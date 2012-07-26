@@ -1,3 +1,39 @@
+2012-07-26  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
+
+        Move region from HitTestResult to HitTestPoint.
+        https://bugs.webkit.org/show_bug.cgi?id=92367
+
+        Reviewed by Antonio Gomes.
+
+        Moves the region to HitTestPoint where it makes more sense, and use this
+        change to simplify hit-testing a new region in RenderFlowThread.
+
+        No new functionality. No new tests.
+
+        * rendering/HitTestResult.cpp:
+        (WebCore::HitTestPoint::HitTestPoint):
+        (WebCore::HitTestPoint::operator=):
+        (WebCore::HitTestResult::HitTestResult):
+        (WebCore::HitTestResult::operator=):
+        * rendering/HitTestResult.h:
+        (HitTestPoint):
+        (WebCore::HitTestPoint::region):
+        (HitTestResult):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::nodeAtPoint):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::nodeAtPoint):
+        * rendering/RenderFlowThread.cpp:
+        (WebCore::RenderFlowThread::hitTestRegion):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::hitTestLayer):
+        * rendering/RenderRegion.cpp:
+        (WebCore::RenderRegion::nodeAtPoint):
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::nodeAtPoint):
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::nodeAtPoint):
+
 2012-07-26  Jan Keromnes  <janx@linux.com>
 
         Web Inspector: ExtensionView constructor shouldn't take parent argument

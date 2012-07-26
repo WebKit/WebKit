@@ -318,14 +318,10 @@ bool RenderFlowThread::hitTestRegion(RenderRegion* region, const HitTestRequest&
     // Always ignore clipping, since the RenderFlowThread has nothing to do with the bounds of the FrameView.
     HitTestRequest newRequest(request.type() | HitTestRequest::IgnoreClipping);
 
-    RenderRegion* oldRegion = result.region();
-    result.setRegion(region);
-
-    HitTestPoint newHitTestPoint(pointInContainer);
-    newHitTestPoint.move(-renderFlowThreadOffset);
+    // Make a new temporary hitTestPoint in the new region.
+    HitTestPoint newHitTestPoint(pointInContainer, -renderFlowThreadOffset, region);
 
     bool isPointInsideFlowThread = layer()->hitTest(newRequest, newHitTestPoint, result);
-    result.setRegion(oldRegion);
 
     // FIXME: Should we set result.m_localPoint back to the RenderRegion's coordinate space or leave it in the RenderFlowThread's coordinate
     // space? Right now it's staying in the RenderFlowThread's coordinate space, which may end up being ok. We will know more when we get around to

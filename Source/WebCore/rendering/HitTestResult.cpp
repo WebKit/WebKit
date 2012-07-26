@@ -49,7 +49,8 @@ namespace WebCore {
 using namespace HTMLNames;
 
 HitTestPoint::HitTestPoint()
-    : m_isRectBased(false)
+    : m_region(0)
+    , m_isRectBased(false)
     , m_isRectilinear(true)
 {
 }
@@ -59,6 +60,7 @@ HitTestPoint::HitTestPoint(const LayoutPoint& point)
     , m_boundingBox(rectForPoint(point, 0, 0, 0, 0))
     , m_transformedPoint(point)
     , m_transformedRect(m_boundingBox)
+    , m_region(0)
     , m_isRectBased(false)
     , m_isRectilinear(true)
 {
@@ -69,6 +71,7 @@ HitTestPoint::HitTestPoint(const FloatPoint& point)
     , m_boundingBox(rectForPoint(m_point, 0, 0, 0, 0))
     , m_transformedPoint(point)
     , m_transformedRect(m_boundingBox)
+    , m_region(0)
     , m_isRectBased(false)
     , m_isRectilinear(true)
 {
@@ -77,6 +80,7 @@ HitTestPoint::HitTestPoint(const FloatPoint& point)
 HitTestPoint::HitTestPoint(const FloatPoint& point, const FloatQuad& quad)
     : m_transformedPoint(point)
     , m_transformedRect(quad)
+    , m_region(0)
     , m_isRectBased(true)
 {
     m_point = roundedLayoutPoint(point);
@@ -88,10 +92,23 @@ HitTestPoint::HitTestPoint(const LayoutPoint& centerPoint, unsigned topPadding, 
     : m_point(centerPoint)
     , m_boundingBox(rectForPoint(centerPoint, topPadding, rightPadding, bottomPadding, leftPadding))
     , m_transformedPoint(centerPoint)
+    , m_region(0)
     , m_isRectBased(topPadding || rightPadding || bottomPadding || leftPadding)
     , m_isRectilinear(true)
 {
     m_transformedRect = FloatQuad(m_boundingBox);
+}
+
+HitTestPoint::HitTestPoint(const HitTestPoint& other, const LayoutSize& offset, RenderRegion* region)
+    : m_point(other.m_point)
+    , m_boundingBox(other.m_boundingBox)
+    , m_transformedPoint(other.m_transformedPoint)
+    , m_transformedRect(other.m_transformedRect)
+    , m_region(region)
+    , m_isRectBased(other.m_isRectBased)
+    , m_isRectilinear(other.m_isRectilinear)
+{
+    move(offset);
 }
 
 HitTestPoint::HitTestPoint(const HitTestPoint& other)
@@ -99,6 +116,7 @@ HitTestPoint::HitTestPoint(const HitTestPoint& other)
     , m_boundingBox(other.m_boundingBox)
     , m_transformedPoint(other.m_transformedPoint)
     , m_transformedRect(other.m_transformedRect)
+    , m_region(other.m_region)
     , m_isRectBased(other.m_isRectBased)
     , m_isRectilinear(other.m_isRectilinear)
 {
@@ -114,6 +132,7 @@ HitTestPoint& HitTestPoint::operator=(const HitTestPoint& other)
     m_boundingBox = other.m_boundingBox;
     m_transformedPoint = other.m_transformedPoint;
     m_transformedRect = other.m_transformedRect;
+    m_region = other.m_region;
     m_isRectBased = other.m_isRectBased;
     m_isRectilinear = other.m_isRectilinear;
 
@@ -176,14 +195,12 @@ IntRect HitTestPoint::rectForPoint(const LayoutPoint& point, unsigned topPadding
 HitTestResult::HitTestResult() : HitTestPoint()
     , m_isOverWidget(false)
     , m_shadowContentFilterPolicy(DoNotAllowShadowContent)
-    , m_region(0)
 {
 }
 
 HitTestResult::HitTestResult(const LayoutPoint& point) : HitTestPoint(point)
     , m_isOverWidget(false)
     , m_shadowContentFilterPolicy(DoNotAllowShadowContent)
-    , m_region(0)
 {
 }
 
@@ -191,7 +208,6 @@ HitTestResult::HitTestResult(const LayoutPoint& centerPoint, unsigned topPadding
     : HitTestPoint(centerPoint, topPadding, rightPadding, bottomPadding, leftPadding)
     , m_isOverWidget(false)
     , m_shadowContentFilterPolicy(allowShadowContent)
-    , m_region(0)
 {
 }
 
@@ -199,7 +215,6 @@ HitTestResult::HitTestResult(const HitTestPoint& other, ShadowContentFilterPolic
     : HitTestPoint(other)
     , m_isOverWidget(false)
     , m_shadowContentFilterPolicy(allowShadowContent)
-    , m_region(0)
 {
 }
 
@@ -212,7 +227,6 @@ HitTestResult::HitTestResult(const HitTestResult& other)
     , m_scrollbar(other.scrollbar())
     , m_isOverWidget(other.isOverWidget())
     , m_shadowContentFilterPolicy(other.shadowContentFilterPolicy())
-    , m_region(other.region())
 {
     // Only copy the NodeSet in case of rect hit test.
     m_rectBasedTestResult = adoptPtr(other.m_rectBasedTestResult ? new NodeSet(*other.m_rectBasedTestResult) : 0);
@@ -235,8 +249,6 @@ HitTestResult& HitTestResult::operator=(const HitTestResult& other)
     // Only copy the NodeSet in case of rect hit test.
     m_rectBasedTestResult = adoptPtr(other.m_rectBasedTestResult ? new NodeSet(*other.m_rectBasedTestResult) : 0);
     m_shadowContentFilterPolicy  = other.shadowContentFilterPolicy();
-
-    m_region = other.m_region;
 
     return *this;
 }

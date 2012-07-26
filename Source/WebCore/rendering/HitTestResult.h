@@ -56,6 +56,8 @@ public:
     HitTestPoint(const FloatPoint&, const FloatQuad&);
     // Pass non-zero padding values to perform a rect-based hit test.
     HitTestPoint(const LayoutPoint& centerPoint, unsigned topPadding, unsigned rightPadding, unsigned bottomPadding, unsigned leftPadding);
+    // Make a copy the HitTestPoint in a new region by applying given offset to internal point and area.
+    HitTestPoint(const HitTestPoint&, const LayoutSize& offset, RenderRegion*);
     HitTestPoint(const HitTestPoint&);
     ~HitTestPoint();
     HitTestPoint& operator=(const HitTestPoint&);
@@ -63,7 +65,7 @@ public:
     LayoutPoint point() const { return m_point; }
     IntPoint roundedPoint() const { return roundedIntPoint(m_point); }
 
-    void move(const LayoutSize& offset);
+    RenderRegion* region() const { return m_region; }
 
     // Rect-based hit test related methods.
     bool isRectBasedTest() const { return m_isRectBased; }
@@ -85,6 +87,7 @@ public:
 private:
     template<typename RectType>
     bool intersectsRect(const RectType&) const;
+    void move(const LayoutSize& offset);
 
     // This is cached forms of the more accurate point and area below.
     LayoutPoint m_point;
@@ -92,6 +95,9 @@ private:
 
     FloatPoint m_transformedPoint;
     FloatQuad m_transformedRect;
+
+    RenderRegion* m_region; // The region we're inside.
+
     bool m_isRectBased;
     bool m_isRectilinear;
 };
@@ -115,9 +121,6 @@ public:
     Element* URLElement() const { return m_innerURLElement.get(); }
     Scrollbar* scrollbar() const { return m_scrollbar.get(); }
     bool isOverWidget() const { return m_isOverWidget; }
-
-    RenderRegion* region() const { return m_region; }
-    void setRegion(RenderRegion* region) { m_region = region; }
 
     void setToNonShadowAncestor();
 
@@ -190,8 +193,6 @@ private:
     bool m_isOverWidget; // Returns true if we are over a widget (and not in the border/padding area of a RenderWidget for example).
 
     ShadowContentFilterPolicy m_shadowContentFilterPolicy;
-
-    RenderRegion* m_region; // The region we're inside.
 
     mutable OwnPtr<NodeSet> m_rectBasedTestResult;
 };
