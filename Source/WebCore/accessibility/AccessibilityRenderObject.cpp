@@ -1036,13 +1036,16 @@ String AccessibilityRenderObject::helpText() const
     if (!describedBy.isEmpty())
         return describedBy;
     
+    String descriptiveText = accessibilityDescription();
     for (RenderObject* curr = m_renderer; curr; curr = curr->parent()) {
         if (curr->node() && curr->node()->isHTMLElement()) {
             const AtomicString& summary = static_cast<Element*>(curr->node())->getAttribute(summaryAttr);
             if (!summary.isEmpty())
                 return summary;
+            
+            // The title attribute should be used as help text, unless it is already being used as descriptive text.
             const AtomicString& title = static_cast<Element*>(curr->node())->getAttribute(titleAttr);
-            if (!title.isEmpty())
+            if (!title.isEmpty() && descriptiveText != title)
                 return title;
         }
         
@@ -1497,6 +1500,10 @@ String AccessibilityRenderObject::accessibilityDescription() const
     
     if (isWebArea())
         return webAreaAccessibilityDescription();
+    
+    // The description should fall back to the title attribute as a last resort.
+    if (title().isEmpty())
+        return getAttribute(titleAttr);
     
     return String();
 }

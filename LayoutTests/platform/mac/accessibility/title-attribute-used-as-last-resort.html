@@ -1,0 +1,54 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<a id="link1" tabindex="0" href="#" title="TITLE">text</a>
+<a id="link2" tabindex="0" href="#" aria-help="HELP" title="TITLE">text</a>
+<a id="link3" tabindex="0" href="#" title="TITLE"></a>
+<a id="link4" tabindex="0" href="#" aria-help="HELP" title="TITLE"></a>
+<a id="link5" tabindex="0" href="#" aria-help="HELP" aria-label="LABEL" title="TITLE"></a>
+
+<p id="description"></p>
+<div id="console"></div>
+<div id="notifications"></div>
+
+<script>
+
+    description("This tests that the title attribute is used as the last resort for description when there is no other option available, but otherwise used as help text.");
+
+    if (window.accessibilityController) {
+
+        // Case 1: title attribute, with text inside element.
+        document.getElementById("link1").focus();
+        shouldBe("accessibilityController.focusedElement.title", "'AXTitle: text'");
+        shouldBe("accessibilityController.focusedElement.helpText", "'AXHelp: TITLE'");
+
+        // Case 2: title attribute and aria-help attribute, with text inside element.
+        document.getElementById("link2").focus();
+        shouldBe("accessibilityController.focusedElement.title", "'AXTitle: text'");
+        shouldBe("accessibilityController.focusedElement.helpText", "'AXHelp: HELP'");
+
+        // Case 3: title attribute is only text available.
+        document.getElementById("link3").focus();
+        shouldBe("accessibilityController.focusedElement.description", "'AXDescription: TITLE'");
+        shouldBe("accessibilityController.focusedElement.helpText", "'AXHelp: '");
+
+        // Case 4: title attribute and aria-help are available.
+        document.getElementById("link4").focus();
+        shouldBe("accessibilityController.focusedElement.description", "'AXDescription: TITLE'");
+        shouldBe("accessibilityController.focusedElement.helpText", "'AXHelp: HELP'");
+
+        // Case 5: aria-help, title and aria-label are available.
+        document.getElementById("link5").focus();
+        shouldBe("accessibilityController.focusedElement.description", "'AXDescription: LABEL'");
+        shouldBe("accessibilityController.focusedElement.helpText", "'AXHelp: HELP'");
+    }
+
+</script>
+
+<script src="../../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

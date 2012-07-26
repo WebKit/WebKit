@@ -1,3 +1,18 @@
+2012-07-27 Chris Fleizach <cfleizach@apple.com>
+
+        WebKit should expose @title as label (AXTitle or AXDescription) sometimes instead of AXHelp, according to the ARIA text alt computation
+        https://bugs.webkit.org/show_bug.cgi?id=91911
+
+        Reviewed by Anders Carlsson.
+
+        The ARIA spec states that the title attribute should be used as the last resort for a description of an element. WebKit needs to honor that.
+
+        Test: platform/mac/accessibility/title-attribute-used-as-last-resort.html
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::helpText):
+        (WebCore::AccessibilityRenderObject::accessibilityDescription):
+
 2012-07-26  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Unreviewed r123761 follow-up, inspector closure compilation fix.
