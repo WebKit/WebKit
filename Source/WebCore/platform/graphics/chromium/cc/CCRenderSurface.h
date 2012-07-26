@@ -71,17 +71,11 @@ public:
     void setDrawTransform(const WebKit::WebTransformationMatrix& drawTransform) { m_drawTransform = drawTransform; }
     const WebKit::WebTransformationMatrix& drawTransform() const { return m_drawTransform; }
 
-    void setOriginTransform(const WebKit::WebTransformationMatrix& originTransform) { m_originTransform = originTransform; }
-    const WebKit::WebTransformationMatrix& originTransform() const { return m_originTransform; }
-
     void setScreenSpaceTransform(const WebKit::WebTransformationMatrix& screenSpaceTransform) { m_screenSpaceTransform = screenSpaceTransform; }
     const WebKit::WebTransformationMatrix& screenSpaceTransform() const { return m_screenSpaceTransform; }
 
     void setReplicaDrawTransform(const WebKit::WebTransformationMatrix& replicaDrawTransform) { m_replicaDrawTransform = replicaDrawTransform; }
     const WebKit::WebTransformationMatrix& replicaDrawTransform() const { return m_replicaDrawTransform; }
-
-    void setReplicaOriginTransform(const WebKit::WebTransformationMatrix& replicaOriginTransform) { m_replicaOriginTransform = replicaOriginTransform; }
-    const WebKit::WebTransformationMatrix& replicaOriginTransform() const { return m_replicaOriginTransform; }
 
     void setReplicaScreenSpaceTransform(const WebKit::WebTransformationMatrix& replicaScreenSpaceTransform) { m_replicaScreenSpaceTransform = replicaScreenSpaceTransform; }
     const WebKit::WebTransformationMatrix& replicaScreenSpaceTransform() const { return m_replicaScreenSpaceTransform; }
@@ -130,10 +124,8 @@ private:
     float m_drawOpacity;
     bool m_drawOpacityIsAnimating;
     WebKit::WebTransformationMatrix m_drawTransform;
-    WebKit::WebTransformationMatrix m_originTransform;
     WebKit::WebTransformationMatrix m_screenSpaceTransform;
     WebKit::WebTransformationMatrix m_replicaDrawTransform;
-    WebKit::WebTransformationMatrix m_replicaOriginTransform;
     WebKit::WebTransformationMatrix m_replicaScreenSpaceTransform;
     bool m_targetSurfaceTransformsAreAnimating;
     bool m_screenSpaceTransformsAreAnimating;

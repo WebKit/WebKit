@@ -1,3 +1,17 @@
+2012-07-26  Adrienne Walker  <enne@google.com>
+
+        [chromium] Remove redundant surface origin transforms
+        https://bugs.webkit.org/show_bug.cgi?id=91815
+
+        Reviewed by Stephen White.
+
+        Clean up use of origin transforms in tests. Where possible, test
+        against the equivalent draw transform.
+
+        * tests/CCLayerTreeHostCommonTest.cpp:
+        * tests/CCLayerTreeHostImplTest.cpp:
+        * tests/CCRenderSurfaceTest.cpp:
+
 2012-07-25  David Grogan  <dgrogan@chromium.org>
 
         IndexedDB: WebKit API interfaces for "upgradeneeded" methods and events

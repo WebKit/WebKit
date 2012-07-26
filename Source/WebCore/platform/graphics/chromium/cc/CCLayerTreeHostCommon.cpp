@@ -384,7 +384,7 @@ WebTransformationMatrix computeScrollCompensationMatrixForChildren(CCLayerImpl* 
     //  Step 2: apply the scroll compensation
     //  Step 3: transform back to the new surface.
     if (layer->renderSurface() && !nextScrollCompensationMatrix.isIdentity())
-        nextScrollCompensationMatrix = layer->renderSurface()->originTransform().inverse() * nextScrollCompensationMatrix * layer->renderSurface()->originTransform();
+        nextScrollCompensationMatrix = layer->renderSurface()->drawTransform().inverse() * nextScrollCompensationMatrix * layer->renderSurface()->drawTransform();
 
     return nextScrollCompensationMatrix;
 }
@@ -486,16 +486,16 @@ static void calculateDrawTransformsInternal(LayerType* layer, LayerType* rootLay
     //
     // We will denote a scale by contents scale S[contentsScale]
     //
-    // The render surface origin/draw transform to its target surface origin is:
-    //        M[surfaceOrigin] = M[owningLayer->Draw]
+    // The render surface draw transform to its target surface origin is:
+    //        M[surfaceDraw] = M[owningLayer->Draw]
     //
     // The render surface origin transform to its the root (screen space) origin is:
     //        M[surface2root] =  M[owningLayer->screenspace] * S[contentsScale].inverse()
     //
-    // The replica origin/draw transform to its target surface origin is:
-    //        M[replicaOrigin] = S[contentsScale] * M[surfaceOrigin] * Tr[replica->position() + replica->anchor()] * Tr[replica] * Tr[origin2anchor].inverse() * S[contentsScale].inverse()
+    // The replica draw transform to its target surface origin is:
+    //        M[replicaDraw] = S[contentsScale] * M[surfaceDraw] * Tr[replica->position() + replica->anchor()] * Tr[replica] * Tr[origin2anchor].inverse() * S[contentsScale].inverse()
     //
-    // The replica origin transform to the root (screen space) origin is:
+    // The replica draw transform to the root (screen space) origin is:
     //        M[replica2root] = M[surface2root] * Tr[replica->position()] * Tr[replica] * Tr[origin2anchor].inverse()
     //
 
@@ -586,7 +586,6 @@ static void calculateDrawTransformsInternal(LayerType* layer, LayerType* rootLay
         renderSurface->clearLayerList();
 
         // The origin of the new surface is the upper left corner of the layer.
-        renderSurface->setOriginTransform(drawTransform);
         renderSurface->setDrawTransform(drawTransform);
         WebTransformationMatrix layerDrawTransform;
         layerDrawTransform.scale(contentsScale);
@@ -616,7 +615,7 @@ static void calculateDrawTransformsInternal(LayerType* layer, LayerType* rootLay
 
         // Update the aggregate hierarchy matrix to include the transform of the
         // newly created RenderSurface.
-        nextHierarchyMatrix.multiply(renderSurface->originTransform());
+        nextHierarchyMatrix.multiply(renderSurface->drawTransform());
 
         // The new renderSurface here will correctly clip the entire subtree. So, we do
         // not need to continue propagating the clipping state further down the tree. This
@@ -752,7 +751,7 @@ static void calculateDrawTransformsInternal(LayerType* layer, LayerType* rootLay
         if (!layer->replicaLayer() && transformToParentIsKnown(layer)) {
             // Note, it is correct to use ancestorClipsSubtree here, because we are looking at this layer's renderSurface, not the layer itself.
             if (ancestorClipsSubtree && !clippedContentRect.isEmpty()) {
-                IntRect surfaceClipRect = CCLayerTreeHostCommon::calculateVisibleRect(renderSurface->clipRect(), clippedContentRect, renderSurface->originTransform());
+                IntRect surfaceClipRect = CCLayerTreeHostCommon::calculateVisibleRect(renderSurface->clipRect(), clippedContentRect, renderSurface->drawTransform());
                 clippedContentRect.intersect(surfaceClipRect);
             }
         }
@@ -778,8 +777,7 @@ static void calculateDrawTransformsInternal(LayerType* layer, LayerType* rootLay
             surfaceOriginToReplicaOriginTransform.scale(1 / contentsScale);
 
             // Compute the replica's "originTransform" that maps from the replica's origin space to the target surface origin space.
-            WebTransformationMatrix replicaOriginTransform = layer->renderSurface()->originTransform() * surfaceOriginToReplicaOriginTransform;
-            renderSurface->setReplicaOriginTransform(replicaOriginTransform);
+            WebTransformationMatrix replicaOriginTransform = layer->renderSurface()->drawTransform() * surfaceOriginToReplicaOriginTransform;
             renderSurface->setReplicaDrawTransform(replicaOriginTransform);
 
             // Compute the replica's "screenSpaceTransform" that maps from the replica's origin space to the screen's origin space.

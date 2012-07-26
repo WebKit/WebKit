@@ -1,3 +1,38 @@
+2012-07-26  Adrienne Walker  <enne@google.com>
+
+        [chromium] Remove redundant surface origin transforms
+        https://bugs.webkit.org/show_bug.cgi?id=91815
+
+        Reviewed by Stephen White.
+
+        Bug 91417 changed draw transforms to become equivalent to origin
+        transforms for surfaces. This change removes them as they are no
+        longer needed for anything.
+
+        No new tests. Just a refactoring.
+
+        * platform/graphics/chromium/RenderSurfaceChromium.h:
+        (RenderSurfaceChromium):
+        * platform/graphics/chromium/cc/CCDamageTracker.cpp:
+        (WebCore::CCDamageTracker::extendDamageForRenderSurface):
+        * platform/graphics/chromium/cc/CCLayerTreeHostCommon.cpp:
+        (WebCore::computeScrollCompensationMatrixForChildren):
+        (WebCore::calculateDrawTransformsInternal):
+        * platform/graphics/chromium/cc/CCOcclusionTracker.cpp:
+        (WebCore::::leaveToRenderTarget):
+        (WebCore::::unoccludedContributingSurfaceContentRect):
+        * platform/graphics/chromium/cc/CCRenderPassDrawQuad.cpp:
+        (WebCore::CCRenderPassDrawQuad::create):
+        (WebCore::CCRenderPassDrawQuad::CCRenderPassDrawQuad):
+        * platform/graphics/chromium/cc/CCRenderPassDrawQuad.h:
+        (CCRenderPassDrawQuad):
+        * platform/graphics/chromium/cc/CCRenderSurface.cpp:
+        (WebCore::CCRenderSurface::createSharedQuadState):
+        (WebCore::CCRenderSurface::createReplicaSharedQuadState):
+        (WebCore::CCRenderSurface::appendQuads):
+        * platform/graphics/chromium/cc/CCRenderSurface.h:
+        (CCRenderSurface):
+
 2012-07-25  Andrey Kosyakov  <caseq@chromium.org>
 
         Web Inspector: simplify handling of status bar items

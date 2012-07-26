@@ -332,13 +332,13 @@ void CCDamageTracker::extendDamageForRenderSurface(CCLayerImpl* layer, FloatRect
 
     // If there was damage, transform it to target space, and possibly contribute its reflection if needed.
     if (!damageRectInLocalSpace.isEmpty()) {
-        const WebTransformationMatrix& originTransform = renderSurface->originTransform();
-        FloatRect damageRectInTargetSpace = CCMathUtil::mapClippedRect(originTransform, damageRectInLocalSpace);
+        const WebTransformationMatrix& drawTransform = renderSurface->drawTransform();
+        FloatRect damageRectInTargetSpace = CCMathUtil::mapClippedRect(drawTransform, damageRectInLocalSpace);
         targetDamageRect.uniteIfNonZero(damageRectInTargetSpace);
 
         if (layer->replicaLayer()) {
-            const WebTransformationMatrix& replicaOriginTransform = renderSurface->replicaOriginTransform();
-            targetDamageRect.uniteIfNonZero(CCMathUtil::mapClippedRect(replicaOriginTransform, damageRectInLocalSpace));
+            const WebTransformationMatrix& replicaDrawTransform = renderSurface->replicaDrawTransform();
+            targetDamageRect.uniteIfNonZero(CCMathUtil::mapClippedRect(replicaDrawTransform, damageRectInLocalSpace));
         }
     }
 
@@ -349,9 +349,8 @@ void CCDamageTracker::extendDamageForRenderSurface(CCLayerImpl* layer, FloatRect
         bool replicaIsNew = false;
         removeRectFromCurrentFrame(replicaMaskLayer->id(), replicaIsNew);
 
-        // Compute the replica's "originTransform" that maps from the replica's origin space to the target surface origin space.
-        const WebTransformationMatrix& replicaOriginTransform = renderSurface->replicaOriginTransform();
-        FloatRect replicaMaskLayerRect = CCMathUtil::mapClippedRect(replicaOriginTransform, FloatRect(FloatPoint::zero(), FloatSize(replicaMaskLayer->bounds().width(), replicaMaskLayer->bounds().height())));
+        const WebTransformationMatrix& replicaDrawTransform = renderSurface->replicaDrawTransform();
+        FloatRect replicaMaskLayerRect = CCMathUtil::mapClippedRect(replicaDrawTransform, FloatRect(FloatPoint::zero(), FloatSize(replicaMaskLayer->bounds().width(), replicaMaskLayer->bounds().height())));
         saveRectForNextFrame(replicaMaskLayer->id(), replicaMaskLayerRect);
 
         // In the current implementation, a change in the replica mask damages the entire replica region.

@@ -28,7 +28,6 @@
 
 #include "cc/CCResourceProvider.h"
 #include <public/WebCompositorQuad.h>
-#include <public/WebTransformationMatrix.h>
 #include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
@@ -38,23 +37,19 @@ class CCRenderPass;
 class CCRenderPassDrawQuad : public WebKit::WebCompositorQuad {
     WTF_MAKE_NONCOPYABLE(CCRenderPassDrawQuad);
 public:
-    static PassOwnPtr<CCRenderPassDrawQuad> create(const WebKit::WebCompositorSharedQuadState*, const IntRect&, int renderPassId, bool isReplica, const WebKit::WebTransformationMatrix&, CCResourceProvider::ResourceId maskResourceId, const IntRect& contentsChangedSinceLastFrame);
+    static PassOwnPtr<CCRenderPassDrawQuad> create(const WebKit::WebCompositorSharedQuadState*, const IntRect&, int renderPassId, bool isReplica, CCResourceProvider::ResourceId maskResourceId, const IntRect& contentsChangedSinceLastFrame);
 
     int renderPassId() const { return m_renderPassId; }
     bool isReplica() const { return m_isReplica; }
     CCResourceProvider::ResourceId maskResourceId() const { return m_maskResourceId; }
     const IntRect& contentsChangedSinceLastFrame() const { return m_contentsChangedSinceLastFrame; }
 
-    // FIXME: This should be removed and we should draw the RenderPass with the quadTransform.
-    const WebKit::WebTransformationMatrix& drawTransform() const { return m_drawTransform; }
-
     static const CCRenderPassDrawQuad* materialCast(const WebKit::WebCompositorQuad*);
 private:
-    CCRenderPassDrawQuad(const WebKit::WebCompositorSharedQuadState*, const IntRect&, int renderPassId, bool isReplica, const WebKit::WebTransformationMatrix&, CCResourceProvider::ResourceId maskResourceId, const IntRect& contentsChangedSinceLastFrame);
+    CCRenderPassDrawQuad(const WebKit::WebCompositorSharedQuadState*, const IntRect&, int renderPassId, bool isReplica, CCResourceProvider::ResourceId maskResourceId, const IntRect& contentsChangedSinceLastFrame);
 
     int m_renderPassId;
     bool m_isReplica;
-    WebKit::WebTransformationMatrix m_drawTransform;
     CCResourceProvider::ResourceId m_maskResourceId;
     IntRect m_contentsChangedSinceLastFrame;
 };
