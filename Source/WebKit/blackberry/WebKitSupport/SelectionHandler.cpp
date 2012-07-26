@@ -45,6 +45,7 @@
 // Note: This generates a lot of logs when dumping rects lists. It will seriously
 // impact performance. Do not enable this during performance tests.
 #define SHOWDEBUG_SELECTIONHANDLER 0
+#define SHOWDEBUG_SELECTIONHANDLER_TIMING 0
 
 using namespace BlackBerry::Platform;
 using namespace WebCore;
@@ -54,6 +55,12 @@ using namespace WebCore;
 #else
 #define DEBUG_SELECTION(severity, format, ...)
 #endif // SHOWDEBUG_SELECTIONHANDLER
+
+#if SHOWDEBUG_SELECTIONHANDLER_TIMING
+#define DEBUG_SELECTION_TIMING(severity, format, ...) logAlways(severity, format, ## __VA_ARGS__)
+#else
+#define DEBUG_SELECTION_TIMING(severity, format, ...)
+#endif // SHOWDEBUG_SELECTIONHANDLER_TIMING
 
 namespace BlackBerry {
 namespace WebKit {
@@ -447,6 +454,10 @@ void SelectionHandler::setSelection(const WebCore::IntPoint& start, const WebCor
 
     Frame* focusedFrame = m_webPage->focusedOrMainFrame();
     FrameSelection* controller = focusedFrame->selection();
+
+#if SHOWDEBUG_SELECTIONHANDLER_TIMING
+    m_timer.start();
+#endif
 
     DEBUG_SELECTION(LogLevelInfo, "SelectionHandler::setSelection adjusted points %d, %d, %d, %d", start.x(), start.y(), end.x(), end.y());
 
@@ -858,6 +869,8 @@ void SelectionHandler::selectionPositionChanged(bool visualChangeOnly)
     else if (!m_selectionActive)
         return;
 
+    DEBUG_SELECTION_TIMING(LogLevelInfo, "SelectionHandler::selectionPositionChanged starting at %f", m_timer.elapsed());
+
     WebCore::IntRect startCaret;
     WebCore::IntRect endCaret;
 
@@ -929,6 +942,7 @@ void SelectionHandler::selectionPositionChanged(bool visualChangeOnly)
         m_webPage->m_selectionOverlay->draw(visibleSelectionRegion);
 
     m_webPage->m_client->notifySelectionDetailsChanged(startCaret, endCaret, visibleSelectionRegion, inputNodeOverridesTouch());
+    DEBUG_SELECTION_TIMING(LogLevelInfo, "SelectionHandler::selectionPositionChanged completed at %f", m_timer.elapsed());
 }
 
 // NOTE: This function is not in WebKit coordinates.

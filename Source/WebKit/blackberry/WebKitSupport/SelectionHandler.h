@@ -21,6 +21,7 @@
 
 #include "BlackBerryPlatformIntRectRegion.h"
 #include "BlackBerryPlatformPrimitives.h"
+#include "BlackBerryPlatformStopWatch.h"
 #include "TextGranularity.h"
 
 #include <wtf/Vector.h>
@@ -89,6 +90,8 @@ private:
     bool m_caretActive;
     bool m_lastUpdatedEndPointIsValid;
     BlackBerry::Platform::IntRectRegion m_lastSelectionRegion;
+
+    BlackBerry::Platform::StopWatch m_timer;
 };
 
 }
