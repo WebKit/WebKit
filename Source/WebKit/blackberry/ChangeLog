@@ -1,3 +1,39 @@
+2012-07-26  Arvid Nilsson  <anilsson@rim.com>
+
+        [BlackBerry] Refactor BackingStorePrivate::render() to avoid touching tile frontbuffer
+        https://bugs.webkit.org/show_bug.cgi?id=91989
+
+        Reviewed by George Staikos.
+
+        PR: 141439
+        Specifically, we want to avoid changing the rendered region of the
+        front buffer. The code only touched the front buffer rendered region
+        if the tile was not committed.
+
+        Instead of immediately marking the tile as committed, and clearing the
+        front buffer's rendered region to make it appear as checkerboard, we
+        leave the front buffer alone and only mark the tile as committed once
+        the front buffer has valid content. Un-committed tiles will also be
+        rendered as checkerboard, so leaving it uncommitted is equivalent to
+        clearing the front buffer rendered region here.
+
+        In addition to the main change, some related changes follow naturally.
+
+        The copyPreviousContentsToBackSurfaceOfTile() call only makes sense if
+        the tile is committed, and the front buffer has valid content.
+        Otherwise, clearing the back buffer is equivalent. The code has been
+        updated to this effect.
+
+        Since copyPreviousContentsToBackSurfaceOfTile() always sets the
+        rendered region to the union of the front and back buffer regions,
+        there is no point in the "backBufferIsValid" check. It has been turned
+        into an ASSERT instead, just to make sure.
+
+        Internally reviewed by Jakob Petsovits.
+
+        * Api/BackingStore.cpp:
+        (BlackBerry::WebKit::BackingStorePrivate::render):
+
 2012-07-25  Jonathan Dong  <jonathan.dong@torchmobile.com.cn>
 
         [BlackBerry] Support RTSP in browser

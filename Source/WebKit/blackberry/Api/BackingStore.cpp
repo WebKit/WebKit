@@ -1090,15 +1090,6 @@ bool BackingStorePrivate::render(const Platform::IntRect& rect)
         // transformed contents coordinates.
         Platform::IntRect dirtyRect = mapFromTilesToTransformedContents(tileRect);
 
-        // If we're not yet committed, then commit now by clearing the rendered region
-        // and setting the committed flag as well as clearing the shift.
-        if (!tile->isCommitted()) {
-            tile->setCommitted(true);
-            tile->frontBuffer()->clearRenderedRegion();
-            tile->backBuffer()->clearRenderedRegion();
-            tile->clearShift();
-        }
-
         // If the tile has been created, but this is the first time we are painting on it
         // then it hasn't been given a default background yet so that we can save time during
         // startup. That's why we are doing it here instead...
@@ -1144,7 +1135,14 @@ bool BackingStorePrivate::render(const Platform::IntRect& rect)
 
         // Modify the buffer only after we've waited for the buffer to become available above.
 
-        copyPreviousContentsToBackSurfaceOfTile(dirtyTileRect, tile);
+        // If we're not yet committed, then commit only after the tile has back buffer has been
+        // swapped in so it has some valid content.
+        // Otherwise the compositing thread could pick up the tile while its front buffer is still invalid.
+        bool wasCommitted = tile->isCommitted();
+        if (wasCommitted)
+            copyPreviousContentsToBackSurfaceOfTile(dirtyTileRect, tile);
+        else
+            tile->backBuffer()->clearRenderedRegion();
 
         // FIXME: modify render to take a Vector<IntRect> parameter so we're not recreating
         // GraphicsContext on the stack each time.
@@ -1153,22 +1151,26 @@ bool BackingStorePrivate::render(const Platform::IntRect& rect)
         // Add the newly rendered region to the tile so it can keep track for blits.
         tile->backBuffer()->addRenderedRegion(dirtyTileRect);
 
-        // Check if the contents for this tile's backbuffer are valid when
-        // compared to the front buffer.
-        bool backBufferIsValid = tile->backBuffer()->isRendered(tile->frontBuffer()->renderedRegion());
-
-        // Our current design demands that the backbuffer is valid after any
-        // rendering operation so assert that here. If we hit this assert we
-        // know that we're doing something bad that will result in artifacts.
-        ASSERT(backBufferIsValid);
+        // Thanks to the copyPreviousContentsToBackSurfaceOfTile() call above, we know that
+        // the rendered region of the back buffer contains the rendered region of the front buffer.
+        // Assert this just to make sure.
+        // For previously uncommitted tiles, the front buffer's rendered region is not relevant.
+        ASSERT(!wasCommitted || tile->backBuffer()->isRendered(tile->frontBuffer()->renderedRegion()));
 
         // We will need a swap here because of the shared back buffer.
-        if (backBufferIsValid) {
-            tile->swapBuffers();
-            BlackBerry::Platform::userInterfaceThreadMessageClient()->syncToCurrentMessage();
-            tile->backBuffer()->clearRenderedRegion();
+        tile->swapBuffers();
+
+        if (!wasCommitted) {
+            // Commit the tile only after it has valid front buffer contents. Now, the compositing thread
+            // can finally start blitting this tile.
+            tile->clearShift();
+            tile->setCommitted(true);
         }
 
+        // Before clearing the render region, wait for the compositing thread to stop using the
+        // buffer, in order to avoid a race on its rendered region.
+        BlackBerry::Platform::userInterfaceThreadMessageClient()->syncToCurrentMessage();
+        tile->backBuffer()->clearRenderedRegion();
     }
 
     return true;
