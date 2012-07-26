@@ -1,3 +1,35 @@
+2012-07-25  Kent Tamura  <tkent@chromium.org>
+
+        REGRESSION(r121420): Performance regression of form state saving for pages with multiple forms
+        https://bugs.webkit.org/show_bug.cgi?id=91804
+
+        Reviewed by Hajime Morita.
+
+        The complexity of FormKeyGenerator::formKey() was O(N) where N is the
+        number form elements with an identical action URL, and formKey() is
+        called for every form. So, it's O(N^2). A page in www.reddit.com
+        contains hundreds of form elements with action="#". So FormController::
+        formElementsState() took a few seconds on a slow machine.
+
+        In order to avoid O(N^2) operation, storing a map from form signatures
+        to next index numbers, instead of storing existing formKey strings.
+
+        No new tests. Just a performance improvement.
+
+        Note: This is a re-landing of r123191. We rolled it out because of
+        suspicion of a performance regression. However it was innocent.
+
+        * html/FormController.cpp:
+        (FormKeyGenerator): Remove m_existingKeys. Add a map from a form
+        signature string to the next index number.
+        (WebCore::formSignature): Returns a signature string for a form, without
+        an index number. This is like "actionURL [name1 name2 ]"
+        (WebCore::FormKeyGenerator::formKey):
+        Creates a formKey string by concatenating a formSignature and #n. N is
+        obtained from m_formSignatureToNextIndexMap in O(1).
+        (WebCore::FormKeyGenerator::willDeleteForm):
+        Remove the code for m_existingKeys.
+
 2012-07-25  Benjamin Poulain  <bpoulain@apple.com>
 
         Initialize QualifiedName's strings from the read only data segment
