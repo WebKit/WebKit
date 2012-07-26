@@ -402,6 +402,8 @@ public:
     String referrer() const;
     String userAgent() const;
 
+    String engineDescription() const;
+
 private:
     MediaPlayer(MediaPlayerClient*);
     void loadWithNextMediaEngine(MediaPlayerFactory*);

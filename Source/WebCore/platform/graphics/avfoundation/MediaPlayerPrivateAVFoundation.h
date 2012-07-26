@@ -243,6 +243,8 @@ protected:
 
     MediaPlayer* player() { return m_player; }
 
+    virtual String engineDescription() const { return "AVFoundation"; }
+
 private:
     MediaPlayer* m_player;
 

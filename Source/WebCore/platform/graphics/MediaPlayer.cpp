@@ -1068,6 +1068,14 @@ String MediaPlayer::userAgent() const
     return m_mediaPlayerClient->mediaPlayerUserAgent();
 }
 
+String MediaPlayer::engineDescription() const
+{
+    if (!m_private)
+        return String();
+
+    return m_private->engineDescription();
+}
+
 #if PLATFORM(WIN) && USE(AVFOUNDATION)
 GraphicsDeviceAdapter* MediaPlayer::graphicsDeviceAdapter() const
 {

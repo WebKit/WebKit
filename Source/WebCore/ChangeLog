@@ -1,3 +1,34 @@
+2012-07-26  Jer Noble  <jer.noble@apple.com>
+
+        Add a MediaPlayer API to retrieve the description of the current media engine.
+        https://bugs.webkit.org/show_bug.cgi?id=92336
+
+        Reviewed by Eric Carlson.
+
+        Add a utility function which retrieves, for diagnostic purposes, a brief description
+        of the current media engine. Stubs have been added for each of the MediaPlayerPrivate
+        subclasses which return the name of the class.
+
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::MediaPlayer::engineDescription):
+        * platform/graphics/MediaPlayer.h:
+        * platform/graphics/MediaPlayerPrivate.h:
+        (WebCore::MediaPlayerPrivateInterface::engineDescription):
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.h:
+        (WebCore::MediaPlayerPrivateAVFoundation::engineDescription):
+        * platform/graphics/blackberry/MediaPlayerPrivateBlackBerry.h:
+        (WebCore::MediaPlayerPrivate::engineDescription):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.h:
+        (WebCore::MediaPlayerPrivateGStreamer::engineDescription):
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.h:
+        (WebCore::MediaPlayerPrivateQTKit::engineDescription):
+        * platform/graphics/qt/MediaPlayerPrivateQt.h:
+        (WebCore::MediaPlayerPrivateQt::engineDescription):
+        * platform/graphics/wince/MediaPlayerPrivateWinCE.h:
+        (WebCore::MediaPlayerPrivate::engineDescription):
+        * platform/graphics/win/MediaPlayerPrivateQuickTimeVisualContext.h:
+        (WebCore::MediaPlayerPrivateQuickTimeVisualContext::engineDescription):
+
 2012-07-26  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: Edits of styles declared after invalid selector are not applied

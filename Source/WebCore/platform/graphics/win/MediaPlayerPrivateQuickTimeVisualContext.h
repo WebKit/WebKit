@@ -156,6 +156,8 @@ private:
 
     virtual void setPrivateBrowsingMode(bool);
 
+    virtual String engineDescription() const { return "QuickTime"; }
+
     class MovieClient;
     friend class MovieClient;
     OwnPtr<MovieClient> m_movieClient;

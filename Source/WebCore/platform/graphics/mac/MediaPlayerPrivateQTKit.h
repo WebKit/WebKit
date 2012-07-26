@@ -187,6 +187,8 @@ private:
     
     NSMutableDictionary* commonMovieAttributes();
 
+    virtual String engineDescription() const { return "QTKit"; }
+
     MediaPlayer* m_player;
     RetainPtr<QTMovie> m_qtMovie;
     RetainPtr<QTMovieView> m_qtMovieView;
