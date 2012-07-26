@@ -664,6 +664,9 @@ fast/forms/textarea-placeholder-visibility-2.html
 fast/forms/textfield-focus-ring.html
 fast/forms/textfield-outline.html
 fast/forms/textfield-overflow.html
+fast/table/colspanMinWidth.html
+fast/table/spanOverlapRepaint.html
+fast/table/text-field-baseline.html
 fast/text/international/unicode-bidi-plaintext-in-textarea.html
 fast/text/textIteratorNilRenderer.html
 tables/mozilla_expected_failures/bugs/bug92647-1.html
