@@ -1,3 +1,26 @@
+2012-07-26  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL][WK2] Implement Network Information provider
+        https://bugs.webkit.org/show_bug.cgi?id=92343
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Moved Network Information provider code from WebKit1
+        to WebCore so that it can be shared with WebKit2.
+
+        No new tests, no behavior change.
+
+        * PlatformEfl.cmake:
+        * platform/efl/NetworkInfoProviderEfl.cpp: Copied from Source/WebKit/efl/WebCoreSupport/NetworkInfoClientEfl.cpp.
+        (WebCore):
+        (WebCore::NetworkInfoProviderEfl::NetworkInfoProviderEfl):
+        (WebCore::NetworkInfoProviderEfl::startUpdating):
+        (WebCore::NetworkInfoProviderEfl::stopUpdating):
+        (WebCore::NetworkInfoProviderEfl::bandwidth):
+        * platform/efl/NetworkInfoProviderEfl.h: Added.
+        (WebCore):
+        (NetworkInfoProviderEfl):
+
 2012-07-25  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: SASS source mapping straw man (behind experiment)

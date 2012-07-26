@@ -1,5 +1,34 @@
 2012-07-26  Christophe Dumez  <christophe.dumez@intel.com>
 
+        [EFL][WK2] Implement Network Information provider
+        https://bugs.webkit.org/show_bug.cgi?id=92343
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Add Network Information provider for WebKit2 EFL
+        by using NetworkInfoProviderEfl class from
+        WebCore.
+
+        * CMakeLists.txt:
+        * PlatformEfl.cmake:
+        * UIProcess/API/efl/NetworkInfoProvider.cpp: Added.
+        (toNetworkInfoProvider):
+        (startUpdatingCallback):
+        (stopUpdatingCallback):
+        (getBandwidthCallback):
+        (isMeteredCallback):
+        (NetworkInfoProvider::create):
+        (NetworkInfoProvider::NetworkInfoProvider):
+        (NetworkInfoProvider::~NetworkInfoProvider):
+        (NetworkInfoProvider::bandwidth):
+        (NetworkInfoProvider::metered):
+        (NetworkInfoProvider::startUpdating):
+        (NetworkInfoProvider::stopUpdating):
+        * UIProcess/API/efl/NetworkInfoProvider.h: Added.
+        (NetworkInfoProvider):
+
+2012-07-26  Christophe Dumez  <christophe.dumez@intel.com>
+
         [EFL][WK2] Compilation warning in EWK2UnitTestServer.cpp
         https://bugs.webkit.org/show_bug.cgi?id=92387
 

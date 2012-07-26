@@ -29,22 +29,12 @@
 #include "NetworkInfoClientEfl.h"
 
 #if ENABLE(NETWORK_INFO)
-#include "NetworkInfo.h"
-#include "NotImplemented.h"
 
-#include "ewk_private.h"
-#include <Eeze.h>
-#include <Eeze_Net.h>
-#include <wtf/text/CString.h>
-#include <wtf/text/WTFString.h>
+#include "NotImplemented.h"
 
 namespace WebCore {
 
-static const char* ethernetInterface = "eth0";
-
 NetworkInfoClientEfl::NetworkInfoClientEfl()
-    : m_controller(0)
-    , m_metered(false)
 {
 }
 
@@ -54,52 +44,26 @@ NetworkInfoClientEfl::~NetworkInfoClientEfl()
 
 void NetworkInfoClientEfl::startUpdating()
 {
-    if (!eeze_init()) {
-        ERR("Fail to start network information client.");
-        return;
-    }
+    m_provider.startUpdating();
 }
 
 void NetworkInfoClientEfl::stopUpdating()
 {
-    eeze_shutdown();
+    m_provider.stopUpdating();
 }
 
 double NetworkInfoClientEfl::bandwidth() const
 {
-    // FIXME : This function should consider cellular network as well. For example, 2G, 3G and 4G.
-    // See https://bugs.webkit.org/show_bug.cgi?id=89851 for detail.
-    Eeze_Net* ethNet = eeze_net_new(ethernetInterface);
-    if (!ethNet)
-        return 0;
-
-    eeze_net_scan(ethNet);
-
-    // FIXME : The eeze library doesn't support EEZE_NET_ADDR_TYPE_IP type yet. So, EEZE_NET_ADDR_TYPE_BROADCAST
-    // is used for now.
-    // See https://bugs.webkit.org/show_bug.cgi?id=89852 for detail.
-    const char* address = eeze_net_addr_get(ethNet, EEZE_NET_ADDR_TYPE_BROADCAST);
-    if (!address)
-        return 0; // If network is offline, return 0.
-
-    double bandwidth;
-    const char* attribute = eeze_net_attribute_get(ethNet, "speed");
-    if (attribute) {
-        bool ok;
-        bandwidth = String::fromUTF8(attribute).toUIntStrict(&ok);
-    } else
-        bandwidth = std::numeric_limits<double>::infinity(); // If bandwidth is unknown, return infinity value.
-
-    eeze_net_free(ethNet);
-
-    return bandwidth / 8; // MB/s
+    return m_provider.bandwidth();
 }
 
 bool NetworkInfoClientEfl::metered() const
 {
     notImplemented();
-    return m_metered;
+
+    return false;
 }
 
-}
+} // namespace WebCore
+
 #endif

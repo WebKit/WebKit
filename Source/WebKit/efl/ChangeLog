@@ -1,3 +1,23 @@
+2012-07-26  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL][WK2] Implement Network Information provider
+        https://bugs.webkit.org/show_bug.cgi?id=92343
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Make NetworkInfoClientEfl use NetworkInfoProviderEfl
+        from WebCore to avoid code duplication with WebKit2.
+
+        * WebCoreSupport/NetworkInfoClientEfl.cpp:
+        (WebCore::NetworkInfoClientEfl::startUpdating):
+        (WebCore::NetworkInfoClientEfl::stopUpdating):
+        (WebCore::NetworkInfoClientEfl::bandwidth):
+        (WebCore::NetworkInfoClientEfl::metered):
+        (WebCore):
+        * WebCoreSupport/NetworkInfoClientEfl.h:
+        (WebCore):
+        (NetworkInfoClientEfl):
+
 2012-07-26  Zoltan Nyul  <zoltan.nyul@intel.com>
 
         [EFL] EFL port should use XDG paths

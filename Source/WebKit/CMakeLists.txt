@@ -2,6 +2,7 @@ SET(WebKit_INCLUDE_DIRECTORIES
     "${WEBKIT_DIR}"
     "${WEBCORE_DIR}"
     "${WEBCORE_DIR}/Modules/intents"
+    "${WEBCORE_DIR}/Modules/networkinfo"
     "${WEBCORE_DIR}/Modules/webdatabase"
     "${WEBCORE_DIR}/accessibility"
     "${WEBCORE_DIR}/bindings/generic"

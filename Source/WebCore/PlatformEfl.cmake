@@ -42,6 +42,7 @@ LIST(APPEND WebCore_SOURCES
   platform/efl/LocalizedStringsEfl.cpp
   platform/efl/LoggingEfl.cpp
   platform/efl/MIMETypeRegistryEfl.cpp
+  platform/efl/NetworkInfoProviderEfl.cpp
   platform/efl/PasteboardEfl.cpp
   platform/efl/PlatformKeyboardEventEfl.cpp
   platform/efl/PlatformMouseEventEfl.cpp
@@ -318,7 +319,7 @@ IF (ENABLE_WEB_AUDIO)
   ADD_DEFINITIONS(-DUNINSTALLED_AUDIO_RESOURCES_DIR="${WEBCORE_DIR}/platform/audio/resources")
 ENDIF ()
 
-IF (ENABLE_GAMEPAD)
+IF (ENABLE_GAMEPAD OR ENABLE_NETWORK_INFO)
   LIST(APPEND WebCore_INCLUDE_DIRECTORIES
     ${EEZE_INCLUDE_DIRS}
   )
