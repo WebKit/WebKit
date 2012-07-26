@@ -130,16 +130,6 @@ String Extensions3DOpenGLCommon::getTranslatedShaderSourceANGLE(Platform3DObject
     if (!isValid)
         return "";
 
-#if PLATFORM(BLACKBERRY)
-    // Our hardware really likes being told what precision to have (i.e., with "precision * float")
-    // ANGLE strips this information.
-    if (entry.source.contains("precision lowp float"))
-        translatedShaderSource = "precision lowp float;\n" + translatedShaderSource;
-    else if (entry.source.contains("precision mediump float"))
-        translatedShaderSource = "precision mediump float;\n" + translatedShaderSource;
-    else
-        translatedShaderSource = "precision highp float;\n" + translatedShaderSource;
-#endif
     return translatedShaderSource;
 }
 

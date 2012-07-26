@@ -54,6 +54,7 @@ GraphicsContext3D::GraphicsContext3D(GraphicsContext3D::Attributes attrs, HostWi
     : m_currentWidth(0)
     , m_currentHeight(0)
     , m_context(BlackBerry::Platform::Graphics::createWebGLContext())
+    , m_compiler(SH_ESSL_OUTPUT)
     , m_extensions(adoptPtr(new Extensions3DOpenGLES(this)))
     , m_attrs(attrs)
     , m_texture(0)

@@ -1,3 +1,20 @@
+2012-07-26  Joshua Netterfield  <jnetterfield@rim.com>
+
+        [WebGL] ANGLEWebKitBridge should support ESSL platforms
+        https://bugs.webkit.org/show_bug.cgi?id=92295
+
+        Reviewed by Rob Buis.
+
+        This tells ANGLEWebKitBridge to output ESSL code for the BlackBerry
+        platform. This eliminates the need for a previous hack. In addition,
+        some (GLSL) ANGLE output that could not be compiled (for example,
+        glsl-mat4-to-mat3.html) now compiles.
+
+        * platform/graphics/blackberry/GraphicsContext3DBlackBerry.cpp:
+        (WebCore::GraphicsContext3D::GraphicsContext3D):
+        * platform/graphics/opengl/Extensions3DOpenGLCommon.cpp:
+        (WebCore::Extensions3DOpenGLCommon::getTranslatedShaderSourceANGLE):
+
 2012-07-26  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: replace "textInput" keyboard event listener breakpoint with "input"
