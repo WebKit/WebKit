@@ -195,6 +195,7 @@ EXPORTS
         ?overrideUserPreferredLanguages@WebCore@@YAXABV?$Vector@VString@WTF@@$0A@@WTF@@@Z
         ?numberOfScopedHTMLStyleChildren@Node@WebCore@@QBEIXZ
         ?page@Document@WebCore@@QBEPAVPage@2@XZ
+        ?pageNumberForElement@PrintContext@WebCore@@SAHPAVElement@2@ABVFloatSize@2@@Z
         ?paintControlTints@FrameView@WebCore@@AAEXXZ
         ?placeholderShouldBeVisible@HTMLTextFormControlElement@WebCore@@QBE_NXZ
         ?rangeFromLocationAndLength@TextIterator@WebCore@@SA?AV?$PassRefPtr@VRange@WebCore@@@WTF@@PAVContainerNode@2@HH_N@Z

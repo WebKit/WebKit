@@ -1,3 +1,15 @@
+2012-07-26  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        [DRT] LTC:: pageNumberForElementById() could be moved to Internals
+        https://bugs.webkit.org/show_bug.cgi?id=92091
+
+        Reviewed by Kentaro Hara.
+
+        Missing a symbol filter for Mac win port.
+
+        * win/WebKit2.def:
+        * win/WebKit2CFLite.def:
+
 2012-07-25  Seokju Kwon  <seokju.kwon@samsung.com>
 
         [EFL][WK2] Implement the inspector for WebKitTestRunner
