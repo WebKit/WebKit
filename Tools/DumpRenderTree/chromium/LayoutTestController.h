@@ -41,27 +41,11 @@
 #ifndef LayoutTestController_h
 #define LayoutTestController_h
 
-#include "CppBoundClass.h"
-#include "Task.h"
-#include "WebDeliveredIntentClient.h"
-#include "platform/WebArrayBufferView.h"
-#include "platform/WebString.h"
-#include "WebTextDirection.h"
-#include "platform/WebURL.h"
-#include <wtf/Deque.h>
-#include <wtf/OwnPtr.h>
-
-namespace WebKit {
-class WebGeolocationClientMock;
-}
-
-namespace webkit_support {
-class ScopedTempDirectory;
-}
+#include "TestRunner.h"
 
 class TestShell;
 
-class LayoutTestController : public CppBoundClass {
+class LayoutTestController : public TestRunner {
 public:
     // Builds the property and method lists needed to bind this class to a JS
     // object.

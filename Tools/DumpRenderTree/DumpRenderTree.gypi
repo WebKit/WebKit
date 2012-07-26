@@ -72,6 +72,8 @@
             'chromium/TestRunner/TestInterfaces.h',
             'chromium/TestRunner/TextInputController.cpp',
             'chromium/TestRunner/TextInputController.h',
+            'chromium/TestRunner/TestRunner.cpp',
+            'chromium/TestRunner/TestRunner.h',
         ],
         'test_plugin_files': [
             'TestNetscapePlugIn/PluginObject.cpp',

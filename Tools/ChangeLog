@@ -1,3 +1,19 @@
+2012-07-25  Adam Barth  <abarth@webkit.org>
+
+        TestRunner.a should contain a TestRunner object
+        https://bugs.webkit.org/show_bug.cgi?id=92313
+
+        Reviewed by Kent Tamura.
+
+        This patch adds a stub implementation of TestRunner, which is the new
+        home for our implementation of window.testRunner. A future patch will
+        migrate functions from LayoutTestController to TestRunner.
+
+        * DumpRenderTree/DumpRenderTree.gypi:
+        * DumpRenderTree/chromium/LayoutTestController.h:
+        * DumpRenderTree/chromium/TestRunner/TestRunner.cpp: Added.
+        * DumpRenderTree/chromium/TestRunner/TestRunner.h: Added.
+
 2012-07-25  Wei James  <james.wei@intel.com>
 
         [Chromium] Fix infinite loop issue for chromium android layout test
