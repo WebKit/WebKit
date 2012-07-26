@@ -103,7 +103,7 @@ void TextFieldInputType::setValue(const String& sanitizedValue, bool valueChange
     InputType::setValue(sanitizedValue, valueChanged, DispatchNoEvent);
 
     if (valueChanged)
-        input->updateInnerTextValue();
+        updateInnerTextValue();
 
     unsigned max = visibleValue().length();
     if (input->focused())
@@ -450,5 +450,17 @@ void TextFieldInputType::spinButtonStepUp()
     stepUpFromRenderer(1);
 }
 
+void TextFieldInputType::updateInnerTextValue()
+{
+    if (!element()->suggestedValue().isNull()) {
+        element()->setInnerTextValue(element()->suggestedValue());
+        element()->updatePlaceholderVisibility(false);
+    } else if (!element()->formControlValueMatchesRenderer()) {
+        // Update the renderer value if the formControlValueMatchesRenderer() flag is false.
+        // It protects an unacceptable renderer value from being overwritten with the DOM value.
+        element()->setInnerTextValue(visibleValue());
+        element()->updatePlaceholderVisibility(false);
+    }
+}
 
 } // namespace WebCore

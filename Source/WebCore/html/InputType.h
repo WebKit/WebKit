@@ -271,6 +271,7 @@ public:
     virtual bool supportsPlaceholder() const;
     virtual bool usesFixedPlaceholder() const;
     virtual String fixedPlaceholder();
+    virtual void updateInnerTextValue();
     virtual void updatePlaceholderText();
     virtual void multipleAttributeChanged();
     virtual void disabledAttributeChanged();

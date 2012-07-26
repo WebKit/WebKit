@@ -153,8 +153,6 @@ public:
 
     String localizeValue(const String&) const;
 
-    void updateInnerTextValue();
-
     // The value which is drawn by a renderer.
     String visibleValue() const;
     String convertFromVisibleValue(const String&) const;

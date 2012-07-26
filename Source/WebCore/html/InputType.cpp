@@ -863,6 +863,10 @@ String InputType::fixedPlaceholder()
     return String();
 }
 
+void InputType::updateInnerTextValue()
+{
+}
+
 void InputType::updatePlaceholderText()
 {
 }

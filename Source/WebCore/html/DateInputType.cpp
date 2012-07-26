@@ -144,7 +144,7 @@ void DateInputType::handleBlurEvent()
     element()->setFormControlValueMatchesRenderer(false);
     // We need to reset the renderer value explicitly because an unacceptable
     // renderer value should be purged before style calculation.
-    element()->updateInnerTextValue();
+    updateInnerTextValue();
 }
 
 bool DateInputType::supportsPlaceholder() const

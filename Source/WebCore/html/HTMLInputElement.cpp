@@ -456,7 +456,7 @@ void HTMLInputElement::updateType()
         updateValueIfNeeded();
 
     setFormControlValueMatchesRenderer(false);
-    updateInnerTextValue();
+    m_inputType->updateInnerTextValue();
 
     m_wasModifiedByUser = false;
 
@@ -487,22 +487,6 @@ void HTMLInputElement::updateType()
 
     setNeedsValidityCheck();
     notifyFormStateChanged();
-}
-
-void HTMLInputElement::updateInnerTextValue()
-{
-    if (!isTextField())
-        return;
-
-    if (!suggestedValue().isNull()) {
-        setInnerTextValue(suggestedValue());
-        updatePlaceholderVisibility(false);
-    } else if (!formControlValueMatchesRenderer()) {
-        // Update the renderer value if the formControlValueMatchesRenderer() flag is false.
-        // It protects an unacceptable renderer value from being overwritten with the DOM value.
-        setInnerTextValue(visibleValue());
-        updatePlaceholderVisibility(false);
-    }
 }
 
 void HTMLInputElement::subtreeHasChanged()
@@ -727,7 +711,7 @@ void HTMLInputElement::parseAttribute(const Attribute& attribute)
 #endif
     else
         HTMLTextFormControlElement::parseAttribute(attribute);
-    updateInnerTextValue();
+    m_inputType->updateInnerTextValue();
 }
 
 void HTMLInputElement::finishParsingChildren()
@@ -902,7 +886,7 @@ void HTMLInputElement::copyNonAttributePropertiesFromElement(const Element& sour
     HTMLTextFormControlElement::copyNonAttributePropertiesFromElement(source);
 
     setFormControlValueMatchesRenderer(false);
-    updateInnerTextValue();
+    m_inputType->updateInnerTextValue();
 }
 
 String HTMLInputElement::value() const
@@ -950,7 +934,7 @@ void HTMLInputElement::setSuggestedValue(const String& value)
     setFormControlValueMatchesRenderer(false);
     m_suggestedValue = sanitizeValue(value);
     setNeedsStyleRecalc();
-    updateInnerTextValue();
+    m_inputType->updateInnerTextValue();
 }
 
 void HTMLInputElement::setEditingValue(const String& value)

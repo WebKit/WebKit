@@ -66,6 +66,7 @@ protected:
     virtual void disabledAttributeChanged() OVERRIDE;
     virtual void readonlyAttributeChanged() OVERRIDE;
     virtual void handleBlurEvent() OVERRIDE;
+    virtual void updateInnerTextValue() OVERRIDE;
 
 private:
     virtual bool isKeyboardFocusable(KeyboardEvent*) const OVERRIDE;

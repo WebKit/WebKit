@@ -1,3 +1,37 @@
+2012-07-25  Yoshifumi Inoue  <yosin@chromium.org>
+
+        [Forms] Move HTMLInputElement::updateInnerTextValue to InputType class
+        https://bugs.webkit.org/show_bug.cgi?id=92230
+
+        Reviewed by Kent Tamura.
+
+        This patch moves implementaion of HTMLInputElement::updateInnerTextValue()
+        into input type classes, removes updateInnerTextValue() from HTMLInputElement,
+        and updates call site of updateInnerTextValue().
+
+        No new tests. This patch doesn't change behavior.
+
+        * html/DateInputType.cpp:
+        (WebCore::DateInputType::handleBlurEvent): Updated call site of updateInnerTextValue().
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::updateType): Updated call site of updateInnerTextValue().
+        (WebCore::HTMLInputElement::parseAttribute): Updated call site of updateInnerTextValue().
+        (WebCore::HTMLInputElement::copyNonAttributePropertiesFromElement): Updated call site of updateInnerTextValue().
+        (WebCore::HTMLInputElement::setSuggestedValue): Updated call site of updateInnerTextValue().
+        * html/HTMLInputElement.h:
+        (HTMLInputElement): Removed updateInnerTextValue().
+        * html/InputType.cpp:
+        (WebCore::InputType::updateInnerTextValue): Added default implementaion.
+        * html/InputType.h:
+        (InputType): Added declaration of updateInnerTextValue().
+        * html/NumberInputType.cpp:
+        (WebCore::NumberInputType::handleBlurEvent): Updated call site of updateInnerTextValue().
+        * html/TextFieldInputType.cpp:
+        (WebCore::TextFieldInputType::setValue): Updated call site of updateInnerTextValue().
+        (WebCore::TextFieldInputType::updateInnerTextValue): Moved implementaion from HTMLInputElement.
+        * html/TextFieldInputType.h:
+        (TextFieldInputType): Added declaration of updateInnerTextValue().
+
 2012-07-25  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Move ephemeral data for a single frame in LayerRendererChromium into a structure with a scoped lifetime equal to the frame
