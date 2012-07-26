@@ -1,3 +1,11 @@
+2012-07-25  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Build fix for 32-bit after r123682
+
+        * runtime/JSObject.h: Need to pad out JSObjects on 32-bit so that they're the correct size since
+        we only removed one 4-byte word and we need to be 8-byte aligned.
+        (JSObject):
+
 2012-07-25  Filip Pizlo  <fpizlo@apple.com>
 
         JSC GC object copying APIs should allow for greater flexibility
