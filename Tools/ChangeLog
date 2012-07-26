@@ -1,3 +1,9 @@
+2012-07-26  Adam Barth  <abarth@webkit.org>
+
+        Unreviewed attempt to fix the chromium-win build.
+
+        * DumpRenderTree/chromium/TestRunner/TestRunner.cpp:
+
 2012-07-26  Kaustubh Atrawalkar  <kaustubh@motorola.com>
 
         [DRT] LTC:: pageNumberForElementById() could be moved to Internals

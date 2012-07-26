@@ -62,7 +62,6 @@
 #include "v8/include/v8.h"
 #include "webkit/support/webkit_support.h"
 #include <algorithm>
-#include <cctype>
 #include <clocale>
 #include <cstdlib>
 #include <limits>
