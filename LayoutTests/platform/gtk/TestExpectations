@@ -1258,7 +1258,7 @@ BUGWK92063 : fast/css/sticky/parsing-position-sticky.html = TEXT
 
 BUGWK92100 : accessibility/canvas-accessibilitynodeobject.html = TEXT
 
-BUGWK92352 : css3/flexbox/flex-algorithm-min-max.html = TEXT
+// This test depends on subpixel layout.
 BUGWK92352 : css3/flexbox/flex-rounding.html = TEXT
 
 //////////////////////////////////////////////////////////////////////////////////////////

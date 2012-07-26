@@ -952,3 +952,7 @@ fast/js/global-constructors.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=91505
 platform/mac/plugins/root-object-premature-delete-crash.html
+
+# This test depends on subpixel layout.
+# https://bugs.webkit.org/show_bug.cgi?id=92352
+css3/flexbox/flex-rounding.html

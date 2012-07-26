@@ -878,9 +878,9 @@ bool RenderFlexibleBox::resolveFlexibleLengths(FlexSign flexSign, const OrderedF
             LayoutUnit preferredChildSize = preferredMainAxisContentExtentForChild(child);
             LayoutUnit childSize = preferredChildSize;
             if (availableFreeSpace > 0 && totalFlexGrow > 0 && flexSign == PositiveFlexibility && isfinite(totalFlexGrow))
-                childSize += availableFreeSpace * child->style()->flexGrow() / totalFlexGrow;
+                childSize += roundedLayoutUnit(availableFreeSpace * child->style()->flexGrow() / totalFlexGrow);
             else if (availableFreeSpace < 0 && totalWeightedFlexShrink > 0 && flexSign == NegativeFlexibility && isfinite(totalWeightedFlexShrink))
-                childSize += availableFreeSpace * child->style()->flexShrink() * preferredChildSize / totalWeightedFlexShrink;
+                childSize += roundedLayoutUnit(availableFreeSpace * child->style()->flexShrink() * preferredChildSize / totalWeightedFlexShrink);
 
             LayoutUnit adjustedChildSize = adjustChildSizeForMinAndMax(child, childSize, flexboxAvailableContentExtent);
             childSizes.append(adjustedChildSize);

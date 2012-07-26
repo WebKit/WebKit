@@ -2669,8 +2669,6 @@ svg/zoom/page/zoom-hixie-mixed-009.xml
 # https://bugs.webkit.org/show_bug.cgi?id=92039
 svg/repaint/container-repaint.svg
 
-# Regression: r123696 made css3/flexbox tests failing
+# This test depends on subpixel layout.
 # https://bugs.webkit.org/show_bug.cgi?id=92352
-css3/flexbox/cross-axis-scrollbar.html
-css3/flexbox/flex-algorithm-min-max.html
 css3/flexbox/flex-rounding.html

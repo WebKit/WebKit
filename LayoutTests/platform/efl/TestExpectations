@@ -820,6 +820,5 @@ BUGWK91843 : http/tests/security/cross-frame-access-put.html = TEXT
 // Failing after r123379 on EFL and GTK.
 BUGWK92063 : fast/css/sticky/parsing-position-sticky.html = TEXT
 
-// Regression: r123696 made css3/flexbox tests failing on EFL and QT
-BUGWK92352 : css3/flexbox/flex-algorithm-min-max.html = TEXT
+// This test depends on subpixel layout.
 BUGWK92352 : css3/flexbox/flex-rounding.html = TEXT
