@@ -408,6 +408,7 @@ SOURCES += \
     dom/ExceptionBase.cpp \
     dom/ExceptionCodePlaceholder.cpp \
     dom/GenericEventQueue.cpp \
+    dom/GestureEvent.cpp \
     dom/IconURL.cpp \
     dom/IdTargetObserver.cpp \
     dom/IdTargetObserverRegistry.cpp \
@@ -1535,6 +1536,7 @@ HEADERS += \
     dom/ExceptionBase.h \
     dom/ExceptionCode.h \
     dom/FragmentScriptingPermission.h \
+    dom/GestureEvent.h \
     dom/IdTargetObserver.h \
     dom/IdTargetObserverRegistry.h \
     dom/KeyboardEvent.h \

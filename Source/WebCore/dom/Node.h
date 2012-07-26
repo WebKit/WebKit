@@ -88,6 +88,10 @@ class ShadowRoot;
 class TagNodeList;
 class TreeScope;
 
+#if ENABLE(GESTURE_EVENTS)
+class PlatformGestureEvent;
+#endif
+
 #if ENABLE(MICRODATA)
 class HTMLPropertiesCollection;
 class PropertyNodeList;
@@ -609,6 +613,9 @@ public:
     bool dispatchKeyEvent(const PlatformKeyboardEvent&);
     bool dispatchWheelEvent(const PlatformWheelEvent&);
     bool dispatchMouseEvent(const PlatformMouseEvent&, const AtomicString& eventType, int clickCount = 0, Node* relatedTarget = 0);
+#if ENABLE(GESTURE_EVENTS)
+    bool dispatchGestureEvent(const PlatformGestureEvent&);
+#endif
     void dispatchSimulatedClick(PassRefPtr<Event> underlyingEvent, bool sendMouseEvents = false, bool showPressedLook = true);
     bool dispatchBeforeLoadEvent(const String& sourceURL);
 

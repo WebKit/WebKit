@@ -1,3 +1,18 @@
+2012-07-26  Sadrul Habib Chowdhury  <sadrul@chromium.org>
+
+        Propagate gesture events to plugins.
+        https://bugs.webkit.org/show_bug.cgi?id=92281
+
+        Reviewed by Adam Barth.
+
+        Update TestWebPlugin to receive events, and output logs for the events.
+
+        * DumpRenderTree/chromium/TestWebPlugin.cpp:
+        (TestWebPlugin::handleInputEvent):
+        * DumpRenderTree/chromium/TestWebPlugin.h:
+        (TestWebPlugin::acceptsInputEvents):
+        (TestWebPlugin):
+
 2012-07-26  Balazs Kelemen  <kbalazs@webkit.org>
 
         [nrwt] get rid of --skip-pixel-test-if-no-baseline

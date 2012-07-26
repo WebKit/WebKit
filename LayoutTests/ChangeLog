@@ -1,3 +1,15 @@
+2012-07-26  Sadrul Habib Chowdhury  <sadrul@chromium.org>
+
+        Propagate gesture events to plugins.
+        https://bugs.webkit.org/show_bug.cgi?id=92281
+
+        Reviewed by Adam Barth.
+
+        Added a layout test to show that the plugins receive the gesture events correctly.
+
+        * platform/chromium/plugins/gesture-events-expected.txt: Added.
+        * platform/chromium/plugins/gesture-events.html: Added.
+
 2012-07-26  Gavin Peters  <gavinp@chromium.org>
 
         Guard Prerenderer against inserting prerenders into detached documents.

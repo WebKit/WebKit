@@ -446,6 +446,11 @@ private:
     TouchTargetMap m_originatingTouchPointTargets;
     bool m_touchPressed;
 #endif
+
+#if ENABLE(GESTURE_EVENTS)
+    RefPtr<Node> m_scrollGestureHandlingNode;
+#endif
+
     double m_maxMouseMovedDuration;
     PlatformEvent::Type m_baseEventType;
 };

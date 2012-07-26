@@ -32,6 +32,7 @@
 #include "WebInputEventConversion.h"
 
 #include "EventNames.h"
+#include "GestureEvent.h"
 #include "KeyboardCodes.h"
 #include "KeyboardEvent.h"
 #include "MouseEvent.h"
@@ -511,5 +512,32 @@ WebTouchEventBuilder::WebTouchEventBuilder(const Widget* widget, const TouchEven
 }
 
 #endif // ENABLE(TOUCH_EVENTS)
+
+#if ENABLE(GESTURE_EVENTS)
+WebGestureEventBuilder::WebGestureEventBuilder(const Widget* widget, const GestureEvent& event)
+{
+    if (event.type() == eventNames().gesturetapEvent)
+        type = GestureTap;
+    else if (event.type() == eventNames().gesturetapdownEvent)
+        type = GestureTapDown;
+    else if (event.type() == eventNames().gesturescrollstartEvent)
+        type = GestureScrollBegin;
+    else if (event.type() == eventNames().gesturescrollendEvent)
+        type = GestureScrollEnd;
+    else if (event.type() == eventNames().gesturescrollupdateEvent)
+        type = GestureScrollUpdate;
+
+    timeStampSeconds = event.timeStamp() / millisPerSecond;
+    modifiers = getWebInputModifiers(event);
+
+    globalX = event.screenX();
+    globalY = event.screenY();
+    x = event.absoluteLocation().x() - widget->location().x();
+    y = event.absoluteLocation().y() - widget->location().y();
+
+    deltaX = event.deltaX();
+    deltaY = event.deltaY();
+}
+#endif // ENABLE(GESTURE_EVENTS)
 
 } // namespace WebKit

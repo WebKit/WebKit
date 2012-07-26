@@ -109,6 +109,10 @@
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
 
+#if ENABLE(GESTURE_EVENTS)
+#include "GestureEvent.h"
+#endif
+
 #if ENABLE(INSPECTOR)
 #include "InspectorController.h"
 #endif
@@ -2632,6 +2636,13 @@ bool Node::dispatchMouseEvent(const PlatformMouseEvent& event, const AtomicStrin
 {
     return EventDispatcher::dispatchEvent(this, MouseEventDispatchMediator::create(MouseEvent::create(eventType, document()->defaultView(), event, detail, relatedTarget)));
 }
+
+#if ENABLE(GESTURE_EVENTS)
+bool Node::dispatchGestureEvent(const PlatformGestureEvent& event)
+{
+    return EventDispatcher::dispatchEvent(this, GestureEventDispatchMediator::create(GestureEvent::create(document()->defaultView(), event)));
+}
+#endif
 
 void Node::dispatchSimulatedClick(PassRefPtr<Event> event, bool sendMouseEvents, bool showPressedLook)
 {
