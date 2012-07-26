@@ -1,3 +1,9 @@
+2012-07-26  Andrew Wilson  <atwilson@chromium.org>
+
+        Unreviewed chromium expectations change to fix lint err.
+
+        * platform/chromium/TestExpectations:
+
 2012-07-26  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r123525.

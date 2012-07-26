@@ -974,7 +974,7 @@ BUGWK82894 SKIP DEBUG : inspector/profiler/heap-snapshot-inspect-dom-wrapper.htm
 BUGWK60109 WIN RELEASE : inspector/elements/edit-dom-actions.html = PASS TEXT
 BUGWK60109 SKIP WIN DEBUG : inspector/elements/edit-dom-actions.html = PASS TEXT
 
-BUGWK72434 LINUX WIN : inspector/styles/svg-style.xhtml = PASS TEXT
+BUGWK72434 LINUX WIN RELEASE : inspector/styles/svg-style.xhtml = PASS TEXT
 BUGWK72434 LINUX WIN DEBUG SLOW : inspector/styles/svg-style.xhtml = TEXT
 
 BUGWK74654 SKIP : http/tests/inspector/network/network-worker.html = PASS
