@@ -166,13 +166,10 @@ LayerRendererChromium::LayerRendererChromium(CCRendererClient* client,
                                              CCResourceProvider* resourceProvider,
                                              TextureUploaderOption textureUploaderSetting)
     : CCRenderer(client)
-    , m_currentRenderPass(0)
-    , m_currentTexture(0)
     , m_offscreenFramebufferId(0)
     , m_sharedGeometryQuad(FloatRect(-0.5f, -0.5f, 1.0f, 1.0f))
     , m_resourceProvider(resourceProvider)
     , m_context(resourceProvider->graphicsContext3D())
-    , m_defaultRenderPass(0)
     , m_isViewportChanged(false)
     , m_isFramebufferDiscarded(false)
     , m_isUsingBindUniform(false)
@@ -289,31 +286,27 @@ void LayerRendererChromium::releaseRenderPassTextures()
 void LayerRendererChromium::viewportChanged()
 {
     m_isViewportChanged = true;
-
-    // Reset the current RenderPass to force an update of the viewport and
-    // projection matrix next time useRenderPass is called.
-    m_currentRenderPass = 0;
 }
 
-void LayerRendererChromium::clearRenderPass(const CCRenderPass* renderPass, const FloatRect& framebufferDamageRect)
+void LayerRendererChromium::clearFramebuffer(DrawingFrame& frame, const FloatRect& framebufferDamageRect)
 {
     // On DEBUG builds, opaque render passes are cleared to blue to easily see regions that were not drawn on the screen. If we
     // are using partial swap / scissor optimization, then the surface should only
     // clear the damaged region, so that we don't accidentally clear un-changed portions
     // of the screen.
 
-    if (renderPass->hasTransparentBackground())
+    if (frame.currentRenderPass->hasTransparentBackground())
         GLC(m_context, m_context->clearColor(0, 0, 0, 0));
     else
         GLC(m_context, m_context->clearColor(0, 0, 1, 1));
 
     if (m_capabilities.usingPartialSwap)
-        setScissorToRect(enclosingIntRect(framebufferDamageRect));
+        setScissorToRect(frame, enclosingIntRect(framebufferDamageRect));
     else
         GLC(m_context, m_context->disable(GraphicsContext3D::SCISSOR_TEST));
 
 #if defined(NDEBUG)
-    if (renderPass->hasTransparentBackground())
+    if (frame.currentRenderPass->hasTransparentBackground())
 #endif
         m_context->clear(GraphicsContext3D::COLOR_BUFFER_BIT);
 
@@ -379,8 +372,9 @@ void LayerRendererChromium::drawFrame(const CCRenderPassList& renderPassesInDraw
     const CCRenderPass* rootRenderPass = renderPassesInDrawOrder.last();
     ASSERT(rootRenderPass);
 
-    m_defaultRenderPass = rootRenderPass;
-    m_renderPassesById = &renderPassesById;
+    DrawingFrame frame;
+    frame.renderPassesById = &renderPassesById;
+    frame.rootRenderPass = rootRenderPass;
 
     beginDrawingFrame();
 
@@ -388,13 +382,10 @@ void LayerRendererChromium::drawFrame(const CCRenderPassList& renderPassesInDraw
         const CCRenderPass* renderPass = renderPassesInDrawOrder[i];
 
         FloatRect rootScissorRectInCurrentSurface = renderPass->targetSurface()->computeRootScissorRectInCurrentSurface(rootScissorRect);
-        drawRenderPass(renderPass, rootScissorRectInCurrentSurface);
+        drawRenderPass(frame, renderPass, rootScissorRectInCurrentSurface);
     }
 
     finishDrawingFrame();
-
-    m_defaultRenderPass = 0;
-    m_renderPassesById = 0;
 }
 
 void LayerRendererChromium::beginDrawingFrame()
@@ -431,19 +422,19 @@ void LayerRendererChromium::doNoOp()
     GLC(m_context, m_context->flush());
 }
 
-void LayerRendererChromium::drawRenderPass(const CCRenderPass* renderPass, const FloatRect& framebufferDamageRect)
+void LayerRendererChromium::drawRenderPass(DrawingFrame& frame, const CCRenderPass* renderPass, const FloatRect& framebufferDamageRect)
 {
-    if (!useRenderPass(renderPass))
+    if (!useRenderPass(frame, renderPass))
         return;
 
-    clearRenderPass(renderPass, framebufferDamageRect);
+    clearFramebuffer(frame, framebufferDamageRect);
 
     const CCQuadList& quadList = renderPass->quadList();
     for (CCQuadList::constBackToFrontIterator it = quadList.backToFrontBegin(); it != quadList.backToFrontEnd(); ++it)
-        drawQuad(it->get());
+        drawQuad(frame, it->get());
 }
 
-void LayerRendererChromium::drawQuad(const WebKit::WebCompositorQuad* quad)
+void LayerRendererChromium::drawQuad(DrawingFrame& frame, const WebKit::WebCompositorQuad* quad)
 {
     IntRect scissorRect = quad->scissorRect();
 
@@ -451,7 +442,7 @@ void LayerRendererChromium::drawQuad(const WebKit::WebCompositorQuad* quad)
     if (scissorRect.isEmpty())
         return;
 
-    setScissorToRect(scissorRect);
+    setScissorToRect(frame, scissorRect);
 
     if (quad->needsBlending())
         GLC(m_context, m_context->enable(GraphicsContext3D::BLEND));
@@ -463,36 +454,36 @@ void LayerRendererChromium::drawQuad(const WebKit::WebCompositorQuad* quad)
         ASSERT_NOT_REACHED();
         break;
     case WebKit::WebCompositorQuad::Checkerboard:
-        drawCheckerboardQuad(CCCheckerboardDrawQuad::materialCast(quad));
+        drawCheckerboardQuad(frame, CCCheckerboardDrawQuad::materialCast(quad));
         break;
     case WebKit::WebCompositorQuad::DebugBorder:
-        drawDebugBorderQuad(CCDebugBorderDrawQuad::materialCast(quad));
+        drawDebugBorderQuad(frame, CCDebugBorderDrawQuad::materialCast(quad));
         break;
     case WebKit::WebCompositorQuad::IOSurfaceContent:
-        drawIOSurfaceQuad(CCIOSurfaceDrawQuad::materialCast(quad));
+        drawIOSurfaceQuad(frame, CCIOSurfaceDrawQuad::materialCast(quad));
         break;
     case WebKit::WebCompositorQuad::RenderPass:
-        drawRenderPassQuad(CCRenderPassDrawQuad::materialCast(quad));
+        drawRenderPassQuad(frame, CCRenderPassDrawQuad::materialCast(quad));
         break;
     case WebKit::WebCompositorQuad::SolidColor:
-        drawSolidColorQuad(WebKit::WebCompositorSolidColorQuad::materialCast(quad));
+        drawSolidColorQuad(frame, WebKit::WebCompositorSolidColorQuad::materialCast(quad));
         break;
     case WebKit::WebCompositorQuad::StreamVideoContent:
-        drawStreamVideoQuad(CCStreamVideoDrawQuad::materialCast(quad));
+        drawStreamVideoQuad(frame, CCStreamVideoDrawQuad::materialCast(quad));
         break;
     case WebKit::WebCompositorQuad::TextureContent:
-        drawTextureQuad(WebKit::WebCompositorTextureQuad::materialCast(quad));
+        drawTextureQuad(frame, WebKit::WebCompositorTextureQuad::materialCast(quad));
         break;
     case WebKit::WebCompositorQuad::TiledContent:
-        drawTileQuad(CCTileDrawQuad::materialCast(quad));
+        drawTileQuad(frame, CCTileDrawQuad::materialCast(quad));
         break;
     case WebKit::WebCompositorQuad::YUVVideoContent:
-        drawYUVVideoQuad(CCYUVVideoDrawQuad::materialCast(quad));
+        drawYUVVideoQuad(frame, CCYUVVideoDrawQuad::materialCast(quad));
         break;
     }
 }
 
-void LayerRendererChromium::drawCheckerboardQuad(const CCCheckerboardDrawQuad* quad)
+void LayerRendererChromium::drawCheckerboardQuad(DrawingFrame& frame, const CCCheckerboardDrawQuad* quad)
 {
     const TileCheckerboardProgram* program = tileCheckerboardProgram();
     ASSERT(program && program->initialized());
@@ -514,13 +505,13 @@ void LayerRendererChromium::drawCheckerboardQuad(const CCCheckerboardDrawQuad* q
     GLC(context(), context()->uniform1f(program->fragmentShader().frequencyLocation(), frequency));
 
     float opacity = quad->opacity();
-    drawTexturedQuad(tileTransform,
+    drawTexturedQuad(frame, tileTransform,
                      tileRect.width(), tileRect.height(), opacity, FloatQuad(),
                      program->vertexShader().matrixLocation(),
                      program->fragmentShader().alphaLocation(), -1);
 }
 
-void LayerRendererChromium::drawDebugBorderQuad(const CCDebugBorderDrawQuad* quad)
+void LayerRendererChromium::drawDebugBorderQuad(DrawingFrame& frame, const CCDebugBorderDrawQuad* quad)
 {
     static float glMatrix[16];
     const SolidColorProgram* program = solidColorProgram();
@@ -531,7 +522,7 @@ void LayerRendererChromium::drawDebugBorderQuad(const CCDebugBorderDrawQuad* qua
     WebTransformationMatrix renderMatrix = quad->quadTransform();
     renderMatrix.translate(0.5 * layerRect.width() + layerRect.x(), 0.5 * layerRect.height() + layerRect.y());
     renderMatrix.scaleNonUniform(layerRect.width(), layerRect.height());
-    LayerRendererChromium::toGLMatrix(&glMatrix[0], projectionMatrix() * renderMatrix);
+    LayerRendererChromium::toGLMatrix(&glMatrix[0], frame.projectionMatrix * renderMatrix);
     GLC(context(), context()->uniformMatrix4fv(program->vertexShader().matrixLocation(), 1, false, &glMatrix[0]));
 
     SkColor color = quad->color();
@@ -561,7 +552,7 @@ static inline SkBitmap applyFilters(LayerRendererChromium* layerRenderer, const 
     return source;
 }
 
-PassOwnPtr<CCScopedTexture> LayerRendererChromium::drawBackgroundFilters(const CCRenderPassDrawQuad* quad, const WebKit::WebFilterOperations& filters, const WebTransformationMatrix& contentsDeviceTransform)
+PassOwnPtr<CCScopedTexture> LayerRendererChromium::drawBackgroundFilters(DrawingFrame& frame, const CCRenderPassDrawQuad* quad, const WebKit::WebFilterOperations& filters, const WebTransformationMatrix& contentsDeviceTransform)
 {
     // This method draws a background filter, which applies a filter to any pixels behind the quad and seen through its background.
     // The algorithm works as follows:
@@ -584,9 +575,9 @@ PassOwnPtr<CCScopedTexture> LayerRendererChromium::drawBackgroundFilters(const C
 
     // FIXME: We only allow background filters on an opaque render surface because other surfaces may contain
     // translucent pixels, and the contents behind those translucent pixels wouldn't have the filter applied.
-    if (m_currentRenderPass->hasTransparentBackground())
+    if (frame.currentRenderPass->hasTransparentBackground())
         return nullptr;
-    ASSERT(!m_currentTexture);
+    ASSERT(!frame.currentTexture);
 
     // FIXME: Do a single readback for both the surface and replica and cache the filtered results (once filter textures are not reused).
     IntRect deviceRect = enclosingIntRect(CCMathUtil::mapClippedRect(contentsDeviceTransform, sharedGeometryQuad().boundingBox()));
@@ -596,7 +587,7 @@ PassOwnPtr<CCScopedTexture> LayerRendererChromium::drawBackgroundFilters(const C
     deviceRect.move(-left, -top);
     deviceRect.expand(left + right, top + bottom);
 
-    deviceRect.intersect(m_currentRenderPass->framebufferOutputRect());
+    deviceRect.intersect(frame.currentRenderPass->framebufferOutputRect());
 
     OwnPtr<CCScopedTexture> deviceBackgroundTexture = CCScopedTexture::create(m_resourceProvider);
     if (!getFramebufferTexture(deviceBackgroundTexture.get(), deviceRect))
@@ -613,8 +604,8 @@ PassOwnPtr<CCScopedTexture> LayerRendererChromium::drawBackgroundFilters(const C
     if (!backgroundTexture->allocate(CCRenderer::ImplPool, quad->quadRect().size(), GraphicsContext3D::RGBA, CCResourceProvider::TextureUsageFramebuffer))
         return nullptr;
 
-    const CCRenderPass* targetRenderPass = m_currentRenderPass;
-    bool usingBackgroundTexture = useScopedTexture(backgroundTexture.get(), quad->quadRect());
+    const CCRenderPass* targetRenderPass = frame.currentRenderPass;
+    bool usingBackgroundTexture = useScopedTexture(frame, backgroundTexture.get(), quad->quadRect());
 
     if (usingBackgroundTexture) {
         // Copy the readback pixels from device to the background texture for the surface.
@@ -625,23 +616,23 @@ PassOwnPtr<CCScopedTexture> LayerRendererChromium::drawBackgroundFilters(const C
         deviceToFramebufferTransform.translate(deviceRect.width() / 2.0, deviceRect.height() / 2.0);
         deviceToFramebufferTransform.translate(deviceRect.x(), deviceRect.y());
 
-        copyTextureToFramebuffer(filteredDeviceBackgroundTextureId, deviceRect.size(), deviceToFramebufferTransform);
+        copyTextureToFramebuffer(frame, filteredDeviceBackgroundTextureId, deviceRect.size(), deviceToFramebufferTransform);
     }
 
-    useRenderPass(targetRenderPass);
+    useRenderPass(frame, targetRenderPass);
 
     if (!usingBackgroundTexture)
         return nullptr;
     return backgroundTexture.release();
 }
 
-void LayerRendererChromium::drawRenderPassQuad(const CCRenderPassDrawQuad* quad)
+void LayerRendererChromium::drawRenderPassQuad(DrawingFrame& frame, const CCRenderPassDrawQuad* quad)
 {
     CachedTexture* contentsTexture = m_renderPassTextures.get(quad->renderPassId());
     if (!contentsTexture || !contentsTexture->id())
         return;
 
-    const CCRenderPass* renderPass = m_renderPassesById->get(quad->renderPassId());
+    const CCRenderPass* renderPass = frame.renderPassesById->get(quad->renderPassId());
     ASSERT(renderPass);
     if (!renderPass)
         return;
@@ -650,13 +641,13 @@ void LayerRendererChromium::drawRenderPassQuad(const CCRenderPassDrawQuad* quad)
     renderMatrix.translate(0.5 * quad->quadRect().width() + quad->quadRect().x(), 0.5 * quad->quadRect().height() + quad->quadRect().y());
     WebTransformationMatrix deviceMatrix = renderMatrix;
     deviceMatrix.scaleNonUniform(quad->quadRect().width(), quad->quadRect().height());
-    WebTransformationMatrix contentsDeviceTransform = WebTransformationMatrix(windowMatrix() * projectionMatrix() * deviceMatrix).to2dTransform();
+    WebTransformationMatrix contentsDeviceTransform = WebTransformationMatrix(frame.windowMatrix * frame.projectionMatrix * deviceMatrix).to2dTransform();
 
     // Can only draw surface if device matrix is invertible.
     if (!contentsDeviceTransform.isInvertible())
         return;
 
-    OwnPtr<CCScopedTexture> backgroundTexture = drawBackgroundFilters(quad, renderPass->backgroundFilters(), contentsDeviceTransform);
+    OwnPtr<CCScopedTexture> backgroundTexture = drawBackgroundFilters(frame, quad, renderPass->backgroundFilters(), contentsDeviceTransform);
 
     // FIXME: Cache this value so that we don't have to do it for both the surface and its replica.
     // Apply filters to the contents texture.
@@ -675,7 +666,7 @@ void LayerRendererChromium::drawRenderPassQuad(const CCRenderPassDrawQuad* quad)
     if (backgroundTexture) {
         ASSERT(backgroundTexture->size() == quad->quadRect().size());
         CCScopedLockResourceForRead lock(m_resourceProvider, backgroundTexture->id());
-        copyTextureToFramebuffer(lock.textureId(), quad->quadRect().size(), renderMatrix);
+        copyTextureToFramebuffer(frame, lock.textureId(), quad->quadRect().size(), renderMatrix);
     }
 
     bool clipped = false;
@@ -762,11 +753,11 @@ void LayerRendererChromium::drawRenderPassQuad(const CCRenderPassDrawQuad* quad)
     FloatQuad surfaceQuad = CCMathUtil::mapQuad(contentsDeviceTransform.inverse(), deviceLayerEdges.floatQuad(), clipped);
     ASSERT(!clipped);
 
-    drawTexturedQuad(renderMatrix, quad->quadRect().width(), quad->quadRect().height(), quad->opacity(), surfaceQuad,
+    drawTexturedQuad(frame, renderMatrix, quad->quadRect().width(), quad->quadRect().height(), quad->opacity(), surfaceQuad,
                      shaderMatrixLocation, shaderAlphaLocation, shaderQuadLocation);
 }
 
-void LayerRendererChromium::drawSolidColorQuad(const CCSolidColorDrawQuad* quad)
+void LayerRendererChromium::drawSolidColorQuad(DrawingFrame& frame, const CCSolidColorDrawQuad* quad)
 {
     const SolidColorProgram* program = solidColorProgram();
     GLC(context(), context()->useProgram(program->program()));
@@ -782,7 +773,7 @@ void LayerRendererChromium::drawSolidColorQuad(const CCSolidColorDrawQuad* quad)
 
     GLC(context(), context()->uniform4f(program->fragmentShader().colorLocation(), (SkColorGetR(color) / 255.0) * alpha, (SkColorGetG(color) / 255.0) * alpha, (SkColorGetB(color) / 255.0) * alpha, alpha));
 
-    drawTexturedQuad(tileTransform,
+    drawTexturedQuad(frame, tileTransform,
                      tileRect.width(), tileRect.height(), 1.0, FloatQuad(),
                      program->vertexShader().matrixLocation(),
                      -1, -1);
@@ -813,7 +804,7 @@ static void tileUniformLocation(T program, TileProgramUniforms& uniforms)
     uniforms.edgeLocation = program->fragmentShader().edgeLocation();
 }
 
-void LayerRendererChromium::drawTileQuad(const CCTileDrawQuad* quad)
+void LayerRendererChromium::drawTileQuad(DrawingFrame& frame, const CCTileDrawQuad* quad)
 {
     const IntRect& tileRect = quad->quadVisibleRect();
 
@@ -849,7 +840,7 @@ void LayerRendererChromium::drawTileQuad(const CCTileDrawQuad* quad)
 
 
     FloatQuad localQuad;
-    WebTransformationMatrix deviceTransform = WebTransformationMatrix(windowMatrix() * projectionMatrix() * quad->quadTransform()).to2dTransform();
+    WebTransformationMatrix deviceTransform = WebTransformationMatrix(frame.windowMatrix * frame.projectionMatrix * quad->quadTransform()).to2dTransform();
     if (!deviceTransform.isInvertible())
         return;
 
@@ -965,10 +956,10 @@ void LayerRendererChromium::drawTileQuad(const CCTileDrawQuad* quad)
     // Normalize to tileRect.
     localQuad.scale(1.0f / tileRect.width(), 1.0f / tileRect.height());
 
-    drawTexturedQuad(quad->quadTransform(), tileRect.width(), tileRect.height(), quad->opacity(), localQuad, uniforms.matrixLocation, uniforms.alphaLocation, uniforms.pointLocation);
+    drawTexturedQuad(frame, quad->quadTransform(), tileRect.width(), tileRect.height(), quad->opacity(), localQuad, uniforms.matrixLocation, uniforms.alphaLocation, uniforms.pointLocation);
 }
 
-void LayerRendererChromium::drawYUVVideoQuad(const CCYUVVideoDrawQuad* quad)
+void LayerRendererChromium::drawYUVVideoQuad(DrawingFrame& frame, const CCYUVVideoDrawQuad* quad)
 {
     const VideoYUVProgram* program = videoYUVProgram();
     ASSERT(program && program->initialized());
@@ -1025,14 +1016,14 @@ void LayerRendererChromium::drawYUVVideoQuad(const CCYUVVideoDrawQuad* quad)
     IntRect quadRect = quad->quadRect();
     quadTransform.translate(quadRect.x() + quadRect.width() / 2.0, quadRect.y() + quadRect.height() / 2.0);
 
-    drawTexturedQuad(quadTransform, quadRect.width(), quadRect.height(), quad->opacity(), FloatQuad(),
+    drawTexturedQuad(frame, quadTransform, quadRect.width(), quadRect.height(), quad->opacity(), FloatQuad(),
                      program->vertexShader().matrixLocation(), program->fragmentShader().alphaLocation(), -1);
 
     // Reset active texture back to texture 0.
     GLC(context(), context()->activeTexture(GraphicsContext3D::TEXTURE0));
 }
 
-void LayerRendererChromium::drawStreamVideoQuad(const CCStreamVideoDrawQuad* quad)
+void LayerRendererChromium::drawStreamVideoQuad(DrawingFrame& frame, const CCStreamVideoDrawQuad* quad)
 {
     static float glMatrix[16];
 
@@ -1053,7 +1044,7 @@ void LayerRendererChromium::drawStreamVideoQuad(const CCStreamVideoDrawQuad* qua
     IntRect quadRect = quad->quadRect();
     quadTransform.translate(quadRect.x() + quadRect.width() / 2.0, quadRect.y() + quadRect.height() / 2.0);
 
-    drawTexturedQuad(quadTransform, quadRect.width(), quadRect.height(), quad->opacity(), sharedGeometryQuad(),
+    drawTexturedQuad(frame, quadTransform, quadRect.width(), quadRect.height(), quad->opacity(), sharedGeometryQuad(),
                      program->vertexShader().matrixLocation(), program->fragmentShader().alphaLocation(), -1);
 }
 
@@ -1081,7 +1072,7 @@ struct TexTransformTextureProgramBinding : TextureProgramBinding {
     int texTransformLocation;
 };
 
-void LayerRendererChromium::drawTextureQuad(const CCTextureDrawQuad* quad)
+void LayerRendererChromium::drawTextureQuad(DrawingFrame& frame, const CCTextureDrawQuad* quad)
 {
     ASSERT(CCProxy::isImplThread());
 
@@ -1122,13 +1113,13 @@ void LayerRendererChromium::drawTextureQuad(const CCTextureDrawQuad* quad)
     IntRect quadRect = quad->quadRect();
     quadTransform.translate(quadRect.x() + quadRect.width() / 2.0, quadRect.y() + quadRect.height() / 2.0);
 
-    drawTexturedQuad(quadTransform, quadRect.width(), quadRect.height(), quad->opacity(), sharedGeometryQuad(), binding.matrixLocation, binding.alphaLocation, -1);
+    drawTexturedQuad(frame, quadTransform, quadRect.width(), quadRect.height(), quad->opacity(), sharedGeometryQuad(), binding.matrixLocation, binding.alphaLocation, -1);
 
     if (!quad->premultipliedAlpha())
         GLC(m_context, m_context->blendFunc(GraphicsContext3D::ONE, GraphicsContext3D::ONE_MINUS_SRC_ALPHA));
 }
 
-void LayerRendererChromium::drawIOSurfaceQuad(const CCIOSurfaceDrawQuad* quad)
+void LayerRendererChromium::drawIOSurfaceQuad(DrawingFrame& frame, const CCIOSurfaceDrawQuad* quad)
 {
     ASSERT(CCProxy::isImplThread());
     TexTransformTextureProgramBinding binding;
@@ -1148,14 +1139,13 @@ void LayerRendererChromium::drawIOSurfaceQuad(const CCIOSurfaceDrawQuad* quad)
     IntRect quadRect = quad->quadRect();
     quadTransform.translate(quadRect.x() + quadRect.width() / 2.0, quadRect.y() + quadRect.height() / 2.0);
 
-    drawTexturedQuad(quadTransform, quadRect.width(), quadRect.height(), quad->opacity(), sharedGeometryQuad(), binding.matrixLocation, binding.alphaLocation, -1);
+    drawTexturedQuad(frame, quadTransform, quadRect.width(), quadRect.height(), quad->opacity(), sharedGeometryQuad(), binding.matrixLocation, binding.alphaLocation, -1);
 
     GLC(context(), context()->bindTexture(Extensions3D::TEXTURE_RECTANGLE_ARB, 0));
 }
 
 void LayerRendererChromium::finishDrawingFrame()
 {
-    m_currentFramebufferLock.clear();
     GLC(m_context, m_context->disable(GraphicsContext3D::SCISSOR_TEST));
     GLC(m_context, m_context->disable(GraphicsContext3D::BLEND));
 }
@@ -1180,7 +1170,7 @@ void LayerRendererChromium::toGLMatrix(float* flattened, const WebTransformation
     flattened[15] = m.m44();
 }
 
-void LayerRendererChromium::drawTexturedQuad(const WebTransformationMatrix& drawMatrix,
+void LayerRendererChromium::drawTexturedQuad(DrawingFrame& frame, const WebTransformationMatrix& drawMatrix,
                                              float width, float height, float opacity, const FloatQuad& quad,
                                              int matrixLocation, int alphaLocation, int quadLocation)
 {
@@ -1192,7 +1182,7 @@ void LayerRendererChromium::drawTexturedQuad(const WebTransformationMatrix& draw
     renderMatrix.scale3d(width, height, 1);
 
     // Apply the projection matrix before sending the transform over to the shader.
-    toGLMatrix(&glMatrix[0], m_projectionMatrix * renderMatrix);
+    toGLMatrix(&glMatrix[0], frame.projectionMatrix * renderMatrix);
 
     GLC(m_context, m_context->uniformMatrix4fv(matrixLocation, 1, false, &glMatrix[0]));
 
@@ -1215,7 +1205,7 @@ void LayerRendererChromium::drawTexturedQuad(const WebTransformationMatrix& draw
     GLC(m_context, m_context->drawElements(GraphicsContext3D::TRIANGLES, 6, GraphicsContext3D::UNSIGNED_SHORT, 0));
 }
 
-void LayerRendererChromium::copyTextureToFramebuffer(int textureId, const IntSize& bounds, const WebTransformationMatrix& drawMatrix)
+void LayerRendererChromium::copyTextureToFramebuffer(DrawingFrame& frame, int textureId, const IntSize& bounds, const WebTransformationMatrix& drawMatrix)
 {
     const RenderPassProgram* program = renderPassProgram();
 
@@ -1228,7 +1218,7 @@ void LayerRendererChromium::copyTextureToFramebuffer(int textureId, const IntSiz
 
     GLC(context(), context()->useProgram(program->program()));
     GLC(context(), context()->uniform1i(program->fragmentShader().samplerLocation(), 0));
-    drawTexturedQuad(drawMatrix, bounds.width(), bounds.height(), 1, sharedGeometryQuad(),
+    drawTexturedQuad(frame, drawMatrix, bounds.width(), bounds.height(), 1, sharedGeometryQuad(),
                                     program->vertexShader().matrixLocation(),
                                     program->fragmentShader().alphaLocation(),
                                     -1);
@@ -1400,20 +1390,20 @@ bool LayerRendererChromium::getFramebufferTexture(CCScopedTexture* texture, cons
     return true;
 }
 
-bool LayerRendererChromium::isCurrentRenderPass(const CCRenderPass* renderPass)
+bool LayerRendererChromium::isCurrentRenderPass(DrawingFrame& frame, const CCRenderPass* renderPass)
 {
-    return m_currentRenderPass == renderPass && !m_currentTexture;
+    return frame.currentRenderPass == renderPass && !frame.currentTexture;
 }
 
-bool LayerRendererChromium::useRenderPass(const CCRenderPass* renderPass)
+bool LayerRendererChromium::useRenderPass(DrawingFrame& frame, const CCRenderPass* renderPass)
 {
-    m_currentRenderPass = renderPass;
-    m_currentTexture = 0;
+    frame.currentRenderPass = renderPass;
+    frame.currentTexture = 0;
 
-    if (renderPass == m_defaultRenderPass) {
-        m_currentFramebufferLock.clear();
+    if (renderPass == frame.rootRenderPass) {
+        frame.currentFramebufferLock.clear();
         GLC(m_context, m_context->bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, 0));
-        setDrawFramebufferRect(renderPass->framebufferOutputRect(), true);
+        setDrawFramebufferRect(frame, renderPass->framebufferOutputRect(), true);
         return true;
     }
 
@@ -1425,25 +1415,26 @@ bool LayerRendererChromium::useRenderPass(const CCRenderPass* renderPass)
     if (!texture->id() && !texture->allocate(CCRenderer::ImplPool, renderPassTextureSize(renderPass), renderPassTextureFormat(renderPass), CCResourceProvider::TextureUsageFramebuffer))
         return false;
 
-    return bindFramebufferToTexture(texture, renderPass->framebufferOutputRect());
+    return bindFramebufferToTexture(frame, texture, renderPass->framebufferOutputRect());
 }
 
-bool LayerRendererChromium::useScopedTexture(const CCScopedTexture* texture, const IntRect& viewportRect)
+bool LayerRendererChromium::useScopedTexture(DrawingFrame& frame, const CCScopedTexture* texture, const IntRect& viewportRect)
 {
     ASSERT(texture->id());
-    m_currentRenderPass = 0;
-    m_currentTexture = texture;
+    frame.currentRenderPass = 0;
+    frame.currentTexture = texture;
 
-    return bindFramebufferToTexture(texture, viewportRect);
+    return bindFramebufferToTexture(frame, texture, viewportRect);
 }
 
-bool LayerRendererChromium::bindFramebufferToTexture(const CCScopedTexture* texture, const IntRect& framebufferRect)
+bool LayerRendererChromium::bindFramebufferToTexture(DrawingFrame& frame, const CCScopedTexture* texture, const IntRect& framebufferRect)
 {
     ASSERT(texture->id());
 
     GLC(m_context, m_context->bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, m_offscreenFramebufferId));
-    m_currentFramebufferLock = adoptPtr(new CCScopedLockResourceForWrite(m_resourceProvider, texture->id()));
-    GLC(m_context, m_context->framebufferTexture2D(GraphicsContext3D::FRAMEBUFFER, GraphicsContext3D::COLOR_ATTACHMENT0, GraphicsContext3D::TEXTURE_2D, m_currentFramebufferLock->textureId(), 0));
+    frame.currentFramebufferLock = adoptPtr(new CCScopedLockResourceForWrite(m_resourceProvider, texture->id()));
+    unsigned textureId = frame.currentFramebufferLock->textureId();
+    GLC(m_context, m_context->framebufferTexture2D(GraphicsContext3D::FRAMEBUFFER, GraphicsContext3D::COLOR_ATTACHMENT0, GraphicsContext3D::TEXTURE_2D, textureId, 0));
 
 #if !defined ( NDEBUG )
     if (m_context->checkFramebufferStatus(GraphicsContext3D::FRAMEBUFFER) != GraphicsContext3D::FRAMEBUFFER_COMPLETE) {
@@ -1452,16 +1443,16 @@ bool LayerRendererChromium::bindFramebufferToTexture(const CCScopedTexture* text
     }
 #endif
 
-    setDrawFramebufferRect(framebufferRect, false);
+    setDrawFramebufferRect(frame, framebufferRect, false);
 
     return true;
 }
 
 // Sets the scissor region to the given rectangle. The coordinate system for the
 // scissorRect has its origin at the top left corner of the current visible rect.
-void LayerRendererChromium::setScissorToRect(const IntRect& scissorRect)
+void LayerRendererChromium::setScissorToRect(DrawingFrame& frame, const IntRect& scissorRect)
 {
-    IntRect framebufferOutputRect = (m_currentRenderPass ? m_currentRenderPass->framebufferOutputRect() : m_defaultRenderPass->framebufferOutputRect());
+    IntRect framebufferOutputRect = frame.currentRenderPass->framebufferOutputRect();
 
     GLC(m_context, m_context->enable(GraphicsContext3D::SCISSOR_TEST));
 
@@ -1472,7 +1463,7 @@ void LayerRendererChromium::setScissorToRect(const IntRect& scissorRect)
     // of the GL scissor is the bottom of our layer.
     // But, if rendering to offscreen texture, we reverse our sense of 'upside down'.
     int scissorY;
-    if (isCurrentRenderPass(m_defaultRenderPass))
+    if (isCurrentRenderPass(frame, frame.rootRenderPass))
         scissorY = framebufferOutputRect.height() - (scissorRect.maxY() - framebufferOutputRect.y());
     else
         scissorY = scissorRect.y() - framebufferOutputRect.y();
@@ -1487,14 +1478,14 @@ bool LayerRendererChromium::makeContextCurrent()
 // Sets the coordinate range of content that ends being drawn onto the target render surface.
 // The target render surface is assumed to have an origin at 0, 0 and the width and height of
 // of the drawRect.
-void LayerRendererChromium::setDrawFramebufferRect(const IntRect& drawRect, bool flipY)
+void LayerRendererChromium::setDrawFramebufferRect(DrawingFrame& frame, const IntRect& drawRect, bool flipY)
 {
     if (flipY)
-        m_projectionMatrix = orthoMatrix(drawRect.x(), drawRect.maxX(), drawRect.maxY(), drawRect.y());
+        frame.projectionMatrix = orthoMatrix(drawRect.x(), drawRect.maxX(), drawRect.maxY(), drawRect.y());
     else
-        m_projectionMatrix = orthoMatrix(drawRect.x(), drawRect.maxX(), drawRect.y(), drawRect.maxY());
+        frame.projectionMatrix = orthoMatrix(drawRect.x(), drawRect.maxX(), drawRect.y(), drawRect.maxY());
     GLC(m_context, m_context->viewport(0, 0, drawRect.width(), drawRect.height()));
-    m_windowMatrix = screenMatrix(0, 0, drawRect.width(), drawRect.height());
+    frame.windowMatrix = screenMatrix(0, 0, drawRect.width(), drawRect.height());
 }
 
 

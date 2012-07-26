@@ -1,3 +1,59 @@
+2012-07-25  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] Move ephemeral data for a single frame in LayerRendererChromium into a structure with a scoped lifetime equal to the frame
+        https://bugs.webkit.org/show_bug.cgi?id=92294
+
+        Reviewed by Adrienne Walker.
+
+        The LayerRendererChromium class has a number of member variables that are used
+        while drawing a single frame. Because they are member variables, their lifetimes
+        are not clear, and some are even updated between frames, which is not needed.
+
+        This change creates a LRC::DrawingFrame structure that holds the data used
+        while drawing the current frame, and an instance of this structure is held
+        and passed around to functions in LayerRendererChromium, moving all of the
+        data out from being member variables on the class to being function
+        arguments on the relevant methods.
+
+        The projection and window matrices are a part of this frame data, and are not
+        used externally, so they are removed from the CCRenderer interface and included
+        within the DrawingFrame structure.
+
+        Covered by existing tests, no change in behaviour intended.
+
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::LayerRendererChromium):
+        (WebCore::LayerRendererChromium::viewportChanged):
+        (WebCore::LayerRendererChromium::clearFramebuffer):
+        (WebCore::LayerRendererChromium::drawFrame):
+        (WebCore::LayerRendererChromium::drawRenderPass):
+        (WebCore::LayerRendererChromium::drawQuad):
+        (WebCore::LayerRendererChromium::drawCheckerboardQuad):
+        (WebCore::LayerRendererChromium::drawDebugBorderQuad):
+        (WebCore::LayerRendererChromium::drawBackgroundFilters):
+        (WebCore::LayerRendererChromium::drawRenderPassQuad):
+        (WebCore::LayerRendererChromium::drawSolidColorQuad):
+        (WebCore::LayerRendererChromium::drawTileQuad):
+        (WebCore::LayerRendererChromium::drawYUVVideoQuad):
+        (WebCore::LayerRendererChromium::drawStreamVideoQuad):
+        (WebCore::LayerRendererChromium::drawTextureQuad):
+        (WebCore::LayerRendererChromium::drawIOSurfaceQuad):
+        (WebCore::LayerRendererChromium::finishDrawingFrame):
+        (WebCore::LayerRendererChromium::drawTexturedQuad):
+        (WebCore::LayerRendererChromium::copyTextureToFramebuffer):
+        (WebCore::LayerRendererChromium::isCurrentRenderPass):
+        (WebCore::LayerRendererChromium::useRenderPass):
+        (WebCore::LayerRendererChromium::useScopedTexture):
+        (WebCore::LayerRendererChromium::bindFramebufferToTexture):
+        (WebCore::LayerRendererChromium::setScissorToRect):
+        (WebCore::LayerRendererChromium::setDrawFramebufferRect):
+        * platform/graphics/chromium/LayerRendererChromium.h:
+        (DrawingFrame):
+        (WebCore::LayerRendererChromium::DrawingFrame::DrawingFrame):
+        (LayerRendererChromium):
+        * platform/graphics/chromium/cc/CCRenderer.h:
+        (CCRenderer):
+
 2012-07-19  Adrienne Walker  <enne@google.com>
 
         [chromium] Make all compositor screen space transforms operate on content rects

@@ -74,9 +74,6 @@ public:
 
     virtual void viewportChanged() { }
 
-    const WebKit::WebTransformationMatrix& projectionMatrix() const { return m_projectionMatrix; }
-    const WebKit::WebTransformationMatrix& windowMatrix() const { return m_windowMatrix; }
-
     virtual void decideRenderPassAllocationsForFrame(const CCRenderPassList&) { }
     virtual bool haveCachedResourcesForRenderPassId(int) const { return false; }
 
@@ -105,8 +102,6 @@ protected:
     }
 
     CCRendererClient* m_client;
-    WebKit::WebTransformationMatrix m_projectionMatrix;
-    WebKit::WebTransformationMatrix m_windowMatrix;
 };
 
 }
