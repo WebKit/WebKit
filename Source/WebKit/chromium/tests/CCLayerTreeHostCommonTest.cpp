@@ -2806,8 +2806,7 @@ TEST(CCLayerTreeHostCommonTest, verifyHitTestingForSingleLayerWithScaledContents
     // screenSpaceTransform converts from the layer's origin space to screen space. This
     // test makes sure that hit testing works correctly accounts for the contents scale.
     // A contentsScale that is not 1 effectively forces a non-identity transform between
-    // layer's content space and layer's origin space, which is not included in the
-    // screenSpaceTransform. The hit testing code must take this into account.
+    // layer's content space and layer's origin space. The hit testing code must take this into account.
     //
     // To test this, the layer is positioned at (25, 25), and is size (50, 50). If
     // contentsScale is ignored, then hit testing will mis-interpret the visibleContentRect
@@ -3304,19 +3303,15 @@ TEST(CCLayerTreeHostCommonTest, verifyLayerTransformsInHighDPI)
     EXPECT_EQ(1u, renderSurfaceLayerList.size());
 
     // Verify parent transforms
-    WebTransformationMatrix expectedParentScreenSpaceTransform;
-    expectedParentScreenSpaceTransform.setM11(deviceScaleFactor);
-    expectedParentScreenSpaceTransform.setM22(deviceScaleFactor);
-    EXPECT_TRANSFORMATION_MATRIX_EQ(expectedParentScreenSpaceTransform, parent->screenSpaceTransform());
-    WebTransformationMatrix expectedParentDrawTransform;
-    EXPECT_TRANSFORMATION_MATRIX_EQ(expectedParentDrawTransform, parent->drawTransform());
+    WebTransformationMatrix expectedParentTransform;
+    EXPECT_TRANSFORMATION_MATRIX_EQ(expectedParentTransform, parent->screenSpaceTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(expectedParentTransform, parent->drawTransform());
 
     // Verify results of transformed parent rects
-    IntRect parentBounds(IntPoint(), parent->bounds());
-    IntRect parentContentBounds(IntPoint(), parent->contentBounds());
+    FloatRect parentContentBounds(FloatPoint(), FloatSize(parent->contentBounds()));
 
-    FloatRect parentDrawRect = CCMathUtil::mapClippedRect(parent->drawTransform(), FloatRect(parentContentBounds));
-    FloatRect parentScreenSpaceRect = CCMathUtil::mapClippedRect(parent->screenSpaceTransform(), FloatRect(parentBounds));
+    FloatRect parentDrawRect = CCMathUtil::mapClippedRect(parent->drawTransform(), parentContentBounds);
+    FloatRect parentScreenSpaceRect = CCMathUtil::mapClippedRect(parent->screenSpaceTransform(), parentContentBounds);
 
     FloatRect expectedParentDrawRect(FloatPoint(), parent->bounds());
     expectedParentDrawRect.scale(deviceScaleFactor);
@@ -3324,22 +3319,16 @@ TEST(CCLayerTreeHostCommonTest, verifyLayerTransformsInHighDPI)
     EXPECT_FLOAT_RECT_EQ(expectedParentDrawRect, parentScreenSpaceRect);
 
     // Verify child transforms
-    WebTransformationMatrix expectedChildScreenSpaceTransform;
-    expectedChildScreenSpaceTransform.setM11(deviceScaleFactor);
-    expectedChildScreenSpaceTransform.setM22(deviceScaleFactor);
-    expectedChildScreenSpaceTransform.translate(child->position().x(), child->position().y());
-    EXPECT_TRANSFORMATION_MATRIX_EQ(expectedChildScreenSpaceTransform, child->screenSpaceTransform());
-
-    WebTransformationMatrix expectedChildDrawTransform;
-    expectedChildDrawTransform.translate(deviceScaleFactor * child->position().x(), deviceScaleFactor * child->position().y());
-    EXPECT_TRANSFORMATION_MATRIX_EQ(expectedChildDrawTransform, child->drawTransform());
+    WebTransformationMatrix expectedChildTransform;
+    expectedChildTransform.translate(deviceScaleFactor * child->position().x(), deviceScaleFactor * child->position().y());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(expectedChildTransform, child->drawTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(expectedChildTransform, child->screenSpaceTransform());
 
     // Verify results of transformed child rects
-    IntRect childBounds(IntPoint(), child->bounds());
-    IntRect childContentBounds(IntPoint(), child->contentBounds());
+    FloatRect childContentBounds(FloatPoint(), FloatSize(child->contentBounds()));
 
-    FloatRect childDrawRect = CCMathUtil::mapClippedRect(child->drawTransform(), FloatRect(childContentBounds));
-    FloatRect childScreenSpaceRect = CCMathUtil::mapClippedRect(child->screenSpaceTransform(), FloatRect(childBounds));
+    FloatRect childDrawRect = CCMathUtil::mapClippedRect(child->drawTransform(), childContentBounds);
+    FloatRect childScreenSpaceRect = CCMathUtil::mapClippedRect(child->screenSpaceTransform(), childContentBounds);
 
     FloatRect expectedChildDrawRect(FloatPoint(), child->bounds());
     expectedChildDrawRect.move(child->position().x(), child->position().y());
@@ -3349,11 +3338,11 @@ TEST(CCLayerTreeHostCommonTest, verifyLayerTransformsInHighDPI)
 
     // Verify childNoScale transforms
     WebTransformationMatrix expectedChildNoScaleTransform = child->drawTransform();
-    // drawTransform transforms on content rects. The child's content rect
+    // All transforms operate on content rects. The child's content rect
     // incorporates device scale, but the childNoScale does not; add it here.
     expectedChildNoScaleTransform.scale(deviceScaleFactor);
-    EXPECT_TRANSFORMATION_MATRIX_EQ(childNoScale->drawTransform(), expectedChildNoScaleTransform);
-    EXPECT_TRANSFORMATION_MATRIX_EQ(child->screenSpaceTransform(), childNoScale->screenSpaceTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(expectedChildNoScaleTransform, childNoScale->drawTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(expectedChildNoScaleTransform, childNoScale->screenSpaceTransform());
 }
 
 TEST(CCLayerTreeHostCommonTest, verifyRenderSurfaceTransformsInHighDPI)
@@ -3396,21 +3385,15 @@ TEST(CCLayerTreeHostCommonTest, verifyRenderSurfaceTransformsInHighDPI)
     // render surface (it needs one because it has a replica layer).
     EXPECT_EQ(2u, renderSurfaceLayerList.size());
 
-    WebTransformationMatrix expectedParentScreenSpaceTransform;
-    expectedParentScreenSpaceTransform.setM11(deviceScaleFactor);
-    expectedParentScreenSpaceTransform.setM22(deviceScaleFactor);
-    EXPECT_TRANSFORMATION_MATRIX_EQ(expectedParentScreenSpaceTransform, parent->screenSpaceTransform());
-
-    WebTransformationMatrix expectedParentDrawTransform;
-    EXPECT_TRANSFORMATION_MATRIX_EQ(parent->drawTransform(), expectedParentDrawTransform);
+    WebTransformationMatrix expectedParentTransform;
+    EXPECT_TRANSFORMATION_MATRIX_EQ(expectedParentTransform, parent->screenSpaceTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(expectedParentTransform, parent->drawTransform());
 
     WebTransformationMatrix expectedDrawTransform;
     EXPECT_TRANSFORMATION_MATRIX_EQ(expectedDrawTransform, child->drawTransform());
 
     WebTransformationMatrix expectedScreenSpaceTransform;
-    expectedScreenSpaceTransform.setM11(deviceScaleFactor);
-    expectedScreenSpaceTransform.setM22(deviceScaleFactor);
-    expectedScreenSpaceTransform.translate(child->position().x(), child->position().y());
+    expectedScreenSpaceTransform.translate(deviceScaleFactor * child->position().x(), deviceScaleFactor * child->position().y());
     EXPECT_TRANSFORMATION_MATRIX_EQ(expectedScreenSpaceTransform, child->screenSpaceTransform());
 
     WebTransformationMatrix expectedDuplicateChildDrawTransform = child->drawTransform();

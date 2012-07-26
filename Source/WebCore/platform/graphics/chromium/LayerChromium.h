@@ -247,7 +247,7 @@ public:
     // root render surface, then this converts to physical pixels).
     const WebKit::WebTransformationMatrix& drawTransform() const { return m_drawTransform; }
     void setDrawTransform(const WebKit::WebTransformationMatrix& matrix) { m_drawTransform = matrix; }
-    // This moves from layer space, with origin the top left to screen space with origin in the top left.
+    // This moves from content space, with origin the top left to screen space with origin in the top left.
     // It converts logical, non-page-scaled pixels to physical pixels.
     const WebKit::WebTransformationMatrix& screenSpaceTransform() const { return m_screenSpaceTransform; }
     void setScreenSpaceTransform(const WebKit::WebTransformationMatrix& matrix) { m_screenSpaceTransform = matrix; }

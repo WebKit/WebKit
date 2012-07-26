@@ -1232,6 +1232,10 @@ TEST_F(TiledLayerChromiumTest, tilesPaintedWithOcclusionAndScaling)
     // pixels, which means none should be occluded.
     layer->setContentsScale(0.5);
     layer->setBounds(IntSize(600, 600));
+    WebTransformationMatrix drawTransform;
+    drawTransform.scale(1 / layer->contentsScale());
+    layer->setDrawTransform(drawTransform);
+    layer->setScreenSpaceTransform(drawTransform);
 
     occluded.setOcclusion(IntRect(200, 200, 300, 100));
     layer->setVisibleContentRect(IntRect(IntPoint(), layer->contentBounds()));

@@ -464,8 +464,8 @@ static void calculateDrawTransformsInternal(LayerType* layer, LayerType* rootLay
     //        Interpreting the math left-to-right, this transforms from the layer's render surface to the origin of the layer in content space.
     //
     // The screen space transform is:
-    //        M[screenspace] = M[root] * Tr[origin] * compositeLayerTransform
-    //                       = M[root] * Tr[layer->position()] * M[layer] * Tr[origin2anchor].inverse()
+    //        M[screenspace] = M[root] * Tr[origin] * compositeLayerTransform * S[content2layer]
+    //                       = M[root] * Tr[layer->position()] * M[layer] * Tr[origin2anchor].inverse() * S[content2layer]
     //
     //        Interpreting the math left-to-right, this transforms from the root render surface's content space to the local layer's origin in layer space.
     //
@@ -554,15 +554,9 @@ static void calculateDrawTransformsInternal(LayerType* layer, LayerType* rootLay
                                       layer->bounds().height() / static_cast<double>(layer->contentBounds().height()));
     }
 
-    // layerScreenSpaceTransform represents the transform between root layer's "screen space" and local layer space.
+    // layerScreenSpaceTransform represents the transform between root layer's "screen space" and local content space.
     WebTransformationMatrix layerScreenSpaceTransform = fullHierarchyMatrix;
     layerScreenSpaceTransform.multiply(drawTransform);
-    // The draw transform operates on content space rects. This needs to be converted to transform layer space rects.
-    // FIXME: Make layer screen space transforms operate on content space rects.
-    if (!layer->contentBounds().isEmpty() && !layer->bounds().isEmpty()) {
-        layerScreenSpaceTransform.scaleNonUniform(layer->contentBounds().width() / static_cast<double>(layer->bounds().width()),
-                                                  layer->contentBounds().height() / static_cast<double>(layer->bounds().height()));
-    }
     layer->setScreenSpaceTransform(layerScreenSpaceTransform);
 
     bool animatingTransformToTarget = layer->transformIsAnimating();
@@ -772,14 +766,7 @@ static void calculateDrawTransformsInternal(LayerType* layer, LayerType* rootLay
             renderSurface->clearLayerList();
 
         renderSurface->setContentRect(clippedContentRect);
-
-        WebTransformationMatrix screenSpaceTransform = layer->screenSpaceTransform();
-        // FIXME: These should be consistent.
-        // The layer's screen space transform operates on layer rects, but the surfaces
-        // screen space transform operates on surface rects, which are in physical pixels,
-        // so we have to 'undo' the scale here.
-        screenSpaceTransform.scale(1 / contentsScale);
-        renderSurface->setScreenSpaceTransform(screenSpaceTransform);
+        renderSurface->setScreenSpaceTransform(layer->screenSpaceTransform());
 
         if (layer->replicaLayer()) {
             WebTransformationMatrix surfaceOriginToReplicaOriginTransform;
@@ -958,8 +945,8 @@ CCLayerImpl* CCLayerTreeHostCommon::findLayerThatIsHitByPoint(const IntPoint& vi
 
         CCLayerImpl* currentLayer = (*it);
 
-        FloatRect layerRect(FloatPoint::zero(), currentLayer->bounds());
-        if (!pointHitsRect(viewportPoint, currentLayer->screenSpaceTransform(), layerRect))
+        FloatRect contentRect(FloatPoint::zero(), currentLayer->contentBounds());
+        if (!pointHitsRect(viewportPoint, currentLayer->screenSpaceTransform(), contentRect))
             continue;
 
         // At this point, we think the point does hit the layer, but we need to walk up
