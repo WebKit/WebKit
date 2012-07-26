@@ -1,3 +1,29 @@
+2012-07-26  Adrienne Walker  <enne@google.com>
+
+        [chromium] When computing surface content scale, use top level device scale
+        https://bugs.webkit.org/show_bug.cgi?id=92328
+
+        Reviewed by Kenneth Russell.
+
+        Previously, surface scale was calculated with layer->contentsScale(),
+        however this value is 1 for any layer that is not ContentLayerChromium
+        because of layer->needsContentsScale(). This would cause any surface
+        created with a non-content owner layer to look fuzzy on a high DPI
+        device. Fix by using the top level device scale.
+
+        Additionally, remove contentsScale from CCLayerImpl as it is no longer
+        used.
+
+        * platform/graphics/chromium/LayerChromium.cpp:
+        (WebCore::LayerChromium::pushPropertiesTo):
+        * platform/graphics/chromium/cc/CCLayerImpl.cpp:
+        (WebCore::CCLayerImpl::CCLayerImpl):
+        * platform/graphics/chromium/cc/CCLayerImpl.h:
+        (CCLayerImpl):
+        * platform/graphics/chromium/cc/CCLayerTreeHostCommon.cpp:
+        (WebCore::calculateDrawTransformsInternal):
+        (WebCore::CCLayerTreeHostCommon::calculateDrawTransforms):
+
 2012-07-26  Anders Carlsson  <andersca@apple.com>
 
         HTMLAppletElement should inherit from HTMLPlugInImageElement

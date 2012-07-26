@@ -410,7 +410,7 @@ static void calculateDrawTransformsInternal(LayerType* layer, LayerType* rootLay
     const WebTransformationMatrix& fullHierarchyMatrix, const WebTransformationMatrix& currentScrollCompensationMatrix,
     const IntRect& clipRectFromAncestor, bool ancestorClipsSubtree,
     RenderSurfaceType* nearestAncestorThatMovesPixels, LayerList& renderSurfaceLayerList, LayerList& layerList,
-    LayerSorter* layerSorter, int maxTextureSize, IntRect& drawableContentRectOfSubtree)
+    LayerSorter* layerSorter, int maxTextureSize, float deviceScaleFactor, IntRect& drawableContentRectOfSubtree)
 {
     // This function computes the new matrix transformations recursively for this
     // layer and all its descendants. It also computes the appropriate render surfaces.
@@ -484,16 +484,16 @@ static void calculateDrawTransformsInternal(LayerType* layer, LayerType* rootLay
     // When a render surface has a replica layer, that layer's transform is used to draw a second copy of the surface.
     // Transforms named here are relative to the surface, unless they specify they are relative to the replica layer.
     //
-    // We will denote a scale by contents scale S[contentsScale]
+    // We will denote a scale by device scale S[deviceScale]
     //
     // The render surface draw transform to its target surface origin is:
     //        M[surfaceDraw] = M[owningLayer->Draw]
     //
     // The render surface origin transform to its the root (screen space) origin is:
-    //        M[surface2root] =  M[owningLayer->screenspace] * S[contentsScale].inverse()
+    //        M[surface2root] =  M[owningLayer->screenspace] * S[deviceScale].inverse()
     //
     // The replica draw transform to its target surface origin is:
-    //        M[replicaDraw] = S[contentsScale] * M[surfaceDraw] * Tr[replica->position() + replica->anchor()] * Tr[replica] * Tr[origin2anchor].inverse() * S[contentsScale].inverse()
+    //        M[replicaDraw] = S[deviceScale] * M[surfaceDraw] * Tr[replica->position() + replica->anchor()] * Tr[replica] * Tr[origin2anchor].inverse() * S[contentsScale].inverse()
     //
     // The replica draw transform to the root (screen space) origin is:
     //        M[replica2root] = M[surface2root] * Tr[replica->position()] * Tr[replica] * Tr[origin2anchor].inverse()
@@ -566,7 +566,6 @@ static void calculateDrawTransformsInternal(LayerType* layer, LayerType* rootLay
         animatingTransformToScreen |= layer->parent()->screenSpaceTransformIsAnimating();
     }
 
-    float contentsScale = layer->contentsScale();
     FloatRect contentRect(FloatPoint(), layer->contentBounds());
 
     // fullHierarchyMatrix is the matrix that transforms objects between screen space (except projection matrix) and the most recent RenderSurface's space.
@@ -588,7 +587,7 @@ static void calculateDrawTransformsInternal(LayerType* layer, LayerType* rootLay
         // The origin of the new surface is the upper left corner of the layer.
         renderSurface->setDrawTransform(drawTransform);
         WebTransformationMatrix layerDrawTransform;
-        layerDrawTransform.scale(contentsScale);
+        layerDrawTransform.scale(deviceScaleFactor);
         if (!layer->contentBounds().isEmpty() && !layer->bounds().isEmpty()) {
             layerDrawTransform.scaleNonUniform(layer->bounds().width() / static_cast<double>(layer->contentBounds().width()),
                                                layer->bounds().height() / static_cast<double>(layer->contentBounds().height()));
@@ -598,7 +597,7 @@ static void calculateDrawTransformsInternal(LayerType* layer, LayerType* rootLay
         // The sublayer matrix transforms centered layer rects into target
         // surface content space.
         sublayerMatrix.makeIdentity();
-        sublayerMatrix.scale(contentsScale);
+        sublayerMatrix.scale(deviceScaleFactor);
         sublayerMatrix.translate(0.5 * bounds.width(), 0.5 * bounds.height());
 
         // The opacity value is moved from the layer to its surface, so that the entire subtree properly inherits opacity.
@@ -712,7 +711,7 @@ static void calculateDrawTransformsInternal(LayerType* layer, LayerType* rootLay
         IntRect drawableContentRectOfChildSubtree;
         calculateDrawTransformsInternal<LayerType, LayerList, RenderSurfaceType, LayerSorter>(child, rootLayer, sublayerMatrix, nextHierarchyMatrix, nextScrollCompensationMatrix,
                                                                                               clipRectForSubtree, subtreeShouldBeClipped, nearestAncestorThatMovesPixels,
-                                                                                              renderSurfaceLayerList, descendants, layerSorter, maxTextureSize, drawableContentRectOfChildSubtree);
+                                                                                              renderSurfaceLayerList, descendants, layerSorter, maxTextureSize, deviceScaleFactor, drawableContentRectOfChildSubtree);
         if (!drawableContentRectOfChildSubtree.isEmpty()) {
             accumulatedDrawableContentRectOfChildren.unite(drawableContentRectOfChildSubtree);
             if (child->renderSurface())
@@ -769,12 +768,12 @@ static void calculateDrawTransformsInternal(LayerType* layer, LayerType* rootLay
 
         if (layer->replicaLayer()) {
             WebTransformationMatrix surfaceOriginToReplicaOriginTransform;
-            surfaceOriginToReplicaOriginTransform.scale(contentsScale);
+            surfaceOriginToReplicaOriginTransform.scale(deviceScaleFactor);
             surfaceOriginToReplicaOriginTransform.translate(layer->replicaLayer()->position().x() + layer->replicaLayer()->anchorPoint().x() * bounds.width(),
                                                             layer->replicaLayer()->position().y() + layer->replicaLayer()->anchorPoint().y() * bounds.height());
             surfaceOriginToReplicaOriginTransform.multiply(layer->replicaLayer()->transform());
             surfaceOriginToReplicaOriginTransform.translate(-layer->replicaLayer()->anchorPoint().x() * bounds.width(), -layer->replicaLayer()->anchorPoint().y() * bounds.height());
-            surfaceOriginToReplicaOriginTransform.scale(1 / contentsScale);
+            surfaceOriginToReplicaOriginTransform.scale(1 / deviceScaleFactor);
 
             // Compute the replica's "originTransform" that maps from the replica's origin space to the target surface origin space.
             WebTransformationMatrix replicaOriginTransform = layer->renderSurface()->drawTransform() * surfaceOriginToReplicaOriginTransform;
@@ -863,7 +862,7 @@ void CCLayerTreeHostCommon::calculateDrawTransforms(LayerChromium* rootLayer, co
 
     WebCore::calculateDrawTransformsInternal<LayerChromium, Vector<RefPtr<LayerChromium> >, RenderSurfaceChromium, void>(rootLayer, rootLayer, deviceScaleTransform, identityMatrix, identityMatrix,
                                                                                                                          rootLayer->renderSurface()->contentRect(), true, 0, renderSurfaceLayerList,
-                                                                                                                         rootLayer->renderSurface()->layerList(), 0, maxTextureSize, totalDrawableContentRect);
+                                                                                                                         rootLayer->renderSurface()->layerList(), 0, maxTextureSize, deviceScaleFactor, totalDrawableContentRect);
 }
 
 void CCLayerTreeHostCommon::calculateDrawTransforms(CCLayerImpl* rootLayer, const IntSize& deviceViewportSize, float deviceScaleFactor, CCLayerSorter* layerSorter, int maxTextureSize, Vector<CCLayerImpl*>& renderSurfaceLayerList)
@@ -877,7 +876,7 @@ void CCLayerTreeHostCommon::calculateDrawTransforms(CCLayerImpl* rootLayer, cons
 
     WebCore::calculateDrawTransformsInternal<CCLayerImpl, Vector<CCLayerImpl*>, CCRenderSurface, CCLayerSorter>(rootLayer, rootLayer, deviceScaleTransform, identityMatrix, identityMatrix,
                                                                                                                 rootLayer->renderSurface()->contentRect(), true, 0, renderSurfaceLayerList,
-                                                                                                                rootLayer->renderSurface()->layerList(), layerSorter, maxTextureSize, totalDrawableContentRect);
+                                                                                                                rootLayer->renderSurface()->layerList(), layerSorter, maxTextureSize, deviceScaleFactor, totalDrawableContentRect);
 }
 
 void CCLayerTreeHostCommon::calculateVisibleAndScissorRects(Vector<RefPtr<LayerChromium> >& renderSurfaceLayerList, const FloatRect& rootScissorRect)

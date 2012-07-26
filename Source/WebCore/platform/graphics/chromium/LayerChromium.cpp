@@ -534,7 +534,6 @@ void LayerChromium::pushPropertiesTo(CCLayerImpl* layer)
     layer->setBackgroundColor(m_backgroundColor);
     layer->setBounds(m_bounds);
     layer->setContentBounds(contentBounds());
-    layer->setContentsScale(contentsScale());
     layer->setDebugBorderColor(m_debugBorderColor);
     layer->setDebugBorderWidth(m_debugBorderWidth);
     layer->setDebugName(m_debugName.isolatedCopy()); // We have to use isolatedCopy() here to safely pass ownership to another thread.
@@ -614,7 +613,6 @@ void LayerChromium::setDebugName(const String& debugName)
     m_debugName = debugName;
     setNeedsCommit();
 }
-
 
 void LayerChromium::setContentsScale(float contentsScale)
 {
