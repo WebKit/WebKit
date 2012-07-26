@@ -1,5 +1,12 @@
 2012-07-26  Yury Semikhatsky  <yurys@chromium.org>
 
+        Unreviewed. Revert r123740 as it breaks AppleMac compilation.
+
+        * wtf/text/StringImpl.cpp:
+        * wtf/text/StringImpl.h:
+
+2012-07-26  Yury Semikhatsky  <yurys@chromium.org>
+
         Web Inspector: move StringImpl size calculation to StringImpl
         https://bugs.webkit.org/show_bug.cgi?id=92359
 

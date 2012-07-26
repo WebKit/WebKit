@@ -385,8 +385,6 @@ public:
         return m_length;
     }
 
-    size_t sizeInBytes() const;
-
     bool has16BitShadow() const { return m_hashAndFlags & s_hashFlagHas16BitShadow; }
     WTF_EXPORT_PRIVATE void upconvertCharacters(unsigned, unsigned) const;
     bool isIdentifier() const { return m_hashAndFlags & s_hashFlagIsIdentifier; }
