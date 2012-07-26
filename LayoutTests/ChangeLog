@@ -1,3 +1,10 @@
+2012-07-26  Ádám Kallai  <kadam@inf.u-szeged.hu>
+
+        [Qt] Unreviewed gardening. Skip a failing tests.
+        https://bugs.webkit.org/show_bug.cgi?id=92355.
+
+        * platform/qt/Skipped:
+
 2012-07-26  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         [EFL] Gardening after r123634
