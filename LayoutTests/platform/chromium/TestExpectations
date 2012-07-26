@@ -3461,6 +3461,24 @@ BUGWK87321 XP : fast/history/history-traversal-is-asynchronous.html = TEXT PASS
 BUGWK79540 DEBUG : fast/files/workers/worker-read-blob-async.html = PASS CRASH
 BUGWK79540 DEBUG : fast/files/workers/worker-read-blob-sync.html = PASS CRASH
 
+// Shadow DOM for replaced elements is not rendered correctly yet.
+BUGWK90860 : fast/dom/shadow/shadowdom-for-object-complex-shadow.html = IMAGE
+BUGWK90860 : fast/dom/shadow/shadowdom-for-object-only-shadow.html = IMAGE
+BUGWK90860 : fast/dom/shadow/shadowdom-for-object-without-shadow.html = IMAGE
+BUGWK91485 : fast/dom/shadow/shadowdom-for-textarea-complex-shadow.html = IMAGE
+BUGWK91485 : fast/dom/shadow/shadowdom-for-textarea-only-shadow.html = IMAGE
+BUGWK91485 : fast/dom/shadow/shadowdom-for-textarea-without-shadow.html = IMAGE
+BUGWK91486 : fast/dom/shadow/shadowdom-for-button-complex-shadow.html = IMAGE
+BUGWK91486 : fast/dom/shadow/shadowdom-for-button-only-shadow.html = IMAGE
+BUGWK91486 : fast/dom/shadow/shadowdom-for-button-without-shadow.html = IMAGE
+BUGWK91487 : fast/dom/shadow/shadowdom-for-select-complex-shadow.html = IMAGE
+BUGWK91487 : fast/dom/shadow/shadowdom-for-select-without-shadow.html = IMAGE
+BUGWK91488 : fast/dom/shadow/shadowdom-for-output-only-shadow.html = IMAGE
+BUGWK91489 : fast/dom/shadow/shadowdom-for-fieldset-complex-shadow.html = IMAGE
+BUGWK91489 : fast/dom/shadow/shadowdom-for-fieldset-only-shadow.html = IMAGE
+BUGWK91491 : fast/dom/shadow/shadowdom-for-keygen-complex-shadow.html = IMAGE
+BUGWK91491 : fast/dom/shadow/shadowdom-for-keygen-without-shadow.html = IMAGE
+
 // Requires setUseDeferredFrameLoading() API from LayoutTestController.
 BUGWK87652 SKIP : http/tests/appcache/load-from-appcache-defer-resume-crash.html = PASS
 

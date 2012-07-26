@@ -25,6 +25,7 @@
 #include "config.h"
 #include "FormAssociatedElement.h"
 
+#include "ElementShadow.h"
 #include "FormController.h"
 #include "HTMLFormControlElement.h"
 #include "HTMLFormElement.h"
@@ -64,6 +65,15 @@ ValidityState* FormAssociatedElement::validity()
         m_validityState = ValidityState::create(this);
 
     return m_validityState.get();
+}
+
+ShadowRoot* FormAssociatedElement::ensureUserAgentShadowRoot()
+{
+    Element* element = toHTMLElement(this);
+    if (ShadowRoot* shadowRoot = element->userAgentShadowRoot())
+        return shadowRoot;
+
+    return ShadowRoot::create(element, ShadowRoot::UserAgentShadowRoot, ASSERT_NO_EXCEPTION).get();
 }
 
 void FormAssociatedElement::didMoveToNewDocument(Document* oldDocument)

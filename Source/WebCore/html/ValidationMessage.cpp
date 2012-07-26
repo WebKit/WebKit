@@ -114,10 +114,12 @@ static void adjustBubblePosition(const LayoutRect& hostRect, HTMLElement* bubble
         return;
     double hostX = hostRect.x();
     double hostY = hostRect.y();
-    if (RenderBox* container = bubble->renderer()->containingBlock()) {
-        FloatPoint containerLocation = container->localToAbsolute();
-        hostX -= containerLocation.x() + container->borderLeft();
-        hostY -= containerLocation.y() + container->borderTop();
+    if (RenderObject* renderer = bubble->renderer()) {
+        if (RenderBox* container = renderer->containingBlock()) {
+            FloatPoint containerLocation = container->localToAbsolute();
+            hostX -= containerLocation.x() + container->borderLeft();
+            hostY -= containerLocation.y() + container->borderTop();
+        }
     }
 
     bubble->setInlineStyleProperty(CSSPropertyTop, hostY + hostRect.height(), CSSPrimitiveValue::CSS_PX);
@@ -132,6 +134,7 @@ static void adjustBubblePosition(const LayoutRect& hostRect, HTMLElement* bubble
 void ValidationMessage::buildBubbleTree(Timer<ValidationMessage>*)
 {
     HTMLElement* host = toHTMLElement(m_element);
+    ShadowRoot* shadowRoot = m_element->ensureUserAgentShadowRoot();
 
     Document* doc = host->document();
     m_bubble = HTMLDivElement::create(doc);
@@ -140,7 +143,7 @@ void ValidationMessage::buildBubbleTree(Timer<ValidationMessage>*)
     // contains non-absolute or non-fixed renderers as children.
     m_bubble->setInlineStyleProperty(CSSPropertyPosition, CSSValueAbsolute);
     ExceptionCode ec = 0;
-    host->ensureShadowRoot()->appendChild(m_bubble.get(), ec);
+    shadowRoot->appendChild(m_bubble.get(), ec);
     ASSERT(!ec);
     host->document()->updateLayout();
     adjustBubblePosition(host->getRect(), m_bubble.get());

@@ -1,3 +1,69 @@
+2012-07-26  Shinya Kawanaka  <shinyak@chromium.org>
+
+        Add UserAgentShadowDOM to FormControlElement just before ading UserShadowDOM
+        https://bugs.webkit.org/show_bug.cgi?id=90866
+
+        Reviewed by Hajime Morita.
+
+        Added a lot of tests of ShadowDOM for replaced elements. They don't crash,
+        but many of them are not rendered correctly. Please see Bug 82313,
+        which is a meta bug of Shadow DOM for replaced elements.
+
+        * fast/dom/shadow/input-with-validation-expected.html: Added.
+        * fast/dom/shadow/input-with-validation-without-shadow-expected.html: Added.
+        * fast/dom/shadow/input-with-validation-without-shadow.html: Added.
+        * fast/dom/shadow/input-with-validation.html: Added.
+        * fast/dom/shadow/shadow-disable-expected.txt:
+        * fast/dom/shadow/shadow-disable.html:
+        * fast/dom/shadow/shadowdom-for-button-complex-shadow-expected.html: Added.
+        * fast/dom/shadow/shadowdom-for-button-complex-shadow.html: Added.
+        * fast/dom/shadow/shadowdom-for-button-only-shadow-expected.html: Added.
+        * fast/dom/shadow/shadowdom-for-button-only-shadow.html: Added.
+        * fast/dom/shadow/shadowdom-for-button-without-shadow-expected.html: Added.
+        * fast/dom/shadow/shadowdom-for-button-without-shadow.html: Added.
+        * fast/dom/shadow/shadowdom-for-fieldset-complex-shadow-expected.html: Added.
+        * fast/dom/shadow/shadowdom-for-fieldset-complex-shadow.html: Added.
+        * fast/dom/shadow/shadowdom-for-fieldset-only-shadow-expected.html: Added.
+        * fast/dom/shadow/shadowdom-for-fieldset-only-shadow.html: Added.
+        * fast/dom/shadow/shadowdom-for-fieldset-without-shadow-expected.html: Added.
+        * fast/dom/shadow/shadowdom-for-fieldset-without-shadow.html: Added.
+        * fast/dom/shadow/shadowdom-for-form-associated-element-useragent-expected.txt: Added.
+        * fast/dom/shadow/shadowdom-for-form-associated-element-useragent.html: Added.
+        * fast/dom/shadow/shadowdom-for-keygen-complex-shadow-expected.html: Added.
+        * fast/dom/shadow/shadowdom-for-keygen-complex-shadow.html: Added.
+        * fast/dom/shadow/shadowdom-for-keygen-only-shadow-expected.html: Added.
+        * fast/dom/shadow/shadowdom-for-keygen-only-shadow.html: Added.
+        * fast/dom/shadow/shadowdom-for-keygen-without-shadow-expected.html: Added.
+        * fast/dom/shadow/shadowdom-for-keygen-without-shadow.html: Added.
+        * fast/dom/shadow/shadowdom-for-object-complex-shadow-expected.html: Added.
+        * fast/dom/shadow/shadowdom-for-object-complex-shadow.html: Added.
+        * fast/dom/shadow/shadowdom-for-object-only-shadow-expected.html: Added.
+        * fast/dom/shadow/shadowdom-for-object-only-shadow.html: Added.
+        * fast/dom/shadow/shadowdom-for-object-without-shadow-expected.html: Added.
+        * fast/dom/shadow/shadowdom-for-object-without-shadow.html: Added.
+        * fast/dom/shadow/shadowdom-for-output-complex-shadow-expected.html: Added.
+        * fast/dom/shadow/shadowdom-for-output-complex-shadow.html: Added.
+        * fast/dom/shadow/shadowdom-for-output-only-shadow-expected.html: Added.
+        * fast/dom/shadow/shadowdom-for-output-only-shadow.html: Added.
+        * fast/dom/shadow/shadowdom-for-output-without-shadow-expected.html: Added.
+        * fast/dom/shadow/shadowdom-for-output-without-shadow.html: Added.
+        * fast/dom/shadow/shadowdom-for-select-complex-shadow-expected.html: Added.
+        * fast/dom/shadow/shadowdom-for-select-complex-shadow.html: Added.
+        * fast/dom/shadow/shadowdom-for-select-only-shadow-expected.html: Added.
+        * fast/dom/shadow/shadowdom-for-select-only-shadow.html: Added.
+        * fast/dom/shadow/shadowdom-for-select-without-shadow-expected.html: Added.
+        * fast/dom/shadow/shadowdom-for-select-without-shadow.html: Added.
+        * fast/dom/shadow/shadowdom-for-textarea-complex-shadow-expected.html: Added.
+        * fast/dom/shadow/shadowdom-for-textarea-complex-shadow.html: Added.
+        * fast/dom/shadow/shadowdom-for-textarea-only-shadow-expected.html: Added.
+        * fast/dom/shadow/shadowdom-for-textarea-only-shadow.html: Added.
+        * fast/dom/shadow/shadowdom-for-textarea-without-shadow-expected.html: Added.
+        * fast/dom/shadow/shadowdom-for-textarea-without-shadow.html: Added.
+        * platform/chromium/TestExpectations:
+        * platform/efl/TestExpectations:
+        * platform/qt/Skipped:
+        * platform/wincairo/Skipped:
+
 2012-07-26  Kaustubh Atrawalkar  <kaustubh@motorola.com>
 
         [DRT] LTC:: pageNumberForElementById() could be moved to Internals

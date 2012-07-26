@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<script src="resources/polyfill.js"></script>
+
+<p>A mixed case of a shadow element and content element.</p>
+<form>
+    <object id="host" data="../resources/apple.gif" type="image/gif" width="20" height="20">
+        <param name="foo" value="bar"></param>
+    </object>
+    <input id="submit" type="submit" value="Submit">
+</form>
+
+<script>
+var host = document.getElementById('host');
+var shadowRoot = new WebKitShadowRoot(host);
+shadowRoot.innerHTML = "<content></content><div style='margin: 20px'><shadow></shadow></div>"
+</script>

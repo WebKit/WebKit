@@ -1,3 +1,64 @@
+2012-07-26  Shinya Kawanaka  <shinyak@chromium.org>
+
+        Add UserAgentShadowDOM to FormControlElement just before adding AuthorShadowDOM
+        https://bugs.webkit.org/show_bug.cgi?id=90866
+
+        Reviewed by Hajime Morita.
+
+        It ensures that UserAgentShadowDOM is the oldest ShadowDOM.
+
+        To show ValidationMessage, WebKit adds a Shadow DOM to some of FormControlElements.
+        ValidationMessage assumes that the added Shadow DOM is the oldest, however, there was a case
+        that a page author might add a Shadow DOM before ValidationMessage adds a Shadow DOM.
+        It will break the assumption that the Shadow DOM added by ValidationMessage is the oldest.
+        So we have prohibited a page author adding a Shadow DOM to FormControlElement.
+
+        To add UserAgentShadowDOM, we use a callback which is called before a page author adding a Shadow DOM.
+        It adds a UserAgentShadowDOM if it does not exist, so we can ensure that UserAgentShadowDOM is the oldest.
+
+        Tests: fast/dom/shadow/input-with-validation-without-shadow.html
+               fast/dom/shadow/input-with-validation.html
+               fast/dom/shadow/shadowdom-for-button-complex-shadow.html
+               fast/dom/shadow/shadowdom-for-button-only-shadow.html
+               fast/dom/shadow/shadowdom-for-button-without-shadow.html
+               fast/dom/shadow/shadowdom-for-fieldset-complex-shadow.html
+               fast/dom/shadow/shadowdom-for-fieldset-only-shadow.html
+               fast/dom/shadow/shadowdom-for-fieldset-without-shadow.html
+               fast/dom/shadow/shadowdom-for-form-associated-element-useragent.html
+               fast/dom/shadow/shadowdom-for-keygen-complex-shadow.html
+               fast/dom/shadow/shadowdom-for-keygen-only-shadow.html
+               fast/dom/shadow/shadowdom-for-keygen-without-shadow.html
+               fast/dom/shadow/shadowdom-for-object-complex-shadow.html
+               fast/dom/shadow/shadowdom-for-object-only-shadow.html
+               fast/dom/shadow/shadowdom-for-object-without-shadow.html
+               fast/dom/shadow/shadowdom-for-output-complex-shadow.html
+               fast/dom/shadow/shadowdom-for-output-only-shadow.html
+               fast/dom/shadow/shadowdom-for-output-without-shadow.html
+               fast/dom/shadow/shadowdom-for-select-complex-shadow.html
+               fast/dom/shadow/shadowdom-for-select-only-shadow.html
+               fast/dom/shadow/shadowdom-for-select-without-shadow.html
+               fast/dom/shadow/shadowdom-for-textarea-complex-shadow.html
+               fast/dom/shadow/shadowdom-for-textarea-only-shadow.html
+               fast/dom/shadow/shadowdom-for-textarea-without-shadow.html
+
+        * dom/ShadowRoot.cpp:
+        (WebCore::allowsAuthorShadowRoot):
+        * html/FormAssociatedElement.cpp:
+        (WebCore::FormAssociatedElement::ensureUserAgentShadowRoot): Ensures the existence of a UserAgentShadowRoot.
+        If it does not exist, we create it with empty content.
+        (WebCore):
+        * html/FormAssociatedElement.h:
+        (FormAssociatedElement):
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::HTMLFormControlElement::willAddAuthorShadowRoot):
+        (WebCore):
+        * html/HTMLFormControlElement.h:
+        (HTMLFormControlElement):
+        * html/ValidationMessage.cpp:
+        (WebCore::adjustBubblePosition): When AuthroShadowRoot does not a shadow element, ValidationMessage
+        does not have a renderer. So we have to check the existence of renderer.
+        (WebCore::ValidationMessage::buildBubbleTree):
+
 2012-07-26  Kaustubh Atrawalkar  <kaustubh@motorola.com>
 
         [DRT] LTC:: pageNumberForElementById() could be moved to Internals

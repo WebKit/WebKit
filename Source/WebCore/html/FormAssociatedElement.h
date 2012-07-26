@@ -46,6 +46,8 @@ public:
     HTMLFormElement* form() const { return m_form; }
     ValidityState* validity();
 
+    ShadowRoot* ensureUserAgentShadowRoot();
+
     virtual bool isFormControlElement() const = 0;
     virtual bool isFormControlElementWithState() const;
     virtual bool isEnumeratable() const = 0;

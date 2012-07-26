@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<script src="resources/polyfill.js"></script>
+
+<p>Validation won't be shown if Shadow DOM does not have a shadow element.</p>
+<form id='form' action="input-with-validation-without-shadow.html">
+<input id=password type=password required maxlength=20 title="Needs at least 8 letters.&#x0a;Should not be identical with the current password.">
+<input type=submit id=submit>
+</form>
+
+<script>
+var input = document.getElementById('password');
+var shadowRoot = new WebKitShadowRoot(input);
+
+document.getElementById('submit').click();
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    setTimeout(function() {
+        testRunner.notifyDone();
+    }, 10);
+}
+</script>
+

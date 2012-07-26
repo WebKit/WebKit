@@ -75,13 +75,6 @@ ShadowRoot::~ShadowRoot()
 
 static bool allowsAuthorShadowRoot(Element* element)
 {
-    // FIXME: ValidationMessage recreates shadow root dynamically.
-    // https://bugs.webkit.org/show_bug.cgi?id=77937
-    // Especially, INPUT recreates shadow root dynamically.
-    // https://bugs.webkit.org/show_bug.cgi?id=77930
-    if (element->isFormControlElement())
-        return false;
-
     // FIXME: We disable multiple shadow subtrees for SVG for while, because there will be problems to support it.
     // https://bugs.webkit.org/show_bug.cgi?id=78205
     // Especially SVG TREF recreates shadow root dynamically.

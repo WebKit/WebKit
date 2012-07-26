@@ -45,6 +45,8 @@ public:
 
     HTMLFormElement* form() const { return FormAssociatedElement::form(); }
 
+    void willAddAuthorShadowRoot() OVERRIDE;
+
     String formEnctype() const;
     void setFormEnctype(const String&);
     String formMethod() const;
