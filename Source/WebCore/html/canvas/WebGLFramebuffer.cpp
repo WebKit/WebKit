@@ -435,7 +435,7 @@ GC3Denum WebGLFramebuffer::checkStatus(const char** reason) const
             haveDepth = true;
             break;
         case GraphicsContext3D::STENCIL_ATTACHMENT:
-            haveDepth = true;
+            haveStencil = true;
             break;
         case GraphicsContext3D::DEPTH_STENCIL_ATTACHMENT:
             haveDepthStencil = true;

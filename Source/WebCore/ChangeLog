@@ -1,3 +1,15 @@
+2012-07-25  Joshua Netterfield  <jnetterfield@rim.com>
+
+        [WebGL] fast/canvas/webgl/framebuffer-object-attachment.html fails on certain platforms
+        https://bugs.webkit.org/show_bug.cgi?id=92296
+
+        Reviewed by Rob Buis.
+
+        No new tests, because it introduces no new functionality, only fixes the above mentioned test.
+
+        * html/canvas/WebGLFramebuffer.cpp:
+        (WebCore::WebGLFramebuffer::checkStatus):
+
 2012-07-25  Xingnan Wang  <xingnan.wang@intel.com>
 
         IndexedDB: IDBTransaction::abort() should throw DOMException
