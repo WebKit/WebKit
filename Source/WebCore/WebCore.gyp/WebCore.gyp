@@ -2130,6 +2130,8 @@
       ],
       'sources': [
         '<@(webcore_test_support_files)',
+        '<(SHARED_INTERMEDIATE_DIR)/webcore/bindings/V8FastMallocStatistics.cpp',
+        '<(SHARED_INTERMEDIATE_DIR)/webkit/bindings/V8FastMallocStatistics.h',
         '<(SHARED_INTERMEDIATE_DIR)/webcore/bindings/V8Internals.cpp',
         '<(SHARED_INTERMEDIATE_DIR)/webkit/bindings/V8Internals.h',
         '<(SHARED_INTERMEDIATE_DIR)/webcore/bindings/V8InternalSettings.cpp',

@@ -589,6 +589,7 @@ BINDING_IDLS = \
     $(WebCore)/svg/SVGViewSpec.idl \
     $(WebCore)/svg/SVGZoomAndPan.idl \
     $(WebCore)/svg/SVGZoomEvent.idl \
+    $(WebCore)/testing/FastMallocStatistics.idl \
     $(WebCore)/testing/Internals.idl \
     $(WebCore)/testing/InternalSettings.idl \
     $(WebCore)/workers/AbstractWorker.idl \

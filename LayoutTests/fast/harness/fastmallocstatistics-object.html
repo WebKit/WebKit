@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../js/resources/js-test-pre.js"></script>
+<script type="text/javascript">
+shouldBeDefined(window.internals);
+
+var stats = window.internals.fastMallocStatistics();
+shouldBeDefined(stats);
+shouldBeGreaterThanOrEqual("stats.reservedVMBytes", "0");
+shouldBeGreaterThanOrEqual("stats.committedVMBytes", "0");
+shouldBeGreaterThanOrEqual("stats.freeListBytes", "0");
+</script>
+</head>
+<body>
+</body>
+</html>

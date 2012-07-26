@@ -2642,6 +2642,7 @@ HEADERS += \
     svg/SVGVKernElement.h \
     svg/SVGZoomAndPan.h \
     svg/SVGZoomEvent.h \
+    testing/FastMallocStatistics.h \
     testing/Internals.h \
     testing/InternalSettings.h \
     workers/AbstractWorker.h \

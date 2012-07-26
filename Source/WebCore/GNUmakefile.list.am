@@ -993,6 +993,7 @@ dom_binding_idls += \
 	$(WebCore)/plugins/DOMPluginArray.idl \
 	$(WebCore)/storage/Storage.idl \
 	$(WebCore)/storage/StorageEvent.idl \
+	$(WebCore)/testing/FastMallocStatistics.idl \
 	$(WebCore)/testing/Internals.idl \
 	$(WebCore)/testing/InternalSettings.idl \
 	$(WebCore)/workers/AbstractWorker.idl \

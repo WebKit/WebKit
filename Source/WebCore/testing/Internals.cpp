@@ -38,6 +38,7 @@
 #include "Element.h"
 #include "ElementShadow.h"
 #include "ExceptionCode.h"
+#include "FastMallocStatistics.h"
 #include "Frame.h"
 #include "FrameView.h"
 #include "HTMLContentElement.h"
@@ -1166,6 +1167,11 @@ void Internals::registerURLSchemeAsBypassingContentSecurityPolicy(const String& 
 void Internals::removeURLSchemeRegisteredAsBypassingContentSecurityPolicy(const String& scheme)
 {
     SchemeRegistry::removeURLSchemeRegisteredAsBypassingContentSecurityPolicy(scheme);
+}
+
+PassRefPtr<FastMallocStatistics> Internals::fastMallocStatistics() const
+{
+    return FastMallocStatistics::create();
 }
 
 }

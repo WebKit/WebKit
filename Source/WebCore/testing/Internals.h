@@ -49,6 +49,7 @@ class Range;
 class ScriptExecutionContext;
 class ShadowRoot;
 class WebKitPoint;
+class FastMallocStatistics;
 
 typedef int ExceptionCode;
 
@@ -204,6 +205,8 @@ public:
 
     void registerURLSchemeAsBypassingContentSecurityPolicy(const String& scheme);
     void removeURLSchemeRegisteredAsBypassingContentSecurityPolicy(const String& scheme);
+
+    PassRefPtr<FastMallocStatistics> fastMallocStatistics() const;
 
 private:
     explicit Internals(Document*);

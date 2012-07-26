@@ -6196,6 +6196,7 @@
             'svg/properties/SVGPathSegListPropertyTearOff.cpp',
         ],
         'webcore_test_support_idl_files': [
+          'testing/FastMallocStatistics.idl',
           'testing/Internals.idl',
           'testing/InternalSettings.idl',
         ],
@@ -6204,6 +6205,7 @@
             'testing/v8/WebCoreTestSupport.h',
             'testing/js/WebCoreTestSupport.cpp',
             'testing/js/WebCoreTestSupport.h',
+            'testing/FastMallocStatistics.h',
             'testing/Internals.cpp',
             'testing/Internals.h',
             'testing/InternalSettings.cpp',

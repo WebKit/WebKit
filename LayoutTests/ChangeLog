@@ -1,3 +1,13 @@
+2012-07-26  Olivier Blin  <olivier.blin@softathome.com>
+
+        Add FastMalloc statistics in window.internals
+        https://bugs.webkit.org/show_bug.cgi?id=91274
+
+        Reviewed by Ryosuke Niwa.
+
+        * fast/harness/fastmallocstatistics-object-expected.txt: Added.
+        * fast/harness/fastmallocstatistics-object.html: Added.
+
 2012-07-26  Luciano Wolf  <luciano.wolf@openbossa.org>
 
         [Qt] css3/filters, editing/undo, fast/block/lineboxcontain, fast/js and tables/layering tests need update after rebaseline and new testfonts
