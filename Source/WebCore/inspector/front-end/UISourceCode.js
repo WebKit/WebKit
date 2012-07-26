@@ -50,6 +50,9 @@ WebInspector.UISourceCode = function(url, resource, contentProvider, sourceMappi
      * @type Array.<function(?string,boolean,string)>
      */
     this._requestContentCallbacks = [];
+    /**
+     * @type Array.<WebInspector.LiveLocation>
+     */
     this._liveLocations = [];
     /**
      * @type {Array.<WebInspector.PresentationConsoleMessage>}
@@ -379,7 +382,7 @@ WebInspector.UISourceCode.prototype = {
     },
 
     /**
-     * @param {WebInspector.Script.Location} liveLocation
+     * @param {WebInspector.LiveLocation} liveLocation
      */
     addLiveLocation: function(liveLocation)
     {
@@ -387,7 +390,7 @@ WebInspector.UISourceCode.prototype = {
     },
 
     /**
-     * @param {WebInspector.Script.Location} liveLocation
+     * @param {WebInspector.LiveLocation} liveLocation
      */
     removeLiveLocation: function(liveLocation)
     {
@@ -403,7 +406,6 @@ WebInspector.UISourceCode.prototype = {
 
     /**
      * @param {WebInspector.UILocation} uiLocation
-     * @return {WebInspector.UILocation}
      */
     overrideLocation: function(uiLocation)
     {
@@ -517,6 +519,58 @@ WebInspector.UILocation.prototype = {
  */
 WebInspector.RawLocation = function()
 {
+}
+
+/**
+ * @constructor
+ * @param {WebInspector.RawLocation} rawLocation
+ * @param {function(WebInspector.UILocation):(boolean|undefined)} updateDelegate
+ */
+WebInspector.LiveLocation = function(rawLocation, updateDelegate)
+{
+    this._rawLocation = rawLocation;
+    this._updateDelegate = updateDelegate;
+    this._uiSourceCodes = [];
+}
+
+WebInspector.LiveLocation.prototype = {
+    update: function()
+    {
+        var uiLocation = this.uiLocation();
+        if (uiLocation) {
+            var uiSourceCode = uiLocation.uiSourceCode;
+            if (this._uiSourceCodes.indexOf(uiSourceCode) === -1) {
+                uiSourceCode.addLiveLocation(this);
+                this._uiSourceCodes.push(uiSourceCode);
+            }
+            var oneTime = this._updateDelegate(uiLocation);
+            if (oneTime)
+                this.dispose();
+        }
+    },
+
+    /**
+     * @return {WebInspector.RawLocation}
+     */
+    rawLocation: function()
+    {
+        return this._rawLocation;
+    },
+
+    /**
+     * @return {WebInspector.UILocation}
+     */
+    uiLocation: function()
+    {
+        // Should be overridden by subclasses.
+    },
+
+    dispose: function()
+    {
+        for (var i = 0; i < this._uiSourceCodes.length; ++i)
+            this._uiSourceCodes[i].removeLiveLocation(this);
+        this._uiSourceCodes = [];
+    }
 }
 
 /**

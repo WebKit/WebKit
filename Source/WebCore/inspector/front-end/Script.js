@@ -205,39 +205,31 @@ WebInspector.Script.prototype = {
 
 /**
  * @constructor
+ * @extends {WebInspector.LiveLocation}
  * @param {WebInspector.Script} script
  * @param {WebInspector.DebuggerModel.Location} rawLocation
  * @param {function(WebInspector.UILocation):(boolean|undefined)} updateDelegate
  */
 WebInspector.Script.Location = function(script, rawLocation, updateDelegate)
 {
+    WebInspector.LiveLocation.call(this, rawLocation, updateDelegate);
     this._script = script;
-    this._rawLocation = rawLocation;
-    this._updateDelegate = updateDelegate;
-    this._uiSourceCodes = [];
 }
 
 WebInspector.Script.Location.prototype = {
-    update: function()
+    /**
+     * @return {WebInspector.UILocation}
+     */
+    uiLocation: function()
     {
-        var uiLocation = this._script.rawLocationToUILocation(this._rawLocation.lineNumber, this._rawLocation.columnNumber);
-        if (uiLocation) {
-            var uiSourceCode = uiLocation.uiSourceCode;
-            if (this._uiSourceCodes.indexOf(uiSourceCode) === -1) {
-                uiSourceCode.addLiveLocation(this);
-                this._uiSourceCodes.push(uiSourceCode);
-            }
-            var oneTime = this._updateDelegate(uiLocation);
-            if (oneTime)
-                this.dispose();
-        }
+        return this._script.rawLocationToUILocation(this.rawLocation().lineNumber, this.rawLocation().columnNumber);
     },
 
     dispose: function()
     {
-        for (var i = 0; i < this._uiSourceCodes.length; ++i)
-            this._uiSourceCodes[i].removeLiveLocation(this);
-        this._uiSourceCodes = [];
+        WebInspector.LiveLocation.prototype.dispose.call(this);
         this._script._locations.remove(this);
     }
 }
+
+WebInspector.Script.Location.prototype.__proto__ = WebInspector.LiveLocation.prototype;

@@ -1,3 +1,25 @@
+2012-07-26  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Introduce generic LiveLocation, make Script.Location inherit it.
+        https://bugs.webkit.org/show_bug.cgi?id=92388
+
+        Reviewed by Pavel Feldman.
+
+        Introduced abstract LiveLocation implemented by Script.Location.
+
+        * inspector/front-end/Script.js:
+        (WebInspector.Script.Location):
+        (WebInspector.Script.Location.prototype.uiLocation):
+        (WebInspector.Script.Location.prototype.dispose):
+        * inspector/front-end/UISourceCode.js:
+        (WebInspector.UISourceCode):
+        (WebInspector.LiveLocation):
+        (WebInspector.LiveLocation.prototype.update):
+        (WebInspector.LiveLocation.prototype.rawLocation):
+        (WebInspector.LiveLocation.prototype.uiLocation):
+        (WebInspector.LiveLocation.prototype.dispose):
+        * inspector/front-end/inspector.html:
+
 2012-07-26  Joshua Netterfield  <jnetterfield@rim.com>
 
         [BlackBerry] readPixels on FBOs are limited to canvas size on SGX platforms
