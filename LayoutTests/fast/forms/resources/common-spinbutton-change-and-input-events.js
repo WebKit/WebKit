@@ -1,55 +1,55 @@
-<!DOCTYPE html>
-<html>
-<head>
-<script src="../../../fast/js/resources/js-test-pre.js"></script>
-</head>
-<body>
-<script>
-description('Test for event dispatching by spin buttons in a type=numnber input.');
-
-var parent = document.createElement('div');
-document.body.appendChild(parent);
-parent.innerHTML = '<input type=number id=number value=0 max=1><input id=another>';
-var numberInput = document.getElementById('number');
-var anotherInput = document.getElementById('another');
 var inputEventCounter = 0;
 var changeEventCounter = 0;
+var testInput;
 
-numberInput.onchange = function() { changeEventCounter++; };
-numberInput.oninput = function() { inputEventCounter++; };
+function testSpinButtonChangeAndInputEvents(inputType, initialValue, expectedValue, maximumValue)
+{
+    description('Test for event dispatching by spin buttons in a type=' + inputType + ' input.');
+    if (!window.eventSender) {
+        debug('No eventSender');
+        return;
+    }
 
-if (window.eventSender) {
+    var parent = document.createElement('div');
+    document.body.appendChild(parent);
+    parent.innerHTML = '<input id=test><input id=another>';
+    testInput = document.getElementById('test');
+    var anotherInput = document.getElementById('another');
+
+    testInput.type = inputType;
+    if (maximumValue != undefined)
+        testInput.setAttribute("max", maximumValue);
+    testInput.setAttribute("value", initialValue);
+    testInput.onchange = function() { changeEventCounter++; };
+    testInput.oninput = function() { inputEventCounter++; };
+
     debug('Initial state');
     eventSender.mouseMoveTo(0, 0);
-    shouldBe('changeEventCounter', '0');
-    shouldBe('inputEventCounter', '0');
+    shouldEvaluateTo('changeEventCounter', 0);
+    shouldEvaluateTo('inputEventCounter', 0);
 
     debug('Click the upper button');
     // Move the cursor on the upper button.
-    eventSender.mouseMoveTo(numberInput.offsetLeft + numberInput.offsetWidth - 10, numberInput.offsetTop + numberInput.offsetHeight / 4);
+    eventSender.mouseMoveTo(testInput.offsetLeft + testInput.offsetWidth - 10, testInput.offsetTop + testInput.offsetHeight / 4);
     eventSender.mouseDown();
     eventSender.mouseUp();
-    shouldBe('numberInput.value', '"1"');
-    shouldBe('changeEventCounter', '1');
-    shouldBe('inputEventCounter', '1');
+    shouldBeEqualToString('testInput.value', expectedValue);
+    shouldEvaluateTo('changeEventCounter', 1);
+    shouldEvaluateTo('inputEventCounter', 1);
 
-    debug('Click again, but the value is not changed.');
-    eventSender.mouseDown();
-    eventSender.mouseUp();
-    shouldBe('numberInput.value', '"1"');
-    shouldBe('changeEventCounter', '1');
-    shouldBe('inputEventCounter', '1');
+    if (testInput.hasAttribute("max")) {
+        debug('Click again, but the value is not changed.');
+        eventSender.mouseDown();
+        eventSender.mouseUp();
+        shouldBeEqualToString('testInput.value', expectedValue);
+        shouldEvaluateTo('changeEventCounter', 1);
+        shouldEvaluateTo('inputEventCounter', 1);
+    }
 
     debug('Focus on another field');
     anotherInput.focus();
-    shouldBe('changeEventCounter', '1');
-    shouldBe('inputEventCounter', '1');
+    shouldEvaluateTo('changeEventCounter', 1);
+    shouldEvaluateTo('inputEventCounter', 1);
 
     parent.innerHTML = '';
-} else {
-  document.getElementById('console').innerHTML = 'No eventSender';
 }
-</script>
-<script src="../../../fast/js/resources/js-test-post.js"></script>
-</body>
-</html>

@@ -1,3 +1,22 @@
+2012-07-25  Yoshifumi Inoue  <yosin@chromium.org>
+
+        [Tests] Re-factor fast/forms/number/number-spinbutton-change-and-input-events.html
+        https://bugs.webkit.org/show_bug.cgi?id=92206
+
+        Reviewed by Kent Tamura.
+
+        For ease of maintenance and improving test coverage with low cost, I
+        would like to make a test script of number-spinbutton-change-and-inputs.html
+        sharable with other input types which have spin button.
+
+        This patch moves JavaScript codes from test HTML file to shared JavaScript
+        file, common-spinbutton-change-and-input-events.html with parametrized
+        entry point for specifying input type.
+
+        * fast/forms/number/number-spinbutton-change-and-input-events-expected.txt: Changed "numnber" to "number", and "numberInput" to "testInput".
+        * fast/forms/number/number-spinbutton-change-and-input-events.html: Removed JavaScript code.
+        * fast/forms/resources/common-spinbutton-change-and-input-events.js: Removed HTML code. Made entry point. Changed to support testing without maximum value.
+
 2012-07-25  Dan Bernstein  <mitz@apple.com>
 
         Hit testing in one column or in the gap between cloumns along the block axis can return a result from the wrong column
