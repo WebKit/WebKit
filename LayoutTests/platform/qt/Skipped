@@ -1258,7 +1258,7 @@ fast/forms/validation-message-on-menulist.html
 fast/forms/validation-message-on-radio.html
 fast/forms/validation-message-on-range.html
 fast/forms/validation-message-on-textarea.html
-fast/forms/validation-user-modify.html
+fast/forms/validation-message-user-modify.html
 
 # LayoutTestController::clearApplicationCacheForOrigin is not implemented
 http/tests/appcache/origin-delete.html

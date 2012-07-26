@@ -1,3 +1,9 @@
+2012-07-26  Ádám Kallai  <kadam@inf.u-szeged.hu>
+
+        [Qt] Unreviewed gardening. Fix after r123733.
+
+        * platform/qt/Skipped:
+
 2012-07-26  Bruno de Oliveira Abinader  <bruno.abinader@basyskom.com>
 
         [Qt] Reskip fast/forms WK2 added results
