@@ -1,3 +1,16 @@
+2012-07-26  Joshua Netterfield  <jnetterfield@rim.com>
+
+        [BlackBerry] readPixels on FBOs are limited to canvas size on SGX platforms
+        https://bugs.webkit.org/show_bug.cgi?id=92301
+
+        Reviewed by Rob Buis.
+
+        This fixes fast/canvas/webgl/uninitialized-test.html on BlackBerry, no new tests.
+
+        * platform/graphics/opengl/GraphicsContext3DOpenGLES.cpp:
+        (WebCore::GraphicsContext3D::readPixels):
+        (WebCore::GraphicsContext3D::readPixelsAndConvertToBGRAIfNecessary):
+
 2012-07-26  Alexei Filippov  <alexeif@chromium.org>
 
         Web Inspector: reduce auto refresh rate of the live native memory diagram
