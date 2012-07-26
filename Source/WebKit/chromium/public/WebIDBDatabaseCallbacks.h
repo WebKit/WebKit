@@ -35,6 +35,7 @@ class WebIDBDatabaseCallbacks {
 public:
     virtual ~WebIDBDatabaseCallbacks() { }
 
+    virtual void onVersionChange(long long oldVersion, long long newVersion) { WEBKIT_ASSERT_NOT_REACHED(); }
     virtual void onVersionChange(const WebString& requestedVersion) { WEBKIT_ASSERT_NOT_REACHED(); }
 };
 

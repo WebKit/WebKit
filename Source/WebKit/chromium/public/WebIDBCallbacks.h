@@ -58,7 +58,9 @@ public:
     virtual void onSuccess(const WebSerializedScriptValue&, const WebIDBKey&, const WebIDBKeyPath&) { WEBKIT_ASSERT_NOT_REACHED(); }
     virtual void onSuccessWithContinuation() { WEBKIT_ASSERT_NOT_REACHED(); }
     virtual void onBlocked() { WEBKIT_ASSERT_NOT_REACHED(); }
+    virtual void onBlocked(long long oldVersion) { WEBKIT_ASSERT_NOT_REACHED(); }
     virtual void onSuccessWithPrefetch(const WebVector<WebIDBKey>& keys, const WebVector<WebIDBKey>& primaryKeys, const WebVector<WebSerializedScriptValue>& values) { WEBKIT_ASSERT_NOT_REACHED(); }
+    virtual void onUpgradeNeeded(long long oldVersion, WebIDBTransaction*, WebIDBDatabase*) { WEBKIT_ASSERT_NOT_REACHED(); }
 };
 
 } // namespace WebKit

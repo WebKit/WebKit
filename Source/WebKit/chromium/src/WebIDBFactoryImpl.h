@@ -46,6 +46,7 @@ public:
 
     virtual void getDatabaseNames(WebIDBCallbacks*, const WebSecurityOrigin&, WebFrame*, const WebString& dataDir);
     virtual void open(const WebString& name, WebIDBCallbacks*, const WebSecurityOrigin&, WebFrame*, const WebString& dataDir);
+    virtual void open(const WebString& name, long long version, WebIDBCallbacks*, const WebSecurityOrigin&, WebFrame*, const WebString& dataDir);
     virtual void deleteDatabase(const WebString& name, WebIDBCallbacks*, const WebSecurityOrigin&, WebFrame*, const WebString& dataDir);
 
 private:

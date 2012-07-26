@@ -69,6 +69,13 @@ void WebIDBFactoryImpl::open(const WebString& name, WebIDBCallbacks* callbacks, 
     m_idbFactoryBackend->open(name, IDBCallbacksProxy::create(adoptPtr(callbacks)).get(), origin, 0, dataDir);
 }
 
+void WebIDBFactoryImpl::open(const WebString& name, long long version, WebIDBCallbacks* callbacks, const WebSecurityOrigin& origin, WebFrame*, const WebString& dataDir)
+{
+    // FIXME: Pass version along when WebCore::IDBFactoryBackendInterface
+    // has an open method that accepts it.
+    m_idbFactoryBackend->open(name, IDBCallbacksProxy::create(adoptPtr(callbacks)).get(), origin, 0, dataDir);
+}
+
 void WebIDBFactoryImpl::deleteDatabase(const WebString& name, WebIDBCallbacks* callbacks, const WebSecurityOrigin& origin, WebFrame*, const WebString& dataDir)
 {
     m_idbFactoryBackend->deleteDatabase(name, IDBCallbacksProxy::create(adoptPtr(callbacks)), origin, 0, dataDir);

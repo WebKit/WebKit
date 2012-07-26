@@ -31,6 +31,7 @@
 
 #include "WebDOMStringList.h"
 #include "WebIDBCallbacks.h"
+#include "WebIDBMetadata.h"
 #include "WebSecurityOrigin.h"
 #include "platform/WebCommon.h"
 #include "platform/WebString.h"
@@ -53,8 +54,15 @@ public:
 
     virtual void getDatabaseNames(WebIDBCallbacks* callbacks, const WebSecurityOrigin& origin, WebFrame* frame, const WebString& dataDir) { WEBKIT_ASSERT_NOT_REACHED(); }
 
+    // FIXME: Delete this method when derived classes in chromium have
+    // implemented the other open method.
+    virtual void open(const WebString& name, WebIDBCallbacks* callbacks, const WebSecurityOrigin& origin, WebFrame* frame, const WebString& dataDir)
+    {
+        open(name, WebIDBMetadata::NoIntVersion, callbacks, origin, frame, dataDir);
+    }
+
     // The WebKit implementation of open ignores the WebFrame* parameter.
-    virtual void open(const WebString& name, WebIDBCallbacks* callbacks, const WebSecurityOrigin& origin, WebFrame* frame, const WebString& dataDir) { WEBKIT_ASSERT_NOT_REACHED(); }
+    virtual void open(const WebString& name, long long version, WebIDBCallbacks* callbacks, const WebSecurityOrigin& origin, WebFrame* frame, const WebString& dataDir) { WEBKIT_ASSERT_NOT_REACHED(); }
 
     virtual void deleteDatabase(const WebString& name, WebIDBCallbacks*, const WebSecurityOrigin&, WebFrame*, const WebString& dataDir) { WEBKIT_ASSERT_NOT_REACHED(); }
 };

@@ -1,3 +1,26 @@
+2012-07-25  David Grogan  <dgrogan@chromium.org>
+
+        IndexedDB: WebKit API interfaces for "upgradeneeded" methods and events
+        https://bugs.webkit.org/show_bug.cgi?id=92203
+
+        Reviewed by Adam Barth.
+
+        This is the beginning of our typical three-sided-patch process.
+
+        * public/WebIDBCallbacks.h:
+        (WebKit::WebIDBCallbacks::onBlocked):
+        (WebKit::WebIDBCallbacks::onUpgradeNeeded):
+        * public/WebIDBDatabaseCallbacks.h:
+        (WebKit::WebIDBDatabaseCallbacks::onVersionChange):
+        * public/WebIDBFactory.h:
+        (WebIDBFactory):
+        (WebKit::WebIDBFactory::open):
+        * src/WebIDBFactoryImpl.cpp:
+        (WebKit::WebIDBFactoryImpl::open):
+        (WebKit):
+        * src/WebIDBFactoryImpl.h:
+        (WebIDBFactoryImpl):
+
 2012-07-19  Adrienne Walker  <enne@google.com>
 
         [chromium] Make all compositor screen space transforms operate on content rects
