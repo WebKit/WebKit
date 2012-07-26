@@ -116,8 +116,6 @@ svg/custom/getscreenctm-in-mixed-content.xhtml
 svg/custom/inline-svg-in-xhtml.xml
 svg/custom/object-sizing.xhtml
 svg/hixie/mixed/003.xml
-tables/mozilla/bugs/bug53690-2.html
-tables/mozilla/other/move_row.html
 
 # [Qt] New failing and flakey tests with newer Qt 5
 # https://bugs.webkit.org/show_bug.cgi?id=86452

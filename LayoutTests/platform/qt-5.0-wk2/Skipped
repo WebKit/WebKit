@@ -423,23 +423,6 @@ svg/custom/getscreenctm-in-mixed-content.xhtml
 svg/custom/inline-svg-in-xhtml.xml
 svg/custom/object-sizing.xhtml
 svg/hixie/mixed/003.xml
-tables/mozilla/bugs/bug1188.html
-tables/mozilla/bugs/bug18359.html
-tables/mozilla/bugs/bug24200.html
-tables/mozilla/bugs/bug2479-3.html
-tables/mozilla/bugs/bug28928.html
-tables/mozilla/bugs/bug30559.html
-tables/mozilla/bugs/bug4382.html
-tables/mozilla/bugs/bug4527.html
-tables/mozilla/bugs/bug46368-1.html
-tables/mozilla/bugs/bug46368-2.html
-tables/mozilla/bugs/bug51037.html
-tables/mozilla/bugs/bug53690-2.html
-tables/mozilla/bugs/bug55545.html
-tables/mozilla/bugs/bug59354.html
-tables/mozilla/bugs/bug96334.html
-tables/mozilla/dom/tableDom.html
-tables/mozilla/other/move_row.html
 
 # [Qt] Tests still fail after the update to new fonts 
 # https://bugs.webkit.org/show_bug.cgi?id=91610
@@ -613,38 +596,6 @@ svg/overflow/overflow-on-outermost-svg-element-ignore-attribute-1.svg
 svg/overflow/overflow-on-outermost-svg-element-ignore-attribute-2.svg
 svg/overflow/overflow-on-outermost-svg-element-ignore-attribute-3.svg
 svg/zoom/page/absolute-sized-document-scrollbars.svg
-tables/mozilla/bugs/bug101674.html
-tables/mozilla/bugs/bug113235-3.html
-tables/mozilla/bugs/bug11944.html
-tables/mozilla/bugs/bug137388-2.html
-tables/mozilla/bugs/bug16252.html
-tables/mozilla/bugs/bug194024.html
-tables/mozilla/bugs/bug22019.html
-tables/mozilla/bugs/bug23151.html
-tables/mozilla/bugs/bug2479-1.html
-tables/mozilla/bugs/bug2479-4.html
-tables/mozilla/bugs/bug32205-2.html
-tables/mozilla/bugs/bug38916.html
-tables/mozilla/bugs/bug3977.html
-tables/mozilla/bugs/bug43854-1.html
-tables/mozilla/bugs/bug44505.html
-tables/mozilla/bugs/bug46480-1.html
-tables/mozilla/bugs/bug50695-1.html
-tables/mozilla/bugs/bug5797.html
-tables/mozilla/bugs/bug5835.html
-tables/mozilla/bugs/bug625.html
-tables/mozilla/bugs/bug67915-1.html
-tables/mozilla/bugs/bug7112-1.html
-tables/mozilla/bugs/bug73321.html
-tables/mozilla/bugs/bug92143.html
-tables/mozilla/core/bloomberg.html
-tables/mozilla/core/captions.html
-tables/mozilla/core/cell_heights.html
-tables/mozilla/core/col_span.html
-tables/mozilla/core/col_widths_auto_fix.html
-tables/mozilla/core/col_widths_fix_fixPer.html
-tables/mozilla/core/nested1.html
-tables/mozilla/core/one_row.html
 
 # [Qt] [WK2] editing/inserting/typing-tab-designmode tests are failing
 # https://bugs.webkit.org/show_bug.cgi?id=91988

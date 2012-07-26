@@ -1,3 +1,19 @@
+2012-07-26  Rafael Brandao  <rafael.lobo@openbossa.org>
+
+        [Qt] platform/qt/tables/mozilla tests needs update after rebaseline and new testfonts
+        https://bugs.webkit.org/show_bug.cgi?id=91242
+
+        Reviewed by Alexis Menard.
+
+        Some leftovers were removed from qt-5.0-wk1 and wk2. If some of them
+        fail on qt-5.0-wk2, then they should be skipped again, but creating
+        proper bug reports for them.
+
+        * platform/qt-5.0-wk1/Skipped:
+        * platform/qt-5.0-wk2/Skipped:
+        * platform/qt-5.0/tables/mozilla/bugs/bug3037-1-expected.png: Removed.
+        * platform/qt-5.0/tables/mozilla/bugs/bug3037-1-expected.txt: Removed.
+
 2012-07-26  Bruno de Oliveira Abinader  <bruno.abinader@basyskom.com>
 
         [Qt] editing/selection tests needs update after rebaseline and new testfonts
