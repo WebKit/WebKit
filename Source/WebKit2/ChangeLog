@@ -1,3 +1,16 @@
+2012-07-26  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [WK2] WebPage::handleEditingKeyboardEvent does not check whether the node allows editing.
+        https://bugs.webkit.org/show_bug.cgi?id=92364
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Added a check whether the input node allows editing. If editing is not allowed
+        text input event will not be emitted.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::handleEditingKeyboardEvent):
+
 2012-07-26  Zoltan Nyul  <zoltan.nyul@intel.com>
 
         [EFL] EFL port should use XDG paths

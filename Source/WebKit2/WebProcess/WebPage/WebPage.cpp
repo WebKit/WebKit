@@ -2145,6 +2145,10 @@ bool WebPage::handleEditingKeyboardEvent(KeyboardEvent* evt)
     if (command.execute(evt))
         return true;
 
+    // Don't allow text insertion for nodes that cannot edit.
+    if (!frame->editor()->canEdit())
+        return false;
+
     // Don't insert null or control characters as they can result in unexpected behaviour
     if (evt->charCode() < ' ')
         return false;
