@@ -242,8 +242,9 @@ bool JSTestInterface::getOwnPropertyDescriptor(JSObject* object, ExecState* exec
 }
 
 #if ENABLE(Condition11) || ENABLE(Condition12)
-JSValue jsTestInterfaceConstructorSupplementalStaticReadOnlyAttr(ExecState* exec, JSValue, PropertyName)
+JSValue jsTestInterfaceConstructorSupplementalStaticReadOnlyAttr(ExecState* exec, JSValue slotBase, PropertyName)
 {
+    UNUSED_PARAM(slotBase);
     UNUSED_PARAM(exec);
     JSValue result = jsNumber(TestSupplemental::supplementalStaticReadOnlyAttr());
     return result;
@@ -252,8 +253,9 @@ JSValue jsTestInterfaceConstructorSupplementalStaticReadOnlyAttr(ExecState* exec
 #endif
 
 #if ENABLE(Condition11) || ENABLE(Condition12)
-JSValue jsTestInterfaceConstructorSupplementalStaticAttr(ExecState* exec, JSValue, PropertyName)
+JSValue jsTestInterfaceConstructorSupplementalStaticAttr(ExecState* exec, JSValue slotBase, PropertyName)
 {
+    UNUSED_PARAM(slotBase);
     UNUSED_PARAM(exec);
     JSValue result = jsString(exec, TestSupplemental::supplementalStaticAttr());
     return result;

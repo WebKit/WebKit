@@ -41,6 +41,7 @@ module test {
 #if defined(TESTING_JS) || defined(TESTING_V8)
         static readonly attribute long     staticReadOnlyLongAttr;
         static attribute DOMString         staticStringAttr;
+        static readonly attribute TestSubObjConstructor TestSubObj;
 #endif
         attribute short                    shortAttr;
         attribute unsigned short           unsignedShortAttr;

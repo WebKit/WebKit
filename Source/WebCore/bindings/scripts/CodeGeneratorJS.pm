@@ -1764,13 +1764,13 @@ sub GenerateImplementation
                 my $attributeConditionalString = $codeGenerator->GenerateConditionalString($attribute->signature);
                 push(@implContent, "#if ${attributeConditionalString}\n") if $attributeConditionalString;
 
-                push(@implContent, "JSValue ${getFunctionName}(ExecState* exec, JSValue");
-                push(@implContent, " slotBase") if !$attribute->isStatic;
-                push(@implContent, ", PropertyName)\n");
+                push(@implContent, "JSValue ${getFunctionName}(ExecState* exec, JSValue slotBase, PropertyName)\n");
                 push(@implContent, "{\n");
 
-                if (!$attribute->isStatic) {
+                if (!$attribute->isStatic || $attribute->signature->type =~ /Constructor$/) {
                     push(@implContent, "    ${className}* castedThis = jsCast<$className*>(asObject(slotBase));\n");
+                } else {
+                    push(@implContent, "    UNUSED_PARAM(slotBase);\n");
                 }
 
                 if ($attribute->signature->extendedAttributes->{"CachedAttribute"}) {
