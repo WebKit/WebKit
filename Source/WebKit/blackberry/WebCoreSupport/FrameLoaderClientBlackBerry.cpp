@@ -66,6 +66,7 @@
 #include "WebPageClient.h"
 
 #include <BlackBerryPlatformLog.h>
+#include <BlackBerryPlatformMediaDocument.h>
 #include <BlackBerryPlatformScreen.h>
 #include <JavaScriptCore/APICast.h>
 #include <network/FilterStream.h>
@@ -388,10 +389,15 @@ PassRefPtr<DocumentLoader> FrameLoaderClientBlackBerry::createDocumentLoader(con
     }
 
     SubstituteData substituteDataLocal = substituteData;
-    if (isMainFrame() && request.url().protocolIs("about")) {
-        // The first 6 letters is "about:"
-        String aboutWhat = request.url().string().substring(6);
-        String source = aboutData(aboutWhat);
+    if (isMainFrame()) {
+        String source;
+        if (request.url().protocolIs("about")) {
+            // The first 6 letters is "about:"
+            String aboutWhat = request.url().string().substring(6);
+            source = aboutData(aboutWhat);
+        } else if (request.url().protocolIs("rtsp"))
+            source = BlackBerry::Platform::mediaDocument(request.url().string().utf8().data()).c_str();
+
         if (!source.isEmpty()) {
             // Always ignore existing substitute data if any.
             WTF::RefPtr<SharedBuffer> buffer = SharedBuffer::create(source.is8Bit() ? reinterpret_cast<const char*>(source.characters8()) : source.latin1().data(), source.length());
