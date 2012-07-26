@@ -404,11 +404,6 @@ class MainTest(unittest.TestCase, StreamTestingMixin):
         tests_run = get_tests_run(['--repeat-each', '2'] + tests_to_run, tests_included=True, flatten_batches=True)
         self.assertEquals(tests_run, ['passes/image.html', 'passes/image.html', 'passes/text.html', 'passes/text.html'])
 
-    def test_skip_pixel_test_if_no_baseline_option(self):
-        tests_to_run = ['passes/image.html', 'passes/text.html']
-        tests_run = get_tests_run(['--skip-pixel-test-if-no-baseline'] + tests_to_run, tests_included=True, flatten_batches=True)
-        self.assertEquals(tests_run, ['passes/image.html', 'passes/text.html'])
-
     def test_ignore_flag(self):
         # Note that passes/image.html is expected to be run since we specified it directly.
         tests_run = get_tests_run(['-i', 'passes', 'passes/image.html'], flatten_batches=True, tests_included=True)

@@ -1271,8 +1271,6 @@ class Port(object):
         if not self.supports_switching_pixel_tests_per_test():
             # Cannot do more filtering without this.
             return True
-        if self._options.skip_pixel_test_if_no_baseline and not self.expected_image(test_input.test_name):
-            return False
         if self._options.pixel_test_directories:
             return any(test_input.test_name.startswith(directory) for directory in self._options.pixel_test_directories)
         return self._should_run_as_pixel_test(test_input)

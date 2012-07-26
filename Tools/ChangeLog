@@ -1,3 +1,20 @@
+2012-07-26  Balazs Kelemen  <kbalazs@webkit.org>
+
+        [nrwt] get rid of --skip-pixel-test-if-no-baseline
+        https://bugs.webkit.org/show_bug.cgi?id=92377
+
+        Reviewed by Adam Barth.
+
+        Remove the option and all code paths that handled it.
+
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        (Port.should_run_as_pixel_test):
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        (_set_up_derived_options):
+        (parse_args):
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_integrationtest.py:
+        (MainTest.test_repeat_each):
+
 2012-07-26  Olivier Blin  <olivier.blin@softathome.com>
 
         Add FastMalloc statistics in window.internals
