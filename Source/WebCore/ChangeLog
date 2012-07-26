@@ -1,3 +1,18 @@
+2012-07-26  Joshua Netterfield  <jnetterfield@rim.com>
+
+        [WebGL] GraphicsContext3D::readPixels has extraneous code from GraphicsContext3D::readPixelsIMG
+        https://bugs.webkit.org/show_bug.cgi?id=92302
+
+        Reviewed by Noam Rosenthal.
+
+        This undoes a mistake from https://bugs.webkit.org/show_bug.cgi?id=90567.
+
+        No new tests, because it introduces no new functionality, but it makes the WebGL aquarium demo
+        run quite a bit smoother on SGX :)
+
+        * platform/graphics/opengl/GraphicsContext3DOpenGLES.cpp:
+        (WebCore::GraphicsContext3D::readPixels):
+
 2012-07-26  Yury Semikhatsky  <yurys@chromium.org>
 
         Unreviewed. Revert r123740 as it breaks AppleMac compilation.

@@ -50,55 +50,10 @@ void GraphicsContext3D::releaseShaderCompiler()
 
 void GraphicsContext3D::readPixels(GC3Dint x, GC3Dint y, GC3Dsizei width, GC3Dsizei height, GC3Denum format, GC3Denum type, void* data)
 {
-    // Currently only format=RGBA, type=UNSIGNED_BYTE is supported by the specification: http://www.khronos.org/registry/webgl/specs/latest/
-    // If this ever changes, this code will need to be updated.
-
-    // Calculate the strides of our data and canvas
-    unsigned int formatSize = 4; // RGBA UNSIGNED_BYTE
-    unsigned int dataStride = width * formatSize;
-    unsigned int canvasStride = m_currentWidth * formatSize;
-
-    // If we are using a pack alignment of 8, then we need to align our strides to 8 byte boundaries
-    // See: http://en.wikipedia.org/wiki/Data_structure_alignment (computing padding)
-    int packAlignment;
-    glGetIntegerv(GL_PACK_ALIGNMENT, &packAlignment);
-    if (8 == packAlignment) {
-        dataStride = (dataStride + 7) & ~7;
-        canvasStride = (canvasStride + 7) & ~7;
-    }
-
-    unsigned char* canvasData = new unsigned char[canvasStride * m_currentHeight];
-    ::glReadPixels(0, 0, m_currentWidth, m_currentHeight, format, type, canvasData);
-
-    // If we failed to read our canvas data due to a GL error, don't continue
-    int error = glGetError();
-    if (GL_NO_ERROR != error) {
-        synthesizeGLError(error);
-        return;
-    }
-
-    // Clear our data in case some of it lies outside the bounds of our canvas
-    // TODO: don't do this if all of the data lies inside the bounds of the canvas
-    memset(data, 0, dataStride * height);
-
-    // Calculate the intersection of our canvas and data bounds
-    IntRect dataRect(x, y, width, height);
-    IntRect canvasRect(0, 0, m_currentWidth, m_currentHeight);
-    IntRect nonZeroDataRect = intersection(dataRect, canvasRect);
-
-    unsigned int xDataOffset = x < 0 ? -x * formatSize : 0;
-    unsigned int yDataOffset = y < 0 ? -y * dataStride : 0;
-    unsigned int xCanvasOffset = nonZeroDataRect.x() * formatSize;
-    unsigned int yCanvasOffset = nonZeroDataRect.y() * canvasStride;
-    unsigned char* dst = static_cast<unsigned char*>(data) + xDataOffset + yDataOffset;
-    unsigned char* src = canvasData + xCanvasOffset + yCanvasOffset;
-    for (int row = 0; row < nonZeroDataRect.height(); row++) {
-        memcpy(dst, src, nonZeroDataRect.width() * formatSize);
-        dst += dataStride;
-        src += canvasStride;
-    }
-
-    delete [] canvasData;
+    makeContextCurrent();
+    // FIXME: remove the two glFlush calls when the driver bug is fixed, i.e.,
+    // all previous rendering calls should be done before reading pixels.
+    ::glFlush();
 #if PLATFORM(BLACKBERRY)
     // Imagination specific fix
     if (m_isImaginationHardware)
@@ -108,6 +63,12 @@ void GraphicsContext3D::readPixels(GC3Dint x, GC3Dint y, GC3Dsizei width, GC3Dsi
 
     // Note: BlackBerries have a different anti-aliasing pipeline.
 #else
+    if (m_attrs.antialias && m_boundFBO == m_multisampleFBO) {
+         resolveMultisamplingIfNecessary(IntRect(x, y, width, height));
+        ::glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_fbo);
+        ::glFlush();
+    }
+
     ::glReadPixels(x, y, width, height, format, type, data);
 
     if (m_attrs.antialias && m_boundFBO == m_multisampleFBO)
