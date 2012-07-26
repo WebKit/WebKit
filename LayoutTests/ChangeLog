@@ -1,3 +1,16 @@
+2012-07-26  Emil A Eklund  <eae@chromium.org>
+
+        Unreviewed chromium mac/win rebaseline post r123782.
+
+        * css2.1/t080301-c411-vt-mrgn-00-b-expected.txt: Added.
+        * platform/chromium-mac-snowleopard/css2.1/t080301-c411-vt-mrgn-00-b-expected.txt: Added.
+        * platform/chromium-mac-snowleopard/svg/custom/svg-fonts-in-html-expected.png:
+        * platform/chromium-mac/svg/custom/svg-fonts-in-html-expected.png:
+        * platform/chromium-mac/svg/custom/svg-fonts-in-html-expected.txt:
+        * platform/chromium-win/svg/custom/svg-fonts-in-html-expected.png:
+        * platform/efl/css2.1/t080301-c411-vt-mrgn-00-b-expected.txt: Removed.
+        * platform/gtk/css2.1/t080301-c411-vt-mrgn-00-b-expected.txt: Removed.
+
 2012-07-25  Ryosuke Niwa  <rniwa@webkit.org>
 
         Href attribute with javascript protocol is stripped when content is pasted into a XML doucment
