@@ -1,3 +1,13 @@
+2012-07-26  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: replace "textInput" keyboard event listener breakpoint with "input"
+        https://bugs.webkit.org/show_bug.cgi?id=92384
+
+        Reviewed by Vsevolod Vlasov.
+
+        * inspector/front-end/BreakpointsSidebarPane.js:
+        (WebInspector.EventListenerBreakpointsSidebarPane):
+
 2012-07-26  Jer Noble  <jer.noble@apple.com>
 
         Add a MediaPlayer API to retrieve the description of the current media engine.
