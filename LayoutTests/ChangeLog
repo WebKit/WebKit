@@ -1,3 +1,14 @@
+2012-07-25  MORITA Hajime  <morrita@google.com>
+
+        [Chromium][Win] <progress> animation on RTL direction is reverse
+        https://bugs.webkit.org/show_bug.cgi?id=92236
+
+        Reviewed by Kent Tamura.
+
+        Updated the expectation file which went slightly different.
+
+        * platform/chromium-linux/fast/dom/HTMLProgressElement/progress-element-expected.png:
+
 2012-07-25  Shinya Kawanaka  <shinyak@chromium.org>
 
         The elements in ShadowDOM of meter or progress should not be modifiable.

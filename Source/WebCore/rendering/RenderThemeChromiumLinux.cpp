@@ -357,6 +357,7 @@ bool RenderThemeChromiumLinux::paintProgressBar(RenderObject* o, const PaintInfo
     extraParams.progressBar.valueRectWidth = valueRect.width();
     extraParams.progressBar.valueRectHeight = valueRect.height();
 
+    DirectionFlippingScope scope(o, i, rect);
     PlatformSupport::paintThemePart(i.context, PlatformSupport::PartProgressBar, getWebThemeState(this, o), rect, &extraParams);
     return false;
 }

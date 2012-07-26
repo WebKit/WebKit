@@ -158,6 +158,16 @@ class RenderThemeChromiumSkia : public RenderTheme {
         IntRect determinateProgressValueRectFor(RenderProgress*, const IntRect&) const;
         IntRect indeterminateProgressValueRectFor(RenderProgress*, const IntRect&) const;
         IntRect progressValueRectFor(RenderProgress*, const IntRect&) const;
+
+        class DirectionFlippingScope {
+        public:
+            DirectionFlippingScope(RenderObject*, const PaintInfo&, const IntRect&);
+            ~DirectionFlippingScope();
+
+        private:
+            bool m_needsFlipping;
+            const PaintInfo& m_paintInfo;
+        };
 #endif
 
 private:

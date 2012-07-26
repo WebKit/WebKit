@@ -1,3 +1,29 @@
+2012-07-25  MORITA Hajime  <morrita@google.com>
+
+        [Chromium][Win] <progress> animation on RTL direction is reverse
+        https://bugs.webkit.org/show_bug.cgi?id=92236
+
+        Reviewed by Kent Tamura.
+
+        This change modfies the way to handle RTL progress bar painting.
+        Originally it computes the flipped coordinates. This change uses transformation for the flip.
+        DirectionFlippingScope handles it.
+
+        * rendering/RenderThemeChromiumLinux.cpp:
+        (WebCore::RenderThemeChromiumLinux::paintProgressBar): Applied DirectionFlippingScope
+        * rendering/RenderThemeChromiumSkia.cpp:
+        (WebCore::RenderThemeChromiumSkia::determinateProgressValueRectFor):
+        - Deleted RTL handling in favor of DirectionFlippingScope
+        (WebCore::RenderThemeChromiumSkia::DirectionFlippingScope::DirectionFlippingScope):
+        (WebCore):
+        (WebCore::RenderThemeChromiumSkia::DirectionFlippingScope::~DirectionFlippingScope):
+        * rendering/RenderThemeChromiumSkia.h:
+        (RenderThemeChromiumSkia):
+        (DirectionFlippingScope): Added.
+        * rendering/RenderThemeChromiumWin.cpp:
+        (WebCore):
+        (WebCore::RenderThemeChromiumWin::paintProgressBar): Applied DirectionFlippingScope
+
 2012-07-25  Vineet Chaudhary  <rgf748@motorola.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=92260

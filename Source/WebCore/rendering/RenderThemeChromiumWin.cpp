@@ -802,6 +802,7 @@ bool RenderThemeChromiumWin::paintProgressBar(RenderObject* o, const PaintInfo& 
     IntRect valueRect = renderProgress->isDeterminate() ? determinateProgressValueRectFor(renderProgress, r) : IntRect(0, 0, 0, 0);
     double animatedSeconds = renderProgress->animationStartTime() ?  WTF::currentTime() - renderProgress->animationStartTime() : 0;
     ThemePainter painter(i.context, r);
+    DirectionFlippingScope scope(o, i, r);
     PlatformSupport::paintProgressBar(painter.context(), r, valueRect, renderProgress->isDeterminate(), animatedSeconds);
     return false;
 }
