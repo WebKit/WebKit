@@ -1,3 +1,53 @@
+2012-07-26  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Allocate Structures in a separate part of the Heap
+        https://bugs.webkit.org/show_bug.cgi?id=92420
+
+        Reviewed by Filip Pizlo.
+
+        To fix our issue with destruction/finalization of Structures before their objects, we can move Structures to a separate 
+        part of the Heap that will be swept after all other objects. This first patch will just be separating Structures 
+        out into their own separate MarkedAllocator. Everything else will behave identically.
+
+        * heap/Heap.h: New function to allocate Structures in the Heap.
+        (Heap):
+        (JSC):
+        (JSC::Heap::allocateStructure):
+        * heap/MarkedAllocator.cpp: Pass whether or not we're allocated Structures to the MarkedBlock.
+        (JSC::MarkedAllocator::allocateBlock):
+        * heap/MarkedAllocator.h: Add tracking for whether or not we're allocating only Structures.
+        (JSC::MarkedAllocator::onlyContainsStructures):
+        (MarkedAllocator):
+        (JSC::MarkedAllocator::MarkedAllocator):
+        (JSC::MarkedAllocator::init):
+        * heap/MarkedBlock.cpp: Add tracking for whether or not we're allocating only Structures. We need this to be able to 
+        distinguish the various MarkedBlock types in MarkedSpace::allocatorFor(MarkedBlock*).
+        (JSC::MarkedBlock::create):
+        (JSC::MarkedBlock::MarkedBlock):
+        * heap/MarkedBlock.h:
+        (MarkedBlock):
+        (JSC::MarkedBlock::onlyContainsStructures):
+        (JSC):
+        * heap/MarkedSpace.cpp: Include the new Structure allocator in all the places that all the other allocators are used/modified.
+        (JSC::MarkedSpace::MarkedSpace):
+        (JSC::MarkedSpace::resetAllocators):
+        (JSC::MarkedSpace::canonicalizeCellLivenessData):
+        (JSC::MarkedSpace::isPagedOut):
+        * heap/MarkedSpace.h: Add new MarkedAllocator just for Structures.
+        (MarkedSpace):
+        (JSC::MarkedSpace::allocatorFor):
+        (JSC::MarkedSpace::allocateStructure):
+        (JSC):
+        (JSC::MarkedSpace::forEachBlock):
+        * runtime/Structure.h: Move all of the functions that call allocateCell<Structure> down below the explicit template specialization
+        for allocateCell<Structure>. The new inline specialization for allocateCell directly calls the allocateStructure() function in the
+        Heap.
+        (Structure):
+        (JSC::Structure):
+        (JSC):
+        (JSC::Structure::create):
+        (JSC::Structure::createStructure):
+
 2012-07-26  Filip Pizlo  <fpizlo@apple.com>
 
         JSArray has methods that are neither used nor defined

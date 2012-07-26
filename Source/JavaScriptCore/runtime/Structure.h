@@ -68,14 +68,7 @@ namespace JSC {
 
         typedef JSCell Base;
 
-        static Structure* create(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue prototype, const TypeInfo& typeInfo, const ClassInfo* classInfo)
-        {
-            ASSERT(globalData.structureStructure);
-            ASSERT(classInfo);
-            Structure* structure = new (NotNull, allocateCell<Structure>(globalData.heap)) Structure(globalData, globalObject, prototype, typeInfo, classInfo);
-            structure->finishCreation(globalData);
-            return structure;
-        }
+        static Structure* create(JSGlobalData&, JSGlobalObject*, JSValue prototype, const TypeInfo&, const ClassInfo*);
 
     protected:
         void finishCreation(JSGlobalData& globalData)
@@ -330,13 +323,7 @@ namespace JSC {
             return OBJECT_OFFSETOF(Structure, m_typeInfo) + TypeInfo::typeOffset();
         }
 
-        static Structure* createStructure(JSGlobalData& globalData)
-        {
-            ASSERT(!globalData.structureStructure);
-            Structure* structure = new (NotNull, allocateCell<Structure>(globalData.heap)) Structure(globalData);
-            structure->finishCreation(globalData, CreatingEarlyCell);
-            return structure;
-        }
+        static Structure* createStructure(JSGlobalData&);
         
         bool transitionWatchpointSetHasBeenInvalidated() const
         {
@@ -368,13 +355,7 @@ namespace JSC {
         Structure(JSGlobalData&);
         Structure(JSGlobalData&, const Structure*);
 
-        static Structure* create(JSGlobalData& globalData, const Structure* structure)
-        {
-            ASSERT(globalData.structureStructure);
-            Structure* newStructure = new (NotNull, allocateCell<Structure>(globalData.heap)) Structure(globalData, structure);
-            newStructure->finishCreation(globalData);
-            return newStructure;
-        }
+        static Structure* create(JSGlobalData&, const Structure*);
         
         typedef enum { 
             NoneDictionaryKind = 0,
@@ -461,6 +442,42 @@ namespace JSC {
         unsigned m_staticFunctionReified;
     };
 
+    template <> inline void* allocateCell<Structure>(Heap& heap)
+    {
+#if ENABLE(GC_VALIDATION)
+        ASSERT(!heap.globalData()->isInitializingObject());
+        heap.globalData()->setInitializingObjectClass(&Structure::s_info);
+#endif
+        JSCell* result = static_cast<JSCell*>(heap.allocateStructure());
+        result->clearStructure();
+        return result;
+    }
+
+    inline Structure* Structure::create(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue prototype, const TypeInfo& typeInfo, const ClassInfo* classInfo)
+    {
+        ASSERT(globalData.structureStructure);
+        ASSERT(classInfo);
+        Structure* structure = new (NotNull, allocateCell<Structure>(globalData.heap)) Structure(globalData, globalObject, prototype, typeInfo, classInfo);
+        structure->finishCreation(globalData);
+        return structure;
+    }
+        
+    inline Structure* Structure::createStructure(JSGlobalData& globalData)
+    {
+        ASSERT(!globalData.structureStructure);
+        Structure* structure = new (NotNull, allocateCell<Structure>(globalData.heap)) Structure(globalData);
+        structure->finishCreation(globalData, CreatingEarlyCell);
+        return structure;
+    }
+
+    inline Structure* Structure::create(JSGlobalData& globalData, const Structure* structure)
+    {
+        ASSERT(globalData.structureStructure);
+        Structure* newStructure = new (NotNull, allocateCell<Structure>(globalData.heap)) Structure(globalData, structure);
+        newStructure->finishCreation(globalData);
+        return newStructure;
+    }
+        
     inline PropertyOffset Structure::get(JSGlobalData& globalData, PropertyName propertyName)
     {
         ASSERT(structure()->classInfo() == &s_info);

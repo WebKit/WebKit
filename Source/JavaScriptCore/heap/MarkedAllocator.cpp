@@ -92,7 +92,7 @@ void* MarkedAllocator::allocateSlowCase()
 
 MarkedBlock* MarkedAllocator::allocateBlock()
 {
-    MarkedBlock* block = MarkedBlock::create(m_heap->blockAllocator().allocate(), m_heap, m_cellSize, m_cellsNeedDestruction);
+    MarkedBlock* block = MarkedBlock::create(m_heap->blockAllocator().allocate(), m_heap, m_cellSize, m_cellsNeedDestruction, m_onlyContainsStructures);
     m_markedSpace->didAddBlock(block);
     return block;
 }

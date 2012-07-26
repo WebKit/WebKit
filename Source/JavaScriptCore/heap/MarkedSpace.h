@@ -80,7 +80,8 @@ public:
     MarkedAllocator& destructorAllocatorFor(size_t);
     void* allocateWithDestructor(size_t);
     void* allocateWithoutDestructor(size_t);
-    
+    void* allocateStructure();
+ 
     void resetAllocators();
 
     void visitWeakSets(HeapRootVisitor&);
@@ -132,6 +133,7 @@ private:
 
     Subspace m_destructorSpace;
     Subspace m_normalSpace;
+    MarkedAllocator m_structureAllocator;
 
     Heap* m_heap;
     MarkedBlockSet m_blocks;
@@ -168,8 +170,12 @@ inline MarkedAllocator& MarkedSpace::allocatorFor(size_t bytes)
 
 inline MarkedAllocator& MarkedSpace::allocatorFor(MarkedBlock* block)
 {
+    if (block->onlyContainsStructures())
+        return m_structureAllocator;
+
     if (block->cellsNeedDestruction())
         return destructorAllocatorFor(block->cellSize());
+
     return allocatorFor(block->cellSize());
 }
 
@@ -191,6 +197,11 @@ inline void* MarkedSpace::allocateWithDestructor(size_t bytes)
     return destructorAllocatorFor(bytes).allocate();
 }
 
+inline void* MarkedSpace::allocateStructure()
+{
+    return m_structureAllocator.allocate();
+}
+
 template <typename Functor> inline typename Functor::ReturnType MarkedSpace::forEachBlock(Functor& functor)
 {
     for (size_t i = 0; i < preciseCount; ++i) {
@@ -202,6 +213,8 @@ template <typename Functor> inline typename Functor::ReturnType MarkedSpace::for
         m_normalSpace.impreciseAllocators[i].forEachBlock(functor);
         m_destructorSpace.impreciseAllocators[i].forEachBlock(functor);
     }
+
+    m_structureAllocator.forEachBlock(functor);
 
     return functor.returnValue();
 }

@@ -183,6 +183,7 @@ namespace JSC {
 
         void* allocateWithDestructor(size_t);
         void* allocateWithoutDestructor(size_t);
+        void* allocateStructure();
 
         static const size_t minExtraCost = 256;
         static const size_t maxExtraCost = 1024 * 1024;
@@ -367,7 +368,12 @@ namespace JSC {
         ASSERT(isValidAllocation(bytes));
         return m_objectSpace.allocateWithoutDestructor(bytes);
     }
-    
+   
+    inline void* Heap::allocateStructure()
+    {
+        return m_objectSpace.allocateStructure();
+    }
+ 
     inline CheckedBoolean Heap::tryAllocateStorage(size_t bytes, void** outPtr)
     {
         return m_storageSpace.tryAllocate(bytes, outPtr);

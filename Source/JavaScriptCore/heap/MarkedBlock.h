@@ -113,7 +113,7 @@ namespace JSC {
             ReturnType m_count;
         };
 
-        static MarkedBlock* create(const PageAllocationAligned&, Heap*, size_t cellSize, bool cellsNeedDestruction);
+        static MarkedBlock* create(const PageAllocationAligned&, Heap*, size_t cellSize, bool cellsNeedDestruction, bool onlyContainsStructures);
         static PageAllocationAligned destroy(MarkedBlock*);
 
         static bool isAtomAligned(const void*);
@@ -145,6 +145,7 @@ namespace JSC {
 
         size_t cellSize();
         bool cellsNeedDestruction();
+        bool onlyContainsStructures();
 
         size_t size();
         size_t capacity();
@@ -195,7 +196,7 @@ namespace JSC {
 
         typedef char Atom[atomSize];
 
-        MarkedBlock(const PageAllocationAligned&, Heap*, size_t cellSize, bool cellsNeedDestruction);
+        MarkedBlock(const PageAllocationAligned&, Heap*, size_t cellSize, bool cellsNeedDestruction, bool onlyContainsStructures);
         Atom* atoms();
         size_t atomNumber(const void*);
         void callDestructor(JSCell*);
@@ -213,6 +214,7 @@ namespace JSC {
         WTF::Bitmap<atomsPerBlock, WTF::BitmapNotAtomic> m_marks;
 #endif
         bool m_cellsNeedDestruction;
+        bool m_onlyContainsStructures;
         BlockState m_state;
         WeakSet m_weakSet;
     };
@@ -320,6 +322,11 @@ namespace JSC {
     inline bool MarkedBlock::cellsNeedDestruction()
     {
         return m_cellsNeedDestruction; 
+    }
+
+    inline bool MarkedBlock::onlyContainsStructures()
+    {
+        return m_onlyContainsStructures;
     }
 
     inline size_t MarkedBlock::size()

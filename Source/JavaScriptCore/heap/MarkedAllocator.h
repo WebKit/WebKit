@@ -24,6 +24,7 @@ public:
     void zapFreeList();
     size_t cellSize() { return m_cellSize; }
     bool cellsNeedDestruction() { return m_cellsNeedDestruction; }
+    bool onlyContainsStructures() { return m_onlyContainsStructures; }
     void* allocate();
     Heap* heap() { return m_heap; }
     
@@ -31,7 +32,7 @@ public:
     
     void addBlock(MarkedBlock*);
     void removeBlock(MarkedBlock*);
-    void init(Heap*, MarkedSpace*, size_t cellSize, bool cellsNeedDestruction);
+    void init(Heap*, MarkedSpace*, size_t cellSize, bool cellsNeedDestruction, bool onlyContainsStructures);
 
     bool isPagedOut(double deadline);
    
@@ -48,6 +49,7 @@ private:
     DoublyLinkedList<HeapBlock> m_blockList;
     size_t m_cellSize;
     bool m_cellsNeedDestruction;
+    bool m_onlyContainsStructures;
     Heap* m_heap;
     MarkedSpace* m_markedSpace;
 };
@@ -56,17 +58,19 @@ inline MarkedAllocator::MarkedAllocator()
     : m_currentBlock(0)
     , m_cellSize(0)
     , m_cellsNeedDestruction(true)
+    , m_onlyContainsStructures(false)
     , m_heap(0)
     , m_markedSpace(0)
 {
 }
 
-inline void MarkedAllocator::init(Heap* heap, MarkedSpace* markedSpace, size_t cellSize, bool cellsNeedDestruction)
+inline void MarkedAllocator::init(Heap* heap, MarkedSpace* markedSpace, size_t cellSize, bool cellsNeedDestruction, bool onlyContainsStructures)
 {
     m_heap = heap;
     m_markedSpace = markedSpace;
     m_cellSize = cellSize;
     m_cellsNeedDestruction = cellsNeedDestruction;
+    m_onlyContainsStructures = onlyContainsStructures;
 }
 
 inline void* MarkedAllocator::allocate()
