@@ -1,4 +1,4 @@
-Tests DeprecatedPeerConnection::addStream().
+Tests PeerConnection00::addStream().
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 

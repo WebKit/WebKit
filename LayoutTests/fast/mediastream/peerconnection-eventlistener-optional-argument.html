@@ -10,7 +10,7 @@
 <script>
 description("This test confirms if the third argument of addEventListener() and removeEventListener() is optional.");
 
-var pc = new webkitDeprecatedPeerConnection("some.server.com", function() {});
+var pc = new webkitPeerConnection00("some.server.com", function() {});
 shouldBe('pc.addEventListener("foo", function() {})', 'undefined');
 shouldBe('pc.addEventListener("foo", function() {}, false)', 'undefined');
 shouldBe('pc.addEventListener("foo", function() {}, true)', 'undefined');

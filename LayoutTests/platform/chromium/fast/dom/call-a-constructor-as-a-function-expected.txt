@@ -18,7 +18,6 @@ PASS Int16Array() threw exception TypeError: DOM object constructor cannot be ca
 PASS Int32Array() threw exception TypeError: DOM object constructor cannot be called as a function..
 PASS Int8Array() threw exception TypeError: DOM object constructor cannot be called as a function..
 PASS MessageChannel() threw exception TypeError: DOM object constructor cannot be called as a function..
-PASS webkitDeprecatedPeerConnection() threw exception TypeError: DOM object constructor cannot be called as a function..
 SKIP SharedWorker is not implemented.
 PASS Uint16Array() threw exception TypeError: DOM object constructor cannot be called as a function..
 PASS Uint32Array() threw exception TypeError: DOM object constructor cannot be called as a function..

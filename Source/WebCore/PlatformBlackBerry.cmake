@@ -236,7 +236,6 @@ ENDIF ()
 
 if (ENABLE_MEDIA_STREAM)
     LIST(APPEND WebCore_SOURCES
-        platform/mediastream/blackberry/DeprecatedPeerConnectionHandler.cpp
         platform/mediastream/blackberry/MediaStreamCenterBlackBerry.cpp
     )
 ENDIF ()

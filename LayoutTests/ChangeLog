@@ -1,3 +1,27 @@
+2012-07-26  Tommy Widenflycht  <tommyw@google.com>
+
+        MediaStream API: Remove DeprecatedPeerConnection
+        https://bugs.webkit.org/show_bug.cgi?id=92106
+
+        Reviewed by Adam Barth.
+
+        Changed all usages of DeprecatedPeerConnection to PeerConnection00.
+
+        * fast/dom/call-a-constructor-as-a-function-expected.txt:
+        * fast/dom/call-a-constructor-as-a-function.html:
+        * fast/mediastream/peerconnection-addstream-expected.txt:
+        * fast/mediastream/peerconnection-argument-types-expected.txt:
+        * fast/mediastream/peerconnection-eventlistener-optional-argument.html:
+        * fast/mediastream/peerconnection-mediastreamlist.html:
+        * fast/mediastream/peerconnection-removestream-expected.txt:
+        * fast/mediastream/script-tests/peerconnection-addstream.js:
+        * fast/mediastream/script-tests/peerconnection-argument-types.js:
+        * fast/mediastream/script-tests/peerconnection-removestream.js:
+        * platform/chromium/fast/dom/call-a-constructor-as-a-function-expected.txt:
+        * platform/gtk/fast/dom/call-a-constructor-as-a-function-expected.txt:
+        * platform/gtk/fast/js/global-constructors-expected.txt:
+        * platform/win/fast/dom/call-a-constructor-as-a-function-expected.txt:
+
 2012-07-26  Mike West  <mkwst@chromium.org>
 
         Implement the experimental Content Security Policy script interface.

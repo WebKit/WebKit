@@ -1,50 +1,15 @@
-description("Tests DeprecatedPeerConnection::removeStream().");
+description("Tests PeerConnection00::removeStream().");
 
-var pc = new webkitDeprecatedPeerConnection("STUN some.server.com", function() {});
+var pc = new webkitPeerConnection00("STUN some.server.com", function() {});
 
-try {
-    pc.removeStream();
-} catch(e) {
-    testPassed('pc.removeStream() threw ' + e);
-}
-
-try {
-    pc.removeStream(undefined);
-} catch(e) {
-    testPassed('pc.removeStream(undefined) threw ' + e);
-}
-
-try {
-    pc.removeStream(null);
-} catch(e) {
-    testPassed('pc.removeStream(null) threw ' + e);
-}
-
-try {
-    pc.removeStream(new Array());
-} catch(e) {
-    testPassed('pc.removeStream(new Array()) threw ' + e);
-}
-try {
-    pc.removeStream({});
-} catch(e) {
-    testPassed('pc.removeStream({}) threw' + e);
-}
-try {
-    pc.removeStream(42);
-} catch(e) {
-    testPassed('pc.removeStream(42) threw' + e);
-}
-try {
-    pc.removeStream(Infinity);
-} catch(e) {
-    testPassed('pc.removeStream(Infinity) threw' + e);
-}
-try {
-    pc.removeStream(-Infinity);
-} catch(e) {
-    testPassed('pc.removeStream(-Infinity) threw' + e);
-}
+shouldThrow('pc.removeStream();');
+shouldThrow('pc.removeStream(undefined);');
+shouldThrow('pc.removeStream(null);');
+shouldThrow('pc.removeStream(new Array());');
+shouldThrow('pc.removeStream({});');
+shouldThrow('pc.removeStream(42);');
+shouldThrow('pc.removeStream(Infinity);');
+shouldThrow('pc.removeStream(-Infinity);');
 
 window.successfullyParsed = true;
 

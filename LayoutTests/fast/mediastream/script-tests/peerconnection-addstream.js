@@ -1,6 +1,6 @@
-description("Tests DeprecatedPeerConnection::addStream().");
+description("Tests PeerConnection00::addStream().");
 
-var pc = new webkitDeprecatedPeerConnection("STUN some.server.com", function() {});
+var pc = new webkitPeerConnection00("STUN some.server.com", function() {});
 
 try {
     pc.addStream();

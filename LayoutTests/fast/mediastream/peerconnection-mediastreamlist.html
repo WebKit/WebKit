@@ -11,7 +11,7 @@
 <script>
 description("This test confirms that out-of-bounds access of MediaStreamList returns undefined.");
 
-var pc = new webkitDeprecatedPeerConnection("", function() {});
+var pc = new webkitPeerConnection00("", function() {});
 
 shouldBeUndefined('pc.localStreams[0xbadc0ded]');
 

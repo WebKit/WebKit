@@ -187,7 +187,6 @@ public:
 
     static bool peerConnectionEnabled() { return isMediaStreamEnabled && isPeerConnectionEnabled; }
     static void setPeerConnectionEnabled(bool isEnabled) { isPeerConnectionEnabled = isEnabled; }
-    static bool webkitDeprecatedPeerConnectionEnabled() { return peerConnectionEnabled(); }
     static bool webkitPeerConnection00Enabled() { return peerConnectionEnabled(); }
 #endif
 

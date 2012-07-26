@@ -189,7 +189,6 @@ SET(WebCore_IDL_FILES
     Modules/intents/IntentResultCallback.idl
     Modules/intents/NavigatorIntents.idl
 
-    Modules/mediastream/DeprecatedPeerConnection.idl
     Modules/mediastream/DOMWindowMediaStream.idl
     Modules/mediastream/IceCallback.idl
     Modules/mediastream/IceCandidate.idl
@@ -206,7 +205,6 @@ SET(WebCore_IDL_FILES
     Modules/mediastream/NavigatorUserMediaSuccessCallback.idl
     Modules/mediastream/PeerConnection00.idl
     Modules/mediastream/SessionDescription.idl
-    Modules/mediastream/SignalingCallback.idl
 
     Modules/networkinfo/NavigatorNetworkInfoConnection.idl
     Modules/networkinfo/NetworkInfoConnection.idl
@@ -814,7 +812,6 @@ SET(WebCore_SOURCES
     Modules/intents/IntentRequest.cpp
     Modules/intents/NavigatorIntents.cpp
 
-    Modules/mediastream/DeprecatedPeerConnection.cpp
     Modules/mediastream/IceCandidate.cpp
     Modules/mediastream/LocalMediaStream.cpp
     Modules/mediastream/MediaStream.cpp

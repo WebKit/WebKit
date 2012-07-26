@@ -18,7 +18,6 @@ PASS Int16Array() threw exception TypeError: '[object Int16ArrayConstructor]' is
 PASS Int32Array() threw exception TypeError: '[object Int32ArrayConstructor]' is not a function (evaluating 'Int32Array()').
 PASS Int8Array() threw exception TypeError: '[object Int8ArrayConstructor]' is not a function (evaluating 'Int8Array()').
 PASS MessageChannel() threw exception TypeError: '[object MessageChannelConstructor]' is not a function (evaluating 'MessageChannel()').
-SKIP webkitDeprecatedPeerConnection is not implemented.
 PASS SharedWorker() threw exception TypeError: '[object SharedWorkerConstructor]' is not a function (evaluating 'SharedWorker()').
 PASS Uint16Array() threw exception TypeError: '[object Uint16ArrayConstructor]' is not a function (evaluating 'Uint16Array()').
 PASS Uint32Array() threw exception TypeError: '[object Uint32ArrayConstructor]' is not a function (evaluating 'Uint32Array()').

@@ -342,7 +342,6 @@ PASS XPathEvaluator.toString() is '[object XPathEvaluatorConstructor]'
 PASS XPathException.toString() is '[object XPathExceptionConstructor]'
 PASS XPathResult.toString() is '[object XPathResultConstructor]'
 PASS XSLTProcessor.toString() is '[object XSLTProcessorConstructor]'
-FAIL webkitDeprecatedPeerConnection.toString() should be [object webkitDeprecatedPeerConnectionConstructor]. Was [object DeprecatedPeerConnectionConstructor].
 FAIL webkitMediaStream.toString() should be [object webkitMediaStreamConstructor]. Was [object MediaStreamConstructor].
 FAIL webkitPeerConnection00.toString() should be [object webkitPeerConnection00Constructor]. Was [object PeerConnection00Constructor].
 FAIL webkitURL.toString() should be [object webkitURLConstructor]. Was [object URLConstructor].

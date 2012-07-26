@@ -5,7 +5,6 @@ BatteryManager conditional=BATTERY_STATUS
 DedicatedWorkerContext conditional=WORKERS
 DOMApplicationCache
 DOMWindow
-DeprecatedPeerConnection conditional=MEDIA_STREAM
 EventSource
 FileReader conditional=BLOB
 FileWriter conditional=FILE_SYSTEM

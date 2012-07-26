@@ -1,3 +1,38 @@
+2012-07-26  Tommy Widenflycht  <tommyw@google.com>
+
+        MediaStream API: Remove DeprecatedPeerConnection
+        https://bugs.webkit.org/show_bug.cgi?id=92106
+
+        Reviewed by Adam Barth.
+
+        Since we are getting ready to add an updated PeerConnection
+        the old DeprecatedPeerConnection will have to go.
+
+        No new tests, and old tests converted to use PeerConnection00.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Modules/mediastream/DOMWindowMediaStream.idl:
+        * Modules/mediastream/DeprecatedPeerConnection.cpp: Removed.
+        * Modules/mediastream/DeprecatedPeerConnection.h: Removed.
+        * Modules/mediastream/DeprecatedPeerConnection.idl: Removed.
+        * Modules/mediastream/SignalingCallback.h: Removed.
+        * Modules/mediastream/SignalingCallback.idl: Removed.
+        * PlatformBlackBerry.cmake:
+        * PlatformEfl.cmake:
+        * UseJSC.cmake:
+        * WebCore.gypi:
+        * bindings/generic/RuntimeEnabledFeatures.h:
+        * bindings/js/JSDeprecatedPeerConnectionCustom.cpp: Removed.
+        * dom/EventTargetFactory.in:
+        * platform/mediastream/DeprecatedPeerConnectionHandler.h: Removed.
+        * platform/mediastream/DeprecatedPeerConnectionHandlerClient.h: Removed.
+        * platform/mediastream/blackberry/DeprecatedPeerConnectionHandler.cpp: Removed.
+        * platform/mediastream/chromium/DeprecatedPeerConnectionHandler.cpp: Removed.
+        * platform/mediastream/chromium/DeprecatedPeerConnectionHandlerInternal.cpp: Removed.
+        * platform/mediastream/chromium/DeprecatedPeerConnectionHandlerInternal.h: Removed.
+        * platform/mediastream/gstreamer/DeprecatedPeerConnectionHandler.cpp: Removed.
+
 2012-07-26  Mike West  <mkwst@chromium.org>
 
         CSP 1.1: Implement the Content Security Policy script interface.
