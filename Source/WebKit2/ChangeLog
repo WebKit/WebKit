@@ -1,3 +1,24 @@
+2012-07-25  Seokju Kwon  <seokju.kwon@samsung.com>
+
+        [EFL][WK2] Implement the inspector for WebKitTestRunner
+        https://bugs.webkit.org/show_bug.cgi?id=92213
+
+        Reviewed by Ryosuke Niwa.
+
+        Partial Implementation of WebInspectorProxyEfl for WebkitTestRunner.
+        And Web Inspector resources installation.
+
+        * PlatformEfl.cmake:
+        * UIProcess/WebInspectorProxy.cpp:
+        (WebKit::WebInspectorProxy::WebInspectorProxy):
+        * UIProcess/WebInspectorProxy.h:
+        (WebInspectorProxy):
+        * UIProcess/efl/WebInspectorProxyEfl.cpp:
+        (WebKit::WebInspectorProxy::platformCreateInspectorPage):
+        (WebKit::WebInspectorProxy::platformDidClose):
+        (WebKit::WebInspectorProxy::inspectorPageURL):
+        (WebKit::WebInspectorProxy::inspectorBaseURL):
+
 2012-07-25  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
 
         Create a specialized struct for use in HashMap iterators

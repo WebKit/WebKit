@@ -252,3 +252,24 @@ IF (ENABLE_API_TESTS)
         TARGET_LINK_LIBRARIES(${testName} ${EWK2UnitTests_LIBRARIES} ewk2UnitTestUtils)
     ENDFOREACH ()
 ENDIF ()
+
+IF (ENABLE_INSPECTOR)
+    SET(WK2_WEB_INSPECTOR_DIR ${CMAKE_BINARY_DIR}/WebKit2/efl/webinspector)
+    SET(WK2_WEB_INSPECTOR_INSTALL_DIR ${CMAKE_INSTALL_PREFIX}/${WebKit2_LIBRARY_NAME}-${PROJECT_VERSION_MAJOR})
+    ADD_DEFINITIONS(-DWK2_WEB_INSPECTOR_DIR="${WK2_WEB_INSPECTOR_DIR}")
+    ADD_DEFINITIONS(-DWK2_WEB_INSPECTOR_INSTALL_DIR="${WK2_WEB_INSPECTOR_INSTALL_DIR}/webinspector")
+    ADD_CUSTOM_TARGET(
+        wk2-web-inspector-resources ALL
+        COMMAND ${CMAKE_COMMAND} -E copy_directory ${WEBCORE_DIR}/inspector/front-end ${WK2_WEB_INSPECTOR_DIR}
+        COMMAND ${CMAKE_COMMAND} -E copy ${WEBCORE_DIR}/English.lproj/localizedStrings.js ${WK2_WEB_INSPECTOR_DIR}
+        COMMAND ${CMAKE_COMMAND} -E copy ${DERIVED_SOURCES_WEBCORE_DIR}/InspectorBackendCommands.js ${WK2_WEB_INSPECTOR_DIR}/InspectorBackendCommands.js
+        DEPENDS ${WebCore_LIBRARY_NAME}
+    )
+    INSTALL(DIRECTORY ${WK2_WEB_INSPECTOR_DIR}
+        DESTINATION ${WK2_WEB_INSPECTOR_INSTALL_DIR}
+        FILES_MATCHING PATTERN "*.js"
+                       PATTERN "*.html"
+                       PATTERN "*.css"
+                       PATTERN "*.gif"
+                       PATTERN "*.png")
+ENDIF ()

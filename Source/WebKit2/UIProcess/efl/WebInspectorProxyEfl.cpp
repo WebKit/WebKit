@@ -28,15 +28,25 @@
 
 #if ENABLE(INSPECTOR)
 
+#include "WebProcessProxy.h"
+#include "ewk_view_private.h"
 #include <WebCore/NotImplemented.h>
+#include <unistd.h>
+#include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebKit {
 
 WebPageProxy* WebInspectorProxy::platformCreateInspectorPage()
 {
-    notImplemented();
-    return 0;
+    ASSERT(m_page);
+
+    m_inspectorWindow = ecore_evas_buffer_new(initialWindowWidth, initialWindowHeight);
+    if (!m_inspectorWindow)
+        return 0;
+
+    m_inspectorView = ewk_view_base_add(ecore_evas_get(m_inspectorWindow), toAPI(page()->process()->context()), toAPI(inspectorPageGroup()));
+    return ewk_view_page_get(m_inspectorView);
 }
 
 void WebInspectorProxy::platformOpen()
@@ -46,7 +56,15 @@ void WebInspectorProxy::platformOpen()
 
 void WebInspectorProxy::platformDidClose()
 {
-    notImplemented();
+    if (m_inspectorView) {
+        evas_object_del(m_inspectorView);
+        m_inspectorView = 0;
+    }
+
+    if (m_inspectorWindow) {
+        ecore_evas_free(m_inspectorWindow);
+        m_inspectorWindow = 0;
+    }
 }
 
 void WebInspectorProxy::platformBringToFront()
@@ -67,14 +85,16 @@ void WebInspectorProxy::platformInspectedURLChanged(const String&)
 
 String WebInspectorProxy::inspectorPageURL() const
 {
-    notImplemented();
-    return String();
+    return makeString(inspectorBaseURL(), "/inspector.html");
 }
 
 String WebInspectorProxy::inspectorBaseURL() const
 {
-    notImplemented();
-    return String();
+    String inspectorFilesPath = makeString("file://", WK2_WEB_INSPECTOR_INSTALL_DIR);
+    if (access(inspectorFilesPath.utf8().data(), R_OK))
+        inspectorFilesPath = makeString("file://", WK2_WEB_INSPECTOR_DIR);
+
+    return inspectorFilesPath;
 }
 
 unsigned WebInspectorProxy::platformInspectedWindowHeight()

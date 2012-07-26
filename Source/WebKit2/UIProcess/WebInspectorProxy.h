@@ -52,6 +52,11 @@ OBJC_CLASS WKWebInspectorWKView;
 #include "WebInspectorClientGtk.h"
 #endif
 
+#if PLATFORM(EFL)
+#include <Ecore_Evas.h>
+#include <Evas.h>
+#endif
+
 namespace WebKit {
 
 class WebFrameProxy;
@@ -217,6 +222,9 @@ private:
     WebInspectorClientGtk m_client;
     GtkWidget* m_inspectorView;
     GtkWidget* m_inspectorWindow;
+#elif PLATFORM(EFL)
+    Evas_Object* m_inspectorView;
+    Ecore_Evas* m_inspectorWindow;
 #endif
 #if ENABLE(INSPECTOR_SERVER)
     int m_remoteInspectionPageId;
