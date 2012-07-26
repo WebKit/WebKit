@@ -29,6 +29,7 @@
 #ifndef NetworkResourcesData_h
 #define NetworkResourcesData_h
 
+#include "CachedResourceHandle.h"
 #include "InspectorPageAgent.h"
 #include "TextResourceDecoder.h"
 
@@ -64,9 +65,7 @@ public:
 
         bool hasContent() const { return !m_content.isNull(); }
         String content() const { return m_content; }
-        void setContent(const String&, bool base64Encoded);
-
-        bool base64Encoded() const { return m_base64Encoded; }
+        void setContent(const String&);
 
         unsigned removeContent();
         bool isContentPurged() const { return m_isContentPurged; }
@@ -87,21 +86,20 @@ public:
         PassRefPtr<SharedBuffer> buffer() const { return m_buffer; }
         void setBuffer(PassRefPtr<SharedBuffer> buffer) { m_buffer = buffer; }
 
-        CachedResource* cachedResource() const { return m_cachedResource; }
+        CachedResource* cachedResource() const { return m_cachedResource.get(); }
         void setCachedResource(CachedResource* cachedResource) { m_cachedResource = cachedResource; }
 
     private:
         bool hasData() const { return m_dataBuffer; }
-        size_t dataLength() const;
-        void appendData(const char* data, size_t dataLength);
-        size_t decodeDataToContent();
+        int dataLength() const;
+        void appendData(const char* data, int dataLength);
+        int decodeDataToContent();
 
         String m_requestId;
         String m_loaderId;
         String m_frameId;
         String m_url;
         String m_content;
-        bool m_base64Encoded;
         RefPtr<SharedBuffer> m_dataBuffer;
         bool m_isContentPurged;
         InspectorPageAgent::ResourceType m_type;
@@ -111,7 +109,7 @@ public:
         RefPtr<TextResourceDecoder> m_decoder;
 
         RefPtr<SharedBuffer> m_buffer;
-        CachedResource* m_cachedResource;
+        CachedResourceHandle<CachedResource> m_cachedResource;
     };
 
     NetworkResourcesData();
@@ -122,28 +120,27 @@ public:
     void responseReceived(const String& requestId, const String& frameId, const ResourceResponse&);
     void setResourceType(const String& requestId, InspectorPageAgent::ResourceType);
     InspectorPageAgent::ResourceType resourceType(const String& requestId);
-    void setResourceContent(const String& requestId, const String& content, bool base64Encoded = false);
-    void maybeAddResourceData(const String& requestId, const char* data, size_t dataLength);
+    void setResourceContent(const String& requestId, const String& content);
+    void maybeAddResourceData(const String& requestId, const char* data, int dataLength);
     void maybeDecodeDataToContent(const String& requestId);
     void addCachedResource(const String& requestId, CachedResource*);
     void addResourceSharedBuffer(const String& requestId, PassRefPtr<SharedBuffer>, const String& textEncodingName);
     ResourceData const* data(const String& requestId);
-    Vector<String> removeCachedResource(CachedResource*);
     void clear(const String& preservedLoaderId = String());
 
-    void setResourcesDataSizeLimits(size_t maximumResourcesContentSize, size_t maximumSingleResourceContentSize);
+    void setResourcesDataSizeLimits(int maximumResourcesContentSize, int maximumSingleResourceContentSize);
 
 private:
     void ensureNoDataForRequestId(const String& requestId);
-    bool ensureFreeSpace(size_t size);
+    bool ensureFreeSpace(int size);
 
     Deque<String> m_requestIdsDeque;
 
     typedef HashMap<String, ResourceData*> ResourceDataMap;
     ResourceDataMap m_requestIdToResourceDataMap;
-    size_t m_contentSize;
-    size_t m_maximumResourcesContentSize;
-    size_t m_maximumSingleResourceContentSize;
+    int m_contentSize;
+    int m_maximumResourcesContentSize;
+    int m_maximumSingleResourceContentSize;
 };
 
 } // namespace WebCore

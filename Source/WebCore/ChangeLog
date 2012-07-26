@@ -1,3 +1,57 @@
+2012-07-26  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r123715.
+        http://trac.webkit.org/changeset/123715
+        https://bugs.webkit.org/show_bug.cgi?id=92356
+
+        Breaks compilation on multiple platforms (Requested by vsevik
+        on #webkit).
+
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::InspectorController):
+        (WebCore::InspectorController::inspectedPageDestroyed):
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore):
+        * inspector/InspectorInstrumentation.h:
+        (InspectorInstrumentation):
+        * inspector/InspectorResourceAgent.cpp:
+        (WebCore::InspectorResourceAgent::didReceiveData):
+        (WebCore::InspectorResourceAgent::getResponseBody):
+        * inspector/InspectorResourceAgent.h:
+        (InspectorResourceAgent):
+        * inspector/NetworkResourcesData.cpp:
+        (WebCore::NetworkResourcesData::ResourceData::ResourceData):
+        (WebCore::NetworkResourcesData::ResourceData::setContent):
+        (WebCore::NetworkResourcesData::ResourceData::dataLength):
+        (WebCore::NetworkResourcesData::ResourceData::appendData):
+        (WebCore::NetworkResourcesData::ResourceData::decodeDataToContent):
+        (WebCore::NetworkResourcesData::setResourceContent):
+        (WebCore::NetworkResourcesData::maybeAddResourceData):
+        (WebCore::NetworkResourcesData::maybeDecodeDataToContent):
+        (WebCore::NetworkResourcesData::setResourcesDataSizeLimits):
+        (WebCore::NetworkResourcesData::ensureFreeSpace):
+        * inspector/NetworkResourcesData.h:
+        (ResourceData):
+        (WebCore::NetworkResourcesData::ResourceData::cachedResource):
+        (NetworkResourcesData):
+        * loader/cache/CachedResource.cpp:
+        (WebCore::CachedResource::~CachedResource):
+        (WebCore::CachedResource::removeClient):
+        (WebCore::CachedResource::deleteIfPossible):
+        * loader/cache/CachedResource.h:
+        (CachedResource):
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::garbageCollectDocumentResourcesTimerFired):
+        (WebCore::CachedResourceLoader::clearPreloads):
+        * loader/cache/CachedResourceLoader.h:
+        (CachedResourceLoader):
+        * loader/cache/MemoryCache.cpp:
+        (WebCore::MemoryCache::evict):
+        * testing/InternalSettings.cpp:
+        * testing/Internals.cpp:
+        * testing/Internals.h:
+        (Internals):
+
 2012-07-26  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Add *explicit* keyword to constructors in WebCore/platform

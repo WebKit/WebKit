@@ -105,7 +105,6 @@ public:
 
     void removeCachedResource(CachedResource*) const;
     void loadDone();
-    void garbageCollectDocumentResources();
     
     void incrementRequestCount(const CachedResource*);
     void decrementRequestCount(const CachedResource*);

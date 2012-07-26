@@ -103,7 +103,6 @@ public:
     void didReceiveXHRResponse(unsigned long identifier);
     void willLoadXHRSynchronously();
     void didLoadXHRSynchronously();
-    void willDestroyCachedResource(CachedResource*);
 
     void applyUserAgentOverride(String* userAgent);
 
