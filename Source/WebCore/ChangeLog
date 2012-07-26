@@ -1,3 +1,77 @@
+2012-07-26  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Resource agent's reference to cached resources should be weak.
+        https://bugs.webkit.org/show_bug.cgi?id=92108
+
+        Reviewed by Pavel Feldman.
+
+        NetworkResourcesData now stores a raw pointer to CachedResource.
+        CachedResource now notifies InspectorInstrumentation that it will be destroyed.
+        InspectorInstrumentation stores a set of InstrumentingAgents and broadcasts willDestroyCachedResource event to all available resourceAgents.
+        Destroyed resources content is saved to NetworkResourcesData.
+        Changed content size variables type in NetworkResourcesData from int to size_t.
+
+        Tests: http/tests/inspector/network/cached-resource-destroyed-moved-to-storage.html
+               http/tests/inspector/network/cached-resource-destroyed-too-big-discarded.html
+
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::InspectorController):
+        (WebCore::InspectorController::inspectedPageDestroyed):
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore):
+        (WebCore::InspectorInstrumentation::willDestroyCachedResourceImpl):
+        (WebCore::InspectorInstrumentation::registerInstrumentingAgents):
+        (WebCore::InspectorInstrumentation::unregisterInstrumentingAgents):
+        * inspector/InspectorInstrumentation.h:
+        (InspectorInstrumentation):
+        (WebCore::InspectorInstrumentation::willDestroyCachedResource):
+        (WebCore):
+        * inspector/InspectorResourceAgent.cpp:
+        (WebCore::InspectorResourceAgent::didReceiveData):
+        (WebCore::InspectorResourceAgent::willDestroyCachedResource):
+        (WebCore):
+        (WebCore::InspectorResourceAgent::getResponseBody):
+        * inspector/InspectorResourceAgent.h:
+        (InspectorResourceAgent):
+        * inspector/NetworkResourcesData.cpp:
+        (WebCore::NetworkResourcesData::ResourceData::ResourceData):
+        (WebCore::NetworkResourcesData::ResourceData::setContent):
+        (WebCore::NetworkResourcesData::ResourceData::dataLength):
+        (WebCore::NetworkResourcesData::ResourceData::appendData):
+        (WebCore::NetworkResourcesData::ResourceData::decodeDataToContent):
+        (WebCore::NetworkResourcesData::setResourceContent):
+        (WebCore::NetworkResourcesData::maybeAddResourceData):
+        (WebCore::NetworkResourcesData::maybeDecodeDataToContent):
+        (WebCore::NetworkResourcesData::removeCachedResource):
+        (WebCore):
+        (WebCore::NetworkResourcesData::setResourcesDataSizeLimits):
+        (WebCore::NetworkResourcesData::ensureFreeSpace):
+        * inspector/NetworkResourcesData.h:
+        (ResourceData):
+        (WebCore::NetworkResourcesData::ResourceData::base64Encoded):
+        (WebCore::NetworkResourcesData::ResourceData::cachedResource):
+        (NetworkResourcesData):
+        * loader/cache/CachedResource.cpp:
+        (WebCore::CachedResource::~CachedResource):
+        (WebCore::CachedResource::removeClient):
+        (WebCore::CachedResource::deleteIfPossible):
+        * loader/cache/CachedResource.h:
+        (CachedResource):
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::garbageCollectDocumentResourcesTimerFired):
+        (WebCore::CachedResourceLoader::garbageCollectDocumentResources):
+        (WebCore::CachedResourceLoader::clearPreloads):
+        * loader/cache/CachedResourceLoader.h:
+        (CachedResourceLoader):
+        * loader/cache/MemoryCache.cpp:
+        (WebCore::MemoryCache::evict):
+        * testing/InternalSettings.cpp:
+        * testing/Internals.cpp:
+        (WebCore::Internals::garbageCollectDocumentResources):
+        (WebCore):
+        * testing/Internals.h:
+        (Internals):
+
 2012-07-26  Luke Macpherson   <macpherson@chromium.org>
 
         Fix null ptr deref in CSSParser::storeVariableDeclaration().

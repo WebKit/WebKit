@@ -402,8 +402,7 @@ void MemoryCache::evict(CachedResource* resource)
     } else
         ASSERT(m_resources.get(resource->url()) != resource);
 
-    if (resource->canDelete())
-        delete resource;
+    resource->deleteIfPossible();
 }
 
 static inline unsigned fastLog2(unsigned i)
