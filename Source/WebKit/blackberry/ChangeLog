@@ -1,5 +1,27 @@
 2012-07-26  Mike Fenton  <mifenton@rim.com>
 
+        [BlackBerry] Improve the logs in Selection Handler.
+        https://bugs.webkit.org/show_bug.cgi?id=92405
+
+        Reviewed by Rob Buis.
+
+        Clean up selection logging, fix priority and style
+        of helper function.
+
+        Reviewed Internally by Nima Ghanavatian.
+
+        * WebKitSupport/SelectionHandler.cpp:
+        (BlackBerry::WebKit::SelectionHandler::cancelSelection):
+        (BlackBerry::WebKit::SelectionHandler::shouldUpdateSelectionOrCaretForPoint):
+        (BlackBerry::WebKit::SelectionHandler::setCaretPosition):
+        (BlackBerry::WebKit::SelectionHandler::updateOrHandleInputSelection):
+        (BlackBerry::WebKit::SelectionHandler::setSelection):
+        (BlackBerry::WebKit::SelectionHandler::selectObject):
+        (BlackBerry::WebKit::SelectionHandler::selectionPositionChanged):
+        (BlackBerry::WebKit::SelectionHandler::caretPositionChanged):
+
+2012-07-26  Mike Fenton  <mifenton@rim.com>
+
         [BlackBerry] Add timing logs to SelectionHandler.
         https://bugs.webkit.org/show_bug.cgi?id=92404
 
