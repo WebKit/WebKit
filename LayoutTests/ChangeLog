@@ -1,3 +1,73 @@
+2012-07-26  Bruno de Oliveira Abinader  <bruno.abinader@basyskom.com>
+
+        [Qt] Reskip fast/forms WK2 added results
+        https://bugs.webkit.org/show_bug.cgi?id=91504
+
+        Reviewed by Alexis Menard.
+
+        This patch reverts the added WK2 layout test results from r123156 "[Qt]
+        Added/updated missing fast/forms results after rebaseline". As discussed with
+        Caio, almost all of these additions were due to an erroneous input-text and
+        text-area default size diff between WK1 and WK2 (handled in bug 91990), and a
+        few ones that are still failing independent of font changes (handled in bug
+        91610). These tests were reskipped and reassigned to proper bugs.
+
+        * platform/qt-5.0-wk2/Skipped:
+        * platform/qt-5.0-wk2/fast/forms/basic-inputs-expected.png: Removed.
+        * platform/qt-5.0-wk2/fast/forms/basic-inputs-expected.txt: Removed.
+        * platform/qt-5.0-wk2/fast/forms/basic-textareas-quirks-expected.png: Removed.
+        * platform/qt-5.0-wk2/fast/forms/basic-textareas-quirks-expected.txt: Removed.
+        * platform/qt-5.0-wk2/fast/forms/control-restrict-line-height-expected.png: Removed.
+        * platform/qt-5.0-wk2/fast/forms/control-restrict-line-height-expected.txt: Removed.
+        * platform/qt-5.0-wk2/fast/forms/encoding-test-expected.txt: Removed.
+        * platform/qt-5.0-wk2/fast/forms/fieldset-align-expected.png: Removed.
+        * platform/qt-5.0-wk2/fast/forms/fieldset-align-expected.txt: Removed.
+        * platform/qt-5.0-wk2/fast/forms/input-appearance-bkcolor-expected.txt: Removed.
+        * platform/qt-5.0-wk2/fast/forms/input-appearance-default-bkcolor-expected.png: Removed.
+        * platform/qt-5.0-wk2/fast/forms/input-appearance-default-bkcolor-expected.txt: Removed.
+        * platform/qt-5.0-wk2/fast/forms/input-appearance-disabled-expected.png: Removed.
+        * platform/qt-5.0-wk2/fast/forms/input-appearance-disabled-expected.txt: Removed.
+        * platform/qt-5.0-wk2/fast/forms/input-appearance-focus-expected.png: Removed.
+        * platform/qt-5.0-wk2/fast/forms/input-appearance-focus-expected.txt: Removed.
+        * platform/qt-5.0-wk2/fast/forms/input-appearance-preventDefault-expected.txt: Removed.
+        * platform/qt-5.0-wk2/fast/forms/input-appearance-readonly-expected.png: Removed.
+        * platform/qt-5.0-wk2/fast/forms/input-appearance-readonly-expected.txt: Removed.
+        * platform/qt-5.0-wk2/fast/forms/input-appearance-selection-expected.png: Removed.
+        * platform/qt-5.0-wk2/fast/forms/input-appearance-selection-expected.txt: Removed.
+        * platform/qt-5.0-wk2/fast/forms/input-appearance-visibility-expected.txt: Removed.
+        * platform/qt-5.0-wk2/fast/forms/input-baseline-expected.png: Removed.
+        * platform/qt-5.0-wk2/fast/forms/input-baseline-expected.txt: Removed.
+        * platform/qt-5.0-wk2/fast/forms/input-double-click-selection-gap-bug-expected.png: Removed.
+        * platform/qt-5.0-wk2/fast/forms/input-double-click-selection-gap-bug-expected.txt: Removed.
+        * platform/qt-5.0-wk2/fast/forms/input-placeholder-visibility-1-expected.txt: Removed.
+        * platform/qt-5.0-wk2/fast/forms/input-placeholder-visibility-3-expected.txt: Removed.
+        * platform/qt-5.0-wk2/fast/forms/input-readonly-dimmed-expected.txt: Removed.
+        * platform/qt-5.0-wk2/fast/forms/input-readonly-empty-expected.txt: Removed.
+        * platform/qt-5.0-wk2/fast/forms/input-spaces-expected.txt: Removed.
+        * platform/qt-5.0-wk2/fast/forms/input-text-click-inside-expected.txt: Removed.
+        * platform/qt-5.0-wk2/fast/forms/input-text-double-click-expected.txt: Removed.
+        * platform/qt-5.0-wk2/fast/forms/input-text-option-delete-expected.txt: Removed.
+        * platform/qt-5.0-wk2/fast/forms/input-text-self-emptying-click-expected.txt: Removed.
+        * platform/qt-5.0-wk2/fast/forms/input-text-word-wrap-expected.txt: Removed.
+        * platform/qt-5.0-wk2/fast/forms/input-width-expected.txt: Removed.
+        * platform/qt-5.0-wk2/fast/forms/placeholder-position-expected.png: Removed.
+        * platform/qt-5.0-wk2/fast/forms/placeholder-position-expected.txt: Removed.
+        * platform/qt-5.0-wk2/fast/forms/search-cancel-button-style-sharing-expected.txt: Removed.
+        * platform/qt-5.0-wk2/fast/forms/search-display-none-cancel-button-expected.txt: Removed.
+        * platform/qt-5.0-wk2/fast/forms/search-rtl-expected.png: Removed.
+        * platform/qt-5.0-wk2/fast/forms/search-rtl-expected.txt: Removed.
+        * platform/qt-5.0-wk2/fast/forms/search-vertical-alignment-expected.png: Removed.
+        * platform/qt-5.0-wk2/fast/forms/search-vertical-alignment-expected.txt: Removed.
+        * platform/qt-5.0-wk2/fast/forms/text-style-color-expected.png: Removed.
+        * platform/qt-5.0-wk2/fast/forms/text-style-color-expected.txt: Removed.
+        * platform/qt-5.0-wk2/fast/forms/textarea-placeholder-pseudo-style-expected.png: Removed.
+        * platform/qt-5.0-wk2/fast/forms/textarea-placeholder-pseudo-style-expected.txt: Removed.
+        * platform/qt-5.0-wk2/fast/forms/textarea-placeholder-visibility-1-expected.txt: Removed.
+        * platform/qt-5.0-wk2/fast/forms/textarea-placeholder-visibility-2-expected.txt: Removed.
+        * platform/qt-5.0-wk2/fast/forms/textfield-focus-ring-expected.txt: Removed.
+        * platform/qt-5.0-wk2/fast/forms/textfield-outline-expected.txt: Removed.
+        * platform/qt-5.0-wk2/fast/forms/textfield-overflow-expected.txt: Removed.
+
 2012-07-26  Rafael Brandao  <rafael.lobo@openbossa.org>
 
         [Qt] platform/qt/tables/mozilla tests needs update after rebaseline and new testfonts
