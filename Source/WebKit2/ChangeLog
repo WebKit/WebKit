@@ -1,5 +1,17 @@
 2012-07-26  Christophe Dumez  <christophe.dumez@intel.com>
 
+        [EFL][WK2] Compilation warning in EWK2UnitTestServer.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=92387
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Fix compilation warning in EWK2UnitTestServer.cpp.
+
+        * UIProcess/API/efl/tests/UnitTestUtils/EWK2UnitTestServer.cpp:
+        (EWK2UnitTestServer::EWK2UnitTestServer):
+
+2012-07-26  Christophe Dumez  <christophe.dumez@intel.com>
+
         [EFL][WK2] Add unit tests for Ewk_Context
         https://bugs.webkit.org/show_bug.cgi?id=92005
 
