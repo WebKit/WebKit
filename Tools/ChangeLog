@@ -1,3 +1,18 @@
+2012-07-20  Holger Hans Peter Freyther  <holger@moiji-mobile.com>
+
+        buildbot: Remove the configuration of hfreyther*
+        https://bugs.webkit.org/show_bug.cgi?id=91849
+
+        Reviewed by Adam Roben.
+
+        The machine running these configs was decommissioned and
+        there is no replacement at this point. Remove them from the
+        configuration.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json: Remove hfreyther* from
+        the config. The Qt Linux SH4 and Qt Linux MIPS schedulers are orphaned, remove
+        them too.
+
 2012-07-26  Balazs Kelemen  <kbalazs@webkit.org>
 
         Unreviewed speculative Mac buildfix after r123729 - 2nd attempt.

@@ -63,9 +63,6 @@
                     { "name": "efl-linux-slave-2", "platform": "efl" },
                     { "name": "efl-linux-slave-3", "platform": "efl" },
                     { "name": "efl-linux-slave-4", "platform": "efl" },
-
-                    { "name": "hfreyther-mipsel-linux1", "platform": "qt"},
-                    { "name": "hfreyther-sh4-linux1", "platform": "qt"}
                   ],
 
     "builders":   [ { "name": "Apple SnowLeopard Release (Build)", "type": "Build", "builddir": "snowleopard-release",
@@ -195,16 +192,6 @@
                       "slavenames": ["indt-snowleopard"]
                     },
                     {
-                      "name": "Qt Linux MIPS Release", "type": "Build", "builddir": "qt-linux-mips-release",
-                      "platform": "qt", "configuration": "release", "architectures": ["mipsel"],
-                      "slavenames": ["hfreyther-mipsel-linux1"]
-                    },
-                    {
-                      "name": "Qt Linux SH4 Release", "type": "Build", "builddir": "qt-linux-sh4-release",
-                      "platform": "qt", "configuration": "release", "architectures": ["sh4"],
-                      "slavenames": ["hfreyther-sh4-linux1"]
-                    },
-                    {
                       "name": "Chromium Win Release", "type": "Build", "builddir": "chromium-win-release",
                       "platform": "chromium-win", "configuration": "release", "architectures": ["i386"],
                       "triggers": ["chromium-win-release-tests", "chromium-win-perf-tests"],
@@ -294,7 +281,6 @@
                                        "Qt Linux Release", "Qt Linux Release minimal", "Qt Linux 64-bit Release (Perf)",
                                        "Qt Linux 64-bit Release (WebKit2 Perf)", "Qt Linux ARMv7 Release",
                                        "Qt Windows 32-bit Release", "Qt Windows 32-bit Debug", "Qt SnowLeopard Release",
-                                       "Qt Linux MIPS Release", "Qt Linux SH4 Release",
                                        "Chromium Win Release", "Chromium Mac Release", "Chromium Linux Release",
                                        "Chromium Android Release",
                                        "EFL Linux 64-bit Release", "EFL Linux 64-bit Debug", "EFL Linux 32-bit Release (Build)", "EFL Linux 64-bit Debug WK2",
