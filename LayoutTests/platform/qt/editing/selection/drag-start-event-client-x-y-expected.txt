@@ -3,8 +3,8 @@ Test for WebKit bug 26723: clientX,Y , screenX , Y always (0, 0) in dragstart ev
 DRAG ME!
 SUCCESS Expected 119 for clientX and got it.
 
-SUCCESS Expected 52 for clientY and got it.
+SUCCESS Expected 49 for clientY and got it.
 
 SUCCESS Expected 119 for pageX and got it.
 
-SUCCESS Expected 52 for pageY and got it.
+SUCCESS Expected 49 for pageY and got it.

@@ -9,7 +9,7 @@ PASS Click after hello (bottom)
 Click above black box
 PASS before h
 PASS before e
-FAIL before l - caret was at 1 but expected to be at 2
+PASS before l
 PASS before l
 PASS before o
 PASS after "hello"
@@ -17,7 +17,7 @@ PASS after "hello"
 Click below black box
 PASS before h
 PASS before e
-FAIL before l - caret was at 1 but expected to be at 2
+PASS before l
 PASS before l
 PASS before o
 PASS after "hello"

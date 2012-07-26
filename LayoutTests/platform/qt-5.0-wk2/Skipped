@@ -412,15 +412,6 @@ editing/pasteboard/4806874.html
 editing/pasteboard/innerText-inline-table.html
 editing/pasteboard/input-field-1.html
 editing/pasteboard/paste-text-019.html
-editing/selection/14971.html
-editing/selection/3690703-2.html
-editing/selection/3690703.html
-editing/selection/3690719.html
-editing/selection/4895428-3.html
-editing/selection/4975120.html
-editing/selection/drag-select-1.html
-editing/selection/vertical-rl-rtl-extend-line-backward-br.html
-editing/selection/vertical-rl-rtl-extend-line-backward-p.html
 fullscreen/full-screen-placeholder.html
 fullscreen/video-controls-drag.html
 fullscreen/video-controls-override.html
@@ -497,6 +488,9 @@ fast/replaced/replaced-breaking.html
 fast/replaced/width100percent-searchfield.html
 fast/replaced/width100percent-textfield.html
 fast/transforms/transformed-focused-text-input.html
+editing/selection/14971.html
+editing/selection/vertical-rl-rtl-extend-line-backward-br.html
+editing/selection/vertical-rl-rtl-extend-line-backward-p.html
 
 # REGRESSION(r122768, r122771) made 157 fails on WebKit2
 compositing/columns/composited-in-paginated.html
@@ -673,6 +667,12 @@ css3/selectors3/xml/css3-modsel-68.xml
 css3/selectors3/xml/css3-modsel-69.xml
 editing/inserting/4960120-1.html
 editing/inserting/before-after-input-element.html
+editing/selection/3690703-2.html
+editing/selection/3690703.html
+editing/selection/3690719.html
+editing/selection/4895428-3.html
+editing/selection/4975120.html
+editing/selection/drag-select-1.html
 tables/mozilla_expected_failures/bugs/bug92647-1.html
 
 # [Qt] Images scale differently in WK1 and WK2

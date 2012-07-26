@@ -1,3 +1,57 @@
+2012-07-26  Bruno de Oliveira Abinader  <bruno.abinader@basyskom.com>
+
+        [Qt] editing/selection tests needs update after rebaseline and new testfonts
+        https://bugs.webkit.org/show_bug.cgi?id=92186
+
+        Reviewed by Alexis Menard.
+
+        After the rebaseline from changeset 121971 - [Qt] DumpRenderTree does not use
+        'monospace' font when directed, editing/selection tests directory needs to be
+        updated.
+
+        It is important to notice some Qt WK2 layout tests are still failing, some
+        requires more investigation (handled in bug 91610) and others have a known cause
+        (input text and text areas differ in WK2 - bug 91990).
+
+        * platform/qt-5.0-wk2/Skipped:
+        * platform/qt-5.0-wk2/editing/selection/select-box-expected.png:
+        * platform/qt-5.0-wk2/editing/selection/select-box-expected.txt:
+        * platform/qt-5.0-wk2/editing/selection/select-element-paragraph-boundary-expected.png:
+        * platform/qt-5.0-wk2/editing/selection/select-element-paragraph-boundary-expected.txt:
+        * platform/qt-5.0/Skipped:
+        * platform/qt-5.0/editing/selection/editable-html-element-expected.txt:
+        * platform/qt-5.0/editing/selection/extend-by-word-001-expected.txt:
+        * platform/qt-5.0/editing/selection/select-box-expected.png:
+        * platform/qt-5.0/editing/selection/select-box-expected.txt:
+        * platform/qt-5.0/editing/selection/select-element-paragraph-boundary-expected.png:
+        * platform/qt-5.0/editing/selection/select-element-paragraph-boundary-expected.txt:
+        * platform/qt-5.0/editing/selection/vertical-lr-ltr-extend-line-backward-br-expected.txt:
+        * platform/qt-5.0/editing/selection/vertical-lr-ltr-extend-line-forward-br-expected.txt:
+        * platform/qt-5.0/editing/selection/vertical-rl-ltr-extend-line-backward-br-expected.txt:
+        * platform/qt-5.0/editing/selection/vertical-rl-ltr-extend-line-backward-p-expected.txt:
+        * platform/qt-5.0/editing/selection/vertical-rl-ltr-extend-line-backward-wrap-expected.txt:
+        * platform/qt-5.0/editing/selection/vertical-rl-ltr-extend-line-forward-br-expected.txt:
+        * platform/qt-5.0/editing/selection/vertical-rl-ltr-extend-line-forward-p-expected.txt:
+        * platform/qt-5.0/editing/selection/vertical-rl-ltr-extend-line-forward-wrap-expected.txt:
+        * platform/qt-5.0/editing/selection/vertical-rl-rtl-extend-line-backward-br-expected.txt:
+        * platform/qt-5.0/editing/selection/vertical-rl-rtl-extend-line-backward-p-expected.txt:
+        * platform/qt/editing/selection/5825350-1-expected.txt:
+        * platform/qt/editing/selection/5825350-2-expected.txt:
+        * platform/qt/editing/selection/drag-start-event-client-x-y-expected.txt:
+        * platform/qt/editing/selection/fake-doubleclick-expected.png:
+        * platform/qt/editing/selection/fake-doubleclick-expected.txt:
+        * platform/qt/editing/selection/hit-test-on-text-with-line-height-expected.txt:
+        * platform/qt/editing/selection/unrendered-001-expected.png:
+        * platform/qt/editing/selection/unrendered-001-expected.txt:
+        * platform/qt/editing/selection/unrendered-002-expected.png:
+        * platform/qt/editing/selection/unrendered-002-expected.txt:
+        * platform/qt/editing/selection/unrendered-003-expected.png:
+        * platform/qt/editing/selection/unrendered-003-expected.txt:
+        * platform/qt/editing/selection/unrendered-004-expected.png:
+        * platform/qt/editing/selection/unrendered-004-expected.txt:
+        * platform/qt/editing/selection/unrendered-005-expected.png:
+        * platform/qt/editing/selection/unrendered-005-expected.txt:
+
 2012-07-26  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: Edits of styles declared after invalid selector are not applied
