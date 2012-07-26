@@ -225,6 +225,11 @@ WebInspector.ProfilesPanel = function()
     this.clearResultsButton = new WebInspector.StatusBarButton(WebInspector.UIString("Clear all profiles."), "clear-status-bar-item");
     this.clearResultsButton.addEventListener("click", this._clearProfiles, this);
 
+    if (WebInspector.experimentsSettings.liveNativeMemoryChart.isEnabled()) {
+        this.garbageCollectButton = new WebInspector.StatusBarButton(WebInspector.UIString("Collect Garbage"), "garbage-collect-status-bar-item");
+        this.garbageCollectButton.addEventListener("click", this._garbageCollectButtonClicked, this);
+    }
+
     this.profileViewStatusBarItemsContainer = document.createElement("div");
     this.profileViewStatusBarItemsContainer.className = "status-bar-items";
 
@@ -300,7 +305,10 @@ WebInspector.ProfilesPanel.prototype = {
 
     get statusBarItems()
     {
-        return [this.enableToggleButton.element, this.recordButton.element, this.clearResultsButton.element, this.profileViewStatusBarItemsContainer];
+        var statusBarItems = [this.enableToggleButton.element, this.recordButton.element, this.clearResultsButton.element, this.profileViewStatusBarItemsContainer];
+        if (WebInspector.experimentsSettings.liveNativeMemoryChart.isEnabled())
+            statusBarItems.splice(3, 0, this.garbageCollectButton.element);
+        return statusBarItems;
     },
 
     toggleRecordButton: function()
@@ -406,6 +414,11 @@ WebInspector.ProfilesPanel.prototype = {
     {
         ProfilerAgent.clearProfiles();
         this._reset();
+    },
+
+    _garbageCollectButtonClicked: function()
+    {
+        ProfilerAgent.collectGarbage();
     },
 
     /**
