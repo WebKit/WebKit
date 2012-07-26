@@ -253,6 +253,7 @@ namespace JSC {
         
         template<typename T>
         void appendUnbarrieredPointer(T**);
+        void appendUnbarrieredValue(JSValue*);
         
         void addOpaqueRoot(void*);
         bool containsOpaqueRoot(void*);
@@ -448,6 +449,12 @@ namespace JSC {
     }
     
     ALWAYS_INLINE void MarkStack::append(JSValue* slot)
+    {
+        ASSERT(slot);
+        internalAppend(*slot);
+    }
+
+    ALWAYS_INLINE void MarkStack::appendUnbarrieredValue(JSValue* slot)
     {
         ASSERT(slot);
         internalAppend(*slot);

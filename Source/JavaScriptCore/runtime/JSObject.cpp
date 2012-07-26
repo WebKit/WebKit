@@ -38,6 +38,7 @@
 #include "Operations.h"
 #include "PropertyDescriptor.h"
 #include "PropertyNameArray.h"
+#include "SlotVisitorInlineMethods.h"
 #include <math.h>
 #include <wtf/Assertions.h>
 
@@ -85,6 +86,31 @@ static inline void getClassPropertyNames(ExecState* exec, const ClassInfo* class
     }
 }
 
+ALWAYS_INLINE void JSObject::visitOutOfLineStorage(SlotVisitor& visitor, PropertyStorage storage, size_t storageSize)
+{
+    ASSERT(storage);
+    ASSERT(storageSize);
+    
+    size_t capacity = structure()->outOfLineCapacity();
+    ASSERT(capacity);
+    size_t capacityInBytes = capacity * sizeof(WriteBarrierBase<Unknown>);
+    PropertyStorage baseOfStorage = storage - capacity - 1;
+    if (visitor.checkIfShouldCopyAndPinOtherwise(baseOfStorage, capacityInBytes)) {
+        PropertyStorage newBaseOfStorage = static_cast<PropertyStorage>(visitor.allocateNewSpace(capacityInBytes));
+        PropertyStorage currentTarget = newBaseOfStorage + capacity;
+        PropertyStorage newStorage = currentTarget + 1;
+        PropertyStorage currentSource = storage - 1;
+        for (size_t count = storageSize; count--;) {
+            JSValue value = (--currentSource)->get();
+            ASSERT(value);
+            visitor.appendUnbarrieredValue(&value);
+            (--currentTarget)->setWithoutWriteBarrier(value);
+        }
+        m_outOfLineStorage.set(newStorage, StorageBarrier::Unchecked);
+    } else
+        visitor.appendValues(storage - storageSize - 1, storageSize);
+}
+
 void JSObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
     JSObject* thisObject = jsCast<JSObject*>(cell);
@@ -97,15 +123,8 @@ void JSObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
     JSCell::visitChildren(thisObject, visitor);
 
     PropertyStorage storage = thisObject->outOfLineStorage();
-    if (storage) {
-        size_t storageSize = thisObject->structure()->outOfLineSizeForKnownNonFinalObject();
-        size_t capacity = thisObject->structure()->outOfLineCapacity();
-        // We have this extra temp here to slake GCC's thirst for the blood of those who dereference type-punned pointers.
-        void* temp = storage - capacity - 1;
-        visitor.copyAndAppend(&temp, capacity * sizeof(WriteBarrierBase<Unknown>), (storage - storageSize - 1)->slot(), storageSize);
-        storage = static_cast<PropertyStorage>(temp) + capacity + 1;
-        thisObject->m_outOfLineStorage.set(storage, StorageBarrier::Unchecked);
-    }
+    if (storage)
+        thisObject->visitOutOfLineStorage(visitor, storage, thisObject->structure()->outOfLineSizeForKnownNonFinalObject());
 
 #if !ASSERT_DISABLED
     visitor.m_isCheckingForDefaultMarkViolation = wasCheckingForDefaultMarkViolation;
@@ -124,15 +143,8 @@ void JSFinalObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
     JSCell::visitChildren(thisObject, visitor);
 
     PropertyStorage storage = thisObject->outOfLineStorage();
-    if (storage) {
-        size_t storageSize = thisObject->structure()->outOfLineSizeForKnownFinalObject();
-        size_t capacity = thisObject->structure()->outOfLineCapacity();
-        // We have this extra temp here to slake GCC's thirst for the blood of those who dereference type-punned pointers.
-        void* temp = storage - capacity - 1;
-        visitor.copyAndAppend(&temp, thisObject->structure()->outOfLineCapacity() * sizeof(WriteBarrierBase<Unknown>), (storage - storageSize - 1)->slot(), storageSize);
-        storage = static_cast<PropertyStorage>(temp) + capacity + 1;
-        thisObject->m_outOfLineStorage.set(storage, StorageBarrier::Unchecked);
-    }
+    if (storage)
+        thisObject->visitOutOfLineStorage(visitor, storage, thisObject->structure()->outOfLineSizeForKnownFinalObject());
 
     size_t storageSize = thisObject->structure()->inlineSizeForKnownFinalObject();
     visitor.appendValues(thisObject->inlineStorage(), storageSize);

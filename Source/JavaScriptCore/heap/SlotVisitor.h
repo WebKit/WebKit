@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -62,11 +62,23 @@ public:
     void finalizeUnconditionalFinalizers();
 
     void startCopying();
+    
+    // High-level API for copying, appropriate for cases where the object's heap references
+    // fall into a contiguous region of the storage chunk and if the object for which you're
+    // doing copying does not occur frequently.
     void copyAndAppend(void**, size_t, JSValue*, unsigned);
+    
+    // Low-level API for copying, appropriate for cases where the object's heap references
+    // are discontiguous or if the object occurs frequently enough that you need to focus on
+    // performance. Use this with care as it is easy to shoot yourself in the foot.
+    bool checkIfShouldCopyAndPinOtherwise(void* oldPtr, size_t);
+    void* allocateNewSpace(size_t);
+    
     void doneCopying(); 
         
 private:
-    void* allocateNewSpace(void*, size_t);
+    void* allocateNewSpaceOrPin(void*, size_t);
+    void* allocateNewSpaceSlow(size_t);
 
     void donateKnownParallel();
 

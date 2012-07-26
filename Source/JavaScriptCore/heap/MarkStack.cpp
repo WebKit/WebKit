@@ -35,6 +35,7 @@
 #include "JSCell.h"
 #include "JSObject.h"
 #include "ScopeChain.h"
+#include "SlotVisitorInlineMethods.h"
 #include "Structure.h"
 #include "UString.h"
 #include "WriteBarrier.h"
@@ -518,26 +519,23 @@ void SlotVisitor::startCopying()
     ASSERT(!m_copiedAllocator.isValid());
 }
 
-void* SlotVisitor::allocateNewSpace(void* ptr, size_t bytes)
+void* SlotVisitor::allocateNewSpaceSlow(size_t bytes)
 {
-    if (CopiedSpace::isOversize(bytes)) {
-        m_shared.m_copiedSpace->pin(CopiedSpace::oversizeBlockFor(ptr));
-        return 0;
-    }
-
-    if (m_shared.m_copiedSpace->isPinned(ptr))
-        return 0;
-    
-    void* result = 0; // Compilers don't realize that this will be assigned.
-    if (m_copiedAllocator.tryAllocate(bytes, &result))
-        return result;
-    
     m_shared.m_copiedSpace->doneFillingBlock(m_copiedAllocator.resetCurrentBlock());
     m_copiedAllocator.setCurrentBlock(m_shared.m_copiedSpace->allocateBlockForCopyingPhase());
 
+    void* result = 0;
     CheckedBoolean didSucceed = m_copiedAllocator.tryAllocate(bytes, &result);
     ASSERT(didSucceed);
     return result;
+}
+
+void* SlotVisitor::allocateNewSpaceOrPin(void* ptr, size_t bytes)
+{
+    if (!checkIfShouldCopyAndPinOtherwise(ptr, bytes))
+        return 0;
+    
+    return allocateNewSpace(bytes);
 }
 
 ALWAYS_INLINE bool JSString::tryHashConstLock()
@@ -616,7 +614,7 @@ ALWAYS_INLINE void MarkStack::internalAppend(JSValue* slot)
 void SlotVisitor::copyAndAppend(void** ptr, size_t bytes, JSValue* values, unsigned length)
 {
     void* oldPtr = *ptr;
-    void* newPtr = allocateNewSpace(oldPtr, bytes);
+    void* newPtr = allocateNewSpaceOrPin(oldPtr, bytes);
     if (newPtr) {
         size_t jsValuesOffset = static_cast<size_t>(reinterpret_cast<char*>(values) - static_cast<char*>(oldPtr));
 

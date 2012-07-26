@@ -325,6 +325,8 @@ namespace JSC {
         {
             removeDirect(globalData, globalData.m_inheritorIDKey);
         }
+        
+        void visitOutOfLineStorage(SlotVisitor&, PropertyStorage, size_t storageSize);
 
     private:
         friend class LLIntOffsetsExtractor;
