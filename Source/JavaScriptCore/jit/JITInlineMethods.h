@@ -425,9 +425,6 @@ template <typename ClassType, bool destructor, typename StructureType> inline vo
     // initialize the object's classInfo pointer
     storePtr(TrustedImmPtr(&ClassType::s_info), Address(result, JSCell::classInfoOffset()));
 
-    // initialize the inheritor ID
-    storePtr(TrustedImmPtr(0), Address(result, JSObject::offsetOfInheritorID()));
-
     // initialize the object's property storage pointer
     storePtr(TrustedImmPtr(0), Address(result, ClassType::offsetOfOutOfLineStorage()));
 }

@@ -107,9 +107,6 @@ void JSObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
         thisObject->m_outOfLineStorage.set(storage, StorageBarrier::Unchecked);
     }
 
-    if (thisObject->m_inheritorID)
-        visitor.append(&thisObject->m_inheritorID);
-
 #if !ASSERT_DISABLED
     visitor.m_isCheckingForDefaultMarkViolation = wasCheckingForDefaultMarkViolation;
 #endif
@@ -136,9 +133,6 @@ void JSFinalObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
         storage = static_cast<PropertyStorage>(temp) + capacity + 1;
         thisObject->m_outOfLineStorage.set(storage, StorageBarrier::Unchecked);
     }
-
-    if (thisObject->m_inheritorID)
-        visitor.append(&thisObject->m_inheritorID);
 
     size_t storageSize = thisObject->structure()->inlineSizeForKnownFinalObject();
     visitor.appendValues(thisObject->inlineStorage(), storageSize);
@@ -580,15 +574,21 @@ NEVER_INLINE void JSObject::fillGetterPropertySlot(PropertySlot& slot, WriteBarr
 
 Structure* JSObject::createInheritorID(JSGlobalData& globalData)
 {
+    ASSERT(!getDirectLocation(globalData, globalData.m_inheritorIDKey));
+
     JSGlobalObject* globalObject;
     if (isGlobalThis())
         globalObject = static_cast<JSGlobalThis*>(this)->unwrappedObject();
     else
         globalObject = structure()->globalObject();
     ASSERT(globalObject);
-    m_inheritorID.set(globalData, this, createEmptyObjectStructure(globalData, globalObject, this));
-    ASSERT(m_inheritorID->isEmpty());
-    return m_inheritorID.get();
+
+    Structure* inheritorID = createEmptyObjectStructure(globalData, globalObject, this);
+    ASSERT(inheritorID->isEmpty());
+
+    PutPropertySlot slot;
+    putDirectInternal<PutModeDefineOwnProperty>(globalData, globalData.m_inheritorIDKey, inheritorID, DontEnum, slot, 0);
+    return inheritorID;
 }
 
 PropertyStorage JSObject::growOutOfLineStorage(JSGlobalData& globalData, size_t oldSize, size_t newSize)

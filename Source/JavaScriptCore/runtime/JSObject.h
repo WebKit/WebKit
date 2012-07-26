@@ -295,7 +295,6 @@ namespace JSC {
         
         static size_t offsetOfInlineStorage();
         static size_t offsetOfOutOfLineStorage();
-        static size_t offsetOfInheritorID();
 
         static JS_EXPORTDATA const ClassInfo s_info;
 
@@ -322,9 +321,9 @@ namespace JSC {
         // To create derived types you likely want JSNonFinalObject, below.
         JSObject(JSGlobalData&, Structure*);
         
-        void resetInheritorID()
+        void resetInheritorID(JSGlobalData& globalData)
         {
-            m_inheritorID.clear();
+            removeDirect(globalData, globalData.m_inheritorIDKey);
         }
 
     private:
@@ -348,7 +347,6 @@ namespace JSC {
         Structure* createInheritorID(JSGlobalData&);
 
         StorageBarrier m_outOfLineStorage;
-        WriteBarrier<Structure> m_inheritorID;
     };
 
 
@@ -461,11 +459,6 @@ inline size_t JSObject::offsetOfOutOfLineStorage()
     return OBJECT_OFFSETOF(JSObject, m_outOfLineStorage);
 }
 
-inline size_t JSObject::offsetOfInheritorID()
-{
-    return OBJECT_OFFSETOF(JSObject, m_inheritorID);
-}
-
 inline bool JSObject::isGlobalObject() const
 {
     return structure()->typeInfo().type() == GlobalObjectType;
@@ -564,9 +557,10 @@ inline void JSObject::setPrototype(JSGlobalData& globalData, JSValue prototype)
 
 inline Structure* JSObject::inheritorID(JSGlobalData& globalData)
 {
-    if (m_inheritorID) {
-        ASSERT(m_inheritorID->isEmpty());
-        return m_inheritorID.get();
+    if (WriteBarrierBase<Unknown>* location = getDirectLocation(globalData, globalData.m_inheritorIDKey)) {
+        Structure* inheritorID = jsCast<Structure*>(location->get());
+        ASSERT(inheritorID->isEmpty());
+        return inheritorID;
     }
     return createInheritorID(globalData);
 }

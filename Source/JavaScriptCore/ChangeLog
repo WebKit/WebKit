@@ -1,3 +1,34 @@
+2012-07-25  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Remove JSObject::m_inheritorID
+        https://bugs.webkit.org/show_bug.cgi?id=88378
+
+        Reviewed by Filip Pizlo.
+
+        This is rarely used, and not performance critical (the commonly accessed copy is cached on JSFunction),
+        and most objects don't need an inheritorID (this value is only used if the object is used as a prototype).
+        Instead use a private named value in the object's property storage.
+
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::emitAllocateBasicJSObject): No need m_inheritorID to initialize!
+        * jit/JITInlineMethods.h:
+        (JSC::JIT::emitAllocateBasicJSObject): No need m_inheritorID to initialize!
+        * llint/LowLevelInterpreter.asm: No need m_inheritorID to initialize!
+        * runtime/JSGlobalData.h:
+        (JSGlobalData): Added private name 'm_inheritorIDKey'.
+        * runtime/JSGlobalThis.cpp:
+        (JSC::JSGlobalThis::setUnwrappedObject): resetInheritorID is now passed a JSGlobalData&.
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::visitChildren): No m_inheritorID to be marked.
+        (JSC::JSFinalObject::visitChildren): No m_inheritorID to be marked.
+        (JSC::JSObject::createInheritorID): Store the newly created inheritorID in the property map. Make sure 
+        it's got the DontEnum attribute!!
+        * runtime/JSObject.h:
+        (JSObject):
+        (JSC::JSObject::resetInheritorID): Remove the inheritorID from property storage.
+        (JSC):
+        (JSC::JSObject::inheritorID): Read the inheritorID from property storage.
+
 2012-07-25  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
 
         Create a specialized pair for use in HashMap iterators

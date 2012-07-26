@@ -39,6 +39,7 @@
 #include "JSValue.h"
 #include "LLIntData.h"
 #include "NumericStrings.h"
+#include "PrivateName.h"
 #include "SmallStrings.h"
 #include "Strong.h"
 #include "Terminator.h"
@@ -292,6 +293,8 @@ namespace JSC {
 #else
         bool canUseRegExpJIT() { return m_canUseAssembler; }
 #endif
+
+        PrivateName m_inheritorIDKey;
 
         OwnPtr<ParserArena> parserArena;
         OwnPtr<Keywords> keywords;

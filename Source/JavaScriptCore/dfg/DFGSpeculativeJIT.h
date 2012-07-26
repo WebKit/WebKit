@@ -2144,9 +2144,6 @@ public:
         // Initialize the object's classInfo pointer
         m_jit.storePtr(MacroAssembler::TrustedImmPtr(&ClassType::s_info), MacroAssembler::Address(resultGPR, JSCell::classInfoOffset()));
         
-        // Initialize the object's inheritorID.
-        m_jit.storePtr(MacroAssembler::TrustedImmPtr(0), MacroAssembler::Address(resultGPR, JSObject::offsetOfInheritorID()));
-        
         // Initialize the object's property storage pointer.
         m_jit.storePtr(MacroAssembler::TrustedImmPtr(0), MacroAssembler::Address(resultGPR, ClassType::offsetOfOutOfLineStorage()));
     }
