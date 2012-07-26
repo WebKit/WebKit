@@ -1,3 +1,21 @@
+2012-07-25  Jer Noble  <jer.noble@apple.com>
+
+        Add setting to enable and disable diagnostic logging.
+        https://bugs.webkit.org/show_bug.cgi?id=92337
+
+        Reviewed by Anders Carlsson.
+
+        Add a WebKit2 WKPreferences API to set set the WebCore diagnosticLoggingEnabled setting.
+
+        * Shared/WebPreferencesStore.h:
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetDiagnosticLoggingEnabled):
+        (WKPreferencesGetDiagnosticLoggingEnabled):
+        * UIProcess/API/C/WKPreferencesPrivate.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences): Ensure this preference is propagated to Settings
+            whenever the preferences change.
+
 2012-07-26  Thiago Marcos P. Santos  <thiago.santos@intel.com>
 
         [EFL][WK2] Regression(r123731): Linking errors due to efreet functions

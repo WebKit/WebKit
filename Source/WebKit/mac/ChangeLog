@@ -1,3 +1,22 @@
+2012-07-25  Jer Noble  <jer.noble@apple.com>
+
+        Add setting to enable and disable diagnostic logging.
+        https://bugs.webkit.org/show_bug.cgi?id=92337
+
+        Reviewed by Anders Carlsson.
+
+        Add a WebKit WebPreferences API to set set the WebCore diagnosticLoggingEnabled setting.
+
+        * WebView/WebPreferenceKeysPrivate.h:
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences initialize]): Register the default value to false.
+        (-[WebPreferences diagnosticLoggingEnabled]): Simple userDefaults accessor.
+        (-[WebPreferences setDiagnosticLoggingEnabled:]): Ditto.
+        * WebView/WebPreferencesPrivate.h:
+        * WebView/WebView.mm:
+        (-[WebView _preferencesChanged:]): Ensure this preference is propagated to Settings
+            whenever the preferences change.
+
 2012-07-25  Pratik Solanki  <psolanki@apple.com>
 
         Remove catchesDelegateExceptions from WebViewData and related accessor methods

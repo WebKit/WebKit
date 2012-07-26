@@ -1,3 +1,18 @@
+2012-07-25  Jer Noble  <jer.noble@apple.com>
+
+        Add setting to enable and disable diagnostic logging.
+        https://bugs.webkit.org/show_bug.cgi?id=92337
+
+        Reviewed by Anders Carlsson.
+
+        Add a new entry in Settings, defaulting to false.
+
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings): Default the new setting to false.
+        * page/Settings.h:
+        (WebCore::Settings::setDiagnosticLoggingEnabled): Simple accessor.
+        (WebCore::Settings::diagnosticLoggingEnabled): Ditto.
+
 2012-07-26  Olivier Blin  <olivier.blin@softathome.com>
 
         Add FastMalloc statistics in window.internals

@@ -281,6 +281,7 @@ Settings::Settings(Page* page)
     , m_syncXHRInDocumentsEnabled(true)
     , m_cookieEnabled(true)
     , m_windowFocusRestricted(true)
+    , m_diagnosticLoggingEnabled(false)
     , m_loadsImagesAutomaticallyTimer(this, &Settings::loadsImagesAutomaticallyTimerFired)
     , m_incrementalRenderingSuppressionTimeoutInSeconds(defaultIncrementalRenderingSuppressionTimeoutInSeconds)
 {

@@ -124,6 +124,7 @@
 #define WebKitRegionBasedColumnsEnabledKey @"WebKitRegionBasedColumnsEnabled"
 #define WebKitShouldRespectImageOrientationKey @"WebKitShouldRespectImageOrientation"
 #define WebKitRequestAnimationFrameEnabledPreferenceKey @"WebKitRequestAnimationFrameEnabled"
+#define WebKitDiagnosticLoggingEnabledKey @"WebKitDiagnosticLoggingEnabled"
 
 // These are private both because callers should be using the cover methods and because the
 // cover methods themselves are private.

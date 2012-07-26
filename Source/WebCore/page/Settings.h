@@ -603,6 +603,9 @@ namespace WebCore {
         void setCookieEnabled(bool enabled) { m_cookieEnabled = enabled; }
         bool cookieEnabled() const { return m_cookieEnabled; }
 
+        void setDiagnosticLoggingEnabled(bool enabled) { m_diagnosticLoggingEnabled = enabled; }
+        bool diagnosticLoggingEnabled() const { return m_diagnosticLoggingEnabled; }
+
     private:
         explicit Settings(Page*);
 
@@ -775,6 +778,8 @@ namespace WebCore {
         bool m_cookieEnabled : 1;
 
         bool m_windowFocusRestricted : 1;
+
+        bool m_diagnosticLoggingEnabled : 1;
 
         Timer<Settings> m_loadsImagesAutomaticallyTimer;
         void loadsImagesAutomaticallyTimerFired(Timer<Settings>*);
