@@ -211,7 +211,6 @@ public slots:
     void setUserStyleSheetEnabled(bool enabled);
     void setDomainRelaxationForbiddenForURLScheme(bool forbidden, const QString& scheme);
     int workerThreadCount();
-    int pageNumberForElementById(const QString& id, float width = 0, float height = 0);
     int numberOfPages(float width = maxViewWidth, float height = maxViewHeight);
     bool callShouldCloseOnWebView();
     // For now, this is a no-op. This may change depending on outcome of

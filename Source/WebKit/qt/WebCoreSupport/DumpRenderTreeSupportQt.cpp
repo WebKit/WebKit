@@ -386,19 +386,6 @@ void DumpRenderTreeSupportQt::garbageCollectorCollectOnAlternateThread(bool wait
     gcController().garbageCollectOnAlternateThreadForDebugging(waitUntilDone);
 }
 
-int DumpRenderTreeSupportQt::pageNumberForElementById(QWebFrame* frame, const QString& id, float width, float height)
-{
-    Frame* coreFrame = QWebFramePrivate::core(frame);
-    if (!coreFrame)
-        return -1;
-
-    Element* element = coreFrame->document()->getElementById(AtomicString(id));
-    if (!element)
-        return -1;
-
-    return PrintContext::pageNumberForElement(element, FloatSize(width, height));
-}
-
 int DumpRenderTreeSupportQt::numberOfPages(QWebFrame* frame, float width, float height)
 {
     Frame* coreFrame = QWebFramePrivate::core(frame);

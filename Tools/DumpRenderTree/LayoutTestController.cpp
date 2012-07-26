@@ -821,22 +821,6 @@ static bool parsePageNumberSizeMarings(JSContextRef context, int argumentCount, 
     }
 }
 
-static JSValueRef pageNumberForElementByIdCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
-{
-    float pageWidthInPixels = 0;
-    float pageHeightInPixels = 0;
-    if (!parsePageParameters(context, argumentCount - 1, arguments + 1, exception, pageWidthInPixels, pageHeightInPixels))
-        return JSValueMakeUndefined(context);
-
-    JSRetainPtr<JSStringRef> elementId(Adopt, JSValueToStringCopy(context, arguments[0], exception));
-    if (*exception)
-        return JSValueMakeUndefined(context);
-
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
-    int pageNumber = controller->pageNumberForElementById(elementId.get(), pageWidthInPixels, pageHeightInPixels);
-    return JSValueMakeNumber(context, pageNumber);
-}
-
 static JSValueRef numberOfPagesCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
     float pageWidthInPixels = 0;
@@ -2331,7 +2315,6 @@ JSStaticFunction* LayoutTestController::staticFunctions()
         { "notifyDone", notifyDoneCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "numberOfActiveAnimations", numberOfActiveAnimationsCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "overridePreference", overridePreferenceCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
-        { "pageNumberForElementById", pageNumberForElementByIdCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "pageSizeAndMarginsInPixels", pageSizeAndMarginsInPixelsCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "pageProperty", pagePropertyCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "pathToLocalResource", pathToLocalResourceCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },

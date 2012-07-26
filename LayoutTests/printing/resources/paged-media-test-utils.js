@@ -12,7 +12,7 @@ function appendResult(result)
 
 function pageNumberForElementShouldBe(id, expectedPageNumber)
 {
-    var actualPageNumber = testRunner.pageNumberForElementById(id);
+    var actualPageNumber = internals.pageNumber(document.getElementById(id));
     if (actualPageNumber == expectedPageNumber)
         appendResult('PASS: page number of "' + id + '" is ' + actualPageNumber);
     else {

@@ -128,7 +128,6 @@ public:
     static void overwritePluginDirectories();
     static int numberOfActiveAnimations(QWebFrame*);
     static int numberOfPages(QWebFrame* frame, float width, float height);
-    static int pageNumberForElementById(QWebFrame* frame, const QString& id, float width, float height);
     static bool hasDocumentElement(QWebFrame* frame);
     static bool elementDoesAutoCompleteForElementWithId(QWebFrame* frame, const QString& elementId);
     static void setWindowsBehaviorAsEditingBehavior(QWebPage*);

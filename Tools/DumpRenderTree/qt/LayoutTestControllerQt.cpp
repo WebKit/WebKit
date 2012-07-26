@@ -716,17 +716,6 @@ int LayoutTestController::workerThreadCount()
     return DumpRenderTreeSupportQt::workerThreadCount();
 }
 
-int LayoutTestController::pageNumberForElementById(const QString& id, float width, float height)
-{
-    // If no size specified, webpage viewport size is used
-    if (!width && !height) {
-        width = m_drt->webPage()->viewportSize().width();
-        height = m_drt->webPage()->viewportSize().height();
-    }
-
-    return DumpRenderTreeSupportQt::pageNumberForElementById(m_drt->webPage()->mainFrame(), id, width, height);
-}
-
 int LayoutTestController::numberOfPages(float width, float height)
 {
     return DumpRenderTreeSupportQt::numberOfPages(m_drt->webPage()->mainFrame(), width, height);

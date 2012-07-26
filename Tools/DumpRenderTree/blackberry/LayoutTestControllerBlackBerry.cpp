@@ -516,12 +516,6 @@ JSRetainPtr<JSStringRef> LayoutTestController::pageSizeAndMarginsInPixels(int, i
     return 0;
 }
 
-int LayoutTestController::pageNumberForElementById(JSStringRef, float, float)
-{
-    notImplemented();
-    return -1;
-}
-
 int LayoutTestController::numberOfPages(float, float)
 {
     notImplemented();

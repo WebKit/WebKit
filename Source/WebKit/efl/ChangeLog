@@ -1,3 +1,15 @@
+2012-07-26  Kaustubh Atrawalkar  <kaustubh@motorola.com>
+
+        [DRT] LTC:: pageNumberForElementById() could be moved to Internals
+        https://bugs.webkit.org/show_bug.cgi?id=92091
+
+        Reviewed by Adam Barth.
+
+        Move the pageNumberForElementById from LayoutTestCotroller to Internals and
+        remove the old platform specific implementations as it exclusively tests WebCore functionality.
+
+        * WebCoreSupport/DumpRenderTreeSupportEfl.cpp:
+
 2012-07-25  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         [EFL] Use eina_stringshare_add instead of strdup.

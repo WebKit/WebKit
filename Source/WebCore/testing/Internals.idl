@@ -170,6 +170,7 @@ module window {
         [Conditional=INSPECTOR] sequence<String> consoleMessageArgumentCounts(in Document document);
 
         DOMString counterValue(in Element element);
+        long pageNumber(in Element element, in [Optional] float pageWidth, in [Optional] float pageHeight);
         DOMString[] iconURLs(in Document document);
 
 #if defined(ENABLE_FULLSCREEN_API) && ENABLE_FULLSCREEN_API

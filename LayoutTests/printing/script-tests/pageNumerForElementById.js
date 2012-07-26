@@ -1,4 +1,4 @@
-description("Test for testRunner.pageNumberForElementById()");
+description("Test for internals.pageNumber()");
 
 function test()
 {

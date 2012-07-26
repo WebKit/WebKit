@@ -311,9 +311,6 @@ public:
     // Causes layout to happen as if targetted to printed pages.
     void setPrinting(const CppArgumentList&, CppVariant*);
 
-    // Gets the number of page where the specified element will be put.
-    void pageNumberForElementById(const CppArgumentList&, CppVariant*);
-
     // Gets the page size and margins for a printed page.
     void pageSizeAndMarginsInPixels(const CppArgumentList&, CppVariant*);
 

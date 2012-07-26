@@ -1,3 +1,24 @@
+2012-07-26  Kaustubh Atrawalkar  <kaustubh@motorola.com>
+
+        [DRT] LTC:: pageNumberForElementById() could be moved to Internals
+        https://bugs.webkit.org/show_bug.cgi?id=92091
+
+        Reviewed by Adam Barth.
+
+        Move the pageNumberForElementById from LayoutTestCotroller to Internals and
+        remove the old platform specific implementations as it exclusively tests WebCore functionality.
+
+        Covered by existing test cases.
+
+        * testing/Internals.cpp:
+        (WebCore::Internals::counterValue):
+        (WebCore):
+        (WebCore::Internals::pageNumber):
+        * testing/Internals.h:
+        (Internals):
+        (WebCore::Internals::pageNumber):
+        * testing/Internals.idl:
+
 2012-07-25  MORITA Hajime  <morrita@google.com>
 
         [Chromium][Win] <progress> animation on RTL direction is reverse

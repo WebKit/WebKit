@@ -55,6 +55,7 @@
 #include "Language.h"
 #include "NodeRenderingContext.h"
 #include "Page.h"
+#include "PrintContext.h"
 #include "Range.h"
 #include "RenderObject.h"
 #include "RenderTreeAsText.h"
@@ -1105,6 +1106,14 @@ String Internals::counterValue(Element* element)
         return String();
 
     return counterValueForElement(element);
+}
+
+int Internals::pageNumber(Element* element, float pageWidth, float pageHeight)
+{
+    if (!element)
+        return 0;
+
+    return PrintContext::pageNumberForElement(element, FloatSize(pageWidth, pageHeight));
 }
 
 PassRefPtr<DOMStringList> Internals::iconURLs(Document* document) const

@@ -59,7 +59,6 @@ public:
     static GSList* getFrameChildren(WebKitWebFrame*);
     static WTF::CString getInnerText(WebKitWebFrame*);
     static WTF::CString dumpRenderTree(WebKitWebFrame*);
-    static int pageNumberForElementById(WebKitWebFrame*, const char* id, float pageWidth, float pageHeight);
     static int numberOfPagesForFrame(WebKitWebFrame*, float pageWidth, float pageHeight);
     static WTF::CString pageProperty(WebKitWebFrame*, const char* propertyName, int pageNumber);
     static WTF::CString pageSizeAndMarginsInPixels(WebKitWebFrame*, int pageNumber, int width, int height, int marginTop, int marginRight, int marginBottom, int marginLeft);

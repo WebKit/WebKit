@@ -173,21 +173,6 @@ int DumpRenderTreeSupportEfl::numberOfPages(const Evas_Object* ewkFrame, float p
     return WebCore::PrintContext::numberOfPages(frame, WebCore::FloatSize(pageWidth, pageHeight));
 }
 
-int DumpRenderTreeSupportEfl::numberOfPagesForElementId(const Evas_Object* ewkFrame, const char* elementId, float pageWidth, float pageHeight)
-{
-    WebCore::Frame* frame = EWKPrivate::coreFrame(ewkFrame);
-
-    if (!frame)
-        return 0;
-
-    WebCore::Element *element = frame->document()->getElementById(elementId);
-
-    if (!element)
-        return 0;
-
-    return WebCore::PrintContext::pageNumberForElement(element, WebCore::FloatSize(pageWidth, pageHeight));
-}
-
 String DumpRenderTreeSupportEfl::pageSizeAndMarginsInPixels(const Evas_Object* ewkFrame, int pageNumber, int width, int height, int marginTop, int marginRight, int marginBottom, int marginLeft)
 {
     WebCore::Frame* frame = EWKPrivate::coreFrame(ewkFrame);

@@ -1,3 +1,15 @@
+2012-07-26  Kaustubh Atrawalkar  <kaustubh@motorola.com>
+
+        [DRT] LTC:: pageNumberForElementById() could be moved to Internals
+        https://bugs.webkit.org/show_bug.cgi?id=92091
+
+        Reviewed by Adam Barth.
+
+        Moved the pageNumberForElementById from LayoutTestCotroller to Internals and
+        remove the old platform specific implementations as it exclusively tests WebCore functionality.
+
+        * WebFrame.cpp: Added comment for removing the function. Removed implementation.
+
 2012-07-25  Roger Fong  <roger_fong@apple.com>
 
         Changes to the WebFrame API cause dependent apps to crash.

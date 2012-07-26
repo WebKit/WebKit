@@ -119,14 +119,6 @@ JSRetainPtr<JSStringRef> LayoutTestController::layerTreeAsText() const
     return string;
 }
 
-int LayoutTestController::pageNumberForElementById(JSStringRef id, float pageWidth, float pageHeight)
-{
-    gchar* idGChar = JSStringCopyUTF8CString(id);
-    int pageNumber = DumpRenderTreeSupportGtk::pageNumberForElementById(mainFrame, idGChar, pageWidth, pageHeight);
-    g_free(idGChar);
-    return pageNumber;
-}
-
 int LayoutTestController::numberOfPages(float pageWidth, float pageHeight)
 {
     return DumpRenderTreeSupportGtk::numberOfPagesForFrame(mainFrame, pageWidth, pageHeight);

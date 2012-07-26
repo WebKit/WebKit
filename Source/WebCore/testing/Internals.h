@@ -146,7 +146,7 @@ public:
 
     int lastSpellCheckRequestSequence(Document*, ExceptionCode&);
     int lastSpellCheckProcessedSequence(Document*, ExceptionCode&);
-    
+
     Vector<String> userPreferredLanguages() const;
     void setUserPreferredLanguages(const Vector<String>&);
 
@@ -191,6 +191,8 @@ public:
 #endif
 
     String counterValue(Element*);
+
+    int pageNumber(Element*, float pageWidth = 800, float pageHeight = 600);
     PassRefPtr<DOMStringList> iconURLs(Document*) const;
 
 #if ENABLE(FULLSCREEN_API)

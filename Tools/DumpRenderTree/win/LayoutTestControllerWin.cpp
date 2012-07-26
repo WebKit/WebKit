@@ -1300,21 +1300,6 @@ void LayoutTestController::removeAllVisitedLinks()
     sharedHistoryPrivate->removeAllVisitedLinks();
 }
 
-int LayoutTestController::pageNumberForElementById(JSStringRef id, float pageWidthInPixels, float pageHeightInPixels)
-{
-    COMPtr<IWebFramePrivate> framePrivate(Query, frame);
-    if (!framePrivate)
-        return 0;
-
-    wstring idWstring = jsStringRefToWString(id);
-    BSTR idBSTR = SysAllocStringLen((OLECHAR*)idWstring.c_str(), idWstring.length());
-    int pageNumber = -1;
-    if (FAILED(framePrivate->pageNumberForElementById(idBSTR, pageWidthInPixels, pageHeightInPixels, &pageNumber)))
-        pageNumber = -1;
-    SysFreeString(idBSTR);
-    return pageNumber;
-}
-
 int LayoutTestController::numberOfPages(float pageWidthInPixels, float pageHeightInPixels)
 {
     COMPtr<IWebFramePrivate> framePrivate(Query, frame);

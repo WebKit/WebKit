@@ -81,7 +81,6 @@ module WTR {
 
         // Printing
         int numberOfPages(in double pageWidthInPixels, in double pageHeightInPixels);
-        int pageNumberForElementById(in DOMString id, in double pageWidthInPixels, in double pageHeightInPixels);
         DOMString pageSizeAndMarginsInPixels(in int pageIndex, in int width, in int height, in int marginTop, in int marginRight, in int marginBottom, in int marginLeft);
         boolean isPageBoxVisible(in int pageIndex);
 

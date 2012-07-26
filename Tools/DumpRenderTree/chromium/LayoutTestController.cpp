@@ -169,7 +169,6 @@ LayoutTestController::LayoutTestController(TestShell* shell)
     bindMethod("numberOfPendingGeolocationPermissionRequests", &LayoutTestController:: numberOfPendingGeolocationPermissionRequests);
     bindMethod("objCIdentityIsEqual", &LayoutTestController::objCIdentityIsEqual);
     bindMethod("overridePreference", &LayoutTestController::overridePreference);
-    bindMethod("pageNumberForElementById", &LayoutTestController::pageNumberForElementById);
     bindMethod("pageProperty", &LayoutTestController::pageProperty);
     bindMethod("pageSizeAndMarginsInPixels", &LayoutTestController::pageSizeAndMarginsInPixels);
     bindMethod("pathToLocalResource", &LayoutTestController::pathToLocalResource);
@@ -1720,24 +1719,6 @@ void LayoutTestController::setPrinting(const CppArgumentList& arguments, CppVari
 {
     setIsPrinting(true);
     result->setNull();
-}
-
-void LayoutTestController::pageNumberForElementById(const CppArgumentList& arguments, CppVariant* result)
-{
-    result->setNull();
-    int pageWidthInPixels = 0;
-    int pageHeightInPixels = 0;
-    if (!parsePageSizeParameters(arguments, 1,
-                                 &pageWidthInPixels, &pageHeightInPixels))
-        return;
-    if (!arguments[0].isString())
-        return;
-    WebFrame* frame = m_shell->webView()->mainFrame();
-    if (!frame)
-        return;
-    result->set(frame->pageNumberForElementById(cppVariantToWebString(arguments[0]),
-                                                static_cast<float>(pageWidthInPixels),
-                                                static_cast<float>(pageHeightInPixels)));
 }
 
 void LayoutTestController::pageSizeAndMarginsInPixels(const CppArgumentList& arguments, CppVariant* result)

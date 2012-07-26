@@ -883,20 +883,9 @@ HRESULT STDMETHODCALLTYPE WebFrame::pageNumberForElementById(
     /* [in] */ float pageHeightInPixels,
     /* [retval][out] */ int* result)
 {
-    if (!result)
-        return E_POINTER;
-
-    Frame* coreFrame = core(this);
-    if (!coreFrame)
-        return E_FAIL;
-
-    String coreId = String(id, SysStringLen(id));
-
-    Element* element = coreFrame->document()->getElementById(coreId);
-    if (!element)
-        return E_FAIL;
-    *result = PrintContext::pageNumberForElement(element, FloatSize(pageWidthInPixels, pageHeightInPixels));
-    return S_OK;
+    // TODO: Please remove this function if not needed as this is LTC specific function
+    // and has been moved to Internals.
+    notImplemented();
 }
 
 HRESULT STDMETHODCALLTYPE WebFrame::numberOfPages(

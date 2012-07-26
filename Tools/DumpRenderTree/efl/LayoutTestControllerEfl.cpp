@@ -123,11 +123,6 @@ JSRetainPtr<JSStringRef> LayoutTestController::layerTreeAsText() const
     return JSRetainPtr<JSStringRef>(Adopt, JSStringCreateWithUTF8CString(""));
 }
 
-int LayoutTestController::pageNumberForElementById(JSStringRef id, float pageWidth, float pageHeight)
-{
-    return DumpRenderTreeSupportEfl::numberOfPagesForElementId(browser->mainFrame(), id->ustring().utf8().data(), pageWidth, pageHeight);
-}
-
 int LayoutTestController::numberOfPages(float pageWidth, float pageHeight)
 {
     return DumpRenderTreeSupportEfl::numberOfPages(browser->mainFrame(), pageWidth, pageHeight);

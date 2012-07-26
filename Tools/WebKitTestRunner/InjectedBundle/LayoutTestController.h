@@ -141,7 +141,6 @@ public:
 
     // Printing
     int numberOfPages(double pageWidthInPixels, double pageHeightInPixels);
-    int pageNumberForElementById(JSStringRef, double pageWidthInPixels, double pageHeightInPixels);
     JSRetainPtr<JSStringRef> pageSizeAndMarginsInPixels(int pageIndex, int width, int height, int marginTop, int marginRight, int marginBottom, int marginLeft);
     bool isPageBoxVisible(int pageIndex);
 

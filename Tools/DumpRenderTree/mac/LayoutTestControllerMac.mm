@@ -284,18 +284,6 @@ JSRetainPtr<JSStringRef> LayoutTestController::markerTextForListItem(JSContextRe
     return markerText;
 }
 
-int LayoutTestController::pageNumberForElementById(JSStringRef id, float pageWidthInPixels, float pageHeightInPixels)
-{
-    RetainPtr<CFStringRef> idCF(AdoptCF, JSStringCopyCFString(kCFAllocatorDefault, id));
-    NSString *idNS = (NSString *)idCF.get();
-
-    DOMElement *element = [[mainFrame DOMDocument] getElementById:idNS];
-    if (!element)
-        return -1;
-
-    return [mainFrame pageNumberForElement:element:pageWidthInPixels:pageHeightInPixels];
-}
-
 JSRetainPtr<JSStringRef> LayoutTestController::pageProperty(const char* propertyName, int pageNumber) const
 {
     JSRetainPtr<JSStringRef> propertyValue(Adopt, JSStringCreateWithCFString((CFStringRef)[mainFrame pageProperty:propertyName:pageNumber]));

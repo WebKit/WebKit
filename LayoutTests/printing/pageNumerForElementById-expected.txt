@@ -1,4 +1,4 @@
-Test for testRunner.pageNumberForElementById()
+Test for internals.pageNumber()
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
