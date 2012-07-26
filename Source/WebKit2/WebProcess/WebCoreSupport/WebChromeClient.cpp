@@ -635,6 +635,15 @@ void WebChromeClient::setCursorHiddenUntilMouseMoves(bool hiddenUntilMouseMoves)
     m_page->send(Messages::WebPageProxy::SetCursorHiddenUntilMouseMoves(hiddenUntilMouseMoves));
 }
 
+#if ENABLE(REQUEST_ANIMATION_FRAME) && !USE(REQUEST_ANIMATION_FRAME_TIMER)
+void WebChromeClient::scheduleAnimation()
+{
+#if USE(UI_SIDE_COMPOSITING)
+    m_page->drawingArea()->layerTreeHost()->scheduleAnimation();
+#endif
+}
+#endif
+
 void WebChromeClient::formStateDidChange(const Node*)
 {
     notImplemented();

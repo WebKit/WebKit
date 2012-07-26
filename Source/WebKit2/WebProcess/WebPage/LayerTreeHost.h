@@ -105,6 +105,10 @@ public:
     virtual WebCore::GraphicsDeviceAdapter* graphicsDeviceAdapter() const { return 0; }
 #endif
 
+#if USE(UI_SIDE_COMPOSITING)
+    virtual void scheduleAnimation() = 0;
+#endif
+
 protected:
     explicit LayerTreeHost(WebPage*);
 

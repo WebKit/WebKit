@@ -70,6 +70,7 @@
 #include "qwebsecurityorigin.h"
 #include "qwebsecurityorigin_p.h"
 #include "qwebview.h"
+#include <qabstractanimation.h>
 #include <qdebug.h>
 #include <qeventloop.h>
 #include <qtooltip.h>
@@ -87,6 +88,38 @@
 #endif
 
 namespace WebCore {
+
+class RefreshAnimation : public QAbstractAnimation {
+public:
+    RefreshAnimation(ChromeClientQt* chromeClient)
+        : QAbstractAnimation()
+        , m_chromeClient(chromeClient)
+        , m_animationScheduled(false)
+    { }
+
+    virtual int duration() const { return -1; }
+
+    void scheduleAnimation()
+    {
+        m_animationScheduled = true;
+        if (state() != QAbstractAnimation::Running)
+            start();
+    }
+
+protected:
+    virtual void updateCurrentTime(int currentTime)
+    {
+        UNUSED_PARAM(currentTime);
+        if (m_animationScheduled) {
+            m_animationScheduled = false;
+            m_chromeClient->serviceScriptedAnimations();
+        } else
+            stop();
+    }
+private:
+    ChromeClientQt* m_chromeClient;
+    bool m_animationScheduled;
+};
 
 bool ChromeClientQt::dumpVisitedLinksCallbacks = false;
 
@@ -618,6 +651,17 @@ void ChromeClientQt::setCursor(const Cursor& cursor)
 #endif
 }
 
+void ChromeClientQt::scheduleAnimation()
+{
+    if (!m_refreshAnimation)
+        m_refreshAnimation = adoptPtr(new RefreshAnimation(this));
+    m_refreshAnimation->scheduleAnimation();
+}
+
+void ChromeClientQt::serviceScriptedAnimations()
+{
+    m_webPage->mainFrame()->d->frame->view()->serviceScriptedAnimations(convertSecondsToDOMTimeStamp(currentTime()));
+}
 
 #if USE(ACCELERATED_COMPOSITING)
 void ChromeClientQt::attachRootGraphicsLayer(Frame* frame, GraphicsLayer* graphicsLayer)

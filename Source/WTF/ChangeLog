@@ -1,3 +1,16 @@
+2012-07-26  Zeno Albisser  <zeno@webkit.org>
+
+        [Qt] requestAnimationFrame should only trigger when a new frame can be displayed.
+        https://bugs.webkit.org/show_bug.cgi?id=88638
+
+        Disable REQUEST_ANIMATION_FRAME_TIMER for the Qt port and tie
+        the servicing of scripted animations to layer syncing for WK2.
+        For WK1 we rely on the RefreshAnimation that is based on QAbstractAnimation.
+
+        Reviewed by Jocelyn Turcotte.
+
+        * wtf/Platform.h:
+
 2012-07-26  Yury Semikhatsky  <yurys@chromium.org>
 
         Unreviewed. Revert r123740 as it breaks AppleMac compilation.

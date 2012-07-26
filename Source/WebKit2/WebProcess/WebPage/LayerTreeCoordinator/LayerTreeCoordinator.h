@@ -86,6 +86,7 @@ public:
     virtual void syncFixedLayers();
 
     virtual PassOwnPtr<WebCore::GraphicsContext> beginContentUpdate(const WebCore::IntSize&, ShareableBitmap::Flags, ShareableSurface::Handle&, WebCore::IntPoint&);
+    virtual void scheduleAnimation() OVERRIDE;
 
 protected:
     explicit LayerTreeCoordinator(WebPage*);

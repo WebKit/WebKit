@@ -49,6 +49,7 @@ class FileChooser;
 class FileIconLoader;
 class FloatRect;
 class Page;
+class RefreshAnimation;
 struct FrameLoadRequest;
 class QtAbstractWebPopup;
 struct ViewportArguments;
@@ -176,6 +177,9 @@ public:
     virtual void setCursor(const Cursor&);
     virtual void setCursorHiddenUntilMouseMoves(bool) { }
 
+    virtual void scheduleAnimation();
+    virtual void serviceScriptedAnimations();
+
     virtual void scrollRectIntoView(const LayoutRect) const { }
 
     virtual bool selectItemWritingDirectionIsNatural();
@@ -201,6 +205,7 @@ public:
     bool statusBarVisible;
     bool menuBarVisible;
     QEventLoop* m_eventLoop;
+    OwnPtr<RefreshAnimation> m_refreshAnimation;
 
 #if ENABLE(VIDEO) && (USE(GSTREAMER) || USE(QT_MULTIMEDIA) || USE(QTKIT))
     FullScreenVideoQt* m_fullScreenVideo;

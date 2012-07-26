@@ -162,6 +162,9 @@ private:
 
     virtual void setCursor(const WebCore::Cursor&) OVERRIDE;
     virtual void setCursorHiddenUntilMouseMoves(bool) OVERRIDE;
+#if ENABLE(REQUEST_ANIMATION_FRAME) && !USE(REQUEST_ANIMATION_FRAME_TIMER)
+    virtual void scheduleAnimation() OVERRIDE;
+#endif
 
     // Notification that the given form element has changed. This function
     // will be called frequently, so handling should be very fast.

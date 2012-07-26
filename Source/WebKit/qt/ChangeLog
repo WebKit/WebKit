@@ -1,3 +1,35 @@
+2012-07-26  Zeno Albisser  <zeno@webkit.org>
+
+        [Qt] requestAnimationFrame should only trigger when a new frame can be displayed.
+        https://bugs.webkit.org/show_bug.cgi?id=88638
+
+        Disable REQUEST_ANIMATION_FRAME_TIMER for the Qt port and tie
+        the servicing of scripted animations to the renderNextFrame call for WK2.
+        For WK1 we rely on the RefreshAnimation that is based on QAbstractAnimation.
+
+        Reviewed by Jocelyn Turcotte.
+
+        * WebCoreSupport/ChromeClientQt.cpp:
+        (RefreshAnimation):
+            Add a RefreshAnimation that is based on QAbstractAnimation
+            and drives the servicing of the scripted animations for WK1.
+        (WebCore::RefreshAnimation::RefreshAnimation):
+        (WebCore::RefreshAnimation::duration):
+        (WebCore::RefreshAnimation::scheduleAnimation):
+            Set m_animationScheduled to true and start the animation
+            timer in case it is not running yet.
+        (WebCore::RefreshAnimation::updateCurrentTime):
+            Call serviceScriptedAnimations if m_animationScheduled is true.
+            If this is not the case, the animation timer can be stopped,
+            because no animation needs to be scheduled anymore.
+        (WebCore):
+        (WebCore::ChromeClientQt::scheduleAnimation):
+            Create and start the RefreshAnimation instance with the
+            first call to scheduleAnimation.
+        * WebCoreSupport/ChromeClientQt.h:
+        (WebCore):
+        (ChromeClientQt):
+
 2012-07-26  Kaustubh Atrawalkar  <kaustubh@motorola.com>
 
         [DRT] LTC:: pageNumberForElementById() could be moved to Internals
