@@ -69,7 +69,6 @@ public:
     };
 
     QualifiedName(const AtomicString& prefix, const AtomicString& localName, const AtomicString& namespaceURI);
-    QualifiedName(const AtomicString& prefix, const char* localName, const AtomicString& namespaceURI);
     QualifiedName(WTF::HashTableDeletedValueType) : m_impl(hashTableDeletedValue()) { }
     bool isHashTableDeletedValue() const { return m_impl == hashTableDeletedValue(); }
     ~QualifiedName();
@@ -108,7 +107,6 @@ public:
         info.addInstrumentedMember(m_impl);
     }
 private:
-    void init(const AtomicString& prefix, const AtomicString& localName, const AtomicString& namespaceURI);
     void ref() const { m_impl->ref(); }
     void deref();
 
@@ -146,6 +144,9 @@ struct QualifiedNameHash {
 
     static const bool safeToCompareToEmptyOrDeleted = false;
 };
+
+void createQualifiedName(void* targetAddress, const char* name, unsigned nameLength);
+void createQualifiedName(void* targetAddress, const char* name, unsigned nameLength, const AtomicString& nameNamespace);
 
 }
 

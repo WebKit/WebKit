@@ -51,6 +51,19 @@ public:
     ATOMICSTRING_CONVERSION AtomicString(const String& s) : m_string(add(s.impl())) { }
     AtomicString(StringImpl* baseString, unsigned start, unsigned length) : m_string(add(baseString, start, length)) { }
 
+    enum ConstructFromLiteralTag { ConstructFromLiteral };
+    AtomicString(const char* characters, unsigned length, ConstructFromLiteralTag)
+        : m_string(addFromLiteralData(reinterpret_cast<const LChar*>(characters), length))
+    {
+    }
+    template<unsigned charactersCount>
+    ALWAYS_INLINE AtomicString(const char (&characters)[charactersCount], ConstructFromLiteralTag)
+        : m_string(addFromLiteralData(reinterpret_cast<const LChar*>(characters), charactersCount - 1))
+    {
+        COMPILE_ASSERT(charactersCount > 1, AtomicStringFromLiteralNotEmpty);
+        COMPILE_ASSERT((charactersCount - 1 <= ((unsigned(~0) - sizeof(StringImpl)) / sizeof(LChar))), AtomicStringFromLiteralCannotOverflow);
+    }
+
 #if COMPILER_SUPPORTS(CXX_RVALUE_REFERENCES)
     // We have to declare the copy constructor and copy assignment operator as well, otherwise
     // they'll be implicitly deleted by adding the move constructor and move assignment operator.
@@ -156,6 +169,7 @@ private:
             return r;
         return addSlowCase(r);
     }
+    WTF_EXPORT_PRIVATE static PassRefPtr<StringImpl> addFromLiteralData(const LChar *characters, unsigned length);
     WTF_EXPORT_PRIVATE static PassRefPtr<StringImpl> addSlowCase(StringImpl*);
     WTF_EXPORT_PRIVATE static AtomicString fromUTF8Internal(const char*, const char*);
 };

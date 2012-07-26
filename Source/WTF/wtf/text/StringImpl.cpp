@@ -82,6 +82,12 @@ StringImpl::~StringImpl()
     m_substringBuffer->deref();
 }
 
+PassRefPtr<StringImpl> StringImpl::createFromLiteral(const LChar* characters, unsigned length)
+{
+    ASSERT(charactersAreAllASCII<LChar>(characters, length));
+    return adoptRef(new StringImpl(characters, length));
+}
+
 PassRefPtr<StringImpl> StringImpl::createUninitialized(unsigned length, LChar*& data)
 {
     if (!length) {

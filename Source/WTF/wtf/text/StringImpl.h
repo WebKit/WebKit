@@ -58,6 +58,7 @@ namespace WTF {
 struct CStringTranslator;
 struct HashAndCharactersTranslator;
 struct HashAndUTF8CharactersTranslator;
+struct LCharBufferFromLiteralDataTranslator;
 struct SubstringTranslator;
 struct UCharBufferTranslator;
 
@@ -75,6 +76,7 @@ class StringImpl {
     friend struct WTF::CStringTranslator;
     friend struct WTF::HashAndCharactersTranslator;
     friend struct WTF::HashAndUTF8CharactersTranslator;
+    friend struct WTF::LCharBufferFromLiteralDataTranslator;
     friend struct WTF::SubstringTranslator;
     friend struct WTF::UCharBufferTranslator;
     friend class AtomicStringImpl;
@@ -280,6 +282,16 @@ public:
         if (rep->is8Bit())
             return adoptRef(new StringImpl(rep->m_data8 + offset, length, ownerRep));
         return adoptRef(new StringImpl(rep->m_data16 + offset, length, ownerRep));
+    }
+
+    WTF_EXPORT_PRIVATE static PassRefPtr<StringImpl> createFromLiteral(const LChar* characters, unsigned length);
+    template<unsigned charactersCount>
+    ALWAYS_INLINE static PassRefPtr<StringImpl> createFromLiteral(const char (&characters)[charactersCount])
+    {
+        COMPILE_ASSERT(charactersCount > 1, StringImplFromLiteralNotEmpty);
+        COMPILE_ASSERT((charactersCount - 1 <= ((unsigned(~0) - sizeof(StringImpl)) / sizeof(LChar))), StringImplFromLiteralCannotOverflow);
+
+        return createFromLiteral(reinterpret_cast<const LChar*>(characters), charactersCount - 1);
     }
 
     WTF_EXPORT_PRIVATE static PassRefPtr<StringImpl> createUninitialized(unsigned length, LChar*& data);

@@ -78,7 +78,7 @@ struct QNameComponentsTranslator {
 
 static QNameSet* gNameCache;
 
-void QualifiedName::init(const AtomicString& p, const AtomicString& l, const AtomicString& n)
+QualifiedName::QualifiedName(const AtomicString& p, const AtomicString& l, const AtomicString& n)
 {
     if (!gNameCache)
         gNameCache = new QNameSet;
@@ -87,16 +87,6 @@ void QualifiedName::init(const AtomicString& p, const AtomicString& l, const Ato
     m_impl = *addResult.iterator;
     if (!addResult.isNewEntry)
         m_impl->ref();
-}
-
-QualifiedName::QualifiedName(const AtomicString& p, const AtomicString& l, const AtomicString& n)
-{
-    init(p, l, n);
-}
-
-QualifiedName::QualifiedName(const AtomicString& p, const char* l, const AtomicString& n)
-{
-    init(p, AtomicString(l), n);
 }
 
 QualifiedName::~QualifiedName()
@@ -149,6 +139,18 @@ const AtomicString& QualifiedName::localNameUpper() const
     if (!m_impl->m_localNameUpper)
         m_impl->m_localNameUpper = m_impl->m_localName.upper();
     return m_impl->m_localNameUpper;
+}
+
+void createQualifiedName(void* targetAddress, const char* name, unsigned nameLength, const AtomicString& nameNamespace)
+{
+    AtomicString atomicName(name, nameLength, AtomicString::ConstructFromLiteral);
+    new (reinterpret_cast<void*>(targetAddress)) QualifiedName(nullAtom, atomicName, nameNamespace);
+}
+
+void createQualifiedName(void* targetAddress, const char* name, unsigned nameLength)
+{
+    AtomicString atomicName(name, nameLength, AtomicString::ConstructFromLiteral);
+    new (reinterpret_cast<void*>(targetAddress)) QualifiedName(nullAtom, atomicName, nullAtom);
 }
 
 }

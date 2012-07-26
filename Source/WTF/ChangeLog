@@ -1,3 +1,30 @@
+2012-07-25  Benjamin Poulain  <bpoulain@apple.com>
+
+        Initialize QualifiedName's strings from the read only data segment
+        https://bugs.webkit.org/show_bug.cgi?id=92226
+
+        Reviewed by Anders Carlsson.
+
+        Add constructors for StringImpl and AtomicString to be able to create
+        the strings from the literal in read only memory.
+
+        * wtf/text/AtomicString.cpp:
+        (HashTranslatorCharBuffer):
+        (WTF::LCharBufferFromLiteralDataTranslator::hash):
+        (LCharBufferFromLiteralDataTranslator):
+        (WTF::LCharBufferFromLiteralDataTranslator::equal):
+        (WTF::LCharBufferFromLiteralDataTranslator::translate):
+        (WTF::AtomicString::addFromLiteralData):
+        * wtf/text/AtomicString.h:
+        (WTF::AtomicString::AtomicString):
+        (AtomicString):
+        * wtf/text/StringImpl.cpp:
+        (WTF::StringImpl::createFromLiteral):
+        * wtf/text/StringImpl.h:
+        (WTF):
+        (StringImpl):
+        (WTF::StringImpl::createFromLiteral):
+
 2012-07-25  Michael Saboff  <msaboff@apple.com>
 
         Convert HTML parser to handle 8-bit resources without converting to UChar*

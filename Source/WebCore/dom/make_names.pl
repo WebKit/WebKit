@@ -116,7 +116,7 @@ if (length($fontNamesIn)) {
     printCppHead($F, "CSS", $familyNamesFileBase, "WTF");
 
     while ( my ($name, $identifier) = each %parameters ) {
-        print F "DEFINE_GLOBAL(AtomicString, $name, \"$identifier\")\n";
+        print F "DEFINE_GLOBAL(AtomicString, $name)\n";
     }
 
     printInit($F, 0);
@@ -624,12 +624,12 @@ sub printNamesCppFile
     
     my $lowerNamespace = lc($parameters{namespacePrefix});
 
-    print F "DEFINE_GLOBAL(AtomicString, ${lowerNamespace}NamespaceURI, \"$parameters{namespaceURI}\")\n\n";
+    print F "DEFINE_GLOBAL(AtomicString, ${lowerNamespace}NamespaceURI)\n\n";
 
     if (keys %allTags) {
         print F "// Tags\n";
         for my $name (sort keys %allTags) {
-            print F "DEFINE_GLOBAL(QualifiedName, ", $name, "Tag, nullAtom, \"$name\", ${lowerNamespace}NamespaceURI)\n";
+            print F "DEFINE_GLOBAL(QualifiedName, ", $name, "Tag)\n";
         }
         
         print F "\n\nWebCore::QualifiedName** get$parameters{namespace}Tags(size_t* size)\n";
@@ -646,7 +646,7 @@ sub printNamesCppFile
     if (keys %allAttrs) {
         print F "\n// Attributes\n";
         for my $name (sort keys %allAttrs) {
-            print F "DEFINE_GLOBAL(QualifiedName, ", $name, "Attr, nullAtom, \"$name\", ${lowerNamespace}NamespaceURI)\n";
+            print F "DEFINE_GLOBAL(QualifiedName, ", $name, "Attr)\n";
         }
         print F "\n\nWebCore::QualifiedName** get$parameters{namespace}Attrs(size_t* size)\n";
         print F "{\n    static WebCore::QualifiedName* $parameters{namespace}Attr[] = {\n";
@@ -660,8 +660,8 @@ sub printNamesCppFile
     }
 
     printInit($F, 0);
-    
-    print(F "    AtomicString ${lowerNamespace}NS(\"$parameters{namespaceURI}\");\n\n");
+
+    print(F "    AtomicString ${lowerNamespace}NS(\"$parameters{namespaceURI}\", AtomicString::ConstructFromLiteral);\n\n");
 
     print(F "    // Namespace\n");
     print(F "    new ((void*)&${lowerNamespace}NamespaceURI) AtomicString(${lowerNamespace}NS);\n\n");
@@ -771,7 +771,13 @@ sub printDefinitions
             $realName = $name;
             $realName =~ s/_/-/g;
         }
-        print F "    new ((void*)&$name","${shortCamelType}) QualifiedName(nullAtom, \"$realName\", $namespaceURI);\n";
+
+        # To generate less code in init(), the common case of nullAtom for the namespace, we call createQualifiedName() without passing $namespaceURI.
+        if ($namespaceURI eq "nullAtom") {
+            print F "    createQualifiedName((void*)&$name","${shortCamelType}, \"$realName\", ", length $realName ,");\n";
+        } else {
+            print F "    createQualifiedName((void*)&$name","${shortCamelType}, \"$realName\", ", length $realName ,", $namespaceURI);\n";
+        }
     }
 }
 
