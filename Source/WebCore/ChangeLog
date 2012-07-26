@@ -1,3 +1,22 @@
+2012-07-26  Jan Keromnes  <janx@linux.com>
+
+        Web Inspector: ExtensionView constructor shouldn't take parent argument
+        https://bugs.webkit.org/show_bug.cgi?id=92326
+
+        Reviewed by Pavel Feldman.
+
+        ExtensionView's constructor took a parent element parameter and auto-
+        showed itself in the constructor. This didn't allow lazy showing and
+        was confusing because it didn't work like a classic View object. Fixed.
+
+        No new tests needed: Refactoring with no behavior changes.
+
+        * inspector/front-end/ExtensionPanel.js:
+        (WebInspector.ExtensionPanel):
+        (WebInspector.ExtensionSidebarPane.prototype.setPage):
+        * inspector/front-end/ExtensionView.js:
+        (WebInspector.ExtensionView):
+
 2012-07-26  Joshua Netterfield  <jnetterfield@rim.com>
 
         [WebGL] ANGLEWebKitBridge should support ESSL platforms

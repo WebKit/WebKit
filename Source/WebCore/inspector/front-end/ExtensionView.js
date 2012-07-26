@@ -32,11 +32,10 @@
  * @constructor
  * @extends {WebInspector.View}
  * @param {string} id
- * @param {Element} parent
  * @param {string} src
  * @param {string} className
  */
-WebInspector.ExtensionView = function(id, parent, src, className)
+WebInspector.ExtensionView = function(id, src, className)
 {
     WebInspector.View.call(this);
     this.element.className = "fill";
@@ -48,7 +47,6 @@ WebInspector.ExtensionView = function(id, parent, src, className)
     this._iframe.className = className;
 
     this.element.appendChild(this._iframe);
-    this.show(parent);
 }
 
 WebInspector.ExtensionView.prototype = {

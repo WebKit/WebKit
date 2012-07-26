@@ -47,7 +47,8 @@ WebInspector.ExtensionPanel = function(id, label, pageURL, iconURL)
         this._addStyleRule(".toolbar-item." + id + " .toolbar-icon", "background-image: url(" + iconURL + ");");
         this._addStyleRule(".toolbar-small .toolbar-item." + id + " .toolbar-icon", "background-position-x: -32px;");
     }
-    new WebInspector.ExtensionView(id, this.element, pageURL, "extension panel");
+    var extensionView = new WebInspector.ExtensionView(id, pageURL, "extension panel");
+    extensionView.show(this.element);
 }
 
 WebInspector.ExtensionPanel.prototype = {
@@ -196,7 +197,9 @@ WebInspector.ExtensionSidebarPane.prototype = {
         if (this._extensionView)
             this._extensionView.detach(true);
 
-        this._extensionView = new WebInspector.ExtensionView(this._id, this.bodyElement, url, "extension fill");
+        this._extensionView = new WebInspector.ExtensionView(this._id, url, "extension fill");
+        this._extensionView.show(this.bodyElement);
+
         if (!this.bodyElement.style.height)
             this.setHeight("150px");
     },
