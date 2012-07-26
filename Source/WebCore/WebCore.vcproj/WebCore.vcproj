@@ -26767,6 +26767,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\page\DiagnosticLoggingKeys.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\page\DiagnosticLoggingKeys.h"
+				>
+			</File>
+			<File
 				RelativePath="..\page\DOMSelection.cpp"
 				>
 			</File>

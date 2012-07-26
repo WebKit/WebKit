@@ -1,3 +1,37 @@
+2012-07-26  Jer Noble  <jer.noble@apple.com>
+
+        Add a ChromeClient method to send diagnostic logging messages from WebCore to the client.
+        https://bugs.webkit.org/show_bug.cgi?id=92340
+
+        Reviewed by Anders Carlsson.
+
+        Add a new ChromeClient menthod, to be implemented by WebKit and WebKit2, which sends
+        a diagnostic logging message up to the client.
+
+        * page/ChromeClient.h:
+        (WebCore::ChromeClient::logDiagnosticMessage):
+        * page/ChromeClient.h:
+        (WebCore::ChromeClient::logDiagnosticMessage):
+        (ChromeClient):
+        * page/DiagnosticLoggingKeys.cpp: Added.
+        (WebCore::DiagnosticLoggingKeys::mediaLoadedKey):
+        (WebCore::DiagnosticLoggingKeys::mediaLoadingFailedKey):
+        (WebCore::DiagnosticLoggingKeys::pluginLoadedKey):
+        (WebCore::DiagnosticLoggingKeys::pluginLoadingFailedKey):
+        (WebCore::DiagnosticLoggingKeys::passKey):
+        (WebCore::DiagnosticLoggingKeys::failKey):
+        (WebCore::DiagnosticLoggingKeys::noopKey):
+        * page/DiagnosticLoggingKeys.h: Added.
+        (DiagnosticLoggingKeys):
+
+        Add the new files DiagnosticLoggingKeys.cpp,h to the project:
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+
 2012-07-25  Jer Noble  <jer.noble@apple.com>
 
         Add setting to enable and disable diagnostic logging.

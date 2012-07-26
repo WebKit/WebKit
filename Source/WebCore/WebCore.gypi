@@ -3038,6 +3038,8 @@
             'page/ContextMenuProvider.h',
             'page/Crypto.cpp',
             'page/Crypto.h',
+            'page/DiagnosticLoggingKeys.cpp',
+            'page/DiagnosticLoggingKeys.h',
             'page/DOMSecurityPolicy.cpp',
             'page/DOMSelection.cpp',
             'page/DOMSelection.h',

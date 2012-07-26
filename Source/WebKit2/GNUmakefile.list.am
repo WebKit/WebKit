@@ -1004,6 +1004,8 @@ webkit2_sources += \
 	Source/WebKit2/WebProcess/InjectedBundle/InjectedBundleNavigationAction.h \
 	Source/WebKit2/WebProcess/InjectedBundle/InjectedBundlePageContextMenuClient.cpp \
 	Source/WebKit2/WebProcess/InjectedBundle/InjectedBundlePageContextMenuClient.h \
+	Source/WebKit2/WebProcess/InjectedBundle/InjectedBundlePageDiagnosticLoggingClient.cpp \
+	Source/WebKit2/WebProcess/InjectedBundle/InjectedBundlePageDiagnosticLoggingClient.h \
 	Source/WebKit2/WebProcess/InjectedBundle/InjectedBundlePageEditorClient.cpp \
 	Source/WebKit2/WebProcess/InjectedBundle/InjectedBundlePageEditorClient.h \
 	Source/WebKit2/WebProcess/InjectedBundle/InjectedBundlePageFormClient.cpp \

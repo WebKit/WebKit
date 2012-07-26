@@ -3024,6 +3024,8 @@ webcore_sources += \
 	Source/WebCore/page/Coordinates.h \
 	Source/WebCore/page/Crypto.cpp \
 	Source/WebCore/page/Crypto.h \
+	Source/WebCore/page/DiagnosticLoggingKeys.cpp \
+	Source/WebCore/page/DiagnosticLoggingKeys.h \
 	Source/WebCore/page/DOMSecurityPolicy.cpp \
 	Source/WebCore/page/DOMSecurityPolicy.h \
 	Source/WebCore/page/DOMSelection.cpp \

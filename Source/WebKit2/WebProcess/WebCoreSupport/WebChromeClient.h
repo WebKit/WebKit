@@ -219,6 +219,8 @@ private:
     
     virtual void numWheelEventHandlersChanged(unsigned) OVERRIDE;
 
+    virtual void logDiagnosticMessage(const String& message, const String& description, const String& success) OVERRIDE;
+
     String m_cachedToolTip;
     mutable RefPtr<WebFrame> m_cachedFrameSetLargestFrame;
     mutable bool m_cachedMainFrameHasHorizontalScrollbar;
