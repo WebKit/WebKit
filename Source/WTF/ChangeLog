@@ -1,3 +1,19 @@
+2012-07-26  Yury Semikhatsky  <yurys@chromium.org>
+
+        Web Inspector: move StringImpl size calculation to StringImpl
+        https://bugs.webkit.org/show_bug.cgi?id=92359
+
+        Reviewed by Pavel Feldman.
+
+        Moved stringSize(StringImpl*) implementation from InspectorMemoryAgent to
+        StringImpl::sizeInBytes();
+
+        * wtf/text/StringImpl.cpp:
+        (WTF::StringImpl::sizeInBytes):
+        (WTF):
+        * wtf/text/StringImpl.h:
+        (StringImpl):
+
 2012-07-25  Benjamin Poulain  <bpoulain@apple.com>
 
         Initialize QualifiedName's strings from the read only data segment

@@ -1,3 +1,16 @@
+2012-07-26  Yury Semikhatsky  <yurys@chromium.org>
+
+        Web Inspector: move StringImpl size calculation to StringImpl
+        https://bugs.webkit.org/show_bug.cgi?id=92359
+
+        Reviewed by Pavel Feldman.
+
+        Moved stringSize(StringImpl*) implementation from InspectorMemoryAgent to
+        StringImpl::sizeInBytes();
+
+        * inspector/InspectorMemoryAgent.cpp:
+        (WebCore):
+
 2012-07-26  Charles Wei  <charles.wei@torchmobile.com.cn>
 
         Remove redundant include of PageGroup.h in FrameLoader.cpp
