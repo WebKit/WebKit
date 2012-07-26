@@ -3666,3 +3666,7 @@ BUGWK92026 DEBUG SNOWLEOPARD : css3/selectors3/xml/css3-modsel-179a.xml = PASS I
 BUGWK92027 DEBUG SNOWLEOPARD : fast/performance/performance-now-timestamps.html = PASS TEXT
 BUGWK92288 SNOWLEOPARD DEBUG : plugins/update-widgets-crash.html = PASS TIMEOUT
 BUGWK92297 DEBUG : media/video-set-rate-from-pause.html = PASS CRASH
+
+// Needs rebaseline
+BUGWK92059 MAC WIN : css3/filters/effect-brightness-clamping.html = MISSING
+BUGWK92059 MAC WIN : css3/filters/effect-brightness-clamping-hw.html = MISSING

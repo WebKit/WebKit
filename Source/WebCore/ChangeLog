@@ -1,3 +1,21 @@
+2012-07-26  Antoine Labour  <piman@chromium.org>
+
+        [chromium] Combine color matrix filters and apply them in a single pass.
+        https://bugs.webkit.org/show_bug.cgi?id=92059
+
+        Reviewed by Stephen White.
+
+        Sequential color matrix filters can easily be combined, by simply
+        multiplying the color matrices and applying it in a single pass. This
+        helps dramatically with performance (bandwidth savings by avoiding extra
+        copy & clear, also saves fragment shader processing).
+
+        Covered by css3/filters layout tests, added effect-brightness-clamping
+        and effect-brightness-clamping-hw.
+
+        * platform/graphics/chromium/cc/CCRenderSurfaceFilters.cpp:
+        (WebCore::CCRenderSurfaceFilters::apply):
+
 2012-07-26  Ryosuke Niwa  <rniwa@webkit.org>
 
         Href attribute with javascript protocol is stripped when content is pasted into a XML doucment
