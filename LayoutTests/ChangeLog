@@ -1,3 +1,23 @@
+2012-07-26  Bruno de Oliveira Abinader  <bruno.abinader@basyskom.com>
+
+        [Qt] Reskip fast/text WK2 added results
+        https://bugs.webkit.org/show_bug.cgi?id=91570
+
+        Unreviewed gardening.
+
+        This patch reverts the added WK2 layout test results from r123144 "[Qt]
+        Added/updated missing fast/text results after rebaseline". As discussed with
+        Caio, these expectations are actually caused by an erroneous input-text and
+        text-area default size diff between WK1 and WK2 (handled in bug 91990). These
+        tests were reskipped and reassigned to proper bugs.
+
+        * platform/qt-5.0-wk2/Skipped:
+        * platform/qt-5.0-wk2/fast/text/international/unicode-bidi-plaintext-in-textarea-expected.png: Removed.
+        * platform/qt-5.0-wk2/fast/text/international/unicode-bidi-plaintext-in-textarea-expected.txt: Removed.
+        * platform/qt-5.0-wk2/fast/text/textIteratorNilRenderer-expected.png: Removed.
+        * platform/qt-5.0-wk2/fast/text/textIteratorNilRenderer-expected.txt: Removed.
+        * platform/qt-5.0/fast/text/international/unicode-bidi-plaintext-in-textarea-expected.png: Removed.
+
 2012-07-26  Sadrul Habib Chowdhury  <sadrul@chromium.org>
 
         Propagate gesture events to plugins.
