@@ -1,5 +1,19 @@
 2012-07-25  Joshua Netterfield  <jnetterfield@rim.com>
 
+        [BlackBerry] readPixels should set alpha to 255 instead of 0 when alpha is disabled
+        https://bugs.webkit.org/show_bug.cgi?id=92303
+
+        Reviewed by Rob Buis.
+
+        No new tests, because it corrects existing functionality, but it makes BlackBerry
+        pass context-attributes-alpha-depth-stencil-antialias.html.
+
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore):
+        (WebCore::WebGLRenderingContext::readPixels):
+
+2012-07-25  Joshua Netterfield  <jnetterfield@rim.com>
+
         [WebGL] fast/canvas/webgl/framebuffer-object-attachment.html fails on certain platforms
         https://bugs.webkit.org/show_bug.cgi?id=92296
 
