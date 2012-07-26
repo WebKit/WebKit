@@ -1,3 +1,10 @@
+2012-07-26  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening, adding text failure expectations for two
+        CSS3 Flexbox tests introduced in r123696.
+
+        * platform/gtk/TestExpectations:
+
 2012-07-26  Ádám Kallai  <kadam@inf.u-szeged.hu>
 
         [Qt] Unreviewed gardening. Skip a failing tests.
