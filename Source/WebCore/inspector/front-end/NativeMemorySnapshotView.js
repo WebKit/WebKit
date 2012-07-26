@@ -428,7 +428,7 @@ WebInspector.NativeMemoryBarChart.prototype = {
      */
     wasShown: function()
     {
-        this._timerId = setInterval(this._updateStats.bind(this), 200);
+        this._timerId = setInterval(this._updateStats.bind(this), 1000);
     },
 
     _updateView: function()
