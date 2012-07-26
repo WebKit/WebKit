@@ -1,3 +1,16 @@
+2012-07-26  Gavin Peters  <gavinp@chromium.org>
+
+        Guard Prerenderer against inserting prerenders into detached documents.
+        https://bugs.webkit.org/show_bug.cgi?id=92401
+
+        Reviewed by Adam Barth.
+
+        If the document is detached, we should just not launch a prerender.
+
+        * fast/dom/HTMLLinkElement/prerender-insert-after-stop-expected.txt: Added.
+        * fast/dom/HTMLLinkElement/prerender-insert-after-stop.html: Added.
+        * fast/dom/HTMLLinkElement/resources/empty2.html: Added.
+
 2012-07-26  Andrew Wilson  <atwilson@chromium.org>
 
         Unreviewed chromium expectations change to fix lint err.
