@@ -1,3 +1,21 @@
+2012-07-26  Mike Fenton  <mifenton@rim.com>
+
+        [BlackBerry] InputHandler failure logs should be logAlways and critical.
+        https://bugs.webkit.org/show_bug.cgi?id=92403
+
+        Reviewed by Rob Buis.
+
+        Update Log level for failures and fix mask in log.
+
+        Reviewed Internally by Nima Ghanavatian.
+
+        * WebKitSupport/InputHandler.cpp:
+        (BlackBerry::WebKit::convertStringToWchar):
+        (BlackBerry::WebKit::convertStringToWcharVector):
+        (BlackBerry::WebKit::convertSpannableStringToString):
+        (BlackBerry::WebKit::InputHandler::spannableTextInRange):
+        (BlackBerry::WebKit::InputHandler::setTextAttributes):
+
 2012-07-26  Arvid Nilsson  <anilsson@rim.com>
 
         [BlackBerry] Refactor BackingStorePrivate::BackingStorePrivate::clearAndUpdateTileOfNotRenderedRegion() to avoid touching tile frontbuffer

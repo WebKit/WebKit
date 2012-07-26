@@ -433,7 +433,7 @@ static bool convertStringToWchar(const String& string, wchar_t* dest, int destCa
     // wchar_t strings sent to IMF are 32 bit so casting to UChar32 is safe.
     u_strToUTF32(reinterpret_cast<UChar32*>(dest), destCapacity, destLength, string.characters(), string.length(), &ec);
     if (ec) {
-        InputLog(LogLevelInfo, "InputHandler::convertStringToWchar Error converting string ec (%d).", ec);
+        logAlways(LogLevelCritical, "InputHandler::convertStringToWchar Error converting string ec (%d).", ec);
         destLength = 0;
         return false;
     }
@@ -449,7 +449,7 @@ static bool convertStringToWcharVector(const String& string, WTF::Vector<wchar_t
         return true;
 
     if (!wcharString.tryReserveCapacity(length + 1)) {
-        logAlways(LogLevelWarn, "InputHandler::convertStringToWcharVector Cannot allocate memory for string.\n");
+        logAlways(LogLevelCritical, "InputHandler::convertStringToWcharVector Cannot allocate memory for string.\n");
         return false;
     }
 
@@ -469,7 +469,7 @@ static String convertSpannableStringToString(spannable_string_t* src)
     WTF::Vector<UChar> dest;
     int destCapacity = (src->length * 2) + 1;
     if (!dest.tryReserveCapacity(destCapacity)) {
-        logAlways(LogLevelWarn, "InputHandler::convertSpannableStringToString Cannot allocate memory for string.\n");
+        logAlways(LogLevelCritical, "InputHandler::convertSpannableStringToString Cannot allocate memory for string.\n");
         return String();
     }
 
@@ -478,7 +478,7 @@ static String convertSpannableStringToString(spannable_string_t* src)
     // wchar_t strings sent from IMF are 32 bit so casting to UChar32 is safe.
     u_strFromUTF32(dest.data(), destCapacity, &destLength, reinterpret_cast<UChar32*>(src->str), src->length, &ec);
     if (ec) {
-        InputLog(LogLevelInfo, "InputHandler::convertSpannableStringToString Error converting string ec (%d).", ec);
+        logAlways(LogLevelCritical, "InputHandler::convertSpannableStringToString Error converting string ec (%d).", ec);
         return String();
     }
     dest.resize(destLength);
@@ -1471,19 +1471,20 @@ spannable_string_t* InputHandler::spannableTextInRange(int start, int end, int32
 
     spannable_string_t* pst = (spannable_string_t*)malloc(sizeof(spannable_string_t));
     if (!pst) {
-        InputLog(LogLevelInfo, "InputHandler::spannableTextInRange error allocating spannable string.");
+        logAlways(LogLevelCritical, "InputHandler::spannableTextInRange error allocating spannable string.");
         return 0;
     }
 
     pst->str = (wchar_t*)malloc(sizeof(wchar_t) * (length + 1));
     if (!pst->str) {
-        InputLog(LogLevelInfo, "InputHandler::spannableTextInRange Cannot allocate memory for string.\n");
+        logAlways(LogLevelCritical, "InputHandler::spannableTextInRange Cannot allocate memory for string.\n");
         free(pst);
         return 0;
     }
 
     int stringLength = 0;
     if (!convertStringToWchar(textString, pst->str, length + 1, &stringLength)) {
+        logAlways(LogLevelCritical, "InputHandler::spannableTextInRange failed to convert string.\n");
         free(pst->str);
         free(pst);
         return 0;
@@ -1790,7 +1791,7 @@ bool InputHandler::setTextAttributes(int insertionPoint, spannable_string_t* spa
         // used by IMF. When they add support for on the fly spell checking we can
         // use it to apply spelling markers and disable continuous spell checking.
 
-        InputLog(LogLevelInfo, "InputHandler::setTextAttributes adding marker %d to %d - %d", startPosition, endPosition, span->attributes_mask);
+        InputLog(LogLevelInfo, "InputHandler::setTextAttributes adding marker %d to %d - %llu", startPosition, endPosition, span->attributes_mask);
         addAttributedTextMarker(startPosition, endPosition, textStyleFromMask(span->attributes_mask));
 
         span++;
