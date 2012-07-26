@@ -64,6 +64,8 @@ private:
     SQLiteStatement* m_hasNeverRememberStatement;
     SQLiteStatement* m_getNeverRememberStatement;
     SQLiteStatement* m_removeNeverRememberStatement;
+
+    bool m_usingCertManager;
 };
 
 CredentialBackingStore& credentialBackingStore();

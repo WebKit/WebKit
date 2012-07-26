@@ -29,6 +29,7 @@
 #include "SQLiteStatement.h"
 #include <BlackBerryPlatformClient.h>
 #include <BlackBerryPlatformEncryptor.h>
+#include <CertMgrWrapper.h>
 
 #define HANDLE_SQL_EXEC_FAILURE(statement, returnValue, ...) \
     if (statement) { \
@@ -37,6 +38,17 @@
     }
 
 namespace WebCore {
+
+static unsigned hashCredentialInfo(const String& url, const ProtectionSpace& space, const String& username)
+{
+    String hashString = String::format("%s@%s@%s@%d@%d@%s@%d",
+                                       username.utf8().data(), url.utf8().data(),
+                                       space.host().utf8().data(), space.port(),
+                                       static_cast<int>(space.serverType()),
+                                       space.realm().utf8().data(),
+                                       static_cast<int>(space.authenticationScheme()));
+    return StringHasher::computeHash(hashString.characters(), hashString.length());
+}
 
 CredentialBackingStore& credentialBackingStore()
 {
@@ -57,6 +69,7 @@ CredentialBackingStore::CredentialBackingStore()
     , m_hasNeverRememberStatement(0)
     , m_getNeverRememberStatement(0)
     , m_removeNeverRememberStatement(0)
+    , m_usingCertManager(BlackBerry::Platform::CertMgrWrapper::instance()->isReady())
 {
 }
 
@@ -125,11 +138,11 @@ bool CredentialBackingStore::open(const String& dbPath)
     HANDLE_SQL_EXEC_FAILURE(m_hasLoginStatement->prepare() != SQLResultOk,
         false, "Failed to prepare hasLogin statement");
 
-    m_getLoginStatement = new SQLiteStatement(m_database, "SELECT username, password FROM logins WHERE host = ? AND port = ? AND service_type = ? AND realm = ? AND auth_scheme = ?");
+    m_getLoginStatement = new SQLiteStatement(m_database, "SELECT username, password, origin_url FROM logins WHERE host = ? AND port = ? AND service_type = ? AND realm = ? AND auth_scheme = ?");
     HANDLE_SQL_EXEC_FAILURE(m_getLoginStatement->prepare() != SQLResultOk,
         false, "Failed to prepare getLogin statement");
 
-    m_getLoginByURLStatement = new SQLiteStatement(m_database, "SELECT username, password FROM logins WHERE origin_url = ?");
+    m_getLoginByURLStatement = new SQLiteStatement(m_database, "SELECT username, password, host, port, service_type, realm, auth_scheme FROM logins WHERE origin_url = ?");
     HANDLE_SQL_EXEC_FAILURE(m_getLoginByURLStatement->prepare() != SQLResultOk,
         false, "Failed to prepare getLoginByURL statement");
 
@@ -171,14 +184,17 @@ bool CredentialBackingStore::addLogin(const KURL& url, const ProtectionSpace& pr
     m_addLoginStatement->bindText(5, protectionSpace.realm());
     m_addLoginStatement->bindInt(6, static_cast<int>(protectionSpace.authenticationScheme()));
     m_addLoginStatement->bindText(7, credential.user());
-    m_addLoginStatement->bindBlob(8, encryptedString(credential.password()));
+    m_addLoginStatement->bindBlob(8, m_usingCertManager ? "" : encryptedString(credential.password()));
 
     int result = m_addLoginStatement->step();
     m_addLoginStatement->reset();
     HANDLE_SQL_EXEC_FAILURE(result != SQLResultDone, false,
         "Failed to add login info into table logins - %i", result);
 
-    return true;
+    if (!m_usingCertManager)
+        return true;
+    unsigned hash = hashCredentialInfo(url.string(), protectionSpace, credential.user());
+    return BlackBerry::Platform::CertMgrWrapper::instance()->savePassword(hash, encryptedString(credential.password()).latin1().data());
 }
 
 bool CredentialBackingStore::updateLogin(const KURL& url, const ProtectionSpace& protectionSpace, const Credential& credential)
@@ -190,7 +206,7 @@ bool CredentialBackingStore::updateLogin(const KURL& url, const ProtectionSpace&
         return false;
 
     m_updateLoginStatement->bindText(1, credential.user());
-    m_updateLoginStatement->bindBlob(2, encryptedString(credential.password()));
+    m_updateLoginStatement->bindBlob(2, m_usingCertManager ? "" : encryptedString(credential.password()));
     m_updateLoginStatement->bindText(3, url.string());
     m_updateLoginStatement->bindText(4, protectionSpace.host());
     m_updateLoginStatement->bindInt(5, protectionSpace.port());
@@ -203,7 +219,10 @@ bool CredentialBackingStore::updateLogin(const KURL& url, const ProtectionSpace&
     HANDLE_SQL_EXEC_FAILURE(result != SQLResultDone, false,
         "Failed to update login info in table logins - %i", result);
 
-    return true;
+    if (!m_usingCertManager)
+        return true;
+    unsigned hash = hashCredentialInfo(url.string(), protectionSpace, credential.user());
+    return BlackBerry::Platform::CertMgrWrapper::instance()->savePassword(hash, encryptedString(credential.password()).latin1().data());
 }
 
 bool CredentialBackingStore::hasLogin(const KURL& url, const ProtectionSpace& protectionSpace)
@@ -248,12 +267,20 @@ Credential CredentialBackingStore::getLogin(const ProtectionSpace& protectionSpa
 
     int result = m_getLoginStatement->step();
     String username = m_getLoginStatement->getColumnText(0);
-    String password = m_getLoginStatement->getColumnBlobAsString(1);
+    String password = m_usingCertManager ? "" : m_getLoginStatement->getColumnBlobAsString(1);
+    String url = m_getLoginStatement->getColumnText(2);
     m_getLoginStatement->reset();
     HANDLE_SQL_EXEC_FAILURE(result != SQLResultRow, Credential(),
         "Failed to execute select login info from table logins in getLogin - %i", result);
 
-    return Credential(username, decryptedString(password), CredentialPersistencePermanent);
+    if (!m_usingCertManager)
+        return Credential(username, decryptedString(password), CredentialPersistencePermanent);
+
+    unsigned hash = hashCredentialInfo(url, protectionSpace, username);
+    std::string passwordBlob;
+    if (!BlackBerry::Platform::CertMgrWrapper::instance()->getPassword(hash, passwordBlob))
+        return Credential();
+    return Credential(username, decryptedString(passwordBlob.c_str()), CredentialPersistencePermanent);
 }
 
 Credential CredentialBackingStore::getLogin(const KURL& url)
@@ -268,12 +295,26 @@ Credential CredentialBackingStore::getLogin(const KURL& url)
 
     int result = m_getLoginByURLStatement->step();
     String username = m_getLoginByURLStatement->getColumnText(0);
-    String password = m_getLoginByURLStatement->getColumnBlobAsString(1);
+    String password = m_usingCertManager ? "" : m_getLoginByURLStatement->getColumnBlobAsString(1);
+    String host = m_getLoginByURLStatement->getColumnText(2);
+    int port = m_getLoginByURLStatement->getColumnInt(3);
+    int serviceType = m_getLoginByURLStatement->getColumnInt(4);
+    String realm = m_getLoginByURLStatement->getColumnText(5);
+    int authenticationScheme = m_getLoginByURLStatement->getColumnInt(6);
     m_getLoginByURLStatement->reset();
     HANDLE_SQL_EXEC_FAILURE(result != SQLResultRow, Credential(),
-        "Failed to execute select login info from table logins in getLogin - %i", result);
+        "Failed to execute select login info from table logins in getLoginByURL - %i", result);
 
-    return Credential(username, decryptedString(password), CredentialPersistencePermanent);
+    if (!m_usingCertManager)
+        return Credential(username, decryptedString(password), CredentialPersistencePermanent);
+
+    ProtectionSpace protectionSpace(host, port, static_cast<ProtectionSpaceServerType>(serviceType),
+                                    realm, static_cast<ProtectionSpaceAuthenticationScheme>(authenticationScheme));
+    unsigned hash = hashCredentialInfo(url, protectionSpace, username);
+    std::string passwordBlob;
+    if (!BlackBerry::Platform::CertMgrWrapper::instance()->getPassword(hash, passwordBlob))
+        return Credential();
+    return Credential(username, decryptedString(passwordBlob.c_str()), CredentialPersistencePermanent);
 }
 
 bool CredentialBackingStore::removeLogin(const KURL& url, const ProtectionSpace& protectionSpace)

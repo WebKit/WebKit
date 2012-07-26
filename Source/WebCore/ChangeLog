@@ -1,3 +1,30 @@
+2012-07-25  Jonathan Dong  <jonathan.dong@torchmobile.com.cn>
+
+        [BlackBerry] Integrate certmgr with CredentialBackingStore
+        https://bugs.webkit.org/show_bug.cgi?id=92183
+
+        Reviewed by George Staikos.
+
+        Integrated BlackBerry::Platform::CertMgrWrapper with
+        CredentialBackingStore, when certmgr is ready we save
+        the password in certmgr and retrieve it from certmgr.
+
+        RIM PR: 171991
+        Internally reviewed by Joe Mason <jmason@rim.com>.
+
+        No new tests since there's no functional change.
+
+        * platform/network/blackberry/CredentialBackingStore.cpp:
+        (WebCore::hashCredentialInfo):
+        (WebCore):
+        (WebCore::CredentialBackingStore::CredentialBackingStore):
+        (WebCore::CredentialBackingStore::open):
+        (WebCore::CredentialBackingStore::addLogin):
+        (WebCore::CredentialBackingStore::updateLogin):
+        (WebCore::CredentialBackingStore::getLogin):
+        * platform/network/blackberry/CredentialBackingStore.h:
+        (CredentialBackingStore):
+
 2012-07-25  Kent Tamura  <tkent@chromium.org>
 
         REGRESSION(r121420): Performance regression of form state saving for pages with multiple forms
