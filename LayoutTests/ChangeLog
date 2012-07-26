@@ -1,3 +1,14 @@
+2012-07-26  Anna Cavender  <annacc@chromium.org>
+
+        [Chromium] Removing http/tests/media/media-source/video-media-source-add-and-remove-ids.html from TestExpectations
+
+        Unreviewed gardening.
+
+        Recent chromium patch fixes this problem:
+        http://src.chromium.org/viewvc/chrome?view=rev&revision=148473
+
+        * platform/chromium/TestExpectations:
+
 2012-07-26  Bruno de Oliveira Abinader  <bruno.abinader@basyskom.com>
 
         [Qt] Reskip fast/text WK2 added results

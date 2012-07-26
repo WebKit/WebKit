@@ -3387,8 +3387,6 @@ BUGWK85952 : http/tests/media/media-source/video-media-source-play.html = PASS T
 BUGWK85952 : http/tests/media/media-source/video-media-source-seek.html = PASS TEXT TIMEOUT
 BUGWK85952 : http/tests/media/media-source/video-media-source-state-changes.html = PASS TIMEOUT TEXT CRASH
 
-BUGWK88949 : http/tests/media/media-source/video-media-source-add-and-remove-ids.html = PASS TEXT CRASH
-
 // Started flaking at around http://trac.webkit.org/changeset/116278.
 BUGWK85950 LINUX DEBUG : compositing/geometry/limit-layer-bounds-transformed-overflow.html = PASS TEXT
 
