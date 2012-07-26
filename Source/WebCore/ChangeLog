@@ -1,3 +1,23 @@
+2012-07-25  Vineet Chaudhary  <rgf748@motorola.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=92260
+        Repalce "int" with "long" from WebCore/*.idls
+
+        Reviewed by Adam Barth.
+
+        As per the WebIDL spec IDL shouldn't have int attributes but long instead.
+        Repalced attributes types int with long from WebCore/*.idls.
+
+        No new tests. TestObj.idl already covers this.
+        There should be no behavioural changes.
+
+        * dom/Touch.idl: Repalce int with long.
+        * dom/WebKitNamedFlow.idl: Ditto.
+        * html/canvas/ArrayBuffer.idl: Ditto.
+        * html/canvas/WebGLActiveInfo.idl: Ditto.
+        * html/canvas/WebGLShaderPrecisionFormat.idl: Ditto.
+        * page/WebKitAnimation.idl: Ditto.
+
 2012-07-25  Shinya Kawanaka  <shinyak@chromium.org>
 
         The elements in ShadowDOM of meter or progress should not be modifiable.

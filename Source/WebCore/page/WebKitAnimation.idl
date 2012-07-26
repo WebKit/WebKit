@@ -36,7 +36,7 @@ module html {
         attribute double elapsedTime;
 
         readonly attribute double delay;
-        readonly attribute [Custom] int iterationCount;
+        readonly attribute [Custom] long iterationCount;
 
         readonly attribute boolean paused;
         readonly attribute boolean ended;

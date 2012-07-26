@@ -31,7 +31,7 @@ module html {
         ConstructorParameters=1,
         JSNoStaticTables
     ] ArrayBuffer {
-        readonly attribute int byteLength;
+        readonly attribute unsigned long byteLength;
         ArrayBuffer slice(in long begin, in [Optional] long end);
     };
 

@@ -29,9 +29,9 @@ module html {
     interface [
         Conditional=WEBGL,
     ] WebGLShaderPrecisionFormat {
-        readonly attribute int rangeMin;
-        readonly attribute int rangeMax;
-        readonly attribute int precision;
+        readonly attribute long rangeMin;
+        readonly attribute long rangeMax;
+        readonly attribute long precision;
     };
 
 }
