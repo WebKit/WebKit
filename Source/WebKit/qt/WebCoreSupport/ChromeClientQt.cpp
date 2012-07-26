@@ -89,6 +89,7 @@
 
 namespace WebCore {
 
+#if ENABLE(REQUEST_ANIMATION_FRAME) && !USE(REQUEST_ANIMATION_FRAME_TIMER)
 class RefreshAnimation : public QAbstractAnimation {
 public:
     RefreshAnimation(ChromeClientQt* chromeClient)
@@ -120,6 +121,7 @@ private:
     ChromeClientQt* m_chromeClient;
     bool m_animationScheduled;
 };
+#endif
 
 bool ChromeClientQt::dumpVisitedLinksCallbacks = false;
 
@@ -651,6 +653,7 @@ void ChromeClientQt::setCursor(const Cursor& cursor)
 #endif
 }
 
+#if ENABLE(REQUEST_ANIMATION_FRAME) && !USE(REQUEST_ANIMATION_FRAME_TIMER)
 void ChromeClientQt::scheduleAnimation()
 {
     if (!m_refreshAnimation)
@@ -662,6 +665,7 @@ void ChromeClientQt::serviceScriptedAnimations()
 {
     m_webPage->mainFrame()->d->frame->view()->serviceScriptedAnimations(convertSecondsToDOMTimeStamp(currentTime()));
 }
+#endif
 
 #if USE(ACCELERATED_COMPOSITING)
 void ChromeClientQt::attachRootGraphicsLayer(Frame* frame, GraphicsLayer* graphicsLayer)

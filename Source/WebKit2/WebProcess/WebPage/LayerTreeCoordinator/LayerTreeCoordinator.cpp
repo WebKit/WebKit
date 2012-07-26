@@ -548,10 +548,12 @@ void LayerTreeCoordinator::setVisibleContentsRect(const IntRect& rect, float sca
         m_shouldSendScrollPositionUpdate = true;
 }
 
+#if USE(UI_SIDE_COMPOSITING)
 void LayerTreeCoordinator::scheduleAnimation()
 {
     scheduleLayerFlush();
 }
+#endif
 
 void LayerTreeCoordinator::renderNextFrame()
 {
