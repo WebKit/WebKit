@@ -1,3 +1,19 @@
+2012-07-26  Dirk Pranke  <dpranke@chromium.org>
+
+        nrwt: pass --verbose twice on the bots to ensure getting the debug output for now
+        https://bugs.webkit.org/show_bug.cgi?id=92172
+
+        Reviewed by Tony Chang.
+
+        Right now new-run-webkit-tests --verbose prints out too much
+        information (it's like --verbose + debugging). I plan to fix
+        this in bug 88702, and also clean up and simplify all of the
+        --print options, but in preparation for these changes I need to
+        pass --verbose twice to get the same level of output
+        temporarily (for compatibility).
+
+        * Scripts/run-webkit-tests:
+
 2012-07-26  Sadrul Habib Chowdhury  <sadrul@chromium.org>
 
         Propagate gesture events to plugins.

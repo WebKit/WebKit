@@ -93,7 +93,7 @@ if (useNewRunWebKitTests()) {
     }
 
     if (runningOnBuildBot()) {
-        push(@ARGV, "--verbose");
+        push(@ARGV, "--verbose", "--verbose");
     }
 }
 
