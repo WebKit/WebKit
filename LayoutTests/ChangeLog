@@ -1,3 +1,43 @@
+2012-07-26  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r123159, r123165, r123168, r123492,
+        and r123650.
+        http://trac.webkit.org/changeset/123159
+        http://trac.webkit.org/changeset/123165
+        http://trac.webkit.org/changeset/123168
+        http://trac.webkit.org/changeset/123492
+        http://trac.webkit.org/changeset/123650
+        https://bugs.webkit.org/show_bug.cgi?id=92406
+
+        allowing inline-table anonymous wrappers is a bad idea due to
+        tons of corner cases that should be properly handled
+        (Requested by jchaffraix on #webkit).
+
+        * css2.1/20110323/inline-table-002b-expected.htm: Removed.
+        * css2.1/20110323/inline-table-002b.html: Removed.
+        * fast/dynamic/insert-before-table-part-in-continuation-expected.txt: Removed.
+        * fast/table/inline-block-generates-table-wrapper-expected.html: Removed.
+        * fast/table/inline-block-generates-table-wrapper.html: Removed.
+        * fast/table/inline-table-in-continuation-expected.html: Removed.
+        * fast/table/inline-table-in-continuation.html: Removed.
+        * fast/table/inline-table-with-caption-expected.html: Removed.
+        * fast/table/inline-table-with-caption.html: Removed.
+        * platform/chromium-linux/fast/dynamic/insert-before-table-part-in-continuation-expected.png:
+        * platform/chromium-mac-snowleopard/fast/dynamic/insert-before-table-part-in-continuation-expected.png:
+        * platform/chromium-mac/fast/dynamic/insert-before-table-part-in-continuation-expected.png:
+        * platform/chromium-win/fast/dynamic/insert-before-table-part-in-continuation-expected.png:
+        * platform/chromium-win/fast/dynamic/insert-before-table-part-in-continuation-expected.txt:
+        * platform/chromium-win/tables/mozilla/bugs/bug3037-1-expected.txt:
+        * platform/efl/fast/dynamic/insert-before-table-part-in-continuation-expected.txt: Added.
+        * platform/efl/tables/mozilla/bugs/bug3037-1-expected.txt: Renamed from LayoutTests/tables/mozilla/bugs/bug3037-1-expected.txt.
+        * platform/gtk/fast/dynamic/insert-before-table-part-in-continuation-expected.txt: Added.
+        * platform/gtk/tables/mozilla/bugs/bug3037-1-expected.txt:
+        * platform/mac-wk2/fast/dynamic/insert-before-table-part-in-continuation-expected.txt: Removed.
+        * platform/mac-wk2/mathml/msub-anonymous-child-render-crash-expected.txt: Removed.
+        * platform/mac-wk2/tables/mozilla/bugs/bug3037-1-expected.txt: Removed.
+        * platform/mac/fast/dynamic/insert-before-table-part-in-continuation-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug3037-1-expected.txt:
+
 2012-07-26  Mike Reed  <reed@google.com>
 
         expectations change for skia rev. 4771

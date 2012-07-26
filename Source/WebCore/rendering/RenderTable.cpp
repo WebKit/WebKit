@@ -1296,9 +1296,7 @@ bool RenderTable::nodeAtPoint(const HitTestRequest& request, HitTestResult& resu
 
 RenderTable* RenderTable::createAnonymousWithParentRenderer(const RenderObject* parent)
 {
-    // CSS 2.1, section 17.2.1: "If a proper table child's parent is an 'inline' box, then the generated anonymous table must be an 'inline-table' box".
-    EDisplay tableDisplay = parent->style()->display() == INLINE ? INLINE_TABLE : TABLE;
-    RefPtr<RenderStyle> newStyle = RenderStyle::createAnonymousStyleWithDisplay(parent->style(), tableDisplay);
+    RefPtr<RenderStyle> newStyle = RenderStyle::createAnonymousStyleWithDisplay(parent->style(), TABLE);
     RenderTable* newTable = new (parent->renderArena()) RenderTable(parent->document() /* is anonymous */);
     newTable->setStyle(newStyle.release());
     return newTable;

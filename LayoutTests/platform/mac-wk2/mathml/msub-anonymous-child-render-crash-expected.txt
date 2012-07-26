@@ -1,5 +1,0 @@
-This test passes if it does not crash.
-
-X3Y3X
-3
-2Y32
