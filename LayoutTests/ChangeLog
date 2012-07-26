@@ -1,3 +1,16 @@
+2012-07-26  Ádám Kallai  <kadam@inf.u-szeged.hu>
+
+        [Qt] Unreviewed gardening. Added Qt5 specific expected results and png.
+
+        * platform/qt-5.0-wk2/fast/block/float/overhanging-tall-block-expected.png: Added after r123551.
+        * platform/qt-5.0-wk2/fast/block/float/overhanging-tall-block-expected.txt: Added after r123551.
+        * platform/qt-5.0-wk2/platform/qt/plugins/application-plugin-plugins-disabled-expected.png: Added after r123514.
+        * platform/qt-5.0-wk2/platform/qt/plugins/application-plugin-plugins-disabled-expected.txt: Update after r123514.
+        * platform/qt-5.0/css2.1/t0805-c5519-brdr-r-01-e-expected.png: Added after r123631.
+        * platform/qt-5.0/css2.1/t0805-c5519-brdr-r-01-e-expected.txt: Added after r123631.
+        * platform/qt-5.0/css2.1/t0905-c5525-fltblck-00-d-ag-expected.png: Added after r123631.
+        * platform/qt-5.0/css2.1/t0905-c5525-fltblck-00-d-ag-expected.txt: Added after r123631.
+
 2012-07-26  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r123715.
