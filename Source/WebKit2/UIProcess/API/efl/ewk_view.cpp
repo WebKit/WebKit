@@ -51,6 +51,7 @@ static const char EWK_VIEW_TYPE_STR[] = "EWK2_View";
 static const int defaultCursorSize = 16;
 
 typedef HashMap<uint64_t, Ewk_Web_Resource*> LoadingResourcesMap;
+static void _ewk_view_priv_loading_resources_clear(LoadingResourcesMap& loadingResourcesMap);
 
 struct _Ewk_View_Private_Data {
     OwnPtr<PageClientImpl> pageClient;
@@ -84,6 +85,7 @@ struct _Ewk_View_Private_Data {
         eina_stringshare_del(title);
         eina_stringshare_del(theme);
         eina_stringshare_del(customEncoding);
+        _ewk_view_priv_loading_resources_clear(loadingResourcesMap);
 
         if (cursorObject)
             evas_object_del(cursorObject);
@@ -309,6 +311,17 @@ static Ewk_View_Private_Data* _ewk_view_priv_new(Ewk_View_Smart_Data* smartData)
 #endif
 
     return priv;
+}
+
+static void _ewk_view_priv_loading_resources_clear(LoadingResourcesMap& loadingResourcesMap)
+{
+    // Clear the loadingResources HashMap.
+    LoadingResourcesMap::iterator it = loadingResourcesMap.begin();
+    LoadingResourcesMap::iterator end = loadingResourcesMap.end();
+    for ( ; it != end; ++it)
+        ewk_web_resource_unref(it->second);
+
+    loadingResourcesMap.clear();
 }
 
 static void _ewk_view_priv_del(Ewk_View_Private_Data* priv)
@@ -998,11 +1011,7 @@ void ewk_view_load_provisional_started(Evas_Object* ewkView)
 
     // The main frame started provisional load, we should clear
     // the loadingResources HashMap to start clean.
-    LoadingResourcesMap::iterator it = priv->loadingResourcesMap.begin();
-    LoadingResourcesMap::iterator end = priv->loadingResourcesMap.end();
-    for ( ; it != end; ++it)
-        ewk_web_resource_unref(it->second);
-    priv->loadingResourcesMap.clear();
+    _ewk_view_priv_loading_resources_clear(priv->loadingResourcesMap);
 
     ewk_view_uri_update(ewkView);
     evas_object_smart_callback_call(ewkView, "load,provisional,started", 0);

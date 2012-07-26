@@ -1,3 +1,17 @@
+2012-07-26  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
+
+        [EFL] [WK2] Memory leak in ewk_view_resource_load_client.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=92099
+
+        Reviewed by Kentaro Hara.
+
+        Fix a memory leak by clearing the loadingResources HashMap on exit.
+
+        * UIProcess/API/efl/ewk_view.cpp:
+        (_Ewk_View_Private_Data::~_Ewk_View_Private_Data):
+        (_ewk_view_priv_loading_resources_clear):
+        (ewk_view_load_provisional_started):
+
 2012-07-26  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         [DRT] LTC:: pageNumberForElementById() could be moved to Internals
