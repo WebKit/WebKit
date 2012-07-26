@@ -1,5 +1,41 @@
 2012-07-26  Arvid Nilsson  <anilsson@rim.com>
 
+        [BlackBerry] Refactor BackingStorePrivate::BackingStorePrivate::clearAndUpdateTileOfNotRenderedRegion() to avoid touching tile frontbuffer
+        https://bugs.webkit.org/show_bug.cgi?id=92095
+
+        Reviewed by George Staikos.
+
+        PR: 141439
+        Specifically, we want to avoid changing the rendered region of the
+        front buffer without proper synchronization.
+
+        The method is trying to force checkerboard to appear on screen because
+        an area was invalidated but the render job was dropped, so the tile
+        contents are now invalid.
+
+        Unfortunately it did this in a way which is not thread safe. Fixed by
+        making it thread safe, in a way that minimizes memory bandwidth usage.
+
+        Instead of using the customary sequence of copy-back, modify and swap,
+        we send a synchronous message to the compositing thread to avoid the
+        copy-back step and save memory bandwidth. The trade-off is that the
+        WebKit thread might wait a little longer for the compositing thread
+        than it would from a waitForCurrentMessage() call.
+
+        The way we synchronize this is rather expensive for the WebKit thread,
+        and this method is called rather carelessly, so add various early
+        returns to avoid doing it redundantly.
+
+        Internally reviewed by Jakob Petsovits and Adam Treat.
+
+        * Api/BackingStore.cpp:
+        (BlackBerry::WebKit::BackingStorePrivate::indexOfTile):
+        (BlackBerry::WebKit::BackingStorePrivate::clearAndUpdateTileOfNotRenderedRegion):
+        * Api/BackingStore_p.h:
+        (BackingStorePrivate):
+
+2012-07-26  Arvid Nilsson  <anilsson@rim.com>
+
         [BlackBerry] Refactor BackingStorePrivate::render() to avoid touching tile frontbuffer
         https://bugs.webkit.org/show_bug.cgi?id=91989
 

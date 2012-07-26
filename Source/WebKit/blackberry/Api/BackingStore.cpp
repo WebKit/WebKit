@@ -929,6 +929,9 @@ void BackingStorePrivate::clearAndUpdateTileOfNotRenderedRegion(const TileIndex&
                                                                 const Platform::IntRect& backingStoreRect,
                                                                 bool update)
 {
+    if (tileNotRenderedRegion.isEmpty())
+        return;
+
     // Intersect the tile with the not rendered region to get the areas
     // of the tile that we need to clear.
     IntRectList tileNotRenderedRegionRects = tileNotRenderedRegion.rects();
@@ -941,17 +944,43 @@ void BackingStorePrivate::clearAndUpdateTileOfNotRenderedRegion(const TileIndex&
             // Add it again as a regular render job.
             m_renderQueue->addToQueue(RenderQueue::RegularRender, tileNotRenderedRegionRect);
         }
-
-        // Find the origin of this tile.
-        Platform::IntPoint origin = originOfTile(index, backingStoreRect);
-
-        // Map to tile coordinates.
-        tileNotRenderedRegionRect.move(-origin.x(), -origin.y());
-
-        // Clear the tile of this region.
-        tile->frontBuffer()->clearRenderedRegion(tileNotRenderedRegionRect);
-        tile->backBuffer()->clearRenderedRegion(tileNotRenderedRegionRect);
     }
+
+    // Find the origin of this tile.
+    Platform::IntPoint origin = originOfTile(index, backingStoreRect);
+
+    // Map to tile coordinates.
+    Platform::IntRectRegion translatedRegion(tileNotRenderedRegion);
+    translatedRegion.move(-origin.x(), -origin.y());
+
+    // If the region in question is already marked as not rendered, return early
+    if (Platform::IntRectRegion::intersectRegions(tile->frontBuffer()->renderedRegion(), translatedRegion).isEmpty())
+        return;
+
+    // Clear the tile of this region. The back buffer region is invalid anyway, but the front
+    // buffer must not be manipulated without synchronization with the compositing thread, or
+    // we have a race.
+    // Instead of using the customary sequence of copy-back, modify and swap, we send a synchronous
+    // message to the compositing thread to avoid the copy-back step and save memory bandwidth.
+    // The trade-off is that the WebKit thread might wait a little longer for the compositing thread
+    // than it would from a waitForCurrentMessage() call.
+
+    ASSERT(Platform::webKitThreadMessageClient()->isCurrentThread());
+    if (!Platform::webKitThreadMessageClient()->isCurrentThread())
+        return;
+
+    Platform::userInterfaceThreadMessageClient()->dispatchSyncMessage(
+        Platform::createMethodCallMessage(&BackingStorePrivate::clearRenderedRegion,
+            this, tile, translatedRegion));
+}
+
+void BackingStorePrivate::clearRenderedRegion(BackingStoreTile* tile, const Platform::IntRectRegion& region)
+{
+    ASSERT(Platform::userInterfaceThreadMessageClient()->isCurrentThread());
+    if (!Platform::userInterfaceThreadMessageClient()->isCurrentThread())
+        return;
+
+    tile->frontBuffer()->clearRenderedRegion(region);
 }
 
 bool BackingStorePrivate::isCurrentVisibleJob(const TileIndex& index, BackingStoreTile* tile, const Platform::IntRect& backingStoreRect) const

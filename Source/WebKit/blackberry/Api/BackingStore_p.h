@@ -166,6 +166,9 @@ public:
     void clearAndUpdateTileOfNotRenderedRegion(const TileIndex&, BackingStoreTile*, const Platform::IntRectRegion&, const Platform::IntRect& backingStoreRect, bool update = true);
     bool isCurrentVisibleJob(const TileIndex&, BackingStoreTile*, const Platform::IntRect& backingStoreRect) const;
 
+    // Not thread safe. Call only when threads are in sync.
+    void clearRenderedRegion(BackingStoreTile*, const Platform::IntRectRegion&);
+
     // Responsible for scrolling the backing store and updating the
     // tile matrix geometry.
     void scrollBackingStore(int deltaX, int deltaY);
