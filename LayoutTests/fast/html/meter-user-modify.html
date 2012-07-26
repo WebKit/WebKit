@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+meter::-webkit-meter-bar {
+    -webkit-user-modify: read-write;
+}
+
+meter {
+    -webkit-appearance: none;
+}
+</style>
+</head>
+<body>
+<script src="../../fast/js/resources/js-test-pre.js"></script>
+
+<p>The inner element of meter should not be deleteable.</p>
+
+<div id="container" contenteditable>
+    (before)<meter id="meter" min="0" max="100" value="50"></meter>(after)
+</div>
+
+<script>
+function focusAndType(id, key)
+{
+    var target = document.getElementById(id);
+    eventSender.mouseMoveTo(target.offsetLeft + 2, target.offsetTop + 2);
+    eventSender.mouseDown();
+    eventSender.mouseUp();
+    eventSender.keyDown(key);
+}
+
+var container = document.getElementById("container");
+renderTreeBeforeType = internals.elementRenderTreeAsText(document.documentElement);
+
+focusAndType("meter", "X");
+
+renderTreeAfterType = internals.elementRenderTreeAsText(document.documentElement);
+shouldBe("renderTreeAfterType", "renderTreeBeforeType");
+
+var successfullyParsed = true;
+</script>
+<script src="../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

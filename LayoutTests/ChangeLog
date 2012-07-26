@@ -1,3 +1,15 @@
+2012-07-25  Shinya Kawanaka  <shinyak@chromium.org>
+
+        The elements in ShadowDOM of meter or progress should not be modifiable.
+        https://bugs.webkit.org/show_bug.cgi?id=92199
+
+        Reviewed by Hajime Morita.
+
+        * fast/html/meter-user-modify.html: Added.
+        * fast/html/meter-user-modify-expected.txt: Added.
+        * fast/html/progress-user-modify.html: Added.
+        * fast/html/progress-user-modify-expected.txt: Added.
+
 2012-07-25  Xingnan Wang  <xingnan.wang@intel.com>
 
         IndexedDB: IDBTransaction::abort() should throw DOMException

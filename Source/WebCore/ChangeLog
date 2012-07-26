@@ -1,3 +1,28 @@
+2012-07-25  Shinya Kawanaka  <shinyak@chromium.org>
+
+        The elements in ShadowDOM of meter or progress should not be modifiable.
+        https://bugs.webkit.org/show_bug.cgi?id=92199
+
+        Reviewed by Hajime Morita.
+
+        A user can set -webkit-user-modify: read-write to the elements in Shadow DOM in a meter or progress element.
+        This might cause a undesired crash like Bug 65738. They should be unmodifiable.
+
+        We add default css values to elements in ShadowDOM of meter or progress to prohibit editing them.
+
+        Tests: fast/html/meter-user-modify.html
+               fast/html/progress-user-modify.html
+
+        * css/html.css:
+        Added -webkit-user-modify: read-only !important; for these elements so that they won't be
+        changed by a user.
+        (meter::-webkit-meter-bar):
+        (meter::-webkit-meter-optimum-value):
+        (meter::-webkit-meter-suboptimum-value):
+        (meter::-webkit-meter-even-less-good-value):
+        (progress::-webkit-progress-bar):
+        (progress::-webkit-progress-value):
+
 2012-07-25  Joshua Netterfield  <jnetterfield@rim.com>
 
         [BlackBerry] GraphicsContext3D::paintToCanvas should not swap 0th and 2nd components of color
