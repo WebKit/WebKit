@@ -115,7 +115,7 @@ uint64_t ewk_url_scheme_request_id_get(const Ewk_Url_Scheme_Request* request)
     return request->requestID;
 }
 
-Eina_Bool ewk_url_scheme_request_finish(const Ewk_Url_Scheme_Request* request, void* contentData, unsigned int contentLength, const char* mimeType)
+Eina_Bool ewk_url_scheme_request_finish(const Ewk_Url_Scheme_Request* request, const void* contentData, unsigned int contentLength, const char* mimeType)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(request, false);
 
