@@ -1,3 +1,46 @@
+2012-07-26  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL][WK2] Add form client for Ewk_View
+        https://bugs.webkit.org/show_bug.cgi?id=92358
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Implement a form client for EFL port in order to
+        send a "form,request,new" signal on the Ewk_View
+        whenever a form will be submitted.
+
+        The Ewk_Form_Submission_Request type is
+        introduced to provide the client with information
+        about the form (e.g. text fields contained in the
+        form) and to submit it.
+
+        This is typically used to store login information
+        that can be used later to pre-fill the form.
+
+        * PlatformEfl.cmake:
+        * UIProcess/API/efl/EWebKit2.h:
+        * UIProcess/API/efl/ewk_form_submission_request.cpp: Added.
+        (_Ewk_Form_Submission_Request):
+        (_Ewk_Form_Submission_Request::_Ewk_Form_Submission_Request):
+        (_Ewk_Form_Submission_Request::~_Ewk_Form_Submission_Request):
+        (ewk_form_submission_request_ref):
+        (ewk_form_submission_request_unref):
+        (ewk_form_submission_request_field_names_get):
+        (ewk_form_submission_request_field_value_get):
+        (ewk_form_submission_request_submit):
+        (ewk_form_submission_request_new):
+        * UIProcess/API/efl/ewk_form_submission_request.h: Added.
+        * UIProcess/API/efl/ewk_form_submission_request_private.h: Added.
+        * UIProcess/API/efl/ewk_view.cpp:
+        (ewk_view_base_add):
+        (ewk_view_form_submission_request_new):
+        * UIProcess/API/efl/ewk_view.h:
+        * UIProcess/API/efl/ewk_view_form_client.cpp: Added.
+        (willSubmitForm):
+        (ewk_view_form_client_attach):
+        * UIProcess/API/efl/ewk_view_form_client_private.h: Added.
+        * UIProcess/API/efl/ewk_view_private.h:
+
 2012-07-26  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         [WK2] WebPage::handleEditingKeyboardEvent does not check whether the node allows editing.

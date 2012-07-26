@@ -29,6 +29,7 @@
 
 #include "ewk_context.h"
 #include "ewk_cookie_manager.h"
+#include "ewk_form_submission_request.h"
 #include "ewk_intent.h"
 #include "ewk_intent_service.h"
 #include "ewk_main.h"

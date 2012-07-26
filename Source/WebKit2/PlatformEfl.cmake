@@ -43,6 +43,7 @@ LIST(APPEND WebKit2_SOURCES
     UIProcess/API/efl/ewk_context.cpp
     UIProcess/API/efl/ewk_context_request_manager_client.cpp
     UIProcess/API/efl/ewk_cookie_manager.cpp
+    UIProcess/API/efl/ewk_form_submission_request.cpp
     UIProcess/API/efl/ewk_intent.cpp
     UIProcess/API/efl/ewk_intent_service.cpp
     UIProcess/API/efl/ewk_main.cpp
@@ -51,6 +52,7 @@ LIST(APPEND WebKit2_SOURCES
     UIProcess/API/efl/ewk_url_response.cpp
     UIProcess/API/efl/ewk_url_scheme_request.cpp
     UIProcess/API/efl/ewk_view.cpp
+    UIProcess/API/efl/ewk_view_form_client.cpp
     UIProcess/API/efl/ewk_view_loader_client.cpp
     UIProcess/API/efl/ewk_view_policy_client.cpp
     UIProcess/API/efl/ewk_view_resource_load_client.cpp
@@ -183,6 +185,7 @@ SET (EWebKit2_HEADERS
     "${CMAKE_CURRENT_SOURCE_DIR}/UIProcess/API/efl/EWebKit2.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/UIProcess/API/efl/ewk_context.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/UIProcess/API/efl/ewk_cookie_manager.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/UIProcess/API/efl/ewk_form_submission_request.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/UIProcess/API/efl/ewk_intent.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/UIProcess/API/efl/ewk_intent_service.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/UIProcess/API/efl/ewk_main.h"

@@ -26,6 +26,15 @@
  *
  * The following signals (see evas_object_smart_callback_add()) are emitted:
  *
+ * - "form,submission,request", Ewk_Form_Submission_Request*: Reports that a form request is about to be submitted.
+ *   The Ewk_Form_Submission_Request passed contains information about the text fields of the form. This
+ *   is typically used to store login information that can be used later to pre-fill the form.
+ *   The form will not be submitted until ewk_form_submission_request_submit() is called.
+ *   It is possible to handle the form submission request asynchronously, by simply calling
+ *   ewk_form_submission_request_ref() on the request and calling ewk_form_submission_request_submit()
+ *   when done to continue with the form submission. If the last reference is removed on a
+ *   #Ewk_Form_Submission_Request and the form has not been submitted yet,
+ *   ewk_form_submission_request_submit() will be called automatically.
  * - "intent,request,new", Ewk_Intent_Request*: reports new Web intent request.
  * - "intent,service,register", Ewk_Intent_Service*: reports new Web intent service registration.
  * - "load,error", const Ewk_Web_Error*: reports main frame load failed.

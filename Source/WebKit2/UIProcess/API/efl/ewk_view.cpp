@@ -32,6 +32,7 @@
 #include "ewk_context.h"
 #include "ewk_context_private.h"
 #include "ewk_intent_private.h"
+#include "ewk_view_form_client_private.h"
 #include "ewk_view_loader_client_private.h"
 #include "ewk_view_policy_client_private.h"
 #include "ewk_view_private.h"
@@ -547,6 +548,7 @@ Evas_Object* ewk_view_base_add(Evas* canvas, WKContextRef contextRef, WKPageGrou
     }
 
     priv->pageClient = PageClientImpl::create(toImpl(contextRef), toImpl(pageGroupRef), ewkView);
+    ewk_view_form_client_attach(toAPI(priv->pageClient->page()), ewkView);
     ewk_view_loader_client_attach(toAPI(priv->pageClient->page()), ewkView);
     ewk_view_policy_client_attach(toAPI(priv->pageClient->page()), ewkView);
     ewk_view_resource_load_client_attach(toAPI(priv->pageClient->page()), ewkView);
@@ -950,6 +952,17 @@ void ewk_view_image_data_set(Evas_Object* ewkView, void* imageData, const IntSiz
     evas_object_resize(smartData->image, size.width(), size.height());
     evas_object_image_size_set(smartData->image, size.width(), size.height());
     evas_object_image_data_copy_set(smartData->image, imageData);
+}
+
+/**
+ * @internal
+ * Reports that a form request is about to be submitted.
+ *
+ * Emits signal: "form,submission,request" with pointer to Ewk_Form_Submission_Request.
+ */
+void ewk_view_form_submission_request_new(Evas_Object* ewkView, Ewk_Form_Submission_Request* request)
+{
+    evas_object_smart_callback_call(ewkView, "form,submission,request", request);
 }
 
 /**
