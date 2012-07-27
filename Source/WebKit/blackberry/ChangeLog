@@ -1,3 +1,18 @@
+2012-07-27  Mike Fenton  <mifenton@rim.com>
+
+        [BlackBerry] Switch InputHandler malloc use to fastMalloc for cases that should never fail
+        https://bugs.webkit.org/show_bug.cgi?id=92508
+
+        Reviewed by Yong Li.
+
+        Replace common uses of malloc with fastMalloc rather
+        than trying to recover gracefully.  If we are truly
+        out of memory, crash before corruption occurs.
+
+        * WebKitSupport/InputHandler.cpp:
+        (BlackBerry::WebKit::InputHandler::spannableTextInRange):
+        (BlackBerry::WebKit::InputHandler::extractedTextRequest):
+
 2012-07-26  Nima Ghanavatian  <nghanavatian@rim.com>
 
         [BlackBerry] Remove synchronous spellchecking code

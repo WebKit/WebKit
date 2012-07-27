@@ -1586,12 +1586,10 @@ spannable_string_t* InputHandler::spannableTextInRange(int start, int end, int32
 
     WTF::String textString = elementText().substring(start, length);
 
-    spannable_string_t* pst = (spannable_string_t*)malloc(sizeof(spannable_string_t));
-    if (!pst) {
-        logAlways(LogLevelCritical, "InputHandler::spannableTextInRange error allocating spannable string.");
-        return 0;
-    }
+    spannable_string_t* pst = (spannable_string_t*)fastMalloc(sizeof(spannable_string_t));
 
+    // Don't use fastMalloc in case the string is unreasonably long. fastMalloc will
+    // crash immediately on failure.
     pst->str = (wchar_t*)malloc(sizeof(wchar_t) * (length + 1));
     if (!pst->str) {
         logAlways(LogLevelCritical, "InputHandler::spannableTextInRange Cannot allocate memory for string.\n");
@@ -1651,7 +1649,7 @@ extracted_text_t* InputHandler::extractedTextRequest(extracted_text_request_t* r
     if (!isActiveTextEdit())
         return 0;
 
-    extracted_text_t* extractedText = (extracted_text_t *)malloc(sizeof(extracted_text_t));
+    extracted_text_t* extractedText = (extracted_text_t *)fastMalloc(sizeof(extracted_text_t));
 
     // 'flags' indicates whether the text is being monitored. This is not currently used.
 
