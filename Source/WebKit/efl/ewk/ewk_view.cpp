@@ -4018,15 +4018,17 @@ void ewk_view_transition_to_commited_for_newpage(Evas_Object* ewkView)
 
 /**
  * @internal
- * Reports a requeset will be loaded. It's client responsibility to decide if
- * request would be used. If @return is true, loader will try to load. Else,
- * Loader ignore action of request.
+ * Reports that a navigation policy decision should be taken. If @return
+ * is true, the navigation request will be accepted, otherwise it will be
+ * ignored.
  *
  * @param ewkView View to load
  * @param request Request which contain url to navigate
  * @param navigationType navigation type
  *
- * @return true on success or false otherwise
+ * @return true if the client accepted the navigation request, false otherwise. If the
+ * client did not make a decision, we return true by default since the default policy
+ * is to accept.
  */
 bool ewk_view_navigation_policy_decision(Evas_Object* ewkView, Ewk_Frame_Resource_Request* request, Ewk_Navigation_Type navigationType)
 {
@@ -4034,7 +4036,7 @@ bool ewk_view_navigation_policy_decision(Evas_Object* ewkView, Ewk_Frame_Resourc
     EINA_SAFETY_ON_NULL_RETURN_VAL(smartData->api, false);
 
     if (!smartData->api->navigation_policy_decision)
-        return false;
+        return true;
 
     return smartData->api->navigation_policy_decision(smartData, request, navigationType);
 }

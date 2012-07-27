@@ -1,3 +1,17 @@
+2012-07-27  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] Regression(r123858): Default navigation policy decision was switched to "reject"
+        https://bugs.webkit.org/show_bug.cgi?id=92507
+
+        Reviewed by Kentaro Hara.
+
+        After r92466, the default navigation policy is to reject the request if the
+        client does not make a decision explicitly. The default policy should be
+        to accept. This broke ewk_view unit tests.
+
+        * ewk/ewk_view.cpp:
+        (ewk_view_navigation_policy_decision):
+
 2012-07-27  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         [EFL] Fix wrong return value in EWK_VIEW_XXX macro.
