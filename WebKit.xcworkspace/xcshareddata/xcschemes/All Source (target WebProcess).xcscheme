@@ -154,7 +154,7 @@
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "-client-executable /Applications/Safari.app/Contents/MacOS/Safari"
+            argument = "-client-executable /Applications/Safari.app/Contents/MacOS/SafariForWebKitDevelopment"
             isEnabled = "YES">
          </CommandLineArgument>
       </CommandLineArguments>

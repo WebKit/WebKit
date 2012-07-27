@@ -127,7 +127,7 @@
       debugDocumentVersioning = "YES"
       allowLocationSimulation = "YES">
       <PathRunnable
-         FilePath = "/Applications/Safari.app">
+         FilePath = "/Applications/Safari.app/Contents/MacOS/SafariForWebKitDevelopment">
       </PathRunnable>
       <AdditionalOptions>
       </AdditionalOptions>
