@@ -1465,10 +1465,10 @@ VisiblePosition WebFrameImpl::visiblePositionForWindowPoint(const WebPoint& poin
     HitTestRequest::HitTestRequestType hitType = HitTestRequest::Move;
     hitType |= HitTestRequest::ReadOnly;
     hitType |= HitTestRequest::Active;
+    hitType |= HitTestRequest::IgnoreClipping;
     HitTestRequest request(hitType);
     FrameView* view = frame()->view();
-    HitTestResult result(view->windowToContents(
-        view->convertFromContainingWindow(IntPoint(point.x, point.y))));
+    HitTestResult result(view->windowToContents(IntPoint(point.x, point.y)));
 
     frame()->document()->renderView()->layer()->hitTest(request, result);
 

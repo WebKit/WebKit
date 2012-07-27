@@ -1,3 +1,23 @@
+2012-07-27  Oli Lan  <olilan@chromium.org>
+
+        [chromium] Fix issues in visiblePositionForWindowPoint (offscreen points / iframes).
+        https://bugs.webkit.org/show_bug.cgi?id=79117
+
+        Fix two issues in WebFrameImpl::visiblePositionForWindowPoint.
+
+        1) If the point is off-screen, the visiblePosition is clipped to the screen.
+           - The fix is to add HitTestRequest::IgnoreClipping.
+
+        2) The result is incorrect if the point is within an iframe.
+           - This is because we are calling convertFromContainingWindow twice: once in windowToContents,
+             and then explicitly as well.
+           - This patch removes the explicit call to convertFromContainingWindow. 
+
+        Reviewed by Adam Barth.
+
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::visiblePositionForWindowPoint):
+
 2012-07-27  Peter Beverloo  <peter@chromium.org>
 
         Unreviewed.  Rolled DEPS.
