@@ -103,7 +103,7 @@ Vector<ContextMenuItem> contextMenuItemVector(const PlatformMenuDescription menu
         GtkWidget* widget = static_cast<GtkWidget*>(item->data);
         if (!GTK_IS_MENU_ITEM(widget))
             continue;
-        menuItemVector.append(ContextMenuItem(GTK_MENU_ITEM(widget)));
+        menuItemVector.append(GTK_MENU_ITEM(widget));
     }
 
     return menuItemVector;

@@ -33,7 +33,7 @@ public:
 
     enum EventType { KeyDown, KeyPress };
     void getEditorCommandsForKeyEvent(GdkEventKey*, EventType, Vector<WTF::String>&);
-    void addPendingEditorCommand(const char* command) { m_pendingEditorCommands.append(WTF::String(command)); }
+    void addPendingEditorCommand(const char* command) { m_pendingEditorCommands.append(command); }
 
 private:
     GRefPtr<GtkWidget> m_nativeWidget;
