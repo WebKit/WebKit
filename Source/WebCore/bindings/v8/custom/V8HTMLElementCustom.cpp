@@ -34,8 +34,8 @@
 #include "V8HTMLElementWrapperFactory.h"
 
 #if ENABLE(MICRODATA)
-#include "MicroDataItemValue.h"
 #include "V8Binding.h"
+#include "V8MicroDataItemValue.h"
 #endif
 
 namespace WebCore {
@@ -48,21 +48,10 @@ v8::Handle<v8::Value> toV8(HTMLElement* impl, v8::Isolate* isolate, bool forceNe
 }
 
 #if ENABLE(MICRODATA)
-static v8::Handle<v8::Value> toV8Object(MicroDataItemValue* itemValue, v8::Isolate* isolate)
-{
-    if (!itemValue)
-        return v8::Null(isolate);
-
-    if (itemValue->isNode())
-        return toV8(itemValue->getNode(), isolate);
-
-    return v8String(itemValue->getString(), isolate);
-}
-
 v8::Handle<v8::Value> V8HTMLElement::itemValueAccessorGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
     HTMLElement* impl = V8HTMLElement::toNative(info.Holder());
-    return toV8Object(impl->itemValue().get(), info.GetIsolate());
+    return toV8(impl->itemValue().get(), info.GetIsolate());
 }
 
 void V8HTMLElement::itemValueAccessorSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)

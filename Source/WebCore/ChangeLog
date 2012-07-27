@@ -1,3 +1,31 @@
+2012-07-27  Arko Saha  <arko@motorola.com>
+
+        Microdata: Remove toJs() and toV8Object() custom methods from JSHTMLElementCustom.cpp and V8HTMLElementCustom.cpp respectively.
+        https://bugs.webkit.org/show_bug.cgi?id=92482
+
+        Reviewed by Kentaro Hara.
+
+        Removed custom methods toJS() and toV8Object(). We should use toJS() method defined in
+        JSMicroDataItemValueCustom.cpp and toV8() method defined in V8MicroDataItemValueCustom.cpp
+        in place of custom toJs() and toV8Object().
+
+        Existing tests :
+                fast/dom/MicroData/itemvalue-reflects-data-attr-on-object-element.html
+                fast/dom/MicroData/itemvalue-reflects-href-attr.html
+                fast/dom/MicroData/itemvalue-reflects-src-attribute-on-img-element.html
+                fast/dom/MicroData/itemvalue-reflects-the-content-attr-on-meta-element.html
+                fast/dom/MicroData/itemvalue-reflects-the-src-attr.html
+                fast/dom/MicroData/itemvalue-returns-element-itself.html
+                fast/dom/MicroData/itemvalue-returns-null.html
+                fast/dom/MicroData/itemvalue-throws-excpetion-onsetting-001.html
+                fast/dom/MicroData/itemvalue-throws-excpetion-onsetting-002.html
+
+        * bindings/js/JSHTMLElementCustom.cpp:
+        (WebCore):
+        * bindings/v8/custom/V8HTMLElementCustom.cpp:
+        (WebCore):
+        (WebCore::V8HTMLElement::itemValueAccessorGetter):
+
 2012-07-27  Thiago Marcos P. Santos  <thiago.santos@intel.com>
 
         REGRESSION(r123856): Breaks the build when disabling inspector

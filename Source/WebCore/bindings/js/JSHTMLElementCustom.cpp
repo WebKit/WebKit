@@ -30,23 +30,12 @@
 #include "HTMLFormElement.h"
 
 #if ENABLE(MICRODATA)
-#include "MicroDataItemValue.h"
+#include "JSMicroDataItemValue.h"
 #endif
 
 namespace WebCore {
 
 using namespace JSC;
-
-#if ENABLE(MICRODATA)
-static JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, MicroDataItemValue* itemValue)
-{
-    if (!itemValue)
-        return jsNull();
-    if (itemValue->isNode())
-        return toJS(exec, globalObject, itemValue->getNode());
-    return jsString(exec, itemValue->getString());
-}
-#endif
 
 ScopeChainNode* JSHTMLElement::pushEventHandlerScope(ExecState* exec, ScopeChainNode* scope) const
 {
