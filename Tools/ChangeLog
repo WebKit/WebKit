@@ -1,5 +1,19 @@
 2012-07-27  Dirk Pranke  <dpranke@chromium.org>
 
+        chromium win compile broken after removing webkit.py
+        https://bugs.webkit.org/show_bug.cgi?id=92549
+
+        Unreviewed, build fix.
+
+        It turns out that this file is listed in the chromium downstream
+        'browser_tests.isolate' file, and so deleting it broke gyp.
+        Adding a stub file back in until we can remove the entry from
+        the file.
+
+        * Scripts/webkitpy/layout_tests/port/webkit.py: Added.
+
+2012-07-27  Dirk Pranke  <dpranke@chromium.org>
+
         nrwt: remove 'webkit.py' and the 'WebKitPort'
         https://bugs.webkit.org/show_bug.cgi?id=92450
 
