@@ -1,3 +1,12 @@
+2012-07-27  Tom Hudson  <hudson@google.com>
+
+        Activate committer bit granted April 6th so I can garden.
+        https://bugs.webkit.org/show_bug.cgi?id=92500
+
+        Reviewed by Jochen Eisinger.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2012-07-27  Jer Noble  <jer.noble@apple.com>
 
         Support a rational time class for use by media elements.
