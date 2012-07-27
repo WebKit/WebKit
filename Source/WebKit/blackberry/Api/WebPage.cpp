@@ -974,6 +974,11 @@ void WebPage::prepareToDestroy()
     d->prepareToDestroy();
 }
 
+bool WebPage::dispatchBeforeUnloadEvent()
+{
+    return d->m_page->mainFrame()->loader()->shouldClose();
+}
+
 static void enableCrossSiteXHRRecursively(Frame* frame)
 {
     frame->document()->securityOrigin()->grantUniversalAccess();

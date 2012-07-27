@@ -1,3 +1,23 @@
+2012-07-27  Yong Li  <yoli@rim.com>
+
+        [BlackBerry] Should support onbeforeunload event and show confirmation dialog
+        https://bugs.webkit.org/show_bug.cgi?id=92510
+
+        Reviewed by Antonio Gomes.
+
+        RIM PR# 155878.
+        1. Export dispatchBeforeUnloadEvent() so client can call it before going to close the page.
+        2. Forward runBeforeUnloadConfirmPanel() call to client so it can show a dialog.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPage::dispatchBeforeUnloadEvent):
+        (WebKit):
+        * Api/WebPage.h:
+        * Api/WebPageClient.h:
+        * WebCoreSupport/ChromeClientBlackBerry.cpp:
+        (WebCore::ChromeClientBlackBerry::canRunBeforeUnloadConfirmPanel):
+        (WebCore::ChromeClientBlackBerry::runBeforeUnloadConfirmPanel):
+
 2012-07-27  Mike Fenton  <mifenton@rim.com>
 
         [BlackBerry] Switch InputHandler malloc use to fastMalloc for cases that should never fail

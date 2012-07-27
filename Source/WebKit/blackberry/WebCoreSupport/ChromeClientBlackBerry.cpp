@@ -375,19 +375,19 @@ void ChromeClientBlackBerry::setResizable(bool)
 
 bool ChromeClientBlackBerry::canRunBeforeUnloadConfirmPanel()
 {
-    notImplemented();
-    return false;
+    return true;
 }
 
-bool ChromeClientBlackBerry::runBeforeUnloadConfirmPanel(const String& message, Frame*)
+bool ChromeClientBlackBerry::runBeforeUnloadConfirmPanel(const String& message, Frame* frame)
 {
 #if !defined(PUBLIC_BUILD) || !PUBLIC_BUILD
     if (m_webPagePrivate->m_dumpRenderTree)
         return m_webPagePrivate->m_dumpRenderTree->runBeforeUnloadConfirmPanel(message);
 #endif
 
-    notImplemented();
-    return false;
+    TimerBase::fireTimersInNestedEventLoop();
+    CString latinOrigin = frameOrigin(frame);
+    return m_webPagePrivate->m_client->runBeforeUnloadConfirmPanel(message.characters(), message.length(), latinOrigin.data(), latinOrigin.length());
 }
 
 void ChromeClientBlackBerry::closeWindowSoon()

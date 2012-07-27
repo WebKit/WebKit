@@ -111,6 +111,8 @@ public:
 
     void stopLoading();
 
+    bool dispatchBeforeUnloadEvent();
+
     // This will force any unload handlers to run.
     void prepareToDestroy();
 
