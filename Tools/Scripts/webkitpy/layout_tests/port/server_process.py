@@ -32,7 +32,6 @@
 import errno
 import logging
 import signal
-import subprocess
 import sys
 import time
 
@@ -99,12 +98,12 @@ class ServerProcess(object):
         self._reset()
         # close_fds is a workaround for http://bugs.python.org/issue2320
         close_fds = not self._host.platform.is_win()
-        self._proc = subprocess.Popen(self._cmd, stdin=subprocess.PIPE,
-                                      stdout=subprocess.PIPE,
-                                      stderr=subprocess.PIPE,
-                                      close_fds=close_fds,
-                                      env=self._env,
-                                      universal_newlines=self._universal_newlines)
+        self._proc = self._host.executive.popen(self._cmd, stdin=self._host.executive.PIPE,
+            stdout=self._host.executive.PIPE,
+            stderr=self._host.executive.PIPE,
+            close_fds=close_fds,
+            env=self._env,
+            universal_newlines=self._universal_newlines)
         self._pid = self._proc.pid
         fd = self._proc.stdout.fileno()
         if not self._use_win32_apis:

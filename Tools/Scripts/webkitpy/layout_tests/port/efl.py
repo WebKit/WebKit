@@ -72,6 +72,7 @@ class EflPort(WebKitPort, PulseAudioSanitizer):
         return super(EflPort, self).default_timeout_ms()
 
     def clean_up_test_run(self):
+        super(EflPort, self).clean_up_test_run()
         self._restore_pulseaudio_module()
 
     def _generate_all_test_configurations(self):

@@ -56,6 +56,8 @@ from webkitpy.layout_tests.models.test_configuration import TestConfiguration
 from webkitpy.layout_tests.port import config as port_config
 from webkitpy.layout_tests.port import driver
 from webkitpy.layout_tests.port import http_lock
+from webkitpy.layout_tests.port import image_diff
+from webkitpy.layout_tests.port import server_process
 from webkitpy.layout_tests.servers import apache_http_server
 from webkitpy.layout_tests.servers import http_server
 from webkitpy.layout_tests.servers import websocket_server
@@ -110,6 +112,8 @@ class Port(object):
         self._helper = None
         self._http_server = None
         self._websocket_server = None
+        self._image_differ = None
+        self._server_process_constructor = server_process.ServerProcess  # overridable for testing
         self._http_lock = None  # FIXME: Why does this live on the port object?
 
         # Python's Popen has a bug that causes any pipes opened to a
@@ -309,8 +313,18 @@ class Port(object):
 
         |tolerance| should be a percentage value (0.0 - 100.0).
         If it is omitted, the port default tolerance value is used.
+
+        If an error occurs (like ImageDiff isn't found, or crashes, we log an error and return True (for a diff).
         """
-        raise NotImplementedError('Port.diff_image')
+        if not actual_contents and not expected_contents:
+            return (None, 0)
+        if not actual_contents or not expected_contents:
+            return (True, 0)
+        if not self._image_differ:
+            self._image_differ = image_diff.ImageDiffer(self)
+        self.set_option_default('tolerance', 0.1)
+        tolerance = tolerance or self.get_option('tolerance')
+        return self._image_differ.diff_image(expected_contents, actual_contents, tolerance)
 
     def diff_text(self, expected_text, actual_text, expected_filename, actual_filename):
         """Returns a string containing the diff of the two text strings
@@ -780,7 +794,9 @@ class Port(object):
 
     def clean_up_test_run(self):
         """Perform port-specific work at the end of a test run."""
-        pass
+        if self._image_differ:
+            self._image_differ.stop()
+            self._image_differ = None
 
     # FIXME: os.environ access should be moved to onto a common/system class to be more easily mockable.
     def _value_or_default_from_environ(self, name, default=None):

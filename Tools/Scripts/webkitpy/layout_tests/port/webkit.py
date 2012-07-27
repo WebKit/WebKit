@@ -34,11 +34,9 @@
 import itertools
 import logging
 import operator
-import re
-import time
 
-from webkitpy.common.system.executive import Executive, ScriptError
-from webkitpy.layout_tests.port import server_process, Port
+from webkitpy.common.system.executive import ScriptError
+from webkitpy.layout_tests.port import Port
 
 
 _log = logging.getLogger(__name__)
@@ -96,81 +94,6 @@ class WebKitPort(Port):
     def _build_driver_flags(self):
         return []
 
-    def diff_image(self, expected_contents, actual_contents, tolerance=None):
-        # Handle the case where the test didn't actually generate an image.
-        # FIXME: need unit tests for this.
-        if not actual_contents and not expected_contents:
-            return (None, 0)
-        if not actual_contents or not expected_contents:
-            # FIXME: It's not clear what we should return in this case.
-            # Maybe we should throw an exception?
-            return (True, 0)
-
-        process = self._start_image_diff_process(expected_contents, actual_contents, tolerance=tolerance)
-        return self._read_image_diff(process)
-
-    def _image_diff_command(self, tolerance=None):
-        # FIXME: There needs to be a more sane way of handling default
-        # values for options so that you can distinguish between a default
-        # value of None and a default value that wasn't set.
-        if tolerance is None:
-            if self.get_option('tolerance') is not None:
-                tolerance = self.get_option('tolerance')
-            else:
-                tolerance = 0.1
-
-        command = [self._path_to_image_diff(), '--tolerance', str(tolerance)]
-        return command
-
-    def _start_image_diff_process(self, expected_contents, actual_contents, tolerance=None):
-        command = self._image_diff_command(tolerance)
-        environment = self.setup_environ_for_server('ImageDiff')
-        process = server_process.ServerProcess(self, 'ImageDiff', command, environment)
-
-        process.write('Content-Length: %d\n%sContent-Length: %d\n%s' % (
-            len(actual_contents), actual_contents,
-            len(expected_contents), expected_contents))
-        return process
-
-    def _read_image_diff(self, sp):
-        deadline = time.time() + 2.0
-        output = None
-        output_image = ""
-
-        while True:
-            output = sp.read_stdout_line(deadline)
-            if sp.timed_out or sp.has_crashed() or not output:
-                break
-
-            if output.startswith('diff'):  # This is the last line ImageDiff prints.
-                break
-
-            if output.startswith('Content-Length'):
-                m = re.match('Content-Length: (\d+)', output)
-                content_length = int(m.group(1))
-                output_image = sp.read_stdout(deadline, content_length)
-                output = sp.read_stdout_line(deadline)
-                break
-
-        stderr = sp.pop_all_buffered_stderr()
-        if stderr:
-            _log.warn("ImageDiff produced stderr output:\n" + stderr)
-        if sp.timed_out:
-            _log.error("ImageDiff timed out")
-        if sp.has_crashed():
-            _log.error("ImageDiff crashed")
-        # FIXME: There is no need to shut down the ImageDiff server after every diff.
-        sp.stop()
-
-        diff_percent = 0
-        if output and output.startswith('diff'):
-            m = re.match('diff: (.+)% (passed|failed)', output)
-            if m.group(2) == 'passed':
-                return [None, 0]
-            diff_percent = float(m.group(1))
-
-        return (output_image, diff_percent)
-
     def _tests_for_other_platforms(self):
         # By default we will skip any directory under LayoutTests/platform
         # that isn't in our baseline search path (this mirrors what
@@ -201,7 +124,7 @@ class WebKitPort(Port):
         symbols = ''
         for path_to_module in self._modules_to_search_for_symbols():
             try:
-                symbols += self._executive.run_command([self.nm_command(), path_to_module], error_handler=Executive.ignore_error)
+                symbols += self._executive.run_command([self.nm_command(), path_to_module], error_handler=self._executive.ignore_error)
             except OSError, e:
                 _log.warn("Failed to run nm: %s.  Can't determine supported features correctly." % e)
         return symbols

@@ -36,8 +36,6 @@ import time
 
 from webkitpy.common.system import path
 
-from webkitpy.layout_tests.port import server_process
-
 
 _log = logging.getLogger(__name__)
 
@@ -114,9 +112,6 @@ class Driver(object):
         self._port = port
         self._worker_number = worker_number
         self._no_timeout = no_timeout
-
-        # overridable for testing.
-        self._server_process_constructor = server_process.ServerProcess
 
         self._driver_tempdir = None
         # WebKitTestRunner can report back subprocess crashes by printing
@@ -271,7 +266,7 @@ class Driver(object):
         environment['LOCAL_RESOURCE_ROOT'] = self._port.layout_tests_dir()
         self._crashed_process_name = None
         self._crashed_pid = None
-        self._server_process = self._server_process_constructor(self._port, server_name, self.cmd_line(pixel_tests, per_test_args), environment)
+        self._server_process = self._port._server_process_constructor(self._port, server_name, self.cmd_line(pixel_tests, per_test_args), environment)
         self._server_process.start()
 
     def stop(self):

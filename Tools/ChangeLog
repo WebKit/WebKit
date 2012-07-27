@@ -1,3 +1,79 @@
+2012-07-27  Dirk Pranke  <dpranke@chromium.org>
+
+        nrwt: move image diffing code to a separate module
+        https://bugs.webkit.org/show_bug.cgi?id=92447
+
+        Reviewed by Ryosuke Niwa.
+
+        This patch moves the code to talk to ImageDiff into its own
+        module, and adds more tests for it. In addition, the patch
+        modifies diff_image() so that we don't automatically stop
+        ImageDiff after a single invocation, and thus subsequent
+        diffs may be slightly faster. (Note that the chromium ports
+        don't use any of this code; that is not changed by this patch).
+
+        The main motivation for this change is to move more "generic"
+        code out of the port/* classes, and in particular to move more
+        code out of webkit.py so that we can eventually eliminate it by
+        merging it into base.py.
+
+        This patch also splits MockServerProcess out from driver_unittest.py
+        so that it can be re-used.
+
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        (Port.__init__):
+        (Port.diff_image):
+        (Port.clean_up_test_run):
+        * Scripts/webkitpy/layout_tests/port/driver.py:
+        (Driver.__init__):
+        (Driver._start):
+        * Scripts/webkitpy/layout_tests/port/driver_unittest.py:
+        (DriverTest.test_stop_cleans_up_properly):
+        (DriverTest.test_two_starts_cleans_up_properly):
+        (DriverTest.test_start_actually_starts):
+        * Scripts/webkitpy/layout_tests/port/efl.py:
+        (EflPort.clean_up_test_run):
+        * Scripts/webkitpy/layout_tests/port/gtk.py:
+        (GtkPort.clean_up_test_run):
+        * Scripts/webkitpy/layout_tests/port/image_diff.py: Added.
+        (ImageDiffer):
+        (ImageDiffer.__init__):
+        (ImageDiffer.diff_image):
+        (ImageDiffer._start):
+        (ImageDiffer._read):
+        (ImageDiffer.stop):
+        * Scripts/webkitpy/layout_tests/port/image_diff_unittest.py: Added.
+        (for):
+        (FakePort):
+        (FakePort.__init__):
+        (FakePort._path_to_image_diff):
+        (FakePort.setup_environ_for_server):
+        (TestImageDiffer):
+        (TestImageDiffer.test_diff_image):
+        * Scripts/webkitpy/layout_tests/port/mock_drt_unittest.py:
+        (MockDRTPortTest.test_diff_image):
+        * Scripts/webkitpy/layout_tests/port/port_testcase.py:
+        (PortTestCase.test_diff_image__missing_both):
+        (PortTestCase.test_diff_image):
+        (PortTestCase.test_diff_image.make_proc):
+        * Scripts/webkitpy/layout_tests/port/server_process.py:
+        (ServerProcess._start):
+        * Scripts/webkitpy/layout_tests/port/server_process_mock.py: Added.
+        (MockServerProcess):
+        (MockServerProcess.__init__):
+        (MockServerProcess.write):
+        (MockServerProcess.has_crashed):
+        (MockServerProcess.read_stdout_line):
+        (MockServerProcess.read_stdout):
+        (MockServerProcess.pop_all_buffered_stderr):
+        (MockServerProcess.read_either_stdout_or_stderr_line):
+        (MockServerProcess.start):
+        (MockServerProcess.stop):
+        (MockServerProcess.kill):
+        * Scripts/webkitpy/layout_tests/port/webkit.py:
+        (WebKitPort._build_driver_flags):
+        (WebKitPort._symbols_string):
+
 2012-07-27  Tom Hudson  <hudson@google.com>
 
         Activate committer bit granted April 6th so I can garden.

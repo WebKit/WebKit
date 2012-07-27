@@ -51,6 +51,7 @@ class GtkPort(WebKitPort, PulseAudioSanitizer):
         self._unload_pulseaudio_module()
 
     def clean_up_test_run(self):
+        super(GtkPort, self).clean_up_test_run()
         self._restore_pulseaudio_module()
 
     def setup_environ_for_server(self, server_name=None):

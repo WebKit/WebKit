@@ -41,6 +41,7 @@ from webkitpy.layout_tests.servers import http_server_base
 from webkitpy.layout_tests.servers import http_server_base
 from webkitpy.layout_tests.port import factory
 from webkitpy.layout_tests.port.config_mock import MockConfig
+from webkitpy.layout_tests.port.server_process_mock import MockServerProcess
 from webkitpy.tool.mocktool import MockOptions
 
 
@@ -209,6 +210,7 @@ class PortTestCase(unittest.TestCase):
         self.assertFalse(port.diff_image(None, None)[0])
         self.assertFalse(port.diff_image(None, '')[0])
         self.assertFalse(port.diff_image('', None)[0])
+
         self.assertFalse(port.diff_image('', '')[0])
 
     def test_diff_image__missing_actual(self):
@@ -220,6 +222,22 @@ class PortTestCase(unittest.TestCase):
         port = self.make_port()
         self.assertTrue(port.diff_image('foo', None)[0])
         self.assertTrue(port.diff_image('foo', '')[0])
+
+    def test_diff_image(self):
+        port = self.make_port()
+        self.proc = None
+
+        def make_proc(port, nm, cmd, env):
+            self.proc = MockServerProcess(port, nm, cmd, env, lines=['diff: 100% failed\n'])
+            return self.proc
+
+        port._server_process_constructor = make_proc
+        port.setup_test_run()
+        self.assertEquals(port.diff_image('foo', 'bar'), ('', 100.0))
+        self.assertEquals(self.proc.cmd[1:3], ["--tolerance", "0.1"])
+        port.clean_up_test_run()
+        self.assertTrue(self.proc.stopped)
+        self.assertEquals(port._image_differ, None)
 
     def test_check_build(self):
         port = self.make_port()

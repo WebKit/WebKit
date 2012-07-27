@@ -31,6 +31,7 @@ import unittest
 from webkitpy.common.system.systemhost_mock import MockSystemHost
 
 from webkitpy.layout_tests.port import Port, Driver, DriverOutput
+from webkitpy.layout_tests.port.server_process_mock import MockServerProcess
 
 # FIXME: remove the dependency on TestWebKitPort
 from webkitpy.layout_tests.port.webkit_unittest import TestWebKitPort
@@ -232,8 +233,8 @@ class DriverTest(unittest.TestCase):
 
     def test_stop_cleans_up_properly(self):
         port = TestWebKitPort()
+        port._server_process_constructor = MockServerProcess
         driver = Driver(port, 0, pixel_tests=True)
-        driver._server_process_constructor = MockServerProcess
         driver.start(True, [])
         last_tmpdir = port._filesystem.last_tmpdir
         self.assertNotEquals(last_tmpdir, None)
@@ -242,8 +243,8 @@ class DriverTest(unittest.TestCase):
 
     def test_two_starts_cleans_up_properly(self):
         port = TestWebKitPort()
+        port._server_process_constructor = MockServerProcess
         driver = Driver(port, 0, pixel_tests=True)
-        driver._server_process_constructor = MockServerProcess
         driver.start(True, [])
         last_tmpdir = port._filesystem.last_tmpdir
         driver._start(True, [])
@@ -251,49 +252,10 @@ class DriverTest(unittest.TestCase):
 
     def test_start_actually_starts(self):
         port = TestWebKitPort()
+        port._server_process_constructor = MockServerProcess
         driver = Driver(port, 0, pixel_tests=True)
-        driver._server_process_constructor = MockServerProcess
         driver.start(True, [])
         self.assertTrue(driver._server_process.started)
-
-
-class MockServerProcess(object):
-    def __init__(self, port_obj=None, name=None, cmd=None, env=None, universal_newlines=False, lines=None):
-        self.timed_out = False
-        self.lines = lines or []
-        self.crashed = False
-        self.started = False
-
-    def has_crashed(self):
-        return self.crashed
-
-    def read_stdout_line(self, deadline):
-        return self.lines.pop(0) + "\n"
-
-    def read_stdout(self, deadline, size):
-        first_line = self.lines[0]
-        if size > len(first_line):
-            self.lines.pop(0)
-            remaining_size = size - len(first_line) - 1
-            if not remaining_size:
-                return first_line + "\n"
-            return first_line + "\n" + self.read_stdout(deadline, remaining_size)
-        result = self.lines[0][:size]
-        self.lines[0] = self.lines[0][size:]
-        return result
-
-    def read_either_stdout_or_stderr_line(self, deadline):
-        # FIXME: We should have tests which intermix stderr and stdout lines.
-        return self.read_stdout_line(deadline), None
-
-    def start(self):
-        self.started = True
-
-    def stop(self, kill_directly=False):
-        return
-
-    def kill(self):
-        return
 
 
 if __name__ == '__main__':
