@@ -1,3 +1,17 @@
+2012-07-27  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] Don't add a HUD layer when there is no rootLayer
+        https://bugs.webkit.org/show_bug.cgi?id=92442
+
+        Reviewed by Adrienne Walker.
+
+        When the compositor is shutting down in threaded mode, it does a commit
+        without a root layer. We should not try stick the hud layer onto the
+        null root layer.
+
+        * platform/graphics/chromium/cc/CCLayerTreeHost.cpp:
+        (WebCore::CCLayerTreeHost::willCommit):
+
 2012-07-27  Alec Flett  <alecflett@chromium.org>
 
         IndexedDB: inject index keys on cursor/objectstore/index get success handlers

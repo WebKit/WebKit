@@ -254,7 +254,7 @@ void CCLayerTreeHost::finishCommitOnImplThread(CCLayerTreeHostImpl* hostImpl)
 void CCLayerTreeHost::willCommit()
 {
     m_client->willCommit();
-    if (m_settings.showDebugInfo()) {
+    if (m_rootLayer && m_settings.showDebugInfo()) {
         if (!m_hudLayer)
             m_hudLayer = HeadsUpDisplayLayerChromium::create(m_settings, layerRendererCapabilities().maxTextureSize);
         m_rootLayer->addChild(m_hudLayer);
