@@ -1,3 +1,56 @@
+2012-07-27  Beth Dakin  <bdakin@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=92327
+        -webkit-background-clip:text is blurry in WebKit 1 apps when
+        deviceScaleFactor > 1
+        -and corresponding-
+        <rdar://problem/11683788>
+
+        Reviewed by Simon Fraser.
+
+        The bug here is that the code to make createCompatibleBuffer() HiDPI-savvy 
+        assumed that the deviceScaleFactor would always be baked into the CTM of the
+        GraphicsContext. But that is NOT the case in WebKit 1.
+
+        createCompatibleBuffer() is used for clip text and gradients.
+
+        Now getCTM() takes a parameter indicating whether the result should definitely
+        include the device scale, or if it should possibly included the device scale, 
+        which is the option that matches old behavior.
+        * platform/graphics/GraphicsContext.h:
+        (GraphicsContext):
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContext::getCTM):
+        * platform/graphics/openvg/GraphicsContextOpenVG.cpp:
+        (WebCore::GraphicsContext::getCTM):
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        (WebCore::GraphicsContext::getCTM):
+        * platform/graphics/skia/GraphicsContextSkia.cpp:
+        (WebCore::GraphicsContext::getCTM):
+        * platform/graphics/wince/GraphicsContextWinCE.cpp:
+        (WebCore::GraphicsContext::getCTM):
+        * platform/graphics/wx/GraphicsContextWx.cpp:
+        (WebCore::GraphicsContext::getCTM):
+
+        Actually use the new parameter in the CG implementation. Use CG API to get a
+        matrix that definitely includes the device scale when that is required. 
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::getCTM):
+
+        Remove some symbol cruft that doesn't seem to require a replacement.
+        * WebCore.exp.in:
+
+        Use DefinitelyIncludeDeviceScale when getting the CTM in the buggy spot.
+        * platform/graphics/GraphicsContext.cpp:
+        (WebCore::GraphicsContext::createCompatibleBuffer):
+
+        The ImageBuffer for gradients is created using createCompatibleBuffer(), and since 
+        createCompatibleBuffer() now uses getCTM(DefinitelyIncludeDeviceScale) to 
+        determine appropriate sizing, drawPattern() should use that same matrix to 
+        determine pattern sizing.
+        * platform/graphics/GeneratorGeneratedImage.cpp:
+        (WebCore::GeneratorGeneratedImage::drawPattern):
+
 2012-07-27  Tony Chang  <tony@chromium.org>
 
         flex-wrap: wrap not wrapping for % sized items in column flow

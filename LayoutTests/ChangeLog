@@ -1,3 +1,17 @@
+2012-07-27  Beth Dakin  <bdakin@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=92327
+        -webkit-background-clip:text is blurry in WebKit 1 apps when
+        deviceScaleFactor > 1
+        -and corresponding-
+        <rdar://problem/11683788>
+
+        Reviewed by Simon Fraser.
+
+        * fast/hidpi/gradient-with-scaled-ancestor.html: Added.
+        * platform/mac/fast/hidpi/gradient-with-scaled-ancestor-expected.png: Added.
+        * platform/mac/fast/hidpi/gradient-with-scaled-ancestor-expected.txt: Added.
+
 2012-07-27  Brian Weinstein  <bweinstein@apple.com>
 
         Add Mac results for fast/table/table-row-outline-paint.html.

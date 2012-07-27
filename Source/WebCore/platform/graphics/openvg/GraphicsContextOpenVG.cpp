@@ -67,7 +67,7 @@ PlatformGraphicsContext* GraphicsContext::platformContext() const
     return m_data->baseSurface();
 }
 
-AffineTransform GraphicsContext::getCTM() const
+AffineTransform GraphicsContext::getCTM(IncludeDeviceScale) const
 {
     if (paintingDisabled())
         return AffineTransform();
