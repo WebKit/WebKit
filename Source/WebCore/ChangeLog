@@ -1,3 +1,17 @@
+2012-07-27  Shawn Singh  <shawnsingh@chromium.org>
+
+        [chromium] CCLayerTreeHost placeholder scissor should be deviceViewportSize instead of viewportSize
+        https://bugs.webkit.org/show_bug.cgi?id=92469
+
+        Reviewed by Adrienne Walker.
+
+        We were accidentally using viewportSize instead of
+        deviceViewportSize in a particular place in code. Recent
+        refactoring to use tighter scissor rects exposed this problem.
+
+        * platform/graphics/chromium/cc/CCLayerTreeHost.cpp:
+        (WebCore::CCLayerTreeHost::updateLayers):
+
 2012-07-27  Kevin Ellis  <kevers@chromium.org>
 
         Search cancel button is hard to activate with a tap gesture even if touch adjustment is enabled.

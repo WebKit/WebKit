@@ -473,7 +473,7 @@ void CCLayerTreeHost::updateLayers(LayerChromium* rootLayer, CCTextureUpdater& u
         TRACE_EVENT0("cc", "CCLayerTreeHost::updateLayers::calcDrawEtc");
         CCLayerTreeHostCommon::calculateDrawTransforms(rootLayer, deviceViewportSize(), m_deviceScaleFactor, layerRendererCapabilities().maxTextureSize, updateList);
 
-        FloatRect rootScissorRect(FloatPoint(0, 0), viewportSize());
+        FloatRect rootScissorRect(FloatPoint(0, 0), deviceViewportSize());
         CCLayerTreeHostCommon::calculateVisibleAndScissorRects(updateList, rootScissorRect);
     }
 
