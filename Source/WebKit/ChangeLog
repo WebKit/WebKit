@@ -1,3 +1,14 @@
+2012-07-27  Thiago Marcos P. Santos  <thiago.santos@intel.com>
+
+        [EFL] WebKit API unit tests needs a timeout
+        https://bugs.webkit.org/show_bug.cgi?id=92496
+
+        Reviewed by Antonio Gomes.
+
+        Added the same timeout value that we have for WebKit2.
+
+        * PlatformEfl.cmake:
+
 2012-07-27  Dominik Röttsches  <dominik.rottsches@intel.com>
 
         [Cairo] Add complex font drawing using HarfbuzzNG
