@@ -174,10 +174,6 @@ http/tests/ssl/referer-301.html
 http/tests/ssl/referer-303.html
 http/tests/ssl/verify-ssl-enabled.php
 svg/as-object/svg-embedded-in-html-in-iframe.html
-svg/custom/clip-path-referencing-use2.svg
-svg/custom/getscreenctm-in-scrollable-div-area.xhtml
-svg/custom/getscreenctm-in-scrollable-svg-area.xhtml
-svg/custom/use-events-crash.svg
 svg/text/select-textLength-spacing-squeeze-1.svg
 svg/text/select-textLength-spacing-squeeze-2.svg
 svg/text/select-textLength-spacing-squeeze-3.svg

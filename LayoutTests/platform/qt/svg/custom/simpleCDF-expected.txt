@@ -1,15 +1,15 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x311
-  RenderBlock {html} at (0,0) size 800x311
-    RenderBody {body} at (8,16) size 784x279
-      RenderBlock {p} at (0,0) size 784x21
-        RenderText {#text} at (0,0) size 148x21
-          text run at (0,0) width 148: "This is a test of CDF:"
-      RenderBlock (anonymous) at (0,37) size 784x205
-        RenderSVGRoot {svg} at (8,53) size 200x200
-          RenderSVGRect {rect} at (8,53) size 200x200 [fill={[type=SOLID] [color=#0000FF]}] [x=0.00] [y=0.00] [width=200.00] [height=200.00]
+layer at (0,0) size 800x306
+  RenderBlock {html} at (0,0) size 800x306
+    RenderBody {body} at (8,16) size 784x274
+      RenderBlock {p} at (0,0) size 784x19
+        RenderText {#text} at (0,0) size 128x19
+          text run at (0,0) width 128: "This is a test of CDF:"
+      RenderBlock (anonymous) at (0,35) size 784x204
+        RenderSVGRoot {svg} at (8,51) size 200x200
+          RenderSVGRect {rect} at (8,51) size 200x200 [fill={[type=SOLID] [color=#0000FF]}] [x=0.00] [y=0.00] [width=200.00] [height=200.00]
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {p} at (0,258) size 784x21
-        RenderText {#text} at (0,0) size 300x21
-          text run at (0,0) width 300: "You should see an SVG image above this!"
+      RenderBlock {p} at (0,255) size 784x19
+        RenderText {#text} at (0,0) size 255x19
+          text run at (0,0) width 255: "You should see an SVG image above this!"

@@ -1,9 +1,9 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x407
-  RenderBlock {html} at (0,0) size 800x407
-    RenderBody {body} at (8,8) size 784x383
-      RenderBlock {div} at (0,0) size 784x213 [bgcolor=#008000]
+layer at (0,0) size 800x394
+  RenderBlock {html} at (0,0) size 800x394
+    RenderBody {body} at (8,8) size 784x370
+      RenderBlock {div} at (0,0) size 784x212 [bgcolor=#008000]
         RenderEmbeddedObject {object} at (0,0) size 208x208 [bgcolor=#FFA500]
           layer at (0,0) size 208x208
             RenderView at (0,0) size 208x208
@@ -11,32 +11,32 @@ layer at (0,0) size 800x407
             RenderSVGRoot {svg} at (20,20) size 168x168
               RenderSVGEllipse {circle} at (20,20) size 168x168 [fill={[type=SOLID] [color=#FF0000]}] [cx=25.00] [cy=25.00] [r=20.00]
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {p} at (0,229) size 208x21 [bgcolor=#0000FF]
-        RenderText {#text} at (0,0) size 13x21
-          text run at (0,0) width 13: "hi"
-      RenderBlock {h2} at (0,269) size 784x32
-        RenderText {#text} at (0,0) size 191x32
-          text run at (0,0) width 191: "Expected results"
-      RenderBlock {ul} at (0,320) size 784x63
-        RenderListItem {li} at (40,0) size 744x21
-          RenderListMarker at (-18,0) size 7x21: bullet
-          RenderText {#text} at (0,0) size 32x21
-            text run at (0,0) width 32: "The "
-          RenderInline {code} at (0,0) size 17x17
-            RenderText {#text} at (32,3) size 17x17
-              text run at (32,3) width 17: "div"
-          RenderText {#text} at (49,0) size 275x21
-            text run at (49,0) width 275: " containing the object appears in green"
-        RenderListItem {li} at (40,21) size 744x21
-          RenderListMarker at (-18,0) size 7x21: bullet
-          RenderText {#text} at (0,0) size 32x21
-            text run at (0,0) width 32: "The "
-          RenderInline {code} at (0,0) size 35x17
-            RenderText {#text} at (32,3) size 35x17
-              text run at (32,3) width 35: "object"
-          RenderText {#text} at (67,0) size 307x21
-            text run at (67,0) width 307: " appears in orange. Its height is set at 13em"
-        RenderListItem {li} at (40,42) size 744x21
-          RenderListMarker at (-18,0) size 7x21: bullet
-          RenderText {#text} at (0,0) size 191x21
-            text run at (0,0) width 191: "The blue line is 13em wide"
+      RenderBlock {p} at (0,228) size 208x19 [bgcolor=#0000FF]
+        RenderText {#text} at (0,0) size 10x19
+          text run at (0,0) width 10: "hi"
+      RenderBlock {h2} at (0,266) size 784x28
+        RenderText {#text} at (0,0) size 169x28
+          text run at (0,0) width 169: "Expected results"
+      RenderBlock {ul} at (0,313) size 784x57
+        RenderListItem {li} at (40,0) size 744x19
+          RenderListMarker at (-18,0) size 7x19: bullet
+          RenderText {#text} at (0,0) size 27x19
+            text run at (0,0) width 27: "The "
+          RenderInline {code} at (0,0) size 24x15
+            RenderText {#text} at (27,4) size 24x15
+              text run at (27,4) width 24: "div"
+          RenderText {#text} at (51,0) size 231x19
+            text run at (51,0) width 231: " containing the object appears in green"
+        RenderListItem {li} at (40,19) size 744x19
+          RenderListMarker at (-18,0) size 7x19: bullet
+          RenderText {#text} at (0,0) size 27x19
+            text run at (0,0) width 27: "The "
+          RenderInline {code} at (0,0) size 48x15
+            RenderText {#text} at (27,4) size 48x15
+              text run at (27,4) width 48: "object"
+          RenderText {#text} at (75,0) size 260x19
+            text run at (75,0) width 260: " appears in orange. Its height is set at 13em"
+        RenderListItem {li} at (40,38) size 744x19
+          RenderListMarker at (-18,0) size 7x19: bullet
+          RenderText {#text} at (0,0) size 160x19
+            text run at (0,0) width 160: "The blue line is 13em wide"

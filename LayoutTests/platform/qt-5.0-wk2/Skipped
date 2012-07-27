@@ -409,10 +409,6 @@ fullscreen/video-controls-override.html
 fullscreen/video-specified-size.html
 http/tests/cache/cancel-during-revalidation-succeeded.html
 svg/css/text-gradient-shadow.svg
-svg/custom/dominant-baseline-hanging.svg
-svg/custom/getscreenctm-in-mixed-content.xhtml
-svg/custom/inline-svg-in-xhtml.xml
-svg/custom/object-sizing.xhtml
 svg/hixie/mixed/003.xml
 
 # [Qt] Tests still fail after the update to new fonts 

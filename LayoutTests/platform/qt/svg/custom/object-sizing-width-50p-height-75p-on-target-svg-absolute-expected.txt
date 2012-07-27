@@ -1,12 +1,12 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 500x155 layerType: background only
+layer at (0,0) size 500x154 layerType: background only
 layer at (0,0) size 250x112
   RenderBlock (positioned) zI: -1 {div} at (0,0) size 250x112 [bgcolor=#FF0000]
-layer at (0,0) size 500x155 layerType: foreground only
-  RenderBlock {html} at (0,0) size 500x155
-    RenderBody {body} at (0,0) size 500x155
-      RenderBlock {p} at (0,0) size 500x155
+layer at (0,0) size 500x154 layerType: foreground only
+  RenderBlock {html} at (0,0) size 500x154
+    RenderBody {body} at (0,0) size 500x154
+      RenderBlock {p} at (0,0) size 500x154
         RenderEmbeddedObject {object} at (0,0) size 250x150
           layer at (0,0) size 250x150
             RenderView at (0,0) size 250x150

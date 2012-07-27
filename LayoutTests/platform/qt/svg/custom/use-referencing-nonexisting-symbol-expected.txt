@@ -1,20 +1,20 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
-  RenderSVGRoot {svg} at (146,0) size 554x600
+  RenderSVGRoot {svg} at (146,18) size 554x582
     RenderSVGHiddenContainer {symbol} at (0,0) size 0x0
       RenderSVGRect {rect} at (5,5) size 59x59 [fill={[type=SOLID] [color=#0000FF]}] [x=5.00] [y=5.00] [width=59.00] [height=59.00]
-      RenderSVGText {text} at (17,-2) size 40x76 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 40x76
-          chunk 1 text run 1 at (17.00,56.00) startOffset 0 endOffset 1 width 40.00: "A"
+      RenderSVGText {text} at (17,2) size 42x67 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 42x67
+          chunk 1 text run 1 at (17.00,56.00) startOffset 0 endOffset 1 width 42.00: "A"
     RenderSVGHiddenContainer {symbol} at (0,0) size 0x0
       RenderSVGRect {rect} at (5,5) size 59x59 [fill={[type=SOLID] [color=#FF00FF]}] [x=5.00] [y=5.00] [width=59.00] [height=59.00]
-      RenderSVGText {text} at (17,-2) size 40x76 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 40x76
-          chunk 1 text run 1 at (17.00,56.00) startOffset 0 endOffset 1 width 40.00: "B"
-    RenderSVGContainer {use} at (146,0) size 554x600
-      RenderSVGViewportContainer {svg} at (146,0) size 554x600
+      RenderSVGText {text} at (17,2) size 39x67 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 39x67
+          chunk 1 text run 1 at (17.00,56.00) startOffset 0 endOffset 1 width 39.00: "B"
+    RenderSVGContainer {use} at (146,18) size 554x582
+      RenderSVGViewportContainer {svg} at (146,18) size 554x582
         RenderSVGRect {rect} at (146,46) size 554x554 [fill={[type=SOLID] [color=#0000FF]}] [x=5.00] [y=5.00] [width=59.00] [height=59.00]
-        RenderSVGText {text} at (17,-2) size 41x75 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 41x75
-            chunk 1 text run 1 at (17.00,56.00) startOffset 0 endOffset 1 width 40.11: "A"
+        RenderSVGText {text} at (17,2) size 44x67 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 44x67
+            chunk 1 text run 1 at (17.00,56.00) startOffset 0 endOffset 1 width 43.41: "A"

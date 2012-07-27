@@ -1,10 +1,10 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
-  RenderSVGRoot {svg} at (50,34) size 222x51
-    RenderSVGText {text} at (50,34) size 222x21 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 222x21
-        chunk 1 text run 1 at (50.00,50.00) startOffset 0 endOffset 34 width 222.00: "Expected: matrix(1, 0, 0, 1, 0, 0)"
-    RenderSVGText {text} at (50,64) size 200x21 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 200x21
-        chunk 1 text run 1 at (50.00,80.00) startOffset 0 endOffset 32 width 200.00: "Actual: matrix(1, 0, 0, 1, 0, 0)"
+  RenderSVGRoot {svg} at (50,35) size 199x49
+    RenderSVGText {text} at (50,35) size 199x19 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 199x19
+        chunk 1 text run 1 at (50.00,50.00) startOffset 0 endOffset 34 width 199.00: "Expected: matrix(1, 0, 0, 1, 0, 0)"
+    RenderSVGText {text} at (50,65) size 181x19 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 181x19
+        chunk 1 text run 1 at (50.00,80.00) startOffset 0 endOffset 32 width 181.00: "Actual: matrix(1, 0, 0, 1, 0, 0)"

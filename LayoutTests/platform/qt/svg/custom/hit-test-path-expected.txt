@@ -3,6 +3,6 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
-      RenderBlock {P} at (0,0) size 784x21
-        RenderText {#text} at (0,0) size 618x21
-          text run at (0,0) width 618: "If you see this, then SVG hit testing on paths works - the arrow was successfully clicked."
+      RenderBlock {P} at (0,0) size 784x19
+        RenderText {#text} at (0,0) size 533x19
+          text run at (0,0) width 533: "If you see this, then SVG hit testing on paths works - the arrow was successfully clicked."

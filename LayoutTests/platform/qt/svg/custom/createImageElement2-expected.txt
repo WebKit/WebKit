@@ -1,18 +1,18 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x105
-  RenderBlock {html} at (0,0) size 800x105
-    RenderInline {head} at (0,0) size 86x21
+layer at (0,0) size 800x104
+  RenderBlock {html} at (0,0) size 800x104
+    RenderInline {head} at (0,0) size 76x19
       RenderText {#text} at (0,0) size 0x0
-      RenderInline {title} at (0,0) size 82x21
-        RenderText {#text} at (0,84) size 82x21
-          text run at (0,84) width 82: "SVG Image"
-      RenderText {#text} at (82,84) size 4x21
-        text run at (82,84) width 4: " "
+      RenderInline {title} at (0,0) size 72x19
+        RenderText {#text} at (0,85) size 72x19
+          text run at (0,85) width 72: "SVG Image"
+      RenderText {#text} at (72,85) size 4x19
+        text run at (72,85) width 4: " "
     RenderText {#text} at (0,0) size 0x0
-    RenderInline {body} at (0,0) size 600x21
+    RenderInline {body} at (0,0) size 600x19
       RenderText {#text} at (0,0) size 0x0
-      RenderSVGRoot {svg} at (96,10) size 100x60
-        RenderSVGImage {image} at (96,10) size 100x60
+      RenderSVGRoot {svg} at (86,10) size 100x60
+        RenderSVGImage {image} at (86,10) size 100x60
       RenderText {#text} at (0,0) size 0x0
     RenderText {#text} at (0,0) size 0x0

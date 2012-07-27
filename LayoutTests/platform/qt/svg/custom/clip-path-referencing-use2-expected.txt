@@ -1,7 +1,7 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
-  RenderSVGRoot {svg} at (0,0) size 676x145
+  RenderSVGRoot {svg} at (0,0) size 569x144
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
       RenderSVGRect {rect} at (0,0) size 50x50 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=50.00] [height=50.00]
       RenderSVGContainer {use} at (0,0) size 50x50
@@ -14,9 +14,9 @@ layer at (0,0) size 800x600
     RenderSVGContainer {g} at (0,0) size 50x50
       [clipPath="clip"] RenderSVGResourceClipper {clipPath} at (0,0) size 50x50
       RenderSVGRect {rect} at (0,0) size 100x100 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
-    RenderSVGText {text} at (10,104) size 425x21 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 425x21
-        chunk 1 text run 1 at (10.00,120.00) startOffset 0 endOffset 56 width 425.00: "The graphic above should show a 100x100 green rectangle."
-    RenderSVGText {text} at (10,124) size 666x21 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 666x21
-        chunk 1 text run 1 at (10.00,140.00) startOffset 0 endOffset 96 width 666.00: "The red rectangle should not show since it uses a clipping path that uses an indirect reference."
+    RenderSVGText {text} at (10,105) size 360x19 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 360x19
+        chunk 1 text run 1 at (10.00,120.00) startOffset 0 endOffset 56 width 360.00: "The graphic above should show a 100x100 green rectangle."
+    RenderSVGText {text} at (10,125) size 559x19 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 559x19
+        chunk 1 text run 1 at (10.00,140.00) startOffset 0 endOffset 96 width 559.00: "The red rectangle should not show since it uses a clipping path that uses an indirect reference."

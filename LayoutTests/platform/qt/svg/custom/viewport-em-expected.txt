@@ -1,19 +1,19 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x236
-  RenderBlock {html} at (0,0) size 800x236
-    RenderBody {body} at (8,16) size 784x212
-      RenderBlock {p} at (0,0) size 784x21 [color=#000080]
-        RenderText {#text} at (0,0) size 295x21
-          text run at (0,0) width 295: "There should be two identical bars below."
-      RenderBlock {p} at (0,37) size 784x21 [color=#000080]
-        RenderText {#text} at (0,0) size 62x21
-          text run at (0,0) width 62: "First bar:"
-      RenderBlock {div} at (0,74) size 160x40 [bgcolor=#000080]
-      RenderBlock {p} at (0,130) size 784x21 [color=#000080]
-        RenderText {#text} at (0,0) size 86x21
-          text run at (0,0) width 86: "Second bar:"
-      RenderBlock (anonymous) at (0,167) size 784x45
-        RenderSVGRoot {svg} at (8,183) size 160x40
-          RenderSVGRect {rect} at (8,183) size 160x40 [fill={[type=SOLID] [color=#000080]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
+layer at (0,0) size 800x229
+  RenderBlock {html} at (0,0) size 800x229
+    RenderBody {body} at (8,16) size 784x205
+      RenderBlock {p} at (0,0) size 784x19 [color=#000080]
+        RenderText {#text} at (0,0) size 252x19
+          text run at (0,0) width 252: "There should be two identical bars below."
+      RenderBlock {p} at (0,35) size 784x19 [color=#000080]
+        RenderText {#text} at (0,0) size 54x19
+          text run at (0,0) width 54: "First bar:"
+      RenderBlock {div} at (0,70) size 160x40 [bgcolor=#000080]
+      RenderBlock {p} at (0,126) size 784x19 [color=#000080]
+        RenderText {#text} at (0,0) size 73x19
+          text run at (0,0) width 73: "Second bar:"
+      RenderBlock (anonymous) at (0,161) size 784x44
+        RenderSVGRoot {svg} at (8,177) size 160x40
+          RenderSVGRect {rect} at (8,177) size 160x40 [fill={[type=SOLID] [color=#000080]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
         RenderText {#text} at (0,0) size 0x0

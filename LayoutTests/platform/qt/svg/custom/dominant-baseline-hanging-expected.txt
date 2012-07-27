@@ -18,45 +18,45 @@ layer at (0,0) size 400x400
       RenderSVGContainer {g} at (9,9) size 381x26 [transform={m=((1.00,0.00)(0.00,1.00)) t=(-0.50,-0.50)}]
         RenderSVGPath {line} at (9,9) size 381x1 [stroke={[type=LINEAR-GRADIENT] [id="h_stroke_gradient"]}] [fill={[type=SOLID] [color=#000000]}] [x1=0.00] [y1=0.00] [x2=380.00] [y2=0.00]
         RenderSVGPath {line} at (9,9) size 1x26 [stroke={[type=LINEAR-GRADIENT] [id="v_stroke_gradient"]}] [fill={[type=SOLID] [color=#000000]}] [x1=0.00] [y1=-0.50] [x2=0.00] [y2=25.00]
-      RenderSVGText {text} at (2,-4) size 345x26 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 345x26
-          chunk 1 text run 1 at (2.00,16.00) startOffset 0 endOffset 40 width 345.00: "This is hanging from the top-left corner"
+      RenderSVGText {text} at (2,-4) size 308x23 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 308x23
+          chunk 1 text run 1 at (2.00,14.40) startOffset 0 endOffset 40 width 308.00: "This is hanging from the top-left corner"
     RenderSVGForeignObject {foreignObject} at (10,45) size 380x150
-      RenderBlock {html} at (0,0) size 380x142
-        RenderBody {body} at (8,0) size 364x142
-          RenderBlock {p} at (0,0) size 364x105
-            RenderText {#text} at (0,0) size 355x42
-              text run at (0,0) width 355: "The piece of text above should be aligned with the"
-              text run at (0,21) width 336: "top-left corner of the rectangle below it. Both the"
-            RenderInline {code} at (0,0) size 38x17
-              RenderText {#text} at (0,45) size 38x17
-                text run at (0,45) width 38: "<text>"
-            RenderText {#text} at (38,42) size 61x21
-              text run at (38,42) width 61: " and the "
-            RenderInline {code} at (0,0) size 38x17
-              RenderText {#text} at (99,45) size 38x17
-                text run at (99,45) width 38: "<rect>"
-            RenderText {#text} at (137,42) size 306x42
-              text run at (137,42) width 169: " are located at the same"
-              text run at (0,63) width 144: "coordinates and the "
-            RenderInline {code} at (0,0) size 38x17
-              RenderText {#text} at (144,66) size 38x17
-                text run at (144,66) width 38: "<text>"
-            RenderText {#text} at (182,63) size 129x21
-              text run at (182,63) width 129: " element uses the "
-            RenderInline {code} at (0,0) size 45x17
-              RenderText {#text} at (311,66) size 45x17
-                text run at (311,66) width 45: "hanging"
-            RenderText {#text} at (0,84) size 85x21
-              text run at (0,84) width 85: "value for its "
-            RenderInline {code} at (0,0) size 105x17
-              RenderText {#text} at (85,87) size 105x17
-                text run at (85,87) width 105: "dominant-baseline"
-            RenderText {#text} at (190,84) size 65x21
-              text run at (190,84) width 65: " attribute."
-          RenderBlock {p} at (0,121) size 364x21
-            RenderInline {a} at (0,0) size 97x21 [color=#800000]
-              RenderText {#text} at (0,0) size 97x21
-                text run at (0,0) width 97: "Antoine Quint"
-            RenderText {#text} at (97,0) size 100x21
-              text run at (97,0) width 100: ", January 27th"
+      RenderBlock {html} at (0,0) size 380x130
+        RenderBody {body} at (8,0) size 364x130
+          RenderBlock {p} at (0,0) size 364x95
+            RenderText {#text} at (0,0) size 349x38
+              text run at (0,0) width 349: "The piece of text above should be aligned with the top-left"
+              text run at (0,19) width 250: "corner of the rectangle below it. Both the "
+            RenderInline {code} at (0,0) size 48x15
+              RenderText {#text} at (250,23) size 48x15
+                text run at (250,23) width 48: "<text>"
+            RenderText {#text} at (298,19) size 48x19
+              text run at (298,19) width 48: " and the"
+            RenderInline {code} at (0,0) size 48x15
+              RenderText {#text} at (0,42) size 48x15
+                text run at (0,42) width 48: "<rect>"
+            RenderText {#text} at (48,38) size 265x19
+              text run at (48,38) width 265: " are located at the same coordinates and the"
+            RenderInline {code} at (0,0) size 48x15
+              RenderText {#text} at (0,61) size 48x15
+                text run at (0,61) width 48: "<text>"
+            RenderText {#text} at (48,57) size 106x19
+              text run at (48,57) width 106: " element uses the "
+            RenderInline {code} at (0,0) size 56x15
+              RenderText {#text} at (154,61) size 56x15
+                text run at (154,61) width 56: "hanging"
+            RenderText {#text} at (210,57) size 77x19
+              text run at (210,57) width 77: " value for its "
+            RenderInline {code} at (0,0) size 359x34
+              RenderText {#text} at (287,61) size 359x34
+                text run at (287,61) width 72: "dominant-"
+                text run at (0,80) width 64: "baseline"
+            RenderText {#text} at (64,76) size 57x19
+              text run at (64,76) width 57: " attribute."
+          RenderBlock {p} at (0,111) size 364x19
+            RenderInline {a} at (0,0) size 84x19 [color=#800000]
+              RenderText {#text} at (0,0) size 84x19
+                text run at (0,0) width 84: "Antoine Quint"
+            RenderText {#text} at (84,0) size 85x19
+              text run at (84,0) width 85: ", January 27th"

@@ -1,28 +1,28 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x230
-  RenderBlock {html} at (0,0) size 800x230
-    RenderBody {body} at (8,21) size 784x201
-      RenderBlock {h1} at (0,0) size 784x42
-        RenderText {#text} at (0,0) size 545x42
-          text run at (0,0) width 545: "SVG Images in Inline CSS Elements"
-      RenderBlock {p} at (0,63) size 784x42
-        RenderText {#text} at (0,0) size 766x42
-          text run at (0,0) width 766: "The two following blocks should display side-by-side a 75x75 pixels image with a 3 pixels border overlaid on"
-          text run at (0,21) width 209: "top of the image (Bug 14051)."
-      RenderBlock (anonymous) at (0,121) size 784x80
-        RenderInline {div} at (0,0) size 79x21
+layer at (0,0) size 800x220
+  RenderBlock {html} at (0,0) size 800x220
+    RenderBody {body} at (8,21) size 784x191
+      RenderBlock {h1} at (0,0) size 784x37
+        RenderText {#text} at (0,0) size 492x36
+          text run at (0,0) width 492: "SVG Images in Inline CSS Elements"
+      RenderBlock {p} at (0,58) size 784x38
+        RenderText {#text} at (0,0) size 758x38
+          text run at (0,0) width 758: "The two following blocks should display side-by-side a 75x75 pixels image with a 3 pixels border overlaid on top of the image"
+          text run at (0,19) width 82: "(Bug 14051)."
+      RenderBlock (anonymous) at (0,112) size 784x79
+        RenderInline {div} at (0,0) size 79x19
           RenderText {#text} at (0,0) size 0x0
-          RenderSVGRoot {svg} at (8,142) size 75x75
-            RenderSVGImage {image} at (8,142) size 75x75
-            RenderSVGRect {rect} at (8,142) size 75x75 [stroke={[type=SOLID] [color=#FF0000] [stroke width=6.00]}] [x=0.00] [y=0.00] [width=75.00] [height=75.00]
-          RenderText {#text} at (75,59) size 4x21
-            text run at (75,59) width 4: " "
+          RenderSVGRoot {svg} at (8,133) size 75x75
+            RenderSVGImage {image} at (8,133) size 75x75
+            RenderSVGRect {rect} at (8,133) size 75x75 [stroke={[type=SOLID] [color=#FF0000] [stroke width=6.00]}] [x=0.00] [y=0.00] [width=75.00] [height=75.00]
+          RenderText {#text} at (75,60) size 4x19
+            text run at (75,60) width 4: " "
         RenderText {#text} at (0,0) size 0x0
-        RenderInline {div} at (0,0) size 75x21
+        RenderInline {div} at (0,0) size 75x19
           RenderText {#text} at (0,0) size 0x0
-          RenderSVGRoot {svg} at (87,142) size 75x75
-            RenderSVGImage {image} at (87,142) size 75x75
-            RenderSVGRect {rect} at (87,142) size 75x75 [stroke={[type=SOLID] [color=#FF0000] [stroke width=6.00]}] [x=0.00] [y=0.00] [width=75.00] [height=75.00]
+          RenderSVGRoot {svg} at (87,133) size 75x75
+            RenderSVGImage {image} at (87,133) size 75x75
+            RenderSVGRect {rect} at (87,133) size 75x75 [stroke={[type=SOLID] [color=#FF0000] [stroke width=6.00]}] [x=0.00] [y=0.00] [width=75.00] [height=75.00]
           RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0

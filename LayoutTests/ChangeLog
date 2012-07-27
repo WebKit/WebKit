@@ -1,3 +1,450 @@
+2012-07-27  Ádám Kallai  <kadam@inf.u-szeged.hu>
+
+        [Qt] platform/qt/svg/custom tests needs update after font change.
+        https://bugs.webkit.org/show_bug.cgi?id=91090.
+
+        Reviewed by Zoltan Herczeg.
+
+        * platform/qt-5.0-wk1/Skipped:
+        * platform/qt-5.0-wk2/Skipped:
+        * platform/qt-5.0-wk2/svg/custom/altglyph-expected.png: Removed.
+        * platform/qt-5.0-wk2/svg/custom/altglyph-expected.txt: Removed.
+        * platform/qt-5.0-wk2/svg/custom/font-face-simple-expected.png: Removed.
+        * platform/qt-5.0-wk2/svg/custom/font-face-simple-expected.txt: Removed.
+        * platform/qt-5.0-wk2/svg/custom/inline-svg-in-xhtml-expected.png: Added.
+        * platform/qt-5.0-wk2/svg/custom/inline-svg-in-xhtml-expected.txt: Copied from LayoutTests/platform/qt/svg/custom/inline-svg-in-xhtml-expected.txt.
+        * platform/qt-5.0/Skipped:
+        * platform/qt-5.0/svg/custom/glyph-selection-arabic-forms-expected.png: Removed.
+        * platform/qt-5.0/svg/custom/glyph-selection-arabic-forms-expected.txt: Removed.
+        * platform/qt-5.0/svg/custom/glyph-selection-bidi-mirror-expected.png: Removed.
+        * platform/qt-5.0/svg/custom/glyph-selection-bidi-mirror-expected.txt: Removed.
+        * platform/qt-5.0/svg/custom/glyph-selection-non-bmp-expected.txt: Removed.
+        * platform/qt-5.0/svg/custom/glyph-transformation-with-hkern-expected.png: Removed.
+        * platform/qt-5.0/svg/custom/glyph-transformation-with-hkern-expected.txt: Removed.
+        * platform/qt-5.0/svg/custom/preserve-aspect-ratio-syntax-expected.png: Removed.
+        * platform/qt-5.0/svg/custom/preserve-aspect-ratio-syntax-expected.txt: Removed.
+        * platform/qt-5.0/svg/custom/scrolling-embedded-svg-file-image-repaint-problem-expected.png: Removed.
+        * platform/qt-5.0/svg/custom/scrolling-embedded-svg-file-image-repaint-problem-expected.txt: Removed.
+        * platform/qt-5.0/svg/custom/svg-features-expected.txt: Removed.
+        * platform/qt-5.0/svg/custom/svg-fonts-in-html-expected.png: Removed.
+        * platform/qt-5.0/svg/custom/svg-fonts-in-html-expected.txt: Removed.
+        * platform/qt-5.0/svg/custom/svg-fonts-in-text-controls-expected.txt: Removed.
+        * platform/qt-5.0/svg/custom/svg-fonts-segmented-expected.png: Removed.
+        * platform/qt-5.0/svg/custom/svg-fonts-segmented-expected.txt: Removed.
+        * platform/qt-5.0/svg/custom/text-linking-expected.png: Removed.
+        * platform/qt-5.0/svg/custom/text-linking-expected.txt: Removed.
+        * platform/qt/svg/custom/SVGMatrix-interface-expected.png:
+        * platform/qt/svg/custom/SVGMatrix-interface-expected.txt:
+        * platform/qt/svg/custom/SVGPoint-matrixTransform-expected.png:
+        * platform/qt/svg/custom/SVGPoint-matrixTransform-expected.txt:
+        * platform/qt/svg/custom/absolute-sized-content-with-resources-expected.png:
+        * platform/qt/svg/custom/absolute-sized-content-with-resources-expected.txt:
+        * platform/qt/svg/custom/absolute-sized-svg-in-xhtml-expected.png:
+        * platform/qt/svg/custom/absolute-sized-svg-in-xhtml-expected.txt:
+        * platform/qt/svg/custom/alignment-baseline-modes-expected.png:
+        * platform/qt/svg/custom/alignment-baseline-modes-expected.txt:
+        * platform/qt/svg/custom/altglyph-expected.png:
+        * platform/qt/svg/custom/altglyph-expected.txt:
+        * platform/qt/svg/custom/baseval-animval-equality-expected.png:
+        * platform/qt/svg/custom/baseval-animval-equality-expected.txt:
+        * platform/qt/svg/custom/broken-internal-references-expected.txt:
+        * platform/qt/svg/custom/bug45331-expected.png: Added.
+        * platform/qt/svg/custom/bug45331-expected.txt: Added.
+        * platform/qt/svg/custom/bug86119-expected.txt:
+        * platform/qt/svg/custom/circle-move-invalidation-expected.png:
+        * platform/qt/svg/custom/circle-move-invalidation-expected.txt:
+        * platform/qt/svg/custom/clip-path-referencing-use-expected.png:
+        * platform/qt/svg/custom/clip-path-referencing-use-expected.txt:
+        * platform/qt/svg/custom/clip-path-referencing-use2-expected.png:
+        * platform/qt/svg/custom/clip-path-referencing-use2-expected.txt:
+        * platform/qt/svg/custom/clone-element-with-animated-svg-properties-expected.png:
+        * platform/qt/svg/custom/clone-element-with-animated-svg-properties-expected.txt:
+        * platform/qt/svg/custom/container-opacity-clip-viewBox-expected.png:
+        * platform/qt/svg/custom/container-opacity-clip-viewBox-expected.txt:
+        * platform/qt/svg/custom/coords-relative-units-transforms-expected.png:
+        * platform/qt/svg/custom/coords-relative-units-transforms-expected.txt:
+        * platform/qt/svg/custom/createImageElement2-expected.png: Added.
+        * platform/qt/svg/custom/createImageElement2-expected.txt:
+        * platform/qt/svg/custom/dominant-baseline-hanging-expected.png:
+        * platform/qt/svg/custom/dominant-baseline-hanging-expected.txt:
+        * platform/qt/svg/custom/dominant-baseline-modes-expected.png:
+        * platform/qt/svg/custom/dominant-baseline-modes-expected.txt:
+        * platform/qt/svg/custom/dynamic-svg-document-creation-expected.png:
+        * platform/qt/svg/custom/dynamic-svg-document-creation-expected.txt:
+        * platform/qt/svg/custom/embedding-external-svgs-expected.png:
+        * platform/qt/svg/custom/embedding-external-svgs-expected.txt:
+        * platform/qt/svg/custom/empty-clip-path-expected.png:
+        * platform/qt/svg/custom/empty-clip-path-expected.txt:
+        * platform/qt/svg/custom/empty-mask-expected.png: Added.
+        * platform/qt/svg/custom/empty-mask-expected.txt:
+        * platform/qt/svg/custom/external-paintserver-reference-expected.png:
+        * platform/qt/svg/custom/external-paintserver-reference-expected.txt:
+        * platform/qt/svg/custom/fill-SVGPaint-interface-expected.png:
+        * platform/qt/svg/custom/fill-SVGPaint-interface-expected.txt:
+        * platform/qt/svg/custom/fill-fallback-expected.png:
+        * platform/qt/svg/custom/fill-fallback-expected.txt:
+        * platform/qt/svg/custom/focus-ring-expected.png:
+        * platform/qt/svg/custom/focus-ring-expected.txt:
+        * platform/qt/svg/custom/font-face-cascade-order-expected.png:
+        * platform/qt/svg/custom/font-face-cascade-order-expected.txt:
+        * platform/qt/svg/custom/font-face-simple-expected.png:
+        * platform/qt/svg/custom/font-face-simple-expected.txt:
+        * platform/qt/svg/custom/foreign-object-skew-expected.png:
+        * platform/qt/svg/custom/foreign-object-skew-expected.txt:
+        * platform/qt/svg/custom/foreignObject-crash-on-hover-expected.png:
+        * platform/qt/svg/custom/foreignObject-crash-on-hover-expected.txt:
+        * platform/qt/svg/custom/getPresentationAttribute-expected.png:
+        * platform/qt/svg/custom/getPresentationAttribute-expected.txt:
+        * platform/qt/svg/custom/getTransformToElement-expected.png:
+        * platform/qt/svg/custom/getTransformToElement-expected.txt:
+        * platform/qt/svg/custom/getscreenctm-in-mixed-content-expected.png:
+        * platform/qt/svg/custom/getscreenctm-in-mixed-content-expected.txt:
+        * platform/qt/svg/custom/getscreenctm-in-scrollable-div-area-expected.png:
+        * platform/qt/svg/custom/getscreenctm-in-scrollable-div-area-expected.txt:
+        * platform/qt/svg/custom/getscreenctm-in-scrollable-div-area-nested-expected.png:
+        * platform/qt/svg/custom/getscreenctm-in-scrollable-div-area-nested-expected.txt:
+        * platform/qt/svg/custom/getscreenctm-in-scrollable-svg-area-expected.png:
+        * platform/qt/svg/custom/getscreenctm-in-scrollable-svg-area-expected.txt:
+        * platform/qt/svg/custom/getsvgdocument-expected.png:
+        * platform/qt/svg/custom/getsvgdocument-expected.txt:
+        * platform/qt/svg/custom/glyph-selection-arabic-forms-expected.png: Added.
+        * platform/qt/svg/custom/glyph-selection-arabic-forms-expected.txt:
+        * platform/qt/svg/custom/glyph-selection-bidi-mirror-expected.png: Copied from LayoutTests/platform/qt-5.0/svg/custom/glyph-selection-non-bmp-expected.png.
+        * platform/qt/svg/custom/glyph-selection-bidi-mirror-expected.txt:
+        * platform/qt/svg/custom/glyph-selection-non-bmp-expected.png: Renamed from LayoutTests/platform/qt-5.0/svg/custom/glyph-selection-non-bmp-expected.png.
+        * platform/qt/svg/custom/glyph-selection-non-bmp-expected.txt:
+        * platform/qt/svg/custom/glyph-transformation-with-hkern-expected.png:
+        * platform/qt/svg/custom/glyph-transformation-with-hkern-expected.txt:
+        * platform/qt/svg/custom/gradient-cycle-detection-expected.png:
+        * platform/qt/svg/custom/gradient-cycle-detection-expected.txt:
+        * platform/qt/svg/custom/gradient-deep-referencing-expected.png:
+        * platform/qt/svg/custom/gradient-deep-referencing-expected.txt:
+        * platform/qt/svg/custom/gradient-with-1d-boundingbox-expected.png: Added.
+        * platform/qt/svg/custom/gradient-with-1d-boundingbox-expected.txt:
+        * platform/qt/svg/custom/hit-test-path-expected.png:
+        * platform/qt/svg/custom/hit-test-path-expected.txt:
+        * platform/qt/svg/custom/hit-test-path-stroke-expected.png:
+        * platform/qt/svg/custom/hit-test-path-stroke-expected.txt:
+        * platform/qt/svg/custom/hit-test-unclosed-subpaths-expected.png:
+        * platform/qt/svg/custom/hit-test-unclosed-subpaths-expected.txt:
+        * platform/qt/svg/custom/image-parent-translation-expected.png:
+        * platform/qt/svg/custom/image-parent-translation-expected.txt:
+        * platform/qt/svg/custom/image-rescale-clip-expected.png:
+        * platform/qt/svg/custom/image-rescale-clip-expected.txt:
+        * platform/qt/svg/custom/image-rescale-scroll-expected.png:
+        * platform/qt/svg/custom/image-rescale-scroll-expected.txt:
+        * platform/qt/svg/custom/image-small-width-height-expected.png:
+        * platform/qt/svg/custom/image-small-width-height-expected.txt:
+        * platform/qt/svg/custom/image-with-transform-clip-filter-expected.png:
+        * platform/qt/svg/custom/image-with-transform-clip-filter-expected.txt:
+        * platform/qt/svg/custom/inline-svg-in-xhtml-expected.png:
+        * platform/qt/svg/custom/inline-svg-in-xhtml-expected.txt:
+        * platform/qt/svg/custom/invalid-css-expected.png:
+        * platform/qt/svg/custom/invalid-css-expected.txt:
+        * platform/qt/svg/custom/invalid-fill-expected.png:
+        * platform/qt/svg/custom/invalid-fill-expected.txt:
+        * platform/qt/svg/custom/invalid-fill-hex-expected.png:
+        * platform/qt/svg/custom/invalid-fill-hex-expected.txt:
+        * platform/qt/svg/custom/invalid-lengthlist-expected.png:
+        * platform/qt/svg/custom/invalid-lengthlist-expected.txt:
+        * platform/qt/svg/custom/invalid-stroke-hex-expected.png: Added.
+        * platform/qt/svg/custom/invalid-stroke-hex-expected.txt:
+        * platform/qt/svg/custom/invalid-uri-stroke-expected.png: Added.
+        * platform/qt/svg/custom/invalid-uri-stroke-expected.txt:
+        * platform/qt/svg/custom/invisible-text-after-scrolling-expected.png:
+        * platform/qt/svg/custom/invisible-text-after-scrolling-expected.txt:
+        * platform/qt/svg/custom/js-late-clipPath-and-object-creation-expected.png:
+        * platform/qt/svg/custom/js-late-clipPath-and-object-creation-expected.txt:
+        * platform/qt/svg/custom/js-late-clipPath-creation-expected.png:
+        * platform/qt/svg/custom/js-late-clipPath-creation-expected.txt:
+        * platform/qt/svg/custom/js-late-gradient-and-object-creation-expected.png:
+        * platform/qt/svg/custom/js-late-gradient-and-object-creation-expected.txt:
+        * platform/qt/svg/custom/js-late-gradient-creation-expected.png:
+        * platform/qt/svg/custom/js-late-gradient-creation-expected.txt:
+        * platform/qt/svg/custom/js-update-stop-linked-gradient-expected.png:
+        * platform/qt/svg/custom/js-update-stop-linked-gradient-expected.txt:
+        * platform/qt/svg/custom/linking-a-03-b-preserveAspectRatio-expected.png:
+        * platform/qt/svg/custom/linking-a-03-b-preserveAspectRatio-expected.txt:
+        * platform/qt/svg/custom/linking-a-03-b-transform-expected.png:
+        * platform/qt/svg/custom/linking-a-03-b-transform-expected.txt:
+        * platform/qt/svg/custom/linking-a-03-b-viewBox-expected.png:
+        * platform/qt/svg/custom/linking-a-03-b-viewBox-expected.txt:
+        * platform/qt/svg/custom/linking-a-03-b-viewBox-transform-expected.png:
+        * platform/qt/svg/custom/linking-a-03-b-viewBox-transform-expected.txt:
+        * platform/qt/svg/custom/linking-a-03-b-viewTarget-expected.png:
+        * platform/qt/svg/custom/linking-a-03-b-viewTarget-expected.txt:
+        * platform/qt/svg/custom/linking-a-03-b-zoomAndPan-expected.png:
+        * platform/qt/svg/custom/linking-a-03-b-zoomAndPan-expected.txt:
+        * platform/qt/svg/custom/linking-base-external-reference-expected.png:
+        * platform/qt/svg/custom/linking-base-external-reference-expected.txt:
+        * platform/qt/svg/custom/linking-uri-01-b-expected.png:
+        * platform/qt/svg/custom/linking-uri-01-b-expected.txt:
+        * platform/qt/svg/custom/marker-default-width-height-expected.png:
+        * platform/qt/svg/custom/marker-default-width-height-expected.txt:
+        * platform/qt/svg/custom/marker-overflow-clip-expected.png:
+        * platform/qt/svg/custom/marker-overflow-clip-expected.txt:
+        * platform/qt/svg/custom/mouse-move-on-svg-container-expected.png:
+        * platform/qt/svg/custom/mouse-move-on-svg-container-expected.txt:
+        * platform/qt/svg/custom/mouse-move-on-svg-container-standalone-expected.png:
+        * platform/qt/svg/custom/mouse-move-on-svg-container-standalone-expected.txt:
+        * platform/qt/svg/custom/mouse-move-on-svg-root-expected.png:
+        * platform/qt/svg/custom/mouse-move-on-svg-root-expected.txt:
+        * platform/qt/svg/custom/mouse-move-on-svg-root-standalone-expected.png:
+        * platform/qt/svg/custom/mouse-move-on-svg-root-standalone-expected.txt:
+        * platform/qt/svg/custom/no-inherited-dashed-stroke-expected.png:
+        * platform/qt/svg/custom/no-inherited-dashed-stroke-expected.txt:
+        * platform/qt/svg/custom/non-opaque-filters-expected.png:
+        * platform/qt/svg/custom/non-opaque-filters-expected.txt:
+        * platform/qt/svg/custom/object-no-size-attributes-expected.png:
+        * platform/qt/svg/custom/object-no-size-attributes-expected.txt:
+        * platform/qt/svg/custom/object-sizing-expected.png:
+        * platform/qt/svg/custom/object-sizing-expected.txt:
+        * platform/qt/svg/custom/object-sizing-explicit-height-expected.png:
+        * platform/qt/svg/custom/object-sizing-explicit-height-expected.txt:
+        * platform/qt/svg/custom/object-sizing-explicit-width-expected.png:
+        * platform/qt/svg/custom/object-sizing-explicit-width-expected.txt:
+        * platform/qt/svg/custom/object-sizing-explicit-width-height-expected.png:
+        * platform/qt/svg/custom/object-sizing-explicit-width-height-expected.txt:
+        * platform/qt/svg/custom/object-sizing-height-50p-on-target-svg-absolute-expected.png:
+        * platform/qt/svg/custom/object-sizing-height-50p-on-target-svg-absolute-expected.txt:
+        * platform/qt/svg/custom/object-sizing-height-50p-on-target-svg-expected.png:
+        * platform/qt/svg/custom/object-sizing-height-50p-on-target-svg-expected.txt:
+        * platform/qt/svg/custom/object-sizing-no-width-height-expected.png:
+        * platform/qt/svg/custom/object-sizing-no-width-height-expected.txt:
+        * platform/qt/svg/custom/object-sizing-width-50p-height-50p-on-target-svg-absolute-expected.png:
+        * platform/qt/svg/custom/object-sizing-width-50p-height-50p-on-target-svg-absolute-expected.txt:
+        * platform/qt/svg/custom/object-sizing-width-50p-height-50p-on-target-svg-expected.png:
+        * platform/qt/svg/custom/object-sizing-width-50p-height-50p-on-target-svg-expected.txt:
+        * platform/qt/svg/custom/object-sizing-width-50p-height-75p-on-target-svg-absolute-expected.txt:
+        * platform/qt/svg/custom/object-sizing-width-50p-height-75p-on-target-svg-expected.txt:
+        * platform/qt/svg/custom/object-sizing-width-50p-on-target-svg-absolute-expected.png:
+        * platform/qt/svg/custom/object-sizing-width-50p-on-target-svg-absolute-expected.txt:
+        * platform/qt/svg/custom/object-sizing-width-50p-on-target-svg-expected.png:
+        * platform/qt/svg/custom/object-sizing-width-50p-on-target-svg-expected.txt:
+        * platform/qt/svg/custom/object-sizing-width-75p-height-50p-on-target-svg-absolute-expected.txt:
+        * platform/qt/svg/custom/object-sizing-width-75p-height-50p-on-target-svg-expected.png:
+        * platform/qt/svg/custom/object-sizing-width-75p-height-50p-on-target-svg-expected.txt:
+        * platform/qt/svg/custom/path-textPath-simulation-expected.png:
+        * platform/qt/svg/custom/path-textPath-simulation-expected.txt:
+        * platform/qt/svg/custom/pattern-cycle-detection-expected.png:
+        * platform/qt/svg/custom/pattern-cycle-detection-expected.txt:
+        * platform/qt/svg/custom/pattern-deep-referencing-expected.png:
+        * platform/qt/svg/custom/pattern-deep-referencing-expected.txt:
+        * platform/qt/svg/custom/pattern-incorrect-tiling-expected.png:
+        * platform/qt/svg/custom/pattern-incorrect-tiling-expected.txt:
+        * platform/qt/svg/custom/pattern-rotate-expected.png:
+        * platform/qt/svg/custom/pattern-rotate-expected.txt:
+        * platform/qt/svg/custom/pattern-rotate-gaps-expected.png:
+        * platform/qt/svg/custom/pattern-rotate-gaps-expected.txt:
+        * platform/qt/svg/custom/pattern-userSpaceOnUse-userToBaseTransform-expected.png:
+        * platform/qt/svg/custom/pattern-userSpaceOnUse-userToBaseTransform-expected.txt:
+        * platform/qt/svg/custom/pattern-with-transformation-expected.png:
+        * platform/qt/svg/custom/pattern-with-transformation-expected.txt:
+        * platform/qt/svg/custom/percentage-of-html-parent-expected.png:
+        * platform/qt/svg/custom/percentage-of-html-parent-expected.txt:
+        * platform/qt/svg/custom/pointer-events-image-css-transform-expected.png:
+        * platform/qt/svg/custom/pointer-events-image-css-transform-expected.txt:
+        * platform/qt/svg/custom/pointer-events-image-expected.png:
+        * platform/qt/svg/custom/pointer-events-image-expected.txt:
+        * platform/qt/svg/custom/pointer-events-path-expected.png:
+        * platform/qt/svg/custom/pointer-events-path-expected.txt:
+        * platform/qt/svg/custom/pointer-events-text-css-transform-expected.png:
+        * platform/qt/svg/custom/pointer-events-text-css-transform-expected.txt:
+        * platform/qt/svg/custom/pointer-events-text-expected.png:
+        * platform/qt/svg/custom/pointer-events-text-expected.txt:
+        * platform/qt/svg/custom/preserve-aspect-ratio-syntax-expected.png:
+        * platform/qt/svg/custom/preserve-aspect-ratio-syntax-expected.txt:
+        * platform/qt/svg/custom/recursive-clippath-expected.png:
+        * platform/qt/svg/custom/recursive-clippath-expected.txt:
+        * platform/qt/svg/custom/recursive-filter-expected.png:
+        * platform/qt/svg/custom/recursive-filter-expected.txt:
+        * platform/qt/svg/custom/recursive-gradient-expected.png:
+        * platform/qt/svg/custom/recursive-gradient-expected.txt:
+        * platform/qt/svg/custom/recursive-mask-expected.png:
+        * platform/qt/svg/custom/recursive-mask-expected.txt:
+        * platform/qt/svg/custom/recursive-pattern-expected.png:
+        * platform/qt/svg/custom/recursive-pattern-expected.txt:
+        * platform/qt/svg/custom/relative-sized-content-expected.png: Added.
+        * platform/qt/svg/custom/relative-sized-content-expected.txt:
+        * platform/qt/svg/custom/relative-sized-content-with-resources-expected.png:
+        * platform/qt/svg/custom/relative-sized-content-with-resources-expected.txt:
+        * platform/qt/svg/custom/relative-sized-deep-shadow-tree-content-expected.png:
+        * platform/qt/svg/custom/relative-sized-deep-shadow-tree-content-expected.txt:
+        * platform/qt/svg/custom/relative-sized-image-expected.png:
+        * platform/qt/svg/custom/relative-sized-image-expected.txt:
+        * platform/qt/svg/custom/relative-sized-inner-svg-expected.png:
+        * platform/qt/svg/custom/relative-sized-inner-svg-expected.txt:
+        * platform/qt/svg/custom/relative-sized-shadow-tree-content-expected.png:
+        * platform/qt/svg/custom/relative-sized-shadow-tree-content-expected.txt:
+        * platform/qt/svg/custom/relative-sized-shadow-tree-content-with-symbol-expected.png:
+        * platform/qt/svg/custom/relative-sized-shadow-tree-content-with-symbol-expected.txt:
+        * platform/qt/svg/custom/relative-sized-use-on-symbol-expected.png:
+        * platform/qt/svg/custom/relative-sized-use-on-symbol-expected.txt:
+        * platform/qt/svg/custom/relative-sized-use-without-attributes-on-symbol-expected.png:
+        * platform/qt/svg/custom/relative-sized-use-without-attributes-on-symbol-expected.txt:
+        * platform/qt/svg/custom/rootmost-svg-xy-attrs-expected.png:
+        * platform/qt/svg/custom/rootmost-svg-xy-attrs-expected.txt:
+        * platform/qt/svg/custom/scroll-hit-test-expected.png:
+        * platform/qt/svg/custom/scroll-hit-test-expected.txt:
+        * platform/qt/svg/custom/scrolling-embedded-svg-file-image-repaint-problem-expected.png:
+        * platform/qt/svg/custom/scrolling-embedded-svg-file-image-repaint-problem-expected.txt:
+        * platform/qt/svg/custom/second-inline-text-expected.png:
+        * platform/qt/svg/custom/second-inline-text-expected.txt:
+        * platform/qt/svg/custom/shape-rendering-expected.png:
+        * platform/qt/svg/custom/shape-rendering-expected.txt:
+        * platform/qt/svg/custom/shapes-supporting-markers-expected.png:
+        * platform/qt/svg/custom/shapes-supporting-markers-expected.txt:
+        * platform/qt/svg/custom/simple-text-double-shadow-expected.png:
+        * platform/qt/svg/custom/simple-text-double-shadow-expected.txt:
+        * platform/qt/svg/custom/simpleCDF-expected.png:
+        * platform/qt/svg/custom/simpleCDF-expected.txt:
+        * platform/qt/svg/custom/stroke-fallback-expected.png:
+        * platform/qt/svg/custom/stroke-fallback-expected.txt:
+        * platform/qt/svg/custom/stroke-width-large-expected.png:
+        * platform/qt/svg/custom/stroke-width-large-expected.txt:
+        * platform/qt/svg/custom/stroked-pattern-expected.png:
+        * platform/qt/svg/custom/stroked-pattern-expected.txt:
+        * platform/qt/svg/custom/style-attribute-font-size-expected.png:
+        * platform/qt/svg/custom/style-attribute-font-size-expected.txt:
+        * platform/qt/svg/custom/svg-curve-with-relative-cordinates-expected.png:
+        * platform/qt/svg/custom/svg-curve-with-relative-cordinates-expected.txt:
+        * platform/qt/svg/custom/svg-features-expected.txt:
+        * platform/qt/svg/custom/svg-float-border-padding-expected.png:
+        * platform/qt/svg/custom/svg-float-border-padding-expected.txt:
+        * platform/qt/svg/custom/svg-fonts-in-html-expected.png:
+        * platform/qt/svg/custom/svg-fonts-in-html-expected.txt:
+        * platform/qt/svg/custom/svg-fonts-in-text-controls-expected.txt:
+        * platform/qt/svg/custom/svg-fonts-segmented-expected.png:
+        * platform/qt/svg/custom/svg-fonts-segmented-expected.txt:
+        * platform/qt/svg/custom/svg-fonts-without-missing-glyph-expected.png:
+        * platform/qt/svg/custom/svg-fonts-without-missing-glyph-expected.txt:
+        * platform/qt/svg/custom/svg-fonts-word-spacing-expected.png:
+        * platform/qt/svg/custom/svg-fonts-word-spacing-expected.txt:
+        * platform/qt/svg/custom/svg-overflow-types-expected.png:
+        * platform/qt/svg/custom/svg-overflow-types-expected.txt:
+        * platform/qt/svg/custom/text-clip-expected.png:
+        * platform/qt/svg/custom/text-clip-expected.txt:
+        * platform/qt/svg/custom/text-ctm-expected.png:
+        * platform/qt/svg/custom/text-ctm-expected.txt:
+        * platform/qt/svg/custom/text-decoration-visibility-expected.png:
+        * platform/qt/svg/custom/text-decoration-visibility-expected.txt:
+        * platform/qt/svg/custom/text-dom-01-f-expected.png:
+        * platform/qt/svg/custom/text-dom-01-f-expected.txt:
+        * platform/qt/svg/custom/text-filter-expected.png:
+        * platform/qt/svg/custom/text-filter-expected.txt:
+        * platform/qt/svg/custom/text-hit-test-expected.png:
+        * platform/qt/svg/custom/text-hit-test-expected.txt:
+        * platform/qt/svg/custom/text-image-opacity-expected.png:
+        * platform/qt/svg/custom/text-image-opacity-expected.txt:
+        * platform/qt/svg/custom/text-letter-spacing-expected.png:
+        * platform/qt/svg/custom/text-letter-spacing-expected.txt:
+        * platform/qt/svg/custom/text-linking-expected.png:
+        * platform/qt/svg/custom/text-linking-expected.txt:
+        * platform/qt/svg/custom/text-repaint-including-stroke-expected.png:
+        * platform/qt/svg/custom/text-repaint-including-stroke-expected.txt:
+        * platform/qt/svg/custom/text-rotated-gradient-expected.png:
+        * platform/qt/svg/custom/text-rotated-gradient-expected.txt:
+        * platform/qt/svg/custom/text-rotation-expected.png:
+        * platform/qt/svg/custom/text-rotation-expected.txt:
+        * platform/qt/svg/custom/text-tref-03-b-change-href-dom-expected.png:
+        * platform/qt/svg/custom/text-tref-03-b-change-href-dom-expected.txt:
+        * platform/qt/svg/custom/text-tref-03-b-change-href-expected.png:
+        * platform/qt/svg/custom/text-tref-03-b-change-href-expected.txt:
+        * platform/qt/svg/custom/text-tref-03-b-referenced-element-removal-expected.png:
+        * platform/qt/svg/custom/text-tref-03-b-referenced-element-removal-expected.txt:
+        * platform/qt/svg/custom/text-tref-03-b-tref-removal-expected.png:
+        * platform/qt/svg/custom/text-tref-03-b-tref-removal-expected.txt:
+        * platform/qt/svg/custom/text-whitespace-handling-expected.png:
+        * platform/qt/svg/custom/text-whitespace-handling-expected.txt:
+        * platform/qt/svg/custom/text-x-dx-lists-expected.png:
+        * platform/qt/svg/custom/text-x-dx-lists-expected.txt:
+        * platform/qt/svg/custom/text-x-dy-lists-expected.png:
+        * platform/qt/svg/custom/text-x-dy-lists-expected.txt:
+        * platform/qt/svg/custom/text-x-override-in-tspan-child-expected.png:
+        * platform/qt/svg/custom/text-x-override-in-tspan-child-expected.txt:
+        * platform/qt/svg/custom/text-xy-updates-SVGList-expected.png:
+        * platform/qt/svg/custom/text-xy-updates-SVGList-expected.txt:
+        * platform/qt/svg/custom/text-xy-updates-expected.png:
+        * platform/qt/svg/custom/text-xy-updates-expected.txt:
+        * platform/qt/svg/custom/tref-own-content-removal-expected.png:
+        * platform/qt/svg/custom/tref-own-content-removal-expected.txt:
+        * platform/qt/svg/custom/tref-update-expected.png:
+        * platform/qt/svg/custom/tref-update-expected.txt:
+        * platform/qt/svg/custom/use-clipped-hit-expected.png:
+        * platform/qt/svg/custom/use-clipped-hit-expected.txt:
+        * platform/qt/svg/custom/use-detach-expected.png:
+        * platform/qt/svg/custom/use-detach-expected.txt:
+        * platform/qt/svg/custom/use-dynamic-append-expected.png:
+        * platform/qt/svg/custom/use-dynamic-append-expected.txt:
+        * platform/qt/svg/custom/use-elementInstance-event-target-expected.png:
+        * platform/qt/svg/custom/use-elementInstance-event-target-expected.txt:
+        * platform/qt/svg/custom/use-elementInstance-methods-expected.png:
+        * platform/qt/svg/custom/use-elementInstance-methods-expected.txt:
+        * platform/qt/svg/custom/use-event-handler-on-referenced-element-expected.png:
+        * platform/qt/svg/custom/use-event-handler-on-referenced-element-expected.txt:
+        * platform/qt/svg/custom/use-event-handler-on-use-element-expected.png:
+        * platform/qt/svg/custom/use-event-handler-on-use-element-expected.txt:
+        * platform/qt/svg/custom/use-events-crash-expected.png:
+        * platform/qt/svg/custom/use-events-crash-expected.txt:
+        * platform/qt/svg/custom/use-instanceRoot-modifications-expected.png:
+        * platform/qt/svg/custom/use-instanceRoot-modifications-expected.txt:
+        * platform/qt/svg/custom/use-modify-container-in-target-expected.png:
+        * platform/qt/svg/custom/use-modify-container-in-target-expected.txt:
+        * platform/qt/svg/custom/use-modify-target-container-expected.png:
+        * platform/qt/svg/custom/use-modify-target-container-expected.txt:
+        * platform/qt/svg/custom/use-modify-target-symbol-expected.png:
+        * platform/qt/svg/custom/use-modify-target-symbol-expected.txt:
+        * platform/qt/svg/custom/use-on-disallowed-foreign-object-1-expected.png:
+        * platform/qt/svg/custom/use-on-disallowed-foreign-object-1-expected.txt:
+        * platform/qt/svg/custom/use-on-disallowed-foreign-object-2-expected.png:
+        * platform/qt/svg/custom/use-on-disallowed-foreign-object-2-expected.txt:
+        * platform/qt/svg/custom/use-on-disallowed-foreign-object-3-expected.png:
+        * platform/qt/svg/custom/use-on-disallowed-foreign-object-3-expected.txt:
+        * platform/qt/svg/custom/use-on-disallowed-foreign-object-4-expected.png:
+        * platform/qt/svg/custom/use-on-disallowed-foreign-object-4-expected.txt:
+        * platform/qt/svg/custom/use-on-disallowed-foreign-object-5-expected.png:
+        * platform/qt/svg/custom/use-on-disallowed-foreign-object-5-expected.txt:
+        * platform/qt/svg/custom/use-on-disallowed-foreign-object-6-expected.png:
+        * platform/qt/svg/custom/use-on-disallowed-foreign-object-6-expected.txt:
+        * platform/qt/svg/custom/use-on-g-containing-symbol-expected.png:
+        * platform/qt/svg/custom/use-on-g-containing-symbol-expected.txt:
+        * platform/qt/svg/custom/use-on-g-containing-use-expected.png:
+        * platform/qt/svg/custom/use-on-g-containing-use-expected.txt:
+        * platform/qt/svg/custom/use-on-g-expected.png:
+        * platform/qt/svg/custom/use-on-g-expected.txt:
+        * platform/qt/svg/custom/use-on-non-svg-namespaced-element-expected.png:
+        * platform/qt/svg/custom/use-on-non-svg-namespaced-element-expected.txt:
+        * platform/qt/svg/custom/use-on-rect-expected.png:
+        * platform/qt/svg/custom/use-on-rect-expected.txt:
+        * platform/qt/svg/custom/use-on-symbol-expected.png:
+        * platform/qt/svg/custom/use-on-symbol-expected.txt:
+        * platform/qt/svg/custom/use-on-text-expected.png:
+        * platform/qt/svg/custom/use-on-text-expected.txt:
+        * platform/qt/svg/custom/use-on-use-expected.png:
+        * platform/qt/svg/custom/use-on-use-expected.txt:
+        * platform/qt/svg/custom/use-property-changes-through-dom-expected.png:
+        * platform/qt/svg/custom/use-property-changes-through-dom-expected.txt:
+        * platform/qt/svg/custom/use-property-changes-through-svg-dom-expected.png:
+        * platform/qt/svg/custom/use-property-changes-through-svg-dom-expected.txt:
+        * platform/qt/svg/custom/use-recursion-1-expected.png:
+        * platform/qt/svg/custom/use-recursion-1-expected.txt:
+        * platform/qt/svg/custom/use-recursion-2-expected.png:
+        * platform/qt/svg/custom/use-recursion-2-expected.txt:
+        * platform/qt/svg/custom/use-recursion-3-expected.png:
+        * platform/qt/svg/custom/use-recursion-3-expected.txt:
+        * platform/qt/svg/custom/use-recursion-4-expected.png:
+        * platform/qt/svg/custom/use-recursion-4-expected.txt:
+        * platform/qt/svg/custom/use-referencing-nonexisting-symbol-expected.png:
+        * platform/qt/svg/custom/use-referencing-nonexisting-symbol-expected.txt:
+        * platform/qt/svg/custom/use-setAttribute-crash-expected.png:
+        * platform/qt/svg/custom/use-setAttribute-crash-expected.txt:
+        * platform/qt/svg/custom/use-transform-expected.png:
+        * platform/qt/svg/custom/use-transform-expected.txt:
+        * platform/qt/svg/custom/viewbox-syntax-expected.png:
+        * platform/qt/svg/custom/viewbox-syntax-expected.txt:
+        * platform/qt/svg/custom/viewport-em-expected.png:
+        * platform/qt/svg/custom/viewport-em-expected.txt:
+
 2012-07-27  Kevin Ellis  <kevers@chromium.org>
 
         Improve touch adjustment for targetting small controls.

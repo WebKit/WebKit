@@ -4,14 +4,14 @@ layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 800x600
     RenderSVGContainer {a} at (0,0) size 0x0
     RenderSVGForeignObject {foreignObject} at (0,0) size 800x600
-      RenderBlock {html} at (0,0) size 800x42
-        RenderBlock {div} at (0,0) size 800x42
-          RenderText {#text} at (0,0) size 789x42
-            text run at (0,0) width 789: "This test tests that getPresentationAttribute succesfully returns SVG presentation attributes, but not ones that are"
-            text run at (0,21) width 525: "defined in the inline style and not non SVG css properties like border. See "
-          RenderInline {a} at (0,0) size 78x21 [color=#0000EE]
-            RenderText {#text} at (525,21) size 78x21
-              text run at (525,21) width 78: "Bug 13976"
-          RenderText {#text} at (603,21) size 4x21
-            text run at (603,21) width 4: "."
+      RenderBlock {html} at (0,0) size 800x38
+        RenderBlock {div} at (0,0) size 800x38
+          RenderText {#text} at (0,0) size 789x38
+            text run at (0,0) width 789: "This test tests that getPresentationAttribute succesfully returns SVG presentation attributes, but not ones that are defined in the inline"
+            text run at (0,19) width 330: "style and not non SVG css properties like border. See "
+          RenderInline {a} at (0,0) size 68x19 [color=#0000EE]
+            RenderText {#text} at (330,19) size 68x19
+              text run at (330,19) width 68: "Bug 13976"
+          RenderText {#text} at (398,19) size 4x19
+            text run at (398,19) width 4: "."
     RenderSVGRect {rect} at (10,50) size 100x100 [fill={[type=SOLID] [color=#008000]}] [x=10.00] [y=50.00] [width=100.00] [height=100.00]

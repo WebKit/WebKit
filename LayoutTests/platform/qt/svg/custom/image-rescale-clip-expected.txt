@@ -3,12 +3,12 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
-      RenderBlock (anonymous) at (0,0) size 784x21
-        RenderBR {BR} at (0,0) size 0x21
-      RenderBlock {DIV} at (0,37) size 784x21
-        RenderBlock {P} at (0,0) size 784x21
-          RenderText {#text} at (0,0) size 394x21
-            text run at (0,0) width 394: "This test verifies correct paint of clipped, scaled images."
+      RenderBlock (anonymous) at (0,0) size 784x19
+        RenderBR {BR} at (0,0) size 0x19
+      RenderBlock {DIV} at (0,35) size 784x19
+        RenderBlock {P} at (0,0) size 784x19
+          RenderText {#text} at (0,0) size 335x19
+            text run at (0,0) width 335: "This test verifies correct paint of clipped, scaled images."
 layer at (8,8) size 160x105 backgroundClip at (8,8) size 150x15 clip at (8,8) size 150x15 outlineClip at (8,8) size 150x15
   RenderBlock (positioned) {DIV} at (8,8) size 160x105
     RenderText {#text} at (0,0) size 0x0

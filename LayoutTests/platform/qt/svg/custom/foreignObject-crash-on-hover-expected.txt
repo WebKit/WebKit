@@ -5,12 +5,12 @@ layer at (0,0) size 800x600
     RenderSVGContainer {g} at (49,49) size 302x302 [transform={m=((1.00,0.00)(0.00,1.00)) t=(50.00,50.00)}]
       RenderSVGPath {polygon} at (49,49) size 302x302 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#ADD8E6]}] [points="0 0 300 0 300 300 0 300"]
       RenderSVGForeignObject {foreignObject} at (10,10) size 280x280
-        RenderInline {html:b} at (0,0) size 121x21
-          RenderText {#text} at (0,0) size 121x21
-            text run at (0,0) width 121: "Absolute Lineto"
-        RenderBR {html:br} at (121,0) size 0x21
-        RenderText {#text} at (0,21) size 263x42
-          text run at (0,21) width 263: "<path d=\"M50,80 L250,80 150,280 z\""
-          text run at (0,42) width 200: "style=\"fill:red; stroke:blue;\"/>"
+        RenderInline {html:b} at (0,0) size 106x19
+          RenderText {#text} at (0,0) size 106x19
+            text run at (0,0) width 106: "Absolute Lineto"
+        RenderBR {html:br} at (106,0) size 0x19
+        RenderText {#text} at (0,19) size 239x38
+          text run at (0,19) width 239: "<path d=\"M50,80 L250,80 150,280 z\""
+          text run at (0,38) width 173: "style=\"fill:red; stroke:blue;\"/>"
       RenderSVGPath {path} at (99,129) size 202x203 [stroke={[type=SOLID] [color=#0000FF]}] [fill={[type=SOLID] [color=#FF0000]}] [data="M 50 80 L 250 80 L 150 280 Z"]
-caret: position 13 of child 3 {#text} of child 5 {foreignObject} of child 3 {g} of child 1 {svg} of document
+caret: position 67 of child 3 {#text} of child 5 {foreignObject} of child 3 {g} of child 1 {svg} of document
