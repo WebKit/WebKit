@@ -88,6 +88,9 @@ def main():
     if not options.out_cpp:
         parser.error("Need to specify --out-cpp=filename")
 
+    if options.flag:
+        options.flag = options.flag.replace(" AND ", " && ")
+
     header_file = open(options.out_header, "w")
     if options.flag:
         header_file.write("#if " + options.flag + "\n")
