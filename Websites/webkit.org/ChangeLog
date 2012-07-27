@@ -1,3 +1,15 @@
+2012-07-27  Adam Barth  <abarth@webkit.org>
+
+        Writing a blog post for new reviewers doesn't add value to the blog
+        https://bugs.webkit.org/show_bug.cgi?id=92305
+
+        Reviewed by Eric Seidel.
+
+        Now that we have Peter posting weekly updates to the blog, having an
+        announcement on the blog for each reviewer is more noise than signal.
+
+        * coding/commit-review-policy.html:
+
 2012-06-19  Ryosuke Niwa  <rniwa@webkit.org>
 
         Update webkit.org to refer to layoutTestController instead of testRunner
