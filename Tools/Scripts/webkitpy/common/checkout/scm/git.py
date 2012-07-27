@@ -274,7 +274,7 @@ class Git(SCM, SVNRepository):
         if self._filesystem.exists(order_file):
             order = "-O%s" % order_file
 
-        command = [self.executable_name, 'diff', '--binary', "--no-ext-diff", "--full-index", "--no-renames", order, self.merge_base(git_commit), "--"]
+        command = [self.executable_name, 'diff', '--binary', '--no-color', "--no-ext-diff", "--full-index", "--no-renames", order, self.merge_base(git_commit), "--"]
         if changed_files:
             command += changed_files
         return self.prepend_svn_revision(self.run(command, decode_output=False, cwd=self.checkout_root))
