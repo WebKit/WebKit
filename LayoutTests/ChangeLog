@@ -1,3 +1,10 @@
+2012-07-27  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening, adding a text failure expectation for an accessibility
+        test that started failing after r123767.
+
+        * platform/gtk/TestExpectations:
+
 2012-07-27  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Move formatting support from JavaScriptSource to UISourceCode.

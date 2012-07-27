@@ -1261,6 +1261,8 @@ BUGWK92100 : accessibility/canvas-accessibilitynodeobject.html = TEXT
 // This test depends on subpixel layout.
 BUGWK92352 : css3/flexbox/flex-rounding.html = TEXT
 
+BUGWK92477 : platform/gtk/accessibility/object-with-title.html = TEXT
+
 //////////////////////////////////////////////////////////////////////////////////////////
 // End of Tests failing
 //////////////////////////////////////////////////////////////////////////////////////////
