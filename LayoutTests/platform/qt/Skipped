@@ -1961,6 +1961,12 @@ fast/xmlhttprequest/xmlhttprequest-get.xhtml
 # https://bugs.webkit.org/show_bug.cgi?id=84013
 fast/repaint/line-flow-with-floats-in-regions.html
 
+# [Qt]REGRESSION(r123786) It made 3 fast/animation tests fail
+# https://bugs.webkit.org/show_bug.cgi?id=92490
+fast/animation/request-animation-frame-cancel2.html
+fast/animation/request-animation-frame-detach-element.html
+fast/animation/request-animation-frame-during-modal.html
+
 # [Qt] fast/block/positioning/offsetLeft-offsetTop-multicolumn.html is failing
 # https://bugs.webkit.org/show_bug.cgi?id=86130
 fast/block/positioning/offsetLeft-offsetTop-multicolumn.html
