@@ -1,3 +1,27 @@
+2012-07-26  Max Vujovic  <mvujovic@adobe.com>
+
+        Added binding and updated chromium tests.
+
+        [CSS Filters] Add V8 binding for WebKitCSSFilterValue
+        https://bugs.webkit.org/show_bug.cgi?id=92391
+
+        Reviewed by Adam Barth.
+
+        * platform/chromium-linux/css3/filters/custom/custom-filter-property-computed-style-expected.txt:
+        Removed. The chromium-linux expectations are (and were) exactly the same as the chromium expectations.
+        * platform/chromium-linux/css3/filters/custom/custom-filter-property-parsing-invalid-expected.txt:
+        Removed. Ditto.
+        * platform/chromium-linux/css3/filters/custom/custom-filter-property-parsing-expected.txt:
+        Removed. Ditto.
+        * platform/chromium/css3/filters/custom/custom-filter-property-computed-style-expected.txt:
+        Many test cases are now expected to pass instead of fail.
+        * platform/chromium/css3/filters/custom/custom-filter-property-parsing-expected.txt:
+        Ditto.
+        * platform/chromium/css3/filters/filter-property-computed-style-expected.txt: 
+        Removed. We can use the platform-independent results now.
+        * platform/chromium/css3/filters/filter-property-parsing-expected.txt:
+        Many test cases are now expected to pass instead of fail.
+
 2012-07-26  Nayan Kumar K  <nayankk@motorola.com>
 
         [WebGL] Initial size of canvas can be larger than MAX_VIEWPORT_DIMS.

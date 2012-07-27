@@ -12,7 +12,7 @@ PASS jsWrapperClass(filterRule) is 'CSSValueList'
 FAIL jsWrapperClass(filterRule.__proto__) should be CSSValueListPrototype. Was Object.
 FAIL jsWrapperClass(filterRule.constructor) should be CSSValueListConstructor. Was Function.
 PASS filterRule.length is 1
-FAIL subRule.operationType should be 12 (of type number). Was undefined (of type undefined).
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_CUSTOM
 PASS removeBaseURL(subRule.cssText) is 'custom(url(vertex.shader))'
 
 Custom with fragment shader : custom(none url(fragment.shader))
@@ -23,7 +23,7 @@ PASS jsWrapperClass(filterRule) is 'CSSValueList'
 FAIL jsWrapperClass(filterRule.__proto__) should be CSSValueListPrototype. Was Object.
 FAIL jsWrapperClass(filterRule.constructor) should be CSSValueListConstructor. Was Function.
 PASS filterRule.length is 1
-FAIL subRule.operationType should be 12 (of type number). Was undefined (of type undefined).
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_CUSTOM
 PASS removeBaseURL(subRule.cssText) is 'custom(none url(fragment.shader))'
 
 Custom with both shaders : custom(url(vertex.shader) url(fragment.shader))
@@ -34,7 +34,7 @@ PASS jsWrapperClass(filterRule) is 'CSSValueList'
 FAIL jsWrapperClass(filterRule.__proto__) should be CSSValueListPrototype. Was Object.
 FAIL jsWrapperClass(filterRule.constructor) should be CSSValueListConstructor. Was Function.
 PASS filterRule.length is 1
-FAIL subRule.operationType should be 12 (of type number). Was undefined (of type undefined).
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_CUSTOM
 PASS removeBaseURL(subRule.cssText) is 'custom(url(vertex.shader) url(fragment.shader))'
 
 Custom with mesh size : custom(url(vertex.shader), 10)
@@ -45,7 +45,7 @@ PASS jsWrapperClass(filterRule) is 'CSSValueList'
 FAIL jsWrapperClass(filterRule.__proto__) should be CSSValueListPrototype. Was Object.
 FAIL jsWrapperClass(filterRule.constructor) should be CSSValueListConstructor. Was Function.
 PASS filterRule.length is 1
-FAIL subRule.operationType should be 12 (of type number). Was undefined (of type undefined).
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_CUSTOM
 PASS removeBaseURL(subRule.cssText) is 'custom(url(vertex.shader), 10)'
 
 Custom with both mesh sizes : custom(none url(fragment.shader), 10 20)
@@ -56,7 +56,7 @@ PASS jsWrapperClass(filterRule) is 'CSSValueList'
 FAIL jsWrapperClass(filterRule.__proto__) should be CSSValueListPrototype. Was Object.
 FAIL jsWrapperClass(filterRule.constructor) should be CSSValueListConstructor. Was Function.
 PASS filterRule.length is 1
-FAIL subRule.operationType should be 12 (of type number). Was undefined (of type undefined).
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_CUSTOM
 PASS removeBaseURL(subRule.cssText) is 'custom(none url(fragment.shader), 10 20)'
 
 Custom with detached mesh : custom(none url(fragment.shader), detached)
@@ -67,7 +67,7 @@ PASS jsWrapperClass(filterRule) is 'CSSValueList'
 FAIL jsWrapperClass(filterRule.__proto__) should be CSSValueListPrototype. Was Object.
 FAIL jsWrapperClass(filterRule.constructor) should be CSSValueListConstructor. Was Function.
 PASS filterRule.length is 1
-FAIL subRule.operationType should be 12 (of type number). Was undefined (of type undefined).
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_CUSTOM
 PASS removeBaseURL(subRule.cssText) is 'custom(none url(fragment.shader), detached)'
 
 Custom with detached and mesh size : custom(none url(fragment.shader), 10 20 detached)
@@ -78,7 +78,7 @@ PASS jsWrapperClass(filterRule) is 'CSSValueList'
 FAIL jsWrapperClass(filterRule.__proto__) should be CSSValueListPrototype. Was Object.
 FAIL jsWrapperClass(filterRule.constructor) should be CSSValueListConstructor. Was Function.
 PASS filterRule.length is 1
-FAIL subRule.operationType should be 12 (of type number). Was undefined (of type undefined).
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_CUSTOM
 PASS removeBaseURL(subRule.cssText) is 'custom(none url(fragment.shader), 10 20 detached)'
 
 Custom with number parameters : custom(none url(fragment.shader), p1 1, p2 2 3, p3 3 4 5, p4 4 5 6 7)
@@ -89,7 +89,7 @@ PASS jsWrapperClass(filterRule) is 'CSSValueList'
 FAIL jsWrapperClass(filterRule.__proto__) should be CSSValueListPrototype. Was Object.
 FAIL jsWrapperClass(filterRule.constructor) should be CSSValueListConstructor. Was Function.
 PASS filterRule.length is 1
-FAIL subRule.operationType should be 12 (of type number). Was undefined (of type undefined).
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_CUSTOM
 PASS removeBaseURL(subRule.cssText) is 'custom(none url(fragment.shader), p1 1, p2 2 3, p3 3 4 5, p4 4 5 6 7)'
 
 Custom with float parameters : custom(none url(fragment.shader), p1 1.1, p2 2.2 3.3, p3 3.1 4.1 5.1, p4 4.1 5.2 6.3 7.4)
@@ -100,7 +100,7 @@ PASS jsWrapperClass(filterRule) is 'CSSValueList'
 FAIL jsWrapperClass(filterRule.__proto__) should be CSSValueListPrototype. Was Object.
 FAIL jsWrapperClass(filterRule.constructor) should be CSSValueListConstructor. Was Function.
 PASS filterRule.length is 1
-FAIL subRule.operationType should be 12 (of type number). Was undefined (of type undefined).
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_CUSTOM
 PASS removeBaseURL(subRule.cssText) is 'custom(none url(fragment.shader), p1 1.1, p2 2.2 3.3, p3 3.1 4.1 5.1, p4 4.1 5.2 6.3 7.4)'
 
 Custom with mesh size and number parameters : custom(none url(fragment.shader), 10 20, p1 1, p2 2 3, p3 3 4 5, p4 4 5 6 7)
@@ -111,7 +111,7 @@ PASS jsWrapperClass(filterRule) is 'CSSValueList'
 FAIL jsWrapperClass(filterRule.__proto__) should be CSSValueListPrototype. Was Object.
 FAIL jsWrapperClass(filterRule.constructor) should be CSSValueListConstructor. Was Function.
 PASS filterRule.length is 1
-FAIL subRule.operationType should be 12 (of type number). Was undefined (of type undefined).
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_CUSTOM
 PASS removeBaseURL(subRule.cssText) is 'custom(none url(fragment.shader), 10 20, p1 1, p2 2 3, p3 3 4 5, p4 4 5 6 7)'
 
 Multiple with fragment shader : grayscale() custom(none url(fragment.shader)) sepia()
@@ -122,11 +122,11 @@ PASS jsWrapperClass(filterRule) is 'CSSValueList'
 FAIL jsWrapperClass(filterRule.__proto__) should be CSSValueListPrototype. Was Object.
 FAIL jsWrapperClass(filterRule.constructor) should be CSSValueListConstructor. Was Function.
 PASS filterRule.length is 3
-FAIL subRule.operationType should be 2 (of type number). Was undefined (of type undefined).
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_GRAYSCALE
 PASS removeBaseURL(subRule.cssText) is 'grayscale()'
-FAIL subRule.operationType should be 12 (of type number). Was undefined (of type undefined).
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_CUSTOM
 PASS removeBaseURL(subRule.cssText) is 'custom(none url(fragment.shader))'
-FAIL subRule.operationType should be 3 (of type number). Was undefined (of type undefined).
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_SEPIA
 PASS removeBaseURL(subRule.cssText) is 'sepia()'
 PASS successfullyParsed is true
 

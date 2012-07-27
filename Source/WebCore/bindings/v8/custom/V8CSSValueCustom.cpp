@@ -35,6 +35,10 @@
 #include "V8CSSValueList.h"
 #include "V8WebKitCSSTransformValue.h"
 
+#if ENABLE(CSS_FILTERS)
+#include "V8WebKitCSSFilterValue.h"
+#endif
+
 #if ENABLE(SVG)
 #include "V8SVGColor.h"
 #include "V8SVGPaint.h"
@@ -48,6 +52,10 @@ v8::Handle<v8::Value> toV8(CSSValue* impl, v8::Isolate* isolate)
         return v8NullWithCheck(isolate);
     if (impl->isWebKitCSSTransformValue())
         return toV8(static_cast<WebKitCSSTransformValue*>(impl), isolate);
+#if ENABLE(CSS_FILTERS)
+    if (impl->isWebKitCSSFilterValue())
+        return toV8(static_cast<WebKitCSSFilterValue*>(impl), isolate);
+#endif
     if (impl->isValueList())
         return toV8(static_cast<CSSValueList*>(impl), isolate);
     if (impl->isPrimitiveValue())

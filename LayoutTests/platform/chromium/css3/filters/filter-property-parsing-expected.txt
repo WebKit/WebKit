@@ -12,7 +12,7 @@ PASS jsWrapperClass(filterRule) is 'CSSValueList'
 FAIL jsWrapperClass(filterRule.__proto__) should be CSSValueListPrototype. Was Object.
 FAIL jsWrapperClass(filterRule.constructor) should be CSSValueListConstructor. Was Function.
 PASS filterRule.length is 1
-FAIL subRule.operationType should be 1 (of type number). Was undefined (of type undefined).
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_REFERENCE
 PASS subRule.cssText is 'url(\'#a\')'
 
 Bare unquoted reference converting to quoted form : url(#a)
@@ -23,7 +23,7 @@ PASS jsWrapperClass(filterRule) is 'CSSValueList'
 FAIL jsWrapperClass(filterRule.__proto__) should be CSSValueListPrototype. Was Object.
 FAIL jsWrapperClass(filterRule.constructor) should be CSSValueListConstructor. Was Function.
 PASS filterRule.length is 1
-FAIL subRule.operationType should be 1 (of type number). Was undefined (of type undefined).
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_REFERENCE
 PASS subRule.cssText is 'url(\'#a\')'
 
 Multiple references : url('#a') url('#b')
@@ -34,9 +34,9 @@ PASS jsWrapperClass(filterRule) is 'CSSValueList'
 FAIL jsWrapperClass(filterRule.__proto__) should be CSSValueListPrototype. Was Object.
 FAIL jsWrapperClass(filterRule.constructor) should be CSSValueListConstructor. Was Function.
 PASS filterRule.length is 2
-FAIL subRule.operationType should be 1 (of type number). Was undefined (of type undefined).
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_REFERENCE
 PASS subRule.cssText is 'url(\'#a\')'
-FAIL subRule.operationType should be 1 (of type number). Was undefined (of type undefined).
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_REFERENCE
 PASS subRule.cssText is 'url(\'#b\')'
 
 Reference as 2nd value : grayscale(1) url('#a')
@@ -47,9 +47,9 @@ PASS jsWrapperClass(filterRule) is 'CSSValueList'
 FAIL jsWrapperClass(filterRule.__proto__) should be CSSValueListPrototype. Was Object.
 FAIL jsWrapperClass(filterRule.constructor) should be CSSValueListConstructor. Was Function.
 PASS filterRule.length is 2
-FAIL subRule.operationType should be 2 (of type number). Was undefined (of type undefined).
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_GRAYSCALE
 PASS subRule.cssText is 'grayscale(1)'
-FAIL subRule.operationType should be 1 (of type number). Was undefined (of type undefined).
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_REFERENCE
 PASS subRule.cssText is 'url(\'#a\')'
 
 Integer value : grayscale(1)
@@ -60,7 +60,7 @@ PASS jsWrapperClass(filterRule) is 'CSSValueList'
 FAIL jsWrapperClass(filterRule.__proto__) should be CSSValueListPrototype. Was Object.
 FAIL jsWrapperClass(filterRule.constructor) should be CSSValueListConstructor. Was Function.
 PASS filterRule.length is 1
-FAIL subRule.operationType should be 2 (of type number). Was undefined (of type undefined).
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_GRAYSCALE
 PASS subRule.cssText is 'grayscale(1)'
 
 Percentage value : grayscale(50%)
@@ -71,7 +71,7 @@ PASS jsWrapperClass(filterRule) is 'CSSValueList'
 FAIL jsWrapperClass(filterRule.__proto__) should be CSSValueListPrototype. Was Object.
 FAIL jsWrapperClass(filterRule.constructor) should be CSSValueListConstructor. Was Function.
 PASS filterRule.length is 1
-FAIL subRule.operationType should be 2 (of type number). Was undefined (of type undefined).
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_GRAYSCALE
 PASS subRule.cssText is 'grayscale(50%)'
 
 Float value converts to integer : grayscale(1.0)
@@ -82,7 +82,7 @@ PASS jsWrapperClass(filterRule) is 'CSSValueList'
 FAIL jsWrapperClass(filterRule.__proto__) should be CSSValueListPrototype. Was Object.
 FAIL jsWrapperClass(filterRule.constructor) should be CSSValueListConstructor. Was Function.
 PASS filterRule.length is 1
-FAIL subRule.operationType should be 2 (of type number). Was undefined (of type undefined).
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_GRAYSCALE
 PASS subRule.cssText is 'grayscale(1)'
 
 Zero value : grayscale(0)
@@ -93,7 +93,7 @@ PASS jsWrapperClass(filterRule) is 'CSSValueList'
 FAIL jsWrapperClass(filterRule.__proto__) should be CSSValueListPrototype. Was Object.
 FAIL jsWrapperClass(filterRule.constructor) should be CSSValueListConstructor. Was Function.
 PASS filterRule.length is 1
-FAIL subRule.operationType should be 2 (of type number). Was undefined (of type undefined).
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_GRAYSCALE
 PASS subRule.cssText is 'grayscale(0)'
 
 No values : grayscale()
@@ -104,7 +104,7 @@ PASS jsWrapperClass(filterRule) is 'CSSValueList'
 FAIL jsWrapperClass(filterRule.__proto__) should be CSSValueListPrototype. Was Object.
 FAIL jsWrapperClass(filterRule.constructor) should be CSSValueListConstructor. Was Function.
 PASS filterRule.length is 1
-FAIL subRule.operationType should be 2 (of type number). Was undefined (of type undefined).
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_GRAYSCALE
 PASS subRule.cssText is 'grayscale()'
 
 Multiple values : grayscale(0.5) grayscale(0.25)
@@ -115,9 +115,9 @@ PASS jsWrapperClass(filterRule) is 'CSSValueList'
 FAIL jsWrapperClass(filterRule.__proto__) should be CSSValueListPrototype. Was Object.
 FAIL jsWrapperClass(filterRule.constructor) should be CSSValueListConstructor. Was Function.
 PASS filterRule.length is 2
-FAIL subRule.operationType should be 2 (of type number). Was undefined (of type undefined).
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_GRAYSCALE
 PASS subRule.cssText is 'grayscale(0.5)'
-FAIL subRule.operationType should be 2 (of type number). Was undefined (of type undefined).
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_GRAYSCALE
 PASS subRule.cssText is 'grayscale(0.25)'
 
 Integer value : sepia(1)
@@ -128,7 +128,7 @@ PASS jsWrapperClass(filterRule) is 'CSSValueList'
 FAIL jsWrapperClass(filterRule.__proto__) should be CSSValueListPrototype. Was Object.
 FAIL jsWrapperClass(filterRule.constructor) should be CSSValueListConstructor. Was Function.
 PASS filterRule.length is 1
-FAIL subRule.operationType should be 3 (of type number). Was undefined (of type undefined).
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_SEPIA
 PASS subRule.cssText is 'sepia(1)'
 
 Percentage value : sepia(50%)
@@ -139,7 +139,7 @@ PASS jsWrapperClass(filterRule) is 'CSSValueList'
 FAIL jsWrapperClass(filterRule.__proto__) should be CSSValueListPrototype. Was Object.
 FAIL jsWrapperClass(filterRule.constructor) should be CSSValueListConstructor. Was Function.
 PASS filterRule.length is 1
-FAIL subRule.operationType should be 3 (of type number). Was undefined (of type undefined).
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_SEPIA
 PASS subRule.cssText is 'sepia(50%)'
 
 Float value converts to integer : sepia(1.0)
@@ -150,7 +150,7 @@ PASS jsWrapperClass(filterRule) is 'CSSValueList'
 FAIL jsWrapperClass(filterRule.__proto__) should be CSSValueListPrototype. Was Object.
 FAIL jsWrapperClass(filterRule.constructor) should be CSSValueListConstructor. Was Function.
 PASS filterRule.length is 1
-FAIL subRule.operationType should be 3 (of type number). Was undefined (of type undefined).
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_SEPIA
 PASS subRule.cssText is 'sepia(1)'
 
 Zero value : sepia(0)
@@ -161,7 +161,7 @@ PASS jsWrapperClass(filterRule) is 'CSSValueList'
 FAIL jsWrapperClass(filterRule.__proto__) should be CSSValueListPrototype. Was Object.
 FAIL jsWrapperClass(filterRule.constructor) should be CSSValueListConstructor. Was Function.
 PASS filterRule.length is 1
-FAIL subRule.operationType should be 3 (of type number). Was undefined (of type undefined).
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_SEPIA
 PASS subRule.cssText is 'sepia(0)'
 
 No values : sepia()
@@ -172,7 +172,7 @@ PASS jsWrapperClass(filterRule) is 'CSSValueList'
 FAIL jsWrapperClass(filterRule.__proto__) should be CSSValueListPrototype. Was Object.
 FAIL jsWrapperClass(filterRule.constructor) should be CSSValueListConstructor. Was Function.
 PASS filterRule.length is 1
-FAIL subRule.operationType should be 3 (of type number). Was undefined (of type undefined).
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_SEPIA
 PASS subRule.cssText is 'sepia()'
 
 Multiple values : sepia(0.5) sepia(0.25)
@@ -183,9 +183,9 @@ PASS jsWrapperClass(filterRule) is 'CSSValueList'
 FAIL jsWrapperClass(filterRule.__proto__) should be CSSValueListPrototype. Was Object.
 FAIL jsWrapperClass(filterRule.constructor) should be CSSValueListConstructor. Was Function.
 PASS filterRule.length is 2
-FAIL subRule.operationType should be 3 (of type number). Was undefined (of type undefined).
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_SEPIA
 PASS subRule.cssText is 'sepia(0.5)'
-FAIL subRule.operationType should be 3 (of type number). Was undefined (of type undefined).
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_SEPIA
 PASS subRule.cssText is 'sepia(0.25)'
 
 Rule combinations : sepia(0.5) grayscale(0.25)
@@ -196,9 +196,9 @@ PASS jsWrapperClass(filterRule) is 'CSSValueList'
 FAIL jsWrapperClass(filterRule.__proto__) should be CSSValueListPrototype. Was Object.
 FAIL jsWrapperClass(filterRule.constructor) should be CSSValueListConstructor. Was Function.
 PASS filterRule.length is 2
-FAIL subRule.operationType should be 3 (of type number). Was undefined (of type undefined).
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_SEPIA
 PASS subRule.cssText is 'sepia(0.5)'
-FAIL subRule.operationType should be 2 (of type number). Was undefined (of type undefined).
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_GRAYSCALE
 PASS subRule.cssText is 'grayscale(0.25)'
 
 Integer value : saturate(1)
@@ -209,7 +209,7 @@ PASS jsWrapperClass(filterRule) is 'CSSValueList'
 FAIL jsWrapperClass(filterRule.__proto__) should be CSSValueListPrototype. Was Object.
 FAIL jsWrapperClass(filterRule.constructor) should be CSSValueListConstructor. Was Function.
 PASS filterRule.length is 1
-FAIL subRule.operationType should be 4 (of type number). Was undefined (of type undefined).
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_SATURATE
 PASS subRule.cssText is 'saturate(1)'
 
 Percentage value : saturate(50%)
@@ -220,7 +220,7 @@ PASS jsWrapperClass(filterRule) is 'CSSValueList'
 FAIL jsWrapperClass(filterRule.__proto__) should be CSSValueListPrototype. Was Object.
 FAIL jsWrapperClass(filterRule.constructor) should be CSSValueListConstructor. Was Function.
 PASS filterRule.length is 1
-FAIL subRule.operationType should be 4 (of type number). Was undefined (of type undefined).
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_SATURATE
 PASS subRule.cssText is 'saturate(50%)'
 
 Percentage value > 1 : saturate(250%)
@@ -231,7 +231,7 @@ PASS jsWrapperClass(filterRule) is 'CSSValueList'
 FAIL jsWrapperClass(filterRule.__proto__) should be CSSValueListPrototype. Was Object.
 FAIL jsWrapperClass(filterRule.constructor) should be CSSValueListConstructor. Was Function.
 PASS filterRule.length is 1
-FAIL subRule.operationType should be 4 (of type number). Was undefined (of type undefined).
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_SATURATE
 PASS subRule.cssText is 'saturate(250%)'
 
 Float value converts to integer : saturate(1.0)
@@ -242,7 +242,7 @@ PASS jsWrapperClass(filterRule) is 'CSSValueList'
 FAIL jsWrapperClass(filterRule.__proto__) should be CSSValueListPrototype. Was Object.
 FAIL jsWrapperClass(filterRule.constructor) should be CSSValueListConstructor. Was Function.
 PASS filterRule.length is 1
-FAIL subRule.operationType should be 4 (of type number). Was undefined (of type undefined).
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_SATURATE
 PASS subRule.cssText is 'saturate(1)'
 
 Input value > 1 : saturate(5.5)
@@ -253,7 +253,7 @@ PASS jsWrapperClass(filterRule) is 'CSSValueList'
 FAIL jsWrapperClass(filterRule.__proto__) should be CSSValueListPrototype. Was Object.
 FAIL jsWrapperClass(filterRule.constructor) should be CSSValueListConstructor. Was Function.
 PASS filterRule.length is 1
-FAIL subRule.operationType should be 4 (of type number). Was undefined (of type undefined).
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_SATURATE
 PASS subRule.cssText is 'saturate(5.5)'
 
 Zero value : saturate(0)
@@ -264,7 +264,7 @@ PASS jsWrapperClass(filterRule) is 'CSSValueList'
 FAIL jsWrapperClass(filterRule.__proto__) should be CSSValueListPrototype. Was Object.
 FAIL jsWrapperClass(filterRule.constructor) should be CSSValueListConstructor. Was Function.
 PASS filterRule.length is 1
-FAIL subRule.operationType should be 4 (of type number). Was undefined (of type undefined).
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_SATURATE
 PASS subRule.cssText is 'saturate(0)'
 
 No values : saturate()
@@ -275,7 +275,7 @@ PASS jsWrapperClass(filterRule) is 'CSSValueList'
 FAIL jsWrapperClass(filterRule.__proto__) should be CSSValueListPrototype. Was Object.
 FAIL jsWrapperClass(filterRule.constructor) should be CSSValueListConstructor. Was Function.
 PASS filterRule.length is 1
-FAIL subRule.operationType should be 4 (of type number). Was undefined (of type undefined).
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_SATURATE
 PASS subRule.cssText is 'saturate()'
 
 Multiple values : saturate(0.5) saturate(0.25)
@@ -286,9 +286,9 @@ PASS jsWrapperClass(filterRule) is 'CSSValueList'
 FAIL jsWrapperClass(filterRule.__proto__) should be CSSValueListPrototype. Was Object.
 FAIL jsWrapperClass(filterRule.constructor) should be CSSValueListConstructor. Was Function.
 PASS filterRule.length is 2
-FAIL subRule.operationType should be 4 (of type number). Was undefined (of type undefined).
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_SATURATE
 PASS subRule.cssText is 'saturate(0.5)'
-FAIL subRule.operationType should be 4 (of type number). Was undefined (of type undefined).
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_SATURATE
 PASS subRule.cssText is 'saturate(0.25)'
 
 Rule combinations : saturate(0.5) grayscale(0.25)
@@ -299,9 +299,9 @@ PASS jsWrapperClass(filterRule) is 'CSSValueList'
 FAIL jsWrapperClass(filterRule.__proto__) should be CSSValueListPrototype. Was Object.
 FAIL jsWrapperClass(filterRule.constructor) should be CSSValueListConstructor. Was Function.
 PASS filterRule.length is 2
-FAIL subRule.operationType should be 4 (of type number). Was undefined (of type undefined).
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_SATURATE
 PASS subRule.cssText is 'saturate(0.5)'
-FAIL subRule.operationType should be 2 (of type number). Was undefined (of type undefined).
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_GRAYSCALE
 PASS subRule.cssText is 'grayscale(0.25)'
 
 Degrees value as integer : hue-rotate(10deg)
@@ -312,7 +312,7 @@ PASS jsWrapperClass(filterRule) is 'CSSValueList'
 FAIL jsWrapperClass(filterRule.__proto__) should be CSSValueListPrototype. Was Object.
 FAIL jsWrapperClass(filterRule.constructor) should be CSSValueListConstructor. Was Function.
 PASS filterRule.length is 1
-FAIL subRule.operationType should be 5 (of type number). Was undefined (of type undefined).
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_HUE_ROTATE
 PASS subRule.cssText is 'hue-rotate(10deg)'
 
 Degrees float value converts to integer : hue-rotate(10.0deg)
@@ -323,7 +323,7 @@ PASS jsWrapperClass(filterRule) is 'CSSValueList'
 FAIL jsWrapperClass(filterRule.__proto__) should be CSSValueListPrototype. Was Object.
 FAIL jsWrapperClass(filterRule.constructor) should be CSSValueListConstructor. Was Function.
 PASS filterRule.length is 1
-FAIL subRule.operationType should be 5 (of type number). Was undefined (of type undefined).
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_HUE_ROTATE
 PASS subRule.cssText is 'hue-rotate(10deg)'
 
 Radians value : hue-rotate(10rad)
@@ -334,7 +334,7 @@ PASS jsWrapperClass(filterRule) is 'CSSValueList'
 FAIL jsWrapperClass(filterRule.__proto__) should be CSSValueListPrototype. Was Object.
 FAIL jsWrapperClass(filterRule.constructor) should be CSSValueListConstructor. Was Function.
 PASS filterRule.length is 1
-FAIL subRule.operationType should be 5 (of type number). Was undefined (of type undefined).
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_HUE_ROTATE
 PASS subRule.cssText is 'hue-rotate(10rad)'
 
 Gradians value : hue-rotate(10grad)
@@ -345,7 +345,7 @@ PASS jsWrapperClass(filterRule) is 'CSSValueList'
 FAIL jsWrapperClass(filterRule.__proto__) should be CSSValueListPrototype. Was Object.
 FAIL jsWrapperClass(filterRule.constructor) should be CSSValueListConstructor. Was Function.
 PASS filterRule.length is 1
-FAIL subRule.operationType should be 5 (of type number). Was undefined (of type undefined).
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_HUE_ROTATE
 PASS subRule.cssText is 'hue-rotate(10grad)'
 
 Turns value : hue-rotate(0.5turn)
@@ -356,7 +356,7 @@ PASS jsWrapperClass(filterRule) is 'CSSValueList'
 FAIL jsWrapperClass(filterRule.__proto__) should be CSSValueListPrototype. Was Object.
 FAIL jsWrapperClass(filterRule.constructor) should be CSSValueListConstructor. Was Function.
 PASS filterRule.length is 1
-FAIL subRule.operationType should be 5 (of type number). Was undefined (of type undefined).
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_HUE_ROTATE
 PASS subRule.cssText is 'hue-rotate(0.5turn)'
 
 Zero value : hue-rotate(0)
@@ -367,7 +367,7 @@ PASS jsWrapperClass(filterRule) is 'CSSValueList'
 FAIL jsWrapperClass(filterRule.__proto__) should be CSSValueListPrototype. Was Object.
 FAIL jsWrapperClass(filterRule.constructor) should be CSSValueListConstructor. Was Function.
 PASS filterRule.length is 1
-FAIL subRule.operationType should be 5 (of type number). Was undefined (of type undefined).
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_HUE_ROTATE
 PASS subRule.cssText is 'hue-rotate(0deg)'
 
 No values : hue-rotate()
@@ -378,7 +378,7 @@ PASS jsWrapperClass(filterRule) is 'CSSValueList'
 FAIL jsWrapperClass(filterRule.__proto__) should be CSSValueListPrototype. Was Object.
 FAIL jsWrapperClass(filterRule.constructor) should be CSSValueListConstructor. Was Function.
 PASS filterRule.length is 1
-FAIL subRule.operationType should be 5 (of type number). Was undefined (of type undefined).
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_HUE_ROTATE
 PASS subRule.cssText is 'hue-rotate()'
 
 Rule combinations : hue-rotate(10deg) grayscale(0.25)
@@ -389,9 +389,9 @@ PASS jsWrapperClass(filterRule) is 'CSSValueList'
 FAIL jsWrapperClass(filterRule.__proto__) should be CSSValueListPrototype. Was Object.
 FAIL jsWrapperClass(filterRule.constructor) should be CSSValueListConstructor. Was Function.
 PASS filterRule.length is 2
-FAIL subRule.operationType should be 5 (of type number). Was undefined (of type undefined).
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_HUE_ROTATE
 PASS subRule.cssText is 'hue-rotate(10deg)'
-FAIL subRule.operationType should be 2 (of type number). Was undefined (of type undefined).
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_GRAYSCALE
 PASS subRule.cssText is 'grayscale(0.25)'
 
 Integer value : invert(1)
@@ -402,7 +402,7 @@ PASS jsWrapperClass(filterRule) is 'CSSValueList'
 FAIL jsWrapperClass(filterRule.__proto__) should be CSSValueListPrototype. Was Object.
 FAIL jsWrapperClass(filterRule.constructor) should be CSSValueListConstructor. Was Function.
 PASS filterRule.length is 1
-FAIL subRule.operationType should be 6 (of type number). Was undefined (of type undefined).
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_INVERT
 PASS subRule.cssText is 'invert(1)'
 
 Percentage value : invert(50%)
@@ -413,7 +413,7 @@ PASS jsWrapperClass(filterRule) is 'CSSValueList'
 FAIL jsWrapperClass(filterRule.__proto__) should be CSSValueListPrototype. Was Object.
 FAIL jsWrapperClass(filterRule.constructor) should be CSSValueListConstructor. Was Function.
 PASS filterRule.length is 1
-FAIL subRule.operationType should be 6 (of type number). Was undefined (of type undefined).
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_INVERT
 PASS subRule.cssText is 'invert(50%)'
 
 Float value converts to integer : invert(1.0)
@@ -424,7 +424,7 @@ PASS jsWrapperClass(filterRule) is 'CSSValueList'
 FAIL jsWrapperClass(filterRule.__proto__) should be CSSValueListPrototype. Was Object.
 FAIL jsWrapperClass(filterRule.constructor) should be CSSValueListConstructor. Was Function.
 PASS filterRule.length is 1
-FAIL subRule.operationType should be 6 (of type number). Was undefined (of type undefined).
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_INVERT
 PASS subRule.cssText is 'invert(1)'
 
 Zero value : invert(0)
@@ -435,7 +435,7 @@ PASS jsWrapperClass(filterRule) is 'CSSValueList'
 FAIL jsWrapperClass(filterRule.__proto__) should be CSSValueListPrototype. Was Object.
 FAIL jsWrapperClass(filterRule.constructor) should be CSSValueListConstructor. Was Function.
 PASS filterRule.length is 1
-FAIL subRule.operationType should be 6 (of type number). Was undefined (of type undefined).
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_INVERT
 PASS subRule.cssText is 'invert(0)'
 
 No values : invert()
@@ -446,7 +446,7 @@ PASS jsWrapperClass(filterRule) is 'CSSValueList'
 FAIL jsWrapperClass(filterRule.__proto__) should be CSSValueListPrototype. Was Object.
 FAIL jsWrapperClass(filterRule.constructor) should be CSSValueListConstructor. Was Function.
 PASS filterRule.length is 1
-FAIL subRule.operationType should be 6 (of type number). Was undefined (of type undefined).
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_INVERT
 PASS subRule.cssText is 'invert()'
 
 Multiple values : invert(0.5) invert(0.25)
@@ -457,9 +457,9 @@ PASS jsWrapperClass(filterRule) is 'CSSValueList'
 FAIL jsWrapperClass(filterRule.__proto__) should be CSSValueListPrototype. Was Object.
 FAIL jsWrapperClass(filterRule.constructor) should be CSSValueListConstructor. Was Function.
 PASS filterRule.length is 2
-FAIL subRule.operationType should be 6 (of type number). Was undefined (of type undefined).
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_INVERT
 PASS subRule.cssText is 'invert(0.5)'
-FAIL subRule.operationType should be 6 (of type number). Was undefined (of type undefined).
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_INVERT
 PASS subRule.cssText is 'invert(0.25)'
 
 Rule combinations : invert(0.5) grayscale(0.25)
@@ -470,9 +470,9 @@ PASS jsWrapperClass(filterRule) is 'CSSValueList'
 FAIL jsWrapperClass(filterRule.__proto__) should be CSSValueListPrototype. Was Object.
 FAIL jsWrapperClass(filterRule.constructor) should be CSSValueListConstructor. Was Function.
 PASS filterRule.length is 2
-FAIL subRule.operationType should be 6 (of type number). Was undefined (of type undefined).
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_INVERT
 PASS subRule.cssText is 'invert(0.5)'
-FAIL subRule.operationType should be 2 (of type number). Was undefined (of type undefined).
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_GRAYSCALE
 PASS subRule.cssText is 'grayscale(0.25)'
 
 Integer value : opacity(1)
@@ -483,7 +483,7 @@ PASS jsWrapperClass(filterRule) is 'CSSValueList'
 FAIL jsWrapperClass(filterRule.__proto__) should be CSSValueListPrototype. Was Object.
 FAIL jsWrapperClass(filterRule.constructor) should be CSSValueListConstructor. Was Function.
 PASS filterRule.length is 1
-FAIL subRule.operationType should be 7 (of type number). Was undefined (of type undefined).
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_OPACITY
 PASS subRule.cssText is 'opacity(1)'
 
 Percentage value : opacity(50%)
@@ -494,7 +494,7 @@ PASS jsWrapperClass(filterRule) is 'CSSValueList'
 FAIL jsWrapperClass(filterRule.__proto__) should be CSSValueListPrototype. Was Object.
 FAIL jsWrapperClass(filterRule.constructor) should be CSSValueListConstructor. Was Function.
 PASS filterRule.length is 1
-FAIL subRule.operationType should be 7 (of type number). Was undefined (of type undefined).
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_OPACITY
 PASS subRule.cssText is 'opacity(50%)'
 
 Float value converts to integer : opacity(1.0)
@@ -505,7 +505,7 @@ PASS jsWrapperClass(filterRule) is 'CSSValueList'
 FAIL jsWrapperClass(filterRule.__proto__) should be CSSValueListPrototype. Was Object.
 FAIL jsWrapperClass(filterRule.constructor) should be CSSValueListConstructor. Was Function.
 PASS filterRule.length is 1
-FAIL subRule.operationType should be 7 (of type number). Was undefined (of type undefined).
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_OPACITY
 PASS subRule.cssText is 'opacity(1)'
 
 Zero value : opacity(0)
@@ -516,7 +516,7 @@ PASS jsWrapperClass(filterRule) is 'CSSValueList'
 FAIL jsWrapperClass(filterRule.__proto__) should be CSSValueListPrototype. Was Object.
 FAIL jsWrapperClass(filterRule.constructor) should be CSSValueListConstructor. Was Function.
 PASS filterRule.length is 1
-FAIL subRule.operationType should be 7 (of type number). Was undefined (of type undefined).
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_OPACITY
 PASS subRule.cssText is 'opacity(0)'
 
 No values : opacity()
@@ -527,7 +527,7 @@ PASS jsWrapperClass(filterRule) is 'CSSValueList'
 FAIL jsWrapperClass(filterRule.__proto__) should be CSSValueListPrototype. Was Object.
 FAIL jsWrapperClass(filterRule.constructor) should be CSSValueListConstructor. Was Function.
 PASS filterRule.length is 1
-FAIL subRule.operationType should be 7 (of type number). Was undefined (of type undefined).
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_OPACITY
 PASS subRule.cssText is 'opacity()'
 
 Multiple values : opacity(0.5) opacity(0.25)
@@ -538,9 +538,9 @@ PASS jsWrapperClass(filterRule) is 'CSSValueList'
 FAIL jsWrapperClass(filterRule.__proto__) should be CSSValueListPrototype. Was Object.
 FAIL jsWrapperClass(filterRule.constructor) should be CSSValueListConstructor. Was Function.
 PASS filterRule.length is 2
-FAIL subRule.operationType should be 7 (of type number). Was undefined (of type undefined).
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_OPACITY
 PASS subRule.cssText is 'opacity(0.5)'
-FAIL subRule.operationType should be 7 (of type number). Was undefined (of type undefined).
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_OPACITY
 PASS subRule.cssText is 'opacity(0.25)'
 
 Rule combinations : opacity(0.5) grayscale(0.25)
@@ -551,9 +551,9 @@ PASS jsWrapperClass(filterRule) is 'CSSValueList'
 FAIL jsWrapperClass(filterRule.__proto__) should be CSSValueListPrototype. Was Object.
 FAIL jsWrapperClass(filterRule.constructor) should be CSSValueListConstructor. Was Function.
 PASS filterRule.length is 2
-FAIL subRule.operationType should be 7 (of type number). Was undefined (of type undefined).
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_OPACITY
 PASS subRule.cssText is 'opacity(0.5)'
-FAIL subRule.operationType should be 2 (of type number). Was undefined (of type undefined).
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_GRAYSCALE
 PASS subRule.cssText is 'grayscale(0.25)'
 
 Integer value : brightness(1)
@@ -564,7 +564,7 @@ PASS jsWrapperClass(filterRule) is 'CSSValueList'
 FAIL jsWrapperClass(filterRule.__proto__) should be CSSValueListPrototype. Was Object.
 FAIL jsWrapperClass(filterRule.constructor) should be CSSValueListConstructor. Was Function.
 PASS filterRule.length is 1
-FAIL subRule.operationType should be 8 (of type number). Was undefined (of type undefined).
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_BRIGHTNESS
 PASS subRule.cssText is 'brightness(1)'
 
 Percentage value : brightness(50%)
@@ -575,7 +575,7 @@ PASS jsWrapperClass(filterRule) is 'CSSValueList'
 FAIL jsWrapperClass(filterRule.__proto__) should be CSSValueListPrototype. Was Object.
 FAIL jsWrapperClass(filterRule.constructor) should be CSSValueListConstructor. Was Function.
 PASS filterRule.length is 1
-FAIL subRule.operationType should be 8 (of type number). Was undefined (of type undefined).
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_BRIGHTNESS
 PASS subRule.cssText is 'brightness(50%)'
 
 Float value converts to integer : brightness(1.0)
@@ -586,7 +586,7 @@ PASS jsWrapperClass(filterRule) is 'CSSValueList'
 FAIL jsWrapperClass(filterRule.__proto__) should be CSSValueListPrototype. Was Object.
 FAIL jsWrapperClass(filterRule.constructor) should be CSSValueListConstructor. Was Function.
 PASS filterRule.length is 1
-FAIL subRule.operationType should be 8 (of type number). Was undefined (of type undefined).
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_BRIGHTNESS
 PASS subRule.cssText is 'brightness(1)'
 
 Zero value : brightness(0)
@@ -597,7 +597,7 @@ PASS jsWrapperClass(filterRule) is 'CSSValueList'
 FAIL jsWrapperClass(filterRule.__proto__) should be CSSValueListPrototype. Was Object.
 FAIL jsWrapperClass(filterRule.constructor) should be CSSValueListConstructor. Was Function.
 PASS filterRule.length is 1
-FAIL subRule.operationType should be 8 (of type number). Was undefined (of type undefined).
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_BRIGHTNESS
 PASS subRule.cssText is 'brightness(0)'
 
 No values : brightness()
@@ -608,7 +608,7 @@ PASS jsWrapperClass(filterRule) is 'CSSValueList'
 FAIL jsWrapperClass(filterRule.__proto__) should be CSSValueListPrototype. Was Object.
 FAIL jsWrapperClass(filterRule.constructor) should be CSSValueListConstructor. Was Function.
 PASS filterRule.length is 1
-FAIL subRule.operationType should be 8 (of type number). Was undefined (of type undefined).
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_BRIGHTNESS
 PASS subRule.cssText is 'brightness()'
 
 Multiple values : brightness(0.5) brightness(0.25)
@@ -619,9 +619,9 @@ PASS jsWrapperClass(filterRule) is 'CSSValueList'
 FAIL jsWrapperClass(filterRule.__proto__) should be CSSValueListPrototype. Was Object.
 FAIL jsWrapperClass(filterRule.constructor) should be CSSValueListConstructor. Was Function.
 PASS filterRule.length is 2
-FAIL subRule.operationType should be 8 (of type number). Was undefined (of type undefined).
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_BRIGHTNESS
 PASS subRule.cssText is 'brightness(0.5)'
-FAIL subRule.operationType should be 8 (of type number). Was undefined (of type undefined).
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_BRIGHTNESS
 PASS subRule.cssText is 'brightness(0.25)'
 
 Rule combinations : brightness(0.5) grayscale(0.25)
@@ -632,9 +632,9 @@ PASS jsWrapperClass(filterRule) is 'CSSValueList'
 FAIL jsWrapperClass(filterRule.__proto__) should be CSSValueListPrototype. Was Object.
 FAIL jsWrapperClass(filterRule.constructor) should be CSSValueListConstructor. Was Function.
 PASS filterRule.length is 2
-FAIL subRule.operationType should be 8 (of type number). Was undefined (of type undefined).
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_BRIGHTNESS
 PASS subRule.cssText is 'brightness(0.5)'
-FAIL subRule.operationType should be 2 (of type number). Was undefined (of type undefined).
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_GRAYSCALE
 PASS subRule.cssText is 'grayscale(0.25)'
 
 Rule combinations : grayscale(0.25) brightness(0.5)
@@ -645,9 +645,9 @@ PASS jsWrapperClass(filterRule) is 'CSSValueList'
 FAIL jsWrapperClass(filterRule.__proto__) should be CSSValueListPrototype. Was Object.
 FAIL jsWrapperClass(filterRule.constructor) should be CSSValueListConstructor. Was Function.
 PASS filterRule.length is 2
-FAIL subRule.operationType should be 2 (of type number). Was undefined (of type undefined).
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_GRAYSCALE
 PASS subRule.cssText is 'grayscale(0.25)'
-FAIL subRule.operationType should be 8 (of type number). Was undefined (of type undefined).
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_BRIGHTNESS
 PASS subRule.cssText is 'brightness(0.5)'
 
 Integer value : contrast(1)
@@ -658,7 +658,7 @@ PASS jsWrapperClass(filterRule) is 'CSSValueList'
 FAIL jsWrapperClass(filterRule.__proto__) should be CSSValueListPrototype. Was Object.
 FAIL jsWrapperClass(filterRule.constructor) should be CSSValueListConstructor. Was Function.
 PASS filterRule.length is 1
-FAIL subRule.operationType should be 9 (of type number). Was undefined (of type undefined).
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_CONTRAST
 PASS subRule.cssText is 'contrast(1)'
 
 Percentage value : contrast(50%)
@@ -669,7 +669,7 @@ PASS jsWrapperClass(filterRule) is 'CSSValueList'
 FAIL jsWrapperClass(filterRule.__proto__) should be CSSValueListPrototype. Was Object.
 FAIL jsWrapperClass(filterRule.constructor) should be CSSValueListConstructor. Was Function.
 PASS filterRule.length is 1
-FAIL subRule.operationType should be 9 (of type number). Was undefined (of type undefined).
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_CONTRAST
 PASS subRule.cssText is 'contrast(50%)'
 
 Percentage value > 1 : contrast(250%)
@@ -680,7 +680,7 @@ PASS jsWrapperClass(filterRule) is 'CSSValueList'
 FAIL jsWrapperClass(filterRule.__proto__) should be CSSValueListPrototype. Was Object.
 FAIL jsWrapperClass(filterRule.constructor) should be CSSValueListConstructor. Was Function.
 PASS filterRule.length is 1
-FAIL subRule.operationType should be 9 (of type number). Was undefined (of type undefined).
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_CONTRAST
 PASS subRule.cssText is 'contrast(250%)'
 
 Float value converts to integer : contrast(1.0)
@@ -691,7 +691,7 @@ PASS jsWrapperClass(filterRule) is 'CSSValueList'
 FAIL jsWrapperClass(filterRule.__proto__) should be CSSValueListPrototype. Was Object.
 FAIL jsWrapperClass(filterRule.constructor) should be CSSValueListConstructor. Was Function.
 PASS filterRule.length is 1
-FAIL subRule.operationType should be 9 (of type number). Was undefined (of type undefined).
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_CONTRAST
 PASS subRule.cssText is 'contrast(1)'
 
 Zero value : contrast(0)
@@ -702,7 +702,7 @@ PASS jsWrapperClass(filterRule) is 'CSSValueList'
 FAIL jsWrapperClass(filterRule.__proto__) should be CSSValueListPrototype. Was Object.
 FAIL jsWrapperClass(filterRule.constructor) should be CSSValueListConstructor. Was Function.
 PASS filterRule.length is 1
-FAIL subRule.operationType should be 9 (of type number). Was undefined (of type undefined).
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_CONTRAST
 PASS subRule.cssText is 'contrast(0)'
 
 No values : contrast()
@@ -713,7 +713,7 @@ PASS jsWrapperClass(filterRule) is 'CSSValueList'
 FAIL jsWrapperClass(filterRule.__proto__) should be CSSValueListPrototype. Was Object.
 FAIL jsWrapperClass(filterRule.constructor) should be CSSValueListConstructor. Was Function.
 PASS filterRule.length is 1
-FAIL subRule.operationType should be 9 (of type number). Was undefined (of type undefined).
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_CONTRAST
 PASS subRule.cssText is 'contrast()'
 
 Value greater than one : contrast(2)
@@ -724,7 +724,7 @@ PASS jsWrapperClass(filterRule) is 'CSSValueList'
 FAIL jsWrapperClass(filterRule.__proto__) should be CSSValueListPrototype. Was Object.
 FAIL jsWrapperClass(filterRule.constructor) should be CSSValueListConstructor. Was Function.
 PASS filterRule.length is 1
-FAIL subRule.operationType should be 9 (of type number). Was undefined (of type undefined).
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_CONTRAST
 PASS subRule.cssText is 'contrast(2)'
 
 Multiple values : contrast(0.5) contrast(0.25)
@@ -735,9 +735,9 @@ PASS jsWrapperClass(filterRule) is 'CSSValueList'
 FAIL jsWrapperClass(filterRule.__proto__) should be CSSValueListPrototype. Was Object.
 FAIL jsWrapperClass(filterRule.constructor) should be CSSValueListConstructor. Was Function.
 PASS filterRule.length is 2
-FAIL subRule.operationType should be 9 (of type number). Was undefined (of type undefined).
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_CONTRAST
 PASS subRule.cssText is 'contrast(0.5)'
-FAIL subRule.operationType should be 9 (of type number). Was undefined (of type undefined).
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_CONTRAST
 PASS subRule.cssText is 'contrast(0.25)'
 
 Rule combinations : contrast(0.5) grayscale(0.25)
@@ -748,9 +748,9 @@ PASS jsWrapperClass(filterRule) is 'CSSValueList'
 FAIL jsWrapperClass(filterRule.__proto__) should be CSSValueListPrototype. Was Object.
 FAIL jsWrapperClass(filterRule.constructor) should be CSSValueListConstructor. Was Function.
 PASS filterRule.length is 2
-FAIL subRule.operationType should be 9 (of type number). Was undefined (of type undefined).
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_CONTRAST
 PASS subRule.cssText is 'contrast(0.5)'
-FAIL subRule.operationType should be 2 (of type number). Was undefined (of type undefined).
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_GRAYSCALE
 PASS subRule.cssText is 'grayscale(0.25)'
 
 Rule combinations : grayscale(0.25) contrast(0.5)
@@ -761,9 +761,9 @@ PASS jsWrapperClass(filterRule) is 'CSSValueList'
 FAIL jsWrapperClass(filterRule.__proto__) should be CSSValueListPrototype. Was Object.
 FAIL jsWrapperClass(filterRule.constructor) should be CSSValueListConstructor. Was Function.
 PASS filterRule.length is 2
-FAIL subRule.operationType should be 2 (of type number). Was undefined (of type undefined).
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_GRAYSCALE
 PASS subRule.cssText is 'grayscale(0.25)'
-FAIL subRule.operationType should be 9 (of type number). Was undefined (of type undefined).
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_CONTRAST
 PASS subRule.cssText is 'contrast(0.5)'
 
 One zero to px : blur(0)
@@ -774,7 +774,7 @@ PASS jsWrapperClass(filterRule) is 'CSSValueList'
 FAIL jsWrapperClass(filterRule.__proto__) should be CSSValueListPrototype. Was Object.
 FAIL jsWrapperClass(filterRule.constructor) should be CSSValueListConstructor. Was Function.
 PASS filterRule.length is 1
-FAIL subRule.operationType should be 10 (of type number). Was undefined (of type undefined).
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_BLUR
 PASS subRule.cssText is 'blur(0px)'
 
 One length : blur(10px)
@@ -785,7 +785,7 @@ PASS jsWrapperClass(filterRule) is 'CSSValueList'
 FAIL jsWrapperClass(filterRule.__proto__) should be CSSValueListPrototype. Was Object.
 FAIL jsWrapperClass(filterRule.constructor) should be CSSValueListConstructor. Was Function.
 PASS filterRule.length is 1
-FAIL subRule.operationType should be 10 (of type number). Was undefined (of type undefined).
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_BLUR
 PASS subRule.cssText is 'blur(10px)'
 
 No values : blur()
@@ -796,7 +796,7 @@ PASS jsWrapperClass(filterRule) is 'CSSValueList'
 FAIL jsWrapperClass(filterRule.__proto__) should be CSSValueListPrototype. Was Object.
 FAIL jsWrapperClass(filterRule.constructor) should be CSSValueListConstructor. Was Function.
 PASS filterRule.length is 1
-FAIL subRule.operationType should be 10 (of type number). Was undefined (of type undefined).
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_BLUR
 PASS subRule.cssText is 'blur()'
 
 Color then three values : drop-shadow(red 1px 2px 3px)
@@ -807,7 +807,7 @@ PASS jsWrapperClass(filterRule) is 'CSSValueList'
 FAIL jsWrapperClass(filterRule.__proto__) should be CSSValueListPrototype. Was Object.
 FAIL jsWrapperClass(filterRule.constructor) should be CSSValueListConstructor. Was Function.
 PASS filterRule.length is 1
-FAIL subRule.operationType should be 11 (of type number). Was undefined (of type undefined).
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_DROP_SHADOW
 PASS subRule.cssText is 'drop-shadow(red 1px 2px 3px)'
 
 Three values then color : drop-shadow(1px 2px 3px red)
@@ -818,7 +818,7 @@ PASS jsWrapperClass(filterRule) is 'CSSValueList'
 FAIL jsWrapperClass(filterRule.__proto__) should be CSSValueListPrototype. Was Object.
 FAIL jsWrapperClass(filterRule.constructor) should be CSSValueListConstructor. Was Function.
 PASS filterRule.length is 1
-FAIL subRule.operationType should be 11 (of type number). Was undefined (of type undefined).
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_DROP_SHADOW
 PASS subRule.cssText is 'drop-shadow(red 1px 2px 3px)'
 
 Color then three values with zero length : drop-shadow(#abc 0 0 0)
@@ -829,7 +829,7 @@ PASS jsWrapperClass(filterRule) is 'CSSValueList'
 FAIL jsWrapperClass(filterRule.__proto__) should be CSSValueListPrototype. Was Object.
 FAIL jsWrapperClass(filterRule.constructor) should be CSSValueListConstructor. Was Function.
 PASS filterRule.length is 1
-FAIL subRule.operationType should be 11 (of type number). Was undefined (of type undefined).
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_DROP_SHADOW
 PASS subRule.cssText is 'drop-shadow(rgb(170, 187, 204) 0px 0px 0px)'
 
 Three values with zero length : drop-shadow(0 0 0)
@@ -840,7 +840,7 @@ PASS jsWrapperClass(filterRule) is 'CSSValueList'
 FAIL jsWrapperClass(filterRule.__proto__) should be CSSValueListPrototype. Was Object.
 FAIL jsWrapperClass(filterRule.constructor) should be CSSValueListConstructor. Was Function.
 PASS filterRule.length is 1
-FAIL subRule.operationType should be 11 (of type number). Was undefined (of type undefined).
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_DROP_SHADOW
 PASS subRule.cssText is 'drop-shadow(0px 0px 0px)'
 
 Two values no color : drop-shadow(1px 2px)
@@ -851,7 +851,7 @@ PASS jsWrapperClass(filterRule) is 'CSSValueList'
 FAIL jsWrapperClass(filterRule.__proto__) should be CSSValueListPrototype. Was Object.
 FAIL jsWrapperClass(filterRule.constructor) should be CSSValueListConstructor. Was Function.
 PASS filterRule.length is 1
-FAIL subRule.operationType should be 11 (of type number). Was undefined (of type undefined).
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_DROP_SHADOW
 PASS subRule.cssText is 'drop-shadow(1px 2px)'
 
 Multiple operations : grayscale(0.5) sepia(0.25) saturate(0.75) hue-rotate(35deg) invert(0.2) opacity(0.9) blur(5px) drop-shadow(green 1px 2px 3px)
@@ -862,21 +862,21 @@ PASS jsWrapperClass(filterRule) is 'CSSValueList'
 FAIL jsWrapperClass(filterRule.__proto__) should be CSSValueListPrototype. Was Object.
 FAIL jsWrapperClass(filterRule.constructor) should be CSSValueListConstructor. Was Function.
 PASS filterRule.length is 8
-FAIL subRule.operationType should be 2 (of type number). Was undefined (of type undefined).
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_GRAYSCALE
 PASS subRule.cssText is 'grayscale(0.5)'
-FAIL subRule.operationType should be 3 (of type number). Was undefined (of type undefined).
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_SEPIA
 PASS subRule.cssText is 'sepia(0.25)'
-FAIL subRule.operationType should be 4 (of type number). Was undefined (of type undefined).
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_SATURATE
 PASS subRule.cssText is 'saturate(0.75)'
-FAIL subRule.operationType should be 5 (of type number). Was undefined (of type undefined).
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_HUE_ROTATE
 PASS subRule.cssText is 'hue-rotate(35deg)'
-FAIL subRule.operationType should be 6 (of type number). Was undefined (of type undefined).
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_INVERT
 PASS subRule.cssText is 'invert(0.2)'
-FAIL subRule.operationType should be 7 (of type number). Was undefined (of type undefined).
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_OPACITY
 PASS subRule.cssText is 'opacity(0.9)'
-FAIL subRule.operationType should be 10 (of type number). Was undefined (of type undefined).
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_BLUR
 PASS subRule.cssText is 'blur(5px)'
-FAIL subRule.operationType should be 11 (of type number). Was undefined (of type undefined).
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_DROP_SHADOW
 PASS subRule.cssText is 'drop-shadow(green 1px 2px 3px)'
 PASS successfullyParsed is true
 
