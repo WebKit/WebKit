@@ -1,3 +1,46 @@
+2012-07-26  Yoshifumi Inoue  <yosin@chromium.org>
+
+        [Tests] Rename fast/forms/{number,time}/*-validity-state-* to *-validity-*
+        https://bugs.webkit.org/show_bug.cgi?id=92449
+
+        Reviewed by Kent Tamura.
+
+        This patch renames test files in fast/forms/{number,time} for matching
+        with IDL attribute names.
+
+        * fast/forms/number/number-validity-rangeoverflow-expected.txt: Copied from LayoutTests/fast/forms/number/number-validitystate-range-overflow-expected.txt.
+        * fast/forms/number/number-validity-rangeoverflow.html: Copied from LayoutTests/fast/forms/number/number-validitystate-range-overflow.html.
+        * fast/forms/number/number-validity-rangeunderflow-expected.txt: Copied from LayoutTests/fast/forms/number/number-validity-state-range-underflow-expected.txt.
+        * fast/forms/number/number-validity-rangeunderflow.html: Copied from LayoutTests/fast/forms/number/number-validity-state-range-underflow.html.
+        * fast/forms/number/number-validity-state-range-underflow-expected.txt: Removed.
+        * fast/forms/number/number-validity-state-range-underflow.html: Removed.
+        * fast/forms/number/number-validity-state-step-mismatch-expected.txt: Removed.
+        * fast/forms/number/number-validity-state-step-mismatch.html: Removed.
+        * fast/forms/number/number-validity-state-type-mismatch-expected.txt: Removed.
+        * fast/forms/number/number-validity-state-type-mismatch.html: Removed.
+        * fast/forms/number/number-validity-stepmismatch-expected.txt: Copied from LayoutTests/fast/forms/number/number-validity-state-step-mismatch-expected.txt.
+        * fast/forms/number/number-validity-stepmismatch.html: Copied from LayoutTests/fast/forms/number/number-validity-state-step-mismatch.html.
+        * fast/forms/number/number-validity-typemismatch-expected.txt: Copied from LayoutTests/fast/forms/number/number-validity-state-type-mismatch-expected.txt.
+        * fast/forms/number/number-validity-typemismatch.html: Copied from LayoutTests/fast/forms/number/number-validity-state-type-mismatch.html.
+        * fast/forms/number/number-validitystate-range-overflow-expected.txt: Removed.
+        * fast/forms/number/number-validitystate-range-overflow.html: Removed.
+        * fast/forms/time/time-validity-rangeoverflow-expected.txt: Copied from LayoutTests/fast/forms/time/time-validity-state-range-overflow-expected.txt.
+        * fast/forms/time/time-validity-rangeoverflow.html: Copied from LayoutTests/fast/forms/time/time-validity-state-range-overflow.html.
+        * fast/forms/time/time-validity-rangeunderflow-expected.txt: Copied from LayoutTests/fast/forms/time/time-validity-state-range-underflow-expected.txt.
+        * fast/forms/time/time-validity-rangeunderflow.html: Copied from LayoutTests/fast/forms/time/time-validity-state-range-underflow.html.
+        * fast/forms/time/time-validity-state-range-overflow-expected.txt: Removed.
+        * fast/forms/time/time-validity-state-range-overflow.html: Removed.
+        * fast/forms/time/time-validity-state-range-underflow-expected.txt: Removed.
+        * fast/forms/time/time-validity-state-range-underflow.html: Removed.
+        * fast/forms/time/time-validity-state-step-mismatch-expected.txt: Removed.
+        * fast/forms/time/time-validity-state-step-mismatch.html: Removed.
+        * fast/forms/time/time-validity-state-type-mismatch-expected.txt: Removed.
+        * fast/forms/time/time-validity-state-type-mismatch.html: Removed.
+        * fast/forms/time/time-validity-stepmismatch-expected.txt: Copied from LayoutTests/fast/forms/time/time-validity-state-step-mismatch-expected.txt.
+        * fast/forms/time/time-validity-stepmismatch.html: Copied from LayoutTests/fast/forms/time/time-validity-state-step-mismatch.html.
+        * fast/forms/time/time-validity-typemismatch-expected.txt: Copied from LayoutTests/fast/forms/time/time-validity-state-type-mismatch-expected.txt.
+        * fast/forms/time/time-validity-typemismatch.html: Copied from LayoutTests/fast/forms/time/time-validity-state-type-mismatch.html.
+
 2012-07-26  Dan Bernstein  <mitz@apple.com>
 
         Blocks with reverse column progression don’t have layout overflow for overflowing columns
