@@ -1,3 +1,33 @@
+2012-07-27  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL][WK2] Stop using C API to interact with the page in Ewk_View
+        https://bugs.webkit.org/show_bug.cgi?id=92463
+
+        Reviewed by Simon Hausmann.
+
+        Stop using C API to interact with the PageProxy in Ewk_View
+        and use the PageProxy object directly. This avoids useless
+        converting to WK type using toAPI() all the time.
+
+        * UIProcess/API/efl/ewk_view.cpp:
+        (ewk_view_base_add):
+        (ewk_view_uri_update):
+        (ewk_view_uri_set):
+        (ewk_view_reload):
+        (ewk_view_reload_bypass_cache):
+        (ewk_view_stop):
+        (ewk_view_load_progress_get):
+        (ewk_view_device_pixel_ratio_set):
+        (ewk_view_theme_get):
+        (ewk_view_cursor_set):
+        (ewk_view_back):
+        (ewk_view_forward):
+        (ewk_view_intent_deliver):
+        (ewk_view_back_possible):
+        (ewk_view_forward_possible):
+        (ewk_view_setting_encoding_custom_get):
+        (ewk_view_setting_encoding_custom_set):
+
 2012-07-27  Dominik Röttsches  <dominik.rottsches@intel.com>
 
         [Cairo] Add complex font drawing using HarfbuzzNG
