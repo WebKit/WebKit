@@ -1036,16 +1036,16 @@ String AccessibilityRenderObject::helpText() const
     if (!describedBy.isEmpty())
         return describedBy;
     
-    String descriptiveText = accessibilityDescription();
+    String description = accessibilityDescription();
     for (RenderObject* curr = m_renderer; curr; curr = curr->parent()) {
         if (curr->node() && curr->node()->isHTMLElement()) {
             const AtomicString& summary = static_cast<Element*>(curr->node())->getAttribute(summaryAttr);
             if (!summary.isEmpty())
                 return summary;
             
-            // The title attribute should be used as help text, unless it is already being used as descriptive text.
+            // The title attribute should be used as help text unless it is already being used as descriptive text.
             const AtomicString& title = static_cast<Element*>(curr->node())->getAttribute(titleAttr);
-            if (!title.isEmpty() && descriptiveText != title)
+            if (!title.isEmpty() && description != title)
                 return title;
         }
         
@@ -1501,7 +1501,10 @@ String AccessibilityRenderObject::accessibilityDescription() const
     if (isWebArea())
         return webAreaAccessibilityDescription();
     
-    // The description should fall back to the title attribute as a last resort.
+    // An element's descriptive text is comprised of title() (what's visible on the screen) and accessibilityDescription() (other descriptive text).
+    // Both are used to generate what a screen reader speaks.
+    // If this point is reached (i.e. there's no accessibilityDescription) and there's no title(), we should fallback to using the title attribute.
+    // The title attribute is normally used as help text (because it is a tooltip), but if there is nothing else available, this should be used (according to ARIA).
     if (title().isEmpty())
         return getAttribute(titleAttr);
     

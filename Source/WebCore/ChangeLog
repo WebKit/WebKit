@@ -1,3 +1,16 @@
+2012-07-28  Chris Fleizach  <cfleizach@apple.com>
+
+        WebKit should expose @title as label (AXTitle or AXDescription) sometimes instead of AXHelp, according to the ARIA text alt computation
+        https://bugs.webkit.org/show_bug.cgi?id=91911
+
+        Reviewed by Darin Adler.
+
+        Update comments around code to explain rationale.
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::helpText):
+        (WebCore::AccessibilityRenderObject::accessibilityDescription):
+
 2012-07-27  Zoltan Horvath  <zoltan@webkit.org>
 
         Add runtime flag to enable/disable JS memory information
