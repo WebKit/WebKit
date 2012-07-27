@@ -131,6 +131,7 @@ module WTR {
 
         // Web intents testing.
         void sendWebIntentResponse(in DOMString reply);
+        void deliverWebIntent(in DOMString action, in DOMString type, in DOMString data);
         
         // Focus testing.
         void addChromeInputField(in object callback);

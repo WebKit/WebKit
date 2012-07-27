@@ -1,3 +1,24 @@
+2012-07-27  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [WK2][WTR] LayoutTestController.deliverWebIntent() needs to be implemented
+        https://bugs.webkit.org/show_bug.cgi?id=92228
+
+        Reviewed by Anders Carlsson.
+
+        Implement LayoutTestController.deliverWebIntent() to
+        allow test cases to deliver a Web intent and test this
+        functionality.
+
+        This functionality is needed by:
+        - webintents/web-intents-delivery.html
+
+        * WebKitTestRunner/InjectedBundle/Bindings/LayoutTestController.idl:
+        * WebKitTestRunner/InjectedBundle/LayoutTestController.cpp:
+        (WTR::LayoutTestController::deliverWebIntent):
+        (WTR):
+        * WebKitTestRunner/InjectedBundle/LayoutTestController.h:
+        (LayoutTestController):
+
 2012-07-27  Jer Noble  <jer.noble@apple.com>
 
         Unreviewed build fix.

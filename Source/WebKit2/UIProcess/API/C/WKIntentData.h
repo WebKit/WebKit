@@ -33,6 +33,9 @@ extern "C" {
 #endif
 
 WK_EXPORT WKTypeID WKIntentDataGetTypeID();
+
+WK_EXPORT WKIntentDataRef WKIntentDataCreate(WKDictionaryRef initDictionary);
+
 WK_EXPORT WKStringRef WKIntentDataCopyAction(WKIntentDataRef intentRef);
 WK_EXPORT WKStringRef WKIntentDataCopyType(WKIntentDataRef intentRef);
 WK_EXPORT WKURLRef WKIntentDataCopyService(WKIntentDataRef intentRef);

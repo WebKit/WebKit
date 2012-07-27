@@ -50,6 +50,7 @@
 
 #if ENABLE(WEB_INTENTS)
 #include <WebKit2/WKBundleIntentRequest.h>
+#include <WebKit2/WKIntentData.h>
 #endif
 
 namespace WTR {
@@ -630,6 +631,26 @@ void LayoutTestController::sendWebIntentResponse(JSStringRef reply)
         WKRetainPtr<WKSerializedScriptValueRef> serializedData(AdoptWK, WKSerializedScriptValueCreate(context, JSValueMakeString(context, errorReply.get()), 0));
         WKBundleIntentRequestPostFailure(currentRequest.get(), serializedData.get());
     }
+#endif
+}
+
+void LayoutTestController::deliverWebIntent(JSStringRef action, JSStringRef type, JSStringRef data)
+{
+#if ENABLE(WEB_INTENTS)
+    WKBundleFrameRef mainFrame = WKBundlePageGetMainFrame(InjectedBundle::shared().page()->page());
+    JSContextRef context = WKBundleFrameGetJavaScriptContext(mainFrame);
+
+    WKRetainPtr<WKStringRef> actionWK = toWK(action);
+    WKRetainPtr<WKStringRef> typeWK = toWK(type);
+    WKRetainPtr<WKSerializedScriptValueRef> dataWK(AdoptWK, WKSerializedScriptValueCreate(context, JSValueMakeString(context, data), 0));
+
+    WKRetainPtr<WKMutableDictionaryRef> intentInitDict(AdoptWK, WKMutableDictionaryCreate());
+    WKDictionaryAddItem(intentInitDict.get(), WKStringCreateWithUTF8CString("action"), actionWK.get());
+    WKDictionaryAddItem(intentInitDict.get(), WKStringCreateWithUTF8CString("type"), typeWK.get());
+    WKDictionaryAddItem(intentInitDict.get(), WKStringCreateWithUTF8CString("data"), dataWK.get());
+
+    WKRetainPtr<WKIntentDataRef> wkIntentData(AdoptWK, WKIntentDataCreate(intentInitDict.get()));
+    WKBundlePageDeliverIntentToFrame(InjectedBundle::shared().page()->page(), mainFrame, wkIntentData.get());
 #endif
 }
 

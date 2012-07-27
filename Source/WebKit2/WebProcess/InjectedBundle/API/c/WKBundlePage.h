@@ -404,6 +404,8 @@ WK_EXPORT WKImageRef WKBundlePageCreateScaledSnapshotInDocumentCoordinates(WKBun
 
 WK_EXPORT double WKBundlePageGetBackingScaleFactor(WKBundlePageRef page);
 
+WK_EXPORT void WKBundlePageDeliverIntentToFrame(WKBundlePageRef page, WKBundleFrameRef frame, WKIntentDataRef intent);
+
 #if defined(ENABLE_INSPECTOR) && ENABLE_INSPECTOR
 WK_EXPORT WKBundleInspectorRef WKBundlePageGetInspector(WKBundlePageRef page);
 #endif

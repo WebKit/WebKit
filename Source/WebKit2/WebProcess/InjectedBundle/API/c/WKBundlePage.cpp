@@ -31,6 +31,7 @@
 #include "InjectedBundleNodeHandle.h"
 #include "WKAPICast.h"
 #include "WKBundleAPICast.h"
+#include "WebFrame.h"
 #include "WebFullScreenManager.h"
 #include "WebImage.h"
 #include "WebPage.h"
@@ -44,6 +45,10 @@
 #include <WebCore/Frame.h>
 #include <WebCore/KURL.h>
 #include <WebCore/Page.h>
+
+#if ENABLE(WEB_INTENTS)
+#include "WebIntentData.h"
+#endif
 
 using namespace WebKit;
 
@@ -303,6 +308,13 @@ WKImageRef WKBundlePageCreateScaledSnapshotInDocumentCoordinates(WKBundlePageRef
 double WKBundlePageGetBackingScaleFactor(WKBundlePageRef pageRef)
 {
     return toImpl(pageRef)->deviceScaleFactor();
+}
+
+void WKBundlePageDeliverIntentToFrame(WKBundlePageRef pageRef, WKBundleFrameRef frameRef, WKIntentDataRef intentRef)
+{
+#if ENABLE(WEB_INTENTS)
+    toImpl(pageRef)->deliverIntentToFrame(toImpl(frameRef)->frameID(), toImpl(intentRef)->store());
+#endif
 }
 
 #if defined(ENABLE_INSPECTOR) && ENABLE_INSPECTOR

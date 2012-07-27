@@ -207,6 +207,7 @@ public:
 
     // Web intents testing.
     void sendWebIntentResponse(JSStringRef reply);
+    void deliverWebIntent(JSStringRef action, JSStringRef type, JSStringRef data);
 
     // Cookies testing
     void setAlwaysAcceptCookies(bool);
