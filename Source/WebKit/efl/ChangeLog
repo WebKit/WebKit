@@ -1,3 +1,22 @@
+2012-07-26  Seokju Kwon  <seokju.kwon@samsung.com>
+
+        [EFL] Highlight the element under mouse on web inspector
+        https://bugs.webkit.org/show_bug.cgi?id=91592
+
+        Reviewed by Kentaro Hara.
+
+        Implement highlighting the nodes when using the web inspector.
+
+        * WebCoreSupport/InspectorClientEfl.cpp:
+        (WebCore::InspectorClientEfl::highlight):
+        (WebCore::InspectorClientEfl::hideHighlight):
+        (WebCore::InspectorClientEfl::invalidateView):
+        (WebCore):
+        * WebCoreSupport/InspectorClientEfl.h:
+        (InspectorClientEfl):
+        * ewk/ewk_paint_context.cpp:
+        (ewk_paint_context_paint_contents):
+
 2012-07-26  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL][WK2] Implement Network Information provider

@@ -23,6 +23,11 @@
 #include "ewk_paint_context_private.h"
 #include "ewk_private.h"
 
+#if ENABLE(INSPECTOR)
+#include "InspectorController.h"
+#include "Page.h"
+#endif
+
 Ewk_Paint_Context* ewk_paint_context_new(cairo_t* cairo)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(cairo, 0);
@@ -169,4 +174,13 @@ void ewk_paint_context_paint_contents(Ewk_Paint_Context* context, WebCore::Frame
     if (view->isTransparent())
         context->graphicContext->clearRect(paintArea);
     view->paintContents(context->graphicContext.get(), paintArea);
+
+#if ENABLE(INSPECTOR)
+    WebCore::Page* page = view->frame()->page();
+    if (page) {
+        WebCore::InspectorController* controller = page->inspectorController();
+        if (controller->highlightedNode())
+            controller->drawHighlight(*context->graphicContext);
+    }
+#endif
 }

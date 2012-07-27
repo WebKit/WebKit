@@ -37,6 +37,17 @@ static void notifyWebInspectorDestroy(void* userData, Evas_Object* webview, void
         inspectorFrontendClient->destroyInspectorWindow(true);
 }
 
+static void invalidateView(Evas_Object* webView)
+{
+    Evas_Coord width, height;
+    Evas_Object* mainFrame = ewk_view_frame_main_get(webView);
+    if (mainFrame && ewk_frame_contents_size_get(mainFrame, &width, &height)) {
+        WebCore::Page* page = EWKPrivate::corePage(webView);
+        if (page)
+            page->mainFrame()->view()->invalidateRect(WebCore::IntRect(0, 0, width, height));
+    }
+}
+
 class InspectorFrontendSettingsEfl : public InspectorFrontendClientLocal::Settings {
 public:
     virtual String getProperty(const String& name)
@@ -107,12 +118,12 @@ void InspectorClientEfl::bringFrontendToFront()
 
 void InspectorClientEfl::highlight()
 {
-    notImplemented();
+    invalidateView(m_inspectedView);
 }
 
 void InspectorClientEfl::hideHighlight()
 {
-    notImplemented();
+    invalidateView(m_inspectedView);
 }
 
 bool InspectorClientEfl::sendMessageToFrontend(const String& message)
