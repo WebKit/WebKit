@@ -1,3 +1,18 @@
+2012-07-27  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add more Russian replay performance tests
+        https://bugs.webkit.org/show_bug.cgi?id=92462
+
+        Reviewed by Tony Chang.
+
+        Add more Russian sites as suggested by loislo.
+
+        * Replay/Russian/lenta.ru.replay: Added.
+        * Replay/Russian/www.ixbt.com.replay: Added.
+        * Replay/Russian/www.kp.ru.replay: Added.
+        * Replay/Russian/www.liveinternet.ru.replay: Added.
+        * Replay/Russian/www.pravda.ru.replay: Added.
+
 2012-07-26  Arnaud Renevier  <a.renevier@sisa.samsung.com>
 
         constructing TypedArray from another TypedArray is slow
