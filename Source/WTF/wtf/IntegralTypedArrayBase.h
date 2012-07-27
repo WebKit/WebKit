@@ -50,14 +50,6 @@ class IntegralTypedArrayBase : public TypedArrayBase<T> {
         TypedArrayBase<T>::data()[index] = static_cast<T>(static_cast<int64_t>(value));
     }
 
-    // Invoked by the indexed getter. Does not perform range checks; caller
-    // is responsible for doing so and returning undefined as necessary.
-    T item(unsigned index) const
-    {
-        ASSERT(index < TypedArrayBase<T>::m_length);
-        return TypedArrayBase<T>::data()[index];
-    }
-
   protected:
     IntegralTypedArrayBase(PassRefPtr<ArrayBuffer> buffer, unsigned byteOffset, unsigned length)
         : TypedArrayBase<T>(buffer, byteOffset, length)

@@ -1,3 +1,41 @@
+2012-07-26  Arnaud Renevier  <a.renevier@sisa.samsung.com>
+
+        constructing TypedArray from another TypedArray is slow
+        https://bugs.webkit.org/show_bug.cgi?id=90838
+
+        Reviewed by Kenneth Russell.
+
+        When constructing a typed array from an array like element, try to
+        determine if the argument is a typed array. If so, cast the argument
+        to a typed array, and read each element with .item() method. That
+        avoid reading the value as a JSValue, and speedups construction by
+        approximatively 3x (even 30x if TypedArrays are both the same type).
+
+        In order to achieve that, we use virtual getType method. We can use
+        this information to cast the TypedArray to the actual type, and then
+        read the values from the source.
+
+        Introduce constructArrayBufferViewWithTypedArrayArgument template
+        function which returns a new typed array if first argument is a typed
+        array, or 0 otherwise.
+
+        This patch also replaces previous is<Type>Array() calls with new
+        getType method.
+
+        * bindings/js/JSArrayBufferViewHelper.h:
+        (WebCore::constructArrayBufferViewWithTypedArrayArgument):
+        (WebCore):
+        (WebCore::constructArrayBufferView):
+        * bindings/v8/SerializedScriptValue.cpp:
+        * html/canvas/DataView.h:
+        (DataView):
+        (WebCore::DataView::getType):
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore):
+        (WebCore::WebGLRenderingContext::readPixels):
+        (WebCore::WebGLRenderingContext::validateTexFuncData):
+        * page/Crypto.cpp:
+
 2012-07-26  Max Vujovic  <mvujovic@adobe.com>
 
         Added binding and updated chromium tests.

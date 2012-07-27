@@ -48,17 +48,13 @@ public:
         TypedArrayBase<double>::data()[index] = static_cast<double>(value);
     }
 
-    // Invoked by the indexed getter. Does not perform range checks; caller
-    // is responsible for doing so and returning undefined as necessary.
-    double item(unsigned index) const
-    {
-        ASSERT(index < TypedArrayBase<double>::m_length);
-        double result = TypedArrayBase<double>::data()[index];
-        return result;
-    }
-
     inline PassRefPtr<Float64Array> subarray(int start) const;
     inline PassRefPtr<Float64Array> subarray(int start, int end) const;
+
+    virtual ViewType getType() const
+    {
+        return TypeFloat64;
+    }
 
 private:
     inline Float64Array(PassRefPtr<ArrayBuffer>,
@@ -66,9 +62,6 @@ private:
                  unsigned length);
     // Make constructor visible to superclass.
     friend class TypedArrayBase<double>;
-
-    // Overridden from ArrayBufferView.
-    virtual bool isDoubleArray() const { return true; }
 };
 
 PassRefPtr<Float64Array> Float64Array::create(unsigned length)

@@ -38,7 +38,6 @@ public:
     static PassRefPtr<DataView> create(unsigned length);
     static PassRefPtr<DataView> create(PassRefPtr<ArrayBuffer>, unsigned byteOffset, unsigned byteLength);
 
-    virtual bool isDataView() const { return true; }
     virtual unsigned length() const { return m_byteLength; }
     virtual unsigned byteLength() const { return m_byteLength; }
     virtual PassRefPtr<ArrayBufferView> slice(int, int) const { return 0; }
@@ -72,6 +71,11 @@ public:
     void setFloat32(unsigned byteOffset, float value, bool littleEndian, ExceptionCode&);
     void setFloat64(unsigned byteOffset, double value, ExceptionCode& ec) { setFloat64(byteOffset, value, false, ec); }
     void setFloat64(unsigned byteOffset, double value, bool littleEndian, ExceptionCode&);
+
+    virtual ViewType getType() const
+    {
+        return TypeDataView;
+    }
 
 protected:
     virtual void neuter();

@@ -44,15 +44,17 @@ public:
     inline PassRefPtr<Int32Array> subarray(int start) const;
     inline PassRefPtr<Int32Array> subarray(int start, int end) const;
 
+    virtual ViewType getType() const
+    {
+        return TypeInt32;
+    }
+
 private:
     inline Int32Array(PassRefPtr<ArrayBuffer>,
                   unsigned byteOffset,
                   unsigned length);
     // Make constructor visible to superclass.
     friend class TypedArrayBase<int>;
-
-    // Overridden from ArrayBufferView.
-    virtual bool isIntArray() const { return true; }
 };
 
 PassRefPtr<Int32Array> Int32Array::create(unsigned length)

@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<body>
+<script src="../resources/runner.js"></script>
+<script>
+
+var length = 10000000;
+var source = new Uint8Array(length);
+for (var i = 0; i < length; i++) {
+    source[i] = i;
+}
+
+PerfTestRunner.run(function() {
+    var target = new Uint8Array(source);
+});
+</script>
+</body>

@@ -1,3 +1,46 @@
+2012-07-26  Arnaud Renevier  <a.renevier@sisa.samsung.com>
+
+        constructing TypedArray from another TypedArray is slow
+        https://bugs.webkit.org/show_bug.cgi?id=90838
+
+        Reviewed by Kenneth Russell.
+
+        Introduce virtual method getType on ArrayBufferView. It returns the actual
+        type of the view. This method replaces previous is<Type>Array() methods.
+
+        * wtf/ArrayBufferView.h:
+        * wtf/Float32Array.h:
+        (WTF::Float32Array::getType):
+        (Float32Array):
+        * wtf/Float64Array.h:
+        (WTF::Float64Array::getType):
+        (Float64Array):
+        * wtf/Int16Array.h:
+        (WTF::Int16Array::getType):
+        (Int16Array):
+        * wtf/Int32Array.h:
+        (WTF::Int32Array::getType):
+        (Int32Array):
+        * wtf/Int8Array.h:
+        (WTF::Int8Array::getType):
+        (Int8Array):
+        * wtf/IntegralTypedArrayBase.h:
+        * wtf/TypedArrayBase.h:
+        (TypedArrayBase):
+        (WTF::TypedArrayBase::item):
+        * wtf/Uint16Array.h:
+        (WTF::Uint16Array::getType):
+        (Uint16Array):
+        * wtf/Uint32Array.h:
+        (WTF::Uint32Array::getType):
+        (Uint32Array):
+        * wtf/Uint8Array.h:
+        (WTF::Uint8Array::getType):
+        (Uint8Array):
+        * wtf/Uint8ClampedArray.h:
+        (WTF::Uint8ClampedArray::getType):
+        (Uint8ClampedArray):
+
 2012-07-26  Zeno Albisser  <zeno@webkit.org>
 
         [Qt] requestAnimationFrame should only trigger when a new frame can be displayed.

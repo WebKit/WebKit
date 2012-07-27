@@ -1,3 +1,13 @@
+2012-07-26  Arnaud Renevier  <a.renevier@sisa.samsung.com>
+
+        constructing TypedArray from another TypedArray is slow
+        https://bugs.webkit.org/show_bug.cgi?id=90838
+
+        Reviewed by Kenneth Russell.
+
+        * Bindings/typed-array-construct-from-same-type.html: Added.
+        * Bindings/typed-array-construct-from-typed.html: Added.
+
 2012-07-25  Ryosuke Niwa  <rniwa@webkit.org>
 
         Import more replay performance tests from Mozilla's Tp5 test suite

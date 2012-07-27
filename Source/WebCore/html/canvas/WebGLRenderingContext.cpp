@@ -3280,7 +3280,7 @@ void WebGLRenderingContext::readPixels(GC3Dint x, GC3Dint y, GC3Dsizei width, GC
         return;
     }
     // Validate array type against pixel type.
-    if (!pixels->isUnsignedByteArray()) {
+    if (pixels->getType() != ArrayBufferView::TypeUint8) {
         synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, "readPixels", "ArrayBufferView not Uint8Array");
         return;
     }
@@ -4937,7 +4937,7 @@ bool WebGLRenderingContext::validateTexFuncData(const char* functionName, GC3Din
 
     switch (type) {
     case GraphicsContext3D::UNSIGNED_BYTE:
-        if (!pixels->isUnsignedByteArray()) {
+        if (pixels->getType() != ArrayBufferView::TypeUint8) {
             synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, functionName, "type UNSIGNED_BYTE but ArrayBufferView not Uint8Array");
             return false;
         }
@@ -4945,13 +4945,13 @@ bool WebGLRenderingContext::validateTexFuncData(const char* functionName, GC3Din
     case GraphicsContext3D::UNSIGNED_SHORT_5_6_5:
     case GraphicsContext3D::UNSIGNED_SHORT_4_4_4_4:
     case GraphicsContext3D::UNSIGNED_SHORT_5_5_5_1:
-        if (!pixels->isUnsignedShortArray()) {
+        if (pixels->getType() != ArrayBufferView::TypeUint16) {
             synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, functionName, "type UNSIGNED_SHORT but ArrayBufferView not Uint16Array");
             return false;
         }
         break;
     case GraphicsContext3D::FLOAT: // OES_texture_float
-        if (!pixels->isFloatArray()) {
+        if (pixels->getType() != ArrayBufferView::TypeFloat32) {
             synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, functionName, "type FLOAT but ArrayBufferView not Float32Array");
             return false;
         }

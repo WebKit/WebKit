@@ -29,6 +29,7 @@
 
 #include "ExceptionCode.h"
 #include "JSArrayBuffer.h"
+#include "JSArrayBufferView.h"
 #include "JSDOMBinding.h"
 #include <interpreter/CallFrame.h>
 #include <runtime/ArgList.h>
@@ -36,6 +37,7 @@
 #include <runtime/JSObject.h>
 #include <runtime/JSValue.h>
 #include <wtf/ArrayBufferView.h>
+#include <wtf/TypedArrayBase.h>
 
 namespace WebCore {
 
@@ -81,6 +83,72 @@ JSC::JSValue setWebGLArrayHelper(JSC::ExecState* exec, T* impl, T* (*conversionF
     }
 
     return JSC::throwSyntaxError(exec);
+}
+
+// Template function used by XXXArrayConstructors.
+// If this returns 0, it will already have thrown a JavaScript exception.
+template<class C, typename T>
+PassRefPtr<C> constructArrayBufferViewWithTypedArrayArgument(JSC::ExecState* exec)
+{
+    RefPtr<ArrayBufferView> source = toArrayBufferView(exec->argument(0));
+    if (!source)
+        return 0;
+
+    ArrayBufferView::ViewType sourceType = source->getType();
+    if (sourceType == ArrayBufferView::TypeDataView)
+        return 0;
+
+    uint32_t length = asObject(exec->argument(0))->get(exec, JSC::Identifier(exec, "length")).toUInt32(exec);
+    RefPtr<C> array = C::create(length);
+    if (!array) {
+        setDOMException(exec, INDEX_SIZE_ERR);
+        return array;
+    }
+
+    if (array->getType() == sourceType) {
+        memcpy(array->baseAddress(), source->baseAddress(), length * sizeof(T));
+        return array;
+    }
+
+    switch (sourceType) {
+    case ArrayBufferView::TypeInt8:
+        for (unsigned i = 0; i < length; ++i)
+            array->set(i, (T)(static_cast<TypedArrayBase<signed char> *>(source.get())->item(i)));
+        break;
+    case ArrayBufferView::TypeUint8:
+    case ArrayBufferView::TypeUint8Clamped:
+        for (unsigned i = 0; i < length; ++i)
+            array->set(i, (T)(static_cast<TypedArrayBase<unsigned char> *>(source.get())->item(i)));
+        break;
+    case ArrayBufferView::TypeInt16:
+        for (unsigned i = 0; i < length; ++i)
+            array->set(i, (T)(static_cast<TypedArrayBase<signed short> *>(source.get())->item(i)));
+        break;
+    case ArrayBufferView::TypeUint16:
+        for (unsigned i = 0; i < length; ++i)
+            array->set(i, (T)(static_cast<TypedArrayBase<unsigned short> *>(source.get())->item(i)));
+        break;
+    case ArrayBufferView::TypeInt32:
+        for (unsigned i = 0; i < length; ++i)
+            array->set(i, (T)(static_cast<TypedArrayBase<int> *>(source.get())->item(i)));
+        break;
+    case ArrayBufferView::TypeUint32:
+        for (unsigned i = 0; i < length; ++i)
+            array->set(i, (T)(static_cast<TypedArrayBase<unsigned int> *>(source.get())->item(i)));
+        break;
+    case ArrayBufferView::TypeFloat32:
+        for (unsigned i = 0; i < length; ++i)
+            array->set(i, (T)(static_cast<TypedArrayBase<float> *>(source.get())->item(i)));
+        break;
+    case ArrayBufferView::TypeFloat64:
+        for (unsigned i = 0; i < length; ++i)
+            array->set(i, (T)(static_cast<TypedArrayBase<double> *>(source.get())->item(i)));
+        break;
+    default:
+        return 0;
+    }
+
+    return array;
 }
 
 // Template function used by XXXArrayConstructors.
@@ -138,6 +206,10 @@ PassRefPtr<C> constructArrayBufferView(JSC::ExecState* exec)
         if (view)
             return view;
     
+        view = constructArrayBufferViewWithTypedArrayArgument<C, T>(exec);
+        if (view)
+            return view;
+
         JSC::JSObject* srcArray = asObject(exec->argument(0));
         uint32_t length = srcArray->get(exec, JSC::Identifier(exec, "length")).toUInt32(exec);
         RefPtr<C> array = C::create(length);

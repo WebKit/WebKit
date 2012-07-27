@@ -48,17 +48,13 @@ public:
         TypedArrayBase<float>::data()[index] = static_cast<float>(value);
     }
 
-    // Invoked by the indexed getter. Does not perform range checks; caller
-    // is responsible for doing so and returning undefined as necessary.
-    float item(unsigned index) const
-    {
-        ASSERT(index < TypedArrayBase<float>::m_length);
-        float result = TypedArrayBase<float>::data()[index];
-        return result;
-    }
-
     inline PassRefPtr<Float32Array> subarray(int start) const;
     inline PassRefPtr<Float32Array> subarray(int start, int end) const;
+
+    virtual ViewType getType() const
+    {
+        return TypeFloat32;
+    }
 
 private:
     inline Float32Array(PassRefPtr<ArrayBuffer>,
@@ -66,9 +62,6 @@ private:
                     unsigned length);
     // Make constructor visible to superclass.
     friend class TypedArrayBase<float>;
-
-    // Overridden from ArrayBufferView.
-    virtual bool isFloatArray() const { return true; }
 };
 
 PassRefPtr<Float32Array> Float32Array::create(unsigned length)

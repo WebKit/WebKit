@@ -38,16 +38,19 @@ namespace WTF {
 
 class WTF_EXPORT_PRIVATE_RTTI ArrayBufferView : public RefCounted<ArrayBufferView> {
   public:
-    virtual bool isByteArray() const { return false; }
-    virtual bool isUnsignedByteArray() const { return false; }
-    virtual bool isUnsignedByteClampedArray() const { return false; }
-    virtual bool isShortArray() const { return false; }
-    virtual bool isUnsignedShortArray() const { return false; }
-    virtual bool isIntArray() const { return false; }
-    virtual bool isUnsignedIntArray() const { return false; }
-    virtual bool isFloatArray() const { return false; }
-    virtual bool isDoubleArray() const { return false; }
-    virtual bool isDataView() const { return false; }
+    enum ViewType {
+        TypeInt8,
+        TypeUint8,
+        TypeUint8Clamped,
+        TypeInt16,
+        TypeUint16,
+        TypeInt32,
+        TypeUint32,
+        TypeFloat32,
+        TypeFloat64,
+        TypeDataView
+    };
+    virtual ViewType getType() const = 0;
 
     PassRefPtr<ArrayBuffer> buffer() const
     {

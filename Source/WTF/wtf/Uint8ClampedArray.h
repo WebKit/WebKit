@@ -55,15 +55,17 @@ public:
     inline PassRefPtr<Uint8ClampedArray> subarray(int start) const;
     inline PassRefPtr<Uint8ClampedArray> subarray(int start, int end) const;
 
+    virtual ViewType getType() const
+    {
+        return TypeUint8Clamped;
+    }
+
 private:
     inline Uint8ClampedArray(PassRefPtr<ArrayBuffer>,
                              unsigned byteOffset,
                              unsigned length);
     // Make constructor visible to superclass.
     friend class TypedArrayBase<unsigned char>;
-
-    // Overridden from ArrayBufferView.
-    virtual bool isUnsignedByteClampedArray() const { return true; }
 };
 
 PassRefPtr<Uint8ClampedArray> Uint8ClampedArray::create(unsigned length)
