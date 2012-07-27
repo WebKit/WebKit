@@ -1,3 +1,15 @@
+2012-07-27  KwangYong Choi  <ky0.choi@samsung.com>
+
+        [WK2][EFL][WTR] TestNetscapePlugin is required.
+        https://bugs.webkit.org/show_bug.cgi?id=88756
+
+        Reviewed by Simon Hausmann.
+
+        libTestNetscapePlugin.so should be required for DRT/WTR/EFL.
+
+        * CMakeLists.txt:
+        * DumpRenderTree/TestNetscapePlugin/CMakeList.txt:
+
 2012-07-27  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
 
         [EFL] Memory leaks in EFL DRT
