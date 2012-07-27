@@ -1,3 +1,14 @@
+2012-07-27  Anders Carlsson  <andersca@apple.com>
+
+        Show the unavailable plug-in indicator for Java applets as well
+        https://bugs.webkit.org/show_bug.cgi?id=92521
+
+        Reviewed by Sam Weinig.
+
+        Check if the Java plug-in is blocked before trying to instantiate it.
+
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+
 2012-07-25  Jer Noble  <jer.noble@apple.com>
 
         Add setting to enable and disable diagnostic logging.

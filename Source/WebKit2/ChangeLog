@@ -1,3 +1,18 @@
+2012-07-27  Anders Carlsson  <andersca@apple.com>
+
+        Show the unavailable plug-in indicator for Java applets as well
+        https://bugs.webkit.org/show_bug.cgi?id=92521
+
+        Reviewed by Sam Weinig.
+
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::unavailablePluginButtonClicked):
+        This can now be called on applet elements as well.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::createJavaAppletWidget):
+        Get the MIME type from the applet element.
+
 2012-07-27  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         [WK2] Fix build warning in WebEventConversion.cpp

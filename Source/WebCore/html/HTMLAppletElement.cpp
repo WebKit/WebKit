@@ -42,6 +42,8 @@ HTMLAppletElement::HTMLAppletElement(const QualifiedName& tagName, Document* doc
     : HTMLPlugInImageElement(tagName, document, createdByParser, ShouldNotPreferPlugInsForImages)
 {
     ASSERT(hasTagName(appletTag));
+
+    m_serviceType = "application/x-java-applet";
 }
 
 PassRefPtr<HTMLAppletElement> HTMLAppletElement::create(const QualifiedName& tagName, Document* document, bool createdByParser)
