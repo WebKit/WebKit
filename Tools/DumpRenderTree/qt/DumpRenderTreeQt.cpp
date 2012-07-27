@@ -696,7 +696,7 @@ void DumpRenderTree::processLine(const QString &input)
     m_expectedHash = QString();
     // single quote marks the pixel dump hash
     int indexOfFirstSeparator = line.indexOf('\'');
-    int indexOfSecondSeparator = line.indexOf('\'', indexOfFirstSeparator);
+    int indexOfSecondSeparator = line.indexOf('\'', indexOfFirstSeparator + 1);
     if (indexOfFirstSeparator > -1) {
         int indexOfPixelHash = indexOfFirstSeparator + 1;
 

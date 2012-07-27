@@ -1,3 +1,13 @@
+2012-07-27  Balazs Kelemen  <kbalazs@webkit.org>
+
+        [NRWT] should have a way to restrict pixel tests for individual directories
+        https://bugs.webkit.org/show_bug.cgi?id=91754
+
+        Unreviewed attempt to fix the chaos I introduced.
+
+        * DumpRenderTree/qt/DumpRenderTreeQt.cpp:
+        (WebCore::DumpRenderTree::processLine):
+
 2012-07-27  YoungTaeck Song  <youngtaeck.song@samsung.com>
 
         [WK2][EFL] Add an ACCELERATED_COMPOSITING implementation for Efl WebKit2
