@@ -1,3 +1,19 @@
+2012-07-27  No'am Rosenthal  <noam.rosenthal@nokia.com>
+
+        [Texmap] Performance regression in texture uploads after r121223
+        https://bugs.webkit.org/show_bug.cgi?id=91897
+
+        Reviewed by Jocelyn Turcotte.
+
+        Rolling out r121223, with some conflict fixes.
+
+        * platform/graphics/texmap/TextureMapperGL.cpp:
+        (WebCore::swizzleBGRAToRGBA):
+        (WebCore):
+        (WebCore::driverSupportsBGRASwizzling):
+        (WebCore::BitmapTextureGL::didReset):
+        (WebCore::BitmapTextureGL::updateContents):
+
 2012-07-27  Joe Mason  <jmason@rim.com>
 
         [BlackBerry] Update NetworkJob::sendRequestWithCredentials to use new getProxyAddress API

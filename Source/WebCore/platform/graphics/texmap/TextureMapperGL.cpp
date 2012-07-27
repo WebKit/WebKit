@@ -22,7 +22,6 @@
 #include "TextureMapperGL.h"
 
 #include "GraphicsContext.h"
-#include "GraphicsContext3D.h"
 #include "Image.h"
 #include "NotImplemented.h"
 #include "TextureMapperShaderManager.h"
@@ -50,6 +49,12 @@
 #include <AGL/agl.h>
 #elif defined(XP_UNIX)
 #include <GL/glx.h>
+#endif
+
+#if USE(CAIRO)
+#include "CairoUtilities.h"
+#include "RefPtrCairo.h"
+#include <cairo.h>
 #endif
 
 #define GL_CMD(...) do { __VA_ARGS__; ASSERT_ARG(__VA_ARGS__, !glGetError()); } while (0)
@@ -622,6 +627,26 @@ bool BitmapTextureGL::canReuseWith(const IntSize& contentsSize, Flags)
 #define DEFAULT_TEXTURE_PIXEL_TRANSFER_TYPE GL_UNSIGNED_BYTE
 #endif
 
+static void swizzleBGRAToRGBA(uint32_t* data, const IntRect& rect, int stride = 0)
+{
+    stride = stride ? stride : rect.width();
+    for (int y = rect.y(); y < rect.maxY(); ++y) {
+        uint32_t* p = data + y * stride;
+        for (int x = rect.x(); x < rect.maxX(); ++x)
+            p[x] = ((p[x] << 16) & 0xff0000) | ((p[x] >> 16) & 0xff) | (p[x] & 0xff00ff00);
+    }
+}
+
+static bool driverSupportsBGRASwizzling()
+{
+#if defined(TEXMAP_OPENGL_ES_2)
+    // FIXME: Implement reliable detection. See also https://bugs.webkit.org/show_bug.cgi?id=81103.
+    return false;
+#else
+    return true;
+#endif
+}
+
 static bool driverSupportsSubImage()
 {
 #if defined(TEXMAP_OPENGL_ES_2)
@@ -641,23 +666,31 @@ void BitmapTextureGL::didReset()
     if (m_textureSize == contentSize())
         return;
 
+    GLuint format = driverSupportsBGRASwizzling() ? GL_BGRA : GL_RGBA;
+
     m_textureSize = contentSize();
     GL_CMD(glBindTexture(GL_TEXTURE_2D, m_id));
     GL_CMD(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
     GL_CMD(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
     GL_CMD(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
     GL_CMD(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
-    GL_CMD(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_textureSize.width(), m_textureSize.height(), 0, GL_RGBA, DEFAULT_TEXTURE_PIXEL_TRANSFER_TYPE, 0));
+    GL_CMD(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_textureSize.width(), m_textureSize.height(), 0, format, DEFAULT_TEXTURE_PIXEL_TRANSFER_TYPE, 0));
 }
 
 
 void BitmapTextureGL::updateContents(const void* data, const IntRect& targetRect, const IntPoint& sourceOffset, int bytesPerLine)
 {
+    GLuint glFormat = GL_RGBA;
     GL_CMD(glBindTexture(GL_TEXTURE_2D, m_id));
 
     const unsigned bytesPerPixel = 4;
-    if (bytesPerLine == targetRect.width() * bytesPerPixel && sourceOffset == IntPoint::zero()) {
-        GL_CMD(glTexSubImage2D(GL_TEXTURE_2D, 0, targetRect.x(), targetRect.y(), targetRect.width(), targetRect.height(), GL_RGBA, DEFAULT_TEXTURE_PIXEL_TRANSFER_TYPE, (const char*)data));
+    if (driverSupportsBGRASwizzling())
+        glFormat = GL_BGRA;
+    else
+        swizzleBGRAToRGBA(reinterpret_cast<uint32_t*>(const_cast<void*>(data)), IntRect(sourceOffset, targetRect.size()), bytesPerLine / bytesPerPixel);
+
+    if (bytesPerLine == targetRect.width() / 4 && sourceOffset == IntPoint::zero()) {
+        GL_CMD(glTexSubImage2D(GL_TEXTURE_2D, 0, targetRect.x(), targetRect.y(), targetRect.width(), targetRect.height(), glFormat, DEFAULT_TEXTURE_PIXEL_TRANSFER_TYPE, (const char*)data));
         return;
     }
 
@@ -675,7 +708,7 @@ void BitmapTextureGL::updateContents(const void* data, const IntRect& targetRect
             dst += targetBytesPerLine;
         }
 
-        GL_CMD(glTexSubImage2D(GL_TEXTURE_2D, 0, targetRect.x(), targetRect.y(), targetRect.width(), targetRect.height(), GL_RGBA, DEFAULT_TEXTURE_PIXEL_TRANSFER_TYPE, temporaryData.data()));
+        GL_CMD(glTexSubImage2D(GL_TEXTURE_2D, 0, targetRect.x(), targetRect.y(), targetRect.width(), targetRect.height(), glFormat, DEFAULT_TEXTURE_PIXEL_TRANSFER_TYPE, temporaryData.data()));
         return;
     }
 
@@ -684,7 +717,7 @@ void BitmapTextureGL::updateContents(const void* data, const IntRect& targetRect
     GL_CMD(glPixelStorei(GL_UNPACK_ROW_LENGTH, bytesPerLine / bytesPerPixel));
     GL_CMD(glPixelStorei(GL_UNPACK_SKIP_ROWS, sourceOffset.y()));
     GL_CMD(glPixelStorei(GL_UNPACK_SKIP_PIXELS, sourceOffset.x()));
-    GL_CMD(glTexSubImage2D(GL_TEXTURE_2D, 0, targetRect.x(), targetRect.y(), targetRect.width(), targetRect.height(), GL_RGBA, DEFAULT_TEXTURE_PIXEL_TRANSFER_TYPE, (const char*)data));
+    GL_CMD(glTexSubImage2D(GL_TEXTURE_2D, 0, targetRect.x(), targetRect.y(), targetRect.width(), targetRect.height(), glFormat, DEFAULT_TEXTURE_PIXEL_TRANSFER_TYPE, (const char*)data));
     GL_CMD(glPixelStorei(GL_UNPACK_ROW_LENGTH, 0));
     GL_CMD(glPixelStorei(GL_UNPACK_SKIP_ROWS, 0));
     GL_CMD(glPixelStorei(GL_UNPACK_SKIP_PIXELS, 0));
@@ -695,12 +728,23 @@ void BitmapTextureGL::updateContents(Image* image, const IntRect& targetRect, co
 {
     if (!image)
         return;
+    NativeImagePtr frameImage = image->nativeImageForCurrentFrame();
+    if (!frameImage)
+        return;
 
-    Vector<uint8_t> imageData;
-    GraphicsContext3D::extractImageData(image, GraphicsContext3D::RGBA, GraphicsContext3D::UNSIGNED_BYTE, false /* flipY */, true /* premultiplyAlpha */, false /* ignoreGammaAndColorProfile */, imageData);
+    int bytesPerLine;
+    const char* imageData;
 
-    const unsigned bytesPerPixel = 4;
-    updateContents(imageData.data(), targetRect, offset, image->width() * bytesPerPixel);
+#if PLATFORM(QT)
+    imageData = reinterpret_cast<const char*>(frameImage->constBits());
+    bytesPerLine = frameImage->bytesPerLine();
+#elif USE(CAIRO)
+    cairo_surface_t* surface = frameImage->surface();
+    imageData = reinterpret_cast<const char*>(cairo_image_surface_get_data(surface));
+    bytesPerLine = cairo_image_surface_get_stride(surface);
+#endif
+
+    updateContents(imageData, targetRect, offset, bytesPerLine);
 }
 
 #if ENABLE(CSS_FILTERS)
