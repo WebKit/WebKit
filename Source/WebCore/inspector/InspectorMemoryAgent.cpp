@@ -417,17 +417,15 @@ void InspectorMemoryAgent::getDOMNodeCount(ErrorString*, RefPtr<TypeBuilder::Arr
 
 static PassRefPtr<InspectorMemoryBlock> jsHeapInfo()
 {
-    size_t usedJSHeapSize;
-    size_t totalJSHeapSize;
-    size_t jsHeapSizeLimit;
-    ScriptGCEvent::getHeapSize(usedJSHeapSize, totalJSHeapSize, jsHeapSizeLimit);
+    HeapInfo info;
+    ScriptGCEvent::getHeapSize(info);
 
     RefPtr<InspectorMemoryBlock> jsHeapAllocated = InspectorMemoryBlock::create().setName(MemoryBlockName::jsHeapAllocated);
-    jsHeapAllocated->setSize(totalJSHeapSize);
+    jsHeapAllocated->setSize(static_cast<int>(info.totalJSHeapSize));
 
     RefPtr<TypeBuilder::Array<InspectorMemoryBlock> > children = TypeBuilder::Array<InspectorMemoryBlock>::create();
     RefPtr<InspectorMemoryBlock> jsHeapUsed = InspectorMemoryBlock::create().setName(MemoryBlockName::jsHeapUsed);
-    jsHeapUsed->setSize(usedJSHeapSize);
+    jsHeapUsed->setSize(static_cast<int>(info.usedJSHeapSize));
     children->addItem(jsHeapUsed);
 
     jsHeapAllocated->setChildren(children);

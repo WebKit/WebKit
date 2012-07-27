@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2012 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -28,37 +28,34 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ScriptGCEvent_h
-#define ScriptGCEvent_h
+#include "config.h"
 
-#if ENABLE(INSPECTOR)
+#include "MemoryInfo.h"
 
-namespace WebCore {
+#include <gtest/gtest.h>
 
-class ScriptGCEventListener;
+using namespace WebCore;
 
-struct HeapInfo {
-    HeapInfo()
-        : usedJSHeapSize(0)
-        , totalJSHeapSize(0)
-        , jsHeapSizeLimit(0)
-    {
-    }
+namespace {
 
-    size_t usedJSHeapSize;
-    size_t totalJSHeapSize;
-    size_t jsHeapSizeLimit;
-};
-
-class ScriptGCEvent
+TEST(MemoryInfo, quantizeMemorySize)
 {
-public:
-    static void addEventListener(ScriptGCEventListener*) { }
-    static void removeEventListener(ScriptGCEventListener*) { }
-    static void getHeapSize(HeapInfo&);
-};
+    EXPECT_EQ(10000000u, quantizeMemorySize(1024));
+    EXPECT_EQ(10000000u, quantizeMemorySize(1024 * 1024));
+    EXPECT_EQ(410000000u, quantizeMemorySize(389472983));
+    EXPECT_EQ(39600000u, quantizeMemorySize(38947298));
+    EXPECT_EQ(29400000u, quantizeMemorySize(28947298));
+    EXPECT_EQ(19300000u, quantizeMemorySize(18947298));
+    EXPECT_EQ(14300000u, quantizeMemorySize(13947298));
+    EXPECT_EQ(10000000u, quantizeMemorySize(3894729));
+    EXPECT_EQ(10000000u, quantizeMemorySize(389472));
+    EXPECT_EQ(10000000u, quantizeMemorySize(38947));
+    EXPECT_EQ(10000000u, quantizeMemorySize(3894));
+    EXPECT_EQ(10000000u, quantizeMemorySize(389));
+    EXPECT_EQ(10000000u, quantizeMemorySize(38));
+    EXPECT_EQ(10000000u, quantizeMemorySize(3));
+    EXPECT_EQ(10000000u, quantizeMemorySize(1));
+    EXPECT_EQ(10000000u, quantizeMemorySize(0));
+}
 
-} // namespace WebCore
-
-#endif // !ENABLE(INSPECTOR)
-#endif // !defined(ScriptGCEvent_h)
+} // namespace

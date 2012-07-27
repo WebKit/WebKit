@@ -467,12 +467,10 @@ void InspectorTimelineAgent::innerAddRecordToTimeline(PassRefPtr<InspectorObject
 
 void InspectorTimelineAgent::setHeapSizeStatistics(InspectorObject* record)
 {
-    size_t usedHeapSize = 0;
-    size_t totalHeapSize = 0;
-    size_t heapSizeLimit = 0;
-    ScriptGCEvent::getHeapSize(usedHeapSize, totalHeapSize, heapSizeLimit);
-    record->setNumber("usedHeapSize", usedHeapSize);
-    record->setNumber("totalHeapSize", totalHeapSize);
+    HeapInfo info;
+    ScriptGCEvent::getHeapSize(info);
+    record->setNumber("usedHeapSize", info.usedJSHeapSize);
+    record->setNumber("totalHeapSize", info.totalJSHeapSize);
 
     if (m_state->getBoolean(TimelineAgentState::includeMemoryDetails)) {
         RefPtr<InspectorObject> counters = InspectorObject::create();

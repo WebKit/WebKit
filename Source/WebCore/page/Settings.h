@@ -453,6 +453,9 @@ namespace WebCore {
         void setMemoryInfoEnabled(bool flag) { m_memoryInfoEnabled = flag; }
         bool memoryInfoEnabled() const { return m_memoryInfoEnabled; }
 
+        void setQuantizedMemoryInfoEnabled(bool flag) { m_quantizedMemoryInfoEnabled = flag; }
+        bool quantizedMemoryInfoEnabled() const { return m_quantizedMemoryInfoEnabled; }
+
         // This setting will be removed when an HTML5 compatibility issue is
         // resolved and WebKit implementation of interactive validation is
         // completed. See http://webkit.org/b/40520, http://webkit.org/b/40747,
@@ -731,11 +734,12 @@ namespace WebCore {
 #if ENABLE(FULLSCREEN_API)
         bool m_fullScreenAPIEnabled : 1;
 #endif
-        bool m_asynchronousSpellCheckingEnabled: 1;
-        bool m_unifiedTextCheckerEnabled: 1;
-        bool m_memoryInfoEnabled: 1;
-        bool m_interactiveFormValidation: 1;
-        bool m_usePreHTML5ParserQuirks: 1;
+        bool m_asynchronousSpellCheckingEnabled : 1;
+        bool m_unifiedTextCheckerEnabled : 1;
+        bool m_memoryInfoEnabled : 1;
+        bool m_quantizedMemoryInfoEnabled : 1;
+        bool m_interactiveFormValidation : 1;
+        bool m_usePreHTML5ParserQuirks : 1;
         bool m_hyperlinkAuditingEnabled : 1;
         bool m_crossOriginCheckInGetMatchedCSSRulesDisabled : 1;
         bool m_forceCompositingMode : 1;

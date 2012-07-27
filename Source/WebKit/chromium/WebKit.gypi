@@ -125,6 +125,7 @@
             'tests/ListenerLeakTest.cpp',
             'tests/LocalizedDateICUTest.cpp',
             'tests/LocalizedNumberICUTest.cpp',
+            'tests/MemoryInfo.cpp',
             'tests/MockCCQuadCuller.h',
             'tests/OpaqueRectTrackingContentLayerDelegateTest.cpp',
             'tests/OpenTypeVerticalDataTest.cpp',

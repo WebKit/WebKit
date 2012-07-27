@@ -242,6 +242,7 @@ Settings::Settings(Page* page)
     , m_unifiedTextCheckerEnabled(false)
 #endif
     , m_memoryInfoEnabled(false)
+    , m_quantizedMemoryInfoEnabled(false)
     , m_interactiveFormValidation(false)
     , m_usePreHTML5ParserQuirks(false)
     , m_hyperlinkAuditingEnabled(false)

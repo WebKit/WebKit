@@ -1,3 +1,57 @@
+2012-07-27  Adam Barth  <abarth@webkit.org>
+
+        Add a Setting to expose quantized, rate-limited MemoryInfo values
+        https://bugs.webkit.org/show_bug.cgi?id=80444
+
+        Reviewed by Eric Seidel.
+
+        We do not currently expose real MemoryInfo objects to the web unless
+        the user opts in because we're worried that this memory information
+        could be used in side-channel attacks.
+
+        We've gotten feedback from a number of web app developers that this
+        information is very useful in tracking the performance of their
+        applications.  These developers use the setting in their testing labs
+        and regression harnesses to catch memory leaks and regressiosn early in
+        their development cycle.
+
+        Some of these developers have experimented with enabling this feature
+        within their enterprise and have found the memory data from the field
+        extremely useful in tracking down memory issues that slip through their
+        testing.
+
+        Based on this experience, they've asked whether we can enable this
+        functionality on a wider scale so they catch even more problems
+        including problems that don't manifest within their enterprise.
+        Because we're still worried about side-channel attacks, we don't want
+        to expose the raw data, so we've talked with these folks in more detail
+        to understand what information they find most valuable.
+
+        This patch is the result of those discussions.  In particular, this
+        patch adds an option to expose quantized and rate-limited memory
+        information to web pages.  Web pages can only learn new data every 20
+        minutes, which helps mitigate attacks where the attacker compares two
+        or readings to extract side-channel information.  The patch also only
+        reports 100 distinct memory values, which (combined with the rate
+        limts) makes it difficult for attackers to learn about small changes in
+        memory use.
+
+        * page/MemoryInfo.cpp:
+        (WebCore):
+        (HeapSizeCache):
+        (WebCore::HeapSizeCache::HeapSizeCache):
+        (WebCore::HeapSizeCache::getCachedHeapSize):
+        (WebCore::HeapSizeCache::maybeUpdate):
+        (WebCore::HeapSizeCache::update):
+        (WebCore::HeapSizeCache::quantize):
+        (WebCore::MemoryInfo::MemoryInfo):
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings):
+        * page/Settings.h:
+        (WebCore::Settings::setQuantizedMemoryInfoEnabled):
+        (WebCore::Settings::quantizedMemoryInfoEnabled):
+        (Settings):
+
 2012-07-27  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Move formatting support from JavaScriptSource to UISourceCode.

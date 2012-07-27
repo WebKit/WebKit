@@ -40,12 +40,26 @@ namespace WebCore {
 
 class ScriptGCEventListener;
 
+struct HeapInfo {
+    HeapInfo()
+        : usedJSHeapSize(0)
+        , totalJSHeapSize(0)
+        , jsHeapSizeLimit(0)
+    {
+    }
+
+    size_t usedJSHeapSize;
+    size_t totalJSHeapSize;
+    size_t jsHeapSizeLimit;
+};
+
 class ScriptGCEvent
 {
 public:
     static void addEventListener(ScriptGCEventListener*);
     static void removeEventListener(ScriptGCEventListener*);
-    static void getHeapSize(size_t&, size_t&, size_t&);
+    static void getHeapSize(HeapInfo&);
+
 private:
     static void gcEpilogueCallback(v8::GCType type, v8::GCCallbackFlags flags);
     static void gcPrologueCallback(v8::GCType type, v8::GCCallbackFlags flags);
