@@ -1,4 +1,4 @@
-PASS navigator.webkitGamepads is defined.
+PASS navigator.webkitGetGamepads is defined.
 PASS successfullyParsed is true
 
 TEST COMPLETE

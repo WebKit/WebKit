@@ -9,17 +9,17 @@
         gamepadController.disconnect(1);
         gamepadController.disconnect(2);
         gamepadController.disconnect(3);
-        shouldBe("navigator.webkitGamepads.length", "4");
-        shouldBeUndefined("navigator.webkitGamepads[0]");
-        shouldBeUndefined("navigator.webkitGamepads[1]");
-        shouldBeUndefined("navigator.webkitGamepads[2]");
-        shouldBeUndefined("navigator.webkitGamepads[3]");
+        shouldBe("navigator.webkitGetGamepads().length", "4");
+        shouldBeUndefined("navigator.webkitGetGamepads()[0]");
+        shouldBeUndefined("navigator.webkitGetGamepads()[1]");
+        shouldBeUndefined("navigator.webkitGetGamepads()[2]");
+        shouldBeUndefined("navigator.webkitGetGamepads()[3]");
 
         // connect and disconnect
         gamepadController.connect(0);
-        shouldBeNonNull("navigator.webkitGamepads[0]");
+        shouldBeNonNull("navigator.webkitGetGamepads()[0]");
         gamepadController.disconnect(0);
-        shouldBeUndefined("navigator.webkitGamepads[0]");
+        shouldBeUndefined("navigator.webkitGetGamepads()[0]");
 
         // connect again, and check standard access
         gamepadController.connect(0);
@@ -30,14 +30,14 @@
         gamepadController.setButtonData(0, 1, 0);
         gamepadController.setAxisData(0, 0, .5);
         gamepadController.setAxisData(0, 1, -1.0);
-        shouldBe("navigator.webkitGamepads[0].id", "'MockStick 3000'");
-        shouldBe("navigator.webkitGamepads[0].buttons.length", "2");
-        shouldBe("navigator.webkitGamepads[0].axes.length", "2");
-        shouldBe("navigator.webkitGamepads[0].buttons[0]", "1.0");
-        shouldBe("navigator.webkitGamepads[0].buttons[1]", "0.0");
-        shouldBe("navigator.webkitGamepads[0].axes.length", "2");
-        shouldBe("navigator.webkitGamepads[0].axes[0]", "0.5");
-        shouldBe("navigator.webkitGamepads[0].axes[1]", "-1.0");
+        shouldBe("navigator.webkitGetGamepads()[0].id", "'MockStick 3000'");
+        shouldBe("navigator.webkitGetGamepads()[0].buttons.length", "2");
+        shouldBe("navigator.webkitGetGamepads()[0].axes.length", "2");
+        shouldBe("navigator.webkitGetGamepads()[0].buttons[0]", "1.0");
+        shouldBe("navigator.webkitGetGamepads()[0].buttons[1]", "0.0");
+        shouldBe("navigator.webkitGetGamepads()[0].axes.length", "2");
+        shouldBe("navigator.webkitGetGamepads()[0].axes[0]", "0.5");
+        shouldBe("navigator.webkitGetGamepads()[0].axes[1]", "-1.0");
     }
     else
     {

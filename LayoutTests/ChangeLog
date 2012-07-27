@@ -1,3 +1,18 @@
+2012-07-27  Scott Graham  <scottmg@chromium.org>
+
+        Change navigator.webkitGamepads[] to navigator.webkitGetGamepads()
+        https://bugs.webkit.org/show_bug.cgi?id=92533
+
+        Reviewed by Adam Barth.
+
+        Updates for renamed access point.
+
+        * gamepad/gamepad-api-expected.txt:
+        * gamepad/gamepad-api.html:
+        * gamepad/gamepad-polling-access-expected.txt:
+        * gamepad/gamepad-polling-access.html:
+        * platform/chromium/fast/dom/navigator-detached-no-crash-expected.txt:
+
 2012-07-27  Brady Eidson  <beidson@apple.com>
 
         Plugins should not be allowed to override standard properties/attributes in non-standard worlds

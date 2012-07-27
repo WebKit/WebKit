@@ -1,3 +1,25 @@
+2012-07-27  Scott Graham  <scottmg@chromium.org>
+
+        Change navigator.webkitGamepads[] to navigator.webkitGetGamepads()
+        https://bugs.webkit.org/show_bug.cgi?id=92533
+
+        Reviewed by Adam Barth.
+
+        Per discussion on public-webapps. Pages that enumerate navigator were
+        causing background resources to be created to poll hardware
+        unintentionally. By changing to an explicit function call, this is
+        avoided (and the API becomes more clear too). This change updates the
+        implementation to match the current ED spec.
+
+        * Modules/gamepad/NavigatorGamepad.cpp:
+        (WebCore::NavigatorGamepad::webkitGetGamepads):
+        * Modules/gamepad/NavigatorGamepad.h:
+        (NavigatorGamepad):
+        * Modules/gamepad/NavigatorGamepad.idl:
+        * bindings/generic/RuntimeEnabledFeatures.h:
+        (WebCore::RuntimeEnabledFeatures::setWebkitGetGamepadsEnabled):
+        (WebCore::RuntimeEnabledFeatures::webkitGetGamepadsEnabled):
+
 2012-07-27  Brady Eidson  <beidson@apple.com>
 
         Plugins should not be allowed to override standard properties/attributes in non-standard worlds

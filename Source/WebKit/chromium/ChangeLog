@@ -1,3 +1,16 @@
+2012-07-27  Scott Graham  <scottmg@chromium.org>
+
+        Change navigator.webkitGamepads[] to navigator.webkitGetGamepads()
+        https://bugs.webkit.org/show_bug.cgi?id=92533
+
+        Reviewed by Adam Barth.
+
+        Renames for updated access point.
+
+        * src/WebRuntimeFeatures.cpp:
+        (WebKit::WebRuntimeFeatures::enableGamepad):
+        (WebKit::WebRuntimeFeatures::isGamepadEnabled):
+
 2012-07-27  Kevin Ellis  <kevers@chromium.org>
 
         [chromium] Calendar for input type=date should be larger on devices that support touch input.

@@ -40,7 +40,7 @@ public:
     virtual ~NavigatorGamepad();
     static NavigatorGamepad* from(Navigator*);
 
-    static GamepadList* webkitGamepads(Navigator*);
+    static GamepadList* webkitGetGamepads(Navigator*);
 
     GamepadList* gamepads();
 
