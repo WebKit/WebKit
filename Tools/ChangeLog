@@ -1,3 +1,16 @@
+2012-07-27  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
+
+        [EFL] Memory leaks in EFL DRT
+        https://bugs.webkit.org/show_bug.cgi?id=92347
+
+        Reviewed by Simon Hausmann.
+
+        Fix a memory leak in EFL's DRT code by adopting an allocation
+        of JSString created with JSStringCreateWithUTF8CString.
+
+        * DumpRenderTree/efl/DumpRenderTreeChrome.cpp:
+        (DumpRenderTreeChrome::onWindowObjectCleared):
+
 2012-07-27  Adam Barth  <abarth@webkit.org>
 
         Simplify ExpectedFailures

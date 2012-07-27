@@ -435,7 +435,7 @@ void DumpRenderTreeChrome::onWindowObjectCleared(void* userData, Evas_Object*, v
                         makeEventSender(objectClearedInfo->context, !DumpRenderTreeSupportEfl::frameParent(objectClearedInfo->frame)),
                         kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete, 0);
 
-    JSRetainPtr<JSStringRef> textInputControllerName(JSStringCreateWithUTF8CString("textInputController"));
+    JSRetainPtr<JSStringRef> textInputControllerName(Adopt, JSStringCreateWithUTF8CString("textInputController"));
     JSObjectSetProperty(objectClearedInfo->context, objectClearedInfo->windowObject,
                         textInputControllerName.get(),
                         makeTextInputController(objectClearedInfo->context),
