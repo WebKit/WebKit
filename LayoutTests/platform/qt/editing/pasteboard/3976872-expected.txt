@@ -18,21 +18,21 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x21
-        RenderText {#text} at (0,0) size 429x21
-          text run at (0,0) width 429: "This tests paste and match style on an empty (but styled) line"
-      RenderBlock {P} at (0,37) size 784x42
-        RenderText {#text} at (0,0) size 735x42
-          text run at (0,0) width 735: "The first line is copied (unstyled), then it's bolded, then a paragraph separator is inserted and the original"
-          text run at (0,21) width 311: "unstyled line is pasted (with style matching)."
-      RenderBlock {HR} at (0,95) size 784x2 [border: (1px inset #000000)]
-      RenderBlock {DIV} at (0,105) size 784x46
-        RenderBlock {DIV} at (0,0) size 784x23 [border: (1px solid #FF0000)]
-          RenderInline {B} at (0,0) size 212x21
-            RenderText {#text} at (1,1) size 212x21
-              text run at (1,1) width 212: "this text should end up bold"
-        RenderBlock {DIV} at (0,23) size 784x23 [border: (1px solid #FF0000)]
-          RenderInline {B} at (0,0) size 212x21
-            RenderText {#text} at (1,1) size 212x21
-              text run at (1,1) width 212: "this text should end up bold"
+      RenderBlock {P} at (0,0) size 784x19
+        RenderText {#text} at (0,0) size 363x19
+          text run at (0,0) width 363: "This tests paste and match style on an empty (but styled) line"
+      RenderBlock {P} at (0,35) size 784x38
+        RenderText {#text} at (0,0) size 756x38
+          text run at (0,0) width 756: "The first line is copied (unstyled), then it's bolded, then a paragraph separator is inserted and the original unstyled line is pasted"
+          text run at (0,19) width 127: "(with style matching)."
+      RenderBlock {HR} at (0,89) size 784x2 [border: (1px inset #000000)]
+      RenderBlock {DIV} at (0,99) size 784x42
+        RenderBlock {DIV} at (0,0) size 784x21 [border: (1px solid #FF0000)]
+          RenderInline {B} at (0,0) size 181x19
+            RenderText {#text} at (1,1) size 181x19
+              text run at (1,1) width 181: "this text should end up bold"
+        RenderBlock {DIV} at (0,21) size 784x21 [border: (1px solid #FF0000)]
+          RenderInline {B} at (0,0) size 181x19
+            RenderText {#text} at (1,1) size 181x19
+              text run at (1,1) width 181: "this text should end up bold"
 caret: position 28 of child 0 {#text} of child 0 {B} of child 1 {DIV} of child 7 {DIV} of body

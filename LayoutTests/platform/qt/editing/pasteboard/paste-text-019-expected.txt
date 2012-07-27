@@ -22,38 +22,38 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x336 [border: (2px solid #0000FF)]
-        RenderBlock {DIV} at (14,14) size 756x122
-          RenderText {#text} at (0,0) size 77x32
-            text run at (0,0) width 77: "Tests: "
+      RenderBlock {DIV} at (0,0) size 784x288 [border: (2px solid #0000FF)]
+        RenderBlock {DIV} at (14,14) size 756x84
+          RenderText {#text} at (0,0) size 66x28
+            text run at (0,0) width 66: "Tests: "
           RenderBR {BR} at (0,0) size 0x0
-          RenderText {#text} at (0,32) size 171x30
-            text run at (0,32) width 171: "Fix for this bug: "
-          RenderInline {A} at (0,0) size 585x30 [color=#0000EE]
-            RenderText {#text} at (171,32) size 585x30
-              text run at (171,32) width 585: "<http://bugzilla.opendarwin.org/show_bug.cgi?id=3429>"
-          RenderText {#text} at (0,62) size 697x60
-            text run at (0,62) width 697: "Text transformed with text-transform does not copy with transform"
-            text run at (0,92) width 75: "applied"
-        RenderBlock {DIV} at (14,152) size 756x170
-          RenderBlock (anonymous) at (0,0) size 756x62
-            RenderText {#text} at (0,0) size 214x32
-              text run at (0,0) width 214: "Expected Results: "
-            RenderBR {BR} at (214,24) size 0x0
-            RenderText {#text} at (0,32) size 223x30
-              text run at (0,32) width 223: "Should see the string"
-          RenderBlock {PRE} at (0,86) size 756x30
-            RenderText {#text} at (0,0) size 174x30
-              text run at (0,0) width 174: "Foo Bar baz Bar"
-          RenderBlock (anonymous) at (0,140) size 756x30
-            RenderText {#text} at (0,0) size 172x30
-              text run at (0,0) width 172: "(case sensitive)."
-      RenderBlock {DIV} at (0,360) size 784x34 [border: (2px solid #FF0000)]
-        RenderInline {SPAN} at (0,0) size 167x30
-          RenderInline {SPAN} at (0,0) size 85x30
-            RenderText {#text} at (2,2) size 85x30
-              text run at (2,2) width 85: "Foo Bar"
-          RenderText {#text} at (87,2) size 82x30
-            text run at (87,2) width 82: " bazBar"
+          RenderText {#text} at (0,28) size 158x28
+            text run at (0,28) width 158: "Fix for this bug: "
+          RenderInline {A} at (0,0) size 544x28 [color=#0000EE]
+            RenderText {#text} at (158,28) size 544x28
+              text run at (158,28) width 544: "<http://bugzilla.opendarwin.org/show_bug.cgi?id=3429>"
+          RenderText {#text} at (702,28) size 752x56
+            text run at (702,28) width 50: " Text"
+            text run at (0,56) width 671: "transformed with text-transform does not copy with transform applied"
+        RenderBlock {DIV} at (14,114) size 756x160
+          RenderBlock (anonymous) at (0,0) size 756x56
+            RenderText {#text} at (0,0) size 189x28
+              text run at (0,0) width 189: "Expected Results: "
+            RenderBR {BR} at (189,22) size 0x0
+            RenderText {#text} at (0,28) size 198x28
+              text run at (0,28) width 198: "Should see the string"
+          RenderBlock {PRE} at (0,80) size 756x28
+            RenderText {#text} at (0,0) size 210x28
+              text run at (0,0) width 210: "Foo Bar baz Bar"
+          RenderBlock (anonymous) at (0,132) size 756x28
+            RenderText {#text} at (0,0) size 153x28
+              text run at (0,0) width 153: "(case sensitive)."
+      RenderBlock {DIV} at (0,312) size 784x32 [border: (2px solid #FF0000)]
+        RenderInline {SPAN} at (0,0) size 152x28
+          RenderInline {SPAN} at (0,0) size 78x28
+            RenderText {#text} at (2,2) size 78x28
+              text run at (2,2) width 78: "Foo Bar"
+          RenderText {#text} at (80,2) size 74x28
+            text run at (80,2) width 74: " bazBar"
         RenderText {#text} at (0,0) size 0x0
 caret: position 7 of child 1 {#text} of child 1 {SPAN} of child 3 {DIV} of body

@@ -3,27 +3,27 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x42
-        RenderText {#text} at (0,0) size 764x42
-          text run at (0,0) width 464: "This tests smart paste of a fragment that ends in a select element. "
-          text run at (464,0) width 300: "There should be spaces added before and"
-          text run at (0,21) width 178: "after the inserted content."
-      RenderBlock {DIV} at (0,58) size 784x30
-        RenderMenuList {SELECT} at (2,2) size 37x26 [bgcolor=#FFFFFF]
-          RenderBlock (anonymous) at (4,2) size 9x21
-            RenderText at (0,0) size 9x21
-              text run at (0,0) width 9: "1"
-      RenderBlock {DIV} at (0,88) size 784x30
-        RenderText {#text} at (0,4) size 8x21
-          text run at (0,4) width 8: "x"
-        RenderText {#text} at (8,4) size 4x21
-          text run at (8,4) width 4: " "
-        RenderMenuList {SELECT} at (14,2) size 37x26 [bgcolor=#FFFFFF]
-          RenderBlock (anonymous) at (4,2) size 9x21
-            RenderText at (0,0) size 9x21
-              text run at (0,0) width 9: "1"
-        RenderText {#text} at (53,4) size 4x21
-          text run at (53,4) width 4: " "
-        RenderText {#text} at (57,4) size 8x21
-          text run at (57,4) width 8: "x"
+      RenderBlock {P} at (0,0) size 784x38
+        RenderText {#text} at (0,0) size 748x38
+          text run at (0,0) width 391: "This tests smart paste of a fragment that ends in a select element. "
+          text run at (391,0) width 357: "There should be spaces added before and after the inserted"
+          text run at (0,19) width 48: "content."
+      RenderBlock {DIV} at (0,54) size 784x28
+        RenderMenuList {SELECT} at (2,2) size 36x24 [bgcolor=#FFFFFF]
+          RenderBlock (anonymous) at (4,2) size 8x19
+            RenderText at (0,0) size 8x19
+              text run at (0,0) width 8: "1"
+      RenderBlock {DIV} at (0,82) size 784x28
+        RenderText {#text} at (0,4) size 7x19
+          text run at (0,4) width 7: "x"
+        RenderText {#text} at (7,4) size 4x19
+          text run at (7,4) width 4: " "
+        RenderMenuList {SELECT} at (13,2) size 36x24 [bgcolor=#FFFFFF]
+          RenderBlock (anonymous) at (4,2) size 8x19
+            RenderText at (0,0) size 8x19
+              text run at (0,0) width 8: "1"
+        RenderText {#text} at (51,4) size 4x19
+          text run at (51,4) width 4: " "
+        RenderText {#text} at (55,4) size 7x19
+          text run at (55,4) width 7: "x"
 caret: position 1 of child 3 {#text} of child 4 {DIV} of body

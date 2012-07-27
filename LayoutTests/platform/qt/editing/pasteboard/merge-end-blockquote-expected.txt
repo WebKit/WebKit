@@ -19,26 +19,26 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
-      RenderBlock {P} at (0,0) size 784x21
-        RenderText {#text} at (0,0) size 677x21
-          text run at (0,0) width 445: "This tests pasting a Mail blockquote at the start of a paragraph. "
-          text run at (445,0) width 232: "Blockquoting should be stripped."
-      RenderBlock {DIV} at (0,37) size 784x21
-        RenderText {#text} at (0,0) size 132x21
-          text run at (0,0) width 132: "Blockquoted Textx"
-      RenderBlock {P} at (0,74) size 784x42
-        RenderText {#text} at (0,0) size 781x42
-          text run at (0,0) width 320: "This tests pasting text into a Mail blockquote. "
-          text run at (320,0) width 461: "The last bit of content in the incoming fragment should be merged"
-          text run at (0,21) width 383: "with the paragraph after the position being pasted into."
-      RenderBlock {DIV} at (0,132) size 784x58
-        RenderBlock {BLOCKQUOTE} at (40,0) size 704x21
-          RenderBlock {DIV} at (0,0) size 704x21
-            RenderText {#text} at (0,0) size 111x21
-              text run at (0,0) width 111: "Blockquotedfoo"
-        RenderBlock (anonymous) at (0,37) size 784x0
-        RenderBlock {BLOCKQUOTE} at (40,37) size 704x21
-          RenderBlock {DIV} at (0,0) size 704x21
-            RenderText {#text} at (0,0) size 54x21
-              text run at (0,0) width 54: "barText"
+      RenderBlock {P} at (0,0) size 784x19
+        RenderText {#text} at (0,0) size 582x19
+          text run at (0,0) width 383: "This tests pasting a Mail blockquote at the start of a paragraph. "
+          text run at (383,0) width 199: "Blockquoting should be stripped."
+      RenderBlock {DIV} at (0,35) size 784x19
+        RenderText {#text} at (0,0) size 116x19
+          text run at (0,0) width 116: "Blockquoted Textx"
+      RenderBlock {P} at (0,70) size 784x38
+        RenderText {#text} at (0,0) size 782x38
+          text run at (0,0) width 276: "This tests pasting text into a Mail blockquote. "
+          text run at (276,0) width 506: "The last bit of content in the incoming fragment should be merged with the paragraph"
+          text run at (0,19) width 210: "after the position being pasted into."
+      RenderBlock {DIV} at (0,124) size 784x54
+        RenderBlock {BLOCKQUOTE} at (40,0) size 704x19
+          RenderBlock {DIV} at (0,0) size 704x19
+            RenderText {#text} at (0,0) size 98x19
+              text run at (0,0) width 98: "Blockquotedfoo"
+        RenderBlock (anonymous) at (0,35) size 784x0
+        RenderBlock {BLOCKQUOTE} at (40,35) size 704x19
+          RenderBlock {DIV} at (0,0) size 704x19
+            RenderText {#text} at (0,0) size 47x19
+              text run at (0,0) width 47: "barText"
 caret: position 4 of child 0 {#text} of child 0 {DIV} of child 1 {BLOCKQUOTE} of child 10 {DIV} of body

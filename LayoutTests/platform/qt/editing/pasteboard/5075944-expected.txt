@@ -3,15 +3,15 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x21
-        RenderText {#text} at (0,0) size 333x21
-          text run at (0,0) width 333: "This test for a bug copy/pasting underlined text."
-      RenderBlock {DIV} at (0,37) size 784x21
-        RenderInline {U} at (0,0) size 189x21
-          RenderText {#text} at (0,0) size 189x21
-            text run at (0,0) width 189: "This should be underlined."
-      RenderBlock {DIV} at (0,58) size 784x21
-        RenderInline {U} at (0,0) size 189x21
-          RenderText {#text} at (0,0) size 189x21
-            text run at (0,0) width 189: "This should be underlined."
+      RenderBlock {P} at (0,0) size 784x19
+        RenderText {#text} at (0,0) size 284x19
+          text run at (0,0) width 284: "This test for a bug copy/pasting underlined text."
+      RenderBlock {DIV} at (0,35) size 784x19
+        RenderInline {U} at (0,0) size 157x19
+          RenderText {#text} at (0,0) size 157x19
+            text run at (0,0) width 157: "This should be underlined."
+      RenderBlock {DIV} at (0,54) size 784x19
+        RenderInline {U} at (0,0) size 157x19
+          RenderText {#text} at (0,0) size 157x19
+            text run at (0,0) width 157: "This should be underlined."
 caret: position 26 of child 0 {#text} of child 0 {U} of child 4 {DIV} of body

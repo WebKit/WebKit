@@ -10,19 +10,19 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x42
-        RenderText {#text} at (0,0) size 776x42
-          text run at (0,0) width 776: "This is a test to make sure that a placeholder, even one without our special class on it, is removed only when it"
-          text run at (0,21) width 530: "has been collapsed away or when it has been displaced by pasted content."
-      RenderBlock {P} at (0,58) size 784x63
-        RenderText {#text} at (0,0) size 783x63
-          text run at (0,0) width 783: "Placeholders with our special class can, through bugs in deletion, be inserted into the document unnecessarily."
-          text run at (0,21) width 755: "Once that happens, we don't want to make matters worse by removing them if they are acting as line breaks"
-          text run at (0,42) width 169: "instead of placeholders."
-      RenderBlock {DIV} at (0,137) size 784x42
-        RenderText {#text} at (0,0) size 112x21
-          text run at (0,0) width 112: "First paragraph."
-        RenderBR {BR} at (112,16) size 0x0
-        RenderText {#text} at (0,21) size 136x21
-          text run at (0,21) width 136: "Second paragraph."
+      RenderBlock {P} at (0,0) size 784x38
+        RenderText {#text} at (0,0) size 777x38
+          text run at (0,0) width 777: "This is a test to make sure that a placeholder, even one without our special class on it, is removed only when it has been collapsed"
+          text run at (0,19) width 329: "away or when it has been displaced by pasted content."
+      RenderBlock {P} at (0,54) size 784x38
+        RenderText {#text} at (0,0) size 776x38
+          text run at (0,0) width 659: "Placeholders with our special class can, through bugs in deletion, be inserted into the document unnecessarily. "
+          text run at (659,0) width 117: "Once that happens,"
+          text run at (0,19) width 672: "we don't want to make matters worse by removing them if they are acting as line breaks instead of placeholders."
+      RenderBlock {DIV} at (0,108) size 784x38
+        RenderText {#text} at (0,0) size 96x19
+          text run at (0,0) width 96: "First paragraph."
+        RenderBR {BR} at (96,15) size 0x0
+        RenderText {#text} at (0,19) size 115x19
+          text run at (0,19) width 115: "Second paragraph."
 caret: position 16 of child 0 {#text} of child 4 {DIV} of body

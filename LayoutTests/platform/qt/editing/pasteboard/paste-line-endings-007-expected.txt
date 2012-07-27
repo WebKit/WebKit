@@ -21,36 +21,36 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x258 [border: (2px solid #0000FF)]
-        RenderBlock {DIV} at (14,14) size 756x92
-          RenderText {#text} at (0,0) size 77x32
-            text run at (0,0) width 77: "Tests: "
+      RenderBlock {DIV} at (0,0) size 784x240 [border: (2px solid #0000FF)]
+        RenderBlock {DIV} at (14,14) size 756x84
+          RenderText {#text} at (0,0) size 66x28
+            text run at (0,0) width 66: "Tests: "
           RenderBR {BR} at (0,0) size 0x0
-          RenderText {#text} at (0,32) size 171x30
-            text run at (0,32) width 171: "Fix for this bug: "
-          RenderInline {A} at (0,0) size 274x30 [color=#0000EE]
-            RenderText {#text} at (171,32) size 274x30
-              text run at (171,32) width 274: "<rdar://problem/4045513>"
-          RenderText {#text} at (445,32) size 747x60
-            text run at (445,32) width 222: " Copying and pasting"
-            text run at (0,62) width 747: "selection starting at end of paragraph can incorrectly remove line break"
-        RenderBlock {DIV} at (14,122) size 756x122
-          RenderText {#text} at (0,0) size 214x32
-            text run at (0,0) width 214: "Expected Results: "
-          RenderBR {BR} at (214,24) size 0x0
-          RenderText {#text} at (0,32) size 711x90
-            text run at (0,32) width 711: "Should see two lines of text below, self-documenting themselves as"
-            text run at (0,62) width 693: "\"line one\" and \"line two\". The insertion point must be after the first"
-            text run at (0,92) width 284: "character (\"l\") of \"line two\"."
-      RenderBlock {DIV} at (0,282) size 784x64
-        RenderBlock {DIV} at (0,0) size 784x64 [border: (2px solid #FF0000)]
-          RenderBlock (anonymous) at (2,2) size 780x30
-            RenderText {#text} at (0,0) size 82x30
-              text run at (0,0) width 82: "line one"
-            RenderBR {BR} at (82,23) size 0x0
-          RenderBlock {DIV} at (2,32) size 780x30
-            RenderText {#text} at (0,0) size 5x30
-              text run at (0,0) width 5: "l"
-            RenderText {#text} at (5,0) size 75x30
-              text run at (5,0) width 75: "ine two"
+          RenderText {#text} at (0,28) size 158x28
+            text run at (0,28) width 158: "Fix for this bug: "
+          RenderInline {A} at (0,0) size 257x28 [color=#0000EE]
+            RenderText {#text} at (158,28) size 257x28
+              text run at (158,28) width 257: "<rdar://problem/4045513>"
+          RenderText {#text} at (415,28) size 708x56
+            text run at (415,28) width 293: " Copying and pasting selection"
+            text run at (0,56) width 593: "starting at end of paragraph can incorrectly remove line break"
+        RenderBlock {DIV} at (14,114) size 756x112
+          RenderText {#text} at (0,0) size 189x28
+            text run at (0,0) width 189: "Expected Results: "
+          RenderBR {BR} at (189,22) size 0x0
+          RenderText {#text} at (0,28) size 746x84
+            text run at (0,28) width 746: "Should see two lines of text below, self-documenting themselves as \"line one\""
+            text run at (0,56) width 713: "and \"line two\". The insertion point must be after the first character (\"l\") of"
+            text run at (0,84) width 103: "\"line two\"."
+      RenderBlock {DIV} at (0,264) size 784x60
+        RenderBlock {DIV} at (0,0) size 784x60 [border: (2px solid #FF0000)]
+          RenderBlock (anonymous) at (2,2) size 780x28
+            RenderText {#text} at (0,0) size 76x28
+              text run at (0,0) width 76: "line one"
+            RenderBR {BR} at (76,22) size 0x0
+          RenderBlock {DIV} at (2,30) size 780x28
+            RenderText {#text} at (0,0) size 6x28
+              text run at (0,0) width 6: "l"
+            RenderText {#text} at (6,0) size 71x28
+              text run at (6,0) width 71: "ine two"
 caret: position 1 of child 0 {#text} of child 2 {DIV} of child 1 {DIV} of child 3 {DIV} of body

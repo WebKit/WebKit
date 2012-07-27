@@ -3,24 +3,23 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x42
-        RenderText {#text} at (0,0) size 772x42
-          text run at (0,0) width 453: "This tests for a bug where a copied link wouldn't paste as a link. "
-          text run at (453,0) width 319: "Both editable regions below should contain a"
-          text run at (0,21) width 138: "link \"Hello\\nWorld\"."
-      RenderBlock {DIV} at (0,58) size 784x42
-        RenderInline {A} at (0,0) size 42x42 [color=#0000EE]
-          RenderText {#text} at (0,0) size 38x21
-            text run at (0,0) width 38: "Hello"
-          RenderBR {BR} at (38,16) size 0x0
-          RenderText {#text} at (0,21) size 42x21
-            text run at (0,21) width 42: "World"
+      RenderBlock {P} at (0,0) size 784x19
+        RenderText {#text} at (0,0) size 782x19
+          text run at (0,0) width 388: "This tests for a bug where a copied link wouldn't paste as a link. "
+          text run at (388,0) width 394: "Both editable regions below should contain a link \"Hello\\nWorld\"."
+      RenderBlock {DIV} at (0,35) size 784x38
+        RenderInline {A} at (0,0) size 39x38 [color=#0000EE]
+          RenderText {#text} at (0,0) size 32x19
+            text run at (0,0) width 32: "Hello"
+          RenderBR {BR} at (32,15) size 0x0
+          RenderText {#text} at (0,19) size 39x19
+            text run at (0,19) width 39: "World"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {DIV} at (0,100) size 784x42
-        RenderInline {A} at (0,0) size 42x42 [color=#0000EE]
-          RenderText {#text} at (0,0) size 38x21
-            text run at (0,0) width 38: "Hello"
-          RenderBR {BR} at (38,16) size 0x0
-          RenderText {#text} at (0,21) size 42x21
-            text run at (0,21) width 42: "World"
+      RenderBlock {DIV} at (0,73) size 784x38
+        RenderInline {A} at (0,0) size 39x38 [color=#0000EE]
+          RenderText {#text} at (0,0) size 32x19
+            text run at (0,0) width 32: "Hello"
+          RenderBR {BR} at (32,15) size 0x0
+          RenderText {#text} at (0,19) size 39x19
+            text run at (0,19) width 39: "World"
 caret: position 5 of child 2 {#text} of child 0 {A} of child 4 {DIV} of body

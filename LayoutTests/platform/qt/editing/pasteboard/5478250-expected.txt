@@ -3,21 +3,21 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x21
-        RenderText {#text} at (0,0) size 575x21
-          text run at (0,0) width 575: "This tests that inherited block properties do not propigate to the editing style span."
-      RenderBlock {DIV} at (50,37) size 734x21
-        RenderText {#text} at (258,0) size 168x21
-          text run at (258,0) width 168: "Some text that is bold."
-      RenderBlock {DIV} at (0,58) size 784x42
-        RenderBlock (anonymous) at (0,0) size 784x21
-          RenderText {#text} at (0,0) size 121x21
-            text run at (0,0) width 121: "Some text that is "
-          RenderInline {SPAN} at (0,0) size 38x21
-            RenderText {#text} at (121,0) size 38x21
-              text run at (121,0) width 38: "bold."
-        RenderBlock {DIV} at (0,21) size 784x21
-          RenderInline {SPAN} at (0,0) size 431x21
-            RenderText {#text} at (0,0) size 431x21
-              text run at (0,0) width 431: "This text should bold and left justified with \"Some text...\"."
+      RenderBlock {P} at (0,0) size 784x19
+        RenderText {#text} at (0,0) size 492x19
+          text run at (0,0) width 492: "This tests that inherited block properties do not propigate to the editing style span."
+      RenderBlock {DIV} at (50,35) size 734x19
+        RenderText {#text} at (268,0) size 148x19
+          text run at (268,0) width 148: "Some text that is bold."
+      RenderBlock {DIV} at (0,54) size 784x38
+        RenderBlock (anonymous) at (0,0) size 784x19
+          RenderText {#text} at (0,0) size 104x19
+            text run at (0,0) width 104: "Some text that is "
+          RenderInline {SPAN} at (0,0) size 32x19
+            RenderText {#text} at (104,0) size 32x19
+              text run at (104,0) width 32: "bold."
+        RenderBlock {DIV} at (0,19) size 784x19
+          RenderInline {SPAN} at (0,0) size 385x19
+            RenderText {#text} at (0,0) size 385x19
+              text run at (0,0) width 385: "This text should bold and left justified with \"Some text...\"."
 caret: position 61 of child 0 {#text} of child 0 {SPAN} of child 2 {DIV} of child 4 {DIV} of body

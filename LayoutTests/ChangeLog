@@ -1,3 +1,180 @@
+2012-07-27  Ádám Kallai  <kadam@inf.u-szeged.hu>
+
+        [Qt] platform/qt/editing/pasteboard tests needs update after font change.
+        https://bugs.webkit.org/show_bug.cgi?id=91399.
+
+        Reviewed by Csaba Osztrogonác.
+
+        * platform/qt-5.0-wk1/Skipped:
+        * platform/qt-5.0-wk2/Skipped:
+        * platform/qt-5.0-wk2/editing/pasteboard/4806874-expected.txt: Added.
+        * platform/qt-5.0-wk2/editing/pasteboard/4944770-1-expected.png: Removed.
+        * platform/qt-5.0-wk2/editing/pasteboard/4944770-1-expected.txt: Removed.
+        * platform/qt-5.0-wk2/editing/pasteboard/4944770-2-expected.png: Removed.
+        * platform/qt-5.0-wk2/editing/pasteboard/4944770-2-expected.txt: Removed.
+        * platform/qt-5.0-wk2/editing/pasteboard/input-field-1-expected.txt: Copied from LayoutTests/platform/qt/editing/pasteboard/input-field-1-expected.txt.
+        * platform/qt-5.0/Skipped:
+        * platform/qt-5.0/editing/pasteboard/4944770-1-expected.png: Removed.
+        * platform/qt-5.0/editing/pasteboard/4944770-1-expected.txt: Removed.
+        * platform/qt-5.0/editing/pasteboard/4944770-2-expected.png: Removed.
+        * platform/qt-5.0/editing/pasteboard/4944770-2-expected.txt: Removed.
+        * platform/qt-5.0/editing/pasteboard/paste-text-at-tabspan-003-expected.txt: Removed.
+        * platform/qt/editing/pasteboard/3976872-expected.png: Added.
+        * platform/qt/editing/pasteboard/3976872-expected.txt:
+        * platform/qt/editing/pasteboard/4076267-2-expected.png:
+        * platform/qt/editing/pasteboard/4076267-2-expected.txt:
+        * platform/qt/editing/pasteboard/4076267-3-expected.png:
+        * platform/qt/editing/pasteboard/4076267-3-expected.txt:
+        * platform/qt/editing/pasteboard/4076267-expected.png:
+        * platform/qt/editing/pasteboard/4076267-expected.txt:
+        * platform/qt/editing/pasteboard/4242293-expected.png: Added.
+        * platform/qt/editing/pasteboard/4242293-expected.txt:
+        * platform/qt/editing/pasteboard/4631972-expected.png: Added.
+        * platform/qt/editing/pasteboard/4631972-expected.txt:
+        * platform/qt/editing/pasteboard/4641033-expected.png:
+        * platform/qt/editing/pasteboard/4641033-expected.txt:
+        * platform/qt/editing/pasteboard/4806874-expected.png:
+        * platform/qt/editing/pasteboard/4806874-expected.txt:
+        * platform/qt/editing/pasteboard/4944770-1-expected.png:
+        * platform/qt/editing/pasteboard/4944770-1-expected.txt:
+        * platform/qt/editing/pasteboard/4944770-2-expected.png:
+        * platform/qt/editing/pasteboard/4944770-2-expected.txt:
+        * platform/qt/editing/pasteboard/4989774-expected.png: Added.
+        * platform/qt/editing/pasteboard/4989774-expected.txt:
+        * platform/qt/editing/pasteboard/5006779-expected.png: Added.
+        * platform/qt/editing/pasteboard/5006779-expected.txt:
+        * platform/qt/editing/pasteboard/5028447-expected.png: Added.
+        * platform/qt/editing/pasteboard/5028447-expected.txt:
+        * platform/qt/editing/pasteboard/5032095-expected.png: Added.
+        * platform/qt/editing/pasteboard/5032095-expected.txt:
+        * platform/qt/editing/pasteboard/5071074-2-expected.png: Added.
+        * platform/qt/editing/pasteboard/5071074-2-expected.txt:
+        * platform/qt/editing/pasteboard/5071074-expected.png: Added.
+        * platform/qt/editing/pasteboard/5071074-expected.txt:
+        * platform/qt/editing/pasteboard/5075944-expected.png: Added.
+        * platform/qt/editing/pasteboard/5075944-expected.txt:
+        * platform/qt/editing/pasteboard/5134759-expected.png: Added.
+        * platform/qt/editing/pasteboard/5134759-expected.txt:
+        * platform/qt/editing/pasteboard/5156401-1-expected.png: Added.
+        * platform/qt/editing/pasteboard/5156401-1-expected.txt:
+        * platform/qt/editing/pasteboard/5247341-expected.png: Added.
+        * platform/qt/editing/pasteboard/5247341-expected.txt:
+        * platform/qt/editing/pasteboard/5387578-expected.png:
+        * platform/qt/editing/pasteboard/5387578-expected.txt:
+        * platform/qt/editing/pasteboard/5478250-expected.png:
+        * platform/qt/editing/pasteboard/5478250-expected.txt:
+        * platform/qt/editing/pasteboard/5601583-1-expected.png: Added.
+        * platform/qt/editing/pasteboard/5601583-1-expected.txt:
+        * platform/qt/editing/pasteboard/5780697-2-expected.txt:
+        * platform/qt/editing/pasteboard/7955-expected.png: Added.
+        * platform/qt/editing/pasteboard/7955-expected.txt:
+        * platform/qt/editing/pasteboard/8145-1-expected.png: Added.
+        * platform/qt/editing/pasteboard/8145-1-expected.txt:
+        * platform/qt/editing/pasteboard/8145-2-expected.png: Added.
+        * platform/qt/editing/pasteboard/8145-2-expected.txt:
+        * platform/qt/editing/pasteboard/8145-3-expected.png:
+        * platform/qt/editing/pasteboard/8145-3-expected.txt:
+        * platform/qt/editing/pasteboard/bad-placeholder-expected.png:
+        * platform/qt/editing/pasteboard/bad-placeholder-expected.txt:
+        * platform/qt/editing/pasteboard/block-wrappers-necessary-expected.txt:
+        * platform/qt/editing/pasteboard/cut-text-001-expected.png:
+        * platform/qt/editing/pasteboard/cut-text-001-expected.txt:
+        * platform/qt/editing/pasteboard/displaced-generic-placeholder-expected.png: Added.
+        * platform/qt/editing/pasteboard/displaced-generic-placeholder-expected.txt:
+        * platform/qt/editing/pasteboard/displaced-placeholder-expected.png: Added.
+        * platform/qt/editing/pasteboard/displaced-placeholder-expected.txt:
+        * platform/qt/editing/pasteboard/emacs-cntl-y-001-expected.png: Added.
+        * platform/qt/editing/pasteboard/emacs-cntl-y-001-expected.txt:
+        * platform/qt/editing/pasteboard/innerText-inline-table-expected.png:
+        * platform/qt/editing/pasteboard/innerText-inline-table-expected.txt:
+        * platform/qt/editing/pasteboard/input-field-1-expected.png:
+        * platform/qt/editing/pasteboard/input-field-1-expected.txt:
+        * platform/qt/editing/pasteboard/merge-after-delete-1-expected.png: Added.
+        * platform/qt/editing/pasteboard/merge-after-delete-1-expected.txt:
+        * platform/qt/editing/pasteboard/merge-after-delete-2-expected.png: Added.
+        * platform/qt/editing/pasteboard/merge-after-delete-2-expected.txt:
+        * platform/qt/editing/pasteboard/merge-after-delete-expected.png: Added.
+        * platform/qt/editing/pasteboard/merge-after-delete-expected.txt:
+        * platform/qt/editing/pasteboard/merge-end-blockquote-expected.png:
+        * platform/qt/editing/pasteboard/merge-end-blockquote-expected.txt:
+        * platform/qt/editing/pasteboard/merge-end-borders-expected.png:
+        * platform/qt/editing/pasteboard/merge-end-borders-expected.txt:
+        * platform/qt/editing/pasteboard/merge-start-blockquote-expected.png: Added.
+        * platform/qt/editing/pasteboard/merge-start-blockquote-expected.txt:
+        * platform/qt/editing/pasteboard/merge-start-list-expected.png: Added.
+        * platform/qt/editing/pasteboard/merge-start-list-expected.txt:
+        * platform/qt/editing/pasteboard/paste-4035648-fix-expected.png: Added.
+        * platform/qt/editing/pasteboard/paste-4035648-fix-expected.txt:
+        * platform/qt/editing/pasteboard/paste-4038267-fix-expected.png: Added.
+        * platform/qt/editing/pasteboard/paste-4038267-fix-expected.txt:
+        * platform/qt/editing/pasteboard/paste-blockquote-after-blockquote-expected.png: Added.
+        * platform/qt/editing/pasteboard/paste-blockquote-after-blockquote-expected.txt:
+        * platform/qt/editing/pasteboard/paste-blockquote-into-blockquote-4-expected.png: Added.
+        * platform/qt/editing/pasteboard/paste-blockquote-into-blockquote-4-expected.txt:
+        * platform/qt/editing/pasteboard/paste-line-endings-001-expected.png: Added.
+        * platform/qt/editing/pasteboard/paste-line-endings-001-expected.txt:
+        * platform/qt/editing/pasteboard/paste-line-endings-002-expected.png: Added.
+        * platform/qt/editing/pasteboard/paste-line-endings-002-expected.txt:
+        * platform/qt/editing/pasteboard/paste-line-endings-003-expected.png: Added.
+        * platform/qt/editing/pasteboard/paste-line-endings-003-expected.txt:
+        * platform/qt/editing/pasteboard/paste-line-endings-004-expected.png: Added.
+        * platform/qt/editing/pasteboard/paste-line-endings-004-expected.txt:
+        * platform/qt/editing/pasteboard/paste-line-endings-005-expected.png: Added.
+        * platform/qt/editing/pasteboard/paste-line-endings-005-expected.txt:
+        * platform/qt/editing/pasteboard/paste-line-endings-006-expected.png: Added.
+        * platform/qt/editing/pasteboard/paste-line-endings-006-expected.txt:
+        * platform/qt/editing/pasteboard/paste-line-endings-007-expected.png:
+        * platform/qt/editing/pasteboard/paste-line-endings-007-expected.txt:
+        * platform/qt/editing/pasteboard/paste-line-endings-008-expected.png:
+        * platform/qt/editing/pasteboard/paste-line-endings-008-expected.txt:
+        * platform/qt/editing/pasteboard/paste-line-endings-009-expected.png:
+        * platform/qt/editing/pasteboard/paste-line-endings-009-expected.txt:
+        * platform/qt/editing/pasteboard/paste-line-endings-010-expected.png:
+        * platform/qt/editing/pasteboard/paste-line-endings-010-expected.txt:
+        * platform/qt/editing/pasteboard/paste-match-style-001-expected.png:
+        * platform/qt/editing/pasteboard/paste-match-style-001-expected.txt:
+        * platform/qt/editing/pasteboard/paste-match-style-002-expected.png: Added.
+        * platform/qt/editing/pasteboard/paste-match-style-002-expected.txt:
+        * platform/qt/editing/pasteboard/paste-table-003-expected.png:
+        * platform/qt/editing/pasteboard/paste-table-003-expected.txt:
+        * platform/qt/editing/pasteboard/paste-table-cells-expected.png:
+        * platform/qt/editing/pasteboard/paste-table-cells-expected.txt:
+        * platform/qt/editing/pasteboard/paste-text-004-expected.png:
+        * platform/qt/editing/pasteboard/paste-text-004-expected.txt:
+        * platform/qt/editing/pasteboard/paste-text-005-expected.png:
+        * platform/qt/editing/pasteboard/paste-text-005-expected.txt:
+        * platform/qt/editing/pasteboard/paste-text-006-expected.png: Added.
+        * platform/qt/editing/pasteboard/paste-text-006-expected.txt:
+        * platform/qt/editing/pasteboard/paste-text-007-expected.png: Added.
+        * platform/qt/editing/pasteboard/paste-text-007-expected.txt:
+        * platform/qt/editing/pasteboard/paste-text-008-expected.png:
+        * platform/qt/editing/pasteboard/paste-text-008-expected.txt:
+        * platform/qt/editing/pasteboard/paste-text-009-expected.png:
+        * platform/qt/editing/pasteboard/paste-text-009-expected.txt:
+        * platform/qt/editing/pasteboard/paste-text-013-expected.png: Added.
+        * platform/qt/editing/pasteboard/paste-text-013-expected.txt:
+        * platform/qt/editing/pasteboard/paste-text-014-expected.png:
+        * platform/qt/editing/pasteboard/paste-text-014-expected.txt:
+        * platform/qt/editing/pasteboard/paste-text-016-expected.png: Added.
+        * platform/qt/editing/pasteboard/paste-text-016-expected.txt:
+        * platform/qt/editing/pasteboard/paste-text-019-expected.png:
+        * platform/qt/editing/pasteboard/paste-text-019-expected.txt:
+        * platform/qt/editing/pasteboard/paste-text-at-tabspan-003-expected.png:
+        * platform/qt/editing/pasteboard/paste-text-at-tabspan-003-expected.txt:
+        * platform/qt/editing/pasteboard/pasting-object-expected.png:
+        * platform/qt/editing/pasteboard/pasting-object-expected.txt:
+        * platform/qt/editing/pasteboard/quirks-mode-br-1-expected.png: Added.
+        * platform/qt/editing/pasteboard/quirks-mode-br-1-expected.txt:
+        * platform/qt/editing/pasteboard/smart-paste-004-expected.txt: Added.
+        * platform/qt/editing/pasteboard/smart-paste-007-expected.png:
+        * platform/qt/editing/pasteboard/smart-paste-007-expected.txt:
+        * platform/qt/editing/pasteboard/styled-element-markup-expected.png: Added.
+        * platform/qt/editing/pasteboard/styled-element-markup-expected.txt:
+        * platform/qt/editing/pasteboard/undoable-fragment-removes-expected.png: Added.
+        * platform/qt/editing/pasteboard/undoable-fragment-removes-expected.txt:
+        * platform/qt/editing/pasteboard/unrendered-br-expected.png: Added.
+        * platform/qt/editing/pasteboard/unrendered-br-expected.txt:
+
 2012-07-27  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed GTK gardening, adding a text failure expectation for an accessibility

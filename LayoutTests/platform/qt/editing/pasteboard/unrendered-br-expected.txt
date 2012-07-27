@@ -10,18 +10,18 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x42
-        RenderText {#text} at (0,0) size 767x42
-          text run at (0,0) width 767: "This is a test to make sure that an unrendered br at the end of the selection being pasted into doesn't become"
-          text run at (0,21) width 231: "rendered as a result of the paste."
-      RenderBlock {DIV} at (0,58) size 784x42
-        RenderBlock (anonymous) at (0,0) size 784x21
-          RenderText {#text} at (0,0) size 35x21
-            text run at (0,0) width 35: "First "
-          RenderText {#text} at (35,0) size 77x21
-            text run at (35,0) width 77: "paragraph."
-        RenderBlock {DIV} at (0,21) size 784x21
-          RenderText {#text} at (0,0) size 136x21
-            text run at (0,0) width 136: "Second paragraph."
-        RenderBlock (anonymous) at (0,42) size 784x0
+      RenderBlock {P} at (0,0) size 784x38
+        RenderText {#text} at (0,0) size 773x38
+          text run at (0,0) width 773: "This is a test to make sure that an unrendered br at the end of the selection being pasted into doesn't become rendered as a result"
+          text run at (0,19) width 74: "of the paste."
+      RenderBlock {DIV} at (0,54) size 784x38
+        RenderBlock (anonymous) at (0,0) size 784x19
+          RenderText {#text} at (0,0) size 31x19
+            text run at (0,0) width 31: "First "
+          RenderText {#text} at (31,0) size 65x19
+            text run at (31,0) width 65: "paragraph."
+        RenderBlock {DIV} at (0,19) size 784x19
+          RenderText {#text} at (0,0) size 115x19
+            text run at (0,0) width 115: "Second paragraph."
+        RenderBlock (anonymous) at (0,38) size 784x0
 caret: position 17 of child 0 {#text} of child 2 {DIV} of child 2 {DIV} of body

@@ -3,15 +3,15 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x21
-        RenderText {#text} at (0,0) size 505x21
-          text run at (0,0) width 505: "This tests for a crash when pasting content into a link inside a table cell."
-      RenderBlock {DIV} at (0,37) size 784x31
-        RenderTable {TABLE} at (0,0) size 161x31 [border: (1px outset #808080)]
-          RenderTableSection {TBODY} at (1,1) size 159x29
-            RenderTableRow {TR} at (0,2) size 159x25
-              RenderTableCell {TD} at (2,2) size 155x25 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-                RenderInline {A} at (0,0) size 151x21 [color=#0000EE]
-                  RenderText {#text} at (2,2) size 151x21
-                    text run at (2,2) width 151: "This should be a link."
+      RenderBlock {P} at (0,0) size 784x19
+        RenderText {#text} at (0,0) size 426x19
+          text run at (0,0) width 426: "This tests for a crash when pasting content into a link inside a table cell."
+      RenderBlock {DIV} at (0,35) size 784x29
+        RenderTable {TABLE} at (0,0) size 137x29 [border: (1px outset #808080)]
+          RenderTableSection {TBODY} at (1,1) size 135x27
+            RenderTableRow {TR} at (0,2) size 135x23
+              RenderTableCell {TD} at (2,2) size 131x23 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                RenderInline {A} at (0,0) size 127x19 [color=#0000EE]
+                  RenderText {#text} at (2,2) size 127x19
+                    text run at (2,2) width 127: "This should be a link."
 caret: position 21 of child 0 {#text} of child 0 {A} of child 0 {TD} of child 0 {TR} of child 0 {TBODY} of child 1 {TABLE} of child 3 {DIV} of body

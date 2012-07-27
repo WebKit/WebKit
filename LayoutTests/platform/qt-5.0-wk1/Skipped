@@ -128,7 +128,6 @@ fast/table/table-style-not-updated.html
 # due to this we are skipping tons of tests. They will be unskipped in batches ASAP.
 # https://bugs.webkit.org/show_bug.cgi?id=85203
 editing/deleting/deletionUI-single-instance.html
-editing/pasteboard/emacs-cntl-y-001.html
 fast/forms/mailto/advanced-get.html
 fast/forms/mailto/advanced-put.html
 http/tests/appcache/different-https-origin-resource-main.html

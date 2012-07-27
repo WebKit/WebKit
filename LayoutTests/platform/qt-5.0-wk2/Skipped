@@ -403,10 +403,6 @@ fast/repaint/background-scaling.html
 editing/deleting/merge-whitespace-pre.html
 editing/input/caret-at-the-edge-of-input.html
 editing/input/reveal-caret-of-multiline-input.html
-editing/pasteboard/4806874.html
-editing/pasteboard/innerText-inline-table.html
-editing/pasteboard/input-field-1.html
-editing/pasteboard/paste-text-019.html
 fullscreen/full-screen-placeholder.html
 fullscreen/video-controls-drag.html
 fullscreen/video-controls-override.html

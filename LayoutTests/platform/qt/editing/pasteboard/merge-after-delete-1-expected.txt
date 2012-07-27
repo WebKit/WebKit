@@ -12,25 +12,24 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x63
-        RenderText {#text} at (0,0) size 776x63
-          text run at (0,0) width 776: "When ReplaceSelectionCommand deletes the current selection, it should request that the deletion do a merge"
-          text run at (0,21) width 712: "in some cases (normally, though, it should ask that a merge not be done, because a merge will cause"
-          text run at (0,42) width 302: "information about block nesting to be lost). "
-          text run at (302,42) width 416: "It wasn't requesting a merge in cases where it should have."
-      RenderBlock {P} at (0,79) size 784x84
-        RenderText {#text} at (0,0) size 771x84
-          text run at (0,0) width 771: "The failing case is where the incoming fragment has more than one block, and the selection being pasted into"
-          text run at (0,21) width 224: "ends at the end of a paragraph. "
-          text run at (224,21) width 506: "Any time the selection being pasted into ends at the end of a paragraph,"
-          text run at (0,42) width 617: "deleting will leave leave a) a br or b) an empty block at the end of the deleted selection. "
-          text run at (617,42) width 140: "So, not merging will"
-          text run at (0,63) width 546: "leave an extraneous empty line or a collapsed block after the paste operation."
-      RenderBlock {DIV} at (2,179) size 780x54 [border: (1px solid #000000)]
-        RenderBlock {DIV} at (3,3) size 774x23 [border: (1px solid #FF0000)]
-          RenderText {#text} at (1,1) size 31x21
-            text run at (1,1) width 31: "bfoo"
-        RenderBlock {DIV} at (3,28) size 774x23 [border: (1px solid #000000)]
-          RenderText {#text} at (1,1) size 23x21
-            text run at (1,1) width 23: "bar"
+      RenderBlock {P} at (0,0) size 784x57
+        RenderText {#text} at (0,0) size 773x57
+          text run at (0,0) width 741: "When ReplaceSelectionCommand deletes the current selection, it should request that the deletion do a merge in some cases"
+          text run at (0,19) width 773: "(normally, though, it should ask that a merge not be done, because a merge will cause information about block nesting to be lost)."
+          text run at (0,38) width 350: "It wasn't requesting a merge in cases where it should have."
+      RenderBlock {P} at (0,73) size 784x76
+        RenderText {#text} at (0,0) size 779x76
+          text run at (0,0) width 769: "The failing case is where the incoming fragment has more than one block, and the selection being pasted into ends at the end of a"
+          text run at (0,19) width 69: "paragraph. "
+          text run at (69,19) width 710: "Any time the selection being pasted into ends at the end of a paragraph, deleting will leave leave a) a br or b) an empty"
+          text run at (0,38) width 247: "block at the end of the deleted selection. "
+          text run at (247,38) width 522: "So, not merging will leave an extraneous empty line or a collapsed block after the paste"
+          text run at (0,57) width 61: "operation."
+      RenderBlock {DIV} at (2,165) size 780x50 [border: (1px solid #000000)]
+        RenderBlock {DIV} at (3,3) size 774x21 [border: (1px solid #FF0000)]
+          RenderText {#text} at (1,1) size 28x19
+            text run at (1,1) width 28: "bfoo"
+        RenderBlock {DIV} at (3,26) size 774x21 [border: (1px solid #000000)]
+          RenderText {#text} at (1,1) size 20x19
+            text run at (1,1) width 20: "bar"
 caret: position 3 of child 0 {#text} of child 1 {DIV} of child 4 {DIV} of body

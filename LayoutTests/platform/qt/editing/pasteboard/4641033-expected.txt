@@ -11,27 +11,27 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x42
-        RenderText {#text} at (0,0) size 767x42
-          text run at (0,0) width 738: "This tests for a bug when creating markup for a selection that contained unrendered nodes with children. "
-          text run at (738,0) width 29: "You"
-          text run at (0,21) width 369: "should see a picture of abe followed by a select box."
-      RenderBlock {DIV} at (0,58) size 784x113
+      RenderBlock {P} at (0,0) size 784x38
+        RenderText {#text} at (0,0) size 776x38
+          text run at (0,0) width 627: "This tests for a bug when creating markup for a selection that contained unrendered nodes with children. "
+          text run at (627,0) width 149: "You should see a picture"
+          text run at (0,19) width 193: "of abe followed by a select box."
+      RenderBlock {DIV} at (0,54) size 784x112
         RenderImage {IMG} at (0,0) size 76x103
-        RenderText {#text} at (76,87) size 4x21
-          text run at (76,87) width 4: " "
-        RenderMenuList {SELECT} at (82,85) size 53x26 [bgcolor=#FFFFFF]
-          RenderBlock (anonymous) at (4,2) size 25x21
-            RenderText at (0,0) size 9x21
-              text run at (0,0) width 9: "1"
-      RenderBlock (anonymous) at (0,171) size 784x113
+        RenderText {#text} at (76,88) size 4x19
+          text run at (76,88) width 4: " "
+        RenderMenuList {SELECT} at (82,86) size 52x24 [bgcolor=#FFFFFF]
+          RenderBlock (anonymous) at (4,2) size 24x19
+            RenderText at (0,0) size 8x19
+              text run at (0,0) width 8: "1"
+      RenderBlock (anonymous) at (0,166) size 784x112
         RenderImage {IMG} at (0,0) size 76x103
-        RenderText {#text} at (76,87) size 4x21
-          text run at (76,87) width 4: " "
-        RenderMenuList {SELECT} at (82,85) size 53x26 [bgcolor=#FFFFFF]
-          RenderBlock (anonymous) at (4,2) size 25x21
-            RenderText at (0,0) size 9x21
-              text run at (0,0) width 9: "1"
+        RenderText {#text} at (76,88) size 4x19
+          text run at (76,88) width 4: " "
+        RenderMenuList {SELECT} at (82,86) size 52x24 [bgcolor=#FFFFFF]
+          RenderBlock (anonymous) at (4,2) size 24x19
+            RenderText at (0,0) size 8x19
+              text run at (0,0) width 8: "1"
         RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
 caret: position 1 of child 2 {SELECT} of child 2 {DIV} of body

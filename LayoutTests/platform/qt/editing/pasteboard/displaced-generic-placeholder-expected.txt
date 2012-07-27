@@ -9,16 +9,16 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x42
-        RenderText {#text} at (0,0) size 756x42
-          text run at (0,0) width 756: "This is a test to make sure that a placeholder, even one that doesn't have our special class on it, is removed"
-          text run at (0,21) width 273: "when it is displaced by pasted content."
-      RenderBlock {DIV} at (0,58) size 784x42
-        RenderBlock (anonymous) at (0,0) size 784x21
-          RenderText {#text} at (0,0) size 112x21
-            text run at (0,0) width 112: "First paragraph."
-        RenderBlock {DIV} at (0,21) size 784x21
-          RenderText {#text} at (0,0) size 136x21
-            text run at (0,0) width 136: "Second paragraph."
-        RenderBlock (anonymous) at (0,42) size 784x0
+      RenderBlock {P} at (0,0) size 784x38
+        RenderText {#text} at (0,0) size 780x38
+          text run at (0,0) width 780: "This is a test to make sure that a placeholder, even one that doesn't have our special class on it, is removed when it is displaced by"
+          text run at (0,19) width 92: "pasted content."
+      RenderBlock {DIV} at (0,54) size 784x38
+        RenderBlock (anonymous) at (0,0) size 784x19
+          RenderText {#text} at (0,0) size 96x19
+            text run at (0,0) width 96: "First paragraph."
+        RenderBlock {DIV} at (0,19) size 784x19
+          RenderText {#text} at (0,0) size 115x19
+            text run at (0,0) width 115: "Second paragraph."
+        RenderBlock (anonymous) at (0,38) size 784x0
 caret: position 17 of child 0 {#text} of child 1 {DIV} of child 2 {DIV} of body

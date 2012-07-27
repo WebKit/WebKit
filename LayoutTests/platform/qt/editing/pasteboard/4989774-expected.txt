@@ -7,11 +7,11 @@ layer at (0,0) size 800x600
       RenderImage {IMG} at (76,0) size 76x103
       RenderImage {IMG} at (152,0) size 76x103
       RenderBR {BR} at (228,103) size 0x0
-      RenderText {#text} at (0,103) size 743x42
-        text run at (0,103) width 708: "This tests for a bug where an images pasted on the same line would appear on different lines. "
-        text run at (708,103) width 31: "You"
-        text run at (739,103) width 4: " "
-        text run at (0,124) width 490: "should see several pictures above all in the same line/paragraph."
+      RenderText {#text} at (0,103) size 776x38
+        text run at (0,103) width 619: "This tests for a bug where an images pasted on the same line would appear on different lines. "
+        text run at (619,103) width 153: "You should see several"
+        text run at (772,103) width 4: " "
+        text run at (0,122) width 301: "pictures above all in the same line/paragraph."
       RenderText {#text} at (0,0) size 0x0
       RenderText {#text} at (0,0) size 0x0
 caret: position 164 of child 4 {#text} of body

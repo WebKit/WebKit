@@ -8,24 +8,24 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x198 [border: (2px solid #0000FF)]
-        RenderBlock {DIV} at (14,14) size 756x62
-          RenderText {#text} at (0,0) size 77x32
-            text run at (0,0) width 77: "Tests: "
+      RenderBlock {DIV} at (0,0) size 784x184 [border: (2px solid #0000FF)]
+        RenderBlock {DIV} at (14,14) size 756x56
+          RenderText {#text} at (0,0) size 66x28
+            text run at (0,0) width 66: "Tests: "
           RenderBR {BR} at (0,0) size 0x0
-          RenderText {#text} at (0,32) size 572x30
-            text run at (0,32) width 572: "Cntl-y at caret selection when nothing is in the kill ring."
-        RenderBlock {DIV} at (14,92) size 756x92
-          RenderText {#text} at (0,0) size 214x32
-            text run at (0,0) width 214: "Expected Results: "
-          RenderBR {BR} at (214,24) size 0x0
-          RenderText {#text} at (0,32) size 313x30
-            text run at (0,32) width 313: "Deletes a character, yielding: "
-          RenderBR {BR} at (313,55) size 0x0
-          RenderText {#text} at (0,62) size 179x30
-            text run at (0,62) width 179: "one tw three four"
-      RenderBlock {DIV} at (0,222) size 784x34
-        RenderBlock {DIV} at (0,0) size 784x34 [border: (2px solid #FF0000)]
-          RenderText {#text} at (2,2) size 192x30
-            text run at (2,2) width 192: "one two three four"
+          RenderText {#text} at (0,28) size 532x28
+            text run at (0,28) width 532: "Cntl-y at caret selection when nothing is in the kill ring."
+        RenderBlock {DIV} at (14,86) size 756x84
+          RenderText {#text} at (0,0) size 189x28
+            text run at (0,0) width 189: "Expected Results: "
+          RenderBR {BR} at (189,22) size 0x0
+          RenderText {#text} at (0,28) size 285x28
+            text run at (0,28) width 285: "Deletes a character, yielding: "
+          RenderBR {BR} at (285,50) size 0x0
+          RenderText {#text} at (0,56) size 166x28
+            text run at (0,56) width 166: "one tw three four"
+      RenderBlock {DIV} at (0,208) size 784x32
+        RenderBlock {DIV} at (0,0) size 784x32 [border: (2px solid #FF0000)]
+          RenderText {#text} at (2,2) size 178x28
+            text run at (2,2) width 178: "one two three four"
 caret: position 7 of child 0 {#text} of child 1 {DIV} of child 3 {DIV} of body

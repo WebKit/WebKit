@@ -20,19 +20,19 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x42
-        RenderText {#text} at (0,0) size 741x42
-          text run at (0,0) width 647: "This is a testcase for 8193, hitting an assert inside RemoveNodeCommand on Undo Paste. "
-          text run at (647,0) width 94: "Both editable"
-          text run at (0,21) width 349: "regions below should look the same after the test."
-      RenderBlock {HR} at (0,58) size 784x2 [border: (1px inset #000000)]
-      RenderBlock {DIV} at (0,68) size 784x44 [border: (1px solid #000000)]
-        RenderBlock {DIV} at (1,1) size 782x21
-          RenderText {#text} at (0,0) size 22x21
-            text run at (0,0) width 22: "foo"
-        RenderBlock {DIV} at (1,22) size 782x21
-          RenderText {#text} at (0,0) size 23x21
-            text run at (0,0) width 23: "bar"
-      RenderBlock {DIV} at (0,112) size 784x23 [border: (1px solid #000000)]
-        RenderBR {BR} at (1,1) size 0x21
+      RenderBlock {P} at (0,0) size 784x38
+        RenderText {#text} at (0,0) size 761x38
+          text run at (0,0) width 550: "This is a testcase for 8193, hitting an assert inside RemoveNodeCommand on Undo Paste. "
+          text run at (550,0) width 211: "Both editable regions below should"
+          text run at (0,19) width 166: "look the same after the test."
+      RenderBlock {HR} at (0,54) size 784x2 [border: (1px inset #000000)]
+      RenderBlock {DIV} at (0,64) size 784x40 [border: (1px solid #000000)]
+        RenderBlock {DIV} at (1,1) size 782x19
+          RenderText {#text} at (0,0) size 20x19
+            text run at (0,0) width 20: "foo"
+        RenderBlock {DIV} at (1,20) size 782x19
+          RenderText {#text} at (0,0) size 20x19
+            text run at (0,0) width 20: "bar"
+      RenderBlock {DIV} at (0,104) size 784x21 [border: (1px solid #000000)]
+        RenderBR {BR} at (1,1) size 0x19
 caret: position 0 of child 0 {BR} of child 6 {DIV} of body

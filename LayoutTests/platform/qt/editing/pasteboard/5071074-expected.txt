@@ -3,19 +3,19 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x21
-        RenderText {#text} at (0,0) size 653x21
-          text run at (0,0) width 653: "This tests for a bug where links that weren't fully selected would be copy/pasted as plain text."
-      RenderBlock {DIV} at (0,37) size 784x21
-        RenderText {#text} at (0,0) size 181x21
-          text run at (0,0) width 181: "This should be plain text. "
-        RenderInline {A} at (0,0) size 151x21 [color=#0000EE]
-          RenderText {#text} at (181,0) size 151x21
-            text run at (181,0) width 151: "This should be a link."
-        RenderText {#text} at (332,0) size 181x21
-          text run at (332,0) width 181: " This should be plain text."
-      RenderBlock {DIV} at (0,58) size 784x21
-        RenderInline {A} at (0,0) size 151x21 [color=#0000EE]
-          RenderText {#text} at (0,0) size 151x21
-            text run at (0,0) width 151: "This should be a link."
+      RenderBlock {P} at (0,0) size 784x19
+        RenderText {#text} at (0,0) size 558x19
+          text run at (0,0) width 558: "This tests for a bug where links that weren't fully selected would be copy/pasted as plain text."
+      RenderBlock {DIV} at (0,35) size 784x19
+        RenderText {#text} at (0,0) size 153x19
+          text run at (0,0) width 153: "This should be plain text. "
+        RenderInline {A} at (0,0) size 127x19 [color=#0000EE]
+          RenderText {#text} at (153,0) size 127x19
+            text run at (153,0) width 127: "This should be a link."
+        RenderText {#text} at (280,0) size 153x19
+          text run at (280,0) width 153: " This should be plain text."
+      RenderBlock {DIV} at (0,54) size 784x19
+        RenderInline {A} at (0,0) size 127x19 [color=#0000EE]
+          RenderText {#text} at (0,0) size 127x19
+            text run at (0,0) width 127: "This should be a link."
 caret: position 22 of child 0 {#text} of child 0 {A} of child 4 {DIV} of body
