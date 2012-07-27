@@ -1,5 +1,20 @@
 2012-07-26  Nima Ghanavatian  <nghanavatian@rim.com>
 
+        [BlackBerry] Remove synchronous spellchecking code
+        https://bugs.webkit.org/show_bug.cgi?id=92415
+
+        Removing synchronous spellchecking code path.
+
+        Reviewed by Rob Buis.
+
+        Internally reviewed by Mike Fenton.
+
+        * Api/WebPageClient.h:
+        * WebCoreSupport/EditorClientBlackBerry.cpp:
+        (WebCore::EditorClientBlackBerry::checkSpellingOfString):
+
+2012-07-26  Nima Ghanavatian  <nghanavatian@rim.com>
+
         [BlackBerry] Support async spellcheck for the blackberry port
         https://bugs.webkit.org/show_bug.cgi?id=92160
 
