@@ -1,3 +1,12 @@
+2012-07-27  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        [Qt] Fix build after r123917
+        https://bugs.webkit.org/show_bug.cgi?id=92555
+
+        Unreviewed.
+
+        * wtf/GregorianDateTime.h: Needs string.h for memset().
+
 2012-07-27  Paweł Forysiuk  <tuxator@o2.pl>
 
         MinGW build fails because of missing header in GregorianDateTime.h
