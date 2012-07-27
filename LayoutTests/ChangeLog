@@ -1,3 +1,15 @@
+2012-07-27  Gavin Peters  <gavinp@chromium.org>
+
+        Lose a timer in prerender-remove-after-stop.html
+        https://bugs.webkit.org/show_bug.cgi?id=92425
+
+        Reviewed by Nate Chapin.
+
+        japhet suggested that the timer wasn't needed, and testing revealed that the test works without it. I've tested that if the bug is reintroduced
+        that it crashes, and of course it doesn't crash with the fix. So bye-bye setTimeout!
+
+        * fast/dom/HTMLLinkElement/prerender-remove-after-stop.html:
+
 2012-07-27  Balazs Ankes  <bank@inf.u-szeged.hu>
 
         [Qt][WK2] Gardening after r123786. It made 5 fast/animation tests fail

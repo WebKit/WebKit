@@ -12,7 +12,7 @@ function elementRemover(doc, id) {
     return function() {
         var element = doc.getElementById(id);
         element.parentNode.removeChild(element);
-        setTimeout(done, 0);
+        done();
     }
 }
 
