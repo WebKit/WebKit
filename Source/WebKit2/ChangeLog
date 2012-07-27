@@ -1,3 +1,17 @@
+2012-07-27  Anders Carlsson  <andersca@apple.com>
+
+        Don't use an NSUserDefault for disabling the web process sandbox
+        https://bugs.webkit.org/show_bug.cgi?id=92542
+        <rdar://problem/11976060>
+
+        Reviewed by Mark Rowe.
+
+        The user default was really helpful during WebKit2 bringup, but we no longer need to pay the IPC cost of initializing NSUserDefaults at startup,
+        so get rid of the preference and use a good old #ifdef instead.
+
+        * WebProcess/mac/WebProcessMac.mm:
+        (WebKit::initializeSandbox):
+
 2012-07-27  Christophe Dumez  <christophe.dumez@intel.com>
 
         [WK2][WTR] LayoutTestController.deliverWebIntent() needs to be implemented
