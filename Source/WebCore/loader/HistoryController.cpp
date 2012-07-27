@@ -438,7 +438,7 @@ void HistoryController::updateForCommit()
     FrameLoadType type = frameLoader->loadType();
     if (isBackForwardLoadType(type)
         || isReplaceLoadTypeWithProvisionalItem(type)
-        || ((type == FrameLoadTypeReload || type == FrameLoadTypeReloadFromOrigin) && !frameLoader->provisionalDocumentLoader()->unreachableURL().isEmpty())) {
+        || (isReloadTypeWithProvisionalItem(type) && !frameLoader->provisionalDocumentLoader()->unreachableURL().isEmpty())) {
         // Once committed, we want to use current item for saving DocState, and
         // the provisional item for restoring state.
         // Note previousItem must be set before we close the URL, which will
@@ -463,6 +463,11 @@ bool HistoryController::isReplaceLoadTypeWithProvisionalItem(FrameLoadType type)
     // Going back to an error page in a subframe can trigger a FrameLoadTypeReplace
     // while m_provisionalItem is set, so we need to commit it.
     return type == FrameLoadTypeReplace && m_provisionalItem;
+}
+
+bool HistoryController::isReloadTypeWithProvisionalItem(FrameLoadType type)
+{
+    return (type == FrameLoadTypeReload || type == FrameLoadTypeReloadFromOrigin) && m_provisionalItem;
 }
 
 void HistoryController::recursiveUpdateForCommit()

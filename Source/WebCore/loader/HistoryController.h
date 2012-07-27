@@ -98,6 +98,7 @@ private:
     void recursiveSetProvisionalItem(HistoryItem*, HistoryItem*, FrameLoadType);
     void recursiveGoToItem(HistoryItem*, HistoryItem*, FrameLoadType);
     bool isReplaceLoadTypeWithProvisionalItem(FrameLoadType);
+    bool isReloadTypeWithProvisionalItem(FrameLoadType);
     void recursiveUpdateForCommit();
     void recursiveUpdateForSameDocumentNavigation();
     bool itemsAreClones(HistoryItem*, HistoryItem*) const;

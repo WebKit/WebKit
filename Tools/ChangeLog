@@ -1,3 +1,17 @@
+2012-07-26  Jeffrey Pfau  <jpfau@apple.com>
+
+        Reloading substitute-data/alternate html string for unreachableURL will add an item to the back-forward-history for each reload
+        https://bugs.webkit.org/show_bug.cgi?id=84041
+
+        Reviewed by Brady Eidson.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/mac/BackForwardList.mm: Added.
+        (-[BackForwardListTest webView:didFinishLoadForFrame:]):
+        (-[BackForwardListTest webView:didFailProvisionalLoadWithError:forFrame:]):
+        (TestWebKitAPI):
+        (TestWebKitAPI::TEST):
+
 2012-07-26  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r123799.

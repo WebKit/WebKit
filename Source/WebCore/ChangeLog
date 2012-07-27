@@ -1,3 +1,25 @@
+2012-07-26  Jeffrey Pfau  <jpfau@apple.com>
+
+        Reloading substitute-data/alternate html string for unreachableURL will add an item to the back-forward-history for each reload
+        https://bugs.webkit.org/show_bug.cgi?id=84041
+
+        Reviewed by Brady Eidson.
+
+        Previously, loadAlternateHTMLString:baseURL:forUnreachableURL: would insert a new history item, regardless of
+        the load type of the original frame load. This could cause navigation to a broken website to make back and
+        forward navigation difficult to use. This change ensures that a reload type makes it through all the way.
+
+        Added API test 'mac/BackForwardList.mm'.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::load): Prevent m_loadType from being overwritten early and check if it's a reload.
+        * loader/HistoryController.cpp:
+        (WebCore::HistoryController::updateForCommit): Amend check when committing the provisional item for a reload.
+        (WebCore::HistoryController::isReloadTypeWithProvisionalItem): Check that a reload type has a provisional item.
+        (WebCore):
+        * loader/HistoryController.h:
+        (HistoryController): Add prototype for isReloadTypeWithProvisionalItem.
+
 2012-07-26  Silvia Pfeiffer  <silviapf@chromium.org>
 
         [Chromium] Regression: Global-buffer-overflow in WebCore::mediaControlElementType

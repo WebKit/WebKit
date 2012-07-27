@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		00CD9F6315BE312C002DA2CE /* BackForwardList.mm in Sources */ = {isa = PBXBuildFile; fileRef = 00CD9F6215BE312C002DA2CE /* BackForwardList.mm */; };
 		0BCD833514857CE400EA2003 /* HashMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0BCD833414857CE400EA2003 /* HashMap.cpp */; };
 		0BCD856A1485C98B00EA2003 /* TemporaryChange.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0BCD85691485C98B00EA2003 /* TemporaryChange.cpp */; };
 		0F17BBD615AF6C4D007AB753 /* WebCoreStatisticsWithNoWebProcess.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F17BBD415AF6C4D007AB753 /* WebCoreStatisticsWithNoWebProcess.cpp */; };
@@ -233,6 +234,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		00CD9F6215BE312C002DA2CE /* BackForwardList.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BackForwardList.mm; sourceTree = "<group>"; };
 		0BCD833414857CE400EA2003 /* HashMap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = HashMap.cpp; path = WTF/HashMap.cpp; sourceTree = "<group>"; };
 		0BCD85691485C98B00EA2003 /* TemporaryChange.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TemporaryChange.cpp; path = WTF/TemporaryChange.cpp; sourceTree = "<group>"; };
 		0F17BBD415AF6C4D007AB753 /* WebCoreStatisticsWithNoWebProcess.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebCoreStatisticsWithNoWebProcess.cpp; sourceTree = "<group>"; };
@@ -713,6 +715,7 @@
 				E490296714E2E3A4002BEDD1 /* TypingStyleCrash.mm */,
 				51FBBB4C1513D4E900822738 /* WebViewCanPasteURL.mm */,
 				A5E2027215B2181900C13E14 /* WindowlessWebViewWithMedia.mm */,
+				00CD9F6215BE312C002DA2CE /* BackForwardList.mm */,
 			);
 			path = mac;
 			sourceTree = "<group>";
@@ -949,6 +952,7 @@
 				261516D615B0E60500A2C201 /* SetAndUpdateCacheModel.mm in Sources */,
 				A5E2027315B2181900C13E14 /* WindowlessWebViewWithMedia.mm in Sources */,
 				26B2DFF915BDE599004F691D /* HashSet.cpp in Sources */,
+				00CD9F6315BE312C002DA2CE /* BackForwardList.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
