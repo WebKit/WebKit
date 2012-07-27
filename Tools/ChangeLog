@@ -1,3 +1,28 @@
+2012-07-27  Xianzhu Wang  <wangxianzhu@chromium.org>
+
+        [Chromium-Android] NRWT better handling of DRT deadlocks and crashes
+        https://bugs.webkit.org/show_bug.cgi?id=92299
+
+        Reviewed by Dirk Pranke.
+
+        1. Changed the deadlock detector thread target from a method of driver to a function to avoid its reference to the
+           current driver (see the bug for the problem of the reference.
+        2. Let the deadlock detector thread exit early when the normal_startup_event is set to avoid it from blocking the main thread when the main thread is exiting.
+        3. Extracted common loop until timeout logic into ChromiumAndroidDriver._loop_with_timeout().
+        4. Use the "for i in range(n)" style suggested by dpranke in https://bugs.webkit.org/show_bug.cgi?id=89124 in several functions.
+
+        * Scripts/webkitpy/layout_tests/port/chromium_android.py:
+        (ChromiumAndroidPort.__init__):
+        (ChromiumAndroidPort._run_adb_command): Reduced the verbose output.
+        (ChromiumAndroidDriver.__init__):
+        (ChromiumAndroidDriver._loop_with_timeout): Extracted common loop until timeout logic here.
+        (ChromiumAndroidDriver._all_pipes_created):
+        (ChromiumAndroidDriver._remove_all_pipes):
+        (ChromiumAndroidDriver._start): Changed the retry loop style.
+        (ChromiumAndroidDriver._start_once): Changed the loop style and code related to deadlock detector.
+        (ChromiumAndroidDriver._start_once.deadlock_detector): Moved the original ChromiumAndroidDriver._deadlock_detector() here.
+        (ChromiumAndroidDriver.stop): Changed the loop style.
+
 2012-07-27  Dirk Pranke  <dpranke@chromium.org>
 
         nrwt: move collect_tests(), parse_expectations() into manager

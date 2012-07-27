@@ -177,7 +177,6 @@ class ChromiumAndroidPort(chromium.ChromiumPort):
         adb_args = self.get_option('adb_args')
         if adb_args:
             self._adb_command += shlex.split(adb_args)
-        self._drt_retry_after_killed = 0
 
     def default_timeout_ms(self):
         # Android platform has less computing power than desktop platforms.
@@ -400,7 +399,9 @@ class ChromiumAndroidPort(chromium.ChromiumPort):
         else:
             error_handler = None
         result = self._executive.run_command(self._adb_command + cmd, error_handler=error_handler)
-        _log.debug('Run adb result:\n' + result)
+        # Limit the length to avoid too verbose output of commands like 'adb logcat' and 'cat /data/tombstones/tombstone01'
+        # whose outputs are normally printed in later logs.
+        _log.debug('Run adb result: ' + result[:80])
         return result
 
     def _link_device_file(self, from_file, to_file, ignore_error=False):
@@ -461,7 +462,6 @@ class ChromiumAndroidDriver(driver.Driver):
         self._in_fifo_path = DRT_APP_FILES_DIR + 'DumpRenderTree.in'
         self._out_fifo_path = DRT_APP_FILES_DIR + 'DumpRenderTree.out'
         self._err_fifo_path = DRT_APP_FILES_DIR + 'DumpRenderTree.err'
-        self._restart_after_killed = False
         self._read_stdout_process = None
         self._read_stderr_process = None
 
@@ -476,23 +476,31 @@ class ChromiumAndroidDriver(driver.Driver):
         assert full_file_path.startswith('/')
         return self._port._run_adb_command(['shell', 'ls', full_file_path]).strip() == full_file_path
 
-    def _deadlock_detector(self, processes, normal_startup_event):
-        time.sleep(DRT_START_STOP_TIMEOUT_SECS)
-        if not normal_startup_event.is_set():
-            # If normal_startup_event is not set in time, the main thread must be blocked at
-            # reading/writing the fifo. Kill the fifo reading/writing processes to let the
-            # main thread escape from the deadlocked state. After that, the main thread will
-            # treat this as a crash.
-            for i in processes:
-                i.kill()
-        # Otherwise the main thread has been proceeded normally. This thread just exits silently.
-
     def _drt_cmd_line(self, pixel_tests, per_test_args):
         return driver.Driver.cmd_line(self, pixel_tests, per_test_args) + [
             '--in-fifo=' + self._in_fifo_path,
             '--out-fifo=' + self._out_fifo_path,
             '--err-fifo=' + self._err_fifo_path,
         ]
+
+    @staticmethod
+    def _loop_with_timeout(condition, timeout_secs):
+        deadline = time.time() + timeout_secs
+        while time.time() < deadline:
+            if condition():
+                return True
+        return False
+
+    def _all_pipes_created(self):
+        return (self._file_exists_on_device(self._in_fifo_path) and
+                self._file_exists_on_device(self._out_fifo_path) and
+                self._file_exists_on_device(self._err_fifo_path))
+
+    def _remove_all_pipes(self):
+        self._port._run_adb_command(['shell', 'rm', self._in_fifo_path, self._out_fifo_path, self._err_fifo_path])
+        return (not self._file_exists_on_device(self._in_fifo_path) and
+                not self._file_exists_on_device(self._out_fifo_path) and
+                not self._file_exists_on_device(self._err_fifo_path))
 
     def start(self, pixel_tests, per_test_args):
         # Only one driver instance is allowed because of the nature of Android activity.
@@ -503,14 +511,13 @@ class ChromiumAndroidDriver(driver.Driver):
         super(ChromiumAndroidDriver, self).start(pixel_tests, per_test_args)
 
     def _start(self, pixel_tests, per_test_args):
-        retries = 0
-        while not self._start_once(pixel_tests, per_test_args):
+        for retries in range(3):
+            if self._start_once(pixel_tests, per_test_args):
+                return
             _log.error('Failed to start DumpRenderTree application. Retries=%d. Log:%s' % (retries, self._port._get_logcat()))
-            retries += 1
-            if retries >= 3:
-                raise AssertionError('Failed to start DumpRenderTree application multiple times. Give up.')
             self.stop()
             time.sleep(2)
+        raise AssertionError('Failed to start DumpRenderTree application multiple times. Give up.')
 
     def _start_once(self, pixel_tests, per_test_args):
         super(ChromiumAndroidDriver, self)._start(pixel_tests, per_test_args)
@@ -522,14 +529,8 @@ class ChromiumAndroidDriver(driver.Driver):
             _log.error('Failed to start DumpRenderTree application. Exception:\n' + start_result)
             return False
 
-        seconds = 0
-        while (not self._file_exists_on_device(self._in_fifo_path) or
-               not self._file_exists_on_device(self._out_fifo_path) or
-               not self._file_exists_on_device(self._err_fifo_path)):
-            time.sleep(1)
-            seconds += 1
-            if seconds >= DRT_START_STOP_TIMEOUT_SECS:
-                return False
+        if not ChromiumAndroidDriver._loop_with_timeout(self._all_pipes_created, DRT_START_STOP_TIMEOUT_SECS):
+            return False
 
         # Read back the shell prompt to ensure adb shell ready.
         deadline = time.time() + DRT_START_STOP_TIMEOUT_SECS
@@ -555,9 +556,19 @@ class ChromiumAndroidDriver(driver.Driver):
         # Combine the stdout and stderr pipes into self._server_process.
         self._server_process.replace_outputs(self._read_stdout_process._proc.stdout, self._read_stderr_process._proc.stdout)
 
+        def deadlock_detector(processes, normal_startup_event):
+            if not ChromiumAndroidDriver._loop_with_timeout(lambda: normal_startup_event.is_set(), DRT_START_STOP_TIMEOUT_SECS):
+                # If normal_startup_event is not set in time, the main thread must be blocked at
+                # reading/writing the fifo. Kill the fifo reading/writing processes to let the
+                # main thread escape from the deadlocked state. After that, the main thread will
+                # treat this as a crash.
+                _log.warn('Deadlock detected. Processes killed.')
+                for i in processes:
+                    i.kill()
+
         # Start a thread to kill the pipe reading/writing processes on deadlock of the fifos during startup.
         normal_startup_event = threading.Event()
-        threading.Thread(target=self._deadlock_detector,
+        threading.Thread(name='DeadlockDetector', target=deadlock_detector,
                          args=([self._server_process, self._read_stdout_process, self._read_stderr_process], normal_startup_event)).start()
 
         output = ''
@@ -575,28 +586,6 @@ class ChromiumAndroidDriver(driver.Driver):
             # Inform the deadlock detector that the startup is successful without deadlock.
             normal_startup_event.set()
             return True
-
-    def run_test(self, driver_input):
-        driver_output = super(ChromiumAndroidDriver, self).run_test(driver_input)
-        if driver_output.crash:
-            # When Android is OOM, DRT process may be killed by ActivityManager or system OOM.
-            # It looks like a crash but there is no fatal signal logged. Re-run the test for
-            # such crash.
-            # To test: adb shell am force-stop org.chromium.native_test,
-            # or kill -11 pid twice or three times to simulate a fatal crash.
-            if self._port._get_logcat().find('Fatal signal') == -1:
-                self._restart_after_killed = True
-                self._port._drt_retry_after_killed += 1
-                if self._port._drt_retry_after_killed > 10:
-                    raise AssertionError('DumpRenderTree is killed by Android for too many times!')
-                _log.error('DumpRenderTree is killed by system (%d).' % self._port._drt_retry_after_killed)
-                self.stop()
-                # Sleep 10 seconds to let system recover.
-                time.sleep(10)
-                return self.run_test(driver_input)
-
-        self._restart_after_killed = False
-        return driver_output
 
     def stop(self):
         self._port._run_adb_command(['shell', 'am', 'force-stop', DRT_APP_PACKAGE])
@@ -616,15 +605,8 @@ class ChromiumAndroidDriver(driver.Driver):
             self._server_process = None
         super(ChromiumAndroidDriver, self).stop()
 
-        seconds = 0
-        while (self._file_exists_on_device(self._in_fifo_path) or
-               self._file_exists_on_device(self._out_fifo_path) or
-               self._file_exists_on_device(self._err_fifo_path)):
-            time.sleep(1)
-            self._port._run_adb_command(['shell', 'rm', self._in_fifo_path, self._out_fifo_path, self._err_fifo_path])
-            seconds += 1
-            if seconds >= DRT_START_STOP_TIMEOUT_SECS:
-                raise AssertionError('Failed to remove fifo files. May be locked.')
+        if not ChromiumAndroidDriver._loop_with_timeout(self._remove_all_pipes, DRT_START_STOP_TIMEOUT_SECS):
+            raise AssertionError('Failed to remove fifo files. May be locked.')
 
     def _command_from_driver_input(self, driver_input):
         command = super(ChromiumAndroidDriver, self)._command_from_driver_input(driver_input)
