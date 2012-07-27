@@ -230,6 +230,31 @@ public:
     static void setInputTypeDateEnabled(bool isEnabled) { isInputTypeDateEnabled = isEnabled; }
 #endif
 
+#if ENABLE(INPUT_TYPE_DATETIME)
+    static bool inputTypeDateTimeEnabled() { return isInputTypeDateTimeEnabled; }
+    static void setInputTypeDateTimeEnabled(bool isEnabled) { isInputTypeDateTimeEnabled = isEnabled; }
+#endif
+
+#if ENABLE(INPUT_TYPE_DATETIMELOCAL)
+    static bool inputTypeDateTimeLocalEnabled() { return isInputTypeDateTimeLocalEnabled; }
+    static void setInputTypeDateTimeLocalEnabled(bool isEnabled) { isInputTypeDateTimeLocalEnabled = isEnabled; }
+#endif
+
+#if ENABLE(INPUT_TYPE_MONTH)
+    static bool inputTypeMonthEnabled() { return isInputTypeMonthEnabled; }
+    static void setInputTypeMonthEnabled(bool isEnabled) { isInputTypeMonthEnabled = isEnabled; }
+#endif
+
+#if ENABLE(INPUT_TYPE_TIME)
+    static bool inputTypeTimeEnabled() { return isInputTypeTimeEnabled; }
+    static void setInputTypeTimeEnabled(bool isEnabled) { isInputTypeTimeEnabled = isEnabled; }
+#endif
+
+#if ENABLE(INPUT_TYPE_WEEK)
+    static bool inputTypeWeekEnabled() { return isInputTypeWeekEnabled; }
+    static void setInputTypeWeekEnabled(bool isEnabled) { isInputTypeWeekEnabled = isEnabled; }
+#endif
+
 #if ENABLE(DIALOG_ELEMENT)
     static bool dialogElementEnabled() { return isDialogElementEnabled; }
     static void setDialogElementEnabled(bool isEnabled) { isDialogElementEnabled = isEnabled; }
@@ -307,6 +332,26 @@ private:
 
 #if ENABLE(INPUT_TYPE_DATE)
     static bool isInputTypeDateEnabled;
+#endif
+
+#if ENABLE(INPUT_TYPE_DATETIME)
+    static bool isInputTypeDateTimeEnabled;
+#endif
+
+#if ENABLE(INPUT_TYPE_DATETIMELOCAL)
+    static bool isInputTypeDateTimeLocalEnabled;
+#endif
+
+#if ENABLE(INPUT_TYPE_MONTH)
+    static bool isInputTypeMonthEnabled;
+#endif
+
+#if ENABLE(INPUT_TYPE_TIME)
+    static bool isInputTypeTimeEnabled;
+#endif
+
+#if ENABLE(INPUT_TYPE_WEEK)
+    static bool isInputTypeWeekEnabled;
 #endif
 
 #if ENABLE(DIALOG_ELEMENT)

@@ -198,6 +198,46 @@ bool RuntimeEnabledFeatures::isStyleScopedEnabled = false;
 bool RuntimeEnabledFeatures::isInputTypeDateEnabled = true;
 #endif
 
+#if ENABLE(INPUT_TYPE_DATETIME)
+#if PLATFORM(CHROMIUM) && !OS(ANDROID)
+bool RuntimeEnabledFeatures::isInputTypeDateTimeEnabled = false;
+#else
+bool RuntimeEnabledFeatures::isInputTypeDateTimeEnabled = true;
+#endif
+#endif
+
+#if ENABLE(INPUT_TYPE_DATETIMELOCAL)
+#if PLATFORM(CHROMIUM) && !OS(ANDROID)
+bool RuntimeEnabledFeatures::isInputTypeDateTimeLocalEnabled = false;
+#else
+bool RuntimeEnabledFeatures::isInputTypeDateTimeLocalEnabled = true;
+#endif
+#endif
+
+#if ENABLE(INPUT_TYPE_MONTH)
+#if PLATFORM(CHROMIUM) && !OS(ANDROID)
+bool RuntimeEnabledFeatures::isInputTypeMonthEnabled = false;
+#else
+bool RuntimeEnabledFeatures::isInputTypeMonthEnabled = true;
+#endif
+#endif
+
+#if ENABLE(INPUT_TYPE_TIME)
+#if PLATFORM(CHROMIUM) && !OS(ANDROID)
+bool RuntimeEnabledFeatures::isInputTypeTimeEnabled = false;
+#else
+bool RuntimeEnabledFeatures::isInputTypeTimeEnabled = true;
+#endif
+#endif
+
+#if ENABLE(INPUT_TYPE_WEEK)
+#if PLATFORM(CHROMIUM) && !OS(ANDROID)
+bool RuntimeEnabledFeatures::isInputTypeWeekEnabled = false;
+#else
+bool RuntimeEnabledFeatures::isInputTypeWeekEnabled = true;
+#endif
+#endif
+
 #if ENABLE(DIALOG_ELEMENT)
 bool RuntimeEnabledFeatures::isDialogElementEnabled = false;
 #endif

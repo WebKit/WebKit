@@ -79,7 +79,9 @@ public:
 // Do not expose instances of InputType and classes derived from it to classes
 // other than HTMLInputElement.
 class InputType {
-    WTF_MAKE_NONCOPYABLE(InputType); WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_NONCOPYABLE(InputType);
+    WTF_MAKE_FAST_ALLOCATED;
+
 public:
     static PassOwnPtr<InputType> create(HTMLInputElement*, const String&);
     static PassOwnPtr<InputType> createText(HTMLInputElement*);

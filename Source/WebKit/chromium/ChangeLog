@@ -1,3 +1,35 @@
+2012-07-26  Yoshifumi Inoue  <yosin@chromium.org>
+
+        [Forms] Introduce runtime feature flags for input type datetime, datetimelocal, month, time, week
+        https://bugs.webkit.org/show_bug.cgi?id=92339
+
+        Reviewed by Kent Tamura.
+
+        To detect compilation errors and test failure earlier, I would like
+        build and run tests for input type datetime, datetime-local, month,
+        time and week with runtime feature flags to avoid behavior changes
+        on chromium browser.
+
+        This patch adds query and change functions for runtime features of
+        input type datetime, datetime-local, month, time and week to WebRuntimeFeatures
+        class for exposing DRT and chromium browser expermental flags.
+
+        * features.gypi: Turn on ENABLE_INPUT_TYPE_DATETIME, ENABLE_INPUT_TYPE_DATETIMELOCAL,
+        ENABLE_INPUT_TYPE_MONTH, ENABLE_INPUT_TYPE_TIME, and ENABLE_INPUT_TYPE_WEEK for all OS.
+        * public/WebRuntimeFeatures.h:
+        (WebRuntimeFeatures):
+        * src/WebRuntimeFeatures.cpp:
+        (WebKit::WebRuntimeFeatures::enableInputTypeDateTime): Added.
+        (WebKit::WebRuntimeFeatures::isInputTypeDateTimeEnabled): Added.
+        (WebKit::WebRuntimeFeatures::enableInputTypeDateTimeLocal): Added.
+        (WebKit::WebRuntimeFeatures::isInputTypeDateTimeLocalEnabled): Added.
+        (WebKit::WebRuntimeFeatures::enableInputTypeMonth): Added.
+        (WebKit::WebRuntimeFeatures::isInputTypeMonthEnabled): Added.
+        (WebKit::WebRuntimeFeatures::enableInputTypeTime): Added.
+        (WebKit::WebRuntimeFeatures::isInputTypeTimeEnabled): Added.
+        (WebKit::WebRuntimeFeatures::enableInputTypeWeek): Added.
+        (WebKit::WebRuntimeFeatures::isInputTypeWeekEnabled): Added.
+
 2012-07-26  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r123799.

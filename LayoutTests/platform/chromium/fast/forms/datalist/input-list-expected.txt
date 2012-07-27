@@ -12,12 +12,12 @@ PASS document.getElementById("search").list is document.getElementById("dl1")
 PASS document.getElementById("url").list is document.getElementById("dl1")
 PASS document.getElementById("telephone").list is document.getElementById("dl1")
 PASS document.getElementById("email").list is document.getElementById("dl1")
-PASS document.getElementById("datetime").list is document.getElementById("dl1")
+FAIL document.getElementById("datetime").list should be [object HTMLDataListElement]. Was null.
 FAIL document.getElementById("date").list should be [object HTMLDataListElement]. Was null.
-PASS document.getElementById("month").list is document.getElementById("dl1")
-PASS document.getElementById("week").list is document.getElementById("dl1")
-PASS document.getElementById("time").list is document.getElementById("dl1")
-PASS document.getElementById("datetime-local").list is document.getElementById("dl1")
+FAIL document.getElementById("month").list should be [object HTMLDataListElement]. Was null.
+FAIL document.getElementById("week").list should be [object HTMLDataListElement]. Was null.
+FAIL document.getElementById("time").list should be [object HTMLDataListElement]. Was null.
+FAIL document.getElementById("datetime-local").list should be [object HTMLDataListElement]. Was null.
 PASS document.getElementById("number").list is document.getElementById("dl1")
 PASS document.getElementById("range").list is document.getElementById("dl1")
 FAIL document.getElementById("color").list should be [object HTMLDataListElement]. Was null.

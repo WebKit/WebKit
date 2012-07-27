@@ -1,3 +1,47 @@
+2012-07-26  Yoshifumi Inoue  <yosin@chromium.org>
+
+        [Forms] Introduce runtime feature flags for input type datetime, datetimelocal, month, time, week
+        https://bugs.webkit.org/show_bug.cgi?id=92339
+
+        Reviewed by Kent Tamura.
+
+        To detect compilation errors and test failure earlier, I would like
+        build and run tests for input type datetime, datetime-local, month,
+        time and week with runtime feature flags to avoid behavior changes
+        other than test shell.
+
+        This patch adds runtime features for input types, datetime, datetime-local,
+        month, time and week and integrates them into InputType::createInputTypeFactoryMap
+        to follow runtime feature flags.
+
+        At this time, these runtime features are enabled by default for all
+        ports define ENABLE_INPUT_TYPE_XXX except for Chromium port other than
+        Android. I'll remove these #if after I update Chromium browser for
+        disabling them for non-Android.
+
+        No new tests. Enabling disabled tests (fast/forms/datetime, fast/forms/dattimelocal,
+        fast/forms/month, fast/forms/time, fast/forms/week)
+
+        * bindings/generic/RuntimeEnabledFeatures.cpp: Added initializations of
+        variables for runtime features of input types.
+        * bindings/generic/RuntimeEnabledFeatures.h:
+        (WebCore::RuntimeEnabledFeatures::inputTypeDateTimeEnabled): Added.
+        (WebCore::RuntimeEnabledFeatures::setInputTypeDateTimeEnabled): Added.
+        (WebCore::RuntimeEnabledFeatures::inputTypeDateTimeLocalEnabled): Added.
+        (WebCore::RuntimeEnabledFeatures::setInputTypeDateTimeLocalEnabled): Added.
+        (WebCore::RuntimeEnabledFeatures::inputTypeMonthEnabled): Added.
+        (WebCore::RuntimeEnabledFeatures::setInputTypeMonthEnabled): Added.
+        (WebCore::RuntimeEnabledFeatures::inputTypeTimeEnabled): Added.
+        (WebCore::RuntimeEnabledFeatures::setInputTypeTimeEnabled): Added.
+        (WebCore::RuntimeEnabledFeatures::inputTypeWeekEnabled): Added.
+        (WebCore::RuntimeEnabledFeatures::setInputTypeWeekEnabled): Added.
+        * html/InputType.cpp:
+        (WebCore::createInputTypeFactoryMap): Register input types datetime,
+        datetime-local, month, time and week if corresponding runtime feature
+        flag is enabled.
+        * html/InputType.h: Changed indentation to force building *InputType.cpp for
+        making Chromium-win bots to be happy.
+
 2012-07-26  Xianzhu Wang  <wangxianzhu@chromium.org>
 
         [Chromium-Android] Don't overlay scrollbars in layout test mode

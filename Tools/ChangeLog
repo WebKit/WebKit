@@ -1,3 +1,16 @@
+2012-07-26  Yoshifumi Inoue  <yosin@chromium.org>
+
+        [Forms] Introduce runtime feature flags for input type datetime, datetimelocal, month, time, week
+        https://bugs.webkit.org/show_bug.cgi?id=92339
+
+        Reviewed by Kent Tamura.
+
+        This patch enables runtime features for input type datetime, datetime-local,
+        month, time and week for Chromium DRT.
+
+        * DumpRenderTree/chromium/TestShell.cpp:
+        (TestShell::TestShell): Call enableInputType{DateTime,DateTimeLocal,Month,Time,Week}.
+
 2012-07-26  Jeffrey Pfau  <jpfau@apple.com>
 
         Reloading substitute-data/alternate html string for unreachableURL will add an item to the back-forward-history for each reload

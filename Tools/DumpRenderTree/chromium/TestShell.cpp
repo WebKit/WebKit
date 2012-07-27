@@ -122,6 +122,11 @@ TestShell::TestShell()
     WebRuntimeFeatures::enableGeolocation(true);
     WebRuntimeFeatures::enablePointerLock(true);
     WebRuntimeFeatures::enableIndexedDatabase(true);
+    WebRuntimeFeatures::enableInputTypeDateTime(true);
+    WebRuntimeFeatures::enableInputTypeDateTimeLocal(true);
+    WebRuntimeFeatures::enableInputTypeMonth(true);
+    WebRuntimeFeatures::enableInputTypeTime(true);
+    WebRuntimeFeatures::enableInputTypeWeek(true);
     WebRuntimeFeatures::enableFileSystem(true);
     WebRuntimeFeatures::enableJavaScriptI18NAPI(true);
     WebRuntimeFeatures::enableMediaSource(true);

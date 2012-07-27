@@ -531,6 +531,96 @@ bool WebRuntimeFeatures::isInputTypeDateEnabled()
 #endif
 }
 
+void WebRuntimeFeatures::enableInputTypeDateTime(bool enable)
+{
+#if ENABLE(INPUT_TYPE_DATETIME)
+    RuntimeEnabledFeatures::setInputTypeDateTimeEnabled(enable);
+#else
+    UNUSED_PARAM(enable);
+#endif
+}
+
+bool WebRuntimeFeatures::isInputTypeDateTimeEnabled()
+{
+#if ENABLE(INPUT_TYPE_DATETIME)
+    return RuntimeEnabledFeatures::inputTypeDateTimeEnabled();
+#else
+    return false;
+#endif
+}
+
+void WebRuntimeFeatures::enableInputTypeDateTimeLocal(bool enable)
+{
+#if ENABLE(INPUT_TYPE_DATETIMELOCAL)
+    RuntimeEnabledFeatures::setInputTypeDateTimeLocalEnabled(enable);
+#else
+    UNUSED_PARAM(enable);
+#endif
+}
+
+bool WebRuntimeFeatures::isInputTypeDateTimeLocalEnabled()
+{
+#if ENABLE(INPUT_TYPE_DATETIMELOCAL)
+    return RuntimeEnabledFeatures::inputTypeDateTimeLocalEnabled();
+#else
+    return false;
+#endif
+}
+
+void WebRuntimeFeatures::enableInputTypeMonth(bool enable)
+{
+#if ENABLE(INPUT_TYPE_MONTH)
+    RuntimeEnabledFeatures::setInputTypeMonthEnabled(enable);
+#else
+    UNUSED_PARAM(enable);
+#endif
+}
+
+bool WebRuntimeFeatures::isInputTypeMonthEnabled()
+{
+#if ENABLE(INPUT_TYPE_MONTH)
+    return RuntimeEnabledFeatures::inputTypeMonthEnabled();
+#else
+    return false;
+#endif
+}
+
+void WebRuntimeFeatures::enableInputTypeTime(bool enable)
+{
+#if ENABLE(INPUT_TYPE_TIME)
+    RuntimeEnabledFeatures::setInputTypeTimeEnabled(enable);
+#else
+    UNUSED_PARAM(enable);
+#endif
+}
+
+bool WebRuntimeFeatures::isInputTypeTimeEnabled()
+{
+#if ENABLE(INPUT_TYPE_TIME)
+    return RuntimeEnabledFeatures::inputTypeTimeEnabled();
+#else
+    return false;
+#endif
+}
+
+void WebRuntimeFeatures::enableInputTypeWeek(bool enable)
+{
+#if ENABLE(INPUT_TYPE_WEEK)
+    RuntimeEnabledFeatures::setInputTypeWeekEnabled(enable);
+#else
+    UNUSED_PARAM(enable);
+#endif
+}
+
+bool WebRuntimeFeatures::isInputTypeWeekEnabled()
+{
+#if ENABLE(INPUT_TYPE_WEEK)
+    return RuntimeEnabledFeatures::inputTypeWeekEnabled();
+#else
+    return false;
+#endif
+}
+
 void WebRuntimeFeatures::enableDialogElement(bool enable)
 {
 #if ENABLE(DIALOG_ELEMENT)

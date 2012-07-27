@@ -1,3 +1,20 @@
+2012-07-26  Yoshifumi Inoue  <yosin@chromium.org>
+
+        [Forms] Introduce runtime feature flags for input type datetime, datetimelocal, month, time, week
+        https://bugs.webkit.org/show_bug.cgi?id=92339
+
+        Reviewed by Kent Tamura.
+
+        This patch enables tests for input type datetime, datetime-local,
+        month, time and week for Chromium ports.
+
+        * platform/chromium/TestExpectations: Removed disabled directives for
+        input type datetime, datetime-local, month, time and week.
+        * platform/chromium/fast/forms/datalist/input-list-expected.txt: Updated
+        expecations for input type datetime, datetime-local, month, time and week
+        to null for IDL list attribute. So far, these expectations specified
+        HTMLDataListElement for input type "text" as unsupported input types.
+
 2012-07-26  Brian Weinstein  <bweinstein@apple.com>
 
         Unreviewed rebaseline after r123790.

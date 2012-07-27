@@ -1103,21 +1103,6 @@ BUGCR33211 LINUX MAC : http/tests/loading/deleted-host-in-resource-load-delegate
 // HTML5 DB layout tests
 BUGCR27697 SKIP : storage/websql/hash-change-with-xhr.html = PASS
 
-// Implementation of Date/time input types are incomplete and
-// ENABLE_INPUT_TYPE_* flags are not enabled.
-BUGWK29359 : fast/forms/datetime = TEXT
-BUGWK29359 : fast/forms/datetimelocal/ValidityState-rangeOverflow-datetimelocal.html = TEXT
-BUGWK29359 : fast/forms/datetimelocal/ValidityState-rangeUnderflow-datetimelocal.html = TEXT
-BUGWK29359 : fast/forms/datetimelocal/ValidityState-stepMismatch-datetimelocal.html = TEXT
-BUGWK29359 : fast/forms/datetimelocal/ValidityState-typeMismatch-datetimelocal.html = TEXT
-BUGWK29359 : fast/forms/datetimelocal/datetimelocal-input-type.html = TEXT
-BUGWK29359 : fast/forms/datetimelocal/datetimelocal-input-visible-string.html = TEXT
-BUGWK29359 : fast/forms/datetimelocal/datetimelocal-stepup-stepdown-from-renderer.html = TEXT
-BUGWK29359 : fast/forms/datetimelocal/datetimelocal-stepup-stepdown.html = TEXT
-BUGWK29359 : fast/forms/datetimelocal/input-valueasnumber-datetimelocal.html = TEXT
-BUGWK29359 : fast/forms/month = TEXT
-BUGWK29359 : fast/forms/time = TEXT
-BUGWK29359 : fast/forms/week = TEXT
 // Need rebaseline
 BUGWK84827 : fast/forms/date/calendar-picker-appearance.html = IMAGE PASS MISSING
 

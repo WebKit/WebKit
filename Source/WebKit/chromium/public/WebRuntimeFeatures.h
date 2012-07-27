@@ -139,6 +139,21 @@ public:
     WEBKIT_EXPORT static void enableInputTypeDate(bool);
     WEBKIT_EXPORT static bool isInputTypeDateEnabled();
 
+    WEBKIT_EXPORT static void enableInputTypeDateTime(bool);
+    WEBKIT_EXPORT static bool isInputTypeDateTimeEnabled();
+
+    WEBKIT_EXPORT static void enableInputTypeDateTimeLocal(bool);
+    WEBKIT_EXPORT static bool isInputTypeDateTimeLocalEnabled();
+
+    WEBKIT_EXPORT static void enableInputTypeMonth(bool);
+    WEBKIT_EXPORT static bool isInputTypeMonthEnabled();
+
+    WEBKIT_EXPORT static void enableInputTypeTime(bool);
+    WEBKIT_EXPORT static bool isInputTypeTimeEnabled();
+
+    WEBKIT_EXPORT static void enableInputTypeWeek(bool);
+    WEBKIT_EXPORT static bool isInputTypeWeekEnabled();
+
     WEBKIT_EXPORT static void enableDialogElement(bool);
     WEBKIT_EXPORT static bool isDialogElementEnabled();
 
