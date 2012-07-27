@@ -396,9 +396,11 @@ LayoutUnit RenderFlexibleBox::crossAxisContentExtent() const
     return isHorizontalFlow() ? contentHeight() : contentWidth();
 }
 
-LayoutUnit RenderFlexibleBox::mainAxisContentExtent() const
+LayoutUnit RenderFlexibleBox::mainAxisContentExtent()
 {
-    return isHorizontalFlow() ? contentWidth() : contentHeight();
+    if (isColumnFlow())
+        return std::max(LayoutUnit(0), computeContentLogicalHeightUsing(MainOrPreferredSize, style()->logicalHeight()));
+    return contentLogicalWidth();
 }
 
 WritingMode RenderFlexibleBox::transformedWritingMode() const
@@ -590,7 +592,7 @@ LayoutUnit RenderFlexibleBox::mainAxisScrollbarExtentForChild(RenderBox* child) 
     return isHorizontalFlow() ? child->verticalScrollbarWidth() : child->horizontalScrollbarHeight();
 }
 
-LayoutUnit RenderFlexibleBox::preferredMainAxisContentExtentForChild(RenderBox* child) const
+LayoutUnit RenderFlexibleBox::preferredMainAxisContentExtentForChild(RenderBox* child)
 {
     Length flexBasis = flexBasisForChild(child);
     if (flexBasis.isAuto()) {

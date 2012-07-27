@@ -25,6 +25,18 @@
         * Shared/WebEventConversion.cpp:
         (WebKit::WebKit2PlatformTouchEvent::WebKit2PlatformTouchEvent):
 
+2012-07-27  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        [WK2] Fix build warning in WebEventConversion.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=92517
+
+        Reviewed by Darin Adler.
+
+        There is a build warning related to comparison between signed and unsigned integer expressions.
+
+        * Shared/WebEventConversion.cpp:
+        (WebKit::WebKit2PlatformTouchEvent::WebKit2PlatformTouchEvent):
+
 2012-07-27  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL][WK2] Add download client for Ewk_Context
