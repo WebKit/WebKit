@@ -153,6 +153,75 @@ TEST_F(EWK2UnitTestBase, ewk_cookie_manager_accept_policy)
     ASSERT_EQ(countHostnamesWithCookies(cookieManager), 0);
 }
 
+void onCookiesChanged(void *eventInfo)
+{
+    bool* cookiesChanged = static_cast<bool*>(eventInfo);
+    *cookiesChanged = true;
+}
+
+TEST_F(EWK2UnitTestBase, ewk_cookie_manager_changes_watch)
+{
+    OwnPtr<EWK2UnitTestServer> httpServer = adoptPtr(new EWK2UnitTestServer);
+    httpServer->run(serverCallback);
+
+    Ewk_Cookie_Manager* cookieManager = ewk_context_cookie_manager_get(ewk_context_default_get());
+    ASSERT_TRUE(cookieManager);
+
+    ewk_cookie_manager_accept_policy_set(cookieManager, EWK_COOKIE_ACCEPT_POLICY_ALWAYS);
+    ASSERT_EQ(getAcceptPolicy(cookieManager), EWK_COOKIE_ACCEPT_POLICY_ALWAYS);
+
+    // Watch for changes
+    bool cookiesChanged = false;
+    ewk_cookie_manager_changes_watch(cookieManager, onCookiesChanged, &cookiesChanged);
+
+    // Check for cookie changes notifications
+    loadUrlSync(httpServer->getURIForPath("/index.html").data());
+
+    while (!cookiesChanged)
+        ecore_main_loop_iterate();
+    ASSERT_TRUE(cookiesChanged);
+
+    cookiesChanged = false;
+    ewk_cookie_manager_cookies_clear(cookieManager);
+    while (!cookiesChanged)
+        ecore_main_loop_iterate();
+    ASSERT_TRUE(cookiesChanged);
+
+    // Stop watching for notifications
+    ewk_cookie_manager_changes_watch(cookieManager, 0, 0);
+    cookiesChanged = false;
+    loadUrlSync(httpServer->getURIForPath("/index.html").data());
+    ASSERT_EQ(countHostnamesWithCookies(cookieManager), 2);
+    ASSERT_FALSE(cookiesChanged);
+
+    // Watch again for notifications
+    ewk_cookie_manager_changes_watch(cookieManager, onCookiesChanged, &cookiesChanged);
+
+    // Make sure we don't get notifications when loading setting an existing persistent storage
+    char textStorage1[] = "/tmp/txt-cookie.XXXXXX";
+    ASSERT_TRUE(mktemp(textStorage1));
+    char textStorage2[] = "/tmp/txt-cookie.XXXXXX";
+    ASSERT_TRUE(mktemp(textStorage2));
+
+    ewk_cookie_manager_persistent_storage_set(cookieManager, textStorage1, EWK_COOKIE_PERSISTENT_STORAGE_TEXT);
+    loadUrlSync(httpServer->getURIForPath("/index.html").data());
+    ASSERT_EQ(countHostnamesWithCookies(cookieManager), 2);
+
+    cookiesChanged = false;
+    ewk_cookie_manager_persistent_storage_set(cookieManager, textStorage2, EWK_COOKIE_PERSISTENT_STORAGE_TEXT);
+    ASSERT_EQ(countHostnamesWithCookies(cookieManager), 0);
+
+    ewk_cookie_manager_persistent_storage_set(cookieManager, textStorage1, EWK_COOKIE_PERSISTENT_STORAGE_TEXT);
+    ASSERT_EQ(countHostnamesWithCookies(cookieManager), 2);
+
+    ASSERT_FALSE(cookiesChanged);
+
+    // Final clean up.
+    ewk_cookie_manager_changes_watch(cookieManager, 0, 0);
+    unlink(textStorage1);
+    unlink(textStorage2);
+}
+
 TEST_F(EWK2UnitTestBase, ewk_cookie_manager_cookies_delete)
 {
     OwnPtr<EWK2UnitTestServer> httpServer = adoptPtr(new EWK2UnitTestServer);

@@ -40,16 +40,47 @@
 
 using namespace WebKit;
 
+struct Cookie_Change_Handler {
+    Ewk_Cookie_Manager_Changes_Watch_Cb callback;
+    void* userData;
+
+    Cookie_Change_Handler()
+        : callback(0)
+        , userData(0)
+    { }
+
+    Cookie_Change_Handler(Ewk_Cookie_Manager_Changes_Watch_Cb _callback, void* _userData)
+        : callback(_callback)
+        , userData(_userData)
+    { }
+};
+
+static void cookiesDidChange(WKCookieManagerRef, const void* clientInfo);
+
 /**
  * \struct  _Ewk_Cookie_Manager
  * @brief   Contains the cookie manager data.
  */
 struct _Ewk_Cookie_Manager {
     WKRetainPtr<WKCookieManagerRef> wkCookieManager;
+    Cookie_Change_Handler changeHandler;
 
     _Ewk_Cookie_Manager(WKCookieManagerRef cookieManagerRef)
         : wkCookieManager(cookieManagerRef)
-    { }
+    {
+        WKCookieManagerClient wkCookieManagerClient = {
+            kWKCookieManagerClientCurrentVersion,
+            this, // clientInfo
+            cookiesDidChange
+        };
+        WKCookieManagerSetClient(wkCookieManager.get(), &wkCookieManagerClient);
+    }
+
+    ~_Ewk_Cookie_Manager()
+    {
+        if (changeHandler.callback)
+            WKCookieManagerStopObservingCookieChanges(wkCookieManager.get());
+    }
 };
 
 #define EWK_COOKIE_MANAGER_WK_GET_OR_RETURN(manager, wkManager_, ...)    \
@@ -72,12 +103,26 @@ COMPILE_ASSERT_MATCHING_ENUM(EWK_COOKIE_ACCEPT_POLICY_NO_THIRD_PARTY, kWKHTTPCoo
 COMPILE_ASSERT_MATCHING_ENUM(EWK_COOKIE_PERSISTENT_STORAGE_TEXT, SoupCookiePersistentStorageText);
 COMPILE_ASSERT_MATCHING_ENUM(EWK_COOKIE_PERSISTENT_STORAGE_SQLITE, SoupCookiePersistentStorageSQLite);
 
+static void cookiesDidChange(WKCookieManagerRef, const void* clientInfo)
+{
+    Ewk_Cookie_Manager* manager = static_cast<Ewk_Cookie_Manager*>(const_cast<void*>(clientInfo));
+
+    ASSERT(manager->changeHandler.callback);
+    manager->changeHandler.callback(manager->changeHandler.userData);
+}
+
 void ewk_cookie_manager_persistent_storage_set(Ewk_Cookie_Manager* manager, const char* filename, Ewk_Cookie_Persistent_Storage storage)
 {
     EWK_COOKIE_MANAGER_WK_GET_OR_RETURN(manager, wkManager);
     EINA_SAFETY_ON_NULL_RETURN(filename);
 
+    if (manager->changeHandler.callback)
+        WKCookieManagerStopObservingCookieChanges(wkManager);
+
     toImpl(wkManager)->setCookiePersistentStorage(String::fromUTF8(filename), storage);
+
+    if (manager->changeHandler.callback)
+        WKCookieManagerStartObservingCookieChanges(wkManager);
 }
 
 void ewk_cookie_manager_accept_policy_set(Ewk_Cookie_Manager* manager, Ewk_Cookie_Accept_Policy policy)
@@ -172,6 +217,18 @@ void ewk_cookie_manager_cookies_clear(Ewk_Cookie_Manager* manager)
     EWK_COOKIE_MANAGER_WK_GET_OR_RETURN(manager, wkManager);
 
     WKCookieManagerDeleteAllCookies(wkManager);
+}
+
+void ewk_cookie_manager_changes_watch(Ewk_Cookie_Manager* manager, Ewk_Cookie_Manager_Changes_Watch_Cb callback, void* data)
+{
+    EWK_COOKIE_MANAGER_WK_GET_OR_RETURN(manager, wkManager);
+
+    manager->changeHandler = Cookie_Change_Handler(callback, data);
+
+    if (callback)
+        WKCookieManagerStartObservingCookieChanges(wkManager);
+    else
+        WKCookieManagerStopObservingCookieChanges(wkManager);
 }
 
 /**

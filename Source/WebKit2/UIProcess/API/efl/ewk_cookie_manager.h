@@ -90,6 +90,12 @@ typedef void (*Ewk_Cookie_Manager_Async_Policy_Get_Cb)(Ewk_Cookie_Accept_Policy 
 typedef void (*Ewk_Cookie_Manager_Async_Hostnames_Get_Cb)(Eina_List* hostnames, Ewk_Web_Error *error, void *event_info);
 
 /**
+ * @typedef Ewk_Cookie_Manager_Changes_Watch_Cb Ewk_Cookie_Manager_Changes_Watch_Cb
+ * @brief Callback type for use with ewk_cookie_manager_changes_watch()
+ */
+typedef void (*Ewk_Cookie_Manager_Changes_Watch_Cb)(void *event_info);
+
+/**
  * Set the @a filename where non-session cookies are stored persistently using @a storage as the format to read/write the cookies.
  *
  * Cookies are initially read from @filename to create an initial set of cookies.
@@ -142,6 +148,17 @@ EAPI void ewk_cookie_manager_async_hostnames_with_cookies_get(const Ewk_Cookie_M
  * @param hostname A host name.
  */
 EAPI void ewk_cookie_manager_hostname_cookies_clear(Ewk_Cookie_Manager *manager, const char *hostname);
+
+/**
+ * Watch for cookies changes in @a manager.
+ *
+ * Pass @c NULL as value for @a callback to stop watching for changes.
+ *
+ * @param manager The cookie manager to watch.
+ * @param callback function that will be called every time cookies are added, removed or modified.
+ * @param data User data (may be @c NULL).
+ */
+EAPI void ewk_cookie_manager_changes_watch(Ewk_Cookie_Manager *manager, Ewk_Cookie_Manager_Changes_Watch_Cb callback, void *data);
 
 /**
  * Delete all cookies of @a manager.

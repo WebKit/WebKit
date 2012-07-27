@@ -1,5 +1,20 @@
 2012-07-27  Christophe Dumez  <christophe.dumez@intel.com>
 
+        [EFL][WK2] Add API to Ewk_Cookie_Manager to watch for cookie changes
+        https://bugs.webkit.org/show_bug.cgi?id=92484
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Add API tp Ewk_Cookie_Manager so that the client can watch
+        for cookie changes.
+
+        * UIProcess/API/efl/ewk_cookie_manager.cpp:
+        * UIProcess/API/efl/ewk_cookie_manager.h:
+        * UIProcess/API/efl/tests/test_ewk2_cookie_manager.cpp: Add unit tests
+        for cookie changes watching.
+
+2012-07-27  Christophe Dumez  <christophe.dumez@intel.com>
+
         [EFL][WK2] Stop using C API to interact with the page in Ewk_View
         https://bugs.webkit.org/show_bug.cgi?id=92463
 
