@@ -1077,6 +1077,11 @@ void DumpRenderTreeSupportQt::resetInternalsObject(QWebFrame* frame)
     WebCoreTestSupport::resetInternalsObject(context);
 }
 
+void DumpRenderTreeSupportQt::resetInternalsObject(JSContextRef context)
+{
+    WebCoreTestSupport::resetInternalsObject(context);
+}
+
 QImage DumpRenderTreeSupportQt::paintPagesWithBoundaries(QWebFrame* qframe)
 {
     Frame* frame = QWebFramePrivate::core(qframe);

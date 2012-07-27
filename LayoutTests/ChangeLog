@@ -1,3 +1,12 @@
+2012-07-27  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt][WK2] REGRESSION(r119127): resetting window.internals settings between tests doesn't work properly
+        https://bugs.webkit.org/show_bug.cgi?id=88064
+
+        Reviewed by Zoltan Herczeg.
+
+        * platform/qt-5.0-wk2/Skipped: Unskip now passing tests.
+
 2012-07-26  Mike Lawther  <mikelawther@chromium.org>
 
         Make transitions work between different Length types

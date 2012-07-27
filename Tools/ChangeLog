@@ -1,3 +1,15 @@
+2012-07-27  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt][WK2] REGRESSION(r119127): resetting window.internals settings between tests doesn't work properly
+        https://bugs.webkit.org/show_bug.cgi?id=88064
+
+        Reviewed by Zoltan Herczeg.
+
+        Use resetInternalsObject() instead of injectInternalsObject().
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::InjectedBundlePage::resetAfterTest):
+
 2012-07-26  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL] Remove forwarding headers from MiniBrowser/Efl.

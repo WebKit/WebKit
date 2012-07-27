@@ -204,6 +204,7 @@ public:
     static void injectInternalsObject(QWebFrame*);
     static void injectInternalsObject(JSContextRef);
     static void resetInternalsObject(QWebFrame*);
+    static void resetInternalsObject(JSContextRef);
 
     static void setInteractiveFormValidationEnabled(QWebPage*, bool);
 
