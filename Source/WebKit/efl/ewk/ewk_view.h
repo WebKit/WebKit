@@ -2141,7 +2141,7 @@ EAPI Eina_Bool    ewk_view_setting_minimum_timer_interval_set(Evas_Object *o, do
  *
  * @param o view object to get the minimum interval
  *
- * @return the minimum interval on success or @c 0 on failure
+ * @return the minimum interval on success or @c -1.0 on failure
  */
 EAPI double       ewk_view_setting_minimum_timer_interval_get(const Evas_Object *o);
 

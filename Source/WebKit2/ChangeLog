@@ -1,3 +1,20 @@
+2012-07-27  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        [EFL] Fix wrong return value in EWK_VIEW_XXX macro.
+        https://bugs.webkit.org/show_bug.cgi?id=92466
+
+        Reviewed by Simon Hausmann.
+
+        There are wrong return values in EWK_VIEW_XXX macros. The wrong return values
+        should be fixed. In addition, API description is also modified according to returned
+        value change.
+
+        * UIProcess/API/efl/ewk_view.cpp:
+        (ewk_view_uri_set):
+        (ewk_view_load_progress_get):
+        (ewk_view_device_pixel_ratio_get):
+        * UIProcess/API/efl/ewk_view.h:
+
 2012-07-27  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL][WK2] Add unit tests for Ewk_View form client

@@ -592,8 +592,8 @@ void ewk_view_uri_update(Evas_Object* ewkView)
 
 Eina_Bool ewk_view_uri_set(Evas_Object* ewkView, const char* uri)
 {
-    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, 0);
-    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, 0);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, false);
+    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, false);
 
     WKRetainPtr<WKURLRef> url(AdoptWK, WKURLCreateWithUTF8CString(uri));
     WKPageLoadURL(toAPI(priv->pageClient->page()), url.get());
@@ -761,8 +761,8 @@ void ewk_view_title_changed(Evas_Object* ewkView, const char* title)
 
 double ewk_view_load_progress_get(const Evas_Object* ewkView)
 {
-    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, 0);
-    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, 0);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, -1.0);
+    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, -1.0);
 
     return WKPageGetEstimatedProgress(toAPI(priv->pageClient->page()));
 }
@@ -778,8 +778,8 @@ Eina_Bool ewk_view_device_pixel_ratio_set(Evas_Object* ewkView, float ratio)
 
 float ewk_view_device_pixel_ratio_get(const Evas_Object* ewkView)
 {
-    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, 1);
-    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, 1);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, -1.0);
+    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, -1.0);
 
     return priv->pageClient->page()->deviceScaleFactor();
 }

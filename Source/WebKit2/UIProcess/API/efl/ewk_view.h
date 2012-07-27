@@ -223,7 +223,8 @@ EAPI Evas_Object *ewk_view_add_with_context(Evas *e, Ewk_Context *context);
  * @param o view object to load @a URI
  * @param uri uniform resource identifier to load
  *
- * @return @c EINA_TRUE is returned if @a o is valid, irrespective of load.
+ * @return @c EINA_TRUE is returned if @a o is valid, irrespective of load,
+ *         or @c EINA_FALSE on failure
  */
 EAPI Eina_Bool ewk_view_uri_set(Evas_Object *o, const char *uri);
 
@@ -336,7 +337,8 @@ EAPI const char *ewk_view_title_get(const Evas_Object *o);
  *
  * @param o view object to get the current progress
  *
- * @return the load progres of page, value from 0.0 to 1.0.
+ * @return the load progress of page, value from 0.0 to 1.0,
+ *         or @c -1.0 on failure
  */
 EAPI double ewk_view_load_progress_get(const Evas_Object *o);
 
@@ -392,7 +394,8 @@ EAPI Eina_Bool ewk_view_html_string_load(Evas_Object *o, const char *html, const
  *
  * @param o view object to get device pixel ratio
  *
- * @return the ratio between the CSS units and device pixels.
+ * @return the ratio between the CSS units and device pixels,
+ *         or @c -1.0 on failure
  */
 EAPI float ewk_view_device_pixel_ratio_get(const Evas_Object *o);
 

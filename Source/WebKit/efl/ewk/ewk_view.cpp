@@ -2614,8 +2614,8 @@ Eina_Bool ewk_view_setting_minimum_timer_interval_set(Evas_Object* ewkView, doub
 
 double ewk_view_setting_minimum_timer_interval_get(const Evas_Object* ewkView)
 {
-    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, false);
-    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, false);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, -1.0);
+    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, -1.0);
     return priv->settings.domTimerInterval;
 }
 
@@ -4025,14 +4025,16 @@ void ewk_view_transition_to_commited_for_newpage(Evas_Object* ewkView)
  * @param ewkView View to load
  * @param request Request which contain url to navigate
  * @param navigationType navigation type
+ *
+ * @return true on success or false otherwise
  */
 bool ewk_view_navigation_policy_decision(Evas_Object* ewkView, Ewk_Frame_Resource_Request* request, Ewk_Navigation_Type navigationType)
 {
-    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, true);
-    EINA_SAFETY_ON_NULL_RETURN_VAL(smartData->api, true);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, false);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(smartData->api, false);
 
     if (!smartData->api->navigation_policy_decision)
-        return true;
+        return false;
 
     return smartData->api->navigation_policy_decision(smartData, request, navigationType);
 }
@@ -4095,12 +4097,12 @@ void ewk_view_contents_size_changed(Evas_Object* ewkView, int width, int height)
  *
  * @param ewkView view.
  *
- * @return page size.
+ * @return page size, or -1.0 size on failure
  */
 WebCore::FloatRect ewk_view_page_rect_get(const Evas_Object* ewkView)
 {
-    EWK_VIEW_SD_GET(ewkView, smartData);
-    EWK_VIEW_PRIV_GET(smartData, priv);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, WebCore::FloatRect(-1.0, -1.0, -1.0, -1.0));
+    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, WebCore::FloatRect(-1.0, -1.0, -1.0, -1.0));
 
     WebCore::Frame* main_frame = priv->page->mainFrame();
     return main_frame->view()->frameRect();
@@ -4275,8 +4277,8 @@ void ewk_view_soup_session_set(Evas_Object* ewkView, SoupSession* session)
 
 Eina_Bool ewk_view_setting_enable_xss_auditor_get(const Evas_Object* ewkView)
 {
-    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, EINA_FALSE);
-    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, EINA_FALSE);
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, false);
+    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, false);
     return priv->settings.enableXSSAuditor;
 }
 

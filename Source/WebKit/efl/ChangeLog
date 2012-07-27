@@ -1,3 +1,21 @@
+2012-07-27  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        [EFL] Fix wrong return value in EWK_VIEW_XXX macro.
+        https://bugs.webkit.org/show_bug.cgi?id=92466
+
+        Reviewed by Simon Hausmann.
+
+        There are wrong return values in EWK_VIEW_XXX macros. The wrong return values
+        should be fixed. In addition, API description is also modified according to returned
+        value change.
+
+        * ewk/ewk_view.cpp:
+        (ewk_view_setting_minimum_timer_interval_get):
+        (ewk_view_navigation_policy_decision):
+        (ewk_view_page_rect_get):
+        (ewk_view_setting_enable_xss_auditor_get):
+        * ewk/ewk_view.h:
+
 2012-07-27  Kihong Kwon  <kihong.kwon@samsung.com>
 
         [EFL] Change prototype of run_open_panel
