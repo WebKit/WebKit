@@ -263,27 +263,6 @@ String ClipboardChromium::getData(const String& type) const
     if (!convertToURL)
         return data;
     return convertURIListToURL(data);
-
-    Vector<String> uriList;
-    // Line separator is \r\n per RFC 2483 - howver, for compatiblity
-    // reasons we also allow just \n here.
-    data.split('\n', uriList);
-    // Process the input and return the first valid RUL. In case no URLs can
-    // be found, return an empty string. This is in line with the HTML5
-    // spec (see "The DragEvent and DataTransfer interfaces").
-    for (size_t i = 0; i < uriList.size(); ++i) {
-        String& line = uriList[i];
-        line = line.stripWhiteSpace();
-        if (line.isEmpty())
-            continue;
-        if (line[0] == '#')
-            continue;
-        KURL url = KURL(ParsedURLString, line);
-        if (url.isValid())
-            return url;
-    }
-
-    return String();
 }
 
 bool ClipboardChromium::setData(const String& type, const String& data)
