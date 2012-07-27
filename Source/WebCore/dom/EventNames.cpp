@@ -24,10 +24,10 @@
 namespace WebCore {
 
 #define INITIALIZE_EVENT_NAME(name) \
-    , name##Event(#name, AtomicString::ConstructFromLiteral)
+    , name##Event(#name)
 
 #define INITIALIZE_EVENT_INTERFACE(name) \
-    , interfaceFor##name(#name, AtomicString::ConstructFromLiteral)
+    , interfaceFor##name(#name)
 
 EventNames::EventNames()
     : dummy(0)

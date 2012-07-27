@@ -1,3 +1,15 @@
+2012-07-26  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r123820.
+        http://trac.webkit.org/changeset/123820
+        https://bugs.webkit.org/show_bug.cgi?id=92465
+
+        It made all tests crash on all port (Requested by Ossy_home on
+        #webkit).
+
+        * dom/EventNames.cpp:
+        (WebCore):
+
 2012-07-26  Ryosuke Niwa  <rniwa@webkit.org>
 
         Qt build fix after r123788. Fixed the typo.
