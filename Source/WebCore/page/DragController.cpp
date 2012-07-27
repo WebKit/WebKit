@@ -101,6 +101,7 @@ DragController::DragController(Page* page, DragClient* client)
     , m_isHandlingDrag(false)
     , m_sourceDragOperation(DragOperationNone)
 {
+    ASSERT(m_client);
 }
 
 DragController::~DragController()

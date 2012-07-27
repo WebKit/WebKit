@@ -1,3 +1,18 @@
+2012-07-27  Vivek Galatage  <vivekgalatage@gmail.com>
+
+        DragController should ascertain dragClient to be non-null
+        https://bugs.webkit.org/show_bug.cgi?id=92474
+
+        Reviewed by Tony Chang.
+
+        The DragController must always ensure a valid dragClient object. Hence
+        adding the ASSERT to assure that.
+
+        No new tests. Added assertion for PageClient.dragClient.
+
+        * page/DragController.cpp:
+        (WebCore::DragController::DragController):
+
 2012-07-27  Adrienne Walker  <enne@google.com>
 
         [chromium] Clean up LayerRendererChromium::drawTexturedQuad
