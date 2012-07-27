@@ -201,11 +201,9 @@ HTMLElement* ColorInputType::shadowColorSwatch() const
     return shadow ? toHTMLElement(shadow->firstChild()->firstChild()) : 0;
 }
 
-IntRect ColorInputType::elementRectRelativeToWindow() const
+IntRect ColorInputType::elementRectRelativeToRootView() const
 {
-    RenderObject* renderer = element()->renderer();
-    ASSERT(renderer);
-    return pixelSnappedIntRect(renderer->view()->frameView()->contentsToWindow(renderer->absoluteBoundingBoxRect()));
+    return element()->document()->view()->contentsToRootView(element()->getPixelSnappedRect());
 }
 
 Color ColorInputType::currentColor()

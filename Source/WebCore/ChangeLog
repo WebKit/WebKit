@@ -1,3 +1,21 @@
+2012-07-27  Keishi Hattori  <keishi@webkit.org>
+
+        Replace ColorChooserClient::elementRectRelativeToWindow with elementRectRelativeToRootView
+        https://bugs.webkit.org/show_bug.cgi?id=92488
+
+        Reviewed by Kent Tamura.
+
+        Changing ColorChooserClient interface to return element rectangle that is relative to root view instead of window.
+
+        No new tests. Method is not used yet.
+
+        * html/ColorInputType.cpp:
+        (WebCore::ColorInputType::elementRectRelativeToRootView): Replaced elementRectRelativeToWindow. Returns element rectangle relative to root view.
+        * html/ColorInputType.h:
+        (ColorInputType):
+        * platform/ColorChooserClient.h:
+        (ColorChooserClient):
+
 2012-07-27  Dominik Röttsches  <dominik.rottsches@intel.com>
 
         [Cairo] Add complex font drawing using HarfbuzzNG
