@@ -345,7 +345,7 @@ static inline void handleElementAttributes(Vector<Attribute, 8>& prefixedAttribu
         if (!Element::parseAttributeName(parsedName, attrURI, attrQName, ec))
             return;
 
-        prefixedAttributes.append(Attribute(parsedName, attrURI));
+        prefixedAttributes.append(Attribute(parsedName, attrValue));
     }
 }
 
