@@ -1,3 +1,12 @@
+2012-07-26  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL] Remove forwarding headers from MiniBrowser/Efl.
+        https://bugs.webkit.org/show_bug.cgi?id=91627
+
+        Reviewed by Kentaro Hara.
+
+        * MiniBrowser/efl/CMakeLists.txt: Remove unnecessary forwarding headers.
+
 2012-07-26  Yoshifumi Inoue  <yosin@chromium.org>
 
         [Forms] Introduce runtime feature flags for input type datetime, datetimelocal, month, time, week

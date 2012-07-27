@@ -12,7 +12,6 @@ SET(MiniBrowser_INCLUDE_DIRECTORIES
     ${EVAS_INCLUDE_DIRS}
     ${WEBKIT2_DIR}/UIProcess/API/efl
     ${WEBKIT2_DIR}
-    ${DERIVED_SOURCES_WEBKIT2_DIR}/include
     ${CMAKE_SOURCE_DIR}/Source
 )
 
@@ -47,14 +46,6 @@ IF (ENABLE_GLIB_SUPPORT)
     )
 ENDIF ()
 
-ADD_CUSTOM_TARGET(forwarding-headerMiniBrowserEfl
-    COMMAND ${PERL_EXECUTABLE} ${WEBKIT2_DIR}/Scripts/generate-forwarding-headers.pl ${MiniBrowser_DIR} ${DERIVED_SOURCES_WEBKIT2_DIR}/include efl
-)
-
-ADD_CUSTOM_TARGET(forwarding-headerMiniBrowserSoup
-    COMMAND ${PERL_EXECUTABLE} ${WEBKIT2_DIR}/Scripts/generate-forwarding-headers.pl ${MiniBrowser_DIR} ${DERIVED_SOURCES_WEBKIT2_DIR}/include soup
-)
-
 ADD_DEFINITIONS(-DTHEME_DIR=\"${THEME_BINARY_DIR}\")
 
 INCLUDE_DIRECTORIES(${MiniBrowser_INCLUDE_DIRECTORIES})
@@ -63,6 +54,3 @@ ADD_EXECUTABLE(MiniBrowser ${MiniBrowser_SOURCES})
 TARGET_LINK_LIBRARIES(MiniBrowser ${MiniBrowser_LIBRARIES})
 ADD_TARGET_PROPERTIES(MiniBrowser LINK_FLAGS "${MiniBrowser_LINK_FLAGS}")
 SET_TARGET_PROPERTIES(MiniBrowser PROPERTIES FOLDER "Tools")
-
-ADD_DEPENDENCIES(MiniBrowser forwarding-headerMiniBrowserEfl)
-ADD_DEPENDENCIES(MiniBrowser forwarding-headerMiniBrowserSoup)
