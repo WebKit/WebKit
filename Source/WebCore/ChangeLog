@@ -1,3 +1,29 @@
+2012-07-26  Silvia Pfeiffer  <silviapf@chromium.org>
+
+        [Chromium] Regression: Global-buffer-overflow in WebCore::mediaControlElementType
+        https://bugs.webkit.org/show_bug.cgi?id=91333
+
+        Reviewed by Eric Seidel.
+
+        MediaControlChromiumEnclosureElement now is a subclass of MediaControlElement, which
+        fixes the broken cast detected in the bug.
+        The displayType() of MediaControlChromiumEnclosureElement is set to 'MediaControlsPanel',
+        since the Panel element is sufficiently close in functionality to the Enclosure element.
+        By reusing this type, we do not need to introduce a Chromium-specific constant into
+        the generally used MediaControlElementType.
+
+        Test: accessibility/media-controls.html
+
+        * html/shadow/MediaControlRootElementChromium.cpp:
+        (WebCore::MediaControlChromiumEnclosureElement::MediaControlChromiumEnclosureElement):
+        Subclass MediaControlChromiumEnclosureElement from MediaControlElement.
+        (WebCore::MediaControlChromiumEnclosureElement::displayType):
+        Give the enclosure the MediaPanels type.
+        * html/shadow/MediaControlRootElementChromium.h:
+        Add the MediaControlElement.h header file.
+        (MediaControlChromiumEnclosureElement):
+        Subclass MediaControlChromiumEnclosureElement from MediaControlElement.
+
 2012-07-26  Arnaud Renevier  <arno@renevier.net>
 
         [GTK] avoid unneeded object creation when calling Vector::append

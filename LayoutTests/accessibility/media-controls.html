@@ -1,0 +1,19 @@
+<!DOCTYPE HTML>
+<html>
+  <body>
+    <script src="../fast/js/resources/js-test-pre.js"></script>
+    <script>
+      description("This tests that the script creation of an audio element with controls works when accessibility is enabled and does not crash.");
+
+      if (window.testRunner && window.accessibilityController) {
+          function createAudio() {
+              var audio = document.createElement('audio');
+              audio.setAttribute('controls', 'controls');
+              document.documentElement.appendChild(audio);
+          }
+          window.onload = createAudio;
+      }
+    </script>
+    <script src="../fast/js/resources/js-test-post.js"></script>
+  </body>
+</html>

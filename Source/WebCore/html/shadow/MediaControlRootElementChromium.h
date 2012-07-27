@@ -29,6 +29,7 @@
 
 #if ENABLE(VIDEO)
 
+#include "MediaControlElements.h"
 #include "MediaControls.h"
 #include <wtf/RefPtr.h>
 
@@ -61,22 +62,15 @@ class MediaControlTextTrackContainerElement;
 class MediaControlTextTrackDisplayElement;
 #endif
 
-class MediaControlChromiumEnclosureElement : public HTMLDivElement {
+class MediaControlChromiumEnclosureElement : public MediaControlElement {
 public:
     static PassRefPtr<MediaControlChromiumEnclosureElement> create(Document*);
 
-    virtual const AtomicString& shadowPseudoId() const;
-
-    void setMediaController(MediaControllerInterface* controller) { m_mediaController = controller; }
-    MediaControllerInterface* mediaController() const { return m_mediaController; }
-
-protected:
-    MediaControlChromiumEnclosureElement(Document*);
-
 private:
-    virtual bool isMediaControlElement() const { return true; }
+    explicit MediaControlChromiumEnclosureElement(Document*);
 
-    MediaControllerInterface* m_mediaController;
+    virtual MediaControlElementType displayType() const;
+    virtual const AtomicString& shadowPseudoId() const;
 };
 
 class MediaControlRootElementChromium : public MediaControls {

@@ -49,8 +49,7 @@ namespace WebCore {
 static const double timeWithoutMouseMovementBeforeHidingControls = 2;
 
 MediaControlChromiumEnclosureElement::MediaControlChromiumEnclosureElement(Document* document)
-    : HTMLDivElement(HTMLNames::divTag, document->document())
-    , m_mediaController(0)
+    : MediaControlElement(document)
 {
 }
 
@@ -58,6 +57,13 @@ PassRefPtr<MediaControlChromiumEnclosureElement> MediaControlChromiumEnclosureEl
 {
     return adoptRef(new MediaControlChromiumEnclosureElement(document));
 }
+
+MediaControlElementType MediaControlChromiumEnclosureElement::displayType() const
+{
+    // Mapping onto same MediaControlElementType as panel element, since it has similar properties.
+    return MediaControlsPanel;
+}
+
 
 const AtomicString& MediaControlChromiumEnclosureElement::shadowPseudoId() const
 {

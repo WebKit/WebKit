@@ -1,3 +1,16 @@
+2012-07-26  Silvia Pfeiffer  <silviapf@chromium.org>
+
+        [Chromium] Regression: Global-buffer-overflow in WebCore::mediaControlElementType
+        https://bugs.webkit.org/show_bug.cgi?id=91333
+
+        Reviewed by Eric Seidel.
+
+        This new test assures that the creation of a audio element with controls does not
+        break when accessibility is turned on.
+
+        * accessibility/media-controls-expected.txt: Added.
+        * accessibility/media-controls.html: Added.
+
 2012-07-26  Max Vujovic  <mvujovic@adobe.com>
 
         Added binding and updated chromium tests.
