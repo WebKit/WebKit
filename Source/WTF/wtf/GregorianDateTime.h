@@ -25,7 +25,8 @@
 #ifndef WTF_GregorianDateTime_h
 #define WTF_GregorianDateTime_h
 
-#include <wtf/text/CString.h>
+#include <time.h>
+#include <wtf/Noncopyable.h>
 
 namespace WTF {
 
