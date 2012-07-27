@@ -1,3 +1,39 @@
+2012-07-26  Anish Bhayani  <anish.bhayani@gmail.com>
+
+        De-virtualize WrapShape classes
+        https://bugs.webkit.org/show_bug.cgi?id=90998
+
+        Reviewed by Andreas Kling.
+
+        The destructor for WrapShapes classes did not need to use a virtual
+        pointer. WrapShapes.cpp is created to cast the WrapShape destructor 
+        to the subclass type saving memory and avoiding virtual calls. 
+
+        There are existing tests that cover the validity of shapes. The
+        added changes merely change the destructor of the shape objects
+        which is also tested by LayoutTests/fast/exclusions.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * rendering/style/WrapShapes.cpp: Added.
+        (WebCore):
+        (WebCore::WrapShape::destroy):
+        * rendering/style/WrapShapes.h:
+        (WebCore::WrapShape::deref):
+        (WrapShape):
+        (WebCore::WrapShape::type):
+        (WebCore::WrapShape::setType):
+        (WrapShapeRectangle):
+        (WebCore::WrapShapeRectangle::WrapShapeRectangle):
+        (WebCore::WrapShapeCircle::WrapShapeCircle):
+        (WebCore::WrapShapeEllipse::WrapShapeEllipse):
+        (WebCore::WrapShapePolygon::WrapShapePolygon):
+        (WrapShapePolygon):
+
 2012-07-26  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r123808.

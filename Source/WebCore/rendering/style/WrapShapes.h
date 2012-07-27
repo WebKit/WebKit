@@ -13,7 +13,7 @@
  *    disclaimer in the documentation and/or other materials
  *    provided with the distribution.
  *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDER “AS IS” AND ANY
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDER "AS IS" AND ANY
  * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
  * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER BE
@@ -32,10 +32,12 @@
 
 #include "Length.h"
 #include "WindRule.h"
+#include <wtf/RefCounted.h>
+#include <wtf/RefPtr.h>
 
 namespace WebCore {
 
-class WrapShape : public RefCounted<WrapShape> {
+class WrapShape : public WTF::RefCountedBase {
 public:
     enum Type {
         WRAP_SHAPE_RECTANGLE = 1,
@@ -43,12 +45,23 @@ public:
         WRAP_SHAPE_ELLIPSE = 3,
         WRAP_SHAPE_POLYGON = 4
     };
+    
+    void deref() 
+    {
+        if (derefBase())
+            destroy();
+    }
 
-    virtual Type type() const = 0;
-    virtual ~WrapShape() { }
+    Type type() const { return m_type; }
 
 protected:
-    WrapShape() { }
+    WrapShape(Type type)
+        : m_type(type)
+    { }
+    
+private:
+    void destroy();
+    Type m_type;
 };
 
 class WrapShapeRectangle : public WrapShape {
@@ -68,12 +81,11 @@ public:
     void setHeight(Length height) { m_height = height; }
     void setCornerRadiusX(Length radiusX) { m_cornerRadiusX = radiusX; }
     void setCornerRadiusY(Length radiusY) { m_cornerRadiusY = radiusY; }
-
-    virtual Type type() const { return WRAP_SHAPE_RECTANGLE; }
-
+    
 private:
     WrapShapeRectangle()
-        : m_cornerRadiusX(Undefined)
+        : WrapShape(WRAP_SHAPE_RECTANGLE)
+        , m_cornerRadiusX(Undefined)
         , m_cornerRadiusY(Undefined)
     { }
 
@@ -97,9 +109,10 @@ public:
     void setCenterY(Length centerY) { m_centerY = centerY; }
     void setRadius(Length radius) { m_radius = radius; }
 
-    virtual Type type() const { return WRAP_SHAPE_CIRCLE; }
 private:
-    WrapShapeCircle() { }
+    WrapShapeCircle() 
+        : WrapShape(WRAP_SHAPE_CIRCLE)
+    { }
 
     Length m_centerX;
     Length m_centerY;
@@ -120,9 +133,10 @@ public:
     void setRadiusX(Length radiusX) { m_radiusX = radiusX; }
     void setRadiusY(Length radiusY) { m_radiusY = radiusY; }
 
-    virtual Type type() const { return WRAP_SHAPE_ELLIPSE; }
 private:
-    WrapShapeEllipse() { }
+    WrapShapeEllipse() 
+        : WrapShape(WRAP_SHAPE_ELLIPSE)
+    { }
 
     Length m_centerX;
     Length m_centerY;
@@ -142,10 +156,10 @@ public:
     void setWindRule(WindRule windRule) { m_windRule = windRule; }
     void appendPoint(Length x, Length y) { m_values.append(x); m_values.append(y); }
 
-    virtual Type type() const { return WRAP_SHAPE_POLYGON; }
 private:
     WrapShapePolygon()
-        : m_windRule(RULE_NONZERO)
+        : WrapShape(WRAP_SHAPE_POLYGON)
+        , m_windRule(RULE_NONZERO)
     { }
 
     WindRule m_windRule;

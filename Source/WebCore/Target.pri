@@ -1207,6 +1207,7 @@ SOURCES += \
     rendering/style/StyleSurroundData.cpp \
     rendering/style/StyleTransformData.cpp \
     rendering/style/StyleVisualData.cpp \
+    rendering/style/WrapShapes.cpp \
     storage/StorageTask.cpp \
     storage/StorageThread.cpp \
     storage/Storage.cpp \
@@ -2384,6 +2385,7 @@ HEADERS += \
     rendering/style/StyleVisualData.h \
     rendering/style/SVGRenderStyleDefs.h \
     rendering/style/SVGRenderStyle.h \
+    rendering/style/WrapShapes.h \
     rendering/svg/RenderSVGBlock.h \
     rendering/svg/RenderSVGContainer.h \
     rendering/svg/RenderSVGEllipse.h \

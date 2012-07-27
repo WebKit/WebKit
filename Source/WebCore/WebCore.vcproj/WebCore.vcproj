@@ -46267,6 +46267,14 @@
 					RelativePath="..\rendering\style\SVGRenderStyleDefs.h"
 					>
 				</File>
+				<File
+					RelativePath="..\rendering\style\WrapShapes.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\rendering\style\WrapShapes.h"
+					>
+				</File>
 			</Filter>
 			<Filter
 				Name="svg"
