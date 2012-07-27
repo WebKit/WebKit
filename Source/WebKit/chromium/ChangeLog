@@ -1,3 +1,17 @@
+2012-07-27  Kevin Ellis  <kevers@chromium.org>
+
+        [chromium] Calendar for input type=date should be larger on devices that support touch input.
+        https://bugs.webkit.org/show_bug.cgi?id=92424
+
+        Reviewed by Kent Tamura.
+
+        Plumbs the deviceSupportsTouch setting through to the popup page so
+        that the Calendar popup can be enlarged on screens that support touch
+        input.
+
+        * src/WebPagePopupImpl.cpp:
+        (WebKit::WebPagePopupImpl::initPage):
+
 2012-07-27  Peter Beverloo  <peter@chromium.org>
 
         Unreviewed.  Rolled DEPS.

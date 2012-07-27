@@ -139,6 +139,13 @@ body {
     -webkit-box-sizing: border-box;
 }
 
+@media (pointer:coarse) {
+    .day {
+        min-width: 28px;
+        line-height: 28px;
+    }
+}
+
 .available {
     cursor: default;
     font-weight: 700;

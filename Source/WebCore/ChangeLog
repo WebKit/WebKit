@@ -1,3 +1,20 @@
+2012-07-27  Kevin Ellis  <kevers@chromium.org>
+
+        [chromium] Calendar for input type=date should be larger on devices that support touch input.
+        https://bugs.webkit.org/show_bug.cgi?id=92424
+
+        Reviewed by Kent Tamura.
+
+        Adds touch specific CSS rules to enlarge entries in the calendar on
+        screens that support touch input.
+
+        Manually tested with touch support enabled/disabled.
+
+        * Resources/calendarPicker.css:
+        (@media (pointer:coarse)):
+        * html/shadow/CalendarPickerElement.cpp:
+        (WebCore::CalendarPickerElement::contentSize):
+
 2012-07-28  Chris Fleizach  <cfleizach@apple.com>
 
         WebKit should expose @title as label (AXTitle or AXDescription) sometimes instead of AXHelp, according to the ARIA text alt computation
