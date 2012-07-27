@@ -33,13 +33,13 @@ namespace WebCore {
 class ScrollbarThemeChromiumAndroid : public ScrollbarThemeComposite {
 public:
     virtual int scrollbarThickness(ScrollbarControlSize);
-    virtual bool usesOverlayScrollbars() const { return true; }
+    virtual bool usesOverlayScrollbars() const;
 
     virtual int thumbPosition(ScrollbarThemeClient*);
     virtual int thumbLength(ScrollbarThemeClient*);
 
     virtual bool hasButtons(ScrollbarThemeClient*) { return false; };
-    virtual bool hasThumb(ScrollbarThemeClient*) { return true; };
+    virtual bool hasThumb(ScrollbarThemeClient*);
 
     virtual IntRect backButtonRect(ScrollbarThemeClient*, ScrollbarPart, bool painting = false);
     virtual IntRect forwardButtonRect(ScrollbarThemeClient*, ScrollbarPart, bool painting = false);

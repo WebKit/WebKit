@@ -61,6 +61,12 @@ int ScrollbarThemeChromiumAndroid::scrollbarThickness(ScrollbarControlSize contr
     return scrollbarWidth + scrollbarMargin;
 }
 
+bool ScrollbarThemeChromiumAndroid::usesOverlayScrollbars() const
+{
+    // In layout test mode, match Chromium-Linux.
+    return !isRunningLayoutTest();
+}
+
 int ScrollbarThemeChromiumAndroid::thumbPosition(ScrollbarThemeClient* scrollbar)
 {
     if (!scrollbar->totalSize())
@@ -82,6 +88,12 @@ int ScrollbarThemeChromiumAndroid::thumbLength(ScrollbarThemeClient* scrollbar)
     int length = round(proportion * trackLen);
     length = min(max(length, minimumThumbLength(scrollbar)), trackLen);
     return length;
+}
+
+bool ScrollbarThemeChromiumAndroid::hasThumb(ScrollbarThemeClient* scrollbar)
+{
+    // In layout test mode, match Chromium-Linux.
+    return !isRunningLayoutTest();
 }
 
 IntRect ScrollbarThemeChromiumAndroid::backButtonRect(ScrollbarThemeClient*, ScrollbarPart, bool)

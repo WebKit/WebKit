@@ -1,3 +1,19 @@
+2012-07-26  Xianzhu Wang  <wangxianzhu@chromium.org>
+
+        [Chromium-Android] Don't overlay scrollbars in layout test mode
+        https://bugs.webkit.org/show_bug.cgi?id=92419
+
+        Reviewed by Adam Barth.
+
+        No new tests. This fixes failures of existing tests, e.g. css1/box_properties/border.html and many others.
+
+        * platform/chromium/ScrollbarThemeChromiumAndroid.cpp:
+        (WebCore::ScrollbarThemeChromiumAndroid::usesOverlayScrollbars): Returns false in layout test mode.
+        (WebCore):
+        (WebCore::ScrollbarThemeChromiumAndroid::hasThumb): Returns false in layout test mode (to match pixel test expectations).
+        * platform/chromium/ScrollbarThemeChromiumAndroid.h:
+        (ScrollbarThemeChromiumAndroid):
+
 2012-07-26  Jeffrey Pfau  <jpfau@apple.com>
 
         Reloading substitute-data/alternate html string for unreachableURL will add an item to the back-forward-history for each reload
