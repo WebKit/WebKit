@@ -1,3 +1,17 @@
+2012-07-27  Varun Jain  <varunjain@chromium.org>
+
+        Animated SVGs do not clear previous frame completely in hidpi mode.
+        https://bugs.webkit.org/show_bug.cgi?id=92395
+
+        Reviewed by Darin Adler.
+
+        The rect thats is cleared in subsequent frames needed to be scaled with device scale.
+
+        Test: svg/as-image/animated-svg-repaints-completely-in-hidpi.html
+
+        * svg/graphics/SVGImage.cpp:
+        (WebCore::SVGImage::drawSVGToImageBuffer):
+
 2012-07-27  Scott Graham  <scottmg@chromium.org>
 
         Fix COMPILE_ASSERT for InlineFlowBox growing

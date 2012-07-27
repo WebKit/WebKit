@@ -1,3 +1,16 @@
+2012-07-27  Varun Jain  <varunjain@chromium.org>
+
+        Animated SVGs do not clear previous frame completely in hidpi mode.
+        https://bugs.webkit.org/show_bug.cgi?id=92395
+
+        Reviewed by Darin Adler.
+
+        * platform/chromium/TestExpectations:
+        * platform/mac/svg/as-image/animated-svg-repaints-completely-in-hidpi-expected.png: Added.
+        * platform/mac/svg/as-image/animated-svg-repaints-completely-in-hidpi-expected.txt: Added.
+        * svg/as-image/animated-svg-repaints-completely-in-hidpi.html: Added.
+        * svg/as-image/resources/animated-rect-fixed-size-3.svg: Added.
+
 2012-07-27  Beth Dakin  <bdakin@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=92327

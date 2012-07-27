@@ -164,11 +164,12 @@ void SVGImage::drawSVGToImageBuffer(ImageBuffer* buffer, const IntSize& size, fl
 
     // Eventually clear image buffer.
     IntRect rect(IntPoint(), size);
-    if (shouldClear == ClearImageBuffer)
-        buffer->context()->clearRect(rect);
 
     FloatRect scaledRect(rect);
     scaledRect.scale(scale);
+
+    if (shouldClear == ClearImageBuffer)
+        buffer->context()->clearRect(enclosingIntRect(scaledRect));
 
     // Draw SVG on top of ImageBuffer.
     draw(buffer->context(), enclosingIntRect(scaledRect), rect, ColorSpaceDeviceRGB, CompositeSourceOver);

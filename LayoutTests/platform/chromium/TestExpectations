@@ -2816,6 +2816,9 @@ BUGWK70210 : fast/js/stack-overflow-arrity-catch.html = TEXT
 // These all will timeout, because we are lacking a hook that signals test completion.
 BUGWK70066 SKIP : svg/as-image/image-respects-deviceScaleFactor.html = TIMEOUT
 
+// SVG painting in high DPI mode is broken in DRT.
+BUGWK92511 SKIP : svg/as-image/animated-svg-repaints-completely-in-hidpi.html = IMAGE+TEXT
+
 // Flaky tests from ~r97647
 BUGWK70298 MAC : fast/table/border-collapsing/cached-69296.html = IMAGE
 
