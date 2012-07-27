@@ -75,6 +75,22 @@ video::-webkit-media-controls-enclosure {
     height: 35px;
 }
 
+audio::-webkit-media-controls-overlay-enclosure {
+    display: none;
+}
+
+video::-webkit-media-controls-overlay-enclosure {
+    display: -webkit-box;
+    -webkit-box-orient: horizontal;
+    -webkit-box-pack:center;
+    -webkit-box-align:center;
+    -webkit-box-flex:1;
+    width: 100%;
+    max-width: 800px;
+    text-indent: 0;
+    box-sizing: border-box;
+}
+
 audio::-webkit-media-controls-mute-button, video::-webkit-media-controls-mute-button {
     display: none;
 }
@@ -89,6 +105,18 @@ audio::-webkit-media-controls-play-button, video::-webkit-media-controls-play-bu
     line-height: 35px;
     margin-left: 9px;
     margin-right: 9px;
+    padding: 0;
+}
+
+video::-webkit-media-controls-overlay-play-button {
+    -webkit-appearance: media-overlay-play-button;
+    -webkit-box-align: center;
+    display: -webkit-box;
+    border: none;
+    box-sizing: border-box;
+    background-color: transparent;
+    width: 80px;
+    height: 80px;
     padding: 0;
 }
 

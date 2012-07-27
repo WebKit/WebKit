@@ -41,6 +41,8 @@ public:
 
     virtual bool delegatesMenuListRendering() const OVERRIDE { return true; }
 
+    virtual bool paintMediaOverlayPlayButton(RenderObject*, const PaintInfo&, const IntRect&) OVERRIDE;
+
 #if ENABLE(VIDEO)
     virtual String extraMediaControlsStyleSheet() OVERRIDE;
 #endif
