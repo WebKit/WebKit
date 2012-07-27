@@ -106,6 +106,7 @@ inline int atomicIncrement(int volatile* addend) { return static_cast<int>(atomi
 inline int atomicDecrement(int volatile* addend) { return static_cast<int>(atomic_sub_value(reinterpret_cast<unsigned volatile*>(addend), 1)) - 1; }
 
 #elif OS(ANDROID)
+#define WTF_USE_LOCKFREE_THREADSAFEREFCOUNTED 1
 
 inline int atomicIncrement(int volatile* addend) { return __atomic_inc(addend); }
 inline int atomicDecrement(int volatile* addend) { return __atomic_dec(addend); }

@@ -1,3 +1,20 @@
+2012-07-27  Wei James  <james.wei@intel.com>
+
+        set WTF_USE_LOCKFREE_THREADSAFEREFCOUNTED for chromium android
+        https://bugs.webkit.org/show_bug.cgi?id=91746
+
+        Reviewed by Adam Barth.
+
+        This patch is part of efforts to enable web audio for chromium android.
+        Web audio component needs to use atomicIncrement and atomicDecrement,
+        which are enabled by this MACRO.
+
+        As mentioned in https://bugs.webkit.org/show_bug.cgi?id=89428#c19, make
+        this patch standalone.
+
+        * wtf/Atomics.h:
+        (WTF):
+
 2012-07-26  Arnaud Renevier  <a.renevier@sisa.samsung.com>
 
         constructing TypedArray from another TypedArray is slow
