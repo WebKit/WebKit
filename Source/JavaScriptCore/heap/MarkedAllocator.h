@@ -46,6 +46,7 @@ private:
     
     MarkedBlock::FreeList m_freeList;
     MarkedBlock* m_currentBlock;
+    MarkedBlock* m_blocksToSweep;
     DoublyLinkedList<HeapBlock> m_blockList;
     size_t m_cellSize;
     bool m_cellsNeedDestruction;
@@ -56,6 +57,7 @@ private:
 
 inline MarkedAllocator::MarkedAllocator()
     : m_currentBlock(0)
+    , m_blocksToSweep(0)
     , m_cellSize(0)
     , m_cellsNeedDestruction(true)
     , m_onlyContainsStructures(false)
@@ -86,7 +88,9 @@ inline void* MarkedAllocator::allocate()
 
 inline void MarkedAllocator::reset()
 {
-    m_currentBlock = static_cast<MarkedBlock*>(m_blockList.head());
+    m_currentBlock = 0;
+    m_freeList = MarkedBlock::FreeList();
+    m_blocksToSweep = static_cast<MarkedBlock*>(m_blockList.head());
 }
 
 inline void MarkedAllocator::zapFreeList()

@@ -29,15 +29,19 @@ bool MarkedAllocator::isPagedOut(double deadline)
 inline void* MarkedAllocator::tryAllocateHelper()
 {
     if (!m_freeList.head) {
-        for (MarkedBlock*& block = m_currentBlock; block; block = static_cast<MarkedBlock*>(block->next())) {
+        for (MarkedBlock*& block = m_blocksToSweep; block; block = static_cast<MarkedBlock*>(block->next())) {
             m_freeList = block->sweep(MarkedBlock::SweepToFreeList);
-            if (m_freeList.head)
+            if (m_freeList.head) {
+                m_currentBlock = block;
                 break;
+            }
             block->didConsumeFreeList();
         }
         
-        if (!m_freeList.head)
+        if (!m_freeList.head) {
+            m_currentBlock = 0;
             return 0;
+        }
     }
     
     MarkedBlock::FreeCell* head = m_freeList.head;
@@ -100,10 +104,11 @@ MarkedBlock* MarkedAllocator::allocateBlock()
 void MarkedAllocator::addBlock(MarkedBlock* block)
 {
     ASSERT(!m_currentBlock);
+    ASSERT(!m_blocksToSweep);
     ASSERT(!m_freeList.head);
     
     m_blockList.append(block);
-    m_currentBlock = block;
+    m_blocksToSweep = m_currentBlock = block;
     m_freeList = block->sweep(MarkedBlock::SweepToFreeList);
 }
 
@@ -113,6 +118,8 @@ void MarkedAllocator::removeBlock(MarkedBlock* block)
         m_currentBlock = static_cast<MarkedBlock*>(m_currentBlock->next());
         m_freeList = MarkedBlock::FreeList();
     }
+    if (m_blocksToSweep == block)
+        m_blocksToSweep = static_cast<MarkedBlock*>(m_blocksToSweep->next());
     m_blockList.remove(block);
 }
 

@@ -1,5 +1,32 @@
 2012-07-27  Mark Hahnenberg  <mhahnenberg@apple.com>
 
+        Split functionality of MarkedAllocator::m_currentBlock
+        https://bugs.webkit.org/show_bug.cgi?id=92550
+
+        Reviewed by Filip Pizlo.
+
+        MarkedAllocator::m_currentBlock serves two purposes right now; it indicates the block that is currently 
+        being used for allocation and the beginning of the list of blocks that need to be swept. We should split 
+        these two functionalities into two separate fields.
+
+        * heap/MarkedAllocator.cpp:
+        (JSC::MarkedAllocator::tryAllocateHelper): Use m_blocksToSweep instead of m_currentBlock as the 
+        initializer/reference of the loop. Only change m_currentBlock when we know what the result will be.
+        (JSC::MarkedAllocator::addBlock): When we add a new block we know that both m_blocksToSweep and 
+        m_currentBlock are null. In order to preserve the invariant that m_currentBlock <= m_blocksToSweep, 
+        we assign both of them to point to the new block.
+        (JSC::MarkedAllocator::removeBlock): We need a separate check to see if the block we're removing is 
+        m_blocksToSweep and if so, advance it to the next block in the list.
+        * heap/MarkedAllocator.h:
+        (MarkedAllocator): Initialize m_blocksToSweep.
+        (JSC::MarkedAllocator::MarkedAllocator):
+        (JSC::MarkedAllocator::reset): We set m_blocksToSweep to be the head of our list. This function is called
+        at the end of a collection, so all of the blocks in our allocator need to be swept. We need to sweep a 
+        block before we can start allocating, so m_currentBlock is set to null. We also set the freeList to 
+        the empty FreeList to emphasize the fact that we can't start allocating until we do some sweeping.
+
+2012-07-27  Mark Hahnenberg  <mhahnenberg@apple.com>
+
         Increase inline storage for JSFinalObjects by one
         https://bugs.webkit.org/show_bug.cgi?id=92526
 
