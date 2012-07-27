@@ -1,3 +1,15 @@
+2012-07-27  Patrick Gansterer  <paroga@webkit.org>
+
+        [WINCE] Use macros from ICU instead of defining the same functionality again
+        https://bugs.webkit.org/show_bug.cgi?id=92530
+
+        Reviewed by Ryosuke Niwa.
+
+        Replace isHighSurrogate() with U16_IS_LEAD(), isLowSurrogate() with
+        U16_IS_TRAIL() and surrogateToUcs4() with U16_GET_SUPPLEMENTARY().
+
+        * wtf/unicode/wince/UnicodeWinCE.h:
+
 2012-07-27  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
 
         [Qt] Fix build after r123917

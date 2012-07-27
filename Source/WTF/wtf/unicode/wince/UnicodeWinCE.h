@@ -129,8 +129,6 @@ bool isPunct(UChar);
 bool isDigit(UChar);
 bool isAlphanumeric(UChar);
 inline bool isSeparatorSpace(UChar c) { return category(c) == Separator_Space; }
-inline bool isHighSurrogate(UChar c) { return (c & 0xfc00) == 0xd800; }
-inline bool isLowSurrogate(UChar c) { return (c & 0xfc00) == 0xdc00; }
 
 UChar toLower(UChar);
 UChar toUpper(UChar);
@@ -165,11 +163,6 @@ inline int umemcasecmp(const UChar* a, const UChar* b, int len)
             return c1 - c2;
     }
     return 0;
-}
-
-inline UChar32 surrogateToUcs4(UChar high, UChar low)
-{
-    return (UChar32(high) << 10) + low - 0x35fdc00;
 }
 
 } // namespace Unicode

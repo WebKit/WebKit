@@ -138,9 +138,9 @@ static int generateComponents(TextRunComponents* components, const Font &font, c
         }
         for (int i = 1; i < run.length(); ++i) {
             uint ch = run[i];
-            if (isHighSurrogate(ch) && isLowSurrogate(run[i-1]))
-                ch = surrogateToUcs4(ch, run[i-1]);
-            if (isLowSurrogate(ch) || category(ch) == Mark_NonSpacing)
+            if (U16_IS_LEAD(ch) && U16_IS_TRAIL(run[i-1]))
+                ch = U16_GET_SUPPLEMENTARY(ch, run[i-1]);
+            if (U16_IS_TRAIL(ch) || category(ch) == Mark_NonSpacing)
                 continue;
             if (Font::treatAsSpace(run[i])) {
                 int add = 0;
