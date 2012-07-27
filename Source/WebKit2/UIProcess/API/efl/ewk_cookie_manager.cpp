@@ -107,7 +107,9 @@ static void cookiesDidChange(WKCookieManagerRef, const void* clientInfo)
 {
     Ewk_Cookie_Manager* manager = static_cast<Ewk_Cookie_Manager*>(const_cast<void*>(clientInfo));
 
-    ASSERT(manager->changeHandler.callback);
+    if (!manager->changeHandler.callback)
+        return;
+
     manager->changeHandler.callback(manager->changeHandler.userData);
 }
 
