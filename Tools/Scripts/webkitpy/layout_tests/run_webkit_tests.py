@@ -112,23 +112,7 @@ def run(port, options, args, regular_output=sys.stderr, buildbot_output=sys.stdo
         manager = Manager(port, options, printer)
         printer.print_config()
 
-        printer.write_update("Collecting tests ...")
-        try:
-            manager.collect_tests(args)
-        except IOError, e:
-            if e.errno == errno.ENOENT:
-                return -1
-            raise
-
-        printer.write_update("Checking build ...")
-        if not port.check_build(manager.needs_servers()):
-            _log.error("Build check failed")
-            return -1
-
-        printer.write_update("Parsing expectations ...")
-        manager.parse_expectations()
-
-        unexpected_result_count = manager.run()
+        unexpected_result_count = manager.run(args)
         _log.debug("Testing completed, Exit status: %d" % unexpected_result_count)
     except Exception:
         exception_type, exception_value, exception_traceback = sys.exc_info()

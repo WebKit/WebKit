@@ -329,7 +329,7 @@ class Manager(object):
         self._worker_stats = {}
         self._current_result_summary = None
 
-    def collect_tests(self, args):
+    def _collect_tests(self, args):
         """Find all the files to test.
 
         Args:
@@ -366,7 +366,7 @@ class Manager(object):
     def _is_perf_test(self, test):
         return self.PERF_SUBDIR == test or (self.PERF_SUBDIR + self._port.TEST_PATH_SEPARATOR) in test
 
-    def parse_expectations(self):
+    def _parse_expectations(self):
         self._expectations = test_expectations.TestExpectations(self._port, self._test_files)
 
     def _split_into_chunks_if_necessary(self, skipped):
@@ -439,7 +439,7 @@ class Manager(object):
         self._test_files_list = files + skip_chunk_list
         self._test_files = set(self._test_files_list)
 
-        self.parse_expectations()
+        self._parse_expectations()
 
         self._test_files = set(files)
         self._test_files_list = files
@@ -833,21 +833,22 @@ class Manager(object):
 
         return result_summary
 
-    def run(self):
-        """Run all our tests on all our test files.
+    def run(self, args):
+        """Run all our tests on all our test files and return the number of unexpected results (0 == success)."""
+        self._printer.write_update("Collecting tests ...")
+        try:
+            self._collect_tests(args)
+        except IOError as e:
+            # This is raised when the --test-list doesn't exist.
+            return -1
 
-        For each test file, we run each test type. If there are any failures,
-        we collect them for reporting.
+        self._printer.write_update("Checking build ...")
+        if not self._port.check_build(self.needs_servers()):
+            _log.error("Build check failed")
+            return -1
 
-        Args:
-          result_summary: a summary object tracking the test results.
-
-        Return:
-          The number of unexpected results (0 == success)
-        """
-        # collect_tests() must have been called first to initialize us.
-        # If we didn't find any files to test, we've errored out already in
-        # prepare_lists_and_print_output().
+        self._printer.write_update("Parsing expectations ...")
+        self._parse_expectations()
 
         result_summary = self._set_up_run()
         if not result_summary:
@@ -1169,7 +1170,7 @@ def read_test_files(fs, filenames, test_path_separator):
         except IOError, e:
             if e.errno == errno.ENOENT:
                 _log.critical('')
-                _log.critical('--test-list file "%s" not found' % file)
+                _log.critical('--test-list file "%s" not found' % filename)
             raise
     return tests
 

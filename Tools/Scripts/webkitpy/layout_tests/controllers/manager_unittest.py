@@ -263,9 +263,7 @@ class ManagerTest(unittest.TestCase):
         run_webkit_tests._set_up_derived_options(port, options)
         printer = printing.Printer(port, options, StringIO.StringIO(), StringIO.StringIO())
         manager = LockCheckingManager(port, options, printer, tester, True)
-        manager.collect_tests(args)
-        manager.parse_expectations()
-        num_unexpected_results = manager.run()
+        num_unexpected_results = manager.run(args)
         printer.cleanup()
         tester.assertEquals(num_unexpected_results, 0)
 
@@ -276,9 +274,7 @@ class ManagerTest(unittest.TestCase):
         run_webkit_tests._set_up_derived_options(port, options)
         printer = printing.Printer(port, options, StringIO.StringIO(), StringIO.StringIO())
         manager = LockCheckingManager(port, options, printer, tester, False)
-        manager.collect_tests(args)
-        manager.parse_expectations()
-        num_unexpected_results = manager.run()
+        num_unexpected_results = manager.run(args)
         printer.cleanup()
         tester.assertEquals(num_unexpected_results, 0)
 
@@ -350,7 +346,7 @@ class ManagerTest(unittest.TestCase):
             host = MockHost()
             port = host.port_factory.get()
             manager = Manager(port, options=MockOptions(test_list=None, http=True), printer=Mock())
-            manager.collect_tests(test_names)
+            manager._collect_tests(test_names)
             return manager
 
         manager = get_manager_with_tests(['fast/html'])
@@ -371,7 +367,7 @@ class ManagerTest(unittest.TestCase):
             host = MockHost()
             port = host.port_factory.get('test-mac-leopard')
             manager = Manager(port, options=MockOptions(test_list=None, http=True), printer=Mock())
-            manager.collect_tests(test_names)
+            manager._collect_tests(test_names)
             return manager
         host = MockHost()
         port = host.port_factory.get('test-mac-leopard')

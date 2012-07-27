@@ -1,5 +1,32 @@
 2012-07-27  Dirk Pranke  <dpranke@chromium.org>
 
+        nrwt: move collect_tests(), parse_expectations() into manager
+        https://bugs.webkit.org/show_bug.cgi?id=92423
+
+        Reviewed by Ojan Vafai.
+
+        This is the first in a series of patches refactoring
+        run_webkit_tests.py and manager.py to make them more
+        maintainable; all this patch does is move a couple of functions
+        into manager.run_tests() so manager's public interface is
+        simple.
+
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        (Manager._collect_tests):
+        (Manager._parse_expectations):
+        (Manager._split_into_chunks_if_necessary):
+        (Manager.run):
+        (read_test_files):
+        * Scripts/webkitpy/layout_tests/controllers/manager_unittest.py:
+        (ManagerTest.test_http_locking):
+        (ManagerTest.test_perf_locking):
+        (ManagerTest.integration_test_needs_servers.get_manager_with_tests):
+        (ManagerTest.test_look_for_new_crash_logs.get_manager_with_tests):
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        (run):
+
+2012-07-27  Dirk Pranke  <dpranke@chromium.org>
+
         nrwt: print filtered stderr after a crash correctly
         https://bugs.webkit.org/show_bug.cgi?id=92428
 
