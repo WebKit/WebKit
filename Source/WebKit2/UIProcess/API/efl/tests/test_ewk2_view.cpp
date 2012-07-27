@@ -21,9 +21,12 @@
 
 #include "UnitTestUtils/EWK2UnitTestBase.h"
 #include "UnitTestUtils/EWK2UnitTestEnvironment.h"
+#include "UnitTestUtils/EWK2UnitTestServer.h"
 #include <EWebKit2.h>
 #include <Ecore.h>
 #include <gtest/gtest.h>
+#include <wtf/OwnPtr.h>
+#include <wtf/PassOwnPtr.h>
 #include <wtf/UnusedParam.h>
 #include <wtf/text/CString.h>
 
@@ -49,6 +52,80 @@ TEST_F(EWK2UnitTestBase, ewk_view_uri_get)
         ecore_main_loop_iterate();
     evas_object_smart_callback_del(webView(), "load,finished", onLoadFinishedForRedirection);
     EXPECT_STREQ(ewk_view_uri_get(webView()), environment->defaultTestPageUrl());
+}
+
+TEST_F(EWK2UnitTestBase, ewk_view_device_pixel_ratio)
+{
+    loadUrlSync(environment->defaultTestPageUrl());
+
+    // Default pixel ratio is 1.0
+    ASSERT_FLOAT_EQ(ewk_view_device_pixel_ratio_get(webView()), 1);
+
+    ASSERT_TRUE(ewk_view_device_pixel_ratio_set(webView(), 1.2));
+    ASSERT_FLOAT_EQ(ewk_view_device_pixel_ratio_get(webView()), 1.2);
+
+    ASSERT_TRUE(ewk_view_device_pixel_ratio_set(webView(), 1));
+    ASSERT_FLOAT_EQ(ewk_view_device_pixel_ratio_get(webView()), 1);
+}
+
+TEST_F(EWK2UnitTestBase, ewk_view_html_string_load)
+{
+    ewk_view_html_string_load(webView(), "<html><head><title>Foo</title></head><body>Bar</body></html>", 0, 0);
+    waitUntilTitleChangedTo("Foo");
+    ASSERT_STREQ(ewk_view_title_get(webView()), "Foo");
+    ewk_view_html_string_load(webView(), "<html><head><title>Bar</title></head><body>Foo</body></html>", 0, 0);
+    waitUntilTitleChangedTo("Bar");
+    ASSERT_STREQ(ewk_view_title_get(webView()), "Bar");
+}
+
+static void serverCallbackNavigation(SoupServer* server, SoupMessage* message, const char* path, GHashTable*, SoupClientContext*, gpointer)
+{
+    if (message->method != SOUP_METHOD_GET) {
+        soup_message_set_status(message, SOUP_STATUS_NOT_IMPLEMENTED);
+        return;
+    }
+
+    soup_message_set_status(message, SOUP_STATUS_OK);
+
+    Eina_Strbuf* body = eina_strbuf_new();
+    eina_strbuf_append_printf(body, "<html><title>%s</title><body>%s</body></html>", path + 1, path + 1);
+    const size_t bodyLength = eina_strbuf_length_get(body);
+    soup_message_body_append(message->response_body, SOUP_MEMORY_TAKE, eina_strbuf_string_steal(body), bodyLength);
+    eina_strbuf_free(body);
+
+    soup_message_body_complete(message->response_body);
+}
+
+TEST_F(EWK2UnitTestBase, ewk_view_navigation)
+{
+    OwnPtr<EWK2UnitTestServer> httpServer = adoptPtr(new EWK2UnitTestServer);
+    httpServer->run(serverCallbackNavigation);
+
+    // Visit Page1
+    loadUrlSync(httpServer->getURIForPath("/Page1").data());
+    ASSERT_STREQ(ewk_view_title_get(webView()), "Page1");
+    ASSERT_FALSE(ewk_view_back_possible(webView()));
+    ASSERT_FALSE(ewk_view_forward_possible(webView()));
+
+    // Visit Page2
+    loadUrlSync(httpServer->getURIForPath("/Page2").data());
+    ASSERT_STREQ(ewk_view_title_get(webView()), "Page2");
+    ASSERT_TRUE(ewk_view_back_possible(webView()));
+    ASSERT_FALSE(ewk_view_forward_possible(webView()));
+
+    // Go back to Page1
+    ewk_view_back(webView());
+    waitUntilTitleChangedTo("Page1");
+    ASSERT_STREQ(ewk_view_title_get(webView()), "Page1");
+    ASSERT_FALSE(ewk_view_back_possible(webView()));
+    ASSERT_TRUE(ewk_view_forward_possible(webView()));
+
+    // Go forward to Page2
+    ewk_view_forward(webView());
+    waitUntilTitleChangedTo("Page2");
+    ASSERT_STREQ(ewk_view_title_get(webView()), "Page2");
+    ASSERT_TRUE(ewk_view_back_possible(webView()));
+    ASSERT_FALSE(ewk_view_forward_possible(webView()));
 }
 
 TEST_F(EWK2UnitTestBase, ewk_view_setting_encoding_custom)

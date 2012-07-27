@@ -1,3 +1,29 @@
+2012-07-27  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL][WK2] Add more Ewk_View unit tests
+        https://bugs.webkit.org/show_bug.cgi?id=92407
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Add more unit tests for WebKit2 Ewk_View API.
+        In particular, navigation, HTML loading and
+        device pixel ratio functions are now tested.
+
+        * UIProcess/API/efl/tests/UnitTestUtils/EWK2UnitTestBase.cpp:
+        (EWK2UnitTest::EWK2UnitTestBase::SetUp): Call ewk_init() instead
+        of duplicating initialization code.
+        (EWK2UnitTest::EWK2UnitTestBase::TearDown): call ewk_shutdown().
+        (TitleChangedData):
+        (EWK2UnitTest):
+        (EWK2UnitTest::onTitleChanged):
+        (EWK2UnitTest::EWK2UnitTestBase::waitUntilTitleChangedTo): Add convenience
+        method to wait until the view main frame title changes to a given value.
+        * UIProcess/API/efl/tests/UnitTestUtils/EWK2UnitTestBase.h:
+        (EWK2UnitTestBase):
+        * UIProcess/API/efl/tests/test_ewk2_view.cpp:
+        (TEST_F):
+        (serverCallbackNavigation):
+
 2012-07-27  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         [EFL][WK2] Keyboard events miss key location data.

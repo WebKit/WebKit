@@ -47,12 +47,7 @@ EWK2UnitTestBase::EWK2UnitTestBase()
 
 void EWK2UnitTestBase::SetUp()
 {
-    ASSERT_GT(ecore_evas_init(), 0);
-
-    // glib support (for libsoup).
-    g_type_init();
-    if (!ecore_main_loop_glib_integrate())
-        fprintf(stderr, "WARNING: Glib main loop integration is not working. Some tests may fail.");
+    ewk_init();
 
     unsigned int width = environment->defaultWidth();
     unsigned int height = environment->defaultHeight();
@@ -77,7 +72,7 @@ void EWK2UnitTestBase::TearDown()
 {
     evas_object_del(m_webView);
     ecore_evas_free(m_ecoreEvas);
-    ecore_evas_shutdown();
+    ewk_shutdown();
 }
 
 void EWK2UnitTestBase::loadUrlSync(const char* url)
@@ -91,6 +86,30 @@ void EWK2UnitTestBase::loadUrlSync(const char* url)
         ecore_main_loop_iterate();
 
     evas_object_smart_callback_del(m_webView, "load,finished", onLoadFinished);
+}
+
+struct TitleChangedData {
+    CString expectedTitle;
+    bool done;
+};
+
+static void onTitleChanged(void* userData, Evas_Object* webView, void* eventInfo)
+{
+    TitleChangedData* data = static_cast<TitleChangedData*>(userData);
+
+    if (!strcmp(ewk_view_title_get(webView), data->expectedTitle.data()))
+        data->done = true;
+}
+
+void EWK2UnitTestBase::waitUntilTitleChangedTo(const char* expectedTitle)
+{
+    TitleChangedData data = { expectedTitle, false };
+    evas_object_smart_callback_add(m_webView, "title,changed", onTitleChanged, &data);
+
+    while (!data.done)
+        ecore_main_loop_iterate();
+
+    evas_object_smart_callback_del(m_webView, "title,changed", onTitleChanged);
 }
 
 } // namespace EWK2UnitTest

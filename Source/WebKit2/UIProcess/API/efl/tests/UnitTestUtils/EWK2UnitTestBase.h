@@ -37,6 +37,7 @@ protected:
     virtual void TearDown();
 
     void loadUrlSync(const char* url);
+    void waitUntilTitleChangedTo(const char* expectedTitle);
 
 private:
     Evas_Object* m_webView;
