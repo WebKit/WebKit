@@ -97,7 +97,7 @@ bool ewk_view_should_interrupt_javascript(Evas_Object* ewkView);
 int64_t ewk_view_exceeded_application_cache_quota(Evas_Object* ewkView, Ewk_Security_Origin *origin, int64_t defaultOriginQuota, int64_t totalSpaceNeeded);
 uint64_t ewk_view_exceeded_database_quota(Evas_Object* ewkView, Evas_Object* frame, const char* databaseName, uint64_t currentSize, uint64_t expectedSize);
 
-bool ewk_view_run_open_panel(Evas_Object* ewkView, Evas_Object* frame, bool allowsMultipleFiles, const Vector<String>& acceptMIMETypes, Eina_List** selectedFilenames);
+bool ewk_view_run_open_panel(Evas_Object* ewkView, Evas_Object* frame, Ewk_File_Chooser* fileChooser, Eina_List** selectedFilenames);
 
 void ewk_view_repaint(Evas_Object* ewkView, Evas_Coord x, Evas_Coord y, Evas_Coord width, Evas_Coord height);
 void ewk_view_scroll(Evas_Object* ewkView, Evas_Coord deltaX, Evas_Coord deltaY, Evas_Coord scrollX, Evas_Coord scrollY, Evas_Coord scrollWidth, Evas_Coord scrollHeight, Evas_Coord centerX, Evas_Coord centerY, Evas_Coord centerW, Evas_Coord centerHeight);

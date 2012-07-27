@@ -113,6 +113,7 @@
 #ifndef ewk_view_h
 #define ewk_view_h
 
+#include "ewk_file_chooser.h"
 #include "ewk_frame.h"
 #include "ewk_history.h"
 #include "ewk_js.h"
@@ -187,7 +188,7 @@ struct _Ewk_View_Smart_Class {
     int64_t (*exceeded_application_cache_quota)(Ewk_View_Smart_Data *sd, Ewk_Security_Origin* origin, int64_t defaultOriginQuota, int64_t totalSpaceNeeded);
     uint64_t (*exceeded_database_quota)(Ewk_View_Smart_Data *sd, Evas_Object *frame, const char *databaseName, uint64_t current_size, uint64_t expected_size);
 
-    Eina_Bool (*run_open_panel)(Ewk_View_Smart_Data *sd, Evas_Object *frame, Eina_Bool allows_multiple_files, Eina_List *accept_types, Eina_List **selected_filenames);
+    Eina_Bool (*run_open_panel)(Ewk_View_Smart_Data *sd, Evas_Object *frame, Ewk_File_Chooser *file_chooser, Eina_List **selected_filenames);
 
     Eina_Bool (*navigation_policy_decision)(Ewk_View_Smart_Data *sd, Ewk_Frame_Resource_Request *request, Ewk_Navigation_Type navigation_type);
     Eina_Bool (*focus_can_cycle)(Ewk_View_Smart_Data *sd, Ewk_Focus_Direction direction);
@@ -197,7 +198,7 @@ struct _Ewk_View_Smart_Class {
  * The version you have to put into the version field
  * in the @a Ewk_View_Smart_Class structure.
  */
-#define EWK_VIEW_SMART_CLASS_VERSION 5UL
+#define EWK_VIEW_SMART_CLASS_VERSION 6UL
 
 /**
  * Initializes a whole @a Ewk_View_Smart_Class structure.

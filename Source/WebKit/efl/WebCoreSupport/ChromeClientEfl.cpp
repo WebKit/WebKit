@@ -53,6 +53,7 @@
 #include "ViewportArguments.h"
 #include "WindowFeatures.h"
 #include "ewk_custom_handler_private.h"
+#include "ewk_file_chooser_private.h"
 #include "ewk_frame_private.h"
 #include "ewk_private.h"
 #include "ewk_security_origin_private.h"
@@ -474,17 +475,16 @@ void ChromeClientEfl::runOpenPanel(Frame* frame, PassRefPtr<FileChooser> prpFile
 {
     RefPtr<FileChooser> chooser = prpFileChooser;
     Eina_List* selectedFilenames = 0;
-    void* filename;
-    Vector<String> filenames;
-
-    const FileChooserSettings& settings = chooser->settings();
-    bool confirm = ewk_view_run_open_panel(m_view, kit(frame), settings.allowsMultipleFiles, settings.acceptMIMETypes, &selectedFilenames);
-
+    Ewk_File_Chooser* fileChooser = ewk_file_chooser_new(chooser.get());
+    bool confirm = ewk_view_run_open_panel(m_view, kit(frame), fileChooser, &selectedFilenames);
+    ewk_file_chooser_free(fileChooser);
     if (!confirm)
         return;
 
+    void* filename;
+    Vector<String> filenames;
     EINA_LIST_FREE(selectedFilenames, filename) {
-        filenames.append((char*)filename);
+        filenames.append(String::fromUTF8(static_cast<char*>(filename)));
         free(filename);
     }
 
