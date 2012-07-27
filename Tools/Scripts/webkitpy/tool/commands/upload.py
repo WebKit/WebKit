@@ -74,7 +74,7 @@ class CleanPendingCommit(AbstractDeclarativeCommand):
         what_was_cleared = []
         if patch.review() == "+":
             if patch.reviewer():
-                what_was_cleared.append("%s's review+" % patch.reviewer().full_name)
+                what_was_cleared.append(u"%s's review+" % patch.reviewer().full_name)
             else:
                 what_was_cleared.append("review+")
         return join_with_separators(what_was_cleared)
@@ -88,7 +88,7 @@ class CleanPendingCommit(AbstractDeclarativeCommand):
                 flags_to_clear = self._flags_to_clear_on_patch(patch)
                 if not flags_to_clear:
                     continue
-                message = "Cleared %s from obsolete attachment %s so that this bug does not appear in http://webkit.org/pending-commit." % (flags_to_clear, patch.id())
+                message = u"Cleared %s from obsolete attachment %s so that this bug does not appear in http://webkit.org/pending-commit." % (flags_to_clear, patch.id())
                 self._tool.bugs.obsolete_attachment(patch.id(), message)
 
 
@@ -133,7 +133,7 @@ class AssignToCommitter(AbstractDeclarativeCommand):
         bug = self._tool.bugs.fetch_bug(bug_id)
         if not bug.is_unassigned():
             assigned_to_email = bug.assigned_to_email()
-            log("Bug %s is already assigned to %s (%s)." % (bug_id, assigned_to_email, committers.committer_by_email(assigned_to_email)))
+            log(u"Bug %s is already assigned to %s (%s)." % (bug_id, assigned_to_email, committers.committer_by_email(assigned_to_email)))
             return
 
         reviewed_patches = bug.reviewed_patches()
@@ -153,7 +153,7 @@ class AssignToCommitter(AbstractDeclarativeCommand):
             log("Attacher %s is not a committer.  Bug %s likely needs commit-queue+." % (attacher_email, bug_id))
             return
 
-        reassign_message = "Attachment %s was posted by a committer and has review+, assigning to %s for commit." % (latest_patch.id(), committer.full_name)
+        reassign_message = u"Attachment %s was posted by a committer and has review+, assigning to %s for commit." % (latest_patch.id(), committer.full_name)
         self._tool.bugs.reassign_bug(bug_id, committer.bugzilla_email(), reassign_message)
 
     def execute(self, options, args, tool):
