@@ -2035,11 +2035,11 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EPosition e)
         case FixedPosition:
             m_value.ident = CSSValueFixed;
             break;
-#if ENABLE(CSS_STICKY_POSITION)
         case StickyPosition:
+#if ENABLE(CSS_STICKY_POSITION)
             m_value.ident = CSSValueWebkitSticky;
-            break;
 #endif
+            break;
     }
 }
 

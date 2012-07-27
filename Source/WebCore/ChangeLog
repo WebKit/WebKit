@@ -1,3 +1,18 @@
+2012-07-27  Christophe Dumez  <christophe.dumez@intel.com>
+
+        Build warning in CSSPrimitiveValueMappings.h when CSS_STICKY_POSITION is disabled
+        https://bugs.webkit.org/show_bug.cgi?id=92523
+
+        Reviewed by Simon Fraser.
+
+        Move #ifdef in CSSPrimitiveValueMappings.h to silent compilation warning
+        when CSS_STICKY_POSITION is disabled.
+
+        No new tests, no behavior change.
+
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+
 2012-07-27  Vivek Galatage  <vivekgalatage@gmail.com>
 
         DragController should ascertain dragClient to be non-null
