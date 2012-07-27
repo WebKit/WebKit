@@ -48,9 +48,9 @@ var test = function()
                 {
                     var originalPosition = source.indexOf(string);
                     InspectorTest.assertTrue(originalPosition !== -1);
-                    var originalLocation = WebInspector.ScriptFormatter.positionToLocation(source.lineEndings(), originalPosition);
+                    var originalLocation = WebInspector.Formatter.positionToLocation(source.lineEndings(), originalPosition);
                     var formattedLocation = mapping.originalToFormatted(originalLocation[0], originalLocation[1]);
-                    var formattedPosition = WebInspector.ScriptFormatter.locationToPosition(formattedSource.lineEndings(), formattedLocation[0], formattedLocation[1]);
+                    var formattedPosition = WebInspector.Formatter.locationToPosition(formattedSource.lineEndings(), formattedLocation[0], formattedLocation[1]);
                     var expectedFormattedPosition = formattedSource.indexOf(string);
                     InspectorTest.assertEquals(expectedFormattedPosition, formattedPosition, "wrong mapping for <" + string + ">");
                 }

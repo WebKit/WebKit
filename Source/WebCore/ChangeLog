@@ -1,3 +1,47 @@
+2012-07-27  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Move formatting support from JavaScriptSource to UISourceCode.
+        https://bugs.webkit.org/show_bug.cgi?id=92373
+
+        Reviewed by Pavel Feldman.
+
+        Moved formatting support from JavaScriptSource to UISourceCode.
+        Extracted Formatter interface from ScriptFormatter and created IdentityFormatter
+        implememntation and Formatter.createFormatter(contentType) formatter factory.
+        Introduced virtual formattedChanged() method on UISourceCode.
+
+        * inspector/front-end/JavaScriptSource.js:
+        (WebInspector.JavaScriptSource):
+        (WebInspector.JavaScriptSource.prototype.uiLocationToRawLocation):
+        (WebInspector.JavaScriptSource.prototype.breakpointStorageId):
+        (WebInspector.JavaScriptSource.prototype.searchInContent):
+        (WebInspector.JavaScriptSource.prototype.formattedChanged):
+        * inspector/front-end/ScriptFormatter.js:
+        (WebInspector.Formatter):
+        (WebInspector.Formatter.createFormatter):
+        (WebInspector.Formatter.locationToPosition):
+        (WebInspector.Formatter.positionToLocation):
+        (WebInspector.Formatter.prototype.formatContent):
+        (WebInspector.ScriptFormatter):
+        (WebInspector.IdentityFormatter):
+        (WebInspector.IdentityFormatter.prototype.formatContent):
+        (WebInspector.FormatterSourceMappingImpl.prototype.originalToFormatted):
+        (WebInspector.FormatterSourceMappingImpl.prototype.formattedToOriginal):
+        * inspector/front-end/UISourceCode.js:
+        (WebInspector.UISourceCode):
+        (WebInspector.UISourceCode.prototype.requestContent):
+        (WebInspector.UISourceCode.prototype._fireContentAvailable):
+        (WebInspector.UISourceCode.prototype.uiLocationToRawLocation):
+        (WebInspector.UISourceCode.prototype.overrideLocation):
+        (WebInspector.UISourceCode.prototype.togglingFormatter):
+        (WebInspector.UISourceCode.prototype.formatted):
+        (WebInspector.UISourceCode.prototype.setFormatted.if):
+        (WebInspector.UISourceCode.prototype.setFormatted.didGetContent.formattedChanged):
+        (WebInspector.UISourceCode.prototype.setFormatted.didGetContent):
+        (WebInspector.UISourceCode.prototype.setFormatted):
+        (WebInspector.UISourceCode.prototype.createFormatter):
+        (WebInspector.UISourceCode.prototype.formattedChanged):
+
 2012-07-27  Vivek Galatage  <vivekgalatage@gmail.com>
 
         Page object should ascertain EditorClient to be non-null
