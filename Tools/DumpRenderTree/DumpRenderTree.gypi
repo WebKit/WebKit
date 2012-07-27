@@ -95,6 +95,7 @@
             'TestNetscapePlugIn/Tests/NullNPPGetValuePointer.cpp',
             'TestNetscapePlugIn/Tests/PassDifferentNPPStruct.cpp',
             'TestNetscapePlugIn/Tests/PluginScriptableNPObjectInvokeDefault.cpp',
+            'TestNetscapePlugIn/Tests/PluginScriptableObjectOverridesAllProperties.cpp',
             'TestNetscapePlugIn/Tests/PrivateBrowsing.cpp',
             'TestNetscapePlugIn/main.cpp',
         ],

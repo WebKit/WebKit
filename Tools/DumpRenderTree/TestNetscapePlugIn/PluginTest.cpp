@@ -166,6 +166,11 @@ void PluginTest::NPN_InvalidateRect(NPRect* invalidRect)
     browser->invalidaterect(m_npp, invalidRect);
 }
 
+void* PluginTest::NPN_MemAlloc(uint32_t size)
+{
+    return browser->memalloc(size);
+}
+
 // NPRuntime NPN functions.
 
 NPIdentifier PluginTest::NPN_GetStringIdentifier(const NPUTF8 *name)

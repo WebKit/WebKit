@@ -76,6 +76,7 @@ public:
     NPError NPN_GetURLNotify(const char* url, const char* target, void* notifyData);
     NPError NPN_GetValue(NPNVariable, void* value);
     void NPN_InvalidateRect(NPRect* invalidRect);
+    void* NPN_MemAlloc(uint32_t size);
 
     // NPRuntime NPN functions.
     NPIdentifier NPN_GetStringIdentifier(const NPUTF8* name);

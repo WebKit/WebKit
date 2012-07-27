@@ -850,6 +850,9 @@ WONTFIX : platform/win/inverted-colors/non-composited.html = IMAGE+TEXT
 // Test for BlackBerry port only
 WONTFIX SKIP : platform/blackberry = PASS
 
+// JavaScriptCore bindings willfully have different behavior than V8 bindings
+WONTFIX SKIP : plugins/npruntime/overrides-all-properties.html = TEXT
+
 // -----------------------------------------------------------------
 // TESTS TO FIX
 // -----------------------------------------------------------------

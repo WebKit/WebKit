@@ -1,3 +1,31 @@
+2012-07-27  Brady Eidson  <beidson@apple.com>
+
+        Plugins should not be allowed to override standard properties/attributes in non-standard worlds
+        <rdar://problem/11975252> and https://bugs.webkit.org/show_bug.cgi?id=92519
+
+        Reviewed by Anders Carlsson.
+
+        Change the 3 plugin-owning element's custom bindings to prefer built-in properties if they exist.
+        When they do they don't give the plugin a chance to override.
+
+        Test: plugins/npruntime/overrides-all-properties.html
+
+        Add plugin custom functions to prefer built-in properties over plugin scriptable object properties:
+        * bindings/js/JSPluginElementFunctions.h:
+        (WebCore::pluginElementCustomGetOwnPropertySlot):
+        (WebCore::pluginElementCustomGetOwnPropertyDescriptor):
+
+        Use those new custom functions for getting properties:
+        * bindings/js/JSHTMLAppletElementCustom.cpp:
+        (WebCore::JSHTMLAppletElement::getOwnPropertySlotDelegate):
+        (WebCore::JSHTMLAppletElement::getOwnPropertyDescriptorDelegate):
+        * bindings/js/JSHTMLEmbedElementCustom.cpp:
+        (WebCore::JSHTMLEmbedElement::getOwnPropertySlotDelegate):
+        (WebCore::JSHTMLEmbedElement::getOwnPropertyDescriptorDelegate):
+        * bindings/js/JSHTMLObjectElementCustom.cpp:
+        (WebCore::JSHTMLObjectElement::getOwnPropertySlotDelegate):
+        (WebCore::JSHTMLObjectElement::getOwnPropertyDescriptorDelegate):
+
 2012-07-27  Arnaud Renevier  <a.renevier@sisa.samsung.com>
 
         use createUninitialized when creating TypedArray from another array
