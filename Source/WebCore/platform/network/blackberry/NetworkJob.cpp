@@ -684,15 +684,19 @@ bool NetworkJob::sendRequestWithCredentials(ProtectionSpaceServerType type, Prot
     if (!newURL.isValid())
         return false;
 
-    int port = 0;
+    String host;
+    int port;
     if (type == ProtectionSpaceProxyHTTP) {
-        std::stringstream toPort(BlackBerry::Platform::Client::get()->getProxyPort());
-        toPort >> port;
-    } else
+        String proxyAddress = BlackBerry::Platform::Client::get()->getProxyAddress(newURL.string().ascii().data()).c_str();
+        KURL proxyURL(KURL(), proxyAddress);
+        host = proxyURL.host();
+        port = proxyURL.port();
+    } else {
+        host = m_response.url().host();
         port = m_response.url().port();
+    }
 
-    ProtectionSpace protectionSpace((type == ProtectionSpaceProxyHTTP) ? BlackBerry::Platform::Client::get()->getProxyAddress().c_str() : m_response.url().host()
-            , port, type, realm, scheme);
+    ProtectionSpace protectionSpace(host, port, type, realm, scheme);
 
     // We've got the scheme and realm. Now we need a username and password.
     // First search the CredentialStorage.
