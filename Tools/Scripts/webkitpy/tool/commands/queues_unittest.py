@@ -449,7 +449,11 @@ The commit-queue is continuing to process your patch.
 class StyleQueueTest(QueuesTest):
     def test_style_queue_with_style_exception(self):
         expected_stderr = {
-            "begin_work_queue": self._default_begin_work_queue_stderr("style-queue"),
+            "begin_work_queue": self._default_begin_work_queue_stderr("style-queue") + """MOCK: update_status: style-queue Cleaning review queue
+MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'clean-review-queue'], cwd=/mock-checkout
+MOCK: update_status: style-queue Cleaning pending commit
+MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'clean-pending-commit'], cwd=/mock-checkout
+""",
             "next_work_item": "",
             "process_work_item": """MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'clean'], cwd=/mock-checkout
 MOCK: update_status: style-queue Cleaned working directory
@@ -472,7 +476,11 @@ MOCK: release_work_item: style-queue 10000
 
     def test_style_queue_with_watch_list_exception(self):
         expected_stderr = {
-            "begin_work_queue": self._default_begin_work_queue_stderr("style-queue"),
+            "begin_work_queue": self._default_begin_work_queue_stderr("style-queue") + """MOCK: update_status: style-queue Cleaning review queue
+MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'clean-review-queue'], cwd=/mock-checkout
+MOCK: update_status: style-queue Cleaning pending commit
+MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'clean-pending-commit'], cwd=/mock-checkout
+""",
             "next_work_item": "",
             "process_work_item": """MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'clean'], cwd=/mock-checkout
 MOCK: update_status: style-queue Cleaned working directory

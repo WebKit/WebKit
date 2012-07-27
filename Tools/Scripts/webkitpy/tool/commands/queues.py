@@ -379,9 +379,6 @@ class AbstractReviewQueue(AbstractPatchQueue, StepSequenceErrorHandler):
 
     # AbstractPatchQueue methods
 
-    def begin_work_queue(self):
-        AbstractPatchQueue.begin_work_queue(self)
-
     def next_work_item(self):
         return self._next_patch()
 
@@ -415,6 +412,23 @@ class StyleQueue(AbstractReviewQueue, StyleQueueTaskDelegate):
 
     def __init__(self):
         AbstractReviewQueue.__init__(self)
+
+    def begin_work_queue(self):
+        AbstractReviewQueue.begin_work_queue(self)
+        self.clean_bugzilla()
+
+    def clean_bugzilla(self):
+        try:
+            self._update_status("Cleaning review queue")
+            self.run_webkit_patch(["clean-review-queue"])
+        except ScriptError, e:
+            self._update_status(e)
+
+        try:
+            self._update_status("Cleaning pending commit")
+            self.run_webkit_patch(["clean-pending-commit"])
+        except ScriptError, e:
+            self._update_status(e)
 
     def review_patch(self, patch):
         task = StyleQueueTask(self, patch)

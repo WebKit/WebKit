@@ -1,3 +1,25 @@
+2012-07-27  Adam Barth  <abarth@webkit.org>
+
+        webkit.review.bot should run clean-review-queue and clean-pending-commit periodically
+        https://bugs.webkit.org/show_bug.cgi?id=92472
+
+        Reviewed by Eric Seidel.
+
+        We need to run these command periodically to keep cruft from
+        accumulating in bugs.webkit.org. Rather than running them manually, we
+        should just have a bot run them. This patch has the style-queue run the
+        commands, which admittedly is a bit odd but it doesn't seem worthwhile
+        to create another bot specifically for this purposes.
+
+        * Scripts/webkitpy/tool/commands/queues.py:
+        (AbstractReviewQueue):
+        (StyleQueue.begin_work_queue):
+        (StyleQueue):
+        (StyleQueue.clean_bugzilla):
+        * Scripts/webkitpy/tool/commands/queues_unittest.py:
+        (StyleQueueTest.test_style_queue_with_style_exception):
+        (test_style_queue_with_watch_list_exception):
+
 2012-07-27  Dominik Röttsches  <dominik.rottsches@intel.com>
 
         [Cairo] Add complex font drawing using HarfbuzzNG
