@@ -52,6 +52,18 @@ const String& DiagnosticLoggingKeys::pluginLoadingFailedKey()
     return key;
 }
 
+const String& DiagnosticLoggingKeys::pageContainsPluginKey()
+{
+    DEFINE_STATIC_LOCAL(const String, key, ("pageContainsPlugin"));
+    return key;
+}
+
+const String& DiagnosticLoggingKeys::pageContainsAtLeastOnePluginKey()
+{
+    DEFINE_STATIC_LOCAL(const String, key, ("pageContainsAtLeastOnePlugin"));
+    return key;
+}
+
 const String& DiagnosticLoggingKeys::passKey()
 {
     DEFINE_STATIC_LOCAL(const String, key, ("pass"));

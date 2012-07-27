@@ -33,7 +33,10 @@
 #include "config.h"
 #include "SubframeLoader.h"
 
+#include "Chrome.h"
+#include "ChromeClient.h"
 #include "ContentSecurityPolicy.h"
+#include "DiagnosticLoggingKeys.h"
 #include "Frame.h"
 #include "FrameLoaderClient.h"
 #include "HTMLAppletElement.h"
@@ -130,7 +133,24 @@ bool SubframeLoader::requestPlugin(HTMLPlugInImageElement* ownerElement, const K
     ASSERT(ownerElement->hasTagName(objectTag) || ownerElement->hasTagName(embedTag));
     return loadPlugin(ownerElement, url, mimeType, paramNames, paramValues, useFallback);
 }
- 
+
+static void logPluginRequest(Page* page, const String& mimeType, bool success)
+{
+    if (!page || !page->settings()->diagnosticLoggingEnabled())
+        return;
+    
+    ChromeClient* client = page->chrome()->client();
+    client->logDiagnosticMessage(success ? DiagnosticLoggingKeys::pluginLoadedKey() : DiagnosticLoggingKeys::pluginLoadingFailedKey(), mimeType, DiagnosticLoggingKeys::noopKey());
+    
+    if (!page->hasSeenAnyPlugin())
+        client->logDiagnosticMessage(DiagnosticLoggingKeys::pageContainsAtLeastOnePluginKey(), emptyString(), DiagnosticLoggingKeys::noopKey());
+    
+    if (!page->hasSeenPlugin(mimeType))
+        client->logDiagnosticMessage(DiagnosticLoggingKeys::pageContainsPluginKey(), mimeType, DiagnosticLoggingKeys::noopKey());
+
+    page->sawPlugin(mimeType);
+}
+
 bool SubframeLoader::requestObject(HTMLPlugInImageElement* ownerElement, const String& url, const AtomicString& frameName, const String& mimeType, const Vector<String>& paramNames, const Vector<String>& paramValues)
 {
     if (url.isEmpty() && mimeType.isEmpty())
@@ -147,8 +167,11 @@ bool SubframeLoader::requestObject(HTMLPlugInImageElement* ownerElement, const S
         completedURL = completeURL(url);
 
     bool useFallback;
-    if (shouldUsePlugin(completedURL, mimeType, ownerElement->shouldPreferPlugInsForImages(), renderer->hasFallbackContent(), useFallback))
-        return requestPlugin(ownerElement, completedURL, mimeType, paramNames, paramValues, useFallback);
+    if (shouldUsePlugin(completedURL, mimeType, ownerElement->shouldPreferPlugInsForImages(), renderer->hasFallbackContent(), useFallback)) {
+        bool success = requestPlugin(ownerElement, completedURL, mimeType, paramNames, paramValues, useFallback);
+        logPluginRequest(document()->page(), mimeType, success);
+        return success;
+    }
 
     // If the plug-in element already contains a subframe, loadOrRedirectSubframe will re-use it. Otherwise,
     // it will create a new frame and set it as the RenderPart's widget, causing what was previously 
@@ -229,6 +252,8 @@ PassRefPtr<Widget> SubframeLoader::createJavaAppletWidget(const IntSize& size, H
     RefPtr<Widget> widget;
     if (allowPlugins(AboutToInstantiatePlugin))
         widget = m_frame->loader()->client()->createJavaAppletWidget(size, element, baseURL, paramNames, paramValues);
+
+    logPluginRequest(document()->page(), element->serviceType(), widget);
 
     if (!widget) {
         RenderEmbeddedObject* renderer = element->renderEmbeddedObject();

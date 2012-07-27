@@ -1,3 +1,39 @@
+2012-07-27  Jer Noble  <jer.noble@apple.com>
+
+        Add diagnostic logging for plugins-per-page.
+        https://bugs.webkit.org/show_bug.cgi?id=92538
+
+        Reviewed by Anders Carlsson.
+
+        Add some diagnostic logging for whether a page has seen a plugin, and 
+        whether a page has seen a plugin of a specific type.
+
+        Move the diagnostic logging out of the elemements themselves:
+        * html/HTMLEmbedElement.cpp:
+        (WebCore::HTMLEmbedElement::updateWidget):
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::updateWidget):
+
+        Instead, log when the plugin is requested, thereby catching plugins which are
+        rejected because, e.g., Java is disabled or not installed:
+        * loader/SubframeLoader.cpp:
+        (WebCore::logPluginRequest):
+        (WebCore::SubframeLoader::requestObject):
+        (WebCore::SubframeLoader::createJavaAppletWidget):
+
+        Add new diagnostic key values:
+        * page/DiagnosticLoggingKeys.cpp:
+        (WebCore::DiagnosticLoggingKeys::pageContainsPluginKey):
+        (WebCore::DiagnosticLoggingKeys::pageContainsAtLeastOnePluginKey):
+        * page/DiagnosticLoggingKeys.h:
+
+        Add a map of plugin types seen per-page for diagnostic purposes:
+        * page/Page.cpp:
+        (WebCore::Page::hasSeenAnyPlugin):
+        (WebCore::Page::hasSeenPlugin):
+        (WebCore::Page::sawPlugin):
+        * page/Page.h:
+
 2012-07-27  Patrick Gansterer  <paroga@webkit.org>
 
         [WINCE] Use macros from ICU instead of defining the same functionality again

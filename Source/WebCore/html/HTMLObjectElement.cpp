@@ -28,7 +28,6 @@
 #include "CSSValueKeywords.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
-#include "DiagnosticLoggingKeys.h"
 #include "EventNames.h"
 #include "ExceptionCode.h"
 #include "FormDataList.h"
@@ -319,9 +318,6 @@ void HTMLObjectElement::updateWidget(PluginCreationOption pluginCreationOption)
     bool success = beforeLoadAllowedLoad && hasValidClassId() && loader->requestObject(this, url, getNameAttribute(), serviceType, paramNames, paramValues);
     if (!success && fallbackContent)
         renderFallbackContent();
-
-    if (document()->page() && document()->page()->settings()->diagnosticLoggingEnabled())
-        document()->page()->chrome()->client()->logDiagnosticMessage(success ? DiagnosticLoggingKeys::pluginLoadedKey() : DiagnosticLoggingKeys::pluginLoadingFailedKey(), serviceType, DiagnosticLoggingKeys::noopKey());
 }
 
 bool HTMLObjectElement::rendererIsNeeded(const NodeRenderingContext& context)

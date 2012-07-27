@@ -1158,6 +1158,21 @@ void Page::resumeActiveDOMObjectsAndAnimations()
         frame->resumeActiveDOMObjectsAndAnimations();
 }
 
+bool Page::hasSeenAnyPlugin() const
+{
+    return !m_seenPlugins.isEmpty();
+}
+
+bool Page::hasSeenPlugin(const String& serviceType) const
+{
+    return m_seenPlugins.contains(serviceType);
+}
+
+void Page::sawPlugin(const String& serviceType)
+{
+    m_seenPlugins.add(serviceType);
+}
+
 Page::PageClients::PageClients()
     : alternativeTextClient(0)
     , chromeClient(0)
