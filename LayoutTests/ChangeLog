@@ -1,3 +1,9 @@
+2012-07-27  Brian Weinstein  <bweinstein@apple.com>
+
+        Add Mac results for fast/table/table-row-outline-paint.html.
+
+        * platform/mac/fast/table/table-row-outline-paint-expected.txt: Added.
+
 2012-07-27  Tony Chang  <tony@chromium.org>
 
         flex-wrap: wrap not wrapping for % sized items in column flow
