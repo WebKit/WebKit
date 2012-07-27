@@ -1,3 +1,14 @@
+2012-07-27  János Badics  <jbadics@inf.u-szeged.hu>
+
+        [Qt] Unreviewed, rebaseline for tests introduced in r123790
+
+        Rubber stamped by Zoltan Herczeg.
+
+        * platform/qt/css3/filters/effect-brightness-clamping-expected.png: Added.
+        * platform/qt/css3/filters/effect-brightness-clamping-expected.txt: Added.
+        * platform/qt/css3/filters/effect-brightness-clamping-hw-expected.png: Added.
+        * platform/qt/css3/filters/effect-brightness-clamping-hw-expected.txt: Added.
+
 2012-07-27  Alec Flett  <alecflett@chromium.org>
 
         IndexedDB: inject index keys on cursor/objectstore/index get success handlers
