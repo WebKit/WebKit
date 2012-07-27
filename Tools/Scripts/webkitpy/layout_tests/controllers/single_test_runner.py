@@ -199,9 +199,9 @@ class SingleTestRunner(object):
                                                        driver_output.crashed_process_name,
                                                        driver_output.crashed_pid))
             if driver_output.error:
-                _log.debug("%s %s crashed, stack trace:" % (self._worker_name, testname))
+                _log.debug("%s %s crashed, (stderr lines):" % (self._worker_name, testname))
             else:
-                _log.debug("%s %s crashed, no stack trace" % (self._worker_name, testname))
+                _log.debug("%s %s crashed, (no stderr)" % (self._worker_name, testname))
         elif driver_output.error:
             _log.debug("%s %s output stderr lines:" % (self._worker_name, testname))
         for line in driver_output.error.splitlines():

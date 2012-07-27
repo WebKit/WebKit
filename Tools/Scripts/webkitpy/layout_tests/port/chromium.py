@@ -356,14 +356,13 @@ class ChromiumPort(WebKitPort):
         return repos
 
     def _get_crash_log(self, name, pid, stdout, stderr, newer_than):
-        new_stderr = stderr
         if stderr and 'AddressSanitizer' in stderr:
             asan_filter_path = self.path_from_chromium_base('tools', 'valgrind', 'asan', 'asan_symbolize.py')
             if self._filesystem.exists(asan_filter_path):
                 output = self._executive.run_command([asan_filter_path], input=stderr)
-                new_stderr = self._executive.run_command(['c++filt'], input=output)
+                stderr = self._executive.run_command(['c++filt'], input=output)
 
-        return super(ChromiumPort, self)._get_crash_log(name, pid, stdout, new_stderr, newer_than)
+        return super(ChromiumPort, self)._get_crash_log(name, pid, stdout, stderr, newer_than)
 
     def virtual_test_suites(self):
         return [

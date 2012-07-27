@@ -1,5 +1,36 @@
 2012-07-27  Dirk Pranke  <dpranke@chromium.org>
 
+        nrwt: print filtered stderr after a crash correctly
+        https://bugs.webkit.org/show_bug.cgi?id=92428
+
+        Reviewed by Adam Barth.
+
+        Some ports will run the stderr output from DRT/WTR through a
+        filter after a crash in order to print a more useful stack
+        trace; while that gets written to the crash log correctly, we
+        don't log it to the debug output properly. This change fixes
+        that and makes it clearer that we're logging stderr, not the
+        crash log.
+
+        * Scripts/webkitpy/layout_tests/controllers/single_test_runner.py:
+        (SingleTestRunner._handle_error):
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        (Port._get_crash_log):
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+        (ChromiumPort._get_crash_log):
+        * Scripts/webkitpy/layout_tests/port/chromium_android_unittest.py:
+        (ChromiumAndroidPortTest.test_get_crash_log):
+        * Scripts/webkitpy/layout_tests/port/driver.py:
+        (Driver.run_test):
+        * Scripts/webkitpy/layout_tests/port/gtk.py:
+        * Scripts/webkitpy/layout_tests/port/gtk_unittest.py:
+        * Scripts/webkitpy/layout_tests/port/mac.py:
+        (MacPort._get_crash_log):
+        * Scripts/webkitpy/layout_tests/port/port_testcase.py:
+        (PortTestCase.test_get_crash_log):
+
+2012-07-27  Dirk Pranke  <dpranke@chromium.org>
+
         nrwt: move image diffing code to a separate module
         https://bugs.webkit.org/show_bug.cgi?id=92447
 

@@ -1220,9 +1220,9 @@ class Port(object):
         pid_str = str(pid or '<unknown>')
         stdout_lines = (stdout or '<empty>').decode('utf8', 'replace').splitlines()
         stderr_lines = (stderr or '<empty>').decode('utf8', 'replace').splitlines()
-        return 'crash log for %s (pid %s):\n%s\n%s\n' % (name_str, pid_str,
+        return (stderr, 'crash log for %s (pid %s):\n%s\n%s\n' % (name_str, pid_str,
             '\n'.join(('STDOUT: ' + l) for l in stdout_lines),
-            '\n'.join(('STDERR: ' + l) for l in stderr_lines))
+            '\n'.join(('STDERR: ' + l) for l in stderr_lines)))
 
     def look_for_new_crash_logs(self, crashed_processes, start_time):
         pass

@@ -220,8 +220,8 @@ class MacPort(ApplePort):
                 now = time_fn()
 
         if not crash_log:
-            return None
-        return crash_log
+            return (stderr, None)
+        return (stderr, crash_log)
 
     def look_for_new_crash_logs(self, crashed_processes, start_time):
         """Since crash logs can take a long time to be written out if the system is

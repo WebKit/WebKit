@@ -166,8 +166,8 @@ Coredump %(expected_crash_dump_filename)s not found. To enable crash logs:
 
 """ % locals()
 
-        return """\
+        return (stderr, """\
 Crash log for %(name)s (pid %(pid_representation)s):
 
 %(crash_log)s
-%(errors_str)s""" % locals()
+%(errors_str)s""" % locals())

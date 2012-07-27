@@ -337,24 +337,28 @@ class PortTestCase(unittest.TestCase):
     def test_get_crash_log(self):
         port = self.make_port()
         self.assertEquals(port._get_crash_log(None, None, None, None, newer_than=None),
-           ('crash log for <unknown process name> (pid <unknown>):\n'
+           (None,
+            'crash log for <unknown process name> (pid <unknown>):\n'
             'STDOUT: <empty>\n'
             'STDERR: <empty>\n'))
 
         self.assertEquals(port._get_crash_log('foo', 1234, 'out bar\nout baz', 'err bar\nerr baz\n', newer_than=None),
-            ('crash log for foo (pid 1234):\n'
+            ('err bar\nerr baz\n',
+             'crash log for foo (pid 1234):\n'
              'STDOUT: out bar\n'
              'STDOUT: out baz\n'
              'STDERR: err bar\n'
              'STDERR: err baz\n'))
 
         self.assertEquals(port._get_crash_log('foo', 1234, 'foo\xa6bar', 'foo\xa6bar', newer_than=None),
-            (u'crash log for foo (pid 1234):\n'
+            ('foo\xa6bar',
+             u'crash log for foo (pid 1234):\n'
              u'STDOUT: foo\ufffdbar\n'
              u'STDERR: foo\ufffdbar\n'))
 
         self.assertEquals(port._get_crash_log('foo', 1234, 'foo\xa6bar', 'foo\xa6bar', newer_than=1.0),
-            (u'crash log for foo (pid 1234):\n'
+            ('foo\xa6bar',
+             u'crash log for foo (pid 1234):\n'
              u'STDOUT: foo\ufffdbar\n'
              u'STDERR: foo\ufffdbar\n'))
 

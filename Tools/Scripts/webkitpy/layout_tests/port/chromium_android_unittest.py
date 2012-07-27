@@ -104,7 +104,13 @@ class ChromiumAndroidPortTest(chromium_port_testcase.ChromiumPortTestCase):
         port._executive = MockExecutive2(run_command_fn=ChromiumAndroidPortTest.mock_run_command_fn)
         ChromiumAndroidPortTest.mock_logcat = 'logcat contents\n'
         self.assertEquals(port._get_crash_log('foo', 1234, 'out bar\nout baz\n', 'err bar\nerr baz\n', newer_than=None),
-            (u'crash log for foo (pid 1234):\n'
+            ('err bar\n'
+             'err baz\n'
+             '********* Tombstone file:\n'
+             '-rw------- 1000 1000 45316 2012-04-27 16:33 tombstone_03\n'
+             '/data/tombstones/tombstone_03\n'
+             'mock_contents\n',
+             u'crash log for foo (pid 1234):\n'
              u'STDOUT: out bar\n'
              u'STDOUT: out baz\n'
              u'STDOUT: ********* Logcat:\n'
@@ -116,7 +122,11 @@ class ChromiumAndroidPortTest(chromium_port_testcase.ChromiumPortTestCase):
              u'STDERR: /data/tombstones/tombstone_03\n'
              u'STDERR: mock_contents\n'))
         self.assertEquals(port._get_crash_log(None, None, None, None, newer_than=None),
-            (u'crash log for <unknown process name> (pid <unknown>):\n'
+            ('********* Tombstone file:\n'
+             '-rw------- 1000 1000 45316 2012-04-27 16:33 tombstone_03\n'
+             '/data/tombstones/tombstone_03\n'
+             'mock_contents\n',
+             u'crash log for <unknown process name> (pid <unknown>):\n'
              u'STDOUT: ********* Logcat:\n'
              u'STDOUT: logcat contents\n'
              u'STDERR: ********* Tombstone file:\n'
