@@ -1,3 +1,17 @@
+2012-07-27  Scott Graham  <scottmg@chromium.org>
+
+        Fix COMPILE_ASSERT for InlineFlowBox growing
+        https://bugs.webkit.org/show_bug.cgi?id=92541
+
+        Reviewed by Dan Bernstein.
+
+        Use unsigned instead of bool to keep size small on Windows.
+
+        No new tests.
+
+        * rendering/InlineFlowBox.h:
+        (InlineFlowBox):
+
 2012-07-27  Beth Dakin  <bdakin@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=92327
