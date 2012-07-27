@@ -44,6 +44,8 @@ enum {
     RightButton = 3
 };
 
+static const char keyPadPrefix[] = "KP_";
+
 static inline WebEvent::Modifiers modifiersForEvent(const Evas_Modifier* modifiers)
 {
     unsigned result = 0;
@@ -158,7 +160,7 @@ WebWheelEvent WebEventFactory::createWebWheelEvent(const Evas_Event_Mouse_Wheel*
 
 WebKeyboardEvent WebEventFactory::createWebKeyboardEvent(const Evas_Event_Key_Down* event)
 {
-    String keyName = String(event->key);
+    const String keyName(event->key);
     return WebKeyboardEvent(WebEvent::KeyDown,
                             String::fromUTF8(event->string),
                             String::fromUTF8(event->string),
@@ -167,7 +169,7 @@ WebKeyboardEvent WebEventFactory::createWebKeyboardEvent(const Evas_Event_Key_Do
                             0 /* FIXME: nativeVirtualKeyCode */,
                             0 /* macCharCode */,
                             false /* FIXME: isAutoRepeat */,
-                            false /* FIXME: isKeypad */,
+                            keyName.startsWith(keyPadPrefix),
                             false /* isSystemKey */,
                             modifiersForEvent(event->modifiers),
                             event->timestamp);
@@ -175,7 +177,7 @@ WebKeyboardEvent WebEventFactory::createWebKeyboardEvent(const Evas_Event_Key_Do
 
 WebKeyboardEvent WebEventFactory::createWebKeyboardEvent(const Evas_Event_Key_Up* event)
 {
-    String keyName = String(event->key);
+    const String keyName(event->key);
     return WebKeyboardEvent(WebEvent::KeyUp,
                             String::fromUTF8(event->string),
                             String::fromUTF8(event->string),
@@ -184,7 +186,7 @@ WebKeyboardEvent WebEventFactory::createWebKeyboardEvent(const Evas_Event_Key_Up
                             0 /* FIXME: nativeVirtualKeyCode */,
                             0 /* macCharCode */,
                             false /* FIXME: isAutoRepeat */,
-                            false /* FIXME: isKeypad */,
+                            keyName.startsWith(keyPadPrefix),
                             false /* isSystemKey */,
                             modifiersForEvent(event->modifiers),
                             event->timestamp);

@@ -1,3 +1,16 @@
+2012-07-27  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [EFL][WK2] Keyboard events miss key location data.
+        https://bugs.webkit.org/show_bug.cgi?id=92235
+
+        Reviewed by Simon Hausmann.
+
+        EFL WK2 did not initialize WebKeyboardEvent::m_isKeypad field.
+        This caused failure of fast/events/keydown-numpad-keys.html test.
+
+        * Shared/efl/WebEventFactory.cpp: WebKeyboardEvent::m_isKeypad is initialized.
+        (WebKit::WebEventFactory::createWebKeyboardEvent):
+
 2012-07-27  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         [EFL] Fix wrong return value in EWK_VIEW_XXX macro.
