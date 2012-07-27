@@ -1,3 +1,30 @@
+2012-07-27  Dan Bernstein  <mitz@apple.com>
+
+        Hit testing near a column break can return a result from an adjacent column when there is leading
+        https://bugs.webkit.org/show_bug.cgi?id=92524
+
+        Reviewed by Anders Carlsson.
+
+        The fix for <http://webkit.org/b/92311> relied on the existence of a pagination strut for
+        detecting that a line was at the beginning of a new column. However, when a line naturally
+        falls at the beginning of a column, there is no pagination strut, and the check failed.
+
+        Test: fast/multicol/hit-test-end-of-column-with-line-height.html
+
+        * rendering/InlineFlowBox.h:
+        (WebCore::InlineFlowBox::InlineFlowBox): Added initializer for new member variable.
+        (InlineFlowBox): Added m_isFirstAfterPageBreak member variable.
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::positionForPointWithInlineChildren): Changed the test for whether a
+        line was at the beginning of a column from relying on a pagination strut to checking
+        isFirstAfterPageBreak(). Also refined the hit test itself to include the leading above such
+        a line.
+        (WebCore::RenderBlock::adjustLinePositionForPagination): Added calls to
+        setIsFirstAfterPageBreak() to first reset this flag, then set it to true if necessary.
+        * rendering/RootInlineBox.h:
+        (WebCore::RootInlineBox::isFirstAfterPageBreak): Added this accessor.
+        (WebCore::RootInlineBox::setIsFirstAfterPageBreak): Ditto.
+
 2012-07-27  John J. Barton  <johnjbarton@johnjbarton.com>
 
         Web Inspector: Allow front_end to be loaded into an iframe

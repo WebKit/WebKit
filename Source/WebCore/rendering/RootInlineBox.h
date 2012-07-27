@@ -56,6 +56,9 @@ public:
     LayoutUnit paginationStrut() const { return m_paginationStrut; }
     void setPaginationStrut(LayoutUnit s) { m_paginationStrut = s; }
 
+    bool isFirstAfterPageBreak() const { return m_isFirstAfterPageBreak; }
+    void setIsFirstAfterPageBreak(bool isFirstAfterPageBreak) { m_isFirstAfterPageBreak = isFirstAfterPageBreak; }
+
     LayoutUnit paginatedLineWidth() const { return m_paginatedLineWidth; }
     void setPaginatedLineWidth(LayoutUnit width) { m_paginatedLineWidth = width; }
 

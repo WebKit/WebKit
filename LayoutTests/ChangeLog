@@ -1,3 +1,13 @@
+2012-07-27  Dan Bernstein  <mitz@apple.com>
+
+        Hit testing near a column break can return a result from an adjacent column when there is leading
+        https://bugs.webkit.org/show_bug.cgi?id=92524
+
+        Reviewed by Anders Carlsson.
+
+        * fast/multicol/hit-test-end-of-column-with-line-height-expected.txt: Added.
+        * fast/multicol/hit-test-end-of-column-with-line-height.html: Added.
+
 2012-07-27  Mike West  <mkwst@chromium.org>
 
         CSP directives containing invalid characters should log an error.

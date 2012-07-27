@@ -4926,7 +4926,7 @@ VisiblePosition RenderBlock::positionForPointWithInlineChildren(const LayoutPoin
         if (!firstRootBoxWithChildren)
             firstRootBoxWithChildren = root;
 
-        if (root->paginationStrut() && pointInLogicalContents.y() < root->logicalTop())
+        if (root->isFirstAfterPageBreak() && pointInLogicalContents.y() < root->lineTopWithLeading())
             break;
 
         lastRootBoxWithChildren = root;
@@ -6961,6 +6961,7 @@ void RenderBlock::adjustLinePositionForPagination(RootInlineBox* lineBox, Layout
         layoutState->m_columnInfo->updateMinimumColumnHeight(lineHeight);
     logicalOffset += delta;
     lineBox->setPaginationStrut(0);
+    lineBox->setIsFirstAfterPageBreak(false);
     LayoutUnit pageLogicalHeight = pageLogicalHeightForOffset(logicalOffset);
     bool hasUniformPageLogicalHeight = !inRenderFlowThread() || enclosingRenderFlowThread()->regionsHaveUniformLogicalHeight();
     // If lineHeight is greater than pageLogicalHeight, but logicalVisualOverflow.height() still fits, we are
@@ -6984,8 +6985,10 @@ void RenderBlock::adjustLinePositionForPagination(RootInlineBox* lineBox, Layout
         else {
             delta += remainingLogicalHeight;
             lineBox->setPaginationStrut(remainingLogicalHeight);
+            lineBox->setIsFirstAfterPageBreak(true);
         }
-    }
+    } else if (remainingLogicalHeight == pageLogicalHeight && lineBox != firstRootBox())
+        lineBox->setIsFirstAfterPageBreak(true);
 }
 
 LayoutUnit RenderBlock::adjustBlockChildForPagination(LayoutUnit logicalTopAfterClear, LayoutUnit estimateWithoutPagination, RenderBox* child, bool atBeforeSideOfBlock)
