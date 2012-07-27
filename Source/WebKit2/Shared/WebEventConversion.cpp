@@ -319,7 +319,7 @@ public:
         m_timestamp = webEvent.timestamp();
 
         // PlatformTouchEvent
-        for (int i = 0; i < webEvent.touchPoints().size(); ++i)
+        for (size_t i = 0; i < webEvent.touchPoints().size(); ++i)
             m_touchPoints.append(WebKit2PlatformTouchPoint(webEvent.touchPoints().at(i)));
     }
 };
