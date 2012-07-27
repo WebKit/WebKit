@@ -32,6 +32,7 @@
 #define RenderFlexibleBox_h
 
 #include "RenderBlock.h"
+#include <wtf/OwnPtr.h>
 
 namespace WebCore {
 
@@ -40,11 +41,13 @@ public:
     RenderFlexibleBox(Node*);
     virtual ~RenderFlexibleBox();
 
-    virtual const char* renderName() const;
+    virtual const char* renderName() const OVERRIDE;
 
-    virtual bool isFlexibleBox() const { return true; }
-    virtual void computePreferredLogicalWidths();
-    virtual void layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeight = 0);
+    virtual bool isFlexibleBox() const OVERRIDE { return true; }
+    virtual void computePreferredLogicalWidths() OVERRIDE;
+    virtual void layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeight = 0) OVERRIDE;
+
+    virtual void paintChildren(PaintInfo& forSelf, const LayoutPoint&, PaintInfo& forChild, bool usePrintRect) OVERRIDE;
 
     bool isHorizontalFlow() const;
 
@@ -132,6 +135,8 @@ private:
     void applyStretchAlignmentToChild(RenderBox*, LayoutUnit lineCrossAxisExtent);
     void flipForRightToLeftColumn(OrderIterator&);
     void flipForWrapReverse(OrderIterator&, const WTF::Vector<LineContext>&, LayoutUnit crossAxisStartEdge);
+
+    OwnPtr<OrderIterator> m_orderIterator;
 };
 
 } // namespace WebCore

@@ -259,12 +259,12 @@ void RenderFlexibleBox::layoutBlock(bool relayoutChildren, LayoutUnit)
     WTF::Vector<LineContext> lineContexts;
     OrderHashSet orderValues;
     computeMainAxisPreferredSizes(relayoutChildren, orderValues);
-    OrderIterator flexIterator(this, orderValues);
-    layoutFlexItems(flexIterator, lineContexts);
+    m_orderIterator = adoptPtr(new OrderIterator(this, orderValues));
+    layoutFlexItems(*m_orderIterator, lineContexts);
 
     LayoutUnit oldClientAfterEdge = clientLogicalBottom();
     computeLogicalHeight();
-    repositionLogicalHeightDependentFlexItems(flexIterator, lineContexts, oldClientAfterEdge);
+    repositionLogicalHeightDependentFlexItems(*m_orderIterator, lineContexts, oldClientAfterEdge);
 
     if (size() != previousSize)
         relayoutChildren = true;
@@ -287,6 +287,16 @@ void RenderFlexibleBox::layoutBlock(bool relayoutChildren, LayoutUnit)
     repainter.repaintAfterLayout();
 
     setNeedsLayout(false);
+}
+
+void RenderFlexibleBox::paintChildren(PaintInfo& paintInfo, const LayoutPoint& paintOffset, PaintInfo& paintInfoForChild, bool usePrintRect)
+{
+    ASSERT(m_orderIterator);
+
+    for (RenderBox* child = m_orderIterator->first(); child; child = m_orderIterator->next()) {
+        if (!paintChild(child, paintInfo, paintOffset, paintInfoForChild, usePrintRect))
+            return;
+    }
 }
 
 void RenderFlexibleBox::repositionLogicalHeightDependentFlexItems(OrderIterator& iterator, WTF::Vector<LineContext>& lineContexts, LayoutUnit& oldClientAfterEdge)
