@@ -1,3 +1,23 @@
+2012-07-27  John J. Barton  <johnjbarton@johnjbarton.com>
+
+        Web Inspector: Allow front_end to be loaded into an iframe
+        https://bugs.webkit.org/show_bug.cgi?id=92437
+
+        Reviewed by Pavel Feldman.
+
+        This change only affects 'embedders' of the inspector/front_end. No change of function for WebKit ports.
+
+        * inspector/front-end/ExtensionAPI.js: 
+        Replace window.top with window.parent two places. When WebInspector is loaded as the main window content, 
+        then extension iframes have window.top === window.parent; when WebInspector is loaded as an iframe, then
+        extensions are iframes in iframes and we need to use a relative address window.parent.
+        (injectedExtensionAPI.ExtensionViewImpl.dispatchShowEvent):
+        (injectedExtensionAPI.ExtensionViewImpl):
+        (injectedExtensionAPI.ExtensionServerClient):
+        WebKit/chromium/scripts/generate_devtools_extension_api.py:
+        The current number of frames is used in a dynamically created identifier. Again we replace 'top' by 
+        window.parent.
+
 2012-07-27  Vivek Galatage  <vivekgalatage@gmail.com>
 
         Web Inspector: InspectorPageAgent should ascertain document to be non-null in updateViewMetrics()
