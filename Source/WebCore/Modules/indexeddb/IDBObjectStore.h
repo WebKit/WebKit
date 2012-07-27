@@ -95,7 +95,7 @@ public:
     PassRefPtr<IDBRequest> count(ScriptExecutionContext*, PassRefPtr<IDBKeyRange>, ExceptionCode&);
     PassRefPtr<IDBRequest> count(ScriptExecutionContext*, PassRefPtr<IDBKey>, ExceptionCode&);
 
-    PassRefPtr<IDBRequest> put(IDBObjectStoreBackendInterface::PutMode, ScriptExecutionContext*, PassRefPtr<SerializedScriptValue>, PassRefPtr<IDBKey>, ExceptionCode&);
+    PassRefPtr<IDBRequest> put(IDBObjectStoreBackendInterface::PutMode, PassRefPtr<IDBAny> source, ScriptExecutionContext*, PassRefPtr<SerializedScriptValue>, PassRefPtr<IDBKey>, ExceptionCode&);
     void markDeleted() { m_deleted = true; }
     void transactionFinished();
 

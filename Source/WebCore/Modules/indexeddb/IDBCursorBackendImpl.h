@@ -57,7 +57,6 @@ public:
     virtual PassRefPtr<IDBKey> key() const;
     virtual PassRefPtr<IDBKey> primaryKey() const;
     virtual PassRefPtr<SerializedScriptValue> value() const;
-    virtual void update(PassRefPtr<SerializedScriptValue>, PassRefPtr<IDBCallbacks>, ExceptionCode&);
     virtual void advance(unsigned long, PassRefPtr<IDBCallbacks>, ExceptionCode&);
     virtual void continueFunction(PassRefPtr<IDBKey>, PassRefPtr<IDBCallbacks>, ExceptionCode&);
     virtual void deleteFunction(PassRefPtr<IDBCallbacks>, ExceptionCode&);

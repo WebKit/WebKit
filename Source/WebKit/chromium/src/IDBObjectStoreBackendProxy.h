@@ -44,7 +44,6 @@ public:
     virtual ~IDBObjectStoreBackendProxy();
 
     virtual void get(PassRefPtr<WebCore::IDBKeyRange>, PassRefPtr<WebCore::IDBCallbacks>, WebCore::IDBTransactionBackendInterface*, WebCore::ExceptionCode&);
-    virtual void put(PassRefPtr<WebCore::SerializedScriptValue>, PassRefPtr<WebCore::IDBKey>, PutMode, PassRefPtr<WebCore::IDBCallbacks>, WebCore::IDBTransactionBackendInterface*, WebCore::ExceptionCode&);
     virtual void putWithIndexKeys(PassRefPtr<WebCore::SerializedScriptValue>, PassRefPtr<WebCore::IDBKey>, PutMode, PassRefPtr<WebCore::IDBCallbacks>, WebCore::IDBTransactionBackendInterface*, const WTF::Vector<WTF::String>&, const WTF::Vector<IndexKeys>&, WebCore::ExceptionCode&);
     virtual void deleteFunction(PassRefPtr<WebCore::IDBKeyRange>, PassRefPtr<WebCore::IDBCallbacks>, WebCore::IDBTransactionBackendInterface*, WebCore::ExceptionCode&);
     virtual void clear(PassRefPtr<WebCore::IDBCallbacks>, WebCore::IDBTransactionBackendInterface*, WebCore::ExceptionCode&);

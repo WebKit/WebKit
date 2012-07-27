@@ -101,7 +101,6 @@ template<typename T>
 bool setValue(v8::Handle<v8::Value>& v8Object, T indexOrName, const v8::Handle<v8::Value>& v8Value)
 {
     v8::Local<v8::Object> object = v8Object->ToObject();
-    ASSERT(!object->Has(indexOrName));
     return object->Set(indexOrName, v8Value);
 }
 

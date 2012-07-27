@@ -159,13 +159,7 @@ PassRefPtr<IDBRequest> IDBCursor::update(ScriptExecutionContext* context, PassRe
         }
     }
 
-    RefPtr<IDBRequest> request = IDBRequest::create(context, IDBAny::create(this), m_transaction.get());
-    m_backend->update(value, request, ec);
-    if (ec) {
-        request->markEarlyDeath();
-        return 0;
-    }
-    return request.release();
+    return objectStore->put(IDBObjectStoreBackendInterface::CursorUpdate, IDBAny::create(this), context, value, m_currentPrimaryKey, ec);
 }
 
 void IDBCursor::advance(unsigned long count, ExceptionCode& ec)
@@ -259,18 +253,21 @@ void IDBCursor::setValueReady()
     m_currentPrimaryKey = m_backend->primaryKey();
 
     RefPtr<SerializedScriptValue> value = m_backend->value();
-#ifndef NDEBUG
     if (!isKeyCursor()) {
-        // FIXME: Actually inject the primaryKey at the keyPath.
         RefPtr<IDBObjectStore> objectStore = effectiveObjectStore();
-        if (objectStore->autoIncrement() && !objectStore->metadata().keyPath.isNull()) {
-            const IDBKeyPath& keyPath = objectStore->metadata().keyPath;
-            RefPtr<IDBKey> expectedKey = createIDBKeyFromSerializedValueAndKeyPath(value, keyPath);
-            ASSERT(m_currentPrimaryKey);
-            ASSERT(expectedKey->isEqual(m_currentPrimaryKey.get()));
+        const IDBObjectStoreMetadata metadata = objectStore->metadata();
+        if (metadata.autoIncrement && !metadata.keyPath.isNull()) {
+#ifndef NDEBUG
+            RefPtr<IDBKey> expectedKey = createIDBKeyFromSerializedValueAndKeyPath(value, metadata.keyPath);
+            ASSERT(!expectedKey || expectedKey->isEqual(m_currentPrimaryKey.get()));
+#endif
+            RefPtr<SerializedScriptValue> valueAfterInjection = injectIDBKeyIntoSerializedValue(m_currentPrimaryKey, value, metadata.keyPath);
+            ASSERT(valueAfterInjection);
+            // FIXME: There is no way to report errors here. Move this into onSuccessWithContinuation so that we can abort the transaction there. See: https://bugs.webkit.org/show_bug.cgi?id=92278
+            if (valueAfterInjection)
+                value = valueAfterInjection;
         }
     }
-#endif
     m_currentValue = IDBAny::create(value.release());
 
     m_gotValue = true;

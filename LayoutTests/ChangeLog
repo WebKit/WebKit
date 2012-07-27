@@ -1,3 +1,21 @@
+2012-07-27  Alec Flett  <alecflett@chromium.org>
+
+        IndexedDB: inject index keys on cursor/objectstore/index get success handlers
+        https://bugs.webkit.org/show_bug.cgi?id=91123
+
+        Reviewed by Tony Chang.
+
+        One new test to make sure that indexes with the same keypath as an
+        autoIncrement'ed objectStore still index their values. Also minor
+        tweaks to tests to make it easier to figure out which key is being
+        updated.
+
+        * storage/indexeddb/index-duplicate-keypaths-expected.txt: Added.
+        * storage/indexeddb/index-duplicate-keypaths.html: Added.
+        * storage/indexeddb/mozilla/autoincrement-indexes-expected.txt:
+        * storage/indexeddb/mozilla/resources/autoincrement-indexes.js:
+        * storage/indexeddb/resources/index-duplicate-keypaths.js: Added.
+
 2012-07-27  Tony Chang  <tony@chromium.org>
 
         changing -webkit-order should change the paint order of flex items

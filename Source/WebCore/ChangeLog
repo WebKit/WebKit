@@ -1,3 +1,60 @@
+2012-07-27  Alec Flett  <alecflett@chromium.org>
+
+        IndexedDB: inject index keys on cursor/objectstore/index get success handlers
+        https://bugs.webkit.org/show_bug.cgi?id=91123
+
+        Reviewed by Tony Chang.
+
+        Move key-injection into the frontend, by injecting the key into
+        the value on get rather than set for autoincremented keys. This
+        gives a potential performance win by avoiding an IPC call to the
+        V8 utility process on chromium, and generally cleans up the key
+        management.
+
+        Note that this duplicates the logic of generateIndexKeys into the
+        frontend until that method can be expunged from the backend. This
+        will be cleaned up in a later patch.
+
+        In order to account for both old data (which has the duplicate
+        primary key already injected and serialized) and any new data, an
+        assertion was removed from IDBBindingUtilities.
+
+        This also includes some minor refactoring such as the deprecation
+        of IDBCursorBackendInterface::update in favor of a direct call to
+        IDBObjectStoreBackendImpl::put, and removal of the now-defunct
+        IDBBackingStore::getObjectViaIndex.
+
+        Tests: storage/indexdb/index-duplicate-keypaths.html
+
+        * Modules/indexeddb/IDBBackingStore.h:
+        (IDBBackingStore):
+        * Modules/indexeddb/IDBCursor.cpp:
+        (WebCore::IDBCursor::update):
+        (WebCore::IDBCursor::setValueReady):
+        * Modules/indexeddb/IDBCursorBackendImpl.cpp:
+        (WebCore::IDBCursorBackendImpl::update):
+        * Modules/indexeddb/IDBIndexBackendImpl.cpp:
+        (WebCore::IDBIndexBackendImpl::getInternal):
+        * Modules/indexeddb/IDBLevelDBBackingStore.cpp:
+        * Modules/indexeddb/IDBLevelDBBackingStore.h:
+        (IDBLevelDBBackingStore):
+        * Modules/indexeddb/IDBObjectStore.cpp:
+        (WebCore::generateIndexKeysForValue):
+        (WebCore):
+        (WebCore::IDBObjectStore::add):
+        (WebCore::IDBObjectStore::put):
+        * Modules/indexeddb/IDBObjectStore.h:
+        (IDBObjectStore):
+        * Modules/indexeddb/IDBObjectStoreBackendImpl.cpp:
+        (WebCore::IDBObjectStoreBackendImpl::put):
+        (WebCore::IDBObjectStoreBackendImpl::putWithIndexKeys):
+        (WebCore):
+        (WebCore::IDBObjectStoreBackendImpl::putInternal):
+        * Modules/indexeddb/IDBRequest.cpp:
+        (WebCore::IDBRequest::onSuccess):
+        * bindings/v8/IDBBindingUtilities.cpp:
+        (WebCore):
+
 2012-07-27  Tony Chang  <tony@chromium.org>
 
         changing -webkit-order should change the paint order of flex items

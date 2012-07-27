@@ -83,17 +83,6 @@ PassRefPtr<SerializedScriptValue> IDBCursorBackendImpl::value() const
     return SerializedScriptValue::createFromWire(m_cursor->value());
 }
 
-void IDBCursorBackendImpl::update(PassRefPtr<SerializedScriptValue> value, PassRefPtr<IDBCallbacks> callbacks, ExceptionCode& ec)
-{
-    IDB_TRACE("IDBCursorBackendImpl::update");
-    ASSERT(m_transaction->mode() != IDBTransaction::READ_ONLY);
-
-    ASSERT(m_cursor);
-    ASSERT(m_cursorType != IndexKeyCursor);
-
-    m_objectStore->put(value, m_cursor->primaryKey(), IDBObjectStoreBackendInterface::CursorUpdate, callbacks, m_transaction.get(), ec);
-}
-
 void IDBCursorBackendImpl::continueFunction(PassRefPtr<IDBKey> prpKey, PassRefPtr<IDBCallbacks> prpCallbacks, ExceptionCode& ec)
 {
     IDB_TRACE("IDBCursorBackendImpl::continue");

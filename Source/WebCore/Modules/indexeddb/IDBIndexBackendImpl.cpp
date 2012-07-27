@@ -172,9 +172,17 @@ void IDBIndexBackendImpl::getInternal(ScriptExecutionContext*, PassRefPtr<IDBInd
         backingStoreCursor->close();
     }
 
-    String value = index->backingStore()->getObjectViaIndex(index->databaseId(), index->m_objectStoreBackend->id(), index->id(), *key);
+    RefPtr<IDBKey> primaryKey = index->backingStore()->getPrimaryKeyViaIndex(index->databaseId(), index->m_objectStoreBackend->id(), index->id(), *key);
+
+    String value = index->backingStore()->getObjectStoreRecord(index->databaseId(), index->m_objectStoreBackend->id(), *primaryKey);
+
     if (value.isNull()) {
         callbacks->onSuccess(SerializedScriptValue::undefinedValue());
+        return;
+    }
+    if (index->m_objectStoreBackend->autoIncrement() && !index->m_objectStoreBackend->keyPath().isNull()) {
+        callbacks->onSuccess(SerializedScriptValue::createFromWire(value),
+                             primaryKey, index->m_objectStoreBackend->keyPath());
         return;
     }
     callbacks->onSuccess(SerializedScriptValue::createFromWire(value));

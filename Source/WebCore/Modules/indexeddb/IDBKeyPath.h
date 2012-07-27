@@ -72,6 +72,8 @@ public:
     bool isNull() const { return m_type == NullType; }
     bool isValid() const;
     operator PassRefPtr<IDBAny>() const;
+    bool operator==(PassRefPtr<IDBAny> other) const;
+    bool operator==(const IDBKeyPath& other) const;
 
 private:
     Type m_type;

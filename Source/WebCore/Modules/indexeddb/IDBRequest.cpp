@@ -339,24 +339,42 @@ void IDBRequest::onSuccess(PassRefPtr<SerializedScriptValue> serializedScriptVal
     enqueueEvent(createSuccessEvent());
 }
 
+#ifndef NDEBUG
+static PassRefPtr<IDBObjectStore> effectiveObjectStore(PassRefPtr<IDBAny> source)
+{
+    if (source->type() == IDBAny::IDBObjectStoreType)
+        return source->idbObjectStore();
+    if (source->type() == IDBAny::IDBIndexType)
+        return source->idbIndex()->objectStore();
+
+    ASSERT_NOT_REACHED();
+    return 0;
+}
+#endif
 
 void IDBRequest::onSuccess(PassRefPtr<SerializedScriptValue> prpSerializedScriptValue, PassRefPtr<IDBKey> prpPrimaryKey, const IDBKeyPath& keyPath)
 {
-    LOG_ERROR("CHECKING: onSuccess(value, key, keypath)");
-    ASSERT(m_readyState == PENDING || m_readyState == DONE);
     if (m_requestAborted)
         return;
-    ASSERT(m_readyState == PENDING);
-    RefPtr<SerializedScriptValue> serializedScriptValue = prpSerializedScriptValue;
 #ifndef NDEBUG
-    // FIXME: Assert until we can actually inject the right value.
-    RefPtr<IDBKey> primaryKey = prpPrimaryKey;
-    RefPtr<IDBKey> expectedKey =
-              createIDBKeyFromSerializedValueAndKeyPath(serializedScriptValue, keyPath);
-    ASSERT(primaryKey);
-    ASSERT(expectedKey->isEqual(primaryKey.get()));
+    ASSERT(keyPath == effectiveObjectStore(m_source)->keyPath());
 #endif
-    onSuccess(serializedScriptValue.release());
+    RefPtr<SerializedScriptValue> value = prpSerializedScriptValue;
+
+    RefPtr<IDBKey> primaryKey = prpPrimaryKey;
+#ifndef NDEBUG
+    RefPtr<IDBKey> expectedKey = createIDBKeyFromSerializedValueAndKeyPath(value, keyPath);
+    ASSERT(!expectedKey || expectedKey->isEqual(primaryKey.get()));
+#endif
+    RefPtr<SerializedScriptValue> valueAfterInjection = injectIDBKeyIntoSerializedValue(primaryKey, value, keyPath);
+    ASSERT(valueAfterInjection);
+    if (!valueAfterInjection) {
+        // Checks in put() ensure this should only happen if I/O error occurs.
+        onError(IDBDatabaseError::create(IDBDatabaseException::UNKNOWN_ERR, "Internal error inserting generated key into the object."));
+        return;
+    }
+    value = valueAfterInjection;
+    onSuccess(value.release());
 }
 
 void IDBRequest::onSuccessWithContinuation()

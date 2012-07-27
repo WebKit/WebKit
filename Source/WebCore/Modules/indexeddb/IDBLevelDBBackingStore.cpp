@@ -967,15 +967,6 @@ bool IDBLevelDBBackingStore::deleteIndexDataForRecord(int64_t, int64_t, int64_t,
     return true;
 }
 
-String IDBLevelDBBackingStore::getObjectViaIndex(int64_t databaseId, int64_t objectStoreId, int64_t indexId, const IDBKey& key)
-{
-    RefPtr<IDBKey> primaryKey = getPrimaryKeyViaIndex(databaseId, objectStoreId, indexId, key);
-    if (!primaryKey)
-        return String();
-
-    return getObjectStoreRecord(databaseId, objectStoreId, *primaryKey);
-}
-
 static bool versionExists(LevelDBTransaction* transaction, int64_t databaseId, int64_t objectStoreId, int64_t version, const Vector<char>& encodedPrimaryKey)
 {
     const Vector<char> key = ExistsEntryKey::encode(databaseId, objectStoreId, encodedPrimaryKey);

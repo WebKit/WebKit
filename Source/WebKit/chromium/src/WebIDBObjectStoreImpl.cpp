@@ -58,11 +58,6 @@ void WebIDBObjectStoreImpl::get(const WebIDBKeyRange& keyRange, WebIDBCallbacks*
     m_objectStore->get(keyRange, IDBCallbacksProxy::create(adoptPtr(callbacks)), transaction.getIDBTransactionBackendInterface(), ec);
 }
 
-void WebIDBObjectStoreImpl::put(const WebSerializedScriptValue& value, const WebIDBKey& key, PutMode putMode, WebIDBCallbacks* callbacks, const WebIDBTransaction& transaction, WebExceptionCode& ec)
-{
-    m_objectStore->put(value, key, static_cast<IDBObjectStoreBackendInterface::PutMode>(putMode), IDBCallbacksProxy::create(adoptPtr(callbacks)), transaction.getIDBTransactionBackendInterface(), ec);
-}
-
 void WebIDBObjectStoreImpl::putWithIndexKeys(const WebSerializedScriptValue& value, const WebIDBKey& key, PutMode putMode, WebIDBCallbacks* callbacks, const WebIDBTransaction& transaction, const WebVector<WebString>& webIndexNames, const WebVector<WebIndexKeys>& webIndexKeys, WebExceptionCode& ec)
 {
     ASSERT(webIndexNames.size() == webIndexKeys.size());

@@ -236,6 +236,48 @@ IDBKeyPath::operator PassRefPtr<IDBAny>() const
     return 0;
 }
 
+bool IDBKeyPath::operator==(PassRefPtr<IDBAny> other) const
+{
+    if (!isValid())
+        return false;
+
+    switch (m_type) {
+    case NullType:
+        return other->type() == IDBAny::NullType;
+    case StringType:
+        return other->type() == IDBAny::StringType && other->string() == string();
+    case ArrayType:
+        if (other->type() != IDBAny::DOMStringListType)
+            return false;
+
+        RefPtr<DOMStringList> otherList = other->domStringList();
+        for (size_t i = 0; i < m_array.size(); ++i) {
+            if (otherList->item(i) != m_array[i])
+                return false;
+        }
+        return true;
+    }
+    ASSERT_NOT_REACHED();
+    return false;
+}
+
+bool IDBKeyPath::operator==(const IDBKeyPath& other) const
+{
+    if (m_type != other.m_type)
+        return false;
+
+    switch (m_type) {
+    case NullType:
+        return true;
+    case StringType:
+        return m_string == other.m_string;
+    case ArrayType:
+        return m_array == other.m_array;
+    }
+    ASSERT_NOT_REACHED();
+    return false;
+}
+
 
 } // namespace WebCore
 

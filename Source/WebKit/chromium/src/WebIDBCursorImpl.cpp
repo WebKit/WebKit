@@ -62,11 +62,6 @@ WebSerializedScriptValue WebIDBCursorImpl::value() const
     return m_idbCursorBackend->value();
 }
 
-void WebIDBCursorImpl::update(const WebSerializedScriptValue& value, WebIDBCallbacks* callbacks, WebExceptionCode& ec)
-{
-    m_idbCursorBackend->update(value, IDBCallbacksProxy::create(adoptPtr(callbacks)), ec);
-}
-
 void WebIDBCursorImpl::advance(unsigned long count, WebIDBCallbacks* callbacks, WebExceptionCode& ec)
 {
     m_idbCursorBackend->advance(count, IDBCallbacksProxy::create(adoptPtr(callbacks)), ec);
