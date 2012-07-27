@@ -1,3 +1,13 @@
+2012-07-26  Dan Bernstein  <mitz@apple.com>
+
+        Blocks with reverse column progression don’t have layout overflow for overflowing columns
+        https://bugs.webkit.org/show_bug.cgi?id=92440
+
+        Reviewed by Sam Weinig.
+
+        * fast/multicol/progression-reverse-overflow-expected.html: Added.
+        * fast/multicol/progression-reverse-overflow.html: Added.
+
 2012-07-26  Sukolsak Sakshuwong  <sukolsak@google.com>
 
         Implement undoscope attribute.

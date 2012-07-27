@@ -1,3 +1,19 @@
+2012-07-26  Dan Bernstein  <mitz@apple.com>
+
+        Blocks with reverse column progression don’t have layout overflow for overflowing columns
+        https://bugs.webkit.org/show_bug.cgi?id=92440
+
+        Reviewed by Sam Weinig.
+
+        Test: fast/multicol/progression-reverse-overflow.html
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::addLayoutOverflow): If column progression is reversed, then allow
+        layout overflow to go in the opposite direction than it would normally be allowed to go.
+        For example, in a block with writing-mode: horizontal-tb, direction: ltr and
+        column-progression: reverse, columns overflow to the left, so layout overflow would go on
+        the left.
+
 2012-07-26  Keishi Hattori  <keishi@webkit.org>
 
         Implement ColorSuggestionPicker page popup

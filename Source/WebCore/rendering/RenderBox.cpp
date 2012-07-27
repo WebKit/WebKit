@@ -3634,7 +3634,14 @@ void RenderBox::addLayoutOverflow(const LayoutRect& rect)
             else
                 hasTopOverflow = true;
         }
-        
+
+        if (hasColumns() && style()->columnProgression() == ReverseColumnProgression) {
+            if (isHorizontalWritingMode() ^ !style()->hasInlineColumnAxis())
+                hasLeftOverflow = !hasLeftOverflow;
+            else
+                hasTopOverflow = !hasTopOverflow;
+        }
+
         if (!hasTopOverflow)
             overflowRect.shiftYEdgeTo(max(overflowRect.y(), clientBox.y()));
         else
