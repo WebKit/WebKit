@@ -1,3 +1,17 @@
+2012-07-27  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Increase inline storage for JSFinalObjects by one
+        https://bugs.webkit.org/show_bug.cgi?id=92526
+
+        Reviewed by Geoffrey Garen.
+
+        Now that we've removed the inheritorID from objects, we can increase our inline storage for JSFinalObjects on 
+        64-bit platforms by 1.
+
+        * llint/LowLevelInterpreter.asm: Change the constant.
+        * runtime/PropertyOffset.h: Change the constant.
+        (JSC):
+
 2012-07-27  Jer Noble  <jer.noble@apple.com>
 
         Support a rational time class for use by media elements.

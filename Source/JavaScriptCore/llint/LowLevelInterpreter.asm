@@ -86,7 +86,7 @@ const HashFlags8BitBuffer = 64
 
 # Property storage constants
 if JSVALUE64
-    const InlineStorageCapacity = 4
+    const InlineStorageCapacity = 5
 else
     const InlineStorageCapacity = 6
 end
