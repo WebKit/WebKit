@@ -591,4 +591,10 @@ String InternalSettings::configurationForViewport(float devicePixelRatio, int de
     return "viewport size " + String::number(attributes.layoutSize.width()) + "x" + String::number(attributes.layoutSize.height()) + " scale " + String::number(attributes.initialScale) + " with limits [" + String::number(attributes.minimumScale) + ", " + String::number(attributes.maximumScale) + "] and userScalable " + (attributes.userScalable ? "true" : "false");
 }
 
+void InternalSettings::setMemoryInfoEnabled(bool enabled, ExceptionCode& ec)
+{
+    InternalSettingsGuardForSettings();
+    settings()->setMemoryInfoEnabled(enabled);
+}
+
 }

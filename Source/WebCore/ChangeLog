@@ -1,3 +1,20 @@
+2012-07-27  Zoltan Horvath  <zoltan@webkit.org>
+
+        Add runtime flag to enable/disable JS memory information
+        https://bugs.webkit.org/show_bug.cgi?id=92479
+
+        Reviewed by Simon Hausmann.
+
+        We need console.memory JS object to be accessible because of the memory consumption
+        measurements of the performance tests, so I added a toggle to InternalSettings.
+
+        * testing/InternalSettings.cpp:
+        (WebCore::InternalSettings::setMemoryInfoEnabled):
+        (WebCore):
+        * testing/InternalSettings.h:
+        (InternalSettings):
+        * testing/InternalSettings.idl:
+
 2012-07-27  Arko Saha  <arko@motorola.com>
 
         Microdata: Remove toJs() and toV8Object() custom methods from JSHTMLElementCustom.cpp and V8HTMLElementCustom.cpp respectively.

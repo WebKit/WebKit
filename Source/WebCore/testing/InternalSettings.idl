@@ -75,6 +75,7 @@ module window {
         void setShouldDisplayTrackKind(in DOMString kind, in boolean enabled) raises (DOMException);
         boolean shouldDisplayTrackKind(in DOMString trackKind) raises (DOMException);
 #endif
+        void setMemoryInfoEnabled(in boolean enabled) raises(DOMException);
     };
 }
 
