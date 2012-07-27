@@ -1,30 +1,30 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
-  RenderSVGRoot {svg} at (50,0) size 375x68
-    RenderSVGContainer {g} at (197,1) size 92x67
-      RenderSVGPath {svg:line} at (197,1) size 6x67 [stroke={[type=SOLID] [color=#008000]}] [fill={[type=SOLID] [color=#000000]}] [x1=40.00] [y1=0.40] [x2=40.00] [y2=13.60]
-      RenderSVGPath {svg:line} at (283,1) size 6x67 [stroke={[type=SOLID] [color=#008000]}] [fill={[type=SOLID] [color=#000000]}] [x1=57.20] [y1=0.40] [x2=57.20] [y2=13.60]
-      RenderSVGRect {svg:rect} at (200,1) size 86x64 [fill={[type=SOLID] [color=#FF0000] [opacity=0.40]}] [x=40.00] [y=0.40] [width=17.20] [height=12.60]
-    RenderSVGText {text} at (10,0) size 75x13 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 16x13
+  RenderSVGRoot {svg} at (50,0) size 380x65
+    RenderSVGContainer {g} at (197,4) size 94x58
+      RenderSVGPath {svg:line} at (197,4) size 6x58 [stroke={[type=SOLID] [color=#008000]}] [fill={[type=SOLID] [color=#000000]}] [x1=40.00] [y1=0.80] [x2=40.00] [y2=12.40]
+      RenderSVGPath {svg:line} at (285,4) size 6x58 [stroke={[type=SOLID] [color=#008000]}] [fill={[type=SOLID] [color=#000000]}] [x1=57.60] [y1=0.80] [x2=57.60] [y2=12.40]
+      RenderSVGRect {svg:rect} at (200,4) size 88x57 [fill={[type=SOLID] [color=#FF0000] [opacity=0.40]}] [x=40.00] [y=0.80] [width=17.60] [height=11.40]
+    RenderSVGText {text} at (10,0) size 76x12 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 16x12
         chunk 1 text run 1 at (10.00,10.00) startOffset 0 endOffset 1 width 6.20: "T"
         chunk 1 text run 1 at (20.00,10.00) startOffset 0 endOffset 1 width 5.60: "h"
-      RenderSVGTSpan {tspan} at (0,0) size 3x13
-        RenderSVGInlineText {#text} at (30,0) size 3x13
-          chunk 1 text run 1 at (40.00,10.00) startOffset 0 endOffset 1 width 2.20: "i"
-      RenderSVGTSpan {tspan} at (0,0) size 11x13
-        RenderSVGInlineText {#text} at (32,0) size 10x13
-          chunk 1 text run 1 at (42.20,10.00) startOffset 0 endOffset 3 width 10.00: "s i"
-      RenderSVGInlineText {#text} at (42,0) size 5x13
-        chunk 1 text run 1 at (52.20,10.00) startOffset 0 endOffset 1 width 5.00: "s"
-      RenderSVGTSpan {tspan} at (0,0) size 12x13
-        RenderSVGInlineText {#text} at (47,0) size 12x13
-          chunk 1 text run 1 at (57.20,10.00) startOffset 0 endOffset 3 width 11.20: " a "
-      RenderSVGTSpan {tspan} at (0,0) size 4x13
-        RenderSVGInlineText {#text} at (58,0) size 3x13
-          chunk 1 text run 1 at (68.40,10.00) startOffset 0 endOffset 1 width 2.80: "t"
-      RenderSVGInlineText {#text} at (61,0) size 14x13
-        chunk 1 text run 1 at (71.20,10.00) startOffset 0 endOffset 3 width 13.40: "est"
+      RenderSVGTSpan {tspan} at (0,0) size 3x12
+        RenderSVGInlineText {#text} at (30,0) size 3x12
+          chunk 1 text run 1 at (40.00,10.00) startOffset 0 endOffset 1 width 2.40: "i"
+      RenderSVGTSpan {tspan} at (0,0) size 11x12
+        RenderSVGInlineText {#text} at (32,0) size 11x12
+          chunk 1 text run 1 at (42.40,10.00) startOffset 0 endOffset 3 width 10.20: "s i"
+      RenderSVGInlineText {#text} at (42,0) size 5x12
+        chunk 1 text run 1 at (52.60,10.00) startOffset 0 endOffset 1 width 5.00: "s"
+      RenderSVGTSpan {tspan} at (0,0) size 12x12
+        RenderSVGInlineText {#text} at (47,0) size 12x12
+          chunk 1 text run 1 at (57.60,10.00) startOffset 0 endOffset 3 width 11.20: " a "
+      RenderSVGTSpan {tspan} at (0,0) size 4x12
+        RenderSVGInlineText {#text} at (58,0) size 3x12
+          chunk 1 text run 1 at (68.80,10.00) startOffset 0 endOffset 1 width 2.80: "t"
+      RenderSVGInlineText {#text} at (61,0) size 14x12
+        chunk 1 text run 1 at (71.60,10.00) startOffset 0 endOffset 3 width 13.40: "est"
 selection start: position 0 of child 0 {#text} of child 1 {tspan} of child 7 {text} of child 0 {svg} of document
 selection end:   position 1 of child 3 {#text} of child 7 {text} of child 0 {svg} of document

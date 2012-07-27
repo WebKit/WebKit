@@ -1,17 +1,17 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x66
-  RenderBlock {HTML} at (0,0) size 800x66
-    RenderBody {BODY} at (8,8) size 784x50
-      RenderBlock {DIV} at (0,0) size 784x21
-        RenderText {#text} at (0,0) size 750x21
-          text run at (0,0) width 750: "When the caret reaches the edge of the input box, on the next input if must jump to the center of the control."
-      RenderBlock (anonymous) at (0,21) size 784x29
-        RenderTextControl {INPUT} at (2,2) size 94x25
+layer at (0,0) size 800x62
+  RenderBlock {HTML} at (0,0) size 800x62
+    RenderBody {BODY} at (8,8) size 784x46
+      RenderBlock {DIV} at (0,0) size 784x19
+        RenderText {#text} at (0,0) size 646x19
+          text run at (0,0) width 646: "When the caret reaches the edge of the input box, on the next input if must jump to the center of the control."
+      RenderBlock (anonymous) at (0,19) size 784x27
+        RenderTextControl {INPUT} at (2,2) size 102x23
         RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
-layer at (12,33) size 90x21 scrollX 46 scrollWidth 379
-  RenderBlock {DIV} at (2,2) size 90x21
-    RenderText {#text} at (0,0) size 378x21
-      text run at (0,0) width 378: "012345678901012345678901234567890123456789"
+layer at (12,31) size 98x19 scrollWidth 337
+  RenderBlock {DIV} at (2,2) size 98x19
+    RenderText {#text} at (0,0) size 336x19
+      text run at (0,0) width 336: "012345678901012345678901234567890123456789"
 caret: position 12 of child 0 {#text} of child 0 {DIV} of {#shadow-root} of child 3 {INPUT} of body

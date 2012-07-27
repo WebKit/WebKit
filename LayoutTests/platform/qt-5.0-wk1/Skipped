@@ -29,9 +29,6 @@ http/tests/incremental/slow-utf8-text.pl
 
 # [Qt] REGRESSION: 360 tests started to fail with newer Qt5-WK1
 # https://bugs.webkit.org/show_bug.cgi?id=85631
-editing/deleting/merge-whitespace-pre.html
-editing/input/caret-at-the-edge-of-input.html
-editing/input/reveal-caret-of-multiline-input.html
 editing/pasteboard/4806874.html
 editing/pasteboard/innerText-inline-table.html
 editing/pasteboard/input-field-1.html
@@ -115,88 +112,20 @@ svg/custom/dominant-baseline-hanging.svg
 svg/custom/getscreenctm-in-mixed-content.xhtml
 svg/custom/inline-svg-in-xhtml.xml
 svg/custom/object-sizing.xhtml
-svg/hixie/mixed/003.xml
 
 # [Qt] New failing and flakey tests with newer Qt 5
 # https://bugs.webkit.org/show_bug.cgi?id=86452
-svg/css/text-gradient-shadow.svg
 fast/table/table-row-before-child-style-update.html
 fast/table/table-row-style-not-updated.html
 fast/table/table-style-not-updated.html
 
-# [Qt] The test fonts used for Qt tests changed to the Liberation font family,
-# due to this we are skipping tons of tests. They will be unskipped in batches ASAP.
-# https://bugs.webkit.org/show_bug.cgi?id=85203
-editing/deleting/deletionUI-single-instance.html
+# [Qt] [WK1] Spaces missing in output of fast/forms/mailto/advanced-{get,put}.html
+# https://bugs.webkit.org/show_bug.cgi?id=92551
 fast/forms/mailto/advanced-get.html
 fast/forms/mailto/advanced-put.html
-http/tests/appcache/different-https-origin-resource-main.html
-http/tests/cache/cancel-during-revalidation-succeeded.html
-http/tests/cache/history-only-cached-subresource-loads-max-age-https.html
-http/tests/loading/simple-subframe.html
-http/tests/misc/object-embedding-svg-delayed-size-negotiation-2.htm
-http/tests/misc/slow-loading-mask.html
-http/tests/misc/webtiming-ssl.php
-http/tests/navigation/error404-basic.html
-http/tests/navigation/error404-goback.html
-http/tests/navigation/error404-subframeload.html
-http/tests/navigation/ping-cross-origin-from-https.html
-http/tests/security/contentSecurityPolicy/block-mixed-content-hides-warning.html
-http/tests/security/contentSecurityPolicy/script-src-star-cross-scheme.html
-http/tests/security/cross-frame-access-protocol-explicit-domain.html
-http/tests/security/cross-frame-access-protocol.html
-http/tests/security/cross-frame-access-put.html
-http/tests/security/mixedContent/about-blank-iframe-in-main-frame.html
-http/tests/security/mixedContent/data-url-iframe-in-main-frame.html
-http/tests/security/mixedContent/data-url-script-in-iframe.html
-http/tests/security/mixedContent/empty-url-plugin-in-frame.html
-http/tests/security/mixedContent/insecure-css-in-iframe.html
-http/tests/security/mixedContent/insecure-css-in-main-frame.html
-http/tests/security/mixedContent/insecure-iframe-in-iframe.html
-http/tests/security/mixedContent/insecure-iframe-in-main-frame.html
-http/tests/security/mixedContent/insecure-image-in-iframe.html
-http/tests/security/mixedContent/insecure-image-in-main-frame.html
-http/tests/security/mixedContent/insecure-plugin-in-iframe.html
-http/tests/security/mixedContent/insecure-script-in-iframe.html
-http/tests/security/mixedContent/insecure-xhr-in-main-frame.html
-http/tests/security/mixedContent/redirect-http-to-https-iframe-in-main-frame.html
-http/tests/security/mixedContent/redirect-http-to-https-script-in-iframe.html
-http/tests/security/mixedContent/redirect-https-to-http-iframe-in-main-frame.html
-http/tests/security/mixedContent/redirect-https-to-http-script-in-iframe.html
-http/tests/security/originHeader/origin-header-for-https.html
-http/tests/security/referrer-policy-https-always.html
-http/tests/security/referrer-policy-https-default.html
-http/tests/security/referrer-policy-https-never.html
-http/tests/security/referrer-policy-https-origin.html
-http/tests/security/referrer-policy-redirect.html
-http/tests/security/xss-DENIED-xsl-document-securityOrigin.xml
-http/tests/ssl/referer-301.html
-http/tests/ssl/referer-303.html
-http/tests/ssl/verify-ssl-enabled.php
-svg/as-object/svg-embedded-in-html-in-iframe.html
-svg/text/select-textLength-spacing-squeeze-1.svg
-svg/text/select-textLength-spacing-squeeze-2.svg
-svg/text/select-textLength-spacing-squeeze-3.svg
-svg/text/select-textLength-spacing-squeeze-4.svg
-svg/text/select-textLength-spacing-stretch-1.svg
-svg/text/select-textLength-spacing-stretch-2.svg
-svg/text/select-textLength-spacing-stretch-3.svg
-svg/text/select-textLength-spacing-stretch-4.svg
-svg/text/select-textLength-spacingAndGlyphs-stretch-4.svg
-svg/text/select-x-list-1.svg
-svg/text/select-x-list-2.svg
-svg/text/select-x-list-3.svg
-svg/text/select-x-list-4.svg
-svg/text/select-x-list-with-tspans-1.svg
-svg/text/select-x-list-with-tspans-2.svg
-svg/text/select-x-list-with-tspans-3.svg
-svg/text/select-x-list-with-tspans-4.svg
-svg/text/selection-doubleclick.svg
 
-# [Qt] The test fonts used for Qt tests changed to the Liberation font family,
-# due to this we are skipping tons of tests. They will be unskipped in batches ASAP.
-# https://bugs.webkit.org/show_bug.cgi?id=85203
-# new failures after https://trac.webkit.org/changeset/121971 - needs more investigation
+# [Qt] Tests still fail after the update to new fonts
+# https://bugs.webkit.org/show_bug.cgi?id=91610
 css3/calc/table-calcs.html
 editing/deleting/delete-block-table.html
 editing/pasteboard/paste-plaintext-user-select-none.html

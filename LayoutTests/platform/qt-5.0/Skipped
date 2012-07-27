@@ -241,6 +241,7 @@ fast/runin/generated4.html
 fast/writing-mode/fallback-orientation.html
 fast/xsl/document-function.xml
 fast/xsl/xslt-entity.xml
+svg/css/text-gradient-shadow.svg
 svg/custom/mouse-move-on-svg-container.xhtml
 svg/custom/mouse-move-on-svg-root-standalone.svg
 svg/custom/mouse-move-on-svg-root.xhtml

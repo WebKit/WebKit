@@ -321,7 +321,8 @@ compositing/layers-inside-overflow-scroll.html
 # https://bugs.webkit.org/show_bug.cgi?id=89645
 compositing/backface-visibility/backface-visibility-webgl.html
 
-# For some reason they time-out on the bot.
+# [Qt] [WK2] Some fullscreen layout tests are timing out on the bot
+# https://bugs.webkit.org/show_bug.cgi?id=92543
 fullscreen/video-controls-timeline.html
 fullscreen/full-screen-iframe-legacy.html
 
@@ -397,20 +398,6 @@ http/tests/ssl
 # https://bugs.webkit.org/show_bug.cgi?id=90985
 fast/repaint/background-scaling.html
 
-# [Qt] The test fonts used for Qt tests changed to the Liberation font family,
-# due to this we are skipping tons of tests. They will be unskipped in batches ASAP.
-# https://bugs.webkit.org/show_bug.cgi?id=85203
-editing/deleting/merge-whitespace-pre.html
-editing/input/caret-at-the-edge-of-input.html
-editing/input/reveal-caret-of-multiline-input.html
-fullscreen/full-screen-placeholder.html
-fullscreen/video-controls-drag.html
-fullscreen/video-controls-override.html
-fullscreen/video-specified-size.html
-http/tests/cache/cancel-during-revalidation-succeeded.html
-svg/css/text-gradient-shadow.svg
-svg/hixie/mixed/003.xml
-
 # [Qt] Tests still fail after the update to new fonts 
 # https://bugs.webkit.org/show_bug.cgi?id=91610
 fast/css/font-face-default-font.html
@@ -482,6 +469,8 @@ css3/selectors3/xml/css3-modsel-23.xml
 css3/selectors3/xml/css3-modsel-24.xml
 css3/selectors3/xml/css3-modsel-68.xml
 css3/selectors3/xml/css3-modsel-69.xml
+editing/input/caret-at-the-edge-of-input.html
+editing/input/reveal-caret-of-multiline-input.html
 editing/inserting/4960120-1.html
 editing/inserting/before-after-input-element.html
 editing/selection/3690703-2.html
@@ -534,6 +523,8 @@ fast/table/text-field-baseline.html
 fast/text/international/unicode-bidi-plaintext-in-textarea.html
 fast/text/textIteratorNilRenderer.html
 tables/mozilla_expected_failures/bugs/bug92647-1.html
+svg/hixie/mixed/003.xml
+
 
 # [Qt] Images scale differently in WK1 and WK2
 # https://bugs.webkit.org/show_bug.cgi?id=92015

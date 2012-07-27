@@ -1,3 +1,41 @@
+2012-07-27  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        [Qt] Remaining rebaselines after new test fonts
+        https://bugs.webkit.org/show_bug.cgi?id=92552
+
+        Unreviewed.
+
+        Unskip a bunch of tests, organize the remaining skips. The mentions to bug 85203 were
+        removed now. A last batch of WK1 results were associated with the bug 91610.
+
+        * platform/qt-5.0-wk1/Skipped:
+        * platform/qt-5.0-wk2/Skipped:
+        * platform/qt-5.0-wk2/fullscreen/full-screen-placeholder-expected.txt:
+        * platform/qt-5.0/Skipped:
+        * platform/qt/editing/input/caret-at-the-edge-of-input-expected.txt:
+        * platform/qt/editing/input/reveal-caret-of-multiline-input-expected.txt:
+        * platform/qt/http/tests/cache/cancel-during-revalidation-succeeded-expected.txt: Removed.
+        * platform/qt/http/tests/misc/object-embedding-svg-delayed-size-negotiation-2-expected.txt:
+        * platform/qt/http/tests/security/xss-DENIED-xsl-document-securityOrigin-expected.txt: Removed.
+        * platform/qt/svg/text/select-textLength-spacing-squeeze-1-expected.txt:
+        * platform/qt/svg/text/select-textLength-spacing-squeeze-2-expected.txt:
+        * platform/qt/svg/text/select-textLength-spacing-squeeze-3-expected.txt:
+        * platform/qt/svg/text/select-textLength-spacing-squeeze-4-expected.txt:
+        * platform/qt/svg/text/select-textLength-spacing-stretch-1-expected.txt:
+        * platform/qt/svg/text/select-textLength-spacing-stretch-2-expected.txt:
+        * platform/qt/svg/text/select-textLength-spacing-stretch-3-expected.txt:
+        * platform/qt/svg/text/select-textLength-spacing-stretch-4-expected.txt:
+        * platform/qt/svg/text/select-textLength-spacingAndGlyphs-stretch-4-expected.txt:
+        * platform/qt/svg/text/select-x-list-1-expected.txt:
+        * platform/qt/svg/text/select-x-list-2-expected.txt:
+        * platform/qt/svg/text/select-x-list-3-expected.txt:
+        * platform/qt/svg/text/select-x-list-4-expected.txt:
+        * platform/qt/svg/text/select-x-list-with-tspans-1-expected.txt:
+        * platform/qt/svg/text/select-x-list-with-tspans-2-expected.txt:
+        * platform/qt/svg/text/select-x-list-with-tspans-3-expected.txt:
+        * platform/qt/svg/text/select-x-list-with-tspans-4-expected.txt:
+        * platform/qt/svg/text/selection-doubleclick-expected.txt:
+
 2012-07-27  Kevin Ellis  <kevers@chromium.org>
 
         Search cancel button is hard to activate with a tap gesture even if touch adjustment is enabled.
