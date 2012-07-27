@@ -1,3 +1,22 @@
+2012-07-27  Mike West  <mkwst@chromium.org>
+
+        CSP directives containing invalid characters should log an error.
+        https://bugs.webkit.org/show_bug.cgi?id=92487
+
+        Reviewed by Adam Barth.
+
+        Unknown directive names are currently logged, but we exit the directive
+        parser early without logging if we hit an invalid character inside a
+        directive. `script-src: ...`, for example, was ignored without letting
+        the developer know what happened. This patch changes that behavior,
+        logging the whole name (in this case `script-src:`) as an unknown
+        directive.
+
+        Test: http/tests/security/contentSecurityPolicy/directive-parsing-04.html
+
+        * page/ContentSecurityPolicy.cpp:
+        (WebCore::CSPDirectiveList::parseDirective):
+
 2012-07-27  No'am Rosenthal  <noam.rosenthal@nokia.com>
 
         [Texmap] Performance regression in texture uploads after r121223

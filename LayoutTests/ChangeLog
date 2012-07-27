@@ -1,3 +1,16 @@
+2012-07-27  Mike West  <mkwst@chromium.org>
+
+        CSP directives containing invalid characters should log an error.
+        https://bugs.webkit.org/show_bug.cgi?id=92487
+
+        Reviewed by Adam Barth.
+
+        * http/tests/security/contentSecurityPolicy/directive-parsing-03-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/directive-parsing-04-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/directive-parsing-04.html: Added.
+            Adding a test specifically for `script-src: ...` which bit me, and
+            updating test #3, which now has a better error message.
+
 2012-07-27  Ádám Kallai  <kadam@inf.u-szeged.hu>
 
         [Qt] platform/qt/svg/custom tests needs update after font change.

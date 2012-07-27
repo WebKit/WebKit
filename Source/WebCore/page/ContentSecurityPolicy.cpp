@@ -949,8 +949,11 @@ bool CSPDirectiveList::parseDirective(const UChar* begin, const UChar* end, Stri
     if (position == end)
         return true;
 
-    if (!skipExactly<isASCIISpace>(position, end))
+    if (!skipExactly<isASCIISpace>(position, end)) {
+        skipWhile<isNotASCIISpace>(position, end);
+        logUnrecognizedDirective(String(nameBegin, position - nameBegin));
         return false;
+    }
 
     skipWhile<isASCIISpace>(position, end);
 

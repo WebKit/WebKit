@@ -1,0 +1,10 @@
+CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'script-src:'.
+
+A warning should be logged to the console, as `script-src: 'none'` shouldn't contain a colon. Since the directive is invalid, the script should run.
+
+
+
+--------
+Frame: '<!--framePath //<!--frame0-->-->'
+--------
+PASS
