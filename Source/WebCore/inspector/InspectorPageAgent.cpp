@@ -967,7 +967,8 @@ void InspectorPageAgent::updateViewMetrics(int width, int height, double fontSca
     m_client->overrideDeviceMetrics(width, height, static_cast<float>(fontScaleFactor), fitWindow);
 
     Document* document = mainFrame()->document();
-    document->styleResolverChanged(RecalcStyleImmediately);
+    if (document)
+        document->styleResolverChanged(RecalcStyleImmediately);
     InspectorInstrumentation::mediaQueryResultChanged(document);
 }
 

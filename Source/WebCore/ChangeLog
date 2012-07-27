@@ -1,3 +1,18 @@
+2012-07-27  Vivek Galatage  <vivekgalatage@gmail.com>
+
+        Web Inspector: InspectorPageAgent should ascertain document to be non-null in updateViewMetrics()
+        https://bugs.webkit.org/show_bug.cgi?id=92476
+
+        Reviewed by Pavel Feldman.
+
+        InspectorPageAgent should check for document object being null. As pages created with blank URL might
+        not have the document object, this causes a crash.
+
+        No new tests as added null check.
+
+        * inspector/InspectorPageAgent.cpp:
+        (WebCore::InspectorPageAgent::updateViewMetrics):
+
 2012-07-27  Mike West  <mkwst@chromium.org>
 
         CSP directives containing invalid characters should log an error.
