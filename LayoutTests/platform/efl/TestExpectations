@@ -214,9 +214,6 @@ BUGWK83007 : fast/repaint/region-painting-invalidation.html = TEXT IMAGE IMAGE+T
 // Needs to have PNG generated, which currently fails for this case.
 BUGWK83274 : fast/repaint/transform-rotate-and-remove.html = PASS
 
-// Not able to generate a meaningful expected result, since complex font rendering fails.
-BUGWK83275 : fast/text/international/text-spliced-font.html = TEXT IMAGE IMAGE+TEXT MISSING
-
 BUGWK83906 : ietestcenter/css3/grid/grid-column-001.htm = IMAGE
 BUGWK83907 : ietestcenter/css3/grid/grid-column-002.htm = IMAGE
 BUGWK83909 : ietestcenter/css3/grid/grid-column-003.htm = IMAGE

@@ -16,73 +16,73 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,70) size 784x18
         RenderText {#text} at (0,0) size 600x19
           text run at (0,0) width 600: "The two columns should be identical except for the accent over the e and the umlaut over the u."
-      RenderTable {TABLE} at (0,104) size 128x131 [border: none]
-        RenderTableSection {TBODY} at (0,0) size 127x130
-          RenderTableRow {TR} at (0,0) size 127x26
-            RenderTableCell {TD} at (0,0) size 8x26 [border: (1px solid #008000)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 0x23
-                text run at (2,2) width 0: "Lore\x{300}m "
-              RenderInline {SPAN} at (0,0) size 0x23
-                RenderText {#text} at (2,2) size 0x23
-                  text run at (2,2) width 0: "ipsu\x{308}m"
+      RenderTable {TABLE} at (0,104) size 239x131 [border: none]
+        RenderTableSection {TBODY} at (0,0) size 238x130
+          RenderTableRow {TR} at (0,0) size 238x26
+            RenderTableCell {TD} at (0,0) size 119x26 [border: (1px solid #008000)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 59x23
+                text run at (2,2) width 59: "Lore\x{300}m "
+              RenderInline {SPAN} at (0,0) size 50x23
+                RenderText {#text} at (61,2) size 50x23
+                  text run at (61,2) width 50: "ipsu\x{308}m"
               RenderText {#text} at (0,0) size 0x0
-            RenderTableCell {TD} at (8,0) size 119x26 [border: (1px solid #008000)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (119,0) size 119x26 [border: (1px solid #008000)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 59x23
                 text run at (2,2) width 59: "Lorem "
               RenderInline {SPAN} at (0,0) size 50x23
                 RenderText {#text} at (61,2) size 50x23
                   text run at (61,2) width 50: "ipsum"
               RenderText {#text} at (0,0) size 0x0
-          RenderTableRow {TR} at (0,26) size 127x26
-            RenderTableCell {TD} at (0,26) size 8x26 [border: (1px solid #008000)] [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 0x23
-                text run at (2,2) width 0: "Lore\x{300}m "
-              RenderInline {SPAN} at (0,0) size 0x23
-                RenderText {#text} at (2,2) size 0x23
-                  text run at (2,2) width 0: "ipsu\x{308}m"
+          RenderTableRow {TR} at (0,26) size 238x26
+            RenderTableCell {TD} at (0,26) size 119x26 [border: (1px solid #008000)] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 63x23
+                text run at (2,2) width 63: "Lore\x{300}m "
+              RenderInline {SPAN} at (0,0) size 53x23
+                RenderText {#text} at (65,2) size 53x23
+                  text run at (65,2) width 53: "ipsu\x{308}m"
               RenderText {#text} at (0,0) size 0x0
-            RenderTableCell {TD} at (8,26) size 119x26 [border: (1px solid #008000)] [r=1 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (119,26) size 119x26 [border: (1px solid #008000)] [r=1 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 63x23
                 text run at (2,2) width 63: "Lorem "
               RenderInline {SPAN} at (0,0) size 53x23
                 RenderText {#text} at (65,2) size 53x23
                   text run at (65,2) width 53: "ipsum"
               RenderText {#text} at (0,0) size 0x0
-          RenderTableRow {TR} at (0,52) size 127x26
-            RenderTableCell {TD} at (0,52) size 8x26 [border: (1px solid #008000)] [r=2 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 0x23
-                text run at (2,2) width 0: "Lore\x{300}m "
-              RenderInline {SPAN} at (0,0) size 0x23
-                RenderText {#text} at (2,2) size 0x23
-                  text run at (2,2) width 0: "ipsu\x{308}m"
+          RenderTableRow {TR} at (0,52) size 238x26
+            RenderTableCell {TD} at (0,52) size 119x26 [border: (1px solid #008000)] [r=2 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 56x23
+                text run at (2,2) width 56: "Lore\x{300}m "
+              RenderInline {SPAN} at (0,0) size 48x23
+                RenderText {#text} at (58,2) size 48x23
+                  text run at (58,2) width 48: "ipsu\x{308}m"
               RenderText {#text} at (0,0) size 0x0
-            RenderTableCell {TD} at (8,52) size 119x26 [border: (1px solid #008000)] [r=2 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (119,52) size 119x26 [border: (1px solid #008000)] [r=2 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 57x23
                 text run at (2,2) width 57: "Lorem "
               RenderInline {SPAN} at (0,0) size 48x23
                 RenderText {#text} at (59,2) size 48x23
                   text run at (59,2) width 48: "ipsum"
               RenderText {#text} at (0,0) size 0x0
-          RenderTableRow {TR} at (0,78) size 127x26
-            RenderTableCell {TD} at (0,78) size 8x26 [border: (1px solid #008000)] [r=3 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 0x23
-                text run at (2,2) width 0: "Lore\x{300}m "
-              RenderInline {SPAN} at (0,0) size 0x23
-                RenderText {#text} at (2,2) size 0x23
-                  text run at (2,2) width 0: "ipsu\x{308}m"
+          RenderTableRow {TR} at (0,78) size 238x26
+            RenderTableCell {TD} at (0,78) size 119x26 [border: (1px solid #008000)] [r=3 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 60x23
+                text run at (2,2) width 60: "Lore\x{300}m "
+              RenderInline {SPAN} at (0,0) size 51x23
+                RenderText {#text} at (62,2) size 51x23
+                  text run at (62,2) width 51: "ipsu\x{308}m"
               RenderText {#text} at (0,0) size 0x0
-            RenderTableCell {TD} at (8,78) size 119x26 [border: (1px solid #008000)] [r=3 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (119,78) size 119x26 [border: (1px solid #008000)] [r=3 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 60x23
                 text run at (2,2) width 60: "Lorem "
               RenderInline {SPAN} at (0,0) size 51x23
                 RenderText {#text} at (62,2) size 51x23
                   text run at (62,2) width 51: "ipsum"
               RenderText {#text} at (0,0) size 0x0
-          RenderTableRow {TR} at (0,104) size 127x26
-            RenderTableCell {TD} at (0,104) size 8x26 [border: (1px solid #008000)] [r=4 c=0 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 0x23
-                text run at (2,2) width 0: "Lore\x{300}m ipsu\x{308}m"
-            RenderTableCell {TD} at (8,104) size 119x26 [border: (1px solid #008000)] [r=4 c=1 rs=1 cs=1]
+          RenderTableRow {TR} at (0,104) size 238x26
+            RenderTableCell {TD} at (0,104) size 119x26 [border: (1px solid #008000)] [r=4 c=0 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 100x23
+                text run at (2,2) width 100: "Lore\x{300}m ipsu\x{308}m"
+            RenderTableCell {TD} at (119,104) size 119x26 [border: (1px solid #008000)] [r=4 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 100x23
                 text run at (2,2) width 100: "Lorem ipsum"
       RenderBlock {HR} at (0,243) size 784x2 [border: (1px inset #000000)]
@@ -90,12 +90,12 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 277x19
           text run at (0,0) width 277: "The following two lines should be identical."
       RenderBlock {P} at (0,295) size 784x21
-        RenderInline {SPAN} at (0,0) size 2x23 [border: (1px solid #008000)]
-          RenderText {#text} at (1,0) size 0x21
-            text run at (1,0) width 0: "\x{E01}\x{E02}\x{E03}\x{E04}\x{E05}\x{E06}\x{E07}\x{E08}\x{E01}\x{E02}\x{E03}\x{E04}\x{E05}\x{E06}\x{E07}\x{E08}\x{E01}\x{E02}\x{E03}\x{E04}\x{E05}\x{E06}\x{E07}\x{E08}\x{E01}\x{E02}\x{E03}\x{E04}\x{E05}\x{E06}\x{E07}\x{E08}"
+        RenderInline {SPAN} at (0,0) size 354x23 [border: (1px solid #008000)]
+          RenderText {#text} at (1,0) size 352x21
+            text run at (1,0) width 352: "\x{E01}\x{E02}\x{E03}\x{E04}\x{E05}\x{E06}\x{E07}\x{E08}\x{E01}\x{E02}\x{E03}\x{E04}\x{E05}\x{E06}\x{E07}\x{E08}\x{E01}\x{E02}\x{E03}\x{E04}\x{E05}\x{E06}\x{E07}\x{E08}\x{E01}\x{E02}\x{E03}\x{E04}\x{E05}\x{E06}\x{E07}\x{E08}"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,332) size 784x21
-        RenderInline {SPAN} at (0,0) size 2x23 [border: (1px solid #008000)]
-          RenderText {#text} at (1,0) size 0x21
-            text run at (1,0) width 0: "\x{E01}\x{E02}\x{E03}\x{E04}\x{E05}\x{E06}\x{E07}\x{E08}\x{E01}\x{E02}\x{E03}\x{E04}\x{E05}\x{E06}\x{E07}\x{E08}\x{E01}\x{E02}\x{E03}\x{E04}\x{E05}\x{E06}\x{E07}\x{E08}\x{E01}\x{E02}\x{E03}\x{E04}\x{E05}\x{E06}\x{E07}\x{E08}"
+        RenderInline {SPAN} at (0,0) size 354x23 [border: (1px solid #008000)]
+          RenderText {#text} at (1,0) size 352x21
+            text run at (1,0) width 352: "\x{E01}\x{E02}\x{E03}\x{E04}\x{E05}\x{E06}\x{E07}\x{E08}\x{E01}\x{E02}\x{E03}\x{E04}\x{E05}\x{E06}\x{E07}\x{E08}\x{E01}\x{E02}\x{E03}\x{E04}\x{E05}\x{E06}\x{E07}\x{E08}\x{E01}\x{E02}\x{E03}\x{E04}\x{E05}\x{E06}\x{E07}\x{E08}"
         RenderText {#text} at (0,0) size 0x0

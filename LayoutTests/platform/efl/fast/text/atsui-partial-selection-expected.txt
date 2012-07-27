@@ -19,14 +19,14 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,52) size 784x18
         RenderText {#text} at (0,0) size 144x19
           text run at (0,0) width 144: "This should look like \x{201C}"
-        RenderInline {SPAN} at (0,0) size 42x19 [color=#008000]
-          RenderText {#text} at (144,0) size 42x19
-            text run at (144,0) width 42: "Lore\x{300}m ipsum"
-        RenderText {#text} at (186,0) size 15x19
-          text run at (186,0) width 15: "\x{201D}: "
-        RenderInline {SPAN} at (0,0) size 42x19
-          RenderText {#text} at (201,0) size 42x19
-            text run at (201,0) width 42: " Lore\x{300}m ipsum"
+        RenderInline {SPAN} at (0,0) size 84x19 [color=#008000]
+          RenderText {#text} at (144,0) size 84x19
+            text run at (144,0) width 84: "Lore\x{300}m ipsum"
+        RenderText {#text} at (228,0) size 15x19
+          text run at (228,0) width 15: "\x{201D}: "
+        RenderInline {SPAN} at (0,0) size 88x19
+          RenderText {#text} at (243,0) size 88x19
+            text run at (243,0) width 88: " Lore\x{300}m ipsum"
         RenderText {#text} at (0,0) size 0x0
 selection start: position 1 of child 0 {#text} of child 3 {SPAN} of child 2 {P} of body
 selection end:   position 13 of child 0 {#text} of child 3 {SPAN} of child 2 {P} of body

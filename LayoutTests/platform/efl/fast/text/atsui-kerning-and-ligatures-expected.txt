@@ -18,9 +18,9 @@ layer at (0,0) size 800x600
       RenderBlock {DIV} at (0,86) size 784x42
         RenderBlock {HR} at (0,0) size 784x2 [border: (1px inset #000000)]
         RenderBlock (anonymous) at (0,14) size 784x28
-          RenderInline {SPAN} at (0,0) size 503x28
-            RenderText {#text} at (0,0) size 503x28
-              text run at (0,0) width 503: "AVAVAVAVAVfififififififi Lorem ipsum dolor sit ame\x{300}t"
+          RenderInline {SPAN} at (0,0) size 551x28
+            RenderText {#text} at (0,0) size 551x28
+              text run at (0,0) width 551: "AVAVAVAVAVfififififififi Lorem ipsum dolor sit ame\x{300}t"
           RenderText {#text} at (0,0) size 0x0
 selection start: position 37 of child 0 {#text} of child 3 {SPAN} of child 5 {DIV} of body
 selection end:   position 42 of child 0 {#text} of child 3 {SPAN} of child 5 {DIV} of body
