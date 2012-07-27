@@ -1,3 +1,17 @@
+2012-07-27  Kevin Ellis  <kevers@chromium.org>
+
+        Search cancel button is hard to activate with a tap gesture even if touch adjustment is enabled.
+        https://bugs.webkit.org/show_bug.cgi?id=91894
+
+        Reviewed by Antonio Gomes.
+
+        Add test for touch adjustment in the vicinity of a search cancel button.
+        Prior to the patch, the cancel button was pruned as a candidate if the 
+        touch area clipped the input field.
+
+        * touchadjustment/search-cancel-expected.txt: Added.
+        * touchadjustment/search-cancel.html: Added.
+
 2012-07-27  Varun Jain  <varunjain@chromium.org>
 
         Animated SVGs do not clear previous frame completely in hidpi mode.

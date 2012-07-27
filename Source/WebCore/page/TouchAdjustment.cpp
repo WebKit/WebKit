@@ -25,6 +25,7 @@
 #include "FloatPoint.h"
 #include "FloatQuad.h"
 #include "FrameView.h"
+#include "HTMLInputElement.h"
 #include "HTMLLabelElement.h"
 #include "HTMLNames.h"
 #include "IntPoint.h"
@@ -73,6 +74,12 @@ bool nodeRespondsToTapGesture(Node* node)
     if (node->isElementNode()) {
         Element* element =  static_cast<Element*>(node);
         if (element->hasTagName(HTMLNames::labelTag) && static_cast<HTMLLabelElement*>(element)->control())
+            return true;
+    }
+    Element* shadowHost = node->shadowHost();
+    if (shadowHost && shadowHost->hasTagName(HTMLNames::inputTag)) {
+        HTMLInputElement* input = static_cast<HTMLInputElement*>(shadowHost);
+        if (!input->readOnly() && !input->disabled())
             return true;
     }
 
