@@ -152,6 +152,8 @@
             'wtf/MD5.cpp',
             'wtf/MainThread.cpp',
             'wtf/MallocZoneSupport.h',
+            'wtf/MediaTime.h',
+            'wtf/MediaTime.cpp',
             'wtf/NullPtr.cpp',
             'wtf/NumberOfCores.cpp',
             'wtf/NumberOfCores.h',

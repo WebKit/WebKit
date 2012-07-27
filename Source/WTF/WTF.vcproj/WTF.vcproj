@@ -885,6 +885,14 @@
 			>
 		</File>
 		<File
+			RelativePath="..\wtf\MediaTime.h"
+			>
+		</File>
+		<File
+			RelativePath="..\wtf\MediaTime.cpp"
+			>
+		</File>
+		<File
 			RelativePath="..\wtf\MessageQueue.h"
 			>
 		</File>

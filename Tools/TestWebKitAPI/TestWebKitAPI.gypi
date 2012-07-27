@@ -34,6 +34,7 @@
             'Tests/WTF/CheckedArithmeticOperations.cpp',
             'Tests/WTF/Functional.cpp',
             'Tests/WTF/HashMap.cpp',
+            'Tests/WTF/MediaTime.cpp',
             'Tests/WTF/RedBlackTree.cpp',
             'Tests/WTF/StringBuilder.cpp',
             'Tests/WTF/StringOperators.cpp',

@@ -652,6 +652,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\Tests\WTF\MediaTime.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\Tests\WTF\StringOperators.cpp"
 					>
 				</File>

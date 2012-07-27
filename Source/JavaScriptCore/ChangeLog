@@ -1,3 +1,15 @@
+2012-07-27  Jer Noble  <jer.noble@apple.com>
+
+        Support a rational time class for use by media elements.
+        https://bugs.webkit.org/show_bug.cgi?id=88787
+
+        Re-export WTF::MediaTime from JavaScriptCore.
+
+        Reviewed by Eric Carlson.
+
+        * JavaScriptCore.order:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+
 2012-07-26  Filip Pizlo  <fpizlo@apple.com>
 
         JSObject::reallocateStorageIfNecessary is neither used nor defined

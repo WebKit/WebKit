@@ -1,3 +1,21 @@
+2012-07-27  Jer Noble  <jer.noble@apple.com>
+
+        Support a rational time class for use by media elements.
+        https://bugs.webkit.org/show_bug.cgi?id=88787
+
+        Add unit tests for the WTF::MediaTime class.
+
+        Reviewed by Eric Carlson.
+
+        * TestWebKitAPI/GNUmakefile.am:
+        * TestWebKitAPI/TestWebKitAPI.gypi:
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WTF/MediaTime.cpp: Added.
+        * TestWebKitAPI/win/TestWebKitAPI.vcproj:
+        (WTF::operator<<):
+        (TestWebKitAPI):
+        (TestWebKitAPI::TEST):
+
 2012-07-27  Balazs Kelemen  <kbalazs@webkit.org>
 
         [NRWT] should have a way to restrict pixel tests for individual directories

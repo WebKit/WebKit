@@ -1,3 +1,75 @@
+2012-07-27  Jer Noble  <jer.noble@apple.com>
+
+        Support a rational time class for use by media elements.
+        https://bugs.webkit.org/show_bug.cgi?id=88787
+
+        Reviewed by Eric Carlson.
+
+        Add a new MediaTime class which implements rational math operations.
+
+        Add common constructors and assignment operators:
+        * wtf/MediaTime.cpp: Added.
+        (WTF::MediaTime::MediaTime):
+        (WTF::MediaTime::~MediaTime):
+        (WTF::MediaTime::operator=):
+
+        Add common math operators:
+        * wtf/MediaTime.cpp:
+        (WTF::MediaTime::operator+):
+        (WTF::MediaTime::operator-):
+        (WTF::MediaTime::operator<):
+        (WTF::MediaTime::operator>):
+        (WTF::MediaTime::operator==):
+        (WTF::MediaTime::operator>=):
+        (WTF::MediaTime::operator<=):
+
+        Add functions to check the MeiaTime time type flags:
+        * wtf/MediaTime.h:
+        (WTF::MediaTime::isValid):
+        (WTF::MediaTime::isInvalid):
+        (WTF::MediaTime::hasBeenRounde):
+        (WTF::MediaTime::isPositiveInfinite):
+        (WTF::MediaTime::isNegativeInfinite):
+        (WTF::MediaTime::isIndefinite):
+
+        Add constants for commonly used MediaTime values:
+        (WTF::MediaTime::zeroTime):
+        (WTF::MediaTime::invalidTime):
+        (WTF::MediaTime::positiveInfiniteTime):
+        (WTF::MediaTime::negativeInfiniteTime):
+        (WTF::MediaTime::indefiniteTime):
+
+        Add explicit conversion functions to convert to and from floating point values.
+        * wtf/MediaTime.cpp:
+        (WTF::MediaTime::createWithFloat):
+        (WTF::MediaTime::createWithDouble):
+        (WTF::MediaTime::toFloat):
+        (WTF::MediaTime::toDouble):
+
+        Add some useful exported functions:
+        * wtf/MediaTime.cpp:
+        (WTF::MediaTime::compare): Master function for the comparison operators above.
+        (WTF::MediaTime::setTimeScale): Rescale the time value to a new time scale.
+        (WTF::abs): Return an absolute value for the current MediaTime.
+
+        Static utility functions to implement the above:
+        * wtf/MediaTime.cpp:
+        (WTF::greatestCommonDivisor):
+        (WTF::leastCommonMultiple):
+        (WTF::signum):
+
+        Windows-only implementations of isinf and signbit:
+        * wtf/MediaTime.cpp:
+        (std::isinf):
+        (std::signbit):
+
+        Add the new class to platform build files:
+        * GNUmakefile.list.am:
+        * WTF.gypi:
+        * WTF.pro:
+        * WTF.vcproj/WTF.vcproj:
+        * WTF.xcodeproj/project.pbxproj:
+
 2012-07-27  Wei James  <james.wei@intel.com>
 
         set WTF_USE_LOCKFREE_THREADSAFEREFCOUNTED for chromium android
