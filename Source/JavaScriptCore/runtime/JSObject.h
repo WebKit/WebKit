@@ -272,7 +272,6 @@ namespace JSC {
         JS_EXPORT_PRIVATE PropertyStorage growOutOfLineStorage(JSGlobalData&, size_t oldSize, size_t newSize);
         void setOutOfLineStorage(JSGlobalData&, PropertyStorage, Structure*);
         
-        bool reallocateStorageIfNecessary(JSGlobalData&, unsigned oldCapacity, Structure*);
         void setStructureAndReallocateStorageIfNecessary(JSGlobalData&, unsigned oldCapacity, Structure*);
         void setStructureAndReallocateStorageIfNecessary(JSGlobalData&, Structure*);
 
