@@ -1,3 +1,18 @@
+2012-07-26  Hironori Bono  <hbono@chromium.org>
+
+        [Qt] Build fix for Qt after r123811
+        https://bugs.webkit.org/show_bug.cgi?id=92460
+
+        Reviewed by Ryosuke Niwa.
+
+        This change explicitly converts from AtomicString to String to avoid ambiguities
+        when compiling HTMLAppletWidget.cpp on Qt.
+
+        No new tests because it is a build fix.
+
+        * html/HTMLAppletElement.cpp:
+        (WebCore::HTMLAppletElement::updateWidget):
+
 2012-07-26  Mike Lawther  <mikelawther@chromium.org>
 
         Make transitions work between different Length types

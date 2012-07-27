@@ -111,19 +111,19 @@ void HTMLAppletElement::updateWidget(PluginCreationOption)
     const AtomicString& codeBase = getAttribute(codebaseAttr);
     if (!codeBase.isNull()) {
         paramNames.append("codeBase");
-        paramValues.append(codeBase);
+        paramValues.append(codeBase.string());
     }
 
     const AtomicString& name = document()->isHTMLDocument() ? getNameAttribute() : getIdAttribute();
     if (!name.isNull()) {
         paramNames.append("name");
-        paramValues.append(name);
+        paramValues.append(name.string());
     }
 
     const AtomicString& archive = getAttribute(archiveAttr);
     if (!archive.isNull()) {
         paramNames.append("archive");
-        paramValues.append(archive);
+        paramValues.append(archive.string());
     }
 
     paramNames.append("baseURL");
@@ -132,7 +132,7 @@ void HTMLAppletElement::updateWidget(PluginCreationOption)
     const AtomicString& mayScript = getAttribute(mayscriptAttr);
     if (!mayScript.isNull()) {
         paramNames.append("mayScript");
-        paramValues.append(mayScript);
+        paramValues.append(mayScript.string());
     }
 
     for (Node* child = firstChild(); child; child = child->nextSibling()) {
