@@ -27,20 +27,16 @@
 
 """WebKit Efl implementation of the Port interface."""
 
-import logging
-import signal
-import subprocess
-
 from webkitpy.layout_tests.models.test_configuration import TestConfiguration
-from webkitpy.layout_tests.port.webkit import WebKitPort
+from webkitpy.layout_tests.port.base import Port
 from webkitpy.layout_tests.port.pulseaudio_sanitizer import PulseAudioSanitizer
 
 
-class EflPort(WebKitPort, PulseAudioSanitizer):
+class EflPort(Port, PulseAudioSanitizer):
     port_name = 'efl'
 
     def __init__(self, *args, **kwargs):
-        WebKitPort.__init__(self, *args, **kwargs)
+        super(EflPort, self).__init__(*args, **kwargs)
 
         self._jhbuild_wrapper_path = self.path_from_webkit_base('Tools', 'efl', 'run-with-jhbuild')
 

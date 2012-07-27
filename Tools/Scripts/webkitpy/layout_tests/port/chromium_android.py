@@ -37,7 +37,6 @@ from webkitpy.layout_tests.port import chromium
 from webkitpy.layout_tests.port import driver
 from webkitpy.layout_tests.port import factory
 from webkitpy.layout_tests.port import server_process
-from webkitpy.layout_tests.port import webkit
 
 
 _log = logging.getLogger(__name__)

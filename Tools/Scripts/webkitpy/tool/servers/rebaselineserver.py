@@ -32,7 +32,7 @@ import os.path
 import BaseHTTPServer
 
 from webkitpy.common.host import Host  # FIXME: This should not be needed!
-from webkitpy.layout_tests.port.webkit import WebKitPort
+from webkitpy.layout_tests.port.base import Port
 from webkitpy.tool.servers.reflectionhandler import ReflectionHandler
 
 
@@ -163,9 +163,9 @@ def _move_test_baselines(test_file, extensions_to_move, source_platform, destina
 
 def get_test_baselines(test_file, test_config):
     # FIXME: This seems like a hack. This only seems used to access the Port.expected_baselines logic.
-    class AllPlatformsPort(WebKitPort):
+    class AllPlatformsPort(Port):
         def __init__(self, host):
-            WebKitPort.__init__(self, host, 'mac')
+            super(AllPlatformsPort, self).__init__(host, 'mac')
             self._platforms_by_directory = dict([(self._webkit_baseline_path(p), p) for p in test_config.platforms])
 
         def baseline_search_path(self):

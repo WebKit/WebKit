@@ -34,7 +34,7 @@ from webkitpy.layout_tests.port import Port, Driver, DriverOutput
 from webkitpy.layout_tests.port.server_process_mock import MockServerProcess
 
 # FIXME: remove the dependency on TestWebKitPort
-from webkitpy.layout_tests.port.webkit_unittest import TestWebKitPort
+from webkitpy.layout_tests.port.port_testcase import TestWebKitPort
 
 
 class DriverOutputTest(unittest.TestCase):

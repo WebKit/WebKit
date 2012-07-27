@@ -34,17 +34,15 @@ import re
 import sys
 import os
 
-import webkit
-
 from webkitpy.common.memoized import memoized
 from webkitpy.layout_tests.models.test_configuration import TestConfiguration
-from webkitpy.layout_tests.port.webkit import WebKitPort
+from webkitpy.layout_tests.port.base import Port
 from webkitpy.layout_tests.port.xvfbdriver import XvfbDriver
 
 _log = logging.getLogger(__name__)
 
 
-class QtPort(WebKitPort):
+class QtPort(Port):
     ALL_VERSIONS = ['linux', 'win', 'mac']
     port_name = "qt"
 
@@ -62,9 +60,9 @@ class QtPort(WebKitPort):
 
     # sys_platform exists only for unit testing.
     def __init__(self, host, port_name, **kwargs):
-        WebKitPort.__init__(self, host, port_name, **kwargs)
+        super(QtPort, self).__init__(host, port_name, **kwargs)
 
-        # FIXME: This will allow WebKitPort.baseline_search_path and WebKitPort._skipped_file_search_paths
+        # FIXME: This will allow Port.baseline_search_path and Port._skipped_file_search_paths
         # to do the right thing, but doesn't include support for qt-4.8 or qt-arm (seen in LayoutTests/platform) yet.
         self._operating_system = port_name.replace('qt-', '')
 
@@ -156,7 +154,7 @@ class QtPort(WebKitPort):
         return list(reversed([self._filesystem.join(self._webkit_baseline_path(p), 'TestExpectations') for p in self._search_paths()]))
 
     def setup_environ_for_server(self, server_name=None):
-        clean_env = WebKitPort.setup_environ_for_server(self, server_name)
+        clean_env = super(QtPort, self).setup_environ_for_server(server_name)
         clean_env['QTWEBKIT_PLUGIN_PATH'] = self._build_path('lib/plugins')
         self._copy_value_from_environ_if_set(clean_env, 'QT_DRT_WEBVIEW_MODE')
         self._copy_value_from_environ_if_set(clean_env, 'DYLD_IMAGE_SUFFIX')
@@ -166,7 +164,7 @@ class QtPort(WebKitPort):
         return clean_env
 
     # FIXME: We should find a way to share this implmentation with Gtk,
-    # or teach run-launcher how to call run-safari and move this down to WebKitPort.
+    # or teach run-launcher how to call run-safari and move this down to Port.
     def show_results_html_file(self, results_filename):
         run_launcher_args = []
         if self.get_option('webkit_test_runner'):

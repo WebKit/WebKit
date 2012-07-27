@@ -26,19 +26,16 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import logging
 import os
-import signal
 import subprocess
 
 from webkitpy.layout_tests.models.test_configuration import TestConfiguration
-from webkitpy.layout_tests.port.server_process import ServerProcess
-from webkitpy.layout_tests.port.webkit import WebKitPort
+from webkitpy.layout_tests.port.base import Port
 from webkitpy.layout_tests.port.pulseaudio_sanitizer import PulseAudioSanitizer
 from webkitpy.layout_tests.port.xvfbdriver import XvfbDriver
-from webkitpy.common.system.executive import Executive
 
-class GtkPort(WebKitPort, PulseAudioSanitizer):
+
+class GtkPort(Port, PulseAudioSanitizer):
     port_name = "gtk"
 
     def _port_flag_for_scripts(self):
@@ -55,7 +52,7 @@ class GtkPort(WebKitPort, PulseAudioSanitizer):
         self._restore_pulseaudio_module()
 
     def setup_environ_for_server(self, server_name=None):
-        environment = WebKitPort.setup_environ_for_server(self, server_name)
+        environment = super(GtkPort, self).setup_environ_for_server(server_name)
         environment['GTK_MODULES'] = 'gail'
         environment['GSETTINGS_BACKEND'] = 'memory'
         environment['LIBOVERLAY_SCROLLBAR'] = '0'
@@ -114,7 +111,7 @@ class GtkPort(WebKitPort, PulseAudioSanitizer):
         return None
 
     # FIXME: We should find a way to share this implmentation with Gtk,
-    # or teach run-launcher how to call run-safari and move this down to WebKitPort.
+    # or teach run-launcher how to call run-safari and move this down to Port.
     def show_results_html_file(self, results_filename):
         run_launcher_args = ["file://%s" % results_filename]
         if self.get_option('webkit_test_runner'):

@@ -28,14 +28,14 @@
 
 import logging
 
-from webkitpy.layout_tests.port.webkit import WebKitPort
+from webkitpy.layout_tests.port.base import Port
 from webkitpy.layout_tests.models.test_configuration import TestConfiguration
 
 
 _log = logging.getLogger(__name__)
 
 
-class ApplePort(WebKitPort):
+class ApplePort(Port):
     """Shared logic between all of Apple's ports."""
 
     # This is used to represent the version of an operating system
@@ -72,7 +72,7 @@ class ApplePort(WebKitPort):
         return port_name[len(self.port_name + '-'):]
 
     def __init__(self, host, port_name, **kwargs):
-        WebKitPort.__init__(self, host, port_name, **kwargs)
+        super(ApplePort, self).__init__(host, port_name, **kwargs)
 
         allowed_port_names = self.VERSION_FALLBACK_ORDER + [self.operating_system() + "-future"]
         port_name = port_name.replace('-wk2', '')

@@ -32,7 +32,7 @@ import unittest
 from webkitpy.common.net import resultsjsonparser_unittest
 from webkitpy.common.host_mock import MockHost
 from webkitpy.layout_tests.layout_package.json_results_generator import strip_json_wrapper
-from webkitpy.layout_tests.port.webkit import WebKitPort
+from webkitpy.layout_tests.port.base import Port
 from webkitpy.tool.commands.rebaselineserver import TestConfig, RebaselineServer
 from webkitpy.tool.servers import rebaselineserver
 
@@ -299,7 +299,7 @@ def get_test_config(test_files=[], result_files=[]):
     for file in result_files:
         host.filesystem.write_binary_file(host.filesystem.join(results_directory, file), '')
 
-    class TestMacPort(WebKitPort):
+    class TestMacPort(Port):
         port_name = "mac"
 
     return TestConfig(

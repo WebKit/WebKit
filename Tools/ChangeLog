@@ -1,3 +1,85 @@
+2012-07-27  Dirk Pranke  <dpranke@chromium.org>
+
+        nrwt: remove 'webkit.py' and the 'WebKitPort'
+        https://bugs.webkit.org/show_bug.cgi?id=92450
+
+        Reviewed by Ryosuke Niwa.
+
+        This patch finishes the work of merging WebKitPort into Port.
+        Now Port is way too big :).
+
+        This is all cutting and pasting; no new functionality and
+        no changes in the tests.
+
+        * Scripts/webkitpy/layout_tests/port/apple.py:
+        (ApplePort):
+        (ApplePort.__init__):
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        (Port.skipped_layout_tests):
+        (Port):
+        (Port._port_flag_for_scripts):
+        (Port._arguments_for_configuration):
+        (Port._run_script):
+        (Port._build_driver):
+        (Port._build_driver_flags):
+        (Port._tests_for_other_platforms):
+        (Port._runtime_feature_list):
+        (Port.nm_command):
+        (Port._modules_to_search_for_symbols):
+        (Port._symbols_string):
+        (Port._missing_feature_to_skipped_tests):
+        (Port._missing_symbol_to_skipped_tests):
+        (Port._has_test_in_directories):
+        (Port._skipped_tests_for_unsupported_features):
+        (Port._wk2_port_name):
+        (Port._skipped_file_search_paths):
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+        (ChromiumPort):
+        * Scripts/webkitpy/layout_tests/port/chromium_android.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_port_testcase.py:
+        (ChromiumPortTestCase.test_check_build):
+        * Scripts/webkitpy/layout_tests/port/driver_unittest.py:
+        * Scripts/webkitpy/layout_tests/port/efl.py:
+        (EflPort):
+        (EflPort.__init__):
+        * Scripts/webkitpy/layout_tests/port/gtk.py:
+        (GtkPort):
+        (GtkPort.setup_environ_for_server):
+        * Scripts/webkitpy/layout_tests/port/port_testcase.py:
+        (TestWebKitPort):
+        (TestWebKitPort.__init__):
+        (TestWebKitPort.all_test_configurations):
+        (TestWebKitPort._symbols_string):
+        (TestWebKitPort._tests_for_other_platforms):
+        (TestWebKitPort._tests_for_disabled_features):
+        (PortTestCase):
+        (PortTestCase.test_diff_image):
+        (PortTestCase.test_path_to_test_expectations_file):
+        (PortTestCase.test_skipped_directories_for_symbols):
+        (test_skipped_directories_for_features):
+        (test_skipped_directories_for_features_no_matching_tests_in_test_list):
+        (test_skipped_tests_for_unsupported_features_empty_test_list):
+        (test_skipped_layout_tests):
+        (test_skipped_file_search_paths):
+        (test_root_option):
+        (test_test_expectations):
+        (test_build_driver):
+        (_assert_config_file_for_platform):
+        (test_linux_distro_detection):
+        (test_apache_config_file_name_for_platform):
+        (test_path_to_apache_config_file):
+        * Scripts/webkitpy/layout_tests/port/qt.py:
+        (QtPort):
+        (QtPort.__init__):
+        (QtPort.setup_environ_for_server):
+        * Scripts/webkitpy/layout_tests/port/webkit.py: Removed.
+        * Scripts/webkitpy/layout_tests/port/webkit_unittest.py: Removed.
+        * Scripts/webkitpy/tool/servers/rebaselineserver.py:
+        (get_test_baselines.AllPlatformsPort):
+        (get_test_baselines.AllPlatformsPort.__init__):
+        * Scripts/webkitpy/tool/servers/rebaselineserver_unittest.py:
+        (get_test_config.TestMacPort):
+
 2012-07-27  Christophe Dumez  <christophe.dumez@intel.com>
 
         [WK2][WTR] LayoutTestController.deliverWebIntent() needs to be implemented

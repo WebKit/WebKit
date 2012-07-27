@@ -42,13 +42,12 @@ from webkitpy.common.system import executive
 from webkitpy.common.system.path import cygpath
 from webkitpy.layout_tests.models.test_configuration import TestConfiguration
 from webkitpy.layout_tests.port.base import Port, VirtualTestSuite
-from webkitpy.layout_tests.port.webkit import WebKitPort
 
 
 _log = logging.getLogger(__name__)
 
 
-class ChromiumPort(WebKitPort):
+class ChromiumPort(Port):
     """Abstract base class for Chromium implementations of the Port class."""
 
     ALL_SYSTEMS = (
