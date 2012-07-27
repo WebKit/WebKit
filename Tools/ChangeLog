@@ -1,3 +1,32 @@
+2012-07-27  Adam Barth  <abarth@webkit.org>
+
+        Simplify ExpectedFailures
+        https://bugs.webkit.org/show_bug.cgi?id=92216
+
+        Reviewed by Eric Seidel.
+
+        This patch simplifies the ExpectedFailures class we use to remember
+        which tests are currently failing on the bots. When we wrote this code
+        originally, we weren't entirely sure how it would work. Now that we
+        understand it more clearly, we can write the code more clearly.
+
+        * Scripts/webkitpy/tool/bot/expectedfailures.py:
+        (_has_failures):
+        (_is_trustworthy):
+        (ExpectedFailures.__init__):
+        (ExpectedFailures.failures_were_expected):
+        (ExpectedFailures.unexpected_failures_observed):
+        (ExpectedFailures.update):
+        * Scripts/webkitpy/tool/bot/expectedfailures_unittest.py:
+        (ExpectedFailuresTest._assert_can_trust):
+        (ExpectedFailuresTest.test_failures_were_expected):
+        (ExpectedFailuresTest.test_unexpected_failures_observed):
+        (ExpectedFailuresTest.test_unexpected_failures_observed_when_tree_is_hosed):
+        * Scripts/webkitpy/tool/bot/patchanalysistask.py:
+        (PatchAnalysisTask._test):
+        (PatchAnalysisTask._build_and_test_without_patch):
+        (PatchAnalysisTask._test_patch):
+
 2012-07-27  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt][WK2] REGRESSION(r119127): resetting window.internals settings between tests doesn't work properly

@@ -30,45 +30,31 @@
 class ExpectedFailures(object):
     def __init__(self):
         self._failures = set()
-        # If the set of failures is unbounded, self._failures isn't very
-        # meaningful because we can't store an unbounded set in memory.
-        self._failures_are_bounded = True
+        self._is_trustworthy = True
 
-    def _has_failures(self, results):
-        return bool(results and len(results.failing_tests()) != 0)
+    @classmethod
+    def _has_failures(cls, results):
+        return bool(results and results.failing_tests())
 
-    def has_bounded_failures(self, results):
-        assert(results)  # You probably want to call _has_failures first!
-        return bool(results.failure_limit_count() and len(results.failing_tests()) < results.failure_limit_count())
-
-    def _can_trust_results(self, results):
-        return self._has_failures(results) and self.has_bounded_failures(results)
+    @classmethod
+    def _should_trust(cls, results):
+        return bool(cls._has_failures(results) and results.failure_limit_count() and len(results.failing_tests()) < results.failure_limit_count())
 
     def failures_were_expected(self, results):
-        if not self._can_trust_results(results):
+        if not self._is_trustworthy:
+            return False
+        if not self._should_trust(results):
             return False
         return set(results.failing_tests()) <= self._failures
 
     def unexpected_failures_observed(self, results):
-        if not self._has_failures(results):
+        if not self._is_trustworthy:
             return None
-        if not self._failures_are_bounded:
+        if not self._has_failures(results):
             return None
         return set(results.failing_tests()) - self._failures
 
-    def shrink_expected_failures(self, results, run_success):
-        if run_success:
-            self._failures = set()
-            self._failures_are_bounded = True
-        elif self._can_trust_results(results):
-            # Remove all expected failures which are not in the new failing results.
-            self._failures.intersection_update(set(results.failing_tests()))
-            self._failures_are_bounded = True
-
-    def grow_expected_failures(self, results):
-        if not self._can_trust_results(results):
-            self._failures_are_bounded = False
-            return
-        self._failures.update(results.failing_tests())
-        self._failures_are_bounded = True
-        # FIXME: Should we assert() here that expected_failures never crosses a certain size?
+    def update(self, results):
+        if results:
+            self._failures = set(results.failing_tests())
+            self._is_trustworthy = self._should_trust(results)

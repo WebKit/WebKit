@@ -134,7 +134,7 @@ class PatchAnalysisTask(object):
         "Unable to build without patch")
 
     def _test(self):
-        success = self._run_command([
+        return self._run_command([
             "build-and-test",
             "--no-clean",
             "--no-update",
@@ -145,11 +145,8 @@ class PatchAnalysisTask(object):
         "Passed tests",
         "Patch does not pass tests")
 
-        self._expected_failures.shrink_expected_failures(self._delegate.test_results(), success)
-        return success
-
     def _build_and_test_without_patch(self):
-        success = self._run_command([
+        return self._run_command([
             "build-and-test",
             "--force-clean",
             "--no-update",
@@ -159,9 +156,6 @@ class PatchAnalysisTask(object):
         ],
         "Able to pass tests without patch",
         "Unable to pass tests without patch (tree is red?)")
-
-        self._expected_failures.shrink_expected_failures(self._delegate.test_results(), success)
-        return success
 
     def _land(self):
         # Unclear if this should pass --quiet or not.  If --parent-command always does the reporting, then it should.
@@ -220,7 +214,7 @@ class PatchAnalysisTask(object):
             return self.report_failure(first_results_archive, first_results, first_script_error)
 
         clean_tree_results = self._delegate.test_results()
-        self._expected_failures.grow_expected_failures(clean_tree_results)
+        self._expected_failures.update(clean_tree_results)
 
         # Re-check if the original results are now to be expected to avoid a full re-try.
         if self._expected_failures.failures_were_expected(first_results):
