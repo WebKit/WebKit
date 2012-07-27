@@ -182,6 +182,22 @@ def _set_up_derived_options(port, options):
         options.reset_results = True
         options.add_platform_exceptions = True
 
+    if options.pixel_test_directories:
+        options.pixel_tests = True
+        varified_dirs = set()
+        pixel_test_directories = options.pixel_test_directories
+        for directory in pixel_test_directories:
+            # FIXME: we should support specifying the directories all the ways we support it for additional
+            # arguments specifying which tests and directories to run. We should also move the logic for that
+            # to Port.
+            filesystem = port.host.filesystem
+            if not filesystem.isdir(filesystem.join(port.layout_tests_dir(), directory)):
+                warnings.append("'%s' was passed to --pixel-test-directories, which doesn't seem to be a directory" % str(directory))
+            else:
+                varified_dirs.add(directory)
+
+        options.pixel_test_directories = list(varified_dirs)
+
     return warnings
 
 
@@ -306,6 +322,15 @@ def parse_args(args=None):
         optparse.make_option("--no-new-test-results", action="store_false",
             dest="new_test_results", default=True,
             help="Don't create new baselines when no expected results exist"),
+
+        #FIXME: we should support a comma separated list with --pixel-test-directory as well.
+        optparse.make_option("--pixel-test-directory", action="append", default=[], dest="pixel_test_directories",
+            help="A directory where it is allowed to execute tests as pixel tests. "
+                 "Specify multiple times to add multiple directories. "
+                 "This option implies --pixel-tests. If specified, only those tests "
+                 "will be executed as pixel tests that are located in one of the "
+                 "directories enumerated with the option. Some ports may ignore this "
+                 "option while others can have a default value that can be overridden here."),
 
         optparse.make_option("--skip-failing-tests", action="store_true",
             default=False, help="Skip tests that are expected to fail. "

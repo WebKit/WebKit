@@ -192,7 +192,7 @@ int main(int argc, char* argv[])
 
     int index = args.indexOf(QLatin1String("--pixel-tests"));
     if (index != -1) {
-        dumper.setDumpPixels(true);
+        dumper.setDumpPixelsForAllTests(true);
         args.removeAt(index);
     }
 

@@ -1,3 +1,58 @@
+2012-07-27  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r123869.
+        http://trac.webkit.org/changeset/123869
+        https://bugs.webkit.org/show_bug.cgi?id=92501
+
+        "it did not fix anything but made things even worst"
+        (Requested by kbalazs on #webkit).
+
+        * DumpRenderTree/qt/DumpRenderTreeQt.cpp:
+        (WebCore::DumpRenderTree::DumpRenderTree):
+        (WebCore::DumpRenderTree::open):
+        (WebCore::DumpRenderTree::processLine):
+        (WebCore::DumpRenderTree::setDumpPixelsForAllTests):
+        (WebCore::DumpRenderTree::dump):
+        * DumpRenderTree/qt/DumpRenderTreeQt.h:
+        (DumpRenderTree):
+        * DumpRenderTree/qt/main.cpp:
+        (main):
+        * Scripts/webkitpy/layout_tests/controllers/single_test_runner.py:
+        (SingleTestRunner._should_fetch_expected_checksum):
+        (SingleTestRunner._overwrite_baselines):
+        (SingleTestRunner._compare_output):
+        * Scripts/webkitpy/layout_tests/controllers/worker.py:
+        (Worker._update_test_input):
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        (Port.supports_switching_pixel_tests_per_test):
+        (Port):
+        (Port._supports_switching_pixel_tests_per_test):
+        (Port.should_run_as_pixel_test):
+        (Port._should_run_as_pixel_test):
+        * Scripts/webkitpy/layout_tests/port/driver.py:
+        (Driver.cmd_line):
+        (Driver._command_from_driver_input):
+        * Scripts/webkitpy/layout_tests/port/qt.py:
+        (QtPort.check_sys_deps):
+        (QtPort):
+        (QtPort._supports_switching_pixel_tests_per_test):
+        (QtPort._should_run_as_pixel_test):
+        (QtPort._default_pixel_test_directories):
+        * Scripts/webkitpy/layout_tests/port/test.py:
+        (TestPort.supports_switching_pixel_tests_per_test):
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        (_set_up_derived_options):
+        (parse_args):
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_integrationtest.py:
+        (MainTest.test_run_singly_actually_runs_tests):
+        (MainTest.test_pixel_test_directories):
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::TestController):
+        (WTR::TestController::initialize):
+        (WTR::TestController::runTest):
+        * WebKitTestRunner/TestController.h:
+        (TestController):
+
 2012-07-27  Balazs Kelemen  <kbalazs@webkit.org>
 
         [NRWT] should have a way to restrict pixel tests for individual directories
