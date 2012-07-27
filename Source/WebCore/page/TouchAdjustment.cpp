@@ -34,10 +34,13 @@
 #include "RenderBox.h"
 #include "RenderObject.h"
 #include "RenderStyle.h"
+#include "ShadowRoot.h"
 
 namespace WebCore {
 
 namespace TouchAdjustment {
+
+const float zeroTolerance = 1e-6f;
 
 // Class for remembering absolute quads of a target node and what node they represent.
 class SubtargetGeometry {
@@ -72,6 +75,7 @@ bool nodeRespondsToTapGesture(Node* node)
         if (element->hasTagName(HTMLNames::labelTag) && static_cast<HTMLLabelElement*>(element)->control())
             return true;
     }
+
     // FIXME: Implement hasDefaultEventHandler and use that instead of all of the above checks.
     if (node->hasEventListeners()
         && (node->hasEventListeners(eventNames().clickEvent)
@@ -219,7 +223,6 @@ float distanceSquaredToTargetCenterLine(const IntPoint& touchHotspot, const IntR
     return rect.distanceSquaredFromCenterLineToPoint(touchHotspot);
 }
 
-
 // This returns quotient of the target area and its intersection with the touch area.
 // This will prioritize largest intersection and smallest area, while balancing the two against each other.
 float zoomableIntersectionQuotient(const IntPoint& touchHotspot, const IntRect& touchArea, const SubtargetGeometry& subtarget)
@@ -237,6 +240,34 @@ float zoomableIntersectionQuotient(const IntPoint& touchHotspot, const IntRect& 
 
     // Return the quotient of the intersection.
     return rect.size().area() / (float)intersection.size().area();
+}
+
+// Uses a hybrid of distance to center and intersect ratio, normalizing each
+// score between 0 and 1 and choosing the better score. The distance to
+// centerline works best for disambiguating clicks on targets such as links,
+// where the width may be significantly larger than the touch width. Using
+// area of overlap in such cases can lead to a bias towards shorter links.
+// Conversely, percentage of overlap can provide strong confidence in tapping
+// on a small target, where the overlap is often quite high, and works well
+// for tightly packed controls.
+float hybridDistanceFunction(const IntPoint& touchHotspot, const IntRect& touchArea, const SubtargetGeometry& subtarget)
+{
+    IntRect rect = subtarget.boundingBox();
+
+    // Convert from frame coordinates to window coordinates.
+    rect = subtarget.node()->document()->view()->contentsToWindow(rect);
+   
+    float touchWidth = touchArea.width();
+    float touchHeight = touchArea.height();
+    float distanceScale =  touchWidth * touchWidth + touchHeight * touchHeight;
+    float distanceToCenterScore = rect.distanceSquaredFromCenterLineToPoint(touchHotspot) / distanceScale;
+
+    float targetArea = rect.size().area();
+    rect.intersect(touchArea);
+    float intersectArea = rect.size().area();
+    float intersectionScore = 1 - intersectArea / targetArea;
+
+    return intersectionScore < distanceToCenterScore ? intersectionScore : distanceToCenterScore;
 }
 
 FloatPoint contentsToWindow(FrameView *view, FloatPoint pt)
@@ -320,6 +351,7 @@ bool findNodeWithLowestDistanceMetric(Node*& targetNode, IntPoint& targetPoint, 
     SubtargetGeometryList::const_iterator it = subtargets.begin();
     const SubtargetGeometryList::const_iterator end = subtargets.end();
     IntPoint adjustedPoint;
+
     for (; it != end; ++it) {
         Node* node = it->node();
         float distanceMetric = distanceFunction(touchHotspot, touchArea, *it);
@@ -330,12 +362,27 @@ bool findNodeWithLowestDistanceMetric(Node*& targetNode, IntPoint& targetPoint, 
                 targetNode = node;
                 bestDistanceMetric = distanceMetric;
             }
-        } else if (distanceMetric == bestDistanceMetric) {
-            // Try to always return the inner-most element.
-            if (node->isDescendantOf(targetNode) && snapTo(*it, touchHotspot, touchArea, adjustedPoint)) {
-                targetPoint = adjustedPoint;
-                targetNode = node;
-                targetArea = it->boundingBox();
+        } else if (distanceMetric - bestDistanceMetric < zeroTolerance) {
+            if (snapTo(*it, touchHotspot, touchArea, adjustedPoint)) {
+                if (node->isDescendantOf(targetNode)) {
+                    // Try to always return the inner-most element.
+                    targetPoint = adjustedPoint;
+                    targetNode = node;
+                    targetArea = it->boundingBox();
+                } else {
+                    // Minimize adjustment distance.
+                    float dx = targetPoint.x() - touchHotspot.x();
+                    float dy = targetPoint.y() - touchHotspot.y();
+                    float bestDistance = dx * dx + dy * dy;
+                    dx = adjustedPoint.x() - touchHotspot.x();
+                    dy = adjustedPoint.y() - touchHotspot.y();
+                    float distance = dx * dx + dy * dy;
+                    if (distance < bestDistance) {
+                        targetPoint = adjustedPoint;
+                        targetNode = node;
+                        targetArea = it->boundingBox();
+                    }
+                }
             }
         }
     }
@@ -352,7 +399,7 @@ bool findBestClickableCandidate(Node*& targetNode, IntPoint &targetPoint, const 
     IntRect targetArea;
     TouchAdjustment::SubtargetGeometryList subtargets;
     TouchAdjustment::compileSubtargetList(nodeList, subtargets, TouchAdjustment::nodeRespondsToTapGesture);
-    return TouchAdjustment::findNodeWithLowestDistanceMetric(targetNode, targetPoint, targetArea, touchHotspot, touchArea, subtargets, TouchAdjustment::distanceSquaredToTargetCenterLine);
+    return TouchAdjustment::findNodeWithLowestDistanceMetric(targetNode, targetPoint, targetArea, touchHotspot, touchArea, subtargets, TouchAdjustment::hybridDistanceFunction);
 }
 
 bool findBestZoomableArea(Node*& targetNode, IntRect& targetArea, const IntPoint& touchHotspot, const IntRect& touchArea, const NodeList& nodeList)

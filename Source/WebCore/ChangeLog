@@ -1,5 +1,30 @@
 2012-07-27  Kevin Ellis  <kevers@chromium.org>
 
+        Improve touch adjustment for targetting small controls.
+        https://bugs.webkit.org/show_bug.cgi?id=92293
+
+        Reviewed by Antonio Gomes.
+
+        Modifies the touch adjustment algorithm to better discriminate small targets without introducing
+        a bias towards shorter links.  The revised scoring algorihtm uses a normalized distance to
+        center-line score and a normalized overlap score.  The better of the two scores is used for
+        determining the best candidate for target adjustment.  The center-line score works well
+        for discriminating elements with partial overlaps, where relying solely on percent overlap
+        could bias towards the smaller element.  Conversely, a high percentage in overlap provides a 
+        strong measure of confidence in a candidate target.  An additonal tie-break algorithm is
+        introduced to minimize the adjustment distance if two equally suitable candidates are found.
+
+        Test: touchadjustment/small-target-test.html
+
+        * page/TouchAdjustment.cpp:
+        (TouchAdjustment):
+        (WebCore::TouchAdjustment::nodeRespondsToTapGesture):
+        (WebCore::TouchAdjustment::hybridDistanceFunction):
+        (WebCore::TouchAdjustment::findNodeWithLowestDistanceMetric):
+        (WebCore::findBestClickableCandidate):
+
+2012-07-27  Kevin Ellis  <kevers@chromium.org>
+
         [chromium] Calendar for input type=date should be larger on devices that support touch input.
         https://bugs.webkit.org/show_bug.cgi?id=92424
 

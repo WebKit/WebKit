@@ -1,3 +1,18 @@
+2012-07-27  Kevin Ellis  <kevers@chromium.org>
+
+        Improve touch adjustment for targetting small controls.
+        https://bugs.webkit.org/show_bug.cgi?id=92293
+
+        Reviewed by Antonio Gomes.
+
+        Adds a test for cases that were problematic for the touch adjustment algorithm.  Each example
+        in the test involves a small control immediately adjacent to a larger control.  When the touch
+        area is significantly larger than the small control, it was possible for the touch element to
+        completely overlap the control yet select an adjacent element with a partial overlap. 
+
+        * touchadjustment/small-target-test-expected.txt: Added.
+        * touchadjustment/small-target-test.html: Added.
+
 2012-07-27  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
 
         [EFL] Add missing baselines for fast/table/table-row-outline-paint.html
