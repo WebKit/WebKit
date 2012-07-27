@@ -36,7 +36,7 @@
 
 using namespace std;
 
-#if PLATFORM(WIN)
+#if COMPILER(MSVC)
 // Work around Visual Studio 2008's lack of an INFINITY or NAN definition.
 #include <limits>
 #if !defined(INFINITY)

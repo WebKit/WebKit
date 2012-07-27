@@ -1,3 +1,11 @@
+2012-07-27  Jer Noble  <jer.noble@apple.com>
+
+        Unreviewed build fix.
+
+        Wrap MSVC-specific fixes is a COMPILER() check, not a PLATFORM() check.
+
+        * TestWebKitAPI/Tests/WTF/MediaTime.cpp:
+
 2012-07-27  Xianzhu Wang  <wangxianzhu@chromium.org>
 
         [Chromium-Android] NRWT better handling of DRT deadlocks and crashes

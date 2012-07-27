@@ -31,14 +31,7 @@
 
 #include <algorithm>
 #include <wtf/CheckedArithmetic.h>
-
-#if PLATFORM(WIN)
-// Work around Visual Studio 2008's lack of an isinf or signbit method in STL.
-namespace std {
-    static bool isinf(double number) { return !_finite(number) && !_isnan(number); }
-    static int signbit(double number) { return number < 0; }
-}
-#endif
+#include <wtf/MathExtras.h>
 
 using namespace std;
 
@@ -90,8 +83,8 @@ MediaTime MediaTime::createWithFloat(float floatTime, int32_t timeScale)
 {
     if (floatTime != floatTime)
         return invalidTime();
-    if (std::isinf(floatTime))
-        return std::signbit(floatTime) ? negativeInfiniteTime() : positiveInfiniteTime();
+    if (isinf(floatTime))
+        return signbit(floatTime) ? negativeInfiniteTime() : positiveInfiniteTime();
     if (floatTime > numeric_limits<int64_t>::max())
         return positiveInfiniteTime();
     if (floatTime < numeric_limits<int64_t>::min())
@@ -106,8 +99,8 @@ MediaTime MediaTime::createWithDouble(double doubleTime, int32_t timeScale)
 {
     if (doubleTime != doubleTime)
         return invalidTime();
-    if (std::isinf(doubleTime))
-        return std::signbit(doubleTime) ? negativeInfiniteTime() : positiveInfiniteTime();
+    if (isinf(doubleTime))
+        return signbit(doubleTime) ? negativeInfiniteTime() : positiveInfiniteTime();
     if (doubleTime > numeric_limits<int64_t>::max())
         return positiveInfiniteTime();
     if (doubleTime < numeric_limits<int64_t>::min())
