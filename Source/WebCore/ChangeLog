@@ -1,3 +1,46 @@
+2012-07-27  Huang Dongsung  <luxtella@company100.net>
+
+        Gather the duplicated timer code into CachedResource.
+        https://bugs.webkit.org/show_bug.cgi?id=92332
+
+        Reviewed by Nate Chapin.
+
+        Internal review by Jae Hyun Park.
+
+        When all clients are removed, CachedImage, CachedScript and CachedCSSStyleSheet
+        start the timer to destroy decoded data. Those three classes have their own
+        timer.
+        Changed CachedCSSStyleSheet::didAddClient to call super class method in order to
+        stop the timer. This change does not have any side effect because
+        CachedResource::didAddClient only stops the timer in this case.
+
+        No new tests - no new testable functionality.
+
+        * loader/cache/CachedCSSStyleSheet.cpp:
+        (WebCore::CachedCSSStyleSheet::CachedCSSStyleSheet):
+        (WebCore::CachedCSSStyleSheet::didAddClient):
+        * loader/cache/CachedCSSStyleSheet.h:
+        (CachedCSSStyleSheet):
+        * loader/cache/CachedImage.cpp:
+        (WebCore::CachedImage::CachedImage):
+        (WebCore::CachedImage::didAddClient):
+        (WebCore::CachedImage::allClientsRemoved):
+        * loader/cache/CachedImage.h:
+        (CachedImage):
+        * loader/cache/CachedResource.cpp:
+        (WebCore::CachedResource::CachedResource):
+        (WebCore::CachedResource::didAddClient):
+        (WebCore::CachedResource::removeClient):
+        (WebCore::CachedResource::destroyDecodedDataIfNeeded):
+        (WebCore):
+        (WebCore::CachedResource::decodedDataDeletionTimerFired):
+        * loader/cache/CachedResource.h:
+        (CachedResource):
+        * loader/cache/CachedScript.cpp:
+        (WebCore::CachedScript::CachedScript):
+        * loader/cache/CachedScript.h:
+        (CachedScript):
+
 2012-07-27  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Don't add a HUD layer when there is no rootLayer
