@@ -1,3 +1,15 @@
+2012-07-27  Eli Fidler  <efidler@rim.com>
+
+        [BlackBerry] Adapt to change in the FontInfo platform API.
+        https://bugs.webkit.org/show_bug.cgi?id=92547
+
+        Reviewed by Yong Li
+
+        RIM PR 161263
+
+        * page/blackberry/SettingsBlackBerry.cpp:
+        (WebCore::Settings::initializeDefaultFontFamilies):
+
 2012-07-27  Antoine Labour  <piman@chromium.org>
 
         [chromium] Fix color matrix filter computation so that filters that don't need clamping are correctly detected as such

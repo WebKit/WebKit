@@ -1,3 +1,15 @@
+2012-07-27  Eli Fidler  <efidler@rim.com>
+
+        [BlackBerry] Adapt to change in the FontInfo platform API.
+        https://bugs.webkit.org/show_bug.cgi?id=92547
+
+        Reviewed by Yong Li
+
+        RIM PR 161263
+
+        * Api/WebSettings.cpp:
+        (BlackBerry::WebKit::WebSettings::standardSettings):
+
 2012-07-27  Yong Li  <yoli@rim.com>
 
         [BlackBerry] Should support onbeforeunload event and show confirmation dialog

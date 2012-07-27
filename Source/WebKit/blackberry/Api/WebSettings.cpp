@@ -200,10 +200,10 @@ WebSettings* WebSettings::standardSettings()
     settings->m_private->setInteger(WebKitMinimumFontSize, 8);
     settings->m_private->setBoolean(WebKitWebSocketsEnabled, true);
 
-    settings->m_private->setString(WebKitFixedFontFamily, BlackBerry::Platform::fontFamily("-webkit-monospace", "").c_str());
-    settings->m_private->setString(WebKitSansSeriffFontFamily, BlackBerry::Platform::fontFamily("-webkit-sans-serif", "").c_str());
-    settings->m_private->setString(WebKitSeriffFontFamily, BlackBerry::Platform::fontFamily("-webkit-serif", "").c_str());
-    settings->m_private->setString(WebKitStandardFontFamily, BlackBerry::Platform::fontFamily("-webkit-standard", "").c_str());
+    settings->m_private->setString(WebKitFixedFontFamily, BlackBerry::Platform::FontInfo::instance()->fontFamily("-webkit-monospace", "").c_str());
+    settings->m_private->setString(WebKitSansSeriffFontFamily, BlackBerry::Platform::FontInfo::instance()->fontFamily("-webkit-sans-serif", "").c_str());
+    settings->m_private->setString(WebKitSeriffFontFamily, BlackBerry::Platform::FontInfo::instance()->fontFamily("-webkit-serif", "").c_str());
+    settings->m_private->setString(WebKitStandardFontFamily, BlackBerry::Platform::FontInfo::instance()->fontFamily("-webkit-standard", "").c_str());
 
     return settings;
 }
