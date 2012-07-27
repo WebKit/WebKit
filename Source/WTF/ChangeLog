@@ -1,3 +1,47 @@
+2012-07-27  Arnaud Renevier  <a.renevier@sisa.samsung.com>
+
+        use createUninitialized when creating TypedArray from another array
+        https://bugs.webkit.org/show_bug.cgi?id=92518
+
+        Reviewed by Kenneth Russell.
+
+        Expose a createUninitialized static method on TypedArray classes.
+
+        * wtf/Float32Array.h:
+        (Float32Array):
+        (WTF::Float32Array::createUninitialized):
+        (WTF):
+        * wtf/Float64Array.h:
+        (Float64Array):
+        (WTF::Float64Array::createUninitialized):
+        (WTF):
+        * wtf/Int16Array.h:
+        (Int16Array):
+        (WTF::Int16Array::createUninitialized):
+        (WTF):
+        * wtf/Int32Array.h:
+        (Int32Array):
+        (WTF::Int32Array::createUninitialized):
+        (WTF):
+        * wtf/Int8Array.h:
+        (Int8Array):
+        (WTF::Int8Array::createUninitialized):
+        (WTF):
+        * wtf/Uint16Array.h:
+        (Uint16Array):
+        (WTF::Uint16Array::createUninitialized):
+        (WTF):
+        * wtf/Uint32Array.h:
+        (Uint32Array):
+        (WTF::Uint32Array::createUninitialized):
+        (WTF):
+        * wtf/Uint8Array.h:
+        (Uint8Array):
+        (WTF::Uint8Array::createUninitialized):
+        (WTF):
+        * wtf/Uint8ClampedArray.h:
+        (Uint8ClampedArray):
+
 2012-07-27  Patrick Gansterer  <paroga@webkit.org>
 
         [WINCE] Use macros from ICU instead of defining the same functionality again

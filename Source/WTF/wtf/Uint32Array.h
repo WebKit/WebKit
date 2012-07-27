@@ -39,6 +39,10 @@ public:
     static inline PassRefPtr<Uint32Array> create(const unsigned int* array, unsigned length);
     static inline PassRefPtr<Uint32Array> create(PassRefPtr<ArrayBuffer>, unsigned byteOffset, unsigned length);
 
+    // Should only be used when it is known the entire array will be filled. Do
+    // not return these results directly to JavaScript without filling first.
+    static inline PassRefPtr<Uint32Array> createUninitialized(unsigned length);
+
     // Can’t use "using" here due to a bug in the RVCT compiler.
     bool set(TypedArrayBase<unsigned int>* array, unsigned offset) { return TypedArrayBase<unsigned int>::set(array, offset); }
     void set(unsigned index, double value) { IntegralTypedArrayBase<unsigned int>::set(index, value); }
@@ -72,6 +76,11 @@ PassRefPtr<Uint32Array> Uint32Array::create(const unsigned int* array, unsigned 
 PassRefPtr<Uint32Array> Uint32Array::create(PassRefPtr<ArrayBuffer> buffer, unsigned byteOffset, unsigned length)
 {
     return TypedArrayBase<unsigned int>::create<Uint32Array>(buffer, byteOffset, length);
+}
+
+PassRefPtr<Uint32Array> Uint32Array::createUninitialized(unsigned length)
+{
+    return TypedArrayBase<unsigned int>::createUninitialized<Uint32Array>(length);
 }
 
 Uint32Array::Uint32Array(PassRefPtr<ArrayBuffer> buffer, unsigned byteOffset, unsigned length)

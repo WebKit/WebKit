@@ -38,9 +38,8 @@ public:
     static inline PassRefPtr<Uint8ClampedArray> create(const unsigned char* array, unsigned length);
     static inline PassRefPtr<Uint8ClampedArray> create(PassRefPtr<ArrayBuffer>, unsigned byteOffset, unsigned length);
 
-    // Should only be used for WebCore-internal use (like filters and
-    // getImageData) when it is known the entire array will be filled.
-    // Do not return these results directly to JavaScript.
+    // Should only be used when it is known the entire array will be filled. Do
+    // not return these results directly to JavaScript without filling first.
     static inline PassRefPtr<Uint8ClampedArray> createUninitialized(unsigned length);
 
     // It's only needed to potentially call this method if the array

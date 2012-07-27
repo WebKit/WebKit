@@ -38,6 +38,10 @@ public:
     static inline PassRefPtr<Float32Array> create(const float* array, unsigned length);
     static inline PassRefPtr<Float32Array> create(PassRefPtr<ArrayBuffer>, unsigned byteOffset, unsigned length);
 
+    // Should only be used when it is known the entire array will be filled. Do
+    // not return these results directly to JavaScript without filling first.
+    static inline PassRefPtr<Float32Array> createUninitialized(unsigned length);
+
     // Can’t use "using" here due to a bug in the RVCT compiler.
     bool set(TypedArrayBase<float>* array, unsigned offset) { return TypedArrayBase<float>::set(array, offset); }
 
@@ -77,6 +81,11 @@ PassRefPtr<Float32Array> Float32Array::create(const float* array, unsigned lengt
 PassRefPtr<Float32Array> Float32Array::create(PassRefPtr<ArrayBuffer> buffer, unsigned byteOffset, unsigned length)
 {
     return TypedArrayBase<float>::create<Float32Array>(buffer, byteOffset, length);
+}
+
+PassRefPtr<Float32Array> Float32Array::createUninitialized(unsigned length)
+{
+    return TypedArrayBase<float>::createUninitialized<Float32Array>(length);
 }
 
 Float32Array::Float32Array(PassRefPtr<ArrayBuffer> buffer, unsigned byteOffset, unsigned length)

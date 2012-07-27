@@ -1,0 +1,36 @@
+<html>
+<head>
+<script src="../../js/resources/js-test-pre.js"></script>
+<script src="resources/webgl-test.js"></script>
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+
+<script>
+
+description("Verifies that when constructing WebGLArray with nan values, it results in a 0");
+
+var source, target, idx;
+
+source = new Array(10);
+
+target = new Uint8Array(source);
+shouldBe(target.length.toString(), source.length.toString())
+for (idx = 0; idx < target.length; idx++) {
+    shouldBeZero(target[idx].toString());
+}
+
+source = {length: 10};
+target = new Uint8Array(source);
+shouldBe(target.length.toString(), source.length.toString())
+for (idx = 0; idx < target.length; idx++) {
+    shouldBeZero(target[idx].toString());
+}
+
+</script>
+
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>
+

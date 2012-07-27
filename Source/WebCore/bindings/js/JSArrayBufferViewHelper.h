@@ -99,7 +99,7 @@ PassRefPtr<C> constructArrayBufferViewWithTypedArrayArgument(JSC::ExecState* exe
         return 0;
 
     uint32_t length = asObject(exec->argument(0))->get(exec, JSC::Identifier(exec, "length")).toUInt32(exec);
-    RefPtr<C> array = C::create(length);
+    RefPtr<C> array = C::createUninitialized(length);
     if (!array) {
         setDOMException(exec, INDEX_SIZE_ERR);
         return array;
@@ -212,7 +212,7 @@ PassRefPtr<C> constructArrayBufferView(JSC::ExecState* exec)
 
         JSC::JSObject* srcArray = asObject(exec->argument(0));
         uint32_t length = srcArray->get(exec, JSC::Identifier(exec, "length")).toUInt32(exec);
-        RefPtr<C> array = C::create(length);
+        RefPtr<C> array = C::createUninitialized(length);
         if (!array) {
             setDOMException(exec, INDEX_SIZE_ERR);
             return array;

@@ -1,3 +1,16 @@
+2012-07-27  Arnaud Renevier  <a.renevier@sisa.samsung.com>
+
+        use createUninitialized when creating TypedArray from another array
+        https://bugs.webkit.org/show_bug.cgi?id=92518
+
+        Reviewed by Kenneth Russell.
+
+        Add test to check that constructing a Typed Array with nan values does
+        not result in random values.
+
+        * fast/canvas/webgl/array-constructor-expected.txt: Added.
+        * fast/canvas/webgl/array-constructor.html: Added.
+
 2012-07-27  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
 
         [Qt] Remaining rebaselines after new test fonts
