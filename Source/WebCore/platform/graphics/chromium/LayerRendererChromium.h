@@ -150,10 +150,11 @@ private:
     void drawTileQuad(DrawingFrame&, const CCTileDrawQuad*);
     void drawYUVVideoQuad(DrawingFrame&, const CCYUVVideoDrawQuad*);
 
-    void drawTexturedQuad(DrawingFrame&, const WebKit::WebTransformationMatrix& layerMatrix,
-                          float width, float height, float opacity, const FloatQuad&,
-                          int matrixLocation, int alphaLocation, int quadLocation);
-    void copyTextureToFramebuffer(DrawingFrame&, int textureId, const IntSize& bounds, const WebKit::WebTransformationMatrix& drawMatrix);
+    void setShaderOpacity(float opacity, int alphaLocation);
+    void setShaderFloatQuad(const FloatQuad&, int quadLocation);
+    void drawQuadGeometry(DrawingFrame&, const WebKit::WebTransformationMatrix& drawTransform, const FloatRect& quadRect, int matrixLocation);
+
+    void copyTextureToFramebuffer(DrawingFrame&, int textureId, const IntRect&, const WebKit::WebTransformationMatrix& drawMatrix);
 
     void setScissorToRect(DrawingFrame&, const IntRect&);
 

@@ -490,9 +490,6 @@ void LayerRendererChromium::drawCheckerboardQuad(DrawingFrame& frame, const CCCh
     GLC(context(), context()->useProgram(program->program()));
 
     IntRect tileRect = quad->quadRect();
-    WebTransformationMatrix tileTransform = quad->quadTransform();
-    tileTransform.translate(tileRect.x() + tileRect.width() / 2.0, tileRect.y() + tileRect.height() / 2.0);
-
     float texOffsetX = tileRect.x();
     float texOffsetY = tileRect.y();
     float texScaleX = tileRect.width();
@@ -504,11 +501,8 @@ void LayerRendererChromium::drawCheckerboardQuad(DrawingFrame& frame, const CCCh
 
     GLC(context(), context()->uniform1f(program->fragmentShader().frequencyLocation(), frequency));
 
-    float opacity = quad->opacity();
-    drawTexturedQuad(frame, tileTransform,
-                     tileRect.width(), tileRect.height(), opacity, FloatQuad(),
-                     program->vertexShader().matrixLocation(),
-                     program->fragmentShader().alphaLocation(), -1);
+    setShaderOpacity(quad->opacity(), program->fragmentShader().alphaLocation());
+    drawQuadGeometry(frame, quad->quadTransform(), quad->quadRect(), program->vertexShader().matrixLocation());
 }
 
 void LayerRendererChromium::drawDebugBorderQuad(DrawingFrame& frame, const CCDebugBorderDrawQuad* quad)
@@ -613,10 +607,7 @@ PassOwnPtr<CCScopedTexture> LayerRendererChromium::drawBackgroundFilters(Drawing
         deviceToFramebufferTransform.translate(quad->quadRect().width() / 2.0, quad->quadRect().height() / 2.0);
         deviceToFramebufferTransform.scale3d(quad->quadRect().width(), quad->quadRect().height(), 1);
         deviceToFramebufferTransform.multiply(contentsDeviceTransform.inverse());
-        deviceToFramebufferTransform.translate(deviceRect.width() / 2.0, deviceRect.height() / 2.0);
-        deviceToFramebufferTransform.translate(deviceRect.x(), deviceRect.y());
-
-        copyTextureToFramebuffer(frame, filteredDeviceBackgroundTextureId, deviceRect.size(), deviceToFramebufferTransform);
+        copyTextureToFramebuffer(frame, filteredDeviceBackgroundTextureId, deviceRect, deviceToFramebufferTransform);
     }
 
     useRenderPass(frame, targetRenderPass);
@@ -666,7 +657,7 @@ void LayerRendererChromium::drawRenderPassQuad(DrawingFrame& frame, const CCRend
     if (backgroundTexture) {
         ASSERT(backgroundTexture->size() == quad->quadRect().size());
         CCScopedLockResourceForRead lock(m_resourceProvider, backgroundTexture->id());
-        copyTextureToFramebuffer(frame, lock.textureId(), quad->quadRect().size(), renderMatrix);
+        copyTextureToFramebuffer(frame, lock.textureId(), quad->quadRect(), quad->quadTransform());
     }
 
     bool clipped = false;
@@ -753,8 +744,9 @@ void LayerRendererChromium::drawRenderPassQuad(DrawingFrame& frame, const CCRend
     FloatQuad surfaceQuad = CCMathUtil::mapQuad(contentsDeviceTransform.inverse(), deviceLayerEdges.floatQuad(), clipped);
     ASSERT(!clipped);
 
-    drawTexturedQuad(frame, renderMatrix, quad->quadRect().width(), quad->quadRect().height(), quad->opacity(), surfaceQuad,
-                     shaderMatrixLocation, shaderAlphaLocation, shaderQuadLocation);
+    setShaderOpacity(quad->opacity(), shaderAlphaLocation);
+    setShaderFloatQuad(surfaceQuad, shaderQuadLocation);
+    drawQuadGeometry(frame, quad->quadTransform(), quad->quadRect(), shaderMatrixLocation);
 }
 
 void LayerRendererChromium::drawSolidColorQuad(DrawingFrame& frame, const CCSolidColorDrawQuad* quad)
@@ -762,21 +754,13 @@ void LayerRendererChromium::drawSolidColorQuad(DrawingFrame& frame, const CCSoli
     const SolidColorProgram* program = solidColorProgram();
     GLC(context(), context()->useProgram(program->program()));
 
-    IntRect tileRect = quad->quadRect();
-
-    WebTransformationMatrix tileTransform = quad->quadTransform();
-    tileTransform.translate(tileRect.x() + tileRect.width() / 2.0, tileRect.y() + tileRect.height() / 2.0);
-
     SkColor color = quad->color();
     float opacity = quad->opacity();
     float alpha = (SkColorGetA(color) / 255.0) * opacity;
 
     GLC(context(), context()->uniform4f(program->fragmentShader().colorLocation(), (SkColorGetR(color) / 255.0) * alpha, (SkColorGetG(color) / 255.0) * alpha, (SkColorGetB(color) / 255.0) * alpha, alpha));
 
-    drawTexturedQuad(frame, tileTransform,
-                     tileRect.width(), tileRect.height(), 1.0, FloatQuad(),
-                     program->vertexShader().matrixLocation(),
-                     -1, -1);
+    drawQuadGeometry(frame, quad->quadTransform(), quad->quadRect(), program->vertexShader().matrixLocation());
 }
 
 struct TileProgramUniforms {
@@ -878,9 +862,8 @@ void LayerRendererChromium::drawTileQuad(DrawingFrame& frame, const CCTileDrawQu
     GLC(context(), context()->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_MIN_FILTER, quad->textureFilter()));
     GLC(context(), context()->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_MAG_FILTER, quad->textureFilter()));
 
-
-    if (!clipped && quad->isAntialiased()) {
-
+    bool useAA = !clipped && quad->isAntialiased();
+    if (useAA) {
         CCLayerQuad deviceLayerBounds = CCLayerQuad(FloatQuad(deviceLayerQuad.boundingBox()));
         deviceLayerBounds.inflateAntiAliasingDistance();
 
@@ -956,7 +939,16 @@ void LayerRendererChromium::drawTileQuad(DrawingFrame& frame, const CCTileDrawQu
     // Normalize to tileRect.
     localQuad.scale(1.0f / tileRect.width(), 1.0f / tileRect.height());
 
-    drawTexturedQuad(frame, quad->quadTransform(), tileRect.width(), tileRect.height(), quad->opacity(), localQuad, uniforms.matrixLocation, uniforms.alphaLocation, uniforms.pointLocation);
+    setShaderOpacity(quad->opacity(), uniforms.alphaLocation);
+    setShaderFloatQuad(localQuad, uniforms.pointLocation);
+
+    // The tile quad shader behaves differently compared to all other shaders.
+    // The transform and vertex data are used to figure out the extents that the
+    // un-antialiased quad should have and which vertex this is and the float
+    // quad passed in via uniform is the actual geometry that gets used to draw
+    // it. This is why this centered rect is used and not the original quadRect.
+    FloatRect centeredRect(FloatPoint(-0.5 * tileRect.width(), -0.5 * tileRect.height()), tileRect.size());
+    drawQuadGeometry(frame, quad->quadTransform(), centeredRect, uniforms.matrixLocation);
 }
 
 void LayerRendererChromium::drawYUVVideoQuad(DrawingFrame& frame, const CCYUVVideoDrawQuad* quad)
@@ -1012,12 +1004,8 @@ void LayerRendererChromium::drawYUVVideoQuad(DrawingFrame& frame, const CCYUVVid
     };
     GLC(context(), context()->uniform3fv(program->fragmentShader().yuvAdjLocation(), 1, yuvAdjust));
 
-    WebTransformationMatrix quadTransform = quad->quadTransform();
-    IntRect quadRect = quad->quadRect();
-    quadTransform.translate(quadRect.x() + quadRect.width() / 2.0, quadRect.y() + quadRect.height() / 2.0);
-
-    drawTexturedQuad(frame, quadTransform, quadRect.width(), quadRect.height(), quad->opacity(), FloatQuad(),
-                     program->vertexShader().matrixLocation(), program->fragmentShader().alphaLocation(), -1);
+    setShaderOpacity(quad->opacity(), program->fragmentShader().alphaLocation());
+    drawQuadGeometry(frame, quad->quadTransform(), quad->quadRect(), program->vertexShader().matrixLocation());
 
     // Reset active texture back to texture 0.
     GLC(context(), context()->activeTexture(GraphicsContext3D::TEXTURE0));
@@ -1040,12 +1028,8 @@ void LayerRendererChromium::drawStreamVideoQuad(DrawingFrame& frame, const CCStr
 
     GLC(context(), context()->uniform1i(program->fragmentShader().samplerLocation(), 0));
 
-    WebTransformationMatrix quadTransform = quad->quadTransform();
-    IntRect quadRect = quad->quadRect();
-    quadTransform.translate(quadRect.x() + quadRect.width() / 2.0, quadRect.y() + quadRect.height() / 2.0);
-
-    drawTexturedQuad(frame, quadTransform, quadRect.width(), quadRect.height(), quad->opacity(), sharedGeometryQuad(),
-                     program->vertexShader().matrixLocation(), program->fragmentShader().alphaLocation(), -1);
+    setShaderOpacity(quad->opacity(), program->fragmentShader().alphaLocation());
+    drawQuadGeometry(frame, quad->quadTransform(), quad->quadRect(), program->vertexShader().matrixLocation());
 }
 
 struct TextureProgramBinding {
@@ -1109,11 +1093,8 @@ void LayerRendererChromium::drawTextureQuad(DrawingFrame& frame, const CCTexture
         GLC(context(), context()->blendFuncSeparate(GraphicsContext3D::SRC_ALPHA, GraphicsContext3D::ONE_MINUS_SRC_ALPHA, GraphicsContext3D::ZERO, GraphicsContext3D::ONE));
     }
 
-    WebTransformationMatrix quadTransform = quad->quadTransform();
-    IntRect quadRect = quad->quadRect();
-    quadTransform.translate(quadRect.x() + quadRect.width() / 2.0, quadRect.y() + quadRect.height() / 2.0);
-
-    drawTexturedQuad(frame, quadTransform, quadRect.width(), quadRect.height(), quad->opacity(), sharedGeometryQuad(), binding.matrixLocation, binding.alphaLocation, -1);
+    setShaderOpacity(quad->opacity(), binding.alphaLocation);
+    drawQuadGeometry(frame, quad->quadTransform(), quad->quadRect(), binding.matrixLocation);
 
     if (!quad->premultipliedAlpha())
         GLC(m_context, m_context->blendFunc(GraphicsContext3D::ONE, GraphicsContext3D::ONE_MINUS_SRC_ALPHA));
@@ -1135,11 +1116,8 @@ void LayerRendererChromium::drawIOSurfaceQuad(DrawingFrame& frame, const CCIOSur
     GLC(context(), context()->activeTexture(GraphicsContext3D::TEXTURE0));
     GLC(context(), context()->bindTexture(Extensions3D::TEXTURE_RECTANGLE_ARB, quad->ioSurfaceTextureId()));
 
-    WebTransformationMatrix quadTransform = quad->quadTransform();
-    IntRect quadRect = quad->quadRect();
-    quadTransform.translate(quadRect.x() + quadRect.width() / 2.0, quadRect.y() + quadRect.height() / 2.0);
-
-    drawTexturedQuad(frame, quadTransform, quadRect.width(), quadRect.height(), quad->opacity(), sharedGeometryQuad(), binding.matrixLocation, binding.alphaLocation, -1);
+    setShaderOpacity(quad->opacity(), binding.alphaLocation);
+    drawQuadGeometry(frame, quad->quadTransform(), quad->quadRect(), binding.matrixLocation);
 
     GLC(context(), context()->bindTexture(Extensions3D::TEXTURE_RECTANGLE_ARB, 0));
 }
@@ -1170,42 +1148,43 @@ void LayerRendererChromium::toGLMatrix(float* flattened, const WebTransformation
     flattened[15] = m.m44();
 }
 
-void LayerRendererChromium::drawTexturedQuad(DrawingFrame& frame, const WebTransformationMatrix& drawMatrix,
-                                             float width, float height, float opacity, const FloatQuad& quad,
-                                             int matrixLocation, int alphaLocation, int quadLocation)
+void LayerRendererChromium::setShaderFloatQuad(const FloatQuad& quad, int quadLocation)
 {
-    static float glMatrix[16];
+    if (quadLocation == -1)
+        return;
 
-    WebTransformationMatrix renderMatrix = drawMatrix;
+    float point[8];
+    point[0] = quad.p1().x();
+    point[1] = quad.p1().y();
+    point[2] = quad.p2().x();
+    point[3] = quad.p2().y();
+    point[4] = quad.p3().x();
+    point[5] = quad.p3().y();
+    point[6] = quad.p4().x();
+    point[7] = quad.p4().y();
+    GLC(m_context, m_context->uniform2fv(quadLocation, 4, point));
+}
 
-    // Apply a scaling factor to size the quad from 1x1 to its intended size.
-    renderMatrix.scale3d(width, height, 1);
-
-    // Apply the projection matrix before sending the transform over to the shader.
-    toGLMatrix(&glMatrix[0], frame.projectionMatrix * renderMatrix);
-
-    GLC(m_context, m_context->uniformMatrix4fv(matrixLocation, 1, false, &glMatrix[0]));
-
-    if (quadLocation != -1) {
-        float point[8];
-        point[0] = quad.p1().x();
-        point[1] = quad.p1().y();
-        point[2] = quad.p2().x();
-        point[3] = quad.p2().y();
-        point[4] = quad.p3().x();
-        point[5] = quad.p3().y();
-        point[6] = quad.p4().x();
-        point[7] = quad.p4().y();
-        GLC(m_context, m_context->uniform2fv(quadLocation, 4, point));
-    }
-
+void LayerRendererChromium::setShaderOpacity(float opacity, int alphaLocation)
+{
     if (alphaLocation != -1)
         GLC(m_context, m_context->uniform1f(alphaLocation, opacity));
+}
+
+void LayerRendererChromium::drawQuadGeometry(DrawingFrame& frame, const WebKit::WebTransformationMatrix& drawTransform, const FloatRect& quadRect, int matrixLocation)
+{
+    WebTransformationMatrix quadMatrix = drawTransform;
+    quadMatrix.translate(0.5 * quadRect.width() + quadRect.x(), 0.5 * quadRect.height() + quadRect.y());
+    quadMatrix.scaleNonUniform(quadRect.width(), quadRect.height());
+
+    static float glMatrix[16];
+    toGLMatrix(&glMatrix[0], frame.projectionMatrix * quadMatrix);
+    GLC(m_context, m_context->uniformMatrix4fv(matrixLocation, 1, false, &glMatrix[0]));
 
     GLC(m_context, m_context->drawElements(GraphicsContext3D::TRIANGLES, 6, GraphicsContext3D::UNSIGNED_SHORT, 0));
 }
 
-void LayerRendererChromium::copyTextureToFramebuffer(DrawingFrame& frame, int textureId, const IntSize& bounds, const WebTransformationMatrix& drawMatrix)
+void LayerRendererChromium::copyTextureToFramebuffer(DrawingFrame& frame, int textureId, const IntRect& rect, const WebTransformationMatrix& drawMatrix)
 {
     const RenderPassProgram* program = renderPassProgram();
 
@@ -1218,10 +1197,8 @@ void LayerRendererChromium::copyTextureToFramebuffer(DrawingFrame& frame, int te
 
     GLC(context(), context()->useProgram(program->program()));
     GLC(context(), context()->uniform1i(program->fragmentShader().samplerLocation(), 0));
-    drawTexturedQuad(frame, drawMatrix, bounds.width(), bounds.height(), 1, sharedGeometryQuad(),
-                                    program->vertexShader().matrixLocation(),
-                                    program->fragmentShader().alphaLocation(),
-                                    -1);
+    setShaderOpacity(1, program->fragmentShader().alphaLocation());
+    drawQuadGeometry(frame, drawMatrix, rect, program->vertexShader().matrixLocation());
 }
 
 void LayerRendererChromium::finish()

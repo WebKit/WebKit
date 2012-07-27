@@ -1,3 +1,42 @@
+2012-07-27  Adrienne Walker  <enne@google.com>
+
+        [chromium] Clean up LayerRendererChromium::drawTexturedQuad
+        https://bugs.webkit.org/show_bug.cgi?id=91823
+
+        Reviewed by James Robinson.
+
+        LayerRendererChromium::drawTexturedQuad has been around forever and
+        over time has developed several problems:
+         - Confusingly named relative to drawTextureQuad
+         - All but one callers identically manipulate the transform matrix
+         - Lots of optional parameters that only few functions use
+
+        This patch breaks up drawTexturedQuad into setShaderOpacity (for
+        optional opacity values sent to the shader), setShaderFloatQuad (the
+        full FloatQuad used by AA shaders), and drawQuadGeometry (actually
+        draw the geometry, and wrap the transform logic that was duplicated
+        everywhere).
+
+        No new tests; no change in functionality.
+
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::drawCheckerboardQuad):
+        (WebCore::LayerRendererChromium::drawBackgroundFilters):
+        (WebCore::LayerRendererChromium::drawRenderPassQuad):
+        (WebCore::LayerRendererChromium::drawSolidColorQuad):
+        (WebCore::LayerRendererChromium::drawTileQuad):
+        (WebCore::LayerRendererChromium::drawYUVVideoQuad):
+        (WebCore::LayerRendererChromium::drawStreamVideoQuad):
+        (WebCore::LayerRendererChromium::drawTextureQuad):
+        (WebCore::LayerRendererChromium::drawIOSurfaceQuad):
+        (WebCore::LayerRendererChromium::drawHeadsUpDisplay):
+        (WebCore::LayerRendererChromium::setShaderFloatQuad):
+        (WebCore::LayerRendererChromium::setShaderOpacity):
+        (WebCore::LayerRendererChromium::drawQuadGeometry):
+        (WebCore::LayerRendererChromium::copyTextureToFramebuffer):
+        * platform/graphics/chromium/LayerRendererChromium.h:
+        (LayerRendererChromium):
+
 2012-07-27  Shawn Singh  <shawnsingh@chromium.org>
 
         [chromium] CCLayerTreeHost placeholder scissor should be deviceViewportSize instead of viewportSize
