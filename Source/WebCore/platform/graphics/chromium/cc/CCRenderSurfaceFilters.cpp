@@ -67,17 +67,19 @@ void getContrastMatrix(float amount, SkScalar matrix[20])
 
 void getSaturateMatrix(float amount, SkScalar matrix[20])
 {
+    // Note, these values are computed to ensure matrixNeedsClamping is false
+    // for amount in [0..1]
     matrix[0] = 0.213f + 0.787f * amount;
     matrix[1] = 0.715f - 0.715f * amount;
-    matrix[2] = 0.072f - 0.072f * amount;
+    matrix[2] = 1.f - (matrix[0] + matrix[1]);
     matrix[3] = matrix[4] = 0;
     matrix[5] = 0.213f - 0.213f * amount;
     matrix[6] = 0.715f + 0.285f * amount;
-    matrix[7] = 0.072f - 0.072f * amount;
+    matrix[7] = 1.f - (matrix[5] + matrix[6]);
     matrix[8] = matrix[9] = 0;
     matrix[10] = 0.213f - 0.213f * amount;
     matrix[11] = 0.715f - 0.715f * amount;
-    matrix[12] = 0.072f + 0.928f * amount;
+    matrix[12] = 1.f - (matrix[10] + matrix[11]);
     matrix[13] = matrix[14] = 0;
     matrix[15] = matrix[16] = matrix[17] = matrix[19] = 0;
     matrix[18] = 1;
@@ -121,19 +123,21 @@ void getOpacityMatrix(float amount, SkScalar matrix[20])
 
 void getGrayscaleMatrix(float amount, SkScalar matrix[20])
 {
+    // Note, these values are computed to ensure matrixNeedsClamping is false
+    // for amount in [0..1]
     matrix[0] = 0.2126f + 0.7874f * amount;
     matrix[1] = 0.7152f - 0.7152f * amount;
-    matrix[2] = 0.0722f - 0.0722f * amount;
+    matrix[2] = 1.f - (matrix[0] + matrix[1]);
     matrix[3] = matrix[4] = 0;
 
     matrix[5] = 0.2126f - 0.2126f * amount;
     matrix[6] = 0.7152f + 0.2848f * amount;
-    matrix[7] = 0.0722f - 0.0722f * amount;
+    matrix[7] = 1.f - (matrix[5] + matrix[6]);
     matrix[8] = matrix[9] = 0;
 
     matrix[10] = 0.2126f - 0.2126f * amount;
     matrix[11] = 0.7152f - 0.7152f * amount;
-    matrix[12] = 0.0722f + 0.9278f * amount;
+    matrix[12] = 1.f - (matrix[10] + matrix[11]);
     matrix[13] = matrix[14] = 0;
 
     matrix[15] = matrix[16] = matrix[17] = matrix[19] = 0;
@@ -187,15 +191,15 @@ void multColorMatrix(SkScalar a[20], SkScalar b[20], SkScalar out[20])
 // Same goes for all components.
 bool componentNeedsClamping(SkScalar row[5])
 {
-    SkScalar maxValue = row[4];
-    SkScalar minValue = row[4];
+    SkScalar maxValue = row[4] / 255;
+    SkScalar minValue = row[4] / 255;
     for (int i = 0; i < 4; ++i) {
         if (row[i] > 0)
-            maxValue += row[i] * 255;
+            maxValue += row[i];
         else
-            minValue += row[i] * 255;
+            minValue += row[i];
     }
-    return (maxValue > 255) || (minValue < 0);
+    return (maxValue > 1) || (minValue < 0);
 }
 
 bool matrixNeedsClamping(SkScalar matrix[20])

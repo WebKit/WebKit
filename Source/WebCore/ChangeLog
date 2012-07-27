@@ -1,3 +1,18 @@
+2012-07-27  Antoine Labour  <piman@chromium.org>
+
+        [chromium] Fix color matrix filter computation so that filters that don't need clamping are correctly detected as such
+        https://bugs.webkit.org/show_bug.cgi?id=92452
+
+        Reviewed by Stephen White.
+
+        Because of precision issues, some filters were returning true to
+        matrixNeedsClamping when they can return false. This fixes it.
+
+        No new tests in this CL, a follow-up change refactors the code to add
+        several tests.
+
+        * platform/graphics/chromium/cc/CCRenderSurfaceFilters.cpp:
+
 2012-07-27  Jer Noble  <jer.noble@apple.com>
 
         Add diagnostic logging for plugins-per-page.
