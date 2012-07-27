@@ -43,6 +43,29 @@ typedef struct _MiniBrowser {
     Evas_Object *browser;
 } MiniBrowser;
 
+static const Ecore_Getopt options = {
+    "MiniBrowser",
+    "%prog [options] [url]",
+    "0.0.1",
+    "(C)2012 Samsung Electronics\n",
+    "",
+    "Test Web Browser using the Enlightenment Foundation Libraries of WebKit2",
+    EINA_TRUE, {
+        ECORE_GETOPT_STORE_STR
+            ('e', "engine", "ecore-evas engine to use."),
+        ECORE_GETOPT_CALLBACK_NOARGS
+            ('E', "list-engines", "list ecore-evas engines.",
+             ecore_getopt_callback_ecore_evas_list_engines, NULL),
+        ECORE_GETOPT_VERSION
+            ('V', "version"),
+        ECORE_GETOPT_COPYRIGHT
+            ('R', "copyright"),
+        ECORE_GETOPT_HELP
+            ('h', "help"),
+        ECORE_GETOPT_SENTINEL
+    }
+};
+
 static Eina_Bool main_signal_exit(void *data, int ev_type, void *ev)
 {
     ecore_main_loop_quit();
@@ -154,11 +177,27 @@ on_error(void *user_data, Evas_Object *webview, void *event_info)
     eina_strbuf_free(buffer);
 }
 
-static MiniBrowser *browserCreate(const char *url)
+static int
+quit(Eina_Bool success, const char *msg)
+{
+    ewk_shutdown();
+
+    if (msg)
+        fputs(msg, (success) ? stdout : stderr);
+
+    if (!success)
+        return EXIT_FAILURE;
+
+    return EXIT_SUCCESS;
+}
+
+static MiniBrowser *browserCreate(const char *url, const char *engine)
 {
     MiniBrowser *app = malloc(sizeof(MiniBrowser));
 
-    app->ee = ecore_evas_new(0, 0, 0, DEFAULT_WIDTH, DEFAULT_HEIGHT, 0);
+    app->ee = ecore_evas_new(engine, 0, 0, DEFAULT_WIDTH, DEFAULT_HEIGHT, 0);
+    if (!app->ee)
+        return 0;
 
     ecore_evas_title_set(app->ee, APP_NAME);
     ecore_evas_callback_resize_set(app->ee, on_ecore_evas_resize);
@@ -202,16 +241,38 @@ int main(int argc, char *argv[])
 {
     const char *url;
     int args = 1;
+    char *engine = NULL;
+    unsigned char quitOption = 0;
+
+    Ecore_Getopt_Value values[] = {
+        ECORE_GETOPT_VALUE_STR(engine),
+        ECORE_GETOPT_VALUE_BOOL(quitOption),
+        ECORE_GETOPT_VALUE_BOOL(quitOption),
+        ECORE_GETOPT_VALUE_BOOL(quitOption),
+        ECORE_GETOPT_VALUE_BOOL(quitOption),
+        ECORE_GETOPT_VALUE_NONE
+    };
 
     if (!ewk_init())
         return EXIT_FAILURE;
+
+    ecore_app_args_set(argc, (const char **) argv);
+    args = ecore_getopt_parse(&options, values, argc, argv);
+
+    if (args < 0)
+        return quit(EINA_FALSE, "ERROR: could not parse options.\n");
+
+    if (quitOption)
+        return quit(EINA_TRUE, NULL);
 
     if (args < argc)
         url = argv[args];
     else
         url = DEFAULT_URL;
 
-    MiniBrowser *browser = browserCreate(url);
+    MiniBrowser *browser = browserCreate(url, engine);
+    if (!browser)
+        return quit(EINA_FALSE, "ERROR: could not create browser.\n");
 
     Ecore_Event_Handler *handle = ecore_event_handler_add(ECORE_EVENT_SIGNAL_EXIT, main_signal_exit, 0);
 
@@ -221,7 +282,5 @@ int main(int argc, char *argv[])
     ecore_evas_free(browser->ee);
     free(browser);
 
-    ewk_shutdown();
-
-    return 0;
+    return quit(EINA_TRUE, NULL);
 }

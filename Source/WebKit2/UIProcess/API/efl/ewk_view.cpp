@@ -44,6 +44,10 @@
 #include <WebCore/EflScreenUtilities.h>
 #include <wtf/text/CString.h>
 
+#if USE(ACCELERATED_COMPOSITING)
+#include <Evas_GL.h>
+#endif
+
 using namespace WebKit;
 using namespace WebCore;
 
@@ -68,6 +72,12 @@ struct _Ewk_View_Private_Data {
     bool isUsingEcoreX;
 #endif
 
+#if USE(ACCELERATED_COMPOSITING)
+    Evas_GL* evasGl;
+    Evas_GL_Context* evasGlContext;
+    Evas_GL_Surface* evasGlSurface;
+#endif
+
     _Ewk_View_Private_Data()
         : uri(0)
         , title(0)
@@ -77,6 +87,11 @@ struct _Ewk_View_Private_Data {
         , cursorObject(0)
 #ifdef HAVE_ECORE_X
         , isUsingEcoreX(false)
+#endif
+#if USE(ACCELERATED_COMPOSITING)
+        , evasGl(0)
+        , evasGlContext(0)
+        , evasGlSurface(0)
 #endif
     { }
 
@@ -407,6 +422,94 @@ static void _ewk_view_smart_move(Evas_Object* ewkView, Evas_Coord x, Evas_Coord 
     _ewk_view_smart_changed(smartData);
 }
 
+IntSize ewk_view_size_get(const Evas_Object* ewkView)
+{
+    int width, height;
+    evas_object_geometry_get(ewkView, 0, 0, &width, &height);
+    return IntSize(width, height);
+}
+
+#if USE(ACCELERATED_COMPOSITING)
+static bool ewk_view_create_gl_surface(const Evas_Object* ewkView, const IntSize& viewSize)
+{
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, false);
+    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, false);
+
+    Evas_GL_Config evasGlConfig = {
+        EVAS_GL_RGBA_8888,
+        EVAS_GL_DEPTH_BIT_8,
+        EVAS_GL_STENCIL_NONE,
+        EVAS_GL_OPTIONS_NONE,
+        EVAS_GL_MULTISAMPLE_NONE
+    };
+
+    ASSERT(!priv->evasGlSurface);
+    priv->evasGlSurface = evas_gl_surface_create(priv->evasGl, &evasGlConfig, viewSize.width(), viewSize.height());
+    if (!priv->evasGlSurface)
+        return false;
+
+    Evas_Native_Surface nativeSurface;
+    evas_gl_native_surface_get(priv->evasGl, priv->evasGlSurface, &nativeSurface);
+    evas_object_image_native_surface_set(smartData->image, &nativeSurface);
+
+    return true;
+}
+
+bool ewk_view_accelerated_compositing_mode_enter(const Evas_Object* ewkView)
+{
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, false);
+    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, false);
+
+    EINA_SAFETY_ON_NULL_RETURN_VAL(!priv->evasGl, false);
+
+    Evas* evas = evas_object_evas_get(ewkView);
+    priv->evasGl = evas_gl_new(evas);
+    if (!priv->evasGl)
+        return false;
+
+    priv->evasGlContext = evas_gl_context_create(priv->evasGl, 0);
+    if (!priv->evasGlContext) {
+        evas_gl_free(priv->evasGl);
+        priv->evasGl = 0;
+        return false;
+    }
+
+    if (!ewk_view_create_gl_surface(ewkView, ewk_view_size_get(ewkView))) {
+        evas_gl_context_destroy(priv->evasGl, priv->evasGlContext);
+        priv->evasGlContext = 0;
+
+        evas_gl_free(priv->evasGl);
+        priv->evasGl = 0;
+        return false;
+    }
+
+    return true;
+}
+
+bool ewk_view_accelerated_compositing_mode_exit(const Evas_Object* ewkView)
+{
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, false);
+    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, false);
+
+    EINA_SAFETY_ON_NULL_RETURN_VAL(priv->evasGl, false);
+
+    if (priv->evasGlSurface) {
+        evas_gl_surface_destroy(priv->evasGl, priv->evasGlSurface);
+        priv->evasGlSurface = 0;
+    }
+
+    if (priv->evasGlContext) {
+        evas_gl_context_destroy(priv->evasGl, priv->evasGlContext);
+        priv->evasGlContext = 0;
+    }
+
+    evas_gl_free(priv->evasGl);
+    priv->evasGl = 0;
+
+    return true;
+}
+#endif
+
 static void _ewk_view_smart_calculate(Evas_Object* ewkView)
 {
     EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData);
@@ -420,6 +523,16 @@ static void _ewk_view_smart_calculate(Evas_Object* ewkView)
     if (smartData->changed.size) {
         if (priv->pageClient->page()->drawingArea())
             priv->pageClient->page()->drawingArea()->setSize(IntSize(width, height), IntSize());
+
+#if USE(ACCELERATED_COMPOSITING)
+        if (!priv->evasGlSurface)
+            return;
+        evas_gl_surface_destroy(priv->evasGl, priv->evasGlSurface);
+        priv->evasGlSurface = 0;
+        ewk_view_create_gl_surface(ewkView, IntSize(width, height));
+        ewk_view_display(ewkView, IntRect(IntPoint(), IntSize(width, height)));
+#endif
+
         smartData->view.w = width;
         smartData->view.h = height;
         smartData->changed.size = false;

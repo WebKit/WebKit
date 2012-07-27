@@ -72,9 +72,7 @@ void PageClientImpl::scrollView(const WebCore::IntRect& scrollRect, const WebCor
 
 WebCore::IntSize PageClientImpl::viewSize()
 {
-    int width, height;
-    evas_object_geometry_get(m_viewWidget, 0, 0, &width, &height);
-    return IntSize(width, height);
+    return ewk_view_size_get(m_viewWidget);
 }
 
 bool PageClientImpl::isViewWindowActive()
@@ -221,12 +219,12 @@ void PageClientImpl::setFindIndicator(PassRefPtr<FindIndicator>, bool, bool)
 #if USE(ACCELERATED_COMPOSITING)
 void PageClientImpl::enterAcceleratedCompositingMode(const LayerTreeContext&)
 {
-    notImplemented();
+    ewk_view_accelerated_compositing_mode_enter(m_viewWidget);
 }
 
 void PageClientImpl::exitAcceleratedCompositingMode()
 {
-    notImplemented();
+    ewk_view_accelerated_compositing_mode_exit(m_viewWidget);
 }
 
 void PageClientImpl::updateAcceleratedCompositingMode(const LayerTreeContext&)

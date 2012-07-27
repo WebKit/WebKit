@@ -1,3 +1,30 @@
+2012-07-27  YoungTaeck Song  <youngtaeck.song@samsung.com>
+
+        [WK2][EFL] Add an ACCELERATED_COMPOSITING implementation for Efl WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=91581
+
+        Reviewed by Noam Rosenthal.
+
+        This patch is a subset of Efl's UI_SIDE_COMPOSITING implementation.
+        When enter accelerated compositing mode, create evas_gl, evas_gl_context, and evas_gl_surface.
+
+        * PlatformEfl.cmake:
+        * Shared/LayerTreeContext.h:
+        (LayerTreeContext):
+        * UIProcess/API/efl/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::viewSize):
+        (WebKit::PageClientImpl::enterAcceleratedCompositingMode):
+        (WebKit::PageClientImpl::exitAcceleratedCompositingMode):
+        * UIProcess/API/efl/ewk_view.cpp:
+        (_Ewk_View_Private_Data):
+        (_Ewk_View_Private_Data::_Ewk_View_Private_Data):
+        (ewk_view_size_get):
+        (ewk_view_create_gl_surface):
+        (ewk_view_enter_accelerated_compositing_mode):
+        (ewk_view_exit_accelerated_compositing_mode):
+        (_ewk_view_smart_calculate):
+        * UIProcess/API/efl/ewk_view_private.h:
+
 2012-07-27  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL][WK2] Add API to Ewk_Cookie_Manager to watch for cookie changes

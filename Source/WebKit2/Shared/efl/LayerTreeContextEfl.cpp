@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2012 Samsung Electronics. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,53 +23,41 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef LayerTreeContext_h
-#define LayerTreeContext_h
+#include "config.h"
+#include "LayerTreeContext.h"
 
-namespace CoreIPC {
-    class ArgumentDecoder;
-    class ArgumentEncoder;
-}
+#include "ArgumentDecoder.h"
+#include "ArgumentEncoder.h"
 
 namespace WebKit {
 
-enum LayerHostingMode {
-    LayerHostingModeDefault,
-#if HAVE(LAYER_HOSTING_IN_WINDOW_SERVER)
-    LayerHostingModeInWindowServer
-#endif
-};
-
-class LayerTreeContext {
-public:
-    LayerTreeContext();
-    ~LayerTreeContext();
-
-    void encode(CoreIPC::ArgumentEncoder*) const;
-    static bool decode(CoreIPC::ArgumentDecoder*, LayerTreeContext&);
-
-    bool isEmpty() const;
-
-#if PLATFORM(MAC)
-    uint32_t contextID;
-#elif PLATFORM(WIN)
-    HWND window;
-#elif PLATFORM(QT)
-    uint32_t webLayerID;
-#elif PLATFORM(GTK)
-    uint64_t windowHandle;
-#elif PLATFORM(EFL)
-    uint32_t webLayerID;
-#endif
-};
-
-bool operator==(const LayerTreeContext&, const LayerTreeContext&);
-
-inline bool operator!=(const LayerTreeContext& a, const LayerTreeContext& b)
+LayerTreeContext::LayerTreeContext()
+    : webLayerID(0)
 {
-    return !(a == b);
 }
 
-};
+LayerTreeContext::~LayerTreeContext()
+{
+}
 
-#endif // LayerTreeContext_h
+void LayerTreeContext::encode(CoreIPC::ArgumentEncoder* encoder) const
+{
+    encoder->encode(webLayerID);
+}
+
+bool LayerTreeContext::decode(CoreIPC::ArgumentDecoder* decoder, LayerTreeContext& context)
+{
+    return decoder->decode(context.webLayerID);
+}
+
+bool LayerTreeContext::isEmpty() const
+{
+    return !webLayerID;
+}
+
+bool operator==(const LayerTreeContext& a, const LayerTreeContext& b)
+{
+    return a.webLayerID == b.webLayerID;
+}
+
+} // namespace WebKit

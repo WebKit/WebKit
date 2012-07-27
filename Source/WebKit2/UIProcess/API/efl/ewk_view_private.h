@@ -73,5 +73,11 @@ void ewk_view_intent_service_register(Evas_Object* ewkView, const Ewk_Intent_Ser
 #endif
 
 WebKit::WebPageProxy* ewk_view_page_get(const Evas_Object* ewkView);
+WebCore::IntSize ewk_view_size_get(const Evas_Object* ewkView);
+
+#if USE(ACCELERATED_COMPOSITING)
+bool ewk_view_accelerated_compositing_mode_enter(const Evas_Object* ewkView);
+bool ewk_view_accelerated_compositing_mode_exit(const Evas_Object* ewkView);
+#endif
 
 #endif // ewk_view_private_h

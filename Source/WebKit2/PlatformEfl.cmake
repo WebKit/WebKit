@@ -20,9 +20,9 @@ LIST(APPEND WebKit2_SOURCES
 
     Shared/API/c/gtk/WKGraphicsContextGtk.cpp
 
-    Shared/cairo/LayerTreeContextCairo.cpp
     Shared/cairo/ShareableBitmapCairo.cpp
 
+    Shared/efl/LayerTreeContextEfl.cpp
     Shared/efl/NativeWebKeyboardEventEfl.cpp
     Shared/efl/NativeWebWheelEventEfl.cpp
     Shared/efl/NativeWebMouseEventEfl.cpp
