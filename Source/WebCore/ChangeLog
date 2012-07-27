@@ -1,3 +1,21 @@
+2012-07-26  Mike Lawther  <mikelawther@chromium.org>
+
+        Make transitions work between different Length types
+        https://bugs.webkit.org/show_bug.cgi?id=92220
+
+        Reviewed by Simon Fraser.
+
+        Use the existing CSS calc machinery for blending between two calculations
+        to blend between two Lengths of differing types.
+
+        Test: transitions/mixed-type.html
+
+        * platform/Length.cpp:
+        (WebCore::Length::blendMixedTypes):
+        * platform/Length.h:
+        (WebCore::Length::blend):
+        (Length):
+
 2012-07-26  Dan Bernstein  <mitz@apple.com>
 
         Blocks with reverse column progression don’t have layout overflow for overflowing columns

@@ -1,3 +1,13 @@
+2012-07-26  Mike Lawther  <mikelawther@chromium.org>
+
+        Make transitions work between different Length types
+        https://bugs.webkit.org/show_bug.cgi?id=92220
+
+        Reviewed by Simon Fraser.
+
+        * transitions/mixed-type-expected.txt: Added.
+        * transitions/mixed-type.html: Added.
+
 2012-07-26  Yoshifumi Inoue  <yosin@chromium.org>
 
         [Tests] Rename fast/forms/{number,time}/*-validity-state-* to *-validity-*

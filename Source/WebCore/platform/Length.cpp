@@ -202,7 +202,7 @@ Length::Length(PassRefPtr<CalculationValue> calc)
     m_intValue = calcHandles().insert(calc);
 }
         
-Length Length::blendCalculation(const Length& from, double progress) const
+Length Length::blendMixedTypes(const Length& from, double progress) const
 {
     if (progress <= 0.0)
         return from;

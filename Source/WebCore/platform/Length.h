@@ -231,10 +231,10 @@ public:
     {
         // Blend two lengths to produce a new length that is in between them.  Used for animation.
         if (from.type() == Calculated || type() == Calculated)
-            return blendCalculation(from, progress);
+            return blendMixedTypes(from, progress);
         
         if (!from.isZero() && !isZero() && from.type() != type())
-            return *this;
+            return blendMixedTypes(from, progress);
 
         if (from.isZero() && isZero())
             return *this;
@@ -292,7 +292,7 @@ private:
             incrementCalculatedRef();
     }
 
-    Length blendCalculation(const Length& from, double progress) const;
+    Length blendMixedTypes(const Length& from, double progress) const;
 
     int calculationHandle() const
     {
