@@ -149,15 +149,24 @@ IF (WTF_USE_CAIRO)
   IF (WTF_USE_FREETYPE)
     LIST(APPEND WebCore_INCLUDE_DIRECTORIES
       "${WEBCORE_DIR}/platform/graphics/freetype"
+      "${WEBCORE_DIR}/platform/graphics/harfbuzz/"
+      "${WEBCORE_DIR}/platform/graphics/harfbuzz/ng"
     )
     LIST(APPEND WebCore_SOURCES
       platform/graphics/WOFFFileFormat.cpp
-      platform/graphics/efl/FontEfl.cpp
+      platform/graphics/cairo/FontCairoHarfbuzzNG.cpp
       platform/graphics/freetype/FontCacheFreeType.cpp
       platform/graphics/freetype/FontCustomPlatformDataFreeType.cpp
       platform/graphics/freetype/FontPlatformDataFreeType.cpp
       platform/graphics/freetype/GlyphPageTreeNodeFreeType.cpp
       platform/graphics/freetype/SimpleFontDataFreeType.cpp
+      platform/graphics/harfbuzz/HarfBuzzShaperBase.cpp
+      platform/graphics/harfbuzz/ng/HarfBuzzNGFace.cpp
+      platform/graphics/harfbuzz/ng/HarfBuzzNGFaceCairo.cpp
+      platform/graphics/harfbuzz/ng/HarfBuzzShaper.cpp
+    )
+    LIST(APPEND WebCore_LIBRARIES
+      ${HARFBUZZ_LIBRARIES}
     )
   ENDIF ()
 

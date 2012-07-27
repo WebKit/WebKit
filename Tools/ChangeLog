@@ -1,3 +1,15 @@
+2012-07-27  Dominik Röttsches  <dominik.rottsches@intel.com>
+
+        [Cairo] Add complex font drawing using HarfbuzzNG
+        https://bugs.webkit.org/show_bug.cgi?id=91864
+
+        Reviewed by Simon Hausmann and Martin Robinson.
+
+        Bringing Harfbuzz support to EFL with this patch, so we need HarfBuzz in the pulled in jhbuild dependencies.
+
+        * WebKitTestRunner/CMakeLists.txt: Adding additional header include directories.
+        * efl/jhbuild.modules: Adding source for HarfBuzz release version 0.9.0.
+
 2012-07-27  KwangYong Choi  <ky0.choi@samsung.com>
 
         [WK2][EFL][WTR] TestNetscapePlugin is required.

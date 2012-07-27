@@ -9,6 +9,7 @@
       <dep package="fonts"/>
       <dep package="fontconfig"/>
       <dep package="freetype6"/>
+      <dep package="harfbuzz"/>
       <dep package="glib"/>
       <dep package="glib-networking"/>
       <dep package="libsoup"/>
@@ -159,6 +160,15 @@
             md5sum="77e15a92006ddc2adbb06f840d591c0e">
     </branch>
   </autotools>
+
+ <autotools id="harfbuzz" autogen-sh="configure">
+   <branch module="software/harfbuzz/release/harfbuzz-20120627.tar.bz2" version="0.9.0"
+           checkoutdir="harfbuzz-0.9.0"
+           repo="freedesktop.org"
+           hash="sha256:562a187b84a2b5bd38f87e898f5f18aa918a41db62adbc17f6fcfd8fa1755485"
+           md5sum="18e6a8d847259441723a26e299792d55">
+   </branch>
+ </autotools>
 
   <autotools id="eina" >
     <branch module="eina"

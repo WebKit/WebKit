@@ -26,6 +26,8 @@ SET(WebKitTestRunner_INCLUDE_DIRECTORIES
     ${WEBCORE_DIR}/editing
     ${WEBCORE_DIR}/platform
     ${WEBCORE_DIR}/platform/graphics
+    ${WEBCORE_DIR}/platform/graphics/harfbuzz
+    ${WEBCORE_DIR}/platform/graphics/harfbuzz/ng
     ${WEBCORE_DIR}/platform/network
     ${WEBCORE_DIR}/platform/text
     ${WEBCORE_DIR}/testing/js

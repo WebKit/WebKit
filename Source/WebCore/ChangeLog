@@ -1,3 +1,53 @@
+2012-07-27  Dominik Röttsches  <dominik.rottsches@intel.com>
+
+        [Cairo] Add complex font drawing using HarfbuzzNG
+        https://bugs.webkit.org/show_bug.cgi?id=91864
+
+        Reviewed by Simon Hausmann and Martin Robinson.
+
+        Adding Harfbuzz support to EFL by implementing it with the help of cairo and cairo-ft.
+        Reusing Chromium's Harfbuzz-NG support.
+
+        No new tests, complex font support is covered by existing tests.
+
+        * CMakeLists.txt: Adding new cairo based implementations, removing emtpy FontEfl.cpp
+        * WebCore.gypi: Removing FontEfl.cpp
+        * platform/graphics/cairo/FontCairoHarfbuzzNG.cpp: Added. New implementation that implements cairo & harfbuzz-ng based complex font drawing.
+        (WebCore):
+        (WebCore::Font::drawComplexText):
+        (WebCore::Font::drawEmphasisMarksForComplexText):
+        (WebCore::Font::canReturnFallbackFontsForComplexText):
+        (WebCore::Font::canExpandAroundIdeographsInComplexText):
+        (WebCore::Font::floatWidthForComplexText):
+        (WebCore::Font::offsetForPositionForComplexText):
+        (WebCore::Font::selectionRectForComplexText):
+        * platform/graphics/efl/FontEfl.cpp: Removed.
+        * platform/graphics/freetype/FontPlatformData.h: Adding a getter that retrieves a harfbuzz face.
+        (FontPlatformData):
+        * platform/graphics/freetype/FontPlatformDataFreeType.cpp: Adding a getter that retrieves a harfbuzz face.
+        (WebCore::FontPlatformData::operator=):
+        (WebCore::FontPlatformData::FontPlatformData):
+        (WebCore):
+        (WebCore::FontPlatformData::harfbuzzFace):
+        * platform/graphics/harfbuzz/ng/HarfBuzzNGFaceCairo.cpp: Added. Cairo-freetype based approach to get complex font metrics.
+        (WebCore):
+        (CairoFtFaceLocker):
+        (WebCore::CairoFtFaceLocker::CairoFtFaceLocker):
+        (WebCore::CairoFtFaceLocker::lock):
+        (WebCore::CairoFtFaceLocker::~CairoFtFaceLocker):
+        (WebCore::floatToHarfBuzzPosition):
+        (WebCore::doubleToHarfBuzzPosition):
+        (WebCore::CairoGetGlyphWidthAndExtents):
+        (WebCore::harfbuzzGetGlyph):
+        (WebCore::harfbuzzGetGlyphHorizontalAdvance):
+        (WebCore::harfbuzzGetGlyphHorizontalOrigin):
+        (WebCore::harfbuzzGetGlyphExtents):
+        (WebCore::harfbuzzCairoTextGetFontFuncs):
+        (WebCore::harfbuzzCairoGetTable):
+        (WebCore::HarfBuzzNGFace::createFace):
+        (WebCore::HarfBuzzNGFace::createFont):
+        (WebCore::HarfBuzzShaper::createGlyphBufferAdvance):
+
 2012-07-27  Adam Barth  <abarth@webkit.org>
 
         Add a Setting to expose quantized, rate-limited MemoryInfo values

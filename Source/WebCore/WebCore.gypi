@@ -3658,7 +3658,6 @@
             'platform/graphics/chromium/VDMXParser.cpp',
             'platform/graphics/chromium/VDMXParser.h',
             'platform/graphics/cocoa/FontPlatformDataCocoa.mm',
-            'platform/graphics/efl/FontEfl.cpp',
             'platform/graphics/efl/IconEfl.cpp',
             'platform/graphics/efl/ImageEfl.cpp',
             'platform/graphics/efl/IntPointEfl.cpp',

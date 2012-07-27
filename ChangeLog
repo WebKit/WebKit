@@ -1,3 +1,15 @@
+2012-07-27  Dominik Röttsches  <dominik.rottsches@intel.com>
+
+        [Cairo] Add complex font drawing using HarfbuzzNG
+        https://bugs.webkit.org/show_bug.cgi?id=91864
+
+        Reviewed by Simon Hausmann and Martin Robinson.
+
+        Configuring Freetype backend to use HarfBuzz by default.
+
+        * Source/cmake/FindHarfBuzz.cmake: Added pkgconfig based discovery of HarfBuzz.
+        * Source/cmake/OptionsEfl.cmake: Adding Harfbuzz configuration.
+
 2012-07-26  Dan Bernstein  <mitz@apple.com>
 
         When Safari 6 is launched via the WebKit Xcode workspace, it does not link against the built frameworks
