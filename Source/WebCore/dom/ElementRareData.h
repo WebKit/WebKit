@@ -29,6 +29,7 @@
 #include "HTMLCollection.h"
 #include "NamedNodeMap.h"
 #include "NodeRareData.h"
+#include "UndoManager.h"
 #include <wtf/OwnPtr.h>
 
 namespace WebCore {
@@ -117,6 +118,11 @@ public:
 
 #if ENABLE(FULLSCREEN_API)
     bool m_containsFullScreenElement;
+#endif
+
+#if ENABLE(UNDO_MANAGER)
+    RefPtr<UndoManager> m_undoManager;
+    bool m_undoScope;
 #endif
 };
 

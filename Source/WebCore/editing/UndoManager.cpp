@@ -33,6 +33,7 @@
 
 #if ENABLE(UNDO_MANAGER)
 
+#include "Element.h"
 #include "Node.h"
 
 namespace WebCore {
@@ -47,25 +48,74 @@ UndoManager::UndoManager(Node* host)
 {
 }
 
-void UndoManager::undoScopeHostDestroyed()
+void UndoManager::disconnect()
 {
     m_undoScopeHost = 0;
 }
 
-void UndoManager::undo()
+void UndoManager::transact(const Dictionary&, bool, ExceptionCode& ec)
 {
+    if (!isConnected()) {
+        ec = INVALID_ACCESS_ERR;
+        return;
+    }
+    RefPtr<UndoStep> step;
+    m_undoStack.append(step);
 }
 
-void UndoManager::redo()
+void UndoManager::undo(ExceptionCode& ec)
 {
+    if (!isConnected()) {
+        ec = INVALID_ACCESS_ERR;
+        return;
+    }
 }
 
-void UndoManager::clearUndo()
+void UndoManager::redo(ExceptionCode& ec)
 {
+    if (!isConnected()) {
+        ec = INVALID_ACCESS_ERR;
+        return;
+    }
 }
 
-void UndoManager::clearRedo()
+void UndoManager::clearUndo(ExceptionCode& ec)
 {
+    if (!isConnected()) {
+        ec = INVALID_ACCESS_ERR;
+        return;
+    }
+    m_undoStack.clear();
+}
+
+void UndoManager::clearRedo(ExceptionCode& ec)
+{
+    if (!isConnected()) {
+        ec = INVALID_ACCESS_ERR;
+        return;
+    }
+    m_redoStack.clear();
+}
+
+void UndoManager::clearUndoRedo()
+{
+    m_undoStack.clear();
+    m_redoStack.clear();
+}
+
+bool UndoManager::isConnected()
+{
+    if (!m_undoScopeHost)
+        return false;
+    if (!m_undoScopeHost->isElementNode())
+        return true;
+    Element* element = toElement(m_undoScopeHost);
+    ASSERT(element->undoScope());
+    if (element->isContentEditable() && !element->isRootEditableElement()) {
+        element->disconnectUndoManager();
+        return false;
+    }
+    return true;
 }
 
 }

@@ -33,28 +33,41 @@
 
 #if ENABLE(UNDO_MANAGER)
 
+#include "ExceptionCode.h"
+#include "UndoStep.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
+class Dictionary;
 class Node;
 
 class UndoManager : public RefCounted<UndoManager> {
 public:
     static PassRefPtr<UndoManager> create(Node* host);
-    void undoScopeHostDestroyed();
+    void disconnect();
 
-    void undo();
-    void redo();
+    void transact(const Dictionary& transaction, bool merge, ExceptionCode&);
 
-    void clearUndo();
-    void clearRedo();
+    void undo(ExceptionCode&);
+    void redo(ExceptionCode&);
+
+    unsigned length() const { return m_undoStack.size() + m_redoStack.size(); }
+
+    void clearUndo(ExceptionCode&);
+    void clearRedo(ExceptionCode&);
+    void clearUndoRedo();
 
 private:
     explicit UndoManager(Node* host);
+    bool isConnected();
+    
     Node* m_undoScopeHost;
+    Vector<RefPtr<UndoStep> > m_undoStack;
+    Vector<RefPtr<UndoStep> > m_redoStack;
 };
     
 }

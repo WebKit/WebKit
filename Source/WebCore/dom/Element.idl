@@ -142,6 +142,11 @@ module core {
         // CSS Regions API
         readonly attribute DOMString webkitRegionOverflow;
 
+#if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
+        readonly attribute [Conditional=UNDO_MANAGER] UndoManager undoManager;
+        attribute [Conditional=UNDO_MANAGER, Reflect] boolean undoScope;
+#endif
+
 #if !defined(LANGUAGE_OBJECTIVE_C) || !LANGUAGE_OBJECTIVE_C
         // Event handler DOM attributes
         attribute [NotEnumerable] EventListener onabort;

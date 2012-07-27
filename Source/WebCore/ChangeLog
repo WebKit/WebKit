@@ -1,3 +1,52 @@
+2012-07-26  Sukolsak Sakshuwong  <sukolsak@google.com>
+
+        Implement undoscope attribute.
+        https://bugs.webkit.org/show_bug.cgi?id=88793
+
+        Reviewed by Ryosuke Niwa.
+
+        undoscope attribute support as specified at
+        http://dvcs.w3.org/hg/undomanager/raw-file/tip/undomanager.html
+
+        Test: editing/undomanager/undoscope-attribute.html
+
+        * Target.pri:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * dom/Document.cpp:
+        (WebCore::Document::~Document):
+        * dom/Element.cpp:
+        (WebCore):
+        (WebCore::Element::undoScope):
+        (WebCore::Element::setUndoScope):
+        (WebCore::Element::undoManager):
+        (WebCore::Element::disconnectUndoManager):
+        (WebCore::Element::disconnectUndoManagersInSubtree):
+        * dom/Element.h:
+        (Element):
+        * dom/Element.idl:
+        * dom/ElementRareData.h:
+        (ElementRareData):
+        * editing/UndoManager.cpp:
+        (WebCore::UndoManager::disconnect):
+        (WebCore::UndoManager::transact):
+        (WebCore::UndoManager::undo):
+        (WebCore::UndoManager::redo):
+        (WebCore::UndoManager::clearUndo):
+        (WebCore):
+        (WebCore::UndoManager::clearRedo):
+        (WebCore::UndoManager::clearUndoRedo):
+        (WebCore::UndoManager::isConnected):
+        * editing/UndoManager.h:
+        (WebCore):
+        (UndoManager):
+        (WebCore::UndoManager::length):
+        * editing/UndoManager.idl:
+        * html/HTMLAttributeNames.in:
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::parseAttribute):
+        (WebCore::HTMLElement::setContentEditable):
+
 2012-07-26  Yoshifumi Inoue  <yosin@chromium.org>
 
         [Forms] Introduce runtime feature flags for input type datetime, datetimelocal, month, time, week

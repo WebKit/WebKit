@@ -666,7 +666,7 @@ Document::~Document()
 
 #if ENABLE(UNDO_MANAGER)
     if (m_undoManager)
-        m_undoManager->undoScopeHostDestroyed();
+        m_undoManager->disconnect();
 #endif
 
     // We must call clearRareData() here since a Document class inherits TreeScope

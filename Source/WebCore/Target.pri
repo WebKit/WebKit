@@ -3919,6 +3919,13 @@ contains(DEFINES, ENABLE_MHTML=1) {
         page/PageSerializer.cpp
 }
 
+contains(DEFINES, ENABLE_UNDO_MANAGER=1) {
+    SOURCES += \
+        editing/UndoManager.cpp
+    HEADERS += \
+        editing/UndoManager.h
+}
+
 contains(DEFINES, WTF_USE_LIBPNG=1) {
     SOURCES += platform/image-decoders/ico/ICOImageDecoder.cpp \
                platform/image-decoders/png/PNGImageDecoder.cpp

@@ -2700,6 +2700,8 @@
             'editing/TextInsertionBaseCommand.h',
             'editing/TextIterator.cpp',
             'editing/TypingCommand.cpp',
+            'editing/UndoManager.cpp',
+            'editing/UndoManager.h',
             'editing/UndoStep.h',
             'editing/UnlinkCommand.cpp',
             'editing/UnlinkCommand.h',

@@ -33,11 +33,20 @@ module core {
     interface [
         Conditional=UNDO_MANAGER
     ] UndoManager {
-        void undo();
-        void redo();
+        void transact(in Dictionary transaction, in boolean merge)
+            raises(DOMException);
 
-        void clearUndo();
-        void clearRedo();
+        void undo()
+            raises(DOMException);
+        void redo()
+            raises(DOMException);
+
+        readonly attribute unsigned long length;
+
+        void clearUndo()
+            raises(DOMException);
+        void clearRedo()
+            raises(DOMException);
     };
 
 }
