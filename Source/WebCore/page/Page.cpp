@@ -167,6 +167,8 @@ Page::Page(PageClients& pageClients)
     , m_alternativeTextClient(pageClients.alternativeTextClient)
     , m_scriptedAnimationsSuspended(false)
 {
+    ASSERT(m_editorClient);
+
     if (!allPages) {
         allPages = new HashSet<Page*>;
         
