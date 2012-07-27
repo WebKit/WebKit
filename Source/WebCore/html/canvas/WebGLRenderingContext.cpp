@@ -441,11 +441,14 @@ WebGLRenderingContext::WebGLRenderingContext(HTMLCanvasElement* passedCanvas, Pa
     m_contextGroup = WebGLContextGroup::create();
     m_contextGroup->addContext(this);
 
+    m_maxViewportDims[0] = m_maxViewportDims[1] = 0;
+    m_context->getIntegerv(GraphicsContext3D::MAX_VIEWPORT_DIMS, m_maxViewportDims);
+
 #if PLATFORM(CHROMIUM)
     // Create the DrawingBuffer and initialize the platform layer.
     DrawingBuffer::PreserveDrawingBuffer preserve = m_attributes.preserveDrawingBuffer ? DrawingBuffer::Preserve : DrawingBuffer::Discard;
     DrawingBuffer::AlphaRequirement alpha = m_attributes.alpha ? DrawingBuffer::Alpha : DrawingBuffer::Opaque;
-    m_drawingBuffer = DrawingBuffer::create(m_context.get(), IntSize(canvas()->size()), preserve, alpha);
+    m_drawingBuffer = DrawingBuffer::create(m_context.get(), clampedCanvasSize(), preserve, alpha);
 #endif
 
     if (m_drawingBuffer)
@@ -504,8 +507,6 @@ void WebGLRenderingContext::initializeNewContext()
     m_maxCubeMapTextureLevel = WebGLTexture::computeLevelCount(m_maxCubeMapTextureSize, m_maxCubeMapTextureSize);
     m_maxRenderbufferSize = 0;
     m_context->getIntegerv(GraphicsContext3D::MAX_RENDERBUFFER_SIZE, &m_maxRenderbufferSize);
-    m_maxViewportDims[0] = m_maxViewportDims[1] = 0;
-    m_context->getIntegerv(GraphicsContext3D::MAX_VIEWPORT_DIMS, m_maxViewportDims);
 
     m_defaultVertexArrayObject = WebGLVertexArrayObjectOES::create(this, WebGLVertexArrayObjectOES::VaoTypeDefault);
     addContextObject(m_defaultVertexArrayObject.get());
@@ -518,11 +519,12 @@ void WebGLRenderingContext::initializeNewContext()
     if (!isGLES2Compliant())
         initVertexAttrib0();
 
+    IntSize canvasSize = clampedCanvasSize();
     if (m_drawingBuffer)
-        m_drawingBuffer->reset(IntSize(canvas()->width(), canvas()->height()));
+        m_drawingBuffer->reset(canvasSize);
 
-    m_context->reshape(canvas()->width(), canvas()->height());
-    m_context->viewport(0, 0, canvas()->width(), canvas()->height());
+    m_context->reshape(canvasSize.width(), canvasSize.height());
+    m_context->viewport(0, 0, canvasSize.width(), canvasSize.height());
 
     m_context->setContextLostCallback(adoptPtr(new WebGLRenderingContextLostCallback(this)));
     m_context->setErrorMessageCallback(adoptPtr(new WebGLRenderingContextErrorMessageCallback(this)));
@@ -605,7 +607,7 @@ void WebGLRenderingContext::markContextChanged()
 #endif
         if (!m_markedCanvasDirty) {
             m_markedCanvasDirty = true;
-            canvas()->didDraw(FloatRect(0, 0, canvas()->width(), canvas()->height()));
+            canvas()->didDraw(FloatRect(FloatPoint(0, 0), clampedCanvasSize()));
         }
 #if USE(ACCELERATED_COMPOSITING)
     }
@@ -5664,6 +5666,12 @@ void WebGLRenderingContext::enableOrDisable(GC3Denum capability, bool enable)
         m_context->enable(capability);
     else
         m_context->disable(capability);
+}
+
+IntSize WebGLRenderingContext::clampedCanvasSize()
+{
+    return IntSize(clamp(canvas()->width(), 1, m_maxViewportDims[0]),
+                   clamp(canvas()->height(), 1, m_maxViewportDims[1]));
 }
 
 } // namespace WebCore

@@ -4,10 +4,25 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 PASS context exists
-
 Checking drawingBufferWidth/drawingBufferHeight
-PASS gl.drawingBufferWidth is canvas.width
-PASS gl.drawingBufferHeight is canvas.height
+PASS maxSize[0] > 0 is true
+PASS maxSize[1] > 0 is true
+PASS gl.drawingBufferWidth > 0 is true
+PASS gl.drawingBufferHeight > 0 is true
+PASS gl.drawingBufferWidth <= maxSize[0] is true
+PASS gl.drawingBufferHeight <= maxSize[1] is true
+
+PASS context exists
+Checking drawingBufferWidth/drawingBufferHeight
+PASS maxSize[0] > 0 is true
+PASS maxSize[1] > 0 is true
+PASS gl.drawingBufferWidth > 0 is true
+PASS gl.drawingBufferHeight > 0 is true
+PASS gl.drawingBufferWidth <= maxSize[0] is true
+PASS gl.drawingBufferHeight <= maxSize[1] is true
+
+PASS context exists
+Checking drawingBufferWidth/drawingBufferHeight
 PASS maxSize[0] > 0 is true
 PASS maxSize[1] > 0 is true
 PASS gl.drawingBufferWidth > 0 is true

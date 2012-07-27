@@ -721,6 +721,9 @@ public:
     // Helper for enabling or disabling a capability.
     void enableOrDisable(GC3Denum capability, bool enable);
 
+    // Clamp the width and height to GL_MAX_VIEWPORT_DIMS.
+    IntSize clampedCanvasSize();
+
     friend class WebGLStateRestorer;
 };
 

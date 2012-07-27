@@ -1,3 +1,24 @@
+2012-07-26  Nayan Kumar K  <nayankk@motorola.com>
+
+        [WebGL] Initial size of canvas can be larger than MAX_VIEWPORT_DIMS.
+        https://bugs.webkit.org/show_bug.cgi?id=91976
+
+        Reviewed by Kenneth Russell.
+
+        From section 2.2 of the spec the WebGL implementation says initial size of
+        the canvas can be larger than MAX_VIEWPORT_DIMS. With the current WebGL
+        implementation, we get error when initial size if greater than MAX_VIEWPORT_DIMS.
+        This change limits the width and height of drawingbuffer to MAX_VIEWPORT_DIMS
+        when given initial size exceeds it.
+
+        Added tests to LayoutTests/fast/canvas/webgl/drawingbuffer-test.html
+
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore):
+        (WebCore::WebGLRenderingContext::WebGLRenderingContext):
+        (WebCore::WebGLRenderingContext::initializeNewContext):
+        (WebCore::WebGLRenderingContext::markContextChanged):
+
 2012-07-26  Adrienne Walker  <enne@google.com>
 
         [chromium] When computing surface content scale, use top level device scale
