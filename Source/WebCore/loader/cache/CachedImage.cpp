@@ -57,6 +57,7 @@ namespace WebCore {
 CachedImage::CachedImage(const ResourceRequest& resourceRequest)
     : CachedResource(resourceRequest, ImageResource)
     , m_image(0)
+    , m_decodedDataDeletionTimer(this, &CachedImage::decodedDataDeletionTimerFired)
     , m_shouldPaintBrokenImage(true)
 {
     setStatus(Unknown);
@@ -65,6 +66,7 @@ CachedImage::CachedImage(const ResourceRequest& resourceRequest)
 CachedImage::CachedImage(Image* image)
     : CachedResource(ResourceRequest(), ImageResource)
     , m_image(image)
+    , m_decodedDataDeletionTimer(this, &CachedImage::decodedDataDeletionTimerFired)
     , m_shouldPaintBrokenImage(true)
 {
     setStatus(Cached);
@@ -74,6 +76,12 @@ CachedImage::CachedImage(Image* image)
 CachedImage::~CachedImage()
 {
     clearImage();
+}
+
+void CachedImage::decodedDataDeletionTimerFired(Timer<CachedImage>*)
+{
+    ASSERT(!hasClients());
+    destroyDecodedData();
 }
 
 void CachedImage::load(CachedResourceLoader* cachedResourceLoader, const ResourceLoaderOptions& options)
@@ -86,6 +94,9 @@ void CachedImage::load(CachedResourceLoader* cachedResourceLoader, const Resourc
 
 void CachedImage::didAddClient(CachedResourceClient* c)
 {
+    if (m_decodedDataDeletionTimer.isActive())
+        m_decodedDataDeletionTimer.stop();
+    
     if (m_data && !m_image && !errorOccurred()) {
         createImage();
         m_image->setData(m_data, true);
@@ -113,6 +124,8 @@ void CachedImage::allClientsRemoved()
 {
     if (m_image && !errorOccurred())
         m_image->resetAnimation();
+    if (double interval = memoryCache()->deadDecodedDataDeletionInterval())
+        m_decodedDataDeletionTimer.startOneShot(interval);
 }
 
 pair<Image*, float> CachedImage::brokenImage(float deviceScaleFactor) const

@@ -1,3 +1,43 @@
+2012-07-26  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r123808.
+        http://trac.webkit.org/changeset/123808
+        https://bugs.webkit.org/show_bug.cgi?id=92443
+
+        Broke Apple Mac debug tests ASSERTION FAILED: !hasClients()
+        (Requested by msaboff_ on #webkit).
+
+        * loader/cache/CachedCSSStyleSheet.cpp:
+        (WebCore::CachedCSSStyleSheet::CachedCSSStyleSheet):
+        (WebCore::CachedCSSStyleSheet::didAddClient):
+        (WebCore::CachedCSSStyleSheet::allClientsRemoved):
+        (WebCore::CachedCSSStyleSheet::decodedDataDeletionTimerFired):
+        (WebCore):
+        * loader/cache/CachedCSSStyleSheet.h:
+        (CachedCSSStyleSheet):
+        * loader/cache/CachedImage.cpp:
+        (WebCore::CachedImage::CachedImage):
+        (WebCore::CachedImage::decodedDataDeletionTimerFired):
+        (WebCore):
+        (WebCore::CachedImage::didAddClient):
+        (WebCore::CachedImage::allClientsRemoved):
+        * loader/cache/CachedImage.h:
+        (CachedImage):
+        * loader/cache/CachedResource.cpp:
+        (WebCore::CachedResource::CachedResource):
+        (WebCore::CachedResource::didAddClient):
+        (WebCore::CachedResource::removeClient):
+        * loader/cache/CachedResource.h:
+        (CachedResource):
+        * loader/cache/CachedScript.cpp:
+        (WebCore::CachedScript::CachedScript):
+        (WebCore::CachedScript::didAddClient):
+        (WebCore):
+        (WebCore::CachedScript::allClientsRemoved):
+        (WebCore::CachedScript::decodedDataDeletionTimerFired):
+        * loader/cache/CachedScript.h:
+        (CachedScript):
+
 2012-07-26  Tony Chang  <tony@chromium.org>
 
         [chromium] Remove some unreachable code in ClipboardChromium.cpp

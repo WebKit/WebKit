@@ -136,7 +136,6 @@ CachedResource::CachedResource(const ResourceRequest& request, Type type)
     : m_resourceRequest(request)
     , m_loadPriority(defaultPriorityForResourceType(type))
     , m_responseTimestamp(currentTime())
-    , m_decodedDataDeletionTimer(this, &CachedResource::decodedDataDeletionTimerFired)
     , m_lastDecodedAccessTime(0)
     , m_loadFinishTime(0)
     , m_encodedSize(0)
@@ -381,9 +380,6 @@ void CachedResource::addClient(CachedResourceClient* client)
 
 void CachedResource::didAddClient(CachedResourceClient* c)
 {
-    if (m_decodedDataDeletionTimer.isActive())
-        m_decodedDataDeletionTimer.stop();
-
     if (m_clientsAwaitingCallback.contains(c)) {
         m_clients.add(c);
         m_clientsAwaitingCallback.remove(c);
@@ -440,7 +436,6 @@ void CachedResource::removeClient(CachedResourceClient* client)
         memoryCache()->removeFromLiveResourcesSize(this);
         memoryCache()->removeFromLiveDecodedResourcesList(this);
         allClientsRemoved();
-        destroyDecodedDataIfNeeded();
         if (response().cacheControlContainsNoStore()) {
             // RFC2616 14.9.2:
             // "no-store: ... MUST make a best-effort attempt to remove the information from volatile storage as promptly as possible"
@@ -452,21 +447,6 @@ void CachedResource::removeClient(CachedResourceClient* client)
             memoryCache()->prune();
     }
     // This object may be dead here.
-}
-
-void CachedResource::destroyDecodedDataIfNeeded()
-{
-    if (!m_decodedSize)
-        return;
-
-    if (double interval = memoryCache()->deadDecodedDataDeletionInterval())
-        m_decodedDataDeletionTimer.startOneShot(interval);
-}
-
-void CachedResource::decodedDataDeletionTimerFired(Timer<CachedResource>*)
-{
-    ASSERT(!hasClients());
-    destroyDecodedData();
 }
 
 void CachedResource::deleteIfPossible()

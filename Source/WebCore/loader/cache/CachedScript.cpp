@@ -43,6 +43,7 @@ namespace WebCore {
 CachedScript::CachedScript(const ResourceRequest& resourceRequest, const String& charset)
     : CachedResource(resourceRequest, Script)
     , m_decoder(TextResourceDecoder::create("application/javascript", charset))
+    , m_decodedDataDeletionTimer(this, &CachedScript::decodedDataDeletionTimerFired)
 {
     // It's javascript we want.
     // But some websites think their scripts are <some wrong mimetype here>
@@ -52,6 +53,20 @@ CachedScript::CachedScript(const ResourceRequest& resourceRequest, const String&
 
 CachedScript::~CachedScript()
 {
+}
+
+void CachedScript::didAddClient(CachedResourceClient* c)
+{
+    if (m_decodedDataDeletionTimer.isActive())
+        m_decodedDataDeletionTimer.stop();
+
+    CachedResource::didAddClient(c);
+}
+
+void CachedScript::allClientsRemoved()
+{
+    if (double interval = memoryCache()->deadDecodedDataDeletionInterval())
+        m_decodedDataDeletionTimer.startOneShot(interval);
 }
 
 void CachedScript::setEncoding(const String& chs)
@@ -110,6 +125,11 @@ void CachedScript::destroyDecodedData()
     setDecodedSize(extraSize);
     if (!MemoryCache::shouldMakeResourcePurgeableOnEviction() && isSafeToMakePurgeable())
         makePurgeable(true);
+}
+
+void CachedScript::decodedDataDeletionTimerFired(Timer<CachedScript>*)
+{
+    destroyDecodedData();
 }
 
 #if USE(JSC)
