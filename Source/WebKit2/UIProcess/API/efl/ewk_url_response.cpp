@@ -98,6 +98,13 @@ const char* ewk_url_response_mime_type_get(const Ewk_Url_Response* response)
     return response->mimeType;
 }
 
+unsigned long ewk_url_response_content_length_get(const Ewk_Url_Response* response)
+{
+    EINA_SAFETY_ON_NULL_RETURN_VAL(response, 0);
+
+    return response->coreResponse.expectedContentLength();
+}
+
 /**
  * @internal
  * Constructs a Ewk_Url_Response from a WebCore::ResourceResponse.

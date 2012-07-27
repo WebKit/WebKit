@@ -23,10 +23,15 @@
 #include <WebKit2/WKBase.h>
 
 typedef struct _Ewk_Context Ewk_Context;
+typedef struct _Ewk_Download_Job Ewk_Download_Job;
 typedef struct _Ewk_Url_Scheme_Request Ewk_Url_Scheme_Request;
 
 WKContextRef ewk_context_WKContext_get(const Ewk_Context*);
 WKSoupRequestManagerRef ewk_context_request_manager_get(const Ewk_Context*);
 void ewk_context_url_scheme_request_received(Ewk_Context*, Ewk_Url_Scheme_Request*);
+
+void ewk_context_download_job_add(Ewk_Context*, Ewk_Download_Job*);
+Ewk_Download_Job* ewk_context_download_job_get(const Ewk_Context*, uint64_t downloadId);
+void ewk_context_download_job_remove(Ewk_Context*, uint64_t downloadId);
 
 #endif // ewk_context_private_h

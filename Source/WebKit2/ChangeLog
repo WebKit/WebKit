@@ -1,3 +1,108 @@
+2012-07-27  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL][WK2] Add download client for Ewk_Context
+        https://bugs.webkit.org/show_bug.cgi?id=91345
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Add download client for Ewk_Context so that
+        information about downloads can be reported
+        to the client application via Ewk_View signals.
+
+        The client application needs to listen for
+        "download,request" signal on the view and set
+        the download path for the download in the
+        callback in order to accept it. If the signal
+        is ignored or if the download path is not set
+        the download will fail.
+
+        A new Ewk_Download_Job type is introduced to provide
+        information relative to a download to the client
+        and to allow the client to interact with it (e.g.
+        set its download path, cancel it, ...).
+
+        * PlatformEfl.cmake:
+        * UIProcess/API/efl/EWebKit2.h:
+        * UIProcess/API/efl/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::handleDownloadRequest):
+        (WebKit):
+        * UIProcess/API/efl/PageClientImpl.h:
+        (PageClientImpl):
+        * UIProcess/API/efl/ewk_context.cpp:
+        (_Ewk_Context):
+        (_Ewk_Context::_Ewk_Context):
+        (_Ewk_Context::~_Ewk_Context):
+        (ewk_context_download_job_add):
+        (ewk_context_download_job_get):
+        (ewk_context_download_job_remove):
+        * UIProcess/API/efl/ewk_context_download_client.cpp: Added.
+        (toEwkContext):
+        (decideDestinationWithSuggestedFilename):
+        (didReceiveResponse):
+        (didCreateDestination):
+        (didReceiveData):
+        (didFail):
+        (didCancel):
+        (didFinish):
+        (ewk_context_download_client_attach):
+        * UIProcess/API/efl/ewk_context_download_client_private.h: Added.
+        * UIProcess/API/efl/ewk_context_private.h:
+        * UIProcess/API/efl/ewk_download_job.cpp: Added.
+        (_Ewk_Download_Job):
+        (_Ewk_Download_Job::_Ewk_Download_Job):
+        (_Ewk_Download_Job::~_Ewk_Download_Job):
+        (ewk_download_job_ref):
+        (ewk_download_job_unref):
+        (ewk_download_job_id_get):
+        (ewk_download_job_view_get):
+        (ewk_download_job_state_get):
+        (ewk_download_job_request_get):
+        (ewk_download_job_response_get):
+        (ewk_download_job_destination_get):
+        (ewk_download_job_destination_set):
+        (ewk_download_job_suggested_filename_get):
+        (ewk_download_job_cancel):
+        (ewk_download_job_estimated_progress_get):
+        (ewk_download_job_elapsed_time_get):
+        (ewk_download_job_response_set):
+        (ewk_download_job_suggested_filename_set):
+        (ewk_download_job_received_data):
+        (ewk_download_job_state_set):
+        (ewk_download_job_new):
+        * UIProcess/API/efl/ewk_download_job.h: Added.
+        * UIProcess/API/efl/ewk_download_job_private.h: Added.
+        (WebKit):
+        * UIProcess/API/efl/ewk_url_response.cpp:
+        (ewk_url_response_content_length_get): Add a function to
+        retrieve the content length of a URL response.
+        * UIProcess/API/efl/ewk_url_response.h:
+        * UIProcess/API/efl/ewk_view.cpp:
+        (ewk_view_download_job_cancelled):
+        (ewk_view_download_job_requested):
+        (ewk_view_download_job_failed):
+        (ewk_view_download_job_finished):
+        * UIProcess/API/efl/ewk_view.h:
+        * UIProcess/API/efl/ewk_view_private.h:
+        * UIProcess/API/efl/tests/resources/test.pdf: Added.
+        * UIProcess/API/efl/tests/test_ewk2_download_job.cpp: Added. This tests
+        the download functionality.
+        (DownloadTestData):
+        (fileExists):
+        (serverCallback):
+        (on_download_requested):
+        (on_download_cancelled):
+        (on_download_failed):
+        (on_download_finished):
+        (TEST_F):
+        * UIProcess/PageClient.h:
+        (PageClient):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::receivedPolicyDecision):
+        (WebKit):
+        (WebKit::WebPageProxy::handleDownloadRequest):
+        * UIProcess/WebPageProxy.h:
+        (WebPageProxy):
+
 2012-07-27  YoungTaeck Song  <youngtaeck.song@samsung.com>
 
         [WK2][EFL] Add an ACCELERATED_COMPOSITING implementation for Efl WebKit2

@@ -26,6 +26,11 @@
  *
  * The following signals (see evas_object_smart_callback_add()) are emitted:
  *
+ * - "download,cancelled", Ewk_Download_Job*: reports that a download was effectively cancelled.
+ * - "download,failed", Ewk_Download_Job_Error*: reports that a download failed with the given error.
+ * - "download,finished", Ewk_Download_Job*: reports that a download completed successfully.
+ * - "download,request", Ewk_Download_Job*: reports that a new download has been requested. The client should set the
+ *   destination path by calling ewk_download_job_destination_set() or the download will fail.
  * - "form,submission,request", Ewk_Form_Submission_Request*: Reports that a form request is about to be submitted.
  *   The Ewk_Form_Submission_Request passed contains information about the text fields of the form. This
  *   is typically used to store login information that can be used later to pre-fill the form.
@@ -62,6 +67,7 @@
 #define ewk_view_h
 
 #include "ewk_context.h"
+#include "ewk_download_job.h"
 #include "ewk_intent.h"
 #include "ewk_url_request.h"
 #include "ewk_url_response.h"
@@ -196,6 +202,17 @@ typedef struct _Ewk_Web_Resource_Load_Error Ewk_Web_Resource_Load_Error;
 struct _Ewk_Web_Resource_Load_Error {
     Ewk_Web_Resource *resource; /**< resource that failed loading */
     Ewk_Web_Error *error; /**< load error */
+};
+
+/// Creates a type name for _Ewk_Download_Job_Error.
+typedef struct _Ewk_Download_Job_Error Ewk_Download_Job_Error;
+
+/**
+ * @brief Structure containing details about a download failure.
+ */
+struct _Ewk_Download_Job_Error {
+    Ewk_Download_Job *download_job; /**< download that failed */
+    Ewk_Web_Error *error; /**< download error */
 };
 
 /**

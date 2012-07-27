@@ -32,6 +32,10 @@
 #include "WebContext.h"
 #include "WebContextMenuProxy.h"
 #include "WebPageProxy.h"
+#include "ewk_context.h"
+#include "ewk_context_private.h"
+#include "ewk_download_job.h"
+#include "ewk_download_job_private.h"
 #include "ewk_view_private.h"
 
 using namespace WebCore;
@@ -272,6 +276,16 @@ void PageClientImpl::findStringInCustomRepresentation(const String&, FindOptions
 void PageClientImpl::countStringMatchesInCustomRepresentation(const String&, FindOptions, unsigned)
 {
     notImplemented();
+}
+
+void PageClientImpl::handleDownloadRequest(DownloadProxy* download)
+{
+    Ewk_Download_Job* ewkDownload = ewk_download_job_new(download, m_viewWidget);
+    // For now we only support one default context, but once we support
+    // multiple contexts, we will need to retrieve the context from the
+    // view.
+    ewk_context_download_job_add(ewk_context_default_get(), ewkDownload);
+    ewk_download_job_unref(ewkDownload);
 }
 
 } // namespace WebKit

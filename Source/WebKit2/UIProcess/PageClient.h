@@ -121,12 +121,15 @@ public:
     virtual void didChangeContentsSize(const WebCore::IntSize&) = 0;
     virtual void didFindZoomableArea(const WebCore::IntPoint&, const WebCore::IntRect&) = 0;
     virtual void didReceiveMessageFromNavigatorQtObject(const String&) = 0;
-    virtual void handleDownloadRequest(DownloadProxy*) = 0;
     virtual void updateTextInputState() = 0;
     virtual void handleAuthenticationRequiredRequest(const String& hostname, const String& realm, const String& prefilledUsername, String& username, String& password) = 0;
     virtual void handleCertificateVerificationRequest(const String& hostname, bool& ignoreErrors) = 0;
     virtual void handleProxyAuthenticationRequiredRequest(const String& hostname, uint16_t port, const String& prefilledUsername, String& username, String& password) = 0;
 #endif // PLATFORM(QT).
+
+#if PLATFORM(QT) || PLATFORM(EFL)
+    virtual void handleDownloadRequest(DownloadProxy*) = 0;
+#endif // PLATFORM(QT) || PLATFORM(EFL)
 
 #if PLATFORM(QT) || PLATFORM(GTK)
     virtual void startDrag(const WebCore::DragData&, PassRefPtr<ShareableBitmap> dragImage) = 0;

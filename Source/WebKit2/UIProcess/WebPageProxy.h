@@ -635,6 +635,9 @@ public:
 #if PLATFORM(QT)
     void findZoomableAreaForPoint(const WebCore::IntPoint&, const WebCore::IntSize&);
     void didReceiveMessageFromNavigatorQtObject(const String&);
+#endif
+
+#if PLATFORM(QT) || PLATFORM(EFL)
     void handleDownloadRequest(DownloadProxy*);
 #endif
 

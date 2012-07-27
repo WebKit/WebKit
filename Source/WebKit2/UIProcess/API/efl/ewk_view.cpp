@@ -1006,6 +1006,51 @@ void ewk_view_display(Evas_Object* ewkView, const IntRect& rect)
     evas_object_image_data_update_add(smartData->image, rect.x(), rect.y(), rect.width(), rect.height());
 }
 
+/**
+ * @internal
+ * A download for that view was cancelled.
+ *
+ * Emits signal: "download,cancelled" with pointer to a Ewk_Download_Job.
+ */
+void ewk_view_download_job_cancelled(Evas_Object* ewkView, Ewk_Download_Job* download)
+{
+    evas_object_smart_callback_call(ewkView, "download,cancelled", download);
+}
+
+/**
+ * @internal
+ * A new download has been requested for that view.
+ *
+ * Emits signal: "download,request" with pointer to a Ewk_Download_Job.
+ */
+void ewk_view_download_job_requested(Evas_Object* ewkView, Ewk_Download_Job* download)
+{
+     evas_object_smart_callback_call(ewkView, "download,request", download);
+}
+
+/**
+ * @internal
+ * A download for that view has failed.
+ *
+ * Emits signal: "download,failed" with pointer to a Ewk_Download_Job_Error.
+ */
+void ewk_view_download_job_failed(Evas_Object* ewkView, Ewk_Download_Job* download, Ewk_Web_Error* error)
+{
+    Ewk_Download_Job_Error downloadError = { download, error };
+    evas_object_smart_callback_call(ewkView, "download,failed", &downloadError);
+}
+
+/**
+ * @internal
+ * A download for that view finished successfully.
+ *
+ * Emits signal: "download,finished" with pointer to a Ewk_Download_Job.
+ */
+void ewk_view_download_job_finished(Evas_Object* ewkView, Ewk_Download_Job* download)
+{
+     evas_object_smart_callback_call(ewkView, "download,finished", download);
+}
+
 Eina_Bool ewk_view_back(Evas_Object* ewkView)
 {
     EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, false);

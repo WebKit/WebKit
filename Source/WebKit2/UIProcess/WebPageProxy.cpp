@@ -1221,7 +1221,7 @@ void WebPageProxy::receivedPolicyDecision(PolicyAction action, WebFrameProxy* fr
         // Create a download proxy.
         DownloadProxy* download = m_process->context()->createDownloadProxy();
         downloadID = download->downloadID();
-#if PLATFORM(QT)
+#if PLATFORM(QT) || PLATFORM(EFL)
         // Our design does not suppport downloads without a WebPage.
         handleDownloadRequest(download);
 #endif
@@ -2642,11 +2642,6 @@ void WebPageProxy::didReceiveMessageFromNavigatorQtObject(const String& contents
     m_pageClient->didReceiveMessageFromNavigatorQtObject(contents);
 }
 
-void WebPageProxy::handleDownloadRequest(DownloadProxy* download)
-{
-    m_pageClient->handleDownloadRequest(download);
-}
-
 void WebPageProxy::authenticationRequiredRequest(const String& hostname, const String& realm, const String& prefilledUsername, String& username, String& password)
 {
     m_pageClient->handleAuthenticationRequiredRequest(hostname, realm, prefilledUsername, username, password);
@@ -2662,6 +2657,13 @@ void WebPageProxy::certificateVerificationRequest(const String& hostname, bool& 
     m_pageClient->handleCertificateVerificationRequest(hostname, ignoreErrors);
 }
 #endif // PLATFORM(QT).
+
+#if PLATFORM(QT) || PLATFORM(EFL)
+void WebPageProxy::handleDownloadRequest(DownloadProxy* download)
+{
+    m_pageClient->handleDownloadRequest(download);
+}
+#endif // PLATFORM(QT) || PLATFORM(EFL)
 
 #if ENABLE(TOUCH_EVENTS)
 void WebPageProxy::needTouchEvents(bool needTouchEvents)
