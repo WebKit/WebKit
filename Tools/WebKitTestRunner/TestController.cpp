@@ -67,7 +67,7 @@ TestController& TestController::shared()
 }
 
 TestController::TestController(int argc, const char* argv[])
-    : m_dumpPixelsForAllTests(false)
+    : m_dumpPixels(false)
     , m_verbose(false)
     , m_printSeparators(false)
     , m_usingServerMode(false)
@@ -268,7 +268,7 @@ void TestController::initialize(int argc, const char* argv[])
         }
 
         if (argument == "--pixel-tests") {
-            m_dumpPixelsForAllTests = true;
+            m_dumpPixels = true;
             continue;
         }
         if (argument == "--verbose") {
@@ -517,31 +517,18 @@ bool TestController::runTest(const char* test)
         return false;
     }
 
-    bool dumpPixelsTest = m_dumpPixelsForAllTests;
-    std::string command(test);
-    std::string pathOrURL = command;
+    std::string pathOrURL = test;
     std::string expectedPixelHash;
-    size_t firstSeparatorPos = command.find_first_of('\'');
-    size_t secondSeparatorPos = command.find_first_of('\'', firstSeparatorPos + 1);
-    if (firstSeparatorPos != std::string::npos) {
-        pathOrURL = std::string(command, 0, firstSeparatorPos);
-        size_t pixelHashPos = firstSeparatorPos + 1;
-
-        // NRWT passes --pixel-test if we should dump pixels for the test.
-        const std::string expectedPixelTestArg("--pixel-test");
-        std::string argTest = std::string(command, firstSeparatorPos + 1, expectedPixelTestArg.size());
-        if (argTest == expectedPixelTestArg) {
-            dumpPixelsTest = true;
-            pixelHashPos = secondSeparatorPos == std::string::npos ? std::string::npos : secondSeparatorPos + 1;
-        }
-        if (pixelHashPos != std::string::npos && pixelHashPos < command.size())
-            expectedPixelHash = std::string(command, pixelHashPos);
+    size_t separatorPos = pathOrURL.find("'");
+    if (separatorPos != std::string::npos) {
+        pathOrURL = std::string(std::string(test), 0, separatorPos);
+        expectedPixelHash = std::string(std::string(test), separatorPos + 1);
     }
 
     m_state = RunningTest;
 
     m_currentInvocation = adoptPtr(new TestInvocation(pathOrURL));
-    if (dumpPixelsTest)
+    if (m_dumpPixels)
         m_currentInvocation->setIsPixelTest(expectedPixelHash);
 
     m_currentInvocation->invoke();

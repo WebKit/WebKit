@@ -82,7 +82,7 @@ public:
     void setGraphicsBased(bool flag) { m_graphicsBased = flag; }
     bool isGraphicsBased() { return m_graphicsBased; }
 
-    void setDumpPixelsForAllTests(bool);
+    void setDumpPixels(bool);
 
     void closeRemainingWindows();
     void resetToConsistentStateBeforeTesting(const QUrl&);
@@ -142,8 +142,7 @@ private:
     QString dumpFrameScrollPosition(QWebFrame* frame);
     LayoutTestController *m_controller;
 
-    bool m_dumpPixelsForAllTests;
-    bool m_dumpPixelsForCurrentTest;
+    bool m_dumpPixels;
     QString m_expectedHash;
     QStringList m_standAloneModeTestList;
 

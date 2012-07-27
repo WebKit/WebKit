@@ -227,14 +227,6 @@ layer at (0,0) size 800x34
     tests.add('perf/foo/test.html')
     tests.add('perf/foo/test-ref.html')
 
-    # For testing --pixel-test-directories.
-    tests.add('failures/unexpected/pixeldir/image_in_pixeldir.html',
-        actual_image='image_in_pixeldir-pngtEXtchecksum\x00checksum_fail',
-        expected_image='image_in_pixeldir-pngtEXtchecksum\x00checksum-png')
-    tests.add('failures/unexpected/image_not_in_pixeldir.html',
-        actual_image='image_not_in_pixeldir-pngtEXtchecksum\x00checksum_fail',
-        expected_image='image_not_in_pixeldir-pngtEXtchecksum\x00checksum-png')
-
     return tests
 
 
@@ -512,11 +504,6 @@ class TestPort(Port):
             VirtualTestSuite('virtual/passes', 'passes', ['--virtual-arg']),
             VirtualTestSuite('virtual/skipped', 'failures/expected', ['--virtual-arg2']),
         ]
-
-    def supports_switching_pixel_tests_per_test(self):
-        # Let it true so we can test the --pixel-test-directory option.
-        return True
-
 
 class TestDriver(Driver):
     """Test/Dummy implementation of the DumpRenderTree interface."""

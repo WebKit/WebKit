@@ -298,7 +298,7 @@ class Driver(object):
 
         cmd.extend(self._port.get_option('additional_drt_flag', []))
 
-        if pixel_tests and not self._port.supports_switching_pixel_tests_per_test():
+        if pixel_tests:
             cmd.append('--pixel-tests')
         cmd.extend(per_test_args)
 
@@ -338,14 +338,8 @@ class Driver(object):
             if sys.platform == 'cygwin':
                 command = path.cygpath(command)
 
-        assert not driver_input.image_hash or driver_input.should_run_pixel_test
-
-        if driver_input.should_run_pixel_test:
-            if self._port.supports_switching_pixel_tests_per_test():
-                # We did not start the driver with --pixel-tests, instead we specify it per test.
-                # "'" is the separator of command fields.
-                command += "'" + '--pixel-test'
         if driver_input.image_hash:
+            # "'" is the separator of command fields.
             command += "'" + driver_input.image_hash
         return command + "\n"
 

@@ -388,7 +388,7 @@ WebViewGraphicsBased::WebViewGraphicsBased(QWidget* parent)
 }
 
 DumpRenderTree::DumpRenderTree()
-    : m_dumpPixelsForAllTests(false)
+    : m_dumpPixels(false)
     , m_stdin(0)
     , m_enableTextOutput(false)
     , m_standAloneMode(false)
@@ -606,7 +606,7 @@ void DumpRenderTree::open(const QUrl& url)
 
     if (isDumpAsTextTest(url)) {
         layoutTestController()->dumpAsText();
-        setDumpPixelsForAllTests(false);
+        setDumpPixels(false);
     }
 
     if (isGlobalHistoryTest(url))
@@ -692,24 +692,14 @@ void DumpRenderTree::processLine(const QString &input)
 {
     QString line = input;
 
-    m_dumpPixelsForCurrentTest = false;
     m_expectedHash = QString();
-    // single quote marks the pixel dump hash
-    int indexOfFirstSeparator = line.indexOf('\'');
-    int indexOfSecondSeparator = line.indexOf('\'', indexOfFirstSeparator);
-    if (indexOfFirstSeparator > -1) {
-        int indexOfPixelHash = indexOfFirstSeparator + 1;
-
-        // NRWT passes --pixel-test if we should dump pixels for the test.
-        const QString expectedArg(QLatin1String("--pixel-test"));
-        QString argTest = line.mid(indexOfFirstSeparator + 1, expectedArg.length());
-        if (argTest == expectedArg) {
-            m_dumpPixelsForCurrentTest = true;
-            indexOfPixelHash = indexOfSecondSeparator == -1 ? -1 : indexOfSecondSeparator + 1;
+    if (m_dumpPixels) {
+        // single quote marks the pixel dump hash
+        int i = line.indexOf('\'');
+        if (i > -1) {
+            m_expectedHash = line.mid(i + 1, line.length());
+            line.remove(i, line.length());
         }
-        if (indexOfPixelHash != -1 && indexOfPixelHash < line.size())
-            m_expectedHash = line.mid(indexOfPixelHash);
-        line.remove(indexOfFirstSeparator, line.length());
     }
 
     if (line.startsWith(QLatin1String("http:"))
@@ -741,9 +731,9 @@ void DumpRenderTree::processLine(const QString &input)
     fflush(stdout);
 }
 
-void DumpRenderTree::setDumpPixelsForAllTests(bool dump)
+void DumpRenderTree::setDumpPixels(bool dump)
 {
-    m_dumpPixelsForAllTests = dump;
+    m_dumpPixels = dump;
 }
 
 void DumpRenderTree::closeRemainingWindows()
@@ -961,7 +951,7 @@ void DumpRenderTree::dump()
     fputs("#EOF\n", stdout);
     fputs("#EOF\n", stderr);
 
-    if ((m_dumpPixelsForAllTests || m_dumpPixelsForCurrentTest) && !m_controller->shouldDumpAsText()) {
+    if (m_dumpPixels && !m_controller->shouldDumpAsText()) {
         QImage image;
         if (!m_controller->isPrinting()) {
             image = QImage(m_page->viewportSize(), QImage::Format_ARGB32);

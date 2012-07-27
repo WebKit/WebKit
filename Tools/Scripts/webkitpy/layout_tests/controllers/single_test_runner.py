@@ -78,7 +78,10 @@ class SingleTestRunner(object):
                                  self._port.expected_audio(self._test_name))
 
     def _should_fetch_expected_checksum(self):
-        return self._should_run_pixel_test and not (self._options.new_baseline or self._options.reset_results)
+        if not self._should_run_pixel_test:
+            return False
+        return (self._options.pixel_tests and
+                not (self._options.new_baseline or self._options.reset_results))
 
     def _driver_input(self):
         # The image hash is used to avoid doing an image dump if the
@@ -150,7 +153,7 @@ class SingleTestRunner(object):
         location = self.VERSION_DIR if self._options.add_platform_exceptions else self.UPDATE
         self._save_baseline_data(driver_output.text, '.txt', location)
         self._save_baseline_data(driver_output.audio, '.wav', location)
-        if self._should_run_pixel_test:
+        if self._options.pixel_tests:
             self._save_baseline_data(driver_output.image, '.png', location)
 
     def _save_baseline_data(self, data, extension, location):
@@ -219,7 +222,7 @@ class SingleTestRunner(object):
 
         failures.extend(self._compare_text(driver_output.text, expected_driver_output.text))
         failures.extend(self._compare_audio(driver_output.audio, expected_driver_output.audio))
-        if self._should_run_pixel_test:
+        if self._options.pixel_tests:
             failures.extend(self._compare_image(driver_output, expected_driver_output))
         return TestResult(self._test_name, failures, driver_output.test_time, driver_output.has_stderr())
 
