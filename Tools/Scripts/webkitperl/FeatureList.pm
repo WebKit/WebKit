@@ -92,6 +92,7 @@ my (
     $linkPrefetchSupport,
     $linkPrerenderSupport,
     $mathmlSupport,
+    $mediaCaptureSupport,
     $mediaSourceSupport,
     $mediaStatisticsSupport,
     $mediaStreamSupport,
@@ -282,6 +283,9 @@ my @features = (
 
     { option => "mathml", desc => "Toggle MathML support",
       define => "ENABLE_MATHML", default => 1, value => \$mathmlSupport },
+
+    { option => "media-capture", desc => "Toggle Media Capture support",
+      define => "ENABLE_MEDIA_CAPTURE", default => isEfl(), value => \$mediaCaptureSupport },
 
     { option => "media-source", desc => "Toggle Media Source support",
       define => "ENABLE_MEDIA_SOURCE", default => 0, value => \$mediaSourceSupport },

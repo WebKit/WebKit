@@ -1,3 +1,15 @@
+2012-07-27  Kihong Kwon  <kihong.kwon@samsung.com>
+
+        [EFL] Support for HTML media capture
+        https://bugs.webkit.org/show_bug.cgi?id=91842
+
+        Reviewed by Ryosuke Niwa.
+
+        Add HTML media capture feature to the feature list.
+        In addition, enable that on the Efl port.
+
+        * Scripts/webkitperl/FeatureList.pm:
+
 2012-07-27  Dirk Pranke  <dpranke@chromium.org>
 
         "webkit-patch rebaseline <test>" fails with exit_code 1
