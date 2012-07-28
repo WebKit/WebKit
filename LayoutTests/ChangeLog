@@ -1,5 +1,14 @@
 2012-07-28  Peter Kasting  <pkasting@google.com>
 
+        [Chromium] Widen expectation for crashing test.
+        http://crbug.com/139493
+
+        Unreviewed, test expectations update.
+
+        * platform/chromium/TestExpectations:
+
+2012-07-28  Peter Kasting  <pkasting@google.com>
+
         [Chromium] Rebaselining and test expectations update.
         https://bugs.webkit.org/show_bug.cgi?id=77188
         https://bugs.webkit.org/show_bug.cgi?id=85856
