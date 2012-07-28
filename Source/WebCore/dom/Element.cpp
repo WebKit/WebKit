@@ -640,7 +640,7 @@ const AtomicString& Element::getAttribute(const AtomicString& name) const
     return nullAtom;
 }
 
-const AtomicString& Element::getAttributeNS(const String& namespaceURI, const String& localName) const
+const AtomicString& Element::getAttributeNS(const AtomicString& namespaceURI, const AtomicString& localName) const
 {
     return getAttribute(QualifiedName(nullAtom, localName, namespaceURI));
 }

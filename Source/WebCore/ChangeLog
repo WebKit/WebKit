@@ -1,3 +1,55 @@
+2012-07-27  Kentaro Hara  <haraken@chromium.org>
+
+        [V8] Optimize Element::getAttributeNS() by replacing String with AtomicString
+        https://bugs.webkit.org/show_bug.cgi?id=90276
+
+        Reviewed by Adam Barth.
+
+        In r121439, we changed the argument type of Element::getAttribute()
+        from String to AtomicString for optimization. This patch changes the
+        argument type of Element::getAttributeNS() from String to AtomicString.
+
+        Actually this change affects V8 performance only.
+
+        [JSC without the patch]
+        The binding code converts a given JavaScript string to a String
+        -> the String is passed to getAttributeNS()
+        -> the String is converted to an AtomicString when it is passed to
+        QualifiedName() constructor.
+
+        [JSC with the patch]
+        The binding code converts a given JavaScript string to a String
+        -> the String is converted to an AtomicString when it is passed to
+        getAttributeNS()
+        -> the AtomicString is passed to QualifiedName() constructor.
+
+        [V8 without the patch]
+        The binding code retrieves a cached external String for a given
+        JavaScript string
+        -> the String is passed to getAttributeNS()
+        -> the String is converted to AtomicString when it is passed to
+        QualifiedName() constructor.
+
+        [V8 with the patch]
+        The binding code retrieves a cached external AtomicString for a given
+        JavaScript string
+        -> the AtomicString is passed to getAttributeNS()
+        -> the AtomicString is passed to QualifiedName() constructor.
+
+        In this way, in JSC, the change affects where a String is converted to
+        an AtomicString. On the other hand, in V8, (since the AtomicString is already
+        cached,) we can skip the conversion step.
+
+        Performance test: https://bugs.webkit.org/attachment.cgi?id=150158
+
+        getAttributeNS (Chromium/Linux):
+        577.80ms => 454.60ms
+
+        * dom/Element.cpp:
+        (WebCore::Element::getAttributeNS):
+        * dom/Element.h:
+        (Element):
+
 2012-07-27  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r123679.

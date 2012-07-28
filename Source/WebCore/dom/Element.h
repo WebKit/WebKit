@@ -143,7 +143,7 @@ public:
     bool hasAttributeNS(const String& namespaceURI, const String& localName) const;
 
     const AtomicString& getAttribute(const AtomicString& name) const;
-    const AtomicString& getAttributeNS(const String& namespaceURI, const String& localName) const;
+    const AtomicString& getAttributeNS(const AtomicString& namespaceURI, const AtomicString& localName) const;
 
     void setAttribute(const AtomicString& name, const AtomicString& value, ExceptionCode&);
     static bool parseAttributeName(QualifiedName&, const AtomicString& namespaceURI, const AtomicString& qualifiedName, ExceptionCode&);
