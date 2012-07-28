@@ -1,0 +1,65 @@
+<style>
+  .composited {
+    -webkit-transform: translateZ(0);
+  }
+  
+  .box {
+    width: 100px;
+    height: 100px;
+    background-color: blue;
+  }
+  
+  img {
+    background-color: black;
+    width: 50px;
+    height: 50px;
+  }
+  
+  img.to-visible {
+      visibility: hidden;
+  }
+  body.changed img.to-visible {
+      visibility: visible;
+  }
+
+  img.to-hidden {
+      visibility: visible;
+  }
+  body.changed img.to-hidden {
+      visibility: hidden;
+  }
+  
+  #layers {
+      opacity: 0; /* hide from pixel result */
+  }
+</style>
+<script>
+    if (window.testRunner) {
+        testRunner.dumpAsText(true);
+        testRunner.waitUntilDone();
+    }
+
+    function doTest()
+    {
+        window.setTimeout(function() {
+            document.body.classList.add('changed');
+            if (window.testRunner) {
+                document.getElementById('layers').innerText = testRunner.layerTreeAsText();
+                testRunner.notifyDone();
+            }
+        }, 0);
+    }
+    window.addEventListener('load', doTest, false);
+</script>
+<body>
+    <div style="position: absolute; left: 0px; top: 0px; z-index: 106; " class="composited">
+        <img style="position: absolute; left: 10px; top: 10px; z-index: 0;">
+        <img style="position: absolute; left: 500px; top: 200px; z-index: 0;" class="to-visible">
+    </div>
+
+    <div style="position: absolute; left: 0px; top: 250px; z-index: 106; " class="composited">
+        <img style="position: absolute; left: 10px; top: 10px; z-index: 0;">
+        <img style="position: absolute; left: 500px; top: 200px; z-index: 0;" class="to-hidden">
+    </div>
+<pre id="layers">Layer tree goes here in DRT</pre>
+</body>

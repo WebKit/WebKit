@@ -1,3 +1,27 @@
+2012-07-28  Simon Fraser  <simon.fraser@apple.com>
+
+        Ignore visibility:hidden elements when computing compositing layer bounds
+        https://bugs.webkit.org/show_bug.cgi?id=92569
+
+        Reviewed by Dan Bernstein.
+
+        Tests related to visibility:hidden's affect on composited layer bounds.
+
+        * compositing/geometry/bounds-ignores-hidden-composited-expected.txt: Added.
+        * compositing/geometry/bounds-ignores-hidden-composited-descendant.html: Added.
+        Test with visibility:visible descendants of a visibility:hidden element in a
+        compositing layer.
+
+        * compositing/geometry/bounds-ignores-hidden-dynamic-expected.txt: Added.
+        * compositing/geometry/bounds-ignores-hidden-dynamic.html: Added.
+        Test that changes visibility on descendants of a compositing layer, to test dynamic changes.
+
+        * compositing/geometry/bounds-ignores-hidden-expected.txt: Added.
+        * compositing/geometry/bounds-ignores-hidden.html: Added.
+        Test with a compositing layer having visibility:hidden descendants, which dumps
+        layer tree information.
+
+
 2012-07-28  Peter Kasting  <pkasting@google.com>
 
         [Chromium] Widen expectation for crashing test.

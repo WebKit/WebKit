@@ -4226,6 +4226,10 @@ IntRect RenderLayer::calculateLayerBounds(const RenderLayer* layer, const Render
     if (!layer->isSelfPaintingLayer())
         return IntRect();
 
+    // FIXME: This could be improved to do a check like hasVisibleNonCompositingDescendantLayers() (bug 92580).
+    if ((flags & ExcludeHiddenDescendants) && layer != ancestorLayer && !layer->hasVisibleContent() && !layer->hasVisibleDescendant())
+        return IntRect();
+
     LayoutRect boundingBoxRect = layer->localBoundingBox();
     if (layer->renderer()->isBox())
         layer->renderBox()->flipForWritingMode(boundingBoxRect);
@@ -4260,11 +4264,14 @@ IntRect RenderLayer::calculateLayerBounds(const RenderLayer* layer, const Render
         }
     }
 
+    // FIXME: should probably just pass 'flags' down to descendants.
+    CalculateLayerBoundsFlags descendantFlags = DefaultCalculateLayerBoundsFlags | (flags & ExcludeHiddenDescendants);
+
     const_cast<RenderLayer*>(layer)->updateLayerListsIfNeeded();
 
     if (RenderLayer* reflection = layer->reflectionLayer()) {
         if (!reflection->isComposited()) {
-            IntRect childUnionBounds = calculateLayerBounds(reflection, layer);
+            IntRect childUnionBounds = calculateLayerBounds(reflection, layer, descendantFlags);
             unionBounds.unite(childUnionBounds);
         }
     }
@@ -4280,7 +4287,7 @@ IntRect RenderLayer::calculateLayerBounds(const RenderLayer* layer, const Render
         for (size_t i = 0; i < listSize; ++i) {
             RenderLayer* curLayer = negZOrderList->at(i);
             if (!curLayer->isComposited()) {
-                IntRect childUnionBounds = calculateLayerBounds(curLayer, layer);
+                IntRect childUnionBounds = calculateLayerBounds(curLayer, layer, descendantFlags);
                 unionBounds.unite(childUnionBounds);
             }
         }
@@ -4291,7 +4298,7 @@ IntRect RenderLayer::calculateLayerBounds(const RenderLayer* layer, const Render
         for (size_t i = 0; i < listSize; ++i) {
             RenderLayer* curLayer = posZOrderList->at(i);
             if (!curLayer->isComposited()) {
-                IntRect childUnionBounds = calculateLayerBounds(curLayer, layer);
+                IntRect childUnionBounds = calculateLayerBounds(curLayer, layer, descendantFlags);
                 unionBounds.unite(childUnionBounds);
             }
         }
@@ -4302,7 +4309,7 @@ IntRect RenderLayer::calculateLayerBounds(const RenderLayer* layer, const Render
         for (size_t i = 0; i < listSize; ++i) {
             RenderLayer* curLayer = normalFlowList->at(i);
             if (!curLayer->isComposited()) {
-                IntRect curAbsBounds = calculateLayerBounds(curLayer, layer);
+                IntRect curAbsBounds = calculateLayerBounds(curLayer, layer, descendantFlags);
                 unionBounds.unite(curAbsBounds);
             }
         }
