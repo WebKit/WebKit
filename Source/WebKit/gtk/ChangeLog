@@ -1,3 +1,24 @@
+2012-07-28  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        [GTK] Add a new and reusable enchant-based spellchecker in WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=90269
+
+        Reviewed by Martin Robinson.
+
+        Remove enchant specific code from WebKitSpellCheckerEnchant and
+        implement it relying in the new TextCheckerEnchant class in WebCore.
+
+        * webkit/webkitspellcheckerenchant.cpp:
+        (_WebKitSpellCheckerEnchantPrivate):
+        (webkit_spell_checker_enchant_finalize):
+        (webkit_spell_checker_enchant_class_init):
+        (webkit_spell_checker_enchant_init):
+        (checkSpellingOfString):
+        (getGuessesForWord):
+        (updateSpellCheckingLanguages):
+        (learnWord):
+        (ignoreWord):
+
 2012-07-26  Kaustubh Atrawalkar  <kaustubh@motorola.com>
 
         [DRT] LTC:: pageNumberForElementById() could be moved to Internals
