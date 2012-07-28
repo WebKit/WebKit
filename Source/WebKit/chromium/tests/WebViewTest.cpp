@@ -242,7 +242,8 @@ TEST_F(WebViewTest, AutoResizeHeightOverflowAndFixedWidth)
                    expectedWidth, expectedHeight, NoHorizontalScrollbar, VisibleVerticalScrollbar);
 }
 
-TEST_F(WebViewTest, AutoResizeFixedHeightAndWidthOverflow)
+// Disabled for https://bugs.webkit.org/show_bug.cgi?id=92318
+TEST_F(WebViewTest, DISABLED_AutoResizeFixedHeightAndWidthOverflow)
 {
     WebSize minAutoResize(90, 100);
     WebSize maxAutoResize(200, 100);
@@ -254,8 +255,7 @@ TEST_F(WebViewTest, AutoResizeFixedHeightAndWidthOverflow)
                    expectedWidth, expectedHeight, VisibleHorizontalScrollbar, NoVerticalScrollbar);
 }
 
-// Disabled for https://bugs.webkit.org/show_bug.cgi?id=92318
-TEST_F(WebViewTest, DISABLED_AutoResizeInBetweenSizes)
+TEST_F(WebViewTest, AutoResizeInBetweenSizes)
 {
     WebSize minAutoResize(90, 95);
     WebSize maxAutoResize(200, 300);
@@ -267,8 +267,7 @@ TEST_F(WebViewTest, DISABLED_AutoResizeInBetweenSizes)
                    expectedWidth, expectedHeight, NoHorizontalScrollbar, NoVerticalScrollbar);
 }
 
-// Disabled for https://bugs.webkit.org/show_bug.cgi?id=92318
-TEST_F(WebViewTest, DISABLED_AutoResizeOverflowSizes)
+TEST_F(WebViewTest, AutoResizeOverflowSizes)
 {
     WebSize minAutoResize(90, 95);
     WebSize maxAutoResize(200, 300);
