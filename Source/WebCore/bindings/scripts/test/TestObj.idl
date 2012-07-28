@@ -189,6 +189,8 @@ module test {
         [Conditional=Condition1] static void overloadedMethod1(in long arg);
         [Conditional=Condition1] static void overloadedMethod1(in DOMString type);
 
+        void classMethodWithClamp(in [Clamp] unsigned short objArgsShort, in [Clamp] unsigned long objArgsLong);
+
 #if defined(TESTING_V8)
         // 'V8EnabledAtRuntime' methods and attributes.
         [V8EnabledAtRuntime] void enabledAtRuntimeMethod1(in long longArg);

@@ -1722,6 +1722,24 @@ static v8::Handle<v8::Value> overloadedMethod1Callback(const v8::Arguments& args
 
 #endif // ENABLE(Condition1)
 
+static v8::Handle<v8::Value> classMethodWithClampCallback(const v8::Arguments& args)
+{
+    INC_STATS("DOM.TestObj.classMethodWithClamp");
+    if (args.Length() < 2)
+        return V8Proxy::throwNotEnoughArgumentsError(args.GetIsolate());
+    TestObj* imp = V8TestObj::toNative(args.Holder());
+    unsigned short objArgsShort = 0
+    EXCEPTION_BLOCK(double, objArgsShortNativeValue, args[0]->NumberValue());
+    if (!isnan(objArgsShortNativeValue))
+        objArgsShort = clampTo<unsigned short>(objArgsShortNativeValue);
+    unsigned long objArgsLong = 0
+    EXCEPTION_BLOCK(double, objArgsLongNativeValue, args[1]->NumberValue());
+    if (!isnan(objArgsLongNativeValue))
+        objArgsLong = clampTo<unsigned long>(objArgsLongNativeValue);
+    imp->classMethodWithClamp(objArgsShort, objArgsLong);
+    return v8::Handle<v8::Value>();
+}
+
 static v8::Handle<v8::Value> enabledAtRuntimeMethod1Callback(const v8::Arguments& args)
 {
     INC_STATS("DOM.TestObj.enabledAtRuntimeMethod1");
@@ -2068,6 +2086,7 @@ static const BatchedCallback TestObjCallbacks[] = {
     {"conditionalMethod3", TestObjV8Internal::conditionalMethod3Callback},
 #endif
     {"overloadedMethod", TestObjV8Internal::overloadedMethodCallback},
+    {"classMethodWithClamp", TestObjV8Internal::classMethodWithClampCallback},
     {"stringArrayFunction", TestObjV8Internal::stringArrayFunctionCallback},
     {"getSVGDocument", TestObjV8Internal::getSVGDocumentCallback},
     {"mutablePointFunction", TestObjV8Internal::mutablePointFunctionCallback},

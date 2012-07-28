@@ -1,3 +1,34 @@
+2012-07-28  Vineet Chaudhary  <rgf748@motorola.com>
+
+        [Clamp] support in binding generator.
+        https://bugs.webkit.org/show_bug.cgi?id=77605
+
+        Reviewed by Kentaro Hara.
+
+        Currently [Clamp] extended attribute in IDL files.
+        Spec: http://www.w3.org/TR/2012/CR-WebIDL-20120419/#Clamp
+
+        Tests: TestObj.idl
+
+        * bindings/scripts/CodeGeneratorCPP.pm:
+        (SkipFunction): Skips methods with [Clamp] parameters.
+        * bindings/scripts/CodeGeneratorGObject.pm:
+        (SkipFunction): Skips methods with [Clamp] parameters.
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateParametersCheck): Support [Clamp] for JSBindings.
+        * bindings/scripts/CodeGeneratorObjC.pm:
+        (SkipFunction): Skips methods with [Clamp] parameters.
+        * bindings/scripts/CodeGeneratorV8.pm:
+        (GenerateParametersCheck): Support [Clamp] for V8Bindings.
+        * bindings/scripts/IDLAttributes.txt: Added [Clamp] to attributes list.
+        * bindings/scripts/test/JS/JSTestObj.cpp: Test.
+        (WebCore::jsTestObjPrototypeFunctionClassMethodWithClamp):
+        * bindings/scripts/test/JS/JSTestObj.h:
+        * bindings/scripts/test/TestObj.idl:
+        * bindings/scripts/test/V8/V8TestObj.cpp:
+        (WebCore::TestObjV8Internal::classMethodWithClampCallback):
+        (TestObjV8Internal):
+
 2012-07-27  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r123908.

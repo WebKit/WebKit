@@ -206,6 +206,7 @@ sub SkipFunction
 
     foreach my $param (@{$function->parameters}) {
         return 1 if $codeGenerator->GetSequenceType($param->type);
+        return 1 if $param->extendedAttributes->{"Clamp"};
     }
 
     # FIXME: This is typically used to add script execution state arguments to the method.

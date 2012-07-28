@@ -457,6 +457,7 @@ sub SkipFunction
     foreach my $param (@{$function->parameters}) {
         return 1 if $codeGenerator->GetSequenceType($param->type);
         return 1 if $codeGenerator->GetArrayType($param->type);
+        return 1 if $param->extendedAttributes->{"Clamp"};
     }
 
     return 0;

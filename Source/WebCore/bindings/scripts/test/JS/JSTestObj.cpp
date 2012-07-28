@@ -305,6 +305,7 @@ static const HashTableValue JSTestObjPrototypeTableValues[] =
     { "conditionalMethod3", DontDelete | JSC::Function, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionConditionalMethod3), (intptr_t)0, NoIntrinsic },
 #endif
     { "overloadedMethod", DontDelete | JSC::Function, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionOverloadedMethod), (intptr_t)2, NoIntrinsic },
+    { "classMethodWithClamp", DontDelete | JSC::Function, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionClassMethodWithClamp), (intptr_t)2, NoIntrinsic },
     { "methodWithUnsignedLongSequence", DontDelete | JSC::Function, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionMethodWithUnsignedLongSequence), (intptr_t)1, NoIntrinsic },
     { "stringArrayFunction", DontDelete | JSC::Function, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionStringArrayFunction), (intptr_t)1, NoIntrinsic },
     { "getSVGDocument", DontDelete | JSC::Function, (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionGetSVGDocument), (intptr_t)0, NoIntrinsic },
@@ -2344,6 +2345,36 @@ EncodedJSValue JSC_HOST_CALL jsTestObjConstructorFunctionOverloadedMethod1(ExecS
 }
 
 #endif
+
+EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionClassMethodWithClamp(ExecState* exec)
+{
+    JSValue thisValue = exec->hostThisValue();
+    if (!thisValue.inherits(&JSTestObj::s_info))
+        return throwVMTypeError(exec);
+    JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(thisValue));
+    ASSERT_GC_OBJECT_INHERITS(castedThis, &JSTestObj::s_info);
+    TestObj* impl = static_cast<TestObj*>(castedThis->impl());
+    if (exec->argumentCount() < 2)
+        return throwVMError(exec, createNotEnoughArgumentsError(exec));
+    unsigned short objArgsShort = 0;
+    double objArgsShortNativeValue = exec->argument(0).toNumber(exec);
+    if (exec->hadException())
+        return JSValue::encode(jsUndefined());
+
+    if (!isnan(objArgsShortNativeValue))
+        objArgsShort = clampTo<unsigned short>(objArgsShortNativeValue);
+
+    unsigned long objArgsLong = 0;
+    double objArgsLongNativeValue = exec->argument(1).toNumber(exec);
+    if (exec->hadException())
+        return JSValue::encode(jsUndefined());
+
+    if (!isnan(objArgsShortNativeValue))
+        objArgsLong = clampTo<unsigned long>(objArgsLongNativeValue);
+
+    impl->classMethodWithClamp(objArgsShort, objArgsLong);
+    return JSValue::encode(jsUndefined());
+}
 
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithUnsignedLongSequence(ExecState* exec)
 {

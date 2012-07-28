@@ -2607,6 +2607,14 @@ sub GenerateParametersCheck
                 push(@$outputArray, "    }\n");
                 push(@$outputArray, "    RefPtr<$argType> $name = ${callbackClassName}::create(asObject(exec->argument($argsIndex)), castedThis->globalObject());\n");
             }
+        } elsif ($parameter->extendedAttributes->{"Clamp"}) {
+                my $nativeValue = "${name}NativeValue";
+                push(@$outputArray, "    $argType $name = 0;\n");
+                push(@$outputArray, "    double $nativeValue = exec->argument($argsIndex).toNumber(exec);\n");
+                push(@$outputArray, "    if (exec->hadException())\n");
+                push(@$outputArray, "        return JSValue::encode(jsUndefined());\n\n");
+                push(@$outputArray, "    if (!isnan(objArgsShortNativeValue))\n");
+                push(@$outputArray, "        $name = clampTo<$argType>($nativeValue);\n\n");
         } else {
             # If the "StrictTypeChecking" extended attribute is present, and the argument's type is an
             # interface type, then if the incoming value does not implement that interface, a TypeError

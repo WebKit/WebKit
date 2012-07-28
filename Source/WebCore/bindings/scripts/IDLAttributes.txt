@@ -25,6 +25,7 @@ CallWith=ScriptExecutionContext|ScriptState|ScriptArguments|CallStack
 Callback
 CheckSecurity
 CheckSecurityForNode
+Clamp
 Conditional=*
 Constructor
 ConstructorParameters=*

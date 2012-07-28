@@ -1680,6 +1680,13 @@ sub GenerateParametersCheck
                 $parameterCheckString .= "        return throwError(TYPE_MISMATCH_ERR, args.GetIsolate());\n";
                 $parameterCheckString .= "    RefPtr<" . $parameter->type . "> $parameterName = ${className}::create(args[$paramIndex], getScriptExecutionContext());\n";
             }
+        } elsif ($parameter->extendedAttributes->{"Clamp"}) {
+                my $nativeValue = "${parameterName}NativeValue";
+                my $paramType = $parameter->type;
+                $parameterCheckString .= "    $paramType $parameterName = 0\n";
+                $parameterCheckString .= "    EXCEPTION_BLOCK(double, $nativeValue, args[$paramIndex]->NumberValue());\n";
+                $parameterCheckString .= "    if (!isnan($nativeValue))\n";
+                $parameterCheckString .= "        $parameterName = clampTo<$paramType>($nativeValue);\n";
         } elsif ($parameter->type eq "SerializedScriptValue") {
             AddToImplIncludes("SerializedScriptValue.h");
             my $useTransferList = 0;

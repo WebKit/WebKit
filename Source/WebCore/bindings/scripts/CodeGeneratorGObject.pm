@@ -247,6 +247,7 @@ sub SkipFunction {
     # code generator doesn't know how to auto-generate MediaQueryListListener or sequence<T>.
     foreach my $param (@{$function->parameters}) {
         if ($param->extendedAttributes->{"Callback"} ||
+            $param->extendedAttributes->{"Clamp"} ||
             $param->type eq "MediaQueryListListener" ||
             $codeGenerator->GetSequenceType($param->type)) {
             return 1;
