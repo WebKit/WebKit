@@ -56,7 +56,7 @@ public:
     IceCandidateDescriptor* descriptor();
 
 private:
-    IceCandidate(PassRefPtr<IceCandidateDescriptor>);
+    explicit IceCandidate(PassRefPtr<IceCandidateDescriptor>);
 
     RefPtr<IceCandidateDescriptor> m_descriptor;
 };

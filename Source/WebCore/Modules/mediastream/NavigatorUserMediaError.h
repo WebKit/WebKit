@@ -49,7 +49,7 @@ public:
     ErrorCode code() const { return m_code; }
 
 private:
-    NavigatorUserMediaError(ErrorCode code) : m_code(code) { }
+    explicit NavigatorUserMediaError(ErrorCode code) : m_code(code) { }
 
     ErrorCode m_code;
 };

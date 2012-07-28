@@ -37,7 +37,7 @@ class BiquadProcessor;
 
 class BiquadDSPKernel : public AudioDSPKernel {
 public:  
-    BiquadDSPKernel(BiquadProcessor* processor)
+    explicit BiquadDSPKernel(BiquadProcessor* processor)
     : AudioDSPKernel(processor)
     {
     }

@@ -67,7 +67,7 @@ public:
     
 protected:
     AudioBuffer(unsigned numberOfChannels, size_t numberOfFrames, float sampleRate);
-    AudioBuffer(AudioBus* bus);
+    explicit AudioBuffer(AudioBus*);
 
     double m_gain; // scalar gain
     float m_sampleRate;

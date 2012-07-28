@@ -55,7 +55,7 @@ public:
     unsigned long long size() const { return static_cast<unsigned long long>(m_platformMetadata.length); }
 
 private:
-    Metadata(const FileMetadata& platformMetadata)
+    explicit Metadata(const FileMetadata& platformMetadata)
         : m_platformMetadata(platformMetadata)
     {
     }

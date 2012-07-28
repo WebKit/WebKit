@@ -38,7 +38,7 @@ class AudioNodeOutput;
 
 class AudioSummingJunction {
 public:
-    AudioSummingJunction(AudioContext*);
+    explicit AudioSummingJunction(AudioContext*);
     virtual ~AudioSummingJunction();
 
     // Can be called from any thread.

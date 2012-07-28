@@ -51,7 +51,7 @@ public:
     static SpeechRecognitionController* from(Page* page) { return static_cast<SpeechRecognitionController*>(Supplement<Page>::from(page, supplementName())); }
 
 private:
-    SpeechRecognitionController(SpeechRecognitionClient*);
+    explicit SpeechRecognitionController(SpeechRecognitionClient*);
 
     SpeechRecognitionClient* m_client;
 };

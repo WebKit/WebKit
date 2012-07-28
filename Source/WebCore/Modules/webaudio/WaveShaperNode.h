@@ -44,7 +44,7 @@ public:
     Float32Array* curve();
 
 private:    
-    WaveShaperNode(AudioContext*);    
+    explicit WaveShaperNode(AudioContext*);    
 
     WaveShaperProcessor* waveShaperProcessor() { return static_cast<WaveShaperProcessor*>(processor()); }
 };

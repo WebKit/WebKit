@@ -109,7 +109,7 @@ private:
         }
 
     private:
-        SuccessCallbackImpl(HelperType* helper)
+        explicit SuccessCallbackImpl(HelperType* helper)
             : m_helper(helper)
         {
         }
@@ -131,7 +131,7 @@ private:
         }
 
     private:
-        ErrorCallbackImpl(HelperType* helper)
+        explicit ErrorCallbackImpl(HelperType* helper)
             : m_helper(helper)
         {
         }

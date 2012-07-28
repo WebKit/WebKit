@@ -64,7 +64,7 @@ public:
     float sampleRate() const { return m_sampleRate; }
 
 private:
-    WaveTable(float sampleRate);
+    explicit WaveTable(float sampleRate);
 
     void generateBasicWaveform(int);
 

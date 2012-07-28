@@ -1,3 +1,79 @@
+2012-07-27  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Change constructor with explicit constructor in WebCore/Modules
+        https://bugs.webkit.org/show_bug.cgi?id=92529
+
+        Reviewed by Kentaro Hara.
+
+        As a step to let *explicit* keyword add to constructors which have a parameter,
+        *explicit* keyword is added to Source/WebCore/Modules in order to avoid implicit
+        type conversion.
+
+        No new tests. Covered by existing tests.
+
+        * Modules/filesystem/LocalFileSystem.h:
+        (WebCore::LocalFileSystem::LocalFileSystem):
+        * Modules/filesystem/Metadata.h:
+        (WebCore::Metadata::Metadata):
+        * Modules/filesystem/SyncCallbackHelper.h:
+        (WebCore::SyncCallbackHelper::SuccessCallbackImpl::SuccessCallbackImpl):
+        (WebCore::SyncCallbackHelper::ErrorCallbackImpl::ErrorCallbackImpl):
+        * Modules/mediastream/IceCandidate.h:
+        (IceCandidate):
+        * Modules/mediastream/NavigatorUserMediaError.h:
+        (WebCore::NavigatorUserMediaError::NavigatorUserMediaError):
+        * Modules/mediastream/SessionDescription.h:
+        (SessionDescription):
+        * Modules/mediastream/UserMediaController.h:
+        (UserMediaController):
+        * Modules/notifications/NotificationController.h:
+        (NotificationController):
+        * Modules/speech/SpeechRecognition.h:
+        (SpeechRecognition):
+        * Modules/speech/SpeechRecognitionController.h:
+        (SpeechRecognitionController):
+        * Modules/speech/SpeechRecognitionEvent.h:
+        (SpeechRecognitionEvent):
+        * Modules/speech/SpeechRecognitionResultList.h:
+        (SpeechRecognitionResultList):
+        * Modules/vibration/Vibration.h:
+        (Vibration):
+        * Modules/webaudio/AudioBuffer.h:
+        (AudioBuffer):
+        * Modules/webaudio/AudioContext.h:
+        (AudioContext):
+        * Modules/webaudio/AudioNodeInput.h:
+        (AudioNodeInput):
+        * Modules/webaudio/AudioSummingJunction.h:
+        (AudioSummingJunction):
+        * Modules/webaudio/BiquadDSPKernel.h:
+        (WebCore::BiquadDSPKernel::BiquadDSPKernel):
+        * Modules/webaudio/DefaultAudioDestinationNode.h:
+        (DefaultAudioDestinationNode):
+        * Modules/webaudio/DelayDSPKernel.h:
+        (DelayDSPKernel):
+        * Modules/webaudio/OfflineAudioCompletionEvent.h:
+        (OfflineAudioCompletionEvent):
+        * Modules/webaudio/WaveShaperDSPKernel.h:
+        (WebCore::WaveShaperDSPKernel::WaveShaperDSPKernel):
+        * Modules/webaudio/WaveShaperNode.h:
+        (WaveShaperNode):
+        * Modules/webaudio/WaveTable.h:
+        (WaveTable):
+        * Modules/webdatabase/DatabaseAuthorizer.h:
+        (DatabaseAuthorizer):
+        * Modules/webdatabase/DatabaseTask.h:
+        (Database::DatabaseTransactionTask):
+        * Modules/webdatabase/DatabaseTracker.h:
+        (DatabaseTracker):
+        * Modules/webdatabase/SQLCallbackWrapper.h:
+        (WebCore::SQLCallbackWrapper::SafeReleaseTask::SafeReleaseTask):
+        * Modules/webdatabase/SQLException.h:
+        (WebCore::SQLException::SQLException):
+        * Modules/websockets/WebSocket.h:
+        * Modules/websockets/WebSocketExtensionProcessor.h:
+        (WebCore::WebSocketExtensionProcessor::WebSocketExtensionProcessor):
+
 2012-07-27  Kentaro Hara  <haraken@chromium.org>
 
         [V8] Optimize Element::getAttributeNS() by replacing String with AtomicString

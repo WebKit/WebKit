@@ -47,7 +47,7 @@ public:
 
 private:
     OfflineAudioCompletionEvent();
-    OfflineAudioCompletionEvent(PassRefPtr<AudioBuffer> renderedBuffer);
+    explicit OfflineAudioCompletionEvent(PassRefPtr<AudioBuffer> renderedBuffer);
 
     RefPtr<AudioBuffer> m_renderedBuffer;
 };

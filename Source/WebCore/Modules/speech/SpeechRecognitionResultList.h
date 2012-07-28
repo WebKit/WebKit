@@ -42,7 +42,7 @@ public:
     SpeechRecognitionResult* item(unsigned long index);
 
 private:
-    SpeechRecognitionResultList(const Vector<RefPtr<SpeechRecognitionResult> >&);
+    explicit SpeechRecognitionResultList(const Vector<RefPtr<SpeechRecognitionResult> >&);
 
     Vector<RefPtr<SpeechRecognitionResult> > m_results;
 };

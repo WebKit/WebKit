@@ -69,7 +69,7 @@ public:
 #endif
 
 private:
-    LocalFileSystem(const String& basePath)
+    explicit LocalFileSystem(const String& basePath)
         : m_basePath(basePath)
     {
     }

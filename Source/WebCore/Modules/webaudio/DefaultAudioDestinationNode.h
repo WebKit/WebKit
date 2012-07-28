@@ -48,7 +48,7 @@ public:
     virtual void startRendering();
     
 private:
-    DefaultAudioDestinationNode(AudioContext*);
+    explicit DefaultAudioDestinationNode(AudioContext*);
 
     OwnPtr<AudioDestination> m_destination;
 };

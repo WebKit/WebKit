@@ -68,7 +68,7 @@ private:
     SpeechRecognitionEvent();
     SpeechRecognitionEvent(const AtomicString&, const SpeechRecognitionEventInit&);
     SpeechRecognitionEvent(const AtomicString& eventName, PassRefPtr<SpeechRecognitionResult>, short resultIndex, PassRefPtr<SpeechRecognitionResultList> resultHistory);
-    SpeechRecognitionEvent(PassRefPtr<SpeechRecognitionError>);
+    explicit SpeechRecognitionEvent(PassRefPtr<SpeechRecognitionError>);
 
     RefPtr<SpeechRecognitionResult> m_result;
     short m_resultIndex;

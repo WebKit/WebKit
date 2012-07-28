@@ -58,7 +58,7 @@ public:
     virtual String failureReason() { return "Extension " + m_extensionToken + " failed"; }
 
 protected:
-    WebSocketExtensionProcessor(const String& extensionToken)
+    explicit WebSocketExtensionProcessor(const String& extensionToken)
         : m_extensionToken(extensionToken)
     {
     }

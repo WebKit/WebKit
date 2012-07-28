@@ -104,7 +104,7 @@ public:
 private:
     friend class RefCounted<SpeechRecognition>;
 
-    SpeechRecognition(ScriptExecutionContext*);
+    explicit SpeechRecognition(ScriptExecutionContext*);
 
 
     // EventTarget

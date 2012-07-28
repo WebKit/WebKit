@@ -55,7 +55,7 @@ public:
     SessionDescriptionDescriptor* descriptor();
 
 private:
-    SessionDescription(PassRefPtr<SessionDescriptionDescriptor>);
+    explicit SessionDescription(PassRefPtr<SessionDescriptionDescriptor>);
 
     RefPtr<SessionDescriptionDescriptor> m_descriptor;
 };

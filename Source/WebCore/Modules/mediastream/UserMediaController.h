@@ -46,7 +46,7 @@ public:
     static UserMediaController* from(Page* page) { return static_cast<UserMediaController*>(Supplement<Page>::from(page, supplementName())); }
 
 protected:
-    UserMediaController(UserMediaClient*);
+    explicit UserMediaController(UserMediaClient*);
 
 private:
     UserMediaClient* m_client;

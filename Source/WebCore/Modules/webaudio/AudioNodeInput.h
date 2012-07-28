@@ -42,7 +42,7 @@ class AudioNodeOutput;
 
 class AudioNodeInput : public AudioSummingJunction {
 public:
-    AudioNodeInput(AudioNode*);
+    explicit AudioNodeInput(AudioNode*);
 
     // AudioSummingJunction
     virtual bool canUpdateState() OVERRIDE { return !node()->isMarkedForDeletion(); }

@@ -61,7 +61,7 @@ public:
     static bool initializeDescription(ExceptionCode, ExceptionCodeDescription*);
 
 private:
-    SQLException(const ExceptionCodeDescription& description)
+    explicit SQLException(const ExceptionCodeDescription& description)
         : ExceptionBase(description)
     {
     }

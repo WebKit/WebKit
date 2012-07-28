@@ -36,7 +36,7 @@ class Vibration : public Supplement<Page> {
 public:
     typedef Vector<unsigned long> VibrationPattern;
 
-    Vibration(VibrationClient*);
+    explicit Vibration(VibrationClient*);
     ~Vibration();
 
     static PassOwnPtr<Vibration> create(VibrationClient*);

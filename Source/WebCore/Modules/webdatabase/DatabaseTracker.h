@@ -82,7 +82,7 @@ public:
     void interruptAllDatabasesForContext(const ScriptExecutionContext*);
 
 private:
-    DatabaseTracker(const String& databasePath);
+    explicit DatabaseTracker(const String& databasePath);
 
 #if !PLATFORM(CHROMIUM)
 public:

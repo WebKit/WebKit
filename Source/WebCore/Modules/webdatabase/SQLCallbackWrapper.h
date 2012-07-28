@@ -105,7 +105,7 @@ private:
         virtual bool isCleanupTask() const { return true; }
 
     private:
-        SafeReleaseTask(T* callbackToRelease)
+        explicit SafeReleaseTask(T* callbackToRelease)
             : m_callbackToRelease(callbackToRelease)
         {
         }

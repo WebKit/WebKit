@@ -49,7 +49,7 @@ public:
     NotificationClient* client() { return m_client; }
     
 private:
-    NotificationController(NotificationClient*);
+    explicit NotificationController(NotificationClient*);
 
     NotificationClient* m_client;
 };

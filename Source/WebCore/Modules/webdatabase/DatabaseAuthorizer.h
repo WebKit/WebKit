@@ -104,7 +104,7 @@ public:
     bool hadDeletes() const { return m_hadDeletes; }
 
 private:
-    DatabaseAuthorizer(const String& databaseInfoTableName);
+    explicit DatabaseAuthorizer(const String& databaseInfoTableName);
     void addWhitelistedFunctions();
     int denyBasedOnTableName(const String&) const;
     int updateDeletesBasedOnTableName(const String&);

@@ -146,7 +146,7 @@ public:
     SQLTransaction* transaction() const { return m_transaction.get(); }
 
 private:
-    DatabaseTransactionTask(PassRefPtr<SQLTransaction>);
+    explicit DatabaseTransactionTask(PassRefPtr<SQLTransaction>);
 
     virtual void doPerformTask();
 #if !LOG_DISABLED

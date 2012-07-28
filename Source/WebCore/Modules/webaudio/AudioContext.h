@@ -243,7 +243,7 @@ public:
     static unsigned s_hardwareContextCount;
     
 private:
-    AudioContext(Document*);
+    explicit AudioContext(Document*);
     AudioContext(Document*, unsigned numberOfChannels, size_t numberOfFrames, float sampleRate);
     void constructCommon();
 

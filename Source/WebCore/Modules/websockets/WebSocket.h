@@ -113,7 +113,7 @@ public:
     virtual void didClose(unsigned long unhandledBufferedAmount, ClosingHandshakeCompletionStatus, unsigned short code, const String& reason) OVERRIDE;
 
 private:
-    WebSocket(ScriptExecutionContext*);
+    explicit WebSocket(ScriptExecutionContext*);
 
     virtual void refEventTarget() { ref(); }
     virtual void derefEventTarget() { deref(); }

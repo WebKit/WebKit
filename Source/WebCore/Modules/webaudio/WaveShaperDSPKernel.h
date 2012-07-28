@@ -36,7 +36,7 @@ class WaveShaperProcessor;
 
 class WaveShaperDSPKernel : public AudioDSPKernel {
 public:  
-    WaveShaperDSPKernel(WaveShaperProcessor* processor)
+    explicit WaveShaperDSPKernel(WaveShaperProcessor* processor)
     : AudioDSPKernel(processor)
     {
     }
