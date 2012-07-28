@@ -123,3 +123,6 @@ http/tests/media/video-query-url.html
 # https://bugs.webkit.org/show_bug.cgi?id=86785
 fast/repaint/float-overflow-right.html
 fast/repaint/float-overflow.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=92573
+http/tests/misc/submit-post-keygen.html
