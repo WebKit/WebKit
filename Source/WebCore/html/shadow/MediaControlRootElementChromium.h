@@ -63,13 +63,19 @@ class MediaControlTextTrackDisplayElement;
 #endif
 
 class MediaControlChromiumEnclosureElement : public MediaControlElement {
-public:
-    static PassRefPtr<MediaControlChromiumEnclosureElement> create(Document*);
-
-private:
+protected:
     explicit MediaControlChromiumEnclosureElement(Document*);
 
+private:
     virtual MediaControlElementType displayType() const;
+};
+
+class MediaControlPanelEnclosureElement : public MediaControlChromiumEnclosureElement {
+public:
+    static PassRefPtr<MediaControlPanelEnclosureElement> create(Document*);
+
+private:
+    explicit MediaControlPanelEnclosureElement(Document*);
     virtual const AtomicString& shadowPseudoId() const;
 };
 
@@ -78,7 +84,7 @@ public:
     static PassRefPtr<MediaControlRootElementChromium> create(Document*);
 
     // MediaControls implementation.
-    void setMediaController(MediaControllerInterface*);
+    virtual void setMediaController(MediaControllerInterface*);
 
     void show();
     void hide();
@@ -87,9 +93,9 @@ public:
 
     void reset();
 
-    void playbackProgressed();
-    void playbackStarted();
-    void playbackStopped();
+    virtual void playbackProgressed();
+    virtual void playbackStarted();
+    virtual void playbackStopped();
 
     void changedMute();
     void changedVolume();
@@ -116,9 +122,13 @@ public:
 
     virtual bool shouldHideControls();
 
-private:
-    MediaControlRootElementChromium(Document*);
+protected:
+    explicit MediaControlRootElementChromium(Document*);
 
+    // Returns true if successful, otherwise return false.
+    bool initializeControls(Document*);
+
+private:
     virtual void defaultEventHandler(Event*);
     void hideFullscreenControlsTimerFired(Timer<MediaControlRootElementChromium>*);
     void startHideFullscreenControlsTimer();
@@ -138,7 +148,8 @@ private:
     MediaControlVolumeSliderElement* m_volumeSlider;
     MediaControlFullscreenButtonElement* m_fullscreenButton;
     MediaControlPanelElement* m_panel;
-    MediaControlChromiumEnclosureElement* m_enclosure;
+    MediaControlPanelEnclosureElement* m_enclosure;
+
 #if ENABLE(VIDEO_TRACK)
     MediaControlTextTrackContainerElement* m_textDisplayContainer;
 #endif

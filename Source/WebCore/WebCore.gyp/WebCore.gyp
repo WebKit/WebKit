@@ -1539,6 +1539,13 @@
       'sources/': [
         ['exclude', 'AllInOne\\.cpp$'],
       ],
+      'conditions': [
+        ['OS!="android"', {
+          'sources/': [
+            ['exclude', 'Android\\.cpp$'],
+          ],
+        }],
+      ],
     },
     {
       'target_name': 'webcore_svg',
@@ -1627,7 +1634,6 @@
           'sources/': [
             ['exclude', 'platform/graphics/harfbuzz/ComplexTextControllerHarfBuzz\\.cpp$'],
             ['exclude', 'platform/graphics/harfbuzz/HarfBuzzSkia\\.cpp$'],
-
             ['include', 'platform/graphics/harfbuzz/ng/HarfBuzzNGFace\\.(cpp|h)$'],
             ['include', 'platform/graphics/harfbuzz/ng/HarfBuzzNGFaceSkia\\.cpp$'],
             ['include', 'platform/graphics/harfbuzz/ng/HarfBuzzShaper\\.(cpp|h)$'],

@@ -81,6 +81,10 @@ audio::-webkit-media-controls-mute-button, video::-webkit-media-controls-mute-bu
     color: inherit;
 }
 
+audio::-webkit-media-controls-overlay-play-button, video::-webkit-media-controls-overlay-play-button {
+    display: none;
+}
+
 audio::-webkit-media-controls-play-button, video::-webkit-media-controls-play-button {
     -webkit-appearance: media-play-button;
     display: -webkit-box;

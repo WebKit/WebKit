@@ -612,6 +612,46 @@ const AtomicString& MediaControlPlayButtonElement::shadowPseudoId() const
 
 // ----------------------------
 
+inline MediaControlOverlayPlayButtonElement::MediaControlOverlayPlayButtonElement(Document* document)
+    : MediaControlInputElement(document, MediaOverlayPlayButton)
+{
+}
+
+PassRefPtr<MediaControlOverlayPlayButtonElement> MediaControlOverlayPlayButtonElement::create(Document* document)
+{
+    RefPtr<MediaControlOverlayPlayButtonElement> button = adoptRef(new MediaControlOverlayPlayButtonElement(document));
+    button->createShadowSubtree();
+    button->setType("button");
+    return button.release();
+}
+
+void MediaControlOverlayPlayButtonElement::defaultEventHandler(Event* event)
+{
+    if (event->type() == eventNames().clickEvent && mediaController()->canPlay()) {
+        mediaController()->play();
+        updateDisplayType();
+        event->setDefaultHandled();
+    }
+    HTMLInputElement::defaultEventHandler(event);
+}
+
+void MediaControlOverlayPlayButtonElement::updateDisplayType()
+{
+    if (mediaController()->canPlay()) {
+        show();
+        setDisplayType(MediaOverlayPlayButton);
+    } else
+        hide();
+}
+
+const AtomicString& MediaControlOverlayPlayButtonElement::shadowPseudoId() const
+{
+    DEFINE_STATIC_LOCAL(AtomicString, id, ("-webkit-media-controls-overlay-play-button"));
+    return id;
+}
+
+// ----------------------------
+
 inline MediaControlSeekButtonElement::MediaControlSeekButtonElement(Document* document, MediaControlElementType displayType)
     : MediaControlInputElement(document, displayType)
     , m_actionOnStop(Nothing)
