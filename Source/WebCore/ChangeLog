@@ -1,3 +1,25 @@
+2012-07-27  Sukolsak Sakshuwong  <sukolsak@google.com>
+
+        execCommand copies the backgroung-color of the enclosing element to the element being edited.
+        https://bugs.webkit.org/show_bug.cgi?id=91783
+
+        Reviewed by Ryosuke Niwa.
+
+        InsertListCommand and some other edit commands remove redundant
+        style properties after their DOM modification by using
+        StylePropertySet::removeEquivalentProperties.  However, this method
+        does not remove redundant background-color properties such as
+        "background-color: white" and "background-color: #fff" because
+        it compares them using cssText and thus treats them as different.
+        Add code to convert background colors to RGBA and then compare them.
+
+        Test: editing/style/redundant-background-color.html
+
+        * editing/EditingStyle.cpp:
+        (WebCore::getRGBABackgroundColor):
+        (WebCore):
+        (WebCore::getPropertiesNotIn):
+
 2012-07-27  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         [EFL] Return 0 when network is offline

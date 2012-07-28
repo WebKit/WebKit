@@ -1,3 +1,16 @@
+2012-07-27  Sukolsak Sakshuwong  <sukolsak@google.com>
+
+        execCommand copies the backgroung-color of the enclosing element to the element being edited.
+        https://bugs.webkit.org/show_bug.cgi?id=91783
+
+        Reviewed by Ryosuke Niwa.
+
+        This tests to make sure that WebKit removes redundant "background-color"
+        property after execCommand.
+
+        * editing/style/redundant-background-color-expected.txt: Added.
+        * editing/style/redundant-background-color.html: Added.
+
 2012-07-27  Scott Graham  <scottmg@chromium.org>
 
         Change navigator.webkitGamepads[] to navigator.webkitGetGamepads()

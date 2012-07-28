@@ -368,6 +368,16 @@ static inline RGBA32 getRGBAFontColor(StylePropertySet* style)
     return cssValueToRGBA(style->getPropertyCSSValue(CSSPropertyColor).get());
 }
 
+static inline RGBA32 getRGBABackgroundColor(CSSStyleDeclaration* style)
+{
+    return cssValueToRGBA(style->getPropertyCSSValueInternal(CSSPropertyBackgroundColor).get());
+}
+
+static inline RGBA32 getRGBABackgroundColor(StylePropertySet* style)
+{
+    return cssValueToRGBA(style->getPropertyCSSValue(CSSPropertyBackgroundColor).get());
+}
+
 static inline RGBA32 rgbaBackgroundColorInEffect(Node* node)
 {
     return cssValueToRGBA(backgroundColorInEffect(node).get());
@@ -1504,6 +1514,9 @@ PassRefPtr<StylePropertySet> getPropertiesNotIn(StylePropertySet* styleWithRedun
     if (baseStyle->getPropertyCSSValueInternal(CSSPropertyTextAlign)
         && textAlignResolvingStartAndEnd(result.get()) == textAlignResolvingStartAndEnd(baseStyle))
         result->removeProperty(CSSPropertyTextAlign);
+
+    if (baseStyle->getPropertyCSSValueInternal(CSSPropertyBackgroundColor) && getRGBABackgroundColor(result.get()) == getRGBABackgroundColor(baseStyle))
+        result->removeProperty(CSSPropertyBackgroundColor);
 
     return result;
 }
