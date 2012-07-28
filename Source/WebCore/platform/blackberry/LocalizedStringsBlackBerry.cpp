@@ -22,7 +22,7 @@
 #include "IntSize.h"
 #include "NotImplemented.h"
 #include "PlatformString.h"
-#include <BlackBerryPlatformClient.h>
+#include <LocaleHandler.h>
 #include <LocalizeResource.h>
 #include <wtf/Vector.h>
 
@@ -62,7 +62,7 @@ String inputElementAltText()
 
 static String platformLanguage()
 {
-    String lang = BlackBerry::Platform::Client::get()->getLocale().c_str();
+    String lang = BlackBerry::Platform::LocaleHandler::instance()->language().c_str();
     // getLocale() returns a POSIX locale which uses '_' to separate language and country.
     // However, we use '-' instead of '_' in WebCore (e.g. en_us should read en-us)
     size_t underscorePosition = lang.find('_');

@@ -1,3 +1,20 @@
+2012-07-27  Eli Fidler  <efidler@rim.com>
+
+        [BlackBerry] Use new LocaleHandler.
+        https://bugs.webkit.org/show_bug.cgi?id=92548
+
+        Reviewed by Yong Li.
+
+        RIM PR 128381
+
+        * platform/blackberry/LocalizedStringsBlackBerry.cpp:
+        (WebCore::platformLanguage):
+        * platform/network/blackberry/ResourceRequestBlackBerry.cpp:
+        (WebCore::ResourceRequest::initializePlatformRequest):
+        * platform/text/blackberry/TextBreakIteratorInternalICUBlackBerry.cpp:
+        (WebCore::currentSearchLocaleID):
+        (WebCore::currentTextBreakLocaleID):
+
 2012-07-27  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Change constructor with explicit constructor in WebCore/Modules

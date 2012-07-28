@@ -21,7 +21,7 @@
 
 #include "BlobRegistryImpl.h"
 #include "CookieManager.h"
-#include <BlackBerryPlatformClient.h>
+#include <LocaleHandler.h>
 #include <network/NetworkRequest.h>
 #include <wtf/HashMap.h>
 #include <wtf/text/CString.h>
@@ -218,7 +218,7 @@ void ResourceRequest::initializePlatformRequest(NetworkRequest& platformRequest,
 
         if (!httpHeaderFields().contains("Accept-Language")) {
             // Locale has the form "en-US". Construct accept language like "en-US, en;q=0.8".
-            std::string locale = BlackBerry::Platform::Client::get()->getLocale();
+            std::string locale = BlackBerry::Platform::LocaleHandler::instance()->language();
             // POSIX locale has '_' instead of '-'.
             // Replace to conform to HTTP spec.
             size_t underscore = locale.find('_');
