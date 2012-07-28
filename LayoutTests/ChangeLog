@@ -1,3 +1,47 @@
+2012-07-28  Peter Kasting  <pkasting@google.com>
+
+        [Chromium] Rebaselining and test expectations update.
+        https://bugs.webkit.org/show_bug.cgi?id=77188
+        https://bugs.webkit.org/show_bug.cgi?id=85856
+        https://bugs.webkit.org/show_bug.cgi?id=87844
+        https://bugs.webkit.org/show_bug.cgi?id=91756
+        http://crbug.com/10364
+        http://crbug.com/138159
+        http://crbug.com/139162
+        http://crbug.com/139493
+
+        Unreviewed, test expectations update.
+
+        * fast/overflow/unreachable-overflow-rtl-bug-expected.txt: Added.
+        * platform/chromium-linux-x86/platform/chromium: Added.
+        * platform/chromium-linux-x86/platform/chromium/virtual: Added.
+        * platform/chromium-linux-x86/platform/chromium/virtual/gpu: Added.
+        * platform/chromium-linux-x86/platform/chromium/virtual/gpu/fast: Added.
+        * platform/chromium-linux-x86/platform/chromium/virtual/gpu/fast/canvas: Added.
+        * platform/chromium-linux-x86/platform/chromium/virtual/gpu/fast/canvas/canvas-text-alignment-expected.png: Added.
+        * platform/chromium-linux-x86/platform/chromium/virtual/gpu/fast/canvas/gradient-add-second-start-end-stop-expected.png: Added.
+        * platform/chromium-linux/platform/chromium/virtual/gpu/fast/canvas/canvas-text-alignment-expected.png:
+        * platform/chromium-linux/platform/chromium/virtual/gpu/fast/canvas/gradient-add-second-start-end-stop-expected.png: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/filters-example-01-b-expected.png:
+        * platform/chromium-mac-snowleopard/fast/block/float/026-expected.png:
+        * platform/chromium-mac-snowleopard/fast/block/float/028-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/datalist: Added.
+        * platform/chromium-mac-snowleopard/fast/forms/datalist/input-appearance-range-with-datalist-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/forms/datalist/input-appearance-range-with-datalist-zoomed-expected.png: Added.
+        * platform/chromium-mac-snowleopard/platform/chromium/virtual/gpu/fast/canvas/canvas-text-alignment-expected.png:
+        * platform/chromium-mac/fast/block/float/026-expected.png:
+        * platform/chromium-mac/fast/block/float/028-expected.png:
+        * platform/chromium-mac/fast/overflow/unreachable-overflow-rtl-bug-expected.png:
+        * platform/chromium-mac/fast/overflow/unreachable-overflow-rtl-bug-expected.txt:
+        * platform/chromium-mac/platform/chromium/virtual/gpu/fast/canvas/canvas-text-alignment-expected.png:
+        * platform/chromium-mac/platform/chromium/virtual/gpu/fast/canvas/gradient-add-second-start-end-stop-expected.png: Added.
+        * platform/chromium-win/fast/forms/box-shadow-override-expected.png:
+        * platform/chromium-win/platform/chromium/virtual/gpu/fast/canvas/canvas-text-alignment-expected.png:
+        * platform/chromium-win/platform/chromium/virtual/gpu/fast/canvas/gradient-add-second-start-end-stop-expected.png:
+        * platform/chromium/TestExpectations:
+        * platform/efl/fast/overflow/unreachable-overflow-rtl-bug-expected.txt: Removed.
+        * platform/gtk/fast/overflow/unreachable-overflow-rtl-bug-expected.txt: Removed.
+
 2012-07-28  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unreviewed gardening.

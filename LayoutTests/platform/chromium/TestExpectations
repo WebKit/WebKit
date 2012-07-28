@@ -1376,13 +1376,6 @@ BUGWK75276 : fast/repaint/shadow-multiple-horizontal.html = IMAGE
 BUGWK75276 : fast/repaint/shadow-multiple-strict-horizontal.html = IMAGE
 BUGWK75276 : fast/repaint/shadow-multiple-strict-vertical.html = IMAGE
 
-// Requires rebaselining after skia roll
-BUGCR138159 : platform/chromium/virtual/gpu/fast/canvas/canvas-text-alignment.html = IMAGE
-// This test was already marked as failing on mac. It's commented out now to fix the build, but it
-// should be checked carefully before rebaselining.
-BUGCR138159 : platform/chromium/virtual/gpu/fast/canvas/gradient-add-second-start-end-stop.html = IMAGE
-// BUGWK77188 MAC : platform/chromium/virtual/gpu/fast/canvas/gradient-add-second-start-end-stop.html = IMAGE
-
 // -----------------------------------------------------------------
 // Other failures
 // -----------------------------------------------------------------
@@ -1492,8 +1485,6 @@ BUGWK48651 MAC : http/tests/navigation/error404-subframeload.html = IMAGE
 
 BUGCR26253 SLOW WIN RELEASE : http/tests/navigation/reload-subframe-object.html = PASS
 BUGCR9798 WIN RELEASE : http/tests/navigation/no-referrer-reset.html = PASS TIMEOUT
-// Regressions from r67349?
-BUGCR10364 MAC : http/tests/navigation/reload-subframe-object.html = TEXT
 
 // Actual is just slightly off in color than expected
 BUGCR23488 MAC : platform/chromium/virtual/gpu/fast/canvas/canvas-incremental-repaint-2.html = IMAGE
@@ -1589,9 +1580,6 @@ BUGCR23473 MAC : fast/repaint/transform-replaced-shadows.html = IMAGE
 // -----------------------------------------------------------------
 // END MAC PORT TESTS
 // -----------------------------------------------------------------
-
-// Rebaseline this after Skia rev. 4771 has landed
-BUGCR139162 : svg/W3C-SVG-1.1/filters-example-01-b.svg = IMAGE
 
 // Rebaseline to take advantage of skia ColorFilter optimization.
 // Note that two of tests below are broken on Leopard for other reasons (search
@@ -3583,11 +3571,6 @@ BUGWK90207 SLOW LINUX DEBUG : fast/forms/select/select-state-restore.html = PASS
 // Flaky
 BUGWK90430 : inspector/timeline/timeline-receive-response-event.html = PASS TEXT TIMEOUT
 
-// Require rebaselines when Bug 85856 is fixed. (The left side of their RTL elements are cropped due to this bug.)
-BUGWK85856 BUGWK91756 : fast/block/float/026.html = TEXT IMAGE+TEXT IMAGE
-BUGWK85856 BUGWK91756 : fast/block/float/028.html = TEXT IMAGE+TEXT IMAGE
-BUGWK85856 BUGWK91756 : fast/overflow/unreachable-overflow-rtl-bug.html = IMAGE+TEXT IMAGE TEXT
-
 // Require rebaseline after bug 88171
 BUGWK88171 WIN : css1/formatting_model/floating_elements.html = IMAGE
 
@@ -3640,10 +3623,6 @@ BUGWK91544 : media/media-continues-playing-after-replace-source.html = PASS TIME
 // Needs rebaseline. Behavior should now be the same as Safari.
 BUGWK91472 : compositing/reflections/nested-reflection-anchor-point.html = IMAGE
 
-BUGWK87844 SNOWLEOPARD : fast/forms/datalist/input-appearance-range-with-datalist-rtl.html = IMAGE
-BUGWK87844 SNOWLEOPARD : fast/forms/datalist/input-appearance-range-with-datalist-zoomed.html = IMAGE
-BUGWK87844 SNOWLEOPARD : fast/forms/datalist/input-appearance-range-with-datalist.html = IMAGE
-
 // Needs rebaseline.
 BUGWK91811 : media/media-document-audio-repaint.html = IMAGE+TEXT
 
@@ -3659,3 +3638,5 @@ BUGWK92297 DEBUG : media/video-set-rate-from-pause.html = PASS CRASH
 BUGWK92570 WIN DEBUG : inspector/debugger/dom-breakpoints.html = PASS TIMEOUT
 BUGWK92570 WIN DEBUG : inspector/timeline/timeline-network-received-data.html = TEXT PASS TIMEOUT
 BUGWK92570 WIN DEBUG : inspector/timeline/timeline-start-time.html = TEXT PASS TIMEOUT
+
+BUGCR139493 MAC DEBUG : media/track/track-cues-sorted-before-dispatch.html = PASS CRASH
