@@ -780,7 +780,7 @@ class RunsTest(DataStoreTestsBase):
         def split_as_int(string):
             return [int(float(value)) for value in string.split(',')]
 
-        params = Runs.update_or_insert(some_branch, some_platform, some_test).chart_params(7, end_time)
+        params = Runs.update_or_insert(some_branch, some_platform, some_test).chart_params(7)
         self.assertEqual(params['chxl'], '0:|Feb 21|Feb 22|Feb 23|Feb 24|Feb 25|Feb 26|Feb 27|Feb 28')
         self.assertEqual(split_as_int(params['chxr']), [1, 0, 57, int(52 * 1.1 / 5 + 0.5)])
         x_min, x_max, y_min, y_max = split_as_int(params['chds'])
@@ -790,7 +790,7 @@ class RunsTest(DataStoreTestsBase):
         self.assertEqual(y_max, int(52 * 1.1))
         self.assertEqual(split_as_int(params['chg']), [int(100 / 7), 20, 0, 0])
 
-        params = Runs.update_or_insert(some_branch, some_platform, some_test).chart_params(14, end_time)
+        params = Runs.update_or_insert(some_branch, some_platform, some_test).chart_params(14)
         self.assertEqual(params['chxl'], '0:|Feb 14|Feb 16|Feb 18|Feb 20|Feb 22|Feb 24|Feb 26|Feb 28')
         self.assertEqual(split_as_int(params['chxr']), [1, 0, 57, int(52 * 1.1 / 5 + 0.5)])
         x_min, x_max, y_min, y_max = split_as_int(params['chds'])

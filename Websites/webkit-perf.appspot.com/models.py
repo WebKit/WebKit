@@ -452,24 +452,23 @@ class Runs(db.Model):
             self.json_averages, str(self.json_min) if self.json_min else 'null', str(self.json_max) if self.json_max else 'null',
             '"%s"' % self.test.unit if self.test.unit else 'null')
 
-    def chart_params(self, display_days, now=datetime.utcnow().replace(hour=12, minute=0, second=0, microsecond=0)):
+    def chart_params(self, display_days):
         chart_data_x = []
         chart_data_y = []
-        end_time = now
-        start_timestamp = mktime((end_time - timedelta(display_days)).timetuple())
-        end_timestamp = mktime(end_time.timetuple())
+        runs = json.loads('[' + self.json_runs + ']')
+        if not runs:
+            return None
 
-        for entry in json.loads('[' + self.json_runs + ']'):
+        end_timestamp = Runs._timestamp_and_value_from_json_entry(runs[-1])[0]
+        start_timestamp = end_timestamp - display_days * 24 * 3600
+        for entry in runs:
             timestamp, value = Runs._timestamp_and_value_from_json_entry(entry)
             if timestamp < start_timestamp or timestamp > end_timestamp:
                 continue
             chart_data_x.append(timestamp)
             chart_data_y.append(value)
 
-        if not chart_data_y:
-            return None
-
-        dates = [end_time - timedelta(display_days / 7.0 * (7 - i)) for i in range(0, 8)]
+        dates = [datetime.fromtimestamp(end_timestamp) - timedelta(display_days / 7.0 * (7 - i)) for i in range(0, 8)]
 
         y_max = max(chart_data_y) * 1.1
         y_axis_label_step = int(y_max / 5 + 0.5)  # This won't work for decimal numbers
@@ -508,7 +507,7 @@ class DashboardImage(db.Model):
         image = memcache.get('dashboard-image:' + key_name)
         if not image:
             instance = DashboardImage.get_by_key_name(key_name)
-            image = instance.image
+            image = instance.image if instance else None
             memcache.set('dashboard-image:' + key_name, image)
         return image
 

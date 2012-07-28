@@ -1,3 +1,18 @@
+2012-07-27  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Unreviewed perf-o-matic build fix for dashboard image generation.
+        Also, only show Parser/html5-full-render on the dashboard by default
+        so that it won't take forever to load it.
+
+        * Websites/webkit-perf.appspot.com/controller.py:
+        (schedule_runs_update):
+        (RunsChartHandler.post):
+        * Websites/webkit-perf.appspot.com/models.py:
+        (Runs.chart_params):
+        (DashboardImage.get_image):
+        * Websites/webkit-perf.appspot.com/models_unittest.py:
+        (RunsTest.test_chart_params_with_value):
+
 2012-07-27  Dominik Röttsches  <dominik.rottsches@intel.com>
 
         [Cairo] Add complex font drawing using HarfbuzzNG
