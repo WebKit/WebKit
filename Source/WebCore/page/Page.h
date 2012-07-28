@@ -351,6 +351,7 @@ namespace WebCore {
         bool hasSeenPlugin(const String& serviceType) const;
         bool hasSeenAnyPlugin() const;
         void sawPlugin(const String& serviceType);
+        void resetSeenPlugins();
 
     private:
         void initGroup();

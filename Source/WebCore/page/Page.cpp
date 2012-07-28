@@ -1173,6 +1173,11 @@ void Page::sawPlugin(const String& serviceType)
     m_seenPlugins.add(serviceType);
 }
 
+void Page::resetSeenPlugins()
+{
+    m_seenPlugins.clear();
+}
+
 Page::PageClients::PageClients()
     : alternativeTextClient(0)
     , chromeClient(0)

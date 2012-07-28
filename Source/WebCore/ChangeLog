@@ -1,3 +1,22 @@
+2012-07-27  Jer Noble  <jer.noble@apple.com>
+
+        Reset the set of "seen" plugins when the main frame load is committed.
+        https://bugs.webkit.org/show_bug.cgi?id=92564
+
+        Reviewed by Anders Carlsson.
+
+        Because the Page object is re-used across navigation and reload, reset the list
+        of seen plugins when the main frame load commits. This gives a good baseline to
+        compare against the number of pages loaded.
+
+        No new tests; the "seen" plugin list is for diagnostic purposes only.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::dispatchDidCommitLoad):
+        * page/Page.cpp:
+        (WebCore::Page::resetSeenPlugins):
+        * page/Page.h:
+
 2012-07-27  Sukolsak Sakshuwong  <sukolsak@google.com>
 
         execCommand copies the backgroung-color of the enclosing element to the element being edited.
