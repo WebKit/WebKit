@@ -1,3 +1,9 @@
+2012-07-28  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, GTK rebaseline after r123937.
+
+        * platform/gtk/fast/dom/navigator-detached-no-crash-expected.txt:
+
 2012-07-27  Nayan Kumar K  <nayankk@motorola.com>
 
         [WebGL] Align contents of drawbuffer-test.html layout test with the one in the WebGL conformance suite.
