@@ -189,12 +189,6 @@ inline bool hasLineBreakingPropertyComplexContext(UChar32 c)
     return false;
 }
 
-inline bool hasLineBreakingPropertyComplexContextOrIdeographic(UChar32 c)
-{
-    // FIXME
-    return false;
-}
-
 inline UChar32 mirroredChar(UChar32 c)
 {
     gunichar mirror = 0;
@@ -215,11 +209,6 @@ Direction direction(UChar32);
 inline bool isLower(UChar32 c)
 {
     return g_unichar_islower(c);
-}
-
-inline int digitValue(UChar32 c)
-{
-    return g_unichar_digit_value(c);
 }
 
 inline uint8_t combiningClass(UChar32 c)

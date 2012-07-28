@@ -190,12 +190,6 @@ inline bool hasLineBreakingPropertyComplexContext(UChar32 c)
     return u_getIntPropertyValue(c, UCHAR_LINE_BREAK) == U_LB_COMPLEX_CONTEXT;
 }
 
-inline bool hasLineBreakingPropertyComplexContextOrIdeographic(UChar32 c)
-{
-    int32_t prop = u_getIntPropertyValue(c, UCHAR_LINE_BREAK);
-    return prop == U_LB_COMPLEX_CONTEXT || prop == U_LB_IDEOGRAPHIC;
-}
-
 inline UChar32 mirroredChar(UChar32 c)
 {
     return u_charMirror(c);
