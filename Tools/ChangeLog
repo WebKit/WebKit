@@ -1,3 +1,24 @@
+2012-07-27  Dirk Pranke  <dpranke@chromium.org>
+
+        "webkit-patch rebaseline <test>" fails with exit_code 1
+        https://bugs.webkit.org/show_bug.cgi?id=91560
+
+        Reviewed by Adam Barth.
+
+        webkit-patch rebaseline-json crashes in an svn checkout if it
+        tries to add files and there are no files to add; arguably
+        svn.add() should be robust against this, but rebaseline-json
+        shouldn't be calling it, either. This patch fixes the latter and
+        adds better debugging info to garden-o-matic so we can see what
+        caused the crash.
+
+        * Scripts/webkitpy/tool/commands/rebaseline.py:
+        (AbstractParallelRebaselineCommand._rebaseline):
+        * Scripts/webkitpy/tool/servers/gardeningserver.py:
+        (GardeningHTTPRequestHandler.rebaselineall):
+        (GardeningHTTPRequestHandler.rebaselineall.error_handler):
+        (GardeningHTTPRequestHandler):
+
 2012-07-27  Brady Eidson  <beidson@apple.com>
 
         Plugins should not be allowed to override standard properties/attributes in non-standard worlds

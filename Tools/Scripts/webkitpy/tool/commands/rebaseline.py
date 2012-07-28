@@ -302,7 +302,8 @@ class AbstractParallelRebaselineCommand(AbstractDeclarativeCommand):
         command_results = self._tool.executive.run_in_parallel(commands)
 
         files_to_add = self._files_to_add(command_results)
-        self._tool.scm().add_list(list(files_to_add))
+        if files_to_add:
+            self._tool.scm().add_list(list(files_to_add))
 
         if options.optimize:
             self._optimize_baselines(test_list)
