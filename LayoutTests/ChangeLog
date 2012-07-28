@@ -1,3 +1,13 @@
+2012-07-27  Nayan Kumar K  <nayankk@motorola.com>
+
+        [WebGL] Align contents of drawbuffer-test.html layout test with the one in the WebGL conformance suite.
+        https://bugs.webkit.org/show_bug.cgi?id=92375
+
+        Reviewed by Kenneth Russell.
+
+        * fast/canvas/webgl/drawingbuffer-test-expected.txt:
+        * fast/canvas/webgl/drawingbuffer-test.html:
+
 2012-07-27  Peter Kasting  <pkasting@google.com>
 
         Chromium rebaseline after r123285.
