@@ -1,3 +1,63 @@
+2012-07-27  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r123679.
+        http://trac.webkit.org/changeset/123679
+        https://bugs.webkit.org/show_bug.cgi?id=92565
+
+        Slowed down HTML parsing by 3.6% (Requested by abarth on
+        #webkit).
+
+        * html/FTPDirectoryDocument.cpp:
+        (WebCore::FTPDirectoryDocumentParser::append):
+        * html/parser/HTMLEntityParser.cpp:
+        (WebCore::HTMLEntityParser::consumeNamedEntity):
+        * html/parser/HTMLParserIdioms.cpp:
+        (WebCore::stripLeadingAndTrailingHTMLSpaces):
+        * html/parser/HTMLSourceTracker.cpp:
+        (WebCore::HTMLSourceTracker::sourceForToken):
+        * loader/cache/CachedScript.cpp:
+        (WebCore::CachedScript::script):
+        * platform/text/SegmentedString.cpp:
+        (WebCore::SegmentedString::SegmentedString):
+        (WebCore::SegmentedString::operator=):
+        (WebCore::SegmentedString::clear):
+        (WebCore::SegmentedString::append):
+        (WebCore::SegmentedString::prepend):
+        (WebCore::SegmentedString::advanceSubstring):
+        (WebCore::SegmentedString::advance):
+        (WebCore::SegmentedString::advanceSlowCase):
+        (WebCore::SegmentedString::advanceAndUpdateLineNumberSlowCase):
+        * platform/text/SegmentedString.h:
+        (WebCore::SegmentedSubstring::SegmentedSubstring):
+        (WebCore::SegmentedSubstring::clear):
+        (WebCore::SegmentedSubstring::appendTo):
+        (SegmentedSubstring):
+        (WebCore::SegmentedString::SegmentedString):
+        (WebCore::SegmentedString::push):
+        (WebCore::SegmentedString::isEmpty):
+        (WebCore::SegmentedString::lookAhead):
+        (WebCore::SegmentedString::lookAheadIgnoringCase):
+        (WebCore::SegmentedString::advance):
+        (WebCore::SegmentedString::advanceAndASSERT):
+        (WebCore::SegmentedString::advanceAndASSERTIgnoringCase):
+        (WebCore::SegmentedString::advancePastNewlineAndUpdateLineNumber):
+        (SegmentedString):
+        (WebCore::SegmentedString::advancePastNonNewline):
+        (WebCore::SegmentedString::advanceAndUpdateLineNumber):
+        (WebCore::SegmentedString::operator*):
+        (WebCore::SegmentedString::operator->):
+        (WebCore::SegmentedString::current):
+        (WebCore::SegmentedString::equalsLiterally):
+        (WebCore::SegmentedString::equalsIgnoringCase):
+        (WebCore::SegmentedString::lookAheadInline):
+        (WebCore::SegmentedString::lookAheadSlowCase):
+        * xml/parser/CharacterReferenceParserInlineMethods.h:
+        (WebCore::consumeCharacterReference):
+        * xml/parser/MarkupTokenizerBase.h:
+        (WebCore::MarkupTokenizerBase::InputStreamPreprocessor::nextInputCharacter):
+        (WebCore::MarkupTokenizerBase::InputStreamPreprocessor::peek):
+        (WebCore::MarkupTokenizerBase::InputStreamPreprocessor::advance):
+
 2012-07-27  Jer Noble  <jer.noble@apple.com>
 
         Reset the set of "seen" plugins when the main frame load is committed.
