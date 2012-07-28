@@ -598,7 +598,10 @@ void RenderLayerBacking::updateGraphicsLayerGeometry()
         }
 
         m_foregroundLayer->setPosition(foregroundPosition);
-        m_foregroundLayer->setSize(foregroundSize);
+        if (foregroundSize != m_foregroundLayer->size()) {
+            m_foregroundLayer->setSize(foregroundSize);
+            m_foregroundLayer->setNeedsDisplay();
+        }
         m_foregroundLayer->setOffsetFromRenderer(foregroundOffset);
     }
 
