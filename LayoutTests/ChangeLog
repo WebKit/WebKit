@@ -1,5 +1,14 @@
 2012-07-27  Peter Kasting  <pkasting@google.com>
 
+        Fix broken script reference after test move.
+        https://bugs.webkit.org/show_bug.cgi?id=92111
+
+        Unreviewed, fixing bad test move.
+
+        * platform/win/fast/events/panScroll-click-hyperlink.html:
+
+2012-07-27  Peter Kasting  <pkasting@google.com>
+
         Chromium rebaselines after r123912.
         https://bugs.webkit.org/show_bug.cgi?id=92327
 
