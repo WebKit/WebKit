@@ -1,3 +1,15 @@
+2012-07-28  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        [WK2][GTK] Implement a new spell checker API for WebKit2GTK+
+        https://bugs.webkit.org/show_bug.cgi?id=90268
+
+        Reviewed by Martin Robinson.
+
+        Ignore WebKitTextChecker.* private files for gtk-doc.
+
+        * gtk/generate-gtkdoc:
+        (get_webkit2_options):
+
 2012-07-28  Philippe Normand  <pnormand@igalia.com>
 
         [GTK] Transparent Media controls timeline and panel

@@ -701,6 +701,8 @@ webkit2_sources += \
 	Source/WebKit2/UIProcess/API/gtk/WebKitSettings.cpp \
 	Source/WebKit2/UIProcess/API/gtk/WebKitSettings.h \
 	Source/WebKit2/UIProcess/API/gtk/WebKitSettingsPrivate.h \
+	Source/WebKit2/UIProcess/API/gtk/WebKitTextChecker.cpp \
+	Source/WebKit2/UIProcess/API/gtk/WebKitTextChecker.h \
 	Source/WebKit2/UIProcess/API/gtk/WebKitUIClient.cpp \
 	Source/WebKit2/UIProcess/API/gtk/WebKitUIClient.h \
 	Source/WebKit2/UIProcess/API/gtk/WebKitURIRequest.cpp \
