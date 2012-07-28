@@ -935,7 +935,8 @@ WONTFIX SKIP : http/tests/inspector/network/network-content-replacement-embed.ht
 WONTFIX LINUX DEBUG SKIP : inspector/profiler/cpu-profiler-profiling.html = TIMEOUT PASS
 
 BUGWK91435 WIN LINUX : http/tests/inspector/extensions-ignore-cache.html = PASS TIMEOUT
-BUGWK91435 WIN LINUX : inspector/timeline/timeline-network-received-data.html = PASS TEXT
+BUGWK91435 LINUX : inspector/timeline/timeline-network-received-data.html = PASS TEXT
+BUGWK91435 WIN RELEASE : inspector/timeline/timeline-network-received-data.html = PASS TEXT
 BUGWK91435 WIN LINUX : inspector/debugger/live-edit.html = PASS TEXT TIMEOUT
 BUGCR89357 SKIP MAC : http/tests/inspector/extensions-ignore-cache.html = TIMEOUT
 BUGCR89357 SKIP MAC : inspector/timeline/timeline-network-received-data.html = TIMEOUT
@@ -3337,7 +3338,7 @@ BUGWK84735 WIN : http/tests/inspector/change-iframe-src.html = TIMEOUT PASS
 
 BUGWK84802 DEBUG SLOW : fast/js/random-array-gc-stress.html = PASS
 
-BUGWK84847 WIN : inspector/timeline/timeline-start-time.html = TEXT PASS
+BUGWK84847 WIN RELEASE : inspector/timeline/timeline-start-time.html = TEXT PASS
 
 BUGWK85003 WIN : media/video-currentTime-set.html = PASS TEXT
 
@@ -3654,3 +3655,7 @@ BUGWK92026 DEBUG SNOWLEOPARD : css3/selectors3/xml/css3-modsel-179a.xml = PASS I
 BUGWK92027 DEBUG SNOWLEOPARD : fast/performance/performance-now-timestamps.html = PASS TEXT
 BUGWK92288 SNOWLEOPARD DEBUG : plugins/update-widgets-crash.html = PASS TIMEOUT
 BUGWK92297 DEBUG : media/video-set-rate-from-pause.html = PASS CRASH
+
+BUGWK92570 WIN DEBUG : inspector/debugger/dom-breakpoints.html = PASS TIMEOUT
+BUGWK92570 WIN DEBUG : inspector/timeline/timeline-network-received-data.html = TEXT PASS TIMEOUT
+BUGWK92570 WIN DEBUG : inspector/timeline/timeline-start-time.html = TEXT PASS TIMEOUT
