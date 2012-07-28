@@ -1,3 +1,43 @@
+2012-07-27  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r123908.
+        http://trac.webkit.org/changeset/123908
+        https://bugs.webkit.org/show_bug.cgi?id=92572
+
+        Broke Chromium Linux compile (Requested by pkasting on
+        #webkit).
+
+        * WebCore.gypi:
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        * css/CSSValueKeywords.in:
+        * css/mediaControls.css:
+        * css/mediaControlsChromiumAndroid.css:
+        (audio::-webkit-media-controls-play-button, video::-webkit-media-controls-play-button):
+        * html/shadow/MediaControlElements.cpp:
+        (WebCore):
+        * html/shadow/MediaControlElements.h:
+        (WebCore):
+        * html/shadow/MediaControlRootElementChromium.cpp:
+        (WebCore::MediaControlChromiumEnclosureElement::create):
+        (WebCore):
+        (WebCore::MediaControlChromiumEnclosureElement::shadowPseudoId):
+        (WebCore::MediaControls::create):
+        (WebCore::MediaControlRootElementChromium::create):
+        * html/shadow/MediaControlRootElementChromium.h:
+        (MediaControlChromiumEnclosureElement):
+        (MediaControlRootElementChromium):
+        * html/shadow/MediaControlRootElementChromiumAndroid.cpp: Removed.
+        * html/shadow/MediaControlRootElementChromiumAndroid.h: Removed.
+        * platform/ThemeTypes.h:
+        * rendering/RenderMediaControlsChromium.cpp:
+        (WebCore::RenderMediaControlsChromium::paintMediaControlsPart):
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::paint):
+        * rendering/RenderTheme.h:
+        * rendering/RenderThemeChromiumAndroid.cpp:
+        * rendering/RenderThemeChromiumAndroid.h:
+
 2012-07-27  Eli Fidler  <efidler@rim.com>
 
         [BlackBerry] Use new LocaleHandler.

@@ -74,7 +74,6 @@ enum MediaControlElementType {
     MediaTextTrackDisplayContainer,
     MediaTextTrackDisplay,
     MediaExitFullscreenButton,
-    MediaOverlayPlayButton,
 };
 
 HTMLMediaElement* toParentMediaElement(Node*);
@@ -272,20 +271,6 @@ private:
 
 // ----------------------------
 
-class MediaControlOverlayPlayButtonElement : public MediaControlInputElement {
-public:
-    static PassRefPtr<MediaControlOverlayPlayButtonElement> create(Document*);
-
-    virtual void defaultEventHandler(Event*);
-    virtual void updateDisplayType();
-
-private:
-    explicit MediaControlOverlayPlayButtonElement(Document*);
-
-    virtual const AtomicString& shadowPseudoId() const;
-};
-
-// ----------------------------
 class MediaControlSeekButtonElement : public MediaControlInputElement {
 public:
     virtual void defaultEventHandler(Event*);

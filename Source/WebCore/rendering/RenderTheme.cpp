@@ -329,8 +329,6 @@ bool RenderTheme::paint(RenderObject* o, const PaintInfo& paintInfo, const IntRe
             return paintMediaFullscreenButton(o, paintInfo, r);
         case MediaPlayButtonPart:
             return paintMediaPlayButton(o, paintInfo, r);
-        case MediaOverlayPlayButtonPart:
-            return paintMediaOverlayPlayButton(o, paintInfo, r);
         case MediaMuteButtonPart:
             return paintMediaMuteButton(o, paintInfo, r);
         case MediaSeekBackButtonPart:

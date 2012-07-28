@@ -111,19 +111,6 @@ static bool paintMediaPlayButton(RenderObject* object, const PaintInfo& paintInf
     return paintMediaButton(paintInfo.context, rect, mediaElement->canPlay() ? mediaPlay : mediaPause);
 }
 
-static bool paintMediaOverlayPlayButton(RenderObject* object, const PaintInfo& paintInfo, const IntRect& rect)
-{
-    HTMLMediaElement* mediaElement = toParentMediaElement(object);
-    if (!mediaElement)
-        return false;
-
-    if (!hasSource(mediaElement) || !mediaElement->canPlay())
-        return false;
-
-    static Image* mediaOverlayPlay = platformResource("mediaplayerOverlayPlay");
-    return paintMediaButton(paintInfo.context, rect, mediaOverlayPlay);
-}
-
 static Image* getMediaSliderThumb()
 {
     static Image* mediaSliderThumb = platformResource("mediaplayerSliderThumb");
@@ -347,8 +334,6 @@ bool RenderMediaControlsChromium::paintMediaControlsPart(MediaControlElementType
     case MediaEnterFullscreenButton:
     case MediaExitFullscreenButton:
         return paintMediaFullscreenButton(object, paintInfo, rect);
-    case MediaOverlayPlayButton:
-        return paintMediaOverlayPlayButton(object, paintInfo, rect);
     case MediaVolumeSliderMuteButton:
     case MediaSeekBackButton:
     case MediaSeekForwardButton:

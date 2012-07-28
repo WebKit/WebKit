@@ -5740,8 +5740,6 @@
             'html/shadow/MediaControlElements.h',
             'html/shadow/MediaControlRootElementChromium.cpp',
             'html/shadow/MediaControlRootElementChromium.h',
-            'html/shadow/MediaControlRootElementChromiumAndroid.cpp',
-            'html/shadow/MediaControlRootElementChromiumAndroid.h',
             'html/shadow/MeterShadowElement.cpp',
             'html/shadow/MeterShadowElement.h',
             'html/shadow/ProgressShadowElement.cpp',
