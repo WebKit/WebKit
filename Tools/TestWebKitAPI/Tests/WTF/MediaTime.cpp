@@ -26,11 +26,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#define _USE_MATH_DEFINES 1
 #include "config.h"
-
-#if PLATFORM(WIN)
-#define _USE_MATH_DEFINES
-#endif
 
 #include <wtf/MediaTime.h>
 

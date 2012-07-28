@@ -1,3 +1,17 @@
+2012-07-28  Peter Kasting  <pkasting@google.com>
+
+        Fix Chromium/Win compile.
+        https://bugs.webkit.org/show_bug.cgi?id=88787
+
+        Unreviewed, build fix.
+
+        Chromium/Win needs _USE_MATH_DEFINES but doesn't define PLATFORM(WIN).
+        The other files in WebKit that define this macro (both in
+        WebCore/platform/graphics/cg) do it by unconditionally #defining it to 1
+        above the #include of "config.h", so copy that pattern here.
+
+        * TestWebKitAPI/Tests/WTF/MediaTime.cpp:
+
 2012-07-28  Mario Sanchez Prada  <msanchez@igalia.com>
 
         [WK2][GTK] Implement a new spell checker API for WebKit2GTK+
