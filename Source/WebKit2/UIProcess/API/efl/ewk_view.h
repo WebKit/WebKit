@@ -379,6 +379,30 @@ EAPI double ewk_view_load_progress_get(const Evas_Object *o);
 EAPI Eina_Bool ewk_view_html_string_load(Evas_Object *o, const char *html, const char *baseUrl, const char *unreachableUrl);
 
 /**
+ * Scales the current page, centered at the given point.
+ *
+ * @param o view object to set the zoom level
+ * @param scale_factor a new level to set
+ * @param cx x of center coordinate
+ * @param cy y of center coordinate
+ *
+ * @return @c EINA_TRUE on success or @c EINA_FALSE otherwise
+ */
+Eina_Bool ewk_view_scale_set(Evas_Object *o, double scaleFactor, int x, int y);
+
+/**
+ * Queries the current scale factor of the page.
+ *
+ * It returns previous scale factor after ewk_view_scale_set is called immediately
+ * until scale factor of page is really changed.
+ *
+ * @param o view object to get the scale factor
+ *
+ * @return current scale factor in use on success or @c -1.0 on failure
+ */
+double ewk_view_scale_get(const Evas_Object *o);
+
+/**
  * Queries the ratio between the CSS units and device pixels when the content is unscaled.
  *
  * When designing touch-friendly contents, knowing the approximated target size on a device

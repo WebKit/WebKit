@@ -884,6 +884,23 @@ double ewk_view_load_progress_get(const Evas_Object* ewkView)
     return priv->pageClient->page()->estimatedProgress();
 }
 
+Eina_Bool ewk_view_scale_set(Evas_Object* ewkView, double scaleFactor, int x, int y)
+{
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, false);
+    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, false);
+
+    priv->pageClient->page()->scalePage(scaleFactor, IntPoint(x, y));
+    return true;
+}
+
+double ewk_view_scale_get(const Evas_Object* ewkView)
+{
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, -1);
+    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, -1);
+
+    return priv->pageClient->page()->pageScaleFactor();
+}
+
 Eina_Bool ewk_view_device_pixel_ratio_set(Evas_Object* ewkView, float ratio)
 {
     EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, false);

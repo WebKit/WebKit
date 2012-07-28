@@ -1,3 +1,17 @@
+2012-07-28  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [WK2][EFL] Add ewk_view_scale_{get|set} to EwkView.
+        https://bugs.webkit.org/show_bug.cgi?id=92446
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Add methods to Ewk_View to get or set the scale factor of page.
+
+        * UIProcess/API/efl/ewk_view.cpp:
+        (ewk_view_scale_set):
+        (ewk_view_scale_get):
+        * UIProcess/API/efl/ewk_view.h:
+
 2012-07-28  Mario Sanchez Prada  <msanchez@igalia.com>
 
         [WK2][GTK] Implement a new spell checker API for WebKit2GTK+
