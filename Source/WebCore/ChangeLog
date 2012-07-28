@@ -1,3 +1,16 @@
+2012-07-27  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        [EFL] Return 0 when network is offline
+        https://bugs.webkit.org/show_bug.cgi?id=92454
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Network Info latest spec says 0 is returned when network is offline.
+        r123769 modified to return infinity value when network is offiline.
+
+        * platform/efl/NetworkInfoProviderEfl.cpp:
+        (WebCore::NetworkInfoProviderEfl::bandwidth):
+
 2012-07-27  Scott Graham  <scottmg@chromium.org>
 
         Change navigator.webkitGamepads[] to navigator.webkitGetGamepads()

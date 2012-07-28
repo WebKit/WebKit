@@ -57,8 +57,9 @@ double NetworkInfoProviderEfl::bandwidth() const
     // FIXME : This function should consider cellular network as well. For example, 2G, 3G and 4G.
     // See https://bugs.webkit.org/show_bug.cgi?id=89851 for detail.
     Eeze_Net* ethNet = eeze_net_new(ethernetInterface);
+    // FIXME: Ethernet is only supported now. If ethNet is null, network is offline.
     if (!ethNet)
-        return std::numeric_limits<double>::infinity(); // Spec says we should return infinity if unknown
+        return 0; // If network is offline, return 0.
 
     eeze_net_scan(ethNet);
 
