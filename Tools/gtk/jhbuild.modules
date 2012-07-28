@@ -15,6 +15,7 @@
       <dep package="glib"/>
       <dep package="glib-networking"/>
       <dep package="gnome-icon-theme"/>
+      <dep package="gnome-themes-standard"/>
       <dep package="libsoup"/>
       <dep package="at-spi2-core"/>
       <dep package="at-spi2-atk"/>
@@ -100,6 +101,17 @@
             md5sum="1c186f9903a20e96587b9afb27944b40"/>
   </autotools>
 
+  <autotools id="librsvg" autogen-sh="configure"
+             autogenargs="--disable-introspection --enable-pixbuf-loader --disable-gtk-theme">
+    <dependencies>
+      <dep package="gdk-pixbuf"/>
+    </dependencies>
+    <branch module="/pub/GNOME/sources/librsvg/2.36/librsvg-2.36.1.tar.xz" version="2.36.1"
+            repo="ftp.gnome.org"
+            hash="sha256:786b95e1a091375c5ef2997a21c69ff24d7077afeff18197355f54d9dcbcd8c5"
+            md5sum="89d483f30a7c77245b7ee02faaea5a5a"/>
+  </autotools>
+
   <autotools id="pango"
              autogenargs="--disable-introspection">
     <dependencies>
@@ -183,6 +195,18 @@
             repo="ftp.gnome.org"
             hash="sha256:a7f0a8b17e91ac338fdbc01ac59a8738e9c1e201de492c070d43aacf291a8959"
             md5sum="40be1e5a6eae11181311a6fc432cf892">
+    </branch>
+  </autotools>
+
+  <autotools id="gnome-themes-standard" autogen-sh="configure">
+    <dependencies>
+      <dep package="gtk+"/>
+      <dep package="librsvg"/>
+    </dependencies>
+    <branch module="pub/GNOME/sources/gnome-themes-standard/3.4/gnome-themes-standard-3.4.0.tar.xz" version="3.4.0"
+            repo="ftp.gnome.org"
+            hash="sha256:6c85056db16b748a14c412554371a22f096b981d2eca3ae3d6922a435d43b0fd"
+            md5sum="046a122a4231c7f7fc805b052b4498ce">
     </branch>
   </autotools>
 

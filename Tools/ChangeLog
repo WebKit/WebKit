@@ -1,3 +1,14 @@
+2012-07-28  Philippe Normand  <pnormand@igalia.com>
+
+        [GTK] Transparent Media controls timeline and panel
+        https://bugs.webkit.org/show_bug.cgi?id=85279
+
+        Reviewed by Martin Robinson.
+
+        * gtk/jhbuild.modules: Provide gnome-themes-standard build
+        support, this is necessary so the media controls panel colors are
+        properly initialized from the GTK+ theme.
+
 2012-07-27  Kihong Kwon  <kihong.kwon@samsung.com>
 
         [EFL] Support for HTML media capture
