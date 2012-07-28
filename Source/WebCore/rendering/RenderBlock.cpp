@@ -4916,6 +4916,8 @@ VisiblePosition RenderBlock::positionForPointWithInlineChildren(const LayoutPoin
     if (!firstRootBox())
         return createVisiblePosition(0, DOWNSTREAM);
 
+    bool linesAreFlipped = style()->isFlippedLinesWritingMode();
+
     // look for the closest line box in the root box which is at the passed-in y coordinate
     InlineBox* closestBox = 0;
     RootInlineBox* firstRootBoxWithChildren = 0;
@@ -4926,13 +4928,21 @@ VisiblePosition RenderBlock::positionForPointWithInlineChildren(const LayoutPoin
         if (!firstRootBoxWithChildren)
             firstRootBoxWithChildren = root;
 
-        if (root->isFirstAfterPageBreak() && pointInLogicalContents.y() < root->lineTopWithLeading())
+        if (!linesAreFlipped && root->isFirstAfterPageBreak() && pointInLogicalContents.y() < root->lineTopWithLeading())
             break;
 
         lastRootBoxWithChildren = root;
 
         // check if this root line box is located at this y coordinate
         if (pointInLogicalContents.y() < root->selectionBottom()) {
+            if (linesAreFlipped) {
+                RootInlineBox* nextRootBoxWithChildren = root->nextRootBox();
+                while (nextRootBoxWithChildren && !nextRootBoxWithChildren->firstLeafChild())
+                    nextRootBoxWithChildren = nextRootBoxWithChildren->nextRootBox();
+
+                if (nextRootBoxWithChildren && nextRootBoxWithChildren->isFirstAfterPageBreak() && pointInLogicalContents.y() >= nextRootBoxWithChildren->lineTopWithLeading())
+                    continue;
+            }
             closestBox = root->closestLeafChildForLogicalLeftPosition(pointInLogicalContents.x());
             if (closestBox)
                 break;

@@ -27,4 +27,16 @@
     // Clicking above the first line in the second column should not snap to the beginning of the line.
     hitOffset = document.caretRangeFromPoint(target.offsetLeft + 250, target.offsetTop + 2).startOffset;
     log(hitOffset === 14 ? "PASS" : "FAIL: hit offset " + hitOffset + ".");
+
+    // Now test with a flipped lines writing mode.
+    target.style.webkitWritingMode = "horizontal-bt";
+
+    // Clicking above the last line in the first column should not select anything from the first
+    // line on the second column.
+    hitOffset = document.caretRangeFromPoint(target.offsetLeft + 190, target.offsetTop + 3).startOffset;
+    log(hitOffset === 11 ? "PASS" : "FAIL: hit offset " + hitOffset + ".");
+
+    // Clicking below the first line in the second column should not snap to the beginning of the line.
+    hitOffset = document.caretRangeFromPoint(target.offsetLeft + 250, target.offsetTop + 78).startOffset;
+    log(hitOffset === 14 ? "PASS" : "FAIL: hit offset " + hitOffset + ".");
 </script>
