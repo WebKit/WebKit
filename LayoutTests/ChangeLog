@@ -1,5 +1,21 @@
 2012-07-27  Peter Kasting  <pkasting@google.com>
 
+        Chromium rebaselines after r123912.
+        https://bugs.webkit.org/show_bug.cgi?id=92327
+
+        Unreviewed, rebaselining.
+
+        * platform/chromium-linux-x86/fast/hidpi: Added.
+        * platform/chromium-linux-x86/fast/hidpi/gradient-with-scaled-ancestor-expected.png: Added.
+        * platform/chromium-linux/fast/hidpi/gradient-with-scaled-ancestor-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/hidpi/gradient-with-scaled-ancestor-expected.png: Added.
+        * platform/chromium-mac/fast/hidpi/gradient-with-scaled-ancestor-expected.png: Added.
+        * platform/chromium-win-xp/fast/hidpi: Added.
+        * platform/chromium-win-xp/fast/hidpi/gradient-with-scaled-ancestor-expected.png: Added.
+        * platform/chromium-win/fast/hidpi/gradient-with-scaled-ancestor-expected.png: Added.
+
+2012-07-27  Peter Kasting  <pkasting@google.com>
+
         Chromium rebaseline after r123706.
         https://bugs.webkit.org/show_bug.cgi?id=92236
 
