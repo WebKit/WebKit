@@ -1,5 +1,14 @@
 2012-07-28  Patrick Gansterer  <paroga@webkit.org>
 
+        [WIN] Add missing export macro to friend decleration.
+
+        Since the __declspec is part of the function signature
+        on windows, we need it at all friend declerations too.
+
+        * wtf/MediaTime.h:
+
+2012-07-28  Patrick Gansterer  <paroga@webkit.org>
+
         [CMake] Add missing MediaTime files after r123878.
 
         * wtf/CMakeLists.txt:

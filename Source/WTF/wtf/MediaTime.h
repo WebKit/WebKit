@@ -87,7 +87,7 @@ public:
     const int64_t& timeValue() const { return m_timeValue; }
     const int32_t& timeScale() const { return m_timeScale; }
 
-    friend MediaTime abs(const MediaTime& rhs);
+    friend WTF_EXPORT_PRIVATE MediaTime abs(const MediaTime& rhs);
 private:
     static const int32_t DefaultTimeScale = 6000;
     static const int32_t MaximumTimeScale;
