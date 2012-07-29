@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2006, 2008 Apple Inc. All rights reserved.
+ *  Copyright (C) 2006, 2008, 2012 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -55,14 +55,12 @@ namespace JSC {
         PropertyNameArray(JSGlobalData* globalData)
             : m_data(PropertyNameArrayData::create())
             , m_globalData(globalData)
-            , m_shouldCache(true)
         {
         }
 
         PropertyNameArray(ExecState* exec)
             : m_data(PropertyNameArrayData::create())
             , m_globalData(&exec->globalData())
-            , m_shouldCache(true)
         {
         }
 
@@ -91,7 +89,6 @@ namespace JSC {
         RefPtr<PropertyNameArrayData> m_data;
         IdentifierSet m_set;
         JSGlobalData* m_globalData;
-        bool m_shouldCache;
     };
 
 } // namespace JSC
