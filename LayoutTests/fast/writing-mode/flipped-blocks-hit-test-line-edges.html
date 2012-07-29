@@ -25,9 +25,14 @@
             log("FAIL: offset at (" + x + "," + y + ") was " + actualOffset + ". Expected " + expectedOffset + ".");
     }
 
+    test(100, 105, 4);
     test(160, 105, 5);
+    test(100, 104, 10);
     test(160, 104, 11);
+    test(60, 26, 24);
     test(160, 26, 26);
+    test(60, 25, 24);
     test(160, 25, 26);
+    test(60, 24, 26);
     test(160, 24, 26);
 </script>

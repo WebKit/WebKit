@@ -1,3 +1,31 @@
+2012-07-29  Dan Bernstein  <mitz@apple.com>
+
+        In flipped blocks, a point on the top edge of a text box is considered outside the box (and vice versa)
+        https://bugs.webkit.org/show_bug.cgi?id=92597
+
+        Reviewed by Ryosuke Niwa.
+
+        This is similar to <http://webkit.org/b/92593> except for RenderText. Fixing this required
+        fixing some code that creates a point inside a box by setting its y coordinate to the
+        logical top of the box. In a flipped block, this would be just outside the box.
+
+        Enhanced fast/writing-mode/flipped-blocks-hit-test-line-edges.html to cover this.
+
+        * editing/visible_units.cpp:
+        (WebCore::absoluteLineDirectionPointToLocalPointInBlock): Changed to use
+        RootInlineBox::blockDirectionPointInLine in the vertical case as well.
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::positionForPointWithInlineChildren): Changed to use
+        RootInlineBox::blockDirectionPointInLine.
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::positionForPoint): Changed the strictness of y inequalities based on
+        the flippedness of the block. This fixes the bug.
+        * rendering/RootInlineBox.cpp:
+        (WebCore::RootInlineBox::blockDirectionPointInLine): Moved the implementation here from the
+        header, and made it return the bottom in the flipped block case, so that the returned point
+        is inside the line in that case as well.
+        * rendering/RootInlineBox.h:
+
 2012-07-29  Rik Cabanier  <cabanier@adobe.com>
 
         ENABLE_CSS_COMPOSITING flag

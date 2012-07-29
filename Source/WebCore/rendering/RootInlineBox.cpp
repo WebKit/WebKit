@@ -601,6 +601,11 @@ LayoutUnit RootInlineBox::selectionBottom() const
     return nextTop;
 }
 
+int RootInlineBox::blockDirectionPointInLine() const
+{
+    return !block()->style()->isFlippedBlocksWritingMode() ? max(lineTop(), selectionTop()) : min(lineBottom(), selectionBottom());
+}
+
 RenderBlock* RootInlineBox::block() const
 {
     return toRenderBlock(renderer());

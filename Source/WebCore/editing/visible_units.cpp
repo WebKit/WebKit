@@ -919,7 +919,7 @@ static inline IntPoint absoluteLineDirectionPointToLocalPointInBlock(RootInlineB
     if (root->block()->isHorizontalWritingMode())
         return IntPoint(lineDirectionPoint - absoluteBlockPoint.x(), root->blockDirectionPointInLine());
 
-    return IntPoint(root->selectionTop(), lineDirectionPoint - absoluteBlockPoint.y());
+    return IntPoint(root->blockDirectionPointInLine(), lineDirectionPoint - absoluteBlockPoint.y());
 }
 
 VisiblePosition previousLinePosition(const VisiblePosition &visiblePosition, int lineDirectionPoint, EditableType editableType)
