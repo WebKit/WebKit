@@ -77,7 +77,6 @@
 		1A24B5F311F531E800C38269 /* MachUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A24B5F111F531E800C38269 /* MachUtilities.h */; };
 		1A24BED5120894D100FBB059 /* SharedMemory.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A24BED3120894D100FBB059 /* SharedMemory.h */; };
 		1A24BF3A120896A600FBB059 /* SharedMemoryMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A24BF39120896A600FBB059 /* SharedMemoryMac.cpp */; };
-		1A2A4B00158693920090C9E9 /* ColorSpaceData.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 1A2A4AFE158693920090C9E9 /* ColorSpaceData.h */; };
 		1A2A4B0E1586A2240090C9E9 /* ColorSpaceData.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A2A4AFD158693920090C9E9 /* ColorSpaceData.mm */; };
 		1A2BB6D014117B4D000F35D4 /* PluginProcessConnectionMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A2BB6CE14117B4D000F35D4 /* PluginProcessConnectionMessageReceiver.cpp */; };
 		1A2BB6D114117B4D000F35D4 /* PluginProcessConnectionMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A2BB6CF14117B4D000F35D4 /* PluginProcessConnectionMessages.h */; };
@@ -189,7 +188,6 @@
 		1AA56F2911E92BC80061B882 /* PluginController.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AA56F2811E92BC80061B882 /* PluginController.h */; };
 		1AA575FA1496B52600A4EE06 /* EventDispatcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AA575F81496B52600A4EE06 /* EventDispatcher.cpp */; };
 		1AA575FB1496B52600A4EE06 /* EventDispatcher.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AA575F91496B52600A4EE06 /* EventDispatcher.h */; };
-		1AA575FE1496B6F300A4EE06 /* EventDispatcher.messages.in in Resources */ = {isa = PBXBuildFile; fileRef = 1AA575FD1496B6F300A4EE06 /* EventDispatcher.messages.in */; };
 		1AA576021496B97900A4EE06 /* EventDispatcherMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AA575FF1496B7C000A4EE06 /* EventDispatcherMessageReceiver.cpp */; };
 		1AA5889211EE70400061B882 /* NetscapePluginStream.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AA5889011EE70400061B882 /* NetscapePluginStream.h */; };
 		1AA5889311EE70400061B882 /* NetscapePluginStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AA5889111EE70400061B882 /* NetscapePluginStream.cpp */; };
@@ -994,7 +992,6 @@
 			files = (
 				BCDE0ABF13272708001259FB /* PluginProcess.app in CopyFiles */,
 				1A50DB66110A3D57000D3FE5 /* WebProcess.app in CopyFiles */,
-				1A2A4B00158693920090C9E9 /* ColorSpaceData.h in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4351,7 +4348,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1AA575FE1496B6F300A4EE06 /* EventDispatcher.messages.in in Resources */,
 				E133FD8A1423DD7F00FC7BFB /* WebKit.icns in Resources */,
 				E1967E38150AB5E200C73169 /* com.apple.WebProcess.sb in Resources */,
 			);

@@ -1,3 +1,14 @@
+2012-07-28  Sam Weinig  <sam@webkit.org>
+
+        Stop copying unnecessary files in WebKit2 build
+        https://bugs.webkit.org/show_bug.cgi?id=92587
+
+        Reviewed by Dan Bernstein.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        We were accidentally copying ColorSpaceData.h and EventDispatcher.messages.in into the
+        build products. Stop this.
+
 2012-07-28  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [WK2][EFL] Add ewk_view_scale_{get|set} to EwkView.
