@@ -23,8 +23,8 @@ import subprocess
 import sys
 
 if not os.path.exists(common.top_level_path('WebKitBuild', 'Dependencies')):
-    process = subprocess.Popen(sys.argv[1:])
+    os.execve(sys.argv[1], sys.argv[1])
 else:
-    process = subprocess.Popen([common.top_level_path('Tools', 'jhbuild', 'jhbuild-wrapper'), '--gtk', 'run'] + sys.argv[1:])
-process.wait()
-sys.exit(process.returncode)
+    wrapper = common.top_level_path('Tools', 'jhbuild', 'jhbuild-wrapper')
+    os.execve(wrapper, [wrapper, '--gtk', 'run'] + sys.argv[1:], os.environ)
+

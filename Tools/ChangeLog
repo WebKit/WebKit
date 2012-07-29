@@ -1,3 +1,14 @@
+2012-07-29  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Reviewed by Martin Robinson.
+
+        Make the jhbuild wrapper scripts become the jhbuild process
+        instead of starting it as a child. This should make it possible to
+        interrupt execution of jhbuild cleanly.
+
+        * gtk/run-with-jhbuild:
+        * jhbuild/jhbuild-wrapper:
+
 2012-07-29  Mike West  <mkwst@chromium.org>
 
         Extend `application/x-webkit-test-netscape` plugins to better support multiple frames.

@@ -145,6 +145,5 @@ except ValueError as e:
     sys.exit(e)
 ensure_jhbuild()
 
-process = subprocess.Popen([jhbuild_path, '--no-interact', '-f', top_level_path('Tools', platform, 'jhbuildrc')] + sys.argv[2:])
-process.wait()
-sys.exit(process.returncode)
+os.execve(jhbuild_path, [jhbuild_path, '--no-interact', '-f', top_level_path('Tools', platform, 'jhbuildrc')] + sys.argv[2:], os.environ)
+
