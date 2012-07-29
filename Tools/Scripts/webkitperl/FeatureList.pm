@@ -57,6 +57,7 @@ my (
     $cssImageResolutionSupport,
     $cssRegionsSupport,
     $cssShadersSupport,
+    $cssCompositingSupport,
     $cssVariablesSupport,
     $customSchemeHandlerSupport,
     $dataTransferItemsSupport,
@@ -181,6 +182,9 @@ my @features = (
 
     { option => "css-shaders", desc => "Toggle CSS Shaders support",
       define => "ENABLE_CSS_SHADERS", default => isAppleMacWebKit(), value => \$cssShadersSupport },
+
+    { option => "css-compositing", desc => "Toggle CSS Compositing support",
+      define => "ENABLE_CSS_COMPOSITING", default => 0, value => \$cssCompositingSupport },
 
     { option => "css-variables", desc => "Toggle CSS Variable support",
       define => "ENABLE_CSS_VARIABLES", default => isEfl(), value => \$cssVariablesSupport },

@@ -1,3 +1,14 @@
+2012-07-29  Rik Cabanier  <cabanier@adobe.com>
+
+        Add ENABLE_CSS_COMPOSITING flag
+        https://bugs.webkit.org/show_bug.cgi?id=92553
+
+        Reviewed by Dirk Schulze.
+
+        Adds compiler flag CSS_COMPOSITING to build systems to enable CSS blending and compositing. See spec https://dvcs.w3.org/hg/FXTF/rawfile/tip/compositing/index.html
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2012-07-27  Anders Carlsson  <andersca@apple.com>
 
         Show the unavailable plug-in indicator for Java applets as well

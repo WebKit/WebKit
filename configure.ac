@@ -1133,6 +1133,14 @@ AC_ARG_ENABLE(css_filters,
               [],[enable_css_filters="no"])
 AC_MSG_RESULT([$enable_css_filters])
 
+# check whether to enable CSS Compositing support
+AC_MSG_CHECKING([whether to enable CSS Compositing])
+AC_ARG_ENABLE(css_compositing,
+              AC_HELP_STRING([--enable-css-compositing],
+                             [enable support for CSS Compositing[default=no]]),
+              [],[enable_css_compositing="no"])
+AC_MSG_RESULT([$enable_css_compositing])
+
 G_IR_SCANNER=
 G_IR_COMPILER=
 G_IR_GENERATE=
@@ -1474,6 +1482,7 @@ AM_CONDITIONAL([ENABLE_TEXT_AUTOSIZING],[test "$enable_text_autosizing" = "yes"]
 AM_CONDITIONAL([ENABLE_CSS_EXCLUSIONS],[test "$enable_css_exclusions" = "yes"])
 AM_CONDITIONAL([ENABLE_CSS_REGIONS],[test "$enable_css_regions" = "yes"])
 AM_CONDITIONAL([ENABLE_CSS_FILTERS],[test "$enable_css_filters" = "yes"])
+AM_CONDITIONAL([ENABLE_CSS_COMPOSITING],[test "$enable_css_compositing" = "yes"])
 
 # Gtk conditionals
 AM_CONDITIONAL([ENABLE_INTROSPECTION],[test "$enable_introspection" = "yes"])
@@ -1536,6 +1545,7 @@ Features:
  CSS Exclusions support                                   : $enable_css_exclusions
  CSS Regions support                                      : $enable_css_regions
  CSS Filters support                                      : $enable_css_filters
+ CSS Compositing support                                  : $enable_css_compositing
  DeviceOrientation support                                : $enable_device_orientation
  Directory upload                                         : $enable_directory_upload
  DOM mutation observer support                            : $enable_mutation_observers
