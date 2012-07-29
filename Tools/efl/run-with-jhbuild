@@ -17,10 +17,9 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
 import common
-import subprocess
+import os
 import sys
 
+
 jhbuild_wrapper = common.top_level_path('Tools', 'jhbuild', 'jhbuild-wrapper')
-process = subprocess.Popen([jhbuild_wrapper, '--efl', 'run'] + sys.argv[1:])
-process.wait()
-sys.exit(process.returncode)
+os.execve(jhbuild_wrapper, [jhbuild_wrapper, '--efl', 'run'] + sys.argv[1:], os.environ)

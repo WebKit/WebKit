@@ -1,3 +1,19 @@
+2012-07-29  Raphael Kubo da Costa  <rakuco@webkit.org>
+
+        [EFL][jhbuild] Make run-with-jhbuild become the jhbuild process itself.
+        https://bugs.webkit.org/show_bug.cgi?id=92592
+
+        Reviewed by Eric Seidel.
+
+        Adapt to the changes made to GTK+'s run-with-jhbuild in r123979
+        and make EFL's run-with-jhbuild call os.execve() instead of
+        launching a subprocess as well.
+
+        This should make it possible to interrupt execution of jhbuild
+        cleanly.
+
+        * efl/run-with-jhbuild:
+
 2012-07-28  Ryosuke Niwa  <rniwa@webkit.org>
 
         run-perf-tests should generate a results page
