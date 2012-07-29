@@ -1,3 +1,16 @@
+2012-07-29  Patrick Gansterer  <paroga@webkit.org>
+
+        [CMake] Use WEBKIT_CREATE_FORWARDING_HEADERS to generate WK2 forwarding headers
+        https://bugs.webkit.org/show_bug.cgi?id=83579
+
+        Reviewed by Daniel Bates.
+
+        Using a list of directories in combination with the WEBKIT_CREATE_FORWARDING_HEADERS
+        macro allows us to share the common generation of forwarding headers across ports.
+
+        * CMakeLists.txt:
+        * PlatformEfl.cmake:
+
 2012-07-28  Sam Weinig  <sam@webkit.org>
 
         Stop copying unnecessary files in WebKit2 build

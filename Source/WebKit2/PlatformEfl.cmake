@@ -156,6 +156,13 @@ LIST(APPEND WebKit2_LIBRARIES
     ${LIBSOUP24_LIBRARIES}
 )
 
+LIST (APPEND WebKit2_FORWARDING_HEADERS_DIRECTORIES
+    Shared/API/c/efl
+    Shared/API/c/soup
+    UIProcess/API/C/efl
+    UIProcess/API/C/soup
+)
+
 LIST (APPEND WebProcess_SOURCES
     efl/MainEfl.cpp
 )
@@ -172,16 +179,6 @@ LIST (APPEND WebProcess_LIBRARIES
 )
 
 ADD_DEFINITIONS(-DDEFAULT_THEME_PATH=\"${CMAKE_INSTALL_PREFIX}/${DATA_INSTALL_DIR}/themes\")
-
-ADD_CUSTOM_TARGET(forwarding-headerEfl
-    COMMAND ${PERL_EXECUTABLE} ${WEBKIT2_DIR}/Scripts/generate-forwarding-headers.pl ${WEBKIT2_DIR} ${DERIVED_SOURCES_WEBKIT2_DIR}/include efl
-)
-SET(ForwardingHeaders_NAME forwarding-headerEfl)
-
-ADD_CUSTOM_TARGET(forwarding-headerSoup
-    COMMAND ${PERL_EXECUTABLE} ${WEBKIT2_DIR}/Scripts/generate-forwarding-headers.pl ${WEBKIT2_DIR} ${DERIVED_SOURCES_WEBKIT2_DIR}/include soup
-)
-SET(ForwardingNetworkHeaders_NAME forwarding-headerSoup)
 
 CONFIGURE_FILE(efl/ewebkit2.pc.in ${CMAKE_BINARY_DIR}/WebKit2/efl/ewebkit2.pc @ONLY)
 SET (EWebKit2_HEADERS
