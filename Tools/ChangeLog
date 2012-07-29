@@ -1,3 +1,21 @@
+2012-07-29  Mike West  <mkwst@chromium.org>
+
+        Extend `application/x-webkit-test-netscape` plugins to better support multiple frames.
+        https://bugs.webkit.org/show_bug.cgi?id=92478
+
+        Reviewed by Adam Barth.
+
+        DumpRenderTree currently understands
+        `<object src="data:application/x-webkit-test-netscape,alertwhenloaded">`.
+        It would be useful if it understood `logifloaded`, which could give
+        more context regarding test expectations, and can be written in such
+        as way as to support plugins loaded into multiple iframes in a single
+        test.
+
+        * DumpRenderTree/TestNetscapePlugIn/main.cpp:
+        (NPP_New):
+            Adding support for `logifloaded`.
+
 2012-07-28  Peter Kasting  <pkasting@google.com>
 
         Fix Chromium/Win compile.

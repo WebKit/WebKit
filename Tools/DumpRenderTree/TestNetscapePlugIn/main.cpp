@@ -202,7 +202,18 @@ NPError NPP_New(NPMIMEType pluginType, NPP instance, uint16_t mode, int16_t argc
         else if (strcasecmp(argn[i], "src") == 0 &&
                  strcasecmp(argv[i], "data:application/x-webkit-test-netscape,alertwhenloaded") == 0)
             executeScript(obj, "alert('Plugin Loaded!')");
-        else if (strcasecmp(argn[i], "onSetWindow") == 0 && !obj->onSetWindow)
+        else if (strcasecmp(argn[i], "src") == 0 &&
+                 strcasecmp(argv[i], "data:application/x-webkit-test-netscape,logifloaded") == 0) {
+            for (int j = 0; j < argc; j++) {
+              if (strcasecmp(argn[j], "log") == 0) {
+                int length = 26 + strlen(argv[j]) + 1;
+                char* buffer = (char*) malloc(length);
+                snprintf(buffer, length, "xWebkitTestNetscapeLog('%s')", argv[j]);
+                executeScript(obj, buffer);
+                free(buffer);
+              }
+            }
+        } else if (strcasecmp(argn[i], "onSetWindow") == 0 && !obj->onSetWindow)
             obj->onSetWindow = strdup(argv[i]);
         else if (strcasecmp(argn[i], "onNew") == 0 && !onNewScript)
             onNewScript = argv[i];

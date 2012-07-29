@@ -1,3 +1,20 @@
+2012-07-29  Mike West  <mkwst@chromium.org>
+
+        Extend `application/x-webkit-test-netscape` plugins to better support multiple frames.
+        https://bugs.webkit.org/show_bug.cgi?id=92478
+
+        Reviewed by Adam Barth.
+
+        * http/tests/plugins/resources/mock-plugin-logger.js:
+            Exciting JS "framework" for use when logging via `logifloaded`.
+        * http/tests/security/contentSecurityPolicy/object-src-none-allowed.html:
+        * http/tests/security/contentSecurityPolicy/object-src-none-allowed-expected.html:
+        * http/tests/security/contentSecurityPolicy/object-src-none-blocked.html:
+        * http/tests/security/contentSecurityPolicy/object-src-none-blocked-expected.html:
+            Adjusting these tests to use the newly created `logifloaded` plugin mock.
+        * http/tests/security/contentSecurityPolicy/resources/echo-object-data.pl:
+            Loading `mock-plugin-logger.js`, and adding a `log` attribute for `logifloaded`.
+
 2012-07-28  Dan Bernstein  <mitz@apple.com>
 
         Hit test results are wrong in flipped blocks writing modes with block column axis
