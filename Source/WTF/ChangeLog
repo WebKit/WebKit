@@ -1,5 +1,11 @@
 2012-07-28  Patrick Gansterer  <paroga@webkit.org>
 
+        [CMake] Add missing MediaTime files after r123878.
+
+        * wtf/CMakeLists.txt:
+
+2012-07-28  Patrick Gansterer  <paroga@webkit.org>
+
         Remove obsolete functions from WTF::Unicode
         https://bugs.webkit.org/show_bug.cgi?id=92571
 
