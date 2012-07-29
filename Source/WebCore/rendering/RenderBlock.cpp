@@ -5042,11 +5042,15 @@ VisiblePosition RenderBlock::positionForPoint(const LayoutPoint& point)
 
 void RenderBlock::offsetForContents(LayoutPoint& offset) const
 {
+    offset = flipForWritingMode(offset);
+
     if (hasOverflowClip())
         offset += scrolledContentOffset();
 
     if (hasColumns())
         adjustPointToColumnContents(offset);
+
+    offset = flipForWritingMode(offset);
 }
 
 LayoutUnit RenderBlock::availableLogicalWidth() const
@@ -5282,12 +5286,12 @@ void RenderBlock::adjustPointToColumnContents(LayoutPoint& point) const
 
                 // We're inside the column.  Translate the x and y into our column coordinate space.
                 if (colInfo->progressionAxis() == ColumnInfo::InlineAxis)
-                    point.move(columnPoint.x() - colRect.x(), logicalOffset);
+                    point.move(columnPoint.x() - colRect.x(), (!style()->isFlippedBlocksWritingMode() ? logicalOffset : -logicalOffset));
                 else
                     point.move((!style()->isFlippedBlocksWritingMode() ? logicalOffset : -logicalOffset) - colRect.x() + borderLeft() + paddingLeft(), 0);
                 return;
             }
-            
+
             // Move to the next position.
             logicalOffset += colInfo->progressionAxis() == ColumnInfo::InlineAxis ? colRect.height() : colRect.width();
         } else {
@@ -5314,12 +5318,12 @@ void RenderBlock::adjustPointToColumnContents(LayoutPoint& point) const
 
                 // We're inside the column.  Translate the x and y into our column coordinate space.
                 if (colInfo->progressionAxis() == ColumnInfo::InlineAxis)
-                    point.move(logicalOffset, columnPoint.y() - colRect.y());
+                    point.move((!style()->isFlippedBlocksWritingMode() ? logicalOffset : -logicalOffset), columnPoint.y() - colRect.y());
                 else
                     point.move(0, (!style()->isFlippedBlocksWritingMode() ? logicalOffset : -logicalOffset) - colRect.y() + borderTop() + paddingTop());
                 return;
             }
-            
+
             // Move to the next position.
             logicalOffset += colInfo->progressionAxis() == ColumnInfo::InlineAxis ? colRect.width() : colRect.height();
         }

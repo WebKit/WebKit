@@ -1,5 +1,21 @@
 2012-07-28  Dan Bernstein  <mitz@apple.com>
 
+        RenderBlock::offsetForContents() is wrong in flipped blocks writing modes
+        https://bugs.webkit.org/show_bug.cgi?id=92588
+
+        Reviewed by Sam Weinig.
+
+        Tests: fast/multicol/hit-test-block-axis-flipped.html
+               fast/writing-mode/flipped-blocks-hit-test-overflow-scroll.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::offsetForContents): Flip the point, which puts it back in unflipped
+        coordinates, before adding the scroll offset and adjusting for columns, then flip it back.
+        (WebCore::RenderBlock::adjustPointToColumnContents): Changed the inline-axis cases to
+        work with an unflipped point.
+
+2012-07-28  Dan Bernstein  <mitz@apple.com>
+
         In flipped lines writing modes, hit testing at the beginning of a column may return a result from the previous column
         https://bugs.webkit.org/show_bug.cgi?id=92566
 

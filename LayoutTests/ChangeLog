@@ -1,3 +1,13 @@
+2012-07-28  Dan Bernstein  <mitz@apple.com>
+
+        Hit test results are wrong in flipped blocks writing modes with block column axis
+        https://bugs.webkit.org/show_bug.cgi?id=92588
+
+        Reviewed by Sam Weinig.
+
+        * fast/multicol/hit-test-block-axis-flipped-expected.txt: Added.
+        * fast/multicol/hit-test-block-axis-flipped.html: Added.
+
 2012-07-28  Peter Kasting  <pkasting@google.com>
 
         [Chromium] New baselines and test expectations update.
