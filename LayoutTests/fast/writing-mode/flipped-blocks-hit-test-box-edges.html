@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<style>
+    #outer > div { margin: 0 25px; }
+</style>
+<div id="outer" style="
+    outline: dashed lightblue;
+    width: 150px;
+    padding: 25px;
+    -webkit-writing-mode: horizontal-bt;
+">
+    <div id="before-before" style="
+        background-color: purple;
+        height: 10px;
+    "></div>
+    <div id="before" style="
+        background-color: silver;
+        height: 15px;
+    "></div>
+    <div id="middle" style="
+        background-color: blue;
+        height: 100px;
+    "></div>
+    <div id="after" style="
+        background-color: silver;
+        height: 15px;
+    "></div>
+    <div id="after-after" style="
+        background-color: purple;
+        height: 10px;
+    "></div>
+</div>
+<table id="results">
+    <thead>
+        <tr>
+            <th>y</th>
+            <th>x</th>
+            <th>element</th>
+            <th>range start container</th>
+        </tr>
+    </thead>
+    <tbody id="table-body">
+    </tbody>
+</table>
+<script>
+    if (window.testRunner)
+        testRunner.dumpAsText();
+
+    function addCell(row, text)
+    {
+        row.appendChild(document.createElement("td")).appendChild(document.createTextNode(text));
+    }
+
+    function test(x, y)
+    {
+        var row = document.getElementById("table-body").appendChild(document.createElement("tr"));
+        addCell(row, y);
+        addCell(row, x);
+        addCell(row, document.elementFromPoint(8 + x, 8 + y).id);
+        addCell(row, document.caretRangeFromPoint(8 + x, 8 + y).startContainer.id);
+    }
+
+    test(25, 25);
+    test(100, 25);
+    test(25, 49);
+    test(100, 49);
+    test(25, 50);
+    test(100, 50);
+    test(25, 149);
+    test(100, 149);
+    test(25, 150);
+    test(100, 150);
+    test(25, 165);
+    test(100, 165);
+</script>

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<div id="target" style="
+    outline: dashed lightblue;
+    width: 150px;
+    padding: 25px;
+    font: 20px ahem;
+    -webkit-writing-mode: horizontal-bt;
+">Lorem ipsum dolor sit amet</div>
+<pre id="log"></pre>
+<script>
+    if (window.testRunner)
+        testRunner.dumpAsText();
+
+    function log(message)
+    {
+        document.getElementById("log").appendChild(document.createTextNode(message + "\n"));
+    }
+
+    function test(x, y, expectedOffset)
+    {
+        var actualOffset = document.caretRangeFromPoint(8 + x, 8 + y).startOffset;
+        if (actualOffset === expectedOffset)
+            log("PASS: offset at (" + x + "," + y + ") was " + actualOffset + ".");
+        else
+            log("FAIL: offset at (" + x + "," + y + ") was " + actualOffset + ". Expected " + expectedOffset + ".");
+    }
+
+    test(160, 105, 5);
+    test(160, 104, 11);
+    test(160, 26, 26);
+    test(160, 25, 26);
+    test(160, 24, 26);
+</script>

@@ -1,3 +1,15 @@
+2012-07-29  Dan Bernstein  <mitz@apple.com>
+
+        In flipped blocks, a point on the top edge of a box is considered outside the box (and vice versa)
+        https://bugs.webkit.org/show_bug.cgi?id=92593
+
+        Reviewed by Simon Fraser.
+
+        * fast/writing-mode/flipped-blocks-hit-test-box-edges-expected.txt: Added.
+        * fast/writing-mode/flipped-blocks-hit-test-box-edges.html: Added.
+        * fast/writing-mode/flipped-blocks-hit-test-line-edges-expected.txt: Added.
+        * fast/writing-mode/flipped-blocks-hit-test-line-edges.html: Added.
+
 2012-07-29  Mike West  <mkwst@chromium.org>
 
         Extend `application/x-webkit-test-netscape` plugins to better support multiple frames.
