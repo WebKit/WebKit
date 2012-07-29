@@ -52,6 +52,7 @@ WebLayerTreeView::Settings::operator CCLayerTreeSettings() const
     settings.refreshRate = refreshRate;
     settings.defaultTileSize = defaultTileSize;
     settings.maxUntiledLayerSize = maxUntiledLayerSize;
+    settings.acceleratePainting = acceleratePainting;
 
     // FIXME: showFPSCounter / showPlatformLayerTree / maxPartialTextureUpdates aren't supported currently.
     return settings;
