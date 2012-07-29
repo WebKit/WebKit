@@ -225,101 +225,111 @@ max 1120
         'median= 1101.0 ms, stdev= 11.0 ms, min= 1080.0 ms, max= 1120.0 ms',
         '', '']))
 
-    def test_run_test_set_with_json_output(self):
-        runner, port = self.create_runner(args=['--output-json-path=/mock-checkout/output.json'])
-        port.host.filesystem.files[runner._base_path + '/inspector/pass.html'] = True
-        port.host.filesystem.files[runner._base_path + '/Bindings/event-target-wrapper.html'] = True
+    def _test_run_with_json_output(self, runner, filesystem, upload_suceeds=True, expected_exit_code=0):
+        filesystem.write_text_file(runner._base_path + '/inspector/pass.html', 'some content')
+        filesystem.write_text_file(runner._base_path + '/Bindings/event-target-wrapper.html', 'some content')
+
+        uploaded = [False]
+
+        def mock_upload_json(hostname, json_path):
+            self.assertEqual(hostname, 'some.host')
+            self.assertEqual(json_path, '/mock-checkout/output.json')
+            uploaded[0] = True
+            return upload_suceeds
+
+        runner._upload_json = mock_upload_json
         runner._timestamp = 123456789
         output_capture = OutputCapture()
         output_capture.capture_output()
         try:
-            self.assertEqual(runner.run(), 0)
+            self.assertEqual(runner.run(), expected_exit_code)
         finally:
             stdout, stderr, logs = output_capture.restore_output()
 
-        self.assertEqual(logs,
-            '\n'.join(['Running 2 tests',
-                       'Running Bindings/event-target-wrapper.html (1 of 2)',
-                       'RESULT Bindings: event-target-wrapper= 1489.05 ms',
-                       'median= 1487.0 ms, stdev= 14.46 ms, min= 1471.0 ms, max= 1510.0 ms',
-                       '',
-                       'Running inspector/pass.html (2 of 2)',
-                       'RESULT group_name: test_name= 42 ms',
-                       '', '']))
-
-        self.assertEqual(json.loads(port.host.filesystem.files['/mock-checkout/output.json']), {
-            "timestamp": 123456789, "results":
-            {"Bindings/event-target-wrapper": {"max": 1510, "avg": 1489.05, "median": 1487, "min": 1471, "stdev": 14.46, "unit": "ms"},
-            "inspector/pass.html:group_name:test_name": 42},
-            "webkit-revision": 5678})
-
-    def test_run_test_set_with_json_source(self):
-        runner, port = self.create_runner(args=['--output-json-path=/mock-checkout/output.json', '--source-json-path=/mock-checkout/source.json'])
-        port.host.filesystem.files['/mock-checkout/source.json'] = '{"key": "value"}'
-        port.host.filesystem.files[runner._base_path + '/inspector/pass.html'] = True
-        port.host.filesystem.files[runner._base_path + '/Bindings/event-target-wrapper.html'] = True
-        runner._timestamp = 123456789
-        output_capture = OutputCapture()
-        output_capture.capture_output()
-        try:
-            self.assertEqual(runner.run(), 0)
-        finally:
-            stdout, stderr, logs = output_capture.restore_output()
-
-        self.assertEqual(logs, '\n'.join(['Running 2 tests',
+        self.assertEqual(logs, '\n'.join([
+            'Running 2 tests',
             'Running Bindings/event-target-wrapper.html (1 of 2)',
             'RESULT Bindings: event-target-wrapper= 1489.05 ms',
             'median= 1487.0 ms, stdev= 14.46 ms, min= 1471.0 ms, max= 1510.0 ms',
             '',
             'Running inspector/pass.html (2 of 2)',
             'RESULT group_name: test_name= 42 ms',
-            '', '']))
+            '',
+            '']))
 
+        return uploaded[0]
+
+    def test_run_with_json_output(self):
+        runner, port = self.create_runner(args=['--output-json-path=/mock-checkout/output.json',
+            '--test-results-server=some.host'])
+        self._test_run_with_json_output(runner, port.host.filesystem)
+        self.assertEqual(json.loads(port.host.filesystem.read_text_file('/mock-checkout/output.json')), {
+            "timestamp": 123456789, "results":
+            {"Bindings/event-target-wrapper": {"max": 1510, "avg": 1489.05, "median": 1487, "min": 1471, "stdev": 14.46, "unit": "ms"},
+            "inspector/pass.html:group_name:test_name": 42},
+            "webkit-revision": 5678, "branch": "webkit-trunk"})
+
+    def test_run_generates_results_page(self):
+        runner, port = self.create_runner(args=['--output-json-path=/mock-checkout/output.json'])
+        filesystem = port.host.filesystem
+        print runner._base_path + '/resources/results-template.html'
+        filesystem.write_text_file(runner._base_path + '/resources/results-template.html',
+            'BEGIN<?WebKitPerfTestRunnerInsertionPoint?>END')
+        filesystem.write_text_file(runner._base_path + '/Dromaeo/resources/dromaeo/web/lib/jquery-1.6.4.js',
+            'jquery content')
+
+        self._test_run_with_json_output(runner, filesystem)
+
+        expected_entry = {"timestamp": 123456789, "results": {"Bindings/event-target-wrapper":
+            {"max": 1510, "avg": 1489.05, "median": 1487, "min": 1471, "stdev": 14.46, "unit": "ms"},
+            "inspector/pass.html:group_name:test_name": 42}, "webkit-revision": 5678}
+
+        self.maxDiff = None
+        json_output = port.host.filesystem.read_text_file('/mock-checkout/output.json')
+        self.assertEqual(json.loads(json_output), [expected_entry])
+        self.assertEqual(filesystem.read_text_file('/mock-checkout/output.html'),
+            'BEGIN<script>jquery content</script><script id="json">' + json_output + '</script>END')
+
+        self._test_run_with_json_output(runner, filesystem)
+        json_output = port.host.filesystem.read_text_file('/mock-checkout/output.json')
+        self.assertEqual(json.loads(json_output), [expected_entry, expected_entry])
+        self.assertEqual(filesystem.read_text_file('/mock-checkout/output.html'),
+            'BEGIN<script>jquery content</script><script id="json">' + json_output + '</script>END')
+
+    def test_run_with_json_source(self):
+        runner, port = self.create_runner(args=['--output-json-path=/mock-checkout/output.json',
+            '--source-json-path=/mock-checkout/source.json', '--test-results-server=some.host'])
+        port.host.filesystem.write_text_file('/mock-checkout/source.json', '{"key": "value"}')
+        self._test_run_with_json_output(runner, port.host.filesystem)
         self.assertEqual(json.loads(port.host.filesystem.files['/mock-checkout/output.json']), {
             "timestamp": 123456789, "results":
             {"Bindings/event-target-wrapper": {"max": 1510, "avg": 1489.05, "median": 1487, "min": 1471, "stdev": 14.46, "unit": "ms"},
             "inspector/pass.html:group_name:test_name": 42},
-            "webkit-revision": 5678,
+            "webkit-revision": 5678, "branch": "webkit-trunk",
             "key": "value"})
 
-    def test_run_test_set_with_multiple_repositories(self):
-        runner, port = self.create_runner(args=['--output-json-path=/mock-checkout/output.json'])
-        port.host.filesystem.files[runner._base_path + '/inspector/pass.html'] = True
-        runner._timestamp = 123456789
+    def test_run_with_multiple_repositories(self):
+        runner, port = self.create_runner(args=['--output-json-path=/mock-checkout/output.json',
+            '--test-results-server=some.host'])
         port.repository_paths = lambda: [('webkit', '/mock-checkout'), ('some', '/mock-checkout/some')]
-        self.assertEqual(runner.run(), 0)
+        self._test_run_with_json_output(runner, port.host.filesystem)
         self.assertEqual(json.loads(port.host.filesystem.files['/mock-checkout/output.json']), {
-            "timestamp": 123456789, "results": {"inspector/pass.html:group_name:test_name": 42.0}, "webkit-revision": 5678, "some-revision": 5678})
+            "timestamp": 123456789, "results":
+            {"Bindings/event-target-wrapper": {"max": 1510, "avg": 1489.05, "median": 1487, "min": 1471, "stdev": 14.46, "unit": "ms"},
+            "inspector/pass.html:group_name:test_name": 42.0},
+            "webkit-revision": 5678, "some-revision": 5678, "branch": "webkit-trunk"})
 
     def test_run_with_upload_json(self):
         runner, port = self.create_runner(args=['--output-json-path=/mock-checkout/output.json',
             '--test-results-server', 'some.host', '--platform', 'platform1', '--builder-name', 'builder1', '--build-number', '123'])
-        upload_json_is_called = [False]
-        upload_json_returns_true = True
 
-        def mock_upload_json(hostname, json_path):
-            self.assertEqual(hostname, 'some.host')
-            self.assertEqual(json_path, '/mock-checkout/output.json')
-            upload_json_is_called[0] = True
-            return upload_json_returns_true
-
-        runner._upload_json = mock_upload_json
-        port.host.filesystem.files['/mock-checkout/source.json'] = '{"key": "value"}'
-        port.host.filesystem.files[runner._base_path + '/inspector/pass.html'] = True
-        port.host.filesystem.files[runner._base_path + '/Bindings/event-target-wrapper.html'] = True
-        runner._timestamp = 123456789
-        self.assertEqual(runner.run(), 0)
-        self.assertEqual(upload_json_is_called[0], True)
+        self._test_run_with_json_output(runner, port.host.filesystem, upload_suceeds=True)
         generated_json = json.loads(port.host.filesystem.files['/mock-checkout/output.json'])
         self.assertEqual(generated_json['platform'], 'platform1')
         self.assertEqual(generated_json['builder-name'], 'builder1')
         self.assertEqual(generated_json['build-number'], 123)
-        upload_json_returns_true = False
 
-        runner, port = self.create_runner(args=['--output-json-path=/mock-checkout/output.json',
-            '--test-results-server', 'some.host', '--platform', 'platform1', '--builder-name', 'builder1', '--build-number', '123'])
-        runner._upload_json = mock_upload_json
-        self.assertEqual(runner.run(), -3)
+        self._test_run_with_json_output(runner, port.host.filesystem, upload_suceeds=False, expected_exit_code=-3)
 
     def test_upload_json(self):
         runner, port = self.create_runner()

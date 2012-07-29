@@ -1,3 +1,38 @@
+2012-07-28  Ryosuke Niwa  <rniwa@webkit.org>
+
+        run-perf-tests should generate a results page
+        https://bugs.webkit.org/show_bug.cgi?id=92575
+
+        Reviewed by Eric Seidel.
+
+        Added the ability to generate a results page that summarizes performance test results from
+        multiple runs of run-perf-tests when --output-json-path is specified and --test-results-server
+        is not specified. We cannot generate a results page when --test-results-server is specified
+        because perf-o-matic cannot parse the new JSON format.
+
+        The new JSON format is simply an array of the old JSON output. This JSON is then merged into
+        results-template.html along with jQuery and copied as a HTML file of the same filename as
+        the output JSON file with a .html extension.
+
+        We merge all scripts and the JSON output into the results page as opposed to including them
+        with the src content attribute to make it standalone so that we may post it on Bugzilla or
+        e-mail it to someone else without breaking it.
+
+        * Scripts/webkitpy/performance_tests/perftestsrunner.py:
+        (PerfTestsRunner.run):
+        (PerfTestsRunner._generate_json): Merge "contents" with the existing JSON file when generating
+        a results page, and generate the results page from results-template.html merged with jQuery and
+        the generated JSON output.
+        * Scripts/webkitpy/performance_tests/perftestsrunner_unittest.py:
+        (_test_run_with_json_output): Extracted from test_run_with_upload_json to be shared with
+        several test cases.
+        (_test_run_with_json_output.mock_upload_json): Ditto.
+        (test_run_with_json_output): Refactored to use _test_run_with_json_output.
+        (test_run_generates_results_page): Added. Tests the new feature.
+        (test_run_with_json_source): Refactored to use _test_run_with_json_output.
+        (test_run_with_multiple_repositories): Ditto.
+        (test_run_with_upload_json): Ditto.
+
 2012-07-29  Rik Cabanier  <cabanier@adobe.com>
 
         Add ENABLE_CSS_COMPOSITING flag

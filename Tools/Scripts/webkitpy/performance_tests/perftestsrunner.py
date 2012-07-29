@@ -159,15 +159,20 @@ class PerfTestsRunner(object):
             test_results_server = options.test_results_server
             branch = self._default_branch if test_results_server else None
             build_number = int(options.build_number) if options.build_number else None
+
             if not self._generate_json(self._timestamp, options.output_json_path, options.source_json_path,
+                not test_results_server,
                 branch, options.platform, options.builder_name, build_number) and not unexpected:
                 return self._EXIT_CODE_BAD_JSON
+
             if test_results_server and not self._upload_json(test_results_server, options.output_json_path):
                 return self._EXIT_CODE_FAILED_UPLOADING
 
         return unexpected
 
-    def _generate_json(self, timestamp, output_json_path, source_json_path, branch, platform, builder_name, build_number):
+    def _generate_json(self, timestamp, output_json_path, source_json_path, should_generate_results_page,
+        branch, platform, builder_name, build_number):
+
         contents = {'timestamp': int(timestamp), 'results': self._results}
         for (name, path) in self._port.repository_paths():
             contents[name + '-revision'] = self._host.scm().svn_revision(path)
@@ -193,7 +198,29 @@ class PerfTestsRunner(object):
             if not succeeded:
                 return False
 
-        filesystem.write_text_file(output_json_path, json.dumps(contents))
+        if should_generate_results_page:
+            if filesystem.isfile(output_json_path):
+                existing_contents = json.loads(filesystem.read_text_file(output_json_path))
+                existing_contents.append(contents)
+                contents = existing_contents
+            else:
+                contents = [contents]
+
+        serialized_contents = json.dumps(contents)
+        filesystem.write_text_file(output_json_path, serialized_contents)
+
+        if should_generate_results_page:
+            jquery_path = filesystem.join(self._port.perf_tests_dir(), 'Dromaeo/resources/dromaeo/web/lib/jquery-1.6.4.js')
+            jquery = filesystem.read_text_file(jquery_path)
+
+            template_path = filesystem.join(self._port.perf_tests_dir(), 'resources/results-template.html')
+            template = filesystem.read_text_file(template_path)
+
+            results_page = template.replace('<?WebKitPerfTestRunnerInsertionPoint?>',
+                '<script>%s</script><script id="json">%s</script>' % (jquery, serialized_contents))
+
+            filesystem.write_text_file(filesystem.splitext(output_json_path)[0] + '.html', results_page)
+
         return True
 
     def _upload_json(self, test_results_server, json_path, file_uploader=FileUploader):
