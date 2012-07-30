@@ -1,3 +1,47 @@
+2012-07-30  James Robinson  <jamesr@chromium.org>
+
+        [chromium] CCThreadTask should not depend on CrossThreadTask and does not need to depend on CrossThreadCopier
+        https://bugs.webkit.org/show_bug.cgi?id=90132
+
+        Reviewed by David Levin.
+
+        CrossThreadTask is defined in WebCore/dom/ and depends on concepts like ScriptExecutionConcept. CCThreadTask,
+        being in WebCore/platform/, should not depend on /dom/ or anything from that layer.
+
+        CrossThreadCopier is not a layering violation per se, but it's also not at all helpful for CCThreadTask - we
+        never use any types for which it would be useful.
+
+        * platform/graphics/chromium/cc/CCThreadProxy.cpp:
+        (WebCore::CCThreadProxy::compositeAndReadback):
+        (WebCore::CCThreadProxy::finishAllRendering):
+        (WebCore::CCThreadProxy::initializeContext):
+        (WebCore::CCThreadProxy::setVisible):
+        (WebCore::CCThreadProxy::initializeLayerRenderer):
+        (WebCore::CCThreadProxy::recreateContext):
+        (WebCore::CCThreadProxy::implSideRenderingStats):
+        (WebCore::CCThreadProxy::start):
+        (WebCore::CCThreadProxy::stop):
+        (WebCore::CCThreadProxy::forceSerializeOnSwapBuffers):
+        (WebCore::CCThreadProxy::beginFrame):
+        (WebCore::CCThreadProxy::acquireLayerTextures):
+        * platform/graphics/chromium/cc/CCThreadTask.h:
+        (CCThreadTask1):
+        (WebCore::CCThreadTask1::create):
+        (WebCore::CCThreadTask1::CCThreadTask1):
+        (CCThreadTask2):
+        (WebCore::CCThreadTask2::create):
+        (WebCore::CCThreadTask2::CCThreadTask2):
+        (CCThreadTask3):
+        (WebCore::CCThreadTask3::create):
+        (WebCore::CCThreadTask3::CCThreadTask3):
+        (CCThreadTask4):
+        (WebCore::CCThreadTask4::create):
+        (WebCore::CCThreadTask4::CCThreadTask4):
+        (CCThreadTask5):
+        (WebCore::CCThreadTask5::create):
+        (WebCore::CCThreadTask5::CCThreadTask5):
+        (WebCore::createCCThreadTask):
+
 2012-07-30  Paul Irish  <paul.irish@gmail.com>
 
         Web Inspector: Rename Databases to Web SQL

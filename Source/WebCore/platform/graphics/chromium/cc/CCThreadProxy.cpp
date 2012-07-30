@@ -26,7 +26,6 @@
 
 #include "cc/CCThreadProxy.h"
 
-#include "GraphicsContext3D.h"
 #include "SharedGraphicsContext3D.h"
 #include "TraceEvent.h"
 #include "cc/CCDelayBasedTimeSource.h"
@@ -111,7 +110,7 @@ bool CCThreadProxy::compositeAndReadback(void *pixels, const IntRect& rect)
 
     // Perform a synchronous commit.
     CCCompletionEvent beginFrameCompletion;
-    CCProxy::implThread()->postTask(createCCThreadTask(this, &CCThreadProxy::forceBeginFrameOnImplThread, AllowCrossThreadAccess(&beginFrameCompletion)));
+    CCProxy::implThread()->postTask(createCCThreadTask(this, &CCThreadProxy::forceBeginFrameOnImplThread, &beginFrameCompletion));
     beginFrameCompletion.wait();
     m_inCompositeAndReadback = true;
     beginFrame();
@@ -121,7 +120,7 @@ bool CCThreadProxy::compositeAndReadback(void *pixels, const IntRect& rect)
     ReadbackRequest request;
     request.rect = rect;
     request.pixels = pixels;
-    CCProxy::implThread()->postTask(createCCThreadTask(this, &CCThreadProxy::requestReadbackOnImplThread, AllowCrossThreadAccess(&request)));
+    CCProxy::implThread()->postTask(createCCThreadTask(this, &CCThreadProxy::requestReadbackOnImplThread, &request));
     request.completion.wait();
     return request.success;
 }
@@ -160,7 +159,7 @@ void CCThreadProxy::finishAllRendering()
 
     // Make sure all GL drawing is finished on the impl thread.
     CCCompletionEvent completion;
-    CCProxy::implThread()->postTask(createCCThreadTask(this, &CCThreadProxy::finishAllRenderingOnImplThread, AllowCrossThreadAccess(&completion)));
+    CCProxy::implThread()->postTask(createCCThreadTask(this, &CCThreadProxy::finishAllRenderingOnImplThread, &completion));
     completion.wait();
 }
 
@@ -178,7 +177,7 @@ bool CCThreadProxy::initializeContext()
         return false;
 
     CCProxy::implThread()->postTask(createCCThreadTask(this, &CCThreadProxy::initializeContextOnImplThread,
-                                                       AllowCrossThreadAccess(context.leakPtr())));
+                                                       context.leakPtr()));
     return true;
 }
 
@@ -198,7 +197,7 @@ void CCThreadProxy::setVisible(bool visible)
 {
     TRACE_EVENT0("cc", "CCThreadProxy::setVisible");
     CCCompletionEvent completion;
-    CCProxy::implThread()->postTask(createCCThreadTask(this, &CCThreadProxy::setVisibleOnImplThread, AllowCrossThreadAccess(&completion), visible));
+    CCProxy::implThread()->postTask(createCCThreadTask(this, &CCThreadProxy::setVisibleOnImplThread, &completion, visible));
     completion.wait();
 }
 
@@ -219,9 +218,9 @@ bool CCThreadProxy::initializeLayerRenderer()
     bool initializeSucceeded = false;
     LayerRendererCapabilities capabilities;
     CCProxy::implThread()->postTask(createCCThreadTask(this, &CCThreadProxy::initializeLayerRendererOnImplThread,
-                                                       AllowCrossThreadAccess(&completion),
-                                                       AllowCrossThreadAccess(&initializeSucceeded),
-                                                       AllowCrossThreadAccess(&capabilities)));
+                                                       &completion,
+                                                       &initializeSucceeded,
+                                                       &capabilities));
     completion.wait();
 
     if (initializeSucceeded) {
@@ -251,10 +250,10 @@ bool CCThreadProxy::recreateContext()
     bool recreateSucceeded = false;
     LayerRendererCapabilities capabilities;
     CCProxy::implThread()->postTask(createCCThreadTask(this, &CCThreadProxy::recreateContextOnImplThread,
-                                                       AllowCrossThreadAccess(&completion),
-                                                       AllowCrossThreadAccess(context.leakPtr()),
-                                                       AllowCrossThreadAccess(&recreateSucceeded),
-                                                       AllowCrossThreadAccess(&capabilities)));
+                                                       &completion,
+                                                       context.leakPtr(),
+                                                       &recreateSucceeded,
+                                                       &capabilities));
     completion.wait();
 
     if (recreateSucceeded)
@@ -274,8 +273,8 @@ void CCThreadProxy::implSideRenderingStats(CCRenderingStats& stats)
 
     CCCompletionEvent completion;
     CCProxy::implThread()->postTask(createCCThreadTask(this, &CCThreadProxy::implSideRenderingStatsOnImplThread,
-                                                       AllowCrossThreadAccess(&completion),
-                                                       AllowCrossThreadAccess(&stats)));
+                                                       &completion,
+                                                       &stats));
     completion.wait();
 }
 
@@ -376,7 +375,7 @@ void CCThreadProxy::start()
     ASSERT(CCProxy::implThread());
     // Create LayerTreeHostImpl.
     CCCompletionEvent completion;
-    CCProxy::implThread()->postTask(createCCThreadTask(this, &CCThreadProxy::initializeImplOnImplThread, AllowCrossThreadAccess(&completion)));
+    CCProxy::implThread()->postTask(createCCThreadTask(this, &CCThreadProxy::initializeImplOnImplThread, &completion));
     completion.wait();
 
     m_started = true;
@@ -393,7 +392,7 @@ void CCThreadProxy::stop()
         DebugScopedSetMainThreadBlocked mainThreadBlocked;
 
         CCCompletionEvent completion;
-        CCProxy::implThread()->postTask(createCCThreadTask(this, &CCThreadProxy::layerTreeHostClosedOnImplThread, AllowCrossThreadAccess(&completion)));
+        CCProxy::implThread()->postTask(createCCThreadTask(this, &CCThreadProxy::layerTreeHostClosedOnImplThread, &completion));
         completion.wait();
     }
 
@@ -407,7 +406,7 @@ void CCThreadProxy::stop()
 void CCThreadProxy::forceSerializeOnSwapBuffers()
 {
     CCCompletionEvent completion;
-    CCProxy::implThread()->postTask(createCCThreadTask(this, &CCThreadProxy::forceSerializeOnSwapBuffersOnImplThread, AllowCrossThreadAccess(&completion)));
+    CCProxy::implThread()->postTask(createCCThreadTask(this, &CCThreadProxy::forceSerializeOnSwapBuffersOnImplThread, &completion));
     completion.wait();
 }
 
@@ -542,7 +541,7 @@ void CCThreadProxy::beginFrame()
         DebugScopedSetMainThreadBlocked mainThreadBlocked;
 
         CCCompletionEvent completion;
-        CCProxy::implThread()->postTask(createCCThreadTask(this, &CCThreadProxy::beginFrameCompleteOnImplThread, AllowCrossThreadAccess(&completion)));
+        CCProxy::implThread()->postTask(createCCThreadTask(this, &CCThreadProxy::beginFrameCompleteOnImplThread, &completion));
         completion.wait();
     }
 
@@ -706,7 +705,7 @@ void CCThreadProxy::acquireLayerTextures()
 
     TRACE_EVENT0("cc", "CCThreadProxy::acquireLayerTextures");
     CCCompletionEvent completion;
-    CCProxy::implThread()->postTask(createCCThreadTask(this, &CCThreadProxy::acquireLayerTexturesForMainThreadOnImplThread, AllowCrossThreadAccess(&completion)));
+    CCProxy::implThread()->postTask(createCCThreadTask(this, &CCThreadProxy::acquireLayerTexturesForMainThreadOnImplThread, &completion));
     completion.wait(); // Block until it is safe to write to layer textures from the main thread.
 
     m_texturesAcquired = true;

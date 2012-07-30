@@ -24,8 +24,6 @@
 #ifndef CCThreadTask_h
 #define CCThreadTask_h
 
-#include "CrossThreadCopier.h"
-#include "CrossThreadTask.h"
 #include "cc/CCThread.h"
 #include <wtf/PassOwnPtr.h>
 #include <wtf/PassRefPtr.h>
@@ -64,15 +62,14 @@ class CCThreadTask1 : public CCThread::Task {
 public:
     typedef void (T::*Method)(MP1);
     typedef CCThreadTask1<T, P1, MP1> CCThreadTaskImpl;
-    typedef typename CrossThreadTaskTraits<P1>::ParamType Param1;
 
-    static PassOwnPtr<CCThreadTaskImpl> create(T* instance, Method method, Param1 parameter1)
+    static PassOwnPtr<CCThreadTaskImpl> create(T* instance, Method method, P1 parameter1)
     {
         return adoptPtr(new CCThreadTaskImpl(instance, method, parameter1));
     }
 
 private:
-    CCThreadTask1(T* instance, Method method, Param1 parameter1)
+    CCThreadTask1(T* instance, Method method, P1 parameter1)
         : CCThread::Task(instance)
         , m_method(method)
         , m_parameter1(parameter1)
@@ -94,16 +91,14 @@ class CCThreadTask2 : public CCThread::Task {
 public:
     typedef void (T::*Method)(MP1, MP2);
     typedef CCThreadTask2<T, P1, MP1, P2, MP2> CCThreadTaskImpl;
-    typedef typename CrossThreadTaskTraits<P1>::ParamType Param1;
-    typedef typename CrossThreadTaskTraits<P2>::ParamType Param2;
 
-    static PassOwnPtr<CCThreadTaskImpl> create(T* instance, Method method, Param1 parameter1, Param2 parameter2)
+    static PassOwnPtr<CCThreadTaskImpl> create(T* instance, Method method, P1 parameter1, P2 parameter2)
     {
         return adoptPtr(new CCThreadTaskImpl(instance, method, parameter1, parameter2));
     }
 
 private:
-    CCThreadTask2(T* instance, Method method, Param1 parameter1, Param2 parameter2)
+    CCThreadTask2(T* instance, Method method, P1 parameter1, P2 parameter2)
         : CCThread::Task(instance)
         , m_method(method)
         , m_parameter1(parameter1)
@@ -127,17 +122,14 @@ class CCThreadTask3 : public CCThread::Task {
 public:
     typedef void (T::*Method)(MP1, MP2, MP3);
     typedef CCThreadTask3<T, P1, MP1, P2, MP2, P3, MP3> CCThreadTaskImpl;
-    typedef typename CrossThreadTaskTraits<P1>::ParamType Param1;
-    typedef typename CrossThreadTaskTraits<P2>::ParamType Param2;
-    typedef typename CrossThreadTaskTraits<P3>::ParamType Param3;
 
-    static PassOwnPtr<CCThreadTaskImpl> create(T* instance, Method method, Param1 parameter1, Param2 parameter2, Param3 parameter3)
+    static PassOwnPtr<CCThreadTaskImpl> create(T* instance, Method method, P1 parameter1, P2 parameter2, P3 parameter3)
     {
         return adoptPtr(new CCThreadTaskImpl(instance, method, parameter1, parameter2, parameter3));
     }
 
 private:
-    CCThreadTask3(T* instance, Method method, Param1 parameter1, Param2 parameter2, Param3 parameter3)
+    CCThreadTask3(T* instance, Method method, P1 parameter1, P2 parameter2, P3 parameter3)
         : CCThread::Task(instance)
         , m_method(method)
         , m_parameter1(parameter1)
@@ -164,18 +156,14 @@ class CCThreadTask4 : public CCThread::Task {
 public:
     typedef void (T::*Method)(MP1, MP2, MP3, MP4);
     typedef CCThreadTask4<T, P1, MP1, P2, MP2, P3, MP3, P4, MP4> CCThreadTaskImpl;
-    typedef typename CrossThreadTaskTraits<P1>::ParamType Param1;
-    typedef typename CrossThreadTaskTraits<P2>::ParamType Param2;
-    typedef typename CrossThreadTaskTraits<P3>::ParamType Param3;
-    typedef typename CrossThreadTaskTraits<P4>::ParamType Param4;
 
-    static PassOwnPtr<CCThreadTaskImpl> create(T* instance, Method method, Param1 parameter1, Param2 parameter2, Param3 parameter3, Param4 parameter4)
+    static PassOwnPtr<CCThreadTaskImpl> create(T* instance, Method method, P1 parameter1, P2 parameter2, P3 parameter3, P4 parameter4)
     {
         return adoptPtr(new CCThreadTaskImpl(instance, method, parameter1, parameter2, parameter3, parameter4));
     }
 
 private:
-    CCThreadTask4(T* instance, Method method, Param1 parameter1, Param2 parameter2, Param3 parameter3, Param4 parameter4)
+    CCThreadTask4(T* instance, Method method, P1 parameter1, P2 parameter2, P3 parameter3, P4 parameter4)
         : CCThread::Task(instance)
         , m_method(method)
         , m_parameter1(parameter1)
@@ -203,19 +191,14 @@ class CCThreadTask5 : public CCThread::Task {
 public:
     typedef void (T::*Method)(MP1, MP2, MP3, MP4, MP5);
     typedef CCThreadTask5<T, P1, MP1, P2, MP2, P3, MP3, P4, MP4, P5, MP5> CCThreadTaskImpl;
-    typedef typename CrossThreadTaskTraits<P1>::ParamType Param1;
-    typedef typename CrossThreadTaskTraits<P2>::ParamType Param2;
-    typedef typename CrossThreadTaskTraits<P3>::ParamType Param3;
-    typedef typename CrossThreadTaskTraits<P4>::ParamType Param4;
-    typedef typename CrossThreadTaskTraits<P5>::ParamType Param5;
 
-    static PassOwnPtr<CCThreadTaskImpl> create(T* instance, Method method, Param1 parameter1, Param2 parameter2, Param3 parameter3, Param4 parameter4, Param5 parameter5)
+    static PassOwnPtr<CCThreadTaskImpl> create(T* instance, Method method, P1 parameter1, P2 parameter2, P3 parameter3, P4 parameter4, P5 parameter5)
     {
         return adoptPtr(new CCThreadTaskImpl(instance, method, parameter1, parameter2, parameter3, parameter4, parameter5));
     }
 
 private:
-    CCThreadTask5(T* instance, Method method, Param1 parameter1, Param2 parameter2, Param3 parameter3, Param4 parameter4, Param5 parameter5)
+    CCThreadTask5(T* instance, Method method, P1 parameter1, P2 parameter2, P3 parameter3, P4 parameter4, P5 parameter5)
         : CCThread::Task(instance)
         , m_method(method)
         , m_parameter1(parameter1)
@@ -261,10 +244,10 @@ PassOwnPtr<CCThread::Task> createCCThreadTask(
     void (T::*method)(MP1),
     const P1& parameter1)
 {
-    return CCThreadTask1<T, typename CrossThreadCopier<P1>::Type, MP1>::create(
+    return CCThreadTask1<T, P1, MP1>::create(
         callee,
         method,
-        CrossThreadCopier<P1>::copy(parameter1));
+        parameter1);
 }
 
 template<typename T, typename P1, typename MP1, typename P2, typename MP2>
@@ -274,11 +257,11 @@ PassOwnPtr<CCThread::Task> createCCThreadTask(
     const P1& parameter1,
     const P2& parameter2)
 {
-    return CCThreadTask2<T, typename CrossThreadCopier<P1>::Type, MP1, typename CrossThreadCopier<P2>::Type, MP2>::create(
+    return CCThreadTask2<T, P1, MP1, P2, MP2>::create(
         callee,
         method,
-        CrossThreadCopier<P1>::copy(parameter1),
-        CrossThreadCopier<P2>::copy(parameter2));
+        parameter1,
+        parameter2);
 }
 
 template<typename T, typename P1, typename MP1, typename P2, typename MP2, typename P3, typename MP3>
@@ -289,12 +272,12 @@ PassOwnPtr<CCThread::Task> createCCThreadTask(
     const P2& parameter2,
     const P3& parameter3)
 {
-    return CCThreadTask3<T, typename CrossThreadCopier<P1>::Type, MP1, typename CrossThreadCopier<P2>::Type, MP2, typename CrossThreadCopier<P3>::Type, MP3>::create(
+    return CCThreadTask3<T, P1, MP1, P2, MP2, P3, MP3>::create(
         callee,
         method,
-        CrossThreadCopier<P1>::copy(parameter1),
-        CrossThreadCopier<P2>::copy(parameter2),
-        CrossThreadCopier<P3>::copy(parameter3));
+        parameter1,
+        parameter2,
+        parameter3);
 }
 
 template<typename T, typename P1, typename MP1, typename P2, typename MP2, typename P3, typename MP3, typename P4, typename MP4>
@@ -306,13 +289,13 @@ PassOwnPtr<CCThread::Task> createCCThreadTask(
     const P3& parameter3,
     const P4& parameter4)
 {
-    return CCThreadTask4<T, typename CrossThreadCopier<P1>::Type, MP1, typename CrossThreadCopier<P2>::Type, MP2, typename CrossThreadCopier<P3>::Type, MP3, typename CrossThreadCopier<P4>::Type, MP4>::create(
+    return CCThreadTask4<T, P1, MP1, P2, MP2, P3, MP3, P4, MP4>::create(
         callee,
         method,
-        CrossThreadCopier<P1>::copy(parameter1),
-        CrossThreadCopier<P2>::copy(parameter2),
-        CrossThreadCopier<P3>::copy(parameter3),
-        CrossThreadCopier<P4>::copy(parameter4));
+        parameter1,
+        parameter2,
+        parameter3,
+        parameter4);
 
 }
 
@@ -326,14 +309,14 @@ PassOwnPtr<CCThread::Task> createCCThreadTask(
     const P4& parameter4,
     const P5& parameter5)
 {
-    return CCThreadTask5<T, typename CrossThreadCopier<P1>::Type, MP1, typename CrossThreadCopier<P2>::Type, MP2, typename CrossThreadCopier<P3>::Type, MP3, typename CrossThreadCopier<P4>::Type, MP4, typename CrossThreadCopier<P5>::Type, MP5>::create(
+    return CCThreadTask5<T, P1, MP1, P2, MP2, P3, MP3, P4, MP4, P5, MP5>::create(
         callee,
         method,
-        CrossThreadCopier<P1>::copy(parameter1),
-        CrossThreadCopier<P2>::copy(parameter2),
-        CrossThreadCopier<P3>::copy(parameter3),
-        CrossThreadCopier<P4>::copy(parameter4),
-        CrossThreadCopier<P5>::copy(parameter5));
+        parameter1,
+        parameter2,
+        parameter3,
+        parameter4,
+        parameter5);
 
 }
 
