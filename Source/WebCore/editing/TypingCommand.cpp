@@ -554,6 +554,8 @@ void TypingCommand::forwardDeleteKeyPressed(TextGranularity granularity, bool ki
 
         Position downstreamEnd = endingSelection().end().downstream();
         VisiblePosition visibleEnd = endingSelection().visibleEnd();
+        if (isEmptyTableCell(visibleEnd.deepEquivalent().containerNode()))
+            return;
         if (visibleEnd == endOfParagraph(visibleEnd))
             downstreamEnd = visibleEnd.next(CannotCrossEditingBoundary).deepEquivalent().downstream();
         // When deleting tables: Select the table first, then perform the deletion

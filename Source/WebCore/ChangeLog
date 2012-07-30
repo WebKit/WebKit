@@ -1,3 +1,20 @@
+2012-07-29  Sukolsak Sakshuwong  <sukolsak@google.com>
+
+        forward-delete in the last cell of a table moves the caret after the table
+        https://bugs.webkit.org/show_bug.cgi?id=24250
+
+        Reviewed by Ryosuke Niwa.
+
+        The ForwardDelete command moved the cursor after the table when it's invoked
+        in an empty cell that is the last cell of a table. It also removed the break
+        element when invoked in an empty cell that is not the last cell of a table.
+        Make it do nothing inside an empty table cell.
+
+        Test: editing/deleting/forward-delete-empty-table-cell.html
+
+        * editing/TypingCommand.cpp:
+        (WebCore::TypingCommand::forwardDeleteKeyPressed):
+
 2012-07-29  Kwang Yul Seo  <skyul@company100.net>
 
         Remove unused method HTMLConstructionSiteTask::take(HTMLConstructionSiteTask&)

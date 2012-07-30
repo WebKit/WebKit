@@ -1,3 +1,13 @@
+2012-07-29  Sukolsak Sakshuwong  <sukolsak@google.com>
+
+        forward-delete in the last cell of a table moves the caret after the table
+        https://bugs.webkit.org/show_bug.cgi?id=24250
+
+        Reviewed by Ryosuke Niwa.
+
+        * editing/deleting/forward-delete-empty-table-cell-expected.txt: Added.
+        * editing/deleting/forward-delete-empty-table-cell.html: Added.
+
 2012-07-29  Kent Tamura  <tkent@chromium.org>
 
         REGRESSION(r123993): fast/forms/date/calendar-picker-type-change-onclick.html fails
