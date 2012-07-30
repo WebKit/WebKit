@@ -1,3 +1,27 @@
+2012-07-30  Dominik Röttsches  <dominik.rottsches@intel.com>
+
+        Avoid Assertion Failure in HarfBuzzRun::characterIndexForXPosition
+        https://bugs.webkit.org/show_bug.cgi?id=92376
+
+        Reviewed by Tony Chang.
+
+        Previously, the if condition in offsetForPosition gating the call to
+        characterIndexForXPosition was comparing a different value than what was actually used
+        as the argument to calling it. In some cases, this can lead to a minuscule difference
+        when comparing the two floats - enough to trigger the assertion. To resolve this,
+        the accuracy of the index calculation is improved by changing the types from int
+        to floats and rephrasing the if condition to be exactly the same as what is checked
+        for in the assertion.
+
+        Manual test ManualTests/harfbuzz-mouse-selection-crash.html added
+        which reliably reproduces the assertion failure before this change.
+
+        * platform/graphics/harfbuzz/ng/HarfBuzzShaper.cpp:
+        (WebCore::HarfBuzzShaper::HarfBuzzRun::characterIndexForXPosition): Types changed to float.
+        (WebCore::HarfBuzzShaper::offsetForPosition): Types changed to float, if condition rephrased.
+        * platform/graphics/harfbuzz/ng/HarfBuzzShaper.h:
+        (HarfBuzzRun):
+
 2012-06-29  James Robinson  <jamesr@chromium.org>
 
         [chromium] Remove WebTransformationMatrix::mapPoint overrides

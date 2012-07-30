@@ -70,7 +70,7 @@ private:
         void setGlyphAndAdvance(unsigned index, uint16_t glyphId, float advance);
         void setWidth(float width) { m_width = width; }
 
-        int characterIndexForXPosition(int targetX);
+        int characterIndexForXPosition(float targetX);
         float xPositionForOffset(unsigned offset);
 
         const SimpleFontData* fontData() { return m_fontData; }
