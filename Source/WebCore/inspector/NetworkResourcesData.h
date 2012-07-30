@@ -91,9 +91,9 @@ public:
 
     private:
         bool hasData() const { return m_dataBuffer; }
-        int dataLength() const;
-        void appendData(const char* data, int dataLength);
-        int decodeDataToContent();
+        size_t dataLength() const;
+        void appendData(const char* data, size_t dataLength);
+        size_t decodeDataToContent();
 
         String m_requestId;
         String m_loaderId;
@@ -121,26 +121,26 @@ public:
     void setResourceType(const String& requestId, InspectorPageAgent::ResourceType);
     InspectorPageAgent::ResourceType resourceType(const String& requestId);
     void setResourceContent(const String& requestId, const String& content);
-    void maybeAddResourceData(const String& requestId, const char* data, int dataLength);
+    void maybeAddResourceData(const String& requestId, const char* data, size_t dataLength);
     void maybeDecodeDataToContent(const String& requestId);
     void addCachedResource(const String& requestId, CachedResource*);
     void addResourceSharedBuffer(const String& requestId, PassRefPtr<SharedBuffer>, const String& textEncodingName);
     ResourceData const* data(const String& requestId);
     void clear(const String& preservedLoaderId = String());
 
-    void setResourcesDataSizeLimits(int maximumResourcesContentSize, int maximumSingleResourceContentSize);
+    void setResourcesDataSizeLimits(size_t maximumResourcesContentSize, size_t maximumSingleResourceContentSize);
 
 private:
     void ensureNoDataForRequestId(const String& requestId);
-    bool ensureFreeSpace(int size);
+    bool ensureFreeSpace(size_t);
 
     Deque<String> m_requestIdsDeque;
 
     typedef HashMap<String, ResourceData*> ResourceDataMap;
     ResourceDataMap m_requestIdToResourceDataMap;
-    int m_contentSize;
-    int m_maximumResourcesContentSize;
-    int m_maximumSingleResourceContentSize;
+    size_t m_contentSize;
+    size_t m_maximumResourcesContentSize;
+    size_t m_maximumSingleResourceContentSize;
 };
 
 } // namespace WebCore

@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 60: Done.
+CONSOLE MESSAGE: line 58: Done.
 Tests NetworkResourcesData logic for embed content replacement.
 
 

@@ -1,3 +1,15 @@
+2012-07-30  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Content size variables in NetworkResourcesData should have size_t type instead of int.
+        https://bugs.webkit.org/show_bug.cgi?id=92618
+
+        Reviewed by Yury Semikhatsky.
+
+        * http/tests/inspector/network/network-content-replacement-embed-expected.txt:
+        * http/tests/inspector/network/network-content-replacement-embed.html:
+        * http/tests/inspector/network/network-content-replacement-xhr-expected.txt:
+        * http/tests/inspector/network/network-content-replacement-xhr.html:
+
 2012-07-30  János Badics  <jbadics@inf.u-szeged.hu>
 
         [Qt][WK1] Gardening after r123988. It made fast/writing-mode/flipped-blocks-hit-test-line-edges.html fail

@@ -1,3 +1,27 @@
+2012-07-30  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Content size variables in NetworkResourcesData should have size_t type instead of int.
+        https://bugs.webkit.org/show_bug.cgi?id=92618
+
+        Reviewed by Yury Semikhatsky.
+
+        Changed content size variables type in NetworkResourcesData from int to size_t.
+        Drive-by: Switched String length calculation to recently added StringImpl's sizeInBytes.
+
+        * inspector/NetworkResourcesData.cpp:
+        (WebCore::NetworkResourcesData::ResourceData::removeContent):
+        (WebCore::NetworkResourcesData::ResourceData::dataLength):
+        (WebCore::NetworkResourcesData::ResourceData::appendData):
+        (WebCore::NetworkResourcesData::ResourceData::decodeDataToContent):
+        (WebCore::NetworkResourcesData::setResourceContent):
+        (WebCore::NetworkResourcesData::maybeAddResourceData):
+        (WebCore::NetworkResourcesData::maybeDecodeDataToContent):
+        (WebCore::NetworkResourcesData::setResourcesDataSizeLimits):
+        (WebCore::NetworkResourcesData::ensureFreeSpace):
+        * inspector/NetworkResourcesData.h:
+        (ResourceData):
+        (NetworkResourcesData):
+
 2012-07-30  Hayato Ito  <hayato@chromium.org>
 
         Remove an useless member variable, m_shouldPreventDispatch, from EventDispatcher.
