@@ -32,24 +32,21 @@
 #include "XPathEvaluator.h"
 #include "XPathException.h"
 #include "XPathNSResolver.h"
+#include "XPathPath.h"
 #include "XPathStep.h"
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/StringHash.h>
 
-int xpathyyparse(void*);
-
+using namespace WebCore;
 using namespace WTF;
 using namespace Unicode;
+using namespace XPath;
 
-namespace WebCore {
-namespace XPath {
-
-class LocationPath;
-
-#include "XPathGrammar.h"    
+extern int xpathyyparse(WebCore::XPath::Parser*);
+#include "XPathGrammar.h"
 
 Parser* Parser::currentParser = 0;
-    
+
 enum XMLCat { NameStart, NameCont, NotPartOfName };
 
 typedef HashMap<String, Step::Axis> AxisNamesMap;
@@ -630,5 +627,3 @@ void Parser::deleteNodeTest(Step::NodeTest* t)
     delete t;
 }
 
-}
-}

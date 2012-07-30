@@ -114,7 +114,7 @@
 extern int cssyydebug;
 #endif
 
-extern int cssyyparse(void* parser);
+extern int cssyyparse(WebCore::CSSParser*);
 
 using namespace std;
 using namespace WTF;

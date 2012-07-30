@@ -1,3 +1,28 @@
+2012-07-30  Alexis Menard  <alexis.menard@openbossa.org>
+
+        Build fix with newer bison 2.6.
+        https://bugs.webkit.org/show_bug.cgi?id=92264
+
+        Reviewed by Adam Barth.
+
+        As stated in http://www.gnu.org/software/bison/manual/html_node/Table-of-Symbols.html
+        YYLEX_PARAM and YYPARSE_PARAM are depecreated since version 1.875. So far all Mac OS
+        version I had access to as well as recent Linux runs at least version 2.3 so it's safe
+        to use the replacement of these deprecated macros in favor of %lex-param and %parse-param.
+        As announced http://lists.gnu.org/archive/html/info-gnu/2012-07/msg00011.html with the release
+        of version 2.6 YYLEX_PARAM and YYPARSE_PARAM are not supported anymore.
+
+        No new tests : build fix and the patch should not trigger any regressions
+
+        * css/CSSGrammar.y:
+        * css/CSSParser.cpp:
+        * xml/XPathGrammar.y: Refactored a bit to not use an intermediate PARSER define.
+        * xml/XPathParser.cpp: bison 2.6 declare xpathyyparse in the .h file now, i.e. XPathGrammar.h
+        therefore including this file within the namespace {} declarations leads to xpathyyparse being
+        defined part of WebCore::XPath namespaces but the actual implementation of xpathyyparse is in XPathGrammar.cpp
+        (generated) and not implemented within the WebCore::XPath so it lead to linking issues. Last, XPathGrammar.h needs 
+        to be included after the other includes as it uses some XPath types. It breaks the style but CSSParser.cpp is doing the same.
+
 2012-07-30  Sadrul Habib Chowdhury  <sadrul@chromium.org>
 
         Propagate gesture events to plugins.

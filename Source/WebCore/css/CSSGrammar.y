@@ -53,13 +53,12 @@ using namespace HTMLNames;
 #define YYMAXDEPTH 10000
 #define YYDEBUG 0
 
-// FIXME: Replace with %parse-param { CSSParser* parser } once we can depend on bison 2.x
-#define YYPARSE_PARAM parser
-#define YYLEX_PARAM parser
-
 %}
 
 %pure_parser
+
+%parse-param { CSSParser* parser }
+%lex-param { CSSParser* parser }
 
 %union {
     bool boolean;
@@ -89,7 +88,7 @@ using namespace HTMLNames;
 
 %{
 
-static inline int cssyyerror(const char*)
+static inline int cssyyerror(void*, const char*)
 {
     return 1;
 }
