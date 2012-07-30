@@ -1,5 +1,23 @@
 2012-07-30  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
 
+        Wheel events on a page with frames are not handled in fixed layout
+        https://bugs.webkit.org/show_bug.cgi?id=90550
+
+        Reviewed by Antonio Gomes.
+
+        Based on patch by Andras Becsi.
+
+        Frame-rect size is not the right value to check against to see if the document
+        can be contained within the full visible content rect, since it does not handle
+        fixedVisibleContentRect. Instead visibleContentRect(true) should be used which
+        returns the full visible content rect disregarding scrollbars, and which is
+        the same a frame-rect size when fixedVisibleContentRect is not set.
+
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::updateScrollbars):
+
+2012-07-30  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
+
         There is no way to tell whether an element can be activated or not
         https://bugs.webkit.org/show_bug.cgi?id=92093
 
