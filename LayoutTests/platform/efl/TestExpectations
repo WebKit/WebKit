@@ -477,6 +477,10 @@ BUGWK82294 : compositing/visibility/layer-visible-content.html = TEXT
 BUGWK82294 : compositing/visibility/visibility-image-layers-dynamic.html = TEXT
 BUGWK82294 : compositing/layer-creation/no-compositing-for-preserve-3d.html = TEXT
 BUGWK82294 : compositing/columns/composited-in-paginated.html = TEXT
+BUGWK82294 : compositing/geometry/bounds-ignores-hidden-composited-descendant.html
+BUGWK82294 : compositing/geometry/bounds-ignores-hidden-dynamic-negzindex.html
+BUGWK82294 : compositing/geometry/bounds-ignores-hidden-dynamic.html
+BUGWK82294 : compositing/geometry/bounds-ignores-hidden.html
 
 // EFL's LayoutTestController does not implement displayInvalidatedRegion
 BUGWK86727 : compositing/plugins/invalidate_rect.html = TEXT

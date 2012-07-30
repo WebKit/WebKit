@@ -1,3 +1,14 @@
+2012-07-30  Alexander Shalamov  <alexander.shalamov@intel.com>
+
+        [EFL] Skip new compositing tests for EFL port
+        https://bugs.webkit.org/show_bug.cgi?id=92633
+
+        Unreviewed EFL gardening.
+
+        Skip new compositing layout tests until accelerated compositing is enabled.
+
+        * platform/efl/TestExpectations:
+
 2012-07-30  Shinya Kawanaka  <shinyak@chromium.org>
 
         Prohibit having AuthorShadowDOM of input or textarea element for a while and having a flag to enable it in Internals.
