@@ -38,6 +38,7 @@ module audio {
 
         // Channel access
         readonly attribute unsigned long numberOfChannels;
-        Float32Array getChannelData(in unsigned long channelIndex);
+        Float32Array getChannelData(in unsigned long channelIndex)
+            raises(DOMException);
     };
 }

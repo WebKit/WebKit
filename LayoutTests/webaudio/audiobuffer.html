@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+description("Basic tests for AudioBuffer.");
+
+var sampleRate = 44100.0
+var lengthInSeconds = 2;
+var numberOfChannels = 4;
+
+var context = new webkitAudioContext();
+var buffer = context.createBuffer(numberOfChannels, sampleRate * lengthInSeconds, sampleRate);
+
+if (buffer.sampleRate === sampleRate)
+    testPassed("sampleRate has been set correctly.");
+else
+    testFailed("sampleRate should be set correctly.");
+
+if (buffer.length === sampleRate * lengthInSeconds)
+    testPassed("length has been set correctly.");
+else
+    testFailed("length should be set correctly");
+
+if (buffer.duration === lengthInSeconds)
+    testPassed("duration has been set correctly.");
+else
+    testFailed("duration should be set correctly.");
+
+if (buffer.numberOfChannels === numberOfChannels)
+    testPassed("numberOfChannels has been set correctly.");
+else
+    testFailed("numberOfChannels should be set correctly.");
+
+for (var index = 0; index < buffer.numberOfChannels; ++index) {
+    if (buffer.getChannelData(index) instanceof window.Float32Array)
+        testPassed("getChannelData(" + index + ") returns a Float32Array object.");
+    else
+        testFailed("getChannelData(" + index + ") should return a Float32Array object.");
+}
+
+try {
+    buffer.getChannelData(buffer.numberOfChannels);
+    testFailed("Exception should be thrown when index is not less than numberOfChannels.");
+} catch(e) {
+    testPassed("Exception has been thrown correctly when index is not less than numberOfChannels.");
+}
+
+</script>
+
+<script src="../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>
