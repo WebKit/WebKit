@@ -1,3 +1,17 @@
+2012-07-30  Tony Chang  <tony@chromium.org>
+
+        new flexbox should ignore float set on flexitems
+        https://bugs.webkit.org/show_bug.cgi?id=70792
+
+        Reviewed by Ojan Vafai.
+
+        Force flex items to not float.
+
+        Test: css3/flexbox/floated-flexitem.html
+
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::adjustRenderStyle): Force NoFloat on flex items.
+
 2012-07-30  Adrienne Walker  <enne@google.com>
 
         [chromium] Turn back on ScrollbarLayerChromium for Windows

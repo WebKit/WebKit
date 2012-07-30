@@ -2143,8 +2143,10 @@ void StyleResolver::adjustRenderStyle(RenderStyle* style, RenderStyle* parentSty
         if (style->writingMode() != TopToBottomWritingMode && (style->display() == BOX || style->display() == INLINE_BOX))
             style->setWritingMode(TopToBottomWritingMode);
 
-        if (e && e->parentNode() && e->parentNode()->renderer() && e->parentNode()->renderer()->isFlexibleBox())
+        if (e && e->parentNode() && e->parentNode()->renderer() && e->parentNode()->renderer()->isFlexibleBox()) {
+            style->setFloating(NoFloat);
             style->setDisplay(equivalentBlockDisplay(style->display(), style->isFloating(), m_checker.strictParsing()));
+        }
     }
 
     // Make sure our z-index value is only applied if the object is positioned.
