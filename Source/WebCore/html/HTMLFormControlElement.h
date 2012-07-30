@@ -51,7 +51,7 @@ public:
     void setFormMethod(const String&);
     bool formNoValidate() const;
 
-    void updateAncestors() const;
+    void updateFieldSetAndLegendAncestor() const;
 
     virtual void reset() { }
 
@@ -153,11 +153,14 @@ private:
     mutable HTMLFieldSetElement* m_fieldSetAncestor;
     mutable HTMLLegendElement* m_legendAncestor;
     OwnPtr<ValidationMessage> m_validationMessage;
-    mutable bool m_ancestorsValid : 1;
+    mutable bool m_fieldSetAncestorValid : 1;
     bool m_disabled : 1;
     bool m_readOnly : 1;
     bool m_required : 1;
     bool m_valueMatchesRenderer : 1;
+
+    enum DataListAncestorState { Unknown, InsideDataList, NotInsideDataList };
+    mutable enum DataListAncestorState m_dataListAncestorState;
 
     // The initial value of m_willValidate depends on the derived class. We can't
     // initialize it with a virtual function in the constructor. m_willValidate
@@ -172,7 +175,6 @@ private:
     bool m_wasChangedSinceLastFormControlChangeEvent : 1;
 
     bool m_hasAutofocused : 1;
-    mutable bool m_hasDataListAncestor : 1;
 };
 
 } // namespace
