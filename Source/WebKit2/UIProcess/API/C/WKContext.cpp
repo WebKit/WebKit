@@ -61,11 +61,6 @@ WKContextRef WKContextCreateWithInjectedBundlePath(WKStringRef pathRef)
     return toAPI(context.release().leakRef());
 }
 
-WKContextRef WKContextGetSharedProcessContext()
-{
-    return toAPI(WebContext::sharedProcessContext());
-}
-
 WKContextRef WKContextGetSharedThreadContext()
 {
     return toAPI(WebContext::sharedThreadContext());

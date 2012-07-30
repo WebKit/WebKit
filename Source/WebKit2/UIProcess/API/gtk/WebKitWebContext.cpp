@@ -118,7 +118,7 @@ static void webkit_web_context_class_init(WebKitWebContextClass* webContextClass
 static gpointer createDefaultWebContext(gpointer)
 {
     static GRefPtr<WebKitWebContext> webContext = adoptGRef(WEBKIT_WEB_CONTEXT(g_object_new(WEBKIT_TYPE_WEB_CONTEXT, NULL)));
-    webContext->priv->context = WKContextGetSharedProcessContext();
+    webContext->priv->context = WKContextCreate();
     webContext->priv->requestManager = WKContextGetSoupRequestManager(webContext->priv->context.get());
     WKContextSetCacheModel(webContext->priv->context.get(), kWKCacheModelPrimaryWebBrowser);
     attachDownloadClientToContext(webContext.get());

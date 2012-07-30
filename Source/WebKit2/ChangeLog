@@ -1,3 +1,22 @@
+2012-07-30  Alexey Proskuryakov  <ap@apple.com>
+
+        [WK2] Kill the concept of secondary shared process
+        https://bugs.webkit.org/show_bug.cgi?id=92676
+
+        Reviewed by Sam Weinig.
+
+        * UIProcess/API/C/WKContext.cpp:
+        * UIProcess/API/C/WKContext.h:
+        * UIProcess/WebContext.cpp:
+        * UIProcess/WebContext.h:
+        Deleted shared process related code. We don't need to build the singleton into
+        the cross-platform C API, platform-specific API wrappers are perfectly capable
+        of doing that.
+
+        * UIProcess/API/efl/ewk_context.cpp: (createDefaultEwkContext):
+        * UIProcess/API/gtk/WebKitWebContext.cpp: (createDefaultWebContext):
+        Use WKContextCreate() when creating default context.
+
 2012-07-30  Claudio Saavedra  <csaavedra@igalia.com>
 
         [GTK] critical warning: gdk_window_get_cursor() called on a NULL window

@@ -189,7 +189,7 @@ void ewk_context_url_scheme_request_received(Ewk_Context* ewkContext, Ewk_Url_Sc
 
 static inline Ewk_Context* createDefaultEwkContext()
 {
-    return new Ewk_Context(WKContextGetSharedProcessContext());
+    return new Ewk_Context(WKContextCreate());
 }
 
 Ewk_Context* ewk_context_default_get()
