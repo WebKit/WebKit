@@ -14,5 +14,4 @@ layer at (0,0) size 800x193
       RenderBlock (anonymous) at (0,164) size 784x0
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {PRE} at (0,177) size 784x0
-selection start: position 5 of child 0 {#text} of child 1 {P} of child 3 {DIV} of body
-selection end:   position 13 of child 0 {#text} of child 1 {P} of child 3 {DIV} of body
+caret: position 13 of child 0 {#text} of child 1 {P} of child 3 {DIV} of body

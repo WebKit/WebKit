@@ -1,3 +1,13 @@
+2012-07-30  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening.
+
+        Skipping a test that utilizes unsupported isolated worlds and updating
+        one baseline after r123988.
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/editing/selection/vertical-rl-ltr-extend-line-backward-wrap-expected.txt:
+
 2012-07-30  Pravin D  <pravind.2k4@gmail.com>
 
         REGRESSION: Focused TR element draws its focus outline in the wrong place

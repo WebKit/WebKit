@@ -365,6 +365,7 @@ BUGWK87908 SKIP : editing/undomanager = PASS
 // New test infrastructure required -- need isolated worlds
 BUGWK31508 SKIP : http/tests/security/isolatedWorld = TEXT
 BUGWK31508 BUGWK61540 SKIP : http/tests/security/isolatedWorld/cross-origin-xhr.html = TEXT
+BUGWK31508 SKIP : plugins/npruntime/overrides-all-properties.html = TEXT
 BUGWK31508 SKIP : storage/websql/open-database-creation-callback-isolated-world.html = TEXT
 BUGWK31508 SKIP : storage/websql/statement-error-callback-isolated-world.html = TEXT
 BUGWK31508 SKIP : storage/websql/statement-success-callback-isolated-world.html = TEXT
