@@ -1,3 +1,22 @@
+2012-07-30  Andreas Kling  <kling@webkit.org>
+
+        REGRESSION(r123636): Heap-use-after-free in StyleResolver::collectMatchingRules.
+        <http://webkit.org/b/92430>
+
+        Reviewed by Antti Koivisto.
+
+        Don't hold on to a reference to StyledElement::classNames() as that may become
+        invalid after mutating the element's attribute data.
+
+        In this case it was happening below Element::hasAttributes() which is unfortunately
+        naive enough to always serialize lazy attributes. That is a minor inefficiency that
+        can be addressed in a separate patch.
+
+        Covered by valgrind on existing tests.
+
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::collectMatchingRules):
+
 2012-07-30  James Robinson  <jamesr@chromium.org>
 
         [chromium] CCThreadTask should not depend on CrossThreadTask and does not need to depend on CrossThreadCopier

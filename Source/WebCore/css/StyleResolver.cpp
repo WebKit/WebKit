@@ -886,10 +886,8 @@ void StyleResolver::collectMatchingRules(RuleSet* rules, int& firstRuleIndex, in
         collectMatchingRulesForList(rules->idRules(m_element->idForStyleResolution().impl()), firstRuleIndex, lastRuleIndex, options);
     if (m_element->hasClass()) {
         ASSERT(m_styledElement);
-        const SpaceSplitString& classNames = m_styledElement->classNames();
-        size_t size = classNames.size();
-        for (size_t i = 0; i < size; ++i)
-            collectMatchingRulesForList(rules->classRules(classNames[i].impl()), firstRuleIndex, lastRuleIndex, options);
+        for (size_t i = 0; i < m_styledElement->classNames().size(); ++i)
+            collectMatchingRulesForList(rules->classRules(m_styledElement->classNames()[i].impl()), firstRuleIndex, lastRuleIndex, options);
     }
     const AtomicString& pseudoId = m_element->shadowPseudoId();
     if (!pseudoId.isEmpty()) {
