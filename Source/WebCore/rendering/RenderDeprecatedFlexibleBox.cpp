@@ -150,6 +150,15 @@ static bool childDoesNotAffectWidthOrFlexing(RenderObject* child)
     return child->isPositioned() || child->style()->visibility() == COLLAPSE;
 }
 
+void RenderDeprecatedFlexibleBox::styleWillChange(StyleDifference diff, const RenderStyle* newStyle)
+{
+    RenderStyle* oldStyle = style();
+    if (oldStyle && !oldStyle->lineClamp().isNone() && newStyle->lineClamp().isNone())
+        clearLineClamp();
+
+    RenderBlock::styleWillChange(diff, newStyle);
+}
+
 void RenderDeprecatedFlexibleBox::calcHorizontalPrefWidths()
 {
     for (RenderBox* child = firstChildBox(); child; child = child->nextSiblingBox()) {
@@ -972,6 +981,25 @@ void RenderDeprecatedFlexibleBox::applyLineClamp(FlexBoxIterator& iterator, bool
         // Let the truncation code kick in.
         lastVisibleLine->placeEllipsis(anchorBox ? ellipsisAndSpaceStr : ellipsisStr, leftToRight, blockLeftEdge, blockRightEdge, totalWidth, anchorBox);
         destBlock->setHasMarkupTruncation(true);
+    }
+}
+
+void RenderDeprecatedFlexibleBox::clearLineClamp()
+{
+    FlexBoxIterator iterator(this);
+    for (RenderBox* child = iterator.first(); child; child = iterator.next()) {
+        if (childDoesNotAffectWidthOrFlexing(child))
+            continue;
+
+        if ((child->isReplaced() && (child->style()->width().isPercent() || child->style()->height().isPercent()))
+            || (child->style()->height().isAuto() && child->isBlockFlow())) {
+            child->setChildNeedsLayout(true);
+
+            if (child->isRenderBlock()) {
+                toRenderBlock(child)->markPositionedObjectsForLayout();
+                toRenderBlock(child)->clearTruncation();
+            }
+        }
     }
 }
 

@@ -40,6 +40,8 @@ public:
     void calcHorizontalPrefWidths();
     void calcVerticalPrefWidths();
 
+    virtual void styleWillChange(StyleDifference, const RenderStyle* newStyle) OVERRIDE;
+
     virtual void layoutBlock(bool relayoutChildren, LayoutUnit pageHeight = 0);
     void layoutHorizontalBox(bool relayoutChildren);
     void layoutVerticalBox(bool relayoutChildren);
@@ -65,6 +67,7 @@ protected:
 
 private:
     void applyLineClamp(FlexBoxIterator&, bool relayoutChildren);
+    void clearLineClamp();
 };
 
 } // namespace WebCore
