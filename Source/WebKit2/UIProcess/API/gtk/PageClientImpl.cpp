@@ -142,6 +142,9 @@ void PageClientImpl::toolTipChanged(const String&, const String& newToolTip)
 
 void PageClientImpl::setCursor(const Cursor& cursor)
 {
+    if (!gtk_widget_get_realized(m_viewWidget))
+        return;
+
     // [GTK] Widget::setCursor() gets called frequently
     // http://bugs.webkit.org/show_bug.cgi?id=16388
     // Setting the cursor may be an expensive operation in some backends,
