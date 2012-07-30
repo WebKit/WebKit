@@ -1,8 +1,7 @@
 LIST(APPEND WTF_HEADERS
-    unicode/wince/UnicodeWinCE.h
+    unicode/wchar/UnicodeWchar.h
 
     ${3RDPARTY_DIR}/ce-compat/ce_time.h
-    ${3RDPARTY_DIR}/ce-compat/ce_unicode.h
 )
 
 LIST(APPEND WTF_SOURCES
@@ -14,13 +13,12 @@ LIST(APPEND WTF_SOURCES
     threads/win/BinarySemaphoreWin.cpp
 
     unicode/CollatorDefault.cpp
-    unicode/wince/UnicodeWinCE.cpp
+    unicode/wchar/UnicodeWchar.cpp
 
     win/MainThreadWin.cpp
     win/OwnPtrWin.cpp
 
     ${3RDPARTY_DIR}/ce-compat/ce_time.c
-    ${3RDPARTY_DIR}/ce-compat/ce_unicode.cpp
 )
 
 LIST(APPEND WTF_LIBRARIES

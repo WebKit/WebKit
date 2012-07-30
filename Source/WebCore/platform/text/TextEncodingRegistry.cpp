@@ -51,7 +51,7 @@
 #if USE(GLIB_UNICODE)
 #include "gtk/TextCodecGtk.h"
 #endif
-#if USE(WINCE_UNICODE)
+#if OS(WINDOWS) && USE(WCHAR_UNICODE)
 #include "win/TextCodecWin.h"
 #endif
 
@@ -311,7 +311,7 @@ static void extendTextCodecMaps()
     TextCodecGtk::registerExtendedCodecs(addToTextCodecMap);
 #endif
 
-#if USE(WINCE_UNICODE)
+#if OS(WINDOWS) && USE(WCHAR_UNICODE)
     TextCodecWin::registerExtendedEncodingNames(addToTextEncodingNameMap);
     TextCodecWin::registerExtendedCodecs(addToTextCodecMap);
 #endif

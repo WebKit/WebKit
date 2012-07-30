@@ -34,8 +34,8 @@ typedef unsigned char LChar;
 #include <wtf/unicode/icu/UnicodeIcu.h>
 #elif USE(GLIB_UNICODE)
 #include <wtf/unicode/glib/UnicodeGLib.h>
-#elif USE(WINCE_UNICODE)
-#include <wtf/unicode/wince/UnicodeWinCE.h>
+#elif USE(WCHAR_UNICODE)
+#include <wtf/unicode/wchar/UnicodeWchar.h>
 #else
 #error "Unknown Unicode implementation"
 #endif

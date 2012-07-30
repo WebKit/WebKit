@@ -122,9 +122,9 @@
         ['exclude', '../wtf/url'],
         ['exclude', '../wtf/wince'],
         ['exclude', '../wtf/wx'],
-        ['exclude', '../wtf/unicode/wince'],
         ['exclude', '../wtf/unicode/glib'],
         ['exclude', '../wtf/unicode/qt4'],
+        ['exclude', '../wtf/unicode/wchar'],
         # GLib/GTK, even though its name doesn't really indicate.
         ['exclude', '/(gtk|glib|gobject)/.*\\.(cpp|h)$'],
         ['exclude', '(Default|Gtk|Mac|None|Qt|Win|Wx|Efl|Symbian)\\.(cpp|mm)$'],

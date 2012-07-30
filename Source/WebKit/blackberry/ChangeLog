@@ -1,3 +1,17 @@
+2012-07-30  Patrick Gansterer  <paroga@webkit.org>
+
+        Replace UnicodeWinCE with UnicodeWchar
+        https://bugs.webkit.org/show_bug.cgi?id=92539
+
+        Reviewed by Ryosuke Niwa.
+
+        UnicodeWinCE never contained WinCE specific code. UnicodeWchar
+        is a replacement for it, which is mainly based on the functions
+        from <wchar.h>. It is ment as a minimal Unicode backend, which
+        can be used very easy and has no external dependencies.
+
+        * WebCoreSupport/AboutDataUseFeatures.in:
+
 2012-07-27  Eli Fidler  <efidler@rim.com>
 
         [BlackBerry] Adapt to change in the FontInfo platform API.

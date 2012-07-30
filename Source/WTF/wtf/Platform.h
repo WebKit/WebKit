@@ -517,7 +517,7 @@
 #define WTF_USE_QT4_UNICODE 1
 #endif
 #elif OS(WINCE)
-#define WTF_USE_WINCE_UNICODE 1
+#define WTF_USE_WCHAR_UNICODE 1
 #elif PLATFORM(GTK)
 /* The GTK+ Unicode backend is configurable */
 #else
