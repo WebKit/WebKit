@@ -603,9 +603,6 @@ BUGWK84678 : fast/spatial-navigation/snav-container-white-space.html = TEXT
 BUGWK84678 : fast/spatial-navigation/snav-fully-aligned-horizontally.html = TEXT
 BUGWK84678 : fast/spatial-navigation/snav-iframe-no-scrollable-content.html = TEXT
 
-// Ligatures rendering issue.
-BUGWK85606 : fast/text/font-variant-ligatures.html = IMAGE
-
 // Off-by-few-pixels issue for this selection reftest, fails on GTK as well.
 BUGWK84701 : fast/block/line-layout/selection-highlight-overlap.html = TEXT IMAGE IMAGE+TEXT
 

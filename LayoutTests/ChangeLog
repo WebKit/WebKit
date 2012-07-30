@@ -1,3 +1,14 @@
+2012-07-30  Dominik Röttsches  <dominik.rottsches@intel.com>
+
+        [EFL][DRT] fast/text/font-variant-ligatures.html fails with missing rendering output
+        https://bugs.webkit.org/show_bug.cgi?id=85606
+
+        Unreviewed, EFL gardening.
+
+        Unskip test that's passing after r123864 due to complex font support.
+
+        * platform/efl/TestExpectations: font-variant-ligatures.html unskipped.
+
 2012-07-30  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unreviewed gardening. Unkskip more passing tests after bug85203.
