@@ -1,3 +1,47 @@
+2012-07-26  Yury Semikhatsky  <yurys@chromium.org>
+
+        Web Inspector: make MemoryInstrumentation methods private
+        https://bugs.webkit.org/show_bug.cgi?id=92379
+
+        Reviewed by Vsevolod Vlasov.
+
+        MemoryInstrumentation was refactored.
+        - All reporting methods on MemoryInstrumentation except add*Object are
+          private to enforce MemoryClassInfo usage.
+        - MemoryInstrumentation::Add*Member methods renamed to Add*Object
+        - String reporting is implemented directly in the MemoryInstrumentation,
+          not in its descendants.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/v8/ScriptProfiler.cpp:
+        (WebCore::ScriptProfiler::collectBindingMemoryInfo):
+        * dom/MemoryInstrumentation.cpp: Added.
+        (WebCore):
+        (WebCore::MemoryInstrumentation::addString):
+        * dom/MemoryInstrumentation.h:
+        (WebCore::MemoryInstrumentation::addInstrumentedObject):
+        (WebCore::MemoryInstrumentation::addObject):
+        (MemoryInstrumentation):
+        (InstrumentedPointerBase):
+        (WebCore::MemoryInstrumentation::InstrumentedPointerBase::~InstrumentedPointerBase):
+        (InstrumentedPointer):
+        (WebCore::MemoryInstrumentation::InstrumentedPointer::InstrumentedPointer):
+        (WebCore::MemoryInstrumentation::OwningTraits::addInstrumentedObject):
+        (WebCore::MemoryInstrumentation::OwningTraits::addObject):
+        (WebCore::MemoryInstrumentation::addInstrumentedObjectImpl):
+        (WebCore::MemoryClassInfo::addInstrumentedMember):
+        (WebCore::MemoryClassInfo::addMember):
+        (WebCore):
+        (WebCore::MemoryInstrumentation::addObjectImpl):
+        (WebCore::MemoryInstrumentation::addInstrumentedCollection):
+        (WebCore::MemoryInstrumentation::calculateContainerSize):
+        * inspector/InspectorMemoryAgent.cpp:
+        (WebCore):
+
 2012-07-30  Alexander Pavlov  <apavlov@chromium.org>
 
         Web Inspector: [Styles] No color swatch for the SVG "fill" and "stroke" property values

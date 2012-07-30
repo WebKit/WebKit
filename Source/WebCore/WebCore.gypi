@@ -5199,6 +5199,7 @@
             'dom/IdTargetObserverRegistry.cpp',
             'dom/IdTargetObserverRegistry.h',
             'dom/KeyboardEvent.cpp',
+            'dom/MemoryInstrumentation.cpp',
             'dom/MemoryInstrumentation.h',
             'dom/MessageChannel.cpp',
             'dom/MessageChannel.h',

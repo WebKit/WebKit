@@ -223,7 +223,7 @@ void ScriptProfiler::visitExternalArrays(ExternalArrayVisitor* visitor)
 void ScriptProfiler::collectBindingMemoryInfo(MemoryInstrumentation* instrumentation)
 {
     V8BindingPerIsolateData* data = V8BindingPerIsolateData::current();
-    instrumentation->addInstrumentedMember(data);
+    instrumentation->addInstrumentedObject(data);
 }
 
 size_t ScriptProfiler::profilerSnapshotsSize()

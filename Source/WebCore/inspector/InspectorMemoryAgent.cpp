@@ -485,13 +485,6 @@ public:
     }
 
 private:
-    virtual void addString(const String& string, ObjectType objectType)
-    {
-        if (string.isNull() || visited(string.impl()))
-            return;
-        countObjectSize(objectType, string.impl()->sizeInBytes());
-    }
-
     virtual void countObjectSize(ObjectType objectType, size_t size) OVERRIDE
     {
         ASSERT(objectType >= 0 && objectType < LastTypeEntry);
@@ -526,13 +519,13 @@ public:
         if (node->document() && node->document()->frame() && m_page != node->document()->frame()->page())
             return;
 
-        m_domMemoryUsage.addInstrumentedMember(node);
+        m_domMemoryUsage.addInstrumentedObject(node);
         m_domMemoryUsage.processDeferredInstrumentedPointers();
     }
 
     void visitFrame(Frame* frame)
     {
-        m_domMemoryUsage.addInstrumentedMember(frame);
+        m_domMemoryUsage.addInstrumentedObject(frame);
         m_domMemoryUsage.processDeferredInstrumentedPointers();
     }
 

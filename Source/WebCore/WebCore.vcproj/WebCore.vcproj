@@ -51531,6 +51531,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\dom\MemoryInstrumentation.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\dom\MemoryInstrumentation.h"
 				>
 			</File>
