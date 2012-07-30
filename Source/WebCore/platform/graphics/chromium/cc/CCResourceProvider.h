@@ -44,6 +44,7 @@ namespace WebCore {
 class CCGraphicsContext;
 class CCScopedLockResourceForRead;
 class CCScopedLockResourceForWrite;
+class IntRect;
 class LayerTextureSubImage;
 
 // Thread-safety notes: this class is not thread-safe and can only be called

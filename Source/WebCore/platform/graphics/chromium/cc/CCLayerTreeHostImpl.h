@@ -69,17 +69,17 @@ public:
     virtual ~CCLayerTreeHostImpl();
 
     // CCInputHandlerClient implementation
-    virtual CCInputHandlerClient::ScrollStatus scrollBegin(const IntPoint&, CCInputHandlerClient::ScrollInputType);
-    virtual void scrollBy(const IntSize&);
-    virtual void scrollEnd();
-    virtual void pinchGestureBegin();
-    virtual void pinchGestureUpdate(float, const IntPoint&);
-    virtual void pinchGestureEnd();
-    virtual void startPageScaleAnimation(const IntSize& targetPosition, bool anchorPoint, float pageScale, double startTime, double duration);
-    virtual CCActiveGestureAnimation* activeGestureAnimation() { return m_activeGestureAnimation.get(); }
+    virtual CCInputHandlerClient::ScrollStatus scrollBegin(const IntPoint&, CCInputHandlerClient::ScrollInputType) OVERRIDE;
+    virtual void scrollBy(const IntSize&) OVERRIDE;
+    virtual void scrollEnd() OVERRIDE;
+    virtual void pinchGestureBegin() OVERRIDE;
+    virtual void pinchGestureUpdate(float, const IntPoint&) OVERRIDE;
+    virtual void pinchGestureEnd() OVERRIDE;
+    virtual void startPageScaleAnimation(const IntSize& targetPosition, bool anchorPoint, float pageScale, double startTime, double duration) OVERRIDE;
+    virtual CCActiveGestureAnimation* activeGestureAnimation() OVERRIDE { return m_activeGestureAnimation.get(); }
     // To clear an active animation, pass nullptr.
-    virtual void setActiveGestureAnimation(PassOwnPtr<CCActiveGestureAnimation>);
-    virtual void scheduleAnimation();
+    virtual void setActiveGestureAnimation(PassOwnPtr<CCActiveGestureAnimation>) OVERRIDE;
+    virtual void scheduleAnimation() OVERRIDE;
 
     struct FrameData {
         Vector<IntRect> occludingScreenSpaceRects;

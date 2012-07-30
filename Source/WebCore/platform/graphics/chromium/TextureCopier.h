@@ -28,6 +28,8 @@
 #include "GraphicsContext3D.h"
 #include "ProgramBinding.h"
 #include "ShaderChromium.h"
+#include <wtf/OwnPtr.h>
+#include <wtf/PassOwnPtr.h>
 
 namespace WebKit {
 class WebGraphicsContext3D;
@@ -59,8 +61,8 @@ public:
     }
     virtual ~AcceleratedTextureCopier();
 
-    virtual void copyTexture(unsigned sourceTextureId, unsigned destTextureId, const IntSize&);
-    virtual void flush();
+    virtual void copyTexture(unsigned sourceTextureId, unsigned destTextureId, const IntSize&) OVERRIDE;
+    virtual void flush() OVERRIDE;
 
 protected:
     AcceleratedTextureCopier(WebKit::WebGraphicsContext3D*, bool usingBindUniforms);

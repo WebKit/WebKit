@@ -26,6 +26,7 @@
 #ifndef CCRenderPassDrawQuad_h
 #define CCRenderPassDrawQuad_h
 
+#include "IntRect.h"
 #include "cc/CCResourceProvider.h"
 #include <public/WebCompositorQuad.h>
 #include <wtf/PassOwnPtr.h>

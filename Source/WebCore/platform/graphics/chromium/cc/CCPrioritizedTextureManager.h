@@ -31,6 +31,9 @@
 #include "GraphicsContext3D.h"
 #include "IntRect.h"
 #include "IntSize.h"
+#include <wtf/HashSet.h>
+#include <wtf/ListHashSet.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 

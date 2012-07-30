@@ -1,3 +1,19 @@
+2012-07-30  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Add miscellaneous missing includes and OVERRIDE declarations in compositor code
+        https://bugs.webkit.org/show_bug.cgi?id=92680
+
+        Reviewed by Adrienne Walker.
+
+        * platform/graphics/chromium/TextureCopier.h:
+        (AcceleratedTextureCopier):
+        * platform/graphics/chromium/cc/CCLayerTreeHostImpl.h:
+        (CCLayerTreeHostImpl):
+        * platform/graphics/chromium/cc/CCPrioritizedTextureManager.h:
+        * platform/graphics/chromium/cc/CCRenderPassDrawQuad.h:
+        * platform/graphics/chromium/cc/CCResourceProvider.h:
+        (WebCore):
+
 2012-07-30  Adrienne Walker  <enne@google.com>
 
         [chromium] Remove dependency on ScrollbarTheme from the compositor
