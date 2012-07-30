@@ -1,5 +1,13 @@
 2012-07-29  Kent Tamura  <tkent@chromium.org>
 
+        REGRESSION(r123993): fast/forms/date/calendar-picker-type-change-onclick.html fails
+
+        * fast/forms/date/calendar-picker-appearance-expected.txt:
+        * fast/forms/date/calendar-picker-appearance.html:
+        Clear webkitTransitionEnd event handler before notifyDone().
+
+2012-07-29  Kent Tamura  <tkent@chromium.org>
+
         Fix opacity issue of fast/forms/date/calendar-picker-appearance.html
         https://bugs.webkit.org/show_bug.cgi?id=92605
 
