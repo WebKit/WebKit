@@ -32,6 +32,18 @@ public:
     typedef SVGPropertyTearOff<PropertyType> PropertyTearOff;
     typedef PropertyType ContentType;
 
+    virtual ~SVGAnimatedPropertyTearOff()
+    {
+        if (m_baseVal) {
+            ASSERT(m_baseVal->animatedProperty() == this);
+            m_baseVal->setAnimatedProperty(0);
+        }
+        if (m_animVal) {
+            ASSERT(m_animVal->animatedProperty() == this);
+            m_animVal->setAnimatedProperty(0);
+        }
+    }
+
     PropertyTearOff* baseVal()
     {
         if (!m_baseVal)
