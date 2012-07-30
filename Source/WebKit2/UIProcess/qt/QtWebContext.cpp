@@ -115,7 +115,7 @@ PassRefPtr<QtWebContext> QtWebContext::defaultContext()
     if (s_defaultContext)
         return PassRefPtr<QtWebContext>(s_defaultContext);
 
-    RefPtr<WebContext> context = WebContext::sharedProcessContext();
+    RefPtr<WebContext> context = WebContext::create(String());
     RefPtr<QtWebContext> defaultContext = QtWebContext::create(context.get());
     s_defaultContext = defaultContext.get();
     // Make sure that this doesn't get called in WebKitTestRunner (defaultContext isn't used there).

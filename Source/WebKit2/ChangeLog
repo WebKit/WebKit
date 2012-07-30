@@ -1,3 +1,15 @@
+2012-07-30  Rafael Brandao  <rafael.lobo@openbossa.org>
+
+        [WK2] Kill the concept of secondary shared process
+        https://bugs.webkit.org/show_bug.cgi?id=92676
+
+        Reviewed by Alexey Proskuryakov.
+
+        Build fix after r124092.
+
+        * UIProcess/qt/QtWebContext.cpp: Build fix for Qt. In exchange of the
+        method removed, I've used WebContext::create(String()).
+
 2012-07-30  Alexey Proskuryakov  <ap@apple.com>
 
         [WK2] Kill the concept of secondary shared process
