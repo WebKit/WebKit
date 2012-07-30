@@ -1,3 +1,31 @@
+2012-07-30  John Bates  <jbates@google.com>
+
+        Plumb vsync-enabled flag up to compositor thread and support disable-vsync
+        https://bugs.webkit.org/show_bug.cgi?id=92323
+
+        Reviewed by James Robinson.
+
+        * platform/graphics/chromium/cc/CCFrameRateController.cpp:
+        (WebCore::CCFrameRateController::CCFrameRateController):
+        (WebCore::CCFrameRateController::disableTimeSourceThrottling):
+        (WebCore):
+        (WebCore::CCFrameRateController::setActive):
+        (WebCore::CCFrameRateController::postManualTick):
+        (WebCore::CCFrameRateController::onTimerFired):
+        (WebCore::CCFrameRateController::didBeginFrame):
+        (WebCore::CCFrameRateController::didFinishFrame):
+        * platform/graphics/chromium/cc/CCFrameRateController.h:
+        (WebCore):
+        (CCFrameRateController):
+        * platform/graphics/chromium/cc/CCLayerTreeHost.h:
+        (WebCore::CCLayerTreeSettings::CCLayerTreeSettings):
+        (CCLayerTreeSettings):
+        * platform/graphics/chromium/cc/CCThreadProxy.cpp:
+        (WebCore::CCThreadProxy::CCThreadProxy):
+        (WebCore::CCThreadProxy::initializeImplOnImplThread):
+        * platform/graphics/chromium/cc/CCThreadProxy.h:
+        (CCThreadProxy):
+
 2012-07-30  James Robinson  <jamesr@chromium.org>
 
         [chromium] Add miscellaneous missing includes and OVERRIDE declarations in compositor code

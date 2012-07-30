@@ -139,4 +139,37 @@ TEST(CCFrameRateControllerTest, TestFrameThrottling_TwoFramesInFlight)
     EXPECT_TRUE(client.vsyncTicked());
 }
 
+TEST(CCFrameRateControllerTest, TestFrameThrottling_Unthrottled)
+{
+    FakeCCThread thread;
+    FakeCCFrameRateControllerClient client;
+    CCFrameRateController controller(&thread);
+
+    controller.setClient(&client);
+    controller.setMaxFramesPending(2);
+
+    // setActive triggers 1st frame, make sure the vsync callback is called
+    controller.setActive(true);
+    thread.runPendingTask();
+    EXPECT_TRUE(client.vsyncTicked());
+    client.reset();
+
+    // didBeginFrame triggers 2nd frame, make sure the vsync callback is called
+    controller.didBeginFrame();
+    thread.runPendingTask();
+    EXPECT_TRUE(client.vsyncTicked());
+    client.reset();
+
+    // didBeginFrame triggers 3rd frame (> maxFramesPending), make sure the vsync callback is NOT called
+    controller.didBeginFrame();
+    thread.runPendingTask();
+    EXPECT_FALSE(client.vsyncTicked());
+    client.reset();
+
+    // didFinishFrame triggers a frame, make sure the vsync callback is called
+    controller.didFinishFrame();
+    thread.runPendingTask();
+    EXPECT_TRUE(client.vsyncTicked());
+}
+
 }

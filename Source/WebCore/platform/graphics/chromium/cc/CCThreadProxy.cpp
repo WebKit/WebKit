@@ -84,6 +84,7 @@ CCThreadProxy::CCThreadProxy(CCLayerTreeHost* layerTreeHost)
     , m_commitCompletionEventOnImplThread(0)
     , m_textureAcquisitionCompletionEventOnImplThread(0)
     , m_nextFrameIsNewlyCommittedFrameOnImplThread(false)
+    , m_renderVSyncEnabled(layerTreeHost->settings().renderVSyncEnabled)
 {
     TRACE_EVENT0("cc", "CCThreadProxy::CCThreadProxy");
     ASSERT(isMainThread());
@@ -808,7 +809,11 @@ void CCThreadProxy::initializeImplOnImplThread(CCCompletionEvent* completion)
     ASSERT(isImplThread());
     m_layerTreeHostImpl = m_layerTreeHost->createLayerTreeHostImpl(this);
     const double displayRefreshInterval = 1.0 / 60.0;
-    OwnPtr<CCFrameRateController> frameRateController = adoptPtr(new CCFrameRateController(CCDelayBasedTimeSource::create(displayRefreshInterval, CCProxy::implThread())));
+    OwnPtr<CCFrameRateController> frameRateController;
+    if (m_renderVSyncEnabled)
+        frameRateController = adoptPtr(new CCFrameRateController(CCDelayBasedTimeSource::create(displayRefreshInterval, CCProxy::implThread())));
+    else
+        frameRateController = adoptPtr(new CCFrameRateController(CCProxy::implThread()));
     m_schedulerOnImplThread = CCScheduler::create(this, frameRateController.release());
     m_schedulerOnImplThread->setVisible(m_layerTreeHostImpl->visible());
 

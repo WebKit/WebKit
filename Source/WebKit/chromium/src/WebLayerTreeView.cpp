@@ -49,6 +49,7 @@ WebLayerTreeView::Settings::operator CCLayerTreeSettings() const
     settings.showFPSCounter = showFPSCounter;
     settings.showPlatformLayerTree = showPlatformLayerTree;
     settings.showPaintRects = showPaintRects;
+    settings.renderVSyncEnabled = renderVSyncEnabled;
     settings.refreshRate = refreshRate;
     settings.defaultTileSize = defaultTileSize;
     settings.maxUntiledLayerSize = maxUntiledLayerSize;

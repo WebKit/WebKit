@@ -1,3 +1,14 @@
+2012-07-30  John Bates  <jbates@google.com>
+
+        Plumb vsync-enabled flag up to compositor thread and support disable-vsync
+        https://bugs.webkit.org/show_bug.cgi?id=92323
+
+        Reviewed by James Robinson.
+
+        * chromium/public/WebLayerTreeView.h:
+        (WebKit::WebLayerTreeView::Settings::Settings):
+        (Settings):
+
 2012-07-30  Adrienne Walker  <enne@google.com>
 
         [chromium] Remove dependency on ScrollbarTheme from the compositor

@@ -51,6 +51,7 @@ WebSettingsImpl::WebSettingsImpl(Settings* settings)
     , m_showFPSCounter(false)
     , m_showPlatformLayerTree(false)
     , m_showPaintRects(false)
+    , m_renderVSyncEnabled(true)
     , m_viewportEnabled(false)
     , m_applyDefaultDeviceScaleFactorInCompositor(false)
     , m_defaultTileSize(WebSize(256, 256))
@@ -355,6 +356,11 @@ void WebSettingsImpl::setOpenGLMultisamplingEnabled(bool enabled)
 void WebSettingsImpl::setPrivilegedWebGLExtensionsEnabled(bool enabled)
 {
     m_settings->setPrivilegedWebGLExtensionsEnabled(enabled);
+}
+
+void WebSettingsImpl::setRenderVSyncEnabled(bool enabled)
+{
+    m_renderVSyncEnabled = enabled;
 }
 
 void WebSettingsImpl::setWebGLErrorsToConsoleEnabled(bool enabled)

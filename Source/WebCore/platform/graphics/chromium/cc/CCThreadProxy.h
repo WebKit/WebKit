@@ -187,6 +187,8 @@ private:
 
     // Set when the next draw should post didCommitAndDrawFrame to the main thread.
     bool m_nextFrameIsNewlyCommittedFrameOnImplThread;
+
+    bool m_renderVSyncEnabled;
 };
 
 }

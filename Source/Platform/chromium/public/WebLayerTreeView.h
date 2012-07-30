@@ -55,6 +55,7 @@ public:
             , showFPSCounter(false)
             , showPlatformLayerTree(false)
             , showPaintRects(false)
+            , renderVSyncEnabled(true)
             , refreshRate(0)
             , defaultTileSize(WebSize(256, 256))
             , maxUntiledLayerSize(WebSize(512, 512))
@@ -66,6 +67,7 @@ public:
         bool showFPSCounter;
         bool showPlatformLayerTree;
         bool showPaintRects;
+        bool renderVSyncEnabled;
         double refreshRate;
         WebSize defaultTileSize;
         WebSize maxUntiledLayerSize;

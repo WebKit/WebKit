@@ -124,6 +124,7 @@ public:
     virtual void setPictographFontFamily(const WebString&, UScriptCode = USCRIPT_COMMON);
     virtual void setPluginsEnabled(bool);
     virtual void setPrivilegedWebGLExtensionsEnabled(bool);
+    virtual void setRenderVSyncEnabled(bool);
     virtual void setSansSerifFontFamily(const WebString&, UScriptCode = USCRIPT_COMMON);
     virtual void setSerifFontFamily(const WebString&, UScriptCode = USCRIPT_COMMON);
     virtual void setShouldDisplayCaptions(bool);
@@ -155,6 +156,7 @@ public:
     bool showFPSCounter() const { return m_showFPSCounter; }
     bool showPlatformLayerTree() const { return m_showPlatformLayerTree; }
     bool showPaintRects() const { return m_showPaintRects; }
+    bool renderVSyncEnabled() const { return m_renderVSyncEnabled; }
     bool applyDefaultDeviceScaleFactorInCompositor() const { return m_applyDefaultDeviceScaleFactorInCompositor; }
     WebSize defaultTileSize() const { return m_defaultTileSize; }
     WebSize maxUntiledLayerSize() const { return m_maxUntiledLayerSize; }
@@ -165,6 +167,7 @@ private:
     bool m_showFPSCounter;
     bool m_showPlatformLayerTree;
     bool m_showPaintRects;
+    bool m_renderVSyncEnabled;
     bool m_viewportEnabled;
     bool m_applyDefaultDeviceScaleFactorInCompositor;
     WebSize m_defaultTileSize;
