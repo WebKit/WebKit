@@ -231,38 +231,11 @@ static void testWebContextURIScheme(URISchemeTest* test, gconstpointer)
     g_assert(!test->m_loadEvents.contains(LoadTrackingTest::LoadFailed));
 }
 
-static void testWebContextSpellChecker(Test* test, gconstpointer)
-{
-    GRefPtr<WebKitWebContext> webContext(webkit_web_context_get_default());
-
-    // Set the language to a specific one, an empty one and a list of them.
-    webkit_web_context_set_spell_checking_languages(webContext.get(), "en_US");
-    const gchar* currentLanguage(webkit_web_context_get_spell_checking_languages(webContext.get()));
-    g_assert_cmpstr(currentLanguage, ==, "en_US");
-
-    webkit_web_context_set_spell_checking_languages(webContext.get(), 0);
-    currentLanguage = webkit_web_context_get_spell_checking_languages(webContext.get());
-    g_assert_cmpstr(currentLanguage, ==, 0);
-
-    webkit_web_context_set_spell_checking_languages(webContext.get(), "es_ES,en_US");
-    currentLanguage = webkit_web_context_get_spell_checking_languages(webContext.get());
-    g_assert_cmpstr(currentLanguage, ==, "es_ES,en_US");
-
-    // Check disabling and re-enabling spell checking.
-    webkit_web_context_set_spell_checking_enabled(webContext.get(), FALSE);
-    gboolean isSpellCheckingEnabled = webkit_web_context_get_spell_checking_enabled(webContext.get());
-    g_assert(!isSpellCheckingEnabled);
-    webkit_web_context_set_spell_checking_enabled(webContext.get(), TRUE);
-    isSpellCheckingEnabled = webkit_web_context_get_spell_checking_enabled(webContext.get());
-    g_assert(isSpellCheckingEnabled);
-}
-
 void beforeAll()
 {
     Test::add("WebKitWebContext", "default-context", testWebContextDefault);
     PluginsTest::add("WebKitWebContext", "get-plugins", testWebContextGetPlugins);
     URISchemeTest::add("WebKitWebContext", "uri-scheme", testWebContextURIScheme);
-    Test::add("WebKitWebContext", "spell-checker", testWebContextSpellChecker);
 }
 
 void afterAll()

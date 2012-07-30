@@ -28,13 +28,10 @@
 #include "WebKitPluginPrivate.h"
 #include "WebKitPrivate.h"
 #include "WebKitRequestManagerClient.h"
-#include "WebKitTextChecker.h"
 #include "WebKitURISchemeRequestPrivate.h"
 #include "WebKitWebContextPrivate.h"
 #include <WebCore/FileSystem.h>
 #include <wtf/HashMap.h>
-#include <wtf/OwnPtr.h>
-#include <wtf/gobject/GOwnPtr.h>
 #include <wtf/gobject/GRefPtr.h>
 #include <wtf/text/CString.h>
 
@@ -74,10 +71,6 @@ struct _WebKitWebContextPrivate {
     URISchemeRequestMap uriSchemeRequests;
 #if ENABLE(GEOLOCATION)
     RefPtr<WebKitGeolocationProvider> geolocationProvider;
-#endif
-#if ENABLE(SPELLCHECK)
-    OwnPtr<WebKitTextChecker> textChecker;
-    GOwnPtr<gchar> spellCheckingLanguages;
 #endif
 };
 
@@ -133,9 +126,6 @@ static gpointer createDefaultWebContext(gpointer)
 #if ENABLE(GEOLOCATION)
     WKGeolocationManagerRef wkGeolocationManager = WKContextGetGeolocationManager(webContext->priv->context.get());
     webContext->priv->geolocationProvider = WebKitGeolocationProvider::create(wkGeolocationManager);
-#endif
-#if ENABLE(SPELLCHECK)
-    webContext->priv->textChecker = WebKitTextChecker::create();
 #endif
     return webContext.get();
 }
@@ -426,88 +416,6 @@ void webkit_web_context_register_uri_scheme(WebKitWebContext* context, const cha
     context->priv->uriSchemeHandlers.set(String::fromUTF8(scheme), WebKitURISchemeHandler(callback, userData));
     WKRetainPtr<WKStringRef> wkScheme(AdoptWK, WKStringCreateWithUTF8CString(scheme));
     WKSoupRequestManagerRegisterURIScheme(context->priv->requestManager.get(), wkScheme.get());
-}
-
-/**
- * webkit_web_context_get_spell_checking_enabled:
- * @context: a #WebKitWebContext
- *
- * Get the current status of the spell checking feature.
- *
- * Returns: %TRUE If spell checking is enabled, or %FALSE otherwise.
- */
-gboolean webkit_web_context_get_spell_checking_enabled(WebKitWebContext* context)
-{
-    g_return_val_if_fail(WEBKIT_IS_WEB_CONTEXT(context), FALSE);
-
-#if ENABLE(SPELLCHECK)
-    return context->priv->textChecker->isSpellCheckingEnabled();
-#else
-    return false;
-#endif
-}
-
-/**
- * webkit_web_context_set_spell_checking_enabled:
- * @context: a #WebKitWebContext
- * @enabled: Value to be set
- *
- * Enable or disable the spell checking feature.
- */
-void webkit_web_context_set_spell_checking_enabled(WebKitWebContext* context, gboolean enabled)
-{
-    g_return_if_fail(WEBKIT_IS_WEB_CONTEXT(context));
-
-#if ENABLE(SPELLCHECK)
-    context->priv->textChecker->setSpellCheckingEnabled(enabled);
-#endif
-}
-
-/**
- * webkit_web_context_get_spell_checking_languages:
- * @context: a #WebKitWebContext
- *
- * Get the the list of spell checking languages associated with
- * @context, separated by commas. See
- * webkit_web_context_set_spell_checking_languages() for more details
- * on the format of the languages in the list.
- *
- * Returns: (transfer none): A comma separated list of languages.
- */
-const gchar* webkit_web_context_get_spell_checking_languages(WebKitWebContext* context)
-{
-    g_return_val_if_fail(WEBKIT_IS_WEB_CONTEXT(context), 0);
-
-#if ENABLE(SPELLCHECK)
-    return context->priv->spellCheckingLanguages.get();
-#else
-    return 0;
-#endif
-}
-
-/**
- * webkit_web_context_set_spell_checking_languages:
- * @context: a #WebKitWebContext
- * @languages: (allow-none): new list of spell checking
- * languages separated by commas, or %NULL
- *
- * Set the list of spell checking languages to be used for spell
- * checking, separated by commas. In case %NULL is passed, the default
- * value as returned by gtk_get_default_language() will be used.
- *
- * The locale string typically is in the form lang_COUNTRY, where lang
- * is an ISO-639 language code, and COUNTRY is an ISO-3166 country code.
- * For instance, sv_FI for Swedish as written in Finland or pt_BR
- * for Portuguese as written in Brazil.
- */
-void webkit_web_context_set_spell_checking_languages(WebKitWebContext* context, const gchar* languages)
-{
-    g_return_if_fail(WEBKIT_IS_WEB_CONTEXT(context));
-
-#if ENABLE(SPELLCHECK)
-    context->priv->textChecker->setSpellCheckingLanguages(String(languages));
-    context->priv->spellCheckingLanguages.set(g_strdup(languages));
-#endif
 }
 
 WebKitDownload* webkitWebContextGetOrCreateDownload(WKDownloadRef wkDownload)

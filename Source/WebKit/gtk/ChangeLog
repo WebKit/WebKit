@@ -1,3 +1,29 @@
+2012-07-30  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r123966 and r123967.
+        http://trac.webkit.org/changeset/123966
+        http://trac.webkit.org/changeset/123967
+        https://bugs.webkit.org/show_bug.cgi?id=92656
+
+        This patch is causing assertion failures on the debug bot
+        (also rolling out a dependent patch) (Requested by mrobinson
+        on #webkit).
+
+        * webkit/webkitspellcheckerenchant.cpp:
+        (_WebKitSpellCheckerEnchantPrivate):
+        (createEnchantBrokerIfNeeded):
+        (freeSpellCheckingLanguage):
+        (webkit_spell_checker_enchant_finalize):
+        (webkit_spell_checker_enchant_class_init):
+        (webkit_spell_checker_enchant_init):
+        (wordEndIsAContractionApostrophe):
+        (checkSpellingOfString):
+        (getGuessesForWord):
+        (getAvailableDictionariesCallback):
+        (updateSpellCheckingLanguages):
+        (learnWord):
+        (ignoreWord):
+
 2012-07-30  Claudio Saavedra  <csaavedra@igalia.com>
 
         [Gtk] Add WK1 API for snapshot retrieval

@@ -6290,13 +6290,3 @@ dom_binding_idls += \
 	$(WebCore)/Modules/quota/StorageInfoUsageCallback.idl
 
 endif  # END ENABLE_QUOTA
-
-# ----
-# Spell check support
-# ----
-if ENABLE_SPELLCHECK
-webcore_sources += \
-	Source/WebCore/platform/text/gtk/TextCheckerEnchant.h \
-	Source/WebCore/platform/text/gtk/TextCheckerEnchant.cpp
-endif # END ENABLE_SPELLCHECK
-

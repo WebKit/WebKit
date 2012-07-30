@@ -1,3 +1,27 @@
+2012-07-30  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r123966 and r123967.
+        http://trac.webkit.org/changeset/123966
+        http://trac.webkit.org/changeset/123967
+        https://bugs.webkit.org/show_bug.cgi?id=92656
+
+        This patch is causing assertion failures on the debug bot
+        (also rolling out a dependent patch) (Requested by mrobinson
+        on #webkit).
+
+        * GNUmakefile.am:
+        * GNUmakefile.list.am:
+        * UIProcess/API/gtk/WebKitPrivate.h:
+        * UIProcess/API/gtk/WebKitTextChecker.cpp: Removed.
+        * UIProcess/API/gtk/WebKitTextChecker.h: Removed.
+        * UIProcess/API/gtk/WebKitWebContext.cpp:
+        (_WebKitWebContextPrivate):
+        (createDefaultWebContext):
+        * UIProcess/API/gtk/WebKitWebContext.h:
+        * UIProcess/API/gtk/docs/webkit2gtk-sections.txt:
+        * UIProcess/API/gtk/tests/TestWebKitWebContext.cpp:
+        (beforeAll):
+
 2012-07-29  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Resource agent's reference to cached resources should be weak.

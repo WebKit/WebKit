@@ -99,7 +99,6 @@ def get_webkit2_options():
                          glob.glob(src_path('*Client*')) + \
                          glob.glob(src_path('WebKitWebViewBaseAccessible.*')) + \
                          glob.glob(src_path('WebKitGeolocationProvider.*')) + \
-                         glob.glob(src_path('WebKitTextChecker.*')) + \
                          glob.glob(derived_sources_path('webkit2gtk', 'webkit2', 'WebKitMarshal.*')) + \
                          glob.glob(derived_sources_path('webkit2gtk', 'webkit2', 'WebKitEnumTypes.*')) + \
                          glob.glob(src_path('tests/*.h'))
