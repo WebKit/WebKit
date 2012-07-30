@@ -27,6 +27,7 @@
 #include "SVGFilterElement.h"
 
 #include "Attr.h"
+#include "NodeRenderingContext.h"
 #include "RenderSVGResourceFilter.h"
 #include "SVGElementInstance.h"
 #include "SVGFilterBuilder.h"
@@ -191,6 +192,45 @@ void SVGFilterElement::childrenChanged(bool changedByParser, Node* beforeChange,
 RenderObject* SVGFilterElement::createRenderer(RenderArena* arena, RenderStyle*)
 {
     return new (arena) RenderSVGResourceFilter(this);
+}
+
+bool SVGFilterElement::childShouldCreateRenderer(const NodeRenderingContext& childContext) const
+{
+    if (!childContext.node()->isSVGElement())
+        return false;
+
+    Element* element = static_cast<Element*>(childContext.node());
+
+    DEFINE_STATIC_LOCAL(HashSet<QualifiedName>, allowedChildElementTags, ());
+    if (allowedChildElementTags.isEmpty()) {
+        allowedChildElementTags.add(SVGNames::feBlendTag);
+        allowedChildElementTags.add(SVGNames::feColorMatrixTag);
+        allowedChildElementTags.add(SVGNames::feComponentTransferTag);
+        allowedChildElementTags.add(SVGNames::feCompositeTag);
+        allowedChildElementTags.add(SVGNames::feConvolveMatrixTag);
+        allowedChildElementTags.add(SVGNames::feDiffuseLightingTag);
+        allowedChildElementTags.add(SVGNames::feDisplacementMapTag);
+        allowedChildElementTags.add(SVGNames::feDistantLightTag);
+        allowedChildElementTags.add(SVGNames::feDropShadowTag);
+        allowedChildElementTags.add(SVGNames::feFloodTag);
+        allowedChildElementTags.add(SVGNames::feFuncATag);
+        allowedChildElementTags.add(SVGNames::feFuncBTag);
+        allowedChildElementTags.add(SVGNames::feFuncGTag);
+        allowedChildElementTags.add(SVGNames::feFuncRTag);
+        allowedChildElementTags.add(SVGNames::feGaussianBlurTag);
+        allowedChildElementTags.add(SVGNames::feImageTag);
+        allowedChildElementTags.add(SVGNames::feMergeTag);
+        allowedChildElementTags.add(SVGNames::feMergeNodeTag);
+        allowedChildElementTags.add(SVGNames::feMorphologyTag);
+        allowedChildElementTags.add(SVGNames::feOffsetTag);
+        allowedChildElementTags.add(SVGNames::fePointLightTag);
+        allowedChildElementTags.add(SVGNames::feSpecularLightingTag);
+        allowedChildElementTags.add(SVGNames::feSpotLightTag);
+        allowedChildElementTags.add(SVGNames::feTileTag);
+        allowedChildElementTags.add(SVGNames::feTurbulenceTag);
+    }
+
+    return allowedChildElementTags.contains<QualifiedName, SVGAttributeHashTranslator>(element->tagQName());
 }
 
 bool SVGFilterElement::selfHasRelativeLengths() const
