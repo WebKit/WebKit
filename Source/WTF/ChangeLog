@@ -1,3 +1,19 @@
+2012-07-26  Yury Semikhatsky  <yurys@chromium.org>
+
+        Web Inspector: move StringImpl size calculation to StringImpl
+        https://bugs.webkit.org/show_bug.cgi?id=92359
+
+        Reviewed by Pavel Feldman.
+
+        Moved stringSize(StringImpl*) implementation from InspectorMemoryAgent to
+        StringImpl::sizeInBytes();
+
+        * wtf/text/StringImpl.cpp:
+        (WTF::StringImpl::sizeInBytes):
+        (WTF):
+        * wtf/text/StringImpl.h:
+        (StringImpl):
+
 2012-07-28  Patrick Gansterer  <paroga@webkit.org>
 
         [WIN] Add missing export macro to friend decleration.

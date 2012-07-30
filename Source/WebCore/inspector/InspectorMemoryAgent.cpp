@@ -110,21 +110,6 @@ String nodeName(Node* node)
     return node->nodeName().lower();
 }
 
-size_t stringSize(StringImpl* string)
-{
-    // FIXME: support substrings
-    size_t size = string->length();
-    if (string->is8Bit()) {
-        if (string->has16BitShadow()) {
-            size += 2 * size;
-            if (string->hasTerminatingNullCharacter())
-                size += 2;
-        }
-    } else
-        size *= 2;
-    return size + sizeof(*string);
-}
-
 typedef HashSet<StringImpl*, PtrHash<StringImpl*> > StringImplIdentitySet;
 
 class CharacterDataStatistics {
@@ -143,7 +128,7 @@ public:
             return;
         m_domStringImplSet.add(dataImpl);
 
-        m_characterDataSize += stringSize(dataImpl);
+        m_characterDataSize += dataImpl->sizeInBytes();
     }
 
     bool contains(StringImpl* s) { return m_domStringImplSet.contains(s); }
@@ -288,7 +273,7 @@ public:
 
     virtual void visitJSExternalString(StringImpl* string)
     {
-        int size = stringSize(string);
+        int size = string->sizeInBytes();
         m_jsExternalStringSize += size;
         if (m_characterDataStatistics.contains(string))
             m_sharedStringSize += size;
@@ -352,7 +337,7 @@ private:
     virtual void visitJSExternalString(StringImpl* string)
     {
         if (m_visitedObjects.add(string).isNewEntry)
-            m_jsExternalStringSize += stringSize(string);
+            m_jsExternalStringSize += string->sizeInBytes();
     }
 
     VisitedObjects& m_visitedObjects;
@@ -504,7 +489,7 @@ private:
     {
         if (string.isNull() || visited(string.impl()))
             return;
-        countObjectSize(objectType, stringSize(string.impl()));
+        countObjectSize(objectType, string.impl()->sizeInBytes());
     }
 
     virtual void countObjectSize(ObjectType objectType, size_t size) OVERRIDE

@@ -1693,4 +1693,19 @@ PassRefPtr<StringImpl> StringImpl::createWithTerminatingNullCharacter(const Stri
     return terminatedString.release();
 }
 
+size_t StringImpl::sizeInBytes() const
+{
+    // FIXME: support substrings
+    size_t size = length();
+    if (is8Bit()) {
+        if (has16BitShadow()) {
+            size += 2 * size;
+            if (hasTerminatingNullCharacter())
+                size += 2;
+        }
+    } else
+        size *= 2;
+    return size + sizeof(*this);
+}
+
 } // namespace WTF
