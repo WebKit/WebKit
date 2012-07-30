@@ -63,6 +63,7 @@ private:
     virtual void handleDOMActivateEvent(Event*) OVERRIDE;
     virtual void detach() OVERRIDE;
     virtual bool shouldRespectListAttribute() OVERRIDE;
+    virtual bool typeMismatchFor(const String&) const OVERRIDE;
 
     Color valueAsColor() const;
     void endColorChooser();

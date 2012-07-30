@@ -166,6 +166,11 @@ bool ColorInputType::shouldRespectListAttribute()
     return InputType::themeSupportsDataListUI(this);
 }
 
+bool ColorInputType::typeMismatchFor(const String& value) const
+{
+    return isValidColorString(value);
+}
+
 void ColorInputType::didChooseColor(const Color& color)
 {
     if (element()->disabled() || element()->readOnly() || color == valueAsColor())
