@@ -8,8 +8,10 @@
 ">Lorem ipsum dolor sit amet</div>
 <pre id="log"></pre>
 <script>
-    if (window.testRunner)
+    if (window.testRunner && window.internals) {
         testRunner.dumpAsText();
+        internals.settings.setEditingBehavior("mac");
+    }        
 
     function log(message)
     {

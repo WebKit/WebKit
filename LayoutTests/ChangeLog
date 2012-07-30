@@ -1,3 +1,12 @@
+2012-07-30  Peter Kasting  <pkasting@google.com>
+
+        Force Mac editing mode on new test so other platforms will pass it.
+        https://bugs.webkit.org/show_bug.cgi?id=92662
+
+        Reviewed by Ryosuke Niwa.
+
+        * fast/writing-mode/flipped-blocks-hit-test-line-edges.html:
+
 2012-07-30  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unreviewed gardening.
