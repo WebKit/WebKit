@@ -1728,11 +1728,11 @@ static v8::Handle<v8::Value> classMethodWithClampCallback(const v8::Arguments& a
     if (args.Length() < 2)
         return V8Proxy::throwNotEnoughArgumentsError(args.GetIsolate());
     TestObj* imp = V8TestObj::toNative(args.Holder());
-    unsigned short objArgsShort = 0
+    unsigned short objArgsShort = 0;
     EXCEPTION_BLOCK(double, objArgsShortNativeValue, args[0]->NumberValue());
     if (!isnan(objArgsShortNativeValue))
         objArgsShort = clampTo<unsigned short>(objArgsShortNativeValue);
-    unsigned long objArgsLong = 0
+    unsigned long objArgsLong = 0;
     EXCEPTION_BLOCK(double, objArgsLongNativeValue, args[1]->NumberValue());
     if (!isnan(objArgsLongNativeValue))
         objArgsLong = clampTo<unsigned long>(objArgsLongNativeValue);

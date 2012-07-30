@@ -1683,7 +1683,7 @@ sub GenerateParametersCheck
         } elsif ($parameter->extendedAttributes->{"Clamp"}) {
                 my $nativeValue = "${parameterName}NativeValue";
                 my $paramType = $parameter->type;
-                $parameterCheckString .= "    $paramType $parameterName = 0\n";
+                $parameterCheckString .= "    $paramType $parameterName = 0;\n";
                 $parameterCheckString .= "    EXCEPTION_BLOCK(double, $nativeValue, args[$paramIndex]->NumberValue());\n";
                 $parameterCheckString .= "    if (!isnan($nativeValue))\n";
                 $parameterCheckString .= "        $parameterName = clampTo<$paramType>($nativeValue);\n";

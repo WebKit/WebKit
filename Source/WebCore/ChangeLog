@@ -1,3 +1,32 @@
+2012-07-30  Vineet Chaudhary  <rgf748@motorola.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=92642
+        [Bindings]Remove custom JS/V8 bindings for WebSocket::close() using [Clamp]
+
+        Reviewed by Kentaro Hara.
+
+        With support of [Clamp] as extended attribute we can replace custom bindings from WebSocket::close().
+        Spec for WebSocket::close() : http://www.whatwg.org/specs/web-apps/current-work/multipage/network.html#websocket
+
+        No new tests. There should be no behavioural changes 
+        Existing tests under http/websocket/tests/hybi/ should cover this.
+
+        * Modules/websockets/WebSocket.h:
+        (WebCore::WebSocket::close):
+        * Modules/websockets/WebSocket.idl: Used [Clamp].
+        * bindings/js/JSWebSocketCustom.cpp: Removed custom call close().
+        (WebCore):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateParametersCheck):
+        * bindings/scripts/CodeGeneratorV8.pm:
+        (GenerateParametersCheck):
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::jsTestObjPrototypeFunctionClassMethodWithClamp):
+        * bindings/scripts/test/V8/V8TestObj.cpp:
+        (WebCore::TestObjV8Internal::classMethodWithClampCallback):
+        * bindings/v8/custom/V8WebSocketCustom.cpp: Removed custom call close().
+        (WebCore):
+
 2012-07-29  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Resource agent's reference to cached resources should be weak.

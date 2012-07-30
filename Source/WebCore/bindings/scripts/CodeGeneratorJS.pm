@@ -2613,7 +2613,7 @@ sub GenerateParametersCheck
                 push(@$outputArray, "    double $nativeValue = exec->argument($argsIndex).toNumber(exec);\n");
                 push(@$outputArray, "    if (exec->hadException())\n");
                 push(@$outputArray, "        return JSValue::encode(jsUndefined());\n\n");
-                push(@$outputArray, "    if (!isnan(objArgsShortNativeValue))\n");
+                push(@$outputArray, "    if (!isnan($nativeValue))\n");
                 push(@$outputArray, "        $name = clampTo<$argType>($nativeValue);\n\n");
         } else {
             # If the "StrictTypeChecking" extended attribute is present, and the argument's type is an

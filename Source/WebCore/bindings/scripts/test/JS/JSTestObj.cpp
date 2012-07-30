@@ -2369,7 +2369,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionClassMethodWithClamp(Exec
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
 
-    if (!isnan(objArgsShortNativeValue))
+    if (!isnan(objArgsLongNativeValue))
         objArgsLong = clampTo<unsigned long>(objArgsLongNativeValue);
 
     impl->classMethodWithClamp(objArgsShort, objArgsLong);
