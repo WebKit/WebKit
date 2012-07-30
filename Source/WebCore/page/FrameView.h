@@ -319,8 +319,6 @@ public:
     void setAnimatorsAreActive();
 
     RenderBox* embeddedContentBox() const;
-
-    void clearOwningRendererForCustomScrollbars(RenderBox*);
     
     void setTracksRepaints(bool);
     bool isTrackingRepaints() const { return m_isTrackingRepaints; }
