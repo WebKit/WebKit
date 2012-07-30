@@ -650,4 +650,11 @@ void ChromeClientEfl::exitFullScreenForElement(WebCore::Element*)
 }
 #endif
 
+#if USE(TILED_BACKING_STORE)
+void ChromeClientEfl::delegatedScrollRequested(const IntPoint& point)
+{
+    notImplemented();
+}
+#endif
+
 }

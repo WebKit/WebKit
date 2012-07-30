@@ -108,6 +108,10 @@ private:
     virtual void findStringInCustomRepresentation(const String&, FindOptions, unsigned);
     virtual void countStringMatchesInCustomRepresentation(const String&, FindOptions, unsigned);
 
+#if USE(TILED_BACKING_STORE)
+    virtual void pageDidRequestScroll(const WebCore::IntPoint&);
+#endif
+
 private:
     RefPtr<WebPageProxy> m_page;
     Evas_Object* m_viewWidget;

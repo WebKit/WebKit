@@ -1,3 +1,21 @@
+2012-07-29  YoungTaeck Song  <youngtaeck.song@samsung.com>
+
+        [WK2][EFL] TILED_BACKING_STORE support on Efl WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=91582
+
+        Reviewed by Noam Rosenthal.
+
+        This patch is a subset of Efl's UI_SIDE_COMPOSITING implementation.
+        Add a dummy function for fixing building error when enabling TILED_BACKING_STORE.
+
+        * UIProcess/API/efl/PageClientImpl.cpp:
+        (WebKit):
+        (WebKit::PageClientImpl::pageDidRequestScroll):
+        * UIProcess/API/efl/PageClientImpl.h:
+        (PageClientImpl):
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::contentsSizeChanged):
+
 2012-07-29  Patrick Gansterer  <paroga@webkit.org>
 
         [CMake] Use WEBKIT_CREATE_FORWARDING_HEADERS to generate WK2 forwarding headers

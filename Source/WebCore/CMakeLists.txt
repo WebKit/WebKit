@@ -1812,6 +1812,7 @@ SET(WebCore_SOURCES
     platform/graphics/SurrogatePairAwareTextIterator.cpp
     platform/graphics/SVGGlyph.cpp
     platform/graphics/TextRun.cpp
+    platform/graphics/TiledBackingStore.cpp
     platform/graphics/WidthIterator.cpp
 
     platform/graphics/filters/CustomFilterGlobalContext.cpp

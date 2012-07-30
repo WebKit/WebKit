@@ -288,4 +288,11 @@ void PageClientImpl::handleDownloadRequest(DownloadProxy* download)
     ewk_download_job_unref(ewkDownload);
 }
 
+#if USE(TILED_BACKING_STORE)
+void PageClientImpl::pageDidRequestScroll(const IntPoint&)
+{
+    notImplemented();
+}
+#endif
+
 } // namespace WebKit

@@ -135,6 +135,7 @@ IF (WTF_USE_CAIRO)
     platform/graphics/cairo/GraphicsContextCairo.cpp
     platform/graphics/cairo/ImageBufferCairo.cpp
     platform/graphics/cairo/ImageCairo.cpp
+    platform/graphics/cairo/IntRectCairo.cpp
     platform/graphics/cairo/NativeImageCairo.cpp
     platform/graphics/cairo/OwnPtrCairo.cpp
     platform/graphics/cairo/PathCairo.cpp
@@ -142,6 +143,8 @@ IF (WTF_USE_CAIRO)
     platform/graphics/cairo/PlatformContextCairo.cpp
     platform/graphics/cairo/PlatformPathCairo.cpp
     platform/graphics/cairo/RefPtrCairo.cpp
+    platform/graphics/cairo/TileCairo.cpp
+    platform/graphics/cairo/TiledBackingStoreBackendCairo.cpp
     platform/graphics/cairo/TransformationMatrixCairo.cpp
 
     platform/image-decoders/cairo/ImageDecoderCairo.cpp

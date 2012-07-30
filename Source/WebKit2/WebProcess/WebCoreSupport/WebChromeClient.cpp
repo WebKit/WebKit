@@ -440,7 +440,7 @@ void WebChromeClient::contentsSizeChanged(Frame* frame, const IntSize& size) con
     if (frame->page()->mainFrame() != frame)
         return;
 
-#if PLATFORM(QT)
+#if PLATFORM(QT) || (PLATFORM(EFL) && USE(TILED_BACKING_STORE))
     if (m_page->useFixedLayout()) {
         // The below method updates the size().
         m_page->resizeToContentsIfNeeded();
