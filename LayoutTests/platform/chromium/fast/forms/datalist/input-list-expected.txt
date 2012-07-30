@@ -20,7 +20,7 @@ FAIL document.getElementById("time").list should be [object HTMLDataListElement]
 FAIL document.getElementById("datetime-local").list should be [object HTMLDataListElement]. Was null.
 PASS document.getElementById("number").list is document.getElementById("dl1")
 PASS document.getElementById("range").list is document.getElementById("dl1")
-FAIL document.getElementById("color").list should be [object HTMLDataListElement]. Was null.
+PASS document.getElementById("color").list is document.getElementById("dl1")
 PASS document.getElementById("hidden").list is null
 PASS document.getElementById("password").list is null
 PASS document.getElementById("checkbox").list is null

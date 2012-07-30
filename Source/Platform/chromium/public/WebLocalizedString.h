@@ -60,6 +60,7 @@ struct WebLocalizedString {
         KeygenMenuMediumGradeKeySize,
         MissingPluginText,
         MultipleFileUploadText,
+        OtherColorLabel,
         ResetButtonDefaultLabel,
         SearchableIndexIntroduction,
         SearchMenuClearRecentSearchesText,

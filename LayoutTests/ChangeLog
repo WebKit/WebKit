@@ -1,3 +1,16 @@
+2012-07-30  Keishi Hattori  <keishi@webkit.org>
+
+        Implement datalist UI for input type color for Chromium
+        https://bugs.webkit.org/show_bug.cgi?id=92075
+
+        Reviewed by Kent Tamura.
+
+        * platform/chromium-mac/platform/chromium/fast/forms/color/color-suggestion-picker-appearance-expected.png: Added.
+        * platform/chromium/TestExpectations:
+        * platform/chromium/fast/forms/color/color-suggestion-picker-appearance-expected.txt: Added.
+        * platform/chromium/fast/forms/color/color-suggestion-picker-appearance.html: Added. Tests color suggestion picker popup appearance.
+        * platform/chromium/fast/forms/datalist/input-list-expected.txt:
+
 2012-07-30  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
 
         There is no way to tell whether an element can be activated or not

@@ -1,3 +1,44 @@
+2012-07-30  Keishi Hattori  <keishi@webkit.org>
+
+        Implement datalist UI for input type color for Chromium
+        https://bugs.webkit.org/show_bug.cgi?id=92075
+
+        Reviewed by Kent Tamura.
+
+        Integrated ColorChooserProxy and WebColorChooserClientImpl into ColorChooserUIController.
+        ColorChooserUIController can control whether to open the color suggestion picker
+        popup or the color chooser depending on the responses from ColorChooserClient.
+
+        * WebKit.gyp:
+        * src/ChromeClientImpl.cpp:
+        (WebKit::ChromeClientImpl::createColorChooser): Returns ColorChooserUIController which is a ColorChooser.
+        (WebKit::ChromeClientImpl::createWebColorChooser): Returns WebColorChooser that was created by Chromium.
+        * src/ChromeClientImpl.h:
+        (WebKit):
+        (ChromeClientImpl):
+        * src/ColorChooserProxy.cpp: Removed.
+        * src/ColorChooserProxy.h: Removed.
+        * src/ColorChooserUIController.cpp: Added.
+        (WebKit):
+        (WebKit::ColorChooserUIController::ColorChooserUIController): Controls the UI for color chooser. Opens the color suggestion picker popup or color chooser depending on the ColorChooserClient.
+        (WebKit::ColorChooserUIController::~ColorChooserUIController):
+        (WebKit::ColorChooserUIController::setSelectedColor):
+        (WebKit::ColorChooserUIController::endChooser): This is called by WebCore so we close both the popup and the color chooser.
+        (WebKit::ColorChooserUIController::didChooseColor):
+        (WebKit::ColorChooserUIController::didEndChooser):
+        (WebKit::ColorChooserUIController::contentSize): The popup will be resized later from JS so we return an arbitrary size.
+        (WebKit::ColorChooserUIController::writeDocument):
+        (WebKit::ColorChooserUIController::setValueAndClosePopup): Performs action based on the numValue.
+        (WebKit::ColorChooserUIController::didClosePopup):
+        (WebKit::ColorChooserUIController::openPopup): Opens color chooser suggestion popup.
+        (WebKit::ColorChooserUIController::closePopup):
+        (WebKit::ColorChooserUIController::openColorChooser): Opens color chooser.
+        * src/ColorChooserUIController.h: Renamed from Source/WebKit/chromium/src/WebColorChooserClientImpl.h.
+        (WebCore):
+        (WebKit):
+        (ColorChooserUIController):
+        * src/WebColorChooserClientImpl.cpp: Removed.
+
 2012-07-30  Kaustubh Atrawalkar  <kaustubh@motorola.com>
 
         [DRT] LTC:: pageNumberForElementById() could be moved to Internals

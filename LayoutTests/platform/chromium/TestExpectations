@@ -3465,6 +3465,9 @@ BUGWK87652 SKIP : http/tests/appcache/load-from-appcache-defer-resume-crash.html
 // A few pixels off from the baseline, added by r118567.
 BUGWK87653 WIN LINUX : compositing/geometry/composited-in-columns.html = IMAGE+TEXT
 
+// Needs rebaseline. After localized string is added to chromium.
+BUGWK92444 : platform/chromium/fast/forms/color/color-suggestion-picker-appearance.html = PASS MISSING IMAGE
+
 // Needs Rebaseline.
 BUGWK88705 : fast/css/text-overflow-ellipsis-text-align-center.html = MISSING
 BUGWK88705 : fast/css/text-overflow-ellipsis-text-align-justify.html = MISSING
