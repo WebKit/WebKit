@@ -2085,7 +2085,6 @@ void WebPagePrivate::notifyTransformedContentsSizeChanged()
     const IntSize size = transformedContentsSize();
     m_backingStore->d->contentsSizeChanged(size);
     m_client->contentsSizeChanged(size);
-    m_selectionHandler->selectionPositionChanged();
 }
 
 void WebPagePrivate::notifyTransformedScrollChanged()
@@ -3392,7 +3391,7 @@ void WebPagePrivate::updateDelegatedOverlays(bool dispatched)
     if (Platform::webKitThreadMessageClient()->isCurrentThread()) {
         // Must be called on the WebKit thread.
         if (m_selectionHandler->isSelectionActive())
-            m_selectionHandler->selectionPositionChanged(true /* visualChangeOnly */);
+            m_selectionHandler->selectionPositionChanged();
         if (m_inspectorOverlay)
             m_inspectorOverlay->update();
 

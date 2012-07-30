@@ -243,7 +243,7 @@ void SelectionHandler::setCaretPosition(const WebCore::IntPoint &position)
     WebCore::IntRect currentCaretRect = controller->selection().visibleStart().absoluteCaretBounds();
 
     if (relativePoint == DOMSupport::InvalidPoint || !shouldUpdateSelectionOrCaretForPoint(relativePoint, currentCaretRect)) {
-        selectionPositionChanged();
+        selectionPositionChanged(true /* forceUpdateWithoutChange */);
         return;
     }
 
@@ -253,13 +253,15 @@ void SelectionHandler::setCaretPosition(const WebCore::IntPoint &position)
         if (unsigned short character = directionOfPointRelativeToRect(relativePoint, currentCaretRect))
             m_webPage->m_inputHandler->handleKeyboardInput(Platform::KeyboardEvent(character));
 
-        selectionPositionChanged();
+        // Send the selection changed in case this does not trigger a selection change to
+        // ensure the caret position is accurate. This may be a duplicate event.
+        selectionPositionChanged(true /* forceUpdateWithoutChange */);
         return;
     }
 
     VisibleSelection newSelection(visibleCaretPosition);
     if (controller->selection() == newSelection) {
-        selectionPositionChanged();
+        selectionPositionChanged(true /* forceUpdateWithoutChange */);
         return;
     }
 
@@ -403,7 +405,7 @@ bool SelectionHandler::updateOrHandleInputSelection(VisibleSelection& newSelecti
     // Check if the handle movement is valid.
     if (!shouldUpdateSelectionOrCaretForPoint(relativeStart, currentStartCaretRect, true /* startCaret */)
         || !shouldUpdateSelectionOrCaretForPoint(relativeEnd, currentEndCaretRect, false /* startCaret */)) {
-        selectionPositionChanged();
+        selectionPositionChanged(true /* forceUpdateWithoutChange */);
         return true;
     }
 
@@ -438,9 +440,9 @@ bool SelectionHandler::updateOrHandleInputSelection(VisibleSelection& newSelecti
     if (shouldExtendSelectionInDirection(controller->selection(), character))
         m_webPage->m_inputHandler->handleKeyboardInput(Platform::KeyboardEvent(character, Platform::KeyboardEvent::KeyDown, KEYMOD_SHIFT));
 
-    // Must send the selectionPositionChanged every time, sometimes this will duplicate but an accepted
-    // handleNavigationMove may not make an actual selection change.
-    selectionPositionChanged();
+    // Send the selection changed in case this does not trigger a selection change to
+    // ensure the caret position is accurate. This may be a duplicate event.
+    selectionPositionChanged(true /* forceUpdateWithoutChange */);
     return true;
 }
 
@@ -513,7 +515,7 @@ void SelectionHandler::setSelection(const WebCore::IntPoint& start, const WebCor
     }
 
     if (controller->selection() == newSelection) {
-        selectionPositionChanged();
+        selectionPositionChanged(true /* forceUpdateWithoutChange */);
         return;
     }
 
@@ -525,20 +527,21 @@ void SelectionHandler::setSelection(const WebCore::IntPoint& start, const WebCor
 
     IntRectRegion unclippedRegion;
     regionForTextQuads(quads, unclippedRegion, false /* shouldClipToVisibleContent */);
-    if (!unclippedRegion.isEmpty()) {
-        // Check if the handles reversed position.
-        if (m_selectionActive && !newSelection.isBaseFirst())
-            m_webPage->m_client->notifySelectionHandlesReversed();
 
-        controller->setSelection(newSelection);
-
-        SelectionLog(LogLevelInfo, "SelectionHandler::setSelection selection points valid, selection updated.");
-    } else {
+    if (unclippedRegion.isEmpty()) {
         // Requested selection results in an empty selection, skip this change.
-        selectionPositionChanged();
+        selectionPositionChanged(true /* forceUpdateWithoutChange */);
 
         SelectionLog(LogLevelWarn, "SelectionHandler::setSelection selection points invalid, selection not updated.");
+        return;
     }
+
+    // Check if the handles reversed position.
+    if (m_selectionActive && !newSelection.isBaseFirst())
+        m_webPage->m_client->notifySelectionHandlesReversed();
+
+    controller->setSelection(newSelection);
+    SelectionLog(LogLevelInfo, "SelectionHandler::setSelection selection points valid, selection updated.");
 }
 
 // FIXME re-use this in context. Must be updated to include an option to return the href.
@@ -838,9 +841,9 @@ bool SelectionHandler::inputNodeOverridesTouch() const
 
 // Note: This is the only function in SelectionHandler in which the coordinate
 // system is not entirely WebKit.
-void SelectionHandler::selectionPositionChanged(bool visualChangeOnly)
+void SelectionHandler::selectionPositionChanged(bool forceUpdateWithoutChange)
 {
-    SelectionLog(LogLevelInfo, "SelectionHandler::selectionPositionChanged visibleChangeOnly = %s", visualChangeOnly ? "true" : "false");
+    SelectionLog(LogLevelInfo, "SelectionHandler::selectionPositionChanged forceUpdateWithoutChange = %s", forceUpdateWithoutChange ? "true" : "false");
 
     // This method can get called during WebPage shutdown process.
     // If that is the case, just bail out since the client is not
@@ -883,7 +886,7 @@ void SelectionHandler::selectionPositionChanged(bool visualChangeOnly)
 
     // If there is no change in selected text and the visual rects
     // have not changed then don't bother notifying anything.
-    if (visualChangeOnly && m_lastSelectionRegion.isEqual(unclippedRegion))
+    if (!forceUpdateWithoutChange && m_lastSelectionRegion.isEqual(unclippedRegion))
         return;
 
     m_lastSelectionRegion = unclippedRegion;

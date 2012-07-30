@@ -659,7 +659,6 @@ void InputHandler::setElementUnfocused(bool refocusOccuring)
             notifyClientOfKeyboardVisibilityChange(false);
 
         m_webPage->m_client->inputFocusLost();
-        m_webPage->m_selectionHandler->selectionPositionChanged();
 
         // If the frame selection isn't focused, focus it.
         if (!m_currentFocusElement->document()->frame()->selection()->isFocused())

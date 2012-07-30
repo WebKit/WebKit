@@ -65,7 +65,7 @@ public:
     void selectObject(WebCore::TextGranularity);
     void selectObject(WebCore::Node*);
 
-    void selectionPositionChanged(bool visualChangeOnly = false);
+    void selectionPositionChanged(bool forceUpdateWithoutChange = false);
 
     void setCaretPosition(const WebCore::IntPoint&);
 

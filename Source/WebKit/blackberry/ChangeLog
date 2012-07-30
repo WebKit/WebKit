@@ -1,3 +1,33 @@
+2012-07-30  Mike Fenton  <mifenton@rim.com>
+
+        [BlackBerry] Optimize the generation of selection details generation.
+        https://bugs.webkit.org/show_bug.cgi?id=92522
+
+        Reviewed by Antonio Gomes.
+
+        PR 179264.
+
+        Reduce the number of times we generate selection details notifications.
+
+        This removes several notifications that are handled by the standard
+        notification path and makes skipping duplicate notifications the default
+        so that only those that must generate a response do.
+
+        Reviewed Internally by Gen Mak.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::notifyTransformedContentsSizeChanged):
+        (BlackBerry::WebKit::WebPagePrivate::updateDelegatedOverlays):
+        * WebKitSupport/InputHandler.cpp:
+        (BlackBerry::WebKit::InputHandler::setElementUnfocused):
+        * WebKitSupport/SelectionHandler.cpp:
+        (BlackBerry::WebKit::SelectionHandler::setCaretPosition):
+        (BlackBerry::WebKit::SelectionHandler::updateOrHandleInputSelection):
+        (BlackBerry::WebKit::SelectionHandler::setSelection):
+        (BlackBerry::WebKit::SelectionHandler::selectionPositionChanged):
+        * WebKitSupport/SelectionHandler.h:
+        (SelectionHandler):
+
 2012-07-30  Robin Cao  <robin.cao@torchmobile.com.cn>
 
         [BlackBerry] Adapt to changes in the SharedArray platform API
