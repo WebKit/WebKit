@@ -80,26 +80,51 @@ WebInspector.SASSSourceMapping.prototype = {
             if (!content)
                 return;
             var lines = content.split(/\r?\n/);
-            var regex = /@media\s\-sass\-debug\-info{filename{font-family:([^}]+)}line{font-family:\\[0]+([^}]*)}}/i;
+            var debugInfoRegex = /@media\s\-sass\-debug\-info{filename{font-family:([^}]+)}line{font-family:\\[0]+([^}]*)}}/i;
+            var lineNumbersRegex = /\/\*\s+line\s+([0-9]+),\s+([^*\/]+)/;
             for (var lineNumber = 0; lineNumber < lines.length; ++lineNumber) {
-                var match = regex.exec(lines[lineNumber]);
-                if (!match)
+                var match = debugInfoRegex.exec(lines[lineNumber]);
+                if (match) {
+                    var url = match[1].replace(/\\(.)/g, "$1");
+                    var line = parseInt(decodeURI(match[2].replace(/(..)/g, "%$1")), 10);
+                    this._bindUISourceCode(url, line, resource.url, lineNumber);
                     continue;
-                var url = match[1].replace(/\\(.)/g, "$1");
-                var uiSourceCode = this._uiSourceCodeForURL[url];
-                if (!uiSourceCode) {
-                    uiSourceCode = new WebInspector.SASSSource(url);
-                    this._uiSourceCodeForURL[url] = uiSourceCode;
-                    this._uiSourceCodes.push(uiSourceCode);
-                    this.dispatchEventToListeners(WebInspector.UISourceCodeProvider.Events.UISourceCodeAdded, uiSourceCode);
-                    WebInspector.cssModel.setSourceMapping(resource.url, this);
                 }
-                var line = parseInt(decodeURI(match[2].replace(/(..)/g, "%$1")), 10) - 1;
-                var rawLocationString = resource.url + ":" + (lineNumber + 1);
-                this._uiLocations[rawLocationString] = new WebInspector.UILocation(uiSourceCode, line, 0);
+                match = lineNumbersRegex.exec(lines[lineNumber]);
+                if (match) {
+                    var fileName = match[2].trim();
+                    var line = parseInt(match[1], 10);
+                    var url = resource.url;
+                    if (url.endsWith("/" + resource.parsedURL.lastPathComponent))
+                        url = url.substring(0, url.length - resource.parsedURL.lastPathComponent.length) + fileName;
+                    else
+                        url = fileName;
+                    this._bindUISourceCode(url, line, resource.url, lineNumber);
+                    continue;
+                }
             }
         }
         resource.requestContent(didRequestContent.bind(this));
+    },
+
+    /**
+     * @param {string} url
+     * @param {number} line
+     * @param {string} rawURL
+     * @param {number} rawLine
+     */
+    _bindUISourceCode: function(url, line, rawURL, rawLine)
+    {
+        var uiSourceCode = this._uiSourceCodeForURL[url];
+        if (!uiSourceCode) {
+            uiSourceCode = new WebInspector.SASSSource(url);
+            this._uiSourceCodeForURL[url] = uiSourceCode;
+            this._uiSourceCodes.push(uiSourceCode);
+            this.dispatchEventToListeners(WebInspector.UISourceCodeProvider.Events.UISourceCodeAdded, uiSourceCode);
+            WebInspector.cssModel.setSourceMapping(rawURL, this);
+        }
+        var rawLocationString = rawURL + ":" + (rawLine + 1);  // Next line after mapping metainfo
+        this._uiLocations[rawLocationString] = new WebInspector.UILocation(uiSourceCode, line - 1, 0);
     },
 
     /**

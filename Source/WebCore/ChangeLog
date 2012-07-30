@@ -1,3 +1,17 @@
+2012-07-30  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: support --line-numbers mapping for SASS
+        https://bugs.webkit.org/show_bug.cgi?id=92400
+
+        Reviewed by Vsevolod Vlasov.
+
+        There is --debug-info and --line-numbers ways of referencing the source scss file, adding support for --line-numbers here.
+
+        * inspector/front-end/SASSSourceMapping.js:
+        (WebInspector.SASSSourceMapping.prototype._resourceAdded.didRequestContent):
+        (WebInspector.SASSSourceMapping.prototype._resourceAdded):
+        (_bindUISourceCode):
+
 2012-07-30  Keishi Hattori  <keishi@webkit.org>
 
         Implement datalist UI for input type color for Chromium
