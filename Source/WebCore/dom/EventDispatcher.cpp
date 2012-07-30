@@ -201,7 +201,6 @@ void EventDispatcher::adjustRelatedTarget(Event* event, PassRefPtr<EventTarget> 
 EventDispatcher::EventDispatcher(Node* node)
     : m_node(node)
     , m_ancestorsInitialized(false)
-    , m_shouldPreventDispatch(false)
 {
     ASSERT(node);
     m_view = node->document()->view();
@@ -254,7 +253,7 @@ bool EventDispatcher::dispatchEvent(PassRefPtr<Event> event)
 
     // Give the target node a chance to do some work before DOM event handlers get a crack.
     void* data = m_node->preDispatchEventHandler(event.get());
-    if (m_ancestors.isEmpty() || m_shouldPreventDispatch || event->propagationStopped())
+    if (m_ancestors.isEmpty() || event->propagationStopped())
         goto doneDispatching;
 
     // Trigger capturing event handlers, starting at the top and working our way down.

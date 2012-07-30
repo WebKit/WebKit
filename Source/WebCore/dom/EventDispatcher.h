@@ -84,7 +84,6 @@ private:
     RefPtr<Node> m_node;
     RefPtr<FrameView> m_view;
     bool m_ancestorsInitialized;
-    bool m_shouldPreventDispatch;
 };
 
 inline Node* EventDispatcher::node() const
