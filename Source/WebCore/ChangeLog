@@ -1,3 +1,18 @@
+2012-07-30  Hayato Ito  <hayato@chromium.org>
+
+        Remove unnecessary code which set event's target from EventDispatcher::dispatchEvent.
+        https://bugs.webkit.org/show_bug.cgi?id=92613
+
+        Reviewed by Hajime Morita.
+
+        EventContext::handleLocalEvents does all required jobs so we don't
+        need to set target in EventDispacher::dispatchEvent() for TARGET phase.
+
+        No new tests, no behavior change.
+
+        * dom/EventDispatcher.cpp:
+        (WebCore::EventDispatcher::dispatchEvent):
+
 2012-07-30  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r124004.

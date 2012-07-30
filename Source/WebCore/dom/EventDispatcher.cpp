@@ -277,8 +277,6 @@ bool EventDispatcher::dispatchEvent(PassRefPtr<Event> event)
     }
 
     event->setEventPhase(Event::AT_TARGET);
-    event->setTarget(originalTarget.get());
-    event->setCurrentTarget(eventTargetRespectingSVGTargetRules(m_node.get()));
     m_ancestors[0].handleLocalEvents(event.get());
     if (event->propagationStopped())
         goto doneDispatching;
