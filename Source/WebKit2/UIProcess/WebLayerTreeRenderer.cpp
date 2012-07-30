@@ -74,15 +74,14 @@ void WebLayerTreeRenderer::callOnMainTread(const Function<void()>& function)
         MainThreadGuardedInvoker<WebLayerTreeRenderer>::call(this, function);
 }
 
-static IntPoint boundedScrollPosition(const IntPoint& scrollPosition, const IntRect& visibleContentRect, const FloatSize& contentSize)
+static FloatPoint boundedScrollPosition(const FloatPoint& scrollPosition, const FloatRect& visibleContentRect, const FloatSize& contentSize)
 {
-    IntSize size(contentSize.width(), contentSize.height());
-    int scrollPositionX = std::max(scrollPosition.x(), 0);
-    scrollPositionX = std::min(scrollPositionX, size.width() - visibleContentRect.width());
+    float scrollPositionX = std::max(scrollPosition.x(), 0.0f);
+    scrollPositionX = std::min(scrollPositionX, contentSize.width() - visibleContentRect.width());
 
-    int scrollPositionY = std::max(scrollPosition.y(), 0);
-    scrollPositionY = std::min(scrollPositionY, size.height() - visibleContentRect.height());
-    return IntPoint(scrollPositionX, scrollPositionY);
+    float scrollPositionY = std::max(scrollPosition.y(), 0.0f);
+    scrollPositionY = std::min(scrollPositionY, contentSize.height() - visibleContentRect.height());
+    return FloatPoint(scrollPositionX, scrollPositionY);
 }
 
 WebLayerTreeRenderer::WebLayerTreeRenderer(LayerTreeCoordinatorProxy* layerTreeCoordinatorProxy)
@@ -111,12 +110,6 @@ void WebLayerTreeRenderer::paintToCurrentGLContext(const TransformationMatrix& m
         m_textureMapper = TextureMapper::create(TextureMapper::OpenGLMode);
     ASSERT(m_textureMapper->accelerationMode() == TextureMapper::OpenGLMode);
 
-    // We need to compensate for the rounding error that happens due to m_visibleContentsRect being
-    // int and not float. We do that by moving the TransformationMatrix by the delta between the
-    // position of m_visibleContentsRect and the position it would have if it wasn't rounded.
- 
-    TransformationMatrix newMatrix = matrix;
-    newMatrix.translate(m_accurateVisibleContentsPosition.x() / m_contentsScale - m_visibleContentsRect.x(), m_accurateVisibleContentsPosition.y() / m_contentsScale - m_visibleContentsRect.y());
     adjustPositionForFixedLayers();
     GraphicsLayer* currentRootLayer = rootLayer();
     if (!currentRootLayer)
@@ -131,9 +124,9 @@ void WebLayerTreeRenderer::paintToCurrentGLContext(const TransformationMatrix& m
     m_textureMapper->beginPainting(PaintFlags);
     m_textureMapper->beginClip(TransformationMatrix(), clipRect);
 
-    if (currentRootLayer->opacity() != opacity || currentRootLayer->transform() != newMatrix) {
+    if (currentRootLayer->opacity() != opacity || currentRootLayer->transform() != matrix) {
         currentRootLayer->setOpacity(opacity);
-        currentRootLayer->setTransform(newMatrix);
+        currentRootLayer->setTransform(matrix);
         currentRootLayer->syncCompositingStateForThisLayerOnly();
     }
 
@@ -184,16 +177,21 @@ void WebLayerTreeRenderer::adjustPositionForFixedLayers()
     if (m_fixedLayers.isEmpty())
         return;
 
-    IntPoint scrollPosition = boundedScrollPosition(m_visibleContentsRect.location(), m_visibleContentsRect, m_contentsSize);
+    // Fixed layer positions are updated by the web process when we update the visible contents rect / scroll position.
+    // If we want those layers to follow accurately the viewport when we move between the web process updates, we have to offset
+    // them by the delta between the current position and the position of the viewport used for the last layout.
+    FloatPoint scrollPosition = boundedScrollPosition(FloatPoint(m_accurateVisibleContentsPosition.x() / m_contentsScale, m_accurateVisibleContentsPosition.y() / m_contentsScale), m_visibleContentsRect, m_contentsSize);
+    FloatPoint renderedScrollPosition = boundedScrollPosition(m_renderedContentsScrollPosition, m_visibleContentsRect, m_contentsSize);
+    FloatSize delta = scrollPosition - renderedScrollPosition;
 
     LayerMap::iterator end = m_fixedLayers.end();
     for (LayerMap::iterator it = m_fixedLayers.begin(); it != end; ++it)
-        toTextureMapperLayer(it->second)->setScrollPositionDeltaIfNeeded(IntPoint(scrollPosition.x() - m_renderedContentsScrollPosition.x(), scrollPosition.y() - m_renderedContentsScrollPosition.y()));
+        toTextureMapperLayer(it->second)->setScrollPositionDeltaIfNeeded(delta);
 }
 
 void WebLayerTreeRenderer::didChangeScrollPosition(const IntPoint& position)
 {
-    m_pendingRenderedContentsScrollPosition = boundedScrollPosition(position, m_visibleContentsRect, m_contentsSize);
+    m_pendingRenderedContentsScrollPosition = position;
 }
 
 void WebLayerTreeRenderer::syncCanvas(WebLayerID id, const WebCore::IntSize& canvasSize, uint32_t graphicsSurfaceToken)

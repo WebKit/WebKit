@@ -1,3 +1,19 @@
+2012-07-27  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
+        [Qt] Fix issues remaining with fixed positioned layers
+        https://bugs.webkit.org/show_bug.cgi?id=92528
+
+        Reviewed by Noam Rosenthal.
+
+        * platform/graphics/texmap/TextureMapperLayer.cpp:
+        (WebCore::TextureMapperLayer::syncCompositingStateSelf):
+        Make sure that the delta is used when syncCompositingStateSelf is called afterward.
+        (WebCore::TextureMapperLayer::setScrollPositionDeltaIfNeeded):
+        * platform/graphics/texmap/TextureMapperLayer.h:
+        Use a FloatSize instead of an IntPoint for the delta.
+        (TextureMapperLayer):
+        (WebCore::TextureMapperLayer::adjustedPosition):
+
 2012-07-30  Patrick Gansterer  <paroga@webkit.org>
 
         Replace UnicodeWinCE with UnicodeWchar

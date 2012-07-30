@@ -128,7 +128,7 @@ public:
     PassRefPtr<TextureMapperBackingStore> backingStore() { return m_backingStore; }
     void clearBackingStoresRecursive();
 
-    void setScrollPositionDeltaIfNeeded(const IntPoint&);
+    void setScrollPositionDeltaIfNeeded(const FloatSize&);
 
     void setDebugBorder(const Color&, float width);
 
@@ -149,6 +149,7 @@ private:
     static void sortByZOrder(Vector<TextureMapperLayer* >& array, int first, int last);
 
     PassRefPtr<BitmapTexture> texture() { return m_backingStore ? m_backingStore->texture() : 0; }
+    FloatPoint adjustedPosition() const { return m_state.pos + m_scrollPositionDelta; }
     bool isAncestorFixedToViewport() const;
 
     void paintRecursive(const TextureMapperPaintOptions&);
@@ -237,7 +238,7 @@ private:
     State m_state;
     TextureMapper* m_textureMapper;
     GraphicsLayerAnimations m_animations;
-    IntPoint m_scrollPositionDelta;
+    FloatSize m_scrollPositionDelta;
     bool m_fixedToViewport;
     Color m_debugBorderColor;
     float m_debugBorderWidth;

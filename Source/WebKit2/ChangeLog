@@ -1,3 +1,21 @@
+2012-07-27  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
+        [Qt] Fix issues remaining with fixed positioned layers
+        https://bugs.webkit.org/show_bug.cgi?id=92528
+
+        Reviewed by Noam Rosenthal.
+
+        This partially fixes jittering of fixed layers when zoomed in and the
+        blurriness of rendered tiles of the non-composited contents layer.
+
+        * UIProcess/WebLayerTreeRenderer.cpp:
+        (WebKit::boundedScrollPosition):
+        (WebKit::WebLayerTreeRenderer::paintToCurrentGLContext):
+        Remove the adjustment on the root layer. This cancels setPixelAligned and causes the blurriness.
+        (WebKit::WebLayerTreeRenderer::adjustPositionForFixedLayers):
+        Use m_accurateVisibleContentsPosition to calculate the delta.
+        (WebKit::WebLayerTreeRenderer::didChangeScrollPosition):
+
 2012-07-29  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Resource agent's reference to cached resources should be weak.
