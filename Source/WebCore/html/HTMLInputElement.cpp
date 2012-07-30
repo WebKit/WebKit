@@ -1160,6 +1160,15 @@ void HTMLInputElement::defaultEventHandler(Event* evt)
         HTMLTextFormControlElement::defaultEventHandler(evt);
 }
 
+bool HTMLInputElement::willRespondToMouseClickEvents()
+{
+    // FIXME: Consider implementing willRespondToMouseClickEvents() in InputType if more accurate results are necessary.
+    if (!disabled())
+        return true;
+
+    return HTMLTextFormControlElement::willRespondToMouseClickEvents();
+}
+
 bool HTMLInputElement::isURLAttribute(const Attribute& attribute) const
 {
     return attribute.name() == srcAttr || attribute.name() == formactionAttr || HTMLTextFormControlElement::isURLAttribute(attribute);

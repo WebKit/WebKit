@@ -147,6 +147,14 @@ void HTMLLabelElement::defaultEventHandler(Event* evt)
     HTMLElement::defaultEventHandler(evt);
 }
 
+bool HTMLLabelElement::willRespondToMouseClickEvents()
+{
+    if (control() && control()->willRespondToMouseClickEvents())
+        return true;
+
+    return HTMLElement::willRespondToMouseClickEvents();
+}
+
 void HTMLLabelElement::focus(bool)
 {
     // to match other browsers, always restore previous selection

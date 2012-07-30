@@ -328,6 +328,8 @@ public:
 
     virtual bool dispatchEvent(PassRefPtr<Event>);
 
+    virtual bool willRespondToMouseClickEvents() OVERRIDE;
+
 protected:
     HTMLMediaElement(const QualifiedName&, Document*, bool);
     virtual ~HTMLMediaElement();

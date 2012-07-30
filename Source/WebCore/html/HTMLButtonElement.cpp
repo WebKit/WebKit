@@ -153,6 +153,13 @@ void HTMLButtonElement::defaultEventHandler(Event* event)
     HTMLFormControlElement::defaultEventHandler(event);
 }
 
+bool HTMLButtonElement::willRespondToMouseClickEvents()
+{
+    if (!disabled() && form() && (m_type == SUBMIT || m_type == RESET))
+        return true;
+    return HTMLFormControlElement::willRespondToMouseClickEvents();
+}
+
 bool HTMLButtonElement::isSuccessfulSubmitButton() const
 {
     // HTML spec says that buttons must have names to be considered successful.

@@ -36,6 +36,8 @@ public:
     LabelableElement* control();
     HTMLFormElement* form() const;
 
+    virtual bool willRespondToMouseClickEvents() OVERRIDE;
+
 private:
     HTMLLabelElement(const QualifiedName&, Document*);
 

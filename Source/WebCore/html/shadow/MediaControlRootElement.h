@@ -114,6 +114,8 @@ public:
 
     void bufferingProgressed();
 
+    virtual bool willRespondToMouseMoveEvents() OVERRIDE { return true; }
+
 private:
     MediaControlRootElement(Document*);
 

@@ -165,6 +165,11 @@ void SearchFieldResultsButtonElement::defaultEventHandler(Event* event)
         HTMLDivElement::defaultEventHandler(event);
 }
 
+bool SearchFieldResultsButtonElement::willRespondToMouseClickEvents()
+{
+    return true;
+}
+
 // ----------------------------
 
 inline SearchFieldCancelButtonElement::SearchFieldCancelButtonElement(Document* document)
@@ -232,6 +237,15 @@ void SearchFieldCancelButtonElement::defaultEventHandler(Event* event)
 
     if (!event->defaultHandled())
         HTMLDivElement::defaultEventHandler(event);
+}
+
+bool SearchFieldCancelButtonElement::willRespondToMouseClickEvents()
+{
+    const HTMLInputElement* input = static_cast<HTMLInputElement*>(shadowHost());
+    if (!input->disabled() && !input->isReadOnlyFormControl())
+        return true;
+
+    return HTMLDivElement::willRespondToMouseClickEvents();
 }
 
 // ----------------------------
@@ -326,6 +340,24 @@ void SpinButtonElement::defaultEventHandler(Event* event)
 
     if (!event->defaultHandled())
         HTMLDivElement::defaultEventHandler(event);
+}
+
+bool SpinButtonElement::willRespondToMouseMoveEvents()
+{
+    const HTMLInputElement* input = static_cast<HTMLInputElement*>(shadowHost());
+    if (renderBox() && !input->disabled() && !input->isReadOnlyFormControl())
+        return true;
+
+    return HTMLDivElement::willRespondToMouseMoveEvents();
+}
+
+bool SpinButtonElement::willRespondToMouseClickEvents()
+{
+    const HTMLInputElement* input = static_cast<HTMLInputElement*>(shadowHost());
+    if (renderBox() && !input->disabled() && !input->isReadOnlyFormControl())
+        return true;
+
+    return HTMLDivElement::willRespondToMouseClickEvents();
 }
 
 void SpinButtonElement::doStepAction(int amount)
@@ -477,6 +509,15 @@ void InputFieldSpeechButtonElement::defaultEventHandler(Event* event)
 
     if (!event->defaultHandled())
         HTMLDivElement::defaultEventHandler(event);
+}
+
+bool InputFieldSpeechButtonElement::willRespondToMouseClickEvents()
+{
+    const HTMLInputElement* input = static_cast<HTMLInputElement*>(shadowHost());
+    if (!input->disabled() && !input->isReadOnlyFormControl())
+        return true;
+
+    return HTMLDivElement::willRespondToMouseClickEvents();
 }
 
 void InputFieldSpeechButtonElement::setState(SpeechInputState state)

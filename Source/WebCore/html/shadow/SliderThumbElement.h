@@ -54,6 +54,8 @@ public:
 
     void dragFrom(const LayoutPoint&);
     virtual void defaultEventHandler(Event*);
+    virtual bool willRespondToMouseMoveEvents() OVERRIDE;
+    virtual bool willRespondToMouseClickEvents() OVERRIDE;
     virtual void detach();
     virtual const AtomicString& shadowPseudoId() const;
     HTMLInputElement* hostInput() const;

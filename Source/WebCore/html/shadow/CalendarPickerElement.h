@@ -46,6 +46,7 @@ public:
     virtual ~CalendarPickerElement();
     void openPopup();
     void closePopup();
+    virtual bool willRespondToMouseClickEvents() OVERRIDE;
 
 private:
     CalendarPickerElement(Document*);

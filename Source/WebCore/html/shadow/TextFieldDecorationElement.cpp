@@ -198,4 +198,13 @@ void TextFieldDecorationElement::defaultEventHandler(Event* event)
         HTMLDivElement::defaultEventHandler(event);
 }
 
+bool TextFieldDecorationElement::willRespondToMouseClickEvents()
+{
+    const HTMLInputElement* input = hostInput();
+    if (!input->disabled() && !input->readOnly())
+        return true;
+
+    return HTMLDivElement::willRespondToMouseClickEvents();
+}
+
 } // namespace WebCore

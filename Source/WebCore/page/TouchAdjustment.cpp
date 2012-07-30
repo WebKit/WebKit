@@ -67,32 +67,9 @@ typedef float (*DistanceFunction)(const IntPoint&, const IntRect&, const Subtarg
 // Takes non-const Node* because isContentEditable is a non-const function.
 bool nodeRespondsToTapGesture(Node* node)
 {
-    if (node->isLink()
-        || node->isContentEditable()
-        || node->isMouseFocusable())
+    if (node->isMouseFocusable())
         return true;
-    if (node->isElementNode()) {
-        Element* element =  static_cast<Element*>(node);
-        if (element->hasTagName(HTMLNames::labelTag) && static_cast<HTMLLabelElement*>(element)->control())
-            return true;
-    }
-    Element* shadowHost = node->shadowHost();
-    if (shadowHost && shadowHost->hasTagName(HTMLNames::inputTag)) {
-        HTMLInputElement* input = static_cast<HTMLInputElement*>(shadowHost);
-        if (!input->readOnly() && !input->disabled())
-            return true;
-    }
-
-    // FIXME: Implement hasDefaultEventHandler and use that instead of all of the above checks.
-    if (node->hasEventListeners()
-        && (node->hasEventListeners(eventNames().clickEvent)
-            || node->hasEventListeners(eventNames().DOMActivateEvent)
-            || node->hasEventListeners(eventNames().mousedownEvent)
-            || node->hasEventListeners(eventNames().mouseupEvent)
-            || node->hasEventListeners(eventNames().mousemoveEvent)
-            // Checking for focus events is not necessary since they can only fire on
-            // focusable elements which have already been captured above.
-        ))
+    if (node->willRespondToMouseClickEvents() || node->willRespondToMouseMoveEvents())
         return true;
     if (node->renderStyle()) {
         // Accept nodes that has a CSS effect when touched.

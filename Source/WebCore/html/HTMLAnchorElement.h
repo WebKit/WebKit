@@ -94,6 +94,8 @@ public:
 
     bool isLiveLink() const;
 
+    virtual bool willRespondToMouseClickEvents() OVERRIDE;
+
     bool hasRel(uint32_t relation) const;
     void setRel(const String&);
     

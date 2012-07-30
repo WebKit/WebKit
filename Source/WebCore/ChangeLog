@@ -1,3 +1,83 @@
+2012-07-30  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
+
+        There is no way to tell whether an element can be activated or not
+        https://bugs.webkit.org/show_bug.cgi?id=92093
+
+        Reviewed by Antonio Gomes.
+
+        This patch adds the willRespondToMouseClickEvents and willRespondToMouseMoveEvents
+        functions, named after similar functions in the iOS fork of WebKit.
+
+        Touch-adjustment will now use these two functions, which improves accuracy when
+        targeting shadow-dom elements, and also means touch adjustment will prefer enabled
+        form-elements over disabled ones.
+
+        Test: touchadjustment/disabled-formelements.html
+
+        * dom/Node.cpp:
+        (WebCore::Node::willRespondToMouseMoveEvents):
+        (WebCore::Node::willRespondToMouseClickEvents):
+        * dom/Node.h:
+        (Node):
+        * editing/DeleteButton.h:
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::HTMLAnchorElement::willRespondToMouseClickEvents):
+        * html/HTMLAnchorElement.h:
+        (HTMLAnchorElement):
+        * html/HTMLButtonElement.cpp:
+        (WebCore::HTMLButtonElement::willRespondToMouseClickEvents):
+        * html/HTMLButtonElement.h:
+        (HTMLButtonElement):
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::willRespondToMouseClickEvents):
+        * html/HTMLInputElement.h:
+        (HTMLInputElement):
+        * html/HTMLLabelElement.cpp:
+        (WebCore::HTMLLabelElement::willRespondToMouseClickEvents):
+        * html/HTMLLabelElement.h:
+        (HTMLLabelElement):
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::willRespondToMouseClickEvents):
+        * html/HTMLMediaElement.h:
+        * html/HTMLSummaryElement.cpp:
+        (WebCore::HTMLSummaryElement::willRespondToMouseClickEvents):
+        * html/HTMLSummaryElement.h:
+        (HTMLSummaryElement):
+        * html/shadow/CalendarPickerElement.cpp:
+        (WebCore::CalendarPickerElement::willRespondToMouseClickEvents):
+        * html/shadow/CalendarPickerElement.h:
+        (CalendarPickerElement):
+        * html/shadow/MediaControlElements.cpp:
+        (WebCore::MediaControlTimelineElement::willRespondToMouseClickEvents):
+        (WebCore::MediaControlTimelineElement::setPosition):
+        (WebCore::MediaControlVolumeSliderElement::willRespondToMouseMoveEvents):
+        (WebCore::MediaControlVolumeSliderElement::willRespondToMouseClickEvents):
+        * html/shadow/MediaControlElements.h:
+        (MediaControlTimelineElement):
+        (MediaControlVolumeSliderElement):
+        * html/shadow/MediaControlRootElement.h:
+        * html/shadow/SliderThumbElement.cpp:
+        (WebCore::SliderThumbElement::willRespondToMouseMoveEvents):
+        (WebCore::SliderThumbElement::willRespondToMouseClickEvents):
+        * html/shadow/SliderThumbElement.h:
+        (SliderThumbElement):
+        * html/shadow/TextControlInnerElements.cpp:
+        (WebCore::SearchFieldResultsButtonElement::willRespondToMouseClickEvents):
+        (WebCore::SearchFieldCancelButtonElement::willRespondToMouseClickEvents):
+        (WebCore::SpinButtonElement::willRespondToMouseMoveEvents):
+        (WebCore::SpinButtonElement::willRespondToMouseClickEvents):
+        (WebCore::InputFieldSpeechButtonElement::willRespondToMouseClickEvents):
+        * html/shadow/TextControlInnerElements.h:
+        (SearchFieldResultsButtonElement):
+        (SearchFieldCancelButtonElement):
+        (SpinButtonElement):
+        * html/shadow/TextFieldDecorationElement.cpp:
+        (WebCore::TextFieldDecorationElement::willRespondToMouseClickEvents):
+        * html/shadow/TextFieldDecorationElement.h:
+        (TextFieldDecorationElement):
+        * page/TouchAdjustment.cpp:
+        (WebCore::TouchAdjustment::nodeRespondsToTapGesture):
+
 2012-07-30  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Content size variables in NetworkResourcesData should have size_t type instead of int.

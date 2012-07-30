@@ -589,6 +589,11 @@ void handleLinkClick(Event* event, Document* document, const String& url, const 
     frame->loader()->urlSelected(document->completeURL(url), target, event, false, false, hideReferrer ? NeverSendReferrer : MaybeSendReferrer);
 }
 
+bool HTMLAnchorElement::willRespondToMouseClickEvents()
+{
+    return isLink() || HTMLElement::willRespondToMouseClickEvents();
+}
+
 #if ENABLE(MICRODATA)
 String HTMLAnchorElement::itemValueText() const
 {

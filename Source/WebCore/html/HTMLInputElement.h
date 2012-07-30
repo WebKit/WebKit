@@ -232,6 +232,8 @@ public:
     void addSearchResult();
     void onSearch();
 
+    virtual bool willRespondToMouseClickEvents() OVERRIDE;
+
 #if ENABLE(DATALIST_ELEMENT)
     HTMLElement* list() const;
     HTMLDataListElement* dataList() const;

@@ -3910,6 +3910,15 @@ void HTMLMediaElement::defaultEventHandler(Event* event)
 #endif
 }
 
+bool HTMLMediaElement::willRespondToMouseClickEvents()
+{
+#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
+    return true;
+#else
+    return HTMLElement::willRespondToMouseClickEvents();
+#endif
+}
+
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
 
 void HTMLMediaElement::ensureMediaPlayer()

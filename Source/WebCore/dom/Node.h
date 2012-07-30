@@ -573,6 +573,9 @@ public:
     PassRefPtr<NodeList> getElementsByClassName(const String& classNames);
     PassRefPtr<RadioNodeList> radioNodeList(const AtomicString&);
 
+    virtual bool willRespondToMouseMoveEvents();
+    virtual bool willRespondToMouseClickEvents();
+
     PassRefPtr<Element> querySelector(const AtomicString& selectors, ExceptionCode&);
     PassRefPtr<NodeList> querySelectorAll(const AtomicString& selectors, ExceptionCode&);
 

@@ -2742,6 +2742,20 @@ void Node::defaultEventHandler(Event* event)
     }
 }
 
+bool Node::willRespondToMouseMoveEvents()
+{
+    if (disabled())
+        return false;
+    return hasEventListeners(eventNames().mousemoveEvent) || hasEventListeners(eventNames().mouseoverEvent) || hasEventListeners(eventNames().mouseoutEvent);
+}
+
+bool Node::willRespondToMouseClickEvents()
+{
+    if (disabled())
+        return false;
+    return isContentEditable() || hasEventListeners(eventNames().mouseupEvent) || hasEventListeners(eventNames().mousedownEvent) || hasEventListeners(eventNames().clickEvent) || hasEventListeners(eventNames().DOMActivateEvent);
+}
+
 #if ENABLE(MICRODATA)
 DOMSettableTokenList* Node::itemProp()
 {

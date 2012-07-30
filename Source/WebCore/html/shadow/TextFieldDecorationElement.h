@@ -71,6 +71,8 @@ public:
     TextFieldDecorator* textFieldDecorator() { return m_textFieldDecorator; }
     void decorate(HTMLInputElement*, bool visible);
 
+    virtual bool willRespondToMouseClickEvents() OVERRIDE;
+
 private:
     TextFieldDecorationElement(Document*, TextFieldDecorator*);
     virtual bool isTextFieldDecoration() const OVERRIDE;

@@ -388,7 +388,6 @@ void MediaControlVolumeSliderContainerElement::defaultEventHandler(Event* event)
     hide();
 }
 
-
 MediaControlElementType MediaControlVolumeSliderContainerElement::displayType() const
 {
     return MediaVolumeSliderContainer;
@@ -924,7 +923,15 @@ void MediaControlTimelineElement::defaultEventHandler(Event* event)
         m_controls->updateTimeDisplay();
 }
 
-void MediaControlTimelineElement::setPosition(float currentTime) 
+bool MediaControlTimelineElement::willRespondToMouseClickEvents()
+{
+    if (!attached())
+        return false;
+
+    return true;
+}
+
+void MediaControlTimelineElement::setPosition(float currentTime)
 {
     setValue(String::number(currentTime));
 }
@@ -981,6 +988,22 @@ void MediaControlVolumeSliderElement::defaultEventHandler(Event* event)
     }
     if (m_clearMutedOnUserInteraction)
         mediaController()->setMuted(false);
+}
+
+bool MediaControlVolumeSliderElement::willRespondToMouseMoveEvents()
+{
+    if (!attached())
+        return false;
+
+    return MediaControlInputElement::willRespondToMouseMoveEvents();
+}
+
+bool MediaControlVolumeSliderElement::willRespondToMouseClickEvents()
+{
+    if (!attached())
+        return false;
+
+    return MediaControlInputElement::willRespondToMouseClickEvents();
 }
 
 void MediaControlVolumeSliderElement::setVolume(float volume)

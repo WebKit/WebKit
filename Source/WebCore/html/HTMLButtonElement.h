@@ -36,6 +36,8 @@ public:
     
     String value() const;
 
+    virtual bool willRespondToMouseClickEvents() OVERRIDE;
+
 private:
     HTMLButtonElement(const QualifiedName& tagName, Document*, HTMLFormElement*);
 
@@ -48,6 +50,7 @@ private:
     virtual void parseAttribute(const Attribute&) OVERRIDE;
     virtual bool isPresentationAttribute(const QualifiedName&) const OVERRIDE;
     virtual void defaultEventHandler(Event*);
+
     virtual bool appendFormData(FormDataList&, bool);
 
     virtual bool isEnumeratable() const { return true; } 

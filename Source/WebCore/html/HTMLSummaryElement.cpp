@@ -157,6 +157,14 @@ void HTMLSummaryElement::defaultEventHandler(Event* event)
     HTMLElement::defaultEventHandler(event);
 }
 
+bool HTMLSummaryElement::willRespondToMouseClickEvents()
+{
+    if (isMainSummary() && renderer())
+        return true;
+
+    return HTMLElement::willRespondToMouseClickEvents();
+}
+
 }
 
 #endif

@@ -331,6 +331,24 @@ void SliderThumbElement::defaultEventHandler(Event* event)
     HTMLDivElement::defaultEventHandler(event);
 }
 
+bool SliderThumbElement::willRespondToMouseMoveEvents()
+{
+    const HTMLInputElement* input = hostInput();
+    if (input && !input->isReadOnlyFormControl() && input->isEnabledFormControl() && m_inDragMode)
+        return true;
+
+    return HTMLDivElement::willRespondToMouseMoveEvents();
+}
+
+bool SliderThumbElement::willRespondToMouseClickEvents()
+{
+    const HTMLInputElement* input = hostInput();
+    if (input && !input->isReadOnlyFormControl() && input->isEnabledFormControl())
+        return true;
+
+    return HTMLDivElement::willRespondToMouseClickEvents();
+}
+
 void SliderThumbElement::detach()
 {
     if (m_inDragMode) {

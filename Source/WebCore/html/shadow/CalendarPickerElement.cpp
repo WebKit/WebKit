@@ -104,6 +104,15 @@ void CalendarPickerElement::defaultEventHandler(Event* event)
         HTMLDivElement::defaultEventHandler(event);
 }
 
+bool CalendarPickerElement::willRespondToMouseClickEvents()
+{
+    const HTMLInputElement* input = hostInput();
+    if (renderer() && !input->readOnly() && !input->disabled())
+        return true;
+
+    return HTMLDivElement::willRespondToMouseClickEvents();
+}
+
 void CalendarPickerElement::openPopup()
 {
     if (m_popup)
