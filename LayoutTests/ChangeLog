@@ -1,5 +1,19 @@
 2012-07-30  Lucas Forschler  <lforschler@apple.com>
 
+    Merge 118213
+
+    2012-05-23  Chris Fleizach  <cfleizach@apple.com>
+
+            Regression(r112694): Crash in WebCore::AXObjectCache::postNotification
+            https://bugs.webkit.org/show_bug.cgi?id=86029
+
+            Reviewed by Abhishek Arya.
+
+            * accessibility/content-changed-notification-causes-crash-expected.txt: Added.
+            * accessibility/content-changed-notification-causes-crash.html: Added.
+
+2012-07-30  Lucas Forschler  <lforschler@apple.com>
+
     Merge 117801
 
     2012-05-21  Brady Eidson  <beidson@apple.com>
