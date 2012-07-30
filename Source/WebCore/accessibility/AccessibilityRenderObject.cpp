@@ -1996,9 +1996,11 @@ bool AccessibilityRenderObject::accessibilityIsIgnored() const
     if (isWebArea() || m_renderer->isListMarker())
         return false;
     
-    // Using the help text to decide an element's visibility is not as definitive
-    // as previous checks, so this should remain as one of the last.
-    if (!helpText().isEmpty())
+    // Using the help text, title or accessibility description (so we
+    // check if there's some kind of accessible name for the element)
+    // to decide an element's visibility is not as definitive as
+    // previous checks, so this should remain as one of the last.
+    if (!helpText().isEmpty() || !title().isEmpty() || !accessibilityDescription().isEmpty())
         return false;
     
     // By default, objects should be ignored so that the AX hierarchy is not 

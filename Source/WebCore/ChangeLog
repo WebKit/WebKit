@@ -1,3 +1,16 @@
+2012-07-30  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        REGRESSION (r123767): platform/gtk/accessibility/object-with-title.html failing on GTK
+        https://bugs.webkit.org/show_bug.cgi?id=92477
+
+        Reviewed by Chris Fleizach.
+
+        Consider title and accessibilityDescription together with helpText to
+        decide whether an object should be exposed in the accessibility tree.
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::accessibilityIsIgnored):
+
 2012-07-29  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Resource agent's reference to cached resources should be weak.
