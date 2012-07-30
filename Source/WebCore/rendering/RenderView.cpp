@@ -854,7 +854,7 @@ void RenderView::updateHitTestResult(HitTestResult& result, const LayoutPoint& p
             result.setInnerNonSharedNode(node);
 
         LayoutPoint adjustedPoint = point;
-        adjustPointToColumnContents(adjustedPoint);
+        offsetForContents(adjustedPoint);
 
         result.setLocalPoint(adjustedPoint);
     }

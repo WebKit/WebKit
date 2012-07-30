@@ -1,5 +1,23 @@
 2012-07-29  Dan Bernstein  <mitz@apple.com>
 
+        Hit testing in the gap between pages returns incorrect results in flipped blocks writing modes
+        https://bugs.webkit.org/show_bug.cgi?id=92600
+
+        Reviewed by Simon Fraser.
+
+        Test: fast/multicol/hit-test-gap-between-pages-flipped.html
+
+        * rendering/RenderBlock.h:
+        (WebCore::RenderBlock): Promoted offsetForContents() from private to protected, and demoted
+        adjustPointToColumnContents() back to private.
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::hitTest): Changed to flip the point passed to updateHitTestResults().
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::updateHitTestResult): Changed to call offsetForContents(), which, as
+        of r123977, correctly accounts for flippedness.
+
+2012-07-29  Dan Bernstein  <mitz@apple.com>
+
         In flipped blocks, a point on the top edge of a text box is considered outside the box (and vice versa)
         https://bugs.webkit.org/show_bug.cgi?id=92597
 
