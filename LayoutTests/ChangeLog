@@ -1,3 +1,31 @@
+2012-07-30  Peter Kasting  <pkasting@google.com>
+
+        [Chromium] Rebaseline tests for Skia changes.
+        http://crbug.com/130283
+        http://crbug.com/131188
+
+        Unreviewed, test expectations update.
+
+        * platform/chromium-linux/css3/filters/effect-combined-hw-expected.png:
+        * platform/chromium-linux/css3/filters/effect-saturate-hw-expected.png:
+        * platform/chromium-linux/css3/filters/effect-sepia-hw-expected.png:
+        * platform/chromium-linux/platform/chromium/virtual/gpu/fast/canvas/fillrect_gradient-expected.png:
+        * platform/chromium-mac-snowleopard/platform/chromium/virtual/gpu/fast/canvas/fillrect_gradient-expected.png:
+        * platform/chromium-mac/css3/filters/effect-combined-hw-expected.png:
+        * platform/chromium-mac/css3/filters/effect-grayscale-hw-expected.png:
+        * platform/chromium-mac/css3/filters/effect-hue-rotate-hw-expected.png:
+        * platform/chromium-mac/css3/filters/effect-saturate-hw-expected.png:
+        * platform/chromium-mac/css3/filters/effect-sepia-hw-expected.png:
+        * platform/chromium-mac/platform/chromium/virtual/gpu/fast/canvas/fillrect_gradient-expected.png:
+        * platform/chromium-mac/svg/W3C-SVG-1.1/painting-stroke-04-t-expected.txt: Removed.
+        * platform/chromium-win/css3/filters/effect-combined-hw-expected.png:
+        * platform/chromium-win/css3/filters/effect-grayscale-hw-expected.png:
+        * platform/chromium-win/css3/filters/effect-hue-rotate-hw-expected.png:
+        * platform/chromium-win/css3/filters/effect-saturate-hw-expected.png:
+        * platform/chromium-win/css3/filters/effect-sepia-hw-expected.png:
+        * platform/chromium-win/platform/chromium/virtual/gpu/fast/canvas/fillrect_gradient-expected.png:
+        * platform/chromium-win/svg/W3C-SVG-1.1/painting-stroke-04-t-expected.txt:
+
 2012-07-30  Tony Chang  <tony@chromium.org>
 
         new flexbox should ignore float set on flexitems
