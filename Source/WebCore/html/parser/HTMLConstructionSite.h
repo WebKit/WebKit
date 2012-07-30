@@ -44,14 +44,6 @@ struct HTMLConstructionSiteTask {
     {
     }
 
-    void take(HTMLConstructionSiteTask& other)
-    {
-        parent = other.parent.release();
-        nextChild = other.nextChild.release();
-        child = other.child.release();
-        selfClosing = other.selfClosing;
-    }
-
     RefPtr<ContainerNode> parent;
     RefPtr<Node> nextChild;
     RefPtr<Node> child;
