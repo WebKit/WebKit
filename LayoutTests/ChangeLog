@@ -1,3 +1,16 @@
+2012-07-30  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening.
+
+        Adding platform-specific baselines that are required after r123793, r123912 and r123914.
+
+        * platform/gtk/fast/hidpi/gradient-with-scaled-ancestor-expected.png: Added.
+        * platform/gtk/fast/hidpi/gradient-with-scaled-ancestor-expected.txt: Added.
+        * platform/gtk/fast/table/table-row-outline-paint-expected.png: Added.
+        * platform/gtk/fast/table/table-row-outline-paint-expected.txt: Added.
+        * platform/gtk/svg/as-image/animated-svg-repaints-completely-in-hidpi-expected.png: Added.
+        * platform/gtk/svg/as-image/animated-svg-repaints-completely-in-hidpi-expected.txt: Added.
+
 2012-07-30  Stephen White  <senorblanco@chromium.org>
 
         [chromium] Unreviewed gardening.  Marking two accelerated painting
