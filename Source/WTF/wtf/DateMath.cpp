@@ -286,9 +286,9 @@ int dayInMonthFromDayInYear(int dayInYear, bool leapYear)
     return d - step;
 }
 
-static inline int monthToDayInYear(int month, bool isLeapYear)
+static inline int dayInYear(int year, int month, int day)
 {
-    return firstDayOfMonth[isLeapYear][month];
+    return firstDayOfMonth[isLeapYear(year)][month] + day - 1;
 }
 
 double dateToDaysFrom1970(int year, int month, int day)
@@ -303,9 +303,7 @@ double dateToDaysFrom1970(int year, int month, int day)
 
     double yearday = floor(daysFrom1970ToYear(year));
     ASSERT((year >= 1970 && yearday >= 0) || (year < 1970 && yearday < 0));
-    int monthday = monthToDayInYear(month, isLeapYear(year));
-
-    return yearday + monthday + day - 1;
+    return yearday + dayInYear(year, month, day);
 }
 
 // There is a hard limit at 2038 that we currently do not have a workaround

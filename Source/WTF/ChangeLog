@@ -1,5 +1,19 @@
 2012-07-30  Patrick Gansterer  <paroga@webkit.org>
 
+        Add function to calculate the day in year from a date
+        https://bugs.webkit.org/show_bug.cgi?id=92671
+
+        Reviewed by Ryosuke Niwa.
+
+        Replace monthToDayInYear() with dayInYear() which takes a whole
+        date for calculation and will be used for bug 92286 later.
+
+        * wtf/DateMath.cpp:
+        (WTF::dayInYear):
+        (WTF::dateToDaysFrom1970):
+
+2012-07-30  Patrick Gansterer  <paroga@webkit.org>
+
         Add special export macro for string related functions
         https://bugs.webkit.org/show_bug.cgi?id=92624
 
