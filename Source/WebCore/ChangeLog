@@ -1,3 +1,72 @@
+2012-07-29  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Resource agent's reference to cached resources should be weak.
+        https://bugs.webkit.org/show_bug.cgi?id=92108
+
+        Reviewed by Pavel Feldman.
+
+        NetworkResourcesData now stores a raw pointer to CachedResource.
+        CachedResource now notifies InspectorInstrumentation that it will be destroyed.
+        InspectorInstrumentation stores a set of InstrumentingAgents and broadcasts willDestroyCachedResource event to all available resourceAgents.
+        Destroyed resources content is saved to NetworkResourcesData.
+
+        Tests: http/tests/inspector/network/cached-resource-destroyed-moved-to-storage.html
+               http/tests/inspector/network/cached-resource-destroyed-too-big-discarded.html
+
+        * WebCore.exp.in:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::InspectorController):
+        (WebCore::InspectorController::inspectedPageDestroyed):
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore):
+        (WebCore::InspectorInstrumentation::willDestroyCachedResourceImpl):
+        (WebCore::InspectorInstrumentation::registerInstrumentingAgents):
+        (WebCore::InspectorInstrumentation::unregisterInstrumentingAgents):
+        * inspector/InspectorInstrumentation.h:
+        (InspectorInstrumentation):
+        (WebCore::InspectorInstrumentation::willDestroyCachedResource):
+        (WebCore):
+        * inspector/InspectorResourceAgent.cpp:
+        (WebCore::InspectorResourceAgent::didReceiveData):
+        (WebCore::InspectorResourceAgent::willDestroyCachedResource):
+        (WebCore):
+        (WebCore::InspectorResourceAgent::getResponseBody):
+        * inspector/InspectorResourceAgent.h:
+        (InspectorResourceAgent):
+        * inspector/NetworkResourcesData.cpp:
+        (WebCore::NetworkResourcesData::ResourceData::ResourceData):
+        (WebCore::NetworkResourcesData::ResourceData::setContent):
+        (WebCore::NetworkResourcesData::setResourceContent):
+        (WebCore::NetworkResourcesData::removeCachedResource):
+        (WebCore):
+        * inspector/NetworkResourcesData.h:
+        (ResourceData):
+        (WebCore::NetworkResourcesData::ResourceData::base64Encoded):
+        (WebCore::NetworkResourcesData::ResourceData::cachedResource):
+        (NetworkResourcesData):
+        * loader/cache/CachedResource.cpp:
+        (WebCore::CachedResource::~CachedResource):
+        (WebCore::CachedResource::removeClient):
+        (WebCore::CachedResource::deleteIfPossible):
+        (WebCore):
+        * loader/cache/CachedResource.h:
+        (CachedResource):
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::garbageCollectDocumentResourcesTimerFired):
+        (WebCore::CachedResourceLoader::garbageCollectDocumentResources):
+        (WebCore::CachedResourceLoader::clearPreloads):
+        * loader/cache/CachedResourceLoader.h:
+        (CachedResourceLoader):
+        * loader/cache/MemoryCache.cpp:
+        (WebCore::MemoryCache::evict):
+        * testing/InternalSettings.cpp:
+        * testing/Internals.cpp:
+        (WebCore::Internals::garbageCollectDocumentResources):
+        (WebCore):
+        * testing/Internals.h:
+        (Internals):
+        * testing/Internals.idl:
+
 2012-07-29  YoungTaeck Song  <youngtaeck.song@samsung.com>
 
         [WK2][EFL] Accelerated compositing support using TextureMapper on Efl WebKit2

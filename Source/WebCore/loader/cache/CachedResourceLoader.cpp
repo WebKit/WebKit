@@ -676,7 +676,11 @@ void CachedResourceLoader::loadDone()
 void CachedResourceLoader::garbageCollectDocumentResourcesTimerFired(Timer<CachedResourceLoader>* timer)
 {
     ASSERT_UNUSED(timer, timer == &m_garbageCollectDocumentResourcesTimer);
+    garbageCollectDocumentResources();
+}
 
+void CachedResourceLoader::garbageCollectDocumentResources()
+{
     typedef Vector<String, 10> StringVector;
     StringVector resourcesToDelete;
 
@@ -813,9 +817,8 @@ void CachedResourceLoader::clearPreloads()
     for (ListHashSet<CachedResource*>::iterator it = m_preloads->begin(); it != end; ++it) {
         CachedResource* res = *it;
         res->decreasePreloadCount();
-        if (res->canDelete() && !res->inCache())
-            delete res;
-        else if (res->preloadResult() == CachedResource::PreloadNotReferenced)
+        bool deleted = res->deleteIfPossible();
+        if (!deleted && res->preloadResult() == CachedResource::PreloadNotReferenced)
             memoryCache()->remove(res);
     }
     m_preloads.clear();

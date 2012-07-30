@@ -29,7 +29,6 @@
 #ifndef NetworkResourcesData_h
 #define NetworkResourcesData_h
 
-#include "CachedResourceHandle.h"
 #include "InspectorPageAgent.h"
 #include "TextResourceDecoder.h"
 
@@ -65,7 +64,9 @@ public:
 
         bool hasContent() const { return !m_content.isNull(); }
         String content() const { return m_content; }
-        void setContent(const String&);
+        void setContent(const String&, bool base64Encoded);
+
+        bool base64Encoded() const { return m_base64Encoded; }
 
         unsigned removeContent();
         bool isContentPurged() const { return m_isContentPurged; }
@@ -86,7 +87,7 @@ public:
         PassRefPtr<SharedBuffer> buffer() const { return m_buffer; }
         void setBuffer(PassRefPtr<SharedBuffer> buffer) { m_buffer = buffer; }
 
-        CachedResource* cachedResource() const { return m_cachedResource.get(); }
+        CachedResource* cachedResource() const { return m_cachedResource; }
         void setCachedResource(CachedResource* cachedResource) { m_cachedResource = cachedResource; }
 
     private:
@@ -100,6 +101,7 @@ public:
         String m_frameId;
         String m_url;
         String m_content;
+        bool m_base64Encoded;
         RefPtr<SharedBuffer> m_dataBuffer;
         bool m_isContentPurged;
         InspectorPageAgent::ResourceType m_type;
@@ -109,7 +111,7 @@ public:
         RefPtr<TextResourceDecoder> m_decoder;
 
         RefPtr<SharedBuffer> m_buffer;
-        CachedResourceHandle<CachedResource> m_cachedResource;
+        CachedResource* m_cachedResource;
     };
 
     NetworkResourcesData();
@@ -120,19 +122,20 @@ public:
     void responseReceived(const String& requestId, const String& frameId, const ResourceResponse&);
     void setResourceType(const String& requestId, InspectorPageAgent::ResourceType);
     InspectorPageAgent::ResourceType resourceType(const String& requestId);
-    void setResourceContent(const String& requestId, const String& content);
+    void setResourceContent(const String& requestId, const String& content, bool base64Encoded = false);
     void maybeAddResourceData(const String& requestId, const char* data, int dataLength);
     void maybeDecodeDataToContent(const String& requestId);
     void addCachedResource(const String& requestId, CachedResource*);
     void addResourceSharedBuffer(const String& requestId, PassRefPtr<SharedBuffer>, const String& textEncodingName);
     ResourceData const* data(const String& requestId);
+    Vector<String> removeCachedResource(CachedResource*);
     void clear(const String& preservedLoaderId = String());
 
     void setResourcesDataSizeLimits(int maximumResourcesContentSize, int maximumSingleResourceContentSize);
 
 private:
     void ensureNoDataForRequestId(const String& requestId);
-    bool ensureFreeSpace(int size);
+    bool ensureFreeSpace(int);
 
     Deque<String> m_requestIdsDeque;
 
