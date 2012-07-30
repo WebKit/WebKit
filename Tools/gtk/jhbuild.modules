@@ -32,8 +32,6 @@
       href="http://ftp.gnome.org"/>
   <repository type="git" name="git.gnome.org"
       href="git://git.gnome.org/"/>
-  <repository type="tarball" name="gnu.org"
-      href="http://ftp.gnu.org/"/>
   <repository type="tarball" name="cairographics.org"
       href="http://cairographics.org"/>
   <repository type="tarball" name="freedesktop.org"
@@ -153,20 +151,11 @@
   <autotools id="glib-networking">
     <dependencies>
       <dep package="glib"/>
-      <dep package="gnutls"/>
     </dependencies>
     <branch module="/pub/GNOME/sources/glib-networking/2.33/glib-networking-2.33.2.tar.xz" version="2.33.2"
             repo="ftp.gnome.org"
             hash="sha256:e298cff3935eb752be290bbf734e457f1870bdb5370ee292606e6040a82074e7"
             md5sum="5abb364f2a0babe2ec1e3a6d59f69043"/>
-  </autotools>
-
-  <autotools id="gnutls"
-             autogenargs="--enable-ld-version-script --enable-cxx --without-lzo --with-libgcrypt --without-p11-kit">
-    <branch module="/gnu/gnutls/gnutls-2.12.14.tar.bz2" version="2.12.14"
-            repo="gnu.org"
-            hash="sha256:5ee72ba6de7a23cf315792561954451e022dac8730149ca95f93c61e95be2ce3"
-            md5sum="555687a7ffefba0bd9de1e71cb61402c"/>
   </autotools>
 
   <autotools id="libsoup"

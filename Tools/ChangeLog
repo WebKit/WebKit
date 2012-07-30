@@ -1,3 +1,27 @@
+2012-07-30  Raphael Kubo da Costa  <rakuco@webkit.org>
+
+        [jhbuild] gnutls 2.12.14 does not build with glibc 2.16.0
+        https://bugs.webkit.org/show_bug.cgi?id=90643
+
+        Reviewed by Gustavo Noronha Silva.
+
+        The 2.x series of gnutls has a version of Gnulib that is
+        incompatible with glibc 2.16.0, which now does not define gets()
+        by default.
+
+        After talking to kov, mrobinson and philn, it looks like it makes
+        sense to simply remove gnutls from jhbuild.modules and rely on the
+        version installed on the system being recent enough.
+
+        This means at least version 2.12.8 for PKCS11 support, or at the
+        very least 2.11.0 (these are the minimum versions enforced by
+        glib-networking's configure.ac).
+
+        * efl/jhbuild.modules: Do not build gnutls anymore, make
+        glib-networking depend on glib instead, and move the libgcrypt
+        dependency to eet, which is what currently needs it.
+        * gtk/jhbuild.modules: Do not build gnutls anymore.
+
 2012-07-30  Dirk Pranke  <dpranke@chromium.org>
 
         nrwt: --verbose logging does not work right on windows
