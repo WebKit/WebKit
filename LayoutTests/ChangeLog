@@ -1,3 +1,11 @@
+2012-07-30  Raphael Kubo da Costa  <rakuco@webkit.org>
+
+        [EFL] Unreviewed gardening.
+
+        Fix r124028 by adding the missing expectations to the added lines.
+
+        * platform/efl/TestExpectations:
+
 2012-07-30  Stephen White  <senorblanco@chromium.org>
 
         [chromium] Unreviewed gardening.  Add new baselines for tests 
