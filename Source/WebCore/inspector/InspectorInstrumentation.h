@@ -187,7 +187,6 @@ public:
     static void frameDetachedFromParent(Frame*);
     static void didCommitLoad(Frame*, DocumentLoader*);
     static void loaderDetachedFromFrame(Frame*, DocumentLoader*);
-    static void willDestroyCachedResource(CachedResource*);
 
     static InspectorInstrumentationCookie willWriteHTML(Document*, unsigned int length, unsigned int startLine);
     static void didWriteHTML(const InspectorInstrumentationCookie&, unsigned int endLine);
@@ -263,9 +262,6 @@ public:
 #if ENABLE(GEOLOCATION)
     static GeolocationPosition* overrideGeolocationPosition(Page*, GeolocationPosition*);
 #endif
-
-    static void registerInstrumentingAgents(InstrumentingAgents*);
-    static void unregisterInstrumentingAgents(InstrumentingAgents*);
 
 private:
 #if ENABLE(INSPECTOR)
@@ -363,7 +359,6 @@ private:
     static void frameDetachedFromParentImpl(InstrumentingAgents*, Frame*);
     static void didCommitLoadImpl(InstrumentingAgents*, Page*, DocumentLoader*);
     static void loaderDetachedFromFrameImpl(InstrumentingAgents*, DocumentLoader*);
-    static void willDestroyCachedResourceImpl(CachedResource*);
 
     static InspectorInstrumentationCookie willWriteHTMLImpl(InstrumentingAgents*, unsigned int length, unsigned int startLine, Frame*);
     static void didWriteHTMLImpl(const InspectorInstrumentationCookie&, unsigned int endLine);
@@ -1202,14 +1197,6 @@ inline void InspectorInstrumentation::loaderDetachedFromFrame(Frame* frame, Docu
 #if ENABLE(INSPECTOR)
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForFrame(frame))
         loaderDetachedFromFrameImpl(instrumentingAgents, loader);
-#endif
-}
-
-inline void InspectorInstrumentation::willDestroyCachedResource(CachedResource* cachedResource)
-{
-#if ENABLE(INSPECTOR)
-    FAST_RETURN_IF_NO_FRONTENDS(void());
-    willDestroyCachedResourceImpl(cachedResource);
 #endif
 }
 

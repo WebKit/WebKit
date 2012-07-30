@@ -34,7 +34,6 @@
 #include "Document.h"
 #include "Frame.h"
 #include "FrameLoaderClient.h"
-#include "InspectorInstrumentation.h"
 #include "KURL.h"
 #include "Logging.h"
 #include "PurgeableBuffer.h"
@@ -178,7 +177,7 @@ CachedResource::~CachedResource()
     ASSERT(!inCache());
     ASSERT(!m_deleted);
     ASSERT(url().isNull() || memoryCache()->resourceForURL(KURL(ParsedURLString, url())) != this);
-
+    
 #ifndef NDEBUG
     m_deleted = true;
     cachedResourceLeakCounter.decrement();
@@ -435,8 +434,9 @@ void CachedResource::removeClient(CachedResourceClient* client)
         didRemoveClient(client);
     }
 
-    bool deleted = deleteIfPossible();
-    if (!deleted && !hasClients() && inCache()) {
+    if (canDelete() && !inCache())
+        delete this;
+    else if (!hasClients() && inCache()) {
         memoryCache()->removeFromLiveResourcesSize(this);
         memoryCache()->removeFromLiveDecodedResourcesList(this);
         allClientsRemoved();
@@ -468,16 +468,12 @@ void CachedResource::decodedDataDeletionTimerFired(Timer<CachedResource>*)
     destroyDecodedData();
 }
 
-bool CachedResource::deleteIfPossible()
+void CachedResource::deleteIfPossible()
 {
-    if (canDelete() && !inCache()) {
-        InspectorInstrumentation::willDestroyCachedResource(this);
+    if (canDelete() && !inCache())
         delete this;
-        return true;
-    }
-    return false;
 }
-
+    
 void CachedResource::setDecodedSize(unsigned size)
 {
     if (size == m_decodedSize)

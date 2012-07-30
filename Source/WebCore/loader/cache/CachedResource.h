@@ -115,7 +115,7 @@ public:
     void addClient(CachedResourceClient*);
     void removeClient(CachedResourceClient*);
     bool hasClients() const { return !m_clients.isEmpty() || !m_clientsAwaitingCallback.isEmpty(); }
-    bool deleteIfPossible();
+    void deleteIfPossible();
 
     enum PreloadResult {
         PreloadNotReferenced,

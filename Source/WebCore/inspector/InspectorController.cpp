@@ -165,8 +165,6 @@ InspectorController::InspectorController(Page* page, InspectorClient* inspectorC
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     runtimeAgent->setScriptDebugServer(&m_debuggerAgent->scriptDebugServer());
 #endif
-
-    InspectorInstrumentation::registerInstrumentingAgents(m_instrumentingAgents.get());
 }
 
 InspectorController::~InspectorController()
@@ -185,7 +183,6 @@ PassOwnPtr<InspectorController> InspectorController::create(Page* page, Inspecto
 void InspectorController::inspectedPageDestroyed()
 {
     disconnectFrontend();
-    InspectorInstrumentation::unregisterInstrumentingAgents(m_instrumentingAgents.get());
     m_injectedScriptManager->disconnect();
     m_inspectorClient->inspectorDestroyed();
     m_inspectorClient = 0;

@@ -1,3 +1,54 @@
+2012-07-30  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r124000.
+        http://trac.webkit.org/changeset/124000
+        https://bugs.webkit.org/show_bug.cgi?id=92632
+
+        seems to have broken chromium Range_InstanceSizeUnknown unit
+        test across many platforms (Requested by tomhudson on
+        #webkit).
+
+        * WebCore.exp.in:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::InspectorController):
+        (WebCore::InspectorController::inspectedPageDestroyed):
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore):
+        * inspector/InspectorInstrumentation.h:
+        (InspectorInstrumentation):
+        * inspector/InspectorResourceAgent.cpp:
+        (WebCore::InspectorResourceAgent::didReceiveData):
+        (WebCore::InspectorResourceAgent::getResponseBody):
+        * inspector/InspectorResourceAgent.h:
+        (InspectorResourceAgent):
+        * inspector/NetworkResourcesData.cpp:
+        (WebCore::NetworkResourcesData::ResourceData::ResourceData):
+        (WebCore::NetworkResourcesData::ResourceData::setContent):
+        (WebCore::NetworkResourcesData::setResourceContent):
+        * inspector/NetworkResourcesData.h:
+        (ResourceData):
+        (WebCore::NetworkResourcesData::ResourceData::cachedResource):
+        (NetworkResourcesData):
+        * loader/cache/CachedResource.cpp:
+        (WebCore::CachedResource::~CachedResource):
+        (WebCore::CachedResource::removeClient):
+        (WebCore::CachedResource::deleteIfPossible):
+        (WebCore):
+        * loader/cache/CachedResource.h:
+        (CachedResource):
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::garbageCollectDocumentResourcesTimerFired):
+        (WebCore::CachedResourceLoader::clearPreloads):
+        * loader/cache/CachedResourceLoader.h:
+        (CachedResourceLoader):
+        * loader/cache/MemoryCache.cpp:
+        (WebCore::MemoryCache::evict):
+        * testing/InternalSettings.cpp:
+        * testing/Internals.cpp:
+        * testing/Internals.h:
+        (Internals):
+        * testing/Internals.idl:
+
 2012-07-30  Hayato Ito  <hayato@chromium.org>
 
         Remove an unused member variable, m_originalTarget, from EventDispatcher.

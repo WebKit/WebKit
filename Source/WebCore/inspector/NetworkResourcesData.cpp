@@ -51,19 +51,16 @@ namespace WebCore {
 NetworkResourcesData::ResourceData::ResourceData(const String& requestId, const String& loaderId)
     : m_requestId(requestId)
     , m_loaderId(loaderId)
-    , m_base64Encoded(false)
     , m_isContentPurged(false)
     , m_type(InspectorPageAgent::OtherResource)
-    , m_cachedResource(0)
 {
 }
 
-void NetworkResourcesData::ResourceData::setContent(const String& content, bool base64Encoded)
+void NetworkResourcesData::ResourceData::setContent(const String& content)
 {
     ASSERT(!hasData());
     ASSERT(!hasContent());
     m_content = content;
-    m_base64Encoded = base64Encoded;
 }
 
 unsigned NetworkResourcesData::ResourceData::removeContent()
@@ -174,7 +171,7 @@ InspectorPageAgent::ResourceType NetworkResourcesData::resourceType(const String
     return resourceData->type();
 }
 
-void NetworkResourcesData::setResourceContent(const String& requestId, const String& content, bool base64Encoded)
+void NetworkResourcesData::setResourceContent(const String& requestId, const String& content)
 {
     ResourceData* resourceData = m_requestIdToResourceDataMap.get(requestId);
     if (!resourceData)
@@ -189,7 +186,7 @@ void NetworkResourcesData::setResourceContent(const String& requestId, const Str
         if (resourceData->hasContent())
             m_contentSize -= resourceData->removeContent();
         m_requestIdsDeque.append(requestId);
-        resourceData->setContent(content, base64Encoded);
+        resourceData->setContent(content);
         m_contentSize += dataLength;
     }
 }
@@ -246,22 +243,6 @@ void NetworkResourcesData::addResourceSharedBuffer(const String& requestId, Pass
 NetworkResourcesData::ResourceData const* NetworkResourcesData::data(const String& requestId)
 {
     return m_requestIdToResourceDataMap.get(requestId);
-}
-
-Vector<String> NetworkResourcesData::removeCachedResource(CachedResource* cachedResource)
-{
-    Vector<String> result;
-    ResourceDataMap::iterator it;
-    ResourceDataMap::iterator end = m_requestIdToResourceDataMap.end();
-    for (it = m_requestIdToResourceDataMap.begin(); it != end; ++it) {
-        ResourceData* resourceData = it->second;
-        if (resourceData->cachedResource() == cachedResource) {
-            resourceData->setCachedResource(0);
-            result.append(it->first);
-        }
-    }
-
-    return result;
 }
 
 void NetworkResourcesData::clear(const String& preservedLoaderId)

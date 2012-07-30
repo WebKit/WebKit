@@ -175,7 +175,6 @@ EXPORTS
         ?find@StringImpl@WTF@@QAEIPAV12@@Z
         ?absoluteCaretBounds@FrameSelection@WebCore@@QAE?AVIntRect@2@XZ
         ?fromUTF8WithLatin1Fallback@String@WTF@@SA?AV12@PBEI@Z
-        ?garbageCollectDocumentResources@CachedResourceLoader@WebCore@@QAEXXZ
         ?getCachedDOMStructure@WebCore@@YAPAVStructure@JSC@@PAVJSDOMGlobalObject@1@PBUClassInfo@3@@Z
         ?getData16SlowCase@StringImpl@WTF@@ABEPB_WXZ
         ?getElementById@TreeScope@WebCore@@QBEPAVElement@2@ABVAtomicString@WTF@@@Z

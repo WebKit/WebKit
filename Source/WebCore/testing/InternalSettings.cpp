@@ -26,6 +26,7 @@
 #include "config.h"
 #include "InternalSettings.h"
 
+#include "CachedResourceLoader.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "Document.h"

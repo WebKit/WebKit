@@ -80,10 +80,6 @@ static const char* const setTimerEventName = "setTimer";
 static const char* const clearTimerEventName = "clearTimer";
 static const char* const timerFiredEventName = "timerFired";
 
-namespace {
-static HashSet<InstrumentingAgents*>* instrumentingAgentsSet = 0;
-}
-
 int InspectorInstrumentation::s_frontendCounter = 0;
 
 static bool eventHasListeners(const AtomicString& eventType, DOMWindow* window, Node* node, const Vector<EventContext>& ancestors)
@@ -848,18 +844,6 @@ void InspectorInstrumentation::loaderDetachedFromFrameImpl(InstrumentingAgents* 
         inspectorPageAgent->loaderDetachedFromFrame(loader);
 }
 
-void InspectorInstrumentation::willDestroyCachedResourceImpl(CachedResource* cachedResource)
-{
-    if (!instrumentingAgentsSet)
-        return;
-    HashSet<InstrumentingAgents*>::iterator end = instrumentingAgentsSet->end();
-    for (HashSet<InstrumentingAgents*>::iterator it = instrumentingAgentsSet->begin(); it != end; ++it) {
-        InstrumentingAgents* instrumentingAgents = *it;
-        if (InspectorResourceAgent* inspectorResourceAgent = instrumentingAgents->inspectorResourceAgent())
-            inspectorResourceAgent->willDestroyCachedResource(cachedResource);
-    }
-}
-
 InspectorInstrumentationCookie InspectorInstrumentation::willWriteHTMLImpl(InstrumentingAgents* instrumentingAgents, unsigned int length, unsigned int startLine, Frame* frame)
 {
     int timelineAgentId = 0;
@@ -1155,22 +1139,6 @@ WTF::ThreadSpecific<InspectorTimelineAgent*>& InspectorInstrumentation::threadSp
 {
     AtomicallyInitializedStatic(WTF::ThreadSpecific<InspectorTimelineAgent*>*, instance = new WTF::ThreadSpecific<InspectorTimelineAgent*>());
     return *instance;
-}
-
-void InspectorInstrumentation::registerInstrumentingAgents(InstrumentingAgents* instrumentingAgents)
-{
-    if (!instrumentingAgentsSet)
-        instrumentingAgentsSet = new HashSet<InstrumentingAgents*>();
-    instrumentingAgentsSet->add(instrumentingAgents);
-}
-
-void InspectorInstrumentation::unregisterInstrumentingAgents(InstrumentingAgents* instrumentingAgents)
-{
-    if (!instrumentingAgentsSet)
-        return;
-    instrumentingAgentsSet->remove(instrumentingAgents);
-    if (!instrumentingAgentsSet->size())
-        delete instrumentingAgentsSet;
 }
 
 InspectorTimelineAgent* InspectorInstrumentation::retrieveTimelineAgent(const InspectorInstrumentationCookie& cookie)
