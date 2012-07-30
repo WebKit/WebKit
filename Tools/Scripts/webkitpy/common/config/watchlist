@@ -69,6 +69,10 @@
             "less": r"[Ss]ecurityOrigin(?!\.(h|cpp))",
             "filename": r"XSS|[Ss]ecurity",
         },
+        "SkiaGraphics": {
+            "filename": r"Source/WebCore/platform/graphics/skia/"
+                        r"|Source/WebCore/platform/graphics/filters/skia/",
+        },
         "V8Bindings": {
             "filename": r"Source/WebCore/bindings/v8/",
         },
@@ -241,6 +245,7 @@
         "Media": [ "feature-media-reviews@chromium.org", "eric.carlson@apple.com" ],
         "NetworkInfo": [ "gyuyoung.kim@samsung.com" ],
         "OpenGL" : [ "noam.rosenthal@nokia.com" ],
+        "SkiaGraphics": [ "senorblanco@chromium.org" ],
         "QtBuildSystem" : [ "vestbo@webkit.org", ],
         "QtGraphics" : [ "noam.rosenthal@nokia.com" ],
         "QtWebKit2PlatformSpecific": [ "alexis.menard@openbossa.org", "zoltan@webkit.org", "cmarcelo@webkit.org" ],
