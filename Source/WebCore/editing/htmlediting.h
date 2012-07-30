@@ -61,7 +61,7 @@ Node* highestEnclosingNodeOfType(const Position&, bool (*nodeIsOfType)(const Nod
 Node* highestNodeToRemoveInPruning(Node*);
 Node* lowestEditableAncestor(Node*);
 
-Node* enclosingBlock(Node*, EditingBoundaryCrossingRule = CannotCrossEditingBoundary);
+Element* enclosingBlock(Node*, EditingBoundaryCrossingRule = CannotCrossEditingBoundary);
 Node* enclosingTableCell(const Position&);
 Node* enclosingEmptyListItem(const VisiblePosition&);
 Node* enclosingAnchorElement(const Position&);
