@@ -48,7 +48,7 @@ WebInspector.EmptyView.prototype = {
     set text(text)
     {
         this._text = text;
-        if (this.visible)
+        if (this.isShowing())
             this.element.textContent = this._text;
     },
 }

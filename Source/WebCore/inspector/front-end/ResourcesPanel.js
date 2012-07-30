@@ -49,7 +49,7 @@ WebInspector.ResourcesPanel = function(database)
     this.resourcesListTreeElement = new WebInspector.StorageCategoryTreeElement(this, WebInspector.UIString("Frames"), "Frames", ["frame-storage-tree-item"]);
     this.sidebarTree.appendChild(this.resourcesListTreeElement);
 
-    this.databasesListTreeElement = new WebInspector.StorageCategoryTreeElement(this, WebInspector.UIString("Databases"), "Databases", ["database-storage-tree-item"]);
+    this.databasesListTreeElement = new WebInspector.StorageCategoryTreeElement(this, WebInspector.UIString("Web SQL"), "Databases", ["database-storage-tree-item"]);
     this.sidebarTree.appendChild(this.databasesListTreeElement);
 
     this.indexedDBListTreeElement = new WebInspector.IndexedDBTreeElement(this);
@@ -1619,7 +1619,7 @@ WebInspector.IDBDatabaseTreeElement.prototype = {
 
         if (this._view)
             this._view.update(database);
-        
+
         this._updateTooltip();
     },
 
@@ -1715,13 +1715,13 @@ WebInspector.IDBObjectStoreTreeElement.prototype = {
 
         if (this._view)
             this._view.update(this._objectStore);
-        
+
         this._updateTooltip();
     },
 
     _updateTooltip: function()
     {
-        
+
         var keyPathString = this._objectStore.keyPathString;
         var tooltipString = keyPathString !== null ? (WebInspector.UIString("Key path: ") + keyPathString) : "";
         if (this._objectStore.autoIncrement)
@@ -1793,7 +1793,7 @@ WebInspector.IDBIndexTreeElement.prototype = {
 
         if (this._view)
             this._view.update(this._index);
-        
+
         this._updateTooltip();
     },
 
