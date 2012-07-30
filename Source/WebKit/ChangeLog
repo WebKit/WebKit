@@ -1,3 +1,10 @@
+2012-07-30  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Unreviewed Qt/Mac build fix: Use libWebKitSystemInterfaceMountainLion.a
+        on Mountain Lion.
+
+        * WebKit1.pri:
+
 2012-07-27  Thiago Marcos P. Santos  <thiago.santos@intel.com>
 
         [EFL] WebKit API unit tests needs a timeout
