@@ -1,3 +1,12 @@
+2012-07-30  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed gardening.
+
+        * platform/qt-5.0/Skipped: Unskip now passing tests. (bug85203)
+        * platform/qt-5.0/fast/js/global-constructors-expected.txt: Added. Same as
+          platform/qt/...expected.txt, but has more attribute because of enabled SVG_FONTS.
+        * platform/qt/fast/js/global-constructors-expected.png: Removed, it is text only test.
+
 2012-07-30  Stephen White  <senorblanco@chromium.org>
 
         [chromium] Unreviewed gardening.  Rebaseline another test affected by

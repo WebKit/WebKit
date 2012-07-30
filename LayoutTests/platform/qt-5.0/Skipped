@@ -1,13 +1,5 @@
-# Still failing tests after refactored Qt5 and after WEBKIT_TESTFONTS fix.
-fast/dom/Window/Plug-ins.html
-fast/frames/sandboxed-iframe-about-blank.html
-fast/frames/sandboxed-iframe-navigation-allowed.html
-fast/images/object-image.html
-fast/js/global-constructors.html
-fast/replaced/invalid-object-with-fallback.html
-fast/text/international/arabic-justify.html
-http/tests/inspector/network/network-embed.html
-http/tests/security/frameNavigation/xss-DENIED-plugin-navigation.html
+# [Qt] load event fires on XMLHttpRequestUpload twice with Qt5
+# https://bugs.webkit.org/show_bug.cgi?id=92669
 http/tests/xmlhttprequest/upload-onprogress-event.html
 http/tests/xmlhttprequest/upload-progress-events.html
 
