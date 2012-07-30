@@ -23,32 +23,59 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ColorChooserProxy_h
-#define ColorChooserProxy_h
-
-#include "ColorChooser.h"
-#include "WebColorChooser.h"
-#include <wtf/OwnPtr.h>
-#include <wtf/PassOwnPtr.h>
+#ifndef ColorChooserUIController_h
+#define ColorChooserUIController_h
 
 #if ENABLE(INPUT_TYPE_COLOR)
 
+#include "ColorChooser.h"
+#include "PagePopupClient.h"
+#include "WebColorChooserClient.h"
+#include <wtf/OwnPtr.h>
+#include <wtf/PassOwnPtr.h>
+
+namespace WebCore {
+class ColorChooserClient;
+class PagePopup;
+}
+
 namespace WebKit {
 
-class ColorChooserProxy : public WebCore::ColorChooser {
-public:
-    ColorChooserProxy(PassOwnPtr<WebColorChooser>);
-    virtual ~ColorChooserProxy();
+class ChromeClientImpl;
+class WebColorChooser;
 
-    virtual void setSelectedColor(const WebCore::Color&);
-    virtual void endChooser();
+class ColorChooserUIController : public WebColorChooserClient, public WebCore::ColorChooser, public WebCore::PagePopupClient {
+public:
+    ColorChooserUIController(ChromeClientImpl*, WebCore::ColorChooserClient*);
+    virtual ~ColorChooserUIController();
+
+    // ColorChooser functions:
+    virtual void setSelectedColor(const WebCore::Color&) OVERRIDE;
+    virtual void endChooser() OVERRIDE;
+
+    // WebColorChooserClient functions:
+    virtual void didChooseColor(const WebColor&) OVERRIDE;
+    virtual void didEndChooser() OVERRIDE;
+
+    // PagePopupClient functions:
+    virtual WebCore::IntSize contentSize() OVERRIDE;
+    virtual void writeDocument(WebCore::DocumentWriter&) OVERRIDE;
+    virtual void setValueAndClosePopup(int, const String&) OVERRIDE;
+    virtual void didClosePopup() OVERRIDE;
 
 private:
+    void openPopup();
+    void closePopup();
+    void openColorChooser();
+
+    ChromeClientImpl* m_chromeClient;
+    WebCore::ColorChooserClient* m_client;
     OwnPtr<WebColorChooser> m_chooser;
+    WebCore::PagePopup* m_popup;
 };
 
-} // namespace WebKit
+}
 
 #endif // ENABLE(INPUT_TYPE_COLOR)
 
-#endif // ColorChooserProxy_h
+#endif // ColorChooserUIController_h
