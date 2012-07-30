@@ -66,16 +66,12 @@ inline static EventTarget* eventTargetRespectingSVGTargetRules(Node* referenceNo
     // Spec: The event handling for the non-exposed tree works as if the referenced element had been textually included
     // as a deeply cloned child of the 'use' element, except that events are dispatched to the SVGElementInstance objects
     Element* shadowHostElement = referenceNode->treeScope()->rootNode()->shadowHost();
-    // At this time, SVG nodes are not allowed in non-<use> shadow trees, so any shadow root we do
-    // have should be a use. The assert and following test is here to catch future shadow DOM changes
-    // that do enable SVG in a shadow tree.
-    ASSERT(!shadowHostElement || shadowHostElement->hasTagName(SVGNames::useTag));
-    if (shadowHostElement && shadowHostElement->hasTagName(SVGNames::useTag)) {
-        SVGUseElement* useElement = static_cast<SVGUseElement*>(shadowHostElement);
-
-        if (SVGElementInstance* instance = useElement->instanceForShadowTreeElement(referenceNode))
-            return instance;
-    }
+    // At this time, SVG nodes are not supported in non-<use> shadow trees.
+    if (!shadowHostElement || !shadowHostElement->hasTagName(SVGNames::useTag))
+        return referenceNode;
+    SVGUseElement* useElement = static_cast<SVGUseElement*>(shadowHostElement);
+    if (SVGElementInstance* instance = useElement->instanceForShadowTreeElement(referenceNode))
+        return instance;
 #endif
 
     return referenceNode;

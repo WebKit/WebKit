@@ -2096,10 +2096,9 @@ static inline SVGElementInstance* instanceAssociatedWithShadowTreeElement(Node* 
         return 0;
 
     Element* shadowTreeParentElement = shadowTreeElement->shadowHost();
-    if (!shadowTreeParentElement)
+    if (!shadowTreeParentElement || !shadowTreeParentElement->hasTagName(useTag))
         return 0;
 
-    ASSERT(shadowTreeParentElement->hasTagName(useTag));
     return static_cast<SVGUseElement*>(shadowTreeParentElement)->instanceForShadowTreeElement(referenceNode);
 }
 #endif
