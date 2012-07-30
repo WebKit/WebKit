@@ -1,3 +1,26 @@
+2012-07-26  Stephen White  <senorblanco@chromium.org>
+
+        [chromium] Refactor the computation of resampled bitmap size in
+        drawImage and drawPattern.
+        https://bugs.webkit.org/show_bug.cgi?id=92408
+
+        Reviewed by Adrienne Walker.
+
+        We used to have a special-purpose function called TransformDimensions()
+        which did pretty much the same thing as SkRect::mapRect() does.  This
+        change unifies the drawPattern code to use mapRect() in the same way
+        that drawImage() does.
+
+        Covered by existing tests, e.g., fast/backgrounds/size/*.
+
+        * platform/graphics/skia/ImageSkia.cpp:
+        (WebCore):
+        (WebCore::Image::drawPattern):
+        Note:  we're now doing using the original (float) source rect, and
+        converting to int only after applying the matrix transform.  This
+        might result in different decisions about resampling mode, but it's
+        more correct anyway.
+
 2012-07-30  Vineet Chaudhary  <rgf748@motorola.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=92642

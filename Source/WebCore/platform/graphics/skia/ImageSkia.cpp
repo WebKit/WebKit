@@ -274,25 +274,6 @@ static void paintSkBitmap(PlatformContextSkia* platformContext, const NativeImag
     platformContext->didDrawRect(destRect, paint, &bitmap.bitmap());
 }
 
-// Transforms the given dimensions with the given matrix. Used to see how big
-// images will be once transformed.
-static void TransformDimensions(const SkMatrix& matrix, float srcWidth, float srcHeight, float* destWidth, float* destHeight)
-{
-    // Transform 3 points to see how long each side of the bitmap will be.
-    SkPoint srcPoints[3]; // (0, 0), (width, 0), (0, height).
-    srcPoints[0].set(0, 0);
-    srcPoints[1].set(SkFloatToScalar(srcWidth), 0);
-    srcPoints[2].set(0, SkFloatToScalar(srcHeight));
-
-    // Now measure the length of the two transformed vectors relative to the
-    // transformed origin to see how big the bitmap will be. Note: for skews,
-    // this isn't the best thing, but we don't have skews.
-    SkPoint destPoints[3];
-    matrix.mapPoints(destPoints, srcPoints, 3);
-    *destWidth = SkScalarToFloat((destPoints[1] - destPoints[0]).length());
-    *destHeight = SkScalarToFloat((destPoints[2] - destPoints[0]).length());
-}
-
 // A helper method for translating negative width and height values.
 FloatRect normalizeRect(const FloatRect& rect)
 {
@@ -350,9 +331,11 @@ void Image::drawPattern(GraphicsContext* context,
     // Figure out what size the bitmap will be in the destination. The
     // destination rect is the bounds of the pattern, we need to use the
     // matrix to see how big it will be.
-    float destBitmapWidth, destBitmapHeight;
-    TransformDimensions(totalMatrix, srcRect.width(), srcRect.height(),
-                        &destBitmapWidth, &destBitmapHeight);
+    SkRect destRectTarget;
+    totalMatrix.mapRect(&destRectTarget, normSrcRect);
+
+    float destBitmapWidth = SkScalarToFloat(destRectTarget.width());
+    float destBitmapHeight = SkScalarToFloat(destRectTarget.height());
 
     // Compute the resampling mode.
     ResamplingMode resampling;
