@@ -104,11 +104,21 @@ class _MessagePool(object):
             host = self._host
 
         for worker_number in xrange(self._num_workers):
-            worker = _Worker(host, self._messages_to_manager, self._messages_to_worker, self._worker_factory, worker_number, self._running_inline, self if self._running_inline else None)
+            worker = _Worker(host, self._messages_to_manager, self._messages_to_worker, self._worker_factory, worker_number, self._running_inline, self if self._running_inline else None, self._worker_log_level())
             self._workers.append(worker)
             worker.start()
             if self._worker_startup_delay_secs:
                 time.sleep(self._worker_startup_delay_secs)
+
+    def _worker_log_level(self):
+        log_level = logging.NOTSET
+        for handler in logging.root.handlers:
+            if handler.level != logging.NOTSET:
+                if log_level == logging.NOTSET:
+                    log_level = handler.level
+                else:
+                    log_level = min(log_level, handler.level)
+        return log_level
 
     def wait(self):
         try:
@@ -192,12 +202,13 @@ class _Message(object):
 
 
 class _Worker(multiprocessing.Process):
-    def __init__(self, host, messages_to_manager, messages_to_worker, worker_factory, worker_number, running_inline, manager):
+    def __init__(self, host, messages_to_manager, messages_to_worker, worker_factory, worker_number, running_inline, manager, log_level):
         super(_Worker, self).__init__()
         self.host = host
         self.worker_number = worker_number
         self.name = 'worker/%d' % worker_number
         self.log_messages = []
+        self.log_level = log_level
         self._running_inline = running_inline
         self._manager = manager
 
@@ -300,12 +311,14 @@ class _Worker(multiprocessing.Process):
 
         self._log_handler = _WorkerLogHandler(self)
         self._logger.addHandler(self._log_handler)
+        self._logger.setLevel(self.log_level)
 
 
 class _WorkerLogHandler(logging.Handler):
     def __init__(self, worker):
         logging.Handler.__init__(self)
         self._worker = worker
+        self.setLevel(worker.log_level)
 
     def emit(self, record):
         self._worker.log_messages.append(record)

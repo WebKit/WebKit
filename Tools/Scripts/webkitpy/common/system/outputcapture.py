@@ -68,11 +68,15 @@ class OutputCapture(object):
         self._logs = StringIO()
         self._logs_handler = logging.StreamHandler(self._logs)
         self._logs_handler.setLevel(self._log_level)
-        logging.getLogger().addHandler(self._logs_handler)
+        self._logger = logging.getLogger()
+        self._orig_log_level = self._logger.level
+        self._logger.addHandler(self._logs_handler)
+        self._logger.setLevel(min(self._log_level, self._orig_log_level))
         return (self._capture_output_with_name("stdout"), self._capture_output_with_name("stderr"))
 
     def restore_output(self):
-        logging.getLogger().removeHandler(self._logs_handler)
+        self._logger.removeHandler(self._logs_handler)
+        self._logger.setLevel(self._orig_log_level)
         self._logs_handler.flush()
         self._logs.flush()
         logs_string = self._logs.getvalue()

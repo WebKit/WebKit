@@ -1,5 +1,29 @@
 2012-07-30  Dirk Pranke  <dpranke@chromium.org>
 
+        nrwt: --verbose logging does not work right on windows
+        https://bugs.webkit.org/show_bug.cgi?id=92673
+
+        Unreviewed, build fix.
+
+        The --verbose log level is not being propagated to the worker
+        processes on windows properly; this has been broken ever since I
+        refactored logging into the message pool directly :(.
+
+        Also, fixing this revealed that outputcapture wasn't saving and
+        restoring log levels correctly, so I had to fix that as well.
+
+        * Scripts/webkitpy/common/message_pool.py:
+        (_MessagePool._start_workers):
+        (_MessagePool._worker_log_level):
+        (_Worker.__init__):
+        (_Worker._set_up_logging):
+        (_WorkerLogHandler.__init__):
+        * Scripts/webkitpy/common/system/outputcapture.py:
+        (OutputCapture.capture_output):
+        (OutputCapture.restore_output):
+
+2012-07-30  Dirk Pranke  <dpranke@chromium.org>
+
         After r123895, new-run-webkit-tests can fail with TypeError when a test crashes
         https://bugs.webkit.org/show_bug.cgi?id=92664
 
