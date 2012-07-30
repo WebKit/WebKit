@@ -1,3 +1,10 @@
+2012-07-30  Alexander Pavlov  <apavlov@chromium.org>
+
+        Unreviewed, upgrade apavlov to reviewer.
+        http://lists.webkit.org/mailman/private/webkit-committers/2012-July/000184.html
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2012-07-30  Robin Cao  <robin.cao@torchmobile.com.cn>
 
         [BlackBerry] Adapt to changes in the SharedArray platform API
