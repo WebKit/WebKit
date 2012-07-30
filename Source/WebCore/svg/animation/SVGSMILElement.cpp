@@ -462,9 +462,13 @@ void SVGSMILElement::svgAttributeChanged(const QualifiedName& attrName)
             beginListChanged(elapsed());
         else if (attrName == SVGNames::endAttr)
             endListChanged(elapsed());
-        else if (attrName == SVGNames::attributeNameAttr)
+        else if (attrName == SVGNames::attributeNameAttr) {
             m_attributeName = constructQualifiedName(this, fastGetAttribute(SVGNames::attributeNameAttr));
-        else if (attrName.matches(XLinkNames::hrefAttr)) {
+            if (m_targetElement) {
+                resetTargetElement();
+                return;
+            }
+        } else if (attrName.matches(XLinkNames::hrefAttr)) {
             if (SVGElement* targetElement = this->targetElement())
                 document()->accessSVGExtensions()->removeAllAnimationElementsFromTarget(targetElement);
         }
