@@ -401,6 +401,10 @@ void EventSenderProxy::keyDown(WKStringRef keyRef, WKEventModifiers wkModifiers,
     const char* keyName = keyEventInfo->keyName.data();
     const char* keyString = keyEventInfo->keyString.data();
 
+    // Enforce 'Shift' modifier for caps.
+    if ((strlen(keyName) == 1) && (keyName[0] >= 'A' && keyName[0] <= 'Z'))
+        wkModifiers |= kWKEventModifiersShiftKey;
+
     Evas* evas = ecore_evas_get(m_testController->mainWebView()->platformWindow());
     setEvasModifiers(evas, wkModifiers);
     evas_event_feed_key_down(evas, keyName, keyName, keyString, 0, 0, 0);

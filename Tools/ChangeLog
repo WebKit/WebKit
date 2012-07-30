@@ -1,3 +1,17 @@
+2012-07-30  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [EFL][WTR] Enforce SHIFT modifier to upper case keys in event sender.
+        https://bugs.webkit.org/show_bug.cgi?id=92366
+
+        Reviewed by Antonio Gomes.
+
+        Add SHIFT modifier for capital letters as VK_
+        codes do not distinguish between lows and caps and also to be consistent
+        with other ports which send caps as lowercase letters with the shift key down.
+
+        * WebKitTestRunner/efl/EventSenderProxyEfl.cpp:
+        (WTR::EventSenderProxy::keyDown):
+
 2012-07-29  Raphael Kubo da Costa  <rakuco@webkit.org>
 
         [EFL][jhbuild] Make run-with-jhbuild become the jhbuild process itself.
