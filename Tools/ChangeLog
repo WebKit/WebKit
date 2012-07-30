@@ -1,3 +1,15 @@
+2012-07-30  Dirk Pranke  <dpranke@chromium.org>
+
+        After r123895, new-run-webkit-tests can fail with TypeError when a test crashes
+        https://bugs.webkit.org/show_bug.cgi?id=92664
+
+        Reviewed by Michael Saboff.
+
+        Updated to handle crash_logs being returned as a tuple of (stderr, crash_log).
+
+        * Scripts/webkitpy/layout_tests/port/mac.py:
+        (MacPort.look_for_new_crash_logs):
+
 2012-07-30  Stephen White  <senorblanco@chromium.org>
 
         Added a SkiaGraphics definition to the watchlist file; cc'ed myself

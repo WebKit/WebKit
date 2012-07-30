@@ -235,7 +235,7 @@ class MacPort(ApplePort):
         for (test_name, process_name, pid) in crashed_processes:
             # Passing None for output.  This is a second pass after the test finished so
             # if the output had any loggine we would have already collected it.
-            crash_log = self._get_crash_log(process_name, pid, None, None, start_time, wait_for_log=False)
+            crash_log = self._get_crash_log(process_name, pid, None, None, start_time, wait_for_log=False)[1]
             if not crash_log:
                 continue
             crash_logs[test_name] = crash_log
