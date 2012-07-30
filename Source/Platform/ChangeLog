@@ -1,3 +1,15 @@
+2012-06-29  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Remove WebTransformationMatrix::mapPoint overrides
+        https://bugs.webkit.org/show_bug.cgi?id=90329
+
+        Reviewed by Adrienne Walker.
+
+        Remove clipping-unaware mapPoint functions from the WebTransformationMatrix interface.
+
+        * chromium/public/WebTransformationMatrix.h:
+        (WebTransformationMatrix):
+
 2012-07-30  John Bates  <jbates@google.com>
 
         Plumb vsync-enabled flag up to compositor thread and support disable-vsync

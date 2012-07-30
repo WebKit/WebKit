@@ -183,9 +183,11 @@ CCLayerSorter::LayerShape::LayerShape(float width, float height, const WebTransf
         projectedQuad.setP4(clippedQuad[2]); // this will be a degenerate quad that is actually a triangle.
 
     // Compute the normal of the layer's plane.
-    FloatPoint3D c1 = drawTransform.mapPoint(FloatPoint3D(0, 0, 0));
-    FloatPoint3D c2 = drawTransform.mapPoint(FloatPoint3D(0, 1, 0));
-    FloatPoint3D c3 = drawTransform.mapPoint(FloatPoint3D(1, 0, 0));
+    bool clipped = false;
+    FloatPoint3D c1 = CCMathUtil::mapPoint(drawTransform, FloatPoint3D(0, 0, 0), clipped);
+    FloatPoint3D c2 = CCMathUtil::mapPoint(drawTransform, FloatPoint3D(0, 1, 0), clipped);
+    FloatPoint3D c3 = CCMathUtil::mapPoint(drawTransform, FloatPoint3D(1, 0, 0), clipped);
+    // FIXME: Deal with clipping.
     FloatPoint3D c12 = c2 - c1;
     FloatPoint3D c13 = c3 - c1;
     layerNormal = c13.cross(c12);

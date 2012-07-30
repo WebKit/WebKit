@@ -422,19 +422,4 @@ TransformationMatrix WebTransformationMatrix::toWebCoreTransform() const
     return m_private;
 }
 
-FloatPoint3D WebTransformationMatrix::mapPoint(const FloatPoint3D& p) const
-{
-    return m_private.mapPoint(p);
-}
-
-FloatPoint WebTransformationMatrix::mapPoint(const FloatPoint& p) const
-{
-    return m_private.mapPoint(p);
-}
-
-IntPoint WebTransformationMatrix::mapPoint(const IntPoint& p) const
-{
-    return m_private.mapPoint(p);
-}
-
 } // namespace WebKit

@@ -26,6 +26,7 @@
 #define CCMathUtil_h
 
 #include "FloatPoint.h"
+#include "FloatPoint3D.h"
 
 namespace WebKit {
 class WebTransformationMatrix;
@@ -60,6 +61,17 @@ struct HomogeneousCoordinate {
         ASSERT(w);
         double invW = 1.0 / w;
         return FloatPoint(x * invW, y * invW);
+    }
+
+    FloatPoint3D cartesianPoint3d() const
+    {
+        if (w == 1)
+            return FloatPoint3D(x, y, z);
+
+        // For now, because this code is used privately only by CCMathUtil, it should never be called when w == 0, and we do not yet need to handle that case.
+        ASSERT(w);
+        double invW = 1.0 / w;
+        return FloatPoint3D(x * invW, y * invW, z * invW);
     }
 
     double x;
@@ -97,6 +109,8 @@ public:
     // NOTE: These functions do not do correct clipping against w = 0 plane, but they
     // correctly detect the clipped condition via the boolean clipped.
     static FloatQuad mapQuad(const WebKit::WebTransformationMatrix&, const FloatQuad&, bool& clipped);
+    static FloatPoint mapPoint(const WebKit::WebTransformationMatrix&, const FloatPoint&, bool& clipped);
+    static FloatPoint3D mapPoint(const WebKit::WebTransformationMatrix&, const FloatPoint3D&, bool& clipped);
     static FloatQuad projectQuad(const WebKit::WebTransformationMatrix&, const FloatQuad&, bool& clipped);
     static FloatPoint projectPoint(const WebKit::WebTransformationMatrix&, const FloatPoint&, bool& clipped);
 };

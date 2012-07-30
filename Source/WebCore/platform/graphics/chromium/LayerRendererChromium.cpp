@@ -884,10 +884,14 @@ void LayerRendererChromium::drawTileQuad(DrawingFrame& frame, const CCTileDrawQu
         FloatPoint topRight(tileRect.maxX(), tileRect.y());
 
         // Map points to device space.
-        bottomRight = deviceTransform.mapPoint(bottomRight);
-        bottomLeft = deviceTransform.mapPoint(bottomLeft);
-        topLeft = deviceTransform.mapPoint(topLeft);
-        topRight = deviceTransform.mapPoint(topRight);
+        bottomRight = CCMathUtil::mapPoint(deviceTransform, bottomRight, clipped);
+        ASSERT(!clipped);
+        bottomLeft = CCMathUtil::mapPoint(deviceTransform, bottomLeft, clipped);
+        ASSERT(!clipped);
+        topLeft = CCMathUtil::mapPoint(deviceTransform, topLeft, clipped);
+        ASSERT(!clipped);
+        topRight = CCMathUtil::mapPoint(deviceTransform, topRight, clipped);
+        ASSERT(!clipped);
 
         CCLayerQuad::Edge bottomEdge(bottomRight, bottomLeft);
         CCLayerQuad::Edge leftEdge(bottomLeft, topLeft);

@@ -137,13 +137,6 @@ public:
     // Conversions between WebKit::WebTransformationMatrix and WebCore::TransformationMatrix
     explicit WebTransformationMatrix(const WebCore::TransformationMatrix&);
     WebCore::TransformationMatrix toWebCoreTransform() const;
-
-    // FIXME: these map functions should not exist, should be using CCMathUtil
-    // instead. Eventually CCMathUtil functions could be merged here, but its
-    // not yet the right time for that.
-    WebCore::FloatPoint3D mapPoint(const WebCore::FloatPoint3D&) const;
-    WebCore::FloatPoint mapPoint(const WebCore::FloatPoint&) const;
-    WebCore::IntPoint mapPoint(const WebCore::IntPoint&) const;
 #endif
 
 protected:

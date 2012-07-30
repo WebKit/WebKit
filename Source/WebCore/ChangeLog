@@ -1,3 +1,27 @@
+2012-06-29  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Remove WebTransformationMatrix::mapPoint overrides
+        https://bugs.webkit.org/show_bug.cgi?id=90329
+
+        Reviewed by Adrienne Walker.
+
+        Add more functionality for mapping points to CCMathUtil and use it in CCLayerSorter / drawTileQuad. These
+        mappings should never clip.
+
+        * platform/chromium/support/WebTransformationMatrix.cpp:
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::drawTileQuad):
+        * platform/graphics/chromium/cc/CCLayerSorter.cpp:
+        (WebCore::CCLayerSorter::LayerShape::LayerShape):
+        * platform/graphics/chromium/cc/CCMathUtil.cpp:
+        (WebCore::mapHomogeneousPoint):
+        (WebCore::CCMathUtil::mapPoint):
+        (WebCore):
+        * platform/graphics/chromium/cc/CCMathUtil.h:
+        (WebCore::HomogeneousCoordinate::cartesianPoint3d):
+        (HomogeneousCoordinate):
+        (CCMathUtil):
+
 2012-07-30  Anders Carlsson  <andersca@apple.com>
 
         Crash in logging code if MIME type is null

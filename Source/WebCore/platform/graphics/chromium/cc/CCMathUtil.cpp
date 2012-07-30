@@ -57,17 +57,17 @@ static HomogeneousCoordinate projectHomogeneousPoint(const WebTransformationMatr
     return HomogeneousCoordinate(outX, outY, outZ, outW);
 }
 
-static HomogeneousCoordinate mapHomogeneousPoint(const WebTransformationMatrix& transform, const FloatPoint& p)
+static HomogeneousCoordinate mapHomogeneousPoint(const WebTransformationMatrix& transform, const FloatPoint3D& p)
 {
     double x = p.x();
     double y = p.y();
-    // implicit definition of z = 0;
+    double z = p.z();
     // implicit definition of w = 1;
 
-    double outX = x * transform.m11() + y * transform.m21() + transform.m41();
-    double outY = x * transform.m12() + y * transform.m22() + transform.m42();
-    double outZ = x * transform.m13() + y * transform.m23() + transform.m43();
-    double outW = x * transform.m14() + y * transform.m24() + transform.m44();
+    double outX = x * transform.m11() + y * transform.m21() + z * transform.m31() + transform.m41();
+    double outY = x * transform.m12() + y * transform.m22() + z * transform.m32() + transform.m42();
+    double outZ = x * transform.m13() + y * transform.m23() + z * transform.m33() + transform.m43();
+    double outW = x * transform.m14() + y * transform.m24() + z * transform.m34() + transform.m44();
 
     return HomogeneousCoordinate(outX, outY, outZ, outW);
 }
@@ -274,6 +274,52 @@ FloatQuad CCMathUtil::mapQuad(const WebTransformationMatrix& transform, const Fl
     return FloatQuad(h1.cartesianPoint2d(), h2.cartesianPoint2d(), h3.cartesianPoint2d(), h4.cartesianPoint2d());
 }
 
+FloatPoint CCMathUtil::mapPoint(const WebTransformationMatrix& transform, const FloatPoint& p, bool& clipped)
+{
+    HomogeneousCoordinate h = mapHomogeneousPoint(transform, p);
+
+    if (h.w > 0) {
+        clipped = false;
+        return h.cartesianPoint2d();
+    }
+
+    // The cartesian coordinates will be invalid after dividing by w.
+    clipped = true;
+
+    // Avoid dividing by w if w == 0.
+    if (!h.w)
+        return FloatPoint();
+
+    // This return value will be invalid because clipped == true, but (1) users of this
+    // code should be ignoring the return value when clipped == true anyway, and (2) this
+    // behavior is more consistent with existing behavior of WebKit transforms if the user
+    // really does not ignore the return value.
+    return h.cartesianPoint2d();
+}
+
+FloatPoint3D CCMathUtil::mapPoint(const WebTransformationMatrix& transform, const FloatPoint3D& p, bool& clipped)
+{
+    HomogeneousCoordinate h = mapHomogeneousPoint(transform, p);
+
+    if (h.w > 0) {
+        clipped = false;
+        return h.cartesianPoint3d();
+    }
+
+    // The cartesian coordinates will be invalid after dividing by w.
+    clipped = true;
+
+    // Avoid dividing by w if w == 0.
+    if (!h.w)
+        return FloatPoint3D();
+
+    // This return value will be invalid because clipped == true, but (1) users of this
+    // code should be ignoring the return value when clipped == true anyway, and (2) this
+    // behavior is more consistent with existing behavior of WebKit transforms if the user
+    // really does not ignore the return value.
+    return h.cartesianPoint3d();
+}
+
 FloatQuad CCMathUtil::projectQuad(const WebTransformationMatrix& transform, const FloatQuad& q, bool& clipped)
 {
     FloatQuad projectedQuad;
@@ -313,6 +359,5 @@ FloatPoint CCMathUtil::projectPoint(const WebTransformationMatrix& transform, co
     // really does not ignore the return value.
     return h.cartesianPoint2d();
 }
-
 
 } // namespace WebCore
