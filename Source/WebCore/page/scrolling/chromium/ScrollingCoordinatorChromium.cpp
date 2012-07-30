@@ -126,11 +126,8 @@ static WebLayer createScrollbarLayer(Scrollbar* scrollbar, WebScrollableLayer sc
         scrollbarGraphicsLayer->setContentsOpaque(isOpaqueRootScrollbar);
 
     // FIXME: Mac scrollbar themes are not thread-safe to paint.
-    // FIXME: Win scrollbars on XP Classic themes do not paint valid alpha
-    // values due to GDI. This needs to be fixed in theme code before it
-    // can be turned on here.
     bool platformSupported = true;
-#if OS(DARWIN) || OS(WINDOWS)
+#if OS(DARWIN)
     platformSupported = false;
 #endif
 
