@@ -410,34 +410,12 @@ fast/dom/Document/CaretRangeFromPoint/caretRangeFromPoint-in-zoom-and-scroll.htm
 fast/dom/isindex-001.html
 fast/dom/object-plugin-hides-properties.html
 fast/forms/validation-message-user-modify.html
-fast/frames/focus-controller-crash-change-event.html
 fast/frames/take-focus-from-iframe.html
 fast/html/details-no-summary4.html
 fast/html/details-open-javascript.html
 fast/html/details-open2.html
 fast/html/details-open4.html
 fast/lists/dynamic-marker-crash.html
-fast/multicol/scrolling-overflow.html
-fast/multicol/span/anonymous-style-inheritance.html
-fast/multicol/span/span-as-immediate-child-complex-splitting.html
-fast/multicol/span/span-as-immediate-child-generated-content.html
-fast/multicol/span/span-as-immediate-columns-child-dynamic.html
-fast/multicol/span/span-as-immediate-columns-child.html
-fast/multicol/span/span-as-nested-columns-child-dynamic.html
-fast/multicol/span/span-as-nested-columns-child.html
-fast/multicol/span/span-margin-collapsing.html
-fast/multicol/vertical-lr/column-break-with-balancing.html
-fast/multicol/vertical-lr/float-multicol.html
-fast/multicol/vertical-lr/float-paginate-complex.html
-fast/multicol/vertical-lr/float-paginate.html
-fast/multicol/vertical-lr/nested-columns.html
-fast/multicol/vertical-lr/unsplittable-inline-block.html
-fast/multicol/vertical-rl/column-break-with-balancing.html
-fast/multicol/vertical-rl/float-multicol.html
-fast/multicol/vertical-rl/float-paginate-complex.html
-fast/multicol/vertical-rl/float-paginate.html
-fast/multicol/vertical-rl/nested-columns.html
-fast/multicol/vertical-rl/unsplittable-inline-block.html
 fast/repaint/renderer-destruction-by-invalidateSelection-crash.html
 fast/repaint/search-field-cancel.html
 fast/repaint/subtree-root-skipped.html
@@ -447,8 +425,6 @@ fast/replaced/width100percent-searchfield.html
 fast/replaced/width100percent-textfield.html
 fast/transforms/transformed-focused-text-input.html
 editing/selection/14971.html
-editing/selection/vertical-rl-rtl-extend-line-backward-br.html
-editing/selection/vertical-rl-rtl-extend-line-backward-p.html
 
 # [Qt] [WK2] editing/inserting/typing-tab-designmode tests are failing
 # https://bugs.webkit.org/show_bug.cgi?id=91988
