@@ -5190,6 +5190,8 @@
             'dom/ExceptionCodePlaceholder.cpp',
             'dom/GenericEventQueue.cpp',
             'dom/GenericEventQueue.h',
+            'dom/GestureEvent.cpp',
+            'dom/GestureEvent.h',
             'dom/HashChangeEvent.h',
             'dom/IgnoreDestructiveWriteCountIncrementer.h',
             'dom/IconURL.cpp',

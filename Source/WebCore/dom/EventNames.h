@@ -71,6 +71,11 @@ namespace WebCore {
     macro(focus) \
     macro(focusin) \
     macro(focusout) \
+    macro(gesturetap) \
+    macro(gesturetapdown) \
+    macro(gesturescrollstart) \
+    macro(gesturescrollend) \
+    macro(gesturescrollupdate) \
     macro(hashchange) \
     macro(input) \
     macro(invalid) \
@@ -260,6 +265,15 @@ namespace WebCore {
                 || eventType == touchmoveEvent
                 || eventType == touchendEvent
                 || eventType == touchcancelEvent;
+        }
+
+        inline bool isGestureEventType(const AtomicString& eventType) const
+        {
+            return eventType == gesturetapEvent
+                || eventType == gesturetapdownEvent
+                || eventType == gesturescrollstartEvent
+                || eventType == gesturescrollendEvent
+                || eventType == gesturescrollupdateEvent;
         }
 
         Vector<AtomicString> touchEventNames() const

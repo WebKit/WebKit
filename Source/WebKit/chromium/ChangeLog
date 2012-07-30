@@ -1,3 +1,25 @@
+2012-07-30  Sadrul Habib Chowdhury  <sadrul@chromium.org>
+
+        Propagate gesture events to plugins.
+        https://bugs.webkit.org/show_bug.cgi?id=92281
+
+        Reviewed by Adam Barth.
+
+        Propagate gesture events to plugins.
+
+        * src/WebInputEventConversion.cpp:
+        (WebKit):
+        (WebKit::WebGestureEventBuilder::WebGestureEventBuilder):
+        * src/WebInputEventConversion.h:
+        (WebCore):
+        (WebKit):
+        (WebGestureEventBuilder):
+        * src/WebPluginContainerImpl.cpp:
+        (WebKit::WebPluginContainerImpl::handleEvent):
+        * src/WebPluginContainerImpl.h:
+        (WebCore):
+        (WebPluginContainerImpl):
+
 2012-07-30  John Bates  <jbates@google.com>
 
         Plumb vsync-enabled flag up to compositor thread and support disable-vsync

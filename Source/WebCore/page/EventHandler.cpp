@@ -367,10 +367,11 @@ void EventHandler::clear()
 #if ENABLE(TOUCH_EVENTS)
     m_originatingTouchPointTargets.clear();
 #endif
-    m_maxMouseMovedDuration = 0;
 #if ENABLE(GESTURE_EVENTS)
-    m_baseEventType = PlatformEvent::NoType;
+    m_scrollGestureHandlingNode = 0;
 #endif
+    m_maxMouseMovedDuration = 0;
+    m_baseEventType = PlatformEvent::NoType;
 }
 
 void EventHandler::nodeWillBeRemoved(Node* nodeToBeRemoved)
@@ -2413,6 +2414,29 @@ bool EventHandler::handleGestureTapDown()
 
 bool EventHandler::handleGestureEvent(const PlatformGestureEvent& gestureEvent)
 {
+    Node* eventTarget = 0;
+    if (gestureEvent.type() == PlatformEvent::GestureScrollEnd || gestureEvent.type() == PlatformEvent::GestureScrollUpdate)
+        eventTarget = m_scrollGestureHandlingNode.get();
+
+    if (!eventTarget) {
+        HitTestResult result = hitTestResultAtPoint(gestureEvent.position(), false, false, DontHitTestScrollbars, HitTestRequest::ReadOnly | HitTestRequest::Active);
+        eventTarget = targetNode(result);
+    }
+
+    if (eventTarget) {
+        bool eventSwallowed = eventTarget->dispatchGestureEvent(gestureEvent);
+
+        if (gestureEvent.type() == PlatformEvent::GestureScrollBegin) {
+            if (eventSwallowed)
+                m_scrollGestureHandlingNode = eventTarget;
+            else
+                m_scrollGestureHandlingNode = 0;
+        }
+
+        if (eventSwallowed)
+            return true;
+    }
+
     // FIXME: A more general scroll system (https://bugs.webkit.org/show_bug.cgi?id=80596) will
     // eliminate the need for this.
     TemporaryChange<PlatformEvent::Type> baseEventType(m_baseEventType, gestureEvent.type());

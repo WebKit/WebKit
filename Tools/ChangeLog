@@ -1,3 +1,18 @@
+2012-07-30  Sadrul Habib Chowdhury  <sadrul@chromium.org>
+
+        Propagate gesture events to plugins.
+        https://bugs.webkit.org/show_bug.cgi?id=92281
+
+        Reviewed by Adam Barth.
+
+        Update TestWebPlugin to receive events, and output logs for the events.
+
+        * DumpRenderTree/chromium/TestWebPlugin.cpp:
+        (TestWebPlugin::handleInputEvent):
+        * DumpRenderTree/chromium/TestWebPlugin.h:
+        (TestWebPlugin::acceptsInputEvents):
+        (TestWebPlugin):
+
 2012-07-30  Raphael Kubo da Costa  <rakuco@webkit.org>
 
         [jhbuild] gnutls 2.12.14 does not build with glibc 2.16.0

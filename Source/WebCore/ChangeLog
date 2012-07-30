@@ -1,3 +1,54 @@
+2012-07-30  Sadrul Habib Chowdhury  <sadrul@chromium.org>
+
+        Propagate gesture events to plugins.
+        https://bugs.webkit.org/show_bug.cgi?id=92281
+
+        Reviewed by Adam Barth.
+
+        Propagate gesture events to plugins. This change does not expose the gesture events
+        to JavaScript, since there is no spec for that at the moment. Exposing gesture events
+        to JavaScript will be done separately, once there is a spec for it.
+
+        Test: platform/chromium/plugins/gesture-events.html
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gypi:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/EventNames.h:
+        (WebCore):
+        (WebCore::EventNames::isGestureEventType):
+        (EventNames):
+        * dom/GestureEvent.cpp: Added.
+        (WebCore):
+        (WebCore::GestureEvent::create):
+        (WebCore::GestureEvent::initGestureEvent):
+        (WebCore::GestureEvent::interfaceName):
+        (WebCore::GestureEvent::GestureEvent):
+        (WebCore::GestureEventDispatchMediator::GestureEventDispatchMediator):
+        (WebCore::GestureEventDispatchMediator::event):
+        (WebCore::GestureEventDispatchMediator::dispatchEvent):
+        * dom/GestureEvent.h: Added.
+        (WebCore):
+        (GestureEvent):
+        (WebCore::GestureEvent::~GestureEvent):
+        (WebCore::GestureEvent::deltaX):
+        (WebCore::GestureEvent::deltaY):
+        (WebCore::GestureEvent::GestureEvent):
+        (GestureEventDispatchMediator):
+        (WebCore::GestureEventDispatchMediator::create):
+        * dom/Node.cpp:
+        (WebCore):
+        (WebCore::Node::dispatchGestureEvent):
+        * dom/Node.h:
+        (WebCore):
+        (Node):
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::clear):
+        (WebCore::EventHandler::handleGestureEvent):
+        * page/EventHandler.h:
+
 2012-07-30  John Bates  <jbates@google.com>
 
         Plumb vsync-enabled flag up to compositor thread and support disable-vsync
