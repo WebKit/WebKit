@@ -1,5 +1,25 @@
 2012-07-30  Patrick Gansterer  <paroga@webkit.org>
 
+        Add special export macro for string related functions
+        https://bugs.webkit.org/show_bug.cgi?id=92624
+
+        Reviewed by Hajime Morita.
+
+        The windows port compiles string related code into every binary for performance reasons (see r59187).
+        Add the WTF_EXPORT_STRING_API define to allow this behaviour with export macros too.
+
+        * wtf/ExportMacros.h:
+        * wtf/text/AtomicString.h:
+        (AtomicString):
+        * wtf/text/StringImpl.h:
+        (StringImpl):
+        (WTF):
+        * wtf/text/WTFString.h:
+        (WTF):
+        (String):
+
+2012-07-30  Patrick Gansterer  <paroga@webkit.org>
+
         Replace UnicodeWinCE with UnicodeWchar
         https://bugs.webkit.org/show_bug.cgi?id=92539
 

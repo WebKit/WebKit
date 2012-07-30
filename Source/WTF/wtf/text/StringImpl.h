@@ -249,12 +249,12 @@ private:
 #endif
 
 public:
-    WTF_EXPORT_PRIVATE ~StringImpl();
+    WTF_EXPORT_STRING_API ~StringImpl();
 
-    WTF_EXPORT_PRIVATE static PassRefPtr<StringImpl> create(const UChar*, unsigned length);
+    WTF_EXPORT_STRING_API static PassRefPtr<StringImpl> create(const UChar*, unsigned length);
     static PassRefPtr<StringImpl> create(const LChar*, unsigned length);
     ALWAYS_INLINE static PassRefPtr<StringImpl> create(const char* s, unsigned length) { return create(reinterpret_cast<const LChar*>(s), length); }
-    WTF_EXPORT_PRIVATE static PassRefPtr<StringImpl> create(const LChar*);
+    WTF_EXPORT_STRING_API static PassRefPtr<StringImpl> create(const LChar*);
     ALWAYS_INLINE static PassRefPtr<StringImpl> create(const char* s) { return create(reinterpret_cast<const LChar*>(s)); }
 
     static ALWAYS_INLINE PassRefPtr<StringImpl> create8(PassRefPtr<StringImpl> rep, unsigned offset, unsigned length)
@@ -284,7 +284,7 @@ public:
         return adoptRef(new StringImpl(rep->m_data16 + offset, length, ownerRep));
     }
 
-    WTF_EXPORT_PRIVATE static PassRefPtr<StringImpl> createFromLiteral(const LChar* characters, unsigned length);
+    WTF_EXPORT_STRING_API static PassRefPtr<StringImpl> createFromLiteral(const LChar* characters, unsigned length);
     template<unsigned charactersCount>
     ALWAYS_INLINE static PassRefPtr<StringImpl> createFromLiteral(const char (&characters)[charactersCount])
     {
@@ -294,8 +294,8 @@ public:
         return createFromLiteral(reinterpret_cast<const LChar*>(characters), charactersCount - 1);
     }
 
-    WTF_EXPORT_PRIVATE static PassRefPtr<StringImpl> createUninitialized(unsigned length, LChar*& data);
-    WTF_EXPORT_PRIVATE static PassRefPtr<StringImpl> createUninitialized(unsigned length, UChar*& data);
+    WTF_EXPORT_STRING_API static PassRefPtr<StringImpl> createUninitialized(unsigned length, LChar*& data);
+    WTF_EXPORT_STRING_API static PassRefPtr<StringImpl> createUninitialized(unsigned length, UChar*& data);
     template <typename T> static ALWAYS_INLINE PassRefPtr<StringImpl> tryCreateUninitialized(unsigned length, T*& output)
     {
         if (!length) {
@@ -348,8 +348,8 @@ public:
         return empty();
     }
 
-    WTF_EXPORT_PRIVATE static PassRefPtr<StringImpl> adopt(StringBuffer<UChar>&);
-    WTF_EXPORT_PRIVATE static PassRefPtr<StringImpl> adopt(StringBuffer<LChar>&);
+    WTF_EXPORT_STRING_API static PassRefPtr<StringImpl> adopt(StringBuffer<UChar>&);
+    WTF_EXPORT_STRING_API static PassRefPtr<StringImpl> adopt(StringBuffer<LChar>&);
 
 #if PLATFORM(QT) && HAVE(QT5)
     static PassRefPtr<StringImpl> adopt(QStringData*);
@@ -388,7 +388,7 @@ public:
     WTF_EXPORT_PRIVATE size_t sizeInBytes() const;
 
     bool has16BitShadow() const { return m_hashAndFlags & s_hashFlagHas16BitShadow; }
-    WTF_EXPORT_PRIVATE void upconvertCharacters(unsigned, unsigned) const;
+    WTF_EXPORT_STRING_API void upconvertCharacters(unsigned, unsigned) const;
     bool isIdentifier() const { return m_hashAndFlags & s_hashFlagIsIdentifier; }
     void setIsIdentifier(bool isIdentifier)
     {
@@ -517,7 +517,7 @@ public:
     // its own copy of the string.
     PassRefPtr<StringImpl> isolatedCopy() const;
 
-    WTF_EXPORT_PRIVATE PassRefPtr<StringImpl> substring(unsigned pos, unsigned len = UINT_MAX);
+    WTF_EXPORT_STRING_API PassRefPtr<StringImpl> substring(unsigned pos, unsigned len = UINT_MAX);
 
     UChar operator[](unsigned i) const
     {
@@ -526,9 +526,9 @@ public:
             return m_data8[i];
         return m_data16[i];
     }
-    WTF_EXPORT_PRIVATE UChar32 characterStartingAt(unsigned);
+    WTF_EXPORT_STRING_API UChar32 characterStartingAt(unsigned);
 
-    WTF_EXPORT_PRIVATE bool containsOnlyWhitespace();
+    WTF_EXPORT_STRING_API bool containsOnlyWhitespace();
 
     int toIntStrict(bool* ok = 0, int base = 10);
     unsigned toUIntStrict(bool* ok = 0, int base = 10);
@@ -536,7 +536,7 @@ public:
     uint64_t toUInt64Strict(bool* ok = 0, int base = 10);
     intptr_t toIntPtrStrict(bool* ok = 0, int base = 10);
 
-    WTF_EXPORT_PRIVATE int toInt(bool* ok = 0); // ignores trailing garbage
+    WTF_EXPORT_STRING_API int toInt(bool* ok = 0); // ignores trailing garbage
     unsigned toUInt(bool* ok = 0); // ignores trailing garbage
     int64_t toInt64(bool* ok = 0); // ignores trailing garbage
     uint64_t toUInt64(bool* ok = 0); // ignores trailing garbage
@@ -548,16 +548,16 @@ public:
     double toDouble(bool* ok = 0);
     float toFloat(bool* ok = 0);
 
-    WTF_EXPORT_PRIVATE PassRefPtr<StringImpl> lower();
-    WTF_EXPORT_PRIVATE PassRefPtr<StringImpl> upper();
+    WTF_EXPORT_STRING_API PassRefPtr<StringImpl> lower();
+    WTF_EXPORT_STRING_API PassRefPtr<StringImpl> upper();
 
-    WTF_EXPORT_PRIVATE PassRefPtr<StringImpl> fill(UChar);
+    WTF_EXPORT_STRING_API PassRefPtr<StringImpl> fill(UChar);
     // FIXME: Do we need fill(char) or can we just do the right thing if UChar is ASCII?
     PassRefPtr<StringImpl> foldCase();
 
     PassRefPtr<StringImpl> stripWhiteSpace();
     PassRefPtr<StringImpl> stripWhiteSpace(IsWhiteSpaceFunctionPtr);
-    WTF_EXPORT_PRIVATE PassRefPtr<StringImpl> simplifyWhiteSpace();
+    WTF_EXPORT_STRING_API PassRefPtr<StringImpl> simplifyWhiteSpace();
     PassRefPtr<StringImpl> simplifyWhiteSpace(IsWhiteSpaceFunctionPtr);
 
     PassRefPtr<StringImpl> removeCharacters(CharacterMatchFunctionPtr);
@@ -567,37 +567,37 @@ public:
     size_t find(LChar character, unsigned start = 0);
     size_t find(char character, unsigned start = 0);
     size_t find(UChar character, unsigned start = 0);
-    WTF_EXPORT_PRIVATE size_t find(CharacterMatchFunctionPtr, unsigned index = 0);
+    WTF_EXPORT_STRING_API size_t find(CharacterMatchFunctionPtr, unsigned index = 0);
     size_t find(const LChar*, unsigned index = 0);
     ALWAYS_INLINE size_t find(const char* s, unsigned index = 0) { return find(reinterpret_cast<const LChar*>(s), index); };
-    WTF_EXPORT_PRIVATE size_t find(StringImpl*);
-    WTF_EXPORT_PRIVATE size_t find(StringImpl*, unsigned index);
+    WTF_EXPORT_STRING_API size_t find(StringImpl*);
+    WTF_EXPORT_STRING_API size_t find(StringImpl*, unsigned index);
     size_t findIgnoringCase(const LChar*, unsigned index = 0);
     ALWAYS_INLINE size_t findIgnoringCase(const char* s, unsigned index = 0) { return findIgnoringCase(reinterpret_cast<const LChar*>(s), index); };
-    WTF_EXPORT_PRIVATE size_t findIgnoringCase(StringImpl*, unsigned index = 0);
+    WTF_EXPORT_STRING_API size_t findIgnoringCase(StringImpl*, unsigned index = 0);
 
-    WTF_EXPORT_PRIVATE size_t reverseFind(UChar, unsigned index = UINT_MAX);
-    WTF_EXPORT_PRIVATE size_t reverseFind(StringImpl*, unsigned index = UINT_MAX);
-    WTF_EXPORT_PRIVATE size_t reverseFindIgnoringCase(StringImpl*, unsigned index = UINT_MAX);
+    WTF_EXPORT_STRING_API size_t reverseFind(UChar, unsigned index = UINT_MAX);
+    WTF_EXPORT_STRING_API size_t reverseFind(StringImpl*, unsigned index = UINT_MAX);
+    WTF_EXPORT_STRING_API size_t reverseFindIgnoringCase(StringImpl*, unsigned index = UINT_MAX);
 
     bool startsWith(StringImpl* str, bool caseSensitive = true) { return (caseSensitive ? reverseFind(str, 0) : reverseFindIgnoringCase(str, 0)) == 0; }
-    WTF_EXPORT_PRIVATE bool startsWith(UChar) const;
-    WTF_EXPORT_PRIVATE bool startsWith(const char*, unsigned matchLength, bool caseSensitive) const;
+    WTF_EXPORT_STRING_API bool startsWith(UChar) const;
+    WTF_EXPORT_STRING_API bool startsWith(const char*, unsigned matchLength, bool caseSensitive) const;
     template<unsigned matchLength>
     bool startsWith(const char (&prefix)[matchLength], bool caseSensitive = true) const { return startsWith(prefix, matchLength - 1, caseSensitive); };
 
-    WTF_EXPORT_PRIVATE bool endsWith(StringImpl*, bool caseSensitive = true);
-    WTF_EXPORT_PRIVATE bool endsWith(UChar) const;
-    WTF_EXPORT_PRIVATE bool endsWith(const char*, unsigned matchLength, bool caseSensitive) const;
+    WTF_EXPORT_STRING_API bool endsWith(StringImpl*, bool caseSensitive = true);
+    WTF_EXPORT_STRING_API bool endsWith(UChar) const;
+    WTF_EXPORT_STRING_API bool endsWith(const char*, unsigned matchLength, bool caseSensitive) const;
     template<unsigned matchLength>
     bool endsWith(const char (&prefix)[matchLength], bool caseSensitive = true) const { return endsWith(prefix, matchLength - 1, caseSensitive); }
 
-    WTF_EXPORT_PRIVATE PassRefPtr<StringImpl> replace(UChar, UChar);
-    WTF_EXPORT_PRIVATE PassRefPtr<StringImpl> replace(UChar, StringImpl*);
-    WTF_EXPORT_PRIVATE PassRefPtr<StringImpl> replace(StringImpl*, StringImpl*);
-    WTF_EXPORT_PRIVATE PassRefPtr<StringImpl> replace(unsigned index, unsigned len, StringImpl*);
+    WTF_EXPORT_STRING_API PassRefPtr<StringImpl> replace(UChar, UChar);
+    WTF_EXPORT_STRING_API PassRefPtr<StringImpl> replace(UChar, StringImpl*);
+    WTF_EXPORT_STRING_API PassRefPtr<StringImpl> replace(StringImpl*, StringImpl*);
+    WTF_EXPORT_STRING_API PassRefPtr<StringImpl> replace(unsigned index, unsigned len, StringImpl*);
 
-    WTF_EXPORT_PRIVATE WTF::Unicode::Direction defaultWritingDirection(bool* hasStrongDirectionality = 0);
+    WTF_EXPORT_STRING_API WTF::Unicode::Direction defaultWritingDirection(bool* hasStrongDirectionality = 0);
 
 #if USE(CF)
     CFStringRef createCFString();
@@ -614,7 +614,7 @@ private:
     bool isStatic() const { return m_refCount & s_refCountFlagIsStaticString; }
     template <class UCharPredicate> PassRefPtr<StringImpl> stripMatchedCharacters(UCharPredicate);
     template <typename CharType, class UCharPredicate> PassRefPtr<StringImpl> simplifyMatchedCharactersToSpace(UCharPredicate);
-    WTF_EXPORT_PRIVATE NEVER_INLINE const UChar* getData16SlowCase() const;
+    WTF_EXPORT_STRING_API NEVER_INLINE const UChar* getData16SlowCase() const;
     WTF_EXPORT_PRIVATE NEVER_INLINE unsigned hashSlowCase() const;
 
     // The bottom bit in the ref count indicates a static (immortal) string.
@@ -657,14 +657,14 @@ ALWAYS_INLINE const LChar* StringImpl::getCharacters<LChar>() const { return cha
 template <>
 ALWAYS_INLINE const UChar* StringImpl::getCharacters<UChar>() const { return characters(); }
 
-WTF_EXPORT_PRIVATE bool equal(const StringImpl*, const StringImpl*);
-WTF_EXPORT_PRIVATE bool equal(const StringImpl*, const LChar*);
+WTF_EXPORT_STRING_API bool equal(const StringImpl*, const StringImpl*);
+WTF_EXPORT_STRING_API bool equal(const StringImpl*, const LChar*);
 inline bool equal(const StringImpl* a, const char* b) { return equal(a, reinterpret_cast<const LChar*>(b)); }
-WTF_EXPORT_PRIVATE bool equal(const StringImpl*, const LChar*, unsigned);
+WTF_EXPORT_STRING_API bool equal(const StringImpl*, const LChar*, unsigned);
 inline bool equal(const StringImpl* a, const char* b, unsigned length) { return equal(a, reinterpret_cast<const LChar*>(b), length); }
 inline bool equal(const LChar* a, StringImpl* b) { return equal(b, a); }
 inline bool equal(const char* a, StringImpl* b) { return equal(b, reinterpret_cast<const LChar*>(a)); }
-WTF_EXPORT_PRIVATE bool equal(const StringImpl*, const UChar*, unsigned);
+WTF_EXPORT_STRING_API bool equal(const StringImpl*, const UChar*, unsigned);
 
 // Do comparisons 8 or 4 bytes-at-a-time on architectures where it's safe.
 #if CPU(X86_64)
@@ -822,16 +822,16 @@ ALWAYS_INLINE bool equal(const UChar* a, const LChar* b, unsigned length)
     return true;
 }
 
-WTF_EXPORT_PRIVATE bool equalIgnoringCase(StringImpl*, StringImpl*);
-WTF_EXPORT_PRIVATE bool equalIgnoringCase(StringImpl*, const LChar*);
+WTF_EXPORT_STRING_API bool equalIgnoringCase(StringImpl*, StringImpl*);
+WTF_EXPORT_STRING_API bool equalIgnoringCase(StringImpl*, const LChar*);
 inline bool equalIgnoringCase(const LChar* a, StringImpl* b) { return equalIgnoringCase(b, a); }
-WTF_EXPORT_PRIVATE bool equalIgnoringCase(const LChar*, const LChar*, unsigned);
-WTF_EXPORT_PRIVATE bool equalIgnoringCase(const UChar*, const LChar*, unsigned);
+WTF_EXPORT_STRING_API bool equalIgnoringCase(const LChar*, const LChar*, unsigned);
+WTF_EXPORT_STRING_API bool equalIgnoringCase(const UChar*, const LChar*, unsigned);
 inline bool equalIgnoringCase(const UChar* a, const char* b, unsigned length) { return equalIgnoringCase(a, reinterpret_cast<const LChar*>(b), length); }
 inline bool equalIgnoringCase(const LChar* a, const UChar* b, unsigned length) { return equalIgnoringCase(b, a, length); }
 inline bool equalIgnoringCase(const char* a, const UChar* b, unsigned length) { return equalIgnoringCase(b, reinterpret_cast<const LChar*>(a), length); }
 
-WTF_EXPORT_PRIVATE bool equalIgnoringNullity(StringImpl*, StringImpl*);
+WTF_EXPORT_STRING_API bool equalIgnoringNullity(StringImpl*, StringImpl*);
 
 template<typename CharacterType>
 inline size_t find(const CharacterType* characters, unsigned length, CharacterType matchCharacter, unsigned index = 0)
