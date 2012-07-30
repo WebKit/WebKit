@@ -65,7 +65,6 @@ LIST(APPEND WebCore_SOURCES
   platform/efl/TemporaryLinkStubs.cpp
   platform/efl/WidgetEfl.cpp
   platform/graphics/ImageSource.cpp
-  platform/graphics/efl/GraphicsLayerEfl.cpp
   platform/graphics/efl/IconEfl.cpp
   platform/graphics/efl/ImageEfl.cpp
   platform/graphics/efl/IntPointEfl.cpp
@@ -201,6 +200,16 @@ IF (WTF_USE_ICU_UNICODE)
     platform/text/TextEncodingDetectorICU.cpp
     platform/text/TextBreakIteratorICU.cpp
     platform/text/TextCodecICU.cpp
+  )
+ENDIF ()
+
+IF (WTF_USE_TEXTURE_MAPPER)
+  LIST(APPEND WebCore_SOURCES
+    platform/graphics/texmap/GraphicsLayerTextureMapper.cpp
+  )
+ELSE ()
+  LIST(APPEND WebCore_SOURCES
+    platform/graphics/efl/GraphicsLayerEfl.cpp
   )
 ENDIF ()
 

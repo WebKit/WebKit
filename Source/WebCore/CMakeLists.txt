@@ -1794,6 +1794,8 @@ SET(WebCore_SOURCES
     platform/graphics/Gradient.cpp
     platform/graphics/GraphicsContext.cpp
     platform/graphics/GraphicsLayer.cpp
+    platform/graphics/GraphicsLayerAnimation.cpp
+    platform/graphics/GraphicsLayerTransform.cpp
     platform/graphics/GraphicsTypes.cpp
     platform/graphics/Image.cpp
     platform/graphics/ImageBuffer.cpp
@@ -1853,6 +1855,11 @@ SET(WebCore_SOURCES
     platform/graphics/filters/arm/FEGaussianBlurNEON.h
     platform/graphics/filters/arm/FELightingNEON.cpp
     platform/graphics/filters/arm/FELightingNEON.h
+
+    platform/graphics/texmap/TextureMapper.cpp
+    platform/graphics/texmap/TextureMapperBackingStore.cpp
+    platform/graphics/texmap/TextureMapperImageBuffer.cpp
+    platform/graphics/texmap/TextureMapperLayer.cpp
 
     platform/graphics/transforms/AffineTransform.cpp
     platform/graphics/transforms/Matrix3DTransformOperation.cpp

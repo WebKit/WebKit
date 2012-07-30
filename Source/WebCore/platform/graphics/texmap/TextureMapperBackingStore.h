@@ -20,6 +20,8 @@
 #ifndef TextureMapperBackingStore_h
 #define TextureMapperBackingStore_h
 
+#if USE(ACCELERATED_COMPOSITING)
+
 #include "FloatRect.h"
 #include "Image.h"
 #include "TextureMapper.h"
@@ -128,4 +130,6 @@ private:
 };
 
 }
+#endif
+
 #endif // TextureMapperBackingStore_h

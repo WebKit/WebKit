@@ -18,6 +18,8 @@
  */
 
 #include "config.h"
+
+#if USE(ACCELERATED_COMPOSITING)
 #include "GraphicsLayerAnimation.h"
 
 #include "UnitBezier.h"
@@ -295,3 +297,5 @@ void GraphicsLayerAnimations::apply(GraphicsLayerAnimation::Client* client)
 }
 
 }
+#endif
+

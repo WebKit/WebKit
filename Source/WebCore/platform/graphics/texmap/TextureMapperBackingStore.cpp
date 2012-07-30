@@ -18,6 +18,8 @@
  */
 
 #include "config.h"
+
+#if USE(ACCELERATED_COMPOSITING)
 #include "TextureMapperBackingStore.h"
 
 #include "GraphicsLayer.h"
@@ -222,3 +224,4 @@ void TextureMapperTiledBackingStore::setDebugBorder(const Color& color, float wi
 }
 
 }
+#endif

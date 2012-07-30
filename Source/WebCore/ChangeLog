@@ -1,5 +1,30 @@
 2012-07-29  YoungTaeck Song  <youngtaeck.song@samsung.com>
 
+        [WK2][EFL] Accelerated compositing support using TextureMapper on Efl WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=91583
+
+        Reviewed by Noam Rosenthal.
+
+        This patch is a subset of Efl's UI_SIDE_COMPOSITING implementation.
+        This patch adds Texture Mapper related files to PlatformEfl.cmake.
+        And wrapped TextureMapperLayer and TextureMapperBackingStore with USE(ACCELERATED_COMPOSITING) for fixing building error when disable ACCELERATED_COMPOSITING.
+
+        * CMakeLists.txt:
+        * PlatformEfl.cmake:
+        * platform/graphics/GraphicsLayer.cpp:
+        (WebCore):
+        * platform/graphics/GraphicsLayer.h:
+        (GraphicsLayer):
+        * platform/graphics/GraphicsLayerAnimation.cpp:
+        * platform/graphics/GraphicsLayerAnimation.h:
+        * platform/graphics/PlatformLayer.h:
+        (WebCore):
+        * platform/graphics/texmap/TextureMapperBackingStore.cpp:
+        * platform/graphics/texmap/TextureMapperBackingStore.h:
+        * platform/graphics/texmap/TextureMapperLayer.h:
+
+2012-07-29  YoungTaeck Song  <youngtaeck.song@samsung.com>
+
         [WK2][EFL] TILED_BACKING_STORE support on Efl WebKit2
         https://bugs.webkit.org/show_bug.cgi?id=91582
 

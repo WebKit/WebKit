@@ -394,7 +394,7 @@ public:
 
     virtual TiledBacking* tiledBacking() { return 0; }
 
-#if PLATFORM(QT) || PLATFORM(GTK)
+#if PLATFORM(QT) || PLATFORM(GTK) || PLATFORM(EFL)
     // This allows several alternative GraphicsLayer implementations in the same port,
     // e.g. if a different GraphicsLayer implementation is needed in WebKit1 vs. WebKit2.
     typedef PassOwnPtr<GraphicsLayer> GraphicsLayerFactory(GraphicsLayerClient*);
@@ -485,7 +485,7 @@ protected:
 
     int m_repaintCount;
 
-#if PLATFORM(QT) || PLATFORM(GTK)
+#if PLATFORM(QT) || PLATFORM(GTK) || PLATFORM(EFL)
     static GraphicsLayer::GraphicsLayerFactory* s_graphicsLayerFactory;
 #endif
 };

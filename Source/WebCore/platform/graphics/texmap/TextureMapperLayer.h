@@ -20,6 +20,8 @@
 #ifndef TextureMapperLayer_h
 #define TextureMapperLayer_h
 
+#if USE(ACCELERATED_COMPOSITING)
+
 #include "FilterOperations.h"
 #include "FloatRect.h"
 #include "GraphicsContext.h"
@@ -245,4 +247,6 @@ private:
 TextureMapperLayer* toTextureMapperLayer(GraphicsLayer*);
 
 }
+#endif
+
 #endif // TextureMapperLayer_h
