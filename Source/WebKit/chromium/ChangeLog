@@ -1,3 +1,160 @@
+2012-07-30  Adrienne Walker  <enne@google.com>
+
+        [chromium] Remove dependency on ScrollbarTheme from the compositor
+        https://bugs.webkit.org/show_bug.cgi?id=90528
+
+        Reviewed by James Robinson.
+
+        Add implementations for WebScrollbarThemeGeometry and
+        WebScrollbarThemePainter. Fill out additional API calls for
+        WebPluginScrollbarImpl since it derives from WebScrollbar.
+
+        Add WebScrollbarImpl to the client API to wrap and own an existing
+        WebCore Scrollbar object and provide the WebScrollbar interface.
+
+        By keeping WebScrollbar separate from WebScrollbarThemeGeometry, the
+        compositor thread can create its own thread-safe data bag version of a
+        WebScrollbar (CCScrollbarLayerImpl::CCScrollbar), but this requires
+        WebScrollbarThemeClientImpl.
+
+        WebScrollbarThemeClientImpl does the reverse of WebScrollbarImpl; it
+        wraps a WebScrollbar and provides the ScrollbarThemeClient interface.
+        This is so that a WebScrollbar can be passed to the geometry and
+        painter functions. Then, internally the WebScrollbarThemeClientImpl
+        can be used to adapt the WebScrollbar to the ScrollbarThemeClient
+        interface so the geometry and painter functions can call direct
+        functions on ScrollbarThemeComposite.
+
+        * WebKit.gyp:
+        * src/AssertMatchingEnums.cpp:
+        * src/ExternalPopupMenu.h:
+        (WebKit):
+        * src/WebPluginScrollbarImpl.cpp:
+        (WebKit::WebPluginScrollbarImpl::WebPluginScrollbarImpl):
+        (WebKit::WebPluginScrollbarImpl::location):
+        (WebKit):
+        (WebKit::WebPluginScrollbarImpl::size):
+        (WebKit::WebPluginScrollbarImpl::enabled):
+        (WebKit::WebPluginScrollbarImpl::maximum):
+        (WebKit::WebPluginScrollbarImpl::totalSize):
+        (WebKit::WebPluginScrollbarImpl::isScrollViewScrollbar):
+        (WebKit::WebPluginScrollbarImpl::isScrollableAreaActive):
+        (WebKit::WebPluginScrollbarImpl::getTickmarks):
+        (WebKit::WebPluginScrollbarImpl::controlSize):
+        (WebKit::WebPluginScrollbarImpl::pressedPart):
+        (WebKit::WebPluginScrollbarImpl::hoveredPart):
+        (WebKit::WebPluginScrollbarImpl::scrollbarOverlayStyle):
+        (WebKit::WebPluginScrollbarImpl::orientation):
+        (WebKit::WebPluginScrollbarImpl::isCustomScrollbar):
+        (WebKit::WebPluginScrollbarImpl::onMouseUp):
+        (WebKit::WebPluginScrollbarImpl::onMouseMove):
+        (WebKit::WebPluginScrollbarImpl::onMouseLeave):
+        * src/WebPluginScrollbarImpl.h:
+        (WebPluginScrollbarImpl):
+        * src/WebScrollbarImpl.cpp: Added.
+        (WebKit):
+        (WebKit::WebScrollbar::create):
+        (WebKit::WebScrollbarImpl::WebScrollbarImpl):
+        (WebKit::WebScrollbarImpl::isOverlay):
+        (WebKit::WebScrollbarImpl::value):
+        (WebKit::WebScrollbarImpl::location):
+        (WebKit::WebScrollbarImpl::size):
+        (WebKit::WebScrollbarImpl::enabled):
+        (WebKit::WebScrollbarImpl::maximum):
+        (WebKit::WebScrollbarImpl::totalSize):
+        (WebKit::WebScrollbarImpl::isScrollViewScrollbar):
+        (WebKit::WebScrollbarImpl::isScrollableAreaActive):
+        (WebKit::WebScrollbarImpl::getTickmarks):
+        (WebKit::WebScrollbarImpl::controlSize):
+        (WebKit::WebScrollbarImpl::pressedPart):
+        (WebKit::WebScrollbarImpl::hoveredPart):
+        (WebKit::WebScrollbarImpl::scrollbarOverlayStyle):
+        (WebKit::WebScrollbarImpl::orientation):
+        (WebKit::WebScrollbarImpl::isCustomScrollbar):
+        * src/WebScrollbarImpl.h: Copied from Source/Platform/chromium/public/WebScrollbar.h.
+        (WebCore):
+        (WebKit):
+        (WebScrollbarImpl):
+        * src/WebScrollbarThemeClientImpl.cpp: Added.
+        (WebKit):
+        (WebKit::WebScrollbarThemeClientImpl::WebScrollbarThemeClientImpl):
+        (WebKit::WebScrollbarThemeClientImpl::x):
+        (WebKit::WebScrollbarThemeClientImpl::y):
+        (WebKit::WebScrollbarThemeClientImpl::width):
+        (WebKit::WebScrollbarThemeClientImpl::height):
+        (WebKit::WebScrollbarThemeClientImpl::size):
+        (WebKit::WebScrollbarThemeClientImpl::location):
+        (WebKit::WebScrollbarThemeClientImpl::parent):
+        (WebKit::WebScrollbarThemeClientImpl::root):
+        (WebKit::WebScrollbarThemeClientImpl::setFrameRect):
+        (WebKit::WebScrollbarThemeClientImpl::frameRect):
+        (WebKit::WebScrollbarThemeClientImpl::invalidate):
+        (WebKit::WebScrollbarThemeClientImpl::invalidateRect):
+        (WebKit::WebScrollbarThemeClientImpl::scrollbarOverlayStyle):
+        (WebKit::WebScrollbarThemeClientImpl::getTickmarks):
+        (WebKit::WebScrollbarThemeClientImpl::isScrollableAreaActive):
+        (WebKit::WebScrollbarThemeClientImpl::isScrollViewScrollbar):
+        (WebKit::WebScrollbarThemeClientImpl::convertFromContainingWindow):
+        (WebKit::WebScrollbarThemeClientImpl::isCustomScrollbar):
+        (WebKit::WebScrollbarThemeClientImpl::orientation):
+        (WebKit::WebScrollbarThemeClientImpl::value):
+        (WebKit::WebScrollbarThemeClientImpl::currentPos):
+        (WebKit::WebScrollbarThemeClientImpl::visibleSize):
+        (WebKit::WebScrollbarThemeClientImpl::totalSize):
+        (WebKit::WebScrollbarThemeClientImpl::maximum):
+        (WebKit::WebScrollbarThemeClientImpl::controlSize):
+        (WebKit::WebScrollbarThemeClientImpl::lineStep):
+        (WebKit::WebScrollbarThemeClientImpl::pageStep):
+        (WebKit::WebScrollbarThemeClientImpl::pressedPart):
+        (WebKit::WebScrollbarThemeClientImpl::hoveredPart):
+        (WebKit::WebScrollbarThemeClientImpl::styleChanged):
+        (WebKit::WebScrollbarThemeClientImpl::enabled):
+        (WebKit::WebScrollbarThemeClientImpl::setEnabled):
+        (WebKit::WebScrollbarThemeClientImpl::isOverlayScrollbar):
+        * src/WebScrollbarThemeClientImpl.h: Added.
+        (WebCore):
+        (WebKit):
+        (WebScrollbarThemeClientImpl):
+        * src/WebScrollbarThemeGeometry.cpp: Added.
+        (WebKit):
+        (WebKit::WebScrollbarThemeGeometry::assign):
+        (WebKit::WebScrollbarThemeGeometry::thumbPosition):
+        (WebKit::WebScrollbarThemeGeometry::thumbLength):
+        (WebKit::WebScrollbarThemeGeometry::trackPosition):
+        (WebKit::WebScrollbarThemeGeometry::trackLength):
+        (WebKit::WebScrollbarThemeGeometry::hasButtons):
+        (WebKit::WebScrollbarThemeGeometry::hasThumb):
+        (WebKit::WebScrollbarThemeGeometry::trackRect):
+        (WebKit::WebScrollbarThemeGeometry::thumbRect):
+        (WebKit::WebScrollbarThemeGeometry::minimumThumbLength):
+        (WebKit::WebScrollbarThemeGeometry::scrollbarThickness):
+        (WebKit::WebScrollbarThemeGeometry::backButtonStartRect):
+        (WebKit::WebScrollbarThemeGeometry::backButtonEndRect):
+        (WebKit::WebScrollbarThemeGeometry::forwardButtonStartRect):
+        (WebKit::WebScrollbarThemeGeometry::forwardButtonEndRect):
+        (WebKit::WebScrollbarThemeGeometry::constrainTrackRectToTrackPieces):
+        (WebKit::WebScrollbarThemeGeometry::splitTrack):
+        (WebKit::WebScrollbarThemeGeometry::WebScrollbarThemeGeometry):
+        * src/WebScrollbarThemePainter.cpp: Added.
+        (WebKit):
+        (WebKit::WebScrollbarThemePainter::assign):
+        (WebKit::WebScrollbarThemePainter::paintScrollbarBackground):
+        (WebKit::WebScrollbarThemePainter::paintTrackBackground):
+        (WebKit::WebScrollbarThemePainter::paintBackTrackPart):
+        (WebKit::WebScrollbarThemePainter::paintForwardTrackPart):
+        (WebKit::WebScrollbarThemePainter::paintBackButtonStart):
+        (WebKit::WebScrollbarThemePainter::paintBackButtonEnd):
+        (WebKit::WebScrollbarThemePainter::paintForwardButtonStart):
+        (WebKit::WebScrollbarThemePainter::paintForwardButtonEnd):
+        (WebKit::WebScrollbarThemePainter::paintTickmarks):
+        (WebKit::WebScrollbarThemePainter::paintThumb):
+        (WebKit::WebScrollbarThemePainter::WebScrollbarThemePainter):
+        * tests/ScrollbarLayerChromiumTest.cpp:
+        (WebCore::MockScrollbar::convertFromContainingWindow):
+        (WebCore::MockScrollbar::isOverlayScrollbar):
+        (MockScrollbar):
+        (WebCore::TEST):
+
 2012-07-30  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r124025.

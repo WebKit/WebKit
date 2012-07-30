@@ -69,8 +69,8 @@ WebPluginScrollbarImpl::WebPluginScrollbarImpl(Orientation orientation,
 {
     m_scrollbar = Scrollbar::createNativeScrollbar(
         static_cast<ScrollableArea*>(m_group),
-        static_cast<ScrollbarOrientation>(orientation),
-        RegularScrollbar);
+        static_cast<WebCore::ScrollbarOrientation>(orientation),
+        WebCore::RegularScrollbar);
     m_group->scrollbarCreated(this);
 }
 
@@ -121,6 +121,78 @@ bool WebPluginScrollbarImpl::isOverlay() const
 int WebPluginScrollbarImpl::value() const
 {
     return m_scrollOffset;
+}
+
+WebPoint WebPluginScrollbarImpl::location() const
+{
+    return m_scrollbar->frameRect().location();
+}
+
+WebSize WebPluginScrollbarImpl::size() const
+{
+    return m_scrollbar->frameRect().size();
+}
+
+bool WebPluginScrollbarImpl::enabled() const
+{
+    return m_scrollbar->enabled();
+}
+
+int WebPluginScrollbarImpl::maximum() const
+{
+    return m_scrollbar->maximum();
+}
+
+int WebPluginScrollbarImpl::totalSize() const
+{
+    return m_scrollbar->totalSize();
+}
+
+bool WebPluginScrollbarImpl::isScrollViewScrollbar() const
+{
+    return m_scrollbar->isScrollViewScrollbar();
+}
+
+bool WebPluginScrollbarImpl::isScrollableAreaActive() const
+{
+    return m_scrollbar->isScrollableAreaActive();
+}
+
+void WebPluginScrollbarImpl::getTickmarks(WebVector<WebRect>& tickmarks) const
+{
+    m_client->getTickmarks(const_cast<WebPluginScrollbarImpl*>(this), &tickmarks);
+}
+
+WebScrollbar::ScrollbarControlSize WebPluginScrollbarImpl::controlSize() const
+{
+    return static_cast<WebScrollbar::ScrollbarControlSize>(m_scrollbar->controlSize());
+}
+
+WebScrollbar::ScrollbarPart WebPluginScrollbarImpl::pressedPart() const
+{
+    return static_cast<WebScrollbar::ScrollbarPart>(m_scrollbar->pressedPart());
+}
+
+WebScrollbar::ScrollbarPart WebPluginScrollbarImpl::hoveredPart() const
+{
+    return static_cast<WebScrollbar::ScrollbarPart>(m_scrollbar->hoveredPart());
+}
+
+WebScrollbar::ScrollbarOverlayStyle WebPluginScrollbarImpl::scrollbarOverlayStyle() const
+{
+    return static_cast<WebScrollbar::ScrollbarOverlayStyle>(m_scrollbar->scrollbarOverlayStyle());
+}
+
+WebScrollbar::Orientation WebPluginScrollbarImpl::orientation() const
+{
+    if (m_scrollbar->orientation() == WebCore::HorizontalScrollbar)
+        return WebScrollbar::Horizontal;
+    return WebScrollbar::Vertical;
+}
+
+bool WebPluginScrollbarImpl::isCustomScrollbar() const
+{
+    return m_scrollbar->isCustomScrollbar();
 }
 
 void WebPluginScrollbarImpl::setLocation(const WebRect& rect)
@@ -211,7 +283,7 @@ bool WebPluginScrollbarImpl::onMouseDown(const WebInputEvent& event)
 bool WebPluginScrollbarImpl::onMouseUp(const WebInputEvent& event)
 {
     WebMouseEvent mouseup = *static_cast<const WebMouseEvent*>(&event);
-    if (m_scrollbar->pressedPart() == NoPart)
+    if (m_scrollbar->pressedPart() == WebCore::NoPart)
         return false;
 
     return m_scrollbar->mouseUp(PlatformMouseEventBuilder(m_scrollbar.get(), mouseup));
@@ -221,20 +293,20 @@ bool WebPluginScrollbarImpl::onMouseMove(const WebInputEvent& event)
 {
     WebMouseEvent mousemove = *static_cast<const WebMouseEvent*>(&event);
     if (m_scrollbar->frameRect().contains(mousemove.x, mousemove.y)
-        || m_scrollbar->pressedPart() != NoPart) {
+        || m_scrollbar->pressedPart() != WebCore::NoPart) {
         mousemove.x -= m_scrollbar->x();
         mousemove.y -= m_scrollbar->y();
         return m_scrollbar->mouseMoved(PlatformMouseEventBuilder(m_scrollbar.get(), mousemove));
     }
 
-    if (m_scrollbar->hoveredPart() != NoPart && !m_scrollbar->isOverlayScrollbar())
+    if (m_scrollbar->hoveredPart() != WebCore::NoPart && !m_scrollbar->isOverlayScrollbar())
         m_scrollbar->mouseExited();
     return false;
 }
 
 bool WebPluginScrollbarImpl::onMouseLeave(const WebInputEvent& event)
 {
-    if (m_scrollbar->hoveredPart() != NoPart)
+    if (m_scrollbar->hoveredPart() != WebCore::NoPart)
         m_scrollbar->mouseExited();
 
     return false;

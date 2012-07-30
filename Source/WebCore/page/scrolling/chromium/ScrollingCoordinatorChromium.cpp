@@ -34,9 +34,12 @@
 #include "RenderLayerCompositor.h"
 #include "RenderView.h"
 #include "ScrollbarLayerChromium.h"
-#include "ScrollbarTheme.h"
+#include "ScrollbarThemeComposite.h"
 #include "cc/CCProxy.h"
 #include <public/WebScrollableLayer.h>
+#include <public/WebScrollbar.h>
+#include <public/WebScrollbarThemeGeometry.h>
+#include <public/WebScrollbarThemePainter.h>
 
 using WebKit::WebLayer;
 using WebKit::WebScrollableLayer;
@@ -131,13 +134,21 @@ static WebLayer createScrollbarLayer(Scrollbar* scrollbar, WebScrollableLayer sc
     platformSupported = false;
 #endif
 
-    if (!platformSupported || scrollbar->isOverlayScrollbar()) {
+    if (!platformSupported || scrollbar->isOverlayScrollbar() || scrollbar->isCustomScrollbar()) {
         scrollbarGraphicsLayer->setContentsToMedia(0);
         scrollbarGraphicsLayer->setDrawsContent(true);
         return WebLayer();
     }
 
-    RefPtr<ScrollbarLayerChromium> scrollbarLayer = ScrollbarLayerChromium::create(scrollbar, scrollLayer.unwrap<LayerChromium>()->id());
+    // All Chromium scrollbar themes derive from ScrollbarThemeComposite.
+    ScrollbarThemeComposite* themeComposite = static_cast<ScrollbarThemeComposite*>(scrollbar->theme());
+
+    // ScrollbarLayerChromium owns the WebScrollbar
+    OwnPtr<WebKit::WebScrollbar> webScrollbar = WebKit::WebScrollbar::create(scrollbar);
+    WebKit::WebScrollbarThemePainter painter(themeComposite);
+    WebKit::WebScrollbarThemeGeometry geometry(themeComposite);
+
+    RefPtr<ScrollbarLayerChromium> scrollbarLayer = ScrollbarLayerChromium::create(webScrollbar.release(), painter, geometry, scrollLayer.unwrap<LayerChromium>()->id());
     scrollbarGraphicsLayer->setContentsToMedia(scrollbarLayer.get());
     scrollbarGraphicsLayer->setDrawsContent(false);
     scrollbarLayer->setOpaque(scrollbarGraphicsLayer->contentsOpaque());

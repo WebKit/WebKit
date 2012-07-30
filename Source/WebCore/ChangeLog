@@ -1,3 +1,73 @@
+2012-07-30  Adrienne Walker  <enne@google.com>
+
+        [chromium] Remove dependency on ScrollbarTheme from the compositor
+        https://bugs.webkit.org/show_bug.cgi?id=90528
+
+        Reviewed by James Robinson.
+
+        Tested by existing layout tests.
+
+        ScrollbarLayerChromium is modified to use the Platform API for
+        WebScrollbar, WebScrollbarThemePainter, and WebScrollbarThemeGeometry.
+        This prevents API dependencies from the compositor code into WebCore
+        scrollbar and theme code.
+
+        CCScrollbarLayerImpl::CCScrollbar now implements the WebScrollbar API
+        instead of the ScrollbarThemeClient API.
+
+        Also, CCScrollbarLayerImpl now no longer gets the theme from a static
+        accessor. It now gets a "copy" of the theme from the main thread via
+        WebScrollbarThemeGeometry, which is more correct for render theme
+        scrollbars which were previously using the native theme to get part
+        geometry. Using the correct theme unfortunately causes crashes due to
+        bad casts in RenderScrollbarTheme, so this patch turns back off the
+        use of ScrollbarLayerChromium for themed scrollbars until that can be
+        resolved.
+
+        * page/scrolling/chromium/ScrollingCoordinatorChromium.cpp:
+        (WebCore::createScrollbarLayer):
+        * platform/ScrollbarThemeClient.h:
+        (ScrollbarThemeClient):
+        * platform/graphics/chromium/ScrollbarLayerChromium.cpp:
+        (WebCore::ScrollbarLayerChromium::create):
+        (WebCore::ScrollbarLayerChromium::ScrollbarLayerChromium):
+        (WebCore::ScrollbarLayerChromium::pushPropertiesTo):
+        (WebCore::ScrollbarBackgroundPainter::create):
+        (WebCore::ScrollbarBackgroundPainter::ScrollbarBackgroundPainter):
+        (ScrollbarBackgroundPainter):
+        (WebCore::ScrollbarThumbPainter::create):
+        (WebCore::ScrollbarThumbPainter::ScrollbarThumbPainter):
+        (ScrollbarThumbPainter):
+        (WebCore::ScrollbarLayerChromium::createTextureUpdaterIfNeeded):
+        (WebCore::ScrollbarLayerChromium::setTexturePriorities):
+        (WebCore::ScrollbarLayerChromium::update):
+        * platform/graphics/chromium/ScrollbarLayerChromium.h:
+        (ScrollbarLayerChromium):
+        * platform/graphics/chromium/cc/CCScrollbarLayerImpl.cpp:
+        (WebCore::CCScrollbarLayerImpl::CCScrollbarLayerImpl):
+        (WebCore::CCScrollbarLayerImpl::setScrollbarData):
+        (WebCore::toUVRect):
+        (WebCore::CCScrollbarLayerImpl::appendQuads):
+        (WebCore::CCScrollbarLayerImpl::CCScrollbar::isOverlay):
+        (WebCore::CCScrollbarLayerImpl::CCScrollbar::value):
+        (WebCore::CCScrollbarLayerImpl::CCScrollbar::location):
+        (WebCore::CCScrollbarLayerImpl::CCScrollbar::size):
+        (WebCore::CCScrollbarLayerImpl::CCScrollbar::enabled):
+        (WebCore::CCScrollbarLayerImpl::CCScrollbar::maximum):
+        (WebCore::CCScrollbarLayerImpl::CCScrollbar::totalSize):
+        (WebCore::CCScrollbarLayerImpl::CCScrollbar::isScrollViewScrollbar):
+        (WebCore::CCScrollbarLayerImpl::CCScrollbar::isScrollableAreaActive):
+        (WebCore::CCScrollbarLayerImpl::CCScrollbar::getTickmarks):
+        (WebCore::CCScrollbarLayerImpl::CCScrollbar::controlSize):
+        (WebCore::CCScrollbarLayerImpl::CCScrollbar::pressedPart):
+        (WebCore::CCScrollbarLayerImpl::CCScrollbar::hoveredPart):
+        (WebCore::CCScrollbarLayerImpl::CCScrollbar::scrollbarOverlayStyle):
+        (WebCore::CCScrollbarLayerImpl::CCScrollbar::orientation):
+        (WebCore::CCScrollbarLayerImpl::CCScrollbar::isCustomScrollbar):
+        * platform/graphics/chromium/cc/CCScrollbarLayerImpl.h:
+        (CCScrollbarLayerImpl):
+        (CCScrollbar):
+
 2012-07-30  Andreas Kling  <kling@webkit.org>
 
         REGRESSION(r123636): Heap-use-after-free in StyleResolver::collectMatchingRules.

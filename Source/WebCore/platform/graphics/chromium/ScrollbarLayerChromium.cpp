@@ -37,6 +37,9 @@
 #include "cc/CCLayerTreeHost.h"
 #include "cc/CCScrollbarLayerImpl.h"
 #include "cc/CCTextureUpdater.h"
+#include <public/WebRect.h>
+
+using WebKit::WebRect;
 
 namespace WebCore {
 
@@ -45,27 +48,18 @@ PassOwnPtr<CCLayerImpl> ScrollbarLayerChromium::createCCLayerImpl()
     return CCScrollbarLayerImpl::create(id());
 }
 
-PassRefPtr<ScrollbarLayerChromium> ScrollbarLayerChromium::create(Scrollbar* scrollbar, int scrollLayerId)
+PassRefPtr<ScrollbarLayerChromium> ScrollbarLayerChromium::create(PassOwnPtr<WebKit::WebScrollbar> scrollbar, WebKit::WebScrollbarThemePainter painter, WebKit::WebScrollbarThemeGeometry geometry, int scrollLayerId)
 {
-    return adoptRef(new ScrollbarLayerChromium(scrollbar, scrollLayerId));
+    return adoptRef(new ScrollbarLayerChromium(scrollbar, painter, geometry, scrollLayerId));
 }
 
-ScrollbarLayerChromium::ScrollbarLayerChromium(Scrollbar* scrollbar, int scrollLayerId)
+ScrollbarLayerChromium::ScrollbarLayerChromium(PassOwnPtr<WebKit::WebScrollbar> scrollbar, WebKit::WebScrollbarThemePainter painter, WebKit::WebScrollbarThemeGeometry geometry, int scrollLayerId)
     : m_scrollbar(scrollbar)
+    , m_painter(painter)
+    , m_geometry(geometry)
     , m_scrollLayerId(scrollLayerId)
     , m_textureFormat(GraphicsContext3D::INVALID_ENUM)
-    , m_scrollbarOverlayStyle(scrollbar->scrollbarOverlayStyle())
-    , m_isScrollableAreaActive(scrollbar->isScrollableAreaActive())
-    , m_isScrollViewScrollbar(scrollbar->isScrollViewScrollbar())
-    , m_orientation(scrollbar->orientation())
-    , m_controlSize(scrollbar->controlSize())
 {
-}
-
-ScrollbarThemeComposite* ScrollbarLayerChromium::theme() const
-{
-    // All Chromium scrollbars are ScrollbarThemeComposite-derived.
-    return static_cast<ScrollbarThemeComposite*>(m_scrollbar->theme());
 }
 
 void ScrollbarLayerChromium::pushPropertiesTo(CCLayerImpl* layer)
@@ -74,7 +68,7 @@ void ScrollbarLayerChromium::pushPropertiesTo(CCLayerImpl* layer)
 
     CCScrollbarLayerImpl* scrollbarLayer = static_cast<CCScrollbarLayerImpl*>(layer);
 
-    scrollbarLayer->setScrollbarOverlayStyle(m_scrollbarOverlayStyle);
+    scrollbarLayer->setScrollbarData(m_scrollbar.get(), m_geometry);
 
     if (m_backTrack && m_backTrack->texture()->haveBackingTexture())
         scrollbarLayer->setBackTrackResourceId(m_backTrack->texture()->resourceId());
@@ -90,105 +84,94 @@ void ScrollbarLayerChromium::pushPropertiesTo(CCLayerImpl* layer)
         scrollbarLayer->setThumbResourceId(m_thumb->texture()->resourceId());
     else
         scrollbarLayer->setThumbResourceId(0);
-
-    Vector<IntRect> tickmarks;
-    m_scrollbar->getTickmarks(tickmarks);
-    scrollbarLayer->setTickmarks(tickmarks);
-
-    scrollbarLayer->setIsScrollableAreaActive(m_isScrollableAreaActive);
-    scrollbarLayer->setIsScrollViewScrollbar(m_isScrollViewScrollbar);
-
-    scrollbarLayer->setOrientation(m_orientation);
-
-    scrollbarLayer->setControlSize(m_controlSize);
-
-    scrollbarLayer->setPressedPart(m_scrollbar->pressedPart());
-    scrollbarLayer->setHoveredPart(m_scrollbar->hoveredPart());
-
-    scrollbarLayer->setEnabled(m_scrollbar->enabled());
 }
 
 class ScrollbarBackgroundPainter : public LayerPainterChromium {
     WTF_MAKE_NONCOPYABLE(ScrollbarBackgroundPainter);
 public:
-    static PassOwnPtr<ScrollbarBackgroundPainter> create(ScrollbarThemeClient* scrollbar, ScrollbarThemeComposite* theme, ScrollbarPart trackPart)
+    static PassOwnPtr<ScrollbarBackgroundPainter> create(WebKit::WebScrollbar* scrollbar, WebKit::WebScrollbarThemePainter painter, WebKit::WebScrollbarThemeGeometry geometry, ScrollbarPart trackPart)
     {
-        return adoptPtr(new ScrollbarBackgroundPainter(scrollbar, theme, trackPart));
+        return adoptPtr(new ScrollbarBackgroundPainter(scrollbar, painter, geometry, trackPart));
     }
 
-    virtual void paint(SkCanvas* canvas, const IntRect& contentRect, FloatRect&) OVERRIDE
+    virtual void paint(SkCanvas* skCanvas, const IntRect& contentRect, FloatRect&) OVERRIDE
     {
-        PlatformContextSkia platformContext(canvas);
-        platformContext.setDrawingToImageBuffer(true);
-        GraphicsContext context(&platformContext);
-
+        WebKit::WebCanvas* canvas = skCanvas;
         // The following is a simplification of ScrollbarThemeComposite::paint.
-        m_theme->paintScrollbarBackground(&context, m_scrollbar);
+        m_painter.paintScrollbarBackground(canvas, m_scrollbar, contentRect);
 
-        if (m_theme->hasButtons(m_scrollbar)) {
-            IntRect backButtonStartPaintRect = m_theme->backButtonRect(m_scrollbar, BackButtonStartPart, true);
-            m_theme->paintButton(&context, m_scrollbar, backButtonStartPaintRect, BackButtonStartPart);
+        if (m_geometry.hasButtons(m_scrollbar)) {
+            WebRect backButtonStartPaintRect = m_geometry.backButtonStartRect(m_scrollbar);
+            m_painter.paintBackButtonStart(canvas, m_scrollbar, backButtonStartPaintRect);
 
-            IntRect backButtonEndPaintRect = m_theme->backButtonRect(m_scrollbar, BackButtonEndPart, true);
-            m_theme->paintButton(&context, m_scrollbar, backButtonEndPaintRect, BackButtonEndPart);
+            WebRect backButtonEndPaintRect = m_geometry.backButtonEndRect(m_scrollbar);
+            m_painter.paintBackButtonEnd(canvas, m_scrollbar, backButtonEndPaintRect);
 
-            IntRect forwardButtonStartPaintRect = m_theme->forwardButtonRect(m_scrollbar, ForwardButtonStartPart, true);
-            m_theme->paintButton(&context, m_scrollbar, forwardButtonStartPaintRect, ForwardButtonStartPart);
+            WebRect forwardButtonStartPaintRect = m_geometry.forwardButtonStartRect(m_scrollbar);
+            m_painter.paintForwardButtonStart(canvas, m_scrollbar, forwardButtonStartPaintRect);
 
-            IntRect forwardButtonEndPaintRect = m_theme->forwardButtonRect(m_scrollbar, ForwardButtonEndPart, true);
-            m_theme->paintButton(&context, m_scrollbar, forwardButtonEndPaintRect, ForwardButtonEndPart);
+            WebRect forwardButtonEndPaintRect = m_geometry.forwardButtonEndRect(m_scrollbar);
+            m_painter.paintForwardButtonEnd(canvas, m_scrollbar, forwardButtonEndPaintRect);
         }
 
-        IntRect trackPaintRect = m_theme->trackRect(m_scrollbar, true);
-        m_theme->paintTrackBackground(&context, m_scrollbar, trackPaintRect);
+        WebRect trackPaintRect = m_geometry.trackRect(m_scrollbar);
+        m_painter.paintTrackBackground(canvas, m_scrollbar, trackPaintRect);
 
-        bool thumbPresent = m_theme->hasThumb(m_scrollbar);
-        if (thumbPresent)
-            m_theme->paintTrackPiece(&context, m_scrollbar, trackPaintRect, m_trackPart);
+        bool thumbPresent = m_geometry.hasThumb(m_scrollbar);
+        if (thumbPresent) {
+            if (m_trackPart == ForwardTrackPart)
+                m_painter.paintForwardTrackPart(canvas, m_scrollbar, trackPaintRect);
+            else
+                m_painter.paintBackTrackPart(canvas, m_scrollbar, trackPaintRect);
+        }
 
-        m_theme->paintTickmarks(&context, m_scrollbar, trackPaintRect);
+        m_painter.paintTickmarks(canvas, m_scrollbar, trackPaintRect);
     }
 private:
-    ScrollbarBackgroundPainter(ScrollbarThemeClient* scrollbar, ScrollbarThemeComposite* theme, ScrollbarPart trackPart)
+    ScrollbarBackgroundPainter(WebKit::WebScrollbar* scrollbar, WebKit::WebScrollbarThemePainter painter, WebKit::WebScrollbarThemeGeometry geometry, ScrollbarPart trackPart)
         : m_scrollbar(scrollbar)
-        , m_theme(theme)
+        , m_painter(painter)
+        , m_geometry(geometry)
         , m_trackPart(trackPart)
     {
     }
 
-    ScrollbarThemeClient* m_scrollbar;
-    ScrollbarThemeComposite* m_theme;
+    WebKit::WebScrollbar* m_scrollbar;
+    WebKit::WebScrollbarThemePainter m_painter;
+    WebKit::WebScrollbarThemeGeometry m_geometry;
     ScrollbarPart m_trackPart;
 };
 
 class ScrollbarThumbPainter : public LayerPainterChromium {
     WTF_MAKE_NONCOPYABLE(ScrollbarThumbPainter);
 public:
-    static PassOwnPtr<ScrollbarThumbPainter> create(ScrollbarThemeClient* scrollbar, ScrollbarThemeComposite* theme)
+    static PassOwnPtr<ScrollbarThumbPainter> create(WebKit::WebScrollbar* scrollbar, WebKit::WebScrollbarThemePainter painter, WebKit::WebScrollbarThemeGeometry geometry)
     {
-        return adoptPtr(new ScrollbarThumbPainter(scrollbar, theme));
+        return adoptPtr(new ScrollbarThumbPainter(scrollbar, painter, geometry));
     }
 
-    virtual void paint(SkCanvas* canvas, const IntRect& contentRect, FloatRect& opaque) OVERRIDE
+    virtual void paint(SkCanvas* skCanvas, const IntRect& contentRect, FloatRect& opaque) OVERRIDE
     {
-        PlatformContextSkia platformContext(canvas);
-        platformContext.setDrawingToImageBuffer(true);
-        GraphicsContext context(&platformContext);
+        WebKit::WebCanvas* canvas = skCanvas;
 
         // Consider the thumb to be at the origin when painting.
-        IntRect thumbRect = IntRect(IntPoint(), m_theme->thumbRect(m_scrollbar).size());
-        m_theme->paintThumb(&context, m_scrollbar, thumbRect);
+        WebRect thumbRect = m_geometry.thumbRect(m_scrollbar);
+        thumbRect.x = 0;
+        thumbRect.y = 0;
+        m_painter.paintThumb(canvas, m_scrollbar, thumbRect);
     }
 
 private:
-    ScrollbarThumbPainter(ScrollbarThemeClient* scrollbar, ScrollbarThemeComposite* theme)
+    ScrollbarThumbPainter(WebKit::WebScrollbar* scrollbar, WebKit::WebScrollbarThemePainter painter, WebKit::WebScrollbarThemeGeometry geometry)
         : m_scrollbar(scrollbar)
-        , m_theme(theme)
+        , m_painter(painter)
+        , m_geometry(geometry)
     {
     }
 
-    ScrollbarThemeClient* m_scrollbar;
-    ScrollbarThemeComposite* m_theme;
+    WebKit::WebScrollbar* m_scrollbar;
+    WebKit::WebScrollbarThemePainter m_painter;
+    WebKit::WebScrollbarThemeGeometry m_geometry;
 };
 
 void ScrollbarLayerChromium::setLayerTreeHost(CCLayerTreeHost* host)
@@ -208,20 +191,20 @@ void ScrollbarLayerChromium::createTextureUpdaterIfNeeded()
     m_textureFormat = layerTreeHost()->layerRendererCapabilities().bestTextureFormat;
 
     if (!m_backTrackUpdater)
-        m_backTrackUpdater = BitmapCanvasLayerTextureUpdater::create(ScrollbarBackgroundPainter::create(m_scrollbar.get(), theme(), BackTrackPart));
+        m_backTrackUpdater = BitmapCanvasLayerTextureUpdater::create(ScrollbarBackgroundPainter::create(m_scrollbar.get(), m_painter, m_geometry, BackTrackPart));
     if (!m_backTrack)
         m_backTrack = m_backTrackUpdater->createTexture(layerTreeHost()->contentsTextureManager());
 
     // Only create two-part track if we think the two parts could be different in appearance.
     if (m_scrollbar->isCustomScrollbar()) {
         if (!m_foreTrackUpdater)
-            m_foreTrackUpdater = BitmapCanvasLayerTextureUpdater::create(ScrollbarBackgroundPainter::create(m_scrollbar.get(), theme(), ForwardTrackPart));
+            m_foreTrackUpdater = BitmapCanvasLayerTextureUpdater::create(ScrollbarBackgroundPainter::create(m_scrollbar.get(), m_painter, m_geometry, ForwardTrackPart));
         if (!m_foreTrack)
             m_foreTrack = m_foreTrackUpdater->createTexture(layerTreeHost()->contentsTextureManager());
     }
 
     if (!m_thumbUpdater)
-        m_thumbUpdater = BitmapCanvasLayerTextureUpdater::create(ScrollbarThumbPainter::create(m_scrollbar.get(), theme()));
+        m_thumbUpdater = BitmapCanvasLayerTextureUpdater::create(ScrollbarThumbPainter::create(m_scrollbar.get(), m_painter, m_geometry));
     if (!m_thumb)
         m_thumb = m_thumbUpdater->createTexture(layerTreeHost()->contentsTextureManager());
 }
@@ -267,7 +250,7 @@ void ScrollbarLayerChromium::setTexturePriorities(const CCPriorityCalculator&)
         m_foreTrack->texture()->setRequestPriority(CCPriorityCalculator::uiPriority(drawsToRoot));
     }
     if (m_thumb) {
-        IntSize thumbSize = theme()->thumbRect(m_scrollbar.get()).size();
+        IntSize thumbSize = IntRect(m_geometry.thumbRect(m_scrollbar.get())).size();
         m_thumb->texture()->setDimensions(thumbSize, m_textureFormat);
         m_thumb->texture()->setRequestPriority(CCPriorityCalculator::uiPriority(drawsToRoot));
     }
@@ -280,14 +263,14 @@ void ScrollbarLayerChromium::update(CCTextureUpdater& updater, const CCOcclusion
 
     createTextureUpdaterIfNeeded();
 
-    IntPoint scrollbarOrigin(m_scrollbar->x(), m_scrollbar->y());
+    IntPoint scrollbarOrigin(m_scrollbar->location());
     IntRect contentRect(scrollbarOrigin, contentBounds());
     updatePart(m_backTrackUpdater.get(), m_backTrack.get(), contentRect, updater, stats);
     if (m_foreTrack && m_foreTrackUpdater)
         updatePart(m_foreTrackUpdater.get(), m_foreTrack.get(), contentRect, updater, stats);
 
     // Consider the thumb to be at the origin when painting.
-    IntRect thumbRect = IntRect(IntPoint(), theme()->thumbRect(m_scrollbar.get()).size());
+    IntRect thumbRect = IntRect(IntPoint(), IntRect(m_geometry.thumbRect(m_scrollbar.get())).size());
     if (!thumbRect.isEmpty())
         updatePart(m_thumbUpdater.get(), m_thumb.get(), thumbRect, updater, stats);
 }

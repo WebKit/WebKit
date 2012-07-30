@@ -32,6 +32,9 @@
 #include "cc/CCScrollbarLayerImpl.h"
 #include "cc/CCSingleThreadProxy.h"
 #include <gtest/gtest.h>
+#include <public/WebScrollbar.h>
+#include <public/WebScrollbarThemeGeometry.h>
+#include <public/WebScrollbarThemePainter.h>
 
 using namespace WebCore;
 
@@ -60,7 +63,7 @@ public:
     virtual bool isScrollableAreaActive() const { return false; }
     virtual bool isScrollViewScrollbar() const { return false; }
 
-    virtual IntPoint convertFromContainingWindow(const IntPoint& windowPoint) { return IntPoint(); }
+    virtual IntPoint convertFromContainingWindow(const IntPoint& windowPoint) { return windowPoint; }
 
     virtual bool isCustomScrollbar() const { return false; }
     virtual ScrollbarOrientation orientation() const { return HorizontalScrollbar; }
@@ -83,6 +86,8 @@ public:
     virtual bool enabled() const { return false; }
     virtual void setEnabled(bool) { }
 
+    virtual bool isOverlayScrollbar() const { return false; }
+
     MockScrollbar() : Scrollbar(0, HorizontalScrollbar, RegularScrollbar) { }
     virtual ~MockScrollbar() { }
 };
@@ -91,12 +96,16 @@ TEST(ScrollbarLayerChromiumTest, resolveScrollLayerPointer)
 {
     DebugScopedSetImplThread impl;
 
+    RefPtr<MockScrollbar> mockScrollbar = adoptRef(new MockScrollbar);
+    WebKit::WebScrollbarThemeGeometry geometry(0);
+    WebKit::WebScrollbarThemePainter painter(0);
+
     Settings::setMockScrollbarsEnabled(true);
     {
-        RefPtr<MockScrollbar> scrollbar = adoptRef(new MockScrollbar);
+        OwnPtr<WebKit::WebScrollbar> scrollbar = WebKit::WebScrollbar::create(mockScrollbar.get());
         RefPtr<LayerChromium> layerTreeRoot = LayerChromium::create();
         RefPtr<LayerChromium> child1 = LayerChromium::create();
-        RefPtr<LayerChromium> child2 = ScrollbarLayerChromium::create(scrollbar.get(), child1->id());
+        RefPtr<LayerChromium> child2 = ScrollbarLayerChromium::create(scrollbar.release(), painter, geometry, child1->id());
         layerTreeRoot->addChild(child1);
         layerTreeRoot->addChild(child2);
 
@@ -109,10 +118,10 @@ TEST(ScrollbarLayerChromiumTest, resolveScrollLayerPointer)
     }
 
     { // another traverse order
-        RefPtr<MockScrollbar> scrollbar = adoptRef(new MockScrollbar);
+        OwnPtr<WebKit::WebScrollbar> scrollbar = WebKit::WebScrollbar::create(mockScrollbar.get());
         RefPtr<LayerChromium> layerTreeRoot = LayerChromium::create();
         RefPtr<LayerChromium> child2 = LayerChromium::create();
-        RefPtr<LayerChromium> child1 = ScrollbarLayerChromium::create(scrollbar.get(), child2->id());
+        RefPtr<LayerChromium> child1 = ScrollbarLayerChromium::create(scrollbar.release(), painter, geometry, child2->id());
         layerTreeRoot->addChild(child1);
         layerTreeRoot->addChild(child2);
 

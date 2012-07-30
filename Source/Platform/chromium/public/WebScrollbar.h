@@ -25,8 +25,21 @@
 #ifndef WebScrollbar_h
 #define WebScrollbar_h
 
+#include "WebPoint.h"
+#include "WebRect.h"
+#include "WebSize.h"
+#include "WebVector.h"
+#if WEBKIT_IMPLEMENTATION
+#include <wtf/PassOwnPtr.h>
+#endif
+
+namespace WebCore {
+class Scrollbar;
+}
+
 namespace WebKit {
 
+// A const accessor interface for a WebKit scrollbar
 class WebScrollbar {
 public:
     enum Orientation {
@@ -46,6 +59,31 @@ public:
         ScrollByPixel
     };
 
+    enum ScrollbarControlSize {
+        RegularScrollbar,
+        SmallScrollbar
+    };
+
+    enum ScrollbarPart {
+        NoPart = 0,
+        BackButtonStartPart = 1,
+        ForwardButtonStartPart = 1 << 1,
+        BackTrackPart = 1 << 2,
+        ThumbPart = 1 << 3,
+        ForwardTrackPart = 1 << 4,
+        BackButtonEndPart = 1 << 5,
+        ForwardButtonEndPart = 1 << 6,
+        ScrollbarBGPart = 1 << 7,
+        TrackBGPart = 1 << 8,
+        AllParts = 0xffffffff
+    };
+
+    enum ScrollbarOverlayStyle {
+        ScrollbarOverlayStyleDefault,
+        ScrollbarOverlayStyleDark,
+        ScrollbarOverlayStyleLight
+    };
+
     virtual ~WebScrollbar() { }
 
     // Return true if this is an overlay scrollbar.
@@ -53,6 +91,25 @@ public:
 
     // Gets the current value (i.e. position inside the region).
     virtual int value() const = 0;
+
+    virtual WebPoint location() const = 0;
+    virtual WebSize size() const = 0;
+    virtual bool enabled() const = 0;
+    virtual int maximum() const = 0;
+    virtual int totalSize() const = 0;
+    virtual bool isScrollViewScrollbar() const = 0;
+    virtual bool isScrollableAreaActive() const = 0;
+    virtual void getTickmarks(WebVector<WebRect>& tickmarks) const = 0;
+    virtual ScrollbarControlSize controlSize() const = 0;
+    virtual ScrollbarPart pressedPart() const = 0;
+    virtual ScrollbarPart hoveredPart() const = 0;
+    virtual ScrollbarOverlayStyle scrollbarOverlayStyle() const = 0;
+    virtual bool isCustomScrollbar() const = 0;
+    virtual Orientation orientation() const = 0;
+
+#if WEBKIT_IMPLEMENTATION
+    WEBKIT_EXPORT static PassOwnPtr<WebScrollbar> create(WebCore::Scrollbar*);
+#endif
 };
 
 } // namespace WebKit

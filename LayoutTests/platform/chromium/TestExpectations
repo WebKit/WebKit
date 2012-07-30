@@ -3577,6 +3577,8 @@ BUGWK90430 : inspector/timeline/timeline-receive-response-event.html = PASS TEXT
 // Require rebaseline after bug 88171
 BUGWK88171 WIN : css1/formatting_model/floating_elements.html = IMAGE
 
+BUGCR135709 : platform/chromium/compositing/scrollbars/custom-composited-different-track-parts.html = IMAGE
+
 // webkitIsFullScreen does not have the correct value after an iframe exits fullscreen
 BUGWK90704 : fullscreen/exit-full-screen-iframe.html = TEXT
 

@@ -33,6 +33,8 @@
 
 #include "PopupMenu.h"
 #include "WebExternalPopupMenuClient.h"
+#include <public/WebCanvas.h>
+#include <public/WebScrollbar.h>
 
 namespace WebCore {
 class FrameView;
@@ -45,6 +47,7 @@ namespace WebKit {
 class WebExternalPopupMenu;
 class WebViewClient;
 struct WebPopupMenuInfo;
+class WebInputEvent;
 
 // The ExternalPopupMenu connects the actual implementation of the popup menu
 // to the WebCore popup menu.
@@ -76,7 +79,7 @@ private:
 
     // The actual implementor of the show menu.
     WebExternalPopupMenu* m_webExternalPopupMenu;
-}; 
+};
 
 } // namespace WebKit
 

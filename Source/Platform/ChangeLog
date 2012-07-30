@@ -1,3 +1,49 @@
+2012-07-30  Adrienne Walker  <enne@google.com>
+
+        [chromium] Remove dependency on ScrollbarTheme from the compositor
+        https://bugs.webkit.org/show_bug.cgi?id=90528
+
+        Reviewed by James Robinson.
+
+        Flesh out WebScrollbar functions enough to be able to implement
+        the parts of ScrollbarThemeClient that Chromium uses.
+
+        Wrap ScrollbarThemeComposite in the Platform API via two different
+        classes: WebScrollbarThemePainter is the non-threadsafe version that
+        is used to paint parts of a scrollbar into a context. This is intended
+        to only be used on the main thread. WebScrollbarThemeGeometry is the
+        threadsafe version, used to get the location and sizes of scrollbar
+        parts on both threads, so they can be painted on the main thread and
+        composited on the compositor thread.
+
+        Unfortunately, there is no way to enforce these thread safety issues,
+        as other ports use the ScrollbarTheme hierarchy differently than
+        Chromium does. On the bright side, other than painting, the
+        ScrollbarTheme code is largely functional and we can enforce this
+        internally for the Chromium port.
+
+        * Platform.gypi:
+        * chromium/public/WebScrollbar.h:
+        (WebCore):
+        (WebKit):
+        (WebScrollbar):
+        * chromium/public/WebScrollbarThemeGeometry.h: Added.
+        (WebCore):
+        (WebKit):
+        (WebScrollbarThemeGeometry):
+        (WebKit::WebScrollbarThemeGeometry::WebScrollbarThemeGeometry):
+        (WebKit::WebScrollbarThemeGeometry::~WebScrollbarThemeGeometry):
+        (WebKit::WebScrollbarThemeGeometry::operator=):
+        (WebKit::WebScrollbarThemeGeometry::isNull):
+        * chromium/public/WebScrollbarThemePainter.h: Added.
+        (WebCore):
+        (WebKit):
+        (WebScrollbarThemePainter):
+        (WebKit::WebScrollbarThemePainter::WebScrollbarThemePainter):
+        (WebKit::WebScrollbarThemePainter::~WebScrollbarThemePainter):
+        (WebKit::WebScrollbarThemePainter::operator=):
+        (WebKit::WebScrollbarThemePainter::isNull):
+
 2012-07-30  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r124025.

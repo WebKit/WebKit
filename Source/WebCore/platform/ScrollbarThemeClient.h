@@ -83,6 +83,8 @@ public:
     virtual bool enabled() const = 0;
     virtual void setEnabled(bool) = 0;
 
+    virtual bool isOverlayScrollbar() const = 0;
+
 protected:
     virtual ~ScrollbarThemeClient() { }
 };

@@ -1,3 +1,16 @@
+2012-07-30  Adrienne Walker  <enne@google.com>
+
+        [chromium] Remove dependency on ScrollbarTheme from the compositor
+        https://bugs.webkit.org/show_bug.cgi?id=90528
+
+        Reviewed by James Robinson.
+
+        Mark custom-composited-different-track-parts.html as failing because
+        custom scrollbars no longer create ScrollbarLayerChromiums. This is
+        due to the unsafe casts in RenderThemeScrollbar.
+
+        * platform/chromium/TestExpectations:
+
 2012-07-30  Tom Hudson  <tomhudson@google.com>
 
         Baselines on additional platforms for fast/table/table-row-focus-ring-paint.

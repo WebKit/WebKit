@@ -109,6 +109,8 @@
             'chromium/public/WebReferrerPolicy.h',
             'chromium/public/WebRenderingStats.h',
             'chromium/public/WebScrollbar.h',
+            'chromium/public/WebScrollbarThemeGeometry.h',
+            'chromium/public/WebScrollbarThemePainter.h',
             'chromium/public/WebSessionDescriptionDescriptor.h',
             'chromium/public/WebSize.h',
             'chromium/public/WebSocketStreamError.h',

@@ -30,7 +30,9 @@
 
 #include "LayerChromium.h"
 #include "LayerTextureUpdater.h"
-#include "ScrollTypes.h"
+#include <public/WebScrollbar.h>
+#include <public/WebScrollbarThemeGeometry.h>
+#include <public/WebScrollbarThemePainter.h>
 
 namespace WebCore {
 
@@ -41,7 +43,7 @@ class CCTextureUpdater;
 class ScrollbarLayerChromium : public LayerChromium {
 public:
     virtual PassOwnPtr<CCLayerImpl> createCCLayerImpl();
-    static PassRefPtr<ScrollbarLayerChromium> create(Scrollbar*, int scrollLayerId);
+    static PassRefPtr<ScrollbarLayerChromium> create(PassOwnPtr<WebKit::WebScrollbar>, WebKit::WebScrollbarThemePainter, WebKit::WebScrollbarThemeGeometry, int scrollLayerId);
 
     // LayerChromium interface
     virtual void setTexturePriorities(const CCPriorityCalculator&) OVERRIDE;
@@ -55,14 +57,15 @@ public:
     virtual ScrollbarLayerChromium* toScrollbarLayerChromium() { return this; }
 
 protected:
-    ScrollbarLayerChromium(Scrollbar*, int scrollLayerId);
+    ScrollbarLayerChromium(PassOwnPtr<WebKit::WebScrollbar>, WebKit::WebScrollbarThemePainter, WebKit::WebScrollbarThemeGeometry, int scrollLayerId);
 
 private:
-    ScrollbarThemeComposite* theme() const;
     void updatePart(LayerTextureUpdater*, LayerTextureUpdater::Texture*, const IntRect&, CCTextureUpdater&, CCRenderingStats&);
     void createTextureUpdaterIfNeeded();
 
-    RefPtr<Scrollbar> m_scrollbar;
+    OwnPtr<WebKit::WebScrollbar> m_scrollbar;
+    WebKit::WebScrollbarThemePainter m_painter;
+    WebKit::WebScrollbarThemeGeometry m_geometry;
     int m_scrollLayerId;
 
     GC3Denum m_textureFormat;
@@ -75,14 +78,6 @@ private:
     OwnPtr<LayerTextureUpdater::Texture> m_backTrack;
     OwnPtr<LayerTextureUpdater::Texture> m_foreTrack;
     OwnPtr<LayerTextureUpdater::Texture> m_thumb;
-
-    ScrollbarOverlayStyle m_scrollbarOverlayStyle;
-    bool m_isScrollableAreaActive;
-    bool m_isScrollViewScrollbar;
-
-    ScrollbarOrientation m_orientation;
-
-    ScrollbarControlSize m_controlSize;
 };
 
 }

@@ -30,6 +30,10 @@
 
 #include "ScrollbarThemeClient.h"
 #include "cc/CCLayerImpl.h"
+#include <public/WebRect.h>
+#include <public/WebScrollbar.h>
+#include <public/WebScrollbarThemeGeometry.h>
+#include <public/WebVector.h>
 
 namespace WebCore {
 
@@ -39,19 +43,7 @@ class CCScrollbarLayerImpl : public CCLayerImpl {
 public:
     static PassOwnPtr<CCScrollbarLayerImpl> create(int id);
 
-    void setScrollbarOverlayStyle(ScrollbarOverlayStyle scrollbarOverlayStyle) { m_scrollbarOverlayStyle = scrollbarOverlayStyle; }
-    void setTickmarks(const Vector<IntRect>& tickmarks) { m_tickmarks = tickmarks; }
-    void setIsScrollableAreaActive(bool isScrollableAreaActive) { m_isScrollableAreaActive = isScrollableAreaActive; }
-    void setIsScrollViewScrollbar(bool isScrollViewScrollbar) { m_isScrollViewScrollbar = isScrollViewScrollbar; }
-
-    void setOrientation(ScrollbarOrientation orientation) { m_orientation = orientation; }
-
-    void setControlSize(ScrollbarControlSize controlSize) { m_controlSize = controlSize; }
-
-    void setPressedPart(ScrollbarPart pressedPart) { m_pressedPart = pressedPart; }
-    void setHoveredPart(ScrollbarPart hoveredPart) { m_hoveredPart = hoveredPart; }
-
-    void setEnabled(bool enabled) { m_enabled = enabled; }
+    void setScrollbarData(const WebKit::WebScrollbar*, WebKit::WebScrollbarThemeGeometry);
 
     void setBackTrackResourceId(CCResourceProvider::ResourceId id) { m_backTrackResourceId = id; }
     void setForeTrackResourceId(CCResourceProvider::ResourceId id) { m_foreTrackResourceId = id; }
@@ -69,54 +61,27 @@ private:
     CCLayerImpl* m_scrollLayer;
 
     // nested class only to avoid namespace problem
-    class CCScrollbar : public ScrollbarThemeClient {
+    class CCScrollbar : public WebKit::WebScrollbar {
     public:
         explicit CCScrollbar(CCScrollbarLayerImpl* owner) : m_owner(owner) { }
 
-        // ScrollbarThemeClient implementation
-        virtual int x() const;
-        virtual int y() const;
-        virtual int width() const;
-        virtual int height() const;
-        virtual IntSize size() const;
-        virtual IntPoint location() const;
-
-        virtual ScrollView* parent() const;
-        virtual ScrollView* root() const;
-
-        virtual void setFrameRect(const IntRect&);
-        virtual IntRect frameRect() const;
-
-        virtual void invalidate();
-        virtual void invalidateRect(const IntRect&);
-
-        virtual ScrollbarOverlayStyle scrollbarOverlayStyle() const;
-        virtual void getTickmarks(Vector<IntRect>&) const;
-        virtual bool isScrollableAreaActive() const;
-        virtual bool isScrollViewScrollbar() const;
-
-        virtual IntPoint convertFromContainingWindow(const IntPoint& windowPoint);
-
-        virtual bool isCustomScrollbar() const;
-        virtual ScrollbarOrientation orientation() const;
-
+        // WebScrollbar implementation
+        virtual bool isOverlay() const;
         virtual int value() const;
-        virtual float currentPos() const;
-        virtual int visibleSize() const;
-        virtual int totalSize() const;
-        virtual int maximum() const;
-        virtual ScrollbarControlSize controlSize() const;
-
-        virtual int lineStep() const;
-        virtual int pageStep() const;
-
-        virtual ScrollbarPart pressedPart() const;
-        virtual ScrollbarPart hoveredPart() const;
-
-        virtual void styleChanged();
-
+        virtual WebKit::WebPoint location() const;
+        virtual WebKit::WebSize size() const;
         virtual bool enabled() const;
-        virtual void setEnabled(bool);
+        virtual int maximum() const;
+        virtual int totalSize() const;
+        virtual bool isScrollViewScrollbar() const;
+        virtual bool isScrollableAreaActive() const;
+        virtual void getTickmarks(WebKit::WebVector<WebKit::WebRect>& tickmarks) const;
+        virtual WebScrollbar::ScrollbarControlSize controlSize() const;
+        virtual WebScrollbar::ScrollbarPart pressedPart() const;
+        virtual WebScrollbar::ScrollbarPart hoveredPart() const;
+        virtual WebScrollbar::ScrollbarOverlayStyle scrollbarOverlayStyle() const;
+        virtual WebScrollbar::Orientation orientation() const;
+        virtual bool isCustomScrollbar() const;
 
     private:
         CCScrollbarLayerImpl* m_owner;
@@ -128,19 +93,20 @@ private:
     CCResourceProvider::ResourceId m_foreTrackResourceId;
     CCResourceProvider::ResourceId m_thumbResourceId;
 
-    ScrollbarOverlayStyle m_scrollbarOverlayStyle;
-    Vector<IntRect> m_tickmarks;
+    WebKit::WebScrollbarThemeGeometry m_geometry;
+
+    // Data to implement CCScrollbar
+    WebKit::WebScrollbar::ScrollbarOverlayStyle m_scrollbarOverlayStyle;
+    WebKit::WebVector<WebKit::WebRect> m_tickmarks;
+    WebKit::WebScrollbar::Orientation m_orientation;
+    WebKit::WebScrollbar::ScrollbarControlSize m_controlSize;
+    WebKit::WebScrollbar::ScrollbarPart m_pressedPart;
+    WebKit::WebScrollbar::ScrollbarPart m_hoveredPart;
     bool m_isScrollableAreaActive;
     bool m_isScrollViewScrollbar;
-
-    ScrollbarOrientation m_orientation;
-
-    ScrollbarControlSize m_controlSize;
-
-    ScrollbarPart m_pressedPart;
-    ScrollbarPart m_hoveredPart;
-
     bool m_enabled;
+    bool m_isCustomScrollbar;
+    bool m_isOverlayScrollbar;
 };
 
 }
