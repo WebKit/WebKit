@@ -1,3 +1,22 @@
+2012-07-30  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] Add a non-subprocess jhbuild environment and use it for run-gtk-tests
+        https://bugs.webkit.org/show_bug.cgi?id=92626
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Instead of always shelling out to enter a jhbuild environment, add a Python
+        hook for entering a jhbuild environment directly. This avoids requiring a
+        script to be wrapped in jhbuild.
+
+        * GNUmakefile.am: Remove gtk/run-api-tests from the distribution list.
+        * Scripts/run-gtk-tests: Move most of the logic from run-api-tests here
+        with additional code for entering a jhbuild environment directly.
+        * gtk/run-api-tests: Removed.
+        * jhbuild/jhbuild-wrapper: Use the new helper methods defined in jhbuildutils.py.
+        * jhbuild/jhbuildutils.py: Add some new helper methods here including
+        a method which can transform the current environment into a jhbuild-ified one.
+
 2012-07-30  Alexander Pavlov  <apavlov@chromium.org>
 
         Unreviewed, upgrade apavlov to reviewer.

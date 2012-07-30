@@ -17,37 +17,19 @@
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
+import jhbuildutils
 import os
 import shlex
 import subprocess
 import sys
 
-
-top_level_dir = None
-
-
-def top_level_path(*args):
-    global top_level_dir
-    if not top_level_dir:
-        top_level_dir = os.path.join(os.path.dirname(__file__), '..', '..')
-    return os.path.join(*(top_level_dir,) + args)
-
-
 jhbuild_revision = '1eedc423f75c605224b430579e4c303292199507'
 
-if os.environ.has_key('WEBKITOUTPUTDIR'):
-    dependencies_path = os.path.abspath(os.path.join(os.environ['WEBKITOUTPUTDIR'], 'Dependencies'))
-else:
-    dependencies_path = os.path.abspath(top_level_path('WebKitBuild', 'Dependencies'))
-
+dependencies_path = jhbuildutils.get_dependencies_path()
 installation_prefix = os.path.abspath(os.path.join(dependencies_path, 'Root'))
 source_path = os.path.abspath(os.path.join(dependencies_path, 'Source'))
 jhbuild_source_path = os.path.join(source_path, 'jhbuild')
 jhbuild_path = os.path.join(installation_prefix, 'bin', 'jhbuild')
-
-
-platform = None;
-
 
 def jhbuild_installed():
     return os.path.exists(jhbuild_path)
@@ -108,8 +90,8 @@ def install_jhbuild():
         raise Exception('jhbuild configure failed with return code: %i' % process.returncode)
 
 
-def update_webkit_libs_jhbuild():
-    process = subprocess.Popen([top_level_path('Tools', 'Scripts', 'update-webkit-libs-jhbuild'), '--' + platform])
+def update_webkit_libs_jhbuild(platform):
+    process = subprocess.Popen([jhbuildutils.top_level_path('Tools', 'Scripts', 'update-webkit-libs-jhbuild'), '--' + platform])
     process.wait()
     if process.returncode != 0:
         raise Exception('jhbuild configure failed with return code: %i' % process.returncode)
@@ -123,12 +105,12 @@ def determine_platform():
     raise ValueError('No platform specified for jhbuild-wrapper.')
 
 
-def ensure_jhbuild():
+def ensure_jhbuild(platform):
     if not jhbuild_cloned():
         clone_jhbuild()
         update_jhbuild()
         install_jhbuild()
-        update_webkit_libs_jhbuild()
+        update_webkit_libs_jhbuild(platform)
     elif not jhbuild_installed() \
             or not jhbuild_at_expected_revision():
         update_jhbuild()
@@ -143,7 +125,6 @@ try:
     platform = determine_platform()
 except ValueError as e:
     sys.exit(e)
-ensure_jhbuild()
+ensure_jhbuild(platform)
 
-os.execve(jhbuild_path, [jhbuild_path, '--no-interact', '-f', top_level_path('Tools', platform, 'jhbuildrc')] + sys.argv[2:], os.environ)
-
+os.execve(jhbuild_path, [jhbuild_path, '--no-interact', '-f', jhbuildutils.get_config_file_for_platform(platform)] + sys.argv[2:], os.environ)
