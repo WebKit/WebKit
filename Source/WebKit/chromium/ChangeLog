@@ -1,3 +1,40 @@
+2012-07-30  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r124025.
+        http://trac.webkit.org/changeset/124025
+        https://bugs.webkit.org/show_bug.cgi?id=92658
+
+        Causes color-suggestion-picker-appearance layout test to time
+        out on all Chromium platforms (Requested by tomhudson_ on
+        #webkit).
+
+        * WebKit.gyp:
+        * src/ChromeClientImpl.cpp:
+        (WebKit::ChromeClientImpl::createColorChooser):
+        * src/ChromeClientImpl.h:
+        (WebCore):
+        (ChromeClientImpl):
+        * src/ColorChooserProxy.cpp: Copied from Source/WebKit/chromium/src/ColorChooserUIController.h.
+        (WebKit):
+        (WebKit::ColorChooserProxy::ColorChooserProxy):
+        (WebKit::ColorChooserProxy::~ColorChooserProxy):
+        (WebKit::ColorChooserProxy::setSelectedColor):
+        (WebKit::ColorChooserProxy::endChooser):
+        * src/ColorChooserProxy.h: Copied from Source/WebKit/chromium/src/ColorChooserUIController.h.
+        (WebKit):
+        (ColorChooserProxy):
+        * src/ColorChooserUIController.cpp: Removed.
+        * src/WebColorChooserClientImpl.cpp: Copied from Source/WebKit/chromium/src/ColorChooserUIController.h.
+        (WebKit):
+        (WebKit::WebColorChooserClientImpl::WebColorChooserClientImpl):
+        (WebKit::WebColorChooserClientImpl::~WebColorChooserClientImpl):
+        (WebKit::WebColorChooserClientImpl::didChooseColor):
+        (WebKit::WebColorChooserClientImpl::didEndChooser):
+        * src/WebColorChooserClientImpl.h: Renamed from Source/WebKit/chromium/src/ColorChooserUIController.h.
+        (WebCore):
+        (WebKit):
+        (WebColorChooserClientImpl):
+
 2012-07-30  Keishi Hattori  <keishi@webkit.org>
 
         Implement datalist UI for input type color for Chromium

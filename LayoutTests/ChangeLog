@@ -1,3 +1,19 @@
+2012-07-30  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r124025.
+        http://trac.webkit.org/changeset/124025
+        https://bugs.webkit.org/show_bug.cgi?id=92658
+
+        Causes color-suggestion-picker-appearance layout test to time
+        out on all Chromium platforms (Requested by tomhudson_ on
+        #webkit).
+
+        * platform/chromium-mac/platform/chromium/fast/forms/color/color-suggestion-picker-appearance-expected.png: Removed.
+        * platform/chromium/TestExpectations:
+        * platform/chromium/fast/forms/color/color-suggestion-picker-appearance-expected.txt: Removed.
+        * platform/chromium/fast/forms/color/color-suggestion-picker-appearance.html: Removed.
+        * platform/chromium/fast/forms/datalist/input-list-expected.txt:
+
 2012-07-30  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed GTK gardening.
