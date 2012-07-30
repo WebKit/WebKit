@@ -1106,6 +1106,19 @@ void Internals::resumeAnimations(Document* document, ExceptionCode& ec) const
     controller->resumeAnimations();
 }
 
+void Internals::garbageCollectDocumentResources(Document* document, ExceptionCode& ec) const
+{
+    if (!document) {
+        ec = INVALID_ACCESS_ERR;
+        return;
+    }
+
+    CachedResourceLoader* cachedResourceLoader = document->cachedResourceLoader();
+    if (!cachedResourceLoader)
+        return;
+    cachedResourceLoader->garbageCollectDocumentResources();
+}
+
 void Internals::allowRoundingHacks() const
 {
     settings()->allowRoundingHacks();

@@ -1,3 +1,12 @@
+2012-07-29  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Resource agent's reference to cached resources should be weak.
+        https://bugs.webkit.org/show_bug.cgi?id=92108
+
+        Reviewed by Pavel Feldman.
+
+        * Source/autotools/symbols.filter:
+
 2012-07-30  Shinya Kawanaka  <shinyak@chromium.org>
 
         Prohibit having AuthorShadowDOM of input or textarea element for a while and having a flag to enable it in Internals.

@@ -1,3 +1,15 @@
+2012-07-29  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Resource agent's reference to cached resources should be weak.
+        https://bugs.webkit.org/show_bug.cgi?id=92108
+
+        Reviewed by Pavel Feldman.
+
+        * http/tests/inspector/network/cached-resource-destroyed-moved-to-storage-expected.txt: Added.
+        * http/tests/inspector/network/cached-resource-destroyed-moved-to-storage.html: Added.
+        * http/tests/inspector/network/cached-resource-destroyed-too-big-discarded-expected.txt: Added.
+        * http/tests/inspector/network/cached-resource-destroyed-too-big-discarded.html: Added.
+
 2012-07-30  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
 
         [Qt] Gardening. Skip failing tests and add a Qt specific expected file.
