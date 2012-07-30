@@ -1,3 +1,15 @@
+2012-07-30  Robin Cao  <robin.cao@torchmobile.com.cn>
+
+        [BlackBerry] Adapt to changes in the SharedArray platform API
+        https://bugs.webkit.org/show_bug.cgi?id=92631
+
+        Reviewed by Rob Buis.
+
+        Adapt to changes in the SharedArray platform API. No behavioural change.
+
+        * DumpRenderTree/blackberry/LayoutTestControllerBlackBerry.cpp:
+        (LayoutTestController::webHistoryItemCount):
+
 2012-07-30  Balazs Kelemen  <kbalazs@webkit.org>
 
         [Qt][NRWT] REGRESSION(123729): Forcing pixel tests with -p doesn't work

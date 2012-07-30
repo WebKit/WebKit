@@ -507,26 +507,25 @@ void ChromeClientBlackBerry::exceededDatabaseQuota(Frame* frame, const String& n
 void ChromeClientBlackBerry::runOpenPanel(Frame*, PassRefPtr<FileChooser> chooser)
 {
     SharedArray<WebString> initialFiles;
-    unsigned int initialFileSize = chooser->settings().selectedFiles.size();
-    if (initialFileSize > 0)
-        initialFiles.reset(new WebString[initialFileSize]);
-    for (unsigned i = 0; i < initialFileSize; ++i)
+    unsigned numberOfInitialFiles = chooser->settings().selectedFiles.size();
+    if (numberOfInitialFiles > 0)
+        initialFiles.reset(new WebString[numberOfInitialFiles], numberOfInitialFiles);
+    for (unsigned i = 0; i < numberOfInitialFiles; ++i)
         initialFiles[i] = chooser->settings().selectedFiles[i];
 
     SharedArray<WebString> chosenFiles;
-    unsigned int chosenFileSize;
 
     {
         PageGroupLoadDeferrer deferrer(m_webPagePrivate->m_page, true);
         TimerBase::fireTimersInNestedEventLoop();
 
         // FIXME: Use chooser->settings().acceptMIMETypes instead of WebString() for the second parameter.
-        if (!m_webPagePrivate->m_client->chooseFilenames(chooser->settings().allowsMultipleFiles, WebString(), initialFiles, initialFileSize, chosenFiles, chosenFileSize))
+        if (!m_webPagePrivate->m_client->chooseFilenames(chooser->settings().allowsMultipleFiles, WebString(), initialFiles, chosenFiles))
             return;
     }
 
-    Vector<String> files(chosenFileSize);
-    for (unsigned i = 0; i < chosenFileSize; ++i)
+    Vector<String> files(chosenFiles.length());
+    for (unsigned i = 0; i < chosenFiles.length(); ++i)
         files[i] = chosenFiles[i];
     chooser->chooseFiles(files);
 }

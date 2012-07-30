@@ -1,3 +1,21 @@
+2012-07-30  Robin Cao  <robin.cao@torchmobile.com.cn>
+
+        [BlackBerry] Adapt to changes in the SharedArray platform API
+        https://bugs.webkit.org/show_bug.cgi?id=92631
+
+        Reviewed by Rob Buis.
+
+        Adapt to changes in the SharedArray platform API. No behavioural change.
+
+        Reviewed internally by Joe Mason.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPage::getBackForwardList):
+        * Api/WebPage.h:
+        * Api/WebPageClient.h:
+        * WebCoreSupport/ChromeClientBlackBerry.cpp:
+        (WebCore::ChromeClientBlackBerry::runOpenPanel):
+
 2012-07-30  Patrick Gansterer  <paroga@webkit.org>
 
         Replace UnicodeWinCE with UnicodeWchar

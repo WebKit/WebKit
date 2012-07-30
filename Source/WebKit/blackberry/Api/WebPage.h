@@ -299,7 +299,7 @@ public:
     void goToBackForwardEntry(BackForwardId);
 
     int backForwardListLength() const;
-    void getBackForwardList(SharedArray<BackForwardEntry>& result, unsigned& resultLength) const;
+    void getBackForwardList(SharedArray<BackForwardEntry>& result) const;
     void releaseBackForwardEntry(BackForwardId) const;
     void clearBackForwardList(bool keepCurrentPage) const;
 

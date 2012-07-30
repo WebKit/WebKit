@@ -5391,13 +5391,12 @@ JSValueRef WebPage::windowObject() const
 // Serialize only the members of HistoryItem which are needed by the client,
 // and copy them into a SharedArray. Also include the HistoryItem pointer which
 // will be used by the client as an opaque reference to identify the item.
-void WebPage::getBackForwardList(SharedArray<BackForwardEntry>& result, unsigned int& resultSize) const
+void WebPage::getBackForwardList(SharedArray<BackForwardEntry>& result) const
 {
     HistoryItemVector entries = static_cast<BackForwardListImpl*>(d->m_page->backForward()->client())->entries();
-    resultSize = entries.size();
-    result.reset(new BackForwardEntry[resultSize]);
+    result.reset(new BackForwardEntry[entries.size()], entries.size());
 
-    for (unsigned i = 0; i < resultSize; ++i) {
+    for (unsigned i = 0; i < entries.size(); ++i) {
         RefPtr<HistoryItem> entry = entries[i];
         BackForwardEntry& resultEntry = result[i];
         resultEntry.url = entry->urlString();
