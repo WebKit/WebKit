@@ -60,7 +60,7 @@ public:
     void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
     void purgeGLResources();
     void setContentsSize(const WebCore::FloatSize&);
-    void setVisibleContentsRect(const WebCore::IntRect&, float scale, const WebCore::FloatPoint& trajectory, const WebCore::FloatPoint& accurateVisibleContentsPosition);
+    void setVisibleContentsRect(const WebCore::FloatRect&, float scale, const WebCore::FloatPoint& trajectoryVector);
     void didRenderFrame();
     void createTileForLayer(int layerID, int tileID, const WebCore::IntRect&, const SurfaceUpdateInfo&);
     void updateTileForLayer(int layerID, int tileID, const WebCore::IntRect&, const SurfaceUpdateInfo&);
@@ -80,6 +80,9 @@ protected:
 
     DrawingAreaProxy* m_drawingAreaProxy;
     RefPtr<WebLayerTreeRenderer> m_renderer;
+    WebCore::IntRect m_lastSentVisibleRect;
+    float m_lastSentScale;
+    WebCore::FloatPoint m_lastSentTrajectoryVector;
 #if USE(GRAPHICS_SURFACE)
     HashMap<uint32_t, RefPtr<ShareableSurface> > m_surfaces;
 #endif

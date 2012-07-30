@@ -85,8 +85,7 @@ static FloatPoint boundedScrollPosition(const FloatPoint& scrollPosition, const 
 }
 
 WebLayerTreeRenderer::WebLayerTreeRenderer(LayerTreeCoordinatorProxy* layerTreeCoordinatorProxy)
-    : m_contentsScale(1)
-    , m_layerTreeCoordinatorProxy(layerTreeCoordinatorProxy)
+    : m_layerTreeCoordinatorProxy(layerTreeCoordinatorProxy)
     , m_rootLayerID(InvalidWebLayerID)
     , m_isActive(false)
 {
@@ -159,11 +158,9 @@ void WebLayerTreeRenderer::setContentsSize(const WebCore::FloatSize& contentsSiz
     m_contentsSize = contentsSize;
 }
 
-void WebLayerTreeRenderer::setVisibleContentsRect(const IntRect& rect, float scale, const WebCore::FloatPoint& accurateVisibleContentsPosition)
+void WebLayerTreeRenderer::setVisibleContentsRect(const FloatRect& rect)
 {
     m_visibleContentsRect = rect;
-    m_contentsScale = scale;
-    m_accurateVisibleContentsPosition = accurateVisibleContentsPosition;
 }
 
 void WebLayerTreeRenderer::updateViewport()
@@ -180,7 +177,7 @@ void WebLayerTreeRenderer::adjustPositionForFixedLayers()
     // Fixed layer positions are updated by the web process when we update the visible contents rect / scroll position.
     // If we want those layers to follow accurately the viewport when we move between the web process updates, we have to offset
     // them by the delta between the current position and the position of the viewport used for the last layout.
-    FloatPoint scrollPosition = boundedScrollPosition(FloatPoint(m_accurateVisibleContentsPosition.x() / m_contentsScale, m_accurateVisibleContentsPosition.y() / m_contentsScale), m_visibleContentsRect, m_contentsSize);
+    FloatPoint scrollPosition = boundedScrollPosition(m_visibleContentsRect.location(), m_visibleContentsRect, m_contentsSize);
     FloatPoint renderedScrollPosition = boundedScrollPosition(m_renderedContentsScrollPosition, m_visibleContentsRect, m_contentsSize);
     FloatSize delta = scrollPosition - renderedScrollPosition;
 

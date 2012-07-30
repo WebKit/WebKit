@@ -1,5 +1,46 @@
 2012-07-27  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
+        [Qt] Remove accurateVisibleContentsPosition and use a FloatRect for visibleContentsRect instead
+        https://bugs.webkit.org/show_bug.cgi?id=92536
+
+        Reviewed by Noam Rosenthal.
+
+        AccurateVisibleContentsPosition carries the same information as visibleContentsRect.location() and
+        is needed for fixed layer position updates.
+        This patch instead uses a FloatRect for the visible contents rect from the web view down to the
+        LayerCoordinatorProxy, and converts it to an IntRect at this moment, before sending it to the
+        web process.
+        This also moves the check to prevent sending the same rect to the moment of the conversion
+        in LayerTreeCoordinatorProxy to fix a bug where the fixed layer deltas wouldn't be updated
+        unless the integer part of position components changed.
+
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebViewLegacyPrivate::updateViewportSize):
+        * UIProcess/DrawingAreaProxy.h:
+        (WebKit::DrawingAreaProxy::setVisibleContentsRect):
+        * UIProcess/DrawingAreaProxyImpl.cpp:
+        (WebKit::DrawingAreaProxyImpl::setVisibleContentsRect):
+        * UIProcess/DrawingAreaProxyImpl.h:
+        (DrawingAreaProxyImpl):
+        * UIProcess/LayerTreeCoordinatorProxy.cpp:
+        (WebKit::LayerTreeCoordinatorProxy::LayerTreeCoordinatorProxy):
+        (WebKit::LayerTreeCoordinatorProxy::setVisibleContentsRect):
+        * UIProcess/LayerTreeCoordinatorProxy.h:
+        (LayerTreeCoordinatorProxy):
+        * UIProcess/WebLayerTreeRenderer.cpp:
+        (WebKit::WebLayerTreeRenderer::WebLayerTreeRenderer):
+        (WebKit::WebLayerTreeRenderer::setVisibleContentsRect):
+        (WebKit::WebLayerTreeRenderer::adjustPositionForFixedLayers):
+        * UIProcess/WebLayerTreeRenderer.h:
+        (WebLayerTreeRenderer):
+        * UIProcess/qt/QtViewportHandler.cpp:
+        (WebKit::QtViewportHandler::visibleContentsRect):
+        (WebKit::QtViewportHandler::informVisibleContentChange):
+        * UIProcess/qt/QtViewportHandler.h:
+        (QtViewportHandler):
+
+2012-07-27  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
         [Qt] Fix issues remaining with fixed positioned layers
         https://bugs.webkit.org/show_bug.cgi?id=92528
 

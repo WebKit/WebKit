@@ -116,7 +116,7 @@ private:
     void setPageItemRectVisible(const QRectF&);
     void animatePageItemRectVisible(const QRectF&);
 
-    QRect visibleContentsRect() const;
+    QRectF visibleContentsRect() const;
     QRectF initialRect() const;
     QRectF nearestValidBounds() const;
 
@@ -169,7 +169,6 @@ private:
     QPointF m_lastScrollPosition;
     qreal m_pinchStartScale;
     qreal m_lastCommittedScale;
-    QRectF m_lastVisibleContentsRect;
     qreal m_zoomOutScale;
     QList<ScaleStackItem> m_scaleStack;
 };

@@ -777,15 +777,15 @@ void QQuickWebViewLegacyPrivate::initialize(WKContextRef contextRef, WKPageGroup
 void QQuickWebViewLegacyPrivate::updateViewportSize()
 {
     Q_Q(QQuickWebView);
-    QSize viewportSize = q->boundingRect().size().toSize();
+    QSizeF viewportSize = q->boundingRect().size();
     if (viewportSize.isEmpty())
         return;
     pageView->setContentsSize(viewportSize);
     // The fixed layout is handled by the FrameView and the drawing area doesn't behave differently
     // whether its fixed or not. We still need to tell the drawing area which part of it
     // has to be rendered on tiles, and in desktop mode it's all of it.
-    webPageProxy->drawingArea()->setSize(viewportSize, IntSize());
-    webPageProxy->drawingArea()->setVisibleContentsRect(IntRect(IntPoint(), viewportSize), 1, FloatPoint());
+    webPageProxy->drawingArea()->setSize(viewportSize.toSize(), IntSize());
+    webPageProxy->drawingArea()->setVisibleContentsRect(FloatRect(FloatPoint(), viewportSize), 1, FloatPoint());
 }
 
 void QQuickWebViewLegacyPrivate::enableMouseEvents()

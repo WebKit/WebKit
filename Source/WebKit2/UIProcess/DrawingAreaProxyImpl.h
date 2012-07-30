@@ -82,7 +82,7 @@ private:
     bool isInAcceleratedCompositingMode() const { return !m_layerTreeContext.isEmpty(); }
 
 #if USE(UI_SIDE_COMPOSITING)
-    virtual void setVisibleContentsRect(const WebCore::IntRect& visibleContentsRect, float scale, const WebCore::FloatPoint& trajectory, const WebCore::FloatPoint& accurateVisibleContentsPosition = WebCore::FloatPoint());
+    virtual void setVisibleContentsRect(const WebCore::FloatRect& visibleContentsRect, float scale, const WebCore::FloatPoint& trajectory);
     void didReceiveLayerTreeCoordinatorProxyMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
 #endif
 #else

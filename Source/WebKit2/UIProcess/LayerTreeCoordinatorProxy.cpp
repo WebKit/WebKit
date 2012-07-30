@@ -37,6 +37,7 @@ using namespace WebCore;
 LayerTreeCoordinatorProxy::LayerTreeCoordinatorProxy(DrawingAreaProxy* drawingAreaProxy)
     : m_drawingAreaProxy(drawingAreaProxy)
     , m_renderer(adoptRef(new WebLayerTreeRenderer(this)))
+    , m_lastSentScale(0)
 {
 }
 
@@ -137,10 +138,20 @@ void LayerTreeCoordinatorProxy::setContentsSize(const FloatSize& contentsSize)
     dispatchUpdate(bind(&WebLayerTreeRenderer::setContentsSize, m_renderer.get(), contentsSize));
 }
 
-void LayerTreeCoordinatorProxy::setVisibleContentsRect(const IntRect& rect, float scale, const FloatPoint& trajectoryVector, const WebCore::FloatPoint& accurateVisibleContentsPosition)
+void LayerTreeCoordinatorProxy::setVisibleContentsRect(const FloatRect& rect, float scale, const FloatPoint& trajectoryVector)
 {
-    dispatchUpdate(bind(&WebLayerTreeRenderer::setVisibleContentsRect, m_renderer.get(), rect, scale, accurateVisibleContentsPosition));
-    m_drawingAreaProxy->page()->process()->send(Messages::LayerTreeCoordinator::SetVisibleContentsRect(rect, scale, trajectoryVector), m_drawingAreaProxy->page()->pageID());
+    // Inform the renderer to adjust viewport-fixed layers.
+    dispatchUpdate(bind(&WebLayerTreeRenderer::setVisibleContentsRect, m_renderer.get(), rect));
+
+    // Round the rect instead of enclosing it to make sure that its size stays the same while panning. This can have nasty effects on layout.
+    IntRect roundedRect = roundedIntRect(rect);
+    if (roundedRect == m_lastSentVisibleRect && scale == m_lastSentScale && trajectoryVector == m_lastSentTrajectoryVector)
+        return;
+
+    m_drawingAreaProxy->page()->process()->send(Messages::LayerTreeCoordinator::SetVisibleContentsRect(roundedRect, scale, trajectoryVector), m_drawingAreaProxy->page()->pageID());
+    m_lastSentVisibleRect = roundedRect;
+    m_lastSentScale = scale;
+    m_lastSentTrajectoryVector = trajectoryVector;
 }
 
 void LayerTreeCoordinatorProxy::renderNextFrame()
