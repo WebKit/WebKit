@@ -75,6 +75,9 @@ RenderObject* RenderObjectChildList::removeChildNode(RenderObject* owner, Render
 {
     ASSERT(oldChild->parent() == owner);
 
+    if (oldChild->isFloatingOrPositioned())
+        toRenderBox(oldChild)->removeFloatingOrPositionedChildFromBlockLists();
+
     // So that we'll get the appropriate dirty bit set (either that a normal flow child got yanked or
     // that a positioned child got yanked).  We also repaint, so that the area exposed when the child
     // disappears gets repainted properly.
