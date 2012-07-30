@@ -87,7 +87,7 @@ WebInspector.CSSKeywordCompletions._colors = [
 WebInspector.CSSKeywordCompletions._colorAwareProperties = [
     "background", "background-color", "background-image", "border", "border-color", "border-top", "border-right", "border-bottom",
     "border-left", "border-top-color", "border-right-color", "border-bottom-color", "border-left-color", "box-shadow", "color",
-    "outline", "outline-color", "text-line-through", "text-line-through-color", "text-overline", "text-overline-color",
+    "fill", "outline", "outline-color", "stroke", "text-line-through", "text-line-through-color", "text-overline", "text-overline-color",
     "text-shadow", "text-underline", "text-underline-color", "-webkit-box-shadow", "-webkit-text-emphasis", "-webkit-text-emphasis-color"
 ].keySet();
 
