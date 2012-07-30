@@ -1,3 +1,15 @@
+2012-07-29  Kent Tamura  <tkent@chromium.org>
+
+        Fix opacity issue of fast/forms/date/calendar-picker-appearance.html
+        https://bugs.webkit.org/show_bug.cgi?id=92605
+
+        Reviewed by Hajime Morita.
+
+        We need to wait for pixel dumping until CSS transition completion for
+        the 'main' element, which has transition from opacity:0 to opacity:1.
+
+        * fast/forms/date/calendar-picker-appearance.html:
+
 2012-07-29  Dan Bernstein  <mitz@apple.com>
 
         Hit testing in the gap between pages returns incorrect results in flipped blocks writing modes

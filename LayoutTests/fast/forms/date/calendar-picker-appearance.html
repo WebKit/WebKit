@@ -16,10 +16,10 @@ if (window.internals)
 
 sendKey(document.getElementById('date'), 'Down');
 var pickerWindow = document.getElementById('mock-page-popup').contentWindow;
-pickerWindow.onresize = function() {
+pickerWindow.document.getElementById('main').addEventListener('webkitTransitionEnd', function() {
     console.log(pickerWindow.pagePopupController);
     testRunner.notifyDone();
-}
+}, false);
 </script>
 </body>
 
