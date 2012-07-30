@@ -1,3 +1,14 @@
+2012-07-30  Stephen White  <senorblanco@chromium.org>
+
+        [chromium] Unreviewed gardening.  Rebaseline another test affected by
+        r124042.
+
+        * platform/chromium-linux-x86/fast/gradients: Removed.
+        * platform/chromium-linux/fast/gradients/background-clipped-expected.png:
+        * platform/chromium-mac-snowleopard/fast/gradients/background-clipped-expected.png:
+        * platform/chromium-mac/fast/gradients/background-clipped-expected.png:
+        * platform/chromium/TestExpectations:
+
 2012-07-30  Peter Kasting  <pkasting@google.com>
 
         [Chromium] Rebaseline tests for Skia changes.

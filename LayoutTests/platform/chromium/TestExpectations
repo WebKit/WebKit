@@ -3049,9 +3049,6 @@ BUGWK81145 LION : fast/writing-mode/broken-ideograph-small-caps.html = CRASH
 BUGWK81145 LION : fast/writing-mode/broken-ideographic-font.html = CRASH
 BUGWK81145 LION : fast/writing-mode/japanese-rl-text-with-broken-font.html = CRASH
 
-// Needs rebaseline.
-BUGWK92059 : fast/gradients/background-clipped.html = IMAGE
-
 BUGYANGGUO MAC : fast/repaint/moving-shadow-on-container.html = TEXT
 
 BUGWK81537 : fast/events/touch/gesture/pad-gesture-fling.html = TEXT PASS
