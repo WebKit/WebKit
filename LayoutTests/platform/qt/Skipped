@@ -281,7 +281,6 @@ fast/regions
 
 # CSS Exclusions support not yet enabled. http://webkit.org/b/57311
 fast/exclusions
-inspector/styles/protocol-getNamedFlowCollection-command.html
 
 # USE(V8)
 
@@ -741,8 +740,6 @@ http/tests/cookies/js-get-and-set-http-only-cookie.html
 # https://bugs.webkit.org/show_bug.cgi?id=91218
 http/tests/w3c/webperf/approved/navigation-timing/html/test_performance_attributes_exist_in_object.html
 http/tests/w3c/webperf/approved/navigation-timing/html/test_timing_xserver_redirect.html
-http/tests/w3c/webperf/approved/navigation-timing/html5/test_performance_attributes_exist_in_object.html
-http/tests/w3c/webperf/approved/navigation-timing/html5/test_timing_xserver_redirect.html
 
 # =========================================================================== #
 #       Failing xmlhttprequest tests                                          #

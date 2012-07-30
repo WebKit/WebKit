@@ -524,7 +524,22 @@ fast/text/international/unicode-bidi-plaintext-in-textarea.html
 fast/text/textIteratorNilRenderer.html
 tables/mozilla_expected_failures/bugs/bug92647-1.html
 svg/hixie/mixed/003.xml
-
+tables/mozilla/bugs/bug1188.html
+tables/mozilla/bugs/bug18359.html
+tables/mozilla/bugs/bug24200.html
+tables/mozilla/bugs/bug2479-3.html
+tables/mozilla/bugs/bug28928.html
+tables/mozilla/bugs/bug30559.html
+tables/mozilla/bugs/bug4382.html
+tables/mozilla/bugs/bug4527.html
+tables/mozilla/bugs/bug46368-1.html
+tables/mozilla/bugs/bug46368-2.html
+tables/mozilla/bugs/bug51037.html
+tables/mozilla/bugs/bug55545.html
+tables/mozilla/bugs/bug59354.html
+tables/mozilla/bugs/bug96334.html
+tables/mozilla/dom/tableDom.html
+tables/mozilla/other/move_row.html
 
 # [Qt] Images scale differently in WK1 and WK2
 # https://bugs.webkit.org/show_bug.cgi?id=92015

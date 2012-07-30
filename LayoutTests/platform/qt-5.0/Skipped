@@ -1,4 +1,4 @@
-Fede# Still failing tests after refactored Qt5 and after WEBKIT_TESTFONTS fix.
+# Still failing tests after refactored Qt5 and after WEBKIT_TESTFONTS fix.
 fast/dom/Window/Plug-ins.html
 fast/frames/sandboxed-iframe-about-blank.html
 fast/frames/sandboxed-iframe-navigation-allowed.html
@@ -84,9 +84,6 @@ fast/replaced/invalid-object-with-fallback.html
 fast/replaced/object-with-embed-url-param.html
 http/tests/inspector/network/network-content-replacement-embed.html
 http/tests/inspector/network/network-embed.html
-http/tests/security/contentSecurityPolicy/object-src-no-url-blocked.html
-http/tests/security/contentSecurityPolicy/object-src-none-allowed.html
-http/tests/security/contentSecurityPolicy/object-src-none-blocked.html
 http/tests/security/frameNavigation/xss-DENIED-plugin-navigation.html
 
 # [Qt] New fast/text/line-breaks-after-ideographic-comma-or-full-stop-2.html introduced in r120624 fails on ICU platforms

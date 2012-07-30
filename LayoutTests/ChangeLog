@@ -1,3 +1,16 @@
+2012-07-30  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Default sizes for input-text and text-area are different when running DRT/WTR
+        https://bugs.webkit.org/show_bug.cgi?id=91990
+
+        Unreviewed gardening.
+
+        * platform/qt-5.0-wk2/Skipped: Skip tests.
+        * platform/qt-5.0/Skipped: Unskip accidentally skipped tests.
+        * platform/qt.5-0/fast/text/whitespace/028-expected.png: Remove accidentally committed file.
+        * platform/qt.5-0/fast/text/whitespace/028-expected.txt: Remove accidentally committed file.
+        * platform/qt/Skipped: Unskip non-existing tests.
+
 2012-07-30  Alexander Shalamov  <alexander.shalamov@intel.com>
 
         [EFL] Skip new compositing tests for EFL port
