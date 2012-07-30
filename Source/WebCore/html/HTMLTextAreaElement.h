@@ -123,6 +123,11 @@ private:
     mutable bool m_wasModifiedByUser;
 };
 
+inline bool isHTMLTextAreaElement(Node* node)
+{
+    return node->hasTagName(HTMLNames::textareaTag);
+}
+
 } //namespace
 
 #endif

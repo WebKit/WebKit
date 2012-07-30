@@ -188,6 +188,8 @@ bool RuntimeEnabledFeatures::isEncryptedMediaEnabled = false;
 
 #if ENABLE(SHADOW_DOM)
 bool RuntimeEnabledFeatures::isShadowDOMEnabled = false;
+
+bool RuntimeEnabledFeatures::isAuthorShadowDOMForAnyElementEnabled = false;
 #endif
 
 #if ENABLE(STYLE_SCOPED)

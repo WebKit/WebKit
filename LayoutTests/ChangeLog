@@ -1,3 +1,16 @@
+2012-07-30  Shinya Kawanaka  <shinyak@chromium.org>
+
+        Prohibit having AuthorShadowDOM of input or textarea element for a while and having a flag to enable it in Internals.
+        https://bugs.webkit.org/show_bug.cgi?id=92611
+
+        Reviewed by Hajime Morita.
+
+        * fast/dom/shadow/input-with-validation-without-shadow.html: Make the test runs even if
+        new WebKitShadowRoot() throws an exception.
+        * fast/dom/shadow/input-with-validation.html: Sets a flag to make AuthorShadowDOM available.
+        * fast/dom/shadow/shadow-disable-expected.txt:
+        * fast/dom/shadow/shadow-disable.html: Makes it unavailable for input and textarea to have an AuthorShadowDOM.
+
 2012-07-30  Keishi Hattori  <keishi@webkit.org>
 
         Implement datalist UI for input type color for Chromium

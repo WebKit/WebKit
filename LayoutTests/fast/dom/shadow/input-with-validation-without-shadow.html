@@ -8,15 +8,24 @@
 </form>
 
 <script>
-var input = document.getElementById('password');
-var shadowRoot = new WebKitShadowRoot(input);
+function doTest() {
+    var input = document.getElementById('password');
+    var shadowRoot = new WebKitShadowRoot(input);
 
-document.getElementById('submit').click();
-if (window.testRunner) {
-    testRunner.waitUntilDone();
-    setTimeout(function() {
+    document.getElementById('submit').click();
+    if (window.testRunner) {
+        testRunner.waitUntilDone();
+        setTimeout(function() {
+            testRunner.notifyDone();
+        }, 10);
+    }
+}
+
+try {
+    doTest()
+} catch (e) {
+    if (window.testRunner)
         testRunner.notifyDone();
-    }, 10);
 }
 </script>
 

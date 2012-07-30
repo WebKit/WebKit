@@ -15,12 +15,12 @@ AUDIO
 PASS new WebKitShadowRoot(element) is not null
 VIDEO
 PASS new WebKitShadowRoot(element) is not null
-INPUT
-PASS new WebKitShadowRoot(element) is not null
-TEXTAREA
-PASS new WebKitShadowRoot(element) is not null
 SELECT
 PASS new WebKitShadowRoot(element) is not null
+INPUT
+PASS new WebKitShadowRoot(element) threw exception Error: HIERARCHY_REQUEST_ERR: DOM Exception 3.
+TEXTAREA
+PASS new WebKitShadowRoot(element) threw exception Error: HIERARCHY_REQUEST_ERR: DOM Exception 3.
 tref
 PASS new WebKitShadowRoot(element) threw exception Error: HIERARCHY_REQUEST_ERR: DOM Exception 3.
 PASS successfullyParsed is true

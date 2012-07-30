@@ -60,6 +60,7 @@
 #include "Range.h"
 #include "RenderObject.h"
 #include "RenderTreeAsText.h"
+#include "RuntimeEnabledFeatures.h"
 #include "SchemeRegistry.h"
 #include "Settings.h"
 #include "ShadowRoot.h"
@@ -430,6 +431,15 @@ void Internals::setShadowPseudoId(Element* element, const String& id, ExceptionC
     }
 
     return element->setShadowPseudoId(id, ec);
+}
+
+void Internals::setAuthorShadowDOMForAnyElementEnabled(bool isEnabled)
+{
+#if ENABLE(SHADOW_DOM)
+    RuntimeEnabledFeatures::setAuthorShadowDOMForAnyElementEnabled(isEnabled);
+#else
+    UNUSED_PARAM(isEnabled);
+#endif
 }
 
 String Internals::visiblePlaceholder(Element* element)
