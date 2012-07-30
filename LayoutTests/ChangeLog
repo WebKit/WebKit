@@ -1,3 +1,14 @@
+2012-07-30  Stephen White  <senorblanco@chromium.org>
+
+        [chromium] Unreviewed gardening.  Add new baselines for tests 
+        affected by r124042.
+
+        * platform/chromium-linux/fast/backgrounds/repeat/negative-offset-repeat-transformed-expected.png:
+        * platform/chromium-linux/fast/borders/border-image-rotate-transform-expected.png:
+        * platform/chromium-win-xp/fast/backgrounds/repeat: Removed.
+        * platform/chromium-win/fast/backgrounds/repeat/negative-offset-repeat-transformed-expected.png:
+        * platform/chromium-win/fast/borders/border-image-rotate-transform-expected.png:
+
 2012-07-30  Peter Kasting  <pkasting@google.com>
 
         Force Mac editing mode on new test so other platforms will pass it.
