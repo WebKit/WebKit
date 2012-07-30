@@ -139,3 +139,7 @@ http/tests/webfont/fallback-font-while-loading.html
 svg/custom/glyph-selection-lang-attribute.svg
 svg/dom/css-transforms.xhtml
 touchadjustment/event-triggered-widgets.html
+
+# [Qt][WK1] REGRESSION(r123988) It made fast/writing-mode/flipped-blocks-hit-test-line-edges.html fail
+# https://bugs.webkit.org/show_bug.cgi?id=92636
+fast/writing-mode/flipped-blocks-hit-test-line-edges.html

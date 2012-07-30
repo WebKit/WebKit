@@ -176,6 +176,10 @@ svg/as-image/svg-nested.html
 # https://bugs.webkit.org/show_bug.cgi?id=89426
 fast/text/line-breaks-after-ideographic-comma-or-full-stop.html
 
+# [Qt][WK1] REGRESSION(r123988) It made fast/writing-mode/flipped-blocks-hit-test-line-edges.html fail
+# https://bugs.webkit.org/show_bug.cgi?id=92636
+fast/writing-mode/flipped-blocks-hit-test-line-edges.html
+
 # [Qt] The test fonts used for Qt tests changed to the Liberation font family,
 # due to this we are skipping tons of tests. They will be unskipped in batches ASAP.
 # https://bugs.webkit.org/show_bug.cgi?id=85203
