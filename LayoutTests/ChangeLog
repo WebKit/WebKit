@@ -1,5 +1,21 @@
 2012-07-30  Lucas Forschler  <lforschler@apple.com>
 
+    Merge 116827
+
+    2012-05-11  David Barton  <dbarton@mathscribe.com>
+
+            use after free in WebCore::RenderObject::document
+            https://bugs.webkit.org/show_bug.cgi?id=84891
+
+            Reviewed by Julien Chaffraix.
+
+            * mathml/presentation/mfenced-add-child1-expected.html: Added.
+            * mathml/presentation/mfenced-add-child1.html: Added.
+            * mathml/presentation/mfenced-add-child2-expected.html: Added.
+            * mathml/presentation/mfenced-add-child2.html: Added.
+
+2012-07-30  Lucas Forschler  <lforschler@apple.com>
+
     Merge 116698
 
     2012-05-10  Abhishek Arya  <inferno@chromium.org>
