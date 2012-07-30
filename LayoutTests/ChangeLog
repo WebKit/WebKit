@@ -1,3 +1,19 @@
+2012-07-30  Pravin D  <pravind.2k4@gmail.com>
+
+        REGRESSION: Focused TR element draws its focus outline in the wrong place
+        https://bugs.webkit.org/show_bug.cgi?id=85348
+
+        Reviewed by Julien Chaffraix.
+
+        The focus ring used to be drawn around the first row of the table section irrespective of the row in focus.
+        The issue was fixed by the bug http://www.webkit.org/b/92389 .
+        Adding a regression test case. 
+
+        * fast/table/table-row-focus-ring-paint-expected.txt: Added.
+        * fast/table/table-row-focus-ring-paint.html: Added.
+        * platform/chromium-linux/fast/table/table-row-focus-ring-paint-expected.png: Added.
+        * platform/qt-4.8/fast/table/table-row-focus-ring-paint-expected.png: Added.
+
 2012-07-30  Julien Chaffraix  <jchaffraix@webkit.org>
 
         ASSERTION FAILED: !rect.isEmpty()  : void WebCore::GraphicsContext::drawRect(const WebCore::IntRect &)
