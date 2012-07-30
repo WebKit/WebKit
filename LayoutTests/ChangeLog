@@ -1,5 +1,16 @@
 2012-07-30  Lucas Forschler  <lforschler@apple.com>
 
+    Merge 116665
+
+    2012-05-10  Abhishek Arya  <inferno@chromium.org>
+
+            Unreviewed. Correct spelling in test name.
+
+            * editing/inserting/insert-paragraph-separator-crash-expected.txt: Renamed from LayoutTests/editing/inserting/insert-paragraph-seperator-crash-expected.txt.
+            * editing/inserting/insert-paragraph-separator-crash.html: Renamed from LayoutTests/editing/inserting/insert-paragraph-seperator-crash.html.
+
+2012-07-30  Lucas Forschler  <lforschler@apple.com>
+
     Merge 116653
 
     2012-05-10  Abhishek Arya  <inferno@chromium.org>
