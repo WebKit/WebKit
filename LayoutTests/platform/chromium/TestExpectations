@@ -2890,7 +2890,7 @@ BUGWK77110 WIN DEBUG : accessibility/loading-iframe-sends-notification.html = PA
 
 BUGWK73514 WIN : platform/chromium/compositing/lost-compositor-context-permanently.html = PASS TIMEOUT
 
-Flaky/crashing
+// Flaky/crashing
 BUGWK92660 : platform/chromium/compositing/accelerated-drawing/svg-filters.html = CRASH PASS
 BUGWK92660 : platform/chromium/compositing/accelerated-drawing/alpha.html = CRASH PASS
 
