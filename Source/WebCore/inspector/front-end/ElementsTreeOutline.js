@@ -2037,9 +2037,13 @@ WebInspector.ElementsTreeUpdater.prototype = {
         }
 
         var updatedParentTreeElements = [];
-        var treeOutlineContainerElement = this._treeOutline.element.parentNode;
-        var originalScrollTop = treeOutlineContainerElement ? treeOutlineContainerElement.scrollTop : 0;
-        this._treeOutline.element.addStyleClass("hidden");
+
+        var hidePanelWhileUpdating = this._recentlyModifiedNodes.length > 10;
+        if (hidePanelWhileUpdating) {
+            var treeOutlineContainerElement = this._treeOutline.element.parentNode;
+            this._treeOutline.element.addStyleClass("hidden");
+            var originalScrollTop = treeOutlineContainerElement ? treeOutlineContainerElement.scrollTop : 0;
+        }
 
         for (var i = 0; i < this._recentlyModifiedNodes.length; ++i) {
             var parent = this._recentlyModifiedNodes[i].parent;
@@ -2074,9 +2078,12 @@ WebInspector.ElementsTreeUpdater.prototype = {
         for (var i = 0; i < updatedParentTreeElements.length; ++i)
             delete updatedParentTreeElements[i].alreadyUpdatedChildren;
 
-        this._treeOutline.element.removeStyleClass("hidden");
-        if (originalScrollTop)
-            treeOutlineContainerElement.scrollTop = originalScrollTop;
+        if (hidePanelWhileUpdating) {
+            this._treeOutline.element.removeStyleClass("hidden");
+            if (originalScrollTop)
+                treeOutlineContainerElement.scrollTop = originalScrollTop;
+            this._treeOutline.updateSelection();
+        }
         this._recentlyModifiedNodes = [];
     },
 

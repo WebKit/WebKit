@@ -1,3 +1,17 @@
+2012-07-30  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: element tag disappears after editing
+        https://bugs.webkit.org/show_bug.cgi?id=92385
+
+        Reviewed by Vsevolod Vlasov.
+
+        This has regressed when we started hiding elements panel upon
+        batch updates. Narrowing hiding cases, updating selection
+        in on-screen mode only.
+
+        * inspector/front-end/ElementsTreeOutline.js:
+        (WebInspector.ElementsTreeElement.prototype.updateSelection):
+
 2012-07-26  Yury Semikhatsky  <yurys@chromium.org>
 
         Web Inspector: move StringImpl size calculation to StringImpl
