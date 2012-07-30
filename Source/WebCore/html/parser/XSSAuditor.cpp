@@ -557,7 +557,7 @@ String XSSAuditor::decodedSnippetForJavaScript(const HTMLToken& token)
             while (startPosition < endPosition && !isJSNewline(string[startPosition]))
                 startPosition++;
         } else if (startsMultiLineCommentAt(string, startPosition)) {
-            if ((foundPosition = string.find("*/", startPosition)) != notFound)
+            if (startPosition + 2 < endPosition && (foundPosition = string.find("*/", startPosition + 2)) != notFound)
                 startPosition = foundPosition + 2;
             else
                 startPosition = endPosition;
