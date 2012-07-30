@@ -1,3 +1,19 @@
+2012-07-30  Claudio Saavedra  <csaavedra@igalia.com>
+
+        [Gtk] Add WK1 API for snapshot retrieval
+        https://bugs.webkit.org/show_bug.cgi?id=92261
+
+        Reviewed by Martin Robinson.
+
+        Add API to WebKitWebView to retrieve a snapshot of its
+        visible contents as a cairo_surface_t.
+
+        * docs/webkitgtk-sections.txt: Add new symbols.
+        * webkit/webkitwebview.cpp:
+        (webkit_web_view_get_snapshot): New
+        method to paint a webview snapshot.
+        * webkit/webkitwebview.h: Ditto.
+
 2012-07-28  Mario Sanchez Prada  <msanchez@igalia.com>
 
         [GTK] Add a new and reusable enchant-based spellchecker in WebCore

@@ -475,6 +475,7 @@ webkit_web_view_unmark_text_matches
 webkit_web_view_zoom_in
 webkit_web_view_zoom_out
 webkit_web_view_get_window_features
+webkit_web_view_get_snapshot
 <SUBSECTION Standard>
 WEBKIT_WEB_VIEW
 WEBKIT_IS_WEB_VIEW

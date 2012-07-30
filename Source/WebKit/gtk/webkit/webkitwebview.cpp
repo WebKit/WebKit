@@ -5259,6 +5259,44 @@ GtkMenu* webkit_web_view_get_context_menu(WebKitWebView* webView)
 #endif
 }
 
+/**
+ * webkit_web_view_get_snapshot:
+ * @web_view: a #WebKitWebView
+ *
+ * Retrieves a snapshot with the visible contents of @webview.
+ *
+ * Returns: (transfer full): a @cairo_surface_t
+ *
+ * Since: 1.10
+ **/
+cairo_surface_t*
+webkit_web_view_get_snapshot(WebKitWebView* webView)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), 0);
+
+    Frame* frame = core(webView)->mainFrame();
+    if (!frame || !frame->contentRenderer() || !frame->view())
+        return 0;
+
+    frame->view()->updateLayoutAndStyleIfNeededRecursive();
+    GtkAllocation allocation;
+    gtk_widget_get_allocation(GTK_WIDGET(webView), &allocation);
+    cairo_surface_t* surface = cairo_image_surface_create(CAIRO_FORMAT_ARGB32, allocation.width, allocation.height);
+    RefPtr<cairo_t> cr = adoptRef(cairo_create(surface));
+    GraphicsContext gc(cr.get());
+
+    IntRect rect = allocation;
+    gc.applyDeviceScaleFactor(frame->page()->deviceScaleFactor());
+    gc.save();
+    gc.clip(rect);
+    if (webView->priv->transparent)
+        gc.clearRect(rect);
+    frame->view()->paint(&gc, rect);
+    gc.restore();
+
+    return surface;
+}
+
 void webViewEnterFullscreen(WebKitWebView* webView, Node* node)
 {
     if (!node->hasTagName(HTMLNames::videoTag))

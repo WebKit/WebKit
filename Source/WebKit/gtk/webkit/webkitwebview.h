@@ -446,6 +446,9 @@ webkit_web_view_get_dom_document                (WebKitWebView        *web_view)
 WEBKIT_API WebKitViewportAttributes*
 webkit_web_view_get_viewport_attributes         (WebKitWebView        *web_view);
 
+WEBKIT_API cairo_surface_t*
+webkit_web_view_get_snapshot                    (WebKitWebView        *web_view);
+
 G_END_DECLS
 
 #endif
