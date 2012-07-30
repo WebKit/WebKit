@@ -1,3 +1,23 @@
+2012-07-30  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        ASSERTION FAILED: !rect.isEmpty()  : void WebCore::GraphicsContext::drawRect(const WebCore::IntRect &)
+        https://bugs.webkit.org/show_bug.cgi?id=92187
+
+        Reviewed by Simon Fraser.
+
+        The border painting logic (RenderBoxModelObject::paintOneBorderSide) would pass a rect with a 0px length
+        to RenderObject::drawLineForBoxSide. We do check the width (thickness) but not the length so we would pass
+        the rect to GraphicsContext and hit the ASSERT. This change adds a check for the length too as it is the safest
+        way, it means that we may still do unneeded operations before bailing out but that's an existing problem in the code.
+
+        Tests: fast/borders/0px-borders-no-line-height.html
+               fast/borders/double-1px-border-assert.html
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::drawLineForBoxSide):
+        Added a 0px length check. While renaming confusing variables and re-using others,
+        I also found a potential empty border that I fixed (tested by the 2nd case above).
+
 2012-07-26  Stephen White  <senorblanco@chromium.org>
 
         [chromium] Refactor the computation of resampled bitmap size in
