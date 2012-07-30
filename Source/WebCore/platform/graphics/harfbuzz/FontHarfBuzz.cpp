@@ -185,6 +185,7 @@ void Font::drawComplexText(GraphicsContext* gc, const TextRun& run,
 #if USE(HARFBUZZ_NG)
     GlyphBuffer glyphBuffer;
     HarfBuzzShaper shaper(this, run);
+    shaper.setDrawRange(from, to);
     if (!shaper.shape(&glyphBuffer))
         return;
     FloatPoint adjustedPoint = shaper.adjustStartPoint(point);

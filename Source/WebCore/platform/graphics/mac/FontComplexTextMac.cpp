@@ -105,6 +105,7 @@ void Font::drawComplexText(GraphicsContext* context, const TextRun& run, const F
     if (preferHarfBuzz(this)) {
         GlyphBuffer glyphBuffer;
         HarfBuzzShaper shaper(this, run);
+        shaper.setDrawRange(from, to);
         if (shaper.shape(&glyphBuffer)) {
             drawGlyphBuffer(context, run, glyphBuffer, point);
             return;
