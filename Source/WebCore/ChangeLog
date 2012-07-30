@@ -1,3 +1,18 @@
+2012-07-30  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: workers inspector is broken in the remote debugging mode
+        https://bugs.webkit.org/show_bug.cgi?id=92540
+
+        Reviewed by Yury Semikhatsky.
+
+        The problem was that worker manager re-used complete url with query parameters
+        for spin-off worker front-ends. As a result, in case of remote debugging, newly
+        created front-ends were connecting to the same web socket (because of the ws parameter).
+
+        * inspector/front-end/WorkerManager.js:
+        (WebInspector.WorkerManager.isDedicatedWorkerFrontend):
+        * inspector/front-end/inspector.js:
+
 2012-07-30  Keishi Hattori  <keishi@webkit.org>
 
         Implement datalist UI for input type color for Chromium

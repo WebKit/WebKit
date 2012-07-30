@@ -44,6 +44,11 @@ WebInspector.WorkerManager.isWorkerFrontend = function()
            !!WebInspector.queryParamsObject["isSharedWorker"];
 }
 
+WebInspector.WorkerManager.isDedicatedWorkerFrontend = function()
+{
+    return !!WebInspector.queryParamsObject["dedicatedWorkerId"];
+}
+
 WebInspector.WorkerManager.loaded = function()
 {
     var workerId = WebInspector.queryParamsObject["dedicatedWorkerId"];

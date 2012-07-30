@@ -389,6 +389,12 @@ WebInspector.loaded = function()
 {
     InspectorBackend.loadFromJSONIfNeeded();
 
+    if (WebInspector.WorkerManager.isDedicatedWorkerFrontend()) {
+        // Do not create socket for the worker front-end.
+        WebInspector.doLoadedDone();
+        return;
+    }
+
     var ws;
     if ("ws" in WebInspector.queryParamsObject)
         ws = "ws://" + WebInspector.queryParamsObject.ws;
