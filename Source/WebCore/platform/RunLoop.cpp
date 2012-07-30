@@ -57,15 +57,42 @@ RunLoop* RunLoop::main()
 
 void RunLoop::performWork()
 {
-    Function<void()> function;
-    
-    while (true) {
-        // It is important to handle the functions in the queue one at a time because while inside one of these
-        // functions we might re-enter RunLoop::performWork() and we need to be able to pick up where we left off.
-        // See http://webkit.org/b/89590 for more discussion.
+    // It is important to handle the functions in the queue one at a time because while inside one of these
+    // functions we might re-enter RunLoop::performWork() and we need to be able to pick up where we left off.
+    // See http://webkit.org/b/89590 for more discussion.
 
+    // One possible scenario when handling the function queue is as follows:
+    // - RunLoop::performWork() is invoked with 1 function on the queue
+    // - Handling that function results in 1 more function being enqueued
+    // - Handling that one results in yet another being enqueued
+    // - And so on
+    //
+    // In this situation one invocation of performWork() never returns so all other event sources are blocked.
+    // By only handling up to the number of functions that were in the queue when performWork() is called
+    // we guarantee to occasionally return from the run loop so other event sources will be allowed to spin.
+
+    Function<void()> function;
+    size_t functionsToHandle = 0;
+
+    {
+        MutexLocker locker(m_functionQueueLock);
+        functionsToHandle = m_functionQueue.size();
+
+        if (m_functionQueue.isEmpty())
+            return;
+
+        function = m_functionQueue.takeFirst();
+    }
+
+    function();
+
+    for (size_t functionsHandled = 1; functionsHandled < functionsToHandle; ++functionsHandled) {
         {
             MutexLocker locker(m_functionQueueLock);
+
+            // Even if we start off with N functions to handle and we've only handled less than N functions, the queue
+            // still might be empty because those functions might have been handled in an inner RunLoop::performWork().
+            // In that case we should bail here.
             if (m_functionQueue.isEmpty())
                 break;
 
