@@ -1,3 +1,13 @@
+2012-07-30  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
+
+        [Qt] Gardening. Skip failing tests and add a Qt specific expected file.
+
+        Reviewed by Csaba Osztrogonác.
+
+        * platform/qt-4.8/Skipped: Skip svg/custom/svg-features.html.
+        * platform/qt/Skipped: Skip http/tests/security/contentSecurityPolicy/object-src-none-blocked.html.
+        * platform/qt/http/tests/security/xss-DENIED-xsl-document-securityOrigin-expected.txt: Added because of a whitespace difference.
+
 2012-07-30  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Default sizes for input-text and text-area are different when running DRT/WTR

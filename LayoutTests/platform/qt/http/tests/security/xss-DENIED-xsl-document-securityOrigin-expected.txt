@@ -1,0 +1,3 @@
+CONSOLE MESSAGE: Unsafe JavaScript attempt to access frame with URL http://localhost:8080/security/resources/innocent-victim.html from frame with URL about:blank. Domains, protocols and ports must match.
+
+This test passes if it doesn't alert the contents of innocent-victim.html. 

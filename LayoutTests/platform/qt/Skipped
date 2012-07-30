@@ -2675,3 +2675,7 @@ svg/repaint/container-repaint.svg
 # This test depends on subpixel layout.
 # https://bugs.webkit.org/show_bug.cgi?id=92352
 css3/flexbox/flex-rounding.html
+
+# [Qt] REGRESSION http/tests/security/contentSecurityPolicy/object-src-none-blocked.html fails after r123978
+# https://bugs.webkit.org/show_bug.cgi?id=92649
+http/tests/security/contentSecurityPolicy/object-src-none-blocked.html

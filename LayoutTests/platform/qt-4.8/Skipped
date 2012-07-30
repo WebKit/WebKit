@@ -595,3 +595,7 @@ fast/text/font-kerning.html
 http/tests/misc/acid3.html
 fast/css/tab-size.html
 fast/text/international/bdi-dir-default-to-auto.html
+
+# [Qt] svg/custom/svg-features.html fails on Qt 4.8
+# https://bugs.webkit.org/show_bug.cgi?id=92645
+svg/custom/svg-features.html
