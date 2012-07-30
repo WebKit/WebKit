@@ -242,6 +242,11 @@ public:
     RenderBlock* createAnonymousColumnSpanBlock() const { return createAnonymousColumnSpanWithParentRenderer(this); }
 
     virtual RenderBox* createAnonymousBoxWithSameTypeAs(const RenderObject* parent) const OVERRIDE;
+
+    static bool shouldSkipCreatingRunsForObject(RenderObject* obj)
+    {
+        return obj->isFloating() || (obj->isPositioned() && !obj->style()->isOriginalDisplayInlineType() && !obj->container()->isRenderInline());
+    }
     
     static void appendRunsForObject(BidiRunList<BidiRun>&, int start, int end, RenderObject*, InlineBidiResolver&);
 
