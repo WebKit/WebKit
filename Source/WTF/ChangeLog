@@ -1,3 +1,19 @@
+2012-07-30  Wei James  <james.wei@intel.com>
+
+        atomicDecrement() never reach 0 on Android so no deref() will be called
+        https://bugs.webkit.org/show_bug.cgi?id=92635
+
+        Reviewed by Adam Barth.
+
+        With Android NDK 7b and later, __atomic_dec()  is implemented by
+        __sync_fetch_and_sub(), which will result in that atomicDecrement()
+        returns the old value instead of new one.
+
+        * wtf/Atomics.h:
+        (WTF):
+        (WTF::atomicIncrement):
+        (WTF::atomicDecrement):
+
 2012-07-30  Patrick Gansterer  <paroga@webkit.org>
 
         Add function to calculate the day in year from a date
