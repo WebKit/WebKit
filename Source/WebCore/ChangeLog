@@ -1,3 +1,17 @@
+2012-07-30  Anders Carlsson  <andersca@apple.com>
+
+        Crash in logging code if MIME type is null
+        https://bugs.webkit.org/show_bug.cgi?id=92683
+        <rdar://problem/11985295>
+
+        Reviewed by Dan Bernstein.
+
+        If the MIME type is null, try to figure it out from the URL extension. If this fails, return early instead of crashing
+        trying to insert the null string into a hash set.
+
+        * loader/SubframeLoader.cpp:
+        (WebCore::logPluginRequest):
+
 2012-07-30  Alexis Menard  <alexis.menard@openbossa.org>
 
         Build fix with newer bison 2.6.
