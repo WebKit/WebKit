@@ -228,9 +228,6 @@ public:
     virtual WebString contentAsMarkup() const;
     virtual WebString renderTreeAsText(RenderAsTextControls toShow = RenderAsTextNormal) const;
     virtual WebString markerTextForListItem(const WebElement&) const;
-    virtual int pageNumberForElementById(const WebString& id,
-                                         float pageWidthInPixels,
-                                         float pageHeightInPixels) const;
     virtual WebRect selectionBoundsRect() const;
 
     virtual bool selectionStartHasSpellingMarkerFor(int from, int length) const;

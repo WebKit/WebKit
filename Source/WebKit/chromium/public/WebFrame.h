@@ -630,12 +630,6 @@ public:
     // Calls markerTextForListItem() defined in WebCore/rendering/RenderTreeAsText.h.
     virtual WebString markerTextForListItem(const WebElement&) const = 0;
 
-    // Returns the number of page where the specified element will be put.
-    // This method is used to support layout tests.
-    virtual int pageNumberForElementById(const WebString& id,
-                                         float pageWidthInPixels,
-                                         float pageHeightInPixels) const = 0;
-
     // Prints all of the pages into the canvas, with page boundaries drawn as
     // one pixel wide blue lines. This method exists to support layout tests.
     virtual void printPagesWithBoundaries(WebCanvas*, const WebSize&) = 0;

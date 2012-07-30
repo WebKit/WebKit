@@ -2001,21 +2001,6 @@ WebString WebFrameImpl::markerTextForListItem(const WebElement& webElement) cons
     return WebCore::markerTextForListItem(const_cast<Element*>(webElement.constUnwrap<Element>()));
 }
 
-int WebFrameImpl::pageNumberForElementById(const WebString& id,
-                                           float pageWidthInPixels,
-                                           float pageHeightInPixels) const
-{
-    if (!m_frame)
-        return -1;
-
-    Element* element = m_frame->document()->getElementById(id);
-    if (!element)
-        return -1;
-
-    FloatSize pageSize(pageWidthInPixels, pageHeightInPixels);
-    return PrintContext::pageNumberForElement(element, pageSize);
-}
-
 void WebFrameImpl::printPagesWithBoundaries(WebCanvas* canvas, const WebSize& pageSizeInPixels)
 {
     ASSERT(m_printContext.get());
