@@ -1,3 +1,17 @@
+2012-07-30  Hayato Ito  <hayato@chromium.org>
+
+        Remove an unused member variable, m_originalTarget, from EventDispatcher.
+        https://bugs.webkit.org/show_bug.cgi?id=92614
+
+        Reviewed by Andreas Kling.
+
+        No one uses EventDispatcher::m_originalTarget.
+
+        No new tests, no behavior change.
+
+        * dom/EventDispatcher.h:
+        (EventDispatcher):
+
 2012-07-27  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
         [Qt] Fix issues remaining with fixed positioned layers
