@@ -208,7 +208,7 @@ static bool advanceByCombiningCharacterSequence(const UChar*& iterator, const UC
         UChar32 nextCharacter;
         int markLength = 0;
         U16_NEXT(iterator, markLength, end - iterator, nextCharacter);
-        if (!(U_GET_GC_MASK(nextCharacter) & U_GC_M_MASK) && nextCharacter != zeroWidthJoiner && nextCharacter != zeroWidthNonJoiner)
+        if (!(U_GET_GC_MASK(nextCharacter) & U_GC_M_MASK))
             break;
         markCount += markLength;
         iterator += markLength;
@@ -284,13 +284,17 @@ void ComplexTextController::collectComplexTextRuns()
         }
 
         nextIsMissingGlyph = false;
+        if (baseCharacter == zeroWidthJoiner)
+            nextFontData = fontData;
 #if !PLATFORM(WX)
-        nextFontData = m_font.fontDataForCombiningCharacterSequence(cp + index, curr - cp - index, nextIsSmallCaps ? SmallCapsVariant : NormalVariant);
-        if (!nextFontData) {
-            if (markCount)
-                nextFontData = systemFallbackFontData();
-            else
-                nextIsMissingGlyph = true;
+        else {
+            nextFontData = m_font.fontDataForCombiningCharacterSequence(cp + index, curr - cp - index, nextIsSmallCaps ? SmallCapsVariant : NormalVariant);
+            if (!nextFontData) {
+                if (markCount)
+                    nextFontData = systemFallbackFontData();
+                else
+                    nextIsMissingGlyph = true;
+            }
         }
 #endif
 
