@@ -329,9 +329,10 @@ class Manager(object):
         self._group_stats = {}
         self._worker_stats = {}
         self._current_result_summary = None
+        self._finder = LayoutTestFinder(self._port, self._options)
 
     def _collect_tests(self, args):
-        self._paths, self._test_files = LayoutTestFinder(self._port).find_tests(self._options, args)
+        self._paths, self._test_files = self._finder.find_tests(self._options, args)
 
     def _is_http_test(self, test):
         return self.HTTP_SUBDIR in test or self.WEBSOCKET_SUBDIR in test
@@ -348,70 +349,6 @@ class Manager(object):
     def _parse_expectations(self):
         self._expectations = test_expectations.TestExpectations(self._port, self._test_files)
 
-    def _split_into_chunks_if_necessary(self, skipped):
-        if not self._options.run_chunk and not self._options.run_part:
-            return skipped
-
-        # If the user specifies they just want to run a subset of the tests,
-        # just grab a subset of the non-skipped tests.
-        chunk_value = self._options.run_chunk or self._options.run_part
-        test_files = self._test_files_list
-        try:
-            (chunk_num, chunk_len) = chunk_value.split(":")
-            chunk_num = int(chunk_num)
-            assert(chunk_num >= 0)
-            test_size = int(chunk_len)
-            assert(test_size > 0)
-        except AssertionError:
-            _log.critical("invalid chunk '%s'" % chunk_value)
-            return None
-
-        # Get the number of tests
-        num_tests = len(test_files)
-
-        # Get the start offset of the slice.
-        if self._options.run_chunk:
-            chunk_len = test_size
-            # In this case chunk_num can be really large. We need
-            # to make the slave fit in the current number of tests.
-            slice_start = (chunk_num * chunk_len) % num_tests
-        else:
-            # Validate the data.
-            assert(test_size <= num_tests)
-            assert(chunk_num <= test_size)
-
-            # To count the chunk_len, and make sure we don't skip
-            # some tests, we round to the next value that fits exactly
-            # all the parts.
-            rounded_tests = num_tests
-            if rounded_tests % test_size != 0:
-                rounded_tests = (num_tests + test_size - (num_tests % test_size))
-
-            chunk_len = rounded_tests / test_size
-            slice_start = chunk_len * (chunk_num - 1)
-            # It does not mind if we go over test_size.
-
-        # Get the end offset of the slice.
-        slice_end = min(num_tests, slice_start + chunk_len)
-
-        files = test_files[slice_start:slice_end]
-
-        _log.debug('chunk slice [%d:%d] of %d is %d tests' % (slice_start, slice_end, num_tests, (slice_end - slice_start)))
-
-        # If we reached the end and we don't have enough tests, we run some
-        # from the beginning.
-        if slice_end - slice_start < chunk_len:
-            extra = chunk_len - (slice_end - slice_start)
-            _log.debug('   last chunk is partial, appending [0:%d]' % extra)
-            files.extend(test_files[0:extra])
-
-        tests_to_run = set(files)
-        more_tests_to_skip = self._test_files - tests_to_run
-        self._expectations.add_skipped_tests(more_tests_to_skip)
-        self._test_files = tests_to_run
-        self._test_files_list = files
-        return skipped.union(more_tests_to_skip)
-
     # FIXME: This method is way too long and needs to be broken into pieces.
     def prepare_lists_and_print_output(self):
         """Create appropriate subsets of test lists and returns a
@@ -423,16 +360,17 @@ class Manager(object):
         found_test_files = set(self._test_files)
         num_all_test_files = len(self._test_files)
 
-        skipped = self._expectations.get_tests_with_result_type(test_expectations.SKIP)
+        tests_to_skip = self._expectations.get_tests_with_result_type(test_expectations.SKIP)
         if not self._options.http:
-            skipped.update(set(self._http_tests()))
+            tests_to_skip.update(set(self._http_tests()))
 
         if self._options.skipped == 'only':
-            self._test_files = self._test_files.intersection(skipped)
+            self._test_files = self._test_files.intersection(tests_to_skip)
+            tests_to_skip = set()
         elif self._options.skipped == 'default':
-            self._test_files -= skipped
+            self._test_files -= tests_to_skip
         elif self._options.skipped == 'ignore':
-            pass  # just to be clear that we're ignoring the skip list.
+            tests_to_skip = set()
 
         if self._options.skip_failing_tests:
             self._test_files -= self._expectations.get_tests_with_result_type(test_expectations.FAIL)
@@ -456,7 +394,9 @@ class Manager(object):
         else:
             self._test_files_list.sort(key=lambda test: test_key(self._port, test))
 
-        all_tests_to_skip = self._split_into_chunks_if_necessary(skipped)
+        self._test_files_list, tests_in_other_chunks = self._finder.split_into_chunks_if_necessary(self._test_files_list)
+        self._expectations.add_skipped_tests(tests_in_other_chunks)
+        self._tests = set(self._test_files_list)
 
         if self._options.repeat_each:
             list_with_repetitions = []
@@ -468,7 +408,7 @@ class Manager(object):
             self._test_files_list = self._test_files_list * self._options.iterations
 
         iterations = self._options.repeat_each * self._options.iterations
-        result_summary = ResultSummary(self._expectations, self._test_files, iterations, all_tests_to_skip)
+        result_summary = ResultSummary(self._expectations, self._test_files, iterations, tests_to_skip.union(tests_in_other_chunks))
 
         self._printer.print_found(num_all_test_files, len(self._test_files), self._options.repeat_each, self._options.iterations)
         self._printer.print_expected(result_summary, self._expectations.get_tests_with_result_type)

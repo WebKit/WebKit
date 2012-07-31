@@ -37,8 +37,9 @@ _log = logging.getLogger(__name__)
 
 
 class LayoutTestFinder(object):
-    def __init__(self, port):
+    def __init__(self, port, options):
         self._port = port
+        self._options = options
         self._filesystem = self._port.host.filesystem
         self.LAYOUT_TESTS_DIRECTORY = 'LayoutTests'
 
@@ -92,3 +93,62 @@ class LayoutTestFinder(object):
             return None
         else:
             return line
+
+    def split_into_chunks_if_necessary(self, test_files_list):
+        if not self._options.run_chunk and not self._options.run_part:
+            return test_files_list, set()
+
+        # If the user specifies they just want to run a subset of the tests,
+        # just grab a subset of the non-skipped tests.
+        chunk_value = self._options.run_chunk or self._options.run_part
+        try:
+            (chunk_num, chunk_len) = chunk_value.split(":")
+            chunk_num = int(chunk_num)
+            assert(chunk_num >= 0)
+            test_size = int(chunk_len)
+            assert(test_size > 0)
+        except AssertionError:
+            _log.critical("invalid chunk '%s'" % chunk_value)
+            return None
+
+        # Get the number of tests
+        num_tests = len(test_files_list)
+
+        # Get the start offset of the slice.
+        if self._options.run_chunk:
+            chunk_len = test_size
+            # In this case chunk_num can be really large. We need
+            # to make the slave fit in the current number of tests.
+            slice_start = (chunk_num * chunk_len) % num_tests
+        else:
+            # Validate the data.
+            assert(test_size <= num_tests)
+            assert(chunk_num <= test_size)
+
+            # To count the chunk_len, and make sure we don't skip
+            # some tests, we round to the next value that fits exactly
+            # all the parts.
+            rounded_tests = num_tests
+            if rounded_tests % test_size != 0:
+                rounded_tests = (num_tests + test_size - (num_tests % test_size))
+
+            chunk_len = rounded_tests / test_size
+            slice_start = chunk_len * (chunk_num - 1)
+            # It does not mind if we go over test_size.
+
+        # Get the end offset of the slice.
+        slice_end = min(num_tests, slice_start + chunk_len)
+
+        tests_to_run = test_files_list[slice_start:slice_end]
+
+        _log.debug('chunk slice [%d:%d] of %d is %d tests' % (slice_start, slice_end, num_tests, (slice_end - slice_start)))
+
+        # If we reached the end and we don't have enough tests, we run some
+        # from the beginning.
+        if slice_end - slice_start < chunk_len:
+            extra = chunk_len - (slice_end - slice_start)
+            _log.debug('   last chunk is partial, appending [0:%d]' % extra)
+            tests_to_run.extend(test_files_list[0:extra])
+
+        more_tests_to_skip = set(test_files_list) - set(tests_to_run)
+        return (tests_to_run, more_tests_to_skip)

@@ -1,5 +1,29 @@
 2012-07-30  Dirk Pranke  <dpranke@chromium.org>
 
+        nrwt: move the code that identifies the chunk of tests to run into finder
+        https://bugs.webkit.org/show_bug.cgi?id=92694
+
+        Reviewed by Ryosuke Niwa.
+
+        Another patch to make manager.py smaller and clearer; this patch moves
+        the handling of breaking the list of tests into chunks (--run-part,
+        --run-chunk) from manager.py to finder.py.
+
+        There are no functional changes and this is covered by existing tests.
+
+        * Scripts/webkitpy/layout_tests/controllers/finder.py:
+        (Finder.__init__):
+        (Finder._read_test_files):
+        (Finder):
+        (Finder.split_into_chunks_if_necessary):
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        (Manager.__init__):
+        (Manager._collect_tests):
+        (Manager._parse_expectations):
+        (Manager.prepare_lists_and_print_output):
+
+2012-07-30  Dirk Pranke  <dpranke@chromium.org>
+
         nrwt: split test-finding code out from manager.py
         https://bugs.webkit.org/show_bug.cgi?id=92693
 
