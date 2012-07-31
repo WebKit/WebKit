@@ -1,3 +1,22 @@
+2012-07-31  Hans Wennborg  <hans@chromium.org>
+
+        Speech JavaScript API: Throw exception for start() when already started
+        https://bugs.webkit.org/show_bug.cgi?id=92756
+
+        Reviewed by Adam Barth.
+
+        Fix the task queue in MockWebSpeechRecognizer.
+        It's important that we remove the task from the queue before we run
+        it, as running the task could alter the queue's state.
+
+        * DumpRenderTree/chromium/MockWebSpeechRecognizer.cpp:
+        (MockWebSpeechRecognizer::abort):
+        (MockWebSpeechRecognizer::setError):
+        (MockWebSpeechRecognizer::clearTaskQueue):
+        (MockWebSpeechRecognizer::StepTask::runIfValid):
+        * DumpRenderTree/chromium/MockWebSpeechRecognizer.h:
+        (MockWebSpeechRecognizer):
+
 2012-07-31  Dirk Pranke  <dpranke@chromium.org>
 
         nrwt: move handling the initial list of tests to skip to finder

@@ -1,3 +1,26 @@
+2012-07-31  Hans Wennborg  <hans@chromium.org>
+
+        Speech JavaScript API: Throw exception for start() when already started
+        https://bugs.webkit.org/show_bug.cgi?id=92756
+
+        Reviewed by Adam Barth.
+
+        Make the start() function throw an exception if the SpeechRecognition
+        object was already started.
+
+        Test: fast/speech/scripted/start-exception.html
+
+        * Modules/speech/SpeechRecognition.cpp:
+        (WebCore::SpeechRecognition::start):
+        (WebCore::SpeechRecognition::stopFunction):
+        (WebCore::SpeechRecognition::abort):
+        (WebCore::SpeechRecognition::didReceiveError):
+        (WebCore::SpeechRecognition::didEnd):
+        (WebCore::SpeechRecognition::SpeechRecognition):
+        * Modules/speech/SpeechRecognition.h:
+        (SpeechRecognition):
+        * Modules/speech/SpeechRecognition.idl:
+
 2012-07-31  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r124207.

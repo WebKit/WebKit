@@ -1,3 +1,16 @@
+2012-07-31  Hans Wennborg  <hans@chromium.org>
+
+        Speech JavaScript API: Throw exception for start() when already started
+        https://bugs.webkit.org/show_bug.cgi?id=92756
+
+        Reviewed by Adam Barth.
+
+        Layout test for checking that calling start on an already started
+        SpeechRecognition object throws an exception.
+
+        * fast/speech/scripted/start-exception-expected.txt: Added.
+        * fast/speech/scripted/start-exception.html: Added.
+
 2012-07-31  Adrienne Walker  <enne@google.com>
 
         [Chromium] transforms/3d/point-mapping/3d-point-mapping-*.html failing on Win

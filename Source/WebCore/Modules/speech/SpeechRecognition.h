@@ -60,7 +60,7 @@ public:
     void setMaxAlternatives(unsigned long maxAlternatives) { m_maxAlternatives = maxAlternatives; }
 
     // Callable by the user.
-    void start();
+    void start(ExceptionCode&);
     void stopFunction();
     void abort();
 
@@ -122,6 +122,7 @@ private:
 
     SpeechRecognitionController* m_controller;
     bool m_stoppedByActiveDOMObject;
+    bool m_started;
 };
 
 } // namespace WebCore

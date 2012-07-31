@@ -72,6 +72,7 @@ public:
 private:
     MockWebSpeechRecognizer();
     void startTaskQueue();
+    void clearTaskQueue();
 
     TaskList m_taskList;
     WebKit::WebSpeechRecognitionHandle m_handle;
