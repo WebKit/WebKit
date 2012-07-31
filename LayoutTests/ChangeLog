@@ -1,5 +1,18 @@
 2012-07-30  Lucas Forschler  <lforschler@apple.com>
 
+    Merge 122300
+
+    2012-07-10  Hayato Ito  <hayato@chromium.org>
+
+            Unreviewed gardening.
+
+            Remove 'true' from testRunner.dumpAsText(true).
+            NRWT complained that an '-expected.png' file was MISSING.
+
+            * animations/animation-shorthand-name-order.html:
+
+2012-07-30  Lucas Forschler  <lforschler@apple.com>
+
     Merge 122271
 
     2012-07-10  Dean Jackson  <dino@apple.com>
