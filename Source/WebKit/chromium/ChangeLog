@@ -1,3 +1,9 @@
+2012-07-30  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Roll out the DEPS roll (r124164) for now since it broke Chromium Mac builds.
+
+        * DEPS:
+
 2012-07-30  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed.  Rolled DEPS.
