@@ -96,23 +96,6 @@ def suffixes_for_expectations(expectations):
     return set(suffixes)
 
 
-# FIXME: This method is no longer used here in this module. Remove remaining callsite in manager.py and this method.
-def strip_comments(line):
-    """Strips comments from a line and return None if the line is empty
-    or else the contents of line with leading and trailing spaces removed
-    and all other whitespace collapsed"""
-
-    commentIndex = line.find('//')
-    if commentIndex is -1:
-        commentIndex = len(line)
-
-    line = re.sub(r'\s+', ' ', line[:commentIndex].strip())
-    if line == '':
-        return None
-    else:
-        return line
-
-
 class ParseError(Exception):
     def __init__(self, warnings):
         super(ParseError, self).__init__()

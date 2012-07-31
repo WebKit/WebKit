@@ -1,3 +1,28 @@
+2012-07-30  Dirk Pranke  <dpranke@chromium.org>
+
+        nrwt: split test-finding code out from manager.py
+        https://bugs.webkit.org/show_bug.cgi?id=92693
+
+        Reviewed by Ryosuke Niwa.
+
+        In the interest of making manager.py smaller, this patch moves
+        the code that actually takes the command line arguments and
+        --test-file lists of tests to run and expands them into an
+        actual list of tests out into a separate module.
+
+        * Scripts/webkitpy/layout_tests/controllers/finder.py: Added.
+        (LayoutTestFinder):
+        (LayoutTestFinder.__init__):
+        (LayoutTestFinder.find_tests):
+        (LayoutTestFinder._strip_test_dir_prefixes):
+        (LayoutTestFinder._strip_test_dir_prefix):
+        (LayoutTestFinder._read_test_names_from_file):
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        (Manager._collect_tests):
+        (Manager._handle_finished_test):
+        * Scripts/webkitpy/layout_tests/models/test_expectations.py:
+        (strip_comments):
+
 2012-07-30  Adam Barth  <abarth@webkit.org>
 
         commit-queue is corrupting ChangeLogs

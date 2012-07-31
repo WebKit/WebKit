@@ -46,6 +46,7 @@ import time
 
 from webkitpy.common import message_pool
 from webkitpy.layout_tests.controllers import worker
+from webkitpy.layout_tests.controllers.finder import LayoutTestFinder
 from webkitpy.layout_tests.controllers.test_result_writer import TestResultWriter
 from webkitpy.layout_tests.layout_package import json_layout_results_generator
 from webkitpy.layout_tests.layout_package import json_results_generator
@@ -330,29 +331,7 @@ class Manager(object):
         self._current_result_summary = None
 
     def _collect_tests(self, args):
-        """Find all the files to test.
-
-        Args:
-          args: list of test arguments from the command line
-
-        """
-        paths = self._strip_test_dir_prefixes(args)
-        if self._options.test_list:
-            paths += self._strip_test_dir_prefixes(read_test_files(self._filesystem, self._options.test_list, self._port.TEST_PATH_SEPARATOR))
-        self._paths = set(paths)
-        self._test_files = self._port.tests(paths)
-
-    def _strip_test_dir_prefixes(self, paths):
-        return [self._strip_test_dir_prefix(path) for path in paths if path]
-
-    def _strip_test_dir_prefix(self, path):
-        # Handle both "LayoutTests/foo/bar.html" and "LayoutTests\foo\bar.html" if
-        # the filesystem uses '\\' as a directory separator.
-        if path.startswith(self.LAYOUT_TESTS_DIRECTORY + self._port.TEST_PATH_SEPARATOR):
-            return path[len(self.LAYOUT_TESTS_DIRECTORY + self._port.TEST_PATH_SEPARATOR):]
-        if path.startswith(self.LAYOUT_TESTS_DIRECTORY + self._filesystem.sep):
-            return path[len(self.LAYOUT_TESTS_DIRECTORY + self._filesystem.sep):]
-        return path
+        self._paths, self._test_files = LayoutTestFinder(self._port).find_tests(self._options, args)
 
     def _is_http_test(self, test):
         return self.HTTP_SUBDIR in test or self.WEBSOCKET_SUBDIR in test
@@ -1129,25 +1108,6 @@ class Manager(object):
         self._worker_stats[worker_name]['num_tests'] += 1
         self._all_results.append(result)
         self._update_summary_with_result(self._current_result_summary, result)
-
-
-def read_test_files(fs, filenames, test_path_separator):
-    tests = []
-    for filename in filenames:
-        try:
-            if test_path_separator != fs.sep:
-                filename = filename.replace(test_path_separator, fs.sep)
-            file_contents = fs.read_text_file(filename).split('\n')
-            for line in file_contents:
-                line = test_expectations.strip_comments(line)
-                if line:
-                    tests.append(line)
-        except IOError, e:
-            if e.errno == errno.ENOENT:
-                _log.critical('')
-                _log.critical('--test-list file "%s" not found' % filename)
-            raise
-    return tests
 
 
 # FIXME: These two free functions belong either on manager (since it's the only one
