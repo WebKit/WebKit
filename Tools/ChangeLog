@@ -1,3 +1,9 @@
+2012-07-31  Jochen Eisinger  <jochen@chromium.org>
+
+        Unreviewed. Update watchlist
+
+        * Scripts/webkitpy/common/config/watchlist: Turned out to be less useful than I had hoped
+
 2012-07-31  Kent Tamura  <tkent@chromium.org>
 
         Unreviewed, update watchlist
