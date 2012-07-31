@@ -645,6 +645,7 @@
 		BC5750981268F3C6006F0F12 /* WebPopupMenuProxyMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC5750961268F3C6006F0F12 /* WebPopupMenuProxyMac.mm */; };
 		BC575613126E0138006F0F12 /* WebError.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC575612126E0138006F0F12 /* WebError.cpp */; };
 		BC59534210FC04520098F82D /* WebLoaderClient.h in Headers */ = {isa = PBXBuildFile; fileRef = BC59534010FC04520098F82D /* WebLoaderClient.h */; };
+		BC59548915C7868500FD1E3E /* WebKit2.h in Headers */ = {isa = PBXBuildFile; fileRef = BC59548815C7868500FD1E3E /* WebKit2.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		BC597075116591D000551FCA /* ProcessModel.h in Headers */ = {isa = PBXBuildFile; fileRef = BC597074116591D000551FCA /* ProcessModel.h */; };
 		BC5C75C814954DA600BC4775 /* WKConnectionInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = BC5C75C614954DA600BC4775 /* WKConnectionInternal.h */; };
 		BC60C5791240A546008C5E29 /* WKBundleRangeHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = BC60C5771240A546008C5E29 /* WKBundleRangeHandle.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -729,7 +730,7 @@
 		BCB0B0DE12305A8C00B1341E /* InjectedBundleUserMessageCoders.h in Headers */ = {isa = PBXBuildFile; fileRef = BCB0B0DD12305A8C00B1341E /* InjectedBundleUserMessageCoders.h */; };
 		BCB0B0E012305AB100B1341E /* UserMessageCoders.h in Headers */ = {isa = PBXBuildFile; fileRef = BCB0B0DF12305AB100B1341E /* UserMessageCoders.h */; };
 		BCB28CC0120233D9007D99BC /* InjectedBundleMessageKinds.h in Headers */ = {isa = PBXBuildFile; fileRef = BCB28CBF120233D9007D99BC /* InjectedBundleMessageKinds.h */; };
-		BCB63478116BF10600603215 /* WebKit2_C.h in Headers */ = {isa = PBXBuildFile; fileRef = BCB63477116BF10600603215 /* WebKit2_C.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		BCB63478116BF10600603215 /* WebKit2_C.h in Headers */ = {isa = PBXBuildFile; fileRef = BCB63477116BF10600603215 /* WebKit2_C.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BCB9E2431120DACA00A137E0 /* WebContext.h in Headers */ = {isa = PBXBuildFile; fileRef = BCB9E2411120DACA00A137E0 /* WebContext.h */; };
 		BCB9E2441120DACA00A137E0 /* WebContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCB9E2421120DACA00A137E0 /* WebContext.cpp */; };
 		BCB9E24B1120E15C00A137E0 /* WKContext.h in Headers */ = {isa = PBXBuildFile; fileRef = BCB9E2491120E15C00A137E0 /* WKContext.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1690,6 +1691,7 @@
 		BC5750961268F3C6006F0F12 /* WebPopupMenuProxyMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebPopupMenuProxyMac.mm; sourceTree = "<group>"; };
 		BC575612126E0138006F0F12 /* WebError.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebError.cpp; sourceTree = "<group>"; };
 		BC59534010FC04520098F82D /* WebLoaderClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebLoaderClient.h; sourceTree = "<group>"; };
+		BC59548815C7868500FD1E3E /* WebKit2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebKit2.h; sourceTree = "<group>"; };
 		BC597074116591D000551FCA /* ProcessModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProcessModel.h; sourceTree = "<group>"; };
 		BC5C75C614954DA600BC4775 /* WKConnectionInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKConnectionInternal.h; sourceTree = "<group>"; };
 		BC60C5771240A546008C5E29 /* WKBundleRangeHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKBundleRangeHandle.h; sourceTree = "<group>"; };
@@ -3159,6 +3161,7 @@
 				BC8699B3116AADAA002A925B /* WKView.mm */,
 				BC8699B4116AADAA002A925B /* WKViewInternal.h */,
 				BFA6179E12F0B99D0033E0CA /* WKViewPrivate.h */,
+				BC59548815C7868500FD1E3E /* WebKit2.h */,
 			);
 			path = mac;
 			sourceTree = "<group>";
@@ -4204,6 +4207,7 @@
 				51EFC1CF1524E62500C9A938 /* WKBundleDOMWindowExtension.h in Headers */,
 				3F87B9BE158940190090FF62 /* WebColorChooser.h in Headers */,
 				3F87B9C0158940D80090FF62 /* WebColorChooserProxy.h in Headers */,
+				BC59548915C7868500FD1E3E /* WebKit2.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

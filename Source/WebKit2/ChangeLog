@@ -1,5 +1,20 @@
 2012-07-30  Sam Weinig  <sam@webkit.org>
 
+        Add a proper umbrella header for the public WebKit2 API headers
+        https://bugs.webkit.org/show_bug.cgi?id=92708
+        <rdar://problem/11970825>
+
+        Reviewed by Dan Bernstein.
+
+        Create a new umbrella WebKit2.h and add the currently public (as decided by their 
+        status in Xcode) Objective-C headers.
+
+        * UIProcess/API/mac/WebKit2.h: Added.
+        * WebKit2.xcodeproj/project.pbxproj:
+        While we are here, make WebKit2_C.h a private header.
+
+2012-07-30  Sam Weinig  <sam@webkit.org>
+
         Rename WebKit2.h to WebKit2_C.h
         https://bugs.webkit.org/show_bug.cgi?id=92704
 
