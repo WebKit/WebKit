@@ -1,3 +1,16 @@
+2012-07-30  Kent Tamura  <tkent@chromium.org>
+
+        [Chromium] Add baseline files for calendar-picker-appearance.html
+        https://bugs.webkit.org/show_bug.cgi?id=84827
+
+        * platform/chromium-linux-x86/fast/forms/date/calendar-picker-appearance-expected.png: Added.
+        * platform/chromium-linux/fast/forms/date/calendar-picker-appearance-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/forms/date/calendar-picker-appearance-expected.png:
+        * platform/chromium-mac/fast/forms/date/calendar-picker-appearance-expected.png: Added.
+        * platform/chromium-win-xp/fast/forms/date/calendar-picker-appearance-expected.png: Added.
+        * platform/chromium-win/fast/forms/date/calendar-picker-appearance-expected.png: Added.
+        * platform/chromium/TestExpectations:
+
 2012-07-30  Elliott Sprehn  <esprehn@gmail.com>
 
         Make QuotesData use a Vector of pairs

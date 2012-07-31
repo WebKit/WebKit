@@ -1107,9 +1107,6 @@ BUGCR33211 LINUX MAC : http/tests/loading/deleted-host-in-resource-load-delegate
 // HTML5 DB layout tests
 BUGCR27697 SKIP : storage/websql/hash-change-with-xhr.html = PASS
 
-// Need rebaseline
-BUGWK84827 : fast/forms/date/calendar-picker-appearance.html = IMAGE PASS MISSING
-
 BUGCR78376 : http/tests/media/video-play-stall-seek.html = TIMEOUT
 
 // canplaythrough event is sent too early.
