@@ -1,3 +1,9 @@
+2012-07-31  Sam Weinig  <sam@webkit.org>
+
+        Fix the Windows build.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+
 2012-07-31  Geoffrey Garen  <ggaren@apple.com>
 
         Maybe fix the GCC build.
