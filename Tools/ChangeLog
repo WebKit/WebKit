@@ -1,3 +1,17 @@
+2012-07-31  Peter Beverloo  <peter@chromium.org>
+
+        [Chromium] Don't use ninja for building Chromium for Android
+        https://bugs.webkit.org/show_bug.cgi?id=92764
+
+        Reviewed by Adam Barth.
+
+        When Ninja projects files are generated (which will be done for Android),
+        make sure that the Android builder doesn't unintentionally switch to
+        using Ninja. We should make that switch at a predetermined time.
+
+        * Scripts/webkitdirs.pm:
+        (buildChromium):
+
 2012-07-31  Thiago Marcos P. Santos  <thiago.santos@intel.com>
 
         Add a mechanism to dump the stack trace in case of a crash
