@@ -36,8 +36,7 @@ enum AllocationEffort { AllocationCanFail, AllocationMustSucceed };
 
 template<typename T>
 class HeapBlock : public DoublyLinkedListNode<T> {
-    typedef DoublyLinkedListNode<T> Base;
-    friend Base;
+    friend DoublyLinkedListNode<T>;
 public:
     static const size_t s_blockSize = 64 * KB;
 

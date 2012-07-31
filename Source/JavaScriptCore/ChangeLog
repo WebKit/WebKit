@@ -1,3 +1,14 @@
+2012-07-31  Geoffrey Garen  <ggaren@apple.com>
+
+        Maybe break the Windows build.
+
+        Reviewed by Anders Carlsson.
+
+        Formally objected to by Sam Weinig.
+
+        * heap/HeapBlock.h:
+        (HeapBlock): Try to slightly improve this because we don't want Windows to control our lives.
+
 2012-07-30  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Structures should be swept after all other objects
