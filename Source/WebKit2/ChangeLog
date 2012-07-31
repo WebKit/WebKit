@@ -1,3 +1,23 @@
+2012-07-30  Sam Weinig  <sam@webkit.org>
+
+        Rename WebKit2.h to WebKit2_C.h
+        https://bugs.webkit.org/show_bug.cgi?id=92704
+
+        Reviewed by Dan Bernstein.
+
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * UIProcess/API/C/WebKit2_C.h: Renamed from Source/WebKit2/UIProcess/API/C/WebKit2.h.
+        * UIProcess/API/gtk/WebKitBackForwardListPrivate.h:
+        * UIProcess/API/gtk/WebKitPolicyDecisionPrivate.h:
+        * UIProcess/API/gtk/WebKitPrivate.h:
+        * UIProcess/API/gtk/WebKitSettingsPrivate.h:
+        * UIProcess/API/gtk/WebKitWebViewPrivate.h:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * win/WebKit2.vcproj:
+        * win/WebKit2Generated.make:
+        Update for changed header file name.
+
 2012-07-28  Sam Weinig  <sam@webkit.org>
 
         Add ability to load from a string to the ObjC WK API

@@ -43,7 +43,7 @@
 #include <WebKit2/WKBundleScriptWorld.h>
 #include <WebKit2/WKRetainPtr.h>
 #include <WebKit2/WKSerializedScriptValue.h>
-#include <WebKit2/WebKit2.h>
+#include <WebKit2/WebKit2_C.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/HashMap.h>
 #include <wtf/text/StringBuilder.h>

@@ -26,7 +26,7 @@
 #ifndef BrowserView_h
 #define BrowserView_h
 
-#include <WebKit2/WebKit2.h>
+#include <WebKit2/WebKit2_C.h>
 #include <string>
 
 class BrowserWindow;

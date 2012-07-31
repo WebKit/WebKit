@@ -184,7 +184,7 @@ HEADERS += \
     UIProcess/API/C/WKProtectionSpace.h \
     UIProcess/API/C/WKProtectionSpaceTypes.h \
     UIProcess/API/C/WKVibration.h \
-    UIProcess/API/C/WebKit2.h \
+    UIProcess/API/C/WebKit2_C.h \
     UIProcess/API/C/qt/WKNativeEvent.h \
     UIProcess/API/cpp/WKRetainPtr.h \
     UIProcess/API/cpp/qt/WKStringQt.h \

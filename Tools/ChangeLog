@@ -1,3 +1,19 @@
+2012-07-30  Sam Weinig  <sam@webkit.org>
+
+        Rename WebKit2.h to WebKit2_C.h
+        https://bugs.webkit.org/show_bug.cgi?id=92704
+
+        Reviewed by Dan Bernstein.
+
+        * MiniBrowser/mac/MiniBrowser_Prefix.pch:
+        * MiniBrowser/win/BrowserView.h:
+        * TestWebKitAPI/config.h:
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        * WebKitTestRunner/InjectedBundle/LayoutTestController.cpp:
+        * WebKitTestRunner/WebKitTestRunnerPrefix.h:
+        * WebKitTestRunner/config.h:
+        Update for changed header file name.
+
 2012-07-30  Dirk Pranke  <dpranke@chromium.org>
 
         chromium win compile broken after removing webkit.py

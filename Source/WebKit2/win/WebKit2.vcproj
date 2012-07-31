@@ -3281,7 +3281,7 @@
 					Name="C"
 					>
 					<File
-						RelativePath="..\UIProcess\API\C\WebKit2.h"
+						RelativePath="..\UIProcess\API\C\WebKit2_C.h"
 						>
 					</File>
 					<File

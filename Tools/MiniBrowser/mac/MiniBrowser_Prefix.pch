@@ -27,7 +27,7 @@
     #import <Cocoa/Cocoa.h>
 #endif
 
-#import <WebKit2/WebKit2.h>
+#import <WebKit2/WebKit2_C.h>
 
 #define ENABLE_LOGGING 0
 

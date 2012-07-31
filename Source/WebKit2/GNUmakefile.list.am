@@ -40,7 +40,7 @@ webkit2_h_api += \
 	$(WebKit2)/UIProcess/API/C/soup/WKAPICastSoup.h \
 	$(WebKit2)/UIProcess/API/C/soup/WKContextSoup.h \
 	$(WebKit2)/UIProcess/API/C/soup/WKSoupRequestManager.h \
-	$(WebKit2)/UIProcess/API/C/WebKit2.h \
+	$(WebKit2)/UIProcess/API/C/WebKit2_C.h \
 	$(WebKit2)/UIProcess/API/C/WKAPICast.h \
 	$(WebKit2)/UIProcess/API/C/WKApplicationCacheManager.h \
 	$(WebKit2)/UIProcess/API/C/WKAuthenticationChallenge.h \
@@ -518,7 +518,7 @@ webkit2_sources += \
 	Source/WebKit2/UIProcess/API/C/soup/WKContextSoup.h \
 	Source/WebKit2/UIProcess/API/C/soup/WKSoupRequestManager.cpp \
 	Source/WebKit2/UIProcess/API/C/soup/WKSoupRequestManager.h \
-	Source/WebKit2/UIProcess/API/C/WebKit2.h \
+	Source/WebKit2/UIProcess/API/C/WebKit2_C.h \
 	Source/WebKit2/UIProcess/API/C/WKAPICast.h \
 	Source/WebKit2/UIProcess/API/C/WKApplicationCacheManager.h \
 	Source/WebKit2/UIProcess/API/C/WKApplicationCacheManager.cpp \

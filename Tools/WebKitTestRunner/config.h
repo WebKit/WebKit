@@ -35,7 +35,7 @@
 #include <runtime/JSExportMacros.h>
 #endif
 
-#include <WebKit2/WebKit2.h>
+#include <WebKit2/WebKit2_C.h>
 
 #if PLATFORM(WIN)
 #define WTF_USE_CF 1 

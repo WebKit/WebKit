@@ -28,7 +28,7 @@
 #define WebKitWebViewPrivate_h
 
 #include "WebKitWebView.h"
-#include <WebKit2/WebKit2.h>
+#include <WebKit2/WebKit2_C.h>
 #include <wtf/text/CString.h>
 
 void webkitWebViewLoadChanged(WebKitWebView*, WebKitLoadEvent);

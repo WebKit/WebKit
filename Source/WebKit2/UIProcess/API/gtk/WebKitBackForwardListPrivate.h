@@ -28,7 +28,7 @@
 
 #include "WebBackForwardList.h"
 #include "WebKitBackForwardList.h"
-#include <WebKit2/WebKit2.h>
+#include <WebKit2/WebKit2_C.h>
 
 WebKitBackForwardList* webkitBackForwardListCreate(WKBackForwardListRef);
 WebKitBackForwardListItem* webkitBackForwardListItemGetOrCreate(WKBackForwardListItemRef);

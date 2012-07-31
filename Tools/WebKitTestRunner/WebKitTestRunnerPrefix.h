@@ -39,7 +39,7 @@
 #endif /* defined (BUILDING_GTK__) */
 
 #include <wtf/Platform.h>
-#include <WebKit2/WebKit2.h>
+#include <WebKit2/WebKit2_C.h>
 
 
 /* When C++ exceptions are disabled, the C++ library defines |try| and |catch|
