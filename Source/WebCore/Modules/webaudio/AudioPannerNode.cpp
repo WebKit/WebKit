@@ -171,6 +171,20 @@ void AudioPannerNode::setPanningModel(unsigned short model, ExceptionCode& ec)
     }
 }
 
+void AudioPannerNode::setDistanceModel(unsigned short model, ExceptionCode& ec)
+{
+    switch (model) {
+    case DistanceEffect::ModelLinear:
+    case DistanceEffect::ModelInverse:
+    case DistanceEffect::ModelExponential:
+        m_distanceEffect.setModel(static_cast<DistanceEffect::ModelType>(model), true);
+        break;
+    default:
+        ec = NOT_SUPPORTED_ERR;
+        break;
+    }
+}
+
 void AudioPannerNode::getAzimuthElevation(double* outAzimuth, double* outElevation)
 {
     // FIXME: we should cache azimuth and elevation (if possible), so we only re-calculate if a change has been made.

@@ -1,0 +1,19 @@
+Basic test for AudioPannerNode.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS AudioPannerNode has one input.
+PASS AudioPannerNode has one output.
+PASS panningModel default value is HRTF.
+PASS panningModel set to EQUALPOWER model and read correctly.
+PASS panningModel set to HRTF model and read correctly.
+PASS Setting panningModel to SOUNDFIELD correctly throws exception because it is not implemented.
+PASS Illegal panningModel correctly throws exception.
+PASS distanceModel set to LINEAR_DISTANCE and read correctly.
+PASS distanceModel set to INVERSE_DISTANCE and read correctly.
+PASS distanceModel set to EXPONENTIAL_DISTANCE and read correctly.
+PASS Illegal distanceModel correctly throws exception.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

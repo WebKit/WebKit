@@ -96,8 +96,8 @@ public:
 
     // Distance parameters
     unsigned short distanceModel() { return m_distanceEffect.model(); }
-    void setDistanceModel(unsigned short model) { m_distanceEffect.setModel(static_cast<DistanceEffect::ModelType>(model), true); }
-    
+    void setDistanceModel(unsigned short, ExceptionCode&);
+
     float refDistance() { return static_cast<float>(m_distanceEffect.refDistance()); }
     void setRefDistance(float refDistance) { m_distanceEffect.setRefDistance(refDistance); }
 

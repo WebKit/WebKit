@@ -1,3 +1,18 @@
+2012-07-31  Li Yin  <li.yin@intel.com>
+
+        AudioPannerNode should raise exception when distanceModel is set incorrectly
+        https://bugs.webkit.org/show_bug.cgi?id=90952
+
+        Reviewed by Chris Rogers.
+
+        Spec: http://www.w3.org/TR/webaudio/#AudioPannerNode-section
+        Add tests for distanceModel,numberOfInputs and numberOfInputs of AudioPannerNode.
+
+        * webaudio/audiopannernode-basic-expected.txt: Added.
+        * webaudio/audiopannernode-basic.html: Added.
+        * webaudio/panner-set-model-expected.txt: Removed.
+        * webaudio/panner-set-model.html: Removed.
+
 2012-07-31  Max Vujovic  <mvujovic@adobe.com>
 
         [CSS Shaders] CSS parser rejects parameter names that are also CSS keywords
