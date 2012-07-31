@@ -273,6 +273,16 @@ void GraphicsLayerTextureMapper::setDrawsContent(bool value)
 
 /* \reimp (GraphicsLayer.h)
 */
+void GraphicsLayerTextureMapper::setContentsVisible(bool value)
+{
+    if (value == contentsAreVisible())
+        return;
+    notifyChange(TextureMapperLayer::ContentsVisibleChange);
+    GraphicsLayer::setContentsVisible(value);
+}
+
+/* \reimp (GraphicsLayer.h)
+*/
 void GraphicsLayerTextureMapper::setContentsOpaque(bool value)
 {
     if (value == contentsOpaque())

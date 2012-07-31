@@ -1,3 +1,33 @@
+2012-07-30  Huang Dongsung  <luxtella@company100.net>
+
+        [Texmap] Remove the backing store after 'style.visibility' for an element sets 'hidden'.
+        https://bugs.webkit.org/show_bug.cgi?id=92492
+
+        Reviewed by Noam Rosenthal.
+
+        This patch's purpose is to save vram memory.
+        When visibility of the element sets hidden, we do not need to draw the element,
+        so we do not need to keep a texture of the backing store.
+        Currently, Texmap does not draw the element with visibility:hidden because
+        RenderLayerBacking::paintIntoLayer does not draw anything.
+        This patch just removes unused textures.
+
+        No new tests - no new testable functionality.
+
+        * platform/graphics/texmap/GraphicsLayerTextureMapper.cpp:
+        (WebCore::GraphicsLayerTextureMapper::setContentsVisible):
+        (WebCore):
+        * platform/graphics/texmap/GraphicsLayerTextureMapper.h:
+        (GraphicsLayerTextureMapper):
+        * platform/graphics/texmap/TextureMapperLayer.cpp:
+        (WebCore::TextureMapperLayer::updateBackingStore):
+        (WebCore::TextureMapperLayer::paintSelf):
+        (WebCore::TextureMapperLayer::isVisible):
+        (WebCore::TextureMapperLayer::syncCompositingStateSelf):
+        * platform/graphics/texmap/TextureMapperLayer.h:
+        (State):
+        (WebCore::TextureMapperLayer::State::State):
+
 2012-07-30  Keishi Hattori  <keishi@webkit.org>
 
         Implement datalist UI for input type color for Chromium

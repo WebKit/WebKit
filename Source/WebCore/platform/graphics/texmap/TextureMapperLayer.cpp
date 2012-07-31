@@ -103,7 +103,7 @@ void TextureMapperLayer::updateBackingStore(TextureMapper* textureMapper, Graphi
     if (!m_shouldUpdateBackingStoreFromLayer)
         return;
 
-    if (!m_state.drawsContent || m_size.isEmpty()) {
+    if (!m_state.drawsContent || !m_state.contentsVisible || m_size.isEmpty()) {
         m_backingStore.clear();
         return;
     }
@@ -157,7 +157,7 @@ void TextureMapperLayer::paint()
 
 void TextureMapperLayer::paintSelf(const TextureMapperPaintOptions& options)
 {
-    if (!m_state.visible)
+    if (!m_state.visible || !m_state.contentsVisible)
         return;
 
     // We apply the following transform to compensate for painting into a surface, and then apply the offset so that the painting fits in the target rect.
@@ -293,6 +293,8 @@ bool TextureMapperLayer::isVisible() const
     if (m_size.isEmpty() && (m_state.masksToBounds || m_state.maskLayer || m_children.isEmpty()))
         return false;
     if (!m_state.visible && m_children.isEmpty())
+        return false;
+    if (!m_state.contentsVisible && m_children.isEmpty())
         return false;
     if (m_opacity < 0.01)
         return false;
@@ -472,6 +474,7 @@ void TextureMapperLayer::syncCompositingStateSelf(GraphicsLayerTextureMapper* gr
     m_state.preserves3D = graphicsLayer->preserves3D();
     m_state.masksToBounds = graphicsLayer->masksToBounds();
     m_state.drawsContent = graphicsLayer->drawsContent();
+    m_state.contentsVisible = graphicsLayer->contentsAreVisible();
     m_state.contentsOpaque = graphicsLayer->contentsOpaque();
     m_state.backfaceVisibility = graphicsLayer->backfaceVisibility();
     m_state.childrenTransform = graphicsLayer->childrenTransform();

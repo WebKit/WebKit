@@ -60,6 +60,7 @@ public:
     virtual void setPreserves3D(bool b);
     virtual void setMasksToBounds(bool b);
     virtual void setDrawsContent(bool b);
+    virtual void setContentsVisible(bool);
     virtual void setContentsOpaque(bool b);
     virtual void setBackfaceVisibility(bool b);
     virtual void setOpacity(float opacity);

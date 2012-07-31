@@ -95,6 +95,7 @@ public:
     void setPreserves3D(bool);
     void setMasksToBounds(bool);
     void setDrawsContent(bool);
+    void setContentsVisible(bool);
     void setContentsOpaque(bool);
     void setBackfaceVisibility(bool);
     void setOpacity(float);

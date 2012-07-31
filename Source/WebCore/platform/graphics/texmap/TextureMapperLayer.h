@@ -83,16 +83,17 @@ public:
         Preserves3DChange =         (1L << 12),
         MasksToBoundsChange =       (1L << 13),
         DrawsContentChange =        (1L << 14),
-        ContentsOpaqueChange =      (1L << 15),
+        ContentsVisibleChange =     (1L << 15),
+        ContentsOpaqueChange =      (1L << 16),
 
-        BackfaceVisibilityChange =  (1L << 16),
-        ChildrenTransformChange =   (1L << 17),
-        DisplayChange =             (1L << 18),
-        BackgroundColorChange =     (1L << 19),
+        BackfaceVisibilityChange =  (1L << 17),
+        ChildrenTransformChange =   (1L << 18),
+        DisplayChange =             (1L << 19),
+        BackgroundColorChange =     (1L << 20),
 
-        ReplicaLayerChange =        (1L << 20),
-        AnimationChange =           (1L << 21),
-        FilterChange =              (1L << 22)
+        ReplicaLayerChange =        (1L << 21),
+        AnimationChange =           (1L << 22),
+        FilterChange =              (1L << 23)
     };
 
     enum SyncOptions {
@@ -212,6 +213,7 @@ private:
         bool preserves3D : 1;
         bool masksToBounds : 1;
         bool drawsContent : 1;
+        bool contentsVisible : 1;
         bool contentsOpaque : 1;
         bool backfaceVisibility : 1;
         bool visible : 1;
@@ -225,6 +227,7 @@ private:
             , preserves3D(false)
             , masksToBounds(false)
             , drawsContent(false)
+            , contentsVisible(true)
             , contentsOpaque(false)
             , backfaceVisibility(false)
             , visible(true)

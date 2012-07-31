@@ -264,6 +264,7 @@ void WebLayerTreeRenderer::setLayerState(WebLayerID id, const WebLayerInfo& laye
     layer->setContentsOpaque(layerInfo.contentsOpaque);
     layer->setContentsRect(layerInfo.contentsRect);
     layer->setDrawsContent(layerInfo.drawsContent);
+    layer->setContentsVisible(layerInfo.contentsVisible);
     toGraphicsLayerTextureMapper(layer)->setFixedToViewport(layerInfo.fixedToViewport);
 
     if (layerInfo.fixedToViewport)
