@@ -210,6 +210,7 @@ extern const WTF_EXPORTDATA AtomicString commentAtom;
 extern const WTF_EXPORTDATA AtomicString starAtom;
 extern const WTF_EXPORTDATA AtomicString xmlAtom;
 extern const WTF_EXPORTDATA AtomicString xmlnsAtom;
+extern const WTF_EXPORTDATA AtomicString xlinkAtom;
 
 inline AtomicString AtomicString::fromUTF8(const char* characters, size_t length)
 {
@@ -247,6 +248,7 @@ using WTF::commentAtom;
 using WTF::starAtom;
 using WTF::xmlAtom;
 using WTF::xmlnsAtom;
+using WTF::xlinkAtom;
 #endif
 
 #include <wtf/text/StringConcatenate.h>

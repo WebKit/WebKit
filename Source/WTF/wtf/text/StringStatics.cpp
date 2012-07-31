@@ -59,6 +59,7 @@ WTF_EXPORTDATA DEFINE_GLOBAL(AtomicString, commentAtom, "#comment")
 WTF_EXPORTDATA DEFINE_GLOBAL(AtomicString, starAtom, "*")
 WTF_EXPORTDATA DEFINE_GLOBAL(AtomicString, xmlAtom, "xml")
 WTF_EXPORTDATA DEFINE_GLOBAL(AtomicString, xmlnsAtom, "xmlns")
+WTF_EXPORTDATA DEFINE_GLOBAL(AtomicString, xlinkAtom, "xlink")
 
 NEVER_INLINE unsigned StringImpl::hashSlowCase() const
 {
@@ -84,6 +85,7 @@ void AtomicString::init()
         new (NotNull, (void*)&starAtom) AtomicString("*");
         new (NotNull, (void*)&xmlAtom) AtomicString("xml");
         new (NotNull, (void*)&xmlnsAtom) AtomicString("xmlns");
+        new (NotNull, (void*)&xlinkAtom) AtomicString("xlink");
 
         initialized = true;
     }

@@ -710,14 +710,15 @@ static void adjustForeignAttributes(AtomicHTMLToken* token)
     static PrefixedNameToQualifiedNameMap* map = 0;
     if (!map) {
         map = new PrefixedNameToQualifiedNameMap;
+
         QualifiedName** attrs = XLinkNames::getXLinkAttrs();
-        addNamesWithPrefix(map, "xlink", attrs, XLinkNames::XLinkAttrsCount);
+        addNamesWithPrefix(map, xlinkAtom, attrs, XLinkNames::XLinkAttrsCount);
 
         attrs = XMLNames::getXMLAttrs();
-        addNamesWithPrefix(map, "xml", attrs, XMLNames::XMLAttrsCount);
+        addNamesWithPrefix(map, xmlAtom, attrs, XMLNames::XMLAttrsCount);
 
-        map->add("xmlns", XMLNSNames::xmlnsAttr);
-        map->add("xmlns:xlink", QualifiedName("xmlns", "xlink", XMLNSNames::xmlnsNamespaceURI));
+        map->add(WTF::xmlnsAtom, XMLNSNames::xmlnsAttr);
+        map->add("xmlns:xlink", QualifiedName(xmlnsAtom, xlinkAtom, XMLNSNames::xmlnsNamespaceURI));
     }
 
     for (unsigned i = 0; i < token->attributes().size(); ++i) {

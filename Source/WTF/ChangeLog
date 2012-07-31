@@ -1,3 +1,18 @@
+2012-07-31  Stephen Chenney  <schenney@chromium.org>
+
+        xmlserializer strips xlink from xlink:html svg image tag
+        https://bugs.webkit.org/show_bug.cgi?id=79586
+
+        Reviewed by Nikolas Zimmermann.
+
+        Add WTF::xlinkAtom as a global AtomicString constant.
+
+        * wtf/text/AtomicString.h:
+        (WTF): Add xlinkAtom.
+        * wtf/text/StringStatics.cpp:
+        (WTF): Add xlinkAtom.
+        (WTF::AtomicString::init): Add xlinkAtom.
+
 2012-07-30  Patrick Gansterer  <paroga@webkit.org>
 
         Add WTF_EXPORT_PRIVATE to deleteOwnedPtr()

@@ -36,7 +36,9 @@
 #include "HTMLNames.h"
 #include "KURL.h"
 #include "ProcessingInstruction.h"
+#include "XLinkNames.h"
 #include "XMLNSNames.h"
+#include "XMLNames.h"
 #include <wtf/unicode/CharacterNames.h>
 
 namespace WebCore {
@@ -418,16 +420,35 @@ void MarkupAccumulator::appendCloseTag(StringBuilder& result, Element* element)
     result.append('>');
 }
 
+static inline bool attributeIsInSerializedNamespace(const Attribute& attribute)
+{
+    return attribute.namespaceURI() == XMLNames::xmlNamespaceURI
+        || attribute.namespaceURI() == XLinkNames::xlinkNamespaceURI
+        || attribute.namespaceURI() == XMLNSNames::xmlnsNamespaceURI;
+}
+
 void MarkupAccumulator::appendAttribute(StringBuilder& result, Element* element, const Attribute& attribute, Namespaces* namespaces)
 {
     bool documentIsHTML = element->document()->isHTMLDocument();
 
     result.append(' ');
 
-    if (documentIsHTML)
+    if (documentIsHTML && !attributeIsInSerializedNamespace(attribute))
         result.append(attribute.name().localName());
-    else
-        result.append(attribute.name().toString());
+    else {
+        QualifiedName prefixedName = attribute.name();
+        if (attribute.namespaceURI() == XLinkNames::xlinkNamespaceURI) {
+            if (attribute.prefix() != xlinkAtom)
+                prefixedName.setPrefix(xlinkAtom);
+        } else if (attribute.namespaceURI() == XMLNames::xmlNamespaceURI) {
+            if (attribute.prefix() != xmlAtom)
+                prefixedName.setPrefix(xmlAtom);
+        } else if (attribute.namespaceURI() == XMLNSNames::xmlnsNamespaceURI) {
+            if (attribute.name() != XMLNSNames::xmlnsAttr && attribute.prefix() != xmlnsAtom)
+                prefixedName.setPrefix(xmlnsAtom);
+        }
+        result.append(prefixedName.toString());
+    }
 
     result.append('=');
 
