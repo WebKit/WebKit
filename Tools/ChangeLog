@@ -1,5 +1,36 @@
 2012-07-31  Dirk Pranke  <dpranke@chromium.org>
 
+        nrwt: clean up names in sharding code
+        https://bugs.webkit.org/show_bug.cgi?id=92785
+
+        Reviewed by Ryosuke Niwa.
+
+        More refactoring ... this makes the methods use TestInputs
+        consistently (and updates the names accordingly) and improves
+        encapsulation a bit. The sharding code is now pretty
+        self-contained.
+
+        This change adds no new functionality and is covered by the
+        existing (updated) tests.
+
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        (TestShard.visible.__init__):
+        (TestShard.visible.__repr__):
+        (Manager._dir_for_test_input):
+        (Manager._shard_tests):
+        (Manager._shard_in_two):
+        (Manager._shard_every_file):
+        (Manager._shard_by_directory):
+        (Manager._run_tests):
+        * Scripts/webkitpy/layout_tests/controllers/manager_unittest.py:
+        (ManagerWrapper._test_input_for_file):
+        (ShardingTests.get_shards):
+        * Scripts/webkitpy/layout_tests/models/test_input.py:
+        (TestInput.__init__):
+        (TestInput.__repr__):
+
+2012-07-31  Dirk Pranke  <dpranke@chromium.org>
+
         nrwt: clean up TestInputs in preparation for cleaning up sharding
         https://bugs.webkit.org/show_bug.cgi?id=92784
 

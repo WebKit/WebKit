@@ -64,7 +64,8 @@ class ManagerWrapper(Manager):
         self._ref_tests = ref_tests
 
     def _test_input_for_file(self, test_file):
-        return TestInput(test_file, reference_files=(['foo'] if test_file in self._ref_tests else None))
+        return TestInput(test_file, reference_files=(['foo'] if test_file in self._ref_tests else None),
+            requires_lock=(test_file.startswith('http') or test_file.startswith('perf')))
 
 
 class ShardingTests(unittest.TestCase):
@@ -95,7 +96,7 @@ class ShardingTests(unittest.TestCase):
         port._filesystem = MockFileSystem()
         options = MockOptions(max_locked_shards=max_locked_shards)
         self.manager = ManagerWrapper(self.ref_tests, port=port, options=options, printer=Mock())
-        return self.manager._shard_tests(test_list, num_workers, fully_parallel, shard_ref_tests)
+        return self.manager._shard_tests([self.manager._test_input_for_file(test) for test in test_list], num_workers, fully_parallel, shard_ref_tests)
 
     def assert_shards(self, actual_shards, expected_shard_names):
         self.assertEquals(len(actual_shards), len(expected_shard_names))
