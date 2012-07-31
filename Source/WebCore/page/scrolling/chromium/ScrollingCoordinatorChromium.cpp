@@ -33,16 +33,17 @@
 #include "Region.h"
 #include "RenderLayerCompositor.h"
 #include "RenderView.h"
-#include "ScrollbarLayerChromium.h"
 #include "ScrollbarThemeComposite.h"
 #include "cc/CCProxy.h"
 #include <public/WebScrollableLayer.h>
 #include <public/WebScrollbar.h>
+#include <public/WebScrollbarLayer.h>
 #include <public/WebScrollbarThemeGeometry.h>
 #include <public/WebScrollbarThemePainter.h>
 
 using WebKit::WebLayer;
 using WebKit::WebScrollableLayer;
+using WebKit::WebScrollbarLayer;
 
 namespace WebCore {
 
@@ -56,19 +57,18 @@ public:
     {
         m_scrollLayer = layer;
 
-        int id = layer.isNull() ? 0 : layer.unwrap<LayerChromium>()->id();
         if (!m_horizontalScrollbarLayer.isNull())
-            m_horizontalScrollbarLayer.unwrap<ScrollbarLayerChromium>()->setScrollLayerId(id);
+            m_horizontalScrollbarLayer.setScrollLayer(layer);
         if (!m_verticalScrollbarLayer.isNull())
-            m_verticalScrollbarLayer.unwrap<ScrollbarLayerChromium>()->setScrollLayerId(id);
+            m_verticalScrollbarLayer.setScrollLayer(layer);
     }
 
-    void setHorizontalScrollbarLayer(WebLayer layer)
+    void setHorizontalScrollbarLayer(WebScrollbarLayer layer)
     {
         m_horizontalScrollbarLayer = layer;
     }
 
-    void setVerticalScrollbarLayer(WebLayer layer)
+    void setVerticalScrollbarLayer(WebScrollbarLayer layer)
     {
         m_verticalScrollbarLayer = layer;
     }
@@ -78,8 +78,8 @@ public:
 
 private:
     WebScrollableLayer m_scrollLayer;
-    WebLayer m_horizontalScrollbarLayer;
-    WebLayer m_verticalScrollbarLayer;
+    WebScrollbarLayer m_horizontalScrollbarLayer;
+    WebScrollbarLayer m_verticalScrollbarLayer;
 };
 
 PassRefPtr<ScrollingCoordinator> ScrollingCoordinator::create(Page* page)
@@ -111,7 +111,7 @@ static GraphicsLayer* scrollLayerForFrameView(FrameView* frameView)
 #endif
 }
 
-static WebLayer createScrollbarLayer(Scrollbar* scrollbar, WebScrollableLayer scrollLayer, GraphicsLayer* scrollbarGraphicsLayer, FrameView* frameView)
+static WebScrollbarLayer createScrollbarLayer(Scrollbar* scrollbar, WebScrollableLayer scrollLayer, GraphicsLayer* scrollbarGraphicsLayer, FrameView* frameView)
 {
     ASSERT(scrollbar);
     ASSERT(scrollbarGraphicsLayer);
@@ -137,23 +137,22 @@ static WebLayer createScrollbarLayer(Scrollbar* scrollbar, WebScrollableLayer sc
     if (!platformSupported || scrollbar->isOverlayScrollbar() || scrollbar->isCustomScrollbar()) {
         scrollbarGraphicsLayer->setContentsToMedia(0);
         scrollbarGraphicsLayer->setDrawsContent(true);
-        return WebLayer();
+        return WebScrollbarLayer();
     }
 
     // All Chromium scrollbar themes derive from ScrollbarThemeComposite.
     ScrollbarThemeComposite* themeComposite = static_cast<ScrollbarThemeComposite*>(scrollbar->theme());
-
-    // ScrollbarLayerChromium owns the WebScrollbar
-    OwnPtr<WebKit::WebScrollbar> webScrollbar = WebKit::WebScrollbar::create(scrollbar);
     WebKit::WebScrollbarThemePainter painter(themeComposite);
     WebKit::WebScrollbarThemeGeometry geometry(themeComposite);
 
-    RefPtr<ScrollbarLayerChromium> scrollbarLayer = ScrollbarLayerChromium::create(webScrollbar.release(), painter, geometry, scrollLayer.unwrap<LayerChromium>()->id());
-    scrollbarGraphicsLayer->setContentsToMedia(scrollbarLayer.get());
-    scrollbarGraphicsLayer->setDrawsContent(false);
-    scrollbarLayer->setOpaque(scrollbarGraphicsLayer->contentsOpaque());
+    WebScrollbarLayer scrollbarLayer = WebScrollbarLayer::create(scrollbar, painter, geometry);
+    scrollbarLayer.setScrollLayer(scrollLayer);
 
-    return WebLayer(scrollbarLayer.release());
+    scrollbarGraphicsLayer->setContentsToMedia(scrollbarLayer.unwrap<LayerChromium>());
+    scrollbarGraphicsLayer->setDrawsContent(false);
+    scrollbarLayer.setOpaque(scrollbarGraphicsLayer->contentsOpaque());
+
+    return scrollbarLayer;
 }
 
 void ScrollingCoordinator::frameViewHorizontalScrollbarLayerDidChange(FrameView* frameView, GraphicsLayer* horizontalScrollbarLayer)

@@ -1,3 +1,23 @@
+2012-07-30  Adrienne Walker  <enne@google.com>
+
+        [chromium] Wrap ScrollbarLayerChromium in WebScrollbarLayer
+        https://bugs.webkit.org/show_bug.cgi?id=91032
+
+        Reviewed by James Robinson.
+
+        Modify ScrollingCoordinatorChromium to operate on WebScrollbarLayer
+        instead of ScrollbarLayerChromium. This removes the dependency on
+        ScrollbarLayerChromium.
+
+        No change in functionality, so no new tests.
+
+        * page/scrolling/chromium/ScrollingCoordinatorChromium.cpp:
+        (WebCore::ScrollingCoordinatorPrivate::setScrollLayer):
+        (WebCore::ScrollingCoordinatorPrivate::setHorizontalScrollbarLayer):
+        (WebCore::ScrollingCoordinatorPrivate::setVerticalScrollbarLayer):
+        (ScrollingCoordinatorPrivate):
+        (WebCore::createScrollbarLayer):
+
 2012-07-30  Ryosuke Niwa  <rniwa@webkit.org>
 
         Another Qt build fix attempt after r124098.

@@ -1,3 +1,21 @@
+2012-07-30  Adrienne Walker  <enne@google.com>
+
+        [chromium] Wrap ScrollbarLayerChromium in WebScrollbarLayer
+        https://bugs.webkit.org/show_bug.cgi?id=91032
+
+        Reviewed by James Robinson.
+
+        Add WebScrollbarLayer class to the Platform API.
+
+        * Platform.gypi:
+        * chromium/public/WebScrollbarLayer.h: Added.
+        (WebCore):
+        (WebKit):
+        (WebScrollbarLayer):
+        (WebKit::WebScrollbarLayer::WebScrollbarLayer):
+        (WebKit::WebScrollbarLayer::~WebScrollbarLayer):
+        (WebKit::WebScrollbarLayer::operator=):
+
 2012-06-29  James Robinson  <jamesr@chromium.org>
 
         [chromium] Remove WebTransformationMatrix::mapPoint overrides

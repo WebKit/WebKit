@@ -1,3 +1,21 @@
+2012-07-30  Adrienne Walker  <enne@google.com>
+
+        [chromium] Wrap ScrollbarLayerChromium in WebScrollbarLayer
+        https://bugs.webkit.org/show_bug.cgi?id=91032
+
+        Reviewed by James Robinson.
+
+        Add implementation of WebScrollbarLayer to the client API.
+
+        * WebKit.gyp:
+        * src/WebScrollbarLayer.cpp: Added.
+        (WebKit):
+        (WebKit::WebScrollbarLayer::setScrollLayer):
+        (WebKit::WebScrollbarLayer::create):
+        (WebKit::WebScrollbarLayer::WebScrollbarLayer):
+        (WebKit::WebScrollbarLayer::operator=):
+        (WebKit::WebScrollbarLayer::operator PassRefPtr<ScrollbarLayerChromium>):
+
 2012-07-30  Sadrul Habib Chowdhury  <sadrul@chromium.org>
 
         Propagate gesture events to plugins.
