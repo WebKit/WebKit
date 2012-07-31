@@ -1,5 +1,12 @@
 2012-07-30  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Windows build fix attempt after r124092.
+
+        * MiniBrowser/win/BrowserView.cpp:
+        (BrowserView::create):
+
+2012-07-30  Ryosuke Niwa  <rniwa@webkit.org>
+
         Remove erroneously committed debugging print call from a test.
 
         * Scripts/webkitpy/performance_tests/perftestsrunner_unittest.py:
