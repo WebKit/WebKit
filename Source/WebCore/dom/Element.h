@@ -350,6 +350,8 @@ public:
     Element* nextElementSibling() const;
     unsigned childElementCount() const;
 
+    virtual bool shouldMatchReadOnlySelector() const;
+    virtual bool shouldMatchReadWriteSelector() const;
     bool webkitMatchesSelector(const String& selectors, ExceptionCode&);
 
     DOMTokenList* classList();
@@ -373,7 +375,6 @@ public:
 
     virtual bool isFormControlElement() const { return false; }
     virtual bool isEnabledFormControl() const { return true; }
-    virtual bool isReadOnlyFormControl() const { return false; }
     virtual bool isSpinButtonElement() const { return false; }
     virtual bool isTextFormControl() const { return false; }
     virtual bool isOptionalFormControl() const { return false; }

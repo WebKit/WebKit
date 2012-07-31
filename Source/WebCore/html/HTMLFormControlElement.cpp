@@ -482,6 +482,16 @@ void HTMLFormControlElement::setCustomValidity(const String& error)
     setNeedsValidityCheck();
 }
 
+bool HTMLFormControlElement::shouldMatchReadOnlySelector() const
+{
+    return readOnly();
+}
+
+bool HTMLFormControlElement::shouldMatchReadWriteSelector() const
+{
+    return !readOnly();
+}
+
 bool HTMLFormControlElement::validationMessageShadowTreeContains(Node* node) const
 {
     return m_validationMessage && m_validationMessage->shadowTreeContains(node);

@@ -1,3 +1,47 @@
+2012-07-31  Yoshifumi Inoue  <yosin@chromium.org>
+
+        Change Element::isReadOnlyFormControl to Element::shouldMatchReadOnlySelector/shouldMatchReadWriteSelector or HTMLFormControlElement::readOnly
+        https://bugs.webkit.org/show_bug.cgi?id=92602
+
+        Reviewed by Kent Tamura.
+
+        This patch replaces Element::isReadOnlyFormControl() by
+        Element::shouldMatchReadOnlySelector/shouldMatchReadOnlySelector or
+        HTMLFormControlElement::readOnly() to make intention of functions
+        self descriptive.
+
+        No new tests. This patch doesn't change behavior.
+
+        * css/SelectorChecker.cpp:
+        (WebCore::SelectorChecker::checkOneSelector): Replaced isReadOnlyFormControl() by shouldMatchReadOnlySelector() for :read-only pseudo class, and replaced isReadOnlyFormControl() by shouldMatchReadOnlySelector() for :read-only pseudo class.
+        * dom/Element.cpp:
+        (WebCore::Element::shouldMatchReadOnlySelector): Added for default implementation.
+        (WebCore::Element::shouldMatchReadWriteSelector): for default implementation.
+        * dom/Element.h:
+        (Element): Removed isReadOnlyFormControl() and added shouldMatchReadOnlySelector and shouldMatchReadWriteSelector.
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::HTMLFormControlElement::shouldMatchReadOnlySelector): Added.
+        (WebCore::HTMLFormControlElement::shouldMatchReadWriteSelector): Added.
+        * html/HTMLFormControlElement.h:
+        (HTMLFormControlElement): Removed isReadOnlyFormControl() and added shouldMatchReadOnlySelector and shouldMatchReadWriteSelector.
+        * html/shadow/SliderThumbElement.cpp:
+        (WebCore::SliderThumbElement::shouldMatchReadOnlySelector): Added.
+        (WebCore::SliderThumbElement::shouldMatchReadWriteSelector): Added.
+        (WebCore::SliderThumbElement::willRespondToMouseMoveEvents): Replaced isReadOnlyFormControl() by readOnly().
+        (WebCore::SliderThumbElement::willRespondToMouseClickEvents): ditto.
+        (SliderThumbElement):
+        * html/shadow/TextControlInnerElements.cpp:
+        (WebCore::SearchFieldCancelButtonElement::willRespondToMouseClickEvents): Replaced isReadOnlyFormControl() by readOnly().
+        (WebCore::SpinButtonElement::willRespondToMouseMoveEvents): ditto.
+        (WebCore::SpinButtonElement::willRespondToMouseClickEvents): ditto.
+        (WebCore::SpinButtonElement::shouldMatchReadOnlySelector): Added.
+        (WebCore::SpinButtonElement::shouldMatchReadWriteSelector): Added.
+        (WebCore::InputFieldSpeechButtonElement::willRespondToMouseClickEvents): Replaced isReadOnlyFormControl() by readOnly().
+        * html/shadow/TextControlInnerElements.h:
+        (SpinButtonElement): Removed isReadOnlyFormControl() and added shouldMatchReadOnlySelector and shouldMatchReadWriteSelector.
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::isReadOnlyControl): Replaced isReadOnlyControl() by shouldMatchReadOnlySelector().
+
 2012-07-31  Xingnan Wang  <xingnan.wang@intel.com>
 
         IndexedDB: Size the Vector in encodeInt/encodeVarInt/encodeString

@@ -1783,6 +1783,16 @@ unsigned Element::childElementCount() const
     return count;
 }
 
+bool Element::shouldMatchReadOnlySelector() const
+{
+    return false;
+}
+
+bool Element::shouldMatchReadWriteSelector() const
+{
+    return false;
+}
+
 bool Element::webkitMatchesSelector(const String& selector, ExceptionCode& ec)
 {
     if (selector.isEmpty()) {
