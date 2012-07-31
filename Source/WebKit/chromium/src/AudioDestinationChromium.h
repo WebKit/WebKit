@@ -31,6 +31,7 @@
 
 #include "AudioBus.h"
 #include "AudioDestination.h"
+#include "AudioIOCallback.h"
 #include "AudioSourceProvider.h"
 #include "platform/WebAudioDevice.h"
 #include "platform/WebVector.h"
@@ -43,9 +44,9 @@ class AudioPullFIFO;
 
 // An AudioDestination using Chromium's audio system
 
-class AudioDestinationChromium : public AudioDestination, public WebKit::WebAudioDevice::RenderCallback {
+class AudioDestinationChromium : public AudioDestination, public WebKit::WebAudioDevice::RenderCallback, public AudioSourceProvider {
 public:
-    AudioDestinationChromium(AudioSourceProvider&, float sampleRate);
+    AudioDestinationChromium(AudioIOCallback&, float sampleRate);
     virtual ~AudioDestinationChromium();
 
     virtual void start();
@@ -57,7 +58,11 @@ public:
     // WebKit::WebAudioDevice::RenderCallback
     virtual void render(const WebKit::WebVector<float*>& audioData, size_t numberOfFrames);
 
+    // WebCore::AudioSourceProvider
+    virtual void provideInput(AudioBus*, size_t framesToProcess);
+
 private:
+    AudioIOCallback& m_callback;
     AudioBus m_renderBus;
     float m_sampleRate;
     bool m_isPlaying;

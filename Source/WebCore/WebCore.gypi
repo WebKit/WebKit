@@ -3292,6 +3292,7 @@
             'platform/audio/AudioFIFO.cpp',
             'platform/audio/AudioFIFO.h',
             'platform/audio/AudioFileReader.h',
+            'platform/audio/AudioIOCallback.h',
             'platform/audio/AudioProcessor.h',
             'platform/audio/AudioPullFIFO.cpp',
             'platform/audio/AudioPullFIFO.h',

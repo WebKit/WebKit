@@ -28,7 +28,6 @@
 
 #include "AudioDestinationNode.h"
 
-#include "AudioBus.h"
 #include "AudioContext.h"
 #include "AudioNodeInput.h"
 #include "AudioNodeOutput.h"
@@ -51,8 +50,7 @@ AudioDestinationNode::~AudioDestinationNode()
     uninitialize();
 }
 
-// The audio hardware calls us back here to gets its input stream.
-void AudioDestinationNode::provideInput(AudioBus* destinationBus, size_t numberOfFrames)
+void AudioDestinationNode::render(AudioBus* sourceBus, AudioBus* destinationBus, size_t numberOfFrames)
 {
     // We don't want denormals slowing down any of the audio processing
     // since they can very seriously hurt performance.
@@ -68,6 +66,10 @@ void AudioDestinationNode::provideInput(AudioBus* destinationBus, size_t numberO
 
     // Let the context take care of any business at the start of each render quantum.
     context()->handlePreRenderTasks();
+
+    // Prepare the local audio input provider for this render quantum.
+    if (sourceBus)
+        m_localAudioInputProvider.set(sourceBus);
 
     // This will cause the node(s) connected to us to process, which in turn will pull on their input(s),
     // all the way backwards through the rendering graph.

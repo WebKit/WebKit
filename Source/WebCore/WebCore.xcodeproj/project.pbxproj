@@ -6490,6 +6490,7 @@
 		FDE6860215B0A93B00BB480C /* WrapShapeFunctions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD7E95A215ACD6090039E3D0 /* WrapShapeFunctions.cpp */; };
 		FDE6860315B0A96100BB480C /* WrapShapeFunctions.h in Headers */ = {isa = PBXBuildFile; fileRef = FD7E95A015ACD5620039E3D0 /* WrapShapeFunctions.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FDE6860415B0A96100BB480C /* WrapShapes.h in Headers */ = {isa = PBXBuildFile; fileRef = FDB51CF4159CD70300E227C5 /* WrapShapes.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		FDE2D55B159E66EB00DCCCF8 /* AudioIOCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = FDE2D55A159E66EB00DCCCF8 /* AudioIOCallback.h */; };
 		FDEA6242152102E200479DF0 /* JSOscillator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FDEA6240152102E200479DF0 /* JSOscillator.cpp */; };
 		FDEA6243152102E200479DF0 /* JSOscillator.h in Headers */ = {isa = PBXBuildFile; fileRef = FDEA6241152102E200479DF0 /* JSOscillator.h */; };
 		FDEA6246152102FC00479DF0 /* JSWaveTable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FDEA6244152102FC00479DF0 /* JSWaveTable.cpp */; };
@@ -13874,6 +13875,7 @@
 		FDC54F011399B0DA008D9117 /* BiquadFilterNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BiquadFilterNode.cpp; sourceTree = "<group>"; };
 		FDC54F021399B0DA008D9117 /* BiquadFilterNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BiquadFilterNode.h; sourceTree = "<group>"; };
 		FDC54F031399B0DA008D9117 /* BiquadFilterNode.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = BiquadFilterNode.idl; sourceTree = "<group>"; };
+		FDE2D55A159E66EB00DCCCF8 /* AudioIOCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioIOCallback.h; sourceTree = "<group>"; };
 		FDEA6240152102E200479DF0 /* JSOscillator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSOscillator.cpp; sourceTree = "<group>"; };
 		FDEA6241152102E200479DF0 /* JSOscillator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSOscillator.h; sourceTree = "<group>"; };
 		FDEA6244152102FC00479DF0 /* JSWaveTable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWaveTable.cpp; sourceTree = "<group>"; };
@@ -21948,6 +21950,7 @@
 				FD31604B12B026F700C1A359 /* AudioDSPKernelProcessor.cpp */,
 				FD31604C12B026F700C1A359 /* AudioDSPKernelProcessor.h */,
 				FD31604D12B026F700C1A359 /* AudioFileReader.h */,
+				FDE2D55A159E66EB00DCCCF8 /* AudioIOCallback.h */,
 				FD31604E12B026F700C1A359 /* AudioProcessor.h */,
 				FD31604F12B026F700C1A359 /* AudioResampler.cpp */,
 				FD31605012B026F700C1A359 /* AudioResampler.h */,
@@ -25369,6 +25372,7 @@
 				49B3760D15C6C6840059131D /* ArrayValue.h in Headers */,
 				FD671A78159BB07000197559 /* MediaStreamAudioSourceNode.h in Headers */,
 				FDBD480D159BC6870093EB4F /* JSMediaStreamAudioSourceNode.h in Headers */,
+				FDE2D55B159E66EB00DCCCF8 /* AudioIOCallback.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

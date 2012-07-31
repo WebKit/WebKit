@@ -1,3 +1,65 @@
+2012-07-31  Chris Rogers  <crogers@google.com>
+
+        Allow AudioDestination to support local/live audio input
+        https://bugs.webkit.org/show_bug.cgi?id=90318
+
+        Reviewed by Kenneth Russell.
+
+        * WebCore.gypi:
+        * WebCore.xcodeproj/project.pbxproj:
+        * GNUmakefile.list.am:
+        Add AudioIOCallback.h to make files.
+
+        * Modules/webaudio/AudioDestinationNode.h:
+        * Modules/webaudio/AudioDestinationNode.cpp:
+        (WebCore::AudioDestinationNode::render):
+        Change provideInput() method to render() to support optional audio input.
+
+        (AudioDestinationNode):
+        (WebCore::AudioDestinationNode::localAudioInputProvider):
+        Expose public access to an AudioSourceProvider for local/live audio input.
+
+        (LocalAudioInputProvider):
+        (WebCore::AudioDestinationNode::LocalAudioInputProvider::LocalAudioInputProvider):
+        (WebCore::AudioDestinationNode::LocalAudioInputProvider::set):
+        (WebCore::AudioDestinationNode::LocalAudioInputProvider::provideInput):
+        Add simple AudioSourceProvider implementation which dishes out a single AudioBus each
+        render quantum for optional local/live audio input.
+
+        * Modules/webaudio/OfflineAudioDestinationNode.h:
+        * Modules/webaudio/OfflineAudioDestinationNode.cpp:
+        (WebCore::OfflineAudioDestinationNode::startRendering):
+        (WebCore::OfflineAudioDestinationNode::offlineRenderEntry):
+        (WebCore::OfflineAudioDestinationNode::offlineRender):
+        Simple name change using "offline" prefix to avoid confusion with AudioDestinationNode::render() method (implementing AudioIOCallback)
+
+        * platform/audio/AudioDestination.h:
+        Switch create() method to take an AudioIOCallback instead of AudioSourceProvider.
+
+        * platform/audio/AudioIOCallback.h:
+        (WebCore::AudioIOCallback::~AudioIOCallback):
+        Add new AudioIOCallback interface for audio input/output.
+
+        * platform/audio/gstreamer/AudioDestinationGStreamer.cpp:
+        (WebCore::AudioDestination::create):
+        (WebCore::AudioDestinationGStreamer::AudioDestinationGStreamer):
+        * platform/audio/gstreamer/AudioDestinationGStreamer.h:
+        (AudioDestinationGStreamer):
+        (WebCore::AudioDestinationGStreamer::callback):
+        * platform/audio/gstreamer/WebKitWebAudioSourceGStreamer.cpp:
+        (_WebKitWebAudioSourcePrivate):
+        (webKitWebAudioSrcSetProperty):
+        (webKitWebAudioSrcLoop):
+        Small tweaks to AudioDestinationGStreamer implementation to account for switch to AudioIOCallback.
+
+        * platform/audio/mac/AudioDestinationMac.cpp:
+        (WebCore::AudioDestination::create):
+        (WebCore::AudioDestinationMac::AudioDestinationMac):
+        (WebCore::AudioDestinationMac::render):
+        * platform/audio/mac/AudioDestinationMac.h:
+        (AudioDestinationMac):
+        Small tweaks to AudioDestinationMac implementation to account for switch to AudioIOCallback.
+
 2012-07-31  Kwang Yul Seo  <skyul@company100.net>
 
         Read tag names and attributes from the saved tokens in HTMLTreeBuilder::processEndTag(AtomicHTMLToken*)

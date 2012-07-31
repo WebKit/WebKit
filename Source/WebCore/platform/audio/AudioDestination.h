@@ -34,14 +34,15 @@
 
 namespace WebCore {
 
-class AudioSourceProvider;
+class AudioIOCallback;
 
-// Abstraction for an audio output to the audio hardware
-// An AudioSourceProvider is called back periodically to provide the rendered audio stream.
+// AudioDestination is an abstraction for audio hardware I/O.
+// The audio hardware periodically calls the AudioIOCallback render() method asking it to render/output the next render quantum of audio.
+// It optionally will pass in local/live audio input when it calls render().
 
 class AudioDestination {
 public:
-    static PassOwnPtr<AudioDestination> create(AudioSourceProvider&, float sampleRate);
+    static PassOwnPtr<AudioDestination> create(AudioIOCallback&, float sampleRate);
 
     virtual ~AudioDestination() { }
 

@@ -23,7 +23,7 @@
 #if ENABLE(WEB_AUDIO) && USE(GSTREAMER)
 
 #include "AudioBus.h"
-#include "AudioSourceProvider.h"
+#include "AudioIOCallback.h"
 #include <wtf/gobject/GOwnPtr.h>
 #include "GRefPtrGStreamer.h"
 #include <gst/audio/multichannel.h>
@@ -47,7 +47,7 @@ struct _WebKitWebAudioSrcClass {
 struct _WebKitWebAudioSourcePrivate {
     gfloat sampleRate;
     AudioBus* bus;
-    AudioSourceProvider* provider;
+    AudioIOCallback* provider;
     guint framesToPull;
     guint64 currentBufferOffset;
 
@@ -279,7 +279,7 @@ static void webKitWebAudioSrcSetProperty(GObject* object, guint propertyId, cons
         priv->bus = static_cast<AudioBus*>(g_value_get_pointer(value));
         break;
     case PROP_PROVIDER:
-        priv->provider = static_cast<AudioSourceProvider*>(g_value_get_pointer(value));
+        priv->provider = static_cast<AudioIOCallback*>(g_value_get_pointer(value));
         break;
     case PROP_FRAMES:
         priv->framesToPull = g_value_get_uint(value);
@@ -323,7 +323,8 @@ static void webKitWebAudioSrcLoop(WebKitWebAudioSrc* src)
     if (!priv->provider || !priv->bus)
         return;
 
-    priv->provider->provideInput(priv->bus, priv->framesToPull);
+    // FIXME: Add support for local/live audio input.
+    priv->provider->render(0, priv->bus, priv->framesToPull);
 
     unsigned bufferSize = priv->framesToPull * sizeof(float);
     for (unsigned index = 0; index < g_slist_length(priv->pads); index++) {

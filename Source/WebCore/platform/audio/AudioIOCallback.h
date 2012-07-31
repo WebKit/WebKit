@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2012 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,44 +26,23 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef AudioDestinationMac_h
-#define AudioDestinationMac_h
-
-#include "AudioBus.h"
-#include "AudioDestination.h"
-#include <AudioUnit/AudioUnit.h>
+#ifndef AudioIOCallback_h
+#define AudioIOCallback_h
 
 namespace WebCore {
 
-// An AudioDestination using CoreAudio's default output AudioUnit
+class AudioBus;
 
-class AudioDestinationMac : public AudioDestination {
+// Abstract base-class for isochronous audio I/O client.
+class AudioIOCallback {
 public:
-    AudioDestinationMac(AudioIOCallback&, float sampleRate);
-    virtual ~AudioDestinationMac();
+    // render() is called periodically to get the next render quantum of audio into destinationBus.
+    // Optional audio input is given in sourceBus (if it's not 0).
+    virtual void render(AudioBus* sourceBus, AudioBus* destinationBus, size_t framesToProcess) = 0;
 
-    virtual void start();
-    virtual void stop();
-    bool isPlaying() { return m_isPlaying; }
-
-    float sampleRate() const { return m_sampleRate; }
-
-private:
-    void configure();
-
-    // DefaultOutputUnit callback
-    static OSStatus inputProc(void* userData, AudioUnitRenderActionFlags*, const AudioTimeStamp*, UInt32 busNumber, UInt32 numberOfFrames, AudioBufferList* ioData);
-
-    OSStatus render(UInt32 numberOfFrames, AudioBufferList* ioData);
-
-    AudioUnit m_outputUnit;
-    AudioIOCallback& m_callback;
-    AudioBus m_renderBus;
-
-    float m_sampleRate;
-    bool m_isPlaying;
+    virtual ~AudioIOCallback() { }
 };
 
-} // namespace WebCore
+} // WebCore
 
-#endif // AudioDestinationMac_h
+#endif // AudioIOCallback_h

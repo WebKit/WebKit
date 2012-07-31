@@ -52,13 +52,14 @@ const size_t fifoSize = 8192;
 const unsigned numberOfChannels = 2;
 
 // Factory method: Chromium-implementation
-PassOwnPtr<AudioDestination> AudioDestination::create(AudioSourceProvider& provider, float sampleRate)
+PassOwnPtr<AudioDestination> AudioDestination::create(AudioIOCallback& callback, float sampleRate)
 {
-    return adoptPtr(new AudioDestinationChromium(provider, sampleRate));
+    return adoptPtr(new AudioDestinationChromium(callback, sampleRate));
 }
 
-AudioDestinationChromium::AudioDestinationChromium(AudioSourceProvider& provider, float sampleRate)
-    : m_renderBus(numberOfChannels, renderBufferSize, false)
+AudioDestinationChromium::AudioDestinationChromium(AudioIOCallback& callback, float sampleRate)
+    : m_callback(callback)
+    , m_renderBus(numberOfChannels, renderBufferSize, false)
     , m_sampleRate(sampleRate)
     , m_isPlaying(false)
 {
@@ -78,7 +79,7 @@ AudioDestinationChromium::AudioDestinationChromium(AudioSourceProvider& provider
     // contains enough data, the data will be provided directly.
     // Otherwise, the FIFO will call the provider enough times to
     // satisfy the request for data.
-    m_fifo = adoptPtr(new AudioPullFIFO(provider, numberOfChannels, fifoSize, renderBufferSize));
+    m_fifo = adoptPtr(new AudioPullFIFO(*this, numberOfChannels, fifoSize, renderBufferSize));
 }
 
 AudioDestinationChromium::~AudioDestinationChromium()
@@ -125,6 +126,12 @@ void AudioDestinationChromium::render(const WebVector<float*>& audioData, size_t
     m_renderBus.setChannelMemory(0, audioData[0], numberOfFrames);
     m_renderBus.setChannelMemory(1, audioData[1], numberOfFrames);
     m_fifo->consume(&m_renderBus, numberOfFrames);
+}
+
+void AudioDestinationChromium::provideInput(AudioBus* bus, size_t framesToProcess)
+{
+    // FIXME: Add support for local/live audio input.
+    m_callback.render(0, bus, framesToProcess);
 }
 
 } // namespace WebCore

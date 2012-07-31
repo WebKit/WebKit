@@ -26,6 +26,8 @@
 #define AudioDestinationNode_h
 
 #include "AudioBuffer.h"
+#include "AudioBus.h"
+#include "AudioIOCallback.h"
 #include "AudioNode.h"
 #include "AudioSourceProvider.h"
 
@@ -34,7 +36,7 @@ namespace WebCore {
 class AudioBus;
 class AudioContext;
     
-class AudioDestinationNode : public AudioNode, public AudioSourceProvider {
+class AudioDestinationNode : public AudioNode, public AudioIOCallback {
 public:
     AudioDestinationNode(AudioContext*, float sampleRate);
     virtual ~AudioDestinationNode();
@@ -43,8 +45,9 @@ public:
     virtual void process(size_t) { }; // we're pulled by hardware so this is never called
     virtual void reset() { m_currentSampleFrame = 0; };
     
-    // The audio hardware calls here periodically to gets its input stream.
-    virtual void provideInput(AudioBus*, size_t numberOfFrames);
+    // The audio hardware calls render() to get the next render quantum of audio into destinationBus.
+    // It will optionally give us local/live audio input in sourceBus (if it's not 0).
+    virtual void render(AudioBus* sourceBus, AudioBus* destinationBus, size_t numberOfFrames);
 
     size_t currentSampleFrame() const { return m_currentSampleFrame; }
     double currentTime() const { return currentSampleFrame() / static_cast<double>(sampleRate()); }
@@ -52,13 +55,45 @@ public:
     virtual unsigned numberOfChannels() const { return 2; } // FIXME: update when multi-channel (more than stereo) is supported
 
     virtual void startRendering() = 0;
+
+    AudioSourceProvider* localAudioInputProvider() { return &m_localAudioInputProvider; }
     
 protected:
+    // LocalAudioInputProvider allows us to expose an AudioSourceProvider for local/live audio input.
+    // If there is local/live audio input, we call set() with the audio input data every render quantum.
+    class LocalAudioInputProvider : public AudioSourceProvider {
+    public:
+        LocalAudioInputProvider()
+            : m_sourceBus(2, AudioNode::ProcessingSizeInFrames) // FIXME: handle non-stereo local input.
+        {
+        }
+
+        void set(AudioBus* bus)
+        {
+            if (bus)
+                m_sourceBus.copyFrom(*bus);
+        }
+
+        // AudioSourceProvider.
+        virtual void provideInput(AudioBus* destinationBus, size_t numberOfFrames)
+        {
+            bool isGood = destinationBus && destinationBus->length() == numberOfFrames && m_sourceBus.length() == numberOfFrames;
+            ASSERT(isGood);
+            if (isGood)
+                destinationBus->copyFrom(m_sourceBus);
+        }
+
+    private:
+        AudioBus m_sourceBus;
+    };
+
     virtual double tailTime() const OVERRIDE { return 0; }
     virtual double latencyTime() const OVERRIDE { return 0; }
 
     // Counts the number of sample-frames processed by the destination.
     size_t m_currentSampleFrame;
+
+    LocalAudioInputProvider m_localAudioInputProvider;
 };
 
 } // namespace WebCore

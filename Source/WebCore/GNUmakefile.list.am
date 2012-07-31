@@ -5776,6 +5776,7 @@ webcore_sources += \
 	Source/WebCore/platform/audio/AudioDSPKernelProcessor.cpp \
 	Source/WebCore/platform/audio/AudioDSPKernelProcessor.h \
 	Source/WebCore/platform/audio/AudioFileReader.h \
+	Source/WebCore/platform/audio/AudioIOCallback.h \
 	Source/WebCore/platform/audio/AudioProcessor.h \
 	Source/WebCore/platform/audio/AudioResampler.cpp \
 	Source/WebCore/platform/audio/AudioResampler.h \

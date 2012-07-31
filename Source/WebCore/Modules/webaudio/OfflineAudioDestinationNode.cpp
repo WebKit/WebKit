@@ -85,19 +85,19 @@ void OfflineAudioDestinationNode::startRendering()
     if (!m_startedRendering) {
         m_startedRendering = true;
         ref(); // See corresponding deref() call in notifyCompleteDispatch().
-        m_renderThread = createThread(OfflineAudioDestinationNode::renderEntry, this, "offline renderer");
+        m_renderThread = createThread(OfflineAudioDestinationNode::offlineRenderEntry, this, "offline renderer");
     }
 }
 
 // Do offline rendering in this thread.
-void OfflineAudioDestinationNode::renderEntry(void* threadData)
+void OfflineAudioDestinationNode::offlineRenderEntry(void* threadData)
 {
     OfflineAudioDestinationNode* destinationNode = reinterpret_cast<OfflineAudioDestinationNode*>(threadData);
     ASSERT(destinationNode);
-    destinationNode->render();
+    destinationNode->offlineRender();
 }
 
-void OfflineAudioDestinationNode::render()
+void OfflineAudioDestinationNode::offlineRender()
 {
     ASSERT(!isMainThread());
     ASSERT(m_renderBus.get());
@@ -131,7 +131,7 @@ void OfflineAudioDestinationNode::render()
     unsigned n = 0;
     while (framesToProcess > 0) {
         // Render one render quantum.
-        provideInput(m_renderBus.get(), renderQuantumSize);
+        render(0, m_renderBus.get(), renderQuantumSize);
         
         size_t framesAvailableToCopy = min(framesToProcess, renderQuantumSize);
         

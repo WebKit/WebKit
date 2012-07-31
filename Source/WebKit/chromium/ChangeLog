@@ -1,3 +1,18 @@
+2012-07-31  Chris Rogers  <crogers@google.com>
+
+        Allow AudioDestination to support local/live audio input
+        https://bugs.webkit.org/show_bug.cgi?id=90318
+
+        Reviewed by Kenneth Russell.
+
+        * src/AudioDestinationChromium.cpp:
+        (WebCore::AudioDestination::create):
+        (WebCore::AudioDestinationChromium::AudioDestinationChromium):
+        (WebCore::AudioDestinationChromium::provideInput):
+        (WebCore):
+        * src/AudioDestinationChromium.h:
+        (AudioDestinationChromium):
+
 2012-07-31  Adam Barth  <abarth@webkit.org>
 
         [Chromium-Android] We should hueristically detect content intents on touch
