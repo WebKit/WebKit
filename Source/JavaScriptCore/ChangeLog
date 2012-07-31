@@ -1,3 +1,10 @@
+2012-07-31  Geoffrey Garen  <ggaren@apple.com>
+
+        Maybe fix the GCC build.
+
+        * heap/HeapBlock.h:
+        (HeapBlock): Accommodate incorrect parsing in GCC.
+
 2012-07-31  Sam Weinig  <sam@webkit.org>
 
         Stop masking 8 bits off of the visited link hash. We need all the bits!
