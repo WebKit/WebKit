@@ -1,3 +1,24 @@
+2012-07-31  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
+
+        FractionalLayoutUnit minor math bugs
+        https://bugs.webkit.org/show_bug.cgi?id=86065
+
+        Reviewed by Levi Weintraub.
+
+        Implement a consistent set of subject modifying operators, to ensure
+        operations that need to be in float are performed in float.
+
+        Scale FractionalLayoutSize in FractionalLayoutUnits instead of intergers.
+
+        No new functionality. No new tests.
+
+        * platform/FractionalLayoutUnit.h:
+        (WebCore::operator-=):
+        (WebCore::operator*=):
+        (WebCore::operator/=):
+        * platform/graphics/FractionalLayoutSize.h:
+        (WebCore::FractionalLayoutSize::scale):
+
 2012-07-31  Joshua Netterfield  <jnetterfield@rim.com>
 
         [BlackBerry] Enable CSS Filter Effects
