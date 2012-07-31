@@ -31,7 +31,7 @@ from webkitpy.layout_tests.models.test_expectations import TestExpectations, SKI
 
 
 class ResultSummary(object):
-    def __init__(self, expectations, test_files, iterations=1):
+    def __init__(self, expectations, test_files, iterations, expected_skips):
         self.total = len(test_files) * iterations
         self.remaining = self.total
         self.expectations = expectations
@@ -48,8 +48,8 @@ class ResultSummary(object):
         self.failures = {}
         self.total_failures = 0
         self.expected_skips = 0
-        self.total_tests_by_expectation[SKIP] = 0
-        self.tests_by_expectation[SKIP] = set()
+        self.total_tests_by_expectation[SKIP] = len(expected_skips)
+        self.tests_by_expectation[SKIP] = expected_skips
         for expectation in TestExpectations.EXPECTATIONS.values():
             self.tests_by_expectation[expectation] = set()
             self.total_tests_by_expectation[expectation] = 0

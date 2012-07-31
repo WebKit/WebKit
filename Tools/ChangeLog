@@ -1,3 +1,72 @@
+2012-07-30  Dirk Pranke  <dpranke@chromium.org>
+
+        nrwt: clean up handling of 'expected' stats
+        https://bugs.webkit.org/show_bug.cgi?id=92527
+
+        Reviewed by Tony Chang.
+
+        This patch alters the way we compute and log the "expected"
+        results and how we treat skipped tests; we will now log the
+        number of skipped tests separately from the categories, e.g.:
+
+        Found 31607 tests; running 24464.
+        Expect: 23496 passes   (23496 now,    0 wontfix)
+        Expect:   548 failures (  543 now,    5 wontfix)
+        Expect:   420 flaky    (  245 now,  175 wontfix)
+
+        (so that the "expect" totals add up to the "running" totals);
+        in addition, the totals in the one-line-progress reflect the
+        number of tests we will actually run. If --iterations or
+        --repeat-each are specified, the number of tests we run are
+        multiplied as appropriate, but the "expect" numbers are
+        unchanged, since we don't count multiple invocations of the same
+        test multiple times. In addition, if we are using --run-part or
+        --run-chunk, the tests we don't run are treated as skipped
+        for consistency. We will also log the values for --iterations
+        and --repeat each as part of the found/running line.
+
+        Previously the code had parsed and re-parsed the
+        TestExpectations files several times in an attempt to come up
+        with some sane statistics, but this was expensive and lead to
+        confusing layer; treating files as skipped in the way described
+        above is more consistent and cleaner.
+
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        (Manager._split_into_chunks_if_necessary):
+        (Manager.prepare_lists_and_print_output):
+        (Manager.run):
+        * Scripts/webkitpy/layout_tests/controllers/manager_unittest.py:
+        (ManagerTest.test_interrupt_if_at_failure_limits):
+        (ManagerTest.test_update_summary_with_result):
+        (ManagerTest.test_look_for_new_crash_logs):
+        (ResultSummaryTest.get_result_summary):
+        * Scripts/webkitpy/layout_tests/models/result_summary.py:
+        (ResultSummary.__init__):
+        * Scripts/webkitpy/layout_tests/models/test_expectations.py:
+        (TestExpectationParser.expectation_for_skipped_test):
+        (TestExpectations.__init__):
+        (TestExpectations.add_skipped_tests):
+          Here we make add_skipped_tests() public, so that we can update
+          the expectations for tests that we are skipping due to
+          --run-part or --run-chunk; we use the wontfix flag so that
+          the tests that are intentionally skipped aren't considered
+          "fixable".
+        * Scripts/webkitpy/layout_tests/models/test_expectations_unittest.py:
+        (SkippedTests.check):
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        (parse_args):
+        * Scripts/webkitpy/layout_tests/views/printing.py:
+        (Printer.print_found):
+        (Printer):
+        (Printer.print_expected):
+        (Printer._print_result_summary):
+        (Printer._print_result_summary_entry):
+          Here we split out printing the number of tests found and run
+          from the expected results, to be clearer and so that we don't
+          have to reparse the expectations to update the stats.
+        * Scripts/webkitpy/layout_tests/views/printing_unittest.py:
+        (Testprinter.get_result_summary):
+
 2012-07-30  Sadrul Habib Chowdhury  <sadrul@chromium.org>
 
         Propagate gesture events to plugins.

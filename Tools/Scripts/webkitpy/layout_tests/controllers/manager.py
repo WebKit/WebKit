@@ -426,25 +426,12 @@ class Manager(object):
             _log.debug('   last chunk is partial, appending [0:%d]' % extra)
             files.extend(test_files[0:extra])
 
-        len_skip_chunk = int(len(files) * len(skipped) / float(len(self._test_files)))
-        skip_chunk_list = list(skipped)[0:len_skip_chunk]
-        skip_chunk = set(skip_chunk_list)
-
-        # FIXME: This is a total hack.
-        # Update expectations so that the stats are calculated correctly.
-        # We need to pass a list that includes the right # of skipped files
-        # to ParseExpectations so that ResultSummary() will get the correct
-        # stats. So, we add in the subset of skipped files, and then
-        # subtract them back out.
-        self._test_files_list = files + skip_chunk_list
-        self._test_files = set(self._test_files_list)
-
-        self._parse_expectations()
-
-        self._test_files = set(files)
+        tests_to_run = set(files)
+        more_tests_to_skip = self._test_files - tests_to_run
+        self._expectations.add_skipped_tests(more_tests_to_skip)
+        self._test_files = tests_to_run
         self._test_files_list = files
-
-        return skip_chunk
+        return skipped.union(more_tests_to_skip)
 
     # FIXME: This method is way too long and needs to be broken into pieces.
     def prepare_lists_and_print_output(self):
@@ -490,9 +477,8 @@ class Manager(object):
         else:
             self._test_files_list.sort(key=lambda test: test_key(self._port, test))
 
-        skipped = self._split_into_chunks_if_necessary(skipped)
+        all_tests_to_skip = self._split_into_chunks_if_necessary(skipped)
 
-        # FIXME: It's unclear how --repeat-each and --iterations should interact with chunks?
         if self._options.repeat_each:
             list_with_repetitions = []
             for test in self._test_files_list:
@@ -502,22 +488,11 @@ class Manager(object):
         if self._options.iterations:
             self._test_files_list = self._test_files_list * self._options.iterations
 
-        iterations =  \
-            (self._options.repeat_each if self._options.repeat_each else 1) * \
-            (self._options.iterations if self._options.iterations else 1)
-        result_summary = ResultSummary(self._expectations, self._test_files | skipped, iterations)
+        iterations = self._options.repeat_each * self._options.iterations
+        result_summary = ResultSummary(self._expectations, self._test_files, iterations, all_tests_to_skip)
 
-        self._printer.print_expected(num_all_test_files, result_summary, self._expectations.get_tests_with_result_type)
-
-        if self._options.skipped != 'ignore':
-            # Note that we don't actually run the skipped tests (they were
-            # subtracted out of self._test_files, above), but we stub out the
-            # results here so the statistics can remain accurate.
-            for test in skipped:
-                result = test_results.TestResult(test)
-                result.type = test_expectations.SKIP
-                for iteration in range(iterations):
-                    result_summary.add(result, expected=True, test_is_slow=self._test_is_slow(test))
+        self._printer.print_found(num_all_test_files, len(self._test_files), self._options.repeat_each, self._options.iterations)
+        self._printer.print_expected(result_summary, self._expectations.get_tests_with_result_type)
 
         return result_summary
 
@@ -869,7 +844,7 @@ class Manager(object):
             _log.info("Retrying %d unexpected failure(s) ..." % len(failures))
             _log.info('')
             self._retrying = True
-            retry_summary = ResultSummary(self._expectations, failures.keys())
+            retry_summary = ResultSummary(self._expectations, failures.keys(), 1, set())
             # Note that we intentionally ignore the return value here.
             self._run_tests(failures.keys(), retry_summary, num_workers=1)
             failures = self._get_failures(retry_summary, include_crashes=True, include_missing=True)

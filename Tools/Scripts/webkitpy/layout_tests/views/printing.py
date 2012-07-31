@@ -220,20 +220,17 @@ class Printer(object):
         self._print_config('Command line: ' + ' '.join(self._port.driver_cmd_line()))
         self._print_config('')
 
-    def print_expected(self, num_all_test_files, result_summary, tests_with_result_type_callback):
-        self._print_expected('Found %s.' % grammar.pluralize('test', num_all_test_files))
+    def print_found(self, num_all_test_files, num_to_run, repeat_each, iterations):
+        found_str = 'Found %s; running %d' % (grammar.pluralize('test', num_all_test_files), num_to_run)
+        if repeat_each * iterations > 1:
+            found_str += ', %d times each (--repeat-each=%d, --iterations=%d)' % (repeat_each * iterations, repeat_each, iterations)
+        self._print_expected(found_str + '.')
+
+    def print_expected(self, result_summary, tests_with_result_type_callback):
         self._print_expected_results_of_type(result_summary, test_expectations.PASS, "passes", tests_with_result_type_callback)
         self._print_expected_results_of_type(result_summary, test_expectations.FAIL, "failures", tests_with_result_type_callback)
         self._print_expected_results_of_type(result_summary, test_expectations.FLAKY, "flaky", tests_with_result_type_callback)
-        self._print_expected_results_of_type(result_summary, test_expectations.SKIP, "skipped", tests_with_result_type_callback)
         self._print_expected('')
-
-        if self._options.repeat_each > 1:
-            self._print_expected('Running each test %d times.' % self._options.repeat_each)
-        if self._options.iterations > 1:
-            self._print_expected('Running %d iterations of the tests.' % self._options.iterations)
-        if self._options.iterations > 1 or self._options.repeat_each > 1:
-            self._print_expected('')
 
     def print_workers_and_shards(self, num_workers, num_shards, num_locked_shards):
         driver_name = self._port.driver_name()
@@ -447,7 +444,7 @@ class Printer(object):
         """
         failed = result_summary.total_failures
         total = result_summary.total - result_summary.expected_skips
-        passed = total - failed
+        passed = total - failed - result_summary.remaining
         pct_passed = 0.0
         if total > 0:
             pct_passed = float(passed) * 100 / total
@@ -460,6 +457,7 @@ class Printer(object):
             test_expectations.NOW, "Tests to be fixed")
 
         self.print_actual("")
+        # FIXME: We should be skipping anything marked WONTFIX, so we shouldn't bother logging these stats.
         self._print_result_summary_entry(result_summary,
             test_expectations.WONTFIX,
             "Tests that will only be fixed if they crash (WONTFIX)")
@@ -471,7 +469,7 @@ class Printer(object):
 
         Args:
           result_summary: summary to print results for
-          timeline: the timeline to print results for (NOT, WONTFIX, etc.)
+          timeline: the timeline to print results for (NOW, WONTFIX, etc.)
           heading: a textual description of the timeline
         """
         total = len(result_summary.tests_by_timeline[timeline])
@@ -481,7 +479,7 @@ class Printer(object):
         self.print_actual("=> %s (%d):" % (heading, not_passing))
 
         for result in TestExpectations.EXPECTATION_ORDER:
-            if result == test_expectations.PASS:
+            if result in (test_expectations.PASS, test_expectations.SKIP):
                 continue
             results = (result_summary.tests_by_expectation[result] &
                        result_summary.tests_by_timeline[timeline])

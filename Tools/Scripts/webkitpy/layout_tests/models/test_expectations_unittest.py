@@ -284,7 +284,7 @@ class SkippedTests(Base):
 
         # Check that the expectation is for BUG_DUMMY SKIP : ... = PASS
         self.assertEquals(exp.get_modifiers('failures/expected/text.html'),
-                          [TestExpectationParser.DUMMY_BUG_MODIFIER, TestExpectationParser.SKIP_MODIFIER])
+                          [TestExpectationParser.DUMMY_BUG_MODIFIER, TestExpectationParser.SKIP_MODIFIER, TestExpectationParser.WONTFIX_MODIFIER])
         self.assertEquals(exp.get_expectations('failures/expected/text.html'), set([PASS]))
 
     def test_skipped_tests_work(self):

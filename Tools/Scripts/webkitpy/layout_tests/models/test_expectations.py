@@ -232,6 +232,10 @@ class TestExpectationParser(object):
         expectation_line = TestExpectationLine()
         expectation_line.original_string = test_name
         expectation_line.modifiers = [TestExpectationParser.DUMMY_BUG_MODIFIER, TestExpectationParser.SKIP_MODIFIER]
+        # FIXME: It's not clear what the expectations for a skipped test should be; the expectations
+        # might be different for different entries in a Skipped file, or from the command line, or from
+        # only running parts of the tests. It's also not clear if it matters much.
+        expectation_line.modifiers.append(TestExpectationParser.WONTFIX_MODIFIER)
         expectation_line.name = test_name
         # FIXME: we should pass in a more descriptive string here.
         expectation_line.filename = '<Skipped file>'
@@ -759,7 +763,7 @@ class TestExpectations(object):
                 self._expectations += expectations
 
         # FIXME: move ignore_tests into port.skipped_layout_tests()
-        self._add_skipped_tests(port.skipped_layout_tests(tests).union(set(port.get_option('ignore_tests', []))))
+        self.add_skipped_tests(port.skipped_layout_tests(tests).union(set(port.get_option('ignore_tests', []))))
 
         self._has_warnings = False
         self._report_warnings()
@@ -882,7 +886,7 @@ class TestExpectations(object):
             if self._is_lint_mode or self._test_config in expectation_line.matching_configurations:
                 self._model.add_expectation_line(expectation_line)
 
-    def _add_skipped_tests(self, tests_to_skip):
+    def add_skipped_tests(self, tests_to_skip):
         if not tests_to_skip:
             return
         for test in self._expectations:

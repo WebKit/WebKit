@@ -412,8 +412,8 @@ def parse_args(args=None):
         optparse.make_option("--exit-after-n-crashes-or-timeouts", type="int",
             default=None, help="Exit after the first N crashes instead of "
             "running all tests"),
-        optparse.make_option("--iterations", type="int", help="Number of times to run the set of tests (e.g. ABCABCABC)"),
-        optparse.make_option("--repeat-each", type="int", help="Number of times to run each test (e.g. AAABBBCCC)"),
+        optparse.make_option("--iterations", type="int", default=1, help="Number of times to run the set of tests (e.g. ABCABCABC)"),
+        optparse.make_option("--repeat-each", type="int", default=1, help="Number of times to run each test (e.g. AAABBBCCC)"),
         optparse.make_option("--retry-failures", action="store_true",
             default=True,
             help="Re-try any tests that produce unexpected results (default)"),
