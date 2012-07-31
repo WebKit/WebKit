@@ -1,3 +1,15 @@
+2012-07-30  Dirk Pranke  <dpranke@chromium.org>
+
+        chromium win compile broken after removing webkit.py
+        https://bugs.webkit.org/show_bug.cgi?id=92549
+
+        Reviewed by Ryosuke Niwa.
+
+        Remove the stub file for webkit.py now that it's no longer
+        necessary.
+
+        * Scripts/webkitpy/layout_tests/port/webkit.py: Removed.
+
 2012-07-30  Ryosuke Niwa  <rniwa@webkit.org>
 
         Windows build fix attempt after r124092.
