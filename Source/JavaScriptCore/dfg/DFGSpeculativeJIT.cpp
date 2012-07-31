@@ -1306,14 +1306,12 @@ ValueRecovery SpeculativeJIT::computeValueRecoveryFor(const ValueSource& valueSo
             return ValueRecovery::constant(valueOfJSConstant(valueSource.nodeIndex()));
     
         Node* nodePtr = &at(valueSource.nodeIndex());
-        if (!nodePtr->shouldGenerate()) {
-            // It's legitimately dead. As in, nobody will ever use this node, or operand,
-            // ever. Set it to Undefined to make the GC happy after the OSR.
-            return ValueRecovery::constant(jsUndefined());
-        }
-    
-        GenerationInfo* infoPtr = &m_generationInfo[nodePtr->virtualRegister()];
-        if (!infoPtr->alive() || infoPtr->nodeIndex() != valueSource.nodeIndex()) {
+        GenerationInfo* infoPtr;
+        if (nodePtr->shouldGenerate())
+            infoPtr = &m_generationInfo[nodePtr->virtualRegister()];
+        else
+            infoPtr = 0;
+        if (!infoPtr || !infoPtr->alive() || infoPtr->nodeIndex() != valueSource.nodeIndex()) {
             // Try to see if there is an alternate node that would contain the value we want.
             // There are four possibilities:
             //
@@ -1340,9 +1338,11 @@ ValueRecovery SpeculativeJIT::computeValueRecoveryFor(const ValueSource& valueSo
             if (nodePtr->op() == UInt32ToNumber || nodePtr->op() == DoubleAsInt32) {
                 NodeIndex nodeIndex = nodePtr->child1().index();
                 nodePtr = &at(nodeIndex);
-                infoPtr = &m_generationInfo[nodePtr->virtualRegister()];
-                if (infoPtr->alive() && infoPtr->nodeIndex() == nodeIndex)
-                    found = true;
+                if (nodePtr->shouldGenerate()) {
+                    infoPtr = &m_generationInfo[nodePtr->virtualRegister()];
+                    if (infoPtr->alive() && infoPtr->nodeIndex() == nodeIndex)
+                        found = true;
+                }
             }
         
             if (!found) {
@@ -1391,9 +1391,11 @@ ValueRecovery SpeculativeJIT::computeValueRecoveryFor(const ValueSource& valueSo
             
                 if (nodeIndexToUse != NoNode) {
                     nodePtr = &at(nodeIndexToUse);
-                    infoPtr = &m_generationInfo[nodePtr->virtualRegister()];
-                    ASSERT(infoPtr->alive() && infoPtr->nodeIndex() == nodeIndexToUse);
-                    found = true;
+                    if (nodePtr->shouldGenerate()) {
+                        infoPtr = &m_generationInfo[nodePtr->virtualRegister()];
+                        ASSERT(infoPtr->alive() && infoPtr->nodeIndex() == nodeIndexToUse);
+                        found = true;
+                    }
                 }
             }
         
