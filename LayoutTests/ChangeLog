@@ -1,3 +1,628 @@
+2012-07-30  Peter Kasting  <pkasting@google.com>
+
+        [Chromium] Rebaselines and test expectation updates.
+        ​https://bugs.webkit.org/show_bug.cgi?id=62754
+        ​https://bugs.webkit.org/show_bug.cgi?id=63937
+        ​https://bugs.webkit.org/show_bug.cgi?id=70298
+        ​https://bugs.webkit.org/show_bug.cgi?id=74374
+        ​https://bugs.webkit.org/show_bug.cgi?id=77368
+        ​https://bugs.webkit.org/show_bug.cgi?id=79615
+        ​https://bugs.webkit.org/show_bug.cgi?id=80531
+        https://bugs.webkit.org/show_bug.cgi?id=80879
+        ​https://bugs.webkit.org/show_bug.cgi?id=81631
+        https://bugs.webkit.org/show_bug.cgi?id=83717
+        ​https://bugs.webkit.org/show_bug.cgi?id=87880
+        http://crbug.com/10350
+        http://crbug.com/26291
+        http://crbug.com/47826
+        http://crbug.com/131189
+
+        Unreviewed, test updates.
+
+        Most of the baselines here are for
+        http://trac.webkit.org/changeset/119431 and
+        http://trac.webkit.org/changeset/119748 , as well as some changes to
+        antialiasing (generally to improve it) for which I couldn't find a CL;
+        when these were originally landed and new baselines committed, a
+        Chromium test expectation override file was masking the fact that the
+        tests here needed new baselines as well.
+
+        There is also a small number of other changes mixed in.
+
+        * platform/chromium-linux-x86/css1: Added.
+        * platform/chromium-linux-x86/css1/basic: Added.
+        * platform/chromium-linux-x86/css1/basic/class_as_selector-expected.png: Added.
+        * platform/chromium-linux-x86/css1/basic/id_as_selector-expected.png: Added.
+        * platform/chromium-linux-x86/css1/box_properties: Added.
+        * platform/chromium-linux-x86/css1/box_properties/border_bottom-expected.png: Added.
+        * platform/chromium-linux-x86/css1/box_properties/margin_left-expected.png: Added.
+        * platform/chromium-linux-x86/css1/box_properties/padding_right-expected.png: Added.
+        * platform/chromium-linux-x86/css1/pseudo: Added.
+        * platform/chromium-linux-x86/css1/pseudo/anchor-expected.png: Added.
+        * platform/chromium-linux-x86/editing/input: Added.
+        * platform/chromium-linux-x86/editing/input/reveal-caret-of-multiline-contenteditable-expected.png: Added.
+        * platform/chromium-linux-x86/editing/selection: Removed.
+        * platform/chromium-linux-x86/fast/backgrounds/repeat: Added.
+        * platform/chromium-linux-x86/fast/backgrounds/repeat/negative-offset-repeat-transformed-expected.png: Added.
+        * platform/chromium-linux-x86/fast/block/float: Added.
+        * platform/chromium-linux-x86/fast/block/float/float-avoidance-expected.png: Added.
+        * platform/chromium-linux-x86/fast/canvas/image-pattern-rotate-expected.png: Added.
+        * platform/chromium-linux-x86/fast/events: Added.
+        * platform/chromium-linux-x86/fast/events/autoscroll-expected.png: Added.
+        * platform/chromium-linux-x86/fast/events/reveal-link-when-focused-expected.png: Added.
+        * platform/chromium-linux-x86/fast/forms/textarea: Added.
+        * platform/chromium-linux-x86/fast/forms/textarea/textarea-placeholder-paint-order-expected.png: Added.
+        * platform/chromium-linux-x86/fast/overflow: Added.
+        * platform/chromium-linux-x86/fast/overflow/overflow-with-local-background-attachment-expected.png: Added.
+        * platform/chromium-linux-x86/fast/selectors: Added.
+        * platform/chromium-linux-x86/fast/selectors/166-expected.png: Added.
+        * platform/chromium-linux-x86/fast/selectors/unqualified-hover-strict-expected.png: Added.
+        * platform/chromium-linux-x86/fast/selectors/unqualified-hover-strict-expected.txt: Added.
+        * platform/chromium-linux-x86/fast/transforms: Added.
+        * platform/chromium-linux-x86/fast/transforms/rotated-transform-affects-scrolling-1-expected.png: Added.
+        * platform/chromium-linux-x86/fonts: Added.
+        * platform/chromium-linux-x86/fonts/monospace-expected.png: Added.
+        * platform/chromium-linux-x86/http/tests/navigation: Added.
+        * platform/chromium-linux-x86/http/tests/navigation/javascriptlink-frames-expected.png: Added.
+        * platform/chromium-linux-x86/ietestcenter: Added.
+        * platform/chromium-linux-x86/ietestcenter/css3: Added.
+        * platform/chromium-linux-x86/ietestcenter/css3/bordersbackgrounds: Added.
+        * platform/chromium-linux-x86/ietestcenter/css3/bordersbackgrounds/border-radius-sum-of-radii-002-expected.png: Added.
+        * platform/chromium-linux-x86/svg/as-image: Added.
+        * platform/chromium-linux-x86/svg/as-image/image-respects-pageScaleFactor-expected.png: Added.
+        * platform/chromium-linux-x86/svg/dom: Added.
+        * platform/chromium-linux-x86/svg/dom/SVGTransformList-basics-expected.png: Added.
+        * platform/chromium-linux-x86/svg/dom/css-transforms-expected.png: Added.
+        * platform/chromium-linux-x86/svg/transforms/text-with-pattern-inside-transformed-html-expected.png: Added.
+        * platform/chromium-linux-x86/svg/transforms/text-with-pattern-with-svg-transform-expected.png:
+        * platform/chromium-linux-x86/svg/wicd: Added.
+        * platform/chromium-linux-x86/svg/wicd/test-rightsizing-b-expected.png: Added.
+        * platform/chromium-linux-x86/tables/mozilla/marvin: Added.
+        * platform/chromium-linux-x86/tables/mozilla/marvin/backgr_index-expected.png: Added.
+        * platform/chromium-linux-x86/tables/mozilla/marvin/backgr_layers-opacity-expected.png: Added.
+        * platform/chromium-linux-x86/tables/mozilla_expected_failures/marvin/backgr_fixed-bg-expected.png: Added.
+        * platform/chromium-linux-x86/transforms: Added.
+        * platform/chromium-linux-x86/transforms/2d: Added.
+        * platform/chromium-linux-x86/transforms/2d/hindi-rotated-expected.png: Added.
+        * platform/chromium-linux-x86/transforms/2d/hindi-rotated-expected.txt: Added.
+        * platform/chromium-linux/compositing/geometry/fixed-position-iframe-composited-page-scale-down-expected.png:
+        * platform/chromium-linux/compositing/geometry/fixed-position-iframe-composited-page-scale-expected.png:
+        * platform/chromium-linux/css1/basic/class_as_selector-expected.png:
+        * platform/chromium-linux/css1/basic/id_as_selector-expected.png:
+        * platform/chromium-linux/css1/box_properties/border_bottom-expected.png:
+        * platform/chromium-linux/css1/box_properties/margin_left-expected.png:
+        * platform/chromium-linux/css1/box_properties/padding_right-expected.png:
+        * platform/chromium-linux/css1/pseudo/anchor-expected.png:
+        * platform/chromium-linux/editing/input/reveal-caret-of-multiline-contenteditable-expected.png:
+        * platform/chromium-linux/editing/selection/iframe-expected.png:
+        * platform/chromium-linux/editing/selection/select-all-001-expected.png:
+        * platform/chromium-linux/editing/selection/select-all-002-expected.png:
+        * platform/chromium-linux/fast/backgrounds/background-leakage-transforms-expected.png:
+        * platform/chromium-linux/fast/block/float/float-avoidance-expected.png:
+        * platform/chromium-linux/fast/borders/border-radius-valid-border-clipping-expected.png:
+        * platform/chromium-linux/fast/box-shadow/basic-shadows-expected.png:
+        * platform/chromium-linux/fast/canvas/image-object-in-canvas-expected.png:
+        * platform/chromium-linux/fast/canvas/image-pattern-rotate-expected.png:
+        * platform/chromium-linux/fast/events/autoscroll-expected.png:
+        * platform/chromium-linux/fast/events/reveal-link-when-focused-expected.png:
+        * platform/chromium-linux/fast/forms/fieldset-align-expected.png:
+        * platform/chromium-linux/fast/forms/input-appearance-selection-expected.png:
+        * platform/chromium-linux/fast/forms/input-placeholder-paint-order-expected.png:
+        * platform/chromium-linux/fast/forms/input-table-expected.png:
+        * platform/chromium-linux/fast/forms/listbox-bidi-align-expected.png:
+        * platform/chromium-linux/fast/forms/placeholder-position-expected.png:
+        * platform/chromium-linux/fast/forms/select-overflow-scroll-expected.png:
+        * platform/chromium-linux/fast/forms/select-overflow-scroll-inherited-expected.png:
+        * platform/chromium-linux/fast/forms/textarea-scrollbar-expected.png:
+        * platform/chromium-linux/fast/forms/textarea/textarea-placeholder-paint-order-expected.png:
+        * platform/chromium-linux/fast/html/details-position-expected.png:
+        * platform/chromium-linux/fast/html/details-writing-mode-expected.png:
+        * platform/chromium-linux/fast/overflow/overflow-update-transform-expected.png:
+        * platform/chromium-linux/fast/overflow/overflow-with-local-background-attachment-expected.png:
+        * platform/chromium-linux/fast/replaced/width100percent-radio-expected.png: Added.
+        * platform/chromium-linux/fast/selectors/166-expected.png:
+        * platform/chromium-linux/fast/selectors/unqualified-hover-strict-expected.png:
+        * platform/chromium-linux/fast/selectors/unqualified-hover-strict-expected.txt: Added.
+        * platform/chromium-linux/fast/transforms/rotated-transform-affects-scrolling-1-expected.png:
+        * platform/chromium-linux/fonts/monospace-expected.png:
+        * platform/chromium-linux/http/tests/navigation/javascriptlink-frames-expected.png:
+        * platform/chromium-linux/ietestcenter/css3/bordersbackgrounds/border-radius-sum-of-radii-002-expected.png:
+        * platform/chromium-linux/svg/as-image/image-respects-pageScaleFactor-expected.png:
+        * platform/chromium-linux/svg/custom/getscreenctm-in-scrollable-div-area-expected.png:
+        * platform/chromium-linux/svg/custom/getscreenctm-in-scrollable-div-area-nested-expected.png:
+        * platform/chromium-linux/svg/custom/getscreenctm-in-scrollable-svg-area-expected.png:
+        * platform/chromium-linux/svg/custom/pattern-rotate-expected.png:
+        * platform/chromium-linux/svg/dom/SVGTransformList-basics-expected.png:
+        * platform/chromium-linux/svg/dom/css-transforms-expected.png:
+        * platform/chromium-linux/svg/dynamic-updates/SVG-dynamic-css-transform-expected.png:
+        * platform/chromium-linux/svg/filters/feImage-filterUnits-objectBoundingBox-primitiveUnits-objectBoundingBox-expected.png:
+        * platform/chromium-linux/svg/filters/feImage-filterUnits-objectBoundingBox-primitiveUnits-userSpaceOnUse-expected.png:
+        * platform/chromium-linux/svg/filters/feImage-filterUnits-userSpaceOnUse-primitiveUnits-objectBoundingBox-expected.png:
+        * platform/chromium-linux/svg/filters/feImage-filterUnits-userSpaceOnUse-primitiveUnits-userSpaceOnUse-expected.png:
+        * platform/chromium-linux/svg/transforms/text-with-pattern-inside-transformed-html-expected.png:
+        * platform/chromium-linux/svg/transforms/text-with-pattern-with-svg-transform-expected.png:
+        * platform/chromium-linux/svg/wicd/test-rightsizing-b-expected.png:
+        * platform/chromium-linux/svg/zoom/page/absolute-sized-document-scrollbars-expected.png:
+        * platform/chromium-linux/svg/zoom/page/zoom-hixie-mixed-008-expected.png:
+        * platform/chromium-linux/svg/zoom/page/zoom-mask-with-percentages-expected.png:
+        * platform/chromium-linux/tables/mozilla/bugs/bug2479-3-expected.png:
+        * platform/chromium-linux/tables/mozilla/marvin/backgr_index-expected.png:
+        * platform/chromium-linux/tables/mozilla/marvin/backgr_layers-opacity-expected.png:
+        * platform/chromium-linux/tables/mozilla_expected_failures/marvin/backgr_fixed-bg-expected.png:
+        * platform/chromium-linux/transforms/2d/hindi-rotated-expected.png:
+        * platform/chromium-linux/transforms/2d/hindi-rotated-expected.txt:
+        * platform/chromium-mac-snowleopard/compositing/geometry/fixed-position-iframe-composited-page-scale-down-expected.png:
+        * platform/chromium-mac-snowleopard/css2.1/20110323/replaced-intrinsic-ratio-001-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/canvas/image-object-in-canvas-expected.png:
+        * platform/chromium-mac-snowleopard/fast/canvas/image-pattern-rotate-expected.png:
+        * platform/chromium-mac-snowleopard/svg/as-border-image: Removed.
+        * platform/chromium-mac-snowleopard/svg/as-border-image/svg-as-border-image-2-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/svg/as-border-image/svg-as-border-image-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/svg/custom/foreign-object-skew-expected.png:
+        * platform/chromium-mac-snowleopard/svg/custom/pattern-rotate-expected.png:
+        * platform/chromium-mac-snowleopard/svg/transforms/text-with-pattern-inside-transformed-html-expected.png:
+        * platform/chromium-mac-snowleopard/svg/transforms/text-with-pattern-with-svg-transform-expected.png: Added.
+        * platform/chromium-mac-snowleopard/tables/mozilla_expected_failures/bugs/bug85016-expected.png:
+        * platform/chromium-mac-snowleopard/transforms/2d/hindi-rotated-expected.png:
+        * platform/chromium-mac/compositing/geometry/fixed-position-iframe-composited-page-scale-down-expected.png:
+        * platform/chromium-mac/compositing/geometry/fixed-position-iframe-composited-page-scale-expected.png:
+        * platform/chromium-mac/fast/borders/border-radius-valid-border-clipping-expected.png:
+        * platform/chromium-mac/fast/canvas/canvas-imageSmoothingEnabled-patterns-expected.png:
+        * platform/chromium-mac/fast/canvas/image-object-in-canvas-expected.png:
+        * platform/chromium-mac/fast/canvas/image-pattern-rotate-expected.png:
+        * platform/chromium-mac/svg/as-border-image/svg-as-border-image-2-expected.png:
+        * platform/chromium-mac/svg/as-border-image/svg-as-border-image-expected.png:
+        * platform/chromium-mac/svg/custom/non-scaling-stroke-expected.png:
+        * platform/chromium-mac/svg/custom/pattern-rotate-expected.png:
+        * platform/chromium-mac/svg/transforms/text-with-pattern-inside-transformed-html-expected.png:
+        * platform/chromium-mac/svg/transforms/text-with-pattern-with-svg-transform-expected.png:
+        * platform/chromium-mac/tables/mozilla_expected_failures/bugs/bug85016-expected.png:
+        * platform/chromium-mac/transforms/2d/hindi-rotated-expected.png: Added.
+        * platform/chromium-mac/transforms/2d/hindi-rotated-expected.txt: Added.
+        * platform/chromium-win-xp/compositing/geometry/fixed-position-iframe-composited-page-scale-down-expected.png: Added.
+        * platform/chromium-win-xp/css1: Added.
+        * platform/chromium-win-xp/css1/basic: Added.
+        * platform/chromium-win-xp/css1/basic/class_as_selector-expected.png: Added.
+        * platform/chromium-win-xp/css1/basic/containment-expected.png: Added.
+        * platform/chromium-win-xp/css1/basic/id_as_selector-expected.png: Added.
+        * platform/chromium-win-xp/css1/box_properties: Added.
+        * platform/chromium-win-xp/css1/box_properties/border_bottom-expected.png: Added.
+        * platform/chromium-win-xp/css1/box_properties/border_left-expected.png: Added.
+        * platform/chromium-win-xp/css1/box_properties/border_right_inline-expected.png: Added.
+        * platform/chromium-win-xp/css1/box_properties/border_top-expected.png: Added.
+        * platform/chromium-win-xp/css1/box_properties/clear_float-expected.png: Added.
+        * platform/chromium-win-xp/css1/box_properties/margin_left-expected.png: Added.
+        * platform/chromium-win-xp/css1/box_properties/margin_right-expected.png: Added.
+        * platform/chromium-win-xp/css1/box_properties/padding_left-expected.png: Added.
+        * platform/chromium-win-xp/css1/box_properties/padding_right-expected.png: Added.
+        * platform/chromium-win-xp/css1/cascade: Added.
+        * platform/chromium-win-xp/css1/cascade/cascade_order-expected.png: Added.
+        * platform/chromium-win-xp/css1/classification: Added.
+        * platform/chromium-win-xp/css1/classification/list_style_type-expected.png: Added.
+        * platform/chromium-win-xp/css1/pseudo: Added.
+        * platform/chromium-win-xp/css1/pseudo/anchor-expected.png: Added.
+        * platform/chromium-win-xp/css3/selectors3: Added.
+        * platform/chromium-win-xp/css3/selectors3/html: Added.
+        * platform/chromium-win-xp/css3/selectors3/html/css3-modsel-161-expected.png: Added.
+        * platform/chromium-win-xp/css3/selectors3/xhtml: Added.
+        * platform/chromium-win-xp/css3/selectors3/xhtml/css3-modsel-161-expected.png: Added.
+        * platform/chromium-win-xp/css3/selectors3/xml: Added.
+        * platform/chromium-win-xp/css3/selectors3/xml/css3-modsel-161-expected.png: Added.
+        * platform/chromium-win-xp/editing/input: Added.
+        * platform/chromium-win-xp/editing/input/caret-at-the-edge-of-input-expected.png: Added.
+        * platform/chromium-win-xp/editing/input/reveal-caret-of-multiline-contenteditable-expected.png: Added.
+        * platform/chromium-win-xp/editing/input/reveal-caret-of-multiline-input-expected.png: Added.
+        * platform/chromium-win-xp/fast/backgrounds/repeat: Removed.
+        * platform/chromium-win-xp/fast/block/float: Added.
+        * platform/chromium-win-xp/fast/block/float/float-avoidance-expected.png: Added.
+        * platform/chromium-win-xp/fast/block/margin-collapse: Added.
+        * platform/chromium-win-xp/fast/block/margin-collapse/103-expected.png: Added.
+        * platform/chromium-win-xp/fast/events: Added.
+        * platform/chromium-win-xp/fast/events/autoscroll-expected.png: Added.
+        * platform/chromium-win-xp/fast/events/context-no-deselect-expected.png: Added.
+        * platform/chromium-win-xp/fast/events/reveal-link-when-focused-expected.png: Added.
+        * platform/chromium-win-xp/fast/forms/date: Added.
+        * platform/chromium-win-xp/fast/forms/date/date-appearance-expected.png: Added.
+        * platform/chromium-win-xp/fast/forms/select: Added.
+        * platform/chromium-win-xp/fast/forms/select/optgroup-rendering-expected.png: Added.
+        * platform/chromium-win-xp/fast/forms/textarea: Added.
+        * platform/chromium-win-xp/fast/forms/textarea/textarea-placeholder-paint-order-expected.png: Added.
+        * platform/chromium-win-xp/fast/frames: Added.
+        * platform/chromium-win-xp/fast/frames/take-focus-from-iframe-expected.png: Added.
+        * platform/chromium-win-xp/fast/gradients: Added.
+        * platform/chromium-win-xp/fast/gradients/background-clipped-expected.png: Added.
+        * platform/chromium-win-xp/fast/html: Removed.
+        * platform/chromium-win-xp/fast/html/details-writing-mode-expected.png: Removed.
+        * platform/chromium-win-xp/fast/invalid: Added.
+        * platform/chromium-win-xp/fast/invalid/014-expected.png: Added.
+        * platform/chromium-win-xp/fast/layers: Added.
+        * platform/chromium-win-xp/fast/layers/scroll-with-transform-composited-layer-expected.png: Added.
+        * platform/chromium-win-xp/fast/layers/scroll-with-transform-layer-expected.png: Added.
+        * platform/chromium-win-xp/fast/lists: Added.
+        * platform/chromium-win-xp/fast/lists/008-expected.png: Added.
+        * platform/chromium-win-xp/fast/lists/008-vertical-expected.png: Added.
+        * platform/chromium-win-xp/fast/lists/dynamic-marker-crash-expected.png: Added.
+        * platform/chromium-win-xp/fast/overflow: Added.
+        * platform/chromium-win-xp/fast/overflow/overflow-rtl-expected.png: Added.
+        * platform/chromium-win-xp/fast/overflow/overflow-rtl-vertical-expected.png: Added.
+        * platform/chromium-win-xp/fast/selectors: Added.
+        * platform/chromium-win-xp/fast/selectors/166-expected.png: Added.
+        * platform/chromium-win-xp/fast/selectors/unqualified-hover-strict-expected.png: Added.
+        * platform/chromium-win-xp/fast/selectors/unqualified-hover-strict-expected.txt: Added.
+        * platform/chromium-win-xp/fast/speech: Added.
+        * platform/chromium-win-xp/fast/speech/input-appearance-numberandspeech-expected.png: Added.
+        * platform/chromium-win-xp/fast/speech/input-appearance-searchandspeech-expected.png: Added.
+        * platform/chromium-win-xp/fast/speech/input-appearance-speechbutton-expected.png: Added.
+        * platform/chromium-win-xp/fast/speech/speech-bidi-rendering-expected.png: Added.
+        * platform/chromium-win-xp/fast/text/drawBidiText-expected.png:
+        * platform/chromium-win-xp/fast/transforms: Added.
+        * platform/chromium-win-xp/fast/transforms/rotated-transform-affects-scrolling-1-expected.png: Added.
+        * platform/chromium-win-xp/fast/transforms/rotated-transform-affects-scrolling-2-expected.png: Added.
+        * platform/chromium-win-xp/fast/transforms/transformed-focused-text-input-expected.png: Added.
+        * platform/chromium-win-xp/fonts: Added.
+        * platform/chromium-win-xp/fonts/monospace-expected.png: Added.
+        * platform/chromium-win-xp/http/tests/misc: Added.
+        * platform/chromium-win-xp/http/tests/misc/object-embedding-svg-delayed-size-negotiation-expected.png: Added.
+        * platform/chromium-win-xp/http/tests/navigation: Added.
+        * platform/chromium-win-xp/http/tests/navigation/javascriptlink-frames-expected.png: Added.
+        * platform/chromium-win-xp/plugins: Added.
+        * platform/chromium-win-xp/plugins/mouse-click-plugin-clears-selection-expected.png: Added.
+        * platform/chromium-win-xp/svg/as-image/image-respects-pageScaleFactor-expected.png: Removed.
+        * platform/chromium-win-xp/svg/dom: Removed.
+        * platform/chromium-win-xp/svg/hixie/mixed: Added.
+        * platform/chromium-win-xp/svg/hixie/mixed/003-expected.png: Added.
+        * platform/chromium-win-xp/svg/in-html: Added.
+        * platform/chromium-win-xp/svg/in-html/circle-expected.png: Added.
+        * platform/chromium-win-xp/svg/transforms: Added.
+        * platform/chromium-win-xp/svg/transforms/text-with-pattern-inside-transformed-html-expected.png: Added.
+        * platform/chromium-win-xp/svg/transforms/text-with-pattern-with-svg-transform-expected.png: Added.
+        * platform/chromium-win-xp/svg/wicd/test-rightsizing-b-expected.png:
+        * platform/chromium-win-xp/svg/zoom/page/zoom-mask-with-percentages-expected.png: Added.
+        * platform/chromium-win-xp/tables/mozilla/core: Added.
+        * platform/chromium-win-xp/tables/mozilla/core/margins-expected.png: Added.
+        * platform/chromium-win-xp/tables/mozilla/dom: Added.
+        * platform/chromium-win-xp/tables/mozilla/dom/tableDom-expected.png: Added.
+        * platform/chromium-win-xp/tables/mozilla/other: Added.
+        * platform/chromium-win-xp/tables/mozilla/other/move_row-expected.png: Added.
+        * platform/chromium-win-xp/tables/mozilla_expected_failures: Added.
+        * platform/chromium-win-xp/tables/mozilla_expected_failures/bugs: Added.
+        * platform/chromium-win-xp/tables/mozilla_expected_failures/bugs/bug1725-expected.png: Added.
+        * platform/chromium-win-xp/tables/mozilla_expected_failures/bugs/bug92647-1-expected.png: Added.
+        * platform/chromium-win-xp/tables/mozilla_expected_failures/marvin: Added.
+        * platform/chromium-win-xp/tables/mozilla_expected_failures/marvin/backgr_fixed-bg-expected.png: Added.
+        * platform/chromium-win-xp/tables/mozilla_expected_failures/marvin/backgr_layers-show-expected.png: Added.
+        * platform/chromium-win-xp/transforms/2d/hindi-rotated-expected.png:
+        * platform/chromium-win/compositing/geometry/fixed-position-iframe-composited-page-scale-down-expected.png:
+        * platform/chromium-win/compositing/geometry/fixed-position-iframe-composited-page-scale-expected.png:
+        * platform/chromium-win/css1/basic/class_as_selector-expected.png:
+        * platform/chromium-win/css1/basic/containment-expected.png:
+        * platform/chromium-win/css1/basic/id_as_selector-expected.png:
+        * platform/chromium-win/css1/box_properties/border_bottom-expected.png:
+        * platform/chromium-win/css1/box_properties/border_left-expected.png:
+        * platform/chromium-win/css1/box_properties/border_right_inline-expected.png:
+        * platform/chromium-win/css1/box_properties/border_top-expected.png:
+        * platform/chromium-win/css1/box_properties/clear_float-expected.png:
+        * platform/chromium-win/css1/box_properties/margin_left-expected.png:
+        * platform/chromium-win/css1/box_properties/margin_right-expected.png:
+        * platform/chromium-win/css1/box_properties/padding_left-expected.png:
+        * platform/chromium-win/css1/box_properties/padding_right-expected.png:
+        * platform/chromium-win/css1/cascade/cascade_order-expected.png:
+        * platform/chromium-win/css1/classification/list_style_type-expected.png:
+        * platform/chromium-win/css1/pseudo/anchor-expected.png:
+        * platform/chromium-win/css2.1/20110323/replaced-intrinsic-ratio-001-expected.png:
+        * platform/chromium-win/css3/selectors3/html/css3-modsel-161-expected.png:
+        * platform/chromium-win/css3/selectors3/xhtml/css3-modsel-161-expected.png:
+        * platform/chromium-win/css3/selectors3/xml/css3-modsel-161-expected.png:
+        * platform/chromium-win/editing/deleting/delete-after-span-ws-001-expected.png:
+        * platform/chromium-win/editing/deleting/delete-after-span-ws-002-expected.png:
+        * platform/chromium-win/editing/deleting/delete-after-span-ws-003-expected.png:
+        * platform/chromium-win/editing/deleting/delete-line-end-ws-001-expected.png:
+        * platform/chromium-win/editing/deleting/delete-line-end-ws-002-expected.png:
+        * platform/chromium-win/editing/input/caret-at-the-edge-of-input-expected.png:
+        * platform/chromium-win/editing/input/reveal-caret-of-multiline-contenteditable-expected.png:
+        * platform/chromium-win/editing/input/reveal-caret-of-multiline-input-expected.png:
+        * platform/chromium-win/editing/inserting/4960120-1-expected.png:
+        * platform/chromium-win/editing/inserting/before-after-input-element-expected.png:
+        * platform/chromium-win/editing/pasteboard/4806874-expected.png:
+        * platform/chromium-win/editing/pasteboard/4944770-1-expected.png:
+        * platform/chromium-win/editing/pasteboard/4944770-2-expected.png:
+        * platform/chromium-win/editing/pasteboard/drop-text-without-selection-expected.png:
+        * platform/chromium-win/editing/pasteboard/input-field-1-expected.png:
+        * platform/chromium-win/editing/pasteboard/pasting-tabs-expected.png:
+        * platform/chromium-win/editing/selection/3690703-2-expected.png:
+        * platform/chromium-win/editing/selection/3690703-expected.png:
+        * platform/chromium-win/editing/selection/3690719-expected.png:
+        * platform/chromium-win/editing/selection/4397952-expected.png:
+        * platform/chromium-win/editing/selection/4895428-3-expected.png:
+        * platform/chromium-win/editing/selection/4975120-expected.png:
+        * platform/chromium-win/editing/selection/caret-before-select-expected.png:
+        * platform/chromium-win/editing/selection/drag-select-1-expected.png:
+        * platform/chromium-win/editing/selection/iframe-expected.png:
+        * platform/chromium-win/editing/selection/replaced-boundaries-3-expected.png:
+        * platform/chromium-win/editing/selection/select-across-readonly-input-1-expected.png:
+        * platform/chromium-win/editing/selection/select-across-readonly-input-2-expected.png:
+        * platform/chromium-win/editing/selection/select-across-readonly-input-3-expected.png:
+        * platform/chromium-win/editing/selection/select-across-readonly-input-4-expected.png:
+        * platform/chromium-win/editing/selection/select-across-readonly-input-5-expected.png:
+        * platform/chromium-win/editing/selection/select-all-001-expected.png:
+        * platform/chromium-win/editing/selection/select-all-002-expected.png:
+        * platform/chromium-win/editing/selection/select-box-expected.png:
+        * platform/chromium-win/editing/selection/select-element-paragraph-boundary-expected.png:
+        * platform/chromium-win/editing/selection/unrendered-001-expected.png:
+        * platform/chromium-win/editing/selection/unrendered-002-expected.png:
+        * platform/chromium-win/editing/selection/unrendered-003-expected.png:
+        * platform/chromium-win/editing/selection/unrendered-004-expected.png:
+        * platform/chromium-win/editing/selection/unrendered-005-expected.png:
+        * platform/chromium-win/fast/backgrounds/background-inherit-color-bug-expected.png:
+        * platform/chromium-win/fast/backgrounds/background-leakage-transforms-expected.png:
+        * platform/chromium-win/fast/block/float/float-avoidance-expected.png:
+        * platform/chromium-win/fast/block/margin-collapse/103-expected.png:
+        * platform/chromium-win/fast/borders/border-radius-valid-border-clipping-expected.png:
+        * platform/chromium-win/fast/borders/mixed-border-styles-radius2-expected.png:
+        * platform/chromium-win/fast/box-shadow/basic-shadows-expected.png:
+        * platform/chromium-win/fast/canvas/canvas-imageSmoothingEnabled-patterns-expected.png:
+        * platform/chromium-win/fast/canvas/canvas-incremental-repaint-expected.png:
+        * platform/chromium-win/fast/canvas/canvas-text-alignment-expected.png:
+        * platform/chromium-win/fast/canvas/image-object-in-canvas-expected.png:
+        * platform/chromium-win/fast/canvas/image-pattern-rotate-expected.png:
+        * platform/chromium-win/fast/css/input-search-padding-expected.png:
+        * platform/chromium-win/fast/css/line-height-expected.png:
+        * platform/chromium-win/fast/css/nested-rounded-corners-expected.png:
+        * platform/chromium-win/fast/css/text-input-with-webkit-border-radius-expected.png:
+        * platform/chromium-win/fast/css/text-overflow-input-expected.png:
+        * platform/chromium-win/fast/css/text-transform-select-expected.png:
+        * platform/chromium-win/fast/dom/52776-expected.png:
+        * platform/chromium-win/fast/dom/HTMLMeterElement/meter-appearances-capacity-expected.png:
+        * platform/chromium-win/fast/dom/HTMLMeterElement/meter-appearances-rating-relevancy-expected.png:
+        * platform/chromium-win/fast/dom/HTMLMeterElement/meter-optimums-expected.png:
+        * platform/chromium-win/fast/dom/focus-contenteditable-expected.png:
+        * platform/chromium-win/fast/dom/isindex-001-expected.png:
+        * platform/chromium-win/fast/dom/isindex-002-expected.png:
+        * platform/chromium-win/fast/events/autoscroll-expected.png:
+        * platform/chromium-win/fast/events/context-no-deselect-expected.png:
+        * platform/chromium-win/fast/events/reveal-link-when-focused-expected.png:
+        * platform/chromium-win/fast/forms/001-expected.png:
+        * platform/chromium-win/fast/forms/003-expected.png:
+        * platform/chromium-win/fast/forms/004-expected.png:
+        * platform/chromium-win/fast/forms/HTMLOptionElement_label01-expected.png:
+        * platform/chromium-win/fast/forms/HTMLOptionElement_label02-expected.png:
+        * platform/chromium-win/fast/forms/HTMLOptionElement_label03-expected.png:
+        * platform/chromium-win/fast/forms/HTMLOptionElement_label04-expected.png:
+        * platform/chromium-win/fast/forms/HTMLOptionElement_label05-expected.png:
+        * platform/chromium-win/fast/forms/HTMLOptionElement_label06-expected.png:
+        * platform/chromium-win/fast/forms/HTMLOptionElement_label07-expected.png:
+        * platform/chromium-win/fast/forms/basic-buttons-expected.png:
+        * platform/chromium-win/fast/forms/basic-inputs-expected.png:
+        * platform/chromium-win/fast/forms/basic-selects-expected.png:
+        * platform/chromium-win/fast/forms/button-generated-content-expected.png:
+        * platform/chromium-win/fast/forms/button-inner-block-reuse-expected.png:
+        * platform/chromium-win/fast/forms/control-clip-overflow-expected.png:
+        * platform/chromium-win/fast/forms/control-restrict-line-height-expected.png:
+        * platform/chromium-win/fast/forms/date/date-appearance-expected.png:
+        * platform/chromium-win/fast/forms/disabled-select-change-index-expected.png:
+        * platform/chromium-win/fast/forms/encoding-test-expected.png:
+        * platform/chromium-win/fast/forms/fieldset-align-expected.png:
+        * platform/chromium-win/fast/forms/floating-textfield-relayout-expected.png:
+        * platform/chromium-win/fast/forms/form-element-geometry-expected.png:
+        * platform/chromium-win/fast/forms/input-align-expected.png:
+        * platform/chromium-win/fast/forms/input-appearance-default-bkcolor-expected.png:
+        * platform/chromium-win/fast/forms/input-appearance-disabled-expected.png:
+        * platform/chromium-win/fast/forms/input-appearance-focus-expected.png:
+        * platform/chromium-win/fast/forms/input-appearance-height-expected.png:
+        * platform/chromium-win/fast/forms/input-appearance-preventDefault-expected.png:
+        * platform/chromium-win/fast/forms/input-appearance-readonly-expected.png:
+        * platform/chromium-win/fast/forms/input-appearance-selection-expected.png:
+        * platform/chromium-win/fast/forms/input-appearance-visibility-expected.png:
+        * platform/chromium-win/fast/forms/input-appearance-width-expected.png:
+        * platform/chromium-win/fast/forms/input-baseline-expected.png:
+        * platform/chromium-win/fast/forms/input-disabled-color-expected.png:
+        * platform/chromium-win/fast/forms/input-double-click-selection-gap-bug-expected.png:
+        * platform/chromium-win/fast/forms/input-field-text-truncated-expected.png:
+        * platform/chromium-win/fast/forms/input-placeholder-paint-order-expected.png:
+        * platform/chromium-win/fast/forms/input-placeholder-visibility-1-expected.png:
+        * platform/chromium-win/fast/forms/input-placeholder-visibility-3-expected.png:
+        * platform/chromium-win/fast/forms/input-readonly-autoscroll-expected.png:
+        * platform/chromium-win/fast/forms/input-readonly-dimmed-expected.png:
+        * platform/chromium-win/fast/forms/input-readonly-empty-expected.png:
+        * platform/chromium-win/fast/forms/input-spaces-expected.png:
+        * platform/chromium-win/fast/forms/input-table-expected.png:
+        * platform/chromium-win/fast/forms/input-text-click-inside-expected.png:
+        * platform/chromium-win/fast/forms/input-text-click-outside-expected.png:
+        * platform/chromium-win/fast/forms/input-text-double-click-expected.png:
+        * platform/chromium-win/fast/forms/input-text-option-delete-expected.png:
+        * platform/chromium-win/fast/forms/input-text-scroll-left-on-blur-expected.png:
+        * platform/chromium-win/fast/forms/input-text-self-emptying-click-expected.png:
+        * platform/chromium-win/fast/forms/input-text-word-wrap-expected.png:
+        * platform/chromium-win/fast/forms/input-type-text-min-width-expected.png:
+        * platform/chromium-win/fast/forms/input-value-expected.png:
+        * platform/chromium-win/fast/forms/input-width-expected.png:
+        * platform/chromium-win/fast/forms/listbox-bidi-align-expected.png:
+        * platform/chromium-win/fast/forms/listbox-clip-expected.png:
+        * platform/chromium-win/fast/forms/listbox-scrollbar-incremental-load-expected.png:
+        * platform/chromium-win/fast/forms/listbox-width-change-expected.png:
+        * platform/chromium-win/fast/forms/menulist-deselect-update-expected.png:
+        * platform/chromium-win/fast/forms/menulist-narrow-width-expected.png:
+        * platform/chromium-win/fast/forms/menulist-no-overflow-expected.png:
+        * platform/chromium-win/fast/forms/menulist-restrict-line-height-expected.png:
+        * platform/chromium-win/fast/forms/menulist-separator-painting-expected.png:
+        * platform/chromium-win/fast/forms/menulist-style-color-expected.png:
+        * platform/chromium-win/fast/forms/menulist-width-change-expected.png:
+        * platform/chromium-win/fast/forms/minWidthPercent-expected.png:
+        * platform/chromium-win/fast/forms/option-script-expected.png:
+        * platform/chromium-win/fast/forms/option-strip-whitespace-expected.png:
+        * platform/chromium-win/fast/forms/option-text-clip-expected.png:
+        * platform/chromium-win/fast/forms/placeholder-position-expected.png:
+        * platform/chromium-win/fast/forms/placeholder-pseudo-style-expected.png:
+        * platform/chromium-win/fast/forms/plaintext-mode-2-expected.png:
+        * platform/chromium-win/fast/forms/search-cancel-button-style-sharing-expected.png:
+        * platform/chromium-win/fast/forms/search-display-none-cancel-button-expected.png:
+        * platform/chromium-win/fast/forms/search-rtl-expected.png:
+        * platform/chromium-win/fast/forms/searchfield-heights-expected.png:
+        * platform/chromium-win/fast/forms/select-align-expected.png:
+        * platform/chromium-win/fast/forms/select-background-none-expected.png:
+        * platform/chromium-win/fast/forms/select-baseline-expected.png:
+        * platform/chromium-win/fast/forms/select-block-background-expected.png:
+        * platform/chromium-win/fast/forms/select-change-listbox-size-expected.png:
+        * platform/chromium-win/fast/forms/select-change-listbox-to-popup-expected.png:
+        * platform/chromium-win/fast/forms/select-change-popup-to-listbox-expected.png:
+        * platform/chromium-win/fast/forms/select-dirty-parent-pref-widths-expected.png:
+        * platform/chromium-win/fast/forms/select-disabled-appearance-expected.png:
+        * platform/chromium-win/fast/forms/select-initial-position-expected.png:
+        * platform/chromium-win/fast/forms/select-list-box-with-height-expected.png:
+        * platform/chromium-win/fast/forms/select-listbox-multiple-no-focusring-expected.png:
+        * platform/chromium-win/fast/forms/select-overflow-scroll-expected.png:
+        * platform/chromium-win/fast/forms/select-overflow-scroll-inherited-expected.png:
+        * platform/chromium-win/fast/forms/select-selected-expected.png:
+        * platform/chromium-win/fast/forms/select-size-expected.png:
+        * platform/chromium-win/fast/forms/select-style-expected.png:
+        * platform/chromium-win/fast/forms/select-visual-hebrew-expected.png:
+        * platform/chromium-win/fast/forms/select-writing-direction-natural-expected.png:
+        * platform/chromium-win/fast/forms/select/optgroup-rendering-expected.png:
+        * platform/chromium-win/fast/forms/selectlist-minsize-expected.png:
+        * platform/chromium-win/fast/forms/stuff-on-my-optgroup-expected.png:
+        * platform/chromium-win/fast/forms/tabbing-input-iframe-expected.png:
+        * platform/chromium-win/fast/forms/text-style-color-expected.png:
+        * platform/chromium-win/fast/forms/textarea-placeholder-visibility-1-expected.png:
+        * platform/chromium-win/fast/forms/textarea-placeholder-visibility-2-expected.png:
+        * platform/chromium-win/fast/forms/textarea-scrollbar-expected.png:
+        * platform/chromium-win/fast/forms/textarea-scrolled-type-expected.png:
+        * platform/chromium-win/fast/forms/textarea/textarea-placeholder-paint-order-expected.png:
+        * platform/chromium-win/fast/forms/textfield-focus-ring-expected.png:
+        * platform/chromium-win/fast/forms/textfield-overflow-expected.png:
+        * platform/chromium-win/fast/forms/validation-message-appearance-expected.png:
+        * platform/chromium-win/fast/forms/visual-hebrew-text-field-expected.png:
+        * platform/chromium-win/fast/frames/take-focus-from-iframe-expected.png:
+        * platform/chromium-win/fast/gradients/background-clipped-expected.png:
+        * platform/chromium-win/fast/html/details-no-summary4-expected.png:
+        * platform/chromium-win/fast/html/details-open-javascript-expected.png:
+        * platform/chromium-win/fast/html/details-open2-expected.png:
+        * platform/chromium-win/fast/html/details-open4-expected.png:
+        * platform/chromium-win/fast/html/details-position-expected.png:
+        * platform/chromium-win/fast/html/details-replace-summary-child-expected.png:
+        * platform/chromium-win/fast/html/details-replace-text-expected.png:
+        * platform/chromium-win/fast/html/details-writing-mode-expected.png:
+        * platform/chromium-win/fast/html/keygen-expected.png:
+        * platform/chromium-win/fast/invalid/014-expected.png:
+        * platform/chromium-win/fast/layers/scroll-with-transform-composited-layer-expected.png:
+        * platform/chromium-win/fast/layers/scroll-with-transform-layer-expected.png:
+        * platform/chromium-win/fast/lists/008-expected.png:
+        * platform/chromium-win/fast/lists/008-vertical-expected.png:
+        * platform/chromium-win/fast/lists/dynamic-marker-crash-expected.png:
+        * platform/chromium-win/fast/overflow/overflow-rtl-expected.png:
+        * platform/chromium-win/fast/overflow/overflow-rtl-vertical-expected.png:
+        * platform/chromium-win/fast/overflow/overflow-update-transform-expected.png:
+        * platform/chromium-win/fast/overflow/overflow-with-local-background-attachment-expected.png:
+        * platform/chromium-win/fast/parser/document-write-option-expected.png:
+        * platform/chromium-win/fast/repaint/control-clip-expected.png:
+        * platform/chromium-win/fast/repaint/moving-shadow-on-container-expected.png:
+        * platform/chromium-win/fast/repaint/moving-shadow-on-path-expected.png:
+        * platform/chromium-win/fast/repaint/renderer-destruction-by-invalidateSelection-crash-expected.png:
+        * platform/chromium-win/fast/repaint/select-option-background-color-expected.png:
+        * platform/chromium-win/fast/repaint/subtree-root-skipped-expected.png:
+        * platform/chromium-win/fast/repaint/transform-absolute-in-positioned-container-expected.png:
+        * platform/chromium-win/fast/replaced/replaced-breaking-expected.png:
+        * platform/chromium-win/fast/replaced/replaced-breaking-mixture-expected.png:
+        * platform/chromium-win/fast/replaced/three-selects-break-expected.png:
+        * platform/chromium-win/fast/replaced/width100percent-searchfield-expected.png:
+        * platform/chromium-win/fast/replaced/width100percent-textfield-expected.png:
+        * platform/chromium-win/fast/selectors/166-expected.png:
+        * platform/chromium-win/fast/selectors/unqualified-hover-strict-expected.png:
+        * platform/chromium-win/fast/selectors/unqualified-hover-strict-expected.txt:
+        * platform/chromium-win/fast/speech/input-appearance-numberandspeech-expected.png:
+        * platform/chromium-win/fast/speech/input-appearance-searchandspeech-expected.png:
+        * platform/chromium-win/fast/speech/input-appearance-speechbutton-expected.png:
+        * platform/chromium-win/fast/speech/speech-bidi-rendering-expected.png:
+        * platform/chromium-win/fast/table/003-expected.png:
+        * platform/chromium-win/fast/table/colspanMinWidth-expected.png:
+        * platform/chromium-win/fast/table/spanOverlapRepaint-expected.png:
+        * platform/chromium-win/fast/table/text-field-baseline-expected.png:
+        * platform/chromium-win/fast/text/drawBidiText-expected.png:
+        * platform/chromium-win/fast/text/international/bidi-listbox-atsui-expected.png:
+        * platform/chromium-win/fast/text/international/bidi-listbox-expected.png:
+        * platform/chromium-win/fast/text/international/bidi-menulist-expected.png:
+        * platform/chromium-win/fast/text/international/pop-up-button-text-alignment-and-direction-expected.png:
+        * platform/chromium-win/fast/text/textIteratorNilRenderer-expected.png:
+        * platform/chromium-win/fast/text/updateNewFont-expected.png:
+        * platform/chromium-win/fast/transforms/rotated-transform-affects-scrolling-1-expected.png:
+        * platform/chromium-win/fast/transforms/rotated-transform-affects-scrolling-2-expected.png:
+        * platform/chromium-win/fast/transforms/transformed-focused-text-input-expected.png:
+        * platform/chromium-win/fast/writing-mode/border-radius-clipping-vertical-lr-expected.png:
+        * platform/chromium-win/fast/writing-mode/box-shadow-vertical-lr-expected.png:
+        * platform/chromium-win/fast/writing-mode/box-shadow-vertical-rl-expected.png:
+        * platform/chromium-win/fonts/monospace-expected.png:
+        * platform/chromium-win/http/tests/misc/object-embedding-svg-delayed-size-negotiation-expected.png:
+        * platform/chromium-win/http/tests/navigation/javascriptlink-frames-expected.png:
+        * platform/chromium-win/ietestcenter/css3/bordersbackgrounds/border-radius-sum-of-radii-002-expected.png:
+        * platform/chromium-win/plugins/mouse-click-plugin-clears-selection-expected.png:
+        * platform/chromium-win/svg/as-image/image-respects-pageScaleFactor-expected.png:
+        * platform/chromium-win/svg/css/composite-shadow-example-expected.png:
+        * platform/chromium-win/svg/css/composite-shadow-with-opacity-expected.png:
+        * platform/chromium-win/svg/css/stars-with-shadow-expected.png:
+        * platform/chromium-win/svg/custom/foreign-object-skew-expected.png:
+        * platform/chromium-win/svg/custom/getscreenctm-in-scrollable-div-area-expected.png:
+        * platform/chromium-win/svg/custom/getscreenctm-in-scrollable-div-area-nested-expected.png:
+        * platform/chromium-win/svg/custom/getscreenctm-in-scrollable-svg-area-expected.png:
+        * platform/chromium-win/svg/custom/inline-svg-in-xhtml-expected.png:
+        * platform/chromium-win/svg/custom/non-scaling-stroke-expected.png:
+        * platform/chromium-win/svg/custom/object-sizing-no-width-height-expected.png:
+        * platform/chromium-win/svg/custom/pattern-rotate-expected.png:
+        * platform/chromium-win/svg/dom/SVGTransformList-basics-expected.png:
+        * platform/chromium-win/svg/dom/css-transforms-expected.png:
+        * platform/chromium-win/svg/dynamic-updates/SVG-dynamic-css-transform-expected.png:
+        * platform/chromium-win/svg/dynamic-updates/SVGLinearGradientElement-svgdom-gradientTransform-prop-expected.png:
+        * platform/chromium-win/svg/dynamic-updates/SVGRadialGradientElement-svgdom-gradientTransform-prop-expected.png:
+        * platform/chromium-win/svg/filters/feImage-filterUnits-objectBoundingBox-primitiveUnits-objectBoundingBox-expected.png:
+        * platform/chromium-win/svg/filters/feImage-filterUnits-objectBoundingBox-primitiveUnits-userSpaceOnUse-expected.png:
+        * platform/chromium-win/svg/filters/feImage-filterUnits-userSpaceOnUse-primitiveUnits-objectBoundingBox-expected.png:
+        * platform/chromium-win/svg/filters/feImage-filterUnits-userSpaceOnUse-primitiveUnits-userSpaceOnUse-expected.png:
+        * platform/chromium-win/svg/hixie/mixed/003-expected.png:
+        * platform/chromium-win/svg/in-html/circle-expected.png:
+        * platform/chromium-win/svg/transforms/text-with-pattern-inside-transformed-html-expected.png:
+        * platform/chromium-win/svg/transforms/text-with-pattern-with-svg-transform-expected.png:
+        * platform/chromium-win/svg/wicd/rightsizing-grid-expected.png:
+        * platform/chromium-win/svg/wicd/test-rightsizing-b-expected.png:
+        * platform/chromium-win/svg/wicd/test-scalable-background-image1-expected.png:
+        * platform/chromium-win/svg/zoom/page/absolute-sized-document-scrollbars-expected.png:
+        * platform/chromium-win/svg/zoom/page/zoom-hixie-mixed-008-expected.png:
+        * platform/chromium-win/svg/zoom/page/zoom-mask-with-percentages-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/45621-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug1188-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug12384-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug18359-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug24200-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug2479-2-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug2479-3-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug28928-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug29326-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug30692-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug33855-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug4382-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug44505-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug4527-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug46368-1-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug46368-2-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug51037-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug55545-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug59354-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug7342-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug92647-2-expected.png:
+        * platform/chromium-win/tables/mozilla/bugs/bug96334-expected.png:
+        * platform/chromium-win/tables/mozilla/core/margins-expected.png:
+        * platform/chromium-win/tables/mozilla/dom/tableDom-expected.png:
+        * platform/chromium-win/tables/mozilla/marvin/backgr_index-expected.png:
+        * platform/chromium-win/tables/mozilla/marvin/backgr_layers-opacity-expected.png:
+        * platform/chromium-win/tables/mozilla/other/move_row-expected.png:
+        * platform/chromium-win/tables/mozilla_expected_failures/bugs/bug1725-expected.png:
+        * platform/chromium-win/tables/mozilla_expected_failures/bugs/bug92647-1-expected.png:
+        * platform/chromium-win/tables/mozilla_expected_failures/marvin/backgr_fixed-bg-expected.png:
+        * platform/chromium-win/tables/mozilla_expected_failures/marvin/backgr_layers-show-expected.png:
+        * platform/chromium-win/transforms/2d/hindi-rotated-expected.png:
+        * platform/chromium-win/transforms/2d/hindi-rotated-expected.txt:
+        * platform/chromium-win/transforms/2d/zoom-menulist-expected.png:
+        * platform/chromium/TestExpectations:
+        * platform/efl/css2.1/20110323/block-replaced-width-001-expected.txt: Removed.
+        * platform/gtk/css2.1/20110323/block-replaced-width-001-expected.txt: Removed.
+
 2012-07-30  Michael Saboff  <msaboff@apple.com>
 
         inspector/profiler/heap-snapshot-containment-show-all.html test crashing during WebView closing

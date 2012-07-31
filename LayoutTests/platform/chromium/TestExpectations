@@ -1269,11 +1269,6 @@ BUGWK83303 LINUX : svg/transforms/text-with-pattern-with-svg-transform.svg = IMA
 // This fails image 5-10% of the time. Probably a race condition on timers.
 BUGWK83471 : svg/as-image/animated-svg-as-image-same-image.html = PASS IMAGE
 
-BUGWK83717 MAC : svg/W3C-SVG-1.1/masking-mask-01-b.svg = IMAGE PASS
-BUGWK83717 MAC : svg/as-border-image/svg-as-border-image-2.html = IMAGE PASS
-BUGWK83717 MAC : svg/as-border-image/svg-as-border-image.html = IMAGE PASS
-BUGWK83717 MAC : svg/custom/foreign-object-skew.svg = IMAGE PASS
-
 BUGWK83875 LINUX : svg/text/font-size-below-point-five.svg = PASS TEXT
 
 // It is very hard to see why some of these are failing. The diff must be tiny in some cases.
@@ -1431,10 +1426,6 @@ BUGWK78657 : fast/js/constructor-length.html = TEXT
 
 // This is JSC-only, preliminary implementation of a ES6 feature - doesn't exist in V8 (yet)
 BUGWK86509 SKIP WONTFIX : fast/js/names.html = PASS
-
-// Linux pixeltest failure: The text suggests that the radios should not
-// overlap, but it's very close and quite different from the Windows version
-BUGCR10350 LINUX : fast/replaced/width100percent-radio.html = IMAGE
 
 // NEW FOR MERGE 36102:37604
 BUGCR32184 : fast/js/arguments.html = TEXT
@@ -1679,9 +1670,6 @@ BUGCR24182 SLOW DEBUG : fast/forms/input-maxlength.html = PASS
 
 // WebKit roll 49405:49413
 BUGCR28409 : http/tests/xmlhttprequest/logout.html = TEXT
-
-// ==== WebKit roll 50258:50313 ====
-BUGCR26291 : transforms/2d/hindi-rotated.html = IMAGE+TEXT IMAGE
 
 // I don't think we've ever passed this test correctly.
 BUGWK73329 WIN LINUX : fast/text/international/hindi-whitespace.html = IMAGE+TEXT
@@ -2009,11 +1997,11 @@ BUGCR47083 : fast/text/hyphenate-limit-lines.html = IMAGE IMAGE+TEXT
 BUGCR47083 : fast/text/hyphenate-limit-before-after.html = IMAGE+TEXT
 
 // Produces different results on Mac dbg.
-BUGCR47826 SKIP MAC : fast/dom/HTMLMeterElement/meter-appearances-capacity.html = PASS
-BUGCR47826 SKIP MAC : fast/dom/HTMLMeterElement/meter-element.html = PASS
-BUGCR47826 SKIP MAC : fast/dom/HTMLMeterElement/meter-optimums.html = PASS
-BUGCR47826 SKIP MAC : fast/dom/HTMLMeterElement/meter-styles.html = PASS
-BUGCR47826 SKIP MAC : fast/dom/HTMLMeterElement/meter-styles-changing-pseudo.html = PASS
+// BUGCR47826 MAC : fast/dom/HTMLMeterElement/meter-appearances-capacity.html = PASS
+// BUGCR47826 MAC : fast/dom/HTMLMeterElement/meter-element.html = PASS
+// BUGCR47826 MAC : fast/dom/HTMLMeterElement/meter-optimums.html = PASS
+// BUGCR47826 MAC : fast/dom/HTMLMeterElement/meter-styles.html = PASS
+// BUGCR47826 MAC : fast/dom/HTMLMeterElement/meter-styles-changing-pseudo.html = PASS
 
 BUGCR48239 : fast/js/function-apply.html = TEXT
 BUGCR48239 LINUX WIN : fast/js/function-apply-aliased.html = PASS TEXT
@@ -2324,8 +2312,6 @@ BUGBSALOMON WIN LINUX : platform/chromium/virtual/gpu/fast/canvas/arc360.html = 
 BUGBSALOMON : platform/chromium/virtual/gpu/fast/canvas/canvas-composite-transformclip.html = IMAGE
 BUGBSALOMON : platform/chromium/virtual/gpu/fast/canvas/canvas-composite.html = IMAGE
 BUGBSALOMON : platform/chromium/virtual/gpu/fast/canvas/canvas-transform-skewed.html = IMAGE
-BUGBSALOMON : platform/chromium/virtual/gpu/fast/canvas/image-object-in-canvas.html = IMAGE
-BUGBSALOMON : platform/chromium/virtual/gpu/fast/canvas/image-pattern-rotate.html = IMAGE
 
 BUGWK89494 : platform/chromium/virtual/gpu/fast/canvas/webgl/gl-teximage.html = TEXT
 
@@ -2650,16 +2636,8 @@ BUGCR85755 : fast/js/exception-properties.html = TEXT
 
 BUGWK62580 : fast/loader/inherit-charset-to-empty-frame.html = PASS TEXT
 
-// These started failing with r88913.  The results are visibly wrong, and the
-// checked-in pixel results for Safari (platform/mac) are wrong too.
-BUGWK62754 LINUX WIN : css2.1/20110323/block-replaced-width-001.htm = IMAGE+TEXT
-// Probably related to the above, but just flaky (esp. in debug)
-BUGWK63937 MAC : css2.1/20110323/replaced-intrinsic-ratio-001.htm = PASS IMAGE TEXT IMAGE+TEXT
-
 // Has been timing out since r88913.
-BUGWK62754 LINUX MAC RELEASE : http/tests/misc/object-embedding-svg-delayed-size-negotiation-2.htm = TIMEOUT IMAGE+TEXT
-BUGWK62754 SLOW LINUX MAC DEBUG : http/tests/misc/object-embedding-svg-delayed-size-negotiation-2.htm = IMAGE+TEXT IMAGE
-BUGWK79615 WIN : http/tests/misc/object-embedding-svg-delayed-size-negotiation-2.htm = IMAGE+TEXT
+BUGWK62754 LINUX MAC RELEASE : http/tests/misc/object-embedding-svg-delayed-size-negotiation-2.htm = TIMEOUT PASS
 
 BUGCR89282 SNOWLEOPARD : fast/forms/range/input-appearance-range.html = PASS IMAGE
 
@@ -2814,9 +2792,6 @@ BUGWK92511 SKIP : svg/as-image/animated-svg-repaints-completely-in-hidpi.html = 
 // Flaky tests from ~r97647
 BUGWK70298 MAC : fast/table/border-collapsing/cached-69296.html = IMAGE
 
-// Failing since ~r97700.
-BUGWK70298 WIN LINUX SNOWLEOPARD : fast/selectors/unqualified-hover-strict.html = IMAGE+TEXT PASS
-
 BUGWK70640 SNOWLEOPARD : fast/multicol/vertical-lr/rules-with-border-before.html = PASS TEXT
 BUGWK70640 SNOWLEOPARD : fast/multicol/vertical-rl/rules-with-border-before.html = PASS TEXT
 
@@ -2905,8 +2880,6 @@ BUGWK78544 LINUX : fast/text/international/danda-space.html = PASS IMAGE IMAGE+T
 BUGWK74157 SNOWLEOPARD : transitions/cross-fade-border-image.html = IMAGE+TEXT IMAGE
 
 BUGWK74357 SKIP : plugins/netscape-plugin-page-cache-works.html = TEXT TIMEOUT
-
-BUGWK74374 WIN : fast/forms/select-listbox-multiple-no-focusring.html = IMAGE
 
 BUGWK74662 WIN LINUX : fast/text/unicode-variation-selector.html = IMAGE+TEXT
 
@@ -3085,9 +3058,7 @@ BUGWK37244 : tables/mozilla/bugs/bug27038-2.html = IMAGE+TEXT
 
 // Tests still flaky on the given platforms. They may not actually be flaky, but prior to
 // a rebaselining they were showing inconsistent results.
-BUGWK81631 WIN LINUX DEBUG : tables/mozilla_expected_failures/bugs/bug85016.html = IMAGE PASS
 BUGWK81631 WIN LINUX DEBUG : fast/writing-mode/block-level-images.html = IMAGE PASS
-BUGWK81631 MAC : tables/mozilla_expected_failures/bugs/bug85016.html = IMAGE PASS
 BUGWK81631 MAC : fast/repaint/block-layout-inline-children-replaced.html = IMAGE PASS
 BUGWK81631 MAC : fast/writing-mode/block-level-images.html = IMAGE PASS
 BUGWK81631 MAC : fast/table/quote-text-around-iframe.html = IMAGE PASS
@@ -3213,12 +3184,6 @@ BUGWK82122 SNOWLEOPARD : css3/selectors3/xml/css3-modsel-d1b.xml = IMAGE
 BUGWK82122 SNOWLEOPARD : css3/selectors3/xml/css3-modsel-d2.xml = IMAGE
 BUGWK82122 SNOWLEOPARD : css3/selectors3/xml/css3-modsel-d3.xml = IMAGE IMAGE+TEXT
 BUGWK82122 SNOWLEOPARD : css3/selectors3/xml/css3-modsel-d4.xml = IMAGE
-
-
-// Needs a rebaseline after the bug.
-// The inner <input> should now grow to take the full cell's height.
-BUGWK80531 WIN : fast/table/colspanMinWidth-vertical.html = IMAGE+TEXT
-BUGWK80531 MAC : fast/table/colspanMinWidth-vertical.html = IMAGE+TEXT
 
 BUGWK82297 MAC : fast/events/platform-wheelevent-paging-x-in-scrolling-page.html = TEXT PASS
 BUGWK82297 MAC : fast/events/platform-wheelevent-paging-xy-in-scrolling-page.html = TEXT PASS
@@ -3492,7 +3457,7 @@ BUGWK87772 DEBUG : svg/dom/viewspec-parser-4.html = TIMEOUT
 BUGWK87772 SLOW RELEASE : svg/dom/viewspec-parser-5.html = PASS
 BUGWK87772 DEBUG : svg/dom/viewspec-parser-5.html = TIMEOUT
 
-BUGWK87880 : fast/layers/scroll-with-transform-composited-layer.html = PASS IMAGE
+BUGWK87880 LINUX MAC : fast/layers/scroll-with-transform-composited-layer.html = PASS IMAGE
 
 BUGWK87886 LINUX : perf/mouse-event.html = PASS TEXT
 
@@ -3645,3 +3610,14 @@ BUGWK92570 WIN DEBUG : inspector/timeline/timeline-network-received-data.html = 
 BUGWK92570 WIN DEBUG : inspector/timeline/timeline-start-time.html = TEXT PASS TIMEOUT
 
 BUGCR139493 DEBUG : media/track/track-cues-sorted-before-dispatch.html = PASS CRASH
+
+// Supposedly started failing between CR r140760 and CR r141216.  The failures
+// look like they involve antialiasing; the fact that the test clearly expects
+// these pixels not to be antialiased means these shouldn't just be rebaselined
+// blindly.
+BUGCR131189 : canvas/philip/tests/2d.line.width.basic.html = TEXT
+BUGCR131189 : canvas/philip/tests/2d.line.width.transformed.html = TEXT
+BUGCR131189 : canvas/philip/tests/2d.transformation.setTransform.skewed.html = TEXT
+BUGCR131189 : canvas/philip/tests/2d.transformation.transform.skewed.html = TEXT
+BUGCR131189 : platform/chromium/virtual/gpu/canvas/philip/tests/2d.transformation.setTransform.skewed.html = TEXT
+BUGCR131189 : platform/chromium/virtual/gpu/canvas/philip/tests/2d.transformation.transform.skewed.html = TEXT
