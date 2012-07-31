@@ -1,5 +1,22 @@
 2012-07-30  Lucas Forschler  <lforschler@apple.com>
 
+    Merge 123411
+
+    2012-07-23  Roger Fong  <roger_fong@apple.com>
+
+            If select element in Windows is off screen horizontally, 
+            menu is either inappropriately resized or positioned offscreen.
+            https://bugs.webkit.org/show_bug.cgi?id=91913
+            <rdar://problem/7611229>
+
+            Reviewed by Tim Horton.
+
+            Add a manual test to verify that popup menus render in the correct place.
+
+            * ManualTests/win/select-menu-off-screen.html: Added.
+
+2012-07-30  Lucas Forschler  <lforschler@apple.com>
+
     Merge 116647
 
     2012-05-09  Stephen Chenney  <schenney@chromium.org>
