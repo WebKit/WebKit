@@ -2716,10 +2716,6 @@ BUGWK66989 : transforms/3d/point-mapping/3d-point-mapping-2.html = IMAGE IMAGE+T
 BUGWK66989 : transforms/3d/point-mapping/3d-point-mapping-deep.html = IMAGE IMAGE+TEXT
 BUGWK66989 : transforms/3d/point-mapping/3d-point-mapping-coplanar.html = IMAGE IMAGE+TEXT
 
-// Temporary failure. This failure is going to be removed as a rebase line
-// after WebKit bug r62684 is landed.
-BUGWK62684 WIN LINUX : fast/ruby/overhang-horizontal.html = IMAGE
-
 // We don't seem to load this glyph on windows
 BUGJAMESR WIN : fast/text/fallback-traits-fixup.html = IMAGE+TEXT
 

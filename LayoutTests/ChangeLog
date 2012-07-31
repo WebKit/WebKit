@@ -1,3 +1,10 @@
+2012-07-31  Alexander Pavlov  <apavlov@chromium.org>
+
+        [Chromium] Unreviewed, rebaseline fast/ruby/overhang-horizontal.html.
+
+        * platform/chromium-win/fast/ruby/overhang-horizontal-expected.png: Added.
+        * platform/chromium/TestExpectations:
+
 2012-07-31  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unreviewed gardening, skip new failing tests.
