@@ -1,3 +1,10 @@
+2012-07-30  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Revert r124153 and land the "right" build fix per ap's comment on the bug 92676.
+
+        * MiniBrowser/win/BrowserView.cpp:
+        (BrowserView::create):
+
 2012-07-30  Sam Weinig  <sam@webkit.org>
 
         Rename WebKit2.h to WebKit2_C.h
