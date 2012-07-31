@@ -1,3 +1,18 @@
+2012-07-31  Stephen White  <senorblanco@chromium.org>
+
+        Remove the clone() method from FilterOperation (and subclasses).
+        https://bugs.webkit.org/show_bug.cgi?id=92757
+
+        Reviewed by Kentaro Hara.
+
+        Since the move to WebFilterOperation in Chromium, this is now dead
+        code.
+
+        Covered by existing tests in css3/filters.
+
+        * platform/graphics/filters/CustomFilterOperation.h:
+        * platform/graphics/filters/FilterOperation.h:
+
 2012-07-31  Thiago Marcos P. Santos  <thiago.santos@intel.com>
 
         Regression(r124135): SVG tests crashing on ports using Cairo

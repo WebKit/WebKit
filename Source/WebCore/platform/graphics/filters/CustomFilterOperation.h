@@ -65,13 +65,6 @@ public:
         return adoptRef(new CustomFilterOperation(program, sortedParameters, meshRows, meshColumns, meshBoxType, meshType));
     }
     
-    virtual PassRefPtr<FilterOperation> clone() const
-    {
-        // Some member vars (e.g., m_program) are not thread-safe, so
-        // we can't be cloned.
-        return 0;
-    }
-    
     CustomFilterProgram* program() const { return m_program.get(); }
     
     const CustomFilterParameterList& parameters() { return m_parameters; }
