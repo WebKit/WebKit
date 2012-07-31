@@ -1,3 +1,67 @@
+2012-07-30  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Structures should be swept after all other objects
+        https://bugs.webkit.org/show_bug.cgi?id=92679
+
+        Reviewed by Filip Pizlo.
+
+        In order to get rid of ClassInfo from our objects, we need to be able to safely get the 
+        ClassInfo during the destruction of objects. We'd like to get the ClassInfo out of the 
+        Structure, but currently it is not safe to do so because the order of destruction of objects 
+        is not guaranteed to sweep objects before their corresponding Structure. We can fix this by 
+        sweeping Structures after everything else.
+
+        * heap/Heap.cpp:
+        (JSC::Heap::isSafeToSweepStructures): Add a function that checks if it is safe to sweep Structures.
+        If the Heap's IncrementalSweeper member is null, that means we're shutting down this VM and it is 
+        safe to sweep structures since we'll always do Structures last anyways due to the ordering of 
+        MarkedSpace::forEachBlock.
+        (JSC):
+        (JSC::Heap::didStartVMShutdown): Add this intermediate function to the Heap that ~JSGlobalData now
+        calls rather than calling the two HeapTimer objects individually. This allows the Heap to null out 
+        these pointers after it has invalidated them to prevent accidental use-after-free in the sweep() 
+        calls during lastChanceToFinalize().
+        * heap/Heap.h:
+        (Heap):
+        * heap/HeapTimer.h:
+        (HeapTimer):
+        * heap/IncrementalSweeper.cpp:
+        (JSC::IncrementalSweeper::structuresCanBeSwept): Determines if it is currently safe to sweep Structures.
+        This decision is based on whether we have gotten to the end of the vector of blocks that need sweeping
+        the first time.
+        (JSC):
+        (JSC::IncrementalSweeper::doSweep): We add a second pass over the vector to sweep Structures after we 
+        make our first pass. We now null out the slots as we sweep them so that we can quickly find the 
+        Structures during the second pass.
+        (JSC::IncrementalSweeper::startSweeping): Initialize our new Structure sweeping index.
+        (JSC::IncrementalSweeper::willFinishSweeping): Callback that is called by MarkedSpace::sweep to notify 
+        the IncrementalSweeper that we are going to sweep all of the remaining blocks in the Heap so it can 
+        assume that everything is taken care of in the correct order. Since MarkedSpace::forEachBlock 
+        iterates over the Structure blocks after all other blocks, the ordering property for sweeping Structures holds.
+        (JSC::IncrementalSweeper::IncrementalSweeper): Initialize Structure sweeping index.
+        * heap/IncrementalSweeper.h: Add declarations for new stuff.
+        (IncrementalSweeper):
+        * heap/MarkedAllocator.cpp:
+        (JSC::MarkedAllocator::tryAllocateHelper): We now check if the current block only contains structures and 
+        if so and it isn't safe to sweep Structures according to the Heap, we just return early instead of doing 
+        the normal lazy sweep. If this proves to be too much of a waste in the future we can add an extra clause that 
+        will sweep some number of other blocks in place of the current block to mitigate the cost of the floating 
+        Structure garbage.
+        (JSC::MarkedAllocator::addBlock):
+        * heap/MarkedAllocator.h:
+        (JSC::MarkedAllocator::zapFreeList): When we zap the free list in the MarkedAllocator, the current block is no 
+        longer valid to allocate from, so we set the current block to null.
+        * heap/MarkedBlock.cpp:
+        (JSC::MarkedBlock::sweepHelper): Added a couple assertions to make sure that we weren't trying to sweep Structures
+        at an unsafe time.
+        * heap/MarkedSpace.cpp:
+        (JSC::MarkedSpace::sweep): Notify the IncrementalSweeper that the MarkedSpace will finish all currently remaining sweeping.
+        (JSC): 
+        * heap/MarkedSpace.h:
+        (JSC):
+        * runtime/JSGlobalData.cpp:
+        (JSC::JSGlobalData::~JSGlobalData): Call the new Heap::didStartVMShutdown.
+
 2012-07-31  Geoffrey Garen  <ggaren@apple.com>
 
         Fix all the other builds I just broke. Maybe fix the Windows build.
@@ -99,6 +163,7 @@
         (MarkedBlock):
         (JSC::MarkedBlock::capacity): Updated for encapsulation.
 
+>>>>>>> .r124259
 2012-07-31  Filip Pizlo  <fpizlo@apple.com>
 
         DFG OSR exit profiling has unusual oversights

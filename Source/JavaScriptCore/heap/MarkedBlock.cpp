@@ -26,6 +26,7 @@
 #include "config.h"
 #include "MarkedBlock.h"
 
+#include "IncrementalSweeper.h"
 #include "JSCell.h"
 #include "JSObject.h"
 #include "ScopeChain.h"
@@ -131,10 +132,12 @@ MarkedBlock::FreeList MarkedBlock::sweepHelper(SweepMode sweepMode)
         ASSERT_NOT_REACHED();
         return FreeList();
     case Marked:
+        ASSERT(!m_onlyContainsStructures || heap()->isSafeToSweepStructures());
         return sweepMode == SweepToFreeList
             ? specializedSweep<Marked, SweepToFreeList, destructorCallNeeded>()
             : specializedSweep<Marked, SweepOnly, destructorCallNeeded>();
     case Zapped:
+        ASSERT(!m_onlyContainsStructures || heap()->isSafeToSweepStructures());
         return sweepMode == SweepToFreeList
             ? specializedSweep<Zapped, SweepToFreeList, destructorCallNeeded>()
             : specializedSweep<Zapped, SweepOnly, destructorCallNeeded>();
