@@ -1,3 +1,58 @@
+2012-07-31  Peter Kasting  <pkasting@google.com>
+
+        [Chromium] Rebaselines.
+        https://bugs.webkit.org/show_bug.cgi?id=58008
+        https://bugs.webkit.org/show_bug.cgi?id=81145
+        https://bugs.webkit.org/show_bug.cgi?id=92537
+
+        Unreviewed, test updates.
+
+        Mostly rebaselining for
+        http://src.chromium.org/viewvc/chrome?view=rev&revision=149198 , which
+        resulted in some i18n font changes due to
+        http://trac.webkit.org/changeset/83126 .
+
+        * fast/dom/52776-expected.txt: Added.
+        * fast/text/international/bidi-neutral-directionality-paragraph-start-expected.txt: Added.
+        * platform/chromium-linux-x86/fast/text/international: Removed.
+        * platform/chromium-linux-x86/fast/text/international/bidi-neutral-run-expected.png: Removed.
+        * platform/chromium-linux-x86/platform/chromium/compositing: Added.
+        * platform/chromium-linux-x86/platform/chromium/compositing/scrollbars: Added.
+        * platform/chromium-linux-x86/platform/chromium/compositing/scrollbars/custom-composited-different-track-parts-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/dom/52776-expected.png:
+        * platform/chromium-mac-snowleopard/fast/dom/52776-expected.txt:
+        * platform/chromium-mac-snowleopard/fast/text/complex-text-opacity-expected.png:
+        * platform/chromium-mac-snowleopard/fast/text/international/arabic-justify-expected.png:
+        * platform/chromium-mac-snowleopard/fast/text/international/arabic-justify-expected.txt:
+        * platform/chromium-mac-snowleopard/fast/text/international/bidi-AN-after-L-expected.png:
+        * platform/chromium-mac-snowleopard/fast/text/international/bidi-AN-after-empty-run-expected.png:
+        * platform/chromium-mac-snowleopard/fast/text/international/bidi-CS-after-AN-expected.png:
+        * platform/chromium-mac-snowleopard/fast/text/international/bidi-mirror-he-ar-expected.png:
+        * platform/chromium-mac-snowleopard/fast/text/international/bidi-mirror-he-ar-expected.txt: Removed.
+        * platform/chromium-mac-snowleopard/fast/text/international/bidi-neutral-run-expected.png:
+        * platform/chromium-mac/fast/dom/52776-expected.png:
+        * platform/chromium-mac/fast/dom/52776-expected.txt: Removed.
+        * platform/chromium-mac/fast/text/complex-text-opacity-expected.png:
+        * platform/chromium-mac/fast/text/complex-text-opacity-expected.txt: Removed.
+        * platform/chromium-mac/fast/text/international/arabic-justify-expected.png:
+        * platform/chromium-mac/fast/text/international/arabic-justify-expected.txt: Removed.
+        * platform/chromium-mac/fast/text/international/bidi-AN-after-L-expected.png:
+        * platform/chromium-mac/fast/text/international/bidi-AN-after-L-expected.txt: Removed.
+        * platform/chromium-mac/fast/text/international/bidi-AN-after-empty-run-expected.png: Added.
+        * platform/chromium-mac/fast/text/international/bidi-CS-after-AN-expected.png:
+        * platform/chromium-mac/fast/text/international/bidi-CS-after-AN-expected.txt: Removed.
+        * platform/chromium-mac/fast/text/international/bidi-mirror-he-ar-expected.png:
+        * platform/chromium-mac/fast/text/international/bidi-mirror-he-ar-expected.txt: Removed.
+        * platform/chromium-mac/fast/text/international/bidi-neutral-directionality-paragraph-start-expected.png:
+        * platform/chromium-mac/fast/text/international/bidi-neutral-directionality-paragraph-start-expected.txt: Removed.
+        * platform/chromium-mac/fast/text/international/bidi-neutral-run-expected.png: Added.
+        * platform/chromium-win-xp/fast/text/international/bidi-neutral-run-expected.png: Removed.
+        * platform/chromium/TestExpectations:
+        * platform/efl/fast/dom/52776-expected.txt: Removed.
+        * platform/efl/fast/text/international/bidi-neutral-directionality-paragraph-start-expected.txt: Removed.
+        * platform/gtk/fast/dom/52776-expected.txt: Removed.
+        * platform/gtk/fast/text/international/bidi-neutral-directionality-paragraph-start-expected.txt: Removed.
+
 2012-07-31  Chris Rogers  <crogers@google.com>
 
         Add stub implementation for MediaStreamAudioSourceNode
@@ -17,6 +72,8 @@
         http://crbug.com/131187
         http://crbug.com/135709
         http://crbug.com/139796
+
+        Unreviewed, test updates.
 
         Mostly rebaselining in the wake of r124209, with a few other things
         mixed in.

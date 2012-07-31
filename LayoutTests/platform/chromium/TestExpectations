@@ -179,7 +179,8 @@ WONTFIX : platform/mac = TEXT IMAGE IMAGE+TEXT PASS TIMEOUT
 WONTFIX : platform/mac-wk2 = TEXT IMAGE IMAGE+TEXT PASS TIMEOUT
 WONTFIX : platform/qt = TEXT IMAGE IMAGE+TEXT PASS MISSING
 WONTFIX SKIP : platform/qt/plugins/qt-qwidget-plugin.html = PASS
-WONTFIX SKIP : platform/mac/fast/text/international/Geeza-Pro-vertical-metrics-adjustment.html = PASS
+// [pkasting] temporarily unskipping to see if this can be permanently unskipped
+WONTFIX : platform/mac/fast/text/international/Geeza-Pro-vertical-metrics-adjustment.html = PASS
 WONTFIX SKIP : platform/qt/fast/forms = PASS
 WONTFIX MAC WIN : platform/chromium-linux = TEXT IMAGE IMAGE+TEXT
 WONTFIX SKIP LINUX MAC : platform/win = PASS
@@ -2394,15 +2395,6 @@ BUGWK60094 DEBUG : fast/encoding/parser-tests-120.html = PASS TIMEOUT
 BUGWK57593 : fast/preloader/document-write-2.html = TEXT
 BUGWK57593 : fast/preloader/document-write.html = TEXT
 
-// We need to skip Geeza Pro quirk in SimpleFontDataMac.mm for non-Leopard.
-// http://trac.webkit.org/changeset/83126
-BUGWK58008 SNOWLEOPARD : fast/text/complex-text-opacity.html = IMAGE+TEXT
-BUGWK58008 SNOWLEOPARD : fast/text/international/bidi-AN-after-L.html = IMAGE+TEXT
-BUGWK58008 SNOWLEOPARD : fast/text/international/bidi-AN-after-empty-run.html = IMAGE+TEXT
-BUGWK58008 SNOWLEOPARD : fast/text/international/bidi-CS-after-AN.html = IMAGE+TEXT
-BUGWK58008 SNOWLEOPARD : fast/text/international/bidi-mirror-he-ar.html = IMAGE+TEXT
-BUGWK58008 SNOWLEOPARD : fast/text/international/bidi-neutral-run.html = IMAGE+TEXT
-
 BUGCR780807 : http/tests/misc/webtiming-origins.html = PASS TEXT
 
 BUGCR78835 : plugins/npp-set-window-called-during-destruction.html = TEXT
@@ -2588,7 +2580,6 @@ BUGWK84800 WIN LINUX : css3/filters/custom/filter-repaint-custom-clipped.html = 
 BUGWK84800 WIN LINUX : css3/filters/custom/filter-repaint-custom-rotated.html = PASS IMAGE IMAGE+TEXT TEXT MISSING
 BUGWK84800 WIN LINUX : css3/filters/custom/filter-repaint-custom.html = PASS IMAGE IMAGE+TEXT TEXT MISSING
 BUGWK84800 WIN LINUX : css3/filters/custom/effect-color-check.html = PASS IMAGE IMAGE+TEXT TEXT MISSING
-BUGWK92537 WIN LINUX : css3/filters/custom/custom-filter-css-keyword-as-parameter-name.html = PASS IMAGE IMAGE+TEXT TEXT MISSING
 
 // CSS Regions tests for region styling and scoped styles
 BUGWK49142 : fast/regions/style-scoped-in-flow-override-container-style.html = PASS IMAGE IMAGE+TEXT TEXT MISSING
@@ -2958,8 +2949,6 @@ BUGWK81050 : fast/forms/file/recover-file-input-in-unposted-form.html = PASS TEX
 
 BUGWK81145 LION : compositing/plugins/composited-plugin.html = IMAGE+TEXT
 BUGWK81145 LION : fast/repaint/transform-absolute-in-positioned-container.html = IMAGE+TEXT
-BUGWK81145 LION : fast/text/international/bidi-AN-after-empty-run.html = IMAGE+TEXT
-BUGWK81145 LION : fast/text/international/bidi-neutral-run.html = IMAGE+TEXT
 BUGWK81145 LION : animations/cross-fade-webkit-mask-box-image.html = IMAGE
 BUGWK81145 LION : compositing/iframes/iframe-content-flipping.html = IMAGE
 BUGWK81145 LION : fast/box-shadow/single-pixel-shadow.html = IMAGE
@@ -3586,3 +3575,5 @@ BUGCR131189 : canvas/philip/tests/2d.transformation.transform.skewed.html = TEXT
 BUGCR131189 : platform/chromium/virtual/gpu/canvas/philip/tests/2d.transformation.setTransform.skewed.html = TEXT
 BUGCR131189 : platform/chromium/virtual/gpu/canvas/philip/tests/2d.transformation.transform.skewed.html = TEXT
 
+// Needs rebaseline
+BUGWK92537 : css3/filters/custom/custom-filter-css-keyword-as-parameter-name.html = IMAGE
