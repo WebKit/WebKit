@@ -47,14 +47,14 @@ class TileBuffer {
 
         Platform::Graphics::Buffer* nativeBuffer() const;
 
-        void setBlitGeneration(int g) const { m_blitGeneration = g; }
-        int blitGeneration() const { return m_blitGeneration; }
+        void* syncObject() const { return m_syncObject; }
+        void setSyncObject(void* syncObject) { m_syncObject = syncObject; }
 
     private:
         Platform::IntSize m_size;
         Platform::IntRectRegion m_renderedRegion;
+        void* m_syncObject;
         mutable Platform::Graphics::Buffer* m_buffer;
-        mutable int m_blitGeneration;
 };
 
 

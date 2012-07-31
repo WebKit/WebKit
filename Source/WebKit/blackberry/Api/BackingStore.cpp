@@ -209,7 +209,6 @@ BackingStorePrivate::BackingStorePrivate()
     , m_hasBlitJobs(false)
     , m_currentWindowBackBuffer(0)
     , m_preferredTileMatrixDimension(Vertical)
-    , m_blitGeneration(-1)
 #if USE(ACCELERATED_COMPOSITING)
     , m_needsDrawLayersOnCommit(false)
     , m_isDirectRenderingAnimationMessageScheduled(false)
@@ -226,14 +225,6 @@ BackingStorePrivate::BackingStorePrivate()
     pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_RECURSIVE);
     pthread_mutex_init(&m_mutex, &attr);
     pthread_mutexattr_destroy(&attr);
-
-    pthread_mutex_init(&m_blitGenerationLock, 0);
-
-    pthread_condattr_t condattr;
-    pthread_condattr_init(&condattr);
-    pthread_condattr_setclock(&condattr, CLOCK_MONOTONIC);
-    pthread_cond_init(&m_blitGenerationCond, &condattr);
-    pthread_condattr_destroy(&condattr);
 }
 
 BackingStorePrivate::~BackingStorePrivate()
@@ -246,8 +237,6 @@ BackingStorePrivate::~BackingStorePrivate()
     delete back;
     m_backState = 0;
 
-    pthread_cond_destroy(&m_blitGenerationCond);
-    pthread_mutex_destroy(&m_blitGenerationLock);
     pthread_mutex_destroy(&m_mutex);
 }
 
@@ -1141,26 +1130,11 @@ bool BackingStorePrivate::render(const Platform::IntRect& rect)
         BlackBerry::Platform::Graphics::Buffer* nativeBuffer
             = tile->backBuffer()->nativeBuffer();
 
-        // This code is only needed for EGLImage code path, and only effective if we are swapping the render target.
-        // This combination is only true if there's a GLES2Usage window.
-        // FIXME: Use an EGL fence instead, PR152132
-        Window* window = m_webPage->client()->window();
-        if (window && window->windowUsage() == Window::GLES2Usage) {
-            pthread_mutex_lock(&m_blitGenerationLock);
-            while (m_blitGeneration == tile->backBuffer()->blitGeneration()) {
-                int err = pthread_cond_timedwait(&m_blitGenerationCond, &m_blitGenerationLock, &m_currentBlitEnd);
-                if (err == ETIMEDOUT) {
-                    ++m_blitGeneration;
-                    break;
-                }
-                if (err) {
-                    BlackBerry::Platform::log(BlackBerry::Platform::LogLevelCritical,
-                                              "cond_timedwait failed (%s)", strerror(err));
-                    break;
-                }
-            }
-            pthread_mutex_unlock(&m_blitGenerationLock);
-        }
+        // TODO: This code is only needed for EGLImage code path, but preferrably BackingStore
+        // should not know that, and the synchronization should be in BlackBerry::Platform::Graphics
+        // if possible.
+        if (isOpenGLCompositing())
+            SurfacePool::globalSurfacePool()->waitForBuffer(tile->backBuffer());
 
         // Modify the buffer only after we've waited for the buffer to become available above.
 
@@ -1561,6 +1535,12 @@ void BackingStorePrivate::blitContents(const Platform::IntRect& dstRect,
         }
     }
 
+    // TODO: This code is only needed for EGLImage code path, but preferrably BackingStore
+    // should not know that, and the synchronization should be in BlackBerry::Platform::Graphics
+    // if possible.
+    if (isOpenGLCompositing())
+        SurfacePool::globalSurfacePool()->notifyBuffersComposited(blittedTiles);
+
 #if USE(ACCELERATED_COMPOSITING)
     if (WebPageCompositorPrivate* compositor = m_webPage->d->compositor()) {
         WebCore::FloatRect contentsRect = m_webPage->d->mapFromTransformedFloatRect(WebCore::FloatRect(WebCore::IntRect(contents)));
@@ -1628,28 +1608,6 @@ void BackingStorePrivate::blitContents(const Platform::IntRect& dstRect,
 #endif
 
     invalidateWindow(dstRect);
-
-    // This code is only needed for EGLImage code path, and only effective if we are swapping the render target.
-    // This combination is only true if there's a GLES2Usage window.
-    // FIXME: Use an EGL fence instead
-    Window* window = m_webPage->client()->window();
-    if (window && window->windowUsage() == Window::GLES2Usage && !blittedTiles.isEmpty()) {
-        pthread_mutex_lock(&m_blitGenerationLock);
-
-        ++m_blitGeneration;
-        for (unsigned int i = 0; i < blittedTiles.size(); ++i)
-            blittedTiles[i]->setBlitGeneration(m_blitGeneration);
-
-        clock_gettime(CLOCK_MONOTONIC, &m_currentBlitEnd);
-        m_currentBlitEnd.tv_nsec += 30 * 1000 * 1000;
-        if (m_currentBlitEnd.tv_nsec >= 1000000000L) {
-            m_currentBlitEnd.tv_sec  += 1;
-            m_currentBlitEnd.tv_nsec -= 1000000000L;
-        }
-
-        pthread_mutex_unlock(&m_blitGenerationLock);
-        pthread_cond_signal(&m_blitGenerationCond);
-    }
 }
 
 #if USE(ACCELERATED_COMPOSITING)
@@ -1669,6 +1627,7 @@ void BackingStorePrivate::compositeContents(WebCore::LayerRenderer* layerRendere
 
     BackingStoreGeometry* currentState = frontState();
     TileMap currentMap = currentState->tileMap();
+    Vector<TileBuffer*> compositedTiles;
 
     Platform::IntRectRegion transformedContentsRegion = transformedContents;
     Platform::IntRectRegion backingStoreRegion = currentState->backingStoreRect();
@@ -1708,7 +1667,7 @@ void BackingStorePrivate::compositeContents(WebCore::LayerRenderer* layerRendere
             layerRenderer->drawCheckerboardPattern(transform, m_webPage->d->mapFromTransformedFloatRect(Platform::FloatRect(dirtyRect)));
         else {
             layerRenderer->compositeBuffer(transform, m_webPage->d->mapFromTransformedFloatRect(Platform::FloatRect(wholeRect)), tileBuffer->nativeBuffer(), contentsOpaque, 1.0f);
-
+            compositedTiles.append(tileBuffer);
             // Intersect the rendered region.
             Platform::IntRectRegion notRenderedRegion = Platform::IntRectRegion::subtractRegions(dirtyTileRect, tileBuffer->renderedRegion());
             IntRectList notRenderedRects = notRenderedRegion.rects();
@@ -1716,6 +1675,8 @@ void BackingStorePrivate::compositeContents(WebCore::LayerRenderer* layerRendere
                 layerRenderer->drawCheckerboardPattern(transform, m_webPage->d->mapFromTransformedFloatRect(Platform::FloatRect(notRenderedRects.at(i))));
         }
     }
+
+    SurfacePool::globalSurfacePool()->notifyBuffersComposited(compositedTiles);
 }
 #endif
 

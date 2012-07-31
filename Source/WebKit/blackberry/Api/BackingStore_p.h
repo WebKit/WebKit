@@ -369,11 +369,6 @@ public:
 
     pthread_mutex_t m_mutex;
 
-    int m_blitGeneration;
-    pthread_mutex_t m_blitGenerationLock;
-    pthread_cond_t m_blitGenerationCond;
-    struct timespec m_currentBlitEnd;
-
 #if USE(ACCELERATED_COMPOSITING)
     mutable bool m_needsDrawLayersOnCommit; // Not thread safe, WebKit thread only
     bool m_isDirectRenderingAnimationMessageScheduled;

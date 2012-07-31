@@ -25,6 +25,8 @@
 
 #include <BlackBerryPlatformGraphics.h>
 #include <BlackBerryPlatformPrimitives.h>
+#include <pthread.h>
+#include <set>
 #include <wtf/Vector.h>
 
 #define ENABLE_COMPOSITING_SURFACE 1
@@ -71,6 +73,16 @@ public:
     void releaseBuffers();
     void createBuffers();
 
+    // EGLImage synchronization between WebKit and compositing threads
+    // TODO: Figure out how to improve the BlackBerry::Platform::Graphics with API that can encapsulate
+    // this kind of synchronisation mechanism.
+
+    // WebKit thread must waitForBuffer() before rendering to EGLImage
+    void waitForBuffer(TileBuffer*);
+
+    // Compositing thread must notify the SurfacePool when EGLImages are composited
+    void notifyBuffersComposited(const Vector<TileBuffer*>& buffers);
+
 private:
     // This is necessary so BackingStoreTile can atomically swap buffers with m_backBuffer.
     friend class BackingStoreTile;
@@ -86,6 +98,10 @@ private:
     unsigned m_backBuffer;
     bool m_initialized; // SurfacePool has been set up, with or without buffers.
     bool m_buffersSuspended; // Buffer objects exist, but pixel memory has been freed.
+
+    std::set<void*> m_syncObjectsToDestroy;
+    bool m_hasFenceExtension;
+    mutable pthread_mutex_t m_mutex;
 };
 }
 }

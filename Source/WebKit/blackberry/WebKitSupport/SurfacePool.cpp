@@ -25,15 +25,28 @@
 #include "BackingStoreCompositingSurface.h"
 #endif
 
+#include <BlackBerryPlatformGraphics.h>
 #include <BlackBerryPlatformLog.h>
 #include <BlackBerryPlatformMisc.h>
 #include <BlackBerryPlatformScreen.h>
 #include <BlackBerryPlatformSettings.h>
+#include <BlackBerryPlatformThreading.h>
+#include <errno.h>
+
+#if BLACKBERRY_PLATFORM_GRAPHICS_EGL
+#include <EGL/eglext.h>
+#endif
 
 #define SHARED_PIXMAP_GROUP "webkit_backingstore_group"
 
 namespace BlackBerry {
 namespace WebKit {
+
+#if BLACKBERRY_PLATFORM_GRAPHICS_EGL
+static PFNEGLCREATESYNCKHRPROC eglCreateSyncKHR;
+static PFNEGLDESTROYSYNCKHRPROC eglDestroySyncKHR;
+static PFNEGLCLIENTWAITSYNCKHRPROC eglClientWaitSyncKHR;
+#endif
 
 #if USE(ACCELERATED_COMPOSITING) && ENABLE_COMPOSITING_SURFACE
 static PassRefPtr<BackingStoreCompositingSurface> createCompositingSurface()
@@ -60,6 +73,7 @@ SurfacePool::SurfacePool()
     , m_backBuffer(0)
     , m_initialized(false)
     , m_buffersSuspended(false)
+    , m_hasFenceExtension(false)
 {
 }
 
@@ -95,6 +109,21 @@ void SurfacePool::initialize(const BlackBerry::Platform::IntSize& tileSize)
 
     for (size_t i = 0; i < numberOfTiles; ++i)
         m_tilePool.append(BackingStoreTile::create(tileSize, BackingStoreTile::DoubleBuffered));
+
+#if BLACKBERRY_PLATFORM_GRAPHICS_EGL
+    const char* extensions = eglQueryString(Platform::Graphics::eglDisplay(), EGL_EXTENSIONS);
+    if (strstr(extensions, "EGL_KHR_fence_sync")) {
+        // We assume GL_OES_EGL_sync is present, but we don't check for it because
+        // no GL context is current at this point.
+        // TODO: check for it
+        eglCreateSyncKHR = (PFNEGLCREATESYNCKHRPROC) eglGetProcAddress("eglCreateSyncKHR");
+        eglDestroySyncKHR = (PFNEGLDESTROYSYNCKHRPROC) eglGetProcAddress("eglDestroySyncKHR");
+        eglClientWaitSyncKHR = (PFNEGLCLIENTWAITSYNCKHRPROC) eglGetProcAddress("eglClientWaitSyncKHR");
+        m_hasFenceExtension = eglCreateSyncKHR && eglDestroySyncKHR && eglClientWaitSyncKHR;
+    }
+#endif
+
+    pthread_mutex_init(&m_mutex, 0);
 }
 
 PlatformGraphicsContext* SurfacePool::createPlatformGraphicsContext(BlackBerry::Platform::Graphics::Drawable* drawable) const
@@ -197,6 +226,72 @@ void SurfacePool::releaseBuffers()
         BlackBerry::Platform::Graphics::clearBuffer(backBuffer()->nativeBuffer(), 0, 0, 0, 0);
         BlackBerry::Platform::Graphics::destroyPixmapBuffer(backBuffer()->nativeBuffer());
     }
+}
+
+void SurfacePool::waitForBuffer(TileBuffer* tileBuffer)
+{
+    if (!m_hasFenceExtension)
+        return;
+
+#if BLACKBERRY_PLATFORM_GRAPHICS_EGL
+    EGLSyncKHR syncObject;
+
+    {
+        Platform::MutexLocker locker(&m_mutex);
+        syncObject = tileBuffer->syncObject();
+        if (!syncObject)
+            return;
+
+        // Stale references to this sync object may remain with other tiles, don't wait for it again.
+        for (unsigned int i = 0; i < m_tilePool.size(); ++i) {
+            TileBuffer* tileBuffer = m_tilePool[i]->frontBuffer();
+            if (tileBuffer->syncObject() == syncObject)
+                tileBuffer->setSyncObject(0);
+        }
+        if (backBuffer()->syncObject() == syncObject)
+            backBuffer()->setSyncObject(0);
+    }
+
+    eglClientWaitSyncKHR(Platform::Graphics::eglDisplay(), syncObject, 0, 100000000LL);
+
+    // Instead of assuming eglDestroySyncKHR is thread safe, we add it to
+    // a garbage list for later collection on the thread that created it.
+    {
+        Platform::MutexLocker locker(&m_mutex);
+        m_syncObjectsToDestroy.insert(syncObject);
+    }
+#endif
+}
+
+void SurfacePool::notifyBuffersComposited(const Vector<TileBuffer*>& tileBuffers)
+{
+    if (!m_hasFenceExtension)
+        return;
+
+#if BLACKBERRY_PLATFORM_GRAPHICS_EGL
+    Platform::MutexLocker locker(&m_mutex);
+
+    EGLDisplay display = Platform::Graphics::eglDisplay();
+
+    // The EGL_KHR_fence_sync spec is nice enough to specify that the sync object
+    // is not actually deleted until everyone has stopped using it.
+    for (std::set<void*>::const_iterator it = m_syncObjectsToDestroy.begin(); it != m_syncObjectsToDestroy.end(); ++it)
+        eglDestroySyncKHR(display, *it);
+    m_syncObjectsToDestroy.clear();
+
+    // If we didn't blit anything, we don't need to create a new sync object.
+    if (tileBuffers.isEmpty())
+        return;
+
+    EGLSyncKHR syncObject = eglCreateSyncKHR(display, EGL_SYNC_FENCE_KHR, 0);
+
+    for (unsigned int i = 0; i < tileBuffers.size(); ++i) {
+        if (EGLSyncKHR previousSyncObject = tileBuffers[i]->syncObject())
+            m_syncObjectsToDestroy.insert(previousSyncObject);
+
+        tileBuffers[i]->setSyncObject(syncObject);
+    }
+#endif
 }
 
 }

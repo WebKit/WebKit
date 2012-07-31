@@ -1,3 +1,40 @@
+2012-07-31  Arvid Nilsson  <anilsson@rim.com>
+
+        [BlackBerry] Backing store output flickers when using WebPageCompositor
+        https://bugs.webkit.org/show_bug.cgi?id=90291
+
+        Reviewed by Antonio Gomes.
+
+        The backing store doesn't know when the API client swaps the buffers,
+        so it doesn't know when to signal the blit generation condition
+        variable. Fixed by using EGL fence sync instead, when available, so we
+        don't have to know.
+
+        Reviewed internally by Filip Spacek.
+
+        * Api/BackingStore.cpp:
+        (BlackBerry::WebKit::BackingStorePrivate::BackingStorePrivate):
+        (BlackBerry::WebKit::BackingStorePrivate::~BackingStorePrivate):
+        (BlackBerry::WebKit::BackingStorePrivate::render):
+        (BlackBerry::WebKit::BackingStorePrivate::blitContents):
+        (BlackBerry::WebKit::BackingStorePrivate::compositeContents):
+        * Api/BackingStore_p.h:
+        (BackingStorePrivate):
+        * WebKitSupport/BackingStoreTile.cpp:
+        (BlackBerry::WebKit::TileBuffer::TileBuffer):
+        * WebKitSupport/BackingStoreTile.h:
+        (BlackBerry::WebKit::TileBuffer::syncObject):
+        (BlackBerry::WebKit::TileBuffer::setSyncObject):
+        (TileBuffer):
+        * WebKitSupport/SurfacePool.cpp:
+        (WebKit):
+        (BlackBerry::WebKit::SurfacePool::SurfacePool):
+        (BlackBerry::WebKit::SurfacePool::initialize):
+        (BlackBerry::WebKit::SurfacePool::waitForBuffer):
+        (BlackBerry::WebKit::SurfacePool::notifyBuffersComposited):
+        * WebKitSupport/SurfacePool.h:
+        (SurfacePool):
+
 2012-07-30  Yoshifumi Inoue  <yosin@chromium.org>
 
         [Forms] Get rid of Element::isReadOnlyFormControl other than CSS related
