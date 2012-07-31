@@ -187,10 +187,8 @@ TEST(IDBLevelDBCodingTest, EncodeVarInt)
     EXPECT_EQ(static_cast<size_t>(2), encodeVarInt(255).size());
     EXPECT_EQ(static_cast<size_t>(2), encodeVarInt(256).size());
     EXPECT_EQ(static_cast<size_t>(5), encodeVarInt(0xffffffff).size());
-    EXPECT_EQ(static_cast<size_t>(8), encodeVarInt(0xfffffffffffff).size());
-    EXPECT_EQ(static_cast<size_t>(9), encodeVarInt(0x7fffffffffffffff).size());
 #ifdef NDEBUG
-    EXPECT_EQ(static_cast<size_t>(10), encodeVarInt(-100).size());
+    EXPECT_EQ(static_cast<size_t>(8), encodeInt(-100).size());
 #endif
 }
 
