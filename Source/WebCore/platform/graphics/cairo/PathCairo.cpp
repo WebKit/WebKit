@@ -73,10 +73,18 @@ Path& Path::operator=(const Path& other)
     if (&other == this)
         return *this;
 
-    clear();
-    cairo_t* cr = ensurePlatformPath()->context();
-    OwnPtr<cairo_path_t> pathCopy = adoptPtr(cairo_copy_path(other.platformPath()->context()));
-    cairo_append_path(cr, pathCopy.get());
+    if (other.isNull()) {
+        if (m_path) {
+            delete m_path;
+            m_path = 0;
+        }
+    } else {
+        clear();
+        cairo_t* cr = ensurePlatformPath()->context();
+        OwnPtr<cairo_path_t> pathCopy = adoptPtr(cairo_copy_path(other.platformPath()->context()));
+        cairo_append_path(cr, pathCopy.get());
+    }
+
     return *this;
 }
 
