@@ -195,7 +195,7 @@ static const int touchPointPadding = 32;
 static const float minScaleDifference = 0.01f;
 static const float doubleTapZoomContentDefaultMargin = 5;
 static const float doubleTapZoomContentMinimumMargin = 2;
-static const double doubleTabZoomAnimationDurationInSeconds = 0.25;
+static const double doubleTapZoomAnimationDurationInSeconds = 0.25;
 
 // Constants for zooming in on a focused text field.
 static const double scrollAndScaleAnimationDurationInSeconds = 0.2;
@@ -1112,7 +1112,7 @@ void WebViewImpl::animateZoomAroundPoint(const IntPoint& point, AutoZoomType zoo
     computeScaleAndScrollForHitRect(WebRect(point.x(), point.y(), 0, 0), zoomType, scale, scroll);
 
     bool isDoubleTap = (zoomType == DoubleTap);
-    double durationInSeconds = isDoubleTap ? doubleTabZoomAnimationDurationInSeconds : 0;
+    double durationInSeconds = isDoubleTap ? doubleTapZoomAnimationDurationInSeconds : 0;
     startPageScaleAnimation(scroll, isDoubleTap, scale, durationInSeconds);
 #endif
 }
