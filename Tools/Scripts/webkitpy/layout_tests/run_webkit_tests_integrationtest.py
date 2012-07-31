@@ -928,6 +928,14 @@ class MainTest(unittest.TestCase, StreamTestingMixin):
         # This is empty because we don't even get a chance to configure the logger before failing.
         self.assertEquals(logs, '')
 
+    def test_verbose(self):
+        # Note that the tests fail because we can't pass a mock host to the worker processes *and*
+        # use outputcapture to capture the output (doing the latter results in a nonpicklable host).
+        _, _, err, _ = logging_run(['--verbose', '--fully-parallel', '--child-processes', '2', 'passes/text.html', 'passes/image.html'], tests_included=True)
+        self.assertTrue('text.html failed' in err.getvalue())
+        self.assertTrue('image.html failed' in err.getvalue())
+
+
 class EndToEndTest(unittest.TestCase):
     def parse_full_results(self, full_results_text):
         json_to_eval = full_results_text.replace("ADD_RESULTS(", "").replace(");", "")
