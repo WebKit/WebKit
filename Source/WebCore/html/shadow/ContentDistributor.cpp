@@ -49,7 +49,6 @@ InsertionPoint* ContentDistributor::findInsertionPointFor(const Node* key) const
     return m_nodeToInsertionPoint.get(key);
 }
 
-
 void ContentDistributor::distribute(Element* host)
 {
     ASSERT(needsDistribution());

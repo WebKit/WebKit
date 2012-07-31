@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="resources/polyfill.js"></script>
+<div id="host"></div>
+
+<script>
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+var shadowRoot = new WebKitShadowRoot(host);
+shadowRoot.innerHTML = "<p>oldest shadow</p>"
+
+setTimeout(function() {
+    var shadowRoot2 = new WebKitShadowRoot(host);
+    shadowRoot2.innerHTML = "<p>younger shadow</p>";
+
+    if (window.testRunner)
+        testRunner.notifyDone();
+}, 0);
+</script>
+</body>
+</html>

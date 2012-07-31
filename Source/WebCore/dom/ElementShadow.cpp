@@ -79,7 +79,8 @@ void ElementShadow::addShadowRoot(Element* shadowHost, PassRefPtr<ShadowRoot> sh
     shadowRoot->setHost(shadowHost);
     shadowRoot->setParentTreeScope(shadowHost->treeScope());
     m_shadowRoots.push(shadowRoot.get());
-    invalidateDistribution(shadowHost, InvalidateIfNeeded);
+    setValidityUndetermined();
+    invalidateDistribution(shadowHost);
     ChildNodeInsertionNotifier(shadowHost).notify(shadowRoot.get());
 
     if (shadowHost->attached() && !shadowRoot->attached())
@@ -108,7 +109,7 @@ void ElementShadow::removeAllShadowRoots()
         ChildNodeRemovalNotifier(shadowHost).notify(oldRoot.get());
     }
 
-    invalidateDistribution(shadowHost, InvalidateIfNeeded);
+    invalidateDistribution(shadowHost);
 }
 
 void ElementShadow::attach()
@@ -188,18 +189,20 @@ void ElementShadow::ensureDistribution()
     m_distributor.distribute(host());
 }
 
-void ElementShadow::invalidateDistribution(InvalidationType type)
+void ElementShadow::setValidityUndetermined()
 {
-    invalidateDistribution(host(), type);
+    m_distributor.setValidity(ContentDistributor::Undetermined);
 }
 
-void ElementShadow::invalidateDistribution(Element* host, InvalidationType type)
+void ElementShadow::invalidateDistribution()
 {
-    bool needsReattach = (type == InvalidateAndForceReattach);
-    bool needsInvalidation = m_distributor.needsInvalidation();
+    invalidateDistribution(host());
+}
 
-    if (needsInvalidation)
-        needsReattach |= m_distributor.invalidate(host);
+void ElementShadow::invalidateDistribution(Element* host)
+{
+    bool needsInvalidation = m_distributor.needsInvalidation();
+    bool needsReattach = needsInvalidation ? m_distributor.invalidate(host) : false;
 
     if (needsReattach && host->attached()) {
         host->detach();

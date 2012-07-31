@@ -60,6 +60,8 @@ public:
 
     InsertionPoint* findInsertionPointFor(const Node* key) const;
 
+    void setValidity(Validity validity) { m_validity = validity; }
+
     void distribute(Element* host);
     bool invalidate(Element* host);
     void finishInivalidation();

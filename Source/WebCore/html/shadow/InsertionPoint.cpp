@@ -118,8 +118,10 @@ Node::InsertionNotificationRequest InsertionPoint::insertedInto(ContainerNode* i
 {
     HTMLElement::insertedInto(insertionPoint);
     if (insertionPoint->inDocument()) {
-        if (ShadowRoot* root = shadowRoot())
-            root->owner()->invalidateDistribution(ElementShadow::InvalidateAndForceReattach);
+        if (ShadowRoot* root = shadowRoot()) {
+            root->owner()->setValidityUndetermined();
+            root->owner()->invalidateDistribution();
+        }
     }
 
     return InsertionDone;

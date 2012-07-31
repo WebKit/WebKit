@@ -1,3 +1,36 @@
+2012-07-31  Shinya Kawanaka  <shinyak@chromium.org>
+
+        Older ShadowDOM is still rendered when a new ShadowDOM is added when they don't have any InsertionPoints.
+        https://bugs.webkit.org/show_bug.cgi?id=92456
+
+        Reviewed by Hajime Morita.
+
+        When adding a new ShadowRoot to an element having other ShadowRoots, and they don't have any InsretionPoint,
+        the older ShadowDOM is still rendered.
+
+        When ContentDistributor's validity is 'Undetermined', ElementShadow reattaches the host and the whole shadow
+        subtree. Since adding a new ShadowRoot makes the validity 'Undetermined', we have had to make it 'Undetermined'.
+
+        This change enables us to remove a unnecessary InvalidationType flag from the code. We should call
+        setValidityUndetermined() instead of using InvalidateAndForceReattach.
+
+        Test: fast/dom/shadow/invalidate-distribution.html
+
+        * dom/ElementShadow.cpp:
+        (WebCore::ElementShadow::addShadowRoot): Calls setValidityUndetermined().
+        (WebCore::ElementShadow::removeAllShadowRoots):
+        (WebCore::ElementShadow::setValidityUndetermined):
+        (WebCore::ElementShadow::invalidateDistribution): When validity is undetermined, we will reattach the
+        host and the shadow subtree.
+        * dom/ElementShadow.h:
+        (ElementShadow):
+        * html/shadow/ContentDistributor.cpp:
+        * html/shadow/ContentDistributor.h:
+        (WebCore::ContentDistributor::setValidity):
+        (ContentDistributor):
+        * html/shadow/InsertionPoint.cpp:
+        (WebCore::InsertionPoint::insertedInto): Calls setValidityUndetermined().
+
 2012-07-31  Tommy Widenflycht  <tommyw@google.com>
 
         Introduce a minimal RTCPeerConnection together with Dictionary changes

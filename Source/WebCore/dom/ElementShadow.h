@@ -62,12 +62,8 @@ public:
     bool needsStyleRecalc();
     void recalcStyle(Node::StyleChange);
 
-    enum InvalidationType {
-        InvalidateIfNeeded,
-        InvalidateAndForceReattach
-    };
-
-    void invalidateDistribution(InvalidationType = InvalidateIfNeeded);
+    void setValidityUndetermined();
+    void invalidateDistribution();
     void ensureDistribution();
  
     InsertionPoint* insertionPointFor(const Node*) const;
@@ -76,7 +72,7 @@ public:
     const ContentDistributor& distributor() const;
 
 private:
-    void invalidateDistribution(Element* host, InvalidationType);
+    void invalidateDistribution(Element* host);
 
     DoublyLinkedList<ShadowRoot> m_shadowRoots;
     ContentDistributor m_distributor;
