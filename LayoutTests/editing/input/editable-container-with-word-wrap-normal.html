@@ -1,0 +1,62 @@
+<!DOCTYPE html> 
+<html>
+<head>
+<title> Testcase for bug https://bugs.webkit.org/show_bug.cgi?id=89649 </title>
+<style>
+@font-face {
+    font-family:ahem;
+    src: url(../../resources/Ahem.ttf);
+}
+.editableDiv {
+    overflow:auto;
+    height:50px;
+    width:500px;
+    word-wrap:normal;
+    font-family:ahem;
+}
+</style>
+<script src="../../fast/js/resources/js-test-pre.js"></script>
+<script>
+startCaretRect = null;
+finalCaretRect = null;
+editableContainer = null;
+caretWidth = null;
+function runTest() {
+    description('Testcase for bug <a href="http://www.webkit.org/b/89649">http://www.webkit.org/b/89649</a>. \
+The test case checks if caret is drawn properly(especially scrolls properly) inside a editable container having word-wrap:normal.');
+
+    editableContainer = document.getElementById('test');
+    editableContainer.focus();
+    if (window.internals)
+        startCaretRect = internals.absoluteCaretBounds(document);
+
+    window.getSelection().setPosition(editableContainer,0);
+    if (window.eventSender)
+        eventSender.keyDown('end');
+
+    if (window.internals)
+        finalCaretRect = internals.absoluteCaretBounds(document);
+
+    caretWidth = finalCaretRect.right - finalCaretRect.left;
+
+    debug("The content must scroll for the caret to reach the end of the editable text.")
+    shouldBeTrue("editableContainer.scrollLeft > 0");
+
+    debug('<br>Final caret rect is calculated by following constraints');
+    debug('1) ScrollWidth = text content width + caret width');
+    debug('2) Caret rect is always within container bounding box (thus substracting the scroll left)');
+    shouldBe("startCaretRect.left + editableContainer.scrollWidth - editableContainer.scrollLeft - caretWidth", "finalCaretRect.right");
+    
+    document.body.removeChild(editableContainer);
+    isSuccessfullyParsed();
+ }
+</script>
+</head>
+<body onload="runTest();">
+ <div id="test" contenteditable="true" class="editableDiv" >
+  SOMEFILLERTEXTSOMEFILLERTEXTSOMEFILLERFILLERSFILLERSFILLERSFILLERSFILLERS
+ </div>
+ <div id="description"></div>
+ <div id="console"></div>
+</body>
+</html>

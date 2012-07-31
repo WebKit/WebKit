@@ -1,3 +1,13 @@
+2012-07-31  Pravin D  <pravind.2k4@gmail.com>
+
+        Caret position is wrong when a editable container has word-wrap:normal set
+        https://bugs.webkit.org/show_bug.cgi?id=89649
+
+        Reviewed by Levi Weintraub.
+
+        * editing/input/editable-container-with-word-wrap-normal-expected.txt: Added.
+        * editing/input/editable-container-with-word-wrap-normal.html: Added.
+
 2012-07-31  Thiago Marcos P. Santos  <thiago.santos@intel.com>
 
         [EFL] Gardening of failing tests and new passes

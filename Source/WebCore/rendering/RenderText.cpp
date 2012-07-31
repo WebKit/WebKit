@@ -678,15 +678,11 @@ LayoutRect RenderText::localCaretRect(InlineBox* inlineBox, int caretOffset, Lay
 
     RenderBlock* cb = containingBlock();
     RenderStyle* cbStyle = cb->style();
+
     float leftEdge;
     float rightEdge;
-    if (style()->autoWrap()) {
-        leftEdge = 0;
-        rightEdge = cb->logicalWidth();
-    } else {
-        leftEdge = min(static_cast<float>(0), rootLeft);
-        rightEdge = max(static_cast<float>(cb->logicalWidth()), rootRight);
-    }
+    leftEdge = min<float>(0, rootLeft);
+    rightEdge = max<float>(cb->logicalWidth(), rootRight);
 
     bool rightAligned = false;
     switch (cbStyle->textAlign()) {
