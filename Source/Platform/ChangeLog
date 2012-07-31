@@ -1,3 +1,12 @@
+2012-07-30  Keishi Hattori  <keishi@webkit.org>
+
+        Implement datalist UI for input type color for Chromium
+        https://bugs.webkit.org/show_bug.cgi?id=92075
+
+        Reviewed by Kent Tamura.
+
+        * chromium/public/WebLocalizedString.h: Added OtherColorLabel.
+
 2012-07-30  Adrienne Walker  <enne@google.com>
 
         [chromium] Wrap ScrollbarLayerChromium in WebScrollbarLayer

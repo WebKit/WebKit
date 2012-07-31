@@ -37,14 +37,13 @@
 #include "RegisterProtocolHandlerClient.h"
 #include "SearchPopupMenu.h"
 #include "WebNavigationPolicy.h"
+#include <public/WebColor.h>
 #include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
 class AccessibilityObject;
-#if ENABLE(INPUT_TYPE_COLOR)
 class ColorChooser;
 class ColorChooserClient;
-#endif
 class Element;
 class FileChooser;
 class PopupContainer;
@@ -55,6 +54,8 @@ struct WindowFeatures;
 }
 
 namespace WebKit {
+class WebColorChooser;
+class WebColorChooserClient;
 class WebViewImpl;
 struct WebCursorInfo;
 struct WebPopupMenuInfo;
@@ -138,6 +139,7 @@ public:
     virtual bool paintCustomOverhangArea(WebCore::GraphicsContext*, const WebCore::IntRect&, const WebCore::IntRect&, const WebCore::IntRect&);
 #if ENABLE(INPUT_TYPE_COLOR)
     virtual PassOwnPtr<WebCore::ColorChooser> createColorChooser(WebCore::ColorChooserClient*, const WebCore::Color&) OVERRIDE;
+    PassOwnPtr<WebColorChooser> createWebColorChooser(WebColorChooserClient*, const WebColor&);
 #endif
     virtual void runOpenPanel(WebCore::Frame*, PassRefPtr<WebCore::FileChooser>);
     virtual void loadIconForFiles(const Vector<WTF::String>&, WebCore::FileIconLoader*);

@@ -32,9 +32,12 @@ namespace WebCore {
 
 bool RenderThemeChromiumCommon::supportsDataListUI(const AtomicString& type)
 {
-    // FIXME: We still need to support datetime, date, month, week, time, datetime-local, color.
+    // FIXME: We still need to support datetime, date, month, week, time, datetime-local.
     return type == InputTypeNames::text() || type == InputTypeNames::search() || type == InputTypeNames::url()
         || type == InputTypeNames::telephone() || type == InputTypeNames::email() || type == InputTypeNames::number()
+#if ENABLE(INPUT_TYPE_COLOR)
+        || type == InputTypeNames::color()
+#endif
         || type == InputTypeNames::range();
 }
 
