@@ -41,6 +41,7 @@
 #include "DrawingBuffer.h"
 #include "GraphicsContext3D.h"
 #include "ImageData.h"
+#include "NotImplemented.h"
 #include "RenderTreeAsText.h"
 #include "TextStream.h"
 #include "Texture.h"
@@ -139,9 +140,11 @@ void FECustomFilter::platformApplySoftware()
     if (!hadContext || m_contextSize != newContextSize)
         resizeContext(newContextSize);
 
+#if !PLATFORM(BLACKBERRY) // BlackBerry defines its own Texture class.
     // Do not draw the filter if the input image cannot fit inside a single GPU texture.
     if (m_inputTexture->tiles().numTilesX() != 1 || m_inputTexture->tiles().numTilesY() != 1)
         return;
+#endif
     
     // The shader had compiler errors. We cannot draw anything.
     if (!m_compiledProgram->isInitialized())
@@ -185,7 +188,11 @@ bool FECustomFilter::initializeContext()
 
 void FECustomFilter::resizeContext(const IntSize& newContextSize)
 {
+#if !PLATFORM(BLACKBERRY) // BlackBerry defines its own Texture class
     m_inputTexture = Texture::create(m_context.get(), Texture::RGBA8, newContextSize.width(), newContextSize.height());
+#else
+    m_inputTexture = Texture::create(true);
+#endif
     
     if (!m_frameBuffer)
         m_frameBuffer = m_context->createFramebuffer();
@@ -269,8 +276,12 @@ void FECustomFilter::bindProgramAndBuffers(Uint8ClampedArray* srcPixelArray)
     if (m_compiledProgram->samplerLocation() != -1) {
         m_context->activeTexture(GraphicsContext3D::TEXTURE0);
         m_context->uniform1i(m_compiledProgram->samplerLocation(), 0);
+#if !PLATFORM(BLACKBERRY)
         m_inputTexture->load(srcPixelArray->data());
         m_inputTexture->bindTile(0);
+#else
+        notImplemented();
+#endif
     }
     
     if (m_compiledProgram->projectionMatrixLocation() != -1) {

@@ -1038,6 +1038,7 @@ SET(WebCore_SOURCES
     css/WebKitCSSMatrix.cpp
     css/WebKitCSSRegionRule.cpp
     css/WebKitCSSSVGDocumentValue.cpp
+    css/WebKitCSSShaderValue.cpp
     css/WebKitCSSTransformValue.cpp
     css/WrapShapeFunctions.cpp
 
@@ -1605,6 +1606,7 @@ SET(WebCore_SOURCES
     loader/cache/CachedResourceHandle.cpp
     loader/cache/CachedResourceLoader.cpp
     loader/cache/CachedScript.cpp
+    loader/cache/CachedShader.cpp
     loader/cache/CachedSVGDocument.cpp
     loader/cache/CachedTextTrack.cpp
     loader/cache/CachedXSLStyleSheet.cpp
@@ -1821,10 +1823,11 @@ SET(WebCore_SOURCES
     platform/graphics/TiledBackingStore.cpp
     platform/graphics/WidthIterator.cpp
 
+    platform/graphics/filters/CustomFilterCompiledProgram.cpp
     platform/graphics/filters/CustomFilterGlobalContext.cpp
     platform/graphics/filters/CustomFilterMesh.cpp
+    platform/graphics/filters/CustomFilterOperation.cpp
     platform/graphics/filters/CustomFilterProgram.cpp
-    platform/graphics/filters/CustomFilterCompiledProgram.cpp
     platform/graphics/filters/DistantLightSource.cpp
     platform/graphics/filters/FEBlend.cpp
     platform/graphics/filters/FEColorMatrix.cpp
@@ -1849,16 +1852,15 @@ SET(WebCore_SOURCES
     platform/graphics/filters/FilterOperations.cpp
     platform/graphics/filters/LightSource.cpp
     platform/graphics/filters/PointLightSource.cpp
-    platform/graphics/filters/SpotLightSource.cpp
     platform/graphics/filters/SourceAlpha.cpp
     platform/graphics/filters/SourceGraphic.cpp
+    platform/graphics/filters/SpotLightSource.cpp
 
     platform/graphics/filters/arm/NEONHelpers.h
     platform/graphics/filters/arm/FEBlendNEON.h
     platform/graphics/filters/arm/FECompositeArithmeticNEON.h
     platform/graphics/filters/arm/FEGaussianBlurNEON.h
     platform/graphics/filters/arm/FELightingNEON.cpp
-    platform/graphics/filters/arm/FELightingNEON.h
 
     platform/graphics/texmap/TextureMapper.cpp
     platform/graphics/texmap/TextureMapperBackingStore.cpp

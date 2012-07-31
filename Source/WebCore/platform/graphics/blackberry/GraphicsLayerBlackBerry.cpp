@@ -51,6 +51,7 @@
 #include "Image.h"
 #include "LayerAnimation.h"
 #include "LayerWebKitThread.h"
+#include "NotImplemented.h"
 
 namespace WebCore {
 
@@ -291,6 +292,26 @@ void GraphicsLayerBlackBerry::setHasFixedAncestorInDOMTree(bool hasFixedAncestor
     GraphicsLayer::setHasFixedAncestorInDOMTree(hasFixedAncestorInDOMTree);
     updateHasFixedAncestorInDOMTree();
 }
+
+#if ENABLE(CSS_FILTERS)
+bool GraphicsLayerBlackBerry::setFilters(const FilterOperations& filters)
+{
+    if (m_filters == filters)
+        return true;
+
+    bool canCompositeFilters = LayerWebKitThread::filtersCanBeComposited(filters);
+    if (canCompositeFilters) {
+        m_filters = filters;
+        GraphicsLayer::setFilters(filters);
+        updateFilters();
+    } else {
+        m_filters.clear();
+        notImplemented();
+    }
+
+    return canCompositeFilters;
+}
+#endif
 
 void GraphicsLayerBlackBerry::setBackgroundColor(const Color& color)
 {
@@ -802,6 +823,16 @@ void GraphicsLayerBlackBerry::updateLayerBackgroundColor()
     else
         clearLayerBackgroundColor(*m_contentsLayer);
 }
+
+#if ENABLE(CSS_FILTERS)
+void GraphicsLayerBlackBerry::updateFilters()
+{
+    if (!m_filters.size())
+        return;
+
+    primaryLayer()->setFilters(m_filters);
+}
+#endif
 
 void GraphicsLayerBlackBerry::updateAnimations()
 {

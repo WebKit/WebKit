@@ -35,9 +35,11 @@
 
 #if USE(ACCELERATED_COMPOSITING)
 
+#include "FilterOperations.h"
 #include "FloatQuad.h"
 #include "LayerAnimation.h"
 #include "LayerData.h"
+#include "LayerFilterRenderer.h"
 #include "LayerRendererSurface.h"
 #include "LayerTiler.h"
 
@@ -101,6 +103,7 @@ private:
     IntSize m_bounds;
     TransformationMatrix m_transform;
     float m_opacity;
+
     Vector<RefPtr<LayerAnimation> > m_animations;
 
     unsigned m_positionSet : 1;
@@ -109,6 +112,8 @@ private:
     unsigned m_transformSet : 1;
     unsigned m_opacitySet : 1;
 };
+
+class LayerFilterRendererAction;
 
 class LayerCompositingThread : public ThreadSafeRefCounted<LayerCompositingThread>, public LayerData, public BlackBerry::Platform::GuardedPointerBase {
 public:
@@ -207,6 +212,14 @@ public:
     LayerOverride* override();
     void clearOverride();
 
+#if ENABLE(CSS_FILTERS)
+    bool filterOperationsChanged() const { return m_filterOperationsChanged; }
+    void setFilterOperationsChanged(bool changed) { m_filterOperationsChanged = changed; }
+
+    Vector<RefPtr<LayerFilterRendererAction> > filterActions() const { return m_filterActions; }
+    void setFilterActions(const Vector<RefPtr<LayerFilterRendererAction> >& actions) { m_filterActions = actions; }
+#endif
+
 protected:
     virtual ~LayerCompositingThread();
 
@@ -251,6 +264,11 @@ private:
 
     OwnPtr<LayerOverride> m_override;
     LayerCompositingThreadClient* m_client;
+
+#if ENABLE(CSS_FILTERS)
+    bool m_filterOperationsChanged;
+    Vector<RefPtr<LayerFilterRendererAction> > m_filterActions;
+#endif
 };
 
 } // namespace WebCore

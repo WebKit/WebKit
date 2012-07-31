@@ -1,3 +1,104 @@
+2012-07-31  Joshua Netterfield  <jnetterfield@rim.com>
+
+        [BlackBerry] Enable CSS Filter Effects
+        https://bugs.webkit.org/show_bug.cgi?id=92685
+
+        Reviewed by Rob Buis.
+
+        Enable CSS filter effects, with the exception of custom effects (CSS shaders) and reference effects (SVG effects)
+
+        No new tests, because this is covered by tests from other platforms.
+
+        Internally reviewed by Arvid Nilsson <anilsson@rim.com> and Antonio Gomes <agomes@rim.com>.
+
+        * CMakeLists.txt:
+        * PlatformBlackBerry.cmake:
+        * platform/graphics/blackberry/GraphicsLayerBlackBerry.cpp:
+        (WebCore):
+        (WebCore::GraphicsLayerBlackBerry::setFilters):
+        (WebCore::GraphicsLayerBlackBerry::updateFilters):
+        * platform/graphics/blackberry/GraphicsLayerBlackBerry.h:
+        (GraphicsLayerBlackBerry):
+        (WebCore::GraphicsLayerBlackBerry::filters):
+        * platform/graphics/blackberry/LayerCompositingThread.h:
+        (LayerOverride):
+        (WebCore):
+        (WebCore::LayerCompositingThread::filterOperationsChanged):
+        (WebCore::LayerCompositingThread::setFilterOperationsChanged):
+        (LayerCompositingThread):
+        (WebCore::LayerCompositingThread::filterActions):
+        (WebCore::LayerCompositingThread::setFilterActions):
+        * platform/graphics/blackberry/LayerData.h:
+        (LayerData):
+        (WebCore::LayerData::filters):
+        * platform/graphics/blackberry/LayerFilterRenderer.cpp: Added.
+        (WebCore):
+        (WebCore::operationTypeToProgramID):
+        (WebCore::Uniformf::Uniformf):
+        (WebCore::Uniform1f::apply):
+        (WebCore::Uniform1f::create):
+        (WebCore::Uniform1f::Uniform1f):
+        (WebCore::Uniform2f::apply):
+        (WebCore::Uniform2f::create):
+        (WebCore::Uniform2f::Uniform2f):
+        (WebCore::Uniform3f::apply):
+        (WebCore::Uniform3f::create):
+        (WebCore::Uniform3f::Uniform3f):
+        (WebCore::LayerFilterRendererAction::create):
+        (WebCore::LayerFilterRendererAction::LayerFilterRendererAction):
+        (WebCore::LayerFilterRendererAction::~LayerFilterRendererAction):
+        (WebCore::LayerFilterRendererAction::useActionOn):
+        (WebCore::LayerFilterRenderer::create):
+        (WebCore::LayerFilterRenderer::LayerFilterRenderer):
+        (WebCore::LayerFilterRenderer::bindCommonAttribLocation):
+        (WebCore::LayerFilterRenderer::initializeSharedGLObjects):
+        (WebCore::LayerFilterRenderer::ping):
+        (WebCore::LayerFilterRenderer::pong):
+        (WebCore::LayerFilterRenderer::pushSnapshot):
+        (WebCore::LayerFilterRenderer::popSnapshot):
+        (WebCore::LayerFilterRenderer::actionsForOperations):
+        (WebCore::LayerFilterRenderer::applyActions):
+        * platform/graphics/blackberry/LayerFilterRenderer.h: Added.
+        (WebCore):
+        (Uniformf):
+        (WebCore::Uniformf::location):
+        (Uniform1f):
+        (Uniform2f):
+        (Uniform3f):
+        (LayerFilterRendererAction):
+        (WebCore::LayerFilterRendererAction::shouldPushSnapshot):
+        (WebCore::LayerFilterRendererAction::setPushSnapshot):
+        (WebCore::LayerFilterRendererAction::shouldPopSnapshot):
+        (WebCore::LayerFilterRendererAction::setPopSnapshot):
+        (WebCore::LayerFilterRendererAction::appendUniform):
+        (LayerFilterRenderer):
+        (WebCore::LayerFilterRenderer::isEnabled):
+        (WebCore::LayerFilterRenderer::disable):
+        * platform/graphics/blackberry/LayerRenderer.cpp:
+        (WebCore::LayerRenderer::loadShader):
+        (WebCore::LayerRenderer::loadShaderProgram):
+        (WebCore::LayerRenderer::drawLayersOnSurfaces):
+        (WebCore::LayerRenderer::updateLayersRecursive):
+        (WebCore):
+        (WebCore::LayerRenderer::initializeSharedGLObjects):
+        * platform/graphics/blackberry/LayerRenderer.h:
+        (LayerRenderer):
+        * platform/graphics/blackberry/LayerWebKitThread.cpp:
+        (WebCore::LayerWebKitThread::LayerWebKitThread):
+        (WebCore::LayerWebKitThread::commitOnCompositingThread):
+        (WebCore):
+        (WebCore::LayerWebKitThread::filtersCanBeComposited):
+        * platform/graphics/blackberry/LayerWebKitThread.h:
+        (LayerWebKitThread):
+        (WebCore::LayerWebKitThread::setFilters):
+        * platform/graphics/filters/FECustomFilter.cpp:
+        (WebCore::FECustomFilter::platformApplySoftware):
+        (WebCore::FECustomFilter::resizeContext):
+        (WebCore::FECustomFilter::bindProgramAndBuffers):
+        * platform/graphics/filters/FilterOperation.h:
+        (WebCore):
+        (FilterOperation):
+
 2012-07-31  Alexis Menard  <alexis.menard@openbossa.org>
 
         Get rid of "parser" type casts in CSSGrammar.y

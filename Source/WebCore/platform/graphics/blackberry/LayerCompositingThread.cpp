@@ -79,6 +79,9 @@ LayerCompositingThread::LayerCompositingThread(LayerType type, LayerCompositingT
     , m_visible(false)
     , m_commitScheduled(false)
     , m_client(client)
+#if ENABLE(CSS_FILTERS)
+    , m_filterOperationsChanged(false)
+#endif
 {
 }
 

@@ -65,6 +65,9 @@ LayerWebKitThread::LayerWebKitThread(LayerType type, GraphicsLayerBlackBerry* ow
     , m_isMask(false)
     , m_animationsChanged(false)
     , m_clearOverrideOnCommit(false)
+#if ENABLE(CSS_FILTERS)
+    , m_filtersChanged(false)
+#endif
 {
     if (type == Layer)
         m_tiler = LayerTiler::create(this);
@@ -284,6 +287,12 @@ void LayerWebKitThread::commitOnCompositingThread()
     m_position += m_absoluteOffset;
     // Copy the base variables from this object into m_layerCompositingThread
     replicate(m_layerCompositingThread.get());
+#if ENABLE(CSS_FILTERS)
+    if (m_filtersChanged) {
+        m_filtersChanged = false;
+        m_layerCompositingThread->setFilterOperationsChanged(true);
+    }
+#endif
     if (m_animationsChanged) {
         m_layerCompositingThread->setRunningAnimations(m_runningAnimations);
         m_layerCompositingThread->setSuspendedAnimations(m_suspendedAnimations);
@@ -404,6 +413,31 @@ void LayerWebKitThread::setFrame(const FloatRect& rect)
     m_frame = rect;
     setNeedsDisplay();
 }
+
+#if ENABLE(CSS_FILTERS)
+bool LayerWebKitThread::filtersCanBeComposited(const FilterOperations& filters)
+{
+    // There is work associated with compositing filters, even if there are zero filters,
+    // so if there are no filters, claim we can't composite them.
+    if (!filters.size())
+        return false;
+
+    for (unsigned i = 0; i < filters.size(); ++i) {
+        const FilterOperation* filterOperation = filters.at(i);
+        switch (filterOperation->getOperationType()) {
+        case FilterOperation::REFERENCE:
+#if ENABLE(CSS_SHADERS)
+        case FilterOperation::CUSTOM:
+#endif
+            return false;
+        default:
+            break;
+        }
+    }
+
+    return true;
+}
+#endif
 
 const LayerWebKitThread* LayerWebKitThread::rootLayer() const
 {

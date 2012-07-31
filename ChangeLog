@@ -1,3 +1,17 @@
+2012-07-31  Joshua Netterfield  <jnetterfield@rim.com>
+
+        [BlackBerry] Enable CSS Filter Effects
+        https://bugs.webkit.org/show_bug.cgi?id=92685
+
+        Reviewed by Rob Buis.
+
+        Enable CSS filter effects, with the exception of custom effects (CSS shaders) and reference effects (SVG effects)
+
+        Internally reviewed by Arvid Nilsson <anilsson@rim.com> and Antonio Gomes <agomes@rim.com>.
+
+        * Source/cmake/OptionsBlackBerry.cmake: Add LayerFilterRenderer
+        * Source/cmakeconfig.h.cmake: Acknowledge CSS filter effects
+
 2012-07-31  Ryosuke Niwa  <rniwa@webkit.org>
 
         Perf-o-matic: dashboard images are not generated properly from incrementally updated JSON

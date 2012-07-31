@@ -1,3 +1,16 @@
+2012-07-31  Joshua Netterfield  <jnetterfield@rim.com>
+
+        [BlackBerry] Enable CSS Filter Effects
+        https://bugs.webkit.org/show_bug.cgi?id=92685
+
+        Reviewed by Rob Buis.
+
+        Enable CSS filter effects, with the exception of custom effects (CSS shaders) and reference effects (SVG effects)
+
+        Internally reviewed by Arvid Nilsson <anilsson@rim.com> and Antonio Gomes <agomes@rim.com>.
+
+        * Scripts/webkitperl/FeatureList.pm: Acknowledge CSS filter effects.
+
 2012-07-31  Dirk Pranke  <dpranke@chromium.org>
 
         nrwt: clean up prepare_lists_and_print_output, run, set_up_run a bit

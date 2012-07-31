@@ -29,13 +29,15 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "Platform.h"
+
 #ifndef GraphicsLayerBlackBerry_h
 #define GraphicsLayerBlackBerry_h
 
 #if USE(ACCELERATED_COMPOSITING)
 
+#include "FilterOperations.h"
 #include "GraphicsLayer.h"
-
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -76,6 +78,12 @@ public:
     virtual void setFixedPosition(bool);
     virtual void setHasFixedContainer(bool);
     virtual void setHasFixedAncestorInDOMTree(bool);
+
+#if ENABLE(CSS_FILTERS)
+    // Returns true if filter can be rendered by the compositor
+    virtual bool setFilters(const FilterOperations &);
+    const FilterOperations& filters() const { return m_filters; }
+#endif
 
     virtual void setBackgroundColor(const Color&);
     virtual void clearBackgroundColor();
@@ -146,6 +154,9 @@ private:
     void updateHasFixedContainer();
     void updateHasFixedAncestorInDOMTree();
     void updateLayerBackgroundColor();
+#if ENABLE(CSS_FILTERS)
+    void updateFilters();
+#endif
     void updateAnimations();
 
     void updateContentsImage(Image*);
@@ -158,6 +169,10 @@ private:
     RefPtr<LayerWebKitThread> m_layer;
     RefPtr<LayerWebKitThread> m_transformLayer;
     RefPtr<LayerWebKitThread> m_contentsLayer;
+
+#if ENABLE(CSS_FILTERS)
+    FilterOperations m_filters;
+#endif
 
     Vector<RefPtr<LayerAnimation> > m_runningAnimations;
     Vector<RefPtr<LayerAnimation> > m_suspendedAnimations;

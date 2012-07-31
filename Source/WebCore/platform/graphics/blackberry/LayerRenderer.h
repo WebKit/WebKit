@@ -37,6 +37,7 @@
 
 #include "IntRect.h"
 #include "LayerData.h"
+#include "LayerFilterRenderer.h"
 #include "TransformationMatrix.h"
 
 #include <BlackBerryPlatformGLES2Context.h>
@@ -134,6 +135,9 @@ public:
     // If the layer has already been drawed on a surface.
     bool layerAlreadyOnSurface(LayerCompositingThread*) const;
 
+    static GLuint loadShader(GLenum type, const char* shaderSource);
+    static GLuint loadShaderProgram(const char* vertexShaderSource, const char* fragmentShaderSource);
+
 private:
     void prepareFrameRecursive(LayerCompositingThread*, double animationTime, bool isContextCurrent);
     void updateLayersRecursive(LayerCompositingThread*, const TransformationMatrix& parentMatrix, Vector<RefPtr<LayerCompositingThread> >& surfaceLayers, float opacity, FloatRect clipRect);
@@ -164,6 +168,10 @@ private:
     // Shader uniform and attribute locations.
     const int m_positionLocation;
     const int m_texCoordLocation;
+#if ENABLE(CSS_FILTERS)
+    OwnPtr<LayerFilterRenderer> m_filterRenderer;
+#endif
+
     int m_samplerLocation[LayerData::NumberOfLayerProgramShaders];
     int m_alphaLocation[LayerData::NumberOfLayerProgramShaders];
     int m_maskSamplerLocation[LayerData::NumberOfLayerProgramShaders];
