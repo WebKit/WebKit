@@ -1,3 +1,17 @@
+2012-07-31  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r124207.
+        http://trac.webkit.org/changeset/124207
+        https://bugs.webkit.org/show_bug.cgi?id=92773
+
+        Patch causes crashes on the 64-bit debug builder (and other
+        builders likely) (Requested by zdobersek on #webkit).
+
+        * GNUmakefile.am:
+        * GNUmakefile.list.am:
+        * platform/text/gtk/TextCheckerEnchant.cpp: Removed.
+        * platform/text/gtk/TextCheckerEnchant.h: Removed.
+
 2012-07-07  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] Live stream support is weak

@@ -1,3 +1,27 @@
+2012-07-31  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r124207.
+        http://trac.webkit.org/changeset/124207
+        https://bugs.webkit.org/show_bug.cgi?id=92773
+
+        Patch causes crashes on the 64-bit debug builder (and other
+        builders likely) (Requested by zdobersek on #webkit).
+
+        * webkit/webkitspellcheckerenchant.cpp:
+        (_WebKitSpellCheckerEnchantPrivate):
+        (createEnchantBrokerIfNeeded):
+        (freeSpellCheckingLanguage):
+        (webkit_spell_checker_enchant_finalize):
+        (webkit_spell_checker_enchant_class_init):
+        (webkit_spell_checker_enchant_init):
+        (wordEndIsAContractionApostrophe):
+        (checkSpellingOfString):
+        (getGuessesForWord):
+        (getAvailableDictionariesCallback):
+        (updateSpellCheckingLanguages):
+        (learnWord):
+        (ignoreWord):
+
 2012-07-31  Mario Sanchez Prada  <msanchez@igalia.com>
 
         [GTK] Add a new and reusable enchant-based spellchecker in WebCore

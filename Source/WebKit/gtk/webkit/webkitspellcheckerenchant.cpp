@@ -21,14 +21,11 @@
 
 #if ENABLE(SPELLCHECK)
 
-#include "TextCheckerEnchant.h"
 #include "webkitspellchecker.h"
+#include <enchant.h>
 #include <gtk/gtk.h>
-#include <wtf/OwnPtr.h>
 #include <wtf/gobject/GOwnPtr.h>
 #include <wtf/text/CString.h>
-
-using namespace WebCore;
 
 /**
  * SECTION:webkitspellcheckerenchant
@@ -38,9 +35,10 @@ using namespace WebCore;
  * WebKitGTK+. It uses the Enchant dictionaries installed on the system to
  * correct spelling.
  */
+static EnchantBroker* broker = 0;
 
 struct _WebKitSpellCheckerEnchantPrivate {
-    OwnPtr<TextCheckerEnchant> textCheckerEnchant;
+    GSList* enchantDicts;
 };
 
 static void webkit_spell_checker_enchant_spell_checker_interface_init(WebKitSpellCheckerInterface* interface);
@@ -49,16 +47,35 @@ G_DEFINE_TYPE_WITH_CODE(WebKitSpellCheckerEnchant, webkit_spell_checker_enchant,
                         G_IMPLEMENT_INTERFACE(WEBKIT_TYPE_SPELL_CHECKER,
                                               webkit_spell_checker_enchant_spell_checker_interface_init))
 
+static void createEnchantBrokerIfNeeded()
+{
+    if (!broker)
+        broker = enchant_broker_init();
+}
+
+static void freeSpellCheckingLanguage(gpointer data, gpointer)
+{
+    createEnchantBrokerIfNeeded();
+
+    enchant_broker_free_dict(broker, static_cast<EnchantDict*>(data));
+}
+
 static void webkit_spell_checker_enchant_finalize(GObject* object)
 {
     WebKitSpellCheckerEnchantPrivate* priv = WEBKIT_SPELL_CHECKER_ENCHANT(object)->priv;
-    priv->~WebKitSpellCheckerEnchantPrivate();
+
+    g_slist_foreach(priv->enchantDicts, freeSpellCheckingLanguage, 0);
+    g_slist_free(priv->enchantDicts);
+
+    WEBKIT_SPELL_CHECKER_ENCHANT(object)->priv->~WebKitSpellCheckerEnchantPrivate();
 }
 
 static void webkit_spell_checker_enchant_class_init(WebKitSpellCheckerEnchantClass* klass)
 {
     GObjectClass* objectClass = G_OBJECT_CLASS(klass);
+
     objectClass->finalize = webkit_spell_checker_enchant_finalize;
+
     g_type_class_add_private(klass, sizeof(WebKitSpellCheckerEnchantPrivate));
 }
 
@@ -68,38 +85,149 @@ static void webkit_spell_checker_enchant_init(WebKitSpellCheckerEnchant* checker
     checker->priv = priv;
     new (priv) WebKitSpellCheckerEnchantPrivate();
 
-    priv->textCheckerEnchant = TextCheckerEnchant::create();
+    priv->enchantDicts = 0;
+}
+
+static bool wordEndIsAContractionApostrophe(const char* string, long offset)
+{
+    if (g_utf8_get_char(g_utf8_offset_to_pointer(string, offset)) != g_utf8_get_char("'"))
+        return false;
+
+    // If this is the last character in the string, it cannot be the apostrophe part of a contraction.
+    if (offset == g_utf8_strlen(string, -1))
+        return false;
+
+    return g_unichar_isalpha(g_utf8_get_char(g_utf8_offset_to_pointer(string, offset + 1)));
 }
 
 static void checkSpellingOfString(WebKitSpellChecker* checker, const char* string, int* misspellingLocation, int* misspellingLength)
 {
     WebKitSpellCheckerEnchantPrivate* priv = WEBKIT_SPELL_CHECKER_ENCHANT(checker)->priv;
-    priv->textCheckerEnchant->checkSpellingOfString(String::fromUTF8(string), *misspellingLocation, *misspellingLength);
+
+    GSList* dicts = priv->enchantDicts;
+    if (!dicts)
+        return;
+
+    int length = g_utf8_strlen(string, -1);
+
+    PangoLanguage* language(pango_language_get_default());
+    GOwnPtr<PangoLogAttr> attrs(g_new(PangoLogAttr, length + 1));
+
+    // pango_get_log_attrs uses an aditional position at the end of the text.
+    pango_get_log_attrs(string, -1, -1, language, attrs.get(), length + 1);
+
+    for (int i = 0; i < length + 1; i++) {
+        // We go through each character until we find an is_word_start,
+        // then we get into an inner loop to find the is_word_end corresponding
+        // to it.
+        if (attrs.get()[i].is_word_start) {
+            int start = i;
+            int end = i;
+            int wordLength;
+
+            while (attrs.get()[end].is_word_end < 1 || wordEndIsAContractionApostrophe(string, end))
+                end++;
+
+            wordLength = end - start;
+            // Set the iterator to be at the current word end, so we don't
+            // check characters twice.
+            i = end;
+
+            gchar* cstart = g_utf8_offset_to_pointer(string, start);
+            gint bytes = static_cast<gint>(g_utf8_offset_to_pointer(string, end) - cstart);
+            GOwnPtr<gchar> word(g_new0(gchar, bytes + 1));
+
+            g_utf8_strncpy(word.get(), cstart, wordLength);
+
+            for (; dicts; dicts = dicts->next) {
+                EnchantDict* dict = static_cast<EnchantDict*>(dicts->data);
+                if (enchant_dict_check(dict, word.get(), wordLength)) {
+                    *misspellingLocation = start;
+                    *misspellingLength = wordLength;
+                } else {
+                    // Stop checking, this word is ok in at least one dict.
+                    *misspellingLocation = -1;
+                    *misspellingLength = 0;
+                    break;
+                }
+            }
+        }
+    }
 }
 
 static char** getGuessesForWord(WebKitSpellChecker* checker, const char* word, const char* context)
 {
     WebKitSpellCheckerEnchantPrivate* priv = WEBKIT_SPELL_CHECKER_ENCHANT(checker)->priv;
 
-    Vector<String> guesses = priv->textCheckerEnchant->getGuessesForWord(String::fromUTF8(word));
+    GSList* dicts = priv->enchantDicts;
+    char** guesses = 0;
 
-    if (guesses.isEmpty())
-        return 0;
+    for (; dicts; dicts = dicts->next) {
+        size_t numberOfSuggestions;
+        size_t i;
 
-    int i = 0;
-    int numberOfGuesses = guesses.size();
-    char** guessesArray = static_cast<char**>(g_malloc0((numberOfGuesses + 1) * sizeof(char*)));
-    for (Vector<String>::const_iterator iter = guesses.begin(); iter != guesses.end(); ++iter)
-        guessesArray[i++] = g_strdup(iter->utf8().data());
-    guessesArray[i] = 0;
+        EnchantDict* dict = static_cast<EnchantDict*>(dicts->data);
+        gchar** suggestions = enchant_dict_suggest(dict, word, -1, &numberOfSuggestions);
 
-    return guessesArray;
+        if (numberOfSuggestions > 0) {
+            if (numberOfSuggestions > 10)
+                numberOfSuggestions = 10;
+
+            guesses = static_cast<char**>(g_malloc0((numberOfSuggestions + 1) * sizeof(char*)));
+            for (i = 0; i < numberOfSuggestions && i < 10; i++)
+                guesses[i] = g_strdup(suggestions[i]);
+
+            guesses[i] = 0;
+
+            enchant_dict_free_suggestions(dict, suggestions);
+        }
+    }
+
+    return guesses;
+}
+
+static void getAvailableDictionariesCallback(const char* const languageTag, const char* const, const char* const, const char* const, void* data)
+{
+    Vector<CString>* dicts = static_cast<Vector<CString>*>(data);
+
+    dicts->append(languageTag);
 }
 
 static void updateSpellCheckingLanguages(WebKitSpellChecker* checker, const char* languages)
 {
+    GSList* spellDictionaries = 0;
+
     WebKitSpellCheckerEnchantPrivate* priv = WEBKIT_SPELL_CHECKER_ENCHANT(checker)->priv;
-    priv->textCheckerEnchant->updateSpellCheckingLanguages(String::fromUTF8(languages));
+
+    createEnchantBrokerIfNeeded();
+
+    if (languages) {
+        char** langs = g_strsplit(languages, ",", -1);
+        for (int i = 0; langs[i]; i++) {
+            if (enchant_broker_dict_exists(broker, langs[i])) {
+                EnchantDict* dict = enchant_broker_request_dict(broker, langs[i]);
+                spellDictionaries = g_slist_append(spellDictionaries, dict);
+            }
+        }
+        g_strfreev(langs);
+    } else {
+        const char* language = pango_language_to_string(gtk_get_default_language());
+        if (enchant_broker_dict_exists(broker, language)) {
+            EnchantDict* dict = enchant_broker_request_dict(broker, language);
+            spellDictionaries = g_slist_append(spellDictionaries, dict);
+        } else {
+            // No dictionaries selected, we get one from the list.
+            Vector<CString> allDictionaries;
+            enchant_broker_list_dicts(broker, getAvailableDictionariesCallback, &allDictionaries);
+            if (!allDictionaries.isEmpty()) {
+                EnchantDict* dict = enchant_broker_request_dict(broker, allDictionaries[0].data());
+                spellDictionaries = g_slist_append(spellDictionaries, dict);
+            }
+        }
+    }
+    g_slist_foreach(priv->enchantDicts, freeSpellCheckingLanguage, 0);
+    g_slist_free(priv->enchantDicts);
+    priv->enchantDicts = spellDictionaries;
 }
 
 static char* getAutocorrectSuggestionsForMisspelledWord(WebKitSpellChecker* checker, const char* word)
@@ -110,13 +238,25 @@ static char* getAutocorrectSuggestionsForMisspelledWord(WebKitSpellChecker* chec
 static void learnWord(WebKitSpellChecker* checker, const char* word)
 {
     WebKitSpellCheckerEnchantPrivate* priv = WEBKIT_SPELL_CHECKER_ENCHANT(checker)->priv;
-    priv->textCheckerEnchant->learnWord(String::fromUTF8(word));
+    GSList* dicts = priv->enchantDicts;
+
+    for (; dicts; dicts = dicts->next) {
+        EnchantDict* dict = static_cast<EnchantDict*>(dicts->data);
+
+        enchant_dict_add_to_personal(dict, word, -1);
+    }
 }
 
 static void ignoreWord(WebKitSpellChecker* checker, const char* word)
 {
     WebKitSpellCheckerEnchantPrivate* priv = WEBKIT_SPELL_CHECKER_ENCHANT(checker)->priv;
-    priv->textCheckerEnchant->ignoreWord(String::fromUTF8(word));
+    GSList* dicts = priv->enchantDicts;
+
+    for (; dicts; dicts = dicts->next) {
+        EnchantDict* dict = static_cast<EnchantDict*>(dicts->data);
+
+        enchant_dict_add_to_session(dict, word, -1);
+    }
 }
 
 static void webkit_spell_checker_enchant_spell_checker_interface_init(WebKitSpellCheckerInterface* interface)
