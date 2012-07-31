@@ -42,7 +42,9 @@ using namespace WebCore;
 
     // FIXME: The tile size should be configurable.
     _tileCache = TileCache::create(self, IntSize(512, 512));
-
+#ifndef NDEBUG
+    [self setName:@"WebTileCacheLayer"];
+#endif
     return self;
 }
 

@@ -87,6 +87,8 @@ static inline bool isAcceleratedCanvas(RenderObject* renderer)
     return false;
 }
 
+bool RenderLayerBacking::m_creatingPrimaryGraphicsLayer = false;
+
 RenderLayerBacking::RenderLayerBacking(RenderLayer* layer)
     : m_owningLayer(layer)
     , m_artificiallyInflatedBounds(false)
@@ -150,7 +152,7 @@ PassOwnPtr<GraphicsLayer> RenderLayerBacking::createGraphicsLayer(const String& 
 
 bool RenderLayerBacking::shouldUseTileCache(const GraphicsLayer*) const
 {
-    return m_usingTiledCacheLayer;
+    return m_usingTiledCacheLayer && m_creatingPrimaryGraphicsLayer;
 }
 
 void RenderLayerBacking::createPrimaryGraphicsLayer()
@@ -159,7 +161,18 @@ void RenderLayerBacking::createPrimaryGraphicsLayer()
 #ifndef NDEBUG
     layerName = nameForLayer();
 #endif
+    
+    // The call to createGraphicsLayer ends calling back into here as
+    // a GraphicsLayerClient to ask if it shouldUseTileCache(). We only want
+    // the tile cache on our main layer. This is pretty ugly, but saves us from
+    // exposing the API to all clients.
+
+    m_creatingPrimaryGraphicsLayer = true;
     m_graphicsLayer = createGraphicsLayer(layerName);
+    m_creatingPrimaryGraphicsLayer = false;
+
+    if (m_usingTiledCacheLayer)
+        m_containmentLayer = createGraphicsLayer("TileCache Flattening Layer");
 
     if (m_isMainFrameRenderViewLayer) {
         m_graphicsLayer->setContentsOpaque(true);
@@ -188,7 +201,7 @@ void RenderLayerBacking::destroyGraphicsLayers()
 
     m_graphicsLayer = nullptr;
     m_foregroundLayer = nullptr;
-    m_clippingLayer = nullptr;
+    m_containmentLayer = nullptr;
     m_maskLayer = nullptr;
 }
 
@@ -334,6 +347,11 @@ bool RenderLayerBacking::updateGraphicsLayerConfiguration()
 
     if (layerConfigChanged)
         updateInternalHierarchy();
+
+    if (GraphicsLayer* flatteningLayer = tileCacheFlatteningLayer()) {
+        flatteningLayer->removeFromParent();
+        m_graphicsLayer->addChild(flatteningLayer);
+    }
 
     if (updateMaskLayer(renderer->hasMask()))
         m_graphicsLayer->setMaskLayer(m_maskLayer.get());
@@ -487,11 +505,11 @@ void RenderLayerBacking::updateGraphicsLayerGeometry()
 
     // If we have a layer that clips children, position it.
     IntRect clippingBox;
-    if (m_clippingLayer) {
+    if (GraphicsLayer* clipLayer = clippingLayer()) {
         clippingBox = clipBox(toRenderBox(renderer()));
-        m_clippingLayer->setPosition(FloatPoint() + (clippingBox.location() - localCompositingBounds.location()));
-        m_clippingLayer->setSize(clippingBox.size());
-        m_clippingLayer->setOffsetFromRenderer(clippingBox.location() - IntPoint());
+        clipLayer->setPosition(FloatPoint() + (clippingBox.location() - localCompositingBounds.location()));
+        clipLayer->setSize(clippingBox.size());
+        clipLayer->setOffsetFromRenderer(clippingBox.location() - IntPoint());
     }
     
     if (m_maskLayer) {
@@ -518,18 +536,19 @@ void RenderLayerBacking::updateGraphicsLayerGeometry()
         m_graphicsLayer->setAnchorPoint(anchor);
 
         RenderStyle* style = renderer()->style();
+        GraphicsLayer* clipLayer = clippingLayer();
         if (style->hasPerspective()) {
             TransformationMatrix t = owningLayer()->perspectiveTransform();
             
-            if (m_clippingLayer) {
-                m_clippingLayer->setChildrenTransform(t);
+            if (clipLayer) {
+                clipLayer->setChildrenTransform(t);
                 m_graphicsLayer->setChildrenTransform(TransformationMatrix());
             }
             else
                 m_graphicsLayer->setChildrenTransform(t);
         } else {
-            if (m_clippingLayer)
-                m_clippingLayer->setChildrenTransform(TransformationMatrix());
+            if (clipLayer)
+                clipLayer->setChildrenTransform(TransformationMatrix());
             else
                 m_graphicsLayer->setChildrenTransform(TransformationMatrix());
         }
@@ -541,7 +560,7 @@ void RenderLayerBacking::updateGraphicsLayerGeometry()
         FloatPoint foregroundPosition;
         FloatSize foregroundSize = newSize;
         IntSize foregroundOffset = m_graphicsLayer->offsetFromRenderer();
-        if (m_clippingLayer) {
+        if (hasClippingLayer()) {
             // If we have a clipping layer (which clips descendants), then the foreground layer is a child of it,
             // so that it gets correctly sorted with children. In that case, position relative to the clipping layer.
             foregroundSize = FloatSize(clippingBox.size());
@@ -579,9 +598,9 @@ void RenderLayerBacking::updateInternalHierarchy()
         m_ancestorClippingLayer->addChild(m_graphicsLayer.get());
     }
 
-    if (m_clippingLayer) {
-        m_clippingLayer->removeFromParent();
-        m_graphicsLayer->addChild(m_clippingLayer.get());
+    if (m_containmentLayer) {
+        m_containmentLayer->removeFromParent();
+        m_graphicsLayer->addChild(m_containmentLayer.get());
 
         // The clip for child layers does not include space for overflow controls, so they exist as
         // siblings of the clipping layer if we have one. Normal children of this layer are set as
@@ -629,14 +648,14 @@ bool RenderLayerBacking::updateClippingLayers(bool needsAncestorClip, bool needs
     }
     
     if (needsDescendantClip) {
-        if (!m_clippingLayer) {
-            m_clippingLayer = createGraphicsLayer("Child clipping Layer");
-            m_clippingLayer->setMasksToBounds(true);
+        if (!m_containmentLayer && !m_usingTiledCacheLayer) {
+            m_containmentLayer = createGraphicsLayer("Child clipping Layer");
+            m_containmentLayer->setMasksToBounds(true);
             layersChanged = true;
         }
-    } else if (m_clippingLayer) {
-        m_clippingLayer->removeFromParent();
-        m_clippingLayer = nullptr;
+    } else if (hasClippingLayer()) {
+        m_containmentLayer->removeFromParent();
+        m_containmentLayer = nullptr;
         layersChanged = true;
     }
     
@@ -1516,7 +1535,7 @@ double RenderLayerBacking::backingStoreArea() const
 {
     double backingArea;
     
-    // m_ancestorClippingLayer and m_clippingLayer are just used for masking, so have no backing.
+    // m_ancestorClippingLayer and m_containmentLayer are just used for masking or containment, so have no backing.
     backingArea = m_graphicsLayer->backingStoreArea();
     if (m_foregroundLayer)
         backingArea += m_foregroundLayer->backingStoreArea();
