@@ -1,3 +1,12 @@
+2012-07-31  János Badics  <jbadics@inf.u-szeged.hu>
+
+        [Qt][EFL] New inspector/styles/region-style-crash.html introduced in r124186 fails
+        https://bugs.webkit.org/show_bug.cgi?id=91503
+
+        Reviewed by Csaba Osztrogonác.
+
+        * platform/qt/Skipped:
+
 2012-07-31  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unreviewed gardening after r124189, remove unnecessary expected files.

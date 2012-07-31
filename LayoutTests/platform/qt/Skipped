@@ -2612,6 +2612,10 @@ fast/multicol/split-in-top-margin.html
 # https://bugs.webkit.org/show_bug.cgi?id=87367
 fast/block/positioning/fixed-position-stacking-context.html
 
+# [Qt][EFL] New inspector/styles/region-style-crash.html fails since r124186
+# https://bugs.webkit.org/show_bug.cgi?id=91503
+inspector/styles/region-style-crash.html
+
 # [Qt] REGRESSION(r118291) fast/frames/flattening/iframe-tiny.html fails
 # https://bugs.webkit.org/show_bug.cgi?id=87363
 fast/frames/flattening/iframe-tiny.html
