@@ -1,3 +1,14 @@
+2012-07-30  Kent Tamura  <tkent@chromium.org>
+
+        Fix a popup position issue of fast/forms/date/calendar-picker-appearance.html
+        https://bugs.webkit.org/show_bug.cgi?id=92609
+
+        Reviewed by Hajime Morita.
+
+        Force to lay out the document before opening a popup.
+
+        * fast/forms/date/calendar-picker-appearance.html:
+
 2012-07-30  Peter Kasting  <pkasting@google.com>
 
         [Chromium] Rebaselines and test expectation updates.

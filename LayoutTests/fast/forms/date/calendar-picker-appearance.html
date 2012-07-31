@@ -20,7 +20,9 @@ testRunner.waitUntilDone();
 if (window.internals)
     internals.settings.setEnableMockPagePopup(true);
 
-sendKey(document.getElementById('date'), 'Down');
+var dateInput = document.getElementById('date');
+dateInput.offsetTop;
+sendKey(dateInput, 'Down');
 var pickerWindow = document.getElementById('mock-page-popup').contentWindow;
 pickerWindow.document.getElementById('main').addEventListener('webkitTransitionEnd', finishTest, false);
 </script>
