@@ -36,8 +36,8 @@
 #include "GraphicsContext.h"
 #include "GraphicsLayer.h"
 #include "OpaqueRectTrackingContentLayerDelegate.h"
-#include "cc/CCLayerAnimationDelegate.h"
 
+#include <public/WebAnimationDelegate.h>
 #include <public/WebContentLayer.h>
 #include <public/WebLayer.h>
 #include <wtf/HashMap.h>
@@ -48,7 +48,7 @@ class LayerChromium;
 class LinkHighlight;
 class Path;
 
-class GraphicsLayerChromium : public GraphicsLayer, public GraphicsContextPainter, public CCLayerAnimationDelegate {
+class GraphicsLayerChromium : public GraphicsLayer, public GraphicsContextPainter, public WebKit::WebAnimationDelegate {
 public:
     GraphicsLayerChromium(GraphicsLayerClient*);
     virtual ~GraphicsLayerChromium();
@@ -121,9 +121,9 @@ public:
     // GraphicsContextPainter implementation.
     virtual void paint(GraphicsContext&, const IntRect& clip) OVERRIDE;
 
-    // CCLayerAnimationDelegate implementation.
-    virtual void notifyAnimationStarted(double startTime);
-    virtual void notifyAnimationFinished(double finishTime);
+    // WebAnimationDelegate implementation.
+    virtual void notifyAnimationStarted(double startTime) OVERRIDE;
+    virtual void notifyAnimationFinished(double finishTime) OVERRIDE;
 
     // Exposed for tests.
     WebKit::WebLayer contentsLayer() const { return m_contentsLayer; }

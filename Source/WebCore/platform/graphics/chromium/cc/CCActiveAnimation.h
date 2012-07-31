@@ -49,7 +49,7 @@ public:
     // Aborted or Finished states. A Finished animation was allowed to run to completion, but
     // an Aborted animation was not.
     enum RunState {
-        WaitingForNextTick = 1,
+        WaitingForNextTick = 0,
         WaitingForTargetAvailability,
         WaitingForStartTime,
         WaitingForDeletion,
@@ -60,7 +60,7 @@ public:
     };
 
     enum TargetProperty {
-        Transform = 1,
+        Transform = 0,
         Opacity
     };
 

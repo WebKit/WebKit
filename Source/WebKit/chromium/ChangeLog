@@ -1,3 +1,29 @@
+2012-07-31  Ian Vollick  <vollick@chromium.org>
+
+        [chromium] Use WebAnimation and related classes in GraphicsLayerChromium and AnimTranslationUtil
+        https://bugs.webkit.org/show_bug.cgi?id=90468
+
+        Reviewed by James Robinson.
+
+        * src/WebAnimation.cpp:
+        (WebKit::WebAnimation::targetProperty):
+        (WebKit):
+        (WebKit::WebAnimation::initialize):
+        * src/WebLayer.cpp:
+        (WebKit::WebLayer::setAnimationDelegate):
+        (WebKit):
+        (WebKit::WebLayer::addAnimation):
+        (WebKit::WebLayer::removeAnimation):
+        (WebKit::WebLayer::pauseAnimation):
+        (WebKit::WebLayer::suspendAnimations):
+        (WebKit::WebLayer::resumeAnimations):
+        (WebKit::WebLayer::transferAnimationsTo):
+        * tests/CCThreadedTest.cpp:
+        * tests/CCThreadedTest.h:
+        (TestHooks):
+        * tests/WebAnimationTest.cpp:
+        (WebKit::TEST):
+
 2012-07-30  Adam Barth  <abarth@webkit.org>
 
         Typo: doubleTa*b*ZoomAnimationDurationInSeconds in WebViewImpl.cpp

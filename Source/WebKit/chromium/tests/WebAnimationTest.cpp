@@ -47,7 +47,7 @@ namespace {
 TEST(WebAnimationTest, MAYBE_DefaultSettings)
 {
     WebFloatAnimationCurve curve;
-    WebAnimation animation(curve, WebAnimation::WebAnimationOpacity);
+    WebAnimation animation(curve, WebAnimation::TargetPropertyOpacity);
 
     // Ensure that the defaults are correct.
     EXPECT_EQ(1, animation.iterations());
@@ -68,7 +68,7 @@ TEST(WebAnimationTest, MAYBE_DefaultSettings)
 TEST(WebAnimationTest, MAYBE_ModifiedSettings)
 {
     WebFloatAnimationCurve curve;
-    WebAnimation animation(curve, WebAnimation::WebAnimationOpacity);
+    WebAnimation animation(curve, WebAnimation::TargetPropertyOpacity);
     animation.setIterations(2);
     animation.setStartTime(2);
     animation.setTimeOffset(2);

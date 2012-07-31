@@ -1,3 +1,21 @@
+2012-07-31  Ian Vollick  <vollick@chromium.org>
+
+        [chromium] Use WebAnimation and related classes in GraphicsLayerChromium and AnimTranslationUtil
+        https://bugs.webkit.org/show_bug.cgi?id=90468
+
+        Reviewed by James Robinson.
+
+        * Platform.gypi:
+        * chromium/public/WebAnimation.h:
+        (WebAnimation):
+        (WebKit::WebAnimation::WebAnimation):
+        * chromium/public/WebAnimationDelegate.h: Renamed from Source/WebCore/platform/graphics/chromium/cc/CCLayerAnimationDelegate.h.
+        (WebKit):
+        (WebAnimationDelegate):
+        * chromium/public/WebLayer.h:
+        (WebKit):
+        (WebLayer):
+
 2012-07-30  Keishi Hattori  <keishi@webkit.org>
 
         Implement datalist UI for input type color for Chromium

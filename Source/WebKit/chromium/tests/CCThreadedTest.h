@@ -26,11 +26,11 @@
 #define CCThreadedTest_h
 
 #include "CompositorFakeWebGraphicsContext3D.h"
-#include "cc/CCLayerAnimationDelegate.h"
 #include "cc/CCLayerTreeHost.h"
 #include "cc/CCLayerTreeHostImpl.h"
 #include "cc/CCScopedThreadProxy.h"
 #include <gtest/gtest.h>
+#include <public/WebAnimationDelegate.h>
 
 namespace WebCore {
 class CCLayerImpl;
@@ -47,7 +47,7 @@ class WebThread;
 namespace WebKitTests {
 
 // Used by test stubs to notify the test when something interesting happens.
-class TestHooks : public WebCore::CCLayerAnimationDelegate {
+class TestHooks : public WebKit::WebAnimationDelegate {
 public:
     virtual void beginCommitOnCCThread(WebCore::CCLayerTreeHostImpl*) { }
     virtual void commitCompleteOnCCThread(WebCore::CCLayerTreeHostImpl*) { }
@@ -64,9 +64,9 @@ public:
     virtual void didCommitAndDrawFrame() { }
     virtual void scheduleComposite() { }
 
-    // Implementation of CCLayerAnimationDelegate
-    virtual void notifyAnimationStarted(double time) { }
-    virtual void notifyAnimationFinished(double time) { }
+    // Implementation of WebAnimationDelegate
+    virtual void notifyAnimationStarted(double time) OVERRIDE { }
+    virtual void notifyAnimationFinished(double time) OVERRIDE { }
 
     virtual PassOwnPtr<WebKit::WebGraphicsContext3D> createContext();
 };

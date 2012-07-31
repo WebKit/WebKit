@@ -1,3 +1,39 @@
+2012-07-31  Ian Vollick  <vollick@chromium.org>
+
+        [chromium] Use WebAnimation and related classes in GraphicsLayerChromium and AnimTranslationUtil
+        https://bugs.webkit.org/show_bug.cgi?id=90468
+
+        Reviewed by James Robinson.
+
+        No new tests. No new functionality.
+
+        * WebCore.gypi:
+        * platform/graphics/chromium/AnimationTranslationUtil.cpp:
+        (WebCore::appendKeyframe):
+        (WebCore::WebTransformAnimationCurve):
+        (WebCore::createWebAnimation):
+        * platform/graphics/chromium/AnimationTranslationUtil.h:
+        (WebKit):
+        (WebCore):
+        * platform/graphics/chromium/GraphicsLayerChromium.cpp:
+        (WebCore::GraphicsLayerChromium::willBeDestroyed):
+        (WebCore::GraphicsLayerChromium::addAnimation):
+        (WebCore::GraphicsLayerChromium::pauseAnimation):
+        (WebCore::GraphicsLayerChromium::removeAnimation):
+        (WebCore::GraphicsLayerChromium::suspendAnimations):
+        (WebCore::GraphicsLayerChromium::resumeAnimations):
+        (WebCore::GraphicsLayerChromium::updateLayerPreserves3D):
+        * platform/graphics/chromium/GraphicsLayerChromium.h:
+        (GraphicsLayerChromium):
+        * platform/graphics/chromium/LayerChromium.cpp:
+        * platform/graphics/chromium/LayerChromium.h:
+        (WebKit):
+        (WebCore):
+        (WebCore::LayerChromium::setLayerAnimationDelegate):
+        (LayerChromium):
+        * platform/graphics/chromium/LinkHighlight.h:
+        (LinkHighlight):
+
 2012-07-31  Taiju Tsuiki  <tzik@chromium.org>
 
         Fix potential build error on LocalFileSystem::deleteFileSystem.

@@ -34,6 +34,7 @@
             'chromium/public/Platform.h',
             'chromium/public/WebAnimation.h',
             'chromium/public/WebAnimationCurve.h',
+            'chromium/public/WebAnimationDelegate.h',
             'chromium/public/WebAudioBus.h',
             'chromium/public/WebAudioDevice.h',
             'chromium/public/WebBlobData.h',

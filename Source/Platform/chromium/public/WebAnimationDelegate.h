@@ -22,18 +22,17 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CCLayerAnimationDelegate_h
-#define CCLayerAnimationDelegate_h
+#ifndef WebAnimationDelegate_h
+#define WebAnimationDelegate_h
 
-namespace WebCore {
+namespace WebKit {
 
-// This class is used to send notifications when layer animations begin or end.
-class CCLayerAnimationDelegate {
+class WebAnimationDelegate {
 public:
     virtual void notifyAnimationStarted(double time) = 0;
     virtual void notifyAnimationFinished(double time) = 0;
 };
 
-} // namespace WebCore
+} // namespace WebKit
 
-#endif // CCLayerAnimationDelegate_h
+#endif // WebAnimationDelegate_h

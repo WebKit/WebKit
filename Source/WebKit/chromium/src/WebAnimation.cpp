@@ -38,6 +38,11 @@ using WebCore::CCActiveAnimation;
 
 namespace WebKit {
 
+WebAnimation::TargetProperty WebAnimation::targetProperty() const
+{
+    return static_cast<WebAnimation::TargetProperty>(m_private->targetProperty());
+}
+
 int WebAnimation::iterations() const
 {
     return m_private->iterations();
@@ -87,10 +92,12 @@ WebAnimation::operator PassOwnPtr<WebCore::CCActiveAnimation>() const
 
 void WebAnimation::initialize(const WebAnimationCurve& curve, TargetProperty targetProperty)
 {
-    m_private.reset(CCActiveAnimation::create(curve,
-                                              AnimationIdVendor::getNextAnimationId(),
-                                              AnimationIdVendor::getNextGroupId(),
-                                              static_cast<WebCore::CCActiveAnimation::TargetProperty>(targetProperty)).leakPtr());
+    initialize(curve, AnimationIdVendor::getNextAnimationId(), AnimationIdVendor::getNextGroupId(), targetProperty);
+}
+
+void WebAnimation::initialize(const WebAnimationCurve& curve, int animationId, int groupId, TargetProperty targetProperty)
+{
+    m_private.reset(CCActiveAnimation::create(curve, animationId, groupId, static_cast<WebCore::CCActiveAnimation::TargetProperty>(targetProperty)).leakPtr());
 }
 
 void WebAnimation::destroy()

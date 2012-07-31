@@ -60,8 +60,7 @@
 #include "SkMatrix44.h"
 #include "SystemTime.h"
 
-#include "cc/CCActiveAnimation.h"
-
+#include <public/WebAnimation.h>
 #include <public/WebFilterOperation.h>
 #include <public/WebFilterOperations.h>
 #include <public/WebFloatPoint.h>
@@ -109,17 +108,17 @@ void GraphicsLayerChromium::willBeDestroyed()
     if (!m_layer.isNull()) {
         m_layer.clearClient();
         m_layer.unwrap<LayerChromium>()->clearRenderSurface();
-        m_layer.unwrap<LayerChromium>()->setLayerAnimationDelegate(0);
+        m_layer.setAnimationDelegate(0);
     }
 
     if (!m_contentsLayer.isNull()) {
         m_contentsLayer.unwrap<LayerChromium>()->clearRenderSurface();
-        m_contentsLayer.unwrap<LayerChromium>()->setLayerAnimationDelegate(0);
+        m_contentsLayer.setAnimationDelegate(0);
     }
 
     if (!m_transformLayer.isNull()) {
         m_transformLayer.unwrap<LayerChromium>()->clearRenderSurface();
-        m_transformLayer.unwrap<LayerChromium>()->setLayerAnimationDelegate(0);
+        m_transformLayer.setAnimationDelegate(0);
     }
 
     if (m_linkHighlight)
@@ -509,17 +508,17 @@ void GraphicsLayerChromium::setContentsToCanvas(PlatformLayer* platformLayer)
 
 bool GraphicsLayerChromium::addAnimation(const KeyframeValueList& values, const IntSize& boxSize, const Animation* animation, const String& animationName, double timeOffset)
 {
-    primaryLayer().unwrap<LayerChromium>()->setLayerAnimationDelegate(this);
+    primaryLayer().setAnimationDelegate(this);
 
     int animationId = mapAnimationNameToId(animationName);
     int groupId = AnimationIdVendor::getNextGroupId();
 
-    OwnPtr<CCActiveAnimation> toAdd(createActiveAnimation(values, animation, animationId, groupId, timeOffset, boxSize));
+    OwnPtr<WebKit::WebAnimation> toAdd(createWebAnimation(values, animation, animationId, groupId, timeOffset, boxSize));
 
     if (toAdd.get()) {
         // Remove any existing animations with the same animation id and target property.
-        primaryLayer().unwrap<LayerChromium>()->layerAnimationController()->removeAnimation(toAdd->id(), toAdd->targetProperty());
-        return primaryLayer().unwrap<LayerChromium>()->addAnimation(toAdd.release());
+        primaryLayer().removeAnimation(animationId, toAdd->targetProperty());
+        return primaryLayer().addAnimation(*toAdd);
     }
 
     return false;
@@ -527,12 +526,12 @@ bool GraphicsLayerChromium::addAnimation(const KeyframeValueList& values, const 
 
 void GraphicsLayerChromium::pauseAnimation(const String& animationName, double timeOffset)
 {
-    primaryLayer().unwrap<LayerChromium>()->pauseAnimation(mapAnimationNameToId(animationName), timeOffset);
+    primaryLayer().pauseAnimation(mapAnimationNameToId(animationName), timeOffset);
 }
 
 void GraphicsLayerChromium::removeAnimation(const String& animationName)
 {
-    primaryLayer().unwrap<LayerChromium>()->removeAnimation(mapAnimationNameToId(animationName));
+    primaryLayer().removeAnimation(mapAnimationNameToId(animationName));
 }
 
 void GraphicsLayerChromium::suspendAnimations(double wallClockTime)
@@ -540,12 +539,12 @@ void GraphicsLayerChromium::suspendAnimations(double wallClockTime)
     // |wallClockTime| is in the wrong time base. Need to convert here.
     // FIXME: find a more reliable way to do this.
     double monotonicTime = wallClockTime + monotonicallyIncreasingTime() - currentTime();
-    primaryLayer().unwrap<LayerChromium>()->suspendAnimations(monotonicTime);
+    primaryLayer().suspendAnimations(monotonicTime);
 }
 
 void GraphicsLayerChromium::resumeAnimations()
 {
-    primaryLayer().unwrap<LayerChromium>()->resumeAnimations(monotonicallyIncreasingTime());
+    primaryLayer().resumeAnimations(monotonicallyIncreasingTime());
 }
 
 void GraphicsLayerChromium::addLinkHighlight(const Path& path)
@@ -707,8 +706,8 @@ void GraphicsLayerChromium::updateLayerPreserves3D()
         // Create the transform layer.
         m_transformLayer = WebLayer::create();
         m_transformLayer.setPreserves3D(true);
-        m_transformLayer.unwrap<LayerChromium>()->setLayerAnimationDelegate(this);
-        m_transformLayer.unwrap<LayerChromium>()->setLayerAnimationController(m_layer.unwrap<LayerChromium>()->releaseLayerAnimationController());
+        m_transformLayer.setAnimationDelegate(this);
+        m_layer.transferAnimationsTo(&m_transformLayer);
 
         // Copy the position from this layer.
         updateLayerPosition();
@@ -739,11 +738,11 @@ void GraphicsLayerChromium::updateLayerPreserves3D()
         if (!m_transformLayer.parent().isNull())
             m_transformLayer.parent().replaceChild(m_transformLayer, m_layer);
 
-        m_layer.unwrap<LayerChromium>()->setLayerAnimationDelegate(this);
-        m_layer.unwrap<LayerChromium>()->setLayerAnimationController(m_transformLayer.unwrap<LayerChromium>()->releaseLayerAnimationController());
+        m_layer.setAnimationDelegate(this);
+        m_transformLayer.transferAnimationsTo(&m_layer);
 
         // Release the transform layer.
-        m_transformLayer.unwrap<LayerChromium>()->setLayerAnimationDelegate(0);
+        m_transformLayer.setAnimationDelegate(0);
         m_transformLayer.reset();
 
         updateLayerPosition();

@@ -45,8 +45,8 @@ class WebAnimationCurve;
 class WebAnimation : public WebNonCopyable {
 public:
     enum TargetProperty {
-        WebAnimationTransform = 1,
-        WebAnimationOpacity
+        TargetPropertyTransform = 0,
+        TargetPropertyOpacity
     };
 
     WebAnimation(const WebAnimationCurve& curve, TargetProperty targetProperty)
@@ -54,10 +54,20 @@ public:
         initialize(curve, targetProperty);
     }
 
+    // An animationId is effectively the animation's name, and it is not unique.
+    // Animations with the same groupId are run at the same time. An animation
+    // may be uniquely identified by a combination of groupId and target property.
+    WebAnimation(const WebAnimationCurve& curve, int animationId, int groupId, TargetProperty targetProperty)
+    {
+        initialize(curve, animationId, groupId, targetProperty);
+    }
+
     ~WebAnimation()
     {
         destroy();
     }
+
+    WEBKIT_EXPORT TargetProperty targetProperty() const;
 
     // This is the number of times that the animation will play. If this
     // value is zero the animation will not play. If it is negative, then
@@ -82,7 +92,7 @@ public:
 
 private:
     WEBKIT_EXPORT void initialize(const WebAnimationCurve&, TargetProperty);
-    WEBKIT_EXPORT void initialize(const WebAnimation&);
+    WEBKIT_EXPORT void initialize(const WebAnimationCurve&, int animationId, int groupId, TargetProperty);
     WEBKIT_EXPORT void destroy();
 
     WebPrivateOwnPtr<WebCore::CCActiveAnimation> m_private;

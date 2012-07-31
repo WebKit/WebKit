@@ -26,6 +26,7 @@
 #ifndef WebLayer_h
 #define WebLayer_h
 
+#include "WebAnimation.h"
 #include "WebColor.h"
 #include "WebCommon.h"
 #include "WebPrivatePtr.h"
@@ -34,6 +35,7 @@ class SkMatrix44;
 namespace WebCore { class LayerChromium; }
 
 namespace WebKit {
+class WebAnimationDelegate;
 class WebFilterOperations;
 class WebTransformationMatrix;
 struct WebFloatPoint;
@@ -136,6 +138,32 @@ public:
 
     WEBKIT_EXPORT void setDebugBorderColor(const WebColor&);
     WEBKIT_EXPORT void setDebugBorderWidth(float);
+
+    // An animation delegate is notified when animations are started and
+    // stopped. The WebLayer does not take ownership of the delegate, and it is
+    // the responsibility of the client to reset the layer's delegate before
+    // deleting the delegate.
+    WEBKIT_EXPORT void setAnimationDelegate(WebAnimationDelegate*);
+
+    // Returns false if the animation cannot be added.
+    WEBKIT_EXPORT bool addAnimation(const WebAnimation&);
+
+    // Removes all animations with the given id.
+    WEBKIT_EXPORT void removeAnimation(int animationId);
+
+    // Removes all animations with the given id targeting the given property.
+    WEBKIT_EXPORT void removeAnimation(int animationId, WebAnimation::TargetProperty);
+
+    // Pauses all animations with the given id.
+    WEBKIT_EXPORT void pauseAnimation(int animationId, double timeOffset);
+
+    // The following functions suspend and resume all animations. The given time
+    // is assumed to use the same time base as monotonicallyIncreasingTime().
+    WEBKIT_EXPORT void suspendAnimations(double monotonicTime);
+    WEBKIT_EXPORT void resumeAnimations(double monotonicTime);
+
+    // Transfers all animations running on the current layer.
+    WEBKIT_EXPORT void transferAnimationsTo(WebLayer*);
 
     // DEPRECATED.
     // This requests that this layer's compositor-managed textures always be reserved

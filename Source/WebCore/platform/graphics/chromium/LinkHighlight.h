@@ -28,7 +28,7 @@
 
 #include "ContentLayerChromium.h"
 #include "Path.h"
-#include "cc/CCLayerAnimationDelegate.h"
+#include <public/WebAnimationDelegate.h>
 #include <wtf/RefPtr.h>
 
 #if USE(ACCELERATED_COMPOSITING)
@@ -37,7 +37,7 @@ namespace WebCore {
 
 class GraphicsLayerChromium;
 
-class LinkHighlight : public RefCounted<LinkHighlight>, public ContentLayerDelegate, public CCLayerAnimationDelegate {
+class LinkHighlight : public RefCounted<LinkHighlight>, public ContentLayerDelegate, public WebKit::WebAnimationDelegate {
 public:
     static PassRefPtr<LinkHighlight> create(GraphicsLayerChromium* parent, const Path&, int animationId, int groupId);
     virtual ~LinkHighlight();
@@ -47,7 +47,7 @@ public:
     // ContentLayerDelegate implementation.
     virtual void paintContents(SkCanvas*, const IntRect& clipRect, FloatRect& opaque) OVERRIDE;
 
-    // CCLayerAnimationDelegate implementation.
+    // WebAnimationDelegate implementation.
     virtual void notifyAnimationStarted(double time) OVERRIDE;
     virtual void notifyAnimationFinished(double time) OVERRIDE;
 

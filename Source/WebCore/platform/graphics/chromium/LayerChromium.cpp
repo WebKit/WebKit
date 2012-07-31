@@ -37,10 +37,11 @@
 #include "cc/CCActiveAnimation.h"
 #include "cc/CCAnimationEvents.h"
 #include "cc/CCLayerAnimationController.h"
-#include "cc/CCLayerAnimationDelegate.h"
 #include "cc/CCLayerImpl.h"
 #include "cc/CCLayerTreeHost.h"
 #include "cc/CCSettings.h"
+
+#include <public/WebAnimationDelegate.h>
 
 using namespace std;
 using WebKit::WebTransformationMatrix;

@@ -104,7 +104,7 @@ protected:
     explicit CCLayerAnimationController(CCLayerAnimationControllerClient*);
 
 private:
-    typedef HashSet<int> TargetProperties;
+    typedef HashSet<int, DefaultHash<int>::Hash, WTF::UnsignedWithZeroKeyHashTraits<int> > TargetProperties;
 
     void pushNewAnimationsToImplThread(CCLayerAnimationController*) const;
     void removeAnimationsCompletedOnMainThread(CCLayerAnimationController*) const;

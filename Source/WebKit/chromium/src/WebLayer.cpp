@@ -310,6 +310,48 @@ void WebLayer::setDebugBorderWidth(float width)
     m_private->setDebugBorderWidth(width);
 }
 
+void WebLayer::setAnimationDelegate(WebAnimationDelegate* delegate)
+{
+    m_private->setLayerAnimationDelegate(delegate);
+}
+
+bool WebLayer::addAnimation(const WebAnimation& animation)
+{
+    return m_private->addAnimation(animation);
+}
+
+void WebLayer::removeAnimation(int animationId)
+{
+    m_private->removeAnimation(animationId);
+}
+
+void WebLayer::removeAnimation(int animationId, WebAnimation::TargetProperty targetProperty)
+{
+    m_private->layerAnimationController()->removeAnimation(animationId, static_cast<CCActiveAnimation::TargetProperty>(targetProperty));
+}
+
+void WebLayer::pauseAnimation(int animationId, double timeOffset)
+{
+    m_private->pauseAnimation(animationId, timeOffset);
+}
+
+void WebLayer::suspendAnimations(double monotonicTime)
+{
+    m_private->suspendAnimations(monotonicTime);
+}
+
+void WebLayer::resumeAnimations(double monotonicTime)
+{
+    m_private->resumeAnimations(monotonicTime);
+}
+
+void WebLayer::transferAnimationsTo(WebLayer* other)
+{
+    ASSERT(other);
+    if (other)
+        other->m_private->setLayerAnimationController(m_private->releaseLayerAnimationController());
+}
+
 void WebLayer::setAlwaysReserveTextures(bool reserve)
 {
     m_private->setAlwaysReserveTextures(reserve);

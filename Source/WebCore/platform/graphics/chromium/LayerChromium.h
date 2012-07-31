@@ -52,10 +52,14 @@
 #include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
 
+namespace WebKit {
+class WebAnimationDelegate;
+}
 
 namespace WebCore {
 
 class CCActiveAnimation;
+struct CCAnimationEvent;
 class CCLayerAnimationDelegate;
 class CCLayerImpl;
 class CCLayerTreeHost;
@@ -280,7 +284,7 @@ public:
     void setLayerAnimationController(PassOwnPtr<CCLayerAnimationController>);
     PassOwnPtr<CCLayerAnimationController> releaseLayerAnimationController();
 
-    void setLayerAnimationDelegate(CCLayerAnimationDelegate* layerAnimationDelegate) { m_layerAnimationDelegate = layerAnimationDelegate; }
+    void setLayerAnimationDelegate(WebKit::WebAnimationDelegate* layerAnimationDelegate) { m_layerAnimationDelegate = layerAnimationDelegate; }
 
     bool hasActiveAnimation() const;
 
@@ -402,7 +406,7 @@ private:
     IntRect m_drawableContentRect;
     float m_contentsScale;
 
-    CCLayerAnimationDelegate* m_layerAnimationDelegate;
+    WebKit::WebAnimationDelegate* m_layerAnimationDelegate;
     LayerChromiumScrollDelegate* m_layerScrollDelegate;
 };
 

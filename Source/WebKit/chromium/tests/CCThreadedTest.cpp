@@ -38,7 +38,6 @@
 #include "WebKit.h"
 #include "cc/CCActiveAnimation.h"
 #include "cc/CCLayerAnimationController.h"
-#include "cc/CCLayerAnimationDelegate.h"
 #include "cc/CCLayerImpl.h"
 #include "cc/CCLayerTreeHostImpl.h"
 #include "cc/CCScopedThreadProxy.h"
