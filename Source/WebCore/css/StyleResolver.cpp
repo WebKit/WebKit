@@ -1480,8 +1480,17 @@ bool StyleResolver::canShareStyleWithElement(StyledElement* element) const
     if (elementHasDirectionAuto(element) || elementHasDirectionAuto(m_element))
         return false;
 
-    if (element->hasClass() && m_element->getAttribute(classAttr) != element->getAttribute(classAttr))
-        return false;
+    if (element->hasClass()) {
+#if ENABLE(SVG)
+        // SVG elements require a (slow!) getAttribute comparision because "class" is an animatable attribute for SVG.
+        if (element->isSVGElement()) {
+            if (element->getAttribute(classAttr) != m_element->getAttribute(classAttr))
+                return false;
+        } else
+#endif
+        if (element->fastGetAttribute(classAttr) != m_element->fastGetAttribute(classAttr))
+            return false;
+    }
 
     if (element->attributeStyle() && !attributeStylesEqual(element->attributeStyle(), m_styledElement->attributeStyle()))
         return false;

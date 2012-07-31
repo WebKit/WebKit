@@ -1,3 +1,17 @@
+2012-07-31  Eric Seidel  <eric@webkit.org>
+
+        StyleResolver::canShareStyleWithElement does not need to use getAttribute for classAttr in the non-SVG case
+        https://bugs.webkit.org/show_bug.cgi?id=92687
+
+        Reviewed by Antti Koivisto.
+
+        Previously 10% of samples in canShareStyleWithElement hit this line, after this change < 1% do.
+        This is a small speedup for the non-SVG case.  Since this call is made for every element
+        when style is resolved, any small speedup in this function matters on large documents.
+
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::collectMatchingRulesForList):
+
 2012-07-31  Luke Macpherson   <macpherson@chromium.org>
 
         Heap-use-after-free in WebCore::StyleResolver::loadPendingImage
