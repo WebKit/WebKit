@@ -1,6 +1,0 @@
-layer at (0,0) size 800x600
-  RenderView at (0,0) size 800x600
-layer at (0,0) size 800x21
-  RenderBlock {P} at (0,0) size 800x21
-    RenderText {#text} at (0,0) size 157x21
-      text run at (0,0) width 157: "Hello World, Success!"

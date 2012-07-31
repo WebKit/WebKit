@@ -1,5 +1,46 @@
 2012-07-31  Csaba Osztrogonác  <ossy@webkit.org>
 
+        [Qt] Unreviewed gardening after r124189, remove unnecessary expected files.
+
+        * platform/qt-4.8/http/tests/security/xss-DENIED-xsl-document-securityOrigin-expected.txt: Renamed from LayoutTests/platform/qt/http/tests/security/xss-DENIED-xsl-document-securityOrigin-expected.txt.
+        * platform/qt-5.0/fast/dynamic/insert-before-table-part-in-continuation-expected.png: Removed.
+        * platform/qt-5.0/fast/dynamic/insert-before-table-part-in-continuation-expected.txt: Removed.
+        * platform/qt-5.0/fast/images/object-image-expected.txt: Added.
+        * platform/qt-5.0/fast/parser/entity-comment-in-textarea-expected.png: Removed.
+        * platform/qt-5.0/fast/parser/entity-comment-in-textarea-expected.txt: Removed.
+        * platform/qt-5.0/fast/parser/open-comment-in-textarea-expected.png: Removed.
+        * platform/qt-5.0/fast/parser/open-comment-in-textarea-expected.txt: Removed.
+        * platform/qt-5.0/fast/repaint/continuation-after-outline-expected.txt: Removed.
+        * platform/qt-5.0/fast/replaced/three-selects-break-expected.png: Removed.
+        * platform/qt-5.0/fast/replaced/three-selects-break-expected.txt: Removed.
+        * platform/qt-5.0/fast/writing-mode/fallback-orientation-expected.txt: Removed.
+        * platform/qt-5.0/fast/xsl/document-function-expected.png: Removed.
+        * platform/qt-5.0/fast/xsl/document-function-expected.txt: Removed.
+        * platform/qt-5.0/fast/xsl/xslt-entity-expected.png: Removed.
+        * platform/qt-5.0/fast/xsl/xslt-entity-expected.txt: Removed.
+        * platform/qt-5.0/svg/W3C-SVG-1.1-SE/coords-units-03-b-expected.png: Removed.
+        * platform/qt-5.0/svg/W3C-SVG-1.1-SE/coords-units-03-b-expected.txt: Removed.
+        * platform/qt-5.0/svg/W3C-SVG-1.1-SE/styling-css-04-f-expected.png: Removed.
+        * platform/qt-5.0/svg/W3C-SVG-1.1-SE/styling-css-04-f-expected.txt: Removed.
+        * platform/qt-5.0/svg/W3C-SVG-1.1/animate-elem-06-t-expected.png: Removed.
+        * platform/qt-5.0/svg/W3C-SVG-1.1/animate-elem-06-t-expected.txt: Removed.
+        * platform/qt-5.0/svg/W3C-SVG-1.1/filters-light-04-f-expected.png: Removed.
+        * platform/qt-5.0/svg/W3C-SVG-1.1/filters-light-04-f-expected.txt: Removed.
+        * platform/qt-5.0/svg/W3C-SVG-1.1/render-elems-06-t-expected.png: Removed.
+        * platform/qt-5.0/svg/W3C-SVG-1.1/render-elems-06-t-expected.txt: Removed.
+        * platform/qt-5.0/svg/W3C-SVG-1.1/render-elems-07-t-expected.png: Removed.
+        * platform/qt-5.0/svg/W3C-SVG-1.1/render-elems-07-t-expected.txt: Removed.
+        * platform/qt-5.0/svg/W3C-SVG-1.1/render-elems-08-t-expected.png: Removed.
+        * platform/qt-5.0/svg/W3C-SVG-1.1/render-elems-08-t-expected.txt: Removed.
+        * platform/qt-5.0/svg/W3C-SVG-1.1/render-groups-01-b-expected.png: Removed.
+        * platform/qt-5.0/svg/W3C-SVG-1.1/render-groups-01-b-expected.txt: Removed.
+        * platform/qt-5.0/svg/W3C-SVG-1.1/render-groups-03-t-expected.png: Removed.
+        * platform/qt-5.0/svg/W3C-SVG-1.1/render-groups-03-t-expected.txt: Removed.
+        * platform/qt-5.0/svg/W3C-SVG-1.1/text-text-01-b-expected.png: Removed.
+        * platform/qt-5.0/svg/W3C-SVG-1.1/text-text-01-b-expected.txt: Removed.
+
+2012-07-31  Csaba Osztrogonác  <ossy@webkit.org>
+
         [Qt] Unreviewed gardening. Unskip passing tests and add new expected files. (bug85203)
 
         * platform/qt-5.0/Skipped: Unskip passing tests.
