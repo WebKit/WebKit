@@ -1,3 +1,16 @@
+2012-07-31  Antti Koivisto  <antti@apple.com>
+
+        Crash in FrameLoader::checkLoadComplete with non-browser client app
+        https://bugs.webkit.org/show_bug.cgi?id=92774
+
+        Reviewed by Alexey Proskuryakov..
+
+        Speculative fix. It is possible that CSSFontSelector could get deleted during the timer callback
+        and memory reused, making m_document point to some garbage when it is tested at the end.
+
+        * css/CSSFontSelector.cpp:
+        (WebCore::CSSFontSelector::beginLoadTimerFired):
+
 2012-07-31  Hans Wennborg  <hans@chromium.org>
 
         Speech JavaScript API: Throw exception for start() when already started
