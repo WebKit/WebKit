@@ -614,6 +614,9 @@ void LoopBlinnPathProcessor::buildContours(const Path& path)
 {
     // Clear out the contours
     m_contours.clear();
+    if (path.isNull())
+        return;
+
 #if USE(SKIA)
     SkPath::Iter iter(*path.platformPath(), false);
     SkPoint points[4];

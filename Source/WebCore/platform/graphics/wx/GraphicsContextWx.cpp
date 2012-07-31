@@ -396,10 +396,11 @@ void GraphicsContext::clipPath(const Path& path, WindRule clipRule)
 {
     if (paintingDisabled())
         return;
-        
+
+    // FIXME: Why does this method ignore empty paths?
     if (path.isEmpty())
         return; 
-    
+
     wxGraphicsContext* gc = m_data->context->GetGraphicsContext();
 
 #if wxUSE_CAIRO
@@ -638,6 +639,9 @@ InterpolationQuality GraphicsContext::imageInterpolationQuality() const
 
 void GraphicsContext::fillPath(const Path& path)
 {
+    if (path.isNull())
+        return;
+
 #if USE(WXGC)
     wxGraphicsContext* gc = m_data->context->GetGraphicsContext();
     if (gc)
@@ -647,6 +651,9 @@ void GraphicsContext::fillPath(const Path& path)
 
 void GraphicsContext::strokePath(const Path& path)
 {
+    if (path.isNull())
+        return;
+
 #if USE(WXGC)
     wxGraphicsContext* gc = m_data->context->GetGraphicsContext();
     if (gc)

@@ -481,7 +481,7 @@ void GraphicsContext::clipConvexPolygon(size_t numPoints, const FloatPoint* poin
 
 void GraphicsContext::fillPath(const Path& path)
 {
-    if (paintingDisabled())
+    if (paintingDisabled() || path.isEmpty())
         return;
 
     cairo_t* cr = platformContext()->cr();
@@ -491,7 +491,7 @@ void GraphicsContext::fillPath(const Path& path)
 
 void GraphicsContext::strokePath(const Path& path)
 {
-    if (paintingDisabled())
+    if (paintingDisabled() || path.isEmpty())
         return;
 
     cairo_t* cr = platformContext()->cr();
@@ -548,7 +548,8 @@ void GraphicsContext::clipPath(const Path& path, WindRule clipRule)
         return;
 
     cairo_t* cr = platformContext()->cr();
-    setPathOnCairoContext(cr, path.platformPath()->context());
+    if (!path.isNull())
+        setPathOnCairoContext(cr, path.platformPath()->context());
     cairo_set_fill_rule(cr, clipRule == RULE_EVENODD ? CAIRO_FILL_RULE_EVEN_ODD : CAIRO_FILL_RULE_WINDING);
     cairo_clip(cr);
 }
@@ -1017,8 +1018,11 @@ void GraphicsContext::clip(const Path& path)
         return;
 
     cairo_t* cr = platformContext()->cr();
-    OwnPtr<cairo_path_t> pathCopy = adoptPtr(cairo_copy_path(path.platformPath()->context()));
-    cairo_append_path(cr, pathCopy.get());
+    OwnPtr<cairo_path_t> pathCopy;
+    if (!path.isNull()) {
+        pathCopy = adoptPtr(cairo_copy_path(path.platformPath()->context()));
+        cairo_append_path(cr, pathCopy.get());
+    }
     cairo_fill_rule_t savedFillRule = cairo_get_fill_rule(cr);
     cairo_set_fill_rule(cr, CAIRO_FILL_RULE_WINDING);
     cairo_clip(cr);

@@ -44,13 +44,13 @@
 namespace WebCore {
 
 Path::Path()
+    : m_path(0)
 {
-    m_path = new SkPath;
 }
 
 Path::Path(const Path& other)
 {
-    m_path = new SkPath(*other.m_path);
+    m_path = other.m_path ? new SkPath(*other.m_path) : 0;
 }
 
 #if PLATFORM(BLACKBERRY)
@@ -62,28 +62,41 @@ Path::Path(const SkPath& path)
 
 Path::~Path()
 {
-    delete m_path;
+    if (m_path)
+        delete m_path;
+}
+
+PlatformPathPtr Path::ensurePlatformPath()
+{
+    if (!m_path)
+        m_path = new SkPath();
+    return m_path;
 }
 
 Path& Path::operator=(const Path& other)
 {
-    *m_path = *other.m_path;
+    if (other.isNull()) {
+        if (m_path)
+            delete m_path;
+        m_path = 0;
+    } else
+        *ensurePlatformPath() = *other.m_path;
     return *this;
 }
 
 bool Path::isEmpty() const
 {
-    return m_path->isEmpty();
+    return isNull() || m_path->isEmpty();
 }
 
 bool Path::hasCurrentPoint() const
 {
-    return m_path->getPoints(NULL, 0) != 0;
+    return !isNull() && m_path->getPoints(0, 0);
 }
 
 FloatPoint Path::currentPoint() const 
 {
-    if (m_path->countPoints() > 0) {
+    if (!isNull() && m_path->countPoints() > 0) {
         SkPoint skResult;
         m_path->getLastPt(&skResult);
         FloatPoint result;
@@ -92,57 +105,64 @@ FloatPoint Path::currentPoint() const
         return result;
     }
 
+    // FIXME: Why does this return quietNaN? Other ports return 0,0.
     float quietNaN = std::numeric_limits<float>::quiet_NaN();
     return FloatPoint(quietNaN, quietNaN);
 }
 
 bool Path::contains(const FloatPoint& point, WindRule rule) const
 {
-    return SkPathContainsPoint(m_path, point,
-      rule == RULE_NONZERO ? SkPath::kWinding_FillType : SkPath::kEvenOdd_FillType);
+    if (isNull())
+        return false;
+    return SkPathContainsPoint(m_path, point, rule == RULE_NONZERO ? SkPath::kWinding_FillType : SkPath::kEvenOdd_FillType);
 }
 
 void Path::translate(const FloatSize& size)
 {
-    m_path->offset(WebCoreFloatToSkScalar(size.width()), WebCoreFloatToSkScalar(size.height()));
+    ensurePlatformPath()->offset(WebCoreFloatToSkScalar(size.width()), WebCoreFloatToSkScalar(size.height()));
 }
 
 FloatRect Path::boundingRect() const
 {
+    if (isNull())
+        return FloatRect();
     return m_path->getBounds();
 }
 
 void Path::moveTo(const FloatPoint& point)
 {
-    m_path->moveTo(point);
+    ensurePlatformPath()->moveTo(point);
 }
 
 void Path::addLineTo(const FloatPoint& point)
 {
-    m_path->lineTo(point);
+    ensurePlatformPath()->lineTo(point);
 }
 
 void Path::addQuadCurveTo(const FloatPoint& cp, const FloatPoint& ep)
 {
-    m_path->quadTo(cp, ep);
+    ensurePlatformPath()->quadTo(cp, ep);
 }
 
 void Path::addBezierCurveTo(const FloatPoint& p1, const FloatPoint& p2, const FloatPoint& ep)
 {
-    m_path->cubicTo(p1, p2, ep);
+    ensurePlatformPath()->cubicTo(p1, p2, ep);
 }
 
 void Path::addArcTo(const FloatPoint& p1, const FloatPoint& p2, float radius)
 {
-    m_path->arcTo(p1, p2, WebCoreFloatToSkScalar(radius));
+    ensurePlatformPath()->arcTo(p1, p2, WebCoreFloatToSkScalar(radius));
 }
 
 void Path::closeSubpath()
 {
-    m_path->close();
+    ensurePlatformPath()->close();
 }
 
-void Path::addArc(const FloatPoint& p, float r, float sa, float ea, bool anticlockwise) {
+void Path::addArc(const FloatPoint& p, float r, float sa, float ea, bool anticlockwise)
+{
+    ensurePlatformPath(); // Make sure m_path is not null.
+
     SkScalar cx = WebCoreFloatToSkScalar(p.x());
     SkScalar cy = WebCoreFloatToSkScalar(p.y());
     SkScalar radius = WebCoreFloatToSkScalar(r);
@@ -180,16 +200,18 @@ void Path::addArc(const FloatPoint& p, float r, float sa, float ea, bool anticlo
 
 void Path::addRect(const FloatRect& rect)
 {
-    m_path->addRect(rect);
+    ensurePlatformPath()->addRect(rect);
 }
 
 void Path::addEllipse(const FloatRect& rect)
 {
-    m_path->addOval(rect);
+    ensurePlatformPath()->addOval(rect);
 }
 
 void Path::clear()
 {
+    if (isNull())
+        return;
     m_path->reset();
 }
 
@@ -204,6 +226,9 @@ static FloatPoint* convertPathPoints(FloatPoint dst[], const SkPoint src[], int 
 
 void Path::apply(void* info, PathApplierFunction function) const
 {
+    if (isNull())
+        return;
+
     SkPath::RawIter iter(*m_path);
     SkPoint pts[4];
     PathElement pathElement;
@@ -240,11 +265,14 @@ void Path::apply(void* info, PathApplierFunction function) const
 
 void Path::transform(const AffineTransform& xform)
 {
-    m_path->transform(xform);
+    ensurePlatformPath()->transform(xform);
 }
 
 FloatRect Path::strokeBoundingRect(StrokeStyleApplier* applier) const
 {
+    if (isNull())
+        return FloatRect();
+
     GraphicsContext* scratch = scratchContext();
     scratch->save();
 
@@ -263,6 +291,9 @@ FloatRect Path::strokeBoundingRect(StrokeStyleApplier* applier) const
 
 bool Path::strokeContains(StrokeStyleApplier* applier, const FloatPoint& point) const
 {
+    if (isNull())
+        return false;
+
     ASSERT(applier);
     GraphicsContext* scratch = scratchContext();
     scratch->save();
@@ -273,10 +304,10 @@ bool Path::strokeContains(StrokeStyleApplier* applier, const FloatPoint& point) 
     scratch->platformContext()->setupPaintForStroking(&paint, 0, 0);
     SkPath strokePath;
     paint.getFillPath(*platformPath(), &strokePath);
-    bool contains = SkPathContainsPoint(&strokePath, point,
-                                        SkPath::kWinding_FillType);
+    bool contains = SkPathContainsPoint(&strokePath, point, SkPath::kWinding_FillType);
 
     scratch->restore();
     return contains;
 }
+
 } // namespace WebCore

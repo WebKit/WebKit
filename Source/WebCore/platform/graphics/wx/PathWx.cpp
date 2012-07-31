@@ -49,30 +49,14 @@ int getWxWindRuleForWindRule(WindRule rule)
 }
 
 Path::Path() 
-{ 
-    m_path = 0;
-    // NB: This only supports the 'default' renderer as determined by wx on
-    // each platform. If an app uses a non-default renderer (e.g. Cairo on Win),  
-    // there will be problems, but there's no way we can determine which 
-    // renderer an app is using right now with wx API, so we will just handle
-    // the common case.
-#if USE(WXGC)
-    wxGraphicsRenderer* renderer = 0;
-#if wxUSE_CAIRO
-    renderer = wxGraphicsRenderer::GetCairoRenderer();
-#else
-    renderer = wxGraphicsRenderer::GetDefaultRenderer();
-#endif
-    if (renderer) {
-        wxGraphicsPath path = renderer->CreatePath();
-        m_path = new wxGraphicsPath(path);
-    }
-#endif
+    : m_path(0)
+{
 }
 
 Path::~Path()
 {
-    clear();
+    if (m_path)
+        delete m_path;
 }
 
 Path::Path(const Path& path)
@@ -102,9 +86,8 @@ void Path::translate(const FloatSize&)
 FloatRect Path::boundingRect() const 
 { 
 #if USE(WXGC)
-    if (m_path) {
-        return m_path->GetBox();     
-    }
+    if (m_path)
+        return m_path->GetBox();
 #endif
 
     return FloatRect();
@@ -124,32 +107,46 @@ bool Path::strokeContains(StrokeStyleApplier*, const FloatPoint&) const
 
 Path& Path::operator=(const Path& path)
 { 
-    *m_path = *path.platformPath();
+    *ensurePlatformPath() = *path.platformPath();
     return *this; 
 }
 
-void Path::clear() 
-{ 
+PlatformPathPtr Path::ensurePlatformPath()
+{
     if (m_path)
-        delete m_path;
+        return m_path;
 
+    // NB: This only supports the 'default' renderer as determined by wx on
+    // each platform. If an app uses a non-default renderer (e.g. Cairo on Win),
+    // there will be problems, but there's no way we can determine which
+    // renderer an app is using right now with wx API, so we will just handle
+    // the common case.
 #if USE(WXGC)
+    wxGraphicsRenderer* renderer = 0;
 #if wxUSE_CAIRO
-    wxGraphicsRenderer* renderer = wxGraphicsRenderer::GetCairoRenderer();
+    renderer = wxGraphicsRenderer::GetCairoRenderer();
 #else
-    wxGraphicsRenderer* renderer = wxGraphicsRenderer::GetDefaultRenderer();
+    renderer = wxGraphicsRenderer::GetDefaultRenderer();
 #endif
     if (renderer) {
         wxGraphicsPath path = renderer->CreatePath();
         m_path = new wxGraphicsPath(path);
     }
 #endif
+    return m_path;
+}
+
+void Path::clear()
+{ 
+    if (m_path)
+        delete m_path;
+    m_path = 0;
 }
 
 void Path::moveTo(const FloatPoint& point) 
 {
 #if USE(WXGC)
-    if (m_path)
+    if (ensurePlatformPath())
         m_path->MoveToPoint(point.x(), point.y());
 #endif
 }
@@ -157,7 +154,7 @@ void Path::moveTo(const FloatPoint& point)
 void Path::addLineTo(const FloatPoint& point) 
 {
 #if USE(WXGC)
-    if (m_path)
+    if (ensurePlatformPath())
         m_path->AddLineToPoint(point.x(), point.y());
 #endif
 }
@@ -165,7 +162,7 @@ void Path::addLineTo(const FloatPoint& point)
 void Path::addQuadCurveTo(const FloatPoint& control, const FloatPoint& end) 
 {
 #if USE(WXGC)
-    if (m_path)
+    if (ensurePlatformPath())
         m_path->AddQuadCurveToPoint(control.x(), control.y(), end.x(), end.y());
 #endif
 }
@@ -173,7 +170,7 @@ void Path::addQuadCurveTo(const FloatPoint& control, const FloatPoint& end)
 void Path::addBezierCurveTo(const FloatPoint& control1, const FloatPoint& control2, const FloatPoint& end) 
 {
 #if USE(WXGC)
-    if (m_path)
+    if (ensurePlatformPath())
         m_path->AddCurveToPoint(control1.x(), control1.y(), control2.x(), control2.y(), end.x(), end.y());
 #endif
 }
@@ -181,7 +178,7 @@ void Path::addBezierCurveTo(const FloatPoint& control1, const FloatPoint& contro
 void Path::addArcTo(const FloatPoint& point1, const FloatPoint& point2, float radius) 
 {
 #if USE(WXGC)
-    if (m_path)
+    if (ensurePlatformPath())
         m_path->AddArcToPoint(point1.x(), point1.y(), point2.x(), point2.y(), radius);
 #endif
 }
@@ -189,7 +186,7 @@ void Path::addArcTo(const FloatPoint& point1, const FloatPoint& point2, float ra
 void Path::closeSubpath() 
 {
 #if USE(WXGC)
-    if (m_path)
+    if (ensurePlatformPath())
         m_path->CloseSubpath();
 #endif
 }
@@ -197,7 +194,7 @@ void Path::closeSubpath()
 void Path::addArc(const FloatPoint& point, float radius, float startAngle, float endAngle, bool clockwise) 
 {
 #if USE(WXGC)
-    if (m_path)
+    if (ensurePlatformPath())
         m_path->AddArc(point.x(), point.y(), radius, startAngle, endAngle, clockwise);
 #endif
 }
@@ -205,7 +202,7 @@ void Path::addArc(const FloatPoint& point, float radius, float startAngle, float
 void Path::addRect(const FloatRect& rect) 
 {
 #if USE(WXGC)
-    if (m_path)
+    if (ensurePlatformPath())
         m_path->AddRectangle(rect.x(), rect.y(), rect.width(), rect.height());
 #endif
 }
@@ -213,7 +210,7 @@ void Path::addRect(const FloatRect& rect)
 void Path::addEllipse(const FloatRect& rect) 
 {
 #if USE(WXGC)
-    if (m_path)
+    if (ensurePlatformPath())
         m_path->AddEllipse(rect.x(), rect.y(), rect.width(), rect.height());
 #endif
 }
@@ -221,7 +218,7 @@ void Path::addEllipse(const FloatRect& rect)
 void Path::transform(const AffineTransform& transform) 
 {
 #if USE(WXGC)
-    if (m_path)
+    if (ensurePlatformPath())
         m_path->Transform(transform);
 #endif
 }
@@ -248,7 +245,7 @@ bool Path::hasCurrentPoint() const
     return !isEmpty();
 }
 
-FloatPoint Path::currentPoint() const 
+FloatPoint Path::currentPoint() const
 {
     // FIXME: return current point of subpath.
     float quietNaN = std::numeric_limits<float>::quiet_NaN();

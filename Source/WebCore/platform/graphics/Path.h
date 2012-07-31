@@ -119,6 +119,11 @@ namespace WebCore {
         float normalAngleAtLength(float length, bool& ok) const;
 
         void clear();
+#if PLATFORM(QT)
+        bool isNull() const { return false; }
+#else
+        bool isNull() const { return !m_path; }
+#endif
         bool isEmpty() const;
         // Gets the current point of the current path, which is conceptually the final point reached by the path so far.
         // Note the Path can be empty (isEmpty() == true) and still have a current point.
@@ -147,7 +152,15 @@ namespace WebCore {
 
         void translate(const FloatSize&);
 
+        // To keep Path() cheap, it does not allocate a PlatformPath immediately
+        // meaning Path::platformPath() can return null (except on Qt).
         PlatformPathPtr platformPath() const { return m_path; }
+#if PLATFORM(QT)
+        PlatformPathPtr ensurePlatformPath() { return platformPath(); }
+#else
+        // ensurePlatformPath() will allocate a PlatformPath if it has not yet been and will never return null.
+        PlatformPathPtr ensurePlatformPath();
+#endif
 
         void apply(void* info, PathApplierFunction) const;
         void transform(const AffineTransform&);

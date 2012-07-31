@@ -40,21 +40,32 @@
 namespace WebCore {
 
 Path::Path()
-    : m_path(new CairoPath())
+    : m_path(0)
 {
 }
 
 Path::~Path()
 {
-    delete m_path;
+    if (m_path)
+        delete m_path;
 }
 
 Path::Path(const Path& other)
-    : m_path(new CairoPath())
+    : m_path(0)
 {
+    if (other.isNull())
+        return;
+
     cairo_t* cr = platformPath()->context();
     OwnPtr<cairo_path_t> pathCopy = adoptPtr(cairo_copy_path(other.platformPath()->context()));
     cairo_append_path(cr, pathCopy.get());
+}
+
+PlatformPathPtr Path::ensurePlatformPath()
+{
+    if (!m_path)
+        m_path = new CairoPath();
+    return m_path;
 }
 
 Path& Path::operator=(const Path& other)
@@ -63,7 +74,7 @@ Path& Path::operator=(const Path& other)
         return *this;
 
     clear();
-    cairo_t* cr = platformPath()->context();
+    cairo_t* cr = ensurePlatformPath()->context();
     OwnPtr<cairo_path_t> pathCopy = adoptPtr(cairo_copy_path(other.platformPath()->context()));
     cairo_append_path(cr, pathCopy.get());
     return *this;
@@ -71,13 +82,16 @@ Path& Path::operator=(const Path& other)
 
 void Path::clear()
 {
+    if (isNull())
+        return;
+
     cairo_t* cr = platformPath()->context();
     cairo_new_path(cr);
 }
 
 bool Path::isEmpty() const
 {
-    return !cairo_has_current_point(platformPath()->context());
+    return isNull() || !cairo_has_current_point(platformPath()->context());
 }
 
 bool Path::hasCurrentPoint() const
@@ -87,6 +101,9 @@ bool Path::hasCurrentPoint() const
 
 FloatPoint Path::currentPoint() const 
 {
+    if (isNull())
+        return FloatPoint();
+
     // FIXME: Is this the correct way?
     double x;
     double y;
@@ -96,25 +113,25 @@ FloatPoint Path::currentPoint() const
 
 void Path::translate(const FloatSize& p)
 {
-    cairo_t* cr = platformPath()->context();
+    cairo_t* cr = ensurePlatformPath()->context();
     cairo_translate(cr, -p.width(), -p.height());
 }
 
 void Path::moveTo(const FloatPoint& p)
 {
-    cairo_t* cr = platformPath()->context();
+    cairo_t* cr = ensurePlatformPath()->context();
     cairo_move_to(cr, p.x(), p.y());
 }
 
 void Path::addLineTo(const FloatPoint& p)
 {
-    cairo_t* cr = platformPath()->context();
+    cairo_t* cr = ensurePlatformPath()->context();
     cairo_line_to(cr, p.x(), p.y());
 }
 
 void Path::addRect(const FloatRect& rect)
 {
-    cairo_t* cr = platformPath()->context();
+    cairo_t* cr = ensurePlatformPath()->context();
     cairo_rectangle(cr, rect.x(), rect.y(), rect.width(), rect.height());
 }
 
@@ -123,7 +140,7 @@ void Path::addRect(const FloatRect& rect)
  */
 void Path::addQuadCurveTo(const FloatPoint& controlPoint, const FloatPoint& point)
 {
-    cairo_t* cr = platformPath()->context();
+    cairo_t* cr = ensurePlatformPath()->context();
     double x, y;
     double x1 = controlPoint.x();
     double y1 = controlPoint.y();
@@ -138,7 +155,7 @@ void Path::addQuadCurveTo(const FloatPoint& controlPoint, const FloatPoint& poin
 
 void Path::addBezierCurveTo(const FloatPoint& controlPoint1, const FloatPoint& controlPoint2, const FloatPoint& controlPoint3)
 {
-    cairo_t* cr = platformPath()->context();
+    cairo_t* cr = ensurePlatformPath()->context();
     cairo_curve_to(cr, controlPoint1.x(), controlPoint1.y(),
                    controlPoint2.x(), controlPoint2.y(),
                    controlPoint3.x(), controlPoint3.y());
@@ -151,7 +168,7 @@ void Path::addArc(const FloatPoint& p, float r, float startAngle, float endAngle
     if (!isfinite(r) || !isfinite(startAngle) || !isfinite(endAngle))
         return;
 
-    cairo_t* cr = platformPath()->context();
+    cairo_t* cr = ensurePlatformPath()->context();
     float sweep = endAngle - startAngle;
     const float twoPI = 2 * piFloat;
     if ((sweep <= -twoPI || sweep >= twoPI)
@@ -177,6 +194,7 @@ static inline float areaOfTriangleFormedByPoints(const FloatPoint& p1, const Flo
 
 void Path::addArcTo(const FloatPoint& p1, const FloatPoint& p2, float radius)
 {
+    // FIXME: Why do we return if the path is empty? Can't a path start with an arc?
     if (isEmpty())
         return;
 
@@ -257,7 +275,7 @@ void Path::addArcTo(const FloatPoint& p1, const FloatPoint& p2, float radius)
 
 void Path::addEllipse(const FloatRect& rect)
 {
-    cairo_t* cr = platformPath()->context();
+    cairo_t* cr = ensurePlatformPath()->context();
     cairo_save(cr);
     float yRadius = .5 * rect.height();
     float xRadius = .5 * rect.width();
@@ -269,12 +287,16 @@ void Path::addEllipse(const FloatRect& rect)
 
 void Path::closeSubpath()
 {
-    cairo_t* cr = platformPath()->context();
+    cairo_t* cr = ensurePlatformPath()->context();
     cairo_close_path(cr);
 }
 
 FloatRect Path::boundingRect() const
 {
+    // Should this be isEmpty() or can an empty path have a non-zero origin?
+    if (isNull())
+        return FloatRect();
+
     cairo_t* cr = platformPath()->context();
     double x0, x1, y0, y1;
     cairo_path_extents(cr, &x0, &y0, &x1, &y1);
@@ -283,6 +305,10 @@ FloatRect Path::boundingRect() const
 
 FloatRect Path::strokeBoundingRect(StrokeStyleApplier* applier) const
 {
+    // Should this be isEmpty() or can an empty path have a non-zero origin?
+    if (isNull())
+        return FloatRect();
+
     cairo_t* cr = platformPath()->context();
     if (applier) {
         GraphicsContext gc(cr);
@@ -296,7 +322,7 @@ FloatRect Path::strokeBoundingRect(StrokeStyleApplier* applier) const
 
 bool Path::contains(const FloatPoint& point, WindRule rule) const
 {
-    if (!isfinite(point.x()) || !isfinite(point.y()))
+    if (isNull() || !isfinite(point.x()) || !isfinite(point.y()))
         return false;
     cairo_t* cr = platformPath()->context();
     cairo_fill_rule_t cur = cairo_get_fill_rule(cr);
@@ -308,6 +334,9 @@ bool Path::contains(const FloatPoint& point, WindRule rule) const
 
 bool Path::strokeContains(StrokeStyleApplier* applier, const FloatPoint& point) const
 {
+    if (isNull())
+        return false;
+
     ASSERT(applier);
     cairo_t* cr = platformPath()->context();
     GraphicsContext gc(cr);
@@ -318,6 +347,9 @@ bool Path::strokeContains(StrokeStyleApplier* applier, const FloatPoint& point) 
 
 void Path::apply(void* info, PathApplierFunction function) const
 {
+    if (isNull())
+        return;
+
     cairo_t* cr = platformPath()->context();
     OwnPtr<cairo_path_t> pathCopy = adoptPtr(cairo_copy_path(cr));
     cairo_path_data_t* data;
@@ -355,7 +387,7 @@ void Path::apply(void* info, PathApplierFunction function) const
 
 void Path::transform(const AffineTransform& trans)
 {
-    cairo_t* cr = platformPath()->context();
+    cairo_t* cr = ensurePlatformPath()->context();
     cairo_matrix_t c_matrix = cairo_matrix_t(trans);
     cairo_matrix_invert(&c_matrix);
     cairo_transform(cr, &c_matrix);

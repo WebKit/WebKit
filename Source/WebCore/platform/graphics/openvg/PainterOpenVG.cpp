@@ -713,6 +713,9 @@ void PainterOpenVG::translate(float dx, float dy)
 
 void PainterOpenVG::drawPath(const Path& path, VGbitfield specifiedPaintModes, WindRule fillRule)
 {
+    if (path.isNull())
+        return;
+
     ASSERT(m_state);
 
     VGbitfield paintModes = 0;

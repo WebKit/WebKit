@@ -1,3 +1,166 @@
+2012-07-30  Eric Seidel  <eric@webkit.org>
+
+        Grid Demo spends 1.5% of total time allocating Path objects in RenderBoxModelObject::paintBorderSides
+        https://bugs.webkit.org/show_bug.cgi?id=92252
+
+        Reviewed by Simon Fraser.
+
+        This change introduces the concept of a "null Path" very similar to a null WTF::String.
+        Just like String functions as a RefPtr around a StringImpl, Path (for most ports)
+        functions as an OwnPtr around a PlatformPathPtr.
+
+        In various places in the code, we declare a local Path variable, but don't necessarily
+        use that Path variable in all code paths, or might pass that Path variable along to GraphicsContext
+        functions, without ever actually adding points to that Path.
+        On most platforms, this Path default constructor was causing a malloc!
+        In some of these case, the code-path in question (like paintBorderSides) can be quite hot.
+        Introducing this null-Path and delaying instantiation of the PlatformPath object
+        until it's actually needed, saves a malloc for these hot paths.
+
+        To test this, I loaded a few popular pages, and added printfs to both the Path constructor
+        and destructor, logging during construction and destruction when the path was still null at destruction time.
+
+        This simple testing showed this to be a small win (avoiding mallocs) on many sites and a huge win for Google Spreadsheets:
+        apple.com: 147 Paths created, 9 (6%) destroyed null.
+        google.com: 58 Paths created, 26 (44%) destroyed null (google seems creating 5 paths every second after load?  1 of which is destroyed empty.)
+        amazon.com: 130 Paths created, 130 (100%) destroyed null.
+        Loading an empty spreadsheet from drive.google.com: 5237 created, 4861 destroyed null (92%!) :)
+
+        * platform/graphics/Path.h:
+        (Path):
+        (WebCore::Path::isNull):
+        (WebCore::Path::ensurePlatformPath):
+        * platform/graphics/cairo/CairoUtilities.cpp:
+        (WebCore::appendWebCorePathToCairoContext):
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContext::fillPath):
+        (WebCore::GraphicsContext::strokePath):
+        (WebCore::GraphicsContext::clipPath):
+        (WebCore::GraphicsContext::clip):
+        * platform/graphics/cairo/PathCairo.cpp:
+        (WebCore::Path::Path):
+        (WebCore::Path::~Path):
+        (WebCore::Path::ensurePlatformPath):
+        (WebCore):
+        (WebCore::Path::operator=):
+        (WebCore::Path::clear):
+        (WebCore::Path::isEmpty):
+        (WebCore::Path::currentPoint):
+        (WebCore::Path::translate):
+        (WebCore::Path::moveTo):
+        (WebCore::Path::addLineTo):
+        (WebCore::Path::addRect):
+        (WebCore::Path::addQuadCurveTo):
+        (WebCore::Path::addBezierCurveTo):
+        (WebCore::Path::addArc):
+        (WebCore::Path::addArcTo):
+        (WebCore::Path::addEllipse):
+        (WebCore::Path::closeSubpath):
+        (WebCore::Path::boundingRect):
+        (WebCore::Path::strokeBoundingRect):
+        (WebCore::Path::contains):
+        (WebCore::Path::strokeContains):
+        (WebCore::Path::apply):
+        (WebCore::Path::transform):
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::drawPath):
+        (WebCore::GraphicsContext::fillPath):
+        (WebCore::GraphicsContext::strokePath):
+        (WebCore::GraphicsContext::clipPath):
+        (WebCore::GraphicsContext::clipOut):
+        * platform/graphics/cg/PathCG.cpp:
+        (WebCore::Path::Path):
+        (WebCore::Path::~Path):
+        (WebCore):
+        (WebCore::Path::ensurePlatformPath):
+        (WebCore::Path::operator=):
+        (WebCore::Path::contains):
+        (WebCore::Path::strokeContains):
+        (WebCore::Path::translate):
+        (WebCore::Path::boundingRect):
+        (WebCore::Path::fastBoundingRect):
+        (WebCore::Path::strokeBoundingRect):
+        (WebCore::Path::moveTo):
+        (WebCore::Path::addLineTo):
+        (WebCore::Path::addQuadCurveTo):
+        (WebCore::Path::addBezierCurveTo):
+        (WebCore::Path::addArcTo):
+        (WebCore::Path::platformAddPathForRoundedRect):
+        (WebCore::Path::closeSubpath):
+        (WebCore::Path::addArc):
+        (WebCore::Path::addRect):
+        (WebCore::Path::addEllipse):
+        (WebCore::Path::clear):
+        (WebCore::Path::isEmpty):
+        (WebCore::Path::currentPoint):
+        (WebCore::Path::apply):
+        * platform/graphics/gpu/LoopBlinnPathProcessor.cpp:
+        (WebCore):
+        (WebCore::LoopBlinnPathProcessor::buildContours):
+        * platform/graphics/mac/GraphicsContextMac.mm:
+        (WebCore::GraphicsContext::drawFocusRing):
+        * platform/graphics/openvg/PainterOpenVG.cpp:
+        (WebCore::PainterOpenVG::drawPath):
+        * platform/graphics/skia/GraphicsContextSkia.cpp:
+        (WebCore::GraphicsContext::clip):
+        (WebCore::GraphicsContext::canvasClip):
+        (WebCore::GraphicsContext::clipOut):
+        (WebCore::GraphicsContext::clipPath):
+        (WebCore::GraphicsContext::fillPath):
+        (WebCore::GraphicsContext::strokePath):
+        * platform/graphics/skia/PathSkia.cpp:
+        (WebCore::Path::Path):
+        (WebCore::Path::~Path):
+        (WebCore):
+        (WebCore::Path::ensurePlatformPath):
+        (WebCore::Path::operator=):
+        (WebCore::Path::isEmpty):
+        (WebCore::Path::hasCurrentPoint):
+        (WebCore::Path::currentPoint):
+        (WebCore::Path::contains):
+        (WebCore::Path::translate):
+        (WebCore::Path::boundingRect):
+        (WebCore::Path::moveTo):
+        (WebCore::Path::addLineTo):
+        (WebCore::Path::addQuadCurveTo):
+        (WebCore::Path::addBezierCurveTo):
+        (WebCore::Path::addArcTo):
+        (WebCore::Path::closeSubpath):
+        (WebCore::Path::addArc):
+        (WebCore::Path::addRect):
+        (WebCore::Path::addEllipse):
+        (WebCore::Path::clear):
+        (WebCore::Path::apply):
+        (WebCore::Path::transform):
+        (WebCore::Path::strokeBoundingRect):
+        (WebCore::Path::strokeContains):
+        * platform/graphics/wince/GraphicsContextWinCE.cpp:
+        (WebCore::GraphicsContext::fillPath):
+        (WebCore::GraphicsContext::strokePath):
+        * platform/graphics/wx/GraphicsContextWx.cpp:
+        (WebCore::GraphicsContext::clipPath):
+        (WebCore::GraphicsContext::fillPath):
+        (WebCore::GraphicsContext::strokePath):
+        * platform/graphics/wx/PathWx.cpp:
+        (WebCore::Path::Path):
+        (WebCore::Path::~Path):
+        (WebCore::Path::boundingRect):
+        (WebCore::Path::operator=):
+        (WebCore::Path::ensurePlatformPath):
+        (WebCore):
+        (WebCore::Path::clear):
+        (WebCore::Path::moveTo):
+        (WebCore::Path::addLineTo):
+        (WebCore::Path::addQuadCurveTo):
+        (WebCore::Path::addBezierCurveTo):
+        (WebCore::Path::addArcTo):
+        (WebCore::Path::closeSubpath):
+        (WebCore::Path::addArc):
+        (WebCore::Path::addRect):
+        (WebCore::Path::addEllipse):
+        (WebCore::Path::transform):
+        (WebCore::Path::currentPoint):
+
 2012-07-30  Dominik Röttsches  <dominik.rottsches@intel.com>
 
         Avoid Assertion Failure in HarfBuzzRun::characterIndexForXPosition

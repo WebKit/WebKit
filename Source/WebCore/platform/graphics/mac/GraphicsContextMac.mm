@@ -55,7 +55,7 @@ void GraphicsContext::drawFocusRing(const Path& path, int width, int /*offset*/,
 {
     // FIXME: Use 'offset' for something? http://webkit.org/b/49909
 
-    if (paintingDisabled())
+    if (paintingDisabled() || path.isNull())
         return;
 
     int radius = (width - 1) / 2;

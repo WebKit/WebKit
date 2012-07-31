@@ -78,6 +78,8 @@ void setPathOnCairoContext(cairo_t* to, cairo_t* from)
 
 void appendWebCorePathToCairoContext(cairo_t* context, const Path& path)
 {
+    if (path.isEmpty())
+        return;
     appendPathToCairoContext(context, path.platformPath()->context());
 }
 

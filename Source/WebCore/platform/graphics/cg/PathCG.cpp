@@ -74,24 +74,33 @@ static inline CGContextRef scratchContext()
 }
 
 Path::Path()
-    : m_path(CGPathCreateMutable())
+    : m_path(0)
 {
 }
 
 Path::~Path()
 {
-    CGPathRelease(m_path);
+    if (m_path)
+        CGPathRelease(m_path);
+}
+
+PlatformPathPtr Path::ensurePlatformPath()
+{
+    if (!m_path)
+        m_path = CGPathCreateMutable();
+    return m_path;
 }
 
 Path::Path(const Path& other)
-    : m_path(CGPathCreateMutableCopy(other.m_path))
 {
+    m_path = other.m_path ? CGPathCreateMutableCopy(other.m_path) : 0;
 }
 
 Path& Path::operator=(const Path& other)
 {
-    CGMutablePathRef path = CGPathCreateMutableCopy(other.m_path);
-    CGPathRelease(m_path);
+    CGMutablePathRef path = other.m_path ? CGPathCreateMutableCopy(other.m_path) : 0;
+    if (m_path)
+        CGPathRelease(m_path);
     m_path = path;
     return *this;
 }
@@ -132,6 +141,9 @@ static CGMutablePathRef copyCGPathClosingSubpaths(CGPathRef originalPath)
 
 bool Path::contains(const FloatPoint &point, WindRule rule) const
 {
+    if (isNull())
+        return false;
+
     if (!fastBoundingRect().contains(point))
         return false;
 
@@ -143,6 +155,9 @@ bool Path::contains(const FloatPoint &point, WindRule rule) const
 
 bool Path::strokeContains(StrokeStyleApplier* applier, const FloatPoint& point) const
 {
+    if (isNull())
+        return false;
+
     ASSERT(applier);
 
     CGContextRef context = scratchContext();
@@ -164,13 +179,17 @@ void Path::translate(const FloatSize& size)
 {
     CGAffineTransform translation = CGAffineTransformMake(1, 0, 0, 1, size.width(), size.height());
     CGMutablePathRef newPath = CGPathCreateMutable();
-    CGPathAddPath(newPath, &translation, m_path);
+    // FIXME: This is potentially wasteful to allocate an empty path only to create a transformed copy.
+    CGPathAddPath(newPath, &translation, ensurePlatformPath());
     CGPathRelease(m_path);
     m_path = newPath;
 }
 
 FloatRect Path::boundingRect() const
 {
+    if (isNull())
+        return CGRectZero;
+
     // CGPathGetBoundingBox includes the path's control points, CGPathGetPathBoundingBox
     // does not, but only exists on 10.6 and above.
 
@@ -185,12 +204,17 @@ FloatRect Path::boundingRect() const
 
 FloatRect Path::fastBoundingRect() const
 {
+    if (isNull())
+        return CGRectZero;
     CGRect bound = CGPathGetBoundingBox(m_path);
     return CGRectIsNull(bound) ? CGRectZero : bound;
 }
 
 FloatRect Path::strokeBoundingRect(StrokeStyleApplier* applier) const
 {
+    if (isNull())
+        return CGRectZero;
+
     CGContextRef context = scratchContext();
 
     CGContextSaveGState(context);
@@ -211,27 +235,27 @@ FloatRect Path::strokeBoundingRect(StrokeStyleApplier* applier) const
 
 void Path::moveTo(const FloatPoint& point)
 {
-    CGPathMoveToPoint(m_path, 0, point.x(), point.y());
+    CGPathMoveToPoint(ensurePlatformPath(), 0, point.x(), point.y());
 }
 
 void Path::addLineTo(const FloatPoint& p)
 {
-    CGPathAddLineToPoint(m_path, 0, p.x(), p.y());
+    CGPathAddLineToPoint(ensurePlatformPath(), 0, p.x(), p.y());
 }
 
 void Path::addQuadCurveTo(const FloatPoint& cp, const FloatPoint& p)
 {
-    CGPathAddQuadCurveToPoint(m_path, 0, cp.x(), cp.y(), p.x(), p.y());
+    CGPathAddQuadCurveToPoint(ensurePlatformPath(), 0, cp.x(), cp.y(), p.x(), p.y());
 }
 
 void Path::addBezierCurveTo(const FloatPoint& cp1, const FloatPoint& cp2, const FloatPoint& p)
 {
-    CGPathAddCurveToPoint(m_path, 0, cp1.x(), cp1.y(), cp2.x(), cp2.y(), p.x(), p.y());
+    CGPathAddCurveToPoint(ensurePlatformPath(), 0, cp1.x(), cp1.y(), cp2.x(), cp2.y(), p.x(), p.y());
 }
 
 void Path::addArcTo(const FloatPoint& p1, const FloatPoint& p2, float radius)
 {
-    CGPathAddArcToPoint(m_path, 0, p1.x(), p1.y(), p2.x(), p2.y(), radius);
+    CGPathAddArcToPoint(ensurePlatformPath(), 0, p1.x(), p1.y(), p2.x(), p2.y(), radius);
 }
 
 void Path::platformAddPathForRoundedRect(const FloatRect& rect, const FloatSize& topLeftRadius, const FloatSize& topRightRadius, const FloatSize& bottomLeftRadius, const FloatSize& bottomRightRadius)
@@ -241,7 +265,7 @@ void Path::platformAddPathForRoundedRect(const FloatRect& rect, const FloatSize&
     bool equalHeights = (topLeftRadius.height() == bottomLeftRadius.height() && bottomLeftRadius.height() == topRightRadius.height() && topRightRadius.height() == bottomRightRadius.height());
 
     if (equalWidths && equalHeights) {
-        wkCGPathAddRoundedRect(m_path, 0, rect, topLeftRadius.width(), topLeftRadius.height());
+        wkCGPathAddRoundedRect(ensurePlatformPath(), 0, rect, topLeftRadius.width(), topLeftRadius.height());
         return;
     }
 #endif
@@ -251,6 +275,10 @@ void Path::platformAddPathForRoundedRect(const FloatRect& rect, const FloatSize&
 
 void Path::closeSubpath()
 {
+    // FIXME: Unclear if close commands should have meaning for a null path.
+    if (isNull())
+        return;
+
     CGPathCloseSubpath(m_path);
 }
 
@@ -258,28 +286,31 @@ void Path::addArc(const FloatPoint& p, float r, float sa, float ea, bool clockwi
 {
     // Workaround for <rdar://problem/5189233> CGPathAddArc hangs or crashes when passed inf as start or end angle
     if (isfinite(sa) && isfinite(ea))
-        CGPathAddArc(m_path, 0, p.x(), p.y(), r, sa, ea, clockwise);
+        CGPathAddArc(ensurePlatformPath(), 0, p.x(), p.y(), r, sa, ea, clockwise);
 }
 
 void Path::addRect(const FloatRect& r)
 {
-    CGPathAddRect(m_path, 0, r);
+    CGPathAddRect(ensurePlatformPath(), 0, r);
 }
 
 void Path::addEllipse(const FloatRect& r)
 {
-    CGPathAddEllipseInRect(m_path, 0, r);
+    CGPathAddEllipseInRect(ensurePlatformPath(), 0, r);
 }
 
 void Path::clear()
 {
+    if (isNull())
+        return;
+
     CGPathRelease(m_path);
     m_path = CGPathCreateMutable();
 }
 
 bool Path::isEmpty() const
 {
-    return CGPathIsEmpty(m_path);
+    return isNull() || CGPathIsEmpty(m_path);
 }
 
 bool Path::hasCurrentPoint() const
@@ -289,6 +320,8 @@ bool Path::hasCurrentPoint() const
     
 FloatPoint Path::currentPoint() const 
 {
+    if (isNull())
+        return FloatPoint();
     return CGPathGetCurrentPoint(m_path);
 }
 
@@ -330,6 +363,9 @@ static void CGPathApplierToPathApplier(void *info, const CGPathElement *element)
 
 void Path::apply(void* info, PathApplierFunction function) const
 {
+    if (isNull())
+        return;
+
     PathApplierInfo pinfo;
     pinfo.info = info;
     pinfo.function = function;
