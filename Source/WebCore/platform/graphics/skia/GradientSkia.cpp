@@ -152,7 +152,7 @@ SkShader* Gradient::platformGradient()
             // negative radius, ask for zero instead.
             SkScalar radius0 = m_r0 >= 0.0f ? WebCoreFloatToSkScalar(m_r0) : 0;
             SkScalar radius1 = m_r1 >= 0.0f ? WebCoreFloatToSkScalar(m_r1) : 0;
-            m_gradient = SkGradientShader::CreateTwoPointRadial(m_p0, radius0, m_p1, radius1, colors, pos, static_cast<int>(countUsed), tile);
+            m_gradient = SkGradientShader::CreateTwoPointConical(m_p0, radius0, m_p1, radius1, colors, pos, static_cast<int>(countUsed), tile);
         }
 
         if (aspectRatio() != 1) {

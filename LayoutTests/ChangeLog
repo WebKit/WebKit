@@ -1,3 +1,14 @@
+2012-07-31  Mike Reed  <reed@google.com>
+
+        skia: switch to conical gradient to match css/svg spec for two-point gradients
+        https://bugs.webkit.org/show_bug.cgi?id=92754
+
+        Reviewed by Stephen White.
+
+        Update expectations to rebaseline 9 images after this change lands
+
+        * platform/chromium/TestExpectations:
+
 2012-07-31  Alexander Pavlov  <apavlov@chromium.org>
 
         [Chromium] Unreviewed, rebaseline fast/ruby/overhang-horizontal.html.

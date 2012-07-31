@@ -1255,7 +1255,7 @@ BUGWK83303 LINUX : svg/text/scaling-font-with-geometric-precision.html = PASS IM
 BUGWK83303 WIN LINUX : svg/text/foreignObject-text-clipping-bug.xml = PASS IMAGE
 BUGWK83303 LINUX : svg/transforms/text-with-mask-with-svg-transform.svg = PASS IMAGE
 BUGWK83303 WIN : svg/as-background-image/svg-as-background-1.html = PASS IMAGE
-BUGWK83303 WIN : svg/as-background-image/svg-as-background-3.html = PASS IMAGE
+//BUGWK83303 WIN : svg/as-background-image/svg-as-background-3.html = PASS IMAGE
 BUGWK83303 WIN : svg/as-background-image/svg-as-background-6.html = PASS IMAGE
 BUGWK83303 WIN : svg/custom/mouse-move-on-svg-container-standalone.svg = IMAGE PASS
 BUGWK83303 WIN : svg/custom/mouse-move-on-svg-container.xhtml = IMAGE PASS
@@ -1866,6 +1866,19 @@ BUGWK45991 LINUX RELEASE : canvas/philip/tests/2d.gradient.radial.cone.top.html 
 BUGWK45991 LINUX RELEASE : platform/chromium/virtual/gpu/canvas/philip/tests/2d.gradient.radial.cone.top.html = TEXT
 BUGWK45991 LINUX DEBUG : canvas/philip/tests/2d.gradient.radial.cone.top.html = TIMEOUT TEXT
 BUGWK45991 LINUX DEBUG : platform/chromium/virtual/gpu/canvas/philip/tests/2d.gradient.radial.cone.top.html = TIMEOUT TEXT
+
+// Rebaseline these now that we're using Skia's twopointconical gradient, which
+// correctly matches the spec.
+BUGCR139796 : fast/gradients/crash-on-zero-radius.html = IMAGE
+BUGCR139796 : fast/gradients/generated-gradients.html = IMAGE
+BUGCR139796 : fast/gradients/list-item-gradient.html = IMAGE
+BUGCR139796 : fast/gradients/simple-gradients.html = IMAGE
+BUGCR139796 : svg/W3C-SVG-1.1/pservers-grad-13-b.svg = IMAGE
+BUGCR139796 : svg/as-background-image/svg-as-background-3.html = IMAGE
+BUGCR139796 : svg/as-background-image/svg-as-background-with-relative-size.html = IMAGE
+BUGCR139796 : svg/custom/radial-gradient-with-outstanding-focalPoint.svg = IMAGE
+BUGCR139796 : svg/zoom/page/zoom-svg-as-background-with-relative-size.html = IMAGE
+
 
 BUGWK39212 : canvas/philip/tests/2d.imageData.create1.type.html = TEXT
 BUGWK39212 : canvas/philip/tests/2d.imageData.create2.type.html = TEXT

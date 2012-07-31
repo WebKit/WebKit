@@ -1,3 +1,18 @@
+2012-07-31  Mike Reed  <reed@google.com>
+
+        skia: switch to conical gradient to match css/svg spec for two-point gradients
+        https://bugs.webkit.org/show_bug.cgi?id=92754
+
+        Reviewed by Stephen White.
+
+        Switching to skia's TwoPointConical gradient, which has been written explicitly to match the css/svg spec.
+        Leaving the existing TwoPointRadial gradient in skia, for other callers that may want the old behavior.
+
+        No new tests. existing layouttests exercise this change (9 pending rebaselines associated with this CL).
+
+        * platform/graphics/skia/GradientSkia.cpp:
+        (WebCore::Gradient::platformGradient):
+
 2012-04-06  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Web Inspector: extract MemoryInstrumentationImpl into separate files for future reusing in unit tests
