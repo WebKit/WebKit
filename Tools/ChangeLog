@@ -1,3 +1,11 @@
+2012-07-31  Kent Tamura  <tkent@chromium.org>
+
+        Unreviewed, update watchlist
+
+        * Scripts/webkitpy/common/config/watchlist:
+        - Improve "Forms" filename pattern.
+        - tkent stops watching Chromium DRT. It was not so helpful.
+
 2012-07-31  Martin Robinson  <mrobinson@igalia.com>
 
         [jhbuild] Also try to load jhbuild Python module from the source checkout

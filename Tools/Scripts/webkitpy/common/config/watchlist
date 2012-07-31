@@ -12,9 +12,6 @@
 #
 {
     "DEFINITIONS": {
-        "ChromiumDumpRenderTree": {
-            "filename": r"Tools/DumpRenderTree/chromium/",
-        },
         "ChromiumGraphics": {
             "filename": r"Source/WebCore/platform/graphics/chromium/",
         },
@@ -26,13 +23,11 @@
             "filename": r"Source/WebCore/bindings/objc/PublicDOMInterfaces.h"
         },
         "Forms": {
-            "filename": r"Source/WebCore/html/HTML(DataList|FieldSet|Form|FormControl|Input|Keygen|Label"
-                        r"|Legend|OptGroup|Option|Output|Select|TextArea|TextFormControl)Element\."
-                        r"|Source/WebCore/html/FormAssociatedElement\."
+            "filename": r"Source/WebCore/html/HTML(DataList|FieldSet|Input|Keygen|Label|Legend|OptGroup|Option|Output|Select|TextArea)Element\."
+                        r"|Source/WebCore/html/.*Form[A-Z].*\."
                         r"|Source/WebCore/html/\w*InputType\."
                         r"|Source/WebCore/html/shadow/(SliderThumbElement|TextControlInnerElements)\."
-                        r"|Source/WebCore/rendering/Render(FileUploadControl|ListBox|MenuList|Slider|TextControl"
-                        r"|TextControlMultiLine|TextControlSingleLine)\."
+                        r"|Source/WebCore/rendering/Render(FileUploadControl|ListBox|MenuList|Slider|TextControl.*)\."
         },
         "GStreamerGraphics": {
             "filename": r"Source/WebCore/platform/graphics/gstreamer/",
@@ -228,7 +223,6 @@
         "BlackBerry": [ "mifenton@rim.com" ],
         "CMake": [ "rakuco@webkit.org", "gyuyoung.kim@samsung.com" ],
         "CSS": [ "alexis.menard@openbossa.org", "macpherson@chromium.org", "cmarcelo@webkit.org" ],
-        "ChromiumDumpRenderTree": [ "tkent@chromium.org", ],
         "ChromiumGraphics": [ "jamesr@chromium.org", "cc-bugs@google.com" ],
         "ChromiumPublicApi": [ "abarth@webkit.org", "dglazkov@chromium.org", "fishd@chromium.org", "jamesr@chromium.org", "tkent+wkapi@chromium.org" ],
         "DOMAttributes": [ "cmarcelo@webkit.org", ],
