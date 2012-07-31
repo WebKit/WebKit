@@ -135,8 +135,8 @@ public:
     void addVisitedLink(const String&);
     void addVisitedLinkHash(WebCore::LinkHash);
 
-    void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
-    void didReceiveSyncMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*, OwnPtr<CoreIPC::ArgumentEncoder>&);
+    void didReceiveMessage(WebProcessProxy*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
+    void didReceiveSyncMessage(WebProcessProxy*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*, OwnPtr<CoreIPC::ArgumentEncoder>&);
 
     void setCacheModel(CacheModel);
     CacheModel cacheModel() const { return m_cacheModel; }

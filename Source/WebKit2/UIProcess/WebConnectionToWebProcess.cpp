@@ -78,7 +78,7 @@ void WebConnectionToWebProcess::didReceiveMessage(CoreIPC::Connection* connectio
             case WebConnectionLegacyMessage::PostMessage: {
                 String messageName;
                 RefPtr<APIObject> messageBody;
-                WebContextUserMessageDecoder messageDecoder(messageBody, m_process->context());
+                WebContextUserMessageDecoder messageDecoder(messageBody, m_process);
                 if (!arguments->decode(CoreIPC::Out(messageName, messageDecoder)))
                     return;
 

@@ -332,7 +332,7 @@ void WebProcessProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC
         || messageID.is<CoreIPC::MessageClassWebVibrationProxy>()
 #endif
         || messageID.is<CoreIPC::MessageClassWebResourceCacheManagerProxy>()) {
-        m_context->didReceiveMessage(connection, messageID, arguments);
+        m_context->didReceiveMessage(this, messageID, arguments);
         return;
     }
 
@@ -359,7 +359,7 @@ void WebProcessProxy::didReceiveSyncMessage(CoreIPC::Connection* connection, Cor
         || messageID.is<CoreIPC::MessageClassWebNetworkInfoManagerProxy>()
 #endif
         || messageID.is<CoreIPC::MessageClassDownloadProxy>() || messageID.is<CoreIPC::MessageClassWebIconDatabase>()) {
-        m_context->didReceiveSyncMessage(connection, messageID, arguments, reply);
+        m_context->didReceiveSyncMessage(this, messageID, arguments, reply);
         return;
     }
 

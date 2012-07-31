@@ -84,15 +84,15 @@ class WebContextUserMessageDecoder : public UserMessageDecoder<WebContextUserMes
 public:
     typedef UserMessageDecoder<WebContextUserMessageDecoder> Base;
 
-    WebContextUserMessageDecoder(RefPtr<APIObject>& root, WebContext* context)
+    WebContextUserMessageDecoder(RefPtr<APIObject>& root, WebProcessProxy* process)
         : Base(root)
-        , m_context(context)
+        , m_process(process)
     {
     }
 
     WebContextUserMessageDecoder(WebContextUserMessageDecoder& userMessageDecoder, RefPtr<APIObject>& root)
         : Base(root)
-        , m_context(userMessageDecoder.m_context)
+        , m_process(userMessageDecoder.m_process)
     {
     }
 
@@ -110,14 +110,14 @@ public:
             uint64_t pageID;
             if (!decoder->decode(pageID))
                 return false;
-            coder.m_root = coder.m_context->process()->webPage(pageID);
+            coder.m_root = coder.m_process->webPage(pageID);
             break;
         }
         case APIObject::TypeBundleFrame: {
             uint64_t frameID;
             if (!decoder->decode(frameID))
                 return false;
-            coder.m_root = coder.m_context->process()->webFrame(frameID);
+            coder.m_root = coder.m_process->webFrame(frameID);
             break;
         }
         case APIObject::TypeBundlePageGroup: {
@@ -135,7 +135,7 @@ public:
     }
 
 private:
-    WebContext* m_context;
+    WebProcessProxy* m_process;
 };
 
 } // namespace WebKit

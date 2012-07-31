@@ -756,91 +756,91 @@ HashSet<String, CaseFoldingHash> WebContext::pdfAndPostScriptMIMETypes()
     return mimeTypes;
 }
 
-void WebContext::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments)
+void WebContext::didReceiveMessage(WebProcessProxy* process, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments)
 {
     if (messageID.is<CoreIPC::MessageClassWebContext>()) {
-        didReceiveWebContextMessage(connection, messageID, arguments);
+        didReceiveWebContextMessage(process->connection(), messageID, arguments);
         return;
     }
 
     if (messageID.is<CoreIPC::MessageClassDownloadProxy>()) {
         if (DownloadProxy* downloadProxy = m_downloads.get(arguments->destinationID()).get())
-            downloadProxy->didReceiveDownloadProxyMessage(connection, messageID, arguments);
+            downloadProxy->didReceiveDownloadProxyMessage(process->connection(), messageID, arguments);
         
         return;
     }
 
     if (messageID.is<CoreIPC::MessageClassWebApplicationCacheManagerProxy>()) {
-        m_applicationCacheManagerProxy->didReceiveMessage(connection, messageID, arguments);
+        m_applicationCacheManagerProxy->didReceiveMessage(process->connection(), messageID, arguments);
         return;
     }
 
 #if ENABLE(BATTERY_STATUS)
     if (messageID.is<CoreIPC::MessageClassWebBatteryManagerProxy>()) {
-        m_batteryManagerProxy->didReceiveMessage(connection, messageID, arguments);
+        m_batteryManagerProxy->didReceiveMessage(process->connection(), messageID, arguments);
         return;
     }
 #endif
 
     if (messageID.is<CoreIPC::MessageClassWebCookieManagerProxy>()) {
-        m_cookieManagerProxy->didReceiveMessage(connection, messageID, arguments);
+        m_cookieManagerProxy->didReceiveMessage(process->connection(), messageID, arguments);
         return;
     }
 
 #if ENABLE(SQL_DATABASE)
     if (messageID.is<CoreIPC::MessageClassWebDatabaseManagerProxy>()) {
-        m_databaseManagerProxy->didReceiveWebDatabaseManagerProxyMessage(connection, messageID, arguments);
+        m_databaseManagerProxy->didReceiveWebDatabaseManagerProxyMessage(process->connection(), messageID, arguments);
         return;
     }
 #endif
 
     if (messageID.is<CoreIPC::MessageClassWebGeolocationManagerProxy>()) {
-        m_geolocationManagerProxy->didReceiveMessage(connection, messageID, arguments);
+        m_geolocationManagerProxy->didReceiveMessage(process->connection(), messageID, arguments);
         return;
     }
     
     if (messageID.is<CoreIPC::MessageClassWebIconDatabase>()) {
-        m_iconDatabase->didReceiveMessage(connection, messageID, arguments);
+        m_iconDatabase->didReceiveMessage(process->connection(), messageID, arguments);
         return;
     }
 
     if (messageID.is<CoreIPC::MessageClassWebKeyValueStorageManagerProxy>()) {
-        m_keyValueStorageManagerProxy->didReceiveMessage(connection, messageID, arguments);
+        m_keyValueStorageManagerProxy->didReceiveMessage(process->connection(), messageID, arguments);
         return;
     }
 
     if (messageID.is<CoreIPC::MessageClassWebMediaCacheManagerProxy>()) {
-        m_mediaCacheManagerProxy->didReceiveMessage(connection, messageID, arguments);
+        m_mediaCacheManagerProxy->didReceiveMessage(process->connection(), messageID, arguments);
         return;
     }
 
 #if ENABLE(NETWORK_INFO)
     if (messageID.is<CoreIPC::MessageClassWebNetworkInfoManagerProxy>()) {
-        m_networkInfoManagerProxy->didReceiveMessage(connection, messageID, arguments);
+        m_networkInfoManagerProxy->didReceiveMessage(process->connection(), messageID, arguments);
         return;
     }
 #endif
     
     if (messageID.is<CoreIPC::MessageClassWebNotificationManagerProxy>()) {
-        m_notificationManagerProxy->didReceiveMessage(connection, messageID, arguments);
+        m_notificationManagerProxy->didReceiveMessage(process->connection(), messageID, arguments);
         return;
     }
 
     if (messageID.is<CoreIPC::MessageClassWebResourceCacheManagerProxy>()) {
-        m_resourceCacheManagerProxy->didReceiveWebResourceCacheManagerProxyMessage(connection, messageID, arguments);
+        m_resourceCacheManagerProxy->didReceiveWebResourceCacheManagerProxyMessage(process->connection(), messageID, arguments);
         return;
     }
 
 #if USE(SOUP)
     if (messageID.is<CoreIPC::MessageClassWebSoupRequestManagerProxy>()) {
-        m_soupRequestManagerProxy->didReceiveMessage(connection, messageID, arguments);
+        m_soupRequestManagerProxy->didReceiveMessage(process->connection(), messageID, arguments);
         return;
     }
 #endif
 
 #if ENABLE(VIBRATION)
     if (messageID.is<CoreIPC::MessageClassWebVibrationProxy>()) {
-        m_vibrationProxy->didReceiveMessage(connection, messageID, arguments);
+        m_vibrationProxy->didReceiveMessage(process->connection(), messageID, arguments);
         return;
     }
 #endif
@@ -849,7 +849,7 @@ void WebContext::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::Mes
         case WebContextLegacyMessage::PostMessage: {
             String messageName;
             RefPtr<APIObject> messageBody;
-            WebContextUserMessageDecoder messageDecoder(messageBody, this);
+            WebContextUserMessageDecoder messageDecoder(messageBody, process);
             if (!arguments->decode(CoreIPC::Out(messageName, messageDecoder)))
                 return;
 
@@ -863,27 +863,27 @@ void WebContext::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::Mes
     ASSERT_NOT_REACHED();
 }
 
-void WebContext::didReceiveSyncMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments, OwnPtr<CoreIPC::ArgumentEncoder>& reply)
+void WebContext::didReceiveSyncMessage(WebProcessProxy* process, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments, OwnPtr<CoreIPC::ArgumentEncoder>& reply)
 {
     if (messageID.is<CoreIPC::MessageClassWebContext>()) {
-        didReceiveSyncWebContextMessage(connection, messageID, arguments, reply);
+        didReceiveSyncWebContextMessage(process->connection(), messageID, arguments, reply);
         return;
     }
 
     if (messageID.is<CoreIPC::MessageClassDownloadProxy>()) {
         if (DownloadProxy* downloadProxy = m_downloads.get(arguments->destinationID()).get())
-            downloadProxy->didReceiveSyncDownloadProxyMessage(connection, messageID, arguments, reply);
+            downloadProxy->didReceiveSyncDownloadProxyMessage(process->connection(), messageID, arguments, reply);
         return;
     }
     
     if (messageID.is<CoreIPC::MessageClassWebIconDatabase>()) {
-        m_iconDatabase->didReceiveSyncMessage(connection, messageID, arguments, reply);
+        m_iconDatabase->didReceiveSyncMessage(process->connection(), messageID, arguments, reply);
         return;
     }
 
 #if ENABLE(NETWORK_INFO)
     if (messageID.is<CoreIPC::MessageClassWebNetworkInfoManagerProxy>()) {
-        m_networkInfoManagerProxy->didReceiveSyncMessage(connection, messageID, arguments, reply);
+        m_networkInfoManagerProxy->didReceiveSyncMessage(process->connection(), messageID, arguments, reply);
         return;
     }
 #endif
@@ -894,7 +894,7 @@ void WebContext::didReceiveSyncMessage(CoreIPC::Connection* connection, CoreIPC:
 
             String messageName;
             RefPtr<APIObject> messageBody;
-            WebContextUserMessageDecoder messageDecoder(messageBody, this);
+            WebContextUserMessageDecoder messageDecoder(messageBody, m_process.get());
             if (!arguments->decode(CoreIPC::Out(messageName, messageDecoder)))
                 return;
 

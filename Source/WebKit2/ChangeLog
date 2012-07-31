@@ -1,3 +1,62 @@
+2012-07-31  Alexey Proskuryakov  <ap@apple.com>
+
+        [WK2] Use an actual WebProcessProxy when decoding messages
+        https://bugs.webkit.org/show_bug.cgi?id=92788
+
+        Reviewed by Anders Carlsson.
+
+        WebContextUserMessageDecoder gets process proxy from a WebContext object, but we
+        know which process a message came from, and can just use that.
+
+        * UIProcess/WebContextUserMessageCoders.h:
+        (WebKit::WebContextUserMessageDecoder::WebContextUserMessageDecoder):
+        (WebKit::WebContextUserMessageDecoder::decode):
+        This is the focal point of this patch - decoder no longer needs to call m_context->process().
+
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::didReceiveMessage):
+        (WebKit::WebContext::didReceiveSyncMessage):
+        * UIProcess/WebContext.h:
+        These methods now take a WebProcessProxy pointer instead of IPC::Connection,
+        so that they can call the updated coder.
+        A number of other didReceiveMessage can be modified to take WebProcessProxy later
+        if needed (it's a richer interface than IPC::Connection), although not all messages
+        come from WebProcesses.
+
+        * UIProcess/WebConnectionToWebProcess.cpp:
+        (WebKit::WebConnectionToWebProcess::didReceiveMessage):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::willGoToBackForwardListItem):
+        (WebKit::WebPageProxy::registerIntentServiceForFrame):
+        (WebKit::WebPageProxy::didStartProvisionalLoadForFrame):
+        (WebKit::WebPageProxy::didReceiveServerRedirectForProvisionalLoadForFrame):
+        (WebKit::WebPageProxy::didFailProvisionalLoadForFrame):
+        (WebKit::WebPageProxy::didCommitLoadForFrame):
+        (WebKit::WebPageProxy::didFinishDocumentLoadForFrame):
+        (WebKit::WebPageProxy::didFinishLoadForFrame):
+        (WebKit::WebPageProxy::didFailLoadForFrame):
+        (WebKit::WebPageProxy::didSameDocumentNavigationForFrame):
+        (WebKit::WebPageProxy::didReceiveTitleForFrame):
+        (WebKit::WebPageProxy::didFirstLayoutForFrame):
+        (WebKit::WebPageProxy::didFirstVisuallyNonEmptyLayoutForFrame):
+        (WebKit::WebPageProxy::didNewFirstVisuallyNonEmptyLayout):
+        (WebKit::WebPageProxy::didRemoveFrameFromHierarchy):
+        (WebKit::WebPageProxy::didDisplayInsecureContentForFrame):
+        (WebKit::WebPageProxy::didRunInsecureContentForFrame):
+        (WebKit::WebPageProxy::didDetectXSSForFrame):
+        (WebKit::WebPageProxy::didReceiveIntentForFrame):
+        (WebKit::WebPageProxy::decidePolicyForNavigationAction):
+        (WebKit::WebPageProxy::decidePolicyForNewWindowAction):
+        (WebKit::WebPageProxy::decidePolicyForResponse):
+        (WebKit::WebPageProxy::unableToImplementPolicy):
+        (WebKit::WebPageProxy::willSubmitForm):
+        (WebKit::WebPageProxy::mouseDidMoveOverElement):
+        (WebKit::WebPageProxy::internalShowContextMenu):
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::didReceiveMessage):
+        (WebKit::WebProcessProxy::didReceiveSyncMessage):
+        Updated arguments accordingly.
+
 2012-07-31  Andras Becsi  <andras.becsi@nokia.com>
 
         [WK2] Visible content rect update with null trajectory vector does not reach the backing store
