@@ -1228,9 +1228,6 @@ BUGWK82416 : svg/custom/pattern-userSpaceOnUse-userToBaseTransform.xhtml = PASS 
 
 BUGWK82509 LINUX : svg/text/append-text-node-to-tspan.html = PASS IMAGE
 
-// Flaky on MAC
-BUGWK82911 MAC : svg/W3C-SVG-1.1/animate-elem-80-t.svg = TEXT IMAGE+TEXT IMAGE PASS
-
 // Flaky on MAC 10.6
 BUGWK82954 SNOWLEOPARD : svg/text/text-text-05-t.svg = TEXT PASS
 BUGWK82954 SNOWLEOPARD : svg/W3C-SVG-1.1/animate-elem-77-t.svg = TEXT PASS
@@ -1255,7 +1252,7 @@ BUGWK83303 LINUX : svg/text/scaling-font-with-geometric-precision.html = PASS IM
 BUGWK83303 WIN LINUX : svg/text/foreignObject-text-clipping-bug.xml = PASS IMAGE
 BUGWK83303 LINUX : svg/transforms/text-with-mask-with-svg-transform.svg = PASS IMAGE
 BUGWK83303 WIN : svg/as-background-image/svg-as-background-1.html = PASS IMAGE
-//BUGWK83303 WIN : svg/as-background-image/svg-as-background-3.html = PASS IMAGE
+BUGWK83303 WIN : svg/as-background-image/svg-as-background-3.html = PASS IMAGE
 BUGWK83303 WIN : svg/as-background-image/svg-as-background-6.html = PASS IMAGE
 BUGWK83303 WIN : svg/custom/mouse-move-on-svg-container-standalone.svg = IMAGE PASS
 BUGWK83303 WIN : svg/custom/mouse-move-on-svg-container.xhtml = IMAGE PASS
@@ -1856,39 +1853,6 @@ BUGCR43890 WIN : http/tests/loading/basic.html = PASS TEXT
 // Many of these are skipped on the Mac platform
 BUGWK45991 : canvas/philip/tests/2d.drawImage.broken.html = TEXT
 BUGWK45991 : platform/chromium/virtual/gpu/canvas/philip/tests/2d.drawImage.broken.html = TEXT
-BUGWK45991 WIN : canvas/philip/tests/2d.gradient.radial.cone.top.html = TEXT
-BUGWK45991 WIN : platform/chromium/virtual/gpu/canvas/philip/tests/2d.gradient.radial.cone.top.html = TEXT
-BUGWK45991 LINUX RELEASE : canvas/philip/tests/2d.gradient.radial.cone.top.html = TEXT
-BUGWK45991 LINUX RELEASE : platform/chromium/virtual/gpu/canvas/philip/tests/2d.gradient.radial.cone.top.html = TEXT
-BUGWK45991 LINUX DEBUG : canvas/philip/tests/2d.gradient.radial.cone.top.html = TIMEOUT TEXT
-BUGWK45991 LINUX DEBUG : platform/chromium/virtual/gpu/canvas/philip/tests/2d.gradient.radial.cone.top.html = TIMEOUT TEXT
-
-// Rebaseline these now that we're using Skia's twopointconical gradient, which
-// correctly matches the spec.
-BUGCR139796 : fast/gradients/crash-on-zero-radius.html = IMAGE
-BUGCR139796 : fast/gradients/generated-gradients.html = IMAGE
-BUGCR139796 : fast/gradients/list-item-gradient.html = IMAGE
-BUGCR139796 : fast/gradients/simple-gradients.html = IMAGE
-BUGCR139796 : svg/W3C-SVG-1.1/pservers-grad-13-b.svg = IMAGE
-BUGCR139796 : svg/as-background-image/svg-as-background-3.html = IMAGE
-BUGCR139796 : svg/as-background-image/svg-as-background-with-relative-size.html = IMAGE
-BUGCR139796 : svg/custom/radial-gradient-with-outstanding-focalPoint.svg = IMAGE
-BUGCR139796 : svg/zoom/page/zoom-svg-as-background-with-relative-size.html = IMAGE
-
-// These tests now actually pass, but there are check-in -expected.txt files that
-// say "failed". These checked-in files need to be removed, since we now pass.
-BUGCR139796 MAC : canvas/philip/tests/2d.gradient.radial.cone.behind.html = TEXT
-BUGCR139796 MAC : canvas/philip/tests/2d.gradient.radial.cone.beside.html = TEXT
-BUGCR139796 MAC : canvas/philip/tests/2d.gradient.radial.cone.shape2.html = TEXT
-BUGCR139796 MAC : canvas/philip/tests/2d.gradient.radial.cone.top.html = TEXT
-BUGCR139796 MAC : canvas/philip/tests/2d.gradient.radial.touch1.html = TEXT
-BUGCR139796 MAC : canvas/philip/tests/2d.gradient.radial.touch3.html = TEXT
-BUGCR139796 MAC : platform/chromium/virtual/gpu/canvas/philip/tests/2d.gradient.radial.cone.behind.html = TEXT
-BUGCR139796 MAC : platform/chromium/virtual/gpu/canvas/philip/tests/2d.gradient.radial.cone.beside.html = TEXT
-BUGCR139796 MAC : platform/chromium/virtual/gpu/canvas/philip/tests/2d.gradient.radial.cone.shape2.html = TEXT
-BUGCR139796 MAC : platform/chromium/virtual/gpu/canvas/philip/tests/2d.gradient.radial.cone.top.html = TEXT
-BUGCR139796 MAC : platform/chromium/virtual/gpu/canvas/philip/tests/2d.gradient.radial.touch1.html = TEXT
-BUGCR139796 MAC : platform/chromium/virtual/gpu/canvas/philip/tests/2d.gradient.radial.touch3.html = TEXT
 
 BUGWK39212 : canvas/philip/tests/2d.imageData.create1.type.html = TEXT
 BUGWK39212 : canvas/philip/tests/2d.imageData.create2.type.html = TEXT
@@ -1966,14 +1930,7 @@ BUGWK45991 : canvas/philip/tests/2d.text.measure.width.space.html = TEXT
 BUGWK45991 : platform/chromium/virtual/gpu/canvas/philip/tests/2d.text.measure.width.space.html = TEXT
 
 // These tests fail everywhere we use skia and are most likely skia bugs
-BUGWK45991 LINUX WIN : canvas/philip/tests/2d.gradient.radial.cone.behind.html = TEXT
-BUGWK45991 LINUX WIN : canvas/philip/tests/2d.gradient.radial.cone.beside.html = TEXT
-BUGWK45991 LINUX WIN : platform/chromium/virtual/gpu/canvas/philip/tests/2d.gradient.radial.cone.behind.html = TEXT
-BUGWK45991 LINUX WIN : platform/chromium/virtual/gpu/canvas/philip/tests/2d.gradient.radial.cone.beside.html = TEXT
-BUGWK45991 LINUX WIN : canvas/philip/tests/2d.gradient.radial.cone.shape2.html = TEXT
 BUGWK45991 LINUX WIN : canvas/philip/tests/2d.gradient.radial.outside3.html = TEXT
-BUGWK45991 LINUX WIN : canvas/philip/tests/2d.gradient.radial.touch1.html = TEXT
-BUGWK45991 LINUX WIN : canvas/philip/tests/2d.gradient.radial.touch3.html = TEXT
 BUGWK45991 LINUX WIN : canvas/philip/tests/2d.path.arc.angle.3.html = TEXT
 BUGWK45991 LINUX WIN : canvas/philip/tests/2d.path.arc.angle.5.html = TEXT
 BUGWK45991 LINUX WIN : canvas/philip/tests/2d.path.arcTo.shape.curve1.html = TEXT
@@ -1982,10 +1939,7 @@ BUGWK45991 LINUX WIN : canvas/philip/tests/2d.pattern.paint.norepeat.coord3.html
 BUGWK45991 LINUX WIN : canvas/philip/tests/2d.pattern.paint.repeatx.coord1.html = TEXT
 BUGWK45991 LINUX WIN : canvas/philip/tests/2d.pattern.paint.repeaty.coord1.html = TEXT
 BUGWK45991 LINUX WIN : canvas/philip/tests/2d.shadow.enable.blur.html = TEXT
-BUGWK45991 LINUX WIN : platform/chromium/virtual/gpu/canvas/philip/tests/2d.gradient.radial.cone.shape2.html = TEXT
 BUGWK45991 LINUX WIN : platform/chromium/virtual/gpu/canvas/philip/tests/2d.gradient.radial.outside3.html = TEXT
-BUGWK45991 LINUX WIN : platform/chromium/virtual/gpu/canvas/philip/tests/2d.gradient.radial.touch1.html = TEXT
-BUGWK45991 LINUX WIN : platform/chromium/virtual/gpu/canvas/philip/tests/2d.gradient.radial.touch3.html = TEXT
 BUGWK45991 LINUX WIN : platform/chromium/virtual/gpu/canvas/philip/tests/2d.path.arc.angle.3.html = TEXT
 BUGWK45991 LINUX WIN : platform/chromium/virtual/gpu/canvas/philip/tests/2d.path.arc.angle.5.html = TEXT
 BUGWK45991 LINUX WIN : platform/chromium/virtual/gpu/canvas/philip/tests/2d.pattern.paint.norepeat.coord3.html = TEXT
@@ -3010,7 +2964,6 @@ BUGWK81145 LION : animations/cross-fade-webkit-mask-box-image.html = IMAGE
 BUGWK81145 LION : compositing/iframes/iframe-content-flipping.html = IMAGE
 BUGWK81145 LION : fast/box-shadow/single-pixel-shadow.html = IMAGE
 BUGWK81145 LION : fast/frames/invalid.html = IMAGE
-BUGWK81145 LION : fast/gradients/css3-color-stop-units.html = IMAGE
 BUGWK81145 LION : fast/repaint/background-scaling.html = IMAGE
 BUGWK81145 LION : fast/repaint/scale-page-shrink.html = IMAGE
 BUGWK81145 LION : fast/text/midword-break-before-surrogate-pair-2.html = IMAGE
@@ -3493,9 +3446,6 @@ BUGWK88900 MAC : http/tests/misc/embed-image-load-outlives-gc-without-crashing.h
 
 BUGWK88939 DEBUG : fast/events/before-unload-adopt-subframe-to-outside.html = TEXT PASS
 
-BUGCR131187 : canvas/philip/tests/2d.gradient.radial.cone.cylinder.html = TEXT
-BUGCR131187 : fast/canvas/canvas-currentColor.html = TEXT
-
 // The test has its own notion of timeouts that manifest timeouts as TEXT.
 BUGWK88833 DEBUG : media/video-played-collapse.html = PASS TEXT
 
@@ -3556,7 +3506,7 @@ BUGWK90430 : inspector/timeline/timeline-receive-response-event.html = PASS TEXT
 // Require rebaseline after bug 88171
 BUGWK88171 WIN : css1/formatting_model/floating_elements.html = IMAGE
 
-BUGCR135709 : platform/chromium/compositing/scrollbars/custom-composited-different-track-parts.html = IMAGE
+BUGCR135709 : platform/chromium/compositing/scrollbars/custom-composited-different-track-parts.html = IMAGE PASS
 
 // webkitIsFullScreen does not have the correct value after an iframe exits fullscreen
 BUGWK90704 : fullscreen/exit-full-screen-iframe.html = TEXT

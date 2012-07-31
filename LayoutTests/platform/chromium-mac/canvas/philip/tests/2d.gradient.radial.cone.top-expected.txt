@@ -1,7 +1,0 @@
-Failed assertion: got pixel [95,160,0,255] at (50,1), expected [0,255,0,255]
-Failed assertion: got pixel [188,67,0,255] at (98,1), expected [0,255,0,255]
-Failed assertion: got pixel [4,251,0,255] at (1,25), expected [0,255,0,255]
-Failed assertion: got pixel [100,155,0,255] at (50,25), expected [0,255,0,255]
-Failed assertion: got pixel [194,61,0,255] at (98,25), expected [0,255,0,255]
-Failed assertion: got pixel [95,160,0,255] at (50,48), expected [0,255,0,255]
-Failed assertion: got pixel [188,67,0,255] at (98,48), expected [0,255,0,255]

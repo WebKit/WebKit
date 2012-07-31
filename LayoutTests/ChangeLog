@@ -1,3 +1,89 @@
+2012-07-31  Peter Kasting  <pkasting@google.com>
+
+        [Chromium] Rebaselines.
+        https://bugs.webkit.org/show_bug.cgi?id=45991
+        https://bugs.webkit.org/show_bug.cgi?id=81145
+        https://bugs.webkit.org/show_bug.cgi?id=82911
+        http://crbug.com/131187
+        http://crbug.com/135709
+        http://crbug.com/139796
+
+        Mostly rebaselining in the wake of r124209, with a few other things
+        mixed in.
+
+        * platform/chromium-linux-x86/fast/gradients: Added.
+        * platform/chromium-linux-x86/fast/gradients/crash-on-zero-radius-expected.png: Added.
+        * platform/chromium-linux-x86/fast/gradients/generated-gradients-expected.png: Added.
+        * platform/chromium-linux-x86/fast/gradients/list-item-gradient-expected.png: Added.
+        * platform/chromium-linux-x86/fast/gradients/simple-gradients-expected.png: Added.
+        * platform/chromium-linux-x86/svg/W3C-SVG-1.1/pservers-grad-13-b-expected.png: Removed.
+        * platform/chromium-linux-x86/svg/as-background-image: Added.
+        * platform/chromium-linux-x86/svg/as-background-image/svg-as-background-3-expected.png: Added.
+        * platform/chromium-linux-x86/svg/as-background-image/svg-as-background-with-relative-size-expected.png: Added.
+        * platform/chromium-linux-x86/svg/custom/radial-gradient-with-outstanding-focalPoint-expected.png: Removed.
+        * platform/chromium-linux/fast/gradients/crash-on-zero-radius-expected.png:
+        * platform/chromium-linux/fast/gradients/generated-gradients-expected.png:
+        * platform/chromium-linux/fast/gradients/list-item-gradient-expected.png:
+        * platform/chromium-linux/fast/gradients/simple-gradients-expected.png:
+        * platform/chromium-linux/platform/chromium/compositing/scrollbars/custom-composited-different-track-parts-expected.png:
+        * platform/chromium-linux/svg/W3C-SVG-1.1/pservers-grad-13-b-expected.png:
+        * platform/chromium-linux/svg/as-background-image/svg-as-background-3-expected.png:
+        * platform/chromium-linux/svg/as-background-image/svg-as-background-with-relative-size-expected.png:
+        * platform/chromium-linux/svg/custom/radial-gradient-with-outstanding-focalPoint-expected.png:
+        * platform/chromium-linux/svg/zoom/page/zoom-svg-as-background-with-relative-size-expected.png:
+        * platform/chromium-mac-snowleopard/fast/gradients/generated-gradients-expected.png:
+        * platform/chromium-mac-snowleopard/fast/gradients/list-item-gradient-expected.png:
+        * platform/chromium-mac-snowleopard/platform/chromium/virtual/gpu/canvas: Added.
+        * platform/chromium-mac-snowleopard/platform/chromium/virtual/gpu/canvas/philip: Added.
+        * platform/chromium-mac-snowleopard/platform/chromium/virtual/gpu/canvas/philip/tests: Added.
+        * platform/chromium-mac-snowleopard/platform/chromium/virtual/gpu/canvas/philip/tests/2d.gradient.radial.cone.behind-expected.txt: Added.
+        * platform/chromium-mac-snowleopard/platform/chromium/virtual/gpu/canvas/philip/tests/2d.gradient.radial.cone.beside-expected.txt: Added.
+        * platform/chromium-mac-snowleopard/platform/chromium/virtual/gpu/canvas/philip/tests/2d.gradient.radial.cone.shape2-expected.txt: Added.
+        * platform/chromium-mac-snowleopard/platform/chromium/virtual/gpu/canvas/philip/tests/2d.gradient.radial.cone.top-expected.txt: Added.
+        * platform/chromium-mac-snowleopard/platform/chromium/virtual/gpu/canvas/philip/tests/2d.gradient.radial.touch1-expected.txt: Added.
+        * platform/chromium-mac-snowleopard/platform/chromium/virtual/gpu/canvas/philip/tests/2d.gradient.radial.touch3-expected.txt: Added.
+        * platform/chromium-mac-snowleopard/svg/as-background-image/svg-as-background-with-relative-size-expected.png: Added.
+        * platform/chromium-mac/canvas/philip/tests/2d.gradient.radial.cone.behind-expected.txt: Removed.
+        * platform/chromium-mac/canvas/philip/tests/2d.gradient.radial.cone.beside-expected.txt: Removed.
+        * platform/chromium-mac/canvas/philip/tests/2d.gradient.radial.cone.cylinder-expected.txt: Removed.
+        * platform/chromium-mac/canvas/philip/tests/2d.gradient.radial.cone.shape2-expected.txt: Removed.
+        * platform/chromium-mac/canvas/philip/tests/2d.gradient.radial.cone.top-expected.txt: Removed.
+        * platform/chromium-mac/canvas/philip/tests/2d.gradient.radial.touch1-expected.txt: Removed.
+        * platform/chromium-mac/canvas/philip/tests/2d.gradient.radial.touch3-expected.txt: Removed.
+        * platform/chromium-mac/fast/canvas/canvas-currentColor-expected.txt: Removed.
+        * platform/chromium-mac/fast/gradients/crash-on-zero-radius-expected.png:
+        * platform/chromium-mac/fast/gradients/css3-color-stop-units-expected.png: Added.
+        * platform/chromium-mac/fast/gradients/generated-gradients-expected.png:
+        * platform/chromium-mac/fast/gradients/list-item-gradient-expected.png:
+        * platform/chromium-mac/fast/gradients/simple-gradients-expected.png:
+        * platform/chromium-mac/platform/chromium/virtual/gpu/canvas/philip/tests/2d.gradient.radial.cone.behind-expected.txt: Added.
+        * platform/chromium-mac/platform/chromium/virtual/gpu/canvas/philip/tests/2d.gradient.radial.cone.beside-expected.txt: Added.
+        * platform/chromium-mac/platform/chromium/virtual/gpu/canvas/philip/tests/2d.gradient.radial.cone.shape2-expected.txt: Added.
+        * platform/chromium-mac/platform/chromium/virtual/gpu/canvas/philip/tests/2d.gradient.radial.cone.top-expected.txt: Added.
+        * platform/chromium-mac/platform/chromium/virtual/gpu/canvas/philip/tests/2d.gradient.radial.touch1-expected.txt: Added.
+        * platform/chromium-mac/platform/chromium/virtual/gpu/canvas/philip/tests/2d.gradient.radial.touch3-expected.txt: Added.
+        * platform/chromium-mac/svg/W3C-SVG-1.1/animate-elem-80-t-expected.png: Added.
+        * platform/chromium-mac/svg/W3C-SVG-1.1/pservers-grad-13-b-expected.png:
+        * platform/chromium-mac/svg/as-background-image/svg-as-background-3-expected.png:
+        * platform/chromium-mac/svg/as-background-image/svg-as-background-with-relative-size-expected.png:
+        * platform/chromium-mac/svg/custom/radial-gradient-with-outstanding-focalPoint-expected.png:
+        * platform/chromium-mac/svg/zoom/page/zoom-svg-as-background-with-relative-size-expected.png:
+        * platform/chromium-win-xp/svg/as-background-image: Added.
+        * platform/chromium-win-xp/svg/as-background-image/svg-as-background-3-expected.png: Added.
+        * platform/chromium-win-xp/svg/as-background-image/svg-as-background-6-expected.png: Added.
+        * platform/chromium-win-xp/svg/as-background-image/svg-as-background-with-relative-size-expected.png: Added.
+        * platform/chromium-win/fast/gradients/crash-on-zero-radius-expected.png:
+        * platform/chromium-win/fast/gradients/generated-gradients-expected.png:
+        * platform/chromium-win/fast/gradients/list-item-gradient-expected.png:
+        * platform/chromium-win/fast/gradients/simple-gradients-expected.png:
+        * platform/chromium-win/svg/W3C-SVG-1.1/pservers-grad-13-b-expected.png:
+        * platform/chromium-win/svg/as-background-image/svg-as-background-3-expected.png:
+        * platform/chromium-win/svg/as-background-image/svg-as-background-6-expected.png:
+        * platform/chromium-win/svg/as-background-image/svg-as-background-with-relative-size-expected.png:
+        * platform/chromium-win/svg/custom/radial-gradient-with-outstanding-focalPoint-expected.png:
+        * platform/chromium-win/svg/zoom/page/zoom-svg-as-background-with-relative-size-expected.png:
+        * platform/chromium/TestExpectations:
+
 2012-07-31  Stephen White  <senorblanco@chromium.org>
 
         [chromium] Unreviwed gardening.
@@ -28,7 +114,7 @@
         suppress gradient tests on skia/mac that have incorrectly "recorded failure", now that those tests are actually passing (drawing correctly)
         https://bugs.webkit.org/show_bug.cgi?id=92787
 
-        Reviewed by NOBODY - expectations only
+        Unreviewed, test expectations update.
 
         * platform/chromium/TestExpectations:
 
