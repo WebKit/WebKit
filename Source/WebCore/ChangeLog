@@ -1,3 +1,17 @@
+2012-07-31  Danilo Cesar Lemes de Paula  <danilo.cesar@collabora.co.uk>
+
+        add Farstream flags/deps to WebKit, for WebRTC
+        https://bugs.webkit.org/show_bug.cgi?id=87524
+
+        Reviewed by Philippe Normand.
+
+        Since Farstream will be used as the backend for GTK's WebRTC, this
+        patch adds it as a dependency to the build system.
+
+        No new features or code changes were added, so new tests aren't necessary.
+
+        * GNUmakefile.am:
+
 2012-07-31  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed crash fix after r124135.

@@ -470,6 +470,13 @@ AC_SUBST(ENCHANT_CFLAGS)
 AC_SUBST(ENCHANT_LIBS)
 fi
 
+if test "$enable_media_stream" = "yes"; then
+   PKG_CHECK_MODULES([FARSTREAM], [farstream-0.1], [have_farstream=yes],
+                     AC_MSG_ERROR([farstream is required to enable media_stream]))
+   AC_SUBST([FARSTREAM_CFLAGS])
+   AC_SUBST([FARSTREAM_LIBS])
+fi
+
 PKG_CHECK_MODULES(GAIL, $GAIL_PC_NAME >= $GAIL_REQUIRED_VERSION)
 AC_SUBST(GAIL_CFLAGS)
 AC_SUBST(GAIL_LIBS)
@@ -1411,6 +1418,9 @@ AM_CONDITIONAL([USE_OPENGL], [test "$with_acceleration_backend" = "opengl"])
 # IndexedDB implies LevelDB, but other features may one day require LevelDB.
 AM_CONDITIONAL([ENABLE_INDEXED_DATABASE],[test "$enable_indexed_database" = "yes"])
 AM_CONDITIONAL([USE_LEVELDB],[test "$enable_indexed_database" = "yes"])
+
+# Farstream feature conditional
+AM_CONDITIONAL([USE_FARSTREAM], [test "$have_farstream" = "yes"])
 
 # WebKit feature conditionals
 AM_CONDITIONAL([ENABLE_DEBUG],[test "$enable_debug_features" = "yes"])
