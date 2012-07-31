@@ -2578,6 +2578,8 @@ BUGWK61169 LINUX WIN : css3/images/optimize-contrast-image.html = IMAGE
 BUGWK88951 : fast/forms/color/input-appearance-color.html = IMAGE+TEXT
 BUGWK88951 : fast/forms/color/input-color-onchange-event.html = TEXT
 
+BUGWK92710 : fast/forms/date/calendar-picker-appearance.html = IMAGE PASS
+
 // New test added in r87324
 BUGCR83994 WIN : platform/win/plugins/call-javascript-that-destroys-plugin.html = TEXT
 

@@ -11,7 +11,7 @@ function sendKey(input, keyName) {
 function finishTest() {
     console.log(pickerWindow.pagePopupController);
     pickerWindow.document.getElementById('main').removeEventListener('webkitTransitionEnd', finishTest);
-    testRunner.notifyDone();
+    setTimeout(function() {testRunner.notifyDone();}, 0);
 }
 
 console.log('Check if window.pagePopupController exists for a page-popup window.');

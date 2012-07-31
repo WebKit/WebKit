@@ -1,3 +1,12 @@
+2012-07-30  Kent Tamura  <tkent@chromium.org>
+
+        [Chromium] Layout Test fast/forms/date/calendar-picker-appearance.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=92710
+
+        * fast/forms/date/calendar-picker-appearance.html:
+         Attempt to fix the flakiness.
+        * platform/chromium/TestExpectations: Add an entry for calendar-picker-appearance.html.
+
 2012-07-30  Peter Kasting  <pkasting@google.com>
 
         [Chromium] Baseline and expectation followups after r124142.
