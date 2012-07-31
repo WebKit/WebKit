@@ -1474,9 +1474,6 @@ BUGWK48651 MAC : http/tests/navigation/error404-subframeload.html = IMAGE
 BUGCR26253 SLOW WIN RELEASE : http/tests/navigation/reload-subframe-object.html = PASS
 BUGCR9798 WIN RELEASE : http/tests/navigation/no-referrer-reset.html = PASS TIMEOUT
 
-// Actual is just slightly off in color than expected
-BUGCR23488 MAC : platform/chromium/virtual/gpu/fast/canvas/canvas-incremental-repaint-2.html = IMAGE
-
 BUGCR23477 MAC : fast/backgrounds/bgCompositeCopy.html = IMAGE
 BUGCR23477 MAC : platform/chromium/virtual/gpu/fast/canvas/canvas-as-image-incremental-repaint.html = IMAGE
 BUGCR23477 MAC : platform/chromium/virtual/gpu/fast/canvas/canvas-incremental-repaint.html = IMAGE
@@ -2935,9 +2932,6 @@ BUGWK76157 SNOWLEOPARD : compositing/geometry/limit-layer-bounds-transformed-ove
 BUGWK76488 : css3/images/cross-fade-background-size.html = IMAGE IMAGE+TEXT
 
 BUGWK81542 SNOWLEOPARD : css3/images/cross-fade-invalidation.html = IMAGE PASS
-
-// rebaseline when skia 3398 lands
-// BUGEPOGER : platform/chromium/virtual/gpu/fast/canvas/quadraticCurveTo.xml = IMAGE
 
 BUGWK76727 : fast/multicol/span/span-as-immediate-child-property-removal.html = IMAGE+TEXT TEXT PASS IMAGE
 BUGWK76727 : fast/multicol/span/span-as-immediate-columns-child-removal.html = IMAGE+TEXT TEXT PASS IMAGE
