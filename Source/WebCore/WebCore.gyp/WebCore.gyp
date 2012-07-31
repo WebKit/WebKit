@@ -1267,7 +1267,7 @@
           # In generated bindings code: 'switch contains default but no case'.
           'msvs_disabled_warnings': [ 4065 ],
         }],
-        ['OS=="linux" and "WTF_USE_WEBAUDIO_IPP=1" in feature_defines', {
+        ['OS in ("linux", "android") and "WTF_USE_WEBAUDIO_IPP=1" in feature_defines', {
           'cflags': [
             '<!@(pkg-config --cflags-only-I ipp)',
           ],
@@ -1470,7 +1470,7 @@
             'include_dirs++': ['../dom'],
           },
         }],
-        ['OS=="linux" and "WTF_USE_WEBAUDIO_IPP=1" in feature_defines', {
+        ['OS in ("linux", "android") and "WTF_USE_WEBAUDIO_IPP=1" in feature_defines', {
           'direct_dependent_settings': {
             'cflags': [
               '<!@(pkg-config --cflags-only-I ipp)',
@@ -2129,6 +2129,15 @@
             'libraries': [
               '-lipps -lippcore',
             ],
+          },
+        }],
+        # Use IPP static libraries for x86 Android.
+        ['OS=="android" and "WTF_USE_WEBAUDIO_IPP=1" in feature_defines', {
+          'link_settings': {
+            'libraries': [
+               '<!@(pkg-config --libs ipp|sed s/-L//)/libipps_l.a',
+               '<!@(pkg-config --libs ipp|sed s/-L//)/libippcore_l.a',
+            ]
           },
         }],
         ['enable_svg!=0', {

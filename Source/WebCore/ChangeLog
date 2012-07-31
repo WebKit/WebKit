@@ -1,3 +1,15 @@
+2012-07-30  Wei James  <james.wei@intel.com>
+
+        [Chromium] Enable web audio IPP for x86 chromium android
+        https://bugs.webkit.org/show_bug.cgi?id=91973
+
+        Reviewed by Tony Chang.
+
+        Include the IPP libraries at link-time for Android builds when
+        compiling the Web Audio API with IPP support.
+
+        * WebCore.gyp/WebCore.gyp:
+
 2012-07-30  Yoshifumi Inoue  <yosin@chromium.org>
 
         [Forms] Get rid of Element::isReadOnlyFormControl other than CSS related
