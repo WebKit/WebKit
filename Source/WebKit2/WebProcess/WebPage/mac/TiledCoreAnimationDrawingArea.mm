@@ -142,15 +142,9 @@ bool TiledCoreAnimationDrawingArea::forceRepaintAsync(uint64_t callbackID)
     if (m_layerTreeStateIsFrozen)
         return false;
 
-    // FIXME: It is possible for the drawing area to be destroyed before the bound block
-    // is invoked, so grab a reference to the web page here so we can access the drawing area through it.
-    // (The web page is already kept alive by dispatchAfterEnsuringUpdatedScrollPosition).
-    // A better fix would be to make sure that we keep the drawing area alive if there are outstanding calls.
-    WebPage* webPage = m_webPage;
     dispatchAfterEnsuringUpdatedScrollPosition(bind(^{
-        if (DrawingArea* drawingArea = webPage->drawingArea())
-            drawingArea->forceRepaint();
-        webPage->send(Messages::WebPageProxy::VoidCallback(callbackID));
+        m_webPage->drawingArea()->forceRepaint();
+        m_webPage->send(Messages::WebPageProxy::VoidCallback(callbackID));
     }));
     return true;
 }
@@ -228,13 +222,23 @@ void TiledCoreAnimationDrawingArea::dispatchAfterEnsuringUpdatedScrollPosition(c
         m_layerFlushScheduler.suspend();
 
     Function<void ()> function = functionRef;
+
+    // It is possible for the drawing area to be destroyed before the bound block
+    // is invoked, so grab a reference to the web page here so we can access the drawing area through it.
+    // (The web page is already kept alive by dispatchAfterEnsuringUpdatedScrollPosition).
+    WebPage* webPage = m_webPage;
+
     ScrollingThread::dispatchBarrier(bind(^{
+        DrawingArea* drawingArea = webPage->drawingArea();
+        if (!drawingArea)
+            return;
+
         function();
 
         if (!m_layerTreeStateIsFrozen)
             m_layerFlushScheduler.resume();
 
-        m_webPage->deref();
+        webPage->deref();
     }));
 }
 
