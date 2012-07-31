@@ -47,7 +47,7 @@ private:
     MarkedBlock::FreeList m_freeList;
     MarkedBlock* m_currentBlock;
     MarkedBlock* m_blocksToSweep;
-    DoublyLinkedList<HeapBlock> m_blockList;
+    DoublyLinkedList<MarkedBlock> m_blockList;
     size_t m_cellSize;
     bool m_cellsNeedDestruction;
     bool m_onlyContainsStructures;
@@ -90,7 +90,7 @@ inline void MarkedAllocator::reset()
 {
     m_currentBlock = 0;
     m_freeList = MarkedBlock::FreeList();
-    m_blocksToSweep = static_cast<MarkedBlock*>(m_blockList.head());
+    m_blocksToSweep = m_blockList.head();
 }
 
 inline void MarkedAllocator::zapFreeList()
@@ -106,10 +106,10 @@ inline void MarkedAllocator::zapFreeList()
 
 template <typename Functor> inline void MarkedAllocator::forEachBlock(Functor& functor)
 {
-    HeapBlock* next;
-    for (HeapBlock* block = m_blockList.head(); block; block = next) {
+    MarkedBlock* next;
+    for (MarkedBlock* block = m_blockList.head(); block; block = next) {
         next = block->next();
-        functor(static_cast<MarkedBlock*>(block));
+        functor(block);
     }
 }
     

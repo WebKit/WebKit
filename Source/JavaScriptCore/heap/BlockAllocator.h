@@ -38,6 +38,24 @@ namespace JSC {
 // Simple allocator to reduce VM cost by holding onto blocks of memory for
 // short periods of time and then freeing them on a secondary thread.
 
+class DeadBlock : public HeapBlock<DeadBlock> {
+public:
+    static DeadBlock* create(const PageAllocationAligned&);
+
+private:
+    DeadBlock(const PageAllocationAligned&);
+};
+
+inline DeadBlock::DeadBlock(const PageAllocationAligned& allocation)
+    : HeapBlock<DeadBlock>(allocation)
+{
+}
+
+inline DeadBlock* DeadBlock::create(const PageAllocationAligned& allocation)
+{
+    return new(NotNull, allocation.base()) DeadBlock(allocation);
+}
+
 class BlockAllocator {
 public:
     BlockAllocator();
@@ -55,7 +73,7 @@ private:
 
     void releaseFreeBlocks();
 
-    DoublyLinkedList<HeapBlock> m_freeBlocks;
+    DoublyLinkedList<DeadBlock> m_freeBlocks;
     size_t m_numberOfFreeBlocks;
     bool m_isCurrentlyAllocating;
     bool m_blockFreeingThreadShouldQuit;
@@ -73,12 +91,12 @@ inline PageAllocationAligned BlockAllocator::allocate()
         if (m_numberOfFreeBlocks) {
             ASSERT(!m_freeBlocks.isEmpty());
             m_numberOfFreeBlocks--;
-            return m_freeBlocks.removeHead()->m_allocation;
+            return DeadBlock::destroy(m_freeBlocks.removeHead());
         }
     }
 
     ASSERT(m_freeBlocks.isEmpty());
-    PageAllocationAligned allocation = PageAllocationAligned::allocate(HeapBlock::s_blockSize, HeapBlock::s_blockSize, OSAllocator::JSGCHeapPages);
+    PageAllocationAligned allocation = PageAllocationAligned::allocate(DeadBlock::s_blockSize, DeadBlock::s_blockSize, OSAllocator::JSGCHeapPages);
     if (!static_cast<bool>(allocation))
         CRASH();
     return allocation;
@@ -87,8 +105,7 @@ inline PageAllocationAligned BlockAllocator::allocate()
 inline void BlockAllocator::deallocate(PageAllocationAligned allocation)
 {
     SpinLockHolder locker(&m_freeBlockLock);
-    HeapBlock* heapBlock = new(NotNull, allocation.base()) HeapBlock(allocation);
-    m_freeBlocks.push(heapBlock);
+    m_freeBlocks.push(DeadBlock::create(allocation));
     m_numberOfFreeBlocks++;
 }
 

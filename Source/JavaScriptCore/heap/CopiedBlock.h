@@ -34,13 +34,12 @@ namespace JSC {
 
 class CopiedSpace;
 
-class CopiedBlock : public HeapBlock {
+class CopiedBlock : public HeapBlock<CopiedBlock> {
     friend class CopiedSpace;
     friend class CopiedAllocator;
 public:
     static CopiedBlock* create(const PageAllocationAligned&);
     static CopiedBlock* createNoZeroFill(const PageAllocationAligned&);
-    static PageAllocationAligned destroy(CopiedBlock*);
 
     // The payload is the region of the block that is usable for allocations.
     char* payload();
@@ -93,17 +92,8 @@ inline void CopiedBlock::zeroFillWilderness()
 #endif
 }
 
-inline PageAllocationAligned CopiedBlock::destroy(CopiedBlock* block)
-{
-    PageAllocationAligned allocation;
-    swap(allocation, block->m_allocation);
-
-    block->~CopiedBlock();
-    return allocation;
-}
-
 inline CopiedBlock::CopiedBlock(const PageAllocationAligned& allocation)
-    : HeapBlock(allocation)
+    : HeapBlock<CopiedBlock>(allocation)
     , m_remaining(payloadCapacity())
     , m_isPinned(false)
 {
@@ -117,7 +107,7 @@ inline char* CopiedBlock::payload()
 
 inline char* CopiedBlock::payloadEnd()
 {
-    return reinterpret_cast<char*>(this) + m_allocation.size();
+    return reinterpret_cast<char*>(this) + allocation().size();
 }
 
 inline size_t CopiedBlock::payloadCapacity()
@@ -162,7 +152,7 @@ inline size_t CopiedBlock::size()
 
 inline size_t CopiedBlock::capacity()
 {
-    return m_allocation.size();
+    return allocation().size();
 }
 
 } // namespace JSC

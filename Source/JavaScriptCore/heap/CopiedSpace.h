@@ -44,7 +44,6 @@ namespace JSC {
 
 class Heap;
 class CopiedBlock;
-class HeapBlock;
 
 class CopiedSpace {
     friend class SlotVisitor;
@@ -101,12 +100,12 @@ private:
 
     SpinLock m_toSpaceLock;
 
-    DoublyLinkedList<HeapBlock>* m_toSpace;
-    DoublyLinkedList<HeapBlock>* m_fromSpace;
+    DoublyLinkedList<CopiedBlock>* m_toSpace;
+    DoublyLinkedList<CopiedBlock>* m_fromSpace;
     
-    DoublyLinkedList<HeapBlock> m_blocks1;
-    DoublyLinkedList<HeapBlock> m_blocks2;
-    DoublyLinkedList<HeapBlock> m_oversizeBlocks;
+    DoublyLinkedList<CopiedBlock> m_blocks1;
+    DoublyLinkedList<CopiedBlock> m_blocks2;
+    DoublyLinkedList<CopiedBlock> m_oversizeBlocks;
    
     bool m_inCopyingPhase;
 
@@ -116,7 +115,7 @@ private:
 
     static const size_t s_maxAllocationSize = 32 * KB;
     static const size_t s_initialBlockNum = 16;
-    static const size_t s_blockMask = ~(HeapBlock::s_blockSize - 1);
+    static const size_t s_blockMask = ~(CopiedBlock::s_blockSize - 1);
 };
 
 } // namespace JSC

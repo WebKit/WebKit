@@ -67,8 +67,7 @@ namespace JSC {
     // size is equal to the difference between the cell size and the object
     // size.
 
-    class MarkedBlock : public HeapBlock {
-        friend class WTF::DoublyLinkedListNode<MarkedBlock>;
+    class MarkedBlock : public HeapBlock<MarkedBlock> {
     public:
         // Ensure natural alignment for native types whilst recognizing that the smallest
         // object the heap will commonly allocate is four words.
@@ -114,7 +113,6 @@ namespace JSC {
         };
 
         static MarkedBlock* create(const PageAllocationAligned&, Heap*, size_t cellSize, bool cellsNeedDestruction, bool onlyContainsStructures);
-        static PageAllocationAligned destroy(MarkedBlock*);
 
         static bool isAtomAligned(const void*);
         static MarkedBlock* blockFor(const void*);
@@ -336,7 +334,7 @@ namespace JSC {
 
     inline size_t MarkedBlock::capacity()
     {
-        return m_allocation.size();
+        return allocation().size();
     }
 
     inline size_t MarkedBlock::atomNumber(const void* p)

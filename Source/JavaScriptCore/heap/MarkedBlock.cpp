@@ -37,17 +37,8 @@ MarkedBlock* MarkedBlock::create(const PageAllocationAligned& allocation, Heap* 
     return new (NotNull, allocation.base()) MarkedBlock(allocation, heap, cellSize, cellsNeedDestruction, onlyContainsStructures);
 }
 
-PageAllocationAligned MarkedBlock::destroy(MarkedBlock* block)
-{
-    PageAllocationAligned allocation;
-    swap(allocation, block->m_allocation);
-
-    block->~MarkedBlock();
-    return allocation;
-}
-
 MarkedBlock::MarkedBlock(const PageAllocationAligned& allocation, Heap* heap, size_t cellSize, bool cellsNeedDestruction, bool onlyContainsStructures)
-    : HeapBlock(allocation)
+    : HeapBlock<MarkedBlock>(allocation)
     , m_atomsPerCell((cellSize + atomSize - 1) / atomSize)
     , m_endAtom(atomsPerBlock - m_atomsPerCell + 1)
     , m_cellsNeedDestruction(cellsNeedDestruction)

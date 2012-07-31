@@ -44,13 +44,13 @@ CopiedSpace::CopiedSpace(Heap* heap)
 CopiedSpace::~CopiedSpace()
 {
     while (!m_toSpace->isEmpty())
-        m_heap->blockAllocator().deallocate(CopiedBlock::destroy(static_cast<CopiedBlock*>(m_toSpace->removeHead())));
+        m_heap->blockAllocator().deallocate(CopiedBlock::destroy(m_toSpace->removeHead()));
 
     while (!m_fromSpace->isEmpty())
-        m_heap->blockAllocator().deallocate(CopiedBlock::destroy(static_cast<CopiedBlock*>(m_fromSpace->removeHead())));
+        m_heap->blockAllocator().deallocate(CopiedBlock::destroy(m_fromSpace->removeHead()));
 
     while (!m_oversizeBlocks.isEmpty())
-        CopiedBlock::destroy(static_cast<CopiedBlock*>(m_oversizeBlocks.removeHead())).deallocate();
+        CopiedBlock::destroy(m_oversizeBlocks.removeHead()).deallocate();
 }
 
 void CopiedSpace::init()
@@ -193,7 +193,7 @@ void CopiedSpace::doneCopying()
     ASSERT(m_inCopyingPhase);
     m_inCopyingPhase = false;
     while (!m_fromSpace->isEmpty()) {
-        CopiedBlock* block = static_cast<CopiedBlock*>(m_fromSpace->removeHead());
+        CopiedBlock* block = m_fromSpace->removeHead();
         if (block->m_isPinned) {
             block->m_isPinned = false;
             // We don't add the block to the blockSet because it was never removed.
@@ -207,9 +207,9 @@ void CopiedSpace::doneCopying()
         m_heap->blockAllocator().deallocate(CopiedBlock::destroy(block));
     }
 
-    CopiedBlock* curr = static_cast<CopiedBlock*>(m_oversizeBlocks.head());
+    CopiedBlock* curr = m_oversizeBlocks.head();
     while (curr) {
-        CopiedBlock* next = static_cast<CopiedBlock*>(curr->next());
+        CopiedBlock* next = curr->next();
         if (!curr->m_isPinned) {
             m_oversizeBlocks.remove(curr);
             m_blockSet.remove(curr);
@@ -224,20 +224,20 @@ void CopiedSpace::doneCopying()
     if (!m_toSpace->head())
         allocateBlock();
     else
-        m_allocator.setCurrentBlock(static_cast<CopiedBlock*>(m_toSpace->head()));
+        m_allocator.setCurrentBlock(m_toSpace->head());
 }
 
 size_t CopiedSpace::size()
 {
     size_t calculatedSize = 0;
 
-    for (CopiedBlock* block = static_cast<CopiedBlock*>(m_toSpace->head()); block; block = static_cast<CopiedBlock*>(block->next()))
+    for (CopiedBlock* block = m_toSpace->head(); block; block = block->next())
         calculatedSize += block->size();
 
-    for (CopiedBlock* block = static_cast<CopiedBlock*>(m_fromSpace->head()); block; block = static_cast<CopiedBlock*>(block->next()))
+    for (CopiedBlock* block = m_fromSpace->head(); block; block = block->next())
         calculatedSize += block->size();
 
-    for (CopiedBlock* block = static_cast<CopiedBlock*>(m_oversizeBlocks.head()); block; block = static_cast<CopiedBlock*>(block->next()))
+    for (CopiedBlock* block = m_oversizeBlocks.head(); block; block = block->next())
         calculatedSize += block->size();
 
     return calculatedSize;
@@ -247,22 +247,22 @@ size_t CopiedSpace::capacity()
 {
     size_t calculatedCapacity = 0;
 
-    for (CopiedBlock* block = static_cast<CopiedBlock*>(m_toSpace->head()); block; block = static_cast<CopiedBlock*>(block->next()))
+    for (CopiedBlock* block = m_toSpace->head(); block; block = block->next())
         calculatedCapacity += block->capacity();
 
-    for (CopiedBlock* block = static_cast<CopiedBlock*>(m_fromSpace->head()); block; block = static_cast<CopiedBlock*>(block->next()))
+    for (CopiedBlock* block = m_fromSpace->head(); block; block = block->next())
         calculatedCapacity += block->capacity();
 
-    for (CopiedBlock* block = static_cast<CopiedBlock*>(m_oversizeBlocks.head()); block; block = static_cast<CopiedBlock*>(block->next()))
+    for (CopiedBlock* block = m_oversizeBlocks.head(); block; block = block->next())
         calculatedCapacity += block->capacity();
 
     return calculatedCapacity;
 }
 
-static bool isBlockListPagedOut(double deadline, DoublyLinkedList<HeapBlock>* list)
+static bool isBlockListPagedOut(double deadline, DoublyLinkedList<CopiedBlock>* list)
 {
     unsigned itersSinceLastTimeCheck = 0;
-    HeapBlock* current = list->head();
+    CopiedBlock* current = list->head();
     while (current) {
         current = current->next();
         ++itersSinceLastTimeCheck;

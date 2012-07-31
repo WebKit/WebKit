@@ -1,3 +1,83 @@
+2012-07-31  Geoffrey Garen  <ggaren@apple.com>
+
+        Removed some public data and casting from the Heap
+        https://bugs.webkit.org/show_bug.cgi?id=92777
+
+        Reviewed by Oliver Hunt.
+
+        * heap/BlockAllocator.cpp:
+        (JSC::BlockAllocator::releaseFreeBlocks):
+        (JSC::BlockAllocator::blockFreeingThreadMain): Use the DeadBlock class
+        since HeapBlock is a template, and not a class, now. Call destroy()
+        instead of monkeying around with DeadBlock's internal data because
+        encapsulation is good.
+
+        * heap/BlockAllocator.h:
+        (DeadBlock): Added a class to represent a dead block, since HeapBlock is
+        a template now, and can't be instantiated directly.
+
+        (JSC::DeadBlock::DeadBlock):
+        (JSC::DeadBlock::create):
+        (BlockAllocator):
+        (JSC::BlockAllocator::allocate):
+        (JSC::BlockAllocator::deallocate): Use the DeadBlock class because
+        encapsulation is good.
+
+        * heap/CopiedBlock.h:
+        (CopiedBlock::destroy): No need for a destroy() function, since we
+        inherit one now.
+
+        (JSC::CopiedBlock::CopiedBlock):
+        (JSC::CopiedBlock::payloadEnd):
+        (JSC::CopiedBlock::capacity): Updated for some encapsulation inside
+        HeapBlock.
+
+        * heap/CopiedSpace.cpp:
+        (JSC::CopiedSpace::~CopiedSpace):
+        (JSC::CopiedSpace::doneCopying):
+        (JSC::CopiedSpace::size):
+        (JSC::CopiedSpace::capacity):
+        (JSC::isBlockListPagedOut): Removed a bunch of casting. This is no longer
+        necessary, now that our list and its nodes have the right type.
+
+        * heap/CopiedSpace.h: Use the right type in our data structures because
+        it improves clarity.
+
+        * heap/CopiedSpaceInlineMethods.h:
+        (JSC::CopiedSpace::startedCopying): Use swap to avoid duplicating it.
+
+        * heap/HeapBlock.h:
+        (HeapBlock): Made this a class template so we can return the right type
+        in linked list operations. Made our data private because encapsulation
+        is good.
+
+        (JSC::HeapBlock::destroy): Since we know our type, we can also eliminate
+        duplicate destroy() functions in our subclasses.
+
+        (JSC::HeapBlock::allocation): Added an accessor so we can hide our data.
+        By using const, this accessor prevents clients from accidentally deleting
+        our allocation.
+
+        * heap/MarkedAllocator.cpp:
+        (JSC::MarkedAllocator::isPagedOut):
+        (JSC::MarkedAllocator::tryAllocateHelper):
+        (JSC::MarkedAllocator::removeBlock): Removed a bunch of casting. This is
+        no longer necessary, now that our list and its nodes have the right type.
+
+        * heap/MarkedAllocator.h:
+        (MarkedAllocator):
+        (JSC::MarkedAllocator::reset):
+        (JSC::MarkedAllocator::forEachBlock): Use the right type, do less casting.
+
+        * heap/MarkedBlock.cpp: 
+        (JSC::MarkedBlock::destroy): Removed this function because our parent
+        class provides it for us now.
+
+        (JSC::MarkedBlock::MarkedBlock):
+        * heap/MarkedBlock.h:
+        (MarkedBlock):
+        (JSC::MarkedBlock::capacity): Updated for encapsulation.
+
 2012-07-31  Filip Pizlo  <fpizlo@apple.com>
 
         DFG OSR exit profiling has unusual oversights

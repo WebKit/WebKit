@@ -11,7 +11,7 @@ namespace JSC {
 bool MarkedAllocator::isPagedOut(double deadline)
 {
     unsigned itersSinceLastTimeCheck = 0;
-    HeapBlock* block = m_blockList.head();
+    MarkedBlock* block = m_blockList.head();
     while (block) {
         block = block->next();
         ++itersSinceLastTimeCheck;
@@ -29,7 +29,7 @@ bool MarkedAllocator::isPagedOut(double deadline)
 inline void* MarkedAllocator::tryAllocateHelper()
 {
     if (!m_freeList.head) {
-        for (MarkedBlock*& block = m_blocksToSweep; block; block = static_cast<MarkedBlock*>(block->next())) {
+        for (MarkedBlock*& block = m_blocksToSweep; block; block = block->next()) {
             m_freeList = block->sweep(MarkedBlock::SweepToFreeList);
             if (m_freeList.head) {
                 m_currentBlock = block;
@@ -115,11 +115,11 @@ void MarkedAllocator::addBlock(MarkedBlock* block)
 void MarkedAllocator::removeBlock(MarkedBlock* block)
 {
     if (m_currentBlock == block) {
-        m_currentBlock = static_cast<MarkedBlock*>(m_currentBlock->next());
+        m_currentBlock = m_currentBlock->next();
         m_freeList = MarkedBlock::FreeList();
     }
     if (m_blocksToSweep == block)
-        m_blocksToSweep = static_cast<MarkedBlock*>(m_blocksToSweep->next());
+        m_blocksToSweep = m_blocksToSweep->next();
     m_blockList.remove(block);
 }
 

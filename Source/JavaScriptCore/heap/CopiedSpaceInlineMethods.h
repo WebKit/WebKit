@@ -95,9 +95,7 @@ inline void CopiedSpace::pinIfNecessary(void* opaquePointer)
 
 inline void CopiedSpace::startedCopying()
 {
-    DoublyLinkedList<HeapBlock>* temp = m_fromSpace;
-    m_fromSpace = m_toSpace;
-    m_toSpace = temp;
+    std::swap(m_fromSpace, m_toSpace);
 
     m_blockFilter.reset();
     m_allocator.resetCurrentBlock();

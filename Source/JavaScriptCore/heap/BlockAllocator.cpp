@@ -55,7 +55,7 @@ BlockAllocator::~BlockAllocator()
 void BlockAllocator::releaseFreeBlocks()
 {
     while (true) {
-        HeapBlock* block;
+        DeadBlock* block;
         {
             SpinLockHolder locker(&m_freeBlockLock);
             if (!m_numberOfFreeBlocks)
@@ -70,7 +70,7 @@ void BlockAllocator::releaseFreeBlocks()
         if (!block)
             break;
 
-        block->m_allocation.deallocate();
+        DeadBlock::destroy(block).deallocate();
     }
 }
 
@@ -121,7 +121,7 @@ void BlockAllocator::blockFreeingThreadMain()
         size_t desiredNumberOfFreeBlocks = currentNumberOfFreeBlocks / 2;
         
         while (!m_blockFreeingThreadShouldQuit) {
-            HeapBlock* block;
+            DeadBlock* block;
             {
                 SpinLockHolder locker(&m_freeBlockLock);
                 if (m_numberOfFreeBlocks <= desiredNumberOfFreeBlocks)
@@ -136,7 +136,7 @@ void BlockAllocator::blockFreeingThreadMain()
             if (!block)
                 break;
             
-            block->m_allocation.deallocate();
+            DeadBlock::destroy(block).deallocate();
         }
     }
 }
