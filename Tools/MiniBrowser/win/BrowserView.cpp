@@ -87,8 +87,10 @@ void BrowserView::create(RECT webViewRect, BrowserWindow* parentWindow)
     WKContextRef context;
     if (isShiftKeyDown)
         context = WKContextGetSharedThreadContext();
-    else
-        context = WKContextCreate();
+    else {
+        static WKContextRef sharedRegularContext = WKContextCreate();
+        context = sharedRegularContext;
+    }
 
     m_webView = WKViewCreate(webViewRect, context, 0, parentWindow->window());
 

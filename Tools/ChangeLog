@@ -1,3 +1,13 @@
+2012-07-31  Alexey Proskuryakov  <ap@apple.com>
+
+        [WK2] Kill the concept of secondary shared process
+        https://bugs.webkit.org/show_bug.cgi?id=92676
+
+        Reviewed by Sam Weinig.
+
+        * MiniBrowser/win/BrowserView.cpp: (BrowserView::create): Update Windows build fix.
+        Don't create a new context for every view.
+
 2012-07-31  Peter Beverloo  <peter@chromium.org>
 
         [Chromium] Don't use ninja for building Chromium for Android
