@@ -2817,6 +2817,8 @@ webcore_sources += \
 	Source/WebCore/inspector/InspectorWorkerResource.h \
 	Source/WebCore/inspector/InstrumentingAgents.cpp \
 	Source/WebCore/inspector/InstrumentingAgents.h \
+	Source/WebCore/inspector/MemoryInstrumentationImpl.cpp \
+	Source/WebCore/inspector/MemoryInstrumentationImpl.h \
 	Source/WebCore/inspector/NetworkResourcesData.cpp \
 	Source/WebCore/inspector/NetworkResourcesData.h \
 	Source/WebCore/inspector/PageConsoleAgent.cpp \

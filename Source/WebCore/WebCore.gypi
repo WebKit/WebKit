@@ -2886,6 +2886,8 @@
             'inspector/InspectorWorkerAgent.h',
             'inspector/InstrumentingAgents.cpp',
             'inspector/InstrumentingAgents.h',
+            'inspector/MemoryInstrumentationImpl.cpp',
+            'inspector/MemoryInstrumentationImpl.h',
             'inspector/NetworkResourcesData.cpp',
             'inspector/NetworkResourcesData.h',
             'inspector/PageConsoleAgent.cpp',

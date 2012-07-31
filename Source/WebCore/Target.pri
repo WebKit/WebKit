@@ -779,6 +779,7 @@ SOURCES += \
     inspector/InspectorWebGLAgent.cpp \
     inspector/InspectorWorkerAgent.cpp \
     inspector/InstrumentingAgents.cpp \
+    inspector/MemoryInstrumentationImpl.cpp \
     inspector/NetworkResourcesData.cpp \
     inspector/PageConsoleAgent.cpp \
     inspector/PageDebuggerAgent.cpp \
@@ -1883,6 +1884,7 @@ HEADERS += \
     inspector/InspectorWebGLInstrumentation.h \
     inspector/InspectorWorkerAgent.h \
     inspector/InstrumentingAgents.h \
+    inspector/MemoryInstrumentationImpl.h \
     inspector/NetworkResourcesData.h \
     inspector/PageConsoleAgent.h \
     inspector/PageDebuggerAgent.h \

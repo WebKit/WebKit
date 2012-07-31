@@ -1533,6 +1533,7 @@ SET(WebCore_SOURCES
     inspector/InspectorWebGLAgent.cpp
     inspector/InspectorWorkerAgent.cpp
     inspector/InstrumentingAgents.cpp
+    inspector/MemoryInstrumentationImpl.cpp
     inspector/NetworkResourcesData.cpp
     inspector/PageConsoleAgent.cpp
     inspector/PageDebuggerAgent.cpp
