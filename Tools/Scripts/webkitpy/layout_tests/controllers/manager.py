@@ -45,7 +45,7 @@ import sys
 import time
 
 from webkitpy.common import message_pool
-from webkitpy.layout_tests.controllers import worker
+from webkitpy.layout_tests.controllers.layout_test_runner import Worker
 from webkitpy.layout_tests.controllers.finder import LayoutTestFinder
 from webkitpy.layout_tests.controllers.test_result_writer import TestResultWriter
 from webkitpy.layout_tests.layout_package import json_layout_results_generator
@@ -608,7 +608,7 @@ class Manager(object):
         self._printer.print_workers_and_shards(num_workers, len(all_shards), len(locked_shards))
 
         def worker_factory(worker_connection):
-            return worker.Worker(worker_connection, self.results_directory(), self._options)
+            return Worker(worker_connection, self.results_directory(), self._options)
 
         if self._options.dry_run:
             return (keyboard_interrupted, interrupted, self._worker_stats.values(), self._group_stats, self._all_results)
