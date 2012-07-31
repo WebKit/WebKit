@@ -120,6 +120,19 @@ static inline NSURL *autoreleased(WKURLRef url)
     WKPageLoadURL(self._pageRef, wkURL.get());
 }
 
+- (void)loadHTMLString:(NSString *)HTMLString baseURL:(NSURL *)baseURL
+{
+    WKRetainPtr<WKStringRef> wkHTMLString;
+    if (HTMLString)
+        wkHTMLString = adoptWK(WKStringCreateWithCFString((CFStringRef)HTMLString));
+
+    WKRetainPtr<WKURLRef> wkBaseURL;
+    if (baseURL)
+        wkBaseURL = adoptWK(WKURLCreateWithCFURL((CFURLRef)baseURL));
+
+    WKPageLoadHTMLString(self._pageRef, wkHTMLString.get(), wkBaseURL.get());
+}
+
 - (void)stopLoading
 {
     WKPageStopLoading(self._pageRef);

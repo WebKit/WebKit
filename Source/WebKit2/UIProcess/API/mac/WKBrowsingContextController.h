@@ -53,6 +53,9 @@ WK_EXPORT
 */
 - (void)loadFileURL:(NSURL *)URL restrictToFilesWithin:(NSURL *)allowedDirectory;
 
+/* Load a page using the passed in string as its contents. */
+- (void)loadHTMLString:(NSString *)HTMLString baseURL:(NSURL *)baseURL;
+
 /* Stops the load associated with the active URL. */
 - (void)stopLoading;
 

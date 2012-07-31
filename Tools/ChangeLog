@@ -1,3 +1,22 @@
+2012-07-28  Sam Weinig  <sam@webkit.org>
+
+        Add ability to load from a string to the ObjC WK API
+        https://bugs.webkit.org/show_bug.cgi?id=92590
+
+        Reviewed by Dan Bernstein.
+
+        Add tests for [WKBrowsingContextController loadHTMLString:baseURL:]. We will be able
+        to greatly improve these tests (to test more than just not crashing) when methods to
+        access page content are added (soon!).
+
+        Adds:
+            Test: WKBrowsingContextLoadDelegateTest_SimpleLoadOfHTMLString
+            Test: WKBrowsingContextLoadDelegateTest_SimpleLoadOfHTMLString_NilBaseURL
+            Test: WKBrowsingContextLoadDelegateTest_SimpleLoadOfHTMLString_NilHTMLStringAndBaseURL
+
+        * TestWebKitAPI/Tests/WebKit2ObjC/WKBrowsingContextLoadDelegateTest.mm:
+        Adds tests and refactors delegates to not use global state.
+
 2012-07-30  Thiago Marcos P. Santos  <thiago.santos@intel.com>
 
         [CMake] TestWebKitAPI bundle should link with WTF

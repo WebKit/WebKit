@@ -1,3 +1,18 @@
+2012-07-28  Sam Weinig  <sam@webkit.org>
+
+        Add ability to load from a string to the ObjC WK API
+        https://bugs.webkit.org/show_bug.cgi?id=92590
+
+        Reviewed by Dan Bernstein.
+
+        This adds an often used method to the new Objective-C API and will
+        be helpful for writing API tests.
+
+        * UIProcess/API/mac/WKBrowsingContextController.h:
+        * UIProcess/API/mac/WKBrowsingContextController.mm:
+        (-[WKBrowsingContextController loadHTMLString:baseURL:]):
+        Implement via calling down to WKPageLoadHTMLString.
+
 2012-07-30  Rafael Brandao  <rafael.lobo@openbossa.org>
 
         [WK2] Kill the concept of secondary shared process
