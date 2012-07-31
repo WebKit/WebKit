@@ -828,7 +828,7 @@ bool RenderTheme::isReadOnlyControl(const RenderObject* o) const
     Node* node = o->node();
     if (!node || !node->isElementNode())
         return false;
-    return !static_cast<Element*>(node)->shouldMatchReadWriteSelector();
+    return static_cast<Element*>(node)->isReadOnlyFormControl();
 }
 
 bool RenderTheme::isHovered(const RenderObject* o) const

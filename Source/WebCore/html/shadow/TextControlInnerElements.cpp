@@ -242,7 +242,7 @@ void SearchFieldCancelButtonElement::defaultEventHandler(Event* event)
 bool SearchFieldCancelButtonElement::willRespondToMouseClickEvents()
 {
     const HTMLInputElement* input = static_cast<HTMLInputElement*>(shadowHost());
-    if (!input->disabled() && !input->readOnly())
+    if (!input->disabled() && !input->isReadOnlyFormControl())
         return true;
 
     return HTMLDivElement::willRespondToMouseClickEvents();
@@ -345,7 +345,7 @@ void SpinButtonElement::defaultEventHandler(Event* event)
 bool SpinButtonElement::willRespondToMouseMoveEvents()
 {
     const HTMLInputElement* input = static_cast<HTMLInputElement*>(shadowHost());
-    if (renderBox() && !input->disabled() && !input->readOnly())
+    if (renderBox() && !input->disabled() && !input->isReadOnlyFormControl())
         return true;
 
     return HTMLDivElement::willRespondToMouseMoveEvents();
@@ -354,7 +354,7 @@ bool SpinButtonElement::willRespondToMouseMoveEvents()
 bool SpinButtonElement::willRespondToMouseClickEvents()
 {
     const HTMLInputElement* input = static_cast<HTMLInputElement*>(shadowHost());
-    if (renderBox() && !input->disabled() && !input->readOnly())
+    if (renderBox() && !input->disabled() && !input->isReadOnlyFormControl())
         return true;
 
     return HTMLDivElement::willRespondToMouseClickEvents();
@@ -514,7 +514,7 @@ void InputFieldSpeechButtonElement::defaultEventHandler(Event* event)
 bool InputFieldSpeechButtonElement::willRespondToMouseClickEvents()
 {
     const HTMLInputElement* input = static_cast<HTMLInputElement*>(shadowHost());
-    if (!input->disabled() && !input->readOnly())
+    if (!input->disabled() && !input->isReadOnlyFormControl())
         return true;
 
     return HTMLDivElement::willRespondToMouseClickEvents();

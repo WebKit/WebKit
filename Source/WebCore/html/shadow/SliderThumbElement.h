@@ -66,7 +66,7 @@ private:
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
     virtual PassRefPtr<Element> cloneElementWithoutAttributesAndChildren();
     virtual bool isEnabledFormControl() const;
-    virtual bool shouldMatchReadWriteSelector() const OVERRIDE;
+    virtual bool isReadOnlyFormControl() const;
     virtual Node* focusDelegate();
     void startDragging();
     void stopDragging();

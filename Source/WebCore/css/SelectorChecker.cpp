@@ -1066,11 +1066,11 @@ bool SelectorChecker::checkOneSelector(const SelectorCheckingContext& context, P
         case CSSSelector::PseudoReadOnly:
             if (!element || !element->isFormControlElement())
                 return false;
-            return element->isTextFormControl() && !element->shouldMatchReadWriteSelector();
+            return element->isTextFormControl() && element->isReadOnlyFormControl();
         case CSSSelector::PseudoReadWrite:
             if (!element || !element->isFormControlElement())
                 return false;
-            return element->isTextFormControl() && element->shouldMatchReadWriteSelector();
+            return element->isTextFormControl() && !element->isReadOnlyFormControl();
         case CSSSelector::PseudoOptional:
             return element && element->isOptionalFormControl();
         case CSSSelector::PseudoRequired:

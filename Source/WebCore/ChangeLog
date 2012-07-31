@@ -1,3 +1,36 @@
+2012-07-30  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r124171.
+        http://trac.webkit.org/changeset/124171
+        https://bugs.webkit.org/show_bug.cgi?id=92712
+
+        Start failing fast/css/square-button-appearance.html
+        (Requested by yosin on #webkit).
+
+        * css/SelectorChecker.cpp:
+        (WebCore::SelectorChecker::checkOneSelector):
+        * dom/Element.cpp:
+        * dom/Element.h:
+        (Element):
+        (WebCore::Element::isReadOnlyFormControl):
+        * html/HTMLFormControlElement.h:
+        (WebCore::HTMLFormControlElement::isReadOnlyFormControl):
+        * html/shadow/SliderThumbElement.cpp:
+        (WebCore::SliderThumbElement::isReadOnlyFormControl):
+        (WebCore::SliderThumbElement::willRespondToMouseMoveEvents):
+        (WebCore::SliderThumbElement::willRespondToMouseClickEvents):
+        * html/shadow/SliderThumbElement.h:
+        (SliderThumbElement):
+        * html/shadow/TextControlInnerElements.cpp:
+        (WebCore::SearchFieldCancelButtonElement::willRespondToMouseClickEvents):
+        (WebCore::SpinButtonElement::willRespondToMouseMoveEvents):
+        (WebCore::SpinButtonElement::willRespondToMouseClickEvents):
+        (WebCore::InputFieldSpeechButtonElement::willRespondToMouseClickEvents):
+        * html/shadow/TextControlInnerElements.h:
+        (WebCore::SpinButtonElement::isReadOnlyFormControl):
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::isReadOnlyControl):
+
 2012-07-30  Yoshifumi Inoue  <yosin@chromium.org>
 
         [CSS] Change Element::isReadOnlyFormControl to shouldMatchReadWriteSelector or HTMLTextFormControlElement::readOnly
