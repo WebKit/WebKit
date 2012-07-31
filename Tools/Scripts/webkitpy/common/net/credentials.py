@@ -133,7 +133,7 @@ class Credentials(object):
             return
         self._keyring.set_password(self.host, username, password)
 
-    def read_credentials(self):
+    def read_credentials(self, user=User):
         username, password = self._credentials_from_environment()
         # FIXME: We don't currently support pulling the username from one
         # source and the password from a separate source.
@@ -142,13 +142,14 @@ class Credentials(object):
         if not username or not password:
             username, password = self._credentials_from_keychain(username)
 
+        if not username:
+            username = user.prompt("%s login: " % self.host)
+
         if username and not password and self._keyring:
             password = self._keyring.get_password(self.host, username)
 
-        if not username:
-            username = User.prompt("%s login: " % self.host)
         if not password:
-            password = User.prompt_password("%s password for %s: " % (self.host, username))
+            password = user.prompt_password("%s password for %s: " % (self.host, username))
             self._offer_to_store_credentials_in_keyring(username, password)
 
         return (username, password)

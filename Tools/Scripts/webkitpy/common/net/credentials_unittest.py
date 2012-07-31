@@ -32,6 +32,7 @@ import unittest
 from webkitpy.common.net.credentials import Credentials
 from webkitpy.common.system.executive import Executive
 from webkitpy.common.system.outputcapture import OutputCapture
+from webkitpy.common.system.user_mock import MockUser
 from webkitpy.thirdparty.mock import Mock
 from webkitpy.tool.mocktool import MockOptions
 from webkitpy.common.system.executive_mock import MockExecutive
@@ -178,6 +179,33 @@ password: "SECRETSAUCE"
             # FIXME: Using read_credentials here seems too broad as higher-priority
             # credential source could be affected by the user's environment.
             self.assertEqual(credentials.read_credentials(), ("test@webkit.org", "NOMNOMNOM"))
+
+    def test_keyring_without_git_repo_nor_keychain(self):
+        class MockKeyring(object):
+            def get_password(self, host, username):
+                return "NOMNOMNOM"
+
+        class FakeCredentials(MockedCredentials):
+            def _credentials_from_keychain(self, username):
+                return (None, None)
+
+            def _credentials_from_environment(self):
+                return (None, None)
+
+        class FakeUser(MockUser):
+            @classmethod
+            def prompt(cls, message, repeat=1, raw_input=raw_input):
+                return "test@webkit.org"
+
+            @classmethod
+            def prompt_password(cls, message, repeat=1, raw_input=raw_input):
+                raise AssertionError("should not prompt for password")
+
+        with _TemporaryDirectory(suffix="not_a_git_repo") as temp_dir_path:
+            credentials = FakeCredentials("fake.hostname", cwd=temp_dir_path, keyring=MockKeyring())
+            # FIXME: Using read_credentials here seems too broad as higher-priority
+            # credential source could be affected by the user's environment.
+            self.assertEqual(credentials.read_credentials(FakeUser), ("test@webkit.org", "NOMNOMNOM"))
 
 
 if __name__ == '__main__':

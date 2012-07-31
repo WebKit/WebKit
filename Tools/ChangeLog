@@ -1,3 +1,27 @@
+2012-07-30  Arnaud Renevier  <a.renevier@sisa.samsung.com>
+
+        webkit-patch: system keyring is not used to read my password
+        https://bugs.webkit.org/show_bug.cgi?id=92532
+
+        Reviewed by Dirk Pranke.
+
+        In case no username can be fetched from environment, git or keychain,
+        prompt for username, and try to get password from keyring associated
+        with that username.
+
+        * Scripts/webkitpy/common/net/credentials.py:
+        (Credentials.read_credentials):
+        * Scripts/webkitpy/common/net/credentials_unittest.py:
+        (test_keyring_without_git_repo_nor_keychain):
+        (test_keyring_without_git_repo_nor_keychain.MockKeyring):
+        (test_keyring_without_git_repo_nor_keychain.MockKeyring.get_password):
+        (test_keyring_without_git_repo_nor_keychain.FakeCredentials):
+        (test_keyring_without_git_repo_nor_keychain.FakeCredentials._credentials_from_keychain):
+        (test_keyring_without_git_repo_nor_keychain.FakeCredentials._credentials_from_environment):
+        (test_keyring_without_git_repo_nor_keychain.FakeUser):
+        (test_keyring_without_git_repo_nor_keychain.FakeUser.prompt):
+        (test_keyring_without_git_repo_nor_keychain.FakeUser.prompt_password):
+
 2012-07-30  Dirk Pranke  <dpranke@chromium.org>
 
         nrwt: move the code that identifies the chunk of tests to run into finder
