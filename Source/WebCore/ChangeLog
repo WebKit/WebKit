@@ -1,3 +1,18 @@
+2012-07-31  Alexis Menard  <alexis.menard@openbossa.org>
+
+        Get rid of "parser" type casts in CSSGrammar.y
+        https://bugs.webkit.org/show_bug.cgi?id=92760
+
+        Reviewed by Adam Barth.
+
+        r124099 now type the parser parameter, it is therefore not needed to
+        cast to CSSParser* everywhere as we know have a CSSParser* type
+        already.
+
+        No new tests : refactor with no behavior change expected.
+
+        * css/CSSGrammar.y:
+
 2012-07-31  Ian Vollick  <vollick@chromium.org>
 
         [chromium] Use WebAnimation and related classes in GraphicsLayerChromium and AnimTranslationUtil
