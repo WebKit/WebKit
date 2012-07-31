@@ -1,3 +1,21 @@
+2012-07-31  Genevieve Mak  <gmak@rim.com>
+
+        Send an onContextMenu event to the page content
+        so that context menus can be prevented. We use
+        the node's event handler because we want to use
+        the fat finger's node. If we use  the EventHandler's
+        sendContextMenuEvent it will hit test with the mouse
+        position which may not be what we want.
+        PR #184032
+        https://bugs.webkit.org/show_bug.cgi?id=92766
+
+        Reviewed by Antonio Gomes.
+        Reviewed Internally by Antonio Gomes.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::webContext):
+        (BlackBerry::WebKit::WebPagePrivate::contextNode):
+
 2012-07-31  Arvid Nilsson  <anilsson@rim.com>
 
         [BlackBerry] Backing store output flickers when using WebPageCompositor

@@ -2356,6 +2356,20 @@ Platform::WebContext WebPagePrivate::webContext(TargetDetectionStrategy strategy
     if (!m_currentContextNode)
         return context;
 
+    // Send an onContextMenu event to the current context ndoe and get the result. Since we've already figured out
+    // which node we want, we can send it directly to the node and not do a hit test. The onContextMenu event doesn't require
+    // mouse positions so we just set the position at (0,0)
+    PlatformMouseEvent mouseEvent(IntPoint(), IntPoint(), PlatformEvent::MouseMoved, 0, NoButton, TouchScreen);
+    if (m_currentContextNode->dispatchMouseEvent(mouseEvent, eventNames().contextmenuEvent, 0)) {
+        context.setFlag(Platform::WebContext::IsOnContextMenuPrevented);
+        return context;
+    }
+
+    // Unpress the mouse button if we're actually getting context.
+    EventHandler* eventHandler = focusedOrMainFrame()->eventHandler();
+    if (eventHandler->mousePressed())
+        eventHandler->setMousePressed(false);
+
     requestLayoutIfNeeded();
 
     bool nodeAllowSelectionOverride = false;
@@ -2759,10 +2773,6 @@ PassRefPtr<Node> WebPagePrivate::contextNode(TargetDetectionStrategy strategy)
     EventHandler* eventHandler = focusedOrMainFrame()->eventHandler();
     const FatFingersResult lastFatFingersResult = m_touchEventHandler->lastFatFingersResult();
     bool isTouching = lastFatFingersResult.isValid() && strategy == RectBased;
-
-    // Unpress the mouse button always.
-    if (eventHandler->mousePressed())
-        eventHandler->setMousePressed(false);
 
     // Check if we're using LinkToLink and the user is not touching the screen.
     if (m_webSettings->doesGetFocusNodeContext() && !isTouching) {
