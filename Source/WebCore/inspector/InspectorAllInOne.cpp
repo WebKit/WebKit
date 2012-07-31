@@ -69,7 +69,6 @@
 #include "InspectorWebGLAgent.cpp"
 #include "InspectorWorkerAgent.cpp"
 #include "InstrumentingAgents.cpp"
-#include "MemoryInstrumentationImpl.cpp"
 #include "NetworkResourcesData.cpp"
 #include "PageConsoleAgent.cpp"
 #include "PageDebuggerAgent.cpp"
