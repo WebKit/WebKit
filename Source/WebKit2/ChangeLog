@@ -1,3 +1,21 @@
+2012-07-31  Anders Carlsson  <andersca@apple.com>
+
+        Prefer the Oracle Java plug-in over the Apple Java plug-in
+        https://bugs.webkit.org/show_bug.cgi?id=92780
+
+        Reviewed by Oliver Hunt.
+
+        * UIProcess/Plugins/mac/PluginInfoStoreMac.mm:
+        (WebKit::findPluginWithBundleIdentifier):
+        Add a new helper for finding a plug-in with the given bundle identifier.
+
+        (WebKit::checkForPreferredPlugin):
+        Helper function for making sure that an old plug-in is never loaded if a new plug-in is found, and that the old plug-in
+        is removed from the list of loaded plug-ins if the new plug-in is found.
+
+        (WebKit::PluginInfoStore::shouldUsePlugin):
+        Prefer the Oracle Java plug-in over the Apple Java plug-in.
+
 2012-07-31  Alexey Proskuryakov  <ap@apple.com>
 
         [WK2] Use an actual WebProcessProxy when decoding messages
