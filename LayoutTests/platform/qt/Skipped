@@ -187,6 +187,7 @@ fast/dom/shadow/form-in-shadow.html
 fast/dom/shadow/get-element-by-id-in-shadow-mutation.html
 fast/dom/shadow/get-element-by-id-in-shadow-root.html
 fast/dom/shadow/iframe-shadow.html
+fast/dom/shadow/invalidate-distribution.html
 fast/dom/shadow/insertion-point-list-menu-crash.html
 fast/dom/shadow/insertion-point-shadow-crash.html
 fast/dom/shadow/insertion-point-video-crash.html
@@ -1971,6 +1972,7 @@ fast/repaint/line-flow-with-floats-in-regions.html
 fast/animation/request-animation-frame-cancel2.html
 fast/animation/request-animation-frame-detach-element.html
 fast/animation/request-animation-frame-during-modal.html
+fast/animation/request-animation-frame-timestamps.html
 
 # [Qt] fast/block/positioning/offsetLeft-offsetTop-multicolumn.html is failing
 # https://bugs.webkit.org/show_bug.cgi?id=86130

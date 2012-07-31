@@ -1,5 +1,12 @@
 2012-07-31  Csaba Osztrogonác  <ossy@webkit.org>
 
+        [Qt] Unreviewed gardening, skip new failing tests.
+
+        * platform/qt/Skipped:
+        * platform/qt/TestExpectations:
+
+2012-07-31  Csaba Osztrogonác  <ossy@webkit.org>
+
         [Qt][WK2] Unreviewed gardening. Skip failing tests and remove unnecessary expected files. (bug85203)
 
         * platform/qt-5.0-wk2/Skipped:
