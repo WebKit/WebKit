@@ -1,3 +1,22 @@
+2012-07-31  Adrienne Walker  <enne@google.com>
+
+        [Chromium] transforms/3d/point-mapping/3d-point-mapping-*.html failing on Win
+        https://bugs.webkit.org/show_bug.cgi?id=92707
+
+        Unreviewed, updating expectations after r124052.
+
+        For efficiency's sake, ScrollbarLayerChromium doesn't draw the top and
+        bottom part of the track differently on "native" scrollbars. This
+        changes the way the mock Windows scrollbars look in tests.
+
+        * platform/chromium-linux-x86/platform/chromium/virtual/gpu/fast/canvas/canvas-text-alignment-expected.png: Removed.
+        * platform/chromium-win-xp/compositing/geometry/fixed-position-iframe-composited-page-scale-down-expected.png: Removed.
+        * platform/chromium-win/platform/chromium/virtual/gpu/fast/canvas/canvas-text-alignment-expected.png:
+        * platform/chromium-win/transforms/3d/point-mapping/3d-point-mapping-expected.png:
+        * platform/chromium-win/transforms/3d/point-mapping/3d-point-mapping-origins-expected.png:
+        * platform/chromium-win/transforms/3d/point-mapping/3d-point-mapping-preserve-3d-expected.png:
+        * platform/chromium/TestExpectations:
+
 2012-07-31  Michael Saboff  <msaboff@apple.com>
 
         inspector/profiler/heap-snapshot-containment-show-all.html test crashing during WebView closing

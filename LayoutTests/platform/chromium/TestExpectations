@@ -3628,8 +3628,3 @@ BUGCR131189 : canvas/philip/tests/2d.transformation.transform.skewed.html = TEXT
 BUGCR131189 : platform/chromium/virtual/gpu/canvas/philip/tests/2d.transformation.setTransform.skewed.html = TEXT
 BUGCR131189 : platform/chromium/virtual/gpu/canvas/philip/tests/2d.transformation.transform.skewed.html = TEXT
 
-BUGWK92707 WIN : transforms/3d/point-mapping/3d-point-mapping.html = IMAGE
-BUGWK92707 WIN : transforms/3d/point-mapping/3d-point-mapping-origins.html = IMAGE
-BUGWK92707 WIN : transforms/3d/point-mapping/3d-point-mapping-preserve-3d.html = IMAGE
-BUGWK92707 WIN : compositing/geometry/fixed-position-iframe-composited-page-scale-down.html = IMAGE PASS
-BUGWK92707 WIN : platform/chromium/virtual/gpu/fast/canvas/canvas-text-alignment.html = IMAGE
