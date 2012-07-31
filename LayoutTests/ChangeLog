@@ -1,3 +1,16 @@
+2012-07-31  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed gardening, remove unnecessary expected files.
+
+        * platform/qt-5.0/fast/css/beforeSelectorOnCodeElement-expected.txt: Removed.
+        * platform/qt-5.0/fast/dom/HTMLTextAreaElement/reset-textarea-expected.png: Removed.
+        * platform/qt-5.0/fast/dom/HTMLTextAreaElement/reset-textarea-expected.txt: Removed.
+        * platform/qt-5.0/fast/dynamic/008-expected.png: Removed.
+        * platform/qt-5.0/fast/dynamic/008-expected.txt: Removed.
+        * platform/qt-5.0/fast/html/font-weight-bold-for-b-and-strong-expected.png: Removed.
+        * platform/qt-5.0/fast/html/font-weight-bold-for-b-and-strong-expected.txt: Removed.
+        * platform/qt-5.0/fast/inline/left-right-center-inline-alignment-in-ltr-and-rtl-blocks-expected.txt: Removed.
+
 2012-07-31  Tommy Widenflycht  <tommyw@google.com>
 
         Introduce a minimal RTCPeerConnection together with Dictionary changes
