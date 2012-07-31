@@ -1,3 +1,43 @@
+2012-07-30  Elliott Sprehn  <esprehn@gmail.com>
+
+        Make QuotesData use a Vector of pairs
+        https://bugs.webkit.org/show_bug.cgi?id=92448
+
+        Reviewed by Julien Chaffraix.
+
+        QuotesData::create returned an array of memory that contained in place instantiations
+        of a QuotesData and then String instances. This changes the code to use a Vector of
+        pairs making it safer and ensuring that quotes are always balanced. This also uses a
+        HashMap directly in the QuoteRenderer instead of building it on first access reducing
+        the amount of code needed for picking quotes by language.
+
+        Test: fast/css-generated-content/close-quote-negative-depth.html
+
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::collectMatchingRulesForList): Create pairs and use the new QuotesData API.
+        * rendering/RenderQuote.cpp:
+        (WebCore):
+        (WebCore::quotesDataLanguageMap): New function that returns the HashMap of languages.
+        (WebCore::basicQuotesData): Returns the simple form of quotes, " and '.
+        (WebCore::defaultQuotes): Changed to use the new map.
+        (WebCore::RenderQuote::styleDidChange):
+        (WebCore::RenderQuote::originalText): Changed to use the new getOpenQuote and getCloseQuote which ensure bounds checks.
+        * rendering/style/QuotesData.cpp:
+        (WebCore::QuotesData::create): Now returns a plain instance of QuotesData without the in place allocation.
+        (WebCore):
+        (WebCore::QuotesData::addPair): Adds an std::pair of strings ensuring quotes are always balanced.
+        (WebCore::QuotesData::getOpenQuote):
+        (WebCore::QuotesData::getCloseQuote):
+        (WebCore::QuotesData::equals): Renamed equals (added the s).
+        * rendering/style/QuotesData.h:
+        (WebCore::QuotesData::create):
+        (QuotesData):
+        (WebCore::QuotesData::QuotesData):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::setQuotes):
+        * rendering/style/StyleRareInheritedData.cpp:
+        (WebCore::StyleRareInheritedData::operator==):
+
 2012-07-30  MORITA Hajime  <morrita@google.com>
 
         Node::replaceChild() can create bad DOM topology with MutationEvent

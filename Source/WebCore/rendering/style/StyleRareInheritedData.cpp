@@ -233,7 +233,7 @@ bool StyleRareInheritedData::operator==(const StyleRareInheritedData& o) const
         && hyphenationString == o.hyphenationString
         && locale == o.locale
         && textEmphasisCustomMark == o.textEmphasisCustomMark
-        && QuotesData::equal(quotes.get(), o.quotes.get())
+        && QuotesData::equals(quotes.get(), o.quotes.get())
         && m_tabSize == o.m_tabSize
         && m_lineGrid == o.m_lineGrid
 #if ENABLE(CSS_IMAGE_ORIENTATION)

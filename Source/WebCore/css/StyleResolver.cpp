@@ -3501,22 +3501,25 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
         }
         if (value->isValueList()) {
             CSSValueList* list = static_cast<CSSValueList*>(value);
-            QuotesData* data = QuotesData::create(list->length());
-            if (!data)
-                return; // Out of memory
-            String* quotes = data->data();
-            for (CSSValueListIterator i = list; i.hasMore(); i.advance()) {
-                CSSValue* item = i.value();
-                ASSERT(item->isPrimitiveValue());
-                primitiveValue = static_cast<CSSPrimitiveValue*>(item);
-                ASSERT(primitiveValue->isString());
-                quotes[i.index()] = primitiveValue->getStringValue();
+            RefPtr<QuotesData> quotes = QuotesData::create();
+            for (size_t i = 0; i < list->length(); i += 2) {
+                CSSValue* first = list->itemWithoutBoundsCheck(i);
+                // item() returns null if out of bounds so this is safe.
+                CSSValue* second = list->item(i + 1);
+                if (!second)
+                    continue;
+                ASSERT(first->isPrimitiveValue());
+                ASSERT(second->isPrimitiveValue());
+                String startQuote = static_cast<CSSPrimitiveValue*>(first)->getStringValue();
+                String endQuote = static_cast<CSSPrimitiveValue*>(second)->getStringValue();
+                quotes->addPair(std::make_pair(startQuote, endQuote));
             }
-            m_style->setQuotes(adoptRef(data));
-        } else if (primitiveValue) {
-            ASSERT(primitiveValue->isIdent());
+            m_style->setQuotes(quotes);
+            return;
+        }
+        if (primitiveValue) {
             if (primitiveValue->getIdent() == CSSValueNone)
-                m_style->setQuotes(adoptRef(QuotesData::create(0)));
+                m_style->setQuotes(QuotesData::create());
         }
         return;
     case CSSPropertyFontFamily: {

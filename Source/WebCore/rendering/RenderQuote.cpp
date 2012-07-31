@@ -26,9 +26,7 @@
 #include "HTMLElement.h"
 #include "QuotesData.h"
 #include "RenderStyle.h"
-#include <algorithm>
 #include <wtf/text/AtomicString.h>
-#include <wtf/text/CString.h>
 
 #define UNKNOWN_DEPTH -1
 
@@ -136,89 +134,28 @@ skipNewDepthCalc:
     } while (head);
 }
 
-#define ARRAY_SIZE(Carray) (sizeof(Carray) / sizeof(*Carray))
-#define LANGUAGE_DATA(name, languageSourceArray) { name, languageSourceArray, ARRAY_SIZE(languageSourceArray) }
 #define U(x) ((const UChar*)L##x)
 
-static const UChar* simpleQuotes[] = {U("\""), U("\""), U("'"), U("'")};
+typedef HashMap<AtomicString, const QuotesData*, CaseFoldingHash> QuotesMap;
 
-static const UChar* englishQuotes[] = {U("\x201C"), U("\x201D"), U("\x2018"), U("\x2019")};
-static const UChar* norwegianQuotes[] = { U("\x00AB"), U("\x00BB"), U("\x2039"), U("\x203A") };
-static const UChar* romanianQuotes[] = { U("\x201E"), U("\x201D")};
-static const UChar* russianQuotes[] = { U("\x00AB"), U("\x00BB"), U("\x201E"), U("\x201C") };
-#undef U
-
-struct LanguageData {
-    const char *name;
-    const UChar* const* const array;
-    const int arraySize;
-    bool operator<(const LanguageData& compareTo) const
-    {
-        return strcmp(name, compareTo.name);
-    }
-};
-
-// Data mast be alphabetically sorted and in all lower case for fast comparison
-LanguageData languageData[] = {
-    LANGUAGE_DATA("en", englishQuotes),
-    LANGUAGE_DATA("no", norwegianQuotes),
-    LANGUAGE_DATA("ro", romanianQuotes),
-    LANGUAGE_DATA("ru", russianQuotes)
-};
-#undef LANGUAGE_DATA
-const LanguageData* const languageDataEnd = languageData + ARRAY_SIZE(languageData);
-
-#define defaultLanguageQuotesSource simpleQuotes
-#define defaultLanguageQuotesCount ARRAY_SIZE(defaultLanguageQuotesSource)
-
-static QuotesData* defaultLanguageQuotesValue = 0;
-static const QuotesData* defaultLanguageQuotes()
-{
-    if (!defaultLanguageQuotesValue) {
-        defaultLanguageQuotesValue = QuotesData::create(defaultLanguageQuotesCount);
-        if (!defaultLanguageQuotesValue)
-            return 0;
-        String* data = defaultLanguageQuotesValue->data();
-        for (size_t i = 0; i < defaultLanguageQuotesCount; ++i)
-            data[i] = defaultLanguageQuotesSource[i];
-    }
-    return defaultLanguageQuotesValue;
-}
-#undef defaultLanguageQuotesSource
-#undef defaultLanguageQuotesCount
-
-typedef HashMap<RefPtr<AtomicStringImpl>, QuotesData* > QuotesMap;
-
-static QuotesMap& quotesMap()
+static const QuotesMap& quotesDataLanguageMap()
 {
     DEFINE_STATIC_LOCAL(QuotesMap, staticQuotesMap, ());
+    if (staticQuotesMap.size())
+        return staticQuotesMap;
+    // FIXME: Expand this table to include all the languages in https://bug-3234-attachments.webkit.org/attachment.cgi?id=2135
+    staticQuotesMap.set("en", QuotesData::create(U("\x201C"), U("\x201D"), U("\x2018"), U("\x2019")).leakRef());
+    staticQuotesMap.set("no", QuotesData::create(U("\x00AB"), U("\x00BB"), U("\x2039"), U("\x203A")).leakRef());
+    staticQuotesMap.set("ro", QuotesData::create(U("\x201E"), U("\x201D")).leakRef());
+    staticQuotesMap.set("ru", QuotesData::create(U("\x00AB"), U("\x00BB"), U("\x201E"), U("\x201C")).leakRef());
     return staticQuotesMap;
 }
 
-static const QuotesData* quotesForLanguage(AtomicStringImpl* language)
+static const QuotesData* basicQuotesData()
 {
-    QuotesData* returnValue;
-    AtomicString lower(language->lower());
-    returnValue = quotesMap().get(lower.impl());
-    if (returnValue)
-        return returnValue;
-    CString s(static_cast<const String&>(lower).ascii());
-    LanguageData request = { s.buffer()->data(), 0, 0 };
-    const LanguageData* lowerBound = std::lower_bound<const LanguageData*, const LanguageData>(languageData, languageDataEnd, request);
-    if (lowerBound == languageDataEnd)
-        return defaultLanguageQuotes();
-    if (strncmp(lowerBound->name, request.name, strlen(lowerBound->name)))
-        return defaultLanguageQuotes();
-    returnValue = QuotesData::create(lowerBound->arraySize);
-    if (!returnValue)
-        return defaultLanguageQuotes();
-    String* data = returnValue->data();
-    for (int i = 0; i < lowerBound->arraySize; ++i)
-        data[i] = lowerBound->array[i];
-    quotesMap().set(lower.impl(), returnValue);
-    return returnValue;
+    static const QuotesData* staticBasicQuotes = QuotesData::create(U("\""), U("\""), U("'"), U("'")).leakRef();
+    return staticBasicQuotes;
 }
-#undef ARRAY_SIZE
 
 static const QuotesData* defaultQuotes(const RenderObject* object)
 {
@@ -232,16 +169,20 @@ static const QuotesData* defaultQuotes(const RenderObject* object)
     } else if (!node->isElementNode()) {
         element = node->parentElement();
         if (!element)
-            return defaultLanguageQuotes();
+            return basicQuotesData();
     } else
       element = toElement(node);
-    const AtomicString* language;
-    while ((language = &element->getAttribute(langString)) && language->isNull()) {
+    AtomicString language = element->getAttribute(langString);
+    while (language.isNull()) {
         element = element->parentElement();
         if (!element)
-            return defaultLanguageQuotes();
+            return basicQuotesData();
+        language = element->getAttribute(langString);
     }
-    return quotesForLanguage(language->impl());
+    const QuotesData* quotesData = quotesDataLanguageMap().get(language);
+    if (!quotesData)
+        return basicQuotesData();
+    return quotesData;
 }
 
 PassRefPtr<StringImpl> RenderQuote::originalText() const
@@ -252,30 +193,19 @@ PassRefPtr<StringImpl> RenderQuote::originalText() const
     const QuotesData* quotes = style()->quotes();
     if (!quotes)
         quotes = defaultQuotes(this);
-    if (!quotes->length)
-        return emptyAtom.impl();
-    int index = m_depth * 2;
     switch (m_type) {
     case NO_OPEN_QUOTE:
     case NO_CLOSE_QUOTE:
-        return emptyString().impl();
+        return StringImpl::empty();
     case CLOSE_QUOTE:
-        if (index)
-            --index;
-        else
-            ++index;
-        break;
+        // FIXME: When m_depth is 0 we should return empty string.
+        return quotes->getCloseQuote(std::max(m_depth - 1, 0)).impl();
     case OPEN_QUOTE:
-        break;
+        return quotes->getOpenQuote(m_depth).impl();
     default:
         ASSERT_NOT_REACHED();
-        return emptyAtom.impl();
+        return StringImpl::empty();
     }
-    if (index >= quotes->length)
-        index = (quotes->length-2) | (index & 1);
-    if (index < 0)
-        return emptyAtom.impl();
-    return quotes->data()[index].impl();
 }
 
 void RenderQuote::computePreferredLogicalWidths(float lead)
@@ -333,7 +263,7 @@ void RenderQuote::styleDidChange(StyleDifference diff, const RenderStyle* oldSty
 {
     const QuotesData* newQuotes = style()->quotes();
     const QuotesData* oldQuotes = oldStyle ? oldStyle->quotes() : 0;
-    if (!QuotesData::equal(newQuotes, oldQuotes))
+    if (!QuotesData::equals(newQuotes, oldQuotes))
         setNeedsLayoutAndPrefWidthsRecalc();
     RenderText::styleDidChange(diff, oldStyle);
 }

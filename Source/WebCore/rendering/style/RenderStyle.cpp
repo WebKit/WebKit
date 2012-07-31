@@ -700,7 +700,7 @@ void RenderStyle::setCursorList(PassRefPtr<CursorList> other)
 
 void RenderStyle::setQuotes(PassRefPtr<QuotesData> q)
 {
-    if (QuotesData::equal(rareInheritedData->quotes.get(), q.get()))
+    if (QuotesData::equals(rareInheritedData->quotes.get(), q.get()))
         return;
     rareInheritedData.access()->quotes = q;
 }

@@ -1,5 +1,6 @@
 /**
  * Copyright (C) 2011 Nokia Inc.  All rights reserved.
+ * Copyright (C) 2012 Google Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -23,38 +24,53 @@
 
 namespace WebCore {
 
-QuotesData* QuotesData::create(int stringCount)
+PassRefPtr<QuotesData> QuotesData::create(String open, String close)
 {
-    char* tmp = new char[sizeof(QuotesData)+sizeof(String)*stringCount];
-    if (!tmp)
-        return 0;
-    QuotesData* ret = new (tmp) QuotesData(stringCount);
-    for (int i = 0; i < stringCount; ++i)
-        new (tmp +sizeof(QuotesData) + sizeof(String)*i) String();
-    return ret;
+    RefPtr<QuotesData> data = QuotesData::create();
+    data->addPair(std::make_pair(open, close));
+    return data;
 }
 
-bool QuotesData::equal(const QuotesData* quotesData1, const QuotesData* quotesData2)
+PassRefPtr<QuotesData> QuotesData::create(String open1, String close1, String open2, String close2)
 {
-    if (quotesData1 == quotesData2)
+    RefPtr<QuotesData> data = QuotesData::create();
+    data->addPair(std::make_pair(open1, close1));
+    data->addPair(std::make_pair(open2, close2));
+    return data;
+}
+
+void QuotesData::addPair(std::pair<String, String> quotePair)
+{
+    m_quotePairs.append(quotePair);
+}
+
+const String QuotesData::getOpenQuote(int index) const
+{
+    ASSERT(index >= 0);
+    if (!m_quotePairs.size())
+        return emptyString();
+    if ((size_t)index >= m_quotePairs.size())
+        return m_quotePairs.last().first;
+    return m_quotePairs.at(index).first;
+}
+
+const String QuotesData::getCloseQuote(int index) const
+{
+    ASSERT(index >= 0);
+    if (!m_quotePairs.size())
+        return emptyString();
+    if ((size_t)index >= m_quotePairs.size())
+        return m_quotePairs.last().second;
+    return m_quotePairs.at(index).second;
+}
+
+bool QuotesData::equals(const QuotesData* a, const QuotesData* b)
+{
+    if (a == b)
         return true;
-    if (!quotesData1 || !quotesData2)
+    if (!a || !b)
         return false;
-    if (quotesData1->length != quotesData2->length)
-        return false;
-    const String* data1 = quotesData1->data();
-    const String* data2 = quotesData2->data();
-    for (int i = quotesData1->length - 1; i >= 0; --i)
-        if (data1[i] != data2[i])
-            return false;
-    return true;
-}
-
-QuotesData::~QuotesData()
-{
-    String* p = data();
-    for (int i = 0; i < length; ++i)
-        p[i].~String();
+    return a->m_quotePairs == b->m_quotePairs;
 }
 
 } // namespace WebCore

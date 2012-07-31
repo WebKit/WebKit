@@ -1,3 +1,16 @@
+2012-07-30  Elliott Sprehn  <esprehn@gmail.com>
+
+        Make QuotesData use a Vector of pairs
+        https://bugs.webkit.org/show_bug.cgi?id=92448
+
+        Reviewed by Julien Chaffraix.
+
+        Test that when quote depths go negative we do not output quotes. The expected result
+        is wrong right now because we output quotes in this case when we should not.
+
+        * fast/css-generated-content/close-quote-negative-depth-expected.html: Added.
+        * fast/css-generated-content/close-quote-negative-depth.html: Added.
+
 2012-07-30  MORITA Hajime  <morrita@google.com>
 
         Node::replaceChild() can create bad DOM topology with MutationEvent
