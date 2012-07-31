@@ -1,5 +1,22 @@
 2012-07-30  Lucas Forschler  <lforschler@apple.com>
 
+    Merge 123637
+
+    2012-07-25  Beth Dakin  <bdakin@apple.com>
+
+            https://bugs.webkit.org/show_bug.cgi?id=89114
+            REGRESSION (r112919): Setting scrollTop after setting display from none to block 
+            fails
+            -and corresponding-
+            <rdar://problem/11656050>
+
+            Reviewed by Simon Fraser.
+
+            * fast/overflow/setting-scrollTop-after-hide-show-expected.txt: Added.
+            * fast/overflow/setting-scrollTop-after-hide-show.html: Added.
+
+2012-07-30  Lucas Forschler  <lforschler@apple.com>
+
     Merge 123415
 
     2012-07-23  Roger Fong  <roger_fong@apple.com>
