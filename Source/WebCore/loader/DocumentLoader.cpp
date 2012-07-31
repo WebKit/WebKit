@@ -335,7 +335,8 @@ void DocumentLoader::commitData(const char* bytes, size_t length)
             m_frame->document()->setBaseURLOverride(m_archive->mainResource()->url());
 #endif
 
-        frameLoader()->receivedFirstData();
+        if (!frameLoader()->isReplacing())
+            frameLoader()->receivedFirstData();
 
         bool userChosen = true;
         String encoding = overrideEncoding();
@@ -366,7 +367,7 @@ void DocumentLoader::receivedData(const char* data, int length)
 
 void DocumentLoader::setupForReplaceByMIMEType(const String& newMIMEType)
 {
-    if (!m_gotFirstByte)
+    if (!mainResourceData())
         return;
     
     String oldMIMEType = m_response.mimeType();
