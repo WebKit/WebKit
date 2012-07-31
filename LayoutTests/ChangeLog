@@ -1,3 +1,15 @@
+2012-07-31  Luke Macpherson   <macpherson@chromium.org>
+
+        Heap-use-after-free in WebCore::StyleResolver::loadPendingImage
+        https://bugs.webkit.org/show_bug.cgi?id=92606
+
+        Reviewed by Abhishek Arya.
+
+        Exercises the codepath where an image is loaded using a url specified via a variable.
+
+        * fast/css/variables/deferred-image-load-from-variable-expected.txt: Added.
+        * fast/css/variables/deferred-image-load-from-variable.html: Added.
+
 2012-07-31  Peter Kasting  <pkasting@google.com>
 
         [Chromium] Rebaselines.
