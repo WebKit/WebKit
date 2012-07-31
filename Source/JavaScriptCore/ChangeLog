@@ -1,3 +1,17 @@
+2012-07-31  Sam Weinig  <sam@webkit.org>
+
+        Stop masking 8 bits off of the visited link hash. We need all the bits!
+        https://bugs.webkit.org/show_bug.cgi?id=92799
+
+        Reviewed by Anders Carlsson.
+
+        * runtime/Identifier.cpp:
+        (JSC::IdentifierCStringTranslator::hash):
+        (JSC::IdentifierLCharFromUCharTranslator::hash):
+        * runtime/Identifier.h:
+        (JSC::IdentifierCharBufferTranslator::hash):
+        Update for new function names.
+
 2012-07-31  Geoffrey Garen  <ggaren@apple.com>
 
         Maybe break the Windows build.

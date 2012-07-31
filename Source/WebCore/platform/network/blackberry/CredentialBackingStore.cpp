@@ -47,7 +47,7 @@ static unsigned hashCredentialInfo(const String& url, const ProtectionSpace& spa
                                        static_cast<int>(space.serverType()),
                                        space.realm().utf8().data(),
                                        static_cast<int>(space.authenticationScheme()));
-    return StringHasher::computeHash(hashString.characters(), hashString.length());
+    return StringHasher::computeHashAndMaskTop8Bits(hashString.characters(), hashString.length());
 }
 
 CredentialBackingStore& credentialBackingStore()

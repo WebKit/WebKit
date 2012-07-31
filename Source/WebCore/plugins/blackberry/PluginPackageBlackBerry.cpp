@@ -196,7 +196,7 @@ unsigned PluginPackage::hash() const
         m_path.impl()->hash()
     };
 
-    return StringHasher::computeHash(reinterpret_cast<const UChar*>(hashCodes), sizeof(hashCodes) / sizeof(UChar));
+    return StringHasher::computeHashAndMaskTop8Bits(reinterpret_cast<const UChar*>(hashCodes), sizeof(hashCodes) / sizeof(UChar));
 }
 
 bool PluginPackage::load()

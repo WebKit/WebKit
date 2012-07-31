@@ -356,7 +356,7 @@ ConversionResult convertUTF8ToUTF16(
     return result;
 }
 
-unsigned calculateStringHashAndLengthFromUTF8(const char* data, const char* dataEnd, unsigned& dataLength, unsigned& utf16Length)
+unsigned calculateStringHashAndLengthFromUTF8MaskingTop8Bits(const char* data, const char* dataEnd, unsigned& dataLength, unsigned& utf16Length)
 {
     if (!data)
         return 0;
@@ -404,7 +404,7 @@ unsigned calculateStringHashAndLengthFromUTF8(const char* data, const char* data
             return 0;
     }
 
-    return stringHasher.hash();
+    return stringHasher.hashWithTop8BitsMasked();
 }
 
 bool equalUTF16WithUTF8(const UChar* a, const UChar* aEnd, const char* b, const char* bEnd)

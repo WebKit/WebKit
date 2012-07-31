@@ -428,7 +428,7 @@ private:
     {
         ASSERT(!hasHash());
         // Multiple clients assume that StringHasher is the canonical string hash function.
-        ASSERT(hash == (is8Bit() ? StringHasher::computeHash(m_data8, m_length) : StringHasher::computeHash(m_data16, m_length)));
+        ASSERT(hash == (is8Bit() ? StringHasher::computeHashAndMaskTop8Bits(m_data8, m_length) : StringHasher::computeHashAndMaskTop8Bits(m_data16, m_length)));
         ASSERT(!(hash & (s_flagMask << (8 * sizeof(hash) - s_flagCount)))); // Verify that enough high bits are empty.
         
         hash <<= s_flagCount;

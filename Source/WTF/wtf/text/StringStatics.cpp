@@ -64,9 +64,9 @@ WTF_EXPORTDATA DEFINE_GLOBAL(AtomicString, xlinkAtom, "xlink")
 NEVER_INLINE unsigned StringImpl::hashSlowCase() const
 {
     if (is8Bit())
-        setHash(StringHasher::computeHash(m_data8, m_length));
+        setHash(StringHasher::computeHashAndMaskTop8Bits(m_data8, m_length));
     else
-        setHash(StringHasher::computeHash(m_data16, m_length));
+        setHash(StringHasher::computeHashAndMaskTop8Bits(m_data16, m_length));
     return existingHash();
 }
 

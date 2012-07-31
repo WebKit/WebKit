@@ -1,3 +1,39 @@
+2012-07-31  Sam Weinig  <sam@webkit.org>
+
+        Stop masking 8 bits off of the visited link hash. We need all the bits!
+        https://bugs.webkit.org/show_bug.cgi?id=92799
+
+        Reviewed by Anders Carlsson.
+
+        * wtf/StringHasher.h:
+        (WTF::StringHasher::hashWithTop8BitsMasked):
+        (WTF::StringHasher::hash):
+        (StringHasher):
+        (WTF::StringHasher::computeHashAndMaskTop8Bits):
+        (WTF::StringHasher::hashMemory):
+        (WTF::StringHasher::avalancheBits):
+        Rename existing computeHash and hash functions to computeHashAndMaskTop8Bits
+        and hashWithTop8BitsMasked respectively. Add new computeHash and hash functions
+        that do the StringHash without the masking.
+
+        * wtf/text/AtomicString.cpp:
+        (WTF::CStringTranslator::hash):
+        (WTF::UCharBufferTranslator::hash):
+        (WTF::HashAndCharactersTranslator::hash):
+        (WTF::SubstringTranslator::hash):
+        (WTF::LCharBufferFromLiteralDataTranslator::hash):
+        (WTF::AtomicString::fromUTF8Internal):
+        * wtf/text/StringHash.h:
+        (WTF::CaseFoldingHash::hash):
+        * wtf/text/StringImpl.h:
+        (WTF::StringImpl::setHash):
+        * wtf/text/StringStatics.cpp:
+        (WTF::StringImpl::hashSlowCase):
+        * wtf/unicode/UTF8.cpp:
+        (WTF::Unicode::calculateStringHashAndLengthFromUTF8MaskingTop8Bits):
+        * wtf/unicode/UTF8.h:
+        Update for new function names.
+
 2012-07-31  Thiago Marcos P. Santos  <thiago.santos@intel.com>
 
         Add a mechanism to dump the stack trace in case of a crash

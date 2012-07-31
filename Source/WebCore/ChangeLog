@@ -1,3 +1,18 @@
+2012-07-31  Sam Weinig  <sam@webkit.org>
+
+        Stop masking 8 bits off of the visited link hash. We need all the bits!
+        https://bugs.webkit.org/show_bug.cgi?id=92799
+
+        Reviewed by Anders Carlsson.
+
+        * loader/appcache/ApplicationCacheStorage.cpp:
+        (WebCore::urlHostHash):
+        * platform/network/blackberry/CredentialBackingStore.cpp:
+        (WebCore::hashCredentialInfo):
+        * plugins/blackberry/PluginPackageBlackBerry.cpp:
+        (WebCore::PluginPackage::hash):
+        Update for new function names.
+
 2012-07-31  Chris Rogers  <crogers@google.com>
 
         Allow AudioDestination to support local/live audio input
