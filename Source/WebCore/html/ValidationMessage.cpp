@@ -180,6 +180,13 @@ void ValidationMessage::requestToHideMessage()
     m_timer->startOneShot(0);
 }
 
+bool ValidationMessage::shadowTreeContains(Node* node) const
+{
+    if (!m_bubble)
+        return false;
+    return m_bubble->treeScope() == node->treeScope();
+}
+
 void ValidationMessage::deleteBubbleTree(Timer<ValidationMessage>*)
 {
     if (m_bubble) {

@@ -331,7 +331,11 @@ RenderObject* HTMLSelectElement::createRenderer(RenderArena* arena, RenderStyle*
 
 bool HTMLSelectElement::childShouldCreateRenderer(const NodeRenderingContext& childContext) const
 {
-    return childContext.isOnUpperEncapsulationBoundary() && HTMLFormControlElementWithState::childShouldCreateRenderer(childContext);
+    if (!HTMLFormControlElementWithState::childShouldCreateRenderer(childContext))
+        return false;
+    if (!usesMenuList())
+        return true;
+    return validationMessageShadowTreeContains(childContext.node());
 }
 
 HTMLCollection* HTMLSelectElement::selectedOptions()
