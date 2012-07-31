@@ -1,3 +1,14 @@
+2012-07-31  Shawn Singh  <shawnsingh@chromium.org>
+
+        [chromium] Hit test points are being clipped by layers that should not clip
+        https://bugs.webkit.org/show_bug.cgi?id=92786
+
+        Reviewed by James Robinson.
+
+        * tests/CCLayerTreeHostCommonTest.cpp: adds a test where the
+          hit-testable layer does not overlap its parent. The parent does
+          not clip, so the layer should still be hittable.
+
 2012-07-31  Chris Rogers  <crogers@google.com>
 
         Allow AudioDestination to support local/live audio input

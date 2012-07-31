@@ -918,7 +918,7 @@ static bool pointIsClippedBySurfaceOrClipRect(const IntPoint& viewportPoint, CCL
         // Note that drawableContentRects are actually in targetSurface space, so the transform we
         // have to provide is the target surface's screenSpaceTransform.
         CCLayerImpl* renderTarget = currentLayer->renderTarget();
-        if (!pointHitsRect(viewportPoint, renderTarget->renderSurface()->screenSpaceTransform(), currentLayer->drawableContentRect()))
+        if (layerClipsSubtree(currentLayer) && !pointHitsRect(viewportPoint, renderTarget->renderSurface()->screenSpaceTransform(), currentLayer->drawableContentRect()))
             return true;
 
         currentLayer = currentLayer->parent();

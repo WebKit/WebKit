@@ -3039,6 +3039,70 @@ TEST(CCLayerTreeHostCommonTest, verifyHitTestingForMultiClippedRotatedLayer)
     EXPECT_EQ(2468, resultLayer->id());
 }
 
+TEST(CCLayerTreeHostCommonTest, verifyHitTestingForNonClippingIntermediateLayer)
+{
+    // This test checks that hit testing code does not accidentally clip to layer
+    // bounds for a layer that actually does not clip.
+    DebugScopedSetImplThread thisScopeIsOnImplThread;
+
+    WebTransformationMatrix identityMatrix;
+    FloatPoint anchor(0, 0);
+
+    OwnPtr<CCLayerImpl> root = CCLayerImpl::create(1);
+    setLayerPropertiesForTesting(root.get(), identityMatrix, identityMatrix, anchor, FloatPoint(0, 0), IntSize(100, 100), false);
+
+    {
+        OwnPtr<CCLayerImpl> intermediateLayer = CCLayerImpl::create(123);
+        FloatPoint position(10, 10); // this layer is positioned, and hit testing should correctly know where the layer is located.
+        IntSize bounds(50, 50);
+        setLayerPropertiesForTesting(intermediateLayer.get(), identityMatrix, identityMatrix, anchor, position, bounds, false);
+        // Sanity check the intermediate layer should not clip.
+        ASSERT_FALSE(intermediateLayer->masksToBounds());
+        ASSERT_FALSE(intermediateLayer->maskLayer());
+
+        // The child of the intermediateLayer is translated so that it does not overlap intermediateLayer at all.
+        // If child is incorrectly clipped, we would not be able to hit it successfully.
+        OwnPtr<CCLayerImpl> child = CCLayerImpl::create(456);
+        position = FloatPoint(60, 60); // 70, 70 in screen space
+        bounds = IntSize(20, 20);
+        setLayerPropertiesForTesting(child.get(), identityMatrix, identityMatrix, anchor, position, bounds, false);
+        child->setDrawsContent(true);
+        intermediateLayer->addChild(child.release());
+        root->addChild(intermediateLayer.release());
+    }
+
+    Vector<CCLayerImpl*> renderSurfaceLayerList;
+    int dummyMaxTextureSize = 512;
+    CCLayerTreeHostCommon::calculateDrawTransforms(root.get(), root->bounds(), 1, 0, dummyMaxTextureSize, renderSurfaceLayerList);
+    CCLayerTreeHostCommon::calculateVisibleAndScissorRects(renderSurfaceLayerList, FloatRect()); // empty scissorRect will help ensure we're hit testing the correct rect.
+
+    // Sanity check the scenario we just created.
+    ASSERT_EQ(1u, renderSurfaceLayerList.size());
+    ASSERT_EQ(1u, root->renderSurface()->layerList().size());
+    ASSERT_EQ(456, root->renderSurface()->layerList()[0]->id());
+
+    // Hit testing for a point outside the layer should return a null pointer.
+    IntPoint testPoint(69, 69);
+    CCLayerImpl* resultLayer = CCLayerTreeHostCommon::findLayerThatIsHitByPoint(testPoint, renderSurfaceLayerList);
+    EXPECT_FALSE(resultLayer);
+
+    testPoint = IntPoint(91, 91);
+    resultLayer = CCLayerTreeHostCommon::findLayerThatIsHitByPoint(testPoint, renderSurfaceLayerList);
+    EXPECT_FALSE(resultLayer);
+
+    // Hit testing for a point inside should return the child layer.
+    testPoint = IntPoint(71, 71);
+    resultLayer = CCLayerTreeHostCommon::findLayerThatIsHitByPoint(testPoint, renderSurfaceLayerList);
+    ASSERT_TRUE(resultLayer);
+    EXPECT_EQ(456, resultLayer->id());
+
+    testPoint = IntPoint(89, 89);
+    resultLayer = CCLayerTreeHostCommon::findLayerThatIsHitByPoint(testPoint, renderSurfaceLayerList);
+    ASSERT_TRUE(resultLayer);
+    EXPECT_EQ(456, resultLayer->id());
+}
+
+
 TEST(CCLayerTreeHostCommonTest, verifyHitTestingForMultipleLayers)
 {
     DebugScopedSetImplThread thisScopeIsOnImplThread;

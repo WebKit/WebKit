@@ -1,3 +1,20 @@
+2012-07-31  Shawn Singh  <shawnsingh@chromium.org>
+
+        [chromium] Hit test points are being clipped by layers that should not clip
+        https://bugs.webkit.org/show_bug.cgi?id=92786
+
+        Reviewed by James Robinson.
+
+        On impl-side hit testing for chromium compositor, we are
+        accidentally checking all ancestor layers for clipping, instead of
+        only layers that actually clip something. This patch fixes it.
+
+        Added new unit test that reproduces the scenario:
+          CCLayerTreeHostCommonTest.verifyHitTestingForNonClippingIntermediateLayer
+
+        * platform/graphics/chromium/cc/CCLayerTreeHostCommon.cpp:
+        (WebCore::pointIsClippedBySurfaceOrClipRect):
+
 2012-07-31  James Robinson  <jamesr@chromium.org>
 
         [chromium] REGRESSION(r123644) Compositor HUD crashes immediately with --show-paint-rects
