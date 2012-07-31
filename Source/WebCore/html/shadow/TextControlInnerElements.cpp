@@ -203,7 +203,7 @@ void SearchFieldCancelButtonElement::defaultEventHandler(Event* event)
 {
     // If the element is visible, on mouseup, clear the value, and set selection
     RefPtr<HTMLInputElement> input(static_cast<HTMLInputElement*>(shadowHost()));
-    if (input->disabled() || input->isReadOnlyFormControl()) {
+    if (input->disabled() || input->readOnly()) {
         if (!event->defaultHandled())
             HTMLDivElement::defaultEventHandler(event);
         return;
@@ -293,7 +293,7 @@ void SpinButtonElement::defaultEventHandler(Event* event)
     }
 
     RefPtr<HTMLInputElement> input(static_cast<HTMLInputElement*>(shadowHost()));
-    if (input->disabled() || input->isReadOnlyFormControl()) {
+    if (input->disabled() || input->readOnly()) {
         if (!event->defaultHandled())
             HTMLDivElement::defaultEventHandler(event);
         return;
@@ -397,7 +397,7 @@ void SpinButtonElement::stopRepeatingTimer()
 void SpinButtonElement::step(int amount)
 {
     HTMLInputElement* input = static_cast<HTMLInputElement*>(shadowHost());
-    if (input->disabled() || input->isReadOnlyFormControl())
+    if (input->disabled() || input->readOnly())
         return;
     // On Mac OS, NSStepper updates the value for the button under the mouse
     // cursor regardless of the button pressed at the beginning. So the
@@ -463,7 +463,7 @@ void InputFieldSpeechButtonElement::defaultEventHandler(Event* event)
     // here, we take a temporary reference.
     RefPtr<HTMLInputElement> input(static_cast<HTMLInputElement*>(shadowHost()));
 
-    if (input->disabled() || input->isReadOnlyFormControl()) {
+    if (input->disabled() || input->readOnly()) {
         if (!event->defaultHandled())
             HTMLDivElement::defaultEventHandler(event);
         return;
@@ -551,7 +551,7 @@ void InputFieldSpeechButtonElement::setRecognitionResult(int, const SpeechInputR
     // remove the input element from DOM. To make sure it remains valid until we finish our work
     // here, we take a temporary reference.
     RefPtr<HTMLInputElement> input(static_cast<HTMLInputElement*>(shadowHost()));
-    if (input->disabled() || input->isReadOnlyFormControl())
+    if (input->disabled() || input->readOnly())
         return;
 
     RefPtr<InputFieldSpeechButtonElement> holdRefButton(this);

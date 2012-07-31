@@ -1,3 +1,17 @@
+2012-07-30  Yoshifumi Inoue  <yosin@chromium.org>
+
+        [Forms] Get rid of Element::isReadOnlyFormControl other than CSS related
+        https://bugs.webkit.org/show_bug.cgi?id=92612
+
+        Reviewed by Kent Tamura.
+
+        This patch replaces Element::isReadOnlyFormControl() to
+        HTMLFormControlElement::readOnly() for preparation of introducing
+        Element::shouldMatchReadWriteSelector(), bug 92602.
+
+        * WebKitSupport/DOMSupport.cpp:
+        (BlackBerry::WebKit::DOMSupport::isTextBasedContentEditableElement): Replaced isReadOnlyFormControl() by HTMLTextFormControlElement::readOnly().
+
 2012-07-30  Mike Fenton  <mifenton@rim.com>
 
         [BlackBerry] Optimize the generation of selection details generation.

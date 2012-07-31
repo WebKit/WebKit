@@ -1571,7 +1571,7 @@ bool RenderThemeMac::paintSearchFieldCancelButton(RenderObject* o, const PaintIn
 
     NSSearchFieldCell* search = this->search();
 
-    if (input->isEnabledFormControl() && !input->isReadOnlyFormControl()) {
+    if (input->isEnabledFormControl() && (input->isTextFormControl() && !static_cast<HTMLTextFormControlElement*>(input)->readOnly())) {
         updateActiveState([search cancelButtonCell], o);
         updatePressedState([search cancelButtonCell], o);
     }
