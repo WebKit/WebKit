@@ -60,9 +60,9 @@ InspectorDOMStorageResource::InspectorDOMStorageResource(StorageArea* storageAre
 {
 }
 
-bool InspectorDOMStorageResource::isSameHostAndType(SecurityOrigin* securityOrigin, bool isLocalStorage) const
+bool InspectorDOMStorageResource::isSameOriginAndType(SecurityOrigin* securityOrigin, bool isLocalStorage) const
 {
-    return equalIgnoringCase(m_frame->document()->securityOrigin()->host(), securityOrigin->host()) && m_isLocalStorage == isLocalStorage;
+    return m_frame->document()->securityOrigin()->equal(securityOrigin) && m_isLocalStorage == isLocalStorage;
 }
 
 void InspectorDOMStorageResource::bind(InspectorFrontend* frontend)
@@ -71,7 +71,7 @@ void InspectorDOMStorageResource::bind(InspectorFrontend* frontend)
     m_frontend = frontend->domstorage();
 
     RefPtr<TypeBuilder::DOMStorage::Entry> jsonObject = TypeBuilder::DOMStorage::Entry::create()
-        .setHost(m_frame->document()->securityOrigin()->host())
+        .setHost(m_frame->document()->securityOrigin()->toRawString())
         .setIsLocalStorage(m_isLocalStorage)
         .setId(m_id);
     m_frontend->addDOMStorage(jsonObject);

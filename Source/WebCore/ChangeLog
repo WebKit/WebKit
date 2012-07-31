@@ -1,3 +1,26 @@
+2012-07-31  Alexei Filippov  <alexeif@chromium.org>
+
+        Web Inspector: take into account the whole security origin instead of just host
+        https://bugs.webkit.org/show_bug.cgi?id=92740
+
+        Reviewed by Pavel Feldman.
+
+        Make the DOM Storage Agent take into account all the
+        information relevant to the security origin, i.e. protocol, host, and
+        port. Previously only the host was taken into account. That caused
+        inspector to show the first storage only in the case a page operated
+        over several security origins sharing the same host (but having
+        different protocols e.g. http and https).
+
+        * inspector/InspectorDOMStorageAgent.cpp:
+        (WebCore::InspectorDOMStorageAgent::storageId):
+        (WebCore::InspectorDOMStorageAgent::didUseDOMStorage):
+        * inspector/InspectorDOMStorageResource.cpp:
+        (WebCore::InspectorDOMStorageResource::isSameOriginAndType):
+        (WebCore::InspectorDOMStorageResource::bind):
+        * inspector/InspectorDOMStorageResource.h:
+        (InspectorDOMStorageResource):
+
 2012-07-31  Keishi Hattori  <keishi@webkit.org>
 
         Slider ticks are drawn at wrong positions
