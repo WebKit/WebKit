@@ -273,7 +273,12 @@ void AlternativeTextController::applyAlternativeTextToRange(const Range* range, 
 
     // Clone the range, since the caller of this method may want to keep the original range around.
     RefPtr<Range> rangeWithAlternative = range->cloneRange(ec);
+    
+    int paragraphStartIndex = TextIterator::rangeLength(Range::create(m_frame->document(), m_frame->document(), 0, paragraphRangeContainingCorrection.get()->startContainer(), paragraphRangeContainingCorrection.get()->startOffset()).get());
     applyCommand(SpellingCorrectionCommand::create(rangeWithAlternative, alternative));
+    // Recalculate pragraphRangeContainingCorrection, since SpellingCorrectionCommand modified the DOM, such that the original paragraphRangeContainingCorrection is no longer valid. Radar: 10305315 Bugzilla: 89526
+    paragraphRangeContainingCorrection = TextIterator::rangeFromLocationAndLength(m_frame->document()->documentElement(), paragraphStartIndex, correctionStartOffsetInParagraph + alternative.length());
+    
     setEnd(paragraphRangeContainingCorrection.get(), m_frame->selection()->selection().start());
     RefPtr<Range> replacementRange = TextIterator::subrange(paragraphRangeContainingCorrection.get(), correctionStartOffsetInParagraph, alternative.length());
     String newText = plainText(replacementRange.get());

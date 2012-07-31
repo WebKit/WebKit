@@ -947,6 +947,14 @@ bool Internals::hasSpellingMarker(Document* document, int from, int length, Exce
 
     return document->frame()->editor()->selectionStartHasMarkerFor(DocumentMarker::Spelling, from, length);
 }
+    
+bool Internals::hasAutocorrectedMarker(Document* document, int from, int length, ExceptionCode&)
+{
+    if (!document || !document->frame())
+        return 0;
+    
+    return document->frame()->editor()->selectionStartHasMarkerFor(DocumentMarker::Autocorrected, from, length);
+}
 
 #if ENABLE(INSPECTOR)
 unsigned Internals::numberOfLiveNodes() const

@@ -1,0 +1,24 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+    <script src="../../../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description">This test checks that markers are correct when auto correcting in the blockquote. If you type "n" and " ", there should be blue dots under information, but is off by one. <br> Note, this test can fail due to user specific spell checking data. If the user has previously dismissed 'notational' as the correct spelling of 'notationl' several times, the spell checker will not provide 'information' as a suggestion anymore. To fix this, remove all files in ~/Library/Spelling.</p>
+<div id="console"></div>
+
+<div id = "test" contentEditable="true" spellCheck="true"><blockquote type="cite"><font style = "font-family:Arial"><br> would this <b id = "bold"><br></b><b><br></b>make a difference?<span><br></span><span><br></span></font></blockquote></div>
+
+<script language="javascript">
+    // Insert some text with a typographical error in it, so autocorrection occurs.
+    window.getSelection().setPosition(document.getElementById("bold"), 1);
+    document.execCommand("InsertText", false, "test infomatio");
+    eventSender.keyDown('n');
+    eventSender.keyDown(' ');
+    
+    if(window.internals)
+        shouldBeTrue('internals.hasAutocorrectedMarker(document, 0, 1)');
+</script>
+<script src="../../../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

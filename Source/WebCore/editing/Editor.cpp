@@ -2110,8 +2110,13 @@ void Editor::markAndReplaceFor(PassRefPtr<SpellCheckRequest> request, const Vect
                 if (canEditRichly())
                     applyCommand(CreateLinkCommand::create(m_frame->document(), result->replacement));
             } else if (canEdit() && shouldInsertText(result->replacement, rangeToReplace.get(), EditorInsertActionTyped)) {
+                int paragraphStartIndex = TextIterator::rangeLength(Range::create(m_frame->document(), m_frame->document(), 0, paragraph.paragraphRange()->startContainer(), paragraph.paragraphRange()->startOffset()).get());
+                int paragraphLength = TextIterator::rangeLength(paragraph.paragraphRange().get());
                 applyCommand(SpellingCorrectionCommand::create(rangeToReplace, result->replacement));
-
+                // Recalculate newParagraphRange, since SpellingCorrectionCommand modifies the DOM, such that the original paragraph range is no longer valid. Radar: 10305315 Bugzilla: 89526
+                RefPtr<Range> newParagraphRange = TextIterator::rangeFromLocationAndLength(m_frame->document()->documentElement(), paragraphStartIndex, paragraphLength+replacementLength-resultLength);
+                paragraph = TextCheckingParagraph(TextIterator::subrange(newParagraphRange.get(), resultLocation, replacementLength), newParagraphRange);
+                
                 if (AXObjectCache::accessibilityEnabled()) {
                     if (Element* root = m_frame->selection()->selection().rootEditableElement())
                         m_frame->document()->axObjectCache()->postNotification(root->renderer(), AXObjectCache::AXAutocorrectionOccured, true);

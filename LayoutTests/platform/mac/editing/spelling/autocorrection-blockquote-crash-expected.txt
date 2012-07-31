@@ -1,0 +1,12 @@
+This test checks that markers are correct when auto correcting in the blockquote. If you type "n" and " ", there should be blue dots under information, but is off by one.
+
+PASS internals.hasAutocorrectedMarker(document, 0, 1) is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+would this 
+testinformation 
+make a difference?
+
+

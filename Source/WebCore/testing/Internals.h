@@ -150,6 +150,7 @@ public:
 
     bool hasSpellingMarker(Document*, int from, int length, ExceptionCode&);
     bool hasGrammarMarker(Document*, int from, int length, ExceptionCode&);
+    bool hasAutocorrectedMarker(Document*, int from, int length, ExceptionCode&);
 
     unsigned numberOfScrollableAreas(Document*, ExceptionCode&);
 
