@@ -227,6 +227,16 @@ static Vector<PageGroupLoadDeferrer*>& pageGroupLoadDeferrerStack()
     return deferrerStack;
 }
 
+#if ENABLE(TOUCH_EVENTS)
+static Color tapHighlightColorForNode(const Node* node)
+{
+    Color tapHighlightColor = RenderStyle::initialTapHighlightColor().rgb();
+    if (node && node->renderer())
+        tapHighlightColor = node->renderer()->style()->tapHighlightColor().rgb();
+    return tapHighlightColor;
+}
+#endif
+
 // Ensure that the WebDragOperation enum values stay in sync with the original
 // DragOperation constants.
 #define COMPILE_ASSERT_MATCHING_ENUM(coreName) \
@@ -3799,10 +3809,49 @@ WebGraphicsContext3D* WebViewImpl::sharedGraphicsContext3D()
     return GraphicsContext3DPrivate::extractWebGraphicsContext3D(SharedGraphicsContext3D::get().get());
 }
 
+void WebViewImpl::showTouchHighlightQuads(const WebVector<WebFloatQuad>& highlight, WebColor highlightColor)
+{
+    // FIXME: Upstream this function from the chromium-android branch.
+    notImplemented();
+}
+
 void WebViewImpl::selectAutofillSuggestionAtIndex(unsigned listIndex)
 {
     if (m_autofillPopupClient && listIndex < m_autofillPopupClient->getSuggestionsCount())
         m_autofillPopupClient->valueChanged(listIndex);
+}
+
+bool WebViewImpl::detectContentIntentOnTouch(const WebPoint& position, WebInputEvent::Type touchType)
+{
+    ASSERT(touchType == WebInputEvent::GestureTap || touchType == WebInputEvent::GestureLongPress);
+    HitTestResult touchHit = hitTestResultForWindowPos(position);
+
+    if (touchHit.isContentEditable())
+        return false;
+
+    Node* node = touchHit.innerNode();
+    if (!node || !node->isTextNode())
+        return false;
+
+    // FIXME: Should we not detect content intents in nodes that have event listeners?
+
+    WebContentDetectionResult content = m_client->detectContentIntentAround(touchHit);
+    if (!content.isValid())
+        return false;
+
+    if (touchType == WebInputEvent::GestureLongPress) {
+        // Select the detected content as a block.
+        focusedFrame()->selectRange(content.range());
+        return true;
+    }
+
+    // Temporarily highlight the content as we do with links.
+    Color tapHighlightColor = tapHighlightColorForNode(touchHit.innerNode());
+    WebVector<WebFloatQuad> quads = content.range().textQuads();
+    showTouchHighlightQuads(quads, tapHighlightColor.rgb());
+
+    m_client->scheduleContentIntent(content.intent());
+    return true;
 }
 
 void WebViewImpl::setVisibilityState(WebPageVisibilityState visibilityState,

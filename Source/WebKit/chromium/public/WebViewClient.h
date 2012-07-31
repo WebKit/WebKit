@@ -373,7 +373,13 @@ public:
     // around a hit test result. The embedder should use platform-specific
     // content detectors (e.g., from the Android intent system) to analyze the
     // region around the hit test result.
-    virtual WebContentDetectionResult detectContentAround(const WebHitTestResult&) { return WebContentDetectionResult(); }
+    virtual WebContentDetectionResult detectContentIntentAround(const WebHitTestResult&) { return WebContentDetectionResult(); }
+
+    // Schedules a new content intent with the provided url.
+    virtual void scheduleContentIntent(const WebURL&) { }
+
+    // Cancels any previously scheduled content intents that have not yet launched.
+    virtual void cancelScheduledContentIntents() { }
 
 protected:
     ~WebViewClient() { }

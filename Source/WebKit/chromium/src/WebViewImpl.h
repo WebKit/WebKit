@@ -31,16 +31,6 @@
 #ifndef WebViewImpl_h
 #define WebViewImpl_h
 
-#include "WebNavigationPolicy.h"
-#include "platform/WebLayer.h"
-#include "platform/WebLayerTreeView.h"
-#include "platform/WebLayerTreeViewClient.h"
-#include "platform/WebPoint.h"
-#include "platform/WebRect.h"
-#include "platform/WebSize.h"
-#include "platform/WebString.h"
-#include "WebView.h"
-
 #include "ChromeClientImpl.h"
 #include "ContextMenuClientImpl.h"
 #include "DragClientImpl.h"
@@ -56,7 +46,18 @@
 #include "PageWidgetDelegate.h"
 #include "PlatformGestureCurveTarget.h"
 #include "UserMediaClientImpl.h"
+#include "WebInputEvent.h"
+#include "WebNavigationPolicy.h"
+#include "WebView.h"
 #include "WebViewBenchmarkSupportImpl.h"
+#include "platform/WebFloatQuad.h"
+#include "platform/WebLayer.h"
+#include "platform/WebLayerTreeView.h"
+#include "platform/WebLayerTreeViewClient.h"
+#include "platform/WebPoint.h"
+#include "platform/WebRect.h"
+#include "platform/WebSize.h"
+#include "platform/WebString.h"
 #include <wtf/OwnPtr.h>
 #include <wtf/RefCounted.h>
 
@@ -284,6 +285,8 @@ public:
         const WebVector<int>& itemIDs,
         int separatorIndex);
     virtual void hidePopups();
+    // FIXME: Expose showTouchHighlightQuads in the public WebView API when it does something.
+    virtual void showTouchHighlightQuads(const WebVector<WebFloatQuad>& highlight, WebColor highlightColor);
     virtual void selectAutofillSuggestionAtIndex(unsigned listIndex);
     virtual void setScrollbarColors(unsigned inactiveColor,
                                     unsigned activeColor,
@@ -382,6 +385,8 @@ public:
     // Event related methods:
     void mouseContextMenu(const WebMouseEvent&);
     void mouseDoubleClick(const WebMouseEvent&);
+
+    bool detectContentIntentOnTouch(const WebPoint&, WebInputEvent::Type);
     void startPageScaleAnimation(const WebCore::IntPoint& targetPosition, bool useAnchor, float newScale, double durationInSeconds);
 
     void numberOfWheelEventHandlersChanged(unsigned);

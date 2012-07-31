@@ -1,3 +1,32 @@
+2012-07-31  Adam Barth  <abarth@webkit.org>
+
+        [Chromium-Android] We should hueristically detect content intents on touch
+        https://bugs.webkit.org/show_bug.cgi?id=92346
+
+        Reviewed by Nate Chapin.
+
+        On Android, when the user touches a block of text, we run a bunch of
+        OS-provided hueristics to detect content intents, such as telephone
+        numbers and mailing addresses.
+
+        This patch introduces the WebViewClient functions and the
+        detectContentIntentOnTouch function, but does not wire the code into
+        the event system. There are some decisions to make about how to wire it
+        into the event system, we'll tackle in the next patch.
+
+        * public/WebViewClient.h:
+        (WebKit::WebViewClient::detectContentIntentAround):
+        (WebViewClient):
+        (WebKit::WebViewClient::scheduleContentIntent):
+        (WebKit::WebViewClient::cancelScheduledContentIntents):
+        * src/WebViewImpl.cpp:
+        (WebKit):
+        (WebKit::tapHighlightColorForNode):
+        (WebKit::WebViewImpl::showTouchHighlightQuads):
+        (WebKit::WebViewImpl::detectContentIntentOnTouch):
+        * src/WebViewImpl.h:
+        (WebViewImpl):
+
 2012-07-31  Ian Vollick  <vollick@chromium.org>
 
         [chromium] Use WebAnimation and related classes in GraphicsLayerChromium and AnimTranslationUtil
