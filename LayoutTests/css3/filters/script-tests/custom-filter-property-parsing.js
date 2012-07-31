@@ -101,6 +101,9 @@ testFilterRule("Custom with float parameters",
             "custom(none url(fragment.shader), p1 1.1, p2 2.2 3.3, p3 3.1 4.1 5.1, p4 4.1 5.2 6.3 7.4)",
             "custom(none url(fragment.shader), p1 1.1, p2 2.2 3.3, p3 3.1 4.1 5.1, p4 4.1 5.2 6.3 7.4)");
 
+testFilterRule("Custom with parameter name same as CSS value keyword",
+            "custom(none url(fragment.shader), background 0 1 0 1)",
+            "custom(none url(fragment.shader), background 0 1 0 1)");
 
 testFilterRule("Custom with mesh size and number parameters",
             "custom(none url(fragment.shader), 10 20, p1 1, p2 2 3, p3 3 4 5, p4 4 5 6 7)",

@@ -1,3 +1,24 @@
+2012-07-31  Max Vujovic  <mvujovic@adobe.com>
+
+        [CSS Shaders] CSS parser rejects parameter names that are also CSS keywords
+        https://bugs.webkit.org/show_bug.cgi?id=92537
+
+        Reviewed by Dirk Schulze.
+
+        Remove the CSS keyword check for CSS Shaders parameter names. Parameters are allowed to be
+        any valid CSS identifier, including CSS keywords. See the spec:
+        https://dvcs.w3.org/hg/FXTF/raw-file/tip/custom/index.html#feCustom
+
+        The CSS parser was rejecting input like the following because it uses a CSS keyword
+        "background" as a parameter name:
+        -webkit-filter: custom(none url(fragment.shader), background 0 1 0 1);
+
+        Test: css3/filters/custom/custom-filter-css-keyword-as-parameter-name.html
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseCustomFilter): Do not return early when the parameter name is a
+        CSS keyword (i.e. when the CSSParserValue has a non-zero id).
+
 2012-07-31  Pravin D  <pravind.2k4@gmail.com>
 
         Caret position is wrong when a editable container has word-wrap:normal set

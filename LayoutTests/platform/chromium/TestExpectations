@@ -2624,6 +2624,7 @@ BUGWK84800 WIN LINUX : css3/filters/custom/filter-repaint-custom-clipped.html = 
 BUGWK84800 WIN LINUX : css3/filters/custom/filter-repaint-custom-rotated.html = PASS IMAGE IMAGE+TEXT TEXT MISSING
 BUGWK84800 WIN LINUX : css3/filters/custom/filter-repaint-custom.html = PASS IMAGE IMAGE+TEXT TEXT MISSING
 BUGWK84800 WIN LINUX : css3/filters/custom/effect-color-check.html = PASS IMAGE IMAGE+TEXT TEXT MISSING
+BUGWK92537 WIN LINUX : css3/filters/custom/custom-filter-css-keyword-as-parameter-name.html = PASS IMAGE IMAGE+TEXT TEXT MISSING
 
 // CSS Regions tests for region styling and scoped styles
 BUGWK49142 : fast/regions/style-scoped-in-flow-override-container-style.html = PASS IMAGE IMAGE+TEXT TEXT MISSING

@@ -7448,7 +7448,7 @@ PassRefPtr<WebKitCSSFilterValue> CSSParser::parseCustomFilter(CSSParserValue* va
     RefPtr<CSSValueList> paramList = CSSValueList::createCommaSeparated();
     
     while ((arg = argsList->current())) {
-        if (arg->id || arg->unit != CSSPrimitiveValue::CSS_IDENT)
+        if (arg->unit != CSSPrimitiveValue::CSS_IDENT)
             return 0;
 
         RefPtr<CSSValueList> parameter = CSSValueList::createSpaceSeparated();
