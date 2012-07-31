@@ -1,3 +1,20 @@
+2012-07-31  Taiju Tsuiki  <tzik@chromium.org>
+
+        Fix potential build error on LocalFileSystem::deleteFileSystem.
+        https://bugs.webkit.org/show_bug.cgi?id=92695
+
+        Non-Chrome build of WebKit with FILE_SYSTEM flag will be broken at
+        LocalFileSystem::deleteFileSystem.
+        Chrome does not use this source and most of other ports don't turn on
+        FILE_SYSTEM flag for now. So, we've not seen the breakage explicitly yet.
+
+        Reviewed by Adam Barth.
+
+        Non-Chrome WebKit build with FILE_SYSTEM should be finished successfully.
+
+        * Modules/filesystem/LocalFileSystem.cpp:
+        (WebCore::LocalFileSystem::deleteFileSystem):
+
 2012-07-31  Li Yin  <li.yin@intel.com>
 
         AudioPannerNode should raise exception when distanceModel is set incorrectly
