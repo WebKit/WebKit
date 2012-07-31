@@ -124,6 +124,8 @@ class MediaPlayerPrivateGStreamer : public MediaPlayerPrivateInterface {
             unsigned audioDecodedByteCount() const;
             unsigned videoDecodedByteCount() const;
 
+            MediaPlayer::MovieLoadType movieLoadType() const;
+
         private:
             MediaPlayerPrivateGStreamer(MediaPlayer*);
 
@@ -151,6 +153,7 @@ class MediaPlayerPrivateGStreamer : public MediaPlayerPrivateInterface {
             void processBufferingStats(GstMessage*);
 
             virtual String engineDescription() const { return "GStreamer"; }
+            bool isLiveStream() const { return m_isStreaming; }
 
         private:
             MediaPlayer* m_player;
@@ -195,8 +198,11 @@ class MediaPlayerPrivateGStreamer : public MediaPlayerPrivateInterface {
             guint m_audioTimerHandler;
             guint m_videoTimerHandler;
             GRefPtr<GstElement> m_webkitAudioSink;
+            mutable long m_totalBytes;
             GRefPtr<GstPad> m_videoSinkPad;
             mutable IntSize m_videoSize;
+            KURL m_url;
+            bool m_originalPreloadWasAutoAndWasOverridden;
     };
 }
 

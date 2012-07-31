@@ -1,3 +1,44 @@
+2012-07-07  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] Live stream support is weak
+        https://bugs.webkit.org/show_bug.cgi?id=90084
+
+        Reviewed by Martin Robinson.
+
+        Make sure on-disk buffering is disabled for live streams. It is
+        enabled initially when loading any remote media file if preload is
+        set to Auto. Later on if the player detects that the media is live
+        it disables on-disk buffering. This patch also adds support for
+        caching the total size of the media.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::MediaPlayerPrivateGStreamer):
+        (WebCore::MediaPlayerPrivateGStreamer::load): Keep track of the
+        media url as an instance attribute.
+        (WebCore::MediaPlayerPrivateGStreamer::duration): Logging improvement.
+        (WebCore::MediaPlayerPrivateGStreamer::setRate): use the new
+        isLiveStream() method.
+        (WebCore::MediaPlayerPrivateGStreamer::buffered): Ditto.
+        (WebCore::MediaPlayerPrivateGStreamer::handleMessage): Indicate
+        source of duration message.
+        (WebCore::MediaPlayerPrivateGStreamer::fillTimerFired): Perform an
+        anonymous duration change emission, mostly to cache its value.
+        (WebCore::MediaPlayerPrivateGStreamer::totalBytes): Return
+        cached size when available.
+        (WebCore::MediaPlayerPrivateGStreamer::updateStates): Use the new
+        isLiveStream() method and handle state change corner cases for live streams.
+        (WebCore::MediaPlayerPrivateGStreamer::durationChanged): Cache
+        media total size and re-enable on-disk buffering if caching succeeds.
+        (WebCore::MediaPlayerPrivateGStreamer::movieLoadType): New
+        implementation handling on-disk buffered and live streaming cases.
+        (WebCore::MediaPlayerPrivateGStreamer::setPreload): Remember the
+        case where preload is updated from Auto to another value, do
+        on-disk buffering only for Auto preload attribute.
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.h:
+        (MediaPlayerPrivateGStreamer):
+        (WebCore::MediaPlayerPrivateGStreamer::isLiveStream): Utility
+        method, a stream is live if it goes to PAUSE without prerolling.
+
 2012-07-17  Antonio Gomes  <agomes@rim.com>
 
         [Blackberry][FullScreen] HTML5 <video> controls are scaled differently depending on the current webpage scale
