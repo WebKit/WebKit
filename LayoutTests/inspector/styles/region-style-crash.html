@@ -1,0 +1,42 @@
+<html>
+<head>
+<style>
+#article1 { -webkit-flow-into: flow1; }
+#region1 { -webkit-flow-from: flow1; position: absolute; top: 10px; width: 350px; height: 25px;}
+#p1 { color: #ff0000; }
+@-webkit-region #region1 {
+    #p1 { color: #008000; }
+}
+
+</style>
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="../../http/tests/inspector/elements-test.js"></script>
+<script>
+
+function test()
+{
+    WebInspector.showPanel("elements");
+    InspectorTest.selectNodeAndWaitForStylesWithComputed("p1", dumpAllStyles);
+
+    function dumpAllStyles()
+    {
+        InspectorTest.dumpSelectedElementStyles();
+        InspectorTest.completeTest();
+    }
+}
+
+</script>
+</head>
+
+<body onload="runTest()">
+<p>
+Tests that webkit css region styling can be parsed correctly. Test passes if it doesn't crash.
+</p>
+
+<div id="article1">
+    <p id="p1">P color styled in region: #008000.</p>
+</div>
+<div id="region1" class="regionBox"></div>
+
+</body>
+</html>

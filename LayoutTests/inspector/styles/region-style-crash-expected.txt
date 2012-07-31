@@ -1,0 +1,101 @@
+Tests that webkit css region styling can be parsed correctly. Test passes if it doesn't crash.
+
+P color styled in region: #008000.
+
+[expanded] 
+color: red;
+    #p1 - #ff0000 region-style-crash.html:6
+display: block;
+    p - block user agent stylesheet
+
+[expanded] 
+element.style  { ()
+
+======== Matched CSS Rules ========
+[expanded] 
+#p1  { (region-style-crash.html:8)
+
+[expanded] 
+#p1  { (region-style-crash.html:6)
+color: red;
+
+[expanded] 
+p  { (user agent stylesheet)
+display: block;
+-webkit-margin-before: 1em;
+-webkit-margin-after: 1em;
+-webkit-margin-start: 0px;
+-webkit-margin-end: 0px;
+
+
+======== Pseudo ::first-line element ========
+[expanded] 
+#p1  { (region-style-crash.html:8)
+
+
+======== Pseudo ::first-letter element ========
+[expanded] 
+#p1  { (region-style-crash.html:8)
+
+
+======== Pseudo ::before element ========
+[expanded] 
+#p1  { (region-style-crash.html:8)
+
+
+======== Pseudo ::after element ========
+[expanded] 
+#p1  { (region-style-crash.html:8)
+
+
+======== Pseudo ::selection element ========
+[expanded] 
+#p1  { (region-style-crash.html:8)
+
+
+======== Pseudo element ========
+[expanded] 
+#p1  { (region-style-crash.html:8)
+
+
+======== Pseudo ::-webkit-scrollbar element ========
+[expanded] 
+#p1  { (region-style-crash.html:8)
+
+
+======== Pseudo ::-webkit-file-upload-button element ========
+[expanded] 
+#p1  { (region-style-crash.html:8)
+
+
+======== Pseudo ::-webkit-input-placeholder element ========
+[expanded] 
+#p1  { (region-style-crash.html:8)
+
+
+======== Pseudo ::-webkit-slider-thumb element ========
+[expanded] 
+#p1  { (region-style-crash.html:8)
+
+
+======== Pseudo ::-webkit-search-cancel-button element ========
+[expanded] 
+#p1  { (region-style-crash.html:8)
+
+
+======== Pseudo ::-webkit-search-decoration element ========
+[expanded] 
+#p1  { (region-style-crash.html:8)
+
+
+======== Pseudo ::-webkit-search-results-decoration element ========
+[expanded] 
+#p1  { (region-style-crash.html:8)
+
+
+======== Pseudo ::-webkit-search-results-button element ========
+[expanded] 
+#p1  { (region-style-crash.html:8)
+
+
+

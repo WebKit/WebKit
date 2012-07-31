@@ -9747,7 +9747,6 @@ void CSSParser::invalidBlockHit()
 void CSSParser::updateLastSelectorLineAndPosition()
 {
     m_lastSelectorLineNumber = m_lineNumber;
-    markRuleBodyStart();
 }
 
 void CSSParser::updateLastMediaLine(MediaQuerySet* media)

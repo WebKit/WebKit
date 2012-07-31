@@ -1,3 +1,16 @@
+2012-07-31  Raul Hudea  <rhudea@adobe.com>
+
+        Inspector crashes when trying to inspect a page with CSS region styling
+        https://bugs.webkit.org/show_bug.cgi?id=91503
+
+        Reviewed by Alexander Pavlov.
+
+        Test to make sure inspector is not crashing when having to parse @-webkit-region rules
+
+        * inspector/styles/region-style-crash-expected.txt: Added.
+        * inspector/styles/region-style-crash.html: Added.
+        * platform/chromium/TestExpectations:
+
 2012-07-30  Keishi Hattori  <keishi@webkit.org>
 
         Implement datalist UI for input type color for Chromium

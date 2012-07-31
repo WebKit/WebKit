@@ -869,12 +869,20 @@ region_selector:
     }
 ;
 
+before_region_rule:
+    /* empty */ {
+        static_cast<CSSParser*>(parser)->markRuleHeaderStart(CSSRuleSourceData::REGION_RULE);
+    }
+    ;
+
 region:
-    WEBKIT_REGION_RULE_SYM WHITESPACE region_selector '{' maybe_space block_rule_list save_block {
-        if ($3)
-            $$ = static_cast<CSSParser*>(parser)->createRegionRule($3, $6);
-        else
+    before_region_rule WEBKIT_REGION_RULE_SYM WHITESPACE region_selector at_rule_header_end '{' at_rule_body_start maybe_space block_rule_list save_block {
+        if ($4)
+            $$ = static_cast<CSSParser*>(parser)->createRegionRule($4, $9);
+        else {
             $$ = 0;
+            static_cast<CSSParser*>(parser)->popRuleData();
+        }
     }
 ;
 
@@ -913,7 +921,7 @@ at_rule_header_end:
   ;
 
 ruleset:
-    before_selector_list selector_list at_rule_header_end '{' maybe_space_before_declaration declaration_list closing_brace {
+    before_selector_list selector_list at_rule_header_end '{' at_rule_body_start maybe_space_before_declaration declaration_list closing_brace {
         CSSParser* p = static_cast<CSSParser*>(parser);
         $$ = p->createStyleRule($2);
     }

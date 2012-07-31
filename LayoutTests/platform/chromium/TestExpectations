@@ -2624,6 +2624,8 @@ BUGWK49142 : fast/regions/style-scoped-in-flow-override-region-styling-multiple-
 BUGWK49142 : fast/regions/style-scoped-in-flow-override-region-styling.html = PASS IMAGE IMAGE+TEXT TEXT MISSING
 BUGWK49142 : fast/regions/style-scoped-in-flow.html = PASS IMAGE IMAGE+TEXT TEXT MISSING
 
+BUGWK92131 SKIP : inspector/styles/region-style-crash.html = PASS
+
 BUGCR85755 : fast/js/exception-properties.html = TEXT
 
 BUGWK62580 : fast/loader/inherit-charset-to-empty-frame.html = PASS TEXT
