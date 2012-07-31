@@ -1,3 +1,18 @@
+2012-07-31  Dirk Pranke  <dpranke@chromium.org>
+
+        nrwt: move handling the initial list of tests to skip to finder
+        https://bugs.webkit.org/show_bug.cgi?id=92701
+
+        Reviewed by Ryosuke Niwa.
+
+        More refactoring of manager ...
+
+        * Scripts/webkitpy/layout_tests/controllers/finder.py:
+        (LayoutTestFinder.skip_tests):
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        (Manager._collect_tests):
+        (Manager.prepare_lists_and_print_output):
+
 2012-07-31  Alexey Proskuryakov  <ap@apple.com>
 
         [WK2] Kill the concept of secondary shared process

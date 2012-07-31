@@ -332,7 +332,8 @@ class Manager(object):
         self._finder = LayoutTestFinder(self._port, self._options)
 
     def _collect_tests(self, args):
-        self._paths, self._test_files = self._finder.find_tests(self._options, args)
+        self._paths, self._test_files_list = self._finder.find_tests(self._options, args)
+        self._test_files = set(self._test_files_list)
 
     def _is_http_test(self, test):
         return self.HTTP_SUBDIR in test or self.WEBSOCKET_SUBDIR in test
@@ -354,35 +355,11 @@ class Manager(object):
         """Create appropriate subsets of test lists and returns a
         ResultSummary object. Also prints expected test counts.
         """
+        num_all_test_files = len(self._test_files_list)
 
-        # Remove skipped - both fixable and ignored - files from the
-        # top-level list of files to test.
-        found_test_files = set(self._test_files)
-        num_all_test_files = len(self._test_files)
-
-        tests_to_skip = self._expectations.get_tests_with_result_type(test_expectations.SKIP)
-        if not self._options.http:
-            tests_to_skip.update(set(self._http_tests()))
-
-        if self._options.skipped == 'only':
-            self._test_files = self._test_files.intersection(tests_to_skip)
-            tests_to_skip = set()
-        elif self._options.skipped == 'default':
-            self._test_files -= tests_to_skip
-        elif self._options.skipped == 'ignore':
-            tests_to_skip = set()
-
-        if self._options.skip_failing_tests:
-            self._test_files -= self._expectations.get_tests_with_result_type(test_expectations.FAIL)
-            self._test_files -= self._expectations.get_tests_with_result_type(test_expectations.FLAKY)
-
-        # now make sure we're explicitly running any tests passed on the command line.
-        self._test_files.update(found_test_files.intersection(self._paths))
-
-        num_to_run = len(self._test_files)
-        num_skipped = num_all_test_files - num_to_run
-
-        if not num_to_run:
+        tests_to_skip = self._finder.skip_tests(self._paths, self._test_files_list, self._expectations, self._http_tests())
+        self._test_files = set(self._test_files_list) - tests_to_skip
+        if not self._test_files_list:
             _log.critical('No tests to run.')
             return None
 
@@ -396,6 +373,7 @@ class Manager(object):
 
         self._test_files_list, tests_in_other_chunks = self._finder.split_into_chunks_if_necessary(self._test_files_list)
         self._expectations.add_skipped_tests(tests_in_other_chunks)
+        tests_to_skip.update(tests_in_other_chunks)
         self._tests = set(self._test_files_list)
 
         if self._options.repeat_each:
@@ -408,7 +386,7 @@ class Manager(object):
             self._test_files_list = self._test_files_list * self._options.iterations
 
         iterations = self._options.repeat_each * self._options.iterations
-        result_summary = ResultSummary(self._expectations, self._test_files, iterations, tests_to_skip.union(tests_in_other_chunks))
+        result_summary = ResultSummary(self._expectations, self._test_files, iterations, tests_to_skip)
 
         self._printer.print_found(num_all_test_files, len(self._test_files), self._options.repeat_each, self._options.iterations)
         self._printer.print_expected(result_summary, self._expectations.get_tests_with_result_type)

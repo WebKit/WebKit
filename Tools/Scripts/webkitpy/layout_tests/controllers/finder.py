@@ -32,6 +32,8 @@ import errno
 import logging
 import re
 
+from webkitpy.layout_tests.models import test_expectations
+
 
 _log = logging.getLogger(__name__)
 
@@ -93,6 +95,30 @@ class LayoutTestFinder(object):
             return None
         else:
             return line
+
+    def skip_tests(self, paths, all_tests_list, expectations, http_tests):
+        all_tests = set(all_tests_list)
+
+        tests_to_skip = expectations.get_tests_with_result_type(test_expectations.SKIP)
+        if self._options.skip_failing_tests:
+            tests_to_skip.update(expectations.get_tests_with_result_type(test_expectations.FAIL))
+            tests_to_skip.update(expectations.get_tests_with_result_type(test_expectations.FLAKY))
+
+        if self._options.skipped == 'only':
+            tests_to_skip = all_tests - tests_to_skip
+        elif self._options.skipped == 'ignore':
+            tests_to_skip = set()
+        elif self._options.skipped == 'default':
+            pass  # listed for completeness
+
+        # make sure we're explicitly running any tests passed on the command line.
+        tests_to_skip -= paths
+
+        # unless of course we don't want to run the HTTP tests :)
+        if not self._options.http:
+            tests_to_skip.update(set(http_tests))
+
+        return tests_to_skip
 
     def split_into_chunks_if_necessary(self, test_files_list):
         if not self._options.run_chunk and not self._options.run_part:
