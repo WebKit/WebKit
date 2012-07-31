@@ -1,3 +1,16 @@
+2012-07-31  Dirk Pranke  <dpranke@chromium.org>
+
+        REGRESSION(124116): Number of skipped tests isn't printed anymore
+        https://bugs.webkit.org/show_bug.cgi?id=92736
+
+        Reviewed by Tony Chang.
+
+        Add the skipped number back in; it was useful ... also clean up
+        the formatting a little bit.
+
+        * Scripts/webkitpy/layout_tests/views/printing.py:
+        (Printer.print_found):
+
 2012-07-31  Hans Wennborg  <hans@chromium.org>
 
         Speech JavaScript API: Throw exception for start() when already started
