@@ -5741,6 +5741,8 @@ webcore_sources += \
 	Source/WebCore/Modules/webaudio/JavaScriptAudioNode.h \
 	Source/WebCore/Modules/webaudio/MediaElementAudioSourceNode.cpp \
 	Source/WebCore/Modules/webaudio/MediaElementAudioSourceNode.h \
+	Source/WebCore/Modules/webaudio/MediaStreamAudioSourceNode.cpp \
+	Source/WebCore/Modules/webaudio/MediaStreamAudioSourceNode.h \
 	Source/WebCore/Modules/webaudio/OfflineAudioDestinationNode.h \
 	Source/WebCore/Modules/webaudio/OfflineAudioDestinationNode.cpp \
 	Source/WebCore/Modules/webaudio/OfflineAudioCompletionEvent.h \
@@ -5880,6 +5882,8 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSOfflineAudioCompletionEvent.h \
 	DerivedSources/WebCore/JSMediaElementAudioSourceNode.cpp \
 	DerivedSources/WebCore/JSMediaElementAudioSourceNode.h \
+	DerivedSources/WebCore/JSMediaStreamAudioSourceNode.cpp \
+	DerivedSources/WebCore/JSMediaStreamAudioSourceNode.h \
 	DerivedSources/WebCore/JSRealtimeAnalyserNode.cpp \
 	DerivedSources/WebCore/JSRealtimeAnalyserNode.h
 
@@ -5902,6 +5906,7 @@ dom_binding_idls += \
 	$(WebCore)/Modules/webaudio/DelayNode.idl \
 	$(WebCore)/Modules/webaudio/JavaScriptAudioNode.idl \
 	$(WebCore)/Modules/webaudio/MediaElementAudioSourceNode.idl \
+	$(WebCore)/Modules/webaudio/MediaStreamAudioSourceNode.idl \
 	$(WebCore)/Modules/webaudio/OfflineAudioCompletionEvent.idl \
     $(WebCore)/Modules/webaudio/Oscillator.idl \
 	$(WebCore)/Modules/webaudio/RealtimeAnalyserNode.idl \

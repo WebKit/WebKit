@@ -63,6 +63,7 @@ public:
         NodeTypeOscillator,
         NodeTypeAudioBufferSource,
         NodeTypeMediaElementAudioSource,
+        NodeTypeMediaStreamAudioSource,
         NodeTypeJavaScript,
         NodeTypeBiquadFilter,
         NodeTypePanner,

@@ -1,3 +1,42 @@
+2012-07-31  Chris Rogers  <crogers@google.com>
+
+        Add stub implementation for MediaStreamAudioSourceNode
+        https://bugs.webkit.org/show_bug.cgi?id=90110
+
+        Reviewed by Kenneth Russell.
+
+        Test: webaudio/mediastreamaudiosourcenode.html
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * GNUmakefile.list.am:
+        * WebCore.gypi:
+        * WebCore.xcodeproj/project.pbxproj:
+        Add MediaStreamAudioSourceNode files to make files.
+
+        * Modules/webaudio/AudioContext.cpp:
+        * Modules/webaudio/AudioContext.h:
+        * Modules/webaudio/AudioContext.idl:
+        (WebCore::AudioContext::createMediaStreamSource):
+        Add new createMediaStreamSource() method.
+
+        * Modules/webaudio/AudioNode.h:
+        Add NodeTypeMediaStreamAudioSource.
+
+        * Modules/webaudio/MediaStreamAudioSourceNode.cpp: Added.
+        * Modules/webaudio/MediaStreamAudioSourceNode.h: Added.
+        (WebCore::MediaStreamAudioSourceNode::create):
+        (WebCore::MediaStreamAudioSourceNode::MediaStreamAudioSourceNode):
+        (WebCore::MediaStreamAudioSourceNode::~MediaStreamAudioSourceNode):
+        (WebCore::MediaStreamAudioSourceNode::setFormat):
+        (WebCore::MediaStreamAudioSourceNode::process):
+        (WebCore::MediaStreamAudioSourceNode::reset):
+        (WebCore::MediaStreamAudioSourceNode::mediaStream):
+        (WebCore::MediaStreamAudioSourceNode::audioSourceProvider):
+        Basic MediaStreamAudioSourceNode implementation.
+
+        * Modules/webaudio/MediaStreamAudioSourceNode.idl: Added.
+
 2012-07-31  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
 
         FractionalLayoutUnit minor math bugs

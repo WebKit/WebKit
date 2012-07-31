@@ -59,6 +59,11 @@
 #include "WaveShaperNode.h"
 #include "WaveTable.h"
 
+#if ENABLE(MEDIA_STREAM)
+#include "MediaStream.h"
+#include "MediaStreamAudioSourceNode.h"
+#endif
+
 #if ENABLE(VIDEO)
 #include "HTMLMediaElement.h"
 #include "MediaElementAudioSourceNode.h"
@@ -378,6 +383,26 @@ PassRefPtr<MediaElementAudioSourceNode> AudioContext::createMediaElementSource(H
     RefPtr<MediaElementAudioSourceNode> node = MediaElementAudioSourceNode::create(this, mediaElement);
 
     mediaElement->setAudioSourceNode(node.get());
+
+    refNode(node.get()); // context keeps reference until node is disconnected
+    return node;
+}
+#endif
+
+#if ENABLE(MEDIA_STREAM)
+PassRefPtr<MediaStreamAudioSourceNode> AudioContext::createMediaStreamSource(MediaStream* mediaStream, ExceptionCode& ec)
+{
+    ASSERT(mediaStream);
+    if (!mediaStream) {
+        ec = INVALID_STATE_ERR;
+        return 0;
+    }
+
+    ASSERT(isMainThread());
+    lazyInitialize();
+
+    // FIXME: For now we don't give it an AudioSourceProvider, so it will output silence.
+    RefPtr<MediaStreamAudioSourceNode> node = MediaStreamAudioSourceNode::create(this, mediaStream, 0);
 
     refNode(node.get()); // context keeps reference until node is disconnected
     return node;

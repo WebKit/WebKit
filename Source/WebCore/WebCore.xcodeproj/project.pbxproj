@@ -6416,6 +6416,8 @@
 		FD629EA3154B47160006D026 /* AudioBasicInspectorNode.h in Headers */ = {isa = PBXBuildFile; fileRef = FD629EA1154B47160006D026 /* AudioBasicInspectorNode.h */; };
 		FD629EA4154B47160006D026 /* AudioBasicInspectorNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD629EA2154B47160006D026 /* AudioBasicInspectorNode.cpp */; };
 		FD62F52E145898D80094B0ED /* AudioSourceProviderClient.h in Headers */ = {isa = PBXBuildFile; fileRef = FD62F52D145898D80094B0ED /* AudioSourceProviderClient.h */; };
+		FD671A77159BB07000197559 /* MediaStreamAudioSourceNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD671A74159BB07000197559 /* MediaStreamAudioSourceNode.cpp */; };
+		FD671A78159BB07000197559 /* MediaStreamAudioSourceNode.h in Headers */ = {isa = PBXBuildFile; fileRef = FD671A75159BB07000197559 /* MediaStreamAudioSourceNode.h */; };
 		FD6ED2C3136B8E42003CF072 /* DynamicsCompressorNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD6ED2C1136B8E42003CF072 /* DynamicsCompressorNode.cpp */; };
 		FD6ED2C4136B8E42003CF072 /* DynamicsCompressorNode.h in Headers */ = {isa = PBXBuildFile; fileRef = FD6ED2C2136B8E42003CF072 /* DynamicsCompressorNode.h */; };
 		FD6ED2C7136B8E66003CF072 /* DynamicsCompressor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD6ED2C5136B8E66003CF072 /* DynamicsCompressor.cpp */; };
@@ -6481,6 +6483,8 @@
 		FDB052E01561A42C00B500D6 /* AudioSummingJunction.h in Headers */ = {isa = PBXBuildFile; fileRef = FDB052DE1561A42C00B500D6 /* AudioSummingJunction.h */; };
 		FDB1700514A2BAB200A2B5D9 /* MultiChannelResampler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FDB1700314A2BAB200A2B5D9 /* MultiChannelResampler.cpp */; };
 		FDB1700614A2BAB200A2B5D9 /* MultiChannelResampler.h in Headers */ = {isa = PBXBuildFile; fileRef = FDB1700414A2BAB200A2B5D9 /* MultiChannelResampler.h */; };
+		FDBD480C159BC6870093EB4F /* JSMediaStreamAudioSourceNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FDBD480A159BC6870093EB4F /* JSMediaStreamAudioSourceNode.cpp */; };
+		FDBD480D159BC6870093EB4F /* JSMediaStreamAudioSourceNode.h in Headers */ = {isa = PBXBuildFile; fileRef = FDBD480B159BC6870093EB4F /* JSMediaStreamAudioSourceNode.h */; };
 		FDC54F041399B0DA008D9117 /* BiquadFilterNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FDC54F011399B0DA008D9117 /* BiquadFilterNode.cpp */; };
 		FDC54F051399B0DA008D9117 /* BiquadFilterNode.h in Headers */ = {isa = PBXBuildFile; fileRef = FDC54F021399B0DA008D9117 /* BiquadFilterNode.h */; };
 		FDE6860215B0A93B00BB480C /* WrapShapeFunctions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD7E95A215ACD6090039E3D0 /* WrapShapeFunctions.cpp */; };
@@ -13790,6 +13794,9 @@
 		FD629EA1154B47160006D026 /* AudioBasicInspectorNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioBasicInspectorNode.h; sourceTree = "<group>"; };
 		FD629EA2154B47160006D026 /* AudioBasicInspectorNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AudioBasicInspectorNode.cpp; sourceTree = "<group>"; };
 		FD62F52D145898D80094B0ED /* AudioSourceProviderClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioSourceProviderClient.h; sourceTree = "<group>"; };
+		FD671A74159BB07000197559 /* MediaStreamAudioSourceNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaStreamAudioSourceNode.cpp; sourceTree = "<group>"; };
+		FD671A75159BB07000197559 /* MediaStreamAudioSourceNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaStreamAudioSourceNode.h; sourceTree = "<group>"; };
+		FD671A76159BB07000197559 /* MediaStreamAudioSourceNode.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = MediaStreamAudioSourceNode.idl; sourceTree = "<group>"; };
 		FD6ED2C1136B8E42003CF072 /* DynamicsCompressorNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DynamicsCompressorNode.cpp; sourceTree = "<group>"; };
 		FD6ED2C2136B8E42003CF072 /* DynamicsCompressorNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DynamicsCompressorNode.h; sourceTree = "<group>"; };
 		FD6ED2C5136B8E66003CF072 /* DynamicsCompressor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DynamicsCompressor.cpp; sourceTree = "<group>"; };
@@ -13862,6 +13869,8 @@
 		FDB1700314A2BAB200A2B5D9 /* MultiChannelResampler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MultiChannelResampler.cpp; sourceTree = "<group>"; };
 		FDB1700414A2BAB200A2B5D9 /* MultiChannelResampler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MultiChannelResampler.h; sourceTree = "<group>"; };
 		FDB51CF4159CD70300E227C5 /* WrapShapes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WrapShapes.h; path = style/WrapShapes.h; sourceTree = "<group>"; };
+    	FDBD480A159BC6870093EB4F /* JSMediaStreamAudioSourceNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMediaStreamAudioSourceNode.cpp; sourceTree = "<group>"; };
+	    FDBD480B159BC6870093EB4F /* JSMediaStreamAudioSourceNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSMediaStreamAudioSourceNode.h; sourceTree = "<group>"; };
 		FDC54F011399B0DA008D9117 /* BiquadFilterNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BiquadFilterNode.cpp; sourceTree = "<group>"; };
 		FDC54F021399B0DA008D9117 /* BiquadFilterNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BiquadFilterNode.h; sourceTree = "<group>"; };
 		FDC54F031399B0DA008D9117 /* BiquadFilterNode.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = BiquadFilterNode.idl; sourceTree = "<group>"; };
@@ -21895,6 +21904,9 @@
 				FD6F252913F5EF0E0065165F /* MediaElementAudioSourceNode.cpp */,
 				FD6F252A13F5EF0E0065165F /* MediaElementAudioSourceNode.h */,
 				FD6F252B13F5EF0E0065165F /* MediaElementAudioSourceNode.idl */,
+				FD671A74159BB07000197559 /* MediaStreamAudioSourceNode.cpp */,
+				FD671A75159BB07000197559 /* MediaStreamAudioSourceNode.h */,
+				FD671A76159BB07000197559 /* MediaStreamAudioSourceNode.idl */,
 				FDA3E955134A49EF008D4B5A /* OfflineAudioCompletionEvent.cpp */,
 				FDA3E956134A49EF008D4B5A /* OfflineAudioCompletionEvent.h */,
 				FDA3E95D134A49FF008D4B5A /* OfflineAudioCompletionEvent.idl */,
@@ -22056,6 +22068,8 @@
 				FDA15ECC12B03F61003A583A /* JSJavaScriptAudioNode.h */,
 				FD23A12313F5FA5900F67001 /* JSMediaElementAudioSourceNode.cpp */,
 				FD23A12413F5FA5900F67001 /* JSMediaElementAudioSourceNode.h */,
+				FDBD480A159BC6870093EB4F /* JSMediaStreamAudioSourceNode.cpp */,
+				FDBD480B159BC6870093EB4F /* JSMediaStreamAudioSourceNode.h */,
 				FDF6BAF6134A4C9800822920 /* JSOfflineAudioCompletionEvent.cpp */,
 				FDF6BAF7134A4C9800822920 /* JSOfflineAudioCompletionEvent.h */,
 				FDEA6240152102E200479DF0 /* JSOscillator.cpp */,
@@ -25353,6 +25367,8 @@
 				1059459915B42AA0004D37FD /* PropertyNodeList.h in Headers */,
 				1059459F15B42B1A004D37FD /* JSPropertyNodeList.h in Headers */,
 				49B3760D15C6C6840059131D /* ArrayValue.h in Headers */,
+				FD671A78159BB07000197559 /* MediaStreamAudioSourceNode.h in Headers */,
+				FDBD480D159BC6870093EB4F /* JSMediaStreamAudioSourceNode.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -28425,6 +28441,8 @@
 				1059459D15B42B0C004D37FD /* JSPropertyNodeList.cpp in Sources */,
 				CD37B39815C1B971006DC898 /* DiagnosticLoggingKeys.cpp in Sources */,
 				49B3760C15C6C6840059131D /* ArrayValue.cpp in Sources */,
+				FD671A77159BB07000197559 /* MediaStreamAudioSourceNode.cpp in Sources */,
+				FDBD480C159BC6870093EB4F /* JSMediaStreamAudioSourceNode.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

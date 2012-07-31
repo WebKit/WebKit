@@ -250,6 +250,7 @@ SET(WebCore_IDL_FILES
     Modules/webaudio/DynamicsCompressorNode.idl
     Modules/webaudio/JavaScriptAudioNode.idl
     Modules/webaudio/MediaElementAudioSourceNode.idl
+    Modules/webaudio/MediaStreamAudioSourceNode.idl
     Modules/webaudio/OfflineAudioCompletionEvent.idl
     Modules/webaudio/Oscillator.idl
     Modules/webaudio/RealtimeAnalyserNode.idl
@@ -881,6 +882,7 @@ SET(WebCore_SOURCES
     Modules/webaudio/DynamicsCompressorNode.cpp
     Modules/webaudio/JavaScriptAudioNode.cpp
     Modules/webaudio/MediaElementAudioSourceNode.cpp
+    Modules/webaudio/MediaStreamAudioSourceNode.cpp
     Modules/webaudio/OfflineAudioCompletionEvent.cpp
     Modules/webaudio/OfflineAudioDestinationNode.cpp
     Modules/webaudio/Oscillator.cpp

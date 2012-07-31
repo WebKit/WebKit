@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<script src="../fast/js/resources/js-test-pre.js"></script>
+<script src="resources/audio-testing.js"></script>
+</head>
+
+<body>
+<div id="description"></div>
+<div id="console"></div>
+
+<script>
+description("Basic tests for MediaStreamAudioSourceNode API.");
+
+var context = 0;
+
+function error() {
+    testFailed('Stream generation failed.');
+    finishJSTest();
+}
+
+function getUserMedia(dictionary, callback) {
+    try {
+        navigator.webkitGetUserMedia(dictionary, callback, error);
+    } catch (e) {
+        testFailed('webkitGetUserMedia threw exception :' + e);
+        finishJSTest();
+    }
+}
+
+function gotStream(stream) {
+    s = stream;
+    testPassed('{audio:true} generated stream');
+    shouldBe('s.audioTracks.length', '1');
+    shouldBe('s.videoTracks.length', '0');
+
+    context = new webkitAudioContext();
+
+    // Create an AudioNode from the stream.
+    var mediaStreamSource = context.createMediaStreamSource(stream);
+
+    // Check number of inputs and outputs.
+    if (mediaStreamSource.numberOfInputs == 0)
+        testPassed("Source AudioNode has no inputs.");
+    else
+        testFailed("Source AudioNode should not have inputs.");
+
+    if (mediaStreamSource.numberOfOutputs == 1)
+        testPassed("Source AudioNode has one output.");
+    else
+        testFailed("Source AudioNode should have one output.");
+
+    // Try calling connect() method with illegal values.
+
+    try {
+        mediaStreamSource.connect(0, 0, 0);
+        testFailed("connect() exception should be thrown for illegal destination AudioNode.");
+    } catch(e) {
+        testPassed("connect() exception thrown for illegal destination AudioNode.");
+    }
+
+    try {
+        mediaStreamSource.connect(context.destination, 5, 0);
+        testFailed("connect() exception should be thrown for illegal output index.");
+    } catch(e) {
+        testPassed("connect() exception thrown for illegal output index.");
+    }
+
+    try {
+        mediaStreamSource.connect(context.destination, 0, 5);
+        testFailed("connect() exception should be thrown for illegal input index.");
+    } catch(e) {
+        testPassed("connect() exception thrown for illegal input index.");
+    }
+
+    // Try calling connect() with proper values.
+    try {
+        mediaStreamSource.connect(context.destination, 0, 0);
+        testPassed("mediaStreamSource.connect(context.destination) succeeded.");
+    } catch(e) {
+        testFailed("mediaStreamSource.connect(context.destination) failed.");
+    }
+
+    finishJSTest();
+}
+
+getUserMedia({audio:true}, gotStream);
+window.jsTestIsAsync = true;
+window.successfullyParsed = true;
+
+</script>
+
+<script src="../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>
