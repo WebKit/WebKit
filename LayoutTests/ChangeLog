@@ -1,3 +1,10 @@
+2012-07-31  Michael Saboff  <msaboff@apple.com>
+
+        inspector/profiler/heap-snapshot-containment-show-all.html test crashing during WebView closing
+        <rdar://problem/11991881>
+
+        * platform/mac-lion/Skipped: Added inspector/debugger/debugger-expand-scope.html to skip list.
+
 2012-07-31  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt][WK2] Unreviewed gardening, last attempt to paint the WK2 bot green today.

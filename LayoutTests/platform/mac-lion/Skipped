@@ -129,3 +129,4 @@ http/tests/misc/submit-post-keygen.html
 
 # <rdar://problem/11991881>
 inspector/profiler/heap-snapshot-containment-show-all.html
+inspector/debugger/debugger-expand-scope.html
