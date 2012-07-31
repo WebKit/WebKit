@@ -1,3 +1,34 @@
+2012-07-17  Antonio Gomes  <agomes@rim.com>
+
+        [Blackberry][FullScreen] HTML5 <video> controls are scaled differently depending on the current webpage scale
+        https://bugs.webkit.org/show_bug.cgi?id=90884
+        PR #162839
+
+        Reviewed by Rob Buis.
+
+        The way the BlackBerry port implements the FULLSCREEN_API for media
+        elements might result in the controls being oversized, proportionally
+        to the current page scale. That happens because the fullscreen element
+        gets sized to be as big as the viewport size, and the viewport size might
+        get outstretched to fit to the screen dimensions.
+
+        In order to fix that, the patch strips out the Page scale factor from
+        the media controls multiplier.
+
+        Patch also changes many integer-based calculations to be float-based, in
+        order to get the needed precision.
+
+        Internally reviewed by Jacky Jiang.
+
+        * platform/blackberry/RenderThemeBlackBerry.cpp:
+        (WebCore):
+        (WebCore::determineFullScreenMultiplier):
+        (WebCore::RenderThemeBlackBerry::adjustSliderThumbSize):
+        (WebCore::RenderThemeBlackBerry::adjustMediaControlStyle):
+        (WebCore::RenderThemeBlackBerry::adjustSliderTrackStyle):
+        (WebCore::RenderThemeBlackBerry::paintMediaSliderTrack):
+        (WebCore::RenderThemeBlackBerry::paintMediaSliderThumb):
+
 2012-07-31  Stephen White  <senorblanco@chromium.org>
 
         Remove the clone() method from FilterOperation (and subclasses).
