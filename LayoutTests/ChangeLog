@@ -1,3 +1,13 @@
+2012-07-30  MORITA Hajime  <morrita@google.com>
+
+        Node::replaceChild() can create bad DOM topology with MutationEvent
+        https://bugs.webkit.org/show_bug.cgi?id=92619
+
+        Reviewed by Ryosuke Niwa.
+
+        * fast/events/mutation-during-replace-child-expected.txt: Added.
+        * fast/events/mutation-during-replace-child.html: Added.
+
 2012-07-30  Kent Tamura  <tkent@chromium.org>
 
         Fix a popup position issue of fast/forms/date/calendar-picker-appearance.html

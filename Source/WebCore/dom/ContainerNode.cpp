@@ -271,6 +271,11 @@ bool ContainerNode::replaceChild(PassRefPtr<Node> newChild, Node* oldChild, Exce
     if (next && (next->previousSibling() == newChild || next == newChild)) // nothing to do
         return true;
 
+    // Does this one more time because removeChild() fires a MutationEvent.
+    checkReplaceChild(newChild.get(), oldChild, ec);
+    if (ec)
+        return false;
+
     NodeVector targets;
     collectChildrenAndRemoveFromOldParent(newChild.get(), targets, ec);
     if (ec)

@@ -1,3 +1,24 @@
+2012-07-30  MORITA Hajime  <morrita@google.com>
+
+        Node::replaceChild() can create bad DOM topology with MutationEvent
+        https://bugs.webkit.org/show_bug.cgi?id=92619
+
+        Reviewed by Ryosuke Niwa.
+
+        Node::replaceChild() calls insertBeforeCommon() after dispatching
+        a MutationEvent event for removeChild(). But insertBeforeCommon()
+        expects call sites to check the invariant and doesn't have
+        suffient check. So a MutationEvent handler can let some bad tree
+        topology to slip into insertBeforeCommon().
+
+        This change adds a guard for checking the invariant using
+        checkReplaceChild() between removeChild() and insertBeforeCommon().
+
+        Test: fast/events/mutation-during-replace-child.html
+
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::replaceChild): Added a guard.
+
 2012-07-30  Ryosuke Niwa  <rniwa@webkit.org>
 
         Qt Windows build fix attempt after r124098.
