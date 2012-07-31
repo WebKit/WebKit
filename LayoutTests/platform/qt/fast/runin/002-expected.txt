@@ -1,15 +1,15 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x53
-  RenderBlock {HTML} at (0,0) size 800x53
-    RenderBody {BODY} at (8,16) size 784x21
-      RenderBlock {DL} at (0,0) size 784x21
-        RenderBlock {DD} at (40,0) size 744x21
-          RenderInline (run-in) {DT} at (0,0) size 41x21
-            RenderText {#text} at (0,0) size 37x21
-              text run at (0,0) width 37: "Term"
-            RenderInline (generated) at (0,0) size 4x21
-              RenderText at (37,0) size 4x21
-                text run at (37,0) width 4: ":"
-          RenderText {#text} at (41,0) size 68x21
-            text run at (41,0) width 68: "Definition"
+layer at (0,0) size 800x51
+  RenderBlock {HTML} at (0,0) size 800x51
+    RenderBody {BODY} at (8,16) size 784x19
+      RenderBlock {DL} at (0,0) size 784x19
+        RenderBlock {DD} at (40,0) size 744x19
+          RenderInline (run-in) {DT} at (0,0) size 35x19
+            RenderText {#text} at (0,0) size 32x19
+              text run at (0,0) width 32: "Term"
+            RenderInline (generated) at (0,0) size 3x19
+              RenderText at (32,0) size 3x19
+                text run at (32,0) width 3: ":"
+          RenderText {#text} at (35,0) size 57x19
+            text run at (35,0) width 57: "Definition"

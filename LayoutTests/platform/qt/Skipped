@@ -1470,6 +1470,10 @@ svg/custom/use-on-symbol-inside-pattern.svg
 svg/batik/text/longTextOnPath.svg
 svg/carto.net/tabgroup.svg
 
+# [Qt] svg/css/text-gradient-shadow.svg fails
+# https://bugs.webkit.org/show_bug.cgi?id=92734
+svg/css/text-gradient-shadow.svg
+
 # ============================================================================= #
 # Failing CSS Tests
 # ============================================================================= #
@@ -1537,6 +1541,10 @@ fast/css/square-button-appearance.html
 # https://bugs.webkit.org/show_bug.cgi?id=75400
 fast/css/absolute-inline-alignment.html
 fast/css/absolute-inline-alignment-2.html
+
+# [Qt] css2.1/t100801-c548-ln-ht-01-b-ag.html fails
+# https://bugs.webkit.org/show_bug.cgi?id=92731
+css2.1/t100801-c548-ln-ht-01-b-ag.html
 
 # ============================================================================= #
 # failing fast tests
@@ -1999,6 +2007,14 @@ fast/forms/number/number-validation-message.html
 # [Qt] New fast/css/sticky/parsing-position-sticky.html fails since r123379
 # https://bugs.webkit.org/show_bug.cgi?id=92080
 fast/css/sticky/parsing-position-sticky.html
+
+# [Qt] fast/block/positioning/002.html fails
+# https://bugs.webkit.org/show_bug.cgi?id=92732
+fast/block/positioning/002.html
+
+# [Qt] fast/block/positioning/056.html fails
+# https://bugs.webkit.org/show_bug.cgi?id=92733
+fast/block/positioning/056.html
 
 # ============================================================================= #
 # failing fonts tests

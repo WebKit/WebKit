@@ -12,5 +12,5 @@ PASS successfullyParsed is true
 
 TEST COMPLETE
 PASS document.getElementById('testText').offsetWidth == document.getElementById('mustMatch').offsetWidth is true
-FAIL document.getElementById('testText').offsetWidth != document.getElementById('mustNotMatch').offsetWidth should be true. Was false.
+PASS document.getElementById('testText').offsetWidth != document.getElementById('mustNotMatch').offsetWidth is true
 

@@ -3,13 +3,13 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
-      RenderBlock {UL} at (0,0) size 784x21
-        RenderListItem {LI} at (40,0) size 744x21
-          RenderListMarker at (-18,0) size 7x21: bullet
-          RenderText {#text} at (0,0) size 8x21
-            text run at (0,0) width 8: "x"
-      RenderBlock {DIV} at (0,37) size 784x21
-        RenderBlock {DIV} at (0,0) size 784x21
-          RenderBlock {P} at (0,0) size 784x21
-            RenderText {#text} at (0,0) size 8x21
-              text run at (0,0) width 8: "x"
+      RenderBlock {UL} at (0,0) size 784x19
+        RenderListItem {LI} at (40,0) size 744x19
+          RenderListMarker at (-18,0) size 7x19: bullet
+          RenderText {#text} at (0,0) size 7x19
+            text run at (0,0) width 7: "x"
+      RenderBlock {DIV} at (0,35) size 784x19
+        RenderBlock {DIV} at (0,0) size 784x19
+          RenderBlock {P} at (0,0) size 784x19
+            RenderText {#text} at (0,0) size 7x19
+              text run at (0,0) width 7: "x"

@@ -1,3 +1,182 @@
+2012-07-31  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed gardening. Unskip passing tests and add new expected files. (bug85203)
+
+        * platform/qt-5.0/Skipped: Unskip passing tests.
+        * platform/qt/Skipped: Skip the remaining failing tests and add bug reports.
+        * platform/qt/css2.1/t040103-ident-03-c-expected.png: Added.
+        * platform/qt/css2.1/t040103-ident-03-c-expected.txt: Added.
+        * platform/qt/editing/pasteboard/4242293-1-expected.txt:
+        * platform/qt/editing/pasteboard/5761530-1-expected.txt: Added.
+        * platform/qt/fast/backgrounds/mask-box-image-expected.png:
+        * platform/qt/fast/backgrounds/mask-box-image-expected.txt:
+        * platform/qt/fast/backgrounds/repeat/noRepeatCorrectClip-expected.png: Copied from LayoutTests/platform/qt/fast/invalid/020-expected.png.
+        * platform/qt/fast/backgrounds/repeat/noRepeatCorrectClip-expected.txt:
+        * platform/qt/fast/backgrounds/svg-as-mask-expected.png:
+        * platform/qt/fast/backgrounds/svg-as-mask-expected.txt:
+        * platform/qt/fast/block/positioning/051-expected.png:
+        * platform/qt/fast/block/positioning/051-expected.txt:
+        * platform/qt/fast/compact/003-expected.png:
+        * platform/qt/fast/compact/003-expected.txt:
+        * platform/qt/fast/css-generated-content/010-expected.png:
+        * platform/qt/fast/css-generated-content/010-expected.txt:
+        * platform/qt/fast/css-grid-layout/place-cell-by-index-expected.txt: Added.
+        * platform/qt/fast/css/font-face-descending-unicode-range-expected.txt:
+        * platform/qt/fast/css/font-face-font-family-descriptor-expected.txt:
+        * platform/qt/fast/css/imageTileOpacity-expected.png:
+        * platform/qt/fast/css/imageTileOpacity-expected.txt:
+        * platform/qt/fast/css/live-cssrules-expected.png:
+        * platform/qt/fast/css/live-cssrules-expected.txt:
+        * platform/qt/fast/css/rgba-custom-text-expected.txt: Added.
+        * platform/qt/fast/css/rtl-to-viewport-expected.png:
+        * platform/qt/fast/css/rtl-to-viewport-expected.txt:
+        * platform/qt/fast/css/vertical-align-lengths-expected.png:
+        * platform/qt/fast/css/vertical-align-lengths-expected.txt:
+        * platform/qt/fast/dom/HTMLDocument/frameless-location-bugzilla10837-expected.png:
+        * platform/qt/fast/dom/HTMLDocument/frameless-location-bugzilla10837-expected.txt:
+        * platform/qt/fast/dom/HTMLHeadElement/textInHead1-expected.png:
+        * platform/qt/fast/dom/HTMLHeadElement/textInHead1-expected.txt:
+        * platform/qt/fast/dom/HTMLHeadElement/textInHead2-expected.png:
+        * platform/qt/fast/dom/HTMLHeadElement/textInHead2-expected.txt:
+        * platform/qt/fast/dom/HTMLHeadElement/textInHead3-expected.png:
+        * platform/qt/fast/dom/HTMLHeadElement/textInHead3-expected.txt:
+        * platform/qt/fast/dom/HTMLHeadElement/textInHead4-expected.png:
+        * platform/qt/fast/dom/HTMLHeadElement/textInHead4-expected.txt:
+        * platform/qt/fast/dom/HTMLHeadElement/textInHead5-expected.png:
+        * platform/qt/fast/dom/HTMLHeadElement/textInHead5-expected.txt:
+        * platform/qt/fast/dom/HTMLMeterElement/meter-element-repaint-on-update-value-expected.png:
+        * platform/qt/fast/dom/HTMLMeterElement/meter-element-repaint-on-update-value-expected.txt:
+        * platform/qt/fast/dom/HTMLMeterElement/meter-writing-mode-expected.png:
+        * platform/qt/fast/dom/HTMLMeterElement/meter-writing-mode-expected.txt:
+        * platform/qt/fast/dom/HTMLProgressElement/progress-element-expected.png:
+        * platform/qt/fast/dom/HTMLProgressElement/progress-element-expected.txt:
+        * platform/qt/fast/dom/HTMLProgressElement/progress-writing-mode-expected.png:
+        * platform/qt/fast/dom/HTMLProgressElement/progress-writing-mode-expected.txt:
+        * platform/qt/fast/dom/comment-not-documentElement-expected.png:
+        * platform/qt/fast/dom/comment-not-documentElement-expected.txt:
+        * platform/qt/fast/dom/icon-url-change-expected.txt: Added.
+        * platform/qt/fast/dom/icon-url-list-expected.txt: Added.
+        * platform/qt/fast/dynamic/010-expected.png:
+        * platform/qt/fast/dynamic/010-expected.txt:
+        * platform/qt/fast/dynamic/float-in-trailing-whitespace-after-last-line-break-2-expected.png: Copied from LayoutTests/platform/qt/fast/dom/HTMLMeterElement/meter-element-repaint-on-update-value-expected.png.
+        * platform/qt/fast/dynamic/float-in-trailing-whitespace-after-last-line-break-2-expected.txt:
+        * platform/qt/fast/dynamic/genContentDestroyChildren-expected.png: Added.
+        * platform/qt/fast/dynamic/genContentDestroyChildren-expected.txt:
+        * platform/qt/fast/dynamic/move-node-with-selection-expected.png:
+        * platform/qt/fast/dynamic/move-node-with-selection-expected.txt:
+        * platform/qt/fast/dynamic/positioned-movement-with-positioned-children-expected.png:
+        * platform/qt/fast/dynamic/positioned-movement-with-positioned-children-expected.txt:
+        * platform/qt/fast/html/details-add-summary-1-expected.png:
+        * platform/qt/fast/html/details-add-summary-1-expected.txt:
+        * platform/qt/fast/html/details-add-summary-10-expected.png:
+        * platform/qt/fast/html/details-add-summary-10-expected.txt:
+        * platform/qt/fast/html/details-add-summary-2-expected.png:
+        * platform/qt/fast/html/details-add-summary-2-expected.txt:
+        * platform/qt/fast/html/details-add-summary-3-expected.png:
+        * platform/qt/fast/html/details-add-summary-3-expected.txt:
+        * platform/qt/fast/html/details-add-summary-4-expected.png:
+        * platform/qt/fast/html/details-add-summary-4-expected.txt:
+        * platform/qt/fast/html/details-add-summary-5-expected.png:
+        * platform/qt/fast/html/details-add-summary-5-expected.txt:
+        * platform/qt/fast/html/details-add-summary-6-expected.png:
+        * platform/qt/fast/html/details-add-summary-6-expected.txt:
+        * platform/qt/fast/html/details-add-summary-7-expected.png:
+        * platform/qt/fast/html/details-add-summary-7-expected.txt:
+        * platform/qt/fast/html/details-add-summary-8-expected.png:
+        * platform/qt/fast/html/details-add-summary-8-expected.txt:
+        * platform/qt/fast/html/details-add-summary-9-expected.png:
+        * platform/qt/fast/html/details-add-summary-9-expected.txt:
+        * platform/qt/fast/html/details-no-summary1-expected.png:
+        * platform/qt/fast/html/details-no-summary1-expected.txt:
+        * platform/qt/fast/html/details-no-summary2-expected.png:
+        * platform/qt/fast/html/details-no-summary2-expected.txt:
+        * platform/qt/fast/html/details-no-summary3-expected.png:
+        * platform/qt/fast/html/details-no-summary3-expected.txt:
+        * platform/qt/fast/html/details-open1-expected.png:
+        * platform/qt/fast/html/details-open1-expected.txt:
+        * platform/qt/fast/html/details-open3-expected.png:
+        * platform/qt/fast/html/details-open3-expected.txt:
+        * platform/qt/fast/html/details-open5-expected.png:
+        * platform/qt/fast/html/details-open5-expected.txt:
+        * platform/qt/fast/html/details-open6-expected.png:
+        * platform/qt/fast/html/details-open6-expected.txt:
+        * platform/qt/fast/html/details-remove-summary-1-expected.png:
+        * platform/qt/fast/html/details-remove-summary-1-expected.txt:
+        * platform/qt/fast/html/details-remove-summary-2-expected.png:
+        * platform/qt/fast/html/details-remove-summary-2-expected.txt:
+        * platform/qt/fast/html/details-remove-summary-3-expected.png:
+        * platform/qt/fast/html/details-remove-summary-3-expected.txt:
+        * platform/qt/fast/html/details-remove-summary-4-expected.png:
+        * platform/qt/fast/html/details-remove-summary-4-expected.txt:
+        * platform/qt/fast/html/details-remove-summary-5-expected.png:
+        * platform/qt/fast/html/details-remove-summary-5-expected.txt:
+        * platform/qt/fast/html/details-remove-summary-6-expected.png:
+        * platform/qt/fast/html/details-remove-summary-6-expected.txt:
+        * platform/qt/fast/images/image-in-map-expected.png: Copied from LayoutTests/platform/qt/fast/repaint/selection-clear-expected.png.
+        * platform/qt/fast/images/image-in-map-expected.txt:
+        * platform/qt/fast/inline/002-expected.png: Copied from LayoutTests/platform/qt/fast/dynamic/010-expected.png.
+        * platform/qt/fast/inline/002-expected.txt:
+        * platform/qt/fast/inline/inline-fixed-position-boundingbox-expected.txt: Added.
+        * platform/qt/fast/inline/inline-relative-offset-boundingbox-expected.txt: Added.
+        * platform/qt/fast/inline/positioned-object-between-replaced-elements-expected.txt:
+        * platform/qt/fast/inline/positionedLifetime-expected.png: Copied from LayoutTests/platform/qt/fast/repaint/continuation-after-outline-expected.png.
+        * platform/qt/fast/inline/positionedLifetime-expected.txt:
+        * platform/qt/fast/invalid/005-expected.png: Copied from LayoutTests/platform/qt/fast/dom/comment-not-documentElement-expected.png.
+        * platform/qt/fast/invalid/005-expected.txt:
+        * platform/qt/fast/invalid/007-expected.png: Copied from LayoutTests/platform/qt/fast/html/details-remove-summary-6-expected.png.
+        * platform/qt/fast/invalid/007-expected.txt:
+        * platform/qt/fast/invalid/020-expected.png:
+        * platform/qt/fast/invalid/020-expected.txt:
+        * platform/qt/fast/lists/004-expected.png: Copied from LayoutTests/platform/qt/fast/dom/HTMLProgressElement/progress-writing-mode-expected.png.
+        * platform/qt/fast/lists/004-expected.txt:
+        * platform/qt/fast/lists/inlineBoxWrapperNullCheck-expected.png: Copied from LayoutTests/platform/qt/fast/dom/HTMLProgressElement/progress-writing-mode-expected.png.
+        * platform/qt/fast/lists/inlineBoxWrapperNullCheck-expected.txt:
+        * platform/qt/fast/lists/ol-start-dynamic-expected.png: Copied from LayoutTests/platform/qt/fast/html/details-no-summary2-expected.png.
+        * platform/qt/fast/lists/ol-start-dynamic-expected.txt:
+        * platform/qt/fast/multicol/hit-test-gap-between-pages-expected.txt: Added.
+        * platform/qt/fast/multicol/table-vertical-align-expected.txt:
+        * platform/qt/fast/multicol/vertical-rl/rule-style-expected.txt:
+        * platform/qt/fast/parser/tabs-in-scripts-expected.png: Copied from LayoutTests/platform/qt/fast/dom/HTMLMeterElement/meter-element-repaint-on-update-value-expected.png.
+        * platform/qt/fast/parser/tabs-in-scripts-expected.txt:
+        * platform/qt/fast/reflections/reflection-direction-expected.png: Added.
+        * platform/qt/fast/reflections/reflection-direction-expected.txt:
+        * platform/qt/fast/reflections/reflection-masks-expected.png: Added.
+        * platform/qt/fast/reflections/reflection-masks-expected.txt:
+        * platform/qt/fast/reflections/reflection-masks-opacity-expected.png: Added.
+        * platform/qt/fast/reflections/reflection-masks-opacity-expected.txt:
+        * platform/qt/fast/repaint/block-no-inflow-children-expected.png: Copied from LayoutTests/platform/qt/fast/dom/HTMLProgressElement/progress-writing-mode-expected.png.
+        * platform/qt/fast/repaint/block-no-inflow-children-expected.txt:
+        * platform/qt/fast/repaint/button-spurious-layout-hint-expected.txt:
+        * platform/qt/fast/repaint/clip-with-layout-delta-expected.txt:
+        * platform/qt/fast/repaint/continuation-after-outline-expected.png:
+        * platform/qt/fast/repaint/continuation-after-outline-expected.txt:
+        * platform/qt/fast/repaint/float-overflow-expected.png:
+        * platform/qt/fast/repaint/float-overflow-expected.txt:
+        * platform/qt/fast/repaint/float-overflow-right-expected.png:
+        * platform/qt/fast/repaint/float-overflow-right-expected.txt:
+        * platform/qt/fast/repaint/gradients-em-stops-repaint-expected.png:
+        * platform/qt/fast/repaint/gradients-em-stops-repaint-expected.txt:
+        * platform/qt/fast/repaint/iframe-scroll-repaint-expected.txt:
+        * platform/qt/fast/repaint/line-in-scrolled-clipped-block-expected.png: Copied from LayoutTests/platform/qt/fast/dom/HTMLMeterElement/meter-writing-mode-expected.png.
+        * platform/qt/fast/repaint/line-in-scrolled-clipped-block-expected.txt:
+        * platform/qt/fast/repaint/lines-with-layout-delta-expected.png:
+        * platform/qt/fast/repaint/lines-with-layout-delta-expected.txt:
+        * platform/qt/fast/repaint/reflection-repaint-test-expected.png:
+        * platform/qt/fast/repaint/reflection-repaint-test-expected.txt:
+        * platform/qt/fast/repaint/repaint-svg-after-style-change-expected.png: Copied from LayoutTests/platform/qt/fast/dynamic/positioned-movement-with-positioned-children-expected.png.
+        * platform/qt/fast/repaint/repaint-svg-after-style-change-expected.txt:
+        * platform/qt/fast/repaint/selection-clear-expected.png:
+        * platform/qt/fast/repaint/selection-clear-expected.txt:
+        * platform/qt/fast/repaint/transform-layout-repaint-expected.png:
+        * platform/qt/fast/repaint/transform-layout-repaint-expected.txt:
+        * platform/qt/fast/replaced/image-onload-expected.png:
+        * platform/qt/fast/replaced/image-onload-expected.txt:
+        * platform/qt/fast/runin/002-expected.png:
+        * platform/qt/fast/runin/002-expected.txt:
+        * platform/qt/fast/runin/generated4-expected.png:
+        * platform/qt/fast/runin/generated4-expected.txt:
+        * platform/qt/svg/custom/use-instanceRoot-event-listeners-expected.txt: Added.
+
 2012-07-31  Alexander Pavlov  <apavlov@chromium.org>
 
         [Chromium] Unreviewed, handle more tests failing after r124052.

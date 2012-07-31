@@ -141,7 +141,7 @@ layer at (8,376) size 768x300
     RenderTable {TABLE} at (0,0) size 376x1200 [border: (1px outset #808080)]
       RenderTableSection {TBODY} at (1,1) size 374x1198
         RenderTableRow {TR} at (0,0) size 374x1196
-          RenderTableCell {TD} at (0,0) size 136x1196 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+          RenderTableCell {TD} at (0,0) size 136x1198 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
             RenderText {#text} at (11,11) size 114x38
               text run at (11,11) width 114: "This cell has lots of"
               text run at (11,30) width 26: "text."

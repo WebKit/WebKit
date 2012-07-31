@@ -4,7 +4,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 iiiiiiiiii
 XXXXXXXXXX
-FAIL document.getElementById('i_s').offsetWidth should be 112. Was 42.
+PASS document.getElementById('i_s').offsetWidth is document.getElementById('x_s').offsetWidth
 PASS successfullyParsed is true
 
 TEST COMPLETE

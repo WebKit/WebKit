@@ -9,14 +9,14 @@ layer at (0,0) size 800x600
         layer at (0,0) size 397x600
           RenderBlock {HTML} at (0,0) size 397x600
             RenderBody {BODY} at (8,8) size 381x584
-              RenderBlock {DIV} at (0,0) size 381x21
-                RenderText {#text} at (0,0) size 67x21
-                  text run at (0,0) width 67: "PASSED"
+              RenderBlock {DIV} at (0,0) size 381x19
+                RenderText {#text} at (0,0) size 58x19
+                  text run at (0,0) width 58: "PASSED"
       RenderFrame {FRAME} at (403,0) size 397x600
         layer at (0,0) size 397x600
           RenderView at (0,0) size 397x600
         layer at (0,0) size 397x600
           RenderBlock {HTML} at (0,0) size 397x600
             RenderBody {BODY} at (8,8) size 381x584
-              RenderText {#text} at (0,0) size 22x21
-                text run at (0,0) width 22: "foo"
+              RenderText {#text} at (0,0) size 20x19
+                text run at (0,0) width 20: "foo"

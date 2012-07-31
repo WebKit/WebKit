@@ -3,7 +3,7 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderText {#text} at (0,0) size 32x21
-        text run at (0,0) width 32: "Foo "
-      RenderText {#text} at (32,0) size 81x21
-        text run at (32,0) width 81: "Hello world"
+      RenderText {#text} at (0,0) size 29x19
+        text run at (0,0) width 29: "Foo "
+      RenderText {#text} at (29,0) size 71x19
+        text run at (29,0) width 71: "Hello world"

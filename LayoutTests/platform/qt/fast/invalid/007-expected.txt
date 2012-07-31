@@ -8,18 +8,18 @@ layer at (0,0) size 800x600
           RenderInline {A} at (0,0) size 0x0
         RenderInline {LABEL} at (0,0) size 0x0
           RenderInline {A} at (0,0) size 0x0
-      RenderBlock (anonymous) at (0,0) size 784x42
-        RenderBlock {DIV} at (0,0) size 784x42
-          RenderBlock (anonymous) at (0,0) size 784x21
-            RenderInline {A} at (0,0) size 38x21
-              RenderText {#text} at (0,0) size 38x21
-                text run at (0,0) width 38: "Hello"
-          RenderBlock (anonymous) at (0,21) size 784x21
-            RenderBlock {DIV} at (0,0) size 784x21
-              RenderText {#text} at (0,0) size 42x21
-                text run at (0,0) width 42: "World"
-          RenderBlock (anonymous) at (0,42) size 784x0
+      RenderBlock (anonymous) at (0,0) size 784x38
+        RenderBlock {DIV} at (0,0) size 784x38
+          RenderBlock (anonymous) at (0,0) size 784x19
+            RenderInline {A} at (0,0) size 32x19
+              RenderText {#text} at (0,0) size 32x19
+                text run at (0,0) width 32: "Hello"
+          RenderBlock (anonymous) at (0,19) size 784x19
+            RenderBlock {DIV} at (0,0) size 784x19
+              RenderText {#text} at (0,0) size 39x19
+                text run at (0,0) width 39: "World"
+          RenderBlock (anonymous) at (0,38) size 784x0
             RenderInline {A} at (0,0) size 0x0
             RenderText {#text} at (0,0) size 0x0
-      RenderBlock (anonymous) at (0,42) size 784x0
+      RenderBlock (anonymous) at (0,38) size 784x0
         RenderInline {LABEL} at (0,0) size 0x0

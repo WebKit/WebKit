@@ -1,0 +1,22 @@
+Test some simple grid layouts by positioning grid items by index.
+
+PASS
+PASS
+FAIL:
+Expected 110 for height, but got 15. 
+
+<div class="grid" style="-webkit-writing-mode: vertical-rl; margin-bottom: 60px;" data-expected-width="50" data-expected-height="110">
+    <div id="a" data-offset-x="40" data-offset-y="0"></div>
+    <div id="b" data-offset-x="40" data-offset-y="50"></div>
+    <div id="c" data-offset-x="20" data-offset-y="0"></div>
+    <div id="d" data-offset-x="20" data-offset-y="50"></div>
+</div>
+FAIL:
+Expected 110 for height, but got 15. 
+
+<div class="grid" style="-webkit-writing-mode: vertical-lr; margin-bottom: 60px;" data-expected-width="50" data-expected-height="110">
+    <div id="a" data-offset-x="0" data-offset-y="0"></div>
+    <div id="b" data-offset-x="0" data-offset-y="50"></div>
+    <div id="c" data-offset-x="20" data-offset-y="0"></div>
+    <div id="d" data-offset-x="20" data-offset-y="50"></div>
+</div>
