@@ -1,3 +1,20 @@
+2012-07-31  Thiago Marcos P. Santos  <thiago.santos@intel.com>
+
+        [EFL] Dump a backtrace in case of a crash
+        https://bugs.webkit.org/show_bug.cgi?id=92489
+
+        Reviewed by Csaba Osztrogonác.
+
+        Dump a stack trace in case of a unexpected signal. This should
+        provide a better report at the build bots when WTR crashes.
+
+        * DumpRenderTree/efl/DumpRenderTree.cpp:
+        (main):
+        * TestWebKitAPI/efl/InjectedBundleController.cpp:
+        (TestWebKitAPI::InjectedBundleController::platformInitialize):
+        * WebKitTestRunner/InjectedBundle/efl/InjectedBundleEfl.cpp:
+        (WTR::InjectedBundle::platformInitialize):
+
 2012-07-31  Joshua Netterfield  <jnetterfield@rim.com>
 
         [BlackBerry] Enable CSS Filter Effects

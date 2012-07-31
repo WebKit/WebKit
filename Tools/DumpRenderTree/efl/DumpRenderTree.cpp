@@ -48,6 +48,7 @@
 #include <getopt.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <wtf/Assertions.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
@@ -449,6 +450,8 @@ int main(int argc, char** argv)
 
     if (!initEfl())
         return EXIT_FAILURE;
+
+    WTFInstallReportBacktraceOnCrashHook();
 
     OwnPtr<Ecore_Evas> ecoreEvas = adoptPtr(initEcoreEvas());
     browser = DumpRenderTreeChrome::create(ecore_evas_get(ecoreEvas.get()));

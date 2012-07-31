@@ -20,13 +20,13 @@
 #include "config.h"
 #include "InjectedBundle.h"
 
-#include <WebCore/NotImplemented.h>
+#include <wtf/Assertions.h>
 
 namespace WTR {
 
 void InjectedBundle::platformInitialize(WKTypeRef)
 {
-    notImplemented();
+    WTFInstallReportBacktraceOnCrashHook();
 }
 
 } // namespace WTR

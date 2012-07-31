@@ -26,10 +26,13 @@
 #include "config.h"
 #include "InjectedBundleController.h"
 
+#include <wtf/Assertions.h>
+
 namespace TestWebKitAPI {
 
 void InjectedBundleController::platformInitialize()
 {
+    WTFInstallReportBacktraceOnCrashHook();
 }
 
 } // namespace TestWebKitAPI
