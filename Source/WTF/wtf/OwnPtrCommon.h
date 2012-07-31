@@ -57,22 +57,22 @@ namespace WTF {
     }
 
 #if OS(WINDOWS)
-    void deleteOwnedPtr(HBITMAP);
-    void deleteOwnedPtr(HBRUSH);
-    void deleteOwnedPtr(HDC);
-    void deleteOwnedPtr(HFONT);
-    void deleteOwnedPtr(HPALETTE);
-    void deleteOwnedPtr(HPEN);
-    void deleteOwnedPtr(HRGN);
+    WTF_EXPORT_PRIVATE void deleteOwnedPtr(HBITMAP);
+    WTF_EXPORT_PRIVATE void deleteOwnedPtr(HBRUSH);
+    WTF_EXPORT_PRIVATE void deleteOwnedPtr(HDC);
+    WTF_EXPORT_PRIVATE void deleteOwnedPtr(HFONT);
+    WTF_EXPORT_PRIVATE void deleteOwnedPtr(HPALETTE);
+    WTF_EXPORT_PRIVATE void deleteOwnedPtr(HPEN);
+    WTF_EXPORT_PRIVATE void deleteOwnedPtr(HRGN);
 #endif
 
 #if PLATFORM(EFL)
-    void deleteOwnedPtr(Ecore_Evas*);
-    void deleteOwnedPtr(Ecore_Pipe*);
-    void deleteOwnedPtr(Ecore_Timer*);
-    void deleteOwnedPtr(Eina_Hash*);
-    void deleteOwnedPtr(Eina_Module*);
-    void deleteOwnedPtr(Evas_Object*);
+    WTF_EXPORT_PRIVATE void deleteOwnedPtr(Ecore_Evas*);
+    WTF_EXPORT_PRIVATE void deleteOwnedPtr(Ecore_Pipe*);
+    WTF_EXPORT_PRIVATE void deleteOwnedPtr(Ecore_Timer*);
+    WTF_EXPORT_PRIVATE void deleteOwnedPtr(Eina_Hash*);
+    WTF_EXPORT_PRIVATE void deleteOwnedPtr(Eina_Module*);
+    WTF_EXPORT_PRIVATE void deleteOwnedPtr(Evas_Object*);
 #endif
 
 } // namespace WTF
