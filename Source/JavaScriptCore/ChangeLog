@@ -1,3 +1,36 @@
+2012-07-30  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r124123.
+        http://trac.webkit.org/changeset/124123
+        https://bugs.webkit.org/show_bug.cgi?id=92700
+
+        ASSERT crashes terminate webkit Layout tests (Requested by
+        msaboff on #webkit).
+
+        * heap/Heap.cpp:
+        * heap/Heap.h:
+        (Heap):
+        * heap/IncrementalSweeper.cpp:
+        (JSC::IncrementalSweeper::doSweep):
+        (JSC::IncrementalSweeper::startSweeping):
+        (JSC::IncrementalSweeper::IncrementalSweeper):
+        (JSC):
+        * heap/IncrementalSweeper.h:
+        (IncrementalSweeper):
+        * heap/MarkedAllocator.cpp:
+        (JSC::MarkedAllocator::tryAllocateHelper):
+        (JSC::MarkedAllocator::addBlock):
+        * heap/MarkedAllocator.h:
+        (JSC::MarkedAllocator::zapFreeList):
+        * heap/MarkedBlock.cpp:
+        (JSC::MarkedBlock::sweepHelper):
+        * heap/MarkedSpace.cpp:
+        * heap/MarkedSpace.h:
+        (JSC::MarkedSpace::sweep):
+        (JSC):
+        * runtime/JSGlobalData.cpp:
+        (JSC::JSGlobalData::~JSGlobalData):
+
 2012-07-30  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Structures should be swept after all other objects

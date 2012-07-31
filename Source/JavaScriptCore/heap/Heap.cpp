@@ -830,18 +830,4 @@ void Heap::addCompiledCode(ExecutableBase* executable)
     m_compiledCode.append(executable);
 }
 
-bool Heap::isSafeToSweepStructures()
-{
-    return !m_sweeper || m_sweeper->structuresCanBeSwept();
-}
-
-void Heap::didStartVMShutdown()
-{
-    m_activityCallback->didStartVMShutdown();
-    m_activityCallback = 0;
-    m_sweeper->didStartVMShutdown();
-    m_sweeper = 0;
-    lastChanceToFinalize();
-}
-
 } // namespace JSC

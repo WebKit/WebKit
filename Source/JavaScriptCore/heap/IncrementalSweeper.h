@@ -42,11 +42,8 @@ public:
     static IncrementalSweeper* create(Heap*);
     void startSweeping(const HashSet<MarkedBlock*>& blockSnapshot);
     virtual void doWork();
-    bool structuresCanBeSwept();
-    void willFinishSweeping();
 
 private:
-
 #if USE(CF)
     IncrementalSweeper(Heap*, CFRunLoopRef);
     
@@ -55,14 +52,11 @@ private:
     void cancelTimer();
     
     unsigned m_currentBlockToSweepIndex;
-    unsigned m_currentStructureBlockToSweepIndex;
     Vector<MarkedBlock*> m_blocksToSweep;
 #else
     
     IncrementalSweeper(JSGlobalData*);
-   
-    bool m_structuresCanBeSwept;
-
+    
 #endif
 };
 

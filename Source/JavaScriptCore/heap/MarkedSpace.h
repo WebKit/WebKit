@@ -235,6 +235,11 @@ inline void MarkedSpace::clearMarks()
     forEachBlock<ClearMarks>();
 }
 
+inline void MarkedSpace::sweep()
+{
+    forEachBlock<Sweep>();
+}
+
 inline size_t MarkedSpace::objectCount()
 {
     return forEachBlock<MarkCount>();

@@ -69,46 +69,10 @@ void IncrementalSweeper::cancelTimer()
     CFRunLoopTimerSetNextFireDate(m_timer.get(), CFAbsoluteTimeGetCurrent() + s_decade);
 }
 
-bool IncrementalSweeper::structuresCanBeSwept()
-{
-    ASSERT(m_currentBlockToSweepIndex <= m_blocksToSweep.size());
-    return !m_blocksToSweep.size() || m_currentBlockToSweepIndex >= m_blocksToSweep.size();
-}
-
 void IncrementalSweeper::doSweep(double sweepBeginTime)
 {
     while (m_currentBlockToSweepIndex < m_blocksToSweep.size()) {
-        MarkedBlock* block = m_blocksToSweep[m_currentBlockToSweepIndex];
-        if (block->onlyContainsStructures()) {
-            m_currentBlockToSweepIndex++;
-            continue;
-        }
-
-        m_blocksToSweep[m_currentBlockToSweepIndex++] = 0;
-
-        if (!block->needsSweeping())
-            continue;
-
-        block->sweep();
-        m_globalData->heap.objectSpace().freeOrShrinkBlock(block);
-
-        CFTimeInterval elapsedTime = WTF::monotonicallyIncreasingTime() - sweepBeginTime;
-        if (elapsedTime < sweepTimeSlice)
-            continue;
-
-        scheduleTimer();
-        return;
-    }
-
-    while (m_currentStructureBlockToSweepIndex < m_blocksToSweep.size()) {
-        MarkedBlock* block = m_blocksToSweep[m_currentStructureBlockToSweepIndex];
-        if (!block) {
-            m_currentStructureBlockToSweepIndex++;
-            continue;
-        }
-
-        m_blocksToSweep[m_currentStructureBlockToSweepIndex++] = 0;
-
+        MarkedBlock* block = m_blocksToSweep[m_currentBlockToSweepIndex++];
         if (!block->needsSweeping())
             continue;
 
@@ -131,23 +95,13 @@ void IncrementalSweeper::startSweeping(const HashSet<MarkedBlock*>& blockSnapsho
 {
     WTF::copyToVector(blockSnapshot, m_blocksToSweep);
     m_currentBlockToSweepIndex = 0;
-    m_currentStructureBlockToSweepIndex = 0;
     scheduleTimer();
-}
-
-void IncrementalSweeper::willFinishSweeping()
-{
-    m_currentBlockToSweepIndex = m_currentStructureBlockToSweepIndex = 0;
-    m_blocksToSweep.clear();
-    if (m_globalData)
-        cancelTimer();
 }
 
 #else
 
 IncrementalSweeper::IncrementalSweeper(JSGlobalData* globalData)
     : HeapTimer(globalData)
-    , m_structuresCanBeSwept(false)
 {
 }
 
@@ -160,21 +114,10 @@ IncrementalSweeper* IncrementalSweeper::create(Heap* heap)
     return new IncrementalSweeper(heap->globalData());
 }
 
-bool IncrementalSweeper::structuresCanBeSwept()
-{
-    return m_structuresCanBeSwept;
-}
-
 void IncrementalSweeper::startSweeping(const HashSet<MarkedBlock*>&)
 {
-    m_structuresCanBeSwept = false;
 }
-
-void IncrementalSweeper::willFinishSweeping()
-{
-    m_structuresCanBeSwept = true;
-}
-
+    
 #endif
 
 } // namespace JSC

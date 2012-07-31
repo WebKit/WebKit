@@ -21,7 +21,6 @@
 #include "config.h"
 #include "MarkedSpace.h"
 
-#include "IncrementalSweeper.h"
 #include "JSGlobalObject.h"
 #include "JSLock.h"
 #include "JSObject.h"
@@ -107,12 +106,6 @@ void MarkedSpace::lastChanceToFinalize()
 {
     canonicalizeCellLivenessData();
     forEachBlock<LastChanceToFinalize>();
-}
-
-void MarkedSpace::sweep()
-{
-    m_heap->sweeper()->willFinishSweeping();
-    forEachBlock<Sweep>();
 }
 
 void MarkedSpace::resetAllocators()

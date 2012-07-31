@@ -101,7 +101,6 @@ inline void MarkedAllocator::zapFreeList()
     }
     
     m_currentBlock->zapFreeList(m_freeList);
-    m_currentBlock = 0;
     m_freeList = MarkedBlock::FreeList();
 }
 

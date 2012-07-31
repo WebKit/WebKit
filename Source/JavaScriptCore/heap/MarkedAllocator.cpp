@@ -3,7 +3,6 @@
 
 #include "GCActivityCallback.h"
 #include "Heap.h"
-#include "IncrementalSweeper.h"
 #include "JSGlobalData.h"
 #include <wtf/CurrentTime.h>
 
@@ -30,14 +29,6 @@ bool MarkedAllocator::isPagedOut(double deadline)
 inline void* MarkedAllocator::tryAllocateHelper()
 {
     if (!m_freeList.head) {
-        if (m_onlyContainsStructures && !m_heap->isSafeToSweepStructures()) {
-            if (m_currentBlock) {
-                m_currentBlock->didConsumeFreeList();
-                m_currentBlock = 0;
-            }
-            return 0;
-        }
-
         for (MarkedBlock*& block = m_blocksToSweep; block; block = static_cast<MarkedBlock*>(block->next())) {
             m_freeList = block->sweep(MarkedBlock::SweepToFreeList);
             if (m_freeList.head) {
@@ -113,6 +104,7 @@ MarkedBlock* MarkedAllocator::allocateBlock()
 void MarkedAllocator::addBlock(MarkedBlock* block)
 {
     ASSERT(!m_currentBlock);
+    ASSERT(!m_blocksToSweep);
     ASSERT(!m_freeList.head);
     
     m_blockList.append(block);

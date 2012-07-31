@@ -223,7 +223,9 @@ JSGlobalData::JSGlobalData(GlobalDataType globalDataType, ThreadStackType thread
 JSGlobalData::~JSGlobalData()
 {
     ASSERT(!m_apiLock.currentThreadIsHoldingLock());
-    heap.didStartVMShutdown();
+    heap.activityCallback()->didStartVMShutdown();
+    heap.sweeper()->didStartVMShutdown();
+    heap.lastChanceToFinalize();
 
     delete interpreter;
 #ifndef NDEBUG
