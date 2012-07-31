@@ -330,7 +330,7 @@ class Manager(object):
         self._finder = LayoutTestFinder(self._port, self._options)
 
     def _collect_tests(self, args):
-        self._paths, self._test_names = self._finder.find_tests(self._options, args)
+        return self._finder.find_tests(self._options, args)
 
     def _is_http_test(self, test):
         return self.HTTP_SUBDIR in test or self.WEBSOCKET_SUBDIR in test
@@ -344,21 +344,12 @@ class Manager(object):
     def _is_perf_test(self, test):
         return self.PERF_SUBDIR == test or (self.PERF_SUBDIR + self._port.TEST_PATH_SEPARATOR) in test
 
-    # FIXME: This method is way too long and needs to be broken into pieces.
-    def prepare_lists_and_print_output(self):
-        """Create appropriate subsets of test lists and returns a
-        ResultSummary object. Also prints expected test counts.
-        """
-        num_all_test_files = len(self._test_names)
-
+    def _prepare_lists(self):
         tests_to_skip = self._finder.skip_tests(self._paths, self._test_names, self._expectations, self._http_tests())
-        if not self._test_names:
-            _log.critical('No tests to run.')
-            return None
+        self._test_names = list(set(self._test_names) - tests_to_skip)
 
         # Create a sorted list of test files so the subset chunk,
         # if used, contains alphabetically consecutive tests.
-        self._test_names = list(set(self._test_names) - tests_to_skip)
         if self._options.randomize_order:
             random.shuffle(self._test_names)
         else:
@@ -378,12 +369,7 @@ class Manager(object):
             self._test_names = self._test_names * self._options.iterations
 
         iterations = self._options.repeat_each * self._options.iterations
-        result_summary = ResultSummary(self._expectations, set(self._test_names), iterations, tests_to_skip)
-
-        self._printer.print_found(num_all_test_files, len(self._test_names), self._options.repeat_each, self._options.iterations)
-        self._printer.print_expected(result_summary, self._expectations.get_tests_with_result_type)
-
-        return result_summary
+        return ResultSummary(self._expectations, set(self._test_names), iterations, tests_to_skip)
 
     def _get_dir_for_test_file(self, test_file):
         """Returns the highest-level directory by which to shard the given
@@ -663,12 +649,11 @@ class Manager(object):
         return any(self._test_requires_lock(test_name) for test_name in self._test_names) and self._options.http
 
     def _set_up_run(self):
-        """Configures the system to be ready to run tests.
+        self._printer.write_update("Checking build ...")
+        if not self._port.check_build(self.needs_servers()):
+            _log.error("Build check failed")
+            return False
 
-        Returns a ResultSummary object if we should continue to run tests,
-        or None if we should abort.
-
-        """
         # This must be started before we check the system dependencies,
         # since the helper may do things to make the setup correct.
         if self._options.pixel_tests:
@@ -680,7 +665,7 @@ class Manager(object):
             self._printer.write_update("Checking system dependencies ...")
             if not self._port.check_sys_deps(self.needs_servers()):
                 self._port.stop_helper()
-                return None
+                return False
 
         if self._options.clobber_old_results:
             self._clobber_old_results()
@@ -689,36 +674,33 @@ class Manager(object):
         self._port.host.filesystem.maybe_make_directory(self._results_directory)
 
         self._port.setup_test_run()
-
-        self._printer.write_update("Preparing tests ...")
-        result_summary = self.prepare_lists_and_print_output()
-        if not result_summary:
-            return None
-
-        return result_summary
+        return True
 
     def run(self, args):
         """Run all our tests on all our test files and return the number of unexpected results (0 == success)."""
         self._printer.write_update("Collecting tests ...")
         try:
-            self._collect_tests(args)
-        except IOError as e:
-            # This is raised when the --test-list doesn't exist.
-            return -1
-
-        self._printer.write_update("Checking build ...")
-        if not self._port.check_build(self.needs_servers()):
-            _log.error("Build check failed")
+            self._paths, self._test_names = self._collect_tests(args)
+        except IOError as exception:
+            # This is raised if --test-list doesn't exist
             return -1
 
         self._printer.write_update("Parsing expectations ...")
         self._expectations = test_expectations.TestExpectations(self._port, self._test_names)
 
-        result_summary = self._set_up_run()
-        if not result_summary:
+        num_all_test_files_found = len(self._test_names)
+        result_summary = self._prepare_lists()
+
+        # Check to make sure we're not skipping every test.
+        if not self._test_names:
+            _log.critical('No tests to run.')
             return -1
 
-        assert(self._test_names)
+        self._printer.print_found(num_all_test_files_found, len(self._test_names), self._options.repeat_each, self._options.iterations)
+        self._printer.print_expected(result_summary, self._expectations.get_tests_with_result_type)
+
+        if not self._set_up_run():
+            return -1
 
         start_time = time.time()
 
