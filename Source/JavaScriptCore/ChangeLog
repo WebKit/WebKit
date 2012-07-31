@@ -1,5 +1,12 @@
 2012-07-31  Geoffrey Garen  <ggaren@apple.com>
 
+        Fix all the other builds I just broke. Maybe fix the Windows build.
+
+        * heap/HeapBlock.h:
+        (HeapBlock): WTF?
+
+2012-07-31  Geoffrey Garen  <ggaren@apple.com>
+
         Maybe fix the Windows build.
 
         * heap/HeapBlock.h:
