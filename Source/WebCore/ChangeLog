@@ -1,3 +1,9 @@
+2012-07-30  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Qt Windows build fix attempt after r124098.
+
+        * dom/GestureEvent.cpp:
+
 2012-07-30  Wei James  <james.wei@intel.com>
 
         [Chromium] Enable web audio IPP for x86 chromium android

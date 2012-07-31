@@ -29,6 +29,8 @@
 
 #include "GestureEvent.h"
 
+#include <wtf/text/AtomicString.h>
+
 namespace WebCore {
 
 PassRefPtr<GestureEvent> GestureEvent::create()
