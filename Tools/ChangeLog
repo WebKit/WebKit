@@ -1,3 +1,17 @@
+2012-07-31  Martin Robinson  <mrobinson@igalia.com>
+
+        [jhbuild] Also try to load jhbuild Python module from the source checkout
+
+        Reviewed by Philippe Normand.
+
+        JHBuild also seems to have an installation mode where it prefers to load its
+        Python modules from the source checkout. This seems to be used particularly
+        on the GTK+ 64-bit release bot. We should fall back to this mode.
+
+        * jhbuild/jhbuildutils.py:
+        (enter_jhbuild_environment_if_available): Use the source checkout if there
+        is no installation path.
+
 2012-07-30  Ryosuke Niwa  <rniwa@webkit.org>
 
         Revert r124153 and land the "right" build fix per ap's comment on the bug 92676.

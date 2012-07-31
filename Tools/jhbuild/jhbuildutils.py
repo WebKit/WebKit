@@ -27,18 +27,20 @@ def enter_jhbuild_environment_if_available(platform):
     if not os.path.exists(get_dependencies_path()):
         return False
 
+    # Sometimes jhbuild chooses to install in a way that reads the library from the source directory, so fall
+    # back to that method.
+    source_path = os.path.join(get_dependencies_path(), "Source", "jhbuild")
+    sys.path.insert(0, source_path)
+
     # We don't know the Python version, so we just assume that we can safely take the first one in the list.
     site_packages_path = glob.glob(os.path.join(get_dependencies_path(), "Root", "lib", "*", "site-packages"))
-    if not len(site_packages_path):
-        return False
-
-    site_packages_path = site_packages_path[0]
-    sys.path.insert(0, site_packages_path)
-
-    import jhbuild.config
-    from jhbuild.errors import FatalError
+    if len(site_packages_path):
+       site_packages_path = site_packages_path[0]
+       sys.path.insert(0, site_packages_path)
 
     try:
+        import jhbuild.config
+        from jhbuild.errors import FatalError
         config = jhbuild.config.Config(get_config_file_for_platform(platform))
     except FatalError, exception:
         sys.stderr.write('Could not load jhbuild config file: %s\n' % exception.args[0])
