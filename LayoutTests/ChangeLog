@@ -2,6 +2,12 @@
 
         [chromium] Unreviewed gardening.
 
+        * platform/chromium-mac/platform/chromium/virtual/gpu/fast/canvas/canvas-incremental-repaint-2-expected.png: Added.
+
+2012-07-31  Stephen White  <senorblanco@chromium.org>
+
+        [chromium] Unreviewed gardening.
+
         Add new mac baselines for fill-stroke-clip-reset-path.  These have red
         squares for the dashboard results, since chrome doesn't support
         dashboard mode.  The same had already been done for Win and Linux.
