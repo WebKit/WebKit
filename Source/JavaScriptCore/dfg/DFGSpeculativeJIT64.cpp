@@ -3520,7 +3520,7 @@ void SpeculativeJIT::compile(Node& node)
         
     case StructureTransitionWatchpoint: {
         m_jit.addWeakReference(node.structure());
-        node.structure()->addTransitionWatchpoint(speculationWatchpoint());
+        node.structure()->addTransitionWatchpoint(speculationWatchpoint(BadCache));
 
 #if !ASSERT_DISABLED
         SpeculateCellOperand op1(this, node.child1());

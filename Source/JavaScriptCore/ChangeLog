@@ -1,3 +1,19 @@
+2012-07-31  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG OSR exit profiling has unusual oversights
+        https://bugs.webkit.org/show_bug.cgi?id=92728
+
+        Reviewed by Geoffrey Garen.
+
+        * dfg/DFGOSRExit.cpp:
+        (JSC::DFG::OSRExit::considerAddingAsFrequentExitSiteSlow):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::speculationWatchpoint):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+
 2012-07-31  Chao-ying Fu  <fu@mips.com>
 
         Add MIPS add32 function

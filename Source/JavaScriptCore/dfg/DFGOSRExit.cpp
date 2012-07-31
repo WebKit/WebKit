@@ -64,7 +64,7 @@ bool OSRExit::considerAddingAsFrequentExitSiteSlow(CodeBlock* dfgCodeBlock, Code
     } else
         exitSite = FrequentExitSite(m_codeOriginForExitProfile.bytecodeIndex, m_kind);
     
-    return baselineCodeBlockForOriginAndBaselineCodeBlock(m_codeOrigin, profiledCodeBlock)->addFrequentExitSite(exitSite);
+    return baselineCodeBlockForOriginAndBaselineCodeBlock(m_codeOriginForExitProfile, profiledCodeBlock)->addFrequentExitSite(exitSite);
 }
 
 } } // namespace JSC::DFG

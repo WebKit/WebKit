@@ -2224,9 +2224,9 @@ public:
     // The default for speculation watchpoints is that they're uncounted, because the
     // act of firing a watchpoint invalidates it. So, future recompilations will not
     // attempt to set this watchpoint again.
-    JumpReplacementWatchpoint* speculationWatchpoint()
+    JumpReplacementWatchpoint* speculationWatchpoint(ExitKind kind = UncountableWatchpoint)
     {
-        return speculationWatchpoint(UncountableWatchpoint, JSValueSource(), NoNode);
+        return speculationWatchpoint(kind, JSValueSource(), NoNode);
     }
     void forwardSpeculationCheck(ExitKind kind, JSValueSource jsValueSource, NodeIndex nodeIndex, MacroAssembler::Jump jumpToFail, const ValueRecovery& valueRecovery)
     {
