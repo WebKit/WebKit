@@ -427,7 +427,7 @@ void QtWebPageEventHandler::updateTextInputState()
     if (!m_webView->hasActiveFocus())
         return;
 
-    qApp->inputMethod()->update(Qt::ImQueryInput | Qt::ImEnabled);
+    qApp->inputMethod()->update(Qt::ImQueryInput | Qt::ImEnabled | Qt::ImHints);
 
     setInputPanelVisible(editor.isContentEditable);
 }

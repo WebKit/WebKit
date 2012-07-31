@@ -1,3 +1,15 @@
+2012-07-31  Marcelo Lira  <marcelo.lira@openbossa.org>
+
+        [Qt] Input method update should also include hints
+        https://bugs.webkit.org/show_bug.cgi?id=92744
+
+        Reviewed by Simon Hausmann.
+
+        The QInputMethod is told to query for input method hints when updated.
+
+        * UIProcess/qt/QtWebPageEventHandler.cpp:
+        (WebKit::QtWebPageEventHandler::updateTextInputState):
+
 2012-07-31  Danilo Cesar Lemes de Paula  <danilo.cesar@collabora.co.uk>
 
         add Farstream flags/deps to WebKit, for WebRTC
