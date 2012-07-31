@@ -1877,6 +1877,8 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
     if (window == currentWindow)
         return;
     
+    _data->_pageClient->viewWillMoveToAnotherWindow();
+    
     [self removeWindowObservers];
     [self addWindowObserversForWindow:window];
 
