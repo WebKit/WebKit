@@ -1,3 +1,9 @@
+2012-07-31  Alexander Pavlov  <apavlov@chromium.org>
+
+        [Chromium] Unreviewed, handle more tests failing after r124052.
+
+        * platform/chromium/TestExpectations:
+
 2012-07-31  Raul Hudea  <rhudea@adobe.com>
 
         Inspector crashes when trying to inspect a page with CSS region styling
