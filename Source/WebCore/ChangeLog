@@ -1,3 +1,29 @@
+2012-07-31  James Robinson  <jamesr@chromium.org>
+
+        [chromium] REGRESSION(r123644) Compositor HUD crashes immediately with --show-paint-rects
+        https://bugs.webkit.org/show_bug.cgi?id=92775
+
+        Reviewed by Adrienne Walker.
+
+        In r123644, the compositor HUD was turned into a normal layer. When the HUD is supposed to cover the entire
+        viewport - for instance if the showPlatformLayerTree or showDebugRects settings are true -
+        HeadsUpDisplayLayerChromium's constructor tries to size itself to its layerTreeHost()'s device viewport size.
+        Unfortunately, its layerTreeHost pointer is always nil in the constructor since the layer is not yet in the
+        tree. Additionally, this doesn't handle resize at all.
+
+        To fix this, this grabs the device viewport size and settings in a LayerChromium::update() OVERRIDE. Also
+        changes CCLayerTreeHost::willCommit to only reparent the HUD layer if needed instead of on every frame.
+
+        Tested manually, we don't have any layout tests for the debug HUD.
+
+        * platform/graphics/chromium/HeadsUpDisplayLayerChromium.cpp:
+        (WebCore::HeadsUpDisplayLayerChromium::create):
+        (WebCore::HeadsUpDisplayLayerChromium::HeadsUpDisplayLayerChromium):
+        * platform/graphics/chromium/HeadsUpDisplayLayerChromium.h:
+        (HeadsUpDisplayLayerChromium):
+        * platform/graphics/chromium/cc/CCLayerTreeHost.cpp:
+        (WebCore::CCLayerTreeHost::willCommit):
+
 2012-07-31  Sam Weinig  <sam@webkit.org>
 
         Stop masking 8 bits off of the visited link hash. We need all the bits!

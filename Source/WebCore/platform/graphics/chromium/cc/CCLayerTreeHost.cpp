@@ -256,15 +256,16 @@ void CCLayerTreeHost::willCommit()
     m_client->willCommit();
     if (m_rootLayer && m_settings.showDebugInfo()) {
         if (!m_hudLayer)
-            m_hudLayer = HeadsUpDisplayLayerChromium::create(m_settings, layerRendererCapabilities().maxTextureSize);
-        m_rootLayer->addChild(m_hudLayer);
+            m_hudLayer = HeadsUpDisplayLayerChromium::create(m_settings);
+        if (m_hudLayer->parent() != m_rootLayer.get()) {
+            m_hudLayer->removeFromParent();
+            m_rootLayer->addChild(m_hudLayer);
+        }
     }
 }
 
 void CCLayerTreeHost::commitComplete()
 {
-    if (m_hudLayer)
-        m_hudLayer->removeFromParent();
     m_deleteTextureAfterCommitList.clear();
     m_client->didCommit();
 }

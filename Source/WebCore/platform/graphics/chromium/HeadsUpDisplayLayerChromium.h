@@ -27,6 +27,7 @@
 #ifndef HeadsUpDisplayLayerChromium_h
 #define HeadsUpDisplayLayerChromium_h
 
+#include "IntSize.h"
 #include "LayerChromium.h"
 #include "cc/CCFontAtlas.h"
 
@@ -36,15 +37,16 @@ struct CCLayerTreeSettings;
 
 class HeadsUpDisplayLayerChromium : public LayerChromium {
 public:
-    static PassRefPtr<HeadsUpDisplayLayerChromium> create(const CCLayerTreeSettings&, int maxTextureSize);
+    static PassRefPtr<HeadsUpDisplayLayerChromium> create(const CCLayerTreeSettings&);
     virtual ~HeadsUpDisplayLayerChromium();
 
+    virtual void update(CCTextureUpdater&, const CCOcclusionTracker*, CCRenderingStats&) OVERRIDE;
     virtual bool drawsContent() const OVERRIDE { return true; }
 
     virtual PassOwnPtr<CCLayerImpl> createCCLayerImpl() OVERRIDE;
 
 protected:
-    HeadsUpDisplayLayerChromium(const CCLayerTreeSettings&, int maxTextureSize);
+    explicit HeadsUpDisplayLayerChromium(const CCLayerTreeSettings&);
 
 private:
     OwnPtr<CCFontAtlas> m_fontAtlas;

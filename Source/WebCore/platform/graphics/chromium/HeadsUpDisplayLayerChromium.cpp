@@ -33,25 +33,16 @@
 
 namespace WebCore {
 
-PassRefPtr<HeadsUpDisplayLayerChromium> HeadsUpDisplayLayerChromium::create(const CCLayerTreeSettings& settings, int maxTextureSize)
+PassRefPtr<HeadsUpDisplayLayerChromium> HeadsUpDisplayLayerChromium::create(const CCLayerTreeSettings& settings)
 {
-    return adoptRef(new HeadsUpDisplayLayerChromium(settings, maxTextureSize));
+    return adoptRef(new HeadsUpDisplayLayerChromium(settings));
 }
 
-HeadsUpDisplayLayerChromium::HeadsUpDisplayLayerChromium(const CCLayerTreeSettings& settings, int maxTextureSize)
+HeadsUpDisplayLayerChromium::HeadsUpDisplayLayerChromium(const CCLayerTreeSettings& settings)
     : LayerChromium()
 {
-    OwnPtr<CCFontAtlas> fontAtlas;
 
-    IntSize bounds;
-    if (settings.showPlatformLayerTree || settings.showDebugRects()) {
-        bounds.setWidth(std::min(maxTextureSize, layerTreeHost()->deviceViewportSize().width()));
-        bounds.setHeight(std::min(maxTextureSize, layerTreeHost()->deviceViewportSize().height()));
-    } else {
-        bounds.setWidth(512);
-        bounds.setHeight(128);
-    }
-    setBounds(bounds);
+    setBounds(IntSize(512, 128));
 
     // Only allocate the font atlas if we have reason to use the heads-up display.
     if (settings.showFPSCounter || settings.showPlatformLayerTree) {
@@ -63,6 +54,23 @@ HeadsUpDisplayLayerChromium::HeadsUpDisplayLayerChromium(const CCLayerTreeSettin
 
 HeadsUpDisplayLayerChromium::~HeadsUpDisplayLayerChromium()
 {
+}
+
+void HeadsUpDisplayLayerChromium::update(CCTextureUpdater&, const CCOcclusionTracker*, CCRenderingStats&)
+{
+    const CCLayerTreeSettings& settings = layerTreeHost()->settings();
+    int maxTextureSize = layerTreeHost()->layerRendererCapabilities().maxTextureSize;
+
+    IntSize bounds;
+    if (settings.showPlatformLayerTree || settings.showDebugRects()) {
+        bounds.setWidth(std::min(maxTextureSize, layerTreeHost()->deviceViewportSize().width()));
+        bounds.setHeight(std::min(maxTextureSize, layerTreeHost()->deviceViewportSize().height()));
+    } else {
+        bounds.setWidth(512);
+        bounds.setHeight(128);
+    }
+
+    setBounds(bounds);
 }
 
 PassOwnPtr<CCLayerImpl> HeadsUpDisplayLayerChromium::createCCLayerImpl()
