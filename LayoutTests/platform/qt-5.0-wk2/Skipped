@@ -516,6 +516,13 @@ tables/mozilla/bugs/bug59354.html
 tables/mozilla/bugs/bug96334.html
 tables/mozilla/dom/tableDom.html
 tables/mozilla/other/move_row.html
+fast/dom/HTMLTextAreaElement/reset-textarea.html
+fast/dynamic/008.html
+fast/parser/entity-comment-in-textarea.html
+fast/parser/open-comment-in-textarea.html
+
+# Size of select is different when running DRT/WTR
+fast/replaced/three-selects-break.html
 
 # [Qt] Images scale differently in WK1 and WK2
 # https://bugs.webkit.org/show_bug.cgi?id=92015

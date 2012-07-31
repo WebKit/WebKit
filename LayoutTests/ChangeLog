@@ -1,3 +1,17 @@
+2012-07-31  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt][WK2] Unreviewed gardening. Skip failing tests and remove unnecessary expected files. (bug85203)
+
+        * platform/qt-5.0-wk2/Skipped:
+        * platform/qt-5.0-wk2/fast/dom/HTMLTextAreaElement/reset-textarea-expected.png: Removed.
+        * platform/qt-5.0-wk2/fast/dom/HTMLTextAreaElement/reset-textarea-expected.txt: Removed.
+        * platform/qt-5.0-wk2/fast/dynamic/008-expected.png: Removed.
+        * platform/qt-5.0-wk2/fast/dynamic/008-expected.txt: Removed.
+        * platform/qt-5.0-wk2/fast/parser/entity-comment-in-textarea-expected.png: Removed.
+        * platform/qt-5.0-wk2/fast/parser/entity-comment-in-textarea-expected.txt: Removed.
+        * platform/qt-5.0-wk2/fast/parser/open-comment-in-textarea-expected.png: Removed.
+        * platform/qt-5.0-wk2/fast/parser/open-comment-in-textarea-expected.txt: Removed.
+
 2012-07-31  Alexander Pavlov  <apavlov@chromium.org>
 
         [Chromium] Unreviewed, rebaseline some platform/chromium/virtual/gpu/fast/canvas tests due to antialiasing changes.
