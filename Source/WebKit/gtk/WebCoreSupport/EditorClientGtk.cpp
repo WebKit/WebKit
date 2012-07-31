@@ -96,7 +96,7 @@ bool EditorClient::shouldDeleteRange(Range* range)
 
 bool EditorClient::shouldShowDeleteInterface(HTMLElement* element)
 {
-    gboolean accept = TRUE;
+    gboolean accept = FALSE;
     GRefPtr<WebKitDOMHTMLElement> kitElement(adoptGRef(kit(element)));
     g_signal_emit_by_name(m_webView, "should-show-delete-interface-for-element", kitElement.get(), &accept);
     return accept;
