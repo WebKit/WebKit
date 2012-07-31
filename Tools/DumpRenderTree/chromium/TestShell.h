@@ -32,7 +32,6 @@
 #define TestShell_h
 
 #include "AccessibilityController.h"
-#include "EventSender.h"
 #include "GamepadController.h"
 #include "LayoutTestController.h"
 #include "NotificationPresenter.h"
@@ -91,7 +90,7 @@ public:
     // Returns the host for the main WebView.
     WebViewHost* webViewHost() const { return m_webViewHost.get(); }
     LayoutTestController* layoutTestController() const { return m_layoutTestController.get(); }
-    EventSender* eventSender() const { return m_eventSender.get(); }
+    EventSender* eventSender() const { return m_testInterfaces->eventSender(); }
     AccessibilityController* accessibilityController() const { return m_testInterfaces->accessibilityController(); }
 #if ENABLE(NOTIFICATIONS)
     NotificationPresenter* notificationPresenter() const { return m_notificationPresenter.get(); }
@@ -214,7 +213,6 @@ private:
     OwnPtr<DRTDevToolsAgent> m_drtDevToolsAgent;
     OwnPtr<DRTDevToolsClient> m_drtDevToolsClient;
     OwnPtr<TestInterfaces> m_testInterfaces;
-    OwnPtr<EventSender> m_eventSender;
     OwnPtr<LayoutTestController> m_layoutTestController;
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
     OwnPtr<NotificationPresenter> m_notificationPresenter;

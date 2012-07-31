@@ -96,6 +96,19 @@
             'sources': [
                 '<@(test_runner_files)',
             ],
+            'conditions': [
+                ['toolkit_uses_gtk == 1', {
+                    'defines': [
+                        'WTF_USE_GTK=1',
+                    ],
+                    'dependencies': [
+                        '<(chromium_src_dir)/build/linux/system.gyp:gtk',
+                    ],
+                    'include_dirs': [
+                        '<(source_dir)/WebKit/chromium/public/gtk',
+                    ],
+                }],
+            ],
         },
         {
             'target_name': 'DumpRenderTree',

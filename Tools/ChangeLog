@@ -1,5 +1,39 @@
 2012-07-31  Jochen Eisinger  <jochen@chromium.org>
 
+        [chromium] move EventSender into TestRunner.a
+        https://bugs.webkit.org/show_bug.cgi?id=92277
+
+        Reviewed by Adam Barth.
+
+        * DumpRenderTree/DumpRenderTree.gypi:
+        * DumpRenderTree/DumpRenderTree.gyp/DumpRenderTree.gyp:
+        * DumpRenderTree/chromium/TestRunner/EventSender.cpp: Renamed from Tools/DumpRenderTree/chromium/EventSender.cpp.
+        * DumpRenderTree/chromium/TestRunner/EventSender.h: Renamed from Tools/DumpRenderTree/chromium/EventSender.h.
+        * DumpRenderTree/chromium/TestRunner/TestInterfaces.cpp:
+        (TestInterfaces::Internal::eventSender):
+        (TestInterfaces::Internal):
+        (TestInterfaces::Internal::Internal):
+        (TestInterfaces::Internal::~Internal):
+        (TestInterfaces::Internal::setWebView):
+        (TestInterfaces::Internal::setDelegate):
+        (TestInterfaces::Internal::bindTo):
+        (TestInterfaces::Internal::resetAll):
+        (TestInterfaces::eventSender):
+        * DumpRenderTree/chromium/TestRunner/TestInterfaces.h:
+        (TestInterfaces):
+        * DumpRenderTree/chromium/TestShell.cpp:
+        (TestShell::initialize):
+        (TestShell::createMainWindow):
+        (TestShell::~TestShell):
+        (TestShell::resetTestController):
+        (TestShell::bindJSObjectsToWindow):
+        * DumpRenderTree/chromium/TestShell.h:
+        (TestShell::eventSender):
+        (TestShell):
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+
+2012-07-31  Jochen Eisinger  <jochen@chromium.org>
+
         Unreviewed. Update watchlist
 
         * Scripts/webkitpy/common/config/watchlist: Turned out to be less useful than I had hoped

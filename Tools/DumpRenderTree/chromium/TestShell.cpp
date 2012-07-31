@@ -152,7 +152,6 @@ void TestShell::initialize()
     m_webPermissions = adoptPtr(new WebPermissions(this));
     m_testInterfaces = adoptPtr(new TestInterfaces());
     m_layoutTestController = adoptPtr(new LayoutTestController(this));
-    m_eventSender = adoptPtr(new EventSender());
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
     m_notificationPresenter = adoptPtr(new NotificationPresenter(this));
 #endif
@@ -178,8 +177,6 @@ void TestShell::createMainWindow()
     m_webView = m_webViewHost->webView();
     m_testInterfaces->setDelegate(m_webViewHost.get());
     m_testInterfaces->setWebView(m_webView);
-    m_eventSender->setDelegate(m_webViewHost.get());
-    m_eventSender->setWebView(m_webView);
     m_drtDevToolsAgent->setWebView(m_webView);
 }
 
@@ -187,8 +184,6 @@ TestShell::~TestShell()
 {
     m_testInterfaces->setDelegate(0);
     m_testInterfaces->setWebView(0);
-    m_eventSender->setDelegate(0);
-    m_eventSender->setWebView(0);
     m_drtDevToolsAgent->setWebView(0);
 }
 
@@ -301,7 +296,6 @@ void TestShell::resetTestController()
     m_webPermissions->reset();
     m_testInterfaces->resetAll();
     m_layoutTestController->reset();
-    m_eventSender->reset();
     m_webViewHost->reset();
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
     m_notificationPresenter->reset();
@@ -730,7 +724,6 @@ void TestShell::bindJSObjectsToWindow(WebFrame* frame)
     m_testInterfaces->bindTo(frame);
     m_layoutTestController->bindToJavascript(frame, WebString::fromUTF8("layoutTestController"));
     m_layoutTestController->bindToJavascript(frame, WebString::fromUTF8("testRunner"));
-    m_eventSender->bindToJavascript(frame, WebString::fromUTF8("eventSender"));
 }
 
 WebViewHost* TestShell::createNewWindow(const WebKit::WebURL& url)

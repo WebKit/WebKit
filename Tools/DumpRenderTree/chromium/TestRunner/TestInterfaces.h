@@ -37,6 +37,7 @@ class WebView;
 }
 
 class AccessibilityController;
+class EventSender;
 class TestDelegate;
 
 class TestInterfaces {
@@ -50,6 +51,7 @@ public:
     void resetAll();
 
     AccessibilityController* accessibilityController();
+    EventSender* eventSender();
 
 private:
     class Internal;

@@ -31,6 +31,7 @@
 #include "config.h"
 #include "WebViewHost.h"
 
+#include "EventSender.h"
 #include "LayoutTestController.h"
 #include "MockGrammarCheck.h"
 #include "MockWebSpeechInputController.h"
