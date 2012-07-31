@@ -43,6 +43,7 @@ BUGWK35824 SKIP : http/tests/cookies/third-party-cookie-relaxing.html = PASS
 // CSS Regions support not yet enabled, tracking in a separate EFL bug.
 BUGWK83897 SKIP : fast/regions = PASS
 BUGWK83897 SKIP : inspector/styles/protocol-css-regions-commands.html = PASS
+BUGWK83897 SKIP : inspector/styles/region-style-crash.html = PASS
 
 // Exclusions implementation not complete yet.
 BUGWK83898 SKIP : fast/exclusions = PASS
@@ -81,6 +82,11 @@ WONTFIX : perf/adding-radio-buttons.html = TEXT PASS TIMEOUT
 WONTFIX : perf/array-binary-search.html = TEXT PASS TIMEOUT
 WONTFIX : perf/array-nested-loop.html = TEXT PASS TIMEOUT
 WONTFIX : perf/mouse-event.html = TEXT PASS TIMEOUT
+
+// Rounding issues when running on 32-bits machines.
+WONTFIX X86 : sputnik/Conformance/15_Native_Objects/15.8_Math/15.8.2/15.8.2.16_sin/S15.8.2.16_A7.html = TEXT
+WONTFIX X86 : sputnik/Conformance/15_Native_Objects/15.8_Math/15.8.2/15.8.2.18_tan/S15.8.2.18_A7.html = TEXT
+WONTFIX X86 : svg/css/stars-with-shadow.html = TEXT
 
 // Newly added test which fails on other bots too
 BUGWK85969 : http/tests/loading/post-in-iframe-with-back-navigation.html = TEXT
@@ -150,9 +156,6 @@ BUGWK85532 SKIP : fast/sub-pixel = MISSING
 //////////////////////////////////////////////////////////////////////////////////////////
 // CRASHES
 //////////////////////////////////////////////////////////////////////////////////////////
-
-BUGWK91828 DEBUG : fast/css/acid2-pixel.html = CRASH
-BUGWK91828 DEBUG : http/tests/inspector/network/network-sidebar-width.html = CRASH
 
 //////////////////////////////////////////////////////////////////////////////////////////
 // FLAKY TESTS
@@ -355,6 +358,13 @@ BUGWK84593 : animations/animation-api-1.html = TEXT
 // IndexedDB is not yet enabled.
 BUGWKEFL SKIP : storage/indexeddb = PASS
 BUGWKEFL SKIP : http/tests/inspector/indexeddb = PASS
+
+// harfbuzzGetGlyph is producing incorrect results.
+BUGWK91864 : fast/dom/52776.html = TEXT
+BUGWK91864 : fast/text/atsui-negative-spacing-features.html = TEXT
+BUGWK91864 : fast/text/atsui-pointtooffset-calls-cg.html = TEXT
+BUGWK91864 : fast/text/atsui-spacing-features.html = TEXT
+BUGWK91864 : fast/text/international/text-spliced-font.html = MISSING
 
 // Quota API is not supported.
 BUGWKEFL SKIP : storage/storageinfo-missing-arguments.html = PASS

@@ -1,3 +1,26 @@
+2012-07-31  Thiago Marcos P. Santos  <thiago.santos@intel.com>
+
+        [EFL] Gardening of failing tests and new passes
+        https://bugs.webkit.org/show_bug.cgi?id=92770
+
+        Unreviewed gardening.
+
+        New baselines, skipped some failing tests and removed test
+        expectations that are the same as the global expectations.
+
+        * platform/efl/TestExpectations:
+        * platform/efl/compositing/iframes/leave-compositing-iframe-expected.txt: Removed.
+        * platform/efl/compositing/plugins/1x1-composited-plugin-expected.txt: Removed.
+        * platform/efl/compositing/plugins/large-to-small-composited-plugin-expected.txt: Removed.
+        * platform/efl/css2.1/20110323/block-replaced-width-001-expected.txt: Added.
+        * platform/efl/fast/block/positioning/rtl-fixed-positioning-expected.txt: Removed.
+        * platform/efl/fast/css-generated-content/nested-tables-with-before-after-content-crash-expected.txt: Removed.
+        * platform/efl/fast/forms/listbox-clip-expected.txt: Removed.
+        * platform/efl/fast/html/details-position-expected.txt: Removed.
+        * platform/efl/mathml/msub-anonymous-child-render-crash-expected.txt: Removed.
+        * platform/efl/svg/as-image/animated-svg-repaints-completely-in-hidpi-expected.png: Added.
+        * platform/efl/svg/as-image/animated-svg-repaints-completely-in-hidpi-expected.txt: Added.
+
 2012-07-31  Hans Wennborg  <hans@chromium.org>
 
         Speech JavaScript API: Throw exception for start() when already started
