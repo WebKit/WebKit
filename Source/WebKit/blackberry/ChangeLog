@@ -1,3 +1,22 @@
+2012-07-31  Mike Fenton  <mifenton@rim.com>
+
+        [BlackBerry] Fix crash in InputHandler spell checking.
+        https://bugs.webkit.org/show_bug.cgi?id=92763
+
+        Reviewed by Antonio Gomes.
+
+        PR 185574.
+
+        Fix crash in getSpellChecker by guarding the calling paths
+        to ensure that m_currentFocusElement is valid.
+
+        Also add ASSERTs for previous crash.
+
+        * WebKitSupport/InputHandler.cpp:
+        (BlackBerry::WebKit::InputHandler::spellCheckingRequestProcessed):
+        (BlackBerry::WebKit::InputHandler::spellCheckingRequestCancelled):
+        (BlackBerry::WebKit::InputHandler::getSpellChecker):
+
 2012-07-31  Genevieve Mak  <gmak@rim.com>
 
         Send an onContextMenu event to the page content
