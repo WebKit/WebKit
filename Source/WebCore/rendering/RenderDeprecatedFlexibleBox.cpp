@@ -262,14 +262,6 @@ void RenderDeprecatedFlexibleBox::layoutBlock(bool relayoutChildren, LayoutUnit)
 
     initMaxMarginValues();
 
-    // For overflow:scroll blocks, ensure we have both scrollbars in place always.
-    if (scrollsOverflow()) {
-        if (style()->overflowX() == OSCROLL)
-            layer()->setHasHorizontalScrollbar(true);
-        if (style()->overflowY() == OSCROLL)
-            layer()->setHasVerticalScrollbar(true);
-    }
-
     if (isHorizontal())
         layoutHorizontalBox(relayoutChildren);
     else

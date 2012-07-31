@@ -1,3 +1,59 @@
+2012-07-30  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Remove overflow: scroll handling in block flow layout methods
+        https://bugs.webkit.org/show_bug.cgi?id=92689
+
+        Reviewed by Simon Fraser.
+
+        The overflow: scroll scrollbars creation was done at layout time for all RenderBlocks and
+        descendants. This was not only wrong ('overflow' only changes at style change time) but it
+        was also introducing some code duplication.
+
+        The gist of this change is to share the code by moving it to RenderLayer::updateScrollbarsAfterStyleChange,
+        this includes the code from bug 69993 to special case list box part.
+
+        Covered by existing tests:
+        - All fast/overflow ones.
+        - For the list box change:
+            fast/forms/select-overflow-scroll-inherited.html
+            fast/forms/select-overflow-scroll.html
+        - For the flexbox:
+            css3/flexbox/preferred-widths-orthogonal.html
+            css3/flexbox/preferred-widths.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::layoutBlock):
+        * rendering/RenderDeprecatedFlexibleBox.cpp:
+        (WebCore::RenderDeprecatedFlexibleBox::layoutBlock):
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::layoutBlock):
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::layoutBlock):
+        Removed the common code here.
+
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::computePreferredLogicalWidths):
+        Changed to an ASSERT now that the right scrollbars are created. This is
+        fine as overflow-x/y are physical coordinates and our access was following that.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::invalidateScrollbarRect):
+        Added an early return here if we are not attached yet as RenderLayer::styleChanged
+        is called at attachment time before we are inserted in the tree. This is fine as the
+        scrollbars are part of the object which will be painted after the first layout.
+
+        (WebCore::overflowRequiresAScrollbar):
+        (WebCore::overflowDefinesAutomaticScrollbar):
+        Split the logic in those 2 functions.
+
+        (WebCore::RenderLayer::updateScrollbarsAfterLayout):
+        Updated to use the require / can-have functions. Also added
+        an early return for list box parts as required by bug 69993.
+
+        (WebCore::RenderLayer::updateScrollbarsAfterStyleChange):
+        Added an early return for list box parts as required by bug 69993,
+        also removed some unneeded NULL-checks that were added for list box parts.
+
 2012-07-30  Vivek Galatage  <vivekgalatage@gmail.com>
 
         fillWithEmptyClients method should also initialize chromeClient with EmptyChromeClient

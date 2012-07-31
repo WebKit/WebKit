@@ -194,10 +194,10 @@ void RenderFlexibleBox::computePreferredLogicalWidths()
     LayoutUnit scrollbarWidth = 0;
     if (hasOverflowClip()) {
         if (isHorizontalWritingMode() && styleToUse->overflowY() == OSCROLL) {
-            layer()->setHasVerticalScrollbar(true);
+            ASSERT(layer()->hasVerticalScrollbar());
             scrollbarWidth = verticalScrollbarWidth();
         } else if (!isHorizontalWritingMode() && styleToUse->overflowX() == OSCROLL) {
-            layer()->setHasHorizontalScrollbar(true);
+            ASSERT(layer()->hasHorizontalScrollbar());
             scrollbarWidth = horizontalScrollbarHeight();
         }
     }
@@ -247,14 +247,6 @@ void RenderFlexibleBox::layoutBlock(bool relayoutChildren, LayoutUnit)
     computeLogicalWidth();
 
     m_overflow.clear();
-
-    // For overflow:scroll blocks, ensure we have both scrollbars in place always.
-    if (scrollsOverflow()) {
-        if (style()->overflowX() == OSCROLL)
-            layer()->setHasHorizontalScrollbar(true);
-        if (style()->overflowY() == OSCROLL)
-            layer()->setHasVerticalScrollbar(true);
-    }
 
     WTF::Vector<LineContext> lineContexts;
     OrderHashSet orderValues;

@@ -80,13 +80,6 @@ void RenderGrid::layoutBlock(bool relayoutChildren, LayoutUnit)
 
     m_overflow.clear();
 
-    if (scrollsOverflow()) {
-        if (style()->overflowX() == OSCROLL)
-            layer()->setHasHorizontalScrollbar(true);
-        if (style()->overflowY() == OSCROLL)
-            layer()->setHasVerticalScrollbar(true);
-    }
-
     layoutGridItems();
 
     LayoutUnit oldClientAfterEdge = clientLogicalBottom();

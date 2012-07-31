@@ -1472,14 +1472,6 @@ void RenderBlock::layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeigh
         setPaginationStrut(0);
     }
 
-    // For overflow:scroll blocks, ensure we have both scrollbars in place always.
-    if (scrollsOverflow() && style()->appearance() != ListboxPart) {
-        if (styleToUse->overflowX() == OSCROLL)
-            layer()->setHasHorizontalScrollbar(true);
-        if (styleToUse->overflowY() == OSCROLL)
-            layer()->setHasVerticalScrollbar(true);
-    }
-
     LayoutUnit repaintLogicalTop = ZERO_LAYOUT_UNIT;
     LayoutUnit repaintLogicalBottom = ZERO_LAYOUT_UNIT;
     LayoutUnit maxFloatLogicalBottom = ZERO_LAYOUT_UNIT;
