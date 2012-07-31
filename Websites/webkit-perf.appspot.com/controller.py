@@ -144,7 +144,7 @@ class RunsChartHandler(webapp2.RequestHandler):
         assert branch
         assert platform
         assert test
-        params = Runs.update_or_insert(branch, platform, test).chart_params(display_days)
+        params = Runs.get_by_objects(branch, platform, test).chart_params(display_days)
         if not params:
             return
         dashboard_chart_file = urllib.urlopen('http://chart.googleapis.com/chart', urllib.urlencode(params))
