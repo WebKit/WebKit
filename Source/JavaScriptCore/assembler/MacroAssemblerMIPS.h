@@ -43,6 +43,11 @@ public:
     {
     }
 
+    static bool isCompactPtrAlignedAddressOffset(ptrdiff_t value)
+    {
+        return value >= -2147483647 - 1 && value <= 2147483647;
+    }
+
     static const Scale ScalePtr = TimesFour;
 
     // For storing immediate number
@@ -186,6 +191,12 @@ public:
     void add32(Address src, RegisterID dest)
     {
         load32(src, dataTempRegister);
+        add32(dataTempRegister, dest);
+    }
+
+    void add32(AbsoluteAddress src, RegisterID dest)
+    {
+        load32(src.m_ptr, dataTempRegister);
         add32(dataTempRegister, dest);
     }
 
