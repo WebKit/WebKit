@@ -168,6 +168,8 @@ namespace JSC {
         void didAbandon(size_t);
 
         bool isPagedOut(double deadline);
+        bool isSafeToSweepStructures();
+        void didStartVMShutdown();
 
     private:
         friend class CodeBlock;
