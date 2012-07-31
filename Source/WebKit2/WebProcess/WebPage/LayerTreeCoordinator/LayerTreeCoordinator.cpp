@@ -525,8 +525,8 @@ void LayerTreeCoordinator::setVisibleContentsRect(const IntRect& rect, float sca
     bool contentsRectDidChange = rect != m_visibleContentsRect;
     bool contentsScaleDidChange = scale != m_contentsScale;
 
-    if (trajectoryVector != FloatPoint::zero())
-        toWebGraphicsLayer(m_nonCompositedContentLayer.get())->setVisibleContentRectTrajectoryVector(trajectoryVector);
+    // A zero trajectoryVector indicates that tiles all around the viewport are requested.
+    toWebGraphicsLayer(m_nonCompositedContentLayer.get())->setVisibleContentRectTrajectoryVector(trajectoryVector);
 
     if (contentsRectDidChange || contentsScaleDidChange) {
         m_visibleContentsRect = rect;
