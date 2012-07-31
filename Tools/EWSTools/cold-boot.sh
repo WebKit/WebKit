@@ -78,8 +78,6 @@ cat >> .git/config <<EOF
 [user]
 	email = commit-queue@webkit.org
 	name = Commit Queue
-[merge "changelog"]
-	driver = perl $PWD/Tools/Scripts/resolve-ChangeLogs --merge-driver %O %B %A
 EOF
 fi
 

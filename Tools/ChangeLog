@@ -1,3 +1,18 @@
+2012-07-30  Adam Barth  <abarth@webkit.org>
+
+        commit-queue is corrupting ChangeLogs
+        https://bugs.webkit.org/show_bug.cgi?id=92681
+
+        Reviewed by Tony Chang.
+
+        Some commits made with the commit-queue are ending up with duplicate
+        ChangeLog entries. I've hot-patched the servers to not use a special
+        merge driver for ChangeLogs, which should fix this issue. This patch
+        removes the merge driver from our cold-boot.sh script so that we won't
+        use it on new commit-queue instances.
+
+        * EWSTools/cold-boot.sh:
+
 2012-07-28  Sam Weinig  <sam@webkit.org>
 
         Add ability to load from a string to the ObjC WK API
