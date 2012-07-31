@@ -84,8 +84,8 @@ void GestureEvent::initGestureEvent(const AtomicString& type, PassRefPtr<Abstrac
 
 const AtomicString& GestureEvent::interfaceName() const
 {
-    DEFINE_STATIC_LOCAL(AtomicString, interface, ("TBDInterface"));
-    return interface;
+    DEFINE_STATIC_LOCAL(AtomicString, name, ("TBDInterface"));
+    return name;
 }
 
 GestureEvent::GestureEvent()

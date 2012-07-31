@@ -1,3 +1,11 @@
+2012-07-30  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Another Qt build fix attempt after r124098.
+        "interface" is a keyword. Don't use it. 
+
+        * dom/GestureEvent.cpp:
+        (WebCore::GestureEvent::interfaceName):
+
 2012-07-30  Elliott Sprehn  <esprehn@gmail.com>
 
         Make QuotesData use a Vector of pairs
