@@ -383,13 +383,13 @@ HTMLElementStack::ElementRecord* HTMLElementStack::topRecord() const
     return m_top.get();
 }
 
-Element* HTMLElementStack::oneBelowTop() const
+HTMLStackItem* HTMLElementStack::oneBelowTop() const
 {
     // We should never call this if there are fewer than 2 elements on the stack.
     ASSERT(m_top);
     ASSERT(m_top->next());
     if (m_top->next()->stackItem()->isElementNode())
-        return m_top->next()->element();
+        return m_top->next()->stackItem().get();
     return 0;
 }
 

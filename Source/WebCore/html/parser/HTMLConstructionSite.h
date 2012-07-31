@@ -114,7 +114,7 @@ public:
     Element* currentElement() const { return m_openElements.top(); }
     ContainerNode* currentNode() const { return m_openElements.topNode(); }
     HTMLStackItem* currentStackItem() const { return m_openElements.topStackItem(); }
-    Element* oneBelowTop() const { return m_openElements.oneBelowTop(); }
+    HTMLStackItem* oneBelowTop() const { return m_openElements.oneBelowTop(); }
 
     HTMLElementStack* openElements() const { return &m_openElements; }
     HTMLFormattingElementList* activeFormattingElements() const { return &m_activeFormattingElements; }
