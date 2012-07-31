@@ -53,7 +53,6 @@
 #endif
 
 #include <limits.h>
-#include <signal.h>
 
 #include <wtf/ExportMacros.h>
 #include <wtf/Assertions.h>
@@ -94,34 +93,6 @@ void printUsage()
     fprintf(stderr, "Or folder containing test files: DumpRenderTree [-v|--pixel-tests] dirpath\n");
     fflush(stderr);
 }
-
-#if HAVE(SIGNAL_H)
-typedef void (*SignalHandler)(int);
-
-static NO_RETURN void crashHandler(int sig)
-{
-    WTFReportBacktrace();
-    exit(128 + sig);
-}
-
-static void setupSignalHandlers(SignalHandler handler)
-{
-    signal(SIGILL, handler);    /* 4:   illegal instruction (not reset when caught) */
-    signal(SIGTRAP, handler);   /* 5:   trace trap (not reset when caught) */
-    signal(SIGFPE, handler);    /* 8:   floating point exception */
-    signal(SIGBUS, handler);    /* 10:  bus error */
-    signal(SIGSEGV, handler);   /* 11:  segmentation violation */
-    signal(SIGSYS, handler);    /* 12:  bad argument to system call */
-    signal(SIGPIPE, handler);   /* 13:  write on a pipe with no reader */
-    signal(SIGXCPU, handler);   /* 24:  exceeded CPU time limit */
-    signal(SIGXFSZ, handler);   /* 25:  exceeded file size limit */
-}
-
-static void WTFCrashHook()
-{
-    setupSignalHandlers(SIG_DFL);
-}
-#endif
 
 int main(int argc, char* argv[])
 {
@@ -174,10 +145,7 @@ int main(int argc, char* argv[])
     QApplication::setFont(QWidget().font());
 #endif
 
-#if HAVE(SIGNAL_H)
-    setupSignalHandlers(&crashHandler);
-    WTFSetCrashHook(&WTFCrashHook);
-#endif
+    WTFInstallReportBacktraceOnCrashHook();
 
     QStringList args = app.arguments();
     if (args.count() < (!suppressQtDebugOutput ? 3 : 2)) {

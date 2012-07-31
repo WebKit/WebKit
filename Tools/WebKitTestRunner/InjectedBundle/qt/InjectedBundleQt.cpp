@@ -34,39 +34,7 @@
 #include <wtf/AlwaysInline.h>
 #include <wtf/Assertions.h>
 
-#if HAVE(SIGNAL_H)
-#include <signal.h>
-#endif
-
 namespace WTR {
-
-#if HAVE(SIGNAL_H)
-typedef void (*SignalHandler)(int);
-
-static NO_RETURN void crashHandler(int sig)
-{
-    WTFReportBacktrace();
-    exit(128 + sig);
-}
-
-static void setupSignalHandlers(SignalHandler handler)
-{
-    signal(SIGILL, handler);    /* 4:   illegal instruction (not reset when caught) */
-    signal(SIGTRAP, handler);   /* 5:   trace trap (not reset when caught) */
-    signal(SIGFPE, handler);    /* 8:   floating point exception */
-    signal(SIGBUS, handler);    /* 10:  bus error */
-    signal(SIGSEGV, handler);   /* 11:  segmentation violation */
-    signal(SIGSYS, handler);    /* 12:  bad argument to system call */
-    signal(SIGPIPE, handler);   /* 13:  write on a pipe with no reader */
-    signal(SIGXCPU, handler);   /* 24:  exceeded CPU time limit */
-    signal(SIGXFSZ, handler);   /* 25:  exceeded file size limit */
-}
-
-static void crashHook()
-{
-    setupSignalHandlers(SIG_DFL);
-}
-#endif
 
 void InjectedBundle::platformInitialize(WKTypeRef)
 {
@@ -79,10 +47,7 @@ void InjectedBundle::platformInitialize(WKTypeRef)
     if (qgetenv("QT_WEBKIT2_DEBUG") == "1")
         return;
 
-#if HAVE(SIGNAL_H)
-    setupSignalHandlers(&crashHandler);
-    WTFSetCrashHook(&crashHook);
-#endif
+    WTFInstallReportBacktraceOnCrashHook();
 }
 
 } // namespace WTR

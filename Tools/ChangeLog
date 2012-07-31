@@ -1,3 +1,18 @@
+2012-07-31  Thiago Marcos P. Santos  <thiago.santos@intel.com>
+
+        Add a mechanism to dump the stack trace in case of a crash
+        https://bugs.webkit.org/show_bug.cgi?id=92666
+
+        Reviewed by Csaba Osztrogonác.
+
+        Move crash signal handlers to WTFInstallReportBacktraceOnCrashHook()
+        and eliminate some duplicated code.
+
+        * DumpRenderTree/qt/main.cpp:
+        (main):
+        * WebKitTestRunner/InjectedBundle/qt/InjectedBundleQt.cpp:
+        (WTR::InjectedBundle::platformInitialize):
+
 2012-07-31  Jochen Eisinger  <jochen@chromium.org>
 
         [chromium] move EventSender into TestRunner.a

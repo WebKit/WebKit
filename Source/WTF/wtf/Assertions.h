@@ -152,6 +152,7 @@ WTF_EXPORT_PRIVATE void WTFPrintBacktrace(void** stack, int size);
 typedef void (*WTFCrashHookFunction)();
 WTF_EXPORT_PRIVATE void WTFSetCrashHook(WTFCrashHookFunction);
 WTF_EXPORT_PRIVATE void WTFInvokeCrashHook();
+WTF_EXPORT_PRIVATE void WTFInstallReportBacktraceOnCrashHook();
 
 #ifdef __cplusplus
 }

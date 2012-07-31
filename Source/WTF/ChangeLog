@@ -1,3 +1,18 @@
+2012-07-31  Thiago Marcos P. Santos  <thiago.santos@intel.com>
+
+        Add a mechanism to dump the stack trace in case of a crash
+        https://bugs.webkit.org/show_bug.cgi?id=92666
+
+        Reviewed by Csaba Osztrogonác.
+
+        Unix based ports can make use of signal handlers to dump the stack
+        trace in case of a crash. This is specially handy when a test crashes on
+        the bot without hitting an assertion, we might have a chance to see
+        some insightful information at the reports.
+
+        * wtf/Assertions.cpp:
+        * wtf/Assertions.h:
+
 2012-07-31  Stephen Chenney  <schenney@chromium.org>
 
         xmlserializer strips xlink from xlink:html svg image tag
