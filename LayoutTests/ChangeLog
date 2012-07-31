@@ -1,3 +1,10 @@
+2012-07-30  Michael Saboff  <msaboff@apple.com>
+
+        inspector/profiler/heap-snapshot-containment-show-all.html test crashing during WebView closing
+        <rdar://problem/11991881>
+
+        * platform/mac-lion/Skipped:
+
 2012-07-30  Sadrul Habib Chowdhury  <sadrul@chromium.org>
 
         Propagate gesture events to plugins.
