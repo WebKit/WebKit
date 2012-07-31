@@ -56,7 +56,7 @@ Path::Path(const Path& other)
     if (other.isNull())
         return;
 
-    cairo_t* cr = platformPath()->context();
+    cairo_t* cr = ensurePlatformPath()->context();
     OwnPtr<cairo_path_t> pathCopy = adoptPtr(cairo_copy_path(other.platformPath()->context()));
     cairo_append_path(cr, pathCopy.get());
 }

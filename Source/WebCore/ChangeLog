@@ -1,3 +1,11 @@
+2012-07-31  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed crash fix after r124135.
+
+        * platform/graphics/cairo/PathCairo.cpp:
+        (WebCore::Path::Path): Ensure the Cairo path when acquiring its context,
+        crashes ensue otherwise.
+
 2012-07-31  Yoshifumi Inoue  <yosin@chromium.org>
 
         Change Element::isReadOnlyFormControl to Element::shouldMatchReadOnlySelector/shouldMatchReadWriteSelector or HTMLFormControlElement::readOnly
