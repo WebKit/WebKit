@@ -1,3 +1,20 @@
+2012-07-31  Alexander Pavlov  <apavlov@chromium.org>
+
+        [Chromium] Unreviewed, rebaseline some platform/chromium/virtual/gpu/fast/canvas tests due to antialiasing changes.
+
+        * platform/chromium-linux/platform/chromium/virtual/gpu/fast/canvas/arc360-expected.png:
+        * platform/chromium-linux/platform/chromium/virtual/gpu/fast/canvas/canvas-composite-expected.png:
+        * platform/chromium-linux/platform/chromium/virtual/gpu/fast/canvas/canvas-composite-transformclip-expected.png: Added.
+        * platform/chromium-mac-snowleopard/platform/chromium/virtual/gpu/fast/canvas/canvas-composite-expected.png: Added.
+        * platform/chromium-mac/platform/chromium/virtual/gpu/fast/canvas/canvas-composite-expected.png:
+        * platform/chromium-mac/platform/chromium/virtual/gpu/fast/canvas/canvas-composite-transformclip-expected.png:
+        * platform/chromium-mac/platform/chromium/virtual/gpu/fast/canvas/canvas-transform-skewed-expected.png:
+        * platform/chromium-win/platform/chromium/virtual/gpu/fast/canvas/arc360-expected.png:
+        * platform/chromium-win/platform/chromium/virtual/gpu/fast/canvas/canvas-composite-expected.png:
+        * platform/chromium-win/platform/chromium/virtual/gpu/fast/canvas/canvas-composite-transformclip-expected.png:
+        * platform/chromium-win/platform/chromium/virtual/gpu/fast/canvas/canvas-transform-skewed-expected.png:
+        * platform/chromium/TestExpectations:
+
 2012-07-31  Alexei Filippov  <alexeif@chromium.org>
 
         Web Inspector: take into account the whole security origin instead of just host
