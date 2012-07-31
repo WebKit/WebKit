@@ -1116,7 +1116,7 @@ void WebPageProxy::handleKeyboardEvent(const NativeWebKeyboardEvent& event)
         bool handled = false;
         process()->sendSync(Messages::WebPage::KeyEventSyncForTesting(event), Messages::WebPage::KeyEventSyncForTesting::Reply(handled), m_pageID);
         didReceiveEvent(event.type(), handled);
-    } else
+    } else if (m_keyEventQueue.size() == 1) // Otherwise, sent from DidReceiveEvent message handler.
         process()->send(Messages::WebPage::KeyEvent(event), m_pageID);
 }
 
@@ -3147,8 +3147,10 @@ void WebPageProxy::didReceiveEvent(uint32_t opaqueType, bool handled)
 
         m_keyEventQueue.removeFirst();
 
-        m_pageClient->doneWithKeyEvent(event, handled);
+        if (!m_keyEventQueue.isEmpty())
+            process()->send(Messages::WebPage::KeyEvent(m_keyEventQueue.first()), m_pageID);
 
+        m_pageClient->doneWithKeyEvent(event, handled);
         if (handled)
             break;
 

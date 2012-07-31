@@ -1,5 +1,27 @@
 2012-07-30  Lucas Forschler  <lforschler@apple.com>
 
+    Merge 123630
+
+    2012-07-25  Alexey Proskuryakov  <ap@apple.com>
+
+            Chinese IM receives incorrect/duplicated key events in text fields in webpages in Safari.
+            https://bugs.webkit.org/show_bug.cgi?id=89048
+            <rdar://problem/11786384>
+
+            Reviewed by Andreas Kling.
+
+            Cannot test text input from UI process side.
+
+            Stop relying on IPC to handle key events in order. There are too many complications
+            where out of order delivery is performed. Instead, queue the events at UI process
+            side.
+
+            * UIProcess/WebPageProxy.cpp:
+            (WebKit::WebPageProxy::handleKeyboardEvent):
+            (WebKit::WebPageProxy::didReceiveEvent):
+
+2012-07-30  Lucas Forschler  <lforschler@apple.com>
+
     Merge 122520
 
     2012-07-12  Timothy Hatcher  <timothy@apple.com>
