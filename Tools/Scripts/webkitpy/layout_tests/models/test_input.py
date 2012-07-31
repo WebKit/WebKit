@@ -32,21 +32,15 @@
 class TestInput(object):
     """Groups information about a test for easy passing of data."""
 
-    def __init__(self, test_name, timeout):
-        """Holds the input parameters for a test.
-        Args:
-          test: name of test (not an absolute path!)
-          timeout: Timeout in msecs the driver should use while running the test
-          """
-        self.test_name = test_name
-        self.timeout = timeout
-
+    def __init__(self, test_name, timeout=None, test_requires_lock=None, reference_files=None, should_run_pixel_tests=None):
         # TestInput objects are normally constructed by the manager and passed
-        # to the workers, but these two fields are set lazily in the workers
-        # because they require us to figure out if the test is a reftest or not
-        # and we want to be able to do that in parallel.
-        self.should_run_pixel_tests = None
-        self.reference_files = None
+        # to the workers, but these some fields are set lazily in the workers where possible
+        # because they require us to look at the filesystem and we want to be able to do that in parallel.
+        self.test_name = test_name
+        self.timeout = timeout  # in msecs; should rename this for consistency
+        self.test_requires_lock = test_requires_lock
+        self.should_run_pixel_tests = should_run_pixel_tests
+        self.reference_files = reference_files
 
     def __repr__(self):
-        return "TestInput('%s', %d, %s, %s)" % (self.test_name, self.timeout, self.should_run_pixel_tests, self.reference_files)
+        return "TestInput('%s', %s, %s, %s, %s)" % (self.test_name, self.timeout, self.test_requires_lock, self.should_run_pixel_tests, self.reference_files)

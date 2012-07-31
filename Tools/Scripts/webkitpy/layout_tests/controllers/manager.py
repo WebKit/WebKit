@@ -382,13 +382,11 @@ class Manager(object):
         # what made them stable on linux/mac.
         return directory
 
-    def _get_test_input_for_file(self, test_file):
-        """Returns the appropriate TestInput object for the file. Mostly this
-        is used for looking up the timeout value (in ms) to use for the given
-        test."""
-        if self._test_is_slow(test_file):
-            return TestInput(test_file, self._options.slow_time_out_ms)
-        return TestInput(test_file, self._options.time_out_ms)
+    def _test_input_for_file(self, test_file):
+        return TestInput(test_file,
+            self._options.slow_time_out_ms if self._test_is_slow(test_file) else self._options.time_out_ms,
+            self._test_requires_lock(test_file),
+            self._port.reference_files(test_file) if self._options.shard_ref_tests else None)
 
     def _test_requires_lock(self, test_file):
         """Return True if the test needs to be locked when
@@ -434,14 +432,14 @@ class Manager(object):
         unlocked_inputs = []
         unlocked_ref_test_inputs = []
         for test_file in test_files:
-            test_input = self._get_test_input_for_file(test_file)
+            test_input = self._test_input_for_file(test_file)
             if self._test_requires_lock(test_file):
-                if shard_ref_tests and self._is_ref_test(test_input):
+                if shard_ref_tests and test_input.reference_files:
                     locked_ref_test_inputs.append(test_input)
                 else:
                     locked_inputs.append(test_input)
             else:
-                if shard_ref_tests and self._is_ref_test(test_input):
+                if shard_ref_tests and test_input.reference_files:
                     unlocked_ref_test_inputs.append(test_input)
                 else:
                     unlocked_inputs.append(test_input)
@@ -464,7 +462,7 @@ class Manager(object):
         locked_shards = []
         unlocked_shards = []
         for test_file in test_files:
-            test_input = self._get_test_input_for_file(test_file)
+            test_input = self._test_input_for_file(test_file)
 
             # Note that we use a '.' for the shard name; the name doesn't really
             # matter, and the only other meaningful value would be the filename,
@@ -489,8 +487,8 @@ class Manager(object):
         # we can probably rewrite this to be clearer and faster.
         for test_file in test_files:
             directory = self._get_dir_for_test_file(test_file)
-            test_input = self._get_test_input_for_file(test_file)
-            if shard_ref_tests and self._is_ref_test(test_input):
+            test_input = self._test_input_for_file(test_file)
+            if shard_ref_tests and test_input.reference_files:
                 ref_tests_by_dir.setdefault(directory, [])
                 ref_tests_by_dir[directory].append(test_input)
             else:

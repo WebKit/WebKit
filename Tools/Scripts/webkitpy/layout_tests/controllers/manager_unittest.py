@@ -51,6 +51,7 @@ from webkitpy.layout_tests.models import test_results
 from webkitpy.layout_tests.models.result_summary import ResultSummary
 from webkitpy.layout_tests.models.test_expectations import TestExpectations
 from webkitpy.layout_tests.models.test_results import TestResult
+from webkitpy.layout_tests.models.test_input import TestInput
 from webkitpy.layout_tests.views import printing
 from webkitpy.tool.mocktool import MockOptions
 from webkitpy.common.system.executive_mock import MockExecutive
@@ -62,11 +63,8 @@ class ManagerWrapper(Manager):
         Manager.__init__(self, **kwargs)
         self._ref_tests = ref_tests
 
-    def _get_test_input_for_file(self, test_file):
-        return test_file
-
-    def _is_ref_test(self, test_input):
-        return test_input in self._ref_tests
+    def _test_input_for_file(self, test_file):
+        return TestInput(test_file, reference_files=(['foo'] if test_file in self._ref_tests else None))
 
 
 class ShardingTests(unittest.TestCase):
@@ -99,29 +97,33 @@ class ShardingTests(unittest.TestCase):
         self.manager = ManagerWrapper(self.ref_tests, port=port, options=options, printer=Mock())
         return self.manager._shard_tests(test_list, num_workers, fully_parallel, shard_ref_tests)
 
+    def assert_shards(self, actual_shards, expected_shard_names):
+        self.assertEquals(len(actual_shards), len(expected_shard_names))
+        for i, shard in enumerate(actual_shards):
+            expected_shard_name, expected_test_names = expected_shard_names[i]
+            self.assertEquals(shard.name, expected_shard_name)
+            self.assertEquals([test_input.test_name for test_input in shard.test_inputs],
+                              expected_test_names)
+
     def test_shard_by_dir(self):
         locked, unlocked = self.get_shards(num_workers=2, fully_parallel=False)
 
         # Note that although there are tests in multiple dirs that need locks,
         # they are crammed into a single shard in order to reduce the # of
         # workers hitting the server at once.
-        self.assertEquals(locked,
-            [TestShard('locked_shard_1',
-              ['http/tests/security/view-source-no-refresh.html',
-               'http/tests/websocket/tests/unicode.htm',
-               'http/tests/websocket/tests/websocket-protocol-ignored.html',
-               'http/tests/xmlhttprequest/supported-xml-content-types.html',
-               'perf/object-keys.html'])])
-        self.assertEquals(unlocked,
-            [TestShard('animations',
-                       ['animations/keyframes.html']),
-             TestShard('dom/html/level2/html',
-                       ['dom/html/level2/html/HTMLAnchorElement03.html',
-                        'dom/html/level2/html/HTMLAnchorElement06.html']),
-             TestShard('fast/css',
-                       ['fast/css/display-none-inline-style-change-crash.html']),
-             TestShard('ietestcenter/Javascript',
-                       ['ietestcenter/Javascript/11.1.5_4-4-c-1.html'])])
+        self.assert_shards(locked,
+             [('locked_shard_1',
+               ['http/tests/security/view-source-no-refresh.html',
+                'http/tests/websocket/tests/unicode.htm',
+                'http/tests/websocket/tests/websocket-protocol-ignored.html',
+                'http/tests/xmlhttprequest/supported-xml-content-types.html',
+                'perf/object-keys.html'])])
+        self.assert_shards(unlocked,
+            [('animations', ['animations/keyframes.html']),
+             ('dom/html/level2/html', ['dom/html/level2/html/HTMLAnchorElement03.html',
+                                      'dom/html/level2/html/HTMLAnchorElement06.html']),
+             ('fast/css', ['fast/css/display-none-inline-style-change-crash.html']),
+             ('ietestcenter/Javascript', ['ietestcenter/Javascript/11.1.5_4-4-c-1.html'])])
 
     def test_shard_by_dir_sharding_ref_tests(self):
         locked, unlocked = self.get_shards(num_workers=2, fully_parallel=False, shard_ref_tests=True)
@@ -129,73 +131,68 @@ class ShardingTests(unittest.TestCase):
         # Note that although there are tests in multiple dirs that need locks,
         # they are crammed into a single shard in order to reduce the # of
         # workers hitting the server at once.
-        self.assertEquals(locked,
-            [TestShard('locked_shard_1',
+        self.assert_shards(locked,
+            [('locked_shard_1',
               ['http/tests/websocket/tests/unicode.htm',
                'http/tests/xmlhttprequest/supported-xml-content-types.html',
                'perf/object-keys.html',
                'http/tests/security/view-source-no-refresh.html',
                'http/tests/websocket/tests/websocket-protocol-ignored.html'])])
-        self.assertEquals(unlocked,
-            [TestShard('animations',
-                       ['animations/keyframes.html']),
-             TestShard('dom/html/level2/html',
-                       ['dom/html/level2/html/HTMLAnchorElement03.html']),
-             TestShard('fast/css',
-                       ['fast/css/display-none-inline-style-change-crash.html']),
-             TestShard('~ref:dom/html/level2/html',
-                       ['dom/html/level2/html/HTMLAnchorElement06.html']),
-             TestShard('~ref:ietestcenter/Javascript',
-                       ['ietestcenter/Javascript/11.1.5_4-4-c-1.html'])])
+        self.assert_shards(unlocked,
+            [('animations', ['animations/keyframes.html']),
+             ('dom/html/level2/html', ['dom/html/level2/html/HTMLAnchorElement03.html']),
+             ('fast/css', ['fast/css/display-none-inline-style-change-crash.html']),
+             ('~ref:dom/html/level2/html', ['dom/html/level2/html/HTMLAnchorElement06.html']),
+             ('~ref:ietestcenter/Javascript', ['ietestcenter/Javascript/11.1.5_4-4-c-1.html'])])
 
     def test_shard_every_file(self):
         locked, unlocked = self.get_shards(num_workers=2, fully_parallel=True)
-        self.assertEquals(locked,
-            [TestShard('.', ['http/tests/websocket/tests/unicode.htm']),
-             TestShard('.', ['http/tests/security/view-source-no-refresh.html']),
-             TestShard('.', ['http/tests/websocket/tests/websocket-protocol-ignored.html']),
-             TestShard('.', ['http/tests/xmlhttprequest/supported-xml-content-types.html']),
-             TestShard('.', ['perf/object-keys.html'])]),
-        self.assertEquals(unlocked,
-            [TestShard('.', ['animations/keyframes.html']),
-             TestShard('.', ['fast/css/display-none-inline-style-change-crash.html']),
-             TestShard('.', ['dom/html/level2/html/HTMLAnchorElement03.html']),
-             TestShard('.', ['ietestcenter/Javascript/11.1.5_4-4-c-1.html']),
-             TestShard('.', ['dom/html/level2/html/HTMLAnchorElement06.html'])])
+        self.assert_shards(locked,
+            [('.', ['http/tests/websocket/tests/unicode.htm']),
+             ('.', ['http/tests/security/view-source-no-refresh.html']),
+             ('.', ['http/tests/websocket/tests/websocket-protocol-ignored.html']),
+             ('.', ['http/tests/xmlhttprequest/supported-xml-content-types.html']),
+             ('.', ['perf/object-keys.html'])]),
+        self.assert_shards(unlocked,
+            [('.', ['animations/keyframes.html']),
+             ('.', ['fast/css/display-none-inline-style-change-crash.html']),
+             ('.', ['dom/html/level2/html/HTMLAnchorElement03.html']),
+             ('.', ['ietestcenter/Javascript/11.1.5_4-4-c-1.html']),
+             ('.', ['dom/html/level2/html/HTMLAnchorElement06.html'])])
 
     def test_shard_in_two(self):
         locked, unlocked = self.get_shards(num_workers=1, fully_parallel=False)
-        self.assertEquals(locked,
-            [TestShard('locked_tests',
-                       ['http/tests/websocket/tests/unicode.htm',
-                        'http/tests/security/view-source-no-refresh.html',
-                        'http/tests/websocket/tests/websocket-protocol-ignored.html',
-                        'http/tests/xmlhttprequest/supported-xml-content-types.html',
-                        'perf/object-keys.html'])])
-        self.assertEquals(unlocked,
-            [TestShard('unlocked_tests',
-                       ['animations/keyframes.html',
-                        'fast/css/display-none-inline-style-change-crash.html',
-                        'dom/html/level2/html/HTMLAnchorElement03.html',
-                        'ietestcenter/Javascript/11.1.5_4-4-c-1.html',
-                        'dom/html/level2/html/HTMLAnchorElement06.html'])])
+        self.assert_shards(locked,
+            [('locked_tests',
+              ['http/tests/websocket/tests/unicode.htm',
+               'http/tests/security/view-source-no-refresh.html',
+               'http/tests/websocket/tests/websocket-protocol-ignored.html',
+               'http/tests/xmlhttprequest/supported-xml-content-types.html',
+               'perf/object-keys.html'])])
+        self.assert_shards(unlocked,
+            [('unlocked_tests',
+              ['animations/keyframes.html',
+               'fast/css/display-none-inline-style-change-crash.html',
+               'dom/html/level2/html/HTMLAnchorElement03.html',
+               'ietestcenter/Javascript/11.1.5_4-4-c-1.html',
+               'dom/html/level2/html/HTMLAnchorElement06.html'])])
 
     def test_shard_in_two_sharding_ref_tests(self):
         locked, unlocked = self.get_shards(num_workers=1, fully_parallel=False, shard_ref_tests=True)
-        self.assertEquals(locked,
-            [TestShard('locked_tests',
-                       ['http/tests/websocket/tests/unicode.htm',
-                        'http/tests/xmlhttprequest/supported-xml-content-types.html',
-                        'perf/object-keys.html',
-                        'http/tests/security/view-source-no-refresh.html',
-                        'http/tests/websocket/tests/websocket-protocol-ignored.html'])])
-        self.assertEquals(unlocked,
-            [TestShard('unlocked_tests',
-                       ['animations/keyframes.html',
-                        'fast/css/display-none-inline-style-change-crash.html',
-                        'dom/html/level2/html/HTMLAnchorElement03.html',
-                        'ietestcenter/Javascript/11.1.5_4-4-c-1.html',
-                        'dom/html/level2/html/HTMLAnchorElement06.html'])])
+        self.assert_shards(locked,
+            [('locked_tests',
+              ['http/tests/websocket/tests/unicode.htm',
+               'http/tests/xmlhttprequest/supported-xml-content-types.html',
+               'perf/object-keys.html',
+               'http/tests/security/view-source-no-refresh.html',
+               'http/tests/websocket/tests/websocket-protocol-ignored.html'])])
+        self.assert_shards(unlocked,
+            [('unlocked_tests',
+              ['animations/keyframes.html',
+               'fast/css/display-none-inline-style-change-crash.html',
+               'dom/html/level2/html/HTMLAnchorElement03.html',
+               'ietestcenter/Javascript/11.1.5_4-4-c-1.html',
+               'dom/html/level2/html/HTMLAnchorElement06.html'])])
 
     def test_shard_in_two_has_no_locked_shards(self):
         locked, unlocked = self.get_shards(num_workers=1, fully_parallel=False,
@@ -205,29 +202,29 @@ class ShardingTests(unittest.TestCase):
 
     def test_shard_in_two_has_no_unlocked_shards(self):
         locked, unlocked = self.get_shards(num_workers=1, fully_parallel=False,
-             test_list=['http/tests/webcoket/tests/unicode.htm'])
+             test_list=['http/tests/websocket/tests/unicode.htm'])
         self.assertEquals(len(locked), 1)
         self.assertEquals(len(unlocked), 0)
 
     def test_multiple_locked_shards(self):
         locked, unlocked = self.get_shards(num_workers=4, fully_parallel=False, max_locked_shards=2)
-        self.assertEqual(locked,
-            [TestShard('locked_shard_1',
-                       ['http/tests/security/view-source-no-refresh.html',
-                        'http/tests/websocket/tests/unicode.htm',
-                        'http/tests/websocket/tests/websocket-protocol-ignored.html']),
-             TestShard('locked_shard_2',
-                        ['http/tests/xmlhttprequest/supported-xml-content-types.html',
-                         'perf/object-keys.html'])])
+        self.assert_shards(locked,
+            [('locked_shard_1',
+              ['http/tests/security/view-source-no-refresh.html',
+               'http/tests/websocket/tests/unicode.htm',
+               'http/tests/websocket/tests/websocket-protocol-ignored.html']),
+             ('locked_shard_2',
+              ['http/tests/xmlhttprequest/supported-xml-content-types.html',
+               'perf/object-keys.html'])])
 
         locked, unlocked = self.get_shards(num_workers=4, fully_parallel=False)
-        self.assertEquals(locked,
-            [TestShard('locked_shard_1',
-                       ['http/tests/security/view-source-no-refresh.html',
-                        'http/tests/websocket/tests/unicode.htm',
-                        'http/tests/websocket/tests/websocket-protocol-ignored.html',
-                        'http/tests/xmlhttprequest/supported-xml-content-types.html',
-                        'perf/object-keys.html'])])
+        self.assert_shards(locked,
+            [('locked_shard_1',
+              ['http/tests/security/view-source-no-refresh.html',
+               'http/tests/websocket/tests/unicode.htm',
+               'http/tests/websocket/tests/websocket-protocol-ignored.html',
+               'http/tests/xmlhttprequest/supported-xml-content-types.html',
+               'perf/object-keys.html'])])
 
 
 class LockCheckingManager(Manager):

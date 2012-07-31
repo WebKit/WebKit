@@ -1,3 +1,40 @@
+2012-07-31  Dirk Pranke  <dpranke@chromium.org>
+
+        nrwt: clean up TestInputs in preparation for cleaning up sharding
+        https://bugs.webkit.org/show_bug.cgi?id=92784
+
+        Reviewed by Ryosuke Niwa.
+
+        Currently, in order to shard the tests you need to refer to
+        state in the manager as well as the state in the TestInputs;
+        this change embeds the necessary state into the TestInputs so
+        sharding them can be a standalone operation.
+
+        The actual clean up of the sharding will follow in a subsequent patch.
+
+        Covered by existing tests; no new functionality. However, I did
+        rework the sharding tests to be less dependent on the test
+        scaffolding and easier to follow.
+
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        (Manager._test_input_for_file):
+        (Manager._shard_in_two):
+        (Manager._shard_every_file):
+        (Manager._shard_by_directory):
+        * Scripts/webkitpy/layout_tests/controllers/manager_unittest.py:
+        (ManagerWrapper._test_input_for_file):
+        (ShardingTests.assert_shards):
+        (ShardingTests.test_shard_by_dir):
+        (ShardingTests.test_shard_by_dir_sharding_ref_tests):
+        (ShardingTests.test_shard_every_file):
+        (ShardingTests.test_shard_in_two):
+        (ShardingTests.test_shard_in_two_sharding_ref_tests):
+        (ShardingTests.test_shard_in_two_has_no_unlocked_shards):
+        (ShardingTests.test_multiple_locked_shards):
+        * Scripts/webkitpy/layout_tests/models/test_input.py:
+        (TestInput.__init__):
+        (TestInput.__repr__):
+
 2012-07-31  Thiago Marcos P. Santos  <thiago.santos@intel.com>
 
         [EFL] Dump a backtrace in case of a crash
