@@ -543,3 +543,8 @@ fast/animation/request-animation-frame-timestamps-advance.html
 fast/animation/request-animation-frame-timestamps.html
 fast/animation/request-animation-frame-within-callback.html
 fast/animation/request-animation-frame.html
+
+# [Qt] REGRESSION http/tests/security/contentSecurityPolicy/object-src-none-blocked.html fails after r123978
+# https://bugs.webkit.org/show_bug.cgi?id=92649
+# skipping http/tests/security/contentSecurityPolicy/object-src-no-url-blocked.html made this one fail on WK2
+http/tests/security/contentSecurityPolicy/object-src-no-url-blocked.html

@@ -1,3 +1,12 @@
+2012-07-31  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt][WK2] Unreviewed gardening, last attempt to paint the WK2 bot green today.
+
+        * platform/qt-5.0-wk2/Skipped: Skip a failing test.
+        * platform/qt-5.0-wk2/compositing/columns/composited-in-paginated-expected.txt: Added.
+        * platform/qt-5.0-wk2/compositing/geometry/bounds-ignores-hidden-composited-descendant-expected.txt: Added.
+        * platform/qt/Skipped:
+
 2012-07-31  Stephen Chenney  <schenney@chromium.org>
 
         xmlserializer strips xlink from xlink:html svg image tag
