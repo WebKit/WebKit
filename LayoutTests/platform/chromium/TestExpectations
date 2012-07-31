@@ -1993,13 +1993,6 @@ BUGCR47083 : fast/text/hyphenate-limit-lines.html = IMAGE IMAGE+TEXT
 // it was CR75019 for unknown reason.
 BUGCR47083 : fast/text/hyphenate-limit-before-after.html = IMAGE+TEXT
 
-// Produces different results on Mac dbg.
-// BUGCR47826 MAC : fast/dom/HTMLMeterElement/meter-appearances-capacity.html = PASS
-// BUGCR47826 MAC : fast/dom/HTMLMeterElement/meter-element.html = PASS
-// BUGCR47826 MAC : fast/dom/HTMLMeterElement/meter-optimums.html = PASS
-// BUGCR47826 MAC : fast/dom/HTMLMeterElement/meter-styles.html = PASS
-// BUGCR47826 MAC : fast/dom/HTMLMeterElement/meter-styles-changing-pseudo.html = PASS
-
 BUGCR48239 : fast/js/function-apply.html = TEXT
 BUGCR48239 LINUX WIN : fast/js/function-apply-aliased.html = PASS TEXT
 BUGCR48239 : fast/js/function-apply-many-args.html = TIMEOUT TEXT
@@ -2634,7 +2627,9 @@ BUGCR85755 : fast/js/exception-properties.html = TEXT
 BUGWK62580 : fast/loader/inherit-charset-to-empty-frame.html = PASS TEXT
 
 // Has been timing out since r88913.
-BUGWK62754 LINUX MAC RELEASE : http/tests/misc/object-embedding-svg-delayed-size-negotiation-2.htm = TIMEOUT PASS
+BUGWK62754 LINUX MAC RELEASE : http/tests/misc/object-embedding-svg-delayed-size-negotiation-2.htm = TIMEOUT IMAGE+TEXT
+BUGWK62754 SLOW LINUX MAC DEBUG : http/tests/misc/object-embedding-svg-delayed-size-negotiation-2.htm = IMAGE+TEXT
+BUGWK62754 WIN : http/tests/misc/object-embedding-svg-delayed-size-negotiation-2.htm = IMAGE+TEXT
 
 BUGCR89282 SNOWLEOPARD : fast/forms/range/input-appearance-range.html = PASS IMAGE
 
@@ -3618,3 +3613,7 @@ BUGCR131189 : canvas/philip/tests/2d.transformation.setTransform.skewed.html = T
 BUGCR131189 : canvas/philip/tests/2d.transformation.transform.skewed.html = TEXT
 BUGCR131189 : platform/chromium/virtual/gpu/canvas/philip/tests/2d.transformation.setTransform.skewed.html = TEXT
 BUGCR131189 : platform/chromium/virtual/gpu/canvas/philip/tests/2d.transformation.transform.skewed.html = TEXT
+
+BUGWK92707 WIN : transforms/3d/point-mapping/3d-point-mapping.html = IMAGE
+BUGWK92707 WIN : transforms/3d/point-mapping/3d-point-mapping-origins.html = IMAGE
+BUGWK92707 WIN : transforms/3d/point-mapping/3d-point-mapping-preserve-3d.html = IMAGE

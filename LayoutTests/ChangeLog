@@ -1,3 +1,52 @@
+2012-07-30  Peter Kasting  <pkasting@google.com>
+
+        [Chromium] Baseline and expectation followups after r124142.
+        https://bugs.webkit.org/show_bug.cgi?id=62754
+        https://bugs.webkit.org/show_bug.cgi?id=80531
+        http://crbug.com/47826
+
+        Unreviewed, test updates.
+
+        * platform/chromium-linux-x86/css2.1/20110323: Added.
+        * platform/chromium-linux-x86/css2.1/20110323/block-replaced-width-001-expected.png: Added.
+        * platform/chromium-linux-x86/css2.1/20110323/block-replaced-width-001-expected.txt: Added.
+        * platform/chromium-linux/css2.1/20110323/block-replaced-width-001-expected.png: Added.
+        * platform/chromium-linux/fast/table/colspanMinWidth-vertical-expected.txt: Removed.
+        * platform/chromium-linux/platform/chromium/virtual/gpu/fast/canvas/image-object-in-canvas-expected.png:
+        * platform/chromium-linux/platform/chromium/virtual/gpu/fast/canvas/image-pattern-rotate-expected.png:
+        * platform/chromium-mac-snowleopard/fast/dom/HTMLMeterElement/meter-appearances-capacity-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/dom/HTMLMeterElement/meter-appearances-capacity-expected.txt: Added.
+        * platform/chromium-mac-snowleopard/fast/dom/HTMLMeterElement/meter-boundary-values-expected.png:
+        * platform/chromium-mac-snowleopard/fast/dom/HTMLMeterElement/meter-optimums-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/dom/HTMLMeterElement/meter-styles-changing-pseudo-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/dom/HTMLMeterElement/meter-styles-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/table/colspanMinWidth-vertical-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/platform/chromium/virtual/gpu/fast/canvas/image-object-in-canvas-expected.png: Added.
+        * platform/chromium-mac-snowleopard/platform/chromium/virtual/gpu/fast/canvas/image-pattern-rotate-expected.png: Added.
+        * platform/chromium-mac/fast/dom/HTMLMeterElement/meter-appearances-capacity-expected.png: Added.
+        * platform/chromium-mac/fast/dom/HTMLMeterElement/meter-appearances-capacity-expected.txt: Added.
+        * platform/chromium-mac/fast/dom/HTMLMeterElement/meter-boundary-values-expected.png:
+        * platform/chromium-mac/fast/dom/HTMLMeterElement/meter-element-expected.png: Added.
+        * platform/chromium-mac/fast/dom/HTMLMeterElement/meter-element-expected.txt: Added.
+        * platform/chromium-mac/fast/dom/HTMLMeterElement/meter-optimums-expected.png: Added.
+        * platform/chromium-mac/fast/dom/HTMLMeterElement/meter-optimums-expected.txt: Added.
+        * platform/chromium-mac/fast/dom/HTMLMeterElement/meter-styles-changing-pseudo-expected.png: Added.
+        * platform/chromium-mac/fast/dom/HTMLMeterElement/meter-styles-changing-pseudo-expected.txt: Added.
+        * platform/chromium-mac/fast/dom/HTMLMeterElement/meter-styles-expected.png: Added.
+        * platform/chromium-mac/fast/dom/HTMLMeterElement/meter-styles-expected.txt: Added.
+        * platform/chromium-mac/fast/table/colspanMinWidth-vertical-expected.png: Added.
+        * platform/chromium-mac/fast/table/colspanMinWidth-vertical-expected.txt:
+        * platform/chromium-mac/platform/chromium/virtual/gpu/fast/canvas/image-object-in-canvas-expected.png:
+        * platform/chromium-mac/platform/chromium/virtual/gpu/fast/canvas/image-pattern-rotate-expected.png:
+        * platform/chromium-win-xp/css2.1/20110323/block-replaced-width-001-expected.png: Added.
+        * platform/chromium-win/css2.1/20110323/block-replaced-width-001-expected.png: Added.
+        * platform/chromium-win/css2.1/20110323/block-replaced-width-001-expected.txt: Added.
+        * platform/chromium-win/fast/table/colspanMinWidth-vertical-expected.png:
+        * platform/chromium-win/fast/table/colspanMinWidth-vertical-expected.txt:
+        * platform/chromium-win/platform/chromium/virtual/gpu/fast/canvas/image-object-in-canvas-expected.png:
+        * platform/chromium-win/platform/chromium/virtual/gpu/fast/canvas/image-pattern-rotate-expected.png:
+        * platform/chromium/TestExpectations:
+
 2012-07-30  Kent Tamura  <tkent@chromium.org>
 
         [Chromium] Add baseline files for calendar-picker-appearance.html
