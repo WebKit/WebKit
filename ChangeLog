@@ -1,3 +1,15 @@
+2012-07-31  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Perf-o-matic: dashboard images are not generated properly from incrementally updated JSON
+        https://bugs.webkit.org/show_bug.cgi?id=92717
+
+        Reviewed by Hajime Morita.
+
+        Sort the values by timestamp. Unfortunately, there isn't a good way of testing this fix.
+
+        * Websites/webkit-perf.appspot.com/models.py:
+        (Runs.chart_params):
+
 2012-07-31  Danilo Cesar Lemes de Paula  <danilo.cesar@collabora.co.uk>
 
         add Farstream flags/deps to WebKit, for WebRTC

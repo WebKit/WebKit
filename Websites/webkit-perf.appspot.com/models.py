@@ -455,11 +455,12 @@ class Runs(db.Model):
     def chart_params(self, display_days):
         chart_data_x = []
         chart_data_y = []
-        runs = json.loads('[' + self.json_runs + ']')
+        timestamp_from_entry = lambda entry: Runs._timestamp_and_value_from_json_entry(entry)[0]
+        runs = sorted(json.loads('[' + self.json_runs + ']'), lambda a, b: int(timestamp_from_entry(a) - timestamp_from_entry(b)))
         if not runs:
             return None
 
-        end_timestamp = Runs._timestamp_and_value_from_json_entry(runs[-1])[0]
+        end_timestamp = timestamp_from_entry(runs[-1])
         start_timestamp = end_timestamp - display_days * 24 * 3600
         for entry in runs:
             timestamp, value = Runs._timestamp_and_value_from_json_entry(entry)
