@@ -120,9 +120,10 @@ class LayoutTestFinder(object):
 
         return tests_to_skip
 
-    def split_into_chunks_if_necessary(self, test_files_list):
+    def split_into_chunks(self, test_names):
+        """split into a list to run and a set to skip, based on --run-chunk and --run-part."""
         if not self._options.run_chunk and not self._options.run_part:
-            return test_files_list, set()
+            return test_names, set()
 
         # If the user specifies they just want to run a subset of the tests,
         # just grab a subset of the non-skipped tests.
@@ -135,10 +136,10 @@ class LayoutTestFinder(object):
             assert(test_size > 0)
         except AssertionError:
             _log.critical("invalid chunk '%s'" % chunk_value)
-            return None
+            return (None, None)
 
         # Get the number of tests
-        num_tests = len(test_files_list)
+        num_tests = len(test_names)
 
         # Get the start offset of the slice.
         if self._options.run_chunk:
@@ -165,7 +166,7 @@ class LayoutTestFinder(object):
         # Get the end offset of the slice.
         slice_end = min(num_tests, slice_start + chunk_len)
 
-        tests_to_run = test_files_list[slice_start:slice_end]
+        tests_to_run = test_names[slice_start:slice_end]
 
         _log.debug('chunk slice [%d:%d] of %d is %d tests' % (slice_start, slice_end, num_tests, (slice_end - slice_start)))
 
@@ -174,7 +175,6 @@ class LayoutTestFinder(object):
         if slice_end - slice_start < chunk_len:
             extra = chunk_len - (slice_end - slice_start)
             _log.debug('   last chunk is partial, appending [0:%d]' % extra)
-            tests_to_run.extend(test_files_list[0:extra])
+            tests_to_run.extend(test_names[0:extra])
 
-        more_tests_to_skip = set(test_files_list) - set(tests_to_run)
-        return (tests_to_run, more_tests_to_skip)
+        return (tests_to_run, set(test_names) - set(tests_to_run))

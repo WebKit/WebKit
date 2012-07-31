@@ -318,9 +318,7 @@ class Manager(object):
 
         self._paths = set()
 
-        # FIXME: Rename to test_names.
-        self._test_files = set()
-        self._test_files_list = None
+        self._test_names = None
         self._result_queue = Queue.Queue()
         self._retrying = False
         self._results_directory = self._port.results_directory()
@@ -332,63 +330,57 @@ class Manager(object):
         self._finder = LayoutTestFinder(self._port, self._options)
 
     def _collect_tests(self, args):
-        self._paths, self._test_files_list = self._finder.find_tests(self._options, args)
-        self._test_files = set(self._test_files_list)
+        self._paths, self._test_names = self._finder.find_tests(self._options, args)
 
     def _is_http_test(self, test):
         return self.HTTP_SUBDIR in test or self.WEBSOCKET_SUBDIR in test
 
     def _http_tests(self):
-        return set(test for test in self._test_files if self._is_http_test(test))
+        return set(test for test in self._test_names if self._is_http_test(test))
 
     def _websocket_tests(self):
-        return set(test for test in self._test_files if self.WEBSOCKET_SUBDIR in test)
+        return set(test for test in self._test_names if self.WEBSOCKET_SUBDIR in test)
 
     def _is_perf_test(self, test):
         return self.PERF_SUBDIR == test or (self.PERF_SUBDIR + self._port.TEST_PATH_SEPARATOR) in test
-
-    def _parse_expectations(self):
-        self._expectations = test_expectations.TestExpectations(self._port, self._test_files)
 
     # FIXME: This method is way too long and needs to be broken into pieces.
     def prepare_lists_and_print_output(self):
         """Create appropriate subsets of test lists and returns a
         ResultSummary object. Also prints expected test counts.
         """
-        num_all_test_files = len(self._test_files_list)
+        num_all_test_files = len(self._test_names)
 
-        tests_to_skip = self._finder.skip_tests(self._paths, self._test_files_list, self._expectations, self._http_tests())
-        self._test_files = set(self._test_files_list) - tests_to_skip
-        if not self._test_files_list:
+        tests_to_skip = self._finder.skip_tests(self._paths, self._test_names, self._expectations, self._http_tests())
+        if not self._test_names:
             _log.critical('No tests to run.')
             return None
 
         # Create a sorted list of test files so the subset chunk,
         # if used, contains alphabetically consecutive tests.
-        self._test_files_list = list(self._test_files)
+        self._test_names = list(set(self._test_names) - tests_to_skip)
         if self._options.randomize_order:
-            random.shuffle(self._test_files_list)
+            random.shuffle(self._test_names)
         else:
-            self._test_files_list.sort(key=lambda test: test_key(self._port, test))
+            self._test_names.sort(key=lambda test: test_key(self._port, test))
 
-        self._test_files_list, tests_in_other_chunks = self._finder.split_into_chunks_if_necessary(self._test_files_list)
+        self._test_names, tests_in_other_chunks = self._finder.split_into_chunks(self._test_names)
         self._expectations.add_skipped_tests(tests_in_other_chunks)
         tests_to_skip.update(tests_in_other_chunks)
-        self._tests = set(self._test_files_list)
 
-        if self._options.repeat_each:
+        if self._options.repeat_each > 1:
             list_with_repetitions = []
-            for test in self._test_files_list:
+            for test in self._test_names:
                 list_with_repetitions += ([test] * self._options.repeat_each)
-            self._test_files_list = list_with_repetitions
+            self._test_names = list_with_repetitions
 
-        if self._options.iterations:
-            self._test_files_list = self._test_files_list * self._options.iterations
+        if self._options.iterations > 1:
+            self._test_names = self._test_names * self._options.iterations
 
         iterations = self._options.repeat_each * self._options.iterations
-        result_summary = ResultSummary(self._expectations, self._test_files, iterations, tests_to_skip)
+        result_summary = ResultSummary(self._expectations, set(self._test_names), iterations, tests_to_skip)
 
-        self._printer.print_found(num_all_test_files, len(self._test_files), self._options.repeat_each, self._options.iterations)
+        self._printer.print_found(num_all_test_files, len(self._test_names), self._options.repeat_each, self._options.iterations)
         self._printer.print_expected(result_summary, self._expectations.get_tests_with_result_type)
 
         return result_summary
@@ -668,7 +660,7 @@ class Manager(object):
             return self._filesystem.join(self._results_directory, 'retries')
 
     def needs_servers(self):
-        return any(self._test_requires_lock(test_name) for test_name in self._test_files) and self._options.http
+        return any(self._test_requires_lock(test_name) for test_name in self._test_names) and self._options.http
 
     def _set_up_run(self):
         """Configures the system to be ready to run tests.
@@ -720,17 +712,17 @@ class Manager(object):
             return -1
 
         self._printer.write_update("Parsing expectations ...")
-        self._parse_expectations()
+        self._expectations = test_expectations.TestExpectations(self._port, self._test_names)
 
         result_summary = self._set_up_run()
         if not result_summary:
             return -1
 
-        assert(len(self._test_files))
+        assert(self._test_names)
 
         start_time = time.time()
 
-        interrupted, keyboard_interrupted, thread_timings, test_timings, individual_test_timings = self._run_tests(self._test_files_list, result_summary, int(self._options.child_processes))
+        interrupted, keyboard_interrupted, thread_timings, test_timings, individual_test_timings = self._run_tests(self._test_names, result_summary, int(self._options.child_processes))
 
         # We exclude the crashes from the list of results to retry, because
         # we want to treat even a potentially flaky crash as an error.
@@ -836,7 +828,7 @@ class Manager(object):
                 writer.write_crash_log(crash_log)
 
     def _mark_interrupted_tests_as_skipped(self, result_summary):
-        for test_name in self._test_files:
+        for test_name in self._test_names:
             if test_name not in result_summary.results:
                 result = test_results.TestResult(test_name, [test_failures.FailureEarlyExit()])
                 # FIXME: We probably need to loop here if there are multiple iterations.
@@ -877,7 +869,7 @@ class Manager(object):
         result_summary.add(result, expected, self._test_is_slow(result.test_name))
 
         # FIXME: there's too many arguments to this function.
-        self._printer.print_finished_test(result, expected, exp_str, got_str, result_summary, self._retrying, self._test_files_list)
+        self._printer.print_finished_test(result, expected, exp_str, got_str, result_summary, self._retrying, self._test_names)
 
         self._interrupt_if_at_failure_limits(result_summary)
 
@@ -948,7 +940,7 @@ class Manager(object):
             self._port, self._options.builder_name, self._options.build_name,
             self._options.build_number, self._results_directory,
             BUILDER_BASE_URL, individual_test_timings,
-            self._expectations, result_summary, self._test_files_list,
+            self._expectations, result_summary, self._test_names,
             self._options.test_results_server,
             "layout-tests",
             self._options.master_name)

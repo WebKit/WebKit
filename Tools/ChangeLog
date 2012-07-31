@@ -1,5 +1,37 @@
 2012-07-31  Dirk Pranke  <dpranke@chromium.org>
 
+        nrwt: clean up self._test_files_list vs. self._test_files, other nits
+        https://bugs.webkit.org/show_bug.cgi?id=92702
+
+        Reviewed by Ojan Vafai.
+
+        Get rid of self._test_files, rename self._test_files_list to
+        self._test_names (removing the confusion between the two fields).
+
+        Also inline the one call to _parse_expectations, remove the one
+        use of more_tests_to_skip, and fix a couple of minor nits.
+
+        * Scripts/webkitpy/layout_tests/controllers/finder.py:
+        (LayoutTestFinder.split_into_chunks):
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        (Manager.__init__):
+        (Manager._collect_tests):
+        (Manager._http_tests):
+        (Manager._websocket_tests):
+        (Manager._is_perf_test):
+        (Manager.prepare_lists_and_print_output):
+        (Manager.needs_servers):
+        (Manager.run):
+        (Manager._mark_interrupted_tests_as_skipped):
+        (Manager._update_summary_with_result):
+        (Manager._upload_json_files):
+        * Scripts/webkitpy/layout_tests/controllers/manager_unittest.py:
+        (ManagerTest.test_interrupt_if_at_failure_limits):
+        (ManagerTest.test_needs_servers.get_manager_with_tests):
+        (ManagerTest.test_servers_started):
+
+2012-07-31  Dirk Pranke  <dpranke@chromium.org>
+
         nrwt: --verbose logging does not work right on windows
         https://bugs.webkit.org/show_bug.cgi?id=92673
 

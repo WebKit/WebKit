@@ -284,10 +284,10 @@ class ManagerTest(unittest.TestCase):
         manager = Manager(port=port, options=MockOptions(), printer=Mock())
 
         manager._options = MockOptions(exit_after_n_failures=None, exit_after_n_crashes_or_timeouts=None)
-        manager._test_files = ['foo/bar.html', 'baz.html']
+        manager._test_names = ['foo/bar.html', 'baz.html']
         manager._test_is_slow = lambda test_name: False
 
-        result_summary = ResultSummary(Mock(), manager._test_files, 1, set())
+        result_summary = ResultSummary(Mock(), manager._test_names, 1, set())
         result_summary.unexpected_failures = 100
         result_summary.unexpected_crashes = 50
         result_summary.unexpected_timeouts = 50
@@ -330,8 +330,7 @@ class ManagerTest(unittest.TestCase):
             port = Mock()  # FIXME: Use a tighter mock.
             port.TEST_PATH_SEPARATOR = '/'
             manager = Manager(port, options=MockOptions(http=True), printer=Mock())
-            manager._test_files = set(test_names)
-            manager._test_files_list = test_names
+            manager._test_names = test_names
             return manager
 
         manager = get_manager_with_tests(['fast/html'])
@@ -399,7 +398,7 @@ class ManagerTest(unittest.TestCase):
 
         self.http_started = self.http_stopped = self.websocket_started = self.websocket_stopped = False
         manager = Manager(port=port, options=MockOptions(http=True), printer=Mock())
-        manager._test_files = ['http/tests/pass.txt']
+        manager._test_names = ['http/tests/pass.txt']
         manager.start_servers_with_lock(number_of_servers=4)
         self.assertEquals(self.http_started, True)
         self.assertEquals(self.websocket_started, False)
@@ -409,7 +408,7 @@ class ManagerTest(unittest.TestCase):
 
         self.http_started = self.http_stopped = self.websocket_started = self.websocket_stopped = False
         manager = Manager(port=port, options=MockOptions(http=True), printer=Mock())
-        manager._test_files = ['websocket/pass.txt']
+        manager._test_names = ['websocket/pass.txt']
         manager.start_servers_with_lock(number_of_servers=4)
         self.assertEquals(self.http_started, True)
         self.assertEquals(self.websocket_started, True)
@@ -419,7 +418,7 @@ class ManagerTest(unittest.TestCase):
 
         self.http_started = self.http_stopped = self.websocket_started = self.websocket_stopped = False
         manager = Manager(port=port, options=MockOptions(http=True), printer=Mock())
-        manager._test_files = ['perf/foo/test.html']
+        manager._test_names = ['perf/foo/test.html']
         manager.start_servers_with_lock(number_of_servers=4)
         self.assertEquals(self.http_started, False)
         self.assertEquals(self.websocket_started, False)
