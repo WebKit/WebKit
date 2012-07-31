@@ -1,3 +1,38 @@
+2012-07-31  Joe Mason  <jmason@rim.com>
+
+        [BlackBerry] Support Negotiate auth
+        https://bugs.webkit.org/show_bug.cgi?id=91871
+
+        Reviewed by George Staikos.
+
+        Add Negotiate to the list of auth schemes allowed in the platform request.
+
+        Add "success" and "requireCredentials" parameters to notifyAuthReceived (which is now called
+        with success = true on successful authentication, as well as on failures).
+
+        When success is true, update the stored credential to use the auth scheme actually reported
+        rather than that set in the request. (This is used when Negotiate auth can't get a ticket
+        and falls back to a different supported auth type.)
+
+        When requireCredentials is false, just set the auth type and start a new request using empty
+        credentials.
+
+        RIM PR# 166514
+        Internally reviewed by Jonathan Dong
+
+        * platform/network/blackberry/NetworkJob.cpp:
+        (WebCore::NetworkJob::notifyAuthReceived): Add Negotiate to the auth scheme switch. Handle
+        success param by updating auth type in stored credentials; pass requireCredentials param on
+        to sendRequestWithCredentials.
+        (WebCore::NetworkJob::startNewJobWithRequest): Fix typo in increaseRedirectCount parameter
+        name.
+        (WebCore::NetworkJob::sendRequestWithCredentials): Use empty credentials if
+        requireCredentials is false.
+        * platform/network/blackberry/NetworkJob.h:
+        (NetworkJob):
+        * platform/network/blackberry/NetworkManager.cpp:
+        (WebCore::NetworkManager::startJob): Add Negotiate to the auth scheme switch.
+
 2012-07-31  Alexei Filippov  <alexeif@chromium.org>
 
         Web Inspector: take into account the whole security origin instead of just host

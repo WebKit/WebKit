@@ -231,7 +231,7 @@ void NetworkJob::notifyMultipartHeaderReceived(const char* key, const char* valu
         handleNotifyMultipartHeaderReceived(key, value);
 }
 
-void NetworkJob::notifyAuthReceived(BlackBerry::Platform::NetworkRequest::AuthType authType, const char* realm)
+void NetworkJob::notifyAuthReceived(BlackBerry::Platform::NetworkRequest::AuthType authType, const char* realm, bool success, bool requireCredentials)
 {
     using BlackBerry::Platform::NetworkRequest;
 
@@ -243,6 +243,9 @@ void NetworkJob::notifyAuthReceived(BlackBerry::Platform::NetworkRequest::AuthTy
         break;
     case NetworkRequest::AuthHTTPDigest:
         scheme = ProtectionSpaceAuthenticationSchemeHTTPDigest;
+        break;
+    case NetworkRequest::AuthNegotiate:
+        scheme = ProtectionSpaceAuthenticationSchemeNegotiate;
         break;
     case NetworkRequest::AuthHTTPNTLM:
         scheme = ProtectionSpaceAuthenticationSchemeNTLM;
@@ -258,7 +261,26 @@ void NetworkJob::notifyAuthReceived(BlackBerry::Platform::NetworkRequest::AuthTy
         return;
     }
 
-    m_newJobWithCredentialsStarted = sendRequestWithCredentials(serverType, scheme, realm);
+    if (success) {
+        // Update the credentials that will be stored to match the scheme that was actually used
+        AuthenticationChallenge& challenge = m_handle->getInternal()->m_currentWebChallenge;
+        if (!challenge.isNull()) {
+            const ProtectionSpace& oldSpace = challenge.protectionSpace();
+            if (oldSpace.authenticationScheme() != scheme) {
+                // The scheme might have changed, but the server type shouldn't have!
+                BLACKBERRY_ASSERT(serverType == oldSpace.serverType());
+                ProtectionSpace newSpace(oldSpace.host(), oldSpace.port(), oldSpace.serverType(), oldSpace.realm(), scheme);
+                m_handle->getInternal()->m_currentWebChallenge = AuthenticationChallenge(newSpace,
+                                                                                         challenge.proposedCredential(),
+                                                                                         challenge.previousFailureCount(),
+                                                                                         challenge.failureResponse(),
+                                                                                         challenge.error());
+            }
+        }
+        return;
+    }
+
+    m_newJobWithCredentialsStarted = sendRequestWithCredentials(serverType, scheme, realm, requireCredentials);
 }
 
 void NetworkJob::notifyStringHeaderReceived(const String& key, const String& value)
@@ -510,7 +532,7 @@ bool NetworkJob::retryAsFTPDirectory()
     return startNewJobWithRequest(newRequest);
 }
 
-bool NetworkJob::startNewJobWithRequest(ResourceRequest& newRequest, bool increasRedirectCount)
+bool NetworkJob::startNewJobWithRequest(ResourceRequest& newRequest, bool increaseRedirectCount)
 {
     // m_frame can be null if this is a PingLoader job (See NetworkJob::initialize).
     // In this case we don't start new request.
@@ -538,7 +560,7 @@ bool NetworkJob::startNewJobWithRequest(ResourceRequest& newRequest, bool increa
         m_streamFactory,
         *m_frame,
         m_deferLoadingCount,
-        increasRedirectCount ? m_redirectCount + 1 : m_redirectCount);
+        increaseRedirectCount ? m_redirectCount + 1 : m_redirectCount);
     return true;
 }
 
@@ -674,7 +696,7 @@ bool NetworkJob::handleFTPHeader(const String& header)
     return true;
 }
 
-bool NetworkJob::sendRequestWithCredentials(ProtectionSpaceServerType type, ProtectionSpaceAuthenticationScheme scheme, const String& realm)
+bool NetworkJob::sendRequestWithCredentials(ProtectionSpaceServerType type, ProtectionSpaceAuthenticationScheme scheme, const String& realm, bool requireCredentials)
 {
     ASSERT(m_handle);
     if (!m_handle)
@@ -699,9 +721,13 @@ bool NetworkJob::sendRequestWithCredentials(ProtectionSpaceServerType type, Prot
     ProtectionSpace protectionSpace(host, port, type, realm, scheme);
 
     // We've got the scheme and realm. Now we need a username and password.
-    // First search the CredentialStorage.
-    Credential credential = CredentialStorage::get(protectionSpace);
-    if (!credential.isEmpty()) {
+    Credential credential;
+    if (!requireCredentials) {
+        // Don't overwrite any existing credentials with the empty credential
+        if (m_handle->getInternal()->m_currentWebChallenge.isNull())
+            m_handle->getInternal()->m_currentWebChallenge = AuthenticationChallenge(protectionSpace, credential, 0, m_response, ResourceError());
+    } else if (!(credential = CredentialStorage::get(protectionSpace)).isEmpty()) {
+        // First search the CredentialStorage.
         m_handle->getInternal()->m_currentWebChallenge = AuthenticationChallenge(protectionSpace, credential, 0, m_response, ResourceError());
         m_handle->getInternal()->m_currentWebChallenge.setStored(true);
     } else {
