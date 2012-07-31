@@ -1,3 +1,18 @@
+2012-07-30  Vivek Galatage  <vivekgalatage@gmail.com>
+
+        fillWithEmptyClients method should also initialize chromeClient with EmptyChromeClient
+        https://bugs.webkit.org/show_bug.cgi?id=92703
+
+        Reviewed by Kent Tamura.
+
+        fillWithEmptyClients should also intialize PageClients.chromeClient with EmptyChromeClient 
+        as its required for creating a Empty page and to minimize the exported symbols.
+
+        No new tests as no change in functionality.
+
+        * loader/EmptyClients.cpp:
+        (WebCore::fillWithEmptyClients):
+
 2012-07-30  Adrienne Walker  <enne@google.com>
 
         [chromium] Wrap ScrollbarLayerChromium in WebScrollbarLayer

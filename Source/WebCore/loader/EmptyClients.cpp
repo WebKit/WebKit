@@ -47,6 +47,9 @@ namespace WebCore {
 
 void fillWithEmptyClients(Page::PageClients& pageClients)
 {
+    static ChromeClient* dummyChromeClient = adoptPtr(new EmptyChromeClient).leakPtr();
+    pageClients.chromeClient = dummyChromeClient;
+
 #if ENABLE(CONTEXT_MENUS)
     static ContextMenuClient* dummyContextMenuClient = adoptPtr(new EmptyContextMenuClient).leakPtr();
     pageClients.contextMenuClient = dummyContextMenuClient;
