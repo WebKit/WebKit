@@ -1,3 +1,17 @@
+2012-07-31  Keishi Hattori  <keishi@webkit.org>
+
+        Slider ticks are drawn at wrong positions
+        https://bugs.webkit.org/show_bug.cgi?id=92720
+
+        Reviewed by Kent Tamura.
+
+        * fast/forms/datalist/input-appearance-range-with-datalist.html: Added values to input elements so we can see if the slider thumb position matches with the tick marks.
+        * platform/chromium-linux/fast/forms/datalist/input-appearance-range-with-datalist-expected.png:
+        * platform/chromium-linux/fast/forms/datalist/input-appearance-range-with-datalist-zoomed-expected.png:
+        * platform/chromium-mac/fast/forms/datalist/input-appearance-range-with-datalist-expected.png:
+        * platform/chromium-mac/fast/forms/datalist/input-appearance-range-with-datalist-zoomed-expected.png:
+        * platform/chromium/TestExpectations:
+
 2012-07-31  Shinya Kawanaka  <shinyak@chromium.org>
 
         Older ShadowDOM is still rendered when a new ShadowDOM is added when they don't have any InsertionPoints.

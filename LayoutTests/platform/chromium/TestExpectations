@@ -3432,6 +3432,10 @@ BUGWK87653 WIN LINUX : compositing/geometry/composited-in-columns.html = IMAGE+T
 // Needs rebaseline. After localized string is added to chromium.
 BUGWK92444 : platform/chromium/fast/forms/color/color-suggestion-picker-appearance.html = PASS TIMEOUT MISSING IMAGE
 
+// Needs rebaseline.
+BUGWK92721 WIN SNOWLEOPARD : fast/forms/datalist/input-appearance-range-with-datalist-zoomed.html = IMAGE
+BUGWK92721 WIN SNOWLEOPARD : fast/forms/datalist/input-appearance-range-with-datalist.html = IMAGE
+
 // Needs Rebaseline.
 BUGWK88705 : fast/css/text-overflow-ellipsis-text-align-center.html = MISSING
 BUGWK88705 : fast/css/text-overflow-ellipsis-text-align-justify.html = MISSING

@@ -3,10 +3,10 @@ if (window.layoutTestController)
     layoutTestController.dumpAsText(true);
 </script>
 
-<input type=range list=foo />
-<input type=range list=foo style="width: 50px;" />
-<input type=range list=foo style="-webkit-appearance:slider-vertical;" />
-<input type=range list=foo style="-webkit-appearance:slider-vertical; height: 50px;" />
+<input type=range list=foo value=10 />
+<input type=range list=foo style="width: 50px;" value=20 />
+<input type=range list=foo style="-webkit-appearance:slider-vertical;" value=40 />
+<input type=range list=foo style="-webkit-appearance:slider-vertical; height: 50px;" value=80 />
 <datalist id=foo>
     <option>0</option>
     <option>10</option>

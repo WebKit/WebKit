@@ -1,3 +1,18 @@
+2012-07-31  Keishi Hattori  <keishi@webkit.org>
+
+        Slider ticks are drawn at wrong positions
+        https://bugs.webkit.org/show_bug.cgi?id=92720
+
+        Reviewed by Kent Tamura.
+
+        Slider tick marks for vertical sliders were drawn reversed. And the tick
+        mark positions were slightly off from the thumb position because of rounding.
+
+        No new tests. Covered in input-appearance-range-with-datalist.html.
+
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::paintSliderTicks):
+
 2012-07-31  Shinya Kawanaka  <shinyak@chromium.org>
 
         Older ShadowDOM is still rendered when a new ShadowDOM is added when they don't have any InsertionPoints.

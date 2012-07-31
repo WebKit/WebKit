@@ -1024,13 +1024,13 @@ void RenderTheme::paintSliderTicks(RenderObject* o, const PaintInfo& paintInfo, 
         if (!input->isValidValue(value))
             continue;
         double parsedValue = parseToDoubleForNumberType(input->sanitizeValue(value));
-        double tickPosition = (parsedValue - min) / (max - min);
-        if (!o->style()->isLeftToRightDirection())
-            tickPosition = 1.0 - tickPosition;
+        double tickFraction = (parsedValue - min) / (max - min);
+        double tickRatio = isHorizontal && o->style()->isLeftToRightDirection() ? tickFraction : 1.0 - tickFraction;
+        double tickPosition = round(tickRegionSideMargin + tickRegionWidth * tickRatio);
         if (isHorizontal)
-            tickRect.setX(floor(tickRegionSideMargin + tickRegionWidth * tickPosition));
+            tickRect.setX(tickPosition);
         else
-            tickRect.setY(floor(tickRegionSideMargin + tickRegionWidth * tickPosition));
+            tickRect.setY(tickPosition);
         paintInfo.context->fillRect(tickRect);
     }
 }
