@@ -1,3 +1,10 @@
+2012-07-30  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Remove erroneously committed debugging print call from a test.
+
+        * Scripts/webkitpy/performance_tests/perftestsrunner_unittest.py:
+        (test_run_generates_results_page):
+
 2012-07-30  Arnaud Renevier  <a.renevier@sisa.samsung.com>
 
         webkit-patch: system keyring is not used to read my password

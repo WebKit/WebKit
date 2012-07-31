@@ -272,7 +272,6 @@ max 1120
     def test_run_generates_results_page(self):
         runner, port = self.create_runner(args=['--output-json-path=/mock-checkout/output.json'])
         filesystem = port.host.filesystem
-        print runner._base_path + '/resources/results-template.html'
         filesystem.write_text_file(runner._base_path + '/resources/results-template.html',
             'BEGIN<?WebKitPerfTestRunnerInsertionPoint?>END')
         filesystem.write_text_file(runner._base_path + '/Dromaeo/resources/dromaeo/web/lib/jquery-1.6.4.js',
