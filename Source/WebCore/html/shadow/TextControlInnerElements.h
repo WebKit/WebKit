@@ -125,7 +125,7 @@ private:
     virtual void detach();
     virtual bool isSpinButtonElement() const { return true; }
     virtual bool isEnabledFormControl() const { return shadowHost()->isEnabledFormControl(); }
-    virtual bool isReadOnlyFormControl() const { return shadowHost()->isReadOnlyFormControl(); }
+    virtual bool shouldMatchReadWriteSelector() const OVERRIDE { return shadowHost()->shouldMatchReadWriteSelector(); }
     virtual void defaultEventHandler(Event*);
     void doStepAction(int);
     void startRepeatingTimer();

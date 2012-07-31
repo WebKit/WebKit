@@ -214,9 +214,9 @@ bool SliderThumbElement::isEnabledFormControl() const
     return hostInput()->isEnabledFormControl();
 }
 
-bool SliderThumbElement::isReadOnlyFormControl() const
+bool SliderThumbElement::shouldMatchReadWriteSelector() const
 {
-    return hostInput()->isReadOnlyFormControl();
+    return hostInput()->shouldMatchReadWriteSelector();
 }
 
 Node* SliderThumbElement::focusDelegate()
@@ -334,7 +334,7 @@ void SliderThumbElement::defaultEventHandler(Event* event)
 bool SliderThumbElement::willRespondToMouseMoveEvents()
 {
     const HTMLInputElement* input = hostInput();
-    if (input && !input->isReadOnlyFormControl() && input->isEnabledFormControl() && m_inDragMode)
+    if (input && !input->readOnly() && input->isEnabledFormControl() && m_inDragMode)
         return true;
 
     return HTMLDivElement::willRespondToMouseMoveEvents();
@@ -343,7 +343,7 @@ bool SliderThumbElement::willRespondToMouseMoveEvents()
 bool SliderThumbElement::willRespondToMouseClickEvents()
 {
     const HTMLInputElement* input = hostInput();
-    if (input && !input->isReadOnlyFormControl() && input->isEnabledFormControl())
+    if (input && !input->readOnly() && input->isEnabledFormControl())
         return true;
 
     return HTMLDivElement::willRespondToMouseClickEvents();

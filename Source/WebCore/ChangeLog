@@ -1,3 +1,38 @@
+2012-07-30  Yoshifumi Inoue  <yosin@chromium.org>
+
+        [CSS] Change Element::isReadOnlyFormControl to shouldMatchReadWriteSelector or HTMLTextFormControlElement::readOnly
+        https://bugs.webkit.org/show_bug.cgi?id=92602
+
+        Reviewed by Kent Tamura.
+
+        This patch renames Element::isReadOnlyFormControl() to Element::shouldMatchReadWriteSelector()
+        or HTMLTextFormControlElement::readOnly() to make intention of
+        shouldMatchReadWriteSelector(was isReadOnlyFormControl) self descriptive.
+
+        No new tests. This patch doesn't change behavior.
+
+        * css/SelectorChecker.cpp:
+        (WebCore::SelectorChecker::checkOneSelector): Replaced isReadOnlyFormControl() by shouldMatchReadWriteSelector().
+        * dom/Element.cpp:
+        (WebCore::Element::shouldMatchReadWriteSelector): Added default implementation.
+        * dom/Element.h:
+        (WebCore::Element::shouldMatchReadWriteSelector): Replaced isReadOnlyFormControl() by shouldMatchReadWriteSelector().
+        * html/HTMLFormControlElement.h:
+        * html/shadow/SliderThumbElement.cpp:
+        (WebCore::SliderThumbElement::shouldMatchReadWriteSelector): Replaced isReadOnlyFormControl() by shouldMatchReadWriteSelector().
+        (WebCore::SliderThumbElement::willRespondToMouseMoveEvents): Replaced isReadOnlyFormControl() by readOnly().
+        (WebCore::SliderThumbElement::willRespondToMouseClickEvents): ditto.
+        * html/shadow/SliderThumbElement.h:
+        (SliderThumbElement): Replaced isReadOnlyFormControl() by shouldMatchReadWriteSelector().
+        * html/shadow/TextControlInnerElements.cpp:
+        (WebCore::SearchFieldCancelButtonElement::willRespondToMouseClickEvents): Replaced isReadOnlyFormControl() by readOnly().
+        (WebCore::SpinButtonElement::willRespondToMouseMoveEvents): Replaced isReadOnlyFormControl() by readOnly().
+        (WebCore::SpinButtonElement::willRespondToMouseClickEvents): Replaced isReadOnlyFormControl() by readOnly().
+        (WebCore::InputFieldSpeechButtonElement::willRespondToMouseClickEvents): Replaced isReadOnlyFormControl() by readOnly().
+        * html/shadow/TextControlInnerElements.h:
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::isReadOnlyControl): Replaced isReadOnlyFormControl() by shouldMatchReadWriteSelector().
+
 2012-07-30  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Remove overflow: scroll handling in block flow layout methods

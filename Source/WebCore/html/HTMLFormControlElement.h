@@ -81,7 +81,7 @@ public:
 
     virtual const AtomicString& formControlType() const OVERRIDE = 0;
     virtual bool isEnabledFormControl() const { return !disabled(); }
-    virtual bool isReadOnlyFormControl() const { return readOnly(); }
+    virtual bool shouldMatchReadWriteSelector() const OVERRIDE { return !readOnly(); }
 
     virtual bool canTriggerImplicitSubmission() const { return false; }
 
