@@ -48,6 +48,7 @@ ADD_LIBRARY(TestWebKitAPIInjectedBundle SHARED
     ${TESTWEBKITAPI_DIR}/Tests/WebKit2/WillSendSubmitEvent_Bundle.cpp
 )
 
+TARGET_LINK_LIBRARIES(TestWebKitAPIInjectedBundle ${WTF_LIBRARY_NAME})
 ADD_DEPENDENCIES(TestWebKitAPIInjectedBundle ${WebKit2_LIBRARY_NAME} ${ForwardingHeadersForTestWebKitAPI_NAME} ${ForwardingNetworkHeadersForTestWebKitAPI_NAME})
 
 GET_PROPERTY(TestWebKitAPIInjectedBundle_PATH TARGET TestWebKitAPIInjectedBundle PROPERTY LOCATION)

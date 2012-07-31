@@ -1,3 +1,14 @@
+2012-07-30  Thiago Marcos P. Santos  <thiago.santos@intel.com>
+
+        [CMake] TestWebKitAPI bundle should link with WTF
+        https://bugs.webkit.org/show_bug.cgi?id=92616
+
+        Reviewed by Antonio Gomes.
+
+        Fixes build when shared core is disabled.
+
+        * TestWebKitAPI/CMakeLists.txt:
+
 2012-07-30  Dirk Pranke  <dpranke@chromium.org>
 
         nrwt: clean up handling of 'expected' stats
