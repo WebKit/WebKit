@@ -1,3 +1,13 @@
+2012-07-31  Tommy Widenflycht  <tommyw@google.com>
+
+        Introduce a minimal RTCPeerConnection together with Dictionary changes
+        https://bugs.webkit.org/show_bug.cgi?id=92380
+
+        Reviewed by Kentaro Hara.
+
+        * fast/mediastream/RTCPeerConnection-expected.txt: Added.
+        * fast/mediastream/RTCPeerConnection.html: Added.
+
 2012-07-31  János Badics  <jbadics@inf.u-szeged.hu>
 
         [Qt][EFL] New inspector/styles/region-style-crash.html introduced in r124186 fails

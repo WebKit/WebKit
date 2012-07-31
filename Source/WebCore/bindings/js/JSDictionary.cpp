@@ -26,6 +26,7 @@
 #include "config.h"
 #include "JSDictionary.h"
 
+#include "ArrayValue.h"
 #include "Dictionary.h"
 #include "JSDOMWindow.h"
 #include "JSEventTarget.h"
@@ -33,8 +34,8 @@
 #include "JSNode.h"
 #include "JSStorage.h"
 #include "JSTrackCustom.h"
-#include "SerializedScriptValue.h"
 #include "ScriptValue.h"
+#include "SerializedScriptValue.h"
 #include <wtf/HashMap.h>
 #include <wtf/MathExtras.h>
 #include <wtf/text/AtomicString.h>
@@ -184,6 +185,14 @@ void JSDictionary::convertValue(ExecState* exec, JSValue value, HashSet<AtomicSt
     }
 }
 #endif
+
+void JSDictionary::convertValue(ExecState* exec, JSValue value, ArrayValue& result)
+{
+    if (value.isUndefinedOrNull())
+        return;
+
+    result = ArrayValue(exec, value);
+}
 
 bool JSDictionary::getWithUndefinedOrNullCheck(const String& propertyName, String& result) const
 {

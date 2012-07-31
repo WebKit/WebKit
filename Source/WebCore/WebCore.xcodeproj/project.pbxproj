@@ -1289,6 +1289,8 @@
 		49AE2D97134EE5F90072920A /* CalculationValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 49AE2D95134EE5F90072920A /* CalculationValue.h */; };
 		49AF2D6914435D050016A784 /* DisplayRefreshMonitor.h in Headers */ = {isa = PBXBuildFile; fileRef = 49AF2D6814435D050016A784 /* DisplayRefreshMonitor.h */; };
 		49AF2D6C14435D210016A784 /* DisplayRefreshMonitorMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49AF2D6B14435D210016A784 /* DisplayRefreshMonitorMac.cpp */; };
+		49B3760C15C6C6840059131D /* ArrayValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49B3760A15C6C6840059131D /* ArrayValue.cpp */; };
+		49B3760D15C6C6840059131D /* ArrayValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 49B3760B15C6C6840059131D /* ArrayValue.h */; };
 		49C7B9931042D2D30009D447 /* JSWebGLBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49C7B9801042D2D30009D447 /* JSWebGLBuffer.cpp */; };
 		49C7B9941042D2D30009D447 /* JSWebGLBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 49C7B9811042D2D30009D447 /* JSWebGLBuffer.h */; };
 		49C7B9951042D2D30009D447 /* JSInt8Array.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49C7B9821042D2D30009D447 /* JSInt8Array.cpp */; };
@@ -8391,6 +8393,8 @@
 		49AE2D95134EE5F90072920A /* CalculationValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CalculationValue.h; sourceTree = "<group>"; };
 		49AF2D6814435D050016A784 /* DisplayRefreshMonitor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DisplayRefreshMonitor.h; sourceTree = "<group>"; };
 		49AF2D6B14435D210016A784 /* DisplayRefreshMonitorMac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DisplayRefreshMonitorMac.cpp; sourceTree = "<group>"; };
+		49B3760A15C6C6840059131D /* ArrayValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ArrayValue.cpp; sourceTree = "<group>"; };
+		49B3760B15C6C6840059131D /* ArrayValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArrayValue.h; sourceTree = "<group>"; };
 		49C7B9801042D2D30009D447 /* JSWebGLBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebGLBuffer.cpp; sourceTree = "<group>"; };
 		49C7B9811042D2D30009D447 /* JSWebGLBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebGLBuffer.h; sourceTree = "<group>"; };
 		49C7B9821042D2D30009D447 /* JSInt8Array.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSInt8Array.cpp; sourceTree = "<group>"; };
@@ -20027,6 +20031,8 @@
 				BCCE58B41061E925008FB35A /* Constructors */,
 				BC4EDEF70C08F414007EDD49 /* Custom */,
 				14DFB33F0A7DF7630018F769 /* Derived Sources */,
+				49B3760A15C6C6840059131D /* ArrayValue.cpp */,
+				49B3760B15C6C6840059131D /* ArrayValue.h */,
 				BCD533630ED6848900887468 /* CachedScriptSourceProvider.h */,
 				93F8B3060A300FEA00F61AB8 /* CodeGeneratorJS.pm */,
 				312D67B01535691F00563D0D /* Dictionary.cpp */,
@@ -25346,6 +25352,7 @@
 				1059457A15B42A43004D37FD /* JSMicroDataItemValue.h in Headers */,
 				1059459915B42AA0004D37FD /* PropertyNodeList.h in Headers */,
 				1059459F15B42B1A004D37FD /* JSPropertyNodeList.h in Headers */,
+				49B3760D15C6C6840059131D /* ArrayValue.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -28417,6 +28424,7 @@
 				1059459715B42A8E004D37FD /* PropertyNodeList.cpp in Sources */,
 				1059459D15B42B0C004D37FD /* JSPropertyNodeList.cpp in Sources */,
 				CD37B39815C1B971006DC898 /* DiagnosticLoggingKeys.cpp in Sources */,
+				49B3760C15C6C6840059131D /* ArrayValue.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

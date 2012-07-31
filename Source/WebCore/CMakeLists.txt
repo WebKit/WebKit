@@ -206,6 +206,7 @@ SET(WebCore_IDL_FILES
     Modules/mediastream/NavigatorUserMediaErrorCallback.idl
     Modules/mediastream/NavigatorUserMediaSuccessCallback.idl
     Modules/mediastream/PeerConnection00.idl
+    Modules/mediastream/RTCPeerConnection.idl
     Modules/mediastream/SessionDescription.idl
 
     Modules/networkinfo/NavigatorNetworkInfoConnection.idl
@@ -825,6 +826,7 @@ SET(WebCore_SOURCES
     Modules/mediastream/MediaStreamTrackList.cpp
     Modules/mediastream/NavigatorMediaStream.cpp
     Modules/mediastream/PeerConnection00.cpp
+    Modules/mediastream/RTCPeerConnection.cpp
     Modules/mediastream/SessionDescription.cpp
     Modules/mediastream/UserMediaController.cpp
     Modules/mediastream/UserMediaRequest.cpp

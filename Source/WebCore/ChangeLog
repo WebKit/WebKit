@@ -1,3 +1,97 @@
+2012-07-31  Tommy Widenflycht  <tommyw@google.com>
+
+        Introduce a minimal RTCPeerConnection together with Dictionary changes
+        https://bugs.webkit.org/show_bug.cgi?id=92380
+
+        Reviewed by Kentaro Hara.
+
+        This patch introduces a shell RTCPeerConnection together with neccecary changes to
+        Dictionary.
+
+        The W3C specification can be found here:
+        http://dev.w3.org/2011/webrtc/editor/webrtc.html#rtcpeerconnection
+
+        Since Dictionaries can't be fully copied around adding
+        get(const String& name, Vector<Dictionary>& result)
+        isn't feasible so I have added a new ArrayValue class.
+
+        Test: fast/mediastream/RTCPeerConnection.html
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Modules/mediastream/DOMWindowMediaStream.idl:
+        * Modules/mediastream/RTCPeerConnection.cpp: Added.
+        (WebCore):
+        (RTCIceServer):
+        (WebCore::RTCIceServer::create):
+        (WebCore::RTCIceServer::~RTCIceServer):
+        (WebCore::RTCIceServer::uri):
+        (WebCore::RTCIceServer::credential):
+        (WebCore::RTCIceServer::RTCIceServer):
+        (RTCConfiguration):
+        (WebCore::RTCConfiguration::create):
+        (WebCore::RTCConfiguration::~RTCConfiguration):
+        (WebCore::RTCConfiguration::appendServer):
+        (WebCore::RTCConfiguration::numberOfServers):
+        (WebCore::RTCConfiguration::server):
+        (WebCore::RTCConfiguration::RTCConfiguration):
+        (WebCore::RTCPeerConnection::parseConfiguration):
+        (WebCore::RTCPeerConnection::create):
+        (WebCore::RTCPeerConnection::RTCPeerConnection):
+        (WebCore::RTCPeerConnection::~RTCPeerConnection):
+        (WebCore::RTCPeerConnection::interfaceName):
+        (WebCore::RTCPeerConnection::scriptExecutionContext):
+        (WebCore::RTCPeerConnection::stop):
+        (WebCore::RTCPeerConnection::eventTargetData):
+        (WebCore::RTCPeerConnection::ensureEventTargetData):
+        * Modules/mediastream/RTCPeerConnection.h: Added.
+        (WebCore):
+        (RTCPeerConnection):
+        (WebCore::RTCPeerConnection::refEventTarget):
+        (WebCore::RTCPeerConnection::derefEventTarget):
+        * Modules/mediastream/RTCPeerConnection.idl: Added.
+        * Target.pri:
+        * UseJSC.cmake:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/generic/RuntimeEnabledFeatures.h:
+        (WebCore::RuntimeEnabledFeatures::webkitRTCPeerConnectionEnabled):
+        * bindings/js/ArrayValue.cpp: Added.
+        (WebCore):
+        (WebCore::ArrayValue::ArrayValue):
+        (WebCore::ArrayValue::operator=):
+        (WebCore::ArrayValue::isUndefinedOrNull):
+        (WebCore::ArrayValue::length):
+        (WebCore::ArrayValue::get):
+        * bindings/js/ArrayValue.h: Added.
+        (WebCore):
+        (ArrayValue):
+        * bindings/js/JSBindingsAllInOne.cpp:
+        * bindings/js/JSDictionary.cpp:
+        (WebCore::JSDictionary::convertValue):
+        (WebCore):
+        * bindings/js/JSDictionary.h:
+        (WebCore):
+        * bindings/v8/ArrayValue.cpp: Added.
+        (WebCore):
+        (WebCore::ArrayValue::operator=):
+        (WebCore::ArrayValue::isUndefinedOrNull):
+        (WebCore::ArrayValue::length):
+        (WebCore::ArrayValue::get):
+        * bindings/v8/ArrayValue.h: Added.
+        (WebCore):
+        (ArrayValue):
+        (WebCore::ArrayValue::ArrayValue):
+        (WebCore::ArrayValue::~ArrayValue):
+        * bindings/v8/Dictionary.cpp:
+        (WebCore::Dictionary::get):
+        (WebCore):
+        * bindings/v8/Dictionary.h:
+        (WebCore):
+        (Dictionary):
+        * dom/EventTargetFactory.in:
+
 2012-07-31  Raul Hudea  <rhudea@adobe.com>
 
         Inspector crashes when trying to inspect a page with CSS region styling

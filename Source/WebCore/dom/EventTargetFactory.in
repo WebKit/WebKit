@@ -24,6 +24,7 @@ Node
 Notification conditional=NOTIFICATIONS|LEGACY_NOTIFICATIONS
 PeerConnection00 conditional=MEDIA_STREAM
 Performance conditional=WEB_TIMING
+RTCPeerConnection conditional=MEDIA_STREAM
 SharedWorker conditional=SHARED_WORKERS
 SharedWorkerContext conditional=SHARED_WORKERS
 SourceBufferList conditional=MEDIA_SOURCE

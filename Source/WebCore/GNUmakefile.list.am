@@ -491,6 +491,8 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSRect.h \
 	DerivedSources/WebCore/JSRGBColor.cpp \
 	DerivedSources/WebCore/JSRGBColor.h \
+	DerivedSources/WebCore/JSRTCPeerConnection.cpp \
+	DerivedSources/WebCore/JSRTCPeerConnection.h \
 	DerivedSources/WebCore/JSScreen.cpp \
 	DerivedSources/WebCore/JSScreen.h \
 	DerivedSources/WebCore/JSScriptProfile.cpp \
@@ -715,6 +717,7 @@ dom_binding_idls += \
 	$(WebCore)/Modules/mediastream/NavigatorUserMediaErrorCallback.idl \
 	$(WebCore)/Modules/mediastream/NavigatorUserMediaSuccessCallback.idl \
 	$(WebCore)/Modules/mediastream/PeerConnection00.idl \
+	$(WebCore)/Modules/mediastream/RTCPeerConnection.idl \
 	$(WebCore)/Modules/mediastream/SessionDescription.idl \
 	$(WebCore)/Modules/notifications/Notification.idl \
 	$(WebCore)/Modules/notifications/NotificationCenter.idl \
@@ -1199,6 +1202,8 @@ webcore_modules_sources += \
 	Source/WebCore/Modules/mediastream/NavigatorUserMediaSuccessCallback.h \
 	Source/WebCore/Modules/mediastream/PeerConnection00.cpp \
 	Source/WebCore/Modules/mediastream/PeerConnection00.h \
+	Source/WebCore/Modules/mediastream/RTCPeerConnection.cpp \
+	Source/WebCore/Modules/mediastream/RTCPeerConnection.h \
 	Source/WebCore/Modules/mediastream/SessionDescription.cpp \
 	Source/WebCore/Modules/mediastream/SessionDescription.h \
 	Source/WebCore/Modules/mediastream/UserMediaClient.h \
@@ -1364,6 +1369,8 @@ webcore_sources += \
 	Source/WebCore/bindings/generic/GenericBinding.h \
 	Source/WebCore/bindings/generic/RuntimeEnabledFeatures.cpp \
 	Source/WebCore/bindings/generic/RuntimeEnabledFeatures.h \
+	Source/WebCore/bindings/js/ArrayValue.cpp \
+	Source/WebCore/bindings/js/ArrayValue.h \
 	Source/WebCore/bindings/js/CachedScriptSourceProvider.h \
 	Source/WebCore/bindings/js/CallbackFunction.cpp \
 	Source/WebCore/bindings/js/CallbackFunction.h \

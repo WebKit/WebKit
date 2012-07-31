@@ -73,6 +73,7 @@ SOURCES += \
 
 SOURCES += \
      bindings/ScriptControllerBase.cpp \
+     bindings/js/ArrayValue.cpp \
      bindings/js/CallbackFunction.cpp \
      bindings/js/DOMObjectHashTableMap.cpp \
      bindings/js/DOMWrapperWorld.cpp \

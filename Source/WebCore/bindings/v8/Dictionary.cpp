@@ -26,6 +26,7 @@
 #include "config.h"
 #include "Dictionary.h"
 
+#include "ArrayValue.h"
 #include "DOMStringList.h"
 #include "V8Binding.h"
 #include "V8DOMWindow.h"
@@ -439,6 +440,19 @@ bool Dictionary::get(const String& key, Vector<String>& value) const
         value.append(v8ValueToWebCoreString(indexedValue));
     }
 
+    return true;
+}
+
+bool Dictionary::get(const String& key, ArrayValue& value) const
+{
+    v8::Local<v8::Value> v8Value;
+    if (!getKey(key, v8Value))
+        return false;
+
+    if (!v8Value->IsArray())
+        return false;
+
+    value = ArrayValue(v8::Local<v8::Array>::Cast(v8Value));
     return true;
 }
 

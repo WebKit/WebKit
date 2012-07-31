@@ -38,6 +38,7 @@
 
 namespace WebCore {
 
+class ArrayValue;
 class DOMWindow;
 class IDBKeyRange;
 class MediaKeyError;
@@ -86,6 +87,8 @@ public:
     bool get(const String&, HashSet<AtomicString>&) const;
     bool get(const String&, Dictionary&) const;
     bool get(const String&, Vector<String>&) const;
+    bool get(const String&, ArrayValue&) const;
+
     bool getOwnPropertiesAsStringHashMap(WTF::HashMap<String, String>&) const;
 
     bool getWithUndefinedOrNullCheck(const String&, String&) const;

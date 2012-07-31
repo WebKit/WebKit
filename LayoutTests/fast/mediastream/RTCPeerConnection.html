@@ -1,0 +1,30 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+description("Tests the RTCPeerConnection constructor.");
+
+shouldNotThrow("new webkitRTCPeerConnection(null);");
+shouldNotThrow("new webkitRTCPeerConnection(null, null);");
+shouldNotThrow("new webkitRTCPeerConnection(undefined);");
+shouldNotThrow("new webkitRTCPeerConnection(undefined, undefined);");
+shouldNotThrow("new webkitRTCPeerConnection({iceServers:[]}, null);");
+shouldNotThrow("new webkitRTCPeerConnection({iceServers:[{uri:'stun:foo.com'}]}, null);");
+shouldNotThrow("new webkitRTCPeerConnection({iceServers:[{uri:'turn:foo.com', credential:'x'}]}, null);");
+shouldNotThrow("new webkitRTCPeerConnection({iceServers:[{uri:'turn:foo.com', credential:'x'},{uri:'stun:bar.com'}]}, null);");
+
+shouldThrow("new webkitRTCPeerConnection();");
+shouldThrow("new webkitRTCPeerConnection('');");
+shouldThrow("new webkitRTCPeerConnection(null, '');");
+shouldThrow("new webkitRTCPeerConnection({fooServers:[]}, null);");
+shouldThrow("new webkitRTCPeerConnection({iceServers:true}, null);");
+shouldThrow("new webkitRTCPeerConnection({iceServers:[1, 2, 3]}, null);");
+shouldThrow("new webkitRTCPeerConnection({iceServers:[{}]}, null);");
+shouldThrow("new webkitRTCPeerConnection({iceServers:[{url:'foo'}]}, null);");
+</script>
+<script src="../js/resources/js-test-post.js"></script>
+</body>
+</html>

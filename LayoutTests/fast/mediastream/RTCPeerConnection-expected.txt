@@ -1,0 +1,25 @@
+Tests the RTCPeerConnection constructor.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS new webkitRTCPeerConnection(null); did not throw exception.
+PASS new webkitRTCPeerConnection(null, null); did not throw exception.
+PASS new webkitRTCPeerConnection(undefined); did not throw exception.
+PASS new webkitRTCPeerConnection(undefined, undefined); did not throw exception.
+PASS new webkitRTCPeerConnection({iceServers:[]}, null); did not throw exception.
+PASS new webkitRTCPeerConnection({iceServers:[{uri:'stun:foo.com'}]}, null); did not throw exception.
+PASS new webkitRTCPeerConnection({iceServers:[{uri:'turn:foo.com', credential:'x'}]}, null); did not throw exception.
+PASS new webkitRTCPeerConnection({iceServers:[{uri:'turn:foo.com', credential:'x'},{uri:'stun:bar.com'}]}, null); did not throw exception.
+PASS new webkitRTCPeerConnection(); threw exception TypeError: Not enough arguments.
+PASS new webkitRTCPeerConnection(''); threw exception TypeError: Not an object..
+PASS new webkitRTCPeerConnection(null, ''); threw exception TypeError: Not an object..
+PASS new webkitRTCPeerConnection({fooServers:[]}, null); threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
+PASS new webkitRTCPeerConnection({iceServers:true}, null); threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
+PASS new webkitRTCPeerConnection({iceServers:[1, 2, 3]}, null); threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
+PASS new webkitRTCPeerConnection({iceServers:[{}]}, null); threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
+PASS new webkitRTCPeerConnection({iceServers:[{url:'foo'}]}, null); threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
