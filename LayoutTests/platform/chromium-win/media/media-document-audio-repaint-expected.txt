@@ -22,23 +22,22 @@ layer at (0,0) size 800x600
           layer at (45,165) size 290x30 scrollHeight 36
             RenderDeprecatedFlexibleBox (relative positioned) {DIV} at (5,0) size 290x30 [bgcolor=#141414CC]
               RenderButton {INPUT} at (9,0) size 30x30
-              RenderSlider {INPUT} at (48,11) size 81x8
-                RenderDeprecatedFlexibleBox {DIV} at (0,0) size 81x8 [border: (1px solid #E6E6E659)]
-                  RenderBlock {DIV} at (1,1) size 61x24
-                  RenderBlock {DIV} at (55,1) size 32x24
-              RenderDeprecatedFlexibleBox {DIV} at (144,0) size 25x30 [color=#FFFFFF]
+              RenderSlider {INPUT} at (48,11) size 98x8
+                RenderDeprecatedFlexibleBox {DIV} at (0,0) size 98x8 [border: (1px solid #E6E6E659)]
+                  RenderBlock {DIV} at (1,1) size 78x24
+                  RenderBlock {DIV} at (72,1) size 32x24
+              RenderDeprecatedFlexibleBox {DIV} at (161,0) size 25x30 [color=#FFFFFF]
                 RenderBlock (anonymous) at (0,0) size 25x30
                   RenderText {#text} at (0,7) size 25x16
                     text run at (0,7) width 25: "0:00"
-              RenderButton {INPUT} at (178,0) size 35x30
-              RenderSlider {INPUT} at (219,11) size 22x8
-                RenderDeprecatedFlexibleBox {DIV} at (0,0) size 22x8 [border: (1px solid #E6E6E659)]
-                  RenderBlock {DIV} at (1,1) size 10x24
-                  RenderBlock {DIV} at (4,1) size 24x24
-              RenderButton {INPUT} at (251,0) size 30x30
-          layer at (117,168) size 32x24
+              RenderButton {INPUT} at (195,0) size 35x30
+              RenderSlider {INPUT} at (236,11) size 39x8
+                RenderDeprecatedFlexibleBox {DIV} at (0,0) size 39x8 [border: (1px solid #E6E6E659)]
+                  RenderBlock {DIV} at (1,1) size 27x24
+                  RenderBlock {DIV} at (21,1) size 24x24
+          layer at (126,168) size 32x24
             RenderBlock (relative positioned) {DIV} at (-7,-8) size 32x24
-          layer at (268,168) size 24x24
+          layer at (302,168) size 24x24
             RenderBlock (relative positioned) {DIV} at (-7,-8) size 24x24
         RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0

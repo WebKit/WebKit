@@ -1,3 +1,197 @@
+2012-07-31  Peter Kasting  <pkasting@google.com>
+
+        [Chromium] Miscellaneous rebaselining.
+        https://bugs.webkit.org/show_bug.cgi?id=78664
+        https://bugs.webkit.org/show_bug.cgi?id=82129
+        https://bugs.webkit.org/show_bug.cgi?id=82547
+        https://bugs.webkit.org/show_bug.cgi?id=84065
+        https://bugs.webkit.org/show_bug.cgi?id=84800
+        https://bugs.webkit.org/show_bug.cgi?id=86592
+        https://bugs.webkit.org/show_bug.cgi?id=88171
+        https://bugs.webkit.org/show_bug.cgi?id=88705
+        https://bugs.webkit.org/show_bug.cgi?id=89045
+        https://bugs.webkit.org/show_bug.cgi?id=89936
+        https://bugs.webkit.org/show_bug.cgi?id=90951
+        https://bugs.webkit.org/show_bug.cgi?id=91811
+        https://bugs.webkit.org/show_bug.cgi?id=92444
+        https://bugs.webkit.org/show_bug.cgi?id=92537
+        https://bugs.webkit.org/show_bug.cgi?id=92721
+        https://bugs.webkit.org/show_bug.cgi?id=92811
+        http://crbug.com/128325
+
+        Unreviewed, test expectation updates.
+
+        * platform/chromium-linux-x86/compositing/reflections/nested-reflection-anchor-point-expected.png: Added.
+        * platform/chromium-linux-x86/css3/filters/custom: Added.
+        * platform/chromium-linux-x86/css3/filters/custom/custom-filter-css-keyword-as-parameter-name-expected.png: Added.
+        * platform/chromium-linux-x86/css3/filters/custom/effect-color-check-expected.png: Added.
+        * platform/chromium-linux-x86/css3/filters/custom/filter-repaint-custom-clipped-expected.png: Added.
+        * platform/chromium-linux-x86/css3/filters/custom/filter-repaint-custom-expected.png: Added.
+        * platform/chromium-linux-x86/css3/filters/custom/filter-repaint-custom-rotated-expected.png: Added.
+        * platform/chromium-linux-x86/fast/css/text-overflow-ellipsis-text-align-center-expected.txt: Added.
+        * platform/chromium-linux-x86/fast/css/text-overflow-ellipsis-text-align-justify-expected.txt: Added.
+        * platform/chromium-linux-x86/fast/css/text-overflow-ellipsis-text-align-left-expected.txt: Added.
+        * platform/chromium-linux-x86/fast/css/text-overflow-ellipsis-text-align-right-expected.txt: Added.
+        * platform/chromium-linux-x86/fast/css/vertical-text-overflow-ellipsis-text-align-center-expected.txt: Added.
+        * platform/chromium-linux-x86/fast/css/vertical-text-overflow-ellipsis-text-align-justify-expected.txt: Added.
+        * platform/chromium-linux-x86/fast/css/vertical-text-overflow-ellipsis-text-align-left-expected.txt: Added.
+        * platform/chromium-linux-x86/fast/css/vertical-text-overflow-ellipsis-text-align-right-expected.txt: Added.
+        * platform/chromium-linux-x86/fast/text/shaping: Added.
+        * platform/chromium-linux-x86/fast/text/shaping/shaping-script-order-expected.png: Added.
+        * platform/chromium-linux-x86/fast/text/shaping/shaping-script-order-expected.txt: Added.
+        * platform/chromium-linux-x86/fast/text/shaping/shaping-selection-rect-expected.png: Added.
+        * platform/chromium-linux-x86/fast/text/shaping/shaping-selection-rect-expected.txt: Added.
+        * platform/chromium-linux-x86/media: Removed.
+        * platform/chromium-linux/compositing/reflections/nested-reflection-anchor-point-expected.png:
+        * platform/chromium-linux/css3/filters/custom/custom-filter-css-keyword-as-parameter-name-expected.png: Added.
+        * platform/chromium-linux/css3/filters/custom/effect-color-check-expected.png: Added.
+        * platform/chromium-linux/css3/filters/custom/filter-repaint-custom-clipped-expected.png: Added.
+        * platform/chromium-linux/css3/filters/custom/filter-repaint-custom-expected.png: Added.
+        * platform/chromium-linux/css3/filters/custom/filter-repaint-custom-rotated-expected.png: Added.
+        * platform/chromium-linux/fast/css/text-overflow-ellipsis-text-align-center-expected.png: Added.
+        * platform/chromium-linux/fast/css/text-overflow-ellipsis-text-align-center-expected.txt: Added.
+        * platform/chromium-linux/fast/css/text-overflow-ellipsis-text-align-justify-expected.png: Added.
+        * platform/chromium-linux/fast/css/text-overflow-ellipsis-text-align-justify-expected.txt: Added.
+        * platform/chromium-linux/fast/css/text-overflow-ellipsis-text-align-left-expected.png: Added.
+        * platform/chromium-linux/fast/css/text-overflow-ellipsis-text-align-left-expected.txt: Added.
+        * platform/chromium-linux/fast/css/text-overflow-ellipsis-text-align-right-expected.png: Added.
+        * platform/chromium-linux/fast/css/text-overflow-ellipsis-text-align-right-expected.txt: Added.
+        * platform/chromium-linux/fast/css/vertical-text-overflow-ellipsis-text-align-center-expected.png: Added.
+        * platform/chromium-linux/fast/css/vertical-text-overflow-ellipsis-text-align-center-expected.txt: Added.
+        * platform/chromium-linux/fast/css/vertical-text-overflow-ellipsis-text-align-justify-expected.png: Added.
+        * platform/chromium-linux/fast/css/vertical-text-overflow-ellipsis-text-align-justify-expected.txt: Added.
+        * platform/chromium-linux/fast/css/vertical-text-overflow-ellipsis-text-align-left-expected.png: Added.
+        * platform/chromium-linux/fast/css/vertical-text-overflow-ellipsis-text-align-left-expected.txt: Added.
+        * platform/chromium-linux/fast/css/vertical-text-overflow-ellipsis-text-align-right-expected.png: Added.
+        * platform/chromium-linux/fast/css/vertical-text-overflow-ellipsis-text-align-right-expected.txt: Added.
+        * platform/chromium-linux/fast/text/shaping: Added.
+        * platform/chromium-linux/fast/text/shaping/shaping-script-order-expected.png: Added.
+        * platform/chromium-linux/fast/text/shaping/shaping-script-order-expected.txt: Added.
+        * platform/chromium-linux/fast/text/shaping/shaping-selection-rect-expected.png: Added.
+        * platform/chromium-linux/fast/text/shaping/shaping-selection-rect-expected.txt: Added.
+        * platform/chromium-linux/media/media-document-audio-repaint-expected.png:
+        * platform/chromium-mac-snowleopard/compositing/reflections/nested-reflection-anchor-point-expected.png:
+        * platform/chromium-mac-snowleopard/css3/filters/custom: Added.
+        * platform/chromium-mac-snowleopard/css3/filters/custom/custom-filter-css-keyword-as-parameter-name-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/block/lineboxcontain/glyphs-expected.txt: Added.
+        * platform/chromium-mac-snowleopard/fast/css/text-overflow-ellipsis-text-align-center-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/css/text-overflow-ellipsis-text-align-center-expected.txt: Added.
+        * platform/chromium-mac-snowleopard/fast/css/text-overflow-ellipsis-text-align-justify-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/css/text-overflow-ellipsis-text-align-justify-expected.txt: Added.
+        * platform/chromium-mac-snowleopard/fast/css/text-overflow-ellipsis-text-align-left-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/css/text-overflow-ellipsis-text-align-left-expected.txt: Added.
+        * platform/chromium-mac-snowleopard/fast/css/text-overflow-ellipsis-text-align-right-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/css/text-overflow-ellipsis-text-align-right-expected.txt: Added.
+        * platform/chromium-mac-snowleopard/fast/css/vertical-text-overflow-ellipsis-text-align-center-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/css/vertical-text-overflow-ellipsis-text-align-center-expected.txt: Added.
+        * platform/chromium-mac-snowleopard/fast/css/vertical-text-overflow-ellipsis-text-align-justify-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/css/vertical-text-overflow-ellipsis-text-align-justify-expected.txt: Added.
+        * platform/chromium-mac-snowleopard/fast/css/vertical-text-overflow-ellipsis-text-align-left-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/css/vertical-text-overflow-ellipsis-text-align-left-expected.txt: Added.
+        * platform/chromium-mac-snowleopard/fast/css/vertical-text-overflow-ellipsis-text-align-right-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/css/vertical-text-overflow-ellipsis-text-align-right-expected.txt: Added.
+        * platform/chromium-mac-snowleopard/fast/forms/datalist/input-appearance-range-with-datalist-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/datalist/input-appearance-range-with-datalist-zoomed-expected.png:
+        * platform/chromium-mac-snowleopard/fast/speech/input-appearance-searchandspeech-expected.txt: Removed.
+        * platform/chromium-mac-snowleopard/fast/text/shaping: Added.
+        * platform/chromium-mac-snowleopard/fast/text/shaping/shaping-script-order-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/text/shaping/shaping-script-order-expected.txt: Added.
+        * platform/chromium-mac-snowleopard/fast/text/shaping/shaping-selection-rect-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/text/shaping/shaping-selection-rect-expected.txt: Added.
+        * platform/chromium-mac-snowleopard/media/media-document-audio-repaint-expected.png:
+        * platform/chromium-mac/compositing/reflections/nested-reflection-anchor-point-expected.png:
+        * platform/chromium-mac/css3/filters/custom/custom-filter-css-keyword-as-parameter-name-expected.png: Added.
+        * platform/chromium-mac/fast/block/lineboxcontain/glyphs-expected.txt:
+        * platform/chromium-mac/fast/css/text-overflow-ellipsis-text-align-center-expected.png: Added.
+        * platform/chromium-mac/fast/css/text-overflow-ellipsis-text-align-center-expected.txt: Added.
+        * platform/chromium-mac/fast/css/text-overflow-ellipsis-text-align-justify-expected.png: Added.
+        * platform/chromium-mac/fast/css/text-overflow-ellipsis-text-align-justify-expected.txt: Added.
+        * platform/chromium-mac/fast/css/text-overflow-ellipsis-text-align-left-expected.png: Added.
+        * platform/chromium-mac/fast/css/text-overflow-ellipsis-text-align-left-expected.txt: Added.
+        * platform/chromium-mac/fast/css/text-overflow-ellipsis-text-align-right-expected.png: Added.
+        * platform/chromium-mac/fast/css/text-overflow-ellipsis-text-align-right-expected.txt: Added.
+        * platform/chromium-mac/fast/css/vertical-text-overflow-ellipsis-text-align-center-expected.png: Added.
+        * platform/chromium-mac/fast/css/vertical-text-overflow-ellipsis-text-align-center-expected.txt: Added.
+        * platform/chromium-mac/fast/css/vertical-text-overflow-ellipsis-text-align-justify-expected.png: Added.
+        * platform/chromium-mac/fast/css/vertical-text-overflow-ellipsis-text-align-justify-expected.txt: Added.
+        * platform/chromium-mac/fast/css/vertical-text-overflow-ellipsis-text-align-left-expected.png: Added.
+        * platform/chromium-mac/fast/css/vertical-text-overflow-ellipsis-text-align-left-expected.txt: Added.
+        * platform/chromium-mac/fast/css/vertical-text-overflow-ellipsis-text-align-right-expected.png: Added.
+        * platform/chromium-mac/fast/css/vertical-text-overflow-ellipsis-text-align-right-expected.txt: Added.
+        * platform/chromium-mac/fast/speech/input-appearance-searchandspeech-expected.png:
+        * platform/chromium-mac/fast/speech/input-appearance-searchandspeech-expected.txt:
+        * platform/chromium-mac/fast/text/shaping: Added.
+        * platform/chromium-mac/fast/text/shaping/shaping-script-order-expected.png: Added.
+        * platform/chromium-mac/fast/text/shaping/shaping-script-order-expected.txt: Added.
+        * platform/chromium-mac/fast/text/shaping/shaping-selection-rect-expected.png: Added.
+        * platform/chromium-mac/fast/text/shaping/shaping-selection-rect-expected.txt: Added.
+        * platform/chromium-mac/media/media-document-audio-repaint-expected.png:
+        * platform/chromium-mac/media/media-document-audio-repaint-expected.txt:
+        * platform/chromium-win-xp/compositing/reflections: Added.
+        * platform/chromium-win-xp/compositing/reflections/nested-reflection-anchor-point-expected.png: Added.
+        * platform/chromium-win-xp/compositing/shadows: Added.
+        * platform/chromium-win-xp/compositing/shadows/shadow-drawing-expected.png: Added.
+        * platform/chromium-win-xp/css1/formatting_model: Added.
+        * platform/chromium-win-xp/css1/formatting_model/floating_elements-expected.png: Added.
+        * platform/chromium-win-xp/css3/filters/custom: Added.
+        * platform/chromium-win-xp/css3/filters/custom/custom-filter-css-keyword-as-parameter-name-expected.png: Added.
+        * platform/chromium-win-xp/css3/filters/custom/effect-color-check-expected.png: Added.
+        * platform/chromium-win-xp/css3/filters/custom/filter-repaint-custom-clipped-expected.png: Added.
+        * platform/chromium-win-xp/css3/filters/custom/filter-repaint-custom-expected.png: Added.
+        * platform/chromium-win-xp/css3/filters/custom/filter-repaint-custom-rotated-expected.png: Added.
+        * platform/chromium-win-xp/fast/css/text-overflow-ellipsis-text-align-center-expected.txt: Added.
+        * platform/chromium-win-xp/fast/css/text-overflow-ellipsis-text-align-justify-expected.txt: Added.
+        * platform/chromium-win-xp/fast/css/text-overflow-ellipsis-text-align-left-expected.txt: Added.
+        * platform/chromium-win-xp/fast/css/text-overflow-ellipsis-text-align-right-expected.txt: Added.
+        * platform/chromium-win-xp/fast/css/vertical-text-overflow-ellipsis-text-align-center-expected.txt: Added.
+        * platform/chromium-win-xp/fast/css/vertical-text-overflow-ellipsis-text-align-justify-expected.txt: Added.
+        * platform/chromium-win-xp/fast/css/vertical-text-overflow-ellipsis-text-align-left-expected.txt: Added.
+        * platform/chromium-win-xp/fast/css/vertical-text-overflow-ellipsis-text-align-right-expected.txt: Added.
+        * platform/chromium-win-xp/fast/forms/datalist: Added.
+        * platform/chromium-win-xp/fast/forms/datalist/input-appearance-range-with-datalist-expected.png: Added.
+        * platform/chromium-win-xp/fast/forms/datalist/input-appearance-range-with-datalist-zoomed-expected.png: Added.
+        * platform/chromium-win-xp/fast/speech/input-appearance-searchandspeech-expected.png: Removed.
+        * platform/chromium-win-xp/fast/text/shaping: Added.
+        * platform/chromium-win-xp/fast/text/shaping/shaping-script-order-expected.png: Added.
+        * platform/chromium-win-xp/fast/text/shaping/shaping-script-order-expected.txt: Added.
+        * platform/chromium-win-xp/fast/text/shaping/shaping-selection-rect-expected.png: Added.
+        * platform/chromium-win-xp/fast/text/shaping/shaping-selection-rect-expected.txt: Added.
+        * platform/chromium-win-xp/media: Removed.
+        * platform/chromium-win/compositing/reflections/nested-reflection-anchor-point-expected.png:
+        * platform/chromium-win/css1/formatting_model/floating_elements-expected.png:
+        * platform/chromium-win/css3/filters/custom/custom-filter-css-keyword-as-parameter-name-expected.png: Added.
+        * platform/chromium-win/css3/filters/custom/effect-color-check-expected.png: Added.
+        * platform/chromium-win/css3/filters/custom/filter-repaint-custom-clipped-expected.png: Added.
+        * platform/chromium-win/css3/filters/custom/filter-repaint-custom-expected.png: Added.
+        * platform/chromium-win/css3/filters/custom/filter-repaint-custom-rotated-expected.png: Added.
+        * platform/chromium-win/fast/css/text-overflow-ellipsis-text-align-center-expected.png: Added.
+        * platform/chromium-win/fast/css/text-overflow-ellipsis-text-align-center-expected.txt: Added.
+        * platform/chromium-win/fast/css/text-overflow-ellipsis-text-align-justify-expected.png: Added.
+        * platform/chromium-win/fast/css/text-overflow-ellipsis-text-align-justify-expected.txt: Added.
+        * platform/chromium-win/fast/css/text-overflow-ellipsis-text-align-left-expected.png: Added.
+        * platform/chromium-win/fast/css/text-overflow-ellipsis-text-align-left-expected.txt: Added.
+        * platform/chromium-win/fast/css/text-overflow-ellipsis-text-align-right-expected.png: Added.
+        * platform/chromium-win/fast/css/text-overflow-ellipsis-text-align-right-expected.txt: Added.
+        * platform/chromium-win/fast/css/vertical-text-overflow-ellipsis-text-align-center-expected.png: Added.
+        * platform/chromium-win/fast/css/vertical-text-overflow-ellipsis-text-align-center-expected.txt: Added.
+        * platform/chromium-win/fast/css/vertical-text-overflow-ellipsis-text-align-justify-expected.png: Added.
+        * platform/chromium-win/fast/css/vertical-text-overflow-ellipsis-text-align-justify-expected.txt: Added.
+        * platform/chromium-win/fast/css/vertical-text-overflow-ellipsis-text-align-left-expected.png: Added.
+        * platform/chromium-win/fast/css/vertical-text-overflow-ellipsis-text-align-left-expected.txt: Added.
+        * platform/chromium-win/fast/css/vertical-text-overflow-ellipsis-text-align-right-expected.png: Added.
+        * platform/chromium-win/fast/css/vertical-text-overflow-ellipsis-text-align-right-expected.txt: Added.
+        * platform/chromium-win/fast/forms/datalist/input-appearance-range-with-datalist-expected.png:
+        * platform/chromium-win/fast/forms/datalist/input-appearance-range-with-datalist-zoomed-expected.png:
+        * platform/chromium-win/fast/text/shaping: Added.
+        * platform/chromium-win/fast/text/shaping/shaping-script-order-expected.png: Added.
+        * platform/chromium-win/fast/text/shaping/shaping-script-order-expected.txt: Added.
+        * platform/chromium-win/fast/text/shaping/shaping-selection-rect-expected.png: Added.
+        * platform/chromium-win/fast/text/shaping/shaping-selection-rect-expected.txt: Added.
+        * platform/chromium-win/media/media-document-audio-repaint-expected.png:
+        * platform/chromium-win/media/media-document-audio-repaint-expected.txt:
+        * platform/chromium/TestExpectations:
+        * platform/efl/css1/formatting_model/floating_elements-expected.png: Removed.
+
 2012-07-30  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION(r120979): Node list returned by getElementsByTagNameNS isn't invalidated when children changes

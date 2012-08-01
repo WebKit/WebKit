@@ -179,8 +179,6 @@ WONTFIX : platform/mac = TEXT IMAGE IMAGE+TEXT PASS TIMEOUT
 WONTFIX : platform/mac-wk2 = TEXT IMAGE IMAGE+TEXT PASS TIMEOUT
 WONTFIX : platform/qt = TEXT IMAGE IMAGE+TEXT PASS MISSING
 WONTFIX SKIP : platform/qt/plugins/qt-qwidget-plugin.html = PASS
-// [pkasting] temporarily unskipping to see if this can be permanently unskipped
-WONTFIX : platform/mac/fast/text/international/Geeza-Pro-vertical-metrics-adjustment.html = PASS
 WONTFIX SKIP : platform/qt/fast/forms = PASS
 WONTFIX MAC WIN : platform/chromium-linux = TEXT IMAGE IMAGE+TEXT
 WONTFIX SKIP LINUX MAC : platform/win = PASS
@@ -2575,12 +2573,6 @@ BUGWK82783 : css3/filters/filter-repaint-sepia.html = PASS IMAGE IMAGE+TEXT TEXT
 BUGWK82783 : css3/filters/nested-filter.html = PASS IMAGE IMAGE+TEXT TEXT MISSING
 BUGWK82783 WIN : css3/filters/blur-filter-page-scroll.html = PASS IMAGE IMAGE+TEXT TEXT MISSING
 
-// Following tests need baselines on Win and Linux
-BUGWK84800 WIN LINUX : css3/filters/custom/filter-repaint-custom-clipped.html = PASS IMAGE IMAGE+TEXT TEXT MISSING
-BUGWK84800 WIN LINUX : css3/filters/custom/filter-repaint-custom-rotated.html = PASS IMAGE IMAGE+TEXT TEXT MISSING
-BUGWK84800 WIN LINUX : css3/filters/custom/filter-repaint-custom.html = PASS IMAGE IMAGE+TEXT TEXT MISSING
-BUGWK84800 WIN LINUX : css3/filters/custom/effect-color-check.html = PASS IMAGE IMAGE+TEXT TEXT MISSING
-
 // CSS Regions tests for region styling and scoped styles
 BUGWK49142 : fast/regions/style-scoped-in-flow-override-container-style.html = PASS IMAGE IMAGE+TEXT TEXT MISSING
 BUGWK49142 : fast/regions/style-scoped-in-flow-override-region-styling-multiple-regions.html = PASS IMAGE IMAGE+TEXT TEXT MISSING
@@ -3150,12 +3142,6 @@ BUGWK82413 MAC DEBUG : fast/filesystem/workers/async-operations.html = PASS TIME
 
 BUGWK82417 LINUX SLOW : fast/frames/set-unloaded-frame-location.html = PASS
 
-// Needs a text rebaseline after bug 83954
-BUGWK82547 LION : fast/speech/input-appearance-searchandspeech.html = TEXT IMAGE+TEXT
-
-// This should only be a layer change.
-BUGWK82129 MAC : fast/block/lineboxcontain/glyphs.html = TEXT
-
 BUGWK82669 LINUX WIN : fast/text/international/spaces-combined-in-vertical-text.html = TEXT
 
 BUGWK82717 SNOWLEOPARD : storage/websql/quota-tracking.html = PASS TIMEOUT
@@ -3190,10 +3176,8 @@ BUGWK83635 : platform/chromium/virtual/gpu/fast/canvas/2d.imageDataHD.html = TEX
 
 BUGWK83647 WIN LINUX : fast/multicol/cell-shrinkback.html = IMAGE
 
-BUGWK84065 MAC DEBUG : fast/canvas/webgl/shader-precision-format.html = TEXT
-BUGWK84065 WIN DEBUG : fast/canvas/webgl/shader-precision-format.html = TEXT
-BUGWK84065 MAC DEBUG : platform/chromium/virtual/gpu/fast/canvas/webgl/shader-precision-format.html = TEXT
-BUGWK84065 WIN DEBUG : platform/chromium/virtual/gpu/fast/canvas/webgl/shader-precision-format.html = TEXT
+BUGWK84065 DEBUG : fast/canvas/webgl/shader-precision-format.html = TEXT
+BUGWK84065 DEBUG : platform/chromium/virtual/gpu/fast/canvas/webgl/shader-precision-format.html = TEXT
 
 // IETC grid layout
 BUGWK83906 : ietestcenter/css3/grid/grid-column-001.htm = IMAGE
@@ -3248,7 +3232,7 @@ BUGWK84847 WIN RELEASE : inspector/timeline/timeline-start-time.html = TEXT PASS
 
 BUGWK85003 WIN : media/video-currentTime-set.html = PASS TEXT
 
-BUGWK78664 : platform/chromium/compositing/overflow/overflow-scrolling-touch-stacking-context.html = IMAGE+TEXT
+BUGCR128325 : platform/chromium/compositing/overflow/overflow-scrolling-touch-stacking-context.html = IMAGE+TEXT
 
 BUGWK85090 DEBUG SLOW : fast/js/dfg-float64array.html = PASS
 BUGWK85090 DEBUG SLOW : fast/js/dfg-uint32array.html = PASS
@@ -3266,6 +3250,7 @@ BUGWK68744 : fast/block/float/float-not-removed-from-next-sibling4.html = IMAGE
 BUGWK86414 : fast/loader/javascript-url-in-embed.html = TEXT
 
 BUGDPRANKE : http/tests/security/sandboxed-iframe-modify-self.html = TEXT
+
 // The result of jquery/traversing.html is bleeding into this test.
 BUGDPRANKE : media/video-poster-blocked-by-willsendrequest.html = TEXT PASS
 BUGDPRANKE MAC : userscripts/user-style-all-frames.html = TEXT PASS
@@ -3295,11 +3280,9 @@ BUGWK86439 WIN LINUX DEBUG : inspector/extensions/extensions-sidebar.html = TIME
 
 BUGWK86114 MAC DEBUG : animations/combo-transform-translate+scale.html = PASS TEXT
 
-BUGWK86592 LINUX : fast/canvas/webgl/shader-precision-format.html = TEXT PASS
 BUGWK86592 LINUX : fast/loader/javascript-url-in-object.html = TEXT PASS
 BUGWK92279 SLOW LINUX WIN : http/tests/inspector/resource-har-pages.html = TEXT PASS
 BUGWK86592 LINUX : http/tests/security/sandboxed-iframe-origin-add.html = TEXT PASS
-BUGWK86592 LINUX : platform/chromium/virtual/gpu/fast/canvas/webgl/shader-precision-format.html = TEXT PASS
 BUGWK86592 LINUX : fast/loader/link-no-URL.html = TEXT PASS
 BUGWK86592 LINUX : http/tests/security/sandboxed-iframe-origin-remove.html = TEXT PASS
 
@@ -3382,22 +3365,8 @@ BUGWK87652 SKIP : http/tests/appcache/load-from-appcache-defer-resume-crash.html
 // A few pixels off from the baseline, added by r118567.
 BUGWK87653 WIN LINUX : compositing/geometry/composited-in-columns.html = IMAGE+TEXT
 
-// Needs rebaseline. After localized string is added to chromium.
-BUGWK92444 : platform/chromium/fast/forms/color/color-suggestion-picker-appearance.html = PASS TIMEOUT MISSING IMAGE
-
-// Needs rebaseline.
-BUGWK92721 WIN SNOWLEOPARD : fast/forms/datalist/input-appearance-range-with-datalist-zoomed.html = IMAGE
-BUGWK92721 WIN SNOWLEOPARD : fast/forms/datalist/input-appearance-range-with-datalist.html = IMAGE
-
-// Needs Rebaseline.
-BUGWK88705 : fast/css/text-overflow-ellipsis-text-align-center.html = MISSING
-BUGWK88705 : fast/css/text-overflow-ellipsis-text-align-justify.html = MISSING
-BUGWK88705 : fast/css/text-overflow-ellipsis-text-align-left.html = MISSING
-BUGWK88705 : fast/css/text-overflow-ellipsis-text-align-right.html = MISSING
-BUGWK88705 : fast/css/vertical-text-overflow-ellipsis-text-align-center.html = MISSING
-BUGWK88705 : fast/css/vertical-text-overflow-ellipsis-text-align-justify.html = MISSING
-BUGWK88705 : fast/css/vertical-text-overflow-ellipsis-text-align-left.html = MISSING
-BUGWK88705 : fast/css/vertical-text-overflow-ellipsis-text-align-right.html = MISSING
+// Timing out; may need rebaseline after that is fixed
+BUGWK92444 : platform/chromium/fast/forms/color/color-suggestion-picker-appearance.html = PASS TIMEOUT
 
 // Fails with a mismatch in $("menulist").selectedIndex
 BUGWK87748 MAC : fast/forms/select/optgroup-clicking.html = TEXT
@@ -3463,7 +3432,8 @@ BUGWK89789 MAC : userscripts/user-script-video-document.html = PASS CRASH
 // Flaky
 BUGWK89794 MAC : fast/regions/get-regions-by-content2.html = PASS CRASH
 
-BUGWK89045 : compositing/video-page-visibility.html = IMAGE
+// Results are not useful and a bit indeterminate -- test needs help.
+BUGWK92811 : compositing/video-page-visibility.html = IMAGE
 
 // Flaky
 BUGWK89812 DEBUG : fast/parser/parser-yield-timing.html = PASS TEXT
@@ -3478,7 +3448,7 @@ BUGWK89820 : fast/text/hyphen-min-preferred-width.html = IMAGE
 
 BUGWK91433 LINUX : fast/forms/placeholder-position.html = PASS IMAGE
 
-BUGWK89936 XP : compositing/shadows/shadow-drawing.html = IMAGE
+// Kerning seems disabled for some reason.
 BUGWK89936 XP : fast/text/atsui-kerning-and-ligatures.html = IMAGE
 BUGWK89936 XP : fast/css/text-rendering.html = IMAGE+TEXT
 
@@ -3491,9 +3461,6 @@ BUGWK90207 SLOW LINUX DEBUG : fast/forms/select/select-state-restore.html = PASS
 
 // Flaky
 BUGWK90430 : inspector/timeline/timeline-receive-response-event.html = PASS TEXT TIMEOUT
-
-// Require rebaseline after bug 88171
-BUGWK88171 WIN : css1/formatting_model/floating_elements.html = IMAGE
 
 BUGCR135709 : platform/chromium/compositing/scrollbars/custom-composited-different-track-parts.html = IMAGE PASS
 
@@ -3530,11 +3497,6 @@ BUGWK91386 LINUX : fast/text/descent-clip-in-scaled-page.html = IMAGE
 // Fails since creation in 122663
 BUGWK91372 WIN : css2.1/20110323/vertical-align-boxes-001.htm = IMAGE
 
-// Need rebaseline
-BUGWK90951 : fast/text/shaping/shaping-selection-rect.html = MISSING
-BUGWK90951 : fast/text/shaping/shaping-script-order.html = MISSING
-
-
 // Started failing around r122770
 BUGWK91445 LINUX : plugins/embed-attributes-style.html = PASS IMAGE
 
@@ -3545,9 +3507,6 @@ BUGWK91544 : media/media-continues-playing-after-replace-source.html = PASS TIME
 
 // Needs rebaseline. Behavior should now be the same as Safari.
 BUGWK91472 : compositing/reflections/nested-reflection-anchor-point.html = IMAGE
-
-// Needs rebaseline.
-BUGWK91811 : media/media-document-audio-repaint.html = IMAGE+TEXT
 
 BUGWK92019 : fast/text/international/inline-plaintext-relayout-with-leading-neutrals.html = PASS IMAGE
 BUGWK92022 DEBUG : svg/W3C-SVG-1.1/struct-dom-06-b.svg = TEXT PASS
@@ -3574,6 +3533,3 @@ BUGCR131189 : canvas/philip/tests/2d.transformation.setTransform.skewed.html = T
 BUGCR131189 : canvas/philip/tests/2d.transformation.transform.skewed.html = TEXT
 BUGCR131189 : platform/chromium/virtual/gpu/canvas/philip/tests/2d.transformation.setTransform.skewed.html = TEXT
 BUGCR131189 : platform/chromium/virtual/gpu/canvas/philip/tests/2d.transformation.transform.skewed.html = TEXT
-
-// Needs rebaseline
-BUGWK92537 : css3/filters/custom/custom-filter-css-keyword-as-parameter-name.html = IMAGE
