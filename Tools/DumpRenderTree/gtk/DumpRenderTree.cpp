@@ -73,7 +73,7 @@ extern gchar* webkit_web_frame_get_response_mime_type(WebKitWebFrame* frame);
 
 volatile bool done;
 static bool printSeparators;
-static int dumpPixels;
+static bool dumpPixelsForCurrentTest;
 static int dumpTree = 1;
 static int useTimeoutWatchdog = 1;
 
@@ -544,7 +544,6 @@ static void initializeGlobalsFromCommandLineOptions(int argc, char *argv[])
 {
     struct option options[] = {
         {"notree", no_argument, &dumpTree, false},
-        {"pixel-tests", no_argument, &dumpPixels, true},
         {"tree", no_argument, &dumpTree, true},
         {"no-timeout", no_argument, &useTimeoutWatchdog, false},
         {NULL, 0, NULL, 0}
@@ -624,7 +623,7 @@ void dump()
         }
     }
 
-    if (dumpPixels
+    if (dumpPixelsForCurrentTest
      && gLayoutTestController->generatePixelResults()
      && !gLayoutTestController->dumpDOMAsWebArchive()
      && !gLayoutTestController->dumpSourceAsWebArchive()) {
@@ -687,18 +686,13 @@ static void sendPixelResultsEOF()
     fflush(stderr);
 }
 
-static void runTest(const string& testPathOrURL)
+static void runTest(const string& inputLine)
 {
     ASSERT(!testPathOrURL.empty());
 
-    // Look for "'" as a separator between the path or URL, and the pixel dump hash that follows.
-    string testURL(testPathOrURL);
-    string expectedPixelHash;
-    size_t separatorPos = testURL.find("'");
-    if (separatorPos != string::npos) {
-        testURL = string(testPathOrURL, 0, separatorPos);
-        expectedPixelHash = string(testPathOrURL, separatorPos + 1);
-    }
+    TestCommand command = parseInputLine(inputLine);
+    string& testURL = command.pathOrURL;
+    dumpPixelsForCurrentTest = command.shouldDumpPixels;
 
     // Convert the path into a full file URL if it does not look
     // like an HTTP/S URL (doesn't start with http:// or https://).
@@ -712,7 +706,7 @@ static void runTest(const string& testPathOrURL)
 
     resetDefaultsToConsistentValues();
 
-    gLayoutTestController = LayoutTestController::create(testURL, expectedPixelHash);
+    gLayoutTestController = LayoutTestController::create(testURL, command.expectedPixelHash);
     topLoadingFrame = 0;
     done = false;
 
@@ -1447,7 +1441,7 @@ int main(int argc, char* argv[])
         printSeparators = true;
         runTestingServerLoop();
     } else {
-        printSeparators = (optind < argc-1 || (dumpPixels && dumpTree));
+        printSeparators = (optind < argc-1 || (dumpPixelsForCurrentTest && dumpTree));
         for (int i = optind; i != argc; ++i)
             runTest(argv[i]);
     }

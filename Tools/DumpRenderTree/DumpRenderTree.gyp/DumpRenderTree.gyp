@@ -133,6 +133,7 @@
             'include_dirs': [
                 '<(chromium_src_dir)',
                 '<(source_dir)/WebKit/chromium/public',
+                '<(tools_dir)/DumpRenderTree',
                 '<(DEPTH)',
             ],
             'defines': [

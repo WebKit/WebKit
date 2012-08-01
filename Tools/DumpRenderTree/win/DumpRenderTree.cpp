@@ -80,7 +80,7 @@ static LPCWSTR fontsEnvironmentVariable = L"WEBKIT_TESTFONTS";
 const LPCWSTR kDumpRenderTreeClassName = L"DumpRenderTreeWindow";
 
 static bool dumpTree = true;
-static bool dumpPixels;
+static bool dumpPixelsForCurrentTest;
 static bool dumpAllPixels;
 static bool printSeparators;
 static bool leakChecking = false;
@@ -759,7 +759,7 @@ void dump()
         fflush(stderr);
     }
 
-    if (dumpPixels
+    if (dumpPixelsForCurrentTest
      && gLayoutTestController->generatePixelResults()
      && !gLayoutTestController->dumpDOMAsWebArchive()
      && !gLayoutTestController->dumpSourceAsWebArchive())
@@ -948,20 +948,14 @@ static void sizeWebViewForCurrentTest()
     ::SetWindowPos(webViewWindow, 0, 0, 0, width, height, SWP_NOMOVE);
 }
 
-static void runTest(const string& testPathOrURL)
+static void runTest(const string& inputLine)
 {
+    TestCommand command = parseInputLine(inputLine);
+    const string& pathOrURL = command.pathOrURL;
+    dumpPixelsForCurrentTest = command.shouldDumpPixels;
+
     static BSTR methodBStr = SysAllocString(TEXT("GET"));
 
-    // Look for "'" as a separator between the path or URL, and the pixel dump hash that follows.
-    string pathOrURL(testPathOrURL);
-    string expectedPixelHash;
-    
-    size_t separatorPos = pathOrURL.find("'");
-    if (separatorPos != string::npos) {
-        pathOrURL = string(testPathOrURL, 0, separatorPos);
-        expectedPixelHash = string(testPathOrURL, separatorPos + 1);
-    }
-    
     BSTR urlBStr;
  
     CFStringRef str = CFStringCreateWithCString(0, pathOrURL.c_str(), kCFStringEncodingWindowsLatin1);
@@ -983,7 +977,7 @@ static void runTest(const string& testPathOrURL)
 
     CFRelease(url);
 
-    ::gLayoutTestController = LayoutTestController::create(pathOrURL, expectedPixelHash);
+    ::gLayoutTestController = LayoutTestController::create(pathOrURL, command.expectedPixelHash);
     done = false;
     topLoadingFrame = 0;
 
@@ -1334,11 +1328,6 @@ extern "C" __declspec(dllexport) int WINAPI dllLauncherEntryPoint(int argc, cons
 
         if (!stricmp(argv[i], "--dump-all-pixels")) {
             dumpAllPixels = true;
-            continue;
-        }
-
-        if (!stricmp(argv[i], "--pixel-tests")) {
-            dumpPixels = true;
             continue;
         }
 

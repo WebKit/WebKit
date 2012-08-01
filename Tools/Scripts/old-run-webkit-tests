@@ -748,12 +748,16 @@ for my $test (@tests) {
     print $tests_run_fh "$test\n";
 
     # Try to read expected hash file for pixel tests
-    my $suffixExpectedHash = "";
-    if ($pixelTests && !$resetResults) {
-        my $expectedPixelDir = expectedDirectoryForTest($base, 0, "png");
-        if (my $expectedHash = readChecksumFromPng(File::Spec->catfile($expectedPixelDir, "$base-$expectedTag.png"))) {
-            # Format expected hash into a suffix string that is appended to the path / URL passed to DRT.
-            $suffixExpectedHash = "'$expectedHash";
+    my $suffixPixelTest = "";
+    if ($pixelTests) {
+        # ' is the separator between arguments.
+        $suffixPixelTest = "'--pixel-test";
+        if (!$resetResults) {
+            my $expectedPixelDir = expectedDirectoryForTest($base, 0, "png");
+            if (my $expectedHash = readChecksumFromPng(File::Spec->catfile($expectedPixelDir, "$base-$expectedTag.png"))) {
+                # Format expected hash into a suffix string that is appended to the path / URL passed to DRT.
+                $suffixPixelTest = "'--pixel-test'$expectedHash";
+            }
         }
     }
 
@@ -789,11 +793,11 @@ for my $test (@tests) {
         } elsif ($test !~ /^http\/tests\/local\// && $test !~ /^http\/tests\/ssl\//) {
             my $path = canonpath($test);
             $path =~ s/^http\/tests\///;
-            print OUT "http://127.0.0.1:$httpdPort/$path$suffixExpectedHash\n";
+            print OUT "http://127.0.0.1:$httpdPort/$path$suffixPixelTest\n";
         } elsif ($test =~ /^http\/tests\/ssl\//) {
             my $path = canonpath($test);
             $path =~ s/^http\/tests\///;
-            print OUT "https://127.0.0.1:$httpdSSLPort/$path$suffixExpectedHash\n";
+            print OUT "https://127.0.0.1:$httpdSSLPort/$path$suffixPixelTest\n";
         } else {
             my $testPath = "$testDirectory/$test";
             if (isCygwin()) {
@@ -801,7 +805,7 @@ for my $test (@tests) {
             } else {
                 $testPath = canonpath($testPath);
             }
-            print OUT "$testPath$suffixExpectedHash\n";
+            print OUT "$testPath$suffixPixelTest\n";
         }
     } else {
         my $testPath = "$testDirectory/$test";
@@ -810,7 +814,7 @@ for my $test (@tests) {
         } else {
             $testPath = canonpath($testPath);
         }
-        print OUT "$testPath$suffixExpectedHash\n" if defined $testPath;
+        print OUT "$testPath$suffixPixelTest\n" if defined $testPath;
     }
 
     # DumpRenderTree is expected to dump two "blocks" to stdout for each test.

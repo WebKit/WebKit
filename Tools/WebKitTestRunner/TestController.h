@@ -104,7 +104,6 @@ private:
 
     OwnPtr<TestInvocation> m_currentInvocation;
 
-    bool m_dumpPixelsForAllTests;
     bool m_verbose;
     bool m_printSeparators;
     bool m_usingServerMode;

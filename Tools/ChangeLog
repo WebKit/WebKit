@@ -1,3 +1,97 @@
+2012-08-01  Balazs Kelemen  <kbalazs@webkit.org>
+
+        All ports should support per test switching of pixel testing
+        https://bugs.webkit.org/show_bug.cgi?id=92398
+
+        Reviewed by Dirk Pranke.
+
+        Teach all test drivers to accept a per test control of whether
+        to dump pixels. Drivers now accept a -p/--pixel-test argument
+        on the standart input that means that running the current
+        test as pixel test is allowed (even if the expected hash is
+        missing). Removed the --pixel-tests command line option since
+        there is no need for it anymore.
+
+        * DumpRenderTree/DumpRenderTree.gypi:
+        * DumpRenderTree/DumpRenderTree.h:
+        (TestCommand::TestCommand):
+        (TestCommand):
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
+        * DumpRenderTree/DumpRenderTreeCommon.cpp: Added.
+        (CommandTokenizer):
+        (CommandTokenizer::CommandTokenizer):
+        (CommandTokenizer::pump):
+        (CommandTokenizer::next):
+        (CommandTokenizer::hasNext):
+        (die):
+        (parseInputLine):
+        Common logic to parse the input line from the standard input (or from the command line
+        in standalone mode). Made it somewhat general so we can easily add more arguments if
+        there is a need.
+        * DumpRenderTree/chromium/DumpRenderTree.cpp:
+        (runTest):
+        (main):
+        * DumpRenderTree/chromium/TestShell.cpp:
+        (TestShell::TestShell):
+        (TestShell::runFileTest):
+        (TestShell::dump):
+        * DumpRenderTree/chromium/TestShell.h:
+        (TestParams::TestParams):
+        (TestShell):
+        * DumpRenderTree/efl/CMakeLists.txt:
+        * DumpRenderTree/efl/DumpRenderTree.cpp:
+        (parseCommandLineOptions):
+        (runTest):
+        (shouldDumpPixelsAndCompareWithExpected):
+        (main):
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (initializeGlobalsFromCommandLineOptions):
+        (dump):
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (initializeGlobalsFromCommandLineOptions):
+        (dumpRenderTree):
+        * DumpRenderTree/qt/DumpRenderTree.pro:
+        * DumpRenderTree/qt/DumpRenderTreeQt.cpp:
+        (WebCore::DumpRenderTree::processLine):
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (dump):
+        (runTest):
+        (dllLauncherEntryPoint):
+        * DumpRenderTree/win/DumpRenderTree.vcproj:
+        * DumpRenderTree/wscript:
+        * DumpRenderTree/wx/DumpRenderTreeWx.cpp:
+        (dump):
+        (runTest):
+        (MyApp::OnInit):
+        * Scripts/old-run-webkit-tests: Pass --pixel-test before the hash.
+        Changed the separator form ' to : because it don't need to be escaped
+        when passing manually on the comand line.
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        (Port.should_run_as_pixel_test): Removed now that all ports supports it.
+        * Scripts/webkitpy/layout_tests/port/driver.py:
+        (Driver.cmd_line): Don't pass --pixel-tests anymore.
+        (Driver._command_from_driver_input):
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::TestController):
+        (WTR::TestController::initialize):
+        (WTR::TestCommand::TestCommand):
+        (TestCommand):
+        (WTR):
+        (CommandTokenizer):
+        (WTR::CommandTokenizer::CommandTokenizer):
+        (WTR::CommandTokenizer::pump):
+        (WTR::CommandTokenizer::next):
+        (WTR::CommandTokenizer::hasNext):
+        (WTR::die):
+        (WTR::parseInputLine):
+        (WTR::TestController::runTest):
+        * WebKitTestRunner/TestController.h:
+        (TestController):
+        Duplicate the logic for parsing the command line because
+        unfortunately there is no way to share code between
+        WebKitTestRunner and DumpRenderTree.
+
 2012-08-01  Martin Robinson  <mrobinson@igalia.com>
 
         Add the jhbuild source directory to the __builtin__ object

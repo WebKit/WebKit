@@ -50,7 +50,7 @@
 volatile bool done = true;
 volatile bool notified = false;
 static bool printSeparators = true;
-static int dumpPixels;
+static int dumpPixelsForCurrentTest;
 static int dumpTree = 1;
 time_t startTime; // to detect timeouts / failed tests
 
@@ -203,7 +203,7 @@ void dump()
         }
     }
 
-    if (dumpPixels
+    if (dumpPixelsForCurrentTest
         && gLayoutTestController->generatePixelResults()
         && !gLayoutTestController->dumpDOMAsWebArchive()
         && !gLayoutTestController->dumpSourceAsWebArchive()) {
@@ -218,26 +218,21 @@ void dump()
     gLayoutTestController.clear();
 }
 
-static void runTest(const wxString testPathOrURL)
+static void runTest(const wxString inputLine)
 {
     done = false;
     time(&startTime);
-    string pathOrURLString(testPathOrURL.char_str());
-    string pathOrURL(pathOrURLString);
-    string expectedPixelHash;
 
-    size_t separatorPos = pathOrURL.find("'");
-    if (separatorPos != string::npos) {
-        pathOrURL = string(pathOrURLString, 0, separatorPos);
-        expectedPixelHash = string(pathOrURLString, separatorPos + 1);
-    }
+    TestCommand command = parseInputLine(std::string(inputLine.ToAscii()));
+    string& pathOrURL = command.pathOrURL;
+    dumpPixelsForCurrentTest = command.shouldDumpPixels;
     
     // CURL isn't happy if we don't have a protocol.
     size_t http = pathOrURL.find("http://");
     if (http == string::npos)
         pathOrURL.insert(0, "file://");
     
-    gLayoutTestController = LayoutTestController::create(pathOrURL, expectedPixelHash);
+    gLayoutTestController = LayoutTestController::create(pathOrURL, command.expectedPixelHash);
     if (!gLayoutTestController) {
         wxTheApp->ExitMainLoop();
     }
@@ -282,11 +277,6 @@ bool MyApp::OnInit()
             continue;
         }
         
-        if (!option.CmpNoCase(_T("--pixel-tests"))) {
-            dumpPixels = true;
-            continue;
-        }
-        
         if (!option.CmpNoCase(_T("--tree"))) {
             dumpTree = true;
             continue;
@@ -323,7 +313,7 @@ bool MyApp::OnInit()
         }
     
     } else {
-        printSeparators = (optind < argc-1 || (dumpPixels && dumpTree));
+        printSeparators = (optind < argc - 1 || (dumpPixelsForCurrentTest && dumpTree));
         for (int i = optind; i != argc; ++i) {
             runTest(wxTheApp->argv[1]);
         }

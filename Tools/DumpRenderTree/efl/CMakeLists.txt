@@ -1,4 +1,5 @@
 SET(DumpRenderTree_SOURCES
+    ${TOOLS_DIR}/DumpRenderTree/DumpRenderTreeCommon.cpp
     ${TOOLS_DIR}/DumpRenderTree/CyclicRedundancyCheck.cpp
     ${TOOLS_DIR}/DumpRenderTree/GCController.cpp
     ${TOOLS_DIR}/DumpRenderTree/LayoutTestController.cpp

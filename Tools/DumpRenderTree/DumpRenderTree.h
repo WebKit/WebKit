@@ -65,4 +65,14 @@ extern RefPtr<LayoutTestController> gLayoutTestController;
 void dump();
 void displayWebView();
 
+struct TestCommand {
+    TestCommand() : shouldDumpPixels(false) { }
+
+    std::string pathOrURL;
+    bool shouldDumpPixels;
+    std::string expectedPixelHash;
+};
+
+TestCommand parseInputLine(const std::string&);
+
 #endif // DumpRenderTree_h
