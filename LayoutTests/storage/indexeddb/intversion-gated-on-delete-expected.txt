@@ -1,0 +1,54 @@
+Test that a database is recreated correctly when an open-with-version call is queued behind a deleteDatabase call
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
+
+dbname = "intversion-gated-on-delete.html"
+indexedDB.deleteDatabase(dbname)
+
+deleteSuccess():
+request = indexedDB.open(dbname)
+request.onsuccess = firstSuccessCallback
+
+firstSuccessCallback():
+connection1 = event.target.result
+connection1.onversionchange = connection1VersionChangeCallback
+request = indexedDB.open(dbname)
+request.onsuccess = secondSuccessCallback
+request = indexedDB.deleteDatabase(dbname)
+request.onblocked = deleteDatabaseBlockedCallback
+request.onsuccess = deleteDatabaseSuccessCallback
+request = indexedDB.open(dbname, 1)
+request.onupgradeneeded = upgradeNeededCallback
+request.onsuccess = openWithVersionSuccessCallback
+
+secondSuccessCallback():
+db = event.target.result
+db.onversionchange = connection2VersionChangeCallback
+
+connection1VersionChangeCallback():
+PASS event.type is "versionchange"
+event.version = 
+
+connection2VersionChangeCallback():
+PASS event.type is "versionchange"
+event.target.close()
+
+deleteDatabaseBlockedCallback():
+FIXME: this function should only be called once, http://crbug.com/139695
+connection1.close()
+
+deleteDatabaseBlockedCallback():
+FIXME: this function should only be called once, http://crbug.com/139695
+connection1.close()
+
+deleteDatabaseSuccessCallback():
+
+openWithVersionSuccessCallback():
+PASS event.target.result.objectStoreNames.length is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

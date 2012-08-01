@@ -3459,6 +3459,12 @@ BUGWK91255 LION : fast/multicol/table-vertical-align.html = TEXT
 // Fails since creation in 122663
 BUGWK91372 WIN : css2.1/20110323/vertical-align-boxes-001.htm = IMAGE
 
+// Times out in DRT, but works in chrome
+BUGWK92776 SKIP : storage/indexeddb/intversion-delete-in-upgradeneeded.html = PASS
+
+// Will work when the patch in 92897 lands.
+BUGWK92897 SKIP : storage/indexeddb/intversion-long-queue.html = PASS
+
 // Started failing around r122770
 BUGWK91445 LINUX : plugins/embed-attributes-style.html = PASS IMAGE
 

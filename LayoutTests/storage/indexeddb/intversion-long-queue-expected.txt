@@ -1,0 +1,79 @@
+Test that a database is recreated correctly when an open-with-version call is queued behind both a deleteDatabase and setVersion call
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
+
+dbname = "intversion-long-queue.html"
+indexedDB.deleteDatabase(dbname)
+
+deleteSuccess():
+request = indexedDB.open(dbname)
+request.onsuccess = firstSuccessCallback
+
+firstSuccessCallback():
+connection1 = event.target.result
+connection1.onversionchange = connection1VersionChangeCallback
+request = indexedDB.open(dbname)
+request.onsuccess = secondSuccessCallback
+
+secondSuccessCallback():
+connection2 = event.target.result
+connection2.onversionchange = connection2VersionChangeCallback
+request = connection2.setVersion('version 2')
+request.onblocked = setVersionBlockedCallback
+request.onsuccess = setVersionSuccessCallback
+
+connection1VersionChangeCallback():
+PASS event.type is "versionchange"
+PASS event.version is "version 2"
+
+setVersionBlockedCallback():
+request = indexedDB.deleteDatabase(dbname)
+request.onblocked = deleteDatabaseBlockedCallback
+request.onsuccess = deleteDatabaseSuccessCallback
+request = indexedDB.open(dbname, 1)
+request.onupgradeneeded = upgradeNeededCallback
+request.onsuccess = openWithVersionSuccessCallback
+connection1.close()
+
+setVersionSuccessCallback():
+transaction = event.target.result
+db = transaction.db
+db.createObjectStore('some object store')
+transaction.oncomplete = setVersionTransactionCompleteCallback
+
+setVersionTransactionCompleteCallback():
+PASS event.target.db.version is "version 2"
+
+connection2VersionChangeCallback():
+PASS event.type is "versionchange"
+FIXME: Fire a versionchange event that has oldVersion and newVersion
+FAIL event.oldVersion should be version 2 (of type string). Was undefined (of type undefined).
+FAIL event.newVersion should be null (of type object). Was undefined (of type undefined).
+FAIL event.version should be undefined. Was 
+
+deleteDatabaseBlockedCallback():
+connection2.close()
+FAIL event.oldVersion should be version 2 (of type string). Was undefined (of type undefined).
+FAIL event.newVersion should be null (of type object). Was undefined (of type undefined).
+FAIL event.version should be undefined. Was 
+
+deleteDatabaseSuccessCallback():
+FAIL event.oldVersion should be non-null. Was undefined
+FAIL event.newVersion should be null (of type object). Was undefined (of type undefined).
+PASS event.target.result is null
+
+upgradeNeededCallback():
+gotUpgradeNeededEvent = true
+PASS event.newVersion is 1
+PASS event.oldVersion is 0
+
+openWithVersionSuccessCallback():
+PASS gotUpgradeNeededEvent is true
+PASS event.target.result.objectStoreNames.length is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

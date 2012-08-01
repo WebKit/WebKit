@@ -1,0 +1,23 @@
+Call db.close() in the complete handler for a version change transaction, before the success event associated with the open call fires
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
+
+dbname = "intversion-close-in-oncomplete.html"
+indexedDB.deleteDatabase(dbname)
+request = indexedDB.open(dbname, 7)
+
+openSuccess():
+FAIL sawTransactionComplete should be true. Was false.
+db = event.target.result
+FAIL db.version should be 7 (of type number). Was  (of type string).
+Expecting exception from transaction = db.transaction('os', 'readwrite')
+PASS Exception was thrown.
+FAIL code should be 11. Was 8.
+FAIL ename should be InvalidStateError. Was NotFoundError.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -77,6 +77,12 @@ function unexpectedUpgradeNeededCallback()
     finishJSTest();
 }
 
+function unexpectedVersionChangeCallback()
+{
+    testFailed("onversionchange called unexpectedly");
+    finishJSTest();
+}
+
 function evalAndExpectException(cmd, exceptionCode, exceptionName)
 {
     debug("Expecting exception from " + cmd);
@@ -121,6 +127,18 @@ function deleteAllObjectStores(db)
     while (db.objectStoreNames.length)
         db.deleteObjectStore(db.objectStoreNames.item(0));
     debug("Deleted all object stores.");
+}
+
+function setDBNameFromPath() {
+    evalAndLog('dbname = "' + self.location.pathname.substring(1 + self.location.pathname.lastIndexOf("/")) + '"');
+}
+
+function preamble(evt)
+{
+    if (evt)
+        event = evt;
+    debug("");
+    debug(preamble.caller.name + "():");
 }
 
 // For Workers

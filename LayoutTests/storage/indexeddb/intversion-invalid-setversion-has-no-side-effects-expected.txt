@@ -1,0 +1,31 @@
+Test that when setVersion is called on a db with an integer version, versionchange events don't get fired on other open dbs.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
+
+dbname = "intversion-invalid-setversion-has-no-side-effects.html"
+indexedDB.deleteDatabase(dbname)
+
+deleteSuccess():
+request = indexedDB.open(dbname, 2)
+
+firstSuccessEventHandler():
+FAIL gotFirstUpgradeNeededEvent should be true. Was false.
+connection1 = event.target.result
+connection1.onversionchange = unexpectedVersionChangeCallback
+PASS String(connection1) is "[object IDBDatabase]"
+request = indexedDB.open(dbname)
+
+secondSuccessCallback():
+db = event.target.result
+request = db.setVersion('version')
+request.onerror = setVersionError
+request.onsuccess = unexpectedSuccessCallback
+request.onblocked = unexpectedBlockedCallback
+FAIL onversionchange called unexpectedly
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

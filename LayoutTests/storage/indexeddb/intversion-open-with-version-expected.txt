@@ -1,0 +1,30 @@
+Test that specifying a version when opening a non-existent db causes an upgradeneeded event and that the version number is set correctly.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
+
+dbname = "intversion-open-with-version.html"
+indexedDB.deleteDatabase(dbname)
+Should trigger:
+4.1.4: If no database with the given name from the origin origin was found, or if it was deleted during the previous step, then create a database with name name, with 0 as version, and with no object stores. Let db be the new database.
+4.1.6: Create a new connection to db and let connection represent it.
+4.1.7: If the version of db is lower than version, then run the steps for running a "versionchange" transaction using connection, version, request and upgrade callback.
+4.1.9: Return connection.
+request = indexedDB.open(dbname, 7)
+FAIL String(request) should be [object IDBOpenDBRequest]. Was [object IDBRequest].
+
+
+openSuccess():
+Test 4.1.7, that a versionchange transaction was run.
+FAIL sawUpgradeNeeded should be true. Was false.
+FAIL sawTransactionComplete should be true. Was false.
+db = event.target.result
+Kind of test 4.1.9:
+PASS String(db) is "[object IDBDatabase]"
+FAIL db.version should be 7 (of type number). Was  (of type string).
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,26 @@
+Test that blocked events get delivered properly with the new open api
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
+
+dbname = "intversion-blocked.html"
+indexedDB.deleteDatabase(dbname)
+
+deleteSuccess():
+request = indexedDB.open(dbname, 2)
+
+firstSuccessEventHandler():
+FAIL gotFirstUpgradeNeededEvent should be true. Was false.
+connection1 = event.target.result
+connection1.onversionchange = versionChangeHandler
+PASS String(connection1) is "[object IDBDatabase]"
+request = indexedDB.open(dbname, 3)
+
+secondSuccessCallback():
+FAIL gotSecondUpgradeNeededEvent should be true. Was false.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,3 +1,51 @@
+2012-08-01  David Grogan  <dgrogan@chromium.org>
+
+        IndexedDB: integer version layout tests
+        https://bugs.webkit.org/show_bug.cgi?id=92560
+
+        Reviewed by Nate Chapin.
+
+        Most of the integer version layout tests are here, with failures in
+        the expected files.  This will allow us to incrementally implement
+        upgradeneeded and integer versions and just make the big patch in bug
+        89505 smaller.
+
+        There are two added skips to TestExpectations, one test exposes a bug
+        in the current implementation, causing an assert to fail.  The other
+        times out in DRT so we will run it as a content_browsertest for the
+        time being.
+
+        * platform/chromium/TestExpectations:
+        * storage/indexeddb/intversion-abort-in-initial-upgradeneeded-expected.txt: Added.
+        * storage/indexeddb/intversion-abort-in-initial-upgradeneeded.html: Added.
+        * storage/indexeddb/intversion-and-setversion-expected.txt: Added.
+        * storage/indexeddb/intversion-and-setversion.html: Added.
+        * storage/indexeddb/intversion-blocked-expected.txt: Added.
+        * storage/indexeddb/intversion-blocked.html: Added.
+        * storage/indexeddb/intversion-close-between-events-expected.txt: Added.
+        * storage/indexeddb/intversion-close-between-events.html: Added.
+        * storage/indexeddb/intversion-close-in-oncomplete-expected.txt: Added.
+        * storage/indexeddb/intversion-close-in-oncomplete.html: Added.
+        * storage/indexeddb/intversion-close-in-upgradeneeded-expected.txt: Added.
+        * storage/indexeddb/intversion-close-in-upgradeneeded.html: Added.
+        * storage/indexeddb/intversion-delete-in-upgradeneeded-expected.txt: Added.
+        * storage/indexeddb/intversion-delete-in-upgradeneeded.html: Added.
+        * storage/indexeddb/intversion-gated-on-delete-expected.txt: Added.
+        * storage/indexeddb/intversion-gated-on-delete.html: Added.
+        * storage/indexeddb/intversion-invalid-setversion-has-no-side-effects-expected.txt: Added.
+        * storage/indexeddb/intversion-invalid-setversion-has-no-side-effects.html: Added.
+        * storage/indexeddb/intversion-long-queue-expected.txt: Added.
+        * storage/indexeddb/intversion-long-queue.html: Added.
+        * storage/indexeddb/intversion-omit-parameter-expected.txt: Added.
+        * storage/indexeddb/intversion-omit-parameter.html: Added.
+        * storage/indexeddb/intversion-open-with-version-expected.txt: Added.
+        * storage/indexeddb/intversion-open-with-version.html: Added.
+        and their respective js files...
+        * storage/indexeddb/resources/shared.js:
+        (unexpectedVersionChangeCallback):
+        (setDBNameFromPath):
+        (preamble):
+
 2012-08-01  Florin Malita  <fmalita@chromium.org>
 
         Use testRunner instead of layoutTestController in SVG tests
