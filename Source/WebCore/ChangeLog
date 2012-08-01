@@ -1,3 +1,27 @@
+2012-08-01  Eugene Klyuchnikov  <eustas.big@gmail.com>
+
+        Web Inspector: Profiles: cleanup HeapSnapshotReceiver interface
+        https://bugs.webkit.org/show_bug.cgi?id=92390
+
+        Reviewed by Yury Semikhatsky.
+
+        Remove callback parameter and return values from methods startLoading
+        and finishLoading. All implementations of HeapSnapshotReceiver honestly
+        override interface methods now.
+
+        * inspector/front-end/HeapSnapshotLoader.js: Adopted new API.
+        * inspector/front-end/HeapSnapshotProxy.js: Adopted new API. 
+        (WebInspector.HeapSnapshotLoaderProxy.prototype.isStarted): Added.
+        (WebInspector.HeapSnapshotLoaderProxy.prototype.addConsumer): Added.
+        (WebInspector.HeapSnapshotLoaderProxy.prototype.finishLoading):
+        Explicitly finishes loading and build snapshot.
+        * inspector/front-end/HeapSnapshotView.js:
+        (WebInspector.HeapSnapshotReceiver.prototype.startLoading):
+        Removed callback parameter and return value.
+        (WebInspector.HeapSnapshotReceiver.prototype.finishLoading):
+        Removed callback parameter.
+        (WebInspector.HeapSnapshotSaveToFileReceiver): Adopted new API.
+
 2012-04-07  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Web Inspector: extract MemoryInstrumentationImpl into separate files for future reusing in unit tests

@@ -38,13 +38,8 @@ WebInspector.HeapSnapshotLoader = function()
 }
 
 WebInspector.HeapSnapshotLoader.prototype = {
-    /**
-     * @param {function(WebInspector.HeapSnapshotProxy)} callback
-     * @return {boolean}
-     */
-    startLoading: function(callback)
+    startLoading: function()
     {
-        return true;
     },
 
     dispose: function()
@@ -77,9 +72,12 @@ WebInspector.HeapSnapshotLoader.prototype = {
 
     finishLoading: function()
     {
-        if (!this._json)
-            return null;
-        this._parseStringsArray();
+        if (this._json)
+            this._parseStringsArray();
+    },
+
+    buildSnapshot: function()
+    {
         var result = new WebInspector.HeapSnapshot(this._snapshot);
         this._reset();
         return result;

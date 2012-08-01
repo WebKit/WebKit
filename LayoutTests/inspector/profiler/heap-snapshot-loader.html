@@ -21,7 +21,8 @@ function test()
             var loader = new WebInspector.HeapSnapshotLoader();
             for (var i = 0, l = sourceStringified.length; i < l; i += partSize)
                 loader.pushJSONChunk(sourceStringified.slice(i, i + partSize));
-            var result = loader.finishLoading();
+            loader.finishLoading();
+            var result = loader.buildSnapshot();
             result._nodes = new Uint32Array(result._nodes);
             result._containmentEdges = new Uint32Array(result._containmentEdges);
             InspectorTest.assertSnapshotEquals(new WebInspector.HeapSnapshot(InspectorTest.createHeapSnapshotMock()), result);
@@ -77,7 +78,7 @@ function test()
                 ProfilerAgent.getProfile = oldGetProfile;
                 next();
             }
-            InspectorTest.addSniffer(profileHeader, "_parsed", parsed);
+            InspectorTest.addSniffer(profileHeader, "_snapshotReceived", parsed);
 
             panel.showProfile(profileHeader);
         },
@@ -93,15 +94,15 @@ function test()
                 webkitSlice: function(begin, end) { return this; }
             };
 
-            WebInspector.HeapProfileHeader.prototype._createFileReader = function() {
+            InspectorTest.override(WebInspector.HeapProfileHeader.prototype, '_createFileReader', function(fileMock, delegate) {
                 return {
                     readAsText: function(filePart) {
                         var profileHeader = panel._profiles[panel._profiles.length - 1];
-                        InspectorTest.addSniffer(profileHeader, "_parsed", function parsed() { next(); });
                         profileHeader._nextChunkLoaded(sourceStringified);
                     }
                 };
-            }
+            });
+            InspectorTest.addSniffer(WebInspector.HeapProfileHeader.prototype, "_snapshotReceived", function() { next(); });
             panel._loadFromFile(fileMock);
         }
     ]);
