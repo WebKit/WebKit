@@ -3212,8 +3212,6 @@ BUGWK84432 WIN : fast/filesystem/simple-readonly-file-object.html = TEXT
 
 BUGWK84550 SNOWLEOPARD : fast/canvas/2d.text.draw.fill.maxWidth.gradient.html = TEXT PASS
 
-BUGCR124783 : media/video-currentTime-delay.html = TEXT PASS
-
 BUGWK84688 SNOWLEOPARD : compositing/animation/computed-style-during-delay.html = TEXT PASS
 
 BUGWK84696 SNOWLEOPARD : fast/workers/storage/interrupt-database.html = TIMEOUT PASS

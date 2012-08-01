@@ -21,10 +21,6 @@
         setTimeout(function() {
             run("video.play()"); 
         }, 400);
-    
-        var timeout = 2000;
-        setTimeout(function () { logResult(false, "No 'ended' event in " + timeout/1000  + " seconds"); }, timeout);
-
     });
     
     video.src = findMediaFile("video", "content/test");

@@ -1,3 +1,13 @@
+2012-07-31  Ami Fischman  <fischman@chromium.org>
+
+        media/video-currentTime-delay.html shouldn't be a performance test, so remove artificial deadline.
+        https://bugs.webkit.org/show_bug.cgi?id=92816
+
+        Unreviewed test cleanup.
+
+        * media/video-currentTime-delay.html:
+        * platform/chromium/TestExpectations:
+
 2012-07-31  Peter Kasting  <pkasting@google.com>
 
         [Chromium] Rebaseline a test and correct two expectations
