@@ -97,7 +97,6 @@ public:
     void insertHTMLHtmlStartTagInBody(AtomicHTMLToken*);
     void insertHTMLBodyStartTagInBody(AtomicHTMLToken*);
 
-    PassRefPtr<Element> createHTMLElement(AtomicHTMLToken*);
     PassRefPtr<HTMLStackItem> createElementFromSavedToken(HTMLStackItem*);
 
     bool shouldFosterParent() const;
@@ -154,6 +153,7 @@ private:
 
     void findFosterSite(HTMLConstructionSiteTask&);
 
+    PassRefPtr<Element> createHTMLElement(AtomicHTMLToken*);
     PassRefPtr<Element> createElement(AtomicHTMLToken*, const AtomicString& namespaceURI);
 
     void mergeAttributesFromTokenIntoElement(AtomicHTMLToken*, Element*);

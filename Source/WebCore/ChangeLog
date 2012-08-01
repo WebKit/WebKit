@@ -1,3 +1,17 @@
+2012-08-01  Kwang Yul Seo  <skyul@company100.net>
+
+        Make HTMLConstructionSite::createHTMLElement(AtomicHTMLToken*) private.
+        https://bugs.webkit.org/show_bug.cgi?id=92846
+
+        Reviewed by Eric Seidel.
+
+        This method is internal to HTMLConstructionSite.
+
+        No functional change.
+
+        * html/parser/HTMLConstructionSite.h:
+        (HTMLConstructionSite):
+
 2012-08-01  Kinuko Yasuda  <kinuko@chromium.org>
 
         [Filesystem] Assertion on $0.webkitEntries while on the input field.
