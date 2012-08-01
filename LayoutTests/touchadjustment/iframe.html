@@ -1,5 +1,7 @@
+<!DOCTYPE html>
 <html>
 <head>
+    <title>Touch Adjustment : Correct for frame positions - bug 82043</title>
     <script src="../fast/js/resources/js-test-pre.js"></script>
     <style>
         #myframe { position: absolute; left: 200px; top: 100px; width: 400px; height: 300px;}
@@ -39,13 +41,12 @@
     {
         if (window.testRunner && window.internals && internals.touchNodeAdjustedToBestClickableNode) {
             description('Test touch-adjustment on links in an iframe. Making sure we iframe position is correctly adjusted for.');
-            testRunner.dumpAsText();
-            testRunner.waitUntilDone();
             testDirectTouches();
-            isSuccessfullyParsed();
-            testRunner.notifyDone();
+            finishJSTest();
         }
     }
+    jsTestIsAsync = true;
 </script>
+<script src="../fast/js/resources/js-test-post.js"></script>
 </body>
 </html>

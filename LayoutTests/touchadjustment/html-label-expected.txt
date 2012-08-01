@@ -1,21 +1,16 @@
-Do not click here
-Click here, but not here. 
-
-
-
 Tests if labels are treated as clickable if the input they control is.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
 Testing small direct hits.
-PASS adjustedNode.id is "mylink"
-PASS adjustedNode.id is "mylabel"
-PASS adjustedNode.id is "myinput"
+PASS adjusted node was A#mylink.
+PASS adjusted node was LABEL#mylabel.
+PASS adjusted node was INPUT#myinput.
 Testing indirect hits.
-PASS adjustedNode.id is "mylink"
-PASS adjustedNode.id is "mylabel"
-PASS adjustedNode.id is "myinput"
+PASS adjusted node was A#mylink.
+PASS adjusted node was LABEL#mylabel.
+PASS adjusted node was INPUT#myinput.
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -1,16 +1,18 @@
+<!DOCTYPE html>
 <html>
 <head>
-<title>Touch Adjustment : Disabled form elements - bug 92093</title>
-<style type="text/css">
-    #sandbox {
-        position: absolute;
-        left: 0px;
-        top: 0px;
-        width: 600px;
-        height: 600px;
-    }
-</style>
-<script src="../fast/js/resources/js-test-pre.js"></script>
+    <title>Touch Adjustment : Disabled form elements - bug 92093</title>
+    <script src="../fast/js/resources/js-test-pre.js"></script>
+    <script src="resources/touchadjustment.js"></script>
+    <style type="text/css">
+        #sandbox {
+            position: absolute;
+            left: 0px;
+            top: 0px;
+            width: 600px;
+            height: 600px;
+        }
+    </style>
 </head>
 
 <body id="body">
@@ -26,67 +28,42 @@
 <div id='console'></div>
 
 <script>
-    var adjustedNode;
-    function testRoundTouch(x, y, radius)
-    {
-        var x = x - radius;
-        var y = y - radius;
-        var width = radius * 2;
-        var height = radius * 2;
-        var adjustedNode = internals.touchNodeAdjustedToBestClickableNode(x, y, width, height, document);
-        if (adjustedNode.nodeType == 3) // TEXT node
-            adjustedNode = adjustedNode.parentNode;
-        return adjustedNode;
-    }
+    // Set up shortcut access to elements
+    var e = {};
+    ['sandbox', 'form,', 'label1', 'label2', 'input1', 'input2'].forEach(function(a) {
+        e[a] = document.getElementById(a);
+    });
 
     function testDirectTouches()
     {
         // Quick sanity check.
         debug('Test we can hit the form elements directly.');
 
-//         adjustedNode = testRoundTouch(16, 8, 5);
-//         shouldBeEqualToString('adjustedNode.id', 'label1');
-
-        adjustedNode = testRoundTouch(16, 38, 5);
-        shouldBeEqualToString('adjustedNode.id', 'label2');
-
-//         adjustedNode = testRoundTouch(60, 8, 5);
-//         shouldBeEqualToString('adjustedNode.id', 'input1');
-
-        adjustedNode = testRoundTouch(60, 38, 5);
-        shouldBeEqualToString('adjustedNode.id', 'input2');
-
+        testTouchPoint(touchPoint(16, 8, 5), null);
+        testTouchPoint(touchPoint(16, 38, 5), e.label2);
+        testTouchPoint(touchPoint(60, 8, 5), null);
+        testTouchPoint(touchPoint(60, 38, 5), e.input2);
     }
 
     function testAdjustedTouches()
     {
         debug('Test indirect touches are adjusted to the enabled form elements.');
-        adjustedNode = testRoundTouch(16, 25, 10);
-        shouldBeEqualToString('adjustedNode.id', 'label2');
+        testTouchPoint(touchPoint(16, 25, 10), e.label2);
+        testTouchPoint(touchPoint(16, 20, 15), e.label2);
+        testTouchPoint(touchPoint(16, 16, 20), e.label2);
 
-        adjustedNode = testRoundTouch(16, 20, 15);
-        shouldBeEqualToString('adjustedNode.id', 'label2');
-
-        adjustedNode = testRoundTouch(16, 16, 20);
-        shouldBeEqualToString('adjustedNode.id', 'label2');
-
-        adjustedNode = testRoundTouch(60, 25, 10);
-        shouldBeEqualToString('adjustedNode.id', 'input2');
-
-        adjustedNode = testRoundTouch(60, 20, 15);
-        shouldBeEqualToString('adjustedNode.id', 'input2');
-
-        adjustedNode = testRoundTouch(60, 16, 20);
-        shouldBeEqualToString('adjustedNode.id', 'input2');
+        testTouchPoint(touchPoint(60, 25, 10), e.input2);
+        testTouchPoint(touchPoint(60, 20, 15), e.input2);
+        testTouchPoint(touchPoint(60, 16, 20), e.input2);
     }
 
     function runTests()
     {
         if (window.testRunner && window.internals && internals.touchNodeAdjustedToBestClickableNode) {
             description(document.title);
-            testRunner.dumpAsText();
             testDirectTouches();
             testAdjustedTouches();
+            e.sandbox.style.display = 'none';
         }
     }
 

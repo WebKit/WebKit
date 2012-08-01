@@ -1,28 +1,22 @@
-some link
-some link breaking lines and link
-hola mundo! a split up link
-hello world some link also breaking
-hi there some link that is breaking multiple lines just for the very fun of it
-
-Test touch-adjustment on inline links. Making sure we can hit over line-breaks, and can miss when tapping between parts of a line-broken link.
+Tests touch-adjustment on inline links. Making sure we can hit over line-breaks, and can miss when tapping between parts of a line-broken link.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
 Test some direct hits.
-PASS adjustedNode.id is "1"
-PASS adjustedNode.id is "2"
-PASS adjustedNode.id is "4"
-PASS adjustedNode.id is "6"
+PASS adjusted node was A#1.
+PASS adjusted node was A#2.
+PASS adjusted node was A#4.
+PASS adjusted node was A#6.
 Test a few direct misses.
-PASS adjustedNode is null
-PASS adjustedNode is null
-Test some in-direct hits.
-PASS adjustedNode.id is "2"
-PASS adjustedNode.id is "3"
-PASS adjustedNode.id is "4"
-PASS adjustedNode.id is "4"
-PASS adjustedNode.id is "6"
+PASS adjusted node was null.
+PASS adjusted node was null.
+Test some indirect hits.
+PASS adjusted node was A#2.
+PASS adjusted node was A#3.
+PASS adjusted node was A#4.
+PASS adjusted node was A#4.
+PASS adjusted node was A#6.
 PASS successfullyParsed is true
 
 TEST COMPLETE

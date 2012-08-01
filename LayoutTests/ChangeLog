@@ -1,3 +1,49 @@
+2012-08-01  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
+
+        Clean-up touchadjustment tests.
+        https://bugs.webkit.org/show_bug.cgi?id=92869
+
+        Reviewed by Jocelyn Turcotte.
+
+        Review and cleanup the touchadjustment tests, so they are more consistent,
+        uses best practices and are good examples for future touchadjustment tests.
+
+        Gather commonly used functions in touchadjustment.js.
+        Add HTML5 doctype to ensure strict parsing rules.
+        Remove redundant testRunner calls, and use js-test-post.js instead.
+        Fix XHTMLisms in small-target-test.html
+        Fix ignored offset mistake in nested-touch.html that resulted in three identical tests.
+
+        * touchadjustment/big-div-expected.txt:
+        * touchadjustment/big-div.html:
+        * touchadjustment/block-testing-expected.txt:
+        * touchadjustment/block-testing.html:
+        * touchadjustment/disabled-formelements-expected.txt:
+        * touchadjustment/disabled-formelements.html:
+        * touchadjustment/event-triggered-widgets-expected.txt:
+        * touchadjustment/event-triggered-widgets.html:
+        * touchadjustment/html-label-expected.txt:
+        * touchadjustment/html-label.html:
+        * touchadjustment/iframe.html:
+        * touchadjustment/nested-shadow-node.html:
+        * touchadjustment/nested-touch-expected.txt:
+        * touchadjustment/nested-touch.html:
+        * touchadjustment/resources/inner-frame.html:
+        * touchadjustment/resources/touchadjustment.js: Added.
+        (findAbsoluteBounds):
+        (nodeToString):
+        (touchPoint):
+        (offsetTouchPoint):
+        * touchadjustment/rotated-node-expected.txt:
+        * touchadjustment/rotated-node.html:
+        * touchadjustment/scroll-offset-expected.txt:
+        * touchadjustment/scroll-offset.html:
+        * touchadjustment/search-cancel.html:
+        * touchadjustment/small-target-test-expected.txt:
+        * touchadjustment/small-target-test.html:
+        * touchadjustment/touch-inlines-expected.txt:
+        * touchadjustment/touch-inlines.html:
+
 2012-08-01  Andrei Bucur  <abucur@adobe.com>
 
         [CSS Regions] The regionLayoutUpdate event should be dispatched on the NamedFlow object

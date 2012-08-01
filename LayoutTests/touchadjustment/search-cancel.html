@@ -1,31 +1,33 @@
+<!DOCTYPE html>
 <html>
 <head>
-<style>
-    input[type='search'] {
-      -webkit-appearance: none;
-      -webkit-box-sizing: border-box;
-      border: 1px solid #999;
-      padding: 5px;
-    }
+    <title>Touch Adjustment : Shadow DOM Element Search Cancel Button - bug 91894</title>
+    <script src="../fast/js/resources/js-test-pre.js"></script>
+    <script src="resources/touchadjustment.js"></script>
+    <style>
+        input[type='search'] {
+        -webkit-appearance: none;
+        -webkit-box-sizing: border-box;
+        border: 1px solid #999;
+        padding: 5px;
+        }
 
-    input[type='search']::-webkit-search-cancel-button {
-      -webkit-appearance: none;
-      -webkit-box-sizing: border-box;
-      background: #999;
-      height: 10px;
-      margin: 0;
-      padding: 0;
-      width: 10px;
-    }
-</style>
-<script src="../fast/js/resources/js-test-pre.js"></script>
-
+        input[type='search']::-webkit-search-cancel-button {
+        -webkit-appearance: none;
+        -webkit-box-sizing: border-box;
+        background: #999;
+        height: 10px;
+        margin: 0;
+        padding: 0;
+        width: 10px;
+        }
+    </style>
 </head>
 
-<body onload="runTests()">
+<body>
 
 <div>
-  <input id="target" type="search" value="abcd"/>
+  <input id="target" type="search" value="abcd">
 </div>
 
 <p id='description'></p>
@@ -43,50 +45,30 @@
     var targetContainsPoint;
     var touchContainsPoint;
 
-    function findAbsolutePosition(node) {
-        var pos = {left: 0, top: 0};
-        do {
-            pos.left += node.offsetLeft;
-            pos.top += node.offsetTop;
-        } while (node = node.offsetParent);
-        return pos;
-    }
-
     function runTouchTests() {
         document.addEventListener('click', function() {}, false);
 
         element = document.getElementById('target');
-        var pos = findAbsolutePosition(element);
-
-        var x = pos.left;
-        var y = pos.top;
-        var width = element.clientWidth;
-        var height = element.clientHeight;
-
-        inputBounds = {
-            x: x,
-            y: y,
-            width: width,
-            height: height
-        };
+        
+        inputBounds = findAbsoluteBounds(element);
 
         var touchRadius = 20;
         var offset = touchRadius / 2;
 
         // Center of cancel button.
-        var midX = x + width - 11;
-        var midY = y + height / 2;
+        var midX = inputBounds.left + inputBounds.width - 11;
+        var midY = inputBounds.top + inputBounds.height / 2;
 
         cancelBounds = {
-            x: midX - 5,
-            y: midY - 5,
+            left: midX - 5,
+            top: midY - 5,
             width: 10,
             height: 10
         };
 
         textContentBounds = {
-           x: inputBounds.x,
-           y: inputBounds.y,
+           left: inputBounds.left,
+           top: inputBounds.top,
            width: inputBounds.width - 16,
            height: inputBounds.height
         };
@@ -110,12 +92,12 @@
         targetBounds = bounds;
 
         touchBounds = {
-            x: touchX - radius,
-            y: touchY - radius,
+            left: touchX - radius,
+            top: touchY - radius,
             width: 2 * radius,
             height: 2 * radius
         };
-        adjustedPoint = internals.touchPositionAdjustedToBestClickableNode(touchBounds.x, touchBounds.y, touchBounds.width, touchBounds.height, document);
+        adjustedPoint = internals.touchPositionAdjustedToBestClickableNode(touchBounds.left, touchBounds.top, touchBounds.width, touchBounds.height, document);
         targetContainsPoint = containsPoint(targetBounds, adjustedPoint);
         touchContainsPoint = containsPoint(touchBounds, adjustedPoint);
         shouldBeTrue('targetContainsPoint');
@@ -123,20 +105,18 @@
     }
 
     function containsPoint(bounds, point) {
-        return bounds.x <= point.x && bounds.y <= point.y && bounds.x + bounds.width >= point.x && bounds.y + bounds.height >= point.y;
+        return bounds.left <= point.x && bounds.top <= point.y && bounds.left + bounds.width >= point.x && bounds.left + bounds.height >= point.y;
     }
 
     function runTests()
     {
         if (window.testRunner && window.internals && internals.touchNodeAdjustedToBestClickableNode) {
             description('Test touch adjustment on a search field with a visible cancel button.');
-            testRunner.dumpAsText();
-            testRunner.waitUntilDone();
             runTouchTests();
-            isSuccessfullyParsed();
-            testRunner.notifyDone();
         }
     }
+    runTests();
 </script>
+<script src="../fast/js/resources/js-test-post.js"></script>
 </body>
 </html>

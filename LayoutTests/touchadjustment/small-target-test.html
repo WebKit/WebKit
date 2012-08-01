@@ -1,11 +1,15 @@
+<!DOCTYPE html>
 <html>
 <head>
+<title>Touch Adjustment : Improved targetting for small controls - bug 92293</title>
+<script src="../fast/js/resources/js-test-pre.js"></script>
+<script src="resources/touchadjustment.js"></script>
+
 <style>
   body {
     -webkit-margin-start: 20px;
     margin-top: 20px;
   }
-
   .control-pair {
     margin-bottom: 30px;
   }
@@ -45,36 +49,38 @@
   }
 
   #drop-down-selector {
-    -webkit-box-sizing; content-box;
+    -webkit-box-sizing: content-box;
     width: 0;
     height: 0;
     border-left: 5px solid transparent;
     border-right: 5px solid transparent;
     border-top: 10px solid #777;
   }
+  
 </style>
 
-<script src="../fast/js/resources/js-test-pre.js"></script>
 </head>
 
-<body id="mybody" onload="runTests()">
+<body id="mybody">
 
-<div class="control-pair">
-  <!-- Small checkbox to the left of another control -->
-  <div id="check" onclick="onClick();"></div>
-  <input id="task" type="text" value="Task 1"/>
-</div>
-<div class="control-pair">
-  <!-- Small remove button to the right of another control -->
-  <input id = "item-label" type="text" value = "Option 1"/>
-  <div id = "remove-button" onclick="onClick();"/>
-</div>
-<div>
-  <div id="combo-button">
-    <!-- Combo-button controls -->
-    <div id = "combo-label" onclick="function() {};"></div>
-    <div id = "drop-down-selector" onclick="onClick();"/>
-  </div>
+<div id=sandbox>
+    <div class="control-pair">
+        <!-- Small checkbox to the left of another control -->
+        <div id="check" onclick="onClick();"></div>
+        <input id="task" type="text" value="Task 1">
+    </div>
+    <div class="control-pair">
+        <!-- Small remove button to the right of another control -->
+        <input id = "item-label" type="text" value = "Option 1">
+        <div id = "remove-button" onclick="onClick();"></div>
+    </div>
+    <div>
+        <div id="combo-button">
+            <!-- Combo-button controls -->
+            <div id = "combo-label" onclick="function() {};"></div>
+            <div id = "drop-down-selector" onclick="onClick();"></div>
+        </div>
+    </div>
 </div>
 
 <p id='description'></p>
@@ -89,17 +95,6 @@
 
     function onClick()
     {
-    }
-
-    function findAbsolutePosition(node)
-    {
-        var pos = new Object();
-        pos.left = 0; pos.top = 0;
-        do {
-            pos.left += node.offsetLeft;
-            pos.top += node.offsetTop;
-        } while (node = node.offsetParent);
-        return pos;
     }
 
     function testDirectTouch(id)
@@ -121,59 +116,8 @@
 
     function testTouch(id, relativePosition)
     {
-        element = document.getElementById(id);
-        var pos = findAbsolutePosition(element);
-        var x = pos.left; 
-        var y = pos.top;
-        // Set center point for touch.
-        switch (relativePosition) {
-        case 'center':
-          x += element.clientWidth / 2;
-          y += element.clientHeight / 2;
-          break;
-        case 'left':
-          x -= touchOffset;
-          y += element.clientHeight / 2;
-          break;
-        case 'right':
-           x += element.clientWidth + touchOffset;
-           y +=  element.clientHeight / 2;
-           break;
-        case 'top-left':
-          x -= touchOffset;
-          y -= touchOffset;
-          break;
-        case 'top-right':
-           x += element.clientWidth + touchOffset;
-           y -= touchOffset;
-           break;
-        case 'bottom-left':
-          x -= touchOffset;
-          y += element.clientHeight + touchOffset;
-          break;
-        case 'bottom-right':
-           x += element.clientWidth + touchOffset;
-           y += element.clientHeight + touchOffset;
-           break;
-        case 'top':
-           x += element.clientWidth / 2;
-           y -= touchOffset;
-           break;
-        case 'bottom':
-           x += element.clientWidth / 2;
-           y += element.clientHeight + touchOffset;
-        }
-        // Adjust from touch center to top-left corner.
-        x -= touchRadius;
-        y -= touchRadius;
-
-        var width = 2 * touchRadius;
-        var height = 2 * touchRadius;
-
-        adjustedNode = internals.touchNodeAdjustedToBestClickableNode(x, y, width, height, document);
-        while (adjustedNode.nodeType != 1 ) // Not an element.
-            adjustedNode = adjustedNode.parentNode;
-        shouldBeEqualToString('adjustedNode.id', id);
+        var element = document.getElementById(id);
+        testTouchPoint(offsetTouchPoint(findAbsoluteBounds(element), relativePosition, touchOffset, touchRadius), element);
     }
 
     function testDirectTouches()
@@ -201,14 +145,13 @@
     {
         if (window.testRunner && window.internals && internals.touchNodeAdjustedToBestClickableNode) {
             description('Tests if small clickable targets adjacent to larger clickable controls are properly targetted with touch adjustment.');
-            testRunner.dumpAsText();
-            testRunner.waitUntilDone();
             testDirectTouches();
             testIndirectTouches();
-            isSuccessfullyParsed();
-            testRunner.notifyDone();
+            document.getElementById('sandbox').style.display = 'none';
         }
     }
+    runTests();
 </script>
+<script src="../fast/js/resources/js-test-post.js"></script>
 </body>
 </html>

@@ -6,10 +6,10 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 Overlapping touch above the target should snap to the top of the target element.
 PASS adjustedNode.id is element.id
-PASS adjustedPoint.x >= targetBounds.x is true
-PASS adjustedPoint.x <= targetBounds.x + targetBounds.width is true
-PASS adjustedPoint.y >= targetBounds.y is true
-PASS adjustedPoint.y <= targetBounds.y + targetBounds.height is true
+PASS adjustedPoint.x >= targetBounds.left is true
+PASS adjustedPoint.x <= targetBounds.left + targetBounds.width is true
+PASS adjustedPoint.y >= targetBounds.top is true
+PASS adjustedPoint.y <= targetBounds.top + targetBounds.height is true
 PASS adjustedPoint.x >= touchBounds.x is true
 PASS adjustedPoint.x <= touchBounds.x + touchBounds.width is true
 PASS adjustedPoint.y >= touchBounds.y is true
@@ -17,10 +17,10 @@ PASS adjustedPoint.y <= touchBounds.y + touchBounds.height is true
 
 Overlapping touch below the target should snap to the bottom of the target element.
 PASS adjustedNode.id is element.id
-PASS adjustedPoint.x >= targetBounds.x is true
-PASS adjustedPoint.x <= targetBounds.x + targetBounds.width is true
-PASS adjustedPoint.y >= targetBounds.y is true
-PASS adjustedPoint.y <= targetBounds.y + targetBounds.height is true
+PASS adjustedPoint.x >= targetBounds.left is true
+PASS adjustedPoint.x <= targetBounds.left + targetBounds.width is true
+PASS adjustedPoint.y >= targetBounds.top is true
+PASS adjustedPoint.y <= targetBounds.top + targetBounds.height is true
 PASS adjustedPoint.x >= touchBounds.x is true
 PASS adjustedPoint.x <= touchBounds.x + touchBounds.width is true
 PASS adjustedPoint.y >= touchBounds.y is true
@@ -28,10 +28,10 @@ PASS adjustedPoint.y <= touchBounds.y + touchBounds.height is true
 
 Overlapping touch left of the target should snap to the left side of the target element.
 PASS adjustedNode.id is element.id
-PASS adjustedPoint.x >= targetBounds.x is true
-PASS adjustedPoint.x <= targetBounds.x + targetBounds.width is true
-PASS adjustedPoint.y >= targetBounds.y is true
-PASS adjustedPoint.y <= targetBounds.y + targetBounds.height is true
+PASS adjustedPoint.x >= targetBounds.left is true
+PASS adjustedPoint.x <= targetBounds.left + targetBounds.width is true
+PASS adjustedPoint.y >= targetBounds.top is true
+PASS adjustedPoint.y <= targetBounds.top + targetBounds.height is true
 PASS adjustedPoint.x >= touchBounds.x is true
 PASS adjustedPoint.x <= touchBounds.x + touchBounds.width is true
 PASS adjustedPoint.y >= touchBounds.y is true
@@ -39,10 +39,10 @@ PASS adjustedPoint.y <= touchBounds.y + touchBounds.height is true
 
 Overlapping touch right of the target should snap to the right side of the target element.
 PASS adjustedNode.id is element.id
-PASS adjustedPoint.x >= targetBounds.x is true
-PASS adjustedPoint.x <= targetBounds.x + targetBounds.width is true
-PASS adjustedPoint.y >= targetBounds.y is true
-PASS adjustedPoint.y <= targetBounds.y + targetBounds.height is true
+PASS adjustedPoint.x >= targetBounds.left is true
+PASS adjustedPoint.x <= targetBounds.left + targetBounds.width is true
+PASS adjustedPoint.y >= targetBounds.top is true
+PASS adjustedPoint.y <= targetBounds.top + targetBounds.height is true
 PASS adjustedPoint.x >= touchBounds.x is true
 PASS adjustedPoint.x <= touchBounds.x + touchBounds.width is true
 PASS adjustedPoint.y >= touchBounds.y is true
@@ -50,10 +50,10 @@ PASS adjustedPoint.y <= touchBounds.y + touchBounds.height is true
 
 Test touch area contained within the target element.
 PASS adjustedNode.id is element.id
-PASS adjustedPoint.x >= targetBounds.x is true
-PASS adjustedPoint.x <= targetBounds.x + targetBounds.width is true
-PASS adjustedPoint.y >= targetBounds.y is true
-PASS adjustedPoint.y <= targetBounds.y + targetBounds.height is true
+PASS adjustedPoint.x >= targetBounds.left is true
+PASS adjustedPoint.x <= targetBounds.left + targetBounds.width is true
+PASS adjustedPoint.y >= targetBounds.top is true
+PASS adjustedPoint.y <= targetBounds.top + targetBounds.height is true
 PASS adjustedPoint.x >= touchBounds.x is true
 PASS adjustedPoint.x <= touchBounds.x + touchBounds.width is true
 PASS adjustedPoint.y >= touchBounds.y is true

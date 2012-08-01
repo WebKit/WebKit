@@ -1,19 +1,14 @@
-Link 0
-Link 1
 Test touch adjustment when main frame is scroll offset.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS successfullyParsed is true
-
-TEST COMPLETE
-PASS adjustedNode.id is "a0"
-PASS adjustedNode.id is "a1"
+PASS adjusted node was A#a0.
+PASS adjusted node was A#a1.
 PASS adjustedPoint is non-null.
-PASS adjustedNode.id is "a0"
+PASS adjustedNode is e.a0
 PASS adjustedPoint is non-null.
-PASS adjustedNode.id is "a1"
+PASS adjustedNode is e.a1
 PASS successfullyParsed is true
 
 TEST COMPLETE

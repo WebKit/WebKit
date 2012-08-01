@@ -4,22 +4,22 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 Direct Touches
-PASS adjustedNode.id is "rotatedDiv"
-PASS adjustedNode.id is "rotatedDiv"
-PASS adjustedNode.id is "rotatedDiv"
-PASS adjustedNode.id is "rotatedDiv"
-PASS adjustedNode.id is "rotatedDiv"
-PASS adjustedNode.id is "containerDiv"
-PASS adjustedNode.id is "containerDiv"
-PASS adjustedNode.id is "containerDiv"
+PASS adjusted node was DIV#rotated.
+PASS adjusted node was DIV#rotated.
+PASS adjusted node was DIV#rotated.
+PASS adjusted node was DIV#rotated.
+PASS adjusted node was DIV#rotated.
+PASS adjusted node was DIV#container.
+PASS adjusted node was DIV#container.
+PASS adjusted node was DIV#container.
 
 Adjusted Touches
-PASS adjustedNode.id is "rotatedDiv"
-PASS adjustedNode.id is "rotatedDiv"
+PASS adjusted node was DIV#rotated.
+PASS adjusted node was DIV#rotated.
 
 Near Misses
-PASS adjustedNode.id is "containerDiv"
-PASS adjustedNode.id is "containerDiv"
+PASS adjusted node was DIV#container.
+PASS adjusted node was DIV#container.
 PASS successfullyParsed is true
 
 TEST COMPLETE

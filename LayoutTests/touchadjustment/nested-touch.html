@@ -1,120 +1,95 @@
+<!DOCTYPE html>
 <html>
 <head>
-<style>
-    .box { border: 1px solid black; border-radius: 5px 5px; margin: 1em; max-width: 40em; }
-</style>
-<script src="../fast/js/resources/js-test-pre.js"></script>
-
+    <title>Touch Adjustment : Prefer deepest event handler - bug 78801</title>
+    <script src="../fast/js/resources/js-test-pre.js"></script>
+    <script src="resources/touchadjustment.js"></script>
+    <style>
+        #sandbox { }
+        .box { border: 1px solid black; border-radius: 5px 5px; margin: 12px; max-width: 40em; }
+    </style>
 </head>
 
-<body onload="runTests()">
+<body>
 
-<div class=box id=mybox1>
-Box with a local click handler.
-</div>
+<div id=sandbox>
+    <div class=box id=mybox1>
+    Box with a local click handler.
+    </div>
 
-<div class=box id=mybox2> 
-Box without a local click handler.
+    <div class=box id=mybox2> 
+    Box without a local click handler.
+    </div>
 </div>
 
 <script>
-  function monitor(e) { alert(e.target +( e.target.id ? ( ' #' + e.target.id) : '')); };
-  function doSomething(e) {};
+    function monitor(e) { alert(e.target +( e.target.id ? ( ' #' + e.target.id) : '')); };
+    function doSomething(e) {};
 
-  var element = document.getElementById('mybox1');
-  element.addEventListener('click', doSomething, false);
-  element = document.body;
-  element.addEventListener('click', monitor, false);
+    var element = document.getElementById('mybox1');
+    element.addEventListener('click', doSomething, false);
+    element = document.body;
+    element.addEventListener('click', monitor, false);
 </script>
-
 
 <p id='description'></p>
 <div id='console'></div>
 
 <script>
-    var element;
-    var adjustedNode;
-    function findAbsolutePosition(node) {
-        var pos = new Object();
-        pos.left = 0; pos.top = 0;
-        do {
-            pos.left += node.offsetLeft;
-            pos.top += node.offsetTop;
-        } while (node = node.offsetParent);
-        return pos;
-    }
+    var e = {};
+    ['sandbox', 'mybox1', 'mybox2'].forEach(function(a) {
+        e[a] = document.getElementById(a);
+    });
 
-    function testDirectTouch(element)
+    function touchPointDoubleTouch(element1, element2, offset)
     {
-        var pos = findAbsolutePosition(element);
-        var x = pos.left + element.clientWidth / 2 - 1;
-        var y = pos.top + element.clientHeight / 2 - 1;
-        var width = 3;
-        var height = 3;
-        var adjustedNode = internals.touchNodeAdjustedToBestClickableNode(x, y, width, height, document);
-        if (adjustedNode.nodeType == 3) // TEXT node
-            adjustedNode = adjustedNode.parentNode;
-        return adjustedNode;
-    }
-
-    function testDoubleTouch(element1, element2, offset)
-    {
-        var pos1 = findAbsolutePosition(element1);
-        var pos2 = findAbsolutePosition(element2);
+        var bounds1 = findAbsoluteBounds(element1);
+        var bounds2 = findAbsoluteBounds(element2);
+        var bounds = new Object();
         // We assume the elements have the same x coord and width.
-        var x = pos1.left + element1.clientWidth/2 - 1;
-        var y1 = pos1.top + element1.clientHeight/2 + 1;
-        var y2 = pos2.top + element2.clientHeight/2 - 1;
-        var width = y2 - y1;
-        var height = y2 - y1;
-        var adjustedNode = internals.touchNodeAdjustedToBestClickableNode(x, y1, width, height, document);
-        if (adjustedNode.nodeType == 3) // TEXT node
-            adjustedNode = adjustedNode.parentNode;
-        return adjustedNode;
+        bounds.left = bounds1.left + bounds1.width/2 - 1;
+        var y1 = bounds1.top + bounds1.height/2 + offset;
+        var y2 = bounds2.top + bounds2.height/2 - 1;
+        bounds.top = y1;
+        bounds.width = y2 - y1;
+        bounds.height = y2 - y1;
+        return bounds;
     }
 
     function testDirectTouches()
     {
         debug('Testing small direct hits.');
 
-        element = document.getElementById('mybox1');
-        adjustedNode = testDirectTouch(element);
-        shouldBe('adjustedNode.id', 'element.id');
+        var touchpoint = offsetTouchPoint(findAbsoluteBounds(e.mybox1), 'center', 0, 2);
+        testTouchPoint(touchpoint, e.mybox1);
 
-        element = document.getElementById('mybox2');
-        adjustedNode = testDirectTouch(element);
-        shouldBe('adjustedNode.id', 'element.id');
+        touchpoint = offsetTouchPoint(findAbsoluteBounds(e.mybox2), 'center', 0, 2);
+        testTouchPoint(touchpoint, e.mybox2);
     }
 
     function testPreferedTouch()
     {
         debug('Testing prefered hits.');
 
-        element1 = document.getElementById('mybox1');
-        element2 = document.getElementById('mybox2');
-        adjustedNode = testDoubleTouch(element1, element2, 0);
-        shouldBe('adjustedNode.id', 'element1.id');
+        testTouchPoint(touchPointDoubleTouch(e.mybox1, e.mybox2, 0), e.mybox1);
 
         // First test was centered, now move the test closer to the wrong node, and ensure we still get the prefered node.
-        adjustedNode = testDoubleTouch(element1, element2, 5);
-        shouldBe('adjustedNode.id', 'element1.id');
+        testTouchPoint(touchPointDoubleTouch(e.mybox1, e.mybox2, 5), e.mybox1);
 
-        adjustedNode = testDoubleTouch(element1, element2, 10);
-        shouldBe('adjustedNode.id', 'element1.id');
+        testTouchPoint(touchPointDoubleTouch(e.mybox1, e.mybox2, 10), e.mybox1);
     }
 
     function runTests()
     {
         if (window.testRunner && window.internals && internals.touchNodeAdjustedToBestClickableNode) {
             description('Test the case where a clickable target is nested inside a document that is monitoring clicks. The target with the local event-handler should be chosen if multiple targets are touched.');
-            testRunner.dumpAsText();
-            testRunner.waitUntilDone();
             testDirectTouches();
             testPreferedTouch();
-            isSuccessfullyParsed();
-            testRunner.notifyDone();
+            e['sandbox'].style.display = 'none';
         }
     }
+    runTests();
 </script>
+<script src="../fast/js/resources/js-test-post.js"></script>
 </body>
 </html>

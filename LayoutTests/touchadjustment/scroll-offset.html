@@ -1,6 +1,9 @@
+<!DOCTYPE html>
 <html>
 <head>
+    <title>Touch Adjustment : Adjust correctly for scroll offset - bug 86205</title>
     <script src="../fast/js/resources/js-test-pre.js"></script>
+    <script src="resources/touchadjustment.js"></script>
     <style>
         #scrolloffsetcontainer {
             position: absolute;
@@ -14,7 +17,7 @@
         #div1 { margin-left: 10px; height: 100px; box-sizing: border-box; }
     </style>
 </head>
-<body onload="runTests()">
+<body>
 
 <div id=scrolloffsetcontainer>
     <div id=div0>
@@ -31,17 +34,12 @@
 <script>
     var adjustedNode;
     var adjustedPoint;
-    function nodeAtTouch(x, y, radius)
-    {
-        var x = x - radius;
-        var y = y - radius;
-        var width = radius * 2;
-        var height = radius * 2;
-        var adjustedNode = internals.touchNodeAdjustedToBestClickableNode(x, y, width, height, document);
-        if (adjustedNode && adjustedNode.nodeType == 3) // TEXT node
-            adjustedNode = adjustedNode.parentNode;
-        return adjustedNode;
-    }
+    // Set up shortcut access to elements
+    var e = {};
+    ['scrolloffsetcontainer', 'div0', 'div1', 'a0', 'a1'].forEach(function(a) {
+        e[a] = document.getElementById(a);
+    });
+
     function adjustedPointAtTouch(x, y, radius)
     {
         var x = x - radius;
@@ -54,23 +52,20 @@
 
     function testDirectTouches()
     {
-        adjustedNode = nodeAtTouch(40, 130, 50);
-        shouldBeEqualToString('adjustedNode.id', 'a0');
-
-        adjustedNode = nodeAtTouch(30, 230, 50);
-        shouldBeEqualToString('adjustedNode.id', 'a1');
+        testTouchPoint(touchPoint(40, 130, 50), e.a0);
+        testTouchPoint(touchPoint(30, 230, 50), e.a1);
     }
     function testAdjustedTouches()
     {
         adjustedPoint = adjustedPointAtTouch(10, 120, 80);
-        shouldBeNonNull('adjustedPoint', null);
+        shouldBeNonNull('adjustedPoint');
         adjustedNode = document.elementFromPoint(adjustedPoint.x, adjustedPoint.y);
-        shouldBeEqualToString('adjustedNode.id', 'a0');
+        shouldBe('adjustedNode', 'e.a0');
 
         adjustedPoint = adjustedPointAtTouch(5, 220, 80);
-        shouldBeNonNull('adjustedPoint', null);
+        shouldBeNonNull('adjustedPoint');
         adjustedNode = document.elementFromPoint(adjustedPoint.x, adjustedPoint.y);
-        shouldBeEqualToString('adjustedNode.id', 'a1');
+        shouldBe('adjustedNode', 'e.a1');
     }
 
     function runTests()
@@ -78,14 +73,12 @@
         if (window.testRunner && window.internals && internals.touchNodeAdjustedToBestClickableNode) {
             description('Test touch adjustment when main frame is scroll offset.');
             window.scrollBy(0,400);
-            testRunner.dumpAsText();
-            testRunner.waitUntilDone();
             testDirectTouches();
             testAdjustedTouches();
-            isSuccessfullyParsed();
-            testRunner.notifyDone();
+            e.scrolloffsetcontainer.style.display = 'none';
         }
     }
+    runTests();
 </script>
 
 <script src="../fast/js/resources/js-test-post.js"></script>

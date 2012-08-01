@@ -1,18 +1,28 @@
+<!DOCTYPE html>
 <html>
 <head>
-<script src="../fast/js/resources/js-test-pre.js"></script>
-
+    <title>Touch Adjustment : HTML Label and form fields - bug 78801</title>
+    <script src="../fast/js/resources/js-test-pre.js"></script>
+    <script src="resources/touchadjustment.js"></script>
+    <style>
+        #sandbox {
+            position: absolute;
+            left: 0px;
+            top: 0px;
+        }
+    </style>
 </head>
 
-<body id="mybody" onload="runTests()">
+<body>
 
-<a href="#myform" id="mylink">Do not click here</a><br>
-<form id="myform">
-<label for="myinput" id="mylabel">Click here,</label>
-<span id="myspan">but not here.</span>
-<input type="text" id="myinput" value="To focus this."></input>
-</form>
-<br><br><br>
+<div id=sandbox>
+    <a href="#myform" id="mylink">Do not click here</a><br>
+    <form id="myform">
+    <label for="myinput" id="mylabel">Click here,</label>
+    <span id="myspan">but not here.</span>
+    <input type="text" id="myinput" value="To focus this."></input>
+    </form>
+</div>
 
 <p id='description'></p>
 <div id='console'></div>
@@ -20,89 +30,54 @@
 <script>
     var element;
     var adjustedNode;
-    function findAbsolutePosition(node) {
-        var pos = new Object();
-        pos.left = 0; pos.top = 0;
-        do {
-            pos.left += node.offsetLeft;
-            pos.top += node.offsetTop;
-        } while (node = node.offsetParent);
-        return pos;
-    }
+    // Set up shortcut access to elements
+    var e = {};
+    ['sandbox', 'mylink', 'myform', 'myinput', 'mylabel', 'myspan'].forEach(function(a) {
+        e[a] = document.getElementById(a);
+    });
 
     function testDirectTouch(element)
     {
-        var pos = findAbsolutePosition(element);
-        var x = pos.left + element.clientWidth / 2 - 20;
-        var y = pos.top + element.clientHeight / 2 - 30;
-        var width = 40;
-        var height = 60;
-        var adjustedNode = internals.touchNodeAdjustedToBestClickableNode(x, y, width, height, document);
-        while (adjustedNode.nodeType != 1) // Not an element.
-            adjustedNode = adjustedNode.parentNode;
-        return adjustedNode;
+        var touchpoint = offsetTouchPoint(findAbsoluteBounds(element), 'center', 0, 20, 30);
+        testTouchPoint(touchpoint, element);
     }
 
     function testIndirectTouch(element)
     {
         // Touch just right of the element.
-        var pos = findAbsolutePosition(element);
-        var x = pos.left + element.clientWidth + 10 - 30;
-        var y = pos.top + element.clientHeight / 2 - 20;
-        var width = 60;
-        var height = 40;
-        var adjustedNode = internals.touchNodeAdjustedToBestClickableNode(x, y, width, height, document);
-        while (adjustedNode.nodeType != 1 ) // Not an element.
-            adjustedNode = adjustedNode.parentNode;
-        return adjustedNode;
+        var touchpoint = offsetTouchPoint(findAbsoluteBounds(element), 'right', 10, 30, 20);
+        testTouchPoint(touchpoint, element);
     }
 
     function testDirectTouches()
     {
         debug('Testing small direct hits.');
 
-        element = document.getElementById('mylink');
-        adjustedNode = testDirectTouch(element);
-        shouldBeEqualToString('adjustedNode.id', 'mylink');
-
-        element = document.getElementById('mylabel');
-        adjustedNode = testDirectTouch(element);
-        shouldBeEqualToString('adjustedNode.id', 'mylabel');
-
-        element = document.getElementById('myinput');
-        adjustedNode = testDirectTouch(element);
-        shouldBeEqualToString('adjustedNode.id', 'myinput');
+        testDirectTouch(e.mylink);
+        testDirectTouch(e.mylabel);
+        testDirectTouch(e.myinput);
     }
 
     function testIndirectTouches()
     {
         debug('Testing indirect hits.');
 
-        element = document.getElementById('mylink');
-        adjustedNode = testIndirectTouch(element);
-        shouldBeEqualToString('adjustedNode.id', 'mylink');
-
-        element = document.getElementById('mylabel');
-        adjustedNode = testIndirectTouch(element);
-        shouldBeEqualToString('adjustedNode.id', 'mylabel');
-
-        element = document.getElementById('myinput');
-        adjustedNode = testIndirectTouch(element);
-        shouldBeEqualToString('adjustedNode.id', 'myinput');
+        testIndirectTouch(e.mylink);
+        testIndirectTouch(e.mylabel);
+        testIndirectTouch(e.myinput);
     }
 
     function runTests()
     {
         if (window.testRunner && window.internals && internals.touchNodeAdjustedToBestClickableNode) {
             description('Tests if labels are treated as clickable if the input they control is.');
-            testRunner.dumpAsText();
-            testRunner.waitUntilDone();
             testDirectTouches();
             testIndirectTouches();
-            isSuccessfullyParsed();
-            testRunner.notifyDone();
+            e.sandbox.style.display = 'none';
         }
     }
+    runTests();
 </script>
+<script src="../fast/js/resources/js-test-post.js"></script>
 </body>
 </html>

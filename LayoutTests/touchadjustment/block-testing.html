@@ -1,57 +1,48 @@
+<!DOCTYPE html>
 <html>
 <head>
+    <title>Touch Adjustment: bug 82044</title>
     <script src="../fast/js/resources/js-test-pre.js"></script>
+    <script src="resources/touchadjustment.js"></script>
     <style>
+        #sandbox { position: absolute; left: 0px; top: 0px; width: 400px; height: 200px; }
         #div1 { position: absolute; left: 50px; top: 50px; width: 200px; height: 50px;}
         #div2 { position: absolute; left: 50px; top: 100px; width: 200px; height: 50px;}
     </style>
 </head>
-<body onload="runTests()">
+<body>
+    <div id=sandbox>
+        <div id=div1 onclick=onClick>
+        Some text.
+        </div>
 
-<div id=div1 onclick=doSomething>
-Some text.
-</div>
+        <div id=div2>
+        Some text. <a id=a1 href="#1">A link</a>
+        </div>
+    </div>
 
-<div id=div2>
-Some text. <a id=a1 href="#1">A link</a>
-</div>
+    <p id='description'></p>
+    <div id='console'></div>
 
-<p id='description'></p>
-<div id='console'></div>
-
-<script>
-    function doSomething() {
-        // Do something!
-    }
-
-    function testRoundTouch(x, y, radius)
-    {
-        var x = x - radius;
-        var y = y - radius;
-        var width = radius * 2;
-        var height = radius * 2;
-        var adjustedNode = internals.touchNodeAdjustedToBestClickableNode(x, y, width, height, document);
-        if (adjustedNode.nodeType == 3) // TEXT node
-            adjustedNode = adjustedNode.parentNode;
-        return adjustedNode;
-    }
-    function testDirectTouches()
-    {
-        adjustedNode = testRoundTouch(200, 90, 200);
-        shouldBeEqualToString('adjustedNode.id', 'div1');
-
-    }
-    function runTests()
-    {
-        if (window.testRunner && window.internals && internals.touchNodeAdjustedToBestClickableNode) {
-            description('Test touch-adjustment on a block where we also touch the inner text and outside link.');
-            testRunner.dumpAsText();
-            testRunner.waitUntilDone();
-            testDirectTouches();
-            isSuccessfullyParsed();
-            testRunner.notifyDone();
+    <script>
+        function onClick() {
         }
-    }
-</script>
+
+        function testDirectTouches()
+        {
+            testTouchPoint(touchPoint(200, 90, 200), document.getElementById('div1'));
+
+        }
+        function runTests()
+        {
+            if (window.testRunner && window.internals && internals.touchNodeAdjustedToBestClickableNode) {
+                description('Test touch-adjustment on a block where we also touch the inner text and outside link.');
+                testDirectTouches();
+                document.getElementById('sandbox').style.display = 'none';
+            }
+        }
+        runTests();
+    </script>
+    <script src="../fast/js/resources/js-test-post.js"></script>
 </body>
 </html>
