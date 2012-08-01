@@ -79,17 +79,15 @@ class FinderTest(unittest.TestCase):
         self.finder.clean_trees()
         self.assertFalse(self.fs.exists('/foo2/bar2/missing.pyc'))
 
-    def check_names(self, names, expected_names, skip_integrationtests=False, find_all=False):
-        self.assertEquals(self.finder.find_names(names, skip_integrationtests, find_all),
-                          expected_names)
+    def check_names(self, names, expected_names, find_all=True):
+        self.assertEquals(self.finder.find_names(names, find_all), expected_names)
 
     def test_default_names(self):
-        self.check_names([], ['bar.baz_unittest', 'bar2.baz2_integrationtest'])
-        self.check_names([], ['bar.baz_unittest'], skip_integrationtests=True, find_all=True)
-        self.check_names([], ['bar.baz_unittest'], skip_integrationtests=True, find_all=False)
+        self.check_names([], ['bar.baz_unittest', 'bar2.baz2_integrationtest'], find_all=True)
+        self.check_names([], ['bar.baz_unittest', 'bar2.baz2_integrationtest'], find_all=False)
 
         # Should return the names given it, even if they don't exist.
-        self.check_names(['foobar'], ['foobar'], skip_integrationtests=True, find_all=False)
+        self.check_names(['foobar'], ['foobar'], find_all=False)
 
     def test_paths(self):
         self.fs.chdir('/foo/bar')

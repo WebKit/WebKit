@@ -85,8 +85,6 @@ class Tester(object):
                           help='display per-test execution time (implies --verbose)')
         parser.add_option('-v', '--verbose', action='count', default=0,
                           help='verbose output (specify once for individual test results, twice for debug messages)')
-        parser.add_option('--skip-integrationtests', action='store_true', default=False,
-                          help='do not run the integration tests')
         parser.add_option('-p', '--pass-through', action='store_true', default=False,
                           help='be debugger friendly by passing captured output through to the system')
         parser.add_option('-j', '--child-processes', action='store', type='int', default=(1 if sys.platform == 'win32' else multiprocessing.cpu_count()),
@@ -103,7 +101,7 @@ class Tester(object):
 
         self.finder.clean_trees()
 
-        names = self.finder.find_names(args, self._options.skip_integrationtests, self._options.all, self._options.child_processes != 1)
+        names = self.finder.find_names(args, self._options.all)
         if not names:
             _log.error('No tests to run')
             return False
