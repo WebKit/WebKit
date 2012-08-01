@@ -1,3 +1,14 @@
+2012-07-31  MORITA Hajime  <morrita@google.com>
+
+        Internals::setAuthorShadowDOMForAnyElementEnabled should be on InternalSettings
+        https://bugs.webkit.org/show_bug.cgi?id=92823
+
+        Reviewed by Kentaro Hara.
+
+        Followed the changed on Internals API.
+
+        * fast/dom/shadow/input-with-validation.html:
+
 2012-07-31  Keishi Hattori  <keishi@webkit.org>
 
         Mark fast/forms/color/color-suggestion-picker-appearance.html as missing or image mismatch

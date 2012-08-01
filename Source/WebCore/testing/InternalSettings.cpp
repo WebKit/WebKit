@@ -77,6 +77,7 @@ InternalSettings::Backup::Backup(Page* page, Settings* settings)
     , m_originalCSSExclusionsEnabled(RuntimeEnabledFeatures::cssExclusionsEnabled())
 #if ENABLE(SHADOW_DOM)
     , m_originalShadowDOMEnabled(RuntimeEnabledFeatures::shadowDOMEnabled())
+    , m_originalAuthorShadowDOMForAnyElementEnabled(RuntimeEnabledFeatures::authorShadowDOMForAnyElementEnabled())
 #endif
     , m_originalEditingBehavior(settings->editingBehaviorType())
     , m_originalFixedPositionCreatesStackingContext(settings->fixedPositionCreatesStackingContext())
@@ -105,6 +106,7 @@ void InternalSettings::Backup::restoreTo(Page* page, Settings* settings)
     RuntimeEnabledFeatures::setCSSExclusionsEnabled(m_originalCSSExclusionsEnabled);
 #if ENABLE(SHADOW_DOM)
     RuntimeEnabledFeatures::setShadowDOMEnabled(m_originalShadowDOMEnabled);
+    RuntimeEnabledFeatures::setAuthorShadowDOMForAnyElementEnabled(m_originalAuthorShadowDOMForAnyElementEnabled);
 #endif
     settings->setEditingBehaviorType(m_originalEditingBehavior);
     settings->setFixedPositionCreatesStackingContext(m_originalFixedPositionCreatesStackingContext);
@@ -270,6 +272,15 @@ void InternalSettings::setShadowDOMEnabled(bool enabled, ExceptionCode& ec)
     // have broader test coverage. But it cannot be setShadowDOMEnabled(true).
     if (enabled)
         ec = INVALID_ACCESS_ERR;
+#endif
+}
+
+void InternalSettings::setAuthorShadowDOMForAnyElementEnabled(bool isEnabled)
+{
+#if ENABLE(SHADOW_DOM)
+    RuntimeEnabledFeatures::setAuthorShadowDOMForAnyElementEnabled(isEnabled);
+#else
+    UNUSED_PARAM(isEnabled);
 #endif
 }
 

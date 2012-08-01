@@ -9,7 +9,7 @@
 
 <script>
 if (window.internals)
-    internals.setAuthorShadowDOMForAnyElementEnabled(true);
+    internals.settings.setAuthorShadowDOMForAnyElementEnabled(true);
 
 var input = document.getElementById('password');
 var shadowRoot = new WebKitShadowRoot(input);
@@ -19,8 +19,6 @@ document.getElementById('submit').click();
 if (window.testRunner) {
     testRunner.waitUntilDone();
     setTimeout(function() {
-        if (window.internals)
-            internals.setAuthorShadowDOMForAnyElementEnabled(false);  
         testRunner.notifyDone();
     }, 10);
 }

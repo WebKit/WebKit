@@ -59,6 +59,7 @@ public:
         bool m_originalCSSExclusionsEnabled;
 #if ENABLE(SHADOW_DOM)
         bool m_originalShadowDOMEnabled;
+        bool m_originalAuthorShadowDOMForAnyElementEnabled;
 #endif
         EditingBehaviorType m_originalEditingBehavior;
         bool m_originalFixedPositionCreatesStackingContext;
@@ -104,6 +105,7 @@ public:
     void setDeviceSupportsTouch(bool enabled, ExceptionCode&);
     void setDeviceSupportsMouse(bool enabled, ExceptionCode&);
     void setShadowDOMEnabled(bool enabled, ExceptionCode&);
+    void setAuthorShadowDOMForAnyElementEnabled(bool);
     void setStandardFontFamily(const String& family, const String& script, ExceptionCode&);
     void setSerifFontFamily(const String& family, const String& script, ExceptionCode&);
     void setSansSerifFontFamily(const String& family, const String& script, ExceptionCode&);

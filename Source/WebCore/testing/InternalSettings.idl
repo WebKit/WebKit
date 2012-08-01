@@ -44,6 +44,7 @@ module window {
         void setDeviceSupportsTouch(in boolean enabled) raises(DOMException);
         void setDeviceSupportsMouse(in boolean enabled) raises(DOMException);
         void setShadowDOMEnabled(in boolean enabled) raises(DOMException);
+        void setAuthorShadowDOMForAnyElementEnabled(in boolean isEnabled);
         void setStandardFontFamily(in DOMString family, in DOMString script) raises(DOMException);
         void setSerifFontFamily(in DOMString family, in DOMString script) raises(DOMException);
         void setSansSerifFontFamily(in DOMString family, in DOMString script) raises(DOMException);

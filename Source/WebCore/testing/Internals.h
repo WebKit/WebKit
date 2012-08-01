@@ -82,8 +82,6 @@ public:
     String shadowPseudoId(Element*, ExceptionCode&);
     void setShadowPseudoId(Element*, const String&, ExceptionCode&);
 
-    void setAuthorShadowDOMForAnyElementEnabled(bool isEnabled);
-
     PassRefPtr<Element> createContentElement(Document*, ExceptionCode&);
     Element* getElementByIdInShadowRoot(Node* shadowRoot, const String& id, ExceptionCode&);
     bool isValidContentSelect(Element* insertionPoint, ExceptionCode&);
