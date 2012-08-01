@@ -30,7 +30,6 @@
  */
 
 #include "config.h"
-#include "DumpRenderTree.h"
 
 #include "DumpRenderTreeQt.h"
 #include "DumpRenderTreeSupportQt.h"
@@ -75,8 +74,6 @@
 #endif
 
 #include <qdebug.h>
-
-#include <iostream>
 
 namespace WebCore {
 
@@ -693,27 +690,44 @@ void DumpRenderTree::loadNextTestInStandAloneMode()
 
 void DumpRenderTree::processLine(const QString &input)
 {
-    TestCommand command = parseInputLine(std::string(input.toLatin1().constData()));
-    QString pathOrURL = QLatin1String(command.pathOrURL.c_str());
-    m_dumpPixelsForCurrentTest = command.shouldDumpPixels;
-    m_expectedHash = QLatin1String(command.expectedPixelHash.c_str());
+    QString line = input;
 
-    if (pathOrURL.startsWith(QLatin1String("http:"))
-            || pathOrURL.startsWith(QLatin1String("https:"))
-            || pathOrURL.startsWith(QLatin1String("file:"))
-            || pathOrURL == QLatin1String("about:blank")) {
-        open(QUrl(pathOrURL));
+    m_dumpPixelsForCurrentTest = false;
+    m_expectedHash = QString();
+    // single quote marks the pixel dump hash
+    int indexOfFirstSeparator = line.indexOf('\'');
+    int indexOfSecondSeparator = line.indexOf('\'', indexOfFirstSeparator + 1);
+    if (indexOfFirstSeparator > -1) {
+        int indexOfPixelHash = indexOfFirstSeparator + 1;
+
+        // NRWT passes --pixel-test if we should dump pixels for the test.
+        const QString expectedArg(QLatin1String("--pixel-test"));
+        QString argTest = line.mid(indexOfFirstSeparator + 1, expectedArg.length());
+        if (argTest == expectedArg) {
+            m_dumpPixelsForCurrentTest = true;
+            indexOfPixelHash = indexOfSecondSeparator == -1 ? -1 : indexOfSecondSeparator + 1;
+        }
+        if (indexOfPixelHash != -1 && indexOfPixelHash < line.size())
+            m_expectedHash = line.mid(indexOfPixelHash);
+        line.remove(indexOfFirstSeparator, line.length());
+    }
+
+    if (line.startsWith(QLatin1String("http:"))
+            || line.startsWith(QLatin1String("https:"))
+            || line.startsWith(QLatin1String("file:"))
+            || line == QLatin1String("about:blank")) {
+        open(QUrl(line));
     } else {
-        QFileInfo fi(pathOrURL);
+        QFileInfo fi(line);
 
         if (!fi.exists()) {
             QDir currentDir = QDir::currentPath();
 
             // Try to be smart about where the test is located
             if (currentDir.dirName() == QLatin1String("LayoutTests"))
-                fi = QFileInfo(currentDir, pathOrURL.replace(QRegExp(".*?LayoutTests/(.*)"), "\\1"));
-            else if (!pathOrURL.contains(QLatin1String("LayoutTests")))
-                fi = QFileInfo(currentDir, pathOrURL.prepend(QLatin1String("LayoutTests/")));
+                fi = QFileInfo(currentDir, line.replace(QRegExp(".*?LayoutTests/(.*)"), "\\1"));
+            else if (!line.contains(QLatin1String("LayoutTests")))
+                fi = QFileInfo(currentDir, line.prepend(QLatin1String("LayoutTests/")));
 
             if (!fi.exists()) {
                 emit ready();

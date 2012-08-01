@@ -29,7 +29,6 @@
  */
 
 #include "config.h"
-#include "DumpRenderTree.h"
 
 #include "MockWebKitPlatformSupport.h"
 #include "TestShell.h"
@@ -45,6 +44,7 @@ using namespace std;
 static const char optionComplexText[] = "--complex-text";
 static const char optionDumpAllPixels[] = "--dump-all-pixels";
 static const char optionNotree[] = "--notree";
+static const char optionPixelTests[] = "--pixel-tests";
 static const char optionThreaded[] = "--threaded";
 static const char optionDebugRenderTree[] = "--debug-render-tree";
 static const char optionDebugLayerTree[] = "--debug-layer-tree";
@@ -85,12 +85,17 @@ private:
     OwnPtr<MockWebKitPlatformSupport> m_mockPlatform;
 };
 
-static void runTest(TestShell& shell, TestParams& params, const string& inputLine)
+static void runTest(TestShell& shell, TestParams& params, const string& testName)
 {
     int oldTimeoutMsec = shell.layoutTestTimeout();
-    TestCommand command = parseInputLine(inputLine);
-    params.testUrl = webkit_support::CreateURLForPathOrURL(command.pathOrURL);
-    params.pixelHash = command.shouldDumpPixels;
+    params.pixelHash = "";
+    string pathOrURL = testName;
+    string::size_type separatorPosition = pathOrURL.find("'");
+    if (separatorPosition != string::npos) {
+        params.pixelHash = pathOrURL.substr(separatorPosition + 1);
+        pathOrURL.erase(separatorPosition);
+    }
+    params.testUrl = webkit_support::CreateURLForPathOrURL(pathOrURL);
     webkit_support::SetCurrentDirectoryForFileURL(params.testUrl);
     v8::V8::SetFlagsFromString(shell.javaScriptFlags().c_str(), shell.javaScriptFlags().length());
     if (shell.stressOpt() || shell.stressDeopt()) {
@@ -103,11 +108,11 @@ static void runTest(TestShell& shell, TestParams& params, const string& inputLin
           bool isLastLoad = (i == (v8::Testing::GetStressRuns() - 1));
           shell.setDumpWhenFinished(isLastLoad);
           shell.resetTestController();
-          shell.runFileTest(params, command.shouldDumpPixels);
+          shell.runFileTest(params);
       }
     } else {
       shell.resetTestController();
-      shell.runFileTest(params, command.shouldDumpPixels);
+      shell.runFileTest(params);
     }
     shell.setLayoutTestTimeout(oldTimeoutMsec);
 }
@@ -141,6 +146,8 @@ int main(int argc, char* argv[])
             serverMode = true;
         else if (argument == optionNotree)
             params.dumpTree = false;
+        else if (argument == optionPixelTests)
+            params.dumpPixels = true;
         else if (argument == optionDebugRenderTree)
             params.debugRenderTree = true;
         else if (argument == optionDebugLayerTree)

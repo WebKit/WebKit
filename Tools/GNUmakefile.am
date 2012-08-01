@@ -106,7 +106,6 @@ endif
 
 Programs_DumpRenderTree_SOURCES = \
 	Tools/DumpRenderTree/DumpRenderTree.h \
-	Tools/DumpRenderTree/DumpRenderTreeCommon.cpp \
 	Tools/DumpRenderTree/DumpRenderTreePrefix.h \
 	Tools/DumpRenderTree/AccessibilityController.cpp \
 	Tools/DumpRenderTree/AccessibilityController.h \

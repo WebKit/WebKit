@@ -25,7 +25,6 @@ contains(DEFINES, HAVE_FONTCONFIG=1): PKGCONFIG += fontconfig
 
 HEADERS += \
     $$PWD/../WorkQueue.h \
-    $$PWD/../DumpRenderTree.h \
     DumpRenderTreeQt.h \
     EventSenderQt.h \
     TextInputControllerQt.h \
@@ -37,7 +36,6 @@ HEADERS += \
 
 SOURCES += \
     $$PWD/../WorkQueue.cpp \
-    $$PWD/../DumpRenderTreeCommon.cpp \
     DumpRenderTreeQt.cpp \
     EventSenderQt.cpp \
     TextInputControllerQt.cpp \

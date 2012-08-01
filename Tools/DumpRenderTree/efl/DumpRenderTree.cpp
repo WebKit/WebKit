@@ -65,7 +65,7 @@ extern Ewk_History_Item* prevTestBFItem;
 RefPtr<LayoutTestController> gLayoutTestController;
 volatile bool done = false;
 
-static bool dumpPixelsForCurrentTest;
+static int dumpPixels = false;
 static int dumpTree = true;
 static int printSeparators = true;
 static int useX11Window = false;
@@ -193,6 +193,7 @@ static bool parseCommandLineOptions(int argc, char** argv)
 {
     static const option options[] = {
         {"notree", no_argument, &dumpTree, false},
+        {"pixel-tests", no_argument, &dumpPixels, true},
         {"tree", no_argument, &dumpTree, true},
         {"gui", no_argument, &useX11Window, true},
         {0, 0, 0, 0}
@@ -208,6 +209,32 @@ static bool parseCommandLineOptions(int argc, char** argv)
     }
 
     return true;
+}
+
+static String getFinalTestURL(const String& testURL)
+{
+    const size_t hashSeparatorPos = testURL.find("'");
+    if (hashSeparatorPos != notFound)
+        return getFinalTestURL(testURL.left(hashSeparatorPos));
+
+    // Convert the path into a full file URL if it does not look
+    // like an HTTP/S URL (doesn't start with http:// or https://).
+    if (!testURL.startsWith("http://") && !testURL.startsWith("https://")) {
+        char* cFilePath = ecore_file_realpath(testURL.utf8().data());
+        const String filePath = String::fromUTF8(cFilePath);
+        free(cFilePath);
+
+        if (ecore_file_exists(filePath.utf8().data()))
+            return String("file://") + filePath;
+    }
+
+    return testURL;
+}
+
+static String getExpectedPixelHash(const String& testURL)
+{
+    const size_t hashSeparatorPos = testURL.find("'");
+    return (hashSeparatorPos != notFound) ? testURL.substring(hashSeparatorPos + 1) : String();
 }
 
 static inline bool isGlobalHistoryTest(const String& cTestPathOrURL)
@@ -241,13 +268,13 @@ static void createLayoutTestController(const String& testURL, const String& expe
     }
 }
 
-static void runTest(const char* inputLine)
+static void runTest(const char* cTestPathOrURL)
 {
-    TestCommand command = parseInputLine(inputLine);
-    const String testURL(command.pathOrURL.c_str());
-    ASSERT(!testURL.isEmpty());
-    dumpPixelsForCurrentTest = command.shouldDumpPixels;
-    const String expectedPixelHash(command.expectedPixelHash.c_str());
+    const String testPathOrURL = String::fromUTF8(cTestPathOrURL);
+    ASSERT(!testPathOrURL.isEmpty());
+
+    const String testURL = getFinalTestURL(testPathOrURL);
+    const String expectedPixelHash = getExpectedPixelHash(testPathOrURL);
 
     browser->resetDefaultsToConsistentValues();
     createLayoutTestController(testURL, expectedPixelHash);
@@ -325,7 +352,7 @@ static bool shouldDumpFrameScrollPosition()
 
 static bool shouldDumpPixelsAndCompareWithExpected()
 {
-    return dumpPixelsForCurrentTest && gLayoutTestController->generatePixelResults() && !gLayoutTestController->dumpDOMAsWebArchive() && !gLayoutTestController->dumpSourceAsWebArchive();
+    return dumpPixels && gLayoutTestController->generatePixelResults() && !gLayoutTestController->dumpDOMAsWebArchive() && !gLayoutTestController->dumpSourceAsWebArchive();
 }
 
 static bool shouldDumpBackForwardList()
@@ -434,7 +461,7 @@ int main(int argc, char** argv)
         printSeparators = true;
         runTestingServerLoop();
     } else {
-        printSeparators = (optind < argc - 1 || (dumpPixelsForCurrentTest && dumpTree));
+        printSeparators = (optind < argc - 1 || (dumpPixels && dumpTree));
         for (int i = optind; i != argc; ++i)
             runTest(argv[i]);
     }

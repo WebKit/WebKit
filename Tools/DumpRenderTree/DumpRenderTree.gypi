@@ -54,8 +54,6 @@
             'chromium/WebViewHost.h',
         ],
         'test_runner_files': [
-            'DumpRenderTree.h',
-            'DumpRenderTreeCommon.cpp',
             'chromium/TestRunner/AccessibilityController.cpp',
             'chromium/TestRunner/AccessibilityController.h',
             'chromium/TestRunner/AccessibilityUIElement.cpp',

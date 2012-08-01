@@ -1,3 +1,80 @@
+2012-08-01  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r124313.
+        http://trac.webkit.org/changeset/124313
+        https://bugs.webkit.org/show_bug.cgi?id=92855
+
+        Compilation failed on Chromium ports (Requested by yosin on
+        #webkit).
+
+        * DumpRenderTree/DumpRenderTree.gyp/DumpRenderTree.gyp:
+        * DumpRenderTree/DumpRenderTree.gypi:
+        * DumpRenderTree/DumpRenderTree.h:
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
+        * DumpRenderTree/DumpRenderTreeCommon.cpp: Removed.
+        * DumpRenderTree/chromium/DumpRenderTree.cpp:
+        (runTest):
+        (main):
+        * DumpRenderTree/chromium/TestShell.cpp:
+        (TestShell::TestShell):
+        (TestShell::runFileTest):
+        (TestShell::dump):
+        * DumpRenderTree/chromium/TestShell.h:
+        (TestParams):
+        (TestParams::TestParams):
+        (TestShell):
+        * DumpRenderTree/efl/CMakeLists.txt:
+        * DumpRenderTree/efl/DumpRenderTree.cpp:
+        (parseCommandLineOptions):
+        (getFinalTestURL):
+        (getExpectedPixelHash):
+        (runTest):
+        (shouldDumpPixelsAndCompareWithExpected):
+        (main):
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (initializeGlobalsFromCommandLineOptions):
+        (dump):
+        (runTest):
+        (main):
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (initializeGlobalsFromCommandLineOptions):
+        (dumpRenderTree):
+        (dump):
+        (runTest):
+        * DumpRenderTree/qt/DumpRenderTree.pro:
+        * DumpRenderTree/qt/DumpRenderTreeQt.cpp:
+        (WebCore::DumpRenderTree::processLine):
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (dump):
+        (runTest):
+        (dllLauncherEntryPoint):
+        * DumpRenderTree/win/DumpRenderTree.vcproj:
+        * DumpRenderTree/wscript:
+        * DumpRenderTree/wx/DumpRenderTreeWx.cpp:
+        (dump):
+        (runTest):
+        (MyApp::OnInit):
+        * GNUmakefile.am:
+        * Scripts/old-run-webkit-tests:
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        (Port.supports_switching_pixel_tests_per_test):
+        (Port):
+        (Port._supports_switching_pixel_tests_per_test):
+        (Port.should_run_as_pixel_test):
+        * Scripts/webkitpy/layout_tests/port/driver.py:
+        (Driver.cmd_line):
+        (Driver._command_from_driver_input):
+        * Scripts/webkitpy/layout_tests/port/qt.py:
+        (QtPort._supports_switching_pixel_tests_per_test):
+        * Scripts/webkitpy/layout_tests/port/test.py:
+        (TestPort.supports_switching_pixel_tests_per_test):
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::TestController):
+        (WTR::TestController::initialize):
+        (WTR::TestController::runTest):
+        * WebKitTestRunner/TestController.h:
+        (TestController):
+
 2012-08-01  Balazs Kelemen  <kbalazs@webkit.org>
 
         All ports should support per test switching of pixel testing

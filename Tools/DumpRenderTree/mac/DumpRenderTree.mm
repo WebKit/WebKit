@@ -140,7 +140,7 @@ static HistoryDelegate *historyDelegate;
 PolicyDelegate *policyDelegate;
 StorageTrackerDelegate *storageDelegate;
 
-static bool dumpPixelsForCurrentTest;
+static int dumpPixels;
 static int threaded;
 static int dumpTree = YES;
 static int useTimeoutWatchdog = YES;
@@ -780,6 +780,7 @@ static void initializeGlobalsFromCommandLineOptions(int argc, const char *argv[]
 {
     struct option options[] = {
         {"notree", no_argument, &dumpTree, NO},
+        {"pixel-tests", no_argument, &dumpPixels, YES},
         {"tree", no_argument, &dumpTree, YES},
         {"threaded", no_argument, &threaded, YES},
         {"complex-text", no_argument, &forceComplexText, YES},
@@ -848,7 +849,7 @@ void dumpRenderTree(int argc, const char *argv[])
     initializeGlobalsFromCommandLineOptions(argc, argv);
     prepareConsistentTestingEnvironment();
     addTestPluginsToPluginSearchPath(argv[0]);
-    if (dumpPixelsForCurrentTest)
+    if (dumpPixels)
         installSignalHandlers();
 
     if (forceComplexText)
@@ -873,7 +874,7 @@ void dumpRenderTree(int argc, const char *argv[])
         printSeparators = YES;
         runTestingServerLoop();
     } else {
-        printSeparators = (optind < argc - 1 || (dumpPixelsForCurrentTest && dumpTree));
+        printSeparators = (optind < argc-1 || (dumpPixels && dumpTree));
         for (int i = optind; i != argc; ++i)
             runTest(argv[i]);
     }
@@ -1194,7 +1195,7 @@ void dump()
         }            
     }
 
-    if (dumpPixelsForCurrentTest && gLayoutTestController->generatePixelResults())
+    if (dumpPixels && gLayoutTestController->generatePixelResults())
         // FIXME: when isPrinting is set, dump the image with page separators.
         dumpWebViewAsPixelsAndCompareWithExpected(gLayoutTestController->expectedPixelHash());
 
@@ -1275,13 +1276,19 @@ static void resetWebViewToConsistentStateBeforeTesting()
     [mainFrame _clearOpener];
 }
 
-static void runTest(const string& inputLine)
+static void runTest(const string& testPathOrURL)
 {
-    ASSERT(!inputLine.empty());
-
-    TestCommand command = parseInputLine(inputLine);
-    const string& pathOrURL = command.pathOrURL;
-    dumpPixelsForCurrentTest = command.shouldDumpPixels;
+    ASSERT(!testPathOrURL.empty());
+    
+    // Look for "'" as a separator between the path or URL, and the pixel dump hash that follows.
+    string pathOrURL(testPathOrURL);
+    string expectedPixelHash;
+    
+    size_t separatorPos = pathOrURL.find("'");
+    if (separatorPos != string::npos) {
+        pathOrURL = string(testPathOrURL, 0, separatorPos);
+        expectedPixelHash = string(testPathOrURL, separatorPos + 1);
+    }
 
     NSString *pathOrURLString = [NSString stringWithUTF8String:pathOrURL.c_str()];
     if (!pathOrURLString) {
@@ -1303,7 +1310,7 @@ static void runTest(const string& inputLine)
     
     resetWebViewToConsistentStateBeforeTesting();
 
-    gLayoutTestController = LayoutTestController::create(testURL, command.expectedPixelHash);
+    gLayoutTestController = LayoutTestController::create(testURL, expectedPixelHash);
     topLoadingFrame = nil;
     ASSERT(!draggingInfo); // the previous test should have called eventSender.mouseUp to drop!
     releaseAndZero(&draggingInfo);

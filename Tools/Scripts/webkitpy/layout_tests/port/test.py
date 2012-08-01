@@ -513,6 +513,10 @@ class TestPort(Port):
             VirtualTestSuite('virtual/skipped', 'failures/expected', ['--virtual-arg2']),
         ]
 
+    def supports_switching_pixel_tests_per_test(self):
+        # Let it true so we can test the --pixel-test-directory option.
+        return True
+
 
 class TestDriver(Driver):
     """Test/Dummy implementation of the DumpRenderTree interface."""

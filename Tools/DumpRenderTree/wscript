@@ -40,7 +40,6 @@ include_paths = [
                 'wx'
                 ]
 sources = [
-            'DumpRenderTreeCommon.cpp',
             'LayoutTestController.cpp',
             'WorkQueue.cpp',
             'wx/DumpRenderTreeWx.cpp',

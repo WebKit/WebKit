@@ -89,7 +89,6 @@
 		8CCDA82A151A72D10003F937 /* SampleFont.sfont in Copy Font Files */ = {isa = PBXBuildFile; fileRef = 8CCDA81F151A56550003F937 /* SampleFont.sfont */; };
 		9340994C08540CAE007F3BC8 /* DumpRenderTreePrefix.h in Headers */ = {isa = PBXBuildFile; fileRef = 32A70AAB03705E1F00C91783 /* DumpRenderTreePrefix.h */; };
 		9340995108540CAE007F3BC8 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9335435F03D75502008635CE /* WebKit.framework */; };
-		9830F31F15C81181005AB206 /* DumpRenderTreeCommon.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9830F31E15C81181005AB206 /* DumpRenderTreeCommon.cpp */; };
 		A817090008B163EF00CCB9FB /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A84F608908B136DA00E9745F /* Cocoa.framework */; };
 		A817090408B164D300CCB9FB /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A817090308B164D300CCB9FB /* JavaScriptCore.framework */; };
 		A84F608A08B136DA00E9745F /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A84F608908B136DA00E9745F /* Cocoa.framework */; };
@@ -290,7 +289,6 @@
 		8CCDA81F151A56550003F937 /* SampleFont.sfont */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = SampleFont.sfont; path = fonts/SampleFont.sfont; sourceTree = "<group>"; };
 		9335435F03D75502008635CE /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = WebKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		9340995408540CAF007F3BC8 /* DumpRenderTree */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = DumpRenderTree; sourceTree = BUILT_PRODUCTS_DIR; };
-		9830F31E15C81181005AB206 /* DumpRenderTreeCommon.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DumpRenderTreeCommon.cpp; sourceTree = "<group>"; };
 		A803FF7409CAAD08009B2A37 /* DumpRenderTree.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; path = DumpRenderTree.h; sourceTree = "<group>"; };
 		A817090308B164D300CCB9FB /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = JavaScriptCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A84F608908B136DA00E9745F /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
@@ -423,7 +421,6 @@
 		08FB7794FE84155DC02AAC07 /* DumpRenderTree */ = {
 			isa = PBXGroup;
 			children = (
-				9830F31E15C81181005AB206 /* DumpRenderTreeCommon.cpp */,
 				32A70AAB03705E1F00C91783 /* DumpRenderTreePrefix.h */,
 				1422A2750AF6F4BD00E1A883 /* Delegates */,
 				1422A2690AF6F45200E1A883 /* Controllers */,
@@ -958,7 +955,6 @@
 				29CFBA2E12273A1000BC30C0 /* AccessibilityTextMarkerMac.mm in Sources */,
 				3A5626CB131CA02A002BE6D9 /* StorageTrackerDelegate.mm in Sources */,
 				80045AEE147718E7008290A8 /* AccessibilityNotificationHandler.mm in Sources */,
-				9830F31F15C81181005AB206 /* DumpRenderTreeCommon.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
