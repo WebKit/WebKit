@@ -1,3 +1,18 @@
+2012-08-01  Zeno Albisser  <zeno@webkit.org>
+
+        [Qt]REGRESSION(r123786): It made 3 fast/animation tests fail.
+        https://bugs.webkit.org/show_bug.cgi?id=92490
+
+        QAbstractAnimation:start() is implicitly calling updateTime
+        without going through the event loop. This resulted in executing
+        scripted animation callbacks right when registering a first callback.
+
+        Reviewed by Noam Rosenthal.
+
+        * WebCoreSupport/ChromeClientQt.cpp:
+        (WebCore::RefreshAnimation::scheduleAnimation):
+            Invoke QAbstractAnimation::start() method through the event loop.
+
 2012-07-27  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt][WK2] REGRESSION(r119127): resetting window.internals settings between tests doesn't work properly

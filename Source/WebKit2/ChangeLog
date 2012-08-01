@@ -1,3 +1,26 @@
+2012-08-01  Zeno Albisser  <zeno@webkit.org>
+
+        [Qt]REGRESSION(r123786): It made 3 fast/animation tests fail.
+        https://bugs.webkit.org/show_bug.cgi?id=92490
+
+        Make sure that scripted animations are also serviced when
+        forceRepaint is being executed. As this is what is being used for
+        running layout tests.
+        Move servicing of scripted animations and layoutIfNeeded call
+        into a separate function syncDisplayState.
+        This function can then be called from forceRepaint as well as from
+        performScheduledLayerFlush.
+
+        Reviewed by Noam Rosenthal.
+
+        * WebProcess/WebPage/LayerTreeCoordinator/LayerTreeCoordinator.cpp:
+        (WebKit::LayerTreeCoordinator::forceRepaint):
+        (WebKit::LayerTreeCoordinator::performScheduledLayerFlush):
+        (WebKit):
+        (WebKit::LayerTreeCoordinator::syncDisplayState):
+        * WebProcess/WebPage/LayerTreeCoordinator/LayerTreeCoordinator.h:
+        (LayerTreeCoordinator):
+
 2012-08-01  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix GTK+ build with recent version of GTK+.

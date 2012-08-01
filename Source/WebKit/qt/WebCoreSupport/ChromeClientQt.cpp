@@ -104,7 +104,7 @@ public:
     {
         m_animationScheduled = true;
         if (state() != QAbstractAnimation::Running)
-            start();
+            QMetaObject::invokeMethod(this, "start", Qt::QueuedConnection);
     }
 
 protected:

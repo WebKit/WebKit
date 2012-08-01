@@ -108,6 +108,7 @@ private:
     void cancelPendingLayerFlush();
     void performScheduledLayerFlush();
     void didPerformScheduledLayerFlush();
+    void syncDisplayState();
 
     OwnPtr<WebCore::GraphicsLayer> m_rootLayer;
 

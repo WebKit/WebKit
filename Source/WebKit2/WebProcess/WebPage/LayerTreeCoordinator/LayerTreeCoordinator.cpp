@@ -174,6 +174,10 @@ void LayerTreeCoordinator::scrollNonCompositedContents(const WebCore::IntRect& s
 
 void LayerTreeCoordinator::forceRepaint()
 {
+    // This is necessary for running layout tests. Since in this case we are not waiting for a UIProcess to reply nicely.
+    // Instead we are just triggering forceRepaint. But we still want to have the scripted animation callbacks being executed.
+    syncDisplayState();
+
     // We need to schedule another flush, otherwise the forced paint might cancel a later expected flush.
     // This is aligned with LayerTreeHostCA.
     scheduleLayerFlush();
@@ -356,18 +360,24 @@ void LayerTreeCoordinator::performScheduledLayerFlush()
 {
     if (m_isSuspended || m_waitingForUIProcess)
         return;
-#if ENABLE(REQUEST_ANIMATION_FRAME) && !USE(REQUEST_ANIMATION_FRAME_TIMER) && !USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
-    // Make sure that any previously registered animation callbacks are being executed before we flush the layers.
-    m_webPage->corePage()->mainFrame()->view()->serviceScriptedAnimations(convertSecondsToDOMTimeStamp(currentTime()));
-#endif
 
-    m_webPage->layoutIfNeeded();
+    syncDisplayState();
 
     if (!m_isValid)
         return;
 
     if (flushPendingLayerChanges())
         didPerformScheduledLayerFlush();
+}
+
+void LayerTreeCoordinator::syncDisplayState()
+{
+#if ENABLE(REQUEST_ANIMATION_FRAME) && !USE(REQUEST_ANIMATION_FRAME_TIMER) && !USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
+    // Make sure that any previously registered animation callbacks are being executed before we flush the layers.
+    m_webPage->corePage()->mainFrame()->view()->serviceScriptedAnimations(convertSecondsToDOMTimeStamp(currentTime()));
+#endif
+
+    m_webPage->layoutIfNeeded();
 }
 
 void LayerTreeCoordinator::didPerformScheduledLayerFlush()
