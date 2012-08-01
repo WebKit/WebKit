@@ -3500,3 +3500,7 @@ BUGCR131189 : platform/chromium/virtual/gpu/canvas/philip/tests/2d.transformatio
 BUGWK92835 MAC WIN DEBUG SLOW : svg/as-background-image/svg-as-background-5.html = PASS
 
 BUGWK82547 LION : fast/speech/input-appearance-searchandspeech.html = IMAGE PASS
+
+BUGWK92580 LINUX DEBUG : http/tests/websocket/tests/hybi/workers/close-code-and-reason.html = PASS CRASH
+
+BUGWK92582 LINUX DEBUG : media/video-currentTime-set2.html = PASS CRASH

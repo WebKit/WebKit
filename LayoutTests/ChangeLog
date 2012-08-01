@@ -1,3 +1,13 @@
+2012-08-01  Peter Kasting  <pkasting@google.com>
+
+        [Chromium] Mark a couple of flaky tests.
+        https://bugs.webkit.org/show_bug.cgi?id=92850
+        https://bugs.webkit.org/show_bug.cgi?id=92852
+
+        Unreviewed, test expectation updates.
+
+        * platform/chromium/TestExpectations:
+
 2012-08-01  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed GTK gardening, adding an image failure expectation for a
