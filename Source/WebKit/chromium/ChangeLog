@@ -1,3 +1,31 @@
+2012-08-01  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Web Inspector: test native memory instrumentation code with help of unittests
+        https://bugs.webkit.org/show_bug.cgi?id=92743
+
+        Reviewed by Yury Semikhatsky.
+
+        Test a part of existing Native Memory Instrumentation code with help of unit tests.
+        6 tests were added and two bugs were fixed.
+
+        * WebKit.gypi:
+        * tests/MemoryInstrumentationTest.cpp: Added.
+        (WebCore):
+        (MemoryInstrumentationImpl):
+        (WebCore::MemoryInstrumentationImpl::MemoryInstrumentationImpl):
+        (WebCore::MemoryInstrumentationImpl::reportedSize):
+        (WebCore::MemoryInstrumentationImpl::countObjectSize):
+        (WebCore::MemoryInstrumentationImpl::processDeferredInstrumentedPointers):
+        (NotInstrumented):
+        (Instrumented):
+        (WebCore::Instrumented::Instrumented):
+        (WebCore::Instrumented::~Instrumented):
+        (WebCore::Instrumented::reportMemoryUsage):
+        (WebCore::TEST):
+        (InstrumentedWithOwnPtr):
+        (WebCore::InstrumentedWithOwnPtr::InstrumentedWithOwnPtr):
+        (WebCore::InstrumentedWithOwnPtr::reportMemoryUsage):
+
 2012-08-01  Alexei Filippov  <alexeif@chromium.org>
 
         Web Inspector: count DOM storage cache memory for native snapshot

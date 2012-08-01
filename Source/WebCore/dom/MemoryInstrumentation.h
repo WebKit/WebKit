@@ -54,9 +54,10 @@ public:
         LastTypeEntry
     };
 
-    template <typename T> void addInstrumentedObject(const T& t)
+    template <typename T> void addRootObject(const T& t)
     {
-        OwningTraits<T>::addInstrumentedObject(this, t);
+        addInstrumentedObject(t);
+        processDeferredInstrumentedPointers();
     }
 
     template <typename Container> static size_t calculateContainerSize(const Container&, bool contentOnly = false);
@@ -68,11 +69,12 @@ protected:
         virtual void process(MemoryInstrumentation*) = 0;
     };
 
+private:
     virtual void countObjectSize(ObjectType, size_t) = 0;
     virtual void deferInstrumentedPointer(PassOwnPtr<InstrumentedPointerBase>) = 0;
     virtual bool visited(const void*) = 0;
+    virtual void processDeferredInstrumentedPointers() = 0;
 
-private:
     template <typename T> friend class MemoryClassInfo;
     template <typename T> class InstrumentedPointer : public InstrumentedPointerBase {
     public:
@@ -88,6 +90,7 @@ private:
         OwningTraits<T>::addObject(this, t, objectType);
     }
     void addString(const String&, ObjectType);
+    template <typename T> void addInstrumentedObject(const T& t) { OwningTraits<T>::addInstrumentedObject(this, t); }
     template <typename HashMapType> void addHashMap(const HashMapType&, ObjectType, bool contentOnly = false);
     template <typename HashSetType> void addHashSet(const HashSetType&, ObjectType, bool contentOnly = false);
     template <typename CollectionType> void addInstrumentedCollection(const CollectionType&, ObjectType, bool contentOnly = false);
@@ -122,6 +125,8 @@ private:
     template <typename T> void addInstrumentedObjectImpl(const RefPtr<T>* const&, OwningType);
 
     template <typename T> void addObjectImpl(const T* const&, ObjectType, OwningType);
+    template <typename T> void addObjectImpl(const OwnPtr<T>* const&, ObjectType, OwningType);
+    template <typename T> void addObjectImpl(const RefPtr<T>* const&, ObjectType, OwningType);
 };
 
 class MemoryObjectInfo {
@@ -202,15 +207,27 @@ void MemoryInstrumentation::addInstrumentedObjectImpl(const T* const& object, Ow
 }
 
 template <typename T>
-void MemoryInstrumentation::addInstrumentedObjectImpl(const OwnPtr<T>* const& object, OwningType owningType)
+void MemoryInstrumentation::addInstrumentedObjectImpl(const OwnPtr<T>* const& object, OwningType)
 {
-    addInstrumentedObjectImpl(object->get(), owningType);
+    addInstrumentedObjectImpl(object->get(), byPointer);
 }
 
 template <typename T>
-void MemoryInstrumentation::addInstrumentedObjectImpl(const RefPtr<T>* const& object, OwningType owningType)
+void MemoryInstrumentation::addInstrumentedObjectImpl(const RefPtr<T>* const& object, OwningType)
 {
-    addInstrumentedObjectImpl(object->get(), owningType);
+    addInstrumentedObjectImpl(object->get(), byPointer);
+}
+
+template <typename T>
+void MemoryInstrumentation::addObjectImpl(const OwnPtr<T>* const& object, ObjectType objectType, OwningType)
+{
+    addObjectImpl(object->get(), objectType, byPointer);
+}
+
+template <typename T>
+void MemoryInstrumentation::addObjectImpl(const RefPtr<T>* const& object, ObjectType objectType, OwningType)
+{
+    addObjectImpl(object->get(), objectType, byPointer);
 }
 
 // Link time guard for string members. They produce link error is a string is reported via addObject.

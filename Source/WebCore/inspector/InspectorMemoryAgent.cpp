@@ -443,7 +443,6 @@ static void addMemoryBlockFor(TypeBuilder::Array<InspectorMemoryBlock>* array, s
 
 namespace {
 
-
 class DOMTreesIterator : public NodeWrapperVisitor {
 public:
     DOMTreesIterator(Page* page, VisitedObjects& visitedObjects)
@@ -457,20 +456,17 @@ public:
         if (node->document() && node->document()->frame() && m_page != node->document()->frame()->page())
             return;
 
-        m_domMemoryUsage.addInstrumentedObject(node);
-        m_domMemoryUsage.processDeferredInstrumentedPointers();
+        m_domMemoryUsage.addRootObject(node);
     }
 
     void visitFrame(Frame* frame)
     {
-        m_domMemoryUsage.addInstrumentedObject(frame);
-        m_domMemoryUsage.processDeferredInstrumentedPointers();
+        m_domMemoryUsage.addRootObject(frame);
     }
 
     void visitBindings()
     {
         ScriptProfiler::collectBindingMemoryInfo(&m_domMemoryUsage);
-        m_domMemoryUsage.processDeferredInstrumentedPointers();
     }
 
     PassRefPtr<InspectorMemoryBlock> dumpStatistics(InspectorDataCounter* inspectorData)
@@ -479,14 +475,14 @@ public:
 
         size_t totalSize = 0;
         for (int i = MemoryInstrumentation::Other; i < MemoryInstrumentation::LastTypeEntry; ++i)
-            totalSize += m_domMemoryUsage.totalTypeSize(static_cast<MemoryInstrumentation::ObjectType>(i));
+            totalSize += m_domMemoryUsage.totalSize(static_cast<MemoryInstrumentation::ObjectType>(i));
 
         RefPtr<TypeBuilder::Array<InspectorMemoryBlock> > domChildren = TypeBuilder::Array<InspectorMemoryBlock>::create();
-        addMemoryBlockFor(domChildren.get(), m_domMemoryUsage.totalTypeSize(MemoryInstrumentation::Other), MemoryBlockName::domTreeOther);
-        addMemoryBlockFor(domChildren.get(), m_domMemoryUsage.totalTypeSize(MemoryInstrumentation::DOM), MemoryBlockName::domTreeDOM);
-        addMemoryBlockFor(domChildren.get(), m_domMemoryUsage.totalTypeSize(MemoryInstrumentation::CSS), MemoryBlockName::domTreeCSS);
-        addMemoryBlockFor(domChildren.get(), m_domMemoryUsage.totalTypeSize(MemoryInstrumentation::Binding), MemoryBlockName::domTreeBinding);
-        addMemoryBlockFor(domChildren.get(), m_domMemoryUsage.totalTypeSize(MemoryInstrumentation::Loader), MemoryBlockName::domTreeLoader);
+        addMemoryBlockFor(domChildren.get(), m_domMemoryUsage.totalSize(MemoryInstrumentation::Other), MemoryBlockName::domTreeOther);
+        addMemoryBlockFor(domChildren.get(), m_domMemoryUsage.totalSize(MemoryInstrumentation::DOM), MemoryBlockName::domTreeDOM);
+        addMemoryBlockFor(domChildren.get(), m_domMemoryUsage.totalSize(MemoryInstrumentation::CSS), MemoryBlockName::domTreeCSS);
+        addMemoryBlockFor(domChildren.get(), m_domMemoryUsage.totalSize(MemoryInstrumentation::Binding), MemoryBlockName::domTreeBinding);
+        addMemoryBlockFor(domChildren.get(), m_domMemoryUsage.totalSize(MemoryInstrumentation::Loader), MemoryBlockName::domTreeLoader);
 
         RefPtr<InspectorMemoryBlock> dom = InspectorMemoryBlock::create().setName(MemoryBlockName::dom);
         dom->setSize(totalSize);
