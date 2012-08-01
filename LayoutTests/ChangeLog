@@ -1,5 +1,16 @@
 2012-07-31  Ami Fischman  <fischman@chromium.org>
 
+        Layout tests media/event-attributes.html and media/video-playbackrate.html failing
+        https://bugs.webkit.org/show_bug.cgi?id=73692
+
+        Unreviewed gardening.
+
+        Should be mostly/all cured.  See http://crbug.com/138583 for ongoing details.
+
+        * platform/chromium/TestExpectations:
+
+2012-07-31  Ami Fischman  <fischman@chromium.org>
+
         media/video-currentTime-delay.html shouldn't be a performance test, so remove artificial deadline.
         https://bugs.webkit.org/show_bug.cgi?id=92816
 
