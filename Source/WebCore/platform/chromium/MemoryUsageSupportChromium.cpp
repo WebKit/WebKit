@@ -31,6 +31,7 @@
 #include "config.h"
 #include "MemoryUsageSupport.h"
 
+#include <SkGraphics.h>
 #include <public/Platform.h>
 
 namespace WebCore {
@@ -63,6 +64,12 @@ int MemoryUsageSupport::highUsageDeltaMB()
 bool MemoryUsageSupport::processMemorySizesInBytes(size_t* privateBytes, size_t* sharedBytes)
 {
     return WebKit::Platform::current()->processMemorySizesInBytes(privateBytes, sharedBytes);
+}
+
+void MemoryUsageSupport::memoryUsageByComponents(Vector<ComponentInfo>& components)
+{
+    size_t size = SkGraphics::GetFontCacheUsed();
+    components.append(ComponentInfo("GlyphCache", size));
 }
 
 } // namespace WebCore

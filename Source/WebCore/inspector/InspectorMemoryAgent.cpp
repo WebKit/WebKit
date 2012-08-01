@@ -516,6 +516,17 @@ static PassRefPtr<InspectorMemoryBlock> domTreeInfo(Page* page, VisitedObjects& 
     return domTreesIterator.dumpStatistics(inspectorData);
 }
 
+static void addPlatformComponentsInfo(PassRefPtr<TypeBuilder::Array<InspectorMemoryBlock> > children)
+{
+    Vector<MemoryUsageSupport::ComponentInfo> components;
+    MemoryUsageSupport::memoryUsageByComponents(components);
+    for (Vector<MemoryUsageSupport::ComponentInfo>::iterator it = components.begin(); it != components.end(); ++it) {
+        RefPtr<InspectorMemoryBlock> block = InspectorMemoryBlock::create().setName(it->m_name);
+        block->setSize(it->m_sizeInBytes);
+        children->addItem(block);
+    }
+}
+
 static PassRefPtr<InspectorMemoryBlock> memoryCacheInfo()
 {
     MemoryCache::Statistics stats = memoryCache()->getStatistics();
@@ -573,6 +584,7 @@ void InspectorMemoryAgent::getProcessMemoryDistribution(ErrorString*, RefPtr<Ins
     children->addItem(domTreeInfo(m_page, visitedObjects, &inspectorData)); // FIXME: collect for all pages?
     children->addItem(jsExternalResourcesInfo(visitedObjects));
     children->addItem(inspectorData.dumpStatistics());
+    addPlatformComponentsInfo(children);
     processMemory->setChildren(children);
 
     size_t privateBytes = 0;

@@ -31,6 +31,9 @@
 #ifndef MemoryUsageSupport_h
 #define MemoryUsageSupport_h
 
+#include <wtf/Forward.h>
+#include <wtf/text/WTFString.h>
+
 namespace WebCore {
 
 class MemoryUsageSupport {
@@ -57,6 +60,17 @@ public:
     // memory currently allocated to this process that cannot be shared. Returns
     // false on platform specific error conditions.
     static bool processMemorySizesInBytes(size_t* privateBytes, size_t* sharedBytes);
+
+    class ComponentInfo {
+    public:
+        ComponentInfo(const String& name, size_t size) : m_name(name), m_sizeInBytes(size) { }
+
+        const String m_name;
+        size_t m_sizeInBytes;
+    };
+
+    // Reports private memory used by components in bytes.
+    static void memoryUsageByComponents(Vector<ComponentInfo>&);
 };
 
 } // namespace WebCore
