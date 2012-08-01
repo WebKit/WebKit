@@ -3298,8 +3298,8 @@ BUGWK87175 SKIP : fast/regions/overflow-in-uniform-regions.html = PASS
 BUGWK87175 SKIP : fast/regions/render-region-renderer.html = PASS
 
 // Failing since sub-pixel was turned on, eae and leviw working on it.
-BUG_EAE SKIP : fast/repaint/reflection-repaint-test.html = PASS
-BUG_EAE SKIP : fast/repaint/transform-layout-repaint.html = PASS
+BUGWK89238 SKIP : fast/repaint/reflection-repaint-test.html = PASS
+BUGWK89238 SKIP : fast/repaint/transform-layout-repaint.html = PASS
 BUGWK87282 WIN : fast/sub-pixel/layout-boxes-with-zoom.html = IMAGE
 
 BUGWK87273 : webaudio/audioparam-connect-audioratesignal.html = TIMEOUT PASS

@@ -1,3 +1,9 @@
+2012-08-01  Emil A Eklund  <eae@chromium.org>
+
+
+        Unreviewed chromium TestExpectations change, replace BUG_eae with a proper bug number.
+        * platform/chromium/TestExpectations:
+
 2012-08-01  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: IDBCursor.continue(key) does not throw for key "behind" cursor
