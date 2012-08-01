@@ -1,3 +1,26 @@
+2012-08-01  Kwang Yul Seo  <skyul@company100.net>
+
+        Read tag names and attributes from the saved tokens in HTMLElementStack
+        https://bugs.webkit.org/show_bug.cgi?id=92830
+
+        Reviewed by Adam Barth.
+
+        This is a follow-up patch for r123577.
+        Replaced top()->hasTagName(x) with topStackItem()->hasTagName(x).
+        Also replaced item->element()->hasTagName(x) with item->hasTagName(x).
+
+        No new tests, covered by existing tests.
+
+        * html/parser/HTMLElementStack.cpp:
+        (WebCore::HTMLElementStack::pop):
+        (WebCore::HTMLElementStack::popUntil):
+        (WebCore::HTMLElementStack::pushHTMLHtmlElement):
+        (WebCore::HTMLElementStack::pushHTMLHeadElement):
+        (WebCore::HTMLElementStack::pushHTMLBodyElement):
+        (WebCore::HTMLElementStack::push):
+        (WebCore::HTMLElementStack::insertAbove):
+        (WebCore::HTMLElementStack::popCommon):
+
 2012-08-01  Antoine Labour  <piman@chromium.org>
 
         [chromium] remove unused fields from LayerRendererCapabilities
