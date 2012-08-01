@@ -28,6 +28,7 @@
 #define RenderNamedFlowThread_h
 
 #include "RenderFlowThread.h"
+#include "Timer.h"
 #include <wtf/HashCountedSet.h>
 #include <wtf/ListHashSet.h>
 #include <wtf/text/AtomicString.h>
@@ -76,11 +77,14 @@ private:
     virtual const char* renderName() const OVERRIDE;
     virtual bool isRenderNamedFlowThread() const OVERRIDE { return true; }
 
+    virtual void dispatchRegionLayoutUpdateEvent() OVERRIDE;
+
     bool dependsOn(RenderNamedFlowThread* otherRenderFlowThread) const;
     void addDependencyOnFlowThread(RenderNamedFlowThread*);
     void removeDependencyOnFlowThread(RenderNamedFlowThread*);
     void checkInvalidRegions();
     bool canBeDestroyed() const { return m_regionList.isEmpty() && m_contentNodes.isEmpty(); }
+    void regionLayoutUpdateEventTimerFired(Timer<RenderNamedFlowThread>*);
 
 private:
     // Observer flow threads have invalid regions that depend on the state of this thread
@@ -101,6 +105,8 @@ private:
 
     // The DOM Object that represents a named flow.
     RefPtr<WebKitNamedFlow> m_namedFlow;
+
+    Timer<RenderNamedFlowThread> m_regionLayoutUpdateEventTimer;
 };
 
 inline RenderNamedFlowThread* toRenderNamedFlowThread(RenderObject* object)

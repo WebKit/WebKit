@@ -30,18 +30,23 @@
 #ifndef WebKitNamedFlow_h
 #define WebKitNamedFlow_h
 
-#include <Node.h>
+#include "EventTarget.h"
+
 #include <wtf/ListHashSet.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
+#include <wtf/text/AtomicString.h>
 
 namespace WebCore {
 
+class Document;
+class Node;
 class NodeList;
 class RenderNamedFlowThread;
+class ScriptExecutionContext;
 class WebKitNamedFlowCollection;
 
-class WebKitNamedFlow : public RefCounted<WebKitNamedFlow> {
+class WebKitNamedFlow : public RefCounted<WebKitNamedFlow>, public EventTarget {
 public:
     static PassRefPtr<WebKitNamedFlow> create(PassRefPtr<WebKitNamedFlowCollection> manager, const AtomicString& flowThreadName);
 
@@ -53,6 +58,16 @@ public:
     PassRefPtr<NodeList> getRegionsByContent(Node*);
     PassRefPtr<NodeList> getContent();
 
+    using RefCounted<WebKitNamedFlow>::ref;
+    using RefCounted<WebKitNamedFlow>::deref;
+
+    virtual const AtomicString& interfaceName() const;
+    virtual ScriptExecutionContext* scriptExecutionContext() const;
+
+    // This function is called from the JS binding code to determine if the NamedFlow object is reachable or not.
+    // If the object has listeners, the object should only be discarded if the parent Document is not reachable.
+    Node* base() const;
+
     void setRenderer(RenderNamedFlowThread* parentFlowThread);
 
     enum FlowState {
@@ -62,14 +77,25 @@ public:
 
     FlowState flowState() const { return m_parentFlowThread ? FlowStateCreated : FlowStateNull; }
 
+    void dispatchRegionLayoutUpdateEvent();
+
 private:
     WebKitNamedFlow(PassRefPtr<WebKitNamedFlowCollection>, const AtomicString&);
+
+    // EventTarget implementation.
+    virtual void refEventTarget() { ref(); }
+    virtual void derefEventTarget() { deref(); }
+
+    virtual EventTargetData* eventTargetData() OVERRIDE;
+    virtual EventTargetData* ensureEventTargetData() OVERRIDE;
 
     // The name of the flow thread as specified in CSS.
     AtomicString m_flowThreadName;
 
     RefPtr<WebKitNamedFlowCollection> m_flowManager;
     RenderNamedFlowThread* m_parentFlowThread;
+
+    EventTargetData m_eventTargetData;
 };
 
 }

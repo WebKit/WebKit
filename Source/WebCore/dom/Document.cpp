@@ -4148,8 +4148,6 @@ void Document::addListenerTypeIfNeeded(const AtomicString& eventType)
 #endif
     else if (eventType == eventNames().scrollEvent)
         addListenerType(SCROLL_LISTENER);
-    else if (eventType == eventNames().webkitRegionLayoutUpdateEvent)
-        addListenerType(REGIONLAYOUTUPDATE_LISTENER);
 }
 
 CSSStyleDeclaration* Document::getOverrideStyle(Element*, const String&)

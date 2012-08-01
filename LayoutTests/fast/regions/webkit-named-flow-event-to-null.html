@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../js/resources/js-test-pre.js"></script>
+<style>
+#article {
+    -webkit-flow-into: article;
+    border: 2px solid black;
+}
+#region_1, #region_2{
+    -webkit-flow-from: no_article;
+    overflow:hidden;
+    display:inline-block;
+    vertical-align:top;
+    margin:10px;
+}
+.block {
+   display:block;
+}
+#region_1, #region_2 { height:110px; width:200px; margin: 5px;}
+</style>
+</head>
+<body>
+<div id="article">
+    <div>
+        <div id="content" style="height: 200px; background-color: green;"></div>
+    </div>
+</div>
+
+<div id="region_1"></div>
+<div id="container2">
+    <div id="region_2"></div>
+</div>
+
+<script>
+
+description("Tests regionLayoutEvent being dispatched when the content is removed");
+
+if (window.layoutTestController) {
+        layoutTestController.dumpAsText();
+        layoutTestController.waitUntilDone();
+    }
+    
+    window.jsTestIsAsync = true;
+    function flowContent(flowName) {
+        var r = document.getElementById("region_1");
+        r.style.webkitFlowFrom = flowName;
+        r = document.getElementById("region_2");
+        r.style.webkitFlowFrom = flowName;
+    }
+    
+    var count = 0;
+    var layoutUpdateDispatchedForNullFlow = false;
+    function regionLayoutUpdated(event) {
+        shouldBeEqualToString("event.target.name", "article");
+        if (++count > 1) {
+           event.target.removeEventListener("webkitRegionLayoutUpdate", regionLayoutUpdated);
+           layoutUpdateDispatchedForNullFlow = true;
+           return;
+        }
+        
+        var el = document.getElementById("region_2");
+        debug("Removing region_2 from flow");
+        el.style.webkitFlowFrom = "none";
+        el = document.getElementById("region_1");
+        debug("Removing region_1 from flow");
+        el.style.webkitFlowFrom = "none";
+        el = document.getElementById("article");
+        debug("Removing article from flow");
+        el.style.webkitFlowInto = "none";
+
+        setTimeout(checkIfEventDispatched, 500);
+    }
+
+    function checkIfEventDispatched() {
+        shouldBeFalse("layoutUpdateDispatchedForNullFlow");
+        finishJSTest();
+    }
+    
+    function startTest() {
+        var flow = document.webkitGetFlowByName("article");
+        flow.addEventListener("webkitRegionLayoutUpdate", regionLayoutUpdated);
+        
+        debug("Flow content");
+        flowContent("article");
+    }
+    window.addEventListener("load", startTest);
+</script>
+<script src="../js/resources/js-test-post.js"></script>
+</body>
+</html>

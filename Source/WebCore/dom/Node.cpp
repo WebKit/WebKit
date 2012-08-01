@@ -2580,16 +2580,6 @@ bool Node::dispatchEvent(PassRefPtr<Event> event)
     return EventDispatcher::dispatchEvent(this, EventDispatchMediator::create(event));
 }
 
-void Node::dispatchRegionLayoutUpdateEvent()
-{
-    ASSERT(!eventDispatchForbidden());
-
-    if (!document()->hasListenerType(Document::REGIONLAYOUTUPDATE_LISTENER))
-        return;
-
-    dispatchScopedEvent(UIEvent::create(eventNames().webkitRegionLayoutUpdateEvent, true, true, document()->defaultView(), 0));
-}
-
 void Node::dispatchSubtreeModifiedEvent()
 {
     if (isInShadowTree())

@@ -36,6 +36,7 @@ namespace WebCore {
 RenderNamedFlowThread::RenderNamedFlowThread(Node* node, PassRefPtr<WebKitNamedFlow> namedFlow)
     : RenderFlowThread(node)
     , m_namedFlow(namedFlow)
+    , m_regionLayoutUpdateEventTimer(this, &RenderNamedFlowThread::regionLayoutUpdateEventTimerFired)
 {
     m_namedFlow->setRenderer(this);
 }
@@ -192,6 +193,10 @@ void RenderNamedFlowThread::removeRegionFromThread(RenderRegion* renderRegion)
         return;
     }
 
+    // After removing all the regions in the flow the following layout needs to dispatch the regionLayoutUpdate event
+    if (m_regionList.isEmpty())
+        setDispatchRegionLayoutUpdateEvent(true);
+
     invalidateRegions();
 }
 
@@ -299,6 +304,21 @@ void RenderNamedFlowThread::willBeDestroyed()
         view()->flowThreadController()->removeFlowThread(this);
 
     RenderFlowThread::willBeDestroyed();
+}
+
+void RenderNamedFlowThread::dispatchRegionLayoutUpdateEvent()
+{
+    RenderFlowThread::dispatchRegionLayoutUpdateEvent();
+
+    if (!m_regionLayoutUpdateEventTimer.isActive() && m_namedFlow->hasEventListeners())
+        m_regionLayoutUpdateEventTimer.startOneShot(0);
+}
+
+void RenderNamedFlowThread::regionLayoutUpdateEventTimerFired(Timer<RenderNamedFlowThread>*)
+{
+    ASSERT(m_namedFlow);
+
+    m_namedFlow->dispatchRegionLayoutUpdateEvent();
 }
 
 }

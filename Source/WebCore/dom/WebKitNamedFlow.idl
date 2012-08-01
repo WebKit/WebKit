@@ -29,13 +29,25 @@
 
 module core {
     interface [
-        JSGenerateToJSObject
+        EventTarget,
+        JSGenerateToJSObject,
+        GenerateIsReachable=ImplBaseRoot
     ] WebKitNamedFlow {
         readonly attribute DOMString name;
         readonly attribute boolean overset;
         readonly attribute long firstEmptyRegionIndex;
         NodeList getRegionsByContent(in Node contentNode);
         NodeList getContent();
+        
+        // EventTarget interface
+        void addEventListener(in DOMString type, 
+                              in EventListener listener, 
+                              in [Optional] boolean useCapture);
+        void removeEventListener(in DOMString type, 
+                                 in EventListener listener, 
+                                 in [Optional] boolean useCapture);
+        boolean dispatchEvent(in Event event)
+            raises(EventException);
     };
 }
 

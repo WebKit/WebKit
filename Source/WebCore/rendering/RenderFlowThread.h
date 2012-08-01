@@ -133,8 +133,13 @@ protected:
     virtual const char* renderName() const = 0;
 
     bool shouldRepaint(const LayoutRect&) const;
-    void regionLayoutUpdateEventTimerFired(Timer<RenderFlowThread>*);
     bool regionInRange(const RenderRegion* targetRegion, const RenderRegion* startRegion, const RenderRegion* endRegion) const;
+    
+    void setDispatchRegionLayoutUpdateEvent(bool value) { m_dispatchRegionLayoutUpdateEvent = value; }
+    bool shouldDispatchRegionLayoutUpdateEvent() { return m_dispatchRegionLayoutUpdateEvent; }
+    
+    // Override if the flow thread implementation supports dispatching events when the flow layout is updated (e.g. for named flows)
+    virtual void dispatchRegionLayoutUpdateEvent() { m_dispatchRegionLayoutUpdateEvent = false; }
 
     RenderRegionList m_regionList;
 
@@ -174,7 +179,7 @@ protected:
     bool m_regionsHaveUniformLogicalHeight;
     bool m_overset;
     bool m_hasRegionsWithStyling;
-    Timer<RenderFlowThread> m_regionLayoutUpdateEventTimer;
+    bool m_dispatchRegionLayoutUpdateEvent;
 };
 
 inline RenderFlowThread* toRenderFlowThread(RenderObject* object)

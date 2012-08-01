@@ -45,18 +45,18 @@
         r = document.getElementById("region_2");
         r.style.webkitFlowFrom = flowName;
     }
-    function region1Updated(event) {
-        shouldBeEqualToString("event.target.id", "region_1");
-    }
-    function region2Updated(event) {
-        shouldBeEqualToString("event.target.id", "region_2");
+    
+    function flowThreadUpdated(event) {
+        shouldBeEqualToString("event.target.name", "article");
+        event.target.removeEventListener("webkitRegionLayoutUpdate", flowThreadUpdated);
+        
         finishJSTest();
     }
-    function startTest() {
-        var r1 = document.getElementById("region_1");
-        var r2 = document.getElementById("region_2");
-        r1.addEventListener("webkitRegionLayoutUpdate", region1Updated);
-        r2.addEventListener("webkitRegionLayoutUpdate", region2Updated);
+    
+    function startTest() {    
+        var flowThread = document.webkitGetFlowByName("article");
+        flowThread.addEventListener("webkitRegionLayoutUpdate", flowThreadUpdated);
+        
         debug("Flow content");
         flowContent("article");
     }

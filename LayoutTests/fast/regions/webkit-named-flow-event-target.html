@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../js/resources/js-test-pre.js"></script>
+<style>
+#article {
+    -webkit-flow-into: article;
+    border: 2px solid black;
+}
+#region_1, #region_2{
+    -webkit-flow-from: no_article;
+    overflow:hidden;
+    display:inline-block;
+    vertical-align:top;
+    margin:10px;
+}
+.block {
+   display:block;
+}
+#region_1, #region_2 { height:110px; width:200px}
+</style>
+</head>
+<body>
+<div id="article">
+    <div>
+        <div id="content" style="height: 200px; background-color: green;"></div>
+    </div>
+</div>
+
+<div id="region_1"></div>
+<div id="region_2"></div>
+
+<script>
+
+description("Tests the the NamedFlow object behavior as an EventTarget");
+
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.waitUntilDone();
+}
+window.jsTestIsAsync = true;
+function flowContent(flowName) {
+    var r = document.getElementById("region_1");
+    r.style.webkitFlowFrom = flowName;
+    r = document.getElementById("region_2");
+    r.style.webkitFlowFrom = flowName;
+}
+
+function makeFlowNull() {
+	shouldBeNonNull('document.webkitGetFlowByName("article")');
+
+    var el = document.getElementById("region_1");
+    el.style.webkitFlowFrom = "no_article";
+    el = document.getElementById("region_2");
+    el.style.webkitFlowFrom = "no_article";
+    el = document.getElementById("article");
+    el.style.webkitFlowInto = "no_article";
+}
+
+var recreated = false;
+function makeFlowCreated() {
+	shouldBeNull('document.webkitGetFlowByName("article")');
+	gc();
+
+    var el = document.getElementById("region_1");
+    el.style.webkitFlowFrom = "article";
+    el = document.getElementById("region_2");
+    el.style.webkitFlowFrom = "article";
+    el = document.getElementById("article");
+    el.style.webkitFlowInto = "article";
+
+    recreated = true;
+}
+
+var updatedCount = 0;
+function flowThreadUpdated(event) {
+	++updatedCount;
+    shouldBeEqualToString("event.target.name", "article");
+
+    shouldBeGreaterThanOrEqual("2", "updatedCount");
+
+    if (updatedCount == 2) {
+    	shouldBeTrue("recreated");
+    	event.target.removeEventListener("webkitRegionLayoutUpdate", flowThreadUpdated);
+    	makeFlowNull();
+    	finishJSTest();
+    	return;
+    }
+
+    makeFlowNull();
+    shouldBeFalse("recreated");
+
+    // Set a timeout so the event reference to the target is discarded
+    setTimeout(makeFlowCreated, 10);
+}
+
+function startTest() {    
+    var flowThread = document.webkitGetFlowByName("article");
+    flowThread.addEventListener("webkitRegionLayoutUpdate", flowThreadUpdated);
+    
+    debug("Flow content");
+    flowContent("article");
+}
+
+window.addEventListener("load", startTest);
+</script>
+<script src="../js/resources/js-test-post.js"></script>
+</body>
+</html>

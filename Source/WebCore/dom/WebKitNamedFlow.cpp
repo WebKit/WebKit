@@ -30,9 +30,12 @@
 #include "config.h"
 #include "WebKitNamedFlow.h"
 
+#include "EventNames.h"
 #include "RenderNamedFlowThread.h"
 #include "RenderRegion.h"
+#include "ScriptExecutionContext.h"
 #include "StaticNodeList.h"
+#include "UIEvent.h"
 #include "WebKitNamedFlowCollection.h"
 
 namespace WebCore {
@@ -153,6 +156,41 @@ void WebKitNamedFlow::setRenderer(RenderNamedFlowThread* parentFlowThread)
 
     // If parentFlowThread is 0, the flow thread will move in the "NULL" state"
     m_parentFlowThread = parentFlowThread;
+}
+
+EventTargetData* WebKitNamedFlow::eventTargetData()
+{
+    return &m_eventTargetData;
+}
+
+EventTargetData* WebKitNamedFlow::ensureEventTargetData()
+{
+    return &m_eventTargetData;
+}
+
+void WebKitNamedFlow::dispatchRegionLayoutUpdateEvent()
+{
+    ASSERT(!eventDispatchForbidden());
+    ASSERT(m_parentFlowThread);
+
+    RefPtr<Event> event = UIEvent::create(eventNames().webkitRegionLayoutUpdateEvent, false, false, m_parentFlowThread->document()->defaultView(), 0);
+
+    dispatchEvent(event);
+}
+
+const AtomicString& WebKitNamedFlow::interfaceName() const
+{
+    return eventNames().interfaceForWebKitNamedFlow;
+}
+
+ScriptExecutionContext* WebKitNamedFlow::scriptExecutionContext() const
+{
+    return m_flowManager->document();
+}
+
+Node* WebKitNamedFlow::base() const
+{
+    return m_flowManager->document();
 }
 
 } // namespace WebCore

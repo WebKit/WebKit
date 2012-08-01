@@ -1,3 +1,63 @@
+2012-08-01  Andrei Bucur  <abucur@adobe.com>
+
+        [CSS Regions] The regionLayoutUpdate event should be dispatched on the NamedFlow object
+        https://bugs.webkit.org/show_bug.cgi?id=88778
+
+        Reviewed by Adam Barth.
+
+        Spec: http://www.w3.org/TR/css3-regions/#region-flow-layout-events
+
+        This patch implements the regionLayoutUpdate event per May 3rd CSS Regions spec recommendation.
+        Before this patch the event was dispatched individually on each region whenever its overflow state changed. The trigger conditions are preserved with the following additions:
+        - the event is dispatched when the last region is removed
+        - the event is not dispatched when the named flow switches to the NULL state
+        Also, the NamedFlow objects are not deleted if they switch to the NULL state and have listeners attached. In that scenario the JS wrapper will not release the reference
+        until the parent Document is destroyed.
+
+        Tests: The old tests have been modified to use the event on the NamedFlow object rather the one on the Region. New tests have been added to verify the
+        correct behavior in the special states of the NamedFlow (no region chain, NULL state).
+
+        * dom/Document.cpp:
+        (WebCore::Document::addListenerTypeIfNeeded): Listeners are not added on Nodes any more so the regionLayoutUpdate type was removed from the list.
+        * dom/Document.h:
+        * dom/EventTarget.h:
+        (WebCore):
+        * dom/EventTargetFactory.in:
+        * dom/Node.cpp:
+        * dom/Node.h:
+        (Node):
+        * dom/WebKitNamedFlow.cpp:
+        (WebCore::WebKitNamedFlow::eventTargetData):
+        (WebCore):
+        (WebCore::WebKitNamedFlow::ensureEventTargetData):
+        (WebCore::WebKitNamedFlow::dispatchRegionLayoutUpdateEvent): The 3rd May WD says the event is bubbling. However this doesn't make sense as this object doesn't belong to the DOM tree. This was fixed in the ED.
+        (WebCore::WebKitNamedFlow::interfaceName):
+        (WebCore::WebKitNamedFlow::scriptExecutionContext):
+        (WebCore::WebKitNamedFlow::base): Getter for the owner Document used by the wrapper to determine if the object is reachable.
+        * dom/WebKitNamedFlow.h:
+        (WebCore):
+        (WebKitNamedFlow):
+        (WebCore::WebKitNamedFlow::refEventTarget):
+        (WebCore::WebKitNamedFlow::derefEventTarget):
+        * dom/WebKitNamedFlow.idl:
+        * rendering/RenderFlowThread.cpp:
+        (WebCore::RenderFlowThread::RenderFlowThread):
+        (WebCore::RenderFlowThread::layout): The event dispatching is now handled by the implementation of RenderFlowThread.
+        (WebCore::RenderFlowThread::computeOverflowStateForRegions):
+        * rendering/RenderFlowThread.h:
+        * rendering/RenderNamedFlowThread.cpp:
+        (WebCore::RenderNamedFlowThread::RenderNamedFlowThread):
+        (WebCore::RenderNamedFlowThread::removeRegionFromThread): The layout doesn't detect changes caused by removing the last region. This case is handled separately.
+        (WebCore::RenderNamedFlowThread::dispatchRegionLayoutUpdateEvent):
+        (WebCore):
+        (WebCore::RenderNamedFlowThread::regionLayoutUpdateEventTimerFired):
+        * rendering/RenderNamedFlowThread.h:
+        (RenderNamedFlowThread):
+        * rendering/RenderRegion.cpp:
+        (WebCore::RenderRegion::RenderRegion):
+        * rendering/RenderRegion.h:
+        (RenderRegion):
+
 2012-07-31  Robert Hogan  <robert@webkit.org>
 
         CSS 2.1 failure: margin-collapse-012 fails

@@ -4,10 +4,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
  
 Flow content
-PASS event.target.id is "region_1"
-PASS event.target.id is "region_2"
-Removing region_2 from flow
-PASS event.target.id is "region_1"
+PASS event.target.name is "article"
 PASS successfullyParsed is true
 
 TEST COMPLETE

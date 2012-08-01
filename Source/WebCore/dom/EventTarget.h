@@ -68,6 +68,7 @@ namespace WebCore {
     class TextTrack;
     class TextTrackCue;
     class WebSocket;
+    class WebKitNamedFlow;
     class Worker;
     class XMLHttpRequest;
     class XMLHttpRequestUpload;

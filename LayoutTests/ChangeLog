@@ -1,3 +1,30 @@
+2012-08-01  Andrei Bucur  <abucur@adobe.com>
+
+        [CSS Regions] The regionLayoutUpdate event should be dispatched on the NamedFlow object
+        https://bugs.webkit.org/show_bug.cgi?id=88778
+
+        Reviewed by Adam Barth.
+
+        Spec: http://www.w3.org/TR/css3-regions/#region-flow-layout-events
+
+        The existing tests have been adapted to match the transition of the event on the NamedFlow interface. Also there are three more tests for the case
+        the region chain is removed, the flow goes in the NULL state and for the event target to match the NamedFlow object.
+
+        * fast/regions/webkit-named-flow-event-add-to-flow-expected.txt: Renamed from LayoutTests/fast/regions/region-event-add-to-flow-expected.txt.
+        * fast/regions/webkit-named-flow-event-add-to-flow.html: Renamed from LayoutTests/fast/regions/region-event-add-to-flow.html.
+        * fast/regions/webkit-named-flow-event-expected.txt: Renamed from LayoutTests/fast/regions/region-event-expected.txt.
+        * fast/regions/webkit-named-flow-event-no-regions-expected.txt: Added.
+        * fast/regions/webkit-named-flow-event-no-regions.html: Added.
+        * fast/regions/webkit-named-flow-event-remove-from-dom-expected.txt: Renamed from LayoutTests/fast/regions/region-event-remove-from-dom-expected.txt.
+        * fast/regions/webkit-named-flow-event-remove-from-dom.html: Renamed from LayoutTests/fast/regions/region-event-remove-from-dom.html.
+        * fast/regions/webkit-named-flow-event-remove-from-flow-expected.txt: Renamed from LayoutTests/fast/regions/region-event-remove-from-flow-expected.txt.
+        * fast/regions/webkit-named-flow-event-remove-from-flow.html: Renamed from LayoutTests/fast/regions/region-event-remove-from-flow.html.
+        * fast/regions/webkit-named-flow-event-target-expected.txt: Added.
+        * fast/regions/webkit-named-flow-event-target.html: Added.
+        * fast/regions/webkit-named-flow-event-to-null-expected.txt: Added.
+        * fast/regions/webkit-named-flow-event-to-null.html: Added.
+        * fast/regions/webkit-named-flow-event.html: Renamed from LayoutTests/fast/regions/region-event.html.
+
 2012-07-31  Robert Hogan  <robert@webkit.org>
 
         CSS 2.1 failure: margin-collapse-012 fails

@@ -43,28 +43,26 @@
         var r = document.getElementById(region);
         r.style.webkitFlowFrom = flowName;
     }
+    
     var count = 0;
-    function region1Updated(event) {
-        shouldBeEqualToString("event.target.id", "region_1");
+    function regionLayoutUpdated(event) {
+        shouldBeEqualToString("event.target.name", "article");
+        
         if (++count > 1) {
-           var r1 = document.getElementById("region_1");
-           r1.removeEventListener("webkitRegionLayoutUpdate", region1Updated);
-           return;
+            event.target.removeEventListener("webkitRegionLayoutUpdate", regionLayoutUpdated);
+            
+            // this should be reached after region_2 is added to flow
+            finishJSTest();
+            return;
         }
+        
         flowContent("region_2", "article"); // this will trigger a new round of events due to layout
     }
-    function region2Updated(event) {
-        shouldBeEqualToString("event.target.id", "region_2");
-        var r2 = document.getElementById("region_2");
-        r2.removeEventListener("webkitRegionLayoutUpdate", region2Updated);
-        // this should be reached after region_2 is removed from flow
-        finishJSTest();
-    }
+
     function startTest() {
-        var r1 = document.getElementById("region_1");
-        var r2 = document.getElementById("region_2");
-        r1.addEventListener("webkitRegionLayoutUpdate", region1Updated);
-        r2.addEventListener("webkitRegionLayoutUpdate", region2Updated);
+        var flow = document.webkitGetFlowByName("article");
+        flow.addEventListener("webkitRegionLayoutUpdate", regionLayoutUpdated);
+        
         debug("Flow content");
         flowContent("region_1", "article");
     }
