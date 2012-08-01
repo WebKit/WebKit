@@ -1,3 +1,16 @@
+2012-08-01  Arvid Nilsson  <anilsson@rim.com>
+
+        [BlackBerry] Disable tap highlight when transparent color is specified
+        https://bugs.webkit.org/show_bug.cgi?id=92849
+
+        Reviewed by Antonio Gomes.
+
+        When the web page specifies -webkit-tap-highlight-color:rgba(0,0,0,0)
+        or any color with alpha value 0, we should disable the tap highlight.
+
+        * WebKitSupport/DefaultTapHighlight.cpp:
+        (BlackBerry::WebKit::DefaultTapHighlight::draw):
+
 2012-07-31  Robin Cao  <robin.cao@torchmobile.com.cn>
 
         [BlackBerry] Pass all file chooser settings to clients

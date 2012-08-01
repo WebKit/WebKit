@@ -61,6 +61,12 @@ void DefaultTapHighlight::draw(const Platform::IntRectRegion& region, int red, i
     if (rect.isEmpty())
         return;
 
+    // Transparent color means disable the tap highlight.
+    if (!m_color.alpha()) {
+        hide();
+        return;
+    }
+
     {
         MutexLocker lock(m_mutex);
         m_visible = true;
