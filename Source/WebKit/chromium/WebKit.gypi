@@ -126,7 +126,6 @@
             'tests/LocalizedDateICUTest.cpp',
             'tests/LocalizedNumberICUTest.cpp',
             'tests/MemoryInfo.cpp',
-            'tests/MemoryInstrumentationTest.cpp',
             'tests/MockCCQuadCuller.h',
             'tests/OpaqueRectTrackingContentLayerDelegateTest.cpp',
             'tests/OpenTypeVerticalDataTest.cpp',

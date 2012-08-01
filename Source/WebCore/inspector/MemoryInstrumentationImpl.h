@@ -44,26 +44,18 @@ class MemoryInstrumentationImpl : public MemoryInstrumentation {
 public:
     explicit MemoryInstrumentationImpl(VisitedObjects&);
 
+    void processDeferredInstrumentedPointers();
     size_t selfSize() const;
-    size_t totalSize(ObjectType objectType) const
+    size_t totalTypeSize(ObjectType objectType)
     {
         ASSERT(objectType >= 0 && objectType < LastTypeEntry);
         return m_totalSizes[objectType];
-    }
-
-    size_t reportedSizeForAllTypes() const
-    {
-        size_t size = 0;
-        for (int i = 0; i < LastTypeEntry; ++i)
-            size += m_totalSizes[i];
-        return size;
     }
 
 private:
     virtual void countObjectSize(ObjectType, size_t) OVERRIDE;
     virtual void deferInstrumentedPointer(PassOwnPtr<InstrumentedPointerBase>) OVERRIDE;
     virtual bool visited(const void*) OVERRIDE;
-    virtual void processDeferredInstrumentedPointers() OVERRIDE;
 
     size_t m_totalSizes[LastTypeEntry];
     VisitedObjects& m_visitedObjects;
