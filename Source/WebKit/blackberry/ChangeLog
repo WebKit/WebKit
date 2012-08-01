@@ -1,3 +1,19 @@
+2012-08-01  Mike Fenton  <mifenton@rim.com>
+
+        [BlackBerry] Consolidate suppression of keyboard requests.
+        https://bugs.webkit.org/show_bug.cgi?id=92871
+
+        Reviewed by Antonio Gomes.
+
+        Reduce VKB requests even more by applying the filter on
+        all requests during processing.
+
+        Reviewed Internally by Gen Mak.
+
+        * WebKitSupport/InputHandler.cpp:
+        (BlackBerry::WebKit::InputHandler::focusedNodeChanged):
+        (BlackBerry::WebKit::InputHandler::notifyClientOfKeyboardVisibilityChange):
+
 2012-08-01  Arvid Nilsson  <anilsson@rim.com>
 
         [BlackBerry] Disable tap highlight when transparent color is specified

@@ -362,8 +362,7 @@ void InputHandler::focusedNodeChanged()
     Node* node = frame->document()->focusedNode();
 
     if (isActiveTextEdit() && m_currentFocusElement == node) {
-        if (!processingChange())
-            notifyClientOfKeyboardVisibilityChange(true);
+        notifyClientOfKeyboardVisibilityChange(true);
         return;
     }
 
@@ -1033,6 +1032,11 @@ void InputHandler::notifyClientOfKeyboardVisibilityChange(bool visible)
     // If we aren't ready for input, keyboard changes should be ignored.
     if (!isInputModeEnabled() && visible)
         return;
+
+    if (processingChange()) {
+        ASSERT(visible);
+        return;
+    }
 
     if (!m_delayKeyboardVisibilityChange) {
         m_webPage->showVirtualKeyboard(visible);
