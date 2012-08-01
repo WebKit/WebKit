@@ -123,4 +123,4 @@ BUGWK91376 : http/tests/security/sandboxed-iframe-modify-self.html = TEXT PASS
 BUGWK91379 : http/tests/security/contentSecurityPolicy/policy-does-not-affect-child.html = TEXT PASS
 BUGWK91379 : http/tests/security/contentSecurityPolicy/object-src-none-allowed.html = TEXT PASS
 
-BUGWK85811 DEBUG : fast/events/message-port-clone.html = CRASH
+BUGWK85811 DEBUG : fast/events/message-port-close.html = CRASH

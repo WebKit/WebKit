@@ -1,3 +1,9 @@
+2012-08-01  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed gardening, typo fix.
+
+        * platform/qt/TestExpectations:
+
 2012-08-01  Peter Kasting  <pkasting@google.com>
 
         [Chromium] Rebaseline a test.
