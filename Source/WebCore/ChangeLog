@@ -1,3 +1,34 @@
+2012-08-01  Yoshifumi Inoue  <yosin@chromium.org>
+
+        [CSS] Add selectors for multiple fields time input UI.
+        https://bugs.webkit.org/show_bug.cgi?id=92834
+
+        Reviewed by Kent Tamura.
+
+        This patch adds new selectors and "height" property to spin button
+        for multiple fields time input UI.
+
+        RenderTextControlSingleLine::layout() sets height of spin button for
+        input type "number" and other input types using RenderTextControlSingleLine
+        as renderer object. However, multiple fields time input UI doesn't use
+        it and needs to set height of spin button.
+
+        No new tests. This patch doesn't change behavior.
+
+        * css/html.css:
+        (input::-webkit-datetime-edit): Added.
+        (input::-webkit-datetime-edit-ampm-field): Added.
+        (input::-webkit-datetime-edit-hour-field): Added.
+        (input::-webkit-datetime-edit-millisecond-field): Added.
+        (input::-webkit-datetime-edit-minute-field): Added.
+        (input::-webkit-datetime-edit-minute-field[readonly]): Added. This selector
+        is used for step>=3600 second and time format contains minute field.
+        (input::-webkit-datetime-edit-second-field): Added.
+        (input::-webkit-datetime-edit-second-field[readonly]): Added. This selector
+        is used for step>=60 second and time format contains second field.
+        (input::-webkit-inner-spin-button): Add "height" property for using
+        spin button other than RenderTextControlSingleLine.
+
 2012-08-01  Kwang Yul Seo  <skyul@company100.net>
 
         Make HTMLConstructionSite::createHTMLElement(AtomicHTMLToken*) private.

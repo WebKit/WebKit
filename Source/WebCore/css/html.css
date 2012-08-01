@@ -471,11 +471,80 @@ datalist {
 }
 #endif
 
+#if defined(ENABLE_INPUT_TYPE_TIME_MULTIPLE_FIELDS) && ENABLE_INPUT_TYPE_TIME_MULTIPLE_FIELDS
+input[type="time"] {
+    font-family: monospace;
+}
+
+input::-webkit-datetime-edit {
+    -webkit-user-modify: read-only !important;
+    display: -webkit-box;
+    -webkit-box-align: center;
+}
+
+input::-webkit-datetime-edit-ampm-field {
+    -webkit-user-modify: read-only !important;
+    border: none;
+    width: 2em;
+    padding: 2px;
+}
+
+input::-webkit-datetime-edit-hour-field {
+    -webkit-user-modify: read-only !important;
+    display: inline-block;
+    border: none;
+    text-align: center;
+    width: 1.2em;
+    padding: 2px;
+}
+
+input::-webkit-datetime-edit-millisecond-field {
+    -webkit-user-modify: read-only !important;
+    display: inline-block;
+    border: none;
+    text-align: center;
+    width: 1.8em;
+    padding: 2px;
+}
+
+input::-webkit-datetime-edit-minute-field {
+    -webkit-user-modify: read-only !important;
+    display: inline-block;
+    border: none;
+    text-align: center;
+    width: 1.2em;
+    padding: 2px;
+}
+
+/* This selector is used when step >= 3600 second but format contains minute field. */
+input::-webkit-datetime-edit-minute-field[readonly] {
+    color: GrayText;
+}
+
+input::-webkit-datetime-edit-second-field {
+    -webkit-user-modify: read-only !important;
+    display: inline-block;
+    border: none;
+    text-align: center;
+    width: 1.2em;
+    padding: 2px;
+}
+
+/* This selector is used when step >= 60 second but format contains second field. */
+input::-webkit-datetime-edit-second-field[readonly] {
+    color: GrayText;
+}
+#endif
+
 input::-webkit-inner-spin-button {
     -webkit-appearance: inner-spin-button;
     display: block;
     position: relative;
     cursor: default;
+    /* This height property is ignored for input type "number" and others which
+     * use RenderTextControlSingleLine as renderer which sets height of spin
+     * button in layout(). */
+    height: 1.5em;
     vertical-align: top;
     -webkit-box-flex: 0;
     -webkit-user-select: none;
