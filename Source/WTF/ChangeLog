@@ -1,5 +1,14 @@
 2012-08-01  Patrick Gansterer  <paroga@webkit.org>
 
+        Fix FastMalloc build with assertions enabled.
+
+        * wtf/FastMalloc.cpp:
+        (WTF::TCMalloc_PageHeap::isScavengerSuspended):
+        (WTF::TCMalloc_PageHeap::scheduleScavenger):
+        (WTF::TCMalloc_PageHeap::suspendScavenger):
+
+2012-08-01  Patrick Gansterer  <paroga@webkit.org>
+
         Export StringImpl::sizeInBytes() with WTF_EXPORT_STRING_API
         https://bugs.webkit.org/show_bug.cgi?id=92851
 
