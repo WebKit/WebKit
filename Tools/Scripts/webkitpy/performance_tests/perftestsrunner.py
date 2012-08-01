@@ -49,10 +49,11 @@ _log = logging.getLogger(__name__)
 
 class PerfTestsRunner(object):
     _default_branch = 'webkit-trunk'
-    _EXIT_CODE_BAD_BUILD = -1
-    _EXIT_CODE_BAD_JSON = -2
-    _EXIT_CODE_FAILED_UPLOADING = -3
-    _EXIT_CODE_BAD_PREPARATION = -4
+    EXIT_CODE_BAD_BUILD = -1
+    EXIT_CODE_BAD_SOURCE_JSON = -2
+    EXIT_CODE_BAD_MERGE = -3
+    EXIT_CODE_FAILED_UPLOADING = -4
+    EXIT_CODE_BAD_PREPARATION = -5
 
     def __init__(self, args=None, port=None):
         self._options, self._args = PerfTestsRunner._parse_args(args)
@@ -142,14 +143,14 @@ class PerfTestsRunner(object):
     def run(self):
         if not self._port.check_build(needs_http=False):
             _log.error("Build not up to date for %s" % self._port._path_to_driver())
-            return self._EXIT_CODE_BAD_BUILD
+            return self.EXIT_CODE_BAD_BUILD
 
         tests = self._collect_tests()
         _log.info("Running %d tests" % len(tests))
 
         for test in tests:
             if not test.prepare(self._options.time_out_ms):
-                return self._EXIT_CODE_BAD_PREPARATION
+                return self.EXIT_CODE_BAD_PREPARATION
 
         unexpected = self._run_tests_set(sorted(list(tests), key=lambda test: test.test_name()), self._port)
 
@@ -157,57 +158,62 @@ class PerfTestsRunner(object):
         if self._options.output_json_path:
             # FIXME: Add --branch or auto-detect the branch we're in
             test_results_server = options.test_results_server
-            branch = self._default_branch if test_results_server else None
-            build_number = int(options.build_number) if options.build_number else None
 
-            if not self._generate_json(self._timestamp, options.output_json_path, options.source_json_path,
-                not test_results_server,
-                branch, options.platform, options.builder_name, build_number) and not unexpected:
-                return self._EXIT_CODE_BAD_JSON
+            output = self._generate_output(self._timestamp, options.platform, options.builder_name, options.build_number)
+
+            if options.source_json_path:
+                output = self._merge_source_json(options.source_json_path, output)
+                if not output:
+                    return self.EXIT_CODE_BAD_SOURCE_JSON
+
+            if not test_results_server:
+                output = self._merge_outputs(self._options.output_json_path, output)
+                if not output:
+                    return self.EXIT_CODE_BAD_MERGE
+
+            self._generate_output_files(self._options.output_json_path, output, not test_results_server)
 
             if test_results_server and not self._upload_json(test_results_server, options.output_json_path):
-                return self._EXIT_CODE_FAILED_UPLOADING
+                return self.EXIT_CODE_FAILED_UPLOADING
 
         return unexpected
 
-    def _generate_json(self, timestamp, output_json_path, source_json_path, should_generate_results_page,
-        branch, platform, builder_name, build_number):
-
-        contents = {'timestamp': int(timestamp), 'results': self._results}
+    def _generate_output(self, timestamp, platform, builder_name, build_number):
+        contents = {'results': self._results}
         for (name, path) in self._port.repository_paths():
             contents[name + '-revision'] = self._host.scm().svn_revision(path)
 
-        for key, value in {'branch': branch, 'platform': platform, 'builder-name': builder_name, 'build-number': build_number}.items():
+        for key, value in {'timestamp': int(timestamp), 'branch': self._default_branch, 'platform': platform,
+            'builder-name': builder_name, 'build-number': int(build_number) if build_number else None}.items():
             if value:
                 contents[key] = value
 
+        return contents
+
+    def _merge_source_json(self, source_json_path, output):
+        try:
+            source_json_file = self._host.filesystem.open_text_file_for_reading(source_json_path)
+            source_json = json.load(source_json_file)
+            return dict(source_json.items() + output.items())
+        except Exception, error:
+            _log.error("Failed to merge source JSON file %s: %s" % (source_json_path, error))
+        return None
+
+    def _merge_outputs(self, output_json_path, output):
+        if not self._host.filesystem.isfile(output_json_path):
+            return [output]
+        try:
+            existing_outputs = json.loads(self._host.filesystem.read_text_file(output_json_path))
+            return existing_outputs + [output]
+        except Exception, error:
+            _log.error("Failed to merge output JSON file %s: %s" % (output_json_path, error))
+        return None
+
+    def _generate_output_files(self, output_json_path, output, should_generate_results_page):
         filesystem = self._host.filesystem
-        succeeded = False
-        if source_json_path:
-            try:
-                source_json_file = filesystem.open_text_file_for_reading(source_json_path)
-                source_json = json.load(source_json_file)
-                contents = dict(source_json.items() + contents.items())
-                succeeded = True
-            except IOError, error:
-                _log.error("Failed to read %s: %s" % (source_json_path, error))
-            except ValueError, error:
-                _log.error("Failed to parse %s: %s" % (source_json_path, error))
-            except TypeError, error:
-                _log.error("Failed to merge JSON files: %s" % error)
-            if not succeeded:
-                return False
 
-        if should_generate_results_page:
-            if filesystem.isfile(output_json_path):
-                existing_contents = json.loads(filesystem.read_text_file(output_json_path))
-                existing_contents.append(contents)
-                contents = existing_contents
-            else:
-                contents = [contents]
-
-        serialized_contents = json.dumps(contents)
-        filesystem.write_text_file(output_json_path, serialized_contents)
+        json_output = json.dumps(output)
+        filesystem.write_text_file(output_json_path, json_output)
 
         if should_generate_results_page:
             jquery_path = filesystem.join(self._port.perf_tests_dir(), 'Dromaeo/resources/dromaeo/web/lib/jquery-1.6.4.js')
@@ -217,11 +223,9 @@ class PerfTestsRunner(object):
             template = filesystem.read_text_file(template_path)
 
             results_page = template.replace('<?WebKitPerfTestRunnerInsertionPoint?>',
-                '<script>%s</script><script id="json">%s</script>' % (jquery, serialized_contents))
+                '<script>%s</script><script id="json">%s</script>' % (jquery, json_output))
 
             filesystem.write_text_file(filesystem.splitext(output_json_path)[0] + '.html', results_page)
-
-        return True
 
     def _upload_json(self, test_results_server, json_path, file_uploader=FileUploader):
         uploader = file_uploader("https://%s/api/test/report" % test_results_server, 120)

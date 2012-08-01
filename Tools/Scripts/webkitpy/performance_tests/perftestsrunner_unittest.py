@@ -246,16 +246,17 @@ max 1120
         finally:
             stdout, stderr, logs = output_capture.restore_output()
 
-        self.assertEqual(logs, '\n'.join([
-            'Running 2 tests',
-            'Running Bindings/event-target-wrapper.html (1 of 2)',
-            'RESULT Bindings: event-target-wrapper= 1489.05 ms',
-            'median= 1487.0 ms, stdev= 14.46 ms, min= 1471.0 ms, max= 1510.0 ms',
-            '',
-            'Running inspector/pass.html (2 of 2)',
-            'RESULT group_name: test_name= 42 ms',
-            '',
-            '']))
+        if not expected_exit_code:
+            self.assertEqual(logs, '\n'.join([
+                'Running 2 tests',
+                'Running Bindings/event-target-wrapper.html (1 of 2)',
+                'RESULT Bindings: event-target-wrapper= 1489.05 ms',
+                'median= 1487.0 ms, stdev= 14.46 ms, min= 1471.0 ms, max= 1510.0 ms',
+                '',
+                'Running inspector/pass.html (2 of 2)',
+                'RESULT group_name: test_name= 42 ms',
+                '',
+                '']))
 
         return uploaded[0]
 
@@ -269,19 +270,21 @@ max 1120
             "inspector/pass.html:group_name:test_name": 42},
             "webkit-revision": 5678, "branch": "webkit-trunk"})
 
-    def test_run_generates_results_page(self):
-        runner, port = self.create_runner(args=['--output-json-path=/mock-checkout/output.json'])
+    def create_runner_and_setup_results_template(self, args):
+        runner, port = self.create_runner(args)
         filesystem = port.host.filesystem
-        filesystem.write_text_file(runner._base_path + '/resources/results-template.html',
-            'BEGIN<?WebKitPerfTestRunnerInsertionPoint?>END')
-        filesystem.write_text_file(runner._base_path + '/Dromaeo/resources/dromaeo/web/lib/jquery-1.6.4.js',
-            'jquery content')
+        filesystem.write_text_file(runner._base_path + '/resources/results-template.html', 'BEGIN<?WebKitPerfTestRunnerInsertionPoint?>END')
+        filesystem.write_text_file(runner._base_path + '/Dromaeo/resources/dromaeo/web/lib/jquery-1.6.4.js', 'jquery content')
+        return runner, port
 
+    def test_run_generates_results_page(self):
+        runner, port = self.create_runner_and_setup_results_template(args=['--output-json-path=/mock-checkout/output.json'])
+        filesystem = port.host.filesystem
         self._test_run_with_json_output(runner, filesystem)
 
         expected_entry = {"timestamp": 123456789, "results": {"Bindings/event-target-wrapper":
             {"max": 1510, "avg": 1489.05, "median": 1487, "min": 1471, "stdev": 14.46, "unit": "ms"},
-            "inspector/pass.html:group_name:test_name": 42}, "webkit-revision": 5678}
+            "inspector/pass.html:group_name:test_name": 42}, "webkit-revision": 5678, "branch": "webkit-trunk"}
 
         self.maxDiff = None
         json_output = port.host.filesystem.read_text_file('/mock-checkout/output.json')
@@ -295,6 +298,13 @@ max 1120
         self.assertEqual(filesystem.read_text_file('/mock-checkout/output.html'),
             'BEGIN<script>jquery content</script><script id="json">' + json_output + '</script>END')
 
+    def test_run_with_bad_output_json(self):
+        runner, port = self.create_runner_and_setup_results_template(args=['--output-json-path=/mock-checkout/output.json'])
+        port.host.filesystem.write_text_file('/mock-checkout/output.json', 'bad json')
+        self._test_run_with_json_output(runner, port.host.filesystem, expected_exit_code=PerfTestsRunner.EXIT_CODE_BAD_MERGE)
+        port.host.filesystem.write_text_file('/mock-checkout/output.json', '{"another bad json": "1"}')
+        self._test_run_with_json_output(runner, port.host.filesystem, expected_exit_code=PerfTestsRunner.EXIT_CODE_BAD_MERGE)
+
     def test_run_with_json_source(self):
         runner, port = self.create_runner(args=['--output-json-path=/mock-checkout/output.json',
             '--source-json-path=/mock-checkout/source.json', '--test-results-server=some.host'])
@@ -306,6 +316,15 @@ max 1120
             "inspector/pass.html:group_name:test_name": 42},
             "webkit-revision": 5678, "branch": "webkit-trunk",
             "key": "value"})
+
+    def test_run_with_bad_json_source(self):
+        runner, port = self.create_runner(args=['--output-json-path=/mock-checkout/output.json',
+            '--source-json-path=/mock-checkout/source.json', '--test-results-server=some.host'])
+        self._test_run_with_json_output(runner, port.host.filesystem, expected_exit_code=PerfTestsRunner.EXIT_CODE_BAD_SOURCE_JSON)
+        port.host.filesystem.write_text_file('/mock-checkout/source.json', 'bad json')
+        self._test_run_with_json_output(runner, port.host.filesystem, expected_exit_code=PerfTestsRunner.EXIT_CODE_BAD_SOURCE_JSON)
+        port.host.filesystem.write_text_file('/mock-checkout/source.json', '["another bad json"]')
+        self._test_run_with_json_output(runner, port.host.filesystem, expected_exit_code=PerfTestsRunner.EXIT_CODE_BAD_SOURCE_JSON)
 
     def test_run_with_multiple_repositories(self):
         runner, port = self.create_runner(args=['--output-json-path=/mock-checkout/output.json',
@@ -328,7 +347,7 @@ max 1120
         self.assertEqual(generated_json['builder-name'], 'builder1')
         self.assertEqual(generated_json['build-number'], 123)
 
-        self._test_run_with_json_output(runner, port.host.filesystem, upload_suceeds=False, expected_exit_code=-3)
+        self._test_run_with_json_output(runner, port.host.filesystem, upload_suceeds=False, expected_exit_code=PerfTestsRunner.EXIT_CODE_FAILED_UPLOADING)
 
     def test_upload_json(self):
         runner, port = self.create_runner()

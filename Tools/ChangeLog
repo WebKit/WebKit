@@ -1,3 +1,28 @@
+2012-08-01  Ryosuke Niwa  <rniwa@webkit.org>
+
+        run-perf-tests throws an exception when the output json is malformed
+        https://bugs.webkit.org/show_bug.cgi?id=92887
+
+        Reviewed by Dirk Pranke.
+
+        Catch exceptions and gracefully fail. Also split _generate_json into smaller methods.
+
+        * Scripts/webkitpy/performance_tests/perftestsrunner.py:
+        (PerfTestsRunner):
+        (PerfTestsRunner.run):
+        (PerfTestsRunner._generate_output): Extracted from _generate_json.
+        (PerfTestsRunner._merge_source_json): Ditto; catch all exceptions since they are too many
+        exceptions to consder here.
+        (PerfTestsRunner._merge_outputs): Ditto.
+        (PerfTestsRunner._generate_output_files): Extracted from _generate_json.
+        * Scripts/webkitpy/performance_tests/perftestsrunner_unittest.py:
+        (_test_run_with_json_output): Don't assert logs when we except an non-zero exit code.
+        (create_runner_and_setup_results_template): Extracted from test_run_generates_results_page.
+        (test_run_generates_results_page):
+        (test_run_with_bad_output_json): Added.
+        (test_run_with_bad_json_source): Added.
+        (test_run_with_upload_json):
+
 2012-08-01  Thiago Marcos P. Santos  <thiago.santos@intel.com>
 
         Regression(r124135): nrwt: --verbose logging does not work right on windows
