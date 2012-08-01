@@ -798,7 +798,7 @@ public:
     EBoxOrient boxOrient() const { return static_cast<EBoxOrient>(rareNonInheritedData->m_deprecatedFlexibleBox->orient); }
     EBoxPack boxPack() const { return static_cast<EBoxPack>(rareNonInheritedData->m_deprecatedFlexibleBox->pack); }
 
-    float order() const { return rareNonInheritedData->m_order; }
+    int order() const { return rareNonInheritedData->m_order; }
     float flexGrow() const { return rareNonInheritedData->m_flexibleBox->m_flexGrow; }
     float flexShrink() const { return rareNonInheritedData->m_flexibleBox->m_flexShrink; }
     Length flexBasis() const { return rareNonInheritedData->m_flexibleBox->m_flexBasis; }
@@ -1268,7 +1268,7 @@ public:
     void setFlexGrow(float f) { SET_VAR(rareNonInheritedData.access()->m_flexibleBox, m_flexGrow, f); }
     void setFlexShrink(float f) { SET_VAR(rareNonInheritedData.access()->m_flexibleBox, m_flexShrink, f); }
     void setFlexBasis(Length length) { SET_VAR(rareNonInheritedData.access()->m_flexibleBox, m_flexBasis, length); }
-    void setOrder(float o) { SET_VAR(rareNonInheritedData, m_order, o); }
+    void setOrder(int o) { SET_VAR(rareNonInheritedData, m_order, o); }
     void setAlignContent(EAlignContent p) { SET_VAR(rareNonInheritedData, m_alignContent, p); }
     void setAlignItems(EAlignItems a) { SET_VAR(rareNonInheritedData, m_alignItems, a); }
     void setAlignSelf(EAlignItems a) { SET_VAR(rareNonInheritedData, m_alignSelf, a); }
@@ -1610,7 +1610,7 @@ public:
     static float initialFlexGrow() { return 0; }
     static float initialFlexShrink() { return 1; }
     static Length initialFlexBasis() { return Length(Auto); }
-    static float initialOrder() { return 0; }
+    static int initialOrder() { return 0; }
     static EAlignContent initialAlignContent() { return AlignContentStretch; }
     static EAlignItems initialAlignItems() { return AlignStretch; }
     static EAlignItems initialAlignSelf() { return AlignAuto; }

@@ -1996,7 +1996,7 @@ StyleBuilder::StyleBuilder()
     setPropertyHandler(CSSPropertyWebkitFlexShrink, ApplyPropertyDefault<float, &RenderStyle::flexShrink, float, &RenderStyle::setFlexShrink, float, &RenderStyle::initialFlexShrink>::createHandler());
     setPropertyHandler(CSSPropertyWebkitFlexWrap, ApplyPropertyDefault<EFlexWrap, &RenderStyle::flexWrap, EFlexWrap, &RenderStyle::setFlexWrap, EFlexWrap, &RenderStyle::initialFlexWrap>::createHandler());
     setPropertyHandler(CSSPropertyWebkitJustifyContent, ApplyPropertyDefault<EJustifyContent, &RenderStyle::justifyContent, EJustifyContent, &RenderStyle::setJustifyContent, EJustifyContent, &RenderStyle::initialJustifyContent>::createHandler());
-    setPropertyHandler(CSSPropertyWebkitOrder, ApplyPropertyDefault<float, &RenderStyle::order, float, &RenderStyle::setOrder, float, &RenderStyle::initialOrder>::createHandler());
+    setPropertyHandler(CSSPropertyWebkitOrder, ApplyPropertyDefault<int, &RenderStyle::order, int, &RenderStyle::setOrder, int, &RenderStyle::initialOrder>::createHandler());
 #endif
 #if ENABLE(CSS_REGIONS)
     setPropertyHandler(CSSPropertyWebkitFlowFrom, ApplyPropertyString<MapNoneToNull, &RenderStyle::regionThread, &RenderStyle::setRegionThread, &RenderStyle::initialRegionThread>::createHandler());

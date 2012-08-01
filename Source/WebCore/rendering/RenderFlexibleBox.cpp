@@ -39,6 +39,16 @@
 
 namespace WebCore {
 
+// Normally, -1 and 0 are not valid in a HashSet, but these are relatively likely order: values. Instead,
+// we make the two smallest int values invalid order: values (in the css parser code we clamp them to
+// int min + 2).
+struct RenderFlexibleBox::OrderHashTraits : WTF::GenericHashTraits<int> {
+    static const bool emptyValueIsZero = false;
+    static int emptyValue() { return std::numeric_limits<int>::min(); }
+    static void constructDeletedValue(int& slot) { slot = std::numeric_limits<int>::min() + 1; }
+    static bool isDeletedValue(int value) { return value == std::numeric_limits<int>::min() + 1; }
+};
+
 class RenderFlexibleBox::OrderIterator {
 public:
     OrderIterator(RenderFlexibleBox* flexibleBox, const OrderHashSet& orderValues)
@@ -89,8 +99,8 @@ public:
 private:
     RenderFlexibleBox* m_flexibleBox;
     RenderBox* m_currentChild;
-    Vector<float> m_orderValues;
-    Vector<float>::const_iterator m_orderValuesIterator;
+    Vector<int> m_orderValues;
+    Vector<int>::const_iterator m_orderValuesIterator;
 };
 
 struct RenderFlexibleBox::LineContext {

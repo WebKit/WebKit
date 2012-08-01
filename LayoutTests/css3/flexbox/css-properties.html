@@ -40,11 +40,12 @@ shouldBeEqualToString('flexitem.style.webkitOrder', '-1');
 flexitem.style.webkitOrder = 0;
 shouldBeEqualToString('flexitem.style.webkitOrder', '0');
 
-flexitem.style.webkitOrder = "test";
+// -webkit-order must be an integer.
+flexitem.style.webkitOrder = 1.5;
 shouldBeEqualToString('flexitem.style.webkitOrder', '0');
 
-flexitem.style.webkitOrder = 1.5;
-shouldBeEqualToString('flexitem.style.webkitOrder', '1.5');
+flexitem.style.webkitOrder = "test";
+shouldBeEqualToString('flexitem.style.webkitOrder', '0');
 
 flexitem.style.webkitOrder = '';
 shouldBeEqualToString('flexitem.style.webkitOrder', '');

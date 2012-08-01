@@ -1689,7 +1689,7 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(CSSPropert
         case CSSPropertyWebkitJustifyContent:
             return cssValuePool().createValue(style->justifyContent());
         case CSSPropertyWebkitOrder:
-            return cssValuePool().createValue(style->order());
+            return cssValuePool().createValue(style->order(), CSSPrimitiveValue::CSS_NUMBER);
 #endif
         case CSSPropertyFloat:
             return cssValuePool().createValue(style->floating());

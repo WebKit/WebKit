@@ -72,12 +72,12 @@ if (window.testRunner)
   <div class="first"  style="-webkit-order: -1000000000"></div>
 </div>
 
-<!-- Decimal numbers are OK. -->
+<!-- Floating numbers are ignored and we use the default of 1 instead. -->
 <div class="horizontal-box">
-  <div class="fourth" style="-webkit-order: 2.5"></div>
-  <div class="third"  style="-webkit-order: 1.1"></div>
-  <div class="first"  style="-webkit-order: -1.7"></div>
-  <div class="second" style=""></div>
+  <div class="second" style="-webkit-order: 2.5"></div>
+  <div class="fourth" style="-webkit-order: 2"></div>
+  <div class="first"  style="-webkit-order: -1"></div>
+  <div class="third"  style=""></div>
 </div>
 
 <div class="horizontal-box">
@@ -87,25 +87,26 @@ if (window.testRunner)
   <div class="third"  style=""></div>
 </div>
 
-<!-- Values greater than what can be stored in a float are clamped. -->
+<!-- Values greater than what can be stored in an int are clamped from
+     -2,147,483,646 (int min + 2) to 2,147,483,647. -->
 <div class="horizontal-box">
-  <div class="third"  style="-webkit-order: 99999999999999999999999999999999999999999"></div>
-  <div class="fourth" style="-webkit-order: 88888888888888888888888888888888888888888"></div>
+  <div class="third"  style="-webkit-order: 4000000000"></div>
+  <div class="fourth" style="-webkit-order: 3000000000"></div>
   <div class="first"  style=""></div>
   <div class="second" style="-webkit-order: 2147483646"></div>
 </div>
 
 <div class="horizontal-box">
-  <div class="fourth" style="-webkit-order: 4000000000"></div>
+  <div class="second" style="-webkit-order: 4000000000"></div>
   <div class="third"  style="-webkit-order: 3000000000"></div>
   <div class="first"  style=""></div>
-  <div class="second" style="-webkit-order: 2147483647"></div>
+  <div class="fourth" style="-webkit-order: 2147483647"></div>
 </div>
 
 <div class="horizontal-box">
-  <div class="first"  style="-webkit-order: -99999999999999999999999999999999999999999"></div>
-  <div class="second" style="-webkit-order: -88888888888888888888888888888888888888888"></div>
-  <div class="third"  style="-webkit-order: -77777777777777777777777777777777777777777"></div>
+  <div class="third"  style="-webkit-order: -2147483645"></div>
+  <div class="first"  style="-webkit-order: -2147483646"></div>
+  <div class="second" style="-webkit-order: -2147483647"></div>
   <div class="fourth" style=""></div>
 </div>
 
