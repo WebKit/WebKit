@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2011 Ericsson AB. All rights reserved.
+ * Copyright (C) 2012 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -47,6 +48,11 @@ public:
         virtual void sourceChangedState() = 0;
     };
 
+    class ExtraData : public RefCounted<ExtraData> {
+    public:
+        virtual ~ExtraData() { }
+    };
+
     enum Type {
         TypeAudio,
         TypeVideo
@@ -70,6 +76,9 @@ public:
     void addObserver(Observer*);
     void removeObserver(Observer*);
 
+    PassRefPtr<ExtraData> extraData() const { return m_extraData; }
+    void setExtraData(PassRefPtr<ExtraData> extraData) { m_extraData = extraData; }
+
 private:
     MediaStreamSource(const String& id, Type, const String& name, ReadyState);
 
@@ -78,6 +87,7 @@ private:
     String m_name;
     ReadyState m_readyState;
     Vector<Observer*> m_observers;
+    RefPtr<ExtraData> m_extraData;
 };
 
 typedef Vector<RefPtr<MediaStreamSource> > MediaStreamSourceVector;
