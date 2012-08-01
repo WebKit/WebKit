@@ -84,9 +84,9 @@ WONTFIX : perf/array-nested-loop.html = TEXT PASS TIMEOUT
 WONTFIX : perf/mouse-event.html = TEXT PASS TIMEOUT
 
 // Rounding issues when running on 32-bits machines.
-WONTFIX X86 : sputnik/Conformance/15_Native_Objects/15.8_Math/15.8.2/15.8.2.16_sin/S15.8.2.16_A7.html = TEXT
-WONTFIX X86 : sputnik/Conformance/15_Native_Objects/15.8_Math/15.8.2/15.8.2.18_tan/S15.8.2.18_A7.html = TEXT
-WONTFIX X86 : svg/css/stars-with-shadow.html = TEXT
+BUGWK43568 : sputnik/Conformance/15_Native_Objects/15.8_Math/15.8.2/15.8.2.16_sin/S15.8.2.16_A7.html = PASS TEXT
+BUGWK43568 : sputnik/Conformance/15_Native_Objects/15.8_Math/15.8.2/15.8.2.18_tan/S15.8.2.18_A7.html = PASS TEXT
+WONTFIX X86 : svg/css/stars-with-shadow.html = PASS TEXT
 
 // Newly added test which fails on other bots too
 BUGWK85969 : http/tests/loading/post-in-iframe-with-back-navigation.html = TEXT

@@ -1,3 +1,14 @@
+2012-08-01  Joone Hur  <joone.hur@intel.com>
+
+        Unreviewed EFL gardening.
+        Marked the following tests as pass, but they don't pass on 32-bits machines.
+
+        sputnik/Conformance/15_Native_Objects/15.8_Math/15.8.2/15.8.2.16_sin/S15.8.2.16_A7.html
+        sputnik/Conformance/15_Native_Objects/15.8_Math/15.8.2/15.8.2.18_tan/S15.8.2.18_A7.html
+        svg/css/stars-with-shadow.html
+
+        * platform/efl/TestExpectations:
+
 2012-07-31  Ami Fischman  <fischman@chromium.org>
 
         Layout tests media/event-attributes.html and media/video-playbackrate.html failing
