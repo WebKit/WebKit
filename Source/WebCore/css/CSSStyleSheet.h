@@ -39,6 +39,7 @@ class CSSStyleSheet;
 class CachedCSSStyleSheet;
 class Document;
 class MediaQuerySet;
+class MemoryObjectInfo;
 class SecurityOrigin;
 class StyleSheetContents;
 
@@ -104,6 +105,8 @@ public:
     void reattachChildRuleCSSOMWrappers();
 
     StyleSheetContents* contents() const { return m_contents.get(); }
+
+    void reportMemoryUsage(MemoryObjectInfo*) const;
 
 private:
     CSSStyleSheet(PassRefPtr<StyleSheetContents>, CSSImportRule* ownerRule);

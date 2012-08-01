@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WebKitCSSKeyframeRule.h"
 
+#include "MemoryInstrumentation.h"
 #include "PropertySetCSSStyleDeclaration.h"
 #include "StylePropertySet.h"
 #include "WebKitCSSKeyframesRule.h"
@@ -83,6 +84,13 @@ String StyleKeyframe::cssText() const
     result += "}";
 
     return result;
+}
+
+void StyleKeyframe::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+{
+    MemoryClassInfo<StyleKeyframe> info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
+    info.addInstrumentedMember(m_properties);
+    info.addString(m_key);
 }
 
 WebKitCSSKeyframeRule::WebKitCSSKeyframeRule(StyleKeyframe* keyframe, WebKitCSSKeyframesRule* parent)

@@ -28,6 +28,7 @@
 #include "CSSSelectorList.h"
 
 #include "CSSParserValues.h"
+#include "MemoryInstrumentation.h"
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
@@ -39,10 +40,7 @@ CSSSelectorList::~CSSSelectorList()
 
 CSSSelectorList::CSSSelectorList(const CSSSelectorList& o)
 {
-    CSSSelector* current = o.m_selectorArray;
-    while (!current->isLastInSelectorList())
-        ++current;
-    unsigned length = (current - o.m_selectorArray) + 1;
+    unsigned length = o.length();
     if (length == 1) {
         // Destructor expects a single selector to be allocated by new, multiple with fastMalloc.
         m_selectorArray = new CSSSelector(o.m_selectorArray[0]);
@@ -97,6 +95,16 @@ void CSSSelectorList::adoptSelectorVector(Vector<OwnPtr<CSSParserSelector> >& se
     selectorVector.shrink(0);
 }
 
+unsigned CSSSelectorList::length() const
+{
+    if (!m_selectorArray)
+        return 0;
+    CSSSelector* current = m_selectorArray;
+    while (!current->isLastInSelectorList())
+        ++current;
+    return (current - m_selectorArray) + 1;
+}
+
 void CSSSelectorList::deleteSelectors()
 {
     if (!m_selectorArray)
@@ -133,6 +141,12 @@ String CSSSelectorList::selectorsText() const
     }
 
     return result.toString();
+}
+
+void CSSSelectorList::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+{
+    MemoryClassInfo<CSSSelectorList> info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
+    info.addRawBuffer(m_selectorArray, length() * sizeof(CSSSelector));
 }
 
 template <typename Functor>

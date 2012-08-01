@@ -37,6 +37,7 @@
 
 namespace WebCore {
 class CSSParserValueList;
+class MemoryObjectInfo;
 
 class MediaQueryExp {
     WTF_MAKE_FAST_ALLOCATED;
@@ -71,6 +72,8 @@ public:
     String serialize() const;
 
     PassOwnPtr<MediaQueryExp> copy() const { return adoptPtr(new MediaQueryExp(*this)); }
+
+    void reportMemoryUsage(MemoryObjectInfo*) const;
 
 private:
     MediaQueryExp(const AtomicString& mediaFeature, CSSParserValueList* values);

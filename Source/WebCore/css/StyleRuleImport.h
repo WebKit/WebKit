@@ -30,6 +30,7 @@ namespace WebCore {
 
 class CachedCSSStyleSheet;
 class MediaQuerySet;
+class MemoryObjectInfo;
 class StyleSheetContents;
 
 class StyleRuleImport : public StyleRuleBase {
@@ -49,6 +50,8 @@ public:
     MediaQuerySet* mediaQueries() { return m_mediaQueries.get(); }
 
     void requestStyleSheet();
+
+    void reportMemoryUsage(MemoryObjectInfo*) const;
 
 private:
     // NOTE: We put the CachedStyleSheetClient in a member instead of inheriting from it

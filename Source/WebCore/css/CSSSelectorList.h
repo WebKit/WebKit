@@ -31,6 +31,7 @@
 namespace WebCore {
 
 class CSSParserSelector;
+class MemoryObjectInfo;
 
 class CSSSelectorList {
     WTF_MAKE_FAST_ALLOCATED;
@@ -52,7 +53,10 @@ public:
 
     String selectorsText() const;
 
+    void reportMemoryUsage(MemoryObjectInfo*) const;
+
 private:
+    unsigned length() const;
     void deleteSelectors();
 
     // End of a multipart selector is indicated by m_isLastInTagHistory bit in the last item.

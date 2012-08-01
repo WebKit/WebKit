@@ -32,6 +32,7 @@
 #include "ExceptionCode.h"
 #include "HTMLNames.h"
 #include "MediaList.h"
+#include "MemoryInstrumentation.h"
 #include "Node.h"
 #include "SVGNames.h"
 #include "SecurityOrigin.h"
@@ -166,6 +167,16 @@ void CSSStyleSheet::reattachChildRuleCSSOMWrappers()
             continue;
         m_childRuleCSSOMWrappers[i]->reattach(m_contents->ruleAt(i));
     }
+}
+
+void CSSStyleSheet::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+{
+    MemoryClassInfo<CSSStyleSheet> info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
+    info.addInstrumentedMember(m_contents);
+    info.addString(m_title);
+    info.addInstrumentedMember(m_mediaQueries);
+    info.addInstrumentedMember(m_ownerNode);
+    info.addInstrumentedMember(m_mediaCSSOMWrapper);
 }
 
 void CSSStyleSheet::setDisabled(bool disabled)

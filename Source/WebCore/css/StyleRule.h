@@ -31,6 +31,7 @@ namespace WebCore {
 class CSSRule;
 class CSSStyleRule;
 class CSSStyleSheet;
+class MemoryObjectInfo;
 class StylePropertySet;
 
 class StyleRuleBase : public WTF::RefCountedBase {
@@ -72,6 +73,8 @@ public:
     PassRefPtr<CSSRule> createCSSOMWrapper(CSSStyleSheet* parentSheet = 0) const;
     PassRefPtr<CSSRule> createCSSOMWrapper(CSSRule* parentRule) const;
 
+    void reportMemoryUsage(MemoryObjectInfo*) const;
+
 protected:
     StyleRuleBase(Type type, signed sourceLine = 0) : m_type(type), m_sourceLine(sourceLine) { }
     StyleRuleBase(const StyleRuleBase& o) : WTF::RefCountedBase(), m_type(o.m_type), m_sourceLine(o.m_sourceLine) { }
@@ -104,6 +107,7 @@ public:
     PassRefPtr<StyleRule> copy() const { return adoptRef(new StyleRule(*this)); }
 
     static unsigned averageSizeInBytes();
+    void reportMemoryUsage(MemoryObjectInfo*) const;
 
 private:
     StyleRule(int sourceLine);
@@ -125,6 +129,8 @@ public:
     void setProperties(PassRefPtr<StylePropertySet>);
 
     PassRefPtr<StyleRuleFontFace> copy() const { return adoptRef(new StyleRuleFontFace(*this)); }
+
+    void reportMemoryUsage(MemoryObjectInfo*) const;
 
 private:
     StyleRuleFontFace();
@@ -149,6 +155,8 @@ public:
 
     PassRefPtr<StyleRulePage> copy() const { return adoptRef(new StyleRulePage(*this)); }
 
+    void reportMemoryUsage(MemoryObjectInfo*) const;
+
 private:
     StyleRulePage();
     StyleRulePage(const StyleRulePage&);
@@ -163,6 +171,8 @@ public:
     
     void wrapperInsertRule(unsigned, PassRefPtr<StyleRuleBase>);
     void wrapperRemoveRule(unsigned);
+
+    void reportMemoryUsage(MemoryObjectInfo*) const;
     
 protected:
     StyleRuleBlock(Type, Vector<RefPtr<StyleRuleBase> >& adoptRule);
@@ -183,6 +193,8 @@ public:
 
     PassRefPtr<StyleRuleMedia> copy() const { return adoptRef(new StyleRuleMedia(*this)); }
 
+    void reportMemoryUsage(MemoryObjectInfo*) const;
+
 private:
     StyleRuleMedia(PassRefPtr<MediaQuerySet>, Vector<RefPtr<StyleRuleBase> >& adoptRules);
     StyleRuleMedia(const StyleRuleMedia&);
@@ -200,6 +212,8 @@ public:
     const CSSSelectorList& selectorList() const { return m_selectorList; }
 
     PassRefPtr<StyleRuleRegion> copy() const { return adoptRef(new StyleRuleRegion(*this)); }
+
+    void reportMemoryUsage(MemoryObjectInfo*) const;
 
 private:
     StyleRuleRegion(Vector<OwnPtr<CSSParserSelector> >*, Vector<RefPtr<StyleRuleBase> >& adoptRules);

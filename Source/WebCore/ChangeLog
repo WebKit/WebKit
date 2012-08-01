@@ -1,3 +1,87 @@
+2012-07-31  Yury Semikhatsky  <yurys@chromium.org>
+
+        Web Inspector: add CSSStyleSheet memory instrumentation
+        https://bugs.webkit.org/show_bug.cgi?id=92748
+
+        Reviewed by Antti Koivisto.
+
+        Added MemoryInstrumentation for CSSStyleSheet, StyleSheetContents, StyleRule,
+        CSSSelectorList and StylePropertySet. The coverage is not complete as the
+        patch was growing too big.
+
+        * css/CSSSelectorList.cpp:
+        (WebCore::CSSSelectorList::CSSSelectorList):
+        (WebCore::CSSSelectorList::length):
+        (WebCore):
+        (WebCore::CSSSelectorList::reportMemoryUsage):
+        * css/CSSSelectorList.h:
+        (WebCore):
+        (CSSSelectorList):
+        * css/CSSStyleSheet.cpp:
+        (WebCore::CSSStyleSheet::reportMemoryUsage):
+        (WebCore):
+        * css/CSSStyleSheet.h:
+        (WebCore):
+        (CSSStyleSheet):
+        * css/MediaList.cpp:
+        (WebCore):
+        (WebCore::MediaQuerySet::reportMemoryUsage):
+        (WebCore::MediaList::reportMemoryUsage):
+        * css/MediaList.h:
+        (WebCore):
+        (MediaQuerySet):
+        (MediaList):
+        * css/MediaQuery.cpp:
+        (WebCore::MediaQuery::reportMemoryUsage):
+        (WebCore):
+        * css/MediaQuery.h:
+        (WebCore):
+        (MediaQuery):
+        * css/MediaQueryExp.cpp:
+        (WebCore::MediaQueryExp::reportMemoryUsage):
+        (WebCore):
+        * css/MediaQueryExp.h:
+        (WebCore):
+        (MediaQueryExp):
+        * css/StylePropertySet.cpp:
+        (WebCore::StylePropertySet::reportMemoryUsage):
+        (WebCore):
+        * css/StylePropertySet.h:
+        (WebCore):
+        (StylePropertySet):
+        * css/StyleRule.cpp:
+        (WebCore::StyleRuleBase::reportMemoryUsage): We cannot make
+        reportMemoryUsage virtual as it would add vtable to StyleRuleBase
+        and its descendants and would blow its memory footprint. This
+        is why we have a switch over StyleRule type here.
+        (WebCore):
+        (WebCore::StyleRule::reportMemoryUsage):
+        (WebCore::StyleRulePage::reportMemoryUsage):
+        (WebCore::StyleRuleFontFace::reportMemoryUsage):
+        (WebCore::StyleRuleBlock::reportMemoryUsage):
+        (WebCore::StyleRuleMedia::reportMemoryUsage):
+        (WebCore::StyleRuleRegion::reportMemoryUsage):
+        * css/StyleRule.h:
+        (WebCore):
+        (StyleRuleBase):
+        (StyleRule):
+        (StyleRuleFontFace):
+        (StyleRulePage):
+        (StyleRuleBlock):
+        (StyleRuleMedia):
+        (StyleRuleRegion):
+        * css/StyleSheetContents.cpp:
+        (WebCore::StyleSheetContents::reportMemoryUsage):
+        (WebCore):
+        * css/StyleSheetContents.h:
+        (WebCore):
+        (StyleSheetContents):
+        * dom/Document.cpp:
+        (WebCore::Document::reportMemoryUsage):
+        * dom/MemoryInstrumentation.h:
+        (WebCore::MemoryClassInfo::addInstrumentedVectorPtr):
+        (WebCore::MemoryClassInfo::addVectorPtr):
+
 2012-08-01  Keishi Hattori  <keishi@webkit.org>
 
         Attempt to fix flakiness of color-suggestion-picker-appearance.html

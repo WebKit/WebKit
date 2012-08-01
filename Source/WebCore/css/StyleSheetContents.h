@@ -34,6 +34,7 @@ namespace WebCore {
 class CSSStyleSheet;
 class CachedCSSStyleSheet;
 class Document;
+class MemoryObjectInfo;
 class Node;
 class SecurityOrigin;
 class StyleRuleBase;
@@ -136,6 +137,8 @@ public:
     bool isInMemoryCache() const { return m_isInMemoryCache; }
     void addedToMemoryCache();
     void removedFromMemoryCache();
+
+    void reportMemoryUsage(MemoryObjectInfo*) const;
 
 private:
     StyleSheetContents(StyleRuleImport* ownerRule, const String& originalURL, const KURL& baseURL, const CSSParserContext&);

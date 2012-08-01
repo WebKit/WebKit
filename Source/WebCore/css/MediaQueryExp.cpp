@@ -32,6 +32,7 @@
 #include "CSSParser.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSValueList.h"
+#include "MemoryInstrumentation.h"
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
@@ -106,6 +107,13 @@ String MediaQueryExp::serialize() const
 
     const_cast<MediaQueryExp*>(this)->m_serializationCache = result.toString();
     return m_serializationCache;
+}
+
+void MediaQueryExp::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+{
+    MemoryClassInfo<MediaQueryExp> info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
+    info.addString(m_mediaFeature);
+    info.addString(m_serializationCache);
 }
 
 } // namespace

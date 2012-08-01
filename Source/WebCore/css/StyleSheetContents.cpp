@@ -26,6 +26,7 @@
 #include "CSSStyleSheet.h"
 #include "CachedCSSStyleSheet.h"
 #include "Document.h"
+#include "MemoryInstrumentation.h"
 #include "Node.h"
 #include "SecurityOrigin.h"
 #include "StylePropertySet.h"
@@ -439,6 +440,17 @@ void StyleSheetContents::removedFromMemoryCache()
     ASSERT(m_isInMemoryCache);
     ASSERT(isCacheable());
     m_isInMemoryCache = false;
+}
+
+void StyleSheetContents::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+{
+    MemoryClassInfo<StyleSheetContents> info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
+    info.addString(m_originalURL);
+    info.addString(m_encodingFromCharsetRule);
+    info.addVector(m_importRules);
+    info.addInstrumentedVector(m_childRules);
+    info.addHashMap(m_namespaces);
+    info.addVector(m_clients);
 }
 
 }

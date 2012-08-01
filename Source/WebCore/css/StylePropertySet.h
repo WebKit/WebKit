@@ -25,7 +25,6 @@
 #include "CSSPrimitiveValue.h"
 #include "CSSProperty.h"
 #include "CSSPropertyNames.h"
-#include "MemoryInstrumentation.h"
 #include <wtf/ListHashSet.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
@@ -35,6 +34,7 @@ namespace WebCore {
 class CSSRule;
 class CSSStyleDeclaration;
 class KURL;
+class MemoryObjectInfo;
 class PropertySetCSSStyleDeclaration;
 class StyledElement;
 class StylePropertyShorthand;
@@ -111,18 +111,12 @@ public:
     bool isMutable() const { return m_isMutable; }
 
     static unsigned averageSizeInBytes();
+    void reportMemoryUsage(MemoryObjectInfo*) const;
 
 #ifndef NDEBUG
     void showStyle();
 #endif
     
-    void reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
-    {
-        MemoryClassInfo<StylePropertySet> info(memoryObjectInfo, this, MemoryInstrumentation::CSS, m_arraySize * sizeof(CSSProperty));
-        if (m_isMutable)
-            info.addMember(m_mutablePropertyVector);
-    }
-
 private:
     StylePropertySet(CSSParserMode);
     StylePropertySet(const CSSProperty* properties, unsigned count, CSSParserMode, bool makeMutable);

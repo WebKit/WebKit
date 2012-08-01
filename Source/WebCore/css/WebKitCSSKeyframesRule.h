@@ -36,6 +36,7 @@
 namespace WebCore {
 
 class CSSRuleList;
+class MemoryObjectInfo;
 class StyleKeyframe;
 class WebKitCSSKeyframeRule;
 
@@ -57,6 +58,8 @@ public:
     int findKeyframeIndex(const String& key) const;
 
     PassRefPtr<StyleRuleKeyframes> copy() const { return adoptRef(new StyleRuleKeyframes(*this)); }
+
+    void reportMemoryUsage(MemoryObjectInfo*) const;
 
 private:
     StyleRuleKeyframes();

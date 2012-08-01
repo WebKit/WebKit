@@ -6098,10 +6098,12 @@ void Document::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     info.addVector(m_customFonts);
     info.addString(m_documentURI);
     info.addString(m_baseTarget);
+    info.addInstrumentedMember(m_elemSheet);
+    info.addInstrumentedMember(m_pageUserSheet);
     if (m_pageGroupUserSheets)
-        info.addVector(*m_pageGroupUserSheets.get());
+        info.addInstrumentedVectorPtr(m_pageGroupUserSheets);
     if (m_userSheets)
-        info.addVector(*m_userSheets.get());
+        info.addInstrumentedVectorPtr(m_userSheets);
     info.addHashSet(m_nodeIterators);
     info.addHashSet(m_ranges);
     info.addListHashSet(m_styleSheetCandidateNodes);

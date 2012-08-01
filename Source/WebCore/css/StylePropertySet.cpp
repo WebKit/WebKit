@@ -1075,6 +1075,15 @@ unsigned StylePropertySet::averageSizeInBytes()
     return sizeof(StylePropertySet) + sizeof(CSSProperty) * 2;
 }
 
+void StylePropertySet::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+{
+    MemoryClassInfo<StylePropertySet> info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
+    if (m_isMutable)
+        info.addVectorPtr(m_mutablePropertyVector);
+    else
+        info.addRawBuffer(m_properties, m_arraySize * sizeof(CSSProperty));
+}
+
 // See the function above if you need to update this.
 struct SameSizeAsStylePropertySet : public RefCounted<SameSizeAsStylePropertySet> {
     unsigned bitfield;

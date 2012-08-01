@@ -36,6 +36,7 @@
 
 namespace WebCore {
 class MediaQueryExp;
+class MemoryObjectInfo;
 
 class MediaQuery {
     WTF_MAKE_FAST_ALLOCATED;
@@ -57,6 +58,8 @@ public:
     bool ignored() const { return m_ignored; }
 
     PassOwnPtr<MediaQuery> copy() const { return adoptPtr(new MediaQuery(*this)); }
+
+    void reportMemoryUsage(MemoryObjectInfo*) const;
 
  private:
     MediaQuery(const MediaQuery&);

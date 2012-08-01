@@ -26,6 +26,7 @@
 #include "ExceptionCode.h"
 #include "MediaQuery.h"
 #include "MediaQueryExp.h"
+#include "MemoryInstrumentation.h"
 
 namespace WebCore {
 
@@ -209,6 +210,12 @@ String MediaQuerySet::mediaText() const
     }
     return text;
 }
+
+void MediaQuerySet::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+{
+    MemoryClassInfo<MediaQuerySet> info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
+    info.addInstrumentedVector(m_queries);
+}
     
 MediaList::MediaList(MediaQuerySet* mediaQueries, CSSStyleSheet* parentSheet)
     : m_mediaQueries(mediaQueries)
@@ -280,6 +287,12 @@ void MediaList::reattach(MediaQuerySet* mediaQueries)
 {
     ASSERT(mediaQueries);
     m_mediaQueries = mediaQueries;
+}
+
+void MediaList::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+{
+    MemoryClassInfo<MediaList> info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
+    info.addInstrumentedMember(m_mediaQueries);
 }
 
 }
