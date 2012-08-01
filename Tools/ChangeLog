@@ -1,3 +1,15 @@
+2012-08-01  Martin Robinson  <mrobinson@igalia.com>
+
+        Add the jhbuild source directory to the __builtin__ object
+
+        Reviewed by Philippe Normand.
+
+        It seems that the jhbuild script explicitly looks for the SRCDIR __builtin__ when
+        initializing. This is necessary for loading the jhbuild from the checkout directory.
+
+        * jhbuild/jhbuildutils.py:
+        (enter_jhbuild_environment_if_available): Set SRCDIR to the source directory.
+
 2012-07-31  Dirk Pranke  <dpranke@chromium.org>
 
         nrwt: move actual test-running code into layout_test_runner.py

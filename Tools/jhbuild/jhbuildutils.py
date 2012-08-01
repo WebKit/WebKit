@@ -1,6 +1,7 @@
 import glob
 import os.path
 import sys
+import __builtin__
 
 top_level_dir = None
 
@@ -31,6 +32,9 @@ def enter_jhbuild_environment_if_available(platform):
     # back to that method.
     source_path = os.path.join(get_dependencies_path(), "Source", "jhbuild")
     sys.path.insert(0, source_path)
+
+    # When loading jhbuild from the source checkout it fails if the SRCDIR variable is not set.
+    __builtin__.__dict__['SRCDIR'] = source_path
 
     # We don't know the Python version, so we just assume that we can safely take the first one in the list.
     site_packages_path = glob.glob(os.path.join(get_dependencies_path(), "Root", "lib", "*", "site-packages"))
