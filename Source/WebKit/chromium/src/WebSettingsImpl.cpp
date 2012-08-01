@@ -149,6 +149,15 @@ void WebSettingsImpl::setTextAutosizingEnabled(bool enabled)
 #endif
 }
 
+void WebSettingsImpl::setTextAutosizingFontScaleFactor(float fontScaleFactor)
+{
+#if ENABLE(TEXT_AUTOSIZING)
+    m_settings->setTextAutosizingFontScaleFactor(fontScaleFactor);
+#else
+    UNUSED_PARAM(fontScaleFactor);
+#endif
+}
+
 void WebSettingsImpl::setDefaultTextEncodingName(const WebString& encoding)
 {
     m_settings->setDefaultTextEncodingName((String)encoding);

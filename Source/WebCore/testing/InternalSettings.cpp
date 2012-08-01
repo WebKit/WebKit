@@ -91,6 +91,7 @@ InternalSettings::Backup::Backup(Page* page, Settings* settings)
 #if ENABLE(TEXT_AUTOSIZING)
     , m_originalTextAutosizingEnabled(settings->textAutosizingEnabled())
     , m_originalTextAutosizingWindowSizeOverride(settings->textAutosizingWindowSizeOverride())
+    , m_originalTextAutosizingFontScaleFactor(settings->textAutosizingFontScaleFactor())
 #endif
 #if ENABLE(DIALOG_ELEMENT)
     , m_originalDialogElementEnabled(RuntimeEnabledFeatures::dialogElementEnabled())
@@ -121,6 +122,7 @@ void InternalSettings::Backup::restoreTo(Page* page, Settings* settings)
 #if ENABLE(TEXT_AUTOSIZING)
     settings->setTextAutosizingEnabled(m_originalTextAutosizingEnabled);
     settings->setTextAutosizingWindowSizeOverride(m_originalTextAutosizingWindowSizeOverride);
+    settings->setTextAutosizingFontScaleFactor(m_originalTextAutosizingFontScaleFactor);
 #endif
 #if ENABLE(DIALOG_ELEMENT)
     RuntimeEnabledFeatures::setDialogElementEnabled(m_originalDialogElementEnabled);
@@ -376,6 +378,17 @@ void InternalSettings::setTextAutosizingWindowSizeOverride(int width, int height
 #else
     UNUSED_PARAM(width);
     UNUSED_PARAM(height);
+    UNUSED_PARAM(ec);
+#endif
+}
+
+void InternalSettings::setTextAutosizingFontScaleFactor(float fontScaleFactor, ExceptionCode& ec)
+{
+#if ENABLE(TEXT_AUTOSIZING)
+    InternalSettingsGuardForSettings();
+    settings()->setTextAutosizingFontScaleFactor(fontScaleFactor);
+#else
+    UNUSED_PARAM(fontScaleFactor);
     UNUSED_PARAM(ec);
 #endif
 }

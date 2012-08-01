@@ -1,3 +1,24 @@
+2012-08-01  Peter Beverloo  <peter@chromium.org>
+
+        [Text Autosizing] Provide an API for influencing the font scale factor
+        https://bugs.webkit.org/show_bug.cgi?id=92882
+
+        Reviewed by Adam Barth.
+
+        Add an API to change Text Autosizing's font scale factor.
+
+        The font scale factor applied to Text Autosizing influences the sizing
+        of text, and will influence the scaling of boosted blocks once the
+        implementation progresses. For Android, it will be set to the font size
+        chosen in the user's system-wide preferences.
+
+        * public/WebSettings.h:
+        * src/WebSettingsImpl.cpp:
+        (WebKit::WebSettingsImpl::setTextAutosizingFontScaleFactor):
+        (WebKit):
+        * src/WebSettingsImpl.h:
+        (WebSettingsImpl):
+
 2012-08-01  Dirk Pranke  <dpranke@chromium.org>
 
         Roll chromium DEPS to 149416.

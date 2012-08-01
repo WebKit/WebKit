@@ -68,6 +68,8 @@ void TextAutosizer::processBlock(RenderBlock* block, const IntSize& windowSize)
 {
     int windowLogicalWidth = block->isHorizontalWritingMode() ? windowSize.width() : windowSize.height();
     float multiplier = static_cast<float>(block->logicalWidth()) / windowLogicalWidth; // FIXME: This is overly simplistic.
+    multiplier *= m_document->settings()->textAutosizingFontScaleFactor();
+
     if (multiplier < 1)
         return;
     for (RenderObject* descendant = traverseNext(block, block, treatAsInline); descendant; descendant = traverseNext(descendant, block, treatAsInline)) {

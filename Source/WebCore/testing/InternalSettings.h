@@ -73,6 +73,7 @@ public:
 #if ENABLE(TEXT_AUTOSIZING)
         bool m_originalTextAutosizingEnabled;
         IntSize m_originalTextAutosizingWindowSizeOverride;
+        float m_originalTextAutosizingFontScaleFactor;
 #endif
 #if ENABLE(DIALOG_ELEMENT)
         bool m_originalDialogElementEnabled;
@@ -115,6 +116,7 @@ public:
     void setPictographFontFamily(const String& family, const String& script, ExceptionCode&);
     void setTextAutosizingEnabled(bool enabled, ExceptionCode&);
     void setTextAutosizingWindowSizeOverride(int width, int height, ExceptionCode&);
+    void setTextAutosizingFontScaleFactor(float fontScaleFactor, ExceptionCode&);
     void setEnableScrollAnimator(bool enabled, ExceptionCode&);
     bool scrollAnimatorEnabled(ExceptionCode&);
     void setCSSExclusionsEnabled(bool enabled, ExceptionCode&);

@@ -54,6 +54,7 @@ module window {
         void setPictographFontFamily(in DOMString family, in DOMString script) raises(DOMException);
         void setTextAutosizingEnabled(in boolean enabled) raises(DOMException);
         void setTextAutosizingWindowSizeOverride(in long width, in long height) raises(DOMException);
+        void setTextAutosizingFontScaleFactor(in float fontScaleFactor) raises(DOMException);
         void setEnableScrollAnimator(in boolean enabled) raises(DOMException);
         boolean scrollAnimatorEnabled() raises(DOMException);
         void setCSSExclusionsEnabled(in boolean enabled) raises(DOMException);

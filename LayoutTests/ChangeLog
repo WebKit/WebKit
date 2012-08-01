@@ -1,3 +1,22 @@
+2012-08-01  Peter Beverloo  <peter@chromium.org>
+
+        [Text Autosizing] Provide an API for influencing the font scale factor
+        https://bugs.webkit.org/show_bug.cgi?id=92882
+
+        Reviewed by Adam Barth.
+
+        Add a basic test. More usable tests should be added later, as it's
+        really hard to test this accurately in this phase of the implementation,
+        and Text Autosizing is still subject to various bugs.
+
+        The font scale factor applied to Text Autosizing influences the sizing
+        of text, and will influence the scaling of boosted blocks once the
+        implementation progresses. For Android, it will be set to the font size
+        chosen in the user's system-wide preferences.
+
+        * fast/text-autosizing/font-scale-factor-expected.html: Added.
+        * fast/text-autosizing/font-scale-factor.html: Added.
+
 2012-08-01  Mike West  <mkwst@chromium.org>
 
         CSP should correctly block plugin resources rendered in PluginDocuments.

@@ -139,6 +139,7 @@ Settings::Settings(Page* page)
     , m_editingBehaviorType(editingBehaviorTypeForPlatform())
     , m_maximumHTMLParserDOMTreeDepth(defaultMaximumHTMLParserDOMTreeDepth)
 #if ENABLE(TEXT_AUTOSIZING)
+    , m_textAutosizingFontScaleFactor(1)
 #if HACK_FORCE_TEXT_AUTOSIZING_ON_DESKTOP
     , m_textAutosizingWindowSizeOverride(320, 480)
     , m_textAutosizingEnabled(true)
@@ -429,6 +430,13 @@ void Settings::setTextAutosizingWindowSizeOverride(const IntSize& textAutosizing
     m_textAutosizingWindowSizeOverride = textAutosizingWindowSizeOverride;
     m_page->setNeedsRecalcStyleInAllFrames();
 }
+
+void Settings::setTextAutosizingFontScaleFactor(float fontScaleFactor)
+{
+    m_textAutosizingFontScaleFactor = fontScaleFactor;
+    m_page->setNeedsRecalcStyleInAllFrames();
+}
+
 #endif
 
 void Settings::setLoadsImagesAutomatically(bool loadsImagesAutomatically)

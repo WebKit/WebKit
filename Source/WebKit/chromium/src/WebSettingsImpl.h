@@ -140,6 +140,7 @@ public:
     virtual void setSyncXHRInDocumentsEnabled(bool);
     virtual void setTextAreasAreResizable(bool);
     virtual void setTextAutosizingEnabled(bool);
+    virtual void setTextAutosizingFontScaleFactor(float);
     virtual void setTextDirectionSubmenuInclusionBehaviorNeverIncluded();
     virtual void setUnifiedTextCheckerEnabled(bool);
     virtual void setUserStyleSheetLocation(const WebURL&);
