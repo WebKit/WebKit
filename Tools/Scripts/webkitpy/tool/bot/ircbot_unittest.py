@@ -3,7 +3,7 @@
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
 # met:
-# 
+#
 #     * Redistributions of source code must retain the above copyright
 # notice, this list of conditions and the following disclaimer.
 #     * Redistributions in binary form must reproduce the above
@@ -13,7 +13,7 @@
 #     * Neither the name of Google Inc. nor the names of its
 # contributors may be used to endorse or promote products derived from
 # this software without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
 # "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
 # LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -33,7 +33,8 @@ from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.tool.bot import irc_command
 from webkitpy.tool.bot.queueengine import TerminateQueue
 from webkitpy.tool.bot.sheriff import Sheriff
-from webkitpy.tool.bot.sheriffircbot import SheriffIRCBot
+from webkitpy.tool.bot.ircbot import IRCBot
+from webkitpy.tool.bot.ircbot import Eliza
 from webkitpy.tool.bot.sheriff_unittest import MockSheriffBot
 from webkitpy.tool.mocktool import MockTool
 
@@ -41,24 +42,29 @@ from webkitpy.tool.mocktool import MockTool
 def run(message):
     tool = MockTool()
     tool.ensure_irc_connected(None)
-    bot = SheriffIRCBot(tool, Sheriff(tool, MockSheriffBot()))
+    bot = IRCBot("sheriffbot", tool, Sheriff(tool, MockSheriffBot()), irc_command.commands)
     bot._message_queue.post(["mock_nick", message])
     bot.process_pending_messages()
 
 
-class SheriffIRCBotTest(unittest.TestCase):
+class IRCBotTest(unittest.TestCase):
+    def test_eliza(self):
+        eliza = Eliza()
+        eliza.execute("tom", "hi", None, None)
+        eliza.execute("tom", "bye", None, None)
+
     def test_parse_command_and_args(self):
         tool = MockTool()
-        bot = SheriffIRCBot(tool, Sheriff(tool, MockSheriffBot()))
-        self.assertEqual(bot._parse_command_and_args(""), (irc_command.Eliza, [""]))
-        self.assertEqual(bot._parse_command_and_args("   "), (irc_command.Eliza, [""]))
+        bot = IRCBot("sheriffbot", tool, Sheriff(tool, MockSheriffBot()), irc_command.commands)
+        self.assertEqual(bot._parse_command_and_args(""), (Eliza, [""]))
+        self.assertEqual(bot._parse_command_and_args("   "), (Eliza, [""]))
         self.assertEqual(bot._parse_command_and_args(" hi "), (irc_command.Hi, []))
         self.assertEqual(bot._parse_command_and_args(" hi there "), (irc_command.Hi, ["there"]))
 
     def test_exception_during_command(self):
         tool = MockTool()
         tool.ensure_irc_connected(None)
-        bot = SheriffIRCBot(tool, Sheriff(tool, MockSheriffBot()))
+        bot = IRCBot("sheriffbot", tool, Sheriff(tool, MockSheriffBot()), irc_command.commands)
 
         class CommandWithException(object):
             def execute(self, nick, args, tool, sheriff):

@@ -1,3 +1,38 @@
+2012-08-01  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Generalize SheriffIRCBot to prepare for PerfBot
+        https://bugs.webkit.org/show_bug.cgi?id=92912
+
+        Reviewed by Adam Barth.
+
+        Renamed SheriffIRCBot to IRCBot and generalized to support non-sheriffbot IRC bot in the future.
+        This will be useful when I add an experimental perf EWS IRC bot.
+
+        * Scripts/webkitpy/tool/bot/irc_command.py:
+        (Whois.execute):
+        * Scripts/webkitpy/tool/bot/irc_command_unittest.py:
+        (IRCCommandTest):
+        * Scripts/webkitpy/tool/bot/ircbot.py: Moved from Tools/Scripts/webkitpy/tool/bot/sheriffircbot.py.
+        (Eliza): Moved from irc_command.
+        (Eliza.__init__):
+        (Eliza.execute):
+        (IRCBot):
+        (IRCBot.__init__):
+        (IRCBot.irc_delegate):
+        (IRCBot._parse_command_and_args):
+        (IRCBot.process_message):
+        * Scripts/webkitpy/tool/bot/ircbot_unittest.py: Moved from Tools/Scripts/webkitpy/tool/bot/sheriffircbot_unittest.py.
+        (run):
+        (IRCBotTest):
+        (IRCBotTest.test_eliza): Moved from IRCCommandTest.
+        (IRCBotTest.test_parse_command_and_args):
+        (IRCBotTest.test_exception_during_command):
+        * Scripts/webkitpy/tool/bot/sheriffircbot.py: Removed.
+        * Scripts/webkitpy/tool/bot/sheriffircbot_unittest.py: Removed.
+        * Scripts/webkitpy/tool/commands/sheriffbot.py:
+        (SheriffBot.begin_work_queue):
+        * Scripts/webkitpy/webkitpy.pyproj:
+
 2012-08-01  Dirk Pranke  <dpranke@chromium.org>
 
         nrwt: reenable the test for --verbose working in child processes

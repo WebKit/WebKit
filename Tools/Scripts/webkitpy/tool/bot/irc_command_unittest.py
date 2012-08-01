@@ -35,11 +35,6 @@ from webkitpy.common.system.executive_mock import MockExecutive
 
 
 class IRCCommandTest(unittest.TestCase):
-    def test_eliza(self):
-        eliza = Eliza()
-        eliza.execute("tom", "hi", None, None)
-        eliza.execute("tom", "bye", None, None)
-
     def test_whois(self):
         whois = Whois()
         self.assertEquals("tom: Usage: whois SEARCH_STRING",

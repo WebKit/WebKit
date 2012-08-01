@@ -28,7 +28,8 @@
 
 from webkitpy.common.system.deprecated_logging import log
 from webkitpy.tool.bot.sheriff import Sheriff
-from webkitpy.tool.bot.sheriffircbot import SheriffIRCBot
+from webkitpy.tool.bot.irc_command import commands as irc_commands
+from webkitpy.tool.bot.ircbot import IRCBot
 from webkitpy.tool.commands.queues import AbstractQueue
 from webkitpy.tool.commands.stepsequence import StepSequenceErrorHandler
 
@@ -45,7 +46,7 @@ class SheriffBot(AbstractQueue, StepSequenceErrorHandler):
     def begin_work_queue(self):
         AbstractQueue.begin_work_queue(self)
         self._sheriff = Sheriff(self._tool, self)
-        self._irc_bot = SheriffIRCBot(self._tool, self._sheriff)
+        self._irc_bot = IRCBot("sheriffbot", self._tool, self._sheriff, irc_commands)
         self._tool.ensure_irc_connected(self._irc_bot.irc_delegate())
 
     def work_item_log_path(self, failure_map):

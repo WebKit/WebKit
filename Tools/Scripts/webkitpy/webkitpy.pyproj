@@ -378,14 +378,14 @@
     <Compile Include="tool\bot\flakytestreporter_unittest.py" />
     <Compile Include="tool\bot\irc_command.py" />
     <Compile Include="tool\bot\irc_command_unittest.py" />
+    <Compile Include="tool\bot\ircbot.py" />
+    <Compile Include="tool\bot\ircbot_unittest.py" />
     <Compile Include="tool\bot\layouttestresultsreader.py" />
     <Compile Include="tool\bot\layouttestresultsreader_unittest.py" />
     <Compile Include="tool\bot\patchanalysistask.py" />
     <Compile Include="tool\bot\queueengine.py" />
     <Compile Include="tool\bot\queueengine_unittest.py" />
     <Compile Include="tool\bot\sheriff.py" />
-    <Compile Include="tool\bot\sheriffircbot.py" />
-    <Compile Include="tool\bot\sheriffircbot_unittest.py" />
     <Compile Include="tool\bot\sheriff_unittest.py" />
     <Compile Include="tool\bot\stylequeuetask.py" />
     <Compile Include="tool\bot\__init__.py" />

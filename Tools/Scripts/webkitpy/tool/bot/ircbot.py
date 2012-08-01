@@ -26,14 +26,15 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from webkitpy.tool.bot import irc_command
 from webkitpy.tool.bot.queueengine import TerminateQueue
+from webkitpy.tool.bot.irc_command import IRCCommand
 from webkitpy.common.net.irc.ircbot import IRCBotDelegate
 from webkitpy.common.thread.threadedmessagequeue import ThreadedMessageQueue
 
 
 class _IRCThreadTearoff(IRCBotDelegate):
-    def __init__(self, password, message_queue, wakeup_event):
+    def __init__(self, name, password, message_queue, wakeup_event):
+        self._name = name
         self._password = password
         self._message_queue = message_queue
         self._wakeup_event = wakeup_event
@@ -45,37 +46,50 @@ class _IRCThreadTearoff(IRCBotDelegate):
         self._wakeup_event.set()
 
     def irc_nickname(self):
-        return "sheriffbot"
+        return self._name
 
     def irc_password(self):
         return self._password
 
 
-class SheriffIRCBot(object):
-    def __init__(self, tool, sheriff):
+class Eliza(IRCCommand):
+    therapist = None
+
+    def __init__(self):
+        if not self.therapist:
+            import webkitpy.thirdparty.autoinstalled.eliza as eliza
+            Eliza.therapist = eliza.eliza()
+
+    def execute(self, nick, args, tool, sheriff):
+        return "%s: %s" % (nick, self.therapist.respond(" ".join(args)))
+
+
+class IRCBot(object):
+    def __init__(self, name, tool, agent, commands):
+        self._name = name
         self._tool = tool
-        self._sheriff = sheriff
+        self._agent = agent
         self._message_queue = ThreadedMessageQueue()
+        self._commands = commands
 
     def irc_delegate(self):
-        return _IRCThreadTearoff(self._tool.irc_password,
-                                 self._message_queue,
-                                 self._tool.wakeup_event)
+        return _IRCThreadTearoff(self._name, self._tool.irc_password,
+            self._message_queue, self._tool.wakeup_event)
 
     def _parse_command_and_args(self, request):
         tokenized_request = request.strip().split(" ")
-        command = irc_command.commands.get(tokenized_request[0])
+        command = self._commands.get(tokenized_request[0])
         args = tokenized_request[1:]
         if not command:
             # Give the peoples someone to talk with.
-            command = irc_command.Eliza
+            command = Eliza
             args = tokenized_request
         return (command, args)
 
     def process_message(self, requester_nick, request):
         command, args = self._parse_command_and_args(request)
         try:
-            response = command().execute(requester_nick, args, self._tool, self._sheriff)
+            response = command().execute(requester_nick, args, self._tool, self._agent)
             if response:
                 self._tool.irc().post(response)
         except TerminateQueue:
