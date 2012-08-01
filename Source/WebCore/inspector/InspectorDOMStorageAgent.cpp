@@ -214,6 +214,14 @@ void InspectorDOMStorageAgent::clearResources()
     m_resources.clear();
 }
 
+size_t InspectorDOMStorageAgent::memoryBytesUsedByStorageCache() const
+{
+    size_t size = 0;
+    for (DOMStorageResourcesMap::const_iterator it = m_resources.begin(); it != m_resources.end(); ++it)
+        size += it->second->storageArea()->memoryBytesUsedByCache();
+    return size;
+}
+
 
 } // namespace WebCore
 

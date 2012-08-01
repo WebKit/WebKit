@@ -120,6 +120,11 @@ bool StorageAreaProxy::canAccessStorage(Frame* frame) const
     return !webView->permissionClient() || webView->permissionClient()->allowStorage(webFrame, m_storageType == LocalStorage);
 }
 
+size_t StorageAreaProxy::memoryBytesUsedByCache() const
+{
+    return m_storageArea->memoryBytesUsedByCache();
+}
+
 void StorageAreaProxy::dispatchLocalStorageEvent(PageGroup* pageGroup, const String& key, const String& oldValue, const String& newValue,
                                                  SecurityOrigin* securityOrigin, const KURL& pageURL, WebKit::WebStorageArea* sourceAreaInstance, bool originatedInProcess)
 {

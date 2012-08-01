@@ -39,6 +39,7 @@
 #include "Document.h"
 #include "EventListenerMap.h"
 #include "Frame.h"
+#include "InspectorDOMStorageAgent.h"
 #include "InspectorFrontend.h"
 #include "InspectorState.h"
 #include "InspectorValues.h"
@@ -97,6 +98,8 @@ static const char domTreeDOM[] = "DOMTreeDOM";
 static const char domTreeCSS[] = "DOMTreeCSS";
 static const char domTreeBinding[] = "DOMTreeBinding";
 static const char domTreeLoader[] = "DOMTreeLoader";
+
+static const char domStorageCache[] = "DOMStorageCache";
 }
 
 namespace {
@@ -569,6 +572,13 @@ static PassRefPtr<InspectorMemoryBlock> jsExternalResourcesInfo(VisitedObjects& 
     return externalResourcesStats.release();
 }
 
+static PassRefPtr<InspectorMemoryBlock> dumpDOMStorageCache(size_t cacheSize)
+{
+    RefPtr<InspectorMemoryBlock> domStorageCache = InspectorMemoryBlock::create().setName(MemoryBlockName::domStorageCache);
+    domStorageCache->setSize(cacheSize);
+    return domStorageCache;
+}
+
 void InspectorMemoryAgent::getProcessMemoryDistribution(ErrorString*, RefPtr<InspectorMemoryBlock>& processMemory)
 {
     processMemory = InspectorMemoryBlock::create().setName(MemoryBlockName::processPrivateMemory);
@@ -584,6 +594,7 @@ void InspectorMemoryAgent::getProcessMemoryDistribution(ErrorString*, RefPtr<Ins
     children->addItem(domTreeInfo(m_page, visitedObjects, &inspectorData)); // FIXME: collect for all pages?
     children->addItem(jsExternalResourcesInfo(visitedObjects));
     children->addItem(inspectorData.dumpStatistics());
+    children->addItem(dumpDOMStorageCache(m_domStorageAgent->memoryBytesUsedByStorageCache()));
     addPlatformComponentsInfo(children);
     processMemory->setChildren(children);
 
@@ -593,9 +604,10 @@ void InspectorMemoryAgent::getProcessMemoryDistribution(ErrorString*, RefPtr<Ins
     processMemory->setSize(privateBytes);
 }
 
-InspectorMemoryAgent::InspectorMemoryAgent(InstrumentingAgents* instrumentingAgents, InspectorState* state, Page* page, InspectorDOMAgent*)
+InspectorMemoryAgent::InspectorMemoryAgent(InstrumentingAgents* instrumentingAgents, InspectorState* state, Page* page, InspectorDOMStorageAgent* domStorageAgent)
     : InspectorBaseAgent<InspectorMemoryAgent>("Memory", instrumentingAgents, state)
     , m_page(page)
+    , m_domStorageAgent(domStorageAgent)
 {
 }
 

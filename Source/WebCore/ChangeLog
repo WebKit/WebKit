@@ -1,3 +1,40 @@
+2012-08-01  Alexei Filippov  <alexeif@chromium.org>
+
+        Web Inspector: count DOM storage cache memory for native snapshot
+        https://bugs.webkit.org/show_bug.cgi?id=91617
+
+        Reviewed by Yury Semikhatsky.
+
+        Add memory size used for DOM storage cache reporting interface.
+        Report it to the native memory snapshot instrumentation framework.
+
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::InspectorController):
+        * inspector/InspectorDOMStorageAgent.cpp:
+        (WebCore::InspectorDOMStorageAgent::memoryBytesUsedByStorageCache):
+        (WebCore):
+        * inspector/InspectorDOMStorageAgent.h:
+        (InspectorDOMStorageAgent):
+        * inspector/InspectorMemoryAgent.cpp:
+        (MemoryBlockName):
+        (WebCore):
+        (WebCore::dumpDOMStorageCache):
+        (WebCore::InspectorMemoryAgent::getProcessMemoryDistribution):
+        (WebCore::InspectorMemoryAgent::InspectorMemoryAgent):
+        * inspector/InspectorMemoryAgent.h:
+        (WebCore):
+        (WebCore::InspectorMemoryAgent::create):
+        (InspectorMemoryAgent):
+        * inspector/front-end/NativeMemorySnapshotView.js:
+        (WebInspector.MemoryBlockViewProperties._initialize):
+        * storage/StorageArea.h:
+        (StorageArea):
+        * storage/StorageAreaImpl.cpp:
+        (WebCore::StorageAreaImpl::memoryBytesUsedByCache):
+        (WebCore):
+        * storage/StorageAreaImpl.h:
+        (StorageAreaImpl):
+
 2012-07-31  Yury Semikhatsky  <yurys@chromium.org>
 
         Web Inspector: add CSSStyleSheet memory instrumentation

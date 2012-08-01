@@ -54,6 +54,8 @@ namespace WebCore {
 
         virtual bool disabledByPrivateBrowsingInFrame(const Frame* sourceFrame) const;
 
+        virtual size_t memoryBytesUsedByCache() const;
+
         virtual void incrementAccessCount();
         virtual void decrementAccessCount();
 

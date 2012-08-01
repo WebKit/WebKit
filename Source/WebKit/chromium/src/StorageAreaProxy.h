@@ -58,6 +58,8 @@ public:
 
     virtual bool disabledByPrivateBrowsingInFrame(const Frame*) const { return false; }
 
+    virtual size_t memoryBytesUsedByCache() const;
+
     static void dispatchLocalStorageEvent(
             PageGroup*, const String& key, const String& oldValue, const String& newValue,
             SecurityOrigin*, const KURL& pageURL, WebKit::WebStorageArea* sourceAreaInstance, bool originatedInProcess);

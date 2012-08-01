@@ -84,6 +84,9 @@ public:
         clear(pageUrl, unused);
     }
 
+    // Returns amount of bytes occupied by the storage cache in physical memory.
+    virtual size_t memoryBytesUsedByCache() const { return 0; }
+
     // DEPRECATED - being replaced by the async variants above which do not return oldValues or block until completion.
     virtual void setItem(const WebString& key, const WebString& newValue, const WebURL&, Result&, WebString& oldValue) { }
     virtual void removeItem(const WebString& key, const WebURL& pageUrl, WebString& oldValue)  { }

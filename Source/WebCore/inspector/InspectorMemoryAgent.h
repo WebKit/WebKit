@@ -38,10 +38,9 @@
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
-class InspectorDOMAgent;
-class InspectorFrontend;
+
+class InspectorDOMStorageAgent;
 class InspectorState;
-class InspectorArray;
 class InstrumentingAgents;
 class Page;
 
@@ -52,19 +51,19 @@ class InspectorMemoryAgent : public InspectorBaseAgent<InspectorMemoryAgent>, pu
 public:
     typedef Vector<OwnPtr<InspectorBaseAgentInterface> > InspectorAgents;
 
-    static PassOwnPtr<InspectorMemoryAgent> create(InstrumentingAgents* instrumentingAgents, InspectorState* state, Page* page, InspectorDOMAgent* domAgent)
+    static PassOwnPtr<InspectorMemoryAgent> create(InstrumentingAgents* instrumentingAgents, InspectorState* state, Page* page, InspectorDOMStorageAgent* domStorageAgent)
     {
-        return adoptPtr(new InspectorMemoryAgent(instrumentingAgents, state, page, domAgent));
+        return adoptPtr(new InspectorMemoryAgent(instrumentingAgents, state, page, domStorageAgent));
     }
     virtual ~InspectorMemoryAgent();
 
     virtual void getDOMNodeCount(ErrorString*, RefPtr<TypeBuilder::Array<TypeBuilder::Memory::DOMGroup> >& domGroups, RefPtr<TypeBuilder::Memory::StringStatistics>& strings);
     virtual void getProcessMemoryDistribution(ErrorString*, RefPtr<TypeBuilder::Memory::MemoryBlock>& processMemory);
 
-
 private:
-    InspectorMemoryAgent(InstrumentingAgents*, InspectorState*, Page*, InspectorDOMAgent* domAgent);
+    InspectorMemoryAgent(InstrumentingAgents*, InspectorState*, Page*, InspectorDOMStorageAgent*);
     Page* m_page;
+    InspectorDOMStorageAgent* m_domStorageAgent;
 };
 
 } // namespace WebCore

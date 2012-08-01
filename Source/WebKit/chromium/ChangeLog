@@ -1,3 +1,18 @@
+2012-08-01  Alexei Filippov  <alexeif@chromium.org>
+
+        Web Inspector: count DOM storage cache memory for native snapshot
+        https://bugs.webkit.org/show_bug.cgi?id=91617
+
+        Reviewed by Yury Semikhatsky.
+
+        Add memory size used for DOM storage cache reporting interface.
+
+        * src/StorageAreaProxy.cpp:
+        (WebCore::StorageAreaProxy::memoryBytesUsedByCache):
+        (WebCore):
+        * src/StorageAreaProxy.h:
+        (StorageAreaProxy):
+
 2012-07-31  Yoshifumi Inoue  <yosin@chromium.org>
 
         [Chromium] Enable ENABLE_INPUT_TYPE_TIME_MULTIPLE_FIELDS

@@ -264,6 +264,11 @@ void StorageAreaImpl::blockUntilImportComplete() const
         m_storageAreaSync->blockUntilImportComplete();
 }
 
+size_t StorageAreaImpl::memoryBytesUsedByCache() const
+{
+    return 0;
+}
+
 void StorageAreaImpl::incrementAccessCount()
 {
     m_accessCount++;
