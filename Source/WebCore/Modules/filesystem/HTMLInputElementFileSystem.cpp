@@ -49,6 +49,10 @@ namespace WebCore {
 PassRefPtr<EntryArray> HTMLInputElementFileSystem::webkitEntries(ScriptExecutionContext* scriptExecutionContext, HTMLInputElement* input)
 {
     RefPtr<EntryArray> array = EntryArray::create();
+    FileList* files = input->files();
+
+    if (!files)
+        return array;
 
     RefPtr<DOMFileSystem> filesystem = DOMFileSystem::createIsolatedFileSystem(scriptExecutionContext, input->droppedFileSystemId());
     if (!filesystem) {
@@ -56,8 +60,6 @@ PassRefPtr<EntryArray> HTMLInputElementFileSystem::webkitEntries(ScriptExecution
         return array;
     }
 
-    FileList* files = input->files();
-    ASSERT(files);
     for (unsigned i = 0; i < files->length(); ++i) {
         File* file = files->item(i);
 

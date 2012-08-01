@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<body>
+<input name="input" id="input"></input>
+<script src="../js/resources/js-test-pre.js"></script>
+<script>
+description('Tests accessing webkitEntries does not crash when input type is not file');
+
+var input = document.getElementById('input');
+shouldEvaluateTo('input.webkitEntries.length', 0);
+
+</script>
+<script src="../js/resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,3 +1,17 @@
+2012-08-01  Kinuko Yasuda  <kinuko@chromium.org>
+
+        [Filesystem] Assertion on $0.webkitEntries while on the input field.
+        https://bugs.webkit.org/show_bug.cgi?id=91954
+
+        Reviewed by Kent Tamura.
+
+        Accessing .webkitEntries should not crash when input type is not for file.
+
+        Tests: fast/filesystem/input-access-entries.html
+
+        * Modules/filesystem/HTMLInputElementFileSystem.cpp:
+        (WebCore::HTMLInputElementFileSystem::webkitEntries):
+
 2012-08-01  Eugene Klyuchnikov  <eustas.big@gmail.com>
 
         Web Inspector: Profiles: cleanup HeapSnapshotReceiver interface
