@@ -16,8 +16,8 @@
 
 <script>
 // Setting up the testcase
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
+if (window.testRunner)
+    testRunner.waitUntilDone();
 
 var useElement = document.getElementById("test");
 var rectElement = document.getElementById("target");
@@ -291,8 +291,8 @@ function eventTestEight()
 
 function completeTest()
 {
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 </script>
 

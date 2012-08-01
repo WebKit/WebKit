@@ -10,8 +10,8 @@
 
 <script type="text/javascript">
 function setup() {
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
     var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
     svg.width.baseVal.valueAsString = "400px";
     svg.height.baseVal.valueAsString = "400px";

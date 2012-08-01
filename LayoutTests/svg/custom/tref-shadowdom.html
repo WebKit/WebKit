@@ -25,10 +25,10 @@ function log(string) {
 }
 
 function runTest() {
-    if (!window.internals || !window.layoutTestController)
+    if (!window.internals || !window.testRunner)
          return;
 
-    window.layoutTestController.dumpAsText();
+    window.testRunner.dumpAsText();
     var result = document.getElementById('result');
     while (result.firstChild)
         result.removeChild(result.firstChild);

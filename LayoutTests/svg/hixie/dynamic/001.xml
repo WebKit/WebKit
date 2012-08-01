@@ -1,7 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" height="200" width="400" onload="test()">
  <script type="text/javascript">
- if (window.layoutTestController)
-     layoutTestController.dumpAsText();
+ if (window.testRunner)
+     testRunner.dumpAsText();
  function test() {
      alert('The test has passed.')
    }

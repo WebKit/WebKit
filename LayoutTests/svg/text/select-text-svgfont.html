@@ -36,7 +36,7 @@ This test checks that individual characters can be selected correctly when using
 function runTest() {
     var text = document.getElementById('text');
 
-    if (!window.layoutTestController)
+    if (!window.testRunner)
         return;
 
     var textWidth = text.offsetWidth;
@@ -55,7 +55,7 @@ function runTest() {
 function verify() {
     var text = document.getElementById('text');
 
-    if (!window.layoutTestController)
+    if (!window.testRunner)
         return;
 
     var range = window.getSelection().getRangeAt(0);
@@ -77,7 +77,7 @@ function log(passed, message) {
     var passfail = document.getElementById('passfail');
     passfail.innerHTML = message;
     passfail.className = (passed ? "pass" : "fail");
-    layoutTestController.dumpAsText();
+    testRunner.dumpAsText();
 }
 
 runTest();

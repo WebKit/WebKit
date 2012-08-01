@@ -5,15 +5,15 @@
     <animate attributeName="width" attributeType="XML" calcMode="discrete" begin="0s; 3s" from="100" to="0" dur="8s"/>
 </rect>
 <script>
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
+if (window.testRunner)
+    testRunner.waitUntilDone();
 
 function loaded() {
     document.documentElement.setCurrentTime(6.5);
     document.documentElement.pauseAnimations();
 
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 </script>
 </svg>

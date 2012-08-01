@@ -12,8 +12,8 @@
     }
 
     function runTest() {
-      if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+      if (window.testRunner)
+        testRunner.dumpAsText();
 
       var e = document.getElementById("rect");
       expect(e.style.getPropertyValue("marker"), "url(#test)");

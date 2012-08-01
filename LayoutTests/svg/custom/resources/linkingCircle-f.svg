@@ -7,8 +7,8 @@
 <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id="linkingCircle-f.svg" width="480" height="360" onload="report()">
 <script>
 function report() {
-if (window.layoutTestController)
-    window.layoutTestController.notifyDone();
+if (window.testRunner)
+    window.testRunner.notifyDone();
 }
 </script>
 	<title id="test-title">linkingCircle-f.svg</title>

@@ -42,13 +42,13 @@ function updateFill() {
     el.setAttribute("fill", "url(#pat)");
 
     if(currentColor == 2)
-        if(window.layoutTestController)
-            layoutTestController.notifyDone();
+        if(window.testRunner)
+            testRunner.notifyDone();
 }
 
 function repaintTest() {
-    if(window.layoutTestController)
-        layoutTestController.waitUntilDone();
+    if(window.testRunner)
+        testRunner.waitUntilDone();
 
     updateFill();
     setTimeout("updateFill()", 0);

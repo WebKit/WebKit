@@ -22,14 +22,14 @@ function draw(x, y) {
 }
 
 function repaintTest() {
-    if (window.layoutTestController)
-        layoutTestController.waitUntilDone();
+    if (window.testRunner)
+        testRunner.waitUntilDone();
 
     draw(150, 50);
     setTimeout(function() {
         draw(50, 50);
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     }, 0);
 }
 

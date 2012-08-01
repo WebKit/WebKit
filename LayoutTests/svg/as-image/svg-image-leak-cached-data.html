@@ -1,9 +1,9 @@
 <html>
 <head>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 var count = 0;
@@ -12,8 +12,8 @@ function test() {
     document.body.replaceChild(img.cloneNode(), img);
     if (++count < 10)
         setTimeout(test, 0);
-    else if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    else if (window.testRunner)
+        testRunner.notifyDone();
 }
 </script>
 </head>

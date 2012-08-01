@@ -8,9 +8,9 @@
     </g>
  <br>   
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 document.execCommand("SelectAll");
 function remove_tspan() {
@@ -39,8 +39,8 @@ style.innerHTML="* { \n\
 ";
 head.appendChild(style);
 
-if (window.layoutTestController)
-    setTimeout("layoutTestController.notifyDone()", 50);
+if (window.testRunner)
+    setTimeout("testRunner.notifyDone()", 50);
 </script>
 </svg>
 </body>

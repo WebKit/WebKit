@@ -15,8 +15,8 @@
 
 <script><![CDATA[
     function repaintTest() {
-        if (window.layoutTestController)
-          layoutTestController.waitUntilDone();
+        if (window.testRunner)
+          testRunner.waitUntilDone();
 
         document.getElementById("animation").beginElement();
         setTimeout(finishTest, 50);
@@ -28,12 +28,12 @@
             return;
           }
 
-          if (window.layoutTestController)
-            layoutTestController.notifyDone();
+          if (window.testRunner)
+            testRunner.notifyDone();
         }
     }
 
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText(true);
+    if (window.testRunner)
+        testRunner.dumpAsText(true);
 ]]></script>
 </svg>

@@ -3,8 +3,8 @@
 <defs>
 <script type="text/javascript">
 function test() {
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
     }
 
     if (!document.getElementById("s0").async)

@@ -17,8 +17,8 @@
   <script>
   <![CDATA[
     document.getElementById("log").appendChild(document.createTextNode("PASS"));
-    if (window.layoutTestController)
-      window.layoutTestController.dumpAsText();
+    if (window.testRunner)
+      window.testRunner.dumpAsText();
   ]]>
   </script>
 </svg>

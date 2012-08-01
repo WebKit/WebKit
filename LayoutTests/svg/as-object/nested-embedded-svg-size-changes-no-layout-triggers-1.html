@@ -3,8 +3,8 @@
 <script src="../../fast/repaint/resources/repaint.js"></script>
 <script type="text/javascript">
 function repaintTest() {
-    if (window.layoutTestController)
-        layoutTestController.waitUntilDone();
+    if (window.testRunner)
+        testRunner.waitUntilDone();
     var object1 = document.getElementsByTagName("object")[0];
     object1.setAttribute("data", "resources/nested-embedded-svg-size-changes-target-no-layout-triggers-1.html");
     object1.setAttribute("style", "border: 1px red solid; width: 400px; height: 200px");

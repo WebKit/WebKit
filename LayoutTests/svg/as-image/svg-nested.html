@@ -1,9 +1,9 @@
 <html>
 <head>
 <script>
-if (window.layoutTestController) {
-  layoutTestController.dumpAsText();
-  layoutTestController.waitUntilDone();
+if (window.testRunner) {
+  testRunner.dumpAsText();
+  testRunner.waitUntilDone();
 }
 </script>
 </head>
@@ -11,8 +11,8 @@ if (window.layoutTestController) {
 Success - a hugely nested SVG did not crash us.
 <script>
 function done() {
-  if (window.layoutTestController)
-    layoutTestController.notifyDone();
+  if (window.testRunner)
+    testRunner.notifyDone();
   else
     alert('done!');
 }

@@ -14,8 +14,8 @@
   <!--=  See http://www.w3.org/Consortium/Legal/.                          =-->
   <!--======================================================================-->
   <script>
-     if (window.layoutTestController)
-         layoutTestController.dumpAsText();
+     if (window.testRunner)
+         testRunner.dumpAsText();
      function runTest() {
          var e = document.getElementById('hello');
          e.appendChild(document.createTextNode('F'));

@@ -4,12 +4,12 @@
   
   <text x="10" y="130">Hover over the rect, you should see a (large) custom cursor</text>
   <script>
-    if (window.layoutTestController) {
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        testRunner.waitUntilDone();
 
         setTimeout(function() {
-            layoutTestController.dumpDOMAsWebArchive();
-            layoutTestController.notifyDone();
+            testRunner.dumpDOMAsWebArchive();
+            testRunner.notifyDone();
         }, 0);
     }
  </script>

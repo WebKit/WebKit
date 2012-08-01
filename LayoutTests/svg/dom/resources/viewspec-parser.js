@@ -143,8 +143,8 @@ function continueFuzzing(event)
         var script = document.createElement("script");
 
         script.onload = function() {
-            if (window.layoutTestController)
-                layoutTestController.notifyDone();
+            if (window.testRunner)
+                testRunner.notifyDone();
         };
 
         script.src = "../../fast/js/resources/js-test-post.js";
@@ -157,8 +157,8 @@ function continueFuzzing(event)
     window.setTimeout(startNextTest, 0);
 }
 
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
+if (window.testRunner)
+    testRunner.waitUntilDone();
 
 buildTestsToRun();
 testFragment("");

@@ -17,8 +17,8 @@
       else
         log("Failure. Was: " + found + ", expected: " + expected);
   }
-  if (window.layoutTestController) {
-    window.layoutTestController.dumpAsText();
+  if (window.testRunner) {
+    window.testRunner.dumpAsText();
     // First offset, left edge, LTR text
     assert(textInputController.firstRectForCharacterRange(0, 0), "20,566,0,18");
     // Last offset, right edge, RTL text

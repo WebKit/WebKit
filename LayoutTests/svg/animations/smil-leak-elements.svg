@@ -42,7 +42,7 @@ function cleanup() {
     else
         log("FAIL: " + liveDelta + " extra live node(s)");
 
-    layoutTestController.notifyDone();
+    testRunner.notifyDone();
 }
 
 function startTest() {
@@ -57,11 +57,11 @@ function startTest() {
 }
 
 function load() {
-    if (window.layoutTestController && window.GCController && window.internals) {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+    if (window.testRunner && window.GCController && window.internals) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
     } else {
-        log("This test only works when run with the layoutTestController, GCController, and internals available.");
+        log("This test only works when run with the testRunner, GCController, and internals available.");
         return;
     }
 

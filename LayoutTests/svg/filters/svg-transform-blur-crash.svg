@@ -1,7 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
   <script>
-  if (window.layoutTestController)
-      layoutTestController.dumpAsText();
+  if (window.testRunner)
+      testRunner.dumpAsText();
   </script>
   <defs>
     <filter id="blur" filterUnits="userSpaceOnUse" x="200" filterRes="200">

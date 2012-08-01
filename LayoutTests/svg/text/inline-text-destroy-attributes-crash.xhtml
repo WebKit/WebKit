@@ -9,8 +9,8 @@
 <use id="use1" xlink:href="#text1"/>
 <text id="text2"></text>
 <script>
-    if (window.layoutTestController)
-	    layoutTestController.dumpAsText();
+    if (window.testRunner)
+	    testRunner.dumpAsText();
 
     var range = document.createRange();
     range.setStart(document.getElementById("use1"), 0);

@@ -2,8 +2,8 @@
 <rect width="300" height="300" fill="green"/>
 <script>
 function done() {
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 </script>
 </svg>

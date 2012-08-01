@@ -6,8 +6,8 @@
             var svg = document.getElementsByTagName("svg")[0];
             svg.setAttribute("width", "400");
 
-            if (window.layoutTestController)
-                layoutTestController.notifyDone();
+            if (window.testRunner)
+                testRunner.notifyDone();
         }
     </script>
 </svg>

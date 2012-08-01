@@ -59,8 +59,8 @@
         }
 
         if (curIdx == tests.length) {
-          if (window.layoutTestController)
-            layoutTestController.notifyDone();
+          if (window.testRunner)
+            testRunner.notifyDone();
         }
         else
           runTest();
@@ -105,9 +105,9 @@
     }
 
     // Begin test async
-    if (window.layoutTestController) {
-      layoutTestController.dumpAsText()
-      layoutTestController.waitUntilDone()
+    if (window.testRunner) {
+      testRunner.dumpAsText()
+      testRunner.waitUntilDone()
     }
     executeTests();
     </script>

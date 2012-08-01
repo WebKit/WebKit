@@ -28,8 +28,8 @@
     ["r1", "r2", "r3"].map(checkClientRect);
     document.getElementById("log").innerHTML = resultString;
 
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
 
  ]]></script>
 </html>

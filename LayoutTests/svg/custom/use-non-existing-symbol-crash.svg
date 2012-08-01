@@ -6,8 +6,8 @@
      onload="init()">
 
 <script type="application/ecmascript">
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
     
 function init() {
   var cell = document.getElementById('foo');

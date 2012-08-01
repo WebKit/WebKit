@@ -13,9 +13,9 @@ gc = window.gc || function()
 
 window.onload = function()
 {
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
     }    
 
     cursor = document.body.appendChild(document.createElementNS(svgNS, "cursor"));
@@ -48,8 +48,8 @@ function finishTest()
     gc();
   
     document.body.innerHTML = "PASS";
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 </script>
 </html>

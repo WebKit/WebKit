@@ -10,7 +10,7 @@
   </style>
   <text x="10" y="50">Some text</text>
   <script>
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
   </script>
 </svg>

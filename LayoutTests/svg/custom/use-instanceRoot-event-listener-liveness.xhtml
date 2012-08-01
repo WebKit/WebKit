@@ -14,9 +14,9 @@
 <div id="console">Test failed</div>
 
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 function eventHandler()
@@ -24,8 +24,8 @@ function eventHandler()
     var divElement = document.getElementById("console");
     divElement.textContent = "Test passed";
 
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
 function fireSimulatedMouseClickEvent(eventTarget)

@@ -58,9 +58,9 @@
     </g>
 
     <script>
-      if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+      if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
       }
       function runTest() {
         if (window.eventSender) {
@@ -72,8 +72,8 @@
         var color = pass ? 'green' : 'red';
         document.getElementById('r1').setAttribute('fill', color);
         document.getElementById('t').firstChild.nodeValue = pass ? "You've passed!" : "You've failed.";
-        if (window.layoutTestController)
-          layoutTestController.notifyDone();
+        if (window.testRunner)
+          testRunner.notifyDone();
       }
     </script>
 

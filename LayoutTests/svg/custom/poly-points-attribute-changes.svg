@@ -1,8 +1,8 @@
 <svg xmlns="http://www.w3.org/2000/svg" onload="runTest()">
   <script type="text/javascript">
   <![CDATA[
-    if (window.layoutTestController)
-      layoutTestController.dumpAsText();
+    if (window.testRunner)
+      testRunner.dumpAsText();
 
     function log(string) {
       var newDiv = document.createElementNS("http://www.w3.org/1999/xhtml", "div");

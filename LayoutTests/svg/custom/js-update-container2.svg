@@ -5,7 +5,7 @@
 <script type="text/ecmascript"><![CDATA[
 function repaintTest() {
     if (window.eventSender) {
-        layoutTestController.waitUntilDone();
+        testRunner.waitUntilDone();
         eventSender.mouseMoveTo(20, 20);
         eventSender.mouseDown();
         eventSender.mouseUp();
@@ -32,8 +32,8 @@ function mouseHandler(evt) {
 
 function mouseHandlerLast(evt) {
     mouseHandler(evt);
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 ]]></script>
 

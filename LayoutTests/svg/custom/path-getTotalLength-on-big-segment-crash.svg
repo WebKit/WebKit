@@ -11,8 +11,8 @@
     pathSegList = path.pathSegList;
     pathSegList.appendItem(pathSeg);
     path.getTotalLength();
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
 
 ]]>
 </script>

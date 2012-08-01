@@ -1,10 +1,10 @@
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
     <script>
         window.onload = function() {
-            if (window.layoutTestController) {
-                layoutTestController.dumpAsText();
-                layoutTestController.waitUntilDone();
-                setTimeout(function(){ layoutTestController.notifyDone() }, 0);
+            if (window.testRunner) {
+                testRunner.dumpAsText();
+                testRunner.waitUntilDone();
+                setTimeout(function(){ testRunner.notifyDone() }, 0);
             }
         }
     </script>

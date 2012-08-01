@@ -47,8 +47,8 @@
     <text id="revision" x="10" y="340" font-size="40" stroke="none" fill="black">$Revision: 1.3 $</text>
     <rect id="test-frame" x="1" y="1" width="478" height="358" fill="none" stroke="#000000"/>
 <script>
-if (window.layoutTestController)
-    window.layoutTestController.dumpSelectionRect();
+if (window.testRunner)
+    window.testRunner.dumpSelectionRect();
 document.execCommand("SelectAll");
 </script>
 </svg>

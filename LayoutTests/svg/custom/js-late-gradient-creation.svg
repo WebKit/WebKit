@@ -9,8 +9,8 @@
     var content = document.getElementById("content");
 
     function repaintTest() {
-        if (window.layoutTestController)
-            layoutTestController.waitUntilDone();
+        if (window.testRunner)
+            testRunner.waitUntilDone();
         setTimeout(createGradient, 0);
     }
 
@@ -34,8 +34,8 @@
 
         content.appendChild(gradient);
 
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     }
 </script>
 

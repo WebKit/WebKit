@@ -60,14 +60,14 @@
     }
     ++count;
     if (count < maxBlocks) {
-      if (window.layoutTestController)
+      if (window.testRunner)
         repaintTest();
       else {
         window.setTimeout(repaintTest, delay);
         t.firstChild.data = 'Test in progress... ' + count + ' of ' + maxBlocks;
       }
     } else {
-      if (window.layoutTestController)
+      if (window.testRunner)
         t.firstChild.data = 'Test completed';
       else {
         var end = new Date();

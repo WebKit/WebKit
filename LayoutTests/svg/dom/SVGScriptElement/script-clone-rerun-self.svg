@@ -18,8 +18,8 @@ defs.appendChild(script.cloneNode(true));
 </script></defs>
 <defs><script>
 
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 
 result = 'PASS';
 if (i == 2)

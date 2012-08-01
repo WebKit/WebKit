@@ -19,12 +19,12 @@ function addSpans() {
     text.appendChild(tspan1);
     text.appendChild(tspan2);
 
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
+if (window.testRunner)
+    testRunner.waitUntilDone();
 
 function loaded() {
     // Bug is only trigger from another loop.

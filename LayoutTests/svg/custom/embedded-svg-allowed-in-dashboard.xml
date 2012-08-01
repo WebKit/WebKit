@@ -3,9 +3,9 @@
         <title>Make sure embedded SVG is turned on in dashboard</title>
     </head>
     <script>
-         if (window.layoutTestController) {
-             layoutTestController.setUseDashboardCompatibilityMode(true);
-             layoutTestController.dumpAsText();
+         if (window.testRunner) {
+             testRunner.setUseDashboardCompatibilityMode(true);
+             testRunner.dumpAsText();
          }
 
          function debug(str) {

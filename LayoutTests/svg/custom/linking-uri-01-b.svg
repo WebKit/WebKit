@@ -11,13 +11,13 @@
 
   <!--======================================================================-->
 <script type="text/ecmascript"><![CDATA[
-if (window.layoutTestController)
-    window.layoutTestController.waitUntilDone();
+if (window.testRunner)
+    window.testRunner.waitUntilDone();
 
 function linkClicked()
 {
-    if (window.layoutTestController)
-        window.layoutTestController.notifyDone();
+    if (window.testRunner)
+        window.testRunner.notifyDone();
 }
 
 function clickLink() {

@@ -8,8 +8,8 @@
         var script = document.createElement("script");
 
         script.onload = function() {
-            if (window.layoutTestController)
-                layoutTestController.notifyDone();
+            if (window.testRunner)
+                testRunner.notifyDone();
         };
 
         script.src = "../../fast/js/resources/js-test-post.js";
@@ -17,8 +17,8 @@
     }
 
     function repaintTest() {
-        if (window.layoutTestController)
-            layoutTestController.waitUntilDone();
+        if (window.testRunner)
+            testRunner.waitUntilDone();
 
         path = document.getElementById("path");
         shouldBe("path.pathSegList.numberOfItems", "3");

@@ -27,13 +27,13 @@
             console.appendChild(document.createTextNode("Failed (cx was not animated)"));
         else
             console.appendChild(document.createTextNode("Passed"));
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     }
 
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
     }
 ]]></script>
 </svg>

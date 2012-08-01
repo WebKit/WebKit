@@ -17,9 +17,9 @@ function print(message)
     document.getElementById("results").appendChild(paragraph);
 }
 
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 function svgOnErrorHandler(e) {
@@ -47,8 +47,8 @@ function testOnErrorInDynamicScript() {
 function endTest() {
     addResult("DONE.");
     messages.forEach(print);
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 </script>
 <script id="0" type="text/javascript" onerror="scriptOnErrorHandler(0)" xlink:href="resources/certainlydoesnotexist.js"></script>

@@ -7,8 +7,8 @@
     </symbol>
   </use>
   <script>
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
   </script>
   <text x="10px" y="100px">This test passes if it did not crash</text>
 </svg>

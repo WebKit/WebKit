@@ -120,8 +120,8 @@ function runAnimationTest(expected) {
     if (currentTest > 0)
         throw("Not allowed to call runAnimationTest() twice");
 
-    if (window.layoutTestController)
-        layoutTestController.waitUntilDone();
+    if (window.testRunner)
+        testRunner.waitUntilDone();
 
     expectedResults = expected;
     testCount = expectedResults.length;
@@ -136,7 +136,7 @@ function runAnimationTest(expected) {
     // Pause animations, we'll drive them manually.
     rootSVGElement.pauseAnimations();
 
-    if (window.layoutTestController)
+    if (window.testRunner)
         setTimeout(sampleAnimation, 0);
     else
         setTimeout(sampleAnimation, 50);

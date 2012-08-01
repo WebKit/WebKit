@@ -4,15 +4,15 @@
 <script xlink:href="../../fast/repaint/resources/repaint.js" type="text/javascript"></script>
 <script type="text/javascript">
 function repaintTest() {
-    if (window.layoutTestController)
-        layoutTestController.waitUntilDone();
+    if (window.testRunner)
+        testRunner.waitUntilDone();
 
     // Run a part of the animation timeline, so we're sure that we're removing the animation element while it's active!
     setTimeout(function() {
         var an1 = document.getElementById('an1');
         an1.parentNode.removeChild(an1);
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     }, 100);
 }
 </script>

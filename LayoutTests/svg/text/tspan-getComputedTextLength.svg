@@ -4,8 +4,8 @@
 <text y="100" id='status'/>
 
 <script>
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 
 var length1 = document.getElementById('x').getComputedTextLength();
 var length2 = document.getElementById('y').getComputedTextLength();

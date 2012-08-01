@@ -251,15 +251,15 @@
   var t = document.getElementsByTagNameNS('http://www.w3.org/2000/svg', 'text')[2];
 
   var delay = 100;
-  if (window.layoutTestController)
+  if (window.testRunner)
       delay = 1;
   var low = 200;
   var high = 800;
   var delta = 60;
   var current = low;
   var idealTime = ((high - low) / delta) * delay;
-  if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
+  if (window.testRunner)
+    testRunner.waitUntilDone();
   function repaintTest() {
     svg.setAttribute("width", current);
     if (current < high) {
@@ -267,9 +267,9 @@
       current += delta;
       window.setTimeout(repaintTest, delay);
     } else {
-      if (window.layoutTestController) {
+      if (window.testRunner) {
         t.firstChild.data = 'Test completed';
-        layoutTestController.notifyDone();
+        testRunner.notifyDone();
       } else {
         var end = new Date();
         var elapsed = (end - start);

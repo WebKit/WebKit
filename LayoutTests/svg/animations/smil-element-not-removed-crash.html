@@ -7,9 +7,9 @@
             <set id="set1" xlink:href="#test"></set>
         </svg>
         <script>
-            if (window.layoutTestController) {
-                layoutTestController.dumpAsText();
-                layoutTestController.waitUntilDone();
+            if (window.testRunner) {
+                testRunner.dumpAsText();
+                testRunner.waitUntilDone();
                 gc = function() { window.GCController.collect() };
             } else if (!window.gc)
                 gc = function(){};
@@ -25,8 +25,8 @@
                     setTimeout(function(){location.reload()}, 0);
                 } else {
                     document.body.innerHTML = "PASS";
-                    if (window.layoutTestController)
-                        layoutTestController.notifyDone();
+                    if (window.testRunner)
+                        testRunner.notifyDone();
                 }
             }
         </script>

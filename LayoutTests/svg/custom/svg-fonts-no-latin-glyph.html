@@ -14,8 +14,8 @@ function doTest() {
         result.innerHTML += 'PASS';
     else
         result.innerHTML += 'FAIL';
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 </script>
 </head>
@@ -25,9 +25,9 @@ function doTest() {
 <div id="result"></div>
 <script>
 document.body.offsetWidth;
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 window.addEventListener('load', doTest, true);
 </script>

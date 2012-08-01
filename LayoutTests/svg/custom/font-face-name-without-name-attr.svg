@@ -8,7 +8,7 @@
 </defs>
 <text font-family="svgtest" x="0" y="1cm">This test passes if WebKit doesn't crash.</text>
 <script>
-if (window.layoutTestController)
-    window.layoutTestController.dumpAsText();
+if (window.testRunner)
+    window.testRunner.dumpAsText();
 </script>
 </svg>

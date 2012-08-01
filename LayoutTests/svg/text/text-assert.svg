@@ -18,8 +18,8 @@
 <text y="50">If you see "So" the test passed.</text>
 
 <script>
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
 </script>
 
 </svg>

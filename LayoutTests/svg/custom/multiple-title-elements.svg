@@ -35,8 +35,8 @@ function createTitleElement(title)
 
 function test()
 {
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
 
     expect('', document.title);
     document.documentElement.appendChild(createTitleElement('First title'));

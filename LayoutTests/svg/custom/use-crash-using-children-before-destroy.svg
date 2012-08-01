@@ -13,8 +13,8 @@ test();
 
 document.getElementById("a").appendChild(document.createElement("g"));
 
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
+if (window.testRunner) {
+    testRunner.dumpAsText();
 }
 ]]></script>
 </svg>

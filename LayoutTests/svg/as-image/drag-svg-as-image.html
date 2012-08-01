@@ -3,10 +3,10 @@
 <script type="text/javascript">
 function test() {
 
-    if (!window.layoutTestController || !window.eventSender)
+    if (!window.testRunner || !window.eventSender)
         return;
 
-    layoutTestController.dumpAsText();
+    testRunner.dumpAsText();
 
     var dragMe = document.getElementById("dragMe");
     var startX = dragMe.offsetLeft + (dragMe.offsetWidth / 2);

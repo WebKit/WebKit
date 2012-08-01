@@ -3,8 +3,8 @@
 <defs><text>PASS if it doesn't assert in debug builds.</text></defs>
 <use xlink:href="../W3C-SVG-1.2-Tiny/struct-use-recursion-02-t.svg#NONEXISTING"/>
 <script>
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 if (window.gcController)
     gcController.collect();
 </script>

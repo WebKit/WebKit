@@ -5,13 +5,13 @@
 <script>
 function clickHandler(evt) {
     evt.target.style.fill = "green";
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
 function repaintTest() {
     if (window.eventSender) {
-        layoutTestController.waitUntilDone();
+        testRunner.waitUntilDone();
         eventSender.mouseMoveTo(50, 80);
         eventSender.mouseDown();
         eventSender.mouseUp();

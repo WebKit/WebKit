@@ -15,14 +15,14 @@
                 </circle>
             </svg>
         <script>
-            if (window.layoutTestController) {
-                layoutTestController.dumpAsText();
-                layoutTestController.waitUntilDone();
+            if (window.testRunner) {
+                testRunner.dumpAsText();
+                testRunner.waitUntilDone();
 	    }
             setTimeout(function () {
                     document.body.innerHTML = "PASS, if DumpRenderTree doesn't crash, and no assertion in a Debug build.";
-                    if (window.layoutTestController)
-                        layoutTestController.notifyDone();
+                    if (window.testRunner)
+                        testRunner.notifyDone();
                 }, 0);
 
         </script>

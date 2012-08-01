@@ -10,10 +10,10 @@ function log(message) {
 }
 
 function load() {
-    if (window.layoutTestController && window.GCController && window.internals)
-        layoutTestController.dumpAsText();
+    if (window.testRunner && window.GCController && window.internals)
+        testRunner.dumpAsText();
     else {
-        log("This test only works when run with the layoutTestController, GCController, and internals available.");
+        log("This test only works when run with the testRunner, GCController, and internals available.");
         return;
     }
 

@@ -10,9 +10,9 @@ function runTest() {
 }
 
 window.onload = function() {
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
     }
     
     g = document.getElementById("g1");
@@ -25,8 +25,8 @@ window.onload = function() {
         setTimeout(runTest(),0);
     } else {
         document.getElementById("t1").appendChild(document.createTextNode("PASS: Successfully changed cursors."));
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     }
 }
 </script>

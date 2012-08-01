@@ -12,8 +12,8 @@
         // The animate element tries to modify the element, which tries to update the
         // instances in the circle, which crashes if it holds a pointer to a non-existent element.
 
-        if (window.layoutTestController)
-            layoutTestController.dumpAsText();
+        if (window.testRunner)
+            testRunner.dumpAsText();
     }
     //]]>
     </script>

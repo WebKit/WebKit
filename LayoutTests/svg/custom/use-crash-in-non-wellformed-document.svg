@@ -3,8 +3,8 @@
     <text x="0" y="30">PASS without crash.</text>
     <use xlink:href="#undefined">
     <script>
-        if (window.layoutTestController)
-            layoutTestController.dumpAsText();
+        if (window.testRunner)
+            testRunner.dumpAsText();
 
         function runTest() {
             try {

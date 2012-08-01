@@ -3,8 +3,8 @@
     This test is to ensure that we do not crash when attempting to determine the dimension properties of an SVG text element with no renderer.
     <div id="log"><span style='color: red;'>FAIL:</span> Did not complete test</div>
 <script>
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
     var svgns = "http://www.w3.org/2000/svg";
     var svg = document.createElementNS(svgns, "svg");
     svg.setAttribute("style", "width:100px;height:100px;display:none;");

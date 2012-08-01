@@ -15,8 +15,8 @@ function RemoveNode(n) { n.parentNode.removeChild(n) }
         RemoveNode(document.getElementById('div1'));
         document.body.offsetTop; // Force layout.
         RemoveNode(document.getElementById('div2'));
-        if (window.layoutTestController)
-            layoutTestController.dumpAsText();
+        if (window.testRunner)
+            testRunner.dumpAsText();
 }
 </script>
 <body>

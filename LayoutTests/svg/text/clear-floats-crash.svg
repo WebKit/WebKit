@@ -9,8 +9,8 @@
       </g>
     </svg>
     <script>
-        if (window.layoutTestController)
-            layoutTestController.dumpAsText();
+        if (window.testRunner)
+            testRunner.dumpAsText();
         var log = document.getElementById("log");
         while (log.childNodes.length)
             log.removeChild(log.firstChild);

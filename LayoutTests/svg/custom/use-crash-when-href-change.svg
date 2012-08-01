@@ -11,8 +11,8 @@
 <text x="10" y= "30">PASS without crash in debug mode.</text>
 
 <script>
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
 
     function runTest() {
         document.getElementById("use").setAttribute("xlink:href", "");

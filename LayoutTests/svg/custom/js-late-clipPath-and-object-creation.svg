@@ -6,8 +6,8 @@
 <script>
     var content = document.getElementById("content");
     function repaintTest() {
-        if (window.layoutTestController)
-            layoutTestController.waitUntilDone();
+        if (window.testRunner)
+            testRunner.waitUntilDone();
         setTimeout(createObject, 0);
     }
 
@@ -38,8 +38,8 @@
         clipPath.appendChild(path);
         content.appendChild(clipPath);
 
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     }
 </script>
 

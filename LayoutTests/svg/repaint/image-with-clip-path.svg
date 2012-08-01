@@ -33,14 +33,14 @@
         i.setAttributeNS('http://www.w3.org/1999/xlink', 'href', img);
     };
 
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText(true);
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        testRunner.dumpAsText(true);
+        testRunner.waitUntilDone();
     }
 
     function finishTest() {
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     }
 
     function nextStep() {

@@ -6,8 +6,8 @@
    width="200"
    height="200">
 <script><![CDATA[
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText(true);
+    if (window.testRunner)
+        testRunner.dumpAsText(true);
 ]]></script>
 <defs>
   <linearGradient id="linearGradient1" xlink:href="#linearGradient0" />

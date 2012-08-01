@@ -16,8 +16,8 @@
         document.execCommand('delete');
       }
 
-      if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+      if (window.testRunner)
+        testRunner.dumpAsText();
 </script>
 <body onload="testCrash()">
 <svg id="root" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">

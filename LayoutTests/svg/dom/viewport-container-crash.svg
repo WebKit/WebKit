@@ -7,7 +7,7 @@
     </defs>
     <rect width="430" height="80" fill="url(#Pattern)"/>
     <script>
-        if (layoutTestController)
-            layoutTestController.dumpAsText();
+        if (testRunner)
+            testRunner.dumpAsText();
     </script>
 </svg>

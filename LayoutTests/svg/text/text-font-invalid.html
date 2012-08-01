@@ -4,8 +4,8 @@
     <div id="log"><span style='color: red;'>FAIL:</span> Did not complete test</div>
     <img src="resources/text-font-invalid.svg" />
     <script>
-        if (window.layoutTestController)
-            layoutTestController.dumpAsText();
+        if (window.testRunner)
+            testRunner.dumpAsText();
         document.getElementById("log").innerHTML = "<span style='color: green;'>PASS:</span> Did not crash when rendering the SVG image.";
     </script>
   </body>

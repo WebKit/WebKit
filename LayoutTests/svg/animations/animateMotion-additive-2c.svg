@@ -226,14 +226,14 @@ Compare from-to, from-by and by animateMotion with values animateMotion.
 </g>
 
 <script>
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
+if (window.testRunner)
+    testRunner.waitUntilDone();
 
 function loaded() {
     document.documentElement.setCurrentTime(52);
 
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 </script>
 </svg>

@@ -2,8 +2,8 @@
 <text>
     <textPath id="textPath">
         <script>
-            if (window.layoutTestController)
-                layoutTestController.dumpAsText();
+            if (window.testRunner)
+                testRunner.dumpAsText();
 
             // This triggers a layout before adding the #text node.
             document.getElementById('textPath').scrollIntoView('foo');

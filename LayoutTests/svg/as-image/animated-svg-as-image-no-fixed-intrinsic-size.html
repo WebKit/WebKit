@@ -3,13 +3,13 @@
   <script src="../../fast/repaint/resources/repaint.js" type="text/javascript"></script>
   <script type="text/javascript">
   function repaintTest() {
-    if (!window.layoutTestController)
+    if (!window.testRunner)
       return;
 
     // The animation lasts 100ms. Wait 200ms for the repaint.
-    layoutTestController.waitUntilDone();
+    testRunner.waitUntilDone();
     setTimeout(function() {
-      layoutTestController.notifyDone();
+      testRunner.notifyDone();
     }, 200);
   }
   </script>

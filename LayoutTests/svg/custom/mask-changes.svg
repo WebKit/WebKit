@@ -9,8 +9,8 @@
 </g>
 
 <script>
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
+if (window.testRunner)
+    testRunner.waitUntilDone();
 
 if (window.eventSender) {
     eventSender.mouseMoveTo(150, 135);
@@ -22,8 +22,8 @@ function mouseHandler(evt)
 {
     document.getElementById("Mask").setAttribute("width", "800");
 
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 </script>
 

@@ -9,8 +9,8 @@
     var content = document.getElementById("content");
 
     function repaintTest() {
-        if (window.layoutTestController)
-            layoutTestController.waitUntilDone();
+        if (window.testRunner)
+            testRunner.waitUntilDone();
         setTimeout(createPattern, 0);
     }
 
@@ -43,8 +43,8 @@
 
         content.appendChild(pattern);
 
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     }
 </script>
 

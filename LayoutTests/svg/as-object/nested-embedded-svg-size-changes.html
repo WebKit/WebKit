@@ -23,8 +23,8 @@
         shouldBeEqualToString("document.defaultView.getComputedStyle(object1).width", "400px");
         shouldBeEqualToString("document.defaultView.getComputedStyle(object1).height", "200px");
 
-        if (window.layoutTestController)
-            layoutTestController.waitUntilDone();
+        if (window.testRunner)
+            testRunner.waitUntilDone();
         requestSizeChange();
     }
 
@@ -62,8 +62,8 @@
     function completeTest() {
         var script = document.createElement("script");
         script.onload = function() {
-            if (window.layoutTestController)
-                layoutTestController.notifyDone();
+            if (window.testRunner)
+                testRunner.notifyDone();
         };
 
         script.src = "../../fast/js/resources/js-test-post.js";

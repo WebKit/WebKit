@@ -7,14 +7,14 @@
 <animate attributeName="fill" xlink:href="#target" from="red" to="green" dur="1s" fill="freeze"/>
 <script type="text/ecmascript">
 <![CDATA[
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
+if (window.testRunner)
+    testRunner.waitUntilDone();
 
 function repaintTest() {
     setTimeout(function() {
         document.getElementsByTagName("svg")[0].removeChild(document.getElementById('target'));
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
    }, 200);
 }
 ]]>

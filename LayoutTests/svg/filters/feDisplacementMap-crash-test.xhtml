@@ -2,9 +2,9 @@
 <body>
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 window.onload = function()
@@ -18,7 +18,7 @@ window.onload = function()
 
     setTimeout(function () {
             document.body.innerHTML = "PASS";
-            layoutTestController.notifyDone();
+            testRunner.notifyDone();
         }, 0);
 }
 </script>

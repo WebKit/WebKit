@@ -10,8 +10,8 @@ var i = 0;
 <defs>
 <script type="text/javascript">
 
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 
 var script = document.getElementsByTagName('script')[1];
 var defs = script.parentNode;

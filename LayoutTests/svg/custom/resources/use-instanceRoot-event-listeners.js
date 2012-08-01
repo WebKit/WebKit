@@ -26,8 +26,8 @@ function finishTest()
     shouldBeTrue("successfullyParsed");
     debug('<br /><span class="pass">TEST COMPLETE</span>');
 
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
 function recordMouseEvent(type)
@@ -167,8 +167,8 @@ function driveTests()
 }
 
 function repaintTest() {
-    if (window.layoutTestController)
-        layoutTestController.waitUntilDone();
+    if (window.testRunner)
+        testRunner.waitUntilDone();
 
     if (window.eventSender)
         driveTests();

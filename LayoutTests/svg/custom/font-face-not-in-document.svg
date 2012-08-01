@@ -8,8 +8,8 @@
 <text y="72">This tests that &lt;font-face&gt; elements that are not in the document have no effect.</text>
 <text y="96">Test result: <tspan id="result"></tspan></text>
 <script>
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
 
     var f = document.getElementById("f");
     f.parentNode.removeChild(f);

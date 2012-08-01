@@ -21,11 +21,11 @@
   <script>
   function repaintTest() {
     if (window.eventSender) {
-        layoutTestController.waitUntilDone();
+        testRunner.waitUntilDone();
         eventSender.mouseMoveTo(100, 100);
         eventSender.mouseUp();
         eventSender.mouseDown();
-        setTimeout("layoutTestController.notifyDone()", 0);
+        setTimeout("testRunner.notifyDone()", 0);
     }
   }
   </script>

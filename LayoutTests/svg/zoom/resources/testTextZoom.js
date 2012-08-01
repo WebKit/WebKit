@@ -9,6 +9,6 @@ function repaintTest() {
             eventSender.textZoomIn();
     }
 
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }

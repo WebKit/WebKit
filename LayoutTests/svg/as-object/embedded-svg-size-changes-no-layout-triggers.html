@@ -3,8 +3,8 @@
 <script src="../../fast/repaint/resources/repaint.js"></script>
 <script type="text/javascript">
 function repaintTest() {
-    if (window.layoutTestController)
-        layoutTestController.waitUntilDone();
+    if (window.testRunner)
+        testRunner.waitUntilDone();
     var object1 = document.getElementsByTagName("object")[0];
     object1.setAttribute("data", "resources/embedded-svg-size-changes-no-layout-triggers.svg");
     object1.setAttribute("style", "border: 1px red solid");

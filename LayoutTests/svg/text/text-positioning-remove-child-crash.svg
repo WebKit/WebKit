@@ -1,8 +1,8 @@
 <svg xmlns="http://www.w3.org/2000/svg">
     <text y="50">Test passes if it does not crash when run with libgmalloc.</text>
     <script>
-        if (window.layoutTestController)
-            layoutTestController.dumpAsText();
+        if (window.testRunner)
+            testRunner.dumpAsText();
     </script>
     <text><a id="a"><tspan>FAIL</tspan></a></text>
 

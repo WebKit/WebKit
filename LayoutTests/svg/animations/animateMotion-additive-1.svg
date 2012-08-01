@@ -111,13 +111,13 @@ fill="#f00">
 <circle id="c2" cx="900" cy="900" r="10" fill="#888" />
 
 <script>
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
+if (window.testRunner)
+    testRunner.waitUntilDone();
 
 function loaded() {
     document.documentElement.setCurrentTime(31);
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 </script>
 </svg>

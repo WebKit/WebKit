@@ -4,9 +4,9 @@
 <script xlink:href="../../fast/repaint/resources/repaint.js"/>
 <script type="text/ecmascript"> <![CDATA[
 function repaintTest() {
-    if (window.layoutTestController) {
-        layoutTestController.waitUntilDone();
-        setTimeout("layoutTestController.notifyDone()", 200);
+    if (window.testRunner) {
+        testRunner.waitUntilDone();
+        setTimeout("testRunner.notifyDone()", 200);
     }
 }
 ]]> </script>

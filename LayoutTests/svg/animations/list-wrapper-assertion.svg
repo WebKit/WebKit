@@ -4,14 +4,14 @@
         <animateTransform attributeName="transform" type="scale" values="1;0.2;1.5;1" dur="3s"/>
     </rect>
 <script>
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
+if (window.testRunner)
+    testRunner.waitUntilDone();
 
 function loaded() {
     document.documentElement.setCurrentTime(2.999);
     setTimeout(function() {
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     }, 100);
 }
 </script>

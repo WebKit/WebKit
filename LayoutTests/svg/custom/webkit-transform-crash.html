@@ -3,8 +3,8 @@
 <!-- This should not crash (null renderer) -->
 <script>
   document.createElementNS("http://www.w3.org/2000/svg","g").getTransformToElement();
-  if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+  if (window.testRunner)
+    testRunner.dumpAsText();
 </script>
 </head><body>
 PASS

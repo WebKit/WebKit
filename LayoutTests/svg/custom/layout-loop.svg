@@ -21,8 +21,8 @@
 
 <text>PASS, if it doesn't crash.</text>
 <script><![CDATA[
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 document.execCommand("SelectAll");
 range = document.createRange();
 range.setStartBefore(document.getElementById("stop"));

@@ -15,12 +15,12 @@ ImageSkia to do a partial load, as this is a precondition of the regression.
     var occluder = document.getElementById('occluder');
     occluder.style.top = 600;
 
-    if (window.layoutTestController)
-      layoutTestController.notifyDone();
+    if (window.testRunner)
+      testRunner.notifyDone();
   }
 
-  if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
+  if (window.testRunner)
+    testRunner.waitUntilDone();
 
 </script>
 <body onLoad="doScroll();" style="overflow:hidden;">

@@ -5,8 +5,8 @@
   <use xlink:href="#r1" x="50" id="use1" onclick="reset()"/>
   <script>
       function runTest() {
-        if (window.layoutTestController)
-            layoutTestController.waitUntilDone();
+        if (window.testRunner)
+            testRunner.waitUntilDone();
          eventSender.mouseMoveTo(100, 50);
          eventSender.mouseDown();
          eventSender.mouseUp();
@@ -15,8 +15,8 @@
         var u = document.querySelector('#use1');
         u.setAttribute('x', 0);
         u.setAttribute('y', 0);
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
       }
   </script>
 </svg>

@@ -18,8 +18,8 @@
     var defs = document.getElementById("defs");
 
     function repaintTest() {
-        if (window.layoutTestController)
-            layoutTestController.waitUntilDone();
+        if (window.testRunner)
+            testRunner.waitUntilDone();
         setTimeout(createMarker, 0);
     }
 
@@ -44,8 +44,8 @@
         marker.appendChild(circle);
         defs.appendChild(marker);
 
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     }
 </script>
 

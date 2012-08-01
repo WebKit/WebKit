@@ -8,8 +8,8 @@
       var elem = document.getElementById('use');
       elem.setAttributeNS(null,'display','inline');
 
-      if (window.layoutTestController)
-        layoutTestController.waitUntilDone();
+      if (window.testRunner)
+        testRunner.waitUntilDone();
       window.setTimeout("step2()", 0);
     }
     function step2() {
@@ -20,8 +20,8 @@
     function step3() {
       var elem = document.getElementById('use');
       elem.setAttributeNS(null,'display','inline');
-      if (window.layoutTestController)
-        layoutTestController.notifyDone();
+      if (window.testRunner)
+        testRunner.notifyDone();
     }
   ]]>
   </script>

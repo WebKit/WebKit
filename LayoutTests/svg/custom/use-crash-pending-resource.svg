@@ -21,7 +21,7 @@
     <!-- Should yield the filtered text -->
     document.getElementById("text_use").setAttribute("xlink:href", "#text1");
 
-    if (window.layoutTestController)
-      layoutTestController.dumpAsText();
+    if (window.testRunner)
+      testRunner.dumpAsText();
   </script>
 </svg>

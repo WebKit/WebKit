@@ -1,9 +1,9 @@
 <html>
 <head>
     <script>
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText(1);
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        testRunner.dumpAsText(1);
+        testRunner.waitUntilDone();
     }
     
     function load() {
@@ -18,8 +18,8 @@
     function increasePageScale() {
         window.internals.settings.setPageScaleFactor(4, 0, 0);
         
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     }
 
     window.onload = load;

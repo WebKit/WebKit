@@ -4,9 +4,9 @@
 <script>
 var resourceLoaded = false;
 
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 // The SVGLoad event should be fired right after appending the script element to the document, before the target resource is loaded
@@ -88,8 +88,8 @@ function continueTest3() {
 }
 
 function finishTest() {
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 </script>
 </defs>

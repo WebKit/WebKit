@@ -48,8 +48,8 @@
     function completeTest() {
         var script = document.createElement("script");
         script.onload = function() {
-            if (window.layoutTestController)
-                layoutTestController.notifyDone();
+            if (window.testRunner)
+                testRunner.notifyDone();
         };
 
         script.src = "../../fast/js/resources/js-test-post.js";
@@ -62,8 +62,8 @@
 <div id="console"></div>
 
 <script>
-    if (window.layoutTestController)
-        layoutTestController.waitUntilDone();
+    if (window.testRunner)
+        testRunner.waitUntilDone();
     description("This test checks that intrinsic size changes of an embedded SVG cause immediate updates of the object that embeds it.");
     test1();
 </script>

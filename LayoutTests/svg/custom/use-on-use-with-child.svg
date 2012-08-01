@@ -43,8 +43,8 @@
         println("The instance tree of use element zoomplus:\n");
         printInstanceTree(useobj,"");
 
-        if (window.layoutTestController){
-            layoutTestController.dumpAsText();
+        if (window.testRunner){
+            testRunner.dumpAsText();
         }
 
   </script>

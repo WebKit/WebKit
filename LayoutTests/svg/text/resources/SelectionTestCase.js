@@ -1,4 +1,4 @@
-if (!window.eventSender || !window.layoutTestController) {
+if (!window.eventSender || !window.testRunner) {
     alert('This test needs to be run in DRT, to get results!');
 }
 

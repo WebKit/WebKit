@@ -5,14 +5,14 @@
             var q = document.getElementById('root').contentDocument;
             q.getElementsByTagName('svg')[0].replaceChild(q.getElementById('refImage'), q.getElementById('d'));
             q.getElementsByTagName('use')[0].setAttribute('xlink:href', '#testName');
-            if (window.layoutTestController) {
-                layoutTestController.dumpAsText();
-                layoutTestController.waitUntilDone();
+            if (window.testRunner) {
+                testRunner.dumpAsText();
+                testRunner.waitUntilDone();
             }
             setTimeout(function () {
                     document.body.innerHTML = "PASS, if DumpRenderTree doesn't crash, and no assertion in a Debug build.";
-                    if (window.layoutTestController)
-                        layoutTestController.notifyDone();
+                    if (window.testRunner)
+                        testRunner.notifyDone();
                }, 0);
         }
     </script>

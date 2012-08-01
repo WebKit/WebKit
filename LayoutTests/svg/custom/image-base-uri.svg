@@ -2,8 +2,8 @@
 <svg xmlns="http://www.w3.org/2000/svg">
   <script type="text/javascript">
   <![CDATA[
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
     var txt = document.createElementNS('http://www.w3.org/2000/svg', "text");
     txt.setAttribute("id", "console");
     txt.textContent = "PASS";

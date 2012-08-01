@@ -10,8 +10,8 @@
       var path = document.getElementsByTagName("path")[0];
       path.parentNode.addEventListener('DOMSubtreeModified', handler);
       path.setAttribute("id","foo");
-      if (window.layoutTestController)
-        layoutTestController.notifyDone();
+      if (window.testRunner)
+        testRunner.notifyDone();
     }
   ]]></script>
 </svg>

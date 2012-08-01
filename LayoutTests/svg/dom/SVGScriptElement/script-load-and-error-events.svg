@@ -10,9 +10,9 @@ var lastTest = 0;
 for (i = 0; i &lt; 7; ++i)
     status_[i] = "";
 
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 function testGlobalErrorHandlerNotFired(evt) {
@@ -58,8 +58,8 @@ function endTest() {
     else
         results.innerHTML = "PASS";
 
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
 function lastTestBeforeRootElementLoaded() {
@@ -85,8 +85,8 @@ function startDynamicTests() {
         var results = document.getElementById("results");
         results.innerHTML = "FAIL: SVGLoad event on root element shouldn't fire.";
 
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     }
 }
 

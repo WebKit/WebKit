@@ -1,5 +1,5 @@
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 
 description("Test strict color parsing on SVG presentation attributes.")
 createSVGTestCase();

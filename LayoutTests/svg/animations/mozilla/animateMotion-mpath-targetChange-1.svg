@@ -34,8 +34,8 @@
     const SVGNS   = "http://www.w3.org/2000/svg";
     const XLINKNS = "http://www.w3.org/1999/xlink";
 
-    if (window.layoutTestController)
-        layoutTestController.waitUntilDone();
+    if (window.testRunner)
+        testRunner.waitUntilDone();
 
     function insertPathElem(aPathId, aPathSpec) {
       var newPath = document.createElementNS(SVGNS, "path");
@@ -73,8 +73,8 @@
       setTimeout(function() {
         document.documentElement.setCurrentTime(1);
         document.documentElement.pauseAnimations();
-        if (window.layoutTestController)
-          layoutTestController.notifyDone();
+        if (window.testRunner)
+          testRunner.notifyDone();
       }, 0);
     }
   </script>

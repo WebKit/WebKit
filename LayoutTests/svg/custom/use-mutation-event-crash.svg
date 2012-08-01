@@ -1,7 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
 <script>
-  if (window.layoutTestController)
-      layoutTestController.dumpAsText();
+  if (window.testRunner)
+      testRunner.dumpAsText();
   // Prevent insertion of any content into the document.
   document.documentElement.addEventListener("DOMNodeInserted", function() {
     var insertedNode = event.target;

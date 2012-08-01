@@ -2,8 +2,8 @@
 <svg xmlns="http://www.w3.org/2000/svg">
   <script type="text/javascript">
   <![CDATA[
-    if (window.layoutTestController)
-      layoutTestController.dumpAsText();
+    if (window.testRunner)
+      testRunner.dumpAsText();
     
     function log(string) {
       var newDiv = document.createElementNS("http://www.w3.org/1999/xhtml", "div");
@@ -38,7 +38,7 @@
     }
     
     function gotMouseEvent(evt, type) {
-      if (!window.layoutTestController)
+      if (!window.testRunner)
         document.getElementById('mouseover-text').textContent = type + " at " + evt.clientX + ", " + evt.clientY;
     }
   ]]>

@@ -2,8 +2,8 @@
     <g id='log' />
     <script>
     <![CDATA[
-        if (window.layoutTestController)
-            layoutTestController.dumpAsText();
+        if (window.testRunner)
+            testRunner.dumpAsText();
         
         var svgNS = "http://www.w3.org/2000/svg";
         var pathElement = document.createElementNS(svgNS, 'path');

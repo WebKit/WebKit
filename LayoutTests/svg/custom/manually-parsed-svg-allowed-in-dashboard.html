@@ -8,9 +8,9 @@
             c.appendChild(document.createTextNode(str + '\n'));
         }
         
-        if (window.layoutTestController) {
-            layoutTestController.setUseDashboardCompatibilityMode(true);
-            layoutTestController.dumpAsText();
+        if (window.testRunner) {
+            testRunner.setUseDashboardCompatibilityMode(true);
+            testRunner.dumpAsText();
         }
     </script>
     <body>

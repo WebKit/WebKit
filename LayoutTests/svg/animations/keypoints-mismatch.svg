@@ -5,7 +5,7 @@
 </g>
 <text>Excellent - did not crash. See bug https://bugs.webkit.org/show_bug.cgi?id=35606</text>
 <script>
-if (window.layoutTestController)
-  layoutTestController.dumpAsText();
+if (window.testRunner)
+  testRunner.dumpAsText();
 </script>
 </svg>

@@ -9,8 +9,8 @@
 <script>
   description("Tests that HTMLFrameElement and HTMLIFrameElement expose a getSVGDocument accessor");
 
-  if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
+  if (window.testRunner)
+    testRunner.waitUntilDone();
 
   var frame;
   var iframe;
@@ -69,8 +69,8 @@
   }
 
   function completeTest() {
-    if (window.layoutTestController)
-      layoutTestController.notifyDone();
+    if (window.testRunner)
+      testRunner.notifyDone();
   }
   
   startTest();

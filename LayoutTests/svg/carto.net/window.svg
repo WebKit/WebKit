@@ -21,15 +21,15 @@
         // to createCalled() were added to prevent a race in which the test may
         // terminate before the final window decoration is added.
         // See <https://bugs.webkit.org/show_bug.cgi?id=21531>.
-        if (window.layoutTestController) 
-            layoutTestController.waitUntilDone();
+        if (window.testRunner) 
+            testRunner.waitUntilDone();
 
         var numberOfWindows = 7;
         var createCalls = 0;
 
         function createCalled() {
-            if (++createCalls == numberOfWindows && window.layoutTestController)
-                layoutTestController.notifyDone();
+            if (++createCalls == numberOfWindows && window.testRunner)
+                testRunner.notifyDone();
         }
 
            //global variables for map application and navigation

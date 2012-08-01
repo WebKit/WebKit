@@ -46,8 +46,8 @@
   </defs>
   <g id="test-body-content" font-family="SVGFreeSansASCII,sans-serif" font-size="18">
     <script><![CDATA[
-       if (window.layoutTestController)
-        layoutTestController.waitUntilDone();
+       if (window.testRunner)
+        testRunner.waitUntilDone();
       var offset_angle = 90;
       var current_shift = 0;
       var shift_inc = 1;
@@ -258,8 +258,8 @@
       setTimeout('AnimatePath();', 0);
       else {
         document.getElementById("mypath").addEventListener("click", function func() { adjust_count_max=32768;anim_count_max=32768; AdjustPath(); AnimatePath(); }, false);
-        if (window.layoutTestController)
-          layoutTestController.notifyDone();
+        if (window.testRunner)
+          testRunner.notifyDone();
       }
       }
 

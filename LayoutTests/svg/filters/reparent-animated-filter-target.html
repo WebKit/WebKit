@@ -9,9 +9,9 @@
 <rect id="rect" width="1" height="1" filter="url(#filter)">
 </svg>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText()
-    layoutTestController.waitUntilDone()
+if (window.testRunner) {
+    testRunner.dumpAsText()
+    testRunner.waitUntilDone()
 }
 
 window.onload = function() {
@@ -28,8 +28,8 @@ window.onload = function() {
         // Wait for at least one more animation frame so we know it succeeded.
         } else if (lastAnimVal != animate.parentElement.limitingConeAngle.animVal) {
             document.body.appendChild(document.createTextNode('PASS - Test succeeded.'))
-            if (window.layoutTestController)
-                layoutTestController.notifyDone()
+            if (window.testRunner)
+                testRunner.notifyDone()
             return
         }
 

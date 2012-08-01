@@ -27,12 +27,12 @@
         root.removeEventListener("mousemove", move, false);
         root.removeEventListener("mouseup", stopMove, false);
 
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     }
 
-    if (window.layoutTestController)
-        layoutTestController.waitUntilDone();
+    if (window.testRunner)
+        testRunner.waitUntilDone();
 
     if (window.eventSender) {
         eventSender.mouseMoveTo(350, 350);

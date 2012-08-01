@@ -19,13 +19,13 @@
             var greenImage = document.getElementById("feimage-green");
             document.getElementById("filter").removeChild(greenImage);
 
-            if (window.layoutTestController)
-                layoutTestController.waitUntilDone();
+            if (window.testRunner)
+                testRunner.waitUntilDone();
 
             setTimeout(function() {
                 document.getElementById("filter").appendChild(greenImage);
-                if (window.layoutTestController)
-                    layoutTestController.notifyDone();
+                if (window.testRunner)
+                    testRunner.notifyDone();
             }, 0);
         }
     ]]>

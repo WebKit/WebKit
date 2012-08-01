@@ -8,7 +8,7 @@
     <![CDATA[
       function repaintTest() {
           if (window.eventSender) {
-              layoutTestController.waitUntilDone();
+              testRunner.waitUntilDone();
               eventSender.mouseMoveTo(250, 50);
               eventSender.mouseDown();
               eventSender.mouseUp();
@@ -39,8 +39,8 @@
         // show the result
         use.setAttributeNS(null, 'fill', colors[pass]);
 
-        if (window.layoutTestController)
-          layoutTestController.notifyDone();
+        if (window.testRunner)
+          testRunner.notifyDone();
       }
     ]]>
     </script>

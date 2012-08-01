@@ -1,9 +1,9 @@
 <html>
 <head>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 function loaded() {
@@ -14,8 +14,8 @@ function loaded() {
     iframe.src = 'resources/load-script.html';
     iframe.onload = function() {
         document.getElementById('result').innerText = 'SUCCESS';
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     };
     document.body.appendChild(iframe);
 }

@@ -17,13 +17,13 @@
 <script>
 <![CDATA[
 function load() {
-  if (window.layoutTestController) {
-      layoutTestController.waitUntilDone();
+  if (window.testRunner) {
+      testRunner.waitUntilDone();
   }
 
   window.setTimeout(function() {
-    if (window.layoutTestController)
-      layoutTestController.notifyDone();
+    if (window.testRunner)
+      testRunner.notifyDone();
   }, 500);
 }
 ]]>

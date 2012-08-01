@@ -14,8 +14,8 @@ document.body.offsetHeight;
 window.addEventListener("DOMSubtreeModified", write_br);
 document.getElementById("rect").style.WebkitWrap="both 2147483519";
 
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
+if (window.testRunner) {
+    testRunner.dumpAsText();
     alert("PASS. WebKit didn't crash");
 } else
     alert("This test requires GCController.");

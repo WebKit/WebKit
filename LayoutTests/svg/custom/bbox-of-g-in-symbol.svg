@@ -7,8 +7,8 @@
     </symbol>
     <text id="console" x="10" y="20" />
     <script><![CDATA[
-        if (window.layoutTestController)
-            layoutTestController.dumpAsText();
+        if (window.testRunner)
+            testRunner.dumpAsText();
 
         function runTest()
         {

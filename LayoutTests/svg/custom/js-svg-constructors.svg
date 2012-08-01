@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" onload="runTest()">
   <script type="text/ecmascript"><![CDATA[
-    if (window.layoutTestController)
-      layoutTestController.dumpAsText();
+    if (window.testRunner)
+      testRunner.dumpAsText();
 
     function expect(string, val) {
       var b = eval(string) == val;

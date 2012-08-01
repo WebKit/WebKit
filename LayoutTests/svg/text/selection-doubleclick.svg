@@ -19,7 +19,7 @@ if (eventSender) {
     eventSender.mouseUp();
 }
 
-if (window.layoutTestController)
-    window.layoutTestController.dumpSelectionRect();
+if (window.testRunner)
+    window.testRunner.dumpSelectionRect();
 </script>
 </svg>

@@ -13,8 +13,8 @@ function createSVGElement(name) {
 }
 
 function createSVGTestCase() {
-    if (window.layoutTestController)
-        layoutTestController.waitUntilDone();
+    if (window.testRunner)
+        testRunner.waitUntilDone();
 
     rootSVGElement = createSVGElement("svg");
     rootSVGElement.setAttribute("width", "300");
@@ -25,8 +25,8 @@ function createSVGTestCase() {
 }
 
 function embedSVGTestCase(uri) {
-    if (window.layoutTestController)
-        layoutTestController.waitUntilDone();
+    if (window.testRunner)
+        testRunner.waitUntilDone();
 
     iframeElement = document.createElement("iframe");
     iframeElement.setAttribute("style", "width: 300px; height: 300px;");
@@ -57,8 +57,8 @@ function completeTest() {
     var script = document.createElement("script");
 
     script.onload = function() {
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     };
 
     script.src = "../../fast/js/resources/js-test-post.js";

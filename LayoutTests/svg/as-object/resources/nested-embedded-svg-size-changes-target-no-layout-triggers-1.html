@@ -8,8 +8,8 @@ function changeSize() {
     var svgWindow = svgDoc.defaultView;
     svgWindow.changeSize();
 
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 </script>
 <object onload="changeSize()" data="embedded-svg-size-changes.svg"></object>

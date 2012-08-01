@@ -7,9 +7,9 @@
 <script>
 <![CDATA[
 
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
     gc = function(){window.GCController.collect()};
 } else if (!window.gc)
     gc = function(){};
@@ -33,8 +33,8 @@ function startup() {
         while (inner.firstChild)
             inner.removeChild(inner.firstChild);
         inner.appendChild(document.createTextNode("PASS: Successfully changed cursors."));
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     }
 }
 

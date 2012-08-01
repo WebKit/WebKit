@@ -12,17 +12,17 @@
   <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
        height="20000" width="200" onload="runTest();">
    <script type="text/ecmascript"><![CDATA[
-if (window.layoutTestController) {
-  layoutTestController.waitUntilDone();
-  layoutTestController.dumpAsText();
+if (window.testRunner) {
+  testRunner.waitUntilDone();
+  testRunner.dumpAsText();
 }
  
 function checkNoNavigation()
 {
   var result = location.hash == '' ? 'PASS' : 'FAIL';
   document.documentElement.appendChild(document.createTextNode(result));
-  if (window.layoutTestController)
-    layoutTestController.notifyDone();
+  if (window.testRunner)
+    testRunner.notifyDone();
 }
 
 function runTest() {

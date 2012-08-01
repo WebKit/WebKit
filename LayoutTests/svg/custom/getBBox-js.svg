@@ -4,8 +4,8 @@
   <![CDATA[
     function init()
     {
-        if (window.layoutTestController)
-            layoutTestController.dumpAsText();
+        if (window.testRunner)
+            testRunner.dumpAsText();
         var g = document.createElementNS("http://www.w3.org/2000/svg", "g");
         document.rootElement.appendChild(g);
         var txt = document.createElementNS("http://www.w3.org/2000/svg", "text");

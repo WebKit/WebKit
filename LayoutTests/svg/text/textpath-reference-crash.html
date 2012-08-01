@@ -3,8 +3,8 @@
     <!-- Test for wkbug.com/88144 - Crash in SVGDocumentExtensions::removeAllElementReferencesForTarget. -->
     <head>
         <script>
-            if (window.layoutTestController)
-                layoutTestController.dumpAsText();
+            if (window.testRunner)
+                testRunner.dumpAsText();
 
             window.onload = function() {
                 svg0 = document.createElementNS('http://www.w3.org/2000/svg', 'svg');

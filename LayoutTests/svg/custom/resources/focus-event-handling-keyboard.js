@@ -9,8 +9,8 @@ var switchElement = document.getElementById("switch");
 var imgElement = document.getElementById("img");
 description("Test whether focusin and focusout events are dispatched and seen in the focusin/focusout event handlers when using keyboard: ");
 
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
+if (window.testRunner)
+    testRunner.waitUntilDone();
 
 function focusinHandler(evt)
 {
@@ -60,7 +60,7 @@ if (window.eventSender) {
 
     successfullyParsed = true;
 
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 } else
     alert("This test must be run via DRT!");

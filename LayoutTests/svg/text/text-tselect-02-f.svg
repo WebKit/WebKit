@@ -132,8 +132,8 @@
     }
   </style>
 <script>
-if (window.layoutTestController)
-    window.layoutTestController.dumpSelectionRect();
+if (window.testRunner)
+    window.testRunner.dumpSelectionRect();
 document.execCommand("SelectAll");
 </script>
 </svg>

@@ -30,12 +30,12 @@
   </rect>
 
 <script>
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
+if (window.testRunner)
+    testRunner.waitUntilDone();
 
 function loaded() {
     document.documentElement.setCurrentTime(2);
-    layoutTestController.notifyDone();
+    testRunner.notifyDone();
 }
 </script>
 </svg>

@@ -5,7 +5,7 @@
   var max = 75;
  
   // When running in DRT only bounce ten times otherwhise this test takes way too long
-  if (window.layoutTestController)
+  if (window.testRunner)
     max = 10;
  </script>
  <rect fill="none" stroke="black" x="-190" y="-190" width="580" height="580" rx="40"/>
@@ -275,14 +275,14 @@
    c.setAttribute('cy', cy);
    ++count;
    if (count < max) {
-     if (window.layoutTestController)
+     if (window.testRunner)
        repaintTest();
      else {
        window.setTimeout(repaintTest, 0);
        t.firstChild.data = 'Test in progress... ' + count + ' of ' + max;
      }
    } else {
-     if (window.layoutTestController)
+     if (window.testRunner)
        t.firstChild.data = 'Test completed';
      else {
        var end = new Date();

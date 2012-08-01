@@ -1,5 +1,5 @@
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 
 description("Test CSS <length> parsing on SVG presentation attributes.")
 createSVGTestCase();

@@ -7,10 +7,10 @@
     <text x="50" y="50">PASS</text>
     <script>
     <![CDATA[
-        if (window.layoutTestController) 
+        if (window.testRunner) 
         {
-            layoutTestController.dumpAsText();
-            layoutTestController.waitUntilDone();
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
             gc = function() {
                 GCController.collect();
     
@@ -26,8 +26,8 @@
             test.removeChild(document.getElementById('marker'));
             gc();
             
-            if (window.layoutTestController)
-                layoutTestController.notifyDone();
+            if (window.testRunner)
+                testRunner.notifyDone();
         }
 
         setTimeout("runTest()", 0);

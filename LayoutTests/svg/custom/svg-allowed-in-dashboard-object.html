@@ -2,10 +2,10 @@
 <body onload="runTest()">
 <p>This test makes sure we can open SVG documents in Dashboard compatibility mode.  It can not be tested manually.</p>
 <script>
-    if (window.layoutTestController) {
-        layoutTestController.setUseDashboardCompatibilityMode(true);
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        testRunner.setUseDashboardCompatibilityMode(true);
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
     }
     
     function debug(str) {
@@ -57,8 +57,8 @@
         } catch (e) {
             debug("FAIL: Exception thrown: " + e)
         }
-        if (window.layoutTestController) 
-            layoutTestController.notifyDone();
+        if (window.testRunner) 
+            testRunner.notifyDone();
     }
 </script>
     

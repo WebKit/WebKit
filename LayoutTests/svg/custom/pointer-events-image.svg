@@ -4,8 +4,8 @@
   <script type="text/javascript">
   <![CDATA[
     
-    if (window.layoutTestController)
-        layoutTestController.waitUntilDone();
+    if (window.testRunner)
+        testRunner.waitUntilDone();
   
     var visibleValues = [ 'visible', 'hidden' ];
     var fillValues = ['none', 'orange' ];
@@ -80,8 +80,8 @@
         yOffset += rectSpacing;
       }
       
-      if (window.layoutTestController)
-        layoutTestController.notifyDone();
+      if (window.testRunner)
+        testRunner.notifyDone();
     }
   ]]>
   </script>

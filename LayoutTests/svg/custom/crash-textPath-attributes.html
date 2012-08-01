@@ -1,7 +1,7 @@
 <iframe src="resources/crash-textPath-attributes-iframe.svg" onload="go(this)"></iframe>
 <script>
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
 
     function go(oIframe) {
       var oSelection = oIframe.contentWindow.getSelection();

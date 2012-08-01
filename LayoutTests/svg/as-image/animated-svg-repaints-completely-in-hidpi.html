@@ -4,18 +4,18 @@
     <script type="text/javascript">
     function startTest()
     {
-        if (!window.layoutTestController)
+        if (!window.testRunner)
             return;
-        layoutTestController.waitUntilDone();
-        layoutTestController.setBackingScaleFactor(2, runRepaintTest);
+        testRunner.waitUntilDone();
+        testRunner.setBackingScaleFactor(2, runRepaintTest);
     }
     function repaintTest()
     {
-        if (!window.layoutTestController)
+        if (!window.testRunner)
             return;
         // The animation lasts 100ms. Wait 200ms for the repaint.
         setTimeout(function() {
-            layoutTestController.notifyDone();
+            testRunner.notifyDone();
         }, 200);
     } 
     </script>

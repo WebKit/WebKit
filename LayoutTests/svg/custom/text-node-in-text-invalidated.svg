@@ -2,8 +2,8 @@
 <text id="text">
     bar
     <script>
-        if (window.layoutTestController)
-            layoutTestController.dumpAsText();
+        if (window.testRunner)
+            testRunner.dumpAsText();
 
         // This triggers a layout before adding the #text node.
         document.getElementById('text').scrollIntoView('foo');

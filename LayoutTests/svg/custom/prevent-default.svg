@@ -7,13 +7,13 @@
           evt.target.setAttribute('fill', 'green'); 
           evt.stopPropagation();
           evt.preventDefault();
-          if (window.layoutTestController)
-            layoutTestController.notifyDone();
+          if (window.testRunner)
+            testRunner.notifyDone();
         }
         
         function repaintTest() {
           if (window.eventSender) {
-            layoutTestController.waitUntilDone();
+            testRunner.waitUntilDone();
             eventSender.mouseMoveTo(50, 50);
             eventSender.mouseDown();
             eventSender.mouseUp();

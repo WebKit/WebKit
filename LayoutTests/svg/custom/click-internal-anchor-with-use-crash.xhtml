@@ -6,8 +6,8 @@
         {
             clickLink(document.getElementById("link"));
             
-            if (window.layoutTestController)
-                layoutTestController.dumpAsText();
+            if (window.testRunner)
+                testRunner.dumpAsText();
         }
 
         function clickLink(link)

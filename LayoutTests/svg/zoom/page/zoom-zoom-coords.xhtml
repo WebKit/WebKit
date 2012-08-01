@@ -182,8 +182,8 @@ function executeTest() {
 </script>
 
 <script>
-if (window.layoutTestController) {
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.waitUntilDone();
     window.postZoomCallback = executeTest;
 } else {
     debug("This test only works in DRT.");

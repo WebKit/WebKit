@@ -15,8 +15,8 @@
     range.setEndAfter(document.getElementById("legendbox"));
     range.deleteContents();
 
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
 
     function go() {
       var svgRoot = document.getElementById("svgRoot");

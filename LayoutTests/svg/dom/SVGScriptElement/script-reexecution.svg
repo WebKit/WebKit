@@ -13,9 +13,9 @@ function pass() {
 }
 
 function startTest() {
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
     }
 
     test = "p1";
@@ -46,8 +46,8 @@ function finish() {
     document.getElementsByTagName("defs")[0].removeChild(e3);
     document.getElementsByTagName("defs")[0].appendChild(e3);
 
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 </script>
 </defs>

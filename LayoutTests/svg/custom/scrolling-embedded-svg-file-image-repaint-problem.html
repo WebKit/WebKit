@@ -27,8 +27,8 @@ SVG 1.1 test:render-groups-01-b </title>
  </style>
  <script>
   function repaintTest() {
-    if (window.layoutTestController)
-      layoutTestController.waitUntilDone();
+    if (window.testRunner)
+      testRunner.waitUntilDone();
     setTimeout(startTest, 0);
   }
   function startTest() {
@@ -42,8 +42,8 @@ SVG 1.1 test:render-groups-01-b </title>
       return;
     }
 
-    if (window.layoutTestController)
-      layoutTestController.notifyDone();
+    if (window.testRunner)
+      testRunner.notifyDone();
   }
  </script>
  </head>

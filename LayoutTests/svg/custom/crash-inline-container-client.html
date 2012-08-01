@@ -18,7 +18,7 @@ range = document.createRange();
 range.setEndAfter(document.getElementById("tspan"));
 range.extractContents();
 
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 </script>
 </svg>

@@ -4,9 +4,9 @@
 <div>http://bugs.webkit.org/show_bug.cgi?id=12310</div>
 <div style="width: 200px; height: 200px; background-image: url(resources/butterfly.svg)"></div>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
     gc = function() { window.GCController.collect() };
 } else if (!window.gc)
     gc = function() { };
@@ -22,8 +22,8 @@ window.onload = function() {
         setTimeout(function() { location.reload() }, 0);
     } else {
         document.getElementById('status').innerHTML = "PASS";
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     }
 }
 </script>

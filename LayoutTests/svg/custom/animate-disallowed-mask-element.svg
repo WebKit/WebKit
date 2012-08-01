@@ -2,10 +2,10 @@
     <!-- Test for wkbug.com/85202: Passes if a crash does not occur. -->
     <script>
         window.onload = function() {
-            if (window.layoutTestController) {
-                layoutTestController.dumpAsText();
-                layoutTestController.waitUntilDone();
-                setTimeout(function(){ layoutTestController.notifyDone() }, 0);
+            if (window.testRunner) {
+                testRunner.dumpAsText();
+                testRunner.waitUntilDone();
+                setTimeout(function(){ testRunner.notifyDone() }, 0);
             }
         }
     </script>

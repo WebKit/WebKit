@@ -14,9 +14,9 @@
           new Object;
       }
     }
-    if (window.layoutTestController) {
-      layoutTestController.dumpAsText();
-      layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+      testRunner.dumpAsText();
+      testRunner.waitUntilDone();
     }
     function runTest() {
       var tref = document.getElementById("tref");
@@ -26,8 +26,8 @@
       var parent = elem.parentNode;
       parent.insertBefore(document.createElement("source"), elem);
       document.body.innerHTML = "PASS";
-      if (window.layoutTestController)
-        layoutTestController.notifyDone();
+      if (window.testRunner)
+        testRunner.notifyDone();
     }
   </script>
 </svg>

@@ -2,8 +2,8 @@
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" onload="test()">
 <image id="image" xlink:href="" width="75" height="75" />
 <script>
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
+if (window.testRunner)
+    testRunner.waitUntilDone();
 
 function test() {
     // set
@@ -18,8 +18,8 @@ function test() {
     document.getElementById("image").setAttributeNS("http://www.w3.org/1999/xlink", "href", "resources/green-checker.png");
     document.getElementById("image").setAttribute("display", "inherit");
 
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
 </script>

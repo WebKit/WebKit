@@ -3,8 +3,8 @@
   <script type="text/javascript">
   <![CDATA[
     
-    if (window.layoutTestController)
-        layoutTestController.waitUntilDone();
+    if (window.testRunner)
+        testRunner.waitUntilDone();
  
    function changeFill(evt) { 
        var poly = evt.target;
@@ -20,8 +20,8 @@
         }
     }
       
-    if (window.layoutTestController)
-      layoutTestController.notifyDone();
+    if (window.testRunner)
+      testRunner.notifyDone();
   ]]>
   </script>
 

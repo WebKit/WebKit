@@ -2,8 +2,8 @@
 <svg id="root" xmlns="http://www.w3.org/2000/svg" onload="runTest()">
   <script>
     function runTest() {
-        if (window.layoutTestController)
-            layoutTestController.dumpAsText();
+        if (window.testRunner)
+            testRunner.dumpAsText();
         var root = document.documentElement;
         root.checkIntersection(null, root.createSVGRect());
         root.checkEnclosure(null, root.createSVGRect());

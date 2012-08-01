@@ -1,5 +1,5 @@
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 
 var logDiv = document.getElementById('log');
 function log(s) {

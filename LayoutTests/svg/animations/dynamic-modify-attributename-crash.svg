@@ -4,9 +4,9 @@
   <text id="log"/>
   <script>
   <![CDATA[
-    if (window.layoutTestController) {
-      layoutTestController.waitUntilDone();
-      layoutTestController.dumpAsText();
+    if (window.testRunner) {
+      testRunner.waitUntilDone();
+      testRunner.dumpAsText();
     }
 
     window.setTimeout(function() {
@@ -16,8 +16,8 @@
 
     window.setTimeout(function() {
       document.getElementById("log").appendChild(document.createTextNode("PASS"));
-      if (window.layoutTestController)
-        layoutTestController.notifyDone();
+      if (window.testRunner)
+        testRunner.notifyDone();
     }, 100);
   ]]>
   </script>

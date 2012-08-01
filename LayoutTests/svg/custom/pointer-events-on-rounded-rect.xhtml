@@ -35,8 +35,8 @@ function stop() {
     fallback.removeEventListener("mousedown", failed, false);
     roundedRect.removeEventListener("mousedown", passed, false);
 
-    if (window.layoutTestController)
-    layoutTestController.notifyDone();
+    if (window.testRunner)
+    testRunner.notifyDone();
 }
 
 function failed() {
@@ -49,9 +49,9 @@ function passed() {
    stop();
 }
 
-if (window.layoutTestController) {
-   layoutTestController.waitUntilDone();
-   layoutTestController.dumpAsText();
+if (window.testRunner) {
+   testRunner.waitUntilDone();
+   testRunner.dumpAsText();
 }
 
 if (window.eventSender) {
