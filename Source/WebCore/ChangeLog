@@ -1,3 +1,23 @@
+2012-07-31  Tony Chang  <tony@chromium.org>
+
+        REGRESSION: flexbox content-size fails to exclude scrollbar
+        https://bugs.webkit.org/show_bug.cgi?id=92667
+
+        Reviewed by Ojan Vafai.
+
+        In r123909, we switched to computing the height using computeContentLogicalHeightUsing().
+        Unfortunately, this includes the scrollbar when we want the content height. Add a helper
+        method for computing the value needed by flexbox.
+
+        Test: css3/flexbox/content-height-with-scrollbars.html
+
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::mainAxisContentExtent): Use computeLogicalClientHeight
+        (WebCore::RenderFlexibleBox::computeLogicalClientHeight): Add new method for taking scrollbar into consideration.
+        (WebCore::RenderFlexibleBox::computeAvailableFreeSpace): Use computeLogicalClientHeight
+        (WebCore::RenderFlexibleBox::lineBreakLength): Use computeLogicalClientHeight
+        * rendering/RenderFlexibleBox.h:
+
 2012-07-31  Kwang Yul Seo  <skyul@company100.net>
 
         Remove unused method HTMLElementStack::bottom()

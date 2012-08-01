@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+.outer {
+    display: -webkit-flex;
+    -webkit-flex-flow: column;
+    height: 100px;
+    overflow: scroll;
+}
+.outer > :nth-child(1) {
+    background-color: lightgreen;
+}
+.outer > :nth-child(2) {
+    background-color: lightblue;
+}
+</style>
+</head>
+<body>
+<p>This tests that when setting the height of a flex item to a percentage
+height, we use the content height with scrollbars. The content should not be
+scrollable in any of the test cases below.</p>
+
+<div class="outer">
+  <div style="height: 100%"></div>
+</div>
+
+<div class="outer">
+  <div style="height: 100%; box-sizing: border-box; border: 5px solid green"></div>
+</div>
+
+<div class="outer" style="-webkit-flex-wrap: wrap">
+  <div style="height: 50px; width: 50%;"></div>
+  <div style="height: 50px; width: 50%; background-color: lightblue"></div>
+</div>
+
+<div class="outer" style="-webkit-flex-wrap: wrap; height: auto; max-height: 100px; padding: 10px;">
+  <div style="height: 50px; width: 50%;"></div>
+  <div style="height: 50px; width: 50%; background-color: lightblue"></div>
+</div>
+</body>
+</html>

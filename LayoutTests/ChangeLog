@@ -1,5 +1,17 @@
 2012-07-31  Tony Chang  <tony@chromium.org>
 
+        REGRESSION: flexbox content-size fails to exclude scrollbar
+        https://bugs.webkit.org/show_bug.cgi?id=92667
+
+        Reviewed by Ojan Vafai.
+
+        Add column flow test cases with scrollbars forced on.
+
+        * css3/flexbox/content-height-with-scrollbars-expected.html: Added.
+        * css3/flexbox/content-height-with-scrollbars.html: Added.
+
+2012-07-31  Tony Chang  <tony@chromium.org>
+
         -webkit-order should take an integer, not a number
         https://bugs.webkit.org/show_bug.cgi?id=92688
 

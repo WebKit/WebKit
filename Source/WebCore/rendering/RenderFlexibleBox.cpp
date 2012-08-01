@@ -401,8 +401,16 @@ LayoutUnit RenderFlexibleBox::crossAxisContentExtent() const
 LayoutUnit RenderFlexibleBox::mainAxisContentExtent()
 {
     if (isColumnFlow())
-        return std::max(LayoutUnit(0), computeContentLogicalHeightUsing(MainOrPreferredSize, style()->logicalHeight()));
+        return std::max(LayoutUnit(0), computeLogicalClientHeight(MainOrPreferredSize, style()->logicalHeight()));
     return contentLogicalWidth();
+}
+
+LayoutUnit RenderFlexibleBox::computeLogicalClientHeight(SizeType heightType, const Length& height)
+{
+    LayoutUnit heightIncludingScrollbar = computeContentLogicalHeightUsing(heightType, height);
+    if (heightIncludingScrollbar == -1)
+        return -1;
+    return std::max(LayoutUnit(0), heightIncludingScrollbar - scrollbarLogicalHeight());
 }
 
 WritingMode RenderFlexibleBox::transformedWritingMode() const
@@ -612,11 +620,11 @@ LayoutUnit RenderFlexibleBox::computeAvailableFreeSpace(LayoutUnit preferredMain
     else if (hasOverrideHeight())
         contentExtent = overrideLogicalContentHeight();
     else {
-        LayoutUnit heightResult = computeContentLogicalHeightUsing(MainOrPreferredSize, style()->logicalHeight());
+        LayoutUnit heightResult = computeLogicalClientHeight(MainOrPreferredSize, style()->logicalHeight());
         if (heightResult == -1)
             heightResult = preferredMainAxisExtent;
-        LayoutUnit minHeight = computeContentLogicalHeightUsing(MinSize, style()->logicalMinHeight()); // Leave as -1 if unset.
-        LayoutUnit maxHeight = style()->logicalMaxHeight().isUndefined() ? heightResult : computeContentLogicalHeightUsing(MaxSize, style()->logicalMaxHeight());
+        LayoutUnit minHeight = computeLogicalClientHeight(MinSize, style()->logicalMinHeight()); // Leave as -1 if unset.
+        LayoutUnit maxHeight = style()->logicalMaxHeight().isUndefined() ? heightResult : computeLogicalClientHeight(MaxSize, style()->logicalMaxHeight());
         if (maxHeight == -1)
             maxHeight = heightResult;
         heightResult = std::min(maxHeight, heightResult);
@@ -789,10 +797,10 @@ LayoutUnit RenderFlexibleBox::lineBreakLength()
     if (!isColumnFlow())
         return mainAxisContentExtent();
 
-    LayoutUnit height = computeContentLogicalHeightUsing(MainOrPreferredSize, style()->logicalHeight());
+    LayoutUnit height = computeLogicalClientHeight(MainOrPreferredSize, style()->logicalHeight());
     if (height == -1)
         height = MAX_LAYOUT_UNIT;
-    LayoutUnit maxHeight = computeContentLogicalHeightUsing(MaxSize, style()->logicalMaxHeight());
+    LayoutUnit maxHeight = computeLogicalClientHeight(MaxSize, style()->logicalMaxHeight());
     if (maxHeight != -1)
         height = std::min(height, maxHeight);
     return height;
