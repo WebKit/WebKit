@@ -1,3 +1,14 @@
+2012-07-31  Ami Fischman  <fischman@chromium.org>
+
+        [Chromium][Mac] Assertion failure in null_audio_sink.cc running WebGL video layout test on 10.5 debug bots
+        https://bugs.webkit.org/show_bug.cgi?id=89529
+
+        Unreviewed gardening.
+
+        Should be mostly/all cured on Mac.  See http://crbug.com/138583 for ongoing details.
+
+        * platform/chromium/TestExpectations:
+
 2012-07-31  Peter Kasting  <pkasting@google.com>
 
         [Chromium] Update test expectations.

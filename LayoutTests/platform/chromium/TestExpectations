@@ -3390,8 +3390,6 @@ BUGWK89167 : media/track/track-cue-rendering-snap-to-lines-not-set.html = TEXT P
 // Timing out on some Windows bots
 BUGWK89510 WIN : gamepad/gamepad-polling-access.html = PASS TIMEOUT
 
-BUGWK89529 MAC DEBUG : fast/canvas/webgl/tex-image-and-sub-image-2d-with-video.html = PASS CRASH
-
 BUGWK89702 : compositing/geometry/fixed-position-transform-composited-page-scale-down.html = PASS IMAGE
 BUGWK89702 : compositing/scaling/tiled-layer-recursion.html = PASS IMAGE
 
