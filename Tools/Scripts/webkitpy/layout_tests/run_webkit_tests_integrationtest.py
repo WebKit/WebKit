@@ -928,12 +928,19 @@ class MainTest(unittest.TestCase, StreamTestingMixin):
         # This is empty because we don't even get a chance to configure the logger before failing.
         self.assertEquals(logs, '')
 
-    def disabled_test_verbose(self):
-        # Note that the tests fail because we can't pass a mock host to the worker processes *and*
-        # use outputcapture to capture the output (doing the latter results in a nonpicklable host).
-        _, _, err, _ = logging_run(['--verbose', '--fully-parallel', '--child-processes', '2', 'passes/text.html', 'passes/image.html'], tests_included=True)
-        self.assertTrue('text.html failed' in err.getvalue())
-        self.assertTrue('image.html failed' in err.getvalue())
+    def test_verbose_in_child_processes(self):
+        # When we actually run multiple processes, we may have to reconfigure logging in the
+        # child process (e.g., on win32) and we need to make sure that works and we still
+        # see the verbose log output. However, we can't use logging_run() because using
+        # outputcapture to capture stdout and stderr latter results in a nonpicklable host.
+        options, parsed_args = parse_args(['--verbose', '--fully-parallel', '--child-processes', '2', 'passes/text.html', 'passes/image.html'], tests_included=True, print_nothing=False)
+        host = MockHost()
+        port_obj = host.port_factory.get(port_name=options.platform, options=options)
+        buildbot_output = StringIO.StringIO()
+        regular_output = StringIO.StringIO()
+        res = run_webkit_tests.run(port_obj, options, parsed_args, buildbot_output=buildbot_output, regular_output=regular_output)
+        self.assertTrue('text.html passed' in regular_output.getvalue())
+        self.assertTrue('image.html passed' in regular_output.getvalue())
 
 
 class EndToEndTest(unittest.TestCase):

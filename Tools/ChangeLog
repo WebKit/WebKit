@@ -1,3 +1,17 @@
+2012-08-01  Dirk Pranke  <dpranke@chromium.org>
+
+        nrwt: reenable the test for --verbose working in child processes
+        https://bugs.webkit.org/show_bug.cgi?id=92894
+
+        Reviewed by Ryosuke Niwa.
+
+        This change rewrites the test to not use outputcapture, meaning
+        that the MockHost can propagate to Worker properly and things
+        work again :).
+
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_integrationtest.py:
+        (MainTest.test_verbose_in_child_processes):
+
 2012-08-01  Ryosuke Niwa  <rniwa@webkit.org>
 
         run-perf-tests --build-directory doesn't work
