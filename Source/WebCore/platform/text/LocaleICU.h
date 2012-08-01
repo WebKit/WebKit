@@ -133,5 +133,5 @@ private:
 #endif
 };
 
-}
+} // namespace WebCore
 #endif

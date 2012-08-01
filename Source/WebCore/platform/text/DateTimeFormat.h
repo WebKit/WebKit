@@ -108,5 +108,4 @@ public:
 } // namespace WebCore
 
 #endif
-
 #endif // DateTimeFormat_h

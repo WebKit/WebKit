@@ -60,7 +60,6 @@ const Vector<String>& weekDayShortLabels();
 
 // The first day of a week. 0 is Sunday, and 6 is Saturday.
 unsigned firstDayOfWeek();
-
 #endif
 
 #if ENABLE(INPUT_TYPE_TIME_MULTIPLE_FIELDS)

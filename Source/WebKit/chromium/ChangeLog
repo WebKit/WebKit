@@ -1,3 +1,16 @@
+2012-07-31  Yoshifumi Inoue  <yosin@chromium.org>
+
+        [Chromium] Enable ENABLE_INPUT_TYPE_TIME_MULTIPLE_FIELDS
+        https://bugs.webkit.org/show_bug.cgi?id=92822
+
+        Reviewed by Kent Tamura.
+
+        This patch enables ENABLE_INPUT_TYPE_TIME_MULTIPLE_FIELDS for Chromium
+        port except for Android.
+
+        * features.gypi: Add ENABLE_INPUT_TYPE_TIME_MULTIPLE_FIELDS=1 to "feature_defines"
+        block of OS != "android".
+
 2012-07-31  Yusuf Ozuysal  <yusufo@google.com>
 
         [chromium]Upstream WebViewImpl:StartPageScaleAnimation changes for Chrome for Android

@@ -1,3 +1,22 @@
+2012-07-31  Yoshifumi Inoue  <yosin@chromium.org>
+
+        [Chromium] Enable ENABLE_INPUT_TYPE_TIME_MULTIPLE_FIELDS
+        https://bugs.webkit.org/show_bug.cgi?id=92822
+
+        Reviewed by Kent Tamura.
+
+        This patch touches header files for compiling files which contains
+        ENABLE_INPUT_TYPE_TIME_MULTIPLE_FIELDS.
+
+        No new tests. This patch doesn't change behavior.
+
+        * platform/text/DateTimeFormat.h:
+        * platform/text/LocaleICU.h:
+        * platform/text/LocaleWin.h:
+        * platform/text/LocalizedDate.h:
+        * platform/text/LocalizedNumber.h:
+        * platform/text/mac/LocaleMac.h:
+
 2012-07-30  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION(r120979): Node list returned by getElementsByTagNameNS isn't invalidated when children changes
