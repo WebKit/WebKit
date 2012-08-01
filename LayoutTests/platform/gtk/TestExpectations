@@ -1259,9 +1259,9 @@ BUGWK92063 : fast/css/sticky/parsing-position-sticky.html = TEXT
 
 BUGWK92100 : accessibility/canvas-accessibilitynodeobject.html = TEXT
 
-// This test depends on subpixel layout.
+// These tests depend on subpixel layout.
+BUGWK92352 : css3/flexbox/content-height-with-scrollbars.html = IMAGE
 BUGWK92352 : css3/flexbox/flex-rounding.html = TEXT
-
 
 //////////////////////////////////////////////////////////////////////////////////////////
 // End of Tests failing

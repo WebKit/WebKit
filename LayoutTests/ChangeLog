@@ -1,3 +1,15 @@
+2012-08-01  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening, adding an image failure expectation for a
+        CSS3 Flexbox test that relies on the subpixel layout to be enabled.
+
+        Also adding a missing platform-specific expectation for a CSS2.1 test
+        that somehow got removed in r124142.
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/css2.1/20110323/block-replaced-width-001-expected.png:
+        * platform/gtk/css2.1/20110323/block-replaced-width-001-expected.txt: Added.
+
 2012-08-01  Kinuko Yasuda  <kinuko@chromium.org>
 
         [Filesystem] Assertion on $0.webkitEntries while on the input field.
