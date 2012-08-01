@@ -1,3 +1,18 @@
+2012-08-01  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION(r122498): Assertion failure: m_nodeListCounts is sometimes not zero in the Document destructor
+        https://bugs.webkit.org/show_bug.cgi?id=92742
+
+        Reviewed by Andreas Kling.
+
+        Add regression tests for two types of node lists: one that uses addCacheWithName and the other that uses
+        addCacheWithAtomicName.
+
+        * fast/dom/NodeList/nodelist-moved-to-fragment-2-expected.txt: Added.
+        * fast/dom/NodeList/nodelist-moved-to-fragment-2.html: Added.
+        * fast/dom/NodeList/nodelist-moved-to-fragment-expected.txt: Added.
+        * fast/dom/NodeList/nodelist-moved-to-fragment.html: Added.
+
 2012-08-01  Zeno Albisser  <zeno@webkit.org>
 
         [Qt]REGRESSION(r123786): It made 3 fast/animation tests fail.

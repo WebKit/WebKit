@@ -1,3 +1,19 @@
+2012-08-01  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION(r122498): Assertion failure: m_nodeListCounts is sometimes not zero in the Document destructor
+        https://bugs.webkit.org/show_bug.cgi?id=92742
+
+        Reviewed by Andreas Kling.
+
+        The bug was caused by adoptTreeScope's not always calling unregisterNodeListCache and registerNodeListCache
+        on node lists that use m_atomicNameCaches and m_nameCaches.
+
+        Tests: fast/dom/NodeList/nodelist-moved-to-fragment-2.html
+               fast/dom/NodeList/nodelist-moved-to-fragment.html
+
+        * dom/NodeRareData.h:
+        (WebCore::NodeListsNodeData::adoptTreeScope):
+
 2012-08-01  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Crashes in NetworkResourcesData.

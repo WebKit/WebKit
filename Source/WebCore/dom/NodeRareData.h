@@ -137,19 +137,15 @@ public:
             NodeListAtomicNameCacheMap::const_iterator atomicNameCacheEnd = m_atomicNameCaches.end();
             for (NodeListAtomicNameCacheMap::const_iterator it = m_atomicNameCaches.begin(); it != atomicNameCacheEnd; ++it) {
                 DynamicSubtreeNodeList* list = it->second;
-                if (list->isRootedAtDocument()) {
-                    oldDocument->unregisterNodeListCache(list);
-                    newDocument->registerNodeListCache(list);
-                }
+                oldDocument->unregisterNodeListCache(list);
+                newDocument->registerNodeListCache(list);
             }
 
             NodeListNameCacheMap::const_iterator nameCacheEnd = m_nameCaches.end();
             for (NodeListNameCacheMap::const_iterator it = m_nameCaches.begin(); it != nameCacheEnd; ++it) {
                 DynamicSubtreeNodeList* list = it->second;
-                if (list->isRootedAtDocument()) {
-                    oldDocument->unregisterNodeListCache(list);
-                    newDocument->registerNodeListCache(list);
-                }
+                oldDocument->unregisterNodeListCache(list);
+                newDocument->registerNodeListCache(list);
             }
 
             TagNodeListCacheNS::const_iterator tagEnd = m_tagNodeListCacheNS.end();
