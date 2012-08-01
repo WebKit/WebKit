@@ -1,3 +1,47 @@
+2012-07-31  Hayato Ito  <hayato@chromium.org>
+
+        Refactor EventDispatcher::dispatchEvent() so that we can call each phase (Caputure, Target and Bubbling) of event dispatching separately.
+        https://bugs.webkit.org/show_bug.cgi?id=92621
+
+        Reviewed by Dimitri Glazkov.
+
+        This is one of the required refactorings to support event
+        propagation for seamless iframes.  I've removed 'goto' statements
+        from EventDispatcher::dispatchEvent() as a result.
+
+        I've verified that all separated functions are successfully
+        inlined. I could not see any performance regression.  The
+        benchmark result is:
+
+        Before this patch:
+        % ./Tools/Scripts/run-perf-tests PerformanceTests/DOM/Events.html
+        Running 1 tests
+        Running DOM/Events.html (1 of 1)
+        RESULT DOM: Events= 243.986607143 ms
+        median= 242.297619048 ms, stdev= 5.74748351315 ms, min= 239.80952381 ms, max= 268.0 ms
+
+        After this patch:
+        % ./Tools/Scripts/run-perf-tests PerformanceTests/DOM/Events.html
+        Running 1 tests
+        Running DOM/Events.html (1 of 1)
+        RESULT DOM: Events= 242.291666667 ms
+        median= 240.452380952 ms, stdev= 5.8718643632 ms, min= 238.214285714 ms, max= 266.5 ms
+
+        No new tests, no behavior change.
+
+        * dom/EventDispatcher.cpp:
+        (WebCore::EventDispatcher::dispatchEvent):
+        (WebCore::EventDispatcher::dispatchEventPreProcess):
+        (WebCore):
+        (WebCore::EventDispatcher::dispatchEventAtCapturing):
+        (WebCore::EventDispatcher::dispatchEventAtTarget):
+        (WebCore::EventDispatcher::dispatchEventAtBubbling):
+        (WebCore::EventDispatcher::dispatchEventPostProcess):
+        (WebCore::EventDispatcher::topEventContext):
+        * dom/EventDispatcher.h:
+        (WebCore):
+        (EventDispatcher):
+
 2012-07-31  Yoshifumi Inoue  <yosin@chromium.org>
 
         [Chromium] Enable ENABLE_INPUT_TYPE_TIME_MULTIPLE_FIELDS

@@ -42,10 +42,16 @@ class PlatformKeyboardEvent;
 class PlatformMouseEvent;
 class ShadowRoot;
 class TreeScope;
+class WindowEventContext;
 
 enum EventDispatchBehavior {
     RetargetEvent,
     StayInsideShadowDOM
+};
+
+enum EventDispatchContinuation {
+    ContinueDispatching,
+    DoneDispatching
 };
 
 class EventRelatedTargetAdjuster {
@@ -79,6 +85,12 @@ private:
 
     void ensureEventAncestors(Event*);
     const EventContext* topEventContext();
+
+    EventDispatchContinuation dispatchEventPreProcess(PassRefPtr<Event>, void*& preDispatchEventHandlerResult);
+    EventDispatchContinuation dispatchEventAtCapturing(PassRefPtr<Event>, WindowEventContext&);
+    EventDispatchContinuation dispatchEventAtTarget(PassRefPtr<Event>);
+    EventDispatchContinuation dispatchEventAtBubbling(PassRefPtr<Event>, WindowEventContext&);
+    void dispatchEventPostProcess(PassRefPtr<Event>, void* preDispatchEventHandlerResult);
 
     Vector<EventContext> m_ancestors;
     RefPtr<Node> m_node;
