@@ -1,3 +1,14 @@
+2012-08-01  Roger Fong  <roger_fong@apple.com>
+
+        Some of the test results for LayoutTests/accessibility/canvas-accessibilitynodeobject.html do not show up on Windows.
+        https://bugs.webkit.org/show_bug.cgi?id=92916
+
+        Reviewed by Tim Horton.
+
+        Adding a failing test result and filing a bug.
+
+        * platform/win/accessibility/canvas-accessibilitynodeobject-expected.txt: Added.
+
 2012-08-01  David Grogan  <dgrogan@chromium.org>
 
         IndexedDB: integer version layout tests
