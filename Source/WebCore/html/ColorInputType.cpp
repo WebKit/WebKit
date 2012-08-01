@@ -168,7 +168,7 @@ bool ColorInputType::shouldRespectListAttribute()
 
 bool ColorInputType::typeMismatchFor(const String& value) const
 {
-    return isValidColorString(value);
+    return !isValidColorString(value);
 }
 
 void ColorInputType::didChooseColor(const Color& color)
