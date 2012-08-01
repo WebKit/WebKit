@@ -1,3 +1,16 @@
+2012-08-01  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
+
+        [Qt][WK2] Race condition between first layout and viewport attributes initialization
+        https://bugs.webkit.org/show_bug.cgi?id=92902
+
+        Reviewed by Noam Rosenthal.
+
+        Initializing m_rawAttributes from QtViewportHandler to avoid calculation of random
+        scale factors on the first layout is triggered.
+
+        * UIProcess/qt/QtViewportHandler.cpp:
+        (WebKit::QtViewportHandler::QtViewportHandler):
+
 2012-08-01  Zeno Albisser  <zeno@webkit.org>
 
         [Qt]REGRESSION(r123786): It made 3 fast/animation tests fail.
