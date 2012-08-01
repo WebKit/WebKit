@@ -602,6 +602,15 @@ namespace JSC {
         ASSERT(m_structure || !globalData.structureStructure);
     }
 
+    inline const ClassInfo* JSCell::classInfo() const
+    {
+#if ENABLE(GC_VALIDATION)
+        return m_structure.unvalidatedGet()->classInfo();
+#else
+        return m_structure->classInfo();
+#endif
+    }
+
 } // namespace JSC
 
 #endif // Structure_h

@@ -1,3 +1,29 @@
+2012-08-01  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        C++ code should get ClassInfo from the Structure
+        https://bugs.webkit.org/show_bug.cgi?id=92892
+
+        Reviewed by Geoffrey Garen.
+
+        In our march to remove ClassInfo from our JSCell object headers, we can switch 
+        C++ code over to grabbing the ClassInfo from the Structure since it is finally 
+        safe to do so now that Structure access is safe during finalization/destruction. 
+        The remaining JIT code changes can be done in a separate patch.
+
+        * heap/MarkedBlock.cpp:
+        (JSC::MarkedBlock::callDestructor): We don't want to clear the Structure any more 
+        since the Structure should still be valid at this point.
+        * heap/WeakSetInlines.h:
+        (JSC::WeakBlock::finalize): Ditto.
+        * runtime/JSCell.h:
+        (JSC):
+        * runtime/Structure.h:
+        (JSC::JSCell::classInfo): Move JSCell's classInfo() to Structure.h so it can be 
+        inline. Use a different method of getting the JSCell's Structure based on 
+        whether we're in GC_VALIDATION mode or not, since always using get() will cause 
+        infinite recursion in GC_VALIDATION mode.
+        (JSC):
+
 2012-07-31  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         MarkedBlock::sweep() should sweep another block if it can't sweep a Structure block

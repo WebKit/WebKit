@@ -61,10 +61,6 @@ inline void MarkedBlock::callDestructor(JSCell* cell)
     m_heap->m_destroyedTypeCounts.countVPtr(vptr);
 #endif
 
-#if !ASSERT_DISABLED || ENABLE(GC_VALIDATION)
-    cell->clearStructure();
-#endif
-
     cell->methodTable()->destroy(cell);
     cell->zap();
 }

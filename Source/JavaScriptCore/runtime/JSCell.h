@@ -192,11 +192,6 @@ namespace JSC {
         return m_structure.get();
     }
 
-    inline const ClassInfo* JSCell::classInfo() const
-    {
-        return m_classInfo;
-    }
-
     inline void JSCell::visitChildren(JSCell* cell, SlotVisitor& visitor)
     {
         MARK_LOG_PARENT(visitor, cell);
