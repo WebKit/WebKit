@@ -1,4 +1,14 @@
 =================
+WebKitGTK+ 1.8.2
+=================
+
+What's new in WebKitGTK+ 1.8.2?
+  - Fix continuous insertion of newlines in Etherpad.
+  - NPAPI plugin support for Windows.
+  - The spell checker now recognizes English-language contractions.
+  - Merge many security fixes from trunk.
+
+=================
 WebKitGTK+ 1.8.1
 =================
 

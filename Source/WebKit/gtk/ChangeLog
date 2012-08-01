@@ -1,3 +1,11 @@
+2012-08-01  Martin Robinson  <mrobinson@igalia.com>
+
+        Update the NEWS file and configure.ac in preparation for the 1.8.2 release.
+
+        Reviewed by Carlos Garcia Campos.
+
+        * NEWS: Add the news.
+
 2012-07-30  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] New lines automatically and repeatedly added to list items in Etherpad
