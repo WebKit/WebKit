@@ -183,6 +183,8 @@ void IDBCursor::advance(unsigned long count, ExceptionCode& ec)
     m_request->setPendingCursor(this);
     m_gotValue = false;
     m_backend->advance(count, m_request, ec);
+    if (ec)
+        m_request->markEarlyDeath();
 }
 
 void IDBCursor::continueFunction(PassRefPtr<IDBKey> key, ExceptionCode& ec)
@@ -203,11 +205,28 @@ void IDBCursor::continueFunction(PassRefPtr<IDBKey> key, ExceptionCode& ec)
         return;
     }
 
+    if (key) {
+        ASSERT(m_currentKey);
+        if (m_direction == IDBCursor::NEXT || m_direction == IDBCursor::NEXT_NO_DUPLICATE) {
+            if (!m_currentKey->isLessThan(key.get())) {
+                ec = IDBDatabaseException::DATA_ERR;
+                return;
+            }
+        } else {
+            if (!key->isLessThan(m_currentKey.get())) {
+                ec = IDBDatabaseException::DATA_ERR;
+                return;
+            }
+        }
+    }
+
     // FIXME: We're not using the context from when continue was called, which means the callback
     //        will be on the original context openCursor was called on. Is this right?
     m_request->setPendingCursor(this);
     m_gotValue = false;
     m_backend->continueFunction(key, m_request, ec);
+    if (ec)
+        m_request->markEarlyDeath();
 }
 
 PassRefPtr<IDBRequest> IDBCursor::deleteFunction(ScriptExecutionContext* context, ExceptionCode& ec)

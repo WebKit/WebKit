@@ -1,3 +1,25 @@
+2012-08-01  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: IDBCursor.continue(key) does not throw for key "behind" cursor
+        https://bugs.webkit.org/show_bug.cgi?id=92562
+
+        Reviewed by Ojan Vafai.
+
+        Ensure cursor.continue(key) throws if key is "behind" the cursor.
+
+        * storage/indexeddb/cursor-continue-dir-expected.txt: Added.
+        * storage/indexeddb/cursor-continue-dir.html: Added.
+        * storage/indexeddb/resources/cursor-continue-dir.js: Added.
+        (test.request.onsuccess.request.onsuccess.request.onsuccess):
+        (test.request.onsuccess.request.onsuccess):
+        (test.request.onsuccess):
+        (test):
+        (testCursors):
+        (testForwardCursor.request.onsuccess):
+        (testForwardCursor):
+        (testReverseCursor.request.onsuccess):
+        (testReverseCursor):
+
 2012-08-01  Rick Byers  <rbyers@chromium.org>
 
         Make Gesture click test validate click count in UIEvent.detail

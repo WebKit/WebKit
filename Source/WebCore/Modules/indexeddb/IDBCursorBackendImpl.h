@@ -47,9 +47,9 @@ class SerializedScriptValue;
 
 class IDBCursorBackendImpl : public IDBCursorBackendInterface {
 public:
-    static PassRefPtr<IDBCursorBackendImpl> create(PassRefPtr<IDBBackingStore::Cursor> cursor, IDBCursor::Direction direction, CursorType cursorType, IDBTransactionBackendImpl* transaction, IDBObjectStoreBackendImpl* objectStore)
+    static PassRefPtr<IDBCursorBackendImpl> create(PassRefPtr<IDBBackingStore::Cursor> cursor, CursorType cursorType, IDBTransactionBackendImpl* transaction, IDBObjectStoreBackendImpl* objectStore)
     {
-        return adoptRef(new IDBCursorBackendImpl(cursor, direction, cursorType, transaction, objectStore));
+        return adoptRef(new IDBCursorBackendImpl(cursor, cursorType, transaction, objectStore));
     }
     virtual ~IDBCursorBackendImpl();
 
@@ -67,7 +67,7 @@ public:
     void close();
 
 private:
-    IDBCursorBackendImpl(PassRefPtr<IDBBackingStore::Cursor>, IDBCursor::Direction, CursorType, IDBTransactionBackendImpl*, IDBObjectStoreBackendImpl*);
+    IDBCursorBackendImpl(PassRefPtr<IDBBackingStore::Cursor>, CursorType, IDBTransactionBackendImpl*, IDBObjectStoreBackendImpl*);
 
     static void advanceInternal(ScriptExecutionContext*, PassRefPtr<IDBCursorBackendImpl>, unsigned long, PassRefPtr<IDBCallbacks>);
     static void continueFunctionInternal(ScriptExecutionContext*, PassRefPtr<IDBCursorBackendImpl>, PassRefPtr<IDBKey>, PassRefPtr<IDBCallbacks>);
@@ -75,7 +75,6 @@ private:
 
     RefPtr<IDBBackingStore::Cursor> m_cursor;
     RefPtr<IDBBackingStore::Cursor> m_savedCursor;
-    IDBCursor::Direction m_direction;
     CursorType m_cursorType;
     RefPtr<IDBTransactionBackendImpl> m_transaction;
     RefPtr<IDBObjectStoreBackendImpl> m_objectStore;

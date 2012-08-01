@@ -42,9 +42,8 @@
 
 namespace WebCore {
 
-IDBCursorBackendImpl::IDBCursorBackendImpl(PassRefPtr<IDBBackingStore::Cursor> cursor, IDBCursor::Direction direction, CursorType cursorType, IDBTransactionBackendImpl* transaction, IDBObjectStoreBackendImpl* objectStore)
+IDBCursorBackendImpl::IDBCursorBackendImpl(PassRefPtr<IDBBackingStore::Cursor> cursor, CursorType cursorType, IDBTransactionBackendImpl* transaction, IDBObjectStoreBackendImpl* objectStore)
     : m_cursor(cursor)
-    , m_direction(direction)
     , m_cursorType(cursorType)
     , m_transaction(transaction)
     , m_objectStore(objectStore)
@@ -87,21 +86,6 @@ void IDBCursorBackendImpl::continueFunction(PassRefPtr<IDBKey> prpKey, PassRefPt
 {
     IDB_TRACE("IDBCursorBackendImpl::continue");
     RefPtr<IDBKey> key = prpKey;
-
-    if (m_cursor && key) {
-        ASSERT(m_cursor->key());
-        if (m_direction == IDBCursor::NEXT || m_direction == IDBCursor::NEXT_NO_DUPLICATE) {
-            if (!m_cursor->key()->isLessThan(key.get())) {
-                ec = IDBDatabaseException::DATA_ERR;
-                return;
-            }
-        } else {
-            if (!key->isLessThan(m_cursor->key().get())) {
-                ec = IDBDatabaseException::DATA_ERR;
-                return;
-            }
-        }
-    }
 
     if (!m_transaction->scheduleTask(createCallbackTask(&IDBCursorBackendImpl::continueFunctionInternal, this, key, prpCallbacks)))
         ec = IDBDatabaseException::TRANSACTION_INACTIVE_ERR;

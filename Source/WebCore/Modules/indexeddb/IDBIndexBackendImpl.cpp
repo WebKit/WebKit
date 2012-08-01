@@ -99,7 +99,7 @@ void IDBIndexBackendImpl::openCursorInternal(ScriptExecutionContext*, PassRefPtr
         return;
     }
 
-    RefPtr<IDBCursorBackendInterface> cursor = IDBCursorBackendImpl::create(backingStoreCursor.get(), direction, cursorType, transaction.get(), index->m_objectStoreBackend);
+    RefPtr<IDBCursorBackendInterface> cursor = IDBCursorBackendImpl::create(backingStoreCursor.get(), cursorType, transaction.get(), index->m_objectStoreBackend);
     callbacks->onSuccess(cursor.release());
 }
 
