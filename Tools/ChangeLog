@@ -1,3 +1,16 @@
+2012-08-01  Adam Barth  <abarth@webkit.org>
+
+        [Chromium] Merge final nits to DumpRenderTree.gyp for Android
+        https://bugs.webkit.org/show_bug.cgi?id=90920
+
+        Reviewed by Tony Chang.
+
+        This patch contains the last few small changes to DumpRenderTree.gyp
+        from the chromium-android branch. After this change, this file will be
+        fully merged.
+
+        * DumpRenderTree/DumpRenderTree.gyp/DumpRenderTree.gyp:
+
 2012-08-01  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] ImageDiff should use float division instead of integer
