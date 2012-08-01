@@ -1,5 +1,18 @@
 2012-07-31  Tony Chang  <tony@chromium.org>
 
+        flexbox should avoid floats
+        https://bugs.webkit.org/show_bug.cgi?id=92661
+
+        Reviewed by Ojan Vafai.
+
+        Block types should avoid floats. Deprecated flexbox and grid already avoid floats.
+
+        Tests: css3/flexbox/floated-flexbox.html - added a test case.
+
+        * rendering/RenderFlexibleBox.h:
+
+2012-07-31  Tony Chang  <tony@chromium.org>
+
         REGRESSION: flexbox content-size fails to exclude scrollbar
         https://bugs.webkit.org/show_bug.cgi?id=92667
 

@@ -44,6 +44,7 @@ public:
     virtual const char* renderName() const OVERRIDE;
 
     virtual bool isFlexibleBox() const OVERRIDE { return true; }
+    virtual bool avoidsFloats() const OVERRIDE { return true; }
     virtual void computePreferredLogicalWidths() OVERRIDE;
     virtual void layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeight = 0) OVERRIDE;
 
