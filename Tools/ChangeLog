@@ -1,3 +1,19 @@
+2012-08-01  Thiago Marcos P. Santos  <thiago.santos@intel.com>
+
+        [EFL] Dump a backtrace in case of a crash on the UIProcess
+        https://bugs.webkit.org/show_bug.cgi?id=92843
+
+        Reviewed by Csaba Osztrogonác.
+
+        We are already dumping the backtraces when automated tests are
+        crashing, but only for the WebProcess. This patch adds the same
+        hooks for the UIProcess.
+
+        * TestWebKitAPI/efl/main.cpp:
+        (main):
+        * WebKitTestRunner/efl/main.cpp:
+        (main):
+
 2012-08-01  Adam Barth  <abarth@webkit.org>
 
         [Chromium] Merge final nits to DumpRenderTree.gyp for Android

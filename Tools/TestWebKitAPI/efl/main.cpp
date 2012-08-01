@@ -29,6 +29,7 @@
 #include <Ecore.h>
 #include <Eina.h>
 #include <getopt.h>
+#include <wtf/Assertions.h>
 
 bool useX11Window = false;
 
@@ -48,6 +49,8 @@ static bool checkForUseX11WindowArgument(int argc, char** argv)
 
 int main(int argc, char** argv)
 {
+    WTFInstallReportBacktraceOnCrashHook();
+
     if (!eina_init())
         return EXIT_FAILURE;
 

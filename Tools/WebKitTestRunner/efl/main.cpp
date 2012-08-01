@@ -21,6 +21,7 @@
 
 #include "EWebKit2.h"
 #include "TestController.h"
+#include <wtf/Assertions.h>
 
 #ifdef HAVE_ECORE_X
 #include <Ecore_X.h>
@@ -28,6 +29,8 @@
 
 int main(int argc, char** argv)
 {
+    WTFInstallReportBacktraceOnCrashHook();
+
     if (!ewk_init())
         return 1;
 
