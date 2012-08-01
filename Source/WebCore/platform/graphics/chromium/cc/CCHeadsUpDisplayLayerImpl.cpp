@@ -30,11 +30,14 @@
 #include "Extensions3DChromium.h"
 #include "GraphicsContext3D.h"
 #include "LayerRendererChromium.h"
+#include "SkBitmap.h"
+#include "SkPaint.h"
 #include "cc/CCDebugRectHistory.h"
 #include "cc/CCFontAtlas.h"
 #include "cc/CCFrameRateCounter.h"
 #include "cc/CCLayerTreeHostImpl.h"
 #include "cc/CCQuadSink.h"
+#include "skia/ext/platform_canvas.h"
 #include <public/WebCompositorTextureQuad.h>
 #include <wtf/text/WTFString.h>
 

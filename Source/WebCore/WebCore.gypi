@@ -8246,6 +8246,8 @@
             'platform/graphics/chromium/BitmapSkPictureCanvasLayerTextureUpdater.h',
             'platform/graphics/chromium/CanvasLayerTextureUpdater.cpp',
             'platform/graphics/chromium/CanvasLayerTextureUpdater.h',
+            'platform/graphics/chromium/CompositorHUDFontAtlas.cpp',
+            'platform/graphics/chromium/CompositorHUDFontAtlas.h',
             'platform/graphics/chromium/ContentLayerChromium.cpp',
             'platform/graphics/chromium/ContentLayerChromium.h',
             'platform/graphics/chromium/FrameBufferSkPictureCanvasLayerTextureUpdater.cpp',

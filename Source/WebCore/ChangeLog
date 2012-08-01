@@ -1,3 +1,33 @@
+2012-08-01  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Move compositor HUD font atlas generation out of compositor core
+        https://bugs.webkit.org/show_bug.cgi?id=92901
+
+        Reviewed by Adrienne Walker.
+
+        This moves the font atlas generation out of CCFontAtlas into a separate helper class and ports the CCFontAtlas
+        text drawing code over to use skia directly.
+
+        * WebCore.gypi:
+        * platform/graphics/chromium/CompositorHUDFontAtlas.cpp: Added.
+        (WebCore):
+        (WebCore::wrapPositionIfNeeded):
+        (WebCore::CompositorHUDFontAtlas::generateFontAtlas):
+        * platform/graphics/chromium/CompositorHUDFontAtlas.h: Added.
+        (WebCore):
+        (CompositorHUDFontAtlas):
+        * platform/graphics/chromium/cc/CCFontAtlas.cpp:
+        (WebCore::CCFontAtlas::CCFontAtlas):
+        (WebCore::CCFontAtlas::~CCFontAtlas):
+        (WebCore::CCFontAtlas::initialize):
+        (WebCore::CCFontAtlas::drawText):
+        (WebCore::CCFontAtlas::drawOneLineOfTextInternal):
+        (WebCore::CCFontAtlas::drawDebugAtlas):
+        * platform/graphics/chromium/cc/CCFontAtlas.h:
+        (WebCore):
+        (CCFontAtlas):
+        * platform/graphics/chromium/cc/CCHeadsUpDisplayLayerImpl.cpp:
+
 2012-08-01  Peter Beverloo  <peter@chromium.org>
 
         [Text Autosizing] Provide an API for influencing the font scale factor

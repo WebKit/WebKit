@@ -27,7 +27,8 @@
 
 #if USE(ACCELERATED_COMPOSITING)
 
-#include "ImageBuffer.h"
+#include "IntRect.h"
+#include "SkBitmap.h"
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/text/WTFString.h>
@@ -38,9 +39,9 @@ namespace WebCore {
 
 class Color;
 class FontDescription;
-class IntPoint;
-class IntRect;
 class GraphicsContext;
+class IntPoint;
+class IntSize;
 
 // This class provides basic ability to draw text onto the heads-up display.
 // It must be initialized on the main thread, and it can only draw text on the impl thread.
@@ -51,6 +52,7 @@ public:
     {
         return adoptPtr(new CCFontAtlas());
     }
+    ~CCFontAtlas();
 
     // Creates the font atlas.
     // - Should only be called on the main thread.
@@ -65,21 +67,15 @@ public:
     void drawText(SkCanvas*, const String& text, const IntPoint& destPosition, const IntSize& clip) const;
 
     // Draws the entire atlas at the specified position, just for debugging purposes.
-    void drawDebugAtlas(GraphicsContext*, const IntPoint& destPosition) const;
+    void drawDebugAtlas(SkCanvas*, const IntPoint& destPosition) const;
 
 private:
     CCFontAtlas();
 
-    // Paints the font into the atlas, from left-to-right, top-to-bottom, starting at
-    // startingPosition. At the same time, it updates the ascii-to-IntRect mapping for
-    // each character. By doing things this way, it is possible to support variable-width
-    // fonts and multiple fonts on the same atlas.
-    void generateAtlasForFont(GraphicsContext*, const FontDescription&, const Color& fontColor, const IntPoint& startingPosition, IntRect asciiToAtlasTable[128]);
-
-    void drawOneLineOfTextInternal(GraphicsContext*, const String&, const IntPoint& destPosition) const;
+    void drawOneLineOfTextInternal(SkCanvas*, const String&, const IntPoint& destPosition) const;
 
     // The actual texture atlas containing all the pre-rendered glyphs.
-    OwnPtr<ImageBuffer> m_atlas;
+    SkBitmap m_atlas;
 
     // The look-up tables mapping ascii characters to their IntRect locations on the atlas.
     IntRect m_asciiToRectTable[128];
