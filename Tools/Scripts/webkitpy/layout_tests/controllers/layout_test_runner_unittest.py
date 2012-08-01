@@ -31,8 +31,176 @@
 import unittest
 
 from webkitpy.common.host_mock import MockHost
+from webkitpy.layout_tests import run_webkit_tests
+from webkitpy.layout_tests.models import test_expectations
+from webkitpy.layout_tests.models import test_failures
+from webkitpy.layout_tests.models.result_summary import ResultSummary
 from webkitpy.layout_tests.models.test_input import TestInput
-from webkitpy.layout_tests.controllers.layout_test_runner import Sharder
+from webkitpy.layout_tests.models.test_results import TestResult
+from webkitpy.layout_tests.controllers.layout_test_runner import LayoutTestRunner, Sharder, TestRunInterruptedException
+
+
+TestExpectations = test_expectations.TestExpectations
+
+
+class FakePrinter(object):
+    def print_workers_and_shards(self, num_workers, num_shards, num_locked_shards):
+        pass
+
+    def print_finished_test(self, result, expected, exp_str, got_str, result_summary, retrying, test_names):
+        pass
+
+    def write(self, msg):
+        pass
+
+    def write_update(self, msg):
+        pass
+
+    def flush(self):
+        pass
+
+
+class LockCheckingRunner(LayoutTestRunner):
+    def __init__(self, port, options, printer, tester, http_lock):
+        super(LockCheckingRunner, self).__init__(options, port, printer, port.results_directory(), TestExpectations(port, []), lambda test_name: False)
+        self._finished_list_called = False
+        self._tester = tester
+        self._should_have_http_lock = http_lock
+
+    def handle_finished_list(self, source, list_name, num_tests, elapsed_time):
+        if not self._finished_list_called:
+            self._tester.assertEquals(list_name, 'locked_tests')
+            self._tester.assertTrue(self._remaining_locked_shards)
+            self._tester.assertTrue(self._has_http_lock is self._should_have_http_lock)
+
+        super(LockCheckingRunner, self).handle_finished_list(source, list_name, num_tests, elapsed_time)
+
+        if not self._finished_list_called:
+            self._tester.assertEquals(self._remaining_locked_shards, [])
+            self._tester.assertFalse(self._has_http_lock)
+            self._finished_list_called = True
+
+
+class LayoutTestRunnerTests(unittest.TestCase):
+    def _runner(self, port=None):
+        # FIXME: we shouldn't have to use run_webkit_tests.py to get the options we need.
+        options = run_webkit_tests.parse_args(['--platform', 'test-mac-snowleopard'])[0]
+        options.child_processes = '1'
+
+        host = MockHost()
+        port = port or host.port_factory.get(options.platform, options=options)
+        return LockCheckingRunner(port, options, FakePrinter(), self, True)
+
+    def _result_summary(self, runner, tests):
+        return ResultSummary(TestExpectations(runner._port, tests), tests, 1, set())
+
+    def _run_tests(self, runner, tests):
+        test_inputs = [TestInput(test, 6000) for test in tests]
+        expectations = TestExpectations(runner._port, tests)
+        runner.run_tests(test_inputs, expectations, self._result_summary(runner, tests),
+            num_workers=1, needs_http=any('http' in test for test in tests), needs_websockets=any(['websocket' in test for test in tests]), retrying=False)
+
+    def test_http_locking(self):
+        runner = self._runner()
+        self._run_tests(runner, ['http/tests/passes/text.html', 'passes/text.html'])
+
+    def test_perf_locking(self):
+        runner = self._runner()
+        self._run_tests(runner, ['http/tests/passes/text.html', 'perf/foo/test.html'])
+
+    def test_interrupt_if_at_failure_limits(self):
+        runner = self._runner()
+        runner._options.exit_after_n_failures = None
+        runner._options.exit_after_n_crashes_or_times = None
+        test_names = ['passes/text.html', 'passes/image.html']
+        runner._test_files_list = test_names
+
+        result_summary = self._result_summary(runner, test_names)
+        result_summary.unexpected_failures = 100
+        result_summary.unexpected_crashes = 50
+        result_summary.unexpected_timeouts = 50
+        # No exception when the exit_after* options are None.
+        runner._interrupt_if_at_failure_limits(result_summary)
+
+        # No exception when we haven't hit the limit yet.
+        runner._options.exit_after_n_failures = 101
+        runner._options.exit_after_n_crashes_or_timeouts = 101
+        runner._interrupt_if_at_failure_limits(result_summary)
+
+        # Interrupt if we've exceeded either limit:
+        runner._options.exit_after_n_crashes_or_timeouts = 10
+        self.assertRaises(TestRunInterruptedException, runner._interrupt_if_at_failure_limits, result_summary)
+        self.assertEquals(result_summary.results['passes/text.html'].type, test_expectations.SKIP)
+        self.assertEquals(result_summary.results['passes/image.html'].type, test_expectations.SKIP)
+
+        runner._options.exit_after_n_crashes_or_timeouts = None
+        runner._options.exit_after_n_failures = 10
+        exception = self.assertRaises(TestRunInterruptedException, runner._interrupt_if_at_failure_limits, result_summary)
+
+    def test_update_summary_with_result(self):
+        # Reftests expected to be image mismatch should be respected when pixel_tests=False.
+        runner = self._runner()
+        runner._options.pixel_tests = False
+        test = 'failures/expected/reftest.html'
+        expectations = TestExpectations(runner._port, tests=[test])
+        runner._expectations = expectations
+        result_summary = ResultSummary(expectations, [test], 1, set())
+        result = TestResult(test_name=test, failures=[test_failures.FailureReftestMismatchDidNotOccur()])
+        runner._update_summary_with_result(result_summary, result)
+        self.assertEquals(1, result_summary.expected)
+        self.assertEquals(0, result_summary.unexpected)
+
+    def test_servers_started(self):
+
+        def start_http_server(number_of_servers=None):
+            self.http_started = True
+
+        def start_websocket_server():
+            self.websocket_started = True
+
+        def stop_http_server():
+            self.http_stopped = True
+
+        def stop_websocket_server():
+            self.websocket_stopped = True
+
+        host = MockHost()
+        port = host.port_factory.get('test-mac-leopard')
+        port.start_http_server = start_http_server
+        port.start_websocket_server = start_websocket_server
+        port.stop_http_server = stop_http_server
+        port.stop_websocket_server = stop_websocket_server
+
+        self.http_started = self.http_stopped = self.websocket_started = self.websocket_stopped = False
+        runner = self._runner(port=port)
+        runner._needs_http = True
+        runner._needs_websockets = False
+        runner.start_servers_with_lock(number_of_servers=4)
+        self.assertEquals(self.http_started, True)
+        self.assertEquals(self.websocket_started, False)
+        runner.stop_servers_with_lock()
+        self.assertEquals(self.http_stopped, True)
+        self.assertEquals(self.websocket_stopped, False)
+
+        self.http_started = self.http_stopped = self.websocket_started = self.websocket_stopped = False
+        runner._needs_http = True
+        runner._needs_websockets = True
+        runner.start_servers_with_lock(number_of_servers=4)
+        self.assertEquals(self.http_started, True)
+        self.assertEquals(self.websocket_started, True)
+        runner.stop_servers_with_lock()
+        self.assertEquals(self.http_stopped, True)
+        self.assertEquals(self.websocket_stopped, True)
+
+        self.http_started = self.http_stopped = self.websocket_started = self.websocket_stopped = False
+        runner._needs_http = False
+        runner._needs_websockets = False
+        runner.start_servers_with_lock(number_of_servers=4)
+        self.assertEquals(self.http_started, False)
+        self.assertEquals(self.websocket_started, False)
+        runner.stop_servers_with_lock()
+        self.assertEquals(self.http_stopped, False)
+        self.assertEquals(self.websocket_stopped, False)
 
 
 class SharderTests(unittest.TestCase):

@@ -32,12 +32,235 @@ import re
 import threading
 import time
 
+from webkitpy.common import message_pool
 from webkitpy.layout_tests.controllers import single_test_runner
 from webkitpy.layout_tests.models import test_expectations
+from webkitpy.layout_tests.models import test_failures
 from webkitpy.layout_tests.models import test_results
+from webkitpy.tool import grammar
 
 
 _log = logging.getLogger(__name__)
+
+
+TestExpectations = test_expectations.TestExpectations
+
+# Export this so callers don't need to know about message pools.
+WorkerException = message_pool.WorkerException
+
+
+class TestRunInterruptedException(Exception):
+    """Raised when a test run should be stopped immediately."""
+    def __init__(self, reason):
+        Exception.__init__(self)
+        self.reason = reason
+        self.msg = reason
+
+    def __reduce__(self):
+        return self.__class__, (self.reason,)
+
+
+class LayoutTestRunner(object):
+    def __init__(self, options, port, printer, results_directory, expectations, test_is_slow_fn):
+        self._options = options
+        self._port = port
+        self._printer = printer
+        self._results_directory = results_directory
+        self._expectations = None
+        self._test_is_slow = test_is_slow_fn
+        self._sharder = Sharder(self._port.split_test, self._port.TEST_PATH_SEPARATOR, self._options.max_locked_shards)
+
+        self._current_result_summary = None
+        self._needs_http = None
+        self._needs_websockets = None
+        self._retrying = False
+        self._test_files_list = []
+        self._all_results = []
+        self._group_stats = {}
+        self._worker_stats = {}
+        self._filesystem = self._port.host.filesystem
+
+    def test_key(self, test_name):
+        return self._sharder.test_key(test_name)
+
+    def run_tests(self, test_inputs, expectations, result_summary, num_workers, needs_http, needs_websockets, retrying):
+        """Returns a tuple of (interrupted, keyboard_interrupted, thread_timings, test_timings, individual_test_timings):
+            interrupted is whether the run was interrupted
+            keyboard_interrupted is whether the interruption was because someone typed Ctrl^C
+            thread_timings is a list of dicts with the total runtime
+                of each thread with 'name', 'num_tests', 'total_time' properties
+            test_timings is a list of timings for each sharded subdirectory
+                of the form [time, directory_name, num_tests]
+            individual_test_timings is a list of run times for each test
+                in the form {filename:filename, test_run_time:test_run_time}
+            result_summary: summary object to populate with the results
+        """
+        self._current_result_summary = result_summary
+        self._expectations = expectations
+        self._needs_http = needs_http
+        self._needs_websockets = needs_websockets
+        self._retrying = retrying
+        self._test_files_list = [test_input.test_name for test_input in test_inputs]
+
+        self._all_results = []
+        self._group_stats = {}
+        self._worker_stats = {}
+        self._has_http_lock = False
+        self._remaining_locked_shards = []
+
+        keyboard_interrupted = False
+        interrupted = False
+
+        self._printer.write_update('Sharding tests ...')
+        locked_shards, unlocked_shards = self._sharder.shard_tests(test_inputs, int(self._options.child_processes), self._options.fully_parallel, self._options.shard_ref_tests)
+
+        # FIXME: We don't have a good way to coordinate the workers so that
+        # they don't try to run the shards that need a lock if we don't actually
+        # have the lock. The easiest solution at the moment is to grab the
+        # lock at the beginning of the run, and then run all of the locked
+        # shards first. This minimizes the time spent holding the lock, but
+        # means that we won't be running tests while we're waiting for the lock.
+        # If this becomes a problem in practice we'll need to change this.
+
+        all_shards = locked_shards + unlocked_shards
+        self._remaining_locked_shards = locked_shards
+        if locked_shards and self._options.http:
+            self.start_servers_with_lock(2 * min(num_workers, len(locked_shards)))
+
+        num_workers = min(num_workers, len(all_shards))
+        self._printer.print_workers_and_shards(num_workers, len(all_shards), len(locked_shards))
+
+        if self._options.dry_run:
+            return (keyboard_interrupted, interrupted, self._worker_stats.values(), self._group_stats, self._all_results)
+
+        self._printer.write_update('Starting %s ...' % grammar.pluralize('worker', num_workers))
+
+        try:
+            with message_pool.get(self, self._worker_factory, num_workers, self._port.worker_startup_delay_secs(), self._port.host) as pool:
+                pool.run(('test_list', shard.name, shard.test_inputs) for shard in all_shards)
+        except KeyboardInterrupt:
+            self._printer.flush()
+            self._printer.write('Interrupted, exiting ...')
+            keyboard_interrupted = True
+        except TestRunInterruptedException, e:
+            _log.warning(e.reason)
+            interrupted = True
+        except Exception, e:
+            _log.debug('%s("%s") raised, exiting' % (e.__class__.__name__, str(e)))
+            raise
+        finally:
+            self.stop_servers_with_lock()
+
+        # FIXME: should this be a class instead of a tuple?
+        return (interrupted, keyboard_interrupted, self._worker_stats.values(), self._group_stats, self._all_results)
+
+    def _worker_factory(self, worker_connection):
+        results_directory = self._results_directory
+        if self._retrying:
+            self._filesystem.maybe_make_directory(self._filesystem.join(self._results_directory, 'retries'))
+            results_directory = self._filesystem.join(self._results_directory, 'retries')
+        return Worker(worker_connection, results_directory, self._options)
+
+    def _mark_interrupted_tests_as_skipped(self, result_summary):
+        for test_name in self._test_files_list:
+            if test_name not in result_summary.results:
+                result = test_results.TestResult(test_name, [test_failures.FailureEarlyExit()])
+                # FIXME: We probably need to loop here if there are multiple iterations.
+                # FIXME: Also, these results are really neither expected nor unexpected. We probably
+                # need a third type of result.
+                result_summary.add(result, expected=False, test_is_slow=self._test_is_slow(test_name))
+
+    def _interrupt_if_at_failure_limits(self, result_summary):
+        # Note: The messages in this method are constructed to match old-run-webkit-tests
+        # so that existing buildbot grep rules work.
+        def interrupt_if_at_failure_limit(limit, failure_count, result_summary, message):
+            if limit and failure_count >= limit:
+                message += " %d tests run." % (result_summary.expected + result_summary.unexpected)
+                self._mark_interrupted_tests_as_skipped(result_summary)
+                raise TestRunInterruptedException(message)
+
+        interrupt_if_at_failure_limit(
+            self._options.exit_after_n_failures,
+            result_summary.unexpected_failures,
+            result_summary,
+            "Exiting early after %d failures." % result_summary.unexpected_failures)
+        interrupt_if_at_failure_limit(
+            self._options.exit_after_n_crashes_or_timeouts,
+            result_summary.unexpected_crashes + result_summary.unexpected_timeouts,
+            result_summary,
+            # This differs from ORWT because it does not include WebProcess crashes.
+            "Exiting early after %d crashes and %d timeouts." % (result_summary.unexpected_crashes, result_summary.unexpected_timeouts))
+
+    def _update_summary_with_result(self, result_summary, result):
+        if result.type == test_expectations.SKIP:
+            exp_str = got_str = 'SKIP'
+            expected = True
+        else:
+            expected = self._expectations.matches_an_expected_result(result.test_name, result.type, self._options.pixel_tests or test_failures.is_reftest_failure(result.failures))
+            exp_str = self._expectations.get_expectations_string(result.test_name)
+            got_str = self._expectations.expectation_to_string(result.type)
+
+        result_summary.add(result, expected, self._test_is_slow(result.test_name))
+
+        # FIXME: there's too many arguments to this function.
+        self._printer.print_finished_test(result, expected, exp_str, got_str, result_summary, self._retrying, self._test_files_list)
+
+        self._interrupt_if_at_failure_limits(result_summary)
+
+    def start_servers_with_lock(self, number_of_servers):
+        self._printer.write_update('Acquiring http lock ...')
+        self._port.acquire_http_lock()
+        if self._needs_http:
+            self._printer.write_update('Starting HTTP server ...')
+            self._port.start_http_server(number_of_servers=number_of_servers)
+        if self._needs_websockets:
+            self._printer.write_update('Starting WebSocket server ...')
+            self._port.start_websocket_server()
+        self._has_http_lock = True
+
+    def stop_servers_with_lock(self):
+        if self._has_http_lock:
+            if self._needs_http:
+                self._printer.write_update('Stopping HTTP server ...')
+                self._port.stop_http_server()
+            if self._needs_websockets:
+                self._printer.write_update('Stopping WebSocket server ...')
+                self._port.stop_websocket_server()
+            self._printer.write_update('Releasing server lock ...')
+            self._port.release_http_lock()
+            self._has_http_lock = False
+
+    def handle(self, name, source, *args):
+        method = getattr(self, '_handle_' + name)
+        if method:
+            return method(source, *args)
+        raise AssertionError('unknown message %s received from %s, args=%s' % (name, source, repr(args)))
+
+    def _handle_started_test(self, worker_name, test_input, test_timeout_sec):
+        # FIXME: log that we've started another test.
+        pass
+
+    def _handle_finished_test_list(self, worker_name, list_name, num_tests, elapsed_time):
+        self._group_stats[list_name] = (num_tests, elapsed_time)
+
+        def find(name, test_lists):
+            for i in range(len(test_lists)):
+                if test_lists[i].name == name:
+                    return i
+            return -1
+
+        index = find(list_name, self._remaining_locked_shards)
+        if index >= 0:
+            self._remaining_locked_shards.pop(index)
+            if not self._remaining_locked_shards:
+                self.stop_servers_with_lock()
+
+    def _handle_finished_test(self, worker_name, result, elapsed_time, log_messages=[]):
+        self._worker_stats.setdefault(worker_name, {'name': worker_name, 'num_tests': 0, 'total_time': 0})
+        self._worker_stats[worker_name]['total_time'] += elapsed_time
+        self._worker_stats[worker_name]['num_tests'] += 1
+        self._all_results.append(result)
+        self._update_summary_with_result(self._current_result_summary, result)
 
 
 class Worker(object):

@@ -1,5 +1,91 @@
 2012-07-31  Dirk Pranke  <dpranke@chromium.org>
 
+        nrwt: move actual test-running code into layout_test_runner.py
+        https://bugs.webkit.org/show_bug.cgi?id=92806
+
+        Reviewed by Ryosuke Niwa.
+
+        This is the final patch in manager-refactoring series (for now).
+        This moves all of the logic to actually run the tests into
+        layout_test_runner (in a new LayoutTestRunner) class. Now
+        the mechanics of actually executing all of  the tests are
+        contained in one file (of course the actual work of talking to
+        DRT/WTR and diff'ing the results is still in single_test_runner).
+
+        Now manager is left with setting up and tearing down the test
+        environment, finding the tests to run, and processing the
+        results of the tests, which is a pretty managable amount of code
+        (no pun intended).
+
+        The unit tests for manager were split in two and all of the
+        runner-specific tests moved into layout_test_runner_unittest.
+        They were significantly cleaned up to be easier to read and
+        maintain as a part of this.
+
+        * Scripts/webkitpy/layout_tests/controllers/layout_test_runner.py:
+        (TestRunInterruptedException):
+        (TestRunInterruptedException.__init__):
+        (TestRunInterruptedException.__reduce__):
+        (LayoutTestRunner):
+        (LayoutTestRunner.__init__):
+        (LayoutTestRunner.test_key):
+        (LayoutTestRunner.run_tests):
+        (LayoutTestRunner.run_tests.worker_factory):
+        (LayoutTestRunner.run_tests.instead):
+        (LayoutTestRunner._mark_interrupted_tests_as_skipped):
+        (LayoutTestRunner._interrupt_if_at_failure_limits):
+        (LayoutTestRunner._interrupt_if_at_failure_limits.interrupt_if_at_failure_limit):
+        (LayoutTestRunner._update_summary_with_result):
+        (LayoutTestRunner.start_servers_with_lock):
+        (LayoutTestRunner.stop_servers_with_lock):
+        (LayoutTestRunner.handle):
+        (LayoutTestRunner._handle_started_test):
+        (LayoutTestRunner._handle_finished_test_list):
+        (LayoutTestRunner._handle_finished_test_list.find):
+        (LayoutTestRunner._handle_finished_test):
+        * Scripts/webkitpy/layout_tests/controllers/layout_test_runner_unittest.py:
+        (FakePrinter):
+        (FakePrinter.print_workers_and_shards):
+        (FakePrinter.print_finished_test):
+        (FakePrinter.write):
+        (FakePrinter.write_update):
+        (FakePrinter.flush):
+        (LockCheckingRunner):
+        (LockCheckingRunner.__init__):
+        (LockCheckingRunner.handle_finished_list):
+        (LayoutTestRunnerTests):
+        (LayoutTestRunnerTests._runner):
+        (LayoutTestRunnerTests._result_summary):
+        (LayoutTestRunnerTests._run_tests):
+        (LayoutTestRunnerTests.test_http_locking):
+        (LayoutTestRunnerTests.test_perf_locking):
+        (LayoutTestRunnerTests.test_interrupt_if_at_failure_limits):
+        (LayoutTestRunnerTests.test_update_summary_with_result):
+        (LayoutTestRunnerTests.test_servers_started):
+        (LayoutTestRunnerTests.test_servers_started.start_http_server):
+        (LayoutTestRunnerTests.test_servers_started.start_websocket_server):
+        (LayoutTestRunnerTests.test_servers_started.stop_http_server):
+        (LayoutTestRunnerTests.test_servers_started.stop_websocket_server):
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        (summarize_results):
+        (Manager.__init__):
+        (Manager._is_http_test):
+        (Manager):
+        (Manager._is_websocket_test):
+        (Manager._websocket_tests):
+        (Manager._prepare_lists):
+        (Manager._is_ref_test):
+        (Manager.run):
+        (Manager._run_tests):
+        (Manager._look_for_new_crash_logs):
+        (Manager._show_results_html_file):
+        * Scripts/webkitpy/layout_tests/controllers/manager_unittest.py:
+        (ManagerTest.test_look_for_new_crash_logs):
+        (ResultSummaryTest.summarized_results):
+        (ResultSummaryTest.test_summarized_results_wontfix):
+
+2012-07-31  Dirk Pranke  <dpranke@chromium.org>
+
         nrwt: move sharding logic into layout_test_runner.py
         https://bugs.webkit.org/show_bug.cgi?id=92805
 
