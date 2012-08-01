@@ -305,7 +305,7 @@ void AudioFileReader::decodeAudioForBusCreation()
     if (m_data) {
         ASSERT(m_dataSize);
         source = gst_element_factory_make("giostreamsrc", 0);
-        GRefPtr<GInputStream> memoryStream = g_memory_input_stream_new_from_data(m_data, m_dataSize, 0);
+        GRefPtr<GInputStream> memoryStream = adoptGRef(g_memory_input_stream_new_from_data(m_data, m_dataSize, 0));
         g_object_set(source, "stream", memoryStream.get(), NULL);
     } else {
         source = gst_element_factory_make("filesrc", 0);
