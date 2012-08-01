@@ -2480,7 +2480,7 @@ bool EventHandler::handleGestureTap(const PlatformGestureEvent& gestureEvent)
 #endif
 
     bool defaultPrevented = false;
-    PlatformMouseEvent fakeMouseMove(adjustedPoint, gestureEvent.globalPosition(), NoButton, PlatformEvent::MouseMoved, /* clickCount */ 1, gestureEvent.shiftKey(), gestureEvent.ctrlKey(), gestureEvent.altKey(), gestureEvent.metaKey(), gestureEvent.timestamp());
+    PlatformMouseEvent fakeMouseMove(adjustedPoint, gestureEvent.globalPosition(), NoButton, PlatformEvent::MouseMoved, /* clickCount */ 0, gestureEvent.shiftKey(), gestureEvent.ctrlKey(), gestureEvent.altKey(), gestureEvent.metaKey(), gestureEvent.timestamp());
     PlatformMouseEvent fakeMouseDown(adjustedPoint, gestureEvent.globalPosition(), LeftButton, PlatformEvent::MousePressed, /* clickCount */ 1, gestureEvent.shiftKey(), gestureEvent.ctrlKey(), gestureEvent.altKey(), gestureEvent.metaKey(), gestureEvent.timestamp());
     PlatformMouseEvent fakeMouseUp(adjustedPoint, gestureEvent.globalPosition(), LeftButton, PlatformEvent::MouseReleased, /* clickCount */ 1, gestureEvent.shiftKey(), gestureEvent.ctrlKey(), gestureEvent.altKey(), gestureEvent.metaKey(), gestureEvent.timestamp());
     mouseMoved(fakeMouseMove);

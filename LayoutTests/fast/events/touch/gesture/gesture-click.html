@@ -10,16 +10,21 @@
 <div id="console"></div>
 
 <script>
-var expectedMouseEvents = 4;
 var mouseEventsReceived = 0;
-var eventTypes = [ 'mousemove', 'mousedown', 'mouseup', 'click' ];
+var expectedEvents = [
+  { type: 'mousemove', detail: 0 },
+  { type: 'mousedown', detail: 1 },
+  { type: 'mouseup', detail: 1 },
+  { type: 'click', detail: 1 },
+  ];
 
 function gestureEventCallback(event)
 {
     if (window.eventSender) {
-        shouldBeEqualToString('event.type', eventTypes[mouseEventsReceived]);
+        shouldBeEqualToString('event.type', expectedEvents[mouseEventsReceived].type);
         shouldBe('event.clientX', '10');
         shouldBe('event.clientY', '12');
+        shouldEvaluateTo('event.detail', expectedEvents[mouseEventsReceived].detail);
         mouseEventsReceived++;
     } else {
         debug(event.type);
@@ -36,7 +41,7 @@ function quitKeyToEndTest(event) {
 
 function endTest()
 {
-    if (mouseEventsReceived < expectedMouseEvents) {
+    if (mouseEventsReceived < expectedEvents.length) {
         debug('Gesture manager not implemented on this platform.');
     }
     // Bail.
@@ -48,6 +53,7 @@ function runTest() {
     var div = document.getElementById('gesture');
     div.addEventListener("mousedown", gestureEventCallback, false);
     div.addEventListener("click", gestureEventCallback, false);
+    div.addEventListener("dblclick", gestureEventCallback, false);
     div.addEventListener("mouseup", gestureEventCallback, false);
     div.addEventListener("mousemove", gestureEventCallback, false);
     document.addEventListener("keydown", quitKeyToEndTest, false);
