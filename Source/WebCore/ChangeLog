@@ -1,3 +1,16 @@
+2012-08-01  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix GTK+ build with recent version of GTK+.
+
+        Use g_threads_enter/leave instead of the wrapper macros. This
+        gives a compile warning because they are now deprecated but at
+        least it builds.
+
+        * plugins/gtk/gtk2xtbin.c:
+        (xt_event_prepare):
+        (xt_event_check):
+        (xt_event_dispatch):
+
 2012-08-01  Alexei Filippov  <alexeif@chromium.org>
 
         Web Inspector: Add native memory used by GlyphCache to the snapshot

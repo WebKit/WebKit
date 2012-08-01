@@ -1197,9 +1197,9 @@ void webkitWebViewRunAsModal(WebKitWebView* webView)
     g_signal_emit(webView, signals[RUN_AS_MODAL], 0, NULL);
 
     webView->priv->modalLoop = adoptGRef(g_main_loop_new(0, FALSE));
-    GDK_THREADS_ENTER();
+    gdk_threads_leave();
     g_main_loop_run(webView->priv->modalLoop.get());
-    GDK_THREADS_LEAVE();
+    gdk_threads_enter();
 }
 
 void webkitWebViewClosePage(WebKitWebView* webView)

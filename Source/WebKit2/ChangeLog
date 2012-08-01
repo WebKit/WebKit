@@ -1,3 +1,16 @@
+2012-08-01  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix GTK+ build with recent version of GTK+.
+
+        Use g_threads_enter/leave instead of the wrapper macros. This
+        gives a compile warning because they are now deprecated but at
+        least it builds.
+
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (webkitWebViewRunAsModal): Fix enter/leave order.
+        * UIProcess/gtk/WebPopupMenuProxyGtk.cpp:
+        (WebKit::WebPopupMenuProxyGtk::showPopupMenu):
+
 2012-07-31  Anders Carlsson  <andersca@apple.com>
 
         Prefer the Oracle Java plug-in over the Apple Java plug-in
