@@ -32,6 +32,8 @@
 #include <wtf/PassOwnPtr.h>
 #include <wtf/text/WTFString.h>
 
+class SkCanvas;
+
 namespace WebCore {
 
 class Color;
@@ -60,7 +62,7 @@ public:
     // - IntSize clip is used to avoid wasting time drawing things that are outside the
     //   target canvas bounds.
     // - Should only be called only on the impl thread.
-    void drawText(GraphicsContext*, const String& text, const IntPoint& destPosition, const IntSize& clip) const;
+    void drawText(SkCanvas*, const String& text, const IntPoint& destPosition, const IntSize& clip) const;
 
     // Draws the entire atlas at the specified position, just for debugging purposes.
     void drawDebugAtlas(GraphicsContext*, const IntPoint& destPosition) const;

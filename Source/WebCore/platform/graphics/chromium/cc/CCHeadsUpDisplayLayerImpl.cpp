@@ -30,7 +30,6 @@
 #include "Extensions3DChromium.h"
 #include "GraphicsContext3D.h"
 #include "LayerRendererChromium.h"
-#include "PlatformCanvas.h"
 #include "cc/CCDebugRectHistory.h"
 #include "cc/CCFontAtlas.h"
 #include "cc/CCFrameRateCounter.h"
@@ -69,19 +68,15 @@ void CCHeadsUpDisplayLayerImpl::willDraw(CCResourceProvider* resourceProvider)
         return;
 
     // Render pixels into the texture.
-    PlatformCanvas canvas;
-    canvas.resize(bounds());
-    {
-        PlatformCanvas::Painter painter(&canvas, PlatformCanvas::Painter::GrayscaleText);
-        painter.context()->clearRect(FloatRect(0, 0, bounds().width(), bounds().height()));
-        drawHudContents(painter.context());
-    }
+    OwnPtr<SkCanvas> canvas = adoptPtr(skia::CreateBitmapCanvas(bounds().width(), bounds().height(), false /* opaque */));
+    drawHudContents(canvas.get());
 
-    {
-        PlatformCanvas::AutoLocker locker(&canvas);
-        IntRect layerRect(IntPoint(), bounds());
-        resourceProvider->upload(m_hudTexture->id(), locker.pixels(), layerRect, layerRect, layerRect);
-    }
+    const SkBitmap* bitmap = &canvas->getDevice()->accessBitmap(false);
+    SkAutoLockPixels locker(*bitmap);
+
+    IntRect layerRect(IntPoint(), bounds());
+    ASSERT(bitmap->config() == SkBitmap::kARGB_8888_Config);
+    resourceProvider->upload(m_hudTexture->id(), static_cast<const uint8_t*>(bitmap->getPixels()), layerRect, layerRect, layerRect);
 }
 
 void CCHeadsUpDisplayLayerImpl::appendQuads(CCQuadSink& quadList, const CCSharedQuadState* sharedQuadState, bool&)
@@ -114,13 +109,14 @@ void CCHeadsUpDisplayLayerImpl::didLoseContext()
     m_hudTexture->leak();
 }
 
-void CCHeadsUpDisplayLayerImpl::drawHudContents(GraphicsContext* context)
+void CCHeadsUpDisplayLayerImpl::drawHudContents(SkCanvas* canvas)
 {
     const CCLayerTreeSettings& settings = layerTreeHostImpl()->settings();
 
     if (settings.showPlatformLayerTree) {
-        context->setFillColor(Color(0, 0, 0, 192), ColorSpaceDeviceRGB);
-        context->fillRect(FloatRect(0, 0, bounds().width(), bounds().height()));
+        SkPaint paint;
+        paint.setColor(SkColorSetARGB(192, 0, 0, 0));
+        canvas->drawRect(SkRect::MakeXYWH(0, 0, bounds().width(), bounds().height()), paint);
     }
 
     int fpsCounterHeight = 40;
@@ -133,40 +129,39 @@ void CCHeadsUpDisplayLayerImpl::drawHudContents(GraphicsContext* context)
         platformLayerTreeTop = 0;
 
     if (settings.showFPSCounter)
-        drawFPSCounter(context, layerTreeHostImpl()->fpsCounter(), fpsCounterTop, fpsCounterHeight);
+        drawFPSCounter(canvas, layerTreeHostImpl()->fpsCounter(), fpsCounterTop, fpsCounterHeight);
 
     if (settings.showPlatformLayerTree && m_fontAtlas) {
         String layerTree = layerTreeHostImpl()->layerTreeAsText();
-        m_fontAtlas->drawText(context, layerTree, IntPoint(2, platformLayerTreeTop), bounds());
+        m_fontAtlas->drawText(canvas, layerTree, IntPoint(2, platformLayerTreeTop), bounds());
     }
 
     if (settings.showDebugRects())
-        drawDebugRects(context, layerTreeHostImpl()->debugRectHistory());
+        drawDebugRects(canvas, layerTreeHostImpl()->debugRectHistory());
 }
 
-void CCHeadsUpDisplayLayerImpl::drawFPSCounter(GraphicsContext* context, CCFrameRateCounter* fpsCounter, int top, int height)
+void CCHeadsUpDisplayLayerImpl::drawFPSCounter(SkCanvas* canvas, CCFrameRateCounter* fpsCounter, int top, int height)
 {
     float textWidth = 170; // so text fits on linux.
     float graphWidth = fpsCounter->timeStampHistorySize();
 
     // Draw the FPS text.
-    drawFPSCounterText(context, fpsCounter, top, textWidth, height);
+    drawFPSCounterText(canvas, fpsCounter, top, textWidth, height);
 
     // Draw FPS graph.
     const double loFPS = 0;
     const double hiFPS = 80;
-    context->setStrokeStyle(SolidStroke);
-    context->setFillColor(Color(154, 205, 50), ColorSpaceDeviceRGB);
-    context->fillRect(FloatRect(2 + textWidth, top, graphWidth, height / 2));
-    context->setFillColor(Color(255, 250, 205), ColorSpaceDeviceRGB);
-    context->fillRect(FloatRect(2 + textWidth, top + height / 2, graphWidth, height / 2));
-    context->setStrokeColor(Color(255, 0, 0), ColorSpaceDeviceRGB);
-    context->setFillColor(Color(255, 0, 0), ColorSpaceDeviceRGB);
+    SkPaint paint;
+    paint.setColor(SkColorSetRGB(154, 205, 50));
+    canvas->drawRect(SkRect::MakeXYWH(2 + textWidth, top, graphWidth, height / 2), paint);
+
+    paint.setColor(SkColorSetRGB(255, 250, 205));
+    canvas->drawRect(SkRect::MakeXYWH(2 + textWidth, top + height / 2, graphWidth, height / 2), paint);
 
     int graphLeft = static_cast<int>(textWidth + 3);
-    IntPoint prev(-1, 0);
     int x = 0;
     double h = static_cast<double>(height - 2);
+    SkPath path;
     for (int i = 0; i < fpsCounter->timeStampHistorySize() - 1; ++i) {
         int j = i + 1;
         double delta = fpsCounter->timeStampOfRecentFrame(j) - fpsCounter->timeStampOfRecentFrame(i);
@@ -188,73 +183,84 @@ void CCHeadsUpDisplayLayerImpl::drawFPSCounter(GraphicsContext* context, CCFrame
 
         // Plot this data point.
         IntPoint cur(graphLeft + x, 1 + top + p*h);
-        if (prev.x() != -1)
-            context->drawLine(prev, cur);
-        prev = cur;
+        if (path.isEmpty())
+            path.moveTo(cur);
+        else
+            path.lineTo(cur);
         x += 1;
     }
+    paint.setColor(SK_ColorRED);
+    paint.setStyle(SkPaint::kStroke_Style);
+    paint.setStrokeWidth(1);
+    paint.setAntiAlias(true);
+    canvas->drawPath(path, paint);
 }
 
-void CCHeadsUpDisplayLayerImpl::drawFPSCounterText(GraphicsContext* context, CCFrameRateCounter* fpsCounter, int top, int width, int height)
+void CCHeadsUpDisplayLayerImpl::drawFPSCounterText(SkCanvas* canvas, CCFrameRateCounter* fpsCounter, int top, int width, int height)
 {
     double averageFPS, stdDeviation;
     fpsCounter->getAverageFPSAndStandardDeviation(averageFPS, stdDeviation);
 
     // Draw background.
-    context->setFillColor(Color(0, 0, 0, 255), ColorSpaceDeviceRGB);
-    context->fillRect(FloatRect(2, top, width, height));
+    SkPaint paint;
+    paint.setColor(SK_ColorBLACK);
+    canvas->drawRect(SkRect::MakeXYWH(2, top, width, height), paint);
 
     // Draw FPS text.
     if (m_fontAtlas)
-        m_fontAtlas->drawText(context, String::format("FPS: %4.1f +/- %3.1f", averageFPS, stdDeviation), IntPoint(10, height / 3), IntSize(width, height));
+        m_fontAtlas->drawText(canvas, String::format("FPS: %4.1f +/- %3.1f", averageFPS, stdDeviation), IntPoint(10, height / 3), IntSize(width, height));
 }
 
-void CCHeadsUpDisplayLayerImpl::drawDebugRects(GraphicsContext* context, CCDebugRectHistory* debugRectHistory)
+void CCHeadsUpDisplayLayerImpl::drawDebugRects(SkCanvas* canvas, CCDebugRectHistory* debugRectHistory)
 {
     const Vector<CCDebugRect>& debugRects = debugRectHistory->debugRects();
+
     for (size_t i = 0; i < debugRects.size(); ++i) {
+        SkColor strokeColor = 0;
+        SkColor fillColor = 0;
 
-        if (debugRects[i].type == PaintRectType) {
+        switch (debugRects[i].type) {
+        case PaintRectType:
             // Paint rects in red
-            context->setStrokeColor(Color(255, 0, 0, 255), ColorSpaceDeviceRGB);
-            context->fillRect(debugRects[i].rect, Color(255, 0, 0, 30), ColorSpaceDeviceRGB);
-            context->strokeRect(debugRects[i].rect, 2.0);
-        }
-
-        if (debugRects[i].type == PropertyChangedRectType) {
+            strokeColor = SkColorSetARGB(255, 255, 0, 0);
+            fillColor = SkColorSetARGB(30, 255, 0, 0);
+            break;
+        case PropertyChangedRectType:
             // Property-changed rects in blue
-            context->setStrokeColor(Color(0, 0, 255, 255), ColorSpaceDeviceRGB);
-            context->fillRect(debugRects[i].rect, Color(0, 0, 255, 30), ColorSpaceDeviceRGB);
-            context->strokeRect(debugRects[i].rect, 2.0);
-        }
-
-        if (debugRects[i].type == SurfaceDamageRectType) {
+            strokeColor = SkColorSetARGB(255, 255, 0, 0);
+            fillColor = SkColorSetARGB(30, 0, 0, 255);
+            break;
+        case SurfaceDamageRectType:
             // Surface damage rects in yellow-orange
-            context->setStrokeColor(Color(200, 100, 0, 255), ColorSpaceDeviceRGB);
-            context->fillRect(debugRects[i].rect, Color(200, 100, 0, 30), ColorSpaceDeviceRGB);
-            context->strokeRect(debugRects[i].rect, 2.0);
-        }
-
-        if (debugRects[i].type == ReplicaScreenSpaceRectType) {
+            strokeColor = SkColorSetARGB(255, 200, 100, 0);
+            fillColor = SkColorSetARGB(30, 200, 100, 0);
+            break;
+        case ReplicaScreenSpaceRectType:
             // Screen space rects in green.
-            context->setStrokeColor(Color(100, 200, 0, 255), ColorSpaceDeviceRGB);
-            context->fillRect(debugRects[i].rect, Color(100, 200, 0, 30), ColorSpaceDeviceRGB);
-            context->strokeRect(debugRects[i].rect, 2.0);
-        }
-
-        if (debugRects[i].type == ScreenSpaceRectType) {
+            strokeColor = SkColorSetARGB(255, 100, 200, 0);
+            fillColor = SkColorSetARGB(30, 100, 200, 0);
+            break;
+        case ScreenSpaceRectType:
             // Screen space rects in purple.
-            context->setStrokeColor(Color(100, 0, 200, 255), ColorSpaceDeviceRGB);
-            context->fillRect(debugRects[i].rect, Color(100, 0, 200, 10), ColorSpaceDeviceRGB);
-            context->strokeRect(debugRects[i].rect, 2.0);
+            strokeColor = SkColorSetARGB(255, 100, 0, 200);
+            fillColor = SkColorSetARGB(10, 100, 0, 200);
+            break;
+        case OccludingRectType:
+            // Occluding rects in a reddish color.
+            strokeColor = SkColorSetARGB(255, 200, 0, 100);
+            fillColor = SkColorSetARGB(10, 200, 0, 100);
+            break;
         }
 
-        if (debugRects[i].type == OccludingRectType) {
-            // Occluding rects in a reddish color.
-            context->setStrokeColor(Color(200, 0, 100, 255), ColorSpaceDeviceRGB);
-            context->fillRect(debugRects[i].rect, Color(200, 0, 100, 10), ColorSpaceDeviceRGB);
-            context->strokeRect(debugRects[i].rect, 2.0);
-        }
+        SkRect rect = debugRects[i].rect;
+        SkPaint paint;
+        paint.setColor(fillColor);
+        canvas->drawRect(rect, paint);
+
+        paint.setColor(strokeColor);
+        paint.setStyle(SkPaint::kStroke_Style);
+        paint.setStrokeWidth(2);
+        canvas->drawRect(rect, paint);
     }
 }
 

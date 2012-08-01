@@ -130,7 +130,7 @@ void CCFontAtlas::initialize()
     generateAtlasForFont(atlasContext, fontDescription, Color(255, 0, 0), IntPoint(0, fontDescription.computedPixelSize()), m_asciiToRectTable);
 }
 
-void CCFontAtlas::drawText(GraphicsContext* targetContext, const String& text, const IntPoint& destPosition, const IntSize& clip) const
+void CCFontAtlas::drawText(SkCanvas* canvas, const String& text, const IntPoint& destPosition, const IntSize& clip) const
 {
     ASSERT(CCProxy::isImplThread());
     ASSERT(m_atlas);
@@ -138,9 +138,13 @@ void CCFontAtlas::drawText(GraphicsContext* targetContext, const String& text, c
     Vector<String> lines;
     text.split('\n', lines);
 
+    PlatformContextSkia platformContext(canvas);
+    platformContext.setDrawingToImageBuffer(true);
+    GraphicsContext context(&platformContext);
+
     IntPoint position = destPosition;
     for (size_t i = 0; i < lines.size(); ++i) {
-        drawOneLineOfTextInternal(targetContext, lines[i], position);
+        drawOneLineOfTextInternal(&context, lines[i], position);
         position.setY(position.y() + m_fontHeight);
         if (position.y() > clip.height())
             return;

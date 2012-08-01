@@ -29,12 +29,13 @@
 #include "cc/CCLayerImpl.h"
 #include "cc/CCScopedTexture.h"
 
+class SkCanvas;
+
 namespace WebCore {
 
 class CCDebugRectHistory;
 class CCFontAtlas;
 class CCFrameRateCounter;
-class GraphicsContext;
 
 class CCHeadsUpDisplayLayerImpl : public CCLayerImpl {
 public:
@@ -57,10 +58,10 @@ private:
 
     virtual const char* layerTypeAsString() const OVERRIDE { return "HeadsUpDisplayLayer"; }
 
-    void drawHudContents(GraphicsContext*);
-    void drawFPSCounter(GraphicsContext*, CCFrameRateCounter*, int top, int height);
-    void drawFPSCounterText(GraphicsContext*, CCFrameRateCounter*, int top, int width, int height);
-    void drawDebugRects(GraphicsContext*, CCDebugRectHistory*);
+    void drawHudContents(SkCanvas*);
+    void drawFPSCounter(SkCanvas*, CCFrameRateCounter*, int top, int height);
+    void drawFPSCounterText(SkCanvas*, CCFrameRateCounter*, int top, int width, int height);
+    void drawDebugRects(SkCanvas*, CCDebugRectHistory*);
 
     OwnPtr<CCFontAtlas> m_fontAtlas;
     OwnPtr<CCScopedTexture> m_hudTexture;
