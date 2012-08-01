@@ -32,6 +32,7 @@
 #include "CCTestCommon.h"
 #include "FakeWebGraphicsContext3D.h"
 #include "LayerRendererChromium.h"
+#include "cc/CCHeadsUpDisplayLayerImpl.h"
 #include "cc/CCIOSurfaceLayerImpl.h"
 #include "cc/CCLayerImpl.h"
 #include "cc/CCLayerTilingData.h"
@@ -2334,6 +2335,14 @@ TEST_F(CCLayerTreeHostImplTest, dontUseOldResourcesAfterLostContext)
     ioSurfaceLayer->setIOSurfaceProperties(1, IntSize(10, 10));
     ioSurfaceLayer->setLayerTreeHostImpl(m_hostImpl.get());
     rootLayer->addChild(ioSurfaceLayer.release());
+
+    OwnPtr<CCHeadsUpDisplayLayerImpl> hudLayer = CCHeadsUpDisplayLayerImpl::create(6, nullptr);
+    hudLayer->setBounds(IntSize(10, 10));
+    hudLayer->setAnchorPoint(FloatPoint(0, 0));
+    hudLayer->setContentBounds(IntSize(10, 10));
+    hudLayer->setDrawsContent(true);
+    hudLayer->setLayerTreeHostImpl(m_hostImpl.get());
+    rootLayer->addChild(hudLayer.release());
 
     // Use a context that supports IOSurfaces
     m_hostImpl->initializeLayerRenderer(CCGraphicsContext::create3D(adoptPtr(new FakeWebGraphicsContext3DWithIOSurface)), UnthrottledUploader);

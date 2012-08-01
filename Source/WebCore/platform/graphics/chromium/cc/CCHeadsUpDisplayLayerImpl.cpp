@@ -109,7 +109,7 @@ void CCHeadsUpDisplayLayerImpl::didDraw(CCResourceProvider* resourceProvider)
 
 void CCHeadsUpDisplayLayerImpl::didLoseContext()
 {
-    m_hudTexture->leak();
+    m_hudTexture.clear();
 }
 
 void CCHeadsUpDisplayLayerImpl::drawHudContents(SkCanvas* canvas)

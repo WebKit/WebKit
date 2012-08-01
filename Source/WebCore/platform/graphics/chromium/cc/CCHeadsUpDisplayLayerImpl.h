@@ -26,6 +26,7 @@
 #ifndef CCHeadsUpDisplayLayerImpl_h
 #define CCHeadsUpDisplayLayerImpl_h
 
+#include "cc/CCFontAtlas.h"
 #include "cc/CCLayerImpl.h"
 #include "cc/CCScopedTexture.h"
 

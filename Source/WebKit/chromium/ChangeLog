@@ -1,3 +1,18 @@
+2012-08-01  Antoine Labour  <piman@chromium.org>
+
+        [chromium] Fix lost context handling on hud layer
+        https://bugs.webkit.org/show_bug.cgi?id=92915
+
+        Reviewed by Adrienne Walker.
+
+        On lost context we need to release CCScopedTextures, otherwise later on
+        we will try to re-allocate it using a stale CCResourceProvider.
+
+        Test CCLayerTreeHostImplTest.dontUseOldResourcesAfterLostContext
+        extended.
+
+        * tests/CCLayerTreeHostImplTest.cpp:
+
 2012-08-01  Nico Weber  <thakis@chromium.org>
 
         [chromium/mac] Delete WebImageCG.cpp
