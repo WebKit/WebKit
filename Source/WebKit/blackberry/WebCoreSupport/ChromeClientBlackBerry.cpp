@@ -513,14 +513,25 @@ void ChromeClientBlackBerry::runOpenPanel(Frame*, PassRefPtr<FileChooser> choose
     for (unsigned i = 0; i < numberOfInitialFiles; ++i)
         initialFiles[i] = chooser->settings().selectedFiles[i];
 
+    SharedArray<WebString> acceptMIMETypes;
+    unsigned numberOfTypes = chooser->settings().acceptMIMETypes.size();
+    if (numberOfTypes > 0)
+        acceptMIMETypes.reset(new WebString[numberOfTypes], numberOfTypes);
+    for (unsigned i = 0; i < numberOfTypes; ++i)
+        acceptMIMETypes[i] = chooser->settings().acceptMIMETypes[i];
+
+    WebString capture;
+#if ENABLE(MEDIA_CAPTURE)
+    capture = chooser->settings().capture;
+#endif
+
     SharedArray<WebString> chosenFiles;
 
     {
         PageGroupLoadDeferrer deferrer(m_webPagePrivate->m_page, true);
         TimerBase::fireTimersInNestedEventLoop();
 
-        // FIXME: Use chooser->settings().acceptMIMETypes instead of WebString() for the second parameter.
-        if (!m_webPagePrivate->m_client->chooseFilenames(chooser->settings().allowsMultipleFiles, WebString(), initialFiles, chosenFiles))
+        if (!m_webPagePrivate->m_client->chooseFilenames(chooser->settings().allowsMultipleFiles, acceptMIMETypes, initialFiles, capture, chosenFiles))
             return;
     }
 

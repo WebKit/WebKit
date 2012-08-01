@@ -1,3 +1,16 @@
+2012-07-31  Robin Cao  <robin.cao@torchmobile.com.cn>
+
+        [BlackBerry] Pass all file chooser settings to clients
+        https://bugs.webkit.org/show_bug.cgi?id=92237
+
+        Reviewed by Rob Buis.
+
+        Expose all file chooser settings to clients.
+
+        * Api/WebPageClient.h:
+        * WebCoreSupport/ChromeClientBlackBerry.cpp:
+        (WebCore::ChromeClientBlackBerry::runOpenPanel):
+
 2012-07-31  Mike Fenton  <mifenton@rim.com>
 
         [BlackBerry] Fix crash in InputHandler spell checking.

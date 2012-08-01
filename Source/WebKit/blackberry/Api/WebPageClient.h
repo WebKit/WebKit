@@ -167,7 +167,7 @@ public:
     virtual void openDateTimePopup(int type, const WebString& value, const WebString& min, const WebString& max, double step) = 0;
     virtual void openColorPopup(const WebString& value) = 0;
 
-    virtual bool chooseFilenames(bool allowMultiple, const WebString& acceptTypes, const SharedArray<WebString>& initialFiles, SharedArray<WebString>& chosenFiles) = 0;
+    virtual bool chooseFilenames(bool allowMultiple, const SharedArray<WebString>& acceptTypes, const SharedArray<WebString>& initialFiles, const WebString& capture, SharedArray<WebString>& chosenFiles) = 0;
 
     virtual void loadPluginForMimetype(int, int width, int height, const SharedArray<WebString>& paramNames, const SharedArray<WebString>& paramValues, const char* url) = 0;
     virtual void notifyPluginRectChanged(int, Platform::IntRect rectChanged) = 0;
