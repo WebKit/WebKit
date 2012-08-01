@@ -1,3 +1,26 @@
+2012-08-01  Jacky Jiang  <zhajiang@rim.com>
+
+        [BlackBerry] Allow client side to add and remove origin access whitelist entries
+        https://bugs.webkit.org/show_bug.cgi?id=92790
+
+        Reviewed by Yong Li.
+
+        PR: 172658
+        Add two new APIs to add and remove origin access whitelist entries.
+        Initialize the BlackBerryAllowCrossSiteRequests WebSetting to false.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::addOriginAccessWhitelistEntry):
+        (WebKit):
+        (BlackBerry::WebKit::WebPage::addOriginAccessWhitelistEntry):
+        (BlackBerry::WebKit::WebPagePrivate::removeOriginAccessWhitelistEntry):
+        (BlackBerry::WebKit::WebPage::removeOriginAccessWhitelistEntry):
+        * Api/WebPage.h:
+        * Api/WebPage_p.h:
+        (WebPagePrivate):
+        * Api/WebSettings.cpp:
+        (BlackBerry::WebKit::WebSettings::standardSettings):
+
 2012-08-01  Mike Fenton  <mifenton@rim.com>
 
         [BlackBerry] Consolidate suppression of keyboard requests.

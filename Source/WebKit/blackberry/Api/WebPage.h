@@ -117,6 +117,8 @@ public:
     void prepareToDestroy();
 
     void enableCrossSiteXHR();
+    void addOriginAccessWhitelistEntry(const char* sourceOrigin, const char* destinationOrigin, bool allowDestinationSubdomains);
+    void removeOriginAccessWhitelistEntry(const char* sourceOrigin, const char* destinationOrigin, bool allowDestinationSubdomains);
 
     void reload();
     void reloadFromCache();

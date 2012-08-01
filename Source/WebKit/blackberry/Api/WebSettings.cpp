@@ -161,6 +161,7 @@ WebSettings* WebSettings::standardSettings()
     settings = new WebSettings;
     settings->m_private->impl = new WebSettingsPrivate::WebSettingsPrivateImpl();
     settings->m_private->copyOnWrite = false;
+    settings->m_private->setBoolean(BlackBerryAllowCrossSiteRequests, false);
     settings->m_private->setUnsigned(BlackBerryBackgroundColor, WebCore::Color::white);
     settings->m_private->setBoolean(BlackBerryCookiesEnabled, true);
     settings->m_private->setDouble(BlackBerryInitialScale, -1);

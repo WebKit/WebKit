@@ -104,6 +104,7 @@
 #include "ScriptSourceCode.h"
 #include "ScriptValue.h"
 #include "ScrollTypes.h"
+#include "SecurityPolicy.h"
 #include "SelectionHandler.h"
 #include "SelectionOverlay.h"
 #include "Settings.h"
@@ -1000,6 +1001,36 @@ void WebPagePrivate::enableCrossSiteXHR()
 void WebPage::enableCrossSiteXHR()
 {
     d->enableCrossSiteXHR();
+}
+
+void WebPagePrivate::addOriginAccessWhitelistEntry(const char* sourceOrigin, const char* destinationOrigin, bool allowDestinationSubdomains)
+{
+    RefPtr<SecurityOrigin> source = SecurityOrigin::createFromString(sourceOrigin);
+    if (source->isUnique())
+        return;
+
+    KURL destination(KURL(), destinationOrigin);
+    SecurityPolicy::addOriginAccessWhitelistEntry(*source, destination.protocol(), destination.host(), allowDestinationSubdomains);
+}
+
+void WebPage::addOriginAccessWhitelistEntry(const char* sourceOrigin, const char* destinationOrigin, bool allowDestinationSubdomains)
+{
+    d->addOriginAccessWhitelistEntry(sourceOrigin, destinationOrigin, allowDestinationSubdomains);
+}
+
+void WebPagePrivate::removeOriginAccessWhitelistEntry(const char* sourceOrigin, const char* destinationOrigin, bool allowDestinationSubdomains)
+{
+    RefPtr<SecurityOrigin> source = SecurityOrigin::createFromString(sourceOrigin);
+    if (source->isUnique())
+        return;
+
+    KURL destination(KURL(), destinationOrigin);
+    SecurityPolicy::removeOriginAccessWhitelistEntry(*source, destination.protocol(), destination.host(), allowDestinationSubdomains);
+}
+
+void WebPage::removeOriginAccessWhitelistEntry(const char* sourceOrigin, const char* destinationOrigin, bool allowDestinationSubdomains)
+{
+    d->removeOriginAccessWhitelistEntry(sourceOrigin, destinationOrigin, allowDestinationSubdomains);
 }
 
 void WebPagePrivate::setLoadState(LoadState state)

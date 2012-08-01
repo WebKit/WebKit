@@ -106,6 +106,8 @@ public:
     void prepareToDestroy();
 
     void enableCrossSiteXHR();
+    void addOriginAccessWhitelistEntry(const char* sourceOrigin, const char* destinationOrigin, bool allowDestinationSubdomains);
+    void removeOriginAccessWhitelistEntry(const char* sourceOrigin, const char* destinationOrigin, bool allowDestinationSubdomains);
 
     LoadState loadState() const { return m_loadState; }
     bool isLoading() const { return m_loadState == WebPagePrivate::Provisional || m_loadState == WebPagePrivate::Committed; }
