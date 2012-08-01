@@ -778,10 +778,21 @@ void WebViewImpl::renderingStats(WebRenderingStats& stats) const
         m_layerTreeView.renderingStats(stats);
 }
 
-void WebViewImpl::startPageScaleAnimation(const IntPoint& scroll, bool useAnchor, float newScale, double durationInSeconds)
+void WebViewImpl::startPageScaleAnimation(const IntPoint& targetPosition, bool useAnchor, float newScale, double durationInSeconds)
 {
-    if (!m_layerTreeView.isNull())
-        m_layerTreeView.startPageScaleAnimation(scroll, useAnchor, newScale, durationInSeconds);
+    if (m_layerTreeView.isNull())
+        return;
+
+    IntPoint clampedPoint = targetPosition;
+    if (!useAnchor)
+        clampedPoint = clampOffsetAtScale(targetPosition, newScale);
+
+    if (!durationInSeconds && !useAnchor) {
+        setPageScaleFactor(newScale, clampedPoint);
+        return;
+    }
+
+    m_layerTreeView.startPageScaleAnimation(targetPosition, useAnchor, newScale, durationInSeconds);
 }
 #endif
 

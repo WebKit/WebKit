@@ -1,3 +1,17 @@
+2012-07-31  Yusuf Ozuysal  <yusufo@google.com>
+
+        [chromium]Upstream WebViewImpl:StartPageScaleAnimation changes for Chrome for Android
+        https://bugs.webkit.org/show_bug.cgi?id=92698
+
+        Reviewed by Adam Barth.
+
+        Enforce the maximum and minimum scroll positions after the scale has changed.
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::startPageScaleAnimation):
+        * src/WebViewImpl.h:
+        (WebViewImpl):
+
 2012-07-31  Terry Anderson  <tdanderson@chromium.org>
 
         [chromium] Use the event bounding box when constructing a PlatformEvent::GestureTap
