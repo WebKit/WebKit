@@ -4001,19 +4001,6 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
         return;
     }
 #endif
-#if ENABLE(CSS3_FLEXBOX)
-    case CSSPropertyWebkitFlex:
-        if (isInherit) {
-            m_style->setFlexGrow(m_parentStyle->flexGrow());
-            m_style->setFlexShrink(m_parentStyle->flexShrink());
-            m_style->setFlexBasis(m_parentStyle->flexBasis());
-        } else if (isInitial) {
-            m_style->setFlexGrow(RenderStyle::initialFlexGrow());
-            m_style->setFlexShrink(RenderStyle::initialFlexShrink());
-            m_style->setFlexBasis(RenderStyle::initialFlexBasis());
-        }
-        return;
-#endif
     case CSSPropertyInvalid:
         return;
     // Directional properties are resolved by resolveDirectionAwareProperty() before the switch.
@@ -4344,6 +4331,7 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
     case CSSPropertyWebkitAlignContent:
     case CSSPropertyWebkitAlignItems:
     case CSSPropertyWebkitAlignSelf:
+    case CSSPropertyWebkitFlex:
     case CSSPropertyWebkitFlexBasis:
     case CSSPropertyWebkitFlexDirection:
     case CSSPropertyWebkitFlexFlow:

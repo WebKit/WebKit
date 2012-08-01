@@ -1,3 +1,19 @@
+2012-07-31  Douglas Stockwell  <dstockwell@chromium.org>
+
+        -webkit-flex-flow does not work with inherit/initial values
+        https://bugs.webkit.org/show_bug.cgi?id=92709
+
+        Reviewed by Ojan Vafai.
+
+        Add a new handler for flex-flow and move flex to StyleBuilder to mirror the standard pattern for handling initial/inherit in shorthands.
+
+        Test: css3/flexbox/flex-flow-initial.html
+
+        * css/StyleBuilder.cpp:
+        (WebCore::StyleBuilder::StyleBuilder): Added handlers for flex and flex-flow.
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::collectMatchingRulesForList): Removed hand written logic for handling flex.
+
 2012-07-31  Emil A Eklund  <eae@chromium.org>
 
         Float imprecision causes incorrect wrapping in LineLayout with subpixel layout

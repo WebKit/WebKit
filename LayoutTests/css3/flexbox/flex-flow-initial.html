@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<style>
+#test1 {
+  -webkit-flex-flow: column;
+}
+#test1 {
+  -webkit-flex-flow: initial;
+}
+#test2 {
+  -webkit-flex-direction: column;
+}
+#test2 {
+  -webkit-flex-direction: initial;
+}
+</style>
+<span id="test1"></span>
+<span id="test2"></span>
+<script src="../../fast/js/resources/js-test-pre.js"></script>
+<script>
+description("Tests that 'initial' is handled correctly for the -webkit-flex-flow shorthand.");
+value1 = window.getComputedStyle(test1).webkitFlexDirection;
+value2 = window.getComputedStyle(test2).webkitFlexDirection;
+shouldBeEqualToString('window.getComputedStyle(test1).webkitFlexDirection', 'row');
+shouldBeEqualToString('window.getComputedStyle(test2).webkitFlexDirection', 'row');
+if (window.testRunner)
+   testRunner.dumpAsText();
+</script>
+<script src="../../fast/js/resources/js-test-post.js"></script>

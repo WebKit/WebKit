@@ -1,3 +1,15 @@
+2012-07-31  Douglas Stockwell  <dstockwell@chromium.org>
+
+        -webkit-flex-flow does not work with inherit/initial values
+        https://bugs.webkit.org/show_bug.cgi?id=92709
+
+        Reviewed by Ojan Vafai.
+
+        Test that flex-flow handles 'initial' as expected.
+
+        * css3/flexbox/flex-flow-initial-expected.txt: Added.
+        * css3/flexbox/flex-flow-initial.html: Added.
+
 2012-07-31  Peter Kasting  <pkasting@google.com>
 
         [Chromium] Rebaselines and test expectation updates.
