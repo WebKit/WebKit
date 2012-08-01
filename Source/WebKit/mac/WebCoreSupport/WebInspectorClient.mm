@@ -511,6 +511,7 @@ void WebInspectorFrontendClient::updateWindowTitle() const
             inspectedPage->inspectorController()->disconnectFrontend();
     }
 
+    RetainPtr<WebInspectorWindowController> protect(self);
     [_webView close];
 }
 
