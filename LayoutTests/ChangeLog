@@ -1,3 +1,20 @@
+2012-08-01  Mike West  <mkwst@chromium.org>
+
+        CSP should correctly block plugin resources rendered in PluginDocuments.
+        https://bugs.webkit.org/show_bug.cgi?id=92675
+
+        Reviewed by Adam Barth.
+
+        * http/tests/plugins/resources/mock-plugin.pl: Added.
+            This lovely perl script mocks a plugin by sending a
+            'Content-Type application/x-webkit-test-netscape' header.
+        * http/tests/security/contentSecurityPolicy/object-src-url-allowed-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/object-src-url-allowed.html: Added.
+        * http/tests/security/contentSecurityPolicy/object-src-url-blocked-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/object-src-url-blocked.html: Added.
+            Test that non-'data:' URLs that end up in PluginDocuments are also
+            dealt with correctly by CSP.
+
 2012-08-01  Florin Malita  <fmalita@chromium.org>
 
         SVG animation not working for elements inserted after parsing is finished

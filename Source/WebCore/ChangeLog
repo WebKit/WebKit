@@ -1,3 +1,29 @@
+2012-08-01  Mike West  <mkwst@chromium.org>
+
+        CSP should correctly block plugin resources rendered in PluginDocuments.
+        https://bugs.webkit.org/show_bug.cgi?id=92675
+
+        Reviewed by Adam Barth.
+
+        In certain cases, plugins aren't loaded directly, but are stuffed into a
+        newly-created PluginDocument before rendering. While we were already
+        correctly populating information that allowed us to make decisions about
+        that document's security origin, and already dealing with sandbox
+        status by creating a 'SinkDocument' that ignored plugin data, we weren't
+        correctly inheriting the parent frame's Content Security Policy. This
+        patch ensures that PluginDocuments correctly inherit their parent's
+        Content Security Policy, meaning that the plugin is blocked or allowed
+        according to the policy of the protected resource in which the
+        PluginDocument is embedded.
+
+        Tests: http/tests/security/contentSecurityPolicy/object-src-url-allowed.html
+               http/tests/security/contentSecurityPolicy/object-src-url-blocked.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::initContentSecurityPolicy):
+            Populate a created PluginDocument with its frame's parent's Content
+            Security Policy.
+
 2012-08-01  Florin Malita  <fmalita@chromium.org>
 
         SVG animation not working for elements inserted after parsing is finished
