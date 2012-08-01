@@ -52,6 +52,7 @@ wtf_sources += \
     Source/WTF/wtf/Forward.h \
     Source/WTF/wtf/Functional.h \
     Source/WTF/wtf/GetPtr.h \
+    Source/WTF/wtf/GregorianDateTime.cpp \
     Source/WTF/wtf/GregorianDateTime.h \
     Source/WTF/wtf/HashCountedSet.h \
     Source/WTF/wtf/HashFunctions.h \

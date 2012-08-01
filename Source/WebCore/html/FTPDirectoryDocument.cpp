@@ -36,10 +36,11 @@
 #include "Settings.h"
 #include "SharedBuffer.h"
 #include "Text.h"
+#include <wtf/CurrentTime.h>
+#include <wtf/GregorianDateTime.h>
+#include <wtf/StdLibExtras.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
-#include <wtf/CurrentTime.h>
-#include <wtf/StdLibExtras.h>
 #include <wtf/unicode/CharacterNames.h>
 
 using namespace std;
@@ -219,26 +220,23 @@ static String processFileDateString(const FTPTime& fileTime)
     }
 
     // If it was today or yesterday, lets just do that - but we have to compare to the current time
-    struct tm now;
-    getCurrentLocalTime(&now);
+    GregorianDateTime now;
+    now.setToCurrentLocalTime();
 
-    // localtime does "year = current year - 1900", compensate for that for readability and comparison purposes
-    now.tm_year += 1900;
-
-    if (fileTime.tm_year == now.tm_year) {
-        if (fileTime.tm_mon == now.tm_mon) {
-            if (fileTime.tm_mday == now.tm_mday)
+    if (fileTime.tm_year == now.year()) {
+        if (fileTime.tm_mon == now.month()) {
+            if (fileTime.tm_mday == now.monthDay())
                 return "Today" + timeOfDay;
-            if (fileTime.tm_mday == now.tm_mday - 1)
+            if (fileTime.tm_mday == now.monthDay() - 1)
                 return "Yesterday" + timeOfDay;
         }
         
-        if (now.tm_mday == 1 && (now.tm_mon == fileTime.tm_mon + 1 || (now.tm_mon == 0 && fileTime.tm_mon == 11)) &&
+        if (now.monthDay() == 1 && (now.month() == fileTime.tm_mon + 1 || (now.month() == 0 && fileTime.tm_mon == 11)) &&
             wasLastDayOfMonth(fileTime.tm_year, fileTime.tm_mon, fileTime.tm_mday))
                 return "Yesterday" + timeOfDay;
     }
 
-    if (fileTime.tm_year == now.tm_year - 1 && fileTime.tm_mon == 12 && fileTime.tm_mday == 31 && now.tm_mon == 1 && now.tm_mday == 1)
+    if (fileTime.tm_year == now.year() - 1 && fileTime.tm_mon == 12 && fileTime.tm_mday == 31 && now.month() == 1 && now.monthDay() == 1)
         return "Yesterday" + timeOfDay;
 
     static const char* months[] = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec", "???" };
@@ -252,7 +250,7 @@ static String processFileDateString(const FTPTime& fileTime)
     if (fileTime.tm_year > -1)
         dateString = String(months[month]) + " " + String::number(fileTime.tm_mday) + ", " + String::number(fileTime.tm_year);
     else
-        dateString = String(months[month]) + " " + String::number(fileTime.tm_mday) + ", " + String::number(now.tm_year);
+        dateString = String(months[month]) + " " + String::number(fileTime.tm_mday) + ", " + String::number(now.year());
 
     return dateString + timeOfDay;
 }

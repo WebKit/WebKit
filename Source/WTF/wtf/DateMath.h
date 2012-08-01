@@ -95,6 +95,7 @@ WTF_EXPORT_PRIVATE int msToYear(double ms);
 double msToDays(double ms);
 int msToMinutes(double ms);
 int msToHours(double ms);
+int dayInYear(int year, int month, int day);
 WTF_EXPORT_PRIVATE int dayInYear(double ms, int year);
 WTF_EXPORT_PRIVATE int monthFromDayInYear(int dayInYear, bool leapYear);
 WTF_EXPORT_PRIVATE int dayInMonthFromDayInYear(int dayInYear, bool leapYear);

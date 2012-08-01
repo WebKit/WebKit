@@ -144,6 +144,7 @@
             'wtf/FastMalloc.cpp',
             'wtf/Float32Array.h',
             'wtf/Float64Array.h',
+            'wtf/GregorianDateTime.cpp',
             'wtf/HashTable.cpp',
             'wtf/Int16Array.h',
             'wtf/Int32Array.h',

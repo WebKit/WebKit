@@ -11,6 +11,7 @@
 		143F611F1565F0F900DB514A /* RAMSize.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 143F611D1565F0F900DB514A /* RAMSize.cpp */; };
 		143F61201565F0F900DB514A /* RAMSize.h in Headers */ = {isa = PBXBuildFile; fileRef = 143F611E1565F0F900DB514A /* RAMSize.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2C05385415BC819000F21B96 /* GregorianDateTime.h in Headers */ = {isa = PBXBuildFile; fileRef = 2C05385315BC819000F21B96 /* GregorianDateTime.h */; };
+		2CCD892A15C0390200285083 /* GregorianDateTime.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2CCD892915C0390200285083 /* GregorianDateTime.cpp */; };
 		4330F38F15745B0500AAFA8F /* URLString.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4330F38E15745B0500AAFA8F /* URLString.cpp */; };
 		4F0321BC156AA8D1006EBAF6 /* BitArray.h in Headers */ = {isa = PBXBuildFile; fileRef = 4F0321BB156AA8D1006EBAF6 /* BitArray.h */; };
 		8134013815B092FD001FF0B8 /* Base64.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8134013615B092FD001FF0B8 /* Base64.cpp */; };
@@ -254,6 +255,7 @@
 		143F611D1565F0F900DB514A /* RAMSize.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RAMSize.cpp; sourceTree = "<group>"; };
 		143F611E1565F0F900DB514A /* RAMSize.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RAMSize.h; sourceTree = "<group>"; };
 		2C05385315BC819000F21B96 /* GregorianDateTime.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GregorianDateTime.h; sourceTree = "<group>"; };
+		2CCD892915C0390200285083 /* GregorianDateTime.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GregorianDateTime.cpp; sourceTree = "<group>"; };
 		4330F38E15745B0500AAFA8F /* URLString.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = URLString.cpp; sourceTree = "<group>"; };
 		4F0321BB156AA8D1006EBAF6 /* BitArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BitArray.h; sourceTree = "<group>"; };
 		5D247B6214689B8600E78B76 /* libWTF.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libWTF.a; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -614,6 +616,7 @@
 				A8A472A6151A825A004123FF /* Forward.h */,
 				A8A472A7151A825A004123FF /* Functional.h */,
 				A8A472A8151A825A004123FF /* GetPtr.h */,
+				2CCD892915C0390200285083 /* GregorianDateTime.cpp */,
 				2C05385315BC819000F21B96 /* GregorianDateTime.h */,
 				A8A472B3151A825A004123FF /* HashCountedSet.h */,
 				A8A472B4151A825A004123FF /* HashFunctions.h */,
@@ -1172,6 +1175,7 @@
 				A8A473B3151A825B004123FF /* fast-dtoa.cc in Sources */,
 				A8A473C3151A825B004123FF /* FastMalloc.cpp in Sources */,
 				A8A473B5151A825B004123FF /* fixed-dtoa.cc in Sources */,
+				2CCD892A15C0390200285083 /* GregorianDateTime.cpp in Sources */,
 				A8A473D8151A825B004123FF /* HashTable.cpp in Sources */,
 				A8A473E5151A825B004123FF /* MainThread.cpp in Sources */,
 				A8A473E4151A825B004123FF /* MainThreadMac.mm in Sources */,

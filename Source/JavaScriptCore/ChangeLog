@@ -1,3 +1,16 @@
+2012-08-01  Patrick Gansterer  <paroga@webkit.org>
+
+        Replace WTF::getCurrentLocalTime() with GregorianDateTime::setToCurrentLocalTime()
+        https://bugs.webkit.org/show_bug.cgi?id=92286
+
+        Reviewed by Geoffrey Garen.
+
+        Add a method to GregorianDateTime to set its values to the current locale time.
+        Replacing all occurrences of getCurrentLocalTime with the new function allows
+        us to remove getCurrentLocalTime in a next step.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+
 2012-08-01  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         C++ code should get ClassInfo from the Structure

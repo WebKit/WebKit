@@ -190,6 +190,7 @@ SOURCES += \
     dtoa/fixed-dtoa.cc \
     dtoa/strtod.cc \
     FastMalloc.cpp \
+    GregorianDateTime.cpp \
     gobject/GOwnPtr.cpp \
     gobject/GRefPtr.cpp \
     HashTable.cpp \

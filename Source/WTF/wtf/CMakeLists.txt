@@ -147,6 +147,7 @@ SET(WTF_SOURCES
     DecimalNumber.cpp
     DynamicAnnotations.cpp
     FastMalloc.cpp
+    GregorianDateTime.cpp
     HashTable.cpp
     MD5.cpp
     MainThread.cpp

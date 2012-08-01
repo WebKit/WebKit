@@ -315,6 +315,7 @@ EXPORTS
     ?setOrderLowerFirst@Collator@WTF@@QAEX_N@Z
     ?setPrototype@JSObject@JSC@@QAEXAAVJSGlobalData@2@VJSValue@2@@Z
     ?setSetter@PropertyDescriptor@JSC@@QAEXVJSValue@2@@Z
+    ?setToCurrentLocalTime@GregorianDateTime@WTF@@QAEXXZ
     ?setUndefined@PropertyDescriptor@JSC@@QAEXXZ
     ?setUnwrappedObject@JSGlobalThis@JSC@@IAEXAAVJSGlobalData@2@PAVJSGlobalObject@2@@Z
     ?setUpStaticFunctionSlot@JSC@@YA_NPAVExecState@1@PBVHashEntry@1@PAVJSObject@1@VPropertyName@1@AAVPropertySlot@1@@Z

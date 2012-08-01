@@ -286,7 +286,7 @@ int dayInMonthFromDayInYear(int dayInYear, bool leapYear)
     return d - step;
 }
 
-static inline int dayInYear(int year, int month, int day)
+int dayInYear(int year, int month, int day)
 {
     return firstDayOfMonth[isLeapYear(year)][month] + day - 1;
 }

@@ -797,6 +797,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\wtf\GregorianDateTime.cpp"
+			>
+		</File>
+		<File
 			RelativePath="..\wtf\GregorianDateTime.h"
 			>
 		</File>

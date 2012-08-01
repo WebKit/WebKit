@@ -45,6 +45,7 @@
 
 #include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/DateMath.h>
+#include <wtf/GregorianDateTime.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/Base64.h>
 #include <wtf/text/StringBuilder.h>
@@ -150,9 +151,9 @@ PassRefPtr<SharedBuffer> MHTMLArchive::generateMHTMLData(Page* page, bool useBin
     String boundary = generateRandomBoundary();
     String endOfResourceBoundary = makeString("--", boundary, "\r\n");
 
-    tm localTM;
-    getCurrentLocalTime(&localTM);
-    String dateString = makeRFC2822DateString(localTM.tm_wday, localTM.tm_mday, localTM.tm_mon, 1900 + localTM.tm_year, localTM.tm_hour, localTM.tm_min, localTM.tm_sec, calculateUTCOffset() / (1000 * 60));
+    GregorianDateTime now;
+    now.setToCurrentLocalTime();
+    String dateString = makeRFC2822DateString(now.weekDay(), now.monthDay(), now.month(), now.year(), now.hour(), now.minute(), now.second(), now.utcOffset() / 60);
 
     StringBuilder stringBuilder;
     stringBuilder.append("From: <Saved by WebKit>\r\n");
