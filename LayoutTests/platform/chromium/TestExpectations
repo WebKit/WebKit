@@ -3201,8 +3201,6 @@ BUGWK84802 DEBUG SLOW : fast/js/random-array-gc-stress.html = PASS
 
 BUGWK84847 WIN RELEASE : inspector/timeline/timeline-start-time.html = TEXT PASS
 
-BUGWK85003 WIN : media/video-currentTime-set.html = PASS TEXT
-
 BUGCR128325 : platform/chromium/compositing/overflow/overflow-scrolling-touch-stacking-context.html = IMAGE+TEXT
 
 BUGWK85090 DEBUG SLOW : fast/js/dfg-float64array.html = PASS

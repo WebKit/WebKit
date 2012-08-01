@@ -1,3 +1,12 @@
+2012-07-31  Ami Fischman  <fischman@chromium.org>
+
+        Layout Test media/video-currentTime-set.html is still flaky
+        https://bugs.webkit.org/show_bug.cgi?id=85003
+
+        Unreviewed gardening; test was fixed in r115462 but expectation was left behind.
+        
+        * platform/chromium/TestExpectations:
+
 2012-07-31  Vincent Scheib  <scheib@chromium.org>
 
         webkitRequestPointerLock and webkitExitPointerLock limited to the same document of an active Pointer lock.
