@@ -1,5 +1,18 @@
 2012-08-01  Patrick Gansterer  <paroga@webkit.org>
 
+        Export StringImpl::sizeInBytes() with WTF_EXPORT_STRING_API
+        https://bugs.webkit.org/show_bug.cgi?id=92851
+
+        Reviewed by Hajime Morita.
+
+        r124069 missed to change one export macro, which is needed
+        to make the windows port with USE(EXPORT_MACROS).
+
+        * wtf/text/StringImpl.h:
+        (StringImpl):
+
+2012-08-01  Patrick Gansterer  <paroga@webkit.org>
+
         [WIN] Add missing WTF export macros to functions
         https://bugs.webkit.org/show_bug.cgi?id=92842
 
