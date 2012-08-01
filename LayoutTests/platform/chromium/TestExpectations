@@ -1471,9 +1471,7 @@ BUGCR26253 SLOW WIN RELEASE : http/tests/navigation/reload-subframe-object.html 
 BUGCR9798 WIN RELEASE : http/tests/navigation/no-referrer-reset.html = PASS TIMEOUT
 
 BUGCR23477 MAC : fast/backgrounds/bgCompositeCopy.html = IMAGE
-BUGCR23477 MAC : platform/chromium/virtual/gpu/fast/canvas/canvas-as-image-incremental-repaint.html = IMAGE
 BUGCR23477 MAC : platform/chromium/virtual/gpu/fast/canvas/canvas-incremental-repaint.html = IMAGE
-BUGCR23477 MAC : platform/chromium/virtual/gpu/fast/canvas/fill-stroke-clip-reset-path.html = IMAGE
 
 // Unexpected gray
 BUGCR23476 MAC : fast/frames/inline-object-inside-frameset.html = IMAGE
@@ -3500,9 +3498,6 @@ BUGWK91445 LINUX : plugins/embed-attributes-style.html = PASS IMAGE
 BUGWK91620 : css3/filters/blur-filter-page-scroll-self.html = PASS IMAGE
 
 BUGWK91544 : media/media-continues-playing-after-replace-source.html = PASS TIMEOUT
-
-// Needs rebaseline. Behavior should now be the same as Safari.
-BUGWK91472 : compositing/reflections/nested-reflection-anchor-point.html = IMAGE
 
 BUGWK92019 : fast/text/international/inline-plaintext-relayout-with-leading-neutrals.html = PASS IMAGE
 BUGWK92022 DEBUG : svg/W3C-SVG-1.1/struct-dom-06-b.svg = TEXT PASS

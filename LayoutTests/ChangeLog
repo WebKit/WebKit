@@ -1,3 +1,16 @@
+2012-07-31  Peter Kasting  <pkasting@google.com>
+
+        [Chromium] Rebaseline a test and correct two expectations
+        http://crbug.com/23477
+
+        Unreviewed, test expectation updates.
+
+        One line was extraneous after http://trac.webkit.org/changeset/124245 ,
+        another after http://trac.webkit.org/changeset/124284 .
+
+        * platform/chromium-mac/platform/chromium/virtual/gpu/fast/canvas/canvas-as-image-incremental-repaint-expected.png: Added.
+        * platform/chromium/TestExpectations:
+
 2012-07-31  Ojan Vafai  <ojan@chromium.org>
 
         i and j keys no longer scroll in results.html
