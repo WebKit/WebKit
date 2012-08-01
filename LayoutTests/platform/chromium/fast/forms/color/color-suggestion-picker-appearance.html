@@ -34,7 +34,7 @@ if (window.eventSender)
 var pickerWindow = document.getElementById('mock-page-popup').contentWindow;
 pickerWindow.onresize = function() {
     console.log(pickerWindow.pagePopupController);
-    testRunner.notifyDone();
+    setTimeout(function() {testRunner.notifyDone();}, 0);
 }
 </script>
 </body>

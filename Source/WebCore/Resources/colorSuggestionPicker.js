@@ -171,11 +171,13 @@ ColorPicker.prototype._layout = function() {
     var otherButton = createElement("button", "other-color", this._config.otherColorLabel);
     otherButton.addEventListener("click", chooseOtherColor, false);
     this._element.appendChild(otherButton);
+    var elementWidth = this._element.offsetWidth;
+    var elementHeight = this._element.offsetHeight;
     if (window.frameElement) {
-        window.frameElement.style.width = this._element.offsetWidth + "px";
-        window.frameElement.style.height = this._element.offsetHeight + "px";
+        window.frameElement.style.width = elementWidth + "px";
+        window.frameElement.style.height = elementHeight + "px";
     } else {
-        window.resizeTo(this._element.offsetWidth, this._element.offsetHeight);
+        window.resizeTo(elementWidth, elementHeight);
     }
 };
 

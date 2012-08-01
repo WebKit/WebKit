@@ -1,3 +1,14 @@
+2012-08-01  Keishi Hattori  <keishi@webkit.org>
+
+        Attempt to fix flakiness of color-suggestion-picker-appearance.html
+        https://bugs.webkit.org/show_bug.cgi?id=92848
+
+        Reviewed by Kent Tamura.
+
+        * Resources/colorSuggestionPicker.js:
+        (ColorPicker.prototype._layout): We put the width and height into
+        variables so we don't call window.onresize twice.
+
 2012-08-01  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix GTK+ build with recent version of GTK+.

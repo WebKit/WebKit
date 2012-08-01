@@ -1,3 +1,14 @@
+2012-08-01  Keishi Hattori  <keishi@webkit.org>
+
+        Attempt to fix flakiness of color-suggestion-picker-appearance.html
+        https://bugs.webkit.org/show_bug.cgi?id=92848
+
+        Reviewed by Kent Tamura.
+
+        We observed console.log bleeding into the next test.
+
+        * platform/chromium/fast/forms/color/color-suggestion-picker-appearance.html:
+
 2012-08-01  Alexander Pavlov  <apavlov@chromium.org>
 
         [Chromium] Unreviewed, suppress fast/forms/input-widths.html failure, which is due to r124314.
