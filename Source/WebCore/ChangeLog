@@ -1,3 +1,22 @@
+2012-07-31  Emil A Eklund  <eae@chromium.org>
+
+        Float imprecision causes incorrect wrapping in LineLayout with subpixel layout
+        https://bugs.webkit.org/show_bug.cgi?id=92778
+
+        Reviewed by Eric Seidel.
+
+        Due to float imprecision an incorrect wrapping decision is made in
+        certain cases where the values being compare are close but not exactly
+        the same. This can happen as the size of blocks is represented in layout
+        units while line layout uses floats.
+
+        Test: fast/sub-pixel/inline-block-should-not-wrap.html
+
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::LineWidth::fitsOnLine):
+        Use LayoutUnit::epsilon when comparing values as that is the maximum
+        precision we support.
+
 2012-07-31  Hayato Ito  <hayato@chromium.org>
 
         Refactor EventDispatcher::dispatchEvent() so that we can call each phase (Caputure, Target and Bubbling) of event dispatching separately.

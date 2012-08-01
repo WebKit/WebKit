@@ -1,3 +1,26 @@
+2012-07-31  Emil A Eklund  <eae@chromium.org>
+
+        Float imprecision causes incorrect wrapping in LineLayout with subpixel layout
+        https://bugs.webkit.org/show_bug.cgi?id=92778
+
+        Reviewed by Eric Seidel.
+
+        Add test ensuring that an inline block isn't wrapped incorrectly.
+
+        * fast/sub-pixel/inline-block-should-not-wrap-expected.html: Added.
+        * fast/sub-pixel/inline-block-should-not-wrap.html: Added.
+        * platform/mac-lion/Skipped:
+        * platform/mac-snowleopard/Skipped:
+        * platform/mac-wk2/Skipped:
+        * platform/mac/Skipped:
+        * platform/qt-4.8/Skipped:
+        * platform/qt/Skipped:
+        * platform/win-wk2/Skipped:
+        * platform/win-xp/Skipped:
+        * platform/win/Skipped:
+        * platform/wincairo/Skipped:
+        * platform/wk2/Skipped:
+
 2012-08-01  Joone Hur  <joone.hur@intel.com>
 
         Unreviewed EFL gardening.

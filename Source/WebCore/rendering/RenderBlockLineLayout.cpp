@@ -75,8 +75,13 @@ public:
         ASSERT(block);
         updateAvailableWidth();
     }
+#if ENABLE(SUBPIXEL_LAYOUT)
+    bool fitsOnLine() const { return currentWidth() <= m_availableWidth + LayoutUnit::epsilon(); }
+    bool fitsOnLine(float extra) const { return currentWidth() + extra <= m_availableWidth + LayoutUnit::epsilon(); }
+#else
     bool fitsOnLine() const { return currentWidth() <= m_availableWidth; }
     bool fitsOnLine(float extra) const { return currentWidth() + extra <= m_availableWidth; }
+#endif
     float currentWidth() const { return m_committedWidth + m_uncommittedWidth; }
 
     // FIXME: We should eventually replace these three functions by ones that work on a higher abstraction.
