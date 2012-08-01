@@ -1,5 +1,30 @@
 2012-08-01  Peter Kasting  <pkasting@google.com>
 
+        [Chromium] Rebaseline a test.
+        https://bugs.webkit.org/show_bug.cgi?id=92444
+
+        Unreviewed, test expectation updates.
+
+        * platform/chromium-linux-x86/platform/chromium/fast: Added.
+        * platform/chromium-linux-x86/platform/chromium/fast/forms: Added.
+        * platform/chromium-linux-x86/platform/chromium/fast/forms/color: Added.
+        * platform/chromium-linux-x86/platform/chromium/fast/forms/color/color-suggestion-picker-appearance-expected.png: Added.
+        * platform/chromium-linux/platform/chromium/fast/forms: Added.
+        * platform/chromium-linux/platform/chromium/fast/forms/color: Added.
+        * platform/chromium-linux/platform/chromium/fast/forms/color/color-suggestion-picker-appearance-expected.png: Added.
+        * platform/chromium-mac-snowleopard/platform/chromium/fast/forms: Added.
+        * platform/chromium-mac-snowleopard/platform/chromium/fast/forms/color: Added.
+        * platform/chromium-mac-snowleopard/platform/chromium/fast/forms/color/color-suggestion-picker-appearance-expected.png: Added.
+        * platform/chromium-win-xp/platform/chromium/fast/forms: Added.
+        * platform/chromium-win-xp/platform/chromium/fast/forms/color: Added.
+        * platform/chromium-win-xp/platform/chromium/fast/forms/color/color-suggestion-picker-appearance-expected.png: Added.
+        * platform/chromium-win/platform/chromium/fast/forms: Added.
+        * platform/chromium-win/platform/chromium/fast/forms/color: Added.
+        * platform/chromium-win/platform/chromium/fast/forms/color/color-suggestion-picker-appearance-expected.png: Added.
+        * platform/chromium/TestExpectations:
+
+2012-08-01  Peter Kasting  <pkasting@google.com>
+
         [Chromium] Mark a couple of flaky tests.
         https://bugs.webkit.org/show_bug.cgi?id=92850
         https://bugs.webkit.org/show_bug.cgi?id=92852
