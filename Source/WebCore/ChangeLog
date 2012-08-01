@@ -1,3 +1,18 @@
+2012-08-01  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Crashes in NetworkResourcesData.
+        https://bugs.webkit.org/show_bug.cgi?id=92874
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/NetworkResourcesData.cpp:
+        (WebCore::contentSizeInBytes):
+        (WebCore):
+        (WebCore::NetworkResourcesData::ResourceData::removeContent):
+        (WebCore::NetworkResourcesData::ResourceData::decodeDataToContent):
+        (WebCore::NetworkResourcesData::setResourceContent):
+        (WebCore::NetworkResourcesData::maybeDecodeDataToContent):
+
 2012-08-01  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Web Inspector: test native memory instrumentation code with help of unittests

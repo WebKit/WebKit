@@ -66,6 +66,11 @@ void NetworkResourcesData::ResourceData::setContent(const String& content, bool 
     m_base64Encoded = base64Encoded;
 }
 
+static size_t contentSizeInBytes(const String& content)
+{
+    return content.isNull() ? 0 : content.impl()->sizeInBytes();
+}
+
 unsigned NetworkResourcesData::ResourceData::removeContent()
 {
     unsigned result = 0;
@@ -77,7 +82,7 @@ unsigned NetworkResourcesData::ResourceData::removeContent()
 
     if (hasContent()) {
         ASSERT(!hasData());
-        result = m_content.impl()->sizeInBytes();
+        result = contentSizeInBytes(m_content);
         m_content = String();
     }
     return result;
@@ -110,7 +115,7 @@ size_t NetworkResourcesData::ResourceData::decodeDataToContent()
     m_content = m_decoder->decode(m_dataBuffer->data(), m_dataBuffer->size());
     m_content += m_decoder->flush();
     m_dataBuffer = nullptr;
-    return m_content.impl()->sizeInBytes() - dataLength;
+    return contentSizeInBytes(m_content) - dataLength;
 }
 
 // NetworkResourcesData
@@ -179,7 +184,7 @@ void NetworkResourcesData::setResourceContent(const String& requestId, const Str
     ResourceData* resourceData = m_requestIdToResourceDataMap.get(requestId);
     if (!resourceData)
         return;
-    size_t dataLength = content.impl()->sizeInBytes();
+    size_t dataLength = contentSizeInBytes(content);
     if (dataLength > m_maximumSingleResourceContentSize)
         return;
     if (resourceData->isContentPurged())
@@ -220,7 +225,7 @@ void NetworkResourcesData::maybeDecodeDataToContent(const String& requestId)
     if (!resourceData->hasData())
         return;
     m_contentSize += resourceData->decodeDataToContent();
-    size_t dataLength = resourceData->content().impl()->sizeInBytes();
+    size_t dataLength = contentSizeInBytes(resourceData->content());
     if (dataLength > m_maximumSingleResourceContentSize)
         m_contentSize -= resourceData->purgeContent();
 }
