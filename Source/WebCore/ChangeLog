@@ -1,3 +1,15 @@
+2012-07-31  Dean Jackson  <dino@apple.com>
+
+        ImageCG doesn't initialize m_decodedPropertiesSize in BitmapImage constructor
+        https://bugs.webkit.org/show_bug.cgi?id=92418
+
+        Reviewed by Dan Bernstein.
+
+        Tested by existing content.
+
+        * platform/graphics/cg/ImageCG.cpp:
+        (WebCore::BitmapImage::BitmapImage): initialize m_decodedPropertiesSize to zero.
+
 2012-07-31  Shawn Singh  <shawnsingh@chromium.org>
 
         [chromium] Hit test points are being clipped by layers that should not clip
