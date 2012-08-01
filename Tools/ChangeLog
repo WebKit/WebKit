@@ -1,3 +1,18 @@
+2012-08-01  Ryosuke Niwa  <rniwa@webkit.org>
+
+        run-perf-tests --build-directory doesn't work
+        https://bugs.webkit.org/show_bug.cgi?id=92051
+
+        Reviewed by Dirk Pranke.
+
+        The bug was caused by not prepending build_directory even when one is defined.
+        Fixed that.
+
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        (Port._build_path):
+        * Scripts/webkitpy/layout_tests/port/base_unittest.py:
+        (PortTest.test_build_path):
+
 2012-08-01  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r123865.

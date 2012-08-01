@@ -1151,7 +1151,7 @@ class Port(object):
         if not root_directory:
             build_directory = self.get_option('build_directory')
             if build_directory:
-                root_directory = self._filesystem.join(self.get_option('configuration'))
+                root_directory = self._filesystem.join(build_directory, self.get_option('configuration'))
             else:
                 root_directory = self._config.build_directory(self.get_option('configuration'))
             # Set --root so that we can pass this to subprocesses and avoid making the

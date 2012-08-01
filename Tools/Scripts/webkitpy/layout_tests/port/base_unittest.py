@@ -437,6 +437,10 @@ class PortTest(unittest.TestCase):
         self.assertFalse('passes/text.html' in tests)
         self.assertTrue('virtual/passes/text.html' in tests)
 
+    def test_build_path(self):
+        port = self.make_port(options=optparse.Values({'build_directory': '/my-build-directory/'}))
+        self.assertEqual(port._build_path(), '/my-build-directory/Release')
+
 
 if __name__ == '__main__':
     unittest.main()
