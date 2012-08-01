@@ -1,3 +1,16 @@
+2012-08-01  Ojan Vafai  <ojan@chromium.org>
+
+        Remove code duplication in determining if display is inline or replaced
+        https://bugs.webkit.org/show_bug.cgi?id=92880
+
+        Reviewed by Julien Chaffraix.
+
+        Deduplicate lists of display types by using private helpers.
+
+        No new tests. No change in behavior.
+
+        * rendering/style/RenderStyle.h:
+
 2012-08-01  Tommy Widenflycht  <tommyw@google.com>
 
         MediaStream API: Add ExtraData capability to MediaStreamSource

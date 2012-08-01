@@ -1483,22 +1483,9 @@ public:
 
     StyleDifference diff(const RenderStyle*, unsigned& changedContextSensitiveProperties) const;
 
-    bool isDisplayReplacedType() const
-    {
-        return display() == INLINE_BLOCK || display() == INLINE_BOX || display() == INLINE_TABLE || display() == INLINE_GRID;
-    }
-
-    bool isDisplayInlineType() const
-    {
-        return display() == INLINE || isDisplayReplacedType();
-    }
-
-    bool isOriginalDisplayInlineType() const
-    {
-        return originalDisplay() == INLINE || originalDisplay() == INLINE_BLOCK
-            || originalDisplay() == INLINE_BOX || originalDisplay() == INLINE_TABLE || originalDisplay() == INLINE_GRID;
-    }
-
+    bool isDisplayReplacedType() const { return isDisplayReplacedType(display()); }
+    bool isDisplayInlineType() const { return isDisplayInlineType(display()); }
+    bool isOriginalDisplayInlineType() const { return isDisplayInlineType(originalDisplay()); }
     bool isDisplayRegionType() const
     {
         return display() == BLOCK || display() == INLINE_BLOCK
@@ -1746,6 +1733,16 @@ private:
     void getShadowBlockDirectionExtent(const ShadowData* shadow, LayoutUnit& logicalTop, LayoutUnit& logicalBottom) const
     {
         return isHorizontalWritingMode() ? getShadowVerticalExtent(shadow, logicalTop, logicalBottom) : getShadowHorizontalExtent(shadow, logicalTop, logicalBottom);
+    }
+
+    bool isDisplayReplacedType(EDisplay display) const
+    {
+        return display == INLINE_BLOCK || display == INLINE_BOX || display == INLINE_TABLE || display == INLINE_GRID;
+    }
+
+    bool isDisplayInlineType(EDisplay display) const
+    {
+        return display == INLINE || isDisplayReplacedType(display);
     }
 
     // Color accessors are all private to make sure callers use visitedDependentColor instead to access them.
