@@ -44,6 +44,18 @@ namespace WebCore {
 // Returns true if it succeeded, otherwise returns false.
 bool copyElements(v8::Handle<v8::Object> destArray, v8::Handle<v8::Object> srcArray, uint32_t length, uint32_t offset, v8::Isolate*);
 
+template<class ArrayClass>
+v8::Handle<v8::Value> wrapArrayBufferView(const v8::Arguments& args, WrapperTypeInfo* type, ArrayClass array, v8::ExternalArrayType arrayType, bool hasIndexer)
+{
+    // Transform the holder into a wrapper object for the array.
+    V8DOMWrapper::setDOMWrapper(args.Holder(), type, array.get());
+    if (hasIndexer)
+        args.Holder()->SetIndexedPropertiesToExternalArrayData(array.get()->baseAddress(), arrayType, array.get()->length());
+    v8::Persistent<v8::Object> wrapper = v8::Persistent<v8::Object>::New(args.Holder());
+    wrapper.MarkIndependent();
+    V8DOMWrapper::setJSWrapperForDOMObject(array.release(), wrapper);
+    return args.Holder();
+}
 
 // Template function used by the ArrayBufferView*Constructor callbacks.
 template<class ArrayClass, class ElementType>
@@ -73,18 +85,14 @@ v8::Handle<v8::Value> constructWebGLArrayWithArrayBufferArgument(const v8::Argum
     RefPtr<ArrayClass> array = ArrayClass::create(buf, offset, length);
     if (!array)
         return V8Proxy::setDOMException(INDEX_SIZE_ERR, args.GetIsolate());
-    // Transform the holder into a wrapper object for the array.
-    V8DOMWrapper::setDOMWrapper(args.Holder(), type, array.get());
-    if (hasIndexer)
-        args.Holder()->SetIndexedPropertiesToExternalArrayData(array.get()->baseAddress(), arrayType, array.get()->length());
-    v8::Persistent<v8::Object> wrapper = v8::Persistent<v8::Object>::New(args.Holder());
-    wrapper.MarkIndependent();
-    V8DOMWrapper::setJSWrapperForDOMObject(array.release(), wrapper);
-    return args.Holder();
+
+    return wrapArrayBufferView(args, type, array, arrayType, hasIndexer);
 }
 
+static const char* notSmallEnoughSize = "ArrayBufferView size is not a small enough positive integer.";
+
 // Template function used by the ArrayBufferView*Constructor callbacks.
-template<class ArrayClass, class ElementType>
+template<class ArrayClass, class JavaScriptWrapperArrayType, class ElementType>
 v8::Handle<v8::Value> constructWebGLArray(const v8::Arguments& args, WrapperTypeInfo* type, v8::ExternalArrayType arrayType)
 {
     if (!args.IsConstructCall())
@@ -104,15 +112,10 @@ v8::Handle<v8::Value> constructWebGLArray(const v8::Arguments& args, WrapperType
         // construct an empty view to avoid crashes when fetching the
         // length.
         RefPtr<ArrayClass> array = ArrayClass::create(0);
-        // Transform the holder into a wrapper object for the array.
-        V8DOMWrapper::setDOMWrapper(args.Holder(), type, array.get());
         // Do not call SetIndexedPropertiesToExternalArrayData on this
         // object. Not only is there no point from a performance
         // perspective, but doing so causes errors in the subset() case.
-        v8::Persistent<v8::Object> wrapper = v8::Persistent<v8::Object>::New(args.Holder());
-        wrapper.MarkIndependent();
-        V8DOMWrapper::setJSWrapperForDOMObject(array.release(), wrapper);
-        return args.Holder();
+        return wrapArrayBufferView(args, type, array, arrayType, false);
     }
 
     // Supported constructors:
@@ -134,6 +137,20 @@ v8::Handle<v8::Value> constructWebGLArray(const v8::Arguments& args, WrapperType
     if (V8ArrayBuffer::HasInstance(args[0]))
       return constructWebGLArrayWithArrayBufferArgument<ArrayClass, ElementType>(args, type, arrayType, true);
 
+    // See whether the first argument is the same type as impl. In that case,
+    // we can simply memcpy data from source to impl.
+    if (JavaScriptWrapperArrayType::HasInstance(args[0])) {
+        ArrayClass* source = JavaScriptWrapperArrayType::toNative(args[0]->ToObject());
+        uint32_t length = source->length();
+        RefPtr<ArrayClass> array = ArrayClass::createUninitialized(length);
+        if (!array.get())
+            return V8Proxy::throwError(V8Proxy::RangeError, notSmallEnoughSize, args.GetIsolate());
+
+        memcpy(array->baseAddress(), source->baseAddress(), length * sizeof(ElementType));
+
+        return wrapArrayBufferView(args, type, array, arrayType, true);
+    }
+
     uint32_t len = 0;
     v8::Handle<v8::Object> srcArray;
     bool doInstantiation = false;
@@ -154,10 +171,15 @@ v8::Handle<v8::Value> constructWebGLArray(const v8::Arguments& args, WrapperType
     }
 
     RefPtr<ArrayClass> array;
-    if (doInstantiation)
-        array = ArrayClass::create(len);
+    if (doInstantiation) {
+        if (srcArray.IsEmpty())
+            array = ArrayClass::create(len);
+        else
+            array = ArrayClass::createUninitialized(len);
+    }
+
     if (!array.get())
-        return V8Proxy::throwError(V8Proxy::RangeError, "ArrayBufferView size is not a small enough positive integer.", args.GetIsolate());
+        return V8Proxy::throwError(V8Proxy::RangeError, notSmallEnoughSize, args.GetIsolate());
 
 
     // Transform the holder into a wrapper object for the array.

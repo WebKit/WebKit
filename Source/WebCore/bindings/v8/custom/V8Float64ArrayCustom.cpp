@@ -40,7 +40,7 @@ v8::Handle<v8::Value> V8Float64Array::constructorCallback(const v8::Arguments& a
 {
     INC_STATS("DOM.Float64Array.Contructor");
 
-    return constructWebGLArray<Float64Array, double>(args, &info, v8::kExternalDoubleArray);
+    return constructWebGLArray<Float64Array, V8Float64Array, double>(args, &info, v8::kExternalDoubleArray);
 }
 
 v8::Handle<v8::Value> V8Float64Array::setCallback(const v8::Arguments& args)

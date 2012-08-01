@@ -44,7 +44,7 @@ v8::Handle<v8::Value> V8Uint8Array::constructorCallback(const v8::Arguments& arg
 {
     INC_STATS("DOM.Uint8Array.Contructor");
 
-    return constructWebGLArray<Uint8Array, unsigned char>(args, &info, v8::kExternalUnsignedByteArray);
+    return constructWebGLArray<Uint8Array, V8Uint8Array, unsigned char>(args, &info, v8::kExternalUnsignedByteArray);
 }
 
 v8::Handle<v8::Value> V8Uint8Array::setCallback(const v8::Arguments& args)

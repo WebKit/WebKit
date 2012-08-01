@@ -1,3 +1,48 @@
+2012-08-01  Arnaud Renevier  <a.renevier@sisa.samsung.com>
+
+        [V8] TypedArray binding performance improvements
+        https://bugs.webkit.org/show_bug.cgi?id=92557
+
+        Reviewed by Kenneth Russell.
+
+        Improve TypedArray bindings performance:
+        - create arrays with createUninitialized when possible. Typed Array
+        construction is about 10% faster.
+        - when creating a typed array from a same typed array, memcpy data
+        from source to target.
+
+        In order to detect if argument array is the same type as
+        implementation array, we pass the javascript wrapper type as a new
+        type argument to template function constructWebGLArray.
+
+        Introduce wrapArrayBufferView which wraps typed array into a v8::Value
+
+        No new tests: Performance tests are already handled by
+        Bindings/typed-array-construct-from-same-type.html and
+        Bindings/typed-array-construct-from-typed.html
+
+        * bindings/v8/custom/V8ArrayBufferViewCustom.h:
+        (WebCore):
+        (WebCore::constructWebGLArray):
+        * bindings/v8/custom/V8Float32ArrayCustom.cpp:
+        (WebCore::V8Float32Array::constructorCallback):
+        * bindings/v8/custom/V8Float64ArrayCustom.cpp:
+        (WebCore::V8Float64Array::constructorCallback):
+        * bindings/v8/custom/V8Int16ArrayCustom.cpp:
+        (WebCore::V8Int16Array::constructorCallback):
+        * bindings/v8/custom/V8Int32ArrayCustom.cpp:
+        (WebCore::V8Int32Array::constructorCallback):
+        * bindings/v8/custom/V8Int8ArrayCustom.cpp:
+        (WebCore::V8Int8Array::constructorCallback):
+        * bindings/v8/custom/V8Uint16ArrayCustom.cpp:
+        (WebCore::V8Uint16Array::constructorCallback):
+        * bindings/v8/custom/V8Uint32ArrayCustom.cpp:
+        (WebCore::V8Uint32Array::constructorCallback):
+        * bindings/v8/custom/V8Uint8ArrayCustom.cpp:
+        (WebCore::V8Uint8Array::constructorCallback):
+        * bindings/v8/custom/V8Uint8ClampedArrayCustom.cpp:
+        (WebCore::V8Uint8ClampedArray::constructorCallback):
+
 2012-08-01  Antoine Labour  <piman@chromium.org>
 
         [chromium] Fix lost context handling on hud layer
