@@ -1,3 +1,9 @@
+2012-07-31  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed.  Rolled DEPS.
+
+        * DEPS:
+
 2012-07-31  Shawn Singh  <shawnsingh@chromium.org>
 
         [chromium] Hit test points are being clipped by layers that should not clip
