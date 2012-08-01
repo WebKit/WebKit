@@ -1,3 +1,9 @@
+2012-08-01  Alexander Pavlov  <apavlov@chromium.org>
+
+        [Chromium] Unreviewed, suppress fast/forms/input-widths.html failure, which is due to r124314.
+
+        * platform/chromium/TestExpectations:
+
 2012-08-01  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unreviewed gardening, typo fix.

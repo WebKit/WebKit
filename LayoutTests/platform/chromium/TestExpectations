@@ -3503,3 +3503,6 @@ BUGWK82547 LION : fast/speech/input-appearance-searchandspeech.html = IMAGE PASS
 BUGWK92580 LINUX DEBUG : http/tests/websocket/tests/hybi/workers/close-code-and-reason.html = PASS CRASH
 
 BUGWK92582 LINUX DEBUG : media/video-currentTime-set2.html = PASS CRASH
+
+// Started failing after http://trac.webkit.org/changeset/124314
+BUGWK92863 : fast/forms/input-widths.html = TEXT
