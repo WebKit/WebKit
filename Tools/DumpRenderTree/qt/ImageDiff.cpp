@@ -119,7 +119,7 @@ int main(int argc, char* argv[])
                 if (difference <= tolerance) {
                     difference = 0;
                 } else {
-                    difference = qRound(difference * 100) / 100;
+                    difference = qRound(difference * 100) / 100.0f;
                     difference = qMax(difference, qreal(0.01));
                 }
 
