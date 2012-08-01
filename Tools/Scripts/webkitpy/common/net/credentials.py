@@ -131,7 +131,10 @@ class Credentials(object):
             return
         if not User().confirm("Store password in system keyring?", User.DEFAULT_NO):
             return
-        self._keyring.set_password(self.host, username, password)
+        try:
+            self._keyring.set_password(self.host, username, password)
+        except:
+            pass
 
     def read_credentials(self, user=User):
         username, password = self._credentials_from_environment()
@@ -146,7 +149,10 @@ class Credentials(object):
             username = user.prompt("%s login: " % self.host)
 
         if username and not password and self._keyring:
-            password = self._keyring.get_password(self.host, username)
+            try:
+                password = self._keyring.get_password(self.host, username)
+            except:
+                pass
 
         if not password:
             password = user.prompt_password("%s password for %s: " % (self.host, username))

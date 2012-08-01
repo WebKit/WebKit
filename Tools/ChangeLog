@@ -1,3 +1,17 @@
+2012-08-01  Arnaud Renevier  <a.renevier@sisa.samsung.com>
+
+        keyring.get_password may raise an exception.
+        https://bugs.webkit.org/show_bug.cgi?id=92876
+
+        Reviewed by Dirk Pranke.
+
+        keyring.get_password sometimes raises an exception. We wrap this call,
+        and also set_password to avoid breaking webkit-patch in that case.
+
+        * Scripts/webkitpy/common/net/credentials.py:
+        (Credentials._offer_to_store_credentials_in_keyring):
+        (Credentials.read_credentials):
+
 2012-08-01  Xianzhu Wang  <wangxianzhu@chromium.org>
 
         Layout Test fast/text/descent-clip-in-scaled-page.html is failing on linux since it was added
