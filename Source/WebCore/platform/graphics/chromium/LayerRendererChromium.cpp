@@ -204,8 +204,6 @@ bool LayerRendererChromium::initialize()
 
     m_capabilities.usingPartialSwap = CCSettings::partialSwapEnabled() && extensions.contains("GL_CHROMIUM_post_sub_buffer");
 
-    m_capabilities.usingMapSub = extensions.contains("GL_CHROMIUM_map_sub");
-
     // Use the swapBuffers callback only with the threaded proxy.
     if (CCProxy::hasImplThread())
         m_capabilities.usingSwapCompleteCallback = extensions.contains("GL_CHROMIUM_swapbuffers_complete_callback");
@@ -218,10 +216,6 @@ bool LayerRendererChromium::initialize()
     if (extensions.contains("GL_CHROMIUM_iosurface")) {
         ASSERT(extensions.contains("GL_ARB_texture_rectangle"));
     }
-
-    m_capabilities.usingTextureUsageHint = extensions.contains("GL_ANGLE_texture_usage");
-
-    m_capabilities.usingTextureStorageExtension = extensions.contains("GL_EXT_texture_storage");
 
     m_capabilities.usingGpuMemoryManager = extensions.contains("GL_CHROMIUM_gpu_memory_manager");
     if (m_capabilities.usingGpuMemoryManager)

@@ -125,12 +125,9 @@ struct LayerRendererCapabilities {
         : bestTextureFormat(0)
         , contextHasCachedFrontBuffer(false)
         , usingPartialSwap(false)
-        , usingMapSub(false)
         , usingAcceleratedPainting(false)
         , usingSetVisibility(false)
         , usingSwapCompleteCallback(false)
-        , usingTextureUsageHint(false)
-        , usingTextureStorageExtension(false)
         , usingGpuMemoryManager(false)
         , usingDiscardFramebuffer(false)
         , usingEglImage(false)
@@ -139,12 +136,9 @@ struct LayerRendererCapabilities {
     GC3Denum bestTextureFormat;
     bool contextHasCachedFrontBuffer;
     bool usingPartialSwap;
-    bool usingMapSub;
     bool usingAcceleratedPainting;
     bool usingSetVisibility;
     bool usingSwapCompleteCallback;
-    bool usingTextureUsageHint;
-    bool usingTextureStorageExtension;
     bool usingGpuMemoryManager;
     bool usingDiscardFramebuffer;
     bool usingEglImage;

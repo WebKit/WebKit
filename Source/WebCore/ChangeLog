@@ -1,3 +1,18 @@
+2012-08-01  Antoine Labour  <piman@chromium.org>
+
+        [chromium] remove unused fields from LayerRendererCapabilities
+        https://bugs.webkit.org/show_bug.cgi?id=92906
+
+        Reviewed by James Robinson.
+
+        No new tests (just removing dead code).
+
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::initialize):
+        * platform/graphics/chromium/cc/CCLayerTreeHost.h:
+        (WebCore::LayerRendererCapabilities::LayerRendererCapabilities):
+        (LayerRendererCapabilities):
+
 2012-08-01  James Robinson  <jamesr@chromium.org>
 
         [chromium] Move compositor HUD font atlas generation out of compositor core
