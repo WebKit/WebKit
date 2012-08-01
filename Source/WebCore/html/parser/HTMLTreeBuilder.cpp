@@ -1190,7 +1190,7 @@ void HTMLTreeBuilder::processStartTag(AtomicHTMLToken* token)
             || token->name() == titleTag) {
             parseError(token);
             ASSERT(m_tree.head());
-            m_tree.openElements()->pushHTMLHeadElement(HTMLStackItem::create(m_tree.head(), token));
+            m_tree.openElements()->pushHTMLHeadElement(m_tree.headStackItem());
             processStartTagForInHead(token);
             m_tree.openElements()->removeHTMLHeadElement(m_tree.head());
             return;

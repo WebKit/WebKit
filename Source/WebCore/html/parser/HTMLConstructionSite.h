@@ -118,7 +118,8 @@ public:
     HTMLElementStack* openElements() const { return &m_openElements; }
     HTMLFormattingElementList* activeFormattingElements() const { return &m_activeFormattingElements; }
 
-    Element* head() const { return m_head.get(); }
+    Element* head() const { return m_head->element(); }
+    HTMLStackItem* headStackItem() const { return m_head.get(); }
 
     void setForm(HTMLFormElement*);
     HTMLFormElement* form() const { return m_form.get(); }
@@ -166,7 +167,7 @@ private:
     // and a Document in all other cases.
     ContainerNode* m_attachmentRoot;
     
-    RefPtr<Element> m_head;
+    RefPtr<HTMLStackItem> m_head;
     RefPtr<HTMLFormElement> m_form;
     mutable HTMLElementStack m_openElements;
     mutable HTMLFormattingElementList m_activeFormattingElements;

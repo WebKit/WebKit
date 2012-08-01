@@ -1,3 +1,28 @@
+2012-08-01  Kwang Yul Seo  <skyul@company100.net>
+
+        HTMLTreeBuilder passes a wrong token when pushing the head element
+        https://bugs.webkit.org/show_bug.cgi?id=92838
+
+        Reviewed by Adam Barth.
+
+        When the tree builder pushes the head element in the "after head" insertion mode,
+        it creates a HTMLStackItem from a wrong token.
+
+        Added HTMLConstructionSite::headStackItem() to retrieve the stack item for the head
+        element. Modified the tree builder to pass the correct stack item when pushing the head
+        element in the "after head" insertion mode.
+
+        No new tests, covered by existing tests.
+
+        * html/parser/HTMLConstructionSite.cpp:
+        (WebCore::HTMLConstructionSite::insertHTMLHeadElement):
+        * html/parser/HTMLConstructionSite.h:
+        (WebCore::HTMLConstructionSite::head):
+        (WebCore::HTMLConstructionSite::headStackItem):
+        (HTMLConstructionSite):
+        * html/parser/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::processStartTag):
+
 2012-08-01  Andrei Bucur  <abucur@adobe.com>
 
         [CSS Regions] The regionLayoutUpdate event should be dispatched on the NamedFlow object

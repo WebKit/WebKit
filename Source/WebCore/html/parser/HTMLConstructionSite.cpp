@@ -277,9 +277,9 @@ void HTMLConstructionSite::insertCommentOnHTMLHtmlElement(AtomicHTMLToken* token
 void HTMLConstructionSite::insertHTMLHeadElement(AtomicHTMLToken* token)
 {
     ASSERT(!shouldFosterParent());
-    m_head = createHTMLElement(token);
-    attachLater(currentNode(), m_head);
-    m_openElements.pushHTMLHeadElement(HTMLStackItem::create(m_head, token));
+    m_head = HTMLStackItem::create(createHTMLElement(token), token);
+    attachLater(currentNode(), m_head->element());
+    m_openElements.pushHTMLHeadElement(m_head);
 }
 
 void HTMLConstructionSite::insertHTMLBodyElement(AtomicHTMLToken* token)
