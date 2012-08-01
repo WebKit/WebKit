@@ -1,5 +1,75 @@
 2012-07-31  Dirk Pranke  <dpranke@chromium.org>
 
+        nrwt: move sharding logic into layout_test_runner.py
+        https://bugs.webkit.org/show_bug.cgi?id=92805
+
+        Reviewed by Ryosuke Niwa.
+
+        The sharding logic is specific to how we actually run the tests,
+        so it belongs in this file instead of manager.py or finder.py.
+
+        * Scripts/webkitpy/layout_tests/controllers/layout_test_runner.py:
+        (Worker._run_single_test):
+        (TestShard):
+        (TestShard.__init__):
+        (TestShard.__repr__):
+        (TestShard.__eq__):
+        (Sharder):
+        (Sharder.__init__):
+        (Sharder.shard_tests):
+        (Sharder.shard_tests.or):
+        (Sharder._shard_in_two):
+        (Sharder._shard_every_file):
+        (Sharder._shard_by_directory):
+        (Sharder._resize_shards):
+        (Sharder._resize_shards.divide_and_round_up):
+        (Sharder._resize_shards.extract_and_flatten):
+        (Sharder._resize_shards.split_at):
+        (Sharder._dir_for_test_input):
+        (Sharder.test_key):
+        (Sharder.natural_sort_key):
+        (Sharder.natural_sort_key.tryint):
+        * Scripts/webkitpy/layout_tests/controllers/layout_test_runner_unittest.py: Added.
+        (SharderTests):
+        (SharderTests.get_test_input):
+        (SharderTests.get_shards):
+        (SharderTests.get_shards.split):
+        (SharderTests.assert_shards):
+        (SharderTests.test_shard_by_dir):
+        (SharderTests.test_shard_by_dir_sharding_ref_tests):
+        (SharderTests.test_shard_every_file):
+        (SharderTests.test_shard_in_two):
+        (SharderTests.test_shard_in_two_sharding_ref_tests):
+        (SharderTests.test_shard_in_two_has_no_locked_shards):
+        (SharderTests.test_shard_in_two_has_no_unlocked_shards):
+        (SharderTests.test_multiple_locked_shards):
+        (NaturalCompareTest):
+        (NaturalCompareTest.assert_cmp):
+        (NaturalCompareTest.test_natural_compare):
+        (KeyCompareTest):
+        (KeyCompareTest.setUp):
+        (KeyCompareTest.setUp.split):
+        (KeyCompareTest.assert_cmp):
+        (KeyCompareTest.test_test_key):
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        (Manager.__init__):
+        (Manager._prepare_lists):
+        (Manager._is_ref_test):
+        (Manager._run_tests):
+        (Manager._handle_finished_test):
+        * Scripts/webkitpy/layout_tests/controllers/manager_unittest.py:
+        (ManagerTest.get_options):
+        (ManagerTest.test_interrupt_if_at_failure_limits):
+        (ManagerTest.test_update_summary_with_result):
+        (ManagerTest.test_needs_servers.get_manager_with_tests):
+        (ManagerTest.integration_test_needs_servers.get_manager_with_tests):
+        (ManagerTest.test_look_for_new_crash_logs.get_manager_with_tests):
+        (ManagerTest.test_servers_started):
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        (parse_args):
+
+2012-07-31  Dirk Pranke  <dpranke@chromium.org>
+
         nrwt: rename worker.py to layout_test_runner.py
         https://bugs.webkit.org/show_bug.cgi?id=92804
 

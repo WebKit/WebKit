@@ -420,7 +420,7 @@ def parse_args(args=None):
         optparse.make_option("--no-retry-failures", action="store_false",
             dest="retry_failures",
             help="Don't re-try any tests that produce unexpected results."),
-        optparse.make_option("--max-locked-shards", type="int",
+        optparse.make_option("--max-locked-shards", type="int", default=1,
             help="Set the maximum number of locked shards"),
         # For chromium-android to reduce the cost of restarting the driver.
         # FIXME: Remove the option once per-test arg is supported:

@@ -44,7 +44,7 @@ from webkitpy.layout_tests.port import port_testcase
 from webkitpy import layout_tests
 from webkitpy.layout_tests import run_webkit_tests
 from webkitpy.layout_tests.controllers import manager
-from webkitpy.layout_tests.controllers.manager import interpret_test_failures,  Manager, natural_sort_key, test_key, TestRunInterruptedException, TestShard
+from webkitpy.layout_tests.controllers.manager import interpret_test_failures,  Manager, TestRunInterruptedException
 from webkitpy.layout_tests.models import test_expectations
 from webkitpy.layout_tests.models import test_failures
 from webkitpy.layout_tests.models import test_results
@@ -56,176 +56,6 @@ from webkitpy.layout_tests.views import printing
 from webkitpy.tool.mocktool import MockOptions
 from webkitpy.common.system.executive_mock import MockExecutive
 from webkitpy.common.host_mock import MockHost
-
-
-class ManagerWrapper(Manager):
-    def __init__(self, ref_tests, **kwargs):
-        Manager.__init__(self, **kwargs)
-        self._ref_tests = ref_tests
-
-    def _test_input_for_file(self, test_file):
-        return TestInput(test_file, reference_files=(['foo'] if test_file in self._ref_tests else None),
-            requires_lock=(test_file.startswith('http') or test_file.startswith('perf')))
-
-
-class ShardingTests(unittest.TestCase):
-    test_list = [
-        "http/tests/websocket/tests/unicode.htm",
-        "animations/keyframes.html",
-        "http/tests/security/view-source-no-refresh.html",
-        "http/tests/websocket/tests/websocket-protocol-ignored.html",
-        "fast/css/display-none-inline-style-change-crash.html",
-        "http/tests/xmlhttprequest/supported-xml-content-types.html",
-        "dom/html/level2/html/HTMLAnchorElement03.html",
-        "ietestcenter/Javascript/11.1.5_4-4-c-1.html",
-        "dom/html/level2/html/HTMLAnchorElement06.html",
-        "perf/object-keys.html",
-    ]
-
-    ref_tests = [
-        "http/tests/security/view-source-no-refresh.html",
-        "http/tests/websocket/tests/websocket-protocol-ignored.html",
-        "ietestcenter/Javascript/11.1.5_4-4-c-1.html",
-        "dom/html/level2/html/HTMLAnchorElement06.html",
-    ]
-
-    def get_shards(self, num_workers, fully_parallel, shard_ref_tests=False, test_list=None, max_locked_shards=None):
-        test_list = test_list or self.test_list
-        host = MockHost()
-        port = host.port_factory.get(port_name='test')
-        port._filesystem = MockFileSystem()
-        options = MockOptions(max_locked_shards=max_locked_shards)
-        self.manager = ManagerWrapper(self.ref_tests, port=port, options=options, printer=Mock())
-        return self.manager._shard_tests([self.manager._test_input_for_file(test) for test in test_list], num_workers, fully_parallel, shard_ref_tests)
-
-    def assert_shards(self, actual_shards, expected_shard_names):
-        self.assertEquals(len(actual_shards), len(expected_shard_names))
-        for i, shard in enumerate(actual_shards):
-            expected_shard_name, expected_test_names = expected_shard_names[i]
-            self.assertEquals(shard.name, expected_shard_name)
-            self.assertEquals([test_input.test_name for test_input in shard.test_inputs],
-                              expected_test_names)
-
-    def test_shard_by_dir(self):
-        locked, unlocked = self.get_shards(num_workers=2, fully_parallel=False)
-
-        # Note that although there are tests in multiple dirs that need locks,
-        # they are crammed into a single shard in order to reduce the # of
-        # workers hitting the server at once.
-        self.assert_shards(locked,
-             [('locked_shard_1',
-               ['http/tests/security/view-source-no-refresh.html',
-                'http/tests/websocket/tests/unicode.htm',
-                'http/tests/websocket/tests/websocket-protocol-ignored.html',
-                'http/tests/xmlhttprequest/supported-xml-content-types.html',
-                'perf/object-keys.html'])])
-        self.assert_shards(unlocked,
-            [('animations', ['animations/keyframes.html']),
-             ('dom/html/level2/html', ['dom/html/level2/html/HTMLAnchorElement03.html',
-                                      'dom/html/level2/html/HTMLAnchorElement06.html']),
-             ('fast/css', ['fast/css/display-none-inline-style-change-crash.html']),
-             ('ietestcenter/Javascript', ['ietestcenter/Javascript/11.1.5_4-4-c-1.html'])])
-
-    def test_shard_by_dir_sharding_ref_tests(self):
-        locked, unlocked = self.get_shards(num_workers=2, fully_parallel=False, shard_ref_tests=True)
-
-        # Note that although there are tests in multiple dirs that need locks,
-        # they are crammed into a single shard in order to reduce the # of
-        # workers hitting the server at once.
-        self.assert_shards(locked,
-            [('locked_shard_1',
-              ['http/tests/websocket/tests/unicode.htm',
-               'http/tests/xmlhttprequest/supported-xml-content-types.html',
-               'perf/object-keys.html',
-               'http/tests/security/view-source-no-refresh.html',
-               'http/tests/websocket/tests/websocket-protocol-ignored.html'])])
-        self.assert_shards(unlocked,
-            [('animations', ['animations/keyframes.html']),
-             ('dom/html/level2/html', ['dom/html/level2/html/HTMLAnchorElement03.html']),
-             ('fast/css', ['fast/css/display-none-inline-style-change-crash.html']),
-             ('~ref:dom/html/level2/html', ['dom/html/level2/html/HTMLAnchorElement06.html']),
-             ('~ref:ietestcenter/Javascript', ['ietestcenter/Javascript/11.1.5_4-4-c-1.html'])])
-
-    def test_shard_every_file(self):
-        locked, unlocked = self.get_shards(num_workers=2, fully_parallel=True)
-        self.assert_shards(locked,
-            [('.', ['http/tests/websocket/tests/unicode.htm']),
-             ('.', ['http/tests/security/view-source-no-refresh.html']),
-             ('.', ['http/tests/websocket/tests/websocket-protocol-ignored.html']),
-             ('.', ['http/tests/xmlhttprequest/supported-xml-content-types.html']),
-             ('.', ['perf/object-keys.html'])]),
-        self.assert_shards(unlocked,
-            [('.', ['animations/keyframes.html']),
-             ('.', ['fast/css/display-none-inline-style-change-crash.html']),
-             ('.', ['dom/html/level2/html/HTMLAnchorElement03.html']),
-             ('.', ['ietestcenter/Javascript/11.1.5_4-4-c-1.html']),
-             ('.', ['dom/html/level2/html/HTMLAnchorElement06.html'])])
-
-    def test_shard_in_two(self):
-        locked, unlocked = self.get_shards(num_workers=1, fully_parallel=False)
-        self.assert_shards(locked,
-            [('locked_tests',
-              ['http/tests/websocket/tests/unicode.htm',
-               'http/tests/security/view-source-no-refresh.html',
-               'http/tests/websocket/tests/websocket-protocol-ignored.html',
-               'http/tests/xmlhttprequest/supported-xml-content-types.html',
-               'perf/object-keys.html'])])
-        self.assert_shards(unlocked,
-            [('unlocked_tests',
-              ['animations/keyframes.html',
-               'fast/css/display-none-inline-style-change-crash.html',
-               'dom/html/level2/html/HTMLAnchorElement03.html',
-               'ietestcenter/Javascript/11.1.5_4-4-c-1.html',
-               'dom/html/level2/html/HTMLAnchorElement06.html'])])
-
-    def test_shard_in_two_sharding_ref_tests(self):
-        locked, unlocked = self.get_shards(num_workers=1, fully_parallel=False, shard_ref_tests=True)
-        self.assert_shards(locked,
-            [('locked_tests',
-              ['http/tests/websocket/tests/unicode.htm',
-               'http/tests/xmlhttprequest/supported-xml-content-types.html',
-               'perf/object-keys.html',
-               'http/tests/security/view-source-no-refresh.html',
-               'http/tests/websocket/tests/websocket-protocol-ignored.html'])])
-        self.assert_shards(unlocked,
-            [('unlocked_tests',
-              ['animations/keyframes.html',
-               'fast/css/display-none-inline-style-change-crash.html',
-               'dom/html/level2/html/HTMLAnchorElement03.html',
-               'ietestcenter/Javascript/11.1.5_4-4-c-1.html',
-               'dom/html/level2/html/HTMLAnchorElement06.html'])])
-
-    def test_shard_in_two_has_no_locked_shards(self):
-        locked, unlocked = self.get_shards(num_workers=1, fully_parallel=False,
-             test_list=['animations/keyframe.html'])
-        self.assertEquals(len(locked), 0)
-        self.assertEquals(len(unlocked), 1)
-
-    def test_shard_in_two_has_no_unlocked_shards(self):
-        locked, unlocked = self.get_shards(num_workers=1, fully_parallel=False,
-             test_list=['http/tests/websocket/tests/unicode.htm'])
-        self.assertEquals(len(locked), 1)
-        self.assertEquals(len(unlocked), 0)
-
-    def test_multiple_locked_shards(self):
-        locked, unlocked = self.get_shards(num_workers=4, fully_parallel=False, max_locked_shards=2)
-        self.assert_shards(locked,
-            [('locked_shard_1',
-              ['http/tests/security/view-source-no-refresh.html',
-               'http/tests/websocket/tests/unicode.htm',
-               'http/tests/websocket/tests/websocket-protocol-ignored.html']),
-             ('locked_shard_2',
-              ['http/tests/xmlhttprequest/supported-xml-content-types.html',
-               'perf/object-keys.html'])])
-
-        locked, unlocked = self.get_shards(num_workers=4, fully_parallel=False)
-        self.assert_shards(locked,
-            [('locked_shard_1',
-              ['http/tests/security/view-source-no-refresh.html',
-               'http/tests/websocket/tests/unicode.htm',
-               'http/tests/websocket/tests/websocket-protocol-ignored.html',
-               'http/tests/xmlhttprequest/supported-xml-content-types.html',
-               'perf/object-keys.html'])])
 
 
 class LockCheckingManager(Manager):
@@ -251,7 +81,7 @@ class LockCheckingManager(Manager):
 
 class ManagerTest(unittest.TestCase):
     def get_options(self):
-        return MockOptions(pixel_tests=False, new_baseline=False, time_out_ms=6000, slow_time_out_ms=30000, worker_model='inline')
+        return MockOptions(pixel_tests=False, new_baseline=False, time_out_ms=6000, slow_time_out_ms=30000, worker_model='inline', max_locked_shards=1)
 
     def test_http_locking(tester):
         options, args = run_webkit_tests.parse_args(['--platform=test', '--print=nothing', 'http/tests/passes', 'passes'])
@@ -279,9 +109,9 @@ class ManagerTest(unittest.TestCase):
         port = Mock()  # FIXME: This should be a tighter mock.
         port.TEST_PATH_SEPARATOR = '/'
         port._filesystem = MockFileSystem()
-        manager = Manager(port=port, options=MockOptions(), printer=Mock())
+        manager = Manager(port=port, options=MockOptions(max_locked_shards=1), printer=Mock())
 
-        manager._options = MockOptions(exit_after_n_failures=None, exit_after_n_crashes_or_timeouts=None)
+        manager._options = MockOptions(exit_after_n_failures=None, exit_after_n_crashes_or_timeouts=None, max_locked_shards=1)
         manager._test_names = ['foo/bar.html', 'baz.html']
         manager._test_is_slow = lambda test_name: False
 
@@ -315,7 +145,7 @@ class ManagerTest(unittest.TestCase):
         port.expectations_dict = lambda: {'': 'WONTFIX : failures/expected/reftest.html = IMAGE'}
         expectations = TestExpectations(port, tests=[test])
         # Reftests expected to be image mismatch should be respected when pixel_tests=False.
-        manager = Manager(port=port, options=MockOptions(pixel_tests=False, exit_after_n_failures=None, exit_after_n_crashes_or_timeouts=None), printer=Mock())
+        manager = Manager(port=port, options=MockOptions(pixel_tests=False, exit_after_n_failures=None, exit_after_n_crashes_or_timeouts=None, max_locked_shards=1), printer=Mock())
         manager._expectations = expectations
         result_summary = ResultSummary(expectations, [test], 1, set())
         result = TestResult(test_name=test, failures=[test_failures.FailureReftestMismatchDidNotOccur()])
@@ -327,7 +157,7 @@ class ManagerTest(unittest.TestCase):
         def get_manager_with_tests(test_names):
             port = Mock()  # FIXME: Use a tighter mock.
             port.TEST_PATH_SEPARATOR = '/'
-            manager = Manager(port, options=MockOptions(http=True), printer=Mock())
+            manager = Manager(port, options=MockOptions(http=True, max_locked_shards=1), printer=Mock())
             manager._test_names = test_names
             return manager
 
@@ -341,7 +171,7 @@ class ManagerTest(unittest.TestCase):
         def get_manager_with_tests(test_names):
             host = MockHost()
             port = host.port_factory.get()
-            manager = Manager(port, options=MockOptions(test_list=None, http=True), printer=Mock())
+            manager = Manager(port, options=MockOptions(test_list=None, http=True, max_locked_shards=1), printer=Mock())
             manager._collect_tests(test_names)
             return manager
 
@@ -362,7 +192,7 @@ class ManagerTest(unittest.TestCase):
         def get_manager_with_tests(test_names):
             host = MockHost()
             port = host.port_factory.get('test-mac-leopard')
-            manager = Manager(port, options=MockOptions(test_list=None, http=True), printer=Mock())
+            manager = Manager(port, options=MockOptions(test_list=None, http=True, max_locked_shards=1), printer=Mock())
             manager._collect_tests(test_names)
             return manager
         host = MockHost()
@@ -395,7 +225,7 @@ class ManagerTest(unittest.TestCase):
         port.stop_websocket_server = stop_websocket_server
 
         self.http_started = self.http_stopped = self.websocket_started = self.websocket_stopped = False
-        manager = Manager(port=port, options=MockOptions(http=True), printer=Mock())
+        manager = Manager(port=port, options=MockOptions(http=True, max_locked_shards=1), printer=Mock())
         manager._test_names = ['http/tests/pass.txt']
         manager.start_servers_with_lock(number_of_servers=4)
         self.assertEquals(self.http_started, True)
@@ -405,7 +235,7 @@ class ManagerTest(unittest.TestCase):
         self.assertEquals(self.websocket_stopped, False)
 
         self.http_started = self.http_stopped = self.websocket_started = self.websocket_stopped = False
-        manager = Manager(port=port, options=MockOptions(http=True), printer=Mock())
+        manager = Manager(port=port, options=MockOptions(http=True, max_locked_shards=1), printer=Mock())
         manager._test_names = ['websocket/pass.txt']
         manager.start_servers_with_lock(number_of_servers=4)
         self.assertEquals(self.http_started, True)
@@ -415,7 +245,7 @@ class ManagerTest(unittest.TestCase):
         self.assertEquals(self.websocket_stopped, True)
 
         self.http_started = self.http_stopped = self.websocket_started = self.websocket_stopped = False
-        manager = Manager(port=port, options=MockOptions(http=True), printer=Mock())
+        manager = Manager(port=port, options=MockOptions(http=True, max_locked_shards=1), printer=Mock())
         manager._test_names = ['perf/foo/test.html']
         manager.start_servers_with_lock(number_of_servers=4)
         self.assertEquals(self.http_started, False)
@@ -424,47 +254,6 @@ class ManagerTest(unittest.TestCase):
         self.assertEquals(self.http_stopped, False)
         self.assertEquals(self.websocket_stopped, False)
 
-
-
-class NaturalCompareTest(unittest.TestCase):
-    def assert_cmp(self, x, y, result):
-        self.assertEquals(cmp(natural_sort_key(x), natural_sort_key(y)), result)
-
-    def test_natural_compare(self):
-        self.assert_cmp('a', 'a', 0)
-        self.assert_cmp('ab', 'a', 1)
-        self.assert_cmp('a', 'ab', -1)
-        self.assert_cmp('', '', 0)
-        self.assert_cmp('', 'ab', -1)
-        self.assert_cmp('1', '2', -1)
-        self.assert_cmp('2', '1', 1)
-        self.assert_cmp('1', '10', -1)
-        self.assert_cmp('2', '10', -1)
-        self.assert_cmp('foo_1.html', 'foo_2.html', -1)
-        self.assert_cmp('foo_1.1.html', 'foo_2.html', -1)
-        self.assert_cmp('foo_1.html', 'foo_10.html', -1)
-        self.assert_cmp('foo_2.html', 'foo_10.html', -1)
-        self.assert_cmp('foo_23.html', 'foo_10.html', 1)
-        self.assert_cmp('foo_23.html', 'foo_100.html', -1)
-
-
-class KeyCompareTest(unittest.TestCase):
-    def setUp(self):
-        host = MockHost()
-        self.port = host.port_factory.get('test')
-
-    def assert_cmp(self, x, y, result):
-        self.assertEquals(cmp(test_key(self.port, x), test_key(self.port, y)), result)
-
-    def test_test_key(self):
-        self.assert_cmp('/a', '/a', 0)
-        self.assert_cmp('/a', '/b', -1)
-        self.assert_cmp('/a2', '/a10', -1)
-        self.assert_cmp('/a2/foo', '/a10/foo', -1)
-        self.assert_cmp('/a/foo11', '/a/foo2', 1)
-        self.assert_cmp('/ab', '/a/a/b', -1)
-        self.assert_cmp('/a/a/b', '/ab', 1)
-        self.assert_cmp('/foo-bar/baz', '/foo/baz', -1)
 
 
 class ResultSummaryTest(unittest.TestCase):

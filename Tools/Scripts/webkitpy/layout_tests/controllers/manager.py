@@ -45,7 +45,7 @@ import sys
 import time
 
 from webkitpy.common import message_pool
-from webkitpy.layout_tests.controllers.layout_test_runner import Worker
+from webkitpy.layout_tests.controllers.layout_test_runner import Worker, Sharder
 from webkitpy.layout_tests.controllers.finder import LayoutTestFinder
 from webkitpy.layout_tests.controllers.test_result_writer import TestResultWriter
 from webkitpy.layout_tests.layout_package import json_layout_results_generator
@@ -269,22 +269,6 @@ class TestRunInterruptedException(Exception):
 WorkerException = message_pool.WorkerException
 
 
-class TestShard(object):
-    """A test shard is a named list of TestInputs."""
-
-    # FIXME: Make this class visible, used by workers as well.
-    def __init__(self, name, test_inputs):
-        self.name = name
-        self.test_inputs = test_inputs
-        self.requires_lock = test_inputs[0].requires_lock
-
-    def __repr__(self):
-        return "TestShard(name='%s', test_inputs=%s', requires_lock=%s)" % (self.name, self.test_inputs, self.requires_lock)
-
-    def __eq__(self, other):
-        return self.name == other.name and self.test_inputs == other.test_inputs
-
-
 class Manager(object):
     """A class for managing running a series of tests on a series of layout
     test files."""
@@ -329,6 +313,7 @@ class Manager(object):
         self._worker_stats = {}
         self._current_result_summary = None
         self._finder = LayoutTestFinder(self._port, self._options)
+        self._sharder = Sharder(self._port.split_test, self._port.TEST_PATH_SEPARATOR, self._options.max_locked_shards)
 
     def _collect_tests(self, args):
         return self._finder.find_tests(self._options, args)
@@ -354,7 +339,7 @@ class Manager(object):
         if self._options.randomize_order:
             random.shuffle(self._test_names)
         else:
-            self._test_names.sort(key=lambda test: test_key(self._port, test))
+            self._test_names.sort(key=self._sharder.test_key)
 
         self._test_names, tests_in_other_chunks = self._finder.split_into_chunks(self._test_names)
         self._expectations.add_skipped_tests(tests_in_other_chunks)
@@ -371,17 +356,6 @@ class Manager(object):
 
         iterations = self._options.repeat_each * self._options.iterations
         return ResultSummary(self._expectations, set(self._test_names), iterations, tests_to_skip)
-
-    def _dir_for_test_input(self, test_input):
-        """Returns the highest-level directory by which to shard the given
-        test file."""
-        directory, test_file = self._port.split_test(test_input.test_name)
-
-        # The http tests are very stable on mac/linux.
-        # TODO(ojan): Make the http server on Windows be apache so we can
-        # turn shard the http tests there as well. Switching to apache is
-        # what made them stable on linux/mac.
-        return directory
 
     def _test_input_for_file(self, test_file):
         return TestInput(test_file,
@@ -404,164 +378,6 @@ class Manager(object):
             # Lazy initialization.
             test_input.reference_files = self._port.reference_files(test_input.test_name)
         return bool(test_input.reference_files)
-
-    def _shard_tests(self, test_inputs, num_workers, fully_parallel, shard_ref_tests):
-        """Groups tests into batches.
-        This helps ensure that tests that depend on each other (aka bad tests!)
-        continue to run together as most cross-tests dependencies tend to
-        occur within the same directory.
-        Return:
-            Two list of TestShards. The first contains tests that must only be
-            run under the server lock, the second can be run whenever.
-        """
-
-        # FIXME: Move all of the sharding logic out of manager into its
-        # own class or module. Consider grouping it with the chunking logic
-        # in prepare_lists as well.
-        if num_workers == 1:
-            return self._shard_in_two(test_inputs, shard_ref_tests)
-        elif fully_parallel:
-            return self._shard_every_file(test_inputs)
-        return self._shard_by_directory(test_inputs, num_workers, shard_ref_tests)
-
-    def _shard_in_two(self, test_inputs, shard_ref_tests):
-        """Returns two lists of shards, one with all the tests requiring a lock and one with the rest.
-
-        This is used when there's only one worker, to minimize the per-shard overhead."""
-        locked_inputs = []
-        locked_ref_test_inputs = []
-        unlocked_inputs = []
-        unlocked_ref_test_inputs = []
-        for test_input in test_inputs:
-            if test_input.requires_lock:
-                if shard_ref_tests and test_input.reference_files:
-                    locked_ref_test_inputs.append(test_input)
-                else:
-                    locked_inputs.append(test_input)
-            else:
-                if shard_ref_tests and test_input.reference_files:
-                    unlocked_ref_test_inputs.append(test_input)
-                else:
-                    unlocked_inputs.append(test_input)
-        locked_inputs.extend(locked_ref_test_inputs)
-        unlocked_inputs.extend(unlocked_ref_test_inputs)
-
-        locked_shards = []
-        unlocked_shards = []
-        if locked_inputs:
-            locked_shards = [TestShard('locked_tests', locked_inputs)]
-        if unlocked_inputs:
-            unlocked_shards.append(TestShard('unlocked_tests', unlocked_inputs))
-
-        return locked_shards, unlocked_shards
-
-    def _shard_every_file(self, test_inputs):
-        """Returns two lists of shards, each shard containing a single test file.
-
-        This mode gets maximal parallelism at the cost of much higher flakiness."""
-        locked_shards = []
-        unlocked_shards = []
-        for test_input in test_inputs:
-            # Note that we use a '.' for the shard name; the name doesn't really
-            # matter, and the only other meaningful value would be the filename,
-            # which would be really redundant.
-            if test_input.requires_lock:
-                locked_shards.append(TestShard('.', [test_input]))
-            else:
-                unlocked_shards.append(TestShard('.', [test_input]))
-
-        return locked_shards, unlocked_shards
-
-    def _shard_by_directory(self, test_inputs, num_workers, shard_ref_tests):
-        """Returns two lists of shards, each shard containing all the files in a directory.
-
-        This is the default mode, and gets as much parallelism as we can while
-        minimizing flakiness caused by inter-test dependencies."""
-        locked_shards = []
-        unlocked_shards = []
-        tests_by_dir = {}
-        ref_tests_by_dir = {}
-        # FIXME: Given that the tests are already sorted by directory,
-        # we can probably rewrite this to be clearer and faster.
-        for test_input in test_inputs:
-            directory = self._dir_for_test_input(test_input)
-            if shard_ref_tests and test_input.reference_files:
-                ref_tests_by_dir.setdefault(directory, [])
-                ref_tests_by_dir[directory].append(test_input)
-            else:
-                tests_by_dir.setdefault(directory, [])
-                tests_by_dir[directory].append(test_input)
-
-        for directory, test_inputs in tests_by_dir.iteritems():
-            shard = TestShard(directory, test_inputs)
-            if shard.requires_lock:
-                locked_shards.append(shard)
-            else:
-                unlocked_shards.append(shard)
-
-        for directory, test_inputs in ref_tests_by_dir.iteritems():
-            # '~' to place the ref tests after other tests after sorted.
-            shard = TestShard('~ref:' + directory, test_inputs)
-            if shard.requires_lock:
-                locked_shards.append(shard)
-            else:
-                unlocked_shards.append(shard)
-
-        # Sort the shards by directory name.
-        locked_shards.sort(key=lambda shard: shard.name)
-        unlocked_shards.sort(key=lambda shard: shard.name)
-
-        return (self._resize_shards(locked_shards, self._max_locked_shards(num_workers),
-                                    'locked_shard'),
-                unlocked_shards)
-
-    def _max_locked_shards(self, num_workers):
-        # Put a ceiling on the number of locked shards, so that we
-        # don't hammer the servers too badly.
-
-        # FIXME: For now, limit to one shard or set it
-        # with the --max-locked-shards. After testing to make sure we
-        # can handle multiple shards, we should probably do something like
-        # limit this to no more than a quarter of all workers, e.g.:
-        # return max(math.ceil(num_workers / 4.0), 1)
-        if self._options.max_locked_shards:
-            num_of_locked_shards = self._options.max_locked_shards
-        else:
-            num_of_locked_shards = 1
-
-        return num_of_locked_shards
-
-    def _resize_shards(self, old_shards, max_new_shards, shard_name_prefix):
-        """Takes a list of shards and redistributes the tests into no more
-        than |max_new_shards| new shards."""
-
-        # This implementation assumes that each input shard only contains tests from a
-        # single directory, and that tests in each shard must remain together; as a
-        # result, a given input shard is never split between output shards.
-        #
-        # Each output shard contains the tests from one or more input shards and
-        # hence may contain tests from multiple directories.
-
-        def divide_and_round_up(numerator, divisor):
-            return int(math.ceil(float(numerator) / divisor))
-
-        def extract_and_flatten(shards):
-            test_inputs = []
-            for shard in shards:
-                test_inputs.extend(shard.test_inputs)
-            return test_inputs
-
-        def split_at(seq, index):
-            return (seq[:index], seq[index:])
-
-        num_old_per_new = divide_and_round_up(len(old_shards), max_new_shards)
-        new_shards = []
-        remaining_shards = old_shards
-        while remaining_shards:
-            some_shards, remaining_shards = split_at(remaining_shards, num_old_per_new)
-            new_shards.append(TestShard('%s_%d' % (shard_name_prefix, len(new_shards) + 1),
-                                        extract_and_flatten(some_shards)))
-        return new_shards
 
     def _run_tests(self, file_list, result_summary, num_workers):
         """Runs the tests in the file_list.
@@ -589,7 +405,7 @@ class Manager(object):
 
         self._printer.write_update('Sharding tests ...')
         test_inputs = [self._test_input_for_file(file) for file in file_list]
-        locked_shards, unlocked_shards = self._shard_tests(test_inputs, int(self._options.child_processes), self._options.fully_parallel, self._options.shard_ref_tests)
+        locked_shards, unlocked_shards = self._sharder.shard_tests(test_inputs, int(self._options.child_processes), self._options.fully_parallel, self._options.shard_ref_tests)
 
         # FIXME: We don't have a good way to coordinate the workers so that
         # they don't try to run the shards that need a lock if we don't actually
@@ -996,33 +812,3 @@ class Manager(object):
         self._worker_stats[worker_name]['num_tests'] += 1
         self._all_results.append(result)
         self._update_summary_with_result(self._current_result_summary, result)
-
-
-# FIXME: These two free functions belong either on manager (since it's the only one
-# which uses them) or in a different file (if they need to be re-used).
-def test_key(port, test_name):
-    """Turns a test name into a list with two sublists, the natural key of the
-    dirname, and the natural key of the basename.
-
-    This can be used when sorting paths so that files in a directory.
-    directory are kept together rather than being mixed in with files in
-    subdirectories."""
-    dirname, basename = port.split_test(test_name)
-    return (natural_sort_key(dirname + port.TEST_PATH_SEPARATOR), natural_sort_key(basename))
-
-
-def natural_sort_key(string_to_split):
-    """ Turn a string into a list of string and number chunks.
-        "z23a" -> ["z", 23, "a"]
-
-        Can be used to implement "natural sort" order. See:
-            http://www.codinghorror.com/blog/2007/12/sorting-for-humans-natural-sort-order.html
-            http://nedbatchelder.com/blog/200712.html#e20071211T054956
-    """
-    def tryint(val):
-        try:
-            return int(val)
-        except ValueError:
-            return val
-
-    return [tryint(chunk) for chunk in re.split('(\d+)', string_to_split)]
