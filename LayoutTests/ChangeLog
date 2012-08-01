@@ -1,3 +1,17 @@
+2012-08-01  Vincent Scheib  <scheib@chromium.org>
+
+        Block pointer lock for sandboxed iframes.
+        https://bugs.webkit.org/show_bug.cgi?id=92796
+
+        Reviewed by Adam Barth.
+
+        Sandboxed iframe documents should be blocked from using the
+        pointer lock API until there is specification agreement
+        on what attribute to use to allow the feature.
+
+        * http/tests/pointer-lock/iframe-sandboxed-expected.txt: Added.
+        * http/tests/pointer-lock/iframe-sandboxed.html: Added.
+
 2012-08-01  Emil A Eklund  <eae@chromium.org>
 
 

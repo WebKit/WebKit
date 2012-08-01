@@ -48,7 +48,8 @@ PassOwnPtr<PointerLockController> PointerLockController::create(Page* page)
 
 void PointerLockController::requestPointerLock(Element* target, PassRefPtr<VoidCallback> successCallback, PassRefPtr<VoidCallback> failureCallback)
 {
-    if (!target || !target->inDocument() || m_documentOfRemovedElementWhileWaitingForUnlock) {
+    if (!target || !target->inDocument() || m_documentOfRemovedElementWhileWaitingForUnlock
+        || target->document()->isSandboxed(SandboxPointerLock)) {
         enqueueEvent(eventNames().webkitpointerlockerrorEvent, target);
         return;
     }

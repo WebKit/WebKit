@@ -1,3 +1,23 @@
+2012-08-01  Vincent Scheib  <scheib@chromium.org>
+
+        Block pointer lock for sandboxed iframes.
+        https://bugs.webkit.org/show_bug.cgi?id=92796
+
+        Reviewed by Adam Barth.
+
+        Sandboxed iframe documents should be blocked from using the
+        pointer lock API until there is specification agreement
+        on what attribute to use to allow the feature. After
+        specification this restriction can be relaxed, but not
+        restricting it now would require breaking applications
+        later.
+
+        Test: http/tests/pointer-lock/iframe-sandboxed.html
+
+        * dom/SecurityContext.h:
+        * page/PointerLockController.cpp:
+        (WebCore::PointerLockController::requestPointerLock):
+
 2012-08-01  Patrick Gansterer  <paroga@webkit.org>
 
         Replace WTF::getCurrentLocalTime() with GregorianDateTime::setToCurrentLocalTime()
