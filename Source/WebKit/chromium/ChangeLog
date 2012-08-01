@@ -1,3 +1,16 @@
+2012-08-01  Nico Weber  <thakis@chromium.org>
+
+        [chromium/mac] Delete WebImageCG.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=92910
+
+        Reviewed by James Robinson.
+
+        It's been unused since the switch to skia.
+        Also remove now-unneeded *CG.cpp exclusion rule.
+
+        * WebKit.gyp:
+        * src/WebImageCG.cpp: Removed.
+
 2012-08-01  Joshua Bell  <jsbell@chromium.org>
 
         [Chromium] IndexedDB: API stubs to simplify WebIDBCursor API

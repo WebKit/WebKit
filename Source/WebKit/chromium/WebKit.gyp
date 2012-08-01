@@ -574,7 +574,6 @@
                 'src/WebIDBTransactionCallbacksImpl.cpp',
                 'src/WebIDBTransactionCallbacksImpl.h',
                 'src/WebIOSurfaceLayer.cpp',
-                'src/WebImageCG.cpp',
                 'src/WebImageDecoder.cpp',
                 'src/WebImageLayer.cpp',
                 'src/WebImageSkia.cpp',
@@ -826,18 +825,13 @@
                         ['exclude', '/android/'],
                     ],
                 }],
-                # TODO: we exclude CG.cpp on both sides of the below conditional. Move elsewhere?
                 ['OS=="mac"', {
                     'include_dirs': [
                         'public/mac',
                     ],
-                    'sources/': [
-                        ['exclude', 'CG\\.cpp$'],
-                    ],
                 }, { # else: OS!="mac"
                     'sources/': [
                         ['exclude', '/mac/'],
-                        ['exclude', 'CG\\.cpp$'],
                     ],
                 }],
                 ['OS=="win"', {
