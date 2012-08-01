@@ -11,3 +11,10 @@ window.onmessage = function (messageEvent) {
     }
 }
 
+document.onwebkitpointerlockchange = function () {
+    parent.postMessage(thisFileName() + " onwebkitpointerlockchange, document.webkitPointerLockElement = " + document.webkitPointerLockElement, "*");
+}
+
+document.onwebkitpointerlockerror = function () {
+    parent.postMessage(thisFileName() + " onwebkitpointerlockerror", "*");
+}

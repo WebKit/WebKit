@@ -47,6 +47,10 @@
             targetDiv2.webkitRequestPointerLock();
         },
         function () {
+            expectOnlyChangeEvent("Unlock targetDiv2.");
+            document.webkitExitPointerLock();
+        },
+        function () {
             targetIframe1.src = "about:blank";
             targetIframe1.onload = function () { doNextStep(); }
         },
@@ -55,27 +59,21 @@
             targetIframe2.onload = function () { doNextStep(); }
         },
         function () {
-            expectOnlyChangeEvent("Lock targetIframe1.");
+            expectNoEvents("Lock targetIframe1.");
             expectOnlyChangeEvent("Lock targetIframe1 (handler for iframe1).", targetIframe1.contentDocument);
             targetIframe1.contentDocument.body.webkitRequestPointerLock();
         },
         function () {
-            // Absorb an extra doNextStep() from previous event handlers.
-        },
-        function () {
             expectNoEvents("Lock targetIframe2.");
-            expectOnlyChangeEvent("Lock targetIframe2 (handler for iframe1).", targetIframe1.contentDocument);
-            expectOnlyChangeEvent("Lock targetIframe2 (handler for iframe2).", targetIframe2.contentDocument);
+            expectNoEvents("Lock targetIframe2 (handler for iframe1).", targetIframe1.contentDocument);
+            expectOnlyErrorEvent("Lock targetIframe2 (handler for iframe2).", targetIframe2.contentDocument);
             targetIframe2.contentDocument.body.webkitRequestPointerLock();
         },
         function () {
-            // Absorb an extra doNextStep() from previous event handlers.
-        },
-        function () {
             expectNoEvents("Unlock targetIframe2.");
-            expectNoEvents("Unlock targetIframe2 (handler for iframe1).", targetIframe1.contentDocument);
-            expectOnlyChangeEvent("Unlock targetIframe2 (handler for iframe2).", targetIframe2.contentDocument);
-            document.webkitExitPointerLock();
+            expectOnlyChangeEvent("Unlock targetIframe2 (handler for iframe1).", targetIframe1.contentDocument);
+            expectNoEvents("Unlock targetIframe2 (handler for iframe2).", targetIframe2.contentDocument);
+            targetIframe1.contentDocument.webkitExitPointerLock();
         },
         function () {
             shouldBeDefined("testRunner.setPointerLockWillFailSynchronously");

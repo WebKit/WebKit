@@ -14,19 +14,19 @@ PASS onwebkitpointerlockchange received after: Lock targetDiv1 again.
 PASS onwebkitpointerlockchange received after: Lock targetDiv2.
      Lock targetDiv2 again.
 PASS onwebkitpointerlockchange received after: Lock targetDiv2 again.
+     Unlock targetDiv2.
+PASS onwebkitpointerlockchange received after: Unlock targetDiv2.
      Lock targetIframe1.
      Lock targetIframe1 (handler for iframe1).
 PASS onwebkitpointerlockchange received after: Lock targetIframe1 (handler for iframe1).
-PASS onwebkitpointerlockchange received after: Lock targetIframe1.
      Lock targetIframe2.
      Lock targetIframe2 (handler for iframe1).
      Lock targetIframe2 (handler for iframe2).
-PASS onwebkitpointerlockchange received after: Lock targetIframe2 (handler for iframe2).
-PASS onwebkitpointerlockchange received after: Lock targetIframe2 (handler for iframe1).
+PASS onwebkitpointerlockerror received after: Lock targetIframe2 (handler for iframe2).
      Unlock targetIframe2.
      Unlock targetIframe2 (handler for iframe1).
      Unlock targetIframe2 (handler for iframe2).
-PASS onwebkitpointerlockchange received after: Unlock targetIframe2 (handler for iframe2).
+PASS onwebkitpointerlockchange received after: Unlock targetIframe2 (handler for iframe1).
 PASS testRunner.setPointerLockWillFailSynchronously is defined.
      Lock with synchronous failure.
 PASS onwebkitpointerlockerror received after: Lock with synchronous failure.
