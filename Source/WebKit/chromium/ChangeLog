@@ -1,3 +1,20 @@
+2012-08-01  Joshua Bell  <jsbell@chromium.org>
+
+        [Chromium] IndexedDB: API stubs to simplify WebIDBCursor API
+        https://bugs.webkit.org/show_bug.cgi?id=92414
+
+        Reviewed by Adam Barth.
+
+        Prep work to unblock Chromium changes so that http://webkit.org/b/92278 can land.
+        Adds no-op methods which will later be implemented; during the landing sequence,
+        Chromium will call both the new methods and the old ones. The end goal is that
+        the success callbacks for cursors will include the new key/primaryKey/value rather
+        than requiring the callee to call back into the cursor backend to fetch them.
+
+        * public/WebIDBCallbacks.h:
+        (WebIDBCallbacks):
+        (WebKit::WebIDBCallbacks::onSuccess):
+
 2012-08-01  Peter Beverloo  <peter@chromium.org>
 
         [Text Autosizing] Provide an API for influencing the font scale factor
