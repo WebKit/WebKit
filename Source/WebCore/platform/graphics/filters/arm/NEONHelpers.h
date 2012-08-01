@@ -37,7 +37,8 @@ namespace WebCore {
 
 inline float32x4_t loadRGBA8AsFloat(uint32_t* source)
 {
-    uint32x2_t temporary1 = vset_lane_u32(*source, temporary1, 0);
+    uint32x2_t temporary1 = {0, 0};
+    temporary1 = vset_lane_u32(*source, temporary1, 0);
     uint16x4_t temporary2 = vget_low_u16(vmovl_u8(vreinterpret_u8_u32(temporary1)));
     return vcvtq_f32_u32(vmovl_u16(temporary2));
 }

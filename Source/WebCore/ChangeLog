@@ -1,3 +1,18 @@
+2012-08-01  Han Shen  <shenhan@google.com>
+
+        Fix gcc 4.7 compile warnings.
+        https://bugs.webkit.org/show_bug.cgi?id=92797
+
+        Reviewed by Kentaro Hara.
+
+        GCC 4.7 gives (more strict) warnings on uninitialized variables,
+        fixed by providing initilization values.
+
+        Tested by gcc 4.7 building. No change in behavior.
+
+        * platform/graphics/filters/arm/NEONHelpers.h:
+        (WebCore::loadRGBA8AsFloat): Add initilizaton value for local variable.
+
 2012-08-01  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION(r122498): Assertion failure: m_nodeListCounts is sometimes not zero in the Document destructor
