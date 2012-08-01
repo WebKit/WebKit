@@ -47,7 +47,7 @@ class TesterTest(unittest.TestCase):
             oc.capture_output()
             self.assertFalse(tester.run())
         finally:
-            out, err, logs = oc.restore_output()
+            _, _, logs = oc.restore_output()
             root_logger.handlers = root_handlers
 
         self.assertTrue('No tests to run' in errors.getvalue())

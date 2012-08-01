@@ -1,5 +1,28 @@
 2012-08-01  Dirk Pranke  <dpranke@chromium.org>
 
+        test-webkitpy: clean up handling of tests to skip
+        https://bugs.webkit.org/show_bug.cgi?id=92909
+
+        Reviewed by Ryosuke Niwa.
+
+        This change moves the handling of tests to skip into main.py
+        where it is at least slightly more findable and generic.
+
+        Also fix a couple of lint nits.
+
+        * Scripts/webkitpy/test/finder.py:
+        (Finder.__init__):
+        (Finder.skip):
+        (Finder._default_names):
+        * Scripts/webkitpy/test/main.py:
+        (main):
+        (Tester.skip):
+        * Scripts/webkitpy/test/main_unittest.py:
+        (TesterTest.test_no_tests_found):
+        * Scripts/webkitpy/test/runner_unittest.py:
+
+2012-08-01  Dirk Pranke  <dpranke@chromium.org>
+
         test-webkitpy: remove --skip-integrationtests flag
         https://bugs.webkit.org/show_bug.cgi?id=92907
 

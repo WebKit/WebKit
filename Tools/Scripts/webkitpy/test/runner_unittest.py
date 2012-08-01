@@ -27,7 +27,7 @@ import unittest
 
 from webkitpy.tool.mocktool import MockOptions
 from webkitpy.test.printer import Printer
-from webkitpy.test.runner import Runner, _Worker
+from webkitpy.test.runner import Runner
 
 
 class FakeModuleSuite(object):

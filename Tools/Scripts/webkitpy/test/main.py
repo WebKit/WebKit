@@ -48,7 +48,11 @@ def main():
     tester.add_tree(os.path.join(webkit_root, 'Tools', 'Scripts'), 'webkitpy')
     tester.add_tree(os.path.join(webkit_root, 'Source', 'WebKit2', 'Scripts'), 'webkit2')
 
-    # FIXME: Do we need to be able to test QueueStatusServer on Windows as well?
+    tester.skip(('webkitpy.common.checkout.scm.scm_unittest',), 'are really, really, slow', 31818)
+    if sys.platform == 'win32':
+        tester.skip(('webkitpy.common.checkout', 'webkitpy.common.config', 'webkitpy.tool'), 'fail horribly on win32', 54526)
+
+    # This only needs to run on Unix, so don't worry about win32 for now.
     appengine_sdk_path = '/usr/local/google_appengine'
     if os.path.exists(appengine_sdk_path):
         if not appengine_sdk_path in sys.path:
@@ -72,6 +76,9 @@ class Tester(object):
 
     def add_tree(self, top_directory, starting_subdirectory=None):
         self.finder.add_tree(top_directory, starting_subdirectory)
+
+    def skip(self, names, reason, bugid):
+        self.finder.skip(names, reason, bugid)
 
     def _parse_args(self):
         parser = optparse.OptionParser(usage='usage: %prog [options] [args...]')
