@@ -474,8 +474,15 @@ RenderObject* SVGSVGElement::createRenderer(RenderArena* arena, RenderStyle*)
 
 Node::InsertionNotificationRequest SVGSVGElement::insertedInto(ContainerNode* rootParent)
 {
-    if (rootParent->inDocument())
+    if (rootParent->inDocument()) {
         document()->accessSVGExtensions()->addTimeContainer(this);
+
+        // Animations are started at the end of document parsing and after firing the load event,
+        // but if we miss that train (deferred programmatic element insertion for example) we need
+        // to initialize the time container here.
+        if (!document()->parsing() && !document()->processingLoadEvent() && document()->loadEventFinished())
+            timeContainer()->begin();
+    }
     return SVGStyledLocatableElement::insertedInto(rootParent);
 }
 

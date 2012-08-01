@@ -1,3 +1,19 @@
+2012-08-01  Florin Malita  <fmalita@chromium.org>
+
+        SVG animation not working for elements inserted after parsing is finished
+        https://bugs.webkit.org/show_bug.cgi?id=92025
+
+        Reviewed by Nikolas Zimmermann.
+
+        Time containers for SVG elements inserted after document parsing is finished need to be
+        initialized on insertion (since they've missed the Document::implicitClose() initialization
+        point).
+
+        Test: svg/animations/deferred-insertion.html
+
+        * svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::insertedInto):
+
 2012-08-01  Vincent Scheib  <scheib@chromium.org>
 
         Block pointer lock for sandboxed iframes.
