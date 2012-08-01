@@ -35,6 +35,9 @@ inline void* MarkedAllocator::tryAllocateHelper()
                 m_currentBlock->didConsumeFreeList();
                 m_currentBlock = 0;
             }
+            // We sweep another random block here so that we can make progress
+            // toward being able to sweep Structures.
+            m_heap->sweeper()->sweepNextBlock();
             return 0;
         }
 

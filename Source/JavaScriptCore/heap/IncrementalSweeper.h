@@ -55,6 +55,7 @@ public:
     static IncrementalSweeper* create(Heap*);
     void startSweeping(const HashSet<MarkedBlock*>& blockSnapshot);
     virtual void doWork();
+    void sweepNextBlock();
     bool structuresCanBeSwept();
     void willFinishSweeping();
 

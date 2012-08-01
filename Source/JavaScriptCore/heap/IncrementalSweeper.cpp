@@ -73,17 +73,7 @@ void IncrementalSweeper::cancelTimer()
 void IncrementalSweeper::doSweep(double sweepBeginTime)
 {
     while (m_currentBlockToSweepIndex < m_blocksToSweep.size()) {
-        MarkedBlock* block = m_blocksToSweep[m_currentBlockToSweepIndex++];
-        if (block->onlyContainsStructures())
-            m_structuresCanBeSwept = true;
-        else
-            ASSERT(!m_structuresCanBeSwept);
-
-        if (!block->needsSweeping())
-            continue;
-
-        block->sweep();
-        m_globalData->heap.objectSpace().freeOrShrinkBlock(block);
+        sweepNextBlock();
 
         CFTimeInterval elapsedTime = WTF::monotonicallyIncreasingTime() - sweepBeginTime;
         if (elapsedTime < sweepTimeSlice)
@@ -95,6 +85,24 @@ void IncrementalSweeper::doSweep(double sweepBeginTime)
 
     m_blocksToSweep.clear();
     cancelTimer();
+}
+
+void IncrementalSweeper::sweepNextBlock()
+{
+    while (m_currentBlockToSweepIndex < m_blocksToSweep.size()) {
+        MarkedBlock* block = m_blocksToSweep[m_currentBlockToSweepIndex++];
+        if (block->onlyContainsStructures())
+            m_structuresCanBeSwept = true;
+        else
+            ASSERT(!m_structuresCanBeSwept);
+
+        if (!block->needsSweeping())
+            continue;
+
+        block->sweep();
+        m_globalData->heap.objectSpace().freeOrShrinkBlock(block);
+        return;
+    }
 }
 
 void IncrementalSweeper::startSweeping(const HashSet<MarkedBlock*>& blockSnapshot)
@@ -141,6 +149,10 @@ void IncrementalSweeper::startSweeping(const HashSet<MarkedBlock*>&)
 void IncrementalSweeper::willFinishSweeping()
 {
     m_structuresCanBeSwept = true;
+}
+
+void IncrementalSweeper::sweepNextBlock()
+{
 }
 
 #endif

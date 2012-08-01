@@ -1,3 +1,24 @@
+2012-07-31  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        MarkedBlock::sweep() should sweep another block if it can't sweep a Structure block
+        https://bugs.webkit.org/show_bug.cgi?id=92819
+
+        Reviewed by Geoffrey Garen.
+
+        If we are forced to allocate a new block for Structures because we are unable to safely 
+        sweep our pre-existing Structure blocks, we should sweep another random block so that we 
+        can start sweeping Structure blocks sooner.
+
+        * heap/IncrementalSweeper.cpp:
+        (JSC::IncrementalSweeper::doSweep): Change to use sweepNextBlock.
+        (JSC):
+        (JSC::IncrementalSweeper::sweepNextBlock): 
+        * heap/IncrementalSweeper.h:
+        (IncrementalSweeper):
+        * heap/MarkedAllocator.cpp:
+        (JSC::MarkedAllocator::tryAllocateHelper): When we can't safely sweep 
+        our Structure blocks, call sweepNextBlock instead.
+
 2012-07-31  Sam Weinig  <sam@webkit.org>
 
         Fix the Windows build.
