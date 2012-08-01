@@ -3503,3 +3503,7 @@ BUGWK92582 LINUX DEBUG : media/video-currentTime-set2.html = PASS CRASH
 
 // Started failing after http://trac.webkit.org/changeset/124314
 BUGWK92863 : fast/forms/input-widths.html = TEXT
+
+// Needs rebaseline after https://bugs.webkit.org/show_bug.cgi?id=80219
+BUGWK80219 MAC WIN : fast/box-sizing/box-sizing.html = IMAGE+TEXT
+BUGWK80219 MAC : compositing/overflow/clip-descendents.html = TEXT

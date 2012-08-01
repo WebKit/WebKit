@@ -69,22 +69,22 @@ layer at (0,0) size 785x915
       RenderBlock (anonymous) at (0,849) size 769x41
         RenderBR {BR} at (120,0) size 0x19
       RenderBlock {HR} at (0,897) size 769x3 [border: (1px inset #000000)]
-layer at (13,418) size 20x20
-  RenderBlock (positioned) {DIV} at (13,417) size 20x21 [color=#FFFFFF] [bgcolor=#FFA500] [border: (2px solid #000000)]
-layer at (43,418) size 20x20
-  RenderBlock (positioned) {DIV} at (43,417) size 20x21 [color=#FFFFFF] [bgcolor=#FFA500] [border: (2px solid #000000)]
-layer at (73,418) size 20x20
-  RenderBlock (positioned) {DIV} at (73,417) size 20x21 [color=#FFFFFF] [bgcolor=#FFA500] [border: (2px solid #000000)]
-layer at (103,418) size 20x20
-  RenderBlock (positioned) {DIV} at (103,417) size 20x21 [color=#FFFFFF] [bgcolor=#FFA500] [border: (2px solid #000000)]
+layer at (13,428) size 20x20
+  RenderBlock (positioned) {DIV} at (13,427) size 20x21 [color=#FFFFFF] [bgcolor=#FFA500] [border: (2px solid #000000)]
+layer at (43,428) size 20x20
+  RenderBlock (positioned) {DIV} at (43,427) size 20x21 [color=#FFFFFF] [bgcolor=#FFA500] [border: (2px solid #000000)]
+layer at (73,428) size 20x20
+  RenderBlock (positioned) {DIV} at (73,427) size 20x21 [color=#FFFFFF] [bgcolor=#FFA500] [border: (2px solid #000000)]
+layer at (103,428) size 20x20
+  RenderBlock (positioned) {DIV} at (103,427) size 20x21 [color=#FFFFFF] [bgcolor=#FFA500] [border: (2px solid #000000)]
     RenderBR {BR} at (6,6) size 0x19
     RenderBR {BR} at (6,26) size 0x19
     RenderBR {BR} at (6,46) size 0x19
-layer at (13,757) size 20x20
-  RenderImage {IMG} at (13,757) size 20x20 [color=#FFFFFF] [bgcolor=#FFA500] [border: (2px solid #000000)]
-layer at (43,757) size 20x20
-  RenderImage {IMG} at (43,757) size 20x20 [color=#FFFFFF] [bgcolor=#FFA500] [border: (2px solid #000000)]
-layer at (73,757) size 20x20
-  RenderImage {IMG} at (73,757) size 20x20 [color=#FFFFFF] [bgcolor=#FFA500] [border: (2px solid #000000)]
-layer at (103,757) size 20x20
-  RenderImage {IMG} at (103,757) size 20x20 [color=#FFFFFF] [bgcolor=#FFA500] [border: (2px solid #000000)]
+layer at (13,767) size 20x20
+  RenderImage {IMG} at (13,767) size 20x20 [color=#FFFFFF] [bgcolor=#FFA500] [border: (2px solid #000000)]
+layer at (43,767) size 20x20
+  RenderImage {IMG} at (43,767) size 20x20 [color=#FFFFFF] [bgcolor=#FFA500] [border: (2px solid #000000)]
+layer at (73,767) size 20x20
+  RenderImage {IMG} at (73,767) size 20x20 [color=#FFFFFF] [bgcolor=#FFA500] [border: (2px solid #000000)]
+layer at (103,767) size 20x20
+  RenderImage {IMG} at (103,767) size 20x20 [color=#FFFFFF] [bgcolor=#FFA500] [border: (2px solid #000000)]

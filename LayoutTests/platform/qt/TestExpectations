@@ -124,3 +124,7 @@ BUGWK91379 : http/tests/security/contentSecurityPolicy/policy-does-not-affect-ch
 BUGWK91379 : http/tests/security/contentSecurityPolicy/object-src-none-allowed.html = TEXT PASS
 
 BUGWK85811 DEBUG : fast/events/message-port-close.html = CRASH
+
+// Needs rebaseline after https://bugs.webkit.org/show_bug.cgi?id=80219
+BUGWK80219 : fast/box-sizing/box-sizing.html = IMAGE+TEXT
+BUGWK80219 : compositing/overflow/clip-descendents.html = TEXT

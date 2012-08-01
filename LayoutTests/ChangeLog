@@ -1,3 +1,28 @@
+2012-07-31  Robert Hogan  <robert@webkit.org>
+
+        CSS 2.1 failure: margin-collapse-012 fails
+        https://bugs.webkit.org/show_bug.cgi?id=80219
+
+        Reviewed by Eric Seidel.
+
+        * css2.1/20110323/margin-collapse-012.htm: Added.
+        * css2.1/20110323/margin-collapse-012-expected.html: Added.
+        * fast/css/margin-collapse-abspos-negmargin-expected.html: Added.
+        * fast/css/margin-collapse-abspos-negmargin.htm: Added.
+
+        * fast/block/positioning/auto/001.html:
+        * fast/block/positioning/auto/002.html:
+        * fast/block/positioning/auto/vertical-lr/002.html:
+        * fast/block/positioning/auto/vertical-rl/002.html:
+        * fast/dynamic/staticY.html:
+          Remove the margins from these tests so the results remain the same. The new results
+          are consistent with FF.
+
+        * platform/chromium-linux/fast/box-sizing/box-sizing-expected.png:
+        * platform/chromium-win/compositing/overflow/clip-descendents-expected.txt:
+        * platform/chromium-win/fast/box-sizing/box-sizing-expected.txt:
+          I've rebaselined these - removing the margins doesn't seem helpful.
+
 2012-08-01  Xianzhu Wang  <wangxianzhu@chromium.org>
 
         Layout Test fast/text/descent-clip-in-scaled-page.html is failing on linux since it was added

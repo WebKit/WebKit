@@ -830,3 +830,7 @@ BUGWK92063 : fast/css/sticky/parsing-position-sticky.html = TEXT
 
 // This test depends on subpixel layout.
 BUGWK92352 : css3/flexbox/flex-rounding.html = TEXT
+
+// Needs rebaseline after https://bugs.webkit.org/show_bug.cgi?id=80219
+BUGWK80219 : fast/box-sizing/box-sizing.html = IMAGE+TEXT
+BUGWK80219 : compositing/overflow/clip-descendents.html = TEXT

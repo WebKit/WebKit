@@ -305,3 +305,7 @@ BUGWK91552 : fast/text/descent-clip-in-scaled-page.html = IMAGE
 
 // Layout Test css3/filters/custom/custom-filter-animation.html is failing
 BUGWK84813 : css3/filters/custom/custom-filter-animation.html = TEXT
+
+// Needs rebaseline after https://bugs.webkit.org/show_bug.cgi?id=80219
+BUGWK80219 : fast/box-sizing/box-sizing.html = IMAGE+TEXT
+BUGWK80219 : compositing/overflow/clip-descendents.html = TEXT

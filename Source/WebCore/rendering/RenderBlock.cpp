@@ -1691,18 +1691,11 @@ void RenderBlock::adjustPositionedBlock(RenderBox* child, const MarginInfo& marg
     setStaticInlinePositionForChild(child, logicalTop, startOffsetForContent(logicalTop));
 
     if (!marginInfo.canCollapseWithMarginBefore()) {
-        child->computeBlockDirectionMargins(this);
-        LayoutUnit marginBefore = marginBeforeForChild(child);
+        // Positioned blocks don't collapse margins, so add the margin provided by
+        // the container now. The child's own margin is added later when calculating its logical top.
         LayoutUnit collapsedBeforePos = marginInfo.positiveMargin();
         LayoutUnit collapsedBeforeNeg = marginInfo.negativeMargin();
-        if (marginBefore > 0) {
-            if (marginBefore > collapsedBeforePos)
-                collapsedBeforePos = marginBefore;
-        } else {
-            if (-marginBefore > collapsedBeforeNeg)
-                collapsedBeforeNeg = -marginBefore;
-        }
-        logicalTop += (collapsedBeforePos - collapsedBeforeNeg) - marginBefore;
+        logicalTop += collapsedBeforePos - collapsedBeforeNeg;
     }
     
     RenderLayer* childLayer = child->layer();

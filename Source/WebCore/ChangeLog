@@ -1,3 +1,23 @@
+2012-07-31  Robert Hogan  <robert@webkit.org>
+
+        CSS 2.1 failure: margin-collapse-012 fails
+        https://bugs.webkit.org/show_bug.cgi?id=80219
+
+        Reviewed by Eric Seidel.
+
+        Tests: css2.1/20110323/margin-collapse-012.htm
+               fast/css/margin-collapse-abspos-negmargin.htm
+
+        I also ran this against the full margin-collapse-* CSS 2.1 suite without regressions.
+
+        Per http://www.w3.org/TR/CSS21/box.html#collapsing-margins don't collapse the margins of 
+        positioned blocks. Instead, just use the margin of the sibling/container to offset the 
+        positioned block's logical top - its own margin gets added in later at 
+        RenderBox::computePositionedLogicalHeightUsing().
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::adjustPositionedBlock):
+
 2012-08-01  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r124334.
