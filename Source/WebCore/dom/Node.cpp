@@ -2266,7 +2266,7 @@ void NodeListsNodeData::invalidateCaches(const QualifiedName* attrName)
     for (NodeListNameCacheMap::const_iterator it = m_nameCaches.begin(); it != nameCacheEnd; ++it)
         it->second->invalidateCache(attrName);
 
-    if (!attrName)
+    if (attrName)
         return;
 
     TagNodeListCacheNS::iterator tagCacheEnd = m_tagNodeListCacheNS.end();

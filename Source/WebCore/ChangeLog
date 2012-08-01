@@ -1,3 +1,18 @@
+2012-07-30  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION(r120979): Node list returned by getElementsByTagNameNS isn't invalidated when children changes
+        https://bugs.webkit.org/show_bug.cgi?id=92705
+
+        Reviewed by Abhishek Arya.
+
+        The bug was caused by a typo in NodeListsNodeData::invalidateCaches. We need to invalidate
+        tag name node lists when child nodes change and not when attributes change.
+
+        Test: fast/dom/NodeList/nodelist-namespace-invalidation.html
+
+        * dom/Node.cpp:
+        (WebCore::NodeListsNodeData::invalidateCaches):
+
 2012-07-31  Tony Chang  <tony@chromium.org>
 
         flexbox should avoid floats

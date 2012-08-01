@@ -1,3 +1,16 @@
+2012-07-30  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION(r120979): Node list returned by getElementsByTagNameNS isn't invalidated when children changes
+        https://bugs.webkit.org/show_bug.cgi?id=92705
+
+        Reviewed by Abhishek Arya.
+
+        Add a regression test to ensure node lists returned by getElementsByTagNameNS are invalidated
+        when child nodes are added or removed.
+
+        * fast/dom/NodeList/nodelist-namespace-invalidation-expected.txt: Added.
+        * fast/dom/NodeList/nodelist-namespace-invalidation.html: Added.
+
 2012-07-31  Tony Chang  <tony@chromium.org>
 
         flexbox should avoid floats
