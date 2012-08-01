@@ -3237,6 +3237,8 @@ BUGWK85951 WIN DEBUG : fast/css/hover-update.html = TEXT PASS
 // Requires ENABLE(MEDIA_CAPTURE)
 BUGWK85958 : fast/forms/file/file-input-capture.html = TEXT
 
+BUGWK85952 : http/tests/media/media-source/video-media-source-play.html = PASS TIMEOUT
+
 // Started flaking at around http://trac.webkit.org/changeset/116278.
 BUGWK85950 LINUX DEBUG : compositing/geometry/limit-layer-bounds-transformed-overflow.html = PASS TEXT
 
@@ -3497,3 +3499,5 @@ BUGCR131189 : canvas/philip/tests/2d.transformation.setTransform.skewed.html = T
 BUGCR131189 : canvas/philip/tests/2d.transformation.transform.skewed.html = TEXT
 BUGCR131189 : platform/chromium/virtual/gpu/canvas/philip/tests/2d.transformation.setTransform.skewed.html = TEXT
 BUGCR131189 : platform/chromium/virtual/gpu/canvas/philip/tests/2d.transformation.transform.skewed.html = TEXT
+
+BUGWK92835 MAC WIN DEBUG SLOW : svg/as-background-image/svg-as-background-5.html = PASS
