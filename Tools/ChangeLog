@@ -1,3 +1,18 @@
+2012-08-01  Xianzhu Wang  <wangxianzhu@chromium.org>
+
+        Layout Test fast/text/descent-clip-in-scaled-page.html is failing on linux since it was added
+        https://bugs.webkit.org/show_bug.cgi?id=91386
+
+        Reviewed by Tony Chang.
+
+        Added font mapping from SubpixelPositioningAhem to Ahem on Linux and Android
+        (used in layout test fast/text/descent-clip-in-scaled-page.html).
+        Added font mapping from SubpixelPositioning to Times New Roman on Android to match Linux
+        (used in platform/chromium-linux/fast/text/chromium-linux-text-subpixel-positioning.html)
+
+        * DumpRenderTree/chromium/android_main_fonts.xml:
+        * DumpRenderTree/chromium/fonts.conf:
+
 2012-08-01  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r124325.

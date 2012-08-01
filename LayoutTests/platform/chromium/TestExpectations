@@ -3456,9 +3456,6 @@ BUGWK91183 : http/tests/w3c/webperf/approved/navigation-timing/html/test_perform
 // Fails on Mac 10.7
 BUGWK91255 LION : fast/multicol/table-vertical-align.html = TEXT
 
-// Fails since creation in 122651
-BUGWK91386 LINUX : fast/text/descent-clip-in-scaled-page.html = IMAGE
-
 // Fails since creation in 122663
 BUGWK91372 WIN : css2.1/20110323/vertical-align-boxes-001.htm = IMAGE
 

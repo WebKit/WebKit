@@ -23,6 +23,8 @@
             <name>Times</name>
             <name>Times New Roman</name>
             <name>Monaco</name>
+            <!-- Match chromium-linux. See comments of SubpixelPositioning in fonts.conf -->
+            <name>SubpixelPositioning</name>
         </nameset>
         <fileset>
             <file>Times_New_Roman.ttf</file>
@@ -107,6 +109,8 @@
     <family>
         <nameset>
             <name>Ahem</name>
+            <!-- Match chromium-linux. See comments of SubpixelPositioning in fonts.conf -->
+            <name>SubpixelPositioningAhem</name>
         </nameset>
         <fileset>
             <file>AHEM____.TTF</file>

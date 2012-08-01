@@ -1,3 +1,21 @@
+2012-08-01  Xianzhu Wang  <wangxianzhu@chromium.org>
+
+        Layout Test fast/text/descent-clip-in-scaled-page.html is failing on linux since it was added
+        https://bugs.webkit.org/show_bug.cgi?id=91386
+
+        Reviewed by Tony Chang.
+
+        The failure was because of the caching of font data. Now use the fake font families which are
+        only used when subpixel text positioing is enabled. This is the same method used in
+        platform/chromium-linux/fast/text/chromium-linux-text-subpixel-positioning.html.
+
+        On Linux and Android, the fake font families will be mapped to Time New Roman and Ahem, respectively.
+        On other platforms, they will fall back to system default fonts.
+
+        * fast/text/descent-clip-in-scaled-page-expected.html:
+        * fast/text/descent-clip-in-scaled-page.html:
+        * platform/chromium/TestExpectations:
+
 2012-08-01  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION(r122498): Assertion failure: m_nodeListCounts is sometimes not zero in the Document destructor

@@ -2,10 +2,19 @@
 <html>
 <head>
 <style>
+    /* Use a fake font family for all of the text that we draw.
+       The setTextSubpixelPositioning() call changes a global text style
+       setting.  It gets reset after we're dumped, but if we run first, our
+       style would be cached and would affect other tests, and if we run after
+       another test, we'd use its cached style and subpixel positioning won't be
+       enabled. */
+    body {
+        font-family: SubpixelPositioning;
+    }
     div {
-        font-family: ahem;
-        font-size: 16px;
+        font-family: SubpixelPositioningAhem;
         overflow: hidden; /* the only difference between the test the the ref html */
+        border: solid thin blue;
     }
 </style>
 <script>
@@ -20,6 +29,12 @@
     If success, the text in the "overflow: hidden" div (the test case) should be displayed
     the same as in a normal div (the ref html).
     'p' is the character in ahem font with only the descent part.
-    <div>&nbsp;pppp&nbsp;</div>
+    <br><br>
+    <div style="font-size: 13px">&nbsp;pppp&nbsp;</div>
+    <div style="font-size: 14px">&nbsp;pppp&nbsp;</div>
+    <div style="font-size: 15px">&nbsp;pppp&nbsp;</div>
+    <div style="font-size: 16px">&nbsp;pppp&nbsp;</div>
+    <div style="font-size: 17px">&nbsp;pppp&nbsp;</div>
+    <div style="font-size: 18px">&nbsp;pppp&nbsp;</div>
 </body>
 </html>
