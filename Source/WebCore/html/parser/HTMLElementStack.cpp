@@ -393,11 +393,6 @@ HTMLStackItem* HTMLElementStack::oneBelowTop() const
     return 0;
 }
 
-Element* HTMLElementStack::bottom() const
-{
-    return htmlElement();
-}
-
 void HTMLElementStack::removeHTMLHeadElement(Element* element)
 {
     ASSERT(m_headElement == element);
