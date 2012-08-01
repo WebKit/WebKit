@@ -928,7 +928,7 @@ class MainTest(unittest.TestCase, StreamTestingMixin):
         # This is empty because we don't even get a chance to configure the logger before failing.
         self.assertEquals(logs, '')
 
-    def test_verbose(self):
+    def disabled_test_verbose(self):
         # Note that the tests fail because we can't pass a mock host to the worker processes *and*
         # use outputcapture to capture the output (doing the latter results in a nonpicklable host).
         _, _, err, _ = logging_run(['--verbose', '--fully-parallel', '--child-processes', '2', 'passes/text.html', 'passes/image.html'], tests_included=True)
