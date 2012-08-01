@@ -152,7 +152,7 @@ private:
 #if OS(WINDOWS)
 // The absoluteTime is in seconds, starting on January 1, 1970. The time is assumed to use the same time zone as WTF::currentTime().
 // Returns an interval in milliseconds suitable for passing to one of the Win32 wait functions (e.g., ::WaitForSingleObject).
-DWORD absoluteTimeToWaitTimeoutInterval(double absoluteTime);
+WTF_EXPORT_PRIVATE DWORD absoluteTimeToWaitTimeoutInterval(double absoluteTime);
 #endif
 
 } // namespace WTF

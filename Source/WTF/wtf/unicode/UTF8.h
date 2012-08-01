@@ -66,7 +66,7 @@ namespace Unicode {
                     const char** sourceStart, const char* sourceEnd, 
                     UChar** targetStart, UChar* targetEnd, bool strict = true);
 
-    ConversionResult convertLatin1ToUTF8(
+    WTF_EXPORT_PRIVATE ConversionResult convertLatin1ToUTF8(
                     const LChar** sourceStart, const LChar* sourceEnd, 
                     char** targetStart, char* targetEnd);
 
@@ -74,9 +74,9 @@ namespace Unicode {
                     const UChar** sourceStart, const UChar* sourceEnd, 
                     char** targetStart, char* targetEnd, bool strict = true);
 
-    unsigned calculateStringHashAndLengthFromUTF8MaskingTop8Bits(const char* data, const char* dataEnd, unsigned& dataLength, unsigned& utf16Length);
+    WTF_EXPORT_PRIVATE unsigned calculateStringHashAndLengthFromUTF8MaskingTop8Bits(const char* data, const char* dataEnd, unsigned& dataLength, unsigned& utf16Length);
 
-    bool equalUTF16WithUTF8(const UChar* a, const UChar* aEnd, const char* b, const char* bEnd);
+    WTF_EXPORT_PRIVATE bool equalUTF16WithUTF8(const UChar* a, const UChar* aEnd, const char* b, const char* bEnd);
 
 } // namespace Unicode
 } // namespace WTF

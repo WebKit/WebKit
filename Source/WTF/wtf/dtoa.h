@@ -43,8 +43,8 @@ typedef char NumberToStringBuffer[NumberToStringBufferLength];
 typedef UChar NumberToUStringBuffer[NumberToStringBufferLength];
 
 WTF_EXPORT_PRIVATE const char* numberToString(double, NumberToStringBuffer);
-const char* numberToFixedPrecisionString(double, unsigned significantFigures, NumberToStringBuffer, bool truncateTrailingZeros = false);
-const char* numberToFixedWidthString(double, unsigned decimalPlaces, NumberToStringBuffer);
+WTF_EXPORT_PRIVATE const char* numberToFixedPrecisionString(double, unsigned significantFigures, NumberToStringBuffer, bool truncateTrailingZeros = false);
+WTF_EXPORT_PRIVATE const char* numberToFixedWidthString(double, unsigned decimalPlaces, NumberToStringBuffer);
 
 double parseDouble(const LChar* string, size_t length, size_t& parsedLength);
 double parseDouble(const UChar* string, size_t length, size_t& parsedLength);

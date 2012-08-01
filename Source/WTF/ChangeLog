@@ -1,3 +1,21 @@
+2012-08-01  Patrick Gansterer  <paroga@webkit.org>
+
+        [WIN] Add missing WTF export macros to functions
+        https://bugs.webkit.org/show_bug.cgi?id=92842
+
+        Reviewed by Hajime Morita.
+
+        When we switch the windows port to USE(EXPORT_MACROS) we
+        need to export all functions referenced by WebKit.dll.
+
+        * wtf/ThreadingPrimitives.h:
+        (WTF):
+        * wtf/dtoa.h:
+        (WTF):
+        * wtf/dtoa/double-conversion.h:
+        (StringToDoubleConverter):
+        * wtf/unicode/UTF8.h:
+
 2012-07-31  Sam Weinig  <sam@webkit.org>
 
         Stop masking 8 bits off of the visited link hash. We need all the bits!
