@@ -34,8 +34,8 @@ class NavigatorVibration {
 public:
     typedef Vector<unsigned long> VibrationPattern;
 
-    static void webkitVibrate(Navigator*, unsigned long time, ExceptionCode&);
-    static void webkitVibrate(Navigator*, const VibrationPattern&, ExceptionCode&);
+    static void vibrate(Navigator*, unsigned long time, ExceptionCode&);
+    static void vibrate(Navigator*, const VibrationPattern&, ExceptionCode&);
 
 private:
     NavigatorVibration();

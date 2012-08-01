@@ -39,7 +39,7 @@ NavigatorVibration::~NavigatorVibration()
 {
 }
 
-void NavigatorVibration::webkitVibrate(Navigator* navigator, unsigned long time, ExceptionCode& ec)
+void NavigatorVibration::vibrate(Navigator* navigator, unsigned long time, ExceptionCode& ec)
 {
     if (!navigator->frame()->page())
         return;
@@ -57,7 +57,7 @@ void NavigatorVibration::webkitVibrate(Navigator* navigator, unsigned long time,
     Vibration::from(navigator->frame()->page())->vibrate(time);
 }
 
-void NavigatorVibration::webkitVibrate(Navigator* navigator, const VibrationPattern& pattern, ExceptionCode& ec)
+void NavigatorVibration::vibrate(Navigator* navigator, const VibrationPattern& pattern, ExceptionCode& ec)
 {
     if (!navigator->frame()->page())
         return;

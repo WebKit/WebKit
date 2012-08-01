@@ -1,3 +1,15 @@
+2012-08-01  Kihong Kwon  <kihong.kwon@samsung.com>
+
+        Dropping webkit prefix from Vibration API
+        https://bugs.webkit.org/show_bug.cgi?id=92840
+
+        Reviewed by Adam Barth.
+
+        Remove webkit prefix from navigator.webkitVibrate().
+
+        * fast/dom/navigator-vibration-expected.txt:
+        * fast/dom/navigator-vibration.html:
+
 2012-08-01  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
 
         Clean-up touchadjustment tests.

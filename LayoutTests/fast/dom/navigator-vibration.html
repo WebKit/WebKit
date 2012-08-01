@@ -6,12 +6,12 @@
 <script>
 description('Test for the Vibration API.');
 
-shouldBe("navigator.webkitVibrate(0);", "undefined");
-shouldBe("navigator.webkitVibrate([]);", "undefined");
-shouldBe("navigator.webkitVibrate(1000);", "undefined");
-shouldBe("navigator.webkitVibrate([1000, 300, 500]);", "undefined");
-shouldBe("navigator.webkitVibrate(4294967295);", "undefined");
-shouldThrow("navigator.webkitVibrate();");
+shouldBe("navigator.vibrate(0);", "undefined");
+shouldBe("navigator.vibrate([]);", "undefined");
+shouldBe("navigator.vibrate(1000);", "undefined");
+shouldBe("navigator.vibrate([1000, 300, 500]);", "undefined");
+shouldBe("navigator.vibrate(4294967295);", "undefined");
+shouldThrow("navigator.vibrate();");
 </script>
 <script src="../js/resources/js-test-post.js"></script>
 </body>
