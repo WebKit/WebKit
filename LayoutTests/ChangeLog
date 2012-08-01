@@ -1,3 +1,67 @@
+2012-07-31  Peter Kasting  <pkasting@google.com>
+
+        [Chromium] Rebaselines and test expectation updates.
+        https://bugs.webkit.org/show_bug.cgi?id=66953
+        https://bugs.webkit.org/show_bug.cgi?id=72746
+        https://bugs.webkit.org/show_bug.cgi?id=74157
+        https://bugs.webkit.org/show_bug.cgi?id=81145
+        https://bugs.webkit.org/show_bug.cgi?id=83051
+
+        Unreviewed, test expectation updates.
+
+        Mostly rebaselining for https://bugs.webkit.org/show_bug.cgi?id=72746 .
+
+        * platform/chromium-linux-x86/fast/writing-mode: Added.
+        * platform/chromium-linux-x86/fast/writing-mode/english-lr-text-expected.png: Added.
+        * platform/chromium-linux-x86/transitions: Added.
+        * platform/chromium-linux-x86/transitions/default-timing-function-expected.png: Added.
+        * platform/chromium-linux-x86/transitions/svg-text-shadow-transition-expected.png: Added.
+        * platform/chromium-linux/fast/repaint/box-shadow-h-expected.png:
+        * platform/chromium-linux/fast/repaint/box-shadow-v-expected.png:
+        * platform/chromium-linux/fast/repaint/text-shadow-expected.png:
+        * platform/chromium-linux/fast/repaint/text-shadow-horizontal-expected.png:
+        * platform/chromium-linux/fast/text/shadow-no-blur-expected.png:
+        * platform/chromium-linux/fast/text/shadow-translucent-fill-expected.png:
+        * platform/chromium-linux/fast/text/stroking-decorations-expected.png:
+        * platform/chromium-linux/fast/text/stroking-expected.png:
+        * platform/chromium-linux/fast/writing-mode/english-lr-text-expected.png:
+        * platform/chromium-linux/transitions/default-timing-function-expected.png:
+        * platform/chromium-linux/transitions/svg-text-shadow-transition-expected.png:
+        * platform/chromium-mac-snowleopard/fast/repaint/box-shadow-h-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/repaint/box-shadow-v-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/repaint/text-shadow-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/repaint/text-shadow-horizontal-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/text/shadow-no-blur-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/text/shadow-translucent-fill-expected.png:
+        * platform/chromium-mac-snowleopard/fast/text/stroking-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/transitions/cross-fade-border-image-expected.png:
+        * platform/chromium-mac-snowleopard/transitions/default-timing-function-expected.png: Added.
+        * platform/chromium-mac-snowleopard/transitions/svg-text-shadow-transition-expected.png: Added.
+        * platform/chromium-mac/fast/box-shadow/single-pixel-shadow-expected.png: Added.
+        * platform/chromium-mac/fast/repaint/box-shadow-h-expected.png:
+        * platform/chromium-mac/fast/repaint/box-shadow-v-expected.png:
+        * platform/chromium-mac/fast/repaint/text-shadow-expected.png:
+        * platform/chromium-mac/fast/repaint/text-shadow-horizontal-expected.png:
+        * platform/chromium-mac/fast/text/shadow-no-blur-expected.png:
+        * platform/chromium-mac/fast/text/stroking-decorations-expected.png:
+        * platform/chromium-mac/fast/writing-mode/english-lr-text-expected.png:
+        * platform/chromium-mac/transitions/default-timing-function-expected.png:
+        * platform/chromium-mac/transitions/svg-text-shadow-transition-expected.png:
+        * platform/chromium-win-xp/fast/text/shadow-translucent-fill-expected.png:
+        * platform/chromium-win-xp/fast/text/stroking-decorations-expected.png: Added.
+        * platform/chromium-win-xp/fast/text/stroking-expected.png: Added.
+        * platform/chromium-win-xp/fast/writing-mode/english-lr-text-expected.png: Added.
+        * platform/chromium-win-xp/transitions/svg-text-shadow-transition-expected.png:
+        * platform/chromium-win/fast/repaint/box-shadow-h-expected.png:
+        * platform/chromium-win/fast/repaint/box-shadow-v-expected.png:
+        * platform/chromium-win/fast/text/shadow-translucent-fill-expected.png:
+        * platform/chromium-win/fast/text/stroking-decorations-expected.png:
+        * platform/chromium-win/fast/text/stroking-expected.png:
+        * platform/chromium-win/fast/writing-mode/english-lr-text-expected.png:
+        * platform/chromium-win/transitions/default-timing-function-expected.png:
+        * platform/chromium-win/transitions/svg-text-shadow-transition-expected.png:
+        * platform/chromium/TestExpectations:
+
 2012-07-31  Emil A Eklund  <eae@chromium.org>
 
         Float imprecision causes incorrect wrapping in LineLayout with subpixel layout
@@ -55,7 +119,7 @@
 
 2012-07-31  Peter Kasting  <pkasting@google.com>
 
-        [Chromium] Rebaseline a test and correct two expectations
+        [Chromium] Rebaseline a test and correct two expectations.
         http://crbug.com/23477
 
         Unreviewed, test expectation updates.

@@ -1235,7 +1235,7 @@ BUGWK82594 SNOWLEOPARD : svg/text/exs-display-none.svg = IMAGE PASS
 BUGWK82594 SNOWLEOPARD : svg/text/ems-display-none.svg = IMAGE TEXT PASS
 
 // Failing on Skia platforms
-BUGWK83051 WIN LINUX LION : svg/css/group-with-shadow.svg = IMAGE PASS
+BUGWK83051 WIN LINUX LION : svg/css/group-with-shadow.svg = IMAGE
 
 BUGWK83183 MAC : svg/as-image/animated-svg-as-image-no-fixed-intrinsic-size.html = PASS IMAGE
 
@@ -1558,20 +1558,6 @@ BUGCR23473 MAC : fast/repaint/transform-replaced-shadows.html = IMAGE
 // -----------------------------------------------------------------
 // END MAC PORT TESTS
 // -----------------------------------------------------------------
-
-// Rebaseline to take advantage of skia ColorFilter optimization.
-// Note that two of tests below are broken on Leopard for other reasons (search
-// elsewhere within this file) and thus should not be blindly rebaselined there.
-BUGCR104128 : fast/repaint/box-shadow-h.html = IMAGE
-BUGCR104128 : fast/repaint/box-shadow-v.html = IMAGE
-BUGCR104128 LINUX MAC : fast/repaint/text-shadow-horizontal.html = IMAGE
-BUGCR104128 LINUX MAC : fast/repaint/text-shadow.html = IMAGE
-BUGCR104128 LINUX MAC : fast/text/shadow-no-blur.html = IMAGE
-BUGCR104128 WIN LINUX SNOWLEOPARD : fast/text/shadow-translucent-fill.html = IMAGE
-BUGCR104128 : fast/text/stroking-decorations.html = IMAGE
-BUGCR104128 WIN LINUX SNOWLEOPARD : fast/text/stroking.html = IMAGE
-BUGCR104128 : fast/writing-mode/english-lr-text.html = IMAGE
-BUGCR104128 : transitions/svg-text-shadow-transition.html = IMAGE
 
 // We could fix this test for us and upstream it if the test shell user agent
 // would let us differentiate test_shell and WebKit DumpTreeNode.
@@ -2782,8 +2768,6 @@ BUGRICOW : fast/js/toString-overrides.html = TEXT
 
 BUGWK91944 : platform/chromium/virtual/gpu/fast/canvas/canvas-transforms-fillRect-shadow.html = TEXT
 
-BUGWK66953 : transitions/default-timing-function.html = IMAGE
-
 BUGWK73865 : media/track/text-track-cue-is-reachable.html = TEXT
 BUGWK73865 : media/track/text-track-is-reachable.html = TEXT
 
@@ -2817,8 +2801,6 @@ BUGWK92660 : platform/chromium/compositing/accelerated-drawing/alpha.html = CRAS
 BUGWK73766 : css3/unicode-bidi-isolate-aharon-failing.html = IMAGE
 
 BUGWK78544 LINUX : fast/text/international/danda-space.html = PASS IMAGE IMAGE+TEXT
-
-BUGWK74157 SNOWLEOPARD : transitions/cross-fade-border-image.html = IMAGE+TEXT IMAGE
 
 BUGWK74357 SKIP : plugins/netscape-plugin-page-cache-works.html = TEXT TIMEOUT
 
@@ -2937,7 +2919,6 @@ BUGWK81145 LION : compositing/plugins/composited-plugin.html = IMAGE+TEXT
 BUGWK81145 LION : fast/repaint/transform-absolute-in-positioned-container.html = IMAGE+TEXT
 BUGWK81145 LION : animations/cross-fade-webkit-mask-box-image.html = IMAGE
 BUGWK81145 LION : compositing/iframes/iframe-content-flipping.html = IMAGE
-BUGWK81145 LION : fast/box-shadow/single-pixel-shadow.html = IMAGE
 BUGWK81145 LION : fast/frames/invalid.html = IMAGE
 BUGWK81145 LION : fast/repaint/background-scaling.html = IMAGE
 BUGWK81145 LION : fast/repaint/scale-page-shrink.html = IMAGE
@@ -2956,8 +2937,6 @@ BUGWK81145 LION : plugins/plugin-javascript-access.html = TEXT
 BUGWK81145 LION : fast/writing-mode/broken-ideograph-small-caps.html = CRASH
 BUGWK81145 LION : fast/writing-mode/broken-ideographic-font.html = CRASH
 BUGWK81145 LION : fast/writing-mode/japanese-rl-text-with-broken-font.html = CRASH
-
-BUGYANGGUO MAC : fast/repaint/moving-shadow-on-container.html = TEXT
 
 BUGWK81537 : fast/events/touch/gesture/pad-gesture-fling.html = TEXT PASS
 
