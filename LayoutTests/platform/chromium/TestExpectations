@@ -2636,7 +2636,7 @@ BUGCR97716 : fast/clip/overflow-border-radius-combinations.html = IMAGE
 // Caused by r92618
 BUGWK65874 : fast/js/preventExtensions.html = TEXT
 
-BUGWK66417 WIN LINUX : fast/text/midword-break-before-surrogate-pair-2.html = IMAGE+TEXT
+BUGWK66417 WIN LINUX LION : fast/text/midword-break-before-surrogate-pair-2.html = IMAGE+TEXT
 
 BUGWK66419 : http/tests/misc/authentication-redirect-1/authentication-sent-to-redirect-cross-origin.html = TEXT
 BUGWK66419 : http/tests/misc/authentication-redirect-2/authentication-sent-to-redirect-same-origin.html = TEXT
@@ -2922,7 +2922,6 @@ BUGWK81145 LION : compositing/iframes/iframe-content-flipping.html = IMAGE
 BUGWK81145 LION : fast/frames/invalid.html = IMAGE
 BUGWK81145 LION : fast/repaint/background-scaling.html = IMAGE
 BUGWK81145 LION : fast/repaint/scale-page-shrink.html = IMAGE
-BUGWK81145 LION : fast/text/midword-break-before-surrogate-pair-2.html = IMAGE
 BUGWK81145 LION : fast/writing-mode/vertical-align-table-baseline.html = IMAGE
 BUGWK81145 LION : platform/chromium/compositing/tiny-layer-rotated.html = IMAGE
 BUGWK81145 LION : editing/inserting/insert-3907422-fix.html = TEXT
@@ -3197,7 +3196,9 @@ BUGWK84724 SNOWLEOPARD : platform/chromium/media/video-frame-size-change.html = 
 
 BUGWK84735 WIN : http/tests/inspector/change-iframe-src.html = TIMEOUT PASS
 
-BUGWK84802 DEBUG SLOW : fast/js/random-array-gc-stress.html = PASS
+// This test has its own idea of "timeout", which is to crash.
+BUGWK84802 LINUX WIN DEBUG SLOW : fast/js/random-array-gc-stress.html = PASS
+BUGWK84802 MAC DEBUG SLOW : fast/js/random-array-gc-stress.html = PASS CRASH
 
 BUGWK84847 WIN RELEASE : inspector/timeline/timeline-start-time.html = TEXT PASS
 
@@ -3497,3 +3498,5 @@ BUGCR131189 : platform/chromium/virtual/gpu/canvas/philip/tests/2d.transformatio
 BUGCR131189 : platform/chromium/virtual/gpu/canvas/philip/tests/2d.transformation.transform.skewed.html = TEXT
 
 BUGWK92835 MAC WIN DEBUG SLOW : svg/as-background-image/svg-as-background-5.html = PASS
+
+BUGWK82547 LION : fast/speech/input-appearance-searchandspeech.html = IMAGE PASS
