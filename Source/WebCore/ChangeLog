@@ -1,3 +1,31 @@
+2012-04-07  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Web Inspector: extract MemoryInstrumentationImpl into separate files for future reusing in unit tests
+        https://bugs.webkit.org/show_bug.cgi?id=92751
+
+        Reviewed by Yury Semikhatsky.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * inspector/InspectorAllInOne.cpp:
+        * inspector/InspectorMemoryAgent.cpp:
+        (WebCore):
+        * inspector/MemoryInstrumentationImpl.cpp: Added.
+        (WebCore):
+        (WebCore::MemoryInstrumentationImpl::MemoryInstrumentationImpl):
+        (WebCore::MemoryInstrumentationImpl::processDeferredInstrumentedPointers):
+        (WebCore::MemoryInstrumentationImpl::countObjectSize):
+        (WebCore::MemoryInstrumentationImpl::deferInstrumentedPointer):
+        (WebCore::MemoryInstrumentationImpl::visited):
+        (WebCore::MemoryInstrumentationImpl::selfSize):
+        * inspector/MemoryInstrumentationImpl.h: Added.
+        (WebCore):
+        (MemoryInstrumentationImpl):
+        (WebCore::MemoryInstrumentationImpl::totalTypeSize):
+
 2012-07-31  MORITA Hajime  <morrita@google.com>
 
         Internals::setAuthorShadowDOMForAnyElementEnabled should be on InternalSettings
