@@ -3333,7 +3333,7 @@ BUGWK87652 SKIP : http/tests/appcache/load-from-appcache-defer-resume-crash.html
 BUGWK87653 WIN LINUX : compositing/geometry/composited-in-columns.html = IMAGE+TEXT
 
 // Timing out; may need rebaseline after that is fixed
-BUGWK92444 : platform/chromium/fast/forms/color/color-suggestion-picker-appearance.html = PASS TIMEOUT
+BUGWK92444 : platform/chromium/fast/forms/color/color-suggestion-picker-appearance.html = PASS TIMEOUT MISSING IMAGE
 
 // Fails with a mismatch in $("menulist").selectedIndex
 BUGWK87748 MAC : fast/forms/select/optgroup-clicking.html = TEXT

@@ -1,3 +1,11 @@
+2012-07-31  Keishi Hattori  <keishi@webkit.org>
+
+        Mark fast/forms/color/color-suggestion-picker-appearance.html as missing or image mismatch
+
+        Unreviewed.
+
+        * platform/chromium/TestExpectations:
+
 2012-07-31  Ami Fischman  <fischman@chromium.org>
 
         Layout Test media/video-currentTime-set.html is still flaky
