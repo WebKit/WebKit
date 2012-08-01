@@ -404,8 +404,9 @@ function async(func, args)
     setTimeout(function() { func.apply(null, args); }, 100);
 }
 
-function visibleTests(container)
+function visibleTests(opt_container)
 {
+    var container = opt_container || document;
     if (onlyShowUnexpectedFailures())
         return container.querySelectorAll('tbody:not(.expected)');
     else
@@ -449,7 +450,7 @@ function testLink(test)
         basePath += '/trunk/LayoutTests/';
     } else
         basePath = globalState().results.layout_tests_dir + '/';
-    return '<a class=test-link href="' + basePath + test + '">' + test + '</a>';
+    return '<a class=test-link href="' + basePath + test + '">' + test + '</a><span class=flag onclick="unflag(this)"> \u2691</span>';
 }
 
 function unflag(flag)
@@ -460,8 +461,7 @@ function unflag(flag)
 
 function testLinkWithExpandButton(test)
 {
-    return '<span class=expand-button onclick="toggleExpectations(this)"><span class=expand-button-text>+</span></span>' + testLink(test) +
-        '<span class=flag onclick="unflag(this)"> \u2691</span>';
+    return '<span class=expand-button onclick="toggleExpectations(this)"><span class=expand-button-text>+</span></span>' + testLink(test);
 }
 
 function resultLink(testPrefix, suffix, contents)
@@ -1003,7 +1003,7 @@ TestNavigator._scrollToFirstTest = function()
 
 TestNavigator._scrollToLastTest = function()
 {
-    var links = visibleExpandLinks();
+    var links = visibleTests();
     if (TestNavigator._setCurrentTest(links.length - 1))
         TestNavigator._scrollToCurrentTest();
 }
@@ -1026,28 +1026,33 @@ TestNavigator._scrollToPreviousTest = function()
 
 TestNavigator._currentTestLink = function()
 {
-    var links = visibleExpandLinks();
+    var links = visibleTests();
     return links[TestNavigator.currentTestIndex];
+}
+
+TestNavigator._currentTestExpandLink = function()
+{
+    return TestNavigator._currentTestLink().querySelector('.expand-button-text');
 }
 
 TestNavigator._expandCurrentTest = function()
 {
-    expandExpectations(TestNavigator._currentTestLink());
+    expandExpectations(TestNavigator._currentTestExpandLink());
 }
 
 TestNavigator._collapseCurrentTest = function()
 {
-    collapseExpectations(TestNavigator._currentTestLink());
+    collapseExpectations(TestNavigator._currentTestExpandLink());
 }
 
 TestNavigator._toggleCurrentTest = function()
 {
-    toggleExpectations(TestNavigator._currentTestLink());
+    toggleExpectations(TestNavigator._currentTestExpandLink());
 }
 
 TestNavigator._toggleCurrentTestFlagged = function()
 {
-    var testLink = parentOfType(TestNavigator._currentTestLink(), 'tbody');
+    var testLink = TestNavigator._currentTestLink();
     TestNavigator.flagTest(testLink, !testLink.classList.contains('flagged'));
 }
 
@@ -1088,18 +1093,18 @@ TestNavigator.updateFlaggedTests = function()
 
 TestNavigator._setCurrentTest = function(testIndex)
 {
-    var links = visibleExpandLinks();
+    var links = visibleTests();
     if (testIndex < 0 || testIndex >= links.length)
         return false;
 
-    var currExpandLink = links[TestNavigator.currentTestIndex];
-    if (currExpandLink)
-        parentOfType(currExpandLink, 'tr').classList.remove('current');
+    var currentTest = links[TestNavigator.currentTestIndex];
+    if (currentTest)
+        currentTest.classList.remove('current');
 
     TestNavigator.currentTestIndex = testIndex;
 
-    currExpandLink = links[TestNavigator.currentTestIndex];
-    parentOfType(currExpandLink, 'tr').classList.add('current');
+    currentTest = links[TestNavigator.currentTestIndex];
+    currentTest.classList.add('current');
 
     return true;
 }
@@ -1111,23 +1116,24 @@ TestNavigator._scrollToCurrentTest = function()
         return;
 
     var rowRect = targetLink.getBoundingClientRect();
+    var container = document.querySelector('.content-container');
     // rowRect is in client coords (i.e. relative to viewport), so we just want to add its top to the current scroll position.
-    window.scrollTo(window.scrollX, window.scrollY + rowRect.top - 20);
+    container.scrollTop += rowRect.top - 20;
 }
 
 TestNavigator.onlyShowUnexpectedFailuresChanged = function()
 {
-    var currentTestLink = document.querySelector('.current .expand-button-text');
-    if (!currentTestLink)
+    var currentTest = document.querySelector('.current');
+    if (!currentTest)
         return;
 
     // If our currentTest became hidden, reset the currentTestIndex.
-    if (onlyShowUnexpectedFailures() && parentOfType(currentTestLink, 'tbody').classList.contains('expected'))
+    if (onlyShowUnexpectedFailures() && currentTest.classList.contains('expected'))
         TestNavigator._scrollToFirstTest();
     else {
         // Recompute TestNavigator.currentTestIndex
-        var links = visibleExpandLinks();
-        TestNavigator.currentTestIndex = links.indexOf(currentTestLink);
+        var links = visibleTests();
+        TestNavigator.currentTestIndex = links.indexOf(currentTest);
         window.console.log('TestNavigator.currentTestIndex is ', TestNavigator.currentTestIndex)
     }
 }

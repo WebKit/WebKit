@@ -552,7 +552,7 @@ function runTests()
     runTest(results, function() {
         if (window.eventSender) {
             eventSender.keyDown('k'); // previous
-            var testRows = document.querySelectorAll('#results-table tbody tr');
+            var testRows = document.querySelectorAll('#results-table tbody');
             assertTrue(!testRows[0].classList.contains('current'));
             assertTrue(!testRows[1].classList.contains('current'));
             assertTrue(testRows[2].classList.contains('current'));
@@ -562,12 +562,20 @@ function runTests()
     runTest(results, function() {
         if (window.eventSender) {
             eventSender.keyDown('j'); // next
-            var testRows = document.querySelectorAll('#results-table tbody tr');
+            var testRows = document.querySelectorAll('#results-table tbody');
             assertTrue(testRows[0].classList.contains('current'));
             assertTrue(!testRows[1].classList.contains('current'));
             assertTrue(!testRows[2].classList.contains('current'));
         }
     });
+
+    results = mockResults();
+    var subtree = results.tests['foo'] = {}
+    subtree['bar.html'] = mockExpectation('TEXT', 'FAIL');
+    subtree['bar1.html'] = mockExpectation('TEXT', 'FAIL');
+    subtree['bar2.html'] = mockExpectation('TEXT', 'FAIL');
+    subtree['bar3.html'] = mockExpectation('TEXT', 'PASS');
+    subtree['bar4.html'] = mockExpectation('IMAGE', 'PASS');
 
     runTest(results, function() {
         assertTrue(document.getElementById('results-table'));
@@ -577,7 +585,7 @@ function runTests()
             eventSender.keyDown('i', ["metaKey"]);
             eventSender.keyDown('i', ["shiftKey"]);
             eventSender.keyDown('i', ["ctrlKey"]);
-            var testRows = document.querySelectorAll('#results-table tbody tr');
+            var testRows = document.querySelectorAll('tbody');
             assertTrue(!testRows[0].classList.contains('current'));
             assertTrue(!testRows[1].classList.contains('current'));
             assertTrue(!testRows[2].classList.contains('current'));
@@ -621,7 +629,13 @@ function runTests()
             eventSender.keyDown('l'); // last
             assertTrue(!testRows[0].classList.contains('current'));
             assertTrue(!testRows[1].classList.contains('current'));
-            assertTrue(testRows[2].classList.contains('current'));
+            assertTrue(testRows[4].classList.contains('current'));
+
+            var flaggedTestsTextbox = document.getElementById('flagged-tests');
+
+            eventSender.keyDown('f'); // flag
+            assertTrue(flaggedTestsTextbox.innerText == 'foo/bar4.html');
+            eventSender.keyDown('f'); // unflag
 
             eventSender.keyDown('i'); // first
 
@@ -645,7 +659,6 @@ function runTests()
             eventSender.keyDown('f', ["metaKey"]);
             eventSender.keyDown('f', ["shiftKey"]);
             eventSender.keyDown('f', ["ctrlKey"]);
-            var flaggedTestsTextbox = document.getElementById('flagged-tests');
             assertTrue(flaggedTestsTextbox.innerText == '');
 
             eventSender.keyDown('f'); // flag

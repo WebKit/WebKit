@@ -1,3 +1,22 @@
+2012-07-31  Ojan Vafai  <ojan@chromium.org>
+
+        i and j keys no longer scroll in results.html
+        https://bugs.webkit.org/show_bug.cgi?id=92584
+
+        Reviewed by Tony Chang.
+
+        Scrolling broke with r122880 since the scrolling element is no
+        longer the body.
+
+        Also, fix TestNavigator to allow navigating to tests in the
+        unexpected passes table. That table doesn't have expand links,
+        so we change TestNavigator to navigate the tbody's instead, which
+        also happens to remove a bunch of unnecessary tree-walking.
+
+        * fast/harness/resources/results-test.js:
+        * fast/harness/results-expected.txt:
+        * fast/harness/results.html:
+
 2012-07-31  Ami Fischman  <fischman@chromium.org>
 
         [Chromium] Layout Test http/tests/media/media-source/webm/video-media-source-*.html is flaky
