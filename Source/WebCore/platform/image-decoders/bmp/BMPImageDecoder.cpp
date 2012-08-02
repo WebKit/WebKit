@@ -95,7 +95,7 @@ bool BMPImageDecoder::setFailed()
 void BMPImageDecoder::decode(bool onlySize)
 {
 #if PLATFORM(CHROMIUM)
-    TRACE_EVENT("BMPImageDecoder::decode", this, 0);
+    TRACE_EVENT0("webkit", "BMPImageDecoder::decode");
 #endif
     if (failed())
         return;

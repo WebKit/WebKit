@@ -648,7 +648,7 @@ void JPEGImageDecoder::jpegComplete()
 void JPEGImageDecoder::decode(bool onlySize)
 {
 #if PLATFORM(CHROMIUM)
-    TRACE_EVENT("JPEGImageDecoder::decode", this, 0);
+    TRACE_EVENT0("webkit", "JPEGImageDecoder::decode");
 #endif
     if (failed())
         return;

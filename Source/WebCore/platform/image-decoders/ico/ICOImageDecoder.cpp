@@ -158,7 +158,7 @@ void ICOImageDecoder::setDataForPNGDecoderAtIndex(size_t index)
 void ICOImageDecoder::decode(size_t index, bool onlySize)
 {
 #if PLATFORM(CHROMIUM)
-    TRACE_EVENT("ICOImageDecoder::decode", this, 0);
+    TRACE_EVENT0("webkit", "ICOImageDecoder::decode");
 #endif
     if (failed())
         return;

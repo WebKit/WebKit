@@ -583,7 +583,7 @@ void PlatformContextSkia::paintSkPaint(const SkRect& rect,
 const SkBitmap* PlatformContextSkia::bitmap() const
 {
 #if PLATFORM(CHROMIUM)
-    TRACE_EVENT("PlatformContextSkia::bitmap", this, 0);
+    TRACE_EVENT0("skia", "PlatformContextSkia::bitmap");
 #endif
     return &m_canvas->getDevice()->accessBitmap(false);
 }

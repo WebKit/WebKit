@@ -1,5 +1,19 @@
 2012-08-01  James Robinson  <jamesr@chromium.org>
 
+        [chromium] Use new-style tracing macros with explicit category
+        https://bugs.webkit.org/show_bug.cgi?id=92928
+
+        Reviewed by Adam Barth.
+
+        Set the category explicitly in traces.
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::updateAnimations):
+        (WebKit::WebViewImpl::layout):
+        (WebKit::WebViewImpl::setIsAcceleratedCompositingActive):
+
+2012-08-01  James Robinson  <jamesr@chromium.org>
+
         [chromium] Move compositor HUD font atlas initialization code out of compositor core
         https://bugs.webkit.org/show_bug.cgi?id=92924
 

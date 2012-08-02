@@ -178,7 +178,7 @@ static ResamplingMode limitResamplingMode(PlatformContextSkia* platformContext, 
 static void drawResampledBitmap(SkCanvas& canvas, SkPaint& paint, const NativeImageSkia& bitmap, const SkIRect& srcIRect, const SkRect& destRect)
 {
 #if PLATFORM(CHROMIUM)
-    TRACE_EVENT("drawResampledBitmap", &canvas, 0);
+    TRACE_EVENT0("skia", "drawResampledBitmap");
 #endif
     // Apply forward transform to destRect to estimate required size of
     // re-sampled bitmap, and use only in calls required to resize, or that
@@ -227,7 +227,7 @@ static bool hasNon90rotation(PlatformContextSkia* context)
 static void paintSkBitmap(PlatformContextSkia* platformContext, const NativeImageSkia& bitmap, const SkIRect& srcRect, const SkRect& destRect, const SkXfermode::Mode& compOp)
 {
 #if PLATFORM(CHROMIUM)
-    TRACE_EVENT("paintSkBitmap", platformContext, 0);
+    TRACE_EVENT0("skia", "paintSkBitmap");
 #endif
     SkPaint paint;
     paint.setXfermodeMode(compOp);
@@ -313,7 +313,7 @@ void Image::drawPattern(GraphicsContext* context,
                         const FloatRect& destRect)
 {
 #if PLATFORM(CHROMIUM)
-    TRACE_EVENT("Image::drawPattern", this, 0);
+    TRACE_EVENT0("skia", "Image::drawPattern");
 #endif
     FloatRect normSrcRect = normalizeRect(floatSrcRect);
     if (destRect.isEmpty() || normSrcRect.isEmpty())

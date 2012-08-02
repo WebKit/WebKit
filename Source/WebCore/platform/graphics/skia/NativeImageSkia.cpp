@@ -75,7 +75,7 @@ SkBitmap NativeImageSkia::resizedBitmap(const SkIRect& srcSubset,
                                         const SkIRect& destVisibleSubset) const
 {
 #if PLATFORM(CHROMIUM)
-    TRACE_EVENT("NativeImageSkia::resizedBitmap", const_cast<NativeImageSkia*>(this), 0);
+    TRACE_EVENT0("skia", "NativeImageSkia::resizedBitmap");
 #endif
     if (!hasResizedBitmap(srcSubset, destWidth, destHeight)) {
         bool shouldCache = isDataComplete()
@@ -85,7 +85,7 @@ SkBitmap NativeImageSkia::resizedBitmap(const SkIRect& srcSubset,
         m_image.extractSubset(&subset, srcSubset);
         if (!shouldCache) {
 #if PLATFORM(CHROMIUM)
-            TRACE_EVENT("nonCachedResize", const_cast<NativeImageSkia*>(this), 0);
+            TRACE_EVENT0("skia", "nonCachedResize");
 #endif
             // Just resize the visible subset and return it.
             SkBitmap resizedImage = skia::ImageOperations::Resize(subset, skia::ImageOperations::RESIZE_LANCZOS3, destWidth, destHeight, destVisibleSubset);
@@ -93,7 +93,7 @@ SkBitmap NativeImageSkia::resizedBitmap(const SkIRect& srcSubset,
             return resizedImage;
         } else {
 #if PLATFORM(CHROMIUM)
-            TRACE_EVENT("cachedResize", const_cast<NativeImageSkia*>(this), 0);
+            TRACE_EVENT0("skia", "cachedResize");
 #endif
             m_resizedImage = skia::ImageOperations::Resize(subset, skia::ImageOperations::RESIZE_LANCZOS3, destWidth, destHeight);
         }

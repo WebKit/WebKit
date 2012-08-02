@@ -315,7 +315,7 @@ void GIFImageDecoder::gifComplete()
 void GIFImageDecoder::decode(unsigned haltAtFrame, GIFQuery query)
 {
 #if PLATFORM(CHROMIUM)
-    TRACE_EVENT("GIFImageDecoder::decode", this, 0);
+    TRACE_EVENT0("webkit", "GIFImageDecoder::decode");
 #endif
     if (failed())
         return;

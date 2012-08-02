@@ -123,7 +123,7 @@ void ScheduledAction::execute(V8Proxy* proxy)
         return; // JS may not be enabled.
 
 #if PLATFORM(CHROMIUM)
-    TRACE_EVENT("ScheduledAction::execute", this, 0);
+    TRACE_EVENT0("v8", "ScheduledAction::execute");
 #endif
 
     v8::Context::Scope scope(v8Context);

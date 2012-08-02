@@ -168,9 +168,6 @@
 #include <wtf/DynamicAnnotations.h>
 #include <wtf/text/CString.h>
 
-// Issues begin trace event here and end trace event when the current scope ends.
-#define TRACE_EVENT(name, id, extra) TRACE_EVENT2("webkit", name, "id", id, "extra", extra)
-
 // By default, const char* argument values are assumed to have long-lived scope
 // and will not be copied. Use this macro to force a const char* to be copied.
 #define TRACE_STR_COPY(str) \

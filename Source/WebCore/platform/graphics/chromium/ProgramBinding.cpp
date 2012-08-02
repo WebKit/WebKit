@@ -65,7 +65,7 @@ static bool contextLost(WebGraphicsContext3D* context)
 
 void ProgramBindingBase::init(WebGraphicsContext3D* context, const String& vertexShader, const String& fragmentShader)
 {
-    TRACE_EVENT("ProgramBindingBase::init", this, 0);
+    TRACE_EVENT0("cc", "ProgramBindingBase::init");
     m_vertexShaderId = loadShader(context, GraphicsContext3D::VERTEX_SHADER, vertexShader);
     if (!m_vertexShaderId) {
         if (!contextLost(context))

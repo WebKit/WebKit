@@ -531,7 +531,7 @@ void PNGImageDecoder::pngComplete()
 void PNGImageDecoder::decode(bool onlySize)
 {
 #if PLATFORM(CHROMIUM)
-    TRACE_EVENT("PNGImageDecoder::decode", this, 0);
+    TRACE_EVENT0("webkit", "PNGImageDecoder::decode");
 #endif
     if (failed())
         return;

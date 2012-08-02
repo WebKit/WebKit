@@ -88,7 +88,7 @@ ImageFrame* WEBPImageDecoder::frameBufferAtIndex(size_t index)
 bool WEBPImageDecoder::decode(bool onlySize)
 {
 #if PLATFORM(CHROMIUM)
-    TRACE_EVENT("WEBPImageDecoder::decode", this, 0);
+    TRACE_EVENT0("webkit", "WEBPImageDecoder::decode");
 #endif
     if (failed())
         return false;

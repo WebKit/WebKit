@@ -417,7 +417,7 @@ bool ScrollAnimatorNone::scroll(ScrollbarOrientation orientation, ScrollGranular
         return ScrollAnimator::scroll(orientation, granularity, step, multiplier);
 
 #if PLATFORM(CHROMIUM)
-    TRACE_EVENT("ScrollAnimatorNone::scroll", this, 0);
+    TRACE_EVENT0("webkit", "ScrollAnimatorNone::scroll");
 #endif
 
     // FIXME: get the type passed in. MouseWheel could also be by line, but should still have different
@@ -532,7 +532,7 @@ void ScrollAnimatorNone::animationTimerFired(Timer<ScrollAnimatorNone>* timer)
 void ScrollAnimatorNone::animationTimerFired()
 {
 #if PLATFORM(CHROMIUM)
-    TRACE_EVENT("ScrollAnimatorNone::animationTimerFired", this, 0);
+    TRACE_EVENT0("webkit", "ScrollAnimatorNone::animationTimerFired");
 #endif
 
     double currentTime = WTF::monotonicallyIncreasingTime();
@@ -562,7 +562,7 @@ void ScrollAnimatorNone::animationTimerFired()
 #endif
 
 #if PLATFORM(CHROMIUM)
-    TRACE_EVENT("ScrollAnimatorNone::notifyPositionChanged", this, 0);
+    TRACE_EVENT0("webkit", "ScrollAnimatorNone::notifyPositionChanged");
 #endif
     notifyPositionChanged();
 

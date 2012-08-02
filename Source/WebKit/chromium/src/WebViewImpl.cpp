@@ -1633,7 +1633,7 @@ void WebViewImpl::didBeginFrame()
 void WebViewImpl::updateAnimations(double monotonicFrameBeginTime)
 {
 #if ENABLE(REQUEST_ANIMATION_FRAME)
-    TRACE_EVENT("WebViewImpl::updateAnimations", this, 0);
+    TRACE_EVENT0("webkit", "WebViewImpl::updateAnimations");
 
     WebFrameImpl* webframe = mainFrameImpl();
     if (!webframe)
@@ -1656,7 +1656,7 @@ void WebViewImpl::updateAnimations(double monotonicFrameBeginTime)
 
 void WebViewImpl::layout()
 {
-    TRACE_EVENT("WebViewImpl::layout", this, 0);
+    TRACE_EVENT0("webkit", "WebViewImpl::layout");
     PageWidgetDelegate::layout(m_page.get());
 }
 
@@ -3631,7 +3631,7 @@ void WebViewImpl::setIsAcceleratedCompositingActive(bool active)
 
         m_client->didActivateCompositor(m_layerTreeView.compositorIdentifier());
     } else {
-        TRACE_EVENT("WebViewImpl::setIsAcceleratedCompositingActive(true)", this, 0);
+        TRACE_EVENT0("webkit", "WebViewImpl::setIsAcceleratedCompositingActive(true)");
 
         WebLayerTreeView::Settings layerTreeViewSettings;
         layerTreeViewSettings.acceleratePainting = page()->settings()->acceleratedDrawingEnabled();
