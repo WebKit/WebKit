@@ -1,3 +1,10 @@
+2012-08-02  Antonio Gomes  <agomes@rim.com>
+
+        Unreviewed debug build fix (bug 92889)
+
+        * WebKitSupport/InRegionScroller.cpp:
+        (BlackBerry::WebKit::pushBackInRegionScrollable):
+
 2012-08-02  Leo Yang  <leoyang@rim.com>
 
         [BlackBerry] Rounding error of destination rect of checkerboard

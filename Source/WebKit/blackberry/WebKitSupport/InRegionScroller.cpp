@@ -24,6 +24,7 @@
 #include "HTMLFrameOwnerElement.h"
 #include "HitTestResult.h"
 #include "InRegionScrollableArea.h"
+#include "Page.h"
 #include "RenderBox.h"
 #include "RenderLayer.h"
 #include "RenderObject.h"
@@ -109,7 +110,7 @@ static bool isNonRenderViewFixedPositionedContainer(RenderLayer* layer)
 
 static void pushBackInRegionScrollable(std::vector<Platform::ScrollViewBase*>& vector, InRegionScrollableArea* scrollableArea, InRegionScroller* scroller)
 {
-    ASSERT(webPage);
+    ASSERT(scroller);
     ASSERT(!scrollableArea->isNull());
 
     scrollableArea->setCanPropagateScrollingToEnclosingScrollable(!isNonRenderViewFixedPositionedContainer(scrollableArea->layer()));
