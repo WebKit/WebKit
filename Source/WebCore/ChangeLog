@@ -1,3 +1,33 @@
+2012-08-01  Peter Wang  <peter.wang@torchmobile.com.cn>
+
+        Web Inspector: [JSC] implement setting breakpoints by line:column
+        https://bugs.webkit.org/show_bug.cgi?id=53003
+
+        Reviewed by Geoffrey Garen.
+
+        As JSC is enabled to provide column info of statement, ScriptDebugServer can use it to
+        support "Pretty Print" debug mode.
+
+        No new test case for this patch.
+
+        * bindings/js/ScriptDebugServer.cpp:
+        (WebCore::ScriptDebugServer::setBreakpoint):
+        (WebCore::ScriptDebugServer::removeBreakpoint):
+        (WebCore):
+        (WebCore::ScriptDebugServer::updateCurrentStatementPosition):
+        (WebCore::ScriptDebugServer::hasBreakpoint):
+        (WebCore::ScriptDebugServer::createCallFrameAndPauseIfNeeded):
+        (WebCore::ScriptDebugServer::updateCallFrameAndPauseIfNeeded):
+        (WebCore::ScriptDebugServer::callEvent):
+        (WebCore::ScriptDebugServer::atStatement):
+        (WebCore::ScriptDebugServer::returnEvent):
+        (WebCore::ScriptDebugServer::exception):
+        (WebCore::ScriptDebugServer::willExecuteProgram):
+        (WebCore::ScriptDebugServer::didExecuteProgram):
+        (WebCore::ScriptDebugServer::didReachBreakpoint):
+        * bindings/js/ScriptDebugServer.h:
+        (ScriptDebugServer):
+
 2012-08-01  Xingnan Wang  <xingnan.wang@intel.com>
 
         IndexedDB: ObjectStoreMetaDataKey::m_metaDataType should use byte type

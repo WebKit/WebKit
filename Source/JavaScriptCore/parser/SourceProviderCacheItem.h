@@ -53,9 +53,9 @@ public:
         JSToken token;
         token.m_type = CLOSEBRACE;
         token.m_data.intValue = closeBracePos;
-        token.m_info.startOffset = closeBracePos;
-        token.m_info.endOffset = closeBracePos + 1;
-        token.m_info.line = closeBraceLine; 
+        token.m_location.startOffset = closeBracePos;
+        token.m_location.endOffset = closeBracePos + 1;
+        token.m_location.line = closeBraceLine; 
         return token;
     }
     

@@ -194,7 +194,7 @@ namespace JSC {
         macro(op_throw, 2) \
         macro(op_throw_reference_error, 2) \
         \
-        macro(op_debug, 4) \
+        macro(op_debug, 5) \
         macro(op_profile_will_call, 2) \
         macro(op_profile_did_call, 2) \
         \

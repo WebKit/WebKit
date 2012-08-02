@@ -1478,6 +1478,7 @@ void JIT::emit_op_debug(Instruction* currentInstruction)
     stubCall.addArgument(Imm32(currentInstruction[1].u.operand));
     stubCall.addArgument(Imm32(currentInstruction[2].u.operand));
     stubCall.addArgument(Imm32(currentInstruction[3].u.operand));
+    stubCall.addArgument(Imm32(currentInstruction[4].u.operand));
     stubCall.call();
 #endif
 }

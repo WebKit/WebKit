@@ -123,8 +123,8 @@ protected:
     void dispatchDidParseSource(const ListenerSet& listeners, JSC::SourceProvider*, bool isContentScript);
     void dispatchFailedToParseSource(const ListenerSet& listeners, JSC::SourceProvider*, int errorLine, const String& errorMessage);
 
-    void createCallFrameAndPauseIfNeeded(const JSC::DebuggerCallFrame&, intptr_t sourceID, int lineNumber);
-    void updateCallFrameAndPauseIfNeeded(const JSC::DebuggerCallFrame&, intptr_t sourceID, int lineNumber);
+    void createCallFrameAndPauseIfNeeded(const JSC::DebuggerCallFrame&, intptr_t sourceID, int lineNumber, int columnNumber);
+    void updateCallFrameAndPauseIfNeeded(const JSC::DebuggerCallFrame&, intptr_t sourceID, int lineNumber, int columnNumber);
     void pauseIfNeeded(JSC::JSGlobalObject* dynamicGlobalObject);
 
     virtual void detach(JSC::JSGlobalObject*);
@@ -138,7 +138,19 @@ protected:
     virtual void didExecuteProgram(const JSC::DebuggerCallFrame&, intptr_t sourceID, int lineno);
     virtual void didReachBreakpoint(const JSC::DebuggerCallFrame&, intptr_t sourceID, int lineno);
 
-    typedef HashMap<long, ScriptBreakpoint> LineToBreakpointMap;
+    virtual void callEvent(const JSC::DebuggerCallFrame&, intptr_t sourceID, int lineNumber, int columnNumber);
+    virtual void atStatement(const JSC::DebuggerCallFrame&, intptr_t sourceID, int firstLine, int columnNumber);
+    virtual void returnEvent(const JSC::DebuggerCallFrame&, intptr_t sourceID, int lineNumber, int columnNumber);
+    virtual void exception(const JSC::DebuggerCallFrame&, intptr_t sourceID, int lineNumber, int columnNumber, bool hasHandler);
+    virtual void willExecuteProgram(const JSC::DebuggerCallFrame&, intptr_t sourceID, int lineno, int columnNumber);
+    virtual void didExecuteProgram(const JSC::DebuggerCallFrame&, intptr_t sourceID, int lineno, int columnNumber);
+    virtual void didReachBreakpoint(const JSC::DebuggerCallFrame&, intptr_t sourceID, int lineno, int columnNumber);
+
+
+    void updateCurrentStatementPosition(intptr_t, int);
+
+    typedef Vector<ScriptBreakpoint> BreakpointsInLine;
+    typedef HashMap<long, BreakpointsInLine> LineToBreakpointMap;
     typedef HashMap<intptr_t, LineToBreakpointMap> SourceIdToBreakpointsMap;
 
     bool m_callingListeners;
@@ -151,6 +163,10 @@ protected:
     RefPtr<JavaScriptCallFrame> m_currentCallFrame;
     SourceIdToBreakpointsMap m_sourceIdToBreakpoints;
     Timer<ScriptDebugServer> m_recompileTimer;
+
+    Vector<String> m_currentSourceCode;
+    intptr_t m_currentSourceID;
+    ScriptBreakpoint m_currentStatementPosition;
 };
 
 } // namespace WebCore
