@@ -1,3 +1,35 @@
+2012-08-02  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] Use GST_DEBUG instead of LOG_VERBOSE
+        https://bugs.webkit.org/show_bug.cgi?id=89350
+
+        Reviewed by Martin Robinson.
+
+        Wrap the media player's logging calls to a new macro that also
+        hooks into GStreamer's logging facilities. This way the developer
+        gets the best of both worlds, leaving the choice between GST_DEBUG
+        and WEBKIT_DEBUG environment variables.
+
+        * platform/graphics/gstreamer/GStreamerUtilities.h:
+        (WebCore):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::initializeGStreamerAndRegisterWebKitElements):
+        (WebCore::MediaPlayerPrivateGStreamer::load):
+        (WebCore::MediaPlayerPrivateGStreamer::commitLoad):
+        (WebCore::MediaPlayerPrivateGStreamer::playbackPosition):
+        (WebCore::MediaPlayerPrivateGStreamer::play):
+        (WebCore::MediaPlayerPrivateGStreamer::pause):
+        (WebCore::MediaPlayerPrivateGStreamer::duration):
+        (WebCore::MediaPlayerPrivateGStreamer::seek):
+        (WebCore::MediaPlayerPrivateGStreamer::naturalSize):
+        (WebCore::MediaPlayerPrivateGStreamer::setRate):
+        (WebCore::MediaPlayerPrivateGStreamer::handleMessage):
+        (WebCore::MediaPlayerPrivateGStreamer::processBufferingStats):
+        (WebCore::MediaPlayerPrivateGStreamer::fillTimerFired):
+        (WebCore::MediaPlayerPrivateGStreamer::maxTimeSeekable):
+        (WebCore::MediaPlayerPrivateGStreamer::maxTimeLoaded):
+        (WebCore::MediaPlayerPrivateGStreamer::didLoadingProgress):
+
 2012-08-02  Antti Koivisto  <antti@apple.com>
 
         Inline stylesheets can confuse style sharing
