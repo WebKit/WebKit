@@ -936,7 +936,8 @@ WONTFIX LINUX DEBUG SKIP : inspector/profiler/cpu-profiler-profiling.html = TIME
 BUGWK91435 WIN LINUX : http/tests/inspector/extensions-ignore-cache.html = PASS TIMEOUT
 BUGWK91435 LINUX : inspector/timeline/timeline-network-received-data.html = PASS TEXT
 BUGWK91435 WIN RELEASE : inspector/timeline/timeline-network-received-data.html = PASS TEXT
-BUGWK91435 WIN LINUX : inspector/debugger/live-edit.html = PASS TEXT TIMEOUT
+BUGWK91435 WIN LINUX RELEASE : inspector/debugger/live-edit.html = PASS TEXT
+BUGWK91435 WIN LINUX DEBUG SLOW : inspector/debugger/live-edit.html = PASS TEXT
 BUGCR89357 SKIP MAC : http/tests/inspector/extensions-ignore-cache.html = TIMEOUT
 BUGCR89357 SKIP MAC : inspector/timeline/timeline-network-received-data.html = TIMEOUT
 BUGCR89357 SKIP MAC : inspector/debugger/live-edit.html = TIMEOUT
@@ -1051,8 +1052,6 @@ BUGWK78655 : editing/pasteboard/drag-files-to-editable-element.html = TEXT
 BUGWK66268 WIN LINUX : editing/deleting/regional-indicators.html = TEXT
 
 BUGWK67121 DEBUG SLOW : editing/selection/move-by-word-visually-multi-space.html = PASS
-
-BUGWK63509 : editing/style/smoosh-styles-003.html = PASS IMAGE
 
 // UndoManager is not yet enabled.
 BUGWK87908 SKIP : editing/undomanager = PASS
@@ -2967,13 +2966,6 @@ BUGWK81931 SNOWLEOPARD WIN DEBUG : fast/images/destroyed-image-load-event.html =
 
 BUGWK37244 : tables/mozilla/bugs/bug27038-1.html = IMAGE+TEXT
 BUGWK37244 : tables/mozilla/bugs/bug27038-2.html = IMAGE+TEXT
-
-// Tests still flaky on the given platforms. They may not actually be flaky, but prior to
-// a rebaselining they were showing inconsistent results.
-BUGWK81631 WIN LINUX DEBUG : fast/writing-mode/block-level-images.html = IMAGE PASS
-BUGWK81631 MAC : fast/repaint/block-layout-inline-children-replaced.html = IMAGE PASS
-BUGWK81631 MAC : fast/writing-mode/block-level-images.html = IMAGE PASS
-BUGWK81631 MAC : fast/table/quote-text-around-iframe.html = IMAGE PASS
 
 BUGWK82122 SNOWLEOPARD : css3/selectors3/xml/css3-modsel-100.xml = TEXT PASS
 BUGWK82122 SNOWLEOPARD : css3/selectors3/xml/css3-modsel-100b.xml = TEXT PASS
