@@ -2559,6 +2559,7 @@ fast/forms/datalist/update-range-with-datalist.html
 fast/multicol/cell-shrinkback.html
 fast/multicol/overflow-into-columngap.html
 fast/table/td-width-fifty-percent-regression.html
+fast/text/descent-clip-in-scaled-page.html
 fast/sub-pixel/block-with-margin-overflow.html
 svg/custom/anchor-on-use.svg
 svg/animations/animateTransform-rotate-around-point.svg

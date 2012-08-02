@@ -1,3 +1,11 @@
+2012-08-02  Kristóf Kosztyó  <kkristof@inf.u-szeged.hu>
+
+        [Qt] Unreviewed gardening.
+
+        * platform/qt/Skipped:
+        * platform/qt/fast/box-sizing/box-sizing-expected.txt:
+        * platform/qt/fast/forms/basic-selects-expected.txt:
+
 2012-08-02  Yoshifumi Inoue  <yosin@chromium.org>
 
         Layout Test fast/forms/input-widths.html is failing
