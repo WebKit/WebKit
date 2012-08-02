@@ -261,7 +261,6 @@
         (MarkedBlock):
         (JSC::MarkedBlock::capacity): Updated for encapsulation.
 
->>>>>>> .r124259
 2012-07-31  Filip Pizlo  <fpizlo@apple.com>
 
         DFG OSR exit profiling has unusual oversights
