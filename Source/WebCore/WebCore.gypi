@@ -4431,6 +4431,8 @@
             'platform/text/LocalizedNumber.h',
             'platform/text/LocalizedNumberICU.cpp',
             'platform/text/LocalizedNumberNone.cpp',
+            'platform/text/NumberLocalizer.cpp',
+            'platform/text/NumberLocalizer.h',
             'platform/text/ParserUtilities.h',
             'platform/text/QuotedPrintable.h',
             'platform/text/QuotedPrintable.cpp',

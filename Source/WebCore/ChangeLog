@@ -1,3 +1,45 @@
+2012-08-02  Kent Tamura  <tkent@chromium.org>
+
+        Move number localization code in LocaleICU.cpp to new class
+        https://bugs.webkit.org/show_bug.cgi?id=92976
+
+        Reviewed by Kentaro Hara.
+
+        The number localization code by character mapping is usefull for non-ICU
+        platforms.
+
+        No new tests. This is just a refactoring, and is covered by
+        Source/WebKit/chromium/tests/LocalizedNumberICUTest.cpp.
+
+        * WebCore.gypi: Add NumberLocalizer.{cpp,h}.
+        * platform/text/LocaleICU.cpp:
+        (WebCore::LocaleICU::decimalSymbol):
+        Renamed from setDecimalSymbol. This function returns the resultant
+        string instead of setting it to a data member.
+        (WebCore::LocaleICU::decimalTextAttribute):
+        Renamed from setDecimalTextAttributel. This function returns the
+        resultant string instead of setting it to the specified string.
+        (WebCore::LocaleICU::initializeNumberLocalizerData):
+        Renamed from initializeDecimalFormat.
+        Calls NumberLocaizer::setNumberLocalizerData.
+        (WebCore::LocaleICU::localizedDecimalSeparator):
+        Rename initializeDecimalFormat to initializeNumberLocalizerData.
+        * platform/text/LocaleICU.h:
+        (LocaleICU): Remove some members, and inherit NumberLocalizer.
+        * platform/text/NumberLocalizer.cpp: Added. Move the code from LocaleICU.cpp
+        (WebCore):
+        (WebCore::NumberLocalizer::~NumberLocalizer):
+        (WebCore::NumberLocalizer::setNumberLocalizerData): Added.
+        (WebCore::NumberLocalizer::convertToLocalizedNumber):
+        (WebCore::matches):
+        (WebCore::NumberLocalizer::detectSignAndGetDigitRange):
+        (WebCore::NumberLocalizer::matchedDecimalSymbolIndex):
+        (WebCore::NumberLocalizer::convertFromLocalizedNumber):
+        (WebCore::NumberLocalizer::localizedDecimalSeparator):
+        * platform/text/NumberLocalizer.h: Added.
+        (NumberLocalizer):
+        (WebCore::NumberLocalizer::NumberLocalizer):
+
 2012-08-02  Alexander Pavlov  <apavlov@chromium.org>
 
         Web Inspector: Move DOM breakpoints-related context menu items into a submenu

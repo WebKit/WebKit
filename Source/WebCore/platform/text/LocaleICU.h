@@ -32,6 +32,7 @@
 #define LocaleICU_h
 
 #include "DateComponents.h"
+#include "NumberLocalizer.h"
 #include <unicode/udat.h>
 #include <unicode/unum.h>
 #include <wtf/Forward.h>
@@ -43,18 +44,11 @@ namespace WebCore {
 
 // We should use this class only for LocalizedNumberICU.cpp, LocalizedDateICU.cpp,
 // and LocalizedNumberICUTest.cpp.
-class LocaleICU {
+class LocaleICU : public NumberLocalizer {
 public:
     static PassOwnPtr<LocaleICU> create(const char* localeString);
     static LocaleICU* currentLocale();
-    ~LocaleICU();
-
-    // For LocalizedNumber
-    String convertToLocalizedNumber(const String&);
-    String convertFromLocalizedNumber(const String&);
-#if ENABLE(INPUT_TYPE_TIME_MULTIPLE_FIELDS)
-    String localizedDecimalSeparator();
-#endif
+    virtual ~LocaleICU();
 
     // For LocalizedDate
     double parseLocalizedDate(const String&);
@@ -76,9 +70,9 @@ public:
 private:
     static PassOwnPtr<LocaleICU> createForCurrentLocale();
     explicit LocaleICU(const char*);
-    void setDecimalSymbol(unsigned index, UNumberFormatSymbol);
-    void setDecimalTextAttribute(String&, UNumberFormatTextAttribute);
-    void initializeDecimalFormat();
+    String decimalSymbol(UNumberFormatSymbol);
+    String decimalTextAttribute(UNumberFormatTextAttribute);
+    virtual void initializeNumberLocalizerData() OVERRIDE;
 
     bool detectSignAndGetDigitRange(const String& input, bool& isNegative, unsigned& startIndex, unsigned& endIndex);
     unsigned matchedDecimalSymbolIndex(const String& input, unsigned& position);
@@ -102,17 +96,6 @@ private:
     CString m_locale;
     UNumberFormat* m_numberFormat;
     UDateFormat* m_shortDateFormat;
-    enum {
-        // 0-9 for digits.
-        DecimalSeparatorIndex = 10,
-        GroupSeparatorIndex = 11,
-        DecimalSymbolsSize
-    };
-    String m_decimalSymbols[DecimalSymbolsSize];
-    String m_positivePrefix;
-    String m_positiveSuffix;
-    String m_negativePrefix;
-    String m_negativeSuffix;
     bool m_didCreateDecimalFormat;
     bool m_didCreateShortDateFormat;
 
