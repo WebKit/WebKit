@@ -479,6 +479,15 @@ public:
             SpeculatedType prediction = at(varArgChild(node, 0)).prediction();
             if (!isActionableMutableArraySpeculation(prediction))
                 return false;
+            return true;
+        }
+            
+        case PutByValSafe: {
+            if (!at(varArgChild(node, 1)).shouldSpeculateInteger())
+                return false;
+            SpeculatedType prediction = at(varArgChild(node, 0)).prediction();
+            if (!isActionableMutableArraySpeculation(prediction))
+                return false;
             if (isArraySpeculation(prediction))
                 return false;
             return true;
@@ -524,6 +533,7 @@ public:
             return !isPredictedNumerical(node);
         case GetByVal:
         case PutByVal:
+        case PutByValSafe:
         case PutByValAlias:
             return !byValIsPure(node);
         default:

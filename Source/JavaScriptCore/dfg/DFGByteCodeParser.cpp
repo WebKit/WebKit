@@ -2152,10 +2152,14 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             NodeIndex property = get(currentInstruction[2].u.operand);
             NodeIndex value = get(currentInstruction[3].u.operand);
 
+            bool makeSafe =
+                m_inlineStackTop->m_profiledBlock->couldTakeSlowCase(m_currentIndex)
+                || m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, OutOfBounds);
+            
             addVarArgChild(base);
             addVarArgChild(property);
             addVarArgChild(value);
-            addToGraph(Node::VarArg, PutByVal, OpInfo(0), OpInfo(0));
+            addToGraph(Node::VarArg, makeSafe ? PutByValSafe : PutByVal, OpInfo(0), OpInfo(0));
 
             NEXT_OPCODE(op_put_by_val);
         }

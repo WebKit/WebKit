@@ -950,7 +950,8 @@ bool AbstractState::execute(unsigned indexInBlock)
     }
             
     case PutByVal:
-    case PutByValAlias: {
+    case PutByValAlias:
+    case PutByValSafe: {
         node.setCanExit(true);
 
         Edge child1 = m_graph.varArgChild(node, 0);
@@ -966,7 +967,7 @@ bool AbstractState::execute(unsigned indexInBlock)
             || m_graph[child1].shouldSpeculateArguments()
 #endif
             ) {
-            ASSERT(node.op() == PutByVal);
+            ASSERT(node.op() == PutByVal || node.op() == PutByValSafe);
             clobberWorld(node.codeOrigin, indexInBlock);
             forNode(nodeIndex).makeTop();
             break;
@@ -1055,7 +1056,7 @@ bool AbstractState::execute(unsigned indexInBlock)
         ASSERT(m_graph[child1].shouldSpeculateArray());
         forNode(child1).filter(SpecArray);
         forNode(child2).filter(SpecInt32);
-        if (node.op() == PutByVal)
+        if (node.op() == PutByValSafe)
             clobberWorld(node.codeOrigin, indexInBlock);
         break;
     }

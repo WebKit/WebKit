@@ -2508,7 +2508,8 @@ void SpeculativeJIT::compile(Node& node)
         break;
     }
 
-    case PutByVal: {
+    case PutByVal:
+    case PutByValSafe: {
         Edge child1 = m_jit.graph().varArgChild(node, 0);
         Edge child2 = m_jit.graph().varArgChild(node, 1);
         Edge child3 = m_jit.graph().varArgChild(node, 2);
@@ -2675,13 +2676,15 @@ void SpeculativeJIT::compile(Node& node)
         // If we have predicted the base to be type array, we can skip the check.
         if (!isArraySpeculation(m_state.forNode(child1).m_type))
             speculationCheck(BadType, JSValueRegs(baseReg), child1, m_jit.branchPtr(MacroAssembler::NotEqual, MacroAssembler::Address(baseReg, JSCell::classInfoOffset()), MacroAssembler::TrustedImmPtr(&JSArray::s_info)));
+        
+        MacroAssembler::Jump beyondArrayBounds = m_jit.branch32(MacroAssembler::AboveOrEqual, propertyReg, MacroAssembler::Address(baseReg, JSArray::vectorLengthOffset()));
+        if (node.op() == PutByVal)
+            speculationCheck(OutOfBounds, JSValueRegs(), NoNode, beyondArrayBounds);
 
         base.use();
         property.use();
         value.use();
         
-        MacroAssembler::Jump beyondArrayBounds = m_jit.branch32(MacroAssembler::AboveOrEqual, propertyReg, MacroAssembler::Address(baseReg, JSArray::vectorLengthOffset()));
-
         // Get the array storage.
         GPRReg storageReg = scratchReg;
         m_jit.loadPtr(MacroAssembler::Address(baseReg, JSArray::storageOffset()), storageReg);
@@ -2702,11 +2705,13 @@ void SpeculativeJIT::compile(Node& node)
         // Store the value to the array.
         m_jit.storePtr(valueReg, MacroAssembler::BaseIndex(storageReg, propertyReg, MacroAssembler::ScalePtr, OBJECT_OFFSETOF(ArrayStorage, m_vector[0])));
 
-        addSlowPathGenerator(
-            slowPathCall(
-                beyondArrayBounds, this,
-                m_jit.codeBlock()->isStrictMode() ? operationPutByValBeyondArrayBoundsStrict : operationPutByValBeyondArrayBoundsNonStrict,
-                NoResult, baseReg, propertyReg, valueReg));
+        if (node.op() == PutByValSafe) {
+            addSlowPathGenerator(
+                slowPathCall(
+                    beyondArrayBounds, this,
+                    m_jit.codeBlock()->isStrictMode() ? operationPutByValBeyondArrayBoundsStrict : operationPutByValBeyondArrayBoundsNonStrict,
+                    NoResult, baseReg, propertyReg, valueReg));
+        }
 
         noResult(m_compileIndex, UseChildrenCalledExplicitly);
         break;
