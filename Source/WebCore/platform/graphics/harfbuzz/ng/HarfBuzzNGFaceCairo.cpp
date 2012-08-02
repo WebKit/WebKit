@@ -95,11 +95,17 @@ static hb_bool_t harfbuzzGetGlyph(hb_font_t* hbFont, void* fontData, hb_codepoin
     FontPlatformData* platformData = reinterpret_cast<FontPlatformData*>(fontData);
     cairo_scaled_font_t* scaledFont = platformData->scaledFont();
     ASSERT(scaledFont);
-    CairoFtFaceLocker cairoFtFaceLocker(scaledFont);
-    FT_Face ftFace = cairoFtFaceLocker.lock();
-    ASSERT(ftFace);
-    *glyph = FT_Get_Char_Index(ftFace, unicode);
-    return !!*glyph;
+
+    cairo_glyph_t* glyphs = 0;
+    int numGlyphs = 0;
+    CString utf8Codepoint = UTF8Encoding().encode(reinterpret_cast<UChar*>(&unicode), 1, QuestionMarksForUnencodables);
+    if (CAIRO_STATUS_SUCCESS != cairo_scaled_font_text_to_glyphs(scaledFont, 0, 0, utf8Codepoint.data(), utf8Codepoint.length(), &glyphs, &numGlyphs, 0, 0, 0))
+        return false;
+    if (!numGlyphs)
+        return false;
+    *glyph = glyphs[0].index;
+    cairo_glyph_free(glyphs);
+    return true;
 }
 
 static hb_position_t harfbuzzGetGlyphHorizontalAdvance(hb_font_t* hbFont, void* fontData, hb_codepoint_t glyph, void* userData)

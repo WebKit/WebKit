@@ -1,3 +1,22 @@
+2012-08-02  Dominik Röttsches  <dominik.rottsches@intel.com>
+
+        [Cairo] Add complex font drawing using HarfbuzzNG
+        https://bugs.webkit.org/show_bug.cgi?id=91864
+
+        Reviewed by Martin Robinson.
+
+        Unfortunately the Freetype based approach that avoids allocations and UTF8 conversion
+        fails to produce correct results for some tests.
+
+        No new tests, at least
+          fast/dom/52776.html
+          fast/text/atsui-negative-spacing-features.html
+          fast/text/atsui-spacing-features.html
+        expose this problem.
+
+        * platform/graphics/harfbuzz/ng/HarfBuzzNGFaceCairo.cpp:
+        (WebCore::harfbuzzGetGlyph): Revert to initial cairo_scaled_font based approach.
+
 2012-08-02  Eugene Klyuchnikov  <eustas.big@gmail.com>
 
         Web Inspector: Fix protocol version check.

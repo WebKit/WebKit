@@ -359,13 +359,6 @@ BUGWK84593 : animations/animation-api-1.html = TEXT
 BUGWKEFL SKIP : storage/indexeddb = PASS
 BUGWKEFL SKIP : http/tests/inspector/indexeddb = PASS
 
-// harfbuzzGetGlyph is producing incorrect results.
-BUGWK91864 : fast/dom/52776.html = TEXT
-BUGWK91864 : fast/text/atsui-negative-spacing-features.html = TEXT
-BUGWK91864 : fast/text/atsui-pointtooffset-calls-cg.html = TEXT
-BUGWK91864 : fast/text/atsui-spacing-features.html = TEXT
-BUGWK91864 : fast/text/international/text-spliced-font.html = MISSING
-
 // Quota API is not supported.
 BUGWKEFL SKIP : storage/storageinfo-missing-arguments.html = PASS
 BUGWKEFL SKIP : storage/storageinfo-no-callbacks.html = PASS
