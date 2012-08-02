@@ -137,13 +137,14 @@ class Tester(object):
 
         self.printer.write_update("Finding the individual test methods ...")
         loader = _Loader()
-        test_names = self._test_names(loader, names)
+        parallel_tests, serial_tests = self._test_names(loader, names)
 
         self.printer.write_update("Running the tests ...")
-        self.printer.num_tests = len(test_names)
+        self.printer.num_tests = len(parallel_tests) + len(serial_tests)
         start = time.time()
         test_runner = Runner(self.printer, loader)
-        test_runner.run(test_names, self._options.child_processes)
+        test_runner.run(parallel_tests, self._options.child_processes)
+        test_runner.run(serial_tests, 1)
 
         self.printer.print_result(time.time() - start)
 
@@ -172,11 +173,18 @@ class Tester(object):
         if self._options.integration_tests:
             loader.test_method_prefixes.append('integration_test_')
 
-        test_names = []
-        for name in names:
-            test_names.extend(self._all_test_names(loader.loadTestsFromName(name, None)))
+        parallel_tests = []
+        if self._options.child_processes > 1:
+            for name in names:
+                parallel_tests.extend(self._all_test_names(loader.loadTestsFromName(name, None)))
+            loader.test_method_prefixes = []
 
-        return test_names
+        serial_tests = []
+        loader.test_method_prefixes.extend(['serial_test_', 'serial_integration_test_'])
+        for name in names:
+            serial_tests.extend(self._all_test_names(loader.loadTestsFromName(name, None)))
+
+        return (parallel_tests, serial_tests)
 
     def _all_test_names(self, suite):
         names = []

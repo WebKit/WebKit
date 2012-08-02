@@ -152,7 +152,7 @@ class ExecutiveTest(unittest.TestCase):
         output = executive.run_and_throw_if_fail(command_line('echo', unicode_tor_input), quiet=True, decode_output=False)
         self.assertEquals(output, encoded_tor)
 
-    def test_kill_process(self):
+    def serial_test_kill_process(self):
         executive = Executive()
         process = subprocess.Popen(never_ending_command(), stdout=subprocess.PIPE)
         self.assertEqual(process.poll(), None)  # Process is running
@@ -169,8 +169,8 @@ class ExecutiveTest(unittest.TestCase):
         # Killing again should fail silently.
         executive.kill_process(process.pid)
 
-        # Now test kill_all ; we do this in the same test as kill
-        # so that we don't collide when running tests in parallel.
+    def serial_test_kill_all(self):
+        executive = Executive()
         process = subprocess.Popen(never_ending_command(), stdout=subprocess.PIPE)
         self.assertEqual(process.poll(), None)  # Process is running
         executive.kill_all(never_ending_command()[0])
@@ -202,13 +202,13 @@ class ExecutiveTest(unittest.TestCase):
         self._assert_windows_image_name("foo.baz", "foo.baz")
         self._assert_windows_image_name("foo.baz.exe", "foo.baz.exe")
 
-    def test_check_running_pid(self):
+    def serial_test_check_running_pid(self):
         executive = Executive()
         self.assertTrue(executive.check_running_pid(os.getpid()))
         # Maximum pid number on Linux is 32768 by default
         self.assertFalse(executive.check_running_pid(100000))
 
-    def test_running_pids(self):
+    def serial_test_running_pids(self):
         if sys.platform in ("win32", "cygwin"):
             return  # This function isn't implemented on Windows yet.
 
@@ -216,7 +216,9 @@ class ExecutiveTest(unittest.TestCase):
         pids = executive.running_pids()
         self.assertTrue(os.getpid() in pids)
 
-    def test_run_in_parallel(self):
+    def serial_test_run_in_parallel(self):
+        # We run this test serially to avoid overloading the machine and throwing off the timing.
+
         if sys.platform in ("win32", "cygwin"):
             return  # This function isn't implemented properly on windows yet.
         import multiprocessing

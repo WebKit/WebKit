@@ -1,5 +1,28 @@
 2012-08-02  Dirk Pranke  <dpranke@chromium.org>
 
+        test-webkitpy: some tests need to run by themselves
+        https://bugs.webkit.org/show_bug.cgi?id=92926
+
+        Reviewed by Ojan Vafai.
+
+        Due to timing issues some of the executive tests will collide
+        and fail if they're run concurrently. This patch adds support
+        for writing tests that will be executed one at a time
+        (serially); to get them, add "serial_" to the front of the test
+        method name. 
+
+        * Scripts/webkitpy/common/system/executive_unittest.py:
+        (ExecutiveTest.serial_test_kill_process):
+        (ExecutiveTest.serial_test_kill_all):
+        (ExecutiveTest.serial_test_check_running_pid):
+        (ExecutiveTest.serial_test_running_pids):
+        (ExecutiveTest.serial_test_run_in_parallel):
+        * Scripts/webkitpy/test/main.py:
+        (Tester._run_tests):
+        (Tester._test_names):
+
+2012-08-02  Dirk Pranke  <dpranke@chromium.org>
+
         test-webkitpy: integrate proper support for integration tests
         https://bugs.webkit.org/show_bug.cgi?id=92925
 
