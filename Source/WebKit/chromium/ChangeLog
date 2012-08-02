@@ -1,3 +1,17 @@
+2012-08-02  Alexei Filippov  <alexeif@chromium.org>
+
+        Web Inspector: count RenderStyle objects in the native memory profiler
+        https://bugs.webkit.org/show_bug.cgi?id=91759
+
+        Reviewed by Yury Semikhatsky.
+
+        Add a test for DataRef<T> wrapped member instrumentation.
+
+        * tests/MemoryInstrumentationTest.cpp:
+        (WebCore::InstrumentedRefPtr::create):
+        (WebCore::TEST):
+        (WebCore):
+
 2012-08-02  Peter Beverloo  <peter@chromium.org>
 
         Unreviewed.  Rolled DEPS.

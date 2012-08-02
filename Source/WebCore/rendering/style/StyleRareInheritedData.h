@@ -39,6 +39,7 @@
 namespace WebCore {
 
 class CursorList;
+class MemoryObjectInfo;
 class QuotesData;
 class ShadowData;
 
@@ -57,6 +58,8 @@ public:
         return !(*this == o);
     }
     bool shadowDataEquivalent(const StyleRareInheritedData&) const;
+
+    void reportMemoryUsage(MemoryObjectInfo*) const;
 
     Color textStrokeColor;
     float textStrokeWidth;

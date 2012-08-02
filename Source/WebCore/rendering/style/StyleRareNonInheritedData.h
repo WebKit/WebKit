@@ -39,6 +39,7 @@
 namespace WebCore {
 
 class AnimationList;
+class MemoryObjectInfo;
 class ShadowData;
 class StyleDeprecatedFlexibleBoxData;
 #if ENABLE(CSS_FILTERS)
@@ -88,6 +89,8 @@ public:
     bool reflectionDataEquivalent(const StyleRareNonInheritedData&) const;
     bool animationDataEquivalent(const StyleRareNonInheritedData&) const;
     bool transitionDataEquivalent(const StyleRareNonInheritedData&) const;
+
+    void reportMemoryUsage(MemoryObjectInfo*) const;
 
     float opacity; // Whether or not we're transparent.
 

@@ -29,7 +29,6 @@
 #include "EventTarget.h"
 #include "KURLHash.h"
 #include "LayoutTypes.h"
-#include "MemoryInstrumentation.h"
 #include "MutationObserver.h"
 #include "RenderStyleConstants.h"
 #include "ScriptWrappable.h"
@@ -66,6 +65,7 @@ class Frame;
 class HTMLInputElement;
 class IntRect;
 class KeyboardEvent;
+class MemoryObjectInfo;
 class NSResolver;
 class NamedNodeMap;
 class NameNodeList;

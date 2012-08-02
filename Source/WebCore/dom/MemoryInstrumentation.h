@@ -39,6 +39,7 @@
 
 namespace WebCore {
 
+template <typename T> class DataRef;
 class MemoryObjectInfo;
 
 class MemoryInstrumentation {
@@ -111,20 +112,22 @@ private:
     template <typename T>
     struct OwningTraits { // Default byReference implementation.
         static void addInstrumentedObject(MemoryInstrumentation* instrumentation, const T& t) { instrumentation->addInstrumentedObjectImpl(&t, byReference); }
-        static void addObject(MemoryInstrumentation* instrumentation, const T& t, MemoryInstrumentation::ObjectType objectType) { instrumentation->addObjectImpl(&t, objectType, byReference); }
+        static void addObject(MemoryInstrumentation* instrumentation, const T& t, ObjectType objectType) { instrumentation->addObjectImpl(&t, objectType, byReference); }
     };
 
     template <typename T>
     struct OwningTraits<T*> { // Custom byPointer implementation.
         static void addInstrumentedObject(MemoryInstrumentation* instrumentation, const T* const& t) { instrumentation->addInstrumentedObjectImpl(t, byPointer); }
-        static void addObject(MemoryInstrumentation* instrumentation, const T* const& t, MemoryInstrumentation::ObjectType objectType) { instrumentation->addObjectImpl(t, objectType, byPointer); }
+        static void addObject(MemoryInstrumentation* instrumentation, const T* const& t, ObjectType objectType) { instrumentation->addObjectImpl(t, objectType, byPointer); }
     };
 
     template <typename T> void addInstrumentedObjectImpl(const T* const&, OwningType);
+    template <typename T> void addInstrumentedObjectImpl(const DataRef<T>* const&, OwningType);
     template <typename T> void addInstrumentedObjectImpl(const OwnPtr<T>* const&, OwningType);
     template <typename T> void addInstrumentedObjectImpl(const RefPtr<T>* const&, OwningType);
 
     template <typename T> void addObjectImpl(const T* const&, ObjectType, OwningType);
+    template <typename T> void addObjectImpl(const DataRef<T>* const&, ObjectType, OwningType);
     template <typename T> void addObjectImpl(const OwnPtr<T>* const&, ObjectType, OwningType);
     template <typename T> void addObjectImpl(const RefPtr<T>* const&, ObjectType, OwningType);
 };
@@ -207,6 +210,12 @@ void MemoryInstrumentation::addInstrumentedObjectImpl(const T* const& object, Ow
 }
 
 template <typename T>
+void MemoryInstrumentation::addInstrumentedObjectImpl(const DataRef<T>* const& object, OwningType)
+{
+    addInstrumentedObjectImpl(object->get(), byPointer);
+}
+
+template <typename T>
 void MemoryInstrumentation::addInstrumentedObjectImpl(const OwnPtr<T>* const& object, OwningType)
 {
     addInstrumentedObjectImpl(object->get(), byPointer);
@@ -216,6 +225,12 @@ template <typename T>
 void MemoryInstrumentation::addInstrumentedObjectImpl(const RefPtr<T>* const& object, OwningType)
 {
     addInstrumentedObjectImpl(object->get(), byPointer);
+}
+
+template <typename T>
+void MemoryInstrumentation::addObjectImpl(const DataRef<T>* const& object, ObjectType objectType, OwningType)
+{
+    addObjectImpl(object->get(), objectType, byPointer);
 }
 
 template <typename T>

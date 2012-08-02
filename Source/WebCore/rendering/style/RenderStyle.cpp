@@ -28,6 +28,7 @@
 #include "CSSPropertyNames.h"
 #include "CSSWrapShapes.h"
 #include "FontSelector.h"
+#include "MemoryInstrumentation.h"
 #include "QuotesData.h"
 #include "RenderArena.h"
 #include "RenderObject.h"
@@ -1484,6 +1485,26 @@ LayoutBoxExtent RenderStyle::imageOutsets(const NinePieceImage& image) const
                            NinePieceImage::computeOutset(image.outset().right(), borderRightWidth()),
                            NinePieceImage::computeOutset(image.outset().bottom(), borderBottomWidth()),
                            NinePieceImage::computeOutset(image.outset().left(), borderLeftWidth()));
+}
+
+void RenderStyle::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+{
+    MemoryClassInfo<RenderStyle> info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
+    info.addMember(m_box);
+    info.addMember(visual);
+    // FIXME: m_background contains RefPtr<StyleImage> that might need to be instrumented.
+    info.addMember(m_background);
+    // FIXME: surrond contains some fields e.g. BorderData that might need to be instrumented.
+    info.addMember(surround);
+    info.addInstrumentedMember(rareNonInheritedData);
+    info.addInstrumentedMember(rareInheritedData);
+    // FIXME: inherited contains StyleImage and Font fields that might need to be instrumented.
+    info.addMember(inherited);
+    if (m_cachedPseudoStyles)
+        info.addVectorPtr(m_cachedPseudoStyles.get());
+#if ENABLE(SVG)
+    info.addMember(m_svgStyle);
+#endif
 }
 
 } // namespace WebCore

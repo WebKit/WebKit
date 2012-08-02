@@ -23,6 +23,7 @@
 #include "StyleRareInheritedData.h"
 
 #include "CursorList.h"
+#include "MemoryInstrumentation.h"
 #include "QuotesData.h"
 #include "RenderStyle.h"
 #include "RenderStyleConstants.h"
@@ -259,6 +260,22 @@ bool StyleRareInheritedData::shadowDataEquivalent(const StyleRareInheritedData& 
     if (textShadow && o.textShadow && (*textShadow != *o.textShadow))
         return false;
     return true;
+}
+
+void StyleRareInheritedData::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+{
+    MemoryClassInfo<StyleRareInheritedData> info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
+    info.addMember(textShadow);
+    info.addString(highlight);
+    info.addMember(cursorData);
+    info.addString(hyphenationString);
+    info.addString(locale);
+    info.addString(textEmphasisCustomMark);
+    info.addMember(quotes);
+    info.addString(m_lineGrid);
+#if ENABLE(CSS_VARIABLES)
+    info.addMember(m_variables);
+#endif
 }
 
 } // namespace WebCore

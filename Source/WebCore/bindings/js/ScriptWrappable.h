@@ -32,6 +32,7 @@
 #define ScriptWrappable_h
 
 #include "JSDOMWrapper.h"
+#include "MemoryInstrumentation.h"
 #include <heap/Weak.h>
 
 namespace WebCore {

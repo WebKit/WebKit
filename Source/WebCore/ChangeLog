@@ -1,5 +1,46 @@
 2012-08-02  Alexei Filippov  <alexeif@chromium.org>
 
+        Web Inspector: count RenderStyle objects in the native memory profiler
+        https://bugs.webkit.org/show_bug.cgi?id=91759
+
+        Reviewed by Yury Semikhatsky.
+
+        The patch adds instrumentation to the following classes:
+          - RenderStyle
+          - StyleRareInheritedData
+          - StyleRareNonInheritedData
+
+        * bindings/js/ScriptWrappable.h:
+        * bindings/v8/ScriptWrappable.h:
+        * dom/MemoryInstrumentation.h:
+        (WebCore):
+        (WebCore::MemoryInstrumentation::OwningTraits::addObject):
+        (WebCore::MemoryInstrumentation::addInstrumentedObjectImpl):
+        (WebCore::MemoryInstrumentation::addObjectImpl):
+        * dom/Node.cpp:
+        (WebCore::Node::reportMemoryUsage):
+        * dom/Node.h:
+        (WebCore):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::reportMemoryUsage):
+        (WebCore):
+        * rendering/style/RenderStyle.h:
+        (WebCore):
+        * rendering/style/StyleRareInheritedData.cpp:
+        (WebCore::StyleRareInheritedData::reportMemoryUsage):
+        (WebCore):
+        * rendering/style/StyleRareInheritedData.h:
+        (WebCore):
+        (StyleRareInheritedData):
+        * rendering/style/StyleRareNonInheritedData.cpp:
+        (WebCore::StyleRareNonInheritedData::reportMemoryUsage):
+        (WebCore):
+        * rendering/style/StyleRareNonInheritedData.h:
+        (WebCore):
+        (StyleRareNonInheritedData):
+
+2012-08-02  Alexei Filippov  <alexeif@chromium.org>
+
         Web Inspector: rename host->origin in the inspector protocol DOMStorage entry
         https://bugs.webkit.org/show_bug.cgi?id=92979
 

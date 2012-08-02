@@ -67,6 +67,7 @@
 #include "KeyboardEvent.h"
 #include "LabelsNodeList.h"
 #include "Logging.h"
+#include "MemoryInstrumentation.h"
 #include "MouseEvent.h"
 #include "MutationEvent.h"
 #include "NameNodeList.h"
@@ -2819,6 +2820,8 @@ void Node::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     info.addInstrumentedMember(m_document);
     info.addInstrumentedMember(m_next);
     info.addInstrumentedMember(m_previous);
+    if (m_renderer)
+        info.addInstrumentedMember(m_renderer->style());
 }
 
 } // namespace WebCore

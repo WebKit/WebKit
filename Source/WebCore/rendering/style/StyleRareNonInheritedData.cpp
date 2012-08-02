@@ -23,6 +23,7 @@
 #include "StyleRareNonInheritedData.h"
 
 #include "ContentData.h"
+#include "MemoryInstrumentation.h"
 #include "RenderCounter.h"
 #include "RenderStyle.h"
 #include "ShadowData.h"
@@ -284,6 +285,34 @@ bool StyleRareNonInheritedData::transitionDataEquivalent(const StyleRareNonInher
     if (m_transitions && o.m_transitions && (*m_transitions != *o.m_transitions))
         return false;
     return true;
+}
+
+void StyleRareNonInheritedData::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+{
+    MemoryClassInfo<StyleRareNonInheritedData> info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
+#if ENABLE(DASHBOARD_SUPPORT)
+    info.addVector(m_dashboardRegions);
+#endif
+    info.addMember(m_deprecatedFlexibleBox);
+    info.addMember(m_flexibleBox);
+    info.addMember(m_marquee);
+    info.addMember(m_multiCol);
+    info.addMember(m_transform);
+#if ENABLE(CSS_FILTERS)
+    info.addMember(m_filter);
+#endif
+    info.addMember(m_grid);
+    info.addMember(m_gridItem);
+    info.addMember(m_content);
+    info.addMember(m_counterDirectives);
+    info.addMember(m_boxShadow);
+    info.addMember(m_boxReflect);
+    info.addMember(m_animations);
+    info.addMember(m_transitions);
+    info.addMember(m_wrapShapeInside);
+    info.addMember(m_wrapShapeOutside);
+    info.addString(m_flowThread);
+    info.addString(m_regionThread);
 }
 
 } // namespace WebCore

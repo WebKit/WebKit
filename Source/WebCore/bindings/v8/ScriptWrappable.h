@@ -31,6 +31,7 @@
 #ifndef ScriptWrappable_h
 #define ScriptWrappable_h
 
+#include "MemoryInstrumentation.h"
 #include <v8.h>
 
 namespace WebCore {

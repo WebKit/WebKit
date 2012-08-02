@@ -105,6 +105,7 @@ class BorderData;
 class CounterContent;
 class CursorList;
 class IntRect;
+class MemoryObjectInfo;
 class Pair;
 class ShadowData;
 class StyleImage;
@@ -1528,6 +1529,8 @@ public:
 
     void setHasExplicitlyInheritedProperties() { m_bitfields.setExplicitInheritance(true); }
     bool hasExplicitlyInheritedProperties() const { return m_bitfields.explicitInheritance(); }
+
+    void reportMemoryUsage(MemoryObjectInfo*) const;
     
     // Initial values for all the properties
     static EBorderCollapse initialBorderCollapse() { return BSEPARATE; }

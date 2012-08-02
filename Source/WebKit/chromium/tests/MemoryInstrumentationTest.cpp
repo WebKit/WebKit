@@ -30,6 +30,7 @@
 
 #include "config.h"
 
+#include "DataRef.h"
 #include "MemoryInstrumentationImpl.h"
 
 #include <gtest/gtest.h>
@@ -115,6 +116,7 @@ class InstrumentedRefPtr : public RefCounted<InstrumentedRefPtr> {
 public:
     InstrumentedRefPtr() : m_notInstrumented(new NotInstrumented) { }
     virtual ~InstrumentedRefPtr() { delete m_notInstrumented; }
+    static PassRefPtr<InstrumentedRefPtr> create() { return adoptRef(new InstrumentedRefPtr()); }
 
     virtual void reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     {
@@ -123,6 +125,17 @@ public:
     }
     NotInstrumented* m_notInstrumented;
 };
+
+TEST(MemoryInstrumentationTest, dataRef)
+{
+    VisitedObjects visitedObjects;
+    MemoryInstrumentationImpl impl(visitedObjects);
+    DataRef<InstrumentedRefPtr> instrumentedRefPtr;
+    instrumentedRefPtr.init();
+    impl.addRootObject(instrumentedRefPtr);
+    EXPECT_EQ(sizeof(InstrumentedRefPtr) + sizeof(NotInstrumented), impl.reportedSizeForAllTypes());
+    EXPECT_EQ(2, visitedObjects.size());
+}
 
 TEST(MemoryInstrumentationTest, refPtr)
 {
