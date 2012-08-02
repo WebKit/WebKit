@@ -157,6 +157,13 @@ NSImage* Frame::snapshotDragImage(Node* node, NSRect* imageRect, NSRect* element
     renderer->updateDragState(true);    // mark dragged nodes (so they pick up the right CSS)
     m_doc->updateLayout();        // forces style recalc - needed since changing the drag state might
                                         // imply new styles, plus JS could have changed other things
+
+
+    // Document::updateLayout may have blown away the original RenderObject.
+    renderer = node->renderer();
+    if (!renderer)
+        return nil;
+
     LayoutRect topLevelRect;
     NSRect paintingRect = pixelSnappedIntRect(renderer->paintingRootRect(topLevelRect));
 
@@ -175,12 +182,11 @@ NSImage* Frame::snapshotDragImage(Node* node, NSRect* imageRect, NSRect* element
 
 DragImageRef Frame::nodeImage(Node* node)
 {
+    m_doc->updateLayout(); // forces style recalc
+
     RenderObject* renderer = node->renderer();
     if (!renderer)
         return nil;
-
-    m_doc->updateLayout(); // forces style recalc
-
     LayoutRect topLevelRect;
     NSRect paintingRect = pixelSnappedIntRect(renderer->paintingRootRect(topLevelRect));
 

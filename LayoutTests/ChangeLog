@@ -1,5 +1,19 @@
 2012-08-02  Lucas Forschler  <lforschler@apple.com>
 
+    Merge 121388
+
+    2012-06-27  Daniel Cheng  <dcheng@chromium.org>
+
+            Fix crash in Frame::nodeImage.
+            https://bugs.webkit.org/show_bug.cgi?id=89911
+
+            Reviewed by Abhishek Arya.
+
+            * fast/events/drag-display-none-element-expected.txt: Added.
+            * fast/events/drag-display-none-element.html: Added.
+
+2012-08-02  Lucas Forschler  <lforschler@apple.com>
+
     Merge 121275
 
     2012-06-26  Julien Chaffraix  <jchaffraix@webkit.org>
