@@ -1,3 +1,37 @@
+2012-08-02  Andras Becsi  <andras.becsi@nokia.com>
+
+        [Qt][WK2] Click, mouse and links rely on touch mocking.
+        https://bugs.webkit.org/show_bug.cgi?id=83091
+
+        Reviewed by Simon Hausmann.
+
+        Send the incoming mouse events directly to the gesture recognizers to make
+        the WebView behave consistent with other Flickables.
+        This patch unifies the code paths for input events and makes it possible
+        to enable mouse events on the flickable web view again, thus makes the
+        mobile-version of QQuickWebView usable on desktop.
+
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebViewPrivate::handleMouseEvent):
+        (QQuickWebViewFlickablePrivate::QQuickWebViewFlickablePrivate):
+        (QQuickWebViewFlickablePrivate::handleMouseEvent):
+        (QQuickWebView::mousePressEvent):
+        (QQuickWebView::mouseMoveEvent):
+        (QQuickWebView::mouseReleaseEvent):
+        (QQuickWebView::mouseDoubleClickEvent):
+        * UIProcess/API/qt/qquickwebview_p_p.h:
+        (QQuickWebViewPrivate):
+        (QQuickWebViewFlickablePrivate):
+        * UIProcess/qt/QtPanGestureRecognizer.cpp:
+        (WebKit::QtPanGestureRecognizer::update):
+        * UIProcess/qt/QtWebPageEventHandler.cpp:
+        (WebKit::QtWebPageEventHandler::QtWebPageEventHandler):
+        (WebKit::QtWebPageEventHandler::handleInputEvent):
+        (WebKit):
+        (WebKit::QtWebPageEventHandler::doneWithTouchEvent):
+        * UIProcess/qt/QtWebPageEventHandler.h:
+        (QtWebPageEventHandler):
+
 2012-08-01  Brady Eidson  <beidson@apple.com>
 
         Small part of "Out-of-process plug-ins should support asynchronous initialization."

@@ -408,6 +408,27 @@ void QQuickWebViewPrivate::loadDidFail(const QtWebError& error)
     emit q->loadingChanged(&loadRequest);
 }
 
+void QQuickWebViewPrivate::handleMouseEvent(QMouseEvent* event)
+{
+    switch (event->type()) {
+    case QEvent::MouseButtonPress:
+    case QEvent::MouseButtonDblClick:
+        // If a MouseButtonDblClick was received then we got a MouseButtonPress before
+        // handleMousePressEvent will take care of double clicks.
+        pageView->eventHandler()->handleMousePressEvent(event);
+        break;
+    case QEvent::MouseMove:
+        pageView->eventHandler()->handleMouseMoveEvent(event);
+        break;
+    case QEvent::MouseButtonRelease:
+        pageView->eventHandler()->handleMouseReleaseEvent(event);
+        break;
+    default:
+        ASSERT_NOT_REACHED();
+        break;
+    }
+}
+
 void QQuickWebViewPrivate::setNeedsDisplay()
 {
     Q_Q(QQuickWebView);
@@ -815,12 +836,6 @@ void QQuickWebViewLegacyPrivate::setZoomFactor(qreal factor)
 QQuickWebViewFlickablePrivate::QQuickWebViewFlickablePrivate(QQuickWebView* viewport)
     : QQuickWebViewPrivate(viewport)
 {
-    // Disable mouse events on the flickable web view so we do not
-    // select text during pan gestures on platforms which send both
-    // touch and mouse events simultaneously.
-    // FIXME: Temporary workaround code which should be removed when
-    // bug http://codereview.qt-project.org/21896 is fixed.
-    viewport->setAcceptedMouseButtons(Qt::NoButton);
     viewport->setAcceptHoverEvents(false);
 }
 
@@ -870,6 +885,15 @@ void QQuickWebViewFlickablePrivate::didChangeContentsSize(const QSize& newSize)
 
     pageView->setContentsSize(newSize); // emits contentsSizeChanged()
     m_viewportHandler->pageContentsSizeChanged(newSize, q->boundingRect().size().toSize());
+}
+
+void QQuickWebViewFlickablePrivate::handleMouseEvent(QMouseEvent* event)
+{
+    if (!pageView->eventHandler())
+        return;
+
+    // FIXME: Update the axis locker for mouse events as well.
+    pageView->eventHandler()->handleInputEvent(event);
 }
 
 /*!
@@ -1766,29 +1790,26 @@ void QQuickWebView::mousePressEvent(QMouseEvent* event)
 {
     Q_D(QQuickWebView);
     forceActiveFocus();
-    d->pageView->eventHandler()->handleMousePressEvent(event);
+    d->handleMouseEvent(event);
 }
 
 void QQuickWebView::mouseMoveEvent(QMouseEvent* event)
 {
     Q_D(QQuickWebView);
-    d->pageView->eventHandler()->handleMouseMoveEvent(event);
+    d->handleMouseEvent(event);
 }
 
 void QQuickWebView::mouseReleaseEvent(QMouseEvent* event)
 {
     Q_D(QQuickWebView);
-    d->pageView->eventHandler()->handleMouseReleaseEvent(event);
+    d->handleMouseEvent(event);
 }
 
 void QQuickWebView::mouseDoubleClickEvent(QMouseEvent* event)
 {
     Q_D(QQuickWebView);
-
     forceActiveFocus();
-    // If a MouseButtonDblClick was received then we got a MouseButtonPress before
-    // handleMousePressEvent will take care of double clicks.
-    d->pageView->eventHandler()->handleMousePressEvent(event);
+    d->handleMouseEvent(event);
 }
 
 void QQuickWebView::wheelEvent(QWheelEvent* event)

@@ -31,8 +31,10 @@
 #include <QCursor>
 #include <QDrag>
 #include <QGuiApplication>
+#include <QInputEvent>
 #include <QInputMethod>
 #include <QMimeData>
+#include <QMouseEvent>
 #include <QQuickWindow>
 #include <QStyleHints>
 #include <QTextFormat>
@@ -99,6 +101,7 @@ QtWebPageEventHandler::QtWebPageEventHandler(WKPageRef pageRef, QQuickWebPage* q
     , m_clickCount(0)
     , m_postponeTextInputStateChanged(false)
     , m_isTapHighlightActive(false)
+    , m_isMouseButtonPressed(false)
 {
     connect(qApp->inputMethod(), SIGNAL(visibleChanged()), this, SLOT(inputPanelVisibleChanged()));
 }
@@ -445,23 +448,17 @@ void QtWebPageEventHandler::doneWithGestureEvent(const WebGestureEvent& event, b
     updateTextInputState();
 }
 
-#if ENABLE(TOUCH_EVENTS)
-void QtWebPageEventHandler::doneWithTouchEvent(const NativeWebTouchEvent& event, bool wasEventHandled)
+void QtWebPageEventHandler::handleInputEvent(const QInputEvent* event)
 {
-    if (!m_viewportHandler)
-        return;
+    ASSERT(m_viewportHandler);
 
-    if (wasEventHandled || event.type() == WebEvent::TouchCancel) {
-        m_panGestureRecognizer.cancel();
-        m_pinchGestureRecognizer.cancel();
-        if (event.type() != WebEvent::TouchMove)
-            m_tapGestureRecognizer.cancel();
-        return;
-    }
+    bool isMouseEvent = false;
 
-    const QTouchEvent* ev = event.nativeEvent();
-
-    switch (ev->type()) {
+    switch (event->type()) {
+    case QEvent::MouseButtonPress:
+        isMouseEvent = true;
+        m_isMouseButtonPressed = true;
+        // Fall through.
     case QEvent::TouchBegin:
         ASSERT(!m_viewportHandler->panGestureActive());
         ASSERT(!m_viewportHandler->pinchGestureActive());
@@ -472,16 +469,27 @@ void QtWebPageEventHandler::doneWithTouchEvent(const NativeWebTouchEvent& event,
         // where as it does not stop the scale animation.
         // The gesture recognizer stops the kinetic scrolling animation if needed.
         break;
+    case QEvent::MouseMove:
+        if (!m_isMouseButtonPressed)
+            return;
+
+        isMouseEvent = true;
+        // Fall through.
     case QEvent::TouchUpdate:
         // The scale animation can only be interrupted by a pinch gesture, which will then take over.
         if (m_viewportHandler->scaleAnimationActive() && m_pinchGestureRecognizer.isRecognized())
             m_viewportHandler->interruptScaleAnimation();
         break;
+    case QEvent::MouseButtonRelease:
+        isMouseEvent = true;
+        m_isMouseButtonPressed = false;
+        // Fall through.
     case QEvent::TouchEnd:
         m_viewportHandler->touchEnd();
         break;
     default:
-        break;
+        ASSERT(event->type() == QEvent::MouseButtonDblClick);
+        return;
     }
 
     // If the scale animation is active we don't pass the event to the recognizers. In the future
@@ -489,15 +497,36 @@ void QtWebPageEventHandler::doneWithTouchEvent(const NativeWebTouchEvent& event,
     if (m_viewportHandler->scaleAnimationActive())
         return;
 
-    const QList<QTouchEvent::TouchPoint>& touchPoints = ev->touchPoints();
-    const int touchPointCount = touchPoints.size();
-    qint64 eventTimestampMillis = ev->timestamp();
     QList<QTouchEvent::TouchPoint> activeTouchPoints;
-    activeTouchPoints.reserve(touchPointCount);
+    QTouchEvent::TouchPoint currentTouchPoint;
+    qint64 eventTimestampMillis = event->timestamp();
+    int touchPointCount = 0;
 
-    for (int i = 0; i < touchPointCount; ++i) {
-        if (touchPoints[i].state() != Qt::TouchPointReleased)
-            activeTouchPoints << touchPoints[i];
+    if (!isMouseEvent) {
+        const QTouchEvent* touchEvent = static_cast<const QTouchEvent*>(event);
+        const QList<QTouchEvent::TouchPoint>& touchPoints = touchEvent->touchPoints();
+        currentTouchPoint = touchPoints.first();
+        touchPointCount = touchPoints.size();
+        activeTouchPoints.reserve(touchPointCount);
+
+        for (int i = 0; i < touchPointCount; ++i) {
+            if (touchPoints[i].state() != Qt::TouchPointReleased)
+                activeTouchPoints << touchPoints[i];
+        }
+    } else {
+        const QMouseEvent* mouseEvent = static_cast<const QMouseEvent*>(event);
+        touchPointCount = 1;
+
+        // Make a distinction between mouse events on the basis of pressed buttons.
+        currentTouchPoint.setId(mouseEvent->buttons());
+        currentTouchPoint.setScreenPos(mouseEvent->screenPos());
+        // For tap gesture hit testing the float touch rect is translated to
+        // an int rect representing the radius of the touch point (size/2),
+        // thus the touch rect has to have a size of at least 2.
+        currentTouchPoint.setRect(QRectF(mouseEvent->localPos(), QSizeF(2, 2)));
+
+        if (m_isMouseButtonPressed)
+            activeTouchPoints << currentTouchPoint;
     }
 
     const int activeTouchPointCount = activeTouchPoints.size();
@@ -506,11 +535,11 @@ void QtWebPageEventHandler::doneWithTouchEvent(const NativeWebTouchEvent& event,
         if (touchPointCount == 1) {
             // No active touch points, one finger released.
             if (m_panGestureRecognizer.isRecognized())
-                m_panGestureRecognizer.finish(touchPoints.first(), eventTimestampMillis);
+                m_panGestureRecognizer.finish(currentTouchPoint, eventTimestampMillis);
             else {
                 // The events did not result in a pan gesture.
                 m_panGestureRecognizer.cancel();
-                m_tapGestureRecognizer.finish(touchPoints.first());
+                m_tapGestureRecognizer.finish(currentTouchPoint);
             }
 
         } else
@@ -532,7 +561,27 @@ void QtWebPageEventHandler::doneWithTouchEvent(const NativeWebTouchEvent& event,
     if (m_panGestureRecognizer.isRecognized() || m_pinchGestureRecognizer.isRecognized() || m_webView->isMoving())
         m_tapGestureRecognizer.cancel();
     else if (touchPointCount == 1)
-        m_tapGestureRecognizer.update(touchPoints.first());
+        m_tapGestureRecognizer.update(currentTouchPoint);
+
+}
+
+#if ENABLE(TOUCH_EVENTS)
+void QtWebPageEventHandler::doneWithTouchEvent(const NativeWebTouchEvent& event, bool wasEventHandled)
+{
+    if (!m_viewportHandler)
+        return;
+
+    if (wasEventHandled || event.type() == WebEvent::TouchCancel) {
+        m_panGestureRecognizer.cancel();
+        m_pinchGestureRecognizer.cancel();
+        if (event.type() != WebEvent::TouchMove)
+            m_tapGestureRecognizer.cancel();
+        return;
+    }
+
+    const QTouchEvent* ev = event.nativeEvent();
+
+    handleInputEvent(ev);
 }
 #endif
 

@@ -83,6 +83,7 @@ public:
     virtual void backForwardListDidChange();
     virtual void loadDidSucceed();
     virtual void loadDidFail(const WebKit::QtWebError& error);
+    virtual void handleMouseEvent(QMouseEvent*);
 
     virtual void didChangeViewportProperties(const WebCore::ViewportAttributes& attr) { }
 
@@ -228,6 +229,7 @@ public:
 
     virtual void pageDidRequestScroll(const QPoint& pos);
     virtual void didChangeContentsSize(const QSize& newSize);
+    virtual void handleMouseEvent(QMouseEvent*);
 
 private:
     QScopedPointer<WebKit::QtViewportHandler> m_viewportHandler;

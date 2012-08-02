@@ -47,13 +47,13 @@ bool QtPanGestureRecognizer::update(const QTouchEvent::TouchPoint& touchPoint, q
     switch (m_state) {
     case NoGesture:
         m_state = GestureRecognitionStarted;
-        m_firstScreenPosition = touchPoint.scenePos();
+        m_firstScreenPosition = touchPoint.screenPos();
         viewportHandler()->cancelScrollAnimation();
         return false;
     case GestureRecognitionStarted: {
         // To start the gesture, the delta from start in screen coordinates
         // must be bigger than the trigger threshold.
-        QPointF totalOffsetFromStart(touchPoint.scenePos() - m_firstScreenPosition);
+        QPointF totalOffsetFromStart(touchPoint.screenPos() - m_firstScreenPosition);
         if (qAbs(totalOffsetFromStart.x()) < panningInitialTriggerDistanceThreshold && qAbs(totalOffsetFromStart.y()) < panningInitialTriggerDistanceThreshold)
             return false;
 
