@@ -1,3 +1,17 @@
+2012-08-01  Keishi Hattori  <keishi@webkit.org>
+
+        Fix typo in colorSuggestionPicker.js
+        https://bugs.webkit.org/show_bug.cgi?id=92936
+
+        Reviewed by Kent Tamura.
+
+        Fixes typo.
+
+        Test: platform/chromium/fast/forms/color/color-suggestion-picker-with-scrollbar-appearance.html
+
+        * Resources/colorSuggestionPicker.js:
+        (getScrollbarWidth):
+
 2012-08-01  Shinya Kawanaka  <shinyak@chromium.org>
 
         The elements in Shadow DOM of input should not be modifiable.

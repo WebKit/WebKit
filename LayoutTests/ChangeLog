@@ -1,3 +1,15 @@
+2012-08-01  Keishi Hattori  <keishi@webkit.org>
+
+        Fix typo in colorSuggestionPicker.js
+        https://bugs.webkit.org/show_bug.cgi?id=92936
+
+        Reviewed by Kent Tamura.
+
+        * platform/chromium-mac/platform/chromium/fast/forms/color/color-suggestion-picker-with-scrollbar-appearance-expected.png: Added.
+        * platform/chromium/TestExpectations:
+        * platform/chromium/fast/forms/color/color-suggestion-picker-with-scrollbar-appearance-expected.txt: Added.
+        * platform/chromium/fast/forms/color/color-suggestion-picker-with-scrollbar-appearance.html: Added. Tests the appearance when there are many datalist options.
+
 2012-08-01  Peter Kasting  <pkasting@google.com>
 
         [Chromium] Test expectation updates.

@@ -42,17 +42,17 @@ function bind(func, context) {
 }
 
 function getScrollbarWidth() {
-    if (gloabal.scrollbarWidth === null) {
+    if (global.scrollbarWidth === null) {
         var scrollDiv = document.createElement("div");
         scrollDiv.style.opacity = "0";
         scrollDiv.style.overflow = "scroll";
         scrollDiv.style.width = "50px";
         scrollDiv.style.height = "50px";
         document.body.appendChild(scrollDiv);
-        gloabal.scrollbarWidth = scrollDiv.offsetWidth - scrollDiv.clientWidth;
+        global.scrollbarWidth = scrollDiv.offsetWidth - scrollDiv.clientWidth;
         scrollDiv.parentNode.removeChild(scrollDiv);
     }
-    return gloabal.scrollbarWidth;
+    return global.scrollbarWidth;
 }
 
 /**
