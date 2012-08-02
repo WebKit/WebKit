@@ -91,7 +91,7 @@ v8::Handle<v8::Value> V8HTMLCanvasElement::getContextCallback(const v8::Argument
     // want to take an opportunity to get rid of them as soon as possible when we
     // navigate away from pages using them.
     V8BindingPerIsolateData* perIsolateData = V8BindingPerIsolateData::current(args.GetIsolate());
-    perIsolateData->setLowMemoryNotificationHint();
+    perIsolateData->setShouldCollectGarbageSoon();
 
     if (result->is2d())
         return toV8(static_cast<CanvasRenderingContext2D*>(result), args.GetIsolate());

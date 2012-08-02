@@ -562,9 +562,11 @@ void V8Proxy::resetIsolatedWorlds()
 void V8Proxy::hintForGCIfNecessary()
 {
     V8BindingPerIsolateData* data = V8BindingPerIsolateData::current();
-    if (data->isLowMemoryNotificationHint()) {
-        data->clearLowMemoryNotificationHint();
-        v8::V8::LowMemoryNotification();
+    if (data->shouldCollectGarbageSoon()) {
+        const int longIdlePauseInMs = 1000;
+        data->clearShouldCollectGarbageSoon();
+        v8::V8::ContextDisposedNotification();
+        v8::V8::IdleNotification(longIdlePauseInMs);
     }
 }
 

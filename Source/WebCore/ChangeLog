@@ -1,3 +1,26 @@
+2012-08-02  ulan@chromium.org  <ulan@chromium.org>
+
+        [chromium] Improve garbage collector hint if page uses Canvas contexts
+        https://bugs.webkit.org/show_bug.cgi?id=92856
+
+        Reviewed by Kentaro Hara.
+
+        Request GC by sending context disposed and idle notification to V8 instead
+        of sending low memory notification. It is faster as it causes one GC
+        instead of seven GCs caused by low memory notification.
+
+        * bindings/v8/V8Binding.cpp:
+        (WebCore::V8BindingPerIsolateData::V8BindingPerIsolateData):
+        * bindings/v8/V8Binding.h:
+        (V8BindingPerIsolateData):
+        (WebCore::V8BindingPerIsolateData::setShouldCollectGarbageSoon):
+        (WebCore::V8BindingPerIsolateData::clearShouldCollectGarbageSoon):
+        (WebCore::V8BindingPerIsolateData::shouldCollectGarbageSoon):
+        * bindings/v8/V8Proxy.cpp:
+        (WebCore::V8Proxy::hintForGCIfNecessary):
+        * bindings/v8/custom/V8HTMLCanvasElementCustom.cpp:
+        (WebCore::V8HTMLCanvasElement::getContextCallback):
+
 2012-08-02  Mihnea Ovidenie  <mihnea@adobe.com>
 
         CSSRegions: Crash when reattaching a region to a named flow.

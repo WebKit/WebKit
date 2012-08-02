@@ -220,13 +220,13 @@ namespace WebCore {
 
         void reportMemoryUsage(MemoryObjectInfo*) const;
 
-        // Gives the system a hint that we should send a low memory
-        // notification upon the next close or navigation event,
-        // because some expensive objects have been allocated that we
-        // want to take every opportunity to collect.
-        void setLowMemoryNotificationHint() { m_lowMemoryNotificationHint = true; }
-        void clearLowMemoryNotificationHint() { m_lowMemoryNotificationHint = false; }
-        bool isLowMemoryNotificationHint() const { return m_lowMemoryNotificationHint; }
+        // Gives the system a hint that we should request garbage collection
+        // upon the next close or navigation event, because some expensive
+        // objects have been allocated that we want to take every opportunity
+        // to collect.
+        void setShouldCollectGarbageSoon() { m_shouldCollectGarbageSoon = true; }
+        void clearShouldCollectGarbageSoon() { m_shouldCollectGarbageSoon = false; }
+        bool shouldCollectGarbageSoon() const { return m_shouldCollectGarbageSoon; }
 
     private:
         explicit V8BindingPerIsolateData(v8::Isolate*);
@@ -257,7 +257,7 @@ namespace WebCore {
 #endif
         GCEventData m_gcEventData;
 
-        bool m_lowMemoryNotificationHint;
+        bool m_shouldCollectGarbageSoon;
     };
 
     class ConstructorMode {
