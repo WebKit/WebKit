@@ -23,31 +23,32 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "config.h"
+#include <public/WebFilterOperation.h>
 
-#ifndef CCRenderSurfaceFilters_h
-#define CCRenderSurfaceFilters_h
-
-#if USE(ACCELERATED_COMPOSITING)
-
-class SkBitmap;
+#include <string.h>
 
 namespace WebKit {
-class WebFilterOperations;
+
+bool WebFilterOperation::equals(const WebFilterOperation& other) const
+{
+    if (m_type != other.m_type)
+        return false;
+    if (m_type == FilterTypeColorMatrix)
+        return !memcmp(m_matrix, other.m_matrix, sizeof(m_matrix));
+    if (m_type == FilterTypeDropShadow) {
+        return m_amount == other.m_amount
+            && m_dropShadowOffset == other.m_dropShadowOffset
+            && m_dropShadowColor == other.m_dropShadowColor;
+    } else
+        return m_amount == other.m_amount;
 }
 
-namespace WebCore {
-class FloatSize;
-class GraphicsContext3D;
-
-class CCRenderSurfaceFilters {
-public:
-    static SkBitmap apply(const WebKit::WebFilterOperations& filters, unsigned textureId, const FloatSize&, GraphicsContext3D*);
-    static WebKit::WebFilterOperations optimize(const WebKit::WebFilterOperations& filters);
-private:
-    CCRenderSurfaceFilters();
-};
-
+WebFilterOperation::WebFilterOperation(FilterType type, SkScalar matrix[20])
+{
+    WEBKIT_ASSERT(type == FilterTypeColorMatrix);
+    m_type = type;
+    memcpy(m_matrix, matrix, sizeof(m_matrix));
 }
-#endif // USE(ACCELERATED_COMPOSITING)
 
-#endif
+} // namespace WebKit

@@ -1,3 +1,29 @@
+2012-08-01  Antoine Labour  <piman@chromium.org>
+
+        [chromium] factor out the optimization pass in CCRenderSurfaceFilters::apply
+        https://bugs.webkit.org/show_bug.cgi?id=92453
+
+        Reviewed by James Robinson.
+
+        This separates the "optimization" pass in CCRenderSurfaceFilters::apply
+        to resolve a succession of color matrix filters into a single operation.
+        This allows testing of that code.
+        This introduces a new generic color matrix WebFilterOperation, which can
+        also be used on its own.
+
+        * Platform.gypi:
+        * chromium/public/WebFilterOperation.h:
+        (WebKit::WebFilterOperation::matrix):
+        (WebKit::WebFilterOperation::createColorMatrixFilter):
+        (WebFilterOperation):
+        (WebKit::WebFilterOperation::WebFilterOperation):
+        * chromium/src/WebFilterOperation.cpp: Copied from Source/WebCore/platform/graphics/chromium/cc/CCRenderSurfaceFilters.h.
+        (WebKit):
+        (WebKit::WebFilterOperation::equals):
+        (WebKit::WebFilterOperation::WebFilterOperation):
+        * chromium/src/WebFilterOperations.cpp:
+        (WebKit::WebFilterOperations::hasFilterThatAffectsOpacity):
+
 2012-08-01  Tommy Widenflycht  <tommyw@google.com>
 
         MediaStream API: Add ExtraData capability to MediaStreamSource

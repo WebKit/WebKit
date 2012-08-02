@@ -1,3 +1,22 @@
+2012-08-01  Antoine Labour  <piman@chromium.org>
+
+        [chromium] factor out the optimization pass in CCRenderSurfaceFilters::apply
+        https://bugs.webkit.org/show_bug.cgi?id=92453
+
+        Reviewed by James Robinson.
+
+        This separates the "optimization" pass in CCRenderSurfaceFilters::apply
+        to resolve a succession of color matrix filters into a single operation.
+        This allows testing of that code.
+        This introduces a new generic color matrix WebFilterOperation, which can
+        also be used on its own.
+
+        * WebKit.gypi:
+        * tests/CCRenderSurfaceFiltersTest.cpp: Added.
+        (WebKit):
+        (WebKit::isCombined):
+        (WebKit::TEST):
+
 2012-08-01  Daniel Murphy  <dmurph@chromium.org>
 
         Fix for drawing invalid layers in WebViewBenchmarkSupportImpl

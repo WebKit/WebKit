@@ -245,6 +245,10 @@ bool getColorMatrix(const WebKit::WebFilterOperation& op, SkScalar matrix[20])
         getOpacityMatrix(op.amount(), matrix);
         return true;
     }
+    case WebKit::WebFilterOperation::FilterTypeColorMatrix: {
+        memcpy(matrix, op.matrix(), sizeof(SkScalar[20]));
+        return true;
+    }
     default:
         return false;
     }
@@ -254,6 +258,7 @@ class FilterBufferState {
 public:
     FilterBufferState(GrContext* grContext, const WebCore::FloatSize& size, unsigned textureId)
         : m_grContext(grContext)
+        , m_currentTexture(0)
     {
         // Wrap the source texture in a Ganesh platform texture.
         GrPlatformTextureDesc platformTextureDescription;
@@ -269,6 +274,24 @@ public:
 
     ~FilterBufferState() { }
 
+    bool init(int filterCount)
+    {
+        int scratchCount = std::min(2, filterCount);
+        GrTextureDesc desc;
+        desc.fFlags = kRenderTarget_GrTextureFlagBit | kNoStencil_GrTextureFlagBit;
+        desc.fSampleCnt = 0;
+        desc.fWidth = m_source.width();
+        desc.fHeight = m_source.height();
+        desc.fConfig = kSkia8888_PM_GrPixelConfig;
+        for (int i = 0; i < scratchCount; ++i) {
+            GrAutoScratchTexture scratchTexture(m_grContext, desc, GrContext::kExact_ScratchTexMatch);
+            m_scratchTextures[i].reset(scratchTexture.detach());
+            if (!m_scratchTextures[i].get())
+                return false;
+        }
+        return true;
+    }
+
     SkCanvas* canvas()
     {
         if (!m_canvas.get())
@@ -283,68 +306,35 @@ public:
         m_canvas.reset(0);
         m_device.reset(0);
 
-        m_source.setPixelRef(new SkGrTexturePixelRef(m_destinationTexture.get()))->unref();
-
-        SkAutoTUnref<GrTexture> temp;
-        temp.reset(m_freeTexture.detach());
-        m_freeTexture.reset(m_destinationTexture.detach());
-        m_destinationTexture.reset(temp.detach());
+        m_source.setPixelRef(new SkGrTexturePixelRef(m_scratchTextures[m_currentTexture].get()))->unref();
+        m_currentTexture = 1 - m_currentTexture;
     }
 
 private:
     void createCanvas()
     {
-        if (!m_destinationTexture.get()) {
-            GrTextureDesc desc;
-            desc.fFlags = kRenderTarget_GrTextureFlagBit | kNoStencil_GrTextureFlagBit;
-            desc.fSampleCnt = 0;
-            desc.fWidth = m_source.width();
-            desc.fHeight = m_source.height();
-            desc.fConfig = kSkia8888_PM_GrPixelConfig;
-            GrAutoScratchTexture scratchTexture(m_grContext, desc, GrContext::kExact_ScratchTexMatch);
-            m_destinationTexture.reset(scratchTexture.detach());
-            if (!m_destinationTexture.get())
-                return;
-        }
-        m_device.reset(new SkGpuDevice(m_grContext, m_destinationTexture.get()));
+        ASSERT(m_scratchTextures[m_currentTexture].get());
+        m_device.reset(new SkGpuDevice(m_grContext, m_scratchTextures[m_currentTexture].get()));
         m_canvas.reset(new SkCanvas(m_device.get()));
         m_canvas->clear(0x0);
     }
 
     GrContext* m_grContext;
     SkBitmap m_source;
-    SkAutoTUnref<GrTexture> m_destinationTexture;
-    SkAutoTUnref<GrTexture> m_freeTexture;
+    SkAutoTUnref<GrTexture> m_scratchTextures[2];
+    int m_currentTexture;
     SkAutoTUnref<SkGpuDevice> m_device;
     SkAutoTUnref<SkCanvas> m_canvas;
 };
-
-bool applyColorMatrix(FilterBufferState* state, SkScalar matrix[20])
-{
-    SkCanvas* canvas = state->canvas();
-    if (!canvas)
-        return false;
-    SkPaint paint;
-    paint.setColorFilter(new SkColorMatrixFilter(matrix))->unref();
-    canvas->drawBitmap(state->source(), 0, 0, &paint);
-    state->swap();
-    return true;
-}
 
 }
 
 namespace WebCore {
 
-SkBitmap CCRenderSurfaceFilters::apply(const WebKit::WebFilterOperations& filters, unsigned textureId, const FloatSize& size, GraphicsContext3D* context3D)
+WebKit::WebFilterOperations CCRenderSurfaceFilters::optimize(const WebKit::WebFilterOperations& filters)
 {
-    if (!context3D)
-        return SkBitmap();
+    WebKit::WebFilterOperations newList;
 
-    GrContext* grContext = context3D->grContext();
-    if (!grContext)
-        return SkBitmap();
-    FilterBufferState state(grContext, size, textureId);
-    
     SkScalar accumulatedColorMatrix[20];
     bool haveAccumulatedColorMatrix = false;
     for (unsigned i = 0; i < filters.size(); ++i) {
@@ -369,27 +359,64 @@ SkBitmap CCRenderSurfaceFilters::apply(const WebKit::WebFilterOperations& filter
                 continue;
         }
 
-        if (haveAccumulatedColorMatrix && !applyColorMatrix(&state, accumulatedColorMatrix))
-            return SkBitmap();
+        if (haveAccumulatedColorMatrix)
+            newList.append(WebKit::WebFilterOperation::createColorMatrixFilter(accumulatedColorMatrix));
         haveAccumulatedColorMatrix = false;
 
         switch (op.type()) {
+        case WebKit::WebFilterOperation::FilterTypeBlur:
+        case WebKit::WebFilterOperation::FilterTypeDropShadow:
+            newList.append(op);
+            break;
+        case WebKit::WebFilterOperation::FilterTypeBrightness:
+        case WebKit::WebFilterOperation::FilterTypeContrast:
+        case WebKit::WebFilterOperation::FilterTypeGrayscale:
+        case WebKit::WebFilterOperation::FilterTypeSepia:
+        case WebKit::WebFilterOperation::FilterTypeSaturate:
+        case WebKit::WebFilterOperation::FilterTypeHueRotate:
+        case WebKit::WebFilterOperation::FilterTypeInvert:
+        case WebKit::WebFilterOperation::FilterTypeOpacity:
+        case WebKit::WebFilterOperation::FilterTypeColorMatrix:
+            break;
+        }
+    }
+    if (haveAccumulatedColorMatrix)
+        newList.append(WebKit::WebFilterOperation::createColorMatrixFilter(accumulatedColorMatrix));
+    return newList;
+}
+
+SkBitmap CCRenderSurfaceFilters::apply(const WebKit::WebFilterOperations& filters, unsigned textureId, const FloatSize& size, GraphicsContext3D* context3D)
+{
+    if (!context3D)
+        return SkBitmap();
+
+    GrContext* grContext = context3D->grContext();
+    if (!grContext)
+        return SkBitmap();
+    WebKit::WebFilterOperations optimizedFilters = optimize(filters);
+    FilterBufferState state(grContext, size, textureId);
+    if (!state.init(optimizedFilters.size()))
+        return SkBitmap();
+
+    for (unsigned i = 0; i < optimizedFilters.size(); ++i) {
+        const WebKit::WebFilterOperation& op = optimizedFilters.at(i);
+        SkCanvas* canvas = state.canvas();
+        switch (op.type()) {
+        case WebKit::WebFilterOperation::FilterTypeColorMatrix: {
+            SkPaint paint;
+            paint.setColorFilter(new SkColorMatrixFilter(op.matrix()))->unref();
+            canvas->drawBitmap(state.source(), 0, 0, &paint);
+            break;
+        }
         case WebKit::WebFilterOperation::FilterTypeBlur: {
-            SkCanvas* canvas = state.canvas();
-            if (!canvas)
-                return SkBitmap();
             float stdDeviation = op.amount();
             SkAutoTUnref<SkImageFilter> filter(new SkBlurImageFilter(stdDeviation, stdDeviation));
             SkPaint paint;
             paint.setImageFilter(filter.get());
             canvas->drawSprite(state.source(), 0, 0, &paint);
-            state.swap();
             break;
         }
         case WebKit::WebFilterOperation::FilterTypeDropShadow: {
-            SkCanvas* canvas = state.canvas();
-            if (!canvas)
-                return SkBitmap();
             SkAutoTUnref<SkImageFilter> blurFilter(new SkBlurImageFilter(op.amount(), op.amount()));
             SkAutoTUnref<SkColorFilter> colorFilter(SkColorFilter::CreateModeFilter(op.dropShadowColor(), SkXfermode::kSrcIn_Mode));
             SkPaint paint;
@@ -400,7 +427,6 @@ SkBitmap CCRenderSurfaceFilters::apply(const WebKit::WebFilterOperations& filter
             canvas->drawBitmap(state.source(), op.dropShadowOffset().x, -op.dropShadowOffset().y);
             canvas->restore();
             canvas->drawBitmap(state.source(), 0, 0);
-            state.swap();
             break;
         }
         case WebKit::WebFilterOperation::FilterTypeBrightness:
@@ -411,11 +437,11 @@ SkBitmap CCRenderSurfaceFilters::apply(const WebKit::WebFilterOperations& filter
         case WebKit::WebFilterOperation::FilterTypeHueRotate:
         case WebKit::WebFilterOperation::FilterTypeInvert:
         case WebKit::WebFilterOperation::FilterTypeOpacity:
+            ASSERT_NOT_REACHED();
             break;
         }
+        state.swap();
     }
-    if (haveAccumulatedColorMatrix && !applyColorMatrix(&state, accumulatedColorMatrix))
-        return SkBitmap();
     context3D->flush();
     return state.source();
 }

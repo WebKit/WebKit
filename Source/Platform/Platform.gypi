@@ -151,6 +151,7 @@
             'chromium/public/win/WebThemeEngine.h',
             'chromium/src/Platform.cpp',
             'chromium/src/WebCString.cpp',
+            'chromium/src/WebFilterOperation.cpp',
             'chromium/src/WebFilterOperations.cpp',
             'chromium/src/WebFloatQuad.cpp',
             'chromium/src/WebPrerenderingSupport.cpp',

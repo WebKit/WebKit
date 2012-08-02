@@ -1,3 +1,25 @@
+2012-08-01  Antoine Labour  <piman@chromium.org>
+
+        [chromium] factor out the optimization pass in CCRenderSurfaceFilters::apply
+        https://bugs.webkit.org/show_bug.cgi?id=92453
+
+        Reviewed by James Robinson.
+
+        This separates the "optimization" pass in CCRenderSurfaceFilters::apply
+        to resolve a succession of color matrix filters into a single operation.
+        This allows testing of that code.
+        This introduces a new generic color matrix WebFilterOperation, which can
+        also be used on its own.
+
+        New test: CCRenderSurfaceFiltersTest.
+
+        * platform/graphics/chromium/cc/CCRenderSurfaceFilters.cpp:
+        (WebCore::CCRenderSurfaceFilters::optimize):
+        (WebCore):
+        (WebCore::CCRenderSurfaceFilters::apply):
+        * platform/graphics/chromium/cc/CCRenderSurfaceFilters.h:
+        (CCRenderSurfaceFilters):
+
 2012-08-01  Jian Li  <jianli@chromium.org>
 
         Add new CSS property "-webkit-widget-region" to expose dashboard region support for other port

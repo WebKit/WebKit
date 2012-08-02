@@ -26,8 +26,8 @@
 #ifndef WebFilterOperation_h
 #define WebFilterOperation_h
 
+#include "SkScalar.h"
 #include "WebCommon.h"
-
 #include "WebColor.h"
 #include "WebPoint.h"
 
@@ -46,6 +46,7 @@ public:
         FilterTypeOpacity,
         FilterTypeBlur,
         FilterTypeDropShadow,
+        FilterTypeColorMatrix,
     };
 
     FilterType type() const { return m_type; }
@@ -64,6 +65,10 @@ public:
         WEBKIT_ASSERT(m_type == FilterTypeDropShadow);
         return m_dropShadowColor;
     }
+    const SkScalar* matrix() const
+    {
+        return m_matrix;
+    }
 
 #define WEBKIT_HAS_NEW_WEBFILTEROPERATION_API 1
     static WebFilterOperation createGrayscaleFilter(float amount) { return WebFilterOperation(FilterTypeGrayscale, amount); }
@@ -76,13 +81,9 @@ public:
     static WebFilterOperation createOpacityFilter(float amount) { return WebFilterOperation(FilterTypeOpacity, amount); }
     static WebFilterOperation createBlurFilter(float amount) { return WebFilterOperation(FilterTypeBlur, amount); }
     static WebFilterOperation createDropShadowFilter(WebPoint offset, float stdDeviation, WebColor color) { return WebFilterOperation(FilterTypeDropShadow, offset, stdDeviation, color); }
+    static WebFilterOperation createColorMatrixFilter(SkScalar matrix[20]) { return WebFilterOperation(FilterTypeColorMatrix, matrix); }
 
-    bool equals(const WebFilterOperation& other) const
-    {
-        return m_amount == other.m_amount
-            && m_dropShadowOffset == other.m_dropShadowOffset
-            && m_dropShadowColor == other.m_dropShadowColor;
-    }
+    bool equals(const WebFilterOperation& other) const;
 
 private:
     FilterType m_type;
@@ -90,10 +91,11 @@ private:
     float m_amount;
     WebPoint m_dropShadowOffset;
     WebColor m_dropShadowColor;
+    SkScalar m_matrix[20];
 
     WebFilterOperation(FilterType type, float amount)
     {
-        WEBKIT_ASSERT(type != FilterTypeDropShadow);
+        WEBKIT_ASSERT(type != FilterTypeDropShadow && type != FilterTypeColorMatrix);
         m_type = type;
         m_amount = amount;
         m_dropShadowColor = 0;
@@ -107,6 +109,8 @@ private:
         m_dropShadowOffset = offset;
         m_dropShadowColor = color;
     }
+
+    WebFilterOperation(FilterType, SkScalar matrix[20]);
 };
 
 inline bool operator==(const WebFilterOperation& a, const WebFilterOperation& b)

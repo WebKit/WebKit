@@ -133,6 +133,14 @@ bool WebFilterOperations::hasFilterThatAffectsOpacity() const
         case WebFilterOperation::FilterTypeBlur:
         case WebFilterOperation::FilterTypeDropShadow:
             return true;
+        case WebFilterOperation::FilterTypeColorMatrix: {
+            const SkScalar* matrix = op.matrix();
+            return matrix[15]
+                || matrix[16]
+                || matrix[17]
+                || matrix[18] != 1
+                || matrix[19];
+        }
         default:
             break;
         }

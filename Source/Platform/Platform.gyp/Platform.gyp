@@ -39,6 +39,7 @@
             'type': 'static_library',
             'dependencies': [
                 '../../WTF/WTF.gyp/WTF.gyp:wtf',
+                '<(DEPTH)/skia/skia.gyp:skia',
             ],
             'include_dirs': [
                 '../chromium',
