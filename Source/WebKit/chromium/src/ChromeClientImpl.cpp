@@ -1112,6 +1112,15 @@ bool ChromeClientImpl::isPointerLocked()
 }
 #endif
 
+#if ENABLE(WIDGET_REGION)
+void ChromeClientImpl::dashboardRegionsChanged()
+{
+    WebViewClient* client = m_webView->client();
+    if (client)
+        client->draggableRegionsChanged();
+}
+#endif
+
 #if ENABLE(REGISTER_PROTOCOL_HANDLER)
 PassOwnPtr<RegisterProtocolHandlerClientImpl> RegisterProtocolHandlerClientImpl::create(WebViewImpl* webView)
 {

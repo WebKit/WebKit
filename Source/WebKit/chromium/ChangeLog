@@ -1,3 +1,30 @@
+2012-08-01  Jian Li  <jianli@chromium.org>
+
+        [chromium] Make WebKit API support draggable region change update
+        https://bugs.webkit.org/show_bug.cgi?id=92813
+
+        Reviewed by Adam Barth.
+
+        Introduce WebDraggableRegion and delegate the draggable region update
+        call to the new method draggableRegionsChanged in WebViewClient.
+
+        * public/WebDocument.h:
+        (WebDocument):
+        * public/WebDraggableRegion.h: Added.
+        (WebKit):
+        (WebDraggableRegion):
+        * public/WebViewClient.h:
+        (WebViewClient):
+        (WebKit::WebViewClient::draggableRegionsChanged):
+        * src/ChromeClientImpl.cpp:
+        (WebKit):
+        (WebKit::ChromeClientImpl::dashboardRegionsChanged):
+        * src/ChromeClientImpl.h:
+        (ChromeClientImpl):
+        * src/WebDocument.cpp:
+        (WebKit::WebDocument::draggableRegions):
+        (WebKit):
+
 2012-08-01  Antoine Labour  <piman@chromium.org>
 
         [chromium] factor out the optimization pass in CCRenderSurfaceFilters::apply

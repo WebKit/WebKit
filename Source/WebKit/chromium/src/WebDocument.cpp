@@ -44,6 +44,7 @@
 #include "HTMLFormElement.h"
 #include "HTMLHeadElement.h"
 #include "NodeList.h"
+#include "RenderObject.h"
 #include "SecurityOrigin.h"
 #include "StyleSheetContents.h"
 #include "WebAccessibilityObject.h"
@@ -240,6 +241,25 @@ WebAccessibilityObject WebDocument::accessibilityObjectFromID(int axID) const
     const Document* document = constUnwrap<Document>();
     return WebAccessibilityObject(
         document->axObjectCache()->objectFromAXID(axID));
+}
+
+WebVector<WebDraggableRegion> WebDocument::draggableRegions() const
+{
+    WebVector<WebDraggableRegion> draggableRegions;
+#if ENABLE(WIDGET_REGION)
+    const Document* document = constUnwrap<Document>();
+    if (document->hasDashboardRegions()) {
+        const Vector<DashboardRegionValue>& regions = document->dashboardRegions();
+        draggableRegions = WebVector<WebDraggableRegion>(regions.size());
+        for (size_t i = 0; i < regions.size(); i++) {
+            const DashboardRegionValue& value = regions[i];
+            draggableRegions[i].label = value.label;
+            draggableRegions[i].bounds = WebCore::IntRect(value.bounds);
+            draggableRegions[i].clip = WebCore::IntRect(value.clip);
+        }
+    }
+#endif
+    return draggableRegions;
 }
 
 WebDocument::WebDocument(const PassRefPtr<Document>& elem)

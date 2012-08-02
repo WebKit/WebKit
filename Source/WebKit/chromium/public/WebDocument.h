@@ -31,6 +31,7 @@
 #ifndef WebDocument_h
 #define WebDocument_h
 
+#include "WebDraggableRegion.h"
 #include "WebNode.h"
 #include "WebSecurityOrigin.h"
 #include "platform/WebReferrerPolicy.h"
@@ -119,6 +120,8 @@ public:
     // WebView::addUserStyleSheet which inserts styles for the lifetime of the
     // WebView.
     WEBKIT_EXPORT void insertUserStyleSheet(const WebString& sourceCode, UserStyleLevel);
+
+    WEBKIT_EXPORT WebVector<WebDraggableRegion> draggableRegions() const;
 
 #if WEBKIT_IMPLEMENTATION
     WebDocument(const WTF::PassRefPtr<WebCore::Document>&);

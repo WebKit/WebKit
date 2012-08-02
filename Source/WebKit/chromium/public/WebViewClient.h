@@ -381,6 +381,11 @@ public:
     // Cancels any previously scheduled content intents that have not yet launched.
     virtual void cancelScheduledContentIntents() { }
 
+    // Draggable regions ----------------------------------------------------
+
+    // Informs the browser that the draggable regions have been updated.
+    virtual void draggableRegionsChanged() { }
+
 protected:
     ~WebViewClient() { }
 };
