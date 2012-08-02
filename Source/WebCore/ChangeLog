@@ -1,3 +1,16 @@
+2012-08-02  Kihong Kwon  <kihong.kwon@samsung.com>
+
+        [EFL] Change return value of battey level
+        https://bugs.webkit.org/show_bug.cgi?id=92964
+
+        Reviewed by Simon Hausmann.
+
+        Change return value of navigator.webkitBattery.level from 0~100 to 0~1.0.
+        Battery level have to returns 0~1.0 by Battery Status API spec.
+
+        * platform/efl/BatteryProviderEfl.cpp:
+        (WebCore::BatteryProviderEfl::setBatteryClient):
+
 2012-08-02  Yury Semikhatsky  <yurys@chromium.org>
 
         Web Inspector: remove extraObjectSize parameter from MemoryClassInfo constructor
