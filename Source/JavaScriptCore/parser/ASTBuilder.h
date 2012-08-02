@@ -112,8 +112,8 @@ public:
     static const int  DontBuildKeywords = 0;
     static const int  DontBuildStrings = 0;
 
-    ExpressionNode* makeBinaryNode(const JSTokenLocation&, int token, std::pair<ExpressionNode*, BinaryOpInfo>, std::pair<ExpressionNode*, BinaryOpInfo>);
-    ExpressionNode* makeFunctionCallNode(const JSTokenLocation&, ExpressionNode* func, ArgumentsNode* args, int start, int divot, int end);
+    ExpressionNode* makeBinaryNode(int lineNumber, int token, std::pair<ExpressionNode*, BinaryOpInfo>, std::pair<ExpressionNode*, BinaryOpInfo>);
+    ExpressionNode* makeFunctionCallNode(int lineNumber, ExpressionNode* func, ArgumentsNode* args, int start, int divot, int end);
 
     JSC::SourceElements* createSourceElements() { return new (m_globalData) JSC::SourceElements(); }
 
@@ -124,168 +124,168 @@ public:
 
     void appendToComma(CommaNode* commaNode, ExpressionNode* expr) { commaNode->append(expr); }
 
-    CommaNode* createCommaExpr(const JSTokenLocation& location, ExpressionNode* lhs, ExpressionNode* rhs) { return new (m_globalData) CommaNode(location, lhs, rhs); }
+    CommaNode* createCommaExpr(int lineNumber, ExpressionNode* lhs, ExpressionNode* rhs) { return new (m_globalData) CommaNode(lineNumber, lhs, rhs); }
 
-    ExpressionNode* makeAssignNode(const JSTokenLocation&, ExpressionNode* left, Operator, ExpressionNode* right, bool leftHasAssignments, bool rightHasAssignments, int start, int divot, int end);
-    ExpressionNode* makePrefixNode(const JSTokenLocation&, ExpressionNode*, Operator, int start, int divot, int end);
-    ExpressionNode* makePostfixNode(const JSTokenLocation&, ExpressionNode*, Operator, int start, int divot, int end);
-    ExpressionNode* makeTypeOfNode(const JSTokenLocation&, ExpressionNode*);
-    ExpressionNode* makeDeleteNode(const JSTokenLocation&, ExpressionNode*, int start, int divot, int end);
-    ExpressionNode* makeNegateNode(const JSTokenLocation&, ExpressionNode*);
-    ExpressionNode* makeBitwiseNotNode(const JSTokenLocation&, ExpressionNode*);
-    ExpressionNode* makeMultNode(const JSTokenLocation&, ExpressionNode* left, ExpressionNode* right, bool rightHasAssignments);
-    ExpressionNode* makeDivNode(const JSTokenLocation&, ExpressionNode* left, ExpressionNode* right, bool rightHasAssignments);
-    ExpressionNode* makeModNode(const JSTokenLocation&, ExpressionNode* left, ExpressionNode* right, bool rightHasAssignments);
-    ExpressionNode* makeAddNode(const JSTokenLocation&, ExpressionNode* left, ExpressionNode* right, bool rightHasAssignments);
-    ExpressionNode* makeSubNode(const JSTokenLocation&, ExpressionNode* left, ExpressionNode* right, bool rightHasAssignments);
-    ExpressionNode* makeBitXOrNode(const JSTokenLocation&, ExpressionNode* left, ExpressionNode* right, bool rightHasAssignments);
-    ExpressionNode* makeBitAndNode(const JSTokenLocation&, ExpressionNode* left, ExpressionNode* right, bool rightHasAssignments);
-    ExpressionNode* makeBitOrNode(const JSTokenLocation&, ExpressionNode* left, ExpressionNode* right, bool rightHasAssignments);
-    ExpressionNode* makeLeftShiftNode(const JSTokenLocation&, ExpressionNode* left, ExpressionNode* right, bool rightHasAssignments);
-    ExpressionNode* makeRightShiftNode(const JSTokenLocation&, ExpressionNode* left, ExpressionNode* right, bool rightHasAssignments);
-    ExpressionNode* makeURightShiftNode(const JSTokenLocation&, ExpressionNode* left, ExpressionNode* right, bool rightHasAssignments);
+    ExpressionNode* makeAssignNode(int lineNumber, ExpressionNode* left, Operator, ExpressionNode* right, bool leftHasAssignments, bool rightHasAssignments, int start, int divot, int end);
+    ExpressionNode* makePrefixNode(int lineNumber, ExpressionNode*, Operator, int start, int divot, int end);
+    ExpressionNode* makePostfixNode(int lineNumber, ExpressionNode*, Operator, int start, int divot, int end);
+    ExpressionNode* makeTypeOfNode(int lineNumber, ExpressionNode*);
+    ExpressionNode* makeDeleteNode(int lineNumber, ExpressionNode*, int start, int divot, int end);
+    ExpressionNode* makeNegateNode(int lineNumber, ExpressionNode*);
+    ExpressionNode* makeBitwiseNotNode(int lineNumber, ExpressionNode*);
+    ExpressionNode* makeMultNode(int lineNumber, ExpressionNode* left, ExpressionNode* right, bool rightHasAssignments);
+    ExpressionNode* makeDivNode(int lineNumber, ExpressionNode* left, ExpressionNode* right, bool rightHasAssignments);
+    ExpressionNode* makeModNode(int lineNumber, ExpressionNode* left, ExpressionNode* right, bool rightHasAssignments);
+    ExpressionNode* makeAddNode(int lineNumber, ExpressionNode* left, ExpressionNode* right, bool rightHasAssignments);
+    ExpressionNode* makeSubNode(int lineNumber, ExpressionNode* left, ExpressionNode* right, bool rightHasAssignments);
+    ExpressionNode* makeBitXOrNode(int lineNumber, ExpressionNode* left, ExpressionNode* right, bool rightHasAssignments);
+    ExpressionNode* makeBitAndNode(int lineNumber, ExpressionNode* left, ExpressionNode* right, bool rightHasAssignments);
+    ExpressionNode* makeBitOrNode(int lineNumber, ExpressionNode* left, ExpressionNode* right, bool rightHasAssignments);
+    ExpressionNode* makeLeftShiftNode(int lineNumber, ExpressionNode* left, ExpressionNode* right, bool rightHasAssignments);
+    ExpressionNode* makeRightShiftNode(int lineNumber, ExpressionNode* left, ExpressionNode* right, bool rightHasAssignments);
+    ExpressionNode* makeURightShiftNode(int lineNumber, ExpressionNode* left, ExpressionNode* right, bool rightHasAssignments);
 
-    ExpressionNode* createLogicalNot(const JSTokenLocation& location, ExpressionNode* expr) { return new (m_globalData) LogicalNotNode(location, expr); }
-    ExpressionNode* createUnaryPlus(const JSTokenLocation& location, ExpressionNode* expr) { return new (m_globalData) UnaryPlusNode(location, expr); }
-    ExpressionNode* createVoid(const JSTokenLocation& location, ExpressionNode* expr)
+    ExpressionNode* createLogicalNot(int lineNumber, ExpressionNode* expr) { return new (m_globalData) LogicalNotNode(lineNumber, expr); }
+    ExpressionNode* createUnaryPlus(int lineNumber, ExpressionNode* expr) { return new (m_globalData) UnaryPlusNode(lineNumber, expr); }
+    ExpressionNode* createVoid(int lineNumber, ExpressionNode* expr)
     {
         incConstants();
-        return new (m_globalData) VoidNode(location, expr);
+        return new (m_globalData) VoidNode(lineNumber, expr);
     }
-    ExpressionNode* thisExpr(const JSTokenLocation& location)
+    ExpressionNode* thisExpr(int lineNumber)
     {
         usesThis();
-        return new (m_globalData) ThisNode(location);
+        return new (m_globalData) ThisNode(lineNumber);
     }
-    ExpressionNode* createResolve(const JSTokenLocation& location, const Identifier* ident, int start)
+    ExpressionNode* createResolve(int lineNumber, const Identifier* ident, int start)
     {
         if (m_globalData->propertyNames->arguments == *ident)
             usesArguments();
-        return new (m_globalData) ResolveNode(location, *ident, start);
+        return new (m_globalData) ResolveNode(lineNumber, *ident, start);
     }
-    ExpressionNode* createObjectLiteral(const JSTokenLocation& location) { return new (m_globalData) ObjectLiteralNode(location); }
-    ExpressionNode* createObjectLiteral(const JSTokenLocation& location, PropertyListNode* properties) { return new (m_globalData) ObjectLiteralNode(location, properties); }
+    ExpressionNode* createObjectLiteral(int lineNumber) { return new (m_globalData) ObjectLiteralNode(lineNumber); }
+    ExpressionNode* createObjectLiteral(int lineNumber, PropertyListNode* properties) { return new (m_globalData) ObjectLiteralNode(lineNumber, properties); }
 
-    ExpressionNode* createArray(const JSTokenLocation& location, int elisions)
+    ExpressionNode* createArray(int lineNumber, int elisions)
     {
         if (elisions)
             incConstants();
-        return new (m_globalData) ArrayNode(location, elisions);
+        return new (m_globalData) ArrayNode(lineNumber, elisions);
     }
 
-    ExpressionNode* createArray(const JSTokenLocation& location, ElementNode* elems) { return new (m_globalData) ArrayNode(location, elems); }
-    ExpressionNode* createArray(const JSTokenLocation& location, int elisions, ElementNode* elems)
+    ExpressionNode* createArray(int lineNumber, ElementNode* elems) { return new (m_globalData) ArrayNode(lineNumber, elems); }
+    ExpressionNode* createArray(int lineNumber, int elisions, ElementNode* elems)
     {
         if (elisions)
             incConstants();
-        return new (m_globalData) ArrayNode(location, elisions, elems);
+        return new (m_globalData) ArrayNode(lineNumber, elisions, elems);
     }
-    ExpressionNode* createNumberExpr(const JSTokenLocation& location, double d)
+    ExpressionNode* createNumberExpr(int lineNumber, double d)
     {
         incConstants();
-        return new (m_globalData) NumberNode(location, d);
+        return new (m_globalData) NumberNode(lineNumber, d);
     }
 
-    ExpressionNode* createString(const JSTokenLocation& location, const Identifier* string)
+    ExpressionNode* createString(int lineNumber, const Identifier* string)
     {
         incConstants();
-        return new (m_globalData) StringNode(location, *string);
+        return new (m_globalData) StringNode(lineNumber, *string);
     }
 
-    ExpressionNode* createBoolean(const JSTokenLocation& location, bool b)
+    ExpressionNode* createBoolean(int lineNumber, bool b)
     {
         incConstants();
-        return new (m_globalData) BooleanNode(location, b);
+        return new (m_globalData) BooleanNode(lineNumber, b);
     }
 
-    ExpressionNode* createNull(const JSTokenLocation& location)
+    ExpressionNode* createNull(int lineNumber)
     {
         incConstants();
-        return new (m_globalData) NullNode(location);
+        return new (m_globalData) NullNode(lineNumber);
     }
 
-    ExpressionNode* createBracketAccess(const JSTokenLocation& location, ExpressionNode* base, ExpressionNode* property, bool propertyHasAssignments, int start, int divot, int end)
+    ExpressionNode* createBracketAccess(int lineNumber, ExpressionNode* base, ExpressionNode* property, bool propertyHasAssignments, int start, int divot, int end)
     {
-        BracketAccessorNode* node = new (m_globalData) BracketAccessorNode(location, base, property, propertyHasAssignments);
+        BracketAccessorNode* node = new (m_globalData) BracketAccessorNode(lineNumber, base, property, propertyHasAssignments);
         setExceptionLocation(node, start, divot, end);
         return node;
     }
 
-    ExpressionNode* createDotAccess(const JSTokenLocation& location, ExpressionNode* base, const Identifier* property, int start, int divot, int end)
+    ExpressionNode* createDotAccess(int lineNumber, ExpressionNode* base, const Identifier* property, int start, int divot, int end)
     {
-        DotAccessorNode* node = new (m_globalData) DotAccessorNode(location, base, *property);
+        DotAccessorNode* node = new (m_globalData) DotAccessorNode(lineNumber, base, *property);
         setExceptionLocation(node, start, divot, end);
         return node;
     }
 
-    ExpressionNode* createRegExp(const JSTokenLocation& location, const Identifier& pattern, const Identifier& flags, int start)
+    ExpressionNode* createRegExp(int lineNumber, const Identifier& pattern, const Identifier& flags, int start)
     {
         if (Yarr::checkSyntax(pattern.ustring()))
             return 0;
-        RegExpNode* node = new (m_globalData) RegExpNode(location, pattern, flags);
+        RegExpNode* node = new (m_globalData) RegExpNode(lineNumber, pattern, flags);
         int size = pattern.length() + 2; // + 2 for the two /'s
         setExceptionLocation(node, start, start + size, start + size);
         return node;
     }
 
-    ExpressionNode* createNewExpr(const JSTokenLocation& location, ExpressionNode* expr, ArgumentsNode* arguments, int start, int divot, int end)
+    ExpressionNode* createNewExpr(int lineNumber, ExpressionNode* expr, ArgumentsNode* arguments, int start, int divot, int end)
     {
-        NewExprNode* node = new (m_globalData) NewExprNode(location, expr, arguments);
+        NewExprNode* node = new (m_globalData) NewExprNode(lineNumber, expr, arguments);
         setExceptionLocation(node, start, divot, end);
         return node;
     }
 
-    ExpressionNode* createNewExpr(const JSTokenLocation& location, ExpressionNode* expr, int start, int end)
+    ExpressionNode* createNewExpr(int lineNumber, ExpressionNode* expr, int start, int end)
     {
-        NewExprNode* node = new (m_globalData) NewExprNode(location, expr);
+        NewExprNode* node = new (m_globalData) NewExprNode(lineNumber, expr);
         setExceptionLocation(node, start, end, end);
         return node;
     }
 
-    ExpressionNode* createConditionalExpr(const JSTokenLocation& location, ExpressionNode* condition, ExpressionNode* lhs, ExpressionNode* rhs)
+    ExpressionNode* createConditionalExpr(int lineNumber, ExpressionNode* condition, ExpressionNode* lhs, ExpressionNode* rhs)
     {
-        return new (m_globalData) ConditionalNode(location, condition, lhs, rhs);
+        return new (m_globalData) ConditionalNode(lineNumber, condition, lhs, rhs);
     }
 
-    ExpressionNode* createAssignResolve(const JSTokenLocation& location, const Identifier& ident, ExpressionNode* rhs, int start, int divot, int end)
+    ExpressionNode* createAssignResolve(int lineNumber, const Identifier& ident, ExpressionNode* rhs, int start, int divot, int end)
     {
         if (rhs->isFuncExprNode())
             static_cast<FuncExprNode*>(rhs)->body()->setInferredName(ident);
-        AssignResolveNode* node = new (m_globalData) AssignResolveNode(location, ident, rhs);
+        AssignResolveNode* node = new (m_globalData) AssignResolveNode(lineNumber, ident, rhs);
         setExceptionLocation(node, start, divot, end);
         return node;
     }
 
-    ExpressionNode* createFunctionExpr(const JSTokenLocation& location, const Identifier* name, FunctionBodyNode* body, ParameterNode* parameters, int openBracePos, int closeBracePos, int bodyStartLine, int bodyEndLine)
+    ExpressionNode* createFunctionExpr(int lineNumber, const Identifier* name, FunctionBodyNode* body, ParameterNode* parameters, int openBracePos, int closeBracePos, int bodyStartLine, int bodyEndLine)
     {
-        FuncExprNode* result = new (m_globalData) FuncExprNode(location, *name, body, m_sourceCode->subExpression(openBracePos, closeBracePos, bodyStartLine), parameters);
-        body->setLoc(bodyStartLine, bodyEndLine, location.column);
+        FuncExprNode* result = new (m_globalData) FuncExprNode(lineNumber, *name, body, m_sourceCode->subExpression(openBracePos, closeBracePos, bodyStartLine), parameters);
+        body->setLoc(bodyStartLine, bodyEndLine);
         return result;
     }
 
-    FunctionBodyNode* createFunctionBody(const JSTokenLocation& location, bool inStrictContext)
+    FunctionBodyNode* createFunctionBody(int lineNumber, bool inStrictContext)
     {
-        return FunctionBodyNode::create(m_globalData, location, inStrictContext);
+        return FunctionBodyNode::create(m_globalData, lineNumber, inStrictContext);
     }
     
-    template <bool> PropertyNode* createGetterOrSetterProperty(const JSTokenLocation& location, PropertyNode::Type type, const Identifier* name, ParameterNode* params, FunctionBodyNode* body, int openBracePos, int closeBracePos, int bodyStartLine, int bodyEndLine)
+    template <bool> PropertyNode* createGetterOrSetterProperty(int lineNumber, PropertyNode::Type type, const Identifier* name, ParameterNode* params, FunctionBodyNode* body, int openBracePos, int closeBracePos, int bodyStartLine, int bodyEndLine)
     {
         ASSERT(name);
-        body->setLoc(bodyStartLine, bodyEndLine, location.column);
+        body->setLoc(bodyStartLine, bodyEndLine);
         body->setInferredName(*name);
-        return new (m_globalData) PropertyNode(m_globalData, *name, new (m_globalData) FuncExprNode(location, m_globalData->propertyNames->nullIdentifier, body, m_sourceCode->subExpression(openBracePos, closeBracePos, bodyStartLine), params), type);
+        return new (m_globalData) PropertyNode(m_globalData, *name, new (m_globalData) FuncExprNode(lineNumber, m_globalData->propertyNames->nullIdentifier, body, m_sourceCode->subExpression(openBracePos, closeBracePos, bodyStartLine), params), type);
     }
     
-    template <bool> PropertyNode* createGetterOrSetterProperty(JSGlobalData*, const JSTokenLocation& location, PropertyNode::Type type, double name, ParameterNode* params, FunctionBodyNode* body, int openBracePos, int closeBracePos, int bodyStartLine, int bodyEndLine)
+    template <bool> PropertyNode* createGetterOrSetterProperty(JSGlobalData*, int lineNumber, PropertyNode::Type type, double name, ParameterNode* params, FunctionBodyNode* body, int openBracePos, int closeBracePos, int bodyStartLine, int bodyEndLine)
     {
-        body->setLoc(bodyStartLine, bodyEndLine, location.column);
-        return new (m_globalData) PropertyNode(m_globalData, name, new (m_globalData) FuncExprNode(location, m_globalData->propertyNames->nullIdentifier, body, m_sourceCode->subExpression(openBracePos, closeBracePos, bodyStartLine), params), type);
+        body->setLoc(bodyStartLine, bodyEndLine);
+        return new (m_globalData) PropertyNode(m_globalData, name, new (m_globalData) FuncExprNode(lineNumber, m_globalData->propertyNames->nullIdentifier, body, m_sourceCode->subExpression(openBracePos, closeBracePos, bodyStartLine), params), type);
     }
 
     ArgumentsNode* createArguments() { return new (m_globalData) ArgumentsNode(); }
     ArgumentsNode* createArguments(ArgumentListNode* args) { return new (m_globalData) ArgumentsNode(args); }
-    ArgumentListNode* createArgumentsList(const JSTokenLocation& location, ExpressionNode* arg) { return new (m_globalData) ArgumentListNode(location, arg); }
-    ArgumentListNode* createArgumentsList(const JSTokenLocation& location, ArgumentListNode* args, ExpressionNode* arg) { return new (m_globalData) ArgumentListNode(location, args, arg); }
+    ArgumentListNode* createArgumentsList(int lineNumber, ExpressionNode* arg) { return new (m_globalData) ArgumentListNode(lineNumber, arg); }
+    ArgumentListNode* createArgumentsList(int lineNumber, ArgumentListNode* args, ExpressionNode* arg) { return new (m_globalData) ArgumentListNode(lineNumber, args, arg); }
 
     template <bool> PropertyNode* createProperty(const Identifier* propertyName, ExpressionNode* node, PropertyNode::Type type)
     {
@@ -294,8 +294,8 @@ public:
         return new (m_globalData) PropertyNode(m_globalData, *propertyName, node, type);
     }
     template <bool> PropertyNode* createProperty(JSGlobalData*, double propertyName, ExpressionNode* node, PropertyNode::Type type) { return new (m_globalData) PropertyNode(m_globalData, propertyName, node, type); }
-    PropertyListNode* createPropertyList(const JSTokenLocation& location, PropertyNode* property) { return new (m_globalData) PropertyListNode(location, property); }
-    PropertyListNode* createPropertyList(const JSTokenLocation& location, PropertyNode* property, PropertyListNode* tail) { return new (m_globalData) PropertyListNode(location, property, tail); }
+    PropertyListNode* createPropertyList(int lineNumber, PropertyNode* property) { return new (m_globalData) PropertyListNode(lineNumber, property); }
+    PropertyListNode* createPropertyList(int lineNumber, PropertyNode* property, PropertyListNode* tail) { return new (m_globalData) PropertyListNode(lineNumber, property, tail); }
 
     ElementNode* createElementList(int elisions, ExpressionNode* expr) { return new (m_globalData) ElementNode(elisions, expr); }
     ElementNode* createElementList(ElementNode* elems, int elisions, ExpressionNode* expr) { return new (m_globalData) ElementNode(elems, elisions, expr); }
@@ -309,191 +309,191 @@ public:
 
     void setUsesArguments(FunctionBodyNode* node) { node->setUsesArguments(); }
 
-    StatementNode* createFuncDeclStatement(const JSTokenLocation& location, const Identifier* name, FunctionBodyNode* body, ParameterNode* parameters, int openBracePos, int closeBracePos, int bodyStartLine, int bodyEndLine)
+    StatementNode* createFuncDeclStatement(int lineNumber, const Identifier* name, FunctionBodyNode* body, ParameterNode* parameters, int openBracePos, int closeBracePos, int bodyStartLine, int bodyEndLine)
     {
-        FuncDeclNode* decl = new (m_globalData) FuncDeclNode(location, *name, body, m_sourceCode->subExpression(openBracePos, closeBracePos, bodyStartLine), parameters);
+        FuncDeclNode* decl = new (m_globalData) FuncDeclNode(lineNumber, *name, body, m_sourceCode->subExpression(openBracePos, closeBracePos, bodyStartLine), parameters);
         if (*name == m_globalData->propertyNames->arguments)
             usesArguments();
         m_scope.m_funcDeclarations->data.append(decl->body());
-        body->setLoc(bodyStartLine, bodyEndLine, location.column);
+        body->setLoc(bodyStartLine, bodyEndLine);
         return decl;
     }
 
-    StatementNode* createBlockStatement(const JSTokenLocation& location, JSC::SourceElements* elements, int startLine, int endLine)
+    StatementNode* createBlockStatement(int lineNumber, JSC::SourceElements* elements, int startLine, int endLine)
     {
-        BlockNode* block = new (m_globalData) BlockNode(location, elements);
-        block->setLoc(startLine, endLine, location.column);
+        BlockNode* block = new (m_globalData) BlockNode(lineNumber, elements);
+        block->setLoc(startLine, endLine);
         return block;
     }
 
-    StatementNode* createExprStatement(const JSTokenLocation& location, ExpressionNode* expr, int start, int end)
+    StatementNode* createExprStatement(int lineNumber, ExpressionNode* expr, int start, int end)
     {
-        ExprStatementNode* result = new (m_globalData) ExprStatementNode(location, expr);
-        result->setLoc(start, end, location.column);
-        return result;
-    }
-
-    StatementNode* createIfStatement(const JSTokenLocation& location, ExpressionNode* condition, StatementNode* trueBlock, int start, int end)
-    {
-        IfNode* result = new (m_globalData) IfNode(location, condition, trueBlock);
-        result->setLoc(start, end, location.column);
-        return result;
-    }
-
-    StatementNode* createIfStatement(const JSTokenLocation& location, ExpressionNode* condition, StatementNode* trueBlock, StatementNode* falseBlock, int start, int end)
-    {
-        IfNode* result = new (m_globalData) IfElseNode(location, condition, trueBlock, falseBlock);
-        result->setLoc(start, end, location.column);
-        return result;
-    }
-
-    StatementNode* createForLoop(const JSTokenLocation& location, ExpressionNode* initializer, ExpressionNode* condition, ExpressionNode* iter, StatementNode* statements, int start, int end)
-    {
-        ForNode* result = new (m_globalData) ForNode(location, initializer, condition, iter, statements);
+        ExprStatementNode* result = new (m_globalData) ExprStatementNode(lineNumber, expr);
         result->setLoc(start, end);
         return result;
     }
 
-    StatementNode* createForInLoop(const JSTokenLocation& location, const Identifier* ident, ExpressionNode* initializer, ExpressionNode* iter, StatementNode* statements, int start, int divot, int end, int initStart, int initEnd, int startLine, int endLine)
+    StatementNode* createIfStatement(int lineNumber, ExpressionNode* condition, StatementNode* trueBlock, int start, int end)
     {
-        ForInNode* result = new (m_globalData) ForInNode(m_globalData, location, *ident, initializer, iter, statements, initStart, initStart - start, initEnd - initStart);
-        result->setLoc(startLine, endLine, location.column);
+        IfNode* result = new (m_globalData) IfNode(lineNumber, condition, trueBlock);
+        result->setLoc(start, end);
+        return result;
+    }
+
+    StatementNode* createIfStatement(int lineNumber, ExpressionNode* condition, StatementNode* trueBlock, StatementNode* falseBlock, int start, int end)
+    {
+        IfNode* result = new (m_globalData) IfElseNode(lineNumber, condition, trueBlock, falseBlock);
+        result->setLoc(start, end);
+        return result;
+    }
+
+    StatementNode* createForLoop(int lineNumber, ExpressionNode* initializer, ExpressionNode* condition, ExpressionNode* iter, StatementNode* statements, int start, int end)
+    {
+        ForNode* result = new (m_globalData) ForNode(lineNumber, initializer, condition, iter, statements);
+        result->setLoc(start, end);
+        return result;
+    }
+
+    StatementNode* createForInLoop(int lineNumber, const Identifier* ident, ExpressionNode* initializer, ExpressionNode* iter, StatementNode* statements, int start, int divot, int end, int initStart, int initEnd, int startLine, int endLine)
+    {
+        ForInNode* result = new (m_globalData) ForInNode(m_globalData, lineNumber, *ident, initializer, iter, statements, initStart, initStart - start, initEnd - initStart);
+        result->setLoc(startLine, endLine);
         setExceptionLocation(result, start, divot + 1, end);
         return result;
     }
 
-    StatementNode* createForInLoop(const JSTokenLocation& location, ExpressionNode* lhs, ExpressionNode* iter, StatementNode* statements, int eStart, int eDivot, int eEnd, int start, int end)
+    StatementNode* createForInLoop(int lineNumber, ExpressionNode* lhs, ExpressionNode* iter, StatementNode* statements, int eStart, int eDivot, int eEnd, int start, int end)
     {
-        ForInNode* result = new (m_globalData) ForInNode(location, lhs, iter, statements);
-        result->setLoc(start, end, location.column);
+        ForInNode* result = new (m_globalData) ForInNode(lineNumber, lhs, iter, statements);
+        result->setLoc(start, end);
         setExceptionLocation(result, eStart, eDivot, eEnd);
         return result;
     }
 
-    StatementNode* createEmptyStatement(const JSTokenLocation& location) { return new (m_globalData) EmptyStatementNode(location); }
+    StatementNode* createEmptyStatement(int lineNumber) { return new (m_globalData) EmptyStatementNode(lineNumber); }
 
-    StatementNode* createVarStatement(const JSTokenLocation& location, ExpressionNode* expr, int start, int end)
+    StatementNode* createVarStatement(int lineNumber, ExpressionNode* expr, int start, int end)
     {
         StatementNode* result;
         if (!expr)
-            result = new (m_globalData) EmptyStatementNode(location);
+            result = new (m_globalData) EmptyStatementNode(lineNumber);
         else
-            result = new (m_globalData) VarStatementNode(location, expr);
-        result->setLoc(start, end, location.column);
+            result = new (m_globalData) VarStatementNode(lineNumber, expr);
+        result->setLoc(start, end);
         return result;
     }
 
-    StatementNode* createReturnStatement(const JSTokenLocation& location, ExpressionNode* expression, int eStart, int eEnd, int startLine, int endLine)
+    StatementNode* createReturnStatement(int lineNumber, ExpressionNode* expression, int eStart, int eEnd, int startLine, int endLine)
     {
-        ReturnNode* result = new (m_globalData) ReturnNode(location, expression);
+        ReturnNode* result = new (m_globalData) ReturnNode(lineNumber, expression);
         setExceptionLocation(result, eStart, eEnd, eEnd);
-        result->setLoc(startLine, endLine, location.column);
+        result->setLoc(startLine, endLine);
         return result;
     }
 
-    StatementNode* createBreakStatement(const JSTokenLocation& location, int eStart, int eEnd, int startLine, int endLine)
+    StatementNode* createBreakStatement(int lineNumber, int eStart, int eEnd, int startLine, int endLine)
     {
-        BreakNode* result = new (m_globalData) BreakNode(m_globalData, location);
+        BreakNode* result = new (m_globalData) BreakNode(m_globalData, lineNumber);
         setExceptionLocation(result, eStart, eEnd, eEnd);
-        result->setLoc(startLine, endLine, location.column);
+        result->setLoc(startLine, endLine);
         return result;
     }
 
-    StatementNode* createBreakStatement(const JSTokenLocation& location, const Identifier* ident, int eStart, int eEnd, int startLine, int endLine)
+    StatementNode* createBreakStatement(int lineNumber, const Identifier* ident, int eStart, int eEnd, int startLine, int endLine)
     {
-        BreakNode* result = new (m_globalData) BreakNode(location, *ident);
+        BreakNode* result = new (m_globalData) BreakNode(lineNumber, *ident);
         setExceptionLocation(result, eStart, eEnd, eEnd);
-        result->setLoc(startLine, endLine, location.column);
+        result->setLoc(startLine, endLine);
         return result;
     }
 
-    StatementNode* createContinueStatement(const JSTokenLocation& location, int eStart, int eEnd, int startLine, int endLine)
+    StatementNode* createContinueStatement(int lineNumber, int eStart, int eEnd, int startLine, int endLine)
     {
-        ContinueNode* result = new (m_globalData) ContinueNode(m_globalData, location);
+        ContinueNode* result = new (m_globalData) ContinueNode(m_globalData, lineNumber);
         setExceptionLocation(result, eStart, eEnd, eEnd);
-        result->setLoc(startLine, endLine, location.column);
+        result->setLoc(startLine, endLine);
         return result;
     }
 
-    StatementNode* createContinueStatement(const JSTokenLocation& location, const Identifier* ident, int eStart, int eEnd, int startLine, int endLine)
+    StatementNode* createContinueStatement(int lineNumber, const Identifier* ident, int eStart, int eEnd, int startLine, int endLine)
     {
-        ContinueNode* result = new (m_globalData) ContinueNode(location, *ident);
+        ContinueNode* result = new (m_globalData) ContinueNode(lineNumber, *ident);
         setExceptionLocation(result, eStart, eEnd, eEnd);
-        result->setLoc(startLine, endLine, location.column);
+        result->setLoc(startLine, endLine);
         return result;
     }
 
-    StatementNode* createTryStatement(const JSTokenLocation& location, StatementNode* tryBlock, const Identifier* ident, StatementNode* catchBlock, StatementNode* finallyBlock, int startLine, int endLine)
+    StatementNode* createTryStatement(int lineNumber, StatementNode* tryBlock, const Identifier* ident, StatementNode* catchBlock, StatementNode* finallyBlock, int startLine, int endLine)
     {
-        TryNode* result = new (m_globalData) TryNode(location, tryBlock, *ident, catchBlock, finallyBlock);
+        TryNode* result = new (m_globalData) TryNode(lineNumber, tryBlock, *ident, catchBlock, finallyBlock);
         if (catchBlock)
             usesCatch();
-        result->setLoc(startLine, endLine, location.column);
+        result->setLoc(startLine, endLine);
         return result;
     }
 
-    StatementNode* createSwitchStatement(const JSTokenLocation& location, ExpressionNode* expr, ClauseListNode* firstClauses, CaseClauseNode* defaultClause, ClauseListNode* secondClauses, int startLine, int endLine)
+    StatementNode* createSwitchStatement(int lineNumber, ExpressionNode* expr, ClauseListNode* firstClauses, CaseClauseNode* defaultClause, ClauseListNode* secondClauses, int startLine, int endLine)
     {
         CaseBlockNode* cases = new (m_globalData) CaseBlockNode(firstClauses, defaultClause, secondClauses);
-        SwitchNode* result = new (m_globalData) SwitchNode(location, expr, cases);
-        result->setLoc(startLine, endLine, location.column);
+        SwitchNode* result = new (m_globalData) SwitchNode(lineNumber, expr, cases);
+        result->setLoc(startLine, endLine);
         return result;
     }
 
-    StatementNode* createWhileStatement(const JSTokenLocation& location, ExpressionNode* expr, StatementNode* statement, int startLine, int endLine)
+    StatementNode* createWhileStatement(int lineNumber, ExpressionNode* expr, StatementNode* statement, int startLine, int endLine)
     {
-        WhileNode* result = new (m_globalData) WhileNode(location, expr, statement);
-        result->setLoc(startLine, endLine, location.column);
+        WhileNode* result = new (m_globalData) WhileNode(lineNumber, expr, statement);
+        result->setLoc(startLine, endLine);
         return result;
     }
 
-    StatementNode* createDoWhileStatement(const JSTokenLocation& location, StatementNode* statement, ExpressionNode* expr, int startLine, int endLine)
+    StatementNode* createDoWhileStatement(int lineNumber, StatementNode* statement, ExpressionNode* expr, int startLine, int endLine)
     {
-        DoWhileNode* result = new (m_globalData) DoWhileNode(location, statement, expr);
-        result->setLoc(startLine, endLine, location.column);
+        DoWhileNode* result = new (m_globalData) DoWhileNode(lineNumber, statement, expr);
+        result->setLoc(startLine, endLine);
         return result;
     }
 
-    StatementNode* createLabelStatement(const JSTokenLocation& location, const Identifier* ident, StatementNode* statement, int start, int end)
+    StatementNode* createLabelStatement(int lineNumber, const Identifier* ident, StatementNode* statement, int start, int end)
     {
-        LabelNode* result = new (m_globalData) LabelNode(location, *ident, statement);
+        LabelNode* result = new (m_globalData) LabelNode(lineNumber, *ident, statement);
         setExceptionLocation(result, start, end, end);
         return result;
     }
 
-    StatementNode* createWithStatement(const JSTokenLocation& location, ExpressionNode* expr, StatementNode* statement, int start, int end, int startLine, int endLine)
+    StatementNode* createWithStatement(int lineNumber, ExpressionNode* expr, StatementNode* statement, int start, int end, int startLine, int endLine)
     {
         usesWith();
-        WithNode* result = new (m_globalData) WithNode(location, expr, statement, end, end - start);
-        result->setLoc(startLine, endLine, location.column);
+        WithNode* result = new (m_globalData) WithNode(lineNumber, expr, statement, end, end - start);
+        result->setLoc(startLine, endLine);
         return result;
     }    
     
-    StatementNode* createThrowStatement(const JSTokenLocation& location, ExpressionNode* expr, int start, int end, int startLine, int endLine)
+    StatementNode* createThrowStatement(int lineNumber, ExpressionNode* expr, int start, int end, int startLine, int endLine)
     {
-        ThrowNode* result = new (m_globalData) ThrowNode(location, expr);
-        result->setLoc(startLine, endLine, location.column);
+        ThrowNode* result = new (m_globalData) ThrowNode(lineNumber, expr);
+        result->setLoc(startLine, endLine);
         setExceptionLocation(result, start, end, end);
         return result;
     }
     
-    StatementNode* createDebugger(const JSTokenLocation& location, int startLine, int endLine)
+    StatementNode* createDebugger(int lineNumber, int startLine, int endLine)
     {
-        DebuggerStatementNode* result = new (m_globalData) DebuggerStatementNode(location);
-        result->setLoc(startLine, endLine, location.column);
+        DebuggerStatementNode* result = new (m_globalData) DebuggerStatementNode(lineNumber);
+        result->setLoc(startLine, endLine);
         return result;
     }
     
-    StatementNode* createConstStatement(const JSTokenLocation& location, ConstDeclNode* decls, int startLine, int endLine)
+    StatementNode* createConstStatement(int lineNumber, ConstDeclNode* decls, int startLine, int endLine)
     {
-        ConstStatementNode* result = new (m_globalData) ConstStatementNode(location, decls);
-        result->setLoc(startLine, endLine, location.column);
+        ConstStatementNode* result = new (m_globalData) ConstStatementNode(lineNumber, decls);
+        result->setLoc(startLine, endLine);
         return result;
     }
 
-    ConstDeclNode* appendConstDecl(const JSTokenLocation& location, ConstDeclNode* tail, const Identifier* name, ExpressionNode* initializer)
+    ConstDeclNode* appendConstDecl(int lineNumber, ConstDeclNode* tail, const Identifier* name, ExpressionNode* initializer)
     {
-        ConstDeclNode* result = new (m_globalData) ConstDeclNode(location, *name, initializer);
+        ConstDeclNode* result = new (m_globalData) ConstDeclNode(lineNumber, *name, initializer);
         if (tail)
             tail->m_next = result;
         return result;
@@ -511,7 +511,7 @@ public:
         m_scope.m_varDeclarations->data.append(std::make_pair(ident, attrs));
     }
 
-    ExpressionNode* combineCommaNodes(const JSTokenLocation& location, ExpressionNode* list, ExpressionNode* init)
+    ExpressionNode* combineCommaNodes(int lineNumber, ExpressionNode* list, ExpressionNode* init)
     {
         if (!list)
             return init;
@@ -519,7 +519,7 @@ public:
             static_cast<CommaNode*>(list)->append(init);
             return list;
         }
-        return new (m_globalData) CommaNode(location, list, init);
+        return new (m_globalData) CommaNode(lineNumber, list, init);
     }
 
     int evalCount() const { return m_evalCount; }
@@ -547,10 +547,10 @@ public:
         ASSERT(operandStackDepth >= 0);
         m_binaryOperandStack.resize(m_binaryOperandStack.size() - amount);
     }
-    void appendBinaryOperation(const JSTokenLocation& location, int& operandStackDepth, int&, const BinaryOperand& lhs, const BinaryOperand& rhs)
+    void appendBinaryOperation(int lineNumber, int& operandStackDepth, int&, const BinaryOperand& lhs, const BinaryOperand& rhs)
     {
         operandStackDepth++;
-        m_binaryOperandStack.append(std::make_pair(makeBinaryNode(location, m_binaryOperatorStack.last().first, lhs, rhs), BinaryOpInfo(lhs.second, rhs.second)));
+        m_binaryOperandStack.append(std::make_pair(makeBinaryNode(lineNumber, m_binaryOperatorStack.last().first, lhs, rhs), BinaryOpInfo(lhs.second, rhs.second)));
     }
     void operatorStackAppend(int& operatorStackDepth, int op, int precedence)
     {
@@ -592,9 +592,9 @@ public:
         m_assignmentInfoStack.append(AssignmentInfo(node, start, divot, assignmentCount, op));
     }
 
-    ExpressionNode* createAssignment(const JSTokenLocation& location, int& assignmentStackDepth, ExpressionNode* rhs, int initialAssignmentCount, int currentAssignmentCount, int lastTokenEnd)
+    ExpressionNode* createAssignment(int lineNumber, int& assignmentStackDepth, ExpressionNode* rhs, int initialAssignmentCount, int currentAssignmentCount, int lastTokenEnd)
     {
-        ExpressionNode* result = makeAssignNode(location, m_assignmentInfoStack.last().m_node, m_assignmentInfoStack.last().m_op, rhs, m_assignmentInfoStack.last().m_initAssignments != initialAssignmentCount, m_assignmentInfoStack.last().m_initAssignments != currentAssignmentCount, m_assignmentInfoStack.last().m_start, m_assignmentInfoStack.last().m_divot + 1, lastTokenEnd);
+        ExpressionNode* result = makeAssignNode(lineNumber, m_assignmentInfoStack.last().m_node, m_assignmentInfoStack.last().m_op, rhs, m_assignmentInfoStack.last().m_initAssignments != initialAssignmentCount, m_assignmentInfoStack.last().m_initAssignments != currentAssignmentCount, m_assignmentInfoStack.last().m_start, m_assignmentInfoStack.last().m_divot + 1, lastTokenEnd);
         m_assignmentInfoStack.removeLast();
         assignmentStackDepth--;
         return result;
@@ -635,9 +635,9 @@ private:
         m_evalCount++;
         m_scope.m_features |= EvalFeature;
     }
-    ExpressionNode* createNumber(const JSTokenLocation& location, double d)
+    ExpressionNode* createNumber(int lineNumber, double d)
     {
-        return new (m_globalData) NumberNode(location, d);
+        return new (m_globalData) NumberNode(lineNumber, d);
     }
     
     JSGlobalData* m_globalData;
@@ -650,33 +650,33 @@ private:
     int m_evalCount;
 };
 
-ExpressionNode* ASTBuilder::makeTypeOfNode(const JSTokenLocation& location, ExpressionNode* expr)
+ExpressionNode* ASTBuilder::makeTypeOfNode(int lineNumber, ExpressionNode* expr)
 {
     if (expr->isResolveNode()) {
         ResolveNode* resolve = static_cast<ResolveNode*>(expr);
-        return new (m_globalData) TypeOfResolveNode(location, resolve->identifier());
+        return new (m_globalData) TypeOfResolveNode(lineNumber, resolve->identifier());
     }
-    return new (m_globalData) TypeOfValueNode(location, expr);
+    return new (m_globalData) TypeOfValueNode(lineNumber, expr);
 }
 
-ExpressionNode* ASTBuilder::makeDeleteNode(const JSTokenLocation& location, ExpressionNode* expr, int start, int divot, int end)
+ExpressionNode* ASTBuilder::makeDeleteNode(int lineNumber, ExpressionNode* expr, int start, int divot, int end)
 {
     if (!expr->isLocation())
-        return new (m_globalData) DeleteValueNode(location, expr);
+        return new (m_globalData) DeleteValueNode(lineNumber, expr);
     if (expr->isResolveNode()) {
         ResolveNode* resolve = static_cast<ResolveNode*>(expr);
-        return new (m_globalData) DeleteResolveNode(location, resolve->identifier(), divot, divot - start, end - divot);
+        return new (m_globalData) DeleteResolveNode(lineNumber, resolve->identifier(), divot, divot - start, end - divot);
     }
     if (expr->isBracketAccessorNode()) {
         BracketAccessorNode* bracket = static_cast<BracketAccessorNode*>(expr);
-        return new (m_globalData) DeleteBracketNode(location, bracket->base(), bracket->subscript(), divot, divot - start, end - divot);
+        return new (m_globalData) DeleteBracketNode(lineNumber, bracket->base(), bracket->subscript(), divot, divot - start, end - divot);
     }
     ASSERT(expr->isDotAccessorNode());
     DotAccessorNode* dot = static_cast<DotAccessorNode*>(expr);
-    return new (m_globalData) DeleteDotNode(location, dot->base(), dot->identifier(), divot, divot - start, end - divot);
+    return new (m_globalData) DeleteDotNode(lineNumber, dot->base(), dot->identifier(), divot, divot - start, end - divot);
 }
 
-ExpressionNode* ASTBuilder::makeNegateNode(const JSTokenLocation& location, ExpressionNode* n)
+ExpressionNode* ASTBuilder::makeNegateNode(int lineNumber, ExpressionNode* n)
 {
     if (n->isNumber()) {
         NumberNode* numberNode = static_cast<NumberNode*>(n);
@@ -684,128 +684,128 @@ ExpressionNode* ASTBuilder::makeNegateNode(const JSTokenLocation& location, Expr
         return numberNode;
     }
 
-    return new (m_globalData) NegateNode(location, n);
+    return new (m_globalData) NegateNode(lineNumber, n);
 }
 
-ExpressionNode* ASTBuilder::makeBitwiseNotNode(const JSTokenLocation& location, ExpressionNode* expr)
+ExpressionNode* ASTBuilder::makeBitwiseNotNode(int lineNumber, ExpressionNode* expr)
 {
     if (expr->isNumber())
-        return createNumber(location, ~toInt32(static_cast<NumberNode*>(expr)->value()));
-    return new (m_globalData) BitwiseNotNode(location, expr);
+        return createNumber(lineNumber, ~toInt32(static_cast<NumberNode*>(expr)->value()));
+    return new (m_globalData) BitwiseNotNode(lineNumber, expr);
 }
 
-ExpressionNode* ASTBuilder::makeMultNode(const JSTokenLocation& location, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
+ExpressionNode* ASTBuilder::makeMultNode(int lineNumber, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
 {
     expr1 = expr1->stripUnaryPlus();
     expr2 = expr2->stripUnaryPlus();
 
     if (expr1->isNumber() && expr2->isNumber())
-        return createNumber(location, static_cast<NumberNode*>(expr1)->value() * static_cast<NumberNode*>(expr2)->value());
+        return createNumber(lineNumber, static_cast<NumberNode*>(expr1)->value() * static_cast<NumberNode*>(expr2)->value());
 
     if (expr1->isNumber() && static_cast<NumberNode*>(expr1)->value() == 1)
-        return new (m_globalData) UnaryPlusNode(location, expr2);
+        return new (m_globalData) UnaryPlusNode(lineNumber, expr2);
 
     if (expr2->isNumber() && static_cast<NumberNode*>(expr2)->value() == 1)
-        return new (m_globalData) UnaryPlusNode(location, expr1);
+        return new (m_globalData) UnaryPlusNode(lineNumber, expr1);
 
-    return new (m_globalData) MultNode(location, expr1, expr2, rightHasAssignments);
+    return new (m_globalData) MultNode(lineNumber, expr1, expr2, rightHasAssignments);
 }
 
-ExpressionNode* ASTBuilder::makeDivNode(const JSTokenLocation& location, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
+ExpressionNode* ASTBuilder::makeDivNode(int lineNumber, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
 {
     expr1 = expr1->stripUnaryPlus();
     expr2 = expr2->stripUnaryPlus();
 
     if (expr1->isNumber() && expr2->isNumber())
-        return createNumber(location, static_cast<NumberNode*>(expr1)->value() / static_cast<NumberNode*>(expr2)->value());
-    return new (m_globalData) DivNode(location, expr1, expr2, rightHasAssignments);
+        return createNumber(lineNumber, static_cast<NumberNode*>(expr1)->value() / static_cast<NumberNode*>(expr2)->value());
+    return new (m_globalData) DivNode(lineNumber, expr1, expr2, rightHasAssignments);
 }
 
-ExpressionNode* ASTBuilder::makeModNode(const JSTokenLocation& location, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
+ExpressionNode* ASTBuilder::makeModNode(int lineNumber, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
 {
     expr1 = expr1->stripUnaryPlus();
     expr2 = expr2->stripUnaryPlus();
     
     if (expr1->isNumber() && expr2->isNumber())
-        return createNumber(location, fmod(static_cast<NumberNode*>(expr1)->value(), static_cast<NumberNode*>(expr2)->value()));
-    return new (m_globalData) ModNode(location, expr1, expr2, rightHasAssignments);
+        return createNumber(lineNumber, fmod(static_cast<NumberNode*>(expr1)->value(), static_cast<NumberNode*>(expr2)->value()));
+    return new (m_globalData) ModNode(lineNumber, expr1, expr2, rightHasAssignments);
 }
 
-ExpressionNode* ASTBuilder::makeAddNode(const JSTokenLocation& location, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
+ExpressionNode* ASTBuilder::makeAddNode(int lineNumber, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
 {
     if (expr1->isNumber() && expr2->isNumber())
-        return createNumber(location, static_cast<NumberNode*>(expr1)->value() + static_cast<NumberNode*>(expr2)->value());
-    return new (m_globalData) AddNode(location, expr1, expr2, rightHasAssignments);
+        return createNumber(lineNumber, static_cast<NumberNode*>(expr1)->value() + static_cast<NumberNode*>(expr2)->value());
+    return new (m_globalData) AddNode(lineNumber, expr1, expr2, rightHasAssignments);
 }
 
-ExpressionNode* ASTBuilder::makeSubNode(const JSTokenLocation& location, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
+ExpressionNode* ASTBuilder::makeSubNode(int lineNumber, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
 {
     expr1 = expr1->stripUnaryPlus();
     expr2 = expr2->stripUnaryPlus();
 
     if (expr1->isNumber() && expr2->isNumber())
-        return createNumber(location, static_cast<NumberNode*>(expr1)->value() - static_cast<NumberNode*>(expr2)->value());
-    return new (m_globalData) SubNode(location, expr1, expr2, rightHasAssignments);
+        return createNumber(lineNumber, static_cast<NumberNode*>(expr1)->value() - static_cast<NumberNode*>(expr2)->value());
+    return new (m_globalData) SubNode(lineNumber, expr1, expr2, rightHasAssignments);
 }
 
-ExpressionNode* ASTBuilder::makeLeftShiftNode(const JSTokenLocation& location, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
+ExpressionNode* ASTBuilder::makeLeftShiftNode(int lineNumber, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
 {
     if (expr1->isNumber() && expr2->isNumber())
-        return createNumber(location, toInt32(static_cast<NumberNode*>(expr1)->value()) << (toUInt32(static_cast<NumberNode*>(expr2)->value()) & 0x1f));
-    return new (m_globalData) LeftShiftNode(location, expr1, expr2, rightHasAssignments);
+        return createNumber(lineNumber, toInt32(static_cast<NumberNode*>(expr1)->value()) << (toUInt32(static_cast<NumberNode*>(expr2)->value()) & 0x1f));
+    return new (m_globalData) LeftShiftNode(lineNumber, expr1, expr2, rightHasAssignments);
 }
 
-ExpressionNode* ASTBuilder::makeRightShiftNode(const JSTokenLocation& location, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
+ExpressionNode* ASTBuilder::makeRightShiftNode(int lineNumber, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
 {
     if (expr1->isNumber() && expr2->isNumber())
-        return createNumber(location, toInt32(static_cast<NumberNode*>(expr1)->value()) >> (toUInt32(static_cast<NumberNode*>(expr2)->value()) & 0x1f));
-    return new (m_globalData) RightShiftNode(location, expr1, expr2, rightHasAssignments);
+        return createNumber(lineNumber, toInt32(static_cast<NumberNode*>(expr1)->value()) >> (toUInt32(static_cast<NumberNode*>(expr2)->value()) & 0x1f));
+    return new (m_globalData) RightShiftNode(lineNumber, expr1, expr2, rightHasAssignments);
 }
 
-ExpressionNode* ASTBuilder::makeURightShiftNode(const JSTokenLocation& location, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
+ExpressionNode* ASTBuilder::makeURightShiftNode(int lineNumber, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
 {
     if (expr1->isNumber() && expr2->isNumber())
-        return createNumber(location, toUInt32(static_cast<NumberNode*>(expr1)->value()) >> (toUInt32(static_cast<NumberNode*>(expr2)->value()) & 0x1f));
-    return new (m_globalData) UnsignedRightShiftNode(location, expr1, expr2, rightHasAssignments);
+        return createNumber(lineNumber, toUInt32(static_cast<NumberNode*>(expr1)->value()) >> (toUInt32(static_cast<NumberNode*>(expr2)->value()) & 0x1f));
+    return new (m_globalData) UnsignedRightShiftNode(lineNumber, expr1, expr2, rightHasAssignments);
 }
 
-ExpressionNode* ASTBuilder::makeBitOrNode(const JSTokenLocation& location, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
+ExpressionNode* ASTBuilder::makeBitOrNode(int lineNumber, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
 {
     if (expr1->isNumber() && expr2->isNumber())
-        return createNumber(location, toInt32(static_cast<NumberNode*>(expr1)->value()) | toInt32(static_cast<NumberNode*>(expr2)->value()));
-    return new (m_globalData) BitOrNode(location, expr1, expr2, rightHasAssignments);
+        return createNumber(lineNumber, toInt32(static_cast<NumberNode*>(expr1)->value()) | toInt32(static_cast<NumberNode*>(expr2)->value()));
+    return new (m_globalData) BitOrNode(lineNumber, expr1, expr2, rightHasAssignments);
 }
 
-ExpressionNode* ASTBuilder::makeBitAndNode(const JSTokenLocation& location, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
+ExpressionNode* ASTBuilder::makeBitAndNode(int lineNumber, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
 {
     if (expr1->isNumber() && expr2->isNumber())
-        return createNumber(location, toInt32(static_cast<NumberNode*>(expr1)->value()) & toInt32(static_cast<NumberNode*>(expr2)->value()));
-    return new (m_globalData) BitAndNode(location, expr1, expr2, rightHasAssignments);
+        return createNumber(lineNumber, toInt32(static_cast<NumberNode*>(expr1)->value()) & toInt32(static_cast<NumberNode*>(expr2)->value()));
+    return new (m_globalData) BitAndNode(lineNumber, expr1, expr2, rightHasAssignments);
 }
 
-ExpressionNode* ASTBuilder::makeBitXOrNode(const JSTokenLocation& location, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
+ExpressionNode* ASTBuilder::makeBitXOrNode(int lineNumber, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
 {
     if (expr1->isNumber() && expr2->isNumber())
-        return createNumber(location, toInt32(static_cast<NumberNode*>(expr1)->value()) ^ toInt32(static_cast<NumberNode*>(expr2)->value()));
-    return new (m_globalData) BitXOrNode(location, expr1, expr2, rightHasAssignments);
+        return createNumber(lineNumber, toInt32(static_cast<NumberNode*>(expr1)->value()) ^ toInt32(static_cast<NumberNode*>(expr2)->value()));
+    return new (m_globalData) BitXOrNode(lineNumber, expr1, expr2, rightHasAssignments);
 }
 
-ExpressionNode* ASTBuilder::makeFunctionCallNode(const JSTokenLocation& location, ExpressionNode* func, ArgumentsNode* args, int start, int divot, int end)
+ExpressionNode* ASTBuilder::makeFunctionCallNode(int lineNumber, ExpressionNode* func, ArgumentsNode* args, int start, int divot, int end)
 {
     if (!func->isLocation())
-        return new (m_globalData) FunctionCallValueNode(location, func, args, divot, divot - start, end - divot);
+        return new (m_globalData) FunctionCallValueNode(lineNumber, func, args, divot, divot - start, end - divot);
     if (func->isResolveNode()) {
         ResolveNode* resolve = static_cast<ResolveNode*>(func);
         const Identifier& identifier = resolve->identifier();
         if (identifier == m_globalData->propertyNames->eval) {
             usesEval();
-            return new (m_globalData) EvalFunctionCallNode(location, args, divot, divot - start, end - divot);
+            return new (m_globalData) EvalFunctionCallNode(lineNumber, args, divot, divot - start, end - divot);
         }
-        return new (m_globalData) FunctionCallResolveNode(location, identifier, args, divot, divot - start, end - divot);
+        return new (m_globalData) FunctionCallResolveNode(lineNumber, identifier, args, divot, divot - start, end - divot);
     }
     if (func->isBracketAccessorNode()) {
         BracketAccessorNode* bracket = static_cast<BracketAccessorNode*>(func);
-        FunctionCallBracketNode* node = new (m_globalData) FunctionCallBracketNode(location, bracket->base(), bracket->subscript(), args, divot, divot - start, end - divot);
+        FunctionCallBracketNode* node = new (m_globalData) FunctionCallBracketNode(lineNumber, bracket->base(), bracket->subscript(), args, divot, divot - start, end - divot);
         node->setSubexpressionInfo(bracket->divot(), bracket->endOffset());
         return node;
     }
@@ -813,118 +813,118 @@ ExpressionNode* ASTBuilder::makeFunctionCallNode(const JSTokenLocation& location
     DotAccessorNode* dot = static_cast<DotAccessorNode*>(func);
     FunctionCallDotNode* node;
     if (dot->identifier() == m_globalData->propertyNames->call)
-        node = new (m_globalData) CallFunctionCallDotNode(location, dot->base(), dot->identifier(), args, divot, divot - start, end - divot);
+        node = new (m_globalData) CallFunctionCallDotNode(lineNumber, dot->base(), dot->identifier(), args, divot, divot - start, end - divot);
     else if (dot->identifier() == m_globalData->propertyNames->apply)
-        node = new (m_globalData) ApplyFunctionCallDotNode(location, dot->base(), dot->identifier(), args, divot, divot - start, end - divot);
+        node = new (m_globalData) ApplyFunctionCallDotNode(lineNumber, dot->base(), dot->identifier(), args, divot, divot - start, end - divot);
     else
-        node = new (m_globalData) FunctionCallDotNode(location, dot->base(), dot->identifier(), args, divot, divot - start, end - divot);
+        node = new (m_globalData) FunctionCallDotNode(lineNumber, dot->base(), dot->identifier(), args, divot, divot - start, end - divot);
     node->setSubexpressionInfo(dot->divot(), dot->endOffset());
     return node;
 }
 
-ExpressionNode* ASTBuilder::makeBinaryNode(const JSTokenLocation& location, int token, pair<ExpressionNode*, BinaryOpInfo> lhs, pair<ExpressionNode*, BinaryOpInfo> rhs)
+ExpressionNode* ASTBuilder::makeBinaryNode(int lineNumber, int token, pair<ExpressionNode*, BinaryOpInfo> lhs, pair<ExpressionNode*, BinaryOpInfo> rhs)
 {
     switch (token) {
     case OR:
-        return new (m_globalData) LogicalOpNode(location, lhs.first, rhs.first, OpLogicalOr);
+        return new (m_globalData) LogicalOpNode(lineNumber, lhs.first, rhs.first, OpLogicalOr);
 
     case AND:
-        return new (m_globalData) LogicalOpNode(location, lhs.first, rhs.first, OpLogicalAnd);
+        return new (m_globalData) LogicalOpNode(lineNumber, lhs.first, rhs.first, OpLogicalAnd);
 
     case BITOR:
-        return makeBitOrNode(location, lhs.first, rhs.first, rhs.second.hasAssignment);
+        return makeBitOrNode(lineNumber, lhs.first, rhs.first, rhs.second.hasAssignment);
 
     case BITXOR:
-        return makeBitXOrNode(location, lhs.first, rhs.first, rhs.second.hasAssignment);
+        return makeBitXOrNode(lineNumber, lhs.first, rhs.first, rhs.second.hasAssignment);
 
     case BITAND:
-        return makeBitAndNode(location, lhs.first, rhs.first, rhs.second.hasAssignment);
+        return makeBitAndNode(lineNumber, lhs.first, rhs.first, rhs.second.hasAssignment);
 
     case EQEQ:
-        return new (m_globalData) EqualNode(location, lhs.first, rhs.first, rhs.second.hasAssignment);
+        return new (m_globalData) EqualNode(lineNumber, lhs.first, rhs.first, rhs.second.hasAssignment);
 
     case NE:
-        return new (m_globalData) NotEqualNode(location, lhs.first, rhs.first, rhs.second.hasAssignment);
+        return new (m_globalData) NotEqualNode(lineNumber, lhs.first, rhs.first, rhs.second.hasAssignment);
 
     case STREQ:
-        return new (m_globalData) StrictEqualNode(location, lhs.first, rhs.first, rhs.second.hasAssignment);
+        return new (m_globalData) StrictEqualNode(lineNumber, lhs.first, rhs.first, rhs.second.hasAssignment);
 
     case STRNEQ:
-        return new (m_globalData) NotStrictEqualNode(location, lhs.first, rhs.first, rhs.second.hasAssignment);
+        return new (m_globalData) NotStrictEqualNode(lineNumber, lhs.first, rhs.first, rhs.second.hasAssignment);
 
     case LT:
-        return new (m_globalData) LessNode(location, lhs.first, rhs.first, rhs.second.hasAssignment);
+        return new (m_globalData) LessNode(lineNumber, lhs.first, rhs.first, rhs.second.hasAssignment);
 
     case GT:
-        return new (m_globalData) GreaterNode(location, lhs.first, rhs.first, rhs.second.hasAssignment);
+        return new (m_globalData) GreaterNode(lineNumber, lhs.first, rhs.first, rhs.second.hasAssignment);
 
     case LE:
-        return new (m_globalData) LessEqNode(location, lhs.first, rhs.first, rhs.second.hasAssignment);
+        return new (m_globalData) LessEqNode(lineNumber, lhs.first, rhs.first, rhs.second.hasAssignment);
 
     case GE:
-        return new (m_globalData) GreaterEqNode(location, lhs.first, rhs.first, rhs.second.hasAssignment);
+        return new (m_globalData) GreaterEqNode(lineNumber, lhs.first, rhs.first, rhs.second.hasAssignment);
 
     case INSTANCEOF: {
-        InstanceOfNode* node = new (m_globalData) InstanceOfNode(location, lhs.first, rhs.first, rhs.second.hasAssignment);
+        InstanceOfNode* node = new (m_globalData) InstanceOfNode(lineNumber, lhs.first, rhs.first, rhs.second.hasAssignment);
         setExceptionLocation(node, lhs.second.start, rhs.second.start, rhs.second.end);
         return node;
     }
 
     case INTOKEN: {
-        InNode* node = new (m_globalData) InNode(location, lhs.first, rhs.first, rhs.second.hasAssignment);
+        InNode* node = new (m_globalData) InNode(lineNumber, lhs.first, rhs.first, rhs.second.hasAssignment);
         setExceptionLocation(node, lhs.second.start, rhs.second.start, rhs.second.end);
         return node;
     }
 
     case LSHIFT:
-        return makeLeftShiftNode(location, lhs.first, rhs.first, rhs.second.hasAssignment);
+        return makeLeftShiftNode(lineNumber, lhs.first, rhs.first, rhs.second.hasAssignment);
 
     case RSHIFT:
-        return makeRightShiftNode(location, lhs.first, rhs.first, rhs.second.hasAssignment);
+        return makeRightShiftNode(lineNumber, lhs.first, rhs.first, rhs.second.hasAssignment);
 
     case URSHIFT:
-        return makeURightShiftNode(location, lhs.first, rhs.first, rhs.second.hasAssignment);
+        return makeURightShiftNode(lineNumber, lhs.first, rhs.first, rhs.second.hasAssignment);
 
     case PLUS:
-        return makeAddNode(location, lhs.first, rhs.first, rhs.second.hasAssignment);
+        return makeAddNode(lineNumber, lhs.first, rhs.first, rhs.second.hasAssignment);
 
     case MINUS:
-        return makeSubNode(location, lhs.first, rhs.first, rhs.second.hasAssignment);
+        return makeSubNode(lineNumber, lhs.first, rhs.first, rhs.second.hasAssignment);
 
     case TIMES:
-        return makeMultNode(location, lhs.first, rhs.first, rhs.second.hasAssignment);
+        return makeMultNode(lineNumber, lhs.first, rhs.first, rhs.second.hasAssignment);
 
     case DIVIDE:
-        return makeDivNode(location, lhs.first, rhs.first, rhs.second.hasAssignment);
+        return makeDivNode(lineNumber, lhs.first, rhs.first, rhs.second.hasAssignment);
 
     case MOD:
-        return makeModNode(location, lhs.first, rhs.first, rhs.second.hasAssignment);
+        return makeModNode(lineNumber, lhs.first, rhs.first, rhs.second.hasAssignment);
     }
     CRASH();
     return 0;
 }
 
-ExpressionNode* ASTBuilder::makeAssignNode(const JSTokenLocation& location, ExpressionNode* loc, Operator op, ExpressionNode* expr, bool locHasAssignments, bool exprHasAssignments, int start, int divot, int end)
+ExpressionNode* ASTBuilder::makeAssignNode(int lineNumber, ExpressionNode* loc, Operator op, ExpressionNode* expr, bool locHasAssignments, bool exprHasAssignments, int start, int divot, int end)
 {
     if (!loc->isLocation())
-        return new (m_globalData) AssignErrorNode(location, divot, divot - start, end - divot);
+        return new (m_globalData) AssignErrorNode(lineNumber, divot, divot - start, end - divot);
 
     if (loc->isResolveNode()) {
         ResolveNode* resolve = static_cast<ResolveNode*>(loc);
         if (op == OpEqual) {
             if (expr->isFuncExprNode())
                 static_cast<FuncExprNode*>(expr)->body()->setInferredName(resolve->identifier());
-            AssignResolveNode* node = new (m_globalData) AssignResolveNode(location, resolve->identifier(), expr);
+            AssignResolveNode* node = new (m_globalData) AssignResolveNode(lineNumber, resolve->identifier(), expr);
             setExceptionLocation(node, start, divot, end);
             return node;
         }
-        return new (m_globalData) ReadModifyResolveNode(location, resolve->identifier(), op, expr, exprHasAssignments, divot, divot - start, end - divot);
+        return new (m_globalData) ReadModifyResolveNode(lineNumber, resolve->identifier(), op, expr, exprHasAssignments, divot, divot - start, end - divot);
     }
     if (loc->isBracketAccessorNode()) {
         BracketAccessorNode* bracket = static_cast<BracketAccessorNode*>(loc);
         if (op == OpEqual)
-            return new (m_globalData) AssignBracketNode(location, bracket->base(), bracket->subscript(), expr, locHasAssignments, exprHasAssignments, bracket->divot(), bracket->divot() - start, end - bracket->divot());
-        ReadModifyBracketNode* node = new (m_globalData) ReadModifyBracketNode(location, bracket->base(), bracket->subscript(), op, expr, locHasAssignments, exprHasAssignments, divot, divot - start, end - divot);
+            return new (m_globalData) AssignBracketNode(lineNumber, bracket->base(), bracket->subscript(), expr, locHasAssignments, exprHasAssignments, bracket->divot(), bracket->divot() - start, end - bracket->divot());
+        ReadModifyBracketNode* node = new (m_globalData) ReadModifyBracketNode(lineNumber, bracket->base(), bracket->subscript(), op, expr, locHasAssignments, exprHasAssignments, divot, divot - start, end - divot);
         node->setSubexpressionInfo(bracket->divot(), bracket->endOffset());
         return node;
     }
@@ -933,55 +933,55 @@ ExpressionNode* ASTBuilder::makeAssignNode(const JSTokenLocation& location, Expr
     if (op == OpEqual) {
         if (expr->isFuncExprNode())
             static_cast<FuncExprNode*>(expr)->body()->setInferredName(dot->identifier());
-        return new (m_globalData) AssignDotNode(location, dot->base(), dot->identifier(), expr, exprHasAssignments, dot->divot(), dot->divot() - start, end - dot->divot());
+        return new (m_globalData) AssignDotNode(lineNumber, dot->base(), dot->identifier(), expr, exprHasAssignments, dot->divot(), dot->divot() - start, end - dot->divot());
     }
 
-    ReadModifyDotNode* node = new (m_globalData) ReadModifyDotNode(location, dot->base(), dot->identifier(), op, expr, exprHasAssignments, divot, divot - start, end - divot);
+    ReadModifyDotNode* node = new (m_globalData) ReadModifyDotNode(lineNumber, dot->base(), dot->identifier(), op, expr, exprHasAssignments, divot, divot - start, end - divot);
     node->setSubexpressionInfo(dot->divot(), dot->endOffset());
     return node;
 }
 
-ExpressionNode* ASTBuilder::makePrefixNode(const JSTokenLocation& location, ExpressionNode* expr, Operator op, int start, int divot, int end)
+ExpressionNode* ASTBuilder::makePrefixNode(int lineNumber, ExpressionNode* expr, Operator op, int start, int divot, int end)
 {
     if (!expr->isLocation())
-        return new (m_globalData) PrefixErrorNode(location, op, divot, divot - start, end - divot);
+        return new (m_globalData) PrefixErrorNode(lineNumber, op, divot, divot - start, end - divot);
 
     if (expr->isResolveNode()) {
         ResolveNode* resolve = static_cast<ResolveNode*>(expr);
-        return new (m_globalData) PrefixResolveNode(location, resolve->identifier(), op, divot, divot - start, end - divot);
+        return new (m_globalData) PrefixResolveNode(lineNumber, resolve->identifier(), op, divot, divot - start, end - divot);
     }
     if (expr->isBracketAccessorNode()) {
         BracketAccessorNode* bracket = static_cast<BracketAccessorNode*>(expr);
-        PrefixBracketNode* node = new (m_globalData) PrefixBracketNode(location, bracket->base(), bracket->subscript(), op, divot, divot - start, end - divot);
+        PrefixBracketNode* node = new (m_globalData) PrefixBracketNode(lineNumber, bracket->base(), bracket->subscript(), op, divot, divot - start, end - divot);
         node->setSubexpressionInfo(bracket->divot(), bracket->startOffset());
         return node;
     }
     ASSERT(expr->isDotAccessorNode());
     DotAccessorNode* dot = static_cast<DotAccessorNode*>(expr);
-    PrefixDotNode* node = new (m_globalData) PrefixDotNode(location, dot->base(), dot->identifier(), op, divot, divot - start, end - divot);
+    PrefixDotNode* node = new (m_globalData) PrefixDotNode(lineNumber, dot->base(), dot->identifier(), op, divot, divot - start, end - divot);
     node->setSubexpressionInfo(dot->divot(), dot->startOffset());
     return node;
 }
 
-ExpressionNode* ASTBuilder::makePostfixNode(const JSTokenLocation& location, ExpressionNode* expr, Operator op, int start, int divot, int end)
+ExpressionNode* ASTBuilder::makePostfixNode(int lineNumber, ExpressionNode* expr, Operator op, int start, int divot, int end)
 {
     if (!expr->isLocation())
-        return new (m_globalData) PostfixErrorNode(location, op, divot, divot - start, end - divot);
+        return new (m_globalData) PostfixErrorNode(lineNumber, op, divot, divot - start, end - divot);
 
     if (expr->isResolveNode()) {
         ResolveNode* resolve = static_cast<ResolveNode*>(expr);
-        return new (m_globalData) PostfixResolveNode(location, resolve->identifier(), op, divot, divot - start, end - divot);
+        return new (m_globalData) PostfixResolveNode(lineNumber, resolve->identifier(), op, divot, divot - start, end - divot);
     }
     if (expr->isBracketAccessorNode()) {
         BracketAccessorNode* bracket = static_cast<BracketAccessorNode*>(expr);
-        PostfixBracketNode* node = new (m_globalData) PostfixBracketNode(location, bracket->base(), bracket->subscript(), op, divot, divot - start, end - divot);
+        PostfixBracketNode* node = new (m_globalData) PostfixBracketNode(lineNumber, bracket->base(), bracket->subscript(), op, divot, divot - start, end - divot);
         node->setSubexpressionInfo(bracket->divot(), bracket->endOffset());
         return node;
 
     }
     ASSERT(expr->isDotAccessorNode());
     DotAccessorNode* dot = static_cast<DotAccessorNode*>(expr);
-    PostfixDotNode* node = new (m_globalData) PostfixDotNode(location, dot->base(), dot->identifier(), op, divot, divot - start, end - divot);
+    PostfixDotNode* node = new (m_globalData) PostfixDotNode(lineNumber, dot->base(), dot->identifier(), op, divot, divot - start, end - divot);
     node->setSubexpressionInfo(dot->divot(), dot->endOffset());
     return node;
 }

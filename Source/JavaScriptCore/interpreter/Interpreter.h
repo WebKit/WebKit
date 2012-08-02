@@ -240,7 +240,7 @@ namespace JSC {
         SamplingTool* sampler() { return m_sampler.get(); }
 
         NEVER_INLINE HandlerInfo* throwException(CallFrame*&, JSValue&, unsigned bytecodeOffset);
-        NEVER_INLINE void debug(CallFrame*, DebugHookID, int firstLine, int lastLine, int column);
+        NEVER_INLINE void debug(CallFrame*, DebugHookID, int firstLine, int lastLine);
         static const UString getTraceLine(CallFrame*, StackFrameCodeType, const UString&, int);
         JS_EXPORT_PRIVATE static void getStackTrace(JSGlobalData*, Vector<StackFrame>& results);
         static void addStackTraceIfNecessary(CallFrame*, JSObject* error);

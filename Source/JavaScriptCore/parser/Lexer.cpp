@@ -417,7 +417,6 @@ void Lexer<T>::setCode(const SourceCode& source, ParserArena* arena)
     m_codeEnd = m_codeStart + source.endOffset();
     m_error = false;
     m_atLineStart = true;
-    m_columnNumber = 0;
     m_lexErrorMessage = UString();
     
     m_buffer8.reserveInitialCapacity(initialReadBufferCapacity);
@@ -434,7 +433,6 @@ template <typename T>
 template <int shiftAmount> ALWAYS_INLINE void Lexer<T>::internalShift()
 {
     m_code += shiftAmount;
-    m_columnNumber += shiftAmount;
     m_current = *m_code;
 }
 
@@ -446,7 +444,6 @@ ALWAYS_INLINE void Lexer<T>::shift()
     ++m_code;
     if (LIKELY(m_code < m_codeEnd))
         m_current = *m_code;
-    ++m_columnNumber;
 }
 
 template <typename T>
@@ -1186,7 +1183,7 @@ bool Lexer<T>::nextTokenIsColon()
 }
 
 template <typename T>
-JSTokenType Lexer<T>::lex(JSTokenData* tokenData, JSTokenLocation* tokenLocation, unsigned lexerFlags, bool strictMode)
+JSTokenType Lexer<T>::lex(JSTokenData* tokenData, JSTokenInfo* tokenInfo, unsigned lexerFlags, bool strictMode)
 {
     ASSERT(!m_error);
     ASSERT(m_buffer8.isEmpty());
@@ -1202,8 +1199,7 @@ start:
     if (atEnd())
         return EOFTOK;
     
-    tokenLocation->startOffset = currentOffset();
-    tokenLocation->column = m_columnNumber;
+    tokenInfo->startOffset = currentOffset();
 
     CharacterType type;
     if (LIKELY(isLatin1(m_current)))
@@ -1526,7 +1522,6 @@ inNumberAfterDecimalPoint:
         shiftLineTerminator();
         m_atLineStart = true;
         m_terminator = true;
-        m_columnNumber = 0;
         goto start;
     case CharacterInvalid:
         m_lexErrorMessage = invalidCharacterMessage();
@@ -1549,7 +1544,6 @@ inSingleLineComment:
     shiftLineTerminator();
     m_atLineStart = true;
     m_terminator = true;
-    m_columnNumber = 0;
     if (!lastTokenWasRestrKeyword())
         goto start;
 
@@ -1557,15 +1551,15 @@ inSingleLineComment:
     // Fall through into returnToken.
 
 returnToken:
-    tokenLocation->line = m_lineNumber;
-    tokenLocation->endOffset = currentOffset();
+    tokenInfo->line = m_lineNumber;
+    tokenInfo->endOffset = currentOffset();
     m_lastToken = token;
     return token;
 
 returnError:
     m_error = true;
-    tokenLocation->line = m_lineNumber;
-    tokenLocation->endOffset = currentOffset();
+    tokenInfo->line = m_lineNumber;
+    tokenInfo->endOffset = currentOffset();
     return ERRORTOK;
 }
 

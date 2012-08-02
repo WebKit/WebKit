@@ -42,61 +42,60 @@ namespace JSC {
         globalData->parserArena->derefWithArena(adoptRef(this));
     }
 
-    inline Node::Node(const JSTokenLocation& location)
-        : m_lineNumber(location.line)
-        , m_columnNumber(location.column)
+    inline Node::Node(int lineNumber)
+        : m_lineNumber(lineNumber)
     {
     }
 
-    inline ExpressionNode::ExpressionNode(const JSTokenLocation& location, ResultType resultType)
-        : Node(location)
+    inline ExpressionNode::ExpressionNode(int lineNumber, ResultType resultType)
+        : Node(lineNumber)
         , m_resultType(resultType)
     {
     }
 
-    inline StatementNode::StatementNode(const JSTokenLocation& location)
-        : Node(location)
+    inline StatementNode::StatementNode(int lineNumber)
+        : Node(lineNumber)
         , m_lastLine(-1)
     {
     }
 
-    inline NullNode::NullNode(const JSTokenLocation& location)
-        : ExpressionNode(location, ResultType::nullType())
+    inline NullNode::NullNode(int lineNumber)
+        : ExpressionNode(lineNumber, ResultType::nullType())
     {
     }
 
-    inline BooleanNode::BooleanNode(const JSTokenLocation& location, bool value)
-        : ExpressionNode(location, ResultType::booleanType())
+    inline BooleanNode::BooleanNode(int lineNumber, bool value)
+        : ExpressionNode(lineNumber, ResultType::booleanType())
         , m_value(value)
     {
     }
 
-    inline NumberNode::NumberNode(const JSTokenLocation& location, double value)
-        : ExpressionNode(location, ResultType::numberType())
+    inline NumberNode::NumberNode(int lineNumber, double value)
+        : ExpressionNode(lineNumber, ResultType::numberType())
         , m_value(value)
     {
     }
 
-    inline StringNode::StringNode(const JSTokenLocation& location, const Identifier& value)
-        : ExpressionNode(location, ResultType::stringType())
+    inline StringNode::StringNode(int lineNumber, const Identifier& value)
+        : ExpressionNode(lineNumber, ResultType::stringType())
         , m_value(value)
     {
     }
 
-    inline RegExpNode::RegExpNode(const JSTokenLocation& location, const Identifier& pattern, const Identifier& flags)
-        : ExpressionNode(location)
+    inline RegExpNode::RegExpNode(int lineNumber, const Identifier& pattern, const Identifier& flags)
+        : ExpressionNode(lineNumber)
         , m_pattern(pattern)
         , m_flags(flags)
     {
     }
 
-    inline ThisNode::ThisNode(const JSTokenLocation& location)
-        : ExpressionNode(location)
+    inline ThisNode::ThisNode(int lineNumber)
+        : ExpressionNode(lineNumber)
     {
     }
 
-    inline ResolveNode::ResolveNode(const JSTokenLocation& location, const Identifier& ident, int startOffset)
-        : ExpressionNode(location)
+    inline ResolveNode::ResolveNode(int lineNumber, const Identifier& ident, int startOffset)
+        : ExpressionNode(lineNumber)
         , m_ident(ident)
         , m_startOffset(startOffset)
     {
@@ -117,24 +116,24 @@ namespace JSC {
         l->m_next = this;
     }
 
-    inline ArrayNode::ArrayNode(const JSTokenLocation& location, int elision)
-        : ExpressionNode(location)
+    inline ArrayNode::ArrayNode(int lineNumber, int elision)
+        : ExpressionNode(lineNumber)
         , m_element(0)
         , m_elision(elision)
         , m_optional(true)
     {
     }
 
-    inline ArrayNode::ArrayNode(const JSTokenLocation& location, ElementNode* element)
-        : ExpressionNode(location)
+    inline ArrayNode::ArrayNode(int lineNumber, ElementNode* element)
+        : ExpressionNode(lineNumber)
         , m_element(element)
         , m_elision(0)
         , m_optional(false)
     {
     }
 
-    inline ArrayNode::ArrayNode(const JSTokenLocation& location, int elision, ElementNode* element)
-        : ExpressionNode(location)
+    inline ArrayNode::ArrayNode(int lineNumber, int elision, ElementNode* element)
+        : ExpressionNode(lineNumber)
         , m_element(element)
         , m_elision(elision)
         , m_optional(true)
@@ -155,57 +154,57 @@ namespace JSC {
     {
     }
 
-    inline PropertyListNode::PropertyListNode(const JSTokenLocation& location, PropertyNode* node)
-        : Node(location)
+    inline PropertyListNode::PropertyListNode(int lineNumber, PropertyNode* node)
+        : Node(lineNumber)
         , m_node(node)
         , m_next(0)
     {
     }
 
-    inline PropertyListNode::PropertyListNode(const JSTokenLocation& location, PropertyNode* node, PropertyListNode* list)
-        : Node(location)
+    inline PropertyListNode::PropertyListNode(int lineNumber, PropertyNode* node, PropertyListNode* list)
+        : Node(lineNumber)
         , m_node(node)
         , m_next(0)
     {
         list->m_next = this;
     }
 
-    inline ObjectLiteralNode::ObjectLiteralNode(const JSTokenLocation& location)
-        : ExpressionNode(location)
+    inline ObjectLiteralNode::ObjectLiteralNode(int lineNumber)
+        : ExpressionNode(lineNumber)
         , m_list(0)
     {
     }
 
-    inline ObjectLiteralNode::ObjectLiteralNode(const JSTokenLocation& location, PropertyListNode* list)
-        : ExpressionNode(location)
+    inline ObjectLiteralNode::ObjectLiteralNode(int lineNumber, PropertyListNode* list)
+        : ExpressionNode(lineNumber)
         , m_list(list)
     {
     }
 
-    inline BracketAccessorNode::BracketAccessorNode(const JSTokenLocation& location, ExpressionNode* base, ExpressionNode* subscript, bool subscriptHasAssignments)
-        : ExpressionNode(location)
+    inline BracketAccessorNode::BracketAccessorNode(int lineNumber, ExpressionNode* base, ExpressionNode* subscript, bool subscriptHasAssignments)
+        : ExpressionNode(lineNumber)
         , m_base(base)
         , m_subscript(subscript)
         , m_subscriptHasAssignments(subscriptHasAssignments)
     {
     }
 
-    inline DotAccessorNode::DotAccessorNode(const JSTokenLocation& location, ExpressionNode* base, const Identifier& ident)
-        : ExpressionNode(location)
+    inline DotAccessorNode::DotAccessorNode(int lineNumber, ExpressionNode* base, const Identifier& ident)
+        : ExpressionNode(lineNumber)
         , m_base(base)
         , m_ident(ident)
     {
     }
 
-    inline ArgumentListNode::ArgumentListNode(const JSTokenLocation& location, ExpressionNode* expr)
-        : Node(location)
+    inline ArgumentListNode::ArgumentListNode(int lineNumber, ExpressionNode* expr)
+        : Node(lineNumber)
         , m_next(0)
         , m_expr(expr)
     {
     }
 
-    inline ArgumentListNode::ArgumentListNode(const JSTokenLocation& location, ArgumentListNode* listNode, ExpressionNode* expr)
-        : Node(location)
+    inline ArgumentListNode::ArgumentListNode(int lineNumber, ArgumentListNode* listNode, ExpressionNode* expr)
+        : Node(lineNumber)
         , m_next(0)
         , m_expr(expr)
     {
@@ -222,45 +221,45 @@ namespace JSC {
     {
     }
 
-    inline NewExprNode::NewExprNode(const JSTokenLocation& location, ExpressionNode* expr)
-        : ExpressionNode(location)
+    inline NewExprNode::NewExprNode(int lineNumber, ExpressionNode* expr)
+        : ExpressionNode(lineNumber)
         , m_expr(expr)
         , m_args(0)
     {
     }
 
-    inline NewExprNode::NewExprNode(const JSTokenLocation& location, ExpressionNode* expr, ArgumentsNode* args)
-        : ExpressionNode(location)
+    inline NewExprNode::NewExprNode(int lineNumber, ExpressionNode* expr, ArgumentsNode* args)
+        : ExpressionNode(lineNumber)
         , m_expr(expr)
         , m_args(args)
     {
     }
 
-    inline EvalFunctionCallNode::EvalFunctionCallNode(const JSTokenLocation& location, ArgumentsNode* args, unsigned divot, unsigned startOffset, unsigned endOffset)
-        : ExpressionNode(location)
+    inline EvalFunctionCallNode::EvalFunctionCallNode(int lineNumber, ArgumentsNode* args, unsigned divot, unsigned startOffset, unsigned endOffset)
+        : ExpressionNode(lineNumber)
         , ThrowableExpressionData(divot, startOffset, endOffset)
         , m_args(args)
     {
     }
 
-    inline FunctionCallValueNode::FunctionCallValueNode(const JSTokenLocation& location, ExpressionNode* expr, ArgumentsNode* args, unsigned divot, unsigned startOffset, unsigned endOffset)
-        : ExpressionNode(location)
+    inline FunctionCallValueNode::FunctionCallValueNode(int lineNumber, ExpressionNode* expr, ArgumentsNode* args, unsigned divot, unsigned startOffset, unsigned endOffset)
+        : ExpressionNode(lineNumber)
         , ThrowableExpressionData(divot, startOffset, endOffset)
         , m_expr(expr)
         , m_args(args)
     {
     }
 
-    inline FunctionCallResolveNode::FunctionCallResolveNode(const JSTokenLocation& location, const Identifier& ident, ArgumentsNode* args, unsigned divot, unsigned startOffset, unsigned endOffset)
-        : ExpressionNode(location)
+    inline FunctionCallResolveNode::FunctionCallResolveNode(int lineNumber, const Identifier& ident, ArgumentsNode* args, unsigned divot, unsigned startOffset, unsigned endOffset)
+        : ExpressionNode(lineNumber)
         , ThrowableExpressionData(divot, startOffset, endOffset)
         , m_ident(ident)
         , m_args(args)
     {
     }
 
-    inline FunctionCallBracketNode::FunctionCallBracketNode(const JSTokenLocation& location, ExpressionNode* base, ExpressionNode* subscript, ArgumentsNode* args, unsigned divot, unsigned startOffset, unsigned endOffset)
-        : ExpressionNode(location)
+    inline FunctionCallBracketNode::FunctionCallBracketNode(int lineNumber, ExpressionNode* base, ExpressionNode* subscript, ArgumentsNode* args, unsigned divot, unsigned startOffset, unsigned endOffset)
+        : ExpressionNode(lineNumber)
         , ThrowableSubExpressionData(divot, startOffset, endOffset)
         , m_base(base)
         , m_subscript(subscript)
@@ -268,8 +267,8 @@ namespace JSC {
     {
     }
 
-    inline FunctionCallDotNode::FunctionCallDotNode(const JSTokenLocation& location, ExpressionNode* base, const Identifier& ident, ArgumentsNode* args, unsigned divot, unsigned startOffset, unsigned endOffset)
-        : ExpressionNode(location)
+    inline FunctionCallDotNode::FunctionCallDotNode(int lineNumber, ExpressionNode* base, const Identifier& ident, ArgumentsNode* args, unsigned divot, unsigned startOffset, unsigned endOffset)
+        : ExpressionNode(lineNumber)
         , ThrowableSubExpressionData(divot, startOffset, endOffset)
         , m_base(base)
         , m_ident(ident)
@@ -277,31 +276,31 @@ namespace JSC {
     {
     }
 
-    inline CallFunctionCallDotNode::CallFunctionCallDotNode(const JSTokenLocation& location, ExpressionNode* base, const Identifier& ident, ArgumentsNode* args, unsigned divot, unsigned startOffset, unsigned endOffset)
-        : FunctionCallDotNode(location, base, ident, args, divot, startOffset, endOffset)
+    inline CallFunctionCallDotNode::CallFunctionCallDotNode(int lineNumber, ExpressionNode* base, const Identifier& ident, ArgumentsNode* args, unsigned divot, unsigned startOffset, unsigned endOffset)
+        : FunctionCallDotNode(lineNumber, base, ident, args, divot, startOffset, endOffset)
     {
     }
 
-    inline ApplyFunctionCallDotNode::ApplyFunctionCallDotNode(const JSTokenLocation& location, ExpressionNode* base, const Identifier& ident, ArgumentsNode* args, unsigned divot, unsigned startOffset, unsigned endOffset)
-        : FunctionCallDotNode(location, base, ident, args, divot, startOffset, endOffset)
+    inline ApplyFunctionCallDotNode::ApplyFunctionCallDotNode(int lineNumber, ExpressionNode* base, const Identifier& ident, ArgumentsNode* args, unsigned divot, unsigned startOffset, unsigned endOffset)
+        : FunctionCallDotNode(lineNumber, base, ident, args, divot, startOffset, endOffset)
     {
     }
 
-    inline PrePostResolveNode::PrePostResolveNode(const JSTokenLocation& location, const Identifier& ident, unsigned divot, unsigned startOffset, unsigned endOffset)
-        : ExpressionNode(location, ResultType::numberType()) // could be reusable for pre?
+    inline PrePostResolveNode::PrePostResolveNode(int lineNumber, const Identifier& ident, unsigned divot, unsigned startOffset, unsigned endOffset)
+        : ExpressionNode(lineNumber, ResultType::numberType()) // could be reusable for pre?
         , ThrowableExpressionData(divot, startOffset, endOffset)
         , m_ident(ident)
     {
     }
 
-    inline PostfixResolveNode::PostfixResolveNode(const JSTokenLocation& location, const Identifier& ident, Operator oper, unsigned divot, unsigned startOffset, unsigned endOffset)
-        : PrePostResolveNode(location, ident, divot, startOffset, endOffset)
+    inline PostfixResolveNode::PostfixResolveNode(int lineNumber, const Identifier& ident, Operator oper, unsigned divot, unsigned startOffset, unsigned endOffset)
+        : PrePostResolveNode(lineNumber, ident, divot, startOffset, endOffset)
         , m_operator(oper)
     {
     }
 
-    inline PostfixBracketNode::PostfixBracketNode(const JSTokenLocation& location, ExpressionNode* base, ExpressionNode* subscript, Operator oper, unsigned divot, unsigned startOffset, unsigned endOffset)
-        : ExpressionNode(location)
+    inline PostfixBracketNode::PostfixBracketNode(int lineNumber, ExpressionNode* base, ExpressionNode* subscript, Operator oper, unsigned divot, unsigned startOffset, unsigned endOffset)
+        : ExpressionNode(lineNumber)
         , ThrowableSubExpressionData(divot, startOffset, endOffset)
         , m_base(base)
         , m_subscript(subscript)
@@ -309,8 +308,8 @@ namespace JSC {
     {
     }
 
-    inline PostfixDotNode::PostfixDotNode(const JSTokenLocation& location, ExpressionNode* base, const Identifier& ident, Operator oper, unsigned divot, unsigned startOffset, unsigned endOffset)
-        : ExpressionNode(location)
+    inline PostfixDotNode::PostfixDotNode(int lineNumber, ExpressionNode* base, const Identifier& ident, Operator oper, unsigned divot, unsigned startOffset, unsigned endOffset)
+        : ExpressionNode(lineNumber)
         , ThrowableSubExpressionData(divot, startOffset, endOffset)
         , m_base(base)
         , m_ident(ident)
@@ -318,68 +317,68 @@ namespace JSC {
     {
     }
 
-    inline PostfixErrorNode::PostfixErrorNode(const JSTokenLocation& location, Operator oper, unsigned divot, unsigned startOffset, unsigned endOffset)
-        : ExpressionNode(location)
+    inline PostfixErrorNode::PostfixErrorNode(int lineNumber, Operator oper, unsigned divot, unsigned startOffset, unsigned endOffset)
+        : ExpressionNode(lineNumber)
         , ThrowableSubExpressionData(divot, startOffset, endOffset)
         , m_operator(oper)
     {
     }
 
-    inline DeleteResolveNode::DeleteResolveNode(const JSTokenLocation& location, const Identifier& ident, unsigned divot, unsigned startOffset, unsigned endOffset)
-        : ExpressionNode(location)
+    inline DeleteResolveNode::DeleteResolveNode(int lineNumber, const Identifier& ident, unsigned divot, unsigned startOffset, unsigned endOffset)
+        : ExpressionNode(lineNumber)
         , ThrowableExpressionData(divot, startOffset, endOffset)
         , m_ident(ident)
     {
     }
 
-    inline DeleteBracketNode::DeleteBracketNode(const JSTokenLocation& location, ExpressionNode* base, ExpressionNode* subscript, unsigned divot, unsigned startOffset, unsigned endOffset)
-        : ExpressionNode(location)
+    inline DeleteBracketNode::DeleteBracketNode(int lineNumber, ExpressionNode* base, ExpressionNode* subscript, unsigned divot, unsigned startOffset, unsigned endOffset)
+        : ExpressionNode(lineNumber)
         , ThrowableExpressionData(divot, startOffset, endOffset)
         , m_base(base)
         , m_subscript(subscript)
     {
     }
 
-    inline DeleteDotNode::DeleteDotNode(const JSTokenLocation& location, ExpressionNode* base, const Identifier& ident, unsigned divot, unsigned startOffset, unsigned endOffset)
-        : ExpressionNode(location)
+    inline DeleteDotNode::DeleteDotNode(int lineNumber, ExpressionNode* base, const Identifier& ident, unsigned divot, unsigned startOffset, unsigned endOffset)
+        : ExpressionNode(lineNumber)
         , ThrowableExpressionData(divot, startOffset, endOffset)
         , m_base(base)
         , m_ident(ident)
     {
     }
 
-    inline DeleteValueNode::DeleteValueNode(const JSTokenLocation& location, ExpressionNode* expr)
-        : ExpressionNode(location)
+    inline DeleteValueNode::DeleteValueNode(int lineNumber, ExpressionNode* expr)
+        : ExpressionNode(lineNumber)
         , m_expr(expr)
     {
     }
 
-    inline VoidNode::VoidNode(const JSTokenLocation& location, ExpressionNode* expr)
-        : ExpressionNode(location)
+    inline VoidNode::VoidNode(int lineNumber, ExpressionNode* expr)
+        : ExpressionNode(lineNumber)
         , m_expr(expr)
     {
     }
 
-    inline TypeOfResolveNode::TypeOfResolveNode(const JSTokenLocation& location, const Identifier& ident)
-        : ExpressionNode(location, ResultType::stringType())
+    inline TypeOfResolveNode::TypeOfResolveNode(int lineNumber, const Identifier& ident)
+        : ExpressionNode(lineNumber, ResultType::stringType())
         , m_ident(ident)
     {
     }
 
-    inline TypeOfValueNode::TypeOfValueNode(const JSTokenLocation& location, ExpressionNode* expr)
-        : ExpressionNode(location, ResultType::stringType())
+    inline TypeOfValueNode::TypeOfValueNode(int lineNumber, ExpressionNode* expr)
+        : ExpressionNode(lineNumber, ResultType::stringType())
         , m_expr(expr)
     {
     }
 
-    inline PrefixResolveNode::PrefixResolveNode(const JSTokenLocation& location, const Identifier& ident, Operator oper, unsigned divot, unsigned startOffset, unsigned endOffset)
-        : PrePostResolveNode(location, ident, divot, startOffset, endOffset)
+    inline PrefixResolveNode::PrefixResolveNode(int lineNumber, const Identifier& ident, Operator oper, unsigned divot, unsigned startOffset, unsigned endOffset)
+        : PrePostResolveNode(lineNumber, ident, divot, startOffset, endOffset)
         , m_operator(oper)
     {
     }
 
-    inline PrefixBracketNode::PrefixBracketNode(const JSTokenLocation& location, ExpressionNode* base, ExpressionNode* subscript, Operator oper, unsigned divot, unsigned startOffset, unsigned endOffset)
-        : ExpressionNode(location)
+    inline PrefixBracketNode::PrefixBracketNode(int lineNumber, ExpressionNode* base, ExpressionNode* subscript, Operator oper, unsigned divot, unsigned startOffset, unsigned endOffset)
+        : ExpressionNode(lineNumber)
         , ThrowablePrefixedSubExpressionData(divot, startOffset, endOffset)
         , m_base(base)
         , m_subscript(subscript)
@@ -387,8 +386,8 @@ namespace JSC {
     {
     }
 
-    inline PrefixDotNode::PrefixDotNode(const JSTokenLocation& location, ExpressionNode* base, const Identifier& ident, Operator oper, unsigned divot, unsigned startOffset, unsigned endOffset)
-        : ExpressionNode(location)
+    inline PrefixDotNode::PrefixDotNode(int lineNumber, ExpressionNode* base, const Identifier& ident, Operator oper, unsigned divot, unsigned startOffset, unsigned endOffset)
+        : ExpressionNode(lineNumber)
         , ThrowablePrefixedSubExpressionData(divot, startOffset, endOffset)
         , m_base(base)
         , m_ident(ident)
@@ -396,43 +395,43 @@ namespace JSC {
     {
     }
 
-    inline PrefixErrorNode::PrefixErrorNode(const JSTokenLocation& location, Operator oper, unsigned divot, unsigned startOffset, unsigned endOffset)
-        : ExpressionNode(location)
+    inline PrefixErrorNode::PrefixErrorNode(int lineNumber, Operator oper, unsigned divot, unsigned startOffset, unsigned endOffset)
+        : ExpressionNode(lineNumber)
         , ThrowableExpressionData(divot, startOffset, endOffset)
         , m_operator(oper)
     {
     }
 
-    inline UnaryOpNode::UnaryOpNode(const JSTokenLocation& location, ResultType type, ExpressionNode* expr, OpcodeID opcodeID)
-        : ExpressionNode(location, type)
+    inline UnaryOpNode::UnaryOpNode(int lineNumber, ResultType type, ExpressionNode* expr, OpcodeID opcodeID)
+        : ExpressionNode(lineNumber, type)
         , m_expr(expr)
         , m_opcodeID(opcodeID)
     {
     }
 
-    inline UnaryPlusNode::UnaryPlusNode(const JSTokenLocation& location, ExpressionNode* expr)
-        : UnaryOpNode(location, ResultType::numberType(), expr, op_to_jsnumber)
+    inline UnaryPlusNode::UnaryPlusNode(int lineNumber, ExpressionNode* expr)
+        : UnaryOpNode(lineNumber, ResultType::numberType(), expr, op_to_jsnumber)
     {
     }
 
-    inline NegateNode::NegateNode(const JSTokenLocation& location, ExpressionNode* expr)
-        : UnaryOpNode(location, ResultType::numberType(), expr, op_negate)
+    inline NegateNode::NegateNode(int lineNumber, ExpressionNode* expr)
+        : UnaryOpNode(lineNumber, ResultType::numberType(), expr, op_negate)
     {
     }
 
-    inline BitwiseNotNode::BitwiseNotNode(const JSTokenLocation& location, ExpressionNode* expr)
-        : ExpressionNode(location, ResultType::forBitOp())
+    inline BitwiseNotNode::BitwiseNotNode(int lineNumber, ExpressionNode* expr)
+        : ExpressionNode(lineNumber, ResultType::forBitOp())
         , m_expr(expr)
     {
     }
 
-    inline LogicalNotNode::LogicalNotNode(const JSTokenLocation& location, ExpressionNode* expr)
-        : UnaryOpNode(location, ResultType::booleanType(), expr, op_not)
+    inline LogicalNotNode::LogicalNotNode(int lineNumber, ExpressionNode* expr)
+        : UnaryOpNode(lineNumber, ResultType::booleanType(), expr, op_not)
     {
     }
 
-    inline BinaryOpNode::BinaryOpNode(const JSTokenLocation& location, ExpressionNode* expr1, ExpressionNode* expr2, OpcodeID opcodeID, bool rightHasAssignments)
-        : ExpressionNode(location)
+    inline BinaryOpNode::BinaryOpNode(int lineNumber, ExpressionNode* expr1, ExpressionNode* expr2, OpcodeID opcodeID, bool rightHasAssignments)
+        : ExpressionNode(lineNumber)
         , m_expr1(expr1)
         , m_expr2(expr2)
         , m_opcodeID(opcodeID)
@@ -440,8 +439,8 @@ namespace JSC {
     {
     }
 
-    inline BinaryOpNode::BinaryOpNode(const JSTokenLocation& location, ResultType type, ExpressionNode* expr1, ExpressionNode* expr2, OpcodeID opcodeID, bool rightHasAssignments)
-        : ExpressionNode(location, type)
+    inline BinaryOpNode::BinaryOpNode(int lineNumber, ResultType type, ExpressionNode* expr1, ExpressionNode* expr2, OpcodeID opcodeID, bool rightHasAssignments)
+        : ExpressionNode(lineNumber, type)
         , m_expr1(expr1)
         , m_expr2(expr2)
         , m_opcodeID(opcodeID)
@@ -449,140 +448,140 @@ namespace JSC {
     {
     }
 
-    inline MultNode::MultNode(const JSTokenLocation& location, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
-        : BinaryOpNode(location, ResultType::numberType(), expr1, expr2, op_mul, rightHasAssignments)
+    inline MultNode::MultNode(int lineNumber, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
+        : BinaryOpNode(lineNumber, ResultType::numberType(), expr1, expr2, op_mul, rightHasAssignments)
     {
     }
 
-    inline DivNode::DivNode(const JSTokenLocation& location, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
-        : BinaryOpNode(location, ResultType::numberType(), expr1, expr2, op_div, rightHasAssignments)
+    inline DivNode::DivNode(int lineNumber, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
+        : BinaryOpNode(lineNumber, ResultType::numberType(), expr1, expr2, op_div, rightHasAssignments)
     {
     }
 
 
-    inline ModNode::ModNode(const JSTokenLocation& location, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
-        : BinaryOpNode(location, ResultType::numberType(), expr1, expr2, op_mod, rightHasAssignments)
+    inline ModNode::ModNode(int lineNumber, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
+        : BinaryOpNode(lineNumber, ResultType::numberType(), expr1, expr2, op_mod, rightHasAssignments)
     {
     }
 
-    inline AddNode::AddNode(const JSTokenLocation& location, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
-        : BinaryOpNode(location, ResultType::forAdd(expr1->resultDescriptor(), expr2->resultDescriptor()), expr1, expr2, op_add, rightHasAssignments)
+    inline AddNode::AddNode(int lineNumber, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
+        : BinaryOpNode(lineNumber, ResultType::forAdd(expr1->resultDescriptor(), expr2->resultDescriptor()), expr1, expr2, op_add, rightHasAssignments)
     {
     }
 
-    inline SubNode::SubNode(const JSTokenLocation& location, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
-        : BinaryOpNode(location, ResultType::numberType(), expr1, expr2, op_sub, rightHasAssignments)
+    inline SubNode::SubNode(int lineNumber, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
+        : BinaryOpNode(lineNumber, ResultType::numberType(), expr1, expr2, op_sub, rightHasAssignments)
     {
     }
 
-    inline LeftShiftNode::LeftShiftNode(const JSTokenLocation& location, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
-        : BinaryOpNode(location, ResultType::forBitOp(), expr1, expr2, op_lshift, rightHasAssignments)
+    inline LeftShiftNode::LeftShiftNode(int lineNumber, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
+        : BinaryOpNode(lineNumber, ResultType::forBitOp(), expr1, expr2, op_lshift, rightHasAssignments)
     {
     }
 
-    inline RightShiftNode::RightShiftNode(const JSTokenLocation& location, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
-        : BinaryOpNode(location, ResultType::forBitOp(), expr1, expr2, op_rshift, rightHasAssignments)
+    inline RightShiftNode::RightShiftNode(int lineNumber, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
+        : BinaryOpNode(lineNumber, ResultType::forBitOp(), expr1, expr2, op_rshift, rightHasAssignments)
     {
     }
 
-    inline UnsignedRightShiftNode::UnsignedRightShiftNode(const JSTokenLocation& location, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
-        : BinaryOpNode(location, ResultType::numberType(), expr1, expr2, op_urshift, rightHasAssignments)
+    inline UnsignedRightShiftNode::UnsignedRightShiftNode(int lineNumber, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
+        : BinaryOpNode(lineNumber, ResultType::numberType(), expr1, expr2, op_urshift, rightHasAssignments)
     {
     }
 
-    inline LessNode::LessNode(const JSTokenLocation& location, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
-        : BinaryOpNode(location, ResultType::booleanType(), expr1, expr2, op_less, rightHasAssignments)
+    inline LessNode::LessNode(int lineNumber, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
+        : BinaryOpNode(lineNumber, ResultType::booleanType(), expr1, expr2, op_less, rightHasAssignments)
     {
     }
 
-    inline GreaterNode::GreaterNode(const JSTokenLocation& location, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
-        : BinaryOpNode(location, ResultType::booleanType(), expr1, expr2, op_greater, rightHasAssignments)
+    inline GreaterNode::GreaterNode(int lineNumber, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
+        : BinaryOpNode(lineNumber, ResultType::booleanType(), expr1, expr2, op_greater, rightHasAssignments)
     {
     }
 
-    inline LessEqNode::LessEqNode(const JSTokenLocation& location, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
-        : BinaryOpNode(location, ResultType::booleanType(), expr1, expr2, op_lesseq, rightHasAssignments)
+    inline LessEqNode::LessEqNode(int lineNumber, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
+        : BinaryOpNode(lineNumber, ResultType::booleanType(), expr1, expr2, op_lesseq, rightHasAssignments)
     {
     }
 
-    inline GreaterEqNode::GreaterEqNode(const JSTokenLocation& location, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
-        : BinaryOpNode(location, ResultType::booleanType(), expr1, expr2, op_greatereq, rightHasAssignments)
+    inline GreaterEqNode::GreaterEqNode(int lineNumber, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
+        : BinaryOpNode(lineNumber, ResultType::booleanType(), expr1, expr2, op_greatereq, rightHasAssignments)
     {
     }
 
-    inline ThrowableBinaryOpNode::ThrowableBinaryOpNode(const JSTokenLocation& location, ResultType type, ExpressionNode* expr1, ExpressionNode* expr2, OpcodeID opcodeID, bool rightHasAssignments)
-        : BinaryOpNode(location, type, expr1, expr2, opcodeID, rightHasAssignments)
+    inline ThrowableBinaryOpNode::ThrowableBinaryOpNode(int lineNumber, ResultType type, ExpressionNode* expr1, ExpressionNode* expr2, OpcodeID opcodeID, bool rightHasAssignments)
+        : BinaryOpNode(lineNumber, type, expr1, expr2, opcodeID, rightHasAssignments)
     {
     }
 
-    inline ThrowableBinaryOpNode::ThrowableBinaryOpNode(const JSTokenLocation& location, ExpressionNode* expr1, ExpressionNode* expr2, OpcodeID opcodeID, bool rightHasAssignments)
-        : BinaryOpNode(location, expr1, expr2, opcodeID, rightHasAssignments)
+    inline ThrowableBinaryOpNode::ThrowableBinaryOpNode(int lineNumber, ExpressionNode* expr1, ExpressionNode* expr2, OpcodeID opcodeID, bool rightHasAssignments)
+        : BinaryOpNode(lineNumber, expr1, expr2, opcodeID, rightHasAssignments)
     {
     }
 
-    inline InstanceOfNode::InstanceOfNode(const JSTokenLocation& location, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
-        : ThrowableBinaryOpNode(location, ResultType::booleanType(), expr1, expr2, op_instanceof, rightHasAssignments)
+    inline InstanceOfNode::InstanceOfNode(int lineNumber, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
+        : ThrowableBinaryOpNode(lineNumber, ResultType::booleanType(), expr1, expr2, op_instanceof, rightHasAssignments)
     {
     }
 
-    inline InNode::InNode(const JSTokenLocation& location, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
-        : ThrowableBinaryOpNode(location, expr1, expr2, op_in, rightHasAssignments)
+    inline InNode::InNode(int lineNumber, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
+        : ThrowableBinaryOpNode(lineNumber, expr1, expr2, op_in, rightHasAssignments)
     {
     }
 
-    inline EqualNode::EqualNode(const JSTokenLocation& location, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
-        : BinaryOpNode(location, ResultType::booleanType(), expr1, expr2, op_eq, rightHasAssignments)
+    inline EqualNode::EqualNode(int lineNumber, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
+        : BinaryOpNode(lineNumber, ResultType::booleanType(), expr1, expr2, op_eq, rightHasAssignments)
     {
     }
 
-    inline NotEqualNode::NotEqualNode(const JSTokenLocation& location, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
-        : BinaryOpNode(location, ResultType::booleanType(), expr1, expr2, op_neq, rightHasAssignments)
+    inline NotEqualNode::NotEqualNode(int lineNumber, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
+        : BinaryOpNode(lineNumber, ResultType::booleanType(), expr1, expr2, op_neq, rightHasAssignments)
     {
     }
 
-    inline StrictEqualNode::StrictEqualNode(const JSTokenLocation& location, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
-        : BinaryOpNode(location, ResultType::booleanType(), expr1, expr2, op_stricteq, rightHasAssignments)
+    inline StrictEqualNode::StrictEqualNode(int lineNumber, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
+        : BinaryOpNode(lineNumber, ResultType::booleanType(), expr1, expr2, op_stricteq, rightHasAssignments)
     {
     }
 
-    inline NotStrictEqualNode::NotStrictEqualNode(const JSTokenLocation& location, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
-        : BinaryOpNode(location, ResultType::booleanType(), expr1, expr2, op_nstricteq, rightHasAssignments)
+    inline NotStrictEqualNode::NotStrictEqualNode(int lineNumber, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
+        : BinaryOpNode(lineNumber, ResultType::booleanType(), expr1, expr2, op_nstricteq, rightHasAssignments)
     {
     }
 
-    inline BitAndNode::BitAndNode(const JSTokenLocation& location, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
-        : BinaryOpNode(location, ResultType::forBitOp(), expr1, expr2, op_bitand, rightHasAssignments)
+    inline BitAndNode::BitAndNode(int lineNumber, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
+        : BinaryOpNode(lineNumber, ResultType::forBitOp(), expr1, expr2, op_bitand, rightHasAssignments)
     {
     }
 
-    inline BitOrNode::BitOrNode(const JSTokenLocation& location, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
-        : BinaryOpNode(location, ResultType::forBitOp(), expr1, expr2, op_bitor, rightHasAssignments)
+    inline BitOrNode::BitOrNode(int lineNumber, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
+        : BinaryOpNode(lineNumber, ResultType::forBitOp(), expr1, expr2, op_bitor, rightHasAssignments)
     {
     }
 
-    inline BitXOrNode::BitXOrNode(const JSTokenLocation& location, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
-        : BinaryOpNode(location, ResultType::forBitOp(), expr1, expr2, op_bitxor, rightHasAssignments)
+    inline BitXOrNode::BitXOrNode(int lineNumber, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
+        : BinaryOpNode(lineNumber, ResultType::forBitOp(), expr1, expr2, op_bitxor, rightHasAssignments)
     {
     }
 
-    inline LogicalOpNode::LogicalOpNode(const JSTokenLocation& location, ExpressionNode* expr1, ExpressionNode* expr2, LogicalOperator oper)
-        : ExpressionNode(location, ResultType::booleanType())
+    inline LogicalOpNode::LogicalOpNode(int lineNumber, ExpressionNode* expr1, ExpressionNode* expr2, LogicalOperator oper)
+        : ExpressionNode(lineNumber, ResultType::booleanType())
         , m_expr1(expr1)
         , m_expr2(expr2)
         , m_operator(oper)
     {
     }
 
-    inline ConditionalNode::ConditionalNode(const JSTokenLocation& location, ExpressionNode* logical, ExpressionNode* expr1, ExpressionNode* expr2)
-        : ExpressionNode(location)
+    inline ConditionalNode::ConditionalNode(int lineNumber, ExpressionNode* logical, ExpressionNode* expr1, ExpressionNode* expr2)
+        : ExpressionNode(lineNumber)
         , m_logical(logical)
         , m_expr1(expr1)
         , m_expr2(expr2)
     {
     }
 
-    inline ReadModifyResolveNode::ReadModifyResolveNode(const JSTokenLocation& location, const Identifier& ident, Operator oper, ExpressionNode*  right, bool rightHasAssignments, unsigned divot, unsigned startOffset, unsigned endOffset)
-        : ExpressionNode(location)
+    inline ReadModifyResolveNode::ReadModifyResolveNode(int lineNumber, const Identifier& ident, Operator oper, ExpressionNode*  right, bool rightHasAssignments, unsigned divot, unsigned startOffset, unsigned endOffset)
+        : ExpressionNode(lineNumber)
         , ThrowableExpressionData(divot, startOffset, endOffset)
         , m_ident(ident)
         , m_right(right)
@@ -591,15 +590,15 @@ namespace JSC {
     {
     }
 
-    inline AssignResolveNode::AssignResolveNode(const JSTokenLocation& location, const Identifier& ident, ExpressionNode* right)
-        : ExpressionNode(location)
+    inline AssignResolveNode::AssignResolveNode(int lineNumber, const Identifier& ident, ExpressionNode* right)
+        : ExpressionNode(lineNumber)
         , m_ident(ident)
         , m_right(right)
     {
     }
 
-    inline ReadModifyBracketNode::ReadModifyBracketNode(const JSTokenLocation& location, ExpressionNode* base, ExpressionNode* subscript, Operator oper, ExpressionNode* right, bool subscriptHasAssignments, bool rightHasAssignments, unsigned divot, unsigned startOffset, unsigned endOffset)
-        : ExpressionNode(location)
+    inline ReadModifyBracketNode::ReadModifyBracketNode(int lineNumber, ExpressionNode* base, ExpressionNode* subscript, Operator oper, ExpressionNode* right, bool subscriptHasAssignments, bool rightHasAssignments, unsigned divot, unsigned startOffset, unsigned endOffset)
+        : ExpressionNode(lineNumber)
         , ThrowableSubExpressionData(divot, startOffset, endOffset)
         , m_base(base)
         , m_subscript(subscript)
@@ -610,8 +609,8 @@ namespace JSC {
     {
     }
 
-    inline AssignBracketNode::AssignBracketNode(const JSTokenLocation& location, ExpressionNode* base, ExpressionNode* subscript, ExpressionNode* right, bool subscriptHasAssignments, bool rightHasAssignments, unsigned divot, unsigned startOffset, unsigned endOffset)
-        : ExpressionNode(location)
+    inline AssignBracketNode::AssignBracketNode(int lineNumber, ExpressionNode* base, ExpressionNode* subscript, ExpressionNode* right, bool subscriptHasAssignments, bool rightHasAssignments, unsigned divot, unsigned startOffset, unsigned endOffset)
+        : ExpressionNode(lineNumber)
         , ThrowableExpressionData(divot, startOffset, endOffset)
         , m_base(base)
         , m_subscript(subscript)
@@ -621,8 +620,8 @@ namespace JSC {
     {
     }
 
-    inline AssignDotNode::AssignDotNode(const JSTokenLocation& location, ExpressionNode* base, const Identifier& ident, ExpressionNode* right, bool rightHasAssignments, unsigned divot, unsigned startOffset, unsigned endOffset)
-        : ExpressionNode(location)
+    inline AssignDotNode::AssignDotNode(int lineNumber, ExpressionNode* base, const Identifier& ident, ExpressionNode* right, bool rightHasAssignments, unsigned divot, unsigned startOffset, unsigned endOffset)
+        : ExpressionNode(lineNumber)
         , ThrowableExpressionData(divot, startOffset, endOffset)
         , m_base(base)
         , m_ident(ident)
@@ -631,8 +630,8 @@ namespace JSC {
     {
     }
 
-    inline ReadModifyDotNode::ReadModifyDotNode(const JSTokenLocation& location, ExpressionNode* base, const Identifier& ident, Operator oper, ExpressionNode* right, bool rightHasAssignments, unsigned divot, unsigned startOffset, unsigned endOffset)
-        : ExpressionNode(location)
+    inline ReadModifyDotNode::ReadModifyDotNode(int lineNumber, ExpressionNode* base, const Identifier& ident, Operator oper, ExpressionNode* right, bool rightHasAssignments, unsigned divot, unsigned startOffset, unsigned endOffset)
+        : ExpressionNode(lineNumber)
         , ThrowableSubExpressionData(divot, startOffset, endOffset)
         , m_base(base)
         , m_ident(ident)
@@ -642,21 +641,21 @@ namespace JSC {
     {
     }
 
-    inline AssignErrorNode::AssignErrorNode(const JSTokenLocation& location, unsigned divot, unsigned startOffset, unsigned endOffset)
-        : ExpressionNode(location)
+    inline AssignErrorNode::AssignErrorNode(int lineNumber, unsigned divot, unsigned startOffset, unsigned endOffset)
+        : ExpressionNode(lineNumber)
         , ThrowableExpressionData(divot, startOffset, endOffset)
     {
     }
 
-    inline CommaNode::CommaNode(const JSTokenLocation& location, ExpressionNode* expr1, ExpressionNode* expr2)
-        : ExpressionNode(location)
+    inline CommaNode::CommaNode(int lineNumber, ExpressionNode* expr1, ExpressionNode* expr2)
+        : ExpressionNode(lineNumber)
     {
         m_expressions.append(expr1);
         m_expressions.append(expr2);
     }
 
-    inline ConstStatementNode::ConstStatementNode(const JSTokenLocation& location, ConstDeclNode* next)
-        : StatementNode(location)
+    inline ConstStatementNode::ConstStatementNode(int lineNumber, ConstDeclNode* next)
+        : StatementNode(lineNumber)
         , m_next(next)
     {
     }
@@ -665,57 +664,57 @@ namespace JSC {
     {
     }
 
-    inline EmptyStatementNode::EmptyStatementNode(const JSTokenLocation& location)
-        : StatementNode(location)
+    inline EmptyStatementNode::EmptyStatementNode(int lineNumber)
+        : StatementNode(lineNumber)
     {
     }
 
-    inline DebuggerStatementNode::DebuggerStatementNode(const JSTokenLocation& location)
-        : StatementNode(location)
+    inline DebuggerStatementNode::DebuggerStatementNode(int lineNumber)
+        : StatementNode(lineNumber)
     {
     }
     
-    inline ExprStatementNode::ExprStatementNode(const JSTokenLocation& location, ExpressionNode* expr)
-        : StatementNode(location)
+    inline ExprStatementNode::ExprStatementNode(int lineNumber, ExpressionNode* expr)
+        : StatementNode(lineNumber)
         , m_expr(expr)
     {
     }
 
-    inline VarStatementNode::VarStatementNode(const JSTokenLocation& location, ExpressionNode* expr)
-        : StatementNode(location)
+    inline VarStatementNode::VarStatementNode(int lineNumber, ExpressionNode* expr)
+        : StatementNode(lineNumber)
         , m_expr(expr)
     {
     }
     
-    inline IfNode::IfNode(const JSTokenLocation& location, ExpressionNode* condition, StatementNode* ifBlock)
-        : StatementNode(location)
+    inline IfNode::IfNode(int lineNumber, ExpressionNode* condition, StatementNode* ifBlock)
+        : StatementNode(lineNumber)
         , m_condition(condition)
         , m_ifBlock(ifBlock)
     {
     }
 
-    inline IfElseNode::IfElseNode(const JSTokenLocation& location, ExpressionNode* condition, StatementNode* ifBlock, StatementNode* elseBlock)
-        : IfNode(location, condition, ifBlock)
+    inline IfElseNode::IfElseNode(int lineNumber, ExpressionNode* condition, StatementNode* ifBlock, StatementNode* elseBlock)
+        : IfNode(lineNumber, condition, ifBlock)
         , m_elseBlock(elseBlock)
     {
     }
 
-    inline DoWhileNode::DoWhileNode(const JSTokenLocation& location, StatementNode* statement, ExpressionNode* expr)
-        : StatementNode(location)
+    inline DoWhileNode::DoWhileNode(int lineNumber, StatementNode* statement, ExpressionNode* expr)
+        : StatementNode(lineNumber)
         , m_statement(statement)
         , m_expr(expr)
     {
     }
 
-    inline WhileNode::WhileNode(const JSTokenLocation& location, ExpressionNode* expr, StatementNode* statement)
-        : StatementNode(location)
+    inline WhileNode::WhileNode(int lineNumber, ExpressionNode* expr, StatementNode* statement)
+        : StatementNode(lineNumber)
         , m_expr(expr)
         , m_statement(statement)
     {
     }
 
-    inline ForNode::ForNode(const JSTokenLocation& location, ExpressionNode* expr1, ExpressionNode* expr2, ExpressionNode* expr3, StatementNode* statement)
-        : StatementNode(location)
+    inline ForNode::ForNode(int lineNumber, ExpressionNode* expr1, ExpressionNode* expr2, ExpressionNode* expr3, StatementNode* statement)
+        : StatementNode(lineNumber)
         , m_expr1(expr1)
         , m_expr2(expr2)
         , m_expr3(expr3)
@@ -724,38 +723,38 @@ namespace JSC {
         ASSERT(statement);
     }
 
-    inline ContinueNode::ContinueNode(JSGlobalData* globalData, const JSTokenLocation& location)
-        : StatementNode(location)
+    inline ContinueNode::ContinueNode(JSGlobalData* globalData, int lineNumber)
+        : StatementNode(lineNumber)
         , m_ident(globalData->propertyNames->nullIdentifier)
     {
     }
 
-    inline ContinueNode::ContinueNode(const JSTokenLocation& location, const Identifier& ident)
-        : StatementNode(location)
+    inline ContinueNode::ContinueNode(int lineNumber, const Identifier& ident)
+        : StatementNode(lineNumber)
         , m_ident(ident)
     {
     }
     
-    inline BreakNode::BreakNode(JSGlobalData* globalData, const JSTokenLocation& location)
-        : StatementNode(location)
+    inline BreakNode::BreakNode(JSGlobalData* globalData, int lineNumber)
+        : StatementNode(lineNumber)
         , m_ident(globalData->propertyNames->nullIdentifier)
     {
     }
 
-    inline BreakNode::BreakNode(const JSTokenLocation& location, const Identifier& ident)
-        : StatementNode(location)
+    inline BreakNode::BreakNode(int lineNumber, const Identifier& ident)
+        : StatementNode(lineNumber)
         , m_ident(ident)
     {
     }
     
-    inline ReturnNode::ReturnNode(const JSTokenLocation& location, ExpressionNode* value)
-        : StatementNode(location)
+    inline ReturnNode::ReturnNode(int lineNumber, ExpressionNode* value)
+        : StatementNode(lineNumber)
         , m_value(value)
     {
     }
 
-    inline WithNode::WithNode(const JSTokenLocation& location, ExpressionNode* expr, StatementNode* statement, uint32_t divot, uint32_t expressionLength)
-        : StatementNode(location)
+    inline WithNode::WithNode(int lineNumber, ExpressionNode* expr, StatementNode* statement, uint32_t divot, uint32_t expressionLength)
+        : StatementNode(lineNumber)
         , m_expr(expr)
         , m_statement(statement)
         , m_divot(divot)
@@ -763,21 +762,21 @@ namespace JSC {
     {
     }
 
-    inline LabelNode::LabelNode(const JSTokenLocation& location, const Identifier& name, StatementNode* statement)
-        : StatementNode(location)
+    inline LabelNode::LabelNode(int lineNumber, const Identifier& name, StatementNode* statement)
+        : StatementNode(lineNumber)
         , m_name(name)
         , m_statement(statement)
     {
     }
 
-    inline ThrowNode::ThrowNode(const JSTokenLocation& location, ExpressionNode* expr)
-        : StatementNode(location)
+    inline ThrowNode::ThrowNode(int lineNumber, ExpressionNode* expr)
+        : StatementNode(lineNumber)
         , m_expr(expr)
     {
     }
 
-    inline TryNode::TryNode(const JSTokenLocation& location, StatementNode* tryBlock, const Identifier& exceptionIdent, StatementNode* catchBlock, StatementNode* finallyBlock)
-        : StatementNode(location)
+    inline TryNode::TryNode(int lineNumber, StatementNode* tryBlock, const Identifier& exceptionIdent, StatementNode* catchBlock, StatementNode* finallyBlock)
+        : StatementNode(lineNumber)
         , m_tryBlock(tryBlock)
         , m_exceptionIdent(exceptionIdent)
         , m_catchBlock(catchBlock)
@@ -798,15 +797,15 @@ namespace JSC {
         l->m_next = this;
     }
 
-    inline FuncExprNode::FuncExprNode(const JSTokenLocation& location, const Identifier& ident, FunctionBodyNode* body, const SourceCode& source, ParameterNode* parameter)
-        : ExpressionNode(location)
+    inline FuncExprNode::FuncExprNode(int lineNumber, const Identifier& ident, FunctionBodyNode* body, const SourceCode& source, ParameterNode* parameter)
+        : ExpressionNode(lineNumber)
         , m_body(body)
     {
         m_body->finishParsing(source, parameter, ident);
     }
 
-    inline FuncDeclNode::FuncDeclNode(const JSTokenLocation& location, const Identifier& ident, FunctionBodyNode* body, const SourceCode& source, ParameterNode* parameter)
-        : StatementNode(location)
+    inline FuncDeclNode::FuncDeclNode(int lineNumber, const Identifier& ident, FunctionBodyNode* body, const SourceCode& source, ParameterNode* parameter)
+        : StatementNode(lineNumber)
         , m_body(body)
     {
         m_body->finishParsing(source, parameter, ident);
@@ -838,29 +837,29 @@ namespace JSC {
     {
     }
 
-    inline SwitchNode::SwitchNode(const JSTokenLocation& location, ExpressionNode* expr, CaseBlockNode* block)
-        : StatementNode(location)
+    inline SwitchNode::SwitchNode(int lineNumber, ExpressionNode* expr, CaseBlockNode* block)
+        : StatementNode(lineNumber)
         , m_expr(expr)
         , m_block(block)
     {
     }
 
-    inline ConstDeclNode::ConstDeclNode(const JSTokenLocation& location, const Identifier& ident, ExpressionNode* init)
-        : ExpressionNode(location)
+    inline ConstDeclNode::ConstDeclNode(int lineNumber, const Identifier& ident, ExpressionNode* init)
+        : ExpressionNode(lineNumber)
         , m_ident(ident)
         , m_next(0)
         , m_init(init)
     {
     }
 
-    inline BlockNode::BlockNode(const JSTokenLocation& location, SourceElements* statements)
-        : StatementNode(location)
+    inline BlockNode::BlockNode(int lineNumber, SourceElements* statements)
+        : StatementNode(lineNumber)
         , m_statements(statements)
     {
     }
 
-    inline ForInNode::ForInNode(const JSTokenLocation& location, ExpressionNode* l, ExpressionNode* expr, StatementNode* statement)
-        : StatementNode(location)
+    inline ForInNode::ForInNode(int lineNumber, ExpressionNode* l, ExpressionNode* expr, StatementNode* statement)
+        : StatementNode(lineNumber)
         , m_init(0)
         , m_lexpr(l)
         , m_expr(expr)
@@ -869,16 +868,16 @@ namespace JSC {
     {
     }
 
-    inline ForInNode::ForInNode(JSGlobalData* globalData, const JSTokenLocation& location, const Identifier& ident, ExpressionNode* in, ExpressionNode* expr, StatementNode* statement, int divot, int startOffset, int endOffset)
-        : StatementNode(location)
+    inline ForInNode::ForInNode(JSGlobalData* globalData, int lineNumber, const Identifier& ident, ExpressionNode* in, ExpressionNode* expr, StatementNode* statement, int divot, int startOffset, int endOffset)
+        : StatementNode(lineNumber)
         , m_init(0)
-        , m_lexpr(new (globalData) ResolveNode(location, ident, divot - startOffset))
+        , m_lexpr(new (globalData) ResolveNode(lineNumber, ident, divot - startOffset))
         , m_expr(expr)
         , m_statement(statement)
         , m_identIsVarDecl(true)
     {
         if (in) {
-            AssignResolveNode* node = new (globalData) AssignResolveNode(location, ident, in);
+            AssignResolveNode* node = new (globalData) AssignResolveNode(lineNumber, ident, in);
             node->setExceptionSourceCode(divot, divot - startOffset, endOffset - divot);
             m_init = node;
         }

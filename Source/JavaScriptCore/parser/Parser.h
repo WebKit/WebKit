@@ -502,18 +502,18 @@ private:
 
     ALWAYS_INLINE void next(unsigned lexerFlags = 0)
     {
-        m_lastLine = m_token.m_location.line;
-        m_lastTokenEnd = m_token.m_location.endOffset;
+        m_lastLine = m_token.m_info.line;
+        m_lastTokenEnd = m_token.m_info.endOffset;
         m_lexer->setLastLineNumber(m_lastLine);
-        m_token.m_type = m_lexer->lex(&m_token.m_data, &m_token.m_location, lexerFlags, strictMode());
+        m_token.m_type = m_lexer->lex(&m_token.m_data, &m_token.m_info, lexerFlags, strictMode());
     }
 
     ALWAYS_INLINE void nextExpectIdentifier(unsigned lexerFlags = 0)
     {
-        m_lastLine = m_token.m_location.line;
-        m_lastTokenEnd = m_token.m_location.endOffset;
+        m_lastLine = m_token.m_info.line;
+        m_lastTokenEnd = m_token.m_info.endOffset;
         m_lexer->setLastLineNumber(m_lastLine);
-        m_token.m_type = m_lexer->lexExpectIdentifier(&m_token.m_data, &m_token.m_location, lexerFlags, strictMode());
+        m_token.m_type = m_lexer->lexExpectIdentifier(&m_token.m_data, &m_token.m_info, lexerFlags, strictMode());
     }
 
     ALWAYS_INLINE bool nextTokenIsColon()
@@ -541,25 +541,20 @@ private:
     
     ALWAYS_INLINE int tokenStart()
     {
-        return m_token.m_location.startOffset;
+        return m_token.m_info.startOffset;
     }
     
     ALWAYS_INLINE int tokenLine()
     {
-        return m_token.m_location.line;
+        return m_token.m_info.line;
     }
     
     ALWAYS_INLINE int tokenEnd()
     {
-        return m_token.m_location.endOffset;
+        return m_token.m_info.endOffset;
     }
     
-    ALWAYS_INLINE const JSTokenLocation& tokenLocation()
-    {
-        return m_token.m_location;
-    }
-
-    const char* getTokenName(JSTokenType tok)
+    const char* getTokenName(JSTokenType tok) 
     {
         switch (tok) {
         case NULLTOKEN: 
@@ -1008,11 +1003,8 @@ PassRefPtr<ParsedNode> Parser<LexerType>::parse(JSGlobalObject* lexicalGlobalObj
 
     RefPtr<ParsedNode> result;
     if (m_sourceElements) {
-        JSTokenLocation location;
-        location.line = m_lexer->lastLineNumber();
-        location.column = m_lexer->currentColumnNumber();
         result = ParsedNode::create(&lexicalGlobalObject->globalData(),
-                                    location,
+                                    m_lexer->lastLineNumber(),
                                     m_sourceElements,
                                     m_varDeclarations ? &m_varDeclarations->data : 0,
                                     m_funcDeclarations ? &m_funcDeclarations->data : 0,
@@ -1020,7 +1012,7 @@ PassRefPtr<ParsedNode> Parser<LexerType>::parse(JSGlobalObject* lexicalGlobalObj
                                     *m_source,
                                     m_features,
                                     m_numConstants);
-        result->setLoc(m_source->firstLine(), m_lastLine, m_lexer->currentColumnNumber());
+        result->setLoc(m_source->firstLine(), m_lastLine);
     } else if (lexicalGlobalObject) {
         // We can never see a syntax error when reparsing a function, since we should have
         // reported the error when parsing the containing program or eval code. So if we're

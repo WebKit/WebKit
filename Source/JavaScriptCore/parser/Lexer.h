@@ -87,10 +87,9 @@ public:
     void setIsReparsing() { m_isReparsing = true; }
     bool isReparsing() const { return m_isReparsing; }
 
-    JSTokenType lex(JSTokenData*, JSTokenLocation*, unsigned, bool strictMode);
+    JSTokenType lex(JSTokenData*, JSTokenInfo*, unsigned, bool strictMode);
     bool nextTokenIsColon();
     int lineNumber() const { return m_lineNumber; }
-    int currentColumnNumber() const { return m_columnNumber; }
     void setLastLineNumber(int lastLineNumber) { m_lastLineNumber = lastLineNumber; }
     int lastLineNumber() const { return m_lastLineNumber; }
     bool prevTerminator() const { return m_terminator; }
@@ -121,7 +120,7 @@ public:
 
     SourceProvider* sourceProvider() const { return m_source->provider(); }
 
-    JSTokenType lexExpectIdentifier(JSTokenData*, JSTokenLocation*, unsigned, bool strictMode);
+    JSTokenType lexExpectIdentifier(JSTokenData*, JSTokenInfo*, unsigned, bool strictMode);
 
 private:
     void record8(int);
@@ -167,7 +166,6 @@ private:
 
     int m_lineNumber;
     int m_lastLineNumber;
-    int m_columnNumber;
 
     Vector<LChar> m_buffer8;
     Vector<UChar> m_buffer16;
@@ -259,7 +257,7 @@ ALWAYS_INLINE const Identifier* Lexer<T>::makeIdentifierLCharFromUChar(const UCh
 }
 
 template <typename T>
-ALWAYS_INLINE JSTokenType Lexer<T>::lexExpectIdentifier(JSTokenData* tokenData, JSTokenLocation* tokenLocation, unsigned lexerFlags, bool strictMode)
+ALWAYS_INLINE JSTokenType Lexer<T>::lexExpectIdentifier(JSTokenData* tokenData, JSTokenInfo* tokenInfo, unsigned lexerFlags, bool strictMode)
 {
     ASSERT((lexerFlags & LexerFlagsIgnoreReservedWords));
     const T* start = m_code;
@@ -287,22 +285,20 @@ ALWAYS_INLINE JSTokenType Lexer<T>::lexExpectIdentifier(JSTokenData* tokenData, 
         m_current = 0;
 
     m_code = ptr;
-    m_columnNumber = m_columnNumber + (m_code - start);
 
     // Create the identifier if needed
     if (lexerFlags & LexexFlagsDontBuildKeywords)
         tokenData->ident = 0;
     else
         tokenData->ident = makeIdentifier(start, ptr - start);
-    tokenLocation->line = m_lineNumber;
-    tokenLocation->startOffset = start - m_codeStart;
-    tokenLocation->endOffset = currentOffset();
-    tokenLocation->column = m_columnNumber;
+    tokenInfo->line = m_lineNumber;
+    tokenInfo->startOffset = start - m_codeStart;
+    tokenInfo->endOffset = currentOffset();
     m_lastToken = IDENT;
     return IDENT;
     
 slowCase:
-    return lex(tokenData, tokenLocation, lexerFlags, strictMode);
+    return lex(tokenData, tokenInfo, lexerFlags, strictMode);
 }
 
 } // namespace JSC

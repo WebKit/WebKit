@@ -3403,9 +3403,8 @@ DEFINE_STUB_FUNCTION(void, op_debug)
     int debugHookID = stackFrame.args[0].int32();
     int firstLine = stackFrame.args[1].int32();
     int lastLine = stackFrame.args[2].int32();
-    int column = stackFrame.args[3].int32();
 
-    stackFrame.globalData->interpreter->debug(callFrame, static_cast<DebugHookID>(debugHookID), firstLine, lastLine, column);
+    stackFrame.globalData->interpreter->debug(callFrame, static_cast<DebugHookID>(debugHookID), firstLine, lastLine);
 }
 
 DEFINE_STUB_FUNCTION(void*, vm_throw)

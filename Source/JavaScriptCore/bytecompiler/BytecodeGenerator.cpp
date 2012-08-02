@@ -2083,7 +2083,7 @@ void BytecodeGenerator::emitPopScope()
     m_dynamicScopeDepth--;
 }
 
-void BytecodeGenerator::emitDebugHook(DebugHookID debugHookID, int firstLine, int lastLine, int column)
+void BytecodeGenerator::emitDebugHook(DebugHookID debugHookID, int firstLine, int lastLine)
 {
 #if ENABLE(DEBUG_WITH_BREAKPOINT)
     if (debugHookID != DidReachBreakpoint)
@@ -2096,7 +2096,6 @@ void BytecodeGenerator::emitDebugHook(DebugHookID debugHookID, int firstLine, in
     instructions().append(debugHookID);
     instructions().append(firstLine);
     instructions().append(lastLine);
-    instructions().append(column);
 }
 
 void BytecodeGenerator::pushFinallyContext(StatementNode* finallyBlock)
