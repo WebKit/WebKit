@@ -968,6 +968,11 @@ LayoutUnit RenderTableSection::firstLineBoxBaseline() const
 void RenderTableSection::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
     ASSERT(!needsLayout());
+    // Tables are special, in that they hold local pointers to other renderers.
+    // If we aren't up-to-date on layout m_grid could have stale pointers.
+    // Out of an abundance of caution, we early return here in release builds.
+    if (needsLayout())
+        return;
 
     unsigned totalRows = m_grid.size();
     unsigned totalCols = table()->columns().size();

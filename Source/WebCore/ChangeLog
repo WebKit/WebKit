@@ -1,3 +1,13 @@
+2012-08-02  Eric Seidel  <eric@webkit.org>
+
+        Add back ASSERT(!needsLayout) to RenderTableSection which is now valid
+        https://bugs.webkit.org/show_bug.cgi?id=92954
+
+        Unreviewed, follow-up per Mitz's request.
+
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::paint):
+
 2012-08-02  James Robinson  <jamesr@chromium.org>
 
         [chromium] Remove unused includes from compositor code
