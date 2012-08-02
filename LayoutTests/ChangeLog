@@ -1,5 +1,19 @@
 2012-08-02  Lucas Forschler  <lforschler@apple.com>
 
+    Merge 120731
+
+    2012-06-19  Abhishek Arya  <inferno@chromium.org>
+
+            Crash in WebCore::RenderSVGModelObject::checkIntersection
+            https://bugs.webkit.org/show_bug.cgi?id=89059
+
+            Reviewed by Rob Buis.
+
+            * svg/custom/intersection-list-crash-expected.txt: Added.
+            * svg/custom/intersection-list-crash.svg: Added.
+
+2012-08-02  Lucas Forschler  <lforschler@apple.com>
+
     Merge 120559
 
     2012-06-17  Philip Rogers  <pdr@google.com>
