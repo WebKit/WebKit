@@ -126,7 +126,7 @@ void BreakBlockquoteCommand::doApply()
     }
     
     // Build up list of ancestors in between the start node and the top blockquote.
-    Vector<Element*> ancestors;    
+    Vector<RefPtr<Element> > ancestors;    
     for (Element* node = startNode->parentElement(); node && node != topBlockquote; node = node->parentElement())
         ancestors.append(node);
     
@@ -143,7 +143,7 @@ void BreakBlockquoteCommand::doApply()
         RefPtr<Element> clonedChild = ancestors[i - 1]->cloneElementWithoutChildren();
         // Preserve list item numbering in cloned lists.
         if (clonedChild->isElementNode() && clonedChild->hasTagName(olTag)) {
-            Node* listChildNode = i > 1 ? ancestors[i - 2] : startNode;
+            Node* listChildNode = i > 1 ? ancestors[i - 2].get() : startNode;
             // The first child of the cloned list might not be a list item element, 
             // find the first one so that we know where to start numbering.
             while (listChildNode && !listChildNode->hasTagName(liTag))
@@ -155,37 +155,23 @@ void BreakBlockquoteCommand::doApply()
         appendNode(clonedChild.get(), clonedAncestor.get());
         clonedAncestor = clonedChild;
     }
-    
-    // Move the startNode and its siblings.
-    Node *moveNode = startNode;
-    while (moveNode) {
-        Node *next = moveNode->nextSibling();
-        removeNode(moveNode);
-        appendNode(moveNode, clonedAncestor.get());
-        moveNode = next;
-    }
+
+    moveRemainingSiblingsToNewParent(startNode, 0, clonedAncestor);
 
     if (!ancestors.isEmpty()) {
         // Split the tree up the ancestor chain until the topBlockquote
         // Throughout this loop, clonedParent is the clone of ancestor's parent.
         // This is so we can clone ancestor's siblings and place the clones
         // into the clone corresponding to the ancestor's parent.
-        Element* ancestor;
-        Element* clonedParent;
+        RefPtr<Element> ancestor;
+        RefPtr<Element> clonedParent;
         for (ancestor = ancestors.first(), clonedParent = clonedAncestor->parentElement();
              ancestor && ancestor != topBlockquote;
-             ancestor = ancestor->parentElement(), clonedParent = clonedParent->parentElement()) {
-            moveNode = ancestor->nextSibling();
-            while (moveNode) {
-                Node *next = moveNode->nextSibling();
-                removeNode(moveNode);
-                appendNode(moveNode, clonedParent);
-                moveNode = next;
-            }
-        }
-        
+             ancestor = ancestor->parentElement(), clonedParent = clonedParent->parentElement())
+            moveRemainingSiblingsToNewParent(ancestor->nextSibling(), 0, clonedParent);
+
         // If the startNode's original parent is now empty, remove it
-        Node* originalParent = ancestors.first();
+        Node* originalParent = ancestors.first().get();
         if (!originalParent->hasChildNodes())
             removeNode(originalParent);
     }

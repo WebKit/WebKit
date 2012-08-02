@@ -406,6 +406,20 @@ void CompositeEditCommand::removeNodeAndPruneAncestors(PassRefPtr<Node> node)
     prune(parent.release());
 }
 
+void CompositeEditCommand::moveRemainingSiblingsToNewParent(Node* node, Node* pastLastNodeToMove, PassRefPtr<Element> prpNewParent)
+{
+    NodeVector nodesToRemove;
+    RefPtr<Element> newParent = prpNewParent;
+
+    for (; node && node != pastLastNodeToMove; node = node->nextSibling())
+        nodesToRemove.append(node);
+
+    for (unsigned i = 0; i < nodesToRemove.size(); i++) {
+        removeNode(nodesToRemove[i]);
+        appendNode(nodesToRemove[i], newParent);
+    }
+}
+
 void CompositeEditCommand::updatePositionForNodeRemovalPreservingChildren(Position& position, Node* node)
 {
     int offset = (position.anchorType() == Position::PositionIsOffsetInAnchor) ? position.offsetInContainerNode() : 0;
