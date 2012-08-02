@@ -1,3 +1,32 @@
+2012-08-01  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Web Inspector: test native memory instrumentation code with help of unittests
+        https://bugs.webkit.org/show_bug.cgi?id=92743
+
+        Reviewed by Yury Semikhatsky.
+
+        Test a part of existing Native Memory Instrumentation code with help of unit tests.
+        6 tests were added and two bugs were fixed.
+        a drive-by improvement: the method MemoryInstrumentation::addInstrumentedObject
+        was marked as private and addRootObject was introduced instead of it.
+        The new function also calls processDeferedPointers.
+
+        * bindings/v8/ScriptProfiler.cpp:
+        (WebCore::ScriptProfiler::collectBindingMemoryInfo):
+        * dom/MemoryInstrumentation.h:
+        (WebCore::MemoryInstrumentation::addRootObject):
+        (MemoryInstrumentation):
+        (WebCore::MemoryInstrumentation::addInstrumentedObject):
+        (WebCore::MemoryInstrumentation::addInstrumentedObjectImpl):
+        (WebCore):
+        (WebCore::MemoryInstrumentation::addObjectImpl):
+        * inspector/InspectorMemoryAgent.cpp:
+        (WebCore):
+        * inspector/MemoryInstrumentationImpl.h:
+        (MemoryInstrumentationImpl):
+        (WebCore::MemoryInstrumentationImpl::totalSize):
+        (WebCore::MemoryInstrumentationImpl::reportedSizeForAllTypes):
+
 2012-08-01  Ryosuke Niwa  <rniwa@webkit.org>
 
         Chromium Android build fix after r124402.
