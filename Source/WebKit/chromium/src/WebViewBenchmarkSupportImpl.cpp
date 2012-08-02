@@ -59,7 +59,8 @@ void WebViewBenchmarkSupportImpl::acceleratedPaintUnclipped(PaintClient* paintCl
     FloatSize layerSize = layer.size();
     IntRect clip(0, 0, layerSize.width(), layerSize.height());
 
-    paintLayer(paintClient, layer, clip);
+    if (layer.drawsContent())
+        paintLayer(paintClient, layer, clip);
 
     const Vector<GraphicsLayer*>& children = layer.children();
     Vector<GraphicsLayer*>::const_iterator it;

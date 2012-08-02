@@ -1,3 +1,15 @@
+2012-08-01  Daniel Murphy  <dmurph@chromium.org>
+
+        Fix for drawing invalid layers in WebViewBenchmarkSupportImpl
+        https://bugs.webkit.org/show_bug.cgi?id=92920
+
+        Reviewed by Adrienne Walker.
+
+        The GraphicsLayers without content needed to be skipped.
+
+        * src/WebViewBenchmarkSupportImpl.cpp:
+        (WebKit::WebViewBenchmarkSupportImpl::acceleratedPaintUnclipped):
+
 2012-08-01  Jian Li  <jianli@chromium.org>
 
         Add new CSS property "-webkit-widget-region" to expose dashboard region support for other port
