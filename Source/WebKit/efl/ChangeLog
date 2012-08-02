@@ -1,3 +1,22 @@
+2012-08-01  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL][Regression] Build break with NETSCAPE_PLUGIN_API after r123604
+        https://bugs.webkit.org/show_bug.cgi?id=92937
+
+        Unreviewed build fix.
+
+        r123604 replaced strdup to eina_stringshare, but related codes are not
+        changed properly.
+        This patch changes remained code to use eina_stringshare.
+
+        * ewk/ewk_js.cpp:
+        (ewk_js_variant_to_npvariant):
+        (ewk_js_property_free):
+        (ewk_js_npvariant_to_variant):
+        (ewk_js_variant_free):
+        (ewk_js_variant_array_free):
+        * ewk/ewk_js.h:
+
 2012-07-29  YoungTaeck Song  <youngtaeck.song@samsung.com>
 
         [WK2][EFL] TILED_BACKING_STORE support on Efl WebKit2

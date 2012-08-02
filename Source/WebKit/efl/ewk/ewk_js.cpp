@@ -48,7 +48,7 @@ static Eina_Bool ewk_js_variant_to_npvariant(const Ewk_JS_Variant* data, NPVaria
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(data, false);
     EINA_SAFETY_ON_NULL_RETURN_VAL(result, false);
-    char* string_value;
+    const char* string_value;
 
     switch (data->type) {
     case EWK_JS_VARIANT_VOID:
@@ -315,7 +315,7 @@ static void ewk_js_property_free(Ewk_JS_Property* prop)
 {
     free(const_cast<char*>(prop->name));
     if (prop->value.type == EWK_JS_VARIANT_STRING)
-        free(prop->value.value.s);
+        eina_stringshare_del(prop->value.value.s);
     else if (prop->value.type == EWK_JS_VARIANT_OBJECT)
         ewk_js_object_free(prop->value.value.o);
     free(prop);
@@ -482,7 +482,6 @@ error:
 
 static Eina_Bool ewk_js_npvariant_to_variant(Ewk_JS_Variant* data, const NPVariant* result)
 {
-    int sz;
     EINA_SAFETY_ON_NULL_RETURN_VAL(data, false);
     EINA_SAFETY_ON_NULL_RETURN_VAL(result, false);
     switch (result->type) {
@@ -503,12 +502,7 @@ static Eina_Bool ewk_js_npvariant_to_variant(Ewk_JS_Variant* data, const NPVaria
         data->value.d = NPVARIANT_TO_DOUBLE(*result);
         break;
     case NPVariantType_String:
-        sz = NPVARIANT_TO_STRING(*result).UTF8Length;
-        data->value.s = static_cast<char*>(malloc(sizeof(char) * (sz + 1)));
-        if (!data->value.s)
-            return false;
-        memcpy(data->value.s, NPVARIANT_TO_STRING(*result).UTF8Characters, sz);
-        data->value.s[sz] = '\0';
+        data->value.s = eina_stringshare_add_length(NPVARIANT_TO_STRING(*result).UTF8Characters, NPVARIANT_TO_STRING(*result).UTF8Length);
         data->type = EWK_JS_VARIANT_STRING;
         break;
     case NPVariantType_Bool:
@@ -715,7 +709,7 @@ void ewk_js_variant_free(Ewk_JS_Variant* jsVariant)
 #if ENABLE(NETSCAPE_PLUGIN_API)
     EINA_SAFETY_ON_NULL_RETURN(jsVariant);
     if (jsVariant->type == EWK_JS_VARIANT_STRING)
-        free(jsVariant->value.s);
+        eina_stringshare_del(jsVariant->value.s);
     else if (jsVariant->type == EWK_JS_VARIANT_OBJECT)
         ewk_js_object_free(jsVariant->value.o);
     free(jsVariant);
@@ -728,7 +722,7 @@ void ewk_js_variant_array_free(Ewk_JS_Variant* jsVariant, int count)
     EINA_SAFETY_ON_NULL_RETURN(jsVariant);
     for (int i = 0; i < count; i++) {
         if (jsVariant[i].type == EWK_JS_VARIANT_STRING)
-            free(jsVariant[i].value.s);
+            eina_stringshare_del(jsVariant[i].value.s);
         else if (jsVariant[i].type == EWK_JS_VARIANT_OBJECT)
             ewk_js_object_free(jsVariant[i].value.o);
     }

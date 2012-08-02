@@ -68,7 +68,7 @@ struct _Ewk_JS_Variant {
         Eina_Bool b;
         int i;
         double d;
-        char *s;
+        const char *s;
         Ewk_JS_Object *o;
     } value;
 };
