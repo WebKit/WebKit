@@ -10,8 +10,8 @@
         <div id="console"></div>
 
         <script>
-            if (window.layoutTestController)
-                window.layoutTestController.dumpAsText();
+            if (window.testRunner)
+                window.testRunner.dumpAsText();
             // Try some invalid names. auto/default/inherit/initial/none values are not allowed
             // Empty string and -12px are not identifiers, so they cannot represent valid flow names.
             // Valid flow names followed by another css property do not form a valid flow name.

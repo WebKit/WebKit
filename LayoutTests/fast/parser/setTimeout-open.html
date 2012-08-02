@@ -1,14 +1,14 @@
 <SCRIPT>
-  if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+  if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
   }
   setTimeout(function () {
     document.open();
     document.write("1<br>");
     document.write("2<br>");
     document.close();
-    if (window.layoutTestController)
-      layoutTestController.notifyDone();
+    if (window.testRunner)
+      testRunner.notifyDone();
   }, 0);
 </SCRIPT>

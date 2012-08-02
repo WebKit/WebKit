@@ -15,15 +15,15 @@
 <script type='text/javascript'>
 var blinker = document.getElementById('blinker');
 
-if (window.layoutTestController)
-    window.layoutTestController.waitUntilDone();
+if (window.testRunner)
+    window.testRunner.waitUntilDone();
 
 window.setTimeout(function () {
     blinker.style.display = 'none';
     window.setTimeout(function () {
         blinker.style.display = '';
-        if (window.layoutTestController)
-            window.layoutTestController.notifyDone();
+        if (window.testRunner)
+            window.testRunner.notifyDone();
     }, 50);
 }, 50);
 

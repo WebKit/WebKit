@@ -3,9 +3,9 @@
 <title>Test for Buzilla Bug 15359: JPEG image not shown when height is specified as percentage inside a table</title>
 <script src="../js/resources/js-test-pre.js"></script>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.waitUntilDone();
-    layoutTestController.dumpAsText();
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
 }
 
 function getComputedStyleForElement(element, cssPropertyName)
@@ -87,8 +87,8 @@ function test()
 
     isSuccessfullyParsed();
 
-    if (window.layoutTestController) { 
-        layoutTestController.notifyDone();
+    if (window.testRunner) { 
+        testRunner.notifyDone();
     }
 }
 </script>

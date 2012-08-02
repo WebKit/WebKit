@@ -5,8 +5,8 @@
 This text should be part of the title.
 </title>
 <script>
-if (window.layoutTestController)
-  layoutTestController.dumpAsText();
+if (window.testRunner)
+  testRunner.dumpAsText();
 
 window.onload = function () {
   document.getElementById('console').appendChild(document.createTextNode(document.title));

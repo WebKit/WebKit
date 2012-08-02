@@ -1,8 +1,8 @@
 <script>
-    if (window.layoutTestController)
+    if (window.testRunner)
     {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
     }
 
     function iframeLoaded()
@@ -12,8 +12,8 @@
         iframe.contentWindow.addEventListener("resize", function(event) {
             iframe.parentNode.removeChild(iframe);
             result.innerHTML = "COMPLETE";
-            if (window.layoutTestController)
-                layoutTestController.notifyDone();
+            if (window.testRunner)
+                testRunner.notifyDone();
         }, false);
         iframe.offsetTop;
         iframe.style.height = "100px";

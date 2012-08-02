@@ -1,6 +1,6 @@
 <script>
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
 
     function insertSpan() {
         document.getElementById("container").innerHTML = "<span style=\"content:url('resources/compass.jpg'); -webkit-mask-box-image:url('resources/compass.jpg');\">FAIL</span>";

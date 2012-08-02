@@ -17,8 +17,8 @@
         4. The collection of nodes is returned in document order.
         -->
         <script>
-            if (window.layoutTestController)
-                window.layoutTestController.dumpAsText();
+            if (window.testRunner)
+                window.testRunner.dumpAsText();
             description("Test for 90163: [CSSRegions]Rename NamedFlow::contentNodes to NamedFlow::getContent()");
 
             // Add an element that would be collected by the named flow but do not add it to the DOM, the contentNodes should be empty.

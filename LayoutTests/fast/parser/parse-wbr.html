@@ -3,8 +3,8 @@
 <script>
 function test()
 {
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
     var markup = document.getElementById("specimen").outerHTML;
     if (markup == '<a id="specimen" href="http://groups.yahoo.com/group/BATN/message/34500">http://groups.<wbr>yahoo.com/<wbr>group/BATN/<wbr>message/34500</a>')
         result = "TEST PASSED: Markup was correct";

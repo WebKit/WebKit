@@ -16,8 +16,8 @@
 </div>
 <div id="result">FAIL: Test did not run.</div>
 <script>
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
 
     var result = document.getElementById("result");
     var hitElement = document.elementFromPoint(370, 230);

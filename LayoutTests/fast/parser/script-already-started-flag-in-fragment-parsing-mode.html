@@ -11,8 +11,8 @@
 <p>
 <div></div>
 <script>
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
     var d = document.querySelector("div")
     d.innerHTML = "<script>document.querySelector('#result').textContent = 'FAIL'</" + "script>";
     document.body.appendChild(d.querySelector("script").cloneNode(true));

@@ -1,7 +1,7 @@
 <script src="resources/repaint.js"></script>
 <script>
-    if (window.layoutTestController)
-        window.layoutTestController.overridePreference("WebKitCSSRegionsEnabled", "1");
+    if (window.testRunner)
+        window.testRunner.overridePreference("WebKitCSSRegionsEnabled", "1");
     onload = runRepaintTest;
 
     function repaintTest()

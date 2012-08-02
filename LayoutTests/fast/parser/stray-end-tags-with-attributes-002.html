@@ -13,7 +13,7 @@ There should be a green square and no red below: </br class=fail>
    if (elm.className == "fail")
      result = false;
  }
- if (window.layoutTestController)
-   layoutTestController.dumpAsText();
+ if (window.testRunner)
+   testRunner.dumpAsText();
  document.write(result ? "PASS" : "FAIL");
 </script>

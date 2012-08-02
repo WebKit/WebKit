@@ -8,8 +8,8 @@
         target.style.visibility = "visible";
         document.body.offsetTop;
         
-        if (window.layoutTestController) {
-            layoutTestController.display();
+        if (window.testRunner) {
+            testRunner.display();
             finish();
         } else
             setTimeout(finish, 0);

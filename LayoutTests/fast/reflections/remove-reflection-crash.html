@@ -21,9 +21,9 @@
     }
   </style>
   <script>
-    if (window.layoutTestController) {
-      layoutTestController.waitUntilDone();
-      layoutTestController.dumpAsText();
+    if (window.testRunner) {
+      testRunner.waitUntilDone();
+      testRunner.dumpAsText();
     }
 
     function doTest()
@@ -32,8 +32,8 @@
         var reflection = document.getElementById('reflected');
         var targetContainer = document.getElementById('container');
         targetContainer.appendChild(reflection);
-        if (window.layoutTestController)
-          layoutTestController.notifyDone();
+        if (window.testRunner)
+          testRunner.notifyDone();
       }, 0);
     }
     window.addEventListener('load', doTest, false);

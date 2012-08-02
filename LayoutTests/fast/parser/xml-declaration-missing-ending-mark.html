@@ -6,9 +6,9 @@
 parser (in an iframe).<br />
 See https://bugs.webkit.org/show_bug.cgi?id=17814</p>
 <script>
-if (window.layoutTestController) {
-  layoutTestController.dumpAsText();
-  layoutTestController.dumpChildFramesAsText();
+if (window.testRunner) {
+  testRunner.dumpAsText();
+  testRunner.dumpChildFramesAsText();
 }
 </script>
 

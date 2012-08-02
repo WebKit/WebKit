@@ -18,8 +18,8 @@ function go() {
 
 window.addEventListener("load", go, false);
 
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 </script>
 This test covers some tricky ground where we call appendChild between
 document.open an document.write.  This sequence of calls results in an unusual

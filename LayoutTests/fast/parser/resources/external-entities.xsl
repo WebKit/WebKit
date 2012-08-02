@@ -4,8 +4,8 @@
     <xsl:template match="/">
         <HTML>
         <SCRIPT type="text/javascript">
-        if (window.layoutTestController)
-            layoutTestController.dumpAsText();
+        if (window.testRunner)
+            testRunner.dumpAsText();
         </SCRIPT>
             <BODY>
                &message;

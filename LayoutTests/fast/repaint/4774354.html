@@ -2,8 +2,8 @@
 <script type="text/javascript">
 
 function step1() {
-    if (window.layoutTestController)
-        window.layoutTestController.waitUntilDone();
+    if (window.testRunner)
+        window.testRunner.waitUntilDone();
     // Wait for the frame to load.
     window.setTimeout(step2, 100);
 }
@@ -31,8 +31,8 @@ function repaintTest() {
     
     sel.setBaseAndExtent(text, 5, text, text.length);
     
-    if (window.layoutTestController)
-        window.layoutTestController.notifyDone();
+    if (window.testRunner)
+        window.testRunner.notifyDone();
 }
 </script>
 

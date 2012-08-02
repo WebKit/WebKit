@@ -8,14 +8,14 @@ function finish()
 {
     document.getElementById('allcontent').style.overflow = '';
 
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
 function repaintTest()
 {
-    if (window.layoutTestController)
-        layoutTestController.waitUntilDone();
+    if (window.testRunner)
+        testRunner.waitUntilDone();
 
     window.setTimeout(finish, 1);
 }

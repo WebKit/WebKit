@@ -48,16 +48,16 @@
         </p>
     </article>
     <script>
-        if (window.layoutTestController) {
-            layoutTestController.dumpAsText();
-            layoutTestController.waitUntilDone();
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
         }
         function addNewRegion() {
             var oldRegion = document.getElementById("r1");
             var newRegion = oldRegion.cloneNode(true);
             oldRegion.parentNode.appendChild(newRegion);
-            if (window.layoutTestController)
-                layoutTestController.notifyDone();
+            if (window.testRunner)
+                testRunner.notifyDone();
         }
         function test() {
             setTimeout(addNewRegion, 0);

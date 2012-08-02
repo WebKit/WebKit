@@ -2,10 +2,10 @@
 <body>
     This tests that the XML parser doesn't fail if window.close() is called from a script tag while parsing.
     <script>
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.setCanOpenWindows();
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.setCanOpenWindows();
+        testRunner.waitUntilDone();
     }
         
     window.open("resources/xhtml-close-while-parsing-target.xhtml");

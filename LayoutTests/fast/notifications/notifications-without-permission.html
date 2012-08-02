@@ -9,9 +9,9 @@
         
         function runTests()
         {
-            if (window.layoutTestController) {
-                // NO PERMISSION layoutTestController.grantDesktopNotificationPermission("file://");
-                layoutTestController.dumpAsText();
+            if (window.testRunner) {
+                // NO PERMISSION testRunner.grantDesktopNotificationPermission("file://");
+                testRunner.dumpAsText();
             }
 
             if (!window.webkitNotifications) {

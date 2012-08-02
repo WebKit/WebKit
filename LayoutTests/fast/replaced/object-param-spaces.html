@@ -1,9 +1,9 @@
 <html>
     <head>
         <script>
-            if (window.layoutTestController) {
-                layoutTestController.dumpAsText();
-                layoutTestController.waitUntilDone();
+            if (window.testRunner) {
+                testRunner.dumpAsText();
+                testRunner.waitUntilDone();
             }
             document.addEventListener("beforeload", function(event) {
                 var console = document.getElementById("console");
@@ -15,8 +15,8 @@
 
                 event.preventDefault();
  
-                if (window.layoutTestController)
-                    layoutTestController.notifyDone();
+                if (window.testRunner)
+                    testRunner.notifyDone();
             }, true);
         </script>
     </head>

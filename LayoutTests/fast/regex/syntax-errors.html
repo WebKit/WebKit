@@ -18,8 +18,8 @@ function shouldThrow(program)
     }
 }
 
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 
 shouldThrow('"abc".search("[")');
 shouldThrow('"abc".match("[")');

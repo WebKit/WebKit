@@ -12,8 +12,8 @@ function test()
 
     document.body.appendChild(document.createTextNode("Should be &: " + fragment.firstChild.getAttribute('foo')));
 
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
 }
 ]]>
 </script>

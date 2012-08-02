@@ -112,8 +112,8 @@ var intermediateTags = [
     "marquee",      // scoping
 ];
 
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 
 var headerRow = document.getElementById("header-row");
 for (var i = 0; i < intermediateTags.length; ++i)

@@ -30,18 +30,18 @@
     <script>
         function testScrollRepaint()
         {
-            if (window.layoutTestController) {
-                layoutTestController.waitUntilDone();
+            if (window.testRunner) {
+                testRunner.waitUntilDone();
                 frame.onscroll = function() {
-                    if (window.layoutTestController)
-                        layoutTestController.notifyDone();
+                    if (window.testRunner)
+                        testRunner.notifyDone();
                 };
             }
             frame.scrollBy(-90, -90);
         }
 
-        if (window.layoutTestController) {
-            layoutTestController.display();
+        if (window.testRunner) {
+            testRunner.display();
             testScrollRepaint();
         } else {
             setTimeout(testScrollRepaint, 100);

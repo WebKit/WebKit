@@ -28,8 +28,8 @@
     </style>
     <script src="resources/repaint.js" type="text/javascript" charset="utf-8"></script>
     <script type="text/javascript" charset="utf-8">
-      if (window.layoutTestController)
-        layoutTestController.waitUntilDone();
+      if (window.testRunner)
+        testRunner.waitUntilDone();
 
       function repaintTest()
       {
@@ -42,8 +42,8 @@
       function startTest()
       {
         runRepaintTest();
-        if (window.layoutTestController)
-          layoutTestController.notifyDone();
+        if (window.testRunner)
+          testRunner.notifyDone();
       }
     </script>
   </head>

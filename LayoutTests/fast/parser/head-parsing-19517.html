@@ -1,7 +1,7 @@
 <BODY onload="go()"><SCRIPT>
     function go() {
-        if (window.layoutTestController)
-            layoutTestController.dumpAsText();
+        if (window.testRunner)
+            testRunner.dumpAsText();
         document.body.parentElement.removeChild(document.body);
         o = document.createElement("textArea");
         o.innerHTML='<b><menu><link></b><head></head>x';

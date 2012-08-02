@@ -8,12 +8,12 @@
         
         function runTests()
         {
-            if (window.layoutTestController) {
-                layoutTestController.dumpAsText();
+            if (window.testRunner) {
+                testRunner.dumpAsText();
             }
 
-            if (window.layoutTestController) {
-                layoutTestController.ignoreDesktopNotificationPermissionRequests();
+            if (window.testRunner) {
+                testRunner.ignoreDesktopNotificationPermissionRequests();
             }
 
             window.webkitNotifications.requestPermission(

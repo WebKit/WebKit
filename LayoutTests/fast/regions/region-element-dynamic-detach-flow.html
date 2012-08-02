@@ -14,8 +14,8 @@
             <div id="region_content">This text should be visible when the element is no longer a region.</div>
         </div>
         <script>
-            if (window.layoutTestController)
-                layoutTestController.dumpAsText();
+            if (window.testRunner)
+                testRunner.dumpAsText();
             var region = document.getElementsByClassName("region")[0];
             // The element is a region without a connected flow, its content is not available.
             var pass = region.innerText.length == 0;

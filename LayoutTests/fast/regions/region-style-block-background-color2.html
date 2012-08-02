@@ -101,8 +101,8 @@
         <div id="region71" class="regionBox2"></div>
         <div id="region72" class="regionBox1"></div>
         <script>
-            if (window.layoutTestController)
-                window.layoutTestController.waitUntilDone();
+            if (window.testRunner)
+                window.testRunner.waitUntilDone();
 
             function testFlow1()
             {
@@ -159,8 +159,8 @@
             function testFlow73()
             {
                 document.getElementById("region71").style.height = "50px";
-                if (window.layoutTestController)
-                    window.layoutTestController.notifyDone();
+                if (window.testRunner)
+                    window.testRunner.notifyDone();
             }
 
             function runTests() {

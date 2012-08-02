@@ -25,8 +25,8 @@
         <div id="article"></div>
         <div id="result" class="fail">FAIL</div>
         <script>
-            if (window.layoutTestController)
-                layoutTestController.dumpAsText();
+            if (window.testRunner)
+                testRunner.dumpAsText();
 
             var namedFlow = document.webkitGetFlowByName("flow");
             if (!namedFlow) {

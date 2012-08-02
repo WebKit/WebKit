@@ -1,15 +1,15 @@
 <body>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.dumpResourceResponseMIMETypes();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.dumpResourceResponseMIMETypes();
     // Prevent networking layer from reordering loads.
-    layoutTestController.setSerializeHTTPLoads();
-    layoutTestController.waitUntilDone();
+    testRunner.setSerializeHTTPLoads();
+    testRunner.waitUntilDone();
 }
 function done() {
-    if (window.layoutTestController)
-        setTimeout(function(){ layoutTestController.notifyDone() }, 1000);
+    if (window.testRunner)
+        setTimeout(function(){ testRunner.notifyDone() }, 1000);
 }
 </script>
 <style>

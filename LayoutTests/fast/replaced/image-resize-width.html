@@ -3,8 +3,8 @@
     <script>
         var swapped = false;
     
-        if (window.layoutTestController)
-            layoutTestController.waitUntilDone();
+        if (window.testRunner)
+            testRunner.waitUntilDone();
     
     
         function imageLoaded(image)
@@ -12,8 +12,8 @@
             if (!swapped) {
                 image.src = "resources/square-blue-100x100.png";
                 swapped = true;
-            } else if (window.layoutTestController)
-                layoutTestController.notifyDone();
+            } else if (window.testRunner)
+                testRunner.notifyDone();
         }
     </script>
 </head>

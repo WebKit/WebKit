@@ -38,8 +38,8 @@
 <div id="result"></div>
 
 <script>
-  if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+  if (window.testRunner)
+    testRunner.dumpAsText();
     
   var testElement = document.getElementById("testSpan")
   var testRect = testElement.getBoundingClientRect();
@@ -47,7 +47,7 @@
   var regionRect = regionElement.getBoundingClientRect();
   var resultString = assertTopLeftMatch (regionRect, testRect);
 
-  if (window.layoutTestController)
+  if (window.testRunner)
   	document.getElementById("test").innerText="";
   var resultDiv = document.getElementById("result");
   resultDiv.innerText = resultString;

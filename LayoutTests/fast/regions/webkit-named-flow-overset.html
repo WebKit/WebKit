@@ -20,8 +20,8 @@
     description("Test for https://bugs.webkit.org/show_bug.cgi?id=87491 [CSS Regions]Rename NamedFlow::overflow to NamedFlow::overset. \
                 For more details see http://www.w3.org/TR/2012/WD-css3-regions-20120503/");
 
-    if (window.layoutTestController)
-        window.layoutTestController.dumpAsText();
+    if (window.testRunner)
+        window.testRunner.dumpAsText();
 
     // Flow article does not have any regions yet
     var namedFlow = document.webkitGetFlowByName("flow");

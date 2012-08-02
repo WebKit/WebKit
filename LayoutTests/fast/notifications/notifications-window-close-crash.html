@@ -3,8 +3,8 @@
         <script> 
             function runTest()
             {
-                if (window.layoutTestController)
-                    layoutTestController.dumpAsText();
+                if (window.testRunner)
+                    testRunner.dumpAsText();
                 else
                 {
                     var win = window.open("about:blank");

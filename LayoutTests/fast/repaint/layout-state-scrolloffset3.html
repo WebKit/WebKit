@@ -13,17 +13,17 @@
   parent = document.getElementById('parent');
   parent.scrollTop = 10;
   parent.scrollLeft = 10;
-  if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
+  if (window.testRunner)
+    testRunner.waitUntilDone();
 
   window.setTimeout(function() {
-    if (window.layoutTestController)
-      layoutTestController.display();
+    if (window.testRunner)
+      testRunner.display();
 
     document.getElementById('target').innerText = 'after';
 
-    if (window.layoutTestController)
-      layoutTestController.notifyDone();
+    if (window.testRunner)
+      testRunner.notifyDone();
   }, 50);
 </script>
 </html>

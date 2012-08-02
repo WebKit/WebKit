@@ -9,8 +9,8 @@
         
         function runTests()
         {
-            if (window.layoutTestController) {
-                layoutTestController.dumpAsText();
+            if (window.testRunner) {
+                testRunner.dumpAsText();
             }
 
             if (!window.webkitNotifications) {
@@ -24,8 +24,8 @@
                 log("FAIL: Permission shouldn't be granted.");
             }
             
-            if (window.layoutTestController) {
-                layoutTestController.grantDesktopNotificationPermission("file://");
+            if (window.testRunner) {
+                testRunner.grantDesktopNotificationPermission("file://");
             }
             
             N = window.webkitNotifications.checkPermission();

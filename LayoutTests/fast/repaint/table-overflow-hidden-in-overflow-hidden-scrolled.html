@@ -31,24 +31,24 @@
         }
     </style>
     <script>
-        if (window.layoutTestController) {
-            layoutTestController.dumpAsText(true);
-            layoutTestController.waitUntilDone();
+        if (window.testRunner) {
+            testRunner.dumpAsText(true);
+            testRunner.waitUntilDone();
         }
 
         function repaintTest()
         {
             window.location.hash = "#ucp";
-            if (window.layoutTestController)
-                layoutTestController.notifyDone();
+            if (window.testRunner)
+                testRunner.notifyDone();
         }
 
         function runRepaintTest()
         {
             document.getElementById("outer").scrollTop = 1000;
 
-            if (window.layoutTestController)
-                layoutTestController.display();
+            if (window.testRunner)
+                testRunner.display();
 
             setTimeout(repaintTest, 0);
         }

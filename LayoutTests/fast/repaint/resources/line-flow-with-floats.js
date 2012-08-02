@@ -12,9 +12,9 @@ function loaded()
 
 function beginTest()
 {
-    if (window.layoutTestController) {
+    if (window.testRunner) {
         document.body.offsetTop;
-        layoutTestController.display();
+        testRunner.display();
         test(document.getElementById("iframe").contentDocument);
     } else setTimeout(
         function() {

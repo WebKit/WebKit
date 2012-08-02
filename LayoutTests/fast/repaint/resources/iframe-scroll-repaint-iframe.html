@@ -2,15 +2,15 @@
 <html style="background-color:#eeeeee; overflow:hidden">
 <div style="height:500px">
 <script>
-if (window.layoutTestController)
-  layoutTestController.waitUntilDone()
+if (window.testRunner)
+  testRunner.waitUntilDone()
 
 window.setTimeout(function() {
-  if (window.layoutTestController)
-    layoutTestController.display();
+  if (window.testRunner)
+    testRunner.display();
 
   document.body.scrollTop = 20;
-  if (window.layoutTestController)
-    layoutTestController.notifyDone();
+  if (window.testRunner)
+    testRunner.notifyDone();
 }, 50);
 </script>

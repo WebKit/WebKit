@@ -16,8 +16,8 @@
     <div id="dynamic"></div>
     <p id="result">FAIL: Test did not run to completion</p>
     <script>
-        if (window.layoutTestController)
-            layoutTestController.dumpAsText();
+        if (window.testRunner)
+            testRunner.dumpAsText();
 
         document.documentElement.style.overflow = "hidden";
         document.body.offsetTop;
@@ -27,9 +27,9 @@
             ? "FAIL: Scrollbar did not appear after resetting 'overflow'"
             : "PASS";
 
-        if (window.layoutTestController) {
-            layoutTestController.setScrollbarPolicy('vertical', 'off');
-            layoutTestController.setScrollbarPolicy('horizontal', 'off');
+        if (window.testRunner) {
+            testRunner.setScrollbarPolicy('vertical', 'off');
+            testRunner.setScrollbarPolicy('horizontal', 'off');
 
             result += (innerWidth === document.documentElement.offsetWidth)
                 ? "\nPASS"

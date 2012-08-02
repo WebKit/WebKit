@@ -11,8 +11,8 @@
             document.getElementById('console').appendChild(document.createTextNode(msg + "\n"));
         }
 
-        if (window.layoutTestController)
-            layoutTestController.dumpAsText();
+        if (window.testRunner)
+            testRunner.dumpAsText();
 
         var t = document.getElementById("test");
         var initialTop = t.scrollTop;

@@ -1,9 +1,9 @@
 <script>
     onload = function()
     {
-        if (window.layoutTestController) {
-            layoutTestController.waitUntilDone();
-            layoutTestController.display();
+        if (window.testRunner) {
+            testRunner.waitUntilDone();
+            testRunner.display();
         }
         setTimeout(changeColor, 0);
     }
@@ -12,8 +12,8 @@
     {
         var span = document.getElementById("span");
         getSelection().setBaseAndExtent(span, 0, span, 1);
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     }
 </script>
 <p>

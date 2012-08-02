@@ -10,9 +10,9 @@
             @-webkit-region #region { span { background-color: red } };
         </style>
         <script>
-            if (window.layoutTestController) {
-                window.layoutTestController.dumpAsText();
-                layoutTestController.waitUntilDone();
+            if (window.testRunner) {
+                window.testRunner.dumpAsText();
+                testRunner.waitUntilDone();
             }
 
             function test()
@@ -23,8 +23,8 @@
                 } catch(e) {
                 }
 
-                if (window.layoutTestController)
-                    layoutTestController.notifyDone();
+                if (window.testRunner)
+                    testRunner.notifyDone();
             }
 
             setTimeout("test()", 0);

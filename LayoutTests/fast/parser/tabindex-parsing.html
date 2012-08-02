@@ -1,6 +1,6 @@
 <script>
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
+if (window.testRunner)
+    testRunner.waitUntilDone();
     
 var p1Focused = false;
 var p2Focused = false;
@@ -27,7 +27,7 @@ function test(focusHappened, focusWasExpected, spanNum)
 
 function autoTest()
 {
-    if (!window.layoutTestController)
+    if (!window.testRunner)
         return;
     
     var allParagraphs = document.getElementsByTagName("p");
@@ -36,8 +36,8 @@ function autoTest()
         eventSender.mouseDown();
         eventSender.mouseUp();
     }
-    layoutTestController.dumpAsText();
-    layoutTestController.notifyDone();
+    testRunner.dumpAsText();
+    testRunner.notifyDone();
 }
 
 </script>

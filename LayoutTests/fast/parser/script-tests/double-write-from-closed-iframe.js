@@ -1,5 +1,5 @@
-if (window.layoutTestController)
-    layoutTestController.dumpChildFramesAsText();
+if (window.testRunner)
+    testRunner.dumpChildFramesAsText();
 
 var iframe = document.createElement('iframe');
 document.body.appendChild(iframe);

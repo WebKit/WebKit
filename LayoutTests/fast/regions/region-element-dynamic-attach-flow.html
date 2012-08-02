@@ -14,8 +14,8 @@
             <div id="region_content">This text should not be visible when the element becomes a region.</div>
         </div>
         <script>
-            if (window.layoutTestController)
-                layoutTestController.dumpAsText();
+            if (window.testRunner)
+                testRunner.dumpAsText();
             var region = document.getElementById("region_without_flow");
             // The element is not a region yet, it has content.
             var pass = region.innerText.length != 0;

@@ -16,8 +16,8 @@
 description("This tests the implementation of the 'name' attribute on the NamedFlow object attached to a flow thread. \
             For more details see http://www.w3.org/TR/2012/WD-css3-regions-20120503/#dom-named-flow");
 
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 
 // Flow article does not have any regions yet
 var namedFlow = document.webkitGetFlowByName("flow-name");

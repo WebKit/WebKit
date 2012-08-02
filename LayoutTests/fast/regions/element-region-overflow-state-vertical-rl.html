@@ -44,8 +44,8 @@ body { font-family: monospace; }
 
 <script>
     description("Tests Element.webkitRegionOverflow attribute")
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
     }
     function regionOverflow(id) {
         var e = document.getElementById(id);

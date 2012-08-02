@@ -1,7 +1,7 @@
 description('Test that parsing of css regions related properties is disabled by default.');
 
-if (window.layoutTestController)
-    window.layoutTestController.overridePreference("WebKitCSSRegionsEnabled", "0");
+if (window.testRunner)
+    window.testRunner.overridePreference("WebKitCSSRegionsEnabled", "0");
 
 function testWebKitFlowInto(declaration) {
     var div = document.createElement("div");

@@ -2,8 +2,8 @@ function endTest() {
     console.profileEnd();
     printProfilesDataWithoutTime();
 
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
 function insertGivenText(text) {

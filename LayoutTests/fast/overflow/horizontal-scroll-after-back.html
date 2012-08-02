@@ -10,8 +10,8 @@ function verifyPage()
         ? "FAIL: Scrollbar did not appear"
         : "PASS";
     document.body.innerHTML = result;
-    if (window.layoutTestController)
-            layoutTestController.notifyDone();
+    if (window.testRunner)
+            testRunner.notifyDone();
 }
 
 function navigateAwayAndBack() 
@@ -25,10 +25,10 @@ function navigateAwayAndBack()
 
 function runTestStep() 
 {
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
-        layoutTestController.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+        testRunner.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
     }
     window.setTimeout("navigateAwayAndBack()", 200);
 }

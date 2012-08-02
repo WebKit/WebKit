@@ -3,8 +3,8 @@
   <xsl:output method="html"/>
   <xsl:template match="//*">
     <script>
-        if (window.layoutTestController)
-            layoutTestController.dumpAsText();
+        if (window.testRunner)
+            testRunner.dumpAsText();
     </script>
     <div>PASS</div>
   </xsl:template>

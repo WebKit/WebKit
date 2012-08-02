@@ -25,8 +25,8 @@
   </style>
   <script src="resources/repaint.js" type="text/javascript" charset="utf-8"></script>
   <script type="text/javascript" charset="utf-8">
-    if (window.layoutTestController)
-      layoutTestController.waitUntilDone();
+    if (window.testRunner)
+      testRunner.waitUntilDone();
 
     var gAngle = 20;
     function incrementAngle()
@@ -45,8 +45,8 @@
       incrementAngle();
       window.setTimeout(function() {
         runRepaintTest();
-        if (window.layoutTestController)
-          layoutTestController.notifyDone();
+        if (window.testRunner)
+          testRunner.notifyDone();
       }, 0);
     }
   </script>

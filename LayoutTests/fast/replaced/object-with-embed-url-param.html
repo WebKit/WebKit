@@ -1,9 +1,9 @@
 <html>
     <head>
         <script>
-            if (window.layoutTestController) {
-                layoutTestController.dumpAsText();
-                layoutTestController.waitUntilDone();
+            if (window.testRunner) {
+                testRunner.dumpAsText();
+                testRunner.waitUntilDone();
             }
 
             var object1Result = "";
@@ -36,8 +36,8 @@
                     debug("An &lt;object&gt; with a URL specified in a 'src' &lt;param&gt; and a nested &lt;embed&gt; should load the URL from the 'src' @attr of the &lt;embed&gt; and " + embed3Result + ".");
                     debug("An &lt;object&gt; with a URL specified in a 'src' &lt;param&gt; and a MIME type specified in a 'type' &lt;param&gt; should load the URL from the 'src' &lt;param&gt; and " + object5Result + ".");
                     notified = true;
-                    if (window.layoutTestController)
-                        layoutTestController.notifyDone();
+                    if (window.testRunner)
+                        testRunner.notifyDone();
                 }
             }, true);
 

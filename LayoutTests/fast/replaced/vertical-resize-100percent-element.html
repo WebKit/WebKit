@@ -25,8 +25,8 @@ function resizeAndCheck(newSize)
 
 function run()
 {
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
 
     theFrame = document.getElementById('frame');
     var frContents = theFrame.contentWindow.document;

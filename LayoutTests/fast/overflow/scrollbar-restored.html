@@ -13,8 +13,8 @@
     </p>
     <p id="result">FAIL: Test did not run to completion</p>
     <script>
-        if (window.layoutTestController)
-            layoutTestController.dumpAsText();
+        if (window.testRunner)
+            testRunner.dumpAsText();
 
         document.documentElement.style.overflow = "hidden";
         document.body.offsetTop;

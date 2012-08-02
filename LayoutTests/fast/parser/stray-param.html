@@ -3,8 +3,8 @@
     <head>
         <title>Stray param elements are not dropped when parsing</title>
         <script>
-            if (window.layoutTestController)
-                layoutTestController.dumpAsText();
+            if (window.testRunner)
+                testRunner.dumpAsText();
 
             window.onload = function() {
                 var len = document.getElementsByTagName("param").length;

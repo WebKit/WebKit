@@ -2,9 +2,9 @@
 <head>
 <script src="resources/profiler-test-JS-resources.js"></script>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 if (window.internals)
     internals.settings.setJavaScriptProfilingEnabled(true);

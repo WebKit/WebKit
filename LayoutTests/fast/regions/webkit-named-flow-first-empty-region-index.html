@@ -17,8 +17,8 @@
 <script>
     description("Test for 90608: [CSSRegions]Implement NamedFlow::firstEmptyRegionIndex attribute.");
 
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
 
     // Named flow does not have any regions yet
     var namedFlow = document.webkitGetFlowByName("flow");

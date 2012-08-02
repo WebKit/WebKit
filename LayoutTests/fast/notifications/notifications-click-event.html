@@ -9,10 +9,10 @@
         
         function runTests()
         {
-            if (window.layoutTestController) {
-                layoutTestController.grantDesktopNotificationPermission("file://");
-                layoutTestController.dumpAsText();
-                layoutTestController.waitUntilDone();
+            if (window.testRunner) {
+                testRunner.grantDesktopNotificationPermission("file://");
+                testRunner.dumpAsText();
+                testRunner.waitUntilDone();
             }
 
             if (!window.webkitNotifications) {
@@ -22,9 +22,9 @@
             var N = window.webkitNotifications.createNotification("", "New E-mail", "Meet me tonight at 8!");
             N.onclick = function() { log("PASS: click event fired."); N.cancel();  }
             N.show();
-            if (window.layoutTestController) {
-                layoutTestController.simulateDesktopNotificationClick("New E-mail");
-                layoutTestController.notifyDone();
+            if (window.testRunner) {
+                testRunner.simulateDesktopNotificationClick("New E-mail");
+                testRunner.notifyDone();
             }
         }
     </script>

@@ -12,14 +12,14 @@
 
   function finishTest() {
     toggleReflection();
-    if (window.layoutTestController)
-      layoutTestController.notifyDone();
+    if (window.testRunner)
+      testRunner.notifyDone();
   };
 
   function startTest() {
-    if (window.layoutTestController) {
-      layoutTestController.waitUntilDone();
-      layoutTestController.dumpAsText();
+    if (window.testRunner) {
+      testRunner.waitUntilDone();
+      testRunner.dumpAsText();
     }
     toggleReflection();
     window.setTimeout(function() { finishTest(); }, 0);

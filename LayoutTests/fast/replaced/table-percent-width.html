@@ -3,9 +3,9 @@
 <title> webkit.org/b/29447: Replaced elements squeezed when width is specified as percentage inside a table with Auto layout</title>
 <script src="../js/resources/js-test-pre.js"></script>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.waitUntilDone();
-    layoutTestController.dumpAsText();
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
 }
 
 function getComputedStyleForElement(element, cssPropertyName)
@@ -58,8 +58,8 @@ function test()
 
     isSuccessfullyParsed();
 
-    if (window.layoutTestController) {
-        layoutTestController.notifyDone();
+    if (window.testRunner) {
+        testRunner.notifyDone();
     }
 }
 </script>

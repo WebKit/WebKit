@@ -30,8 +30,8 @@
 
         function runTests()
         {
-            if (window.layoutTestController)
-                layoutTestController.dumpAsText();
+            if (window.testRunner)
+                testRunner.dumpAsText();
             test('reflectionNone', 'none');
             log('');
             test('reflectionDirection', 'below');

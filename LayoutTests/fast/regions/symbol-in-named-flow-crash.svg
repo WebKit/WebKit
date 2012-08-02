@@ -7,8 +7,8 @@
     <use xlink:href="#symbol"/>
 <script><![CDATA[
 
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 
 document.getElementById("symbol").setAttribute("style","-webkit-flow-into:thread;");
 document.getElementById("use").appendChild(document.createElement("radialGradient"));

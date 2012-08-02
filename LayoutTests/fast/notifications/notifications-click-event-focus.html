@@ -9,12 +9,12 @@
 
         function runTests()
         {
-            if (window.layoutTestController) {
-                layoutTestController.grantDesktopNotificationPermission("file://");
-                layoutTestController.dumpAsText();
-                layoutTestController.waitUntilDone();
-                layoutTestController.setCanOpenWindows();
-                layoutTestController.setCloseRemainingWindowsWhenComplete();
+            if (window.testRunner) {
+                testRunner.grantDesktopNotificationPermission("file://");
+                testRunner.dumpAsText();
+                testRunner.waitUntilDone();
+                testRunner.setCanOpenWindows();
+                testRunner.setCloseRemainingWindowsWhenComplete();
             }
 
             if (!window.webkitNotifications) {
@@ -31,9 +31,9 @@
             N.onclick = function() { log("PASS: click event fired."); window.focus(); N.cancel();  }
             N.show();
 
-            if (window.layoutTestController) {
-                layoutTestController.simulateDesktopNotificationClick("New E-mail");
-                layoutTestController.notifyDone();
+            if (window.testRunner) {
+                testRunner.simulateDesktopNotificationClick("New E-mail");
+                testRunner.notifyDone();
             }
         }
     </script>

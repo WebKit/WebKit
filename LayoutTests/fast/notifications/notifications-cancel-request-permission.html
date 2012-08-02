@@ -12,9 +12,9 @@
         
         function runTests()
         {
-            if (window.layoutTestController) {
-                layoutTestController.dumpAsText();
-                layoutTestController.waitUntilDone();
+            if (window.testRunner) {
+                testRunner.dumpAsText();
+                testRunner.waitUntilDone();
             }
 
             if (!window.webkitNotifications) {
@@ -26,8 +26,8 @@
 
         function isDone()
         {
-            if (window.layoutTestController) {
-                layoutTestController.notifyDone();
+            if (window.testRunner) {
+                testRunner.notifyDone();
             }
         }
 

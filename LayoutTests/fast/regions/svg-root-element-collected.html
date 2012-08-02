@@ -18,8 +18,8 @@
         </svg>
         <div id="region"></div>
         <script>
-            if (window.layoutTestController)
-                window.layoutTestController.dumpAsText();
+            if (window.testRunner)
+                window.testRunner.dumpAsText();
             var regionElement = document.getElementById("region");
             var pass = regionElement.innerText.length != 0;
             regionElement.style.display = "none";

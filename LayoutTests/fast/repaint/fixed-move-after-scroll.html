@@ -5,9 +5,9 @@
       function scrollAndRepaint()
       {
           scrollBy(0, 200);
-          if (window.layoutTestController) {
+          if (window.testRunner) {
               document.body.offsetTop;
-              layoutTestController.display();
+              testRunner.display();
               repaintTest();
            } else {
               setTimeout(repaintTest, 15);

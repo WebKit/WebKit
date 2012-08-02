@@ -9,8 +9,8 @@
     </head>
     <body>
         <script>
-            if (window.layoutTestController)
-                layoutTestController.dumpAsText();
+            if (window.testRunner)
+                testRunner.dumpAsText();
             var rulesText = "";
             var cssRules = document.styleSheets[0].cssRules;
             for (var idx = 0; idx < cssRules.length; idx++)

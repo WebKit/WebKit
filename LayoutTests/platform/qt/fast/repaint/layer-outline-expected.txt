@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 5: TypeError: 'undefined' is not a function (evaluating 'layoutTestController.testRepaint()')
+CONSOLE MESSAGE: line 5: TypeError: 'undefined' is not a function (evaluating 'testRunner.testRepaint()')
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600

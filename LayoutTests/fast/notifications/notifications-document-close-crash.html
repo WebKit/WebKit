@@ -2,12 +2,12 @@
     <body>
         <div id="result"></div>
         <script>
-            if (window.layoutTestController)
+            if (window.testRunner)
             {
-                layoutTestController.dumpAsText();
-                layoutTestController.setCanOpenWindows();
-                layoutTestController.grantDesktopNotificationPermission("file://");
-                layoutTestController.waitUntilDone();
+                testRunner.dumpAsText();
+                testRunner.setCanOpenWindows();
+                testRunner.grantDesktopNotificationPermission("file://");
+                testRunner.waitUntilDone();
             }
             
             if (!window.webkitNotifications) {
@@ -41,8 +41,8 @@
                 clearInterval(timer);
                 document.getElementById("result").innerHTML = "PASS";
                 target.close();
-                if (window.layoutTestController)
-                    layoutTestController.notifyDone();
+                if (window.testRunner)
+                    testRunner.notifyDone();
             }
         </script>
     </body>

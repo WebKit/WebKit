@@ -20,17 +20,17 @@
   parent2.scrollTop = 7;
   parent2.scrollLeft = 7;
 
-  if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
+  if (window.testRunner)
+    testRunner.waitUntilDone();
 
   window.setTimeout(function() {
-    if (window.layoutTestController)
-      layoutTestController.display();
+    if (window.testRunner)
+      testRunner.display();
 
     document.getElementById('target').innerText = 'after'
 
-    if (window.layoutTestController)
-      layoutTestController.notifyDone();
+    if (window.testRunner)
+      testRunner.notifyDone();
   }, 50);
 </script>
 </html>

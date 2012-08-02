@@ -1,5 +1,5 @@
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone(), layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.waitUntilDone(), testRunner.dumpAsText();
 
 function checkNoFocusRing(element, event)
 {
@@ -14,14 +14,14 @@ function checkNoFocusRing(element, event)
     document.body.insertAdjacentHTML('beforeEnd', noFocusRing ?
         ' PASS' : ' FAIL: focus style ' + [width, style, color].join(' '));
 
-    if (window.layoutTestController)
-        window.layoutTestController.notifyDone();
+    if (window.testRunner)
+        window.testRunner.notifyDone();
 }
 
 var element = document.getElementById('test');
 element.onfocus = function() { setTimeout(checkNoFocusRing, 50, element, event) };
 
-if (window.layoutTestController) {
+if (window.testRunner) {
     eventSender.mouseMoveTo(element.offsetLeft + 5, element.offsetTop + 5);
     eventSender.mouseDown();
     eventSender.mouseUp();

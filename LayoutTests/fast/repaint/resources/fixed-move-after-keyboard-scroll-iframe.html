@@ -4,9 +4,9 @@
   <script type="text/javascript">
       function scrollAndRepaint()
       {
-          if (window.layoutTestController) {
+          if (window.testRunner) {
               document.body.offsetTop;
-              layoutTestController.display();
+              testRunner.display();
               repaintTest();
           } else {
               setTimeout(repaintTest, 15);
@@ -16,11 +16,11 @@
       {
           document.getElementById('toMove').style.left = "150px";
           document.getElementById('toMove').style.backgroundColor = "green";
-          if (window.layoutTestController)
-              window.layoutTestController.notifyDone();
+          if (window.testRunner)
+              window.testRunner.notifyDone();
       }
-      if (window.layoutTestController)
-          window.layoutTestController.waitUntilDone();
+      if (window.testRunner)
+          window.testRunner.waitUntilDone();
       document.addEventListener("scroll", scrollAndRepaint, false);
   </script>
 </head>

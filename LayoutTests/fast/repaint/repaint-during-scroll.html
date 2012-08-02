@@ -3,8 +3,8 @@
     <script>
         function repaintTest()
         {
-            if (window.layoutTestController)
-                layoutTestController.waitUntilDone();
+            if (window.testRunner)
+                testRunner.waitUntilDone();
             var target = document.getElementById("target");
             scrollBy(0, 100);
         }
@@ -13,8 +13,8 @@
         {
             var target = document.getElementById("target");
             target.style.backgroundColor = "green";
-            if (window.layoutTestController)
-                layoutTestController.notifyDone();
+            if (window.testRunner)
+                testRunner.notifyDone();
         }
     </script>
 </head>

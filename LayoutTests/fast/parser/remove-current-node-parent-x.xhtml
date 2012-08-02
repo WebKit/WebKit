@@ -3,9 +3,9 @@
 </head>
 <body>
 <script>
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
     }
 
     var body = document.getElementsByTagName('body')[0];
@@ -25,8 +25,8 @@
         msg("Should say PASS:");
         // Even though a subtree is removed, parsing continues.
         msg(body.getElementsByTagName("foo").length == 1 ? "PASS" : "FAIL");
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     }
 
     setTimeout(verify, 100);
