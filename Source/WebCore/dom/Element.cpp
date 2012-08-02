@@ -760,9 +760,11 @@ static bool isEventHandlerAttribute(const QualifiedName& name)
     return name.namespaceURI().isNull() && name.localName().startsWith("on");
 }
 
+// FIXME: Share code with Element::isURLAttribute.
 static bool isAttributeToRemove(const QualifiedName& name, const AtomicString& value)
-{    
-    return (name.localName().endsWith(hrefAttr.localName()) || name == srcAttr || name == actionAttr) && protocolIsJavaScript(stripLeadingAndTrailingHTMLSpaces(value));       
+{
+    return (name.localName() == hrefAttr.localName() || name.localName() == nohrefAttr.localName()
+        || name == srcAttr || name == actionAttr || name == formactionAttr) && protocolIsJavaScript(stripLeadingAndTrailingHTMLSpaces(value));
 }
 
 void Element::parserSetAttributes(const Vector<Attribute>& attributeVector, FragmentScriptingPermission scriptingPermission)

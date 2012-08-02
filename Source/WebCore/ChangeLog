@@ -1,3 +1,19 @@
+2012-08-02  Ryosuke Niwa  <rniwa@webkit.org>
+
+        scripts in formaction should be stripped upon paste
+        https://bugs.webkit.org/show_bug.cgi?id=92298
+
+        Reviewed by Eric Seidel.
+
+        Strip formaction attribute values when the URL is of javascript protocol.
+
+        Test: editing/pasteboard/paste-noscript-xhtml.html
+              editing/pasteboard/paste-noscript.html
+
+        * dom/Element.cpp:
+        (WebCore::isAttributeToRemove): Explicitly compare with href and nohref instead of comparing
+        the ends of strings since comparing two AtomicString is much faster.
+
 2012-08-02  Elliott Sprehn  <esprehn@gmail.com>
 
         Built in quotes don't use lang attribute

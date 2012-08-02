@@ -15,5 +15,5 @@ This is a form
 <a id="anchor2" href="">Hello</a>
 <iframe id="iframe1" src="javascript:var x = 1;" style="width: 200px; height: 100px; background-color:#cee;"></iframe>
 <iframe id="iframe1" src="" style="width: 200px; height: 100px; background-color: rgb(204, 238, 238); "></iframe>
-<form id="form1" action="javascript:sayHello()" style="width: 200px; height: 150px; background-color:#cee;">This is a form<br><img src="../resources/abe.png"></form>
-<form id="form1" action="" style="width: 200px; height: 150px; background-color: rgb(204, 238, 238); ">This is a form<br><img src="../resources/abe.png"></form>
+<form id="form1" action="javascript:sayHello()" formaction="javascript:sayHello()" style="width: 200px; height: 150px; background-color:#cee;">This is a form<br><img src="../resources/abe.png"></form>
+<form id="form1" action="" formaction="" style="width: 200px; height: 150px; background-color: rgb(204, 238, 238); ">This is a form<br><img src="../resources/abe.png"></form>

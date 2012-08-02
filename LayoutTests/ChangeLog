@@ -1,3 +1,17 @@
+2012-08-02  Ryosuke Niwa  <rniwa@webkit.org>
+
+        scripts in formaction should be stripped upon paste
+        https://bugs.webkit.org/show_bug.cgi?id=92298
+
+        Reviewed by Eric Seidel.
+
+        Added formaction attributes to tests.
+
+        * editing/pasteboard/paste-noscript-expected.txt:
+        * editing/pasteboard/paste-noscript-xhtml-expected.txt:
+        * editing/pasteboard/paste-noscript.html:
+        * editing/pasteboard/resources/paste-noscript-content.html:
+
 2012-08-02  Elliott Sprehn  <esprehn@gmail.com>
 
         Built in quotes don't use lang attribute

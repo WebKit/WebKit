@@ -42,6 +42,7 @@ Copied content:
 "
 | <form>
 |   action="javascript:sayHello()"
+|   formaction="javascript:sayHello()"
 |   id="form1"
 |   style="width: 200px; height: 150px; background-color:#cee;"
 |   "This is a form<#selection-focus>"
@@ -72,6 +73,7 @@ Pasted content:
 |   style="width: 200px; height: 100px; background-color: rgb(204, 238, 238); "
 | <form>
 |   action=""
+|   formaction=""
 |   id="form1"
 |   style="width: 200px; height: 150px; background-color: rgb(204, 238, 238); "
 |   "This is a form<#selection-caret>"
