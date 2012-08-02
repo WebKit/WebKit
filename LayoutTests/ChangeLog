@@ -1,3 +1,19 @@
+2012-08-02  Yoshifumi Inoue  <yosin@chromium.org>
+
+        REGRESSION(r102741): [Forms] In selects, when disabled, browser skips first option if not in optgroup, then selects first option in optgroup
+        https://bugs.webkit.org/show_bug.cgi?id=92833
+
+        Reviewed by Kent Tamura.
+
+        This patch updates test expectation of fast/forms/basic-selects.html
+        for Chromium-Linux and disables it for Chromium-Mac and Chromium-Win.
+
+        Note: We need to rebaseline for all ports expect for Chromium-Linux.
+
+        * platform/chromium-linux/fast/forms/basic-selects-expected.png: Changed for default selected option for disabled select element, "foo" to "bar" of second select element of "Line-height should be ignored" line.
+        * platform/chromium-linux/fast/forms/basic-selects-expected.txt:
+        * platform/chromium/TestExpectations: Disabled fast/forms/basic-selects.html for Chromium-Mac and Chromium-Win.
+
 2012-08-02  Alexander Pavlov  <apavlov@chromium.org>
 
         [Chromium] Unreviewed, mark fast/js/dfg-osr-entry-hoisted-clobbered-structure-check.html as DEBUG SLOW = PASS.

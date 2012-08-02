@@ -1,3 +1,43 @@
+2012-08-02  Yoshifumi Inoue  <yosin@chromium.org>
+
+        REGRESSION(r102741): [Forms] In selects, when disabled, browser skips first option if not in optgroup, then selects first option in optgroup
+        https://bugs.webkit.org/show_bug.cgi?id=92833
+
+        Reviewed by Kent Tamura.
+
+        This patch changes implementation of HTMLOptionElement::disabled() to
+        follow the "disabled" concept of option element in HTML5 specification[1],
+        the option element is disabled if option element has "disabled"
+        attribute or parent optgroup element has "disabled" attribute. Before
+        this patch, HTMLOptionElement::disabled() checks presenting "disabled"
+        attribute in option element itself and any parent element.
+
+        Before this patch, HTMLSelectElement::recalcListItems() didn't considers
+        non-disabled option as default selected option if select element is
+        disabled because HTMLOptionElement::disabled() returned true if select
+        element is disabled.
+
+        After this patch, HTMLOptionElement::disabled() is independent from
+        select element. HTMLSelectElement::recalcListItems() considers
+        non-disabled option as default selected option.
+
+        [1] http://www.whatwg.org/specs/web-apps/current-work/multipage/the-button-element.html#concept-option-disabled
+
+        Tests: fast/forms/basic-selects.html: Fixed expectation to right thing.
+
+        * css/html.css:
+        (select[disabled]>option): Added to render option elements in disabled
+        select element to disabled color as before this patch.
+        * html/HTMLOptionElement.cpp:
+        (WebCore::HTMLOptionElement::disabled): Changed to check parent element
+        is optgroup.
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::listBoxDefaultEventHandler): On mouse up
+        and down, don't update selection if select element is disabled.
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::paintItemForeground): Added checking select
+        element is disabled. Before this patch, it was done by HTMLOptionElement::disabled().
+
 2012-08-01  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r124406.

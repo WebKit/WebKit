@@ -691,7 +691,8 @@ input[type="range"]::-webkit-slider-thumb, input[type="range"]::-webkit-media-sl
 
 input[type="button"]:disabled, input[type="submit"]:disabled, input[type="reset"]:disabled,
 input[type="file"]:disabled::-webkit-file-upload-button, button:disabled,
-select:disabled, keygen:disabled, optgroup:disabled, option:disabled {
+select:disabled, keygen:disabled, optgroup:disabled, option:disabled,
+select[disabled]>option {
     color: GrayText
 }
 

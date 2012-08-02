@@ -378,7 +378,9 @@ void RenderListBox::paintItemForeground(PaintInfo& paintInfo, const LayoutPoint&
 {
     FontCachePurgePreventer fontCachePurgePreventer;
 
-    const Vector<HTMLElement*>& listItems = toHTMLSelectElement(node())->listItems();
+    HTMLSelectElement* selectElement = toHTMLSelectElement(node());
+
+    const Vector<HTMLElement*>& listItems = selectElement->listItems();
     HTMLElement* element = listItems[listIndex];
 
     RenderStyle* itemStyle = element->renderStyle();
@@ -401,7 +403,7 @@ void RenderListBox::paintItemForeground(PaintInfo& paintInfo, const LayoutPoint&
         if (frame()->selection()->isFocusedAndActive() && document()->focusedNode() == node())
             textColor = theme()->activeListBoxSelectionForegroundColor();
         // Honor the foreground color for disabled items
-        else if (!element->disabled())
+        else if (!element->disabled() && !selectElement->disabled())
             textColor = theme()->inactiveListBoxSelectionForegroundColor();
     }
 

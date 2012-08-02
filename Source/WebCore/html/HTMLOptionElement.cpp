@@ -329,7 +329,14 @@ String HTMLOptionElement::textIndentedToRespectGroupLabel() const
 
 bool HTMLOptionElement::disabled() const
 {
-    return ownElementDisabled() || (parentNode() && parentNode()->isHTMLElement() && static_cast<HTMLElement*>(parentNode())->disabled());
+    if (ownElementDisabled())
+        return true;
+
+    if (!parentNode() || !parentNode()->isHTMLElement())
+        return false;
+
+    HTMLElement* parentElement = static_cast<HTMLElement*>(parentNode());
+    return parentElement->hasTagName(optgroupTag) && parentElement->disabled();
 }
 
 Node::InsertionNotificationRequest HTMLOptionElement::insertedInto(ContainerNode* insertionPoint)
