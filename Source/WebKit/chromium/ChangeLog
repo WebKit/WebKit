@@ -1,3 +1,22 @@
+2012-08-02  Hans Wennborg  <hans@chromium.org>
+
+        Speech JavaScript API: Fire speech start event at the same time as sound start event
+        https://bugs.webkit.org/show_bug.cgi?id=92971
+
+        Reviewed by Adam Barth.
+
+        Chromium's speech recognizer doesn't differentiate between "sound
+        started" and "speech started". Just fire those events at the same
+        time, and don't provide functions for them in
+        WebSpeechRecognizerClient.
+
+        * public/WebSpeechRecognizerClient.h:
+        * src/SpeechRecognitionClientProxy.cpp:
+        (WebKit::SpeechRecognitionClientProxy::didStartSound):
+        (WebKit::SpeechRecognitionClientProxy::didEndSound):
+        * src/SpeechRecognitionClientProxy.h:
+        (SpeechRecognitionClientProxy):
+
 2012-08-02  Adam Barth  <abarth@webkit.org>
 
         [Chromium] WebViewImpl::showTouchHighlightQuads isn't needed for Android

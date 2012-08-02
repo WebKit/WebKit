@@ -118,7 +118,6 @@ void MockWebSpeechRecognizer::start(const WebSpeechRecognitionHandle& handle, co
     m_taskQueue.append(adoptPtr(new ClientCallTask(this, &WebSpeechRecognizerClient::didStart)));
     m_taskQueue.append(adoptPtr(new ClientCallTask(this, &WebSpeechRecognizerClient::didStartAudio)));
     m_taskQueue.append(adoptPtr(new ClientCallTask(this, &WebSpeechRecognizerClient::didStartSound)));
-    m_taskQueue.append(adoptPtr(new ClientCallTask(this, &WebSpeechRecognizerClient::didStartSpeech)));
 
     if (!m_mockTranscripts.isEmpty()) {
         ASSERT(m_mockTranscripts.size() == m_mockConfidences.size());
@@ -131,7 +130,6 @@ void MockWebSpeechRecognizer::start(const WebSpeechRecognitionHandle& handle, co
     } else
         m_taskQueue.append(adoptPtr(new NoMatchTask(this)));
 
-    m_taskQueue.append(adoptPtr(new ClientCallTask(this, &WebSpeechRecognizerClient::didEndSpeech)));
     m_taskQueue.append(adoptPtr(new ClientCallTask(this, &WebSpeechRecognizerClient::didEndSound)));
     m_taskQueue.append(adoptPtr(new ClientCallTask(this, &WebSpeechRecognizerClient::didEndAudio)));
     m_taskQueue.append(adoptPtr(new ClientCallTask(this, &WebSpeechRecognizerClient::didEnd)));

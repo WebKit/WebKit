@@ -1,3 +1,16 @@
+2012-08-02  Hans Wennborg  <hans@chromium.org>
+
+        Speech JavaScript API: Fire speech start event at the same time as sound start event
+        https://bugs.webkit.org/show_bug.cgi?id=92971
+
+        Reviewed by Adam Barth.
+
+        Update the MockWebSpeechRecognizer to not fire "speech started" events
+        separately.
+
+        * DumpRenderTree/chromium/MockWebSpeechRecognizer.cpp:
+        (MockWebSpeechRecognizer::start):
+
 2012-08-02  Philippe Normand  <pnormand@igalia.com>
 
         [GTK] make sometimes using a single core

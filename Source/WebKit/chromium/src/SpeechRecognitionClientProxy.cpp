@@ -85,23 +85,13 @@ void SpeechRecognitionClientProxy::didStartSound(const WebSpeechRecognitionHandl
 {
     RefPtr<SpeechRecognition> recognition = PassRefPtr<SpeechRecognition>(handle);
     recognition->didStartSound();
-}
-
-void SpeechRecognitionClientProxy::didStartSpeech(const WebSpeechRecognitionHandle& handle)
-{
-    RefPtr<SpeechRecognition> recognition = PassRefPtr<SpeechRecognition>(handle);
     recognition->didStartSpeech();
-}
-
-void SpeechRecognitionClientProxy::didEndSpeech(const WebSpeechRecognitionHandle& handle)
-{
-    RefPtr<SpeechRecognition> recognition = PassRefPtr<SpeechRecognition>(handle);
-    recognition->didEndSpeech();
 }
 
 void SpeechRecognitionClientProxy::didEndSound(const WebSpeechRecognitionHandle& handle)
 {
     RefPtr<SpeechRecognition> recognition = PassRefPtr<SpeechRecognition>(handle);
+    recognition->didEndSpeech();
     recognition->didEndSound();
 }
 

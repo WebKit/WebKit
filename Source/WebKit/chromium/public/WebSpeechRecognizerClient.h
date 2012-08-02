@@ -59,13 +59,6 @@ public:
     // This is expected to be called after didStartAudio.
     virtual void didStartSound(const WebSpeechRecognitionHandle&) = 0;
 
-    // To be called when speech has been detected.
-    // This is expected to be called after didStartSound.
-    virtual void didStartSpeech(const WebSpeechRecognitionHandle&) = 0;
-
-    // To be called when speech is no longer detected.
-    virtual void didEndSpeech(const WebSpeechRecognitionHandle&) = 0;
-
     // To be called when sound is no longer detected.
     // This is expected to be called after didEndSpeech.
     virtual void didEndSound(const WebSpeechRecognitionHandle&) = 0;

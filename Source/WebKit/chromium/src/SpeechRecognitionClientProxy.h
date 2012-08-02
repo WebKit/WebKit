@@ -53,8 +53,6 @@ public:
     // WebSpeechRecognizerClient:
     virtual void didStartAudio(const WebSpeechRecognitionHandle&) OVERRIDE;
     virtual void didStartSound(const WebSpeechRecognitionHandle&) OVERRIDE;
-    virtual void didStartSpeech(const WebSpeechRecognitionHandle&) OVERRIDE;
-    virtual void didEndSpeech(const WebSpeechRecognitionHandle&) OVERRIDE;
     virtual void didEndSound(const WebSpeechRecognitionHandle&) OVERRIDE;
     virtual void didEndAudio(const WebSpeechRecognitionHandle&) OVERRIDE;
     virtual void didReceiveResult(const WebSpeechRecognitionHandle&, const WebSpeechRecognitionResult&, unsigned long resultIndex, const WebVector<WebSpeechRecognitionResult>& resultHistory) OVERRIDE;
