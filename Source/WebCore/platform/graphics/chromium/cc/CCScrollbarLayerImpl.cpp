@@ -86,6 +86,13 @@ static FloatRect toUVRect(const WebRect& r, const WebRect& bounds)
                      static_cast<float>(r.width) / bounds.width, static_cast<float>(r.height) / bounds.height);
 }
 
+void CCScrollbarLayerImpl::scrollbarGeometry(WebRect& thumbRect, WebRect& backTrackRect, WebRect& foreTrackRect)
+{
+    m_geometry.splitTrack(&m_scrollbar, m_geometry.trackRect(&m_scrollbar), backTrackRect, thumbRect, foreTrackRect);
+    if (!m_geometry.hasThumb(&m_scrollbar))
+        thumbRect = WebRect();
+}
+
 void CCScrollbarLayerImpl::appendQuads(CCQuadSink& quadList, const CCSharedQuadState* sharedQuadState, bool&)
 {
     bool premultipledAlpha = false;
@@ -94,9 +101,9 @@ void CCScrollbarLayerImpl::appendQuads(CCQuadSink& quadList, const CCSharedQuadS
     IntRect boundsRect(IntPoint(), contentBounds());
 
     WebRect thumbRect, backTrackRect, foreTrackRect;
-    m_geometry.splitTrack(&m_scrollbar, m_geometry.trackRect(&m_scrollbar), backTrackRect, thumbRect, foreTrackRect);
+    scrollbarGeometry(thumbRect, backTrackRect, foreTrackRect);
 
-    if (m_thumbResourceId && m_geometry.hasThumb(&m_scrollbar) && !thumbRect.isEmpty()) {
+    if (m_thumbResourceId && !thumbRect.isEmpty()) {
         OwnPtr<CCTextureDrawQuad> quad = CCTextureDrawQuad::create(sharedQuadState, IntRect(thumbRect), m_thumbResourceId, premultipledAlpha, uvRect, flipped);
         quad->setNeedsBlending();
         quadList.append(quad.release());
@@ -113,6 +120,13 @@ void CCScrollbarLayerImpl::appendQuads(CCQuadSink& quadList, const CCSharedQuadS
     // fore track quads. The back track texture contains (and displays) the buttons.
     if (!boundsRect.isEmpty())
         quadList.append(CCTextureDrawQuad::create(sharedQuadState, IntRect(boundsRect), m_backTrackResourceId, premultipledAlpha, uvRect, flipped));
+}
+
+void CCScrollbarLayerImpl::didLoseContext()
+{
+    m_backTrackResourceId = 0;
+    m_foreTrackResourceId = 0;
+    m_thumbResourceId = 0;
 }
 
 bool CCScrollbarLayerImpl::CCScrollbar::isOverlay() const

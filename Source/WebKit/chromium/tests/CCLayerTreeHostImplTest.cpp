@@ -2123,16 +2123,6 @@ TEST_F(CCLayerTreeHostImplTest, finishAllRenderingAfterContextLost)
     m_hostImpl->finishAllRendering();
 }
 
-class ScrollbarLayerFakePaint : public CCScrollbarLayerImpl {
-public:
-    static PassOwnPtr<ScrollbarLayerFakePaint> create(int id) { return adoptPtr(new ScrollbarLayerFakePaint(id)); }
-
-    virtual void paint(GraphicsContext*) { }
-
-private:
-    ScrollbarLayerFakePaint(int id) : CCScrollbarLayerImpl(id) { }
-};
-
 // Fake WebGraphicsContext3D that will cause a failure if trying to use a
 // resource that wasn't created by it (resources created by
 // FakeWebGraphicsContext3D have an id of 1).
@@ -2292,6 +2282,40 @@ public:
     }
 };
 
+class FakeScrollbarLayerImpl : public CCScrollbarLayerImpl {
+public:
+    static PassOwnPtr<FakeScrollbarLayerImpl> create(int id)
+    {
+        return adoptPtr(new FakeScrollbarLayerImpl(id));
+    }
+
+    void createResources(CCResourceProvider* provider)
+    {
+        ASSERT(provider);
+        int pool = 0;
+        IntSize size(10, 10);
+        GC3Denum format = GraphicsContext3D::RGBA;
+        CCResourceProvider::TextureUsageHint hint = CCResourceProvider::TextureUsageAny;
+
+        setBackTrackResourceId(provider->createResource(pool, size, format, hint));
+        setForeTrackResourceId(provider->createResource(pool, size, format, hint));
+        setThumbResourceId(provider->createResource(pool, size, format, hint));
+    }
+
+protected:
+    explicit FakeScrollbarLayerImpl(int id)
+        : CCScrollbarLayerImpl(id)
+    {
+    }
+
+    virtual void scrollbarGeometry(WebRect& thumbRect, WebRect& backTrackRect, WebRect& foreTrackRect) OVERRIDE
+    {
+        thumbRect = WebRect(0, 5, 5, 2);
+        backTrackRect = WebRect(0, 5, 0, 5);
+        foreTrackRect = WebRect(0, 0, 0, 5);
+    }
+};
+
 TEST_F(CCLayerTreeHostImplTest, dontUseOldResourcesAfterLostContext)
 {
     OwnPtr<CCLayerImpl> rootLayer(CCLayerImpl::create(1));
@@ -2344,6 +2368,15 @@ TEST_F(CCLayerTreeHostImplTest, dontUseOldResourcesAfterLostContext)
     hudLayer->setLayerTreeHostImpl(m_hostImpl.get());
     rootLayer->addChild(hudLayer.release());
 
+    OwnPtr<FakeScrollbarLayerImpl> scrollbarLayer(FakeScrollbarLayerImpl::create(7));
+    scrollbarLayer->setLayerTreeHostImpl(m_hostImpl.get());
+    scrollbarLayer->setBounds(IntSize(10, 10));
+    scrollbarLayer->setContentBounds(IntSize(10, 10));
+    scrollbarLayer->setDrawsContent(true);
+    scrollbarLayer->setLayerTreeHostImpl(m_hostImpl.get());
+    scrollbarLayer->createResources(m_hostImpl->resourceProvider());
+    rootLayer->addChild(scrollbarLayer.release());
+
     // Use a context that supports IOSurfaces
     m_hostImpl->initializeLayerRenderer(CCGraphicsContext::create3D(adoptPtr(new FakeWebGraphicsContext3DWithIOSurface)), UnthrottledUploader);
 
@@ -2355,9 +2388,17 @@ TEST_F(CCLayerTreeHostImplTest, dontUseOldResourcesAfterLostContext)
     m_hostImpl->didDrawAllLayers(frame);
     m_hostImpl->swapBuffers();
 
+    unsigned numResources = m_hostImpl->resourceProvider()->numResources();
+
     // Lose the context, replacing it with a StrictWebGraphicsContext3DWithIOSurface,
     // that will warn if any resource from the previous context gets used.
     m_hostImpl->initializeLayerRenderer(CCGraphicsContext::create3D(adoptPtr(new StrictWebGraphicsContext3DWithIOSurface)), UnthrottledUploader);
+
+    // Create dummy resources so that looking up an old resource will get an
+    // invalid texture id mapping.
+    for (unsigned i = 0; i < numResources; ++i)
+        m_hostImpl->resourceProvider()->createResourceFromExternalTexture(1);
+
     EXPECT_TRUE(m_hostImpl->prepareToDraw(frame));
     m_hostImpl->drawLayers(frame);
     m_hostImpl->didDrawAllLayers(frame);

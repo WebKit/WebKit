@@ -53,8 +53,12 @@ public:
 
     virtual void appendQuads(CCQuadSink&, const CCSharedQuadState*, bool& hadMissingTiles) OVERRIDE;
 
+    void didLoseContext() OVERRIDE;
+
 protected:
     explicit CCScrollbarLayerImpl(int id);
+
+    virtual void scrollbarGeometry(WebKit::WebRect& thumbRect, WebKit::WebRect& backTrackRect, WebKit::WebRect& foreTrackRect);
 
 private:
     CCLayerImpl* m_scrollLayer;
@@ -86,6 +90,7 @@ private:
         CCScrollbarLayerImpl* m_owner;
 
     };
+
     CCScrollbar m_scrollbar;
 
     CCResourceProvider::ResourceId m_backTrackResourceId;

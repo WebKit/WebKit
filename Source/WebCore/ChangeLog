@@ -1,3 +1,28 @@
+2012-08-02  Adrienne Walker  <enne@google.com>
+
+        [chromium] Make CCScrollbarLayerImpl handle lost contexts properly
+        https://bugs.webkit.org/show_bug.cgi?id=93021
+
+        Reviewed by James Robinson.
+
+        The resource ids that CCScrollbarLayerImpl holds onto need to be
+        discarded during a lost context as the resource provider they came
+        from is also destroyed.
+
+        Make a scrollbarGeometry function that wraps all uses of the
+        m_geometry member to make it possible to test CCScrollbarLayerImpl
+        without depending on WebCore.
+
+        Test: CCLayerTreeHostImplTest.dontUseOldResourcesAfterLostContext
+
+        * platform/graphics/chromium/cc/CCScrollbarLayerImpl.cpp:
+        (WebCore::CCScrollbarLayerImpl::scrollbarGeometry):
+        (WebCore):
+        (WebCore::CCScrollbarLayerImpl::appendQuads):
+        (WebCore::CCScrollbarLayerImpl::didLoseContext):
+        * platform/graphics/chromium/cc/CCScrollbarLayerImpl.h:
+        (CCScrollbarLayerImpl):
+
 2012-08-02  Oliver Hunt  <oliver@apple.com>
 
         A few objects aren't being safely protected from GC in all cases

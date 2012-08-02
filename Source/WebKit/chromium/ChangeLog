@@ -1,3 +1,17 @@
+2012-08-02  Adrienne Walker  <enne@google.com>
+
+        [chromium] Make CCScrollbarLayerImpl handle lost contexts properly
+        https://bugs.webkit.org/show_bug.cgi?id=93021
+
+        Reviewed by James Robinson.
+
+        Add CCScrollbarLayerImpl to the dontUseOldResourceAfterLostContext
+        test. Additionally, modify this test so that stale resource ids
+        properly point at invalid texture ids so that the test actually tests
+        what it is supposed to be testing.
+
+        * tests/CCLayerTreeHostImplTest.cpp:
+
 2012-08-02  Adam Barth  <abarth@webkit.org>
 
         The generic bindings shouldn't use templates
