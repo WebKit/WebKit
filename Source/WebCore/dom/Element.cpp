@@ -1934,7 +1934,7 @@ void Element::setContainsFullScreenElementOnAncestorsCrossingFrameBoundaries(boo
 void Element::webkitRequestPointerLock()
 {
     if (document()->page())
-        document()->page()->pointerLockController()->requestPointerLock(this, 0, 0);
+        document()->page()->pointerLockController()->requestPointerLock(this);
 }
 #endif
 

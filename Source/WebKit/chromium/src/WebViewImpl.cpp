@@ -98,7 +98,6 @@
 #include "PlatformMouseEvent.h"
 #include "PlatformThemeChromiumLinux.h"
 #include "PlatformWheelEvent.h"
-#include "PointerLock.h"
 #include "PointerLockController.h"
 #include "PopupContainer.h"
 #include "PopupMenuClient.h"

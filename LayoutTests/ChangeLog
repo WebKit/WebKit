@@ -1,3 +1,28 @@
+2012-08-02  Vincent Scheib  <scheib@chromium.org>
+
+        Remove old Pointer Lock API.
+        https://bugs.webkit.org/show_bug.cgi?id=88892
+
+        Reviewed by Adam Barth.
+
+        Tests for old API removed, and most remaining tests required only small
+        changes.
+
+        * platform/chromium/fast/dom/navigator-detached-no-crash-expected.txt:
+        * pointer-lock/lock-already-locked-expected.txt:
+        * pointer-lock/lock-already-locked.html:
+        * pointer-lock/lock-fail-responses-expected.txt: Removed.
+        * pointer-lock/lock-fail-responses.html: Removed.
+            This test only covered the old API. The related concept is tested
+            for the new api in pointerlockchange-pointerlockerror-events.html.
+        * pointer-lock/pointer-lock-api-expected.txt:
+        * pointer-lock/pointer-lock-api.html:
+        * pointer-lock/pointerlockchange-event-on-lock-lost-expected.txt: Added.
+        * pointer-lock/pointerlockchange-event-on-lock-lost.html: Added.
+        * pointer-lock/pointerlocklost-event-expected.txt: Removed.
+        * pointer-lock/pointerlocklost-event.html: Removed.
+            pointerlocklost-event.html renamed to pointerlockchange-event-on-lock-lost.html.
+
 2012-08-02  Ryosuke Niwa  <rniwa@webkit.org>
 
         scripts in formaction should be stripped upon paste

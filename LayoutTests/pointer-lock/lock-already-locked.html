@@ -56,49 +56,6 @@
             expectedTargetToBeLockedString = "targetdiv2";
             // doNextStep() called by onwebkitpointerlockchange handler.
         },
-        function () {
-            expectTarget1Unlock = false;
-            expectTarget2Unlock = true;
-            navigator.webkitPointer.lock(targetdiv1,
-                function () {
-                    testPassed("Lock target1 succeeded.");
-                    shouldBe("navigator.webkitPointer.isLocked", "true");
-                    // doNextStep() called by onwebkitpointerlockchange handler.
-                },
-                function () {
-                    testFailed("Lock failed.");
-                    finishJSTest();
-                });
-            expectedTargetToBeLockedString = "targetdiv1";
-        },
-        function () {
-            expectTarget2Unlock = false;
-            navigator.webkitPointer.lock(targetdiv1,
-                function () {
-                    testPassed("Lock target1 succeeded again.");
-                    shouldBe("navigator.webkitPointer.isLocked", "true");
-                    // doNextStep() called by onwebkitpointerlockchange handler.
-                },
-                function () {
-                    testFailed("Lock failed.");
-                    finishJSTest();
-                });
-            expectedTargetToBeLockedString = "targetdiv1";
-        },
-        function () {
-            expectTarget1Unlock = true;
-            navigator.webkitPointer.lock(targetdiv2,
-                function () {
-                    testPassed("Lock target2 succeeded.");
-                    shouldBe("navigator.webkitPointer.isLocked", "true");
-                    // doNextStep() called by onwebkitpointerlockchange handler.
-                },
-                function () {
-                    testFailed("Lock failed.");
-                    finishJSTest();
-                });
-            expectedTargetToBeLockedString = "targetdiv2";
-        },
     ];
     doNextStepWithUserGesture();
 </script>

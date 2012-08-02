@@ -3,12 +3,6 @@ Basic API existence test for Pointer Lock.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS navigator.webkitPointer is defined.
-PASS typeof navigator.webkitPointer.isLocked is 'boolean'
-PASS navigator.webkitPointer.isLocked is false
-PASS navigator.webkitPointer.lock() threw exception TypeError: Not enough arguments.
-PASS navigator.webkitPointer.lock(document.body) is undefined
-PASS navigator.webkitPointer.unlock() is undefined
 PASS document.onwebkitpointerlockchange is defined.
 PASS document.onwebkitpointerlockerror is defined.
 PASS document.webkitExitPointerLock is defined.

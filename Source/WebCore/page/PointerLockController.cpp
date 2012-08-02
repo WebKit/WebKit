@@ -46,7 +46,7 @@ PassOwnPtr<PointerLockController> PointerLockController::create(Page* page)
     return adoptPtr(new PointerLockController(page));
 }
 
-void PointerLockController::requestPointerLock(Element* target, PassRefPtr<VoidCallback> successCallback, PassRefPtr<VoidCallback> failureCallback)
+void PointerLockController::requestPointerLock(Element* target)
 {
     if (!target || !target->inDocument() || m_documentOfRemovedElementWhileWaitingForUnlock
         || target->document()->isSandboxed(SandboxPointerLock)) {
@@ -59,33 +59,12 @@ void PointerLockController::requestPointerLock(Element* target, PassRefPtr<VoidC
             enqueueEvent(eventNames().webkitpointerlockerrorEvent, target);
             return;
         }
-
-        // FIXME: Keep enqueueEvent usage. (https://bugs.webkit.org/show_bug.cgi?id=84402)
         enqueueEvent(eventNames().webkitpointerlockchangeEvent, target);
-        if (m_element->document() != target->document())
-            enqueueEvent(eventNames().webkitpointerlockchangeEvent, m_element.get());
-
-        // FIXME: Remove callback usage, keep assignment of m_element = target. (https://bugs.webkit.org/show_bug.cgi?id=84402)
-        if (m_element == target) {
-            if (successCallback)
-                successCallback->handleEvent();
-        } else {
-            didLosePointerLock(false);
-            m_element = target;
-            if (successCallback)
-                successCallback->handleEvent();
-        }
+        m_element = target;
     } else if (m_page->chrome()->client()->requestPointerLock()) {
         m_element = target;
-        m_successCallback = successCallback;
-        m_failureCallback = failureCallback;
     } else {
-        // FIXME: Keep enqueueEvent usage. (https://bugs.webkit.org/show_bug.cgi?id=84402)
         enqueueEvent(eventNames().webkitpointerlockerrorEvent, target);
-
-        // FIXME: Remove callback usage. (https://bugs.webkit.org/show_bug.cgi?id=84402)
-        if (failureCallback)
-            failureCallback->handleEvent();
     }
 }
 
@@ -113,11 +92,6 @@ void PointerLockController::documentDetached(Document* document)
     }
 }
 
-bool PointerLockController::isLocked()
-{
-    return m_page->chrome()->client()->isPointerLocked();
-}
-
 Element* PointerLockController::element() const
 {
     return m_element.get();
@@ -125,49 +99,20 @@ Element* PointerLockController::element() const
 
 void PointerLockController::didAcquirePointerLock()
 {
-    // FIXME: Keep enqueueEvent usage. (https://bugs.webkit.org/show_bug.cgi?id=84402)
     enqueueEvent(eventNames().webkitpointerlockchangeEvent, m_element.get());
-
-    // FIXME: Remove callback usage. (https://bugs.webkit.org/show_bug.cgi?id=84402)
-    RefPtr<Element> elementToNotify(m_element);
-    RefPtr<VoidCallback> callbackToIssue(m_successCallback);
-    m_successCallback = 0;
-    m_failureCallback = 0;
-
-    if (callbackToIssue && elementToNotify && elementToNotify->document()->frame())
-        callbackToIssue->handleEvent();
 }
 
 void PointerLockController::didNotAcquirePointerLock()
 {
-    // FIXME: Keep enqueueEvent usage. (https://bugs.webkit.org/show_bug.cgi?id=84402)
     enqueueEvent(eventNames().webkitpointerlockerrorEvent, m_element.get());
-
-    // FIXME: Remove callback usage. (https://bugs.webkit.org/show_bug.cgi?id=84402)
-    RefPtr<Element> elementToNotify(m_element);
-    RefPtr<VoidCallback> callbackToIssue(m_failureCallback);
     m_element = 0;
-    m_successCallback = 0;
-    m_failureCallback = 0;
-
-    if (callbackToIssue && elementToNotify && elementToNotify->document()->frame())
-        callbackToIssue->handleEvent();
 }
 
-void PointerLockController::didLosePointerLock(bool sendChangeEvent)
+void PointerLockController::didLosePointerLock()
 {
-    // FIXME: Keep enqueueEvent usage. (https://bugs.webkit.org/show_bug.cgi?id=84402)
-    if (sendChangeEvent)
-        enqueueEvent(eventNames().webkitpointerlockchangeEvent, m_element ? m_element->document() : m_documentOfRemovedElementWhileWaitingForUnlock.get());
-
-    // FIXME: Remove callback usage. (https://bugs.webkit.org/show_bug.cgi?id=84402)
-    RefPtr<Element> elementToNotify(m_element);
+    enqueueEvent(eventNames().webkitpointerlockchangeEvent, m_element ? m_element->document() : m_documentOfRemovedElementWhileWaitingForUnlock.get());
     m_element = 0;
     m_documentOfRemovedElementWhileWaitingForUnlock = 0;
-    m_successCallback = 0;
-    m_failureCallback = 0;
-    if (elementToNotify && elementToNotify->document()->frame())
-        elementToNotify->dispatchEvent(Event::create(eventNames().webkitpointerlocklostEvent, true, false));
 }
 
 void PointerLockController::dispatchLockedMouseEvent(const PlatformMouseEvent& event, const AtomicString& eventType)

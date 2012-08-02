@@ -2,38 +2,17 @@
 <html>
 <head>
 <script src="../http/tests/resources/js-test-pre.js"></script>
-<script src="../http/tests/resources/pointer-lock/pointer-lock-test-harness.js"></script>
 </head>
 <body>
 <script>
     description("Basic API existence test for Pointer Lock.")
-    window.jsTestIsAsync = true;
 
-    todo = [
-        function () {
-            shouldBeDefined("navigator.webkitPointer");
-            shouldEvaluateTo("navigator.webkitPointer.isLocked", false);
-            shouldThrow("navigator.webkitPointer.lock()", "'TypeError: Not enough arguments'");
-            shouldEvaluateTo("navigator.webkitPointer.lock(document.body)", "undefined");
-            // Exit call stack to allow lock to take effect.
-            doNextStep();
-        },
-        function () {
-            shouldEvaluateTo("navigator.webkitPointer.unlock()", "undefined");
-            // Exit call stack to allow unlock to take effect.
-            doNextStep();
-        },
-        function () {
-            shouldBeDefined("document.onwebkitpointerlockchange");
-            shouldBeDefined("document.onwebkitpointerlockerror");
-            shouldBeDefined("document.webkitExitPointerLock");
-            shouldEvaluateTo("document.webkitPointerLockElement", null);
-            element = document.createElement();
-            shouldBeDefined("element.webkitRequestPointerLock");
-            doNextStep();
-        },
-    ];
-    doNextStepWithUserGesture();
+    shouldBeDefined("document.onwebkitpointerlockchange");
+    shouldBeDefined("document.onwebkitpointerlockerror");
+    shouldBeDefined("document.webkitExitPointerLock");
+    shouldEvaluateTo("document.webkitPointerLockElement", null);
+    element = document.createElement();
+    shouldBeDefined("element.webkitRequestPointerLock");
 </script>
 <script src="../http/tests/resources/js-test-post.js"></script>
 </body>

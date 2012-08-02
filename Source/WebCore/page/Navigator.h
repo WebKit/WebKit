@@ -34,7 +34,6 @@ namespace WebCore {
 class DOMMimeTypeArray;
 class DOMPluginArray;
 class Frame;
-class PointerLock;
 class PluginData;
 
 typedef int ExceptionCode;
@@ -53,10 +52,6 @@ public:
 
     virtual String userAgent() const;
 
-#if ENABLE(POINTER_LOCK)
-    PointerLock* webkitPointer() const;
-#endif
-
     // Relinquishes the storage lock, if one exists.
     void getStorageUpdates();
 
@@ -65,9 +60,6 @@ private:
 
     mutable RefPtr<DOMPluginArray> m_plugins;
     mutable RefPtr<DOMMimeTypeArray> m_mimeTypes;
-#if ENABLE(POINTER_LOCK)
-    mutable RefPtr<PointerLock> m_pointer;
-#endif
 };
 
 }

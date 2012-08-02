@@ -1,3 +1,43 @@
+2012-08-02  Vincent Scheib  <scheib@chromium.org>
+
+        Remove old Pointer Lock API.
+        https://bugs.webkit.org/show_bug.cgi?id=88892
+
+        Reviewed by Adam Barth.
+
+        Removing the old Pointer Lock API as one of the final cleanup
+        changes for the Update to Fullscreen style locking Spec meta
+        bug https://bugs.webkit.org/show_bug.cgi?id=84402.
+
+        This change primarily removes idl, access in navigator,
+        one event, and supporting infrastructure in page/PointerLock.
+
+        In PointerLockController changes were already noted clearly with
+        TODOs differentiating old and new api sections.
+
+        Test: pointer-lock/pointerlockchange-event-on-lock-lost.html
+
+        * WebCore.gypi:
+        * dom/Element.cpp:
+        (WebCore::Element::webkitRequestPointerLock):
+        * dom/EventNames.h:
+        (WebCore):
+        * page/Navigator.cpp:
+        * page/Navigator.h:
+        (WebCore):
+        (Navigator):
+        * page/Navigator.idl:
+        * page/PointerLock.cpp: Removed.
+        * page/PointerLock.h: Removed.
+        * page/PointerLock.idl: Removed.
+        * page/PointerLockController.cpp:
+        (WebCore::PointerLockController::requestPointerLock):
+        (WebCore::PointerLockController::didAcquirePointerLock):
+        (WebCore::PointerLockController::didNotAcquirePointerLock):
+        (WebCore::PointerLockController::didLosePointerLock):
+        * page/PointerLockController.h:
+        (PointerLockController):
+
 2012-08-02  Ryosuke Niwa  <rniwa@webkit.org>
 
         scripts in formaction should be stripped upon paste
