@@ -1,3 +1,18 @@
+2012-08-01  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [EFL] Crash at WebCore::toRenderSlider
+        https://bugs.webkit.org/show_bug.cgi?id=92893
+
+        Reviewed by Hajime Morita.
+
+        Added a type check before casting a render object to RenderSlider as 
+        an arbitrary element can have for example webkit-appearance: slider-horizontal.
+
+        No new tests. Existing test fast/forms/range/slider-appearance-crash.html covers the case.
+
+        * platform/efl/RenderThemeEfl.cpp:
+        (WebCore::RenderThemeEfl::paintThemePart):
+
 2012-08-01  Koji Ishii  <kojiishi@gmail.com>
 
         Cache support for OpenTypeVerticalData

@@ -326,6 +326,9 @@ bool RenderThemeEfl::paintThemePart(RenderObject* object, FormType type, const P
     // Currently, only sliders needs this message; if other widget ever needs special
     // treatment, move them to special functions.
     if (type == SliderVertical || type == SliderHorizontal) {
+        if (!object->isSlider())
+            return true; // probably have -webkit-appearance: slider..
+
         RenderSlider* renderSlider = toRenderSlider(object);
         HTMLInputElement* input = renderSlider->node()->toInputElement();
         Edje_Message_Float_Set* msg;
