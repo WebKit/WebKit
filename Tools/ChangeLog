@@ -1,3 +1,17 @@
+2012-08-02  Peter Beverloo  <peter@chromium.org>
+
+        [Chromium] Toggle the type of ant compile for webkit_unit_tests and TestWebKitAPI
+        https://bugs.webkit.org/show_bug.cgi?id=92858
+
+        Reviewed by Adam Barth.
+
+        Now that the sdk_build variable is available, we can remove these two differences
+        as well. This goes together with Adam's bug 90920.
+
+        After this patch, the whole Tools/ directory will be unforked :-).
+
+        * TestWebKitAPI/TestWebKitAPI.gyp/TestWebKitAPI.gyp:
+
 2012-08-02  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
 
         [Qt] MSVC specific buildfix for DRT.
