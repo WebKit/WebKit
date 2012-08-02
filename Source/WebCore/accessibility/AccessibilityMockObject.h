@@ -39,7 +39,8 @@ public:
     
     virtual AccessibilityObject* parentObject() const { return m_parent; }
     virtual void setParent(AccessibilityObject* parent) { m_parent = parent; };
-
+    virtual bool isEnabled() const { return true; }
+    
 protected:
     AccessibilityObject* m_parent;
 

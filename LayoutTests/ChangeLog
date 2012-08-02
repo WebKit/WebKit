@@ -1,3 +1,17 @@
+2012-08-02  Chris Fleizach  <cfleizach@apple.com>
+
+        AXEnabled = false for AXIncrementors inside text fields
+        https://bugs.webkit.org/show_bug.cgi?id=93008
+
+        Reviewed by Anders Carlsson.
+
+        Update tests to reflect that mock objects should be enabled by default.
+
+        * platform/mac/accessibility/html5-input-number-expected.txt:
+        * platform/mac/accessibility/html5-input-number.html:
+        * platform/mac/accessibility/table-attributes-expected.txt:
+        * platform/mac/accessibility/table-sections-expected.txt:
+
 2012-08-02  Roger Fong  <roger_fong@apple.com>
 
         Layout Test: compositing/backface-visibility/backface-visibility-webgl.html is not supported on Windows.

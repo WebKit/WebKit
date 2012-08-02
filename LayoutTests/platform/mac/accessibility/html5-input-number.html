@@ -35,6 +35,7 @@
         shouldBe("incrementor.childAtIndex(0).subrole", "'AXSubrole: AXIncrementArrow'");
         shouldBeTrue("incrementor.childAtIndex(0).width > 0");
         shouldBeTrue("incrementor.childAtIndex(0).height > 0");
+        shouldBeTrue("incrementor.childAtIndex(0).isEnabled");
 
         // Increment.
         incrementor.childAtIndex(0).press();
@@ -44,6 +45,7 @@
         shouldBe("incrementor.childAtIndex(1).subrole", "'AXSubrole: AXDecrementArrow'");
         shouldBeTrue("incrementor.childAtIndex(1).width > 0");
         shouldBeTrue("incrementor.childAtIndex(1).height > 0");
+        shouldBeTrue("incrementor.childAtIndex(1).isEnabled");
 
         // Decrement.
         incrementor.childAtIndex(1).press();

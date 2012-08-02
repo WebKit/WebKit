@@ -1,3 +1,16 @@
+2012-08-02  Chris Fleizach  <cfleizach@apple.com>
+
+        AXEnabled = false for AXIncrementors inside text fields
+        https://bugs.webkit.org/show_bug.cgi?id=93008
+
+        Reviewed by Anders Carlsson.
+
+        Mock objects should return "enabled" by default, since they are valid objects.
+
+        * accessibility/AccessibilityMockObject.h:
+        (WebCore::AccessibilityMockObject::isEnabled):
+        (AccessibilityMockObject):
+
 2012-08-02  Eric Seidel  <eric@webkit.org>
 
         Add back ASSERT(!needsLayout) to RenderTableSection which is now valid

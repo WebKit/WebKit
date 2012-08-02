@@ -186,7 +186,7 @@ AXTitle:
 AXDescription: 
 AXValue: 
 AXFocused: 0
-AXEnabled: 0
+AXEnabled: 1
 AXWindow: <AXColumn>
 AXSelectedTextMarkerRange: (null)
 AXStartTextMarker: (null)
@@ -213,7 +213,7 @@ AXTitle:
 AXDescription: 
 AXValue: 
 AXFocused: 0
-AXEnabled: 0
+AXEnabled: 1
 AXWindow: <AXColumn>
 AXSelectedTextMarkerRange: (null)
 AXStartTextMarker: (null)
@@ -240,7 +240,7 @@ AXTitle:
 AXDescription: 
 AXValue: 
 AXFocused: 0
-AXEnabled: 0
+AXEnabled: 1
 AXWindow: <AXColumn>
 AXSelectedTextMarkerRange: (null)
 AXStartTextMarker: (null)
@@ -675,7 +675,7 @@ AXTitle:
 AXDescription: 
 AXValue: 
 AXFocused: 0
-AXEnabled: 0
+AXEnabled: 1
 AXWindow: <AXGroup>
 AXSelectedTextMarkerRange: (null)
 AXStartTextMarker: (null)
@@ -864,7 +864,7 @@ AXTitle:
 AXDescription: 
 AXValue: 
 AXFocused: 0
-AXEnabled: 0
+AXEnabled: 1
 AXWindow: <AXColumn>
 AXSelectedTextMarkerRange: (null)
 AXStartTextMarker: (null)
@@ -891,7 +891,7 @@ AXTitle:
 AXDescription: 
 AXValue: 
 AXFocused: 0
-AXEnabled: 0
+AXEnabled: 1
 AXWindow: <AXColumn>
 AXSelectedTextMarkerRange: (null)
 AXStartTextMarker: (null)
@@ -918,7 +918,7 @@ AXTitle:
 AXDescription: 
 AXValue: 
 AXFocused: 0
-AXEnabled: 0
+AXEnabled: 1
 AXWindow: <AXColumn>
 AXSelectedTextMarkerRange: (null)
 AXStartTextMarker: (null)
@@ -1353,7 +1353,7 @@ AXTitle:
 AXDescription: 
 AXValue: 
 AXFocused: 0
-AXEnabled: 0
+AXEnabled: 1
 AXWindow: <AXGroup>
 AXSelectedTextMarkerRange: (null)
 AXStartTextMarker: (null)
