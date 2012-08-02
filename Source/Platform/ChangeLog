@@ -1,3 +1,20 @@
+2012-08-02  Hironori Bono  <hbono@chromium.org>
+
+        [Chromium] Implement hyphenation for Chromium
+        https://bugs.webkit.org/show_bug.cgi?id=48610
+
+        Reviewed by Eric Seidel.
+
+        This change adds a couple of methods canHyphenate and computeLastHyphenLocation
+        to Platform so Chromium can implement them. Also, this change uses these methods
+        to implement the hyphenation methods of WebCore. (This change does not change
+        any behaviors until Chromium implements these methods.)
+
+        * chromium/public/Platform.h:
+        (Platform):
+        (WebKit::Platform::canHyphenate): Added a stub method so Chromium can implement it.
+        (WebKit::Platform::computeLastHyphenLocation): ditto.
+
 2012-08-02  Tommy Widenflycht  <tommyw@google.com>
 
         MediaStream API: Move RTCConfiguration to its proper place
