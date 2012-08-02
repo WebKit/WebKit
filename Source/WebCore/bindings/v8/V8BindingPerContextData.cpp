@@ -117,7 +117,7 @@ v8::Local<v8::Function> V8BindingPerContextData::constructorForTypeSlowCase(Wrap
 
     if (type->wrapperTypePrototype == WrapperTypeErrorPrototype) {
         v8::Local<v8::Value> prototypeValue = function->Get(v8::String::NewSymbol("prototype"));
-        if (prototypeValue->IsObject())
+        if (!prototypeValue.IsEmpty() && prototypeValue->IsObject())
             v8::Local<v8::Object>::Cast(prototypeValue)->SetPrototype(m_errorPrototype.get());
     }
 

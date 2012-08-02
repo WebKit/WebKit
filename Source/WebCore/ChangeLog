@@ -1,3 +1,17 @@
+2012-08-02  Erik Arvidsson  <arv@chromium.org>
+
+        [V8] Handle case where Error.prototype returns an empty object
+        https://bugs.webkit.org/show_bug.cgi?id=91792
+
+        Reviewed by Kentaro Hara.
+
+        In some edge cases we get an empty object back from Error.prototype.
+
+        No new tests. I cannot reproduce this.
+
+        * bindings/v8/V8BindingPerContextData.cpp:
+        (WebCore::V8BindingPerContextData::constructorForTypeSlowCase):
+
 2012-08-02  Eric Seidel  <eric@webkit.org>
 
         Add back ASSERT(!needsLayout) to RenderTableSection which is now valid
