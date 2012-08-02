@@ -1,3 +1,9 @@
+2012-08-02  Alexander Pavlov  <apavlov@chromium.org>
+
+        [Chromium] Unreviewed, mark fast/js/dfg-osr-entry-hoisted-clobbered-structure-check.html as DEBUG SLOW = PASS.
+
+        * platform/chromium/TestExpectations:
+
 2012-08-01  Alexander Pavlov  <apavlov@chromium.org>
 
         [Chromium] Unreviewed, update test expectations.

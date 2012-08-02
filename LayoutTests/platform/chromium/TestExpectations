@@ -3518,7 +3518,7 @@ BUGWK92941 WIN : accessibility/loading-iframe-updates-axtree.html = CRASH
 
 // Started failing after http://trac.webkit.org/changeset/124404
 // According to fpizlo@apple.com, the test takes a bit longer than the timeout threshold on Chromium Debug bots is.
-BUGWK92948 DEBUG : fast/js/dfg-osr-entry-hoisted-clobbered-structure-check.html = TIMEOUT PASS
+BUGWK92948 DEBUG SLOW : fast/js/dfg-osr-entry-hoisted-clobbered-structure-check.html = PASS
 
 // Flakily crashing after http://trac.webkit.org/changeset/124402
-BUGWK92952 DEBUG: storage/indexeddb/intversion-omit-parameter.html = CRASH PASS
+BUGWK92952 DEBUG : storage/indexeddb/intversion-omit-parameter.html = CRASH PASS
