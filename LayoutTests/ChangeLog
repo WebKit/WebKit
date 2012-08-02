@@ -1,3 +1,13 @@
+2012-08-02  Peter Kasting  <pkasting@google.com>
+
+        [Chromium] Test expectation updates.
+        https://bugs.webkit.org/show_bug.cgi?id=76270
+        https://bugs.webkit.org/show_bug.cgi?id=92941
+
+        Mark a test as flakily crashing, unskip some questionably-skipped tests, reorganize slow test section a bit.
+
+        * platform/chromium/TestExpectations:
+
 2012-08-02  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         [EFL] Gardening after r124278, r124371

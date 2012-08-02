@@ -6,18 +6,49 @@
 // SLOW TESTS
 // -----------------------------------------------------------------
 
+BUGCR24182 SLOW DEBUG : css3/flexbox/multiline-justify-content.html = PASS
+BUGWK91666 SLOW MAC : editing/input/emacs-ctrl-o.html = IMAGE+TEXT
+BUGWK91666 SLOW MAC : editing/pasteboard/emacs-ctrl-a-k-y.html = IMAGE+TEXT
+BUGWK91666 SLOW MAC : editing/pasteboard/emacs-ctrl-k-y-001.html = IMAGE+TEXT
+BUGWK91666 SLOW MAC : editing/pasteboard/emacs-cntl-y-001.html = IMAGE
+BUGWK82097 SLOW : editing/selection/move-by-word-visually-crash-test-5.html = PASS
+BUGWK79679 SLOW DEBUG : platform/chromium/virtual/gpu/fast/canvas/getPutImageDataPairTest.html = PASS
+BUGCR92287 SLOW WIN MAC : fast/canvas/webgl/context-creation-and-destruction.html = PASS
+BUGCR92287 SLOW WIN MAC : platform/chromium/virtual/gpu/fast/canvas/webgl/context-creation-and-destruction.html = PASS
 BUGCR24182 SLOW MAC DEBUG : fast/css/large-list-of-rules-crash.html = PASS
+BUGCR24182 SLOW SNOWLEOPARD DEBUG : fast/dom/shadow/tree-scope-crash.html = PASS
+BUGCR24182 SLOW SNOWLEOPARD DEBUG : fast/dom/Window/window-postmessage-clone-deep-array.html = PASS
 BUGCR24182 SLOW LINUX MAC DEBUG : fast/dom/Window/window-postmessage-clone-really-deep-array.html = PASS
+BUGCR24182 SLOW SNOWLEOPARD DEBUG : fast/frames/calculate-percentage.html = PASS
+BUGCR24182 SLOW SNOWLEOPARD DEBUG : fast/frames/frameset-frameborder-boolean-values.html = PASS
+BUGCR24182 SLOW SNOWLEOPARD WIN DEBUG : fast/frames/sandboxed-iframe-navigation-parent.html = PASS
+BUGCR24182 SLOW DEBUG : fast/frames/valid.html = PASS
+BUGWK77184 SLOW DEBUG : fast/js/dfg-double-vote-fuzz.html = PASS
+BUGCR119915 SLOW MAC RELEASE : fast/js/dfg-double-vote-fuzz.html = PASS
+BUGCR24182 SLOW DEBUG : fast/js/dfg-float32array.html = PASS
+BUGCR24182 SLOW DEBUG WIN MAC : fast/js/dfg-int16array.html = PASS
+BUGWK77365 SLOW DEBUG : fast/js/dfg-int32array-overflow-values.html = PASS
+BUGCR24182 SLOW DEBUG WIN MAC : fast/js/dfg-int8array.html = PASS
+BUGWK92948 SLOW DEBUG : fast/js/dfg-osr-entry-hoisted-clobbered-structure-check.html = PASS
+BUGWK74787 SLOW DEBUG : fast/js/dfg-poison-fuzz.html = PASS
+BUGWK77069 SLOW DEBUG : fast/js/dfg-uint32array-overflow-values.html = PASS
+BUGCR24182 SLOW DEBUG WIN MAC : fast/js/dfg-uint8clampedarray.html = PASS
 BUGCR24182 SLOW : fast/js/regexp-overflow.html = PASS
+BUGCR24182 SNOWLEOPARD DEBUG : fast/js/repeat-cached-vm-reentry.html = PASS TIMEOUT
 BUGCR24182 SLOW DEBUG : fast/js/toString-and-valueOf-override.html = PASS
+BUGCR24182 SLOW SNOWLEOPARD DEBUG : fast/loader/javascript-url-iframe-crash.html = PASS
+BUGCR24182 SLOW DEBUG : html5lib/webkit-resumer.html = PASS
+BUGCR24182 SLOW WIN DEBUG : http/tests/cache/stopped-revalidation.html = PASS
 BUGCR24182 SLOW WIN RELEASE : http/tests/loading/onload-vs-immediate-refresh.pl = PASS
 BUGCR24182 SLOW WIN DEBUG : http/tests/loading/redirect-methods.html = PASS
 BUGCR24182 SLOW WIN : http/tests/local/file-url-sent-as-referer.html = PASS
+BUGCR24182 SLOW SNOWLEOPARD DEBUG : http/tests/misc/dns-prefetch-control.html = PASS
 BUGCR24182 SLOW WIN DEBUG : http/tests/misc/uncacheable-script-repeated.html = PASS
+BUGCR24182 SLOW WIN : http/tests/navigation/slowtimerredirect-basic.html = PASS
+BUGCR24182 SLOW SNOWLEOPARD DEBUG : http/tests/security/xss-DENIED-iframe-src-alias.html = PASS
 BUGCR24182 SLOW WIN : http/tests/xmlhttprequest/simple-cross-origin-progress-events.html = PASS
 BUGCR24182 SLOW WIN : http/tests/xmlhttprequest/supported-xml-content-types.html = PASS
 BUGCR24182 SLOW WIN : http/tests/xmlhttprequest/XMLHttpRequestException.html = PASS
-BUGCR24182 SLOW WIN : http/tests/navigation/slowtimerredirect-basic.html = PASS
 BUGCR24182 SLOW DEBUG : ietestcenter/Javascript/15.4.4.16-7-c-ii-2.html = PASS
 BUGCR24182 SLOW DEBUG : ietestcenter/Javascript/15.4.4.17-7-c-ii-2.html = PASS
 BUGCR24182 SLOW DEBUG : ietestcenter/Javascript/15.4.4.18-7-c-ii-1.html = PASS
@@ -31,57 +62,14 @@ BUGCR24182 DEBUG : jquery/event.html = PASS TIMEOUT
 BUGCR24182 : jquery/manipulation.html = PASS TIMEOUT
 BUGCR24182 SLOW DEBUG : jquery/offset.html = PASS
 BUGCR24182 LINUX WIN DEBUG : jquery/traversing.html = PASS TIMEOUT
-BUGCR24182 SLOW SNOWLEOPARD WIN DEBUG : fast/frames/sandboxed-iframe-navigation-parent.html = PASS
-BUGCR24182 SNOWLEOPARD DEBUG : fast/js/repeat-cached-vm-reentry.html = PASS TIMEOUT
-BUGCR24182 SLOW SNOWLEOPARD DEBUG : fast/dom/Window/window-postmessage-clone-deep-array.html = PASS
-BUGCR24182 SLOW SNOWLEOPARD DEBUG : fast/frames/calculate-percentage.html = PASS
-BUGCR24182 SLOW DEBUG WIN MAC : fast/js/dfg-int8array.html = PASS
-BUGCR24182 SLOW DEBUG WIN MAC : fast/js/dfg-uint8clampedarray.html = PASS
-BUGCR24182 SLOW DEBUG WIN MAC : fast/js/dfg-int16array.html = PASS
-BUGCR24182 SLOW SNOWLEOPARD DEBUG : http/tests/security/xss-DENIED-iframe-src-alias.html = PASS
-BUGCR24182 SLOW DEBUG : css3/flexbox/multiline-justify-content.html = PASS
-BUGCR24182 SLOW DEBUG : fast/js/dfg-float32array.html = PASS
-BUGCR24182 SLOW SNOWLEOPARD DEBUG : http/tests/misc/dns-prefetch-control.html = PASS
+BUGWK77523 SLOW WIN : media/media-fragments/TC0050-TC0059.html = PASS
+BUGWK77523 SLOW WIN RELEASE : media/media-fragments/TC0080-TC0089.html = PASS
 BUGCR24182 SLOW SNOWLEOPARD DEBUG : svg/dom/baseVal-animVal-crash.html = PASS
-BUGCR24182 SLOW SNOWLEOPARD DEBUG : fast/dom/shadow/tree-scope-crash.html = PASS
-BUGCR24182 SLOW SNOWLEOPARD DEBUG : fast/loader/javascript-url-iframe-crash.html = PASS
-BUGCR24182 SLOW DEBUG : html5lib/webkit-resumer.html = PASS
-BUGCR24182 SLOW SNOWLEOPARD DEBUG : fast/frames/frameset-frameborder-boolean-values.html = PASS
-BUGCR92287 SLOW WIN MAC : fast/canvas/webgl/context-creation-and-destruction.html = PASS
-BUGCR92287 SLOW WIN MAC : platform/chromium/virtual/gpu/fast/canvas/webgl/context-creation-and-destruction.html = PASS
-
-// V8 roll to 3.9.24.1. Remember to remove WIN LINUX from the line below upon fixing.
-BUGCR119915 MAC RELEASE SLOW : fast/js/dfg-double-vote-fuzz.html = PASS
-BUGCR119915 LINUX RELEASE X86 : fast/js/dfg-double-vote-fuzz.html = TEXT
-BUGWK77184 DEBUG SLOW : fast/js/dfg-double-vote-fuzz.html = PASS
-BUGWK77069 DEBUG SLOW : fast/js/dfg-uint32array-overflow-values.html = PASS
-BUGWK74787 DEBUG SLOW : fast/js/dfg-poison-fuzz.html = PASS
-BUGWK77365 DEBUG SLOW : fast/js/dfg-int32array-overflow-values.html = PASS
-BUGWK76270 SKIP : http/tests/appcache/abort-cache-onchecking.html = PASS
-BUGWK76270 SKIP : http/tests/appcache/abort-cache-onchecking-manifest-404.html = PASS
-BUGWK76270 SKIP : http/tests/appcache/abort-cache-onchecking-resource-404.html = PASS
-BUGWK76270 SKIP : http/tests/appcache/abort-cache-ondownloading.html = PASS
-BUGWK76270 SKIP : http/tests/appcache/abort-cache-ondownloading-manifest-404.html = PASS
-BUGWK76270 SKIP : http/tests/appcache/abort-cache-ondownloading-resource-404.html = PASS
-BUGWK76270 SKIP : http/tests/appcache/abort-cache-onprogress.html = PASS
 
 // These tests started being slow when we switched to DRT.
 BUGWK90488 SLOW LINUX WIN DEBUG : inspector = PASS
 BUGWK90488 SLOW LINUX WIN DEBUG : http/tests/inspector = PASS
 BUGWK90488 SLOW LINUX WIN DEBUG : http/tests/inspector-enabled = PASS
-
-BUGWK77523 WIN SLOW : media/media-fragments/TC0050-TC0059.html = PASS
-BUGWK77523 WIN RELEASE SLOW : media/media-fragments/TC0080-TC0089.html = PASS
-
-BUGWK79679 DEBUG SLOW : platform/chromium/virtual/gpu/fast/canvas/getPutImageDataPairTest.html = PASS
-
-BUGWK82097 SLOW : editing/selection/move-by-word-visually-crash-test-5.html = PASS
-BUGWK91666 SLOW MAC : editing/pasteboard/emacs-cntl-y-001.html = IMAGE
-BUGWK91666 SLOW MAC : editing/pasteboard/emacs-ctrl-a-k-y.html = IMAGE+TEXT
-BUGWK91666 SLOW MAC : editing/pasteboard/emacs-ctrl-k-y-001.html = IMAGE+TEXT
-BUGWK91666 SLOW MAC : editing/input/emacs-ctrl-o.html = IMAGE+TEXT
-BUGCR24182 SLOW DEBUG : fast/frames/valid.html = PASS
-BUGCR24182 SLOW WIN DEBUG : http/tests/cache/stopped-revalidation.html = PASS
 
 // -----------------------------------------------------------------
 // TEMPORARILY SKIPPED TESTS
@@ -168,6 +156,15 @@ BUGWK89052 SKIP : fast/css/image-orientation = PASS
 
 // Chromium needs larger media files to test buffering this way.
 BUGWK88172 SKIP : http/tests/media/video-buffered.html = PASS
+
+// [pkasting] Unskipping so I can figure out why these were skipped
+// BUGWK76270 SKIP : http/tests/appcache/abort-cache-onchecking.html = PASS
+// BUGWK76270 SKIP : http/tests/appcache/abort-cache-onchecking-manifest-404.html = PASS
+// BUGWK76270 SKIP : http/tests/appcache/abort-cache-onchecking-resource-404.html = PASS
+// BUGWK76270 SKIP : http/tests/appcache/abort-cache-ondownloading.html = PASS
+// BUGWK76270 SKIP : http/tests/appcache/abort-cache-ondownloading-manifest-404.html = PASS
+// BUGWK76270 SKIP : http/tests/appcache/abort-cache-ondownloading-resource-404.html = PASS
+// BUGWK76270 SKIP : http/tests/appcache/abort-cache-onprogress.html = PASS
 
 // -----------------------------------------------------------------
 // WONTFIX TESTS
@@ -3501,11 +3498,9 @@ BUGWK92852 LINUX DEBUG : media/video-currentTime-set2.html = PASS CRASH
 
 BUGWK92938 : compositing/layer-creation/animation-overlap-with-children.html = TEXT PASS
 
-BUGWK92941 WIN : accessibility/loading-iframe-updates-axtree.html = CRASH
-
-// Started failing after http://trac.webkit.org/changeset/124404
-// According to fpizlo@apple.com, the test takes a bit longer than the timeout threshold on Chromium Debug bots is.
-BUGWK92948 DEBUG SLOW : fast/js/dfg-osr-entry-hoisted-clobbered-structure-check.html = PASS
+BUGWK92941 WIN : accessibility/loading-iframe-updates-axtree.html = CRASH PASS
 
 // Flakily crashing after http://trac.webkit.org/changeset/124402
 BUGWK92952 DEBUG : storage/indexeddb/intversion-omit-parameter.html = CRASH PASS
+
+BUGCR131687 LINUX RELEASE X86 : fast/js/dfg-double-vote-fuzz.html = TEXT
