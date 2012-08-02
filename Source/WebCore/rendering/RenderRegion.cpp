@@ -186,8 +186,17 @@ void RenderRegion::layout()
 
 void RenderRegion::attachRegion()
 {
-    if (!m_flowThread)
+    if (documentBeingDestroyed())
         return;
+
+    if (!m_flowThread && isValid()) {
+        // We have to recreate the named flow if the named flow was deleted because
+        // the region detached was the last one from the named flow.
+        m_flowThread = view()->flowThreadController()->ensureRenderFlowThreadWithName(style()->regionThread());
+        // The region will be marked as valid after being checked that it is not
+        // part of a circular dependency.
+        setIsValid(false);
+    }
 
     // By now the flow thread should already be added to the rendering tree,
     // so we go up the rendering parents and check that this region is not part of the same
@@ -201,6 +210,9 @@ void RenderRegion::attachRegion()
             // cannot change, so it is not worth adding it to the list.
             if (m_flowThread == m_parentNamedFlowThread) {
                 m_flowThread = 0;
+                // This region is not valid for this flow thread (as being part of a circular dependency),
+                // so we should not attempt to recreate it in attachRegion.
+                setIsValid(false);
                 return;
             }
             break;
@@ -214,6 +226,7 @@ void RenderRegion::detachRegion()
 {
     if (m_flowThread)
         m_flowThread->removeRegionFromThread(this);
+    m_flowThread = 0;
 }
 
 RenderBoxRegionInfo* RenderRegion::renderBoxRegionInfo(const RenderBox* box) const

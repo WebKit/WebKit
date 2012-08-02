@@ -1,3 +1,29 @@
+2012-08-02  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        CSSRegions: Crash when reattaching a region to a named flow.
+        https://bugs.webkit.org/show_bug.cgi?id=91307
+
+        Reviewed by Abhishek Arya.
+
+        The lifetime of a flow thread  has changed from not being destroyed (until the RenderView is destroyed) to being destroyed,
+        under certain conditions, no attached regions and no content, before RenderView is destroyed.
+        When the flow thread does not have any content and the region to be detached is the last region for the flow thread,
+        the flow thread is destroyed.
+        In this case, if the same region has to be attached again to the flow thread, the flow thread needs to be
+        recreated, otherwise the crash will result.
+
+        Test: fast/regions/region-flow-reattach-crash.html
+
+        * rendering/RenderRegion.cpp:
+        (WebCore::RenderRegion::attachRegion):
+        We skip the attach if we are in the middle of document destruction.
+        We recreate the flow thread to which the region is intended to be attached only if the region was
+        not previously marked as invalid in relation to the flow thread (because the region was part of a
+        circular dependency).
+        (WebCore::RenderRegion::detachRegion): After the region is detached from flow thread,
+        null the region internal pointer to the flow thread to mark that the region is not
+        attached.
+
 2012-08-02  Tommy Widenflycht  <tommyw@google.com>
 
         MediaStream API: Move RTCConfiguration to its proper place

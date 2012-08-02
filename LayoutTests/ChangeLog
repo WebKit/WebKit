@@ -1,3 +1,17 @@
+2012-08-02  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        CSSRegions: Crash when reattaching a region to a named flow.
+        https://bugs.webkit.org/show_bug.cgi?id=91307
+
+        Reviewed by Abhishek Arya.
+
+        Test that after the last region from a flow thread is reattached
+        to the same flow thread, the flow thread object is properly recreated
+        thus preventing a crash.
+
+        * fast/regions/region-flow-reattach-crash-expected.txt: Added.
+        * fast/regions/region-flow-reattach-crash.html: Added.
+
 2012-08-02  Alexander Pavlov  <apavlov@chromium.org>
 
         [Chromium] Unreviewed, expectations cleanup
