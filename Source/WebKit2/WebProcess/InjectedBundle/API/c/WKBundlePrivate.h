@@ -74,6 +74,7 @@ WK_EXPORT void WKBundleSetGeolocationPermission(WKBundleRef bundle, WKBundlePage
 WK_EXPORT void WKBundleSetJavaScriptCanAccessClipboard(WKBundleRef bundle, WKBundlePageGroupRef pageGroup, bool enabled);
 WK_EXPORT void WKBundleSetPrivateBrowsingEnabled(WKBundleRef bundle, WKBundlePageGroupRef pageGroup, bool enabled);
 WK_EXPORT void WKBundleSetPopupBlockingEnabled(WKBundleRef bundle, WKBundlePageGroupRef pageGroup, bool enabled);
+WK_EXPORT void WKBundleSetUserStyleSheetLocation(WKBundleRef bundle, WKBundlePageGroupRef pageGroup, WKStringRef location);
 WK_EXPORT void WKBundleSetAuthorAndUserStylesEnabled(WKBundleRef bundle, WKBundlePageGroupRef pageGroup, bool enabled);
 WK_EXPORT void WKBundleClearAllDatabases(WKBundleRef bundle);
 WK_EXPORT void WKBundleSetDatabaseQuota(WKBundleRef bundle, uint64_t);

@@ -85,6 +85,8 @@ LayoutTestController::LayoutTestController()
     , m_policyDelegatePermissive(false)
     , m_globalFlag(false)
     , m_customFullScreenBehavior(false)
+    , m_userStyleSheetEnabled(false)
+    , m_userStyleSheetLocation(adoptWK(WKStringCreateWithUTF8CString("")))
 {
     platformInitialize();
 }
@@ -662,6 +664,23 @@ void LayoutTestController::setAlwaysAcceptCookies(bool accept)
 double LayoutTestController::preciseTime()
 {
     return currentTime();
+}
+
+void LayoutTestController::setUserStyleSheetEnabled(bool enabled)
+{
+    m_userStyleSheetEnabled = enabled;
+
+    WKRetainPtr<WKStringRef> emptyUrl = adoptWK(WKStringCreateWithUTF8CString(""));
+    WKStringRef location = enabled ? m_userStyleSheetLocation.get() : emptyUrl.get();
+    WKBundleSetUserStyleSheetLocation(InjectedBundle::shared().bundle(), InjectedBundle::shared().pageGroup(), location);
+}
+
+void LayoutTestController::setUserStyleSheetLocation(JSStringRef location)
+{
+    m_userStyleSheetLocation = adoptWK(WKStringCreateWithJSString(location));
+
+    if (m_userStyleSheetEnabled)
+        setUserStyleSheetEnabled(true);
 }
 
 } // namespace WTR

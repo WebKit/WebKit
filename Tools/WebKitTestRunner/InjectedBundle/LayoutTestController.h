@@ -29,6 +29,7 @@
 #include "JSWrappable.h"
 #include <JavaScriptCore/JSRetainPtr.h>
 #include <WebKit2/WKBundleScriptWorld.h>
+#include <WebKit2/WKRetainPtr.h>
 #include <string>
 #include <wtf/PassRefPtr.h>
 
@@ -100,6 +101,8 @@ public:
     void setCustomPolicyDelegate(bool enabled, bool permissive = false);
     void addOriginAccessWhitelistEntry(JSStringRef sourceOrigin, JSStringRef destinationProtocol, JSStringRef destinationHost, bool allowDestinationSubdomains);
     void removeOriginAccessWhitelistEntry(JSStringRef sourceOrigin, JSStringRef destinationProtocol, JSStringRef destinationHost, bool allowDestinationSubdomains);
+    void setUserStyleSheetEnabled(bool);
+    void setUserStyleSheetLocation(JSStringRef);
 
     // Special DOM functions.
     JSValueRef computedStyleIncludingVisitedInfo(JSValueRef element);
@@ -254,6 +257,9 @@ private:
     
     bool m_globalFlag;
     bool m_customFullScreenBehavior;
+
+    bool m_userStyleSheetEnabled;
+    WKRetainPtr<WKStringRef> m_userStyleSheetLocation;
 
     PlatformTimerRef m_waitToDumpWatchdogTimer;
 };

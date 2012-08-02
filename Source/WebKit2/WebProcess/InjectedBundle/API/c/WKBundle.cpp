@@ -255,3 +255,8 @@ void WKBundleSetPageVisibilityState(WKBundleRef bundleRef, WKBundlePageRef pageR
 {
     toImpl(bundleRef)->setPageVisibilityState(toImpl(pageRef), state, isInitialState);
 }
+
+void WKBundleSetUserStyleSheetLocation(WKBundleRef bundleRef, WKBundlePageGroupRef pageGroupRef, WKStringRef location)
+{
+    toImpl(bundleRef)->setUserStyleSheetLocation(toImpl(pageGroupRef), toImpl(location)->string());
+}

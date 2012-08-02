@@ -479,4 +479,11 @@ void InjectedBundle::setPageVisibilityState(WebPage* page, int state, bool isIni
 #endif
 }
 
+void InjectedBundle::setUserStyleSheetLocation(WebPageGroupProxy* pageGroup, const String& location)
+{
+    const HashSet<Page*>& pages = PageGroup::pageGroup(pageGroup->identifier())->pages();
+    for (HashSet<Page*>::iterator iter = pages.begin(); iter != pages.end(); ++iter)
+        (*iter)->settings()->setUserStyleSheetLocation(KURL(KURL(), location));
+}
+
 } // namespace WebKit

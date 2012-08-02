@@ -1,3 +1,22 @@
+2012-08-02  Dinu Jacob  <dinu.jacob@nokia.com>
+
+        WebKitTestRunner needs layoutTestController.setUserStyleSheetEnabled
+        https://bugs.webkit.org/show_bug.cgi?id=42679
+
+        Reviewed by Eric Seidel.
+
+        Added WKBundleSetUserStyleSheetLocation API.
+
+        * WebProcess/InjectedBundle/API/c/WKBundle.cpp:
+        (WKBundleSetUserStyleSheetLocation): Added.
+        * WebProcess/InjectedBundle/API/c/WKBundlePrivate.h: Added WKBundleSetUserStyleSheetLocation.
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::setUserStyleSheetLocation): Added. Sets the user style sheet location
+        for all pages in the page group.
+        (WebKit):
+        * WebProcess/InjectedBundle/InjectedBundle.h:
+        (InjectedBundle):
+
 2012-08-02  Lauro Neto  <lauro.neto@openbossa.org>
 
         [Qt] Fix axis locking when panning on N9

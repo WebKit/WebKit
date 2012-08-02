@@ -1,3 +1,14 @@
+2012-08-02  Dinu Jacob  <dinu.jacob@nokia.com>
+
+        WebKitTestRunner needs layoutTestController.setUserStyleSheetEnabled
+        https://bugs.webkit.org/show_bug.cgi?id=42679
+
+        Reviewed by Eric Seidel.
+
+        Removed tests that are now passing.
+
+        * platform/wk2/Skipped:
+
 2012-08-02  Dominik Röttsches  <dominik.rottsches@intel.com>
 
         [EFL][GTK] Implement font-feature settings

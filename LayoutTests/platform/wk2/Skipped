@@ -611,14 +611,6 @@ http/tests/navigation/timerredirect-subframeload.html
 # <https://bugs.webkit.org/show_bug.cgi?id=42675>
 http/tests/cache/subresource-failover-to-network.html
 
-# WebKitTestRunner needs layoutTestController.setUserStyleSheetLocation
-# <https://bugs.webkit.org/show_bug.cgi?id=42678>
-http/tests/security/local-user-CSS-from-remote.html
-
-# WebKitTestRunner needs layoutTestController.setUserStyleSheetEnabled
-# <https://bugs.webkit.org/show_bug.cgi?id=42679> 
-fast/loader/user-stylesheet-fast-path.html
-
 # WebKitTestRunner needs layoutTestController.setCacheModel
 # <https://bugs.webkit.org/show_bug.cgi?id=42684>
 fast/dom/HTMLScriptElement/nested-execution.html
