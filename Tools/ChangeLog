@@ -1,3 +1,20 @@
+2012-08-02  Dirk Pranke  <dpranke@chromium.org>
+
+        test-webkitpy can fail on a clean checkout
+        https://bugs.webkit.org/show_bug.cgi?id=93039
+
+        Reviewed by Adam Barth.
+
+        Now that we run tests in parallel that can cause the installer
+        to try and install packages in parallel (even the same package),
+        and that probably won't work. We fix this by autoinstalling
+        everything up front (serially).
+
+        * Scripts/webkitpy/test/main.py:
+        (Tester._run_tests):
+        * Scripts/webkitpy/thirdparty/__init__.py:
+        (autoinstall_everything):
+
 2012-06-15  David Barton  <dbarton@mathscribe.com>
 
         MathML: nested square root symbols have varying descenders

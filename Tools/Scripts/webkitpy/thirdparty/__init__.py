@@ -70,6 +70,8 @@ class AutoinstallImportHook(object):
         if '.autoinstalled' not in fullname:
             return
 
+        # Note: all of the methods must follow the "_install_XXX" convention in
+        # order for autoinstall_everything(), below, to work properly.
         if '.mechanize' in fullname:
             self._install_mechanize()
         elif '.pep8' in fullname:
@@ -155,4 +157,11 @@ class AutoinstallImportHook(object):
         installer.install(url=url, url_subpath=url_subpath)
 
 
-sys.meta_path.append(AutoinstallImportHook())
+_hook = AutoinstallImportHook()
+sys.meta_path.append(_hook)
+
+
+def autoinstall_everything():
+    install_methods = [method for method in dir(_hook.__class__) if method.startswith('_install_')]
+    for method in install_methods:
+        getattr(_hook, method)()

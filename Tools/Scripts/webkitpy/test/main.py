@@ -119,17 +119,19 @@ class Tester(object):
         return self._run_tests(names)
 
     def _run_tests(self, names):
-        if self._options.coverage:
-            try:
-                import webkitpy.thirdparty.autoinstalled.coverage as coverage
-            except ImportError:
-                _log.error("Failed to import 'coverage'; can't generate coverage numbers.")
-                return False
-            cov = coverage.coverage()
-            cov.start()
-
         # Make sure PYTHONPATH is set up properly.
         sys.path = self.finder.additional_paths(sys.path) + sys.path
+
+        # We autoinstall everything up so that we can run tests concurrently
+        # and not have to worry about autoinstalling packages concurrently.
+        self.printer.write_update("Checking autoinstalled packages ...")
+        from webkitpy.thirdparty import autoinstall_everything
+        autoinstall_everything()
+
+        if self._options.coverage:
+            import webkitpy.thirdparty.autoinstalled.coverage as coverage
+            cov = coverage.coverage()
+            cov.start()
 
         self.printer.write_update("Checking imports ...")
         if not self._check_imports(names):
