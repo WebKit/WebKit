@@ -35,6 +35,7 @@
 #include "Document.h"
 #include "ExceptionCode.h"
 #include "Frame.h"
+#include "GenericBinding.h"
 #include "MessagePort.h"
 #include "ScriptExecutionContext.h"
 #include "ScriptState.h"

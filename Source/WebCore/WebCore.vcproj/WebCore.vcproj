@@ -63774,18 +63774,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\bindings\generic\BindingSecurity.h"
-					>
-				</File>
-				<File
-					RelativePath="..\bindings\generic\BindingSecurityBase.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\bindings\generic\BindingSecurityBase.h"
-					>
-				</File>
-				<File
 					RelativePath="..\bindings\generic\GenericBinding.h"
 					>
 				</File>

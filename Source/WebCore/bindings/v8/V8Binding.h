@@ -33,15 +33,17 @@
 
 #include "BindingSecurity.h"
 #include "DOMDataStore.h"
+#include "Document.h"
+#include "Frame.h"
 #include "PlatformString.h"
 #include "V8BindingMacros.h"
 #include "V8DOMWrapper.h"
 #include "V8GCController.h"
 #include "V8HiddenPropertyName.h"
+#include "V8Proxy.h"
 #include <wtf/MathExtras.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/text/AtomicString.h>
-
 #include <v8.h>
 
 namespace WebCore {

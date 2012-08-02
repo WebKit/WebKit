@@ -29,26 +29,20 @@
  */
 
 #include "config.h"
-#include "BindingSecurityBase.h"
+#include "BindingSecurity.h"
 
+#include "BindingState.h"
 #include "DOMWindow.h"
 #include "Document.h"
 #include "Frame.h"
+#include "HTMLFrameElementBase.h"
+#include "HTMLParserIdioms.h"
 #include "SecurityOrigin.h"
+#include "Settings.h"
 
 namespace WebCore {
 
-DOMWindow* BindingSecurityBase::getDOMWindow(Frame* frame)
-{
-    return frame->domWindow();
-}
-
-Frame* BindingSecurityBase::getFrame(Node* node)
-{
-    return node->document()->frame();
-}
-
-bool BindingSecurityBase::canAccess(DOMWindow* activeWindow, DOMWindow* targetWindow)
+static bool canAccess(DOMWindow* activeWindow, DOMWindow* targetWindow)
 {
     ASSERT(targetWindow);
     if (activeWindow == targetWindow)
@@ -69,6 +63,41 @@ bool BindingSecurityBase::canAccess(DOMWindow* activeWindow, DOMWindow* targetWi
         return true;
 
     return false;
+}
+
+bool BindingSecurity::canAccessFrame(BindingState* state, Frame* target, bool reportError)
+{
+    if (!target)
+        return false;
+
+    if (!canAccess(activeWindow(state), target->domWindow())) {
+        if (reportError)
+            immediatelyReportUnsafeAccessTo(state, target);
+        return false;
+    }
+    return true;
+}
+
+bool BindingSecurity::shouldAllowAccessToNode(BindingState* state, Node* node)
+{
+    if (!node)
+        return false;
+
+    Frame* target = node->document()->frame();
+    if (!target)
+        return false;
+
+    return canAccessFrame(state, target, true);
+}
+
+bool BindingSecurity::allowSettingFrameSrcToJavascriptUrl(BindingState* state, HTMLFrameElementBase* frame, const String& value)
+{
+    if (protocolIsJavaScript(stripLeadingAndTrailingHTMLSpaces(value))) {
+        Node* contentDocument = frame->contentDocument();
+        if (contentDocument && !shouldAllowAccessToNode(state, contentDocument))
+            return false;
+    }
+    return true;
 }
 
 }

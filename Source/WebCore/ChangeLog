@@ -1,3 +1,28 @@
+2012-08-02  Adam Barth  <abarth@webkit.org>
+
+        BindingSecurityBase serves no purpose and should be removed
+        https://bugs.webkit.org/show_bug.cgi?id=93025
+
+        Reviewed by Eric Seidel.
+
+        Now that we don't use templates in the generic bindings, we can merge
+        BindingSecurity and BindingSecurityBase. This patch also removes some
+        functions that are no longer used (and reduces the number of
+        #includes).
+
+        No behavior change.
+
+        * GNUmakefile.list.am:
+        * WebCore.gypi:
+        * bindings/generic/BindingSecurity.h:
+        (WebCore):
+        (BindingSecurity):
+        * bindings/generic/BindingSecurityBase.cpp: Removed.
+        * bindings/generic/BindingSecurityBase.h: Removed.
+        * bindings/v8/V8Binding.h:
+        * bindings/v8/V8Utilities.cpp:
+        * bindings/v8/custom/V8MutationObserverCustom.cpp:
+
 2012-08-02  Ryosuke Niwa  <rniwa@webkit.org>
 
         Let XCode have its own away and also sort the files.

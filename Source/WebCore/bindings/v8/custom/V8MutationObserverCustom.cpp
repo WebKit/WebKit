@@ -34,6 +34,7 @@
 
 #include "V8MutationObserver.h"
 
+#include "ExceptionCode.h"
 #include "MutationObserver.h"
 #include "V8Binding.h"
 #include "V8BindingMacros.h"

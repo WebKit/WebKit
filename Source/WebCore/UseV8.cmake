@@ -16,6 +16,8 @@ LIST(APPEND WebCore_IDL_INCLUDES
 )
 
 LIST(APPEND WebCore_SOURCES
+    bindings/generic/BindingSecurity.cpp
+
     bindings/v8/BindingState.cpp
     bindings/v8/DOMData.cpp
     bindings/v8/DOMDataStore.cpp
