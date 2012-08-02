@@ -44,6 +44,7 @@ namespace IDBLevelDBCoding {
 const unsigned char MinimumIndexId = 30;
 
 Vector<char> encodeByte(unsigned char);
+const char* decodeByte(const char* p, const char* limit, unsigned char& foundChar);
 Vector<char> maxIDBKey();
 Vector<char> minIDBKey();
 Vector<char> encodeBool(bool);
@@ -161,16 +162,16 @@ public:
 
     ObjectStoreMetaDataKey();
     static const char* decode(const char* start, const char* limit, ObjectStoreMetaDataKey* result);
-    static Vector<char> encode(int64_t databaseId, int64_t objectStoreId, int64_t metaDataType);
+    static Vector<char> encode(int64_t databaseId, int64_t objectStoreId, unsigned char metaDataType);
     static Vector<char> encodeMaxKey(int64_t databaseId);
     static Vector<char> encodeMaxKey(int64_t databaseId, int64_t objectStoreId);
     int64_t objectStoreId() const;
-    int64_t metaDataType() const;
+    unsigned char metaDataType() const;
     int compare(const ObjectStoreMetaDataKey& other);
 
 private:
     int64_t m_objectStoreId;
-    int64_t m_metaDataType; // FIXME: Make this a byte.
+    unsigned char m_metaDataType;
 };
 
 class IndexMetaDataKey {

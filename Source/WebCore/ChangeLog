@@ -1,3 +1,29 @@
+2012-08-01  Xingnan Wang  <xingnan.wang@intel.com>
+
+        IndexedDB: ObjectStoreMetaDataKey::m_metaDataType should use byte type
+        https://bugs.webkit.org/show_bug.cgi?id=92725
+
+        Reviewed by Kentaro Hara.
+
+        No new tests - Low level functions covered by existing layout tests and also covered by Chromium
+        webkit_unit_tests IDBLevelIDBCodingTest.*.
+
+        * Modules/indexeddb/IDBLevelDBCoding.cpp:
+        (IDBLevelDBCoding):
+        (WebCore::IDBLevelDBCoding::decodeByte):
+        (WebCore::IDBLevelDBCoding::DatabaseFreeListKey::decode):
+        (WebCore::IDBLevelDBCoding::DatabaseNameKey::decode):
+        (WebCore::IDBLevelDBCoding::ObjectStoreMetaDataKey::decode):
+        (WebCore::IDBLevelDBCoding::ObjectStoreMetaDataKey::encode):
+        (WebCore::IDBLevelDBCoding::ObjectStoreMetaDataKey::metaDataType):
+        (WebCore::IDBLevelDBCoding::IndexMetaDataKey::decode):
+        (WebCore::IDBLevelDBCoding::ObjectStoreFreeListKey::decode):
+        (WebCore::IDBLevelDBCoding::IndexFreeListKey::decode):
+        (WebCore::IDBLevelDBCoding::ObjectStoreNamesKey::decode):
+        (WebCore::IDBLevelDBCoding::IndexNamesKey::decode):
+        * Modules/indexeddb/IDBLevelDBCoding.h:
+        (IDBLevelDBCoding):
+
 2012-08-01  James Robinson  <jamesr@chromium.org>
 
         [chromium] Use new-style tracing macros with explicit category

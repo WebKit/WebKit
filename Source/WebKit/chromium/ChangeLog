@@ -1,3 +1,18 @@
+2012-08-01  Xingnan Wang  <xingnan.wang@intel.com>
+
+        IndexedDB: ObjectStoreMetaDataKey::m_metaDataType should use byte type
+        https://bugs.webkit.org/show_bug.cgi?id=92725
+
+        Reviewed by Kentaro Hara.
+
+        Add two new tests in IDBLevelDBCodingTest.cpp. One for an added function decodeByte() and 
+        another for verifying that encodeByte() and encodeVarInt() are indentical when the encoded 
+        values are <= 127.
+
+        * tests/IDBLevelDBCodingTest.cpp:
+        (IDBLevelDBCoding::TEST):
+        (IDBLevelDBCoding):
+
 2012-08-01  James Robinson  <jamesr@chromium.org>
 
         [chromium] Use new-style tracing macros with explicit category

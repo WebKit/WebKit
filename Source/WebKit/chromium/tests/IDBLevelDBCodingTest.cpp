@@ -84,6 +84,24 @@ TEST(IDBLevelDBCodingTest, EncodeByte)
     EXPECT_EQ(expected, encodeByte(c));
 }
 
+TEST(IDBLevelDBCodingTest, DecodeByte)
+{
+    Vector<unsigned char> testCases;
+    testCases.append(0);
+    testCases.append(1);
+    testCases.append(255);
+
+    for (size_t i = 0; i < testCases.size(); ++i) {
+        unsigned char n = testCases[i];
+        Vector<char> v = encodeByte(n);
+
+        unsigned char res;
+        const char* p = decodeByte(v.data(), v.data() + v.size(), res);
+        EXPECT_EQ(n, res);
+        EXPECT_EQ(v.data() + v.size(), p);
+    }
+}
+   
 TEST(IDBLevelDBCodingTest, EncodeBool)
 {
     {
@@ -679,6 +697,24 @@ TEST(IDBLevelDBCodingTest, ComparisonTest)
             EXPECT_LT(compare(keyA, keyB), 0);
             EXPECT_GT(compare(keyB, keyA), 0);
         }
+    }
+}
+
+TEST(IDBLevelDBCodingTest, EncodeVarIntVSEncodeByteTest)
+{
+    Vector<unsigned char> testCases;
+    testCases.append(0);
+    testCases.append(1);
+    testCases.append(127);
+
+    for (size_t i = 0; i < testCases.size(); ++i) {
+        unsigned char n = testCases[i];
+
+        Vector<char> vA = encodeByte(n);
+        Vector<char> vB = encodeVarInt(static_cast<int64_t>(n));
+
+        EXPECT_EQ(vA.size(), vB.size());
+        EXPECT_EQ(*(vA.data()), *(vB.data()));
     }
 }
 
