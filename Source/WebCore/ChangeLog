@@ -1,3 +1,50 @@
+2012-08-02  Tommy Widenflycht  <tommyw@google.com>
+
+        MediaStream API: Add RTCPeerConnectionHandler infrastructure
+        https://bugs.webkit.org/show_bug.cgi?id=92866
+
+        Reviewed by Kentaro Hara.
+
+        Introducing RTCPeerConnectionHandler & RTCPeerConnectionHandlerClient,
+        together with the Chromium WebKit interface, following the pattern of
+        the previous PeerConnection00Handler but with the optimizations from MediaStreamCenter.
+
+        Not yet testable due to not enough code landed.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Modules/mediastream/RTCPeerConnection.cpp:
+        (WebCore::RTCPeerConnection::create):
+        (WebCore::RTCPeerConnection::RTCPeerConnection):
+        * Modules/mediastream/RTCPeerConnection.h:
+        (RTCPeerConnection):
+        * WebCore.gypi:
+        * platform/mediastream/RTCPeerConnectionHandler.cpp: Added.
+        (WebCore):
+        (RTCPeerConnectionHandlerDummy):
+        (WebCore::RTCPeerConnectionHandler::create):
+        (WebCore::RTCPeerConnectionHandlerDummy::RTCPeerConnectionHandlerDummy):
+        (WebCore::RTCPeerConnectionHandlerDummy::~RTCPeerConnectionHandlerDummy):
+        (WebCore::RTCPeerConnectionHandlerDummy::initialize):
+        * platform/mediastream/RTCPeerConnectionHandler.h: Copied from Source/WebCore/Modules/mediastream/RTCPeerConnection.h.
+        (WebCore):
+        (RTCPeerConnectionHandler):
+        (WebCore::RTCPeerConnectionHandler::~RTCPeerConnectionHandler):
+        (WebCore::RTCPeerConnectionHandler::RTCPeerConnectionHandler):
+        * platform/mediastream/RTCPeerConnectionHandlerClient.h: Copied from Source/WebCore/Modules/mediastream/RTCPeerConnection.h.
+        (WebCore):
+        (RTCPeerConnectionHandlerClient):
+        (WebCore::RTCPeerConnectionHandlerClient::~RTCPeerConnectionHandlerClient):
+        * platform/mediastream/chromium/RTCPeerConnectionHandlerChromium.cpp: Added.
+        (WebCore):
+        (WebCore::RTCPeerConnectionHandler::create):
+        (WebCore::RTCPeerConnectionHandlerChromium::RTCPeerConnectionHandlerChromium):
+        (WebCore::RTCPeerConnectionHandlerChromium::~RTCPeerConnectionHandlerChromium):
+        (WebCore::RTCPeerConnectionHandlerChromium::initialize):
+        * platform/mediastream/chromium/RTCPeerConnectionHandlerChromium.h: Added.
+        (WebCore):
+        (RTCPeerConnectionHandlerChromium):
+
 2012-08-02  Yury Semikhatsky  <yurys@chromium.org>
 
         Web Inspector: rename reportMemoryUsage to reportDescendantMemoryUsage in StyleRuleBase descendants

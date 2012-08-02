@@ -1,3 +1,28 @@
+2012-08-02  Tommy Widenflycht  <tommyw@google.com>
+
+        MediaStream API: Add RTCPeerConnectionHandler infrastructure
+        https://bugs.webkit.org/show_bug.cgi?id=92866
+
+        Reviewed by Kentaro Hara.
+
+        Introducing RTCPeerConnectionHandler & RTCPeerConnectionHandlerClient,
+        together with the Chromium WebKit interface, following the pattern of
+        the previous PeerConnection00Handler but with the optimizations from MediaStreamCenter.
+
+        * Platform.gypi:
+        * chromium/public/Platform.h:
+        (WebKit):
+        (Platform):
+        (WebKit::Platform::createRTCPeerConnectionHandler):
+        * chromium/public/WebRTCPeerConnectionHandler.h: Added.
+        (WebKit):
+        (WebRTCPeerConnectionHandler):
+        (WebKit::WebRTCPeerConnectionHandler::~WebRTCPeerConnectionHandler):
+        * chromium/public/WebRTCPeerConnectionHandlerClient.h: Added.
+        (WebKit):
+        (WebRTCPeerConnectionHandlerClient):
+        (WebKit::WebRTCPeerConnectionHandlerClient::~WebRTCPeerConnectionHandlerClient):
+
 2012-08-02  Hironori Bono  <hbono@chromium.org>
 
         [Chromium] Implement hyphenation for Chromium

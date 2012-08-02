@@ -28,54 +28,31 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RTCPeerConnection_h
-#define RTCPeerConnection_h
+#ifndef RTCPeerConnectionHandler_h
+#define RTCPeerConnectionHandler_h
 
 #if ENABLE(MEDIA_STREAM)
 
-#include "ActiveDOMObject.h"
-#include "Dictionary.h"
-#include "EventTarget.h"
-#include "ExceptionBase.h"
-#include "RTCPeerConnectionHandler.h"
-#include "RTCPeerConnectionHandlerClient.h"
-#include <wtf/RefCounted.h>
+#include <wtf/PassOwnPtr.h>
+#include <wtf/PassRefPtr.h>
 
 namespace WebCore {
-class RTCConfiguration;
 
-class RTCPeerConnection : public RefCounted<RTCPeerConnection>, public RTCPeerConnectionHandlerClient, public EventTarget, public ActiveDOMObject {
+class RTCPeerConnectionHandlerClient;
+
+class RTCPeerConnectionHandler {
 public:
-    static PassRefPtr<RTCPeerConnection> create(ScriptExecutionContext*, const Dictionary& rtcConfiguration, const Dictionary& mediaConstraints, ExceptionCode&);
-    ~RTCPeerConnection();
+    static PassOwnPtr<RTCPeerConnectionHandler> create(RTCPeerConnectionHandlerClient*);
+    virtual ~RTCPeerConnectionHandler() { }
 
-    // EventTarget
-    virtual const AtomicString& interfaceName() const OVERRIDE;
-    virtual ScriptExecutionContext* scriptExecutionContext() const OVERRIDE;
+    virtual bool initialize() = 0;
 
-    // ActiveDOMObject
-    virtual void stop() OVERRIDE;
-
-    using RefCounted<RTCPeerConnection>::ref;
-    using RefCounted<RTCPeerConnection>::deref;
-
-private:
-    RTCPeerConnection(ScriptExecutionContext*, PassRefPtr<RTCConfiguration>, ExceptionCode&);
-
-    static PassRefPtr<RTCConfiguration> parseConfiguration(const Dictionary& configuration, ExceptionCode&);
-
-    // EventTarget implementation.
-    virtual EventTargetData* eventTargetData();
-    virtual EventTargetData* ensureEventTargetData();
-    virtual void refEventTarget() { ref(); }
-    virtual void derefEventTarget() { deref(); }
-    EventTargetData m_eventTargetData;
-
-    OwnPtr<RTCPeerConnectionHandler> m_peerHandler;
+protected:
+    RTCPeerConnectionHandler() { }
 };
 
 } // namespace WebCore
 
 #endif // ENABLE(MEDIA_STREAM)
 
-#endif // RTCPeerConnection_h
+#endif // RTCPeerConnectionHandler_h

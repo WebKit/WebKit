@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Google Inc. All rights reserved.
+ * Copyright (C) 2012 Google AB. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,54 +28,21 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RTCPeerConnection_h
-#define RTCPeerConnection_h
+#ifndef RTCPeerConnectionHandlerClient_h
+#define RTCPeerConnectionHandlerClient_h
 
 #if ENABLE(MEDIA_STREAM)
 
-#include "ActiveDOMObject.h"
-#include "Dictionary.h"
-#include "EventTarget.h"
-#include "ExceptionBase.h"
-#include "RTCPeerConnectionHandler.h"
-#include "RTCPeerConnectionHandlerClient.h"
-#include <wtf/RefCounted.h>
-
 namespace WebCore {
-class RTCConfiguration;
 
-class RTCPeerConnection : public RefCounted<RTCPeerConnection>, public RTCPeerConnectionHandlerClient, public EventTarget, public ActiveDOMObject {
+class RTCPeerConnectionHandlerClient {
 public:
-    static PassRefPtr<RTCPeerConnection> create(ScriptExecutionContext*, const Dictionary& rtcConfiguration, const Dictionary& mediaConstraints, ExceptionCode&);
-    ~RTCPeerConnection();
+    virtual ~RTCPeerConnectionHandlerClient() { }
 
-    // EventTarget
-    virtual const AtomicString& interfaceName() const OVERRIDE;
-    virtual ScriptExecutionContext* scriptExecutionContext() const OVERRIDE;
-
-    // ActiveDOMObject
-    virtual void stop() OVERRIDE;
-
-    using RefCounted<RTCPeerConnection>::ref;
-    using RefCounted<RTCPeerConnection>::deref;
-
-private:
-    RTCPeerConnection(ScriptExecutionContext*, PassRefPtr<RTCConfiguration>, ExceptionCode&);
-
-    static PassRefPtr<RTCConfiguration> parseConfiguration(const Dictionary& configuration, ExceptionCode&);
-
-    // EventTarget implementation.
-    virtual EventTargetData* eventTargetData();
-    virtual EventTargetData* ensureEventTargetData();
-    virtual void refEventTarget() { ref(); }
-    virtual void derefEventTarget() { deref(); }
-    EventTargetData m_eventTargetData;
-
-    OwnPtr<RTCPeerConnectionHandler> m_peerHandler;
 };
 
 } // namespace WebCore
 
 #endif // ENABLE(MEDIA_STREAM)
 
-#endif // RTCPeerConnection_h
+#endif // RTCPeerConnectionHandlerClient_h
