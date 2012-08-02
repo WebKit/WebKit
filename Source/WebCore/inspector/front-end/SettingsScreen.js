@@ -45,7 +45,7 @@ WebInspector.SettingsScreen = function(onHide)
     this._tabbedPane.element.addStyleClass("help-window-main");
     this._tabbedPane.element.appendChild(this._createCloseButton());
     this._tabbedPane.appendTab(WebInspector.SettingsScreen.Tabs.General, WebInspector.UIString("General"), new WebInspector.GenericSettingsTab());
-    this._tabbedPane.appendTab(WebInspector.SettingsScreen.Tabs.UserAgent, WebInspector.UIString("User agent"), new WebInspector.UserAgentSettingsTab());
+    this._tabbedPane.appendTab(WebInspector.SettingsScreen.Tabs.UserAgent, WebInspector.UIString("Overrides"), new WebInspector.UserAgentSettingsTab());
     if (WebInspector.experimentsSettings.experimentsEnabled)
         this._tabbedPane.appendTab(WebInspector.SettingsScreen.Tabs.Experiments, WebInspector.UIString("Experiments"), new WebInspector.ExperimentsSettingsTab());
     this._tabbedPane.appendTab(WebInspector.SettingsScreen.Tabs.Shortcuts, WebInspector.UIString("Shortcuts"), WebInspector.shortcutsScreen.createShortcutsTabView());
@@ -366,7 +366,7 @@ WebInspector.UserAgentSettingsTab.prototype = {
         var checkboxElement = labelElement.createChild("input");
         checkboxElement.type = "checkbox";
         checkboxElement.checked = !!userAgent;
-        labelElement.appendChild(document.createTextNode("Override User Agent"));
+        labelElement.appendChild(document.createTextNode("User Agent"));
         p.appendChild(this._createUserAgentSelectRowElement(checkboxElement));
         return p;
     },
@@ -543,7 +543,7 @@ WebInspector.UserAgentSettingsTab.prototype = {
         checkboxElement.checked = !metrics || (metrics.width && metrics.height && metrics.fontScaleFactor);
         checkboxElement.addEventListener("click", this._onMetricsCheckboxClicked.bind(this), false);
         this._metricsCheckboxElement = checkboxElement;
-        labelElement.appendChild(document.createTextNode(WebInspector.UIString("Override device metrics")));
+        labelElement.appendChild(document.createTextNode(WebInspector.UIString("Device metrics")));
 
         const metricsSectionElement = this._createDeviceMetricsElement(metrics);
         p.appendChild(metricsSectionElement);

@@ -1,3 +1,15 @@
+2012-08-02  Addy Osmani  <addyo@chromium.org>
+
+        Web Inspector: Rename 'User agent' to 'Overrides' in settings screen
+        https://bugs.webkit.org/show_bug.cgi?id=92990
+
+        Reviewed by Pavel Feldman.
+
+        Simple setting rename of User agent -> Overrides
+
+        * English.lproj/localizedStrings.js:
+        * inspector/front-end/SettingsScreen.js:
+
 2012-08-02  Philip Rogers  <pdr@google.com>
 
         Do not dispatch modification events in SVG attribute synchronization
