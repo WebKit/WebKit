@@ -1,3 +1,26 @@
+2012-08-02  Oliver Hunt  <oliver@apple.com>
+
+        A few objects aren't being safely protected from GC in all cases
+        https://bugs.webkit.org/show_bug.cgi?id=93031
+
+        Reviewed by Filip Pizlo.
+
+        I haven't seen evidence that anyone is hitting bugs due to this, but any
+        GC error can lead to later -- hard to diagnose -- bugs if they result in
+        resurrecting dead objects.
+
+        * bindings/js/JSCustomXPathNSResolver.cpp:
+        (WebCore::JSCustomXPathNSResolver::create):
+        (WebCore::JSCustomXPathNSResolver::JSCustomXPathNSResolver):
+        (WebCore::JSCustomXPathNSResolver::lookupNamespaceURI):
+        * bindings/js/JSCustomXPathNSResolver.h:
+        (JSCustomXPathNSResolver):
+        * bindings/js/JSDictionary.cpp:
+        (WebCore::JSDictionary::tryGetProperty):
+        * bindings/js/JSDictionary.h:
+        (WebCore::JSDictionary::JSDictionary):
+        (WebCore::JSDictionary::initializerObject):
+
 2012-08-02  Emil A Eklund  <eae@chromium.org>
 
         Range::isPointInRange incorrectly throws WRONG_DOCUMENT_ERR
