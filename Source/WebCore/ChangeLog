@@ -1,3 +1,38 @@
+2012-08-02  Yury Semikhatsky  <yurys@chromium.org>
+
+        Web Inspector: rename reportMemoryUsage to reportDescendantMemoryUsage in StyleRuleBase descendants
+        https://bugs.webkit.org/show_bug.cgi?id=92966
+
+        Reviewed by Alexander Pavlov.
+
+        Renamed reportMemoryUsage to reportDescendantMemoryUsage in all descendants of
+        StyleRuleBase to avoid accidental recursive calls to StyleRuleBase::reportMemoryUsage
+        when a new type of rule is added.
+
+        * css/StyleRule.cpp:
+        (WebCore::StyleRuleBase::reportMemoryUsage):
+        (WebCore::StyleRule::reportDescendantMemoryUsage):
+        (WebCore::StyleRulePage::reportDescendantMemoryUsage):
+        (WebCore::StyleRuleFontFace::reportDescendantMemoryUsage):
+        (WebCore::StyleRuleBlock::reportDescendantMemoryUsage):
+        (WebCore::StyleRuleMedia::reportDescendantMemoryUsage):
+        (WebCore::StyleRuleRegion::reportDescendantMemoryUsage):
+        * css/StyleRule.h:
+        (StyleRule):
+        (StyleRuleFontFace):
+        (StyleRulePage):
+        (StyleRuleBlock):
+        (StyleRuleMedia):
+        (StyleRuleRegion):
+        * css/StyleRuleImport.cpp:
+        (WebCore::StyleRuleImport::reportDescendantMemoryUsage):
+        * css/StyleRuleImport.h:
+        (StyleRuleImport):
+        * css/WebKitCSSKeyframesRule.cpp:
+        (WebCore::StyleRuleKeyframes::reportDescendantMemoryUsage):
+        * css/WebKitCSSKeyframesRule.h:
+        (StyleRuleKeyframes):
+
 2012-08-02  Hironori Bono  <hbono@chromium.org>
 
         [Chromium] Implement hyphenation for Chromium

@@ -56,27 +56,27 @@ void StyleRuleBase::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     switch (type()) {
     case Style:
-        static_cast<const StyleRule*>(this)->reportMemoryUsage(memoryObjectInfo);
+        static_cast<const StyleRule*>(this)->reportDescendantMemoryUsage(memoryObjectInfo);
         return;
     case Page:
-        static_cast<const StyleRulePage*>(this)->reportMemoryUsage(memoryObjectInfo);
+        static_cast<const StyleRulePage*>(this)->reportDescendantMemoryUsage(memoryObjectInfo);
         return;
     case FontFace:
-        static_cast<const StyleRuleFontFace*>(this)->reportMemoryUsage(memoryObjectInfo);
+        static_cast<const StyleRuleFontFace*>(this)->reportDescendantMemoryUsage(memoryObjectInfo);
         return;
     case Media:
-        static_cast<const StyleRuleMedia*>(this)->reportMemoryUsage(memoryObjectInfo);
+        static_cast<const StyleRuleMedia*>(this)->reportDescendantMemoryUsage(memoryObjectInfo);
         return;
 #if ENABLE(CSS_REGIONS)
     case Region:
-        static_cast<const StyleRuleRegion*>(this)->reportMemoryUsage(memoryObjectInfo);
+        static_cast<const StyleRuleRegion*>(this)->reportDescendantMemoryUsage(memoryObjectInfo);
         return;
 #endif
     case Import:
-        static_cast<const StyleRuleImport*>(this)->reportMemoryUsage(memoryObjectInfo);
+        static_cast<const StyleRuleImport*>(this)->reportDescendantMemoryUsage(memoryObjectInfo);
         return;
     case Keyframes:
-        static_cast<const StyleRuleKeyframes*>(this)->reportMemoryUsage(memoryObjectInfo);
+        static_cast<const StyleRuleKeyframes*>(this)->reportDescendantMemoryUsage(memoryObjectInfo);
         return;
     case Unknown:
     case Charset:
@@ -206,7 +206,7 @@ unsigned StyleRule::averageSizeInBytes()
     return sizeof(StyleRule) + StylePropertySet::averageSizeInBytes();
 }
 
-void StyleRule::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+void StyleRule::reportDescendantMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo<StyleRule> info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
     info.addInstrumentedMember(m_properties);
@@ -269,7 +269,7 @@ void StyleRulePage::setProperties(PassRefPtr<StylePropertySet> properties)
     m_properties = properties;
 }
 
-void StyleRulePage::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+void StyleRulePage::reportDescendantMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo<StyleRulePage> info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
     info.addInstrumentedMember(m_properties);
@@ -303,7 +303,7 @@ void StyleRuleFontFace::setProperties(PassRefPtr<StylePropertySet> properties)
     m_properties = properties;
 }
 
-void StyleRuleFontFace::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+void StyleRuleFontFace::reportDescendantMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo<StyleRuleFontFace> info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
     info.addInstrumentedMember(m_properties);
@@ -334,7 +334,7 @@ void StyleRuleBlock::wrapperRemoveRule(unsigned index)
     m_childRules.remove(index);
 }
 
-void StyleRuleBlock::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+void StyleRuleBlock::reportDescendantMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo<StyleRuleBlock> info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
     info.addInstrumentedVector(m_childRules);
@@ -353,7 +353,7 @@ StyleRuleMedia::StyleRuleMedia(const StyleRuleMedia& o)
         m_mediaQueries = o.m_mediaQueries->copy();
 }
 
-void StyleRuleMedia::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+void StyleRuleMedia::reportDescendantMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo<StyleRuleMedia> info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
     info.addInstrumentedMember(m_mediaQueries);
@@ -371,7 +371,7 @@ StyleRuleRegion::StyleRuleRegion(const StyleRuleRegion& o)
 {
 }
 
-void StyleRuleRegion::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+void StyleRuleRegion::reportDescendantMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo<StyleRuleRegion> info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
     info.addInstrumentedMember(m_selectorList);

@@ -59,7 +59,7 @@ public:
 
     PassRefPtr<StyleRuleKeyframes> copy() const { return adoptRef(new StyleRuleKeyframes(*this)); }
 
-    void reportMemoryUsage(MemoryObjectInfo*) const;
+    void reportDescendantMemoryUsage(MemoryObjectInfo*) const;
 
 private:
     StyleRuleKeyframes();

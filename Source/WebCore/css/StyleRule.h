@@ -107,7 +107,7 @@ public:
     PassRefPtr<StyleRule> copy() const { return adoptRef(new StyleRule(*this)); }
 
     static unsigned averageSizeInBytes();
-    void reportMemoryUsage(MemoryObjectInfo*) const;
+    void reportDescendantMemoryUsage(MemoryObjectInfo*) const;
 
 private:
     StyleRule(int sourceLine);
@@ -130,7 +130,7 @@ public:
 
     PassRefPtr<StyleRuleFontFace> copy() const { return adoptRef(new StyleRuleFontFace(*this)); }
 
-    void reportMemoryUsage(MemoryObjectInfo*) const;
+    void reportDescendantMemoryUsage(MemoryObjectInfo*) const;
 
 private:
     StyleRuleFontFace();
@@ -155,7 +155,7 @@ public:
 
     PassRefPtr<StyleRulePage> copy() const { return adoptRef(new StyleRulePage(*this)); }
 
-    void reportMemoryUsage(MemoryObjectInfo*) const;
+    void reportDescendantMemoryUsage(MemoryObjectInfo*) const;
 
 private:
     StyleRulePage();
@@ -172,7 +172,7 @@ public:
     void wrapperInsertRule(unsigned, PassRefPtr<StyleRuleBase>);
     void wrapperRemoveRule(unsigned);
 
-    void reportMemoryUsage(MemoryObjectInfo*) const;
+    void reportDescendantMemoryUsage(MemoryObjectInfo*) const;
     
 protected:
     StyleRuleBlock(Type, Vector<RefPtr<StyleRuleBase> >& adoptRule);
@@ -193,7 +193,7 @@ public:
 
     PassRefPtr<StyleRuleMedia> copy() const { return adoptRef(new StyleRuleMedia(*this)); }
 
-    void reportMemoryUsage(MemoryObjectInfo*) const;
+    void reportDescendantMemoryUsage(MemoryObjectInfo*) const;
 
 private:
     StyleRuleMedia(PassRefPtr<MediaQuerySet>, Vector<RefPtr<StyleRuleBase> >& adoptRules);
@@ -213,7 +213,7 @@ public:
 
     PassRefPtr<StyleRuleRegion> copy() const { return adoptRef(new StyleRuleRegion(*this)); }
 
-    void reportMemoryUsage(MemoryObjectInfo*) const;
+    void reportDescendantMemoryUsage(MemoryObjectInfo*) const;
 
 private:
     StyleRuleRegion(Vector<OwnPtr<CSSParserSelector> >*, Vector<RefPtr<StyleRuleBase> >& adoptRules);

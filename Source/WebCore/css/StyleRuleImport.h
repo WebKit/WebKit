@@ -51,7 +51,7 @@ public:
 
     void requestStyleSheet();
 
-    void reportMemoryUsage(MemoryObjectInfo*) const;
+    void reportDescendantMemoryUsage(MemoryObjectInfo*) const;
 
 private:
     // NOTE: We put the CachedStyleSheetClient in a member instead of inheriting from it

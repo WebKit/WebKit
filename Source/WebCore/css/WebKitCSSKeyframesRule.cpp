@@ -87,7 +87,7 @@ int StyleRuleKeyframes::findKeyframeIndex(const String& key) const
     return -1;
 }
 
-void StyleRuleKeyframes::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+void StyleRuleKeyframes::reportDescendantMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo<StyleRuleKeyframes> info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
     info.addInstrumentedVector(m_keyframes);
