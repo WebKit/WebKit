@@ -3482,7 +3482,7 @@ BUGWK92852 LINUX DEBUG : media/video-currentTime-set2.html = PASS CRASH
 
 BUGWK92938 : compositing/layer-creation/animation-overlap-with-children.html = TEXT PASS
 
-BUGWK92941 WIN : accessibility/loading-iframe-updates-axtree.html = CRASH PASS
+BUGWK92941 WIN MAC : accessibility/loading-iframe-updates-axtree.html = CRASH PASS
 
 // Flakily crashing after http://trac.webkit.org/changeset/124402
 BUGWK92952 DEBUG : storage/indexeddb/intversion-omit-parameter.html = CRASH PASS

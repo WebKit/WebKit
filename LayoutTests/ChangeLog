@@ -1,3 +1,9 @@
+2012-08-02  Alexander Pavlov  <apavlov@chromium.org>
+
+        [Chromium] Unreviewed, mark accessibility/loading-iframe-updates-axtree.html as crashy on Mac.
+
+        * platform/chromium/TestExpectations:
+
 2012-08-02  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed GTK gardening.
