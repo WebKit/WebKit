@@ -1,3 +1,17 @@
+2012-08-02  Leo Yang  <leoyang@rim.com>
+
+        [BlackBerry] Rounding error of destination rect of checkerboard
+        https://bugs.webkit.org/show_bug.cgi?id=93012
+
+        Reviewed by Rob Buis.
+
+        Reviewed internally by Jakob Petsovits.
+
+        Intersect with the destination rectangle to eliminate the rounding error.
+
+        * Api/BackingStore.cpp:
+        (BlackBerry::WebKit::BackingStorePrivate::blitContents):
+
 2012-08-01  Antonio Gomes  <agomes@rim.com>
 
         [BlackBerry] Implement InRegionScroller class as a in-region scroll controller

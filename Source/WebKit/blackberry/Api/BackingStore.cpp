@@ -1407,14 +1407,17 @@ void BackingStorePrivate::blitContents(const Platform::IntRect& dstRect,
             // Blit checkered to those parts that are not covered by the backingStoreRect.
             IntRectList checkeredRects = checkeredRegion.rects();
             for (size_t i = 0; i < checkeredRects.size(); ++i) {
-                Platform::IntRect dstRect = transformation.mapRect(Platform::IntRect(
+                Platform::IntRect clippedDstRect = transformation.mapRect(Platform::IntRect(
                     Platform::IntPoint(checkeredRects.at(i).x() - origin.x(), checkeredRects.at(i).y() - origin.y()),
                                        checkeredRects.at(i).size()));
+                // To eliminate 1 pixel inflation due to transformation rounding.
+                clippedDstRect.intersect(dstRect);
 #if DEBUG_CHECKERBOARD
                 blitCheckered = true;
 #endif
+
                 fillWindow(BlackBerry::Platform::Graphics::CheckerboardPattern,
-                    dstRect, checkeredRects.at(i).location(), transformation.a());
+                    clippedDstRect, checkeredRects.at(i).location(), transformation.a());
             }
         }
 
