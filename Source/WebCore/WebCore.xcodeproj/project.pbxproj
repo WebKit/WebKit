@@ -24194,6 +24194,7 @@
 				2917B5631473496C0052C9D0 /* LayerFlushSchedulerClient.h in Headers */,
 				A12538D413F9B60A00024754 /* LayoutRepainter.h in Headers */,
 				2D9066070BE141D400956998 /* LayoutState.h in Headers */,
+				D630E2AC149BF344005B2F93 /* LayoutTestSupport.h in Headers */,
 				BACF290113B2A0D500781F90 /* LayoutTypes.h in Headers */,
 				512DD8F50D91E6AF000F89EE /* LegacyWebArchive.h in Headers */,
 				BCE65BEB0EACDF16007E4533 /* Length.h in Headers */,
