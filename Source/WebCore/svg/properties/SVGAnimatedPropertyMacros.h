@@ -55,18 +55,7 @@ struct SVGSynchronizableAnimatedProperty {
 
     void synchronize(SVGElement* ownerElement, const QualifiedName& attrName, const AtomicString& value)
     {
-        // If the attribute already exists on the element, we change the
-        // Attribute directly to avoid a call to Element::attributeChanged
-        // that could cause the SVGElement to erroneously reset its properties.
-        // svg/dom/SVGStringList-basics.xhtml exercises this behavior.
-        ElementAttributeData* attributeData = ownerElement->mutableAttributeData();
-        Attribute* old = attributeData->getAttributeItem(attrName);
-        if (old && value.isNull())
-            attributeData->removeAttribute(old->name(), ownerElement);
-        else if (!old && !value.isNull())
-            attributeData->addAttribute(Attribute(attrName, value), ownerElement);
-        else if (old && !value.isNull())
-            old->setValue(value);
+        ownerElement->setSynchronizedLazyAttribute(attrName, value);
     }
 
     PropertyType value;

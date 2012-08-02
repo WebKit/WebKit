@@ -37,7 +37,7 @@ class Attr;
 class Element;
 class MemoryObjectInfo;
 
-enum EInUpdateStyleAttribute { NotInUpdateStyleAttribute, InUpdateStyleAttribute };
+enum SynchronizationOfLazyAttribute { NotInSynchronizationOfLazyAttribute, InSynchronizationOfLazyAttribute };
 
 class ElementAttributeData {
     WTF_MAKE_FAST_ALLOCATED;
@@ -78,9 +78,9 @@ public:
     size_t getAttributeItemIndex(const AtomicString& name, bool shouldIgnoreAttributeCase) const;
 
     // These functions do no error checking.
-    void addAttribute(const Attribute&, Element*, EInUpdateStyleAttribute = NotInUpdateStyleAttribute);
+    void addAttribute(const Attribute&, Element*, SynchronizationOfLazyAttribute = NotInSynchronizationOfLazyAttribute);
     void removeAttribute(const QualifiedName&, Element*);
-    void removeAttribute(size_t index, Element*, EInUpdateStyleAttribute = NotInUpdateStyleAttribute);
+    void removeAttribute(size_t index, Element*, SynchronizationOfLazyAttribute = NotInSynchronizationOfLazyAttribute);
     PassRefPtr<Attr> takeAttribute(size_t index, Element*);
 
     bool hasID() const { return !m_idForStyleResolution.isNull(); }

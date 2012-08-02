@@ -1,3 +1,41 @@
+2012-08-02  Philip Rogers  <pdr@google.com>
+
+        Do not dispatch modification events in SVG attribute synchronization
+        https://bugs.webkit.org/show_bug.cgi?id=92604
+
+        Reviewed by Ryosuke Niwa.
+
+        Previously, calling hasAttribute() during layout could hit a
+        layout-during-layout bug because calling hasAttribute() could dispatch a 
+        subtree modification event which could synchronously force a layout. hasAttribute()
+        exhibits this behavior because property synchronization is done lazily.
+
+        This patch skips dispatching subtree modification events during attribute
+        synchronization.
+
+        Additionally, this patch contains a refactoring of lazy attribute setting. We
+        now have a single place where lazy attributes are set (setSynchronizedLazyAttribute)
+        and lazy attribute flags have been moved to just Element and ElementAttributeData.
+
+        Test: svg/custom/path-domsubtreemodified-crash.html
+
+        * dom/Element.cpp:
+        (WebCore::Element::setAttribute):
+        (WebCore::Element::setSynchronizedLazyAttribute):
+        (WebCore):
+        (WebCore::Element::setAttributeInternal):
+        * dom/Element.h:
+        (Element):
+        * dom/ElementAttributeData.cpp:
+        (WebCore::ElementAttributeData::addAttribute):
+        (WebCore::ElementAttributeData::removeAttribute):
+        * dom/ElementAttributeData.h:
+        (ElementAttributeData):
+        * dom/StyledElement.cpp:
+        (WebCore::StyledElement::updateStyleAttribute):
+        * svg/properties/SVGAnimatedPropertyMacros.h:
+        (WebCore::SVGSynchronizableAnimatedProperty::synchronize):
+
 2012-08-02  Konrad Piascik  <kpiascik@rim.com>
 
         Web Inspector: Override the DeviceOrientation

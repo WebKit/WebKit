@@ -656,31 +656,36 @@ void Element::setAttribute(const AtomicString& name, const AtomicString& value, 
 
     size_t index = ensureUpdatedAttributeData()->getAttributeItemIndex(localName, false);
     const QualifiedName& qName = index != notFound ? attributeItem(index)->name() : QualifiedName(nullAtom, localName, nullAtom);
-    setAttributeInternal(index, qName, value, NotInUpdateStyleAttribute);
+    setAttributeInternal(index, qName, value, NotInSynchronizationOfLazyAttribute);
 }
 
-void Element::setAttribute(const QualifiedName& name, const AtomicString& value, EInUpdateStyleAttribute inUpdateStyleAttribute)
+void Element::setAttribute(const QualifiedName& name, const AtomicString& value)
 {
-    setAttributeInternal(ensureUpdatedAttributeData()->getAttributeItemIndex(name), name, value, inUpdateStyleAttribute);
+    setAttributeInternal(ensureUpdatedAttributeData()->getAttributeItemIndex(name), name, value, NotInSynchronizationOfLazyAttribute);
 }
 
-inline void Element::setAttributeInternal(size_t index, const QualifiedName& name, const AtomicString& value, EInUpdateStyleAttribute inUpdateStyleAttribute)
+void Element::setSynchronizedLazyAttribute(const QualifiedName& name, const AtomicString& value)
+{
+    setAttributeInternal(mutableAttributeData()->getAttributeItemIndex(name), name, value, InSynchronizationOfLazyAttribute);
+}
+
+inline void Element::setAttributeInternal(size_t index, const QualifiedName& name, const AtomicString& value, SynchronizationOfLazyAttribute inSynchronizationOfLazyAttribute)
 {
     ElementAttributeData* attributeData = mutableAttributeData();
 
     Attribute* old = index != notFound ? attributeData->attributeItem(index) : 0;
     if (value.isNull()) {
         if (old)
-            attributeData->removeAttribute(index, this, inUpdateStyleAttribute);
+            attributeData->removeAttribute(index, this, inSynchronizationOfLazyAttribute);
         return;
     }
 
     if (!old) {
-        attributeData->addAttribute(Attribute(name, value), this, inUpdateStyleAttribute);
+        attributeData->addAttribute(Attribute(name, value), this, inSynchronizationOfLazyAttribute);
         return;
     }
 
-    if (inUpdateStyleAttribute == NotInUpdateStyleAttribute)
+    if (inSynchronizationOfLazyAttribute == NotInSynchronizationOfLazyAttribute)
         willModifyAttribute(name, old->value(), value);
 
     if (RefPtr<Attr> attrNode = attrIfExists(name))
@@ -688,7 +693,7 @@ inline void Element::setAttributeInternal(size_t index, const QualifiedName& nam
     else
         old->setValue(value);
 
-    if (inUpdateStyleAttribute == NotInUpdateStyleAttribute)
+    if (inSynchronizationOfLazyAttribute == NotInSynchronizationOfLazyAttribute)
         didModifyAttribute(Attribute(old->name(), old->value()));
 }
 

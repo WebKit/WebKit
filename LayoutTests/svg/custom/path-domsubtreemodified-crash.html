@@ -1,0 +1,38 @@
+<!DOCTYPE HTML>
+<html>
+<!-- Test for WK92604 - Passes if no crash occurs and "PASS" is printed. -->
+<body id="body">
+<svg xmlns="http://www.w3.org/2000/svg">
+    <line stroke="green" vector-effect="non-scaling-stroke" y2="1"/>
+    <defs id="defs"></defs>
+</svg>
+<script>
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+
+    var body = document.getElementById("body");
+    var defs = document.getElementById("defs");
+    document.addEventListener("DOMContentLoaded", doCrash, false);
+
+    body.addEventListener("DOMSubtreeModified", function() {
+        // Prevent infinite loop of modification events.
+        this.removeEventListener("DOMSubtreeModified", arguments.callee);
+
+        document.write("This test passes if no crash occurs and PASS is printed. PASS");
+
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }, false);
+
+    function doCrash() {
+        var farthestViewportElement = defs["farthestViewportElement"];
+        var externalResourcesRequired = farthestViewportElement["externalResourcesRequired"];
+        externalResourcesRequired["baseVal"] = undefined;
+        body.offsetWidth;
+        body.innerHTML = "FAIL";
+    }
+</script>
+</body>
+</html>

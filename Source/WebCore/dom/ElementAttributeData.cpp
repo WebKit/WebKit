@@ -218,20 +218,20 @@ void ElementAttributeData::destroyInlineStyle(StyledElement* element) const
     m_inlineStyleDecl = 0;
 }
 
-void ElementAttributeData::addAttribute(const Attribute& attribute, Element* element, EInUpdateStyleAttribute inUpdateStyleAttribute)
+void ElementAttributeData::addAttribute(const Attribute& attribute, Element* element, SynchronizationOfLazyAttribute inSynchronizationOfLazyAttribute)
 {
     ASSERT(isMutable());
 
-    if (element && inUpdateStyleAttribute == NotInUpdateStyleAttribute)
+    if (element && inSynchronizationOfLazyAttribute == NotInSynchronizationOfLazyAttribute)
         element->willModifyAttribute(attribute.name(), nullAtom, attribute.value());
 
     m_mutableAttributeVector->append(attribute);
 
-    if (element && inUpdateStyleAttribute == NotInUpdateStyleAttribute)
+    if (element && inSynchronizationOfLazyAttribute == NotInSynchronizationOfLazyAttribute)
         element->didAddAttribute(attribute);
 }
 
-void ElementAttributeData::removeAttribute(size_t index, Element* element, EInUpdateStyleAttribute inUpdateStyleAttribute)
+void ElementAttributeData::removeAttribute(size_t index, Element* element, SynchronizationOfLazyAttribute inSynchronizationOfLazyAttribute)
 {
     ASSERT(isMutable());
     ASSERT(index < length());
@@ -239,7 +239,7 @@ void ElementAttributeData::removeAttribute(size_t index, Element* element, EInUp
     Attribute& attribute = m_mutableAttributeVector->at(index);
     QualifiedName name = attribute.name();
 
-    if (element && inUpdateStyleAttribute == NotInUpdateStyleAttribute)
+    if (element && inSynchronizationOfLazyAttribute == NotInSynchronizationOfLazyAttribute)
         element->willRemoveAttribute(name, attribute.value());
 
     if (RefPtr<Attr> attr = attrIfExists(element, name))
@@ -247,7 +247,7 @@ void ElementAttributeData::removeAttribute(size_t index, Element* element, EInUp
 
     m_mutableAttributeVector->remove(index);
 
-    if (element && inUpdateStyleAttribute == NotInUpdateStyleAttribute)
+    if (element && inSynchronizationOfLazyAttribute == NotInSynchronizationOfLazyAttribute)
         element->didRemoveAttribute(name);
 }
 
