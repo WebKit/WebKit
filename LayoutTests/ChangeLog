@@ -1,3 +1,23 @@
+2012-08-02  Peter Kasting  <pkasting@google.com>
+
+        Rebaseline per bug 92904.
+        https://bugs.webkit.org/show_bug.cgi?id=92904
+
+        Unreviewed, rebaselining.
+
+        * fast/box-sizing/box-sizing-expected.txt: Added.
+        * platform/chromium-mac-snowleopard/fast/box-sizing/box-sizing-expected.png:
+        * platform/chromium-mac-snowleopard/fast/box-sizing/box-sizing-expected.txt: Removed.
+        * platform/chromium-mac/compositing/overflow/clip-descendents-expected.txt: Added.
+        * platform/chromium-mac/fast/box-sizing/box-sizing-expected.png:
+        * platform/chromium-mac/fast/box-sizing/box-sizing-expected.txt:
+        * platform/chromium-win-xp/fast/box-sizing: Added.
+        * platform/chromium-win-xp/fast/box-sizing/box-sizing-expected.png: Added.
+        * platform/chromium-win/fast/box-sizing/box-sizing-expected.png:
+        * platform/chromium/TestExpectations:
+        * platform/efl/fast/box-sizing/box-sizing-expected.txt: Removed.
+        * platform/gtk/fast/box-sizing/box-sizing-expected.txt: Removed.
+
 2012-08-02  Yoshifumi Inoue  <yosin@chromium.org>
 
         REGRESSION(r102741): [Forms] In selects, when disabled, browser skips first option if not in optgroup, then selects first option in optgroup
