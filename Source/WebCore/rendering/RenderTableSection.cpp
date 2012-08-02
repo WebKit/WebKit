@@ -967,12 +967,8 @@ LayoutUnit RenderTableSection::firstLineBoxBaseline() const
 
 void RenderTableSection::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
-    // put this back in when all layout tests can handle it
-    // ASSERT(!needsLayout());
-    // avoid crashing on bugs that cause us to paint with dirty layout
-    if (needsLayout())
-        return;
-    
+    ASSERT(!needsLayout());
+
     unsigned totalRows = m_grid.size();
     unsigned totalCols = table()->columns().size();
 
