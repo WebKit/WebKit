@@ -49,6 +49,8 @@ class CCLayerSorter;
 class CCLayerTreeHostImpl;
 class CCRenderer;
 class CCQuadSink;
+class CCScrollbarAnimationController;
+class CCScrollbarLayerImpl;
 class LayerChromium;
 
 class CCLayerImpl : public CCLayerAnimationControllerClient {
@@ -191,7 +193,7 @@ public:
     void setScrollPosition(const IntPoint&);
 
     const IntSize& maxScrollPosition() const {return m_maxScrollPosition; }
-    void setMaxScrollPosition(const IntSize& maxScrollPosition) { m_maxScrollPosition = maxScrollPosition; }
+    void setMaxScrollPosition(const IntSize&);
 
     const FloatSize& scrollDelta() const { return m_scrollDelta; }
     void setScrollDelta(const FloatSize&);
@@ -264,6 +266,14 @@ public:
     // was lost and that a new one has been created. Won't be called
     // until the new context has been created successfully.
     virtual void didLoseContext();
+
+    CCScrollbarAnimationController* scrollbarAnimationController() const { return m_scrollbarAnimationController.get(); }
+
+    CCScrollbarLayerImpl* horizontalScrollbarLayer() const;
+    void setHorizontalScrollbarLayer(CCScrollbarLayerImpl*);
+
+    CCScrollbarLayerImpl* verticalScrollbarLayer() const;
+    void setVerticalScrollbarLayer(CCScrollbarLayerImpl*);
 
 protected:
     explicit CCLayerImpl(int);
@@ -395,6 +405,9 @@ private:
 
     // Manages animations for this layer.
     OwnPtr<CCLayerAnimationController> m_layerAnimationController;
+
+    // Manages scrollbars for this layer
+    OwnPtr<CCScrollbarAnimationController> m_scrollbarAnimationController;
 };
 
 void sortLayers(Vector<CCLayerImpl*>::iterator first, Vector<CCLayerImpl*>::iterator end, CCLayerSorter*);

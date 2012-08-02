@@ -30,6 +30,7 @@
 #include "CCScrollbarLayerImpl.h"
 
 #include "cc/CCQuadSink.h"
+#include "cc/CCScrollbarAnimationController.h"
 #include "cc/CCTextureDrawQuad.h"
 
 using WebKit::WebRect;
@@ -44,7 +45,6 @@ PassOwnPtr<CCScrollbarLayerImpl> CCScrollbarLayerImpl::create(int id)
 
 CCScrollbarLayerImpl::CCScrollbarLayerImpl(int id)
     : CCLayerImpl(id)
-    , m_scrollLayer(0)
     , m_scrollbar(this)
     , m_backTrackResourceId(0)
     , m_foreTrackResourceId(0)
@@ -136,11 +136,7 @@ bool CCScrollbarLayerImpl::CCScrollbar::isOverlay() const
 
 int CCScrollbarLayerImpl::CCScrollbar::value() const
 {
-    if (!m_owner->m_scrollLayer)
-        return 0;
-    if (orientation() == WebScrollbar::Horizontal)
-        return m_owner->m_scrollLayer->scrollPosition().x() + m_owner->m_scrollLayer->scrollDelta().width();
-    return m_owner->m_scrollLayer->scrollPosition().y() + m_owner->m_scrollLayer->scrollDelta().height();
+    return m_owner->m_currentPos;
 }
 
 WebKit::WebPoint CCScrollbarLayerImpl::CCScrollbar::location() const
@@ -160,23 +156,12 @@ bool CCScrollbarLayerImpl::CCScrollbar::enabled() const
 
 int CCScrollbarLayerImpl::CCScrollbar::maximum() const
 {
-    if (!m_owner->m_scrollLayer)
-        return 0;
-    if (orientation() == WebScrollbar::Horizontal)
-        return m_owner->m_scrollLayer->maxScrollPosition().width();
-    return m_owner->m_scrollLayer->maxScrollPosition().height();
+    return m_owner->m_maximum;
 }
 
 int CCScrollbarLayerImpl::CCScrollbar::totalSize() const
 {
-    if (!m_owner->m_scrollLayer || !m_owner->m_scrollLayer->children().size())
-        return 0;
-    // Copy & paste from CCLayerTreeHostImpl...
-    // FIXME: Hardcoding the first child here is weird. Think of
-    // a cleaner way to get the contentBounds on the Impl side.
-    if (orientation() == WebScrollbar::Horizontal)
-        return m_owner->m_scrollLayer->children()[0]->bounds().width();
-    return m_owner->m_scrollLayer->children()[0]->bounds().height();
+    return m_owner->m_totalSize;
 }
 
 bool CCScrollbarLayerImpl::CCScrollbar::isScrollViewScrollbar() const

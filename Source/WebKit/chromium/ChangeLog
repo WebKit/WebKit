@@ -1,3 +1,17 @@
+2012-08-02  Tien-Ren Chen  <trchen@chromium.org>
+
+        [chromium] Add CCScrollbarAnimationController class for compositor scrollbar animation
+        https://bugs.webkit.org/show_bug.cgi?id=91688
+
+        Reviewed by Adrienne Walker.
+
+        New unit test ScrollbarLayerChromiumTest.scrollOffsetSynchronization to verify
+        scroll offset is updated during tree synchronization and threaded scrolling.
+        Another new unit test CCScrollbarAnimationControllerLinearFadeTest to verify
+        opacity animates as intended.
+
+        * tests/ScrollbarLayerChromiumTest.cpp:
+
 2012-08-02  Adrienne Walker  <enne@google.com>
 
         [chromium] Make CCScrollbarLayerImpl handle lost contexts properly

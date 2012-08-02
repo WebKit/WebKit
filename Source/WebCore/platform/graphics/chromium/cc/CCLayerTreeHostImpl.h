@@ -213,6 +213,7 @@ protected:
 
     void animatePageScale(double monotonicTime);
     void animateGestures(double monotonicTime);
+    void animateScrollbars(double monotonicTime);
 
     // Exposed for testing.
     void calculateRenderSurfaceLayerList(CCLayerList&);
@@ -247,6 +248,8 @@ private:
     void clearRenderSurfaces();
     bool ensureRenderSurfaceLayerList();
     void clearCurrentlyScrollingLayer();
+
+    void animateScrollbarsRecursive(CCLayerImpl*, double monotonicTime);
 
     void dumpRenderSurfaces(TextStream&, int indent, const CCLayerImpl*) const;
 

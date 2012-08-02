@@ -84,6 +84,7 @@
             'tests/CCSchedulerTestCommon.h',
             'tests/CCSchedulerTest.cpp',
             'tests/CCScopedTextureTest.cpp',
+            'tests/CCScrollbarAnimationControllerLinearFadeTest.cpp',
             'tests/CCSolidColorLayerImplTest.cpp',
             'tests/CCTestCommon.h',
             'tests/CCTextureUpdaterTest.cpp',

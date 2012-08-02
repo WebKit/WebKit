@@ -1,3 +1,95 @@
+2012-08-02  Tien-Ren Chen  <trchen@chromium.org>
+
+        [chromium] Add CCScrollbarAnimationController class for compositor scrollbar animation
+        https://bugs.webkit.org/show_bug.cgi?id=91688
+
+        Reviewed by Adrienne Walker.
+
+        Add CCScrollbarAnimationController that serves as the middle man
+        between the scrolling layer and scrollbar layer. Now all scroll offset
+        information are pushed through the controller, and individual platform
+        can provide specialized controller for extra processing.
+
+        A basic fadeout controller for Android scrollbar is included.
+
+        New test: ScrollbarLayerChromiumTest.scrollOffsetSynchronization
+                  CCScrollbarAnimationControllerLinearFade.*
+
+        * WebCore.gypi:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::calculateScrollbarModesForLayout):
+        * page/scrolling/chromium/ScrollingCoordinatorChromium.cpp:
+        (WebCore::createScrollbarLayer):
+        * platform/graphics/chromium/TreeSynchronizer.cpp:
+        (WebCore::TreeSynchronizer::synchronizeTreeRecursive):
+        (WebCore::TreeSynchronizer::updateScrollbarLayerPointersRecursive):
+        * platform/graphics/chromium/cc/CCLayerImpl.cpp:
+        (WebCore::CCLayerImpl::scrollBy):
+        (WebCore::CCLayerImpl::setMaxScrollPosition):
+        (WebCore):
+        (WebCore::CCLayerImpl::horizontalScrollbarLayer):
+        (WebCore::CCLayerImpl::setHorizontalScrollbarLayer):
+        (WebCore::CCLayerImpl::verticalScrollbarLayer):
+        (WebCore::CCLayerImpl::setVerticalScrollbarLayer):
+        * platform/graphics/chromium/cc/CCLayerImpl.h:
+        (WebCore):
+        (CCLayerImpl):
+        (WebCore::CCLayerImpl::scrollbarAnimationController):
+        * platform/graphics/chromium/cc/CCLayerTreeHostImpl.cpp:
+        (WebCore::CCLayerTreeHostImpl::animate):
+        (WebCore::CCLayerTreeHostImpl::pinchGestureBegin):
+        (WebCore::CCLayerTreeHostImpl::pinchGestureUpdate):
+        (WebCore::CCLayerTreeHostImpl::pinchGestureEnd):
+        (WebCore::CCLayerTreeHostImpl::animateScrollbars):
+        (WebCore):
+        (WebCore::CCLayerTreeHostImpl::animateScrollbarsRecursive):
+        * platform/graphics/chromium/cc/CCLayerTreeHostImpl.h:
+        (CCLayerTreeHostImpl):
+        * platform/graphics/chromium/cc/CCScrollbarAnimationController.cpp: Added.
+        (WebCore):
+        (WebCore::CCScrollbarAnimationController::create):
+        (WebCore::CCScrollbarAnimationController::CCScrollbarAnimationController):
+        (WebCore::CCScrollbarAnimationController::~CCScrollbarAnimationController):
+        (WebCore::CCScrollbarAnimationController::getScrollLayerBounds):
+        (WebCore::CCScrollbarAnimationController::updateScrollOffset):
+        * platform/graphics/chromium/cc/CCScrollbarAnimationController.h: Added.
+        (WebCore):
+        (CCScrollbarAnimationController):
+        (WebCore::CCScrollbarAnimationController::animate):
+        (WebCore::CCScrollbarAnimationController::didPinchGestureBegin):
+        (WebCore::CCScrollbarAnimationController::didPinchGestureUpdate):
+        (WebCore::CCScrollbarAnimationController::didPinchGestureEnd):
+        (WebCore::CCScrollbarAnimationController::setHorizontalScrollbarLayer):
+        (WebCore::CCScrollbarAnimationController::horizontalScrollbarLayer):
+        (WebCore::CCScrollbarAnimationController::setVerticalScrollbarLayer):
+        (WebCore::CCScrollbarAnimationController::verticalScrollbarLayer):
+        * platform/graphics/chromium/cc/CCScrollbarAnimationControllerAndroid.cpp: Added.
+        (WebCore):
+        (WebCore::CCScrollbarAnimationController::create):
+        (WebCore::CCScrollbarAnimationControllerAndroid::CCScrollbarAnimationControllerAndroid):
+        (WebCore::CCScrollbarAnimationControllerAndroid::~CCScrollbarAnimationControllerAndroid):
+        (WebCore::CCScrollbarAnimationControllerAndroid::animate):
+        (WebCore::CCScrollbarAnimationControllerAndroid::didPinchGestureUpdate):
+        (WebCore::CCScrollbarAnimationControllerAndroid::didPinchGestureEnd):
+        (WebCore::CCScrollbarAnimationControllerAndroid::updateScrollOffset):
+        (WebCore::CCScrollbarAnimationControllerAndroid::opacityAtTime):
+        * platform/graphics/chromium/cc/CCScrollbarAnimationControllerAndroid.h: Added.
+        (WebCore):
+        (CCScrollbarAnimationControllerAndroid):
+        * platform/graphics/chromium/cc/CCScrollbarLayerImpl.cpp:
+        (WebCore::CCScrollbarLayerImpl::CCScrollbarLayerImpl):
+        (WebCore):
+        (WebCore::CCScrollbarLayerImpl::CCScrollbar::value):
+        (WebCore::CCScrollbarLayerImpl::CCScrollbar::currentPos):
+        (WebCore::CCScrollbarLayerImpl::CCScrollbar::totalSize):
+        (WebCore::CCScrollbarLayerImpl::CCScrollbar::maximum):
+        * platform/graphics/chromium/cc/CCScrollbarLayerImpl.h:
+        (WebCore::CCScrollbarLayerImpl::orientation):
+        (WebCore::CCScrollbarLayerImpl::setCurrentPos):
+        (WebCore::CCScrollbarLayerImpl::setTotalSize):
+        (WebCore::CCScrollbarLayerImpl::setMaximum):
+        (CCScrollbarLayerImpl):
+
 2012-06-15  David Barton  <dbarton@mathscribe.com>
 
         MathML: nested square root symbols have varying descenders

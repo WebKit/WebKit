@@ -43,6 +43,8 @@
 #include "cc/CCPrioritizedTextureManager.h"
 #include "cc/CCRenderPassDrawQuad.h"
 #include "cc/CCRenderingStats.h"
+#include "cc/CCScrollbarAnimationController.h"
+#include "cc/CCScrollbarLayerImpl.h"
 #include "cc/CCSettings.h"
 #include "cc/CCSingleThreadProxy.h"
 #include <wtf/CurrentTime.h>
@@ -191,6 +193,7 @@ void CCLayerTreeHostImpl::animate(double monotonicTime, double wallClockTime)
     animatePageScale(monotonicTime);
     animateLayers(monotonicTime, wallClockTime);
     animateGestures(monotonicTime);
+    animateScrollbars(monotonicTime);
 }
 
 void CCLayerTreeHostImpl::startPageScaleAnimation(const IntSize& targetPosition, bool anchorPoint, float pageScale, double startTime, double duration)
@@ -931,6 +934,9 @@ void CCLayerTreeHostImpl::pinchGestureBegin()
 {
     m_pinchGestureActive = true;
     m_previousPinchAnchor = IntPoint();
+
+    if (m_rootScrollLayerImpl && m_rootScrollLayerImpl->scrollbarAnimationController())
+        m_rootScrollLayerImpl->scrollbarAnimationController()->didPinchGestureBegin();
 }
 
 void CCLayerTreeHostImpl::pinchGestureUpdate(float magnifyDelta,
@@ -954,6 +960,10 @@ void CCLayerTreeHostImpl::pinchGestureUpdate(float magnifyDelta,
     m_previousPinchAnchor = anchor;
 
     m_rootScrollLayerImpl->scrollBy(roundedIntSize(move));
+
+    if (m_rootScrollLayerImpl->scrollbarAnimationController())
+        m_rootScrollLayerImpl->scrollbarAnimationController()->didPinchGestureUpdate();
+
     m_client->setNeedsCommitOnImplThread();
     m_client->setNeedsRedrawOnImplThread();
 }
@@ -961,6 +971,9 @@ void CCLayerTreeHostImpl::pinchGestureUpdate(float magnifyDelta,
 void CCLayerTreeHostImpl::pinchGestureEnd()
 {
     m_pinchGestureActive = false;
+
+    if (m_rootScrollLayerImpl && m_rootScrollLayerImpl->scrollbarAnimationController())
+        m_rootScrollLayerImpl->scrollbarAnimationController()->didPinchGestureEnd();
 
     m_client->setNeedsCommitOnImplThread();
 }
@@ -1177,6 +1190,24 @@ void CCLayerTreeHostImpl::renderingStats(CCRenderingStats& stats) const
 {
     stats.numFramesSentToScreen = fpsCounter()->currentFrameNumber();
     stats.droppedFrameCount = fpsCounter()->droppedFrameCount();
+}
+
+void CCLayerTreeHostImpl::animateScrollbars(double monotonicTime)
+{
+    animateScrollbarsRecursive(m_rootLayerImpl.get(), monotonicTime);
+}
+
+void CCLayerTreeHostImpl::animateScrollbarsRecursive(CCLayerImpl* layer, double monotonicTime)
+{
+    if (!layer)
+        return;
+
+    CCScrollbarAnimationController* scrollbarController = layer->scrollbarAnimationController();
+    if (scrollbarController && scrollbarController->animate(monotonicTime))
+        m_client->setNeedsRedrawOnImplThread();
+
+    for (size_t i = 0; i < layer->children().size(); ++i)
+        animateScrollbarsRecursive(layer->children()[i].get(), monotonicTime);
 }
 
 } // namespace WebCore

@@ -30,6 +30,7 @@
 #include "LayerChromium.h"
 #include "ScrollbarLayerChromium.h"
 #include "cc/CCLayerImpl.h"
+#include "cc/CCScrollbarAnimationController.h"
 #include "cc/CCScrollbarLayerImpl.h"
 #include <wtf/RefPtr.h>
 
@@ -95,6 +96,13 @@ PassOwnPtr<CCLayerImpl> TreeSynchronizer::synchronizeTreeRecursive(RawPtrCCLayer
 
     layer->pushPropertiesTo(ccLayerImpl.get());
     ccLayerImpl->setLayerTreeHostImpl(hostImpl);
+
+    // Remove all dangling pointers. The pointers will be setup later in updateScrollbarLayerPointersRecursive phase
+    if (CCScrollbarAnimationController* scrollbarController = ccLayerImpl->scrollbarAnimationController()) {
+        scrollbarController->setHorizontalScrollbarLayer(0);
+        scrollbarController->setVerticalScrollbarLayer(0);
+    }
+
     return ccLayerImpl.release();
 }
 
@@ -113,10 +121,13 @@ void TreeSynchronizer::updateScrollbarLayerPointersRecursive(const RawPtrCCLayer
 
     CCScrollbarLayerImpl* ccScrollbarLayerImpl = static_cast<CCScrollbarLayerImpl*>(newLayers.get(scrollbarLayer->id()));
     ASSERT(ccScrollbarLayerImpl);
-    ccScrollbarLayerImpl->setScrollLayer(newLayers.get(scrollbarLayer->scrollLayerId()));
+    CCLayerImpl* ccScrollLayerImpl = newLayers.get(scrollbarLayer->scrollLayerId());
+    ASSERT(ccScrollLayerImpl);
 
-    // Scrollbar layers in the tree should always point to a valid scroll layer
-    ASSERT(newLayers.get(scrollbarLayer->scrollLayerId()));
+    if (ccScrollbarLayerImpl->orientation() == WebKit::WebScrollbar::Horizontal)
+        ccScrollLayerImpl->setHorizontalScrollbarLayer(ccScrollbarLayerImpl);
+    else
+        ccScrollLayerImpl->setVerticalScrollbarLayer(ccScrollbarLayerImpl);
 }
 
 } // namespace WebCore

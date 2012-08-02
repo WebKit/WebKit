@@ -134,7 +134,7 @@ static WebScrollbarLayer createScrollbarLayer(Scrollbar* scrollbar, WebScrollabl
     platformSupported = false;
 #endif
 
-    if (!platformSupported || scrollbar->isOverlayScrollbar() || scrollbar->isCustomScrollbar()) {
+    if (!platformSupported || scrollbar->isCustomScrollbar()) {
         scrollbarGraphicsLayer->setContentsToMedia(0);
         scrollbarGraphicsLayer->setDrawsContent(true);
         return WebScrollbarLayer();

@@ -48,8 +48,16 @@ public:
     void setForeTrackResourceId(CCResourceProvider::ResourceId id) { m_foreTrackResourceId = id; }
     void setThumbResourceId(CCResourceProvider::ResourceId id) { m_thumbResourceId = id; }
 
-    CCLayerImpl* scrollLayer() const { return m_scrollLayer; }
-    void setScrollLayer(CCLayerImpl* scrollLayer) { m_scrollLayer = scrollLayer; }
+    float currentPos() const { return m_currentPos; }
+    void setCurrentPos(float currentPos) { m_currentPos = currentPos; }
+
+    int totalSize() const { return m_totalSize; }
+    void setTotalSize(int totalSize) { m_totalSize = totalSize; }
+
+    int maximum() const { return m_maximum; }
+    void setMaximum(int maximum) { m_maximum = maximum; }
+
+    WebKit::WebScrollbar::Orientation orientation() const { return m_orientation; }
 
     virtual void appendQuads(CCQuadSink&, const CCSharedQuadState*, bool& hadMissingTiles) OVERRIDE;
 
@@ -61,8 +69,6 @@ protected:
     virtual void scrollbarGeometry(WebKit::WebRect& thumbRect, WebKit::WebRect& backTrackRect, WebKit::WebRect& foreTrackRect);
 
 private:
-    CCLayerImpl* m_scrollLayer;
-
     // nested class only to avoid namespace problem
     class CCScrollbar : public WebKit::WebScrollbar {
     public:
@@ -106,6 +112,11 @@ private:
     WebKit::WebScrollbar::ScrollbarControlSize m_controlSize;
     WebKit::WebScrollbar::ScrollbarPart m_pressedPart;
     WebKit::WebScrollbar::ScrollbarPart m_hoveredPart;
+
+    float m_currentPos;
+    int m_totalSize;
+    int m_maximum;
+
     bool m_isScrollableAreaActive;
     bool m_isScrollViewScrollbar;
     bool m_enabled;
