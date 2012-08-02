@@ -56,6 +56,163 @@ SpeculativeJIT::~SpeculativeJIT()
     WTF::deleteAllValues(m_slowPathGenerators);
 }
 
+void SpeculativeJIT::speculationCheck(ExitKind kind, JSValueSource jsValueSource, NodeIndex nodeIndex, MacroAssembler::Jump jumpToFail)
+{
+    if (!m_compileOkay)
+        return;
+    ASSERT(at(m_compileIndex).canExit() || m_isCheckingArgumentTypes);
+    m_jit.codeBlock()->appendOSRExit(OSRExit(kind, jsValueSource, m_jit.graph().methodOfGettingAValueProfileFor(nodeIndex), jumpToFail, this, m_stream->size()));
+}
+
+void SpeculativeJIT::speculationCheck(ExitKind kind, JSValueSource jsValueSource, Edge nodeUse, MacroAssembler::Jump jumpToFail)
+{
+    ASSERT(at(m_compileIndex).canExit() || m_isCheckingArgumentTypes);
+    speculationCheck(kind, jsValueSource, nodeUse.index(), jumpToFail);
+}
+
+void SpeculativeJIT::speculationCheck(ExitKind kind, JSValueSource jsValueSource, NodeIndex nodeIndex, MacroAssembler::JumpList& jumpsToFail)
+{
+    ASSERT(at(m_compileIndex).canExit() || m_isCheckingArgumentTypes);
+    Vector<MacroAssembler::Jump, 16> jumpVector = jumpsToFail.jumps();
+    for (unsigned i = 0; i < jumpVector.size(); ++i)
+        speculationCheck(kind, jsValueSource, nodeIndex, jumpVector[i]);
+}
+
+void SpeculativeJIT::speculationCheck(ExitKind kind, JSValueSource jsValueSource, Edge nodeUse, MacroAssembler::JumpList& jumpsToFail)
+{
+    ASSERT(at(m_compileIndex).canExit() || m_isCheckingArgumentTypes);
+    speculationCheck(kind, jsValueSource, nodeUse.index(), jumpsToFail);
+}
+
+void SpeculativeJIT::speculationCheck(ExitKind kind, JSValueSource jsValueSource, NodeIndex nodeIndex, MacroAssembler::Jump jumpToFail, const SpeculationRecovery& recovery)
+{
+    if (!m_compileOkay)
+        return;
+    ASSERT(at(m_compileIndex).canExit() || m_isCheckingArgumentTypes);
+    m_jit.codeBlock()->appendSpeculationRecovery(recovery);
+    m_jit.codeBlock()->appendOSRExit(OSRExit(kind, jsValueSource, m_jit.graph().methodOfGettingAValueProfileFor(nodeIndex), jumpToFail, this, m_stream->size(), m_jit.codeBlock()->numberOfSpeculationRecoveries()));
+}
+
+void SpeculativeJIT::speculationCheck(ExitKind kind, JSValueSource jsValueSource, Edge nodeUse, MacroAssembler::Jump jumpToFail, const SpeculationRecovery& recovery)
+{
+    ASSERT(at(m_compileIndex).canExit() || m_isCheckingArgumentTypes);
+    speculationCheck(kind, jsValueSource, nodeUse.index(), jumpToFail, recovery);
+}
+
+JumpReplacementWatchpoint* SpeculativeJIT::speculationWatchpoint(ExitKind kind, JSValueSource jsValueSource, NodeIndex nodeIndex)
+{
+    if (!m_compileOkay)
+        return 0;
+    ASSERT(at(m_compileIndex).canExit() || m_isCheckingArgumentTypes);
+    OSRExit& exit = m_jit.codeBlock()->osrExit(
+        m_jit.codeBlock()->appendOSRExit(
+            OSRExit(kind, jsValueSource,
+                    m_jit.graph().methodOfGettingAValueProfileFor(nodeIndex),
+                    JITCompiler::Jump(), this, m_stream->size())));
+    exit.m_watchpointIndex = m_jit.codeBlock()->appendWatchpoint(
+        JumpReplacementWatchpoint(m_jit.watchpointLabel()));
+    return &m_jit.codeBlock()->watchpoint(exit.m_watchpointIndex);
+}
+
+JumpReplacementWatchpoint* SpeculativeJIT::speculationWatchpoint(ExitKind kind)
+{
+    return speculationWatchpoint(kind, JSValueSource(), NoNode);
+}
+
+void SpeculativeJIT::forwardSpeculationCheck(ExitKind kind, JSValueSource jsValueSource, NodeIndex nodeIndex, MacroAssembler::Jump jumpToFail, const ValueRecovery& valueRecovery)
+{
+    ASSERT(at(m_compileIndex).canExit() || m_isCheckingArgumentTypes);
+    speculationCheck(kind, jsValueSource, nodeIndex, jumpToFail);
+    
+#if !ASSERT_DISABLED
+    if (!valueRecovery) {
+        // Check that the preceding node was a SetLocal with the same code origin.
+        Node* setLocal = &at(m_jit.graph().m_blocks[m_block]->at(m_indexInBlock - 1));
+        ASSERT(setLocal->op() == SetLocal);
+        ASSERT(setLocal->codeOrigin == at(m_compileIndex).codeOrigin);
+    }
+#endif
+    
+    unsigned setLocalIndexInBlock = m_indexInBlock + 1;
+    
+    Node* setLocal = &at(m_jit.graph().m_blocks[m_block]->at(setLocalIndexInBlock));
+    bool hadInt32ToDouble = false;
+    
+    if (setLocal->op() == Int32ToDouble) {
+        setLocal = &at(m_jit.graph().m_blocks[m_block]->at(++setLocalIndexInBlock));
+        hadInt32ToDouble = true;
+    }
+    if (setLocal->op() == Flush || setLocal->op() == Phantom)
+        setLocal = &at(m_jit.graph().m_blocks[m_block]->at(++setLocalIndexInBlock));
+        
+    if (!!valueRecovery) {
+        if (hadInt32ToDouble)
+            ASSERT(at(setLocal->child1()).child1() == m_compileIndex);
+        else
+            ASSERT(setLocal->child1() == m_compileIndex);
+    }
+    ASSERT(setLocal->op() == SetLocal);
+    ASSERT(setLocal->codeOrigin == at(m_compileIndex).codeOrigin);
+
+    Node* nextNode = &at(m_jit.graph().m_blocks[m_block]->at(setLocalIndexInBlock + 1));
+    ASSERT(nextNode->codeOrigin != at(m_compileIndex).codeOrigin);
+        
+    OSRExit& exit = m_jit.codeBlock()->lastOSRExit();
+    exit.m_codeOrigin = nextNode->codeOrigin;
+        
+    if (!valueRecovery)
+        return;
+    exit.m_lastSetOperand = setLocal->local();
+    exit.m_valueRecoveryOverride = adoptRef(
+        new ValueRecoveryOverride(setLocal->local(), valueRecovery));
+}
+
+void SpeculativeJIT::forwardSpeculationCheck(ExitKind kind, JSValueSource jsValueSource, NodeIndex nodeIndex, MacroAssembler::JumpList& jumpsToFail, const ValueRecovery& valueRecovery)
+{
+    ASSERT(at(m_compileIndex).canExit() || m_isCheckingArgumentTypes);
+    Vector<MacroAssembler::Jump, 16> jumpVector = jumpsToFail.jumps();
+    for (unsigned i = 0; i < jumpVector.size(); ++i)
+        forwardSpeculationCheck(kind, jsValueSource, nodeIndex, jumpVector[i], valueRecovery);
+}
+
+void SpeculativeJIT::speculationCheckWithConditionalDirection(ExitKind kind, JSValueSource jsValueSource, NodeIndex nodeIndex, MacroAssembler::Jump jumpToFail, bool isForward)
+{
+    if (isForward)
+        forwardSpeculationCheck(kind, jsValueSource, nodeIndex, jumpToFail);
+    else
+        speculationCheck(kind, jsValueSource, nodeIndex, jumpToFail);
+}
+
+void SpeculativeJIT::terminateSpeculativeExecution(ExitKind kind, JSValueRegs jsValueRegs, NodeIndex nodeIndex)
+{
+    ASSERT(at(m_compileIndex).canExit() || m_isCheckingArgumentTypes);
+#if DFG_ENABLE(DEBUG_VERBOSE)
+    dataLog("SpeculativeJIT was terminated.\n");
+#endif
+    if (!m_compileOkay)
+        return;
+    speculationCheck(kind, jsValueRegs, nodeIndex, m_jit.jump());
+    m_compileOkay = false;
+}
+
+void SpeculativeJIT::terminateSpeculativeExecution(ExitKind kind, JSValueRegs jsValueRegs, Edge nodeUse)
+{
+    ASSERT(at(m_compileIndex).canExit() || m_isCheckingArgumentTypes);
+    terminateSpeculativeExecution(kind, jsValueRegs, nodeUse.index());
+}
+
+void SpeculativeJIT::terminateSpeculativeExecutionWithConditionalDirection(ExitKind kind, JSValueRegs jsValueRegs, NodeIndex nodeIndex, bool isForward)
+{
+    ASSERT(at(m_compileIndex).canExit() || m_isCheckingArgumentTypes);
+#if DFG_ENABLE(DEBUG_VERBOSE)
+    dataLog("SpeculativeJIT was terminated.\n");
+#endif
+    if (!m_compileOkay)
+        return;
+    speculationCheckWithConditionalDirection(kind, jsValueRegs, nodeIndex, m_jit.jump(), isForward);
+    m_compileOkay = false;
+}
+
 void SpeculativeJIT::addSlowPathGenerator(PassOwnPtr<SlowPathGenerator> slowPathGenerator)
 {
     m_slowPathGenerators.append(slowPathGenerator.leakPtr());
