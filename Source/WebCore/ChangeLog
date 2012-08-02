@@ -1,3 +1,17 @@
+2012-08-02  Alexander Pavlov  <apavlov@chromium.org>
+
+        Web Inspector: Move DOM breakpoints-related context menu items into a submenu
+        https://bugs.webkit.org/show_bug.cgi?id=92989
+
+        Reviewed by Vsevolod Vlasov.
+
+        A "Break on..." submenu is added to the element context menu, to host all DOM breakpoint items.
+
+        * English.lproj/localizedStrings.js:
+        * inspector/front-end/DOMBreakpointsSidebarPane.js:
+        (WebInspector.DOMBreakpointsSidebarPane):
+        (WebInspector.DOMBreakpointsSidebarPane.prototype.populateNodeContextMenu):
+
 2012-08-02  Dominik Röttsches  <dominik.rottsches@intel.com>
 
         [Cairo] Add complex font drawing using HarfbuzzNG
