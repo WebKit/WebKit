@@ -1255,7 +1255,7 @@
                 "description": "DOM Storage entry.",
                 "hidden": true,
                 "properties": [
-                    { "name": "host", "type": "string", "description": "Domain name." },
+                    { "name": "origin", "type": "string", "description": "Document origin." },
                     { "name": "isLocalStorage", "type": "boolean", "description": "True for local storage." },
                     { "name": "id", "$ref": "StorageId", "description": "Entry id for further reference." }
                 ]

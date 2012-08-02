@@ -1,3 +1,16 @@
+2012-08-02  Alexei Filippov  <alexeif@chromium.org>
+
+        Web Inspector: rename host->origin in the inspector protocol DOMStorage entry
+        https://bugs.webkit.org/show_bug.cgi?id=92979
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/Inspector.json:
+        * inspector/InspectorDOMStorageResource.cpp:
+        (WebCore::InspectorDOMStorageResource::bind):
+        * inspector/front-end/DOMStorage.js:
+        (WebInspector.DOMStorageDispatcher.prototype.addDOMStorage):
+
 2012-08-02  Kihong Kwon  <kihong.kwon@samsung.com>
 
         [EFL] Change return value of battey level

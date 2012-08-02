@@ -100,7 +100,7 @@ WebInspector.DOMStorageDispatcher.prototype = {
     {
         var domStorage = new WebInspector.DOMStorage(
             payload.id,
-            payload.host,
+            payload.origin,
             payload.isLocalStorage);
         WebInspector.panels.resources.addDOMStorage(domStorage);
     },
