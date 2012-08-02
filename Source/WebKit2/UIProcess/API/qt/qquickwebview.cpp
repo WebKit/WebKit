@@ -185,7 +185,7 @@ static QQuickWebViewPrivate* createPrivateObject(QQuickWebView* publicObject)
 
 QQuickWebViewPrivate::FlickableAxisLocker::FlickableAxisLocker()
     : m_allowedDirection(QQuickFlickable::AutoFlickDirection)
-    , m_sampleCount(0)
+    , m_time(0), m_sampleCount(0)
 {
 }
 
@@ -197,8 +197,8 @@ QVector2D QQuickWebViewPrivate::FlickableAxisLocker::touchVelocity(const QTouchE
     if (touchVelocityAvailable)
         return touchPoint.velocity();
 
-    const QLineF movementLine(touchPoint.screenPos(), m_initialScreenPosition);
-    const qint64 elapsed = m_time.elapsed();
+    const QLineF movementLine(touchPoint.pos(), m_initialPosition);
+    const ulong elapsed = event->timestamp() - m_time;
 
     if (!elapsed)
         return QVector2D(0, 0);
@@ -215,8 +215,8 @@ void QQuickWebViewPrivate::FlickableAxisLocker::update(const QTouchEvent* event)
     ++m_sampleCount;
 
     if (m_sampleCount == 1) {
-        m_initialScreenPosition = touchPoint.screenPos();
-        m_time.restart();
+        m_initialPosition = touchPoint.pos();
+        m_time = event->timestamp();
         return;
     }
 

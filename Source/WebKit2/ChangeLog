@@ -1,3 +1,26 @@
+2012-08-02  Lauro Neto  <lauro.neto@openbossa.org>
+
+        [Qt] Fix axis locking when panning on N9
+        https://bugs.webkit.org/show_bug.cgi?id=92394
+
+        Reviewed by Simon Hausmann.
+
+        Make the QQuickWebView axis locker calculate the
+        time between events using QInputEvent.timestamp, which
+        is set from the native event when available.
+
+        Also use touchPoint.pos() instead of screenPos() to
+        correct the axis detection when running on N9, which
+        has a native landscape display and the applications usually
+        run in portrait mode.
+
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebViewPrivate::FlickableAxisLocker::FlickableAxisLocker):
+        (QQuickWebViewPrivate::FlickableAxisLocker::touchVelocity):
+        (QQuickWebViewPrivate::FlickableAxisLocker::update):
+        * UIProcess/API/qt/qquickwebview_p_p.h:
+        (FlickableAxisLocker):
+
 2012-08-02  Hyerim Bae  <hyerim.bae@samsung.com>
 
         [EFL][WK2]Add ewk_view_ui_client.

@@ -143,8 +143,8 @@ protected:
     class FlickableAxisLocker {
         QQuickFlickable::FlickableDirection m_allowedDirection;
 
-        QElapsedTimer m_time;
-        QPointF m_initialScreenPosition;
+        ulong m_time;
+        QPointF m_initialPosition;
         QPointF m_lockReferencePosition;
         int m_sampleCount;
 
