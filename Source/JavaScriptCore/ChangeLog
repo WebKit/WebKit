@@ -1,3 +1,10 @@
+2012-08-02  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, build fix for DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE).
+
+        * dfg/DFGStructureCheckHoistingPhase.cpp:
+        (JSC::DFG::StructureCheckHoistingPhase::run):
+
 2012-08-01  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Remove all uses of ClassInfo for JSStrings in JIT code

@@ -284,7 +284,7 @@ public:
                 dataLog("Not hoisting checks for %s because of heuristics.\n", m_graph.nameOfVariableAccessData(it->first));
                 continue;
             }
-            if (iter->second.m_isClobbered && !iter->second.m_structure->transitionWatchpointSetIsStillValid()) {
+            if (it->second.m_isClobbered && !it->second.m_structure->transitionWatchpointSetIsStillValid()) {
                 dataLog("Not hoisting checks for %s because the structure is clobbered and has an invalid watchpoint set.\n", m_graph.nameOfVariableAccessData(it->first));
                 continue;
             }
