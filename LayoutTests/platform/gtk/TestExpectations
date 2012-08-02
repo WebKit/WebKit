@@ -36,9 +36,6 @@
 // Tests that require new results.
 //////////////////////////////////////////////////////////////////////////////////////////
 
-// Needs rebaseline after https://bugs.webkit.org/show_bug.cgi?id=80219
-BUGWK80219 : fast/box-sizing/box-sizing.html = IMAGE+TEXT
-BUGWK80219 : compositing/overflow/clip-descendents.html = TEXT
 
 //////////////////////////////////////////////////////////////////////////////////////////
 // Expected failures
@@ -71,8 +68,8 @@ WONTFIX SKIP : media/unsupported-rtsp.html = TIMEOUT
 WONTFIX SKIP : fast/canvas/canvas-gradient-addStop-error.html = TEXT
 WONTFIX SKIP : http/tests/xmlhttprequest/default-content-type-dashboard.html = TEXT
 
-# ENABLE(WIDGET_REGION) is disabled
-WONTFIX SKIP : fast/css/widget-region-parser.html
+// ENABLE(WIDGET_REGION) is disabled
+WONTFIX SKIP : fast/css/widget-region-parser.html = TEXT
 
 // These test -apple- and -khtml- prefixed CSS properties, which we don't support.
 WONTFIX SKIP : inspector/styles/vendor-prefixes.html = TEXT

@@ -1,3 +1,19 @@
+2012-08-02  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening.
+
+        Updating baselines for fast/box-sizing/box-sizing.html after r124347
+        and fast/forms/basic-selects.html after r124416.
+
+        Also fix a bogus TestExpectations entry so fast/css/widget-region-parser.html
+        is properly skipped.
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/fast/box-sizing/box-sizing-expected.png:
+        * platform/gtk/fast/box-sizing/box-sizing-expected.txt: Added.
+        * platform/gtk/fast/forms/basic-selects-expected.png:
+        * platform/gtk/fast/forms/basic-selects-expected.txt:
+
 2012-08-02  Ádám Kallai  <kadam@inf.u-szeged.hu>
 
         [Qt] Unreviewed gardening. Skip a failing test.
