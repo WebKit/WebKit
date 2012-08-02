@@ -682,6 +682,9 @@ bool CSSProperty::isInheritedProperty(CSSPropertyID propertyID)
 #if ENABLE(DASHBOARD_SUPPORT)
     case CSSPropertyWebkitDashboardRegion:
 #endif
+#if ENABLE(WIDGET_REGION)
+    case CSSPropertyWebkitWidgetRegion:
+#endif
         return false;
     case CSSPropertyInvalid:
         ASSERT_NOT_REACHED();

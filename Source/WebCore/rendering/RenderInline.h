@@ -159,7 +159,7 @@ private:
 
     virtual void imageChanged(WrappedImagePtr, const IntRect* = 0);
 
-#if ENABLE(DASHBOARD_SUPPORT)
+#if ENABLE(DASHBOARD_SUPPORT) || ENABLE(WIDGET_REGION)
     virtual void addDashboardRegions(Vector<DashboardRegionValue>&);
 #endif
     

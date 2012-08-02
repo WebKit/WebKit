@@ -56,7 +56,7 @@ class StyleTransformData;
 class ContentData;
 struct LengthSize;
 
-#if ENABLE(DASHBOARD_SUPPORT)
+#if ENABLE(DASHBOARD_SUPPORT) || ENABLE(WIDGET_REGION)
 struct StyleDashboardRegion;
 #endif
 
@@ -102,7 +102,7 @@ public:
     Length m_perspectiveOriginY;
 
     LineClampValue lineClamp; // An Apple extension.
-#if ENABLE(DASHBOARD_SUPPORT)
+#if ENABLE(DASHBOARD_SUPPORT) || ENABLE(WIDGET_REGION)
     Vector<StyleDashboardRegion> m_dashboardRegions;
 #endif
 

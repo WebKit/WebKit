@@ -217,7 +217,7 @@ public:
     void endDisableRepaints();
     bool repaintsDisabled() { return m_disableRepaints > 0; }
 
-#if ENABLE(DASHBOARD_SUPPORT)
+#if ENABLE(DASHBOARD_SUPPORT) || ENABLE(WIDGET_REGION)
     void updateDashboardRegions();
 #endif
     void updateControlTints();

@@ -1493,6 +1493,7 @@ AM_CONDITIONAL([ENABLE_CSS_EXCLUSIONS],[test "$enable_css_exclusions" = "yes"])
 AM_CONDITIONAL([ENABLE_CSS_REGIONS],[test "$enable_css_regions" = "yes"])
 AM_CONDITIONAL([ENABLE_CSS_FILTERS],[test "$enable_css_filters" = "yes"])
 AM_CONDITIONAL([ENABLE_CSS_COMPOSITING],[test "$enable_css_compositing" = "yes"])
+AM_CONDITIONAL([ENABLE_WIDGET_REGION],[test "$enable_widget_region" = "yes"])
 
 # Gtk conditionals
 AM_CONDITIONAL([ENABLE_INTROSPECTION],[test "$enable_introspection" = "yes"])
@@ -1603,6 +1604,7 @@ Features:
  Web Sockets support                                      : $enable_web_sockets
  Web Timing support                                       : $enable_web_timing
  Web Workers support                                      : $enable_workers
+ Widget region support                                    : $enable_widget_region
  XSLT support                                             : $enable_xslt
 
 WebKit2 support:

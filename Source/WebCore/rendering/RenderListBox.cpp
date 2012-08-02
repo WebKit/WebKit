@@ -864,7 +864,7 @@ void RenderListBox::setHasVerticalScrollbar(bool hasScrollbar)
     if (m_vBar)
         m_vBar->styleChanged();
 
-#if ENABLE(DASHBOARD_SUPPORT)
+#if ENABLE(DASHBOARD_SUPPORT) || ENABLE(WIDGET_REGION)
     // Force an update since we know the scrollbars have changed things.
     if (document()->hasDashboardRegions())
         document()->setDashboardRegionsDirty(true);

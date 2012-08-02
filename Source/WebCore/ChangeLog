@@ -1,3 +1,90 @@
+2012-08-01  Jian Li  <jianli@chromium.org>
+
+        Add new CSS property "-webkit-widget-region" to expose dashboard region support for other port
+        https://bugs.webkit.org/show_bug.cgi?id=90298
+
+        Reviewed by Adam Barth.
+
+        The css property "-webkit-widget-region" is essentially a synonym of
+        "-webkit-dashboard-region" that allows us to expose dashboard region
+        support for other port. This patch also adds a new feature define
+        ENABLE(WIDGET_REGION) such that "-webkit-dashboard-region" is only
+        provided under ENABLE(DASHBOARD_SUPPORT) as it is now and
+        "-webkit-widget-region" is only exposed under ENABLE(WIDGET_REGION).
+
+        Change almost all the code pieces guarded by ENABLE(DASHBOARD_SUPPORT)
+        to make them also guarded by ENABLE(WIDGET_REGION), except those
+        that are specific to Apple/WebKit.
+
+        Currently ENABLE(WIDGET_REGION) has been turned on by default for
+        Mac/WebKit and chromium ports.
+
+        Test: fast/css/widget-region-parser.html
+
+        * Configurations/FeatureDefines.xcconfig: Add ENABLE_WIDGET_REGION define.
+        * DerivedSources.make:
+        * GNUmakefile.am: Add ENABLE_WIDGET_REGION define.
+        * WebCore.exp.in:
+        * css/CSSComputedStyleDeclaration.cpp: Handle CSSPropertyWebkitWidgetRegion.
+        (WebCore):
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        * css/CSSParser.cpp: Parse "-webkit-widget-region".
+        (WebCore::CSSParser::parseValue):
+        (WebCore):
+        (WebCore::CSSParser::parseDashboardRegions):
+        * css/CSSProperty.cpp: Handle CSSPropertyWebkitWidgetRegion.
+        (WebCore::CSSProperty::isInheritedProperty):
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore):
+        (WebCore::CSSPrimitiveValue::customCssText):
+        (WebCore::CSSPrimitiveValue::cloneForCSSOM):
+        * css/CSSPropertyNames.in: Add "-webkit-widget-region" property.
+        * css/DashboardRegion.h:
+        (DashboardRegion):
+        * css/StyleResolver.cpp: Handle CSSPropertyWebkitWidgetRegion.
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        (WebCore):
+        * dom/Document.h:
+        (WebCore):
+        (Document):
+        * page/Chrome.cpp:
+        (WebCore):
+        * page/ChromeClient.h:
+        (ChromeClient):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::layout):
+        (WebCore):
+        (WebCore::FrameView::paintContents):
+        * page/FrameView.h:
+        (FrameView):
+        * rendering/RenderInline.cpp:
+        (WebCore):
+        * rendering/RenderInline.h:
+        (RenderInline):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::scrollTo):
+        (WebCore::RenderLayer::setHasHorizontalScrollbar):
+        (WebCore::RenderLayer::setHasVerticalScrollbar):
+        (WebCore::RenderLayer::updateScrollbarsAfterLayout):
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::setHasVerticalScrollbar):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::styleWillChange):
+        (WebCore):
+        * rendering/RenderObject.h:
+        (RenderObject):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::diff):
+        (WebCore):
+        * rendering/style/RenderStyle.h:
+        * rendering/style/StyleDashboardRegion.h:
+        * rendering/style/StyleRareNonInheritedData.cpp:
+        (WebCore::StyleRareNonInheritedData::operator==):
+        * rendering/style/StyleRareNonInheritedData.h:
+        (WebCore):
+        (StyleRareNonInheritedData):
+
 2012-08-01  Arnaud Renevier  <a.renevier@sisa.samsung.com>
 
         [V8] TypedArray binding performance improvements

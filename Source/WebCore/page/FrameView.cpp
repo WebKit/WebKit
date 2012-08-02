@@ -1153,7 +1153,7 @@ void FrameView::layout(bool allowSubtree)
     if (AXObjectCache::accessibilityEnabled())
         root->document()->axObjectCache()->postNotification(root, AXObjectCache::AXLayoutComplete, true);
 #endif
-#if ENABLE(DASHBOARD_SUPPORT)
+#if ENABLE(DASHBOARD_SUPPORT) || ENABLE(WIDGET_REGION)
     updateDashboardRegions();
 #endif
 
@@ -2776,7 +2776,7 @@ bool FrameView::scrollAnimatorEnabled() const
     return false;
 }
 
-#if ENABLE(DASHBOARD_SUPPORT)
+#if ENABLE(DASHBOARD_SUPPORT) || ENABLE(WIDGET_REGION)
 void FrameView::updateDashboardRegions()
 {
     Document* document = m_frame->document();
@@ -3118,7 +3118,7 @@ void FrameView::paintContents(GraphicsContext* p, const IntRect& rect)
     m_paintBehavior = oldPaintBehavior;
     m_lastPaintTime = currentTime();
 
-#if ENABLE(DASHBOARD_SUPPORT)
+#if ENABLE(DASHBOARD_SUPPORT) || ENABLE(WIDGET_REGION)
     // Regions may have changed as a result of the visibility/z-index of element changing.
     if (document->dashboardRegionsDirty())
         updateDashboardRegions();

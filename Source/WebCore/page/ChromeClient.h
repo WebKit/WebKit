@@ -203,7 +203,7 @@ namespace WebCore {
         // the new cache.
         virtual void reachedApplicationCacheOriginQuota(SecurityOrigin*, int64_t totalSpaceNeeded) = 0;
 
-#if ENABLE(DASHBOARD_SUPPORT)
+#if ENABLE(DASHBOARD_SUPPORT) || ENABLE(WIDGET_REGION)
         virtual void dashboardRegionsChanged();
 #endif
 

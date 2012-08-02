@@ -1668,7 +1668,7 @@ void RenderLayer::scrollTo(int x, int y)
     // We should have a RenderView if we're trying to scroll.
     ASSERT(view);
     if (view) {
-#if ENABLE(DASHBOARD_SUPPORT)
+#if ENABLE(DASHBOARD_SUPPORT) || ENABLE(WIDGET_REGION)
         // Update dashboard regions, scrolling may change the clip of a
         // particular region.
         view->frameView()->updateDashboardRegions();
@@ -2319,7 +2319,7 @@ void RenderLayer::setHasHorizontalScrollbar(bool hasScrollbar)
     if (m_vBar)
         m_vBar->styleChanged();
 
-#if ENABLE(DASHBOARD_SUPPORT)
+#if ENABLE(DASHBOARD_SUPPORT) || ENABLE(WIDGET_REGION)
     // Force an update since we know the scrollbars have changed things.
     if (renderer()->document()->hasDashboardRegions())
         renderer()->document()->setDashboardRegionsDirty(true);
@@ -2342,7 +2342,7 @@ void RenderLayer::setHasVerticalScrollbar(bool hasScrollbar)
     if (m_vBar)
         m_vBar->styleChanged();
 
-#if ENABLE(DASHBOARD_SUPPORT)
+#if ENABLE(DASHBOARD_SUPPORT) || ENABLE(WIDGET_REGION)
     // Force an update since we know the scrollbars have changed things.
     if (renderer()->document()->hasDashboardRegions())
         renderer()->document()->setDashboardRegionsDirty(true);
@@ -2551,7 +2551,7 @@ void RenderLayer::updateScrollbarsAfterLayout()
 
         updateSelfPaintingLayer();
 
-#if ENABLE(DASHBOARD_SUPPORT)
+#if ENABLE(DASHBOARD_SUPPORT) || ENABLE(WIDGET_REGION)
         // Force an update since we know the scrollbars have changed things.
         if (renderer()->document()->hasDashboardRegions())
             renderer()->document()->setDashboardRegionsDirty(true);

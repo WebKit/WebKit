@@ -748,6 +748,14 @@ FEATURE_DEFINES += ENABLE_LINK_PREFETCH=1
 webcore_cppflags += -DENABLE_LINK_PREFETCH=1
 endif  # END ENABLE_LINK_PREFETCH
 
+# ---
+# Widget region support
+# ---
+if ENABLE_WIDGET_REGION
+FEATURE_DEFINES += ENABLE_WIDGET_REGION=1
+webcore_cppflags += -DENABLE_WIDGET_REGION=1
+endif  # END ENABLE_WIDGET_REGION
+
 DerivedSources/WebCore/CSSPropertyNames.cpp: DerivedSources/WebCore/CSSPropertyNames.h
 DerivedSources/WebCore/CSSPropertyNames.h: $(WEBCORE_CSS_PROPERTY_NAMES) $(WebCore)/css/makeprop.pl
 	$(AM_V_GEN)

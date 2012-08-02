@@ -109,7 +109,7 @@ enum PlaceGeneratedRunInFlag {
 
 const int caretWidth = 1;
 
-#if ENABLE(DASHBOARD_SUPPORT)
+#if ENABLE(DASHBOARD_SUPPORT) || ENABLE(WIDGET_REGION)
 struct DashboardRegionValue {
     bool operator==(const DashboardRegionValue& o) const
     {
@@ -636,7 +636,7 @@ public:
     // repaint and do not need a relayout
     virtual void updateFromElement() { }
 
-#if ENABLE(DASHBOARD_SUPPORT)
+#if ENABLE(DASHBOARD_SUPPORT) || ENABLE(WIDGET_REGION)
     virtual void addDashboardRegions(Vector<DashboardRegionValue>&);
     void collectDashboardRegions(Vector<DashboardRegionValue>&);
 #endif

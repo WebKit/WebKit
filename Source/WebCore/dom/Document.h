@@ -153,7 +153,7 @@ class SVGDocumentExtensions;
 class TransformSource;
 #endif
 
-#if ENABLE(DASHBOARD_SUPPORT)
+#if ENABLE(DASHBOARD_SUPPORT) || ENABLE(WIDGET_REGION)
 struct DashboardRegionValue;
 #endif
 
@@ -1018,7 +1018,7 @@ public:
     void setFrameElementsShouldIgnoreScrolling(bool ignore) { m_frameElementsShouldIgnoreScrolling = ignore; }
     bool frameElementsShouldIgnoreScrolling() const { return m_frameElementsShouldIgnoreScrolling; }
 
-#if ENABLE(DASHBOARD_SUPPORT)
+#if ENABLE(DASHBOARD_SUPPORT) || ENABLE(WIDGET_REGION)
     void setDashboardRegionsDirty(bool f) { m_dashboardRegionsDirty = f; }
     bool dashboardRegionsDirty() const { return m_dashboardRegionsDirty; }
     bool hasDashboardRegions () const { return m_hasDashboardRegions; }
@@ -1447,7 +1447,7 @@ private:
     OwnPtr<SVGDocumentExtensions> m_svgExtensions;
 #endif
 
-#if ENABLE(DASHBOARD_SUPPORT)
+#if ENABLE(DASHBOARD_SUPPORT) || ENABLE(WIDGET_REGION)
     Vector<DashboardRegionValue> m_dashboardRegions;
     bool m_hasDashboardRegions;
     bool m_dashboardRegionsDirty;

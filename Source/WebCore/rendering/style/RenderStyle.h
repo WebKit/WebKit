@@ -78,7 +78,7 @@
 #include "StyleFilterData.h"
 #endif
 
-#if ENABLE(DASHBOARD_SUPPORT)
+#if ENABLE(DASHBOARD_SUPPORT) || ENABLE(WIDGET_REGION)
 #include "StyleDashboardRegion.h"
 #endif
 
@@ -1011,7 +1011,7 @@ public:
     void setMinHeight(Length v) { SET_VAR(m_box, m_minHeight, v) }
     void setMaxHeight(Length v) { SET_VAR(m_box, m_maxHeight, v) }
 
-#if ENABLE(DASHBOARD_SUPPORT)
+#if ENABLE(DASHBOARD_SUPPORT) || ENABLE(WIDGET_REGION)
     Vector<StyleDashboardRegion> dashboardRegions() const { return rareNonInheritedData->m_dashboardRegions; }
     void setDashboardRegions(Vector<StyleDashboardRegion> regions) { SET_VAR(rareNonInheritedData, m_dashboardRegions, regions); }
 
@@ -1702,7 +1702,7 @@ public:
 #if ENABLE(OVERFLOW_SCROLLING)
     static bool initialUseTouchOverflowScrolling() { return false; }
 #endif
-#if ENABLE(DASHBOARD_SUPPORT)
+#if ENABLE(DASHBOARD_SUPPORT) || ENABLE(WIDGET_REGION)
     static const Vector<StyleDashboardRegion>& initialDashboardRegions();
     static const Vector<StyleDashboardRegion>& noneDashboardRegions();
 #endif

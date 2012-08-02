@@ -166,7 +166,7 @@ bool StyleRareNonInheritedData::operator==(const StyleRareNonInheritedData& o) c
         && m_perspectiveOriginX == o.m_perspectiveOriginX
         && m_perspectiveOriginY == o.m_perspectiveOriginY
         && lineClamp == o.lineClamp
-#if ENABLE(DASHBOARD_SUPPORT)
+#if ENABLE(DASHBOARD_SUPPORT) || ENABLE(WIDGET_REGION)
         && m_dashboardRegions == o.m_dashboardRegions
 #endif
         && m_deprecatedFlexibleBox == o.m_deprecatedFlexibleBox

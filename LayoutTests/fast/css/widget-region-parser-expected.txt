@@ -1,0 +1,90 @@
+This tests the parser and serializer for widget region values.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS parseWidgetRegion('none') is 'none'
+
+PASS parseWidgetRegion('region(label circle)') is 'region(label circle)'
+PASS parseWidgetRegion('region(label circle 1px 2px 3px 4px)') is 'region(label circle 1px 2px 3px 4px)'
+PASS parseWidgetRegion('region(label circle 0px 0px 0px 0px)') is 'region(label circle 0px 0px 0px 0px)'
+PASS parseWidgetRegion('region(label circle auto auto auto auto)') is 'region(label circle auto auto auto auto)'
+PASS parseWidgetRegion('region(label circle 1px 2px 3px 4px)') is 'region(label circle 1px 2px 3px 4px)'
+
+PASS parseWidgetRegion('region(label rectangle)') is 'region(label rectangle)'
+PASS parseWidgetRegion('region(label rectangle 1px 2px 3px 4px)') is 'region(label rectangle 1px 2px 3px 4px)'
+
+PASS parseWidgetRegion('region(label circle) region(label circle)') is 'region(label circle) region(label circle)'
+PASS parseWidgetRegion('region(label circle) region(label rectangle)') is 'region(label circle) region(label rectangle)'
+PASS parseWidgetRegion('region(label circle 1px 2px 3px 4px) region(label rectangle 5px 6px 7px 8px)') is 'region(label circle 1px 2px 3px 4px) region(label rectangle 5px 6px 7px 8px)'
+PASS parseWidgetRegion('region(label rectangle 1px 2px 3px 4px) region(label circle 5px 6px 7px 8px)') is 'region(label rectangle 1px 2px 3px 4px) region(label circle 5px 6px 7px 8px)'
+
+Tests to demonstrate that commas are allowed.
+
+PASS parseWidgetRegion('region(label, circle)') is 'region(label circle)'
+PASS parseWidgetRegion('region(label, circle, 1px, 2px, 3px, 4px)') is 'region(label circle 1px 2px 3px 4px)'
+
+Tests for variations in whitespace that are allowed.
+
+PASS parseWidgetRegion('  region(  label  circle  )  ') is 'region(label circle)'
+PASS parseWidgetRegion('  region(  label   circle  1px  2px  3px  4px  )  region(label  rectangle  5px  6px  7px  8px  )  ') is 'region(label circle 1px 2px 3px 4px) region(label rectangle 5px 6px 7px 8px)'
+PASS parseWidgetRegion('region(label circle 1px 2px 3px 4px)region(label rectangle 5px 6px 7px 8px)') is 'region(label circle 1px 2px 3px 4px) region(label rectangle 5px 6px 7px 8px)'
+
+Tests for case insensitivity.
+
+PASS parseWidgetRegion('region(label Circle)') is 'region(label circle)'
+PASS parseWidgetRegion('region(LABEL CIRCLE)') is 'region(LABEL circle)'
+PASS parseWidgetRegion('region(LaBeL CiRcLe)') is 'region(LaBeL circle)'
+PASS parseWidgetRegion('region(lAbEl cIrClE)') is 'region(lAbEl circle)'
+PASS parseWidgetRegion('region(label Rectangle)') is 'region(label rectangle)'
+PASS parseWidgetRegion('region(LABEL RECTANGLE)') is 'region(LABEL rectangle)'
+PASS parseWidgetRegion('region(LaBeL ReCtAnGlE)') is 'region(LaBeL rectangle)'
+PASS parseWidgetRegion('region(lAbEl rEcTaNgLe)') is 'region(lAbEl rectangle)'
+
+Some expected failures.
+
+PASS parseWidgetRegion('') is null
+PASS parseWidgetRegion(' ') is null
+PASS parseWidgetRegion('x') is null
+PASS parseWidgetRegion('dashboard-') is null
+PASS parseWidgetRegion('region') is null
+PASS parseWidgetRegion('region(') is null
+PASS parseWidgetRegion('region(label') is null
+PASS parseWidgetRegion('region(label ') is null
+PASS parseWidgetRegion('region(label c') is null
+PASS parseWidgetRegion('region(label circle') is null
+PASS parseWidgetRegion('region(label)') is null
+PASS parseWidgetRegion('region (label circle)') is null
+PASS parseWidgetRegion('region(label,, circle)') is null
+PASS parseWidgetRegion('region(label circle 1px2px 3px 4px)') is null
+PASS parseWidgetRegion('region(label,, circle, 1px, 2px, 3px, 4px)') is null
+PASS parseWidgetRegion('region(label, circle 1px 2px 3px 4px)') is null
+PASS parseWidgetRegion('region(label, circle, 1px 2px 3px 4px)') is null
+PASS parseWidgetRegion('region(label, circle, 1px, 2px 3px 4px)') is null
+PASS parseWidgetRegion('region(label, circle, 1px, 2px, 3px 4px)') is null
+PASS parseWidgetRegion('region(label circle, 1px, 2px, 3px, 4px)') is null
+PASS parseWidgetRegion('region(label circle 1px, 2px, 3px, 4px)') is null
+PASS parseWidgetRegion('region(label circle x)') is null
+PASS parseWidgetRegion('region(label circle x x)') is null
+PASS parseWidgetRegion('region(label circle x x x)') is null
+PASS parseWidgetRegion('region(label circle x x x x)') is null
+PASS parseWidgetRegion('region(label circle x x x x x)') is null
+PASS parseWidgetRegion('region(label circle 1px 2px 3px 4px x)') is null
+PASS parseWidgetRegion('region(label circle 1px 2px 3px 4px x x)') is null
+PASS parseWidgetRegion('region(label circle 1px 2px 3px 4px x x x)') is null
+PASS parseWidgetRegion('region(label circle 1px 2px 3px 4px x x x x)') is null
+PASS parseWidgetRegion('region(label circle 1px 2px 3px 4px x x x x x)') is null
+PASS parseWidgetRegion('region(label circle 1px 2px 3px 4px circle 5px 6px 7px 8px)') is null
+PASS parseWidgetRegion('region(label, circle, 1px, 2px, 3px, 4px, circle, 5px, 6px, 7px, 8px)') is null
+PASS parseWidgetRegion('none x') is null
+PASS parseWidgetRegion('none x x') is null
+PASS parseWidgetRegion('none x x x') is null
+PASS parseWidgetRegion('none x x x x') is null
+PASS parseWidgetRegion('none region(label, circle)') is null
+PASS parseWidgetRegion('region(label, circle) none') is null
+PASS parseWidgetRegion('attr(a)') is null
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

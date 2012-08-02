@@ -1170,3 +1170,6 @@ inspector/extensions/extensions-api.html
 inspector/extensions/extensions-audits-content-script.html
 inspector/extensions/extensions-audits.html
 inspector/extensions/extensions-eval-content-script.html
+
+# ENABLE(WIDGET_REGION) is disabled
+fast/css/widget-region-parser.html

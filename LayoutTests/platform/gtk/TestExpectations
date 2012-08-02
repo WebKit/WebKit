@@ -71,6 +71,9 @@ WONTFIX SKIP : media/unsupported-rtsp.html = TIMEOUT
 WONTFIX SKIP : fast/canvas/canvas-gradient-addStop-error.html = TEXT
 WONTFIX SKIP : http/tests/xmlhttprequest/default-content-type-dashboard.html = TEXT
 
+# ENABLE(WIDGET_REGION) is disabled
+WONTFIX SKIP : fast/css/widget-region-parser.html
+
 // These test -apple- and -khtml- prefixed CSS properties, which we don't support.
 WONTFIX SKIP : inspector/styles/vendor-prefixes.html = TEXT
 WONTFIX : fast/css/apple-prefix.html = TEXT

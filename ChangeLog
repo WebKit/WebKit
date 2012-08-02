@@ -1,3 +1,12 @@
+2012-08-01  Jian Li  <jianli@chromium.org>
+
+        Add new CSS property "-webkit-widget-region" to expose dashboard region support for other port
+        https://bugs.webkit.org/show_bug.cgi?id=90298
+
+        Reviewed by Adam Barth.
+
+        * configure.ac: Add ENABLE_WIDGET_REGION define.
+
 2012-07-31  Joshua Netterfield  <jnetterfield@rim.com>
 
         [BlackBerry] Enable CSS Filter Effects

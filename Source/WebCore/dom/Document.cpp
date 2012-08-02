@@ -454,7 +454,7 @@ Document::Document(Frame* frame, const KURL& url, bool isXHTML, bool isHTML)
     , m_hasXMLDeclaration(0)
     , m_savedRenderer(0)
     , m_designMode(inherit)
-#if ENABLE(DASHBOARD_SUPPORT)
+#if ENABLE(DASHBOARD_SUPPORT) || ENABLE(WIDGET_REGION)
     , m_hasDashboardRegions(false)
     , m_dashboardRegionsDirty(false)
 #endif
@@ -3714,7 +3714,7 @@ void Document::activeChainNodeDetached(Node* node)
         m_activeNode = m_activeNode->parentNode();
 }
 
-#if ENABLE(DASHBOARD_SUPPORT)
+#if ENABLE(DASHBOARD_SUPPORT) || ENABLE(WIDGET_REGION)
 const Vector<DashboardRegionValue>& Document::dashboardRegions() const
 {
     return m_dashboardRegions;

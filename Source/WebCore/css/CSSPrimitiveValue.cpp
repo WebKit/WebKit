@@ -43,7 +43,7 @@
 #include <wtf/text/StringBuffer.h>
 #include <wtf/text/StringBuilder.h>
 
-#if ENABLE(DASHBOARD_SUPPORT)
+#if ENABLE(DASHBOARD_SUPPORT) || ENABLE(WIDGET_REGION)
 #include "DashboardRegion.h"
 #endif
 
@@ -330,7 +330,7 @@ void CSSPrimitiveValue::init(PassRefPtr<Quad> quad)
     m_value.quad = quad.leakRef();
 }
 
-#if ENABLE(DASHBOARD_SUPPORT)
+#if ENABLE(DASHBOARD_SUPPORT) || ENABLE(WIDGET_REGION)
 void CSSPrimitiveValue::init(PassRefPtr<DashboardRegion> r)
 {
     m_primitiveUnitType = CSS_DASHBOARD_REGION;
@@ -1060,12 +1060,18 @@ String CSSPrimitiveValue::customCssText() const
                 text += m_value.pair->second()->cssText();
             }
             break;
-#if ENABLE(DASHBOARD_SUPPORT)
+#if ENABLE(DASHBOARD_SUPPORT) || ENABLE(WIDGET_REGION)
         case CSS_DASHBOARD_REGION:
             for (DashboardRegion* region = getDashboardRegionValue(); region; region = region->m_next.get()) {
                 if (!text.isEmpty())
                     text.append(' ');
+#if ENABLE(DASHBOARD_SUPPORT) && ENABLE(WIDGET_REGION)
+                text += region->m_cssFunctionName;
+#elif ENABLE(DASHBOARD_SUPPORT)
                 text += "dashboard-region(";
+#else
+                text += "region(";
+#endif
                 text += region->m_label;
                 if (region->m_isCircle)
                     text += " circle";
@@ -1188,7 +1194,7 @@ PassRefPtr<CSSPrimitiveValue> CSSPrimitiveValue::cloneForCSSOM() const
         // Pair is not exposed to the CSSOM, no need for a deep clone.
         result = CSSPrimitiveValue::create(m_value.pair);
         break;
-#if ENABLE(DASHBOARD_SUPPORT)
+#if ENABLE(DASHBOARD_SUPPORT) || ENABLE(WIDGET_REGION)
     case CSS_DASHBOARD_REGION:
         // DashboardRegion is not exposed to the CSSOM, no need for a deep clone.
         result = CSSPrimitiveValue::create(m_value.region);
