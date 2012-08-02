@@ -1,3 +1,15 @@
+2012-08-02  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [EFL] Gardening after r124278, r124371
+        https://bugs.webkit.org/show_bug.cgi?id=92959
+
+        Unreviewed gardening.
+
+        Putting to TestExpectations css3/flexbox/content-height-with-scrollbars.html and 
+        http/tests/security/contentSecurityPolicy/object-src-url-blocked.html.
+
+        * platform/efl/TestExpectations:
+
 2012-08-02  Kent Tamura  <tkent@chromium.org>
 
         [Chromium] Update expectations of calendar-picker-appearance.html
