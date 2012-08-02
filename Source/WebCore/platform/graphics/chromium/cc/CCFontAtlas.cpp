@@ -27,7 +27,6 @@
 #if USE(ACCELERATED_COMPOSITING)
 #include "CCFontAtlas.h"
 
-#include "CompositorHUDFontAtlas.h"
 #include "SkCanvas.h"
 #include "cc/CCProxy.h"
 
@@ -35,22 +34,16 @@ namespace WebCore {
 
 using namespace std;
 
-
-CCFontAtlas::CCFontAtlas()
-    : m_fontHeight(0)
+CCFontAtlas::CCFontAtlas(SkBitmap bitmap, IntRect asciiToRectTable[128], int fontHeight)
+    : m_atlas(bitmap)
+    , m_fontHeight(fontHeight)
 {
+    for (size_t i = 0; i < 128; ++i)
+        m_asciiToRectTable[i] = asciiToRectTable[i];
 }
-
 
 CCFontAtlas::~CCFontAtlas()
 {
-}
-
-void CCFontAtlas::initialize()
-{
-    ASSERT(CCProxy::isMainThread());
-
-    m_atlas = CompositorHUDFontAtlas::generateFontAtlas(m_asciiToRectTable, m_fontHeight);
 }
 
 void CCFontAtlas::drawText(SkCanvas* canvas, const String& text, const IntPoint& destPosition, const IntSize& clip) const

@@ -33,20 +33,21 @@
 
 namespace WebCore {
 
-struct CCLayerTreeSettings;
-
 class HeadsUpDisplayLayerChromium : public LayerChromium {
 public:
-    static PassRefPtr<HeadsUpDisplayLayerChromium> create(const CCLayerTreeSettings&);
+    static PassRefPtr<HeadsUpDisplayLayerChromium> create();
     virtual ~HeadsUpDisplayLayerChromium();
 
     virtual void update(CCTextureUpdater&, const CCOcclusionTracker*, CCRenderingStats&) OVERRIDE;
     virtual bool drawsContent() const OVERRIDE { return true; }
 
+    void setFontAtlas(PassOwnPtr<CCFontAtlas>);
+
     virtual PassOwnPtr<CCLayerImpl> createCCLayerImpl() OVERRIDE;
+    virtual void pushPropertiesTo(CCLayerImpl*) OVERRIDE;
 
 protected:
-    explicit HeadsUpDisplayLayerChromium(const CCLayerTreeSettings&);
+    HeadsUpDisplayLayerChromium();
 
 private:
     OwnPtr<CCFontAtlas> m_fontAtlas;

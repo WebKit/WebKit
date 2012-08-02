@@ -1,3 +1,19 @@
+2012-08-01  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Move compositor HUD font atlas initialization code out of compositor core
+        https://bugs.webkit.org/show_bug.cgi?id=92924
+
+        Reviewed by Adrienne Walker.
+
+        This initializes the compositor's font atlas when initialization the compositor if the "Show FPS counter" or
+        "Show layer tree" settings are true.
+
+        * src/WebLayerTreeView.cpp:
+        (WebKit::WebLayerTreeView::setFontAtlas):
+        (WebKit):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::setIsAcceleratedCompositingActive):
+
 2012-08-01  Jian Li  <jianli@chromium.org>
 
         [chromium] Make WebKit API support draggable region change update

@@ -37,6 +37,8 @@
 #include "TextRun.h"
 #include "skia/ext/platform_canvas.h"
 
+using WebKit::WebRect;
+
 namespace WebCore {
 
 #define ATLAS_SIZE 128
@@ -48,10 +50,10 @@ static void wrapPositionIfNeeded(IntPoint& position, int textWidth, int textHeig
 }
 
 // Paints the font into the atlas, from left-to-right, top-to-bottom, starting at
-// startingPosition. At the same time, it updates the ascii-to-IntRect mapping for
+// startingPosition. At the same time, it updates the ascii-to-WebRect mapping for
 // each character. By doing things this way, it is possible to support variable-width
 // fonts and multiple fonts on the same atlas.
-SkBitmap CompositorHUDFontAtlas::generateFontAtlas(IntRect asciiToRectTable[128], int& fontHeight)
+SkBitmap CompositorHUDFontAtlas::generateFontAtlas(WebRect asciiToRectTable[128], int& fontHeight)
 {
     fontHeight = 14;
 
@@ -91,7 +93,7 @@ SkBitmap CompositorHUDFontAtlas::generateFontAtlas(IntRect asciiToRectTable[128]
         atlasContext.strokeRect(FloatRect(FloatPoint(position.x() + 1, position.y() - textHeight + 1 + inflation), FloatSize(textWidth - 2, textHeight - 2 - inflation)), 1);
 
         // Initialize the rect that would be copied when drawing this glyph from the atlas.
-        asciiToRectTable[0] = IntRect(IntPoint(position.x(), position.y() - textHeight), IntSize(textWidth, textHeight + inflation));
+        asciiToRectTable[0] = WebRect(position.x(), position.y() - textHeight, textWidth, textHeight + inflation);
 
         // Increment to the position where the next glyph will be placed.
         position.setX(position.x() + textWidth);
@@ -114,7 +116,7 @@ SkBitmap CompositorHUDFontAtlas::generateFontAtlas(IntRect asciiToRectTable[128]
         atlasContext.drawText(font, text, position);
 
         // Initialize the rect that would be copied when drawing this glyph from the atlas.
-        asciiToRectTable[i] = IntRect(IntPoint(position.x(), position.y() - textHeight), IntSize(textWidth, textHeight + inflation));
+        asciiToRectTable[i] = WebRect(position.x(), position.y() - textHeight, textWidth, textHeight + inflation);
 
         // Increment to the position where the next glyph will be placed.
         position.setX(position.x() + textWidth);

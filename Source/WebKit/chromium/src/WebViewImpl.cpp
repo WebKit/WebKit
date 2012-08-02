@@ -42,6 +42,7 @@
 #include "Color.h"
 #include "ColorSpace.h"
 #include "CompositionUnderlineVectorBuilder.h"
+#include "CompositorHUDFontAtlas.h"
 #include "ContextFeaturesClientImpl.h"
 #include "ContextMenu.h"
 #include "ContextMenuController.h"
@@ -3668,6 +3669,15 @@ void WebViewImpl::setIsAcceleratedCompositingActive(bool active)
             m_compositorCreationFailed = false;
             if (m_pageOverlays)
                 m_pageOverlays->update();
+
+            // Only allocate the font atlas if we have reason to use the heads-up display.
+            if (layerTreeViewSettings.showFPSCounter || layerTreeViewSettings.showPlatformLayerTree) {
+                TRACE_EVENT0("cc", "WebViewImpl::setIsAcceleratedCompositingActive(true) initialize font atlas");
+                WebRect asciiToRectTable[128];
+                int fontHeight;
+                SkBitmap bitmap = WebCore::CompositorHUDFontAtlas::generateFontAtlas(asciiToRectTable, fontHeight);
+                m_layerTreeView.setFontAtlas(bitmap, asciiToRectTable, fontHeight);
+            }
         } else {
             m_nonCompositedContentHost.clear();
             m_isAcceleratedCompositingActive = false;

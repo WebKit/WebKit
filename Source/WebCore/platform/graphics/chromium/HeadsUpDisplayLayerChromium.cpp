@@ -33,23 +33,16 @@
 
 namespace WebCore {
 
-PassRefPtr<HeadsUpDisplayLayerChromium> HeadsUpDisplayLayerChromium::create(const CCLayerTreeSettings& settings)
+PassRefPtr<HeadsUpDisplayLayerChromium> HeadsUpDisplayLayerChromium::create()
 {
-    return adoptRef(new HeadsUpDisplayLayerChromium(settings));
+    return adoptRef(new HeadsUpDisplayLayerChromium());
 }
 
-HeadsUpDisplayLayerChromium::HeadsUpDisplayLayerChromium(const CCLayerTreeSettings& settings)
+HeadsUpDisplayLayerChromium::HeadsUpDisplayLayerChromium()
     : LayerChromium()
 {
 
     setBounds(IntSize(512, 128));
-
-    // Only allocate the font atlas if we have reason to use the heads-up display.
-    if (settings.showFPSCounter || settings.showPlatformLayerTree) {
-        TRACE_EVENT0("cc", "HeadsUpDisplayLayerChromium::initializeFontAtlas");
-        m_fontAtlas = CCFontAtlas::create();
-        m_fontAtlas->initialize();
-    }
 }
 
 HeadsUpDisplayLayerChromium::~HeadsUpDisplayLayerChromium()
@@ -73,9 +66,26 @@ void HeadsUpDisplayLayerChromium::update(CCTextureUpdater&, const CCOcclusionTra
     setBounds(bounds);
 }
 
+void HeadsUpDisplayLayerChromium::setFontAtlas(PassOwnPtr<CCFontAtlas> fontAtlas)
+{
+    m_fontAtlas = fontAtlas;
+    setNeedsCommit();
+}
+
 PassOwnPtr<CCLayerImpl> HeadsUpDisplayLayerChromium::createCCLayerImpl()
 {
-    return CCHeadsUpDisplayLayerImpl::create(m_layerId, m_fontAtlas.release());
+    return CCHeadsUpDisplayLayerImpl::create(m_layerId);
+}
+
+void HeadsUpDisplayLayerChromium::pushPropertiesTo(CCLayerImpl* layerImpl)
+{
+    LayerChromium::pushPropertiesTo(layerImpl);
+
+    if (!m_fontAtlas)
+        return;
+
+    CCHeadsUpDisplayLayerImpl* hudLayerImpl = static_cast<CCHeadsUpDisplayLayerImpl*>(layerImpl);
+    hudLayerImpl->setFontAtlas(m_fontAtlas.release());
 }
 
 }

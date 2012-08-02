@@ -45,14 +45,18 @@ using WebKit::WebCompositorTextureQuad;
 
 namespace WebCore {
 
-CCHeadsUpDisplayLayerImpl::CCHeadsUpDisplayLayerImpl(int id, PassOwnPtr<CCFontAtlas> fontAtlas)
-    : CCLayerImpl(id),
-      m_fontAtlas(fontAtlas)
+CCHeadsUpDisplayLayerImpl::CCHeadsUpDisplayLayerImpl(int id)
+    : CCLayerImpl(id)
 {
 }
 
 CCHeadsUpDisplayLayerImpl::~CCHeadsUpDisplayLayerImpl()
 {
+}
+
+void CCHeadsUpDisplayLayerImpl::setFontAtlas(PassOwnPtr<CCFontAtlas> fontAtlas)
+{
+    m_fontAtlas = fontAtlas;
 }
 
 void CCHeadsUpDisplayLayerImpl::willDraw(CCResourceProvider* resourceProvider)

@@ -1,3 +1,52 @@
+2012-08-01  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Move compositor HUD font atlas initialization code out of compositor core
+        https://bugs.webkit.org/show_bug.cgi?id=92924
+
+        Reviewed by Adrienne Walker.
+
+        This moves the HUD font atlas initialization code out of the compositor implementation to cut out Font-related
+        dependencies. The new flow is that an embedder can pass a font atlas to the CCLayerTreeHost, after which the
+        atlas is provided the HUD layer (if any) on the next commit. The HUD layer renders text using the font atlas if
+        it has any if the settings require text.
+
+        HUD tested manually, we don't have automated tests for this debugging-only feature.
+
+        * platform/graphics/chromium/CompositorHUDFontAtlas.cpp:
+        (WebCore):
+        (WebCore::CompositorHUDFontAtlas::generateFontAtlas):
+        * platform/graphics/chromium/CompositorHUDFontAtlas.h:
+        (CompositorHUDFontAtlas):
+        * platform/graphics/chromium/HeadsUpDisplayLayerChromium.cpp:
+        (WebCore::HeadsUpDisplayLayerChromium::create):
+        (WebCore::HeadsUpDisplayLayerChromium::HeadsUpDisplayLayerChromium):
+        (WebCore::HeadsUpDisplayLayerChromium::setFontAtlas):
+        (WebCore):
+        (WebCore::HeadsUpDisplayLayerChromium::createCCLayerImpl):
+        (WebCore::HeadsUpDisplayLayerChromium::pushPropertiesTo):
+        * platform/graphics/chromium/HeadsUpDisplayLayerChromium.h:
+        (HeadsUpDisplayLayerChromium):
+        * platform/graphics/chromium/cc/CCFontAtlas.cpp:
+        (WebCore::CCFontAtlas::CCFontAtlas):
+        * platform/graphics/chromium/cc/CCFontAtlas.h:
+        (WebCore):
+        (WebCore::CCFontAtlas::create):
+        (CCFontAtlas):
+        * platform/graphics/chromium/cc/CCHeadsUpDisplayLayerImpl.cpp:
+        (WebCore::CCHeadsUpDisplayLayerImpl::CCHeadsUpDisplayLayerImpl):
+        (WebCore::CCHeadsUpDisplayLayerImpl::setFontAtlas):
+        (WebCore):
+        * platform/graphics/chromium/cc/CCHeadsUpDisplayLayerImpl.h:
+        (WebCore::CCHeadsUpDisplayLayerImpl::create):
+        (CCHeadsUpDisplayLayerImpl):
+        * platform/graphics/chromium/cc/CCLayerTreeHost.cpp:
+        (WebCore::CCLayerTreeHost::setFontAtlas):
+        (WebCore):
+        (WebCore::CCLayerTreeHost::willCommit):
+        * platform/graphics/chromium/cc/CCLayerTreeHost.h:
+        (WebCore):
+        (CCLayerTreeHost):
+
 2012-08-01  Antoine Labour  <piman@chromium.org>
 
         [chromium] factor out the optimization pass in CCRenderSurfaceFilters::apply

@@ -26,6 +26,7 @@
 #ifndef WebLayerTreeView_h
 #define WebLayerTreeView_h
 
+#include "SkBitmap.h"
 #include "WebColor.h"
 #include "WebCommon.h"
 #include "WebNonCopyable.h"
@@ -174,6 +175,10 @@ public:
     // Fills in a WebRenderingStats struct containing information about the state of the compositor.
     // This call is relatively expensive in threaded mode as it blocks on the compositor thread.
     WEBKIT_EXPORT void renderingStats(WebRenderingStats&) const;
+
+    // Provides a font atlas to use for debug visualizations. The atlas must be a bitmap containing glyph data, a table of
+    // ASCII character values to a subrectangle of the atlas representing the corresponding glyph, and the glyph height.
+    WEBKIT_EXPORT void setFontAtlas(SkBitmap, WebRect asciiToRectTable[128], int fontHeight);
 
     // Simulates a lost context. For testing only.
     WEBKIT_EXPORT void loseCompositorContext(int numTimes);

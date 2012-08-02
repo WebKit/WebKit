@@ -251,12 +251,22 @@ void CCLayerTreeHost::finishCommitOnImplThread(CCLayerTreeHostImpl* hostImpl)
     m_commitNumber++;
 }
 
+void CCLayerTreeHost::setFontAtlas(PassOwnPtr<CCFontAtlas> fontAtlas)
+{
+    m_fontAtlas = fontAtlas;
+    setNeedsCommit();
+}
+
 void CCLayerTreeHost::willCommit()
 {
     m_client->willCommit();
     if (m_rootLayer && m_settings.showDebugInfo()) {
         if (!m_hudLayer)
-            m_hudLayer = HeadsUpDisplayLayerChromium::create(m_settings);
+            m_hudLayer = HeadsUpDisplayLayerChromium::create();
+
+        if (m_fontAtlas)
+            m_hudLayer->setFontAtlas(m_fontAtlas.release());
+
         if (m_hudLayer->parent() != m_rootLayer.get()) {
             m_hudLayer->removeFromParent();
             m_rootLayer->addChild(m_hudLayer);

@@ -2336,7 +2336,7 @@ TEST_F(CCLayerTreeHostImplTest, dontUseOldResourcesAfterLostContext)
     ioSurfaceLayer->setLayerTreeHostImpl(m_hostImpl.get());
     rootLayer->addChild(ioSurfaceLayer.release());
 
-    OwnPtr<CCHeadsUpDisplayLayerImpl> hudLayer = CCHeadsUpDisplayLayerImpl::create(6, nullptr);
+    OwnPtr<CCHeadsUpDisplayLayerImpl> hudLayer = CCHeadsUpDisplayLayerImpl::create(6);
     hudLayer->setBounds(IntSize(10, 10));
     hudLayer->setAnchorPoint(FloatPoint(0, 0));
     hudLayer->setContentBounds(IntSize(10, 10));

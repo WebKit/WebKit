@@ -47,13 +47,15 @@
 
 namespace WebCore {
 
+class CCFontAtlas;
 class CCGraphicsContext;
 class CCLayerChromium;
 class CCLayerTreeHostImpl;
 class CCLayerTreeHostImplClient;
-class CCTextureUpdater;
-class Region;
 class CCPrioritizedTextureManager;
+class CCTextureUpdater;
+class HeadsUpDisplayLayerChromium;
+class Region;
 struct CCScrollAndScaleSet;
 
 class CCLayerTreeHostClient {
@@ -265,6 +267,8 @@ public:
     void setDeviceScaleFactor(float);
     float deviceScaleFactor() const { return m_deviceScaleFactor; }
 
+    void setFontAtlas(PassOwnPtr<CCFontAtlas>);
+
 protected:
     CCLayerTreeHost(CCLayerTreeHostClient*, const CCLayerTreeSettings&);
     bool initialize();
@@ -307,7 +311,9 @@ private:
     int m_numFailedRecreateAttempts;
 
     RefPtr<LayerChromium> m_rootLayer;
-    RefPtr<LayerChromium> m_hudLayer;
+    RefPtr<HeadsUpDisplayLayerChromium> m_hudLayer;
+    OwnPtr<CCFontAtlas> m_fontAtlas;
+
     OwnPtr<CCPrioritizedTextureManager> m_contentsTextureManager;
     OwnPtr<CCPrioritizedTexture> m_surfaceMemoryPlaceholder;
 
@@ -331,6 +337,7 @@ private:
 
     TextureList m_deleteTextureAfterCommitList;
     size_t m_partialTextureUpdateRequests;
+
     static bool s_needsFilterContext;
 };
 

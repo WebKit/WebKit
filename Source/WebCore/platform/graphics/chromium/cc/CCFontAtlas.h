@@ -44,19 +44,14 @@ class IntPoint;
 class IntSize;
 
 // This class provides basic ability to draw text onto the heads-up display.
-// It must be initialized on the main thread, and it can only draw text on the impl thread.
 class CCFontAtlas {
     WTF_MAKE_NONCOPYABLE(CCFontAtlas);
 public:
-    static PassOwnPtr<CCFontAtlas> create()
+    static PassOwnPtr<CCFontAtlas> create(SkBitmap bitmap, IntRect asciiToRectTable[128], int fontHeight)
     {
-        return adoptPtr(new CCFontAtlas());
+        return adoptPtr(new CCFontAtlas(bitmap, asciiToRectTable, fontHeight));
     }
     ~CCFontAtlas();
-
-    // Creates the font atlas.
-    // - Should only be called on the main thread.
-    void initialize();
 
     // Draws multiple lines of text where each line of text is separated by '\n'.
     // - Correct glyphs will be drawn for ASCII codes in the range 32-127; any characters
@@ -70,7 +65,7 @@ public:
     void drawDebugAtlas(SkCanvas*, const IntPoint& destPosition) const;
 
 private:
-    CCFontAtlas();
+    CCFontAtlas(SkBitmap, IntRect asciiToRectTable[128], int fontHeight);
 
     void drawOneLineOfTextInternal(SkCanvas*, const String&, const IntPoint& destPosition) const;
 

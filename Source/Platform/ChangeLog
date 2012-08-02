@@ -1,3 +1,18 @@
+2012-08-01  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Move compositor HUD font atlas initialization code out of compositor core
+        https://bugs.webkit.org/show_bug.cgi?id=92924
+
+        Reviewed by Adrienne Walker.
+
+        The chromium compositor does not have any text rendering capabilities. It generally does not need them, but it
+        is helpful for some debugging aids to be able to render at least ASCII text to the screen. This provides an API
+        on WebLayerTreeView by which an embedder can provide an ASCII glyph atlas to use for displaying debug
+        information.
+
+        * chromium/public/WebLayerTreeView.h:
+        (WebLayerTreeView):
+
 2012-08-01  Jian Li  <jianli@chromium.org>
 
         Unreviewed. Fix build break for chromium.

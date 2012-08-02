@@ -29,6 +29,7 @@
 #include "GraphicsContext3DPrivate.h"
 #include "LayerChromium.h"
 #include "WebLayerTreeViewImpl.h"
+#include "cc/CCFontAtlas.h"
 #include "cc/CCGraphicsContext.h"
 #include "cc/CCLayerTreeHost.h"
 #include "cc/CCRenderingStats.h"
@@ -187,6 +188,15 @@ void WebLayerTreeView::renderingStats(WebRenderingStats& stats) const
     stats.droppedFrameCount = ccStats.droppedFrameCount;
     stats.totalPaintTimeInSeconds = ccStats.totalPaintTimeInSeconds;
     stats.totalRasterizeTimeInSeconds = ccStats.totalRasterizeTimeInSeconds;
+}
+
+void WebLayerTreeView::setFontAtlas(SkBitmap bitmap, WebRect asciiToWebRectTable[128], int fontHeight)
+{
+    IntRect asciiToRectTable[128];
+    for (int i = 0; i < 128; ++i)
+        asciiToRectTable[i] = asciiToWebRectTable[i];
+    OwnPtr<CCFontAtlas> fontAtlas = CCFontAtlas::create(bitmap, asciiToRectTable, fontHeight);
+    m_private->layerTreeHost()->setFontAtlas(fontAtlas.release());
 }
 
 void WebLayerTreeView::loseCompositorContext(int numTimes)

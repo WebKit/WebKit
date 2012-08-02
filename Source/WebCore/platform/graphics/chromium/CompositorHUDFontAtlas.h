@@ -26,8 +26,8 @@
 #ifndef CompositorHUDFontAtlas_h
 #define CompositorHUDFontAtlas_h
 
-#include "IntRect.h"
 #include "SkBitmap.h"
+#include <public/WebRect.h>
 
 namespace WebCore {
 
@@ -36,7 +36,7 @@ public:
     // This is a helper function that can generate a font atlas suitable for the compositor's heads up display.
     // Returns a bitmap containing glyphs and populates asciiToRectTable with the
     // location of each glyph.
-    static SkBitmap generateFontAtlas(IntRect asciiToRectTable[128], int& fontHeight);
+    static SkBitmap generateFontAtlas(WebKit::WebRect asciiToRectTable[128], int& fontHeight);
 };
 
 } // namespace WebCore

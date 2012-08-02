@@ -40,11 +40,13 @@ class CCFrameRateCounter;
 
 class CCHeadsUpDisplayLayerImpl : public CCLayerImpl {
 public:
-    static PassOwnPtr<CCHeadsUpDisplayLayerImpl> create(int id, PassOwnPtr<CCFontAtlas> fontAtlas)
+    static PassOwnPtr<CCHeadsUpDisplayLayerImpl> create(int id)
     {
-        return adoptPtr(new CCHeadsUpDisplayLayerImpl(id, fontAtlas));
+        return adoptPtr(new CCHeadsUpDisplayLayerImpl(id));
     }
     virtual ~CCHeadsUpDisplayLayerImpl();
+
+    void setFontAtlas(PassOwnPtr<CCFontAtlas>);
 
     virtual void willDraw(CCResourceProvider*) OVERRIDE;
     virtual void appendQuads(CCQuadSink&, const CCSharedQuadState*, bool& hadMissingTiles) OVERRIDE;
@@ -55,7 +57,7 @@ public:
     virtual bool layerIsAlwaysDamaged() const OVERRIDE { return true; }
 
 private:
-    CCHeadsUpDisplayLayerImpl(int, PassOwnPtr<CCFontAtlas>);
+    explicit CCHeadsUpDisplayLayerImpl(int);
 
     virtual const char* layerTypeAsString() const OVERRIDE { return "HeadsUpDisplayLayer"; }
 
