@@ -1,3 +1,16 @@
+2012-08-02  Peter Kasting  <pkasting@google.com>
+
+        [Chromium] Test expectation updates.
+        https://bugs.webkit.org/show_bug.cgi?id=92948
+        http://crbug.com/131687
+
+        Unreviewed, test expectation updates.
+
+        Removed bogus baseline.  Fixed some other expectation problems.
+
+        * platform/chromium-linux-x86/fast/js/dfg-double-vote-fuzz-expected.txt: Removed.
+        * platform/chromium/TestExpectations:
+
 2012-08-02  Keishi Hattori  <keishi@webkit.org>
 
         [Chromium] fast/forms/color/input-appearance-color.html and input-color-onchange-event.html are failing on WebKit waterfall

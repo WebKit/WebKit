@@ -24,12 +24,11 @@ BUGCR24182 SLOW SNOWLEOPARD DEBUG : fast/frames/frameset-frameborder-boolean-val
 BUGCR24182 SLOW SNOWLEOPARD WIN DEBUG : fast/frames/sandboxed-iframe-navigation-parent.html = PASS
 BUGCR24182 SLOW DEBUG : fast/frames/valid.html = PASS
 BUGWK77184 SLOW DEBUG : fast/js/dfg-double-vote-fuzz.html = PASS
-BUGCR119915 SLOW MAC RELEASE : fast/js/dfg-double-vote-fuzz.html = PASS
 BUGCR24182 SLOW DEBUG : fast/js/dfg-float32array.html = PASS
 BUGCR24182 SLOW DEBUG WIN MAC : fast/js/dfg-int16array.html = PASS
 BUGWK77365 SLOW DEBUG : fast/js/dfg-int32array-overflow-values.html = PASS
 BUGCR24182 SLOW DEBUG WIN MAC : fast/js/dfg-int8array.html = PASS
-BUGWK92948 SLOW DEBUG : fast/js/dfg-osr-entry-hoisted-clobbered-structure-check.html = PASS
+BUGWK92948 DEBUG : fast/js/dfg-osr-entry-hoisted-clobbered-structure-check.html = PASS TIMEOUT
 BUGWK74787 SLOW DEBUG : fast/js/dfg-poison-fuzz.html = PASS
 BUGWK77069 SLOW DEBUG : fast/js/dfg-uint32array-overflow-values.html = PASS
 BUGCR24182 SLOW DEBUG WIN MAC : fast/js/dfg-uint8clampedarray.html = PASS
@@ -156,15 +155,6 @@ BUGWK89052 SKIP : fast/css/image-orientation = PASS
 
 // Chromium needs larger media files to test buffering this way.
 BUGWK88172 SKIP : http/tests/media/video-buffered.html = PASS
-
-// [pkasting] Unskipping so I can figure out why these were skipped
-// BUGWK76270 SKIP : http/tests/appcache/abort-cache-onchecking.html = PASS
-// BUGWK76270 SKIP : http/tests/appcache/abort-cache-onchecking-manifest-404.html = PASS
-// BUGWK76270 SKIP : http/tests/appcache/abort-cache-onchecking-resource-404.html = PASS
-// BUGWK76270 SKIP : http/tests/appcache/abort-cache-ondownloading.html = PASS
-// BUGWK76270 SKIP : http/tests/appcache/abort-cache-ondownloading-manifest-404.html = PASS
-// BUGWK76270 SKIP : http/tests/appcache/abort-cache-ondownloading-resource-404.html = PASS
-// BUGWK76270 SKIP : http/tests/appcache/abort-cache-onprogress.html = PASS
 
 // -----------------------------------------------------------------
 // WONTFIX TESTS
@@ -3345,8 +3335,6 @@ BUGWK88131 DEBUG : fast/dom/HTMLMeterElement/meter-element-crash.html = PASS TEX
 
 BUGWK67116 DEBUG : compositing/layer-creation/overflow-scroll-overlap.html = PASS TEXT
 
-BUGCR131687 RELEASE : fast/js/dfg-double-vote-fuzz.html = PASS TEXT
-
 BUGWK88593 : fast/table/multiple-captions-display.xhtml = PASS IMAGE IMAGE+TEXT
 
 BUGWK88900 MAC : http/tests/misc/embed-image-load-outlives-gc-without-crashing.html = TEXT
@@ -3500,4 +3488,12 @@ BUGWK92941 WIN : accessibility/loading-iframe-updates-axtree.html = CRASH PASS
 // Flakily crashing after http://trac.webkit.org/changeset/124402
 BUGWK92952 DEBUG : storage/indexeddb/intversion-omit-parameter.html = CRASH PASS
 
-BUGCR131687 LINUX RELEASE X86 : fast/js/dfg-double-vote-fuzz.html = TEXT
+// Tests added by bug 76270:
+// Probably just needs rebaseline?
+// BUGPKASTING : http/tests/appcache/abort-cache-onchecking-manifest-404.html = PASS
+// BUGPKASTING : http/tests/appcache/abort-cache-onchecking-resource-404.html = PASS
+// BUGPKASTING : http/tests/appcache/abort-cache-ondownloading-resource-404.html = PASS
+// Needs investigation into why these print FAILURE CACHED
+// BUGPKASTING : http/tests/appcache/abort-cache-onchecking.html = TEXT
+// BUGPKASTING : http/tests/appcache/abort-cache-ondownloading.html = TEXT
+// BUGPKASTING : http/tests/appcache/abort-cache-onprogress.html = TEXT
