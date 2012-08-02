@@ -1,3 +1,21 @@
+2012-08-02  Keishi Hattori  <keishi@webkit.org>
+
+        [Chromium] fast/forms/color/input-appearance-color.html and input-color-onchange-event.html are failing on WebKit waterfall
+        https://bugs.webkit.org/show_bug.cgi?id=88951
+
+        Unreviewed.
+
+        Rebaseline these two tests.
+
+        * platform/chromium-linux/fast/forms/color/input-appearance-color-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/forms/color/input-appearance-color-expected.png: Added.
+        * platform/chromium-mac/fast/forms/color/input-appearance-color-expected.png: Added.
+        * platform/chromium-mac/fast/forms/color/input-appearance-color-expected.txt: Added.
+        * platform/chromium-win/fast/forms/color/input-appearance-color-expected.png: Added.
+        * platform/chromium-win/fast/forms/color/input-appearance-color-expected.txt: Added.
+        * platform/chromium/TestExpectations:
+        * platform/chromium/fast/forms/color/input-color-onchange-event-expected.txt: Added.
+
 2012-08-02  Peter Kasting  <pkasting@google.com>
 
         [Chromium] Test expectation updates.
