@@ -163,6 +163,7 @@
 #include <public/WebLayerTreeView.h>
 #include <public/WebPoint.h>
 #include <public/WebRect.h>
+#include <public/WebTouchCandidatesInfo.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/MainThread.h>
 #include <wtf/RefPtr.h>
@@ -790,6 +791,17 @@ void WebViewImpl::startPageScaleAnimation(const IntPoint& targetPosition, bool u
 WebViewBenchmarkSupport* WebViewImpl::benchmarkSupport()
 {
     return &m_benchmarkSupport;
+}
+
+WebVector<WebFloatQuad> WebViewImpl::getTouchHighlightQuads(const WebPoint& point,
+                                                            int padding,
+                                                            WebTouchCandidatesInfo& outTouchInfo,
+                                                            WebColor& outTapHighlightColor)
+{
+    // FIXME: Upstream this function from the chromium-android branch.
+    notImplemented();
+
+    return WebVector<WebFloatQuad>();
 }
 
 bool WebViewImpl::handleKeyEvent(const WebKeyboardEvent& event)

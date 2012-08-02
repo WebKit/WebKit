@@ -302,6 +302,11 @@ public:
     virtual void transferActiveWheelFlingAnimation(const WebActiveWheelFlingParameters&);
     virtual WebViewBenchmarkSupport* benchmarkSupport();
 
+    virtual WebVector<WebFloatQuad> getTouchHighlightQuads(const WebPoint&,
+                                                           int padding,
+                                                           WebTouchCandidatesInfo& outTouchInfo,
+                                                           WebColor& outTapHighlightColor);
+
     // WebLayerTreeViewClient
     virtual void willBeginFrame();
     virtual void didBeginFrame();
