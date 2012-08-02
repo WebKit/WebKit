@@ -69,6 +69,9 @@ webkit_network_response_get_uri  (WebKitNetworkResponse *response);
 WEBKIT_API SoupMessage *
 webkit_network_response_get_message(WebKitNetworkResponse* response);
 
+WEBKIT_API const char *
+webkit_network_response_get_suggested_filename(WebKitNetworkResponse *response);
+
 G_END_DECLS
 
 #endif

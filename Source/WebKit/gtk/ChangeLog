@@ -1,3 +1,23 @@
+2012-08-02  Claudio Saavedra  <csaavedra@igalia.com>
+
+        [GTK] Add WebKitNetworkResponse::suggested-filename property
+        https://bugs.webkit.org/show_bug.cgi?id=92878
+
+        Reviewed by Carlos Garcia Campos.
+
+        Webcore has API the suggested filename for a response, add
+        a property and getter for it in WebKitNetworkResponse.
+
+        * docs/webkitgtk-sections.txt: Add the symbols
+        * webkit/webkitnetworkresponse.cpp:
+        (_WebKitNetworkResponsePrivate): Add suggested_filename.
+        (webkit_network_response_finalize): Free it on finalize
+        (webkit_network_response_get_property): Add the getter call.
+        (webkit_network_response_class_init): Install the property.
+        (webkit_network_response_get_suggested_filename): New getter.
+        * webkit/webkitnetworkresponse.h: Add the declaration to header
+        file.
+
 2012-07-31  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r124207.

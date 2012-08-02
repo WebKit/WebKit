@@ -380,6 +380,7 @@ webkit_network_request_get_type
 WebKitNetworkResponse
 webkit_network_response_get_uri
 webkit_network_response_get_message
+webkit_network_response_get_suggested_filename
 webkit_network_response_set_uri
 <SUBSECTION Standard>
 WEBKIT_NETWORK_RESPONSE

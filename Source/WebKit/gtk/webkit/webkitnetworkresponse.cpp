@@ -24,9 +24,12 @@
 
 #include "ResourceResponse.h"
 #include "webkitglobalsprivate.h"
+#include "webkitnetworkresponseprivate.h"
 #include <glib/gi18n-lib.h>
 #include <wtf/gobject/GRefPtr.h>
 #include <wtf/text/CString.h>
+
+using namespace WebKit;
 
 /**
  * SECTION:webkitnetworkresponse
@@ -43,6 +46,7 @@ G_DEFINE_TYPE(WebKitNetworkResponse, webkit_network_response, G_TYPE_OBJECT);
 
 struct _WebKitNetworkResponsePrivate {
     gchar* uri;
+    gchar* suggestedFilename;
     SoupMessage* message;
 };
 
@@ -53,6 +57,7 @@ enum {
 
     PROP_URI,
     PROP_MESSAGE,
+    PROP_SUGGESTED_FILENAME,
 };
 
 static void webkit_network_response_dispose(GObject* object)
@@ -74,6 +79,7 @@ static void webkit_network_response_finalize(GObject* object)
     WebKitNetworkResponsePrivate* priv = response->priv;
 
     g_free(priv->uri);
+    g_free(priv->suggestedFilename);
 
     G_OBJECT_CLASS(webkit_network_response_parent_class)->finalize(object);
 }
@@ -88,6 +94,9 @@ static void webkit_network_response_get_property(GObject* object, guint property
         break;
     case PROP_MESSAGE:
         g_value_set_object(value, webkit_network_response_get_message(response));
+        break;
+    case PROP_SUGGESTED_FILENAME:
+        g_value_set_string(value, webkit_network_response_get_suggested_filename(response));
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propertyID, pspec);
@@ -149,6 +158,20 @@ static void webkit_network_response_class_init(WebKitNetworkResponseClass* respo
                                                         _("The SoupMessage that backs the response."),
                                                         SOUP_TYPE_MESSAGE,
                                                         (GParamFlags)(WEBKIT_PARAM_READWRITE|G_PARAM_CONSTRUCT_ONLY)));
+
+    /**
+     * WebKitNetworkResponse:suggested-filename:
+     *
+     * The suggested filename for the response.
+     *
+     * Since: 1.10
+     */
+    g_object_class_install_property(objectClass, PROP_SUGGESTED_FILENAME,
+                                    g_param_spec_string("suggested-filename",
+                                                        _("Suggested filename"),
+                                                        _("The suggested filename for the response."),
+                                                        0,
+                                                        WEBKIT_PARAM_READABLE));
 
     g_type_class_add_private(responseClass, sizeof(WebKitNetworkResponsePrivate));
 }
@@ -248,6 +271,32 @@ SoupMessage* webkit_network_response_get_message(WebKitNetworkResponse* response
     WebKitNetworkResponsePrivate* priv = response->priv;
 
     return priv->message;
+}
+
+/**
+ * webkit_network_response_get_suggested_filename:
+ * @response: a #WebKitNetworkResponse
+ *
+ * Obtains the suggested filename for the given network response. The
+ * suggested filename is taken from the 'Content-Disposition' HTTP
+ * header, but this is not always present, and this method will return
+ * %NULL in such case.
+ *
+ * Returns: (transfer none): the suggested filename or %NULL if not present
+ * Since: 1.10
+ **/
+const gchar* webkit_network_response_get_suggested_filename(WebKitNetworkResponse* response)
+{
+    g_return_val_if_fail(WEBKIT_IS_NETWORK_RESPONSE(response), 0);
+
+    WebKitNetworkResponsePrivate* priv = response->priv;
+
+    if (priv->suggestedFilename)
+        return priv->suggestedFilename;
+
+    WebCore::ResourceResponse coreResponse = core(response);
+    priv->suggestedFilename = g_strdup(coreResponse.suggestedFilename().utf8().data());
+    return priv->suggestedFilename;
 }
 
 namespace WebKit {
