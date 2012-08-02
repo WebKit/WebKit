@@ -1,3 +1,26 @@
+2012-08-02  Yoshifumi Inoue  <yosin@chromium.org>
+
+        Layout Test fast/forms/input-widths.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=92863
+
+        Reviewed by Kent Tamura.
+
+        This patch removes test cases for "date", "datetime", "datetime-local",
+        "month", "time" and "week" input types from fast/forms/input-widths.html
+        and updates its expectation, because these test cases aren't reasonable
+        any more.
+
+        This patch also removes test sample of input type "color".
+
+        After r124314, All chromium ports, except for Android, input type
+        "time" uses "monospace" font which makes input field wider.
+
+        * fast/forms/input-widths-expected.txt: Removed expectation of "date", "datetime", "datetime-local",
+        "month", "time" and "week" input types.
+        * fast/forms/input-widths.html: Removed test cases for "date", "datetime", "datetime-local",
+        "month", "time" and "week" input types, and a test sample for "color".
+        * platform/chromium/TestExpectations: Removed disabling line of fast/forms/input-widths.html
+
 2012-08-02  Peter Kasting  <pkasting@google.com>
 
         Rebaseline per bug 92904.

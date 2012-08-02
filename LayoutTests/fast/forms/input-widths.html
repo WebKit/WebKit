@@ -15,14 +15,6 @@
 <input type=password id=password>
 <input type=tel id=tel>
 <input type=url id=url>
-
-<input type=color id=color>
-<input type=date id=date>
-<input type=datetime id=datetime>
-<input type=datetime-local id=datetimelocal>
-<input type=month id=month>
-<input type=time id=time>
-<input type=week id=week>
 </div>
 
 <script>
@@ -35,14 +27,6 @@ shouldBe('document.getElementById("tel").offsetWidth', 'baseWidth');
 shouldBe('document.getElementById("url").offsetWidth', 'baseWidth');
 
 // type=search is not tested intentionally.
-
-// The folloiwng types should be removed when dedicated UIs are implemented.
-shouldBe('document.getElementById("date").offsetWidth', 'baseWidth');
-shouldBe('document.getElementById("datetime").offsetWidth', 'baseWidth');
-shouldBe('document.getElementById("datetimelocal").offsetWidth', 'baseWidth');
-shouldBe('document.getElementById("month").offsetWidth', 'baseWidth');
-shouldBe('document.getElementById("time").offsetWidth', 'baseWidth');
-shouldBe('document.getElementById("week").offsetWidth', 'baseWidth');
 
 document.getElementById('parent').innerHTML = '';
 </script>
