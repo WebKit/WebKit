@@ -26,7 +26,6 @@ webcore_cppflags += \
 	-I$(srcdir)/Source/WebCore/bindings \
 	-I$(srcdir)/Source/WebCore/bindings/generic \
 	-I$(srcdir)/Source/WebCore/bindings/js \
-	-I$(srcdir)/Source/WebCore/bindings/js/specialization \
 	-I$(srcdir)/Source/WebCore/bridge \
 	-I$(srcdir)/Source/WebCore/bridge/c \
 	-I$(srcdir)/Source/WebCore/bridge/jni/jsc \

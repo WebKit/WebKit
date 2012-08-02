@@ -4,7 +4,6 @@ ADD_DEFINITIONS(-DWTF_CHANGES=1)
 LIST(APPEND WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/bindings/v8"
     "${WEBCORE_DIR}/bindings/v8/custom"
-    "${WEBCORE_DIR}/bindings/v8/specialization"
     "${JAVASCRIPTCORE_DIR}/runtime"
 )
 
@@ -17,6 +16,7 @@ LIST(APPEND WebCore_IDL_INCLUDES
 )
 
 LIST(APPEND WebCore_SOURCES
+    bindings/v8/BindingState.cpp
     bindings/v8/DOMData.cpp
     bindings/v8/DOMDataStore.cpp
     bindings/v8/DOMWrapperWorld.cpp
@@ -160,8 +160,6 @@ LIST(APPEND WebCore_SOURCES
     bindings/v8/custom/V8XMLHttpRequestConstructor.cpp
     bindings/v8/custom/V8XMLHttpRequestCustom.cpp
     bindings/v8/custom/V8XSLTProcessorCustom.cpp
-
-    bindings/v8/specialization/V8BindingState.cpp
 )
 
 LIST(APPEND WebCoreTestSupport_SOURCES

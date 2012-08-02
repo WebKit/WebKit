@@ -23,6 +23,7 @@
 
 #if ENABLE(Condition1) || ENABLE(Condition2)
 
+#include "BindingState.h"
 #include "ContextFeatures.h"
 #include "ExceptionCode.h"
 #include "MessagePort.h"
@@ -30,7 +31,6 @@
 #include "SerializedScriptValue.h"
 #include "V8Binding.h"
 #include "V8BindingMacros.h"
-#include "V8BindingState.h"
 #include "V8DOMWrapper.h"
 #include "V8IsolatedContext.h"
 #include "V8MessagePort.h"

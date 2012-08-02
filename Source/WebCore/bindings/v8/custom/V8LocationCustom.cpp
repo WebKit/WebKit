@@ -31,6 +31,7 @@
 #include "config.h"
 #include "V8Location.h"
 
+#include "BindingState.h"
 #include "Document.h"
 #include "Frame.h"
 #include "FrameLoader.h"
@@ -38,7 +39,6 @@
 #include "Location.h"
 #include "PlatformString.h"
 #include "V8Binding.h"
-#include "V8BindingState.h"
 #include "V8DOMWindow.h"
 #include "V8EventListener.h"
 #include "V8Utilities.h"
@@ -50,85 +50,85 @@ void V8Location::hashAccessorSetter(v8::Local<v8::String> name, v8::Local<v8::Va
 {
     INC_STATS("DOM.Location.hash._set");
     Location* impl = V8Location::toNative(info.Holder());
-    State<V8Binding>* state = V8BindingState::Only();
+    BindingState* state = BindingState::instance();
 
     // FIXME: Handle exceptions correctly.
     String hash = toWebCoreString(value);
 
-    impl->setHash(hash, state->activeWindow(), state->firstWindow());
+    impl->setHash(hash, activeWindow(state), firstWindow(state));
 }
 
 void V8Location::hostAccessorSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
     INC_STATS("DOM.Location.host._set");
     Location* impl = V8Location::toNative(info.Holder());
-    State<V8Binding>* state = V8BindingState::Only();
+    BindingState* state = BindingState::instance();
 
     // FIXME: Handle exceptions correctly.
     String host = toWebCoreString(value);
 
-    impl->setHost(host, state->activeWindow(), state->firstWindow());
+    impl->setHost(host, activeWindow(state), firstWindow(state));
 }
 
 void V8Location::hostnameAccessorSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
     INC_STATS("DOM.Location.hostname._set");
     Location* impl = V8Location::toNative(info.Holder());
-    State<V8Binding>* state = V8BindingState::Only();
+    BindingState* state = BindingState::instance();
 
     // FIXME: Handle exceptions correctly.
     String hostname = toWebCoreString(value);
 
-    impl->setHostname(hostname, state->activeWindow(), state->firstWindow());
+    impl->setHostname(hostname, activeWindow(state), firstWindow(state));
 }
 
 void V8Location::hrefAccessorSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
     INC_STATS("DOM.Location.href._set");
     Location* impl = V8Location::toNative(info.Holder());
-    State<V8Binding>* state = V8BindingState::Only();
+    BindingState* state = BindingState::instance();
 
     // FIXME: Handle exceptions correctly.
     String href = toWebCoreString(value);
 
-    impl->setHref(href, state->activeWindow(), state->firstWindow());
+    impl->setHref(href, activeWindow(state), firstWindow(state));
 }
 
 void V8Location::pathnameAccessorSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
     INC_STATS("DOM.Location.pathname._set");
     Location* impl = V8Location::toNative(info.Holder());
-    State<V8Binding>* state = V8BindingState::Only();
+    BindingState* state = BindingState::instance();
 
     // FIXME: Handle exceptions correctly.
     String pathname = toWebCoreString(value);
 
-    impl->setPathname(pathname, state->activeWindow(), state->firstWindow());
+    impl->setPathname(pathname, activeWindow(state), firstWindow(state));
 }
 
 void V8Location::portAccessorSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
     INC_STATS("DOM.Location.port._set");
     Location* impl = V8Location::toNative(info.Holder());
-    State<V8Binding>* state = V8BindingState::Only();
+    BindingState* state = BindingState::instance();
 
     // FIXME: Handle exceptions correctly.
     String port = toWebCoreString(value);
 
-    impl->setPort(port, state->activeWindow(), state->firstWindow());
+    impl->setPort(port, activeWindow(state), firstWindow(state));
 }
 
 void V8Location::protocolAccessorSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
     INC_STATS("DOM.Location.protocol._set");
     Location* impl = V8Location::toNative(info.Holder());
-    State<V8Binding>* state = V8BindingState::Only();
+    BindingState* state = BindingState::instance();
 
     // FIXME: Handle exceptions correctly.
     String protocol = toWebCoreString(value);
 
     ExceptionCode ec = 0;
-    impl->setProtocol(protocol, state->activeWindow(), state->firstWindow(), ec);
+    impl->setProtocol(protocol, activeWindow(state), firstWindow(state), ec);
     if (UNLIKELY(ec))
         V8Proxy::setDOMException(ec, info.GetIsolate());
 }
@@ -137,12 +137,12 @@ void V8Location::searchAccessorSetter(v8::Local<v8::String> name, v8::Local<v8::
 {
     INC_STATS("DOM.Location.search._set");
     Location* impl = V8Location::toNative(info.Holder());
-    State<V8Binding>* state = V8BindingState::Only();
+    BindingState* state = BindingState::instance();
 
     // FIXME: Handle exceptions correctly.
     String search = toWebCoreString(value);
 
-    impl->setSearch(search, state->activeWindow(), state->firstWindow());
+    impl->setSearch(search, activeWindow(state), firstWindow(state));
 }
 
 v8::Handle<v8::Value> V8Location::reloadAccessorGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
@@ -156,7 +156,7 @@ v8::Handle<v8::Value> V8Location::reloadAccessorGetter(v8::Local<v8::String> nam
         return privateTemplate->GetFunction();
     }
     Location* imp = V8Location::toNative(holder);
-    if (!V8BindingSecurity::canAccessFrame(V8BindingState::Only(), imp->frame(), false)) {
+    if (!BindingSecurity::canAccessFrame(BindingState::instance(), imp->frame(), false)) {
         static v8::Persistent<v8::FunctionTemplate> sharedTemplate = v8::Persistent<v8::FunctionTemplate>::New(v8::FunctionTemplate::New(V8Location::reloadCallback, v8::Handle<v8::Value>(), v8::Signature::New(V8Location::GetRawTemplate())));
         return sharedTemplate->GetFunction();
     }
@@ -174,7 +174,7 @@ v8::Handle<v8::Value> V8Location::replaceAccessorGetter(v8::Local<v8::String> na
         return privateTemplate->GetFunction();
     }
     Location* imp = V8Location::toNative(holder);
-    if (!V8BindingSecurity::canAccessFrame(V8BindingState::Only(), imp->frame(), false)) {
+    if (!BindingSecurity::canAccessFrame(BindingState::instance(), imp->frame(), false)) {
         static v8::Persistent<v8::FunctionTemplate> sharedTemplate = v8::Persistent<v8::FunctionTemplate>::New(v8::FunctionTemplate::New(V8Location::replaceCallback, v8::Handle<v8::Value>(), v8::Signature::New(V8Location::GetRawTemplate())));
         return sharedTemplate->GetFunction();
     }
@@ -193,7 +193,7 @@ v8::Handle<v8::Value> V8Location::assignAccessorGetter(v8::Local<v8::String> nam
         return privateTemplate->GetFunction();
     }
     Location* imp = V8Location::toNative(holder);
-    if (!V8BindingSecurity::canAccessFrame(V8BindingState::Only(), imp->frame(), false)) {
+    if (!BindingSecurity::canAccessFrame(BindingState::instance(), imp->frame(), false)) {
         static v8::Persistent<v8::FunctionTemplate> sharedTemplate = v8::Persistent<v8::FunctionTemplate>::New(v8::FunctionTemplate::New(V8Location::assignCallback, v8::Handle<v8::Value>(), v8::Signature::New(V8Location::GetRawTemplate())));
         return sharedTemplate->GetFunction();
     }
@@ -204,9 +204,9 @@ v8::Handle<v8::Value> V8Location::reloadCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.Location.reload");
     Location* impl = V8Location::toNative(args.Holder());
-    State<V8Binding>* state = V8BindingState::Only();
+    BindingState* state = BindingState::instance();
 
-    impl->reload(state->activeWindow());
+    impl->reload(activeWindow(state));
     return v8::Undefined();
 }
 
@@ -214,12 +214,12 @@ v8::Handle<v8::Value> V8Location::replaceCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.Location.replace");
     Location* impl = V8Location::toNative(args.Holder());
-    State<V8Binding>* state = V8BindingState::Only();
+    BindingState* state = BindingState::instance();
 
     // FIXME: Handle exceptions correctly.
     String urlString = toWebCoreString(args[0]);
 
-    impl->replace(urlString, state->activeWindow(), state->firstWindow());
+    impl->replace(urlString, activeWindow(state), firstWindow(state));
     return v8::Undefined();
 }
 
@@ -227,12 +227,12 @@ v8::Handle<v8::Value> V8Location::assignCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.Location.assign");
     Location* impl = V8Location::toNative(args.Holder());
-    State<V8Binding>* state = V8BindingState::Only();
+    BindingState* state = BindingState::instance();
 
     // FIXME: Handle exceptions correctly.
     String urlString = toWebCoreString(args[0]);
 
-    impl->assign(urlString, state->activeWindow(), state->firstWindow());
+    impl->assign(urlString, activeWindow(state), firstWindow(state));
     return v8::Undefined();
 }
 
@@ -251,7 +251,7 @@ v8::Handle<v8::Value> V8Location::toStringCallback(const v8::Arguments& args)
     INC_STATS("DOM.Location.toString");
     v8::Handle<v8::Object> holder = args.Holder();
     Location* imp = V8Location::toNative(holder);
-    if (!V8BindingSecurity::canAccessFrame(V8BindingState::Only(), imp->frame(), true))
+    if (!BindingSecurity::canAccessFrame(BindingState::instance(), imp->frame(), true))
         return v8::Undefined();
     String result = imp->href();
     return v8String(result, args.GetIsolate());
@@ -261,14 +261,14 @@ bool V8Location::indexedSecurityCheck(v8::Local<v8::Object> host, uint32_t index
 {
     // Only allow same origin access
     Location* imp =  V8Location::toNative(host);
-    return V8BindingSecurity::canAccessFrame(V8BindingState::Only(), imp->frame(), false);
+    return BindingSecurity::canAccessFrame(BindingState::instance(), imp->frame(), false);
 }
 
 bool V8Location::namedSecurityCheck(v8::Local<v8::Object> host, v8::Local<v8::Value> key, v8::AccessType type, v8::Local<v8::Value>)
 {
     // Only allow same origin access
     Location* imp = V8Location::toNative(host);
-    return V8BindingSecurity::canAccessFrame(V8BindingState::Only(), imp->frame(), false);
+    return BindingSecurity::canAccessFrame(BindingState::instance(), imp->frame(), false);
 }
 
 v8::Handle<v8::Value> toV8(Location* impl, v8::Isolate* isolate)

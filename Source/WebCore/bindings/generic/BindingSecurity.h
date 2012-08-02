@@ -48,45 +48,25 @@ namespace WebCore {
 class DOMWindow;
 class Node;
 
-// Security functions shared by various language bindings.
-template <class Binding>
 class BindingSecurity : public BindingSecurityBase {
 public:
-    // Check if the active execution context can access the target frame.
-    static bool canAccessFrame(State<Binding>*, Frame*, bool reportError);
-
-    // Check if it is safe to access the given node from the
-    // current security context.
-    static bool shouldAllowAccessToNode(State<Binding>*, Node* target);
-
-    static bool allowPopUp(State<Binding>*);
-    static bool allowSettingFrameSrcToJavascriptUrl(State<Binding>*, HTMLFrameElementBase*, const String& value);
-    static bool allowSettingSrcToJavascriptURL(State<Binding>*, Element*, const String& name, const String& value);
+    static bool canAccessFrame(BindingState*, Frame*, bool reportError);
+    static bool shouldAllowAccessToNode(BindingState*, Node* target);
+    static bool allowPopUp(BindingState*);
+    static bool allowSettingFrameSrcToJavascriptUrl(BindingState*, HTMLFrameElementBase*, const String& value);
+    static bool allowSettingSrcToJavascriptURL(BindingState*, Element*, const String& name, const String& value);
 
 private:
-    explicit BindingSecurity() {}
-    ~BindingSecurity();
-
-    // Check if the current DOMWindow's security context can access the target
-    // DOMWindow.  This function does not report errors, so most callers should
-    // use canAccessFrame instead.
-    static bool canAccessWindow(State<Binding>*, DOMWindow* target);
+    static bool canAccessWindow(BindingState*, DOMWindow* target);
 };
 
-// Implementations of templated methods must be in this file.
-
-template <class Binding>
-bool BindingSecurity<Binding>::canAccessWindow(State<Binding>* state,
-                                               DOMWindow* targetWindow)
+inline bool BindingSecurity::canAccessWindow(BindingState* state, DOMWindow* targetWindow)
 {
-    DOMWindow* activeWindow = state->activeWindow();
-    return canAccess(activeWindow, targetWindow);
+    DOMWindow* active = activeWindow(state);
+    return canAccess(active, targetWindow);
 }
 
-template <class Binding>
-bool BindingSecurity<Binding>::canAccessFrame(State<Binding>* state,
-                                              Frame* target,
-                                              bool reportError)
+inline bool BindingSecurity::canAccessFrame(BindingState* state, Frame* target, bool reportError)
 {
     // The subject is detached from a frame, deny accesses.
     if (!target)
@@ -94,40 +74,36 @@ bool BindingSecurity<Binding>::canAccessFrame(State<Binding>* state,
 
     if (!canAccessWindow(state, getDOMWindow(target))) {
         if (reportError)
-            state->immediatelyReportUnsafeAccessTo(target);
+            immediatelyReportUnsafeAccessTo(state, target);
         return false;
     }
     return true;
 }
 
-template <class Binding>
-bool BindingSecurity<Binding>::shouldAllowAccessToNode(State<Binding>* state, Node* node)
+inline bool BindingSecurity::shouldAllowAccessToNode(BindingState* state, Node* node)
 {
     if (!node)
         return false;
 
     Frame* target = getFrame(node);
-
     if (!target)
         return false;
 
     return canAccessFrame(state, target, true);
 }
 
-template <class Binding>
-bool BindingSecurity<Binding>::allowPopUp(State<Binding>* state)
+inline bool BindingSecurity::allowPopUp(BindingState* state)
 {
     if (ScriptController::processingUserGesture())
         return true;
 
-    Frame* frame = state->firstFrame();
+    Frame* frame = firstFrame(state);
     ASSERT(frame);
     Settings* settings = frame->settings();
     return settings && settings->javaScriptCanOpenWindowsAutomatically();
 }
 
-template <class Binding>
-bool BindingSecurity<Binding>::allowSettingFrameSrcToJavascriptUrl(State<Binding>* state, HTMLFrameElementBase* frame, const String& value)
+inline bool BindingSecurity::allowSettingFrameSrcToJavascriptUrl(BindingState* state, HTMLFrameElementBase* frame, const String& value)
 {
     if (protocolIsJavaScript(stripLeadingAndTrailingHTMLSpaces(value))) {
         Node* contentDoc = frame->contentDocument();
@@ -137,8 +113,7 @@ bool BindingSecurity<Binding>::allowSettingFrameSrcToJavascriptUrl(State<Binding
     return true;
 }
 
-template <class Binding>
-bool BindingSecurity<Binding>::allowSettingSrcToJavascriptURL(State<Binding>* state, Element* element, const String& name, const String& value)
+inline bool BindingSecurity::allowSettingSrcToJavascriptURL(BindingState* state, Element* element, const String& name, const String& value)
 {
     if ((element->hasTagName(HTMLNames::iframeTag) || element->hasTagName(HTMLNames::frameTag)) && equalIgnoringCase(name, "src"))
         return allowSettingFrameSrcToJavascriptUrl(state, static_cast<HTMLFrameElementBase*>(element), value);

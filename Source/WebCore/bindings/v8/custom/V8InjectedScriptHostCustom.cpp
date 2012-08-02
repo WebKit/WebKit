@@ -32,6 +32,7 @@
 #if ENABLE(INSPECTOR)
 #include "V8InjectedScriptHost.h"
 
+#include "BindingState.h"
 #include "Database.h"
 #include "InjectedScript.h"
 #include "InjectedScriptHost.h"
@@ -40,7 +41,6 @@
 #include "ScriptDebugServer.h"
 #include "ScriptValue.h"
 #include "V8Binding.h"
-#include "V8BindingState.h"
 #include "V8Database.h"
 #include "V8Float32Array.h"
 #include "V8Float64Array.h"

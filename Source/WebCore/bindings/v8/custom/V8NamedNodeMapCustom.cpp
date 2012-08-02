@@ -31,10 +31,10 @@
 #include "config.h"
 #include "V8NamedNodeMap.h"
 
+#include "BindingState.h"
 #include "NamedNodeMap.h"
 #include "V8Attr.h"
 #include "V8Binding.h"
-#include "V8BindingState.h"
 #include "V8Element.h"
 #include "V8Node.h"
 #include "V8Proxy.h"

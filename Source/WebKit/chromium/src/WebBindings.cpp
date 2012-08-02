@@ -35,18 +35,19 @@
 #include "npruntime_priv.h"
 
 #if USE(V8)
-#include <wtf/ArrayBufferView.h>
+#include "BindingState.h"
 #include "DOMWindow.h"
 #include "NPV8Object.h"  // for PrivateIdentifier
 #include "Range.h"
 #include "V8ArrayBuffer.h"
 #include "V8ArrayBufferView.h"
-#include "V8BindingState.h"
 #include "V8DOMWrapper.h"
 #include "V8Element.h"
 #include "V8NPUtils.h"
 #include "V8Proxy.h"
 #include "V8Range.h"
+#include <wtf/ArrayBufferView.h>
+// FIXME: Remove the USE(JSC) ifdefs because we don't support USE(JSC) anymore.
 #elif USE(JSC)
 #include "bridge/c/c_utility.h"
 #endif

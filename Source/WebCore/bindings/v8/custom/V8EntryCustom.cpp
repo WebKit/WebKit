@@ -33,9 +33,9 @@
 
 #if ENABLE(FILE_SYSTEM)
 
+#include "BindingState.h"
 #include "V8Attr.h"
 #include "V8Binding.h"
-#include "V8BindingState.h"
 #include "V8DirectoryEntry.h"
 #include "V8Entry.h"
 #include "V8FileEntry.h"

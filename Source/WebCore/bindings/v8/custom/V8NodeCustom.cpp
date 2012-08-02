@@ -31,14 +31,13 @@
 #include "config.h"
 #include "Node.h"
 
+#include "BindingState.h"
 #include "Document.h"
 #include "EventListener.h"
 #include "ShadowRoot.h"
-
 #include "V8AbstractEventListener.h"
 #include "V8Attr.h"
 #include "V8Binding.h"
-#include "V8BindingState.h"
 #include "V8CDATASection.h"
 #include "V8Comment.h"
 #include "V8Document.h"
@@ -54,12 +53,11 @@
 #include "V8ProcessingInstruction.h"
 #include "V8Proxy.h"
 #include "V8Text.h"
+#include <wtf/RefPtr.h>
 
 #if ENABLE(SVG)
 #include "V8SVGElement.h"
 #endif
-
-#include <wtf/RefPtr.h>
 
 namespace WebCore {
 

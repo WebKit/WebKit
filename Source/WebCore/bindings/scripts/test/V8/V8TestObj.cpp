@@ -21,6 +21,7 @@
 #include "config.h"
 #include "V8TestObj.h"
 
+#include "BindingState.h"
 #include "ContextFeatures.h"
 #include "DOMStringList.h"
 #include "Dictionary.h"
@@ -38,7 +39,6 @@
 #include "SerializedScriptValue.h"
 #include "V8Binding.h"
 #include "V8BindingMacros.h"
-#include "V8BindingState.h"
 #include "V8DOMStringList.h"
 #include "V8DOMWrapper.h"
 #include "V8Document.h"
@@ -930,7 +930,7 @@ static v8::Handle<v8::Value> contentDocumentAttrGetter(v8::Local<v8::String> nam
 {
     INC_STATS("DOM.TestObj.contentDocument._get");
     TestObj* imp = V8TestObj::toNative(info.Holder());
-    if (!V8BindingSecurity::shouldAllowAccessToNode(V8BindingState::Only(), imp->contentDocument()))
+    if (!BindingSecurity::shouldAllowAccessToNode(BindingState::instance(), imp->contentDocument()))
         return v8::Handle<v8::Value>(v8::Null(info.GetIsolate()));
 
     return toV8(imp->contentDocument(), info.GetIsolate());
@@ -1808,7 +1808,7 @@ static v8::Handle<v8::Value> getSVGDocumentCallback(const v8::Arguments& args)
     TestObj* imp = V8TestObj::toNative(args.Holder());
     ExceptionCode ec = 0;
     {
-    if (!V8BindingSecurity::shouldAllowAccessToNode(V8BindingState::Only(), imp->getSVGDocument(ec)))
+    if (!BindingSecurity::shouldAllowAccessToNode(BindingState::instance(), imp->getSVGDocument(ec)))
         return v8::Handle<v8::Value>(v8::Null(args.GetIsolate()));
     RefPtr<SVGDocument> result = imp->getSVGDocument(ec);
     if (UNLIKELY(ec))

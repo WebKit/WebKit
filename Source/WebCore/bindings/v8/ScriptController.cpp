@@ -32,7 +32,7 @@
 #include "config.h"
 #include "ScriptController.h"
 
-#include "PlatformSupport.h"
+#include "BindingState.h"
 #include "Document.h"
 #include "ScriptCallStack.h"
 #include "ScriptCallStackFactory.h"
@@ -49,13 +49,13 @@
 #include "npruntime_impl.h"
 #include "npruntime_priv.h"
 #include "NPV8Object.h"
+#include "PlatformSupport.h"
 #include "ScriptSourceCode.h"
 #include "SecurityOrigin.h"
 #include "Settings.h"
 #include "UserGestureIndicator.h"
 #include "V8Binding.h"
 #include "V8BindingMacros.h"
-#include "V8BindingState.h"
 #include "V8DOMWindow.h"
 #include "V8Event.h"
 #include "V8HiddenPropertyName.h"
@@ -97,7 +97,7 @@ Frame* ScriptController::retrieveFrameForCurrentContext()
 
 bool ScriptController::canAccessFromCurrentOrigin(Frame *frame)
 {
-    return !v8::Context::InContext() || V8BindingSecurity::canAccessFrame(V8BindingState::Only(), frame, true);
+    return !v8::Context::InContext() || BindingSecurity::canAccessFrame(BindingState::instance(), frame, true);
 }
 
 ScriptController::ScriptController(Frame* frame)

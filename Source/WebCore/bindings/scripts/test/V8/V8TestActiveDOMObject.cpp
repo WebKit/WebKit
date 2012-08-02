@@ -21,12 +21,12 @@
 #include "config.h"
 #include "V8TestActiveDOMObject.h"
 
+#include "BindingState.h"
 #include "ContextFeatures.h"
 #include "ExceptionCode.h"
 #include "RuntimeEnabledFeatures.h"
 #include "V8Binding.h"
 #include "V8BindingMacros.h"
-#include "V8BindingState.h"
 #include "V8DOMWrapper.h"
 #include "V8IsolatedContext.h"
 #include "V8Node.h"
@@ -54,7 +54,7 @@ static v8::Handle<v8::Value> excitingFunctionCallback(const v8::Arguments& args)
     if (args.Length() < 1)
         return V8Proxy::throwNotEnoughArgumentsError(args.GetIsolate());
     TestActiveDOMObject* imp = V8TestActiveDOMObject::toNative(args.Holder());
-    if (!V8BindingSecurity::canAccessFrame(V8BindingState::Only(), imp->frame(), true))
+    if (!BindingSecurity::canAccessFrame(BindingState::instance(), imp->frame(), true))
         return v8::Handle<v8::Value>();
     EXCEPTION_BLOCK(Node*, nextChild, V8Node::HasInstance(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined)) ? V8Node::toNative(v8::Handle<v8::Object>::Cast(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined))) : 0);
     imp->excitingFunction(nextChild);
@@ -83,7 +83,7 @@ static v8::Handle<v8::Value> postMessageAttrGetter(v8::Local<v8::String> name, c
         return privateTemplate->GetFunction();
     }
     TestActiveDOMObject* imp = V8TestActiveDOMObject::toNative(holder);
-    if (!V8BindingSecurity::canAccessFrame(V8BindingState::Only(), imp->frame(), false)) {
+    if (!BindingSecurity::canAccessFrame(BindingState::instance(), imp->frame(), false)) {
         static v8::Persistent<v8::FunctionTemplate> sharedTemplate = v8::Persistent<v8::FunctionTemplate>::New(v8::FunctionTemplate::New(TestActiveDOMObjectV8Internal::postMessageCallback, v8::Handle<v8::Value>(), v8::Signature::New(V8TestActiveDOMObject::GetRawTemplate())));
         return sharedTemplate->GetFunction();
     }

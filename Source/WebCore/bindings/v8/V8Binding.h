@@ -52,11 +52,6 @@ namespace WebCore {
     class ExternalStringVisitor;
     class MemoryObjectInfo;
 
-    // FIXME: Remove V8Binding.
-    class V8Binding {
-    };
-    typedef BindingSecurity<V8Binding> V8BindingSecurity;
-
     class StringCache {
     public:
         StringCache() { }

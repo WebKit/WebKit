@@ -28,40 +28,60 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef V8BindingState_h
-#define V8BindingState_h
+#include "config.h"
+#include "BindingState.h"
 
-#include "GenericBinding.h"
-#include "V8Binding.h"
+#include "Frame.h"
+#include "ScriptController.h"
+#include "V8Proxy.h"
+#include <wtf/StdLibExtras.h>
 
 namespace WebCore {
 
-class Frame;
-
-// Singleton implementation of State<V8Binding>.  Uses V8's global data
-// structures to return information about relevant execution state.
-template <>
-class State<V8Binding> : public State<GenericBinding> {
-public:
-    // Singleton
-    static State* Only();
-
-    // Reports an error message (without delay) if the security check fails.
-    static void immediatelyReportUnsafeAccessTo(Frame*);
-
-    DOMWindow* activeWindow();
-    DOMWindow* firstWindow();
-
-    Frame* activeFrame();
-    Frame* firstFrame();
-
-private:
-    explicit State() {}
-    ~State();
-};
-
-typedef State<V8Binding> V8BindingState;
-
+BindingState* BindingState::instance()
+{
+    DEFINE_STATIC_LOCAL(BindingState, bindingStateForV8, ());
+    return &bindingStateForV8;
 }
 
-#endif // V8BindingState_h
+DOMWindow* activeWindow(BindingState*)
+{
+    v8::Local<v8::Context> activeContext = v8::Context::GetCalling();
+    if (activeContext.IsEmpty()) {
+        // There is a single activation record on the stack, so that must
+        // be the activeContext.
+        activeContext = v8::Context::GetCurrent();
+    }
+    return V8Proxy::retrieveWindow(activeContext);
+}
+
+DOMWindow* firstWindow(BindingState*)
+{
+    return V8Proxy::retrieveWindow(v8::Context::GetEntered());
+}
+
+Frame* activeFrame(BindingState*)
+{
+    Frame* frame = V8Proxy::retrieveFrameForCallingContext();
+    if (!frame) {
+        // Unfortunately, when processing script from a plug-in, we might not
+        // have a calling context. In those cases, we fall back to the
+        // entered context for security checks.
+        // FIXME: We need a better API for retrieving frames that abstracts
+        //        away this concern.
+        frame = V8Proxy::retrieveFrameForEnteredContext();
+    }
+    return frame;
+}
+
+Frame* firstFrame(BindingState*)
+{
+    return V8Proxy::retrieveFrameForEnteredContext();
+}
+
+void immediatelyReportUnsafeAccessTo(BindingState*, Frame* target)
+{
+    V8Proxy::reportUnsafeAccessTo(target);
+}
+
+}

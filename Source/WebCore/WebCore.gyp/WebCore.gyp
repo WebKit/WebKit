@@ -76,7 +76,6 @@
       '../bindings/generic',
       '../bindings/v8',
       '../bindings/v8/custom',
-      '../bindings/v8/specialization',
       '../bridge',
       '../bridge/jni',
       '../bridge/jni/v8',

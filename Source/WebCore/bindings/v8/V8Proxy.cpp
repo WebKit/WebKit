@@ -31,6 +31,7 @@
 #include "config.h"
 #include "V8Proxy.h"
 
+#include "BindingState.h"
 #include "CachedMetadata.h"
 #include "DateExtension.h"
 #include "Document.h"
@@ -49,7 +50,6 @@
 #include "Settings.h"
 #include "StylePropertySet.h"
 #include "V8Binding.h"
-#include "V8BindingState.h"
 #include "V8Collection.h"
 #include "V8DOMCoreException.h"
 #include "V8DOMMap.h"

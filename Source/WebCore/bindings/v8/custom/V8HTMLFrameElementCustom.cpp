@@ -31,10 +31,10 @@
 #include "config.h"
 #include "V8HTMLFrameElement.h"
 
+#include "BindingState.h"
 #include "HTMLFrameElement.h"
 #include "HTMLNames.h"
 #include "V8Binding.h"
-#include "V8BindingState.h"
 #include "V8Proxy.h"
 
 namespace WebCore {
@@ -46,7 +46,7 @@ void V8HTMLFrameElement::locationAccessorSetter(v8::Local<v8::String> name, v8::
     HTMLFrameElement* frame = V8HTMLFrameElement::toNative(info.Holder());
     String locationValue = toWebCoreStringWithNullCheck(value);
 
-    if (!V8BindingSecurity::allowSettingFrameSrcToJavascriptUrl(V8BindingState::Only(), frame, locationValue))
+    if (!BindingSecurity::allowSettingFrameSrcToJavascriptUrl(BindingState::instance(), frame, locationValue))
         return;
 
     frame->setLocation(locationValue);

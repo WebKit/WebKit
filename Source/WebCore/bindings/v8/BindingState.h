@@ -28,60 +28,29 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "V8BindingState.h"
-
-#include "Frame.h"
-#include "ScriptController.h"
-#include "V8Proxy.h"
-#include <wtf/StdLibExtras.h>
+#ifndef BindingState_h
+#define BindingState_h
 
 namespace WebCore {
 
-State<V8Binding>* State<V8Binding>::Only()
-{
-    DEFINE_STATIC_LOCAL(State, globalV8BindingState, ());
-    return &globalV8BindingState;
+class DOMWindow;
+class Frame;
+
+class BindingState {
+public:
+    // Currently, V8 uses a singleton for it's state.
+    // FIXME: Should we use v8::Isolate as the BindingState?
+    static BindingState* instance();
+};
+
+DOMWindow* activeWindow(BindingState*);
+DOMWindow* firstWindow(BindingState*);
+
+Frame* activeFrame(BindingState*);
+Frame* firstFrame(BindingState*);
+
+void immediatelyReportUnsafeAccessTo(BindingState*, Frame*);
+
 }
 
-DOMWindow* State<V8Binding>::activeWindow()
-{
-    v8::Local<v8::Context> activeContext = v8::Context::GetCalling();
-    if (activeContext.IsEmpty()) {
-        // There is a single activation record on the stack, so that must
-        // be the activeContext.
-        activeContext = v8::Context::GetCurrent();
-    }
-    return V8Proxy::retrieveWindow(activeContext);
-}
-
-DOMWindow* State<V8Binding>::firstWindow()
-{
-    return V8Proxy::retrieveWindow(v8::Context::GetEntered());
-}
-
-Frame* State<V8Binding>::activeFrame()
-{
-    Frame* frame = V8Proxy::retrieveFrameForCallingContext();
-    if (!frame) {
-        // Unfortunately, when processing script from a plug-in, we might not
-        // have a calling context.  In those cases, we fall back to the
-        // entered context for security checks.
-        // FIXME: We need a better API for retrieving frames that abstracts
-        //        away this concern.
-        frame = V8Proxy::retrieveFrameForEnteredContext();
-    }
-    return frame;
-}
-
-Frame* State<V8Binding>::firstFrame()
-{
-    return V8Proxy::retrieveFrameForEnteredContext();
-}
-
-void State<V8Binding>::immediatelyReportUnsafeAccessTo(Frame* target)
-{
-    V8Proxy::reportUnsafeAccessTo(target);
-}
-
-} // namespace WebCore
+#endif

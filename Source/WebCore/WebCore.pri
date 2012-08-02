@@ -98,7 +98,6 @@ INCLUDEPATH += \
 INCLUDEPATH += \
     $$SOURCE_DIR/bridge/jsc \
     $$SOURCE_DIR/bindings/js \
-    $$SOURCE_DIR/bindings/js/specialization \
     $$SOURCE_DIR/bridge/c \
     $$SOURCE_DIR/testing/js
 

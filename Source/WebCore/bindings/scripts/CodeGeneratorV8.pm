@@ -768,7 +768,7 @@ static v8::Handle<v8::Value> ${funcName}AttrGetter(v8::Local<v8::String> name, c
         return privateTemplate->GetFunction();
     }
     ${implClassName}* imp = ${className}::toNative(holder);
-    if (!V8BindingSecurity::canAccessFrame(V8BindingState::Only(), imp->frame(), false)) {
+    if (!BindingSecurity::canAccessFrame(BindingState::instance(), imp->frame(), false)) {
         static v8::Persistent<v8::FunctionTemplate> sharedTemplate = v8::Persistent<v8::FunctionTemplate>::New($newTemplateString);
         return sharedTemplate->GetFunction();
     }
@@ -904,7 +904,7 @@ END
 
     # Generate security checks if necessary
     if ($attribute->signature->extendedAttributes->{"CheckSecurityForNode"}) {
-        push(@implContentDecls, "    if (!V8BindingSecurity::shouldAllowAccessToNode(V8BindingState::Only(), imp->" . $attribute->signature->name . "()))\n        return v8::Handle<v8::Value>(v8::Null(info.GetIsolate()));\n\n");
+        push(@implContentDecls, "    if (!BindingSecurity::shouldAllowAccessToNode(BindingState::instance(), imp->" . $attribute->signature->name . "()))\n        return v8::Handle<v8::Value>(v8::Null(info.GetIsolate()));\n\n");
     }
 
     my $useExceptions = 1 if @{$attribute->getterExceptions};
@@ -1093,7 +1093,7 @@ END
     if ($implClassName eq "DOMWindow" || $dataNode->extendedAttributes->{"CheckSecurity"}) {
         push(@implContentDecls, <<END);
     ${implClassName}* imp = V8${implClassName}::toNative(info.Holder());
-    if (!V8BindingSecurity::canAccessFrame(V8BindingState::Only(), imp->frame(), true))
+    if (!BindingSecurity::canAccessFrame(BindingState::instance(), imp->frame(), true))
         return;
 END
     }
@@ -1500,7 +1500,7 @@ END
         && !$function->signature->extendedAttributes->{"DoNotCheckSecurity"}) {
         # We have not find real use cases yet.
         push(@implContentDecls, <<END);
-    if (!V8BindingSecurity::canAccessFrame(V8BindingState::Only(), imp->frame(), true))
+    if (!BindingSecurity::canAccessFrame(BindingState::instance(), imp->frame(), true))
         return v8::Handle<v8::Value>();
 END
     }
@@ -1524,7 +1524,7 @@ END
     }
 
     if ($function->signature->extendedAttributes->{"CheckSecurityForNode"}) {
-        push(@implContentDecls, "    if (!V8BindingSecurity::shouldAllowAccessToNode(V8BindingState::Only(), imp->" . $function->signature->name . "(ec)))\n");
+        push(@implContentDecls, "    if (!BindingSecurity::shouldAllowAccessToNode(BindingState::instance(), imp->" . $function->signature->name . "(ec)))\n");
         push(@implContentDecls, "        return v8::Handle<v8::Value>(v8::Null(args.GetIsolate()));\n");
 END
     }
@@ -2497,11 +2497,11 @@ sub GenerateImplementation
     # - Add default header template
     push(@implFixedHeader, GenerateImplementationContentHeader($dataNode));
 
-    AddToImplIncludes("RuntimeEnabledFeatures.h");
+    AddToImplIncludes("BindingState.h");
     AddToImplIncludes("ContextFeatures.h");
+    AddToImplIncludes("RuntimeEnabledFeatures.h");
     AddToImplIncludes("V8Proxy.h");
     AddToImplIncludes("V8Binding.h");
-    AddToImplIncludes("V8BindingState.h");
     AddToImplIncludes("V8DOMWrapper.h");
     AddToImplIncludes("V8IsolatedContext.h");
 

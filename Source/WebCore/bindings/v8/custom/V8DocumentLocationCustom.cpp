@@ -24,11 +24,11 @@
 #include "config.h"
 #include "V8Document.h"
 
+#include "BindingState.h"
 #include "DOMWindow.h"
 #include "Frame.h"
 #include "Location.h"
 #include "V8Binding.h"
-#include "V8BindingState.h"
 #include "V8Location.h"
 #include "V8Proxy.h"
 
@@ -50,19 +50,19 @@ void V8Document::locationAccessorSetter(v8::Local<v8::String> name, v8::Local<v8
     if (!document->frame())
         return;
 
-    State<V8Binding>* state = V8BindingState::Only();
+    BindingState* state = BindingState::instance();
 
-    DOMWindow* activeWindow = state->activeWindow();
-    if (!activeWindow)
-      return;
+    DOMWindow* active = activeWindow(state);
+    if (!active)
+        return;
 
-    DOMWindow* firstWindow = state->firstWindow();
-    if (!firstWindow)
-      return;
+    DOMWindow* first = firstWindow(state);
+    if (!first)
+        return;
 
     DOMWindow* window = document->frame()->domWindow();
     if (Location* location = window->location())
-        location->setHref(toWebCoreString(value), activeWindow, firstWindow);
+        location->setHref(toWebCoreString(value), active, first);
 }
 
 } // namespace WebCore

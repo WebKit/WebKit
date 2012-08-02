@@ -1,3 +1,125 @@
+2012-08-02  Adam Barth  <abarth@webkit.org>
+
+        The generic bindings shouldn't use templates
+        https://bugs.webkit.org/show_bug.cgi?id=93016
+
+        Reviewed by Eric Seidel.
+
+        We originally created the generic bindings to share code between the
+        JavaScriptCore and V8 bindings. However, the code came out sort of ugly
+        because we used templates (with the idea that templates would let us
+        use more than one scripting engine).
+
+        This patch rips out the templates in an attempt to make the code
+        prettier and therefore easier to use in both V8 and JSC. I've tried to
+        keep this patch small by remaning things mostly in place. In the next
+        patch, I'll move a bunch of code out of headers and into cpp files.
+
+        No behavior change.
+
+        * GNUmakefile.am:
+        * UseV8.cmake:
+        * WebCore.gyp/WebCore.gyp:
+        * WebCore.gypi:
+        * WebCore.pri:
+        * bindings/generic/BindingSecurity.h:
+        (WebCore):
+        (BindingSecurity):
+        (WebCore::BindingSecurity::canAccessWindow):
+        (WebCore::BindingSecurity::canAccessFrame):
+        (WebCore::BindingSecurity::shouldAllowAccessToNode):
+        (WebCore::BindingSecurity::allowPopUp):
+        (WebCore::BindingSecurity::allowSettingFrameSrcToJavascriptUrl):
+        (WebCore::BindingSecurity::allowSettingSrcToJavascriptURL):
+        * bindings/generic/GenericBinding.h:
+        (WebCore::completeURL):
+        * bindings/scripts/CodeGeneratorV8.pm:
+        (GenerateDomainSafeFunctionGetter):
+        (GenerateNormalAttrGetter):
+        (GenerateReplaceableAttrSetter):
+        (GenerateFunctionCallback):
+        (GenerateImplementation):
+        * bindings/scripts/test/V8/V8Float64Array.cpp:
+        * bindings/scripts/test/V8/V8TestActiveDOMObject.cpp:
+        (WebCore::TestActiveDOMObjectV8Internal::excitingFunctionCallback):
+        (WebCore::TestActiveDOMObjectV8Internal::postMessageAttrGetter):
+        * bindings/scripts/test/V8/V8TestCustomNamedGetter.cpp:
+        * bindings/scripts/test/V8/V8TestEventConstructor.cpp:
+        * bindings/scripts/test/V8/V8TestEventTarget.cpp:
+        * bindings/scripts/test/V8/V8TestException.cpp:
+        * bindings/scripts/test/V8/V8TestInterface.cpp:
+        * bindings/scripts/test/V8/V8TestMediaQueryListListener.cpp:
+        * bindings/scripts/test/V8/V8TestNamedConstructor.cpp:
+        * bindings/scripts/test/V8/V8TestNode.cpp:
+        * bindings/scripts/test/V8/V8TestObj.cpp:
+        (WebCore::TestObjV8Internal::contentDocumentAttrGetter):
+        (WebCore::TestObjV8Internal::getSVGDocumentCallback):
+        * bindings/scripts/test/V8/V8TestSerializedScriptValueInterface.cpp:
+        * bindings/v8/BindingState.cpp: Renamed from Source/WebCore/bindings/v8/specialization/V8BindingState.cpp.
+        (WebCore):
+        (WebCore::BindingState::instance):
+        (WebCore::activeWindow):
+        (WebCore::firstWindow):
+        (WebCore::activeFrame):
+        (WebCore::firstFrame):
+        (WebCore::immediatelyReportUnsafeAccessTo):
+        * bindings/v8/BindingState.h: Renamed from Source/WebCore/bindings/v8/specialization/V8BindingState.h.
+        (WebCore):
+        (BindingState):
+        * bindings/v8/ScriptController.cpp:
+        (WebCore::ScriptController::canAccessFromCurrentOrigin):
+        * bindings/v8/V8Binding.h:
+        (WebCore):
+        * bindings/v8/V8DOMWindowShell.cpp:
+        * bindings/v8/V8Proxy.cpp:
+        * bindings/v8/V8Utilities.cpp:
+        (WebCore::callingOrEnteredFrame):
+        (WebCore::completeURL):
+        * bindings/v8/custom/V8DOMWindowCustom.cpp:
+        (WebCore::WindowSetTimeoutImpl):
+        (WebCore::V8DOMWindow::eventAccessorGetter):
+        (WebCore::V8DOMWindow::eventAccessorSetter):
+        (WebCore::V8DOMWindow::locationAccessorSetter):
+        (WebCore::V8DOMWindow::openerAccessorSetter):
+        (WebCore::V8DOMWindow::addEventListenerCallback):
+        (WebCore::V8DOMWindow::removeEventListenerCallback):
+        (WebCore::V8DOMWindow::showModalDialogCallback):
+        (WebCore::V8DOMWindow::openCallback):
+        (WebCore::V8DOMWindow::namedSecurityCheck):
+        (WebCore::V8DOMWindow::indexedSecurityCheck):
+        * bindings/v8/custom/V8DocumentLocationCustom.cpp:
+        (WebCore::V8Document::locationAccessorSetter):
+        * bindings/v8/custom/V8EntryCustom.cpp:
+        * bindings/v8/custom/V8EntrySyncCustom.cpp:
+        * bindings/v8/custom/V8HTMLFrameElementCustom.cpp:
+        (WebCore::V8HTMLFrameElement::locationAccessorSetter):
+        * bindings/v8/custom/V8HistoryCustom.cpp:
+        (WebCore::V8History::indexedSecurityCheck):
+        (WebCore::V8History::namedSecurityCheck):
+        * bindings/v8/custom/V8InjectedScriptHostCustom.cpp:
+        * bindings/v8/custom/V8InjectedScriptManager.cpp:
+        (WebCore::InjectedScriptManager::canAccessInspectedWindow):
+        * bindings/v8/custom/V8LocationCustom.cpp:
+        (WebCore::V8Location::hashAccessorSetter):
+        (WebCore::V8Location::hostAccessorSetter):
+        (WebCore::V8Location::hostnameAccessorSetter):
+        (WebCore::V8Location::hrefAccessorSetter):
+        (WebCore::V8Location::pathnameAccessorSetter):
+        (WebCore::V8Location::portAccessorSetter):
+        (WebCore::V8Location::protocolAccessorSetter):
+        (WebCore::V8Location::searchAccessorSetter):
+        (WebCore::V8Location::reloadAccessorGetter):
+        (WebCore::V8Location::replaceAccessorGetter):
+        (WebCore::V8Location::assignAccessorGetter):
+        (WebCore::V8Location::reloadCallback):
+        (WebCore::V8Location::replaceCallback):
+        (WebCore::V8Location::assignCallback):
+        (WebCore::V8Location::toStringCallback):
+        (WebCore::V8Location::indexedSecurityCheck):
+        (WebCore::V8Location::namedSecurityCheck):
+        * bindings/v8/custom/V8NamedNodeMapCustom.cpp:
+        * bindings/v8/custom/V8NodeCustom.cpp:
+
 2012-08-02  Abhishek Arya  <inferno@chromium.org>
 
         No isChildAllowed checked when adding RenderFullScreen as the child..
