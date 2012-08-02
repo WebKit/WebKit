@@ -653,14 +653,14 @@ void Document::removedLastRef()
         m_fullScreenElementStack.clear();
 #endif
 
+        detachParser();
+
         // removeAllChildren() doesn't always unregister IDs,
         // so tear down scope information upfront to avoid having stale references in the map.
         destroyTreeScopeData();
         removeAllChildren();
 
         m_markers->detach();
-
-        detachParser();
 
         m_cssCanvasElements.clear();
 
