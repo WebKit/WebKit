@@ -1,3 +1,9 @@
+2012-08-02  Alexander Pavlov  <apavlov@chromium.org>
+
+        [Chromium] Unreviewed, update expectations for 6 failing http/tests/appcache/abort-cache-on*.html tests.
+
+        * platform/chromium/TestExpectations:
+
 2012-08-02  Peter Kasting  <pkasting@google.com>
 
         [Chromium] Test expectation updates.

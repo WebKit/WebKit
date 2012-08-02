@@ -3490,10 +3490,10 @@ BUGWK92952 DEBUG : storage/indexeddb/intversion-omit-parameter.html = CRASH PASS
 
 // Tests added by bug 76270:
 // Probably just needs rebaseline?
-// BUGPKASTING : http/tests/appcache/abort-cache-onchecking-manifest-404.html = PASS
-// BUGPKASTING : http/tests/appcache/abort-cache-onchecking-resource-404.html = PASS
-// BUGPKASTING : http/tests/appcache/abort-cache-ondownloading-resource-404.html = PASS
+BUGWK92968 : http/tests/appcache/abort-cache-onchecking-manifest-404.html = PASS
+BUGWK92968 : http/tests/appcache/abort-cache-onchecking-resource-404.html = PASS
+BUGWK92968 : http/tests/appcache/abort-cache-ondownloading-resource-404.html = PASS
 // Needs investigation into why these print FAILURE CACHED
-// BUGPKASTING : http/tests/appcache/abort-cache-onchecking.html = TEXT
-// BUGPKASTING : http/tests/appcache/abort-cache-ondownloading.html = TEXT
-// BUGPKASTING : http/tests/appcache/abort-cache-onprogress.html = TEXT
+BUGWK92968 : http/tests/appcache/abort-cache-onchecking.html = TEXT
+BUGWK92968 : http/tests/appcache/abort-cache-ondownloading.html = TEXT
+BUGWK92968 : http/tests/appcache/abort-cache-onprogress.html = TEXT
