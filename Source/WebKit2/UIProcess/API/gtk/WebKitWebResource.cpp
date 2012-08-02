@@ -243,6 +243,11 @@ void webkitWebResourceFailed(WebKitWebResource* resource, GError* error)
     g_signal_emit(resource, signals[FINISHED], 0, NULL);
 }
 
+WKFrameRef webkitWebResourceGetFrame(WebKitWebResource* resource)
+{
+    return resource->priv->wkFrame.get();
+}
+
 /**
  * webkit_web_resource_get_uri:
  * @resource: a #WebKitWebResource

@@ -29,6 +29,7 @@ void webkitWebResourceSetResponse(WebKitWebResource*, WebKitURIResponse*);
 void webkitWebResourceNotifyProgress(WebKitWebResource*, guint64 bytesReceived);
 void webkitWebResourceFinished(WebKitWebResource*);
 void webkitWebResourceFailed(WebKitWebResource*, GError*);
+WKFrameRef webkitWebResourceGetFrame(WebKitWebResource*);
 
 
 #endif // WebKitWebResourcePrivate_h

@@ -124,6 +124,10 @@ struct _WebKitWebViewPrivate {
     CString activeURI;
     ReplaceContentStatus replaceContentStatus;
 
+    bool waitingForMainResource;
+    gulong mainResourceResponseHandlerID;
+    WebKitLoadEvent lastDelayedEvent;
+
     GRefPtr<WebKitBackForwardList> backForwardList;
     GRefPtr<WebKitSettings> settings;
     GRefPtr<WebKitWindowProperties> windowProperties;
@@ -268,6 +272,14 @@ static void webkitWebViewDisconnectSettingsSignalHandlers(WebKitWebView* webView
 
 }
 
+static void webkitWebViewDisconnectMainResourceResponseChangedSignalHandler(WebKitWebView* webView)
+{
+    WebKitWebViewPrivate* priv = webView->priv;
+    if (priv->mainResourceResponseHandlerID)
+        g_signal_handler_disconnect(priv->mainResource.get(), priv->mainResourceResponseHandlerID);
+    priv->mainResourceResponseHandlerID = 0;
+}
+
 static void fileChooserDialogResponseCallback(GtkDialog* dialog, gint responseID, WebKitFileChooserRequest* request)
 {
     GRefPtr<WebKitFileChooserRequest> adoptedRequest = adoptGRef(request);
@@ -382,7 +394,8 @@ static void webkitWebViewGetProperty(GObject* object, guint propId, GValue* valu
 
 static void webkitWebViewFinalize(GObject* object)
 {
-    WebKitWebViewPrivate* priv = WEBKIT_WEB_VIEW(object)->priv;
+    WebKitWebView* webView = WEBKIT_WEB_VIEW(object);
+    WebKitWebViewPrivate* priv = webView->priv;
 
     if (priv->javascriptGlobalContext)
         JSGlobalContextRelease(priv->javascriptGlobalContext);
@@ -391,7 +404,8 @@ static void webkitWebViewFinalize(GObject* object)
     if (priv->modalLoop && g_main_loop_is_running(priv->modalLoop.get()))
         g_main_loop_quit(priv->modalLoop.get());
 
-    webkitWebViewDisconnectSettingsSignalHandlers(WEBKIT_WEB_VIEW(object));
+    webkitWebViewDisconnectMainResourceResponseChangedSignalHandler(webView);
+    webkitWebViewDisconnectSettingsSignalHandlers(webView);
 
     priv->~WebKitWebViewPrivate();
     G_OBJECT_CLASS(webkit_web_view_parent_class)->finalize(object);
@@ -1112,20 +1126,68 @@ static bool updateReplaceContentStatus(WebKitWebView* webView, WebKitLoadEvent l
     return false;
 }
 
+static void setCertificateToMainResource(WebKitWebView* webView)
+{
+    WebKitWebViewPrivate* priv = webView->priv;
+    ASSERT(priv->mainResource.get());
+
+    webkitURIResponseSetCertificateInfo(webkit_web_resource_get_response(priv->mainResource.get()),
+                                        WKFrameGetCertificateInfo(webkitWebResourceGetFrame(priv->mainResource.get())));
+}
+
+static void webkitWebViewEmitLoadChanged(WebKitWebView* webView, WebKitLoadEvent loadEvent)
+{
+    if (loadEvent == WEBKIT_LOAD_FINISHED) {
+        webView->priv->waitingForMainResource = false;
+        webkitWebViewDisconnectMainResourceResponseChangedSignalHandler(webView);
+    } else
+        webkitWebViewUpdateURI(webView);
+    g_signal_emit(webView, signals[LOAD_CHANGED], 0, loadEvent);
+}
+
+static void webkitWebViewEmitDelayedLoadEvents(WebKitWebView* webView)
+{
+    WebKitWebViewPrivate* priv = webView->priv;
+    if (!priv->waitingForMainResource)
+        return;
+    ASSERT(priv->lastDelayedEvent == WEBKIT_LOAD_COMMITTED || priv->lastDelayedEvent == WEBKIT_LOAD_FINISHED);
+
+    if (priv->lastDelayedEvent == WEBKIT_LOAD_FINISHED)
+        webkitWebViewEmitLoadChanged(webView, WEBKIT_LOAD_COMMITTED);
+    webkitWebViewEmitLoadChanged(webView, priv->lastDelayedEvent);
+    priv->waitingForMainResource = false;
+}
+
 void webkitWebViewLoadChanged(WebKitWebView* webView, WebKitLoadEvent loadEvent)
 {
     if (loadEvent == WEBKIT_LOAD_STARTED) {
+        // Finish a possible previous load waiting for main resource.
+        webkitWebViewEmitDelayedLoadEvents(webView);
+
         webView->priv->loadingResourcesMap.clear();
         webView->priv->mainResource = 0;
-    } else if (loadEvent == WEBKIT_LOAD_COMMITTED)
+        webView->priv->waitingForMainResource = false;
+    } else if (loadEvent == WEBKIT_LOAD_COMMITTED) {
         webView->priv->subresourcesMap.clear();
+        if (webView->priv->replaceContentStatus != ReplacingContent) {
+            if (!webView->priv->mainResource) {
+                // When a page is loaded from the history cache, the main resource load callbacks
+                // are called when the main frame load is finished. We want to make sure there's a
+                // main resource available when load has been committed, so we delay the emission of
+                // load-changed signal until main resource object has been created.
+                webView->priv->waitingForMainResource = true;
+            } else
+                setCertificateToMainResource(webView);
+        }
+    }
 
     if (updateReplaceContentStatus(webView, loadEvent))
         return;
 
-    if (loadEvent != WEBKIT_LOAD_FINISHED)
-        webkitWebViewUpdateURI(webView);
-    g_signal_emit(webView, signals[LOAD_CHANGED], 0, loadEvent);
+    if (webView->priv->waitingForMainResource)
+        webView->priv->lastDelayedEvent = loadEvent;
+    else
+        webkitWebViewEmitLoadChanged(webView, loadEvent);
 }
 
 void webkitWebViewLoadFailed(WebKitWebView* webView, WebKitLoadEvent loadEvent, const char* failingURI, GError *error)
@@ -1269,6 +1331,24 @@ void webkitWebViewPrintFrame(WebKitWebView* webView, WKFrameRef wkFrame)
     g_signal_connect(printOperation.leakRef(), "finished", G_CALLBACK(g_object_unref), 0);
 }
 
+static void mainResourceResponseChangedCallback(WebKitWebResource*, GParamSpec*, WebKitWebView* webView)
+{
+    webkitWebViewDisconnectMainResourceResponseChangedSignalHandler(webView);
+    setCertificateToMainResource(webView);
+    webkitWebViewEmitDelayedLoadEvents(webView);
+}
+
+static void waitForMainResourceResponseIfWaitingForResource(WebKitWebView* webView)
+{
+    WebKitWebViewPrivate* priv = webView->priv;
+    if (!priv->waitingForMainResource)
+        return;
+
+    webkitWebViewDisconnectMainResourceResponseChangedSignalHandler(webView);
+    priv->mainResourceResponseHandlerID =
+        g_signal_connect(priv->mainResource.get(), "notify::response", G_CALLBACK(mainResourceResponseChangedCallback), webView);
+}
+
 static inline bool webkitWebViewIsReplacingContentOrDidReplaceContent(WebKitWebView* webView)
 {
     return (webView->priv->replaceContentStatus == ReplacingContent || webView->priv->replaceContentStatus == DidReplaceContent);
@@ -1281,8 +1361,10 @@ void webkitWebViewResourceLoadStarted(WebKitWebView* webView, WKFrameRef wkFrame
 
     WebKitWebViewPrivate* priv = webView->priv;
     WebKitWebResource* resource = webkitWebResourceCreate(wkFrame, request, isMainResource);
-    if (WKFrameIsMainFrame(wkFrame) && (isMainResource || !priv->mainResource))
+    if (WKFrameIsMainFrame(wkFrame) && (isMainResource || !priv->mainResource)) {
         priv->mainResource = resource;
+        waitForMainResourceResponseIfWaitingForResource(webView);
+    }
     priv->loadingResourcesMap.set(resourceIdentifier, adoptGRef(resource));
     g_signal_emit(webView, signals[RESOURCE_LOAD_STARTED], 0, resource, request);
 }

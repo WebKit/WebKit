@@ -1,3 +1,60 @@
+2012-08-02  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] No main resource in WebView on load committed when page has been loaded from history cache
+        https://bugs.webkit.org/show_bug.cgi?id=91482
+
+        Reviewed by Martin Robinson.
+
+        We assume that on load committed, we already have a main resource
+        in the web view, and it has already received a response. This is
+        not true for pages loaded from the history cache, so when going
+        back/forward, we don't have a main resource when the
+        load-committed signal is emitted. We must ensure that the loading
+        process documented in the API is the same for pages loaded from
+        the history cache too.
+
+        * UIProcess/API/gtk/WebKitLoaderClient.cpp:
+        (didCommitLoadForFrame): Call webkitWebViewLoadChanged() and let
+        the web view handle the certificate.
+        * UIProcess/API/gtk/WebKitWebResource.cpp:
+        (webkitWebResourceGetFrame): Helper private function to easily get
+        the WKFrame associated with a WebResource.
+        * UIProcess/API/gtk/WebKitWebResourcePrivate.h:
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (webkitWebViewDisconnectMainResourceResponseChangedSignalHandler):
+        Disconnect the notify::response signal of the main resource.
+        (webkitWebViewFinalize): Call
+        webkitWebViewDisconnectMainResourceResponseChangedSignalHandler().
+        (setCertificateToMainResource): Set the TLS certificate on the
+        response of the main resource.
+        (webkitWebViewEmitLoadChanged): Helper function to emit
+        load-chancged signal.
+        (webkitWebViewEmitDelayedLoadEvents): If we were waiting for the
+        main resource, emit the signals that were delayed.
+        (webkitWebViewLoadChanged): Do not emit committed or finished if
+        we are still waiting for the main resource. Set the TLS
+        certificate if we already have a main resource or wait until we
+        have the main resource with a response.
+        (mainResourceResponseChangedCallback): Emitted when the main
+        resource received the response. Set the certificate on the
+        response and emit load signals delayed.
+        (waitForMainResourceResponseIfWaitingForResource): If we are
+        waiting for the main resource, connect to the notify::response
+        signal of the WebResource to make sure it has a response already
+        when load signal delayed are emitted.
+        (webkitWebViewResourceLoadStarted): Call
+        waitForMainResourceResponseIfWaitingForResource().
+        * UIProcess/API/gtk/tests/LoadTrackingTest.cpp:
+        (loadChangedCallback):
+        (LoadTrackingTest::goBack):
+        (LoadTrackingTest::goForward):
+        * UIProcess/API/gtk/tests/LoadTrackingTest.h:
+        (LoadTrackingTest):
+        * UIProcess/API/gtk/tests/TestLoaderClient.cpp:
+        (testWebViewHistoryLoad):
+        (serverCallback):
+        (beforeAll):
+
 2012-08-02  Andras Becsi  <andras.becsi@nokia.com>
 
         [Qt][WK2] Click, mouse and links rely on touch mocking.

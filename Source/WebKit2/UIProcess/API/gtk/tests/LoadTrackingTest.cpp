@@ -35,10 +35,17 @@ static void loadChangedCallback(WebKitWebView* webView, WebKitLoadEvent loadEven
             g_assert_cmpstr(test->m_redirectURI.data(), ==, test->m_activeURI.data());
         test->provisionalLoadReceivedServerRedirect();
         break;
-    case WEBKIT_LOAD_COMMITTED:
+    case WEBKIT_LOAD_COMMITTED: {
         g_assert_cmpstr(test->m_activeURI.data(), ==, webkit_web_view_get_uri(webView));
+
+        // Check that on committed we always have a main resource with a response.
+        WebKitWebResource* resource = webkit_web_view_get_main_resource(webView);
+        g_assert(resource);
+        g_assert(webkit_web_resource_get_response(resource));
+
         test->loadCommitted();
         break;
+    }
     case WEBKIT_LOAD_FINISHED:
         if (!test->m_loadFailed)
             g_assert_cmpstr(test->m_activeURI.data(), ==, webkit_web_view_get_uri(webView));
@@ -169,4 +176,18 @@ void LoadTrackingTest::reload()
     m_loadEvents.clear();
     m_estimatedProgress = 0;
     webkit_web_view_reload(m_webView);
+}
+
+void LoadTrackingTest::goBack()
+{
+    m_loadEvents.clear();
+    m_estimatedProgress = 0;
+    WebViewTest::goBack();
+}
+
+void LoadTrackingTest::goForward()
+{
+    m_loadEvents.clear();
+    m_estimatedProgress = 0;
+    WebViewTest::goForward();
 }

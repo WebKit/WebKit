@@ -44,6 +44,8 @@ public:
     void loadPlainText(const char* plainText);
     void loadRequest(WebKitURIRequest*);
     void reload();
+    void goBack();
+    void goForward();
 
     void setRedirectURI(const char* uri) { m_redirectURI = uri; }
 
