@@ -970,7 +970,7 @@ const char* DatabaseFreeListKey::decode(const char* start, const char* limit, Da
     ASSERT(!prefix.m_indexId);
     if (p == limit)
         return 0;
-    unsigned char typeByte;
+    unsigned char typeByte = 0;
     p = decodeByte(p, limit, typeByte);
     ASSERT_UNUSED(typeByte, typeByte == DatabaseFreeListTypeByte);
     if (p == limit)
@@ -1015,7 +1015,7 @@ const char* DatabaseNameKey::decode(const char* start, const char* limit, Databa
     ASSERT(!prefix.m_indexId);
     if (p == limit)
         return 0;
-    unsigned char typeByte;
+    unsigned char typeByte = 0;
     p = decodeByte(p, limit, typeByte);
     ASSERT_UNUSED(typeByte, typeByte == DatabaseNameTypeByte);
     if (p == limit)
@@ -1079,7 +1079,7 @@ const char* ObjectStoreMetaDataKey::decode(const char* start, const char* limit,
     ASSERT(!prefix.m_indexId);
     if (p == limit)
         return 0;
-    unsigned char typeByte;
+    unsigned char typeByte = 0;
     p = decodeByte(p, limit, typeByte);
     ASSERT_UNUSED(typeByte, typeByte == ObjectStoreMetaDataTypeByte);
     if (p == limit)
@@ -1154,7 +1154,7 @@ const char* IndexMetaDataKey::decode(const char* start, const char* limit, Index
     ASSERT(!prefix.m_indexId);
     if (p == limit)
         return 0;
-    unsigned char typeByte;
+    unsigned char typeByte = 0;
     p = decodeByte(p, limit, typeByte);
     ASSERT_UNUSED(typeByte, typeByte == IndexMetaDataTypeByte);
     if (p == limit)
@@ -1225,7 +1225,7 @@ const char* ObjectStoreFreeListKey::decode(const char* start, const char* limit,
     ASSERT(!prefix.m_indexId);
     if (p == limit)
         return 0;
-    unsigned char typeByte;
+    unsigned char typeByte = 0;
     p = decodeByte(p, limit, typeByte);
     ASSERT_UNUSED(typeByte, typeByte == ObjectStoreFreeListTypeByte);
     if (p == limit)
@@ -1279,7 +1279,7 @@ const char* IndexFreeListKey::decode(const char* start, const char* limit, Index
     ASSERT(!prefix.m_indexId);
     if (p == limit)
         return 0;
-    unsigned char typeByte;
+    unsigned char typeByte = 0;
     p = decodeByte(p, limit, typeByte);
     ASSERT_UNUSED(typeByte, typeByte == IndexFreeListTypeByte);
     if (p == limit)
@@ -1340,7 +1340,7 @@ const char* ObjectStoreNamesKey::decode(const char* start, const char* limit, Ob
     ASSERT(!prefix.m_indexId);
     if (p == limit)
         return 0;
-    unsigned char typeByte;
+    unsigned char typeByte = 0;
     p = decodeByte(p, limit, typeByte);
     ASSERT_UNUSED(typeByte, typeByte == ObjectStoreNamesTypeByte);
     return decodeStringWithLength(p, limit, result->m_objectStoreName);
@@ -1378,7 +1378,7 @@ const char* IndexNamesKey::decode(const char* start, const char* limit, IndexNam
     ASSERT(!prefix.m_indexId);
     if (p == limit)
         return 0;
-    unsigned char typeByte;
+    unsigned char typeByte = 0;
     p = decodeByte(p, limit, typeByte);
     ASSERT_UNUSED(typeByte, typeByte == IndexNamesKeyTypeByte);
     if (p == limit)

@@ -1,3 +1,18 @@
+2012-08-01  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Chromium Android build fix after r124402.
+        Initialize the out variables as suggested by the compiler.
+
+        * Modules/indexeddb/IDBLevelDBCoding.cpp:
+        (WebCore::IDBLevelDBCoding::DatabaseFreeListKey::decode):
+        (WebCore::IDBLevelDBCoding::DatabaseNameKey::decode):
+        (WebCore::IDBLevelDBCoding::ObjectStoreMetaDataKey::decode):
+        (WebCore::IDBLevelDBCoding::IndexMetaDataKey::decode):
+        (WebCore::IDBLevelDBCoding::ObjectStoreFreeListKey::decode):
+        (WebCore::IDBLevelDBCoding::IndexFreeListKey::decode):
+        (WebCore::IDBLevelDBCoding::ObjectStoreNamesKey::decode):
+        (WebCore::IDBLevelDBCoding::IndexNamesKey::decode):
+
 2012-08-01  Keishi Hattori  <keishi@webkit.org>
 
         Fix typo in colorSuggestionPicker.js
