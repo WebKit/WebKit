@@ -1,5 +1,23 @@
 2012-08-02  Lucas Forschler  <lforschler@apple.com>
 
+    Merge 120761
+
+    2012-06-19  Ken Buchanan  <kenrb@chromium.org>
+
+            Absolute positioned objects should not be added to anonymous block lists
+            https://bugs.webkit.org/show_bug.cgi?id=87768
+
+            Reviewed by Abhishek Arya.
+
+            Test crashing condition in bug 87768.
+
+            * fast/block/positioning/abspositioned-object-under-split-relpositioned-inline-crash-expected.txt: Added
+            * fast/block/positioning/abspositioned-object-under-split-relpositioned-inline-crash.html: Added
+            * fast/block/positioning/insert-positioned-in-anonymous-crash-expected.txt: Added
+            * fast/block/positioning/insert-positioned-in-anonymous-crash.html: Added
+
+2012-08-02  Lucas Forschler  <lforschler@apple.com>
+
     Merge 120731
 
     2012-06-19  Abhishek Arya  <inferno@chromium.org>
