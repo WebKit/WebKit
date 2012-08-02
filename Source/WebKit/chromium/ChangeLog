@@ -1,3 +1,9 @@
+2012-08-02  Peter Beverloo  <peter@chromium.org>
+
+        Unreviewed.  Rolled DEPS.
+
+        * DEPS:
+
 2012-08-01  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Web Inspector: test native memory instrumentation code with help of unittests
