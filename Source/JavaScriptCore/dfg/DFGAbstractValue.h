@@ -317,13 +317,14 @@ struct AbstractValue {
     {
         m_type = SpecNone;
         m_structure.clear();
+        m_unclobberedStructure.clear();
         m_value = JSValue();
         checkConsistency();
     }
     
     bool isClear() const
     {
-        bool result = m_type == SpecNone && m_structure.isClear();
+        bool result = m_type == SpecNone && m_structure.isClear() && m_unclobberedStructure.isClear();
         if (result)
             ASSERT(!m_value);
         return result;
@@ -333,6 +334,7 @@ struct AbstractValue {
     {
         m_type = SpecTop;
         m_structure.makeTop();
+        m_unclobberedStructure.makeTop();
         m_value = JSValue();
         checkConsistency();
     }
@@ -353,7 +355,7 @@ struct AbstractValue {
     
     bool isTop() const
     {
-        return m_type == SpecTop && m_structure.isTop();
+        return m_type == SpecTop && m_structure.isTop() && m_unclobberedStructure.isTop();
     }
     
     bool valueIsTop() const
@@ -383,8 +385,11 @@ struct AbstractValue {
             // it may change in the future - for example between when we compile
             // the code and when we run it.
             m_structure.makeTop();
-        } else
+            m_unclobberedStructure.makeTop(); // FIXME: Consider not clobbering this.
+        } else {
             m_structure.clear();
+            m_unclobberedStructure.clear();
+        }
         
         m_type = speculationFromValue(value);
         m_value = value;
@@ -397,6 +402,9 @@ struct AbstractValue {
         m_structure.clear();
         m_structure.add(structure);
         
+        m_unclobberedStructure.clear();
+        m_unclobberedStructure.add(structure);
+        
         m_type = speculationFromStructure(structure);
         m_value = JSValue();
         
@@ -405,10 +413,13 @@ struct AbstractValue {
     
     void set(SpeculatedType type)
     {
-        if (type & SpecCell)
+        if (type & SpecCell) {
             m_structure.makeTop();
-        else
+            m_unclobberedStructure.makeTop();
+        } else {
             m_structure.clear();
+            m_unclobberedStructure.clear();
+        }
         m_type = type;
         m_value = JSValue();
         checkConsistency();
@@ -418,6 +429,7 @@ struct AbstractValue {
     {
         return m_type == other.m_type
             && m_structure == other.m_structure
+            && m_unclobberedStructure == other.m_unclobberedStructure
             && m_value == other.m_value;
     }
     bool operator!=(const AbstractValue& other) const
@@ -437,6 +449,7 @@ struct AbstractValue {
         } else {
             result |= mergeSpeculation(m_type, other.m_type);
             result |= m_structure.addAll(other.m_structure);
+            result |= m_unclobberedStructure.addAll(other.m_unclobberedStructure);
             if (m_value != other.m_value) {
                 result |= !!m_value;
                 m_value = JSValue();
@@ -451,8 +464,10 @@ struct AbstractValue {
     {
         mergeSpeculation(m_type, type);
         
-        if (type & SpecCell)
+        if (type & SpecCell) {
             m_structure.makeTop();
+            m_unclobberedStructure.makeTop();
+        }
         m_value = JSValue();
 
         checkConsistency();
@@ -462,6 +477,7 @@ struct AbstractValue {
     {
         m_type &= other.speculationFromStructures();
         m_structure.filter(other);
+        m_unclobberedStructure.filter(other);
         
         // It's possible that prior to the above two statements we had (Foo, TOP), where
         // Foo is a SpeculatedType that is disjoint with the passed StructureSet. In that
@@ -469,6 +485,7 @@ struct AbstractValue {
         // sure that new information gleaned from the SpeculatedType needs to be fed back
         // into the information gleaned from the StructureSet.
         m_structure.filter(m_type);
+        m_unclobberedStructure.filter(m_type);
         
         if (!!m_value && !validateIgnoringValue(m_value))
             clear();
@@ -487,6 +504,7 @@ struct AbstractValue {
         // to ensure that the structure filtering does the right thing is to filter on
         // the new type (None) rather than the one passed (Array).
         m_structure.filter(m_type);
+        m_unclobberedStructure.filter(m_type);
 
         if (!!m_value && !validateIgnoringValue(m_value))
             clear();
@@ -523,8 +541,8 @@ struct AbstractValue {
         if (isTop())
             return true;
         
-        if (!!m_value)
-            return m_value == value;
+        if (!!m_value && m_value != value)
+            return false;
         
         if (mergeSpeculations(m_type, speculationFromValue(value)) != m_type)
             return false;
@@ -545,10 +563,39 @@ struct AbstractValue {
         return true;
     }
     
+    bool validateForEntry(JSValue value) const
+    {
+        if (isTop())
+            return true;
+        
+        if (!!m_value && m_value != value)
+            return false;
+        
+        if (mergeSpeculations(m_type, speculationFromValue(value)) != m_type)
+            return false;
+        
+        if (value.isEmpty()) {
+            ASSERT(m_type & SpecEmpty);
+            return true;
+        }
+        
+        if (m_unclobberedStructure.isTop())
+            return true;
+        
+        if (!!value && value.isCell()) {
+            ASSERT(m_type & SpecCell);
+            return m_unclobberedStructure.contains(value.asCell()->structure());
+        }
+        
+        return true;
+    }
+    
     void checkConsistency() const
     {
-        if (!(m_type & SpecCell))
+        if (!(m_type & SpecCell)) {
             ASSERT(m_structure.isClear());
+            ASSERT(m_unclobberedStructure.isClear());
+        }
         
         if (isClear())
             ASSERT(!m_value);
@@ -566,12 +613,15 @@ struct AbstractValue {
     {
         fprintf(out, "(%s, ", speculationToString(m_type));
         m_structure.dump(out);
+        dataLog(", ");
+        m_unclobberedStructure.dump(out);
         if (!!m_value)
             fprintf(out, ", %s", m_value.description());
         fprintf(out, ")");
     }
 
     StructureAbstractValue m_structure;
+    StructureAbstractValue m_unclobberedStructure;
     SpeculatedType m_type;
     JSValue m_value;
 };

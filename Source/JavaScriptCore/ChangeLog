@@ -1,5 +1,127 @@
 2012-08-01  Filip Pizlo  <fpizlo@apple.com>
 
+        DFG should hoist structure checks
+        https://bugs.webkit.org/show_bug.cgi?id=92696
+
+        Reviewed by Gavin Barraclough.
+
+        This hoists structure checks in the same way that we would hoist array checks, but with added
+        complexity to cope with the fact that the structure of an object may change. This is handled
+        by performing a side effects analysis over the region in which the respective variable is
+        live. If a structure clobbering side effect may happen then we either hoist the structure
+        checks and fall back on structure transition watchpoints (if the watchpoint set is still
+        valid), or we avoid hoisting altogether.
+        
+        Doing this required teaching the CFA that we may have an expectation that an object has a
+        particular structure even after structure clobbering happens, in the sense that structure
+        proofs that were cobbered can be revived using watchpoints. CFA must know about this so that
+        OSR entry may know about it, since we cannot allow entry to happen if the variable has a
+        clobbered structure proof, will have a watchpoint to revive the proof, and the variable in
+        the baseline JIT has a completely unrelated structure.
+        
+        This is mostly performance neutral.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Target.pri:
+        * bytecode/ValueRecovery.h:
+        (JSC::ValueRecovery::isSet):
+        (JSC::ValueRecovery::operator!):
+        (ValueRecovery):
+        * dfg/DFGAbstractState.cpp:
+        (JSC::DFG::AbstractState::execute):
+        (JSC::DFG::AbstractState::clobberWorld):
+        (DFG):
+        (JSC::DFG::AbstractState::clobberCapturedVars):
+        * dfg/DFGAbstractState.h:
+        (AbstractState):
+        * dfg/DFGAbstractValue.h:
+        (JSC::DFG::AbstractValue::clear):
+        (JSC::DFG::AbstractValue::isClear):
+        (JSC::DFG::AbstractValue::makeTop):
+        (JSC::DFG::AbstractValue::isTop):
+        (JSC::DFG::AbstractValue::set):
+        (JSC::DFG::AbstractValue::operator==):
+        (JSC::DFG::AbstractValue::merge):
+        (JSC::DFG::AbstractValue::filter):
+        (JSC::DFG::AbstractValue::validate):
+        (JSC::DFG::AbstractValue::validateForEntry):
+        (AbstractValue):
+        (JSC::DFG::AbstractValue::checkConsistency):
+        (JSC::DFG::AbstractValue::dump):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::setLocal):
+        (JSC::DFG::ByteCodeParser::getArgument):
+        (JSC::DFG::ByteCodeParser::setArgument):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        (JSC::DFG::ByteCodeParser::fixVariableAccessSpeculations):
+        * dfg/DFGCSEPhase.cpp:
+        (JSC::DFG::CSEPhase::checkStructureLoadElimination):
+        (JSC::DFG::CSEPhase::structureTransitionWatchpointElimination):
+        (JSC::DFG::CSEPhase::putStructureStoreElimination):
+        (JSC::DFG::CSEPhase::getLocalLoadElimination):
+        (JSC::DFG::CSEPhase::performNodeCSE):
+        * dfg/DFGDriver.cpp:
+        (JSC::DFG::compile):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::dump):
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::vote):
+        (Graph):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::convertToStructureTransitionWatchpoint):
+        (Node):
+        (JSC::DFG::Node::hasStructureSet):
+        * dfg/DFGNodeType.h:
+        (DFG):
+        * dfg/DFGOSREntry.cpp:
+        (JSC::DFG::prepareOSREntry):
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        (PredictionPropagationPhase):
+        (JSC::DFG::PredictionPropagationPhase::doRoundOfDoubleVoting):
+        * dfg/DFGSpeculativeJIT.h:
+        (SpeculativeJIT):
+        (JSC::DFG::SpeculativeJIT::forwardSpeculationCheck):
+        (JSC::DFG::SpeculativeJIT::speculationCheckWithConditionalDirection):
+        (JSC::DFG::SpeculativeJIT::terminateSpeculativeExecutionWithConditionalDirection):
+        (JSC::DFG::SpeculateCellOperand::SpeculateCellOperand):
+        (JSC::DFG::SpeculateCellOperand::gpr):
+        (SpeculateCellOperand):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::fillSpeculateCell):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::fillSpeculateCell):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGStructureCheckHoistingPhase.cpp: Added.
+        (DFG):
+        (StructureCheckHoistingPhase):
+        (JSC::DFG::StructureCheckHoistingPhase::StructureCheckHoistingPhase):
+        (JSC::DFG::StructureCheckHoistingPhase::run):
+        (JSC::DFG::StructureCheckHoistingPhase::noticeStructureCheck):
+        (JSC::DFG::StructureCheckHoistingPhase::noticeClobber):
+        (JSC::DFG::StructureCheckHoistingPhase::clobber):
+        (CheckData):
+        (JSC::DFG::StructureCheckHoistingPhase::CheckData::CheckData):
+        (JSC::DFG::performStructureCheckHoisting):
+        * dfg/DFGStructureCheckHoistingPhase.h: Added.
+        (DFG):
+        * dfg/DFGVariableAccessData.h:
+        (VariableAccessData):
+        (JSC::DFG::VariableAccessData::VariableAccessData):
+        (JSC::DFG::VariableAccessData::mergeStructureCheckHoistingFailed):
+        (JSC::DFG::VariableAccessData::structureCheckHoistingFailed):
+        (JSC::DFG::VariableAccessData::clearVotes):
+        (JSC::DFG::VariableAccessData::vote):
+        (JSC::DFG::VariableAccessData::voteRatio):
+        (JSC::DFG::VariableAccessData::shouldUseDoubleFormatAccordingToVote):
+        * runtime/Options.h:
+        (JSC):
+
+2012-08-01  Filip Pizlo  <fpizlo@apple.com>
+
         DFG should distinguish between PutByVal's that clobber the world and ones that don't
         https://bugs.webkit.org/show_bug.cgi?id=92923
 

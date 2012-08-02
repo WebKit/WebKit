@@ -578,6 +578,42 @@ public:
         return node.children.child(index);
     }
     
+    void vote(Edge edge, unsigned ballot)
+    {
+        switch (at(edge).op()) {
+        case ValueToInt32:
+        case UInt32ToNumber:
+            edge = at(edge).child1();
+            break;
+        default:
+            break;
+        }
+        
+        if (at(edge).op() == GetLocal)
+            at(edge).variableAccessData()->vote(ballot);
+    }
+    
+    void vote(Node& node, unsigned ballot)
+    {
+        if (node.flags() & NodeHasVarArgs) {
+            for (unsigned childIdx = node.firstChild();
+                 childIdx < node.firstChild() + node.numChildren();
+                 childIdx++)
+                vote(m_varArgChildren[childIdx], ballot);
+            return;
+        }
+        
+        if (!node.child1())
+            return;
+        vote(node.child1(), ballot);
+        if (!node.child2())
+            return;
+        vote(node.child2(), ballot);
+        if (!node.child3())
+            return;
+        vote(node.child3(), ballot);
+    }
+    
     JSGlobalData& m_globalData;
     CodeBlock* m_codeBlock;
     CodeBlock* m_profiledBlock;

@@ -217,6 +217,7 @@ public:
     
 private:
     void clobberWorld(const CodeOrigin&, unsigned indexInBlock);
+    void clobberCapturedVars(const CodeOrigin&);
     void clobberStructures(unsigned indexInBlock);
     
     bool mergeStateAtTail(AbstractValue& destination, AbstractValue& inVariable, NodeIndex);

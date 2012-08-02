@@ -37,10 +37,10 @@
 
 namespace JSC { namespace DFG {
 
+enum DoubleBallot { VoteValue, VoteDouble };
+
 class VariableAccessData : public UnionFind<VariableAccessData> {
 public:
-    enum Ballot { VoteValue, VoteDouble };
-
     VariableAccessData()
         : m_local(static_cast<VirtualRegister>(std::numeric_limits<int>::min()))
         , m_prediction(SpecNone)
@@ -49,6 +49,7 @@ public:
         , m_doubleFormatState(EmptyDoubleFormatState)
         , m_isCaptured(false)
         , m_isArgumentsAlias(false)
+        , m_structureCheckHoistingFailed(false)
     {
         clearVotes();
     }
@@ -61,6 +62,7 @@ public:
         , m_doubleFormatState(EmptyDoubleFormatState)
         , m_isCaptured(isCaptured)
         , m_isArgumentsAlias(false)
+        , m_structureCheckHoistingFailed(false)
     {
         clearVotes();
     }
@@ -88,6 +90,20 @@ public:
     bool isCaptured()
     {
         return m_isCaptured;
+    }
+    
+    bool mergeStructureCheckHoistingFailed(bool failed)
+    {
+        bool newFailed = m_structureCheckHoistingFailed | failed;
+        if (newFailed == m_structureCheckHoistingFailed)
+            return false;
+        m_structureCheckHoistingFailed = newFailed;
+        return true;
+    }
+    
+    bool structureCheckHoistingFailed()
+    {
+        return m_structureCheckHoistingFailed;
     }
     
     bool mergeIsArgumentsAlias(bool isArgumentsAlias)
@@ -136,20 +152,20 @@ public:
     void clearVotes()
     {
         ASSERT(find() == this);
-        m_votes[VoteValue] = 0;
-        m_votes[VoteDouble] = 0;
+        m_votes[0] = 0;
+        m_votes[1] = 0;
     }
     
-    void vote(Ballot ballot)
+    void vote(unsigned ballot)
     {
-        ASSERT(static_cast<unsigned>(ballot) < 2);
+        ASSERT(ballot < 2);
         m_votes[ballot]++;
     }
     
-    double doubleVoteRatio()
+    double voteRatio()
     {
         ASSERT(find() == this);
-        return static_cast<double>(m_votes[VoteDouble]) / m_votes[VoteValue];
+        return static_cast<double>(m_votes[1]) / m_votes[0];
     }
     
     bool shouldUseDoubleFormatAccordingToVote()
@@ -176,7 +192,7 @@ public:
         
         // If the variable has been voted to become a double, then make it a
         // double.
-        if (doubleVoteRatio() >= Options::doubleVoteRatioForDoubleFormat())
+        if (voteRatio() >= Options::doubleVoteRatioForDoubleFormat())
             return true;
         
         return false;
@@ -250,11 +266,12 @@ private:
     SpeculatedType m_argumentAwarePrediction;
     NodeFlags m_flags;
     
-    float m_votes[2];
+    float m_votes[2]; // Used primarily for double voting but may be reused for other purposes.
     DoubleFormatState m_doubleFormatState;
     
     bool m_isCaptured;
     bool m_isArgumentsAlias;
+    bool m_structureCheckHoistingFailed;
 };
 
 } } // namespace JSC::DFG

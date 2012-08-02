@@ -338,6 +338,7 @@ private:
             Node& node = m_graph[index];
             switch (node.op()) {
             case CheckStructure:
+            case ForwardCheckStructure:
                 if (node.child1() == child1
                     && structureSet.isSupersetOf(node.structureSet()))
                     return true;
@@ -391,6 +392,7 @@ private:
             Node& node = m_graph[index];
             switch (node.op()) {
             case CheckStructure:
+            case ForwardCheckStructure:
                 if (node.child1() == child1
                     && node.structureSet().containsOnly(structure))
                     return true;
@@ -440,6 +442,7 @@ private:
                 break;
             switch (node.op()) {
             case CheckStructure:
+            case ForwardCheckStructure:
                 return NoNode;
                 
             case PhantomPutStructure:
@@ -670,7 +673,7 @@ private:
         return NoNode;
     }
     
-    NodeIndex getLocalLoadElimination(VirtualRegister local, NodeIndex& relevantLocalOp)
+    NodeIndex getLocalLoadElimination(VirtualRegister local, NodeIndex& relevantLocalOp, bool careAboutClobbering)
     {
         relevantLocalOp = NoNode;
         
@@ -700,7 +703,7 @@ private:
                 break;
                 
             default:
-                if (m_graph.clobbersWorld(index))
+                if (careAboutClobbering && m_graph.clobbersWorld(index))
                     return NoNode;
                 break;
             }
@@ -941,13 +944,15 @@ private:
             
         case GetLocal: {
             VariableAccessData* variableAccessData = node.variableAccessData();
-            if (!variableAccessData->isCaptured())
+            if (m_fixpointState == FixpointNotConverged && !variableAccessData->isCaptured())
                 break;
             NodeIndex relevantLocalOp;
-            NodeIndex possibleReplacement = getLocalLoadElimination(variableAccessData->local(), relevantLocalOp);
-            ASSERT(relevantLocalOp == NoNode
-                   || m_graph[relevantLocalOp].op() == GetLocalUnlinked
-                   || m_graph[relevantLocalOp].variableAccessData() == variableAccessData);
+            NodeIndex possibleReplacement = getLocalLoadElimination(variableAccessData->local(), relevantLocalOp, variableAccessData->isCaptured());
+            if (relevantLocalOp == NoNode)
+                break;
+            if (m_graph[relevantLocalOp].op() != GetLocalUnlinked
+                && m_graph[relevantLocalOp].variableAccessData() != variableAccessData)
+                break;
             NodeIndex phiIndex = node.child1().index();
             if (!setReplacement(possibleReplacement))
                 break;
@@ -977,7 +982,7 @@ private:
             
         case GetLocalUnlinked: {
             NodeIndex relevantLocalOpIgnored;
-            m_changed |= setReplacement(getLocalLoadElimination(node.unlinkedLocal(), relevantLocalOpIgnored));
+            m_changed |= setReplacement(getLocalLoadElimination(node.unlinkedLocal(), relevantLocalOpIgnored, true));
             break;
         }
             
@@ -1106,6 +1111,7 @@ private:
         }
             
         case CheckStructure:
+        case ForwardCheckStructure:
             if (checkStructureLoadElimination(node.structureSet(), node.child1().index()))
                 eliminate();
             break;

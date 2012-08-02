@@ -245,6 +245,13 @@ struct Node {
         children.reset();
     }
     
+    void convertToStructureTransitionWatchpoint()
+    {
+        ASSERT(m_op == CheckStructure);
+        m_opInfo = bitwise_cast<uintptr_t>(structureSet().singletonStructure());
+        m_op = StructureTransitionWatchpoint;
+    }
+    
     JSCell* weakConstant()
     {
         ASSERT(op() == WeakJSConstant);
@@ -651,7 +658,13 @@ struct Node {
     
     bool hasStructureSet()
     {
-        return op() == CheckStructure;
+        switch (op()) {
+        case CheckStructure:
+        case ForwardCheckStructure:
+            return true;
+        default:
+            return false;
+        }
     }
     
     StructureSet& structureSet()

@@ -306,7 +306,7 @@ public:
     GPRReg fillSpeculateInt(NodeIndex, DataFormat& returnFormat);
     GPRReg fillSpeculateIntStrict(NodeIndex);
     FPRReg fillSpeculateDouble(NodeIndex);
-    GPRReg fillSpeculateCell(NodeIndex);
+    GPRReg fillSpeculateCell(NodeIndex, bool isForwardSpeculation = false);
     GPRReg fillSpeculateBoolean(NodeIndex);
     GeneratedOperandType checkGeneratedTypeForToInt32(NodeIndex);
 
@@ -2228,10 +2228,21 @@ public:
     {
         return speculationWatchpoint(kind, JSValueSource(), NoNode);
     }
-    void forwardSpeculationCheck(ExitKind kind, JSValueSource jsValueSource, NodeIndex nodeIndex, MacroAssembler::Jump jumpToFail, const ValueRecovery& valueRecovery)
+    // Note: not specifying the valueRecovery argument (leaving it as ValueRecovery()) implies
+    // that you've ensured that there exists a MovHint prior to your use of forwardSpeculationCheck().
+    void forwardSpeculationCheck(ExitKind kind, JSValueSource jsValueSource, NodeIndex nodeIndex, MacroAssembler::Jump jumpToFail, const ValueRecovery& valueRecovery = ValueRecovery())
     {
         ASSERT(at(m_compileIndex).canExit() || m_isCheckingArgumentTypes);
         speculationCheck(kind, jsValueSource, nodeIndex, jumpToFail);
+        
+#if !ASSERT_DISABLED
+        if (!valueRecovery) {
+            // Check that the preceding node was a SetLocal with the same code origin.
+            Node* setLocal = &at(m_jit.graph().m_blocks[m_block]->at(m_indexInBlock - 1));
+            ASSERT(setLocal->op() == SetLocal);
+            ASSERT(setLocal->codeOrigin == at(m_compileIndex).codeOrigin);
+        }
+#endif
         
         unsigned setLocalIndexInBlock = m_indexInBlock + 1;
         
@@ -2245,10 +2256,12 @@ public:
         if (setLocal->op() == Flush || setLocal->op() == Phantom)
             setLocal = &at(m_jit.graph().m_blocks[m_block]->at(++setLocalIndexInBlock));
         
-        if (hadInt32ToDouble)
-            ASSERT(at(setLocal->child1()).child1() == m_compileIndex);
-        else
-            ASSERT(setLocal->child1() == m_compileIndex);
+        if (!!valueRecovery) {
+            if (hadInt32ToDouble)
+                ASSERT(at(setLocal->child1()).child1() == m_compileIndex);
+            else
+                ASSERT(setLocal->child1() == m_compileIndex);
+        }
         ASSERT(setLocal->op() == SetLocal);
         ASSERT(setLocal->codeOrigin == at(m_compileIndex).codeOrigin);
 
@@ -2257,17 +2270,26 @@ public:
         
         OSRExit& exit = m_jit.codeBlock()->lastOSRExit();
         exit.m_codeOrigin = nextNode->codeOrigin;
-        exit.m_lastSetOperand = setLocal->local();
         
+        if (!valueRecovery)
+            return;
+        exit.m_lastSetOperand = setLocal->local();
         exit.m_valueRecoveryOverride = adoptRef(
             new ValueRecoveryOverride(setLocal->local(), valueRecovery));
     }
-    void forwardSpeculationCheck(ExitKind kind, JSValueSource jsValueSource, NodeIndex nodeIndex, MacroAssembler::JumpList& jumpsToFail, const ValueRecovery& valueRecovery)
+    void forwardSpeculationCheck(ExitKind kind, JSValueSource jsValueSource, NodeIndex nodeIndex, MacroAssembler::JumpList& jumpsToFail, const ValueRecovery& valueRecovery = ValueRecovery())
     {
         ASSERT(at(m_compileIndex).canExit() || m_isCheckingArgumentTypes);
         Vector<MacroAssembler::Jump, 16> jumpVector = jumpsToFail.jumps();
         for (unsigned i = 0; i < jumpVector.size(); ++i)
             forwardSpeculationCheck(kind, jsValueSource, nodeIndex, jumpVector[i], valueRecovery);
+    }
+    void speculationCheckWithConditionalDirection(ExitKind kind, JSValueSource jsValueSource, NodeIndex nodeIndex, MacroAssembler::Jump jumpToFail, bool isForward)
+    {
+        if (isForward)
+            forwardSpeculationCheck(kind, jsValueSource, nodeIndex, jumpToFail);
+        else
+            speculationCheck(kind, jsValueSource, nodeIndex, jumpToFail);
     }
 
     // Called when we statically determine that a speculation will fail.
@@ -2286,6 +2308,17 @@ public:
     {
         ASSERT(at(m_compileIndex).canExit() || m_isCheckingArgumentTypes);
         terminateSpeculativeExecution(kind, jsValueRegs, nodeUse.index());
+    }
+    void terminateSpeculativeExecutionWithConditionalDirection(ExitKind kind, JSValueRegs jsValueRegs, NodeIndex nodeIndex, bool isForward)
+    {
+        ASSERT(at(m_compileIndex).canExit() || m_isCheckingArgumentTypes);
+#if DFG_ENABLE(DEBUG_VERBOSE)
+        dataLog("SpeculativeJIT was terminated.\n");
+#endif
+        if (!m_compileOkay)
+            return;
+        speculationCheckWithConditionalDirection(kind, jsValueRegs, nodeIndex, m_jit.jump(), isForward);
+        m_compileOkay = false;
     }
     
     template<bool strict>
@@ -2912,10 +2945,11 @@ private:
 
 class SpeculateCellOperand {
 public:
-    explicit SpeculateCellOperand(SpeculativeJIT* jit, Edge use)
+    explicit SpeculateCellOperand(SpeculativeJIT* jit, Edge use, bool isForwardSpeculation = false)
         : m_jit(jit)
         , m_index(use.index())
         , m_gprOrInvalid(InvalidGPRReg)
+        , m_isForwardSpeculation(isForwardSpeculation)
     {
         ASSERT(m_jit);
         ASSERT(use.useKind() != DoubleUse);
@@ -2937,7 +2971,7 @@ public:
     GPRReg gpr()
     {
         if (m_gprOrInvalid == InvalidGPRReg)
-            m_gprOrInvalid = m_jit->fillSpeculateCell(index());
+            m_gprOrInvalid = m_jit->fillSpeculateCell(index(), m_isForwardSpeculation);
         return m_gprOrInvalid;
     }
     
@@ -2950,6 +2984,7 @@ private:
     SpeculativeJIT* m_jit;
     NodeIndex m_index;
     GPRReg m_gprOrInvalid;
+    bool m_isForwardSpeculation;
 };
 
 class SpeculateBooleanOperand {

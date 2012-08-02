@@ -76,6 +76,9 @@ public:
     {
     }
     
+    bool isSet() const { return m_technique != DontKnow; }
+    bool operator!() const { return !isSet(); }
+    
     static ValueRecovery alreadyInRegisterFile()
     {
         ValueRecovery result;

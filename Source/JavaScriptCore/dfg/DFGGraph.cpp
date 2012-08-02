@@ -287,13 +287,15 @@ void Graph::dump(const char* prefix, NodeIndex nodeIndex)
         dataLog("%sF:#%u", hasPrinted ? ", " : "", node.notTakenBlockIndex());
         hasPrinted = true;
     }
+    dataLog("%sbc#%u", hasPrinted ? ", " : "", node.codeOrigin.bytecodeIndex);
+    hasPrinted = true;
     (void)hasPrinted;
     
     dataLog(")");
 
     if (!skipped) {
         if (node.hasVariableAccessData())
-            dataLog("  predicting %s, double ratio %lf%s", speculationToString(node.variableAccessData()->prediction()), node.variableAccessData()->doubleVoteRatio(), node.variableAccessData()->shouldUseDoubleFormat() ? ", forcing double" : "");
+            dataLog("  predicting %s%s", speculationToString(node.variableAccessData()->prediction()), node.variableAccessData()->shouldUseDoubleFormat() ? ", forcing double" : "");
         else if (node.hasHeapPrediction())
             dataLog("  predicting %s", speculationToString(node.getHeapPrediction()));
     }

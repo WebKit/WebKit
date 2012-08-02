@@ -673,6 +673,7 @@ private:
         case ForceOSRExit:
         case SetArgument:
         case CheckStructure:
+        case ForwardCheckStructure:
         case StructureTransitionWatchpoint:
         case CheckFunction:
         case PutStructure:
@@ -747,42 +748,6 @@ private:
             propagate(m_graph[m_compileIndex]);
     }
     
-    void vote(Edge nodeUse, VariableAccessData::Ballot ballot)
-    {
-        switch (m_graph[nodeUse].op()) {
-        case ValueToInt32:
-        case UInt32ToNumber:
-            nodeUse = m_graph[nodeUse].child1();
-            break;
-        default:
-            break;
-        }
-        
-        if (m_graph[nodeUse].op() == GetLocal)
-            m_graph[nodeUse].variableAccessData()->vote(ballot);
-    }
-    
-    void vote(Node& node, VariableAccessData::Ballot ballot)
-    {
-        if (node.flags() & NodeHasVarArgs) {
-            for (unsigned childIdx = node.firstChild();
-                 childIdx < node.firstChild() + node.numChildren();
-                 childIdx++)
-                vote(m_graph.m_varArgChildren[childIdx], ballot);
-            return;
-        }
-        
-        if (!node.child1())
-            return;
-        vote(node.child1(), ballot);
-        if (!node.child2())
-            return;
-        vote(node.child2(), ballot);
-        if (!node.child3())
-            return;
-        vote(node.child3(), ballot);
-    }
-    
     void doRoundOfDoubleVoting()
     {
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
@@ -799,16 +764,16 @@ private:
                 SpeculatedType left = m_graph[node.child1()].prediction();
                 SpeculatedType right = m_graph[node.child2()].prediction();
                 
-                VariableAccessData::Ballot ballot;
+                DoubleBallot ballot;
                 
                 if (isNumberSpeculation(left) && isNumberSpeculation(right)
                     && !m_graph.addShouldSpeculateInteger(node))
-                    ballot = VariableAccessData::VoteDouble;
+                    ballot = VoteDouble;
                 else
-                    ballot = VariableAccessData::VoteValue;
+                    ballot = VoteValue;
                 
-                vote(node.child1(), ballot);
-                vote(node.child2(), ballot);
+                m_graph.vote(node.child1(), ballot);
+                m_graph.vote(node.child2(), ballot);
                 break;
             }
                 
@@ -816,16 +781,16 @@ private:
                 SpeculatedType left = m_graph[node.child1()].prediction();
                 SpeculatedType right = m_graph[node.child2()].prediction();
                 
-                VariableAccessData::Ballot ballot;
+                DoubleBallot ballot;
                 
                 if (isNumberSpeculation(left) && isNumberSpeculation(right)
                     && !m_graph.mulShouldSpeculateInteger(node))
-                    ballot = VariableAccessData::VoteDouble;
+                    ballot = VoteDouble;
                 else
-                    ballot = VariableAccessData::VoteValue;
+                    ballot = VoteValue;
                 
-                vote(node.child1(), ballot);
-                vote(node.child2(), ballot);
+                m_graph.vote(node.child1(), ballot);
+                m_graph.vote(node.child2(), ballot);
                 break;
             }
 
@@ -836,46 +801,46 @@ private:
                 SpeculatedType left = m_graph[node.child1()].prediction();
                 SpeculatedType right = m_graph[node.child2()].prediction();
                 
-                VariableAccessData::Ballot ballot;
+                DoubleBallot ballot;
                 
                 if (isNumberSpeculation(left) && isNumberSpeculation(right)
                     && !(Node::shouldSpeculateInteger(m_graph[node.child1()], m_graph[node.child1()])
                          && node.canSpeculateInteger()))
-                    ballot = VariableAccessData::VoteDouble;
+                    ballot = VoteDouble;
                 else
-                    ballot = VariableAccessData::VoteValue;
+                    ballot = VoteValue;
                 
-                vote(node.child1(), ballot);
-                vote(node.child2(), ballot);
+                m_graph.vote(node.child1(), ballot);
+                m_graph.vote(node.child2(), ballot);
                 break;
             }
                 
             case ArithAbs:
-                VariableAccessData::Ballot ballot;
+                DoubleBallot ballot;
                 if (!(m_graph[node.child1()].shouldSpeculateInteger()
                       && node.canSpeculateInteger()))
-                    ballot = VariableAccessData::VoteDouble;
+                    ballot = VoteDouble;
                 else
-                    ballot = VariableAccessData::VoteValue;
+                    ballot = VoteValue;
                 
-                vote(node.child1(), ballot);
+                m_graph.vote(node.child1(), ballot);
                 break;
                 
             case ArithSqrt:
-                vote(node.child1(), VariableAccessData::VoteDouble);
+                m_graph.vote(node.child1(), VoteDouble);
                 break;
                 
             case SetLocal: {
                 SpeculatedType prediction = m_graph[node.child1()].prediction();
                 if (isDoubleSpeculation(prediction))
-                    node.variableAccessData()->vote(VariableAccessData::VoteDouble);
+                    node.variableAccessData()->vote(VoteDouble);
                 else if (!isNumberSpeculation(prediction) || isInt32Speculation(prediction))
-                    node.variableAccessData()->vote(VariableAccessData::VoteValue);
+                    node.variableAccessData()->vote(VoteValue);
                 break;
             }
                 
             default:
-                vote(node, VariableAccessData::VoteValue);
+                m_graph.vote(node, VoteValue);
                 break;
             }
         }

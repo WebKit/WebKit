@@ -257,6 +257,8 @@ private:
         }
 
         VariableAccessData* variableAccessData = newVariableAccessData(operand, isCaptured);
+        variableAccessData->mergeStructureCheckHoistingFailed(
+            m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadCache));
         NodeIndex nodeIndex = addToGraph(SetLocal, OpInfo(variableAccessData), value);
         m_currentBlock->variablesAtTail.local(operand) = nodeIndex;
     }
@@ -299,7 +301,8 @@ private:
                 // We're getting an argument in the first basic block; link
                 // the GetLocal to the SetArgument.
                 ASSERT(nodePtr->local() == static_cast<VirtualRegister>(operand));
-                nodeIndex = injectLazyOperandSpeculation(addToGraph(GetLocal, OpInfo(nodePtr->variableAccessData()), nodeIndex));
+                VariableAccessData* variable = nodePtr->variableAccessData();
+                nodeIndex = injectLazyOperandSpeculation(addToGraph(GetLocal, OpInfo(variable), nodeIndex));
                 m_currentBlock->variablesAtTail.argument(argument) = nodeIndex;
                 return nodeIndex;
             }
@@ -340,6 +343,8 @@ private:
             flushDirect(operand);
         
         VariableAccessData* variableAccessData = newVariableAccessData(operand, isCaptured);
+        variableAccessData->mergeStructureCheckHoistingFailed(
+            m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadCache));
         NodeIndex nodeIndex = addToGraph(SetLocal, OpInfo(variableAccessData), value);
         m_currentBlock->variablesAtTail.argument(argument) = nodeIndex;
     }
@@ -1723,7 +1728,11 @@ bool ByteCodeParser::parseBlock(unsigned limit)
     if (m_currentBlock == m_graph.m_blocks[0].get() && !m_inlineStackTop->m_inlineCallFrame) {
         m_graph.m_arguments.resize(m_numArguments);
         for (unsigned argument = 0; argument < m_numArguments; ++argument) {
-            NodeIndex setArgument = addToGraph(SetArgument, OpInfo(newVariableAccessData(argumentToOperand(argument), m_codeBlock->argumentIsCaptured(argument))));
+            VariableAccessData* variable = newVariableAccessData(
+                argumentToOperand(argument), m_codeBlock->argumentIsCaptured(argument));
+            variable->mergeStructureCheckHoistingFailed(
+                m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadCache));
+            NodeIndex setArgument = addToGraph(SetArgument, OpInfo(variable));
             m_graph.m_arguments[argument] = setArgument;
             m_currentBlock->variablesAtHead.setArgumentFirstTime(argument, setArgument);
             m_currentBlock->variablesAtTail.setArgumentFirstTime(argument, setArgument);
@@ -3014,6 +3023,7 @@ void ByteCodeParser::fixVariableAccessSpeculations()
         VariableAccessData* data = &m_graph.m_variableAccessData[i];
         data->find()->predict(data->nonUnifiedPrediction());
         data->find()->mergeIsCaptured(data->isCaptured());
+        data->find()->mergeStructureCheckHoistingFailed(data->structureCheckHoistingFailed());
     }
 }
 

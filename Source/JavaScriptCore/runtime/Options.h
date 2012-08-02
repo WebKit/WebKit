@@ -109,6 +109,7 @@ namespace JSC {
     v(double, desiredProfileFullnessRate, 0.35) \
     \
     v(double, doubleVoteRatioForDoubleFormat, 2) \
+    v(double, structureCheckVoteRatioForHoisting, 1) \
     \
     v(unsigned, minimumNumberOfScansBetweenRebalance, 100) \
     v(unsigned, gcMarkStackSegmentSize, pageSize()) \

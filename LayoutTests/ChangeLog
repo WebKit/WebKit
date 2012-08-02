@@ -1,3 +1,28 @@
+2012-08-01  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG should hoist structure checks
+        https://bugs.webkit.org/show_bug.cgi?id=92696
+
+        Rubber stamped by Gavin Barraclough.
+
+        Added a new test that covers the following scenarios:
+        
+        - OSR entry if a variable with a hoisted check has an unexpected structure, structures get clobbered, and
+          we're protecting ourselves with structure transition watchpoints.
+        
+        - OSR exit on hoisted structure checks, if the object doesn't have the expected structure, and where the
+          source of the assignment is side-effecting.
+        
+        I combined these into a single test because there is no way to test the latter without testing the former.
+
+        * fast/js/dfg-osr-entry-hoisted-clobbered-structure-check-expected.txt: Added.
+        * fast/js/dfg-osr-entry-hoisted-clobbered-structure-check.html: Added.
+        * fast/js/jsc-test-list:
+        * fast/js/script-tests/dfg-osr-entry-hoisted-clobbered-structure-check.js: Added.
+        (foo):
+        (bar):
+        (baz):
+
 2012-08-01  Raymond Toy  <rtoy@google.com>
 
         Enable codec tests in TestExpectations and update expected mp3 files

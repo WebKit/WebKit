@@ -38,6 +38,7 @@
 #include "DFGJITCompiler.h"
 #include "DFGPredictionPropagationPhase.h"
 #include "DFGRedundantPhiEliminationPhase.h"
+#include "DFGStructureCheckHoistingPhase.h"
 #include "DFGValidate.h"
 #include "DFGVirtualRegisterAllocationPhase.h"
 #include "Options.h"
@@ -101,6 +102,8 @@ inline bool compile(CompileMode compileMode, ExecState* exec, CodeBlock* codeBlo
         dfg.resetExitStates();
         performFixup(dfg);
     }
+    if (performStructureCheckHoisting(dfg))
+        performCFA(dfg); // Need to recompute CFA since nodes were added or changed.
     performCSE(dfg, FixpointConverged);
 #if DFG_ENABLE(DEBUG_VERBOSE)
     dataLog("DFG optimization fixpoint converged in %u iterations.\n", cnt);
