@@ -20,7 +20,6 @@
 #include "InRegionScrollableArea.h"
 
 #include "Frame.h"
-#include "NotImplemented.h"
 #include "RenderBox.h"
 #include "RenderLayer.h"
 #include "RenderObject.h"
@@ -104,6 +103,6 @@ RenderLayer* InRegionScrollableArea::layer() const
     ASSERT(!m_isNull);
     return m_layer;
 }
-}
 
+}
 }

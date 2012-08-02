@@ -393,7 +393,6 @@ WebPagePrivate::WebPagePrivate(WebPage* webPage, WebPageClient* client, const In
     , m_lastUserEventTimestamp(0.0)
     , m_pluginMouseButtonPressed(false)
     , m_pluginMayOpenNewTab(false)
-    , m_inRegionScrollStartingNode(0)
 #if USE(ACCELERATED_COMPOSITING)
     , m_rootLayerCommitTimer(adoptPtr(new Timer<WebPagePrivate>(this, &WebPagePrivate::rootLayerCommitTimerFired)))
     , m_needsOneShotDrawingSynchronization(false)
@@ -557,6 +556,8 @@ void WebPagePrivate::init(const WebString& pageGroupName)
     m_mainFrame = newFrame.get();
     frameLoaderClient->setFrame(m_mainFrame, this);
     m_mainFrame->init();
+
+    m_inRegionScroller = adoptPtr(new InRegionScroller(this));
 
 #if ENABLE(WEBGL)
     Platform::Settings* settings = Platform::Settings::instance();
@@ -1522,15 +1523,13 @@ bool WebPagePrivate::scrollBy(int deltaX, int deltaY, bool scrollMainFrame)
             delta.width() < 0 ? -untransformedCopiedDelta.width() : untransformedCopiedDelta.width(),
             delta.height() < 0 ? -untransformedCopiedDelta.height(): untransformedCopiedDelta.height());
 
-        if (m_inRegionScrollStartingNode) {
-            if (scrollNodeRecursively(m_inRegionScrollStartingNode.get(), delta)) {
-                m_selectionHandler->selectionPositionChanged();
-                // FIXME: We have code in place to handle scrolling and clipping tap highlight
-                // on in-region scrolling. As soon as it is fast enough (i.e. we have it backed by
-                // a backing store), we can reliably make use of it in the real world.
-                // m_touchEventHandler->drawTapHighlight();
-                return true;
-            }
+        if (m_inRegionScroller->scrollBy(delta)) {
+            m_selectionHandler->selectionPositionChanged();
+            // FIXME: We have code in place to handle scrolling and clipping tap highlight
+            // on in-region scrolling. As soon as it is fast enough (i.e. we have it backed by
+            // a backing store), we can reliably make use of it in the real world.
+            // m_touchEventHandler->drawTapHighlight();
+            return true;
         }
 
         return false;
@@ -1550,9 +1549,9 @@ bool WebPage::scrollBy(const Platform::IntSize& delta, bool scrollMainFrame)
 
 void WebPagePrivate::notifyInRegionScrollStatusChanged(bool status)
 {
-    if (!status && m_inRegionScrollStartingNode) {
-        enqueueRenderingOfClippedContentOfScrollableNodeAfterInRegionScrolling(m_inRegionScrollStartingNode.get());
-        m_inRegionScrollStartingNode = 0;
+    if (!status && m_inRegionScroller->hasNode()) {
+        enqueueRenderingOfClippedContentOfScrollableNodeAfterInRegionScrolling(m_inRegionScroller->node());
+        m_inRegionScroller->reset();
     }
 }
 
@@ -2635,8 +2634,8 @@ void WebPagePrivate::clearDocumentData(const Document* documentGoingAway)
     if (m_currentBlockZoomAdjustedNode && m_currentBlockZoomAdjustedNode->document() == documentGoingAway)
         m_currentBlockZoomAdjustedNode = 0;
 
-    if (m_inRegionScrollStartingNode && m_inRegionScrollStartingNode->document() == documentGoingAway)
-        m_inRegionScrollStartingNode = 0;
+    if (m_inRegionScroller->hasNode() && m_inRegionScroller->node()->document() == documentGoingAway)
+        m_inRegionScroller->reset();
 
     if (documentGoingAway->frame())
         m_inputHandler->frameUnloaded(documentGoingAway->frame());
@@ -2654,15 +2653,6 @@ static bool isPositionedContainer(RenderLayer* layer)
 {
     RenderObject* o = layer->renderer();
     return o->isRenderView() || o->isOutOfFlowPositioned() || o->isRelPositioned() || layer->hasTransform();
-}
-
-static bool isNonRenderViewFixedPositionedContainer(RenderLayer* layer)
-{
-    RenderObject* o = layer->renderer();
-    if (o->isRenderView())
-        return false;
-
-    return o->isOutOfFlowPositioned() && o->style()->position() == FixedPosition;
 }
 
 static bool isFixedPositionedContainer(RenderLayer* layer)
@@ -4223,12 +4213,12 @@ bool WebPage::touchEvent(const Platform::TouchEvent& event)
 
 void WebPagePrivate::setScrollOriginPoint(const Platform::IntPoint& point)
 {
-    m_inRegionScrollStartingNode = 0;
+    m_inRegionScroller->reset();
 
     if (!m_hasInRegionScrollableAreas)
         return;
 
-    m_client->notifyInRegionScrollingStartingPointChanged(inRegionScrollableAreasForPoint(point));
+    m_client->notifyInRegionScrollingStartingPointChanged(m_inRegionScroller->inRegionScrollableAreasForPoint(point));
 }
 
 void WebPage::setScrollOriginPoint(const Platform::IntPoint& point)
@@ -4396,120 +4386,6 @@ void WebPage::setForcedTextEncoding(const char* encoding)
 {
     if (encoding && d->focusedOrMainFrame() && d->focusedOrMainFrame()->loader() && d->focusedOrMainFrame()->loader())
         return d->focusedOrMainFrame()->loader()->reloadWithOverrideEncoding(encoding);
-}
-
-bool WebPagePrivate::scrollNodeRecursively(Node* node, const IntSize& delta)
-{
-    if (delta.isZero())
-        return true;
-
-    if (!node)
-        return false;
-
-    RenderObject* renderer = node->renderer();
-    if (!renderer)
-        return false;
-
-    FrameView* view = renderer->view()->frameView();
-    if (!view)
-        return false;
-
-    // Try scrolling the renderer.
-    if (scrollRenderer(renderer, delta))
-        return true;
-
-    // We've hit the page, don't scroll it and return false.
-    if (view == m_mainFrame->view())
-        return false;
-
-    // Try scrolling the FrameView.
-    if (canScrollInnerFrame(view->frame())) {
-        IntSize viewDelta = delta;
-        IntPoint newViewOffset = view->scrollPosition();
-        IntPoint maxViewOffset = view->maximumScrollPosition();
-        adjustScrollDelta(maxViewOffset, newViewOffset, viewDelta);
-
-        if (!viewDelta.isZero()) {
-            view->setCanBlitOnScroll(false);
-
-            BackingStoreClient* backingStoreClient = backingStoreClientForFrame(view->frame());
-            if (backingStoreClient) {
-                backingStoreClient->setIsClientGeneratedScroll(true);
-                backingStoreClient->setIsScrollNotificationSuppressed(true);
-            }
-
-            m_inRegionScrollStartingNode = view->frame()->document();
-
-            view->scrollBy(viewDelta);
-
-            if (backingStoreClient) {
-                backingStoreClient->setIsClientGeneratedScroll(false);
-                backingStoreClient->setIsScrollNotificationSuppressed(false);
-            }
-
-            return true;
-        }
-    }
-
-    // Try scrolling the node of the enclosing frame.
-    Frame* frame = node->document()->frame();
-    if (frame) {
-        Node* ownerNode = frame->ownerElement();
-        if (scrollNodeRecursively(ownerNode, delta))
-            return true;
-    }
-
-    return false;
-}
-
-void WebPagePrivate::adjustScrollDelta(const IntPoint& maxOffset, const IntPoint& currentOffset, IntSize& delta) const
-{
-    if (currentOffset.x() + delta.width() > maxOffset.x())
-        delta.setWidth(min(maxOffset.x() - currentOffset.x(), delta.width()));
-
-    if (currentOffset.x() + delta.width() < 0)
-        delta.setWidth(max(-currentOffset.x(), delta.width()));
-
-    if (currentOffset.y() + delta.height() > maxOffset.y())
-        delta.setHeight(min(maxOffset.y() - currentOffset.y(), delta.height()));
-
-    if (currentOffset.y() + delta.height() < 0)
-        delta.setHeight(max(-currentOffset.y(), delta.height()));
-}
-
-static Node* enclosingLayerNode(RenderLayer*);
-
-bool WebPagePrivate::scrollRenderer(RenderObject* renderer, const IntSize& delta)
-{
-    RenderLayer* layer = renderer->enclosingLayer();
-    if (!layer)
-        return false;
-
-    // Try to scroll layer.
-    bool restrictedByLineClamp = false;
-    if (renderer->parent())
-        restrictedByLineClamp = !renderer->parent()->style()->lineClamp().isNone();
-
-    if (renderer->hasOverflowClip() && !restrictedByLineClamp) {
-        IntSize layerDelta = delta;
-        IntPoint maxOffset(layer->scrollWidth() - layer->renderBox()->clientWidth(), layer->scrollHeight() - layer->renderBox()->clientHeight());
-        IntPoint currentOffset(layer->scrollXOffset(), layer->scrollYOffset());
-        adjustScrollDelta(maxOffset, currentOffset, layerDelta);
-        if (!layerDelta.isZero()) {
-            m_inRegionScrollStartingNode = enclosingLayerNode(layer);
-            IntPoint newOffset = currentOffset + layerDelta;
-            layer->scrollToOffset(toSize(newOffset));
-            renderer->repaint(true);
-            return true;
-        }
-    }
-
-    while (layer = layer->parent()) {
-        if (canScrollRenderBox(layer->renderBox()))
-            return scrollRenderer(layer->renderBox(), delta);
-    }
-
-    return false;
 }
 
 static void handleScrolling(unsigned short character, WebPagePrivate* scroller)
@@ -4773,169 +4649,6 @@ void WebPage::selectAtPoint(const Platform::IntPoint& location)
             d->mapFromTransformed(location);
 
     d->m_selectionHandler->selectAtPoint(selectionLocation);
-}
-
-// FIXME: Move to DOMSupport.
-bool WebPagePrivate::canScrollInnerFrame(Frame* frame) const
-{
-    if (!frame || !frame->view())
-        return false;
-
-    // Not having an owner element means that we are on the mainframe.
-    if (!frame->ownerElement())
-        return false;
-
-    ASSERT(frame != m_mainFrame);
-
-    IntSize visibleSize = frame->view()->visibleContentRect().size();
-    IntSize contentsSize = frame->view()->contentsSize();
-
-    bool canBeScrolled = contentsSize.height() > visibleSize.height() || contentsSize.width() > visibleSize.width();
-
-    // Lets also consider the 'overflow-{x,y} property set directly to the {i}frame tag.
-    return canBeScrolled && (frame->ownerElement()->scrollingMode() != ScrollbarAlwaysOff);
-}
-
-// The RenderBox::canbeScrolledAndHasScrollableArea method returns true for the
-// following scenario, for example:
-// (1) a div that has a vertical overflow but no horizontal overflow
-//     with overflow-y: hidden and overflow-x: auto set.
-// The version below fixes it.
-// FIXME: Fix RenderBox::canBeScrolledAndHasScrollableArea method instead.
-bool WebPagePrivate::canScrollRenderBox(RenderBox* box)
-{
-    if (!box || !box->hasOverflowClip())
-        return false;
-
-    if (box->scrollsOverflowX() && (box->scrollWidth() != box->clientWidth())
-        || box->scrollsOverflowY() && (box->scrollHeight() != box->clientHeight()))
-        return true;
-
-    Node* node = box->node();
-    return node && (node->rendererIsEditable() || node->isDocumentNode());
-}
-
-static RenderLayer* parentLayer(RenderLayer* layer)
-{
-    ASSERT(layer);
-    if (layer->parent())
-        return layer->parent();
-
-    RenderObject* renderer = layer->renderer();
-    if (renderer->document() && renderer->document()->ownerElement() && renderer->document()->ownerElement()->renderer())
-        return renderer->document()->ownerElement()->renderer()->enclosingLayer();
-
-    return 0;
-}
-
-// FIXME: Make RenderLayer::enclosingElement public so this one can be removed.
-static Node* enclosingLayerNode(RenderLayer* layer)
-{
-    for (RenderObject* r = layer->renderer(); r; r = r->parent()) {
-        if (Node* e = r->node())
-            return e;
-    }
-    ASSERT_NOT_REACHED();
-    return 0;
-}
-
-static void pushBackInRegionScrollable(std::vector<Platform::ScrollViewBase*>& vector, InRegionScrollableArea* scroller, WebPagePrivate* webPage)
-{
-    ASSERT(webPage);
-    ASSERT(!scroller.isNull());
-
-    scroller->setCanPropagateScrollingToEnclosingScrollable(!isNonRenderViewFixedPositionedContainer(scroller->layer()));
-    vector.push_back(scroller);
-    if (vector.size() == 1) {
-        // FIXME: Use RenderLayer::renderBox()->node() instead?
-        webPage->m_inRegionScrollStartingNode = enclosingLayerNode(scroller->layer());
-    }
-}
-
-std::vector<Platform::ScrollViewBase*> WebPagePrivate::inRegionScrollableAreasForPoint(const Platform::IntPoint& point)
-{
-    std::vector<Platform::ScrollViewBase*> validReturn;
-    std::vector<Platform::ScrollViewBase*> emptyReturn;
-
-    HitTestResult result = m_mainFrame->eventHandler()->hitTestResultAtPoint(mapFromViewportToContents(point), false /*allowShadowContent*/);
-    Node* node = result.innerNonSharedNode();
-    if (!node)
-        return emptyReturn;
-
-    RenderObject* renderer = node->renderer();
-    // FIXME: Validate with elements with visibility:hidden.
-    if (!renderer)
-        return emptyReturn;
-
-    RenderLayer* layer = renderer->enclosingLayer();
-    do {
-        RenderObject* renderer = layer->renderer();
-
-        if (renderer->isRenderView()) {
-            if (RenderView* renderView = toRenderView(renderer)) {
-                FrameView* view = renderView->frameView();
-                if (!view)
-                    return emptyReturn;
-
-                if (canScrollInnerFrame(view->frame())) {
-                    pushBackInRegionScrollable(validReturn, new InRegionScrollableArea(this, layer), this);
-                    continue;
-                }
-            }
-        } else if (canScrollRenderBox(layer->renderBox())) {
-            pushBackInRegionScrollable(validReturn, new InRegionScrollableArea(this, layer), this);
-            continue;
-        }
-
-        // If we run into a fix positioned layer, set the last scrollable in-region object
-        // as not able to propagate scroll to its parent scrollable.
-        if (isNonRenderViewFixedPositionedContainer(layer) && validReturn.size()) {
-            Platform::ScrollViewBase* end = validReturn.back();
-            end->setCanPropagateScrollingToEnclosingScrollable(false);
-        }
-
-    } while (layer = parentLayer(layer));
-
-    if (validReturn.empty())
-        return emptyReturn;
-
-    // Post-calculate the visible window rects in reverse hit test order so
-    // we account for all and any clipping rects.
-    WebCore::IntRect recursiveClippingRect(WebCore::IntPoint::zero(), transformedViewportSize());
-
-    std::vector<Platform::ScrollViewBase*>::reverse_iterator rend = validReturn.rend();
-    for (std::vector<Platform::ScrollViewBase*>::reverse_iterator rit = validReturn.rbegin(); rit != rend; ++rit) {
-
-        InRegionScrollableArea* curr = static_cast<InRegionScrollableArea*>(*rit);
-        RenderLayer* layer = curr->layer();
-
-        if (layer && layer->renderer()->isRenderView()) { // #document case
-            FrameView* view = toRenderView(layer->renderer())->frameView();
-            ASSERT(view);
-            ASSERT(canScrollInnerFrame(view->frame()));
-
-            WebCore::IntRect frameWindowRect = mapToTransformed(getRecursiveVisibleWindowRect(view));
-            frameWindowRect.intersect(recursiveClippingRect);
-            curr->setVisibleWindowRect(frameWindowRect);
-            recursiveClippingRect = frameWindowRect;
-
-        } else { // RenderBox-based elements case (scrollable boxes (div's, p's, textarea's, etc)).
-
-            RenderBox* box = layer->renderBox();
-            ASSERT(box);
-            ASSERT(canScrollRenderBox(box));
-
-            WebCore::IntRect visibleWindowRect = box->absoluteClippedOverflowRect();
-            visibleWindowRect = box->frame()->view()->contentsToWindow(visibleWindowRect);
-            visibleWindowRect = mapToTransformed(visibleWindowRect);
-            visibleWindowRect.intersect(recursiveClippingRect);
-
-            curr->setVisibleWindowRect(visibleWindowRect);
-            recursiveClippingRect = visibleWindowRect;
-        }
-    }
-
-    return validReturn;
 }
 
 BackingStore* WebPage::backingStore() const

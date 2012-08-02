@@ -1,3 +1,57 @@
+2012-08-01  Antonio Gomes  <agomes@rim.com>
+
+        [BlackBerry] Implement InRegionScroller class as a in-region scroll controller
+        https://bugs.webkit.org/show_bug.cgi?id=92889
+        PR #186587
+
+        Reviewed by Yong Li.
+
+        Internally reviewed by Arvid Nilsson.
+
+        Moved all in-region scrolling code out of WebPagePrivate to the just
+        created InRegionScroller class. This class aims to:
+
+        1) Centralize all in-region scroll code and clean up WebPagePrivate as a consequence.
+        2) Be the bases to add UI/Compositing thread driven scrolls to in-region.
+
+        The patch does not change any functionallity change.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::WebPagePrivate):
+        (BlackBerry::WebKit::WebPagePrivate::init):
+        (BlackBerry::WebKit::WebPagePrivate::scrollBy):
+        (BlackBerry::WebKit::WebPagePrivate::notifyInRegionScrollStatusChanged):
+        (BlackBerry::WebKit::WebPagePrivate::clearDocumentData):
+        (BlackBerry::WebKit::WebPagePrivate::setScrollOriginPoint):
+        * Api/WebPage_p.h:
+        (WebPagePrivate):
+        * WebKitSupport/InRegionScrollableArea.cpp:
+        (BlackBerry::WebKit::InRegionScrollableArea::layer):
+        * WebKitSupport/InRegionScroller.cpp: Added.
+        (WebKit):
+        (BlackBerry::WebKit::canScrollInnerFrame):
+        (BlackBerry::WebKit::canScrollRenderBox):
+        (BlackBerry::WebKit::parentLayer):
+        (BlackBerry::WebKit::enclosingLayerNode):
+        (BlackBerry::WebKit::isNonRenderViewFixedPositionedContainer):
+        (BlackBerry::WebKit::pushBackInRegionScrollable):
+        (BlackBerry::WebKit::InRegionScroller::InRegionScroller):
+        (BlackBerry::WebKit::InRegionScroller::setNode):
+        (BlackBerry::WebKit::InRegionScroller::node):
+        (BlackBerry::WebKit::InRegionScroller::reset):
+        (BlackBerry::WebKit::InRegionScroller::isNull):
+        (BlackBerry::WebKit::InRegionScroller::scrollBy):
+        (BlackBerry::WebKit::InRegionScroller::inRegionScrollableAreasForPoint):
+        (BlackBerry::WebKit::InRegionScroller::scrollNodeRecursively):
+        (BlackBerry::WebKit::InRegionScroller::scrollRenderer):
+        (BlackBerry::WebKit::InRegionScroller::adjustScrollDelta):
+        * WebKitSupport/InRegionScroller.h: Added.
+        (WebCore):
+        (WebKit):
+        (InRegionScroller):
+        * WebKitSupport/TouchEventHandler.cpp:
+        (BlackBerry::WebKit::TouchEventHandler::drawTapHighlight):
+
 2012-08-01  Charles Wei  <charles.wei@torchmobile.com.cn>
 
         [BlackBerry] Favicon should be Base64 encoded for cross-process passing

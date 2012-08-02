@@ -1,3 +1,15 @@
+2012-08-01  Antonio Gomes  <agomes@rim.com>
+
+        [BlackBerry] Implement InRegionScroller class as a in-region scroll controller
+        https://bugs.webkit.org/show_bug.cgi?id=92889
+        PR #186587
+
+        Reviewed by Yong Li.
+
+        Internally reviewed by Arvid Nilsson.
+
+        * PlatformBlackBerry.cmake: Added InRegionScroller.cpp|h to the build system.
+
 2012-07-30  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Unreviewed Qt/Mac build fix: Use libWebKitSystemInterfaceMountainLion.a

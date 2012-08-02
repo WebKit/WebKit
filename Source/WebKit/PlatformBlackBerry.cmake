@@ -100,6 +100,8 @@ LIST(APPEND WebKit_SOURCES
     blackberry/WebKitSupport/FrameLayers.cpp
     blackberry/WebKitSupport/InPageSearchManager.cpp
     blackberry/WebKitSupport/InputHandler.cpp
+    blackberry/WebKitSupport/InRegionScrollableArea.cpp
+    blackberry/WebKitSupport/InRegionScroller.cpp
     blackberry/WebKitSupport/RenderQueue.cpp
     blackberry/WebKitSupport/SelectionHandler.cpp
     blackberry/WebKitSupport/SelectionOverlay.cpp

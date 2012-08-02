@@ -20,6 +20,7 @@
 #define WebPage_p_h
 
 #include "ChromeClient.h"
+#include "InRegionScroller.h"
 #include "InspectorClientBlackBerry.h"
 #include "InspectorOverlay.h"
 #if USE(ACCELERATED_COMPOSITING)
@@ -143,7 +144,6 @@ public:
     bool scrollBy(int deltaX, int deltaY, bool scrollMainFrame = true);
 
     void enqueueRenderingOfClippedContentOfScrollableNodeAfterInRegionScrolling(WebCore::Node*);
-    std::vector<Platform::ScrollViewBase*> inRegionScrollableAreasForPoint(const Platform::IntPoint&);
     void notifyInRegionScrollStatusChanged(bool status);
     void setScrollOriginPoint(const Platform::IntPoint&);
     void setHasInRegionScrollableAreas(bool);
@@ -329,13 +329,6 @@ public:
     void clearFocusNode();
     WebCore::Frame* focusedOrMainFrame() const;
     WebCore::Frame* mainFrame() const { return m_mainFrame; }
-
-    bool scrollNodeRecursively(WebCore::Node* originalNode, const WebCore::IntSize& delta);
-    bool scrollRenderer(WebCore::RenderObject* renderer, const WebCore::IntSize& delta);
-    void adjustScrollDelta(const WebCore::IntPoint& maxOffset, const WebCore::IntPoint& currentOffset, WebCore::IntSize& delta) const;
-
-    bool canScrollRenderBox(WebCore::RenderBox*);
-    bool canScrollInnerFrame(WebCore::Frame*) const;
 
 #if ENABLE(EVENT_MODE_METATAGS)
     void didReceiveCursorEventMode(WebCore::CursorEventMode);
@@ -556,7 +549,7 @@ public:
 
     HashSet<WebCore::PluginView*> m_pluginViews;
 
-    RefPtr<WebCore::Node> m_inRegionScrollStartingNode;
+    OwnPtr<InRegionScroller> m_inRegionScroller;
 
 #if USE(ACCELERATED_COMPOSITING)
     bool m_isAcceleratedCompositingActive;
