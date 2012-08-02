@@ -58,6 +58,9 @@
 #include "ProtectionSpace.h"
 #include "ScopePointer.h"
 #include "SharedBuffer.h"
+#include "SkData.h"
+#include "SkImageEncoder.h"
+#include "SkStream.h"
 #include "TextEncoding.h"
 #include "TouchEventHandler.h"
 #if ENABLE(WEBDOM)
@@ -1184,13 +1187,22 @@ void FrameLoaderClientBlackBerry::dispatchDidReceiveIcon()
 {
     String url = m_frame->document()->url().string();
     NativeImageSkia* bitmap = iconDatabase().synchronousNativeIconForPageURL(url, IntSize(10, 10));
-    if (!bitmap)
+    if (!bitmap || bitmap->bitmap().empty())
         return;
 
-    bitmap->lockPixels();
+    SkAutoLockPixels locker(bitmap->bitmap());
+    SkDynamicMemoryWStream writer;
+    if (!SkImageEncoder::EncodeStream(&writer, bitmap->bitmap(), SkImageEncoder::kPNG_Type, 100)) {
+        BlackBerry::Platform::logAlways(BlackBerry::Platform::LogLevelInfo, "Failed to convert the icon to PNG format.");
+        return;
+    }
+    SkData* data = writer.copyToData();
+    Vector<char> out;
+    base64Encode(static_cast<const char*>(data->data()), data->size(), out);
+    out.append('\0'); // Make it null-terminated.
     String iconUrl = iconDatabase().synchronousIconURLForPageURL(url);
-    m_webPagePrivate->m_client->setFavicon(img->width(), img->height(), (unsigned char*)bitmap->getPixels(), iconUrl.utf8().data());
-    bitmap->unlockPixels();
+    m_webPagePrivate->m_client->setFavicon(out.data(), iconUrl.utf8().data());
+    data->unref();
 }
 
 bool FrameLoaderClientBlackBerry::canCachePage() const

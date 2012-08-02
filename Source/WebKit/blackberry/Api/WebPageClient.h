@@ -187,7 +187,7 @@ public:
     virtual unsigned long long databaseQuota(const unsigned short* origin, unsigned originLength, const unsigned short* databaseName, unsigned databaseNameLength, unsigned long long totalUsage, unsigned long long originUsage, unsigned long long estimatedSize) = 0;
 
     virtual void setIconForUrl(const char* originalPageUrl, const char* finalPageUrl, const char* iconUrl) = 0;
-    virtual void setFavicon(int width, int height, unsigned char* iconData, const char* url) = 0;
+    virtual void setFavicon(const char* dataInBase64, const char* url) = 0;
     virtual void setLargeIcon(const char* iconUrl) = 0;
     virtual void setWebAppCapable() = 0;
     virtual void setSearchProviderDetails(const char* title, const char* documentUrl) = 0;
