@@ -1,3 +1,71 @@
+2012-08-02  Xianzhu Wang  <wangxianzhu@chromium.org>
+
+        [Chromium-Android] Run layout tests on multiple devices in parallel
+        https://bugs.webkit.org/show_bug.cgi?id=92877
+
+        Reviewed by Dirk Pranke.
+
+        Moved methods that run command on a particular device from ChromiumAndroidPort to ChromiumAndroidDriver.
+        The drivers run adb commands with the '-s serial_number' parameter which specifies the device according to the work_number.
+
+        * Scripts/webkitpy/layout_tests/port/chromium_android.py:
+        (ChromiumAndroidPort.__init__):
+        (ChromiumAndroidPort.default_child_processes): Default to the number of attached devices.
+        (ChromiumAndroidPort.test_expectations): Removed because it is unused. 
+        (ChromiumAndroidPort.setup_test_run): Most contents moved into ChromiumAndroidDriver._setup_test()
+        (ChromiumAndroidPort.clean_up_test_run): Now the http server is stopped here.
+        (ChromiumAndroidPort._get_devices):
+        (ChromiumAndroidPort._get_device_serial):
+        (ChromiumAndroidDriver):
+        (ChromiumAndroidDriver.__init__):
+        (ChromiumAndroidDriver.__del__):
+        (ChromiumAndroidDriver._setup_test): Original contents of ChromiumAndroidPort.setup_test_run().
+        (ChromiumAndroidDriver._push_executable): Moved from ChromiumAndroidPort.
+        (ChromiumAndroidDriver._push_fonts): Moved from ChromiumAndroidPort.
+        (ChromiumAndroidDriver._push_test_resources): Moved from ChromiumAndroidPort.
+        (ChromiumAndroidDriver._synchronize_datetime): Moved from ChromiumAndroidPort.
+        (ChromiumAndroidDriver._run_adb_command): Moved from ChromiumAndroidPort.
+        (ChromiumAndroidDriver._teardown_performance): Moved from ChromiumAndroidPort.
+        (ChromiumAndroidDriver._get_crash_log): Moved from ChromiumAndroidPort.
+        (ChromiumAndroidDriver.cmd_line):
+        (ChromiumAndroidDriver._file_exists_on_device):
+        (ChromiumAndroidDriver._remove_all_pipes):
+        (ChromiumAndroidDriver._start):
+        (ChromiumAndroidDriver._start_once):
+        (ChromiumAndroidDriver.stop):
+        * Scripts/webkitpy/layout_tests/port/chromium_android_unittest.py:
+        (MockRunCommand):
+        (MockRunCommand.__init__):
+        (MockRunCommand.mock_run_command_fn):
+        (MockRunCommand.mock_no_device):
+        (MockRunCommand.mock_one_device):
+        (MockRunCommand.mock_two_devices):
+        (MockRunCommand.mock_no_tombstone_dir):
+        (MockRunCommand.mock_no_tombstone_file):
+        (MockRunCommand.mock_ten_tombstones):
+        (MockRunCommand.mock_logcat):
+        (ChromiumAndroidPortTest):
+        (ChromiumAndroidPortTest.make_port):
+        (ChromiumAndroidPortTest.test_driver_cmd_line):
+        (ChromiumAndroidPortTest.test_get_devices_no_device):
+        (ChromiumAndroidPortTest.test_get_devices_one_device):
+        (ChromiumAndroidPortTest.test_get_devices_two_devices):
+        (ChromiumAndroidPortTest.test_get_device_serial_no_device):
+        (ChromiumAndroidPortTest.test_get_device_serial_one_device):
+        (ChromiumAndroidPortTest.test_get_device_serial_two_devices):
+        (ChromiumAndroidDriverTest):
+        (ChromiumAndroidDriverTest.setUp):
+        (ChromiumAndroidDriverTest.test_get_last_stacktrace):
+        (ChromiumAndroidDriverTest.test_get_crash_log):
+        (ChromiumAndroidDriverTest.test_cmd_line):
+        (ChromiumAndroidDriverTwoDriversTest):
+        (ChromiumAndroidDriverTwoDriversTest.test_two_drivers):
+        * Scripts/webkitpy/layout_tests/port/driver.py:
+        (Driver.run_test):
+        (Driver._get_crash_log): Added to allow subclasses to override.
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        (parse_args): Removed the --adb-args command-line parameter because now we select device automatically. Added --adb-device to specify devices.
+
 2012-08-02  Dinu Jacob  <dinu.jacob@nokia.com>
 
         WebKitTestRunner needs layoutTestController.setUserStyleSheetEnabled

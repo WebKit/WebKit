@@ -29,7 +29,7 @@
 
 import logging
 import os
-import shlex
+import re
 import threading
 import time
 
@@ -167,15 +167,13 @@ class ChromiumAndroidPort(chromium.ChromiumPort):
 
         self._operating_system = 'android'
         self._version = 'icecreamsandwich'
-        self._original_governor = None
-        self._android_base_dir = None
 
         self._host_port = factory.PortFactory(host).get('chromium', **kwargs)
 
-        self._adb_command = ['adb']
-        adb_args = self.get_option('adb_args')
-        if adb_args:
-            self._adb_command += shlex.split(adb_args)
+        if hasattr(self._options, 'adb_device'):
+            self._devices = self._options.adb_device
+        else:
+            self._devices = []
 
     def default_timeout_ms(self):
         # Android platform has less computing power than desktop platforms.
@@ -184,8 +182,7 @@ class ChromiumAndroidPort(chromium.ChromiumPort):
         return 10 * 1000
 
     def default_child_processes(self):
-        # Because of the nature of apk, we don't support more than one process.
-        return 1
+        return len(self._get_devices())
 
     def baseline_search_path(self):
         return map(self._webkit_baseline_path, self.FALLBACK_PATHS)
@@ -217,15 +214,6 @@ class ChromiumAndroidPort(chromium.ChromiumPort):
         android_expectations_file = self.path_from_webkit_base('LayoutTests', 'platform', 'chromium', 'test_expectations_android.txt')
         return super(ChromiumAndroidPort, self).expectations_files() + [android_expectations_file]
 
-    def test_expectations(self):
-        # Automatically apply all expectation rules of chromium-linux to
-        # chromium-android.
-        # FIXME: This is a temporary measure to reduce the manual work when
-        # updating WebKit. This method should be removed when we merge
-        # test_expectations_android.txt into TestExpectations.
-        expectations = super(ChromiumAndroidPort, self).test_expectations()
-        return expectations.replace('LINUX ', 'LINUX ANDROID ')
-
     def start_http_server(self, additional_dirs=None, number_of_servers=0):
         # The http server runs during the whole testing period, so ignore this call.
         pass
@@ -235,33 +223,11 @@ class ChromiumAndroidPort(chromium.ChromiumPort):
         pass
 
     def setup_test_run(self):
-        self._run_adb_command(['root'])
-        self._setup_performance()
-        # Required by webkit_support::GetWebKitRootDirFilePath().
-        # Other directories will be created automatically by adb push.
-        self._run_adb_command(['shell', 'mkdir', '-p', DEVICE_SOURCE_ROOT_DIR + 'chrome'])
-        # Allow the DumpRenderTree app to fully access the directory.
-        # The native code needs the permission to write temporary files here.
-        self._run_adb_command(['shell', 'chmod', '777', DEVICE_SOURCE_ROOT_DIR])
-
-        self._push_executable()
-        self._push_fonts()
-        self._synchronize_datetime()
-
-        # Delete the disk cache if any to ensure a clean test run.
-        # This is like what's done in ChromiumPort.setup_test_run but on the device.
-        self._run_adb_command(['shell', 'rm', '-r', DRT_APP_CACHE_DIR])
-
         # Start the HTTP server so that the device can access the test cases.
         super(ChromiumAndroidPort, self).start_http_server(additional_dirs={TEST_PATH_PREFIX: self.layout_tests_dir()})
 
-        _log.debug('Starting forwarder')
-        self._run_adb_command(['shell', '%s %s' % (DEVICE_FORWARDER_PATH, FORWARD_PORTS)])
-
     def clean_up_test_run(self):
-        # Leave the forwarder and tests httpd server there because they are
-        # useful for debugging and do no harm to subsequent tests.
-        self._teardown_performance()
+        super(ChromiumAndroidPort, self).stop_http_server()
 
     def skipped_layout_tests(self, test_list):
         return self._real_tests([
@@ -319,20 +285,67 @@ class ChromiumAndroidPort(chromium.ChromiumPort):
     def _driver_class(self):
         return ChromiumAndroidDriver
 
-    def _get_crash_log(self, name, pid, stdout, stderr, newer_than):
-        if not stdout:
-            stdout = ''
-        stdout += '********* Logcat:\n' + self._get_logcat()
-        if not stderr:
-            stderr = ''
-        stderr += '********* Tombstone file:\n' + self._get_last_stacktrace()
-        return super(ChromiumAndroidPort, self)._get_crash_log(name, pid, stdout, stderr, newer_than)
-
     # Local private functions.
 
+    def _get_devices(self):
+        if not self._devices:
+            re_device = re.compile('^([a-zA-Z0-9_:.-]+)\tdevice$', re.MULTILINE)
+            result = self._executive.run_command(['adb', 'devices'], error_handler=self._executive.ignore_error)
+            self._devices = re_device.findall(result)
+            if not self._devices:
+                raise AssertionError('No devices attached. Result of "adb devices": %s' % result)
+        return self._devices
+
+    def _get_device_serial(self, worker_number):
+        devices = self._get_devices()
+        if worker_number >= len(devices):
+            raise AssertionError('Worker number exceeds available number of devices')
+        return devices[worker_number]
+
+
+class ChromiumAndroidDriver(driver.Driver):
+    def __init__(self, port, worker_number, pixel_tests, no_timeout=False):
+        super(ChromiumAndroidDriver, self).__init__(port, worker_number, pixel_tests, no_timeout)
+        self._pixel_tests = pixel_tests
+        self._in_fifo_path = DRT_APP_FILES_DIR + 'DumpRenderTree.in'
+        self._out_fifo_path = DRT_APP_FILES_DIR + 'DumpRenderTree.out'
+        self._err_fifo_path = DRT_APP_FILES_DIR + 'DumpRenderTree.err'
+        self._read_stdout_process = None
+        self._read_stderr_process = None
+        self._forwarder_process = None
+        self._has_setup = False
+        self._original_governor = None
+        self._adb_command = ['adb', '-s', port._get_device_serial(worker_number)]
+
+    def __del__(self):
+        self._teardown_performance()
+        super(ChromiumAndroidDriver, self).__del__()
+
+    def _setup_test(self):
+        if self._has_setup:
+            return
+
+        self._has_setup = True
+        self._run_adb_command(['root'])
+        self._setup_performance()
+        # Required by webkit_support::GetWebKitRootDirFilePath().
+        # Other directories will be created automatically by adb push.
+        self._run_adb_command(['shell', 'mkdir', '-p', DEVICE_SOURCE_ROOT_DIR + 'chrome'])
+        # Allow the DumpRenderTree app to fully access the directory.
+        # The native code needs the permission to write temporary files here.
+        self._run_adb_command(['shell', 'chmod', '777', DEVICE_SOURCE_ROOT_DIR])
+
+        self._push_executable()
+        self._push_fonts()
+        self._synchronize_datetime()
+
+        # Delete the disk cache if any to ensure a clean test run.
+        # This is like what's done in ChromiumPort.setup_test_run but on the device.
+        self._run_adb_command(['shell', 'rm', '-r', DRT_APP_CACHE_DIR])
+
     def _push_executable(self):
-        drt_host_path = self._path_to_driver()
-        forwarder_host_path = self._path_to_forwarder()
+        drt_host_path = self._port._path_to_driver()
+        forwarder_host_path = self._port._path_to_forwarder()
         host_stamp = int(float(max(os.stat(drt_host_path).st_mtime,
                                    os.stat(forwarder_host_path).st_mtime)))
         device_stamp = int(float(self._run_adb_command([
@@ -344,10 +357,10 @@ class ChromiumAndroidPort(chromium.ChromiumPort):
             install_result = self._run_adb_command(['install', drt_host_path])
             if install_result.find('Success') == -1:
                 raise AssertionError('Failed to install %s onto device: %s' % (drt_host_path, install_result))
-            self._push_to_device(self._build_path('DumpRenderTree.pak'), DEVICE_DRT_DIR + 'DumpRenderTree.pak')
-            self._push_to_device(self._build_path('DumpRenderTree_resources'), DEVICE_DRT_DIR + 'DumpRenderTree_resources')
-            self._push_to_device(self._build_path('android_main_fonts.xml'), DEVICE_DRT_DIR + 'android_main_fonts.xml')
-            self._push_to_device(self._build_path('android_fallback_fonts.xml'), DEVICE_DRT_DIR + 'android_fallback_fonts.xml')
+            self._push_to_device(self._port._build_path('DumpRenderTree.pak'), DEVICE_DRT_DIR + 'DumpRenderTree.pak')
+            self._push_to_device(self._port._build_path('DumpRenderTree_resources'), DEVICE_DRT_DIR + 'DumpRenderTree_resources')
+            self._push_to_device(self._port._build_path('android_main_fonts.xml'), DEVICE_DRT_DIR + 'android_main_fonts.xml')
+            self._push_to_device(self._port._build_path('android_fallback_fonts.xml'), DEVICE_DRT_DIR + 'android_fallback_fonts.xml')
             # Version control of test resources is dependent on executables,
             # because we will always rebuild executables when resources are
             # updated.
@@ -357,7 +370,7 @@ class ChromiumAndroidPort(chromium.ChromiumPort):
     def _push_fonts(self):
         if not self._check_version(DEVICE_FONTS_DIR, FONT_FILES_VERSION):
             _log.debug('Pushing fonts')
-            path_to_ahem_font = self._build_path('AHEM____.TTF')
+            path_to_ahem_font = self._port._build_path('AHEM____.TTF')
             self._push_to_device(path_to_ahem_font, DEVICE_FONTS_DIR + 'AHEM____.TTF')
             for (host_dir, font_file) in HOST_FONT_FILES:
                 self._push_to_device(host_dir + font_file, DEVICE_FONTS_DIR + font_file)
@@ -367,14 +380,14 @@ class ChromiumAndroidPort(chromium.ChromiumPort):
     def _push_test_resources(self):
         _log.debug('Pushing test resources')
         for resource in TEST_RESOURCES_TO_PUSH:
-            self._push_to_device(self.layout_tests_dir() + '/' + resource, DEVICE_LAYOUT_TESTS_DIR + resource)
+            self._push_to_device(self._port.layout_tests_dir() + '/' + resource, DEVICE_LAYOUT_TESTS_DIR + resource)
 
     def _synchronize_datetime(self):
         # The date/time between host and device may not be synchronized.
         # We need to make them synchronized, otherwise tests might fail.
         try:
             # Get seconds since 1970-01-01 00:00:00 UTC.
-            host_datetime = self._executive.run_command(['date', '-u', '+%s'])
+            host_datetime = self._port._executive.run_command(['date', '-u', '+%s'])
         except:
             # Reset to 1970-01-01 00:00:00 UTC.
             host_datetime = 0
@@ -394,10 +407,10 @@ class ChromiumAndroidPort(chromium.ChromiumPort):
     def _run_adb_command(self, cmd, ignore_error=False):
         _log.debug('Run adb command: ' + str(cmd))
         if ignore_error:
-            error_handler = self._executive.ignore_error
+            error_handler = self._port._executive.ignore_error
         else:
             error_handler = None
-        result = self._executive.run_command(self._adb_command + cmd, error_handler=error_handler)
+        result = self._port._executive.run_command(self._adb_command + cmd, error_handler=error_handler)
         # Limit the length to avoid too verbose output of commands like 'adb logcat' and 'cat /data/tombstones/tombstone01'
         # whose outputs are normally printed in later logs.
         _log.debug('Run adb result: ' + result[:80])
@@ -453,27 +466,25 @@ class ChromiumAndroidPort(chromium.ChromiumPort):
             self._run_adb_command(['shell', 'echo', self._original_governor, SCALING_GOVERNOR])
         self._original_governor = None
 
-
-class ChromiumAndroidDriver(driver.Driver):
-    def __init__(self, port, worker_number, pixel_tests, no_timeout=False):
-        super(ChromiumAndroidDriver, self).__init__(port, worker_number, pixel_tests, no_timeout)
-        self._pixel_tests = pixel_tests
-        self._in_fifo_path = DRT_APP_FILES_DIR + 'DumpRenderTree.in'
-        self._out_fifo_path = DRT_APP_FILES_DIR + 'DumpRenderTree.out'
-        self._err_fifo_path = DRT_APP_FILES_DIR + 'DumpRenderTree.err'
-        self._read_stdout_process = None
-        self._read_stderr_process = None
-
     def _command_wrapper(cls, wrapper_option):
         # Ignore command wrapper which is not applicable on Android.
         return []
 
+    def _get_crash_log(self, stdout, stderr, newer_than):
+        if not stdout:
+            stdout = ''
+        stdout += '********* Logcat:\n' + self._get_logcat()
+        if not stderr:
+            stderr = ''
+        stderr += '********* Tombstone file:\n' + self._get_last_stacktrace()
+        return super(ChromiumAndroidDriver, self)._get_crash_log(stdout, stderr, newer_than)
+
     def cmd_line(self, pixel_tests, per_test_args):
-        return self._port._adb_command + ['shell']
+        return self._adb_command + ['shell']
 
     def _file_exists_on_device(self, full_file_path):
         assert full_file_path.startswith('/')
-        return self._port._run_adb_command(['shell', 'ls', full_file_path]).strip() == full_file_path
+        return self._run_adb_command(['shell', 'ls', full_file_path]).strip() == full_file_path
 
     def _drt_cmd_line(self, pixel_tests, per_test_args):
         return driver.Driver.cmd_line(self, pixel_tests, per_test_args) + [
@@ -496,7 +507,7 @@ class ChromiumAndroidDriver(driver.Driver):
                 self._file_exists_on_device(self._err_fifo_path))
 
     def _remove_all_pipes(self):
-        self._port._run_adb_command(['shell', 'rm', self._in_fifo_path, self._out_fifo_path, self._err_fifo_path])
+        self._run_adb_command(['shell', 'rm', self._in_fifo_path, self._out_fifo_path, self._err_fifo_path])
         return (not self._file_exists_on_device(self._in_fifo_path) and
                 not self._file_exists_on_device(self._out_fifo_path) and
                 not self._file_exists_on_device(self._err_fifo_path))
@@ -510,10 +521,12 @@ class ChromiumAndroidDriver(driver.Driver):
         super(ChromiumAndroidDriver, self).start(pixel_tests, per_test_args)
 
     def _start(self, pixel_tests, per_test_args):
+        self._setup_test()
+
         for retries in range(3):
             if self._start_once(pixel_tests, per_test_args):
                 return
-            _log.error('Failed to start DumpRenderTree application. Retries=%d. Log:%s' % (retries, self._port._get_logcat()))
+            _log.error('Failed to start DumpRenderTree application. Retries=%d. Log:%s' % (retries, self._get_logcat()))
             self.stop()
             time.sleep(2)
         raise AssertionError('Failed to start DumpRenderTree application multiple times. Give up.')
@@ -521,9 +534,14 @@ class ChromiumAndroidDriver(driver.Driver):
     def _start_once(self, pixel_tests, per_test_args):
         super(ChromiumAndroidDriver, self)._start(pixel_tests, per_test_args)
 
-        self._port._run_adb_command(['logcat', '-c'])
-        self._port._run_adb_command(['shell', 'echo'] + self._drt_cmd_line(pixel_tests, per_test_args) + ['>', COMMAND_LINE_FILE])
-        start_result = self._port._run_adb_command(['shell', 'am', 'start', '-e', 'RunInSubThread', '-n', DRT_ACTIVITY_FULL_NAME])
+        _log.debug('Starting forwarder')
+        self._forwarder_process = server_process.ServerProcess(
+            self._port, 'Forwarder', self._adb_command + ['shell', '%s -D %s' % (DEVICE_FORWARDER_PATH, FORWARD_PORTS)])
+        self._forwarder_process.start()
+
+        self._run_adb_command(['logcat', '-c'])
+        self._run_adb_command(['shell', 'echo'] + self._drt_cmd_line(pixel_tests, per_test_args) + ['>', COMMAND_LINE_FILE])
+        start_result = self._run_adb_command(['shell', 'am', 'start', '-e', 'RunInSubThread', '-n', DRT_ACTIVITY_FULL_NAME])
         if start_result.find('Exception') != -1:
             _log.error('Failed to start DumpRenderTree application. Exception:\n' + start_result)
             return False
@@ -540,13 +558,13 @@ class ChromiumAndroidDriver(driver.Driver):
         # Start a process to read from the stdout fifo of the DumpRenderTree app and print to stdout.
         _log.debug('Redirecting stdout to ' + self._out_fifo_path)
         self._read_stdout_process = server_process.ServerProcess(
-            self._port, 'ReadStdout', self._port._adb_command + ['shell', 'cat', self._out_fifo_path], universal_newlines=True)
+            self._port, 'ReadStdout', self._adb_command + ['shell', 'cat', self._out_fifo_path], universal_newlines=True)
         self._read_stdout_process.start()
 
         # Start a process to read from the stderr fifo of the DumpRenderTree app and print to stdout.
         _log.debug('Redirecting stderr to ' + self._err_fifo_path)
         self._read_stderr_process = server_process.ServerProcess(
-            self._port, 'ReadStderr', self._port._adb_command + ['shell', 'cat', self._err_fifo_path], universal_newlines=True)
+            self._port, 'ReadStderr', self._adb_command + ['shell', 'cat', self._err_fifo_path], universal_newlines=True)
         self._read_stderr_process.start()
 
         _log.debug('Redirecting stdin to ' + self._in_fifo_path)
@@ -587,7 +605,7 @@ class ChromiumAndroidDriver(driver.Driver):
             return True
 
     def stop(self):
-        self._port._run_adb_command(['shell', 'am', 'force-stop', DRT_APP_PACKAGE])
+        self._run_adb_command(['shell', 'am', 'force-stop', DRT_APP_PACKAGE])
 
         if self._read_stdout_process:
             self._read_stdout_process.kill()
@@ -603,6 +621,10 @@ class ChromiumAndroidDriver(driver.Driver):
             self._server_process.stop(kill_directly=True)
             self._server_process = None
         super(ChromiumAndroidDriver, self).stop()
+
+        if self._forwarder_process:
+            self._forwarder_process.stop(kill_directly=True)
+            self._forwarder_process = None
 
         if not ChromiumAndroidDriver._loop_with_timeout(self._remove_all_pipes, DRT_START_STOP_TIMEOUT_SECS):
             raise AssertionError('Failed to remove fifo files. May be locked.')

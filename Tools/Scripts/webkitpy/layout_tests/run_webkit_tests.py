@@ -246,8 +246,9 @@ def parse_args(args=None):
         optparse.make_option("--per-tile-painting",
             action="store_true",
             help="Use per-tile painting of composited pages"),
-        optparse.make_option("--adb-args", type="string",
-            help="Arguments parsed to Android adb, to select device, etc."),
+        optparse.make_option("--adb-device",
+            action="append", default=[],
+            help="Run Android layout tests on these devices."),
     ]))
 
     option_group_definitions.append(("EFL-specific Options", [

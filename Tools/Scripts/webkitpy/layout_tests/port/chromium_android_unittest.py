@@ -41,10 +41,79 @@ from webkitpy.layout_tests.port import driver
 from webkitpy.layout_tests.port import driver_unittest
 
 
+class MockRunCommand(object):
+    def __init__(self):
+        self._mock_logcat = ''
+        self._mock_devices_output = ''
+        self._mock_devices = []
+        self._mock_ls_tombstones = ''
+
+    def mock_run_command_fn(self, args):
+        if args[0] != 'adb':
+            return ''
+        if args[1] == 'devices':
+            return self._mock_devices_output
+
+        assert len(args) > 3
+        assert args[1] == '-s'
+        assert args[2] in self._mock_devices
+        if args[3] == 'shell':
+            if args[4:] == ['ls', '-n', '/data/tombstones']:
+                return self._mock_ls_tombstones
+            elif args[4] == 'cat':
+                return args[5] + '\nmock_contents\n'
+        elif args[3] == 'logcat':
+            return self._mock_logcat
+        return ''
+
+    def mock_no_device(self):
+        self._mock_devices = []
+        self._mock_devices_output = 'List of devices attached'
+
+    def mock_one_device(self):
+        self._mock_devices = ['123456789ABCDEF0']
+        self._mock_devices_output = ('List of devices attached\n'
+                                     '%s\tdevice\n' % self._mock_devices[0])
+
+    def mock_two_devices(self):
+        self._mock_devices = ['123456789ABCDEF0', '23456789ABCDEF01']
+        self._mock_devices_output = ('* daemon not running. starting it now on port 5037 *'
+                                     '* daemon started successfully *'
+                                     'List of devices attached\n'
+                                     '%s\tdevice\n'
+                                     '%s\tdevice\n' % (self._mock_devices[0], self._mock_devices[1]))
+
+    def mock_no_tombstone_dir(self):
+        self._mock_ls_tombstones = '/data/tombstones: No such file or directory'
+
+    def mock_no_tombstone_file(self):
+        self._mock_ls_tombstones = ''
+
+    def mock_ten_tombstones(self):
+        self._mock_ls_tombstones = ('-rw------- 1000     1000       218643 2012-04-26 18:15 tombstone_00\n'
+                                    '-rw------- 1000     1000       241695 2012-04-26 18:15 tombstone_01\n'
+                                    '-rw------- 1000     1000       219472 2012-04-26 18:16 tombstone_02\n'
+                                    '-rw------- 1000     1000        45316 2012-04-27 16:33 tombstone_03\n'
+                                    '-rw------- 1000     1000        82022 2012-04-23 16:57 tombstone_04\n'
+                                    '-rw------- 1000     1000        82015 2012-04-23 16:57 tombstone_05\n'
+                                    '-rw------- 1000     1000        81974 2012-04-23 16:58 tombstone_06\n'
+                                    '-rw------- 1000     1000       237409 2012-04-26 17:41 tombstone_07\n'
+                                    '-rw------- 1000     1000       276089 2012-04-26 18:15 tombstone_08\n'
+                                    '-rw------- 1000     1000       219618 2012-04-26 18:15 tombstone_09\n')
+
+    def mock_logcat(self, content):
+        self._mock_logcat = content
+
+
 class ChromiumAndroidPortTest(chromium_port_testcase.ChromiumPortTestCase):
     port_name = 'chromium-android'
     port_maker = chromium_android.ChromiumAndroidPort
-    mock_logcat = ''
+
+    def make_port(self, **kwargs):
+        port = super(ChromiumAndroidPortTest, self).make_port(**kwargs)
+        self.mock_run_command = MockRunCommand()
+        port._executive = MockExecutive2(run_command_fn=self.mock_run_command.mock_run_command_fn)
+        return port
 
     def test_attributes(self):
         port = self.make_port()
@@ -59,51 +128,73 @@ class ChromiumAndroidPortTest(chromium_port_testcase.ChromiumPortTestCase):
         # using a custom expectations file.
         pass
 
-    @staticmethod
-    def mock_run_command_fn(args):
-        if args[1] == 'shell':
-            if args[2:] == ['ls', '-n', '/data/tombstones']:
-                # For 'adb shell ls -n /data/tombstones'
-                return ('-rw------- 1000     1000       218643 2012-04-26 18:15 tombstone_00\n'
-                        '-rw------- 1000     1000       241695 2012-04-26 18:15 tombstone_01\n'
-                        '-rw------- 1000     1000       219472 2012-04-26 18:16 tombstone_02\n'
-                        '-rw------- 1000     1000        45316 2012-04-27 16:33 tombstone_03\n'
-                        '-rw------- 1000     1000        82022 2012-04-23 16:57 tombstone_04\n'
-                        '-rw------- 1000     1000        82015 2012-04-23 16:57 tombstone_05\n'
-                        '-rw------- 1000     1000        81974 2012-04-23 16:58 tombstone_06\n'
-                        '-rw------- 1000     1000       237409 2012-04-26 17:41 tombstone_07\n'
-                        '-rw------- 1000     1000       276089 2012-04-26 18:15 tombstone_08\n'
-                        '-rw------- 1000     1000       219618 2012-04-26 18:15 tombstone_09\n')
-            elif args[2] == 'cat':
-                return args[3] + '\nmock_contents\n'
-        elif args[1] == 'logcat':
-            return ChromiumAndroidPortTest.mock_logcat
-        else:
-            return ''
+    def test_driver_cmd_line(self):
+        # Overriding PortTestCase.test_cmd_line(). Use ChromiumAndroidDriverTest.test_cmd_line() instead.
+        return
+
+    def test_get_devices_no_device(self):
+        port = self.make_port()
+        self.mock_run_command.mock_no_device()
+        self.assertRaises(AssertionError, port._get_devices)
+
+    def test_get_devices_one_device(self):
+        port = self.make_port()
+        self.mock_run_command.mock_one_device()
+        self.assertEquals(self.mock_run_command._mock_devices, port._get_devices())
+        self.assertEquals(1, port.default_child_processes())
+
+    def test_get_devices_two_devices(self):
+        port = self.make_port()
+        self.mock_run_command.mock_two_devices()
+        self.assertEquals(self.mock_run_command._mock_devices, port._get_devices())
+        self.assertEquals(2, port.default_child_processes())
+
+    def test_get_device_serial_no_device(self):
+        port = self.make_port()
+        self.mock_run_command.mock_no_device()
+        self.assertRaises(AssertionError, port._get_device_serial, 0)
+
+    def test_get_device_serial_one_device(self):
+        port = self.make_port()
+        self.mock_run_command.mock_one_device()
+        self.assertEquals(self.mock_run_command._mock_devices[0], port._get_device_serial(0))
+        self.assertRaises(AssertionError, port._get_device_serial, 1)
+
+    def test_get_device_serial_two_devices(self):
+        port = self.make_port()
+        self.mock_run_command.mock_two_devices()
+        self.assertEquals(self.mock_run_command._mock_devices[0], port._get_device_serial(0))
+        self.assertEquals(self.mock_run_command._mock_devices[1], port._get_device_serial(1))
+        self.assertRaises(AssertionError, port._get_device_serial, 2)
+
+
+class ChromiumAndroidDriverTest(unittest.TestCase):
+    def setUp(self):
+        self.mock_run_command = MockRunCommand()
+        self.mock_run_command.mock_one_device()
+        self.port = chromium_android.ChromiumAndroidPort(
+                MockSystemHost(executive=MockExecutive2(run_command_fn=self.mock_run_command.mock_run_command_fn)),
+                'chromium-android')
+        self.driver = chromium_android.ChromiumAndroidDriver(self.port, worker_number=0, pixel_tests=True)
 
     def test_get_last_stacktrace(self):
-        port = self.make_port()
+        self.mock_run_command.mock_no_tombstone_dir()
+        self.assertEquals(self.driver._get_last_stacktrace(), '')
 
-        def mock_run_command_no_dir(args):
-            return '/data/tombstones: No such file or directory'
-        port._executive = MockExecutive2(run_command_fn=mock_run_command_no_dir)
-        self.assertEquals(port._get_last_stacktrace(), '')
+        self.mock_run_command.mock_no_tombstone_file()
+        self.assertEquals(self.driver._get_last_stacktrace(), '')
 
-        def mock_run_command_no_file(args):
-            return ''
-        port._executive = MockExecutive2(run_command_fn=mock_run_command_no_file)
-        self.assertEquals(port._get_last_stacktrace(), '')
-
-        port._executive = MockExecutive2(run_command_fn=ChromiumAndroidPortTest.mock_run_command_fn)
-        self.assertEquals(port._get_last_stacktrace(),
+        self.mock_run_command.mock_ten_tombstones()
+        self.assertEquals(self.driver._get_last_stacktrace(),
                           '-rw------- 1000 1000 45316 2012-04-27 16:33 tombstone_03\n'
                           '/data/tombstones/tombstone_03\nmock_contents\n')
 
     def test_get_crash_log(self):
-        port = self.make_port()
-        port._executive = MockExecutive2(run_command_fn=ChromiumAndroidPortTest.mock_run_command_fn)
-        ChromiumAndroidPortTest.mock_logcat = 'logcat contents\n'
-        self.assertEquals(port._get_crash_log('foo', 1234, 'out bar\nout baz\n', 'err bar\nerr baz\n', newer_than=None),
+        self.mock_run_command.mock_logcat('logcat contents\n')
+        self.mock_run_command.mock_ten_tombstones()
+        self.driver._crashed_process_name = 'foo'
+        self.driver._crashed_pid = 1234
+        self.assertEquals(self.driver._get_crash_log('out bar\nout baz\n', 'err bar\nerr baz\n', newer_than=None),
             ('err bar\n'
              'err baz\n'
              '********* Tombstone file:\n'
@@ -121,7 +212,10 @@ class ChromiumAndroidPortTest(chromium_port_testcase.ChromiumPortTestCase):
              u'STDERR: -rw------- 1000 1000 45316 2012-04-27 16:33 tombstone_03\n'
              u'STDERR: /data/tombstones/tombstone_03\n'
              u'STDERR: mock_contents\n'))
-        self.assertEquals(port._get_crash_log(None, None, None, None, newer_than=None),
+
+        self.driver._crashed_process_name = None
+        self.driver._crashed_pid = None
+        self.assertEquals(self.driver._get_crash_log(None, None, newer_than=None),
             ('********* Tombstone file:\n'
              '-rw------- 1000 1000 45316 2012-04-27 16:33 tombstone_03\n'
              '/data/tombstones/tombstone_03\n'
@@ -134,19 +228,9 @@ class ChromiumAndroidPortTest(chromium_port_testcase.ChromiumPortTestCase):
              u'STDERR: /data/tombstones/tombstone_03\n'
              u'STDERR: mock_contents\n'))
 
-    def test_driver_cmd_line(self):
-        # Overriding PortTestCase.test_cmd_line(). Use ChromiumAndroidDriverTest.test_cmd_line() instead.
-        return
-
-
-class ChromiumAndroidDriverTest(unittest.TestCase):
-    def setUp(self):
-        mock_port = chromium_android.ChromiumAndroidPort(MockSystemHost(), 'chromium-android')
-        self.driver = chromium_android.ChromiumAndroidDriver(mock_port, worker_number=0, pixel_tests=True)
-
     def test_cmd_line(self):
         cmd_line = self.driver.cmd_line(True, ['anything'])
-        self.assertEquals(['adb', 'shell'], cmd_line)
+        self.assertEquals(['adb', '-s', self.mock_run_command._mock_devices[0], 'shell'], cmd_line)
 
     def test_drt_cmd_line(self):
         cmd_line = self.driver._drt_cmd_line(True, ['--a'])
@@ -169,6 +253,23 @@ class ChromiumAndroidDriverTest(unittest.TestCase):
         driver_input = driver.DriverInput('http/tests/foo/bar/test.html', 10, 'checksum', True)
         expected_command = "http://127.0.0.1:8000/foo/bar/test.html'checksum\n"
         self.assertEquals(self.driver._command_from_driver_input(driver_input), expected_command)
+
+
+class ChromiumAndroidDriverTwoDriversTest(unittest.TestCase):
+    def test_two_drivers(self):
+        mock_run_command = MockRunCommand()
+        mock_run_command.mock_two_devices()
+        port = chromium_android.ChromiumAndroidPort(
+                MockSystemHost(executive=MockExecutive2(run_command_fn=mock_run_command.mock_run_command_fn)),
+                'chromium-android')
+        driver0 = chromium_android.ChromiumAndroidDriver(port, worker_number=0, pixel_tests=True)
+        driver1 = chromium_android.ChromiumAndroidDriver(port, worker_number=1, pixel_tests=True)
+
+        cmd_line0 = driver0.cmd_line(True, ['anything'])
+        self.assertEquals(['adb', '-s', mock_run_command._mock_devices[0], 'shell'], cmd_line0)
+
+        cmd_line1 = driver1.cmd_line(True, ['anything'])
+        self.assertEquals(['adb', '-s', mock_run_command._mock_devices[1], 'shell'], cmd_line1)
 
 
 if __name__ == '__main__':

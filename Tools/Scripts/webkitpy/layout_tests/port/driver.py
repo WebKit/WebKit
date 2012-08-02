@@ -166,8 +166,7 @@ class Driver(object):
 
         crash_log = None
         if self.has_crashed():
-            self.error_from_test, crash_log = self._port._get_crash_log(self._crashed_process_name,
-                self._crashed_pid, text, self.error_from_test, newer_than=start_time)
+            self.error_from_test, crash_log = self._get_crash_log(text, self.error_from_test, newer_than=start_time)
 
             # If we don't find a crash log use a placeholder error message instead.
             if not crash_log:
@@ -187,6 +186,9 @@ class Driver(object):
             timeout=timeout, error=self.error_from_test,
             crashed_process_name=self._crashed_process_name,
             crashed_pid=self._crashed_pid, crash_log=crash_log)
+
+    def _get_crash_log(self, stdout, stderr, newer_than):
+        return self._port._get_crash_log(self._crashed_process_name, self._crashed_pid, stdout, stderr, newer_than)
 
     # FIXME: Seems this could just be inlined into callers.
     @classmethod
