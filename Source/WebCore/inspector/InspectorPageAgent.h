@@ -33,6 +33,7 @@
 
 #if ENABLE(INSPECTOR)
 
+#include "DeviceOrientationData.h"
 #include "Frame.h"
 #include "GeolocationPosition.h"
 #include "InspectorBaseAgent.h"
@@ -113,10 +114,15 @@ public:
     virtual void setGeolocationOverride(ErrorString*, const double*, const double*, const double*);
     virtual void clearGeolocationOverride(ErrorString*);
     virtual void canOverrideGeolocation(ErrorString*, bool* out_param);
-
+    virtual void setDeviceOrientationOverride(ErrorString*, double, double, double);
+    virtual void clearDeviceOrientationOverride(ErrorString*);
+    virtual void canOverrideDeviceOrientation(ErrorString*, bool*);
 
     // Geolocation override helpers.
     GeolocationPosition* overrideGeolocationPosition(GeolocationPosition*);
+
+    // DeviceOrientation helper
+    DeviceOrientationData* overrideDeviceOrientation(DeviceOrientationData*);
 
     // InspectorInstrumentation API
     void didClearWindowObjectInWorld(Frame*, DOMWrapperWorld*);
@@ -169,6 +175,7 @@ private:
     bool m_geolocationOverridden;
     RefPtr<GeolocationPosition> m_geolocationPosition;
     RefPtr<GeolocationPosition> m_platformGeolocationPosition;
+    RefPtr<DeviceOrientationData> m_deviceOrientation;
 };
 
 

@@ -38,6 +38,7 @@ WebInspector.UserAgentSupport = function()
     WebInspector.settings.deviceMetrics.addChangeListener(this._deviceMetricsChanged, this);
     WebInspector.settings.deviceFitWindow.addChangeListener(this._deviceMetricsChanged, this);
     WebInspector.settings.geolocationOverride.addChangeListener(this._geolocationPositionChanged, this);
+    WebInspector.settings.deviceOrientationOverride.addChangeListener(this._deviceOrientationChanged, this);
 }
 
 /**
@@ -234,6 +235,69 @@ WebInspector.UserAgentSupport.GeolocationPosition.clearGeolocationOverride = fun
     PageAgent.clearGeolocationOverride();
 }
 
+WebInspector.UserAgentSupport.DeviceOrientation = function (alpha, beta, gamma)
+{
+    this.alpha = alpha;
+    this.beta = beta;
+    this.gamma = gamma;
+}
+
+WebInspector.UserAgentSupport.DeviceOrientation.prototype = {
+    /**
+     * @return {string}
+     */
+    toSetting: function()
+    {
+        return JSON.stringify(this);
+    }
+}
+
+/*
+ * @return {WebInspector.UserAgentSupport.DeviceOrientation}
+ */
+WebInspector.UserAgentSupport.DeviceOrientation.parseSetting = function(value)
+{
+    if (value) {
+        var jsonObject = JSON.parse(value);
+        return new WebInspector.UserAgentSupport.DeviceOrientation(jsonObject.alpha, jsonObject.beta, jsonObject.gamma);
+    }
+    return new WebInspector.UserAgentSupport.DeviceOrientation(0, 0, 0);
+}
+
+/**
+ * @return {?WebInspector.UserAgentSupport.DeviceOrientation}
+ */
+WebInspector.UserAgentSupport.DeviceOrientation.parseUserInput = function(alphaString, betaString, gammaString)
+{
+    function isUserInputValid(value)
+    {
+        if (!value)
+            return true;
+        return /^[-]?[0-9]*[.]?[0-9]*$/.test(value);
+    }
+
+    if (!alphaString ^ !betaString ^ !gammaString)
+        return null;
+
+    var isAlphaValid = isUserInputValid(alphaString);
+    var isBetaValid = isUserInputValid(betaString);
+    var isGammaValid = isUserInputValid(gammaString);
+
+    if (!isAlphaValid && !isBetaValid && !isGammaValid)
+        return null;
+
+    var alpha = isAlphaValid ? parseFloat(alphaString) : -1;
+    var beta = isBetaValid ? parseFloat(betaString) : -1;
+    var gamma = isGammaValid ? parseFloat(gammaString) : -1;
+
+    return new WebInspector.UserAgentSupport.DeviceOrientation(alpha, beta, gamma);
+}
+
+WebInspector.UserAgentSupport.DeviceOrientation.clearDeviceOrientationOverride = function()
+{
+    PageAgent.clearDeviceOrientationOverride();
+}
+
 WebInspector.UserAgentSupport.prototype = {
     _deviceMetricsChanged: function()
     {
@@ -249,6 +313,15 @@ WebInspector.UserAgentSupport.prototype = {
             PageAgent.setGeolocationOverride();
         else
             PageAgent.setGeolocationOverride(geolocation.latitude, geolocation.longitude, 150);
+    },
+
+    /**
+     * @param {WebInspector.Event} event
+     */
+    _deviceOrientationChanged: function(event)
+    {
+        var deviceOrientation = WebInspector.UserAgentSupport.DeviceOrientation.parseSetting(WebInspector.settings.deviceOrientationOverride.get());
+        PageAgent.setDeviceOrientationOverride(deviceOrientation.alpha, deviceOrientation.beta, deviceOrientation.gamma);
     }
 }
 

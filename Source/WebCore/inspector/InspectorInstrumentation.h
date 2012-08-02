@@ -56,6 +56,7 @@ class Database;
 class Element;
 class EventContext;
 class DocumentLoader;
+class DeviceOrientationData;
 class GeolocationPosition;
 class GraphicsContext;
 class HitTestResult;
@@ -267,6 +268,8 @@ public:
     static void registerInstrumentingAgents(InstrumentingAgents*);
     static void unregisterInstrumentingAgents(InstrumentingAgents*);
 
+    static DeviceOrientationData* overrideDeviceOrientation(Page*, DeviceOrientationData*);
+
 private:
 #if ENABLE(INSPECTOR)
     static WTF::ThreadSpecific<InspectorTimelineAgent*>& threadSpecificTimelineAgentForOrphanEvents();
@@ -431,6 +434,7 @@ private:
     static GeolocationPosition* overrideGeolocationPositionImpl(InstrumentingAgents*, GeolocationPosition*);
 #endif
 
+    static DeviceOrientationData* overrideDeviceOrientationImpl(InstrumentingAgents*, DeviceOrientationData*);
     static int s_frontendCounter;
 #endif
 };
@@ -1386,7 +1390,6 @@ inline void InspectorInstrumentation::didFireAnimationFrame(const InspectorInstr
 #endif
 }
 
-
 #if ENABLE(GEOLOCATION)
 inline GeolocationPosition* InspectorInstrumentation::overrideGeolocationPosition(Page* page, GeolocationPosition* position)
 {
@@ -1398,6 +1401,16 @@ inline GeolocationPosition* InspectorInstrumentation::overrideGeolocationPositio
     return position;
 }
 #endif
+
+inline DeviceOrientationData* InspectorInstrumentation::overrideDeviceOrientation(Page* page, DeviceOrientationData* deviceOrientation)
+{
+#if ENABLE(INSPECTOR)
+    FAST_RETURN_IF_NO_FRONTENDS(deviceOrientation);
+    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForPage(page))
+        return overrideDeviceOrientationImpl(instrumentingAgents, deviceOrientation);
+#endif
+    return deviceOrientation;
+}
 
 #if ENABLE(INSPECTOR)
 inline bool InspectorInstrumentation::collectingHTMLParseErrors(Page* page)

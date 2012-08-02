@@ -38,6 +38,7 @@
 #include "CSSStyleRule.h"
 #include "DOMWindow.h"
 #include "Database.h"
+#include "DeviceOrientationData.h"
 #include "DocumentLoader.h"
 #include "Event.h"
 #include "EventContext.h"
@@ -1216,6 +1217,13 @@ GeolocationPosition* InspectorInstrumentation::overrideGeolocationPositionImpl(I
     return position;
 }
 #endif
+
+DeviceOrientationData* InspectorInstrumentation::overrideDeviceOrientationImpl(InstrumentingAgents* instrumentingAgents, DeviceOrientationData* deviceOrientation)
+{
+    if (InspectorPageAgent* pageAgent = instrumentingAgents->inspectorPageAgent())
+        deviceOrientation = pageAgent->overrideDeviceOrientation(deviceOrientation);
+    return deviceOrientation;
+}
 
 } // namespace WebCore
 

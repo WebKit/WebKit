@@ -1,3 +1,63 @@
+2012-08-02  Konrad Piascik  <kpiascik@rim.com>
+
+        Web Inspector: Override the DeviceOrientation
+        https://bugs.webkit.org/show_bug.cgi?id=91008
+
+        Reviewed by Pavel Feldman.
+
+        Re-added the m_page member variable to DeviceOrientationController and
+        added InspectorInstrumentation to see if the DeviceOrientationData
+        should be overridden or not.
+
+        Added UI to the web inspector front-end to allow users to override the
+        device orientation.  This is currently hidden behind an experiment.
+
+        Test: inspector/device-orientation-success.html
+
+        * English.lproj/localizedStrings.js:
+        * dom/DeviceOrientationController.cpp:
+        (WebCore::DeviceOrientationController::DeviceOrientationController):
+        (WebCore::DeviceOrientationController::create):
+        (WebCore::DeviceOrientationController::didChangeDeviceOrientation):
+        (WebCore::provideDeviceOrientationTo):
+        * dom/DeviceOrientationController.h:
+        (DeviceOrientationController):
+        * inspector/Inspector.json:
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore):
+        (WebCore::InspectorInstrumentation::overrideDeviceOrientationImpl):
+        * inspector/InspectorInstrumentation.h:
+        (WebCore):
+        (InspectorInstrumentation):
+        (WebCore::InspectorInstrumentation::overrideDeviceOrientation):
+        * inspector/InspectorPageAgent.cpp:
+        (WebCore::InspectorPageAgent::setDeviceOrientationOverride):
+        (WebCore):
+        (WebCore::InspectorPageAgent::clearDeviceOrientationOverride):
+        (WebCore::InspectorPageAgent::canOverrideDeviceOrientation):
+        (WebCore::InspectorPageAgent::overrideDeviceOrientation):
+        * inspector/InspectorPageAgent.h:
+        * inspector/front-end/Settings.js:
+        (WebInspector.ExperimentsSettings):
+        * inspector/front-end/SettingsScreen.js:
+        (WebInspector.UserAgentSettingsTab):
+        (WebInspector.UserAgentSettingsTab.prototype._createInput):
+        (WebInspector.UserAgentSettingsTab.prototype._createDeviceMetricsElement):
+        (WebInspector.UserAgentSettingsTab.prototype._createGeolocationOverrideElement):
+        (WebInspector.UserAgentSettingsTab.prototype._onDeviceOrientationOverrideCheckboxClicked):
+        (WebInspector.UserAgentSettingsTab.prototype._applyDeviceOrientationUserInput):
+        (WebInspector.UserAgentSettingsTab.prototype._setDeviceOrientation.set if):
+        (WebInspector.UserAgentSettingsTab.prototype._setDeviceOrientation):
+        (WebInspector.UserAgentSettingsTab.prototype._createDeviceOrientationOverrideElement):
+        * inspector/front-end/UserAgentSupport.js:
+        (WebInspector.UserAgentSupport.DeviceOrientation):
+        (WebInspector.UserAgentSupport.DeviceOrientation.prototype.toSetting):
+        (WebInspector.UserAgentSupport.DeviceOrientation.parseSetting):
+        (WebInspector.UserAgentSupport.DeviceOrientation.parseUserInput):
+        (WebInspector.UserAgentSupport.DeviceOrientation.clearDeviceOrientationOverride):
+        * inspector/front-end/inspector.js:
+        (WebInspector.doLoadedDone):
+
 2012-08-02  Arnaud Renevier  <a.renevier@sisa.samsung.com>
 
         TypedArray set method is slow when called with another typed array

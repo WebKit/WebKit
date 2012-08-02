@@ -46,6 +46,7 @@
 #include "DOMImplementation.h"
 #include "DOMNodeHighlighter.h"
 #include "DOMPatchSupport.h"
+#include "DeviceOrientationController.h"
 #include "Document.h"
 #include "DocumentLoader.h"
 #include "Frame.h"
@@ -1031,6 +1032,42 @@ GeolocationPosition* InspectorPageAgent::overrideGeolocationPosition(Geolocation
         return m_geolocationPosition.get();
     }
     return position;
+}
+
+void InspectorPageAgent::setDeviceOrientationOverride(ErrorString* error, double alpha, double beta, double gamma)
+{
+    DeviceOrientationController* controller = DeviceOrientationController::from(m_page);
+    if (!controller) {
+        *error = "Internal error: unable to override device orientation.";
+        return;
+    }
+
+    ErrorString clearError;
+    clearDeviceOrientationOverride(&clearError);
+
+    m_deviceOrientation = DeviceOrientationData::create(true, alpha, true, beta, true, gamma);
+    controller->didChangeDeviceOrientation(m_deviceOrientation.get());
+}
+
+void InspectorPageAgent::clearDeviceOrientationOverride(ErrorString*)
+{
+    m_deviceOrientation.clear();
+}
+
+void InspectorPageAgent::canOverrideDeviceOrientation(ErrorString*, bool* outParam)
+{
+#if ENABLE(DEVICE_ORIENTATION)
+    *outParam = true;
+#else
+    *outParam = false;
+#endif
+}
+
+DeviceOrientationData* InspectorPageAgent::overrideDeviceOrientation(DeviceOrientationData* deviceOrientation)
+{
+    if (m_deviceOrientation)
+        deviceOrientation = m_deviceOrientation.get();
+    return deviceOrientation;
 }
 
 } // namespace WebCore

@@ -29,11 +29,13 @@
 #include "DeviceOrientationClient.h"
 #include "DeviceOrientationData.h"
 #include "DeviceOrientationEvent.h"
+#include "InspectorInstrumentation.h"
 
 namespace WebCore {
 
-DeviceOrientationController::DeviceOrientationController(DeviceOrientationClient* client)
+DeviceOrientationController::DeviceOrientationController(Page* page, DeviceOrientationClient* client)
     : m_client(client)
+    , m_page(page)
     , m_timer(this, &DeviceOrientationController::timerFired)
 {
     ASSERT(m_client);
@@ -45,9 +47,9 @@ DeviceOrientationController::~DeviceOrientationController()
     m_client->deviceOrientationControllerDestroyed();
 }
 
-PassOwnPtr<DeviceOrientationController> DeviceOrientationController::create(DeviceOrientationClient* client)
+PassOwnPtr<DeviceOrientationController> DeviceOrientationController::create(Page* page, DeviceOrientationClient* client)
 {
-    return adoptPtr(new DeviceOrientationController(client));
+    return adoptPtr(new DeviceOrientationController(page, client));
 }
 
 void DeviceOrientationController::timerFired(Timer<DeviceOrientationController>* timer)
@@ -129,6 +131,7 @@ void DeviceOrientationController::resumeEventsForAllListeners(DOMWindow* window)
 
 void DeviceOrientationController::didChangeDeviceOrientation(DeviceOrientationData* orientation)
 {
+    orientation = InspectorInstrumentation::overrideDeviceOrientation(m_page, orientation);
     RefPtr<DeviceOrientationEvent> event = DeviceOrientationEvent::create(eventNames().deviceorientationEvent, orientation);
     Vector<RefPtr<DOMWindow> > listenersVector;
     copyToVector(m_listeners, listenersVector);
@@ -151,7 +154,7 @@ bool DeviceOrientationController::isActiveAt(Page* page)
 
 void provideDeviceOrientationTo(Page* page, DeviceOrientationClient* client)
 {
-    DeviceOrientationController::provideTo(page, DeviceOrientationController::supplementName(), DeviceOrientationController::create(client));
+    DeviceOrientationController::provideTo(page, DeviceOrientationController::supplementName(), DeviceOrientationController::create(page, client));
 }
 
 } // namespace WebCore

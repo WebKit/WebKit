@@ -351,6 +351,8 @@ WebInspector.UserAgentSettingsTab = function()
         p.appendChild(this._createDeviceMetricsControl());
     if (Capabilities.canOverrideGeolocation && WebInspector.experimentsSettings.geolocationOverride.isEnabled())
         p.appendChild(this._createGeolocationOverrideControl());
+    if (Capabilities.canOverrideDeviceOrientation && WebInspector.experimentsSettings.deviceOrientationOverride.isEnabled())
+        p.appendChild(this._createDeviceOrientationOverrideControl());
     p.appendChild(this._createCheckboxSetting(WebInspector.UIString("Emulate touch events"), WebInspector.settings.emulateTouchEvents));
 }
 
@@ -507,6 +509,27 @@ WebInspector.UserAgentSettingsTab.prototype = {
         PageAgent.getScriptExecutionStatus(executionStatusCallback.bind(this));
     },
 
+    /**
+     * Creates an input element under the parentElement with the given id and defaultText.
+     * It also sets an onblur event listener.
+     * @param {Element} parentElement
+     * @param {string} id
+     * @param {string} defaultText
+     * @param {function} eventListener
+     * @return {Element} element
+     */
+    _createInput: function(parentElement, id, defaultText, eventListener)
+    {
+        var element = parentElement.createChild("input");
+        element.id = id;
+        element.maxLength = 12;
+        element.style.width = "80px";
+        element.value = defaultText;
+        element.align = "right";
+        element.addEventListener("blur", eventListener, false);
+        return element;
+    },
+
     _createDeviceMetricsControl: function()
     {
         const metricsSetting = WebInspector.settings.deviceMetrics.get();
@@ -604,17 +627,6 @@ WebInspector.UserAgentSettingsTab.prototype = {
         var fieldsetElement = document.createElement("fieldset");
         fieldsetElement.id = "metrics-override-section";
 
-        function createInput(parentElement, id, defaultText)
-        {
-            var element = parentElement.createChild("input");
-            element.id = id;
-            element.maxLength = 6;
-            element.style.width = "48px";
-            element.value = defaultText;
-            element.addEventListener("blur", this._applyDeviceMetricsUserInput.bind(this), false);
-            return element;
-        }
-
         function swapDimensionsClicked(event)
         {
             var widthValue = this._widthOverrideElement.value;
@@ -629,9 +641,9 @@ WebInspector.UserAgentSettingsTab.prototype = {
         var cellElement = rowElement.createChild("td");
         cellElement.appendChild(document.createTextNode(WebInspector.UIString("Screen resolution:")));
         cellElement = rowElement.createChild("td");
-        this._widthOverrideElement = createInput.call(this, cellElement, "metrics-override-width", String(metrics.width || screen.width));
+        this._widthOverrideElement = this._createInput(cellElement, "metrics-override-width", String(metrics.width || screen.width), this._applyDeviceMetricsUserInput.bind(this));
         cellElement.appendChild(document.createTextNode(" \u00D7 ")); // MULTIPLICATION SIGN.
-        this._heightOverrideElement = createInput.call(this, cellElement, "metrics-override-height", String(metrics.height || screen.height));
+        this._heightOverrideElement = this._createInput(cellElement, "metrics-override-height", String(metrics.height || screen.height), this._applyDeviceMetricsUserInput.bind(this));
         cellElement.appendChild(document.createTextNode(" \u2014 ")); // EM DASH.
         this._swapDimensionsElement = cellElement.createChild("button");
         this._swapDimensionsElement.appendChild(document.createTextNode(" \u21C4 ")); // RIGHTWARDS ARROW OVER LEFTWARDS ARROW.
@@ -642,7 +654,7 @@ WebInspector.UserAgentSettingsTab.prototype = {
         cellElement = rowElement.createChild("td");
         cellElement.appendChild(document.createTextNode(WebInspector.UIString("Font scale factor:")));
         cellElement = rowElement.createChild("td");
-        this._fontScaleFactorOverrideElement = createInput.call(this, cellElement, "metrics-override-font-scale", String(metrics.fontScaleFactor || 1));
+        this._fontScaleFactorOverrideElement = this._createInput(cellElement, "metrics-override-font-scale", String(metrics.fontScaleFactor || 1), this._applyDeviceMetricsUserInput.bind(this));
 
         rowElement = tableElement.createChild("tr");
         cellElement = rowElement.createChild("td");
@@ -728,26 +740,14 @@ WebInspector.UserAgentSettingsTab.prototype = {
         var fieldsetElement = document.createElement("fieldset");
         fieldsetElement.id = "geolocation-override-section";
 
-        function createInput(parentElement, id, defaultText)
-        {
-            var element = parentElement.createChild("input");
-            element.id = id;
-            element.maxLength = 12;
-            element.style.width = "80px";
-            element.value = defaultText;
-            element.addEventListener("blur", this._applyGeolocationUserInput.bind(this), false);
-            return element;
-        }
-
         var tableElement = fieldsetElement.createChild("table");
-
         var rowElement = tableElement.createChild("tr");
         var cellElement = rowElement.createChild("td");
         cellElement.appendChild(document.createTextNode(WebInspector.UIString("Geolocation Position") + ":"));
         cellElement = rowElement.createChild("td");
-        this._latitudeElement = createInput.call(this, cellElement, "geolocation-override-latitude", String(geolocation.latitude));
+        this._latitudeElement = this._createInput(cellElement, "geolocation-override-latitude", String(geolocation.latitude), this._applyGeolocationUserInput.bind(this));
         cellElement.appendChild(document.createTextNode(" , "));
-        this._longitudeElement = createInput.call(this, cellElement, "geolocation-override-longitude", String(geolocation.longitude));
+        this._longitudeElement = this._createInput(cellElement, "geolocation-override-longitude", String(geolocation.longitude), this._applyGeolocationUserInput.bind(this));
         rowElement = tableElement.createChild("tr");
         cellElement = rowElement.createChild("td");
         var geolocationErrorLabelElement = document.createElement("label");
@@ -759,6 +759,99 @@ WebInspector.UserAgentSettingsTab.prototype = {
         geolocationErrorLabelElement.appendChild(document.createTextNode(WebInspector.UIString("Emulate position unavailable")));
         this._geolocationErrorElement = geolocationErrorCheckboxElement;
         cellElement.appendChild(geolocationErrorLabelElement);
+
+        return fieldsetElement;
+    },
+
+    _createDeviceOrientationOverrideControl: function()
+    {
+        const deviceOrientationSetting = WebInspector.settings.deviceOrientationOverride.get();
+        var deviceOrientation = WebInspector.UserAgentSupport.DeviceOrientation.parseSetting(deviceOrientationSetting);
+
+        var p = document.createElement("p");
+        var labelElement = p.createChild("label");
+        var checkboxElement = labelElement.createChild("input");
+        checkboxElement.id = "device-orientation-override-checkbox";
+        checkboxElement.type = "checkbox";
+        checkboxElement.checked = !deviceOrientation;
+        checkboxElement.addEventListener("click", this._onDeviceOrientationOverrideCheckboxClicked.bind(this), false);
+        this._deviceOrientationOverrideCheckboxElement = checkboxElement;
+        labelElement.appendChild(document.createTextNode(WebInspector.UIString("Override Device Orientation")));
+
+        var deviceOrientationSectionElement = this._createDeviceOrientationOverrideElement(deviceOrientation);
+        p.appendChild(deviceOrientationSectionElement);
+        this._deviceOrientationSectionElement = deviceOrientationSectionElement;
+
+        this._setDeviceOrientation(deviceOrientation, false, true);
+
+        return p;
+    },
+
+    _onDeviceOrientationOverrideCheckboxClicked: function()
+    {
+        var controlsDisabled = !this._deviceOrientationOverrideCheckboxElement.checked;
+        this._alphaElement.disabled = controlsDisabled;
+        this._betaElement.disabled = controlsDisabled;
+        this._gammaElement.disabled = controlsDisabled;
+
+        if (this._deviceOrientationOverrideCheckboxElement.checked) {
+            var deviceOrientation = WebInspector.UserAgentSupport.DeviceOrientation.parseUserInput(this._alphaElement.value, this._betaElement.value, this._gammaElement.value);
+            if (deviceOrientation)
+                this._setDeviceOrientation(deviceOrientation, false, false);
+            if (!this._alphaElement.value)
+                this._alphaElement.focus();
+        } else
+            WebInspector.UserAgentSupport.DeviceOrientation.clearDeviceOrientationOverride();
+    },
+
+    _applyDeviceOrientationUserInput: function()
+    {
+        this._setDeviceOrientation(WebInspector.UserAgentSupport.DeviceOrientation.parseUserInput(this._alphaElement.value.trim(), this._betaElement.value.trim(), this._gammaElement.value.trim()), true, false);
+    },
+
+    /**
+     * @param {?WebInspector.UserAgentSupport.DeviceOrientation} deviceOrientation
+     * @param {boolean} userInputModified
+     * @param {boolean} updateCheckbox
+     */
+    _setDeviceOrientation: function(deviceOrientation, userInputModified, updateCheckbox)
+    {
+        if (!deviceOrientation)
+            return;
+
+        if (!userInputModified) {
+            this._alphaElement.value = deviceOrientation.alpha;
+            this._betaElement.value = deviceOrientation.beta;
+            this._gammaElement.value = deviceOrientation.gamma;
+        }
+
+        var value = deviceOrientation.toSetting();
+        WebInspector.settings.deviceOrientationOverride.set(value);
+
+        if (this._deviceOrientationOverrideCheckboxElement && updateCheckbox) {
+            this._deviceOrientationOverrideCheckboxElement.checked = !!deviceOrientation.toSetting();
+            this._onDeviceOrientationOverrideCheckboxClicked();
+        }
+    },
+
+    /**
+     * @param {WebInspector.UserAgentSupport.DeviceOrientation} deviceOrientation
+     */
+    _createDeviceOrientationOverrideElement: function(deviceOrientation)
+    {
+        var fieldsetElement = document.createElement("fieldset");
+        fieldsetElement.id = "device-orientation-override-section";
+
+        var tableElement = fieldsetElement.createChild("table");
+
+        var rowElement = tableElement.createChild("tr");
+        var cellElement = rowElement.createChild("td");
+        cellElement.appendChild(document.createTextNode("\u03B1: "));
+        this._alphaElement = this._createInput(cellElement, "device-orientation-override-alpha", String(deviceOrientation.alpha), this._applyDeviceOrientationUserInput.bind(this));
+        cellElement.appendChild(document.createTextNode(" \u03B2: "));
+        this._betaElement = this._createInput(cellElement, "device-orientation-override-beta", String(deviceOrientation.beta), this._applyDeviceOrientationUserInput.bind(this));
+        cellElement.appendChild(document.createTextNode(" \u03B3: "));
+        this._gammaElement = this._createInput(cellElement, "device-orientation-override-gamma", String(deviceOrientation.gamma), this._applyDeviceOrientationUserInput.bind(this));
 
         return fieldsetElement;
     }

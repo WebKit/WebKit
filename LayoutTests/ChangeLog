@@ -1,3 +1,15 @@
+2012-08-02  Konrad Piascik  <kpiascik@rim.com>
+
+        Web Inspector: Override the DeviceOrientation
+        https://bugs.webkit.org/show_bug.cgi?id=91008
+
+        Reviewed by Pavel Feldman.
+
+        New tests for Device Orientation override.
+
+        * inspector/device-orientation-success-expected.txt: Added.
+        * inspector/device-orientation-success.html: Added.
+
 2012-08-02  Chris Fleizach  <cfleizach@apple.com>
 
         AXEnabled = false for AXIncrementors inside text fields

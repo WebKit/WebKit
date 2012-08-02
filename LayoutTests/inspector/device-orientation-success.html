@@ -1,0 +1,37 @@
+<html>
+<head>
+<script src="../http/tests/inspector/inspector-test.js"></script>
+<script>
+
+var mockAlpha = 1.1;
+var mockBeta = 2.2;
+var mockGamma = 3.3;
+
+if (window.layoutTestController)
+    layoutTestController.setMockDeviceOrientation(true, mockAlpha, true, mockBeta, true, mockGamma);
+else
+    debug('This test can not be run without the LayoutTestController');
+
+function handler(evt)
+{
+        console.log('alpha: ' + evt.alpha + ' beta: ' + evt.beta + ' gamma: ' + evt.gamma);
+}
+
+function test()
+{
+    function callback()
+    {
+        PageAgent.clearDeviceOrientationOverride();
+        InspectorTest.completeTest();
+    }
+
+    InspectorTest.evaluateInPage("window.addEventListener('deviceorientation', handler, false);", callback);
+    PageAgent.setDeviceOrientationOverride(20, 30, 40);
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>
+</p>
+</body>
+</html>
