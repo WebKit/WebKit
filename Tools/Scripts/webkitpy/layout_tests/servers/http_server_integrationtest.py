@@ -38,8 +38,6 @@ import sys
 import tempfile
 import unittest
 
-from webkitpy.layout_tests.port import port_testcase
-
 
 class BaseTest(unittest.TestCase):
     """Basic framework for script tests."""
@@ -145,7 +143,3 @@ class WebsocketserverTest(BaseTest):
     # FIXME: test TLS at some point?
     PORTS = (8880, )
     SCRIPT_NAME = 'new-run-webkit-websocketserver'
-
-
-if __name__ == '__main__':
-    port_testcase.main()

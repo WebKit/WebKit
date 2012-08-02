@@ -1,5 +1,31 @@
 2012-08-02  Dirk Pranke  <dpranke@chromium.org>
 
+        test-webkitpy: integrate proper support for integration tests
+        https://bugs.webkit.org/show_bug.cgi?id=92925
+
+        Reviewed by Ojan Vafai.
+
+        This patch merges the custom loader I used for integration tests
+        into the main test-webkitpy code. Integration tests are not run
+        by default yet, but at least they can be run.
+
+        * Scripts/webkitpy/layout_tests/port/mock_drt_unittest.py:
+        (MockTestShellTest.test_test_shell_parse_options):
+        * Scripts/webkitpy/layout_tests/port/port_testcase.py:
+        (test_path_to_apache_config_file):
+        * Scripts/webkitpy/layout_tests/servers/http_server_integrationtest.py:
+        (WebsocketserverTest):
+        * Scripts/webkitpy/test/main.py:
+        (Tester._parse_args):
+        (Tester._run_tests):
+        (Tester._test_names):
+        (Tester._log_exception):
+        (_Loader):
+        (_Loader.getTestCaseNames):
+        (_Loader.getTestCaseNames.isTestMethod):
+
+2012-08-02  Dirk Pranke  <dpranke@chromium.org>
+
         test-webkitpy: clean up runner in preparation for running tests serially as necessary
         https://bugs.webkit.org/show_bug.cgi?id=92922
 

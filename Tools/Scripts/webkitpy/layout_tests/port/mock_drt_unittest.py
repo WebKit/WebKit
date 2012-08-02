@@ -259,7 +259,3 @@ class MockTestShellTest(MockDRTTest):
         self.assertTrue(options.test_shell)
         self.assertTrue(options.pixel_tests)
         self.assertEquals(options.pixel_path, '/tmp/png_result0.png')
-
-
-if __name__ == '__main__':
-    port_testcase.main()

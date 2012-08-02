@@ -87,16 +87,18 @@ class Tester(object):
                           help='run all the tests')
         parser.add_option('-c', '--coverage', action='store_true', default=False,
                           help='generate code coverage info (requires http://pypi.python.org/pypi/coverage)')
+        parser.add_option('-i', '--integration-tests', action='store_true', default=False,
+                          help='run integration tests as well as unit tests'),
+        parser.add_option('-j', '--child-processes', action='store', type='int', default=(1 if sys.platform == 'win32' else multiprocessing.cpu_count()),
+                          help='number of tests to run in parallel (default=%default)')
+        parser.add_option('-p', '--pass-through', action='store_true', default=False,
+                          help='be debugger friendly by passing captured output through to the system')
         parser.add_option('-q', '--quiet', action='store_true', default=False,
                           help='run quietly (errors, warnings, and progress only)')
         parser.add_option('-t', '--timing', action='store_true', default=False,
                           help='display per-test execution time (implies --verbose)')
         parser.add_option('-v', '--verbose', action='count', default=0,
                           help='verbose output (specify once for individual test results, twice for debug messages)')
-        parser.add_option('-p', '--pass-through', action='store_true', default=False,
-                          help='be debugger friendly by passing captured output through to the system')
-        parser.add_option('-j', '--child-processes', action='store', type='int', default=(1 if sys.platform == 'win32' else multiprocessing.cpu_count()),
-                          help='number of tests to run in parallel (default=%default)')
 
         parser.epilog = ('[args...] is an optional list of modules, test_classes, or individual tests. '
                          'If no args are given, all the tests will be run.')
@@ -134,7 +136,7 @@ class Tester(object):
             return False
 
         self.printer.write_update("Finding the individual test methods ...")
-        loader = unittest.defaultTestLoader
+        loader = _Loader()
         test_names = self._test_names(loader, names)
 
         self.printer.write_update("Running the tests ...")
@@ -167,6 +169,9 @@ class Tester(object):
         return True
 
     def _test_names(self, loader, names):
+        if self._options.integration_tests:
+            loader.test_method_prefixes.append('integration_test_')
+
         test_names = []
         for name in names:
             test_names.extend(self._all_test_names(loader.loadTestsFromName(name, None)))
@@ -187,6 +192,20 @@ class Tester(object):
         traceback.print_exc(file=s)
         for l in s.buflist:
             _log.error('  ' + l.rstrip())
+
+
+class _Loader(unittest.TestLoader):
+    test_method_prefixes = ['test_']
+
+    def getTestCaseNames(self, testCaseClass):
+        def isTestMethod(attrname, testCaseClass=testCaseClass):
+            if not hasattr(getattr(testCaseClass, attrname), '__call__'):
+                return False
+            return (any(attrname.startswith(prefix) for prefix in self.test_method_prefixes))
+        testFnNames = filter(isTestMethod, dir(testCaseClass))
+        testFnNames.sort()
+        return testFnNames
+
 
 if __name__ == '__main__':
     sys.exit(main())

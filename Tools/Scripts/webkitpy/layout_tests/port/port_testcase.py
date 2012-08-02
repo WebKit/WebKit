@@ -569,34 +569,3 @@ class PortTestCase(unittest.TestCase):
         # Mock out _apache_config_file_name_for_platform to ignore the passed sys.platform value.
         port._apache_config_file_name_for_platform = lambda platform: 'httpd.conf'
         self.assertEquals(port._path_to_apache_config_file(), '/mock-checkout/LayoutTests/http/conf/httpd.conf')
-
-
-# FIXME: This class and main() should be merged into test-webkitpy.
-class EnhancedTestLoader(unittest.TestLoader):
-    integration_tests = False
-    unit_tests = True
-
-    def getTestCaseNames(self, testCaseClass):
-        def isTestMethod(attrname, testCaseClass=testCaseClass):
-            if not hasattr(getattr(testCaseClass, attrname), '__call__'):
-                return False
-            return ((self.unit_tests and attrname.startswith('test_')) or
-                    (self.integration_tests and attrname.startswith('integration_test_')))
-        testFnNames = filter(isTestMethod, dir(testCaseClass))
-        testFnNames.sort()
-        return testFnNames
-
-
-def main(argv=None):
-    if argv is None:
-        argv = sys.argv
-
-    test_loader = EnhancedTestLoader()
-    if '-i' in argv:
-        test_loader.integration_tests = True
-        argv.remove('-i')
-    if '--no-unit-tests' in argv:
-        test_loader.unit_tests = False
-        argv.remove('--no-unit-tests')
-
-    unittest.main(argv=argv, testLoader=test_loader)
