@@ -1,3 +1,14 @@
+2012-08-02  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] When farstream is not present do not enable MediaStream
+
+        Reviewed by Philippe Normand.
+
+        When farstream libraries are no present, simply do not build MediaStream
+        support.
+
+        * configure.ac:
+
 2012-08-01  Jian Li  <jianli@chromium.org>
 
         Add new CSS property "-webkit-widget-region" to expose dashboard region support for other port

@@ -471,8 +471,8 @@ AC_SUBST(ENCHANT_LIBS)
 fi
 
 if test "$enable_media_stream" = "yes"; then
-   PKG_CHECK_MODULES([FARSTREAM], [farstream-0.1], [have_farstream=yes],
-                     AC_MSG_ERROR([farstream is required to enable media_stream]))
+   PKG_CHECK_MODULES([FARSTREAM], [farstream-0.1],
+                     [have_farstream=yes], [enable_media_stream=false])
    AC_SUBST([FARSTREAM_CFLAGS])
    AC_SUBST([FARSTREAM_LIBS])
 fi
