@@ -195,4 +195,4 @@ class ChromiumWindowsEWS(AbstractChromiumEWS):
 class MacEWS(AbstractEarlyWarningSystem):
     name = "mac-ews"
     port_name = "mac"
-    _run_tests = True
+    _default_run_tests = True

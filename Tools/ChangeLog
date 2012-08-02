@@ -1,3 +1,10 @@
+2012-08-02  Adam Barth  <abarth@webkit.org>
+
+        Turn on tests for the mac-ews, for realz this time.
+
+        * Scripts/webkitpy/tool/commands/earlywarningsystem.py:
+        (MacEWS):
+
 2012-08-02  Xianzhu Wang  <wangxianzhu@chromium.org>
 
         [Chromium-Android] Run layout tests on multiple devices in parallel
