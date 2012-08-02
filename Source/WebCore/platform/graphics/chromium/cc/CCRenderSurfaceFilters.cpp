@@ -30,7 +30,6 @@
 #include "cc/CCRenderSurfaceFilters.h"
 
 #include "FloatSize.h"
-#include "GraphicsContext3D.h"
 #include "SkBlurImageFilter.h"
 #include "SkCanvas.h"
 #include "SkColorMatrixFilter.h"
@@ -38,6 +37,7 @@
 #include "SkGrTexturePixelRef.h"
 #include <public/WebFilterOperation.h>
 #include <public/WebFilterOperations.h>
+#include <public/WebGraphicsContext3D.h>
 #include <wtf/MathExtras.h>
 
 namespace {
@@ -385,14 +385,11 @@ WebKit::WebFilterOperations CCRenderSurfaceFilters::optimize(const WebKit::WebFi
     return newList;
 }
 
-SkBitmap CCRenderSurfaceFilters::apply(const WebKit::WebFilterOperations& filters, unsigned textureId, const FloatSize& size, GraphicsContext3D* context3D)
+SkBitmap CCRenderSurfaceFilters::apply(const WebKit::WebFilterOperations& filters, unsigned textureId, const FloatSize& size, WebKit::WebGraphicsContext3D* context3D, GrContext* grContext)
 {
-    if (!context3D)
+    if (!context3D || !grContext)
         return SkBitmap();
 
-    GrContext* grContext = context3D->grContext();
-    if (!grContext)
-        return SkBitmap();
     WebKit::WebFilterOperations optimizedFilters = optimize(filters);
     FilterBufferState state(grContext, size, textureId);
     if (!state.init(optimizedFilters.size()))

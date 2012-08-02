@@ -40,7 +40,6 @@
 #include "GrTexture.h"
 #include "NotImplemented.h"
 #include "PlatformColor.h"
-#include "SharedGraphicsContext3D.h"
 #include "SkBitmap.h"
 #include "SkColor.h"
 #include "ThrottledTextureUploader.h"
@@ -56,6 +55,7 @@
 #include "cc/CCSingleThreadProxy.h"
 #include "cc/CCVideoLayerImpl.h"
 #include <public/WebGraphicsContext3D.h>
+#include <public/WebSharedGraphicsContext3D.h>
 #include <public/WebVideoFrame.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/MainThread.h>
@@ -64,6 +64,7 @@
 using namespace std;
 using WebKit::WebGraphicsContext3D;
 using WebKit::WebGraphicsMemoryAllocation;
+using WebKit::WebSharedGraphicsContext3D;
 using WebKit::WebTransformationMatrix;
 
 namespace WebCore {
@@ -529,14 +530,16 @@ static inline SkBitmap applyFilters(LayerRendererChromium* layerRenderer, const 
     if (filters.isEmpty())
         return SkBitmap();
 
-    RefPtr<GraphicsContext3D> filterContext = CCProxy::hasImplThread() ? SharedGraphicsContext3D::getForImplThread() : SharedGraphicsContext3D::get();
-    if (!filterContext)
+    WebGraphicsContext3D* filterContext = CCProxy::hasImplThread() ? WebSharedGraphicsContext3D::compositorThreadContext() : WebSharedGraphicsContext3D::mainThreadContext();
+    GrContext* filterGrContext = CCProxy::hasImplThread() ? WebSharedGraphicsContext3D::compositorThreadGrContext() : WebSharedGraphicsContext3D::mainThreadGrContext();
+
+    if (!filterContext || !filterGrContext)
         return SkBitmap();
 
     layerRenderer->context()->flush();
 
     CCScopedLockResourceForWrite lock(layerRenderer->resourceProvider(), sourceTexture->id());
-    SkBitmap source = CCRenderSurfaceFilters::apply(filters, lock.textureId(), sourceTexture->size(), filterContext.get());
+    SkBitmap source = CCRenderSurfaceFilters::apply(filters, lock.textureId(), sourceTexture->size(), filterContext, filterGrContext);
     return source;
 }
 

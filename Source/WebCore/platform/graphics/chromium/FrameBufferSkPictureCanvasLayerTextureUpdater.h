@@ -31,6 +31,13 @@
 
 #include "SkPictureCanvasLayerTextureUpdater.h"
 
+class GrContext;
+
+namespace WebKit {
+class WebGraphicsContext3D;
+class WebSharedGraphicsContext3D;
+}
+
 namespace WebCore {
 
 // This class records the contentRect into an SkPicture, then uses accelerated
@@ -56,7 +63,7 @@ public:
 
     virtual PassOwnPtr<LayerTextureUpdater::Texture> createTexture(CCPrioritizedTextureManager*) OVERRIDE;
     virtual SampledTexelFormat sampledTexelFormat(GC3Denum textureFormat) OVERRIDE;
-    void updateTextureRect(PassRefPtr<GraphicsContext3D>, CCResourceProvider*, CCPrioritizedTexture*, const IntRect& sourceRect, const IntRect& destRect);
+    void updateTextureRect(WebKit::WebGraphicsContext3D*, GrContext*, CCResourceProvider*, CCPrioritizedTexture*, const IntRect& sourceRect, const IntRect& destRect);
 
 private:
     explicit FrameBufferSkPictureCanvasLayerTextureUpdater(PassOwnPtr<LayerPainterChromium>);

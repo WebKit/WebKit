@@ -1,3 +1,39 @@
+2012-08-01  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Wrap shared context getters in WebKit API and avoid WebCore::GraphicsContext3D use in compositor internals
+        https://bugs.webkit.org/show_bug.cgi?id=92917
+
+        Reviewed by Adrienne Walker.
+
+        This uses Platform API wrappers to access the shared WebGraphicsContext3D / Ganesh contexts from the compositor
+        to evaluate accelerated filters or do accelerated painting.
+
+        Filters changes covered by css3/filters/*-hw.html layout tests.
+
+        * WebCore.gypi:
+        * platform/chromium/support/WebSharedGraphicsContext3D.cpp:
+        (WebKit):
+        (WebKit::WebSharedGraphicsContext3D::mainThreadContext):
+        (WebKit::WebSharedGraphicsContext3D::mainThreadGrContext):
+        (WebKit::WebSharedGraphicsContext3D::compositorThreadContext):
+        (WebKit::WebSharedGraphicsContext3D::compositorThreadGrContext):
+        (WebKit::WebSharedGraphicsContext3D::haveCompositorThreadContext):
+        (WebKit::WebSharedGraphicsContext3D::createCompositorThreadContext):
+        * platform/graphics/chromium/FrameBufferSkPictureCanvasLayerTextureUpdater.cpp:
+        (WebCore::createAcceleratedCanvas):
+        (WebCore::FrameBufferSkPictureCanvasLayerTextureUpdater::Texture::updateRect):
+        (WebCore::FrameBufferSkPictureCanvasLayerTextureUpdater::updateTextureRect):
+        * platform/graphics/chromium/FrameBufferSkPictureCanvasLayerTextureUpdater.h:
+        (WebKit):
+        (FrameBufferSkPictureCanvasLayerTextureUpdater):
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::applyFilters):
+        * platform/graphics/chromium/cc/CCRenderSurfaceFilters.cpp:
+        (WebCore::CCRenderSurfaceFilters::apply):
+        * platform/graphics/chromium/cc/CCRenderSurfaceFilters.h:
+        (WebKit):
+        (CCRenderSurfaceFilters):
+
 2012-08-02  Beth Dakin  <bdakin@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=93020

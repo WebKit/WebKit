@@ -23,33 +23,48 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "config.h"
 
-#ifndef CCRenderSurfaceFilters_h
-#define CCRenderSurfaceFilters_h
+#include <public/WebSharedGraphicsContext3D.h>
 
-#if USE(ACCELERATED_COMPOSITING)
+#include "GraphicsContext3DPrivate.h"
+#include "SharedGraphicsContext3D.h"
 
-class GrContext;
-class SkBitmap;
+using WebCore::GraphicsContext3DPrivate;
+using WebCore::SharedGraphicsContext3D;
 
 namespace WebKit {
-class WebFilterOperations;
-class WebGraphicsContext3D;
+
+WebGraphicsContext3D* WebSharedGraphicsContext3D::mainThreadContext()
+{
+    return GraphicsContext3DPrivate::extractWebGraphicsContext3D(SharedGraphicsContext3D::get().get());
 }
 
-namespace WebCore {
-class FloatSize;
+GrContext* WebSharedGraphicsContext3D::mainThreadGrContext()
+{
+    return SharedGraphicsContext3D::get() ? SharedGraphicsContext3D::get()->grContext() : 0;
+}
 
-class CCRenderSurfaceFilters {
-public:
-    static SkBitmap apply(const WebKit::WebFilterOperations& filters, unsigned textureId, const FloatSize&, WebKit::WebGraphicsContext3D*, GrContext*);
-    static WebKit::WebFilterOperations optimize(const WebKit::WebFilterOperations& filters);
 
-private:
-    CCRenderSurfaceFilters();
-};
+WebGraphicsContext3D* WebSharedGraphicsContext3D::compositorThreadContext()
+{
+    return GraphicsContext3DPrivate::extractWebGraphicsContext3D(SharedGraphicsContext3D::getForImplThread().get());
+}
+
+GrContext* WebSharedGraphicsContext3D::compositorThreadGrContext()
+{
+    return SharedGraphicsContext3D::getForImplThread() ? SharedGraphicsContext3D::getForImplThread()->grContext() : 0;
+}
+
+bool WebSharedGraphicsContext3D::haveCompositorThreadContext()
+{
+    return SharedGraphicsContext3D::haveForImplThread();
+}
+
+bool WebSharedGraphicsContext3D::createCompositorThreadContext()
+{
+    return SharedGraphicsContext3D::createForImplThread();
+}
 
 }
-#endif // USE(ACCELERATED_COMPOSITING)
 
-#endif

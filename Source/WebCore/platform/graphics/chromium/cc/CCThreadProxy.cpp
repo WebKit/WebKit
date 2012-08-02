@@ -26,7 +26,6 @@
 
 #include "cc/CCThreadProxy.h"
 
-#include "SharedGraphicsContext3D.h"
 #include "TraceEvent.h"
 #include "cc/CCDelayBasedTimeSource.h"
 #include "cc/CCDrawQuad.h"
@@ -38,11 +37,13 @@
 #include "cc/CCScopedThreadProxy.h"
 #include "cc/CCTextureUpdater.h"
 #include "cc/CCThreadTask.h"
+#include <public/WebSharedGraphicsContext3D.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/MainThread.h>
 
 using namespace WTF;
 
+using WebKit::WebSharedGraphicsContext3D;
 namespace {
 
 // Number of textures to update with each call to
@@ -241,7 +242,7 @@ bool CCThreadProxy::recreateContext()
     if (!context)
         return false;
     if (m_layerTreeHost->needsSharedContext() && !m_layerTreeHost->settings().forceSoftwareCompositing)
-        if (!SharedGraphicsContext3D::createForImplThread())
+        if (!WebSharedGraphicsContext3D::createCompositorThreadContext())
             return false;
 
     // Make a blocking call to recreateContextOnImplThread. The results of that
@@ -473,8 +474,8 @@ void CCThreadProxy::beginFrame()
         return;
     }
 
-    if (m_layerTreeHost->needsSharedContext() && !m_layerTreeHost->settings().forceSoftwareCompositing && !SharedGraphicsContext3D::haveForImplThread())
-        SharedGraphicsContext3D::createForImplThread();
+    if (m_layerTreeHost->needsSharedContext() && !m_layerTreeHost->settings().forceSoftwareCompositing && !WebSharedGraphicsContext3D::haveCompositorThreadContext())
+        WebSharedGraphicsContext3D::createCompositorThreadContext();
 
     OwnPtr<BeginFrameAndCommitState> request(m_pendingBeginFrameRequest.release());
 
