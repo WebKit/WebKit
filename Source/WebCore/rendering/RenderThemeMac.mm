@@ -1833,9 +1833,9 @@ bool RenderThemeMac::paintMediaFullscreenButton(RenderObject* o, const PaintInfo
     if (!node)
         return false;
 
-    if (MediaControlFullscreenButtonElement* btn = static_cast<MediaControlFullscreenButtonElement*>(o->node())) {
+    if (node->isMediaControlElement()) {
         LocalCurrentGraphicsContext localContext(paintInfo.context);
-        wkDrawMediaUIPart(btn->displayType(), mediaControllerTheme(), localContext.cgContext(), r, getMediaUIPartStateFlags(node));
+        wkDrawMediaUIPart(mediaControlElementType(node), mediaControllerTheme(), localContext.cgContext(), r, getMediaUIPartStateFlags(node));
     }
     return false;
 }
