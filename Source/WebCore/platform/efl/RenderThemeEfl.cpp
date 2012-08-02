@@ -1055,6 +1055,9 @@ double RenderThemeEfl::animationDurationForProgressBar(RenderProgress*) const
 
 bool RenderThemeEfl::paintProgressBar(RenderObject* object, const PaintInfo& info, const IntRect& rect)
 {
+    if (!object->isProgress())
+        return true;
+
     return paintThemePart(object, ProgressBar, info, rect);
 }
 #endif

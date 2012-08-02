@@ -1,3 +1,17 @@
+2012-08-02  Alexander Shalamov  <alexander.shalamov@intel.com>
+
+        [EFL] Browser crashes when non-progress element with -webkit-appearance:progress-bar is rendered
+        https://bugs.webkit.org/show_bug.cgi?id=92747
+
+        Reviewed by Hajime Morita.
+
+        When https://bugs.webkit.org/show_bug.cgi?id=40158 was fixed, all ports
+        were fixed except EFL port. This patch fixes assert that is hit when
+        non-progress element is rendered with -webkit-appearance:progress-bar style.
+
+        * platform/efl/RenderThemeEfl.cpp:
+        (WebCore::RenderThemeEfl::paintProgressBar):
+
 2012-08-02  Yoshifumi Inoue  <yosin@chromium.org>
 
         REGRESSION(r102741): [Forms] In selects, when disabled, browser skips first option if not in optgroup, then selects first option in optgroup
