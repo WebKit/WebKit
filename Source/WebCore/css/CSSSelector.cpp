@@ -81,10 +81,9 @@ inline unsigned CSSSelector::specificityForOneSelector() const
     case End:
         // FIXME: PsuedoAny should base the specificity on the sub-selectors.
         // See http://lists.w3.org/Archives/Public/www-style/2010Sep/0530.html
-        if (pseudoType() == PseudoNot) {
-            ASSERT(selectorList());
+        if (pseudoType() == PseudoNot && selectorList())
             s += selectorList()->first()->specificityForOneSelector();
-        } else
+        else
             s += 0x100;
     case None:
         break;
@@ -544,8 +543,8 @@ String CSSSelector::selectorText() const
 
             switch (cs->pseudoType()) {
             case PseudoNot:
-                ASSERT(cs->selectorList());
-                str += cs->selectorList()->first()->selectorText();
+                if (CSSSelectorList* selectorList = cs->selectorList())
+                    str += selectorList->first()->selectorText();
                 str += ")";
                 break;
             case PseudoLang:
