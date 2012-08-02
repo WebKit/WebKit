@@ -22,6 +22,7 @@
 #include "EWebKit2.h"
 #include "TestController.h"
 #include <wtf/Assertions.h>
+#include <stdlib.h>
 
 #ifdef HAVE_ECORE_X
 #include <Ecore_X.h>
@@ -35,9 +36,14 @@ int main(int argc, char** argv)
         return 1;
 
 #ifdef HAVE_ECORE_X
-    if (!ecore_x_init(0)) {
-        ewk_shutdown();
-        return 1;
+    const char* display = getenv("DISPLAY");
+    int intialized = 0;
+    if (display) {
+        intialized = ecore_x_init(0);
+        if (!intialized) {
+            ewk_shutdown();
+            return 1;
+        }
     }
 #endif
 
@@ -45,7 +51,8 @@ int main(int argc, char** argv)
     WTR::TestController controller(argc, const_cast<const char**>(argv));
 
 #ifdef HAVE_ECORE_X
-    ecore_x_shutdown();
+    if (intialized)
+        ecore_x_shutdown();
 #endif
 
     ewk_shutdown();

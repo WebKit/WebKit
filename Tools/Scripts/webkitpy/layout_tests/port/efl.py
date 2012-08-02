@@ -27,6 +27,8 @@
 
 """WebKit Efl implementation of the Port interface."""
 
+import os
+
 from webkitpy.layout_tests.models.test_configuration import TestConfiguration
 from webkitpy.layout_tests.port.base import Port
 from webkitpy.layout_tests.port.pulseaudio_sanitizer import PulseAudioSanitizer
@@ -51,6 +53,10 @@ class EflPort(Port, PulseAudioSanitizer):
 
     def setup_environ_for_server(self, server_name=None):
         env = super(EflPort, self).setup_environ_for_server(server_name)
+        # If DISPLAY environment variable is unset in the system
+        # e.g. on build bot, remove DISPLAY variable from the dictionary
+        if not 'DISPLAY' in os.environ:
+            del env['DISPLAY']
         env['TEST_RUNNER_INJECTED_BUNDLE_FILENAME'] = self._build_path('lib', 'libTestRunnerInjectedBundle.so')
         env['TEST_RUNNER_PLUGIN_PATH'] = self._build_path('lib')
         if self.webprocess_cmd_prefix:

@@ -1,3 +1,18 @@
+2012-08-02  Alexander Shalamov  <alexander.shalamov@intel.com>
+
+        [EFL][WK2] WTR is failing when X server is not running
+        https://bugs.webkit.org/show_bug.cgi?id=92719
+
+        Reviewed by Hajime Morita.
+
+        EFL's WebKitTestRunner doesn't execute tests when X server is not running.
+        This patch fixes the problem by checking environment variable before ecore x initialization.
+
+        * Scripts/webkitpy/layout_tests/port/efl.py:
+        (EflPort.setup_environ_for_server):
+        * WebKitTestRunner/efl/main.cpp:
+        (main):
+
 2012-08-01  Dirk Pranke  <dpranke@chromium.org>
 
         REGRESSION(r123893): Reftest mismatches are run through ImageDiff with 0.1 tolerance
