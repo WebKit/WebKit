@@ -37,6 +37,8 @@ class Printer(object):
         self.options = options
         self.num_tests = 0
         self.num_completed = 0
+        self.num_errors = 0
+        self.num_failures = 0
         self.running_tests = []
         self.completed_tests = []
         if options:
@@ -102,6 +104,9 @@ class Printer(object):
         if self.options.pass_through:
             outputcapture.OutputCapture.stream_wrapper = _CaptureAndPassThroughStream
 
+    def write_update(self, msg):
+        self.meter.write_update(msg)
+
     def print_started_test(self, source, test_name):
         self.running_tests.append(test_name)
         if len(self.running_tests) > 1:
@@ -116,14 +121,16 @@ class Printer(object):
 
         write(self._test_line(self.running_tests[0], suffix))
 
-    def print_finished_test(self, result, test_name, test_time, failure, err):
+    def print_finished_test(self, source, test_name, test_time, failures, errors):
         write = self.meter.writeln
-        if failure:
-            lines = failure[0][1].splitlines() + ['']
+        if failures:
+            lines = failures[0].splitlines() + ['']
             suffix = ' failed:'
-        elif err:
-            lines = err[0][1].splitlines() + ['']
+            self.num_failures += 1
+        elif errors:
+            lines = errors[0].splitlines() + ['']
             suffix = ' erred:'
+            self.num_errors += 1
         else:
             suffix = ' passed'
             lines = []
@@ -154,13 +161,13 @@ class Printer(object):
     def _test_line(self, test_name, suffix):
         return '[%d/%d] %s%s' % (self.num_completed, self.num_tests, test_name, suffix)
 
-    def print_result(self, result, run_time):
+    def print_result(self, run_time):
         write = self.meter.writeln
-        write('Ran %d test%s in %.3fs' % (result.testsRun, result.testsRun != 1 and "s" or "", run_time))
-        if result.wasSuccessful():
-            write('\nOK\n')
+        write('Ran %d test%s in %.3fs' % (self.num_completed, self.num_completed != 1 and "s" or "", run_time))
+        if self.num_failures or self.num_errors:
+            write('FAILED (failures=%d, errors=%d)\n' % (self.num_failures, self.num_errors))
         else:
-            write('FAILED (failures=%d, errors=%d)\n' % (len(result.failures), len(result.errors)))
+            write('\nOK\n')
 
 
 class _CaptureAndPassThroughStream(object):

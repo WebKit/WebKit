@@ -29,13 +29,14 @@ import optparse
 import os
 import StringIO
 import sys
+import time
 import traceback
 import unittest
 
 from webkitpy.common.system.filesystem import FileSystem
 from webkitpy.test.finder import Finder
 from webkitpy.test.printer import Printer
-from webkitpy.test.runner import Runner
+from webkitpy.test.runner import Runner, unit_test_name
 
 _log = logging.getLogger(__name__)
 
@@ -128,10 +129,30 @@ class Tester(object):
         # Make sure PYTHONPATH is set up properly.
         sys.path = self.finder.additional_paths(sys.path) + sys.path
 
-        _log.debug("Loading the tests...")
+        self.printer.write_update("Checking imports ...")
+        if not self._check_imports(names):
+            return False
 
+        self.printer.write_update("Finding the individual test methods ...")
         loader = unittest.defaultTestLoader
-        suites = []
+        test_names = self._test_names(loader, names)
+
+        self.printer.write_update("Running the tests ...")
+        self.printer.num_tests = len(test_names)
+        start = time.time()
+        test_runner = Runner(self.printer, loader)
+        test_runner.run(test_names, self._options.child_processes)
+
+        self.printer.print_result(time.time() - start)
+
+        if self._options.coverage:
+            cov.stop()
+            cov.save()
+            cov.report(show_missing=False)
+
+        return not self.printer.num_errors and not self.printer.num_failures
+
+    def _check_imports(self, names):
         for name in names:
             if self.finder.is_module(name):
                 # if we failed to load a name and it looks like a module,
@@ -143,19 +164,23 @@ class Tester(object):
                     _log.fatal('Failed to import %s:' % name)
                     self._log_exception()
                     return False
+        return True
 
-            suites.append(loader.loadTestsFromName(name, None))
+    def _test_names(self, loader, names):
+        test_names = []
+        for name in names:
+            test_names.extend(self._all_test_names(loader.loadTestsFromName(name, None)))
 
-        test_suite = unittest.TestSuite(suites)
-        test_runner = Runner(self.printer, self._options, loader)
+        return test_names
 
-        _log.debug("Running the tests.")
-        result = test_runner.run(test_suite)
-        if self._options.coverage:
-            cov.stop()
-            cov.save()
-            cov.report(show_missing=False)
-        return result.wasSuccessful()
+    def _all_test_names(self, suite):
+        names = []
+        if hasattr(suite, '_tests'):
+            for t in suite._tests:
+                names.extend(self._all_test_names(t))
+        else:
+            names.append(unit_test_name(suite))
+        return names
 
     def _log_exception(self):
         s = StringIO.StringIO()

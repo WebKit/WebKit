@@ -65,7 +65,7 @@ class FakeLoader(object):
     def top_suite(self):
         return FakeTopSuite(self._tests)
 
-    def loadTestsFromName(self, name, dummy):
+    def loadTestsFromName(self, name, _):
         return FakeModuleSuite(*self._results[name])
 
 
@@ -84,28 +84,17 @@ class RunnerTest(unittest.TestCase):
         for handler in self.log_handlers:
             handler.level = self.log_levels.pop(0)
 
-    def assert_run(self, verbose=0, timing=False, child_processes=1, quiet=False):
+    def test_run(self, verbose=0, timing=False, child_processes=1, quiet=False):
         options = MockOptions(verbose=verbose, timing=timing, child_processes=child_processes, quiet=quiet, pass_through=False)
         stream = StringIO.StringIO()
         loader = FakeLoader(('test1 (Foo)', '.', ''),
                             ('test2 (Foo)', 'F', 'test2\nfailed'),
                             ('test3 (Foo)', 'E', 'test3\nerred'))
-        runner = Runner(Printer(stream, options), options, loader)
-        result = runner.run(loader.top_suite())
-        self.assertFalse(result.wasSuccessful())
-        self.assertEquals(result.testsRun, 3)
-        self.assertEquals(len(result.failures), 1)
-        self.assertEquals(len(result.errors), 1)
-        # FIXME: check the output from the test
-
-    def test_regular(self):
-        self.assert_run()
-
-    def test_verbose(self):
-        self.assert_run(verbose=1)
-
-    def test_timing(self):
-        self.assert_run(timing=True)
+        runner = Runner(Printer(stream, options), loader)
+        runner.run(['Foo.test1', 'Foo.test2', 'Foo.test3'], 1)
+        self.assertEquals(runner.tests_run, 3)
+        self.assertEquals(len(runner.failures), 1)
+        self.assertEquals(len(runner.errors), 1)
 
 
 if __name__ == '__main__':

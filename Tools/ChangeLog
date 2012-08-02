@@ -1,3 +1,47 @@
+2012-08-02  Dirk Pranke  <dpranke@chromium.org>
+
+        test-webkitpy: clean up runner in preparation for running tests serially as necessary
+        https://bugs.webkit.org/show_bug.cgi?id=92922
+
+        Reviewed by Ojan Vafai.
+
+        In order to run some tests by themselves (serially, rather than
+        in parallel with other tests), we will need to be able to run
+        multiple test suites; this causes us to move loading the logic
+        for finding test method names out of the runner and into main.
+
+        I'm taking advantage of this to simplify some other stuff from
+        the runner as well; it is now very simple and doesn't expose its
+        dependency on unittest.TestResult at all (nor will the Printer
+        use TestResult).
+
+        Subsequent patches will move the custom loader from
+        port_testcase so that we can properly choose whether to run
+        integration tests and/or serial tests, and then update the
+        appropriate tests to run only serially.
+
+        * Scripts/webkitpy/test/main.py:
+        (Tester._run_tests):
+        (Tester):
+        (Tester._check_imports):
+        (Tester._test_names):
+        (Tester._all_test_names):
+        * Scripts/webkitpy/test/printer.py:
+        (Printer.__init__):
+        (Printer.write_update):
+        (Printer):
+        (Printer.print_finished_test):
+        (Printer.print_result):
+        * Scripts/webkitpy/test/runner.py:
+        (unit_test_name):
+        (Runner.__init__):
+        (Runner.run):
+        (Runner.handle):
+        (_Worker.handle):
+        * Scripts/webkitpy/test/runner_unittest.py:
+        (FakeLoader.loadTestsFromName):
+        (RunnerTest.test_run):
+
 2012-08-02  Adam Barth  <abarth@webkit.org>
 
         Turn on tests for the mac-ews, for realz this time.
