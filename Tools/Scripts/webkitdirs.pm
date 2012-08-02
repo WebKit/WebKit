@@ -351,7 +351,7 @@ sub determineNumberOfCPUs
     } elsif (isLinux()) {
         # First try the nproc utility, if it exists. If we get no
         # results fall back to just interpretting /proc directly.
-        chomp($numberOfCPUs = `nproc 2> /dev/null`);
+        chomp($numberOfCPUs = `nproc --all 2> /dev/null`);
         if ($numberOfCPUs eq "") {
             $numberOfCPUs = (grep /processor/, `cat /proc/cpuinfo`);
         }

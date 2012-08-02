@@ -1,3 +1,18 @@
+2012-08-02  Philippe Normand  <pnormand@igalia.com>
+
+        [GTK] make sometimes using a single core
+        https://bugs.webkit.org/show_bug.cgi?id=92998
+
+        Reviewed by Martin Robinson.
+
+        In the GTK 64-bit Release buildbot some builds use a single core
+        for the make process. I suspect this is because in those cases
+        nproc reports a single core available. The proposed solution is to
+        always rely on all the cores available in the machine.
+
+        * Scripts/webkitdirs.pm:
+        (determineNumberOfCPUs):
+
 2012-08-02  Adam Barth  <abarth@webkit.org>
 
         Re-land http://trac.webkit.org/changeset/94441 now that lforschler is ready.
