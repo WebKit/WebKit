@@ -1,3 +1,46 @@
+2012-08-02  Tommy Widenflycht  <tommyw@google.com>
+
+        MediaStream API: Move RTCConfiguration to its proper place
+        https://bugs.webkit.org/show_bug.cgi?id=92867
+
+        Reviewed by Adam Barth.
+
+        This patch moves RTCConfiguration to Source/WebCore/platform/mediastream,
+        and adds its WebKit interface for chromium.
+
+        No functional code changes.
+
+        * GNUmakefile.list.am:
+        * Modules/mediastream/RTCPeerConnection.cpp:
+        * WebCore.gypi:
+        * platform/chromium/support/WebRTCConfiguration.cpp: Added.
+        (WebKit):
+        (WebKit::WebRTCICEServer::WebRTCICEServer):
+        (WebKit::WebRTCICEServer::assign):
+        (WebKit::WebRTCICEServer::reset):
+        (WebKit::WebRTCICEServer::uri):
+        (WebKit::WebRTCICEServer::credential):
+        (WebKit::WebRTCConfiguration::WebRTCConfiguration):
+        (WebKit::WebRTCConfiguration::assign):
+        (WebKit::WebRTCConfiguration::reset):
+        (WebKit::WebRTCConfiguration::numberOfServers):
+        (WebKit::WebRTCConfiguration::server):
+        * platform/mediastream/RTCConfiguration.h: Added.
+        (WebCore):
+        (RTCIceServer):
+        (WebCore::RTCIceServer::create):
+        (WebCore::RTCIceServer::~RTCIceServer):
+        (WebCore::RTCIceServer::uri):
+        (WebCore::RTCIceServer::credential):
+        (WebCore::RTCIceServer::RTCIceServer):
+        (RTCConfiguration):
+        (WebCore::RTCConfiguration::create):
+        (WebCore::RTCConfiguration::~RTCConfiguration):
+        (WebCore::RTCConfiguration::appendServer):
+        (WebCore::RTCConfiguration::numberOfServers):
+        (WebCore::RTCConfiguration::server):
+        (WebCore::RTCConfiguration::RTCConfiguration):
+
 2012-08-02  Alexander Shalamov  <alexander.shalamov@intel.com>
 
         [EFL] Browser crashes when non-progress element with -webkit-appearance:progress-bar is rendered

@@ -37,45 +37,10 @@
 #include "ArrayValue.h"
 #include "ExceptionCode.h"
 #include "KURL.h"
+#include "RTCConfiguration.h"
 #include "ScriptExecutionContext.h"
 
 namespace WebCore {
-
-// FIXME: RTCIceServer and RTCConfigration are placed here temporarily.
-// Their final place is in Source/WebCore/platform/mediastream.
-class RTCIceServer : public RefCounted<RTCIceServer> {
-public:
-    static PassRefPtr<RTCIceServer> create(const KURL& uri, const String& credential) { return adoptRef(new RTCIceServer(uri, credential)); }
-    virtual ~RTCIceServer() { }
-
-    const KURL& uri() { return m_uri; }
-    const String& credential() { return m_credential; }
-
-private:
-    RTCIceServer(const KURL& uri, const String& credential)
-        : m_uri(uri)
-        , m_credential(credential)
-    {
-    }
-
-    KURL m_uri;
-    String m_credential;
-};
-
-class RTCConfiguration : public RefCounted<RTCConfiguration> {
-public:
-    static PassRefPtr<RTCConfiguration> create() { return adoptRef(new RTCConfiguration()); }
-    virtual ~RTCConfiguration() { }
-
-    void appendServer(PassRefPtr<RTCIceServer> server) { m_servers.append(server); }
-    size_t numberOfServers() { return m_servers.size(); }
-    RTCIceServer* server(size_t index) { return m_servers[index].get(); }
-
-private:
-    RTCConfiguration() { }
-
-    Vector<RefPtr<RTCIceServer> > m_servers;
-};
 
 PassRefPtr<RTCConfiguration> RTCPeerConnection::parseConfiguration(const Dictionary& configuration, ExceptionCode& ec)
 {

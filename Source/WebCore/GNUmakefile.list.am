@@ -3561,6 +3561,7 @@ webcore_sources += \
 	Source/WebCore/platform/mediastream/PeerConnection00Handler.cpp \
 	Source/WebCore/platform/mediastream/PeerConnection00Handler.h \
 	Source/WebCore/platform/mediastream/PeerConnection00HandlerClient.h \
+	Source/WebCore/platform/mediastream/RTCConfiguration.h \
 	Source/WebCore/platform/mediastream/SessionDescriptionDescriptor.cpp \
 	Source/WebCore/platform/mediastream/SessionDescriptionDescriptor.h \
 	Source/WebCore/platform/mediastream/gstreamer/MediaStreamCenterGStreamer.cpp \

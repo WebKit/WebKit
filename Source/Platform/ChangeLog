@@ -1,3 +1,28 @@
+2012-08-02  Tommy Widenflycht  <tommyw@google.com>
+
+        MediaStream API: Move RTCConfiguration to its proper place
+        https://bugs.webkit.org/show_bug.cgi?id=92867
+
+        Reviewed by Adam Barth.
+
+        This patch moves RTCConfiguration to Source/WebCore/platform/mediastream,
+        and adds its WebKit interface for chromium.
+
+        * Platform.gypi:
+        * chromium/public/WebRTCConfiguration.h: Added.
+        (WebCore):
+        (WebKit):
+        (WebRTCICEServer):
+        (WebKit::WebRTCICEServer::WebRTCICEServer):
+        (WebKit::WebRTCICEServer::~WebRTCICEServer):
+        (WebKit::WebRTCICEServer::operator=):
+        (WebKit::WebRTCICEServer::isNull):
+        (WebRTCConfiguration):
+        (WebKit::WebRTCConfiguration::WebRTCConfiguration):
+        (WebKit::WebRTCConfiguration::~WebRTCConfiguration):
+        (WebKit::WebRTCConfiguration::operator=):
+        (WebKit::WebRTCConfiguration::isNull):
+
 2012-08-01  James Robinson  <jamesr@chromium.org>
 
         [chromium] Move compositor HUD font atlas initialization code out of compositor core
