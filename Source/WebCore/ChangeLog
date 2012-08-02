@@ -1,3 +1,9 @@
+2012-08-02  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Let XCode have its own away and also sort the files.
+
+        * WebCore.xcodeproj/project.pbxproj:
+
 2012-08-02  Tien-Ren Chen  <trchen@chromium.org>
 
         [chromium] Add CCScrollbarAnimationController class for compositor scrollbar animation
