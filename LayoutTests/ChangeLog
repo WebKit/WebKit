@@ -1,3 +1,13 @@
+2012-08-02  Abhishek Arya  <inferno@chromium.org>
+
+        No isChildAllowed checked when adding RenderFullScreen as the child..
+        https://bugs.webkit.org/show_bug.cgi?id=92995
+
+        Reviewed by Eric Seidel.
+
+        * fullscreen/fullscreen-child-not-allowed-crash-expected.txt: Added.
+        * fullscreen/fullscreen-child-not-allowed-crash.html: Added.
+
 2012-08-02  Philip Rogers  <pdr@google.com>
 
         Do not dispatch modification events in SVG attribute synchronization

@@ -1,3 +1,24 @@
+2012-08-02  Abhishek Arya  <inferno@chromium.org>
+
+        No isChildAllowed checked when adding RenderFullScreen as the child..
+        https://bugs.webkit.org/show_bug.cgi?id=92995
+
+        Reviewed by Eric Seidel.
+
+        Test: fullscreen/fullscreen-child-not-allowed-crash.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::webkitWillEnterFullScreenForElement): pass the object's parent
+        pointer as an additional argument.
+        * dom/NodeRenderingContext.cpp:
+        (WebCore::NodeRendererFactory::createRendererIfNeeded): pass the to be parent |parentRenderer|
+        as the argument. 
+        * rendering/RenderFullScreen.cpp:
+        (RenderFullScreen::wrapRenderer): make sure that parent allows RenderFullScreen as the child.
+        * rendering/RenderFullScreen.h: 
+        (RenderFullScreen): support the object's parent
+        pointer as an additional argument.
+
 2012-08-01  James Robinson  <jamesr@chromium.org>
 
         [chromium] Wrap shared context getters in WebKit API and avoid WebCore::GraphicsContext3D use in compositor internals

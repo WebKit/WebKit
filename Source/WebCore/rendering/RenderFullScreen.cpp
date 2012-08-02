@@ -105,11 +105,17 @@ static PassRefPtr<RenderStyle> createFullScreenStyle()
     return fullscreenStyle.release();
 }
 
-RenderObject* RenderFullScreen::wrapRenderer(RenderObject* object, Document* document)
+RenderObject* RenderFullScreen::wrapRenderer(RenderObject* object, RenderObject* parent, Document* document)
 {
     RenderFullScreen* fullscreenRenderer = new (document->renderArena()) RenderFullScreen(document);
     fullscreenRenderer->setStyle(createFullScreenStyle());
+    if (parent && !parent->isChildAllowed(fullscreenRenderer, fullscreenRenderer->style())) {
+        fullscreenRenderer->destroy();
+        return 0;
+    }
     if (object) {
+        // |object->parent()| can be null if the object is not yet attached
+        // to |parent|.
         if (RenderObject* parent = object->parent()) {
             parent->addChild(fullscreenRenderer, object);
             object->remove();
