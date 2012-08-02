@@ -35,10 +35,12 @@
 #include "FontPlatformData.h"
 #include "FontSelector.h"
 #include "GlyphPageTreeNode.h"
+#include "OpenTypeVerticalData.h"
 #include "WebKitFontFamilyNames.h"
 #include <wtf/HashMap.h>
 #include <wtf/ListHashSet.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/text/AtomicStringHash.h>
 #include <wtf/text/StringHash.h>
 
 using namespace WTF;
@@ -179,10 +181,20 @@ static const AtomicString& alternateFamilyName(const AtomicString& familyName)
     return emptyAtom;
 }
 
-FontPlatformData* FontCache::getCachedFontPlatformData(const FontDescription& fontDescription, 
-                                                       const AtomicString& familyName,
+FontPlatformData* FontCache::getCachedFontPlatformData(const FontDescription& fontDescription,
+                                                       const AtomicString& passedFamilyName,
                                                        bool checkingAlternateName)
 {
+#if OS(WINDOWS) && ENABLE(OPENTYPE_VERTICAL)
+    // Leading "@" in the font name enables Windows vertical flow flag for the font.
+    // Because we do vertical flow by ourselves, we don't want to use the Windows feature.
+    // IE disregards "@" regardless of the orientatoin, so we follow the behavior.
+    const AtomicString& familyName = (passedFamilyName.isEmpty() || passedFamilyName[0] != '@') ?
+        passedFamilyName : AtomicString(passedFamilyName.impl()->substring(1));
+#else
+    const AtomicString& familyName = passedFamilyName;
+#endif
+
     if (!gFontPlatformDataCache) {
         gFontPlatformDataCache = new FontPlatformDataCache;
         platformInit();
@@ -215,6 +227,32 @@ FontPlatformData* FontCache::getCachedFontPlatformData(const FontDescription& fo
 
     return result;
 }
+
+#if ENABLE(OPENTYPE_VERTICAL)
+typedef HashMap<FontCache::FontFileKey, OwnPtr<OpenTypeVerticalData>> FontVerticalDataCache;
+
+FontVerticalDataCache& fontVerticalDataCacheInstance()
+{
+    DEFINE_STATIC_LOCAL(FontVerticalDataCache, fontVerticalDataCache, ());
+    return fontVerticalDataCache;
+}
+
+OpenTypeVerticalData* FontCache::getVerticalData(const FontFileKey& key, const FontPlatformData& platformData)
+{
+    FontVerticalDataCache& fontVerticalDataCache = fontVerticalDataCacheInstance();
+    FontVerticalDataCache::iterator result = fontVerticalDataCache.find(key);
+    if (result != fontVerticalDataCache.end())
+        return result.get()->second.get();
+
+    OpenTypeVerticalData* verticalData = new OpenTypeVerticalData(platformData);
+    if (!verticalData->isOpenType()) {
+        delete verticalData;
+        verticalData = 0; // Put 0 in cache to mark that this isn't an OpenType font.
+    }
+    fontVerticalDataCache.set(key, adoptPtr(verticalData));
+    return verticalData;
+}
+#endif
 
 struct FontDataCacheKeyHash {
     static unsigned hash(const FontPlatformData& platformData)
@@ -380,6 +418,32 @@ void FontCache::purgeInactiveFontData(int count)
         for (size_t i = 0; i < keysToRemoveCount; ++i)
             delete gFontPlatformDataCache->take(keysToRemove[i]);
     }
+
+#if ENABLE(OPENTYPE_VERTICAL)
+    FontVerticalDataCache& fontVerticalDataCache = fontVerticalDataCacheInstance();
+    if (!fontVerticalDataCache.isEmpty()) {
+        // Mark & sweep unused verticalData
+        FontVerticalDataCache::iterator verticalDataEnd = fontVerticalDataCache.end();
+        for (FontVerticalDataCache::iterator verticalData = fontVerticalDataCache.begin(); verticalData != verticalDataEnd; ++verticalData) {
+            if (verticalData->second)
+                verticalData->second->m_inFontCache = false;
+        }
+        FontDataCache::iterator fontDataEnd = gFontDataCache->end();
+        for (FontDataCache::iterator fontData = gFontDataCache->begin(); fontData != fontDataEnd; ++fontData) {
+            OpenTypeVerticalData* verticalData = const_cast<OpenTypeVerticalData*>(fontData->second.first->verticalData());
+            if (verticalData)
+                verticalData->m_inFontCache = true;
+        }
+        Vector<FontFileKey> keysToRemove;
+        keysToRemove.reserveInitialCapacity(fontVerticalDataCache.size());
+        for (FontVerticalDataCache::iterator verticalData = fontVerticalDataCache.begin(); verticalData != verticalDataEnd; ++verticalData) {
+            if (!verticalData->second || !verticalData->second->m_inFontCache)
+                keysToRemove.append(verticalData->first);
+        }
+        for (size_t i = 0, count = keysToRemove.size(); i < count; ++i)
+            fontVerticalDataCache.take(keysToRemove[i]);
+    }
+#endif
 
     isPurging = false;
 }

@@ -49,6 +49,7 @@ class FontPlatformData;
 class FontData;
 class FontDescription;
 class FontSelector;
+class OpenTypeVerticalData;
 class SimpleFontData;
 
 class FontCache {
@@ -102,6 +103,11 @@ public:
     SimpleFontData* fontDataFromDescriptionAndLogFont(const FontDescription&, ShouldRetain, const LOGFONT& font, AtomicString& outFontFamilyName);
 #elif PLATFORM(CHROMIUM) && OS(WINDOWS)
     SimpleFontData* fontDataFromDescriptionAndLogFont(const FontDescription&, ShouldRetain, const LOGFONT& font, wchar_t* outFontFamilyName);
+#endif
+
+#if ENABLE(OPENTYPE_VERTICAL)
+    typedef AtomicString FontFileKey;
+    OpenTypeVerticalData* getVerticalData(const FontFileKey&, const FontPlatformData&);
 #endif
 
 private:

@@ -1,3 +1,37 @@
+2012-08-01  Koji Ishii  <kojiishi@gmail.com>
+
+        Cache support for OpenTypeVerticalData
+        https://bugs.webkit.org/show_bug.cgi?id=81332
+
+        Reviewed by Tony Chang.
+
+        This patch adds FontCache to cache OpenTypeVerticalData class
+        instances that was introduced in bug 81326.
+
+        We need one instance of the class per OpenType font file, and we don't
+        have a class to hold such instances today.
+
+        ENABLE_OPENTYPE_VERTICAL isn't enabled for any platforms yet, so this
+        patch isn't on any code path. Apple Windows port (bug 48459) is going
+        to use this code, and probably Chromium (51450, 69282) as well.
+
+        "FIXME" comment in SimpleFontData.h will be implemented in 48459.
+
+        No new tests are required. No behavior changes.
+
+        * platform/graphics/FontCache.cpp:
+        (WebCore::FontCache::getCachedFontPlatformData): Ignore leading "@" on Windows to disable Windows feature for vertical flow.
+        (WebCore):
+        (WebCore::FontCache::getVerticalData): Get cached OpenTypeVerticalData from FontPlatformData, or crete one.
+        (WebCore::FontCache::purgeInactiveFontData): Purge inactive OpenTypeVerticalData.
+        * platform/graphics/FontCache.h:
+        (WebCore):
+        * platform/graphics/SimpleFontData.h:
+        (SimpleFontData):
+        (WebCore::SimpleFontData::verticalData): A dummy implementation for purgeInactiveFontData() to work.
+        * platform/graphics/opentype/OpenTypeVerticalData.h: Added m_inFontCache for mark & sweep.
+        (OpenTypeVerticalData):
+
 2012-08-01  James Robinson  <jamesr@chromium.org>
 
         [chromium] Move compositor HUD font atlas initialization code out of compositor core

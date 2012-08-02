@@ -57,6 +57,7 @@ INCLUDEPATH += \
     $$SOURCE_DIR/platform/graphics/filters \
     $$SOURCE_DIR/platform/graphics/filters/arm \
     $$SOURCE_DIR/platform/graphics/opengl \
+    $$SOURCE_DIR/platform/graphics/opentype \
     $$SOURCE_DIR/platform/graphics/qt \
     $$SOURCE_DIR/platform/graphics/surfaces \
     $$SOURCE_DIR/platform/graphics/texmap \

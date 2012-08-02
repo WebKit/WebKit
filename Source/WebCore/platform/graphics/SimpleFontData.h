@@ -31,6 +31,9 @@
 #include "FloatRect.h"
 #include "GlyphMetricsMap.h"
 #include "GlyphPageTreeNode.h"
+#if ENABLE(OPENTYPE_VERTICAL)
+#include "OpenTypeVerticalData.h"
+#endif
 #include "TypesettingFeatures.h"
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
@@ -88,6 +91,9 @@ public:
     virtual ~SimpleFontData();
 
     const FontPlatformData& platformData() const { return m_platformData; }
+#if ENABLE(OPENTYPE_VERTICAL)
+    const OpenTypeVerticalData* verticalData() const { return 0; } // FIXME: implement
+#endif
 
     SimpleFontData* smallCapsFontData(const FontDescription&) const;
     SimpleFontData* emphasisMarkFontData(const FontDescription&) const;
