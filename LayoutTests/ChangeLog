@@ -1,3 +1,15 @@
+2012-08-02  Kent Tamura  <tkent@chromium.org>
+
+        [Chromium] Update expectations of calendar-picker-appearance.html
+        https://bugs.webkit.org/show_bug.cgi?id=92710
+
+        * platform/chromium-linux-x86/fast/forms/date/calendar-picker-appearance-expected.png: Removed.
+        * platform/chromium-linux/fast/forms/date/calendar-picker-appearance-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/date/calendar-picker-appearance-expected.png:
+        * platform/chromium-mac/fast/forms/date/calendar-picker-appearance-expected.png:
+        * platform/chromium-win-xp/fast/forms/date/calendar-picker-appearance-expected.png:
+        * platform/chromium-win/fast/forms/date/calendar-picker-appearance-expected.png:
+
 2012-08-02  Mihnea Ovidenie  <mihnea@adobe.com>
 
         CSSRegions: Crash when reattaching a region to a named flow.
