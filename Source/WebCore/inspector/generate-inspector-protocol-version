@@ -363,7 +363,7 @@ bool supportsInspectorProtocolVersion(const String& version)
         return false;
 
     int minor = tokens[1].toInt(&ok);
-    if (!ok || minor < %s)
+    if (!ok || minor > %s)
         return false;
 
     return true;
