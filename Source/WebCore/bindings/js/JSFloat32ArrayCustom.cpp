@@ -45,7 +45,7 @@ JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, Float32
 
 JSC::JSValue JSFloat32Array::set(JSC::ExecState* exec)
 {
-    return setWebGLArrayHelper(exec, impl(), toFloat32Array);
+    return setWebGLArrayHelper<Float32Array, float>(exec, impl());
 }
 
 EncodedJSValue JSC_HOST_CALL JSFloat32ArrayConstructor::constructJSFloat32Array(ExecState* exec)

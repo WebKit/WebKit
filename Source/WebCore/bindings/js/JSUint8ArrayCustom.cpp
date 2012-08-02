@@ -45,7 +45,7 @@ JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, Uint8Ar
 
 JSC::JSValue JSUint8Array::set(JSC::ExecState* exec)
 {
-    return setWebGLArrayHelper(exec, impl(), toUint8Array);
+    return setWebGLArrayHelper<Uint8Array, unsigned char>(exec, impl());
 }
 
 EncodedJSValue JSC_HOST_CALL JSUint8ArrayConstructor::constructJSUint8Array(ExecState* exec)

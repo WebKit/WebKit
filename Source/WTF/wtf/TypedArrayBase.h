@@ -73,6 +73,14 @@ class TypedArrayBase : public ArrayBufferView {
         return TypedArrayBase<T>::data()[index];
     }
 
+    bool checkInboundData(unsigned offset, unsigned pos) const
+    {
+        return (offset <= m_length
+            && offset + pos <= m_length
+            // check overflow
+            && offset + pos >= offset);
+    }
+
 protected:
     TypedArrayBase(PassRefPtr<ArrayBuffer> buffer, unsigned byteOffset, unsigned length)
         : ArrayBufferView(buffer, byteOffset)

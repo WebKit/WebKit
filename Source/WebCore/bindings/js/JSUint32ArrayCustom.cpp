@@ -45,7 +45,7 @@ JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, Uint32A
 
 JSC::JSValue JSUint32Array::set(JSC::ExecState* exec)
 {
-    return setWebGLArrayHelper(exec, impl(), toUint32Array);
+    return setWebGLArrayHelper<Uint32Array, unsigned int>(exec, impl());
 }
 
 EncodedJSValue JSC_HOST_CALL JSUint32ArrayConstructor::constructJSUint32Array(ExecState* exec)

@@ -1,3 +1,17 @@
+2012-08-02  Arnaud Renevier  <a.renevier@sisa.samsung.com>
+
+        TypedArray set method is slow when called with another typed array
+        https://bugs.webkit.org/show_bug.cgi?id=92556
+
+        Reviewed by Kenneth Russell.
+
+        Add an checkInboundData function to TypedArrayBase to check if a
+        position will be not be out of bound or overflow from the typed array.
+
+        * wtf/TypedArrayBase.h:
+        (WTF::TypedArrayBase::checkInboundData):
+        (TypedArrayBase):
+
 2012-08-01  Patrick Gansterer  <paroga@webkit.org>
 
         Replace WTF::getCurrentLocalTime() with GregorianDateTime::setToCurrentLocalTime()

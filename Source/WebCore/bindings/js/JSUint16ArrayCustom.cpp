@@ -45,7 +45,7 @@ JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, Uint16A
 
 JSC::JSValue JSUint16Array::set(JSC::ExecState* exec)
 {
-    return setWebGLArrayHelper(exec, impl(), toUint16Array);
+    return setWebGLArrayHelper<Uint16Array, unsigned short>(exec, impl());
 }
 
 EncodedJSValue JSC_HOST_CALL JSUint16ArrayConstructor::constructJSUint16Array(ExecState* exec)

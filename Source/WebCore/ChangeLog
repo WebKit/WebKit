@@ -1,3 +1,49 @@
+2012-08-02  Arnaud Renevier  <a.renevier@sisa.samsung.com>
+
+        TypedArray set method is slow when called with another typed array
+        https://bugs.webkit.org/show_bug.cgi?id=92556
+
+        Reviewed by Kenneth Russell.
+
+        When setting multiples values to a typed array from an array like
+        element, try to determine if the argument is a typed array. If so,
+        cast the argument to a typed array, and read each element with .item()
+        method. That avoid reading the value as a JSValue, and speedups set
+        method by approximatively 10x.
+
+        Introduce setWebGLArrayWithTypedArrayArgument template function which
+        checks if argument is a typed array. If so, it copies the data to
+        target typed array and returns true. Otherwise, it returns false.
+
+        Introduce copyTypedArrayBuffer template function which copies data
+        from a typed array to another one. This function is also used from
+        constructArrayBufferViewWithTypedArrayArgument.
+
+        * bindings/js/JSArrayBufferViewHelper.h:
+        (WebCore):
+        (WebCore::copyTypedArrayBuffer):
+        (WebCore::setWebGLArrayWithTypedArrayArgument):
+        (WebCore::setWebGLArrayHelper):
+        (WebCore::constructArrayBufferViewWithTypedArrayArgument):
+        * bindings/js/JSFloat32ArrayCustom.cpp:
+        (WebCore::JSFloat32Array::set):
+        * bindings/js/JSFloat64ArrayCustom.cpp:
+        (WebCore::JSFloat64Array::set):
+        * bindings/js/JSInt16ArrayCustom.cpp:
+        (WebCore::JSInt16Array::set):
+        * bindings/js/JSInt32ArrayCustom.cpp:
+        (WebCore::JSInt32Array::set):
+        * bindings/js/JSInt8ArrayCustom.cpp:
+        (WebCore::JSInt8Array::set):
+        * bindings/js/JSUint16ArrayCustom.cpp:
+        (WebCore::JSUint16Array::set):
+        * bindings/js/JSUint32ArrayCustom.cpp:
+        (WebCore::JSUint32Array::set):
+        * bindings/js/JSUint8ArrayCustom.cpp:
+        (WebCore::JSUint8Array::set):
+        * bindings/js/JSUint8ClampedArrayCustom.cpp:
+        (WebCore::JSUint8ClampedArray::set):
+
 2012-08-02  Chris Fleizach  <cfleizach@apple.com>
 
         AXEnabled = false for AXIncrementors inside text fields

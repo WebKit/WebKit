@@ -41,23 +41,94 @@
 
 namespace WebCore {
 
-template <class T>
-JSC::JSValue setWebGLArrayHelper(JSC::ExecState* exec, T* impl, T* (*conversionFunc)(JSC::JSValue))
+template<class C, typename T>
+bool copyTypedArrayBuffer(C* target, ArrayBufferView* source, unsigned sourceLength, unsigned offset)
+{
+    ArrayBufferView::ViewType sourceType = source->getType();
+    ASSERT(sourceType != ArrayBufferView::TypeDataView);
+
+    if (target->getType() == sourceType) {
+        if (!target->set(static_cast<C*>(source), offset))
+            return false;
+        return true;
+    }
+
+    if (!target->checkInboundData(offset, sourceLength))
+        return false;
+
+    switch (sourceType) {
+    case ArrayBufferView::TypeInt8:
+        for (unsigned i = 0; i < sourceLength; ++i)
+            target->set(i + offset, (T)(static_cast<TypedArrayBase<signed char> *>(source)->item(i)));
+        break;
+    case ArrayBufferView::TypeUint8:
+    case ArrayBufferView::TypeUint8Clamped:
+        for (unsigned i = 0; i < sourceLength; ++i)
+            target->set(i + offset, (T)(static_cast<TypedArrayBase<unsigned char> *>(source)->item(i)));
+        break;
+    case ArrayBufferView::TypeInt16:
+        for (unsigned i = 0; i < sourceLength; ++i)
+            target->set(i + offset, (T)(static_cast<TypedArrayBase<signed short> *>(source)->item(i)));
+        break;
+    case ArrayBufferView::TypeUint16:
+        for (unsigned i = 0; i < sourceLength; ++i)
+            target->set(i + offset, (T)(static_cast<TypedArrayBase<unsigned short> *>(source)->item(i)));
+        break;
+    case ArrayBufferView::TypeInt32:
+        for (unsigned i = 0; i < sourceLength; ++i)
+            target->set(i + offset, (T)(static_cast<TypedArrayBase<int> *>(source)->item(i)));
+        break;
+    case ArrayBufferView::TypeUint32:
+        for (unsigned i = 0; i < sourceLength; ++i)
+            target->set(i + offset, (T)(static_cast<TypedArrayBase<unsigned int> *>(source)->item(i)));
+        break;
+    case ArrayBufferView::TypeFloat32:
+        for (unsigned i = 0; i < sourceLength; ++i)
+            target->set(i + offset, (T)(static_cast<TypedArrayBase<float> *>(source)->item(i)));
+        break;
+    case ArrayBufferView::TypeFloat64:
+        for (unsigned i = 0; i < sourceLength; ++i)
+            target->set(i + offset, (T)(static_cast<TypedArrayBase<double> *>(source)->item(i)));
+        break;
+    default:
+        break;
+    }
+
+    return true;
+}
+
+template <class C, typename T>
+bool setWebGLArrayWithTypedArrayArgument(JSC::ExecState* exec, C* impl)
+{
+    RefPtr<ArrayBufferView> array = toArrayBufferView(exec->argument(0));
+    if (!array)
+        return false;
+
+    ArrayBufferView::ViewType arrayType = array->getType();
+    if (arrayType == ArrayBufferView::TypeDataView)
+        return false;
+
+    unsigned offset = 0;
+    if (exec->argumentCount() == 2)
+        offset = exec->argument(1).toInt32(exec);
+
+    uint32_t length = asObject(exec->argument(0))->get(exec, JSC::Identifier(exec, "length")).toUInt32(exec);
+
+    if (!(copyTypedArrayBuffer<C, T>(impl, array.get(), length, offset)))
+        setDOMException(exec, INDEX_SIZE_ERR);
+
+    return true;
+}
+
+template<class C, typename T>
+JSC::JSValue setWebGLArrayHelper(JSC::ExecState* exec, C* impl)
 {
     if (exec->argumentCount() < 1)
         return JSC::throwSyntaxError(exec);
 
-    T* array = (*conversionFunc)(exec->argument(0));
-    if (array) {
-        // void set(in WebGL<T>Array array, [Optional] in unsigned long offset);
-        unsigned offset = 0;
-        if (exec->argumentCount() == 2)
-            offset = exec->argument(1).toInt32(exec);
-        if (!impl->set(array, offset))
-            setDOMException(exec, INDEX_SIZE_ERR);
-
+    if (setWebGLArrayWithTypedArrayArgument<C, T>(exec, impl))
+        // void set(in WebGL<>Array array, [Optional] in unsigned long offset);
         return JSC::jsUndefined();
-    }
 
     if (exec->argument(0).isObject()) {
         // void set(in sequence<long> array, [Optional] in unsigned long offset);
@@ -66,9 +137,7 @@ JSC::JSValue setWebGLArrayHelper(JSC::ExecState* exec, T* impl, T* (*conversionF
         if (exec->argumentCount() == 2)
             offset = exec->argument(1).toInt32(exec);
         uint32_t length = array->get(exec, JSC::Identifier(exec, "length")).toInt32(exec);
-        if (offset > impl->length()
-            || offset + length > impl->length()
-            || offset + length < offset)
+        if (!impl->checkInboundData(offset, length))
             setDOMException(exec, INDEX_SIZE_ERR);
         else {
             for (uint32_t i = 0; i < length; i++) {
@@ -105,47 +174,9 @@ PassRefPtr<C> constructArrayBufferViewWithTypedArrayArgument(JSC::ExecState* exe
         return array;
     }
 
-    if (array->getType() == sourceType) {
-        memcpy(array->baseAddress(), source->baseAddress(), length * sizeof(T));
+    if (!(copyTypedArrayBuffer<C, T>(array.get(), source.get(), length, 0))) {
+        setDOMException(exec, INDEX_SIZE_ERR);
         return array;
-    }
-
-    switch (sourceType) {
-    case ArrayBufferView::TypeInt8:
-        for (unsigned i = 0; i < length; ++i)
-            array->set(i, (T)(static_cast<TypedArrayBase<signed char> *>(source.get())->item(i)));
-        break;
-    case ArrayBufferView::TypeUint8:
-    case ArrayBufferView::TypeUint8Clamped:
-        for (unsigned i = 0; i < length; ++i)
-            array->set(i, (T)(static_cast<TypedArrayBase<unsigned char> *>(source.get())->item(i)));
-        break;
-    case ArrayBufferView::TypeInt16:
-        for (unsigned i = 0; i < length; ++i)
-            array->set(i, (T)(static_cast<TypedArrayBase<signed short> *>(source.get())->item(i)));
-        break;
-    case ArrayBufferView::TypeUint16:
-        for (unsigned i = 0; i < length; ++i)
-            array->set(i, (T)(static_cast<TypedArrayBase<unsigned short> *>(source.get())->item(i)));
-        break;
-    case ArrayBufferView::TypeInt32:
-        for (unsigned i = 0; i < length; ++i)
-            array->set(i, (T)(static_cast<TypedArrayBase<int> *>(source.get())->item(i)));
-        break;
-    case ArrayBufferView::TypeUint32:
-        for (unsigned i = 0; i < length; ++i)
-            array->set(i, (T)(static_cast<TypedArrayBase<unsigned int> *>(source.get())->item(i)));
-        break;
-    case ArrayBufferView::TypeFloat32:
-        for (unsigned i = 0; i < length; ++i)
-            array->set(i, (T)(static_cast<TypedArrayBase<float> *>(source.get())->item(i)));
-        break;
-    case ArrayBufferView::TypeFloat64:
-        for (unsigned i = 0; i < length; ++i)
-            array->set(i, (T)(static_cast<TypedArrayBase<double> *>(source.get())->item(i)));
-        break;
-    default:
-        return 0;
     }
 
     return array;

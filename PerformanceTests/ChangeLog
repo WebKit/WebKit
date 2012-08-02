@@ -1,3 +1,12 @@
+2012-08-02  Arnaud Renevier  <a.renevier@sisa.samsung.com>
+
+        TypedArray set method is slow when called with another typed array
+        https://bugs.webkit.org/show_bug.cgi?id=92556
+
+        Reviewed by Kenneth Russell.
+
+        * Bindings/typed-array-set-from-typed.html: Added.
+
 2012-07-28  Ryosuke Niwa  <rniwa@webkit.org>
 
         run-perf-tests should generate a results page
