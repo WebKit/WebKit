@@ -2185,7 +2185,7 @@ public:
     // that you've ensured that there exists a MovHint prior to your use of forwardSpeculationCheck().
     void forwardSpeculationCheck(ExitKind, JSValueSource, NodeIndex, MacroAssembler::Jump jumpToFail, const ValueRecovery& = ValueRecovery());
     void forwardSpeculationCheck(ExitKind, JSValueSource, NodeIndex, MacroAssembler::JumpList& jumpsToFail, const ValueRecovery& = ValueRecovery());
-    void speculationCheckWithConditionalDirection(ExitKind, JSValueSource, NodeIndex nodeIndex, MacroAssembler::Jump jumpToFail, bool isForward);
+    void speculationCheckWithConditionalDirection(ExitKind, JSValueSource, NodeIndex, MacroAssembler::Jump jumpToFail, bool isForward);
     // Called when we statically determine that a speculation will fail.
     void terminateSpeculativeExecution(ExitKind, JSValueRegs, NodeIndex);
     void terminateSpeculativeExecution(ExitKind, JSValueRegs, Edge);

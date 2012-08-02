@@ -1,5 +1,13 @@
 2012-08-02  Filip Pizlo  <fpizlo@apple.com>
 
+        Unreviewed, missed a style goof in the previous patch: "NodeIndex nodeIndex"
+        in a method signature is painfully redundant.
+
+        * dfg/DFGSpeculativeJIT.h:
+        (SpeculativeJIT):
+
+2012-08-02  Filip Pizlo  <fpizlo@apple.com>
+
         DFGSpeculativeJIT.h has too many inline method bodies
         https://bugs.webkit.org/show_bug.cgi?id=92957
 
