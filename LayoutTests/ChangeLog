@@ -1,3 +1,35 @@
+2012-08-01  Peter Kasting  <pkasting@google.com>
+
+        [Chromium] Test expectation updates.
+        https://bugs.webkit.org/show_bug.cgi?id=72990
+        https://bugs.webkit.org/show_bug.cgi?id=74694
+        https://bugs.webkit.org/show_bug.cgi?id=80219
+        https://bugs.webkit.org/show_bug.cgi?id=90741
+        https://bugs.webkit.org/show_bug.cgi?id=92850
+        https://bugs.webkit.org/show_bug.cgi?id=92852
+        https://bugs.webkit.org/show_bug.cgi?id=92938
+        https://bugs.webkit.org/show_bug.cgi?id=92941
+
+        Unreviewed, test expectation updates.
+
+        * Attempting to fix http/tests/cache tests dumping as pixel tests by
+          changing "window.testRunner.dumpAsText()" to "testRunner.dumpAsText()"
+          since the test opens multiple windows.  (I don't know why else it
+          might not be working.)
+        * Removing erroneous Chromium Linux pixel baselines for that test.
+        * Rebaselined a CSS test after http://trac.webkit.org/changeset/123782 ,
+          which only got partially rebaselined before.
+        * Fixed some incorrect bug numbers on some expectations.
+        * Miscellaneous other stuff.
+
+        * http/tests/cache/history-only-cached-subresource-loads-max-age-https.html:
+        * http/tests/cache/history-only-cached-subresource-loads.html:
+        * platform/chromium-linux/http/tests/cache/history-only-cached-subresource-loads-expected.png: Removed.
+        * platform/chromium-linux/http/tests/cache/history-only-cached-subresource-loads-max-age-https-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/css2.1/t080301-c411-vt-mrgn-00-b-expected.txt: Removed.
+        * platform/chromium-mac/css2.1/t080301-c411-vt-mrgn-00-b-expected.txt:
+        * platform/chromium/TestExpectations:
+
 2012-08-01  Shinya Kawanaka  <shinyak@chromium.org>
 
         The elements in Shadow DOM of input should not be modifiable.

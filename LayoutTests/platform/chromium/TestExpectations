@@ -2615,9 +2615,9 @@ BUGWK65199 LINUX WIN SNOWLEOPARD : fast/writing-mode/broken-ideograph-small-caps
 
 BUGWK65453 MAC : fast/css/outline-auto-empty-rects.html = IMAGE
 
-BUGWK74694 LINUX RELEASE : http/tests/cache/history-only-cached-subresource-loads.html = MISSING TEXT PASS
-BUGWK74694 LINUX RELEASE : http/tests/cache/history-only-cached-subresource-loads-max-age-https.html = MISSING TEXT PASS
-BUGWK74694 SNOWLEOPARD : http/tests/cache/history-only-cached-subresource-loads-max-age-https.html = MISSING PASS
+// For some reason, these tests are running as pixel tests most of the time instead of dumping as text.
+BUGWK74694 : http/tests/cache/history-only-cached-subresource-loads.html = MISSING PASS
+BUGWK74694 : http/tests/cache/history-only-cached-subresource-loads-max-age-https.html = MISSING PASS
 
 BUGWK67915 LINUX WIN : fast/borders/borderRadiusDashed06.html = IMAGE
 
@@ -2788,7 +2788,6 @@ BUGWK66953 DEBUG : animations/play-state-suspend.html = TEXT PASS
 BUGWK66953 DEBUG : animations/suspend-resume-animation.html = TEXT PASS
 BUGWK66953 MAC DEBUG : animations/animation-direction-reverse.html = TEXT PASS
 
-BUGWK72990 WIN : accessibility/loading-iframe-updates-axtree.html = PASS TIMEOUT
 BUGWK72761 : accessibility/anonymous-render-block-in-continuation-causes-crash.html = PASS TIMEOUT
 BUGWK77110 WIN DEBUG : accessibility/loading-iframe-sends-notification.html = PASS TEXT
 
@@ -3428,7 +3427,8 @@ BUGCR135709 : platform/chromium/compositing/scrollbars/custom-composited-differe
 // webkitIsFullScreen does not have the correct value after an iframe exits fullscreen
 BUGWK90704 : fullscreen/exit-full-screen-iframe.html = TEXT
 
-// Started failing after r121907.
+// Hopefully will be fixed when WK bug 91660 is fixed.
+BUGWK90741 MAC : fast/text-autosizing/font-scale-factor.html = IMAGE
 BUGWK90741 MAC : fast/text-autosizing/simple-paragraph.html = IMAGE
 
 // Flaky
@@ -3499,13 +3499,18 @@ BUGWK92835 MAC WIN DEBUG SLOW : svg/as-background-image/svg-as-background-5.html
 
 BUGWK82547 LION : fast/speech/input-appearance-searchandspeech.html = IMAGE PASS
 
-BUGWK92580 LINUX DEBUG : http/tests/websocket/tests/hybi/workers/close-code-and-reason.html = PASS CRASH
+BUGWK92850 LINUX DEBUG : http/tests/websocket/tests/hybi/workers/close-code-and-reason.html = PASS CRASH
 
-BUGWK92582 LINUX DEBUG : media/video-currentTime-set2.html = PASS CRASH
+BUGWK92852 LINUX DEBUG : media/video-currentTime-set2.html = PASS CRASH
 
 // Started failing after http://trac.webkit.org/changeset/124314
 BUGWK92863 : fast/forms/input-widths.html = TEXT
 
 // Needs rebaseline after https://bugs.webkit.org/show_bug.cgi?id=80219
-BUGWK80219 MAC WIN : fast/box-sizing/box-sizing.html = IMAGE+TEXT
+BUGWK80219 MAC : fast/box-sizing/box-sizing.html = IMAGE+TEXT
+BUGWK80219 WIN : fast/box-sizing/box-sizing.html = IMAGE
 BUGWK80219 MAC : compositing/overflow/clip-descendents.html = TEXT
+
+BUGWK92938 : compositing/layer-creation/animation-overlap-with-children.html = TEXT PASS
+
+BUGWK92941 WIN7 : accessibility/loading-iframe-updates-axtree.html = CRASH
