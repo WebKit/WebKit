@@ -303,13 +303,7 @@ bool Range::isPointInRange(Node* refNode, int offset, ExceptionCode& ec)
         return false;
     }
 
-    if (!refNode->attached()) {
-        // Firefox doesn't throw an exception for this case; it returns false.
-        return false;
-    }
-
-    if (refNode->document() != m_ownerDocument) {
-        ec = WRONG_DOCUMENT_ERR;
+    if (!refNode->attached() || refNode->document() != m_ownerDocument) {
         return false;
     }
 

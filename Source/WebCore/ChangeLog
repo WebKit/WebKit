@@ -1,3 +1,22 @@
+2012-08-02  Emil A Eklund  <eae@chromium.org>
+
+        Range::isPointInRange incorrectly throws WRONG_DOCUMENT_ERR
+        https://bugs.webkit.org/show_bug.cgi?id=93009
+
+        Reviewed by Ojan Vafai.
+
+        The latest working draft of the DOM4 spec has all but killed the
+        WRONG_DOCUMENT_ERR exception. Update isPointInRange to return false
+        instead of throwing an exception when the range and point are in
+        different documents. This matches the Mozilla behavior.
+
+        Test: fast/html/range-point-in-range-for-different-documents.html
+
+        * dom/Range.cpp:
+        (WebCore::Range::isPointInRange):
+        Return false instead of throwing WRONG_DOCUMENT_ERR when the point is in
+        a different document.
+
 2012-08-02  Erik Arvidsson  <arv@chromium.org>
 
         DOM4: className should be defined on Element and not on HTMLElement

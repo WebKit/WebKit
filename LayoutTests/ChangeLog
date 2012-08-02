@@ -1,3 +1,17 @@
+2012-08-02  Emil A Eklund  <eae@chromium.org>
+
+        Range::isPointInRange incorrectly throws WRONG_DOCUMENT_ERR
+        https://bugs.webkit.org/show_bug.cgi?id=93009
+
+        Reviewed by Ojan Vafai.
+
+        Add test for Range::isPointInRange where the point is in a different
+        document than the range.
+
+        * fast/dom/move-nodes-across-documents.html: Change expectations for isPointInRange
+        * fast/html/range-point-in-range-for-different-documents-expected.txt: Added.
+        * fast/html/range-point-in-range-for-different-documents.html: Added.
+
 2012-08-02  Erik Arvidsson  <arv@chromium.org>
 
         DOM4: className should be defined on Element and not on HTMLElement

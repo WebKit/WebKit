@@ -201,12 +201,9 @@ function run()
     runTest(function() {
         rangeInIframe().setEndAfter(elementInCurrentDocument('setEndAfter'), 0);
     });
-
-    // FIXME: isPointInRange isn't specced anywhere, but Gecko doesn't throw an exception here.
-    // It doesn't seem like we should either. Gecko returns false.
     runTest(function() {
         rangeInIframe().isPointInRange(elementInCurrentDocument('isPointInRange'), 0);
-    }, 'WRONG_DOCUMENT_ERR');
+    });
 
 }
 </script> 
