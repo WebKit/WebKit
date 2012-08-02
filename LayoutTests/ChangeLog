@@ -1,3 +1,9 @@
+2012-08-01  Alexander Pavlov  <apavlov@chromium.org>
+
+        [Chromium] Unreviewed, update test expectations.
+
+        * platform/chromium/TestExpectations:
+
 2012-08-01  Ryosuke Niwa  <rniwa@webkit.org>
 
         Use testRunner instead of layoutTestController in fast/notifications, overflow, parser, performance,
