@@ -174,6 +174,7 @@
 @interface DOMElement : DOMNode WEBKIT_VERSION_1_3
 @property(readonly, copy) NSString *tagName;
 @property(readonly, retain) DOMCSSStyleDeclaration *style;
+@property(copy) NSString *className;
 @property(readonly) int offsetLeft;
 @property(readonly) int offsetTop;
 @property(readonly) int offsetWidth;
@@ -472,7 +473,6 @@
 @property(copy) NSString *idName;
 @property(copy) NSString *lang;
 @property(copy) NSString *dir;
-@property(copy) NSString *className;
 @property(copy) NSString *innerHTML;
 @property(copy) NSString *innerText;
 @property(copy) NSString *outerHTML;

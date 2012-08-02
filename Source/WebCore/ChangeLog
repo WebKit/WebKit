@@ -1,5 +1,20 @@
 2012-08-02  Erik Arvidsson  <arv@chromium.org>
 
+        DOM4: className should be defined on Element and not on HTMLElement
+        https://bugs.webkit.org/show_bug.cgi?id=93014
+
+        Reviewed by Adam Barth.
+
+        DOM4 specs that Element should have the className WebIDL attribute. This moves the
+        attribute to the correct IDL file.
+
+        Test: fast/dom/Element/class-name.html
+
+        * dom/Element.idl:
+        * html/HTMLElement.idl:
+
+2012-08-02  Erik Arvidsson  <arv@chromium.org>
+
         [V8] Handle case where Error.prototype returns an empty object
         https://bugs.webkit.org/show_bug.cgi?id=91792
 

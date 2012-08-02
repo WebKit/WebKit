@@ -1,3 +1,16 @@
+2012-08-02  Erik Arvidsson  <arv@chromium.org>
+
+        DOM4: className should be defined on Element and not on HTMLElement
+        https://bugs.webkit.org/show_bug.cgi?id=93014
+
+        Reviewed by Adam Barth.
+
+        DOM4 specs that Element should have the className WebIDL attribute. This moves the
+        attribute to the correct IDL file.
+
+        * fast/dom/Element/class-name-expected.txt: Added.
+        * fast/dom/Element/class-name.html: Added.
+
 2012-08-02  Abhishek Arya  <inferno@chromium.org>
 
         No isChildAllowed checked when adding RenderFullScreen as the child..
