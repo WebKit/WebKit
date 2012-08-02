@@ -3309,7 +3309,6 @@ BUGWK87652 SKIP : http/tests/appcache/load-from-appcache-defer-resume-crash.html
 BUGWK87653 WIN LINUX : compositing/geometry/composited-in-columns.html = IMAGE+TEXT
 
 BUGWK92444 : platform/chromium/fast/forms/color/color-suggestion-picker-appearance.html = PASS TEXT
-BUGWK92444 : platform/chromium/fast/forms/color/color-suggestion-picker-with-scrollbar-appearance.html = PASS MISSING TEXT IMAGE
 
 // Fails with a mismatch in $("menulist").selectedIndex
 BUGWK87748 MAC : fast/forms/select/optgroup-clicking.html = TEXT

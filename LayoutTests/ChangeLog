@@ -1,3 +1,14 @@
+2012-08-02  Keishi Hattori  <keishi@webkit.org>
+
+        [Chromium] Rebaseline test color-suggestion-picker-with-scrollbar-appearance.html
+
+        Unreviewed.
+
+        * platform/chromium-linux/platform/chromium/fast/forms/color/color-suggestion-picker-with-scrollbar-appearance-expected.png: Added.
+        * platform/chromium-mac-snowleopard/platform/chromium/fast/forms/color/color-suggestion-picker-with-scrollbar-appearance-expected.png: Added.
+        * platform/chromium-win/platform/chromium/fast/forms/color/color-suggestion-picker-with-scrollbar-appearance-expected.png: Added.
+        * platform/chromium/TestExpectations:
+
 2012-08-02  Alexander Pavlov  <apavlov@chromium.org>
 
         [Chromium] Unreviewed, update expectations for 6 failing http/tests/appcache/abort-cache-on*.html tests.
