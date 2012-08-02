@@ -3359,10 +3359,6 @@ BUGWK88131 DEBUG : fast/dom/HTMLMeterElement/meter-element-crash.html = PASS TEX
 
 BUGWK67116 DEBUG : compositing/layer-creation/overflow-scroll-overlap.html = PASS TEXT
 
-// Skip test of proprietary codecs until they're enabled on the bots.
-BUGWK88794 SKIP : webaudio/codec-tests/aac = PASS
-BUGWK88794 SKIP : webaudio/codec-tests/mp3 = PASS
-
 BUGCR131687 RELEASE : fast/js/dfg-double-vote-fuzz.html = PASS TEXT
 
 BUGWK88593 : fast/table/multiple-captions-display.xhtml = PASS IMAGE IMAGE+TEXT

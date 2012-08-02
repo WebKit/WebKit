@@ -1,3 +1,18 @@
+2012-08-01  Raymond Toy  <rtoy@google.com>
+
+        Enable codec tests in TestExpectations and update expected mp3 files
+        https://bugs.webkit.org/show_bug.cgi?id=92886
+
+        Reviewed by Chris Rogers.
+
+        Update expected results caused by ffmpeg now removing pre-roll samples.
+        * platform/chromium-linux/webaudio/codec-tests/mp3/128kbps-44khz-expected.wav:
+        * platform/chromium-mac/webaudio/codec-tests/mp3/128kbps-44khz-expected.wav:
+        * platform/chromium-win/webaudio/codec-tests/mp3/128kbps-44khz-expected.wav:
+        
+        Enable codec tests.
+        * platform/chromium/TestExpectations:
+
 2012-08-01  Jian Li  <jianli@chromium.org>
 
         Add new CSS property "-webkit-widget-region" to expose dashboard region support for other port
