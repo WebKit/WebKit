@@ -476,7 +476,10 @@ void HTMLConstructionSite::findFosterSite(HTMLConstructionSiteTask& task)
     HTMLElementStack::ElementRecord* lastTableElementRecord = m_openElements.topmost(tableTag.localName());
     if (lastTableElementRecord) {
         Element* lastTableElement = lastTableElementRecord->element();
-        if (ContainerNode* parent = lastTableElement->parentNode()) {
+        ContainerNode* parent = lastTableElement->parentNode();
+        // When parsing HTML fragments, we skip step 4.2 ("Let root be a new html element with no attributes") for efficiency,
+        // and instead use the DocumentFragment as a root node. So we must treat the root node (DocumentFragment) as if it is a html element here.
+        if (parent && (parent->isElementNode() || (m_isParsingFragment && parent == m_openElements.rootNode()))) {
             task.parent = parent;
             task.nextChild = lastTableElement;
             return;

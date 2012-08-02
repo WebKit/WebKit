@@ -1,3 +1,17 @@
+2012-08-02  Kwang Yul Seo  <skyul@company100.net>
+
+        Check if the last table element's parent node is an element when determining the foster parent element.
+        https://bugs.webkit.org/show_bug.cgi?id=92977
+
+        Reviewed by Adam Barth.
+
+        This new test changes the table element's parent node to a newly created document fragment node.
+        Because a document fragment node is not an element, the foster parent element must be the element
+        before the last table element in the stack of open elements.
+
+        * fast/parser/foster-parent-expected.txt: Added.
+        * fast/parser/foster-parent.html: Added.
+
 2012-08-02  Antti Koivisto  <antti@apple.com>
 
         Inline stylesheets can confuse style sharing
