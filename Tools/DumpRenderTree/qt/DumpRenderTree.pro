@@ -13,6 +13,7 @@ WEBKIT += wtf webcore
 !v8: WEBKIT += javascriptcore
 
 INCLUDEPATH += \
+    $$PWD/ \
     $$PWD/.. \
     $${ROOT_WEBKIT_DIR}/Source/WebKit/qt/WebCoreSupport \
     $${ROOT_WEBKIT_DIR}/Source/WTF

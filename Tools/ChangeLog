@@ -1,3 +1,14 @@
+2012-08-02  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
+
+        [Qt] MSVC specific buildfix for DRT.
+        https://bugs.webkit.org/show_bug.cgi?id=92978
+
+        Reviewed by Simon Hausmann.
+
+        DumpRenderTree/qt subdirectory is missing from generated makefile under MSVC build, need to be added to the pro file.
+
+        * DumpRenderTree/qt/DumpRenderTree.pro:
+
 2012-08-02  Alexander Shalamov  <alexander.shalamov@intel.com>
 
         [EFL][WK2] WTR is failing when X server is not running
