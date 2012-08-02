@@ -29,11 +29,8 @@
 #include "ScrollbarLayerChromium.h"
 
 #include "BitmapCanvasLayerTextureUpdater.h"
-#include "GraphicsContext.h"
 #include "LayerPainterChromium.h"
-#include "PlatformContextSkia.h"
 #include "Scrollbar.h"
-#include "ScrollbarThemeComposite.h"
 #include "cc/CCLayerTreeHost.h"
 #include "cc/CCScrollbarLayerImpl.h"
 #include "cc/CCTextureUpdater.h"

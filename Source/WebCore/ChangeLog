@@ -1,3 +1,14 @@
+2012-08-02  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Remove unused includes from compositor code
+        https://bugs.webkit.org/show_bug.cgi?id=92930
+
+        Reviewed by Adrienne Walker.
+
+        * platform/graphics/chromium/BitmapCanvasLayerTextureUpdater.cpp:
+        * platform/graphics/chromium/ScrollbarLayerChromium.cpp:
+        * platform/graphics/chromium/cc/CCScrollbarLayerImpl.h:
+
 2012-08-02  Adam Barth  <abarth@webkit.org>
 
         The generic bindings shouldn't use templates

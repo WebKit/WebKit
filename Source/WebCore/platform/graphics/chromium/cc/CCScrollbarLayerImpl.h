@@ -28,7 +28,6 @@
 
 #if USE(ACCELERATED_COMPOSITING)
 
-#include "ScrollbarThemeClient.h"
 #include "cc/CCLayerImpl.h"
 #include <public/WebRect.h>
 #include <public/WebScrollbar.h>
