@@ -510,7 +510,8 @@ static bool readTime(time_t& resultTime, char*& start, const char* end)
     if (start + sizeof(time_t) >= end)
         return false;
 
-    resultTime = *reinterpret_cast_ptr<time_t*>(start);
+    // The stream is not necessary aligned.
+    memcpy(&resultTime, start, sizeof(time_t));
     start += sizeof(time_t);
 
     return true;

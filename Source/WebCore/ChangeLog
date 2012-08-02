@@ -1,3 +1,19 @@
+2012-08-02  Zoltan Herczeg  <zherczeg@webkit.org>
+
+        Alignment issue for readTime in PluginDatabase.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=92746
+
+        Reviewed by Simon Hausmann.
+
+        When the byte stream is written, nothing guarantees that
+        the time_t data is aligned. This issue caused alignment
+        traps on ARM CPUs.
+
+        No new tests. Covered by existing tests.
+
+        * plugins/PluginDatabase.cpp:
+        (WebCore::readTime):
+
 2012-08-02  Tommy Widenflycht  <tommyw@google.com>
 
         MediaStream API: Add RTCPeerConnectionHandler infrastructure
