@@ -285,8 +285,6 @@ public:
         const WebVector<int>& itemIDs,
         int separatorIndex);
     virtual void hidePopups();
-    // FIXME: Expose showTouchHighlightQuads in the public WebView API when it does something.
-    virtual void showTouchHighlightQuads(const WebVector<WebFloatQuad>& highlight, WebColor highlightColor);
     virtual void selectAutofillSuggestionAtIndex(unsigned listIndex);
     virtual void setScrollbarColors(unsigned inactiveColor,
                                     unsigned activeColor,
