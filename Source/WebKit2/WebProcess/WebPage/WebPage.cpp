@@ -207,6 +207,8 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
     , m_isInRedo(false)
     , m_isClosed(false)
     , m_tabToLinks(false)
+    , m_asynchronousPluginInitializationEnabled(false)
+    , m_artificialPluginInitializationDelayEnabled(false)
 #if PLATFORM(MAC)
     , m_windowIsVisible(false)
     , m_isSmartInsertDeleteEnabled(parameters.isSmartInsertDeleteEnabled)
@@ -1976,6 +1978,8 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
     Settings* settings = m_page->settings();
 
     m_tabToLinks = store.getBoolValueForKey(WebPreferencesKey::tabsToLinksKey());
+    m_asynchronousPluginInitializationEnabled = store.getBoolValueForKey(WebPreferencesKey::asynchronousPluginInitializationEnabledKey());
+    m_artificialPluginInitializationDelayEnabled = store.getBoolValueForKey(WebPreferencesKey::artificialPluginInitializationDelayEnabledKey());
 
     // FIXME: This should be generated from macro expansion for all preferences,
     // but we currently don't match the naming of WebCore exactly so we are

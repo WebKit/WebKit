@@ -833,3 +833,23 @@ bool WKPreferencesGetDiagnosticLoggingEnabled(WKPreferencesRef preferencesRef)
 {
     return toImpl(preferencesRef)->diagnosticLoggingEnabled();
 }
+
+void WKPreferencesSetAsynchronousPluginInitializationEnabled(WKPreferencesRef preferencesRef, bool enabled)
+{
+    toImpl(preferencesRef)->setAsynchronousPluginInitializationEnabled(enabled);
+}
+
+bool WKPreferencesGetAsynchronousPluginInitializationEnabled(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->asynchronousPluginInitializationEnabled();
+}
+
+void WKPreferencesSetArtificialPluginInitializationDelayEnabled(WKPreferencesRef preferencesRef, bool enabled)
+{
+    toImpl(preferencesRef)->setArtificialPluginInitializationDelayEnabled(enabled);
+}
+
+bool WKPreferencesGetArtificialPluginInitializationDelayEnabled(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->artificialPluginInitializationDelayEnabled();
+}

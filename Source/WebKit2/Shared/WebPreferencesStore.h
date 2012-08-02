@@ -114,6 +114,8 @@ namespace WebKit {
     macro(WantsBalancedSetDefersLoadingBehavior, wantsBalancedSetDefersLoadingBehavior, Bool, bool, false) \
     macro(RequestAnimationFrameEnabled, requestAnimationFrameEnabled, Bool, bool, true) \
     macro(DiagnosticLoggingEnabled, diagnosticLoggingEnabled, Bool, bool, false) \
+    macro(AsynchronousPluginInitializationEnabled, asynchronousPluginInitializationEnabled, Bool, bool, false) \
+    macro(ArtificialPluginInitializationDelayEnabled, artificialPluginInitializationDelayEnabled, Bool, bool, false) \
     \
 
 #define FOR_EACH_WEBKIT_DOUBLE_PREFERENCE(macro) \

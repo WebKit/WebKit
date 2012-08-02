@@ -570,6 +570,9 @@ public:
     uint64_t nativeWindowHandle() { return m_nativeWindowHandle; }
 #endif
 
+    bool asynchronousPluginInitializationEnabled() const { return m_asynchronousPluginInitializationEnabled; }
+    bool artificialPluginInitializationDelayEnabled() const { return m_artificialPluginInitializationDelayEnabled; }
+
 private:
     WebPage(uint64_t pageID, const WebPageCreationParameters&);
 
@@ -758,6 +761,9 @@ private:
     bool m_isClosed;
 
     bool m_tabToLinks;
+    
+    bool m_asynchronousPluginInitializationEnabled;
+    bool m_artificialPluginInitializationDelayEnabled;
 
 #if PLATFORM(MAC)
     // Whether the containing window is visible or not.
