@@ -26,6 +26,8 @@
  *
  * The following signals (see evas_object_smart_callback_add()) are emitted:
  *
+ * - "close,window", void: window is closed.
+ * - "create,window", Evas_Object**: a new window is created.
  * - "download,cancelled", Ewk_Download_Job*: reports that a download was effectively cancelled.
  * - "download,failed", Ewk_Download_Job_Error*: reports that a download failed with the given error.
  * - "download,finished", Ewk_Download_Job*: reports that a download completed successfully.

@@ -59,6 +59,7 @@ LIST(APPEND WebKit2_SOURCES
     UIProcess/API/efl/ewk_view_loader_client.cpp
     UIProcess/API/efl/ewk_view_policy_client.cpp
     UIProcess/API/efl/ewk_view_resource_load_client.cpp
+    UIProcess/API/efl/ewk_view_ui_client.cpp
     UIProcess/API/efl/ewk_web_error.cpp
     UIProcess/API/efl/ewk_web_resource.cpp
 

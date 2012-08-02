@@ -37,6 +37,7 @@
 #include "ewk_view_policy_client_private.h"
 #include "ewk_view_private.h"
 #include "ewk_view_resource_load_client_private.h"
+#include "ewk_view_ui_client_private.h"
 #include "ewk_web_resource.h"
 #include <Ecore_Evas.h>
 #include <Edje.h>
@@ -667,6 +668,7 @@ Evas_Object* ewk_view_base_add(Evas* canvas, WKContextRef contextRef, WKPageGrou
     ewk_view_loader_client_attach(wkPage, ewkView);
     ewk_view_policy_client_attach(wkPage, ewkView);
     ewk_view_resource_load_client_attach(wkPage, ewkView);
+    ewk_view_ui_client_attach(wkPage, ewkView);
 
     ewk_view_theme_set(ewkView, DEFAULT_THEME_PATH"/default.edj");
 
@@ -1296,4 +1298,20 @@ Eina_Bool ewk_view_setting_encoding_custom_set(Evas_Object* ewkView, const char*
         priv->pageClient->page()->setCustomTextEncodingName(encoding ? encoding : String());
 
     return true;
+}
+
+void ewk_view_page_close(Evas_Object* ewkView)
+{
+    evas_object_smart_callback_call(ewkView, "close,window", 0);
+}
+
+WKPageRef ewk_view_page_create(Evas_Object* ewkView)
+{
+    Evas_Object* newEwkView = 0;
+    evas_object_smart_callback_call(ewkView, "create,window", &newEwkView);
+
+    if (!newEwkView)
+        return 0;
+
+    return static_cast<WKPageRef>(WKRetain(ewk_view_page_get(newEwkView)));
 }
