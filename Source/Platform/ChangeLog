@@ -1,5 +1,11 @@
 2012-08-01  Jian Li  <jianli@chromium.org>
 
+        Unreviewed. Fix build break for chromium.
+
+        * Platform.gypi:
+
+2012-08-01  Jian Li  <jianli@chromium.org>
+
         [chromium] Make WebKit API support draggable region change update
         https://bugs.webkit.org/show_bug.cgi?id=92813
 

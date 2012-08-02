@@ -59,7 +59,6 @@
             'chromium/public/WebCookieJar.h',
             'chromium/public/WebData.h',
             'chromium/public/WebDragData.h',
-            'chromium/public/WebDraggableRegion.h',
             'chromium/public/WebExternalTextureLayer.h',
             'chromium/public/WebExternalTextureLayerClient.h',
             'chromium/public/WebFileInfo.h',
