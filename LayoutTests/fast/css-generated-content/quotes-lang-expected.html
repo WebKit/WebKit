@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+
+<style>
+    span:before, span:after { content: '"'; }
+
+    .example:before, .example > span:before { content: "A"; }
+    .example:after, .example > span:after { content: "B"; }
+
+    .en:before { content: "\201C"; }
+    .en:after { content: "\201D"; }
+    .en > span:before { content: "\2018"; }
+    .en > span:after { content: "\2019"; }
+
+    .no:before { content: "\00AB"; }
+    .no:after { content: "\00BB"; }
+    .no > span:before { content: "\2039"; }
+    .no > span:after { content: "\203A"; }
+
+    .ro:before, .ro > span:before { content: "\201E"; }
+    .ro:after, .ro > span:after { content: "\201D"; }
+
+    .ru:before { content: "\00AB"; }
+    .ru:after { content: "\00BB"; }
+    .ru > span:before { content: "\201E"; }
+    .ru > span:after { content: "\201C"; }
+</style>
+
+<p>
+    You should see the quotes for the specified language on each line below,
+    and not just basic " and ' characters unless no language is specified.
+</p>
+
+<span></span>
+<br>
+
+<span class="en"><span>en</span></span>
+<br>
+
+<span class="no"><span>no</span></span>
+<br>
+
+<span class="ro"><span>ro</span></span>
+<br>
+
+<span class="ru"><span>ru</span></span>
+<br>
+
+<span class="example"><span>example</span></span>
+<br>
+
+<p>
+    <span class="example">example</span>
+</p>

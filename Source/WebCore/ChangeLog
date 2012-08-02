@@ -1,3 +1,26 @@
+2012-08-02  Elliott Sprehn  <esprehn@gmail.com>
+
+        Built in quotes don't use lang attribute
+        https://bugs.webkit.org/show_bug.cgi?id=92918
+
+        Reviewed by Alexey Proskuryakov.
+
+        Previously even though there was a table in RenderQuote of languages mapped
+        to quotes we always used basic quotes. This patch removes the broken tree
+        walking and uses Element::computeInheritedLanguage fixing this.
+
+        Tests: fast/css-generated-content/quotes-lang-expected.html
+               fast/css-generated-content/quotes-lang.html
+               fast/css-generated-content/quotes-xml-lang-expected.html
+               fast/css-generated-content/quotes-xml-lang.html
+
+        * rendering/RenderQuote.cpp:
+        (WebCore::RenderQuote::originalText):
+        (WebCore::RenderQuote::quotesData): New method that determines the right QuotesData to use.
+        (WebCore):
+        * rendering/RenderQuote.h:
+        (RenderQuote):
+
 2012-08-02  Adam Barth  <abarth@webkit.org>
 
         Add back a header I mistakenly removed in my previous commit.

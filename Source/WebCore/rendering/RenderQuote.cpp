@@ -22,8 +22,6 @@
 #include "RenderQuote.h"
 
 #include "Document.h"
-#include "Element.h"
-#include "HTMLElement.h"
 #include "QuotesData.h"
 #include "RenderStyle.h"
 #include <wtf/text/AtomicString.h>
@@ -157,42 +155,12 @@ static const QuotesData* basicQuotesData()
     return staticBasicQuotes;
 }
 
-static const QuotesData* defaultQuotes(const RenderObject* object)
-{
-    DEFINE_STATIC_LOCAL(String, langString, ("lang"));
-    Node* node =  object->generatingNode();
-    Element* element;
-    if (!node) {
-        element = object->document()->body();
-        if (!element)
-            element = object->document()->documentElement();
-    } else if (!node->isElementNode()) {
-        element = node->parentElement();
-        if (!element)
-            return basicQuotesData();
-    } else
-      element = toElement(node);
-    AtomicString language = element->getAttribute(langString);
-    while (language.isNull()) {
-        element = element->parentElement();
-        if (!element)
-            return basicQuotesData();
-        language = element->getAttribute(langString);
-    }
-    const QuotesData* quotesData = quotesDataLanguageMap().get(language);
-    if (!quotesData)
-        return basicQuotesData();
-    return quotesData;
-}
-
 PassRefPtr<StringImpl> RenderQuote::originalText() const
 {
     if (!parent())
         return 0;
     ASSERT(m_depth != UNKNOWN_DEPTH);
-    const QuotesData* quotes = style()->quotes();
-    if (!quotes)
-        quotes = defaultQuotes(this);
+    const QuotesData* quotes = quotesData();
     switch (m_type) {
     case NO_OPEN_QUOTE:
     case NO_CLOSE_QUOTE:
@@ -212,6 +180,20 @@ void RenderQuote::computePreferredLogicalWidths(float lead)
 {
     setTextInternal(originalText());
     RenderText::computePreferredLogicalWidths(lead);
+}
+
+const QuotesData* RenderQuote::quotesData() const
+{
+    if (QuotesData* customQuotes = style()->quotes())
+        return customQuotes;
+
+    AtomicString language = style()->locale();
+    if (language.isNull())
+        return basicQuotesData();
+    const QuotesData* quotes = quotesDataLanguageMap().get(language);
+    if (!quotes)
+        return basicQuotesData();
+    return quotes;
 }
 
 void RenderQuote::rendererSubtreeAttached(RenderObject* renderer)

@@ -41,6 +41,8 @@ private:
     virtual bool isQuote() const { return true; };
     virtual PassRefPtr<StringImpl> originalText() const;
     virtual void computePreferredLogicalWidths(float leadWidth);
+    const QuotesData* quotesData() const;
+
     QuoteType m_type;
     int m_depth;
     RenderQuote* m_next;

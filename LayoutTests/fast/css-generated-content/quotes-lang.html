@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+
+<style>
+   q:lang(example) {
+        quotes: "A" "B";
+   }
+</style>
+
+<p>
+    You should see the quotes for the specified language on each line below,
+    and not just basic " and ' characters unless no language is specified.
+</p>
+
+<q></q>
+<br>
+
+<!-- These languages are from the map in RenderQuote -->
+<q lang="en"><q>en</q></q>
+<br>
+
+<q lang="no"><q>no</q></q>
+<br>
+
+<q lang="ro"><q>ro</q></q>
+<br>
+
+<q lang="ru"><q>ru</q></q>
+<br>
+
+<q lang="example"><q>example</q></q>
+<br>
+
+<div lang="example">
+    <p>
+        <q>example</q>
+    </p>
+</div>

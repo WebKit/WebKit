@@ -1,3 +1,19 @@
+2012-08-02  Elliott Sprehn  <esprehn@gmail.com>
+
+        Built in quotes don't use lang attribute
+        https://bugs.webkit.org/show_bug.cgi?id=92918
+
+        Reviewed by Alexey Proskuryakov.
+
+        Add a test that the built in quote languages are used and that custom
+        languages work as well. This also tests that xml:lang takes precedence
+        over lang.
+
+        * fast/css-generated-content/quotes-lang-expected.html: Added.
+        * fast/css-generated-content/quotes-lang.html: Added.
+        * fast/css-generated-content/quotes-xml-lang-expected.html: Added.
+        * fast/css-generated-content/quotes-xml-lang.html: Added.
+
 2012-06-15  David Barton  <dbarton@mathscribe.com>
 
         MathML: nested square root symbols have varying descenders
