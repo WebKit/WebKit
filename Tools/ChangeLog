@@ -1,5 +1,20 @@
 2012-08-01  Dirk Pranke  <dpranke@chromium.org>
 
+        REGRESSION(r123893): Reftest mismatches are run through ImageDiff with 0.1 tolerance
+        https://bugs.webkit.org/show_bug.cgi?id=92847
+
+        Reviewed by Ojan Vafai.
+
+        I was failing to distinguish between 'None' and 0 :(. Fixed and added tests.
+
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        (Port.diff_image):
+        * Scripts/webkitpy/layout_tests/port/port_testcase.py:
+        (PortTestCase.test_diff_image.make_proc):
+        (PortTestCase.test_diff_image):
+
+2012-08-01  Dirk Pranke  <dpranke@chromium.org>
+
         test-webkitpy: clean up handling of tests to skip
         https://bugs.webkit.org/show_bug.cgi?id=92909
 

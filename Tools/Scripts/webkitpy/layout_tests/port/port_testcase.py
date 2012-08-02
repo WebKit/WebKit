@@ -254,13 +254,20 @@ class PortTestCase(unittest.TestCase):
         self.proc = None
 
         def make_proc(port, nm, cmd, env):
-            self.proc = MockServerProcess(port, nm, cmd, env, lines=['diff: 100% failed\n'])
+            self.proc = MockServerProcess(port, nm, cmd, env, lines=['diff: 100% failed\n', 'diff: 100% failed\n'])
             return self.proc
 
         port._server_process_constructor = make_proc
         port.setup_test_run()
         self.assertEquals(port.diff_image('foo', 'bar'), ('', 100.0))
         self.assertEquals(self.proc.cmd[1:3], ["--tolerance", "0.1"])
+
+        self.assertEquals(port.diff_image('foo', 'bar', None), ('', 100.0))
+        self.assertEquals(self.proc.cmd[1:3], ["--tolerance", "0.1"])
+
+        self.assertEquals(port.diff_image('foo', 'bar', 0), ('', 100.0))
+        self.assertEquals(self.proc.cmd[1:3], ["--tolerance", "0"])
+
         port.clean_up_test_run()
         self.assertTrue(self.proc.stopped)
         self.assertEquals(port._image_differ, None)

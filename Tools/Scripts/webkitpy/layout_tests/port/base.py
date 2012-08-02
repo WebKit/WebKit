@@ -325,7 +325,8 @@ class Port(object):
         if not self._image_differ:
             self._image_differ = image_diff.ImageDiffer(self)
         self.set_option_default('tolerance', 0.1)
-        tolerance = tolerance or self.get_option('tolerance')
+        if tolerance is None:
+            tolerance = self.get_option('tolerance')
         return self._image_differ.diff_image(expected_contents, actual_contents, tolerance)
 
     def diff_text(self, expected_text, actual_text, expected_filename, actual_filename):
