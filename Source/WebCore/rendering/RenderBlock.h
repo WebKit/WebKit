@@ -108,9 +108,10 @@ public:
     void addPercentHeightDescendant(RenderBox*);
     static void removePercentHeightDescendant(RenderBox*);
     HashSet<RenderBox*>* percentHeightDescendants() const;
-#if !ASSERT_DISABLED
+    static bool hasPercentHeightContainerMap();
     static bool hasPercentHeightDescendant(RenderBox*);
-#endif
+    static void clearPercentHeightDescendantsFrom(RenderBox*);
+    static void removePercentHeightDescendantIfNeeded(RenderBox*);
 
     void setHasMarkupTruncation(bool b) { m_hasMarkupTruncation = b; }
     bool hasMarkupTruncation() const { return m_hasMarkupTruncation; }
