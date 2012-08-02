@@ -182,6 +182,11 @@ void WebInspectorProxy::platformAttach()
         m_inspectorWindow = 0;
     }
 
+    // Set a default attached height based on InspectorFrontendClientLocal.
+    static const unsigned defaultAttachedHeight = 300;
+    unsigned maximumAttachedHeight = platformInspectedWindowHeight() * 3 / 4;
+    platformSetAttachedWindowHeight(std::max(minimumAttachedHeight, std::min(defaultAttachedHeight, maximumAttachedHeight)));
+
     if (m_client.attach(this))
         return;
 

@@ -1,3 +1,29 @@
+2012-08-02  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Inspector should set a default attached height before being attached
+        https://bugs.webkit.org/show_bug.cgi?id=90767
+
+        Reviewed by Xan Lopez.
+
+        We are currently using the minimum attached height in
+        WebKitWebViewBase as the default height for the inspector when
+        attached. It would be easier for WebKitWebViewBase and embedders
+        implementing attach() if the inspector already had an attached
+        height set when it's being attached.
+
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseContainerAdd): Don't initialize
+        inspectorViewHeight.
+        (webkitWebViewBaseSetInspectorViewHeight): Allow to set the
+        inspector view height before having an inpector view, but only
+        queue a resize when the view already has an inspector view.
+        * UIProcess/API/gtk/tests/TestInspector.cpp:
+        (testInspectorDefault):
+        (testInspectorManualAttachDetach):
+        * UIProcess/gtk/WebInspectorProxyGtk.cpp:
+        (WebKit::WebInspectorProxy::platformAttach): Set the default
+        attached height before attach the inspector view.
+
 2012-08-02  Dinu Jacob  <dinu.jacob@nokia.com>
 
         WebKitTestRunner needs layoutTestController.setUserStyleSheetEnabled

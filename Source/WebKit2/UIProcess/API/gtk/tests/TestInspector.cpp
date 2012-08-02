@@ -22,8 +22,6 @@
 #include "WebViewTest.h"
 #include <wtf/gobject/GRefPtr.h>
 
-static const unsigned gMinimumAttachedInspectorHeight = 250;
-
 class InspectorTest: public WebViewTest {
 public:
     MAKE_GLIB_TEST_FIXTURE(InspectorTest);
@@ -181,6 +179,7 @@ static void testInspectorDefault(InspectorTest* test, gconstpointer)
 
     test->resizeViewAndAttach();
     g_assert(webkit_web_inspector_is_attached(test->m_inspector));
+    g_assert_cmpuint(webkit_web_inspector_get_attached_height(test->m_inspector), >=, InspectorTest::gMinimumAttachedInspectorHeight);
     events = test->m_events;
     g_assert_cmpint(events.size(), ==, 1);
     g_assert_cmpint(events[0], ==, InspectorTest::Attach);
@@ -258,6 +257,7 @@ public:
             gtk_widget_show_all(pane);
         } else
             pane = gtk_bin_get_child(GTK_BIN(m_parentWindow));
+        gtk_paned_set_position(GTK_PANED(pane), webkit_web_inspector_get_attached_height(m_inspector));
         gtk_paned_add2(GTK_PANED(pane), GTK_WIDGET(inspectorView.get()));
 
         return InspectorTest::attach();
@@ -301,6 +301,7 @@ static void testInspectorManualAttachDetach(CustomInspectorTest* test, gconstpoi
 
     test->resizeViewAndAttach();
     g_assert(webkit_web_inspector_is_attached(test->m_inspector));
+    g_assert_cmpuint(webkit_web_inspector_get_attached_height(test->m_inspector), >=, InspectorTest::gMinimumAttachedInspectorHeight);
     events = test->m_events;
     g_assert_cmpint(events.size(), ==, 1);
     g_assert_cmpint(events[0], ==, InspectorTest::Attach);
