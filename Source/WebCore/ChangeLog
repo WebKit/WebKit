@@ -1,3 +1,52 @@
+2012-06-15  David Barton  <dbarton@mathscribe.com>
+
+        MathML: nested square root symbols have varying descenders
+        https://bugs.webkit.org/show_bug.cgi?id=43819
+
+        Reviewed by Eric Seidel.
+
+        This bug stems from the use of offsetHeight() on a renderer that's possibly a
+        RenderInline, in getBoxModelObjectHeight() in RenderMathMLBlock.h.
+        RenderInline::offsetHeight() actually returns linesBoundingBox().height(), which can be
+        overly large, especially for the big STIX fonts that include a few mathematical symbols
+        with unusually tall ascenders or descenders. A better solution for MathML in general is
+        the CSS properties { -webkit-line-box-contain: glyphs replaced; line-height: 0; }. This
+        gives tight glyph-based formatting in radical expressions, subscripts, superscripts,
+        underscripts, overscripts, numerators, denominators, etc. To make this work, inline
+        elements such as <mn> and <mi> must be wrapped inside implicit <mrow>s or just
+        RenderMathMLBlocks, when a tight height is desired. We also replace
+        getBoxModelObjectWidth(), which uses offsetWidth(), with contentLogicalWidth(). Finally,
+        we enable the STIXGeneral font for use inside layout tests.
+
+        Tested by existing LayoutTests/mathml/presentation/ files including roots.xhtml.
+
+        * css/mathml.css:
+        (math):
+        (mtext):
+        (mroot > * + *):
+        (mtd):
+        * rendering/mathml/RenderMathMLBlock.cpp:
+        (WebCore::RenderMathMLBlock::preferredLogicalHeightAfterSizing):
+        (WebCore::RenderMathMLBlock::baselinePosition):
+        * rendering/mathml/RenderMathMLBlock.h:
+        * rendering/mathml/RenderMathMLFraction.cpp:
+        (WebCore::RenderMathMLFraction::baselinePosition):
+        * rendering/mathml/RenderMathMLOperator.cpp:
+        (WebCore::RenderMathMLOperator::createStackableStyle):
+        (WebCore::RenderMathMLOperator::baselinePosition):
+        * rendering/mathml/RenderMathMLRoot.cpp:
+        (WebCore::RenderMathMLRoot::addChild):
+        (WebCore::RenderMathMLRoot::computePreferredLogicalWidths):
+        (WebCore::RenderMathMLRoot::paint):
+        * rendering/mathml/RenderMathMLRoot.h:
+        * rendering/mathml/RenderMathMLSquareRoot.cpp:
+        * rendering/mathml/RenderMathMLSquareRoot.h:
+        * rendering/mathml/RenderMathMLSubSup.cpp:
+        (WebCore::RenderMathMLSubSup::layout):
+        * rendering/mathml/RenderMathMLUnderOver.cpp:
+        (WebCore::RenderMathMLUnderOver::baselinePosition):
+        * rendering/mathml/RenderMathMLUnderOver.h:
+
 2012-08-02  Adrienne Walker  <enne@google.com>
 
         [chromium] Make CCScrollbarLayerImpl handle lost contexts properly

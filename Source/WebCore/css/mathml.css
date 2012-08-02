@@ -1,13 +1,20 @@
 @namespace "http://www.w3.org/1998/Math/MathML";
 
 math {
+    -webkit-line-box-contain: glyphs replaced;
+    line-height: 0;
+}
+mtext {
+    line-height: 1.0;
+}
+
+math {
     font-family: STIXGeneral, Symbol, "Times New Roman", sans-serif;
     display: inline-block;
     padding: 0px;
     margin: 0px;
     text-align: left;
     vertical-align: baseline;
-    line-height: 1.0;
     padding-left: 1px;
     padding-right: 1px;
 }
@@ -160,11 +167,7 @@ mroot > * + * {
     top: 0;
     padding-right: 0.4em;
     padding-left: 0.2em;
-    padding-bottom: 0.2em; /* FIXME: change to 0.25em */
-}
-
-mroot > * + mrow, mroot > * + mfenced { /* FIXME: eliminate */
-    padding-bottom: 0.4em;
+    padding-bottom: 0.35em;
 }
 
 mtable {
@@ -179,7 +182,7 @@ mtr {
 
 mtd {
     display: table-cell;
-    padding: 0 0.5ex;
+    padding: 0.5ex;
 }
 
 mtable[columnalign="left"], mtr[columnalign="left"], mtd[columnalign="left"] {

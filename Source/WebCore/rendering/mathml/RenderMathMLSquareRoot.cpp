@@ -30,29 +30,11 @@
 
 #include "RenderMathMLSquareRoot.h"
 
-#include "RenderMathMLRow.h"
-
 namespace WebCore {
     
 RenderMathMLSquareRoot::RenderMathMLSquareRoot(Element* element)
     : RenderMathMLRoot(element)
 {
-}
-
-void RenderMathMLSquareRoot::addChild(RenderObject* newChild, RenderObject* beforeChild)
-{
-    if (!firstChild()) {
-        RenderMathMLRow* newMRow = RenderMathMLRow::createAnonymousWithParentRenderer(this);
-        
-        RenderMathMLRoot::addChild(newMRow);
-        
-        // newMRow->isAnonymousBlock() is false because newMRow's display is INLINE_BLOCK,
-        // so we don't need to worry about removeLeftoverAnonymousBlock().
-        ASSERT(!newMRow->isAnonymousBlock());
-    }
-    
-    ASSERT(firstChild() && firstChild()->isAnonymous() && firstChild()->isRenderMathMLBlock() && toRenderMathMLBlock(firstChild())->isRenderMathMLRow());
-    firstChild()->addChild(newChild, beforeChild);
 }
 
 }

@@ -1,31 +1,31 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x86
-  RenderBlock {html} at (0,0) size 800x86
-    RenderBody {body} at (8,16) size 784x54
-      RenderBlock {p} at (0,0) size 784x19
+layer at (0,0) size 800x84
+  RenderBlock {html} at (0,0) size 800x84
+    RenderBody {body} at (8,16) size 784x52
+      RenderBlock {p} at (0,0) size 784x18
         RenderText {#text} at (0,0) size 291x18
           text run at (0,0) width 291: "Following elements should use a regular font: "
-        RenderMathMLMath {math} at (291,3) size 57x16 [padding: 0 1 0 1]
-          RenderInline {mn} at (0,0) size 8x16
-            RenderText {#text} at (1,0) size 8x16
-              text run at (1,0) width 8: "1"
-          RenderMathMLOperator {mo} at (9,0) size 12x16 [padding: 0 1 0 0]
-            RenderMathMLBlock (inline-block) {mo} at (0,0) size 11x16
-              RenderText {mo} at (0,0) size 11x16
-                text run at (0,0) width 11: "\x{2207}"
-          RenderInline {mtext} at (0,0) size 23x16
-            RenderText {#text} at (21,0) size 23x16
-              text run at (21,0) width 23: "text"
-          RenderInline {ms} at (0,0) size 12x16
-            RenderText {#text} at (44,0) size 12x16
-              text run at (44,0) width 12: "&"
+        RenderMathMLMath {math} at (291,3) size 58x12 [padding: 0 1 0 1]
+          RenderInline {mn} at (0,0) size 8x24
+            RenderText {#text} at (1,-6) size 8x24
+              text run at (1,-6) width 8: "1"
+          RenderMathMLOperator {mo} at (9,0) size 13x12 [padding: 0 1 0 0]
+            RenderMathMLBlock (inline-block) {mo} at (0,0) size 12x12
+              RenderText {mo} at (0,-6) size 12x24
+                text run at (0,-6) width 12: "\x{2207}"
+          RenderInline {mtext} at (0,0) size 23x24
+            RenderText {#text} at (22,-6) size 23x24
+              text run at (22,-6) width 23: "text"
+          RenderInline {ms} at (0,0) size 12x24
+            RenderText {#text} at (45,-6) size 12x24
+              text run at (45,-6) width 12: "&"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {p} at (0,35) size 784x19
+      RenderBlock {p} at (0,34) size 784x18
         RenderText {#text} at (0,0) size 241x18
           text run at (0,0) width 241: "Following element should be in italic: "
-        RenderMathMLMath {math} at (241,3) size 9x16 [padding: 0 1 0 1]
-          RenderInline {mi} at (0,0) size 7x16
-            RenderText {#text} at (1,0) size 7x16
-              text run at (1,0) width 7: "x"
+        RenderMathMLMath {math} at (241,6) size 9x9 [padding: 0 1 0 1]
+          RenderInline {mi} at (0,0) size 7x24
+            RenderText {#text} at (1,-9) size 7x24
+              text run at (1,-9) width 7: "x"
         RenderText {#text} at (0,0) size 0x0

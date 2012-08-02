@@ -32,6 +32,7 @@
 
 #include "GraphicsContext.h"
 #include "PaintInfo.h"
+#include "RenderMathMLRow.h"
 
 using namespace std;
 
@@ -70,6 +71,20 @@ RenderMathMLRoot::RenderMathMLRoot(Element* element)
 {
 }
 
+void RenderMathMLRoot::addChild(RenderObject* newChild, RenderObject* beforeChild)
+{
+    // Insert an implicit <mrow> for <mroot> as well as <msqrt>, to ensure firstChild() will have a box
+    // to measure and store a glyph-based height for preferredLogicalHeightAfterSizing.
+    if (!firstChild())
+        RenderMathMLBlock::addChild(RenderMathMLRow::createAnonymousWithParentRenderer(this));
+    
+    // An <mroot>'s index has { position: absolute }.
+    if (newChild->style()->position() == AbsolutePosition)
+        RenderMathMLBlock::addChild(newChild);
+    else
+        firstChild()->addChild(newChild, beforeChild && beforeChild->style()->position() != AbsolutePosition ? beforeChild : 0);
+}
+
 RenderBoxModelObject* RenderMathMLRoot::index() const
 {
     if (!firstChild())
@@ -86,7 +101,7 @@ void RenderMathMLRoot::computePreferredLogicalWidths()
     
     computeChildrenPreferredLogicalHeights();
     
-    int baseHeight = firstChild() ? roundToInt(preferredLogicalHeightAfterSizing(firstChild())) : 0;
+    int baseHeight = firstChild() ? roundToInt(preferredLogicalHeightAfterSizing(firstChild())) : style()->fontSize();
     
     int frontWidth = lroundf(gFrontWidthEms * style()->fontSize());
     
@@ -150,9 +165,9 @@ void RenderMathMLRoot::paint(PaintInfo& info, const LayoutPoint& paintOffset)
     
     int startX = adjustedPaintOffset.x();
     int frontWidth = lroundf(gFrontWidthEms * style()->fontSize());
-    int overbarWidth = roundToInt(getBoxModelObjectWidth(firstChild())) + m_overbarLeftPointShift;
+    int overbarWidth = roundToInt(contentLogicalWidth()) + m_overbarLeftPointShift;
     
-    int baseHeight = roundToInt(getBoxModelObjectHeight(firstChild()));
+    int baseHeight = roundToInt(contentLogicalHeight());
     int rootPad = lroundf(gSpaceAboveEms * style()->fontSize());
     adjustedPaintOffset.setY(adjustedPaintOffset.y() - rootPad);
     

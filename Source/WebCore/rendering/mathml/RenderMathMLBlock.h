@@ -76,6 +76,8 @@ public:
     // computePreferredLogicalWidths() in derived classes must ensure m_preferredLogicalHeight is set to < 0 or its correct value.
     virtual void computePreferredLogicalWidths() OVERRIDE;
     
+    virtual LayoutUnit baselinePosition(FontBaseline, bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const OVERRIDE;
+    
 #if ENABLE(DEBUG_MATH_LAYOUT)
     virtual void paint(PaintInfo&, const LayoutPoint&);
 #endif
@@ -83,26 +85,6 @@ public:
     // Create a new RenderMathMLBlock, with a new style inheriting from this->style().
     RenderMathMLBlock* createAnonymousMathMLBlock(EDisplay = BLOCK);
     
-protected:
-    static LayoutUnit getBoxModelObjectHeight(const RenderObject* object)
-    {
-        if (object && object->isBoxModelObject()) {
-            const RenderBoxModelObject* box = toRenderBoxModelObject(object);
-            return box->offsetHeight();
-        }
-        
-        return 0;
-    }
-    static LayoutUnit getBoxModelObjectWidth(const RenderObject* object)
-    {
-        if (object && object->isBoxModelObject()) {
-            const RenderBoxModelObject* box = toRenderBoxModelObject(object);
-            return box->offsetWidth();
-        }
-        
-        return 0;
-    }
-
 private:
     virtual const char* renderName() const OVERRIDE;
     

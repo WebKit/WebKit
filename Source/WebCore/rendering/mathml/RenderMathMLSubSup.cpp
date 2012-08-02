@@ -140,24 +140,18 @@ void RenderMathMLSubSup::layout()
     
     if (m_kind != SubSup || !m_scripts)
         return;
-    RenderBoxModelObject* base = this->base();
-    RenderObject* superscriptWrapper = m_scripts->firstChild();
-    RenderObject* subscriptWrapper = m_scripts->lastChild();
-    if (!base || !superscriptWrapper || !subscriptWrapper || superscriptWrapper == subscriptWrapper)
-        return;
-    ASSERT(superscriptWrapper->isRenderMathMLBlock());
-    ASSERT(subscriptWrapper->isRenderMathMLBlock());
-    RenderObject* superscript = superscriptWrapper->firstChild();
-    RenderObject* subscript = subscriptWrapper->firstChild();
-    if (!superscript || !subscript)
+    RenderMathMLBlock* baseWrapper = toRenderMathMLBlock(firstChild());
+    RenderMathMLBlock* superscriptWrapper = toRenderMathMLBlock(m_scripts->firstChild());
+    RenderMathMLBlock* subscriptWrapper = toRenderMathMLBlock(m_scripts->lastChild());
+    if (!baseWrapper || !superscriptWrapper || !subscriptWrapper || superscriptWrapper == subscriptWrapper)
         return;
     
-    LineDirectionMode lineDirection = style()->isHorizontalWritingMode() ? HorizontalLine : VerticalLine;
-    LayoutUnit baseBaseline = base->baselinePosition(AlphabeticBaseline, true, lineDirection);
-    LayoutUnit baseExtendUnderBaseline = getBoxModelObjectHeight(base) - baseBaseline;
+    LayoutUnit baseWrapperBaseline = toRenderBox(firstChild())->firstLineBoxBaseline();
+    LayoutUnit baseBaseline = baseWrapperBaseline - baseWrapper->paddingBefore();
+    LayoutUnit baseExtendUnderBaseline = baseWrapper->logicalHeight() - baseWrapperBaseline;
     LayoutUnit axis = style()->fontMetrics().xHeight() / 2;
-    LayoutUnit superscriptHeight = getBoxModelObjectHeight(superscript);
-    LayoutUnit subscriptHeight = getBoxModelObjectHeight(subscript);
+    LayoutUnit superscriptHeight = superscriptWrapper->logicalHeight() - superscriptWrapper->paddingAfter();
+    LayoutUnit subscriptHeight = subscriptWrapper->logicalHeight();
     
     // Our layout rules are: Don't let the superscript go below the "axis" (half x-height above the
     // baseline), or the subscript above the axis. Also, don't let the superscript's top edge be
@@ -181,7 +175,6 @@ void RenderMathMLSubSup::layout()
     
     setChildNeedsLayout(true, MarkOnlyThis);
     
-    RenderObject* baseWrapper = firstChild();
     baseWrapper->style()->setPaddingTop(Length(basePaddingTop, Fixed));
     baseWrapper->setNeedsLayout(true, MarkOnlyThis);
     

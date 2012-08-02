@@ -39,7 +39,6 @@ public:
     
     virtual RenderMathMLOperator* unembellishedOperator();
 
-    virtual void layout();
     virtual LayoutUnit baselinePosition(FontBaseline, bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const;
     
 private:

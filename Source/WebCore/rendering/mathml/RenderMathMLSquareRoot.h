@@ -37,8 +37,6 @@ class RenderMathMLSquareRoot : public RenderMathMLRoot {
 public:
     RenderMathMLSquareRoot(Element*);
     
-    virtual void addChild(RenderObject* newChild, RenderObject* beforeChild = 0) OVERRIDE;
-    
 private:
     virtual const char* renderName() const { return "RenderMathMLSquareRoot"; }
 };

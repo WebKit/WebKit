@@ -1,3 +1,58 @@
+2012-06-15  David Barton  <dbarton@mathscribe.com>
+
+        MathML: nested square root symbols have varying descenders
+        https://bugs.webkit.org/show_bug.cgi?id=43819
+
+        Reviewed by Eric Seidel.
+
+        These tests are rebaselined to use the STIXGeneral font, and tight glyph-based MathML
+        layout using the CSS properties
+        { -webkit-line-box-contain: glyphs replaced; line-height: 0; }.
+
+        * mathml/presentation/style.xhtml:
+        * platform/mac/mathml/presentation/attributes-expected.png:
+        * platform/mac/mathml/presentation/attributes-expected.txt:
+        * platform/mac/mathml/presentation/fenced-expected.png:
+        * platform/mac/mathml/presentation/fenced-expected.txt:
+        * platform/mac/mathml/presentation/fenced-mi-expected.png:
+        * platform/mac/mathml/presentation/fenced-mi-expected.txt:
+        * platform/mac/mathml/presentation/fractions-expected.png:
+        * platform/mac/mathml/presentation/fractions-expected.txt:
+        * platform/mac/mathml/presentation/fractions-vertical-alignment-expected.png:
+        * platform/mac/mathml/presentation/fractions-vertical-alignment-expected.txt:
+        * platform/mac/mathml/presentation/mo-expected.png:
+        * platform/mac/mathml/presentation/mo-expected.txt:
+        * platform/mac/mathml/presentation/mo-stretch-expected.png:
+        * platform/mac/mathml/presentation/mo-stretch-expected.txt:
+        * platform/mac/mathml/presentation/mroot-pref-width-expected.png:
+        * platform/mac/mathml/presentation/mroot-pref-width-expected.txt:
+        * platform/mac/mathml/presentation/over-expected.png:
+        * platform/mac/mathml/presentation/over-expected.txt:
+        * platform/mac/mathml/presentation/roots-expected.png:
+        * platform/mac/mathml/presentation/roots-expected.txt:
+        * platform/mac/mathml/presentation/row-alignment-expected.png:
+        * platform/mac/mathml/presentation/row-alignment-expected.txt:
+        * platform/mac/mathml/presentation/row-expected.png:
+        * platform/mac/mathml/presentation/row-expected.txt:
+        * platform/mac/mathml/presentation/style-expected.png:
+        * platform/mac/mathml/presentation/style-expected.txt:
+        * platform/mac/mathml/presentation/sub-expected.png:
+        * platform/mac/mathml/presentation/sub-expected.txt:
+        * platform/mac/mathml/presentation/subsup-expected.png:
+        * platform/mac/mathml/presentation/subsup-expected.txt:
+        * platform/mac/mathml/presentation/sup-expected.png:
+        * platform/mac/mathml/presentation/sup-expected.txt:
+        * platform/mac/mathml/presentation/tables-expected.png:
+        * platform/mac/mathml/presentation/tables-expected.txt:
+        * platform/mac/mathml/presentation/tokenElements-expected.png:
+        * platform/mac/mathml/presentation/tokenElements-expected.txt:
+        * platform/mac/mathml/presentation/under-expected.png:
+        * platform/mac/mathml/presentation/under-expected.txt:
+        * platform/mac/mathml/presentation/underover-expected.png:
+        * platform/mac/mathml/presentation/underover-expected.txt:
+        * platform/mac/mathml/xHeight-expected.png:
+        * platform/mac/mathml/xHeight-expected.txt:
+
 2012-08-02  Emil A Eklund  <eae@chromium.org>
 
         Range::isPointInRange incorrectly throws WRONG_DOCUMENT_ERR

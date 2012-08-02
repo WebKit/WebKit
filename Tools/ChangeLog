@@ -1,3 +1,17 @@
+2012-06-15  David Barton  <dbarton@mathscribe.com>
+
+        MathML: nested square root symbols have varying descenders
+        https://bugs.webkit.org/show_bug.cgi?id=43819
+
+        Reviewed by Eric Seidel.
+
+        Allow the STIXGeneral font to be used during layout tests, especially for MathML.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (allowedFontFamilySet):
+        * WebKitTestRunner/InjectedBundle/mac/ActivateFonts.mm:
+        (WTR::allowedFontFamilySet):
+
 2012-08-02  Dirk Pranke  <dpranke@chromium.org>
 
         test-webkitpy: some tests need to run by themselves

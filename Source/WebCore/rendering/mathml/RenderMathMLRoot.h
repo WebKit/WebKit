@@ -37,6 +37,8 @@ class RenderMathMLRoot : public RenderMathMLBlock {
 public:
     RenderMathMLRoot(Element*);
     
+    virtual void addChild(RenderObject* newChild, RenderObject* beforeChild = 0) OVERRIDE;
+    
 protected:
     virtual void layout() OVERRIDE;
     

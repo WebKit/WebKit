@@ -331,7 +331,7 @@ void RenderMathMLOperator::updateFromElement()
     setNeedsLayoutAndPrefWidthsRecalc();
 }
 
-PassRefPtr<RenderStyle> RenderMathMLOperator::createStackableStyle(int lineHeight, int maxHeightForRenderer, int topRelative)
+PassRefPtr<RenderStyle> RenderMathMLOperator::createStackableStyle(int /* lineHeight */, int maxHeightForRenderer, int topRelative)
 {
     RefPtr<RenderStyle> newStyle = RenderStyle::create();
     newStyle->inheritFrom(style());
@@ -343,8 +343,7 @@ PassRefPtr<RenderStyle> RenderMathMLOperator::createStackableStyle(int lineHeigh
     desc.setComputedSize(gGlyphFontSize);
     newStyle->setFontDescription(desc);
     newStyle->font().update(style()->font().fontSelector());
-    newStyle->setLineHeight(Length(lineHeight, Fixed));
-    newStyle->setVerticalAlign(TOP);
+    // FIXME: With -webkit-line-box-contain, this method's lineHeight argument is no longer used. It should be removed in a future patch.
 
     if (maxHeightForRenderer > 0)
         newStyle->setMaxHeight(Length(maxHeightForRenderer, Fixed));
@@ -387,7 +386,7 @@ LayoutUnit RenderMathMLOperator::baselinePosition(FontBaseline, bool firstLine, 
 {
     if (m_isStacked)
         return m_stretchHeight * 2 / 3 - (m_stretchHeight - static_cast<int>(m_stretchHeight / gOperatorExpansion)) / 2;    
-    return RenderBlock::baselinePosition(AlphabeticBaseline, firstLine, lineDirection, linePositionMode);
+    return RenderMathMLBlock::baselinePosition(AlphabeticBaseline, firstLine, lineDirection, linePositionMode);
 }
     
 }

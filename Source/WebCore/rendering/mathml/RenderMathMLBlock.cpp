@@ -194,7 +194,17 @@ LayoutUnit RenderMathMLBlock::preferredLogicalHeightAfterSizing(RenderObject* ch
         ASSERT(!child->needsLayout());
         return toRenderBox(child)->logicalHeight();
     }
+    // This currently ignores -webkit-line-box-contain:
     return child->style()->fontSize();
+}
+
+LayoutUnit RenderMathMLBlock::baselinePosition(FontBaseline baselineType, bool firstLine, LineDirectionMode direction, LinePositionMode linePositionMode) const
+{
+    // mathml.css sets math { -webkit-line-box-contain: glyphs replaced; line-height: 0; }, so when linePositionMode == PositionOfInteriorLineBoxes we want to
+    // return 0 here to match our line-height. This matters when RootInlineBox::ascentAndDescentForBox is called on a RootInlineBox for an inline-block.
+    if (linePositionMode == PositionOfInteriorLineBoxes)
+        return 0;
+    return RenderBlock::baselinePosition(baselineType, firstLine, direction, linePositionMode);
 }
 
 const char* RenderMathMLBlock::renderName() const

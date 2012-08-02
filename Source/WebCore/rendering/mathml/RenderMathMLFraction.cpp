@@ -197,7 +197,7 @@ LayoutUnit RenderMathMLFraction::baselinePosition(FontBaseline, bool firstLine, 
         int shift = int(ceil((refStyle->fontMetrics().xHeight() + 1) / 2));
         return numeratorWrapper->pixelSnappedOffsetHeight() + shift;
     }
-    return RenderBlock::baselinePosition(AlphabeticBaseline, firstLine, lineDirection, linePositionMode);
+    return RenderMathMLBlock::baselinePosition(AlphabeticBaseline, firstLine, lineDirection, linePositionMode);
 }
 
 }
