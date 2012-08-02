@@ -1,3 +1,16 @@
+2012-08-02  Dominik Röttsches  <dominik.rottsches@intel.com>
+
+        [EFL][GTK] Implement font-feature settings
+        https://bugs.webkit.org/show_bug.cgi?id=84239
+
+        Unreviewed EFL gardening.
+
+        Now working after bug 91864 is closed.
+
+        * platform/efl/TestExpectations:
+        * platform/efl/css3/font-feature-settings-rendering-expected.png:
+        * platform/efl/css3/font-feature-settings-rendering-expected.txt:
+
 2012-08-02  Kwang Yul Seo  <skyul@company100.net>
 
         Check if the last table element's parent node is an element when determining the foster parent element.

@@ -223,9 +223,6 @@ BUGWK83909 : ietestcenter/css3/grid/grid-column-003.htm = IMAGE
 BUGWK83912 : ietestcenter/css3/grid/grid-items-002.htm = IMAGE
 BUGWK83913 : ietestcenter/css3/grid/grid-items-003.htm = IMAGE
 
-// Font feature settings is not implemented.
-BUGWK84239 : css3/font-feature-settings-rendering.html = TEXT IMAGE IMAGE+TEXT
-
 // EventSender.beginDragWithFiles is not implemented
 BUGWK84333 : editing/pasteboard/data-transfer-items-drag-drop-entry.html = TEXT
 BUGWK84333 : editing/pasteboard/data-transfer-items-drag-drop-file.html = TEXT
