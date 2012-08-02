@@ -27,7 +27,6 @@
 #define ElementAttributeData_h
 
 #include "Attribute.h"
-#include "MemoryInstrumentation.h"
 #include "SpaceSplitString.h"
 #include "StylePropertySet.h"
 #include <wtf/NotFound.h>
@@ -36,6 +35,7 @@ namespace WebCore {
 
 class Attr;
 class Element;
+class MemoryObjectInfo;
 
 enum EInUpdateStyleAttribute { NotInUpdateStyleAttribute, InUpdateStyleAttribute };
 
@@ -94,16 +94,7 @@ public:
     PassRefPtr<Attr> ensureAttr(Element*, const QualifiedName&) const;
     void detachAttrObjectsFromElement(Element*) const;
 
-    void reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
-    {
-        MemoryClassInfo<ElementAttributeData> info(memoryObjectInfo, this, MemoryInstrumentation::DOM, m_arraySize * sizeof(Attribute));
-        info.addInstrumentedMember(m_inlineStyleDecl.get());
-        info.addInstrumentedMember(m_attributeStyle.get());
-        info.addMember(m_classNames);
-        info.addString(m_idForStyleResolution);
-        if (m_isMutable)
-            info.addVector(*m_mutableAttributeVector);
-    }
+    void reportMemoryUsage(MemoryObjectInfo*) const;
 
 private:
     friend class Element;

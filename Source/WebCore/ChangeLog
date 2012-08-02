@@ -1,3 +1,25 @@
+2012-08-02  Yury Semikhatsky  <yurys@chromium.org>
+
+        Web Inspector: remove extraObjectSize parameter from MemoryClassInfo constructor
+        https://bugs.webkit.org/show_bug.cgi?id=92981
+
+        Reviewed by Alexander Pavlov.
+
+        Refactored MemoryInstrumentation to get rid of extraSize parameter from
+        MemoryObjectInfo constructor and MemoryObjectInfo::reportObjectInfo. The
+        extra size should always be reported as an object that occupies these extra
+        bytes.
+
+        * dom/ElementAttributeData.cpp:
+        (WebCore::ElementAttributeData::reportMemoryUsage):
+        (WebCore):
+        * dom/ElementAttributeData.h:
+        (WebCore):
+        (ElementAttributeData):
+        * dom/MemoryInstrumentation.h:
+        (WebCore::MemoryObjectInfo::reportObjectInfo):
+        (WebCore::MemoryClassInfo::MemoryClassInfo):
+
 2012-08-02  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r124439.

@@ -28,6 +28,7 @@
 
 #include "Attr.h"
 #include "CSSStyleSheet.h"
+#include "MemoryInstrumentation.h"
 #include "StyledElement.h"
 
 namespace WebCore {
@@ -281,6 +282,19 @@ void ElementAttributeData::detachAttrObjectsFromElement(Element* element) const
 
     // The loop above should have cleaned out this element's Attr map.
     ASSERT(!element->hasAttrList());
+}
+
+void ElementAttributeData::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+{
+    MemoryClassInfo<ElementAttributeData> info(memoryObjectInfo, this, MemoryInstrumentation::DOM);
+    info.addInstrumentedMember(m_inlineStyleDecl);
+    info.addInstrumentedMember(m_attributeStyle);
+    info.addMember(m_classNames);
+    info.addString(m_idForStyleResolution);
+    if (m_isMutable)
+        info.addVectorPtr(m_mutableAttributeVector);
+    else
+        info.addRawBuffer(m_attributes, m_arraySize * sizeof(Attribute));
 }
 
 size_t ElementAttributeData::getAttributeItemIndexSlowCase(const AtomicString& name, bool shouldIgnoreAttributeCase) const
