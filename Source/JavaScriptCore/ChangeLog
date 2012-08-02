@@ -1,3 +1,51 @@
+2012-08-01  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Remove all uses of ClassInfo for JSStrings in JIT code
+        https://bugs.webkit.org/show_bug.cgi?id=92935
+
+        Reviewed by Geoffrey Garen.
+
+        This is the first step in removing our dependence on in-object ClassInfo pointers
+        in JIT code. Most of the changes are to check the Structure, which is unique for 
+        JSString primitives.
+
+        * bytecode/SpeculatedType.cpp:
+        (JSC::speculationFromClassInfo):
+        (JSC::speculationFromStructure): Changed to check the TypeInfo in the Structure
+        since there wasn't a JSGlobalData immediately available to grab the JSString 
+        Structure out of.
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileGetIndexedPropertyStorage):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * jit/JITInlineMethods.h:
+        (JSC::JIT::emitLoadCharacterString):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::privateCompileCTIMachineTrampolines):
+        (JSC::JIT::emit_op_to_primitive):
+        (JSC::JIT::emit_op_convert_this):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::privateCompileCTIMachineTrampolines):
+        (JSC::JIT::emit_op_to_primitive):
+        (JSC::JIT::emitSlow_op_eq):
+        (JSC::JIT::emitSlow_op_neq):
+        (JSC::JIT::compileOpStrictEq):
+        (JSC::JIT::emit_op_convert_this):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::stringGetByValStubGenerator):
+        (JSC::JIT::emitSlow_op_get_by_val):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::stringGetByValStubGenerator):
+        (JSC::JIT::emitSlow_op_get_by_val):
+        * jit/SpecializedThunkJIT.h:
+        (JSC::SpecializedThunkJIT::loadJSStringArgument):
+        * jit/ThunkGenerators.cpp:
+        (JSC::stringCharLoad):
+        (JSC::charCodeAtThunkGenerator):
+        (JSC::charAtThunkGenerator):
+
 2012-08-02  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed, missed a style goof in the previous patch: "NodeIndex nodeIndex"

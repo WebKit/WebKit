@@ -35,10 +35,10 @@
 
 namespace JSC {
 
-static void stringCharLoad(SpecializedThunkJIT& jit)
+static void stringCharLoad(SpecializedThunkJIT& jit, JSGlobalData* globalData)
 {
     // load string
-    jit.loadJSStringArgument(SpecializedThunkJIT::ThisArgument, SpecializedThunkJIT::regT0);
+    jit.loadJSStringArgument(*globalData, SpecializedThunkJIT::ThisArgument, SpecializedThunkJIT::regT0);
 
     // Load string length to regT2, and start the process of loading the data pointer into regT0
     jit.load32(MacroAssembler::Address(SpecializedThunkJIT::regT0, ThunkHelpers::jsStringLengthOffset()), SpecializedThunkJIT::regT2);
@@ -76,7 +76,7 @@ static void charToString(SpecializedThunkJIT& jit, JSGlobalData* globalData, Mac
 MacroAssemblerCodeRef charCodeAtThunkGenerator(JSGlobalData* globalData)
 {
     SpecializedThunkJIT jit(1);
-    stringCharLoad(jit);
+    stringCharLoad(jit, globalData);
     jit.returnInt32(SpecializedThunkJIT::regT0);
     return jit.finalize(*globalData, globalData->jitStubs->ctiNativeCall(), "charCodeAt");
 }
@@ -84,7 +84,7 @@ MacroAssemblerCodeRef charCodeAtThunkGenerator(JSGlobalData* globalData)
 MacroAssemblerCodeRef charAtThunkGenerator(JSGlobalData* globalData)
 {
     SpecializedThunkJIT jit(1);
-    stringCharLoad(jit);
+    stringCharLoad(jit, globalData);
     charToString(jit, globalData, SpecializedThunkJIT::regT0, SpecializedThunkJIT::regT0, SpecializedThunkJIT::regT1);
     jit.returnJSCell(SpecializedThunkJIT::regT0);
     return jit.finalize(*globalData, globalData->jitStubs->ctiNativeCall(), "charAt");

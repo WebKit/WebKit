@@ -226,9 +226,6 @@ SpeculatedType speculationFromClassInfo(const ClassInfo* classInfo)
     if (classInfo == &JSArray::s_info)
         return SpecArray;
     
-    if (classInfo == &JSString::s_info)
-        return SpecString;
-    
     if (classInfo == &Arguments::s_info)
         return SpecArguments; // Cannot distinguish between MyArguments and ForeignArguments at this stage. That happens in the flow analysis.
     
@@ -269,6 +266,8 @@ SpeculatedType speculationFromClassInfo(const ClassInfo* classInfo)
 
 SpeculatedType speculationFromStructure(Structure* structure)
 {
+    if (structure->typeInfo().type() == StringType)
+        return SpecString;
     return speculationFromClassInfo(structure->classInfo());
 }
 

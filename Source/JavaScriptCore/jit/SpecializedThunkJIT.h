@@ -55,10 +55,10 @@ namespace JSC {
             m_failures.append(emitLoadJSCell(src, dst));
         }
         
-        void loadJSStringArgument(int argument, RegisterID dst)
+        void loadJSStringArgument(JSGlobalData& globalData, int argument, RegisterID dst)
         {
             loadCellArgument(argument, dst);
-            m_failures.append(branchPtr(NotEqual, Address(dst, JSCell::classInfoOffset()), TrustedImmPtr(&JSString::s_info)));
+            m_failures.append(branchPtr(NotEqual, Address(dst, JSCell::structureOffset()), TrustedImmPtr(globalData.stringStructure.get())));
         }
         
         void loadInt32Argument(int argument, RegisterID dst, Jump& failTarget)
