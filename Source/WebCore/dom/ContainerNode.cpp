@@ -593,10 +593,8 @@ void ContainerNode::parserAddChild(PassRefPtr<Node> newChild)
     
     allowEventDispatch();
 
-    // FIXME: Why doesn't this use notify(newChild.get()) instead?
-    if (inDocument())
-        ChildNodeInsertionNotifier(this).notifyInsertedIntoDocument(newChild.get());
     childrenChanged(true, last, 0, 1);
+    ChildNodeInsertionNotifier(this).notify(newChild.get());
 }
 
 void ContainerNode::suspendPostAttachCallbacks()
