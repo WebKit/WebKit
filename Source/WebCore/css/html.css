@@ -435,6 +435,7 @@ input[type="search"] {
 input::-webkit-textfield-decoration-container {
     display: -webkit-box;
     -webkit-box-align: center;
+    -webkit-user-modify: read-only !important;
 }
 
 input[type="search"]::-webkit-textfield-decoration-container {
@@ -445,24 +446,28 @@ input[type="search"]::-webkit-search-cancel-button {
     -webkit-appearance: searchfield-cancel-button;
     display: block;
     -webkit-box-flex: 0;
+    -webkit-user-modify: read-only !important;
 }
 
 input[type="search"]::-webkit-search-decoration {
     -webkit-appearance: searchfield-decoration;
     display: block;
     -webkit-box-flex: 0;
+    -webkit-user-modify: read-only !important;
 }
 
 input[type="search"]::-webkit-search-results-decoration {
     -webkit-appearance: searchfield-results-decoration;
     display: block;
     -webkit-box-flex: 0;
+    -webkit-user-modify: read-only !important;
 }
 
 input[type="search"]::-webkit-search-results-button {
     -webkit-appearance: searchfield-results-button;
     display: block;
     -webkit-box-flex: 0;
+    -webkit-user-modify: read-only !important;
 }
 
 #if defined(ENABLE_DATALIST_ELEMENT) && ENABLE_DATALIST_ELEMENT
@@ -548,6 +553,7 @@ input::-webkit-inner-spin-button {
     vertical-align: top;
     -webkit-box-flex: 0;
     -webkit-user-select: none;
+    -webkit-user-modify: read-only !important;
 }
 
 #if defined(ENABLE_INPUT_SPEECH) && ENABLE_INPUT_SPEECH
@@ -556,6 +562,7 @@ input::-webkit-input-speech-button {
     display: block;
     vertical-align: top;
     -webkit-box-flex: 0;
+    -webkit-user-modify: read-only !important;
 }
 #endif
 
@@ -592,6 +599,7 @@ input::-webkit-input-placeholder, isindex::-webkit-input-placeholder {
     white-space: pre;
     word-wrap: normal;
     overflow: hidden;
+    -webkit-user-modify: read-only !important;
 }
 
 input[type="password"] {
@@ -631,6 +639,7 @@ input[type="button"], input[type="submit"], input[type="reset"] {
 
 input[type="file"]::-webkit-file-upload-button {
     -webkit-appearance: push-button;
+    -webkit-user-modify: read-only !important;
     white-space: nowrap;
     margin: 0;
     font-size: inherit;
@@ -659,6 +668,7 @@ input[type="range"]::-webkit-slider-container, input[type="range"]::-webkit-medi
     -webkit-box-align: center;
     -webkit-box-orient: horizontal; /* This property is updated by C++ code. */
     -webkit-box-sizing: border-box;
+    -webkit-user-modify: read-only !important;
     display: -webkit-box;
     height: 100%;
     width: 100%;
@@ -667,12 +677,14 @@ input[type="range"]::-webkit-slider-container, input[type="range"]::-webkit-medi
 input[type="range"]::-webkit-slider-runnable-track {
     -webkit-box-flex: 1;
     -webkit-box-sizing: border-box;
+    -webkit-user-modify: read-only !important;
     display: block;
 }
 
 input[type="range"]::-webkit-slider-thumb, input[type="range"]::-webkit-media-slider-thumb {
     -webkit-appearance: sliderthumb-horizontal;
     -webkit-box-sizing: border-box;
+    -webkit-user-modify: read-only !important;
     display: block;
     position: relative;
 }
@@ -717,6 +729,7 @@ input[type="color"]::-webkit-color-swatch-wrapper {
     display:-webkit-box;
     padding: 4px 2px;
     -webkit-box-sizing: border-box;
+    -webkit-user-modify: read-only !important;
     width: 100%;
     height: 100%
 }
@@ -725,6 +738,7 @@ input[type="color"]::-webkit-color-swatch {
     background-color: #000000;
     border: 1px solid #777777;
     -webkit-box-flex: 1;
+    -webkit-user-modify: read-only !important;
 }
 
 #if defined(ENABLE_DATALIST_ELEMENT) && ENABLE_DATALIST_ELEMENT
@@ -753,6 +767,7 @@ input::-webkit-calendar-picker-indicator {
     width: 0.66em;
     height: 0.66em;
     padding: 0.17em 0.34em;
+    -webkit-user-modify: read-only !important;
 }
 
 input::-webkit-calendar-picker-indicator:hover {

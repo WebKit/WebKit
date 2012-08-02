@@ -1,3 +1,13 @@
+2012-08-01  Shinya Kawanaka  <shinyak@chromium.org>
+
+        The elements in Shadow DOM of input should not be modifiable.
+        https://bugs.webkit.org/show_bug.cgi?id=92200
+
+        Reviewed by Kent Tamura.
+
+        * fast/forms/input-user-modify-expected.txt: Added.
+        * fast/forms/input-user-modify.html: Added.
+
 2012-08-01  Filip Pizlo  <fpizlo@apple.com>
 
         DFG should hoist structure checks
