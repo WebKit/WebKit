@@ -415,6 +415,11 @@ void ScrollingCoordinator::setWheelEventHandlerCount(unsigned wheelEventHandlerC
 
 void ScrollingCoordinator::setShouldUpdateScrollLayerPositionOnMainThread(bool shouldUpdateScrollLayerPositionOnMainThread)
 {
+    // The FrameView's GraphicsLayer is likely to be out-of-synch with the PlatformLayer
+    // at this point. So we'll update it before we switch back to main thread scrolling
+    // in order to avoid layer positioning bugs.
+    if (shouldUpdateScrollLayerPositionOnMainThread)
+        updateMainFrameScrollPositionAndScrollLayerPosition();
     m_scrollingTreeState->setShouldUpdateScrollLayerPositionOnMainThread(shouldUpdateScrollLayerPositionOnMainThread);
     scheduleTreeStateCommit();
 }

@@ -1,3 +1,24 @@
+2012-08-02  Beth Dakin  <bdakin@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=93020
+        REGRESSION (tiled scrolling): Full-screen video is broken if page is 
+        scrolled
+        -and corresponding-
+        <rdar://problem/11629778>
+
+        Reviewed by Anders Carlsson.
+
+        The bug here is that ScrollingTreeNodeMac::setScrollLayerPosition() 
+        uses the CALayer (PlatformLayer) directly to set the position. That 
+        means that the GraphicsLayer that owns that PlatformLayer does not 
+        have updated position information. That results in this bug when we 
+        switch from fast scrolling to main thread scrolling, because at that 
+        point, the GraphicsLayer needs to have the correct information. So 
+        make sure to update the main thread scroll position and layer 
+        position before transitioning to main thread scrolling.
+        * page/scrolling/ScrollingCoordinator.cpp:
+        (WebCore::ScrollingCoordinator::setShouldUpdateScrollLayerPositionOnMainThread):
+
 2012-08-02  Addy Osmani  <addyo@chromium.org>
 
         Web Inspector: Rename 'User agent' to 'Overrides' in settings screen
