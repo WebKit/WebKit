@@ -97,19 +97,16 @@ PassRefPtr<RTCPeerConnection> RTCPeerConnection::create(ScriptExecutionContext* 
         return 0;
 
     RefPtr<RTCPeerConnection> peerConnection = adoptRef(new RTCPeerConnection(context, configuration.release(), ec));
-    peerConnection->suspendIfNeeded();
     if (ec)
         return 0;
 
+    peerConnection->suspendIfNeeded();
     return peerConnection.release();
 }
 
 RTCPeerConnection::RTCPeerConnection(ScriptExecutionContext* context, PassRefPtr<RTCConfiguration>, ExceptionCode& ec)
     : ActiveDOMObject(context, this)
 {
-    m_peerHandler = RTCPeerConnectionHandler::create(this);
-    if (!m_peerHandler || !m_peerHandler->initialize())
-        ec = NOT_SUPPORTED_ERR;
 }
 
 RTCPeerConnection::~RTCPeerConnection()

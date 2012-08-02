@@ -37,14 +37,12 @@
 #include "Dictionary.h"
 #include "EventTarget.h"
 #include "ExceptionBase.h"
-#include "RTCPeerConnectionHandler.h"
-#include "RTCPeerConnectionHandlerClient.h"
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
 class RTCConfiguration;
 
-class RTCPeerConnection : public RefCounted<RTCPeerConnection>, public RTCPeerConnectionHandlerClient, public EventTarget, public ActiveDOMObject {
+class RTCPeerConnection : public RefCounted<RTCPeerConnection>, public EventTarget, public ActiveDOMObject {
 public:
     static PassRefPtr<RTCPeerConnection> create(ScriptExecutionContext*, const Dictionary& rtcConfiguration, const Dictionary& mediaConstraints, ExceptionCode&);
     ~RTCPeerConnection();
@@ -70,8 +68,6 @@ private:
     virtual void refEventTarget() { ref(); }
     virtual void derefEventTarget() { deref(); }
     EventTargetData m_eventTargetData;
-
-    OwnPtr<RTCPeerConnectionHandler> m_peerHandler;
 };
 
 } // namespace WebCore

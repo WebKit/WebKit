@@ -1,3 +1,25 @@
+2012-08-02  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r124439.
+        http://trac.webkit.org/changeset/124439
+        https://bugs.webkit.org/show_bug.cgi?id=92980
+
+        Broke Chromium Mac Release compile (Requested by apavlov on
+        #webkit).
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Modules/mediastream/RTCPeerConnection.cpp:
+        (WebCore::RTCPeerConnection::create):
+        (WebCore::RTCPeerConnection::RTCPeerConnection):
+        * Modules/mediastream/RTCPeerConnection.h:
+        * WebCore.gypi:
+        * platform/mediastream/RTCPeerConnectionHandler.cpp: Removed.
+        * platform/mediastream/RTCPeerConnectionHandler.h: Removed.
+        * platform/mediastream/RTCPeerConnectionHandlerClient.h: Removed.
+        * platform/mediastream/chromium/RTCPeerConnectionHandlerChromium.cpp: Removed.
+        * platform/mediastream/chromium/RTCPeerConnectionHandlerChromium.h: Removed.
+
 2012-08-02  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] Uninitialized memory read in QObject runtime bridge

@@ -58,15 +58,15 @@ class WebMessagePortChannel;
 class WebMimeRegistry;
 class WebPeerConnection00Handler;
 class WebPeerConnection00HandlerClient;
-class WebRTCPeerConnectionHandler;
-class WebRTCPeerConnectionHandlerClient;
+class WebPeerConnectionHandler;
+class WebPeerConnectionHandlerClient;
+class WebURL;
+class WebURLLoader;
 class WebSandboxSupport;
 class WebSocketStreamHandle;
 class WebStorageNamespace;
 class WebThemeEngine;
 class WebThread;
-class WebURL;
-class WebURLLoader;
 class WebWorkerRunLoop;
 struct WebLocalizedString;
 
@@ -414,14 +414,14 @@ public:
     // WebRTC ----------------------------------------------------------
 
     // DEPRECATED
+    // Creates an WebPeerConnectionHandler for DeprecatedPeerConnection.
+    // May return null if WebRTC functionality is not avaliable or out of resources.
+    virtual WebPeerConnectionHandler* createPeerConnectionHandler(WebPeerConnectionHandlerClient*) { return 0; }
+
     // Creates an WebPeerConnection00Handler for PeerConnection00.
     // This is an highly experimental feature not yet in the WebRTC standard.
     // May return null if WebRTC functionality is not avaliable or out of resources.
     virtual WebPeerConnection00Handler* createPeerConnection00Handler(WebPeerConnection00HandlerClient*) { return 0; }
-
-    // Creates an WebRTCPeerConnectionHandler for RTCPeerConnection.
-    // May return null if WebRTC functionality is not avaliable or out of resources.
-    virtual WebRTCPeerConnectionHandler* createRTCPeerConnectionHandler(WebRTCPeerConnectionHandlerClient*) { return 0; }
 
     // May return null if WebRTC functionality is not avaliable or out of resources.
     virtual WebMediaStreamCenter* createMediaStreamCenter(WebMediaStreamCenterClient*) { return 0; }

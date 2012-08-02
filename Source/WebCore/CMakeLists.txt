@@ -1892,7 +1892,6 @@ SET(WebCore_SOURCES
     platform/mediastream/MediaHints.cpp
     platform/mediastream/MediaStreamCenter.cpp
     platform/mediastream/PeerConnection00Handler.cpp
-    platform/mediastream/RTCPeerConnectionHandler.cpp
     platform/mediastream/SessionDescriptionDescriptor.cpp
 
     platform/mock/DeviceMotionClientMock.cpp

@@ -107,8 +107,6 @@
             'chromium/public/WebPrivateOwnPtr.h',
             'chromium/public/WebPrivatePtr.h',
             'chromium/public/WebRTCConfiguration.h',
-            'chromium/public/WebRTCPeerConnectionHandler.h',
-            'chromium/public/WebRTCPeerConnectionHandlerClient.h',
             'chromium/public/WebRect.h',
             'chromium/public/WebReferrerPolicy.h',
             'chromium/public/WebRenderingStats.h',
