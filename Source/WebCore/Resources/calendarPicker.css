@@ -82,9 +82,47 @@ body {
 }
 
 .month-selector-popup {
+    -webkit-box-sizing: border-box;
+    -webkit-box-shadow:
+        0 0 0 1px rgba(0,0,0,0.1),
+        0 5px 1px 1px rgba(0,0,0,0.1),
+        0 5px 2px 1px rgba(0,0,0,0.1),
+        0 5px 12px 1px rgba(0,0,0,0.5);
+    background: #fff;
     display: none;
-    outline: none;
-    z-index: 2;
+    max-height: 10.8em;
+    overflow-y: auto;
+    position: absolute;
+    white-space: nowrap;
+}
+
+.month-selector-popup-contents {
+    display: table;
+}
+
+.month-selector-popup-entry {
+    -webkit-padding-start: 5px;
+    -webkit-padding-end: 5px;
+    cursor: pointer;
+    display; table-row;
+    line-height: 1.2em;
+}
+
+.selected-month-year {
+    background-color: highlight;
+    color: highlighttext;
+    text-shadow: none;
+}
+
+@media (pointer:coarse) {
+
+    .month-selector-popup {
+        max-height: 150px;
+    }
+
+    .month-selector-popup-entry {
+        line-height: 30px;
+    }
 }
 
 .month-selector-wall {

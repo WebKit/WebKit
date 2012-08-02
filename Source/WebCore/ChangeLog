@@ -1,3 +1,35 @@
+2012-08-02  Kevin Ellis  <kevers@chromium.org>
+
+        Month-year selector on calendar picker should be touch friendly.
+        https://bugs.webkit.org/show_bug.cgi?id=92678
+
+        Reviewed by Kent Tamura.
+
+        Previously the month-year popup menu was implemented using a listbox,
+        which does not support CSS customization.  Entries in the listbox
+        were too shallow to reliably target with touch gestures.  The
+        replacement popup is CSS configurable with larger entries on devices
+        that support touch input.
+
+        Manually tested with and without touch support in English, Japanese
+        and Arabic.
+
+        * Resources/calendarPicker.css:
+        (.month-selector-popup): Update to use scrollable div instead of listbox.
+        (.month-selector-popup-contents): Render popup as a table within a scrollable div.
+        (.month-selector-popup-entry): Formatting entries in the month-year popup.
+        (.selected-month-year): Highlight the selected month-year.
+        (@media (pointer:coarse)): Enlarge entries in the popup meu on devices that support touch.
+        * Resources/calendarPicker.js:
+        (YearMonthController.prototype.attachTo): Change selector popup from a list-box to a div.
+        (YearMonthController.prototype._redraw): Populate table based popup rather than listbox.
+        (YearMonthController.prototype._showPopup): Set scroll position and resize for scrollbar.
+        (YearMonthController.prototype._closePopup): Restore focus to the calendar.
+        (YearMonthController.prototype._getSelection): Added to retrieve the selected month-year.
+        (YearMonthController.prototype._handleMouseMove): Added to update selected month-year on hover.
+        (YearMonthController.prototype._handleMonthPopupKey): Add keyboard navigation.
+        (YearMonthController.prototype._handleYearMonthChange): Retrieve value from selected month-year.
+
 2012-08-02  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: [Regression] context menu does not open on Sources panel tabs on mac
