@@ -1460,6 +1460,7 @@ loader/navigation-while-deferring-loads.html
 http/tests/security/isolatedWorld/cross-origin-xhr.html
 
 # ENABLE(WEBGL) is disabled
+compositing/backface-visibility/backface-visibility-webgl.html
 compositing/visibility/visibility-simple-webgl-layer.html
 compositing/webgl
 fast/canvas/webgl

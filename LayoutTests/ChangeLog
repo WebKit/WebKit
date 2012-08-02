@@ -1,3 +1,14 @@
+2012-08-02  Roger Fong  <roger_fong@apple.com>
+
+        Layout Test: compositing/backface-visibility/backface-visibility-webgl.html is not supported on Windows.
+        No WebGL support.
+        https://bugs.webkit.org/show_bug.cgi?id=92929
+
+        Reviewed by Tim Horton.
+
+        * platform/win/Skipped:
+        compositing/backface-visibility/backface-visibility-webgl.html added to Windows skip list.
+        
 2012-08-02  Dinu Jacob  <dinu.jacob@nokia.com>
 
         WebKitTestRunner needs layoutTestController.setUserStyleSheetEnabled
