@@ -1433,7 +1433,7 @@ EncodedJSValue QtRuntimeMetaMethod::call(ExecState* exec)
             if (QMetaObject::metacall(obj, QMetaObject::InvokeMetaMethod, methodIndex, qargs) >= 0)
                 return JSValue::encode(jsUndefined());
 
-            if (vargs[0].isValid())
+            if (vargs.size() > 0 && vargs[0].isValid())
                 return JSValue::encode(convertQVariantToValue(exec, d->m_instance->rootObject(), vargs[0]));
         }
 
