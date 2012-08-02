@@ -1,3 +1,20 @@
+2012-08-02  Adrienne Walker  <enne@google.com>
+
+        [chromium] Remove dependency on Scrollbar.h from ScrollbarLayerChromium
+        https://bugs.webkit.org/show_bug.cgi?id=93024
+
+        Reviewed by James Robinson.
+
+        Change part enum from the Scrollbar version to WebScrollbar's.
+
+        Tested by composited layout tests.
+
+        * platform/graphics/chromium/ScrollbarLayerChromium.cpp:
+        (WebCore::ScrollbarBackgroundPainter::create):
+        (WebCore::ScrollbarBackgroundPainter::ScrollbarBackgroundPainter):
+        (ScrollbarBackgroundPainter):
+        (WebCore::ScrollbarLayerChromium::createTextureUpdaterIfNeeded):
+
 2012-08-02  Adam Barth  <abarth@webkit.org>
 
         BindingSecurityBase serves no purpose and should be removed
