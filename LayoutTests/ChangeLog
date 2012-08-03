@@ -1,3 +1,12 @@
+2012-08-03  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
+
+        [EFL] Gardening of failing tests
+        https://bugs.webkit.org/show_bug.cgi?id=93098
+
+        Unreviewed EFL gardening. Add failing tests to the Test Expectations.
+
+        * platform/efl/TestExpectations:
+
 2012-08-03  Keishi Hattori  <keishi@webkit.org>
 
         ColorSuggestionPicker popup's height doesn't get smaller than 100 px

@@ -153,9 +153,14 @@ BUGWK84635 SKIP : fast/dom/HTMLDialogElement = TEXT
 // Subpixel layout is not enabled.
 BUGWK85532 SKIP : fast/sub-pixel = MISSING
 
+// DeviceOrientation support is not enabled by default.
+BUGWKEFL SKIP : inspector/device-orientation-success.html = TEXT
+
 //////////////////////////////////////////////////////////////////////////////////////////
 // CRASHES
 //////////////////////////////////////////////////////////////////////////////////////////
+
+BUGWK93096 : webintents/web-intents-obj-constructor.html = CRASH
 
 //////////////////////////////////////////////////////////////////////////////////////////
 // FLAKY TESTS
@@ -510,8 +515,6 @@ BUGWK72363 : fast/dom/Window/window-postmessage-arrays.html = TEXT
 // Expando properties on attribute nodes disappear
 BUGWK88045 : fast/dom/gc-attribute-node.html = TEXT
 
-BUGWK84037 : fast/text/international/spaces-combined-in-vertical-text.html = TEXT
-
 // Requires WebP support.
 BUGWKEFL SKIP : fast/canvas/canvas-toDataURL-webp.html = PASS
 BUGWKEFL SKIP : fast/images/webp-image-decoding.html = PASS
@@ -826,3 +829,24 @@ BUGWK92958 : css3/flexbox/content-height-with-scrollbars.html = IMAGE
 
 // This test is failing after being added at r124371
 BUGWK92956 : http/tests/security/contentSecurityPolicy/object-src-url-blocked.html = TEXT
+
+// This test is failing after being added at r124549
+BUGWK93074 : fast/forms/datalist/range-snap-to-datalist.html = TEXT
+
+// These tests are failing after r124512
+BUGWK93073 : mathml/presentation/attributes.xhtml = TEXT
+BUGWK93073 : mathml/presentation/fenced-mi.xhtml = TEXT
+BUGWK93073 : mathml/presentation/fenced.xhtml = TEXT
+BUGWK93073 : mathml/presentation/fractions-vertical-alignment.xhtml = TEXT
+BUGWK93073 : mathml/presentation/fractions.xhtml = TEXT
+BUGWK93073 : mathml/presentation/mo-stretch.html = TEXT
+BUGWK93073 : mathml/presentation/mroot-pref-width.html = TEXT
+BUGWK93073 : mathml/presentation/roots.xhtml = TEXT
+BUGWK93073 : mathml/presentation/row-alignment.xhtml = TEXT
+BUGWK93073 : mathml/presentation/sub.xhtml = TEXT
+BUGWK93073 : mathml/presentation/subsup.xhtml = TEXT
+BUGWK93073 : mathml/presentation/sup.xhtml = TEXT
+BUGWK93073 : mathml/presentation/tables.xhtml = TEXT
+BUGWK93073 : mathml/presentation/tokenElements.xhtml = TEXT
+BUGWK93073 : mathml/presentation/under.xhtml = TEXT
+BUGWK93073 : mathml/presentation/underover.xhtml = TEXT
