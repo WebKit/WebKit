@@ -349,9 +349,6 @@ BUGWK84589 : http/tests/security/cross-frame-access-get.html = TEXT
 // Issue with timing for suspend/resumeAnimations()?
 BUGWK84592 : animations/stop-animation-on-suspend.html = TEXT
 
-// Animation API not available.
-BUGWK84593 : animations/animation-api-1.html = TEXT
-
 // IndexedDB is not yet enabled.
 BUGWKEFL SKIP : storage/indexeddb = PASS
 BUGWKEFL SKIP : http/tests/inspector/indexeddb = PASS

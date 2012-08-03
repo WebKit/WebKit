@@ -1,3 +1,15 @@
+2012-08-03  Joone Hur  <joone.hur@intel.com>
+
+        [EFL][DRT] WebKitAnimation API compile-time disabled
+        https://bugs.webkit.org/show_bug.cgi?id=84593
+
+        Reviewed by Laszlo Gombos.
+
+        Enable ENABLE_ANIMATION_API by default on the Efl port.
+
+        * Source/cmake/OptionsEfl.cmake:
+        * Source/cmakeconfig.h.cmake:
+
 2012-08-02  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed attempt at fixing the GTK 64-bit debug build.

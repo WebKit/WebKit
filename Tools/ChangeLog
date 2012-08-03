@@ -1,3 +1,14 @@
+2012-08-03  Joone Hur  <joone.hur@intel.com>
+
+        [EFL][DRT] WebKitAnimation API compile-time disabled
+        https://bugs.webkit.org/show_bug.cgi?id=84593
+
+        Reviewed by Laszlo Gombos.
+
+        Enable ENABLE_ANIMATION_API by default on the Efl port.
+
+        * Scripts/webkitperl/FeatureList.pm:
+
 2012-08-03  Balazs Kelemen  <kbalazs@webkit.org>
 
         WTR should be able to load external resources

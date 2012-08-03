@@ -1,3 +1,15 @@
+2012-08-03  Joone Hur  <joone.hur@intel.com>
+
+        [EFL][DRT] WebKitAnimation API compile-time disabled
+        https://bugs.webkit.org/show_bug.cgi?id=84593
+
+        Reviewed by Laszlo Gombos.
+
+        Removing animations/animation-api-1.html from TestExpectations 
+        by enabling ENABLE_ANIMATION_API.
+
+        * platform/efl/TestExpectations:
+
 2012-08-02  Abhishek Arya  <inferno@chromium.org>
 
         Crash due to layer not removed from parent for anonymous block.
