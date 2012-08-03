@@ -89,9 +89,9 @@ Frame* currentFrame(BindingState*)
     return V8Proxy::retrieveFrame(context);
 }
 
-void immediatelyReportUnsafeAccessTo(BindingState*, Document* targetDocument)
+void immediatelyReportUnsafeAccessTo(BindingState*, Frame* target)
 {
-    V8Proxy::reportUnsafeAccessTo(targetDocument);
+    V8Proxy::reportUnsafeAccessTo(target);
 }
 
 }

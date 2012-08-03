@@ -152,7 +152,7 @@ static void reportUnsafeJavaScriptAccess(v8::Local<v8::Object> host, v8::AccessT
 {
     Frame* target = getTargetFrame(host, data);
     if (target)
-        V8Proxy::reportUnsafeAccessTo(target->document());
+        V8Proxy::reportUnsafeAccessTo(target);
 }
 
 PassRefPtr<V8DOMWindowShell> V8DOMWindowShell::create(Frame* frame)
