@@ -1,3 +1,15 @@
+2012-08-03  George Staikos  <staikos@webkit.org>
+
+        [BlackBerry] Add a null check for media implementation to fix a crash.
+        https://bugs.webkit.org/show_bug.cgi?id=93107
+
+        Reviewed by Rob Buis.
+
+        Fixes media/video-size.html.
+
+        * platform/blackberry/RenderThemeBlackBerry.cpp:
+        (WebCore::RenderThemeBlackBerry::paintMediaSliderTrack): Add null check.
+
 2012-08-03  Yury Semikhatsky  <yurys@chromium.org>
 
         Unreviewed. Fixed WinCE compilation after r124589.

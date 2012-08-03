@@ -899,7 +899,7 @@ bool RenderThemeBlackBerry::paintMediaSliderTrack(RenderObject* object, const Pa
     // FIXME: replace loaded with commented out one when buffer bug is fixed (see comment in
     // MediaPlayerPrivateMMrenderer::percentLoaded).
     // loaded = mediaElement->percentLoaded();
-    if (mediaElement->player())
+    if (mediaElement->player() && mediaElement->player()->implementation())
         loaded = static_cast<MediaPlayerPrivate *>(mediaElement->player()->implementation())->percentLoaded();
     float position = mediaElement->duration() > 0 ? (mediaElement->currentTime() / mediaElement->duration()) : 0;
 
