@@ -1,3 +1,16 @@
+2012-08-02  Roger Fong  <roger_fong@apple.com>
+
+        Layout Test: fast/css/image-orientation/image-orientation needs to be added to skip list for Windows.
+        https://bugs.webkit.org/show_bug.cgi?id=93053
+
+        Reviewed by Tim Horton.
+
+        The feature has not been completed yet. 
+        It has been added to all other platforms' skip lists (see https://bugs.webkit.org/show_bug.cgi?id=89624), except for Windows.
+        
+        * platform/win/Skipped:
+        Added fast/css/image-orientation/image-orientation to skip list.
+        
 2012-08-02  Keishi Hattori  <keishi@webkit.org>
 
         Slider should snap to datalist tick marks

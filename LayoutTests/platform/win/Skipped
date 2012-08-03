@@ -1956,3 +1956,6 @@ fast/text/shaping
 
 # ENABLE(WIDGET_REGION) is disabled
 fast/css/widget-region-parser.html
+
+# CSS image-orientation property not yet supported
+fast/css/image-orientation/
