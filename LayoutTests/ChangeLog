@@ -1,3 +1,17 @@
+2012-08-03  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Implement computePreferredLogicalWidths on RenderGrid
+        https://bugs.webkit.org/show_bug.cgi?id=92908
+
+        Reviewed by Ojan Vafai.
+
+        * fast/css-grid-layout/place-cell-by-index-expected.txt:
+        Updated the expected file (everything passes now).
+        * fast/css-grid-layout/place-cell-by-index.html:
+        Removed some FIXMEs and added one about the expected offsets making
+        a wrong assumption. It's fine to keep this testing until we support
+        this part of the spec.
+
 2012-08-03  Arnaud Renevier  <a.renevier@sisa.samsung.com>
 
         Update TypedArrays to throw RangeError or similar instead of INDEX_SIZE_ERR

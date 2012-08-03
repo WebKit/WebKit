@@ -107,6 +107,35 @@ void RenderGrid::layoutBlock(bool relayoutChildren, LayoutUnit)
     setNeedsLayout(false);
 }
 
+void RenderGrid::computePreferredLogicalWidths()
+{
+    ASSERT(preferredLogicalWidthsDirty());
+
+    m_minPreferredLogicalWidth = 0;
+    m_maxPreferredLogicalWidth = 0;
+
+    // FIXME: We don't take our own logical width into account.
+
+    const Vector<Length>& trackStyles = style()->gridColumns();
+
+    for (size_t i = 0; i < trackStyles.size(); ++i) {
+        Length trackLength = trackStyles[i];
+        if (!trackLength.isFixed()) {
+            notImplemented();
+            continue;
+        }
+
+        m_minPreferredLogicalWidth += trackLength.intValue();
+        m_maxPreferredLogicalWidth += trackLength.intValue();
+    }
+
+    // FIXME: We should account for min / max logical width.
+
+    // FIXME: Include borders and paddings in inline direction.
+
+    setPreferredLogicalWidthsDirty(false);
+}
+
 void RenderGrid::computedUsedBreadthOfGridTracks(TrackSizingDirection direction, Vector<GridTrack>& tracks)
 {
     const Vector<Length>& trackStyles = (direction == ForColumns) ? style()->gridColumns() : style()->gridRows();

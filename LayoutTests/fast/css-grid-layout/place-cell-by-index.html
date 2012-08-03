@@ -49,6 +49,8 @@ if (window.testRunner) {
 
 <p>Test some simple grid layouts by positioning grid items by index.</p>
 
+<!-- FIXME: The offsets assumes that grid-{column|row}-align are set to 'start', not 'stretch' (the default). Fix
+     them once we properly implement stretching / alignment. -->
 <div style="position: relative">
 <div class="grid" data-expected-width="110" data-expected-height="50">
     <div id="a" data-offset-x="0" data-offset-y="0"></div>
@@ -68,7 +70,6 @@ if (window.testRunner) {
 </div>
 
 <div style="position: relative">
-<!-- FIXME: The height of the grid is wrong because we need to implement computePreferredLogicalWidths(). -->
 <div class="grid" style="-webkit-writing-mode: vertical-rl; margin-bottom: 60px;" data-expected-width="50" data-expected-height="110">
     <div id="a" data-offset-x="40" data-offset-y="0"></div>
     <div id="b" data-offset-x="40" data-offset-y="50"></div>
@@ -78,7 +79,6 @@ if (window.testRunner) {
 </div>
 
 <div style="position: relative">
-<!-- FIXME: The height of the grid is wrong because we need to implement computePreferredLogicalWidths(). -->
 <div class="grid" style="-webkit-writing-mode: vertical-lr; margin-bottom: 60px;" data-expected-width="50" data-expected-height="110">
     <div id="a" data-offset-x="0" data-offset-y="0"></div>
     <div id="b" data-offset-x="0" data-offset-y="50"></div>

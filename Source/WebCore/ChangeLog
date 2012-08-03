@@ -1,3 +1,20 @@
+2012-08-03  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Implement computePreferredLogicalWidths on RenderGrid
+        https://bugs.webkit.org/show_bug.cgi?id=92908
+
+        Reviewed by Ojan Vafai.
+
+        This functions implements a primitive computePreferredLogicalWidths
+        so that we properly handle vertical writing modes.
+
+        Covered by fast/css-grid-layout/place-cell-by-index.html.
+
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::computePreferredLogicalWidths):
+        * rendering/RenderGrid.h:
+        Added computePreferredLogicalWidths.
+
 2012-08-03  Arnaud Renevier  <a.renevier@sisa.samsung.com>
 
         Update TypedArrays to throw RangeError or similar instead of INDEX_SIZE_ERR
