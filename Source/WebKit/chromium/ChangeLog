@@ -1,3 +1,16 @@
+2012-08-02  Alec Flett  <alecflett@chromium.org>
+
+        IndexedDB: remove leftover chromium stubs from putIndexWithKeys
+        https://bugs.webkit.org/show_bug.cgi?id=93032
+
+        Reviewed by Darin Fisher.
+
+        Remove old chromium APIs that are no longer called by chrome.
+
+        * public/WebIDBCursor.h:
+        * public/WebIDBObjectStore.h:
+        * public/WebIDBTransaction.h:
+
 2012-08-02  Antoine Labour  <piman@chromium.org>
 
         [chromium] add lost context test case for HW video decoder
