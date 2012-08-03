@@ -124,13 +124,12 @@ typedef HashMap<Node*, v8::Object*> DOMNodeMap;
 typedef HashMap<void*, v8::Object*> DOMObjectMap;
 typedef HashMap<int, v8::FunctionTemplate*> FunctionTemplateMap;
 
-void V8Proxy::reportUnsafeAccessTo(Frame* target)
+void V8Proxy::reportUnsafeAccessTo(Document* targetDocument)
 {
-    ASSERT(target);
-    Document* targetDocument = target->document();
     if (!targetDocument)
         return;
 
+    // FIXME: We should pass both the active and target documents in as arguments.
     Frame* source = firstFrame(BindingState::instance());
     if (!source)
         return;

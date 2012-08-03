@@ -224,8 +224,7 @@ namespace WebCore {
 
         static const V8Extensions& extensions();
 
-        // Report an unsafe attempt to access the given frame on the console.
-        static void reportUnsafeAccessTo(Frame* target);
+        static void reportUnsafeAccessTo(Document* targetDocument);
 
     private:
         void resetIsolatedWorlds();
