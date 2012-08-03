@@ -1996,6 +1996,10 @@ fast/dom/gc-attribute-node.html
 # https://bugs.webkit.org/show_bug.cgi?id=89656
 fast/forms/datalist/input-list.html
 
+# [Qt][EFL] new fast/forms/datalist/range-snap-to-datalist.html introduced in r124549 fails
+# https://bugs.webkit.org/show_bug.cgi?id=93074
+fast/forms/datalist/range-snap-to-datalist.html
+
 # [Qt] New fast/forms/number/number-validation-message.html introduced in r121019 fails.
 # https://bugs.webkit.org/show_bug.cgi?id=89760
 fast/forms/number/number-validation-message.html

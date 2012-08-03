@@ -1,3 +1,10 @@
+2012-08-03  János Badics  <jbadics@inf.u-szeged.hu>
+
+        [Qt] Unreviewed gardening after r124549. Skipped a newly added failing test.
+        https://bugs.webkit.org/show_bug.cgi?id=93074
+
+        * platform/qt/Skipped:
+
 2012-08-03  Alexander Pavlov  <apavlov@chromium.org>
 
         [Chromium] Unreviewed, skip appcache abort() tests.
