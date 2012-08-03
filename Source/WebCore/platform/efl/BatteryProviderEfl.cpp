@@ -152,12 +152,12 @@ void BatteryProviderEfl::setBatteryClient(void* data, void* replyData, DBusError
         dischargingTime = property->val.x;
     }
 
-    double level = property->val.d / 100;
     bool levelChanged = false;
-
     property = static_cast<E_Ukit_Property*>(eina_hash_find(eukitPropertyNames->properties, "Percentage"));
     if (!property)
         return;
+
+    double level = property->val.d / 100;
     if (!clientBatteryStatus || clientBatteryStatus->level() != level)
         levelChanged = true;
 
