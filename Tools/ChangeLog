@@ -1,3 +1,22 @@
+2012-08-03  Nico Weber  <thakis@chromium.org>
+
+        [chromium mac] DumpRenderTree compile fails with warning/error in LayoutTestHelper.mm with 10.7sdk
+        https://bugs.webkit.org/show_bug.cgi?id=92820
+
+        Reviewed by Jochen Eisinger.
+
+        When building with the 10.7 SDK, use newer functions to switch color
+        profiles. Note that these newer functions aren't available on 10.6,
+        but we don't intend to ship DRT to users, and no bots that currently
+        build with the 10.7 SDK ship their binaries to 10.6 testers.
+
+        The new code was copied from Apple's DRT/mac/LayoutTestHelper.m.
+
+        * DumpRenderTree/chromium/LayoutTestHelper.mm:
+        (installLayoutTestColorProfile):
+        (restoreUserColorProfile):
+        (saveCurrentColorProfile):
+
 2012-08-03  Benjamin Poulain  <benjamin@webkit.org>
 
         StringImpl created from literal should be BufferInternal
