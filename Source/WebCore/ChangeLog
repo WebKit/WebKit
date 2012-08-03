@@ -1,3 +1,28 @@
+2012-08-03  Kentaro Hara  <haraken@chromium.org>
+
+        [V8] Add an IsExecutionTerminating() check to setDOMException()
+        https://bugs.webkit.org/show_bug.cgi?id=93101
+
+        Reviewed by Adam Barth.
+
+        In preparation for moving exception related code from V8Proxy to V8Binding,
+        I am going to remove throwError(ExceptionCode, v8::Isolate*) from V8Proxy.
+        throwError(ExceptionCode, v8::Isolate*) will be replaced with
+        setDOMException(ExceptionCode, v8::Isolate*). By this refactoring,
+        the way to throw JavaScript errors and DOM exceptions becomes simple:
+        "Throw JavaScript errors by throwError(). Throw DOM exceptions by setDOMException()".
+        (Currently some DOM exceptions are being thrown by throwError().)
+
+        To keep the current behavior of throwError(ExceptionCode, v8::Isolate*),
+        before the replacement, we need to insert the IsExecutionTerminating()
+        check to setDOMException(). This will add an extra check to the current
+        setDOMException(), but I don't think it's a problem.
+
+        No tests. No change in behavior.
+
+        * bindings/v8/V8Proxy.cpp:
+        (WebCore::V8Proxy::setDOMException):
+
 2012-08-03  Sadrul Habib Chowdhury  <sadrul@chromium.org>
 
         Avoid dispatching gesture events of unknown types

@@ -546,7 +546,7 @@ static void DOMExceptionStackSetter(v8::Local<v8::String> name, v8::Local<v8::Va
 
 v8::Handle<v8::Value> V8Proxy::setDOMException(int ec, v8::Isolate* isolate)
 {
-    if (ec <= 0)
+    if (ec <= 0 || v8::V8::IsExecutionTerminating())
         return v8::Handle<v8::Value>();
 
     if (ec == NATIVE_TYPE_ERR) {
