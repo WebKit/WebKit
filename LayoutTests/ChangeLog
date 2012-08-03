@@ -1,5 +1,19 @@
 2012-08-02  Lucas Forschler  <lforschler@apple.com>
 
+    Merge 122188
+
+    2012-07-09  Kent Tamura  <tkent@chromium.org>
+
+            REGRESSION(r114862-r114886): Fix a crash by switching the input type to hidden.
+            https://bugs.webkit.org/show_bug.cgi?id=90774
+
+            Reviewed by Andreas Kling.
+
+            * fast/forms/hidden/change-type-to-hidden-after-updating-value.html: Added.
+            * fast/forms/hidden/change-type-to-hidden-after-updating-value-expected.txt: Added.
+
+2012-08-02  Lucas Forschler  <lforschler@apple.com>
+
     Merge 121388
 
     2012-06-27  Daniel Cheng  <dcheng@chromium.org>

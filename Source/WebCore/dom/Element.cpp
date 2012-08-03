@@ -692,8 +692,10 @@ inline void Element::setAttributeInternal(size_t index, const QualifiedName& nam
     else
         old->setValue(value);
 
-    if (inUpdateStyleAttribute == NotInUpdateStyleAttribute)
-        didModifyAttribute(old);
+    if (inUpdateStyleAttribute == NotInUpdateStyleAttribute) {
+        Attribute dummy(old->name(), old->value());
+        didModifyAttribute(&dummy);
+    }
 }
 
 void Element::attributeChanged(Attribute* attr)
