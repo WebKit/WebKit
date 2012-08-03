@@ -3409,7 +3409,7 @@ BUGWK90741 MAC : fast/text-autosizing/simple-paragraph.html = IMAGE
 BUGWK90743 : fast/events/display-none-on-focus-crash.html = PASS TEXT
 
 // Flaky
-BUGWK90746 : fast/multicol/column-span-parent-continuation-crash.html = PASS TIMEOUT
+BUGWK90746 : fast/multicol/column-span-parent-continuation-crash.html = PASS TIMEOUT CRASH
 
 // Flaky
 BUGWK90896 WIN DEBUG : fast/js/dfg-cross-global-object-inline-new-array-literal.html = PASS TEXT
