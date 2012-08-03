@@ -35,7 +35,11 @@
 #include <WebKit2/WKPagePrivate.h>
 #include <WebKit2/WKPreferencesPrivate.h>
 #include <WebKit2/WKRetainPtr.h>
+#include <algorithm>
 #include <cstdio>
+#include <ctype.h>
+#include <stdlib.h>
+#include <string>
 #include <wtf/PassOwnPtr.h>
 
 #if PLATFORM(MAC)
@@ -67,8 +71,7 @@ TestController& TestController::shared()
 }
 
 TestController::TestController(int argc, const char* argv[])
-    : m_dumpPixelsForAllTests(false)
-    , m_verbose(false)
+    : m_verbose(false)
     , m_printSeparators(false)
     , m_usingServerMode(false)
     , m_gcBetweenTests(false)
@@ -267,10 +270,6 @@ void TestController::initialize(int argc, const char* argv[])
             continue;
         }
 
-        if (argument == "--pixel-tests") {
-            m_dumpPixelsForAllTests = true;
-            continue;
-        }
         if (argument == "--verbose") {
             m_verbose = true;
             continue;
@@ -504,7 +503,89 @@ bool TestController::resetStateToConsistentValues()
     return m_doneResetting;
 }
 
-bool TestController::runTest(const char* test)
+struct TestCommand {
+    TestCommand() : shouldDumpPixels(false) { }
+
+    std::string pathOrURL;
+    bool shouldDumpPixels;
+    std::string expectedPixelHash;
+};
+
+class CommandTokenizer {
+public:
+    explicit CommandTokenizer(const std::string& input)
+        : m_input(input)
+        , m_posNextSeparator(0)
+    {
+        pump();
+    }
+
+    bool hasNext() const;
+    std::string next();
+
+private:
+    void pump();
+    static const char kSeparator = '\'';
+    const std::string& m_input;
+    std::string m_next;
+    size_t m_posNextSeparator;
+};
+
+void CommandTokenizer::pump()
+{
+    if (m_posNextSeparator == std::string::npos || m_posNextSeparator == m_input.size()) {
+        m_next = std::string();
+        return;
+    }
+    size_t start = m_posNextSeparator ? m_posNextSeparator + 1 : 0;
+    m_posNextSeparator = m_input.find(kSeparator, start);
+    size_t size = m_posNextSeparator == std::string::npos ? std::string::npos : m_posNextSeparator - start;
+    m_next = std::string(m_input, start, size);
+}
+
+std::string CommandTokenizer::next()
+{
+    ASSERT(hasNext());
+
+    std::string oldNext = m_next;
+    pump();
+    return oldNext;
+}
+
+bool CommandTokenizer::hasNext() const
+{
+    return !m_next.empty();
+}
+
+NO_RETURN static void die(const std::string& inputLine)
+{
+    fprintf(stderr, "Unexpected input line: %s\n", inputLine.c_str());
+    exit(1);
+}
+
+TestCommand parseInputLine(const std::string& inputLine)
+{
+    TestCommand result;
+    CommandTokenizer tokenizer(inputLine);
+    if (!tokenizer.hasNext())
+        die(inputLine);
+
+    result.pathOrURL = tokenizer.next();
+    if (!tokenizer.hasNext())
+        return result;
+
+    std::string arg = tokenizer.next();
+    if (arg != std::string("-p") && arg != std::string("--pixel-test"))
+        die(inputLine);
+    result.shouldDumpPixels = true;
+
+    if (tokenizer.hasNext())
+        result.expectedPixelHash = tokenizer.next();
+
+    return result;
+}
+
+bool TestController::runTest(const char* inputLine)
 {
     if (!resetStateToConsistentValues()) {
 #if PLATFORM(MAC)
@@ -517,32 +598,13 @@ bool TestController::runTest(const char* test)
         return false;
     }
 
-    bool dumpPixelsTest = m_dumpPixelsForAllTests;
-    std::string command(test);
-    std::string pathOrURL = command;
-    std::string expectedPixelHash;
-    size_t firstSeparatorPos = command.find_first_of('\'');
-    size_t secondSeparatorPos = command.find_first_of('\'', firstSeparatorPos + 1);
-    if (firstSeparatorPos != std::string::npos) {
-        pathOrURL = std::string(command, 0, firstSeparatorPos);
-        size_t pixelHashPos = firstSeparatorPos + 1;
-
-        // NRWT passes --pixel-test if we should dump pixels for the test.
-        const std::string expectedPixelTestArg("--pixel-test");
-        std::string argTest = std::string(command, firstSeparatorPos + 1, expectedPixelTestArg.size());
-        if (argTest == expectedPixelTestArg) {
-            dumpPixelsTest = true;
-            pixelHashPos = secondSeparatorPos == std::string::npos ? std::string::npos : secondSeparatorPos + 1;
-        }
-        if (pixelHashPos != std::string::npos && pixelHashPos < command.size())
-            expectedPixelHash = std::string(command, pixelHashPos);
-    }
+    TestCommand command = parseInputLine(std::string(inputLine));
 
     m_state = RunningTest;
 
-    m_currentInvocation = adoptPtr(new TestInvocation(pathOrURL));
-    if (dumpPixelsTest)
-        m_currentInvocation->setIsPixelTest(expectedPixelHash);
+    m_currentInvocation = adoptPtr(new TestInvocation(command.pathOrURL));
+    if (command.shouldDumpPixels)
+        m_currentInvocation->setIsPixelTest(command.expectedPixelHash);
 
     m_currentInvocation->invoke();
     m_currentInvocation.clear();

@@ -28,8 +28,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef AccessibilityUIElement_h
-#define AccessibilityUIElement_h
+#ifndef AccessibilityUIElementChromium_h
+#define AccessibilityUIElementChromium_h
 
 #include "CppBoundClass.h"
 #include "WebAccessibilityObject.h"
@@ -164,4 +164,4 @@ private:
     ElementList m_elements;
 };
 
-#endif // AccessibilityUIElement_h
+#endif // AccessibilityUIElementChromium_h

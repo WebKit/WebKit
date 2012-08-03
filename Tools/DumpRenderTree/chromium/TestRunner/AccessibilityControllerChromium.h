@@ -28,10 +28,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef AccessibilityController_h
-#define AccessibilityController_h
+#ifndef AccessibilityControllerChromium_h
+#define AccessibilityControllerChromium_h
 
-#include "AccessibilityUIElement.h"
+#include "AccessibilityUIElementChromium.h"
 #include "CppBoundClass.h"
 
 namespace WebKit {
@@ -81,4 +81,4 @@ private:
     WebKit::WebView* m_webView;
 };
 
-#endif // AccessibilityController_h
+#endif // AccessibilityControllerChromium_h

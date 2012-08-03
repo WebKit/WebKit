@@ -563,6 +563,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\DumpRenderTreeCommon.cpp"
+			>
+		</File>
+		<File
 			RelativePath="..\DumpRenderTreePrefix.h"
 			>
 		</File>

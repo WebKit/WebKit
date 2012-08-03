@@ -66,11 +66,11 @@ void messageHandler(QtMsgType type, const char *message)
     // do nothing
 }
 
-// We only support -v or --pixel-tests or --stdout or --stderr or -, all the others will be 
+// We only support -v or --stdout or --stderr or -, all the others will be
 // pass as test case name (even -abc.html is a valid test case name)
 bool isOption(const QString& str)
 {
-    return str == QString("-v") || str == QString("--pixel-tests")
+    return str == QString("-v")
            || str == QString("--stdout") || str == QString("--stderr")
            || str == QString("--timeout") || str == QString("--no-timeout")
            || str == QString("-");
@@ -89,8 +89,8 @@ QString takeOptionValue(QStringList& arguments, int index)
 
 void printUsage()
 {
-    fprintf(stderr, "Usage: DumpRenderTree [-v|--pixel-tests] [--stdout output_filename] [-stderr error_filename] [--no-timeout] [--timeout timeout_MS] filename [filename2..n]\n");
-    fprintf(stderr, "Or folder containing test files: DumpRenderTree [-v|--pixel-tests] dirpath\n");
+    fprintf(stderr, "Usage: DumpRenderTree [-v] [--stdout output_filename] [-stderr error_filename] [--no-timeout] [--timeout timeout_MS] filename [filename2..n]\n");
+    fprintf(stderr, "Or folder containing test files: DumpRenderTree [-v] dirpath\n");
     fflush(stderr);
 }
 
@@ -158,13 +158,7 @@ int main(int argc, char* argv[])
 
     WebCore::DumpRenderTree dumper;
 
-    int index = args.indexOf(QLatin1String("--pixel-tests"));
-    if (index != -1) {
-        dumper.setDumpPixelsForAllTests(true);
-        args.removeAt(index);
-    }
-
-    index = args.indexOf(QLatin1String("--stdout"));
+    int index = args.indexOf(QLatin1String("--stdout"));
     if (index != -1) {
         QString fileName = takeOptionValue(args, index);
         dumper.setRedirectOutputFileName(fileName);

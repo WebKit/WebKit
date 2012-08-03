@@ -29,7 +29,7 @@
  */
 
 #include "config.h"
-#include "AccessibilityUIElement.h"
+#include "AccessibilityUIElementChromium.h"
 
 #include "WebAccessibilityObject.h"
 #include "platform/WebCString.h"

@@ -1,3 +1,128 @@
+2012-08-03  Balazs Kelemen  <kbalazs@webkit.org>
+
+        All ports should support per test switching of pixel testing
+        https://bugs.webkit.org/show_bug.cgi?id=92398
+
+        Reviewed by Dirk Pranke.
+
+        Teach all test drivers to accept a per test control of whether
+        to dump pixels. Drivers now accept a -p/--pixel-test argument
+        on the standart input that means that running the current
+        test as pixel test is allowed (even if the expected hash is
+        missing). Removed the --pixel-tests command line option since
+        there is no need for it anymore.
+
+        * DumpRenderTree/DumpRenderTree.gyp/DumpRenderTree.gyp:
+        * DumpRenderTree/DumpRenderTree.gypi:
+        * DumpRenderTree/DumpRenderTree.h:
+        (TestCommand::TestCommand):
+        (TestCommand):
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
+        * DumpRenderTree/DumpRenderTreeCommon.cpp: Added.
+        (CommandTokenizer):
+        (CommandTokenizer::CommandTokenizer):
+        (CommandTokenizer::pump):
+        (CommandTokenizer::next):
+        (CommandTokenizer::hasNext):
+        (die):
+        (parseInputLine):
+        Common logic to parse the input line from the standard input (or from the command line
+        in standalone mode). Made it somewhat general so we can easily add more arguments if
+        there is a need.
+
+        * DumpRenderTree/chromium/DumpRenderTree.cpp:
+        (runTest):
+        (main):
+
+        * DumpRenderTree/chromium/TestRunner/AccessibilityControllerChromium.cpp: Renamed from Tools/DumpRenderTree/chromium/TestRunner/AccessibilityController.cpp.
+        * DumpRenderTree/chromium/TestRunner/AccessibilityControllerChromium.h: Renamed from Tools/DumpRenderTree/chromium/TestRunner/AccessibilityController.h.
+        * DumpRenderTree/chromium/TestRunner/AccessibilityUIElementChromium.cpp: Renamed from Tools/DumpRenderTree/chromium/TestRunner/AccessibilityUIElement.cpp.
+        * DumpRenderTree/chromium/TestRunner/AccessibilityUIElementChromium.h: Renamed from Tools/DumpRenderTree/chromium/TestRunner/AccessibilityUIElement.h.
+        Renamed these files with a Chromium suffix because they were clashing with the common ones used by other ports after adding the root
+        DumpRenderTree directory to the include path.
+
+        * DumpRenderTree/chromium/TestRunner/TestInterfaces.cpp:
+        * DumpRenderTree/chromium/TestShell.cpp:
+        (TestShell::TestShell):
+        (TestShell::runFileTest):
+        (TestShell::dump):
+        * DumpRenderTree/chromium/TestShell.h:
+        (TestParams::TestParams):
+        (TestShell):
+        * DumpRenderTree/efl/CMakeLists.txt:
+        * DumpRenderTree/efl/DumpRenderTree.cpp:
+        (parseCommandLineOptions):
+        (runTest):
+        (shouldDumpPixelsAndCompareWithExpected):
+        (main):
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (initializeGlobalsFromCommandLineOptions):
+        (dump):
+        (runTest):
+        (main):
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (initializeGlobalsFromCommandLineOptions):
+        (dumpRenderTree):
+        (dump):
+        (runTest):
+        * DumpRenderTree/qt/DumpRenderTree.pro:
+        * DumpRenderTree/qt/DumpRenderTreeQt.cpp:
+        (WebCore::DumpRenderTree::DumpRenderTree):
+        (WebCore::DumpRenderTree::open):
+        (WebCore::DumpRenderTree::processLine):
+        (WebCore::DumpRenderTree::dump):
+        * DumpRenderTree/qt/DumpRenderTreeQt.h:
+        (DumpRenderTree):
+        * DumpRenderTree/qt/main.cpp:
+        (isOption):
+        (printUsage):
+        (main):
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (dump):
+        (runTest):
+        (dllLauncherEntryPoint):
+        * DumpRenderTree/win/DumpRenderTree.vcproj:
+        * DumpRenderTree/wscript:
+        * DumpRenderTree/wx/DumpRenderTreeWx.cpp:
+        (dump):
+        (runTest):
+        (MyApp::OnInit):
+        * GNUmakefile.am:
+
+        * Scripts/old-run-webkit-tests:
+        * Scripts/old-run-webkit-tests:
+        Pass --pixel-test before the hash.
+
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        (Port.should_run_as_pixel_test): Removed now that all ports supports it.
+        * Scripts/webkitpy/layout_tests/port/driver.py:
+        (Driver.cmd_line): Don't pass --pixel-tests anymore.
+        (Driver._command_from_driver_input):
+        * Scripts/webkitpy/layout_tests/port/qt.py:
+        (QtPort.should_run_as_pixel_test):
+        * Scripts/webkitpy/layout_tests/port/test.py:
+        (TestPort.should_run_as_pixel_test):
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::TestController):
+        (WTR::TestController::initialize):
+        (WTR::TestCommand::TestCommand):
+        (TestCommand):
+        (WTR):
+        (CommandTokenizer):
+        (WTR::CommandTokenizer::CommandTokenizer):
+        (WTR::CommandTokenizer::pump):
+        (WTR::CommandTokenizer::next):
+        (WTR::CommandTokenizer::hasNext):
+        (WTR::die):
+        (WTR::parseInputLine):
+        (WTR::TestController::runTest):
+        * WebKitTestRunner/TestController.h:
+        (TestController):
+        Duplicate the logic for parsing the command line because
+        unfortunately there is no way to share code between
+        WebKitTestRunner and DumpRenderTree.
+
 2012-08-03  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Web Inspector: clang plugin for checking native memory instrumentation coverage.

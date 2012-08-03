@@ -31,7 +31,7 @@
 #include "config.h"
 #include "TestInterfaces.h"
 
-#include "AccessibilityController.h"
+#include "AccessibilityControllerChromium.h"
 #include "EventSender.h"
 #include "GamepadController.h"
 #include "TextInputController.h"

@@ -184,6 +184,3 @@ class QtPort(Port):
             return False
         return result
 
-    def _supports_switching_pixel_tests_per_test(self):
-        return True
-

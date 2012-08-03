@@ -31,7 +31,7 @@
 #ifndef TestShell_h
 #define TestShell_h
 
-#include "AccessibilityController.h"
+#include "AccessibilityControllerChromium.h"
 #include "GamepadController.h"
 #include "LayoutTestController.h"
 #include "NotificationPresenter.h"
@@ -63,7 +63,6 @@ class WebPermissions;
 
 struct TestParams {
     bool dumpTree;
-    bool dumpPixels;
     bool debugRenderTree;
     bool debugLayerTree;
     bool printSeparators;
@@ -72,7 +71,6 @@ struct TestParams {
 
     TestParams()
         : dumpTree(true)
-        , dumpPixels(false)
         , debugRenderTree(false)
         , debugLayerTree(false)
         , printSeparators(false) { }
@@ -103,7 +101,7 @@ public:
     WebPermissions* webPermissions() { return m_webPermissions.get(); }
 
     void bindJSObjectsToWindow(WebKit::WebFrame*);
-    void runFileTest(const TestParams&);
+    void runFileTest(const TestParams&, bool shouldDumpPixelTests);
     void callJSGC();
     void resetTestController();
     void waitTestFinished();
@@ -224,6 +222,7 @@ private:
 #endif
 
     TestParams m_params;
+    bool m_dumpPixelsForCurrentTest;
     int m_timeout; // timeout value in millisecond
     bool m_allowExternalPages;
     bool m_acceleratedCompositingForVideoEnabled;

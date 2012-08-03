@@ -106,6 +106,7 @@ TestShell::TestShell()
     , m_testIsPreparing(false)
     , m_focusedWidget(0)
     , m_devTools(0)
+    , m_dumpPixelsForCurrentTest(false)
     , m_allowExternalPages(false)
     , m_acceleratedCompositingForVideoEnabled(false)
     , m_threadedCompositingEnabled(false)
@@ -232,12 +233,15 @@ void TestShell::resetWebSettings(WebView& webView)
     m_prefs.applyTo(&webView);
 }
 
-void TestShell::runFileTest(const TestParams& params)
+void TestShell::runFileTest(const TestParams& params, bool shouldDumpPixels)
 {
     ASSERT(params.testUrl.isValid());
+    m_dumpPixelsForCurrentTest = shouldDumpPixels;
     m_testIsPreparing = true;
     m_params = params;
     string testUrl = m_params.testUrl.spec();
+
+    m_layoutTestController->setShouldGeneratePixelResults(shouldDumpPixels);
 
     if (testUrl.find("loading/") != string::npos
         || testUrl.find("loading\\") != string::npos)
@@ -603,7 +607,7 @@ void TestShell::dump()
     if (dumpedAnything && m_params.printSeparators)
         m_printer.handleTextFooter();
 
-    if (m_params.dumpPixels && shouldGeneratePixelResults) {
+    if (m_dumpPixelsForCurrentTest && shouldGeneratePixelResults) {
         // Image output: we write the image data to the file given on the
         // command line (for the dump pixels argument), and the MD5 sum to
         // stdout.
