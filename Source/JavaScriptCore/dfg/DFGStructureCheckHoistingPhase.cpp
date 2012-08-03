@@ -307,6 +307,9 @@ public:
             for (unsigned indexInBlock = 0; indexInBlock < block->size(); ++indexInBlock) {
                 NodeIndex nodeIndex = block->at(indexInBlock);
                 Node& node = m_graph[nodeIndex];
+                // Be careful not to use 'node' after appending to the graph. In those switch
+                // cases where we need to append, we first carefully extract everything we need
+                // from the node, before doing any appending.
                 if (!node.shouldGenerate())
                     continue;
                 switch (node.op()) {
@@ -327,14 +330,16 @@ public:
                     
                     node.ref();
 
-                    Node getLocal(GetLocal, node.codeOrigin, OpInfo(variable), nodeIndex);
+                    CodeOrigin codeOrigin = node.codeOrigin;
+                    
+                    Node getLocal(GetLocal, codeOrigin, OpInfo(variable), nodeIndex);
                     getLocal.predict(variable->prediction());
                     getLocal.ref();
                     NodeIndex getLocalIndex = m_graph.size();
                     m_graph.append(getLocal);
                     insertionSet.append(indexInBlock + 1, getLocalIndex);
                     
-                    Node checkStructure(CheckStructure, node.codeOrigin, OpInfo(m_graph.addStructureSet(iter->second.m_structure)), getLocalIndex);
+                    Node checkStructure(CheckStructure, codeOrigin, OpInfo(m_graph.addStructureSet(iter->second.m_structure)), getLocalIndex);
                     checkStructure.ref();
                     NodeIndex checkStructureIndex = m_graph.size();
                     m_graph.append(checkStructure);
@@ -356,17 +361,22 @@ public:
                         break;
                     if (iter->second.m_isClobbered && !iter->second.m_structure->transitionWatchpointSetIsStillValid())
                         break;
+
                     // First insert a dead SetLocal to tell OSR that the child's value should
                     // be dropped into this bytecode variable if the CheckStructure decides
                     // to exit.
-                    Node setLocal(SetLocal, node.codeOrigin, OpInfo(variable), node.child1().index());
+                    
+                    CodeOrigin codeOrigin = node.codeOrigin;
+                    NodeIndex child1 = node.child1().index();
+                    
+                    Node setLocal(SetLocal, codeOrigin, OpInfo(variable), child1);
                     NodeIndex setLocalIndex = m_graph.size();
                     m_graph.append(setLocal);
                     insertionSet.append(indexInBlock, setLocalIndex);
-                    m_graph[node.child1()].ref();
+                    m_graph[child1].ref();
                     // Use a ForwardCheckStructure to indicate that we should exit to the
                     // next bytecode instruction rather than reexecuting the current one.
-                    Node checkStructure(ForwardCheckStructure, node.codeOrigin, OpInfo(m_graph.addStructureSet(iter->second.m_structure)), node.child1().index());
+                    Node checkStructure(ForwardCheckStructure, codeOrigin, OpInfo(m_graph.addStructureSet(iter->second.m_structure)), child1);
                     checkStructure.ref();
                     NodeIndex checkStructureIndex = m_graph.size();
                     m_graph.append(checkStructure);
