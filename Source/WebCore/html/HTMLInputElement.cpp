@@ -313,6 +313,13 @@ StepRange HTMLInputElement::createStepRange(AnyStepHandling anyStepHandling) con
     return m_inputType->createStepRange(anyStepHandling);
 }
 
+#if ENABLE(DATALIST_ELEMENT)
+Decimal HTMLInputElement::findClosestTickMarkValue(const Decimal& value)
+{
+    return m_inputType->findClosestTickMarkValue(value);
+}
+#endif
+
 void HTMLInputElement::stepUp(int n, ExceptionCode& ec)
 {
     m_inputType->stepUp(n, ec);

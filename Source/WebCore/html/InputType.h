@@ -281,6 +281,7 @@ public:
     virtual String defaultToolTip() const;
 #if ENABLE(DATALIST_ELEMENT)
     virtual void listAttributeTargetChanged();
+    virtual Decimal findClosestTickMarkValue(const Decimal&);
 #endif
 
     // Parses the specified string for the type, and return

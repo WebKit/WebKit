@@ -908,6 +908,12 @@ String InputType::defaultToolTip() const
 void InputType::listAttributeTargetChanged()
 {
 }
+
+Decimal InputType::findClosestTickMarkValue(const Decimal&)
+{
+    ASSERT_NOT_REACHED();
+    return Decimal::nan();
+}
 #endif
 
 bool InputType::supportsIndeterminateAppearance() const

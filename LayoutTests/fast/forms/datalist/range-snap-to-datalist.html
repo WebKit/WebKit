@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description">Tests if clicking close to a tick mark snaps to it.</p>
+<div id="console"></div>
+<input id="input" type=range min=0 max=1000 step=1 list=target style="width: 100px">
+<datalist id="target">
+    <option>500</option>
+</datalist>
+<script>
+var input = document.getElementById("input");
+function clickSlider(offsetLeft) {
+    var centerY = input.offsetTop + input.offsetHeight / 2;
+    eventSender.mouseMoveTo(input.offsetLeft + offsetLeft, centerY);
+    eventSender.mouseDown();
+    eventSender.mouseUp();
+}
+function resetSliderPosition() {
+    clickSlider(0);
+    shouldBe('input.value', '"0"');
+}
+resetSliderPosition();
+clickSlider(45);
+shouldBeTrue('parseInt(input.value, 10) < 500');
+resetSliderPosition();
+clickSlider(46);
+shouldBeTrue('parseInt(input.value, 10) < 500');
+resetSliderPosition();
+clickSlider(47);
+shouldBeTrue('parseInt(input.value, 10) < 500');
+resetSliderPosition();
+clickSlider(48);
+shouldBe('input.value', "'500'");
+resetSliderPosition();
+clickSlider(49);
+shouldBe('input.value', "'500'");
+resetSliderPosition();
+clickSlider(50);
+shouldBe('input.value', "'500'");
+resetSliderPosition();
+clickSlider(51);
+shouldBe('input.value', "'500'");
+resetSliderPosition();
+clickSlider(52);
+shouldBe('input.value', "'500'");
+resetSliderPosition();
+clickSlider(53);
+shouldBeTrue('parseInt(input.value, 10) > 500');
+resetSliderPosition();
+clickSlider(54);
+shouldBeTrue('parseInt(input.value, 10) > 500');
+resetSliderPosition();
+clickSlider(55);
+shouldBeTrue('parseInt(input.value, 10) > 500');
+</script>
+
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>

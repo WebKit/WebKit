@@ -1,3 +1,37 @@
+2012-08-02  Keishi Hattori  <keishi@webkit.org>
+
+        Slider should snap to datalist tick marks
+        https://bugs.webkit.org/show_bug.cgi?id=92640
+
+        Reviewed by Kent Tamura.
+
+        Input type=range slider snaps to datalist tick marks.
+
+        Test: fast/forms/datalist/range-snap-to-datalist.html
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::findClosestTickMarkValue): Just calls InputType::findClosestTickMarkValue.
+        (WebCore):
+        * html/HTMLInputElement.h:
+        (HTMLInputElement):
+        * html/InputType.cpp:
+        (WebCore):
+        (WebCore::InputType::findClosestTickMarkValue): Overridden by RangeInputType.
+        * html/InputType.h:
+        (InputType):
+        * html/RangeInputType.cpp:
+        (WebCore::RangeInputType::RangeInputType):
+        (WebCore):
+        (WebCore::RangeInputType::listAttributeTargetChanged): Mark m_tickMarkValues as dirty.
+        (WebCore::decimalCompare):
+        (WebCore::RangeInputType::updateTickMarkValues): Sets m_tickMarkValues to a list of sorted valid datalist values.
+        (WebCore::RangeInputType::findClosestTickMarkValue): Finds closest tick mark value to a given value.
+        * html/RangeInputType.h:
+        (RangeInputType):
+        * html/shadow/SliderThumbElement.cpp:
+        (WebCore):
+        (WebCore::SliderThumbElement::setPositionFromPoint): Snaps to the closest tick mark value if it is within a certain distance.
+
 2012-08-02  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL] Crash while loading plugin after r121467

@@ -72,6 +72,10 @@ public:
     bool getAllowedValueStep(Decimal*) const;
     StepRange createStepRange(AnyStepHandling) const;
 
+#if ENABLE(DATALIST_ELEMENT)
+    Decimal findClosestTickMarkValue(const Decimal&);
+#endif
+
     // Implementations of HTMLInputElement::stepUp() and stepDown().
     void stepUp(int, ExceptionCode&);
     void stepDown(int, ExceptionCode&);

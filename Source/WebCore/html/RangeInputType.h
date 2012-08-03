@@ -42,7 +42,7 @@ public:
     static PassOwnPtr<InputType> create(HTMLInputElement*);
 
 private:
-    RangeInputType(HTMLInputElement* element) : InputType(element) { }
+    RangeInputType(HTMLInputElement*);
     virtual bool isRangeControl() const OVERRIDE;
     virtual const AtomicString& formControlType() const OVERRIDE;
     virtual double valueAsDouble() const OVERRIDE;
@@ -72,6 +72,11 @@ private:
     virtual HTMLElement* sliderThumbElement() const OVERRIDE;
 #if ENABLE(DATALIST_ELEMENT)
     virtual void listAttributeTargetChanged() OVERRIDE;
+    void updateTickMarkValues();
+    virtual Decimal findClosestTickMarkValue(const Decimal&) OVERRIDE;
+
+    bool m_tickMarkValuesDirty;
+    Vector<Decimal> m_tickMarkValues;
 #endif
 };
 

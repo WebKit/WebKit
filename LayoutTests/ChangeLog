@@ -1,3 +1,13 @@
+2012-08-02  Keishi Hattori  <keishi@webkit.org>
+
+        Slider should snap to datalist tick marks
+        https://bugs.webkit.org/show_bug.cgi?id=92640
+
+        Reviewed by Kent Tamura.
+
+        * fast/forms/datalist/range-snap-to-datalist-expected.txt: Added.
+        * fast/forms/datalist/range-snap-to-datalist.html: Added.
+
 2012-08-02  Vincent Scheib  <scheib@chromium.org>
 
         Remove old Pointer Lock API.
