@@ -1,3 +1,9 @@
+2012-08-03  Yuta Kitamura  <yutak@chromium.org>
+
+        Unreviewed, test expectation change only.
+
+        * platform/chromium/TestExpectations: Merge a couple of tests into an existing bug.
+
 2012-08-03  János Badics  <jbadics@inf.u-szeged.hu>
 
         [Qt] Unreviewed gardening after r124549. Skipped a newly added failing test.

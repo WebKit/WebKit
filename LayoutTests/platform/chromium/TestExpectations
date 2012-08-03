@@ -2113,13 +2113,11 @@ BUGV8_953 : fast/regex/pcre-test-1.html = TIMEOUT
 BUGWK50282 LINUX WIN : fast/images/imagemap-focus-ring-outline-color-explicitly-inherited-from-map.html = IMAGE+TEXT
 BUGWK50282 LINUX WIN : fast/images/imagemap-focus-ring-outline-color-not-inherited-from-map.html = IMAGE+TEXT
 BUGWK50282 LINUX WIN : fast/images/imagemap-focus-ring-outline-color.html = IMAGE+TEXT
+BUGWK50282 LINUX WIN : fast/images/imagemap-circle-focus-ring.html = IMAGE+TEXT
+BUGWK50282 LINUX WIN : fast/images/imagemap-polygon-focus-ring.html = IMAGE+TEXT
 
 // Regressed at r73423. All areas are painted green.
 BUGWK50734 LINUX WIN : fast/repaint/positioned-document-element.html = IMAGE
-
-// r73490. Win/Linux: Focus ring is not rendered. Mac: Just rebaseline?
-BUG_YUTAK LINUX WIN : fast/images/imagemap-circle-focus-ring.html = IMAGE+TEXT
-BUG_YUTAK LINUX WIN : fast/images/imagemap-polygon-focus-ring.html = IMAGE+TEXT
 
 ///////////////////////////////////////////////////////////////////////////
 // Regressions caused by switching to DRT.
