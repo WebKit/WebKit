@@ -1267,6 +1267,27 @@ BUGWK92100 : accessibility/canvas-accessibilitynodeobject.html = TEXT
 BUGWK92352 : css3/flexbox/content-height-with-scrollbars.html = IMAGE
 BUGWK92352 : css3/flexbox/flex-rounding.html = TEXT
 
+BUGWK93073 : mathml/presentation/attributes.xhtml = TEXT
+BUGWK93073 : mathml/presentation/fenced-mi.xhtml = TEXT
+BUGWK93073 : mathml/presentation/fenced.xhtml = TEXT
+BUGWK93073 : mathml/presentation/fractions-vertical-alignment.xhtml = TEXT
+BUGWK93073 : mathml/presentation/fractions.xhtml = TEXT
+BUGWK93073 : mathml/presentation/mo-stretch.html = TEXT
+BUGWK93073 : mathml/presentation/mo.xhtml = TEXT
+BUGWK93073 : mathml/presentation/mroot-pref-width.html = TEXT
+BUGWK93073 : mathml/presentation/over.xhtml = TEXT
+BUGWK93073 : mathml/presentation/roots.xhtml = TEXT
+BUGWK93073 : mathml/presentation/row-alignment.xhtml = TEXT
+BUGWK93073 : mathml/presentation/row.xhtml = TEXT
+BUGWK93073 : mathml/presentation/style.xhtml = TEXT
+BUGWK93073 : mathml/presentation/sub.xhtml = TEXT
+BUGWK93073 : mathml/presentation/subsup.xhtml = TEXT
+BUGWK93073 : mathml/presentation/sup.xhtml = TEXT
+BUGWK93073 : mathml/presentation/tables.xhtml = TEXT
+BUGWK93073 : mathml/presentation/tokenElements.xhtml = TEXT
+BUGWK93073 : mathml/presentation/under.xhtml = TEXT
+BUGWK93073 : mathml/presentation/underover.xhtml = TEXT
+
 //////////////////////////////////////////////////////////////////////////////////////////
 // End of Tests failing
 //////////////////////////////////////////////////////////////////////////////////////////
