@@ -804,4 +804,38 @@ TEST_F(WebFrameTest, GetFullHtmlOfPage)
     EXPECT_TRUE(selectionHtml.isEmpty());
 }
 
+TEST_F(WebFrameTest, SelectRange)
+{
+    registerMockedHttpURLLoad("select_range_basic.html");
+    WebView* webView = FrameTestHelpers::createWebViewAndLoad(m_baseURL + "select_range_basic.html", true);
+    WebFrame* frame = webView->mainFrame();
+    WebRect startWebRect;
+    WebRect endWebRect;
+    webView->selectionBounds(startWebRect, endWebRect);
+    frame->executeCommand(WebString::fromUTF8("Unselect"));
+    EXPECT_EQ("", std::string(frame->selectionAsText().utf8().data()));
+    frame->selectRange(WebPoint(startWebRect.x, startWebRect.y), WebPoint(endWebRect.x + endWebRect.width, endWebRect.y + endWebRect.height));
+    EXPECT_EQ("some test text for testing", std::string(frame->selectionAsText().utf8().data()));
+
+    registerMockedHttpURLLoad("select_range_scroll.html");
+    webView = FrameTestHelpers::createWebViewAndLoad(m_baseURL + "select_range_scroll.html", true);
+    frame = webView->mainFrame();
+    webView->selectionBounds(startWebRect, endWebRect);
+    frame->executeCommand(WebString::fromUTF8("Unselect"));
+    EXPECT_EQ("", std::string(frame->selectionAsText().utf8().data()));
+    frame->selectRange(WebPoint(startWebRect.x, startWebRect.y), WebPoint(endWebRect.x + endWebRect.width, endWebRect.y + endWebRect.height));
+    EXPECT_EQ("some offscreen test text for testing", std::string(frame->selectionAsText().utf8().data()));
+
+    registerMockedHttpURLLoad("select_range_iframe.html");
+    webView = FrameTestHelpers::createWebViewAndLoad(m_baseURL + "select_range_iframe.html", true);
+    frame = webView->mainFrame();
+    WebFrame* subframe = frame->findChildByExpression(WebString::fromUTF8("/html/body/iframe"));
+    webView->selectionBounds(startWebRect, endWebRect);
+    EXPECT_EQ("some test text for testing", std::string(subframe->selectionAsText().utf8().data()));
+    subframe->executeCommand(WebString::fromUTF8("Unselect"));
+    EXPECT_EQ("", std::string(subframe->selectionAsText().utf8().data()));
+    subframe->selectRange(WebPoint(startWebRect.x, startWebRect.y), WebPoint(endWebRect.x + endWebRect.width, endWebRect.y + endWebRect.height));
+    EXPECT_EQ("some test text for testing", std::string(subframe->selectionAsText().utf8().data()));
+}
+
 } // namespace

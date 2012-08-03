@@ -1,3 +1,26 @@
+2012-08-03  Oli Lan  <olilan@chromium.org>
+
+        [chromium] Add a test to WebFrameTest for selectRange and visiblePositionForWindowPoint.
+        https://bugs.webkit.org/show_bug.cgi?id=93108
+
+        Reviewed by Adam Barth.
+
+        Adds a new test WebFrameTest.SelectRange. This tests WebFrameImpl::selectRange, and also
+        serves to test WebFrameImpl::visiblePositionForWindowPoint as it is used by selectRange.
+
+        The test uses sample files that contain selected text on load. The test uses
+        WebViewImpl::selectionBounds to retrieve the ends of the selection, then unselects
+        and calls WebFrameImpl::selectRange to attempt to reselect the same text.
+
+        Three cases are tested: the normal case, the case where the selected text is offscreen
+        due to a scroll, and the case where the selected text is in an iframe. This allows the
+        problem cases and fix in https://bugs.webkit.org/show_bug.cgi?id=79117 to be tested.
+
+        * tests/WebFrameTest.cpp:
+        * tests/data/select_range_basic.html: Added.
+        * tests/data/select_range_iframe.html: Added.
+        * tests/data/select_range_scroll.html: Added.
+
 2012-08-03  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Web Inspector: eliminate visitBaseClass method from NMI. It introduces unnecessary complexity.
