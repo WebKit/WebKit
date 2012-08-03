@@ -52,27 +52,7 @@ private:
         : m_callbacks(callbacks)
     {
     }
-
     RefPtr<IDBCallbacks> m_callbacks;
-};
-
-class IDBDatabaseBackendImpl::PendingOpenWithVersionCall : public RefCounted<PendingOpenWithVersionCall> {
-public:
-    static PassRefPtr<PendingOpenWithVersionCall> create(PassRefPtr<IDBCallbacks> callbacks, int64_t version)
-    {
-        return adoptRef(new PendingOpenWithVersionCall(callbacks, version));
-    }
-    PassRefPtr<IDBCallbacks> callbacks() { return m_callbacks; }
-    int64_t version() { return m_version; }
-
-private:
-    PendingOpenWithVersionCall(PassRefPtr<IDBCallbacks> callbacks, int64_t version)
-        : m_callbacks(callbacks)
-        , m_version(version)
-    {
-    }
-    RefPtr<IDBCallbacks> m_callbacks;
-    int64_t m_version;
 };
 
 class IDBDatabaseBackendImpl::PendingDeleteCall : public RefCounted<PendingDeleteCall> {
@@ -126,7 +106,6 @@ IDBDatabaseBackendImpl::IDBDatabaseBackendImpl(const String& name, IDBBackingSto
     , m_id(InvalidId)
     , m_name(name)
     , m_version("")
-    , m_intVersion(IDBDatabaseMetadata::NoIntVersion)
     , m_identifier(uniqueIdentifier)
     , m_factory(factory)
     , m_transactionCoordinator(coordinator)
@@ -137,13 +116,13 @@ IDBDatabaseBackendImpl::IDBDatabaseBackendImpl(const String& name, IDBBackingSto
 
 bool IDBDatabaseBackendImpl::openInternal()
 {
-    bool success = m_backingStore->getIDBDatabaseMetaData(m_name, m_version, m_intVersion, m_id);
-    ASSERT_WITH_MESSAGE(success == (m_id != InvalidId), "success = %s, m_id = %"PRId64, success ? "true" : "false", m_id);
+    bool success = m_backingStore->getIDBDatabaseMetaData(m_name, m_version, m_id);
+    ASSERT(success == (m_id != InvalidId));
     if (success) {
         loadObjectStores();
         return true;
     }
-    return m_backingStore->createIDBDatabaseMetaData(m_name, m_version, m_intVersion, m_id);
+    return m_backingStore->createIDBDatabaseMetaData(m_name, m_version, m_id);
 }
 
 IDBDatabaseBackendImpl::~IDBDatabaseBackendImpl()
@@ -157,7 +136,7 @@ PassRefPtr<IDBBackingStore> IDBDatabaseBackendImpl::backingStore() const
 
 IDBDatabaseMetadata IDBDatabaseBackendImpl::metadata() const
 {
-    IDBDatabaseMetadata metadata(m_name, m_version, m_intVersion);
+    IDBDatabaseMetadata metadata(m_name, m_version, IDBDatabaseMetadata::NoIntVersion);
     for (ObjectStoreMap::const_iterator it = m_objectStores.begin(); it != m_objectStores.end(); ++it)
         metadata.objectStores.set(it->first, it->second->metadata());
     return metadata;
@@ -235,10 +214,6 @@ void IDBDatabaseBackendImpl::setVersion(const String& version, PassRefPtr<IDBCal
         callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::IDB_ABORT_ERR, "Connection was closed before set version transaction was created"));
         return;
     }
-    if (m_intVersion != IDBDatabaseMetadata::NoIntVersion) {
-        callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::UNKNOWN_ERR, String::format("You can't use the setVersion function if you've already set the version through an open call.  The current integer version is %"PRId64, m_intVersion)));
-        return;
-    }
     for (DatabaseCallbacksSet::const_iterator it = m_databaseCallbacksSet.begin(); it != m_databaseCallbacksSet.end(); ++it) {
         if (*it != databaseCallbacks)
             (*it)->onVersionChange(version);
@@ -284,20 +259,6 @@ void IDBDatabaseBackendImpl::setVersionInternal(ScriptExecutionContext*, PassRef
     callbacks->onSuccess(PassRefPtr<IDBTransactionBackendInterface>(transaction));
 }
 
-void IDBDatabaseBackendImpl::setIntVersionInternal(ScriptExecutionContext*, PassRefPtr<IDBDatabaseBackendImpl> database, int64_t version, PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<IDBTransactionBackendInterface> transaction)
-{
-    int64_t databaseId = database->id();
-    int64_t oldVersion = database->m_intVersion;
-    ASSERT(version > oldVersion);
-    database->m_intVersion = version;
-    if (!database->m_backingStore->updateIDBDatabaseIntVersion(databaseId, database->m_intVersion)) {
-        callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::UNKNOWN_ERR, "Error writing data to stable storage."));
-        transaction->abort();
-        return;
-    }
-    callbacks->onUpgradeNeeded(oldVersion, transaction, database);
-}
-
 void IDBDatabaseBackendImpl::transactionStarted(PassRefPtr<IDBTransactionBackendImpl> prpTransaction)
 {
     RefPtr<IDBTransactionBackendImpl> transaction = prpTransaction;
@@ -315,16 +276,6 @@ void IDBDatabaseBackendImpl::transactionFinished(PassRefPtr<IDBTransactionBacken
     if (transaction->mode() == IDBTransaction::VERSION_CHANGE) {
         ASSERT(transaction.get() == m_runningVersionChangeTransaction.get());
         m_runningVersionChangeTransaction.clear();
-    }
-}
-
-void IDBDatabaseBackendImpl::transactionFinishedAndEventsFired(PassRefPtr<IDBTransactionBackendImpl> prpTransaction)
-{
-    RefPtr<IDBTransactionBackendImpl> transaction = prpTransaction;
-    if (transaction->mode() == IDBTransaction::VERSION_CHANGE) {
-        // If this was an open-with-version call, there will be a "second
-        // half" open call waiting for us in processPendingCalls.
-        // FIXME: When we no longer support setVersion, assert such a thing.
         processPendingCalls();
     }
 }
@@ -336,16 +287,7 @@ int32_t IDBDatabaseBackendImpl::connectionCount()
 
 void IDBDatabaseBackendImpl::processPendingCalls()
 {
-    // FIXME: Change from queue to just a single place holder.
-    ASSERT(m_pendingSecondHalfOpenWithVersionCalls.size() <= 1);
-    while (!m_pendingSecondHalfOpenWithVersionCalls.isEmpty()) {
-        RefPtr<PendingOpenWithVersionCall> pendingOpenWithVersionCall = m_pendingSecondHalfOpenWithVersionCalls.takeFirst();
-        ASSERT(pendingOpenWithVersionCall->version() == m_intVersion);
-        ASSERT(m_id != InvalidId);
-        ++m_pendingConnectionCount;
-        pendingOpenWithVersionCall->callbacks()->onSuccess(this);
-        return;
-    }
+    ASSERT(connectionCount() <= 1);
 
     // Pending calls may be requeued or aborted
     Deque<RefPtr<PendingSetVersionCall> > pendingSetVersionCalls;
@@ -383,13 +325,6 @@ void IDBDatabaseBackendImpl::processPendingCalls()
     if (m_runningVersionChangeTransaction || !m_pendingSetVersionCalls.isEmpty() || !m_pendingDeleteCalls.isEmpty())
         return;
 
-    Deque<RefPtr<PendingOpenWithVersionCall> > pendingOpenWithVersionCalls;
-    m_pendingOpenWithVersionCalls.swap(pendingOpenWithVersionCalls);
-    while (!pendingOpenWithVersionCalls.isEmpty()) {
-        RefPtr<PendingOpenWithVersionCall> pendingOpenWithVersionCall = pendingOpenWithVersionCalls.takeFirst();
-        openConnectionWithVersion(pendingOpenWithVersionCall->callbacks(), pendingOpenWithVersionCall->version());
-    }
-
     // Given the check above, it appears that calls cannot be requeued by
     // openConnection, but use a different queue for iteration to be safe.
     Deque<RefPtr<PendingOpenCall> > pendingOpenCalls;
@@ -421,10 +356,6 @@ void IDBDatabaseBackendImpl::registerFrontendCallbacks(PassRefPtr<IDBDatabaseCal
     ASSERT(m_pendingConnectionCount);
     --m_pendingConnectionCount;
     m_databaseCallbacksSet.add(RefPtr<IDBDatabaseCallbacks>(callbacks));
-    // We give max priority to open calls that follow upgradeneeded
-    // events; trigger the rest of the queues to be serviced when those open
-    // calls are finished.
-    processPendingCalls();
 }
 
 void IDBDatabaseBackendImpl::openConnection(PassRefPtr<IDBCallbacks> callbacks)
@@ -442,80 +373,6 @@ void IDBDatabaseBackendImpl::openConnection(PassRefPtr<IDBCallbacks> callbacks)
     }
 }
 
-void IDBDatabaseBackendImpl::runIntVersionChangeTransaction(int64_t requestedVersion, PassRefPtr<IDBCallbacks> prpCallbacks)
-{
-    // FIXME: This function won't be reached until it's exposed to script in
-    // wbk.ug/92897.
-    ASSERT_NOT_REACHED();
-
-    RefPtr<IDBCallbacks> callbacks = prpCallbacks;
-    ASSERT(callbacks);
-    for (DatabaseCallbacksSet::const_iterator it = m_databaseCallbacksSet.begin(); it != m_databaseCallbacksSet.end(); ++it) {
-        // Note that some connections might close in the versionchange event
-        // handler for some other connection, after which its own versionchange
-        // event should not be fired. The backend doesn't worry about this, we
-        // just queue up a version change event for every connection. The
-        // frontend takes care to only dispatch to open connections.
-        (*it)->onVersionChange(m_intVersion, requestedVersion);
-    }
-    // The spec dictates we wait until all the version change events are
-    // delivered and then check m_databaseCallbacks.empty() before proceeding
-    // or firing a blocked event, but instead we should be consistent with how
-    // the old setVersion (incorrectly) did it.
-    // FIXME: Remove the call to onBlocked and instead wait until the frontend
-    // tells us that all the blocked events have been delivered.  See
-    // https://bugs.webkit.org/show_bug.cgi?id=71130
-    if (connectionCount() > 0)
-        callbacks->onBlocked(m_intVersion);
-    // FIXME: Add test for m_runningVersionChangeTransaction.
-    if (m_runningVersionChangeTransaction || connectionCount() > 0) {
-        m_pendingOpenWithVersionCalls.append(PendingOpenWithVersionCall::create(callbacks, requestedVersion));
-        return;
-    }
-
-    RefPtr<DOMStringList> objectStoreNames = DOMStringList::create();
-    ExceptionCode ec = 0;
-    RefPtr<IDBTransactionBackendInterface> transactionInterface = transaction(objectStoreNames.get(), IDBTransaction::VERSION_CHANGE, ec);
-    RefPtr<IDBTransactionBackendImpl> transaction = IDBTransactionBackendImpl::from(transactionInterface.get());
-    ASSERT(!ec);
-
-    RefPtr<IDBDatabaseBackendImpl> database = this;
-    PassOwnPtr<ScriptExecutionContext::Task> intVersionTask = createCallbackTask(&IDBDatabaseBackendImpl::setIntVersionInternal, database, requestedVersion, callbacks, transaction);
-    // FIXME: Make this reset the integer version as well.
-    PassOwnPtr<ScriptExecutionContext::Task> resetVersionOnAbortTask = createCallbackTask(&IDBDatabaseBackendImpl::resetVersion, database, m_version);
-    if (!transaction->scheduleTask(intVersionTask, resetVersionOnAbortTask))
-        ec = IDBDatabaseException::TRANSACTION_INACTIVE_ERR;
-    m_pendingSecondHalfOpenWithVersionCalls.append(PendingOpenWithVersionCall::create(callbacks, requestedVersion));
-}
-
-void IDBDatabaseBackendImpl::openConnectionWithVersion(PassRefPtr<IDBCallbacks> prpCallbacks, int64_t version)
-{
-    RefPtr<IDBCallbacks> callbacks = prpCallbacks;
-    if (!m_pendingDeleteCalls.isEmpty() || m_runningVersionChangeTransaction || !m_pendingSetVersionCalls.isEmpty()) {
-        m_pendingOpenWithVersionCalls.append(PendingOpenWithVersionCall::create(callbacks, version));
-        return;
-    }
-    if (m_id == InvalidId) {
-        if (openInternal())
-            ASSERT(m_intVersion == IDBDatabaseMetadata::NoIntVersion);
-        else {
-            callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::UNKNOWN_ERR, "Internal error."));
-            return;
-        }
-    }
-    if (version > m_intVersion) {
-        runIntVersionChangeTransaction(version, callbacks);
-        return;
-    }
-    if (version < m_intVersion) {
-        callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::VER_ERR, String::format("The requested version (%"PRId64") is less than the existing version (%"PRId64").", version, m_intVersion)));
-        return;
-    }
-    ASSERT(version == m_intVersion);
-    ++m_pendingConnectionCount;
-    callbacks->onSuccess(this);
-}
-
 void IDBDatabaseBackendImpl::deleteDatabase(PassRefPtr<IDBCallbacks> prpCallbacks)
 {
     if (m_runningVersionChangeTransaction || !m_pendingSetVersionCalls.isEmpty()) {
@@ -531,19 +388,17 @@ void IDBDatabaseBackendImpl::deleteDatabase(PassRefPtr<IDBCallbacks> prpCallback
     // FIXME: Only fire onBlocked if there are open connections after the
     // VersionChangeEvents are received, not just set up to fire.
     // https://bugs.webkit.org/show_bug.cgi?id=71130
-    if (connectionCount() >= 1) {
+    if (!m_databaseCallbacksSet.isEmpty()) {
         m_pendingDeleteCalls.append(PendingDeleteCall::create(callbacks));
         callbacks->onBlocked();
         return;
     }
-    ASSERT(m_backingStore);
     if (!m_backingStore->deleteDatabase(m_name)) {
         callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::UNKNOWN_ERR, "Internal error."));
         return;
     }
     m_version = "";
     m_id = InvalidId;
-    m_intVersion = IDBDatabaseMetadata::NoIntVersion;
     m_objectStores.clear();
     callbacks->onSuccess(SerializedScriptValue::nullValue());
 }
@@ -556,17 +411,12 @@ void IDBDatabaseBackendImpl::close(PassRefPtr<IDBDatabaseCallbacks> prpCallbacks
     if (connectionCount() > 1)
         return;
 
-    TransactionSet transactions(m_transactions);
     processPendingCalls();
 
-    ASSERT(m_transactions.size() - transactions.size() <= 1);
-    // FIXME: Instead of relying on transactions.size(), make connectionCount
-    // aware of in-flight upgradeneeded events as well as in-flight success
-    // events.
-    if (!connectionCount() && !m_pendingDeleteCalls.size() && m_transactions.size() == transactions.size()) {
+    if (!connectionCount()) {
+        TransactionSet transactions(m_transactions);
         for (TransactionSet::const_iterator it = transactions.begin(); it != transactions.end(); ++it)
             (*it)->abort();
-
         ASSERT(m_transactions.isEmpty());
 
         m_backingStore.clear();

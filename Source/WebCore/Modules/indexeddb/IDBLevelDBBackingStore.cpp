@@ -234,7 +234,7 @@ void IDBLevelDBBackingStore::getDatabaseNames(Vector<String>& foundNames)
     }
 }
 
-bool IDBLevelDBBackingStore::getIDBDatabaseMetaData(const String& name, String& foundStringVersion, int64_t& foundIntVersion, int64_t& foundId)
+bool IDBLevelDBBackingStore::getIDBDatabaseMetaData(const String& name, String& foundVersion, int64_t& foundId)
 {
     const Vector<char> key = DatabaseNameKey::encode(m_identifier, name);
 
@@ -242,7 +242,7 @@ bool IDBLevelDBBackingStore::getIDBDatabaseMetaData(const String& name, String& 
     if (!ok)
         return false;
 
-    ok = getString(m_db.get(), DatabaseMetaDataKey::encode(foundId, DatabaseMetaDataKey::UserVersion), foundStringVersion);
+    ok = getString(m_db.get(), DatabaseMetaDataKey::encode(foundId, DatabaseMetaDataKey::UserVersion), foundVersion);
     if (!ok)
         return false;
 
@@ -264,7 +264,7 @@ static int64_t getNewDatabaseId(LevelDBDatabase* db)
     return databaseId;
 }
 
-bool IDBLevelDBBackingStore::createIDBDatabaseMetaData(const String& name, const String& version, int64_t intVersion, int64_t& rowId)
+bool IDBLevelDBBackingStore::createIDBDatabaseMetaData(const String& name, const String& version, int64_t& rowId)
 {
     rowId = getNewDatabaseId(m_db.get());
     if (rowId < 0)
@@ -275,12 +275,6 @@ bool IDBLevelDBBackingStore::createIDBDatabaseMetaData(const String& name, const
         return false;
     if (!putString(m_db.get(), DatabaseMetaDataKey::encode(rowId, DatabaseMetaDataKey::UserVersion), version))
         return false;
-    return true;
-}
-
-bool IDBLevelDBBackingStore::updateIDBDatabaseIntVersion(int64_t rowId, int64_t intVersion)
-{
-    // FIXME: Make this actually do something. http://wkb.ug/92883
     return true;
 }
 
@@ -311,8 +305,7 @@ bool IDBLevelDBBackingStore::deleteDatabase(const String& name)
 
     int64_t databaseId;
     String version;
-    int64_t intVersion;
-    if (!getIDBDatabaseMetaData(name, version, intVersion, databaseId)) {
+    if (!getIDBDatabaseMetaData(name, version, databaseId)) {
         transaction->rollback();
         return true;
     }

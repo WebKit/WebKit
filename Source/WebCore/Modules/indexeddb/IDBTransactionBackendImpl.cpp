@@ -227,8 +227,6 @@ void IDBTransactionBackendImpl::commit()
     else
         m_callbacks->onAbort();
 
-    m_database->transactionFinishedAndEventsFired(this);
-
     m_database = 0;
 }
 

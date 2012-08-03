@@ -74,7 +74,7 @@ public:
     {
         return adoptRef(new FailingBackingStore);
     }
-    virtual bool createIDBDatabaseMetaData(const String&, const String&, int64_t, int64_t&)
+    virtual bool createIDBDatabaseMetaData(const String&, const String&, int64_t&)
     {
         return false;
     }
