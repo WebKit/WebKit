@@ -1,3 +1,34 @@
+2012-08-03  Stephen Chenney  <schenney@chromium.org>
+
+        Crash when a clip path referencing a clip path changes documents
+        https://bugs.webkit.org/show_bug.cgi?id=93023
+
+        Reviewed by Dirk Schulze.
+
+        The SVGClipPathElement is set to not need pending resource handling,
+        when in fact it can have pending resources. The result is a crash when
+        the element is moved to a new document (which deletes all resources
+        and leaves them pending) and then immediately deleted (which asserts
+        that there are no pending resources). There is code to remove pending
+        resources upon deletion and removal from the DOM, but it was not
+        executing for clips because of the aforementioned code claiming that
+        clips don't require such handling.
+
+        The assertion that there be no pending resources is necessary to
+        prevent caches of pending resources from trying to access the deleted
+        element.
+
+        This change removes the check for needsPendingResourceHandling in
+        SVGStyledElement upon deletion and removal from the DOM. Pending resources
+        will always be checked in such cases to ensure we do not introduce
+        security issues.
+
+        Test: svg/custom/clip-path-document-change-assert.html
+
+        * svg/SVGStyledElement.cpp:
+        (WebCore::SVGStyledElement::~SVGStyledElement): Removed needsPendingResourceHandling in the conditional to clean up resources.
+        (WebCore::SVGStyledElement::removedFrom): Removed needsPendingResourceHandling in the conditional to clean up resources.
+
 2012-08-03  Kentaro Hara  <haraken@chromium.org>
 
         [V8] Remove unused methods in V8Proxy

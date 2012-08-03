@@ -76,7 +76,7 @@ SVGStyledElement::SVGStyledElement(const QualifiedName& tagName, Document* docum
 
 SVGStyledElement::~SVGStyledElement()
 {
-    if (needsPendingResourceHandling() && hasPendingResources() && document())
+    if (hasPendingResources() && document())
         document()->accessSVGExtensions()->removeElementFromPendingResources(this);
 
     ASSERT(!hasPendingResources());
@@ -389,7 +389,7 @@ void SVGStyledElement::removedFrom(ContainerNode* rootParent)
     SVGElement::removedFrom(rootParent);
     SVGElementInstance::invalidateAllInstancesOfElement(this);
     Document* document = this->document();
-    if (!rootParent->inDocument() || !needsPendingResourceHandling() || !document)
+    if (!rootParent->inDocument() || !document)
         return;
 
     document->accessSVGExtensions()->removeElementFromPendingResources(this);

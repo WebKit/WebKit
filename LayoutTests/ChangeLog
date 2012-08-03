@@ -1,3 +1,17 @@
+2012-08-03  Stephen Chenney  <schenney@chromium.org>
+
+        Crash when a clip path referencing a clip path changes documents
+        https://bugs.webkit.org/show_bug.cgi?id=93023
+
+        Reviewed by Dirk Schulze.
+
+        Test that asserts in debug DRT without this change. Any attempt to
+        delete a clip that references another clip after changing the document
+        results in a crash.
+
+        * svg/custom/clip-path-document-change-assert-expected.txt: Added.
+        * svg/custom/clip-path-document-change-assert.html: Added.
+
 2012-07-20  Jon Lee  <jonlee@apple.com>
 
         Crash in Notification when setting a non-object as an event listener (91881)
