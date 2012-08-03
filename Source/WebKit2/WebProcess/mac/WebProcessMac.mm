@@ -62,6 +62,9 @@
 #define SANDBOX_NAMED_EXTERNAL 0x0003
 extern "C" int sandbox_init_with_parameters(const char *profile, uint64_t flags, const char *const parameters[], char **errorbuf);
 
+// Define this to 1 to bypass the sandbox for debugging purposes. 
+#define DEBUG_BYPASS_SANDBOX 0
+
 #endif
 
 using namespace WebCore;
@@ -180,10 +183,11 @@ static void appendReadwriteSandboxDirectory(Vector<const char*>& vector, const c
 static void initializeSandbox(const WebProcessCreationParameters& parameters)
 {
 #if ENABLE(WEB_PROCESS_SANDBOX)
-    if ([[NSUserDefaults standardUserDefaults] boolForKey:@"DisableSandbox"]) {
-        WTFLogAlways("Bypassing sandbox due to DisableSandbox user default.\n");
-        return;
-    }
+
+#if DEBUG_BYPASS_SANDBOX 
+    WTFLogAlways("Bypassing web process sandbox.\n"); 
+    return; 
+ #endif
 
 #if !defined(BUILDING_ON_LION)
     // Use private temporary and cache directories.
