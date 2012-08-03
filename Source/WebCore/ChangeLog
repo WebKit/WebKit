@@ -1,3 +1,19 @@
+2012-08-02  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL] Crash while loading plugin after r121467
+        https://bugs.webkit.org/show_bug.cgi?id=92943
+
+        Reviewed by Laszlo Gombos.
+
+        r121467 replaced POSIX dlopen to helpers in eina_module, but some codes
+        are not changed.
+
+        No new tests, behavior has not changed.
+
+        * plugins/efl/PluginPackageEfl.cpp:
+        (WebCore::PluginPackage::fetchInfo):
+        Changes dlsym to eina_module_symbol_get to follow changes of r121467.
+
 2012-08-02  Adam Barth  <abarth@webkit.org>
 
         V8 bindings code that tries to find its context should use BindingState functions rather than V8Proxy

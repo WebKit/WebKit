@@ -53,13 +53,13 @@ bool PluginPackage::fetchInfo()
     NPP_GetValueProcPtr getValue = 0;
     NP_GetMIMEDescriptionFuncPtr getMIMEDescription = 0;
 
-    getValue = reinterpret_cast<NPP_GetValueProcPtr>(dlsym(m_module, "NP_GetValue"));
+    getValue = reinterpret_cast<NPP_GetValueProcPtr>(eina_module_symbol_get(m_module, "NP_GetValue"));
     if ((errmsg = dlerror())) {
         EINA_LOG_ERR("Could not get symbol NP_GetValue: %s", errmsg);
         return false;
     }
 
-    getMIMEDescription = reinterpret_cast<NP_GetMIMEDescriptionFuncPtr>(dlsym(m_module, "NP_GetMIMEDescription"));
+    getMIMEDescription = reinterpret_cast<NP_GetMIMEDescriptionFuncPtr>(eina_module_symbol_get(m_module, "NP_GetMIMEDescription"));
     if ((errmsg = dlerror())) {
         EINA_LOG_ERR("Could not get symbol NP_GetMIMEDescription: %s", errmsg);
         return false;
