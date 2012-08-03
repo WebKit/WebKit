@@ -490,30 +490,6 @@ Frame* V8Proxy::retrieveFrame(v8::Handle<v8::Context> context)
     return 0;
 }
 
-Frame* V8Proxy::retrieveFrameForEnteredContext()
-{
-    v8::Handle<v8::Context> context = v8::Context::GetEntered();
-    if (context.IsEmpty())
-        return 0;
-    return retrieveFrame(context);
-}
-
-Frame* V8Proxy::retrieveFrameForCurrentContext()
-{
-    v8::Handle<v8::Context> context = v8::Context::GetCurrent();
-    if (context.IsEmpty())
-        return 0;
-    return retrieveFrame(context);
-}
-
-Frame* V8Proxy::retrieveFrameForCallingContext()
-{
-    v8::Handle<v8::Context> context = v8::Context::GetCalling();
-    if (context.IsEmpty())
-        return 0;
-    return retrieveFrame(context);
-}
-
 V8Proxy* V8Proxy::retrieve()
 {
     DOMWindow* window = retrieveWindow(v8::Context::GetCurrent());

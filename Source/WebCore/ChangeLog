@@ -1,3 +1,24 @@
+2012-08-02  Adam Barth  <abarth@webkit.org>
+
+        V8Proxy::retrieveFrameFor*Context are used only by BindingState and should be removed as separate functions
+        https://bugs.webkit.org/show_bug.cgi?id=93049
+
+        Reviewed by Eric Seidel.
+
+        No one calls these functions directly anymore. This patch removes them
+        from V8Proxy and inlines their logic into BindingState.cpp.
+
+        * bindings/v8/BindingState.cpp:
+        (WebCore::activeContext):
+        (WebCore):
+        (WebCore::activeWindow):
+        (WebCore::activeFrame):
+        (WebCore::firstFrame):
+        (WebCore::currentFrame):
+        * bindings/v8/V8Proxy.cpp:
+        * bindings/v8/V8Proxy.h:
+        (V8Proxy):
+
 2012-08-02  Yoshifumi Inoue  <yosin@chromium.org>
 
         Make order of attribute/method in HTMLTrackElement.idl as same as specification

@@ -185,38 +185,6 @@ namespace WebCore {
 
         static V8BindingPerContextData* retrievePerContextData(Frame*);
 
-        // The three functions below retrieve WebFrame instances relating the
-        // currently executing JavaScript. Since JavaScript can make function calls
-        // across frames, though, we need to be more precise.
-        //
-        // For example, imagine that a JS function in frame A calls a function in
-        // frame B, which calls native code, which wants to know what the 'active'
-        // frame is.
-        //
-        // The 'entered context' is the context where execution first entered the
-        // script engine; the context that is at the bottom of the JS function stack.
-        // RetrieveFrameForEnteredContext() would return Frame A in our example.
-        // This frame is often referred to as the "dynamic global object."
-        //
-        // The 'current context' is the context the JS engine is currently inside of;
-        // the context that is at the top of the JS function stack.
-        // RetrieveFrameForCurrentContext() would return Frame B in our example.
-        // This frame is often referred to as the "lexical global object."
-        //
-        // Finally, the 'calling context' is the context one below the current
-        // context on the JS function stack. For example, if function f calls
-        // function g, then the calling context will be the context associated with
-        // f. This context is commonly used by DOM security checks because they want
-        // to know who called them.
-        //
-        // If you are unsure which of these functions to use, ask abarth.
-        //
-        // NOTE: These cannot be declared as inline function, because VS complains at
-        // linking time.
-        static Frame* retrieveFrameForEnteredContext();
-        static Frame* retrieveFrameForCurrentContext();
-        static Frame* retrieveFrameForCallingContext();
-
         // Returns V8 Context of a frame. If none exists, creates
         // a new context. It is potentially slow and consumes memory.
         static v8::Local<v8::Context> context(Frame*);

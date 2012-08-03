@@ -44,15 +44,20 @@ BindingState* BindingState::instance()
     return &bindingStateForV8;
 }
 
+static v8::Handle<v8::Context> activeContext()
+{
+    v8::Handle<v8::Context> context = v8::Context::GetCalling();
+    if (!context.IsEmpty())
+        return context;
+    // Unfortunately, when processing script from a plug-in, we might not
+    // have a calling context. In those cases, we fall back to the
+    // entered context.
+    return v8::Context::GetEntered();
+}
+
 DOMWindow* activeWindow(BindingState*)
 {
-    v8::Local<v8::Context> activeContext = v8::Context::GetCalling();
-    if (activeContext.IsEmpty()) {
-        // There is a single activation record on the stack, so that must
-        // be the activeContext.
-        activeContext = v8::Context::GetCurrent();
-    }
-    return V8Proxy::retrieveWindow(activeContext);
+    return V8Proxy::retrieveWindow(activeContext());
 }
 
 DOMWindow* firstWindow(BindingState*)
@@ -62,26 +67,26 @@ DOMWindow* firstWindow(BindingState*)
 
 Frame* activeFrame(BindingState*)
 {
-    Frame* frame = V8Proxy::retrieveFrameForCallingContext();
-    if (!frame) {
-        // Unfortunately, when processing script from a plug-in, we might not
-        // have a calling context. In those cases, we fall back to the
-        // entered context for security checks.
-        // FIXME: We need a better API for retrieving frames that abstracts
-        //        away this concern.
-        frame = V8Proxy::retrieveFrameForEnteredContext();
-    }
-    return frame;
+    v8::Handle<v8::Context> context = activeContext();
+    if (context.IsEmpty())
+        return 0;
+    return V8Proxy::retrieveFrame(context);
 }
 
 Frame* firstFrame(BindingState*)
 {
-    return V8Proxy::retrieveFrameForEnteredContext();
+    v8::Handle<v8::Context> context = v8::Context::GetEntered();
+    if (context.IsEmpty())
+        return 0;
+    return V8Proxy::retrieveFrame(context);
 }
 
 Frame* currentFrame(BindingState*)
 {
-    return V8Proxy::retrieveFrameForCurrentContext();
+    v8::Handle<v8::Context> context = v8::Context::GetCurrent();
+    if (context.IsEmpty())
+        return 0;
+    return V8Proxy::retrieveFrame(context);
 }
 
 void immediatelyReportUnsafeAccessTo(BindingState*, Frame* target)
