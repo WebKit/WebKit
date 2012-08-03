@@ -1,3 +1,23 @@
+2012-08-03  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r124668.
+        http://trac.webkit.org/changeset/124668
+        https://bugs.webkit.org/show_bug.cgi?id=93167
+
+        Broke Mac build (Requested by kbr_google on #webkit).
+
+        * bindings/js/JSArrayBufferViewHelper.h:
+        (WebCore::setWebGLArrayWithTypedArrayArgument):
+        (WebCore::setWebGLArrayHelper):
+        (WebCore::constructArrayBufferViewWithTypedArrayArgument):
+        (WebCore::constructArrayBufferViewWithArrayBufferArgument):
+        (WebCore::constructArrayBufferView):
+        * bindings/v8/custom/V8ArrayBufferViewCustom.h:
+        (WebCore::constructWebGLArrayWithArrayBufferArgument):
+        (WebCore):
+        (WebCore::constructWebGLArray):
+        (WebCore::setWebGLArrayHelper):
+
 2012-08-03  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Implement computePreferredLogicalWidths on RenderGrid

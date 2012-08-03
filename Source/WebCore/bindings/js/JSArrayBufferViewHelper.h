@@ -27,6 +27,7 @@
 #ifndef JSArrayBufferViewHelper_h
 #define JSArrayBufferViewHelper_h
 
+#include "ExceptionCode.h"
 #include "JSArrayBuffer.h"
 #include "JSArrayBufferView.h"
 #include "JSDOMBinding.h"
@@ -39,9 +40,6 @@
 #include <wtf/TypedArrayBase.h>
 
 namespace WebCore {
-
-static const char* tooLargeSize = "Size is too large (or is negative).";
-static const char* outOfRangeLengthAndOffset = "Index is out of range.";
 
 template<class C, typename T>
 bool copyTypedArrayBuffer(C* target, ArrayBufferView* source, unsigned sourceLength, unsigned offset)
@@ -117,7 +115,7 @@ bool setWebGLArrayWithTypedArrayArgument(JSC::ExecState* exec, C* impl)
     uint32_t length = asObject(exec->argument(0))->get(exec, JSC::Identifier(exec, "length")).toUInt32(exec);
 
     if (!(copyTypedArrayBuffer<C, T>(impl, array.get(), length, offset)))
-        throwError(exec, createRangeError(exec, outOfRangeLengthAndOffset));
+        setDOMException(exec, INDEX_SIZE_ERR);
 
     return true;
 }
@@ -126,7 +124,7 @@ template<class C, typename T>
 JSC::JSValue setWebGLArrayHelper(JSC::ExecState* exec, C* impl)
 {
     if (exec->argumentCount() < 1)
-        return JSC::throwError(exec, createNotEnoughArgumentsError(exec));
+        return JSC::throwSyntaxError(exec);
 
     if (setWebGLArrayWithTypedArrayArgument<C, T>(exec, impl))
         // void set(in WebGL<>Array array, [Optional] in unsigned long offset);
@@ -140,7 +138,7 @@ JSC::JSValue setWebGLArrayHelper(JSC::ExecState* exec, C* impl)
             offset = exec->argument(1).toInt32(exec);
         uint32_t length = array->get(exec, JSC::Identifier(exec, "length")).toInt32(exec);
         if (!impl->checkInboundData(offset, length))
-            throwError(exec, createRangeError(exec, outOfRangeLengthAndOffset));
+            setDOMException(exec, INDEX_SIZE_ERR);
         else {
             for (uint32_t i = 0; i < length; i++) {
                 JSC::JSValue v = array->get(exec, i);
@@ -153,7 +151,7 @@ JSC::JSValue setWebGLArrayHelper(JSC::ExecState* exec, C* impl)
         return JSC::jsUndefined();
     }
 
-    return JSC::throwTypeError(exec, "Invalid argument");
+    return JSC::throwSyntaxError(exec);
 }
 
 // Template function used by XXXArrayConstructors.
@@ -172,12 +170,12 @@ PassRefPtr<C> constructArrayBufferViewWithTypedArrayArgument(JSC::ExecState* exe
     uint32_t length = asObject(exec->argument(0))->get(exec, JSC::Identifier(exec, "length")).toUInt32(exec);
     RefPtr<C> array = C::createUninitialized(length);
     if (!array) {
-        throwError(exec, createRangeError(exec, tooLargeSize));
+        setDOMException(exec, INDEX_SIZE_ERR);
         return array;
     }
 
     if (!(copyTypedArrayBuffer<C, T>(array.get(), source.get(), length, 0))) {
-        throwError(exec, createRangeError(exec, tooLargeSize));
+        setDOMException(exec, INDEX_SIZE_ERR);
         return array;
     }
 
@@ -206,7 +204,7 @@ PassRefPtr<C> constructArrayBufferViewWithArrayBufferArgument(JSC::ExecState* ex
     }
     RefPtr<C> array = C::create(buffer, offset, length);
     if (!array)
-        throwError(exec, createRangeError(exec, tooLargeSize));
+        setDOMException(exec, INDEX_SIZE_ERR);
     return array;
 }
 
@@ -247,7 +245,7 @@ PassRefPtr<C> constructArrayBufferView(JSC::ExecState* exec)
         uint32_t length = srcArray->get(exec, JSC::Identifier(exec, "length")).toUInt32(exec);
         RefPtr<C> array = C::createUninitialized(length);
         if (!array) {
-            throwError(exec, createRangeError(exec, tooLargeSize));
+            setDOMException(exec, INDEX_SIZE_ERR);
             return array;
         }
 
@@ -263,7 +261,7 @@ PassRefPtr<C> constructArrayBufferView(JSC::ExecState* exec)
     if (length >= 0)
         result = C::create(static_cast<unsigned>(length));
     if (!result)
-        throwError(exec, createRangeError(exec, tooLargeSize));
+        throwError(exec, createRangeError(exec, "ArrayBufferView size is not a small enough positive integer."));
     return result;
 }
 
