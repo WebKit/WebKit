@@ -3458,9 +3458,6 @@ BUGWK92570 WIN DEBUG : inspector/timeline/timeline-start-time.html = TEXT PASS T
 
 BUGCR139493 DEBUG : media/track/track-cues-sorted-before-dispatch.html = PASS CRASH
 
-// Need rebaseline
-BUGWK92833 MAC WIN : fast/forms/basic-selects.html = IMAGE+TEXT PASS
-
 // Supposedly started failing between CR r140760 and CR r141216.  The failures
 // look like they involve antialiasing; the fact that the test clearly expects
 // these pixels not to be antialiased means these shouldn't just be rebaselined

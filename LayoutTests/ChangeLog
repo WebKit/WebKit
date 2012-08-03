@@ -1,3 +1,16 @@
+2012-08-02  Yoshifumi Inoue  <yosin@chromium.org>
+
+        Unreviewed. Rebaseline fast/forms/basic-selects.html for Chromium-Mac and Chromium-Win.
+
+        r124416 changes rendering of non-disabled option element in disabled select.
+
+        * platform/chromium-mac-snowleopard/fast/forms/basic-selects-expected.png:
+        * platform/chromium-mac/fast/forms/basic-selects-expected.png:
+        * platform/chromium-mac/fast/forms/basic-selects-expected.txt: Added.
+        * platform/chromium-win/fast/forms/basic-selects-expected.png:
+        * platform/chromium-win/fast/forms/basic-selects-expected.txt:
+        * platform/chromium/TestExpectations:
+
 2012-08-02  Roger Fong  <roger_fong@apple.com>
 
         Layout Test: fast/css/image-orientation/image-orientation needs to be added to skip list for Windows.
