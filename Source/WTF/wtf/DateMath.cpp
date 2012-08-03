@@ -402,6 +402,11 @@ int32_t calculateUTCOffset()
  */
 static double calculateDSTOffsetSimple(double localTimeSeconds, double utcOffset)
 {
+#if OS(WINCE)
+    UNUSED_PARAM(localTimeSeconds);
+    UNUSED_PARAM(utcOffset);
+    return 0;
+#else
     if (localTimeSeconds > maxUnixTime)
         localTimeSeconds = maxUnixTime;
     else if (localTimeSeconds < 0) // Go ahead a day to make localtime work (does not work with 0)
@@ -426,6 +431,7 @@ static double calculateDSTOffsetSimple(double localTimeSeconds, double utcOffset
         diff += secondsPerDay;
 
     return (diff * msPerSecond);
+#endif
 }
 
 // Get the DST offset, given a time in UTC

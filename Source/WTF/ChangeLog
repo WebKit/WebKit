@@ -1,3 +1,18 @@
+2012-08-02  Patrick Gansterer  <paroga@webkit.org>
+
+        [WINCE] Return 0 at calculateDSTOffset(double, double)
+        https://bugs.webkit.org/show_bug.cgi?id=92953
+
+        Reviewed by Ryosuke Niwa.
+
+        localtime() is implemented as a call to gmtime() in ce_time.c.
+        Since this will never return correct values, returning 0 instead
+        does not remove any existing functionality, but decreases the
+        dependency on the (external) ce_time implementation.
+
+        * wtf/DateMath.cpp:
+        (WTF::calculateDSTOffsetSimple):
+
 2012-08-02  Arnaud Renevier  <a.renevier@sisa.samsung.com>
 
         TypedArray set method is slow when called with another typed array
