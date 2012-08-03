@@ -1,3 +1,9 @@
+2012-08-03  Arvid Nilsson  <anilsson@rim.com>
+
+        Unreviewed, adding self to committers.py after becoming committer.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2012-08-03  Ádám Kallai  <kadam@inf.u-szeged.hu>
 
         Limited the number of queried cached build infos in URLs used by Garden-o-matic.
