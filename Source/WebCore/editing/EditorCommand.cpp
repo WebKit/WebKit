@@ -1233,9 +1233,8 @@ static bool enabledInEditableText(Frame* frame, Event* event, EditorCommandSourc
 static bool enabledDelete(Frame* frame, Event* event, EditorCommandSource source)
 {
     switch (source) {
-    case CommandFromMenuOrKeyBinding:
-        // "Delete" from menu only affects selected range, just like Cut but without affecting pasteboard
-        return enabledCut(frame, event, source);
+    case CommandFromMenuOrKeyBinding:    
+        return frame->editor()->canDelete();
     case CommandFromDOM:
     case CommandFromDOMWithUserInterface:
         // "Delete" from DOM is like delete/backspace keypress, affects selected range if non-empty,

@@ -1,3 +1,15 @@
+2012-08-03  Sergio Carlos Morales Angeles  <carloschilazo@gmail.com>
+
+        Delete text from password does nothing.
+        https://bugs.webkit.org/show_bug.cgi?id=92040
+
+        Reviewed by Ryosuke Niwa.
+
+        Added regression test for password field content delete.
+
+        * editing/deleting/password-delete-contents-expected.txt: Added.
+        * editing/deleting/password-delete-contents.html: Added.
+
 2012-08-03  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed GTK gardening, adding text failure expectations for 20 MathML

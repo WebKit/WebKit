@@ -1,3 +1,18 @@
+2012-08-03  Sergio Carlos Morales Angeles  <carloschilazo@gmail.com>
+
+        Delete text from password does nothing.
+        https://bugs.webkit.org/show_bug.cgi?id=92040
+
+        Reviewed by Ryosuke Niwa.
+
+        Use Editor::canDelete() to determine if field is editable or not.
+        Added password-delete-contents test.
+
+        Test: editing/deleting/password-delete-contents.html
+
+        * editing/EditorCommand.cpp:
+        (WebCore::enabledDelete):
+
 2012-08-03  Jan Keromnes  <janx@linux.com>
 
         Web Inspector: Make textModel private to textEditor
