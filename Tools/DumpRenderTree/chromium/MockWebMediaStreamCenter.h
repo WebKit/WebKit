@@ -32,7 +32,7 @@
 #define MockWebMediaStreamCenter_h
 
 #if ENABLE(MEDIA_STREAM)
-#include "platform/WebMediaStreamCenter.h"
+#include <public/WebMediaStreamCenter.h>
 
 namespace WebKit {
 class WebMediaStreamCenterClient;
