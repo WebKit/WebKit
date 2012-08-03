@@ -70,6 +70,15 @@ public:
     bool hasLocalName(const AtomicString& name) const { return m_token->name() == name; }
     bool hasTagName(const QualifiedName& name) const { return m_token->name() == name.localName() && m_namespaceURI == name.namespaceURI(); }
 
+    bool causesFosterParenting()
+    {
+        return hasTagName(HTMLNames::tableTag)
+            || hasTagName(HTMLNames::tbodyTag)
+            || hasTagName(HTMLNames::tfootTag)
+            || hasTagName(HTMLNames::theadTag)
+            || hasTagName(HTMLNames::trTag);
+    }
+
 private:
     HTMLStackItem(PassRefPtr<ContainerNode> node, ItemType type)
         : m_node(node)

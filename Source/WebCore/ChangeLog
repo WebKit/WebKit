@@ -1,5 +1,25 @@
 2012-08-02  Kwang Yul Seo  <skyul@company100.net>
 
+        Move causesFosterParenting() to HTMLStackItem
+        https://bugs.webkit.org/show_bug.cgi?id=93048
+
+        Reviewed by Adam Barth.
+
+        Changed to share causesFosterParenting() between HTMLTreeBuilder and HTMLConstructionSite
+        by moving this function to HTMLStackItem.
+
+        No functional change, so no new tests.
+
+        * html/parser/HTMLConstructionSite.cpp:
+        (WebCore::HTMLConstructionSite::shouldFosterParent):
+        * html/parser/HTMLStackItem.h:
+        (WebCore::HTMLStackItem::causesFosterParenting):
+        (HTMLStackItem):
+        * html/parser/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::callTheAdoptionAgency):
+
+2012-08-02  Kwang Yul Seo  <skyul@company100.net>
+
         Read tag names and attributes from the saved tokens in HTMLTreeBuilder::callTheAdoptionAgency(AtomicHTMLToken*)
         https://bugs.webkit.org/show_bug.cgi?id=93047
 

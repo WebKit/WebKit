@@ -70,15 +70,6 @@ static bool hasImpliedEndTag(const HTMLStackItem* item)
         || item->hasTagName(rtTag);
 }
 
-static bool causesFosterParenting(const HTMLStackItem* item)
-{
-    return item->hasTagName(tableTag)
-        || item->hasTagName(tbodyTag)
-        || item->hasTagName(tfootTag)
-        || item->hasTagName(theadTag)
-        || item->hasTagName(trTag);
-}
-
 static inline bool isAllWhitespace(const String& string)
 {
     return string.isAllSpecialCharacters<isHTMLSpace>();
@@ -495,7 +486,7 @@ bool HTMLConstructionSite::shouldFosterParent() const
 {
     return m_redirectAttachToFosterParent
         && currentStackItem()->isElementNode()
-        && causesFosterParenting(currentStackItem());
+        && currentStackItem()->causesFosterParenting();
 }
 
 void HTMLConstructionSite::fosterParent(PassRefPtr<Node> node)

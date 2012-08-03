@@ -1585,14 +1585,9 @@ void HTMLTreeBuilder::callTheAdoptionAgency(AtomicHTMLToken* token)
             lastNode = node;
         }
         // 7
-        const AtomicString& commonAncestorTag = commonAncestor->localName();
         if (ContainerNode* parent = lastNode->element()->parentNode())
             parent->parserRemoveChild(lastNode->element());
-        // FIXME: If this moves to HTMLConstructionSite, this check should use
-        // causesFosterParenting(tagName) instead.
-        if (commonAncestorTag == tableTag
-            || commonAncestorTag == trTag
-            || isTableBodyContextTag(commonAncestorTag))
+        if (commonAncestor->causesFosterParenting())
             m_tree.fosterParent(lastNode->element());
         else {
             commonAncestor->element()->parserAddChild(lastNode->element());
