@@ -82,6 +82,7 @@
 #include <WebCore/FloatRect.h>
 #include <WebCore/FocusDirection.h>
 #include <WebCore/MIMETypeRegistry.h>
+#include <WebCore/RenderEmbeddedObject.h>
 #include <WebCore/TextCheckerClient.h>
 #include <WebCore/WindowFeatures.h>
 #include <stdio.h>
@@ -2471,7 +2472,22 @@ void WebPageProxy::unavailablePluginButtonClicked(uint32_t opaquePluginUnavailab
     MESSAGE_CHECK_URL(url);
     MESSAGE_CHECK_URL(pluginsPageURL);
 
-    WKPluginUnavailabilityReason pluginUnavailabilityReason = static_cast<WKPluginUnavailabilityReason>(opaquePluginUnavailabilityReason);
+    WKPluginUnavailabilityReason pluginUnavailabilityReason = kWKPluginUnavailabilityReasonPluginMissing;
+    switch (static_cast<RenderEmbeddedObject::PluginUnavailabilityReason>(opaquePluginUnavailabilityReason)) {
+    case RenderEmbeddedObject::PluginMissing:
+        pluginUnavailabilityReason = kWKPluginUnavailabilityReasonPluginMissing;
+        break;
+    case RenderEmbeddedObject::InsecurePluginVersion:
+        pluginUnavailabilityReason = kWKPluginUnavailabilityReasonInsecurePluginVersion;
+        break;
+    case RenderEmbeddedObject::PluginCrashed:
+        pluginUnavailabilityReason = kWKPluginUnavailabilityReasonPluginCrashed;
+        break;
+
+    case RenderEmbeddedObject::PluginBlockedByContentSecurityPolicy:
+        ASSERT_NOT_REACHED();
+    }
+
     m_uiClient.unavailablePluginButtonClicked(this, pluginUnavailabilityReason, mimeType, url, pluginsPageURL);
 }
 

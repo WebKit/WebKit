@@ -1,3 +1,16 @@
+2012-08-03  Anders Carlsson  <andersca@apple.com>
+
+        Nothing happens when clicking on the unavailable plug-in button for a blocked plug-in
+        https://bugs.webkit.org/show_bug.cgi?id=93161
+
+        Reviewed by John Sullivan.
+
+        Be more robust against values being added to the RenderEmbeddedObject::PluginUnavailabilityReason
+        enumeration, and use a switch statement instead of blindly casting the type value to a WKPluginUnavailabilityReason.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::unavailablePluginButtonClicked):
+
 2012-08-03  Brady Eidson  <beidson@apple.com>
 
         Small part of "Out-of-process plug-ins should support asynchronous initialization."
