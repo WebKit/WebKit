@@ -515,7 +515,7 @@ WebInspector.UserAgentSettingsTab.prototype = {
      * @param {Element} parentElement
      * @param {string} id
      * @param {string} defaultText
-     * @param {function} eventListener
+     * @param {function(*)} eventListener
      * @return {Element} element
      */
     _createInput: function(parentElement, id, defaultText, eventListener)

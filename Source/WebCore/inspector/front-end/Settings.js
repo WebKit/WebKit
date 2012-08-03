@@ -57,6 +57,7 @@ var Capabilities = {
     canOverrideDeviceMetrics: false,
     timelineSupportsFrameInstrumentation: false,
     canOverrideGeolocation: false,
+    canOverrideDeviceOrientation: false,
 }
 
 /**

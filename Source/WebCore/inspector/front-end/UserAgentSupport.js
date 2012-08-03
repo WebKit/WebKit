@@ -235,7 +235,13 @@ WebInspector.UserAgentSupport.GeolocationPosition.clearGeolocationOverride = fun
     PageAgent.clearGeolocationOverride();
 }
 
-WebInspector.UserAgentSupport.DeviceOrientation = function (alpha, beta, gamma)
+/**
+ * @constructor
+ * @param {number} alpha
+ * @param {number} beta
+ * @param {number} gamma
+ */
+WebInspector.UserAgentSupport.DeviceOrientation = function(alpha, beta, gamma)
 {
     this.alpha = alpha;
     this.beta = beta;
@@ -252,7 +258,7 @@ WebInspector.UserAgentSupport.DeviceOrientation.prototype = {
     }
 }
 
-/*
+/**
  * @return {WebInspector.UserAgentSupport.DeviceOrientation}
  */
 WebInspector.UserAgentSupport.DeviceOrientation.parseSetting = function(value)
