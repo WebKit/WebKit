@@ -126,8 +126,6 @@ bool SubframeLoader::requestPlugin(HTMLPlugInImageElement* ownerElement, const K
     if (m_frame->document()) {
         if (m_frame->document()->isSandboxed(SandboxPlugins))
             return false;
-        if (!m_frame->document()->contentSecurityPolicy()->allowObjectFromSource(url))
-            return false;
     }
 
     ASSERT(ownerElement->hasTagName(objectTag) || ownerElement->hasTagName(embedTag));
@@ -421,8 +419,10 @@ bool SubframeLoader::loadPlugin(HTMLPlugInImageElement* pluginElement, const KUR
         return false;
     }
 
-    if (!document()->contentSecurityPolicy()->allowObjectFromSource(url))
+    if (!document()->contentSecurityPolicy()->allowObjectFromSource(url)) {
+        renderer->setPluginUnavailabilityReason(RenderEmbeddedObject::PluginBlockedByContentSecurityPolicy);
         return false;
+    }
 
     FrameLoader* frameLoader = m_frame->loader();
     if (!frameLoader->checkIfRunInsecureContent(document()->securityOrigin(), url))

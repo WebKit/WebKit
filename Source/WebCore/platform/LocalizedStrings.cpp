@@ -673,6 +673,11 @@ String crashedPluginText()
     return WEB_UI_STRING("Plug-in Failure", "Label text to be used if plugin host process has crashed");
 }
 
+String blockedPluginByContentSecurityPolicyText()
+{
+    return WEB_UI_STRING("Blocked Plug-in", "Label text to be used if plugin is blocked by a page's Content Security Policy");
+}
+
 String insecurePluginVersionText()
 {
     return WEB_UI_STRING("Blocked Plug-in", "Label text to be used when an insecure plug-in version was blocked from loading");

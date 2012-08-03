@@ -1,3 +1,15 @@
+2012-08-03  Mike West  <mkwst@chromium.org>
+
+        Blocking a plugin via CSP should result in one (and only one) console message.
+        https://bugs.webkit.org/show_bug.cgi?id=92649
+
+        Reviewed by Adam Barth.
+
+        * src/LocalizedStrings.cpp:
+        (WebCore::blockedPluginByContentSecurityPolicyText):
+        (WebCore):
+            Adding a stub for the newly added string.
+
 2012-08-03  Oli Lan  <olilan@chromium.org>
 
         [chromium] Add a test to WebFrameTest for selectRange and visiblePositionForWindowPoint.

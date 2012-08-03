@@ -1,3 +1,53 @@
+2012-08-03  Mike West  <mkwst@chromium.org>
+
+        Blocking a plugin via CSP should result in one (and only one) console message.
+        https://bugs.webkit.org/show_bug.cgi?id=92649
+
+        Reviewed by Adam Barth.
+
+        Currently, blocking a plugin via Content Security Policy results in some
+        leakage of console log messages between tests. I'm unclear as to the
+        root cause, but the symptoms exhibited include
+        `SubframeLoader::requestPlugin` being called multiple times for a single
+        element, which in turn causes multiple console logs to be sent. These
+        messages tend to appear in the subsequent test, making the
+        `http/test/security/contentSecurityPolicy/object-src-*` set of tests
+        flakey indeed.
+
+        This patch addresses the issue by marking elements' plugins as
+        unavailable when they're blocked by CSP. No new tests have been added:
+        this patch should simply make the current tests actually pass.
+
+        * loader/SubframeLoader.cpp:
+        (WebCore::SubframeLoader::requestPlugin):
+            We check the CSP status in `SubframeLoader::loadPlugin`, which is
+            called at the end of this function. Checking CSP status in both
+            locations is redundant.
+        (WebCore::SubframeLoader::loadPlugin):
+            If the plugin is blocked by CSP, tell the element's embedded object
+            renderer that the plugin is unavailable.
+        * platform/LocalizedStrings.cpp:
+        (WebCore::blockedPluginByContentSecurityPolicyText):
+        (WebCore):
+        * platform/LocalizedStrings.h:
+        (WebCore):
+        * platform/blackberry/LocalizedStringsBlackBerry.cpp:
+        (WebCore::blockedPluginByContentSecurityPolicyText):
+        (WebCore):
+        * platform/efl/LocalizedStringsEfl.cpp:
+        (WebCore::blockedPluginByContentSecurityPolicyText):
+        (WebCore):
+        * platform/gtk/LocalizedStringsGtk.cpp:
+        (WebCore::blockedPluginByContentSecurityPolicyText):
+        (WebCore):
+        * platform/qt/LocalizedStringsQt.cpp:
+        (WebCore::blockedPluginByContentSecurityPolicyText):
+        (WebCore):
+        * rendering/RenderEmbeddedObject.cpp:
+        (WebCore::unavailablePluginReplacementText):
+        * rendering/RenderEmbeddedObject.h:
+            Return appropriate text when the plugin is blocked by CSP.
+
 2012-08-03  Kentaro Hara  <haraken@chromium.org>
 
         [V8] Add an IsExecutionTerminating() check to setDOMException()

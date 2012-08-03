@@ -445,6 +445,12 @@ String crashedPluginText()
     return String();
 }
 
+String blockedPluginByContentSecurityPolicyText()
+{
+    notImplemented();
+    return String();
+}
+
 String insecurePluginVersionText()
 {
     notImplemented();

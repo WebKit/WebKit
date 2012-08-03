@@ -215,6 +215,12 @@ String crashedPluginText()
     return String("Plug-in Failure");
 }
 
+String blockedPluginByContentSecurityPolicyText()
+{
+    notImplemented();
+    return String();
+}
+
 String insecurePluginVersionText()
 {
     notImplemented();

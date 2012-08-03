@@ -560,6 +560,12 @@ String crashedPluginText()
     return String::fromUTF8("plugin crashed");
 }
 
+String blockedPluginByContentSecurityPolicyText()
+{
+    notImplemented();
+    return String();
+}
+
 String insecurePluginVersionText()
 {
     notImplemented();

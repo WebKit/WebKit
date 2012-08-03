@@ -109,6 +109,8 @@ static String unavailablePluginReplacementText(RenderEmbeddedObject::PluginUnava
         return missingPluginText();
     case RenderEmbeddedObject::PluginCrashed:
         return crashedPluginText();
+    case RenderEmbeddedObject::PluginBlockedByContentSecurityPolicy:
+        return blockedPluginByContentSecurityPolicyText();
     case RenderEmbeddedObject::InsecurePluginVersion:
         return insecurePluginVersionText();
     }
