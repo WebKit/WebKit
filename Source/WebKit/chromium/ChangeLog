@@ -1,3 +1,14 @@
+2012-08-02  Adam Barth  <abarth@webkit.org>
+
+        V8Proxy::currentContext() doesn't do anything and should be removed
+        https://bugs.webkit.org/show_bug.cgi?id=93041
+
+        Reviewed by Eric Seidel.
+
+        * src/WebBindings.cpp:
+        (WebKit::makeIntArrayImpl):
+        (WebKit::makeStringArrayImpl):
+
 2012-08-02  David Grogan  <dgrogan@chromium.org>
 
         IndexedDB: Core upgradeneeded logic

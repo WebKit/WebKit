@@ -1,3 +1,24 @@
+2012-08-02  Adam Barth  <abarth@webkit.org>
+
+        V8Proxy::currentContext() doesn't do anything and should be removed
+        https://bugs.webkit.org/show_bug.cgi?id=93041
+
+        Reviewed by Eric Seidel.
+
+        It's just a wrapper for GetCurrent().
+
+        * bindings/v8/DateExtension.cpp:
+        (WebCore::DateExtension::setAllowSleep):
+        * bindings/v8/V8NPUtils.cpp:
+        (WebCore::convertV8ObjectToNPVariant):
+        * bindings/v8/V8Proxy.cpp:
+        (WebCore::V8Proxy::retrieve):
+        (WebCore::V8Proxy::mainWorldContext):
+        * bindings/v8/V8Proxy.h:
+        (V8Proxy):
+        * bindings/v8/custom/V8InjectedScriptHostCustom.cpp:
+        (WebCore::getJSListenerFunctions):
+
 2012-08-02  David Grogan  <dgrogan@chromium.org>
 
         IndexedDB: Core upgradeneeded logic

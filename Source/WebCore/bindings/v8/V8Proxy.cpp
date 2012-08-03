@@ -524,7 +524,7 @@ Frame* V8Proxy::retrieveFrameForCallingContext()
 
 V8Proxy* V8Proxy::retrieve()
 {
-    DOMWindow* window = retrieveWindow(currentContext());
+    DOMWindow* window = retrieveWindow(v8::Context::GetCurrent());
     ASSERT(window);
     return retrieve(window->frame());
 }
@@ -722,11 +722,6 @@ v8::Local<v8::Context> V8Proxy::mainWorldContext(Frame* frame)
         return v8::Local<v8::Context>();
 
     return proxy->mainWorldContext();
-}
-
-v8::Local<v8::Context> V8Proxy::currentContext()
-{
-    return v8::Context::GetCurrent();
 }
 
 v8::Handle<v8::Value> V8Proxy::checkNewLegal(const v8::Arguments& args)
