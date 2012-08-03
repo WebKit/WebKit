@@ -28,7 +28,7 @@ namespace WTF {
 
 template <> GRefPtr<GstElement> adoptGRef(GstElement* ptr)
 {
-    ASSERT(!ptr || !GST_OBJECT_IS_FLOATING(GST_OBJECT(ptr)));
+    ASSERT(!ptr || !gstObjectIsFloating(GST_OBJECT(ptr)));
     return GRefPtr<GstElement>(ptr, GRefPtrAdopt);
 }
 
@@ -48,7 +48,7 @@ template <> void derefGPtr<GstElement>(GstElement* ptr)
 
 template <> GRefPtr<GstPad> adoptGRef(GstPad* ptr)
 {
-    ASSERT(!ptr || !GST_OBJECT_IS_FLOATING(GST_OBJECT(ptr)));
+    ASSERT(!ptr || !gstObjectIsFloating(GST_OBJECT(ptr)));
     return GRefPtr<GstPad>(ptr, GRefPtrAdopt);
 }
 
@@ -68,7 +68,7 @@ template <> void derefGPtr<GstPad>(GstPad* ptr)
 
 template <> GRefPtr<GstPadTemplate> adoptGRef(GstPadTemplate* ptr)
 {
-    ASSERT(!ptr || !GST_OBJECT_IS_FLOATING(GST_OBJECT(ptr)));
+    ASSERT(!ptr || !gstObjectIsFloating(GST_OBJECT(ptr)));
     return GRefPtr<GstPadTemplate>(ptr, GRefPtrAdopt);
 }
 
@@ -102,7 +102,7 @@ template <> void derefGPtr<GstCaps>(GstCaps* ptr)
 
 template <> GRefPtr<GstTask> adoptGRef(GstTask* ptr)
 {
-    ASSERT(!GST_OBJECT_IS_FLOATING(GST_OBJECT(ptr)));
+    ASSERT(!gstObjectIsFloating(GST_OBJECT(ptr)));
     return GRefPtr<GstTask>(ptr, GRefPtrAdopt);
 }
 
@@ -122,7 +122,7 @@ template <> void derefGPtr<GstTask>(GstTask* ptr)
 
 template <> GRefPtr<GstBus> adoptGRef(GstBus* ptr)
 {
-    ASSERT(!GST_OBJECT_IS_FLOATING(GST_OBJECT(ptr)));
+    ASSERT(!gstObjectIsFloating(GST_OBJECT(ptr)));
     return GRefPtr<GstBus>(ptr, GRefPtrAdopt);
 }
 
@@ -142,7 +142,7 @@ template <> void derefGPtr<GstBus>(GstBus* ptr)
 
 template <> GRefPtr<GstElementFactory> adoptGRef(GstElementFactory* ptr)
 {
-    ASSERT(!GST_OBJECT_IS_FLOATING(GST_OBJECT(ptr)));
+    ASSERT(!gstObjectIsFloating(GST_OBJECT(ptr)));
     return GRefPtr<GstElementFactory>(ptr, GRefPtrAdopt);
 }
 

@@ -1,3 +1,21 @@
+2012-08-03  Philippe Normand  <pnormand@igalia.com>
+
+        [GTK][jhbuild] Switch to GStreamer 0.11 build
+        https://bugs.webkit.org/show_bug.cgi?id=91727
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Add a new function to encapsulate the GStreamer API removal of
+        GST_OBJECT_IS_FLOATING in the upcoming 1.0 release. Use of this
+        macro can now be replaced by calling the g_object_is_floating
+        function.
+
+        * platform/graphics/gstreamer/GRefPtrGStreamer.cpp:
+        (WTF::adoptGRef):
+        * platform/graphics/gstreamer/GStreamerVersioning.cpp:
+        (gstObjectIsFloating):
+        * platform/graphics/gstreamer/GStreamerVersioning.h:
+
 2012-08-03  George Staikos  <staikos@webkit.org>
 
         [BlackBerry] Add a null check for media implementation to fix a crash.

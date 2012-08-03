@@ -1,3 +1,17 @@
+2012-08-03  Philippe Normand  <pnormand@igalia.com>
+
+        [GTK][jhbuild] Switch to GStreamer 0.11 build
+        https://bugs.webkit.org/show_bug.cgi?id=91727
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Switch build-webkit --gtk to GStreamer 0.11 support and build the
+        necessary GStreamer git modules from JHBuild.
+
+        * Scripts/webkitdirs.pm:
+        (buildAutotoolsProject): Build WebKit with GStreamer 0.11 support.
+        * gtk/jhbuild.modules: GStreamer build support.
+
 2012-08-03  Nico Weber  <thakis@chromium.org>
 
         [chromium mac] DumpRenderTree compile fails with warning/error in LayoutTestHelper.mm with 10.7sdk

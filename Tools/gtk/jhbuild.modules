@@ -19,6 +19,11 @@
       <dep package="libsoup"/>
       <dep package="at-spi2-core"/>
       <dep package="at-spi2-atk"/>
+      <dep package="gstreamer"/>
+      <dep package="gst-plugins-base"/>
+      <dep package="gst-plugins-good"/>
+      <dep package="gst-plugins-bad"/>
+      <dep package="gst-ffmpeg"/>
     </dependencies>
   </metamodule>
 
@@ -36,6 +41,12 @@
       href="http://cairographics.org"/>
   <repository type="tarball" name="freedesktop.org"
       href="http://www.freedesktop.org"/>
+  <repository type="git" name="gstreamer"
+      href="git://anongit.freedesktop.org/git/gstreamer/"/>
+  <repository type="git" name="entropywave"
+      href="git://code.entropywave.com/git/"/>
+  <repository type="tarball" name="xiph"
+              href="http://downloads.xiph.org/releases/"/>
 
   <autotools id="make" autogen-sh="configure">
     <branch repo="ftp.gnu.org"
@@ -221,6 +232,69 @@
       <dep package="glib"/>
       <dep package="at-spi2-core"/>
     </dependencies>
+  </autotools>
+
+  <autotools id="orc">
+    <branch repo="entropywave" module="orc.git" checkoutdir="orc" tag="orc-0.4.16" />
+  </autotools>
+
+  <autotools id="gstreamer">
+    <branch repo="gstreamer" module="gstreamer" checkoutdir="gstreamer" revision="8d9a4b2e94fa806f5146482fb0261d890db38fd5"/>
+  </autotools>
+
+  <autotools id="libogg" autogen-sh="configure" >
+     <branch repo="xiph" module="ogg/libogg-1.3.0.tar.gz"
+             hash="sha256:a8de807631014615549d2356fd36641833b8288221cea214f8a72750efe93780"
+             md5sum="0a7eb40b86ac050db3a789ab65fe21c2"
+             version="1.3.0"/>
+  </autotools>
+  <autotools id="libvorbis" autogen-sh="configure" autogenargs="--disable-examples" >
+     <branch repo="xiph" module="vorbis/libvorbis-1.3.3.tar.gz"
+             hash="sha256:6d747efe7ac4ad249bf711527882cef79fb61d9194c45b5ca5498aa60f290762"
+             md5sum="6b1a36f0d72332fae5130688e65efe1f"
+             version="1.3.3"/>
+  </autotools>
+  <autotools id="libtheora" autogen-sh="configure" autogenargs="--disable-examples">
+     <branch repo="xiph" module="theora/libtheora-1.1.1.tar.gz"
+             hash="sha256:40952956c47811928d1e7922cda3bc1f427eb75680c3c37249c91e949054916b"
+             md5sum="bb4dc37f0dc97db98333e7160bfbb52b"
+             version="1.1.1"/>
+    <dependencies>
+      <dep package="libogg"/>
+      <dep package="libvorbis"/>
+    </dependencies>
+  </autotools>
+
+  <autotools id="gst-plugins-base" autogenargs="--disable-examples">
+    <dependencies>
+      <dep package="gstreamer"/>
+      <dep package="libogg"/>
+      <dep package="libvorbis"/>
+      <dep package="libtheora"/>
+      <dep package="orc"/>
+    </dependencies>
+    <branch repo="gstreamer" module="gst-plugins-base" checkoutdir="gst-plugins-base" revision="39aa4dc674291f438606ccab6033225f7a886de4"/>
+  </autotools>
+
+  <autotools id="gst-plugins-good" autogenargs="--disable-examples">
+    <dependencies>
+      <dep package="gst-plugins-base"/>
+    </dependencies>
+    <branch repo="gstreamer" module="gst-plugins-good" checkoutdir="gst-plugins-good" revision="86c236a5f61725dc4e0fe22ba6681795bb5f1160"/>
+  </autotools>
+
+  <autotools id="gst-plugins-bad" autogenargs="--disable-examples">
+    <dependencies>
+      <dep package="gst-plugins-base"/>
+    </dependencies>
+    <branch repo="gstreamer" module="gst-plugins-bad" checkoutdir="gst-plugins-bad" revision="71902797f22d8ba502cbdfbcc495f67b3b0cdb3c"/>
+  </autotools>
+
+  <autotools id="gst-ffmpeg" autogenargs="--with-libav-extra-configure='--disable-yasm'">
+    <dependencies>
+      <dep package="gst-plugins-base"/>
+    </dependencies>
+    <branch repo="gstreamer" module="gst-ffmpeg" checkoutdir="gst-ffmpeg" revision="3d2d1beb77ccaced48faee3e0d3d6ef5005ccd2a"/>
   </autotools>
 
 </moduleset>

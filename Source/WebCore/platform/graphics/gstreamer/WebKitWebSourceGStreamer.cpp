@@ -854,7 +854,7 @@ void StreamingClient::didReceiveResponse(ResourceHandle*, const ResourceResponse
 #endif
     else
 #ifdef GST_API_VERSION_1
-        gst_pad_push_event(GST_PAD_CAST(m_src->priv->srcpad), gst_event_new_tag("WebKitWebSrc", tags));
+        gst_pad_push_event(GST_PAD_CAST(m_src->priv->srcpad), gst_event_new_tag(tags));
 #else
         gst_element_found_tags_for_pad(GST_ELEMENT(m_src), m_src->priv->srcpad, tags);
 #endif
