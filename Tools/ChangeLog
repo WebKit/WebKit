@@ -17,6 +17,15 @@
         [WTR] process unresponsiveness is reported to the wrong test
         https://bugs.webkit.org/show_bug.cgi?id=88404
 
+        2nd unreviewed buildfix.
+
+        * WebKitTestRunner/TestInvocation.cpp:
+
+2012-08-03  Balazs Kelemen  <kbalazs@webkit.org>
+
+        [WTR] process unresponsiveness is reported to the wrong test
+        https://bugs.webkit.org/show_bug.cgi?id=88404
+
         Unreviewed buildfix. Also made the change on the array size
         suggested on review because I forgot it when landed.
 

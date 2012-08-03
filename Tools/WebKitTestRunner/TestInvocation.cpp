@@ -39,6 +39,10 @@
 #include <wtf/PassOwnArrayPtr.h>
 #include <wtf/text/CString.h>
 
+#if PLATFORM(MAC)
+#include <WebKit2/WKPagePrivateMac.h>
+#endif
+
 #if OS(WINDOWS)
 #include <direct.h> // For _getcwd.
 #define getcwd _getcwd // MSDN says getcwd is deprecated.
