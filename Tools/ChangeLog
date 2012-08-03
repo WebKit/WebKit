@@ -1,3 +1,16 @@
+2012-08-03  Hugo Parente Lima  <hugo.lima@openbossa.org>
+
+        [Qt][WK2] There's no way to test the gesture tap on WTR
+        https://bugs.webkit.org/show_bug.cgi?id=92895
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        WTR doesn't create the QQuickItem from C++, not from QML, so a call
+        to componentComplete() was added to mimic the QML behaviour.
+
+        * WebKitTestRunner/qt/PlatformWebViewQt.cpp:
+        (WTR::PlatformWebView::PlatformWebView):
+
 2012-08-03  Balazs Kelemen  <kbalazs@webkit.org>
 
         Unreviewed, rolling out r124567.

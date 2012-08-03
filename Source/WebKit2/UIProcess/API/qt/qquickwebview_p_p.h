@@ -69,7 +69,7 @@ public:
 
     virtual void initialize(WKContextRef contextRef = 0, WKPageGroupRef pageGroupRef = 0);
 
-    virtual void onComponentComplete() { }
+    virtual void onComponentComplete();
 
     virtual void enableMouseEvents() { }
     virtual void disableMouseEvents() { }
@@ -175,6 +175,7 @@ protected:
     QScopedPointer<QQuickWebPage> pageView;
     QQuickWebView* q_ptr;
 
+    QScopedPointer<WebKit::QtViewportHandler> m_viewportHandler;
     FlickableAxisLocker axisLocker;
 
     QQmlComponent* alertDialog;
@@ -230,9 +231,6 @@ public:
     virtual void pageDidRequestScroll(const QPoint& pos);
     virtual void didChangeContentsSize(const QSize& newSize);
     virtual void handleMouseEvent(QMouseEvent*);
-
-private:
-    QScopedPointer<WebKit::QtViewportHandler> m_viewportHandler;
 };
 
 #endif // qquickwebview_p_p_h

@@ -321,6 +321,13 @@ void QQuickWebViewPrivate::initialize(WKContextRef contextRef, WKPageGroupRef pa
     webPageProxy->initializeWebPage();
 }
 
+void QQuickWebViewPrivate::onComponentComplete()
+{
+    Q_Q(QQuickWebView);
+    m_viewportHandler.reset(new QtViewportHandler(webPageProxy.get(), q, pageView.data()));
+    pageView->eventHandler()->setViewportHandler(m_viewportHandler.data());
+}
+
 void QQuickWebViewPrivate::setTransparentBackground(bool enable)
 {
     webPageProxy->setDrawsTransparentBackground(enable);
@@ -852,10 +859,7 @@ void QQuickWebViewFlickablePrivate::initialize(WKContextRef contextRef, WKPageGr
 
 void QQuickWebViewFlickablePrivate::onComponentComplete()
 {
-    Q_Q(QQuickWebView);
-
-    m_viewportHandler.reset(new QtViewportHandler(webPageProxy.get(), q, pageView.data()));
-    pageView->eventHandler()->setViewportHandler(m_viewportHandler.data());
+    QQuickWebViewPrivate::onComponentComplete();
 
     // Trigger setting of correct visibility flags after everything was allocated and initialized.
     _q_onVisibleChanged();
