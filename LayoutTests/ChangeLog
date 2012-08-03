@@ -1,3 +1,14 @@
+2012-08-02  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, land some overrides for Chromium for the tests I just added, since
+        V8 attachs a slightly different (but equally valid) string for the exception we
+        expect to see.
+
+        * platform/chromium/fast/js/dfg-compare-final-object-to-final-object-or-other-when-both-proven-final-object-expected.txt: Added.
+        * platform/chromium/fast/js/dfg-compare-final-object-to-final-object-or-other-when-proven-final-object-expected.txt: Added.
+        * platform/chromium/fast/js/dfg-peephole-compare-final-object-to-final-object-or-other-when-both-proven-final-object-expected.txt: Added.
+        * platform/chromium/fast/js/dfg-peephole-compare-final-object-to-final-object-or-other-when-proven-final-object-expected.txt: Added.
+
 2012-08-02  Kent Tamura  <tkent@chromium.org>
 
         Fix crashes for <input> and <textarea> with display:run-in.

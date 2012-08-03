@@ -1,0 +1,109 @@
+Tests that the CompareEq optimization for the case where one side is predicted final object and the other side is predicted either final object or other (i.e. null or undefined) doesn't assert when the other side is also proven final object.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS foo({f:42}, null) threw exception TypeError: Cannot read property 'f' of null.
+PASS foo(o, o) is [42, true]
+PASS foo({f:42}, null) threw exception TypeError: Cannot read property 'f' of null.
+PASS foo(o, o) is [42, true]
+PASS foo({f:42}, null) threw exception TypeError: Cannot read property 'f' of null.
+PASS foo(o, o) is [42, true]
+PASS foo({f:42}, null) threw exception TypeError: Cannot read property 'f' of null.
+PASS foo(o, o) is [42, true]
+PASS foo({f:42}, null) threw exception TypeError: Cannot read property 'f' of null.
+PASS foo(o, o) is [42, true]
+PASS foo({f:42}, null) threw exception TypeError: Cannot read property 'f' of null.
+PASS foo(o, o) is [42, true]
+PASS foo({f:42}, null) threw exception TypeError: Cannot read property 'f' of null.
+PASS foo(o, o) is [42, true]
+PASS foo({f:42}, null) threw exception TypeError: Cannot read property 'f' of null.
+PASS foo(o, o) is [42, true]
+PASS foo({f:42}, null) threw exception TypeError: Cannot read property 'f' of null.
+PASS foo(o, o) is [42, true]
+PASS foo({f:42}, null) threw exception TypeError: Cannot read property 'f' of null.
+PASS foo(o, o) is [42, true]
+PASS foo({f:42}, null) threw exception TypeError: Cannot read property 'f' of null.
+PASS foo(o, o) is [42, true]
+PASS foo({f:42}, null) threw exception TypeError: Cannot read property 'f' of null.
+PASS foo(o, o) is [42, true]
+PASS foo({f:42}, null) threw exception TypeError: Cannot read property 'f' of null.
+PASS foo(o, o) is [42, true]
+PASS foo({f:42}, null) threw exception TypeError: Cannot read property 'f' of null.
+PASS foo(o, o) is [42, true]
+PASS foo({f:42}, null) threw exception TypeError: Cannot read property 'f' of null.
+PASS foo(o, o) is [42, true]
+PASS foo({f:42}, null) threw exception TypeError: Cannot read property 'f' of null.
+PASS foo(o, o) is [42, true]
+PASS foo({f:42}, null) threw exception TypeError: Cannot read property 'f' of null.
+PASS foo(o, o) is [42, true]
+PASS foo({f:42}, null) threw exception TypeError: Cannot read property 'f' of null.
+PASS foo(o, o) is [42, true]
+PASS foo({f:42}, null) threw exception TypeError: Cannot read property 'f' of null.
+PASS foo(o, o) is [42, true]
+PASS foo({f:42}, null) threw exception TypeError: Cannot read property 'f' of null.
+PASS foo(o, o) is [42, true]
+PASS foo({f:42}, null) threw exception TypeError: Cannot read property 'f' of null.
+PASS foo(o, o) is [42, true]
+PASS foo({f:42}, null) threw exception TypeError: Cannot read property 'f' of null.
+PASS foo(o, o) is [42, true]
+PASS foo({f:42}, null) threw exception TypeError: Cannot read property 'f' of null.
+PASS foo(o, o) is [42, true]
+PASS foo({f:42}, null) threw exception TypeError: Cannot read property 'f' of null.
+PASS foo(o, o) is [42, true]
+PASS foo({f:42}, null) threw exception TypeError: Cannot read property 'f' of null.
+PASS foo(o, o) is [42, true]
+PASS foo({f:42}, null) threw exception TypeError: Cannot read property 'f' of null.
+PASS foo(o, o) is [42, true]
+PASS foo({f:42}, null) threw exception TypeError: Cannot read property 'f' of null.
+PASS foo(o, o) is [42, true]
+PASS foo({f:42}, null) threw exception TypeError: Cannot read property 'f' of null.
+PASS foo(o, o) is [42, true]
+PASS foo({f:42}, null) threw exception TypeError: Cannot read property 'f' of null.
+PASS foo(o, o) is [42, true]
+PASS foo({f:42}, null) threw exception TypeError: Cannot read property 'f' of null.
+PASS foo(o, o) is [42, true]
+PASS foo({f:42}, null) threw exception TypeError: Cannot read property 'f' of null.
+PASS foo(o, o) is [42, true]
+PASS foo({f:42}, null) threw exception TypeError: Cannot read property 'f' of null.
+PASS foo(o, o) is [42, true]
+PASS foo({f:42}, null) threw exception TypeError: Cannot read property 'f' of null.
+PASS foo(o, o) is [42, true]
+PASS foo({f:42}, null) threw exception TypeError: Cannot read property 'f' of null.
+PASS foo(o, o) is [42, true]
+PASS foo({f:42}, null) threw exception TypeError: Cannot read property 'f' of null.
+PASS foo(o, o) is [42, true]
+PASS foo({f:42}, null) threw exception TypeError: Cannot read property 'f' of null.
+PASS foo(o, o) is [42, true]
+PASS foo({f:42}, null) threw exception TypeError: Cannot read property 'f' of null.
+PASS foo(o, o) is [42, true]
+PASS foo({f:42}, null) threw exception TypeError: Cannot read property 'f' of null.
+PASS foo(o, o) is [42, true]
+PASS foo({f:42}, null) threw exception TypeError: Cannot read property 'f' of null.
+PASS foo(o, o) is [42, true]
+PASS foo({f:42}, null) threw exception TypeError: Cannot read property 'f' of null.
+PASS foo(o, o) is [42, true]
+PASS foo({f:42}, null) threw exception TypeError: Cannot read property 'f' of null.
+PASS foo(o, o) is [42, true]
+PASS foo({f:42}, null) threw exception TypeError: Cannot read property 'f' of null.
+PASS foo(o, o) is [42, true]
+PASS foo({f:42}, null) threw exception TypeError: Cannot read property 'f' of null.
+PASS foo(o, o) is [42, true]
+PASS foo({f:42}, null) threw exception TypeError: Cannot read property 'f' of null.
+PASS foo(o, o) is [42, true]
+PASS foo({f:42}, null) threw exception TypeError: Cannot read property 'f' of null.
+PASS foo(o, o) is [42, true]
+PASS foo({f:42}, null) threw exception TypeError: Cannot read property 'f' of null.
+PASS foo(o, o) is [42, true]
+PASS foo({f:42}, null) threw exception TypeError: Cannot read property 'f' of null.
+PASS foo(o, o) is [42, true]
+PASS foo({f:42}, null) threw exception TypeError: Cannot read property 'f' of null.
+PASS foo(o, o) is [42, true]
+PASS foo({f:42}, null) threw exception TypeError: Cannot read property 'f' of null.
+PASS foo(o, o) is [42, true]
+PASS foo({f:42}, null) threw exception TypeError: Cannot read property 'f' of null.
+PASS foo(o, o) is [42, true]
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
