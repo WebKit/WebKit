@@ -372,7 +372,6 @@ BUGWKEFL SKIP : http/tests/security/isolatedWorld/didClearWindowObject.html = PA
 BUGWK87974 : http/tests/download = TEXT IMAGE IMAGE+TEXT
 
 // Needs custom policy delegate enhancement to log DOM node info - EFL port is missing DOM node abstraction
-BUGWK87972 : fast/loader/stop-provisional-loads.html = TEXT
 BUGWK87972 : fast/loader/policy-delegate-action-hit-test-zoomed.html = TEXT
 BUGWK87972 : fast/encoding/mailto-always-utf-8.html = TEXT
 BUGWK87972 : fast/forms/mailto/formenctype-attribute-button-html.html = TEXT

@@ -682,6 +682,15 @@ void DumpRenderTreeChrome::onFrameProvisionalLoad(void*, Evas_Object* frame, voi
         const String frameName(DumpRenderTreeSupportEfl::suitableDRTFrameName(frame));
         printf("%s - didStartProvisionalLoadForFrame\n", frameName.utf8().data());
     }
+
+    if (!topLoadingFrame && !done)
+        topLoadingFrame = frame;
+  
+    if (!done && gLayoutTestController->stopProvisionalFrameLoads()) { 
+        const String frameName(DumpRenderTreeSupportEfl::suitableDRTFrameName(frame));
+        printf("%s - stopping load in didStartProvisionalLoadForFrame callback\n", frameName.utf8().data());
+        ewk_frame_stop(frame);
+    }   
 }
 
 void DumpRenderTreeChrome::onFrameProvisionalLoadFailed(void*, Evas_Object* frame, void*)

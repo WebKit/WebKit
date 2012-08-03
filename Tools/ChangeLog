@@ -1,3 +1,17 @@
+2012-08-03  Joone Hur  <joone.hur@intel.com>
+
+        [EFL][DRT] fast/loader/stop-provisional-loads.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=92219
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        This patch adds the ability to tell DRT to call ewk_frame_stop 
+        inside of a didStartProvisionalLoadForFrame signal handler.
+        It allows to pass fast/loader/stop-provisional-loads.html.
+
+        * DumpRenderTree/efl/DumpRenderTreeChrome.cpp:
+        (DumpRenderTreeChrome::onFrameProvisionalLoad):
+
 2012-08-03  Balazs Kelemen  <kbalazs@webkit.org>
 
         [WTR] process unresponsiveness is reported to the wrong test
