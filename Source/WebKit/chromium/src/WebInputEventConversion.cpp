@@ -165,6 +165,7 @@ PlatformGestureEventBuilder::PlatformGestureEventBuilder(Widget* widget, const W
         break;
     case WebInputEvent::GestureLongPress:
         m_type = PlatformEvent::GestureLongPress;
+        m_area = IntSize(e.boundingBox.width, e.boundingBox.height);
         break;
     case WebInputEvent::GesturePinchBegin:
         m_type = PlatformEvent::GesturePinchBegin;

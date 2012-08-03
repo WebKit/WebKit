@@ -1,3 +1,18 @@
+2012-08-03  Terry Anderson  <tdanderson@chromium.org>
+
+        Apply target fuzzing when sending a context menu event
+        https://bugs.webkit.org/show_bug.cgi?id=92914
+
+        Reviewed by Antonio Gomes.
+
+        New layout test to verify that context menus appear on links for a long press
+        gesture when TOUCH_ADJUSTMENT is enabled.
+
+        * platform/qt/Skipped:
+        Skipped on qt because gestureLongPress is not used for context menus.
+        * touchadjustment/touch-links-longpress-expected.txt: Added.
+        * touchadjustment/touch-links-longpress.html: Added.
+
 2012-08-03  Stephen Chenney  <schenney@chromium.org>
 
         Crash when a clip path referencing a clip path changes documents

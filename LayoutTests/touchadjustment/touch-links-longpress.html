@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Touch Adjustment : Testing that a context menu will appear on a long press - bug 92914</title>
+    <script src="../fast/js/resources/js-test-pre.js"></script>
+    <script src="resources/touchadjustment.js"></script>
+    <style>
+        #sandbox {
+            position: absolute;
+            left: 0px;
+            top: 0px;
+        }
+    </style>
+</head>
+
+<body>
+
+<div id="sandbox">
+<p><a href="" id="link1">I</a> propose to consider <a href="" id="link2">the question</a>, "Can machines think?"<br>This should begin with definitions of the meaning of the terms "machine" and <a href="" id="link3">"think."</a></p>
+</div>
+
+<p id='description'></p>
+<div id='console'></div>
+
+<script>
+    var element;
+    var adjustedNode;
+    // Set up shortcut access to elements
+    var e = {};
+    ['sandbox', 'link1', 'link2', 'link3'].forEach(function(a) {
+        e[a] = document.getElementById(a);
+    });
+
+    document.oncontextmenu = function() { debug("PASS"); }
+
+    function testLongPress(touchpoint)
+    {
+        if (eventSender.gestureLongPress)
+            eventSender.gestureLongPress(touchpoint.left, touchpoint.top);
+        else
+            debug("gestureLongPress not implemented by this platform.");
+    }
+
+    function testDirectTouch(element)
+    {
+        // Touch directly in the center of the element.
+        var touchpoint = offsetTouchPoint(findAbsoluteBounds(element), 'center', 0, 20, 30);
+        testLongPress(touchpoint);
+    }
+
+    function testIndirectTouch(element)
+    {
+        // Touch just right of the element.
+        var touchpoint = offsetTouchPoint(findAbsoluteBounds(element), 'right', 10, 30, 20);
+        testLongPress(touchpoint);
+    }
+
+    function testDirectTouches()
+    {
+        debug('Testing direct hits.');
+        testDirectTouch(e.link1);
+        testDirectTouch(e.link2);
+        testDirectTouch(e.link3);
+    }
+
+    function testIndirectTouches()
+    {
+        debug('Testing indirect hits.');
+        testIndirectTouch(e.link1);
+        testIndirectTouch(e.link2);
+        testIndirectTouch(e.link3);
+    }
+
+    function runTests()
+    {
+        if (window.testRunner && window.internals && internals.touchNodeAdjustedToBestClickableNode) {
+            description('Tests if a long press gesture on links will trigger a context menu when touch adjustment is used.');
+            testDirectTouches();
+            testIndirectTouches();
+            e.sandbox.style.display = 'none';
+        }
+    }
+    runTests();
+</script>
+<script src="../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

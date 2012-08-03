@@ -1,3 +1,16 @@
+2012-08-03  Terry Anderson  <tdanderson@chromium.org>
+
+        Apply target fuzzing when sending a context menu event
+        https://bugs.webkit.org/show_bug.cgi?id=92914
+
+        Reviewed by Antonio Gomes.
+
+        When constructing a PlatformEvent::GestureLongPress in WebInputEventConversion.cpp,
+        use |boundingBox| to specify |m_area|.
+
+        * src/WebInputEventConversion.cpp:
+        (WebKit::PlatformGestureEventBuilder::PlatformGestureEventBuilder):
+
 2012-08-03  Leandro Gracia Gil  <leandrogracia@chromium.org>
 
         [Chromium] Add stubs for the find-in-page match rects API

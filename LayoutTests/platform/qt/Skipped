@@ -2703,3 +2703,6 @@ http/tests/security/contentSecurityPolicy/object-src-none-blocked.html
 
 # ENABLE(WIDGET_REGION) is disabled
 fast/css/widget-region-parser.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=92914
+touchadjustment/touch-links-longpress.html
