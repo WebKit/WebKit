@@ -1,3 +1,15 @@
+2012-08-03  Patrick Gansterer  <paroga@webkit.org>
+
+        [CMake][WIN] Disable C++ exceptions and RTTI
+        https://bugs.webkit.org/show_bug.cgi?id=93104
+
+        Reviewed by Ryosuke Niwa.
+
+        Both features are not used in WebKit, so remove them to safe some code.
+        Also enable compilation of plain c files with multiple processes.
+
+        * Source/cmake/OptionsWindows.cmake:
+
 2012-08-03  Mario Sanchez Prada  <msanchez@igalia.com>
 
         Unreviewed build fix for GTK after r124479.
