@@ -146,7 +146,7 @@ static v8::Handle<v8::Value> supplementalMethod1Callback(const v8::Arguments& ar
     INC_STATS("DOM.TestInterface.supplementalMethod1");
     TestInterface* imp = V8TestInterface::toNative(args.Holder());
     TestSupplemental::supplementalMethod1(imp);
-    return v8::Handle<v8::Value>();
+    return v8Undefined();
 }
 
 #endif // ENABLE(Condition11) || ENABLE(Condition12)
@@ -165,7 +165,7 @@ static v8::Handle<v8::Value> supplementalMethod2Callback(const v8::Arguments& ar
     EXCEPTION_BLOCK(TestObj*, objArg, V8TestObj::HasInstance(MAYBE_MISSING_PARAMETER(args, 1, DefaultIsUndefined)) ? V8TestObj::toNative(v8::Handle<v8::Object>::Cast(MAYBE_MISSING_PARAMETER(args, 1, DefaultIsUndefined))) : 0);
     ScriptExecutionContext* scriptContext = getScriptExecutionContext();
     if (!scriptContext)
-        return v8::Undefined();
+        return v8Undefined();
     RefPtr<TestObj> result = TestSupplemental::supplementalMethod2(scriptContext, imp, strArg, objArg, ec);
     if (UNLIKELY(ec))
         goto fail;
@@ -183,7 +183,7 @@ static v8::Handle<v8::Value> supplementalMethod4Callback(const v8::Arguments& ar
 {
     INC_STATS("DOM.TestInterface.supplementalMethod4");
     TestSupplemental::supplementalMethod4();
-    return v8::Handle<v8::Value>();
+    return v8Undefined();
 }
 
 #endif // ENABLE(Condition11) || ENABLE(Condition12)
@@ -296,10 +296,10 @@ static v8::Persistent<v8::FunctionTemplate> ConfigureV8TestInterfaceTemplate(v8:
     v8::Handle<v8::FunctionTemplate> supplementalMethod2Argv[supplementalMethod2Argc] = { v8::Handle<v8::FunctionTemplate>(), V8TestObj::GetRawTemplate() };
     v8::Handle<v8::Signature> supplementalMethod2Signature = v8::Signature::New(desc, supplementalMethod2Argc, supplementalMethod2Argv);
 #if ENABLE(Condition11) || ENABLE(Condition12)
-    proto->Set(v8::String::New("supplementalMethod2"), v8::FunctionTemplate::New(TestInterfaceV8Internal::supplementalMethod2Callback, v8::Handle<v8::Value>(), supplementalMethod2Signature));
+    proto->Set(v8::String::New("supplementalMethod2"), v8::FunctionTemplate::New(TestInterfaceV8Internal::supplementalMethod2Callback, v8Undefined(), supplementalMethod2Signature));
 #endif // ENABLE(Condition11) || ENABLE(Condition12)
 #if ENABLE(Condition11) || ENABLE(Condition12)
-    desc->Set(v8::String::New("supplementalMethod4"), v8::FunctionTemplate::New(TestInterfaceV8Internal::supplementalMethod4Callback, v8::Handle<v8::Value>(), v8::Local<v8::Signature>()));
+    desc->Set(v8::String::New("supplementalMethod4"), v8::FunctionTemplate::New(TestInterfaceV8Internal::supplementalMethod4Callback, v8Undefined(), v8::Local<v8::Signature>()));
 #endif // ENABLE(Condition11) || ENABLE(Condition12)
     batchConfigureConstants(desc, proto, TestInterfaceConsts, WTF_ARRAY_LENGTH(TestInterfaceConsts));
 

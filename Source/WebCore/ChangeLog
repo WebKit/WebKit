@@ -1,5 +1,156 @@
 2012-08-03  Kentaro Hara  <haraken@chromium.org>
 
+        [V8] Implement v8Undefined()
+        https://bugs.webkit.org/show_bug.cgi?id=93093
+
+        Reviewed by Adam Barth.
+
+        There are a couple of equivalent ways to create an undefined value,
+        e.g. v8::Undefined(), v8::Undefined(isolate), v8::Handle<v8::Value>(), etc.
+        We should implement v8Undefined() and use it everywhere.
+
+        In this bug, we implement v8Undefined() and use it in CodeGeneratorV8.pm.
+        We can implement v8Undefined() like this:
+
+            v8::Handle<v8::Value> v8Undefined() { v8::Handle<v8::Value>(); }
+
+        This is based on the following performance results:
+
+        // 14.5 ns
+        v8::Handle<v8::Value> xxxAttrGetter(..., info) {
+            return v8::Undefined();
+        }
+
+        // 8.24 ns (This cannot be used where isolate can be 0.)
+        v8::Handle<v8::Value> xxxAttrGetter(..., info) {
+            return v8::Undefined(info.GetIsolate());
+        }
+
+        // 8.54 ns
+        v8::Handle<v8::Value> xxxAttrGetter(..., info) {
+            v8::Isolate* isolate = info.GetIsolate();
+            return isolate ? v8::Handle<v8::Value>(v8::Undefined(isolate)) : v8::Handle<v8::Value>();
+        }
+
+        // 8.52 ns
+        v8::Handle<v8::Value> xxxAttrGetter(..., info) {
+            return v8::Handle<v8::Value>();
+        }
+
+        No tests. No change in behavior.
+
+        * bindings/scripts/CodeGeneratorV8.pm:
+        (GenerateConstructorGetter):
+        (GenerateNormalAttrGetter):
+        (GenerateNewFunctionTemplate):
+        (GenerateEventListenerCallback):
+        (GenerateFunctionCallback):
+        (GenerateCallWith):
+        (GenerateParametersCheck):
+        (GenerateEventConstructorCallback):
+        (GenerateNonStandardFunction):
+        (GenerateImplementation):
+        (NativeToJSValue):
+        * bindings/scripts/test/V8/V8Float64Array.cpp:
+        (WebCore::ConfigureV8Float64ArrayTemplate):
+        * bindings/scripts/test/V8/V8TestActiveDOMObject.cpp:
+        (WebCore::TestActiveDOMObjectV8Internal::excitingFunctionCallback):
+        (WebCore::TestActiveDOMObjectV8Internal::postMessageCallback):
+        (WebCore::TestActiveDOMObjectV8Internal::postMessageAttrGetter):
+        (WebCore::ConfigureV8TestActiveDOMObjectTemplate):
+        (WebCore::V8TestActiveDOMObject::wrapSlow):
+        * bindings/scripts/test/V8/V8TestCustomNamedGetter.cpp:
+        (WebCore::TestCustomNamedGetterV8Internal::anotherFunctionCallback):
+        * bindings/scripts/test/V8/V8TestEventConstructor.cpp:
+        (WebCore::V8TestEventConstructor::constructorCallback):
+        * bindings/scripts/test/V8/V8TestEventTarget.cpp:
+        (WebCore::TestEventTargetV8Internal::addEventListenerCallback):
+        (WebCore::TestEventTargetV8Internal::removeEventListenerCallback):
+        (WebCore::ConfigureV8TestEventTargetTemplate):
+        * bindings/scripts/test/V8/V8TestInterface.cpp:
+        (WebCore::TestInterfaceV8Internal::supplementalMethod1Callback):
+        (WebCore::TestInterfaceV8Internal::supplementalMethod2Callback):
+        (WebCore::TestInterfaceV8Internal::supplementalMethod4Callback):
+        (WebCore::ConfigureV8TestInterfaceTemplate):
+        * bindings/scripts/test/V8/V8TestMediaQueryListListener.cpp:
+        (WebCore::TestMediaQueryListListenerV8Internal::methodCallback):
+        * bindings/scripts/test/V8/V8TestObj.cpp:
+        (WebCore::TestObjV8Internal::readOnlyTestObjAttrAttrGetter):
+        (WebCore::TestObjV8Internal::withScriptStateAttributeAttrGetter):
+        (WebCore::TestObjV8Internal::withScriptExecutionContextAttributeAttrGetter):
+        (WebCore::TestObjV8Internal::withScriptStateAttributeRaisesAttrGetter):
+        (WebCore::TestObjV8Internal::withScriptExecutionContextAttributeRaisesAttrGetter):
+        (WebCore::TestObjV8Internal::withScriptExecutionContextAndScriptStateAttributeAttrGetter):
+        (WebCore::TestObjV8Internal::withScriptExecutionContextAndScriptStateAttributeRaisesAttrGetter):
+        (WebCore::TestObjV8Internal::withScriptExecutionContextAndScriptStateWithSpacesAttributeAttrGetter):
+        (WebCore::TestObjV8Internal::withScriptArgumentsAndCallStackAttributeAttrGetter):
+        (WebCore::TestObjV8Internal::withScriptArgumentsAndCallStackAttributeAttrSetter):
+        (WebCore::TestObjV8Internal::cachedAttribute1AttrGetter):
+        (WebCore::TestObjV8Internal::cachedAttribute2AttrGetter):
+        (WebCore::TestObjV8Internal::TestObjConstructorGetter):
+        (WebCore::TestObjV8Internal::voidMethodCallback):
+        (WebCore::TestObjV8Internal::voidMethodWithArgsCallback):
+        (WebCore::TestObjV8Internal::methodWithSequenceArgCallback):
+        (WebCore::TestObjV8Internal::serializedValueCallback):
+        (WebCore::TestObjV8Internal::idbKeyCallback):
+        (WebCore::TestObjV8Internal::optionsObjectCallback):
+        (WebCore::TestObjV8Internal::methodWithExceptionCallback):
+        (WebCore::TestObjV8Internal::addEventListenerCallback):
+        (WebCore::TestObjV8Internal::removeEventListenerCallback):
+        (WebCore::TestObjV8Internal::withScriptStateVoidCallback):
+        (WebCore::TestObjV8Internal::withScriptStateVoidExceptionCallback):
+        (WebCore::TestObjV8Internal::withScriptExecutionContextCallback):
+        (WebCore::TestObjV8Internal::withScriptExecutionContextAndScriptStateCallback):
+        (WebCore::TestObjV8Internal::withScriptExecutionContextAndScriptStateObjExceptionCallback):
+        (WebCore::TestObjV8Internal::withScriptExecutionContextAndScriptStateWithSpacesCallback):
+        (WebCore::TestObjV8Internal::withScriptArgumentsAndCallStackCallback):
+        (WebCore::TestObjV8Internal::methodWithOptionalArgCallback):
+        (WebCore::TestObjV8Internal::methodWithNonOptionalArgAndOptionalArgCallback):
+        (WebCore::TestObjV8Internal::methodWithNonOptionalArgAndTwoOptionalArgsCallback):
+        (WebCore::TestObjV8Internal::methodWithOptionalStringCallback):
+        (WebCore::TestObjV8Internal::methodWithOptionalStringIsUndefinedCallback):
+        (WebCore::TestObjV8Internal::methodWithOptionalStringIsNullStringCallback):
+        (WebCore::TestObjV8Internal::methodWithCallbackArgCallback):
+        (WebCore::TestObjV8Internal::methodWithNonCallbackArgAndCallbackArgCallback):
+        (WebCore::TestObjV8Internal::methodWithCallbackAndOptionalArgCallback):
+        (WebCore::TestObjV8Internal::conditionalMethod2Callback):
+        (WebCore::TestObjV8Internal::conditionalMethod3Callback):
+        (WebCore::TestObjV8Internal::overloadedMethod1Callback):
+        (WebCore::TestObjV8Internal::overloadedMethod2Callback):
+        (WebCore::TestObjV8Internal::overloadedMethod3Callback):
+        (WebCore::TestObjV8Internal::overloadedMethod4Callback):
+        (WebCore::TestObjV8Internal::overloadedMethod5Callback):
+        (WebCore::TestObjV8Internal::overloadedMethod6Callback):
+        (WebCore::TestObjV8Internal::overloadedMethod7Callback):
+        (WebCore::TestObjV8Internal::overloadedMethod8Callback):
+        (WebCore::TestObjV8Internal::overloadedMethod9Callback):
+        (WebCore::TestObjV8Internal::overloadedMethod10Callback):
+        (WebCore::TestObjV8Internal::classMethodCallback):
+        (WebCore::TestObjV8Internal::overloadedMethod11Callback):
+        (WebCore::TestObjV8Internal::overloadedMethod12Callback):
+        (WebCore::TestObjV8Internal::classMethodWithClampCallback):
+        (WebCore::TestObjV8Internal::enabledAtRuntimeMethod1Callback):
+        (WebCore::TestObjV8Internal::enabledAtRuntimeMethod2Callback):
+        (WebCore::TestObjV8Internal::enabledPerContextMethod1Callback):
+        (WebCore::TestObjV8Internal::enabledPerContextMethod2Callback):
+        (WebCore::TestObjV8Internal::convert1Callback):
+        (WebCore::TestObjV8Internal::convert2Callback):
+        (WebCore::TestObjV8Internal::convert3Callback):
+        (WebCore::TestObjV8Internal::convert4Callback):
+        (WebCore::TestObjV8Internal::convert5Callback):
+        (WebCore::TestObjV8Internal::orangeCallback):
+        (WebCore::ConfigureV8TestObjTemplate):
+        (WebCore::V8TestObj::installPerContextProperties):
+        * bindings/scripts/test/V8/V8TestSerializedScriptValueInterface.cpp:
+        (WebCore::TestSerializedScriptValueInterfaceV8Internal::acceptTransferListCallback):
+        (WebCore::TestSerializedScriptValueInterfaceV8Internal::multiTransferListCallback):
+        (WebCore::V8TestSerializedScriptValueInterface::constructorCallback):
+        * bindings/v8/V8Binding.h:
+        (WebCore::v8Undefined):
+        (WebCore):
+
+2012-08-03  Kentaro Hara  <haraken@chromium.org>
+
         [V8] Remove v8StringToWebCoreString()
         https://bugs.webkit.org/show_bug.cgi?id=93087
 

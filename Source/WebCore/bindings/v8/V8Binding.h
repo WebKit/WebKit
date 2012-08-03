@@ -339,6 +339,11 @@ namespace WebCore {
         return data->integerCache()->v8UnsignedInteger(value);
     }
 
+    inline v8::Handle<v8::Value> v8Undefined()
+    {
+        return v8::Handle<v8::Value>();
+    }
+
     template <class T>
     struct V8ValueTraits {
         static inline v8::Handle<v8::Value> arrayV8Value(const T& value, v8::Isolate* isolate)

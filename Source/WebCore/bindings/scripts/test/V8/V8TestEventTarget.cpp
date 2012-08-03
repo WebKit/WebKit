@@ -70,7 +70,7 @@ static v8::Handle<v8::Value> addEventListenerCallback(const v8::Arguments& args)
         V8TestEventTarget::toNative(args.Holder())->addEventListener(v8ValueToAtomicWebCoreString(args[0]), listener, args[2]->BooleanValue());
         createHiddenDependency(args.Holder(), args[1], V8TestEventTarget::eventListenerCacheIndex);
     }
-    return v8::Undefined();
+    return v8Undefined();
 }
 
 static v8::Handle<v8::Value> removeEventListenerCallback(const v8::Arguments& args)
@@ -81,7 +81,7 @@ static v8::Handle<v8::Value> removeEventListenerCallback(const v8::Arguments& ar
         V8TestEventTarget::toNative(args.Holder())->removeEventListener(v8ValueToAtomicWebCoreString(args[0]), listener.get(), args[2]->BooleanValue());
         removeHiddenDependency(args.Holder(), args[1], V8TestEventTarget::eventListenerCacheIndex);
     }
-    return v8::Undefined();
+    return v8Undefined();
 }
 
 static v8::Handle<v8::Value> dispatchEventCallback(const v8::Arguments& args)
@@ -132,7 +132,7 @@ static v8::Persistent<v8::FunctionTemplate> ConfigureV8TestEventTargetTemplate(v
     const int dispatchEventArgc = 1;
     v8::Handle<v8::FunctionTemplate> dispatchEventArgv[dispatchEventArgc] = { V8Event::GetRawTemplate() };
     v8::Handle<v8::Signature> dispatchEventSignature = v8::Signature::New(desc, dispatchEventArgc, dispatchEventArgv);
-    proto->Set(v8::String::New("dispatchEvent"), v8::FunctionTemplate::New(TestEventTargetV8Internal::dispatchEventCallback, v8::Handle<v8::Value>(), dispatchEventSignature));
+    proto->Set(v8::String::New("dispatchEvent"), v8::FunctionTemplate::New(TestEventTargetV8Internal::dispatchEventCallback, v8Undefined(), dispatchEventSignature));
 
     // Custom toString template
     desc->Set(getToStringName(), getToStringTemplate());

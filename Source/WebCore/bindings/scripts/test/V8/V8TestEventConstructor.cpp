@@ -81,7 +81,7 @@ v8::Handle<v8::Value> V8TestEventConstructor::constructorCallback(const v8::Argu
     if (args.Length() >= 2) {
         EXCEPTION_BLOCK(Dictionary, options, args[1]);
         if (!fillTestEventConstructorInit(eventInit, options))
-            return v8::Undefined();
+            return v8Undefined();
     }
 
     RefPtr<TestEventConstructor> event = TestEventConstructor::create(type, eventInit);

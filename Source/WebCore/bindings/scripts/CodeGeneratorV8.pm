@@ -804,7 +804,7 @@ END
     return V8DOMWrapper::constructorForType(type, V8WorkerContext::toNative(info.Holder()));
 END
     } else {
-        push(@implContentDecls, "    return v8::Handle<v8::Value>();");
+        push(@implContentDecls, "    return v8Undefined();");
     }
 
     push(@implContentDecls, <<END);
@@ -866,7 +866,7 @@ END
             push(@implContentDecls, <<END);
     v8::Handle<v8::Object> holder = V8DOMWrapper::lookupDOMWrapper(V8${interfaceName}::GetTemplate(), info.This());
     if (holder.IsEmpty())
-        return v8::Handle<v8::Value>();
+        return v8Undefined();
 END
         }
         push(@implContentDecls, <<END);
@@ -940,7 +940,7 @@ END
 
     if ($attribute->signature->type eq "EventListener" && $dataNode->name eq "DOMWindow") {
         push(@implContentDecls, "    if (!imp->document())\n");
-        push(@implContentDecls, "        return v8::Handle<v8::Value>();\n");
+        push(@implContentDecls, "        return v8Undefined();\n");
     }
 
     if ($useExceptions) {
@@ -990,7 +990,7 @@ END
         # been created. If we don't find a wrapper, we create both a wrapper and a hidden reference.
         push(@implContentDecls, "    RefPtr<$returnType> result = ${getterString};\n");
         my $domMapFunction = GetDomMapFunction($dataNode, $interfaceName, "info.GetIsolate()");
-        push(@implContentDecls, "    v8::Handle<v8::Value> wrapper = result.get() ? ${domMapFunction}.get(result.get()) : v8::Handle<v8::Object>();\n");
+        push(@implContentDecls, "    v8::Handle<v8::Value> wrapper = result.get() ? ${domMapFunction}.get(result.get()) : v8Undefined();\n");
         push(@implContentDecls, "    if (wrapper.IsEmpty()) {\n");
         push(@implContentDecls, "        wrapper = toV8(result.get(), info.GetIsolate());\n");
         push(@implContentDecls, "        if (!wrapper.IsEmpty())\n");
@@ -1312,7 +1312,7 @@ sub GenerateNewFunctionTemplate
     my $signature = shift;
 
     my $callback = GetFunctionTemplateCallbackName($function, $interfaceName);
-    return "v8::FunctionTemplate::New($callback, v8::Handle<v8::Value>(), $signature)";
+    return "v8::FunctionTemplate::New($callback, v8Undefined(), $signature)";
 }
 
 sub GenerateEventListenerCallback
@@ -1339,7 +1339,7 @@ END
     }
     push(@implContentDecls, <<END);
     }
-    return v8::Undefined();
+    return v8Undefined();
 }
 
 END
@@ -1501,7 +1501,7 @@ END
         # We have not find real use cases yet.
         push(@implContentDecls, <<END);
     if (!BindingSecurity::canAccessFrame(BindingState::instance(), imp->frame(), true))
-        return v8::Handle<v8::Value>();
+        return v8Undefined();
 END
     }
 
@@ -1563,14 +1563,14 @@ sub GenerateCallWith
         } else {
             push(@$outputArray, $indent . "ScriptState* state = ScriptState::current();\n");
             push(@$outputArray, $indent . "if (!state)\n");
-            push(@$outputArray, $indent . "    return" . ($returnVoid ? "" : " v8::Undefined()") . ";\n");
+            push(@$outputArray, $indent . "    return" . ($returnVoid ? "" : " v8Undefined()") . ";\n");
             push(@callWithArgs, "state");
         }
     }
     if ($codeGenerator->ExtendedAttributeContains($callWith, "ScriptExecutionContext")) {
         push(@$outputArray, $indent . "ScriptExecutionContext* scriptContext = getScriptExecutionContext();\n");
         push(@$outputArray, $indent . "if (!scriptContext)\n");
-        push(@$outputArray, $indent . "    return" . ($returnVoid ? "" : " v8::Undefined()") . ";\n");
+        push(@$outputArray, $indent . "    return" . ($returnVoid ? "" : " v8Undefined()") . ";\n");
         push(@callWithArgs, "scriptContext");
     }
     if ($function and $codeGenerator->ExtendedAttributeContains($callWith, "ScriptArguments")) {
@@ -1581,7 +1581,7 @@ sub GenerateCallWith
     if ($codeGenerator->ExtendedAttributeContains($callWith, "CallStack")) {
         push(@$outputArray, $indent . "RefPtr<ScriptCallStack> callStack(createScriptCallStackForInspector());\n");
         push(@$outputArray, $indent . "if (!callStack)\n");
-        push(@$outputArray, $indent . "    return v8::Undefined();\n");
+        push(@$outputArray, $indent . "    return v8Undefined();\n");
         push(@callWithArgs, "callStack");
         AddToImplIncludes("ScriptCallStack.h");
         AddToImplIncludes("ScriptCallStackFactory.h");
@@ -1723,7 +1723,7 @@ sub GenerateParametersCheck
                     $parameterCheckString .= "    $nativeType $parameterName = SerializedScriptValue::create(args[$paramIndex], &messagePortArray$TransferListName, &arrayBufferArray$TransferListName, ${parameterName}DidThrow, args.GetIsolate());\n";
             }
             $parameterCheckString .= "    if (${parameterName}DidThrow)\n";
-            $parameterCheckString .= "        return v8::Undefined();\n";
+            $parameterCheckString .= "        return v8Undefined();\n";
         } elsif (TypeCanFailConversion($parameter)) {
             $parameterCheckString .= "    $nativeType $parameterName = " .
                  JSValueToNative($parameter, "args[$paramIndex]", "args.GetIsolate()") . ";\n";
@@ -1894,7 +1894,7 @@ v8::Handle<v8::Value> V8${implClassName}::constructorCallback(const v8::Argument
     if (args.Length() >= 2) {
         EXCEPTION_BLOCK(Dictionary, options, args[1]);
         if (!fill${implClassName}Init(eventInit, options))
-            return v8::Undefined();
+            return v8Undefined();
     }
 
     RefPtr<${implClassName}> event = ${implClassName}::create(type, eventInit);
@@ -2265,7 +2265,7 @@ sub GenerateNonStandardFunction
         push(@implContent, <<END);
 
     // $commentInfo
-    ${conditional}$template->SetAccessor(v8::String::New("$name"), ${interfaceName}V8Internal::${name}AttrGetter, 0, v8::Handle<v8::Value>(), v8::ALL_CAN_READ, static_cast<v8::PropertyAttribute>($property_attributes));
+    ${conditional}$template->SetAccessor(v8::String::New("$name"), ${interfaceName}V8Internal::${name}AttrGetter, 0, v8Undefined(), v8::ALL_CAN_READ, static_cast<v8::PropertyAttribute>($property_attributes));
 END
         return;
     }
@@ -2296,7 +2296,7 @@ END
     my $conditionalString = $codeGenerator->GenerateConditionalString($function->signature);
     push(@implContent, "#if ${conditionalString}\n") if $conditionalString;
 
-    push(@implContent, "    ${conditional}$template->Set(v8::String::New(\"$name\"), v8::FunctionTemplate::New($callback, v8::Handle<v8::Value>(), ${signature})$property_attributes);\n");
+    push(@implContent, "    ${conditional}$template->Set(v8::String::New(\"$name\"), v8::FunctionTemplate::New($callback, v8Undefined(), ${signature})$property_attributes);\n");
 
     push(@implContent, "#endif // ${conditionalString}\n") if $conditionalString;
 }
@@ -2908,9 +2908,9 @@ END
 
     // For security reasons, these functions are on the instance instead
     // of on the prototype object to ensure that they cannot be overwritten.
-    instance->SetAccessor(v8::String::New("reload"), V8Location::reloadAccessorGetter, 0, v8::Handle<v8::Value>(), v8::ALL_CAN_READ, static_cast<v8::PropertyAttribute>(v8::DontDelete | v8::ReadOnly));
-    instance->SetAccessor(v8::String::New("replace"), V8Location::replaceAccessorGetter, 0, v8::Handle<v8::Value>(), v8::ALL_CAN_READ, static_cast<v8::PropertyAttribute>(v8::DontDelete | v8::ReadOnly));
-    instance->SetAccessor(v8::String::New("assign"), V8Location::assignAccessorGetter, 0, v8::Handle<v8::Value>(), v8::ALL_CAN_READ, static_cast<v8::PropertyAttribute>(v8::DontDelete | v8::ReadOnly));
+    instance->SetAccessor(v8::String::New("reload"), V8Location::reloadAccessorGetter, 0, v8Undefined(), v8::ALL_CAN_READ, static_cast<v8::PropertyAttribute>(v8::DontDelete | v8::ReadOnly));
+    instance->SetAccessor(v8::String::New("replace"), V8Location::replaceAccessorGetter, 0, v8Undefined(), v8::ALL_CAN_READ, static_cast<v8::PropertyAttribute>(v8::DontDelete | v8::ReadOnly));
+    instance->SetAccessor(v8::String::New("assign"), V8Location::assignAccessorGetter, 0, v8Undefined(), v8::ALL_CAN_READ, static_cast<v8::PropertyAttribute>(v8::DontDelete | v8::ReadOnly));
 END
     }
 
@@ -2997,7 +2997,7 @@ END
                 my $name = $runtimeFunc->signature->name;
                 my $callback = GetFunctionTemplateCallbackName($runtimeFunc, $interfaceName);
                 push(@implContent, <<END);
-        proto->Set(v8::String::New("${name}"), v8::FunctionTemplate::New(${callback}, v8::Handle<v8::Value>(), defaultSignature)->GetFunction());
+        proto->Set(v8::String::New("${name}"), v8::FunctionTemplate::New(${callback}, v8Undefined(), defaultSignature)->GetFunction());
 END
                 push(@implContent, "    }\n");
                 push(@implContent, "#endif // ${conditionalString}\n") if $conditionalString;
@@ -3953,7 +3953,7 @@ sub NativeToJSValue
     my $type = GetTypeFromSignature($signature);
 
     return ($getIsolate ? "v8Boolean($value, $getIsolate)" : "v8Boolean($value)") if $type eq "boolean";
-    return "v8::Handle<v8::Value>()" if $type eq "void";     # equivalent to v8::Undefined()
+    return "v8Undefined()" if $type eq "void";     # equivalent to v8Undefined()
 
     # HTML5 says that unsigned reflected attributes should be in the range
     # [0, 2^31). When a value isn't in this range, a default value (or 0)

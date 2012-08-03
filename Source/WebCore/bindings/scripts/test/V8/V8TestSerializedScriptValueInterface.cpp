@@ -136,13 +136,13 @@ static v8::Handle<v8::Value> acceptTransferListCallback(const v8::Arguments& arg
     bool dataDidThrow = false;
     RefPtr<SerializedScriptValue> data = SerializedScriptValue::create(args[0], &messagePortArrayTransferList, &arrayBufferArrayTransferList, dataDidThrow, args.GetIsolate());
     if (dataDidThrow)
-        return v8::Undefined();
+        return v8Undefined();
     if (args.Length() <= 1) {
         imp->acceptTransferList(data);
-        return v8::Handle<v8::Value>();
+        return v8Undefined();
     }
     imp->acceptTransferList(data, messagePortArrayTransferList);
-    return v8::Handle<v8::Value>();
+    return v8Undefined();
 }
 
 static v8::Handle<v8::Value> multiTransferListCallback(const v8::Arguments& args)
@@ -151,7 +151,7 @@ static v8::Handle<v8::Value> multiTransferListCallback(const v8::Arguments& args
     TestSerializedScriptValueInterface* imp = V8TestSerializedScriptValueInterface::toNative(args.Holder());
     if (args.Length() <= 0) {
         imp->multiTransferList();
-        return v8::Handle<v8::Value>();
+        return v8Undefined();
     }
     MessagePortArray messagePortArrayTx;
     ArrayBufferArray arrayBufferArrayTx;
@@ -162,14 +162,14 @@ static v8::Handle<v8::Value> multiTransferListCallback(const v8::Arguments& args
     bool firstDidThrow = false;
     RefPtr<SerializedScriptValue> first = SerializedScriptValue::create(args[0], &messagePortArrayTx, &arrayBufferArrayTx, firstDidThrow, args.GetIsolate());
     if (firstDidThrow)
-        return v8::Undefined();
+        return v8Undefined();
     if (args.Length() <= 1) {
         imp->multiTransferList(first);
-        return v8::Handle<v8::Value>();
+        return v8Undefined();
     }
     if (args.Length() <= 2) {
         imp->multiTransferList(first, messagePortArrayTx);
-        return v8::Handle<v8::Value>();
+        return v8Undefined();
     }
     MessagePortArray messagePortArrayTxx;
     ArrayBufferArray arrayBufferArrayTxx;
@@ -180,13 +180,13 @@ static v8::Handle<v8::Value> multiTransferListCallback(const v8::Arguments& args
     bool secondDidThrow = false;
     RefPtr<SerializedScriptValue> second = SerializedScriptValue::create(args[2], &messagePortArrayTxx, &arrayBufferArrayTxx, secondDidThrow, args.GetIsolate());
     if (secondDidThrow)
-        return v8::Undefined();
+        return v8Undefined();
     if (args.Length() <= 3) {
         imp->multiTransferList(first, messagePortArrayTx, second);
-        return v8::Handle<v8::Value>();
+        return v8Undefined();
     }
     imp->multiTransferList(first, messagePortArrayTx, second, messagePortArrayTxx);
-    return v8::Handle<v8::Value>();
+    return v8Undefined();
 }
 
 } // namespace TestSerializedScriptValueInterfaceV8Internal
@@ -230,7 +230,7 @@ v8::Handle<v8::Value> V8TestSerializedScriptValueInterface::constructorCallback(
     bool dataDidThrow = false;
     RefPtr<SerializedScriptValue> data = SerializedScriptValue::create(args[1], &messagePortArrayTransferList, &arrayBufferArrayTransferList, dataDidThrow, args.GetIsolate());
     if (dataDidThrow)
-        return v8::Undefined();
+        return v8Undefined();
 
     RefPtr<TestSerializedScriptValueInterface> impl = TestSerializedScriptValueInterface::create(hello, data, messagePortArrayTransferList);
     v8::Handle<v8::Object> wrapper = args.Holder();
