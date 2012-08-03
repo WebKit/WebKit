@@ -19,9 +19,10 @@ function test()
         function heapSnapshotLoaderTest(next)
         {
             var loader = new WebInspector.HeapSnapshotLoader();
+            loader.startTransfer();
             for (var i = 0, l = sourceStringified.length; i < l; i += partSize)
-                loader.pushJSONChunk(sourceStringified.slice(i, i + partSize));
-            loader.finishLoading();
+                loader.transferChunk(sourceStringified.slice(i, i + partSize));
+            loader.finishTransfer();
             var result = loader.buildSnapshot();
             result._nodes = new Uint32Array(result._nodes);
             result._containmentEdges = new Uint32Array(result._containmentEdges);
@@ -89,16 +90,33 @@ function test()
 
             var fileMock = {
                 name: "mock.heapsnapshot",
-                size: sourceStringified.length,
-                slice: function(begin, end) { return this; },
-                webkitSlice: function(begin, end) { return this; }
+                size: sourceStringified.length
             };
 
             InspectorTest.override(WebInspector.HeapProfileHeader.prototype, '_createFileReader', function(fileMock, delegate) {
                 return {
-                    readAsText: function(filePart) {
-                        var profileHeader = panel._profiles[panel._profiles.length - 1];
-                        profileHeader._nextChunkLoaded(sourceStringified);
+                    start: function(receiver) {
+                        receiver.startTransfer();
+                        delegate.onTransferStarted(this);
+                        receiver.transferChunk(sourceStringified);
+                        delegate.onChunkTransferred(this);
+                        receiver.finishTransfer();
+                        delegate.onTransferFinished(this);
+                    },
+
+                    loadedSize: function()
+                    {
+                        return fileMock.size;
+                    },
+
+                    fileSize: function()
+                    {
+                        return fileMock.size;
+                    },
+
+                    fileName: function()
+                    {
+                        return fileMock.name;
                     }
                 };
             });

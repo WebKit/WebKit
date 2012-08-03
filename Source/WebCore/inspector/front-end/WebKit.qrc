@@ -62,6 +62,7 @@
     <file>FileManager.js</file>
     <file>FileSystemModel.js</file>
     <file>FileSystemView.js</file>
+    <file>FileUtils.js</file>
     <file>FilteredItemSelectionDialog.js</file>
     <file>FontView.js</file>
     <file>GoToLineDialog.js</file>

@@ -1,3 +1,48 @@
+2012-08-03  Eugene Klyuchnikov  <eustas.big@gmail.com>
+
+        Web Inspector: Profiles: extract save to file / load from code
+        https://bugs.webkit.org/show_bug.cgi?id=92348
+
+        Reviewed by Yury Semikhatsky.
+
+        Motivation: extract reusable code for timeline load/save.
+        FileUtils.js will contain common code. Not all code moved to FileUtils
+        to make review easier. This code will be moved in next patch.
+
+        Core abstractions: OutputStream and OutputStreamDelegate.
+
+        OutputStream is interface that is used to transfer entity divded
+        to chunks. Transfer process is explicitly initialized (startTransfer)
+        and finalized (finishTrnsfer).
+
+        OutputStreamDelegate is interface to receive notifications about
+        transfer process: onTransferStarted, onChunkTransferred, onTransferFinished.
+
+        ChunkedFileReader: utility class that loads file by chunks of specified
+        size and notifies given delegate. OutputStream is supplied as a
+        parameter of method "start".
+
+        ChunkedFileWriter: implementation of OutputStream that saves data
+        to file specified by file name and notifies given delegate.
+
+        * WebCore.gypi: Added 'FileUtils.js'.
+        * WebCore.vcproj/WebCore.vcproj: Added 'FileUtils.js'.
+        * inspector/compile-front-end.py: Added 'FileUtils.js'.
+        * inspector/front-end/FileUtils.js: Added.
+        (WebInspector.OutputStreamDelegate): Added.
+        (WebInspector.ChunkedFileReader): Added.
+        (WebInspector.createFileSelectorElement): Added utility method to construct
+        hidden input element to select file.
+        * inspector/front-end/HeapSnapshotLoader.js: Adopted new API.
+        * inspector/front-end/HeapSnapshotProxy.js: Adopted new API.
+        * inspector/front-end/HeapSnapshotView.js: Adopted new API.
+        (WebInspector.HeapSnapshotLoadFromFileDelegate):
+        Extracted from existing code.
+        (WebInspector.ChunkedFileWriter): Renamed and refactored.
+        (WebInspector.HeapSnapshotSaveToFileDelegate):
+        Extracted from existing code.
+        * inspector/front-end/ProfilesPanel.js: Adopted new API.
+
 2012-08-03  Alexander Pavlov  <apavlov@chromium.org>
 
         Web Inspector: Incorrect blob url href when inspecting

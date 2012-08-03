@@ -355,7 +355,7 @@ WebInspector.HeapSnapshotProxyObject.prototype = {
 /**
  * @constructor
  * @extends {WebInspector.HeapSnapshotProxyObject}
- * @implements {WebInspector.HeapSnapshotReceiver}
+ * @implements {WebInspector.OutputStream}
  */
 WebInspector.HeapSnapshotLoaderProxy = function(worker, objectId)
 {
@@ -365,7 +365,7 @@ WebInspector.HeapSnapshotLoaderProxy = function(worker, objectId)
 }
 
 WebInspector.HeapSnapshotLoaderProxy.prototype = {
-    startLoading: function()
+    startTransfer: function()
     {
         this._started = true;
         this.callMethod(null, "startTransfer");
@@ -387,12 +387,12 @@ WebInspector.HeapSnapshotLoaderProxy.prototype = {
     /**
      * @param {string} chunk
      */
-    pushJSONChunk: function(chunk)
+    transferChunk: function(chunk)
     {
-        this.callMethod(null, "pushJSONChunk", chunk);
+        this.callMethod(null, "transferChunk", chunk);
     },
 
-    finishLoading: function()
+    finishTransfer: function()
     {
         function buildSnapshot()
         {
@@ -411,7 +411,7 @@ WebInspector.HeapSnapshotLoaderProxy.prototype = {
             this._started = false;
             this._pendingSnapshotConsumers = [];
         }
-        this.callMethod(buildSnapshot.bind(this), "finishLoading");
+        this.callMethod(buildSnapshot.bind(this), "finishTransfer");
     }
 };
 

@@ -264,17 +264,8 @@ WebInspector.ProfilesPanel.prototype = {
     {
         if (this._fileSelectorElement)
             this.element.removeChild(this._fileSelectorElement);
-
-        var fileSelectorElement = document.createElement("input");
-        fileSelectorElement.type = "file";
-        fileSelectorElement.style.zIndex = -1;
-        fileSelectorElement.style.position = "absolute";
-        function onChange(event) {
-            this._loadFromFile(this._fileSelectorElement.files[0]);
-        }
-        fileSelectorElement.onchange = onChange.bind(this);
-        this.element.appendChild(fileSelectorElement);
-        this._fileSelectorElement = fileSelectorElement;
+        this._fileSelectorElement = WebInspector.createFileSelectorElement(this._loadFromFile.bind(this));
+        this.element.appendChild(this._fileSelectorElement);
     },
 
     _loadFromFile: function(file)
@@ -675,9 +666,9 @@ WebInspector.ProfilesPanel.prototype = {
     _addHeapSnapshotChunk: function(uid, chunk)
     {
         var profile = this._profilesIdMap[this._makeKey(uid, WebInspector.HeapSnapshotProfileType.TypeId)];
-        if (!profile )
+        if (!profile)
             return;
-        profile.pushJSONChunk(chunk);
+        profile.transferChunk(chunk);
     },
 
     /**
@@ -688,7 +679,7 @@ WebInspector.ProfilesPanel.prototype = {
         var profile = this._profilesIdMap[this._makeKey(uid, WebInspector.HeapSnapshotProfileType.TypeId)];
         if (!profile)
             return;
-        profile.finishHeapSnapshot();
+        profile.finishHeapSnapshot(false);
     },
 
     /**
