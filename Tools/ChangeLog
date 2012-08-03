@@ -1,5 +1,18 @@
 2012-08-03  Oswald Buddenhagen  <oswald.buddenhagen@nokia.com>
 
+        [Qt] Populate .qmake.cache from the top-level project file
+
+        This makes it possible to build webkit without using the perl build
+        script. The duplicated logic in build-webkit will be removed when we
+        remove the Qt4 code paths. The build-webkit script will then simply
+        call 'qmake WebKit.pro' from WEBKITOUTPUTDIR.
+
+        Reviewed by Tor Arne Vestbø.
+
+        * qmake/mkspecs/features/win32/default_pre.prf:
+
+2012-08-03  Oswald Buddenhagen  <oswald.buddenhagen@nokia.com>
+
         [Qt] Move build config default to build-webkit instead of default_pre
 
         Allows the qmake buildsystem have its own default.

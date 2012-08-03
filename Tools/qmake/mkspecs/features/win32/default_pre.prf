@@ -7,3 +7,6 @@
 load(default_pre)
 
 debug: CONFIG += use_all_in_one_files
+
+# WebKit2 not supported on Windows yet
+CONFIG += no_webkit2

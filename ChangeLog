@@ -1,3 +1,16 @@
+2012-08-03  Oswald Buddenhagen  <oswald.buddenhagen@nokia.com>
+
+        [Qt] Populate .qmake.cache from the top-level project file
+
+        This makes it possible to build webkit without using the perl build
+        script. The duplicated logic in build-webkit will be removed when we
+        remove the Qt4 code paths. The build-webkit script will then simply
+        call 'qmake WebKit.pro' from WEBKITOUTPUTDIR.
+
+        Reviewed by Tor Arne Vestbø.
+
+        * WebKit.pro:
+
 2012-08-03  Dominik Röttsches  <dominik.rottsches@intel.com>
 
         [cmake] Cleanup FindHarfBuzz.cmake
