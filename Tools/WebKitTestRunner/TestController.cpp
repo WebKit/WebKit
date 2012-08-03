@@ -52,8 +52,11 @@
 
 namespace WTR {
 
+// defaultLongTimeout + defaultShortTimeout should be less than 35,
+// the default timeout value of the test harness so we can detect an
+// unresponsive web process.
 static const double defaultLongTimeout = 30;
-static const double defaultShortTimeout = 15;
+static const double defaultShortTimeout = 3;
 static const double defaultNoTimeout = -1;
 
 static WKURLRef blankURL()
@@ -587,17 +590,6 @@ TestCommand parseInputLine(const std::string& inputLine)
 
 bool TestController::runTest(const char* inputLine)
 {
-    if (!resetStateToConsistentValues()) {
-#if PLATFORM(MAC)
-        pid_t pid = WKPageGetProcessIdentifier(m_mainWebView->page());
-        fprintf(stderr, "#PROCESS UNRESPONSIVE - WebProcess (pid %ld)\n", static_cast<long>(pid));
-#else
-        fputs("#PROCESS UNRESPONSIVE - WebProcess\n", stderr);
-#endif
-        fflush(stderr);
-        return false;
-    }
-
     TestCommand command = parseInputLine(std::string(inputLine));
 
     m_state = RunningTest;
@@ -630,6 +622,9 @@ void TestController::runTestingServerLoop()
 
 void TestController::run()
 {
+    bool resetDone = resetStateToConsistentValues();
+    ASSERT_UNUSED(resetDone, resetDone);
+
     if (m_usingServerMode)
         runTestingServerLoop();
     else {

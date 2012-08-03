@@ -1,3 +1,36 @@
+2012-08-03  Balazs Kelemen  <kbalazs@webkit.org>
+
+        [WTR] process unresponsiveness is reported to the wrong test
+        https://bugs.webkit.org/show_bug.cgi?id=88404
+
+        Reviewed by Zoltan Herczeg.
+
+        Do resetting to consistent state after the finished test,
+        not before the next. This way we can report unresponsiveness
+        to the test that triggered it, and we do a restart before the
+        next test so it will start in a functional state.
+
+        * Scripts/webkitpy/layout_tests/port/webkit.py:
+        (WebKitDriver._check_for_driver_crash):
+        Print the error line for unresponsive web process, otherwise
+        it's hard to tell what happened.
+        * WebKitTestRunner/TestController.cpp:
+        (WTR):
+        Decreased the default short timeout so we can detect unresponsiveness
+        before the timer of the test harness times out. It was unnecessarily
+        high anyway, we should get answer from the web process in those cases
+        when the short timeout is used in less than a second.
+        (WTR::TestController::runTest):
+        (WTR::TestController::run):
+        * WebKitTestRunner/TestController.h:
+        (TestController):
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::invoke):
+        (WTR::TestInvocation::dump):
+        (WTR::TestInvocation::didReceiveMessageFromInjectedBundle):
+        * WebKitTestRunner/TestInvocation.h:
+        (TestInvocation): Make the dump function static as it doesn't need an object.
+
 2012-08-03  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
 
         [EFL] (REGRESSION 124581) : EFL 64-bit Debug bot is red and build is exiting early after 20 test crashes

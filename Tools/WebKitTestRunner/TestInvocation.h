@@ -45,7 +45,7 @@ public:
     WKRetainPtr<WKTypeRef> didReceiveSynchronousMessageFromInjectedBundle(WKStringRef messageName, WKTypeRef messageBody);
 
 private:
-    void dump(const char*, bool singleEOF = false);
+    static void dump(const char* textToStdout, const char* textToStderr = 0, bool seenError = false);
     void dumpPixelsAndCompareWithExpected(WKImageRef, WKArrayRef repaintRects);
     bool compareActualHashToExpectedAndDumpResults(const char[33]);
     

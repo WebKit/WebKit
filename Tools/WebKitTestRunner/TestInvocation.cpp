@@ -160,14 +160,15 @@ void TestInvocation::invoke()
 
     WKContextPostMessageToInjectedBundle(TestController::shared().context(), messageName.get(), beginTestMessageBody.get());
 
+    const char* errorMessage = 0;
     TestController::shared().runUntil(m_gotInitialResponse, TestController::ShortTimeout);
     if (!m_gotInitialResponse) {
-        dump("Timed out waiting for initial response from web process\n");
-        return;
+        errorMessage = "Timed out waiting for initial response from web process\n";
+        goto end;
     }
     if (m_error) {
-        dump("FAIL\n");
-        return;
+        errorMessage = "FAIL\n";
+        goto end;
     }
 
 #if ENABLE(INSPECTOR)
@@ -178,24 +179,53 @@ void TestInvocation::invoke()
     WKPageLoadURL(TestController::shared().mainWebView()->page(), m_url.get());
 
     TestController::shared().runUntil(m_gotFinalMessage, TestController::shared().useWaitToDumpWatchdogTimer() ? TestController::LongTimeout : TestController::NoTimeout);
-    if (!m_gotFinalMessage)
-        dump("Timed out waiting for final message from web process\n");
-    else if (m_error)
-        dump("FAIL\n");
+    if (!m_gotFinalMessage) {
+        errorMessage = "Timed out waiting for final message from web process\n";
+        goto end;
+    }
+    if (m_error) {
+        errorMessage = "FAIL\n";
+        goto end;
+    }
 
+end:
 #if ENABLE(INSPECTOR)
-    WKInspectorClose(WKPageGetInspector(TestController::shared().mainWebView()->page()));
+    if (m_gotInitialResponse)
+        WKInspectorClose(WKPageGetInspector(TestController::shared().mainWebView()->page()));
 #endif // ENABLE(INSPECTOR)
+
+    bool resetDone = TestController::shared().resetStateToConsistentValues();
+    // We expect resetting to not fail if there was no error or timeout.
+    ASSERT(resetDone || errorMessage);
+
+    const char* errorMessageToStderr = 0;
+#if PLATFORM(MAC)
+    char buffer[256];
+    if (!resetDone) {
+        pid_t pid = WKPageGetProcessIdentifier(m_mainWebView->page());
+        sprintf(buffer, "#PROCESS UNRESPONSIVE - WebProcess (pid %ld)\n", static_cast<long>(pid));
+        errorMessageToStderr = buffer;
+    }
+#else
+    if (!resetDone)
+        errorMessageToStderr = "#PROCESS UNRESPONSIVE - WebProcess";
+#endif
+
+    if (errorMessage)
+        dump(errorMessage, errorMessageToStderr, true);
 }
 
-void TestInvocation::dump(const char* stringToDump, bool singleEOF)
+void TestInvocation::dump(const char* textToStdout, const char* textToStderr, bool seenError)
 {
     printf("Content-Type: text/plain\n");
-    printf("%s", stringToDump);
+    printf("%s", textToStdout);
+
+    if (textToStderr)
+        fputs(textToStderr, stderr);
 
     fputs("#EOF\n", stdout);
     fputs("#EOF\n", stderr);
-    if (!singleEOF)
+    if (seenError)
         fputs("#EOF\n", stdout);
     fflush(stdout);
     fflush(stderr);
@@ -254,7 +284,7 @@ void TestInvocation::didReceiveMessageFromInjectedBundle(WKStringRef messageName
         WKArrayRef repaintRects = static_cast<WKArrayRef>(WKDictionaryGetItemForKey(messageBodyDictionary, repaintRectsKey.get()));        
 
         // Dump text.
-        dump(toWTFString(textOutput).utf8().data(), true);
+        dump(toWTFString(textOutput).utf8().data());
 
         // Dump pixels (if necessary).
         if (m_dumpPixels && pixelResult)
