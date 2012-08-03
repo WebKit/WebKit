@@ -215,7 +215,6 @@ namespace WebCore {
         // linking time.
         static Frame* retrieveFrameForEnteredContext();
         static Frame* retrieveFrameForCurrentContext();
-        static DOMWindow* retrieveWindowForCallingContext();
         static Frame* retrieveFrameForCallingContext();
 
         // Returns V8 Context of a frame. If none exists, creates

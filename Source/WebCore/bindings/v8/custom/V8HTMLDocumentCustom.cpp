@@ -31,6 +31,7 @@
 #include "config.h"
 #include "V8HTMLDocument.h"
 
+#include "BindingState.h"
 #include "Frame.h"
 #include "HTMLAllCollection.h"
 #include "HTMLDocument.h"
@@ -118,7 +119,7 @@ v8::Handle<v8::Value> V8HTMLDocument::writeCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.HTMLDocument.write()");
     HTMLDocument* htmlDocument = V8HTMLDocument::toNative(args.Holder());
-    Frame* frame = V8Proxy::retrieveFrameForCallingContext();
+    Frame* frame = activeFrame(BindingState::instance());
     htmlDocument->write(writeHelperGetString(args), frame ? frame->document() : NULL);
     return v8::Undefined();
 }
@@ -127,7 +128,7 @@ v8::Handle<v8::Value> V8HTMLDocument::writelnCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.HTMLDocument.writeln()");
     HTMLDocument* htmlDocument = V8HTMLDocument::toNative(args.Holder());
-    Frame* frame = V8Proxy::retrieveFrameForCallingContext();
+    Frame* frame = activeFrame(BindingState::instance());
     htmlDocument->writeln(writeHelperGetString(args), frame ? frame->document() : NULL);
     return v8::Undefined();
 }
@@ -164,7 +165,7 @@ v8::Handle<v8::Value> V8HTMLDocument::openCallback(const v8::Arguments& args)
         }
     }
 
-    Frame* frame = V8Proxy::retrieveFrameForCallingContext();
+    Frame* frame = activeFrame(BindingState::instance());
     htmlDocument->open(frame ? frame->document() : NULL);
     // Return the document.
     return args.Holder();

@@ -49,6 +49,10 @@ DOMWindow* firstWindow(BindingState*);
 Frame* activeFrame(BindingState*);
 Frame* firstFrame(BindingState*);
 
+// FIXME: When implementing this function for JSC, we need to understand if there
+// are any subtle differences between the currentFrame and the lexicalGlobalObject.
+Frame* currentFrame(BindingState*);
+
 void immediatelyReportUnsafeAccessTo(BindingState*, Frame*);
 
 }

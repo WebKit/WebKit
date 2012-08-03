@@ -28,14 +28,15 @@
 
 #include "V8AudioContext.h"
 
-#include <wtf/ArrayBuffer.h>
 #include "AudioBuffer.h"
 #include "AudioContext.h"
+#include "BindingState.h"
 #include "Frame.h"
 #include "V8ArrayBuffer.h"
 #include "V8AudioBuffer.h"
 #include "V8Binding.h"
 #include "V8Proxy.h"
+#include <wtf/ArrayBuffer.h>
 
 namespace WebCore {
 
@@ -49,7 +50,7 @@ v8::Handle<v8::Value> V8AudioContext::constructorCallback(const v8::Arguments& a
     if (ConstructorMode::current() == ConstructorMode::WrapExistingObject)
         return args.Holder();
 
-    Frame* frame = V8Proxy::retrieveFrameForCurrentContext();
+    Frame* frame = currentFrame(BindingState::instance());
     if (!frame)
         return V8Proxy::throwError(V8Proxy::ReferenceError, "AudioContext constructor associated frame is unavailable", args.GetIsolate());
 

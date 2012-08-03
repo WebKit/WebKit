@@ -1,3 +1,43 @@
+2012-08-02  Adam Barth  <abarth@webkit.org>
+
+        V8 bindings code that tries to find its context should use BindingState functions rather than V8Proxy
+        https://bugs.webkit.org/show_bug.cgi?id=93038
+
+        Reviewed by Eric Seidel.
+
+        After this patch, most code in the V8 bindings that tries to determine
+        it's "context" goes through BindingState.h rather than V8Proxy. This
+        patch is a step towards unifying all these code paths.
+
+        * bindings/scripts/CodeGeneratorV8.pm:
+        (GenerateNamedConstructorCallback):
+        * bindings/v8/BindingState.cpp:
+        (WebCore::currentFrame):
+        (WebCore):
+        * bindings/v8/BindingState.h:
+        (WebCore):
+        * bindings/v8/ScriptController.cpp:
+        (WebCore::ScriptController::retrieveFrameForEnteredContext):
+        (WebCore::ScriptController::retrieveFrameForCurrentContext):
+        * bindings/v8/V8DOMWindowShell.cpp:
+        (WebCore::v8UncaughtExceptionHandler):
+        * bindings/v8/V8Proxy.cpp:
+        (WebCore::V8Proxy::reportUnsafeAccessTo):
+        * bindings/v8/V8Proxy.h:
+        (V8Proxy):
+        * bindings/v8/V8Utilities.cpp:
+        (WebCore::getScriptExecutionContext):
+        * bindings/v8/custom/V8AudioContextCustom.cpp:
+        (WebCore::V8AudioContext::constructorCallback):
+        * bindings/v8/custom/V8DOMWindowCustom.cpp:
+        (WebCore::handlePostMessageCallback):
+        * bindings/v8/custom/V8HTMLDocumentCustom.cpp:
+        (WebCore::V8HTMLDocument::writeCallback):
+        (WebCore::V8HTMLDocument::writelnCallback):
+        (WebCore::V8HTMLDocument::openCallback):
+        * bindings/v8/custom/V8HTMLImageElementConstructor.cpp:
+        (WebCore::v8HTMLImageElementConstructorCallback):
+
 2012-08-02  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r124540.

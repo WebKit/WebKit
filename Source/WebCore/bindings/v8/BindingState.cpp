@@ -79,6 +79,11 @@ Frame* firstFrame(BindingState*)
     return V8Proxy::retrieveFrameForEnteredContext();
 }
 
+Frame* currentFrame(BindingState*)
+{
+    return V8Proxy::retrieveFrameForCurrentContext();
+}
+
 void immediatelyReportUnsafeAccessTo(BindingState*, Frame* target)
 {
     V8Proxy::reportUnsafeAccessTo(target);

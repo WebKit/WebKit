@@ -1975,7 +1975,7 @@ static v8::Handle<v8::Value> V8${implClassName}ConstructorCallback(const v8::Arg
     if (ConstructorMode::current() == ConstructorMode::WrapExistingObject)
         return args.Holder();
 
-    Frame* frame = V8Proxy::retrieveFrameForCurrentContext();
+    Frame* frame = currentFrame(BindingState::instance());
     if (!frame)
         return V8Proxy::throwError(V8Proxy::ReferenceError, "${implClassName} constructor associated frame is unavailable", args.GetIsolate());
 

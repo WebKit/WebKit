@@ -87,12 +87,12 @@ void ScriptController::setFlags(const char* string, int length)
 
 Frame* ScriptController::retrieveFrameForEnteredContext()
 {
-    return V8Proxy::retrieveFrameForEnteredContext();
+    return firstFrame(BindingState::instance());
 }
 
 Frame* ScriptController::retrieveFrameForCurrentContext()
 {
-    return V8Proxy::retrieveFrameForCurrentContext();
+    return currentFrame(BindingState::instance());
 }
 
 bool ScriptController::canAccessFromCurrentOrigin(Frame *frame)

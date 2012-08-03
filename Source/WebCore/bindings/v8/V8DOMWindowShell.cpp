@@ -104,7 +104,7 @@ static void reportFatalErrorInV8(const char* location, const char* message)
 static void v8UncaughtExceptionHandler(v8::Handle<v8::Message> message, v8::Handle<v8::Value> data)
 {
     // Use the frame where JavaScript is called from.
-    Frame* frame = V8Proxy::retrieveFrameForEnteredContext();
+    Frame* frame = firstFrame(BindingState::instance());
     if (!frame)
         return;
 

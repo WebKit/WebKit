@@ -302,7 +302,7 @@ static v8::Handle<v8::Value> handlePostMessageCallback(const v8::Arguments& args
     // None of these need to be RefPtr because args and context are guaranteed
     // to hold on to them.
     DOMWindow* window = V8DOMWindow::toNative(args.Holder());
-    DOMWindow* source = V8Proxy::retrieveWindowForCallingContext();
+    DOMWindow* source = activeWindow(BindingState::instance());
 
     // If called directly by WebCore we don't have a calling context.
     if (!source)

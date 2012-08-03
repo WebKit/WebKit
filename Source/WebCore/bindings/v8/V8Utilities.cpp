@@ -185,7 +185,7 @@ ScriptExecutionContext* getScriptExecutionContext()
         return controller->workerContext();
 #endif
 
-    if (Frame* frame = V8Proxy::retrieveFrameForCurrentContext())
+    if (Frame* frame = currentFrame(BindingState::instance()))
         return frame->document()->scriptExecutionContext();
 
     return 0;

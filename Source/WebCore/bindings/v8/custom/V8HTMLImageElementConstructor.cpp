@@ -31,15 +31,15 @@
 #include "config.h"
 #include "V8HTMLImageElementConstructor.h"
 
-#include "HTMLImageElement.h"
+#include "BindingState.h"
 #include "Document.h"
 #include "Frame.h"
+#include "HTMLImageElement.h"
 #include "HTMLNames.h"
 #include "V8Binding.h"
 #include "V8Document.h"
 #include "V8HTMLImageElement.h"
 #include "V8Proxy.h"
-
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
@@ -56,7 +56,7 @@ static v8::Handle<v8::Value> v8HTMLImageElementConstructorCallback(const v8::Arg
     if (ConstructorMode::current() == ConstructorMode::WrapExistingObject)
         return args.Holder();
 
-    Frame* frame = V8Proxy::retrieveFrameForCurrentContext();
+    Frame* frame = currentFrame(BindingState::instance());
     if (!frame)
         return V8Proxy::throwError(V8Proxy::ReferenceError, "Image constructor associated frame is unavailable", args.GetIsolate());
 

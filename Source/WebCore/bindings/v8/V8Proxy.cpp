@@ -131,7 +131,7 @@ void V8Proxy::reportUnsafeAccessTo(Frame* target)
     if (!targetDocument)
         return;
 
-    Frame* source = V8Proxy::retrieveFrameForEnteredContext();
+    Frame* source = firstFrame(BindingState::instance());
     if (!source)
         return;
 
@@ -504,14 +504,6 @@ Frame* V8Proxy::retrieveFrameForCurrentContext()
     if (context.IsEmpty())
         return 0;
     return retrieveFrame(context);
-}
-
-DOMWindow* V8Proxy::retrieveWindowForCallingContext()
-{
-    v8::Handle<v8::Context> context = v8::Context::GetCalling();
-    if (context.IsEmpty())
-        return 0;
-    return retrieveWindow(context);
 }
 
 Frame* V8Proxy::retrieveFrameForCallingContext()
