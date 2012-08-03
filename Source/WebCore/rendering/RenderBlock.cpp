@@ -1834,11 +1834,7 @@ void RenderBlock::moveRunInUnderSiblingBlockIfNeeded(RenderObject* runIn)
 
     // Check if this node is allowed to run-in. E.g. <select> expects its renderer to
     // be a RenderListBox or RenderMenuList, and hence cannot be a RenderInline run-in.
-    Node* runInNode = runIn->node();
-    if (runInNode && runInNode->hasTagName(selectTag))
-        return;
-
-    if (runInNode && runInNode->hasTagName(progressTag))
+    if (!runIn->canBeReplacedWithInlineRunIn())
         return;
 
     RenderObject* curr = runIn->nextSibling();

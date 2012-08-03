@@ -39,6 +39,7 @@ namespace WebCore {
     private:
         virtual const char* renderName() const { return "RenderSlider"; }
         virtual bool isSlider() const { return true; }
+        virtual bool canBeReplacedWithInlineRunIn() const OVERRIDE;
 
         virtual LayoutUnit baselinePosition(FontBaseline, bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const;
         virtual void computePreferredLogicalWidths();

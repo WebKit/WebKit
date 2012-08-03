@@ -68,6 +68,7 @@ private:
     virtual LayoutRect controlClipRect(const LayoutPoint&) const;
     virtual bool hasControlClip() const { return true; }
     virtual bool canHaveGeneratedChildren() const OVERRIDE { return false; }
+    virtual bool canBeReplacedWithInlineRunIn() const OVERRIDE;
 
     virtual const char* renderName() const { return "RenderMenuList"; }
 

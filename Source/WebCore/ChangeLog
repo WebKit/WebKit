@@ -1,3 +1,55 @@
+2012-08-02  Kent Tamura  <tkent@chromium.org>
+
+        Fix crashes for <input> and <textarea> with display:run-in.
+        https://bugs.webkit.org/show_bug.cgi?id=87300
+
+        Reviewed by Abhishek Arya.
+
+        Introduce RenderObject::canBeReplacedWithInlineRunIn, and renderers which
+        should not be run-in override it so that it returns false.
+
+        Test: fast/runin/input-text-runin.html
+              fast/runin/textarea-runin.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::moveRunInUnderSiblingBlockIfNeeded):
+        Checks canBeReplacedWithInlineRunIn instead of checking tag names.
+        * rendering/RenderFileUploadControl.cpp:
+        (WebCore::RenderFileUploadControl::canBeReplacedWithInlineRunIn):
+        Added. Disallow run-in.
+        * rendering/RenderFileUploadControl.h:
+        (RenderFileUploadControl): Declare canBeReplacedWithInlineRunIn.
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::canBeReplacedWithInlineRunIn):
+        Added. Disallow run-in. This is not a behavior change.
+        * rendering/RenderListBox.h:
+        (RenderListBox): Declare canBeReplacedWithInlineRunIn.
+        * rendering/RenderMenuList.cpp:
+        (WebCore::RenderMenuList::canBeReplacedWithInlineRunIn):
+        Added. Disallow run-in. This is not a behavior change.
+        * rendering/RenderMenuList.h:
+        (RenderMenuList): Declare canBeReplacedWithInlineRunIn.
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::canBeReplacedWithInlineRunIn):
+        Added. Allow run-in by default.
+        * rendering/RenderObject.h:
+        (RenderObject): Declare canBeReplacedWithInlineRunIn.
+        * rendering/RenderProgress.cpp:
+        (WebCore::RenderProgress::canBeReplacedWithInlineRunIn):
+        Added. Disallow run-in. This is not a behavior change.
+        * rendering/RenderProgress.h:
+        (RenderProgress): Declare canBeReplacedWithInlineRunIn.
+        * rendering/RenderSlider.cpp:
+        (WebCore::RenderSlider::canBeReplacedWithInlineRunIn):
+        Added. Disallow run-in.
+        * rendering/RenderSlider.h:
+        (RenderSlider): Declare canBeReplacedWithInlineRunIn.
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::canBeReplacedWithInlineRunIn):
+        Added. Disallow run-in.
+        * rendering/RenderTextControl.h:
+        (RenderTextControl): Declare canBeReplacedWithInlineRunIn.
+
 2012-08-02  Kihong Kwon  <kihong.kwon@samsung.com>
 
         [EFL] Fix wrong assigned value of BatteryStatus

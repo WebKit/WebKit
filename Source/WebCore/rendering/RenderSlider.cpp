@@ -59,6 +59,11 @@ RenderSlider::~RenderSlider()
 {
 }
 
+bool RenderSlider::canBeReplacedWithInlineRunIn() const
+{
+    return false;
+}
+
 LayoutUnit RenderSlider::baselinePosition(FontBaseline, bool /*firstLine*/, LineDirectionMode, LinePositionMode) const
 {
     // FIXME: Patch this function for writing-mode.

@@ -46,6 +46,7 @@ private:
     virtual bool isProgress() const { return true; }
     virtual bool requiresForcedStyleRecalcPropagation() const { return true; }
     virtual void updateFromElement();
+    virtual bool canBeReplacedWithInlineRunIn() const OVERRIDE;
 
     void animationTimerFired(Timer<RenderProgress>*);
     void updateAnimationState();

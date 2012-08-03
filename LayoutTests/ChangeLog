@@ -1,3 +1,15 @@
+2012-08-02  Kent Tamura  <tkent@chromium.org>
+
+        Fix crashes for <input> and <textarea> with display:run-in.
+        https://bugs.webkit.org/show_bug.cgi?id=87300
+
+        Reviewed by Abhishek Arya.
+
+        * fast/runin/input-text-runin-expected.txt: Added.
+        * fast/runin/input-text-runin.html: Added.
+        * fast/runin/textarea-runin-expected.txt: Added.
+        * fast/runin/textarea-text-runin.html: Added.
+
 2012-08-02  Filip Pizlo  <fpizlo@apple.com>
 
         ASSERTION FAILED: at(m_compileIndex).canExit() || m_isCheckingArgumentTypes

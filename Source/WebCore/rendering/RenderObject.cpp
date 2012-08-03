@@ -2899,6 +2899,11 @@ bool RenderObject::canHaveGeneratedChildren() const
     return canHaveChildren();
 }
 
+bool RenderObject::canBeReplacedWithInlineRunIn() const
+{
+    return true;
+}
+
 #if ENABLE(SVG)
 
 RenderSVGResourceContainer* RenderObject::toRenderSVGResourceContainer()
