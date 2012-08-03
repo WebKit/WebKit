@@ -1,3 +1,17 @@
+2012-08-02  Patrick Gansterer  <paroga@webkit.org>
+
+        Move getLocalTime() as static inline function to DateMath
+        https://bugs.webkit.org/show_bug.cgi?id=92955
+
+        Reviewed by Ryosuke Niwa.
+
+        getCurrentLocalTime() and getLocalTime() has been superseded with the
+        GregorianDateTime class. So we can move it into DateMath.cpp as an static inline
+        function. This allows us to remove the dependecy on time() and localtime()
+        for Windows CE, where this functions require the ce_time library to work.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+
 2012-08-02  Filip Pizlo  <fpizlo@apple.com>
 
         ASSERTION FAILED: at(m_compileIndex).canExit() || m_isCheckingArgumentTypes

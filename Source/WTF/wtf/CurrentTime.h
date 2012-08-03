@@ -47,9 +47,6 @@ inline double currentTimeMS()
     return currentTime() * 1000.0;
 }
 
-WTF_EXPORT_PRIVATE void getLocalTime(const time_t* localTime, struct tm* localTM);
-WTF_EXPORT_PRIVATE void getCurrentLocalTime(struct tm* localTM);
-
 // Provides a monotonically increasing time in seconds since an arbitrary point in the past.
 // On unsupported platforms, this function only guarantees the result will be non-decreasing.
 WTF_EXPORT_PRIVATE double monotonicallyIncreasingTime();
@@ -58,8 +55,6 @@ WTF_EXPORT_PRIVATE double monotonicallyIncreasingTime();
 
 using WTF::currentTime;
 using WTF::currentTimeMS;
-using WTF::getCurrentLocalTime;
-using WTF::getLocalTime;
 using WTF::monotonicallyIncreasingTime;
 
 #endif // CurrentTime_h

@@ -127,6 +127,19 @@ static const int firstDayOfMonth[2][12] = {
     {0, 31, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335}
 };
 
+#if !OS(WINCE)
+static inline void getLocalTime(const time_t* localTime, struct tm* localTM)
+{
+#if COMPILER(MSVC7_OR_LOWER) || COMPILER(MINGW)
+    *localTM = *localtime(localTime);
+#elif COMPILER(MSVC)
+    localtime_s(localTM, localTime);
+#else
+    localtime_r(localTime, localTM);
+#endif
+}
+#endif
+
 bool isLeapYear(int year)
 {
     if (year % 4 != 0)

@@ -201,7 +201,6 @@ EXPORTS
     ?getCallData@JSCell@JSC@@SA?AW4CallType@2@PAV12@AATCallData@2@@Z
     ?getCallableObjectSlow@JSC@@YAPAVJSCell@1@PAV21@@Z
     ?getConstructData@JSCell@JSC@@SA?AW4ConstructType@2@PAV12@AATConstructData@2@@Z
-    ?getCurrentLocalTime@WTF@@YAXPAUtm@@@Z
     ?getObject@JSCell@JSC@@QAEPAVJSObject@2@XZ
     ?getOwnPropertyDescriptor@JSGlobalObject@JSC@@SA_NPAVJSObject@2@PAVExecState@2@VPropertyName@2@AAVPropertyDescriptor@2@@Z
     ?getOwnPropertyDescriptor@JSObject@JSC@@SA_NPAV12@PAVExecState@2@VPropertyName@2@AAVPropertyDescriptor@2@@Z
