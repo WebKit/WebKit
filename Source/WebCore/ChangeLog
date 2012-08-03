@@ -1,3 +1,16 @@
+2012-08-03  Alexander Pavlov  <apavlov@chromium.org>
+
+        Web Inspector: Remove InspectorCSSAgent from InstrumentingAgents on clearFrontend()
+        https://bugs.webkit.org/show_bug.cgi?id=93082
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/InspectorCSSAgent.cpp:
+        (WebCore::InspectorCSSAgent::InspectorCSSAgent):
+        (WebCore::InspectorCSSAgent::~InspectorCSSAgent):
+        (WebCore::InspectorCSSAgent::setFrontend):
+        (WebCore::InspectorCSSAgent::clearFrontend):
+
 2012-08-03  Eugene Klyuchnikov  <eustas.big@gmail.com>
 
         Web Inspector: Profiles: extract save to file / load from code

@@ -467,13 +467,11 @@ InspectorCSSAgent::InspectorCSSAgent(InstrumentingAgents* instrumentingAgents, I
     , m_lastStyleSheetId(1)
 {
     m_domAgent->setDOMListener(this);
-    m_instrumentingAgents->setInspectorCSSAgent(this);
 }
 
 InspectorCSSAgent::~InspectorCSSAgent()
 {
     ASSERT(!m_domAgent);
-    m_instrumentingAgents->setInspectorCSSAgent(0);
     reset();
 }
 
@@ -481,12 +479,14 @@ void InspectorCSSAgent::setFrontend(InspectorFrontend* frontend)
 {
     ASSERT(!m_frontend);
     m_frontend = frontend->css();
+    m_instrumentingAgents->setInspectorCSSAgent(this);
 }
 
 void InspectorCSSAgent::clearFrontend()
 {
     ASSERT(m_frontend);
     m_frontend = 0;
+    m_instrumentingAgents->setInspectorCSSAgent(0);
     resetPseudoStates();
     String errorString;
     stopSelectorProfilerImpl(&errorString, false);
