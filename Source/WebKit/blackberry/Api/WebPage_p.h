@@ -135,7 +135,7 @@ public:
     WebCore::IntPoint calculateReflowedScrollPosition(const WebCore::FloatPoint& anchorOffset, double inverseScale);
     void setTextReflowAnchorPoint(const Platform::IntPoint& focalPoint);
 
-    void schedulePinchZoomAboutPoint(double scale, const WebCore::IntPoint& anchor);
+    void restoreHistoryViewState(Platform::IntSize contentsSize, Platform::IntPoint scrollPosition, double scale, bool shouldReflowBlock);
 
     // Perform actual zoom for block zoom.
     void zoomBlock();

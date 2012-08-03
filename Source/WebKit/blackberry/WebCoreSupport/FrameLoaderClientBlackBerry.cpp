@@ -68,8 +68,10 @@
 #endif
 #include "WebPageClient.h"
 
+#include <BlackBerryPlatformExecutableMessage.h>
 #include <BlackBerryPlatformLog.h>
 #include <BlackBerryPlatformMediaDocument.h>
+#include <BlackBerryPlatformMessageClient.h>
 #include <BlackBerryPlatformScreen.h>
 #include <JavaScriptCore/APICast.h>
 #include <network/FilterStream.h>
@@ -1085,28 +1087,10 @@ void FrameLoaderClientBlackBerry::restoreViewState()
     // When rotate happens, only zoom when previous page was zoomToFitScale, otherwise keep old scale.
     if (orientationChanged && viewState.isZoomToFitScale)
         scale = BlackBerry::Platform::Graphics::Screen::primaryScreen()->width() * scale / static_cast<double>(BlackBerry::Platform::Graphics::Screen::primaryScreen()->height());
-    m_webPagePrivate->m_backingStore->d->suspendScreenAndBackingStoreUpdates(); // don't flash checkerboard for the setScrollPosition call
-    m_frame->view()->setContentsSizeFromHistory(contentsSize);
 
-    // Here we need to set scroll position what we asked for.
-    // So we use ScrollView::setCanOverscroll(true).
-    bool oldCanOverscroll = m_frame->view()->canOverScroll();
-    m_frame->view()->setCanOverscroll(true);
-    m_webPagePrivate->setScrollPosition(scrollPosition);
-    m_frame->view()->setCanOverscroll(oldCanOverscroll);
-
-    m_webPagePrivate->m_shouldReflowBlock = viewState.shouldReflowBlock;
-
-    bool didZoom = m_webPagePrivate->zoomAboutPoint(scale, m_frame->view()->scrollPosition(), true /* enforceScaleClamping */, true /*forceRendering*/, true /*isRestoringZoomLevel*/);
-    // If we're already at that scale, then we should still force rendering
-    // since our scroll position changed.
-    m_webPagePrivate->m_backingStore->d->resumeScreenAndBackingStoreUpdates(BackingStore::RenderAndBlit);
-
-    if (!didZoom) {
-        // We need to notify the client of the scroll position and content size change(s) above even if we didn't scale.
-        m_webPagePrivate->notifyTransformedContentsSizeChanged();
-        m_webPagePrivate->notifyTransformedScrollChanged();
-    }
+    // It is not safe to render the page at this point. So we post a message instead. Messages have higher priority than timers.
+    BlackBerry::Platform::webKitThreadMessageClient()->dispatchMessage(BlackBerry::Platform::createMethodCallMessage(
+        &WebPagePrivate::restoreHistoryViewState, m_webPagePrivate, contentsSize, scrollPosition, scale, viewState.shouldReflowBlock));
 }
 
 PolicyAction FrameLoaderClientBlackBerry::decidePolicyForExternalLoad(const ResourceRequest& request, bool isFragmentScroll)

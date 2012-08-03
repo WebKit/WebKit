@@ -6461,5 +6461,35 @@ void WebPagePrivate::setTextZoomFactor(float textZoomFactor)
 
     m_mainFrame->setTextZoomFactor(textZoomFactor);
 }
+
+void WebPagePrivate::restoreHistoryViewState(Platform::IntSize contentsSize, Platform::IntPoint scrollPosition, double scale, bool shouldReflowBlock)
+{
+    if (!m_mainFrame)
+        return;
+
+    m_backingStore->d->suspendScreenAndBackingStoreUpdates(); // don't flash checkerboard for the setScrollPosition call
+    m_mainFrame->view()->setContentsSizeFromHistory(contentsSize);
+
+    // Here we need to set scroll position what we asked for.
+    // So we use ScrollView::constrainsScrollingToContentEdge(false).
+    bool oldConstrainsScrollingToContentEdge = m_mainFrame->view()->constrainsScrollingToContentEdge();
+    m_mainFrame->view()->setConstrainsScrollingToContentEdge(false);
+    setScrollPosition(scrollPosition);
+    m_mainFrame->view()->setConstrainsScrollingToContentEdge(oldConstrainsScrollingToContentEdge);
+
+    m_shouldReflowBlock = shouldReflowBlock;
+
+    bool didZoom = zoomAboutPoint(scale, m_mainFrame->view()->scrollPosition(), true /* enforceScaleClamping */, true /*forceRendering*/, true /*isRestoringZoomLevel*/);
+    // If we're already at that scale, then we should still force rendering
+    // since our scroll position changed.
+    m_backingStore->d->resumeScreenAndBackingStoreUpdates(BackingStore::RenderAndBlit);
+
+    if (!didZoom) {
+        // We need to notify the client of the scroll position and content size change(s) above even if we didn't scale.
+        notifyTransformedContentsSizeChanged();
+        notifyTransformedScrollChanged();
+    }
+}
+
 }
 }
