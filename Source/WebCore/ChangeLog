@@ -1,3 +1,20 @@
+2012-08-02  Abhishek Arya  <inferno@chromium.org>
+
+        Crash due to layer not removed from parent for anonymous block.
+        https://bugs.webkit.org/show_bug.cgi?id=90800
+
+        Reviewed by Kent Tamura.
+
+        Reverse the order of setStyle and removeChildNode calls. This ensures that setting the style
+        properly removes its layer from the parent in RenderBoxModelObject::styleDidChange. Calling
+        removeChildNode before calling setStyle is problematic since the parent layer never gets
+        notified.
+
+        Test: fast/block/layer-not-removed-from-parent-crash.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::removeChild):
+
 2012-08-02  Adam Barth  <abarth@webkit.org>
 
         V8Proxy::retrieveFrameFor*Context are used only by BindingState and should be removed as separate functions
