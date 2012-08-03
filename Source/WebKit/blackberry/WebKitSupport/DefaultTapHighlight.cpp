@@ -110,9 +110,9 @@ void DefaultTapHighlight::hide()
         m_overlay->override()->addAnimation(fadeAnimation);
 }
 
-void DefaultTapHighlight::notifySyncRequired(const GraphicsLayer*)
+void DefaultTapHighlight::notifySyncRequired(const GraphicsLayer* layer)
 {
-    m_page->scheduleRootLayerCommit();
+    m_page->notifySyncRequired(layer);
 }
 
 void DefaultTapHighlight::paintContents(const GraphicsLayer*, GraphicsContext& c, GraphicsLayerPaintingPhase, const IntRect& /*inClip*/)
@@ -146,6 +146,16 @@ void DefaultTapHighlight::paintContents(const GraphicsLayer*, GraphicsContext& c
     c.setStrokeThickness(1);
     c.strokePath(path);
     c.restore();
+}
+
+bool DefaultTapHighlight::showDebugBorders(const GraphicsLayer* layer) const
+{
+    return m_page->showDebugBorders(layer);
+}
+
+bool DefaultTapHighlight::showRepaintCounter(const GraphicsLayer* layer) const
+{
+    return m_page->showRepaintCounter(layer);
 }
 
 } // namespace WebKit

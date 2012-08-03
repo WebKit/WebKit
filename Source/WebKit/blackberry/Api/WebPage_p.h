@@ -25,6 +25,7 @@
 #include "InspectorOverlay.h"
 #if USE(ACCELERATED_COMPOSITING)
 #include "GLES2Context.h"
+#include "GraphicsLayerClient.h"
 #include "LayerRenderer.h"
 #include <EGL/egl.h>
 #endif
@@ -83,7 +84,12 @@ class WebPageCompositorPrivate;
 // In WebPagePrivate, the screen size is called the transformedViewportSize,
 // the viewport position is called the transformedScrollPosition,
 // and the viewport size is called the transformedActualVisibleSize.
-class WebPagePrivate : public PageClientBlackBerry, public WebSettingsDelegate, public Platform::GuardedPointerBase {
+class WebPagePrivate : public PageClientBlackBerry
+                     , public WebSettingsDelegate
+#if USE(ACCELERATED_COMPOSITING)
+                     , public WebCore::GraphicsLayerClient
+#endif
+                     , public Platform::GuardedPointerBase {
 public:
     enum ViewMode { Mobile, Desktop, FixedDesktop };
     enum LoadState { None /* on instantiation of page */, Provisional, Committed, Finished, Failed };
@@ -385,6 +391,13 @@ public:
     bool commitRootLayerIfNeeded();
     WebCore::LayerRenderingResults lastCompositingResults() const;
     WebCore::GraphicsLayer* overlayLayer();
+
+    // Fallback GraphicsLayerClient implementation, used for various overlay layers.
+    virtual void notifyAnimationStarted(const WebCore::GraphicsLayer*, double time) { }
+    virtual void notifySyncRequired(const WebCore::GraphicsLayer*);
+    virtual void paintContents(const WebCore::GraphicsLayer*, WebCore::GraphicsContext&, WebCore::GraphicsLayerPaintingPhase, const WebCore::IntRect& inClip) { }
+    virtual bool showDebugBorders(const WebCore::GraphicsLayer*) const;
+    virtual bool showRepaintCounter(const WebCore::GraphicsLayer*) const;
 
     // WebKit thread, plumbed through from ChromeClientBlackBerry.
     void setRootLayerWebKitThread(WebCore::Frame*, WebCore::LayerWebKitThread*);

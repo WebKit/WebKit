@@ -5623,10 +5623,8 @@ LayerRenderingResults WebPagePrivate::lastCompositingResults() const
 
 GraphicsLayer* WebPagePrivate::overlayLayer()
 {
-    // The overlay layer has no GraphicsLayerClient, it's just a container
-    // for various overlays.
     if (!m_overlayLayer)
-        m_overlayLayer = GraphicsLayer::create(0);
+        m_overlayLayer = GraphicsLayer::create(this);
 
     return m_overlayLayer.get();
 }
@@ -5745,6 +5743,10 @@ bool WebPagePrivate::commitRootLayerIfNeeded()
     if (!view)
         return false;
 
+    // This can do pretty much anything depending on the overlay,
+    // so in case it causes relayout or schedule a commit, call it early.
+    updateDelegatedOverlays();
+
     // If we sync compositing layers when a layout is pending, we may cause painting of compositing
     // layer content to occur before layout has happened, which will cause paintContents() to bail.
     if (needsLayoutRecursive(view)) {
@@ -5767,7 +5769,6 @@ bool WebPagePrivate::commitRootLayerIfNeeded()
     if (m_frameLayers && m_frameLayers->hasLayer())
         m_frameLayers->commitOnWebKitThread(scale);
 
-    updateDelegatedOverlays();
     if (m_overlayLayer)
         m_overlayLayer->platformLayer()->commitOnWebKitThread(scale);
 
@@ -5987,6 +5988,21 @@ void WebPagePrivate::setNeedsOneShotDrawingSynchronization()
     // whichever happens first.
     m_needsCommit = true;
     m_needsOneShotDrawingSynchronization = true;
+}
+
+void WebPagePrivate::notifySyncRequired(const GraphicsLayer*)
+{
+    scheduleRootLayerCommit();
+}
+
+bool WebPagePrivate::showDebugBorders(const GraphicsLayer*) const
+{
+    return m_page->settings()->showDebugBorders();
+}
+
+bool WebPagePrivate::showRepaintCounter(const GraphicsLayer*) const
+{
+    return m_page->settings()->showRepaintCounter();
 }
 #endif // USE(ACCELERATED_COMPOSITING)
 

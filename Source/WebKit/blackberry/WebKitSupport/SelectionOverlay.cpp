@@ -94,9 +94,9 @@ void SelectionOverlay::hide()
     m_page->m_webPage->removeOverlay(m_overlay.get());
 }
 
-void SelectionOverlay::notifySyncRequired(const GraphicsLayer*)
+void SelectionOverlay::notifySyncRequired(const GraphicsLayer* layer)
 {
-    m_page->scheduleRootLayerCommit();
+    m_page->notifySyncRequired(layer);
 }
 
 void SelectionOverlay::paintContents(const GraphicsLayer*, GraphicsContext& c, GraphicsLayerPaintingPhase, const IntRect& inClip)
@@ -131,6 +131,16 @@ void SelectionOverlay::paintContents(const GraphicsLayer*, GraphicsContext& c, G
     c.fillPath(path);
 
     c.restore();
+}
+
+bool SelectionOverlay::showDebugBorders(const GraphicsLayer* layer) const
+{
+    return m_page->showDebugBorders(layer);
+}
+
+bool SelectionOverlay::showRepaintCounter(const GraphicsLayer* layer) const
+{
+    return m_page->showRepaintCounter(layer);
 }
 
 } // namespace WebKit

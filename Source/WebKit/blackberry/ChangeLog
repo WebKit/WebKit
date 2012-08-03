@@ -1,3 +1,75 @@
+2012-08-03  Arvid Nilsson  <anilsson@rim.com>
+
+        [BlackBerry] Overlays display checkerboard that doesn't resolve
+        https://bugs.webkit.org/show_bug.cgi?id=93099
+
+        Reviewed by Antonio Gomes.
+
+        The WebKit-thread overlays, like tap highlight, inspector highlight and
+        selection are all part of a separate graphics layer tree rooted in
+        WebPagePrivate::m_overlayLayer.
+
+        When LayerRenderer needs to schedule a commit to reactively render
+        tiles and resolve checkerboard, it does so through the root layer.
+        Since the overlay layer root didn't have a GraphicsLayerClient, there
+        was no implementation of GraphicsLayerClient::notifySyncRequired() to
+        call, and a commit was never scheduled, thus checkerboard never
+        resolved.
+
+        Fixed by adding a fallback implementation of GraphicsLayerClient in
+        WebPagePrivate and hooking up the overlay root to it. Also, this
+        implementation can be shared by the various overlays to avoide code
+        duplication, specifically to implement notifySyncRequired(),
+        showDebugBorders() and showRepaintCounter() only once.
+
+        Fixing this revealed a bug where the web page would get stuck in an
+        endless sequence of commits. It turned out that
+        WebPagePrivate::updateDelegatedOverlays() was called right in the
+        middle of the commit operation, after performing the webkit thread part
+        of the commit operation but before we continued on the compositing
+        thread. Since updateDelegatedOverlays() typically mutates layers, this
+        is very bad (layers should not be mutated mid-commit). The mutations
+        also cause a new commit to scheduled from within the current, which
+        results in an endless sequence of commits.
+
+        Fixed this latter bug by moving the updateDelegatedOverlays() call to
+        the beginning of the method where it can cause no harm. This is before
+        we mark the web page as no longer needing commit, so even if the
+        implementation flips the "needs commit" bit, we will immediately flip
+        it back and proceed with commit as usual.
+
+        PR 187458, 184377
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::overlayLayer):
+        (BlackBerry::WebKit::WebPagePrivate::commitRootLayerIfNeeded):
+        (WebKit):
+        (BlackBerry::WebKit::WebPagePrivate::notifySyncRequired):
+        (BlackBerry::WebKit::WebPagePrivate::showDebugBorders):
+        (BlackBerry::WebKit::WebPagePrivate::showRepaintCounter):
+        * Api/WebPage_p.h:
+        (WebPagePrivate):
+        (BlackBerry::WebKit::WebPagePrivate::notifyAnimationStarted):
+        (BlackBerry::WebKit::WebPagePrivate::paintContents):
+        * WebCoreSupport/InspectorOverlay.cpp:
+        (WebCore::InspectorOverlay::notifySyncRequired):
+        (WebCore::InspectorOverlay::showDebugBorders):
+        (WebCore::InspectorOverlay::showRepaintCounter):
+        * WebKitSupport/DefaultTapHighlight.cpp:
+        (BlackBerry::WebKit::DefaultTapHighlight::notifySyncRequired):
+        (BlackBerry::WebKit::DefaultTapHighlight::showDebugBorders):
+        (WebKit):
+        (BlackBerry::WebKit::DefaultTapHighlight::showRepaintCounter):
+        * WebKitSupport/DefaultTapHighlight.h:
+        (DefaultTapHighlight):
+        * WebKitSupport/SelectionOverlay.cpp:
+        (BlackBerry::WebKit::SelectionOverlay::notifySyncRequired):
+        (BlackBerry::WebKit::SelectionOverlay::showDebugBorders):
+        (WebKit):
+        (BlackBerry::WebKit::SelectionOverlay::showRepaintCounter):
+        * WebKitSupport/SelectionOverlay.h:
+        (SelectionOverlay):
+
 2012-08-02  Arvid Nilsson  <anilsson@rim.com>
 
         [BlackBerry] Add default implementation of GraphicsLayerClient::contentsVisible()

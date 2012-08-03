@@ -24,8 +24,6 @@
 #include "FrameView.h"
 #include "GraphicsContext.h"
 #include "GraphicsLayer.h"
-#include "Page.h"
-#include "Settings.h"
 #include "WebPage_p.h"
 
 
@@ -43,9 +41,9 @@ InspectorOverlay::InspectorOverlay(BlackBerry::WebKit::WebPagePrivate* page, Ins
 }
 
 #if USE(ACCELERATED_COMPOSITING)
-void InspectorOverlay::notifySyncRequired(const GraphicsLayer*)
+void InspectorOverlay::notifySyncRequired(const GraphicsLayer* layer)
 {
-    m_webPage->scheduleRootLayerCommit();
+    m_webPage->notifySyncRequired(layer);
 }
 
 void InspectorOverlay::paintContents(const GraphicsLayer*, GraphicsContext& context, GraphicsLayerPaintingPhase, const IntRect& inClip)
@@ -57,14 +55,14 @@ void InspectorOverlay::paintContents(const GraphicsLayer*, GraphicsContext& cont
     context.restore();
 }
 
-bool InspectorOverlay::showDebugBorders(const GraphicsLayer*) const
+bool InspectorOverlay::showDebugBorders(const GraphicsLayer* layer) const
 {
-    return m_webPage->m_page->settings()->showDebugBorders();
+    return m_webPage->showDebugBorders(layer);
 }
 
-bool InspectorOverlay::showRepaintCounter(const GraphicsLayer*) const
+bool InspectorOverlay::showRepaintCounter(const GraphicsLayer* layer) const
 {
-    return m_webPage->m_page->settings()->showRepaintCounter();
+    return m_webPage->showRepaintCounter(layer);
 }
 #endif
 
