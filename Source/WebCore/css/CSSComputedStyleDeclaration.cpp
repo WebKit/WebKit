@@ -46,6 +46,7 @@
 #include "FontFeatureSettings.h"
 #include "FontFeatureValue.h"
 #include "FontValue.h"
+#include "MemoryInstrumentation.h"
 #include "Pair.h"
 #include "Rect.h"
 #include "RenderBox.h"
@@ -2682,6 +2683,12 @@ PassRefPtr<StylePropertySet> CSSComputedStyleDeclaration::copyPropertiesInSet(co
             list.append(CSSProperty(set[i], value.release(), false));
     }
     return StylePropertySet::create(list.data(), list.size());
+}
+
+void CSSComputedStyleDeclaration::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+{
+    MemoryClassInfo<CSSComputedStyleDeclaration> info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
+    info.addInstrumentedMember(m_node);
 }
 
 CSSRule* CSSComputedStyleDeclaration::parentRule() const

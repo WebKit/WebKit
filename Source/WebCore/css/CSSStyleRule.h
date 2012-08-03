@@ -50,6 +50,8 @@ public:
 
     void reattach(StyleRule*);
 
+    void reportDescendantMemoryUsage(MemoryObjectInfo*) const;
+
 private:
     CSSStyleRule(StyleRule*, CSSStyleSheet*);
 

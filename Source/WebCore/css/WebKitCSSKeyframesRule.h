@@ -92,6 +92,8 @@ public:
 
     void reattach(StyleRuleKeyframes*);
 
+    void reportDescendantMemoryUsage(MemoryObjectInfo*) const;
+
 private:
     WebKitCSSKeyframesRule(StyleRuleKeyframes*, CSSStyleSheet* parent);
 

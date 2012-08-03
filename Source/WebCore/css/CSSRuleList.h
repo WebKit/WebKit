@@ -22,6 +22,7 @@
 #ifndef CSSRuleList_h
 #define CSSRuleList_h
 
+#include "MemoryInstrumentation.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
@@ -45,6 +46,8 @@ public:
     virtual CSSRule* item(unsigned index) const = 0;
     
     virtual CSSStyleSheet* styleSheet() const = 0;
+
+    virtual void reportMemoryUsage(MemoryObjectInfo*) const = 0;
     
 protected:
     CSSRuleList();
@@ -60,6 +63,8 @@ public:
     Vector<RefPtr<CSSRule> >& rules() { return m_rules; }
     
     virtual CSSStyleSheet* styleSheet() const { return 0; }
+
+    virtual void reportMemoryUsage(MemoryObjectInfo*) const OVERRIDE;
 
 private:    
     StaticCSSRuleList();
@@ -80,6 +85,12 @@ public:
     
     virtual void ref() { m_rule->ref(); }
     virtual void deref() { m_rule->deref(); }
+
+    virtual void reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const OVERRIDE
+    {
+        MemoryClassInfo<LiveCSSRuleList<Rule> > info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
+        info.addInstrumentedMember(m_rule);
+    }
     
 private:
     virtual unsigned length() const { return m_rule->length(); }

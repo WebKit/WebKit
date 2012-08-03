@@ -23,12 +23,19 @@
 #define CSSUnknownRule_h
 
 #include "CSSRule.h"
+#include "MemoryInstrumentation.h"
 
 namespace WebCore {
 
 class CSSUnknownRule : public CSSRule {
 public:
     CSSUnknownRule() : CSSRule(0, CSSRule::UNKNOWN_RULE) { }
+
+    void reportDescendantMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+    {
+        MemoryClassInfo<CSSUnknownRule> info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
+        CSSRule::reportBaseClassMemoryUsage(memoryObjectInfo);
+    }
 };
 
 } // namespace WebCore

@@ -45,6 +45,8 @@ public:
 
     void reattach(StyleRuleFontFace*);
 
+    void reportDescendantMemoryUsage(MemoryObjectInfo*) const;
+
 private:
     CSSFontFaceRule(StyleRuleFontFace*, CSSStyleSheet* parent);
 

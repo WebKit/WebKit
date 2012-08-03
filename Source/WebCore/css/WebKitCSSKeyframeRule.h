@@ -80,6 +80,8 @@ public:
 
     String cssText() const { return m_keyframe->cssText(); }
 
+    void reportDescendantMemoryUsage(MemoryObjectInfo*) const;
+
 private:
     WebKitCSSKeyframeRule(StyleKeyframe*, WebKitCSSKeyframesRule* parent);
 

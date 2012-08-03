@@ -48,6 +48,8 @@ public:
 
     void reattach(StyleRulePage*);
 
+    void reportDescendantMemoryUsage(MemoryObjectInfo*) const;
+
 private:
     CSSPageRule(StyleRulePage*, CSSStyleSheet*);
     

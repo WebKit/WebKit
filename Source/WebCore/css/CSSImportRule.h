@@ -43,6 +43,8 @@ public:
     
     String cssText() const;
 
+    void reportDescendantMemoryUsage(MemoryObjectInfo*) const;
+
 private:
     CSSImportRule(StyleRuleImport*, CSSStyleSheet*);
 

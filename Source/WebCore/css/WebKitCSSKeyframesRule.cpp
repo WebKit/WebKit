@@ -206,4 +206,13 @@ void WebKitCSSKeyframesRule::reattach(StyleRuleKeyframes* rule)
     m_keyframesRule = rule;
 }
 
+void WebKitCSSKeyframesRule::reportDescendantMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+{
+    MemoryClassInfo<WebKitCSSKeyframesRule> info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
+    CSSRule::reportBaseClassMemoryUsage(memoryObjectInfo);
+    info.addInstrumentedMember(m_keyframesRule);
+    info.addInstrumentedVector(m_childRuleCSSOMWrappers);
+    info.addInstrumentedMember(m_ruleListCSSOMWrapper);
+}
+
 } // namespace WebCore

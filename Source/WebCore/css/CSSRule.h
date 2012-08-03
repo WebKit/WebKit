@@ -30,6 +30,7 @@
 namespace WebCore {
 
 class CSSStyleSheet;
+class MemoryObjectInfo;
 class StyleRuleBase;
 struct CSSParserContext;
 typedef int ExceptionCode;
@@ -103,6 +104,8 @@ public:
 
     void reattach(StyleRuleBase*);
 
+    void reportMemoryUsage(MemoryObjectInfo*) const;
+
 protected:
     CSSRule(CSSStyleSheet* parent, Type type)
         : m_hasCachedSelectorText(false)
@@ -121,6 +124,8 @@ protected:
     void setHasCachedSelectorText(bool hasCachedSelectorText) const { m_hasCachedSelectorText = hasCachedSelectorText; }
 
     const CSSParserContext& parserContext() const;
+
+    void reportBaseClassMemoryUsage(MemoryObjectInfo*) const;
 
 private:
     mutable unsigned m_hasCachedSelectorText : 1;

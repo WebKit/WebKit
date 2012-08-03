@@ -113,4 +113,12 @@ CSSStyleDeclaration* WebKitCSSKeyframeRule::style() const
     return m_propertiesCSSOMWrapper.get();
 }
 
+void WebKitCSSKeyframeRule::reportDescendantMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+{
+    MemoryClassInfo<WebKitCSSKeyframeRule> info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
+    CSSRule::reportBaseClassMemoryUsage(memoryObjectInfo);
+    info.addInstrumentedMember(m_keyframe);
+    info.addInstrumentedMember(m_propertiesCSSOMWrapper);
+}
+
 } // namespace WebCore

@@ -57,6 +57,8 @@ public:
 
     void reattach(StyleRuleRegion*);
 
+    void reportDescendantMemoryUsage(MemoryObjectInfo*) const;
+
 private:
     WebKitCSSRegionRule(StyleRuleRegion*, CSSStyleSheet* parent);
 

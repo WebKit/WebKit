@@ -95,4 +95,12 @@ void CSSPageRule::reattach(StyleRulePage* rule)
         m_propertiesCSSOMWrapper->reattach(m_pageRule->mutableProperties());
 }
 
+void CSSPageRule::reportDescendantMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+{
+    MemoryClassInfo<CSSPageRule> info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
+    CSSRule::reportBaseClassMemoryUsage(memoryObjectInfo);
+    info.addInstrumentedMember(m_pageRule);
+    info.addInstrumentedMember(m_propertiesCSSOMWrapper);
+}
+
 } // namespace WebCore

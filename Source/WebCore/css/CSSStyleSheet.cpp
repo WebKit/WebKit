@@ -53,6 +53,12 @@ private:
     virtual CSSRule* item(unsigned index) const { return m_styleSheet->item(index); }
     
     virtual CSSStyleSheet* styleSheet() const { return m_styleSheet; }
+
+    virtual void reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const OVERRIDE
+    {
+        MemoryClassInfo<StyleSheetCSSRuleList> info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
+        info.addInstrumentedMember(m_styleSheet);
+    }
     
     CSSStyleSheet* m_styleSheet;
 };
@@ -176,7 +182,9 @@ void CSSStyleSheet::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     info.addString(m_title);
     info.addInstrumentedMember(m_mediaQueries);
     info.addInstrumentedMember(m_ownerNode);
+    info.addInstrumentedMember(m_ownerRule);
     info.addInstrumentedMember(m_mediaCSSOMWrapper);
+    info.addInstrumentedVector(m_childRuleCSSOMWrappers);
 }
 
 void CSSStyleSheet::setDisabled(bool disabled)

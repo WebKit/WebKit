@@ -39,6 +39,8 @@ public:
 
     String cssText() const;
 
+    void reportDescendantMemoryUsage(MemoryObjectInfo*) const;
+
 private:
     CSSCharsetRule(CSSStyleSheet* parent, const String& encoding);
 

@@ -22,6 +22,7 @@
 #include "config.h"
 #include "CSSFontFaceRule.h"
 
+#include "MemoryInstrumentation.h"
 #include "StylePropertySet.h"
 #include "StyleRule.h"
 
@@ -61,6 +62,14 @@ void CSSFontFaceRule::reattach(StyleRuleFontFace* rule)
     m_fontFaceRule = rule;
     if (m_propertiesCSSOMWrapper)
         m_propertiesCSSOMWrapper->reattach(m_fontFaceRule->mutableProperties());
+}
+
+void CSSFontFaceRule::reportDescendantMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+{
+    MemoryClassInfo<CSSFontFaceRule> info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
+    CSSRule::reportBaseClassMemoryUsage(memoryObjectInfo);
+    info.addInstrumentedMember(m_fontFaceRule);
+    info.addInstrumentedMember(m_propertiesCSSOMWrapper);
 }
 
 } // namespace WebCore

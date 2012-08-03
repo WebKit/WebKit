@@ -164,10 +164,59 @@ void CSSRule::reattach(StyleRuleBase* rule)
     ASSERT_NOT_REACHED();
 }
 
+void CSSRule::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+{
+    switch (type()) {
+    case UNKNOWN_RULE:
+        static_cast<const CSSUnknownRule*>(this)->reportDescendantMemoryUsage(memoryObjectInfo);
+        return;
+    case STYLE_RULE:
+        static_cast<const CSSStyleRule*>(this)->reportDescendantMemoryUsage(memoryObjectInfo);
+        return;
+    case PAGE_RULE:
+        static_cast<const CSSPageRule*>(this)->reportDescendantMemoryUsage(memoryObjectInfo);
+        return;
+    case CHARSET_RULE:
+        static_cast<const CSSCharsetRule*>(this)->reportDescendantMemoryUsage(memoryObjectInfo);
+        return;
+    case IMPORT_RULE:
+        static_cast<const CSSImportRule*>(this)->reportDescendantMemoryUsage(memoryObjectInfo);
+        return;
+    case MEDIA_RULE:
+        static_cast<const CSSMediaRule*>(this)->reportDescendantMemoryUsage(memoryObjectInfo);
+        return;
+    case FONT_FACE_RULE:
+        static_cast<const CSSFontFaceRule*>(this)->reportDescendantMemoryUsage(memoryObjectInfo);
+        return;
+    case WEBKIT_KEYFRAMES_RULE:
+        static_cast<const WebKitCSSKeyframesRule*>(this)->reportDescendantMemoryUsage(memoryObjectInfo);
+        return;
+    case WEBKIT_KEYFRAME_RULE:
+        static_cast<const WebKitCSSKeyframeRule*>(this)->reportDescendantMemoryUsage(memoryObjectInfo);
+        return;
+#if ENABLE(CSS_REGIONS)
+    case WEBKIT_REGION_RULE:
+        static_cast<const WebKitCSSRegionRule*>(this)->reportDescendantMemoryUsage(memoryObjectInfo);
+        return;
+#endif
+    }
+    ASSERT_NOT_REACHED();
+    return;
+}
+
 const CSSParserContext& CSSRule::parserContext() const
 {
     CSSStyleSheet* styleSheet = parentStyleSheet();
     return styleSheet ? styleSheet->contents()->parserContext() : strictCSSParserContext();
+}
+
+void CSSRule::reportBaseClassMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+{
+    MemoryClassInfo<CSSRule> info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
+    if (m_parentIsRule)
+        info.addInstrumentedMember(m_parentRule);
+    else
+        info.addInstrumentedMember(m_parentStyleSheet);
 }
 
 } // namespace WebCore

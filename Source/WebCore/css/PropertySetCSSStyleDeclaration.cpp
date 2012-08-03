@@ -26,6 +26,7 @@
 #include "CSSStyleSheet.h"
 #include "HTMLNames.h"
 #include "InspectorInstrumentation.h"
+#include "MemoryInstrumentation.h"
 #include "MutationObserverInterestGroup.h"
 #include "MutationRecord.h"
 #include "StylePropertySet.h"
@@ -128,6 +129,13 @@ void PropertySetCSSStyleDeclaration::ref()
 void PropertySetCSSStyleDeclaration::deref()
 { 
     m_propertySet->deref(); 
+}
+
+void PropertySetCSSStyleDeclaration::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+{
+    MemoryClassInfo<PropertySetCSSStyleDeclaration> info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
+    info.addInstrumentedMember(m_propertySet);
+    // FIXME: add info.addInstrumentedHasMap(m_cssomCSSValueClones) when CSSValue is instrumented.
 }
 
 unsigned PropertySetCSSStyleDeclaration::length() const
@@ -378,6 +386,20 @@ void StyleRuleCSSStyleDeclaration::reattach(StylePropertySet* propertySet)
     m_propertySet->deref();
     m_propertySet = propertySet;
     m_propertySet->ref();
+}
+
+void StyleRuleCSSStyleDeclaration::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+{
+    MemoryClassInfo<StyleRuleCSSStyleDeclaration> info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
+    info.visitBaseClass(this);
+    info.addInstrumentedMember(m_parentRule);
+}
+
+void InlineCSSStyleDeclaration::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+{
+    MemoryClassInfo<InlineCSSStyleDeclaration> info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
+    info.visitBaseClass(this);
+    info.addInstrumentedMember(m_parentElement);
 }
 
 void InlineCSSStyleDeclaration::didMutate(MutationType type)

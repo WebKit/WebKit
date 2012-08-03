@@ -27,6 +27,7 @@
 #include "CachedResourceLoader.h"
 #include "Document.h"
 #include "MediaList.h"
+#include "MemoryInstrumentation.h"
 #include "SecurityOrigin.h"
 #include "StyleRuleImport.h"
 #include "StyleSheetContents.h"
@@ -74,6 +75,15 @@ String CSSImportRule::cssText() const
     result.append(';');
     
     return result.toString();
+}
+
+void CSSImportRule::reportDescendantMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+{
+    MemoryClassInfo<CSSImportRule> info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
+    CSSRule::reportBaseClassMemoryUsage(memoryObjectInfo);
+    info.addInstrumentedMember(m_importRule);
+    info.addInstrumentedMember(m_mediaCSSOMWrapper);
+    info.addInstrumentedMember(m_styleSheetCSSOMWrapper);
 }
 
 CSSStyleSheet* CSSImportRule::styleSheet() const

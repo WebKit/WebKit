@@ -52,6 +52,8 @@ public:
 
     void reattach(StyleRuleMedia*);
 
+    void reportDescendantMemoryUsage(MemoryObjectInfo*) const;
+
 private:
     CSSMediaRule(StyleRuleMedia*, CSSStyleSheet*);
     

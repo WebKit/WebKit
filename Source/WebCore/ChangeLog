@@ -1,3 +1,107 @@
+2012-08-03  Yury Semikhatsky  <yurys@chromium.org>
+
+        Web Inspector: add CSSRule memory instrumentation
+        https://bugs.webkit.org/show_bug.cgi?id=92962
+
+        Reviewed by Pavel Feldman.
+
+        Added memory footprint reporting method to CSSRule and its descendants.
+
+        * css/CSSCharsetRule.cpp:
+        (WebCore::CSSCharsetRule::reportDescendantMemoryUsage):
+        (WebCore):
+        * css/CSSCharsetRule.h:
+        (CSSCharsetRule):
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::reportMemoryUsage):
+        (WebCore):
+        * css/CSSComputedStyleDeclaration.h:
+        (CSSComputedStyleDeclaration):
+        * css/CSSFontFaceRule.cpp:
+        (WebCore::CSSFontFaceRule::reportDescendantMemoryUsage):
+        (WebCore):
+        * css/CSSFontFaceRule.h:
+        (CSSFontFaceRule):
+        * css/CSSImportRule.cpp:
+        (WebCore::CSSImportRule::reportDescendantMemoryUsage):
+        (WebCore):
+        * css/CSSImportRule.h:
+        (CSSImportRule):
+        * css/CSSMediaRule.cpp:
+        (WebCore::CSSMediaRule::reportDescendantMemoryUsage):
+        (WebCore):
+        * css/CSSMediaRule.h:
+        (CSSMediaRule):
+        * css/CSSPageRule.cpp:
+        (WebCore::CSSPageRule::reportDescendantMemoryUsage):
+        (WebCore):
+        * css/CSSPageRule.h:
+        (CSSPageRule):
+        * css/CSSRule.cpp:
+        (WebCore::CSSRule::reportMemoryUsage): we manually implement polymorphic
+        call here to avoid adding vtable pointer to all CSSRule objects. Descendants
+        are expected to report their memory via reportDescendantMemoryUsage. The name
+        is intentionally different from reportMemoryUsage to avoid accidential infitite
+        recursion: if the descendants overrode non-virtual CSSRule::reportMemoryUsage,
+        it would be easy to add a new descendant type to the switch in
+        CSSRule::reportMemoryUsage without providing proper override for reportMemoryUsage
+        and CSSRule::reportMemoryUsage would end up calling itself.
+        (WebCore):
+        (WebCore::CSSRule::reportBaseClassMemoryUsage): again we cannot use
+        MemoryClassInfo::visitBaseClass like we do for virtual methods because it would
+        lead to a recursive call of CSSRule::reportMemoryUsage. This is why we use
+        reportBaseClassMemoryUsage to allow descendants to report objects referenced
+        from their base class.
+        * css/CSSRule.h:
+        (WebCore):
+        (CSSRule):
+        * css/CSSRuleList.cpp:
+        (WebCore::StaticCSSRuleList::reportMemoryUsage):
+        (WebCore):
+        * css/CSSRuleList.h:
+        (WebCore):
+        (CSSRuleList):
+        (StaticCSSRuleList):
+        (LiveCSSRuleList):
+        * css/CSSStyleDeclaration.h:
+        (WebCore):
+        (CSSStyleDeclaration):
+        * css/CSSStyleRule.cpp:
+        (WebCore::CSSStyleRule::reportDescendantMemoryUsage):
+        (WebCore):
+        * css/CSSStyleRule.h:
+        (CSSStyleRule):
+        * css/CSSStyleSheet.cpp:
+        (StyleSheetCSSRuleList):
+        (WebCore::CSSStyleSheet::reportMemoryUsage):
+        * css/CSSUnknownRule.h:
+        (CSSUnknownRule):
+        (WebCore::CSSUnknownRule::reportDescendantMemoryUsage):
+        * css/PropertySetCSSStyleDeclaration.cpp:
+        (WebCore::PropertySetCSSStyleDeclaration::reportMemoryUsage):
+        (WebCore):
+        (WebCore::StyleRuleCSSStyleDeclaration::reportMemoryUsage):
+        (WebCore::InlineCSSStyleDeclaration::reportMemoryUsage):
+        * css/PropertySetCSSStyleDeclaration.h:
+        (PropertySetCSSStyleDeclaration):
+        (StyleRuleCSSStyleDeclaration):
+        (InlineCSSStyleDeclaration):
+        * css/WebKitCSSKeyframeRule.cpp:
+        (WebCore::WebKitCSSKeyframeRule::reportDescendantMemoryUsage):
+        (WebCore):
+        * css/WebKitCSSKeyframeRule.h:
+        (WebKitCSSKeyframeRule):
+        * css/WebKitCSSKeyframesRule.cpp:
+        (WebCore::WebKitCSSKeyframesRule::reportDescendantMemoryUsage):
+        (WebCore):
+        * css/WebKitCSSKeyframesRule.h:
+        (WebKitCSSKeyframesRule):
+        * css/WebKitCSSRegionRule.cpp:
+        (WebCore::WebKitCSSRegionRule::reportDescendantMemoryUsage):
+        (WebCore):
+        * css/WebKitCSSRegionRule.h:
+        (WebKitCSSRegionRule):
+
 2012-08-03  Adam Barth  <abarth@webkit.org>
 
         WebCore::DragController::cleanupAfterSystemDrag should null-check page
