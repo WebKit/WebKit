@@ -1,3 +1,15 @@
+2012-08-03  Oswald Buddenhagen  <oswald.buddenhagen@nokia.com>
+
+        [Qt] Always save CONFIG & DEFINES in default_pre
+
+        Always doing it is cheaper than checking whether it needs to be done.
+        apart from that, it would break configuration initiated from another
+        project.
+
+        Reviewed by Tor Arne Vestbø.
+
+        * qmake/mkspecs/features/default_pre.prf:
+
 2012-08-03  Joone Hur  <joone.hur@intel.com>
 
         [EFL][DRT] fast/loader/stop-provisional-loads.html fails

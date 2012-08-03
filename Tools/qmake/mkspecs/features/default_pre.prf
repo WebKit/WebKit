@@ -27,10 +27,6 @@ ROOT_WEBKIT_DIR = $$replace(PWD, /Tools/qmake/mkspecs/features$,)
 WEBKIT_SUBDIR = $$replace(_PRO_FILE_PWD_, $${ROOT_WEBKIT_DIR},)
 ROOT_BUILD_DIR = $$replace(OUT_PWD, $${WEBKIT_SUBDIR}$,)
 
-# Detect if we're running the initial configure step
-pro_file_name = $$basename(_PRO_FILE_)
-equals(pro_file_name, configure.pro): CONFIG += configure_pass
-
 # We want the QtWebKit API forwarding includes to live in the root build dir.
 MODULE_BASE_DIR = $$ROOT_WEBKIT_DIR
 MODULE_BASE_OUTDIR = $$ROOT_BUILD_DIR
@@ -143,9 +139,7 @@ for(define, DEFINES) {
     FEATURE_DEFINES_JAVASCRIPT += $$enabled_feature_define
 }
 
-configure_pass {
-    # Save the base config and defines so we can compute the delta between
-    # what features.prf introduced and what was already there.
-    BASE_CONFIG = $$CONFIG
-    BASE_DEFINES = $$DEFINES
-}
+# Save the base config and defines so we can compute the delta between
+# what features.prf introduced and what was already there.
+BASE_CONFIG = $$CONFIG
+BASE_DEFINES = $$DEFINES
