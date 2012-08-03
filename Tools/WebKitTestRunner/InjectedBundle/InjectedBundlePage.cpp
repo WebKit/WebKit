@@ -944,17 +944,7 @@ void InjectedBundlePage::didInitiateLoadForResource(WKBundlePageRef, WKBundleFra
 
 // Resource Load Client Callbacks
 
-static inline bool isLocalHost(WKStringRef host)
-{
-    return WKStringIsEqualToUTF8CString(host, "127.0.0.1") || WKStringIsEqualToUTF8CString(host, "localhost");
-}
-
-static inline bool isHTTPOrHTTPSScheme(WKStringRef scheme)
-{
-    return WKStringIsEqualToUTF8CStringIgnoringCase(scheme, "http") || WKStringIsEqualToUTF8CStringIgnoringCase(scheme, "https");
-}
-
-WKURLRequestRef InjectedBundlePage::willSendRequestForFrame(WKBundlePageRef, WKBundleFrameRef frame, uint64_t, WKURLRequestRef request, WKURLResponseRef)
+WKURLRequestRef InjectedBundlePage::willSendRequestForFrame(WKBundlePageRef, WKBundleFrameRef, uint64_t, WKURLRequestRef request, WKURLResponseRef)
 {
     if (InjectedBundle::shared().isTestRunning() && InjectedBundle::shared().layoutTestController()->willSendRequestReturnsNull())
         return 0;
@@ -964,23 +954,14 @@ WKURLRequestRef InjectedBundlePage::willSendRequestForFrame(WKBundlePageRef, WKB
     WKRetainPtr<WKStringRef> scheme = adoptWK(WKURLCopyScheme(url.get()));
     WKRetainPtr<WKStringRef> urlString = adoptWK(WKURLCopyString(url.get()));
     if (host && !WKStringIsEmpty(host.get())
-        && isHTTPOrHTTPSScheme(scheme.get())
+        && (WKStringIsEqualToUTF8CStringIgnoringCase(scheme.get(), "http") || WKStringIsEqualToUTF8CStringIgnoringCase(scheme.get(), "https"))
+        && !WKStringIsEqualToUTF8CString(host.get(), "127.0.0.1")
         && !WKStringIsEqualToUTF8CString(host.get(), "255.255.255.255") // Used in some tests that expect to get back an error.
-        && !isLocalHost(host.get())) {
-        WKBundleFrameRef mainFrame = WKBundlePageGetMainFrame(m_page);
-        if (mainFrame != frame) {
-            WKRetainPtr<WKURLRef> mainFrameURL = adoptWK(WKBundleFrameCopyURL(mainFrame));
-            WKRetainPtr<WKStringRef> mainFrameHost = WKURLCopyHostName(mainFrameURL.get());
-            WKRetainPtr<WKStringRef> mainFrameScheme = WKURLCopyScheme(mainFrameURL.get());
-
-            bool mainFrameIsExternal = isHTTPOrHTTPSScheme(mainFrameScheme.get()) && !isLocalHost(mainFrameHost.get());
-            if (!mainFrameIsExternal) {
-                InjectedBundle::shared().stringBuilder()->append("Blocked access to external URL ");
-                InjectedBundle::shared().stringBuilder()->append(toWTFString(urlString));
-                InjectedBundle::shared().stringBuilder()->append("\n");
-                return 0;
-            }
-        }
+        && !WKStringIsEqualToUTF8CStringIgnoringCase(host.get(), "localhost")) {
+        InjectedBundle::shared().stringBuilder()->append("Blocked access to external URL ");
+        InjectedBundle::shared().stringBuilder()->append(toWTFString(urlString));
+        InjectedBundle::shared().stringBuilder()->append("\n");
+        return 0;
     }
 
     WKRetain(request);

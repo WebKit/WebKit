@@ -1,3 +1,14 @@
+2012-08-03  Balazs Kelemen  <kbalazs@webkit.org>
+
+        Unreviewed, rolling out r124567.
+        http://trac.webkit.org/changeset/124567
+        https://bugs.webkit.org/show_bug.cgi?id=89382
+
+        Broke some tests with external resources
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::InjectedBundlePage::willSendRequestForFrame):
+
 2012-08-03  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, rolling out r124614.
