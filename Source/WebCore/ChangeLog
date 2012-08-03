@@ -1,3 +1,19 @@
+2012-07-20  Jon Lee  <jonlee@apple.com>
+
+        Crash in Notification when setting a non-object as an event listener (91881)
+        https://bugs.webkit.org/show_bug.cgi?id=91881
+        <rdar://problem/11923341>
+
+        Reviewed by Oliver Hunt.
+
+        Check to make sure that the value being retrieved is an object. This is similar
+        to the isObject() check done in the bindings code.
+
+        Test: fast/notifications/notifications-event-listener-crash.html
+
+        * bindings/js/Dictionary.h:
+        (WebCore::Dictionary::getEventListener):
+
 2012-08-03  Kentaro Hara  <haraken@chromium.org>
 
         [V8] Remove v8StringToAtomicWebCoreString()
