@@ -2226,25 +2226,28 @@ private:
 // Fake video frame that represents a 4x4 YUV video frame.
 class FakeVideoFrame: public WebVideoFrame {
 public:
-    FakeVideoFrame() { memset(m_data, 0x80, sizeof(m_data)); }
+    FakeVideoFrame() : m_textureId(0) { memset(m_data, 0x80, sizeof(m_data)); }
     virtual ~FakeVideoFrame() { }
-    virtual Format format() const { return FormatYV12; }
+    virtual Format format() const { return m_textureId ? FormatNativeTexture : FormatYV12; }
     virtual unsigned width() const { return 4; }
     virtual unsigned height() const { return 4; }
     virtual unsigned planes() const { return 3; }
     virtual int stride(unsigned plane) const { return 4; }
     virtual const void* data(unsigned plane) const { return m_data; }
-    virtual unsigned textureId() const { return 0; }
-    virtual unsigned textureTarget() const { return 0; }
+    virtual unsigned textureId() const { return m_textureId; }
+    virtual unsigned textureTarget() const { return m_textureId ? GraphicsContext3D::TEXTURE_2D : 0; }
+
+    void setTextureId(unsigned id) { m_textureId = id; }
 
 private:
     char m_data[16];
+    unsigned m_textureId;
 };
 
 // Fake video frame provider that always provides the same FakeVideoFrame.
 class FakeVideoFrameProvider: public WebVideoFrameProvider {
 public:
-    FakeVideoFrameProvider() : m_client(0) { }
+    FakeVideoFrameProvider() : m_frame(0), m_client(0) { }
     virtual ~FakeVideoFrameProvider()
     {
         if (m_client)
@@ -2252,11 +2255,13 @@ public:
     }
 
     virtual void setVideoFrameProviderClient(Client* client) { m_client = client; }
-    virtual WebVideoFrame* getCurrentFrame() { return &m_frame; }
+    virtual WebVideoFrame* getCurrentFrame() { return m_frame; }
     virtual void putCurrentFrame(WebVideoFrame*) { }
 
+    void setFrame(WebVideoFrame* frame) { m_frame = frame; }
+
 private:
-    FakeVideoFrame m_frame;
+    WebVideoFrame* m_frame;
     Client* m_client;
 };
 
@@ -2342,7 +2347,9 @@ TEST_F(CCLayerTreeHostImplTest, dontUseOldResourcesAfterLostContext)
     textureLayer->setTextureId(1);
     rootLayer->addChild(textureLayer.release());
 
+    FakeVideoFrame videoFrame;
     FakeVideoFrameProvider provider;
+    provider.setFrame(&videoFrame);
     OwnPtr<CCVideoLayerImpl> videoLayer = CCVideoLayerImpl::create(4, &provider);
     videoLayer->setBounds(IntSize(10, 10));
     videoLayer->setAnchorPoint(FloatPoint(0, 0));
@@ -2351,7 +2358,18 @@ TEST_F(CCLayerTreeHostImplTest, dontUseOldResourcesAfterLostContext)
     videoLayer->setLayerTreeHostImpl(m_hostImpl.get());
     rootLayer->addChild(videoLayer.release());
 
-    OwnPtr<CCIOSurfaceLayerImpl> ioSurfaceLayer = CCIOSurfaceLayerImpl::create(5);
+    FakeVideoFrame hwVideoFrame;
+    FakeVideoFrameProvider hwProvider;
+    hwProvider.setFrame(&hwVideoFrame);
+    OwnPtr<CCVideoLayerImpl> hwVideoLayer = CCVideoLayerImpl::create(5, &hwProvider);
+    hwVideoLayer->setBounds(IntSize(10, 10));
+    hwVideoLayer->setAnchorPoint(FloatPoint(0, 0));
+    hwVideoLayer->setContentBounds(IntSize(10, 10));
+    hwVideoLayer->setDrawsContent(true);
+    hwVideoLayer->setLayerTreeHostImpl(m_hostImpl.get());
+    rootLayer->addChild(hwVideoLayer.release());
+
+    OwnPtr<CCIOSurfaceLayerImpl> ioSurfaceLayer = CCIOSurfaceLayerImpl::create(6);
     ioSurfaceLayer->setBounds(IntSize(10, 10));
     ioSurfaceLayer->setAnchorPoint(FloatPoint(0, 0));
     ioSurfaceLayer->setContentBounds(IntSize(10, 10));
@@ -2360,7 +2378,7 @@ TEST_F(CCLayerTreeHostImplTest, dontUseOldResourcesAfterLostContext)
     ioSurfaceLayer->setLayerTreeHostImpl(m_hostImpl.get());
     rootLayer->addChild(ioSurfaceLayer.release());
 
-    OwnPtr<CCHeadsUpDisplayLayerImpl> hudLayer = CCHeadsUpDisplayLayerImpl::create(6);
+    OwnPtr<CCHeadsUpDisplayLayerImpl> hudLayer = CCHeadsUpDisplayLayerImpl::create(7);
     hudLayer->setBounds(IntSize(10, 10));
     hudLayer->setAnchorPoint(FloatPoint(0, 0));
     hudLayer->setContentBounds(IntSize(10, 10));
@@ -2368,7 +2386,7 @@ TEST_F(CCLayerTreeHostImplTest, dontUseOldResourcesAfterLostContext)
     hudLayer->setLayerTreeHostImpl(m_hostImpl.get());
     rootLayer->addChild(hudLayer.release());
 
-    OwnPtr<FakeScrollbarLayerImpl> scrollbarLayer(FakeScrollbarLayerImpl::create(7));
+    OwnPtr<FakeScrollbarLayerImpl> scrollbarLayer(FakeScrollbarLayerImpl::create(8));
     scrollbarLayer->setLayerTreeHostImpl(m_hostImpl.get());
     scrollbarLayer->setBounds(IntSize(10, 10));
     scrollbarLayer->setContentBounds(IntSize(10, 10));
@@ -2379,6 +2397,8 @@ TEST_F(CCLayerTreeHostImplTest, dontUseOldResourcesAfterLostContext)
 
     // Use a context that supports IOSurfaces
     m_hostImpl->initializeLayerRenderer(CCGraphicsContext::create3D(adoptPtr(new FakeWebGraphicsContext3DWithIOSurface)), UnthrottledUploader);
+
+    hwVideoFrame.setTextureId(m_hostImpl->resourceProvider()->graphicsContext3D()->createTexture());
 
     m_hostImpl->setRootLayer(rootLayer.release());
 
@@ -2398,6 +2418,18 @@ TEST_F(CCLayerTreeHostImplTest, dontUseOldResourcesAfterLostContext)
     // invalid texture id mapping.
     for (unsigned i = 0; i < numResources; ++i)
         m_hostImpl->resourceProvider()->createResourceFromExternalTexture(1);
+
+    // The WebVideoFrameProvider is expected to recreate its textures after a
+    // lost context (or not serve a frame).
+    hwProvider.setFrame(0);
+
+    EXPECT_TRUE(m_hostImpl->prepareToDraw(frame));
+    m_hostImpl->drawLayers(frame);
+    m_hostImpl->didDrawAllLayers(frame);
+    m_hostImpl->swapBuffers();
+
+    hwVideoFrame.setTextureId(m_hostImpl->resourceProvider()->graphicsContext3D()->createTexture());
+    hwProvider.setFrame(&hwVideoFrame);
 
     EXPECT_TRUE(m_hostImpl->prepareToDraw(frame));
     m_hostImpl->drawLayers(frame);

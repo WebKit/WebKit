@@ -1,3 +1,15 @@
+2012-08-02  Antoine Labour  <piman@chromium.org>
+
+        [chromium] add lost context test case for HW video decoder
+        https://bugs.webkit.org/show_bug.cgi?id=93057
+
+        Reviewed by Adrienne Walker.
+
+        We check that we don't use resources after a lost context (assuming
+        proper WebVideoFrameProvider behavior).
+
+        * tests/CCLayerTreeHostImplTest.cpp:
+
 2012-08-02  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r124540.
