@@ -241,13 +241,31 @@ static void createLayoutTestController(const String& testURL, const String& expe
     }
 }
 
+static String getFinalTestURL(const String& testURL)
+{
+    if (!testURL.startsWith("http://") && !testURL.startsWith("https://")) {
+        char* cFilePath = ecore_file_realpath(testURL.utf8().data());
+        const String filePath = String::fromUTF8(cFilePath);
+        free(cFilePath);
+
+        if (ecore_file_exists(filePath.utf8().data()))
+            return String("file://") + filePath;
+    }
+
+    return testURL;
+}
+
 static void runTest(const char* inputLine)
 {
     TestCommand command = parseInputLine(inputLine);
-    const String testURL(command.pathOrURL.c_str());
-    ASSERT(!testURL.isEmpty());
+    const String testPathOrURL(command.pathOrURL.c_str());
+    ASSERT(!testPathOrURL.isEmpty());
     dumpPixelsForCurrentTest = command.shouldDumpPixels;
     const String expectedPixelHash(command.expectedPixelHash.c_str());
+
+    // Convert the path into a full file URL if it does not look
+    // like an HTTP/S URL (doesn't start with http:// or https://).
+    const String testURL = getFinalTestURL(testPathOrURL);
 
     browser->resetDefaultsToConsistentValues();
     createLayoutTestController(testURL, expectedPixelHash);

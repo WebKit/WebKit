@@ -1,3 +1,16 @@
+2012-08-03  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
+
+        [EFL] (REGRESSION 124581) : EFL 64-bit Debug bot is red and build is exiting early after 20 test crashes
+        https://bugs.webkit.org/show_bug.cgi?id=93084
+
+        Reviewed by Csaba Osztrogonác.
+
+        Fix regression introduced in r124581.
+
+        * DumpRenderTree/efl/DumpRenderTree.cpp:
+        (getFinalTestURL): Convert the path into a full file URL.
+        (runTest):
+
 2012-08-03  Balazs Kelemen  <kbalazs@webkit.org>
 
         All ports should support per test switching of pixel testing
