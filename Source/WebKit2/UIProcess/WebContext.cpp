@@ -86,7 +86,6 @@
 #include <wtf/RefCountedLeakCounter.h>
 #endif
 
-#define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, m_process->connection())
 #define MESSAGE_CHECK_URL(url) MESSAGE_CHECK_BASE(m_process->checkURLReceivedFromWebProcess(url), m_process->connection())
 
 using namespace WebCore;
@@ -521,71 +520,6 @@ void WebContext::didReceiveSynchronousMessageFromInjectedBundle(const String& me
     m_injectedBundleClient.didReceiveSynchronousMessageFromInjectedBundle(this, messageName, messageBody, returnData);
 }
 
-// HistoryClient
-
-void WebContext::didNavigateWithNavigationData(uint64_t pageID, const WebNavigationDataStore& store, uint64_t frameID) 
-{
-    WebPageProxy* page = m_process->webPage(pageID);
-    if (!page)
-        return;
-    
-    WebFrameProxy* frame = m_process->webFrame(frameID);
-    MESSAGE_CHECK(frame);
-    MESSAGE_CHECK(frame->page() == page);
-    
-    m_historyClient.didNavigateWithNavigationData(this, page, store, frame);
-}
-
-void WebContext::didPerformClientRedirect(uint64_t pageID, const String& sourceURLString, const String& destinationURLString, uint64_t frameID)
-{
-    WebPageProxy* page = m_process->webPage(pageID);
-    if (!page)
-        return;
-
-    if (sourceURLString.isEmpty() || destinationURLString.isEmpty())
-        return;
-    
-    WebFrameProxy* frame = m_process->webFrame(frameID);
-    MESSAGE_CHECK(frame);
-    MESSAGE_CHECK(frame->page() == page);
-    MESSAGE_CHECK_URL(sourceURLString);
-    MESSAGE_CHECK_URL(destinationURLString);
-
-    m_historyClient.didPerformClientRedirect(this, page, sourceURLString, destinationURLString, frame);
-}
-
-void WebContext::didPerformServerRedirect(uint64_t pageID, const String& sourceURLString, const String& destinationURLString, uint64_t frameID)
-{
-    WebPageProxy* page = m_process->webPage(pageID);
-    if (!page)
-        return;
-    
-    if (sourceURLString.isEmpty() || destinationURLString.isEmpty())
-        return;
-    
-    WebFrameProxy* frame = m_process->webFrame(frameID);
-    MESSAGE_CHECK(frame);
-    MESSAGE_CHECK(frame->page() == page);
-    MESSAGE_CHECK_URL(sourceURLString);
-    MESSAGE_CHECK_URL(destinationURLString);
-
-    m_historyClient.didPerformServerRedirect(this, page, sourceURLString, destinationURLString, frame);
-}
-
-void WebContext::didUpdateHistoryTitle(uint64_t pageID, const String& title, const String& url, uint64_t frameID)
-{
-    WebPageProxy* page = m_process->webPage(pageID);
-    if (!page)
-        return;
-
-    WebFrameProxy* frame = m_process->webFrame(frameID);
-    MESSAGE_CHECK(frame);
-    MESSAGE_CHECK(frame->page() == page);
-    MESSAGE_CHECK_URL(url);
-
-    m_historyClient.didUpdateHistoryTitle(this, page, title, url, frame);
-}
-
 void WebContext::populateVisitedLinks()
 {
     m_historyClient.populateVisitedLinks(this);
@@ -894,7 +828,7 @@ void WebContext::didReceiveSyncMessage(WebProcessProxy* process, CoreIPC::Messag
 
             String messageName;
             RefPtr<APIObject> messageBody;
-            WebContextUserMessageDecoder messageDecoder(messageBody, m_process.get());
+            WebContextUserMessageDecoder messageDecoder(messageBody, process);
             if (!arguments->decode(CoreIPC::Out(messageName, messageDecoder)))
                 return;
 

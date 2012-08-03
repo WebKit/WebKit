@@ -1,3 +1,31 @@
+2012-08-02  Alexey Proskuryakov  <ap@apple.com>
+
+        [WK2] Move some WebContext messages to WebProcessProxy
+        https://bugs.webkit.org/show_bug.cgi?id=93046
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/WebContext.cpp: (WebKit::WebContext::didReceiveSyncMessage): Unrelated
+        fix - use actual process argument instead of second-guessing where the message came
+        from.
+
+        * UIProcess/WebContext.h: (WebKit::WebContext::historyClient): Expose history client,
+        since WebProcessProxy now needs it.
+
+        * UIProcess/WebContext.messages.in:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::didNavigateWithNavigationData):
+        (WebKit::WebProcessProxy::didPerformClientRedirect):
+        (WebKit::WebProcessProxy::didPerformServerRedirect):
+        (WebKit::WebProcessProxy::didUpdateHistoryTitle):
+        * UIProcess/WebProcessProxy.h:
+        * UIProcess/WebProcessProxy.messages.in:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::updateGlobalHistory):
+        (WebKit::WebFrameLoaderClient::updateGlobalHistoryRedirectLinks):
+        (WebKit::WebFrameLoaderClient::setTitle):
+        Move the messages.
+
 2012-08-03  Balazs Kelemen  <kbalazs@webkit.org>
 
         Unreviewed, rolling out r124603.

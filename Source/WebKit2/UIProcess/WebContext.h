@@ -159,6 +159,8 @@ public:
     WebDownloadClient& downloadClient() { return m_downloadClient; }
     void downloadFinished(DownloadProxy*);
 
+    WebHistoryClient& historyClient() { return m_historyClient; }
+
     static HashSet<String, CaseFoldingHash> pdfAndPostScriptMIMETypes();
 
     WebApplicationCacheManagerProxy* applicationCacheManagerProxy() const { return m_applicationCacheManagerProxy.get(); }
@@ -228,12 +230,6 @@ private:
     void platformInitializeWebProcess(WebProcessCreationParameters&);
     void platformInvalidateContext();
     
-    // History client
-    void didNavigateWithNavigationData(uint64_t pageID, const WebNavigationDataStore& store, uint64_t frameID);
-    void didPerformClientRedirect(uint64_t pageID, const String& sourceURLString, const String& destinationURLString, uint64_t frameID);
-    void didPerformServerRedirect(uint64_t pageID, const String& sourceURLString, const String& destinationURLString, uint64_t frameID);
-    void didUpdateHistoryTitle(uint64_t pageID, const String& title, const String& url, uint64_t frameID);
-
     // Plugins
     void getPlugins(CoreIPC::Connection*, uint64_t requestID, bool refresh);
     void getPluginPath(const String& mimeType, const String& urlString, String& pluginPath, bool& blocked);
