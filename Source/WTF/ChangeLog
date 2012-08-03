@@ -1,3 +1,23 @@
+2012-08-03  Benjamin Poulain  <benjamin@webkit.org>
+
+        StringImpl created from literal should be BufferInternal
+        https://bugs.webkit.org/show_bug.cgi?id=92940
+
+        Reviewed by Anders Carlsson.
+
+        The ownership of string created from literal should be BufferInternal so that
+        StringImpl never tries to delete the characters.
+
+        The ownership was accidentaly set to BufferOwned in r123689.
+
+        * wtf/text/StringImpl.cpp:
+        (WTF::StringImpl::createFromLiteral): Update to use the new constructor.
+        * wtf/text/StringImpl.h:
+        (WTF::StringImpl::StringImpl):
+        Add a new constructor making the construction from literal explicit.
+        Add the flag s_hashFlagHasTerminatingNullCharacter since the data has the terminating
+        null character.
+
 2012-08-02  Patrick Gansterer  <paroga@webkit.org>
 
         Move getLocalTime() as static inline function to DateMath

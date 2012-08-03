@@ -85,7 +85,7 @@ StringImpl::~StringImpl()
 PassRefPtr<StringImpl> StringImpl::createFromLiteral(const LChar* characters, unsigned length)
 {
     ASSERT(charactersAreAllASCII<LChar>(characters, length));
-    return adoptRef(new StringImpl(characters, length));
+    return adoptRef(new StringImpl(characters, length, ConstructFromLiteral));
 }
 
 PassRefPtr<StringImpl> StringImpl::createUninitialized(unsigned length, LChar*& data)

@@ -165,6 +165,19 @@ private:
         ASSERT(m_length);
     }
 
+    enum ConstructFromLiteralTag { ConstructFromLiteral };
+    StringImpl(const LChar* characters, unsigned length, ConstructFromLiteralTag)
+        : m_refCount(s_refCountIncrement)
+        , m_length(length)
+        , m_data8(characters)
+        , m_buffer(0)
+        , m_hashAndFlags(s_hashFlag8BitBuffer | BufferInternal | s_hashFlagHasTerminatingNullCharacter)
+    {
+        ASSERT(m_data8);
+        ASSERT(m_length);
+        ASSERT(!characters[length]);
+    }
+
     // Create a StringImpl adopting ownership of the provided buffer (BufferOwned)
     StringImpl(const UChar* characters, unsigned length)
         : m_refCount(s_refCountIncrement)

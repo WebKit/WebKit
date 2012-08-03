@@ -1,3 +1,20 @@
+2012-08-03  Benjamin Poulain  <benjamin@webkit.org>
+
+        StringImpl created from literal should be BufferInternal
+        https://bugs.webkit.org/show_bug.cgi?id=92940
+
+        Reviewed by Anders Carlsson.
+
+        Add tests for the contruction of strings from literal.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WTF/AtomicString.cpp: Added.
+        (TestWebKitAPI):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WTF/StringImpl.cpp: Added.
+        (TestWebKitAPI):
+        (TestWebKitAPI::TEST):
+
 2012-08-03  Balazs Kelemen  <kbalazs@webkit.org>
 
         [nrwt] fix unit tests after turned pixel testing to be a per test setting
