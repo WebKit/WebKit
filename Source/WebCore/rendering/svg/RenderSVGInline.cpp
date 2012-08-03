@@ -79,7 +79,7 @@ void RenderSVGInline::computeFloatRectForRepaint(RenderBoxModelObject* repaintCo
     SVGRenderSupport::computeFloatRectForRepaint(this, repaintContainer, repaintRect, fixed);
 }
 
-void RenderSVGInline::mapLocalToContainer(RenderBoxModelObject* repaintContainer, bool /* useTransforms */, bool /* fixed */, TransformState& transformState, ApplyContainerFlipOrNot, bool* wasFixed) const
+void RenderSVGInline::mapLocalToContainer(RenderBoxModelObject* repaintContainer, TransformState& transformState, MapLocalToContainerFlags, bool* wasFixed) const
 {
     SVGRenderSupport::mapLocalToContainer(this, repaintContainer, transformState, wasFixed);
 }

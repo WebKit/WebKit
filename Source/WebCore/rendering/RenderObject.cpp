@@ -1987,7 +1987,12 @@ LayoutRect RenderObject::viewRect() const
 FloatPoint RenderObject::localToAbsolute(const FloatPoint& localPoint, bool fixed, bool useTransforms) const
 {
     TransformState transformState(TransformState::ApplyTransformDirection, localPoint);
-    mapLocalToContainer(0, fixed, useTransforms, transformState);
+    MapLocalToContainerFlags mode = ApplyContainerFlip;
+    if (fixed)
+        mode |= IsFixed;
+    if (useTransforms)
+        mode |= UseTransforms;
+    mapLocalToContainer(0, transformState, mode);
     transformState.flatten();
     
     return transformState.lastPlanarPoint();
@@ -2002,7 +2007,7 @@ FloatPoint RenderObject::absoluteToLocal(const FloatPoint& containerPoint, bool 
     return transformState.lastPlanarPoint();
 }
 
-void RenderObject::mapLocalToContainer(RenderBoxModelObject* repaintContainer, bool fixed, bool useTransforms, TransformState& transformState, ApplyContainerFlipOrNot applyContainerFlip, bool* wasFixed) const
+void RenderObject::mapLocalToContainer(RenderBoxModelObject* repaintContainer, TransformState& transformState, MapLocalToContainerFlags mode, bool* wasFixed) const
 {
     if (repaintContainer == this)
         return;
@@ -2013,10 +2018,10 @@ void RenderObject::mapLocalToContainer(RenderBoxModelObject* repaintContainer, b
 
     // FIXME: this should call offsetFromContainer to share code, but I'm not sure it's ever called.
     LayoutPoint centerPoint = roundedLayoutPoint(transformState.mappedPoint());
-    if (applyContainerFlip && o->isBox()) {
+    if (mode & ApplyContainerFlip && o->isBox()) {
         if (o->style()->isFlippedBlocksWritingMode())
             transformState.move(toRenderBox(o)->flipForWritingModeIncludingColumns(roundedLayoutPoint(transformState.mappedPoint())) - centerPoint);
-        applyContainerFlip = DoNotApplyContainerFlip;
+        mode &= ~ApplyContainerFlip;
     }
 
     LayoutSize columnOffset;
@@ -2027,7 +2032,7 @@ void RenderObject::mapLocalToContainer(RenderBoxModelObject* repaintContainer, b
     if (o->hasOverflowClip())
         transformState.move(-toRenderBox(o)->scrolledContentOffset());
 
-    o->mapLocalToContainer(repaintContainer, fixed, useTransforms, transformState, applyContainerFlip, wasFixed);
+    o->mapLocalToContainer(repaintContainer, transformState, mode, wasFixed);
 }
 
 const RenderObject* RenderObject::pushMappingToContainer(const RenderBoxModelObject* ancestorToStopAt, RenderGeometryMap& geometryMap) const
@@ -2101,7 +2106,10 @@ FloatQuad RenderObject::localToContainerQuad(const FloatQuad& localQuad, RenderB
     // Track the point at the center of the quad's bounding box. As mapLocalToContainer() calls offsetFromContainer(),
     // it will use that point as the reference point to decide which column's transform to apply in multiple-column blocks.
     TransformState transformState(TransformState::ApplyTransformDirection, localQuad.boundingBox().center(), localQuad);
-    mapLocalToContainer(repaintContainer, fixed, true, transformState, ApplyContainerFlip, wasFixed);
+    MapLocalToContainerFlags mode = ApplyContainerFlip | UseTransforms;
+    if (fixed)
+        mode |= IsFixed;
+    mapLocalToContainer(repaintContainer, transformState, mode, wasFixed);
     transformState.flatten();
     
     return transformState.lastPlanarQuad();
@@ -2110,7 +2118,10 @@ FloatQuad RenderObject::localToContainerQuad(const FloatQuad& localQuad, RenderB
 FloatPoint RenderObject::localToContainerPoint(const FloatPoint& localPoint, RenderBoxModelObject* repaintContainer, bool fixed, bool* wasFixed) const
 {
     TransformState transformState(TransformState::ApplyTransformDirection, localPoint);
-    mapLocalToContainer(repaintContainer, fixed, true, transformState, ApplyContainerFlip, wasFixed);
+    MapLocalToContainerFlags mode = ApplyContainerFlip | UseTransforms;
+    if (fixed)
+        mode |= IsFixed;
+    mapLocalToContainer(repaintContainer, transformState, mode, wasFixed);
     transformState.flatten();
 
     return transformState.lastPlanarPoint();

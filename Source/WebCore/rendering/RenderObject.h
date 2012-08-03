@@ -107,6 +107,13 @@ enum PlaceGeneratedRunInFlag {
     DoNotPlaceGeneratedRunIn
 };
 
+enum MapLocalToContainerMode {
+    IsFixed = 1 << 0,
+    UseTransforms = 1 << 1,
+    ApplyContainerFlip = 1 << 2
+};
+typedef unsigned MapLocalToContainerFlags;
+
 const int caretWidth = 1;
 
 #if ENABLE(DASHBOARD_SUPPORT) || ENABLE(WIDGET_REGION)
@@ -878,8 +885,7 @@ public:
 
     // Map points and quads through elements, potentially via 3d transforms. You should never need to call these directly; use
     // localToAbsolute/absoluteToLocal methods instead.
-    enum ApplyContainerFlipOrNot { DoNotApplyContainerFlip, ApplyContainerFlip };
-    virtual void mapLocalToContainer(RenderBoxModelObject* repaintContainer, bool useTransforms, bool fixed, TransformState&, ApplyContainerFlipOrNot = ApplyContainerFlip, bool* wasFixed = 0) const;
+    virtual void mapLocalToContainer(RenderBoxModelObject* repaintContainer, TransformState&, MapLocalToContainerFlags mode = ApplyContainerFlip, bool* wasFixed = 0) const;
     virtual void mapAbsoluteToLocalPoint(bool fixed, bool useTransforms, TransformState&) const;
 
     // Pushes state onto RenderGeometryMap about how to map coordinates from this renderer to its container, or ancestorToStopAt (whichever is encountered first).

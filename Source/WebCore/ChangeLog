@@ -1,3 +1,65 @@
+2012-08-03  Levi Weintraub  <leviw@chromium.org>
+
+        Switch mapLocalToContainer to use a flag instead of boolean parameters
+        https://bugs.webkit.org/show_bug.cgi?id=92927
+
+        Reviewed by Dirk Schulze.
+
+        Changing mapLocalToContainer to use a uint flag to set the mode of operation. This removes
+        simplifies the contract, removes boolean arguments and paves the way for an additional mode
+        for sub-pixel layout support. See https://bugs.webkit.org/show_bug.cgi?id=89238 for the
+        sub-pixel use case. Other than the new MapLocalToContainerMode enum and MapLocalToContainerFlags
+        typedef, this change is purely mechanical.
+
+        No new tests as this doesn't change current behavior.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::selectionGapRectsForRepaint):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::mapLocalToContainer):
+        * rendering/RenderBox.h:
+        (RenderBox):
+        * rendering/RenderGeometryMap.cpp:
+        (WebCore::RenderGeometryMap::mapToAbsolute):
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::mapLocalToContainer):
+        * rendering/RenderInline.h:
+        (RenderInline):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::localToAbsolute):
+        (WebCore::RenderObject::mapLocalToContainer):
+        (WebCore::RenderObject::localToContainerQuad):
+        (WebCore::RenderObject::localToContainerPoint):
+        * rendering/RenderObject.h:
+        (RenderObject): Adding the MapLocalToContainerMode enum and MapLocalToContainerFlags unsigned
+        int, and removing the old ApplyContainerFlipOrNot enum.
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::mapLocalToContainer):
+        * rendering/RenderView.h:
+        (RenderView):
+        * rendering/svg/RenderSVGForeignObject.cpp:
+        (WebCore::RenderSVGForeignObject::mapLocalToContainer):
+        * rendering/svg/RenderSVGForeignObject.h:
+        (RenderSVGForeignObject):
+        * rendering/svg/RenderSVGInline.cpp:
+        (WebCore::RenderSVGInline::mapLocalToContainer):
+        * rendering/svg/RenderSVGInline.h:
+        (RenderSVGInline):
+        * rendering/svg/RenderSVGModelObject.cpp:
+        (WebCore::RenderSVGModelObject::mapLocalToContainer):
+        * rendering/svg/RenderSVGModelObject.h:
+        (RenderSVGModelObject):
+        * rendering/svg/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::mapLocalToContainer):
+        * rendering/svg/RenderSVGRoot.h:
+        (RenderSVGRoot):
+        * rendering/svg/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::mapLocalToContainer):
+        * rendering/svg/RenderSVGText.h:
+        (RenderSVGText):
+        * rendering/svg/SVGRenderSupport.cpp:
+        (WebCore::SVGRenderSupport::mapLocalToContainer):
+
 2012-08-03  Emil A Eklund  <eae@chromium.org>
 
         Remove dependency on LayoutTypes.h from transformation code

@@ -3203,7 +3203,7 @@ GapRects RenderBlock::selectionGapRectsForRepaint(RenderBoxModelObject* repaintC
 
     // FIXME: this is broken with transforms
     TransformState transformState(TransformState::ApplyTransformDirection, FloatPoint());
-    mapLocalToContainer(repaintContainer, false, false, transformState);
+    mapLocalToContainer(repaintContainer, transformState);
     LayoutPoint offsetFromRepaintContainer = roundedLayoutPoint(transformState.mappedPoint());
 
     if (hasOverflowClip())

@@ -83,7 +83,7 @@ void SVGRenderSupport::mapLocalToContainer(const RenderObject* object, RenderBox
     if (parent->isSVGRoot())
         transformState.applyTransform(toRenderSVGRoot(parent)->localToBorderBoxTransform());
     
-    parent->mapLocalToContainer(repaintContainer, false, true, transformState, RenderObject::DoNotApplyContainerFlip, wasFixed);
+    parent->mapLocalToContainer(repaintContainer, transformState, UseTransforms, wasFixed);
 }
 
 const RenderObject* SVGRenderSupport::pushMappingToContainer(const RenderObject* object, const RenderBoxModelObject* ancestorToStopAt, RenderGeometryMap& geometryMap)

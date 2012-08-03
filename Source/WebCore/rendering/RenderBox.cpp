@@ -1252,7 +1252,7 @@ LayoutUnit RenderBox::perpendicularContainingBlockLogicalHeight() const
     return cb->computeContentBoxLogicalHeight(logicalHeightLength.value());
 }
 
-void RenderBox::mapLocalToContainer(RenderBoxModelObject* repaintContainer, bool fixed, bool useTransforms, TransformState& transformState, ApplyContainerFlipOrNot, bool* wasFixed) const
+void RenderBox::mapLocalToContainer(RenderBoxModelObject* repaintContainer, TransformState& transformState, MapLocalToContainerFlags mode, bool* wasFixed) const
 {
     if (repaintContainer == this)
         return;
@@ -1278,17 +1278,17 @@ void RenderBox::mapLocalToContainer(RenderBoxModelObject* repaintContainer, bool
     // If this box has a transform, it acts as a fixed position container for fixed descendants,
     // and may itself also be fixed position. So propagate 'fixed' up only if this box is fixed position.
     if (hasTransform && !isFixedPos)
-        fixed = false;
+        mode &= ~IsFixed;
     else if (isFixedPos)
-        fixed = true;
+        mode |= IsFixed;
 
     if (wasFixed)
-        *wasFixed = fixed;
+        *wasFixed = mode & IsFixed;
     
     LayoutSize containerOffset = offsetFromContainer(o, roundedLayoutPoint(transformState.mappedPoint()));
     
-    bool preserve3D = useTransforms && (o->style()->preserves3D() || style()->preserves3D());
-    if (useTransforms && shouldUseTransformFromContainer(o)) {
+    bool preserve3D = mode & UseTransforms && (o->style()->preserves3D() || style()->preserves3D());
+    if (mode & UseTransforms && shouldUseTransformFromContainer(o)) {
         TransformationMatrix t;
         getTransformFromContainer(o, containerOffset, t);
         transformState.applyTransform(t, preserve3D ? TransformState::AccumulateTransform : TransformState::FlattenTransform);
@@ -1303,15 +1303,16 @@ void RenderBox::mapLocalToContainer(RenderBoxModelObject* repaintContainer, bool
         return;
     }
 
+    mode &= ~ApplyContainerFlip;
     if (o->isRenderFlowThread()) {
         // Transform from render flow coordinates into region coordinates.
         RenderRegion* region = toRenderFlowThread(o)->mapFromFlowToRegion(transformState);
         if (region)
-            region->mapLocalToContainer(region->containerForRepaint(), fixed, useTransforms, transformState, DoNotApplyContainerFlip, wasFixed);
+            region->mapLocalToContainer(region->containerForRepaint(), transformState, mode, wasFixed);
         return;
     }
 
-    o->mapLocalToContainer(repaintContainer, fixed, useTransforms, transformState, DoNotApplyContainerFlip, wasFixed);
+    o->mapLocalToContainer(repaintContainer, transformState, mode, wasFixed);
 }
 
 const RenderObject* RenderBox::pushMappingToContainer(const RenderBoxModelObject* ancestorToStopAt, RenderGeometryMap& geometryMap) const

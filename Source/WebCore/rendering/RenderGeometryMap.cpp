@@ -92,8 +92,7 @@ void RenderGeometryMap::mapToAbsolute(TransformState& transformState) const
 {
     // If the mapping includes something like columns, we have to go via renderers.
     if (hasNonUniformStep()) {
-        bool fixed = false;
-        m_mapping.last().m_renderer->mapLocalToContainer(0, fixed, true, transformState, RenderObject::ApplyContainerFlip);
+        m_mapping.last().m_renderer->mapLocalToContainer(0, transformState, UseTransforms | ApplyContainerFlip);
         return;
     }
     

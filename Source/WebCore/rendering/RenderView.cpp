@@ -165,20 +165,20 @@ void RenderView::layout()
     setNeedsLayout(false);
 }
 
-void RenderView::mapLocalToContainer(RenderBoxModelObject* repaintContainer, bool fixed, bool useTransforms, TransformState& transformState, ApplyContainerFlipOrNot, bool* wasFixed) const
+void RenderView::mapLocalToContainer(RenderBoxModelObject* repaintContainer, TransformState& transformState, MapLocalToContainerFlags mode, bool* wasFixed) const
 {
     // If a container was specified, and was not 0 or the RenderView,
     // then we should have found it by now.
     ASSERT_ARG(repaintContainer, !repaintContainer || repaintContainer == this);
-    ASSERT_UNUSED(wasFixed, !wasFixed || *wasFixed == fixed);
+    ASSERT_UNUSED(wasFixed, !wasFixed || *wasFixed == (mode & IsFixed));
 
-    if (!repaintContainer && useTransforms && shouldUseTransformFromContainer(0)) {
+    if (!repaintContainer && mode & UseTransforms && shouldUseTransformFromContainer(0)) {
         TransformationMatrix t;
         getTransformFromContainer(0, LayoutSize(), t);
         transformState.applyTransform(t);
     }
     
-    if (fixed && m_frameView)
+    if (mode & IsFixed && m_frameView)
         transformState.move(m_frameView->scrollOffsetForFixedPosition());
 }
 
