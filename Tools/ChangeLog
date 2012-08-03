@@ -1,3 +1,31 @@
+2012-08-03  Ryosuke Niwa  <rniwa@webkit.org>
+
+        run-perf-tests should generate JSON output and results page by default
+        https://bugs.webkit.org/show_bug.cgi?id=93042
+
+        Reviewed by Eric Seidel.
+
+        Generate results JSON and page named PerfTestResults.json and PerfTestResults.html by default.
+
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        (Port.perf_results_directory): Added.
+        * Scripts/webkitpy/performance_tests/perftestsrunner.py:
+        (PerfTestsRunner): Added _DEFAULT_JSON_FILENAME.
+        (PerfTestsRunner._parse_args): Added --no-results option in the case a user doens't want to generate
+        results JSON or results page.
+        (PerfTestsRunner.run):
+        (PerfTestsRunner._generate_and_show_results): Extracted from run. Set the default json file path using
+        port's perf_results_directory and call show_results_html_file at the end if the results page is generated.
+        (PerfTestsRunner._generate_results_dict): Renamed from _generate_output to disambiguate it from
+        _generate_and_show_results.
+        (PerfTestsRunner._generate_output_files): Takes results page's path instead of a boolean indicating
+        whether results page should be generated or not.
+        * Scripts/webkitpy/performance_tests/perftestsrunner_unittest.py:
+        (create_runner_and_setup_results_template):
+        (test_run_respects_results_output): Added.
+        (test_run_generates_json_by_default): Added.
+        (test_run_generates_and_show_results_page): Added a check to ensure show_results_html_file is called.
+
 2012-08-03  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r124628.

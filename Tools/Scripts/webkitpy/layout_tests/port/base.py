@@ -788,6 +788,9 @@ class Port(object):
             self._results_directory = self._filesystem.abspath(option_val)
         return self._results_directory
 
+    def perf_results_directory(self):
+        return self._build_path()
+
     def default_results_directory(self):
         """Absolute path to the default place to store the test results."""
         # Results are store relative to the built products to make it easy

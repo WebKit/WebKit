@@ -55,6 +55,8 @@ class PerfTestsRunner(object):
     EXIT_CODE_FAILED_UPLOADING = -4
     EXIT_CODE_BAD_PREPARATION = -5
 
+    _DEFAULT_JSON_FILENAME = 'PerformanceTestsResults.json'
+
     def __init__(self, args=None, port=None):
         self._options, self._args = PerfTestsRunner._parse_args(args)
         if port:
@@ -94,6 +96,8 @@ class PerfTestsRunner(object):
                 help="Set the timeout for each test"),
             optparse.make_option("--pause-before-testing", dest="pause_before_testing", action="store_true", default=False,
                 help="Pause before running the tests to let user attach a performance monitor."),
+            optparse.make_option("--no-results", action="store_true", default=False,
+                help="Do no generate results JSON and results page."),
             optparse.make_option("--output-json-path",
                 help="Filename of the JSON file that summaries the results."),
             optparse.make_option("--source-json-path",
@@ -153,36 +157,48 @@ class PerfTestsRunner(object):
                 return self.EXIT_CODE_BAD_PREPARATION
 
         unexpected = self._run_tests_set(sorted(list(tests), key=lambda test: test.test_name()), self._port)
-
-        options = self._options
-        if self._options.output_json_path:
-            # FIXME: Add --branch or auto-detect the branch we're in
-            test_results_server = options.test_results_server
-
-            output = self._generate_output(self._timestamp, options.platform, options.builder_name, options.build_number)
-
-            if options.source_json_path:
-                output = self._merge_source_json(options.source_json_path, output)
-                if not output:
-                    return self.EXIT_CODE_BAD_SOURCE_JSON
-
-            if not test_results_server:
-                output = self._merge_outputs(self._options.output_json_path, output)
-                if not output:
-                    return self.EXIT_CODE_BAD_MERGE
-
-            self._generate_output_files(self._options.output_json_path, output, not test_results_server)
-
-            if test_results_server and not self._upload_json(test_results_server, options.output_json_path):
-                return self.EXIT_CODE_FAILED_UPLOADING
+        if not self._options.no_results:
+            exit_code = self._generate_and_show_results()
+            if exit_code:
+                return exit_code
 
         return unexpected
 
-    def _generate_output(self, timestamp, platform, builder_name, build_number):
+    def _generate_and_show_results(self):
+        options = self._options
+        output_json_path = options.output_json_path
+        if not output_json_path:
+            output_json_path = self._host.filesystem.join(self._port.perf_results_directory(), self._DEFAULT_JSON_FILENAME)
+
+        output = self._generate_results_dict(self._timestamp, options.platform, options.builder_name, options.build_number)
+
+        if options.source_json_path:
+            output = self._merge_source_json(options.source_json_path, output)
+            if not output:
+                return self.EXIT_CODE_BAD_SOURCE_JSON
+
+        test_results_server = options.test_results_server
+        results_page_path = None
+        if not test_results_server:
+            output = self._merge_outputs(output_json_path, output)
+            if not output:
+                return self.EXIT_CODE_BAD_MERGE
+            results_page_path = self._host.filesystem.splitext(output_json_path)[0] + '.html'
+
+        self._generate_output_files(output_json_path, results_page_path, output)
+
+        if test_results_server:
+            if not self._upload_json(test_results_server, output_json_path):
+                return self.EXIT_CODE_FAILED_UPLOADING
+        else:
+            self._port.show_results_html_file(results_page_path)
+
+    def _generate_results_dict(self, timestamp, platform, builder_name, build_number):
         contents = {'results': self._results}
         for (name, path) in self._port.repository_paths():
             contents[name + '-revision'] = self._host.scm().svn_revision(path)
 
+        # FIXME: Add --branch or auto-detect the branch we're in
         for key, value in {'timestamp': int(timestamp), 'branch': self._default_branch, 'platform': platform,
             'builder-name': builder_name, 'build-number': int(build_number) if build_number else None}.items():
             if value:
@@ -209,13 +225,13 @@ class PerfTestsRunner(object):
             _log.error("Failed to merge output JSON file %s: %s" % (output_json_path, error))
         return None
 
-    def _generate_output_files(self, output_json_path, output, should_generate_results_page):
+    def _generate_output_files(self, output_json_path, results_page_path, output):
         filesystem = self._host.filesystem
 
         json_output = json.dumps(output)
         filesystem.write_text_file(output_json_path, json_output)
 
-        if should_generate_results_page:
+        if results_page_path:
             jquery_path = filesystem.join(self._port.perf_tests_dir(), 'Dromaeo/resources/dromaeo/web/lib/jquery-1.6.4.js')
             jquery = filesystem.read_text_file(jquery_path)
 
@@ -225,7 +241,7 @@ class PerfTestsRunner(object):
             results_page = template.replace('<?WebKitPerfTestRunnerInsertionPoint?>',
                 '<script>%s</script><script id="json">%s</script>' % (jquery, json_output))
 
-            filesystem.write_text_file(filesystem.splitext(output_json_path)[0] + '.html', results_page)
+            filesystem.write_text_file(results_page_path, results_page)
 
     def _upload_json(self, test_results_server, json_path, file_uploader=FileUploader):
         uploader = file_uploader("https://%s/api/test/report" % test_results_server, 120)

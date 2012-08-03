@@ -270,15 +270,43 @@ max 1120
             "inspector/pass.html:group_name:test_name": 42},
             "webkit-revision": 5678, "branch": "webkit-trunk"})
 
-    def create_runner_and_setup_results_template(self, args):
+    def create_runner_and_setup_results_template(self, args=[]):
         runner, port = self.create_runner(args)
         filesystem = port.host.filesystem
         filesystem.write_text_file(runner._base_path + '/resources/results-template.html', 'BEGIN<?WebKitPerfTestRunnerInsertionPoint?>END')
         filesystem.write_text_file(runner._base_path + '/Dromaeo/resources/dromaeo/web/lib/jquery-1.6.4.js', 'jquery content')
         return runner, port
 
-    def test_run_generates_results_page(self):
+    def test_run_respects_no_results(self):
+        runner, port = self.create_runner(args=['--output-json-path=/mock-checkout/output.json',
+            '--test-results-server=some.host', '--no-results'])
+        self.assertFalse(self._test_run_with_json_output(runner, port.host.filesystem))
+        self.assertFalse(port.host.filesystem.isfile('/mock-checkout/output.json'))
+
+    def test_run_generates_json_by_default(self):
+        runner, port = self.create_runner_and_setup_results_template()
+        filesystem = port.host.filesystem
+        output_json_path = filesystem.join(port.perf_results_directory(), runner._DEFAULT_JSON_FILENAME)
+        results_page_path = filesystem.splitext(output_json_path)[0] + '.html'
+
+        self.assertFalse(filesystem.isfile(output_json_path))
+        self.assertFalse(filesystem.isfile(results_page_path))
+
+        self._test_run_with_json_output(runner, port.host.filesystem)
+
+        self.assertEqual(json.loads(port.host.filesystem.read_text_file(output_json_path)), [{
+            "timestamp": 123456789, "results":
+            {"Bindings/event-target-wrapper": {"max": 1510, "avg": 1489.05, "median": 1487, "min": 1471, "stdev": 14.46, "unit": "ms"},
+            "inspector/pass.html:group_name:test_name": 42},
+            "webkit-revision": 5678, "branch": "webkit-trunk"}])
+
+        self.assertTrue(filesystem.isfile(output_json_path))
+        self.assertTrue(filesystem.isfile(results_page_path))
+
+    def test_run_generates_and_show_results_page(self):
         runner, port = self.create_runner_and_setup_results_template(args=['--output-json-path=/mock-checkout/output.json'])
+        page_shown = []
+        port.show_results_html_file = lambda path: page_shown.append(path)
         filesystem = port.host.filesystem
         self._test_run_with_json_output(runner, filesystem)
 
@@ -291,6 +319,7 @@ max 1120
         self.assertEqual(json.loads(json_output), [expected_entry])
         self.assertEqual(filesystem.read_text_file('/mock-checkout/output.html'),
             'BEGIN<script>jquery content</script><script id="json">' + json_output + '</script>END')
+        self.assertEqual(page_shown[0], '/mock-checkout/output.html')
 
         self._test_run_with_json_output(runner, filesystem)
         json_output = port.host.filesystem.read_text_file('/mock-checkout/output.json')
