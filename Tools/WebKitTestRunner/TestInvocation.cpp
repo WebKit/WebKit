@@ -200,9 +200,9 @@ end:
 
     const char* errorMessageToStderr = 0;
 #if PLATFORM(MAC)
-    char buffer[256];
+    char buffer[64];
     if (!resetDone) {
-        pid_t pid = WKPageGetProcessIdentifier(m_mainWebView->page());
+        pid_t pid = WKPageGetProcessIdentifier(TestController::shared().mainWebView()->page());
         sprintf(buffer, "#PROCESS UNRESPONSIVE - WebProcess (pid %ld)\n", static_cast<long>(pid));
         errorMessageToStderr = buffer;
     }
