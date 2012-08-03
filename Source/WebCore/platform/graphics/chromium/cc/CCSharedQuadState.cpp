@@ -23,40 +23,37 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebCompositorDebugBorderQuad_h
-#define WebCompositorDebugBorderQuad_h
+#include "config.h"
 
-#include "SkColor.h"
-#include "WebCompositorQuad.h"
-#if WEBKIT_IMPLEMENTATION
-#include <wtf/PassOwnPtr.h>
-#endif
+#include "cc/CCSharedQuadState.h"
 
-namespace WebKit {
+#include "FloatQuad.h"
+#include "cc/CCMathUtil.h"
 
-#pragma pack(push, 4)
+namespace WebCore {
 
-class WebCompositorDebugBorderQuad : public WebCompositorQuad {
-public:
-#if WEBKIT_IMPLEMENTATION
-    static PassOwnPtr<WebCompositorDebugBorderQuad> create(const WebCompositorSharedQuadState*, const WebCore::IntRect&, SkColor, int width);
-#endif
-
-    SkColor color() const { return m_color; };
-    int width() const { return m_width; }
-
-    static const WebCompositorDebugBorderQuad* materialCast(const WebCompositorQuad*);
-private:
-#if WEBKIT_IMPLEMENTATION
-    WebCompositorDebugBorderQuad(const WebCompositorSharedQuadState*, const WebCore::IntRect&, SkColor, int width);
-#endif
-
-    SkColor m_color;
-    int m_width;
-};
-
-#pragma pack(pop)
-
+PassOwnPtr<CCSharedQuadState> CCSharedQuadState::create(int id, const WebKit::WebTransformationMatrix& quadTransform, const IntRect& visibleContentRect, const IntRect& scissorRect, float opacity, bool opaque)
+{
+    return adoptPtr(new CCSharedQuadState(id, quadTransform, visibleContentRect, scissorRect, opacity, opaque));
 }
 
-#endif
+CCSharedQuadState::CCSharedQuadState(int id, const WebKit::WebTransformationMatrix& quadTransform, const IntRect& visibleContentRect, const IntRect& scissorRect, float opacity, bool opaque)
+    : id(id)
+    , quadTransform(quadTransform)
+    , visibleContentRect(visibleContentRect)
+    , scissorRect(scissorRect)
+    , opacity(opacity)
+    , opaque(opaque)
+{
+}
+
+bool CCSharedQuadState::isLayerAxisAlignedIntRect() const
+{
+    // Note: this doesn't consider window or projection matrices.
+    // Assume that they're orthonormal and have integer scales and translations.
+    bool clipped = false;
+    FloatQuad quad = CCMathUtil::mapQuad(quadTransform, FloatQuad(IntRect(visibleContentRect)), clipped);
+    return !clipped && quad.isRectilinear() && quad.boundingBox().isExpressibleAsIntRect();
+}
+
+}

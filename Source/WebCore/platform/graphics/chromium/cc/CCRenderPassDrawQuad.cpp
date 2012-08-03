@@ -27,17 +27,15 @@
 
 #include "cc/CCRenderPassDrawQuad.h"
 
-using WebKit::WebCompositorQuad;
-
 namespace WebCore {
 
-PassOwnPtr<CCRenderPassDrawQuad> CCRenderPassDrawQuad::create(const WebKit::WebCompositorSharedQuadState* sharedQuadState, const IntRect& quadRect, int renderPassId, bool isReplica, const CCResourceProvider::ResourceId maskResourceId, const IntRect& contentsChangedSinceLastFrame)
+PassOwnPtr<CCRenderPassDrawQuad> CCRenderPassDrawQuad::create(const CCSharedQuadState* sharedQuadState, const IntRect& quadRect, int renderPassId, bool isReplica, const CCResourceProvider::ResourceId maskResourceId, const IntRect& contentsChangedSinceLastFrame)
 {
     return adoptPtr(new CCRenderPassDrawQuad(sharedQuadState, quadRect, renderPassId, isReplica, maskResourceId, contentsChangedSinceLastFrame));
 }
 
-CCRenderPassDrawQuad::CCRenderPassDrawQuad(const WebKit::WebCompositorSharedQuadState* sharedQuadState, const IntRect& quadRect, int renderPassId, bool isReplica, CCResourceProvider::ResourceId maskResourceId, const IntRect& contentsChangedSinceLastFrame)
-    : WebCompositorQuad(sharedQuadState, WebCompositorQuad::RenderPass, quadRect)
+CCRenderPassDrawQuad::CCRenderPassDrawQuad(const CCSharedQuadState* sharedQuadState, const IntRect& quadRect, int renderPassId, bool isReplica, CCResourceProvider::ResourceId maskResourceId, const IntRect& contentsChangedSinceLastFrame)
+    : CCDrawQuad(sharedQuadState, CCDrawQuad::RenderPass, quadRect)
     , m_renderPassId(renderPassId)
     , m_isReplica(isReplica)
     , m_maskResourceId(maskResourceId)
@@ -46,9 +44,9 @@ CCRenderPassDrawQuad::CCRenderPassDrawQuad(const WebKit::WebCompositorSharedQuad
     ASSERT(m_renderPassId > 0);
 }
 
-const CCRenderPassDrawQuad* CCRenderPassDrawQuad::materialCast(const WebKit::WebCompositorQuad* quad)
+const CCRenderPassDrawQuad* CCRenderPassDrawQuad::materialCast(const CCDrawQuad* quad)
 {
-    ASSERT(quad->material() == WebCompositorQuad::RenderPass);
+    ASSERT(quad->material() == CCDrawQuad::RenderPass);
     return static_cast<const CCRenderPassDrawQuad*>(quad);
 }
 

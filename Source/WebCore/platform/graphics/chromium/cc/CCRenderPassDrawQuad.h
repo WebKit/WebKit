@@ -27,27 +27,27 @@
 #define CCRenderPassDrawQuad_h
 
 #include "IntRect.h"
+#include "cc/CCDrawQuad.h"
 #include "cc/CCResourceProvider.h"
-#include <public/WebCompositorQuad.h>
 #include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
 
 class CCRenderPass;
 
-class CCRenderPassDrawQuad : public WebKit::WebCompositorQuad {
+class CCRenderPassDrawQuad : public CCDrawQuad {
     WTF_MAKE_NONCOPYABLE(CCRenderPassDrawQuad);
 public:
-    static PassOwnPtr<CCRenderPassDrawQuad> create(const WebKit::WebCompositorSharedQuadState*, const IntRect&, int renderPassId, bool isReplica, CCResourceProvider::ResourceId maskResourceId, const IntRect& contentsChangedSinceLastFrame);
+    static PassOwnPtr<CCRenderPassDrawQuad> create(const CCSharedQuadState*, const IntRect&, int renderPassId, bool isReplica, CCResourceProvider::ResourceId maskResourceId, const IntRect& contentsChangedSinceLastFrame);
 
     int renderPassId() const { return m_renderPassId; }
     bool isReplica() const { return m_isReplica; }
     CCResourceProvider::ResourceId maskResourceId() const { return m_maskResourceId; }
     const IntRect& contentsChangedSinceLastFrame() const { return m_contentsChangedSinceLastFrame; }
 
-    static const CCRenderPassDrawQuad* materialCast(const WebKit::WebCompositorQuad*);
+    static const CCRenderPassDrawQuad* materialCast(const CCDrawQuad*);
 private:
-    CCRenderPassDrawQuad(const WebKit::WebCompositorSharedQuadState*, const IntRect&, int renderPassId, bool isReplica, CCResourceProvider::ResourceId maskResourceId, const IntRect& contentsChangedSinceLastFrame);
+    CCRenderPassDrawQuad(const CCSharedQuadState*, const IntRect&, int renderPassId, bool isReplica, CCResourceProvider::ResourceId maskResourceId, const IntRect& contentsChangedSinceLastFrame);
 
     int m_renderPassId;
     bool m_isReplica;

@@ -25,31 +25,27 @@
 
 #include "config.h"
 
-#include <public/WebCompositorDebugBorderQuad.h>
+#include "cc/CCIOSurfaceDrawQuad.h"
 
-using namespace WebCore;
+namespace WebCore {
 
-namespace WebKit {
-
-PassOwnPtr<WebCompositorDebugBorderQuad> WebCompositorDebugBorderQuad::create(const WebCompositorSharedQuadState* sharedQuadState, const IntRect& quadRect, SkColor color, int width)
+PassOwnPtr<CCIOSurfaceDrawQuad> CCIOSurfaceDrawQuad::create(const CCSharedQuadState* sharedQuadState, const IntRect& quadRect, const IntSize& ioSurfaceSize, unsigned ioSurfaceTextureId, Orientation orientation)
 {
-    return adoptPtr(new WebCompositorDebugBorderQuad(sharedQuadState, quadRect, color, width));
+    return adoptPtr(new CCIOSurfaceDrawQuad(sharedQuadState, quadRect, ioSurfaceSize, ioSurfaceTextureId, orientation));
 }
 
-WebCompositorDebugBorderQuad::WebCompositorDebugBorderQuad(const WebCompositorSharedQuadState* sharedQuadState, const IntRect& quadRect, SkColor color, int width)
-    : WebCompositorQuad(sharedQuadState, WebCompositorQuad::DebugBorder, quadRect)
-    , m_color(color)
-    , m_width(width)
+CCIOSurfaceDrawQuad::CCIOSurfaceDrawQuad(const CCSharedQuadState* sharedQuadState, const IntRect& quadRect, const IntSize& ioSurfaceSize, unsigned ioSurfaceTextureId, Orientation orientation)
+    : CCDrawQuad(sharedQuadState, CCDrawQuad::IOSurfaceContent, quadRect)
+    , m_ioSurfaceSize(ioSurfaceSize)
+    , m_ioSurfaceTextureId(ioSurfaceTextureId)
+    , m_orientation(orientation)
 {
-    m_quadOpaque = false;
-    if (SkColorGetA(m_color) < 255)
-        m_needsBlending = true;
 }
 
-const WebCompositorDebugBorderQuad* WebCompositorDebugBorderQuad::materialCast(const WebCompositorQuad* quad)
+const CCIOSurfaceDrawQuad* CCIOSurfaceDrawQuad::materialCast(const CCDrawQuad* quad)
 {
-    ASSERT(quad->material() == WebCompositorQuad::DebugBorder);
-    return static_cast<const WebCompositorDebugBorderQuad*>(quad);
+    ASSERT(quad->material() == CCDrawQuad::IOSurfaceContent);
+    return static_cast<const CCIOSurfaceDrawQuad*>(quad);
 }
 
 }

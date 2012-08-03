@@ -429,7 +429,7 @@ void LayerRendererChromium::drawRenderPass(DrawingFrame& frame, const CCRenderPa
         drawQuad(frame, it->get());
 }
 
-void LayerRendererChromium::drawQuad(DrawingFrame& frame, const WebKit::WebCompositorQuad* quad)
+void LayerRendererChromium::drawQuad(DrawingFrame& frame, const CCDrawQuad* quad)
 {
     IntRect scissorRect = quad->scissorRect();
 
@@ -445,34 +445,34 @@ void LayerRendererChromium::drawQuad(DrawingFrame& frame, const WebKit::WebCompo
         GLC(m_context, m_context->disable(GraphicsContext3D::BLEND));
 
     switch (quad->material()) {
-    case WebKit::WebCompositorQuad::Invalid:
+    case CCDrawQuad::Invalid:
         ASSERT_NOT_REACHED();
         break;
-    case WebKit::WebCompositorQuad::Checkerboard:
+    case CCDrawQuad::Checkerboard:
         drawCheckerboardQuad(frame, CCCheckerboardDrawQuad::materialCast(quad));
         break;
-    case WebKit::WebCompositorQuad::DebugBorder:
+    case CCDrawQuad::DebugBorder:
         drawDebugBorderQuad(frame, CCDebugBorderDrawQuad::materialCast(quad));
         break;
-    case WebKit::WebCompositorQuad::IOSurfaceContent:
+    case CCDrawQuad::IOSurfaceContent:
         drawIOSurfaceQuad(frame, CCIOSurfaceDrawQuad::materialCast(quad));
         break;
-    case WebKit::WebCompositorQuad::RenderPass:
+    case CCDrawQuad::RenderPass:
         drawRenderPassQuad(frame, CCRenderPassDrawQuad::materialCast(quad));
         break;
-    case WebKit::WebCompositorQuad::SolidColor:
-        drawSolidColorQuad(frame, WebKit::WebCompositorSolidColorQuad::materialCast(quad));
+    case CCDrawQuad::SolidColor:
+        drawSolidColorQuad(frame, CCSolidColorDrawQuad::materialCast(quad));
         break;
-    case WebKit::WebCompositorQuad::StreamVideoContent:
+    case CCDrawQuad::StreamVideoContent:
         drawStreamVideoQuad(frame, CCStreamVideoDrawQuad::materialCast(quad));
         break;
-    case WebKit::WebCompositorQuad::TextureContent:
-        drawTextureQuad(frame, WebKit::WebCompositorTextureQuad::materialCast(quad));
+    case CCDrawQuad::TextureContent:
+        drawTextureQuad(frame, CCTextureDrawQuad::materialCast(quad));
         break;
-    case WebKit::WebCompositorQuad::TiledContent:
+    case CCDrawQuad::TiledContent:
         drawTileQuad(frame, CCTileDrawQuad::materialCast(quad));
         break;
-    case WebKit::WebCompositorQuad::YUVVideoContent:
+    case CCDrawQuad::YUVVideoContent:
         drawYUVVideoQuad(frame, CCYUVVideoDrawQuad::materialCast(quad));
         break;
     }

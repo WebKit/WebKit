@@ -25,29 +25,26 @@
 
 #include "config.h"
 
-#include <public/WebCompositorIOSurfaceQuad.h>
+#include "cc/CCStreamVideoDrawQuad.h"
 
-using namespace WebCore;
+namespace WebCore {
 
-namespace WebKit {
-
-PassOwnPtr<WebCompositorIOSurfaceQuad> WebCompositorIOSurfaceQuad::create(const WebCompositorSharedQuadState* sharedQuadState, const IntRect& quadRect, const IntSize& ioSurfaceSize, unsigned ioSurfaceTextureId, Orientation orientation)
+PassOwnPtr<CCStreamVideoDrawQuad> CCStreamVideoDrawQuad::create(const CCSharedQuadState* sharedQuadState, const IntRect& quadRect, unsigned textureId, const WebKit::WebTransformationMatrix& matrix)
 {
-    return adoptPtr(new WebCompositorIOSurfaceQuad(sharedQuadState, quadRect, ioSurfaceSize, ioSurfaceTextureId, orientation));
+    return adoptPtr(new CCStreamVideoDrawQuad(sharedQuadState, quadRect, textureId, matrix));
 }
 
-WebCompositorIOSurfaceQuad::WebCompositorIOSurfaceQuad(const WebCompositorSharedQuadState* sharedQuadState, const IntRect& quadRect, const IntSize& ioSurfaceSize, unsigned ioSurfaceTextureId, Orientation orientation)
-    : WebCompositorQuad(sharedQuadState, WebCompositorQuad::IOSurfaceContent, quadRect)
-    , m_ioSurfaceSize(ioSurfaceSize)
-    , m_ioSurfaceTextureId(ioSurfaceTextureId)
-    , m_orientation(orientation)
+CCStreamVideoDrawQuad::CCStreamVideoDrawQuad(const CCSharedQuadState* sharedQuadState, const IntRect& quadRect, unsigned textureId, const WebKit::WebTransformationMatrix& matrix)
+    : CCDrawQuad(sharedQuadState, CCDrawQuad::StreamVideoContent, quadRect)
+    , m_textureId(textureId)
+    , m_matrix(matrix)
 {
 }
 
-const WebCompositorIOSurfaceQuad* WebCompositorIOSurfaceQuad::materialCast(const WebCompositorQuad* quad)
+const CCStreamVideoDrawQuad* CCStreamVideoDrawQuad::materialCast(const CCDrawQuad* quad)
 {
-    ASSERT(quad->material() == WebCompositorQuad::IOSurfaceContent);
-    return static_cast<const WebCompositorIOSurfaceQuad*>(quad);
+    ASSERT(quad->material() == CCDrawQuad::StreamVideoContent);
+    return static_cast<const CCStreamVideoDrawQuad*>(quad);
 }
 
 }

@@ -27,26 +27,24 @@
 
 #include "cc/CCYUVVideoDrawQuad.h"
 
-using WebKit::WebCompositorQuad;
-
 namespace WebCore {
 
-PassOwnPtr<CCYUVVideoDrawQuad> CCYUVVideoDrawQuad::create(const WebKit::WebCompositorSharedQuadState* sharedQuadState, const IntRect& quadRect, const CCVideoLayerImpl::FramePlane& yPlane, const CCVideoLayerImpl::FramePlane& uPlane, const CCVideoLayerImpl::FramePlane& vPlane)
+PassOwnPtr<CCYUVVideoDrawQuad> CCYUVVideoDrawQuad::create(const CCSharedQuadState* sharedQuadState, const IntRect& quadRect, const CCVideoLayerImpl::FramePlane& yPlane, const CCVideoLayerImpl::FramePlane& uPlane, const CCVideoLayerImpl::FramePlane& vPlane)
 {
     return adoptPtr(new CCYUVVideoDrawQuad(sharedQuadState, quadRect, yPlane, uPlane, vPlane));
 }
 
-CCYUVVideoDrawQuad::CCYUVVideoDrawQuad(const WebKit::WebCompositorSharedQuadState* sharedQuadState, const IntRect& quadRect, const CCVideoLayerImpl::FramePlane& yPlane, const CCVideoLayerImpl::FramePlane& uPlane, const CCVideoLayerImpl::FramePlane& vPlane)
-    : WebCompositorQuad(sharedQuadState, WebCompositorQuad::YUVVideoContent, quadRect)
+CCYUVVideoDrawQuad::CCYUVVideoDrawQuad(const CCSharedQuadState* sharedQuadState, const IntRect& quadRect, const CCVideoLayerImpl::FramePlane& yPlane, const CCVideoLayerImpl::FramePlane& uPlane, const CCVideoLayerImpl::FramePlane& vPlane)
+    : CCDrawQuad(sharedQuadState, CCDrawQuad::YUVVideoContent, quadRect)
     , m_yPlane(yPlane)
     , m_uPlane(uPlane)
     , m_vPlane(vPlane)
 {
 }
 
-const CCYUVVideoDrawQuad* CCYUVVideoDrawQuad::materialCast(const WebKit::WebCompositorQuad* quad)
+const CCYUVVideoDrawQuad* CCYUVVideoDrawQuad::materialCast(const CCDrawQuad* quad)
 {
-    ASSERT(quad->material() == WebCompositorQuad::YUVVideoContent);
+    ASSERT(quad->material() == CCDrawQuad::YUVVideoContent);
     return static_cast<const CCYUVVideoDrawQuad*>(quad);
 }
 

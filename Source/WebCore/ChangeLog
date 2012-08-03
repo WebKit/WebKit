@@ -1,3 +1,153 @@
+2012-08-03  Alexandre Elias  <aelias@google.com>
+
+        [chromium] Move ubercomp quads back into CC
+        https://bugs.webkit.org/show_bug.cgi?id=93062
+
+        Reviewed by James Robinson.
+
+        Because GTFO is almost done, we can move back the quad types
+        to CC and pickle them there.  This patch moves everything back
+        to where it was before and changes types like WebRect to IntRect.
+
+        As a bonus, I also added CCRenderPassDrawQuad and CCYUVVideoDrawQuad
+        (which had been left in the CC files) to CCDrawQuad::size(), so now
+        every quad type is ready for serialization.
+
+        No new tests (no-op refactoring).
+
+        * WebCore.gypi:
+        * platform/chromium/support/WebCompositorStreamVideoQuad.cpp: Removed.
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::drawQuad):
+        * platform/graphics/chromium/cc/CCCheckerboardDrawQuad.cpp: Copied from Source/WebCore/platform/graphics/chromium/cc/CCQuadSink.h.
+        (WebCore):
+        (WebCore::CCCheckerboardDrawQuad::create):
+        (WebCore::CCCheckerboardDrawQuad::CCCheckerboardDrawQuad):
+        (WebCore::CCCheckerboardDrawQuad::materialCast):
+        * platform/graphics/chromium/cc/CCCheckerboardDrawQuad.h:
+        (WebCore):
+        (CCCheckerboardDrawQuad):
+        * platform/graphics/chromium/cc/CCDebugBorderDrawQuad.cpp: Renamed from Source/WebCore/platform/chromium/support/WebCompositorDebugBorderQuad.cpp.
+        (WebCore):
+        (WebCore::CCDebugBorderDrawQuad::create):
+        (WebCore::CCDebugBorderDrawQuad::CCDebugBorderDrawQuad):
+        (WebCore::CCDebugBorderDrawQuad::materialCast):
+        * platform/graphics/chromium/cc/CCDebugBorderDrawQuad.h:
+        (WebCore):
+        (CCDebugBorderDrawQuad):
+        (WebCore::CCDebugBorderDrawQuad::color):
+        (WebCore::CCDebugBorderDrawQuad::width):
+        * platform/graphics/chromium/cc/CCDrawQuad.cpp: Renamed from Source/WebCore/platform/chromium/support/WebCompositorQuad.cpp.
+        (WebCore):
+        (WebCore::CCDrawQuad::CCDrawQuad):
+        (WebCore::CCDrawQuad::opaqueRect):
+        (WebCore::CCDrawQuad::setQuadVisibleRect):
+        (WebCore::CCDrawQuad::size):
+        (WebCore::CCDrawQuad::setSharedQuadState):
+        * platform/graphics/chromium/cc/CCDrawQuad.h:
+        (WebCore):
+        (CCDrawQuad):
+        (WebCore::CCDrawQuad::quadRect):
+        (WebCore::CCDrawQuad::quadTransform):
+        (WebCore::CCDrawQuad::visibleContentRect):
+        (WebCore::CCDrawQuad::scissorRect):
+        (WebCore::CCDrawQuad::opacity):
+        (WebCore::CCDrawQuad::needsBlending):
+        (WebCore::CCDrawQuad::isLayerAxisAlignedIntRect):
+        (WebCore::CCDrawQuad::quadVisibleRect):
+        (WebCore::CCDrawQuad::isDebugQuad):
+        (WebCore::CCDrawQuad::material):
+        (WebCore::CCDrawQuad::sharedQuadState):
+        (WebCore::CCDrawQuad::sharedQuadStateId):
+        * platform/graphics/chromium/cc/CCHeadsUpDisplayLayerImpl.cpp:
+        (WebCore::CCHeadsUpDisplayLayerImpl::appendQuads):
+        * platform/graphics/chromium/cc/CCIOSurfaceDrawQuad.cpp: Renamed from Source/WebCore/platform/chromium/support/WebCompositorIOSurfaceQuad.cpp.
+        (WebCore):
+        (WebCore::CCIOSurfaceDrawQuad::create):
+        (WebCore::CCIOSurfaceDrawQuad::CCIOSurfaceDrawQuad):
+        (WebCore::CCIOSurfaceDrawQuad::materialCast):
+        * platform/graphics/chromium/cc/CCIOSurfaceDrawQuad.h:
+        (WebCore):
+        (CCIOSurfaceDrawQuad):
+        (WebCore::CCIOSurfaceDrawQuad::ioSurfaceSize):
+        (WebCore::CCIOSurfaceDrawQuad::ioSurfaceTextureId):
+        (WebCore::CCIOSurfaceDrawQuad::orientation):
+        * platform/graphics/chromium/cc/CCQuadCuller.h:
+        (CCQuadCuller):
+        * platform/graphics/chromium/cc/CCQuadSink.h:
+        (WebCore):
+        (CCQuadSink):
+        * platform/graphics/chromium/cc/CCRenderPassDrawQuad.cpp:
+        (WebCore::CCRenderPassDrawQuad::create):
+        (WebCore::CCRenderPassDrawQuad::CCRenderPassDrawQuad):
+        (WebCore::CCRenderPassDrawQuad::materialCast):
+        * platform/graphics/chromium/cc/CCRenderPassDrawQuad.h:
+        (CCRenderPassDrawQuad):
+        * platform/graphics/chromium/cc/CCSharedQuadState.cpp: Renamed from Source/WebCore/platform/chromium/support/WebCompositorSharedQuadState.cpp.
+        (WebCore):
+        (WebCore::CCSharedQuadState::CCSharedQuadState):
+        (WebCore::CCSharedQuadState::create):
+        (WebCore::CCSharedQuadState::isLayerAxisAlignedIntRect):
+        * platform/graphics/chromium/cc/CCSharedQuadState.h:
+        (WebCore):
+        (CCSharedQuadState):
+        * platform/graphics/chromium/cc/CCSolidColorDrawQuad.cpp: Renamed from Source/WebCore/platform/chromium/support/WebCompositorSolidColorQuad.cpp.
+        (WebCore):
+        (WebCore::CCSolidColorDrawQuad::create):
+        (WebCore::CCSolidColorDrawQuad::CCSolidColorDrawQuad):
+        (WebCore::CCSolidColorDrawQuad::materialCast):
+        * platform/graphics/chromium/cc/CCSolidColorDrawQuad.h:
+        (WebCore):
+        (CCSolidColorDrawQuad):
+        (WebCore::CCSolidColorDrawQuad::color):
+        * platform/graphics/chromium/cc/CCStreamVideoDrawQuad.cpp: Renamed from Source/WebCore/platform/chromium/support/WebCompositorCheckerboardQuad.cpp.
+        (WebCore):
+        (WebCore::CCStreamVideoDrawQuad::create):
+        (WebCore::CCStreamVideoDrawQuad::CCStreamVideoDrawQuad):
+        (WebCore::CCStreamVideoDrawQuad::materialCast):
+        * platform/graphics/chromium/cc/CCStreamVideoDrawQuad.h:
+        (WebCore):
+        (CCStreamVideoDrawQuad):
+        (WebCore::CCStreamVideoDrawQuad::textureId):
+        (WebCore::CCStreamVideoDrawQuad::matrix):
+        * platform/graphics/chromium/cc/CCTextureDrawQuad.cpp: Renamed from Source/WebCore/platform/chromium/support/WebCompositorTextureQuad.cpp.
+        (WebCore):
+        (WebCore::CCTextureDrawQuad::create):
+        (WebCore::CCTextureDrawQuad::CCTextureDrawQuad):
+        (WebCore::CCTextureDrawQuad::setNeedsBlending):
+        (WebCore::CCTextureDrawQuad::materialCast):
+        * platform/graphics/chromium/cc/CCTextureDrawQuad.h:
+        (WebCore):
+        (CCTextureDrawQuad):
+        (WebCore::CCTextureDrawQuad::uvRect):
+        (WebCore::CCTextureDrawQuad::resourceId):
+        (WebCore::CCTextureDrawQuad::premultipliedAlpha):
+        (WebCore::CCTextureDrawQuad::flipped):
+        * platform/graphics/chromium/cc/CCTileDrawQuad.cpp: Renamed from Source/WebCore/platform/chromium/support/WebCompositorTileQuad.cpp.
+        (WebCore):
+        (WebCore::CCTileDrawQuad::create):
+        (WebCore::CCTileDrawQuad::CCTileDrawQuad):
+        (WebCore::CCTileDrawQuad::materialCast):
+        * platform/graphics/chromium/cc/CCTileDrawQuad.h:
+        (WebCore):
+        (CCTileDrawQuad):
+        (WebCore::CCTileDrawQuad::resourceId):
+        (WebCore::CCTileDrawQuad::textureOffset):
+        (WebCore::CCTileDrawQuad::textureSize):
+        (WebCore::CCTileDrawQuad::textureFilter):
+        (WebCore::CCTileDrawQuad::swizzleContents):
+        (WebCore::CCTileDrawQuad::leftEdgeAA):
+        (WebCore::CCTileDrawQuad::topEdgeAA):
+        (WebCore::CCTileDrawQuad::rightEdgeAA):
+        (WebCore::CCTileDrawQuad::bottomEdgeAA):
+        (WebCore::CCTileDrawQuad::isAntialiased):
+        * platform/graphics/chromium/cc/CCYUVVideoDrawQuad.cpp:
+        (WebCore::CCYUVVideoDrawQuad::create):
+        (WebCore::CCYUVVideoDrawQuad::CCYUVVideoDrawQuad):
+        (WebCore::CCYUVVideoDrawQuad::materialCast):
+        * platform/graphics/chromium/cc/CCYUVVideoDrawQuad.h:
+        (CCYUVVideoDrawQuad):
+
 2012-08-03  Alexander Pavlov  <apavlov@chromium.org>
 
         Unreviewed, restore Web Inspector JS frontend compilability after r124484 (fix JSDoc annotations).

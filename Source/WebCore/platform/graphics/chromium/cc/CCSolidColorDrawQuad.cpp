@@ -23,42 +23,31 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebCompositorSharedQuadState_h
-#define WebCompositorSharedQuadState_h
+#include "config.h"
 
-#include "WebCommon.h"
+#include "cc/CCSolidColorDrawQuad.h"
 
-#if WEBKIT_IMPLEMENTATION
-#include "IntRect.h"
-#include <wtf/PassOwnPtr.h>
-#endif
-#include "WebRect.h"
-#include "WebTransformationMatrix.h"
+namespace WebCore {
 
-namespace WebKit {
-
-class WebCompositorSharedQuadState {
-public:
-    int id;
-
-    // Transforms from quad's original content space to its target content space.
-    WebTransformationMatrix quadTransform;
-    // This rect lives in the content space for the quad's originating layer.
-    WebRect visibleContentRect;
-    // This rect lives in the quad's target content space.
-    WebRect scissorRect;
-    float opacity;
-    bool opaque;
-
-    WebCompositorSharedQuadState();
-
-#if WEBKIT_IMPLEMENTATION
-    static PassOwnPtr<WebCompositorSharedQuadState> create(int id, const WebTransformationMatrix& quadTransform, const WebCore::IntRect& visibleContentRect, const WebCore::IntRect& scissorRect, float opacity, bool opaque);
-    WebCompositorSharedQuadState(int id, const WebTransformationMatrix& quadTransform, const WebCore::IntRect& visibleContentRect, const WebCore::IntRect& scissorRect, float opacity, bool opaque);
-    bool isLayerAxisAlignedIntRect() const;
-#endif
-};
-
+PassOwnPtr<CCSolidColorDrawQuad> CCSolidColorDrawQuad::create(const CCSharedQuadState* sharedQuadState, const IntRect& quadRect, SkColor color)
+{
+    return adoptPtr(new CCSolidColorDrawQuad(sharedQuadState, quadRect, color));
 }
 
-#endif
+CCSolidColorDrawQuad::CCSolidColorDrawQuad(const CCSharedQuadState* sharedQuadState, const IntRect& quadRect, SkColor color)
+    : CCDrawQuad(sharedQuadState, CCDrawQuad::SolidColor, quadRect)
+    , m_color(color)
+{
+    if (SkColorGetA(m_color) < 255)
+        m_quadOpaque = false;
+    else
+        m_opaqueRect = quadRect;
+}
+
+const CCSolidColorDrawQuad* CCSolidColorDrawQuad::materialCast(const CCDrawQuad* quad)
+{
+    ASSERT(quad->material() == CCDrawQuad::SolidColor);
+    return static_cast<const CCSolidColorDrawQuad*>(quad);
+}
+
+}

@@ -23,50 +23,27 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebCompositorTextureQuad_h
-#define WebCompositorTextureQuad_h
+#include "config.h"
 
-#if WEBKIT_IMPLEMENTATION
-#include "FloatRect.h"
-#endif
-#include "WebCommon.h"
-#include "WebCompositorQuad.h"
-#include "WebFloatRect.h"
-#if WEBKIT_IMPLEMENTATION
-#include <wtf/PassOwnPtr.h>
-#endif
+#include "cc/CCCheckerboardDrawQuad.h"
 
-namespace WebKit {
+namespace WebCore {
 
-#pragma pack(push, 4)
-
-class WebCompositorTextureQuad : public WebCompositorQuad {
-public:
-#if WEBKIT_IMPLEMENTATION
-    static PassOwnPtr<WebCompositorTextureQuad> create(const WebCompositorSharedQuadState*, const WebCore::IntRect&, unsigned resourceId, bool premultipliedAlpha, const WebCore::FloatRect& uvRect, bool flipped);
-    WebCore::FloatRect uvRect() const { return m_uvRect; }
-#endif
-
-    unsigned resourceId() const { return m_resourceId; }
-    bool premultipliedAlpha() const { return  m_premultipliedAlpha; }
-    bool flipped() const { return m_flipped; }
-
-    void setNeedsBlending();
-
-    static const WebCompositorTextureQuad* materialCast(const WebCompositorQuad*);
-private:
-#if WEBKIT_IMPLEMENTATION
-    WebCompositorTextureQuad(const WebKit::WebCompositorSharedQuadState*, const WebCore::IntRect&, unsigned resourceId, bool premultipliedAlpha, const WebCore::FloatRect& uvRect, bool flipped);
-#endif
-
-    unsigned m_resourceId;
-    bool m_premultipliedAlpha;
-    WebFloatRect m_uvRect;
-    bool m_flipped;
-};
-
-#pragma pack(pop)
-
+PassOwnPtr<CCCheckerboardDrawQuad> CCCheckerboardDrawQuad::create(const CCSharedQuadState* sharedQuadState, const IntRect& quadRect)
+{
+    return adoptPtr(new CCCheckerboardDrawQuad(sharedQuadState, quadRect));
 }
 
-#endif
+CCCheckerboardDrawQuad::CCCheckerboardDrawQuad(const CCSharedQuadState* sharedQuadState, const IntRect& quadRect)
+    : CCDrawQuad(sharedQuadState, CCDrawQuad::Checkerboard, quadRect)
+{
+}
+
+const CCCheckerboardDrawQuad* CCCheckerboardDrawQuad::materialCast(const CCDrawQuad* quad)
+{
+    ASSERT(quad->material() == CCDrawQuad::Checkerboard);
+    return static_cast<const CCCheckerboardDrawQuad*>(quad);
+}
+
+
+}

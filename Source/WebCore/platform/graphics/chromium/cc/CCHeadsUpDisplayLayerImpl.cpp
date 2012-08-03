@@ -37,11 +37,9 @@
 #include "cc/CCFrameRateCounter.h"
 #include "cc/CCLayerTreeHostImpl.h"
 #include "cc/CCQuadSink.h"
+#include "cc/CCTextureDrawQuad.h"
 #include "skia/ext/platform_canvas.h"
-#include <public/WebCompositorTextureQuad.h>
 #include <wtf/text/WTFString.h>
-
-using WebKit::WebCompositorTextureQuad;
 
 namespace WebCore {
 
@@ -95,7 +93,7 @@ void CCHeadsUpDisplayLayerImpl::appendQuads(CCQuadSink& quadList, const CCShared
     bool premultipliedAlpha = true;
     FloatRect uvRect(0, 0, 1, 1);
     bool flipped = false;
-    quadList.append(WebCompositorTextureQuad::create(sharedQuadState, quadRect, m_hudTexture->id(), premultipliedAlpha, uvRect, flipped));
+    quadList.append(CCTextureDrawQuad::create(sharedQuadState, quadRect, m_hudTexture->id(), premultipliedAlpha, uvRect, flipped));
 }
 
 void CCHeadsUpDisplayLayerImpl::didDraw(CCResourceProvider* resourceProvider)

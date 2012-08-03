@@ -42,7 +42,7 @@ public:
     virtual ~CCQuadCuller() { }
 
     // Returns true if the quad is added to the list, and false if the quad is entirely culled.
-    virtual bool append(PassOwnPtr<WebKit::WebCompositorQuad> passDrawQuad) OVERRIDE;
+    virtual bool append(PassOwnPtr<CCDrawQuad> passDrawQuad) OVERRIDE;
 
     bool hasOcclusionFromOutsideTargetSurface() { return m_hasOcclusionFromOutsideTargetSurface; }
 

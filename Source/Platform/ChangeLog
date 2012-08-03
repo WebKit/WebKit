@@ -1,3 +1,29 @@
+2012-08-03  Alexandre Elias  <aelias@google.com>
+
+        [chromium] Move ubercomp quads back into CC
+        https://bugs.webkit.org/show_bug.cgi?id=93062
+
+        Reviewed by James Robinson.
+
+        Because GTFO is almost done, we can move back the quad types
+        to CC and pickle them there.  This patch moves everything back
+        to where it was before and changes types like WebRect to IntRect.
+
+        As a bonus, I also added CCRenderPassDrawQuad and CCYUVVideoDrawQuad
+        (which had been left in the CC files) to CCDrawQuad::size(), so now
+        every quad type is ready for serialization.
+
+        * Platform.gypi:
+        * chromium/public/WebCompositorCheckerboardQuad.h: Removed.
+        * chromium/public/WebCompositorDebugBorderQuad.h: Removed.
+        * chromium/public/WebCompositorIOSurfaceQuad.h: Removed.
+        * chromium/public/WebCompositorQuad.h: Removed.
+        * chromium/public/WebCompositorSharedQuadState.h: Removed.
+        * chromium/public/WebCompositorSolidColorQuad.h: Removed.
+        * chromium/public/WebCompositorStreamVideoQuad.h: Removed.
+        * chromium/public/WebCompositorTextureQuad.h: Removed.
+        * chromium/public/WebCompositorTileQuad.h: Removed.
+
 2012-08-02  Alexandre Elias  <aelias@google.com>
 
         [chromium] deviceViewportSize cleanup

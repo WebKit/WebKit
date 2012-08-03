@@ -26,10 +26,29 @@
 #ifndef CCSharedQuadState_h
 #define CCSharedQuadState_h
 
-#include <public/WebCompositorSharedQuadState.h>
+#include "IntRect.h"
+#include <public/WebTransformationMatrix.h>
+#include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
-typedef WebKit::WebCompositorSharedQuadState CCSharedQuadState;
+
+struct CCSharedQuadState {
+    int id;
+
+    // Transforms from quad's original content space to its target content space.
+    WebKit::WebTransformationMatrix quadTransform;
+    // This rect lives in the content space for the quad's originating layer.
+    IntRect visibleContentRect;
+    // This rect lives in the quad's target content space.
+    IntRect scissorRect;
+    float opacity;
+    bool opaque;
+
+    static PassOwnPtr<CCSharedQuadState> create(int id, const WebKit::WebTransformationMatrix& quadTransform, const IntRect& visibleContentRect, const IntRect& scissorRect, float opacity, bool opaque);
+    CCSharedQuadState(int id, const WebKit::WebTransformationMatrix& quadTransform, const IntRect& visibleContentRect, const IntRect& scissorRect, float opacity, bool opaque);
+    bool isLayerAxisAlignedIntRect() const;
+};
+
 }
 
 #endif

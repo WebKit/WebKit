@@ -28,18 +28,16 @@
 
 #include <wtf/PassOwnPtr.h>
 
-namespace WebKit {
-class WebCompositorQuad;
-}
-
 namespace WebCore {
+
+class CCDrawQuad;
 
 class CCQuadSink {
 public:
     virtual ~CCQuadSink() { }
 
     // Returns true if the quad is added to the list, and false if the quad is entirely culled.
-    virtual bool append(PassOwnPtr<WebKit::WebCompositorQuad> passDrawQuad) = 0;
+    virtual bool append(PassOwnPtr<CCDrawQuad> passDrawQuad) = 0;
 };
 
 }

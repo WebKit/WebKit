@@ -23,40 +23,31 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebCompositorStreamVideoQuad_h
-#define WebCompositorStreamVideoQuad_h
+#include "config.h"
 
-#include "WebCompositorQuad.h"
-#include <public/WebTransformationMatrix.h>
-#if WEBKIT_IMPLEMENTATION
-#include <wtf/PassOwnPtr.h>
-#endif
+#include "cc/CCDebugBorderDrawQuad.h"
 
-namespace WebKit {
+namespace WebCore {
 
-#pragma pack(push, 4)
-
-class WebCompositorStreamVideoQuad : public WebCompositorQuad {
-public:
-#if WEBKIT_IMPLEMENTATION
-    static PassOwnPtr<WebCompositorStreamVideoQuad> create(const WebCompositorSharedQuadState*, const WebCore::IntRect&, unsigned textureId, const WebTransformationMatrix&);
-#endif
-
-    unsigned textureId() const { return m_textureId; }
-    const WebTransformationMatrix& matrix() const { return m_matrix; }
-
-    static const WebCompositorStreamVideoQuad* materialCast(const WebCompositorQuad*);
-private:
-#if WEBKIT_IMPLEMENTATION
-    WebCompositorStreamVideoQuad(const WebCompositorSharedQuadState*, const WebCore::IntRect&, unsigned textureId, const WebTransformationMatrix&);
-#endif
-
-    unsigned m_textureId;
-    WebTransformationMatrix m_matrix;
-};
-
-#pragma pack(pop)
-
+PassOwnPtr<CCDebugBorderDrawQuad> CCDebugBorderDrawQuad::create(const CCSharedQuadState* sharedQuadState, const IntRect& quadRect, SkColor color, int width)
+{
+    return adoptPtr(new CCDebugBorderDrawQuad(sharedQuadState, quadRect, color, width));
 }
 
-#endif
+CCDebugBorderDrawQuad::CCDebugBorderDrawQuad(const CCSharedQuadState* sharedQuadState, const IntRect& quadRect, SkColor color, int width)
+    : CCDrawQuad(sharedQuadState, CCDrawQuad::DebugBorder, quadRect)
+    , m_color(color)
+    , m_width(width)
+{
+    m_quadOpaque = false;
+    if (SkColorGetA(m_color) < 255)
+        m_needsBlending = true;
+}
+
+const CCDebugBorderDrawQuad* CCDebugBorderDrawQuad::materialCast(const CCDrawQuad* quad)
+{
+    ASSERT(quad->material() == CCDrawQuad::DebugBorder);
+    return static_cast<const CCDebugBorderDrawQuad*>(quad);
+}
+
+}

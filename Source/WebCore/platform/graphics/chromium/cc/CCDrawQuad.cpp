@@ -24,22 +24,22 @@
  */
 
 #include "config.h"
-#include <public/WebCompositorQuad.h>
+#include "cc/CCDrawQuad.h"
 
 #include "IntRect.h"
-#include <public/WebCompositorCheckerboardQuad.h>
-#include <public/WebCompositorDebugBorderQuad.h>
-#include <public/WebCompositorIOSurfaceQuad.h>
-#include <public/WebCompositorSolidColorQuad.h>
-#include <public/WebCompositorStreamVideoQuad.h>
-#include <public/WebCompositorTextureQuad.h>
-#include <public/WebCompositorTileQuad.h>
+#include "cc/CCCheckerboardDrawQuad.h"
+#include "cc/CCDebugBorderDrawQuad.h"
+#include "cc/CCIOSurfaceDrawQuad.h"
+#include "cc/CCRenderPassDrawQuad.h"
+#include "cc/CCSolidColorDrawQuad.h"
+#include "cc/CCStreamVideoDrawQuad.h"
+#include "cc/CCTextureDrawQuad.h"
+#include "cc/CCTileDrawQuad.h"
+#include "cc/CCYUVVideoDrawQuad.h"
 
-using namespace WebCore;
+namespace WebCore {
 
-namespace WebKit {
-
-WebCompositorQuad::WebCompositorQuad(const WebCompositorSharedQuadState* sharedQuadState, Material material, const IntRect& quadRect)
+CCDrawQuad::CCDrawQuad(const CCSharedQuadState* sharedQuadState, Material material, const IntRect& quadRect)
     : m_sharedQuadState(sharedQuadState)
     , m_sharedQuadStateId(sharedQuadState->id)
     , m_material(material)
@@ -52,7 +52,7 @@ WebCompositorQuad::WebCompositorQuad(const WebCompositorSharedQuadState* sharedQ
     ASSERT(m_material != Invalid);
 }
 
-IntRect WebCompositorQuad::opaqueRect() const
+IntRect CCDrawQuad::opaqueRect() const
 {
     if (opacity() != 1)
         return IntRect();
@@ -61,41 +61,43 @@ IntRect WebCompositorQuad::opaqueRect() const
     return m_opaqueRect;
 }
 
-void WebCompositorQuad::setQuadVisibleRect(const IntRect& quadVisibleRect)
+void CCDrawQuad::setQuadVisibleRect(const IntRect& quadVisibleRect)
 {
     IntRect intersection = quadVisibleRect;
     intersection.intersect(m_quadRect);
     m_quadVisibleRect = intersection;
 }
 
-unsigned WebCompositorQuad::size() const
+unsigned CCDrawQuad::size() const
 {
     switch (material()) {
     case Checkerboard:
-        return sizeof(WebCompositorCheckerboardQuad);
+        return sizeof(CCCheckerboardDrawQuad);
     case DebugBorder:
-        return sizeof(WebCompositorDebugBorderQuad);
+        return sizeof(CCDebugBorderDrawQuad);
     case IOSurfaceContent:
-        return sizeof(WebCompositorIOSurfaceQuad);
+        return sizeof(CCIOSurfaceDrawQuad);
     case TextureContent:
-        return sizeof(WebCompositorTextureQuad);
+        return sizeof(CCTextureDrawQuad);
     case SolidColor:
-        return sizeof(WebCompositorSolidColorQuad);
+        return sizeof(CCSolidColorDrawQuad);
     case TiledContent:
-        return sizeof(WebCompositorTileQuad);
+        return sizeof(CCTileDrawQuad);
     case StreamVideoContent:
-        return sizeof(WebCompositorStreamVideoQuad);
-    case Invalid:
+        return sizeof(CCStreamVideoDrawQuad);
     case RenderPass:
+        return sizeof(CCRenderPassDrawQuad);
     case YUVVideoContent:
+        return sizeof(CCYUVVideoDrawQuad);
+    case Invalid:
         break;
     }
 
     CRASH();
-    return sizeof(WebCompositorQuad);
+    return sizeof(CCDrawQuad);
 }
 
-void WebCompositorQuad::setSharedQuadState(const WebCompositorSharedQuadState* sharedQuadState)
+void CCDrawQuad::setSharedQuadState(const CCSharedQuadState* sharedQuadState)
 {
     m_sharedQuadState = sharedQuadState;
     m_sharedQuadStateId = sharedQuadState->id;

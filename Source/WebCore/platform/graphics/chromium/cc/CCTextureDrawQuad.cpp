@@ -25,31 +25,33 @@
 
 #include "config.h"
 
-#include <public/WebCompositorSolidColorQuad.h>
+#include "cc/CCTextureDrawQuad.h"
 
-using namespace WebCore;
+namespace WebCore {
 
-namespace WebKit {
-
-PassOwnPtr<WebCompositorSolidColorQuad> WebCompositorSolidColorQuad::create(const WebKit::WebCompositorSharedQuadState* sharedQuadState, const IntRect& quadRect, SkColor color)
+PassOwnPtr<CCTextureDrawQuad> CCTextureDrawQuad::create(const CCSharedQuadState* sharedQuadState, const IntRect& quadRect, unsigned resourceId, bool premultipliedAlpha, const FloatRect& uvRect, bool flipped)
 {
-    return adoptPtr(new WebCompositorSolidColorQuad(sharedQuadState, quadRect, color));
+    return adoptPtr(new CCTextureDrawQuad(sharedQuadState, quadRect, resourceId, premultipliedAlpha, uvRect, flipped));
 }
 
-WebCompositorSolidColorQuad::WebCompositorSolidColorQuad(const WebKit::WebCompositorSharedQuadState* sharedQuadState, const IntRect& quadRect, SkColor color)
-    : WebCompositorQuad(sharedQuadState, WebCompositorQuad::SolidColor, quadRect)
-    , m_color(color)
+CCTextureDrawQuad::CCTextureDrawQuad(const CCSharedQuadState* sharedQuadState, const IntRect& quadRect, unsigned resourceId, bool premultipliedAlpha, const FloatRect& uvRect, bool flipped)
+    : CCDrawQuad(sharedQuadState, CCDrawQuad::TextureContent, quadRect)
+    , m_resourceId(resourceId)
+    , m_premultipliedAlpha(premultipliedAlpha)
+    , m_uvRect(uvRect)
+    , m_flipped(flipped)
 {
-    if (SkColorGetA(m_color) < 255)
-        m_quadOpaque = false;
-    else
-        m_opaqueRect = quadRect;
 }
 
-const WebCompositorSolidColorQuad* WebCompositorSolidColorQuad::materialCast(const WebCompositorQuad* quad)
+void CCTextureDrawQuad::setNeedsBlending()
 {
-    ASSERT(quad->material() == WebCompositorQuad::SolidColor);
-    return static_cast<const WebCompositorSolidColorQuad*>(quad);
+    m_needsBlending = true;
+}
+
+const CCTextureDrawQuad* CCTextureDrawQuad::materialCast(const CCDrawQuad* quad)
+{
+    ASSERT(quad->material() == CCDrawQuad::TextureContent);
+    return static_cast<const CCTextureDrawQuad*>(quad);
 }
 
 }
