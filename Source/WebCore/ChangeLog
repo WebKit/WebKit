@@ -1,3 +1,11 @@
+2012-08-03  Yury Semikhatsky  <yurys@chromium.org>
+
+        Unreviewed. Fixed WinCE compilation after r124589.
+
+        * css/PropertySetCSSStyleDeclaration.cpp:
+        (WebCore::StyleRuleCSSStyleDeclaration::reportMemoryUsage):
+        (WebCore::InlineCSSStyleDeclaration::reportMemoryUsage):
+
 2012-08-03  Keishi Hattori  <keishi@webkit.org>
 
         Add keyboard support for color suggestion popup
