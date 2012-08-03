@@ -1,3 +1,11 @@
+2012-08-03  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        Add missing include to build on Mac OS 10.8
+
+        Reviewed by Ossy.
+
+        * platform/graphics/surfaces/mac/GraphicsSurfaceMac.cpp:
+
 2012-08-03  Adam Barth  <abarth@webkit.org>
 
         [V8] Re-wire "target" half of the same-origin security check through Document rather than DOMWindow

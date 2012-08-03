@@ -26,7 +26,7 @@
 #include <CGLCurrent.h>
 #include <CGLIOSurface.h>
 #include <IOSurface/IOSurface.h>
-
+#include <OpenGL/gl.h>
 
 namespace WebCore {
 
