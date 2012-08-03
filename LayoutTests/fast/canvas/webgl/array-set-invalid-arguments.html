@@ -1,0 +1,41 @@
+<html>
+<head>
+<script src="../../js/resources/js-test-pre.js"></script>
+<script src="resources/webgl-test.js"></script>
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+
+<script>
+
+description("Verifies that attempting to set invalid elements to a Typed Array throws an exception");
+
+// Global scope so shouldThrow can see it
+var typedArray, otherArray;
+
+function negativeTestSet(typeName) {
+    var type = window[typeName];
+    typedArray = new type(10);
+
+    shouldThrow("typedArray.set()");
+    shouldThrow("typedArray.set('hello world')");
+
+    otherArray = new type(typedArray.length);
+    shouldThrow("typedArray.set(otherArray, 1)");
+}
+
+negativeTestSet("Int8Array");
+negativeTestSet("Uint8Array");
+negativeTestSet("Int16Array");
+negativeTestSet("Uint16Array");
+negativeTestSet("Int32Array");
+negativeTestSet("Uint32Array");
+negativeTestSet("Float32Array");
+
+</script>
+
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>
+

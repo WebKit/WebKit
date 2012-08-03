@@ -1,3 +1,38 @@
+2012-08-03  Arnaud Renevier  <a.renevier@sisa.samsung.com>
+
+        Update TypedArrays to throw RangeError or similar instead of INDEX_SIZE_ERR
+        https://bugs.webkit.org/show_bug.cgi?id=45118
+
+        Reviewed by Kenneth Russell.
+
+        Update TypedArrays to raise JavaScript RangeError instead of dom
+        INDEX_SIZE_ERR exceptions. Also, update TypedArrays to raise TypeError
+        instead of JavaScript SyntaxError or dom exceptions SYNTAX_ERR when
+        calling set method with invalid arguments.
+
+        Specification does not define the type of exceptions to raise, but
+        other browsers raise JavaScript errors, so those changes will improve
+        compatibility.
+
+        New Test: fast/canvas/webgl/array-set-invalid-arguments.html
+
+        Updated Tests expectations:
+            fast/canvas/webgl/array-set-out-of-bounds.html
+            fast/canvas/webgl/data-view-crash.html
+            fast/canvas/webgl/data-view-test.html
+
+        * bindings/js/JSArrayBufferViewHelper.h:
+        (WebCore):
+        (WebCore::setWebGLArrayWithTypedArrayArgument):
+        (WebCore::setWebGLArrayHelper):
+        (WebCore::constructArrayBufferViewWithTypedArrayArgument):
+        (WebCore::constructArrayBufferViewWithArrayBufferArgument):
+        (WebCore::constructArrayBufferView):
+        * bindings/v8/custom/V8ArrayBufferViewCustom.h:
+        (WebCore):
+        (WebCore::constructWebGLArrayWithArrayBufferArgument):
+        (WebCore::setWebGLArrayHelper):
+
 2012-08-03  Levi Weintraub  <leviw@chromium.org>
 
         Switch mapLocalToContainer to use a flag instead of boolean parameters
