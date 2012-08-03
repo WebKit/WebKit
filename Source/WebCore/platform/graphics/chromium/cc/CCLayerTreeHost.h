@@ -227,10 +227,9 @@ public:
 
     const CCLayerTreeSettings& settings() const { return m_settings; }
 
-    void setViewportSize(const IntSize&);
+    void setViewportSize(const IntSize& layoutViewportSize, const IntSize& deviceViewportSize);
 
-    const IntSize& viewportSize() const { return m_viewportSize; }
-    // Gives the viewport size in device/content space.
+    const IntSize& layoutViewportSize() const { return m_layoutViewportSize; }
     const IntSize& deviceViewportSize() const { return m_deviceViewportSize; }
 
     void setPageScaleFactorAndLimits(float pageScaleFactor, float minPageScaleFactor, float maxPageScaleFactor);
@@ -319,7 +318,7 @@ private:
 
     CCLayerTreeSettings m_settings;
 
-    IntSize m_viewportSize;
+    IntSize m_layoutViewportSize;
     IntSize m_deviceViewportSize;
     float m_deviceScaleFactor;
 

@@ -1700,7 +1700,7 @@ void WebViewImpl::paint(WebCanvas* canvas, const WebRect& rect)
         if (canvas) {
             // Clip rect to the confines of the rootLayerTexture.
             IntRect resizeRect(rect);
-            resizeRect.intersect(IntRect(IntPoint(0, 0), m_layerTreeView.viewportSize()));
+            resizeRect.intersect(IntRect(IntPoint(0, 0), m_layerTreeView.deviceViewportSize()));
             doPixelReadbackToCanvas(canvas, resizeRect);
         }
 #endif
@@ -3819,7 +3819,10 @@ void WebViewImpl::updateLayerTreeViewport()
     float deviceScale = m_deviceScaleInCompositor;
     m_nonCompositedContentHost->setViewport(visibleRect.size(), view->contentsSize(), scroll, view->scrollOrigin(), deviceScale);
 
-    m_layerTreeView.setViewportSize(size());
+    IntSize layoutViewportSize = size();
+    IntSize deviceViewportSize = size();
+    deviceViewportSize.scale(deviceScale);
+    m_layerTreeView.setViewportSize(layoutViewportSize, deviceViewportSize);
     m_layerTreeView.setPageScaleFactorAndLimits(pageScaleFactor(), m_minimumPageScaleFactor, m_maximumPageScaleFactor);
 }
 

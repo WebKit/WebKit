@@ -852,7 +852,7 @@ TEST_F(TiledLayerChromiumTest, skipsDrawGetsReset)
     childLayer->invalidateContentRect(contentRect);
 
     ccLayerTreeHost->setRootLayer(rootLayer);
-    ccLayerTreeHost->setViewportSize(IntSize(300, 300));
+    ccLayerTreeHost->setViewportSize(IntSize(300, 300), IntSize(300, 300));
 
     ccLayerTreeHost->updateLayers(m_updater, memoryLimit);
 
@@ -930,7 +930,7 @@ TEST_F(TiledLayerChromiumTest, partialUpdates)
     layer->invalidateContentRect(contentRect);
 
     ccLayerTreeHost->setRootLayer(layer);
-    ccLayerTreeHost->setViewportSize(IntSize(300, 200));
+    ccLayerTreeHost->setViewportSize(IntSize(300, 200), IntSize(300, 200));
 
     // Full update of all 6 tiles.
     ccLayerTreeHost->updateLayers(m_updater, std::numeric_limits<size_t>::max());
@@ -1478,7 +1478,7 @@ TEST_F(TiledLayerChromiumTest, dontAllocateContentsWhenTargetSurfaceCantBeAlloca
     child2->setVisibleContentRect(child2Rect);
 
     ccLayerTreeHost->setRootLayer(root);
-    ccLayerTreeHost->setViewportSize(rootRect.size());
+    ccLayerTreeHost->setViewportSize(rootRect.size(), rootRect.size());
 
     // With a huge memory limit, all layers should update and push their textures.
     root->invalidateContentRect(rootRect);

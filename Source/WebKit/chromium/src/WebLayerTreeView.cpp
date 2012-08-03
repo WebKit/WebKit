@@ -95,14 +95,22 @@ int WebLayerTreeView::compositorIdentifier()
     return m_private->layerTreeHost()->compositorIdentifier();
 }
 
-void WebLayerTreeView::setViewportSize(const WebSize& viewportSize)
+void WebLayerTreeView::setViewportSize(const WebSize& layoutViewportSize, const WebSize& deviceViewportSize)
 {
-    m_private->layerTreeHost()->setViewportSize(viewportSize);
+    if (!deviceViewportSize.isEmpty())
+        m_private->layerTreeHost()->setViewportSize(layoutViewportSize, deviceViewportSize);
+    else
+        m_private->layerTreeHost()->setViewportSize(layoutViewportSize, layoutViewportSize);
 }
 
-WebSize WebLayerTreeView::viewportSize() const
+WebSize WebLayerTreeView::layoutViewportSize() const
 {
-    return WebSize(m_private->layerTreeHost()->viewportSize());
+    return WebSize(m_private->layerTreeHost()->layoutViewportSize());
+}
+
+WebSize WebLayerTreeView::deviceViewportSize() const
+{
+    return WebSize(m_private->layerTreeHost()->deviceViewportSize());
 }
 
 void WebLayerTreeView::setDeviceScaleFactor(const float deviceScaleFactor)

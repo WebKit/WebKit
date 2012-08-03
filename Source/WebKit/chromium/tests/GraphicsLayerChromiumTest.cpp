@@ -71,7 +71,7 @@ public:
         bool success = layerTreeHost->initialize();
         EXPECT_TRUE(success);
         layerTreeHost->setRootLayer(LayerChromium::create());
-        layerTreeHost->setViewportSize(IntSize(1, 1));
+        layerTreeHost->setViewportSize(IntSize(1, 1), IntSize(1, 1));
         return layerTreeHost.release();
     }
 

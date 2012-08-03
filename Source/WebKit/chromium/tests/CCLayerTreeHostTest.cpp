@@ -339,7 +339,7 @@ public:
         m_numCommits++;
         if (m_numCommits == 1) {
             // Make the viewport empty so the host says it can't draw.
-            m_layerTreeHost->setViewportSize(IntSize(0, 0));
+            m_layerTreeHost->setViewportSize(IntSize(0, 0), IntSize(0, 0));
 
             OwnArrayPtr<char> pixels(adoptArrayPtr(new char[4]));
             m_layerTreeHost->compositeAndReadback(static_cast<void*>(pixels.get()), IntRect(0, 0, 1, 1));
@@ -747,7 +747,7 @@ public:
     virtual void beginTest()
     {
         m_layerTreeHost->rootLayer()->setDrawOpacity(1);
-        m_layerTreeHost->setViewportSize(IntSize(10, 10));
+        m_layerTreeHost->setViewportSize(IntSize(10, 10), IntSize(10, 10));
         m_layerTreeHost->rootLayer()->setOpacity(0);
         postAddAnimationToMainThread();
     }
@@ -1006,7 +1006,7 @@ public:
 
     virtual void beginTest()
     {
-        m_layerTreeHost->setViewportSize(IntSize(20, 20));
+        m_layerTreeHost->setViewportSize(IntSize(20, 20), IntSize(20, 20));
         m_layerTreeHost->setBackgroundColor(Color::gray);
         m_layerTreeHost->setPageScaleFactorAndLimits(5, 5, 5);
 
@@ -1015,7 +1015,7 @@ public:
 
     virtual void commitCompleteOnCCThread(CCLayerTreeHostImpl* impl)
     {
-        EXPECT_EQ(IntSize(20, 20), impl->viewportSize());
+        EXPECT_EQ(IntSize(20, 20), impl->layoutViewportSize());
         EXPECT_EQ(Color::gray, impl->backgroundColor());
         EXPECT_EQ(5, impl->pageScale());
 
@@ -1191,7 +1191,7 @@ public:
     virtual void beginTest()
     {
         m_layerTreeHost->setRootLayer(m_updateCheckLayer);
-        m_layerTreeHost->setViewportSize(IntSize(10, 10));
+        m_layerTreeHost->setViewportSize(IntSize(10, 10), IntSize(10, 10));
 
         postSetNeedsCommitToMainThread();
     }
@@ -1239,10 +1239,9 @@ public:
 
     virtual void beginTest()
     {
-        // The device viewport should be scaled by the device scale factor.
-        m_layerTreeHost->setViewportSize(IntSize(40, 40));
+        m_layerTreeHost->setViewportSize(IntSize(40, 40), IntSize(60, 60));
         m_layerTreeHost->setDeviceScaleFactor(1.5);
-        EXPECT_EQ(IntSize(40, 40), m_layerTreeHost->viewportSize());
+        EXPECT_EQ(IntSize(40, 40), m_layerTreeHost->layoutViewportSize());
         EXPECT_EQ(IntSize(60, 60), m_layerTreeHost->deviceViewportSize());
 
         m_rootLayer->addChild(m_childLayer);
@@ -1273,7 +1272,7 @@ public:
         ASSERT_EQ(1u, impl->rootLayer()->children().size());
 
         // Device viewport is scaled.
-        EXPECT_EQ(IntSize(40, 40), impl->viewportSize());
+        EXPECT_EQ(IntSize(40, 40), impl->layoutViewportSize());
         EXPECT_EQ(IntSize(60, 60), impl->deviceViewportSize());
 
         CCLayerImpl* root = impl->rootLayer();
@@ -1347,7 +1346,7 @@ public:
     virtual void beginTest()
     {
         m_layerTreeHost->setRootLayer(m_layer);
-        m_layerTreeHost->setViewportSize(IntSize(10, 10));
+        m_layerTreeHost->setViewportSize(IntSize(10, 10), IntSize(10, 10));
 
         postSetNeedsCommitToMainThread();
         postSetNeedsRedrawToMainThread();
@@ -1447,7 +1446,7 @@ public:
     virtual void beginTest()
     {
         m_layerTreeHost->setRootLayer(m_parent);
-        m_layerTreeHost->setViewportSize(IntSize(10, 20));
+        m_layerTreeHost->setViewportSize(IntSize(10, 20), IntSize(10, 20));
 
         WebTransformationMatrix identityMatrix;
         setLayerPropertiesForTesting(m_parent.get(), 0, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(10, 20), true);
@@ -1543,10 +1542,10 @@ public:
             break;
         case 3:
             m_child->setNeedsDisplay();
-            m_layerTreeHost->setViewportSize(IntSize(10, 10));
+            m_layerTreeHost->setViewportSize(IntSize(10, 10), IntSize(10, 10));
             break;
         case 4:
-            m_layerTreeHost->setViewportSize(IntSize(10, 20));
+            m_layerTreeHost->setViewportSize(IntSize(10, 20), IntSize(10, 20));
             break;
         default:
             ASSERT_NOT_REACHED();
@@ -1627,7 +1626,7 @@ public:
         setTestLayerPropertiesForTesting(grandChild.get(), child.get(), identityMatrix, FloatPoint(0, 0), FloatPoint(10, 10), IntSize(500, 500), true);
 
         m_layerTreeHost->setRootLayer(rootLayer);
-        m_layerTreeHost->setViewportSize(rootLayer->bounds());
+        m_layerTreeHost->setViewportSize(rootLayer->bounds(), rootLayer->bounds());
         ASSERT_TRUE(m_layerTreeHost->initializeLayerRendererIfNeeded());
         CCTextureUpdater updater;
         m_layerTreeHost->updateLayers(updater, std::numeric_limits<size_t>::max());
@@ -1646,7 +1645,7 @@ public:
         setLayerPropertiesForTesting(grandChild.get(), child.get(), identityMatrix, FloatPoint(0, 0), FloatPoint(10, 10), IntSize(500, 500), true);
 
         m_layerTreeHost->setRootLayer(rootLayer);
-        m_layerTreeHost->setViewportSize(rootLayer->bounds());
+        m_layerTreeHost->setViewportSize(rootLayer->bounds(), rootLayer->bounds());
         m_layerTreeHost->updateLayers(updater, std::numeric_limits<size_t>::max());
         m_layerTreeHost->commitComplete();
 
@@ -1664,7 +1663,7 @@ public:
         setTestLayerPropertiesForTesting(grandChild.get(), child.get(), identityMatrix, FloatPoint(0, 0), FloatPoint(10, 10), IntSize(500, 500), true);
 
         m_layerTreeHost->setRootLayer(rootLayer);
-        m_layerTreeHost->setViewportSize(rootLayer->bounds());
+        m_layerTreeHost->setViewportSize(rootLayer->bounds(), rootLayer->bounds());
         m_layerTreeHost->updateLayers(updater, std::numeric_limits<size_t>::max());
         m_layerTreeHost->commitComplete();
 
@@ -1684,7 +1683,7 @@ public:
         setTestLayerPropertiesForTesting(grandChild.get(), child.get(), identityMatrix, FloatPoint(0, 0), FloatPoint(10, 10), IntSize(500, 500), true);
 
         m_layerTreeHost->setRootLayer(rootLayer);
-        m_layerTreeHost->setViewportSize(rootLayer->bounds());
+        m_layerTreeHost->setViewportSize(rootLayer->bounds(), rootLayer->bounds());
         m_layerTreeHost->updateLayers(updater, std::numeric_limits<size_t>::max());
         m_layerTreeHost->commitComplete();
 
@@ -1706,7 +1705,7 @@ public:
         child->setMaskLayer(mask.get());
 
         m_layerTreeHost->setRootLayer(rootLayer);
-        m_layerTreeHost->setViewportSize(rootLayer->bounds());
+        m_layerTreeHost->setViewportSize(rootLayer->bounds(), rootLayer->bounds());
         m_layerTreeHost->updateLayers(updater, std::numeric_limits<size_t>::max());
         m_layerTreeHost->commitComplete();
 
@@ -1728,7 +1727,7 @@ public:
         child->setMaskLayer(mask.get());
 
         m_layerTreeHost->setRootLayer(rootLayer);
-        m_layerTreeHost->setViewportSize(rootLayer->bounds());
+        m_layerTreeHost->setViewportSize(rootLayer->bounds(), rootLayer->bounds());
         m_layerTreeHost->updateLayers(updater, std::numeric_limits<size_t>::max());
         m_layerTreeHost->commitComplete();
 
@@ -1751,7 +1750,7 @@ public:
         child->setOpacity(0.5);
 
         m_layerTreeHost->setRootLayer(rootLayer);
-        m_layerTreeHost->setViewportSize(rootLayer->bounds());
+        m_layerTreeHost->setViewportSize(rootLayer->bounds(), rootLayer->bounds());
         m_layerTreeHost->updateLayers(updater, std::numeric_limits<size_t>::max());
         m_layerTreeHost->commitComplete();
 
@@ -1774,7 +1773,7 @@ public:
         child->setOpacity(0.5);
 
         m_layerTreeHost->setRootLayer(rootLayer);
-        m_layerTreeHost->setViewportSize(rootLayer->bounds());
+        m_layerTreeHost->setViewportSize(rootLayer->bounds(), rootLayer->bounds());
         m_layerTreeHost->updateLayers(updater, std::numeric_limits<size_t>::max());
         m_layerTreeHost->commitComplete();
 
@@ -1835,7 +1834,7 @@ public:
         }
 
         m_layerTreeHost->setRootLayer(rootLayer);
-        m_layerTreeHost->setViewportSize(rootLayer->bounds());
+        m_layerTreeHost->setViewportSize(rootLayer->bounds(), rootLayer->bounds());
         ASSERT_TRUE(m_layerTreeHost->initializeLayerRendererIfNeeded());
         CCTextureUpdater updater;
         m_layerTreeHost->updateLayers(updater, std::numeric_limits<size_t>::max());
@@ -1864,7 +1863,7 @@ public:
         }
 
         m_layerTreeHost->setRootLayer(rootLayer);
-        m_layerTreeHost->setViewportSize(rootLayer->bounds());
+        m_layerTreeHost->setViewportSize(rootLayer->bounds(), rootLayer->bounds());
         m_layerTreeHost->updateLayers(updater, std::numeric_limits<size_t>::max());
         m_layerTreeHost->commitComplete();
 
@@ -1924,7 +1923,7 @@ public:
         }
 
         m_layerTreeHost->setRootLayer(layers[0].get());
-        m_layerTreeHost->setViewportSize(layers[0]->bounds());
+        m_layerTreeHost->setViewportSize(layers[0]->bounds(), layers[0]->bounds());
         ASSERT_TRUE(m_layerTreeHost->initializeLayerRendererIfNeeded());
         CCTextureUpdater updater;
         m_layerTreeHost->updateLayers(updater, std::numeric_limits<size_t>::max());
@@ -2173,7 +2172,7 @@ public:
 
     virtual void beginTest() OVERRIDE
     {
-        m_layerTreeHost->setViewportSize(IntSize(10, 10));
+        m_layerTreeHost->setViewportSize(IntSize(10, 10), IntSize(10, 10));
         m_layerTreeHost->rootLayer()->setBounds(IntSize(10, 10));
         
         m_rootScrollLayer = ContentLayerChromium::create(&m_mockDelegate);
@@ -2283,7 +2282,7 @@ public:
 
     virtual void beginTest()
     {
-        m_layerTreeHost->setViewportSize(IntSize(100, 100));
+        m_layerTreeHost->setViewportSize(IntSize(100, 100), IntSize(100, 100));
 
         m_rootLayer->setBounds(IntSize(100, 100));
         m_surfaceLayer1->setBounds(IntSize(100, 100));

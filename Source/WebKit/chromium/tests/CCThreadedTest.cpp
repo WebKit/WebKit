@@ -166,7 +166,7 @@ public:
         layerTreeHost->setRootLayer(rootLayer);
 
         // LayerTreeHostImpl won't draw if it has 1x1 viewport.
-        layerTreeHost->setViewportSize(IntSize(1, 1));
+        layerTreeHost->setViewportSize(IntSize(1, 1), IntSize(1, 1));
 
         layerTreeHost->rootLayer()->setLayerAnimationDelegate(testHooks);
 

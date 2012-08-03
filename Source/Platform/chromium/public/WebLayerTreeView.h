@@ -108,8 +108,13 @@ public:
 
     // View properties ---------------------------------------------------
 
-    WEBKIT_EXPORT void setViewportSize(const WebSize&);
-    WEBKIT_EXPORT WebSize viewportSize() const;
+    WEBKIT_EXPORT void setViewportSize(const WebSize& layoutViewportSize, const WebSize& deviceViewportSize = WebSize());
+    // Gives the viewport size in layer space.
+    WEBKIT_EXPORT WebSize layoutViewportSize() const;
+    // Gives the viewport size in physical device pixels (may be different
+    // from the above if there exists page scale, device scale or fixed layout
+    // mode).
+    WEBKIT_EXPORT WebSize deviceViewportSize() const;
 
     WEBKIT_EXPORT void setDeviceScaleFactor(float);
     WEBKIT_EXPORT float deviceScaleFactor() const;

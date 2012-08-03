@@ -168,7 +168,7 @@ bool CCLayerTreeHostImpl::canDraw()
         TRACE_EVENT_INSTANT0("cc", "CCLayerTreeHostImpl::canDraw no root layer");
         return false;
     }
-    if (viewportSize().isEmpty()) {
+    if (deviceViewportSize().isEmpty()) {
         TRACE_EVENT_INSTANT0("cc", "CCLayerTreeHostImpl::canDraw empty viewport");
         return false;
     }
@@ -207,7 +207,7 @@ void CCLayerTreeHostImpl::startPageScaleAnimation(const IntSize& targetPosition,
     IntSize scaledContentSize = contentSize();
     scaledContentSize.scale(m_pageScaleDelta);
 
-    m_pageScaleAnimation = CCPageScaleAnimation::create(scrollTotal, scaleTotal, m_viewportSize, scaledContentSize, startTime);
+    m_pageScaleAnimation = CCPageScaleAnimation::create(scrollTotal, scaleTotal, m_deviceViewportSize, scaledContentSize, startTime);
 
     if (anchorPoint) {
         IntSize windowAnchor(targetPosition);
@@ -708,15 +708,13 @@ bool CCLayerTreeHostImpl::initializeLayerRenderer(PassOwnPtr<CCGraphicsContext> 
     return m_layerRenderer;
 }
 
-void CCLayerTreeHostImpl::setViewportSize(const IntSize& viewportSize)
+void CCLayerTreeHostImpl::setViewportSize(const IntSize& layoutViewportSize, const IntSize& deviceViewportSize)
 {
-    if (viewportSize == m_viewportSize)
+    if (layoutViewportSize == m_layoutViewportSize && deviceViewportSize == m_deviceViewportSize)
         return;
 
-    m_viewportSize = viewportSize;
-
-    m_deviceViewportSize = viewportSize;
-    m_deviceViewportSize.scale(m_deviceScaleFactor);
+    m_layoutViewportSize = layoutViewportSize;
+    m_deviceViewportSize = deviceViewportSize;
 
     updateMaxScrollPosition();
 
@@ -745,12 +743,6 @@ void CCLayerTreeHostImpl::setDeviceScaleFactor(float deviceScaleFactor)
     if (deviceScaleFactor == m_deviceScaleFactor)
         return;
     m_deviceScaleFactor = deviceScaleFactor;
-
-    m_deviceViewportSize = viewportSize();
-    m_deviceViewportSize.scale(m_deviceScaleFactor);
-    updateMaxScrollPosition();
-    if (m_layerRenderer)
-        m_layerRenderer->viewportChanged();
 }
 
 
@@ -802,13 +794,15 @@ void CCLayerTreeHostImpl::updateMaxScrollPosition()
     if (!m_rootScrollLayerImpl || !m_rootScrollLayerImpl->children().size())
         return;
 
-    FloatSize viewBounds = m_viewportSize;
+    FloatSize viewBounds = m_deviceViewportSize;
     if (CCLayerImpl* clipLayer = m_rootScrollLayerImpl->parent()) {
-        if (clipLayer->masksToBounds())
+        // Compensate for non-overlay scrollbars.
+        if (clipLayer->masksToBounds()) {
             viewBounds = clipLayer->bounds();
+            viewBounds.scale(m_deviceScaleFactor);
+        }
     }
     viewBounds.scale(1 / m_pageScaleDelta);
-    viewBounds.scale(m_deviceScaleFactor);
 
     // maxScroll is computed in physical pixels, but scroll positions are in layout pixels.
     IntSize maxScroll = contentSize() - expandedIntSize(viewBounds);

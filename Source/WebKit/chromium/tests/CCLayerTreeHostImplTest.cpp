@@ -75,7 +75,7 @@ public:
 
         m_hostImpl = CCLayerTreeHostImpl::create(settings, this);
         m_hostImpl->initializeLayerRenderer(createContext(), UnthrottledUploader);
-        m_hostImpl->setViewportSize(IntSize(10, 10));
+        m_hostImpl->setViewportSize(IntSize(10, 10), IntSize(10, 10));
     }
 
     virtual void didLoseContextOnImplThread() OVERRIDE { }
@@ -94,7 +94,7 @@ public:
         OwnPtr<CCLayerTreeHostImpl> myHostImpl = CCLayerTreeHostImpl::create(settings, this);
 
         myHostImpl->initializeLayerRenderer(graphicsContext, UnthrottledUploader);
-        myHostImpl->setViewportSize(IntSize(10, 10));
+        myHostImpl->setViewportSize(IntSize(10, 10), IntSize(10, 10));
 
         OwnPtr<CCLayerImpl> root = rootPtr;
 
@@ -257,7 +257,7 @@ TEST_F(CCLayerTreeHostImplTest, scrollDeltaRepeatedScrolls)
 TEST_F(CCLayerTreeHostImplTest, scrollRootCallsCommitAndRedraw)
 {
     setupScrollAndContentsLayers(IntSize(100, 100));
-    m_hostImpl->setViewportSize(IntSize(50, 50));
+    m_hostImpl->setViewportSize(IntSize(50, 50), IntSize(50, 50));
     initializeLayerRendererAndDrawFrame();
 
     EXPECT_EQ(m_hostImpl->scrollBegin(IntPoint(0, 0), CCInputHandlerClient::Wheel), CCInputHandlerClient::ScrollStarted);
@@ -278,7 +278,7 @@ TEST_F(CCLayerTreeHostImplTest, replaceTreeWhileScrolling)
     const int scrollLayerId = 1;
 
     setupScrollAndContentsLayers(IntSize(100, 100));
-    m_hostImpl->setViewportSize(IntSize(50, 50));
+    m_hostImpl->setViewportSize(IntSize(50, 50), IntSize(50, 50));
     initializeLayerRendererAndDrawFrame();
 
     // We should not crash if the tree is replaced while we are scrolling.
@@ -298,7 +298,7 @@ TEST_F(CCLayerTreeHostImplTest, replaceTreeWhileScrolling)
 TEST_F(CCLayerTreeHostImplTest, clearRootRenderSurfaceAndScroll)
 {
     setupScrollAndContentsLayers(IntSize(100, 100));
-    m_hostImpl->setViewportSize(IntSize(50, 50));
+    m_hostImpl->setViewportSize(IntSize(50, 50), IntSize(50, 50));
     initializeLayerRendererAndDrawFrame();
 
     // We should be able to scroll even if the root layer loses its render surface after the most
@@ -310,7 +310,7 @@ TEST_F(CCLayerTreeHostImplTest, clearRootRenderSurfaceAndScroll)
 TEST_F(CCLayerTreeHostImplTest, wheelEventHandlers)
 {
     setupScrollAndContentsLayers(IntSize(100, 100));
-    m_hostImpl->setViewportSize(IntSize(50, 50));
+    m_hostImpl->setViewportSize(IntSize(50, 50), IntSize(50, 50));
     initializeLayerRendererAndDrawFrame();
     CCLayerImpl* root = m_hostImpl->rootLayer();
 
@@ -326,7 +326,7 @@ TEST_F(CCLayerTreeHostImplTest, wheelEventHandlers)
 TEST_F(CCLayerTreeHostImplTest, shouldScrollOnMainThread)
 {
     setupScrollAndContentsLayers(IntSize(100, 100));
-    m_hostImpl->setViewportSize(IntSize(50, 50));
+    m_hostImpl->setViewportSize(IntSize(50, 50), IntSize(50, 50));
     initializeLayerRendererAndDrawFrame();
     CCLayerImpl* root = m_hostImpl->rootLayer();
 
@@ -339,7 +339,7 @@ TEST_F(CCLayerTreeHostImplTest, shouldScrollOnMainThread)
 TEST_F(CCLayerTreeHostImplTest, nonFastScrollableRegionBasic)
 {
     setupScrollAndContentsLayers(IntSize(200, 200));
-    m_hostImpl->setViewportSize(IntSize(100, 100));
+    m_hostImpl->setViewportSize(IntSize(100, 100), IntSize(100, 100));
     initializeLayerRendererAndDrawFrame();
     CCLayerImpl* root = m_hostImpl->rootLayer();
 
@@ -361,7 +361,7 @@ TEST_F(CCLayerTreeHostImplTest, nonFastScrollableRegionBasic)
 TEST_F(CCLayerTreeHostImplTest, nonFastScrollableRegionWithOffset)
 {
     setupScrollAndContentsLayers(IntSize(200, 200));
-    m_hostImpl->setViewportSize(IntSize(100, 100));
+    m_hostImpl->setViewportSize(IntSize(100, 100), IntSize(100, 100));
     CCLayerImpl* root = m_hostImpl->rootLayer();
 
     root->setNonFastScrollableRegion(IntRect(0, 0, 50, 50));
@@ -380,7 +380,7 @@ TEST_F(CCLayerTreeHostImplTest, nonFastScrollableRegionWithOffset)
 TEST_F(CCLayerTreeHostImplTest, pinchGesture)
 {
     setupScrollAndContentsLayers(IntSize(100, 100));
-    m_hostImpl->setViewportSize(IntSize(50, 50));
+    m_hostImpl->setViewportSize(IntSize(50, 50), IntSize(50, 50));
     initializeLayerRendererAndDrawFrame();
 
     CCLayerImpl* scrollLayer = m_hostImpl->rootScrollLayer();
@@ -461,7 +461,7 @@ TEST_F(CCLayerTreeHostImplTest, pinchGesture)
 TEST_F(CCLayerTreeHostImplTest, pageScaleAnimation)
 {
     setupScrollAndContentsLayers(IntSize(100, 100));
-    m_hostImpl->setViewportSize(IntSize(50, 50));
+    m_hostImpl->setViewportSize(IntSize(50, 50), IntSize(50, 50));
     initializeLayerRendererAndDrawFrame();
 
     CCLayerImpl* scrollLayer = m_hostImpl->rootScrollLayer();
@@ -511,7 +511,7 @@ TEST_F(CCLayerTreeHostImplTest, pageScaleAnimation)
 TEST_F(CCLayerTreeHostImplTest, inhibitScrollAndPageScaleUpdatesWhilePinchZooming)
 {
     setupScrollAndContentsLayers(IntSize(100, 100));
-    m_hostImpl->setViewportSize(IntSize(50, 50));
+    m_hostImpl->setViewportSize(IntSize(50, 50), IntSize(50, 50));
     initializeLayerRendererAndDrawFrame();
 
     CCLayerImpl* scrollLayer = m_hostImpl->rootScrollLayer();
@@ -565,7 +565,7 @@ TEST_F(CCLayerTreeHostImplTest, inhibitScrollAndPageScaleUpdatesWhilePinchZoomin
 TEST_F(CCLayerTreeHostImplTest, inhibitScrollAndPageScaleUpdatesWhileAnimatingPageScale)
 {
     setupScrollAndContentsLayers(IntSize(100, 100));
-    m_hostImpl->setViewportSize(IntSize(50, 50));
+    m_hostImpl->setViewportSize(IntSize(50, 50), IntSize(50, 50));
     initializeLayerRendererAndDrawFrame();
 
     CCLayerImpl* scrollLayer = m_hostImpl->rootScrollLayer();
@@ -697,7 +697,7 @@ TEST_F(CCLayerTreeHostImplTest, didDrawNotCalledOnHiddenLayer)
 TEST_F(CCLayerTreeHostImplTest, willDrawNotCalledOnOccludedLayer)
 {
     IntSize bigSize(1000, 1000);
-    m_hostImpl->setViewportSize(bigSize);
+    m_hostImpl->setViewportSize(bigSize, bigSize);
 
     m_hostImpl->setRootLayer(DidDrawCheckLayer::create(1));
     DidDrawCheckLayer* root = static_cast<DidDrawCheckLayer*>(m_hostImpl->rootLayer());
@@ -859,7 +859,7 @@ TEST_F(CCLayerTreeHostImplTest, scrollNonCompositedRoot)
     scrollLayer->addChild(contentLayer.release());
 
     m_hostImpl->setRootLayer(scrollLayer.release());
-    m_hostImpl->setViewportSize(surfaceSize);
+    m_hostImpl->setViewportSize(surfaceSize, surfaceSize);
     initializeLayerRendererAndDrawFrame();
 
     EXPECT_EQ(m_hostImpl->scrollBegin(IntPoint(5, 5), CCInputHandlerClient::Wheel), CCInputHandlerClient::ScrollStarted);
@@ -877,7 +877,7 @@ TEST_F(CCLayerTreeHostImplTest, scrollChildCallsCommitAndRedraw)
     root->setContentBounds(surfaceSize);
     root->addChild(createScrollableLayer(2, FloatPoint(0, 0), surfaceSize));
     m_hostImpl->setRootLayer(root.release());
-    m_hostImpl->setViewportSize(surfaceSize);
+    m_hostImpl->setViewportSize(surfaceSize, surfaceSize);
     initializeLayerRendererAndDrawFrame();
 
     EXPECT_EQ(m_hostImpl->scrollBegin(IntPoint(5, 5), CCInputHandlerClient::Wheel), CCInputHandlerClient::ScrollStarted);
@@ -893,7 +893,7 @@ TEST_F(CCLayerTreeHostImplTest, scrollMissesChild)
     OwnPtr<CCLayerImpl> root = CCLayerImpl::create(1);
     root->addChild(createScrollableLayer(2, FloatPoint(0, 0), surfaceSize));
     m_hostImpl->setRootLayer(root.release());
-    m_hostImpl->setViewportSize(surfaceSize);
+    m_hostImpl->setViewportSize(surfaceSize, surfaceSize);
     initializeLayerRendererAndDrawFrame();
 
     // Scroll event is ignored because the input coordinate is outside the layer boundaries.
@@ -907,7 +907,7 @@ TEST_F(CCLayerTreeHostImplTest, scrollMissesBackfacingChild)
     IntSize surfaceSize(10, 10);
     OwnPtr<CCLayerImpl> root = CCLayerImpl::create(1);
     OwnPtr<CCLayerImpl> child = createScrollableLayer(2, FloatPoint(0, 0), surfaceSize);
-    m_hostImpl->setViewportSize(surfaceSize);
+    m_hostImpl->setViewportSize(surfaceSize, surfaceSize);
 
     WebTransformationMatrix matrix;
     matrix.rotate3d(180, 0, 0);
@@ -936,7 +936,7 @@ TEST_F(CCLayerTreeHostImplTest, scrollBlockedByContentLayer)
     scrollLayer->addChild(contentLayer.release());
 
     m_hostImpl->setRootLayer(scrollLayer.release());
-    m_hostImpl->setViewportSize(surfaceSize);
+    m_hostImpl->setViewportSize(surfaceSize, surfaceSize);
     initializeLayerRendererAndDrawFrame();
 
     // Scrolling fails because the content layer is asking to be scrolled on the main thread.
@@ -949,7 +949,7 @@ TEST_F(CCLayerTreeHostImplTest, scrollRootAndChangePageScaleOnMainThread)
     float pageScale = 2;
     OwnPtr<CCLayerImpl> root = createScrollableLayer(1, FloatPoint(0, 0), surfaceSize);
     m_hostImpl->setRootLayer(root.release());
-    m_hostImpl->setViewportSize(surfaceSize);
+    m_hostImpl->setViewportSize(surfaceSize, surfaceSize);
     initializeLayerRendererAndDrawFrame();
 
     IntSize scrollDelta(0, 10);
@@ -980,7 +980,7 @@ TEST_F(CCLayerTreeHostImplTest, scrollRootAndChangePageScaleOnImplThread)
     float pageScale = 2;
     OwnPtr<CCLayerImpl> root = createScrollableLayer(1, FloatPoint(0, 0), surfaceSize);
     m_hostImpl->setRootLayer(root.release());
-    m_hostImpl->setViewportSize(surfaceSize);
+    m_hostImpl->setViewportSize(surfaceSize, surfaceSize);
     m_hostImpl->setPageScaleFactorAndLimits(1, 1, pageScale);
     initializeLayerRendererAndDrawFrame();
 
@@ -1058,7 +1058,7 @@ TEST_F(CCLayerTreeHostImplTest, scrollChildAndChangePageScaleOnMainThread)
     int scrollLayerId = 2;
     root->addChild(createScrollableLayer(scrollLayerId, FloatPoint(0, 0), surfaceSize));
     m_hostImpl->setRootLayer(root.release());
-    m_hostImpl->setViewportSize(surfaceSize);
+    m_hostImpl->setViewportSize(surfaceSize, surfaceSize);
     initializeLayerRendererAndDrawFrame();
 
     CCLayerImpl* child = m_hostImpl->rootLayer()->children()[0].get();
@@ -1102,7 +1102,7 @@ TEST_F(CCLayerTreeHostImplTest, scrollChildBeyondLimit)
 
     root->addChild(child.release());
     m_hostImpl->setRootLayer(root.release());
-    m_hostImpl->setViewportSize(surfaceSize);
+    m_hostImpl->setViewportSize(surfaceSize, surfaceSize);
     initializeLayerRendererAndDrawFrame();
     {
         IntSize scrollDelta(-3, -7);
@@ -1134,7 +1134,7 @@ TEST_F(CCLayerTreeHostImplTest, scrollEventBubbling)
     root->addChild(child.release());
 
     m_hostImpl->setRootLayer(root.release());
-    m_hostImpl->setViewportSize(surfaceSize);
+    m_hostImpl->setViewportSize(surfaceSize, surfaceSize);
     initializeLayerRendererAndDrawFrame();
     {
         IntSize scrollDelta(0, 4);
@@ -1154,7 +1154,7 @@ TEST_F(CCLayerTreeHostImplTest, scrollBeforeRedraw)
 {
     IntSize surfaceSize(10, 10);
     m_hostImpl->setRootLayer(createScrollableLayer(1, FloatPoint(0, 0), surfaceSize));
-    m_hostImpl->setViewportSize(surfaceSize);
+    m_hostImpl->setViewportSize(surfaceSize, surfaceSize);
 
     // Draw one frame and then immediately rebuild the layer tree to mimic a tree synchronization.
     initializeLayerRendererAndDrawFrame();
@@ -1472,7 +1472,7 @@ TEST_F(CCLayerTreeHostImplTest, viewportCovered)
     m_hostImpl->setBackgroundColor(SK_ColorGRAY);
 
     IntSize viewportSize(1000, 1000);
-    m_hostImpl->setViewportSize(viewportSize);
+    m_hostImpl->setViewportSize(viewportSize, viewportSize);
 
     m_hostImpl->setRootLayer(BlendStateCheckLayer::create(1, m_hostImpl->resourceProvider()));
     BlendStateCheckLayer* root = static_cast<BlendStateCheckLayer*>(m_hostImpl->rootLayer());
@@ -1629,7 +1629,7 @@ TEST_F(CCLayerTreeHostImplTest, partialSwapReceivesDamageRect)
     CCSettings::setPartialSwapEnabled(true);
     OwnPtr<CCLayerTreeHostImpl> layerTreeHostImpl = CCLayerTreeHostImpl::create(settings, this);
     layerTreeHostImpl->initializeLayerRenderer(ccContext.release(), UnthrottledUploader);
-    layerTreeHostImpl->setViewportSize(IntSize(500, 500));
+    layerTreeHostImpl->setViewportSize(IntSize(500, 500), IntSize(500, 500));
 
     CCLayerImpl* root = new FakeDrawableCCLayerImpl(1);
     CCLayerImpl* child = new FakeDrawableCCLayerImpl(2);
@@ -1678,7 +1678,7 @@ TEST_F(CCLayerTreeHostImplTest, partialSwapReceivesDamageRect)
     // Make sure that partial swap is constrained to the viewport dimensions
     // expected damage rect: IntRect(IntPoint::zero(), IntSize(500, 500));
     // expected swap rect: flipped damage rect, but also clamped to viewport
-    layerTreeHostImpl->setViewportSize(IntSize(10, 10));
+    layerTreeHostImpl->setViewportSize(IntSize(10, 10), IntSize(10, 10));
     root->setOpacity(0.7f); // this will damage everything
     EXPECT_TRUE(layerTreeHostImpl->prepareToDraw(frame));
     layerTreeHostImpl->drawLayers(frame);
@@ -1913,7 +1913,7 @@ static PassOwnPtr<CCLayerTreeHostImpl> setupLayersForOpacity(bool partialSwap, C
     CCLayerTreeSettings settings;
     OwnPtr<CCLayerTreeHostImpl> myHostImpl = CCLayerTreeHostImpl::create(settings, client);
     myHostImpl->initializeLayerRenderer(context.release(), UnthrottledUploader);
-    myHostImpl->setViewportSize(IntSize(100, 100));
+    myHostImpl->setViewportSize(IntSize(100, 100), IntSize(100, 100));
 
     /*
       Layers are created as follows:
@@ -2022,7 +2022,7 @@ TEST_F(CCLayerTreeHostImplTest, didDrawNotCalledOnScissoredLayer)
     OwnPtr<CCGraphicsContext> context = CCGraphicsContext::create3D(adoptPtr(new PartialSwapContext));
     OwnPtr<CCLayerTreeHostImpl> myHostImpl = CCLayerTreeHostImpl::create(settings, this);
     myHostImpl->initializeLayerRenderer(context.release(), UnthrottledUploader);
-    myHostImpl->setViewportSize(IntSize(10, 10));
+    myHostImpl->setViewportSize(IntSize(10, 10), IntSize(10, 10));
 
     myHostImpl->setRootLayer(DidDrawCheckLayer::create(1));
     DidDrawCheckLayer* root = static_cast<DidDrawCheckLayer*>(myHostImpl->rootLayer());
@@ -2566,7 +2566,7 @@ static void setupLayersForTextureCaching(CCLayerTreeHostImpl* layerTreeHostImpl,
     OwnPtr<CCGraphicsContext> context = CCGraphicsContext::create3D(adoptPtr(new PartialSwapContext));
 
     layerTreeHostImpl->initializeLayerRenderer(context.release(), UnthrottledUploader);
-    layerTreeHostImpl->setViewportSize(rootSize);
+    layerTreeHostImpl->setViewportSize(rootSize, rootSize);
 
     OwnPtr<CCLayerImpl> root = CCLayerImpl::create(1);
     rootPtr = root.get();
@@ -2611,7 +2611,7 @@ TEST_F(CCLayerTreeHostImplTest, textureCachingWithClipping)
     IntSize rootSize(100, 100);
 
     myHostImpl->initializeLayerRenderer(context.release(), UnthrottledUploader);
-    myHostImpl->setViewportSize(IntSize(rootSize.width(), rootSize.height()));
+    myHostImpl->setViewportSize(IntSize(rootSize.width(), rootSize.height()), IntSize(rootSize.width(), rootSize.height()));
 
     OwnPtr<CCLayerImpl> root = CCLayerImpl::create(1);
     rootPtr = root.get();
@@ -2718,7 +2718,7 @@ TEST_F(CCLayerTreeHostImplTest, textureCachingWithOcclusion)
     IntSize rootSize(1000, 1000);
 
     myHostImpl->initializeLayerRenderer(context.release(), UnthrottledUploader);
-    myHostImpl->setViewportSize(IntSize(rootSize.width(), rootSize.height()));
+    myHostImpl->setViewportSize(IntSize(rootSize.width(), rootSize.height()), IntSize(rootSize.width(), rootSize.height()));
 
     OwnPtr<CCLayerImpl> root = CCLayerImpl::create(1);
     rootPtr = root.get();
@@ -2830,7 +2830,7 @@ TEST_F(CCLayerTreeHostImplTest, textureCachingWithOcclusionEarlyOut)
     IntSize rootSize(1000, 1000);
 
     myHostImpl->initializeLayerRenderer(context.release(), UnthrottledUploader);
-    myHostImpl->setViewportSize(IntSize(rootSize.width(), rootSize.height()));
+    myHostImpl->setViewportSize(IntSize(rootSize.width(), rootSize.height()), IntSize(rootSize.width(), rootSize.height()));
 
     OwnPtr<CCLayerImpl> root = CCLayerImpl::create(1);
     rootPtr = root.get();
@@ -2943,7 +2943,7 @@ TEST_F(CCLayerTreeHostImplTest, textureCachingWithOcclusionExternalOverInternal)
     IntSize rootSize(1000, 1000);
 
     myHostImpl->initializeLayerRenderer(context.release(), UnthrottledUploader);
-    myHostImpl->setViewportSize(IntSize(rootSize.width(), rootSize.height()));
+    myHostImpl->setViewportSize(IntSize(rootSize.width(), rootSize.height()), IntSize(rootSize.width(), rootSize.height()));
 
     OwnPtr<CCLayerImpl> root = CCLayerImpl::create(1);
     rootPtr = root.get();
@@ -3026,7 +3026,7 @@ TEST_F(CCLayerTreeHostImplTest, textureCachingWithOcclusionExternalNotAligned)
     IntSize rootSize(1000, 1000);
 
     myHostImpl->initializeLayerRenderer(context.release(), UnthrottledUploader);
-    myHostImpl->setViewportSize(IntSize(rootSize.width(), rootSize.height()));
+    myHostImpl->setViewportSize(IntSize(rootSize.width(), rootSize.height()), IntSize(rootSize.width(), rootSize.height()));
 
     OwnPtr<CCLayerImpl> root = CCLayerImpl::create(1);
     rootPtr = root.get();
@@ -3110,7 +3110,7 @@ TEST_F(CCLayerTreeHostImplTest, textureCachingWithOcclusionPartialSwap)
     IntSize rootSize(1000, 1000);
 
     myHostImpl->initializeLayerRenderer(context.release(), UnthrottledUploader);
-    myHostImpl->setViewportSize(IntSize(rootSize.width(), rootSize.height()));
+    myHostImpl->setViewportSize(IntSize(rootSize.width(), rootSize.height()), IntSize(rootSize.width(), rootSize.height()));
 
     OwnPtr<CCLayerImpl> root = CCLayerImpl::create(1);
     rootPtr = root.get();

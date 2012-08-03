@@ -1,3 +1,43 @@
+2012-08-02  Alexandre Elias  <aelias@google.com>
+
+        [chromium] deviceViewportSize cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=92794
+
+        Reviewed by Adrienne Walker.
+
+        In the future, CSS layout size will become increasingly disassociated
+        from physical device size, and it will become impossible to infer one
+        from the other inside the compositor.  Therefore, this patch allows
+        deviceViewportSize to be explicitly passed in by the outside client.
+
+        I also renamed the existing viewportSize field to "layoutViewportSize"
+        for clarity, and converted its uses to deviceViewportSize since
+        that is more appropriate.
+
+        I had to add some default-value scaffolding to WebLayerTreeView in
+        order to avoid breaking ui/compositor.  We can delete it once that's
+        updated.
+
+        No new tests (covered by existing tests).
+
+        * platform/graphics/chromium/cc/CCLayerTreeHost.cpp:
+        (WebCore::CCLayerTreeHost::finishCommitOnImplThread):
+        (WebCore::CCLayerTreeHost::setViewportSize):
+        (WebCore::CCLayerTreeHost::updateLayers):
+        (WebCore::CCLayerTreeHost::setDeviceScaleFactor):
+        * platform/graphics/chromium/cc/CCLayerTreeHost.h:
+        (CCLayerTreeHost):
+        (WebCore::CCLayerTreeHost::layoutViewportSize):
+        * platform/graphics/chromium/cc/CCLayerTreeHostImpl.cpp:
+        (WebCore::CCLayerTreeHostImpl::canDraw):
+        (WebCore::CCLayerTreeHostImpl::startPageScaleAnimation):
+        (WebCore::CCLayerTreeHostImpl::setViewportSize):
+        (WebCore::CCLayerTreeHostImpl::setDeviceScaleFactor):
+        (WebCore::CCLayerTreeHostImpl::updateMaxScrollPosition):
+        * platform/graphics/chromium/cc/CCLayerTreeHostImpl.h:
+        (CCLayerTreeHostImpl):
+        (WebCore::CCLayerTreeHostImpl::layoutViewportSize):
+
 2012-08-02  Adam Barth  <abarth@webkit.org>
 
         V8Proxy::currentContext() doesn't do anything and should be removed

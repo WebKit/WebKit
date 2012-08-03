@@ -148,8 +148,8 @@ public:
     bool contentsTexturesWerePurgedSinceLastCommit() const { return m_contentsTexturesWerePurgedSinceLastCommit; }
     size_t memoryAllocationLimitBytes() const { return m_memoryAllocationLimitBytes; }
 
-    const IntSize& viewportSize() const { return m_viewportSize; }
-    void setViewportSize(const IntSize&);
+    void setViewportSize(const IntSize& layoutViewportSize, const IntSize& deviceViewportSize);
+    const IntSize& layoutViewportSize() const { return m_layoutViewportSize; }
 
     float deviceScaleFactor() const { return m_deviceScaleFactor; }
     void setDeviceScaleFactor(float);
@@ -261,7 +261,7 @@ private:
     CCLayerImpl* m_currentlyScrollingLayerImpl;
     int m_scrollingLayerIdFromPreviousTree;
     CCLayerTreeSettings m_settings;
-    IntSize m_viewportSize;
+    IntSize m_layoutViewportSize;
     IntSize m_deviceViewportSize;
     float m_deviceScaleFactor;
     bool m_visible;

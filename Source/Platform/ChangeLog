@@ -1,3 +1,26 @@
+2012-08-02  Alexandre Elias  <aelias@google.com>
+
+        [chromium] deviceViewportSize cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=92794
+
+        Reviewed by Adrienne Walker.
+
+        In the future, CSS layout size will become increasingly disassociated
+        from physical device size, and it will become impossible to infer one
+        from the other inside the compositor.  Therefore, this patch allows
+        deviceViewportSize to be explicitly passed in by the outside client.
+
+        I also renamed the existing viewportSize field to "layoutViewportSize"
+        for clarity, and converted its uses to deviceViewportSize since
+        that is more appropriate.
+
+        I had to add some default-value scaffolding to WebLayerTreeView in
+        order to avoid breaking ui/compositor.  We can delete it once that's
+        updated.
+
+        * chromium/public/WebLayerTreeView.h:
+        (WebLayerTreeView):
+
 2012-08-01  James Robinson  <jamesr@chromium.org>
 
         [chromium] Wrap shared context getters in WebKit API and avoid WebCore::GraphicsContext3D use in compositor internals

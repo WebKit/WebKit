@@ -242,7 +242,7 @@ void CCLayerTreeHost::finishCommitOnImplThread(CCLayerTreeHostImpl* hostImpl)
         hostImpl->setNeedsAnimateLayers();
 
     hostImpl->setSourceFrameNumber(commitNumber());
-    hostImpl->setViewportSize(viewportSize());
+    hostImpl->setViewportSize(layoutViewportSize(), deviceViewportSize());
     hostImpl->setDeviceScaleFactor(deviceScaleFactor());
     hostImpl->setPageScaleFactorAndLimits(m_pageScaleFactor, m_minPageScaleFactor, m_maxPageScaleFactor);
     hostImpl->setBackgroundColor(m_backgroundColor);
@@ -375,15 +375,13 @@ void CCLayerTreeHost::setRootLayer(PassRefPtr<LayerChromium> rootLayer)
     setNeedsCommit();
 }
 
-void CCLayerTreeHost::setViewportSize(const IntSize& viewportSize)
+void CCLayerTreeHost::setViewportSize(const IntSize& layoutViewportSize, const IntSize& deviceViewportSize)
 {
-    if (viewportSize == m_viewportSize)
+    if (layoutViewportSize == m_layoutViewportSize && deviceViewportSize == m_deviceViewportSize)
         return;
 
-    m_viewportSize = viewportSize;
-
-    m_deviceViewportSize = viewportSize;
-    m_deviceViewportSize.scale(m_deviceScaleFactor);
+    m_layoutViewportSize = layoutViewportSize;
+    m_deviceViewportSize = deviceViewportSize;
 
     setNeedsCommit();
 }
@@ -466,7 +464,7 @@ void CCLayerTreeHost::updateLayers(CCTextureUpdater& updater, size_t memoryAlloc
     if (!rootLayer())
         return;
 
-    if (viewportSize().isEmpty())
+    if (layoutViewportSize().isEmpty())
         return;
 
     m_contentsTextureManager->setMaxMemoryLimitBytes(memoryAllocationLimitBytes);
@@ -716,8 +714,6 @@ void CCLayerTreeHost::setDeviceScaleFactor(float deviceScaleFactor)
         return;
     m_deviceScaleFactor = deviceScaleFactor;
 
-    m_deviceViewportSize = m_viewportSize;
-    m_deviceViewportSize.scale(m_deviceScaleFactor);
     setNeedsCommit();
 }
 
