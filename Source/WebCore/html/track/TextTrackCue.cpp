@@ -168,7 +168,8 @@ void TextTrackCue::setId(const String& id)
 
 void TextTrackCue::setStartTime(double value)
 {
-    if (m_startTime == value)
+    // TODO(93143): Add spec-compliant behavior for negative time values.
+    if (m_startTime == value || value < 0)
         return;
     
     cueWillChange();
@@ -178,7 +179,8 @@ void TextTrackCue::setStartTime(double value)
     
 void TextTrackCue::setEndTime(double value)
 {
-    if (m_endTime == value)
+    // TODO(93143): Add spec-compliant behavior for negative time values.
+    if (m_endTime == value || value < 0)
         return;
     
     cueWillChange();

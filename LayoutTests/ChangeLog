@@ -1,3 +1,17 @@
+2012-08-03  Anna Cavender  <annacc@chromium.org>
+
+        Negative timestamps for TextTrackCues should not be allowed.
+        https://bugs.webkit.org/show_bug.cgi?id=92939
+
+        Reviewed by Eric Carlson.
+
+        Make sure cues added in JavaScript are not allowed negative timestamps.
+        Attempting to add a cue with a negative timestamp is not successful
+        and setting a timestamp to a negative value has no effect.
+
+        * media/track/track-cue-negative-timestamp-expected.txt: Added.
+        * media/track/track-cue-negative-timestamp.html: Added.
+
 2012-08-03  Terry Anderson  <tdanderson@chromium.org>
 
         Apply target fuzzing when sending a context menu event

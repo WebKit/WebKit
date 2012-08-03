@@ -1,3 +1,26 @@
+2012-08-03  Anna Cavender  <annacc@chromium.org>
+
+        Negative timestamps for TextTrackCues should not be allowed.
+        https://bugs.webkit.org/show_bug.cgi?id=92939
+
+        Reviewed by Eric Carlson.
+
+        Make sure cues added in JavaScript are not allowed negative timestamps.
+        Attempting to add a cue with a negative timestamp is not successful
+        and setting a timestamp to a negative value has no effect.
+
+        Test: media/track/track-cue-negative-timestamp.html
+
+        * html/track/TextTrack.cpp:
+        (WebCore::TextTrack::addCue): If the cue's startTime or endTime is 
+            negative, do not add the cue.
+        * html/track/TextTrackCue.cpp:
+        (WebCore::TextTrackCue::setStartTime): Ignore negative values.
+        (WebCore::TextTrackCue::setEndTime): Ignore negative values.
+        * html/track/TextTrackCueList.cpp:
+        (WebCore::TextTrackCueList::add): Add ASSERTs to check startTime and
+            endTime are positive.
+
 2012-08-03  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r124594.
