@@ -1,3 +1,30 @@
+2012-08-03  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Web Inspector: simple replace objectType with ownerObjectType in NMI code.
+        https://bugs.webkit.org/show_bug.cgi?id=93001
+
+        Reviewed by Yury Semikhatsky.
+
+        In all the cases when we are visiting members, objectType field is actually the object type of the member's owner object.
+
+        * dom/MemoryInstrumentation.h:
+        (WebCore::MemoryInstrumentation::InstrumentedPointer::InstrumentedPointer):
+        (InstrumentedPointer):
+        (WebCore::MemoryInstrumentation::addObject):
+        (WebCore::MemoryInstrumentation::addInstrumentedObject):
+        (WebCore::MemoryInstrumentation::addRawBuffer):
+        (WebCore::MemoryInstrumentation::OwningTraits::addInstrumentedObject):
+        (WebCore::MemoryInstrumentation::OwningTraits::addObject):
+        (WebCore::MemoryObjectInfo::MemoryObjectInfo):
+        (WebCore::MemoryInstrumentation::addInstrumentedObjectImpl):
+        (WebCore::MemoryInstrumentation::addObjectImpl):
+        (WebCore::MemoryInstrumentation::addHashMap):
+        (WebCore::MemoryInstrumentation::addHashSet):
+        (WebCore::MemoryInstrumentation::addInstrumentedCollection):
+        (WebCore::MemoryInstrumentation::addListHashSet):
+        (WebCore::MemoryInstrumentation::addVector):
+        (WebCore::::process):
+
 2012-08-02  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Web Inspector: extend test coverage for nmi code and fix 2 bugs.
