@@ -2631,7 +2631,10 @@ bool Node::dispatchMouseEvent(const PlatformMouseEvent& event, const AtomicStrin
 #if ENABLE(GESTURE_EVENTS)
 bool Node::dispatchGestureEvent(const PlatformGestureEvent& event)
 {
-    return EventDispatcher::dispatchEvent(this, GestureEventDispatchMediator::create(GestureEvent::create(document()->defaultView(), event)));
+    RefPtr<GestureEvent> gestureEvent = GestureEvent::create(document()->defaultView(), event);
+    if (!gestureEvent.get())
+        return false;
+    return EventDispatcher::dispatchEvent(this, GestureEventDispatchMediator::create(gestureEvent));
 }
 #endif
 

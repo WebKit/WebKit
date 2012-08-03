@@ -59,7 +59,7 @@ PassRefPtr<GestureEvent> GestureEvent::create(PassRefPtr<AbstractView> view, con
     case PlatformEvent::GesturePinchEnd:
     case PlatformEvent::GesturePinchUpdate:
     default:
-        ASSERT_NOT_REACHED();
+        return 0;
     }
     return adoptRef(new GestureEvent(eventType, view, event.globalPosition().x(), event.globalPosition().y(), event.position().x(), event.position().y(), event.ctrlKey(), event.altKey(), event.shiftKey(), event.metaKey(), event.deltaX(), event.deltaY()));
 }

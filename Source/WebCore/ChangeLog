@@ -1,3 +1,18 @@
+2012-08-03  Sadrul Habib Chowdhury  <sadrul@chromium.org>
+
+        Avoid dispatching gesture events of unknown types
+        https://bugs.webkit.org/show_bug.cgi?id=93060
+
+        Reviewed by Adam Barth.
+
+        WebCore gesture events do not always correspond 1-to-1 to the Platform gesture events. So
+        avoid dispatching the unknown gesture events to nodes.
+
+        * dom/GestureEvent.cpp:
+        (WebCore::GestureEvent::create):
+        * dom/Node.cpp:
+        (WebCore::Node::dispatchGestureEvent):
+
 2012-08-03  Stephen Chenney  <schenney@chromium.org>
 
         Crash when a clip path referencing a clip path changes documents
