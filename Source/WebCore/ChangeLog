@@ -1,3 +1,24 @@
+2012-08-03  Kentaro Hara  <haraken@chromium.org>
+
+        [V8] Make v8NonStringValueToWebCoreString a static method
+        https://bugs.webkit.org/show_bug.cgi?id=93066
+
+        Reviewed by Adam Barth.
+
+        v8NonStringValueToWebCoreString() and v8NonStringValueToAtomicWebCoreString()
+        are not intended to be used from outside V8Binding.cpp.
+        They should be static methods.
+
+        No tests. No change in behavior.
+
+        * bindings/v8/V8Binding.cpp:
+        (WebCore::v8NonStringValueToWebCoreString):
+        (WebCore):
+        (WebCore::v8NonStringValueToAtomicWebCoreString):
+        * bindings/v8/V8Binding.h:
+        (WebCore::v8StringToWebCoreString):
+        (WebCore::v8StringToAtomicWebCoreString):
+
 2012-08-02  Abhishek Arya  <inferno@chromium.org>
 
         Crash due to layer not removed from parent for anonymous block.

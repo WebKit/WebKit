@@ -308,7 +308,6 @@ namespace WebCore {
     {
         return v8StringToWebCoreString<String>(v8String, Externalize);
     }
-    String v8NonStringValueToWebCoreString(v8::Handle<v8::Value>);
     String v8ValueToWebCoreString(v8::Handle<v8::Value> value);
 
     // Convert v8 types to a WTF::AtomicString.
@@ -316,7 +315,6 @@ namespace WebCore {
     {
         return v8StringToWebCoreString<AtomicString>(v8String, Externalize);
     }
-    AtomicString v8NonStringValueToAtomicWebCoreString(v8::Handle<v8::Value>);
     AtomicString v8ValueToAtomicWebCoreString(v8::Handle<v8::Value> value);
 
     // Return a V8 external string that shares the underlying buffer with the given
