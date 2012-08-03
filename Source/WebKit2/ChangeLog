@@ -3,6 +3,16 @@
         Small part of "Out-of-process plug-ins should support asynchronous initialization."
         <rdar://problem/10598594> and https://bugs.webkit.org/show_bug.cgi?id=92919
 
+        Unreviewed (build fix).
+
+        * Shared/WebPreferencesStore.h:
+        (WebKit): Include this file which has the declaration of the new pref.
+
+2012-08-03  Brady Eidson  <beidson@apple.com>
+
+        Small part of "Out-of-process plug-ins should support asynchronous initialization."
+        <rdar://problem/10598594> and https://bugs.webkit.org/show_bug.cgi?id=92919
+
         Reviewed by Anders Carlsson.
 
         -Add API-level preferences for forcing asynchronous initialization of all plug-ins (for testing).
