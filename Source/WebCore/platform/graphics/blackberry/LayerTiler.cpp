@@ -83,7 +83,7 @@ LayerTiler::~LayerTiler()
     // Someone should have called LayerTiler::deleteTextures()
     // before now. We can't call it here because we have no
     // OpenGL context.
-    ASSERT(m_tilesCompositingThread.isEmpty());
+    ASSERT(m_tiles.isEmpty());
 }
 
 void LayerTiler::layerWebKitThreadDestroyed()
@@ -167,16 +167,21 @@ void LayerTiler::updateTextureContentsIfNeeded(double scale)
         dirtyRect = IntRect(IntPoint::zero(), requiredTextureSize);
     }
 
+    // If the new size is empty, clear the visibility jobs
+    if (requiredTextureSize.isEmpty() && renderJobs.size()) {
+        renderJobs.clear();
+
+        MutexLocker locker(m_renderJobsMutex);
+        m_renderJobs.clear();
+    }
+
     // If we need display because we no longer need to be displayed, due to texture size becoming 0 x 0,
     // or if we're re-rendering the whole thing anyway, clear old texture jobs.
-    HashSet<TileIndex> finishedJobs;
-    if (requiredTextureSize.isEmpty() || dirtyRect == IntRect(IntPoint::zero(), requiredTextureSize)) {
-        {
-            MutexLocker locker(m_renderJobsMutex);
-            m_renderJobs.clear();
-        }
+    if (requiredTextureSize.isEmpty() || dirtyRect == IntRect(IntPoint::zero(), requiredTextureSize))
         clearTextureJobs();
-    } else if (!renderJobs.isEmpty()) {
+
+    HashSet<TileIndex> finishedJobs;
+    if (!renderJobs.isEmpty()) {
         if (Image* image = m_layer->contents()) {
             bool isOpaque = false;
             if (image->isBitmapImage())
@@ -218,6 +223,7 @@ void LayerTiler::updateTextureContentsIfNeeded(double scale)
     }
 
     bool didResize = false;
+    IntRect previousTextureRect(IntPoint::zero(), m_pendingTextureSize);
     if (m_pendingTextureSize != requiredTextureSize) {
         didResize = true;
         m_pendingTextureSize = requiredTextureSize;
@@ -245,9 +251,10 @@ void LayerTiler::updateTextureContentsIfNeeded(double scale)
     IntPoint topLeft = dirtyRect.minXMinYCorner();
     IntPoint bottomRight = dirtyRect.maxXMaxYCorner(); // This is actually a pixel below and to the right of the dirtyRect.
 
-    IntSize tileMaximumSize = tileSize();
-    bool wasOneTile = m_tilesWebKitThread.size() == 1;
-    bool isOneTile = m_pendingTextureSize.width() <= tileMaximumSize.width() && m_pendingTextureSize.height() <= tileMaximumSize.height();
+    IntSize tileMaximumSize(tileSize());
+    IntRect rectForOneTile(IntPoint::zero(), tileMaximumSize);
+    bool wasOneTile = rectForOneTile.contains(previousTextureRect);
+    bool isOneTile = rectForOneTile.contains(IntRect(IntPoint::zero(), m_pendingTextureSize));
     IntPoint origin = originOfTile(indexOfTile(topLeft));
     IntRect tileRect;
     for (tileRect.setX(origin.x()); tileRect.x() < bottomRight.x(); tileRect.setX(tileRect.x() + tileMaximumSize.width())) {
@@ -312,17 +319,9 @@ void LayerTiler::updateTextureContentsIfNeeded(double scale)
 
 bool LayerTiler::shouldPerformRenderJob(const TileIndex& index, bool allowPrefill)
 {
-    // If the visibility information was propagated from the compositing
-    // thread, use that information.
-    // However, we are about to commit new layer properties that may make
-    // currently hidden layers visible. To avoid false negatives, we only allow
-    // the current state to be used to accept render jobs, not to reject them.
-    if (m_tilesWebKitThread.get(index).isVisible())
-        return true;
-
     // Tiles that are not currently visible on the compositing thread may still
     // deserve to be rendered if they should be prefilled...
-    if (allowPrefill && !m_tilesWebKitThread.contains(index) && shouldPrefillTile(index))
+    if (allowPrefill && shouldPrefillTile(index))
         return true;
 
     // Or if they are visible according to the state that's about to be
@@ -369,7 +368,7 @@ void LayerTiler::layerVisibilityChanged(LayerCompositingThread*, bool visible)
         m_renderJobs.clear();
     }
 
-    for (TileMap::iterator it = m_tilesCompositingThread.begin(); it != m_tilesCompositingThread.end(); ++it) {
+    for (TileMap::iterator it = m_tiles.begin(); it != m_tiles.end(); ++it) {
         TileIndex index = (*it).first;
         LayerTile* tile = (*it).second;
         tile->setVisible(false);
@@ -387,12 +386,12 @@ void LayerTiler::uploadTexturesIfNeeded(LayerCompositingThread*)
     for (TileJobsMap::const_iterator tileJobsIter = tileJobsMap.begin(); tileJobsIter != tileJobsIterEnd; ++tileJobsIter) {
         IntPoint origin = originOfTile(tileJobsIter->first);
 
-        LayerTile* tile = m_tilesCompositingThread.get(tileJobsIter->first);
+        LayerTile* tile = m_tiles.get(tileJobsIter->first);
         if (!tile) {
             if (origin.x() >= m_requiredTextureSize.width() || origin.y() >= m_requiredTextureSize.height())
                 continue;
             tile = new LayerTile();
-            m_tilesCompositingThread.add(tileJobsIter->first, tile);
+            m_tiles.add(tileJobsIter->first, tile);
         }
 
         IntRect tileRect(origin, tileSize());
@@ -516,10 +515,10 @@ void LayerTiler::drawTexturesInternal(LayerCompositingThread* layer, double scal
     for (tileRect.setX(0); tileRect.x() < m_requiredTextureSize.width(); tileRect.setX(tileRect.x() + maxw)) {
         for (tileRect.setY(0); tileRect.y() < m_requiredTextureSize.height(); tileRect.setY(tileRect.y() + maxh)) {
             TileIndex index = indexOfTile(tileRect.location());
-            LayerTile* tile = m_tilesCompositingThread.get(index);
+            LayerTile* tile = m_tiles.get(index);
             if (!tile) {
                 tile = new LayerTile();
-                m_tilesCompositingThread.add(index, tile);
+                m_tiles.add(index, tile);
             }
 
             float x = index.i() * maxw * sx;
@@ -629,12 +628,10 @@ void LayerTiler::deleteTextures(LayerCompositingThread*)
     // from WebKit thread to compositing thread, we don't need
     // any synchronization mechanism here, even though we are
     // touching some WebKit thread state.
-    m_tilesWebKitThread.clear();
-
-    if (m_tilesCompositingThread.size()) {
-        for (TileMap::iterator it = m_tilesCompositingThread.begin(); it != m_tilesCompositingThread.end(); ++it)
+    if (m_tiles.size()) {
+        for (TileMap::iterator it = m_tiles.begin(); it != m_tiles.end(); ++it)
             (*it).second->discardContents();
-        m_tilesCompositingThread.clear();
+        m_tiles.clear();
 
         m_contentsDirty = true;
     }
@@ -649,7 +646,7 @@ void LayerTiler::pruneTextures()
 {
     // Prune tiles that are no longer needed.
     Vector<TileIndex> tilesToDelete;
-    for (TileMap::iterator it = m_tilesCompositingThread.begin(); it != m_tilesCompositingThread.end(); ++it) {
+    for (TileMap::iterator it = m_tiles.begin(); it != m_tiles.end(); ++it) {
         TileIndex index = (*it).first;
 
         IntPoint origin = originOfTile(index);
@@ -658,7 +655,7 @@ void LayerTiler::pruneTextures()
     }
 
     for (Vector<TileIndex>::iterator it = tilesToDelete.begin(); it != tilesToDelete.end(); ++it) {
-        LayerTile* tile = m_tilesCompositingThread.take(*it);
+        LayerTile* tile = m_tiles.take(*it);
         tile->discardContents();
         delete tile;
     }
@@ -738,11 +735,11 @@ IntRect LayerTiler::rectForTile(const TileIndex& index, const IntSize& bounds)
 
 void LayerTiler::bindContentsTexture(LayerCompositingThread*)
 {
-    ASSERT(m_tilesCompositingThread.size() == 1);
-    if (m_tilesCompositingThread.size() != 1)
+    ASSERT(m_tiles.size() == 1);
+    if (m_tiles.size() != 1)
         return;
 
-    const LayerTile* tile = m_tilesCompositingThread.begin()->second;
+    const LayerTile* tile = m_tiles.begin()->second;
 
     ASSERT(tile->hasTexture());
     if (!tile->hasTexture())

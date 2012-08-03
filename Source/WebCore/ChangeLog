@@ -1,3 +1,53 @@
+2012-08-02  Arvid Nilsson  <anilsson@rim.com>
+
+        [BlackBerry] Add default implementation of GraphicsLayerClient::contentsVisible()
+        https://bugs.webkit.org/show_bug.cgi?id=93036
+
+        Reviewed by George Staikos.
+
+        Returning true by default would cause memory usage to balloon, because
+        the LayerTiler would believe every tile is visible and always needs to
+        be rendered. Instead, we choose to return false by default, relying
+        entirely on reactive rendering through render jobs.
+
+        However this revealed a subtle bug. If the entire layer was invalidated
+        every frame, checkerboard would never resolve with this default
+        implementation.
+
+        Fixed by not clearing render jobs when the entire layer is invalidated,
+        thus making us robust against an incomplete contentsVisible
+        implementation.
+
+        Also removed dead code related to the deprecated
+        LayerTiler::m_tilesWebKitThread mechanism, which has been replaced by
+        the implicit visibility management resulting from render jobs.
+
+        With m_tilesWebKitThread out of the way, rename m_tilesCompositingThread
+        to be simply m_tiles.
+
+        PR 187458
+
+        This is not currently testable using BlackBerry testing infrastructure.
+
+        * platform/graphics/GraphicsLayerClient.h:
+        (WebCore::GraphicsLayerClient::contentsVisible): Gets a default implementation instead of being pure virtual.
+        * platform/graphics/blackberry/LayerTile.cpp:
+        (WebCore::LayerTile::LayerTile): Merged LayerTileData into LayerTile now that m_tilesWebKitThread is gone.
+        * platform/graphics/blackberry/LayerTile.h:
+        (LayerTile):
+        * platform/graphics/blackberry/LayerTiler.cpp:
+        (WebCore::LayerTiler::~LayerTiler):
+        (WebCore::LayerTiler::updateTextureContentsIfNeeded): Bug fix to make us robust against the new default implementation of GraphicsLayerClient::contentsVisible()
+        (WebCore::LayerTiler::shouldPerformRenderJob):
+        (WebCore::LayerTiler::layerVisibilityChanged):
+        (WebCore::LayerTiler::uploadTexturesIfNeeded):
+        (WebCore::LayerTiler::drawTexturesInternal):
+        (WebCore::LayerTiler::deleteTextures):
+        (WebCore::LayerTiler::pruneTextures):
+        (WebCore::LayerTiler::bindContentsTexture):
+        * platform/graphics/blackberry/LayerTiler.h:
+        (LayerTiler):
+
 2012-08-02  Keishi Hattori  <keishi@webkit.org>
 
         Slider should snap to datalist tick marks

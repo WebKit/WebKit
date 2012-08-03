@@ -66,11 +66,6 @@ bool InspectorOverlay::showRepaintCounter(const GraphicsLayer*) const
 {
     return m_webPage->m_page->settings()->showRepaintCounter();
 }
-
-bool InspectorOverlay::contentsVisible(const GraphicsLayer*, const IntRect& contentRect) const
-{
-    return true;
-}
 #endif
 
 InspectorOverlay::~InspectorOverlay() { }

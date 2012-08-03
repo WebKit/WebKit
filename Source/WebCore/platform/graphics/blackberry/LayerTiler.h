@@ -138,7 +138,6 @@ private:
     };
 
     typedef HashMap<TileIndex, LayerTile*> TileMap;
-    typedef HashMap<TileIndex, LayerTileData> VisibilityMap;
     typedef HashMap<TileIndex, const TextureJob*> TileJobsMap;
 
     IntSize tileSize() const { return m_tileSize; }
@@ -176,9 +175,7 @@ private:
 
     LayerWebKitThread* m_layer;
 
-    TileMap m_tilesCompositingThread;
-
-    VisibilityMap m_tilesWebKitThread;
+    TileMap m_tiles; // Compositing thread only
 
     bool m_tilingDisabled;
 

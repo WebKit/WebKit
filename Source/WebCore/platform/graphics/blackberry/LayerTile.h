@@ -33,20 +33,7 @@ class Color;
 class IntRect;
 class TileIndex;
 
-class LayerTileData {
-public:
-    LayerTileData()
-        : m_visible(false)
-    {
-    }
-
-    bool isVisible() const { return m_visible; }
-
-protected:
-    bool m_visible;
-};
-
-class LayerTile : public LayerTileData {
+class LayerTile {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     LayerTile();
@@ -76,7 +63,8 @@ private:
 
     // Never assign to m_texture directly, use setTexture() above.
     RefPtr<Texture> m_texture;
-    bool m_contentsDirty;
+    bool m_contentsDirty : 1;
+    bool m_visible : 1;
 };
 
 }

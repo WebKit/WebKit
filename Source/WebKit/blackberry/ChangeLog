@@ -1,3 +1,27 @@
+2012-08-02  Arvid Nilsson  <anilsson@rim.com>
+
+        [BlackBerry] Add default implementation of GraphicsLayerClient::contentsVisible()
+        https://bugs.webkit.org/show_bug.cgi?id=93036
+
+        Reviewed by George Staikos.
+
+        Remove implementation of GraphicsLayerClient::contentsVisible() now
+        that it has a default implementation.
+
+        This also fixes a bug where memory usage for the inspector highlight
+        overlay would balloon because it returned true from contentsVisible()
+        which would cause the LayerTiler to populate all tiles. The default
+        implementation returns false instead.
+
+        PR 187458, 184377
+
+        * WebCoreSupport/InspectorOverlay.cpp:
+        (WebCore::InspectorOverlay::showRepaintCounter):
+        * WebCoreSupport/InspectorOverlay.h:
+        (InspectorOverlay):
+        * WebKitSupport/DefaultTapHighlight.h:
+        * WebKitSupport/SelectionOverlay.h:
+
 2012-08-02  Antonio Gomes  <agomes@rim.com>
 
         Unreviewed debug build fix (bug 92889)

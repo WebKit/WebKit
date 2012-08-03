@@ -28,6 +28,7 @@ namespace WebCore {
 
 LayerTile::LayerTile()
     : m_contentsDirty(false)
+    , m_visible(false)
 {
 }
 

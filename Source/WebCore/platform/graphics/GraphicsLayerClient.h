@@ -86,7 +86,7 @@ public:
 #endif
 
 #if PLATFORM(BLACKBERRY)
-    virtual bool contentsVisible(const GraphicsLayer*, const IntRect& contentRect) const = 0;
+    virtual bool contentsVisible(const GraphicsLayer*, const IntRect& contentRect) const { return false; }
 #endif
 };
 
