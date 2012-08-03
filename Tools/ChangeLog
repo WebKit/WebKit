@@ -1,3 +1,59 @@
+2012-08-03  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Web Inspector: clang plugin for checking native memory instrumentation coverage.
+        https://bugs.webkit.org/show_bug.cgi?id=92650
+
+        Reviewed by Yury Semikhatsky.
+
+        This is the clang plugin for checking native memory instrumentation coverage.
+        The idea: InspectorMemoryAgent traverses through instrumented objects and collects pointers and their sizes and types.
+        It is doing that with help of reportMemoryUsage function that needs to be implemented in each, significant
+        from native memory footprint point of view, WebCore class.
+        This plugin checks that the list of class members is matching with the list of members reported in reportMemoryUsage function
+        and makes a warning for the each member that needs to be reported.
+
+        * clang/ReportMemoryUsagePlugin/CMakeLists.txt: Added.
+        * clang/ReportMemoryUsagePlugin/Makefile: Added.
+        * clang/ReportMemoryUsagePlugin/ReportMemoryUsage.cpp: Added.
+        (clang):
+        (AddMemberCallVisitor):
+        (clang::AddMemberCallVisitor::VisitCallExpr):
+        (clang::AddMemberCallVisitor::instrumentedMembers):
+        (ReportMemoryUsageVisitor):
+        (clang::ReportMemoryUsageVisitor::ReportMemoryUsageVisitor):
+        (clang::ReportMemoryUsageVisitor::VisitCXXMethodDecl):
+        (clang::ReportMemoryUsageVisitor::emitWarning):
+        (clang::ReportMemoryUsageVisitor::findInstrumentationMethod):
+        (clang::ReportMemoryUsageVisitor::needsToBeInstrumented):
+        (clang::ReportMemoryUsageVisitor::CheckMembersCoverage):
+        (ReportMemoryUsageConsumer):
+        (clang::ReportMemoryUsageConsumer::ReportMemoryUsageConsumer):
+        (clang::ReportMemoryUsageConsumer::HandleTranslationUnit):
+        (ReportMemoryUsageAction):
+        (clang::ReportMemoryUsageAction::CreateASTConsumer):
+        (clang::ReportMemoryUsageAction::ParseArgs):
+        * clang/ReportMemoryUsagePlugin/tests/Source/WebCore/Test.cpp: Added.
+        (aNamespace):
+        (MemoryInstrumentation):
+        (MemoryClassInfo):
+        (aNamespace::MemoryClassInfo::MemoryClassInfo):
+        (aNamespace::MemoryClassInfo::addMember):
+        (aNamespace::MemoryClassInfo::addInstrumentedMember):
+        (OwnPtr):
+        (aNamespace::OwnPtr::OwnPtr):
+        (RefPtr):
+        (aNamespace::RefPtr::RefPtr):
+        (Vector):
+        (String):
+        (NotInstrumentedClass):
+        (InstrumentedClass):
+        (aNamespace::InstrumentedClass::reportMemoryUsage):
+        (InstrumentedChildClass):
+        (aNamespace::InstrumentedChildClass::reportMemoryUsage):
+        (InstrumentedChildChildClass):
+        (InstrumentedChildChildClass::reportMemoryUsage):
+        (main):
+
 2012-08-03  Joone Hur  <joone.hur@intel.com>
 
         [EFL][DRT] WebKitAnimation API compile-time disabled
