@@ -1,3 +1,9 @@
+2012-08-02  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed attempt at fixing the GTK 64-bit debug build.
+
+        * Source/autotools/symbols.filter:
+
 2012-08-02  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] When farstream is not present do not enable MediaStream
