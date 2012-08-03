@@ -32,16 +32,15 @@
 /**
  * @extends {WebInspector.View}
  * @constructor
- * @param {WebInspector.TextEditorModel} textModel
  * @param {?string} url
  * @param {WebInspector.TextEditorDelegate} delegate
  */
-WebInspector.TextEditor = function(textModel, url, delegate)
+WebInspector.TextEditor = function(url, delegate)
 {
     WebInspector.View.call(this);
     this.registerRequiredCSS("textEditor.css");
 
-    this._textModel = textModel;
+    this._textModel = new WebInspector.TextEditorModel();
     this._textModel.addEventListener(WebInspector.TextEditorModel.Events.TextChanged, this._textChanged, this);
     this._textModel.resetUndoStack();
     this._delegate = delegate;
@@ -425,6 +424,76 @@ WebInspector.TextEditor.prototype = {
         this._lastSelection = textRange;
         if (this.element.isAncestor(document.activeElement))
             this._mainPanel._restoreSelection(textRange);
+    },
+
+    /**
+     * @param {string} text 
+     */
+    setText: function(text)
+    {
+        this._textModel.setText(text);
+    },
+
+    /**
+     * @return {string}
+     */
+    text: function()
+    {
+        return this._textModel.text();
+    },
+
+    /**
+     * @return {WebInspector.TextRange}
+     */
+    range: function()
+    {
+        return this._textModel.range();
+    },
+
+    /**
+     * @param {number} lineNumber
+     * @return {string}
+     */
+    line: function(lineNumber)
+    {
+        return this._textModel.line(lineNumber);
+    },
+
+    /**
+     * @return {number}
+     */
+    get linesCount()
+    {
+        return this._textModel.linesCount;
+    },
+
+    /**
+     * @param {number} line
+     * @param {string} name  
+     * @param {Object?} value  
+     */
+    setAttribute: function(line, name, value)
+    {
+        this._textModel.setAttribute(line, name, value);
+    },
+
+    /**
+     * @param {number} line
+     * @param {string} name  
+     * @return {Object|null} value  
+     */
+    getAttribute: function(line, name)
+    {
+        return this._textModel.getAttribute(line, name);
+    },
+
+    /**
+     * @param {number} line
+     * @param {string} name
+     */
+    removeAttribute: function(line, name)
+    {
+        this._textModel.removeAttribute(line, name);
     },
 
     wasShown: function()

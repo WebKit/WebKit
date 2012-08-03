@@ -1,3 +1,41 @@
+2012-08-03  Jan Keromnes  <janx@linux.com>
+
+        Web Inspector: Make textModel private to textEditor
+        https://bugs.webkit.org/show_bug.cgi?id=92999
+
+        Reviewed by Pavel Feldman.
+
+        Making textModel private to the textEditor ensures that it is accessed
+        only through the textEditor, making the latter more modular.
+
+        Tests were changed accordingly.
+
+        * inspector/front-end/JavaScriptSourceFrame.js:
+        (WebInspector.JavaScriptSourceFrame.prototype.afterTextChanged):
+        (WebInspector.JavaScriptSourceFrame.prototype._restoreBreakpointsAfterEditing):
+        (WebInspector.JavaScriptSourceFrame.prototype._addBreakpointDecoration):
+        (WebInspector.JavaScriptSourceFrame.prototype._removeBreakpointDecoration):
+        (WebInspector.JavaScriptSourceFrame.prototype._lineNumberAfterEditing):
+        * inspector/front-end/SourceFrame.js:
+        (WebInspector.SourceFrame):
+        (WebInspector.SourceFrame.prototype.setContent):
+        (WebInspector.SourceFrame.prototype.replaceAllWith):
+        (WebInspector.SourceFrame.prototype._collectRegexMatches):
+        (WebInspector.SourceFrame.prototype.addMessageToSource):
+        (WebInspector.SourceFrame.prototype.removeMessageFromSource):
+        (WebInspector.TextEditorDelegateForSourceFrame.prototype.commitEditing):
+        * inspector/front-end/TextEditor.js:
+        (WebInspector.TextEditor.prototype.setText):
+        (WebInspector.TextEditor.prototype.text):
+        (WebInspector.TextEditor.prototype.range):
+        (WebInspector.TextEditor.prototype.line):
+        (WebInspector.TextEditor.prototype.get linesCount):
+        (WebInspector.TextEditor.prototype.setAttribute):
+        (WebInspector.TextEditor.prototype.getAttribute):
+        (WebInspector.TextEditor.prototype.removeAttribute):
+        * inspector/front-end/UISourceCodeFrame.js:
+        (WebInspector.UISourceCodeFrame.prototype.afterTextChanged):
+
 2012-08-03  Adam Barth  <abarth@webkit.org>
 
         V8Proxy::retrieve(*) leads to really obfuscated code and should be removed

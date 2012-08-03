@@ -150,7 +150,7 @@ WebInspector.JavaScriptSourceFrame.prototype = {
     afterTextChanged: function(oldRange, newRange)
     {
         WebInspector.SourceFrame.prototype.afterTextChanged.call(this, oldRange, newRange);
-        this._javaScriptSource.setWorkingCopy(this.textModel.text());
+        this._javaScriptSource.setWorkingCopy(this._textEditor.text());
         this._restoreBreakpointsAfterEditing();
     },
 
@@ -192,8 +192,8 @@ WebInspector.JavaScriptSourceFrame.prototype = {
     {
         if (!this._javaScriptSource.isDirty() || this._javaScriptSource.supportsEnabledBreakpointsWhileEditing()) {
             // Restore all muted breakpoints.
-            for (var lineNumber = 0; lineNumber < this.textModel.linesCount; ++lineNumber) {
-                var breakpointDecoration = this.textModel.getAttribute(lineNumber, "breakpoint");
+            for (var lineNumber = 0; lineNumber < this._textEditor.linesCount; ++lineNumber) {
+                var breakpointDecoration = this._textEditor.getAttribute(lineNumber, "breakpoint");
                 if (breakpointDecoration) {
                     // Remove fake decoration
                     this._removeBreakpointDecoration(lineNumber);
@@ -333,7 +333,7 @@ WebInspector.JavaScriptSourceFrame.prototype = {
             condition: condition,
             enabled: enabled
         };
-        this.textModel.setAttribute(lineNumber, "breakpoint", breakpoint);
+        this.textEditor.setAttribute(lineNumber, "breakpoint", breakpoint);
 
         this.textEditor.beginUpdates();
         this.textEditor.addDecoration(lineNumber, "webkit-breakpoint");
@@ -350,7 +350,7 @@ WebInspector.JavaScriptSourceFrame.prototype = {
 
     _removeBreakpointDecoration: function(lineNumber)
     {
-        this.textModel.removeAttribute(lineNumber, "breakpoint");
+        this.textEditor.removeAttribute(lineNumber, "breakpoint");
         this.textEditor.beginUpdates();
         this.textEditor.removeDecoration(lineNumber, "webkit-breakpoint");
         this.textEditor.removeDecoration(lineNumber, "webkit-breakpoint-disabled");
@@ -460,7 +460,7 @@ WebInspector.JavaScriptSourceFrame.prototype = {
         if (lineNumber === oldRange.startLine) {
             var whiteSpacesRegex = /^[\s\xA0]*$/;
             for (var i = 0; lineNumber + i <= newRange.endLine; ++i) {
-                if (!whiteSpacesRegex.test(this.textModel.line(lineNumber + i))) {
+                if (!whiteSpacesRegex.test(this.textEditor.line(lineNumber + i))) {
                     shiftOffset = i;
                     break;
                 }

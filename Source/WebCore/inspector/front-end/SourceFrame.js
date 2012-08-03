@@ -41,10 +41,8 @@ WebInspector.SourceFrame = function(contentProvider)
     this._url = contentProvider.contentURL();
     this._contentProvider = contentProvider;
 
-    this._textModel = new WebInspector.TextEditorModel();
-
     var textEditorDelegate = new WebInspector.TextEditorDelegateForSourceFrame(this);
-    this._textEditor = new WebInspector.TextEditor(this._textModel, this._url, textEditorDelegate);
+    this._textEditor = new WebInspector.TextEditor(this._url, textEditorDelegate);
 
     this._currentSearchResultIndex = -1;
     this._searchResults = [];
@@ -158,11 +156,6 @@ WebInspector.SourceFrame.prototype = {
         this._messageBubbles = {};
 
         this._textEditor.doResize();
-    },
-
-    get textModel()
-    {
-        return this._textModel;
     },
 
     /**
@@ -299,7 +292,7 @@ WebInspector.SourceFrame.prototype = {
         this._textEditor.mimeType = mimeType;
 
         this._loaded = true;
-        this._textModel.setText(content || "");
+        this._textEditor.setText(content || "");
 
         this._textEditor.beginUpdates();
 
@@ -456,8 +449,8 @@ WebInspector.SourceFrame.prototype = {
     {
         this._textEditor.markAndRevealRange(null);
 
-        var text = this._textModel.text();
-        var range = this._textModel.range();
+        var text = this._textEditor.text();
+        var range = this._textEditor.range();
         text = text.replace(WebInspector.SourceFrame.createSearchRegex(query, "g"), replacement);
 
         this._isReplacing = true;
@@ -468,8 +461,8 @@ WebInspector.SourceFrame.prototype = {
     _collectRegexMatches: function(regexObject)
     {
         var ranges = [];
-        for (var i = 0; i < this._textModel.linesCount; ++i) {
-            var line = this._textModel.line(i);
+        for (var i = 0; i < this._textEditor.linesCount; ++i) {
+            var line = this._textEditor.line(i);
             var offset = 0;
             do {
                 var match = regexObject.exec(line);
@@ -493,8 +486,8 @@ WebInspector.SourceFrame.prototype = {
 
     addMessageToSource: function(lineNumber, msg)
     {
-        if (lineNumber >= this._textModel.linesCount)
-            lineNumber = this._textModel.linesCount - 1;
+        if (lineNumber >= this._textEditor.linesCount)
+            lineNumber = this._textEditor.linesCount - 1;
         if (lineNumber < 0)
             lineNumber = 0;
 
@@ -567,8 +560,8 @@ WebInspector.SourceFrame.prototype = {
 
     removeMessageFromSource: function(lineNumber, msg)
     {
-        if (lineNumber >= this._textModel.linesCount)
-            lineNumber = this._textModel.linesCount - 1;
+        if (lineNumber >= this._textEditor.linesCount)
+            lineNumber = this._textEditor.linesCount - 1;
         if (lineNumber < 0)
             lineNumber = 0;
 
@@ -662,7 +655,7 @@ WebInspector.TextEditorDelegateForSourceFrame.prototype = {
 
     commitEditing: function()
     {
-        this._sourceFrame.commitEditing(this._sourceFrame._textModel.text());
+        this._sourceFrame.commitEditing(this._sourceFrame._textEditor.text());
     },
 
     /**

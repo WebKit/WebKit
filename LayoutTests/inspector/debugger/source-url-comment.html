@@ -20,7 +20,7 @@ function test()
 
             function didShowScriptSource(sourceFrame)
             {
-                InspectorTest.addResult(sourceFrame.textModel.text());
+                InspectorTest.addResult(sourceFrame.textEditor.text());
                 next();
             }
         }

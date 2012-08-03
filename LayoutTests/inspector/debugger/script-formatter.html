@@ -36,12 +36,12 @@ var test = function()
             InspectorTest.showScriptSource("obfuscated.js", didShowScriptSource);
             function didShowScriptSource(sourceFrame)
             {
-                formatter.formatContent("text/javascript", sourceFrame._textModel.text(), didFormatContent);
+                formatter.formatContent("text/javascript", sourceFrame._textEditor.text(), didFormatContent);
             }
 
             function didFormatContent(content, mapping)
             {
-                var source = WebInspector.panels.scripts.visibleView._textModel.text();
+                var source = WebInspector.panels.scripts.visibleView._textEditor.text();
                 var formattedSource = content;
 
                 function testMapping(string)

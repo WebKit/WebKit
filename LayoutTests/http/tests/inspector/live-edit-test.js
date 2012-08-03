@@ -5,7 +5,7 @@ InspectorTest.replaceInSource = function(sourceFrame, string, replacement, callb
     sourceFrame._textEditor._mainPanel.setReadOnly(false);
     sourceFrame.beforeTextChanged();
     var oldRange, newRange;
-    var lines = sourceFrame._textModel._lines;
+    var lines = sourceFrame._textEditor._textModel._lines;
     for (var i = 0; i < lines.length; ++i) {
         var column = lines[i].indexOf(string);
         if (column === -1)

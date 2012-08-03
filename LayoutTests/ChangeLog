@@ -1,3 +1,21 @@
+2012-08-03  Jan Keromnes  <janx@linux.com>
+
+        Web Inspector: Make textModel private to textEditor
+        https://bugs.webkit.org/show_bug.cgi?id=92999
+
+        Reviewed by Pavel Feldman.
+
+        Tests no longer access textModel directly from sourceFrame.
+
+        * http/tests/inspector/debugger-test.js:
+        (initialize_DebuggerTest):
+        * http/tests/inspector/live-edit-test.js:
+        (initialize_LiveEditTest.InspectorTest.replaceInSource):
+        (initialize_LiveEditTest):
+        * inspector/debugger/pause-in-inline-script.html:
+        * inspector/debugger/script-formatter.html:
+        * inspector/debugger/source-url-comment.html:
+
 2012-08-03  Yuta Kitamura  <yutak@chromium.org>
 
         Unreviewed, test expectation change only.

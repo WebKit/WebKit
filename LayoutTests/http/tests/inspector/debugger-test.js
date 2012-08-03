@@ -128,9 +128,9 @@ InspectorTest.captureStackTrace = function(callFrames, dropLineNumbers)
 InspectorTest.dumpSourceFrameContents = function(sourceFrame)
 {
     InspectorTest.addResult("==Source frame contents start==");
-    var textModel = sourceFrame._textModel;
-    for (var i = 0; i < textModel.linesCount; ++i)
-        InspectorTest.addResult(textModel.line(i));
+    var textEditor = sourceFrame._textEditor;
+    for (var i = 0; i < textEditor.linesCount; ++i)
+        InspectorTest.addResult(textEditor.line(i));
     InspectorTest.addResult("==Source frame contents end==");
 };
 

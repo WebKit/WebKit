@@ -65,7 +65,7 @@ var test = function()
     function didShowScript(sourceFrame)
     {
         InspectorTest.addResult("didShowScript");
-        var resourceText = sourceFrame._textModel.text();
+        var resourceText = sourceFrame._textEditor.text();
         var lines = resourceText.split("\n");
         var callFrames = WebInspector.debuggerModel.callFrames;
         InspectorTest.addResult("Source strings corresponding to the call stack:");
