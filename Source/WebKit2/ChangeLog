@@ -1,3 +1,19 @@
+2012-08-03  Balazs Kelemen  <kbalazs@webkit.org>
+
+        Unreviewed, rolling out r124603.
+        http://trac.webkit.org/changeset/124603
+        https://bugs.webkit.org/show_bug.cgi?id=93077
+
+        Made a few tests crash under
+        LayerTreeCoordinator::flushPendingLayerChanges
+
+        * WebProcess/WebPage/LayerTreeCoordinator/LayerTreeCoordinator.cpp:
+        (WebKit::LayerTreeCoordinator::LayerTreeCoordinator):
+        (WebKit::LayerTreeCoordinator::forceRepaint):
+        (WebKit::LayerTreeCoordinator::layerTreeTileUpdatesAllowed):
+        * WebProcess/WebPage/LayerTreeCoordinator/LayerTreeCoordinator.h:
+        (LayerTreeCoordinator):
+
 2012-08-03  Mario Sanchez Prada  <msanchez@igalia.com>
 
         Unreviewed build fix for GTK after r124479.
