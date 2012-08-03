@@ -191,7 +191,7 @@ void GraphicsContext::platformDestroy()
     delete m_data;
 }
 
-AffineTransform GraphicsContext::getCTM() const
+AffineTransform GraphicsContext::getCTM(IncludeDeviceScale) const
 {
     if (paintingDisabled())
         return AffineTransform();

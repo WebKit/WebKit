@@ -54,7 +54,7 @@ void GeneratorGeneratedImage::drawPattern(GraphicsContext* destContext, const Fl
     m_generator->adjustParametersForTiledDrawing(adjustedSize, adjustedSrcRect);
 
     // Factor in the destination context's scale to generate at the best resolution
-    AffineTransform destContextCTM = destContext->getCTM();
+    AffineTransform destContextCTM = destContext->getCTM(GraphicsContext::DefinitelyIncludeDeviceScale);
     double xScale = fabs(destContextCTM.xScale());
     double yScale = fabs(destContextCTM.yScale());
     AffineTransform adjustedPatternCTM = patternTransform;

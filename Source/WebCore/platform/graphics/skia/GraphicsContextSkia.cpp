@@ -736,7 +736,7 @@ void GraphicsContext::fillRoundedRect(const IntRect& rect,
     platformContext()->didDrawPath(path, paint);
 }
 
-AffineTransform GraphicsContext::getCTM() const
+AffineTransform GraphicsContext::getCTM(IncludeDeviceScale) const
 {
     if (paintingDisabled())
         return AffineTransform();

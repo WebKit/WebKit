@@ -475,7 +475,7 @@ void GraphicsContext::canvasClip(const Path& path)
     clip(path);
 }
 
-AffineTransform GraphicsContext::getCTM() const
+AffineTransform GraphicsContext::getCTM(IncludeDeviceScale) const
 { 
     if (paintingDisabled())
         return AffineTransform();

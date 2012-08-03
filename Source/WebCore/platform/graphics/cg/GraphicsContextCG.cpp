@@ -1294,12 +1294,18 @@ void GraphicsContext::setCTM(const AffineTransform& transform)
     m_data->m_userToDeviceTransformKnownToBeIdentity = false;
 }
 
-AffineTransform GraphicsContext::getCTM() const
+AffineTransform GraphicsContext::getCTM(IncludeDeviceScale includeScale) const
 {
     if (paintingDisabled())
         return AffineTransform();
 
-    return AffineTransform(CGContextGetCTM(platformContext()));
+    // The CTM usually includes the deviceScaleFactor except in WebKit 1 when the
+    // content is non-composited, since the scale factor is integrated at a lower
+    // level. To guarantee the deviceScale is included, we can use this CG API.
+    if (includeScale == DefinitelyIncludeDeviceScale)
+        return CGContextGetUserSpaceToDeviceSpaceTransform(platformContext());
+
+    return CGContextGetCTM(platformContext());
 }
 
 FloatRect GraphicsContext::roundToDevicePixels(const FloatRect& rect, RoundingMode roundingMode)
