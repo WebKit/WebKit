@@ -1,5 +1,18 @@
 2012-08-03  Filip Pizlo  <fpizlo@apple.com>
 
+        DFG handling of get_by_id should always inject a ForceOSRExit node if there is no prediction
+        https://bugs.webkit.org/show_bug.cgi?id=93162
+
+        Reviewed by Mark Hahnenberg.
+
+        This simplifies the DFG IR by ensuring that all nodes that use value profiles will be preceded
+        by a ForceOSRExit if the value profile had no data.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+
+2012-08-03  Filip Pizlo  <fpizlo@apple.com>
+
         DFG::StructureCheckHoistingPhase keeps a Node& around for too long
         https://bugs.webkit.org/show_bug.cgi?id=93157
 

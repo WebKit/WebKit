@@ -2235,7 +2235,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
         }
         case op_get_by_id:
         case op_get_by_id_out_of_line: {
-            SpeculatedType prediction = getPredictionWithoutOSRExit();
+            SpeculatedType prediction = getPrediction();
             
             NodeIndex base = get(currentInstruction[2].u.operand);
             unsigned identifierNumber = m_inlineStackTop->m_identifierRemap[currentInstruction[3].u.operand];
