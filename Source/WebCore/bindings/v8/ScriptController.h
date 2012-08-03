@@ -65,6 +65,7 @@ public:
     // FIXME: V8Proxy should either be folded into ScriptController
     // or this accessor should be made JSProxy*
     V8Proxy* proxy() { return m_proxy.get(); }
+    V8DOMWindowShell* windowShell() { return m_proxy->windowShell(); }
 
     ScriptValue executeScript(const ScriptSourceCode&);
     ScriptValue executeScript(const String& script, bool forceUserGesture = false);

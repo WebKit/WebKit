@@ -78,9 +78,6 @@ PageScriptDebugServer::PageScriptDebugServer()
 
 void PageScriptDebugServer::addListener(ScriptDebugListener* listener, Page* page)
 {
-    V8Proxy* proxy = V8Proxy::retrieve(page->mainFrame());
-    if (!proxy)
-        return;
     ScriptController* scriptController = page->mainFrame()->script();
     if (!scriptController->canExecuteScripts(NotAboutToExecuteScript))
         return;
@@ -96,7 +93,7 @@ void PageScriptDebugServer::addListener(ScriptDebugListener* listener, Page* pag
     }
     m_listenersMap.set(page, listener);
 
-    V8DOMWindowShell* shell = proxy->windowShell();
+    V8DOMWindowShell* shell = scriptController->windowShell();
     if (!shell->isContextInitialized())
         return;
     v8::Handle<v8::Context> context = shell->context();

@@ -177,7 +177,7 @@ v8::Local<v8::Object> V8DOMWrapper::instantiateV8Object(V8Proxy* proxy, WrapperT
             if (isWrapperOfType(globalPrototype, &V8DOMWindow::info)) {
                 Frame* frame = V8DOMWindow::toNative(globalPrototype)->frame();
                 if (frame && frame->script()->canExecuteScripts(NotAboutToExecuteScript))
-                    proxy = V8Proxy::retrieve(frame);
+                    proxy = frame->script()->proxy();
             }
 #if ENABLE(WORKERS)
             else if (isWrapperOfType(globalPrototype, &V8WorkerContext::info))

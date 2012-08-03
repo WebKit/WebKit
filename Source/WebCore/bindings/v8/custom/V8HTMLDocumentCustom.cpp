@@ -156,12 +156,7 @@ v8::Handle<v8::Value> V8HTMLDocument::openCallback(const v8::Arguments& args)
             for (int i = 0; i < args.Length(); i++)
                 params[i] = args[i];
 
-            V8Proxy* proxy = V8Proxy::retrieve(frame.get());
-            if (!proxy)
-                return v8::Undefined();
-
-            v8::Local<v8::Value> result = proxy->callFunction(v8::Local<v8::Function>::Cast(function), global, args.Length(), params.get());
-            return result;
+            return frame->script()->proxy()->callFunction(v8::Local<v8::Function>::Cast(function), global, args.Length(), params.get());
         }
     }
 
@@ -193,8 +188,8 @@ v8::Handle<v8::Value> toV8(HTMLDocument* impl, v8::Isolate* isolate, bool forceN
     if (wrapper.IsEmpty())
         return wrapper;
     if (!V8IsolatedContext::getEntered()) {
-        if (V8Proxy* proxy = V8Proxy::retrieve(impl->frame()))
-            proxy->windowShell()->updateDocumentWrapper(wrapper);
+        if (Frame* frame = impl->frame())
+            frame->script()->windowShell()->updateDocumentWrapper(wrapper);
     }
     return wrapper;
 }

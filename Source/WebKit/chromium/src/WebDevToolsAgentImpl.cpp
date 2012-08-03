@@ -423,8 +423,8 @@ void WebDevToolsAgentImpl::didCreateScriptContext(WebFrameImpl* webframe, int wo
     // Skip non main world contexts.
     if (worldId)
         return;
-    if (WebCore::V8Proxy* proxy = WebCore::V8Proxy::retrieve(webframe->frame()))
-        proxy->setContextDebugId(m_hostId);
+    if (WebCore::Frame* frame = webframe->frame())
+        frame->script()->proxy()->setContextDebugId(m_hostId);
 }
 
 void WebDevToolsAgentImpl::mainFrameViewCreated(WebFrameImpl* webFrame)

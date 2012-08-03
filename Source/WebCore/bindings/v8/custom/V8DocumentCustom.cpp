@@ -131,8 +131,8 @@ v8::Handle<v8::Value> toV8(Document* impl, v8::Isolate* isolate, bool forceNewOb
     if (wrapper.IsEmpty())
         return wrapper;
     if (!V8IsolatedContext::getEntered()) {
-        if (V8Proxy* proxy = V8Proxy::retrieve(impl->frame()))
-            proxy->windowShell()->updateDocumentWrapper(wrapper);
+        if (Frame* frame = impl->frame())
+            frame->script()->windowShell()->updateDocumentWrapper(wrapper);
     }
     return wrapper;
 }

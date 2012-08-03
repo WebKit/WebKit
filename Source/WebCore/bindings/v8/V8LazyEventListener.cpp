@@ -86,13 +86,21 @@ v8::Local<v8::Value> V8LazyEventListener::callListenerFunction(ScriptExecutionCo
 
     v8::Handle<v8::Value> parameters[1] = { jsEvent };
 
-    if (V8Proxy* proxy = V8Proxy::retrieve(context)) {
-        Frame* frame = static_cast<Document*>(context)->frame();
-        if (frame->script()->canExecuteScripts(AboutToExecuteScript))
-            return proxy->callFunction(handlerFunction, receiver, 1, parameters);
-    }
+    // FIXME: Can |context| be 0 here?
+    if (!context)
+        return v8::Local<v8::Value>();
 
-    return v8::Local<v8::Value>();
+    if (!context->isDocument())
+        return v8::Local<v8::Value>();
+
+    Frame* frame = static_cast<Document*>(context)->frame();
+    if (!frame)
+        return v8::Local<v8::Value>();
+
+    if (!frame->script()->canExecuteScripts(AboutToExecuteScript))
+        return v8::Local<v8::Value>();
+
+    return frame->script()->proxy()->callFunction(handlerFunction, receiver, 1, parameters);
 }
 
 static v8::Handle<v8::Value> V8LazyEventListenerToString(const v8::Arguments& args)
@@ -110,15 +118,13 @@ void V8LazyEventListener::prepareListenerObject(ScriptExecutionContext* context)
 
     v8::HandleScope handleScope;
 
-    V8Proxy* proxy = V8Proxy::retrieve(context);
-    if (!proxy)
-        return;
     ASSERT(context->isDocument());
-    if (!static_cast<Document*>(context)->frame()->script()->canExecuteScripts(NotAboutToExecuteScript))
+    Frame* frame = static_cast<Document*>(context)->frame();
+    ASSERT(frame);
+    if (!frame->script()->canExecuteScripts(NotAboutToExecuteScript))
         return;
-
     // Use the outer scope to hold context.
-    v8::Local<v8::Context> v8Context = worldContext().adjustedContext(proxy);
+    v8::Local<v8::Context> v8Context = worldContext().adjustedContext(frame->script()->proxy());
     // Bail out if we cannot get the context.
     if (v8Context.IsEmpty())
         return;

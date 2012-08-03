@@ -54,7 +54,7 @@ static v8::Handle<v8::Value> V8TestNamedConstructorConstructorCallback(const v8:
     if (ConstructorMode::current() == ConstructorMode::WrapExistingObject)
         return args.Holder();
 
-    Frame* frame = V8Proxy::retrieveFrameForCurrentContext();
+    Frame* frame = currentFrame(BindingState::instance());
     if (!frame)
         return V8Proxy::throwError(V8Proxy::ReferenceError, "TestNamedConstructor constructor associated frame is unavailable", args.GetIsolate());
 

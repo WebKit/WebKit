@@ -1,3 +1,13 @@
+2012-08-03  Adam Barth  <abarth@webkit.org>
+
+        V8Proxy::retrieve(*) leads to really obfuscated code and should be removed
+        https://bugs.webkit.org/show_bug.cgi?id=93072
+
+        Reviewed by Eric Seidel.
+
+        * src/WebDevToolsAgentImpl.cpp:
+        (WebKit::WebDevToolsAgentImpl::didCreateScriptContext):
+
 2012-08-02  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Web Inspector: extend test coverage for nmi code and fix 2 bugs.

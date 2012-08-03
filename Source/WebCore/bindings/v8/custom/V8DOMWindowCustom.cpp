@@ -243,8 +243,7 @@ v8::Handle<v8::Value> V8DOMWindow::addEventListenerCallback(const v8::Arguments&
         return v8::Undefined();
 
     // FIXME: Check if there is not enough arguments
-    V8Proxy* proxy = V8Proxy::retrieve(imp->frame());
-    if (!proxy)
+    if (!imp->frame())
         return v8::Undefined();
 
     RefPtr<EventListener> listener = V8DOMWrapper::getEventListener(args[1], false, ListenerFindOrCreate);
@@ -275,8 +274,7 @@ v8::Handle<v8::Value> V8DOMWindow::removeEventListenerCallback(const v8::Argumen
     if (!doc)
         return v8::Undefined();
 
-    V8Proxy* proxy = V8Proxy::retrieve(imp->frame());
-    if (!proxy)
+    if (!imp->frame())
         return v8::Undefined();
 
     RefPtr<EventListener> listener = V8DOMWrapper::getEventListener(args[1], false, ListenerFindOnly);

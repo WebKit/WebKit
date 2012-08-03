@@ -197,23 +197,18 @@ bool V8Proxy::handleOutOfMemory()
 
     // Warning, error, disable JS for this frame?
     Frame* frame = V8Proxy::retrieveFrame(context);
+    if (!frame)
+        return true;
 
-    V8Proxy* proxy = V8Proxy::retrieve(frame);
-    if (proxy) {
-        // Clean m_context, and event handlers.
-        proxy->clearForClose();
-
-        proxy->windowShell()->destroyGlobal();
-    }
+    frame->script()->proxy()->clearForClose();
+    frame->script()->windowShell()->destroyGlobal();
 
 #if PLATFORM(CHROMIUM)
     PlatformSupport::notifyJSOutOfMemory(frame);
 #endif
 
-    // Disable JS.
-    Settings* settings = frame->settings();
-    ASSERT(settings);
-    settings->setScriptEnabled(false);
+    if (Settings* settings = frame->settings())
+        settings->setScriptEnabled(false);
 
     return true;
 }
@@ -490,31 +485,12 @@ Frame* V8Proxy::retrieveFrame(v8::Handle<v8::Context> context)
     return 0;
 }
 
-V8Proxy* V8Proxy::retrieve()
-{
-    DOMWindow* window = retrieveWindow(v8::Context::GetCurrent());
-    ASSERT(window);
-    return retrieve(window->frame());
-}
-
-V8Proxy* V8Proxy::retrieve(Frame* frame)
-{
-    return frame ? frame->script()->proxy() : 0;
-}
-
-V8Proxy* V8Proxy::retrieve(ScriptExecutionContext* context)
-{
-    if (!context || !context->isDocument())
-        return 0;
-    return retrieve(static_cast<Document*>(context)->frame());
-}
-
 V8BindingPerContextData* V8Proxy::retrievePerContextData(Frame* frame)
 {
     V8IsolatedContext* isolatedContext;
     if (UNLIKELY(!!(isolatedContext = V8IsolatedContext::getEntered())))
         return isolatedContext->perContextData();
-    return V8Proxy::retrieve(frame)->windowShell()->perContextData();
+    return frame->script()->windowShell()->perContextData();
 }
 
 void V8Proxy::resetIsolatedWorlds()
@@ -685,11 +661,10 @@ bool V8Proxy::matchesCurrentContext()
 
 v8::Local<v8::Context> V8Proxy::mainWorldContext(Frame* frame)
 {
-    V8Proxy* proxy = retrieve(frame);
-    if (!proxy)
+    if (!frame)
         return v8::Local<v8::Context>();
 
-    return proxy->mainWorldContext();
+    return frame->script()->proxy()->mainWorldContext();
 }
 
 v8::Handle<v8::Value> V8Proxy::checkNewLegal(const v8::Arguments& args)
@@ -778,8 +753,8 @@ void V8Proxy::collectIsolatedContexts(Vector<std::pair<ScriptState*, SecurityOri
 v8::Local<v8::Context> toV8Context(ScriptExecutionContext* context, const WorldContextHandle& worldContext)
 {
     if (context->isDocument()) {
-        if (V8Proxy* proxy = V8Proxy::retrieve(context))
-            return worldContext.adjustedContext(proxy);
+        if (Frame* frame = static_cast<Document*>(context)->frame())
+            return worldContext.adjustedContext(frame->script()->proxy());
 #if ENABLE(WORKERS)
     } else if (context->isWorkerContext()) {
         if (WorkerContextExecutionProxy* proxy = static_cast<WorkerContext*>(context)->script()->proxy())

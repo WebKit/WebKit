@@ -3294,10 +3294,10 @@ END
 
     my $proxyInit;
     if (IsNodeSubType($dataNode)) {
-        $proxyInit = "V8Proxy::retrieve(impl->document()->frame())";
+        $proxyInit = "impl->document()->frame() ? impl->document()->frame()->script()->proxy() : 0";
         # DocumentType nodes are the only nodes that may have a NULL document.
         if ($interfaceName eq "DocumentType") {
-            $proxyInit = "impl->document() ? $proxyInit : 0";
+            $proxyInit = "impl->document() ? ($proxyInit) : 0";
         }
     } else {
         $proxyInit = "0";
@@ -3321,9 +3321,8 @@ END
     if (IsVisibleAcrossOrigins($dataNode)) {
         push(@implContent, <<END);
     if (impl->frame()) {
-        proxy = V8Proxy::retrieve(impl->frame());
-        if (proxy)
-            proxy->windowShell()->initContextIfNeeded();
+        proxy = impl->frame()->script()->proxy();
+        proxy->windowShell()->initContextIfNeeded();
     }
 END
     }

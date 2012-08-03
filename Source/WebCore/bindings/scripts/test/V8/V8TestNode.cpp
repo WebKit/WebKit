@@ -112,7 +112,7 @@ bool V8TestNode::HasInstance(v8::Handle<v8::Value> value)
 v8::Handle<v8::Object> V8TestNode::wrapSlow(PassRefPtr<TestNode> impl, v8::Isolate* isolate)
 {
     v8::Handle<v8::Object> wrapper;
-    V8Proxy* proxy = V8Proxy::retrieve(impl->document()->frame());
+    V8Proxy* proxy = impl->document()->frame() ? impl->document()->frame()->script()->proxy() : 0;
 
     // Enter the node's context and create the wrapper in that context.
     v8::Handle<v8::Context> context;

@@ -164,9 +164,9 @@ v8::Handle<v8::Object> V8TestActiveDOMObject::wrapSlow(PassRefPtr<TestActiveDOMO
     v8::Handle<v8::Object> wrapper;
     V8Proxy* proxy = 0;
     if (impl->frame()) {
-        proxy = V8Proxy::retrieve(impl->frame());
-        if (proxy)
-            proxy->windowShell()->initContextIfNeeded();
+        proxy = impl->frame()->script()->proxy();
+        frame->script()->windowShell()->initContextIfNeeded();
+        proxy->windowShell()->initContextIfNeeded();
     }
 
     // Enter the node's context and create the wrapper in that context.

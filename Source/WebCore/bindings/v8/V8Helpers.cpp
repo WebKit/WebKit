@@ -51,7 +51,9 @@ V8Proxy* toV8Proxy(NPObject* npObject)
 {
     V8NPObject* object = reinterpret_cast<V8NPObject*>(npObject);
     Frame* frame = object->rootObject->frame();
-    return V8Proxy::retrieve(frame);
+    if (!frame)
+        return 0;
+    return frame->script()->proxy();
 }
 
 } // namespace WebCore
