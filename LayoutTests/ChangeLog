@@ -1,3 +1,9 @@
+2012-08-03  Alexander Pavlov  <apavlov@chromium.org>
+
+        [Chromium] Unreviewed, skip appcache abort() tests.
+
+        * platform/chromium/TestExpectations:
+
 2012-08-03  Joone Hur  <joone.hur@intel.com>
 
         [EFL][DRT] WebKitAnimation API compile-time disabled
