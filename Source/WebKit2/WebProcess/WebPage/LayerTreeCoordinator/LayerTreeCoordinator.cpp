@@ -44,6 +44,7 @@
 #include <WebCore/RenderLayerCompositor.h>
 #include <WebCore/RenderView.h>
 #include <WebCore/Settings.h>
+#include <wtf/TemporaryChange.h>
 
 using namespace WebCore;
 
@@ -77,6 +78,7 @@ LayerTreeCoordinator::LayerTreeCoordinator(WebPage* webPage)
     , m_shouldSyncRootLayer(true)
     , m_layerFlushTimer(this, &LayerTreeCoordinator::layerFlushTimerFired)
     , m_layerFlushSchedulingEnabled(true)
+    , m_inForceRepaint(false)
 {
     // Create a root layer.
     m_rootLayer = GraphicsLayer::create(this);
@@ -174,6 +176,8 @@ void LayerTreeCoordinator::scrollNonCompositedContents(const WebCore::IntRect& s
 
 void LayerTreeCoordinator::forceRepaint()
 {
+    WTF::TemporaryChange<bool> inForceRepaint(m_inForceRepaint, true);
+
     // This is necessary for running layout tests. Since in this case we are not waiting for a UIProcess to reply nicely.
     // Instead we are just triggering forceRepaint. But we still want to have the scripted animation callbacks being executed.
     syncDisplayState();
@@ -575,7 +579,7 @@ void LayerTreeCoordinator::renderNextFrame()
 
 bool LayerTreeCoordinator::layerTreeTileUpdatesAllowed() const
 {
-    return !m_isSuspended && !m_waitingForUIProcess;
+    return m_inForceRepaint || (!m_isSuspended && !m_waitingForUIProcess);
 }
 
 void LayerTreeCoordinator::purgeBackingStores()

@@ -137,6 +137,7 @@ private:
     void layerFlushTimerFired(WebCore::Timer<LayerTreeCoordinator>*);
     WebCore::Timer<LayerTreeCoordinator> m_layerFlushTimer;
     bool m_layerFlushSchedulingEnabled;
+    bool m_inForceRepaint;
 };
 
 }
