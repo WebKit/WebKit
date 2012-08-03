@@ -1,5 +1,32 @@
 2012-08-02  Filip Pizlo  <fpizlo@apple.com>
 
+        ASSERTION FAILED: at(m_compileIndex).canExit() || m_isCheckingArgumentTypes
+        https://bugs.webkit.org/show_bug.cgi?id=91074
+
+        Reviewed by Mark Hahnenberg.
+
+        Fixes a bug where the speculative JIT was performing an unnecessary speculation that the
+        CFA had proven shouldn't be performed, leading to asserts that a node should not have
+        exit sites. This is a debug-only assert with no release symptom - we were just emitting
+        a check that was not reachable.
+        
+        Also found, and fixed, a bug where structure check hoisting was slightly confusing the
+        CFA by inserting GetLocal's into the graph. CSE would clean the GetLocal's up, which
+        would make the backend happy - but the CFA would produce subtly wrong results.
+
+        * bytecode/SpeculatedType.h:
+        (JSC::isOtherOrEmptySpeculation):
+        (JSC):
+        * dfg/DFGDriver.cpp:
+        (JSC::DFG::compile):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::dump):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compileObjectToObjectOrOtherEquality):
+        (JSC::DFG::SpeculativeJIT::compilePeepHoleObjectToObjectOrOtherEquality):
+
+2012-08-02  Filip Pizlo  <fpizlo@apple.com>
+
         Unreviewed, build fix for DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE).
 
         * dfg/DFGStructureCheckHoistingPhase.cpp:

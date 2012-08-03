@@ -102,9 +102,10 @@ inline bool compile(CompileMode compileMode, ExecState* exec, CodeBlock* codeBlo
         dfg.resetExitStates();
         performFixup(dfg);
     }
-    if (performStructureCheckHoisting(dfg))
-        performCFA(dfg); // Need to recompute CFA since nodes were added or changed.
+    bool shouldRedoCFA = performStructureCheckHoisting(dfg);
     performCSE(dfg, FixpointConverged);
+    if (shouldRedoCFA)
+        performCFA(dfg);
 #if DFG_ENABLE(DEBUG_VERBOSE)
     dataLog("DFG optimization fixpoint converged in %u iterations.\n", cnt);
 #endif

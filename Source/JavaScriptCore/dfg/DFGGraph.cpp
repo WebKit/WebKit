@@ -207,7 +207,7 @@ void Graph::dump(const char* prefix, NodeIndex nodeIndex)
         hasPrinted = !!node.child1();
     }
 
-    if (node.flags()) {
+    if (strlen(nodeFlagsAsString(node.flags()))) {
         dataLog("%s%s", hasPrinted ? ", " : "", nodeFlagsAsString(node.flags()));
         hasPrinted = true;
     }

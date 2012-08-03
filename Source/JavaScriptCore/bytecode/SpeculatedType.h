@@ -243,6 +243,11 @@ inline bool isOtherSpeculation(SpeculatedType value)
     return value == SpecOther;
 }
 
+inline bool isOtherOrEmptySpeculation(SpeculatedType value)
+{
+    return !value || value == SpecOther;
+}
+
 inline bool isEmptySpeculation(SpeculatedType value)
 {
     return value == SpecEmpty;
