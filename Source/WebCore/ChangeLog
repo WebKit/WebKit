@@ -1,3 +1,98 @@
+2012-08-02  David Grogan  <dgrogan@chromium.org>
+
+        IndexedDB: Core upgradeneeded logic
+        https://bugs.webkit.org/show_bug.cgi?id=92558
+
+        Reviewed by Ojan Vafai.
+
+        This is the backend webkit logic needed for integer versions. The rest
+        is in https://bugs.webkit.org/show_bug.cgi?id=89505.
+
+        I tried to make use of the existing processPendingCalls and added two
+        more queues, pendingOpenWithVersionCalls and
+        pendingSecondHalfOpenWithVersionCalls. The "second half" refers to
+        how there are two events that need to be fired in response to an
+        open-with-version call. The "second half" queue holds the open
+        requests that should immediately follow the caller's upgradeneeded
+        handler.
+
+        No new tests, there are so many they are in their own patch:
+        https://bugs.webkit.org/show_bug.cgi?id=92560
+
+        Though this patch doesn't change any expected behavior anyway, lack of
+        regressions is what we're hoping for here.
+
+        * Modules/indexeddb/IDBBackingStore.h:
+        (IDBBackingStore):
+        * Modules/indexeddb/IDBCallbacks.h:
+        (WebCore::IDBCallbacks::onBlocked):
+        (WebCore::IDBCallbacks::onUpgradeNeeded):
+        * Modules/indexeddb/IDBDatabaseBackendImpl.cpp:
+        (IDBDatabaseBackendImpl::PendingOpenCall):
+        (IDBDatabaseBackendImpl::PendingOpenWithVersionCall):
+        (WebCore::IDBDatabaseBackendImpl::PendingOpenWithVersionCall::create):
+        (WebCore::IDBDatabaseBackendImpl::PendingOpenWithVersionCall::callbacks):
+        (WebCore::IDBDatabaseBackendImpl::PendingOpenWithVersionCall::version):
+        (WebCore::IDBDatabaseBackendImpl::PendingOpenWithVersionCall::PendingOpenWithVersionCall):
+        (WebCore):
+        (WebCore::IDBDatabaseBackendImpl::IDBDatabaseBackendImpl):
+        (WebCore::IDBDatabaseBackendImpl::openInternal):
+        (WebCore::IDBDatabaseBackendImpl::metadata):
+        (WebCore::IDBDatabaseBackendImpl::setVersion):
+        (WebCore::IDBDatabaseBackendImpl::setIntVersionInternal):
+        (WebCore::IDBDatabaseBackendImpl::transactionFinished):
+        (WebCore::IDBDatabaseBackendImpl::transactionFinishedAndEventsFired):
+        When an upgradeneeded event is fired in response to an
+        open-with-version call, the version change transaction must receive its
+        complete event before processPendingCalls fires a success event at
+        IDBOpenDBRequest. In the future this should probably be changed
+        instead to transactionFinishedAndAbortFired and
+        transactionFinishedAndCompleteFired so that we'll know to fire a
+        success or error event at IDBOpenDBRequest. Currently, instead of
+        firing error when there's an abort, we don't fire anything.
+
+        (WebCore::IDBDatabaseBackendImpl::processPendingCalls):
+        Now that this is called after a connection is opened, we unfortunately
+        lose the invariant that there is only one existing connection when this
+        is called, but nothing inside this function actually relied on that.
+        Additionally, the secondHalfOpen calls only ever need to be serviced
+        in one place: right after a version change transaction completes, so
+        it could be moved out of here.
+
+        (WebCore::IDBDatabaseBackendImpl::registerFrontendCallbacks):
+        Now that setVersion and deleteDatabase calls are queued up behind
+        secondHalfOpen calls, we have to service those queues when
+        secondHalfOpen calls complete, which is here.  So call
+        processPendingCalls().
+
+        (WebCore::IDBDatabaseBackendImpl::runIntVersionChangeTransaction):
+        (WebCore::IDBDatabaseBackendImpl::openConnectionWithVersion):
+        (WebCore::IDBDatabaseBackendImpl::deleteDatabase):
+        (WebCore::IDBDatabaseBackendImpl::close):
+        * Modules/indexeddb/IDBDatabaseBackendImpl.h:
+        (IDBDatabaseBackendImpl):
+        * Modules/indexeddb/IDBDatabaseCallbacks.h:
+        (WebCore::IDBDatabaseCallbacks::onVersionChange):
+        * Modules/indexeddb/IDBFactoryBackendImpl.cpp:
+        (WebCore::IDBFactoryBackendImpl::open):
+        This is refactored some so that the call to openConection{WithVersion}
+        happens once, at the end.
+
+        * Modules/indexeddb/IDBLevelDBBackingStore.cpp:
+        (WebCore::IDBLevelDBBackingStore::getIDBDatabaseMetaData):
+        (WebCore::IDBLevelDBBackingStore::createIDBDatabaseMetaData):
+        (WebCore::IDBLevelDBBackingStore::updateIDBDatabaseIntVersion):
+        (WebCore):
+        (WebCore::IDBLevelDBBackingStore::deleteDatabase):
+        * Modules/indexeddb/IDBLevelDBBackingStore.h:
+        (IDBLevelDBBackingStore):
+        * Modules/indexeddb/IDBTransactionBackendImpl.cpp:
+        (WebCore::IDBTransactionBackendImpl::commit):
+        See above comments about transactionFinishedAndEventsFired. I tried
+        moving the call to transactionFinished after the events were fired but
+        that failed some asserts. But changing those asserts is still an
+        alternative to splitting up transactionFinished as is done here.
+
 2012-08-02  Rob Buis  <rwlbuis@webkit.org>
 
         SVG text selection doesn't work with hyperlinked text

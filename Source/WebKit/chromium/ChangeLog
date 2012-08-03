@@ -1,3 +1,16 @@
+2012-08-02  David Grogan  <dgrogan@chromium.org>
+
+        IndexedDB: Core upgradeneeded logic
+        https://bugs.webkit.org/show_bug.cgi?id=92558
+
+        Reviewed by Ojan Vafai.
+
+        Update overridden methods to match new signatures.
+
+        * tests/IDBAbortOnCorruptTest.cpp:
+        (WebCore::FailingBackingStore::createIDBDatabaseMetaData):
+        * tests/IDBFakeBackingStore.h:
+
 2012-08-02  Vincent Scheib  <scheib@chromium.org>
 
         Remove old Pointer Lock API.
