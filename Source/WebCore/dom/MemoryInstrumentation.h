@@ -175,8 +175,6 @@ public:
         m_objectType = memoryObjectInfo->objectType();
     }
 
-    template <typename P> void visitBaseClass(const P* ptr) { ptr->P::reportMemoryUsage(m_memoryObjectInfo); }
-
     template <typename M> void addInstrumentedMember(const M& member) { m_memoryInstrumentation->addInstrumentedObject(member, m_objectType); }
     template <typename M> void addMember(const M& member) { m_memoryInstrumentation->addObject(member, m_objectType); }
 

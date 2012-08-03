@@ -6093,7 +6093,7 @@ void Document::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo<Document> info(memoryObjectInfo, this, MemoryInstrumentation::DOM);
     info.addInstrumentedMember(m_styleResolver);
-    info.visitBaseClass<ContainerNode>(this);
+    ContainerNode::reportMemoryUsage(memoryObjectInfo);
     info.addVector(m_customFonts);
     info.addString(m_documentURI);
     info.addString(m_baseTarget);

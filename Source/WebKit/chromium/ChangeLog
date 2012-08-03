@@ -1,3 +1,13 @@
+2012-08-03  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Web Inspector: eliminate visitBaseClass method from NMI. It introduces unnecessary complexity.
+        https://bugs.webkit.org/show_bug.cgi?id=93129
+
+        Reviewed by Yury Semikhatsky.
+
+        * tests/MemoryInstrumentationTest.cpp:
+        (WebCore::InstrumentedWithOwnPtr::reportMemoryUsage):
+
 2012-08-03  Adam Barth  <abarth@webkit.org>
 
         V8Proxy::retrieve(*) leads to really obfuscated code and should be removed

@@ -1,3 +1,25 @@
+2012-08-03  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Web Inspector: eliminate visitBaseClass method from NMI. It introduces unnecessary complexity.
+        https://bugs.webkit.org/show_bug.cgi?id=93129
+
+        Reviewed by Yury Semikhatsky.
+
+        * css/PropertySetCSSStyleDeclaration.cpp:
+        (WebCore::StyleRuleCSSStyleDeclaration::reportMemoryUsage):
+        (WebCore::InlineCSSStyleDeclaration::reportMemoryUsage):
+        * dom/CharacterData.cpp:
+        (WebCore::CharacterData::reportMemoryUsage):
+        * dom/ContainerNode.h:
+        (WebCore::ContainerNode::reportMemoryUsage):
+        * dom/Document.cpp:
+        (WebCore::Document::reportMemoryUsage):
+        * dom/Element.h:
+        (WebCore::Element::reportMemoryUsage):
+        * dom/MemoryInstrumentation.h:
+        * dom/Node.cpp:
+        (WebCore::Node::reportMemoryUsage):
+
 2012-08-03  Alexandre Elias  <aelias@google.com>
 
         [chromium] Move ubercomp quads back into CC

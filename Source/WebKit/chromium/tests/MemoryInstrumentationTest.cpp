@@ -39,7 +39,6 @@
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 
-
 using namespace WebCore;
 
 namespace {
@@ -154,7 +153,7 @@ public:
     virtual void reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     {
         MemoryClassInfo<InstrumentedWithOwnPtr> info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
-        info.visitBaseClass<Instrumented>(this);
+        Instrumented::reportMemoryUsage(memoryObjectInfo);
         info.addMember(m_notInstrumentedOwnPtr);
     }
     OwnPtr<NotInstrumented> m_notInstrumentedOwnPtr;

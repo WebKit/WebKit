@@ -437,7 +437,7 @@ public:
     virtual void reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     {
         MemoryClassInfo<Element> info(memoryObjectInfo, this, MemoryInstrumentation::DOM);
-        info.visitBaseClass<ContainerNode>(this);
+        ContainerNode::reportMemoryUsage(memoryObjectInfo);
         info.addInstrumentedMember(m_tagName);
         info.addInstrumentedMember(attributeData());
     }

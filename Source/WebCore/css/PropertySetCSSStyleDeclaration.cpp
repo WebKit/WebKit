@@ -391,14 +391,14 @@ void StyleRuleCSSStyleDeclaration::reattach(StylePropertySet* propertySet)
 void StyleRuleCSSStyleDeclaration::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo<StyleRuleCSSStyleDeclaration> info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
-    info.visitBaseClass<PropertySetCSSStyleDeclaration>(this);
+    PropertySetCSSStyleDeclaration::reportMemoryUsage(memoryObjectInfo);
     info.addInstrumentedMember(m_parentRule);
 }
 
 void InlineCSSStyleDeclaration::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo<InlineCSSStyleDeclaration> info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
-    info.visitBaseClass<PropertySetCSSStyleDeclaration>(this);
+    PropertySetCSSStyleDeclaration::reportMemoryUsage(memoryObjectInfo);
     info.addInstrumentedMember(m_parentElement);
 }
 
