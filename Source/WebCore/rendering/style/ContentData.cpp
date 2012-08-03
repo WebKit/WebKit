@@ -69,11 +69,11 @@ bool operator==(const ContentData& a, const ContentData& b)
     case CONTENT_NONE:
         return true;
     case CONTENT_OBJECT:
-        return static_cast<const ImageContentData*>(&a)->image() == static_cast<const ImageContentData*>(&b)->image();
+        return *static_cast<const ImageContentData*>(&a)->image() == *static_cast<const ImageContentData*>(&b)->image();
     case CONTENT_TEXT:
         return static_cast<const TextContentData*>(&a)->text() == static_cast<const TextContentData*>(&b)->text();
     case CONTENT_COUNTER:
-        return static_cast<const CounterContentData*>(&a)->counter() == static_cast<const CounterContentData*>(&b)->counter();
+        return *static_cast<const CounterContentData*>(&a)->counter() == *static_cast<const CounterContentData*>(&b)->counter();
     case CONTENT_QUOTE:
         return static_cast<const QuoteContentData*>(&a)->quote() == static_cast<const QuoteContentData*>(&b)->quote();
     }
