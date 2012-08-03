@@ -1,3 +1,17 @@
+2012-08-03  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r124632.
+        http://trac.webkit.org/changeset/124632
+        https://bugs.webkit.org/show_bug.cgi?id=93154
+
+        Added new WebFrameTest.SelectRange which fails on bots
+        (Requested by dimich on #webkit).
+
+        * tests/WebFrameTest.cpp:
+        * tests/data/select_range_basic.html: Removed.
+        * tests/data/select_range_iframe.html: Removed.
+        * tests/data/select_range_scroll.html: Removed.
+
 2012-08-03  Terry Anderson  <tdanderson@chromium.org>
 
         Apply target fuzzing when sending a context menu event
