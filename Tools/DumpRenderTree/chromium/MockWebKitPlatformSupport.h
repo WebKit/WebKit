@@ -44,7 +44,6 @@ public:
 
 #if ENABLE(MEDIA_STREAM)
     virtual WebKit::WebMediaStreamCenter* createMediaStreamCenter(WebKit::WebMediaStreamCenterClient*) OVERRIDE;
-    virtual WebKit::WebRTCPeerConnectionHandler* createRTCPeerConnectionHandler(WebKit::WebRTCPeerConnectionHandlerClient*) OVERRIDE;
 #endif // ENABLE(MEDIA_STREAM)
 
 private:
@@ -52,7 +51,6 @@ private:
 
 #if ENABLE(MEDIA_STREAM)
     OwnPtr<WebKit::WebMediaStreamCenter> m_mockMediaStreamCenter;
-    OwnPtr<WebKit::WebRTCPeerConnectionHandler> m_mockRTCPeerConnectionHandler;
 #endif // ENABLE(MEDIA_STREAM)
 };
 
