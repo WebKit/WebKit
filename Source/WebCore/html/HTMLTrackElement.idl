@@ -28,8 +28,8 @@ module html {
         Conditional=VIDEO_TRACK,
         V8EnabledAtRuntime=webkitVideoTrack
     ] HTMLTrackElement : HTMLElement {
-        attribute [Reflect, URL] DOMString src;
         attribute DOMString kind;
+        attribute [Reflect, URL] DOMString src;
         attribute DOMString srclang;
         attribute DOMString label;
         attribute [Reflect] boolean default;

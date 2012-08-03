@@ -1,3 +1,14 @@
+2012-08-02  Yoshifumi Inoue  <yosin@chromium.org>
+
+        Make order of attribute/method in HTMLTrackElement.idl as same as specification
+        https://bugs.webkit.org/show_bug.cgi?id=80102
+
+        Reviewed by Kentaro Hara.
+
+        No new tests. This patch doesn't change behavior.
+
+        * html/HTMLTrackElement.idl: Reorder attribute/method position.
+
 2012-08-02  Kent Tamura  <tkent@chromium.org>
 
         Fix crashes for <input> and <textarea> with display:run-in.
