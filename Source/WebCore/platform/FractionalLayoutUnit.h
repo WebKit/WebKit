@@ -35,6 +35,7 @@
 #include <limits>
 #include <math.h>
 #include <stdlib.h>
+#include <wtf/MathExtras.h>
 
 #if PLATFORM(QT)
 #include <QDataStream>
@@ -180,6 +181,10 @@ public:
         FractionalLayoutUnit m;
         m.m_value = std::numeric_limits<int>::min();
         return m;
+    }
+    static FractionalLayoutUnit clamp(double value)
+    {
+        return clampTo<FractionalLayoutUnit>(value, FractionalLayoutUnit::min(), FractionalLayoutUnit::max());
     }
     
 private:

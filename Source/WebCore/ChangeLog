@@ -1,3 +1,31 @@
+2012-08-03  Emil A Eklund  <eae@chromium.org>
+
+        Remove dependency on LayoutTypes.h from transformation code
+        https://bugs.webkit.org/show_bug.cgi?id=93037
+
+        Reviewed by Levi Weintraub.
+
+        TransformationMatrix and HitTestingTransformState includes LayoutTypes.h
+        which is in rendering. This is a layering violation.
+        Remove this dependency as it is no longer needed.
+
+        No new tests, no change in functionality.
+
+        * rendering/LayoutTypes.h:
+        Remove clampToLayoutUnit
+        
+        * platform/FractionalLayoutUnit.h:
+        (WebCore::FractionalLayoutUnit::clamp):
+        Add FractionalLayoutUnit::clamp method that clamps a double to a FractionalLayoutUnit.
+        * platform/graphics/transforms/TransformationMatrix.cpp:
+        (WebCore::clampEdgeValue):
+        (WebCore::TransformationMatrix::clampedBoundsOfProjectedQuad):
+        Use clamp/max/min from FractionalLayoutUnit instead of going through LayoutUnit abstraction.
+        * platform/graphics/transforms/TransformationMatrix.h:
+        * rendering/HitTestingTransformState.cpp:
+        * rendering/HitTestingTransformState.h:
+        Replace use of LayoutRect with FractionalLayoutRect as LayoutRect maps to FractionalLayoutRect on all platforms.
+
 2012-08-03  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/12005188> REGRESSION (Safari 5.1 - 6): Cannot correctly display Traditional Mongolian Script

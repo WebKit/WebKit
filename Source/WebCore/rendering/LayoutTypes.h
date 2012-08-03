@@ -152,11 +152,6 @@ inline LayoutUnit layoutMod(const LayoutUnit& numerator, const LayoutUnit& denom
     return numerator.toInt() % denominator.toInt();
 }
 
-inline LayoutUnit clampToLayoutUnit(double value)
-{
-    return clampTo<FractionalLayoutUnit>(value, FractionalLayoutUnit::min(), FractionalLayoutUnit::max());
-}
-
 inline IntSize pixelSnappedIntSize(const FractionalLayoutSize& s, const FractionalLayoutPoint& p)
 {
     return IntSize(snapSizeToPixel(s.width(), p.x()), snapSizeToPixel(s.height(), p.y()));

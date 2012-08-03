@@ -28,7 +28,6 @@
 #include "TransformationMatrix.h"
 
 #include "AffineTransform.h"
-#include "FractionalLayoutRect.h"
 #include "FloatPoint3D.h"
 #include "FloatRect.h"
 #include "FloatQuad.h"
@@ -614,10 +613,10 @@ FloatQuad TransformationMatrix::projectQuad(const FloatQuad& q) const
 static float clampEdgeValue(float f)
 {
     ASSERT(!isnan(f));
-    return min<float>(max<float>(f, -MAX_LAYOUT_UNIT / 2), MAX_LAYOUT_UNIT / 2);
+    return min<float>(max<float>(f, -FractionalLayoutUnit::max() / 2), FractionalLayoutUnit::max() / 2);
 }
 
-LayoutRect TransformationMatrix::clampedBoundsOfProjectedQuad(const FloatQuad& q) const
+FractionalLayoutRect TransformationMatrix::clampedBoundsOfProjectedQuad(const FloatQuad& q) const
 {
     FloatRect mappedQuadBounds = projectQuad(q).boundingBox();
 
@@ -626,18 +625,18 @@ LayoutRect TransformationMatrix::clampedBoundsOfProjectedQuad(const FloatQuad& q
 
     float right;
     if (isinf(mappedQuadBounds.x()) && isinf(mappedQuadBounds.width()))
-        right = MAX_LAYOUT_UNIT / 2;
+        right = FractionalLayoutUnit::max() / 2;
     else
         right = clampEdgeValue(ceilf(mappedQuadBounds.maxX()));
 
     float bottom;
     if (isinf(mappedQuadBounds.y()) && isinf(mappedQuadBounds.height()))
-        bottom = MAX_LAYOUT_UNIT / 2;
+        bottom = FractionalLayoutUnit::max() / 2;
     else
         bottom = clampEdgeValue(ceilf(mappedQuadBounds.maxY()));
-    
-    return LayoutRect(clampToLayoutUnit(left), clampToLayoutUnit(top), 
-                      clampToLayoutUnit(right - left), clampToLayoutUnit(bottom - top));
+
+    return FractionalLayoutRect(FractionalLayoutUnit::clamp(left), FractionalLayoutUnit::clamp(top), 
+                                FractionalLayoutUnit::clamp(right - left), FractionalLayoutUnit::clamp(bottom - top));
 }
 
 FloatPoint TransformationMatrix::mapPoint(const FloatPoint& p) const
