@@ -1543,7 +1543,7 @@ void HTMLTreeBuilder::callTheAdoptionAgency(AtomicHTMLToken* token)
         }
         // 4.
         ASSERT(furthestBlock->isAbove(formattingElementRecord));
-        RefPtr<ContainerNode> commonAncestor = formattingElementRecord->next()->node();
+        RefPtr<HTMLStackItem> commonAncestor = formattingElementRecord->next()->stackItem();
         // 5.
         HTMLFormattingElementList::Bookmark bookmark = m_tree.activeFormattingElements()->bookmarkFor(formattingElement);
         // 6.
@@ -1595,7 +1595,7 @@ void HTMLTreeBuilder::callTheAdoptionAgency(AtomicHTMLToken* token)
             || isTableBodyContextTag(commonAncestorTag))
             m_tree.fosterParent(lastNode->element());
         else {
-            commonAncestor->parserAddChild(lastNode->element());
+            commonAncestor->element()->parserAddChild(lastNode->element());
             ASSERT(lastNode->stackItem()->isElementNode());
             ASSERT(lastNode->element()->parentNode());
             if (lastNode->element()->parentNode()->attached() && !lastNode->element()->attached())
