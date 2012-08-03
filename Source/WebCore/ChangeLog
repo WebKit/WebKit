@@ -1,3 +1,27 @@
+2012-08-03  Keishi Hattori  <keishi@webkit.org>
+
+        Add keyboard support for color suggestion popup
+        https://bugs.webkit.org/show_bug.cgi?id=93069
+
+        Reviewed by Kent Tamura.
+
+        This adds support for keyboard inside the color suggestion popup.
+        Tab or arrow keys to move around. Return or space to select the color.
+        Escape closes the popup.
+
+        No new tests. Covered in platform/chromium/fast/forms/color/color-suggestion-picker-appearance.html.
+
+        * Resources/colorSuggestionPicker.css:
+        (.color-swatch):
+        (.color-swatch:focus):
+        * Resources/colorSuggestionPicker.js:
+        (ColorPicker):
+        (ColorPicker.prototype._layout):
+        (ColorPicker.prototype.selectColorAtIndex): Selects color at index.
+        (ColorPicker.prototype._handleMouseMove): Set focus to the swatch under the mouse cursor.
+        (ColorPicker.prototype._handleKeyDown): Move focused element on arrow keys.
+        (ColorPicker.prototype._handleMouseDown): Prevents blur on click.
+
 2012-08-03  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         Add missing include to build on Mac OS 10.8

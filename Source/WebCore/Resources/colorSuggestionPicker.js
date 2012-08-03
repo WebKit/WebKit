@@ -144,7 +144,11 @@ function ColorPicker(element, config) {
     this._config = config;
     if (this._config.values.length === 0)
         this._config.values = DefaultColorPalette;
+    this._container = null;
     this._layout();
+    document.body.addEventListener("keydown", bind(this._handleKeyDown, this));
+    this._element.addEventListener("mousemove", bind(this._handleMouseMove, this));
+    this._element.addEventListener("mousedown", bind(this._handleMouseDown, this));
 }
 
 var SwatchBorderBoxWidth = 24; // keep in sync with CSS
@@ -156,7 +160,8 @@ ColorPicker.prototype._layout = function() {
     var container = createElement("div", "color-swatch-container");
     container.addEventListener("click", bind(this._handleSwatchClick, this), false);
     for (var i = 0; i < this._config.values.length; ++i) {
-        var swatch = createElement("div", "color-swatch");
+        var swatch = createElement("button", "color-swatch");
+        swatch.dataset.index = i;
         swatch.dataset.value = this._config.values[i];
         swatch.title = this._config.values[i];
         swatch.style.backgroundColor = this._config.values[i];
@@ -171,6 +176,8 @@ ColorPicker.prototype._layout = function() {
     var otherButton = createElement("button", "other-color", this._config.otherColorLabel);
     otherButton.addEventListener("click", chooseOtherColor, false);
     this._element.appendChild(otherButton);
+    this._container = container;
+    this._otherButton = otherButton;
     var elementWidth = this._element.offsetWidth;
     var elementHeight = this._element.offsetHeight;
     if (window.frameElement) {
@@ -179,6 +186,59 @@ ColorPicker.prototype._layout = function() {
     } else {
         window.resizeTo(elementWidth, elementHeight);
     }
+};
+
+ColorPicker.prototype.selectColorAtIndex = function(index) {
+    index = Math.max(Math.min(this._container.childNodes.length - 1, index), 0);
+    this._container.childNodes[index].focus();
+};
+
+ColorPicker.prototype._handleMouseMove = function(event) {
+    if (event.target.classList.contains("color-swatch"))
+        event.target.focus();
+};
+
+ColorPicker.prototype._handleMouseDown = function(event) {
+    // Prevent blur.
+    if (event.target.classList.contains("color-swatch"))
+        event.preventDefault();
+};
+
+ColorPicker.prototype._handleKeyDown = function(event) {
+    var key = event.keyIdentifier;
+    if (key === "U+001B") // ESC
+        handleCancel();
+    else if (key == "Left" || key == "Up" || key == "Right" || key == "Down") {
+        var selectedElement = document.activeElement;
+        var index = 0;
+        if (selectedElement.classList.contains("other-color")) {
+            if (key != "Right" && key != "Up")
+                return;
+            index = this._container.childNodes.length - 1;
+        } else if (selectedElement.classList.contains("color-swatch")) {
+            index = parseInt(selectedElement.dataset.index, 10);
+            switch (key) {
+            case "Left":
+                index--;
+                break;
+            case "Right":
+                index++;
+                break;
+            case "Up":
+                index -= SwatchesPerRow;
+                break;
+            case "Down":
+                index += SwatchesPerRow;
+                break;
+            }
+            if (index > this._container.childNodes.length - 1) {
+                this._otherButton.focus();
+                return;
+            }
+        }
+        this.selectColorAtIndex(index);
+    }
+    event.preventDefault();
 };
 
 ColorPicker.prototype._handleSwatchClick = function(event) {

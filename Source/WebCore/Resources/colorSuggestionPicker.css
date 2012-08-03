@@ -44,12 +44,14 @@ body {
     width: 20px;
     height: 20px;
     margin: 1px;
+    padding: 0;
     border: 1px solid #e0e0e0;
+    box-sizing: content-box;
 }
 
-.color-swatch:hover {
+.color-swatch:focus {
     border: 1px solid #000000;
-    margin: 1px;
+    outline: none;
 }
 
 .color-swatch-container {

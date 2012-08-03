@@ -1,3 +1,14 @@
+2012-08-03  Keishi Hattori  <keishi@webkit.org>
+
+        Add keyboard support for color suggestion popup
+        https://bugs.webkit.org/show_bug.cgi?id=93069
+
+        Reviewed by Kent Tamura.
+
+        * platform/chromium-mac/platform/chromium/fast/forms/color/color-suggestion-picker-appearance-expected.png:
+        * platform/chromium/TestExpectations:
+        * platform/chromium/fast/forms/color/color-suggestion-picker-appearance.html:
+
 2012-08-03  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
 
         [EFL] Gardening of failing tests

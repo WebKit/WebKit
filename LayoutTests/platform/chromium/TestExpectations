@@ -3306,7 +3306,7 @@ BUGWK87652 SKIP : http/tests/appcache/load-from-appcache-defer-resume-crash.html
 // A few pixels off from the baseline, added by r118567.
 BUGWK87653 WIN LINUX : compositing/geometry/composited-in-columns.html = IMAGE+TEXT
 
-BUGWK92444 : platform/chromium/fast/forms/color/color-suggestion-picker-appearance.html = PASS TEXT
+BUGWK92444 : platform/chromium/fast/forms/color/color-suggestion-picker-appearance.html = PASS TEXT IMAGE
 BUGWK92444 : platform/chromium/fast/forms/color/color-suggestion-picker-one-row-appearance.html = PASS MISSING IMAGE TEXT
 BUGWK92444 : platform/chromium/fast/forms/color/color-suggestion-picker-two-row-appearance.html = PASS MISSING IMAGE TEXT
 
