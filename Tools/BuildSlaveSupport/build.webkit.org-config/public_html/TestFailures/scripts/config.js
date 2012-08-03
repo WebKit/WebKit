@@ -27,6 +27,8 @@ var config = config || {};
 
 (function() {
 
+config.kBuildNumberLimit = 20;
+
 config.kPlatforms = {
     'apple' : {
         label : 'Apple',

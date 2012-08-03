@@ -126,8 +126,8 @@ builders.cachedBuildInfos = function(platform, builderName, callback)
     var builderInfoURL = urlForBuilderInfo(platform, builderName);
     net.get(builderInfoURL, function(builderInfo) {
         var selectURL = urlForBuilderInfo(platform, builderName) + 'builds';
-        // // FIXME: limit to some reasonable number?
-        var selectParams = { select : builderInfo.cachedBuilds };
+        var start = Math.max(0, builderInfo.cachedBuilds.length - config.kBuildNumberLimit);
+        var selectParams = { select : builderInfo.cachedBuilds.slice(start) };
         var traditionalEncoding = true;
         selectURL += '?' + $.param(selectParams, traditionalEncoding);
         net.get(selectURL, callback);
