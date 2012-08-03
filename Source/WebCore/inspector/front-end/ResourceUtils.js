@@ -378,7 +378,7 @@ WebInspector.completeURL = function(baseURL, href)
 
         // Return special URLs as-is.
         var trimmedHref = href.trim();
-        if (trimmedHref.startsWith("data:") || trimmedHref.startsWith("javascript:"))
+        if (trimmedHref.startsWith("data:") || trimmedHref.startsWith("javascript:") || trimmedHref.startsWith("blob:"))
             return href;
     }
 
