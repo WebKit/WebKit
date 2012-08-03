@@ -1,3 +1,17 @@
+2012-08-03  Kenneth Russell  <kbr@google.com>
+
+        [Chromium] Web Inspector: Win Dbg tests timing out (r123556 or r123560?)
+        https://bugs.webkit.org/show_bug.cgi?id=92570
+
+        Reviewed by Pavel Feldman.
+
+        Try restricting the use of the GC hint for canvas contexts to only
+        WebGL contexts, where it is most needed, to see whether this
+        clears up the timeouts.
+
+        * bindings/v8/custom/V8HTMLCanvasElementCustom.cpp:
+        (WebCore::V8HTMLCanvasElement::getContextCallback):
+
 2012-08-02  Jeffrey Pfau  <jpfau@apple.com>
 
         Add API for enabling blanket third-party data blocking

@@ -87,16 +87,16 @@ v8::Handle<v8::Value> V8HTMLCanvasElement::getContextCallback(const v8::Argument
     if (!result)
         return v8::Null(args.GetIsolate());
 
-    // Both 2D and 3D canvas contexts can hold on to lots of GPU resources, and we
-    // want to take an opportunity to get rid of them as soon as possible when we
-    // navigate away from pages using them.
-    V8BindingPerIsolateData* perIsolateData = V8BindingPerIsolateData::current(args.GetIsolate());
-    perIsolateData->setShouldCollectGarbageSoon();
-
     if (result->is2d())
         return toV8(static_cast<CanvasRenderingContext2D*>(result), args.GetIsolate());
 #if ENABLE(WEBGL)
     else if (result->is3d()) {
+        // 3D canvas contexts can hold on to lots of GPU resources, and we want to take an
+        // opportunity to get rid of them as soon as possible when we navigate away from pages using
+        // them.
+        V8BindingPerIsolateData* perIsolateData = V8BindingPerIsolateData::current(args.GetIsolate());
+        perIsolateData->setShouldCollectGarbageSoon();
+
         v8::Handle<v8::Value> v8Result = toV8(static_cast<WebGLRenderingContext*>(result), args.GetIsolate());
         if (InspectorInstrumentation::hasFrontends()) {
             ScriptState* scriptState = ScriptState::forContext(v8::Context::GetCurrent());
