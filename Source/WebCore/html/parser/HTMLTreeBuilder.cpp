@@ -1590,7 +1590,7 @@ void HTMLTreeBuilder::callTheAdoptionAgency(AtomicHTMLToken* token)
         if (commonAncestor->causesFosterParenting())
             m_tree.fosterParent(lastNode->element());
         else {
-            commonAncestor->element()->parserAddChild(lastNode->element());
+            commonAncestor->node()->parserAddChild(lastNode->element());
             ASSERT(lastNode->stackItem()->isElementNode());
             ASSERT(lastNode->element()->parentNode());
             if (lastNode->element()->parentNode()->attached() && !lastNode->element()->attached())

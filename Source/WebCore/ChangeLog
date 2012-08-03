@@ -1,3 +1,10 @@
+2012-08-03  Kwang Yul Seo  <skyul@company100.net>
+
+        Unreviewed r124536 followup, fix the assertion error on Chromium.
+
+        * html/parser/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::callTheAdoptionAgency):
+
 2012-08-03  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Web Inspector: simple replace objectType with ownerObjectType in NMI code.
