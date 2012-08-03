@@ -1,3 +1,30 @@
+2012-08-03  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        [GTK] Add a new and reusable enchant-based spellchecker in WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=90269
+
+        Reviewed by Martin Robinson.
+
+        Move enchant specific code down to WebCore, into a new class
+        TextCheckerEnchant, that we can use from WK1 and WK2.
+
+        * GNUmakefile.am: Add flags to handle the SPELLCHECK feature.
+        * GNUmakefile.list.am: Added new files.
+        * platform/text/gtk/TextCheckerEnchant.cpp: Added.
+        (getAvailableDictionariesCallback):
+        (TextCheckerEnchant::TextCheckerEnchant):
+        (TextCheckerEnchant::~TextCheckerEnchant):
+        (TextCheckerEnchant::ignoreWord):
+        (TextCheckerEnchant::learnWord):
+        (TextCheckerEnchant::checkSpellingOfString):
+        (TextCheckerEnchant::getGuessesForWord):
+        (TextCheckerEnchant::updateSpellCheckingLanguages):
+        (TextCheckerEnchant::freeEnchantBrokerDictionaries):
+        * platform/text/gtk/TextCheckerEnchant.h: Added.
+        (WebCore):
+        (TextCheckerEnchant):
+        (WebCore::TextCheckerEnchant::create):
+
 2012-08-03  Kwang Yul Seo  <skyul@company100.net>
 
         Unreviewed r124536 followup, fix the assertion error on Chromium.

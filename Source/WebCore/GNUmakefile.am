@@ -116,7 +116,8 @@ webcoregtk_cppflags += \
 	-I$(srcdir)/Source/WebCore/platform/graphics/gstreamer \
 	-I$(srcdir)/Source/WebCore/platform/graphics/gtk \
 	-I$(srcdir)/Source/WebCore/platform/gtk \
-	-I$(srcdir)/Source/WebCore/platform/network/soup
+	-I$(srcdir)/Source/WebCore/platform/network/soup \
+	-I$(srcdir)/Source/WebCore/platform/text/gtk
 
 # ---
 # Features enabled by default at compilation time
@@ -754,6 +755,14 @@ if ENABLE_WIDGET_REGION
 FEATURE_DEFINES += ENABLE_WIDGET_REGION=1
 webcore_cppflags += -DENABLE_WIDGET_REGION=1
 endif  # END ENABLE_WIDGET_REGION
+
+# ---
+# Spell check support
+# ---
+if ENABLE_SPELLCHECK
+FEATURE_DEFINES += ENABLE_SPELLCHECK=1
+webcore_cppflags += -DENABLE_SPELLCHECK=1
+endif  # END ENABLE_SPELLCHECK
 
 DerivedSources/WebCore/CSSPropertyNames.cpp: DerivedSources/WebCore/CSSPropertyNames.h
 DerivedSources/WebCore/CSSPropertyNames.h: $(WEBCORE_CSS_PROPERTY_NAMES) $(WebCore)/css/makeprop.pl
