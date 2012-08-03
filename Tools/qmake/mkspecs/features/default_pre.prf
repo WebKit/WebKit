@@ -16,12 +16,6 @@ load(moc)
 pro_file = $$_PRO_FILE_ # Checking the variable directly does not work
 isEmpty(pro_file): CONFIG += recursive_include
 
-# We default to release builds
-!build_pass {
-    CONFIG += release
-    CONFIG -= debug
-}
-
 # Resolve root directories for source and build
 ROOT_WEBKIT_DIR = $$replace(PWD, /Tools/qmake/mkspecs/features$,)
 WEBKIT_SUBDIR = $$replace(_PRO_FILE_PWD_, $${ROOT_WEBKIT_DIR},)

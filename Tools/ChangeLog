@@ -1,3 +1,15 @@
+2012-08-03  Oswald Buddenhagen  <oswald.buddenhagen@nokia.com>
+
+        [Qt] Move build config default to build-webkit instead of default_pre
+
+        Allows the qmake buildsystem have its own default.
+
+        Reviewed by Tor Arne Vestbø.
+
+        * Scripts/webkitdirs.pm:
+        (buildQMakeProjects):
+        * qmake/mkspecs/features/default_pre.prf:
+
 2012-08-03  Mario Sanchez Prada  <msanchez@igalia.com>
 
         Unreviewed build fix for GTK after r124581.
