@@ -193,14 +193,14 @@ private:
     void createInspectorWindow();
 #endif
 
-    static const unsigned minimumWindowWidth = 500;
-    static const unsigned minimumWindowHeight = 400;
+    static const unsigned minimumWindowWidth;
+    static const unsigned minimumWindowHeight;
 
-    static const unsigned initialWindowWidth = 750;
-    static const unsigned initialWindowHeight = 650;
+    static const unsigned initialWindowWidth;
+    static const unsigned initialWindowHeight;
 
     // Keep this in sync with the value in InspectorFrontendClientLocal.
-    static const unsigned minimumAttachedHeight = 250;
+    static const unsigned minimumAttachedHeight;
 
     WebPageProxy* m_page;
 

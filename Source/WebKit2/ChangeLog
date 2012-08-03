@@ -1,3 +1,13 @@
+2012-08-03  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        Unreviewed build fix for GTK after r124479.
+
+        * UIProcess/WebInspectorProxy.cpp:
+        (WebKit): Moved static const definitions from header file.
+        * UIProcess/WebInspectorProxy.h:
+        (WebInspectorProxy): Don't give values to static const members
+        here.
+
 2012-08-03  Balazs Kelemen  <kbalazs@webkit.org>
 
         [WK2] LayerTreeCoordinator can disallow tile updates in forceRepaint
