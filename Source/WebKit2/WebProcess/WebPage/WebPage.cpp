@@ -208,6 +208,7 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
     , m_isClosed(false)
     , m_tabToLinks(false)
     , m_asynchronousPluginInitializationEnabled(false)
+    , m_asynchronousPluginInitializationEnabledForAllPlugins(false)
     , m_artificialPluginInitializationDelayEnabled(false)
 #if PLATFORM(MAC)
     , m_windowIsVisible(false)
@@ -1979,6 +1980,7 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
 
     m_tabToLinks = store.getBoolValueForKey(WebPreferencesKey::tabsToLinksKey());
     m_asynchronousPluginInitializationEnabled = store.getBoolValueForKey(WebPreferencesKey::asynchronousPluginInitializationEnabledKey());
+    m_asynchronousPluginInitializationEnabledForAllPlugins = store.getBoolValueForKey(WebPreferencesKey::asynchronousPluginInitializationEnabledForAllPluginsKey());
     m_artificialPluginInitializationDelayEnabled = store.getBoolValueForKey(WebPreferencesKey::artificialPluginInitializationDelayEnabledKey());
 
     // FIXME: This should be generated from macro expansion for all preferences,

@@ -854,6 +854,16 @@ bool WKPreferencesGetAsynchronousPluginInitializationEnabled(WKPreferencesRef pr
     return toImpl(preferencesRef)->asynchronousPluginInitializationEnabled();
 }
 
+void WKPreferencesSetAsynchronousPluginInitializationEnabledForAllPlugins(WKPreferencesRef preferencesRef, bool enabled)
+{
+    toImpl(preferencesRef)->setAsynchronousPluginInitializationEnabledForAllPlugins(enabled);
+}
+
+bool WKPreferencesGetAsynchronousPluginInitializationEnabledForAllPlugins(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->asynchronousPluginInitializationEnabledForAllPlugins();
+}
+
 void WKPreferencesSetArtificialPluginInitializationDelayEnabled(WKPreferencesRef preferencesRef, bool enabled)
 {
     toImpl(preferencesRef)->setArtificialPluginInitializationDelayEnabled(enabled);

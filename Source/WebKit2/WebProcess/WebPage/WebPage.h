@@ -571,7 +571,11 @@ public:
 #endif
 
     bool asynchronousPluginInitializationEnabled() const { return m_asynchronousPluginInitializationEnabled; }
+    void setAsynchronousPluginInitializationEnabled(bool enabled) { m_asynchronousPluginInitializationEnabled = enabled; }
+    bool asynchronousPluginInitializationEnabledForAllPlugins() const { return m_asynchronousPluginInitializationEnabledForAllPlugins; }
+    void setAsynchronousPluginInitializationEnabledForAllPlugins(bool enabled) { m_asynchronousPluginInitializationEnabledForAllPlugins = enabled; }
     bool artificialPluginInitializationDelayEnabled() const { return m_artificialPluginInitializationDelayEnabled; }
+    void setArtificialPluginInitializationDelayEnabled(bool enabled) { m_artificialPluginInitializationDelayEnabled = enabled; }
 
 private:
     WebPage(uint64_t pageID, const WebPageCreationParameters&);
@@ -763,6 +767,7 @@ private:
     bool m_tabToLinks;
     
     bool m_asynchronousPluginInitializationEnabled;
+    bool m_asynchronousPluginInitializationEnabledForAllPlugins;
     bool m_artificialPluginInitializationDelayEnabled;
 
 #if PLATFORM(MAC)

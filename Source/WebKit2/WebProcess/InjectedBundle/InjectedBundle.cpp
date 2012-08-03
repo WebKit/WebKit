@@ -131,6 +131,30 @@ void InjectedBundle::overrideBoolPreferenceForTestRunner(WebPageGroupProxy* page
 
     // FIXME: Need an explicit way to set "WebKitTabToLinksPreferenceKey" directly in WebPage.
 
+    if (preference == "WebKit2AsynchronousPluginInitializationEnabled") {
+        WebPreferencesStore::overrideBoolValueForKey(WebPreferencesKey::asynchronousPluginInitializationEnabledKey(), enabled);
+        for (HashSet<Page*>::iterator i = pages.begin(); i != pages.end(); ++i) {
+            WebPage* webPage = static_cast<WebFrameLoaderClient*>((*i)->mainFrame()->loader()->client())->webFrame()->page();
+            webPage->setAsynchronousPluginInitializationEnabled(enabled);
+        }
+    }
+
+    if (preference == "WebKit2AsynchronousPluginInitializationEnabledForAllPlugins") {
+        WebPreferencesStore::overrideBoolValueForKey(WebPreferencesKey::asynchronousPluginInitializationEnabledForAllPluginsKey(), enabled);
+        for (HashSet<Page*>::iterator i = pages.begin(); i != pages.end(); ++i) {
+            WebPage* webPage = static_cast<WebFrameLoaderClient*>((*i)->mainFrame()->loader()->client())->webFrame()->page();
+            webPage->setAsynchronousPluginInitializationEnabledForAllPlugins(enabled);
+        }
+    }
+
+    if (preference == "WebKit2ArtificialPluginInitializationDelayEnabled") {
+        WebPreferencesStore::overrideBoolValueForKey(WebPreferencesKey::artificialPluginInitializationDelayEnabledKey(), enabled);
+        for (HashSet<Page*>::iterator i = pages.begin(); i != pages.end(); ++i) {
+            WebPage* webPage = static_cast<WebFrameLoaderClient*>((*i)->mainFrame()->loader()->client())->webFrame()->page();
+            webPage->setArtificialPluginInitializationDelayEnabled(enabled);
+        }
+    }
+
     // Map the names used in LayoutTests with the names used in WebCore::Settings and WebPreferencesStore.
 #define FOR_EACH_OVERRIDE_BOOL_PREFERENCE(macro) \
     macro(WebKitAcceleratedCompositingEnabled, AcceleratedCompositingEnabled, acceleratedCompositingEnabled) \
