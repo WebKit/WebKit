@@ -1,3 +1,18 @@
+2012-08-03  Keishi Hattori  <keishi@webkit.org>
+
+        ColorSuggestionPicker popup's height doesn't get smaller than 100 px
+        https://bugs.webkit.org/show_bug.cgi?id=92945
+
+        Reviewed by Kent Tamura.
+
+        * platform/chromium-mac/platform/chromium/fast/forms/color/color-suggestion-picker-one-row-appearance-expected.png: Added.
+        * platform/chromium-mac/platform/chromium/fast/forms/color/color-suggestion-picker-two-row-appearance-expected.png: Added.
+        * platform/chromium/TestExpectations:
+        * platform/chromium/fast/forms/color/color-suggestion-picker-one-row-appearance-expected.txt: Added.
+        * platform/chromium/fast/forms/color/color-suggestion-picker-one-row-appearance.html: Added.
+        * platform/chromium/fast/forms/color/color-suggestion-picker-two-row-appearance-expected.txt: Added.
+        * platform/chromium/fast/forms/color/color-suggestion-picker-two-row-appearance.html: Added.
+
 2012-08-03  Eugene Klyuchnikov  <eustas.big@gmail.com>
 
         Web Inspector: Profiles: extract save to file / load from code

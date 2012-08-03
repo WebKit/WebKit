@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<body>
+<input type=color id=color value="#ff0000" list=single focus>
+<datalist id=single>
+    <option>#000000</option>
+</datalist>
+<script>
+testRunner.dumpAsText(true)
+testRunner.waitUntilDone();
+if (window.internals)
+    internals.settings.setEnableMockPagePopup(true);
+
+document.getElementById('color').focus();
+if (window.eventSender)
+    eventSender.keyDown(' ');
+var pickerWindow = document.getElementById('mock-page-popup').contentWindow;
+pickerWindow.onresize = function() {
+    testRunner.notifyDone();
+}
+</script>
+</body>

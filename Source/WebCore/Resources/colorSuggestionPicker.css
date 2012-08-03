@@ -54,8 +54,12 @@ body {
 
 .color-swatch-container {
     width: 100%;
+    min-height: 72px;
     max-height: 104px;
     overflow: auto;
+    display: -webkit-flex;
+    -webkit-flex-flow: row wrap;
+    -webkit-align-items: center;
 }
 
 .other-color {

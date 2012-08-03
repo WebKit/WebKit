@@ -1,3 +1,20 @@
+2012-08-03  Keishi Hattori  <keishi@webkit.org>
+
+        ColorSuggestionPicker popup's height doesn't get smaller than 100 px
+        https://bugs.webkit.org/show_bug.cgi?id=92945
+
+        Reviewed by Kent Tamura.
+
+        A window cannot be resized to be smaller than 100x100 pixels so this
+        adjust the color suggestion popup UI to look better when there are only
+        a few suggestions.
+
+        Tests: platform/chromium/fast/forms/color/color-suggestion-picker-one-row-appearance.html
+               platform/chromium/fast/forms/color/color-suggestion-picker-two-row-appearance.html
+
+        * Resources/colorSuggestionPicker.css:
+        (.color-swatch-container): Vertically center the swatches.
+
 2012-08-03  Alexander Pavlov  <apavlov@chromium.org>
 
         Web Inspector: Remove InspectorCSSAgent from InstrumentingAgents on clearFrontend()
