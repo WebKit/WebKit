@@ -1,3 +1,19 @@
+2012-08-03  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, rolling out r124614.
+        http://trac.webkit.org/changeset/124614
+        https://bugs.webkit.org/show_bug.cgi?id=91727
+
+        gstreamer core .po files mess up the build again
+
+        * platform/graphics/gstreamer/GRefPtrGStreamer.cpp:
+        (WTF::adoptGRef):
+        * platform/graphics/gstreamer/GStreamerVersioning.cpp:
+        (setGstElementClassMetadata):
+        * platform/graphics/gstreamer/GStreamerVersioning.h:
+        * platform/graphics/gstreamer/WebKitWebSourceGStreamer.cpp:
+        (StreamingClient::didReceiveResponse):
+
 2012-08-03  Benjamin Poulain  <bpoulain@apple.com>
 
         Initialize the Event Names' string from read only memory

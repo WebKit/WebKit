@@ -1,5 +1,17 @@
 2012-08-03  Philippe Normand  <pnormand@igalia.com>
 
+        Unreviewed, rolling out r124614.
+        http://trac.webkit.org/changeset/124614
+        https://bugs.webkit.org/show_bug.cgi?id=91727
+
+        gstreamer core .po files mess up the build again
+
+        * Scripts/webkitdirs.pm:
+        (buildAutotoolsProject):
+        * gtk/jhbuild.modules:
+
+2012-08-03  Philippe Normand  <pnormand@igalia.com>
+
         [GTK][jhbuild] Switch to GStreamer 0.11 build
         https://bugs.webkit.org/show_bug.cgi?id=91727
 
