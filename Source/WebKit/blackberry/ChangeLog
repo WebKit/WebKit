@@ -1,3 +1,34 @@
+2012-08-03  Konrad Piascik  <kpiascik@rim.com>
+
+        [BlackBerry] InspectorOverlay class duplicated in WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=93124
+
+        Reviewed by Rob Buis.
+
+        Changed namespace of InspectorOverlay from WebCore to
+        BlackBerry::WebKit
+
+        * Api/WebPage.cpp:
+        (WebKit):
+        (BlackBerry::WebKit::WebPagePrivate::setInspectorOverlayClient):
+        * Api/WebPage_p.h:
+        (WebPagePrivate):
+        * WebCoreSupport/InspectorClientBlackBerry.h:
+        * WebCoreSupport/InspectorOverlay.cpp:
+        (BlackBerry::WebKit::InspectorOverlay::create):
+        (BlackBerry::WebKit::InspectorOverlay::InspectorOverlay):
+        (BlackBerry::WebKit::InspectorOverlay::notifySyncRequired):
+        (BlackBerry::WebKit::InspectorOverlay::paintContents):
+        (BlackBerry::WebKit::InspectorOverlay::showDebugBorders):
+        (BlackBerry::WebKit::InspectorOverlay::showRepaintCounter):
+        (BlackBerry::WebKit::InspectorOverlay::contentsVisible):
+        (BlackBerry::WebKit::InspectorOverlay::update):
+        * WebCoreSupport/InspectorOverlay.h:
+        (WebKit):
+        (InspectorOverlayClient):
+        (InspectorOverlay):
+        (BlackBerry::WebKit::InspectorOverlay::notifyAnimationStarted):
+
 2012-08-03  Arvid Nilsson  <anilsson@rim.com>
 
         [BlackBerry] Overlays display checkerboard that doesn't resolve

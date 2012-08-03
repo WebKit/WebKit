@@ -454,7 +454,7 @@ public:
 
     void deferredTasksTimerFired(WebCore::Timer<WebPagePrivate>*);
 
-    void setInspectorOverlayClient(WebCore::InspectorOverlay::InspectorOverlayClient*);
+    void setInspectorOverlayClient(InspectorOverlay::InspectorOverlayClient*);
 
     void applySizeOverride(int overrideWidth, int overrideHeight);
     void setTextZoomFactor(float);
@@ -595,7 +595,7 @@ public:
     RefPtr<WebCore::DOMWrapperWorld> m_isolatedWorld;
     bool m_hasInRegionScrollableAreas;
     bool m_updateDelegatedOverlaysDispatched;
-    OwnPtr<WebCore::InspectorOverlay> m_inspectorOverlay;
+    OwnPtr<InspectorOverlay> m_inspectorOverlay;
 
     // There is no need to initialize the following members in WebPagePrivate's constructor,
     // because they are only used by WebPageTasks and the tasks will initialize them when

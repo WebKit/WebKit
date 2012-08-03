@@ -27,40 +27,41 @@
 #include "WebPage_p.h"
 
 
-namespace WebCore {
+namespace BlackBerry {
+namespace WebKit {
 
-PassOwnPtr<InspectorOverlay> InspectorOverlay::create(BlackBerry::WebKit::WebPagePrivate* page, InspectorOverlayClient* client)
+PassOwnPtr<InspectorOverlay> InspectorOverlay::create(WebPagePrivate* page, InspectorOverlayClient* client)
 {
     return adoptPtr(new InspectorOverlay(page, client));
 }
 
-InspectorOverlay::InspectorOverlay(BlackBerry::WebKit::WebPagePrivate* page, InspectorOverlayClient* client)
+InspectorOverlay::InspectorOverlay(WebPagePrivate* page, InspectorOverlayClient* client)
     : m_webPage(page)
     , m_client(client)
 {
 }
 
 #if USE(ACCELERATED_COMPOSITING)
-void InspectorOverlay::notifySyncRequired(const GraphicsLayer* layer)
+void InspectorOverlay::notifySyncRequired(const WebCore::GraphicsLayer* layer)
 {
     m_webPage->notifySyncRequired(layer);
 }
 
-void InspectorOverlay::paintContents(const GraphicsLayer*, GraphicsContext& context, GraphicsLayerPaintingPhase, const IntRect& inClip)
+void InspectorOverlay::paintContents(const WebCore::GraphicsLayer*, WebCore::GraphicsContext& context, WebCore::GraphicsLayerPaintingPhase, const WebCore::IntRect& inClip)
 {
     context.save();
-    IntPoint scrollPosition = m_webPage->focusedOrMainFrame()->view()->scrollPosition();
+    WebCore::IntPoint scrollPosition = m_webPage->focusedOrMainFrame()->view()->scrollPosition();
     context.translate(scrollPosition.x(), scrollPosition.y());
     m_client->paintInspectorOverlay(context);
     context.restore();
 }
 
-bool InspectorOverlay::showDebugBorders(const GraphicsLayer* layer) const
+bool InspectorOverlay::showDebugBorders(const WebCore::GraphicsLayer* layer) const
 {
     return m_webPage->showDebugBorders(layer);
 }
 
-bool InspectorOverlay::showRepaintCounter(const GraphicsLayer* layer) const
+bool InspectorOverlay::showRepaintCounter(const WebCore::GraphicsLayer* layer) const
 {
     return m_webPage->showRepaintCounter(layer);
 }
@@ -82,9 +83,9 @@ void InspectorOverlay::update()
 {
 #if USE(ACCELERATED_COMPOSITING)
     if (!m_overlay) {
-        m_overlay = adoptPtr(new BlackBerry::WebKit::WebOverlay(this));
-        const IntSize size = m_webPage->contentsSize();
-        m_overlay->setSize(FloatSize(size.width(), size.height()));
+        m_overlay = adoptPtr(new WebOverlay(this));
+        const WebCore::IntSize size = m_webPage->contentsSize();
+        m_overlay->setSize(WebCore::FloatSize(size.width(), size.height()));
         m_webPage->m_webPage->addOverlay(m_overlay.get());
     }
 
@@ -94,4 +95,5 @@ void InspectorOverlay::update()
 #endif
 }
 
+}
 }

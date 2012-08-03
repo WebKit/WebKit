@@ -24,25 +24,23 @@
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
 
-namespace BlackBerry {
-namespace WebKit {
-class WebPagePrivate;
-}
-}
-
 namespace WebCore {
 class GraphicsContext;
 class GraphicsLayer;
+}
 
+namespace BlackBerry {
+namespace WebKit {
+class WebPagePrivate;
 
 class InspectorOverlay : public WebCore::GraphicsLayerClient {
 public:
     class InspectorOverlayClient {
     public:
-        virtual void paintInspectorOverlay(GraphicsContext&) = 0;
+        virtual void paintInspectorOverlay(WebCore::GraphicsContext&) = 0;
     };
 
-    static PassOwnPtr<InspectorOverlay> create(BlackBerry::WebKit::WebPagePrivate*, InspectorOverlayClient*);
+    static PassOwnPtr<InspectorOverlay> create(WebPagePrivate*, InspectorOverlayClient*);
 
     ~InspectorOverlay();
 
@@ -50,26 +48,26 @@ public:
 
     void clear();
     void update();
-    void paintWebFrame(GraphicsContext&);
+    void paintWebFrame(WebCore::GraphicsContext&);
 
 #if USE(ACCELERATED_COMPOSITING)
-    virtual void notifyAnimationStarted(const GraphicsLayer*, double time) { }
-    virtual void notifySyncRequired(const GraphicsLayer*);
-    virtual void paintContents(const GraphicsLayer*, GraphicsContext&, GraphicsLayerPaintingPhase, const IntRect& inClip);
-    virtual bool showDebugBorders(const GraphicsLayer*) const;
-    virtual bool showRepaintCounter(const GraphicsLayer*) const;
+    virtual void notifyAnimationStarted(const WebCore::GraphicsLayer*, double time) { }
+    virtual void notifySyncRequired(const WebCore::GraphicsLayer*);
+    virtual void paintContents(const WebCore::GraphicsLayer*, WebCore::GraphicsContext&, WebCore::GraphicsLayerPaintingPhase, const WebCore::IntRect& inClip);
+    virtual bool showDebugBorders(const WebCore::GraphicsLayer*) const;
+    virtual bool showRepaintCounter(const WebCore::GraphicsLayer*) const;
 #endif
 
 private:
-    InspectorOverlay(BlackBerry::WebKit::WebPagePrivate*, InspectorOverlayClient*);
+    InspectorOverlay(WebPagePrivate*, InspectorOverlayClient*);
     void invalidateWebFrame();
 
-    BlackBerry::WebKit::WebPagePrivate* m_webPage;
+    WebPagePrivate* m_webPage;
     InspectorOverlayClient* m_client;
-    OwnPtr<BlackBerry::WebKit::WebOverlay> m_overlay;
+    OwnPtr<WebOverlay> m_overlay;
 };
 
-} // namespace WebCore
-
+} // namespace WebKit
+} // namespace BlackBerry
 
 #endif /* InspectorOverlay_h */

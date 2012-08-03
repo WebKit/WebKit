@@ -34,7 +34,7 @@ class WebPagePrivate;
 
 namespace WebCore {
 
-class InspectorClientBlackBerry : public InspectorClient, public InspectorFrontendChannel, public InspectorOverlay::InspectorOverlayClient {
+class InspectorClientBlackBerry : public InspectorClient, public InspectorFrontendChannel, public BlackBerry::WebKit::InspectorOverlay::InspectorOverlayClient {
 public:
     InspectorClientBlackBerry(BlackBerry::WebKit::WebPagePrivate*);
     virtual void inspectorDestroyed();

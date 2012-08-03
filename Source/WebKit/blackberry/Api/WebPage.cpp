@@ -6431,11 +6431,11 @@ PagePopupBlackBerry* WebPage::popup()
     return d->m_selectPopup;
 }
 
-void WebPagePrivate::setInspectorOverlayClient(WebCore::InspectorOverlay::InspectorOverlayClient* inspectorOverlayClient)
+void WebPagePrivate::setInspectorOverlayClient(InspectorOverlay::InspectorOverlayClient* inspectorOverlayClient)
 {
     if (inspectorOverlayClient) {
         if (!m_inspectorOverlay)
-            m_inspectorOverlay = WebCore::InspectorOverlay::create(this, inspectorOverlayClient);
+            m_inspectorOverlay = InspectorOverlay::create(this, inspectorOverlayClient);
         else
             m_inspectorOverlay->setClient(inspectorOverlayClient);
         m_inspectorOverlay->update();
