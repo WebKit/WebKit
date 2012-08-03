@@ -1,3 +1,33 @@
+2012-08-03  Kentaro Hara  <haraken@chromium.org>
+
+        [V8] Remove v8StringToAtomicWebCoreString()
+        https://bugs.webkit.org/show_bug.cgi?id=93086
+
+        Reviewed by Dimitri Glazkov.
+
+        There should be only one API that converts V8 String to
+        AtomicString. v8ValueToAtomicWebCoreString() does it.
+        We can remove v8StringToAtomicWebCoreString().
+
+        No tests. No change in behavior.
+
+        * bindings/v8/V8Binding.cpp:
+        (WebCore::v8ValueToAtomicWebCoreString):
+        * bindings/v8/V8Binding.h:
+        (WebCore):
+        * bindings/v8/V8DOMWindowShell.cpp:
+        (WebCore::getter):
+        * bindings/v8/custom/V8DOMWindowCustom.cpp:
+        (WebCore::V8DOMWindow::namedPropertyGetter):
+        * bindings/v8/custom/V8HTMLAllCollectionCustom.cpp:
+        (WebCore::V8HTMLAllCollection::namedPropertyGetter):
+        * bindings/v8/custom/V8HTMLCollectionCustom.cpp:
+        (WebCore::V8HTMLCollection::namedPropertyGetter):
+        * bindings/v8/custom/V8HTMLFormElementCustom.cpp:
+        (WebCore::V8HTMLFormElement::namedPropertyGetter):
+        * bindings/v8/custom/V8HTMLFrameSetElementCustom.cpp:
+        (WebCore::V8HTMLFrameSetElement::namedPropertyGetter):
+
 2012-08-03  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Web Inspector: eliminate visitBaseClass method from NMI. It introduces unnecessary complexity.

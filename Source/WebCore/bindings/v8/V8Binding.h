@@ -310,12 +310,8 @@ namespace WebCore {
     }
     String v8ValueToWebCoreString(v8::Handle<v8::Value> value);
 
-    // Convert v8 types to a WTF::AtomicString.
-    inline AtomicString v8StringToAtomicWebCoreString(v8::Handle<v8::String> v8String)
-    {
-        return v8StringToWebCoreString<AtomicString>(v8String, Externalize);
-    }
-    AtomicString v8ValueToAtomicWebCoreString(v8::Handle<v8::Value> value);
+    // Convert a V8 value to a WTF::AtomicString.
+    AtomicString v8ValueToAtomicWebCoreString(v8::Handle<v8::Value>);
 
     // Return a V8 external string that shares the underlying buffer with the given
     // WebCore string. The reference counting mechanism is used to keep the

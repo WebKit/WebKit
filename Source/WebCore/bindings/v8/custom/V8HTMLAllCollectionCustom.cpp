@@ -81,7 +81,7 @@ v8::Handle<v8::Value> V8HTMLAllCollection::namedPropertyGetter(v8::Local<v8::Str
         return v8::Handle<v8::Value>();
 
     HTMLAllCollection* imp = V8HTMLAllCollection::toNative(info.Holder());
-    return getNamedItems(imp, v8StringToAtomicWebCoreString(name), info.GetIsolate());
+    return getNamedItems(imp, v8ValueToAtomicWebCoreString(name), info.GetIsolate());
 }
 
 v8::Handle<v8::Value> V8HTMLAllCollection::itemCallback(const v8::Arguments& args)
