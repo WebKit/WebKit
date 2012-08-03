@@ -1,3 +1,10 @@
+2012-08-03  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        Unreviewed build fix for GTK after r124581.
+
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (runTest): Fix wrong variable name in ASSERT.
+
 2012-08-03  Oswald Buddenhagen  <oswald.buddenhagen@nokia.com>
 
         [Qt] Always save CONFIG & DEFINES in default_pre

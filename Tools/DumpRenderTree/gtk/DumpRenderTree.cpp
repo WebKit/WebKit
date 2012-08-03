@@ -97,7 +97,7 @@ static WebKitWebHistoryItem* prevTestBFItem = NULL;
 
 const unsigned historyItemIndent = 8;
 
-static void runTest(const string& testPathOrURL);
+static void runTest(const string& inputLine);
 
 static void didRunInsecureContent(WebKitWebFrame*, WebKitSecurityOrigin*, const char* url);
 
@@ -688,7 +688,7 @@ static void sendPixelResultsEOF()
 
 static void runTest(const string& inputLine)
 {
-    ASSERT(!testPathOrURL.empty());
+    ASSERT(!inputLine.empty());
 
     TestCommand command = parseInputLine(inputLine);
     string& testURL = command.pathOrURL;
