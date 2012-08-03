@@ -138,10 +138,31 @@ private:
     
     bool byValIsPure(Node& node)
     {
-        return m_graph[node.child2()].shouldSpeculateInteger()
-            && ((node.op() == PutByVal || node.op() == PutByValAlias)
-                ? isActionableMutableArrayPrediction(m_graph[node.child1()].prediction())
-                : isActionableArrayPrediction(m_graph[node.child1()].prediction()));
+        if (!m_graph[node.child2()].shouldSpeculateInteger())
+            return false;
+        PredictedType prediction = m_graph[node.child1()].prediction();
+        switch (node.op()) {
+        case PutByVal:
+            if (!isActionableMutableArrayPrediction(prediction))
+                return false;
+            if (isArrayPrediction(prediction))
+                return false;
+            return true;
+            
+        case PutByValAlias:
+            if (!isActionableMutableArrayPrediction(prediction))
+                return false;
+            return true;
+            
+        case GetByVal:
+            if (!isActionableArrayPrediction(prediction))
+                return false;
+            return true;
+            
+        default:
+            ASSERT_NOT_REACHED();
+            return false;
+        }
     }
     
     bool clobbersWorld(NodeIndex nodeIndex)
@@ -162,6 +183,8 @@ private:
         case LogicalNot:
             return !logicalNotIsPure(node);
         case GetByVal:
+        case PutByVal:
+        case PutByValAlias:
             return !byValIsPure(node);
         default:
             ASSERT_NOT_REACHED();
@@ -642,8 +665,14 @@ private:
             break;
             
         case PutByVal:
-            if (byValIsPure(node) && getByValLoadElimination(node.child1().index(), node.child2().index()) != NoNode)
+            if (isActionableMutableArrayPrediction(m_graph[node.child1()].prediction())
+                && m_graph[node.child2()].shouldSpeculateInteger()) {
+                NodeIndex nodeIndex = getByValLoadElimination(
+                    node.child1().index(), node.child2().index());
+                if (nodeIndex == NoNode)
+                    break;
                 node.setOp(PutByValAlias);
+            }
             break;
             
         case CheckStructure:

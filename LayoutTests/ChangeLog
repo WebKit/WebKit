@@ -1,5 +1,27 @@
 2012-08-02  Lucas Forschler  <lforschler@apple.com>
 
+    Merge 121307
+
+    2012-06-26  Filip Pizlo  <fpizlo@apple.com>
+
+            DFG PutByValAlias is too aggressive
+            https://bugs.webkit.org/show_bug.cgi?id=90026
+            <rdar://problem/11751830>
+
+            Reviewed by Gavin Barraclough.
+
+            * fast/js/dfg-put-by-val-setter-then-get-by-val-expected.txt: Added.
+            * fast/js/dfg-put-by-val-setter-then-get-by-val.html: Added.
+            * fast/js/dfg-uint8clampedarray-out-of-bounds-put-by-val-alias-expected.txt: Added.
+            * fast/js/dfg-uint8clampedarray-out-of-bounds-put-by-val-alias.html: Added.
+            * fast/js/script-tests/dfg-put-by-val-setter-then-get-by-val.js: Added.
+            (foo):
+            (for):
+            * fast/js/script-tests/dfg-uint8clampedarray-out-of-bounds-put-by-val-alias.js: Added.
+            (foo):
+
+2012-08-02  Lucas Forschler  <lforschler@apple.com>
+
     Merge 123912
 
     2012-07-27  Beth Dakin  <bdakin@apple.com>
