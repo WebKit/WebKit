@@ -1,3 +1,14 @@
+2012-08-03  Adam Barth  <abarth@webkit.org>
+
+        WebCore::DragController::cleanupAfterSystemDrag should null-check page
+        https://bugs.webkit.org/show_bug.cgi?id=61815
+
+        Reviewed by Eric Seidel.
+
+        * page/DragController.cpp:
+        (WebCore::DragController::dragEnteredOrUpdated):
+        (WebCore::DragController::doSystemDrag):
+
 2012-08-03  Sergio Carlos Morales Angeles  <carloschilazo@gmail.com>
 
         Delete text from password does nothing.
