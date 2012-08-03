@@ -69,7 +69,7 @@ TEST(MemoryInstrumentationTest, sizeOf)
     Instrumented instrumented;
     impl.addRootObject(instrumented);
     EXPECT_EQ(sizeof(NotInstrumented), impl.reportedSizeForAllTypes());
-    EXPECT_EQ(2, visitedObjects.size());
+    EXPECT_EQ(1, visitedObjects.size());
 }
 
 TEST(MemoryInstrumentationTest, nullCheck)
@@ -98,7 +98,7 @@ TEST(MemoryInstrumentationTest, ptrVsRef)
         Instrumented instrumented;
         impl.addRootObject(instrumented);
         EXPECT_EQ(sizeof(NotInstrumented), impl.reportedSizeForAllTypes());
-        EXPECT_EQ(2, visitedObjects.size());
+        EXPECT_EQ(1, visitedObjects.size());
     }
 }
 
@@ -167,7 +167,62 @@ TEST(MemoryInstrumentationTest, ownPtrNotInstrumented)
     InstrumentedWithOwnPtr instrumentedWithOwnPtr;
     impl.addRootObject(instrumentedWithOwnPtr);
     EXPECT_EQ(2 * sizeof(NotInstrumented), impl.reportedSizeForAllTypes());
-    EXPECT_EQ(3, visitedObjects.size());
+    EXPECT_EQ(2, visitedObjects.size());
+}
+
+class InstrumentedOther {
+public:
+    InstrumentedOther() : m_data(0) { }
+
+    void reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+    {
+        MemoryClassInfo<InstrumentedOther> info(memoryObjectInfo, this, MemoryInstrumentation::Other);
+    }
+    int m_data;
+};
+
+class InstrumentedDOM {
+public:
+    InstrumentedDOM() : m_instrumentedOther(adoptPtr(new InstrumentedOther)) { }
+
+    void reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+    {
+        MemoryClassInfo<InstrumentedDOM> info(memoryObjectInfo, this, MemoryInstrumentation::DOM);
+        info.addInstrumentedMember(m_instrumentedOther);
+    }
+    OwnPtr<InstrumentedOther> m_instrumentedOther;
+};
+
+TEST(MemoryInstrumentationTest, ownerTypePropagation)
+{
+    VisitedObjects visitedObjects;
+    MemoryInstrumentationImpl impl(visitedObjects);
+    OwnPtr<InstrumentedDOM> instrumentedDOM(adoptPtr(new InstrumentedDOM));
+    impl.addRootObject(instrumentedDOM);
+    EXPECT_EQ(sizeof(InstrumentedDOM) + sizeof(InstrumentedOther), impl.reportedSizeForAllTypes());
+    EXPECT_EQ(sizeof(InstrumentedDOM) + sizeof(InstrumentedOther), impl.totalSize(MemoryInstrumentation::DOM));
+    EXPECT_EQ(2, visitedObjects.size());
+}
+
+class NonVirtualInstrumented {
+public:
+    void reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+    {
+        MemoryClassInfo<NonVirtualInstrumented> info(memoryObjectInfo, this, MemoryInstrumentation::DOM);
+        info.addInstrumentedMember(m_instrumented);
+    }
+
+    Instrumented m_instrumented;
+};
+
+TEST(MemoryInstrumentationTest, visitFirstMemberInNonVirtualClass)
+{
+    VisitedObjects visitedObjects;
+    MemoryInstrumentationImpl impl(visitedObjects);
+    NonVirtualInstrumented nonVirtualInstrumented;
+    impl.addRootObject(&nonVirtualInstrumented);
+    EXPECT_EQ(sizeof(NonVirtualInstrumented) + sizeof(NotInstrumented), impl.reportedSizeForAllTypes());
+    EXPECT_EQ(2, visitedObjects.size());
 }
 
 } // namespace

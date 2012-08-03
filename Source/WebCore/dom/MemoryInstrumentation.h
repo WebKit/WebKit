@@ -57,7 +57,7 @@ public:
 
     template <typename T> void addRootObject(const T& t)
     {
-        addInstrumentedObject(t);
+        addInstrumentedObject(t, Other);
         processDeferredInstrumentedPointers();
     }
 
@@ -79,11 +79,12 @@ private:
     template <typename T> friend class MemoryClassInfo;
     template <typename T> class InstrumentedPointer : public InstrumentedPointerBase {
     public:
-        explicit InstrumentedPointer(const T* pointer) : m_pointer(pointer) { }
+        explicit InstrumentedPointer(const T* pointer, ObjectType objectType) : m_pointer(pointer), m_objectType(objectType) { }
         virtual void process(MemoryInstrumentation*) OVERRIDE;
 
     private:
         const T* m_pointer;
+        const ObjectType m_objectType;
     };
 
     template <typename T> void addObject(const T& t, ObjectType objectType)
@@ -91,7 +92,8 @@ private:
         OwningTraits<T>::addObject(this, t, objectType);
     }
     void addString(const String&, ObjectType);
-    template <typename T> void addInstrumentedObject(const T& t) { OwningTraits<T>::addInstrumentedObject(this, t); }
+    template <typename T> void addInstrumentedObject(const T& t, ObjectType objectType) { OwningTraits<T>::addInstrumentedObject(this, t, objectType); }
+
     template <typename HashMapType> void addHashMap(const HashMapType&, ObjectType, bool contentOnly = false);
     template <typename HashSetType> void addHashSet(const HashSetType&, ObjectType, bool contentOnly = false);
     template <typename CollectionType> void addInstrumentedCollection(const CollectionType&, ObjectType, bool contentOnly = false);
@@ -111,20 +113,20 @@ private:
 
     template <typename T>
     struct OwningTraits { // Default byReference implementation.
-        static void addInstrumentedObject(MemoryInstrumentation* instrumentation, const T& t) { instrumentation->addInstrumentedObjectImpl(&t, byReference); }
+        static void addInstrumentedObject(MemoryInstrumentation* instrumentation, const T& t, ObjectType objectType) { instrumentation->addInstrumentedObjectImpl(&t, objectType, byReference); }
         static void addObject(MemoryInstrumentation* instrumentation, const T& t, ObjectType objectType) { instrumentation->addObjectImpl(&t, objectType, byReference); }
     };
 
     template <typename T>
     struct OwningTraits<T*> { // Custom byPointer implementation.
-        static void addInstrumentedObject(MemoryInstrumentation* instrumentation, const T* const& t) { instrumentation->addInstrumentedObjectImpl(t, byPointer); }
+        static void addInstrumentedObject(MemoryInstrumentation* instrumentation, const T* const& t, ObjectType objectType) { instrumentation->addInstrumentedObjectImpl(t, objectType, byPointer); }
         static void addObject(MemoryInstrumentation* instrumentation, const T* const& t, ObjectType objectType) { instrumentation->addObjectImpl(t, objectType, byPointer); }
     };
 
-    template <typename T> void addInstrumentedObjectImpl(const T* const&, OwningType);
-    template <typename T> void addInstrumentedObjectImpl(const DataRef<T>* const&, OwningType);
-    template <typename T> void addInstrumentedObjectImpl(const OwnPtr<T>* const&, OwningType);
-    template <typename T> void addInstrumentedObjectImpl(const RefPtr<T>* const&, OwningType);
+    template <typename T> void addInstrumentedObjectImpl(const T* const&, ObjectType, OwningType);
+    template <typename T> void addInstrumentedObjectImpl(const DataRef<T>* const&, ObjectType, OwningType);
+    template <typename T> void addInstrumentedObjectImpl(const OwnPtr<T>* const&, ObjectType, OwningType);
+    template <typename T> void addInstrumentedObjectImpl(const RefPtr<T>* const&, ObjectType, OwningType);
 
     template <typename T> void addObjectImpl(const T* const&, ObjectType, OwningType);
     template <typename T> void addObjectImpl(const DataRef<T>* const&, ObjectType, OwningType);
@@ -134,11 +136,11 @@ private:
 
 class MemoryObjectInfo {
 public:
-    explicit MemoryObjectInfo(MemoryInstrumentation* memoryInstrumentation)
+    MemoryObjectInfo(MemoryInstrumentation* memoryInstrumentation, MemoryInstrumentation::ObjectType objectType)
         : m_memoryInstrumentation(memoryInstrumentation)
-        , m_objectType(MemoryInstrumentation::Other)
+        , m_objectType(objectType)
         , m_objectSize(0)
-     { }
+    { }
 
     MemoryInstrumentation::ObjectType objectType() const { return m_objectType; }
     size_t objectSize() const { return m_objectSize; }
@@ -150,10 +152,11 @@ private:
 
     template <typename T> void reportObjectInfo(const T*, MemoryInstrumentation::ObjectType objectType)
     {
-        if (m_objectType != MemoryInstrumentation::Other)
-            return;
-        m_objectType = objectType;
-        m_objectSize = sizeof(T);
+        if (!m_objectSize) {
+            m_objectSize = sizeof(T);
+            if (objectType != MemoryInstrumentation::Other)
+                m_objectType = objectType;
+        }
     }
 
     MemoryInstrumentation* m_memoryInstrumentation;
@@ -174,7 +177,7 @@ public:
 
     template <typename P> void visitBaseClass(const P* ptr) { ptr->P::reportMemoryUsage(m_memoryObjectInfo); }
 
-    template <typename M> void addInstrumentedMember(const M& member) { m_memoryInstrumentation->addInstrumentedObject(member); }
+    template <typename M> void addInstrumentedMember(const M& member) { m_memoryInstrumentation->addInstrumentedObject(member, m_objectType); }
     template <typename M> void addMember(const M& member) { m_memoryInstrumentation->addObject(member, m_objectType); }
 
     template <typename HashMapType> void addHashMap(const HashMapType& map) { m_memoryInstrumentation->addHashMap(map, m_objectType, true); }
@@ -198,50 +201,63 @@ private:
 };
 
 template <typename T>
-void MemoryInstrumentation::addInstrumentedObjectImpl(const T* const& object, OwningType owningType)
+void MemoryInstrumentation::addInstrumentedObjectImpl(const T* const& object, ObjectType objectType, OwningType owningType)
 {
-    if (!object || visited(object))
-        return;
     if (owningType == byReference) {
-        MemoryObjectInfo memoryObjectInfo(this);
+        MemoryObjectInfo memoryObjectInfo(this, objectType);
         object->reportMemoryUsage(&memoryObjectInfo);
-    } else
-        deferInstrumentedPointer(adoptPtr(new InstrumentedPointer<T>(object)));
+    } else {
+        if (!object || visited(object))
+            return;
+        deferInstrumentedPointer(adoptPtr(new InstrumentedPointer<T>(object, objectType)));
+    }
 }
 
 template <typename T>
-void MemoryInstrumentation::addInstrumentedObjectImpl(const DataRef<T>* const& object, OwningType)
+void MemoryInstrumentation::addInstrumentedObjectImpl(const DataRef<T>* const& object, ObjectType objectType, OwningType owningType)
 {
-    addInstrumentedObjectImpl(object->get(), byPointer);
+    if (owningType == byPointer)
+        countObjectSize(objectType, sizeof(DataRef<T>));
+    addInstrumentedObjectImpl(object->get(), objectType, byPointer);
 }
 
 template <typename T>
-void MemoryInstrumentation::addInstrumentedObjectImpl(const OwnPtr<T>* const& object, OwningType)
+void MemoryInstrumentation::addInstrumentedObjectImpl(const OwnPtr<T>* const& object, ObjectType objectType, OwningType owningType)
 {
-    addInstrumentedObjectImpl(object->get(), byPointer);
+    if (owningType == byPointer)
+        countObjectSize(objectType, sizeof(OwnPtr<T>));
+    addInstrumentedObjectImpl(object->get(), objectType, byPointer);
 }
 
 template <typename T>
-void MemoryInstrumentation::addInstrumentedObjectImpl(const RefPtr<T>* const& object, OwningType)
+void MemoryInstrumentation::addInstrumentedObjectImpl(const RefPtr<T>* const& object, ObjectType objectType, OwningType owningType)
 {
-    addInstrumentedObjectImpl(object->get(), byPointer);
+    if (owningType == byPointer)
+        countObjectSize(objectType, sizeof(RefPtr<T>));
+    addInstrumentedObjectImpl(object->get(), objectType, byPointer);
 }
 
 template <typename T>
-void MemoryInstrumentation::addObjectImpl(const DataRef<T>* const& object, ObjectType objectType, OwningType)
+void MemoryInstrumentation::addObjectImpl(const DataRef<T>* const& object, ObjectType objectType, OwningType owningType)
 {
+    if (owningType == byPointer)
+        countObjectSize(objectType, sizeof(DataRef<T>));
     addObjectImpl(object->get(), objectType, byPointer);
 }
 
 template <typename T>
-void MemoryInstrumentation::addObjectImpl(const OwnPtr<T>* const& object, ObjectType objectType, OwningType)
+void MemoryInstrumentation::addObjectImpl(const OwnPtr<T>* const& object, ObjectType objectType, OwningType owningType)
 {
+    if (owningType == byPointer)
+        countObjectSize(objectType, sizeof(RefPtr<T>));
     addObjectImpl(object->get(), objectType, byPointer);
 }
 
 template <typename T>
-void MemoryInstrumentation::addObjectImpl(const RefPtr<T>* const& object, ObjectType objectType, OwningType)
+void MemoryInstrumentation::addObjectImpl(const RefPtr<T>* const& object, ObjectType objectType, OwningType owningType)
 {
+    if (owningType == byPointer)
+        countObjectSize(objectType, sizeof(RefPtr<T>));
     addObjectImpl(object->get(), objectType, byPointer);
 }
 
@@ -283,7 +299,7 @@ void MemoryInstrumentation::addInstrumentedCollection(const CollectionType& coll
     countObjectSize(objectType, calculateContainerSize(collection, contentOnly));
     typename CollectionType::const_iterator end = collection.end();
     for (typename CollectionType::const_iterator i = collection.begin(); i != end; ++i)
-        addInstrumentedObject(*i);
+        addInstrumentedObject(*i, objectType);
 }
 
 template<typename ListHashSetType>
@@ -312,7 +328,7 @@ size_t MemoryInstrumentation::calculateContainerSize(const Container& container,
 template<typename T>
 void MemoryInstrumentation::InstrumentedPointer<T>::process(MemoryInstrumentation* memoryInstrumentation)
 {
-    MemoryObjectInfo memoryObjectInfo(memoryInstrumentation);
+    MemoryObjectInfo memoryObjectInfo(memoryInstrumentation, m_objectType);
     m_pointer->reportMemoryUsage(&memoryObjectInfo);
     memoryInstrumentation->countObjectSize(memoryObjectInfo.objectType(), memoryObjectInfo.objectSize());
 }

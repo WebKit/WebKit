@@ -1,3 +1,32 @@
+2012-08-02  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Web Inspector: extend test coverage for nmi code and fix 2 bugs.
+        https://bugs.webkit.org/show_bug.cgi?id=92994
+
+        Reviewed by Yury Semikhatsky.
+
+        1) owner object type propagation.
+        If a class with object-type DOM has an instrumented member with object-type Other then it has to be recorded as DOM.
+        Sample: We have SharedBuffer class and we don't know the object-type for it but we know that it is owned by an object with object-type CachedResourceImage.
+
+        2) the first member of an instrumented non virtual class was skipped even if it was reported properly.
+        it happened because the first member has the same address as it's owner
+
+        * dom/MemoryInstrumentation.h:
+        (WebCore::MemoryInstrumentation::addRootObject):
+        (WebCore::MemoryInstrumentation::InstrumentedPointer::InstrumentedPointer):
+        (InstrumentedPointer):
+        (WebCore::MemoryInstrumentation::addInstrumentedObject):
+        (MemoryInstrumentation):
+        (WebCore::MemoryInstrumentation::OwningTraits::addInstrumentedObject):
+        (WebCore::MemoryObjectInfo::MemoryObjectInfo):
+        (WebCore::MemoryObjectInfo::reportObjectInfo):
+        (WebCore::MemoryClassInfo::addInstrumentedMember):
+        (WebCore::MemoryInstrumentation::addInstrumentedObjectImpl):
+        (WebCore::MemoryInstrumentation::addObjectImpl):
+        (WebCore::MemoryInstrumentation::addInstrumentedCollection):
+        (WebCore::::process):
+
 2012-08-03  Kentaro Hara  <haraken@chromium.org>
 
         [V8] Make v8NonStringValueToWebCoreString a static method
