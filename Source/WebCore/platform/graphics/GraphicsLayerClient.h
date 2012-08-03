@@ -84,6 +84,10 @@ public:
     // while painting.
     virtual void verifyNotPainting() { }
 #endif
+
+#if PLATFORM(BLACKBERRY)
+    virtual bool contentsVisible(const GraphicsLayer*, const IntRect& contentRect) const = 0;
+#endif
 };
 
 } // namespace WebCore

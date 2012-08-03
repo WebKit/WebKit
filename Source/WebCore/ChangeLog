@@ -1,3 +1,23 @@
+2012-08-02  Arvid Nilsson  <anilsson@rim.com>
+
+        [BlackBerry] Upstream GraphicsLayerClient::contentsVisible()
+        https://bugs.webkit.org/show_bug.cgi?id=93040
+
+        Reviewed by George Staikos.
+
+        Our LayerTiler uses both proactive and reactive rendering to populate
+        tiles. If contentsVisible() is accurate, it will cause the right tiles
+        to be rendered. Failing that, when a dirty tile is found to be visible
+        on the compositing thread, a render job is scheduled.
+
+        This is not currently testable using BlackBerry testing infrastructure.
+
+        * platform/graphics/GraphicsLayerClient.h:
+        (GraphicsLayerClient): New BlackBerry-specific method "contentsVisible" added.
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore):
+        (WebCore::RenderLayerBacking::contentsVisible): BlackBerry-specific implementation.
+
 2012-08-02  Alexandre Elias  <aelias@google.com>
 
         [chromium] deviceViewportSize cleanup
