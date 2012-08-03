@@ -233,20 +233,6 @@ namespace WebCore {
 
         PassOwnPtr<v8::ScriptData> precompileScript(v8::Handle<v8::String>, CachedScript*);
 
-        static const char* rangeExceptionName(int exceptionCode);
-        static const char* eventExceptionName(int exceptionCode);
-        static const char* xmlHttpRequestExceptionName(int exceptionCode);
-        static const char* domExceptionName(int exceptionCode);
-        static const char* xpathExceptionName(int exceptionCode);
-
-#if ENABLE(SVG)
-        static const char* svgExceptionName(int exceptionCode);
-#endif
-
-#if ENABLE(SQL_DATABASE)
-        static const char* sqlExceptionName(int exceptionCode);
-#endif
-
         Frame* m_frame;
 
         // For the moment, we have one of these.  Soon we will have one per DOMWrapperWorld.

@@ -1,5 +1,19 @@
 2012-08-03  Kentaro Hara  <haraken@chromium.org>
 
+        [V8] Remove unused methods in V8Proxy
+        https://bugs.webkit.org/show_bug.cgi?id=93106
+
+        Reviewed by Adam Barth.
+
+        In preparation for removing V8Proxy, we can remove unused methods in V8Proxy.
+
+        No tests. No change in behavior.
+
+        * bindings/v8/V8Proxy.h:
+        (V8Proxy):
+
+2012-08-03  Kentaro Hara  <haraken@chromium.org>
+
         [V8] Implement v8Undefined()
         https://bugs.webkit.org/show_bug.cgi?id=93093
 
