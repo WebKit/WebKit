@@ -6278,6 +6278,7 @@
             'inspector/front-end/DataGrid.js',
             'inspector/front-end/DebuggerModel.js',
             'inspector/front-end/DebuggerScriptMapping.js',
+            'inspector/front-end/DefaultTextEditor.js',
             'inspector/front-end/Dialog.js',
             'inspector/front-end/DirectoryContentView.js',
             'inspector/front-end/DOMAgent.js',

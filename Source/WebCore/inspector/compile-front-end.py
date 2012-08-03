@@ -120,6 +120,7 @@ modules = [
             "CookiesTable.js",
             "DOMSyntaxHighlighter.js",
             "DataGrid.js",
+            "DefaultTextEditor.js",
             "Dialog.js",
             "Drawer.js",
             "EmptyView.js",

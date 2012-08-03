@@ -42,7 +42,7 @@ WebInspector.SourceFrame = function(contentProvider)
     this._contentProvider = contentProvider;
 
     var textEditorDelegate = new WebInspector.TextEditorDelegateForSourceFrame(this);
-    this._textEditor = new WebInspector.TextEditor(this._url, textEditorDelegate);
+    this._textEditor = new WebInspector.DefaultTextEditor(this._url, textEditorDelegate);
 
     this._currentSearchResultIndex = -1;
     this._searchResults = [];

@@ -1,3 +1,56 @@
+2012-08-03  Jan Keromnes  <janx@linux.com>
+
+        Web Inspector: Create and interface for TextEditor
+        https://bugs.webkit.org/show_bug.cgi?id=93126
+
+        Reviewed by Pavel Feldman.
+
+        For more extensibility, TextEditor needs to be an interface that other
+        classes can implement, e.g. the new class DefaultTextEditor.
+
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * inspector/compile-front-end.py:
+        * inspector/front-end/SourceFrame.js:
+        (WebInspector.SourceFrame):
+        * inspector/front-end/TextEditor.js:
+        (WebInspector.TextEditor):
+        (WebInspector.TextEditor.prototype.set mimeType):
+        (WebInspector.TextEditor.prototype.setReadOnly):
+        (WebInspector.TextEditor.prototype.readOnly):
+        (WebInspector.TextEditor.prototype.defaultFocusedElement):
+        (WebInspector.TextEditor.prototype.revealLine):
+        (WebInspector.TextEditor.prototype.addDecoration):
+        (WebInspector.TextEditor.prototype.removeDecoration):
+        (WebInspector.TextEditor.prototype.markAndRevealRange):
+        (WebInspector.TextEditor.prototype.highlightLine):
+        (WebInspector.TextEditor.prototype.clearLineHighlight):
+        (WebInspector.TextEditor.prototype.freeCachedElements):
+        (WebInspector.TextEditor.prototype.elementsToRestoreScrollPositionsFor):
+        (WebInspector.TextEditor.prototype.inheritScrollPositions):
+        (WebInspector.TextEditor.prototype.beginUpdates):
+        (WebInspector.TextEditor.prototype.endUpdates):
+        (WebInspector.TextEditor.prototype.onResize):
+        (WebInspector.TextEditor.prototype._textChanged):
+        (WebInspector.TextEditor.prototype.editRange):
+        (WebInspector.TextEditor.prototype.scrollToLine):
+        (WebInspector.TextEditor.prototype.selection):
+        (WebInspector.TextEditor.prototype.lastSelection):
+        (WebInspector.TextEditor.prototype.setSelection):
+        (WebInspector.TextEditor.prototype.setText):
+        (WebInspector.TextEditor.prototype.text):
+        (WebInspector.TextEditor.prototype.range):
+        (WebInspector.TextEditor.prototype.line):
+        (WebInspector.TextEditor.prototype.get linesCount):
+        (WebInspector.TextEditor.prototype.setAttribute):
+        (WebInspector.TextEditor.prototype.getAttribute):
+        (WebInspector.TextEditor.prototype.removeAttribute):
+        (WebInspector.TextEditor.prototype.wasShown):
+        (WebInspector.TextEditor.prototype._handleFocused):
+        (WebInspector.TextEditor.prototype.willHide):
+        * inspector/front-end/WebKit.qrc:
+        * inspector/front-end/inspector.html:
+
 2012-08-03  Mike West  <mkwst@chromium.org>
 
         Blocking a plugin via CSP should result in one (and only one) console message.

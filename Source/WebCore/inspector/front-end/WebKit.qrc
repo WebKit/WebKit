@@ -38,6 +38,7 @@
     <file>DataGrid.js</file>
     <file>DebuggerModel.js</file>
     <file>DebuggerScriptMapping.js</file>
+    <file>DefaultTextEditor.js</file>
     <file>Dialog.js</file>
     <file>DirectoryContentView.js</file>
     <file>DOMAgent.js</file>

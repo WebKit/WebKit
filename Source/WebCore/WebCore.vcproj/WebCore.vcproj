@@ -75422,6 +75422,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\inspector\front-end\DefaultTextEditor.js"
+					>
+				</File>
+				<File
 					RelativePath="..\inspector\front-end\dialog.css"
 					>
 				</File>
