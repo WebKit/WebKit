@@ -24,11 +24,13 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
+# Try to find Harfbuzz include and library directories.
 #
+# After successful discovery, this will set for inclusion where needed:
+# HARFBUZZ_INCLUDE_DIRS - containg the HarfBuzz headers
+# HARFBUZZ_LIBRARIES - containg the HarfBuzz library
 
 INCLUDE(FindPkgConfig)
-
-PKG_CHECK_MODULES (harfbuzz REQUIRED harfbuzz>=0.9.0)
 
 PKG_CHECK_MODULES(PC_HARFBUZZ harfbuzz>=0.9.0)
 

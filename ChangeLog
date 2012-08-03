@@ -1,3 +1,14 @@
+2012-08-03  Dominik Röttsches  <dominik.rottsches@intel.com>
+
+        [cmake] Cleanup FindHarfBuzz.cmake
+        https://bugs.webkit.org/show_bug.cgi?id=92984
+
+        Reviewed by Hajime Morita.
+
+        Cleanup which didn't make it into my previous ptch.
+
+        * Source/cmake/FindHarfBuzz.cmake: Remove duplicate line, add a bit of documentation.
+
 2012-08-03  Joone Hur  <joone.hur@intel.com>
 
         [EFL][DRT] WebKitAnimation API compile-time disabled
