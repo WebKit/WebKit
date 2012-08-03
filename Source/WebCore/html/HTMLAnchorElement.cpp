@@ -569,24 +569,9 @@ bool isEnterKeyKeydownEvent(Event* event)
     return event->type() == eventNames().keydownEvent && event->isKeyboardEvent() && static_cast<KeyboardEvent*>(event)->keyIdentifier() == "Enter";
 }
 
-bool isMiddleMouseButtonEvent(Event* event)
-{
-    return event->isMouseEvent() && static_cast<MouseEvent*>(event)->button() == MiddleButton;
-}
-
 bool isLinkClick(Event* event)
 {
     return event->type() == eventNames().clickEvent && (!event->isMouseEvent() || static_cast<MouseEvent*>(event)->button() != RightButton);
-}
-
-void handleLinkClick(Event* event, Document* document, const String& url, const String& target, bool hideReferrer)
-{
-    event->setDefaultHandled();
-
-    Frame* frame = document->frame();
-    if (!frame)
-        return;
-    frame->loader()->urlSelected(document->completeURL(url), target, event, false, false, hideReferrer ? NeverSendReferrer : MaybeSendReferrer);
 }
 
 bool HTMLAnchorElement::willRespondToMouseClickEvents()

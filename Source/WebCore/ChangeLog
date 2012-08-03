@@ -1,3 +1,23 @@
+2012-08-02  Rob Buis  <rwlbuis@webkit.org>
+
+        SVG text selection doesn't work with hyperlinked text
+        https://bugs.webkit.org/show_bug.cgi?id=29166
+
+        Reviewed by Eric Seidel.
+
+        Cleanup SVGAElement. There is no need to test for middle mouse button here, this
+        is handled elsewhere, so remove isMiddleMouseButtonEvent. Similarly handleLinkClick
+        is not used anymore by HTMLAnchorElement, remove it. Finally, _self indeed is not needed.
+
+        No new tests, since no change in behaviour.
+
+        * WebCore.order:
+        * html/HTMLAnchorElement.cpp:
+        * html/HTMLAnchorElement.h:
+        (WebCore):
+        * svg/SVGAElement.cpp:
+        (WebCore::SVGAElement::defaultEventHandler):
+
 2012-08-02  Kwang Yul Seo  <skyul@company100.net>
 
         Move causesFosterParenting() to HTMLStackItem

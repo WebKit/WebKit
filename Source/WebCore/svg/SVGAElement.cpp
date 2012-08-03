@@ -175,19 +175,15 @@ void SVGAElement::defaultEventHandler(Event* event)
                     return;
             }
 
-            // FIXME: Why does the SVG anchor element have this special logic
-            // for middle click that the HTML anchor element does not have?
-            // Making a middle click open a link in a new window or tab is
-            // properly handled at the client level, not inside WebKit; this
-            // code should be deleted.
-            String target = isMiddleMouseButtonEvent(event) ? "_blank" : this->target();
+            String target = this->target();
+            if (target.isEmpty() && fastGetAttribute(XLinkNames::showAttr) == "new")
+                target = "_blank";
+            event->setDefaultHandled();
 
-            // FIXME: It's not clear why setting target to "_self" is ever
-            // helpful.
-            if (target.isEmpty())
-                target = (fastGetAttribute(XLinkNames::showAttr) == "new") ? "_blank" : "_self";
-
-            handleLinkClick(event, document(), url, target);
+            Frame* frame = document()->frame();
+            if (!frame)
+                return;
+            frame->loader()->urlSelected(document()->completeURL(url), target, event, false, false, MaybeSendReferrer);
             return;
         }
     }
