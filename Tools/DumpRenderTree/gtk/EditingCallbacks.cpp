@@ -138,7 +138,7 @@ gboolean shouldDeleteRange(WebKitWebView* webView, WebKitDOMRange* range)
 
 gboolean shouldShowDeleteInterfaceForElement(WebKitWebView* webView, WebKitDOMHTMLElement* element)
 {
-    GOwnPtr<gchar> elementClassName(webkit_dom_html_element_get_class_name(element));
+    GOwnPtr<gchar> elementClassName(webkit_dom_element_get_class_name(WEBKIT_DOM_ELEMENT(element)));
     return g_str_equal(elementClassName.get(), "needsDeletionUI");
 }
 

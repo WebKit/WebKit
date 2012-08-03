@@ -1,3 +1,15 @@
+2012-08-02  Joone Hur  <joone.hur@intel.com>
+
+        [GTK] Build break when building DumpRenderTree/gtk/EditingCallbacks.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=93061
+
+        Unreviewed, Fix build break for WebKitGtk+.
+
+        Use webkit_dom_element_get_class_name instead of webkit_dom_html_element_get_class_name.
+
+        * DumpRenderTree/gtk/EditingCallbacks.cpp:
+        (shouldShowDeleteInterfaceForElement):
+
 2012-08-02  Dirk Pranke  <dpranke@chromium.org>
 
         test-webkitpy can fail on a clean checkout
