@@ -163,7 +163,7 @@ class DriverTest(unittest.TestCase):
     def test_no_timeout(self):
         port = TestWebKitPort()
         driver = Driver(port, 0, pixel_tests=True, no_timeout=True)
-        self.assertEquals(driver.cmd_line(True, []), ['/mock-build/DumpRenderTree', '--no-timeout', '--pixel-tests', '-'])
+        self.assertEquals(driver.cmd_line(True, []), ['/mock-build/DumpRenderTree', '--no-timeout', '-'])
 
     def test_check_for_driver_crash(self):
         port = TestWebKitPort()

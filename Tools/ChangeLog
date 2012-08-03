@@ -1,3 +1,17 @@
+2012-08-03  Balazs Kelemen  <kbalazs@webkit.org>
+
+        [nrwt] fix unit tests after turned pixel testing to be a per test setting
+        https://bugs.webkit.org/show_bug.cgi?id=93112
+
+        Reviewed by Csaba Osztrogonác.
+
+        Change unit tests in accordance of per test switching of pixel testing.
+
+        * Scripts/webkitpy/layout_tests/port/chromium_android_unittest.py:
+        (ChromiumAndroidDriverTest.test_command_from_driver_input):
+        * Scripts/webkitpy/layout_tests/port/driver_unittest.py:
+        (DriverTest.test_no_timeout):
+
 2012-08-03  Oswald Buddenhagen  <oswald.buddenhagen@nokia.com>
 
         [Qt] Populate .qmake.cache from the top-level project file
