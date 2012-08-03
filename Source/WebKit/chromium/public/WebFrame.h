@@ -75,6 +75,8 @@ class WebURLRequest;
 class WebView;
 struct WebConsoleMessage;
 struct WebFindOptions;
+struct WebFloatPoint;
+struct WebFloatRect;
 struct WebPoint;
 struct WebPrintParams;
 struct WebRect;
@@ -574,6 +576,30 @@ public:
     // This function is called on the main frame to reset the total number
     // of matches found during the scoping effort.
     virtual void resetMatchCount() = 0;
+
+    // Returns a counter that is incremented when the find-in-page markers are
+    // changed on any frame. Switching the active marker doesn't change the
+    // current version. Should be called only on the main frame.
+    virtual int findMatchMarkersVersion() const = 0;
+
+    // Returns the bounding box of the active find-in-page match marker or an
+    // empty rect if no such marker exists. The rect is returned in find-in-page
+    // coordinates whatever frame the active marker is.
+    // Should be called only on the main frame.
+    virtual WebFloatRect activeFindMatchRect() = 0;
+
+    // Swaps the contents of the provided vector with the bounding boxes of the
+    // find-in-page match markers from all frames. The bounding boxes are returned
+    // in find-in-page coordinates. This method should be called only on the main frame.
+    virtual void findMatchRects(WebVector<WebFloatRect>&) = 0;
+
+    // Selects the find-in-page match in the appropriate frame closest to the
+    // provided point in find-in-page coordinates. Returns the ordinal of such
+    // match or -1 if none could be found. If not null, selectionRect is set to
+    // the bounding box of the selected match in window coordinates.
+    // This method should be called only on the main frame.
+    virtual int selectNearestFindMatch(const WebFloatPoint&,
+                                       WebRect* selectionRect) = 0;
 
     // OrientationChange event ---------------------------------------------
 

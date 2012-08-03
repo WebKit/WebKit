@@ -169,6 +169,8 @@
 #include "XPathResult.h"
 #include "markup.h"
 #include "painting/GraphicsContextBuilder.h"
+#include "platform/WebFloatPoint.h"
+#include "platform/WebFloatRect.h"
 #include "platform/WebPoint.h"
 #include "platform/WebRect.h"
 #include "platform/WebSerializedScriptValue.h"
@@ -1936,6 +1938,29 @@ void WebFrameImpl::dispatchMessageEventWithOriginCheck(const WebSecurityOrigin& 
     ASSERT(!event.isNull());
     // Pass an empty call stack, since we don't have the one from the other process.
     m_frame->domWindow()->dispatchMessageEventWithOriginCheck(intendedTargetOrigin.get(), event, 0);
+}
+
+int WebFrameImpl::findMatchMarkersVersion() const
+{
+    // FIXME: Implement this as part of https://bugs.webkit.org/show_bug.cgi?id=93111.
+    return 0;
+}
+
+WebFloatRect WebFrameImpl::activeFindMatchRect()
+{
+    // FIXME: Implement this as part of https://bugs.webkit.org/show_bug.cgi?id=93111.
+    return WebFloatRect();
+}
+
+void WebFrameImpl::findMatchRects(WebVector<WebFloatRect>& outputRects)
+{
+    // FIXME: Implement this as part of https://bugs.webkit.org/show_bug.cgi?id=93111.
+}
+
+int WebFrameImpl::selectNearestFindMatch(const WebFloatPoint& point, WebRect* selectionRect)
+{
+    // FIXME: Implement this as part of https://bugs.webkit.org/show_bug.cgi?id=93111.
+    return 0;
 }
 
 void WebFrameImpl::deliverIntent(const WebIntent& intent, WebMessagePortChannelArray* ports, WebDeliveredIntentClient* intentClient)

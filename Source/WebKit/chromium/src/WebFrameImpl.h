@@ -210,6 +210,10 @@ public:
     virtual void cancelPendingScopingEffort();
     virtual void increaseMatchCount(int count, int identifier);
     virtual void resetMatchCount();
+    virtual int findMatchMarkersVersion() const;
+    virtual WebFloatRect activeFindMatchRect();
+    virtual void findMatchRects(WebVector<WebFloatRect>&);
+    virtual int selectNearestFindMatch(const WebFloatPoint&, WebRect* selectionRect);
 
     virtual void sendOrientationChangeEvent(int orientation);
 

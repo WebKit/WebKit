@@ -1,3 +1,28 @@
+2012-08-03  Leandro Gracia Gil  <leandrogracia@chromium.org>
+
+        [Chromium] Add stubs for the find-in-page match rects API
+        https://bugs.webkit.org/show_bug.cgi?id=93110
+
+        Reviewed by Adam Barth.
+
+        The Android port allows tapping on the find-in-page result tickmarks taking
+        the user to the corresponding matches. This patch introduces stubs for the
+        new required methods in order to achieve WebKit API compatibility for this
+        port as soon as possible. The implementation of these methods will be added
+        later in https://bugs.webkit.org/show_bug.cgi?id=93111.
+
+        * public/WebFrame.h:
+        (WebKit):
+        (WebFrame):
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::findMatchMarkersVersion):
+        (WebKit):
+        (WebKit::WebFrameImpl::activeFindMatchRect):
+        (WebKit::WebFrameImpl::findMatchRects):
+        (WebKit::WebFrameImpl::selectNearestFindMatch):
+        * src/WebFrameImpl.h:
+        (WebFrameImpl):
+
 2012-08-03  Mike West  <mkwst@chromium.org>
 
         Blocking a plugin via CSP should result in one (and only one) console message.
