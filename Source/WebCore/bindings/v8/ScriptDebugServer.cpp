@@ -89,7 +89,7 @@ String ScriptDebugServer::setBreakpoint(const String& sourceID, const ScriptBrea
         return "";
     *actualLineNumber = args->Get(v8::String::New("lineNumber"))->Int32Value();
     *actualColumnNumber = args->Get(v8::String::New("columnNumber"))->Int32Value();
-    return v8StringToWebCoreString(breakpointId->ToString());
+    return v8ValueToWebCoreString(breakpointId->ToString());
 }
 
 void ScriptDebugServer::removeBreakpoint(const String& breakpointId)

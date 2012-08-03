@@ -242,7 +242,7 @@ static AtomicString v8NonStringValueToAtomicWebCoreString(v8::Handle<v8::Value> 
 String v8ValueToWebCoreString(v8::Handle<v8::Value> value)
 {
     if (value->IsString())
-        return v8StringToWebCoreString(v8::Handle<v8::String>::Cast(value));
+        return v8StringToWebCoreString<String>(v8::Handle<v8::String>::Cast(value), Externalize);
     return v8NonStringValueToWebCoreString(value);
 }
 

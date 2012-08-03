@@ -283,15 +283,6 @@ namespace WebCore {
         bool m_previous;
     };
 
-
-    enum ExternalMode {
-        Externalize,
-        DoNotExternalize
-    };
-
-    template <typename StringType>
-    StringType v8StringToWebCoreString(v8::Handle<v8::String> v8String, ExternalMode external);
-
     // Since v8::Null(isolate) crashes if we pass a null isolate,
     // we need to use v8NullWithCheck(isolate) if an isolate can be null.
     //
@@ -301,14 +292,18 @@ namespace WebCore {
         return isolate ? v8::Null(isolate) : v8::Null();
     }
 
+    enum ExternalMode {
+        Externalize,
+        DoNotExternalize
+    };
+
+    template <typename StringType>
+    StringType v8StringToWebCoreString(v8::Handle<v8::String>, ExternalMode);
+
     // Convert v8 types to a WTF::String. If the V8 string is not already
     // an external string then it is transformed into an external string at this
     // point to avoid repeated conversions.
-    inline String v8StringToWebCoreString(v8::Handle<v8::String> v8String)
-    {
-        return v8StringToWebCoreString<String>(v8String, Externalize);
-    }
-    String v8ValueToWebCoreString(v8::Handle<v8::Value> value);
+    String v8ValueToWebCoreString(v8::Handle<v8::Value>);
 
     // Convert a V8 value to a WTF::AtomicString.
     AtomicString v8ValueToAtomicWebCoreString(v8::Handle<v8::Value>);

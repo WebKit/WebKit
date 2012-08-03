@@ -1,3 +1,23 @@
+2012-08-03  Kentaro Hara  <haraken@chromium.org>
+
+        [V8] Remove v8StringToWebCoreString()
+        https://bugs.webkit.org/show_bug.cgi?id=93087
+
+        Reviewed by Adam Barth.
+
+        There should be only one API that converts V8 String
+        to WebCore String. v8ValueToWebCoreString() does it.
+        We can remove v8StringToWebCoreString().
+
+        No tests. No change in behavior.
+
+        * bindings/v8/ScriptDebugServer.cpp:
+        (WebCore::ScriptDebugServer::setBreakpoint):
+        * bindings/v8/V8Binding.cpp:
+        (WebCore::v8ValueToWebCoreString):
+        * bindings/v8/V8Binding.h:
+        (WebCore):
+
 2012-07-20  Jon Lee  <jonlee@apple.com>
 
         Crash in Notification when setting a non-object as an event listener (91881)
