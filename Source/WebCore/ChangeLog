@@ -1,3 +1,19 @@
+2012-08-03  Abhishek Arya  <inferno@chromium.org>
+
+        Regression(r124564): Wrong inlineChildrenBlock->hasLayer() computed in RenderBlock::removeChild.
+        https://bugs.webkit.org/show_bug.cgi?id=90800
+
+        Reviewed by Eric Seidel.
+
+        r124564 reversed the sequence of setStyle and removeChildNode calls, but failed to cache the value
+        of inlineChildrenBlock->hasLayer(). So, it will be null when the layer is removed from parent in setStyle.
+        Fixed by the caching the bool value. 
+
+        Covered by existing test fast/block/layer-not-removed-from-parent-crash.html.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::removeChild):
+
 2012-08-03  Mario Sanchez Prada  <msanchez@igalia.com>
 
         [GTK] Add a new and reusable enchant-based spellchecker in WebCore

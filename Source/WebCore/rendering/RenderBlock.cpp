@@ -1169,12 +1169,14 @@ void RenderBlock::removeChild(RenderObject* oldChild)
             // column span flag if it is set.
             ASSERT(!inlineChildrenBlock->continuation());
             RefPtr<RenderStyle> newStyle = RenderStyle::createAnonymousStyleWithDisplay(style(), BLOCK);
+            // Cache this value as it might get changed in setStyle() call.
+            bool inlineChildrenBlockHasLayer = inlineChildrenBlock->hasLayer();
             inlineChildrenBlock->setStyle(newStyle);
-            children()->removeChildNode(this, inlineChildrenBlock, inlineChildrenBlock->hasLayer());
+            children()->removeChildNode(this, inlineChildrenBlock, inlineChildrenBlockHasLayer);
             
             // Now just put the inlineChildrenBlock inside the blockChildrenBlock.
             blockChildrenBlock->children()->insertChildNode(blockChildrenBlock, inlineChildrenBlock, prev == inlineChildrenBlock ? blockChildrenBlock->firstChild() : 0,
-                                                            inlineChildrenBlock->hasLayer() || blockChildrenBlock->hasLayer());
+                                                            inlineChildrenBlockHasLayer || blockChildrenBlock->hasLayer());
             next->setNeedsLayoutAndPrefWidthsRecalc();
             
             // inlineChildrenBlock got reparented to blockChildrenBlock, so it is no longer a child
