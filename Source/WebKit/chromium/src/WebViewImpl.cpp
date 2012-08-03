@@ -764,7 +764,6 @@ void WebViewImpl::transferActiveWheelFlingAnimation(const WebActiveWheelFlingPar
 
 void WebViewImpl::renderingStats(WebRenderingStats& stats) const
 {
-    ASSERT(isAcceleratedCompositingActive());
     if (!m_layerTreeView.isNull())
         m_layerTreeView.renderingStats(stats);
 }

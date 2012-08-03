@@ -1,3 +1,20 @@
+2012-08-03  Dave Tu  <dtu@chromium.org>
+
+        [chromium] Remove assert when getting hardware renderingStats in software mode.
+        https://bugs.webkit.org/show_bug.cgi?id=92325
+
+        Reviewed by Adrienne Walker.
+
+        If a page caused hardware mode to be turned on, then off, the hardware stats are still valid, so we don't need to assert that we're in hardware mode. Checking if the LayerTreeView is null should be sufficient.
+
+        * public/WebWidget.h:
+        (WebWidget):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::WebViewImpl):
+        (WebKit::WebViewImpl::renderingStats):
+        (WebKit::WebViewImpl::paint):
+        * src/WebViewImpl.h:
+
 2012-08-03  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed.  Rolled DEPS.

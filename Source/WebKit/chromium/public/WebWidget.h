@@ -222,8 +222,9 @@ public:
     // following the call to instrumentBeginFrame().
     virtual void instrumentCancelFrame() { }
 
-    // Fills in a WebRenderingStats struct containing information about the state of the compositor.
-    // This call is relatively expensive in threaded mode as it blocks on the compositor thread.
+    // Fills in a WebRenderingStats struct containing information about rendering, e.g. count of frames rendered, time spent painting.
+    // This call is relatively expensive in threaded compositing mode, as it blocks on the compositor thread.
+    // It is safe to call in software mode, but will only give stats for rendering done in compositing mode.
     virtual void renderingStats(WebRenderingStats&) const { }
 
     // The page background color. Can be used for filling in areas without
