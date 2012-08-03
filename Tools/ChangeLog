@@ -1,3 +1,15 @@
+2012-08-02  Jeffrey Pfau  <jpfau@apple.com>
+
+        Add API for enabling blanket third-party data blocking
+        https://bugs.webkit.org/show_bug.cgi?id=93022
+
+        Reviewed by Anders Carlsson.
+
+        Added test for default setting of new third-party storage blocking API.
+
+        * TestWebKitAPI/Tests/WebKit2/WKPreferences.cpp:
+        (TestWebKitAPI::TEST):
+
 2012-08-03  Arvid Nilsson  <anilsson@rim.com>
 
         Unreviewed, adding self to committers.py after becoming committer.

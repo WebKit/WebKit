@@ -205,6 +205,10 @@ WK_EXPORT bool WKPreferencesGetNotificationsEnabled(WKPreferencesRef preferences
 WK_EXPORT void WKPreferencesSetShouldRespectImageOrientation(WKPreferencesRef preferencesRef, bool enabled);
 WK_EXPORT bool WKPreferencesGetShouldRespectImageOrientation(WKPreferencesRef preferencesRef);
 
+// Defaults to false
+WK_EXPORT void WKPreferencesSetThirdPartyStorageBlockingEnabled(WKPreferencesRef preferencesRef, bool enabled);
+WK_EXPORT bool WKPreferencesGetThirdPartyStorageBlockingEnabled(WKPreferencesRef preferencesRef);
+
 #ifdef __cplusplus
 }
 #endif

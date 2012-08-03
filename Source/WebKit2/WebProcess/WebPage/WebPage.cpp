@@ -2094,6 +2094,7 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
 #endif
 
     settings->setShouldRespectImageOrientation(store.getBoolValueForKey(WebPreferencesKey::shouldRespectImageOrientationKey()));
+    settings->setThirdPartyStorageBlockingEnabled(store.getBoolValueForKey(WebPreferencesKey::thirdPartyStorageBlockingEnabledKey()));
 
     settings->setDiagnosticLoggingEnabled(store.getBoolValueForKey(WebPreferencesKey::diagnosticLoggingEnabledKey()));
 

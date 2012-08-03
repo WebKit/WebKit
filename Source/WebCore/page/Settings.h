@@ -601,6 +601,9 @@ namespace WebCore {
         void setWindowFocusRestricted(bool restricted) { m_windowFocusRestricted = restricted; }
         bool windowFocusRestricted() const { return m_windowFocusRestricted; }
 
+        void setThirdPartyStorageBlockingEnabled(bool enabled) { m_thirdPartyStorageBlockingEnabled = enabled; }
+        bool thirdPartyStorageBlockingEnabled() const { return m_thirdPartyStorageBlockingEnabled; }
+
 #if USE(JSC)
         static void setShouldRespectPriorityInCSSAttributeSetters(bool);
         static bool shouldRespectPriorityInCSSAttributeSetters();
@@ -788,6 +791,8 @@ namespace WebCore {
         bool m_windowFocusRestricted : 1;
 
         bool m_diagnosticLoggingEnabled : 1;
+
+        bool m_thirdPartyStorageBlockingEnabled : 1;
 
         Timer<Settings> m_loadsImagesAutomaticallyTimer;
         void loadsImagesAutomaticallyTimerFired(Timer<Settings>*);

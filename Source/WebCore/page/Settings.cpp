@@ -284,6 +284,7 @@ Settings::Settings(Page* page)
     , m_cookieEnabled(true)
     , m_windowFocusRestricted(true)
     , m_diagnosticLoggingEnabled(false)
+    , m_thirdPartyStorageBlockingEnabled(false)
     , m_loadsImagesAutomaticallyTimer(this, &Settings::loadsImagesAutomaticallyTimerFired)
     , m_incrementalRenderingSuppressionTimeoutInSeconds(defaultIncrementalRenderingSuppressionTimeoutInSeconds)
 {

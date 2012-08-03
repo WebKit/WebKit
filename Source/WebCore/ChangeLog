@@ -1,3 +1,19 @@
+2012-08-02  Jeffrey Pfau  <jpfau@apple.com>
+
+        Add API for enabling blanket third-party data blocking
+        https://bugs.webkit.org/show_bug.cgi?id=93022
+
+        Reviewed by Anders Carlsson.
+
+        Added API for enabling third-party storage blocking.
+
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings):
+        * page/Settings.h:
+        (WebCore::Settings::setThirdPartyStorageBlockingEnabled):
+        (WebCore::Settings::thirdPartyStorageBlockingEnabled):
+        (Settings):
+
 2012-08-03  Anna Cavender  <annacc@chromium.org>
 
         Negative timestamps for TextTrackCues should not be allowed.

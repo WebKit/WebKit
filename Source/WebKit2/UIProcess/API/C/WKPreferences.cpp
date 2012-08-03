@@ -817,6 +817,16 @@ bool WKPreferencesGetRequestAnimationFrameEnabled(WKPreferencesRef preferencesRe
     return toImpl(preferencesRef)->requestAnimationFrameEnabled();
 }
 
+void WKPreferencesSetThirdPartyStorageBlockingEnabled(WKPreferencesRef preferencesRef, bool flag)
+{
+    toImpl(preferencesRef)->setThirdPartyStorageBlockingEnabled(flag);
+}
+
+bool WKPreferencesGetThirdPartyStorageBlockingEnabled(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->thirdPartyStorageBlockingEnabled();
+}
+
 void WKPreferencesResetTestRunnerOverrides(WKPreferencesRef preferencesRef)
 {
     // Currently we reset the overrides on the web process when preferencesDidChange() is called. Since WTR preferences
