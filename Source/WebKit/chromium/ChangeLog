@@ -1,3 +1,16 @@
+2012-08-03  Rick Byers  <rbyers@chromium.org>
+
+        Double tap gesture should send dblclick event
+        https://bugs.webkit.org/show_bug.cgi?id=92412
+
+        Reviewed by Adam Barth.
+
+        Tweak comment to more completely describe the (lame) overloaded use
+        of deltaX in WebGestureEvent, and add a FIXME with the bug to track
+        cleaning it up.
+        * public/WebInputEvent.h:
+        (WebGestureEvent):
+
 2012-08-03  Dave Tu  <dtu@chromium.org>
 
         [chromium] Remove assert when getting hardware renderingStats in software mode.

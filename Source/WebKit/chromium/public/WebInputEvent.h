@@ -370,7 +370,11 @@ public:
     int globalX;
     int globalY;
 
-    // NOTE: |deltaX| and |deltaY| represents the amount to scroll for Scroll gesture events. For Pinch gesture events, |deltaX| represents the scaling/magnification factor.
+    // NOTE: |deltaX| and |deltaY| represents the amount to scroll for Scroll gesture events.
+    // For Pinch gesture events, |deltaX| represents the scaling/magnification factor.
+    // For a GestureTap event, |deltaX| represents the tap count.
+    // For a FlingStart event, |deltaX| and |deltaY| represent the velocity.
+    // FIXME: Avoid overloading 'delta' in this way. http://wkb.ug/93123
     float deltaX;
     float deltaY;
     WebRect boundingBox;

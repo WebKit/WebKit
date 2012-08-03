@@ -1,3 +1,22 @@
+2012-08-03  Rick Byers  <rbyers@chromium.org>
+
+        Double tap gesture should send dblclick event
+        https://bugs.webkit.org/show_bug.cgi?id=92412
+
+        Reviewed by Adam Barth.
+
+        Propagate the tap count from PlatformGestureEvent in the derived mouse
+        events.
+
+        Also fixes a crash with unexpected GestureDoubleTap events by just
+        supressing them early.  They will probably be removed soon anyway.
+
+        Test: fast/events/touch/gesture/gesture-dblclick.html
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleGestureEvent):
+        (WebCore::EventHandler::handleGestureTap):
+
 2012-08-03  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r124668.

@@ -2414,6 +2414,11 @@ bool EventHandler::handleGestureTapDown()
 
 bool EventHandler::handleGestureEvent(const PlatformGestureEvent& gestureEvent)
 {
+    // We don't use DoubleTap at the moment, it's mostly redundant with tap since tap now contains
+    // a tap count. FIXME: We should probably remove GestureDoubleTap (http://wkb.ug/93045).
+    if (gestureEvent.type() == PlatformEvent::GestureDoubleTap)
+        return false;
+
     Node* eventTarget = 0;
     if (gestureEvent.type() == PlatformEvent::GestureScrollEnd || gestureEvent.type() == PlatformEvent::GestureScrollUpdate)
         eventTarget = m_scrollGestureHandlingNode.get();
@@ -2474,13 +2479,28 @@ bool EventHandler::handleGestureTap(const PlatformGestureEvent& gestureEvent)
         return false;
 #endif
 
-    bool defaultPrevented = false;
-    PlatformMouseEvent fakeMouseMove(adjustedPoint, gestureEvent.globalPosition(), NoButton, PlatformEvent::MouseMoved, /* clickCount */ 0, gestureEvent.shiftKey(), gestureEvent.ctrlKey(), gestureEvent.altKey(), gestureEvent.metaKey(), gestureEvent.timestamp());
-    PlatformMouseEvent fakeMouseDown(adjustedPoint, gestureEvent.globalPosition(), LeftButton, PlatformEvent::MousePressed, /* clickCount */ 1, gestureEvent.shiftKey(), gestureEvent.ctrlKey(), gestureEvent.altKey(), gestureEvent.metaKey(), gestureEvent.timestamp());
-    PlatformMouseEvent fakeMouseUp(adjustedPoint, gestureEvent.globalPosition(), LeftButton, PlatformEvent::MouseReleased, /* clickCount */ 1, gestureEvent.shiftKey(), gestureEvent.ctrlKey(), gestureEvent.altKey(), gestureEvent.metaKey(), gestureEvent.timestamp());
+    PlatformMouseEvent fakeMouseMove(adjustedPoint, gestureEvent.globalPosition(),
+        NoButton, PlatformEvent::MouseMoved, /* clickCount */ 0,
+        gestureEvent.shiftKey(), gestureEvent.ctrlKey(), gestureEvent.altKey(), gestureEvent.metaKey(), gestureEvent.timestamp());
     mouseMoved(fakeMouseMove);
+
+    int tapCount = 1;
+    // FIXME: deletaX is overloaded to mean different things for different gestures.
+    // http://wkb.ug/93123
+    if (gestureEvent.deltaX() > 0)
+        tapCount = static_cast<int>(gestureEvent.deltaX());
+
+    bool defaultPrevented = false;
+    PlatformMouseEvent fakeMouseDown(adjustedPoint, gestureEvent.globalPosition(),
+        LeftButton, PlatformEvent::MousePressed, tapCount,
+        gestureEvent.shiftKey(), gestureEvent.ctrlKey(), gestureEvent.altKey(), gestureEvent.metaKey(), gestureEvent.timestamp());
     defaultPrevented |= handleMousePressEvent(fakeMouseDown);
+
+    PlatformMouseEvent fakeMouseUp(adjustedPoint, gestureEvent.globalPosition(),
+        LeftButton, PlatformEvent::MouseReleased, tapCount,
+        gestureEvent.shiftKey(), gestureEvent.ctrlKey(), gestureEvent.altKey(), gestureEvent.metaKey(), gestureEvent.timestamp());
     defaultPrevented |= handleMouseReleaseEvent(fakeMouseUp);
+
     return defaultPrevented;
 }
 
