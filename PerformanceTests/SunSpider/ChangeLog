@@ -1,3 +1,17 @@
+2012-08-02  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, revert debugging stuff I landed in http://trac.webkit.org/changeset/124557
+        by accident.
+
+        * tests/v8-v6/v8-crypto.js:
+        (am1):
+        (am2):
+        (am3):
+        (am4):
+        (bnpCopyTo):
+        (bnpFromString):
+        (bnpClamp):
+
 2012-03-11  Maciej Stachowiak  <mjs@apple.com>
 
         Add --instruments option to sunspider to profile with Instruments

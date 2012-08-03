@@ -66,12 +66,10 @@ function nbi() { return new BigInteger(null); }
 // am1: use a single mult and divide to get the high bits,
 // max digit bits should be 26 because
 // max internal value = 2*dvalue^2-2*dvalue (< 2^53)
-var am1_count = 0;
 function am1(i,x,w,j,c,n) {
   var this_array = this.array;
   var w_array    = w.array;
   while(--n >= 0) {
-    am1_count++;
     var v = x*this_array[i++]+w_array[j]+c;
     c = Math.floor(v/0x4000000);
     w_array[j++] = v&0x3ffffff;
@@ -82,13 +80,11 @@ function am1(i,x,w,j,c,n) {
 // am2 avoids a big mult-and-extract completely.
 // Max digit bits should be <= 30 because we do bitwise ops
 // on values up to 2*hdvalue^2-hdvalue-1 (< 2^31)
-var am2_count = 0;
 function am2(i,x,w,j,c,n) {
   var this_array = this.array;
   var w_array    = w.array;
   var xl = x&0x7fff, xh = x>>15;
   while(--n >= 0) {
-      am2_count++;
     var l = this_array[i]&0x7fff;
     var h = this_array[i++]>>15;
     var m = xh*l+h*xl;
@@ -101,14 +97,12 @@ function am2(i,x,w,j,c,n) {
 
 // Alternately, set max digit bits to 28 since some
 // browsers slow down when dealing with 32-bit numbers.
-var am3_count = 0;
 function am3(i,x,w,j,c,n) {
   var this_array = this.array;
   var w_array    = w.array;
 
   var xl = x&0x3fff, xh = x>>14;
   while(--n >= 0) {
-      am3_count++;
     var l = this_array[i]&0x3fff;
     var h = this_array[i++]>>14;
     var m = xh*l+h*xl;
@@ -121,14 +115,12 @@ function am3(i,x,w,j,c,n) {
 
 // This is tailored to VMs with 2-bit tagging. It makes sure
 // that all the computations stay within the 29 bits available.
-var am4_count = 0;
 function am4(i,x,w,j,c,n) {
   var this_array = this.array;
   var w_array    = w.array;
 
   var xl = x&0x1fff, xh = x>>13;
   while(--n >= 0) {
-      am4_count++;
     var l = this_array[i]&0x1fff;
     var h = this_array[i++]>>13;
     var m = xh*l+h*xl;
@@ -177,15 +169,11 @@ function intAt(s,i) {
 }
 
 // (protected) copy this to r
-var bnpCopyTo_count = 0;
 function bnpCopyTo(r) {
   var this_array = this.array;
   var r_array    = r.array;
 
-  for(var i = this.t-1; i >= 0; --i) {
-      bnpCopyTo_count++;
-      r_array[i] = this_array[i];
-  }
+  for(var i = this.t-1; i >= 0; --i) r_array[i] = this_array[i];
   r.t = this.t;
   r.s = this.s;
 }
@@ -204,7 +192,6 @@ function bnpFromInt(x) {
 function nbv(i) { var r = nbi(); r.fromInt(i); return r; }
 
 // (protected) set from string and radix
-var bnpFromString_count = 0;
 function bnpFromString(s,b) {
   var this_array = this.array;
   var k;
@@ -219,7 +206,6 @@ function bnpFromString(s,b) {
   this.s = 0;
   var i = s.length, mi = false, sh = 0;
   while(--i >= 0) {
-      bnpFromString_count++;
     var x = (k==8)?s[i]&0xff:intAt(s,i);
     if(x < 0) {
       if(s.charAt(i) == "-") mi = true;
@@ -246,18 +232,13 @@ function bnpFromString(s,b) {
 }
 
 // (protected) clamp off excess high words
-var bnpClamp_count = 0;
 function bnpClamp() {
   var this_array = this.array;
   var c = this.s&BI_DM;
-  while(this.t > 0 && this_array[this.t-1] == c) {
-      bnpClamp_count++;
-      --this.t;
-  }
+  while(this.t > 0 && this_array[this.t-1] == c) --this.t;
 }
 
 // (public) return string representation in given radix
-var bnToString_count = 0;
 function bnToString(b) {
   var this_array = this.array;
   if(this.s < 0) return "-"+this.negate().toString(b);
