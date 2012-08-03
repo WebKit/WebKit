@@ -42,7 +42,7 @@ public:
     Scrollbar* scrollbar() const { return m_scrollbar.get(); }
     
 private:
-    AccessibilityScrollbar(Scrollbar*);
+    explicit AccessibilityScrollbar(Scrollbar*);
 
     virtual bool accessibilityIsIgnored() const { return false; }
     virtual bool canSetValueAttribute() const { return true; }

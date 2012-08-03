@@ -43,7 +43,7 @@ public:
     virtual ~AccessibilitySlider() { }
 
 protected:
-    AccessibilitySlider(RenderObject*);
+    explicit AccessibilitySlider(RenderObject*);
 
 private:
     HTMLInputElement* element() const;

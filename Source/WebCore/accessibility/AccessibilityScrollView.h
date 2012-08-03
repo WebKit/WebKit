@@ -45,7 +45,7 @@ protected:
     virtual void scrollTo(const IntPoint&) const;
     
 private:
-    AccessibilityScrollView(ScrollView*);
+    explicit AccessibilityScrollView(ScrollView*);
     
     virtual bool accessibilityIsIgnored() const;
     virtual bool isAccessibilityScrollView() const { return true; }

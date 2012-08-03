@@ -36,7 +36,7 @@ namespace WebCore {
 class AccessibilityTableCell : public AccessibilityRenderObject {
     
 protected:
-    AccessibilityTableCell(RenderObject*);
+    explicit AccessibilityTableCell(RenderObject*);
 public:
     static PassRefPtr<AccessibilityTableCell> create(RenderObject*);
     virtual ~AccessibilityTableCell();

@@ -51,7 +51,7 @@ public:
     virtual String helpText() const;
 
 protected:
-    AccessibilityMediaControl(RenderObject*);
+    explicit AccessibilityMediaControl(RenderObject*);
     MediaControlElementType controlType() const;
     String controlTypeName() const;
 };
@@ -70,7 +70,7 @@ public:
     const AtomicString& getAttribute(const QualifiedName& attribute) const;
 
 private:
-    AccessibilityMediaTimeline(RenderObject*);
+    explicit AccessibilityMediaTimeline(RenderObject*);
 };
 
 
@@ -87,7 +87,7 @@ public:
     virtual String accessibilityDescription() const;
 
 private:
-    AccessibilityMediaControlsContainer(RenderObject*);
+    explicit AccessibilityMediaControlsContainer(RenderObject*);
     bool controllingVideoElement() const;
     const String elementTypeName() const;
 };
@@ -106,7 +106,7 @@ public:
     virtual String accessibilityDescription() const;
 
 private:
-    AccessibilityMediaTimeDisplay(RenderObject*);
+    explicit AccessibilityMediaTimeDisplay(RenderObject*);
 };
 
 

@@ -57,7 +57,7 @@ class Widget;
     
 class AccessibilityRenderObject : public AccessibilityNodeObject {
 protected:
-    AccessibilityRenderObject(RenderObject*);
+    explicit AccessibilityRenderObject(RenderObject*);
 public:
     static PassRefPtr<AccessibilityRenderObject> create(RenderObject*);
     virtual ~AccessibilityRenderObject();

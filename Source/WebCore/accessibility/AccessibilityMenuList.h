@@ -45,7 +45,7 @@ public:
     void didUpdateActiveOption(int optionIndex);
 
 private:
-    AccessibilityMenuList(RenderMenuList*);
+    explicit AccessibilityMenuList(RenderMenuList*);
 
     virtual bool isMenuList() const { return true; }
     virtual AccessibilityRole roleValue() const { return PopUpButtonRole; }

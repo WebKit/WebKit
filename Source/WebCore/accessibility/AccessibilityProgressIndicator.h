@@ -42,7 +42,7 @@ private:
     virtual float maxValueForRange() const;
     virtual float minValueForRange() const;
 
-    AccessibilityProgressIndicator(RenderProgress*);
+    explicit AccessibilityProgressIndicator(RenderProgress*);
 
     HTMLProgressElement* element() const;
     virtual bool accessibilityIsIgnored() const;

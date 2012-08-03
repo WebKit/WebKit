@@ -42,7 +42,7 @@ namespace WebCore {
 class AccessibilityList : public AccessibilityRenderObject {
     
 private:
-    AccessibilityList(RenderObject*);
+    explicit AccessibilityList(RenderObject*);
 public:
     static PassRefPtr<AccessibilityList> create(RenderObject*);
     virtual ~AccessibilityList();

@@ -45,7 +45,7 @@ class AccessibilityTableCell;
 class AccessibilityTable : public AccessibilityRenderObject {
 
 protected:
-    AccessibilityTable(RenderObject*);
+    explicit AccessibilityTable(RenderObject*);
 public:
     static PassRefPtr<AccessibilityTable> create(RenderObject*);
     virtual ~AccessibilityTable();

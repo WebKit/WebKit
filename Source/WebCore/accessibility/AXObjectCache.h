@@ -57,7 +57,7 @@ enum PostType { PostSynchronously, PostAsynchronously };
 class AXObjectCache {
     WTF_MAKE_NONCOPYABLE(AXObjectCache); WTF_MAKE_FAST_ALLOCATED;
 public:
-    AXObjectCache(const Document*);
+    explicit AXObjectCache(const Document*);
     ~AXObjectCache();
 
     static AccessibilityObject* focusedUIElementForPage(const Page*);

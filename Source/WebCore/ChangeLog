@@ -1,3 +1,54 @@
+2012-08-03  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Add *explicit* keyword to constructors in WebCore/accessibility
+        https://bugs.webkit.org/show_bug.cgi?id=93067
+
+        Reviewed by Kentaro Hara.
+
+        As a step to add *explicit* keyword to constructors which have a parameter,
+        *explicit* keyword is added to Source/WebCore/accessibility in order to avoid
+        implicit type conversion.
+
+        No new tests. Covered by existing tests.
+
+        * accessibility/AXObjectCache.h:
+        (AXObjectCache):
+        * accessibility/AccessibilityARIAGrid.h:
+        (AccessibilityARIAGrid):
+        * accessibility/AccessibilityARIAGridCell.h:
+        (AccessibilityARIAGridCell):
+        * accessibility/AccessibilityARIAGridRow.h:
+        (AccessibilityARIAGridRow):
+        * accessibility/AccessibilityList.h:
+        (AccessibilityList):
+        * accessibility/AccessibilityListBox.h:
+        (AccessibilityListBox):
+        * accessibility/AccessibilityMediaControls.h:
+        (AccessibilityMediaControl):
+        (AccessibilityMediaTimeline):
+        (AccessibilityMediaControlsContainer):
+        (AccessibilityMediaTimeDisplay):
+        * accessibility/AccessibilityMenuList.h:
+        (AccessibilityMenuList):
+        * accessibility/AccessibilityNodeObject.h:
+        (AccessibilityNodeObject):
+        * accessibility/AccessibilityProgressIndicator.h:
+        (AccessibilityProgressIndicator):
+        * accessibility/AccessibilityRenderObject.h:
+        (AccessibilityRenderObject):
+        * accessibility/AccessibilityScrollView.h:
+        (AccessibilityScrollView):
+        * accessibility/AccessibilityScrollbar.h:
+        (AccessibilityScrollbar):
+        * accessibility/AccessibilitySlider.h:
+        (AccessibilitySlider):
+        * accessibility/AccessibilityTable.h:
+        (AccessibilityTable):
+        * accessibility/AccessibilityTableCell.h:
+        (AccessibilityTableCell):
+        * accessibility/AccessibilityTableRow.h:
+        (AccessibilityTableRow):
+
 2012-08-03  Abhishek Arya  <inferno@chromium.org>
 
         Regression(r124564): Wrong inlineChildrenBlock->hasLayer() computed in RenderBlock::removeChild.
