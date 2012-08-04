@@ -3475,8 +3475,6 @@ BUGWK82547 LION : fast/speech/input-appearance-searchandspeech.html = IMAGE PASS
 
 BUGWK92850 LINUX DEBUG : http/tests/websocket/tests/hybi/workers/close-code-and-reason.html = PASS CRASH
 
-BUGWK92852 LINUX DEBUG : media/video-currentTime-set2.html = PASS CRASH
-
 BUGWK92938 : compositing/layer-creation/animation-overlap-with-children.html = TEXT PASS
 
 BUGWK92941 WIN MAC : accessibility/loading-iframe-updates-axtree.html = CRASH PASS

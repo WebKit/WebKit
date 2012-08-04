@@ -1,3 +1,14 @@
+2012-08-03  Ami Fischman  <fischman@chromium.org>
+
+        Layout Test media/video-currentTime-set2.html is flakily crashing
+        https://bugs.webkit.org/show_bug.cgi?id=92852
+
+        Unreviewed, test expectation change only.
+
+        The DCHECK in question was removed in http://crrev.com/149452
+
+        * platform/chromium/TestExpectations:
+
 2012-08-03  Rick Byers  <rbyers@chromium.org>
 
         Double tap gesture should send dblclick event
