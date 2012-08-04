@@ -1,3 +1,141 @@
+2012-08-03  Michael Saboff  <msaboff@apple.com>
+
+        Convert HTML parser to handle 8-bit resources without converting to UChar*
+        https://bugs.webkit.org/show_bug.cgi?id=90321
+
+        Reviewed by Adam Barth.
+
+        No new tests, no new functionality therefore covered by existing tests.
+
+        Changed the parsing of HTML to handle 8-bit strings without converting the 
+        whole string to 16-bits.  Primary change was to use the appropriate 
+        character pointer type (LChar* or UChar*) depending on the source string.
+        This access is abstracted in SegmentedSubstring by getCurrentChar{8,16} and
+        incrementAndGetCurrentChar{8,16} methods.  In SegmentedString, the advance()
+        and advanceAndUpdateLineNumber() methods have been refactored into a
+        state machine managed pair of function pointers.  The possible functions
+        have not only the 8 and 16 bitness factored out, they also have the 
+        "exclude line numbers" logic factored out for advanceAndUpdateLineNumber().
+        This change also has improvements over http://trac.webkit.org/changeset/123679.
+        The most prominent change was to inline the 8 bit paths for both advance()
+        and advanceAndUpdateLineNumber().
+        This provides a net speed-up even with the 8/16 bit testing.
+        Other changes involve using String methods to access and compare with the
+        source data.
+
+        * html/FTPDirectoryDocument.cpp:
+        (WebCore::FTPDirectoryDocumentParser::append): Changed to use currentChar()
+        instead of SegmentedString '*' operator.
+        * html/parser/HTMLEntityParser.cpp: Changed to use currentChar() instead of
+        SegmentedString '*' operator.
+        * html/parser/HTMLParserIdioms.cpp:
+        (WebCore::stripLeadingAndTrailingHTMLSpaces): Added 8-bit fast path.
+        * html/parser/HTMLSourceTracker.cpp:
+        (WebCore::HTMLSourceTracker::sourceForToken): Changed to use currentChar() instead of
+        SegmentedString '*' operator.
+        * loader/cache/CachedScript.cpp:
+        (WebCore::CachedScript::script): Updated to use new String::dataSize() method.
+        * platform/text/SegmentedString.cpp:
+        (WebCore::SegmentedString::SegmentedString):
+        (WebCore::SegmentedString::operator=):
+        (WebCore::SegmentedString::clear):
+        (WebCore::SegmentedString::append):
+        (WebCore::SegmentedString::prepend):
+        (WebCore::SegmentedString::advanceSubstring):
+        (WebCore::SegmentedString::advance):
+        (WebCore::SegmentedString::advance8): Fast path advance function for 8 bit data.
+        (WebCore::SegmentedString::advance16): Fast path advance function for 16 bit data.
+        (WebCore::SegmentedString::advanceAndUpdateLineNumber8): Fast path
+        advanceAndUpdateLineNumber for 8 bit data when we need to update the line number.
+        (WebCore::SegmentedString::advanceAndUpdateLineNumber16): Fast path
+        advanceAndUpdateLineNumber for 16 bit data when we need to update the line number.
+        (WebCore::SegmentedString::advanceSlowCase): Slow case advance function for both
+        8 and 16 bit advance.
+        (WebCore::SegmentedString::advanceAndUpdateLineNumberSlowCase): Slow case
+        advanceAndUpdateLineNumber function for both 8 and 16 bit data.
+        (WebCore::SegmentedString::advanceEmpty): Advance function when input has been exhausted.
+        (WebCore::SegmentedString::updateSlowCaseFunctionPointers): Set advance function
+        pointers to slow case functions.
+        * platform/text/SegmentedString.h:
+        (WebCore::SegmentedSubstring::SegmentedSubstring):
+        (WebCore::SegmentedSubstring::clear):
+        (SegmentedSubstring):
+        (WebCore::SegmentedSubstring::is8Bit): New getter.
+        (WebCore::SegmentedSubstring::appendTo):
+        (WebCore::SegmentedSubstring::getCurrentChar8): New getter for the 8 bit case.
+        (WebCore::SegmentedSubstring::getCurrentChar16): New getter for the 16 bit case.
+        (WebCore::SegmentedSubstring::incrementAndGetCurrentChar8): New wrapper functions
+        that pre-increments the 8 bit pointer and returns the next character.
+        (WebCore::SegmentedSubstring::incrementAndGetCurrentChar16): New wrapper functions
+        that pre-increments the 16 bit pointer and returns the next character.
+        (WebCore::SegmentedSubstring::currentSubString):
+        (WebCore::SegmentedSubstring::getCurrentChar):
+        (WebCore::SegmentedSubstring::incrementAndGetCurrentChar):
+        (WebCore::SegmentedString::SegmentedString):
+        (WebCore::SegmentedString::push):
+        (WebCore::SegmentedString::isEmpty):
+        (WebCore::SegmentedString::lookAhead):
+        (WebCore::SegmentedString::lookAheadIgnoringCase):
+        (WebCore::SegmentedString::advance): Wrapper that contains 8 bit fast path
+        or calls via member function point to approriate advance() flavor.
+        (WebCore::SegmentedString::advanceAndUpdateLineNumber): Wrapper that
+        contains 8 bit fast path or calls via member function point to approriate
+        advance() flavor.
+        (WebCore::SegmentedString::advanceAndASSERT):
+        (WebCore::SegmentedString::advanceAndASSERTIgnoringCase):
+        (WebCore::SegmentedString::advancePastNonNewline):
+        (WebCore::SegmentedString::advancePastNewlineAndUpdateLineNumber):
+        (WebCore::SegmentedString::currentChar):
+        (WebCore::SegmentedString::decrementAndCheckLength): Decrement substring length and
+        change to slow case functions when only one character left.
+        (WebCore::SegmentedString::updateAdvanceFunctionPointers): Select appropriate
+        advance functions based on current substring.
+        (WebCore::SegmentedString::lookAheadInline): Changed to use String::startsWith().
+        (WebCore::SegmentedString::lookAheadSlowCase):
+        * xml/parser/CharacterReferenceParserInlineMethods.h:
+        (WebCore::consumeCharacterReference): Changed to use currentChar() instead of
+        SegmentedString '*' operator.
+        * xml/parser/MarkupTokenizerBase.h:
+        (WebCore::MarkupTokenizerBase::InputStreamPreprocessor::nextInputCharacter):
+        (WebCore::MarkupTokenizerBase::InputStreamPreprocessor::peek): Changed to use
+        currentChar() instead of SegmentedString '*' operator.
+        (WebCore::MarkupTokenizerBase::InputStreamPreprocessor::advance):
+
+2012-08-03  Arnaud Renevier  <a.renevier@sisa.samsung.com>
+
+        Update TypedArrays to throw RangeError or similar instead of INDEX_SIZE_ERR
+        https://bugs.webkit.org/show_bug.cgi?id=45118
+
+        Reviewed by Kenneth Russell.
+
+        Update TypedArrays to raise JavaScript RangeError instead of dom
+        INDEX_SIZE_ERR exceptions. Also, update TypedArrays to raise TypeError
+        instead of JavaScript SyntaxError or dom exceptions SYNTAX_ERR when
+        calling set method with invalid arguments.
+
+        Specification does not define the type of exceptions to raise, but
+        other browsers raise JavaScript errors, so those changes will improve
+        compatibility.
+
+        New Test: fast/canvas/webgl/array-set-invalid-arguments.html
+
+        Updated Tests expectations:
+            fast/canvas/webgl/array-set-out-of-bounds.html
+            fast/canvas/webgl/data-view-crash.html
+            fast/canvas/webgl/data-view-test.html
+
+        * bindings/js/JSArrayBufferViewHelper.h:
+        (WebCore):
+        (WebCore::setWebGLArrayWithTypedArrayArgument):
+        (WebCore::setWebGLArrayHelper):
+        (WebCore::constructArrayBufferViewWithTypedArrayArgument):
+        (WebCore::constructArrayBufferViewWithArrayBufferArgument):
+        (WebCore::constructArrayBufferView):
+        * bindings/v8/custom/V8ArrayBufferViewCustom.h:
+        (WebCore):
+        (WebCore::constructWebGLArrayWithArrayBufferArgument):
+        (WebCore::setWebGLArrayHelper):
+
 2012-08-03  Dave Tu  <dtu@chromium.org>
 
         [chromium] Fix Renderer4.CompositorThreadImplDrawDelay histogram.

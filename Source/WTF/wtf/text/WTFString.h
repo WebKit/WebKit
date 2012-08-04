@@ -190,6 +190,13 @@ public:
 
     bool is8Bit() const { return m_impl->is8Bit(); }
 
+    unsigned sizeInBytes() const
+    {
+        if (!m_impl)
+            return 0;
+        return m_impl->length() * (is8Bit() ? sizeof(LChar) : sizeof(UChar));
+    }
+
     WTF_EXPORT_STRING_API CString ascii() const;
     WTF_EXPORT_STRING_API CString latin1() const;
     WTF_EXPORT_STRING_API CString utf8(bool strict = false) const;

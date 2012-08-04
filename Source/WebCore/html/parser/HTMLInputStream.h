@@ -74,7 +74,7 @@ public:
     {
         // FIXME: This should use InputStreamPreprocessor::endOfFileMarker
         // once InputStreamPreprocessor is split off into its own header.
-        static const UChar endOfFileMarker = 0;
+        static const LChar endOfFileMarker = 0;
         m_last->append(SegmentedString(String(&endOfFileMarker, 1)));
         m_last->close();
     }

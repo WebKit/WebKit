@@ -1,3 +1,15 @@
+2012-08-03  Michael Saboff  <msaboff@apple.com>
+
+        Convert HTML parser to handle 8-bit resources without converting to UChar*
+        https://bugs.webkit.org/show_bug.cgi?id=90321
+
+        Reviewed by Adam Barth.
+
+        * wtf/text/WTFString.h:
+        (WTF::String::dataSize): New method to return the number of bytes 
+        the string requires.  This replaces a harcoded calculation based on
+        length and sizeof(UChar).
+
 2012-08-03  Benjamin Poulain  <benjamin@webkit.org>
 
         StringImpl created from literal should be BufferInternal
