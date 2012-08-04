@@ -827,9 +827,6 @@ BUGWK80219 : compositing/overflow/clip-descendents.html = TEXT
 // This test is failing after being added at r124278
 BUGWK92958 : css3/flexbox/content-height-with-scrollbars.html = IMAGE
 
-// This test is failing after being added at r124371
-BUGWK92956 : http/tests/security/contentSecurityPolicy/object-src-url-blocked.html = TEXT
-
 // This test is failing after being added at r124549
 BUGWK93074 : fast/forms/datalist/range-snap-to-datalist.html = TEXT
 

@@ -5203,7 +5203,6 @@ fast/multicol/flipped-blocks-hit-test.html
 fast/text/justify-padding-distribution.html
 fast/text/line-break-after-question-mark.html
 fast/transforms/selection-bounds-in-transformed-view.html
-http/tests/security/contentSecurityPolicy/object-src-none-allowed.html
 svg/as-background-image/background-image-preserveaspectRatio-support.html
 svg/as-image/same-image-two-instances.html
 svg/as-image/svg-image-change-content-size.xhtml

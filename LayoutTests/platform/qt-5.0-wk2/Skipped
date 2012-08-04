@@ -330,10 +330,6 @@ fullscreen/full-screen-iframe-legacy.html
 # https://bugs.webkit.org/show_bug.cgi?id=80209
 http/tests/security/xss-DENIED-xsl-document-securityOrigin.xml
 
-# [Qt][WK2] http/tests/security/contentSecurityPolicy/object-src-url-blocked.html introduced in r124371 fails.
-# https://bugs.webkit.org/show_bug.cgi?id=92963
-http/tests/security/contentSecurityPolicy/object-src-url-blocked.html
-
 # [Qt][WK2] Failing http/tests/plugins tests after reenabled plugins
 # https://bugs.webkit.org/show_bug.cgi?id=82895
 http/tests/plugins/create-v8-script-objects.html
@@ -547,8 +543,3 @@ fast/animation/request-animation-frame-timestamps-advance.html
 fast/animation/request-animation-frame-timestamps.html
 fast/animation/request-animation-frame-within-callback.html
 fast/animation/request-animation-frame.html
-
-# [Qt] REGRESSION http/tests/security/contentSecurityPolicy/object-src-none-blocked.html fails after r123978
-# https://bugs.webkit.org/show_bug.cgi?id=92649
-# skipping http/tests/security/contentSecurityPolicy/object-src-no-url-blocked.html made this one fail on WK2
-http/tests/security/contentSecurityPolicy/object-src-no-url-blocked.html

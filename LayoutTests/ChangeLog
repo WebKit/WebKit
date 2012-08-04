@@ -1,3 +1,20 @@
+2012-08-04  Mike West  <mkwst@chromium.org>
+
+        Unskip http/tests/security/contentSecurityPolicy tests on various ports.
+        https://bugs.webkit.org/show_bug.cgi?id=93178
+
+        Reviewed by Adam Barth.
+
+        After landing r124636, the Content Security Policy `object-src` tests
+        have greened up on the Chromium port. I expect the other ports to be
+        equally happy. Let's reenable the tests to find out.
+
+        * platform/efl/TestExpectations:
+        * platform/qt-5.0-wk2/Skipped:
+        * platform/qt-arm/Skipped:
+        * platform/qt-mac/Skipped:
+        * platform/qt/Skipped:
+
 2012-08-04  Ryosuke Niwa  <rniwa@webkit.org>
 
         Rebaseline after r124691.
