@@ -31,8 +31,8 @@
 <script>
 description("This test makes sure that AccessibilityNodeObjects are created for elements in a canvas subtree.");
 
-if (window.layoutTestController && window.accessibilityController) {
-    window.layoutTestController.dumpAsText();
+if (window.testRunner && window.accessibilityController) {
+    window.testRunner.dumpAsText();
 
     function appendFocusableDescendants(axObject, axFocusableList) {
         for (var i = 0; i < axObject.childrenCount; i++) {

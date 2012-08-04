@@ -13,8 +13,8 @@ window.onload = function() {
     document.body.offsetTop;
     document.body.innerHTML = "PASS. WebKit didn't crash.";
 
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
 }
 </script>
 <i class="class1">

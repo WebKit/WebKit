@@ -10,8 +10,8 @@ the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 */
 
 /* Begin additions for WebKit layout test framework. */
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 /* End additions for WebKit layout test framework. */
 
 

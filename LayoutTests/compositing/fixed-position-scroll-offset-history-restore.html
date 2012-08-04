@@ -10,8 +10,8 @@
   <div style="position: fixed; -webkit-transform: translateZ(0); top: 50px; width: 200px; height: 100px; background-color: green;"></div>
 
 <script>
-if (window.layoutTestController) {
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.waitUntilDone();
 }
 
 onload = function() {
@@ -19,9 +19,9 @@ onload = function() {
         // We went foward and back again.
         // If the scroll position is restored correctly the red div won't be visible.
         delete window.localStorage.stage;
-        if (window.layoutTestController) {
-            layoutTestController.dumpAsText(true);
-            layoutTestController.notifyDone();
+        if (window.testRunner) {
+            testRunner.dumpAsText(true);
+            testRunner.notifyDone();
         }
     } else {
         window.localStorage.stage = 'two';

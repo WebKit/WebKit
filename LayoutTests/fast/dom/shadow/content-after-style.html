@@ -3,14 +3,14 @@
 <body>
 <div id="host"><div>host content</div></div>
 <script>
-if (window.layoutTestController)
-    window.layoutTestController.waitUntilDone();
+if (window.testRunner)
+    window.testRunner.waitUntilDone();
 var root = new WebKitShadowRoot(document.querySelector('#host'));
 root.innerHTML = '<style>invalid { }</style>' +
                  'text<content></content>';
 window.setTimeout(function() {
-    if (window.layoutTestController)
-        window.layoutTestController.notifyDone();
+    if (window.testRunner)
+        window.testRunner.notifyDone();
 }, 0);
 </script>
 </body>

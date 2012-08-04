@@ -708,9 +708,9 @@ function startTest() {
 //  Inform the test controller that this test has a text-format result and so should
 //  be dumped as text, and also that the dump should not occur automatically.
 //
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 //
 //  End WebKit modification
@@ -740,8 +740,8 @@ if (window.layoutTestController) {
 //
 //  Inform the test controller that this test is complete, so it's time to dump.
 //
-    if (window.layoutTestController) {
-        layoutTestController.notifyDone();
+    if (window.testRunner) {
+        testRunner.notifyDone();
     }
 //
 //  End WebKit modification

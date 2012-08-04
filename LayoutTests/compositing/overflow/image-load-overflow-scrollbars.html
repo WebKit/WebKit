@@ -18,16 +18,16 @@
     content.onload = function() {
       var overflow = document.getElementById("overflow");
         overflow.scrollTop = 50;
-        if (window.layoutTestController)
-          layoutTestController.notifyDone();
+        if (window.testRunner)
+          testRunner.notifyDone();
     }
     content.src = canvas.toDataURL();
   }
   window.addEventListener('load', doTest, false);
 
-  if (window.layoutTestController) {
-    layoutTestController.waitUntilDone();
-    layoutTestController.dumpAsText(true);
+  if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText(true);
   }
 </script>
 </head>

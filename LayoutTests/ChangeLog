@@ -1,3 +1,62 @@
+2012-08-03  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Use testRunner instead of layoutTestController in the remaining layout tests
+        https://bugs.webkit.org/show_bug.cgi?id=93172
+
+        Reviewed by Adam Barth.
+
+        One last sweeping patch.
+
+        * accessibility/canvas-accessibilitynodeobject.html:
+        * compositing/backface-visibility/backface-visibility-webgl.html:
+        * compositing/fixed-position-scroll-offset-history-restore.html:
+        * compositing/overflow/image-load-overflow-scrollbars.html:
+        * css3/flexbox/flexitem.html:
+        * dom/html/level1/core/selfhtml.js:
+        (startTest):
+        * dom/html/level2/core/selfhtml.js:
+        (startTest):
+        * dom/html/level2/events/selfhtml.js:
+        (startTest):
+        * dom/html/level2/html/AppletsCollection.html:
+        * dom/html/level2/html/HTMLBaseElement01.html:
+        * dom/html/level2/html/HTMLBaseElement02.html:
+        * dom/html/level2/html/selfhtml.js:
+        (startTest):
+        * dom/svg/level3/xpath/svgunit.js:
+        * dom/xhtml/level1/core/selfxhtml.js:
+        (startTest):
+        * dom/xhtml/level2/core/selfxhtml.js:
+        (startTest):
+        * dom/xhtml/level2/events/selfxhtml.js:
+        (startTest):
+        * dom/xhtml/level2/html/HTMLBaseElement01.xhtml:
+        * dom/xhtml/level2/html/HTMLBaseElement02.xhtml:
+        * dom/xhtml/level2/html/selfxhtml.js:
+        (startTest):
+        * dom/xhtml/level3/core/selfxhtml.js:
+        (startTest):
+        * editing/shadow/adjusting-editing-boundary-with-table-in-shadow.html:
+        * editing/shadow/bold-twice-in-shadow.html:
+        * editing/shadow/breaking-editing-boundaries-2.html:
+        * editing/shadow/contenteditable-propagation-at-shadow-boundary.html:
+        * editing/shadow/delete-characters-in-distributed-node-crash.html:
+        * editing/shadow/delete-list-in-shadow.html:
+        * editing/shadow/insertorderedlist-crash.html:
+        * editing/shadow/pressing-enter-on-list.html:
+        * editing/spelling/grammar-edit-word-expected.txt:
+        * editing/spelling/grammar-edit-word.html:
+        * fast/block/percent-height-descendant-not-removed-crash2.html:
+        * fast/block/positioning/abspositioned-object-under-split-relpositioned-inline-crash.html:
+        * fast/block/positioning/insert-positioned-in-anonymous-crash.html:
+        * fast/canvas/fallback-content.html:
+        * fast/css/counters/counter-reset-subtree-insert-crash.html:
+        * fast/css/crash-on-gradient-with-derived-color.html:
+        * fast/dom/NodeList/childNodes-reverse-iteration.html:
+        * fast/dom/Window/window-property-shadowing-onclick.html:
+        * fast/dom/XMLSerializer-xml-namespace.html:
+        * fast/dom/shadow/content-after-style.html:
+
 2012-08-03  David Barton  <dbarton@mathscribe.com>
 
         Rebaseline MathML pixel tests with STIX fonts for Lion

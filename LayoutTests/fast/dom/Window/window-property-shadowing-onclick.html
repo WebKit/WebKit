@@ -4,8 +4,8 @@
 
 description('This tests the ES5.2 behavior where global variables should not trigger setters on the Window object');
 
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 
 var onClickCalled = false;
 

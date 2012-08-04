@@ -23,8 +23,8 @@ the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
   //  Inform the test controller that this test has a text-format result and so should
   //  be dumped as text.
   //
-  if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+  if (window.testRunner)
+    testRunner.dumpAsText();
 
   function assertSize(descr, expected, actual) {
     var actualSize;

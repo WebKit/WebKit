@@ -18,7 +18,7 @@ shouldBeTrue('internals.hasGrammarMarker(document, 4, 3)');
 
 debug('Delete the end of this sentence until it becomes "You ha".');
 for (var i = 0; i < 12; ++i)
-    evalAndLog('layoutTestController.execCommand("DeleteBackward")');
+    evalAndLog('testRunner.execCommand("DeleteBackward")');
 shouldBeFalse('internals.hasGrammarMarker(document, 4, 2)');
 
 internals.settings.setUnifiedTextCheckingEnabled(false);

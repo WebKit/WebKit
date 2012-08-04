@@ -6,18 +6,18 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 document.execCommand("InsertText", false, "You has the right.")
 PASS internals.hasGrammarMarker(document, 4, 3) is true
 Delete the end of this sentence until it becomes "You ha".
-layoutTestController.execCommand("DeleteBackward")
-layoutTestController.execCommand("DeleteBackward")
-layoutTestController.execCommand("DeleteBackward")
-layoutTestController.execCommand("DeleteBackward")
-layoutTestController.execCommand("DeleteBackward")
-layoutTestController.execCommand("DeleteBackward")
-layoutTestController.execCommand("DeleteBackward")
-layoutTestController.execCommand("DeleteBackward")
-layoutTestController.execCommand("DeleteBackward")
-layoutTestController.execCommand("DeleteBackward")
-layoutTestController.execCommand("DeleteBackward")
-layoutTestController.execCommand("DeleteBackward")
+testRunner.execCommand("DeleteBackward")
+testRunner.execCommand("DeleteBackward")
+testRunner.execCommand("DeleteBackward")
+testRunner.execCommand("DeleteBackward")
+testRunner.execCommand("DeleteBackward")
+testRunner.execCommand("DeleteBackward")
+testRunner.execCommand("DeleteBackward")
+testRunner.execCommand("DeleteBackward")
+testRunner.execCommand("DeleteBackward")
+testRunner.execCommand("DeleteBackward")
+testRunner.execCommand("DeleteBackward")
+testRunner.execCommand("DeleteBackward")
 PASS internals.hasGrammarMarker(document, 4, 2) is false
 PASS successfullyParsed is true
 
