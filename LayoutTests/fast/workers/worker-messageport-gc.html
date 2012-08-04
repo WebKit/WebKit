@@ -8,9 +8,9 @@ function log(message)
     document.getElementById("result").innerHTML += message + "<br>";
 }
 
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 // Test that workers stay alive even though they are only reachable via message ports.
@@ -48,8 +48,8 @@ function gc()
 function done()
 {
     log("DONE");
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
 </script>

@@ -39,9 +39,9 @@ pre {
 <script type="text/javascript">
 var p = new XMLHttpRequest();
 
-if (window.layoutTestController) {
-  layoutTestController.dumpAsText();
-  layoutTestController.waitUntilDone();
+if (window.testRunner) {
+  testRunner.dumpAsText();
+  testRunner.waitUntilDone();
 }
 
 function myfunc(e)
@@ -74,8 +74,8 @@ function myfunc(e)
     "Event object: " + e + "\n" +
     "Event properties:\n" + eventProperties;
 
-  if (window.layoutTestController)
-    layoutTestController.notifyDone();
+  if (window.testRunner)
+    testRunner.notifyDone();
 }
 
 p.onload = myfunc;

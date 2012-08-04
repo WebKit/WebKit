@@ -10,7 +10,7 @@
 <xsl:template match="doc">
   <html>
     <body>
-      <script>if (window.layoutTestController) layoutTestController.dumpAsText();</script>
+      <script>if (window.testRunner) testRunner.dumpAsText();</script>
       <p>Test that exslt:node-set() function is supported.</p>
       <xsl:apply-templates select="exslt:node-set($x)/*"/>
     </body>

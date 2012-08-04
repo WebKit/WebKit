@@ -11,8 +11,8 @@ Here we:
         <script type="text/javascript">
             function test() {
                 document.body.offsetTop;
-                if (window.layoutTestController)
-                    layoutTestController.display();
+                if (window.testRunner)
+                    testRunner.display();
                 // remove text, this requests layout for DIV,
                 // but only simplified layout for TABLE
                 document.getElementById("blockDiv").innerText = "";

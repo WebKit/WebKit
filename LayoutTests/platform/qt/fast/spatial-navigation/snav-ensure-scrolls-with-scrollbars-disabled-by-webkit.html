@@ -18,14 +18,14 @@
    -->
   <head>
     <script type="application/javascript">
-      if (window.layoutTestController) {
-        layoutTestController.setScrollbarPolicy('vertical', 'off');
-        layoutTestController.setScrollbarPolicy('horizontal', 'off');
+      if (window.testRunner) {
+        testRunner.setScrollbarPolicy('vertical', 'off');
+        testRunner.setScrollbarPolicy('horizontal', 'off');
       }
 
       function queueit()
       {
-        layoutTestController.queueLoad("./resources/ensure-scrolls-with-scrollbars-disabled-by-webkit.html");
+        testRunner.queueLoad("./resources/ensure-scrolls-with-scrollbars-disabled-by-webkit.html");
       }
 
       window.onload = queueit;

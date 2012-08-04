@@ -1,13 +1,13 @@
 var referenceResult = 0;
 var referenceResult2 = 0;
 var referenceIntermediateFunction = 0;
-var isDRT = window.layoutTestController && window.internals && window.internals.numberOfScrollableAreas;
+var isDRT = window.testRunner && window.internals && window.internals.numberOfScrollableAreas;
 
 function runTest(firstResult, intermediateFunction, secondResult)
 {
     if (isDRT) {
-        layoutTestController.waitUntilDone();
-        layoutTestController.dumpAsText();
+        testRunner.waitUntilDone();
+        testRunner.dumpAsText();
     }
 
     referenceResult = firstResult;
@@ -31,7 +31,7 @@ function end()
             shouldBeTrue(stringify(result == referenceResult2));
         }
 
-        layoutTestController.notifyDone();
+        testRunner.notifyDone();
         return;
     }
 

@@ -18,8 +18,8 @@
 <script>
     var target = document.getElementById("target");
     var result = document.elementFromPoint(150, 75);
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
 
     document.getElementById("result").innerText = result === target ? "PASS" : "FAIL";
 </script>

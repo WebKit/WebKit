@@ -15,8 +15,8 @@ SRC_1 = '<?xml version="1.0" encoding="utf-8"?>\
 <y:elem xmlns:y="urn:yyyy222"/>\
 </docu>'
 
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
 
     function shouldBe(actual, expected) {
         if (actual == expected)

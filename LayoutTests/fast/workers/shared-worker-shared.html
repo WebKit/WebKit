@@ -7,9 +7,9 @@ function log(message)
     document.getElementById("result").innerHTML += message + "<br>";
 }
 
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 // Load two workers simultaneously, to ensure that simultaneous loads also yield the same instance.
@@ -70,8 +70,8 @@ function testAlreadyLoaded()
 function done()
 {
     log("DONE");
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 </script>
 </body>

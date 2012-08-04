@@ -3,9 +3,9 @@
 
 function test()
 {
-    if (window.layoutTestController) {
-      layoutTestController.dumpAsText();
-      layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+      testRunner.dumpAsText();
+      testRunner.waitUntilDone();
     }
   
     var triggers = document.querySelectorAll(".scrollTrigger");
@@ -61,8 +61,8 @@ function test()
     var results = document.getElementById("results");
     results.innerHTML = resultString;
     
-    if (window.layoutTestController) {
-      layoutTestController.notifyDone();
+    if (window.testRunner) {
+      testRunner.notifyDone();
     }
 
 }

@@ -9,9 +9,9 @@ function log(message)
         document.getElementById("result").innerHTML += message + "<br>";
 }
 
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 var worker = new Worker('resources/worker-timeout.js');
@@ -25,8 +25,8 @@ worker.onmessage = function(evt) {
         // while the worker gets destroyed, so we freeze log rather then stop the interval from firing.
         // See https://bugs.webkit.org/show_bug.cgi?id=31452 for more info.
         logIsFrozen = true;
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     } 
 }
 </script>

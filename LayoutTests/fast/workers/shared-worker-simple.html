@@ -7,9 +7,9 @@ function log(message)
     document.getElementById("result").innerHTML += message + "<br>";
 }
 
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 var worker = new SharedWorker('resources/shared-worker-common.js', 'name');
@@ -25,8 +25,8 @@ worker.port.onmessage = function(event) {
 
 function done()
 {
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 </script>
 </body>

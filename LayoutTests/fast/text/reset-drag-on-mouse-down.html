@@ -1,9 +1,9 @@
 <script>
 window.onload = function(evt) {
-  if (!window.layoutTestController)
+  if (!window.testRunner)
     return;
 
-  window.layoutTestController.dumpAsText();
+  window.testRunner.dumpAsText();
 
   if (-1 == document.location.href.indexOf("?second")) {
     firstLoad();
@@ -13,7 +13,7 @@ window.onload = function(evt) {
 }
 
 function firstLoad() {
-  window.layoutTestController.waitUntilDone();
+  window.testRunner.waitUntilDone();
 
   var link_x = document.getElementById("link").offsetLeft;
   var link_y = document.getElementById("link").offsetTop;
@@ -44,7 +44,7 @@ function secondLoad() {
   var result = range.toString().length > 0 ? "SUCCESS" : "FAILED";
   document.getElementById("result").innerHTML = result;
 
-  window.layoutTestController.notifyDone();
+  window.testRunner.notifyDone();
 }
 </script>
 <p>Test for <a href="http://bugs.webkit.org/show_bug.cgi?id=16479">bug

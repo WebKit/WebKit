@@ -6,10 +6,10 @@
         <script>
             // The objective is to test if the viewport meta tag information is stored in page cache
 
-            if (window.layoutTestController) {
-                layoutTestController.dumpAsText();
-                layoutTestController.waitUntilDone();
-                layoutTestController.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
+            if (window.testRunner) {
+                testRunner.dumpAsText();
+                testRunner.waitUntilDone();
+                testRunner.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
             }
 
             function pageshow(evt)
@@ -21,7 +21,7 @@
                 } else {
                     // if this point is reached the page is comming from the page cache.
                     alert(internals.configurationForViewport(document, 1, 320, 480, 320, 352));
-                    setTimeout(function() { if (window.layoutTestController) layoutTestController.notifyDone(); }, 0);
+                    setTimeout(function() { if (window.testRunner) testRunner.notifyDone(); }, 0);
 
                 }
             }

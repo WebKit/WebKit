@@ -4,7 +4,7 @@
 This tests that we avoid trying to lay out floats inside an inline with unicode-bidi: isolate. Test passes if we don't crash.
 <bdi><div style='float: left; '></div></bdi>
 <script>
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 </script>
 </body>

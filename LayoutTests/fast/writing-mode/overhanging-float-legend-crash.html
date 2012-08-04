@@ -1,9 +1,9 @@
 <html>
     <script>
-    if (window.layoutTestController)
+    if (window.testRunner)
     {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
     }
 
     window.setTimeout('crash();', 0);
@@ -15,8 +15,8 @@
         document.body.offsetTop;
  
         document.getElementById("result").innerHTML = "PASS";
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     }
     </script>
     <div id="result"></div>

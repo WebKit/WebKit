@@ -1,6 +1,6 @@
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 description("This test checks whether exceptions in SharedWorkers are logged to the parent document. An exception should be logged to the error console.");
@@ -21,6 +21,6 @@ worker.onmessage = function(event)
 function done()
 {
     debug('<br /><span class="pass">TEST COMPLETE</span>');
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }

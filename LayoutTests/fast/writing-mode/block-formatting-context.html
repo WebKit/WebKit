@@ -12,8 +12,8 @@ The green LR block should avoid the blue float.
 <div class="lr" id="test"></div>
 <div id="console"></div>
 <script>
-if (window.layoutTestController)
-    window.layoutTestController.dumpAsText();
+if (window.testRunner)
+    window.testRunner.dumpAsText();
 test = document.getElementById("test");
 rect = test.getBoundingClientRect();
 if (rect.left != 100) {

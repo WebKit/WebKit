@@ -21,11 +21,11 @@
         {
             log("ReadyState handler: readyState = " + xhr.readyState);
 
-            if (xhr.readyState == 4 && window.layoutTestController) {
+            if (xhr.readyState == 4 && window.testRunner) {
                 var results = window.top.document.getElementById('results');
                 results.innerHTML = document.body.innerHTML;
 
-                setTimeout("layoutTestController.notifyDone()", 0);
+                setTimeout("testRunner.notifyDone()", 0);
             }
         }
 

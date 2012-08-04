@@ -3,9 +3,9 @@
 Should print "DONE" when done.</p>
 <div id=result></div>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 function log(message)
@@ -23,8 +23,8 @@ for (var i = 0; i < totalWorkers; i++) {
         if (++replies < totalWorkers)
             return;
         log("DONE");
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     }
 }
 </script>

@@ -52,7 +52,7 @@ function test(url)
         logProperty(request, properties[i]);
 }
 
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 test("resources/plist.app");
 </script>

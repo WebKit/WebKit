@@ -2,8 +2,8 @@
 XPath name() function doesn't work with nodes and attributes in null namespace.
 </p>
 <script>
-if (window.layoutTestController)
-  layoutTestController.dumpAsText();
+if (window.testRunner)
+  testRunner.dumpAsText();
 
 var strXML = '<doc><record/><record/><record/><record/><record foo="a-a"/></doc>';
 var doc = (new DOMParser()).parseFromString(strXML, "text/xml");

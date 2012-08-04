@@ -9,8 +9,8 @@ Here we remove cell, expect that cache is invalidated and paint produces expecte
         <script type="text/javascript">
             function test() {
                 document.body.offsetTop;
-                if (window.layoutTestController)
-                    layoutTestController.display();
+                if (window.testRunner)
+                    testRunner.display();
                 barCell = document.getElementById("bar");
                 document.getElementById("row").removeChild(barCell);
             }

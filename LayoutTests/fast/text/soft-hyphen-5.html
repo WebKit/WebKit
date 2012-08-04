@@ -9,8 +9,8 @@
         description("Soft Hyphen Test");
 
         function runTest() {
-            if (window.layoutTestController)
-                layoutTestController.dumpAsText();
+            if (window.testRunner)
+                testRunner.dumpAsText();
 
             // 56 is 4 * the font size (14). We're expecting the text to break up into 4 lines.
             // 4 lines + the padding gives a div height of 92 in webkit and FF, 88 in chrome.

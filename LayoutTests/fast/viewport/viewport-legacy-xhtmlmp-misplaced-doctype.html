@@ -22,8 +22,8 @@
     <title>Default viewport value changed by XHTML-MP and overwritten by viewport meta tag</title>
     <script>
         function test() {
-            if (window.layoutTestController) {
-                layoutTestController.dumpAsText();
+            if (window.testRunner) {
+                testRunner.dumpAsText();
                 alert(internals.configurationForViewport(document, 1, 320, 480, 320, 352));
             }
         }

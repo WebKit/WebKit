@@ -28,8 +28,8 @@ function sendRequest()
     return request;
 }
 
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 
 try {
     var request = sendRequest();

@@ -5,8 +5,8 @@
         <html>
             <body>
               <script>
-                if (window.layoutTestController)
-                  layoutTestController.dumpAsText();
+                if (window.testRunner)
+                  testRunner.dumpAsText();
                 
               	//alert(document.characterSet); // -- works in Firefox
               	document.write("Encoding: " + document.characterSet);

@@ -7,15 +7,15 @@
       body { margin: 0px; }
     </style>
     <script>
-        if (window.layoutTestController) {
-            window.layoutTestController.waitUntilDone();
+        if (window.testRunner) {
+            window.testRunner.waitUntilDone();
         }
         function repaintTest() {
             var testCell = document.getElementById("testcell");
             var offset = document.body.offsetTop;
             testCell.style.backgroundColor = "green";
-            if (window.layoutTestController) {
-                window.layoutTestController.notifyDone();
+            if (window.testRunner) {
+                window.testRunner.notifyDone();
             }
         }
     </script>

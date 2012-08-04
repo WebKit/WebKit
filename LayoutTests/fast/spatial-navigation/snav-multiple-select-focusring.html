@@ -7,9 +7,9 @@
 </select>
 
 <script>
-if (window.layoutTestController) {
-    layoutTestController.setSpatialNavigationEnabled(true);
-    layoutTestController.overridePreference("WebKitTabToLinksPreferenceKey", 1);
+if (window.testRunner) {
+    testRunner.setSpatialNavigationEnabled(true);
+    testRunner.overridePreference("WebKitTabToLinksPreferenceKey", 1);
 }
 
 var multiselect = document.getElementById('multiselect');

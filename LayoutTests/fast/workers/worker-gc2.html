@@ -15,9 +15,9 @@ function log(s)
 }
 
 (function () {
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
     }
 
     var worker = new Worker("resources/worker-gc2.js");
@@ -26,8 +26,8 @@ function log(s)
 
         // Try to wait for the worker to finish closing.
         setTimeout(function () {
-            if (window.layoutTestController)
-                layoutTestController.notifyDone();
+            if (window.testRunner)
+                testRunner.notifyDone();
         }, 0);
     }
 })();

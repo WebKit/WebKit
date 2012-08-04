@@ -13,6 +13,6 @@
 <script>
 var span = document.querySelector("span");
 window.getSelection().setBaseAndExtent(span, 0, span, 1);
-if (window.layoutTestController)
-    layoutTestController.setWindowIsKey(false);
+if (window.testRunner)
+    testRunner.setWindowIsKey(false);
 </script>

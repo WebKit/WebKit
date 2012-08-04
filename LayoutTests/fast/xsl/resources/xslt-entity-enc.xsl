@@ -8,8 +8,8 @@
         </head>
         <body>
             <script>
-               if (window.layoutTestController)
-                   layoutTestController.dumpAsText();
+               if (window.testRunner)
+                   testRunner.dumpAsText();
             </script>
             <p>The letters in quotes should look similar (first is Roman, second is Cyrillic): "B", "В".</p>
         </body>

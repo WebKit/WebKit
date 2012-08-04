@@ -1,9 +1,9 @@
 <html>
 <head>
 <script>
-if (window.layoutTestController) {
-  layoutTestController.dumpAsText();
-  layoutTestController.waitUntilDone();
+if (window.testRunner) {
+  testRunner.dumpAsText();
+  testRunner.waitUntilDone();
 }
 
 function fail(s) {
@@ -39,8 +39,8 @@ function runTest() {
   if (!window.find('for', true, false, true)) fail('not found: for');
   if (window.find('FOR', true, false, true)) fail('found: FOR');
 
-  if (window.layoutTestController)
-    layoutTestController.notifyDone();
+  if (window.testRunner)
+    testRunner.notifyDone();
 }
 </script>
 </head>

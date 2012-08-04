@@ -25,8 +25,8 @@
             log("FAIL: " + markup + " parsed as " + actual + " instead of " + expected);
     }
 
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
 
     test("<foo<bar>", "<foo><bar></bar></foo>");
     test("<foo bar<baz>", "<foo bar=\"\"><baz></baz></foo>");

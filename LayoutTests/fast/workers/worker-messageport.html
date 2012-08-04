@@ -8,9 +8,9 @@ function log(message)
     document.getElementById("result").innerHTML += message + "<br>";
 }
 
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 var worker = new Worker("resources/worker-messageport.js");
@@ -91,8 +91,8 @@ function gotSpam(port)
 function done()
 {
     log("DONE");
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
 </script>

@@ -8,8 +8,8 @@
     <html>
       <body>
         <script>
-          if (window.layoutTestController)
-            layoutTestController.dumpAsText();
+          if (window.testRunner)
+            testRunner.dumpAsText();
         </script>
         <xsl:apply-templates/>
       </body>

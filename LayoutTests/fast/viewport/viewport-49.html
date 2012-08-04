@@ -3,8 +3,8 @@
     <meta name="viewport" content="width=10, height=10, initial-scale=1.0">
     <script>
         function test() {
-            if (window.layoutTestController) {
-                layoutTestController.dumpAsText();
+            if (window.testRunner) {
+                testRunner.dumpAsText();
                 alert(internals.configurationForViewport(document, 1, 320, 480, 320, 352));
             }
         }

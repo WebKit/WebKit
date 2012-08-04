@@ -29,8 +29,8 @@
                     log("Bad: DOM access didn't throw exception");
                 } catch (e) {
                     log("Exception: " + e.message);
-                    if (window.layoutTestController) {
-                        setTimeout("layoutTestController.notifyDone()", 0);
+                    if (window.testRunner) {
+                        setTimeout("testRunner.notifyDone()", 0);
                     }
                 }
             }

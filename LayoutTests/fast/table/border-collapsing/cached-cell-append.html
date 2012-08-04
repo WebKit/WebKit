@@ -9,8 +9,8 @@ Here we append new cell, expect that cache is invalidated and paint produces exp
         <script type="text/javascript">
             function test() {
                 document.body.offsetTop;
-                if (window.layoutTestController)
-                    layoutTestController.display();
+                if (window.testRunner)
+                    testRunner.display();
                 newCell = document.createElement("td");
                 newCell.style.borderLeftWidth = "6px";
                 newCell.style.borderLeftStyle = "solid";

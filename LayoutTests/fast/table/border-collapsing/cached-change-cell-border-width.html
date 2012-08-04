@@ -9,8 +9,8 @@ Here we change cell border width, expect that cache is invalidated and paint pro
         <script type="text/javascript">
             function test() {
                 document.body.offsetTop;
-                if (window.layoutTestController)
-                    layoutTestController.display();
+                if (window.testRunner)
+                    testRunner.display();
                 document.getElementById("foo").style.borderWidth = "4px";
             }
         </script>

@@ -4,8 +4,8 @@
   <html>
   <body>
     <script>
-      if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+      if (window.testRunner)
+        testRunner.dumpAsText();
     </script>
     <h2>en</h2>
     <table border="1">

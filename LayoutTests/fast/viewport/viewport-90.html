@@ -7,8 +7,8 @@
     <meta name="viewport" content="width=700, initial-scale=0.5">
     <script>
         function test() {
-            if (window.layoutTestController) {
-                layoutTestController.dumpAsText();
+            if (window.testRunner) {
+                testRunner.dumpAsText();
                 alert(internals.configurationForViewport(document, 1, 320, 480, 320, 352));
             }
         }

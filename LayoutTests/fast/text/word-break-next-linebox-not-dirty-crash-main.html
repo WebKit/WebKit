@@ -1,10 +1,10 @@
 <html>
 Test passes if it does not crash.
 <script>
-    if (window.layoutTestController)
+    if (window.testRunner)
     {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
     }
 </script>
 <iframe width="100" src="resources/word-break-next-linebox-not-dirty-crash.html"></iframe>

@@ -1,6 +1,6 @@
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 description("Checks the various use cases around the SharedWorker constructor's optional name parameter");

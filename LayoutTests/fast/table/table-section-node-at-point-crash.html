@@ -23,9 +23,9 @@ Test passes if it does not crash.
 }
 </style>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 function crash() {
@@ -37,10 +37,10 @@ function crash() {
     test1.appendChild(test2);
     document.body.offsetTop;
     document.body.style.zoom = 2;
-	if (window.layoutTestController) {
+	if (window.testRunner) {
 	    GCController.collect();
         eventSender.mouseMoveTo(500, 500);
-        layoutTestController.notifyDone();
+        testRunner.notifyDone();
 	}
 }
 window.onload = crash;

@@ -1,8 +1,8 @@
 description("This test checks whether shared workers exit when the parent document closes");
 
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
     waitUntilWorkerThreadsExit(runTests);
 } else {
     debug("NOTE: This test relies on functionality in DumpRenderTree to detect when workers have exited - test results will be incorrect when run in a browser.");

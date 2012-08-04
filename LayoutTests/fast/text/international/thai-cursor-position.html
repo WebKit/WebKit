@@ -14,8 +14,8 @@ function log(str) {
     console.appendChild(li);
 }
 
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
+if (window.testRunner) {
+    testRunner.dumpAsText();
     var test = document.getElementById("test");
     test.focus();
 

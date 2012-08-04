@@ -19,8 +19,8 @@
     log("This tests a particular construction that screws up the text iterator.");
     log("-");
 
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
     
         // Set selection, because attributedSubstringFromRange only works on the run of text that's
         // currently selected.

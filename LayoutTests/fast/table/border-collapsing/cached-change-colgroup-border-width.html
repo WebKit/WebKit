@@ -9,8 +9,8 @@ Here we change colgroup border width, expect that cache is invalidated and paint
         <script type="text/javascript">
             function test() {
                 document.body.offsetTop;
-                if (window.layoutTestController)
-                    layoutTestController.display();
+                if (window.testRunner)
+                    testRunner.display();
                 document.getElementById("colgroup").style.borderWidth = "4px";
             }
         </script>

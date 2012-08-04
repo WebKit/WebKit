@@ -23,9 +23,9 @@
             }
         </style>
         <script>
-            if (window.layoutTestController) {
-                layoutTestController.dumpAsText();
-                layoutTestController.waitUntilDone();
+            if (window.testRunner) {
+                testRunner.dumpAsText();
+                testRunner.waitUntilDone();
             }
             function log(msg)
             {
@@ -46,7 +46,7 @@
                     log("PASSED: Cell changed width");
                 else
                     log("FAILED: Cell did not change width");
-                layoutTestController.notifyDone();
+                testRunner.notifyDone();
             }
         </script>
     </head>

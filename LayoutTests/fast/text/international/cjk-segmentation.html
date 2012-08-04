@@ -24,8 +24,8 @@ function assertEqual(test_name, actual, expected)
 
 function test()
 {
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
 
     var range = document.createRange();
     var divs = document.getElementsByClassName("zh-CN-div");

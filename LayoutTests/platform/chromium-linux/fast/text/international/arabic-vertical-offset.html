@@ -16,8 +16,8 @@
 <!-- Use arabic code points to make WebKit use ComplexTextController -->
 <div>&#x0606;&#x06e1;</div>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.waitUntilDone();
-    setTimeout(function() { layoutTestController.notifyDone(); }, 100);
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    setTimeout(function() { testRunner.notifyDone(); }, 100);
 }
 </script>

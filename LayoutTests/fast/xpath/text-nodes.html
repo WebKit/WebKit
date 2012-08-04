@@ -1,7 +1,7 @@
 <body>
 <script>
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
 
     src = '<doc><elem>a<![CDATA[b]]>c</elem></doc>';
     doc = (new DOMParser).parseFromString(src, "application/xml");

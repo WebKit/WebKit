@@ -17,9 +17,9 @@ function gc()
     }
 }
 
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 var interval = setInterval(gc, 0);
@@ -31,8 +31,8 @@ worker.onmessage = function(evt) {
     this.onmessage = function() {
         log("SUCCESS");
         clearInterval(interval);
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     }
     
 }

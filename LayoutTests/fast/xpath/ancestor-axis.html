@@ -6,8 +6,8 @@ Non-abbreviated XPaths don't work.</p>
   <div id="a"></div>
 
 <script>
-  if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+  if (window.testRunner)
+    testRunner.dumpAsText();
 
   try {
     result = document.evaluate("//div/ancestor::*", document.body, null, XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null);

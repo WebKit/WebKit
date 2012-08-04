@@ -6,16 +6,16 @@
         {
             /* Since the crash happens in painting code, force painting. This
                makes the test work even when run without the --pixel option. */
-            layoutTestController.display();
-            layoutTestController.notifyDone();
+            testRunner.display();
+            testRunner.notifyDone();
         }
 
         function test()
         {
-            if (window.layoutTestController) {
-                layoutTestController.waitUntilDone();
+            if (window.testRunner) {
+                testRunner.waitUntilDone();
                 setTimeout(finish, 0);
-                layoutTestController.dumpAsText();
+                testRunner.dumpAsText();
             }
         }
     </script>

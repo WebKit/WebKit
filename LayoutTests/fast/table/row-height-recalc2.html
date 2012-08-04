@@ -24,8 +24,8 @@ function log(message)
     document.getElementById("log").innerText += message + "\n";
 }
 
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 
 var tableRow = document.getElementById("t");
 log((tableRow.offsetHeight == 50 ? "PASS" : "FAIL") + ": initial height of the row should be 50px.");

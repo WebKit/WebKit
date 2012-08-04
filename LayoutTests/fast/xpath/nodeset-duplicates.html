@@ -12,8 +12,8 @@
     </div>
 
     <script type="text/javascript">
-      if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+      if (window.testRunner)
+        testRunner.dumpAsText();
 
       try {
         var result = document.evaluate("//div//div | //div/div", document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);

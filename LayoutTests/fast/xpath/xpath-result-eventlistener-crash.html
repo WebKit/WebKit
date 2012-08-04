@@ -21,8 +21,8 @@ function allocate() {
 }
 
 (function () {
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
 
     // Fill the heap with event listeners...
     var a = []

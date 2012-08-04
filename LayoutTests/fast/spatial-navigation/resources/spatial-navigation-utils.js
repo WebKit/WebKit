@@ -60,7 +60,7 @@ function doMove()
     debug("Action [" + gExpectedResults[gIndex][0] + "] not supported.");
   }
 
-  if (window.layoutTestController && direction)
+  if (window.testRunner && direction)
     eventSender.keyDown(direction);
 
   setTimeout(verifyAndAdvance, 15);

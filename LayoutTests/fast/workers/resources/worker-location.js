@@ -13,9 +13,9 @@ function gc()
     }
 }
 
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 var worker = createWorker();
@@ -37,7 +37,7 @@ worker.onmessage = function(evt) {
         log(evt.data.replace(new RegExp("/.*LayoutTests"), "<...>"));
     else {
         log("DONE");
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     }
 }

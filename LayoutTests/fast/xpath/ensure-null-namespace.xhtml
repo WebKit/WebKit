@@ -9,8 +9,8 @@
     XPath //title shouldn't match &lt;title> in XHTML.</p>
     <div id="result">FAILURE: script did't run</div>
     <script>
-        if (window.layoutTestController)
-            layoutTestController.dumpAsText();
+        if (window.testRunner)
+            testRunner.dumpAsText();
 
         var result = document.evaluate("//title", document.documentElement, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
         if (result.snapshotLength == 0)

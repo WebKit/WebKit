@@ -4,8 +4,8 @@
     <p>Test for <a href="http://bugs.webkit.org/show_bug.cgi?id=12602">bug 12602</a>:
     </p>
     <script>
-        if (window.layoutTestController)
-            layoutTestController.dumpAsText();
+        if (window.testRunner)
+            testRunner.dumpAsText();
 
         var tests = [
               "//div[string() = '123']"

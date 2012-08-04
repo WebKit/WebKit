@@ -48,8 +48,8 @@ function testWithZeroWidthSpace(a, b) {
 
 function test()
 {
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
 
     var failedDevanagariCount = testWithZeroWidthSpace("\u0915\u093E", "\u0916");
 

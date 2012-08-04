@@ -12,10 +12,10 @@
         အပြည်ပြည်ဆိုင်ရာလှုပ်ရှားမှု၊
     </div>
     <script>
-        if (window.layoutTestController) {
-            layoutTestController.waitUntilDone();
+        if (window.testRunner) {
+            testRunner.waitUntilDone();
             document.body.offsetTop;
-            setTimeout(function() { layoutTestController.notifyDone(); }, 100);
+            setTimeout(function() { testRunner.notifyDone(); }, 100);
         }
     </script>
 </body>

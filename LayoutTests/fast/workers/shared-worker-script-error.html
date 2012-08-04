@@ -27,8 +27,8 @@ function runNextTest()
         log("DONE");
         // Wait briefly to make sure that any pending console messages get written out so they don't spill over into subsequent tests and cause failures.
         setTimeout(function() {
-            if (window.layoutTestController)
-                layoutTestController.notifyDone();
+            if (window.testRunner)
+                testRunner.notifyDone();
         }, 10);
     }
 }
@@ -61,9 +61,9 @@ function testScriptErrorHandled()
     }
 }
 
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 runNextTest();

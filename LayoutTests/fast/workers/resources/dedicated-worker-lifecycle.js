@@ -1,8 +1,8 @@
 description("This test checks whether orphaned workers exit under various conditions");
 
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
     waitUntilWorkerThreadsExit(runTests);
 } else {
     debug("NOTE: This test relies on functionality in DumpRenderTree to detect when workers have exited - test results will be incorrect when run in a browser.");
@@ -16,11 +16,11 @@ function runTests()
     var worker = createWorker();
     worker.postMessage("ping");
     worker.onmessage = function(event) {
-        if (window.layoutTestController) {
-            if (layoutTestController.workerThreadCount == 1)
+        if (window.testRunner) {
+            if (testRunner.workerThreadCount == 1)
                 testPassed("Orphaned worker thread created.");
             else
-                testFailed("After thread creation: layoutTestController.workerThreadCount = " + layoutTestController.workerThreadCount);
+                testFailed("After thread creation: testRunner.workerThreadCount = " + testRunner.workerThreadCount);
         }
 
         // Orphan our worker (no more references to it) and wait for it to exit.
@@ -39,11 +39,11 @@ function orphanedWorkerExited()
     var worker = createWorker();
     worker.postMessage("ping");
     worker.onmessage = function(event) {
-        if (window.layoutTestController) {
-            if (layoutTestController.workerThreadCount == 1)
+        if (window.testRunner) {
+            if (testRunner.workerThreadCount == 1)
                 testPassed("Orphaned timeout worker thread created.");
             else
-                testFailed("After thread creation: layoutTestController.workerThreadCount = " + layoutTestController.workerThreadCount);
+                testFailed("After thread creation: testRunner.workerThreadCount = " + testRunner.workerThreadCount);
         }
         // Send a message that starts up an async operation, to make sure the thread exits when it completes.
         // FIXME: Disabled for now - re-enable when bug 28702 is fixed.

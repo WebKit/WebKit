@@ -8,8 +8,8 @@
 </style>
 
 <script>
-if (window.layoutTestController) {
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.waitUntilDone();
 }
 
 var nodes = Array();
@@ -17,7 +17,7 @@ var nodes = Array();
 function tryToCrash()
 {
     try { nodes[84].setAttribute('class', 'c18'); } catch(e) {};
-    setTimeout('layoutTestController.notifyDone();',1000);
+    setTimeout('testRunner.notifyDone();',1000);
 }
 
 function boom() {

@@ -16,11 +16,11 @@ body { margin: 10; padding: 0 }
         console_messages.appendChild(item);
     }
     
-    if (window.layoutTestController) {
+    if (window.testRunner) {
         
         try {
         
-            layoutTestController.dumpAsText();
+            testRunner.dumpAsText();
         
             log("Testing styled text (12<b>3<i>456</i></b>)");
             window.getSelection().setPosition(document.body, 4);

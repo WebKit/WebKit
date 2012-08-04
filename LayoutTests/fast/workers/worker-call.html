@@ -3,9 +3,9 @@
 <div id=result></div>
 <script>
 
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 function log(message)
@@ -17,8 +17,8 @@ var worker = new Worker("resources/worker-call.js");
 worker.onmessage = function(event) {
     log(event.data);
     if (event.data == "DONE") {
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     }
 };
 </script>

@@ -7,17 +7,17 @@
 .c21:nth-child(2n) { position: static; float: left; }
 .c26 { border-style: ridge; content: counter(section);</style>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 function crash()
 {
     var img = document.createElement('img');
     img.appendChild(select);
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
 function insertNodes() {

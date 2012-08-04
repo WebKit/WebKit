@@ -7,9 +7,9 @@
 XMLHttpRequest doesn't use a correct content type for file:// URLs.</p>
 <script>
 
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
     }
 
     var console_messages = document.createElement("ol");
@@ -48,8 +48,8 @@ XMLHttpRequest doesn't use a correct content type for file:// URLs.</p>
     function processStateChange(){
         if (req.readyState == 4) {
             log("Async: HTML, charset determined by a META: " + req.responseText.replace(/\s/g, "").replace(/.*<body>(.*)<\/body>.*/, "$1"));
-            if (window.layoutTestController)
-                layoutTestController.notifyDone();
+            if (window.testRunner)
+                testRunner.notifyDone();
         }
     }
 

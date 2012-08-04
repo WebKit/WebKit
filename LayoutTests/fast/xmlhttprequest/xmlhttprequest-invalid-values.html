@@ -73,8 +73,8 @@ function debug(str) {
 }
 
 function runTest() {
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
 
     testInvalidMethod();
     testInvalidHeaderName();

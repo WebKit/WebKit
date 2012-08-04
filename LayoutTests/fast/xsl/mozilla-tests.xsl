@@ -84,8 +84,8 @@
     <SCRIPT Language="JavaScript">
      <xsl:text>
       // Support for Apple's DumpRenderTree
-        if (window.layoutTestController)
-            layoutTestController.dumpAsText();
+        if (window.testRunner)
+            testRunner.dumpAsText();
       // This is a test for properly printing SCRIPT elements
       // currently there is a bug, so use xsl:text as a wrapper as I
       // have done here

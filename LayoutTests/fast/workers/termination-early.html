@@ -1,9 +1,9 @@
 <script>
 function test()
 {
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
     }
 
     worker = new Worker("resources/worker-common.js");
@@ -25,8 +25,8 @@ function continueTest() {
 
     worker.terminate();
     document.getElementById("result").innerText = "DONE";
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 </script>
 <body onload=test()>

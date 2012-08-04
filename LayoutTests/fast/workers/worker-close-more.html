@@ -3,12 +3,12 @@
 <div id=result></div>
 <script src="resources/worker-util.js"></script>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
     waitUntilWorkerThreadsExit(runTests);
 } else {
-    log("NOTE: Test relies on window.layoutTestController to detect when worker threads have exited. Please run this test via DumpRenderTree");
+    log("NOTE: Test relies on window.testRunner to detect when worker threads have exited. Please run this test via DumpRenderTree");
     waitUntilWorkerThreadsExit(runTests);
 }
 
@@ -16,8 +16,8 @@ var worker;
 
 function startWorker()
 {
-    if (window.layoutTestController)
-        log("PASS: workerThreadCount = " + layoutTestController.workerThreadCount);
+    if (window.testRunner)
+        log("PASS: workerThreadCount = " + testRunner.workerThreadCount);
     worker = new Worker('resources/worker-close.js');
 }
 
@@ -27,7 +27,7 @@ function runTests()
     startWorker();
     worker.postMessage("close_post_loop"); // Close the worker but put it immediately into infinite loop.
     worker.onmessage = function(event) {
-        if (window.layoutTestController) {
+        if (window.testRunner) {
             log("PASS: Worker thread created and closed, received message: " + event.data);
             // Terminate the worker.
             worker.terminate();

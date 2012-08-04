@@ -6,8 +6,8 @@ when the target document does not have a root node.</p>
 
 <div id="console"></div>
 <script>
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
     
 var xml = (new DOMParser()).parseFromString('<doc/>', 'application/xml');
 var xsl = (new DOMParser()).parseFromString(

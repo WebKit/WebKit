@@ -28,8 +28,8 @@ function shouldBe(a, b)
 
 function test() 
 {
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
 
     shouldBe("document.getElementById('tr1').parentNode.childNodes.length == 5", true);    
     shouldBe("document.getElementById('tr1').rowIndex == 0", true);

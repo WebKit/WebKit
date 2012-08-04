@@ -15,8 +15,8 @@
         console_messages.appendChild(item);
     }
     
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
     
         log("Testing that attributedSubstringFromRange returns a string of the correct length");
         log("The results for oversized requests are incorrect due to <rdar://problem/5400551> which causes a \\n to be appended to the result.");

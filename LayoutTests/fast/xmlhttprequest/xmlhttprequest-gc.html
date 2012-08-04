@@ -3,8 +3,8 @@
 function stateChange() {
     document.write(this.foo + '<br>');
     if (this.readyState == 4) {
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     }
 }
 
@@ -20,9 +20,9 @@ function collectGarbage() {
 function runTest() {
     document.write("Tests that garbage collection doesn't drop the XMLHttpRequest JS wrapper until the send command is done.  You should see 'bar' four times below.<br>");
 
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
     }
 
     var xhr = new XMLHttpRequest();

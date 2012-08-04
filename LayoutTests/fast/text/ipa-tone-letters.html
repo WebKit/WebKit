@@ -14,8 +14,8 @@ function testString(s)
 
 function test()
 {
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
 
     var testStrings = ["\u02E5\u02E9", "\u02E9\u02E5", "\u02E7\u02E9",
                        "\u02E5\u02E7", "\u02E5\u02E7\u02E5"];

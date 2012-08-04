@@ -1,9 +1,9 @@
 <script>
 function test()
 {
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
     }
 
     var worker = new Worker("resources/termination-with-port-messages.js");
@@ -13,8 +13,8 @@ function test()
     {
         // On first message back from worker, terminate it.
         worker.terminate();
-        if (window.layoutTestController)
-            setTimeout("layoutTestController.notifyDone();", 0);
+        if (window.testRunner)
+            setTimeout("testRunner.notifyDone();", 0);
     }
     channel.port2.start();
 

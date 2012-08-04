@@ -6,8 +6,8 @@
 <body>
     <div id="result">FAILURE</div>
     <script type="text/javascript"><![CDATA[
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
 
     function MyNSResolver() {}
     MyNSResolver.prototype.lookupNamespaceURI = function(prefix) {

@@ -4,8 +4,8 @@
   <xsl:include href="xslt-second-level-import2.xsl" />
   <xsl:template match="/">
     <script>
-        if (window.layoutTestController)
-            layoutTestController.dumpAsText();
+        if (window.testRunner)
+            testRunner.dumpAsText();
     </script>
     <p>&success;</p>
   </xsl:template>

@@ -7,9 +7,9 @@ function log(message)
     document.getElementById("result").innerHTML += message + "<br>";
 }
 
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 try {
@@ -66,8 +66,8 @@ try {
 }
 
 log("DONE");
-if (window.layoutTestController)
-    layoutTestController.notifyDone();
+if (window.testRunner)
+    testRunner.notifyDone();
 
 </script>
 </body>

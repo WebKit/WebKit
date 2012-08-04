@@ -6,8 +6,8 @@ XSLT output method does not default to HTML when the target document is HTML.</p
 <div id="result2">Should be black: </div>
 
 <script>
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 
 var xsl = (new DOMParser()).parseFromString('<?xml version="1.0" encoding="ISO-8859-1"?>'+
 '<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">'+

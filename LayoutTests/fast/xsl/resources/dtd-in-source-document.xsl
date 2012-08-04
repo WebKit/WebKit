@@ -6,8 +6,8 @@
 <html>
 <head>
     <script>
-        if (window.layoutTestController)
-            layoutTestController.dumpAsText();
+        if (window.testRunner)
+            testRunner.dumpAsText();
     </script>
 </head>
 <body>

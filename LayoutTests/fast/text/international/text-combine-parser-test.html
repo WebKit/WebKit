@@ -11,8 +11,8 @@ function print(message)
 }
 function test()
 {
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
 
     var textCombineValues = ["none", "horizontal"];
     var pElems = document.getElementsByTagName("div");

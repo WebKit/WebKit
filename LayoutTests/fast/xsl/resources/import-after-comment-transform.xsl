@@ -4,7 +4,7 @@
   <xsl:template match="*">
    <html>
     <body>
-      <script>if (window.layoutTestController) layoutTestController.dumpAsText();</script>
+      <script>if (window.testRunner) testRunner.dumpAsText();</script>
       <p>SUCCESS</p>
     </body>
    </html>

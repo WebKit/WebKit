@@ -1,8 +1,8 @@
 <html> 
 <head> 
 <script>
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 
 function test() {
     var passed = window.getComputedStyle(document.getElementsByTagName('p')[2]).color === "rgb(0, 0, 0)";

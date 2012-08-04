@@ -5,7 +5,7 @@
   <xsl:template match="/">
     <html>
       <body>
-        <script>if (window.layoutTestController) layoutTestController.dumpAsText();</script>
+        <script>if (window.testRunner) testRunner.dumpAsText();</script>
         <div id="mydiv">
            <p>Tests a crash resulting from a string literal in a nested XSL stylesheet. If you reached
            here without crashing, the test passed.  See https://bugs.webkit.org/show_bug.cgi?id=15715 .</p>

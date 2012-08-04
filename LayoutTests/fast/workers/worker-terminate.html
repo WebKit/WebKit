@@ -17,9 +17,9 @@ function gc()
     }
 }
 
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 var worker = new Worker('resources/worker-common.js');
@@ -43,7 +43,7 @@ worker4.onmessage = function(evt) {
     worker4.postMessage("eval true");
     worker4.terminate();
     log("Received message from worker4.");
-    setTimeout("log('DONE'); if (window.layoutTestController) layoutTestController.notifyDone()", 1000);
+    setTimeout("log('DONE'); if (window.testRunner) testRunner.notifyDone()", 1000);
 }
 worker4.postMessage("eval true");
 

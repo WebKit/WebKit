@@ -7,10 +7,10 @@ function log(message)
     document.getElementById("result").innerHTML += message + "<br>";
 }
 
-if (window.layoutTestController)
+if (window.testRunner)
 {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 var worker = new Worker('resources/worker-close.js');
@@ -99,8 +99,8 @@ function done() {
     if (timeout)
         clearTimeout(timeout);
     log("DONE");
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 </script>
 </body>

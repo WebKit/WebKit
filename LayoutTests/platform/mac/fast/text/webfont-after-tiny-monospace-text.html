@@ -8,13 +8,13 @@ div {
 }
 </style>
 <script>
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
+if (window.testRunner)
+    testRunner.waitUntilDone();
 
 function ensureWebFontLoaded() {
     document.body.offsetTop;
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 </script>
 <body onload="setTimeout(ensureWebFontLoaded, 300)">

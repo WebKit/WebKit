@@ -36,11 +36,11 @@
       ["DONE", "DONE"]
     ];
 
-    if (window.layoutTestController) {
-      layoutTestController.dumpAsText();
-      layoutTestController.setSpatialNavigationEnabled(true);
-      layoutTestController.overridePreference("WebKitTabToLinksPreferenceKey", 1);
-      layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+      testRunner.dumpAsText();
+      testRunner.setSpatialNavigationEnabled(true);
+      testRunner.overridePreference("WebKitTabToLinksPreferenceKey", 1);
+      testRunner.waitUntilDone();
     }
 
     function runTest()
@@ -55,8 +55,8 @@
     {
       shouldBeTrue(String(document.getElementById("div").scrollTop != 0));
 
-      if (window.layoutTestController)
-        layoutTestController.notifyDone();
+      if (window.testRunner)
+        testRunner.notifyDone();
     }
 
     window.onload = runTest;

@@ -3,16 +3,16 @@
     body { direction: rtl; padding-left: 100%; }
 </style>
 <script>
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
     }
 
     function runTest() {
         document.body.innerHTML = "PASS, if no crash or exceptions thrown";
 
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     }
 
     setTimeout("runTest()", 0);

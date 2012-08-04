@@ -19,11 +19,11 @@
       ["DONE", "DONE"]
     ];
 
-    if (window.layoutTestController) {
-      layoutTestController.dumpAsText();
-      layoutTestController.setSpatialNavigationEnabled(true);
-      layoutTestController.overridePreference("WebKitTabToLinksPreferenceKey", 1);
-      layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+      testRunner.dumpAsText();
+      testRunner.setSpatialNavigationEnabled(true);
+      testRunner.overridePreference("WebKitTabToLinksPreferenceKey", 1);
+      testRunner.waitUntilDone();
     }
 
     function runTest()
@@ -36,8 +36,8 @@
 
     function testCompleted()
     {
-      if (window.layoutTestController)
-        layoutTestController.notifyDone();
+      if (window.testRunner)
+        testRunner.notifyDone();
     }
 
     window.onload = runTest;

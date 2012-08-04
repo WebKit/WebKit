@@ -2,8 +2,8 @@
 <p>Test for <a href="https://bugs.webkit.org/show_bug.cgi?id=19215">bug 19215</a>:
 XSLT transformToDocument fails when stylesheet contains &amp;#160;</p>
 <script>
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 
 try {
     var XML = '<?xml version="1.0" encoding="utf-8" ?>'+

@@ -4,8 +4,8 @@
     <p>PASS if no crash or assert in debug.</p>
 
 <script>
-if (window.layoutTestController && window.internals && internals.setDelegatesScrolling) {
-    layoutTestController.dumpAsText();
+if (window.testRunner && window.internals && internals.setDelegatesScrolling) {
+    testRunner.dumpAsText();
     internals.setDelegatesScrolling(true, document);
 }
 </script>

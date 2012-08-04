@@ -9,8 +9,8 @@ Here we change tbody border color, expect that cache is invalidated and paint pr
         <script type="text/javascript">
             function test() {
                 document.body.offsetTop;
-                if (window.layoutTestController)
-                    layoutTestController.display();
+                if (window.testRunner)
+                    testRunner.display();
                 document.getElementById("tbody").style.borderColor = "yellow";
             }
         </script>

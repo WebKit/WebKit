@@ -1,9 +1,9 @@
 <script>
 function test()
 {
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
     }
 
     var counter = 0;
@@ -18,8 +18,8 @@ function test()
         if (++counter > 20) {
             document.getElementById("result").innerText = "PASS";
             worker.terminate();
-            if (window.layoutTestController) {
-                layoutTestController.notifyDone();
+            if (window.testRunner) {
+                testRunner.notifyDone();
             }
         }
     }

@@ -4,8 +4,8 @@
     <div style="height: 100px;">target</div>
     <div style="height: 1000px;"></div>
     <script>
-        if (window.layoutTestController && window.internals) {
-            layoutTestController.dumpAsText();
+        if (window.testRunner && window.internals) {
+            testRunner.dumpAsText();
             window.internals.settings.setPageScaleFactor(2, 0, 0);
         }
 

@@ -8,8 +8,8 @@
         </head>
         <body>
         <script>
-        if (window.layoutTestController)
-            layoutTestController.dumpAsText();
+        if (window.testRunner)
+            testRunner.dumpAsText();
 
         if (document.URL.length > 0)
             document.write("<p>Success</p>");

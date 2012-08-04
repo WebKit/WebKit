@@ -7,8 +7,8 @@ table { position: relative; }
 .span:last-child { position: relative; }
 </style>
 <script>
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 
 function crash() {
     table = document.createElement('table');

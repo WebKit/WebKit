@@ -17,17 +17,17 @@ function gc()
     }
 }
 
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 var worker = new Worker('resources/worker-event-listener.js');
 worker.postMessage("");
 worker.onmessage = function(evt) {
     log(evt.data);
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
     
 }
 gc();

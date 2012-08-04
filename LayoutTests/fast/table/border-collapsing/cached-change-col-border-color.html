@@ -9,8 +9,8 @@ Here we change col border color, expect that cache is invalidated and paint prod
         <script type="text/javascript">
             function test() {
                 document.body.offsetTop;
-                if (window.layoutTestController)
-                    layoutTestController.display();
+                if (window.testRunner)
+                    testRunner.display();
                 document.getElementById("col").style.borderColor = "yellow";
             }
         </script>

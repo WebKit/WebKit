@@ -1,16 +1,16 @@
 <html>
 <script>
-if (window.layoutTestController) {
-  layoutTestController.dumpAsText();
-  layoutTestController.waitUntilDone();
+if (window.testRunner) {
+  testRunner.dumpAsText();
+  testRunner.waitUntilDone();
 }
   
 function onFrameLoad(frame) {
   var client = frame.contentWindow.client();
   frame.parentNode.removeChild(frame);
   client.open("GET", "DoesNotExist.txt");
-  if (window.layoutTestController)
-    layoutTestController.notifyDone();
+  if (window.testRunner)
+    testRunner.notifyDone();
 }
 </script>
 <body>

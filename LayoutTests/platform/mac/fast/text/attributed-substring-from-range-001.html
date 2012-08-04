@@ -16,11 +16,11 @@ body { margin: 10; padding: 0 }
         console_messages.appendChild(item);
     }
     
-    if (window.layoutTestController) {
+    if (window.testRunner) {
         
         try {
         
-            layoutTestController.dumpAsText();
+            testRunner.dumpAsText();
         
             log("Testing text with br elements (<div><br></div>hello<br>)");
             window.getSelection().setPosition(document.body, 5);

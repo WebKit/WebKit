@@ -4,8 +4,8 @@ XSLTProcessor transformToFragment fails because of an XML declaration.</p>
 
 <script>
 
-  if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+  if (window.testRunner)
+    testRunner.dumpAsText();
 
   try {
     var xml = (new DOMParser()).parseFromString('<doc/>', 'application/xml');

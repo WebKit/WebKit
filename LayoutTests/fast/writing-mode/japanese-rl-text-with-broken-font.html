@@ -13,13 +13,13 @@ body {
 }
 </style>
 <script>
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
+if (window.testRunner)
+    testRunner.waitUntilDone();
 
 window.onload = function() {
     document.body.offsetTop;
-    if (window.layoutTestController)
-        setTimeout(function() { layoutTestController.notifyDone(); }, 100);
+    if (window.testRunner)
+        setTimeout(function() { testRunner.notifyDone(); }, 100);
 }
 </script>
 </head>

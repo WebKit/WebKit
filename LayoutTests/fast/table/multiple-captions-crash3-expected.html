@@ -6,8 +6,8 @@
 .c15 { display: inline; float: right;}
 </style>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.waitUntilDone();
 }
 
 var nodes = Array();
@@ -15,7 +15,7 @@ var nodes = Array();
 function tryToCrash()
 {
     document.execCommand("SelectAll", false, "");
-    setTimeout('layoutTestController.notifyDone();',1000);
+    setTimeout('testRunner.notifyDone();',1000);
 }
 
 function boom() {

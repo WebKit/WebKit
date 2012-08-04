@@ -1,8 +1,8 @@
 description("This test checks the various use cases around sending multiple ports through Worker.postMessage");
 
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 var channel = new MessageChannel();

@@ -12,8 +12,8 @@ p.success {
 </style> 
 			<link rel="stylesheet" href="resources/xslt-recursion-chain1.css" />
 <script>
-if (window.layoutTestController)
-	layoutTestController.dumpAsText();
+if (window.testRunner)
+	testRunner.dumpAsText();
 </script> 
 			<p class="success">Success!</p>
 			<p class="failure">Failure! (external CSS sheets were ignored)</p>

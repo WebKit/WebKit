@@ -2,8 +2,8 @@
 <head>
     <script>
         function runTests() {
-            if (window.layoutTestController)
-                layoutTestController.dumpAsText();
+            if (window.testRunner)
+                testRunner.dumpAsText();
                 
             document.evaluate("//a[@id='']",document)
         }

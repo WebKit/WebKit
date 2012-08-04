@@ -2,9 +2,9 @@
 <head>
 <script src="../js/resources/js-test-pre.js"></script>
 <script>
-    if (window.layoutTestController) {
-        layoutTestController.waitUntilDone();
-        layoutTestController.dumpAsText();
+    if (window.testRunner) {
+        testRunner.waitUntilDone();
+        testRunner.dumpAsText();
     }
 
     var dummyResolverCalled = false;
@@ -28,8 +28,8 @@
         shouldBeTrue("dummyResolverCalled");
         shouldBe("foundNode.toString()", "\"[object HTMLDivElement]\"");
 
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     }
 </script>
 </head>

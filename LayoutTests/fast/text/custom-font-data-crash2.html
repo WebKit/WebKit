@@ -11,13 +11,13 @@
 <script>
 function finish() {
     document.body.innerHTML = "PASS";
-	if (window.layoutTestController)
-	    layoutTestController.notifyDone();
+	if (window.testRunner)
+	    testRunner.notifyDone();
 }
 
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 document.designMode = 'on';

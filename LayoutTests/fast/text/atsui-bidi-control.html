@@ -42,8 +42,8 @@ function assertEqual(test_name, actual, expected)
 
 onload = function()
 {
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
 
     var div = document.getElementById("div");
     var string = div.innerHTML;

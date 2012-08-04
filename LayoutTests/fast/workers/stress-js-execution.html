@@ -7,9 +7,9 @@ function log(message)
     document.getElementById("result").innerHTML += message + "<br>";
 }
 
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 var worker1 = new Worker('resources/stress-js-execution.js');
@@ -21,7 +21,7 @@ worker1.onmessage = function(evt) {
 
 worker2.onmessage = worker1.onmessage;
 
-setTimeout("log('DONE'); if (window.layoutTestController) layoutTestController.notifyDone();", 1000);
+setTimeout("log('DONE'); if (window.testRunner) testRunner.notifyDone();", 1000);
 
 </script>
 </body>

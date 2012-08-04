@@ -18,9 +18,9 @@
       }
     </style>
     <script>
-        if (window.layoutTestController) {
-            layoutTestController.dumpAsText();
-            layoutTestController.waitUntilDone();
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
         }
 
         function crash() {
@@ -42,8 +42,8 @@
 
                 document.body.innerHTML = "Bug 74026: Crash in RenderTable::outerBorderAfter<br>This test has PASSED!";
 
-                if (window.layoutTestController)
-                    layoutTestController.notifyDone();
+                if (window.testRunner)
+                    testRunner.notifyDone();
             }, 0);
         }
         window.onload=crash

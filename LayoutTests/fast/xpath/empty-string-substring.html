@@ -1,8 +1,8 @@
 <p>Test for <a href="http://bugs.webkit.org/show_bug.cgi?id=11815">bug 11815</a>:
 XPathEvaluator behavior does not match Firefox - substring() and empty element.</p>
 <script>
-if (window.layoutTestController)
-  layoutTestController.dumpAsText();
+if (window.testRunner)
+  testRunner.dumpAsText();
 
 var strXML = '<data><record></record><record>-hi-</record></data>';
 var doc = (new DOMParser()).parseFromString(strXML, "text/xml");

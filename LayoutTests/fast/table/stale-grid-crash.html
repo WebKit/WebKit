@@ -1,16 +1,16 @@
 <head>
     <title></title>
     <script>
-        if (window.layoutTestController)
-            layoutTestController.waitUntilDone();
+        if (window.testRunner)
+            testRunner.waitUntilDone();
 
         function test()
         {
             document.getElementById("topCell").style.display = "none";
             document.getElementById("bottomCell").style.backgroundImage="url(../replaced/resources/1x1-green.png)";
             document.getElementById("result").innerText = "SUCCESS"
-            if (window.layoutTestController)
-                layoutTestController.notifyDone();
+            if (window.testRunner)
+                testRunner.notifyDone();
         }
     </script>
 </head>

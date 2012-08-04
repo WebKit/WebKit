@@ -1,6 +1,6 @@
 <script>
-    if (window.layoutTestController)
-        layoutTestController.waitUntilDone();
+    if (window.testRunner)
+        testRunner.waitUntilDone();
 </script>
 <p>The following two green rectangles should be identical:</p>
 <table>
@@ -24,7 +24,7 @@
         child.innerHTML = "This text should have a green background.";
         document.getElementById("parent").appendChild(child);
         
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     }, 1);
 </script>

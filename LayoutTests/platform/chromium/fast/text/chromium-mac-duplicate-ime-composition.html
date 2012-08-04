@@ -10,16 +10,16 @@
     }
 
     function doTest() {
-      if (!window.layoutTestController)
+      if (!window.testRunner)
         return;
-      layoutTestController.dumpAsText();
-      layoutTestController.waitUntilDone();
+      testRunner.dumpAsText();
+      testRunner.waitUntilDone();
       var textarea = document.getElementById('textarea');
       var consoleElement = document.getElementById('console');
       textarea.addEventListener('keydown', function (e) {
         textarea.style['overflow'] = 'hidden';
       });
-      layoutTestController.display();
+      testRunner.display();
       textarea.focus();
       if (textInputController.setComposition) {
         // Emulates start input method conversion.
@@ -29,7 +29,7 @@
         // Checks whether the textarea does not contain the first composition.
         check('second', textarea.value);
       }
-      layoutTestController.notifyDone();
+      testRunner.notifyDone();
     }
   </script>
 </head>
