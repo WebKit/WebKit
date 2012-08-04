@@ -44,7 +44,6 @@ namespace WebCore {
 
 static bool canAccessDocument(BindingState* state, Document* targetDocument, bool reportError)
 {
-    // We have seen crashes were the target is 0, but we don't have a test case for it.
     if (!targetDocument)
         return false;
 
@@ -66,27 +65,14 @@ bool BindingSecurity::canAccessFrame(BindingState* state, Frame* target, bool re
     return target && canAccessDocument(state, target->document(), reportError);
 }
 
-bool BindingSecurity::shouldAllowAccessToNode(BindingState* state, Node* node)
+bool BindingSecurity::shouldAllowAccessToNode(BindingState* state, Node* target)
 {
-    if (!node)
-        return false;
-
-    // FIXME: We shouldn't need to go through the frame here because we already have the document.
-    Frame* target = node->document()->frame();
-    if (!target)
-        return false;
-
-    return canAccessFrame(state, target, true);
+    return target && canAccessDocument(state, target->document(), true);
 }
 
 bool BindingSecurity::allowSettingFrameSrcToJavascriptUrl(BindingState* state, HTMLFrameElementBase* frame, const String& value)
 {
-    if (protocolIsJavaScript(stripLeadingAndTrailingHTMLSpaces(value))) {
-        Node* contentDocument = frame->contentDocument();
-        if (contentDocument && !shouldAllowAccessToNode(state, contentDocument))
-            return false;
-    }
-    return true;
+    return !protocolIsJavaScript(stripLeadingAndTrailingHTMLSpaces(value)) || canAccessDocument(state, frame->contentDocument(), true);
 }
 
 }

@@ -1,5 +1,27 @@
 2012-08-04  Adam Barth  <abarth@webkit.org>
 
+        BindingSecurity::shouldAllowAccessToNode shouldn't detour through Frame to find the node's document
+        https://bugs.webkit.org/show_bug.cgi?id=93140
+
+        Reviewed by Eric Seidel.
+
+        Previously, shouldAllowAccessToNode took a detour through the Frame to
+        find the Document associated with a given Node. That's crazy! Nodes
+        already know their documents. This patch removes the detour.
+
+        It's theoretically possible that this patch changes behavior in the
+        case where the Frame is 0, but I couldn't find any situations in which
+        we call this function on nodes in inactive documents because the
+        typical way you find a node worth checking security on is via
+        a JavaScript window object.
+
+        * bindings/generic/BindingSecurity.cpp:
+        (WebCore::canAccessDocument):
+        (WebCore::BindingSecurity::shouldAllowAccessToNode):
+        (WebCore::BindingSecurity::allowSettingFrameSrcToJavascriptUrl):
+
+2012-08-04  Adam Barth  <abarth@webkit.org>
+
         [V8] Re-wire "target" half of the same-origin security check through Document rather than DOMWindow
         https://bugs.webkit.org/show_bug.cgi?id=93079
 
