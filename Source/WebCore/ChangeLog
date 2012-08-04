@@ -1,3 +1,11 @@
+2012-08-04  Dan Bernstein  <mitz@apple.com>
+
+        Tried to fix the Qt Windows build after r124654.
+
+        * platform/graphics/SimpleFontData.cpp:
+        (WebCore::SimpleFontData::glyphForCharacter): Enclosed this function in
+        #if !(PLATFORM(QT) && !HAVE(QRAWFONT)).
+
 2012-08-04  Mike West  <mkwst@chromium.org>
 
         Refactor SubframeLoader::requestPlugin/loadPlugin for clarity.
