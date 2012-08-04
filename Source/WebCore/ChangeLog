@@ -1,3 +1,42 @@
+2012-08-04  Mike West  <mkwst@chromium.org>
+
+        Refactor SubframeLoader::requestPlugin/loadPlugin for clarity.
+        https://bugs.webkit.org/show_bug.cgi?id=93138
+
+        Reviewed by Adam Barth.
+
+        SubframeLoader::requestPlugin and SubframeLoader::loadPlugin both do a
+        variety of checks to determine whether or not a specific resource ought
+        to instantiate a plugin in a specific context. r124636[1] moved one of
+        those checks, but there doesn't seem to be a clear way to determine
+        which checks should be performed where.
+
+        This patch refactors the checks out of those two methods for clarity,
+        moving them all into a new method: SubframeLoader::pluginIsLoadable.
+        That method requires the resource URL and MIME type, as well as the
+        `object` or `embed` element that owns this bit of rendering. The URL
+        and type are used directly to determine availability, while the element
+        is currently used only to create a renderer on which
+        setPluginUnavailabilityReason can be called if the plugin is blocked by
+        Content Security Policy.
+
+        This patch introduces no new tests, as it shouldn't change the code's
+        behavior: it should be a straightforward refactoring without web-visible
+        side-effects.
+
+        [1]: http://trac.webkit.org/changeset/124636
+
+        * loader/SubframeLoader.cpp:
+        (WebCore::SubframeLoader::pluginIsLoadable):
+            A new method that extracts the various 'Should we allow this plugin
+            in this context?' checks from requestPlugin and loadPlugin into ine
+            location, rather than spreading them across both.
+        (WebCore):
+        (WebCore::SubframeLoader::requestPlugin):
+        (WebCore::SubframeLoader::loadPlugin):
+        * loader/SubframeLoader.h:
+        (SubframeLoader):
+
 2012-08-04  John J. Barton  <johnjbarton@chromium.org>
 
         Web Inspector: filteredItemSelectionDialog.css has wrong selector for highlights

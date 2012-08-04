@@ -88,6 +88,7 @@ private:
         const Vector<String>& paramNames, const Vector<String>& paramValues, bool useFallback);
 
     bool shouldUsePlugin(const KURL&, const String& mimeType, bool shouldPreferPlugInsForImages, bool hasFallback, bool& useFallback);
+    bool pluginIsLoadable(HTMLPlugInImageElement*, const KURL&, const String& mimeType);
 
     Document* document() const;
 
