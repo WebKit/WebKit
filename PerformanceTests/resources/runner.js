@@ -42,7 +42,7 @@ PerfTestRunner.info = function (text) {
 }
 
 PerfTestRunner.logInfo = function (text) {
-    if (!window.layoutTestController)
+    if (!window.testRunner)
         this.log(text);
 }
 
@@ -131,8 +131,8 @@ PerfTestRunner._runLoop = function () {
             logLines.forEach(function(text) { self.log(text); });
         }
         this._doneFunction();
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     }
 }
 
@@ -172,7 +172,7 @@ PerfTestRunner.initAndStartLoop = function() {
     this._completedRuns = -1;
     this.customRunFunction = null;
     this._results = [];
-    this._logLines = window.layoutTestController ? [] : null;
+    this._logLines = window.testRunner ? [] : null;
     this.log("Running " + this._runCount + " times");
     this._runLoop();
 }
@@ -227,7 +227,7 @@ PerfTestRunner._perSecondRunnerIterator = function (callsPerIteration) {
     return Date.now() - startTime;
 }
 
-if (window.layoutTestController) {
-    layoutTestController.waitUntilDone();
-    layoutTestController.dumpAsText();
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
 }

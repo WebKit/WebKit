@@ -64,8 +64,8 @@
              var scores = DRT.computeScores(data.result);
              PerfTestRunner.printStatistics(scores);
              window.setTimeout(function() {
-                 if (window.layoutTestController)
-                     layoutTestController.notifyDone();
+                 if (window.testRunner)
+                     testRunner.notifyDone();
              }, 0);
          },
 

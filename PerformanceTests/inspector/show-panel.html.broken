@@ -42,7 +42,7 @@ function test()
         for (var panelName in WebInspector.panels) {
             var timerCookie = timer.start("show-panel-" + panelName);
             WebInspector.showPanel(panelName);
-            InspectorTest.evaluateInPage("layoutTestController.display();");
+            InspectorTest.evaluateInPage("testRunner.display();");
             timer.finish(timerCookie);
         }
         timer.done("panel-switch");

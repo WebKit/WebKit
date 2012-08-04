@@ -38,7 +38,7 @@ function test()
     InspectorTest.runPerformanceTest(test, 15000);
 }
 
-if (!window.layoutTestController) {
+if (!window.testRunner) {
     setTimeout(function() {
         makeXHRRequests(30);
     }, 3000);

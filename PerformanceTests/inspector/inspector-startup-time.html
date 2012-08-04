@@ -7,7 +7,7 @@
 
 function onload()
 {
-    layoutTestController.waitUntilDone();
+    testRunner.waitUntilDone();
     times = [];
     startTime = Date.now();
     testStartTime = startTime;
@@ -18,13 +18,13 @@ function inspectorIsReady()
 {
     times.push(Date.now() - startTime);
     if (Date.now() - testStartTime > 20000) {
-        layoutTestController.evaluateInWebInspector(2, "InspectorTest.dumpTestStats('inspector-startup-time', 'time', " + JSON.stringify(times) + ", 'ms')")
-        layoutTestController.evaluateInWebInspector(3, "(InspectorTest.completeTest())")
+        testRunner.evaluateInWebInspector(2, "InspectorTest.dumpTestStats('inspector-startup-time', 'time', " + JSON.stringify(times) + ", 'ms')")
+        testRunner.evaluateInWebInspector(3, "(InspectorTest.completeTest())")
         return;
     }
-    layoutTestController.closeWebInspector();
+    testRunner.closeWebInspector();
     startTime = Date.now();
-    layoutTestController.showWebInspector();
+    testRunner.showWebInspector();
     runTest();
 }
 
