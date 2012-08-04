@@ -61,8 +61,9 @@ BUGCR24182 DEBUG : jquery/event.html = PASS TIMEOUT
 BUGCR24182 : jquery/manipulation.html = PASS TIMEOUT
 BUGCR24182 SLOW DEBUG : jquery/offset.html = PASS
 BUGCR24182 LINUX WIN DEBUG : jquery/traversing.html = PASS TIMEOUT
-BUGWK77523 SLOW WIN : media/media-fragments/TC0050-TC0059.html = PASS
-BUGWK77523 SLOW WIN RELEASE : media/media-fragments/TC0080-TC0089.html = PASS
+BUGWK77523 SLOW : media/media-fragments/TC0030-TC0039.html = PASS
+BUGWK77523 SLOW : media/media-fragments/TC0050-TC0059.html = PASS
+BUGWK77523 SLOW : media/media-fragments/TC0080-TC0089.html = PASS
 BUGCR24182 SLOW SNOWLEOPARD DEBUG : svg/dom/baseVal-animVal-crash.html = PASS
 
 // These tests started being slow when we switched to DRT.
@@ -2831,8 +2832,6 @@ BUGWK76727 : fast/multicol/span/span-as-immediate-columns-child-removal.html = I
 
 // Need to implement file name logging.
 BUGWK76572 : http/tests/download = TEXT
-
-BUGWK76967 : media/media-fragments/TC0030-TC0039.html = PASS TIMEOUT
 
 BUGABARTH : fast/html/marquee-alternate.html = PASS TEXT
 

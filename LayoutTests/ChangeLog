@@ -1,3 +1,14 @@
+2012-08-03  Ami Fischman  <fischman@chromium.org>
+
+        media/media-fragments/TC0030-TC0039.html sometimes times out on Chromium Windows
+        https://bugs.webkit.org/show_bug.cgi?id=76967
+
+        Unreviewed, test expectation change only.
+
+        These media/media-fragments/TC00X0-TC00X9.html tests each test 10 test cases, and consistently skate in the 6-8s range. Marking them as SLOW.
+
+        * platform/chromium/TestExpectations:
+
 2012-08-03  Ryosuke Niwa  <rniwa@webkit.org>
 
         Use testRunner instead of layoutTestController in the remaining layout tests
