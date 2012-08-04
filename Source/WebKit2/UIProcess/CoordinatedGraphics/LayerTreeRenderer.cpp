@@ -19,12 +19,12 @@
 
 #include "config.h"
 
-#if USE(UI_SIDE_COMPOSITING)
+#if USE(COORDINATED_GRAPHICS)
 
-#include "WebLayerTreeRenderer.h"
+#include "LayerTreeRenderer.h"
 
+#include "CoordinatedBackingStore.h"
 #include "GraphicsLayerTextureMapper.h"
-#include "LayerBackingStore.h"
 #include "LayerTreeCoordinatorProxy.h"
 #include "MessageID.h"
 #include "ShareableBitmap.h"
@@ -66,12 +66,12 @@ private:
     }
 };
 
-void WebLayerTreeRenderer::callOnMainTread(const Function<void()>& function)
+void LayerTreeRenderer::callOnMainTread(const Function<void()>& function)
 {
     if (isMainThread())
         function();
     else
-        MainThreadGuardedInvoker<WebLayerTreeRenderer>::call(this, function);
+        MainThreadGuardedInvoker<LayerTreeRenderer>::call(this, function);
 }
 
 static FloatPoint boundedScrollPosition(const FloatPoint& scrollPosition, const FloatRect& visibleContentRect, const FloatSize& contentSize)
@@ -84,18 +84,18 @@ static FloatPoint boundedScrollPosition(const FloatPoint& scrollPosition, const 
     return FloatPoint(scrollPositionX, scrollPositionY);
 }
 
-WebLayerTreeRenderer::WebLayerTreeRenderer(LayerTreeCoordinatorProxy* layerTreeCoordinatorProxy)
+LayerTreeRenderer::LayerTreeRenderer(LayerTreeCoordinatorProxy* layerTreeCoordinatorProxy)
     : m_layerTreeCoordinatorProxy(layerTreeCoordinatorProxy)
     , m_rootLayerID(InvalidWebLayerID)
     , m_isActive(false)
 {
 }
 
-WebLayerTreeRenderer::~WebLayerTreeRenderer()
+LayerTreeRenderer::~LayerTreeRenderer()
 {
 }
 
-PassOwnPtr<GraphicsLayer> WebLayerTreeRenderer::createLayer(WebLayerID layerID)
+PassOwnPtr<GraphicsLayer> LayerTreeRenderer::createLayer(WebLayerID layerID)
 {
     GraphicsLayer* newLayer = new GraphicsLayerTextureMapper(this);
     TextureMapperLayer* layer = toTextureMapperLayer(newLayer);
@@ -103,7 +103,7 @@ PassOwnPtr<GraphicsLayer> WebLayerTreeRenderer::createLayer(WebLayerID layerID)
     return adoptPtr(newLayer);
 }
 
-void WebLayerTreeRenderer::paintToCurrentGLContext(const TransformationMatrix& matrix, float opacity, const FloatRect& clipRect, TextureMapper::PaintFlags PaintFlags)
+void LayerTreeRenderer::paintToCurrentGLContext(const TransformationMatrix& matrix, float opacity, const FloatRect& clipRect, TextureMapper::PaintFlags PaintFlags)
 {
     if (!m_textureMapper)
         m_textureMapper = TextureMapper::create(TextureMapper::OpenGLMode);
@@ -134,7 +134,7 @@ void WebLayerTreeRenderer::paintToCurrentGLContext(const TransformationMatrix& m
     m_textureMapper->endPainting();
 }
 
-void WebLayerTreeRenderer::paintToGraphicsContext(BackingStore::PlatformGraphicsContext painter)
+void LayerTreeRenderer::paintToGraphicsContext(BackingStore::PlatformGraphicsContext painter)
 {
     if (!m_textureMapper)
         m_textureMapper = TextureMapper::create();
@@ -153,23 +153,23 @@ void WebLayerTreeRenderer::paintToGraphicsContext(BackingStore::PlatformGraphics
     m_textureMapper->setGraphicsContext(0);
 }
 
-void WebLayerTreeRenderer::setContentsSize(const WebCore::FloatSize& contentsSize)
+void LayerTreeRenderer::setContentsSize(const WebCore::FloatSize& contentsSize)
 {
     m_contentsSize = contentsSize;
 }
 
-void WebLayerTreeRenderer::setVisibleContentsRect(const FloatRect& rect)
+void LayerTreeRenderer::setVisibleContentsRect(const FloatRect& rect)
 {
     m_visibleContentsRect = rect;
 }
 
-void WebLayerTreeRenderer::updateViewport()
+void LayerTreeRenderer::updateViewport()
 {
     if (m_layerTreeCoordinatorProxy)
         m_layerTreeCoordinatorProxy->updateViewport();
 }
 
-void WebLayerTreeRenderer::adjustPositionForFixedLayers()
+void LayerTreeRenderer::adjustPositionForFixedLayers()
 {
     if (m_fixedLayers.isEmpty())
         return;
@@ -186,12 +186,12 @@ void WebLayerTreeRenderer::adjustPositionForFixedLayers()
         toTextureMapperLayer(it->second)->setScrollPositionDeltaIfNeeded(delta);
 }
 
-void WebLayerTreeRenderer::didChangeScrollPosition(const IntPoint& position)
+void LayerTreeRenderer::didChangeScrollPosition(const IntPoint& position)
 {
     m_pendingRenderedContentsScrollPosition = position;
 }
 
-void WebLayerTreeRenderer::syncCanvas(WebLayerID id, const WebCore::IntSize& canvasSize, uint32_t graphicsSurfaceToken)
+void LayerTreeRenderer::syncCanvas(WebLayerID id, const WebCore::IntSize& canvasSize, uint32_t graphicsSurfaceToken)
 {
     if (canvasSize.isEmpty() || !m_textureMapper)
         return;
@@ -213,7 +213,7 @@ void WebLayerTreeRenderer::syncCanvas(WebLayerID id, const WebCore::IntSize& can
 #endif
 }
 
-void WebLayerTreeRenderer::setLayerChildren(WebLayerID id, const Vector<WebLayerID>& childIDs)
+void LayerTreeRenderer::setLayerChildren(WebLayerID id, const Vector<WebLayerID>& childIDs)
 {
     ensureLayer(id);
     LayerMap::iterator it = m_layers.find(id);
@@ -233,7 +233,7 @@ void WebLayerTreeRenderer::setLayerChildren(WebLayerID id, const Vector<WebLayer
 }
 
 #if ENABLE(CSS_FILTERS)
-void WebLayerTreeRenderer::setLayerFilters(WebLayerID id, const FilterOperations& filters)
+void LayerTreeRenderer::setLayerFilters(WebLayerID id, const FilterOperations& filters)
 {
     ensureLayer(id);
     LayerMap::iterator it = m_layers.find(id);
@@ -244,7 +244,7 @@ void WebLayerTreeRenderer::setLayerFilters(WebLayerID id, const FilterOperations
 }
 #endif
 
-void WebLayerTreeRenderer::setLayerState(WebLayerID id, const WebLayerInfo& layerInfo)
+void LayerTreeRenderer::setLayerState(WebLayerID id, const WebLayerInfo& layerInfo)
 {
     ensureLayer(id);
     LayerMap::iterator it = m_layers.find(id);
@@ -282,7 +282,7 @@ void WebLayerTreeRenderer::setLayerState(WebLayerID id, const WebLayerInfo& laye
         setRootLayerID(id);
 }
 
-void WebLayerTreeRenderer::deleteLayer(WebLayerID layerID)
+void LayerTreeRenderer::deleteLayer(WebLayerID layerID)
 {
     GraphicsLayer* layer = layerByID(layerID);
     if (!layer)
@@ -298,7 +298,7 @@ void WebLayerTreeRenderer::deleteLayer(WebLayerID layerID)
 }
 
 
-void WebLayerTreeRenderer::ensureLayer(WebLayerID id)
+void LayerTreeRenderer::ensureLayer(WebLayerID id)
 {
     // We have to leak the new layer's pointer and manage it ourselves,
     // because OwnPtr is not copyable.
@@ -306,7 +306,7 @@ void WebLayerTreeRenderer::ensureLayer(WebLayerID id)
         m_layers.add(id, createLayer(id).leakPtr());
 }
 
-void WebLayerTreeRenderer::setRootLayerID(WebLayerID layerID)
+void LayerTreeRenderer::setRootLayerID(WebLayerID layerID)
 {
     if (layerID == m_rootLayerID)
         return;
@@ -325,37 +325,37 @@ void WebLayerTreeRenderer::setRootLayerID(WebLayerID layerID)
     m_rootLayer->addChild(layer);
 }
 
-PassRefPtr<LayerBackingStore> WebLayerTreeRenderer::getBackingStore(WebLayerID id)
+PassRefPtr<CoordinatedBackingStore> LayerTreeRenderer::getBackingStore(WebLayerID id)
 {
     TextureMapperLayer* layer = toTextureMapperLayer(layerByID(id));
     ASSERT(layer);
-    RefPtr<LayerBackingStore> backingStore = static_cast<LayerBackingStore*>(layer->backingStore().get());
+    RefPtr<CoordinatedBackingStore> backingStore = static_cast<CoordinatedBackingStore*>(layer->backingStore().get());
     if (!backingStore) {
-        backingStore = LayerBackingStore::create();
+        backingStore = CoordinatedBackingStore::create();
         layer->setBackingStore(backingStore.get());
     }
     ASSERT(backingStore);
     return backingStore;
 }
 
-void WebLayerTreeRenderer::createTile(WebLayerID layerID, int tileID, float scale)
+void LayerTreeRenderer::createTile(WebLayerID layerID, int tileID, float scale)
 {
     getBackingStore(layerID)->createTile(tileID, scale);
 }
 
-void WebLayerTreeRenderer::removeTile(WebLayerID layerID, int tileID)
+void LayerTreeRenderer::removeTile(WebLayerID layerID, int tileID)
 {
     getBackingStore(layerID)->removeTile(tileID);
 }
 
-void WebLayerTreeRenderer::updateTile(WebLayerID layerID, int tileID, const TileUpdate& update)
+void LayerTreeRenderer::updateTile(WebLayerID layerID, int tileID, const TileUpdate& update)
 {
-    RefPtr<LayerBackingStore> backingStore = getBackingStore(layerID);
+    RefPtr<CoordinatedBackingStore> backingStore = getBackingStore(layerID);
     backingStore->updateTile(tileID, update.sourceRect, update.targetRect, update.surface, update.offset);
     m_backingStoresWithPendingBuffers.add(backingStore);
 }
 
-void WebLayerTreeRenderer::createImage(int64_t imageID, PassRefPtr<ShareableBitmap> weakBitmap)
+void LayerTreeRenderer::createImage(int64_t imageID, PassRefPtr<ShareableBitmap> weakBitmap)
 {
     RefPtr<ShareableBitmap> bitmap = weakBitmap;
     RefPtr<TextureMapperTiledBackingStore> backingStore = TextureMapperTiledBackingStore::create();
@@ -363,12 +363,12 @@ void WebLayerTreeRenderer::createImage(int64_t imageID, PassRefPtr<ShareableBitm
     backingStore->updateContents(m_textureMapper.get(), bitmap->createImage().get());
 }
 
-void WebLayerTreeRenderer::destroyImage(int64_t imageID)
+void LayerTreeRenderer::destroyImage(int64_t imageID)
 {
     m_directlyCompositedImages.remove(imageID);
 }
 
-void WebLayerTreeRenderer::assignImageToLayer(GraphicsLayer* layer, int64_t imageID)
+void LayerTreeRenderer::assignImageToLayer(GraphicsLayer* layer, int64_t imageID)
 {
     if (!imageID) {
         layer->setContentsToMedia(0);
@@ -380,16 +380,16 @@ void WebLayerTreeRenderer::assignImageToLayer(GraphicsLayer* layer, int64_t imag
     layer->setContentsToMedia(it->second.get());
 }
 
-void WebLayerTreeRenderer::commitTileOperations()
+void LayerTreeRenderer::commitTileOperations()
 {
-    HashSet<RefPtr<LayerBackingStore> >::iterator end = m_backingStoresWithPendingBuffers.end();
-    for (HashSet<RefPtr<LayerBackingStore> >::iterator it = m_backingStoresWithPendingBuffers.begin(); it != end; ++it)
+    HashSet<RefPtr<CoordinatedBackingStore> >::iterator end = m_backingStoresWithPendingBuffers.end();
+    for (HashSet<RefPtr<CoordinatedBackingStore> >::iterator it = m_backingStoresWithPendingBuffers.begin(); it != end; ++it)
         (*it)->commitTileOperations(m_textureMapper.get());
 
     m_backingStoresWithPendingBuffers.clear();
 }
 
-void WebLayerTreeRenderer::flushLayerChanges()
+void LayerTreeRenderer::flushLayerChanges()
 {
     m_renderedContentsScrollPosition = m_pendingRenderedContentsScrollPosition;
 
@@ -397,16 +397,16 @@ void WebLayerTreeRenderer::flushLayerChanges()
     commitTileOperations();
 
     // The pending tiles state is on its way for the screen, tell the web process to render the next one.
-    callOnMainThread(bind(&WebLayerTreeRenderer::renderNextFrame, this));
+    callOnMainThread(bind(&LayerTreeRenderer::renderNextFrame, this));
 }
 
-void WebLayerTreeRenderer::renderNextFrame()
+void LayerTreeRenderer::renderNextFrame()
 {
     if (m_layerTreeCoordinatorProxy)
         m_layerTreeCoordinatorProxy->renderNextFrame();
 }
 
-void WebLayerTreeRenderer::ensureRootLayer()
+void LayerTreeRenderer::ensureRootLayer()
 {
     if (m_rootLayer)
         return;
@@ -425,7 +425,7 @@ void WebLayerTreeRenderer::ensureRootLayer()
     toTextureMapperLayer(m_rootLayer.get())->setTextureMapper(m_textureMapper.get());
 }
 
-void WebLayerTreeRenderer::syncRemoteContent()
+void LayerTreeRenderer::syncRemoteContent()
 {
     // We enqueue messages and execute them during paint, as they require an active GL context.
     ensureRootLayer();
@@ -436,7 +436,7 @@ void WebLayerTreeRenderer::syncRemoteContent()
     m_renderQueue.clear();
 }
 
-void WebLayerTreeRenderer::purgeGLResources()
+void LayerTreeRenderer::purgeGLResources()
 {
     TextureMapperLayer* layer = toTextureMapperLayer(rootLayer());
 
@@ -458,21 +458,21 @@ void WebLayerTreeRenderer::purgeGLResources()
 
     setActive(false);
 
-    callOnMainThread(bind(&WebLayerTreeRenderer::purgeBackingStores, this));
+    callOnMainThread(bind(&LayerTreeRenderer::purgeBackingStores, this));
 }
 
-void WebLayerTreeRenderer::purgeBackingStores()
+void LayerTreeRenderer::purgeBackingStores()
 {
     if (m_layerTreeCoordinatorProxy)
         m_layerTreeCoordinatorProxy->purgeBackingStores();
 }
 
-void WebLayerTreeRenderer::detach()
+void LayerTreeRenderer::detach()
 {
     m_layerTreeCoordinatorProxy = 0;
 }
 
-void WebLayerTreeRenderer::appendUpdate(const Function<void()>& function)
+void LayerTreeRenderer::appendUpdate(const Function<void()>& function)
 {
     if (!m_isActive)
         return;
@@ -480,7 +480,7 @@ void WebLayerTreeRenderer::appendUpdate(const Function<void()>& function)
     m_renderQueue.append(function);
 }
 
-void WebLayerTreeRenderer::setActive(bool active)
+void LayerTreeRenderer::setActive(bool active)
 {
     if (m_isActive == active)
         return;
@@ -496,4 +496,4 @@ void WebLayerTreeRenderer::setActive(bool active)
 
 } // namespace WebKit
 
-#endif // USE(UI_SIDE_COMPOSITING)
+#endif // USE(COORDINATED_GRAPHICS)

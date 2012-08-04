@@ -20,11 +20,11 @@
 #ifndef LayerTreeCoordinator_h
 #define LayerTreeCoordinator_h
 
+#include "CoordinatedGraphicsLayer.h"
 #include "LayerTreeContext.h"
 #include "LayerTreeHost.h"
 #include "Timer.h"
 #include "UpdateAtlas.h"
-#include "WebGraphicsLayer.h"
 #include <WebCore/GraphicsLayerClient.h>
 #include <wtf/OwnPtr.h>
 
@@ -34,7 +34,7 @@ class UpdateInfo;
 class WebPage;
 
 class LayerTreeCoordinator : public LayerTreeHost, WebCore::GraphicsLayerClient
-                           , public WebGraphicsLayerClient {
+                           , public CoordinatedGraphicsLayerClient {
 public:
     static PassRefPtr<LayerTreeCoordinator> create(WebPage*);
     virtual ~LayerTreeCoordinator();
@@ -81,12 +81,12 @@ public:
     virtual void syncLayerFilters(WebLayerID, const WebCore::FilterOperations&);
 #endif
     virtual void syncCanvas(WebLayerID, const WebCore::IntSize& canvasSize, uint32_t graphicsSurfaceToken) OVERRIDE;
-    virtual void attachLayer(WebCore::WebGraphicsLayer*);
-    virtual void detachLayer(WebCore::WebGraphicsLayer*);
+    virtual void attachLayer(WebCore::CoordinatedGraphicsLayer*);
+    virtual void detachLayer(WebCore::CoordinatedGraphicsLayer*);
     virtual void syncFixedLayers();
 
     virtual PassOwnPtr<WebCore::GraphicsContext> beginContentUpdate(const WebCore::IntSize&, ShareableBitmap::Flags, ShareableSurface::Handle&, WebCore::IntPoint&);
-#if USE(UI_SIDE_COMPOSITING)
+#if USE(COORDINATED_GRAPHICS)
     virtual void scheduleAnimation() OVERRIDE;
 #endif
 
@@ -118,7 +118,7 @@ private:
     // The page overlay layer. Will be null if there's no page overlay.
     OwnPtr<WebCore::GraphicsLayer> m_pageOverlayLayer;
 
-    HashSet<WebCore::WebGraphicsLayer*> m_registeredLayers;
+    HashSet<WebCore::CoordinatedGraphicsLayer*> m_registeredLayers;
     HashMap<int64_t, int> m_directlyCompositedImageRefCounts;
     Vector<UpdateAtlas> m_updateAtlases;
 

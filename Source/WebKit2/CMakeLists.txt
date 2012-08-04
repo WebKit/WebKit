@@ -220,7 +220,7 @@ SET(WebKit2_SOURCES
     UIProcess/FindIndicator.cpp
     UIProcess/GeolocationPermissionRequestManagerProxy.cpp
     UIProcess/GeolocationPermissionRequestProxy.cpp
-    UIProcess/LayerTreeCoordinatorProxy.cpp
+
     UIProcess/ResponsivenessTimer.cpp
     UIProcess/VisitedLinkProvider.cpp
     UIProcess/WebApplicationCacheManagerProxy.cpp
@@ -254,7 +254,7 @@ SET(WebKit2_SOURCES
     UIProcess/WebInspectorProxy.cpp
     UIProcess/WebIntentData.cpp
     UIProcess/WebKeyValueStorageManagerProxy.cpp
-    UIProcess/WebLayerTreeRenderer.cpp
+
     UIProcess/WebLoaderClient.cpp
     UIProcess/WebMediaCacheManagerProxy.cpp
     UIProcess/WebNavigationData.cpp
@@ -323,6 +323,9 @@ SET(WebKit2_SOURCES
     UIProcess/Authentication/WebCredential.cpp
     UIProcess/Authentication/WebProtectionSpace.cpp
 
+    UIProcess/CoordinatedGraphics/LayerTreeCoordinatorProxy.cpp
+    UIProcess/CoordinatedGraphics/LayerTreeRenderer.cpp
+    
     UIProcess/Downloads/DownloadProxy.cpp
 
     UIProcess/InspectorServer/WebInspectorServer.cpp
@@ -454,11 +457,10 @@ SET(WebKit2_SOURCES
     WebProcess/WebPage/EncoderAdapter.cpp
     WebProcess/WebPage/EventDispatcher.cpp
     WebProcess/WebPage/FindController.cpp
-    WebProcess/WebPage/LayerTreeCoordinator/WebGraphicsLayer.cpp
+
     WebProcess/WebPage/LayerTreeHost.cpp
     WebProcess/WebPage/PageOverlay.cpp
     WebProcess/WebPage/TapHighlightController.cpp
-    WebProcess/WebPage/TiledBackingStoreRemoteTile.cpp
     WebProcess/WebPage/WebBackForwardListProxy.cpp
     WebProcess/WebPage/WebContextMenu.cpp
     WebProcess/WebPage/WebFrame.cpp
@@ -467,6 +469,9 @@ SET(WebKit2_SOURCES
     WebProcess/WebPage/WebPage.cpp
     WebProcess/WebPage/WebPageGroupProxy.cpp
     WebProcess/WebPage/WebUndoStep.cpp
+
+    WebProcess/WebPage/CoordinatedGraphics/CoordinatedGraphicsLayer.cpp
+    WebProcess/WebPage/CoordinatedGraphics/CoordinatedTile.cpp
 )
 
 SET(WebKit2_MESSAGES_IN_FILES
@@ -477,7 +482,6 @@ SET(WebKit2_MESSAGES_IN_FILES
     Shared/Plugins/NPObjectMessageReceiver.messages.in
 
     UIProcess/DrawingAreaProxy.messages.in
-    UIProcess/LayerTreeCoordinatorProxy.messages.in
     UIProcess/WebApplicationCacheManagerProxy.messages.in
     UIProcess/WebBatteryManagerProxy.messages.in
     UIProcess/WebContext.messages.in
@@ -495,6 +499,9 @@ SET(WebKit2_MESSAGES_IN_FILES
     UIProcess/WebResourceCacheManagerProxy.messages.in
     UIProcess/WebVibrationProxy.messages.in
 
+
+    UIProcess/CoordinatedGraphics/LayerTreeCoordinatorProxy.messages.in
+    
     UIProcess/Downloads/DownloadProxy.messages.in
 
     UIProcess/Notifications/WebNotificationManagerProxy.messages.in
@@ -534,9 +541,10 @@ SET(WebKit2_MESSAGES_IN_FILES
 
     WebProcess/WebPage/DrawingArea.messages.in
     WebProcess/WebPage/EventDispatcher.messages.in
-    WebProcess/WebPage/LayerTreeCoordinator/LayerTreeCoordinator.messages.in
     WebProcess/WebPage/WebInspector.messages.in
     WebProcess/WebPage/WebPage.messages.in
+
+    WebProcess/WebPage/CoordinatedGraphics/LayerTreeCoordinator.messages.in
 )
 
 SET(WebProcess_EXECUTABLE_NAME WebProcess)

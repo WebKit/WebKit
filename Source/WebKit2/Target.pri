@@ -214,6 +214,9 @@ HEADERS += \
     UIProcess/Authentication/WebProtectionSpace.h \
     UIProcess/BackingStore.h \
     UIProcess/Downloads/DownloadProxy.h \
+    UIProcess/CoordinatedGraphics/CoordinatedBackingStore.h \
+    UIProcess/CoordinatedGraphics/LayerTreeCoordinatorProxy.h \
+    UIProcess/CoordinatedGraphics/LayerTreeRenderer.h \
     UIProcess/DrawingAreaProxy.h \
     UIProcess/DrawingAreaProxyImpl.h \
     UIProcess/FindIndicator.h \
@@ -222,7 +225,6 @@ HEADERS += \
     UIProcess/GeolocationPermissionRequestProxy.h \
     UIProcess/Launcher/ProcessLauncher.h \
     UIProcess/Launcher/ThreadLauncher.h \
-    UIProcess/LayerTreeCoordinatorProxy.h \
     UIProcess/Notifications/NotificationPermissionRequest.h \
     UIProcess/Notifications/NotificationPermissionRequestManagerProxy.h \
     UIProcess/Notifications/WebNotification.h \
@@ -268,7 +270,6 @@ HEADERS += \
     UIProcess/WebInspectorProxy.h \
     UIProcess/WebIntentData.h \
     UIProcess/WebKeyValueStorageManagerProxy.h \
-    UIProcess/WebLayerTreeRenderer.h \
     UIProcess/WebLoaderClient.h \
     UIProcess/WebMediaCacheManagerProxy.h \
     UIProcess/WebNavigationData.h \
@@ -304,7 +305,6 @@ HEADERS += \
     UIProcess/qt/WebContextMenuProxyQt.h \
     UIProcess/qt/WebGeolocationProviderQt.h \
     UIProcess/qt/WebPopupMenuProxyQt.h \
-    UIProcess/texmap/LayerBackingStore.h \
     WebProcess/ApplicationCache/WebApplicationCacheManager.h \
     WebProcess/Authentication/AuthenticationManager.h \
     WebProcess/Battery/WebBatteryManager.h \
@@ -385,8 +385,9 @@ HEADERS += \
     WebProcess/WebPage/DrawingAreaImpl.h \
     WebProcess/WebPage/EventDispatcher.h \
     WebProcess/WebPage/FindController.h \
-    WebProcess/WebPage/LayerTreeCoordinator/LayerTreeCoordinator.h \
-    WebProcess/WebPage/LayerTreeCoordinator/WebGraphicsLayer.h \
+    WebProcess/WebPage/CoordinatedGraphics/CoordinatedGraphicsLayer.h \
+    WebProcess/WebPage/CoordinatedGraphics/CoordinatedTile.h \
+    WebProcess/WebPage/CoordinatedGraphics/LayerTreeCoordinator.h \
     WebProcess/WebPage/TapHighlightController.h \
     WebProcess/WebPage/PageOverlay.h \
     WebProcess/WebPage/UpdateAtlas.h \
@@ -584,6 +585,9 @@ SOURCES += \
     UIProcess/Authentication/WebProtectionSpace.cpp \
     UIProcess/BackingStore.cpp \
     UIProcess/qt/BackingStoreQt.cpp \
+    UIProcess/CoordinatedGraphics/CoordinatedBackingStore.cpp \
+    UIProcess/CoordinatedGraphics/LayerTreeCoordinatorProxy.cpp \
+    UIProcess/CoordinatedGraphics/LayerTreeRenderer.cpp \
     UIProcess/Downloads/DownloadProxy.cpp \
     UIProcess/DrawingAreaProxy.cpp \
     UIProcess/DrawingAreaProxyImpl.cpp \
@@ -595,7 +599,6 @@ SOURCES += \
     UIProcess/Launcher/ThreadLauncher.cpp \
     UIProcess/Launcher/qt/ProcessLauncherQt.cpp \
     UIProcess/Launcher/qt/ThreadLauncherQt.cpp \
-    UIProcess/LayerTreeCoordinatorProxy.cpp \
     UIProcess/Notifications/NotificationPermissionRequest.cpp \
     UIProcess/Notifications/NotificationPermissionRequestManagerProxy.cpp \
     UIProcess/Notifications/WebNotification.cpp \
@@ -639,7 +642,6 @@ SOURCES += \
     UIProcess/WebInspectorProxy.cpp \
     UIProcess/WebIntentData.cpp \
     UIProcess/WebKeyValueStorageManagerProxy.cpp \
-    UIProcess/WebLayerTreeRenderer.cpp \
     UIProcess/WebLoaderClient.cpp \
     UIProcess/WebMediaCacheManagerProxy.cpp \
     UIProcess/WebNavigationData.cpp \
@@ -682,7 +684,6 @@ SOURCES += \
     UIProcess/qt/WebPopupMenuProxyQt.cpp \
     UIProcess/qt/WebPreferencesQt.cpp \
     UIProcess/qt/QtWebIconDatabaseClient.cpp \
-    UIProcess/texmap/LayerBackingStore.cpp \
     WebProcess/ApplicationCache/WebApplicationCacheManager.cpp \
     WebProcess/Authentication/AuthenticationManager.cpp \
     WebProcess/Battery/WebBatteryManager.cpp \
@@ -781,12 +782,12 @@ SOURCES += \
     WebProcess/WebPage/EncoderAdapter.cpp \
     WebProcess/WebPage/EventDispatcher.cpp \
     WebProcess/WebPage/FindController.cpp \
-    WebProcess/WebPage/LayerTreeCoordinator/LayerTreeCoordinator.cpp \
-    WebProcess/WebPage/LayerTreeCoordinator/WebGraphicsLayer.cpp \
+    WebProcess/WebPage/CoordinatedGraphics/CoordinatedGraphicsLayer.cpp \
+    WebProcess/WebPage/CoordinatedGraphics/CoordinatedTile.cpp \
+    WebProcess/WebPage/CoordinatedGraphics/LayerTreeCoordinator.cpp \
     WebProcess/WebPage/TapHighlightController.cpp \
     WebProcess/WebPage/LayerTreeHost.cpp \
     WebProcess/WebPage/PageOverlay.cpp \
-    WebProcess/WebPage/TiledBackingStoreRemoteTile.cpp \
     WebProcess/WebPage/UpdateAtlas.cpp \
     WebProcess/WebPage/WebBackForwardListProxy.cpp \
     WebProcess/WebPage/WebContextMenu.cpp \

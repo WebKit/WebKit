@@ -46,7 +46,7 @@
 #include <WebCore/WindowFeatures.h>
 #include <wtf/text/StringHash.h>
 
-#if USE(UI_SIDE_COMPOSITING)
+#if USE(COORDINATED_GRAPHICS)
 #include <WebCore/Animation.h>
 #include <WebCore/FloatPoint3D.h>
 #include <WebCore/TransformationMatrix.h>
@@ -652,7 +652,7 @@ bool ArgumentCoder<KURL>::decode(ArgumentDecoder* decoder, KURL& result)
     return true;
 }
 
-#if USE(UI_SIDE_COMPOSITING)
+#if USE(COORDINATED_GRAPHICS)
 void ArgumentCoder<FloatPoint3D>::encode(ArgumentEncoder* encoder, const FloatPoint3D& floatPoint3D)
 {
     SimpleArgumentCoder<FloatPoint3D>::encode(encoder, floatPoint3D);

@@ -21,7 +21,7 @@
 #include "config.h"
 #include "QtWebPageSGNode.h"
 
-#include "WebLayerTreeRenderer.h"
+#include "LayerTreeRenderer.h"
 #include <QtGui/QPolygonF>
 #include <QtQuick/QSGSimpleRectNode>
 #include <private/qsgrendernode_p.h>
@@ -32,7 +32,7 @@ namespace WebKit {
 
 class ContentsSGNode : public QSGRenderNode {
 public:
-    ContentsSGNode(PassRefPtr<WebLayerTreeRenderer> renderer)
+    ContentsSGNode(PassRefPtr<LayerTreeRenderer> renderer)
         : m_renderer(renderer)
     {
         layerTreeRenderer()->setActive(true);
@@ -61,7 +61,7 @@ public:
         layerTreeRenderer()->purgeGLResources();
     }
 
-    WebLayerTreeRenderer* layerTreeRenderer() const { return m_renderer.get(); }
+    LayerTreeRenderer* layerTreeRenderer() const { return m_renderer.get(); }
 
 private:
     QRectF clipRect() const
@@ -105,7 +105,7 @@ private:
         return resultRect;
     }
 
-    RefPtr<WebLayerTreeRenderer> m_renderer;
+    RefPtr<LayerTreeRenderer> m_renderer;
 };
 
 QtWebPageSGNode::QtWebPageSGNode()
@@ -128,7 +128,7 @@ void QtWebPageSGNode::setScale(float scale)
     setMatrix(matrix);
 }
 
-void QtWebPageSGNode::setRenderer(PassRefPtr<WebLayerTreeRenderer> renderer)
+void QtWebPageSGNode::setRenderer(PassRefPtr<LayerTreeRenderer> renderer)
 {
     if (m_contentsNode && m_contentsNode->layerTreeRenderer() == renderer)
         return;

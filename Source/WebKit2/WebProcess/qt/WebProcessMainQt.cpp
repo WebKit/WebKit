@@ -38,7 +38,7 @@
 #include <wtf/MainThread.h>
 
 #if USE(ACCELERATED_COMPOSITING)
-#include "WebGraphicsLayer.h"
+#include "CoordinatedGraphicsLayer.h"
 #endif
 #if USE(QTKIT)
 #include "WebSystemInterface.h"
@@ -181,7 +181,7 @@ Q_DECL_EXPORT int WebProcessMainQt(QGuiApplication* app)
     }
 #endif
 #if USE(ACCELERATED_COMPOSITING)
-    WebGraphicsLayer::initFactory();
+    CoordinatedGraphicsLayer::initFactory();
 #endif
 
     WebKit::WebProcess::shared().initialize(identifier, RunLoop::main());

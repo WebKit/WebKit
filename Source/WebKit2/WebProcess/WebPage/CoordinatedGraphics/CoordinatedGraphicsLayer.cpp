@@ -19,10 +19,11 @@
 
 #include "config.h"
 
-#if USE(UI_SIDE_COMPOSITING)
-#include "WebGraphicsLayer.h"
+#if USE(COORDINATED_GRAPHICS)
+#include "CoordinatedGraphicsLayer.h"
 
 #include "BackingStore.h"
+#include "CoordinatedTile.h"
 #include "FloatQuad.h"
 #include "Frame.h"
 #include "FrameView.h"
@@ -31,7 +32,6 @@
 #include "LayerTreeCoordinatorProxyMessages.h"
 #include "Page.h"
 #include "TextureMapperPlatformLayer.h"
-#include "TiledBackingStoreRemoteTile.h"
 #include "WebPage.h"
 #include <wtf/CurrentTime.h>
 #include <wtf/HashMap.h>
@@ -41,16 +41,16 @@ using namespace WebKit;
 
 namespace WebCore {
 
-static HashMap<WebLayerID, WebGraphicsLayer*>& layerByIDMap()
+static HashMap<WebLayerID, CoordinatedGraphicsLayer*>& layerByIDMap()
 {
-    static HashMap<WebLayerID, WebGraphicsLayer*> globalMap;
+    static HashMap<WebLayerID, CoordinatedGraphicsLayer*> globalMap;
     return globalMap;
 }
 
-WebGraphicsLayer* WebGraphicsLayer::layerByID(WebKit::WebLayerID id)
+CoordinatedGraphicsLayer* CoordinatedGraphicsLayer::layerByID(WebKit::WebLayerID id)
 {
-    HashMap<WebLayerID, WebGraphicsLayer*>& table = layerByIDMap();
-    HashMap<WebLayerID, WebGraphicsLayer*>::iterator it = table.find(id);
+    HashMap<WebLayerID, CoordinatedGraphicsLayer*>& table = layerByIDMap();
+    HashMap<WebLayerID, CoordinatedGraphicsLayer*>::iterator it = table.find(id);
     if (it == table.end())
         return 0;
     return it->second;
@@ -58,17 +58,17 @@ WebGraphicsLayer* WebGraphicsLayer::layerByID(WebKit::WebLayerID id)
 
 static WebLayerID toWebLayerID(GraphicsLayer* layer)
 {
-    return layer ? toWebGraphicsLayer(layer)->id() : 0;
+    return layer ? toCoordinatedGraphicsLayer(layer)->id() : 0;
 }
 
-void WebGraphicsLayer::didChangeLayerState()
+void CoordinatedGraphicsLayer::didChangeLayerState()
 {
     m_shouldSyncLayerState = true;
     if (client())
         client()->notifySyncRequired(this);
 }
 
-void WebGraphicsLayer::didChangeChildren()
+void CoordinatedGraphicsLayer::didChangeChildren()
 {
     m_shouldSyncChildren = true;
     if (client())
@@ -76,7 +76,7 @@ void WebGraphicsLayer::didChangeChildren()
 }
 
 #if ENABLE(CSS_FILTERS)
-void WebGraphicsLayer::didChangeFilters()
+void CoordinatedGraphicsLayer::didChangeFilters()
 {
     m_shouldSyncFilters = true;
     if (client())
@@ -84,25 +84,25 @@ void WebGraphicsLayer::didChangeFilters()
 }
 #endif
 
-void WebGraphicsLayer::setShouldUpdateVisibleRect()
+void CoordinatedGraphicsLayer::setShouldUpdateVisibleRect()
 {
     if (!transform().isAffine())
         return;
 
     m_shouldUpdateVisibleRect = true;
     for (size_t i = 0; i < children().size(); ++i)
-        toWebGraphicsLayer(children()[i])->setShouldUpdateVisibleRect();
+        toCoordinatedGraphicsLayer(children()[i])->setShouldUpdateVisibleRect();
     if (replicaLayer())
-        toWebGraphicsLayer(replicaLayer())->setShouldUpdateVisibleRect();
+        toCoordinatedGraphicsLayer(replicaLayer())->setShouldUpdateVisibleRect();
 }
 
-void WebGraphicsLayer::didChangeGeometry()
+void CoordinatedGraphicsLayer::didChangeGeometry()
 {
     didChangeLayerState();
     setShouldUpdateVisibleRect();
 }
 
-WebGraphicsLayer::WebGraphicsLayer(GraphicsLayerClient* client)
+CoordinatedGraphicsLayer::CoordinatedGraphicsLayer(GraphicsLayerClient* client)
     : GraphicsLayer(client)
     , m_maskTarget(0)
     , m_inUpdateMode(false)
@@ -111,7 +111,7 @@ WebGraphicsLayer::WebGraphicsLayer(GraphicsLayerClient* client)
     , m_shouldSyncChildren(true)
     , m_fixedToViewport(false)
     , m_canvasNeedsDisplay(false)
-    , m_webGraphicsLayerClient(0)
+    , m_CoordinatedGraphicsLayerClient(0)
     , m_contentsScale(1)
     , m_canvasPlatformLayer(0)
 {
@@ -120,90 +120,90 @@ WebGraphicsLayer::WebGraphicsLayer(GraphicsLayerClient* client)
     layerByIDMap().add(id(), this);
 }
 
-WebGraphicsLayer::~WebGraphicsLayer()
+CoordinatedGraphicsLayer::~CoordinatedGraphicsLayer()
 {
     layerByIDMap().remove(id());
 
-    if (m_webGraphicsLayerClient) {
+    if (m_CoordinatedGraphicsLayerClient) {
         purgeBackingStores();
-        m_webGraphicsLayerClient->detachLayer(this);
+        m_CoordinatedGraphicsLayerClient->detachLayer(this);
     }
     willBeDestroyed();
 }
 
-void WebGraphicsLayer::willBeDestroyed()
+void CoordinatedGraphicsLayer::willBeDestroyed()
 {
     GraphicsLayer::willBeDestroyed();
 }
 
-bool WebGraphicsLayer::setChildren(const Vector<GraphicsLayer*>& children)
+bool CoordinatedGraphicsLayer::setChildren(const Vector<GraphicsLayer*>& children)
 {
     bool ok = GraphicsLayer::setChildren(children);
     if (!ok)
         return false;
     for (int i = 0; i < children.size(); ++i) {
-        WebGraphicsLayer* child = toWebGraphicsLayer(children[i]);
-        child->setWebGraphicsLayerClient(m_webGraphicsLayerClient);
+        CoordinatedGraphicsLayer* child = toCoordinatedGraphicsLayer(children[i]);
+        child->setCoordinatedGraphicsLayerClient(m_CoordinatedGraphicsLayerClient);
         child->didChangeLayerState();
     }
     didChangeChildren();
     return true;
 }
 
-void WebGraphicsLayer::addChild(GraphicsLayer* layer)
+void CoordinatedGraphicsLayer::addChild(GraphicsLayer* layer)
 {
     GraphicsLayer::addChild(layer);
-    toWebGraphicsLayer(layer)->setWebGraphicsLayerClient(m_webGraphicsLayerClient);
-    toWebGraphicsLayer(layer)->didChangeLayerState();
+    toCoordinatedGraphicsLayer(layer)->setCoordinatedGraphicsLayerClient(m_CoordinatedGraphicsLayerClient);
+    toCoordinatedGraphicsLayer(layer)->didChangeLayerState();
     didChangeChildren();
 }
 
-void WebGraphicsLayer::addChildAtIndex(GraphicsLayer* layer, int index)
+void CoordinatedGraphicsLayer::addChildAtIndex(GraphicsLayer* layer, int index)
 {
     GraphicsLayer::addChildAtIndex(layer, index);
-    toWebGraphicsLayer(layer)->setWebGraphicsLayerClient(m_webGraphicsLayerClient);
-    toWebGraphicsLayer(layer)->didChangeLayerState();
+    toCoordinatedGraphicsLayer(layer)->setCoordinatedGraphicsLayerClient(m_CoordinatedGraphicsLayerClient);
+    toCoordinatedGraphicsLayer(layer)->didChangeLayerState();
     didChangeChildren();
 }
 
-void WebGraphicsLayer::addChildAbove(GraphicsLayer* layer, GraphicsLayer* sibling)
+void CoordinatedGraphicsLayer::addChildAbove(GraphicsLayer* layer, GraphicsLayer* sibling)
 {
     GraphicsLayer::addChildAbove(layer, sibling);
-    toWebGraphicsLayer(layer)->setWebGraphicsLayerClient(m_webGraphicsLayerClient);
-    toWebGraphicsLayer(layer)->didChangeLayerState();
+    toCoordinatedGraphicsLayer(layer)->setCoordinatedGraphicsLayerClient(m_CoordinatedGraphicsLayerClient);
+    toCoordinatedGraphicsLayer(layer)->didChangeLayerState();
     didChangeChildren();
 }
 
-void WebGraphicsLayer::addChildBelow(GraphicsLayer* layer, GraphicsLayer* sibling)
+void CoordinatedGraphicsLayer::addChildBelow(GraphicsLayer* layer, GraphicsLayer* sibling)
 {
     GraphicsLayer::addChildBelow(layer, sibling);
-    toWebGraphicsLayer(layer)->setWebGraphicsLayerClient(m_webGraphicsLayerClient);
-    toWebGraphicsLayer(layer)->didChangeLayerState();
+    toCoordinatedGraphicsLayer(layer)->setCoordinatedGraphicsLayerClient(m_CoordinatedGraphicsLayerClient);
+    toCoordinatedGraphicsLayer(layer)->didChangeLayerState();
     didChangeChildren();
 }
 
-bool WebGraphicsLayer::replaceChild(GraphicsLayer* oldChild, GraphicsLayer* newChild)
+bool CoordinatedGraphicsLayer::replaceChild(GraphicsLayer* oldChild, GraphicsLayer* newChild)
 {
     bool ok = GraphicsLayer::replaceChild(oldChild, newChild);
     if (!ok)
         return false;
     didChangeChildren();
-    toWebGraphicsLayer(oldChild)->didChangeLayerState();
-    toWebGraphicsLayer(newChild)->setWebGraphicsLayerClient(m_webGraphicsLayerClient);
-    toWebGraphicsLayer(newChild)->didChangeLayerState();
+    toCoordinatedGraphicsLayer(oldChild)->didChangeLayerState();
+    toCoordinatedGraphicsLayer(newChild)->setCoordinatedGraphicsLayerClient(m_CoordinatedGraphicsLayerClient);
+    toCoordinatedGraphicsLayer(newChild)->didChangeLayerState();
     return true;
 }
 
-void WebGraphicsLayer::removeFromParent()
+void CoordinatedGraphicsLayer::removeFromParent()
 {
-    if (WebGraphicsLayer* parentLayer = toWebGraphicsLayer(parent()))
+    if (CoordinatedGraphicsLayer* parentLayer = toCoordinatedGraphicsLayer(parent()))
         parentLayer->didChangeChildren();
     GraphicsLayer::removeFromParent();
 
     didChangeLayerState();
 }
 
-void WebGraphicsLayer::setPosition(const FloatPoint& p)
+void CoordinatedGraphicsLayer::setPosition(const FloatPoint& p)
 {
     if (position() == p)
         return;
@@ -212,7 +212,7 @@ void WebGraphicsLayer::setPosition(const FloatPoint& p)
     didChangeGeometry();
 }
 
-void WebGraphicsLayer::setAnchorPoint(const FloatPoint3D& p)
+void CoordinatedGraphicsLayer::setAnchorPoint(const FloatPoint3D& p)
 {
     if (anchorPoint() == p)
         return;
@@ -221,7 +221,7 @@ void WebGraphicsLayer::setAnchorPoint(const FloatPoint3D& p)
     didChangeGeometry();
 }
 
-void WebGraphicsLayer::setSize(const FloatSize& size)
+void CoordinatedGraphicsLayer::setSize(const FloatSize& size)
 {
     if (this->size() == size)
         return;
@@ -233,7 +233,7 @@ void WebGraphicsLayer::setSize(const FloatSize& size)
     didChangeGeometry();
 }
 
-void WebGraphicsLayer::setTransform(const TransformationMatrix& t)
+void CoordinatedGraphicsLayer::setTransform(const TransformationMatrix& t)
 {
     if (transform() == t)
         return;
@@ -242,7 +242,7 @@ void WebGraphicsLayer::setTransform(const TransformationMatrix& t)
     didChangeGeometry();
 }
 
-void WebGraphicsLayer::setChildrenTransform(const TransformationMatrix& t)
+void CoordinatedGraphicsLayer::setChildrenTransform(const TransformationMatrix& t)
 {
     if (childrenTransform() == t)
         return;
@@ -251,7 +251,7 @@ void WebGraphicsLayer::setChildrenTransform(const TransformationMatrix& t)
     didChangeGeometry();
 }
 
-void WebGraphicsLayer::setPreserves3D(bool b)
+void CoordinatedGraphicsLayer::setPreserves3D(bool b)
 {
     if (preserves3D() == b)
         return;
@@ -260,7 +260,7 @@ void WebGraphicsLayer::setPreserves3D(bool b)
     didChangeGeometry();
 }
 
-void WebGraphicsLayer::setMasksToBounds(bool b)
+void CoordinatedGraphicsLayer::setMasksToBounds(bool b)
 {
     if (masksToBounds() == b)
         return;
@@ -268,7 +268,7 @@ void WebGraphicsLayer::setMasksToBounds(bool b)
     didChangeGeometry();
 }
 
-void WebGraphicsLayer::setDrawsContent(bool b)
+void CoordinatedGraphicsLayer::setDrawsContent(bool b)
 {
     if (drawsContent() == b)
         return;
@@ -277,7 +277,7 @@ void WebGraphicsLayer::setDrawsContent(bool b)
     didChangeLayerState();
 }
 
-void WebGraphicsLayer::setContentsVisible(bool b)
+void CoordinatedGraphicsLayer::setContentsVisible(bool b)
 {
     if (contentsAreVisible() == b)
         return;
@@ -286,7 +286,7 @@ void WebGraphicsLayer::setContentsVisible(bool b)
     didChangeLayerState();
 }
 
-void WebGraphicsLayer::setContentsOpaque(bool b)
+void CoordinatedGraphicsLayer::setContentsOpaque(bool b)
 {
     if (contentsOpaque() == b)
         return;
@@ -296,7 +296,7 @@ void WebGraphicsLayer::setContentsOpaque(bool b)
     didChangeLayerState();
 }
 
-void WebGraphicsLayer::setBackfaceVisibility(bool b)
+void CoordinatedGraphicsLayer::setBackfaceVisibility(bool b)
 {
     if (backfaceVisibility() == b)
         return;
@@ -305,7 +305,7 @@ void WebGraphicsLayer::setBackfaceVisibility(bool b)
     didChangeLayerState();
 }
 
-void WebGraphicsLayer::setOpacity(float opacity)
+void CoordinatedGraphicsLayer::setOpacity(float opacity)
 {
     if (this->opacity() == opacity)
         return;
@@ -314,7 +314,7 @@ void WebGraphicsLayer::setOpacity(float opacity)
     didChangeLayerState();
 }
 
-void WebGraphicsLayer::setContentsRect(const IntRect& r)
+void CoordinatedGraphicsLayer::setContentsRect(const IntRect& r)
 {
     if (contentsRect() == r)
         return;
@@ -323,7 +323,7 @@ void WebGraphicsLayer::setContentsRect(const IntRect& r)
     didChangeLayerState();
 }
 
-void WebGraphicsLayer::setContentsNeedsDisplay()
+void CoordinatedGraphicsLayer::setContentsNeedsDisplay()
 {
     RefPtr<Image> image = m_image;
     setContentsToImage(0);
@@ -333,7 +333,7 @@ void WebGraphicsLayer::setContentsNeedsDisplay()
         client()->notifySyncRequired(this);
 }
 
-void WebGraphicsLayer::setContentsToCanvas(PlatformLayer* platformLayer)
+void CoordinatedGraphicsLayer::setContentsToCanvas(PlatformLayer* platformLayer)
 {
     m_canvasPlatformLayer = platformLayer;
     m_canvasNeedsDisplay = true;
@@ -342,7 +342,7 @@ void WebGraphicsLayer::setContentsToCanvas(PlatformLayer* platformLayer)
 }
 
 #if ENABLE(CSS_FILTERS)
-bool WebGraphicsLayer::setFilters(const FilterOperations& newFilters)
+bool CoordinatedGraphicsLayer::setFilters(const FilterOperations& newFilters)
 {
     if (filters() == newFilters)
         return true;
@@ -352,20 +352,20 @@ bool WebGraphicsLayer::setFilters(const FilterOperations& newFilters)
 #endif
 
 
-void WebGraphicsLayer::setContentsToImage(Image* image)
+void CoordinatedGraphicsLayer::setContentsToImage(Image* image)
 {
     if (image == m_image)
         return;
     int64_t newID = 0;
-    if (m_webGraphicsLayerClient) {
+    if (m_CoordinatedGraphicsLayerClient) {
         // We adopt first, in case this is the same frame - that way we avoid destroying and recreating the image.
-        newID = m_webGraphicsLayerClient->adoptImageBackingStore(image);
-        m_webGraphicsLayerClient->releaseImageBackingStore(m_layerInfo.imageBackingStoreID);
+        newID = m_CoordinatedGraphicsLayerClient->adoptImageBackingStore(image);
+        m_CoordinatedGraphicsLayerClient->releaseImageBackingStore(m_layerInfo.imageBackingStoreID);
         didChangeLayerState();
         if (m_layerInfo.imageBackingStoreID && newID == m_layerInfo.imageBackingStoreID)
             return;
     } else {
-        // If m_webGraphicsLayerClient is not set yet there should be no backing store ID.
+        // If m_CoordinatedGraphicsLayerClient is not set yet there should be no backing store ID.
         ASSERT(!m_layerInfo.imageBackingStoreID);
         didChangeLayerState();
     }
@@ -375,7 +375,7 @@ void WebGraphicsLayer::setContentsToImage(Image* image)
     GraphicsLayer::setContentsToImage(image);
 }
 
-void WebGraphicsLayer::setMaskLayer(GraphicsLayer* layer)
+void CoordinatedGraphicsLayer::setMaskLayer(GraphicsLayer* layer)
 {
     if (layer == maskLayer())
         return;
@@ -386,52 +386,52 @@ void WebGraphicsLayer::setMaskLayer(GraphicsLayer* layer)
         return;
 
     layer->setSize(size());
-    WebGraphicsLayer* webGraphicsLayer = toWebGraphicsLayer(layer);
-    webGraphicsLayer->setWebGraphicsLayerClient(m_webGraphicsLayerClient);
-    webGraphicsLayer->setMaskTarget(this);
-    webGraphicsLayer->didChangeLayerState();
+    CoordinatedGraphicsLayer* CoordinatedGraphicsLayer = toCoordinatedGraphicsLayer(layer);
+    CoordinatedGraphicsLayer->setCoordinatedGraphicsLayerClient(m_CoordinatedGraphicsLayerClient);
+    CoordinatedGraphicsLayer->setMaskTarget(this);
+    CoordinatedGraphicsLayer->didChangeLayerState();
     didChangeLayerState();
 
 }
 
-void WebGraphicsLayer::setReplicatedByLayer(GraphicsLayer* layer)
+void CoordinatedGraphicsLayer::setReplicatedByLayer(GraphicsLayer* layer)
 {
     if (layer == replicaLayer())
         return;
 
     if (layer)
-        toWebGraphicsLayer(layer)->setWebGraphicsLayerClient(m_webGraphicsLayerClient);
+        toCoordinatedGraphicsLayer(layer)->setCoordinatedGraphicsLayerClient(m_CoordinatedGraphicsLayerClient);
 
     GraphicsLayer::setReplicatedByLayer(layer);
     didChangeLayerState();
 }
 
-void WebGraphicsLayer::setNeedsDisplay()
+void CoordinatedGraphicsLayer::setNeedsDisplay()
 {
     setNeedsDisplayInRect(IntRect(IntPoint::zero(), IntSize(size().width(), size().height())));
 }
 
-void WebGraphicsLayer::setNeedsDisplayInRect(const FloatRect& rect)
+void CoordinatedGraphicsLayer::setNeedsDisplayInRect(const FloatRect& rect)
 {
     if (m_mainBackingStore)
         m_mainBackingStore->invalidate(IntRect(rect));
     didChangeLayerState();
 }
 
-WebLayerID WebGraphicsLayer::id() const
+WebLayerID CoordinatedGraphicsLayer::id() const
 {
     return m_id;
 }
 
-void WebGraphicsLayer::syncCompositingState(const FloatRect& rect)
+void CoordinatedGraphicsLayer::syncCompositingState(const FloatRect& rect)
 {
-    if (WebGraphicsLayer* mask = toWebGraphicsLayer(maskLayer()))
+    if (CoordinatedGraphicsLayer* mask = toCoordinatedGraphicsLayer(maskLayer()))
         mask->syncCompositingStateForThisLayerOnly();
 
-    if (WebGraphicsLayer* replica = toWebGraphicsLayer(replicaLayer()))
+    if (CoordinatedGraphicsLayer* replica = toCoordinatedGraphicsLayer(replicaLayer()))
         replica->syncCompositingStateForThisLayerOnly();
 
-    m_webGraphicsLayerClient->syncFixedLayers();
+    m_CoordinatedGraphicsLayerClient->syncFixedLayers();
 
     syncCompositingStateForThisLayerOnly();
 
@@ -439,12 +439,12 @@ void WebGraphicsLayer::syncCompositingState(const FloatRect& rect)
         children()[i]->syncCompositingState(rect);
 }
 
-WebGraphicsLayer* toWebGraphicsLayer(GraphicsLayer* layer)
+CoordinatedGraphicsLayer* toCoordinatedGraphicsLayer(GraphicsLayer* layer)
 {
-    return static_cast<WebGraphicsLayer*>(layer);
+    return static_cast<CoordinatedGraphicsLayer*>(layer);
 }
 
-void WebGraphicsLayer::syncChildren()
+void CoordinatedGraphicsLayer::syncChildren()
 {
     if (!m_shouldSyncChildren)
         return;
@@ -453,20 +453,20 @@ void WebGraphicsLayer::syncChildren()
     for (size_t i = 0; i < children().size(); ++i)
         childIDs.append(toWebLayerID(children()[i]));
 
-    m_webGraphicsLayerClient->syncLayerChildren(m_id, childIDs);
+    m_CoordinatedGraphicsLayerClient->syncLayerChildren(m_id, childIDs);
 }
 
 #if ENABLE(CSS_FILTERS)
-void WebGraphicsLayer::syncFilters()
+void CoordinatedGraphicsLayer::syncFilters()
 {
     if (!m_shouldSyncFilters)
         return;
     m_shouldSyncFilters = false;
-    m_webGraphicsLayerClient->syncLayerFilters(m_id, filters());
+    m_CoordinatedGraphicsLayerClient->syncLayerFilters(m_id, filters());
 }
 #endif
 
-void WebGraphicsLayer::syncLayerState()
+void CoordinatedGraphicsLayer::syncLayerState()
 {
     if (!m_shouldSyncLayerState)
         return;
@@ -489,10 +489,10 @@ void WebGraphicsLayer::syncLayerState()
     m_layerInfo.replica = toWebLayerID(replicaLayer());
     m_layerInfo.size = size();
     m_layerInfo.transform = transform();
-    m_webGraphicsLayerClient->syncLayerState(m_id, m_layerInfo);
+    m_CoordinatedGraphicsLayerClient->syncLayerState(m_id, m_layerInfo);
 }
 
-void WebGraphicsLayer::syncCanvas()
+void CoordinatedGraphicsLayer::syncCanvas()
 {
     if (!m_canvasNeedsDisplay)
         return;
@@ -502,20 +502,20 @@ void WebGraphicsLayer::syncCanvas()
 
 #if USE(GRAPHICS_SURFACE)
     uint32_t graphicsSurfaceToken = m_canvasPlatformLayer->copyToGraphicsSurface();
-    m_webGraphicsLayerClient->syncCanvas(m_id, IntSize(size().width(), size().height()), graphicsSurfaceToken);
+    m_CoordinatedGraphicsLayerClient->syncCanvas(m_id, IntSize(size().width(), size().height()), graphicsSurfaceToken);
 #endif
     m_canvasNeedsDisplay = false;
 }
 
-void WebGraphicsLayer::ensureImageBackingStore()
+void CoordinatedGraphicsLayer::ensureImageBackingStore()
 {
     if (!m_image)
         return;
     if (!m_layerInfo.imageBackingStoreID)
-        m_layerInfo.imageBackingStoreID = m_webGraphicsLayerClient->adoptImageBackingStore(m_image.get());
+        m_layerInfo.imageBackingStoreID = m_CoordinatedGraphicsLayerClient->adoptImageBackingStore(m_image.get());
 }
 
-void WebGraphicsLayer::syncCompositingStateForThisLayerOnly()
+void CoordinatedGraphicsLayer::syncCompositingStateForThisLayerOnly()
 {
     // The remote image might have been released by purgeBackingStores.
     ensureImageBackingStore();
@@ -529,34 +529,34 @@ void WebGraphicsLayer::syncCompositingStateForThisLayerOnly()
     syncCanvas();
 }
 
-void WebGraphicsLayer::tiledBackingStorePaintBegin()
+void CoordinatedGraphicsLayer::tiledBackingStorePaintBegin()
 {
 }
 
-void WebGraphicsLayer::setRootLayer(bool isRoot)
+void CoordinatedGraphicsLayer::setRootLayer(bool isRoot)
 {
     m_layerInfo.isRootLayer = isRoot;
     didChangeLayerState();
 }
 
-void WebGraphicsLayer::setVisibleContentRectTrajectoryVector(const FloatPoint& trajectoryVector)
+void CoordinatedGraphicsLayer::setVisibleContentRectTrajectoryVector(const FloatPoint& trajectoryVector)
 {
     if (m_mainBackingStore)
         m_mainBackingStore->coverWithTilesIfNeeded(trajectoryVector);
 }
 
-void WebGraphicsLayer::setContentsScale(float scale)
+void CoordinatedGraphicsLayer::setContentsScale(float scale)
 {
     m_contentsScale = scale;
     adjustContentsScale();
 }
 
-float WebGraphicsLayer::effectiveContentsScale()
+float CoordinatedGraphicsLayer::effectiveContentsScale()
 {
     return shouldUseTiledBackingStore() ? m_contentsScale : 1;
 }
 
-void WebGraphicsLayer::adjustContentsScale()
+void CoordinatedGraphicsLayer::adjustContentsScale()
 {
     if (!drawsContent())
         return;
@@ -576,42 +576,42 @@ void WebGraphicsLayer::adjustContentsScale()
     createBackingStore();
 }
 
-void WebGraphicsLayer::createBackingStore()
+void CoordinatedGraphicsLayer::createBackingStore()
 {
-    m_mainBackingStore = adoptPtr(new TiledBackingStore(this, TiledBackingStoreRemoteTileBackend::create(this)));
+    m_mainBackingStore = adoptPtr(new TiledBackingStore(this, CoordinatedTileBackend::create(this)));
     m_mainBackingStore->setSupportsAlpha(!contentsOpaque());
     m_mainBackingStore->setContentsScale(effectiveContentsScale());
 }
 
-void WebGraphicsLayer::tiledBackingStorePaint(GraphicsContext* context, const IntRect& rect)
+void CoordinatedGraphicsLayer::tiledBackingStorePaint(GraphicsContext* context, const IntRect& rect)
 {
     if (rect.isEmpty())
         return;
     paintGraphicsLayerContents(*context, rect);
 }
 
-void WebGraphicsLayer::tiledBackingStorePaintEnd(const Vector<IntRect>& updatedRects)
+void CoordinatedGraphicsLayer::tiledBackingStorePaintEnd(const Vector<IntRect>& updatedRects)
 {
 }
 
-bool WebGraphicsLayer::tiledBackingStoreUpdatesAllowed() const
+bool CoordinatedGraphicsLayer::tiledBackingStoreUpdatesAllowed() const
 {
     if (!m_inUpdateMode)
         return false;
-    return m_webGraphicsLayerClient->layerTreeTileUpdatesAllowed();
+    return m_CoordinatedGraphicsLayerClient->layerTreeTileUpdatesAllowed();
 }
 
-IntRect WebGraphicsLayer::tiledBackingStoreContentsRect()
+IntRect CoordinatedGraphicsLayer::tiledBackingStoreContentsRect()
 {
     return IntRect(0, 0, size().width(), size().height());
 }
 
-bool WebGraphicsLayer::shouldUseTiledBackingStore()
+bool CoordinatedGraphicsLayer::shouldUseTiledBackingStore()
 {
     return !selfOrAncestorHaveNonAffineTransforms();
 }
 
-IntRect WebGraphicsLayer::tiledBackingStoreVisibleRect()
+IntRect CoordinatedGraphicsLayer::tiledBackingStoreVisibleRect()
 {
     if (!shouldUseTiledBackingStore())
         return tiledBackingStoreContentsRect();
@@ -623,35 +623,35 @@ IntRect WebGraphicsLayer::tiledBackingStoreVisibleRect()
     // Return a projection of the visible rect (surface coordinates) onto the layer's plane (layer coordinates).
     // The resulting quad might be squewed and the visible rect is the bounding box of this quad,
     // so it might spread further than the real visible area (and then even more amplified by the cover rect multiplier).
-    return enclosingIntRect(m_layerTransform.combined().inverse().clampedBoundsOfProjectedQuad(FloatQuad(FloatRect(m_webGraphicsLayerClient->visibleContentsRect()))));
+    return enclosingIntRect(m_layerTransform.combined().inverse().clampedBoundsOfProjectedQuad(FloatQuad(FloatRect(m_CoordinatedGraphicsLayerClient->visibleContentsRect()))));
 }
 
-Color WebGraphicsLayer::tiledBackingStoreBackgroundColor() const
+Color CoordinatedGraphicsLayer::tiledBackingStoreBackgroundColor() const
 {
     return contentsOpaque() ? Color::white : Color::transparent;
 }
 
-PassOwnPtr<WebCore::GraphicsContext> WebGraphicsLayer::beginContentUpdate(const WebCore::IntSize& size, ShareableSurface::Handle& handle, WebCore::IntPoint& offset)
+PassOwnPtr<WebCore::GraphicsContext> CoordinatedGraphicsLayer::beginContentUpdate(const WebCore::IntSize& size, ShareableSurface::Handle& handle, WebCore::IntPoint& offset)
 {
-    return m_webGraphicsLayerClient->beginContentUpdate(size, contentsOpaque() ? 0 : ShareableBitmap::SupportsAlpha, handle, offset);
+    return m_CoordinatedGraphicsLayerClient->beginContentUpdate(size, contentsOpaque() ? 0 : ShareableBitmap::SupportsAlpha, handle, offset);
 }
 
-void WebGraphicsLayer::createTile(int tileID, const SurfaceUpdateInfo& updateInfo, const IntRect& targetRect)
+void CoordinatedGraphicsLayer::createTile(int tileID, const SurfaceUpdateInfo& updateInfo, const IntRect& targetRect)
 {
-    m_webGraphicsLayerClient->createTile(id(), tileID, updateInfo, targetRect);
+    m_CoordinatedGraphicsLayerClient->createTile(id(), tileID, updateInfo, targetRect);
 }
 
-void WebGraphicsLayer::updateTile(int tileID, const SurfaceUpdateInfo& updateInfo, const IntRect& targetRect)
+void CoordinatedGraphicsLayer::updateTile(int tileID, const SurfaceUpdateInfo& updateInfo, const IntRect& targetRect)
 {
-    m_webGraphicsLayerClient->updateTile(id(), tileID, updateInfo, targetRect);
+    m_CoordinatedGraphicsLayerClient->updateTile(id(), tileID, updateInfo, targetRect);
 }
 
-void WebGraphicsLayer::removeTile(int tileID)
+void CoordinatedGraphicsLayer::removeTile(int tileID)
 {
-    m_webGraphicsLayerClient->removeTile(id(), tileID);
+    m_CoordinatedGraphicsLayerClient->removeTile(id(), tileID);
 }
 
-void WebGraphicsLayer::updateContentBuffers()
+void CoordinatedGraphicsLayer::updateContentBuffers()
 {
     if (!drawsContent()) {
         m_mainBackingStore.clear();
@@ -674,13 +674,13 @@ void WebGraphicsLayer::updateContentBuffers()
         m_previousBackingStore.clear();
 }
 
-void WebGraphicsLayer::purgeBackingStores()
+void CoordinatedGraphicsLayer::purgeBackingStores()
 {
     m_mainBackingStore.clear();
     m_previousBackingStore.clear();
 
     if (m_layerInfo.imageBackingStoreID) {
-        m_webGraphicsLayerClient->releaseImageBackingStore(m_layerInfo.imageBackingStoreID);
+        m_CoordinatedGraphicsLayerClient->releaseImageBackingStore(m_layerInfo.imageBackingStoreID);
         m_layerInfo.imageBackingStoreID = 0;
     }
 
@@ -688,37 +688,37 @@ void WebGraphicsLayer::purgeBackingStores()
     didChangeChildren();
 }
 
-void WebGraphicsLayer::setWebGraphicsLayerClient(WebKit::WebGraphicsLayerClient* client)
+void CoordinatedGraphicsLayer::setCoordinatedGraphicsLayerClient(WebKit::CoordinatedGraphicsLayerClient* client)
 {
-    if (m_webGraphicsLayerClient == client)
+    if (m_CoordinatedGraphicsLayerClient == client)
         return;
 
-    if (WebGraphicsLayer* replica = toWebGraphicsLayer(replicaLayer()))
-        replica->setWebGraphicsLayerClient(client);
-    if (WebGraphicsLayer* mask = toWebGraphicsLayer(maskLayer()))
-        mask->setWebGraphicsLayerClient(client);
+    if (CoordinatedGraphicsLayer* replica = toCoordinatedGraphicsLayer(replicaLayer()))
+        replica->setCoordinatedGraphicsLayerClient(client);
+    if (CoordinatedGraphicsLayer* mask = toCoordinatedGraphicsLayer(maskLayer()))
+        mask->setCoordinatedGraphicsLayerClient(client);
     for (size_t i = 0; i < children().size(); ++i) {
-        WebGraphicsLayer* layer = toWebGraphicsLayer(this->children()[i]);
-        layer->setWebGraphicsLayerClient(client);
+        CoordinatedGraphicsLayer* layer = toCoordinatedGraphicsLayer(this->children()[i]);
+        layer->setCoordinatedGraphicsLayerClient(client);
     }
 
     // We have to release resources on the UI process here if the remote client has changed or is removed.
-    if (m_webGraphicsLayerClient) {
+    if (m_CoordinatedGraphicsLayerClient) {
         purgeBackingStores();
-        m_webGraphicsLayerClient->detachLayer(this);
+        m_CoordinatedGraphicsLayerClient->detachLayer(this);
     }
-    m_webGraphicsLayerClient = client;
+    m_CoordinatedGraphicsLayerClient = client;
     if (client)
         client->attachLayer(this);
 }
 
-void WebGraphicsLayer::adjustVisibleRect()
+void CoordinatedGraphicsLayer::adjustVisibleRect()
 {
     if (m_mainBackingStore)
         m_mainBackingStore->coverWithTilesIfNeeded();
 }
 
-void WebGraphicsLayer::computeTransformedVisibleRect()
+void CoordinatedGraphicsLayer::computeTransformedVisibleRect()
 {
     if (!m_shouldUpdateVisibleRect)
         return;
@@ -729,24 +729,24 @@ void WebGraphicsLayer::computeTransformedVisibleRect()
     m_layerTransform.setSize(size());
     m_layerTransform.setFlattening(!preserves3D());
     m_layerTransform.setChildrenTransform(childrenTransform());
-    m_layerTransform.combineTransforms(parent() ? toWebGraphicsLayer(parent())->m_layerTransform.combinedForChildren() : TransformationMatrix());
+    m_layerTransform.combineTransforms(parent() ? toCoordinatedGraphicsLayer(parent())->m_layerTransform.combinedForChildren() : TransformationMatrix());
 
     // The combined transform will be used in tiledBackingStoreVisibleRect.
     adjustVisibleRect();
     adjustContentsScale();
 }
 
-static PassOwnPtr<GraphicsLayer> createWebGraphicsLayer(GraphicsLayerClient* client)
+static PassOwnPtr<GraphicsLayer> createCoordinatedGraphicsLayer(GraphicsLayerClient* client)
 {
-    return adoptPtr(new WebGraphicsLayer(client));
+    return adoptPtr(new CoordinatedGraphicsLayer(client));
 }
 
-void WebGraphicsLayer::initFactory()
+void CoordinatedGraphicsLayer::initFactory()
 {
-    GraphicsLayer::setGraphicsLayerFactory(createWebGraphicsLayer);
+    GraphicsLayer::setGraphicsLayerFactory(createCoordinatedGraphicsLayer);
 }
 
-bool WebGraphicsLayer::selfOrAncestorHaveNonAffineTransforms()
+bool CoordinatedGraphicsLayer::selfOrAncestorHaveNonAffineTransforms()
 {
     if (!m_layerTransform.combined().isAffine())
         return true;

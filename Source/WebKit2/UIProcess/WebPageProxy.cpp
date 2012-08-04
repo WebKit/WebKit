@@ -94,7 +94,7 @@
 #include "WebIntentServiceInfo.h"
 #endif
 
-#if USE(UI_SIDE_COMPOSITING)
+#if USE(COORDINATED_GRAPHICS)
 #include "LayerTreeCoordinatorProxyMessages.h"
 #endif
 
@@ -1747,7 +1747,7 @@ void WebPageProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::M
         return;
     }
 
-#if USE(UI_SIDE_COMPOSITING)
+#if USE(COORDINATED_GRAPHICS)
     if (messageID.is<CoreIPC::MessageClassLayerTreeCoordinatorProxy>()) {
         m_drawingArea->didReceiveLayerTreeCoordinatorProxyMessage(connection, messageID, arguments);
         return;

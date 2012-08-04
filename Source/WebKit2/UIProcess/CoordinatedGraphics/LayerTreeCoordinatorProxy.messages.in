@@ -17,7 +17,7 @@
 #   Boston, MA 02110-1301, USA.
 #
 
-#if USE(ACCELERATED_COMPOSITING) && USE(TILED_BACKING_STORE)
+#if USE(COORDINATED_GRAPHICS)
 messages -> LayerTreeCoordinatorProxy {
     SetCompositingLayerState(uint32_t id, WebKit::WebLayerInfo layerInfo)
     SetCompositingLayerChildren(uint32_t id, Vector<uint32_t> children)

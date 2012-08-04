@@ -31,14 +31,14 @@ QT_END_NAMESPACE
 namespace WebKit {
 
 class ContentsSGNode;
-class WebLayerTreeRenderer;
+class LayerTreeRenderer;
 
 class QtWebPageSGNode : public QSGTransformNode {
     public:
         QtWebPageSGNode();
         void setBackground(const QRectF&, const QColor&);
         void setScale(float);
-        void setRenderer(PassRefPtr<WebLayerTreeRenderer>);
+        void setRenderer(PassRefPtr<LayerTreeRenderer>);
 
     private:
         ContentsSGNode* m_contentsNode;

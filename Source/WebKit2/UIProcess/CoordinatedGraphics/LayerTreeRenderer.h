@@ -17,10 +17,10 @@
     Boston, MA 02110-1301, USA.
 */
 
-#ifndef WebLayerTreeRenderer_h
-#define WebLayerTreeRenderer_h
+#ifndef LayerTreeRenderer_h
+#define LayerTreeRenderer_h
 
-#if USE(UI_SIDE_COMPOSITING)
+#if USE(COORDINATED_GRAPHICS)
 #include "BackingStore.h"
 #include "GraphicsSurface.h"
 #include "ShareableSurface.h"
@@ -39,12 +39,12 @@
 
 namespace WebKit {
 
-class LayerBackingStore;
+class CoordinatedBackingStore;
 class LayerTreeCoordinatorProxy;
 class WebLayerInfo;
 class WebLayerUpdateInfo;
 
-class WebLayerTreeRenderer : public ThreadSafeRefCounted<WebLayerTreeRenderer>, public WebCore::GraphicsLayerClient {
+class LayerTreeRenderer : public ThreadSafeRefCounted<LayerTreeRenderer>, public WebCore::GraphicsLayerClient {
 public:
     struct TileUpdate {
         WebCore::IntRect sourceRect;
@@ -59,8 +59,8 @@ public:
         {
         }
     };
-    WebLayerTreeRenderer(LayerTreeCoordinatorProxy*);
-    virtual ~WebLayerTreeRenderer();
+    LayerTreeRenderer(LayerTreeCoordinatorProxy*);
+    virtual ~LayerTreeRenderer();
     void purgeGLResources();
     void paintToCurrentGLContext(const WebCore::TransformationMatrix&, float, const WebCore::FloatRect&, WebCore::TextureMapper::PaintFlags = 0);
     void paintToGraphicsContext(BackingStore::PlatformGraphicsContext);
@@ -114,9 +114,9 @@ private:
 
 #if USE(TEXTURE_MAPPER)
     OwnPtr<WebCore::TextureMapper> m_textureMapper;
-    PassRefPtr<LayerBackingStore> getBackingStore(WebLayerID);
+    PassRefPtr<CoordinatedBackingStore> getBackingStore(WebLayerID);
     HashMap<int64_t, RefPtr<WebCore::TextureMapperBackingStore> > m_directlyCompositedImages;
-    HashSet<RefPtr<LayerBackingStore> > m_backingStoresWithPendingBuffers;
+    HashSet<RefPtr<CoordinatedBackingStore> > m_backingStoresWithPendingBuffers;
 #endif
 #if USE(GRAPHICS_SURFACE)
     typedef HashMap<WebLayerID, RefPtr<WebCore::TextureMapperSurfaceBackingStore> > SurfaceBackingStoreMap;
@@ -147,8 +147,8 @@ private:
 
 };
 
-#endif // USE(UI_SIDE_COMPOSITING)
+#endif // USE(COORDINATED_GRAPHICS)
 
-#endif // WebLayerTreeRenderer_h
+#endif // LayerTreeRenderer_h
 
 

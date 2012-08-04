@@ -20,7 +20,7 @@
 #ifndef WebLayerTreeInfo_h
 #define WebLayerTreeInfo_h
 
-#if USE(UI_SIDE_COMPOSITING)
+#if USE(COORDINATED_GRAPHICS)
 
 #include "ArgumentDecoder.h"
 #include "ArgumentEncoder.h"

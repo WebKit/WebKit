@@ -90,7 +90,7 @@ public:
     virtual void scheduleCompositingLayerSync() = 0;
 #endif
 
-#if USE(UI_SIDE_COMPOSITING)
+#if USE(COORDINATED_GRAPHICS)
     virtual void didReceiveLayerTreeCoordinatorMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*) = 0;
 #endif
 

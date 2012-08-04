@@ -19,7 +19,7 @@
 
 #include "config.h"
 
-#if USE(UI_SIDE_COMPOSITING)
+#if USE(COORDINATED_GRAPHICS)
 #include "WebLayerTreeInfo.h"
 
 #include "ArgumentCoders.h"

@@ -36,7 +36,7 @@
 #include "WebProcessProxy.h"
 #include <WebCore/Region.h>
 
-#if USE(UI_SIDE_COMPOSITING)
+#if USE(COORDINATED_GRAPHICS)
 #include "LayerTreeCoordinatorProxy.h"
 #endif
 
@@ -58,7 +58,7 @@ DrawingAreaProxyImpl::DrawingAreaProxyImpl(WebPageProxy* webPageProxy)
     , m_isBackingStoreDiscardable(true)
     , m_discardBackingStoreTimer(RunLoop::current(), this, &DrawingAreaProxyImpl::discardBackingStore)
 {
-#if USE(UI_SIDE_COMPOSITING)
+#if USE(COORDINATED_GRAPHICS)
     // Construct the proxy early to allow messages to be sent to the web process while AC is entered there.
     if (webPageProxy->pageGroup()->preferences()->forceCompositingMode())
         m_layerTreeCoordinatorProxy = adoptPtr(new LayerTreeCoordinatorProxy(this));
@@ -353,13 +353,13 @@ void DrawingAreaProxyImpl::enterAcceleratedCompositingMode(const LayerTreeContex
     m_backingStore = nullptr;
     m_layerTreeContext = layerTreeContext;
     m_webPageProxy->enterAcceleratedCompositingMode(layerTreeContext);
-#if USE(UI_SIDE_COMPOSITING)
+#if USE(COORDINATED_GRAPHICS)
     if (!m_layerTreeCoordinatorProxy)
         m_layerTreeCoordinatorProxy = adoptPtr(new LayerTreeCoordinatorProxy(this));
 #endif
 }
 
-#if USE(UI_SIDE_COMPOSITING)
+#if USE(COORDINATED_GRAPHICS)
 void DrawingAreaProxyImpl::didReceiveLayerTreeCoordinatorProxyMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments)
 {
     if (m_layerTreeCoordinatorProxy)

@@ -688,7 +688,7 @@ void DrawingAreaImpl::display(UpdateInfo& updateInfo)
     m_displayTimer.stop();
 }
 
-#if USE(UI_SIDE_COMPOSITING)
+#if USE(COORDINATED_GRAPHICS)
 void DrawingAreaImpl::didReceiveLayerTreeCoordinatorMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments)
 {
     if (m_layerTreeHost)

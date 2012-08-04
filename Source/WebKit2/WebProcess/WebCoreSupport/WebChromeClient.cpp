@@ -638,7 +638,7 @@ void WebChromeClient::setCursorHiddenUntilMouseMoves(bool hiddenUntilMouseMoves)
 #if ENABLE(REQUEST_ANIMATION_FRAME) && !USE(REQUEST_ANIMATION_FRAME_TIMER)
 void WebChromeClient::scheduleAnimation()
 {
-#if USE(UI_SIDE_COMPOSITING)
+#if USE(COORDINATED_GRAPHICS)
     m_page->drawingArea()->layerTreeHost()->scheduleAnimation();
 #endif
 }

@@ -18,9 +18,10 @@
  */
 
 
-#ifndef WebGraphicsLayer_h
-#define WebGraphicsLayer_h
+#ifndef CoordinatedGraphicsLayer_h
+#define CoordinatedGraphicsLayer_h
 
+#include "CoordinatedTile.h"
 #include "FloatPoint3D.h"
 #include "GraphicsLayer.h"
 #include "GraphicsLayerTransform.h"
@@ -29,7 +30,6 @@
 #include "ShareableBitmap.h"
 #include "TiledBackingStore.h"
 #include "TiledBackingStoreClient.h"
-#include "TiledBackingStoreRemoteTile.h"
 #include "TransformationMatrix.h"
 #include "UpdateInfo.h"
 #include "WebLayerTreeInfo.h"
@@ -37,16 +37,16 @@
 #include <WebCore/RunLoop.h>
 #include <wtf/text/StringHash.h>
 
-#if USE(UI_SIDE_COMPOSITING)
+#if USE(COORDINATED_GRAPHICS)
 namespace WebCore {
-class WebGraphicsLayer;
+class CoordinatedGraphicsLayer;
 }
 
 namespace WebKit {
 
-class WebGraphicsLayerClient {
+class CoordinatedGraphicsLayerClient {
 public:
-    // TiledBackingStoreRemoteTileClient
+    // CoordinatedTileClient
     virtual void createTile(WebLayerID, int tileID, const SurfaceUpdateInfo&, const WebCore::IntRect&) = 0;
     virtual void updateTile(WebLayerID, int tileID, const SurfaceUpdateInfo&, const WebCore::IntRect&) = 0;
     virtual void removeTile(WebLayerID, int tileID) = 0;
@@ -63,8 +63,8 @@ public:
 #if PLATFORM(QT)
     virtual void syncCanvas(WebLayerID, const WebCore::IntSize& canvasSize, uint32_t graphicsSurfaceToken) = 0;
 #endif
-    virtual void attachLayer(WebCore::WebGraphicsLayer*) = 0;
-    virtual void detachLayer(WebCore::WebGraphicsLayer*) = 0;
+    virtual void attachLayer(WebCore::CoordinatedGraphicsLayer*) = 0;
+    virtual void detachLayer(WebCore::CoordinatedGraphicsLayer*) = 0;
     virtual void syncFixedLayers() = 0;
     virtual PassOwnPtr<WebCore::GraphicsContext> beginContentUpdate(const WebCore::IntSize&, ShareableBitmap::Flags, ShareableSurface::Handle&, WebCore::IntPoint&) = 0;
 };
@@ -72,12 +72,12 @@ public:
 
 namespace WebCore {
 
-class WebGraphicsLayer : public WebCore::GraphicsLayer
+class CoordinatedGraphicsLayer : public WebCore::GraphicsLayer
                        , public TiledBackingStoreClient
-                       , public WebKit::TiledBackingStoreRemoteTileClient {
+                       , public WebKit::CoordinatedTileClient {
 public:
-    WebGraphicsLayer(GraphicsLayerClient*);
-    virtual ~WebGraphicsLayer();
+    CoordinatedGraphicsLayer(GraphicsLayerClient*);
+    virtual ~CoordinatedGraphicsLayer();
 
     // Reimplementations from GraphicsLayer.h.
     bool setChildren(const Vector<GraphicsLayer*>&);
@@ -118,7 +118,7 @@ public:
     void setRootLayer(bool);
 
     WebKit::WebLayerID id() const;
-    static WebGraphicsLayer* layerByID(WebKit::WebLayerID);
+    static CoordinatedGraphicsLayer* layerByID(WebKit::WebLayerID);
     void didSynchronize();
     Image* image() { return m_image.get(); }
 
@@ -139,13 +139,13 @@ public:
     virtual IntRect tiledBackingStoreVisibleRect();
     virtual Color tiledBackingStoreBackgroundColor() const;
 
-    // TiledBackingStoreRemoteTileClient
+    // CoordinatedTileClient
     virtual void createTile(int tileID, const WebKit::SurfaceUpdateInfo&, const WebCore::IntRect&);
     virtual void updateTile(int tileID, const WebKit::SurfaceUpdateInfo&, const WebCore::IntRect&);
     virtual void removeTile(int tileID);
     virtual PassOwnPtr<WebCore::GraphicsContext> beginContentUpdate(const WebCore::IntSize&, WebKit::ShareableSurface::Handle&, WebCore::IntPoint&);
 
-    void setWebGraphicsLayerClient(WebKit::WebGraphicsLayerClient*);
+    void setCoordinatedGraphicsLayerClient(WebKit::CoordinatedGraphicsLayerClient*);
     void syncChildren();
     void syncLayerState();
 #if ENABLE(CSS_FILTERS)
@@ -193,16 +193,16 @@ private:
     void setShouldUpdateVisibleRect();
     float effectiveContentsScale();
 
-    WebKit::WebGraphicsLayerClient* m_webGraphicsLayerClient;
+    WebKit::CoordinatedGraphicsLayerClient* m_CoordinatedGraphicsLayerClient;
     OwnPtr<WebCore::TiledBackingStore> m_mainBackingStore;
     OwnPtr<WebCore::TiledBackingStore> m_previousBackingStore;
     float m_contentsScale;
     PlatformLayer* m_canvasPlatformLayer;
 };
 
-WebGraphicsLayer* toWebGraphicsLayer(GraphicsLayer*);
+CoordinatedGraphicsLayer* toCoordinatedGraphicsLayer(GraphicsLayer*);
 
 }
 #endif
 
-#endif // WebGraphicsLayer_H
+#endif // CoordinatedGraphicsLayer_H

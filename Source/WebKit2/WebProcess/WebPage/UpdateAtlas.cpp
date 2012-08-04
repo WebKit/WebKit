@@ -20,7 +20,7 @@
 #include "config.h"
 #include "UpdateAtlas.h"
 
-#if USE(UI_SIDE_COMPOSITING)
+#if USE(COORDINATED_GRAPHICS)
 
 #include "GraphicsContext.h"
 #include "IntRect.h"

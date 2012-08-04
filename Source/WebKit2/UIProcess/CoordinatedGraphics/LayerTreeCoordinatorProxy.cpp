@@ -19,14 +19,14 @@
 
 #include "config.h"
 
-#if USE(UI_SIDE_COMPOSITING)
+#if USE(COORDINATED_GRAPHICS)
 #include "LayerTreeCoordinatorProxy.h"
 
 #include "LayerTreeCoordinatorMessages.h"
+#include "LayerTreeRenderer.h"
 #include "UpdateInfo.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebLayerTreeInfo.h"
-#include "WebLayerTreeRenderer.h"
 #include "WebPageProxy.h"
 #include "WebProcessProxy.h"
 
@@ -36,7 +36,7 @@ using namespace WebCore;
 
 LayerTreeCoordinatorProxy::LayerTreeCoordinatorProxy(DrawingAreaProxy* drawingAreaProxy)
     : m_drawingAreaProxy(drawingAreaProxy)
-    , m_renderer(adoptRef(new WebLayerTreeRenderer(this)))
+    , m_renderer(adoptRef(new LayerTreeRenderer(this)))
     , m_lastSentScale(0)
 {
 }
@@ -58,7 +58,7 @@ void LayerTreeCoordinatorProxy::dispatchUpdate(const Function<void()>& function)
 
 void LayerTreeCoordinatorProxy::createTileForLayer(int layerID, int tileID, const IntRect& targetRect, const WebKit::SurfaceUpdateInfo& updateInfo)
 {
-    dispatchUpdate(bind(&WebLayerTreeRenderer::createTile, m_renderer.get(), layerID, tileID, updateInfo.scaleFactor));
+    dispatchUpdate(bind(&LayerTreeRenderer::createTile, m_renderer.get(), layerID, tileID, updateInfo.scaleFactor));
     updateTileForLayer(layerID, tileID, targetRect, updateInfo);
 }
 
@@ -79,69 +79,69 @@ void LayerTreeCoordinatorProxy::updateTileForLayer(int layerID, int tileID, cons
 #else
     surface = ShareableSurface::create(updateInfo.surfaceHandle);
 #endif
-    dispatchUpdate(bind(&WebLayerTreeRenderer::updateTile, m_renderer.get(), layerID, tileID, WebLayerTreeRenderer::TileUpdate(updateInfo.updateRect, targetRect, surface, updateInfo.surfaceOffset)));
+    dispatchUpdate(bind(&LayerTreeRenderer::updateTile, m_renderer.get(), layerID, tileID, LayerTreeRenderer::TileUpdate(updateInfo.updateRect, targetRect, surface, updateInfo.surfaceOffset)));
 }
 
 void LayerTreeCoordinatorProxy::removeTileForLayer(int layerID, int tileID)
 {
-    dispatchUpdate(bind(&WebLayerTreeRenderer::removeTile, m_renderer.get(), layerID, tileID));
+    dispatchUpdate(bind(&LayerTreeRenderer::removeTile, m_renderer.get(), layerID, tileID));
 }
 
 void LayerTreeCoordinatorProxy::deleteCompositingLayer(WebLayerID id)
 {
-    dispatchUpdate(bind(&WebLayerTreeRenderer::deleteLayer, m_renderer.get(), id));
+    dispatchUpdate(bind(&LayerTreeRenderer::deleteLayer, m_renderer.get(), id));
     updateViewport();
 }
 
 void LayerTreeCoordinatorProxy::setRootCompositingLayer(WebLayerID id)
 {
-    dispatchUpdate(bind(&WebLayerTreeRenderer::setRootLayerID, m_renderer.get(), id));
+    dispatchUpdate(bind(&LayerTreeRenderer::setRootLayerID, m_renderer.get(), id));
     updateViewport();
 }
 
 void LayerTreeCoordinatorProxy::setCompositingLayerState(WebLayerID id, const WebLayerInfo& info)
 {
-    dispatchUpdate(bind(&WebLayerTreeRenderer::setLayerState, m_renderer.get(), id, info));
+    dispatchUpdate(bind(&LayerTreeRenderer::setLayerState, m_renderer.get(), id, info));
 }
 
 void LayerTreeCoordinatorProxy::setCompositingLayerChildren(WebLayerID id, const Vector<WebLayerID>& children)
 {
-    dispatchUpdate(bind(&WebLayerTreeRenderer::setLayerChildren, m_renderer.get(), id, children));
+    dispatchUpdate(bind(&LayerTreeRenderer::setLayerChildren, m_renderer.get(), id, children));
 }
 
 #if ENABLE(CSS_FILTERS)
 void LayerTreeCoordinatorProxy::setCompositingLayerFilters(WebLayerID id, const FilterOperations& filters)
 {
-    dispatchUpdate(bind(&WebLayerTreeRenderer::setLayerFilters, m_renderer.get(), id, filters));
+    dispatchUpdate(bind(&LayerTreeRenderer::setLayerFilters, m_renderer.get(), id, filters));
 }
 #endif
 
 void LayerTreeCoordinatorProxy::didRenderFrame()
 {
-    dispatchUpdate(bind(&WebLayerTreeRenderer::flushLayerChanges, m_renderer.get()));
+    dispatchUpdate(bind(&LayerTreeRenderer::flushLayerChanges, m_renderer.get()));
     updateViewport();
 }
 
 void LayerTreeCoordinatorProxy::createDirectlyCompositedImage(int64_t key, const WebKit::ShareableBitmap::Handle& handle)
 {
     RefPtr<ShareableBitmap> bitmap = ShareableBitmap::create(handle);
-    dispatchUpdate(bind(&WebLayerTreeRenderer::createImage, m_renderer.get(), key, bitmap));
+    dispatchUpdate(bind(&LayerTreeRenderer::createImage, m_renderer.get(), key, bitmap));
 }
 
 void LayerTreeCoordinatorProxy::destroyDirectlyCompositedImage(int64_t key)
 {
-    dispatchUpdate(bind(&WebLayerTreeRenderer::destroyImage, m_renderer.get(), key));
+    dispatchUpdate(bind(&LayerTreeRenderer::destroyImage, m_renderer.get(), key));
 }
 
 void LayerTreeCoordinatorProxy::setContentsSize(const FloatSize& contentsSize)
 {
-    dispatchUpdate(bind(&WebLayerTreeRenderer::setContentsSize, m_renderer.get(), contentsSize));
+    dispatchUpdate(bind(&LayerTreeRenderer::setContentsSize, m_renderer.get(), contentsSize));
 }
 
 void LayerTreeCoordinatorProxy::setVisibleContentsRect(const FloatRect& rect, float scale, const FloatPoint& trajectoryVector)
 {
     // Inform the renderer to adjust viewport-fixed layers.
-    dispatchUpdate(bind(&WebLayerTreeRenderer::setVisibleContentsRect, m_renderer.get(), rect));
+    dispatchUpdate(bind(&LayerTreeRenderer::setVisibleContentsRect, m_renderer.get(), rect));
 
     // Round the rect instead of enclosing it to make sure that its size stays the same while panning. This can have nasty effects on layout.
     IntRect roundedRect = roundedIntRect(rect);
@@ -161,12 +161,12 @@ void LayerTreeCoordinatorProxy::renderNextFrame()
 
 void LayerTreeCoordinatorProxy::didChangeScrollPosition(const IntPoint& position)
 {
-    dispatchUpdate(bind(&WebLayerTreeRenderer::didChangeScrollPosition, m_renderer.get(), position));
+    dispatchUpdate(bind(&LayerTreeRenderer::didChangeScrollPosition, m_renderer.get(), position));
 }
 
 void LayerTreeCoordinatorProxy::syncCanvas(uint32_t id, const IntSize& canvasSize, uint32_t graphicsSurfaceToken)
 {
-    dispatchUpdate(bind(&WebLayerTreeRenderer::syncCanvas, m_renderer.get(), id, canvasSize, graphicsSurfaceToken));
+    dispatchUpdate(bind(&LayerTreeRenderer::syncCanvas, m_renderer.get(), id, canvasSize, graphicsSurfaceToken));
 }
 
 void LayerTreeCoordinatorProxy::purgeBackingStores()
@@ -175,4 +175,4 @@ void LayerTreeCoordinatorProxy::purgeBackingStores()
 }
 
 }
-#endif // USE(UI_SIDE_COMPOSITING)
+#endif // USE(COORDINATED_GRAPHICS)

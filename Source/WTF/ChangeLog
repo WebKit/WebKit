@@ -1,3 +1,14 @@
+2012-08-04  No'am Rosenthal  <noam.rosenthal@nokia.com>
+
+        [Qt] UI_SIDE_COMPOSITING code has confusing names
+        https://bugs.webkit.org/show_bug.cgi?id=93164
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Renamed UI_SIDE_COMPOSITING to COORDINATED_GRAPHICS.
+
+        * wtf/Platform.h:
+
 2012-08-03  Michael Saboff  <msaboff@apple.com>
 
         Convert HTML parser to handle 8-bit resources without converting to UChar*

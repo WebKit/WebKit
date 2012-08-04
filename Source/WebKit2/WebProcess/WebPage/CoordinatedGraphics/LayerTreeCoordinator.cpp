@@ -1,4 +1,4 @@
-/*
+    /*
  * Copyright (C) 2011 Apple Inc. All rights reserved.
  * Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
  *
@@ -28,13 +28,13 @@
 
 #include "LayerTreeCoordinator.h"
 
+#include "CoordinatedGraphicsLayer.h"
 #include "DrawingAreaImpl.h"
 #include "GraphicsContext.h"
 #include "LayerTreeCoordinatorProxyMessages.h"
 #include "MessageID.h"
 #include "SurfaceUpdateInfo.h"
 #include "WebCoreArgumentCoders.h"
-#include "WebGraphicsLayer.h"
 #include "WebPage.h"
 #include <WebCore/Frame.h>
 #include <WebCore/FrameView.h>
@@ -56,13 +56,13 @@ PassRefPtr<LayerTreeCoordinator> LayerTreeCoordinator::create(WebPage* webPage)
 
 LayerTreeCoordinator::~LayerTreeCoordinator()
 {
-    // Prevent setWebGraphicsLayerClient(0) -> detachLayer() from modifying the set while we iterate it.
-    HashSet<WebCore::WebGraphicsLayer*> registeredLayers;
+    // Prevent setCoordinatedGraphicsLayerClient(0) -> detachLayer() from modifying the set while we iterate it.
+    HashSet<WebCore::CoordinatedGraphicsLayer*> registeredLayers;
     registeredLayers.swap(m_registeredLayers);
 
-    HashSet<WebCore::WebGraphicsLayer*>::iterator end = registeredLayers.end();
-    for (HashSet<WebCore::WebGraphicsLayer*>::iterator it = registeredLayers.begin(); it != end; ++it)
-        (*it)->setWebGraphicsLayerClient(0);
+    HashSet<WebCore::CoordinatedGraphicsLayer*>::iterator end = registeredLayers.end();
+    for (HashSet<WebCore::CoordinatedGraphicsLayer*>::iterator it = registeredLayers.begin(); it != end; ++it)
+        (*it)->setCoordinatedGraphicsLayerClient(0);
 }
 
 LayerTreeCoordinator::LayerTreeCoordinator(WebPage* webPage)
@@ -80,17 +80,17 @@ LayerTreeCoordinator::LayerTreeCoordinator(WebPage* webPage)
 {
     // Create a root layer.
     m_rootLayer = GraphicsLayer::create(this);
-    WebGraphicsLayer* webRootLayer = toWebGraphicsLayer(m_rootLayer.get());
+    CoordinatedGraphicsLayer* webRootLayer = toCoordinatedGraphicsLayer(m_rootLayer.get());
     webRootLayer->setRootLayer(true);
 #ifndef NDEBUG
     m_rootLayer->setName("LayerTreeCoordinator root layer");
 #endif
     m_rootLayer->setDrawsContent(false);
     m_rootLayer->setSize(m_webPage->size());
-    m_layerTreeContext.webLayerID = toWebGraphicsLayer(webRootLayer)->id();
+    m_layerTreeContext.webLayerID = toCoordinatedGraphicsLayer(webRootLayer)->id();
 
     m_nonCompositedContentLayer = GraphicsLayer::create(this);
-    toWebGraphicsLayer(m_rootLayer.get())->setWebGraphicsLayerClient(this);
+    toCoordinatedGraphicsLayer(m_rootLayer.get())->setCoordinatedGraphicsLayerClient(this);
 #ifndef NDEBUG
     m_nonCompositedContentLayer->setName("LayerTreeCoordinator non-composited content");
 #endif
@@ -247,7 +247,7 @@ bool LayerTreeCoordinator::flushPendingLayerChanges()
     m_rootLayer->syncCompositingStateForThisLayerOnly();
 
     if (m_shouldSyncRootLayer) {
-        m_webPage->send(Messages::LayerTreeCoordinatorProxy::SetRootCompositingLayer(toWebGraphicsLayer(m_rootLayer.get())->id()));
+        m_webPage->send(Messages::LayerTreeCoordinatorProxy::SetRootCompositingLayer(toCoordinatedGraphicsLayer(m_rootLayer.get())->id()));
         m_shouldSyncRootLayer = false;
     }
 
@@ -292,7 +292,7 @@ void LayerTreeCoordinator::syncLayerFilters(WebLayerID id, const FilterOperation
 }
 #endif
 
-void LayerTreeCoordinator::attachLayer(WebGraphicsLayer* layer)
+void LayerTreeCoordinator::attachLayer(CoordinatedGraphicsLayer* layer)
 {
     ASSERT(!m_registeredLayers.contains(layer));
     m_registeredLayers.add(layer);
@@ -301,7 +301,7 @@ void LayerTreeCoordinator::attachLayer(WebGraphicsLayer* layer)
     layer->adjustVisibleRect();
 }
 
-void LayerTreeCoordinator::detachLayer(WebGraphicsLayer* layer)
+void LayerTreeCoordinator::detachLayer(CoordinatedGraphicsLayer* layer)
 {
     m_registeredLayers.remove(layer);
     m_shouldSyncFrame = true;
@@ -328,7 +328,7 @@ static void updateOffsetFromViewportForSelf(RenderLayer* renderLayer)
     if (!renderLayer->isStackingContext())
         return;
 
-    WebGraphicsLayer* graphicsLayer = toWebGraphicsLayer(backing->graphicsLayer());
+    CoordinatedGraphicsLayer* graphicsLayer = toCoordinatedGraphicsLayer(backing->graphicsLayer());
     graphicsLayer->setFixedToViewport(true);
 }
 
@@ -536,14 +536,14 @@ void LayerTreeCoordinator::setVisibleContentsRect(const IntRect& rect, float sca
     bool contentsScaleDidChange = scale != m_contentsScale;
 
     // A zero trajectoryVector indicates that tiles all around the viewport are requested.
-    toWebGraphicsLayer(m_nonCompositedContentLayer.get())->setVisibleContentRectTrajectoryVector(trajectoryVector);
+    toCoordinatedGraphicsLayer(m_nonCompositedContentLayer.get())->setVisibleContentRectTrajectoryVector(trajectoryVector);
 
     if (contentsRectDidChange || contentsScaleDidChange) {
         m_visibleContentsRect = rect;
         m_contentsScale = scale;
 
-        HashSet<WebCore::WebGraphicsLayer*>::iterator end = m_registeredLayers.end();
-        for (HashSet<WebCore::WebGraphicsLayer*>::iterator it = m_registeredLayers.begin(); it != end; ++it) {
+        HashSet<WebCore::CoordinatedGraphicsLayer*>::iterator end = m_registeredLayers.end();
+        for (HashSet<WebCore::CoordinatedGraphicsLayer*>::iterator it = m_registeredLayers.begin(); it != end; ++it) {
             if (contentsScaleDidChange)
                 (*it)->setContentsScale(scale);
             if (contentsRectDidChange)
@@ -558,7 +558,7 @@ void LayerTreeCoordinator::setVisibleContentsRect(const IntRect& rect, float sca
         m_shouldSendScrollPositionUpdate = true;
 }
 
-#if USE(UI_SIDE_COMPOSITING)
+#if USE(COORDINATED_GRAPHICS)
 void LayerTreeCoordinator::scheduleAnimation()
 {
     scheduleLayerFlush();
@@ -580,8 +580,8 @@ bool LayerTreeCoordinator::layerTreeTileUpdatesAllowed() const
 
 void LayerTreeCoordinator::purgeBackingStores()
 {
-    HashSet<WebCore::WebGraphicsLayer*>::iterator end = m_registeredLayers.end();
-    for (HashSet<WebCore::WebGraphicsLayer*>::iterator it = m_registeredLayers.begin(); it != end; ++it)
+    HashSet<WebCore::CoordinatedGraphicsLayer*>::iterator end = m_registeredLayers.end();
+    for (HashSet<WebCore::CoordinatedGraphicsLayer*>::iterator it = m_registeredLayers.begin(); it != end; ++it)
         (*it)->purgeBackingStores();
 
     ASSERT(!m_directlyCompositedImageRefCounts.size());

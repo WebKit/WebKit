@@ -86,7 +86,7 @@ namespace WebCore {
 }
 #endif
 
-#if USE(UI_SIDE_COMPOSITING) && ENABLE(CSS_FILTERS)
+#if USE(COORDINATED_GRAPHICS) && ENABLE(CSS_FILTERS)
 namespace WebCore {
     class FilterOperations;
 }
@@ -240,7 +240,7 @@ template<> struct ArgumentCoder<WebCore::KURL> {
     static bool decode(ArgumentDecoder*, WebCore::KURL&);
 };
 
-#if USE(UI_SIDE_COMPOSITING)
+#if USE(COORDINATED_GRAPHICS)
 template<> struct ArgumentCoder<WebCore::FloatPoint3D> {
     static void encode(ArgumentEncoder*, const WebCore::FloatPoint3D&);
     static bool decode(ArgumentDecoder*, WebCore::FloatPoint3D&);

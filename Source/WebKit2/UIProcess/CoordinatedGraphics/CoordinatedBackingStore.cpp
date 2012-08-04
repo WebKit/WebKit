@@ -18,9 +18,9 @@
  */
 
 #include "config.h"
-#include "LayerBackingStore.h"
+#include "CoordinatedBackingStore.h"
 
-#if USE(UI_SIDE_COMPOSITING)
+#if USE(COORDINATED_GRAPHICS)
 #include "GraphicsLayer.h"
 #include "ShareableSurface.h"
 #include "TextureMapper.h"
@@ -30,7 +30,7 @@ using namespace WebCore;
 
 namespace WebKit {
 
-void LayerBackingStoreTile::swapBuffers(WebCore::TextureMapper* textureMapper)
+void CoordinatedBackingStoreTile::swapBuffers(WebCore::TextureMapper* textureMapper)
 {
     if (!m_surface)
         return;
@@ -56,7 +56,7 @@ void LayerBackingStoreTile::swapBuffers(WebCore::TextureMapper* textureMapper)
     m_surface.clear();
 }
 
-void LayerBackingStoreTile::setBackBuffer(const IntRect& targetRect, const IntRect& sourceRect, PassRefPtr<ShareableSurface> buffer, const IntPoint& offset)
+void CoordinatedBackingStoreTile::setBackBuffer(const IntRect& targetRect, const IntRect& sourceRect, PassRefPtr<ShareableSurface> buffer, const IntPoint& offset)
 {
     m_sourceRect = sourceRect;
     m_targetRect = targetRect;
@@ -64,30 +64,30 @@ void LayerBackingStoreTile::setBackBuffer(const IntRect& targetRect, const IntRe
     m_surface = buffer;
 }
 
-void LayerBackingStore::createTile(int id, float scale)
+void CoordinatedBackingStore::createTile(int id, float scale)
 {
-    m_tiles.add(id, LayerBackingStoreTile(scale));
+    m_tiles.add(id, CoordinatedBackingStoreTile(scale));
     m_scale = scale;
 }
 
-void LayerBackingStore::removeTile(int id)
+void CoordinatedBackingStore::removeTile(int id)
 {
     m_tilesToRemove.append(id);
 }
 
 
-void LayerBackingStore::updateTile(int id, const IntRect& sourceRect, const IntRect& targetRect, PassRefPtr<ShareableSurface> backBuffer, const IntPoint& offset)
+void CoordinatedBackingStore::updateTile(int id, const IntRect& sourceRect, const IntRect& targetRect, PassRefPtr<ShareableSurface> backBuffer, const IntPoint& offset)
 {
-    HashMap<int, LayerBackingStoreTile>::iterator it = m_tiles.find(id);
+    HashMap<int, CoordinatedBackingStoreTile>::iterator it = m_tiles.find(id);
     ASSERT(it != m_tiles.end());
     it->second.incrementRepaintCount();
     it->second.setBackBuffer(targetRect, sourceRect, backBuffer, offset);
 }
 
-PassRefPtr<BitmapTexture> LayerBackingStore::texture() const
+PassRefPtr<BitmapTexture> CoordinatedBackingStore::texture() const
 {
-    HashMap<int, LayerBackingStoreTile>::const_iterator end = m_tiles.end();
-    for (HashMap<int, LayerBackingStoreTile>::const_iterator it = m_tiles.begin(); it != end; ++it) {
+    HashMap<int, CoordinatedBackingStoreTile>::const_iterator end = m_tiles.end();
+    for (HashMap<int, CoordinatedBackingStoreTile>::const_iterator it = m_tiles.begin(); it != end; ++it) {
         RefPtr<BitmapTexture> texture = it->second.texture();
         if (texture)
             return texture;
@@ -104,15 +104,15 @@ static bool shouldShowTileDebugVisuals()
     return false;
 }
 
-void LayerBackingStore::paintToTextureMapper(TextureMapper* textureMapper, const FloatRect& targetRect, const TransformationMatrix& transform, float opacity, BitmapTexture* mask)
+void CoordinatedBackingStore::paintToTextureMapper(TextureMapper* textureMapper, const FloatRect& targetRect, const TransformationMatrix& transform, float opacity, BitmapTexture* mask)
 {
     Vector<TextureMapperTile*> tilesToPaint;
 
     // We have to do this every time we paint, in case the opacity has changed.
-    HashMap<int, LayerBackingStoreTile>::iterator end = m_tiles.end();
+    HashMap<int, CoordinatedBackingStoreTile>::iterator end = m_tiles.end();
     FloatRect coveredRect;
-    for (HashMap<int, LayerBackingStoreTile>::iterator it = m_tiles.begin(); it != end; ++it) {
-        LayerBackingStoreTile& tile = it->second;
+    for (HashMap<int, CoordinatedBackingStoreTile>::iterator it = m_tiles.begin(); it != end; ++it) {
+        CoordinatedBackingStoreTile& tile = it->second;
         if (!tile.texture())
             continue;
 
@@ -132,7 +132,7 @@ void LayerBackingStore::paintToTextureMapper(TextureMapper* textureMapper, const
 
     // TODO: When the TextureMapper makes a distinction between some edges exposed and no edges
     // exposed, the value passed should be an accurate reflection of the tile subset that we are
-    // passing. For now we just "estimate" since LayerBackingStore doesn't keep information about
+    // passing. For now we just "estimate" since CoordinatedBackingStore doesn't keep information about
     // the total tiled surface rect at the moment.
     unsigned edgesExposed = m_tiles.size() > 1 ? TextureMapper::NoEdges : TextureMapper::AllEdges;
     for (size_t i = 0; i < tilesToPaint.size(); ++i) {
@@ -143,19 +143,19 @@ void LayerBackingStore::paintToTextureMapper(TextureMapper* textureMapper, const
             continue;
 
         textureMapper->drawBorder(Color(0xFF, 0, 0), 2, tile->rect(), transform);
-        textureMapper->drawRepaintCounter(static_cast<LayerBackingStoreTile*>(tile)->repaintCount(), 8, tilesToPaint[i]->rect().location(), transform);
+        textureMapper->drawRepaintCounter(static_cast<CoordinatedBackingStoreTile*>(tile)->repaintCount(), 8, tilesToPaint[i]->rect().location(), transform);
     }
 }
 
-void LayerBackingStore::commitTileOperations(TextureMapper* textureMapper)
+void CoordinatedBackingStore::commitTileOperations(TextureMapper* textureMapper)
 {
     Vector<int>::iterator tilesToRemoveEnd = m_tilesToRemove.end();
     for (Vector<int>::iterator it = m_tilesToRemove.begin(); it != tilesToRemoveEnd; ++it)
         m_tiles.remove(*it);
     m_tilesToRemove.clear();
 
-    HashMap<int, LayerBackingStoreTile>::iterator tilesEnd = m_tiles.end();
-    for (HashMap<int, LayerBackingStoreTile>::iterator it = m_tiles.begin(); it != tilesEnd; ++it)
+    HashMap<int, CoordinatedBackingStoreTile>::iterator tilesEnd = m_tiles.end();
+    for (HashMap<int, CoordinatedBackingStoreTile>::iterator it = m_tiles.begin(); it != tilesEnd; ++it)
         it->second.swapBuffers(textureMapper);
 }
 

@@ -140,8 +140,6 @@ webkit2_built_sources += \
 	DerivedSources/WebKit2/DrawingAreaProxyMessages.h \
 	DerivedSources/WebKit2/EventDispatcherMessageReceiver.cpp \
 	DerivedSources/WebKit2/EventDispatcherMessages.h \
-	DerivedSources/WebKit2/LayerTreeCoordinatorProxyMessageReceiver.cpp \
-	DerivedSources/WebKit2/LayerTreeCoordinatorProxyMessages.h \
 	DerivedSources/WebKit2/NPObjectMessageReceiverMessageReceiver.cpp \
 	DerivedSources/WebKit2/NPObjectMessageReceiverMessages.h \
 	DerivedSources/WebKit2/PluginControllerProxyMessageReceiver.cpp \

@@ -85,7 +85,7 @@ public:
     virtual void pauseRendering() { }
     virtual void resumeRendering() { }
 
-#if USE(UI_SIDE_COMPOSITING)
+#if USE(COORDINATED_GRAPHICS)
     virtual void setVisibleContentsRect(const WebCore::IntRect&, float scale, const WebCore::FloatPoint&) { }
     virtual void setVisibleContentsRectForLayer(int layerID, const WebCore::IntRect&) { }
     virtual void renderNextFrame() { }
@@ -105,7 +105,7 @@ public:
     virtual WebCore::GraphicsDeviceAdapter* graphicsDeviceAdapter() const { return 0; }
 #endif
 
-#if USE(UI_SIDE_COMPOSITING)
+#if USE(COORDINATED_GRAPHICS)
     virtual void scheduleAnimation() = 0;
 #endif
 
@@ -114,7 +114,7 @@ protected:
 
     WebPage* m_webPage;
 
-#if USE(UI_SIDE_COMPOSITING)
+#if USE(COORDINATED_GRAPHICS)
     bool m_waitingForUIProcess;
 #endif
 };

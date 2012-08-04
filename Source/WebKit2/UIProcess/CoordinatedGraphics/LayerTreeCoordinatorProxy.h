@@ -20,7 +20,7 @@
 #ifndef LayerTreeCoordinatorProxy_h
 #define LayerTreeCoordinatorProxy_h
 
-#if USE(UI_SIDE_COMPOSITING)
+#if USE(COORDINATED_GRAPHICS)
 
 #include "BackingStore.h"
 #include "DrawingAreaProxy.h"
@@ -43,7 +43,7 @@ QT_END_NAMESPACE
 namespace WebKit {
 
 class WebLayerInfo;
-class WebLayerTreeRenderer;
+class LayerTreeRenderer;
 class WebLayerUpdateInfo;
 
 class LayerTreeCoordinatorProxy {
@@ -73,13 +73,13 @@ public:
     void didChangeScrollPosition(const WebCore::IntPoint& position);
     void syncCanvas(uint32_t id, const WebCore::IntSize& canvasSize, uint32_t graphicsSurfaceToken);
     void purgeBackingStores();
-    WebLayerTreeRenderer* layerTreeRenderer() const { return m_renderer.get(); }
+    LayerTreeRenderer* layerTreeRenderer() const { return m_renderer.get(); }
 
 protected:
     void dispatchUpdate(const Function<void()>&);
 
     DrawingAreaProxy* m_drawingAreaProxy;
-    RefPtr<WebLayerTreeRenderer> m_renderer;
+    RefPtr<LayerTreeRenderer> m_renderer;
     WebCore::IntRect m_lastSentVisibleRect;
     float m_lastSentScale;
     WebCore::FloatPoint m_lastSentTrajectoryVector;

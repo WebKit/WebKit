@@ -90,7 +90,7 @@ public:
 
     virtual void colorSpaceDidChange() { }
 
-#if USE(UI_SIDE_COMPOSITING)
+#if USE(COORDINATED_GRAPHICS)
     virtual void updateViewport();
     virtual WebCore::IntRect viewportVisibleRect() const { return contentsRect(); }
     virtual WebCore::IntRect contentsRect() const;
@@ -113,7 +113,7 @@ protected:
     WebCore::IntSize m_size;
     WebCore::IntSize m_scrollOffset;
 
-#if USE(UI_SIDE_COMPOSITING)
+#if USE(COORDINATED_GRAPHICS)
     OwnPtr<LayerTreeCoordinatorProxy> m_layerTreeCoordinatorProxy;
 #endif
 

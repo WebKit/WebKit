@@ -23,8 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef TiledBackingStoreRemoteTile_h
-#define TiledBackingStoreRemoteTile_h
+#ifndef CoordinatedTile_h
+#define CoordinatedTile_h
 
 #if USE(TILED_BACKING_STORE)
 
@@ -40,13 +40,13 @@ class TiledBackingStore;
 
 namespace WebKit {
 
-class TiledBackingStoreRemoteTileClient;
+class CoordinatedTileClient;
 class SurfaceUpdateInfo;
 
-class TiledBackingStoreRemoteTile : public WebCore::Tile {
+class CoordinatedTile : public WebCore::Tile {
 public:
-    static PassRefPtr<Tile> create(TiledBackingStoreRemoteTileClient* client, WebCore::TiledBackingStore* tiledBackingStore, const Coordinate& tileCoordinate) { return adoptRef(new TiledBackingStoreRemoteTile(client, tiledBackingStore, tileCoordinate)); }
-    ~TiledBackingStoreRemoteTile();
+    static PassRefPtr<Tile> create(CoordinatedTileClient* client, WebCore::TiledBackingStore* tiledBackingStore, const Coordinate& tileCoordinate) { return adoptRef(new CoordinatedTile(client, tiledBackingStore, tileCoordinate)); }
+    ~CoordinatedTile();
 
     bool isDirty() const;
     void invalidate(const WebCore::IntRect&);
@@ -60,9 +60,9 @@ public:
     void resize(const WebCore::IntSize&);
 
 private:
-    TiledBackingStoreRemoteTile(TiledBackingStoreRemoteTileClient*, WebCore::TiledBackingStore*, const Coordinate&);
+    CoordinatedTile(CoordinatedTileClient*, WebCore::TiledBackingStore*, const Coordinate&);
 
-    TiledBackingStoreRemoteTileClient* m_client;
+    CoordinatedTileClient* m_client;
     WebCore::TiledBackingStore* m_tiledBackingStore;
     Coordinate m_coordinate;
     WebCore::IntRect m_rect;
@@ -73,24 +73,24 @@ private:
     OwnPtr<WebCore::ImageBuffer> m_localBuffer;
 };
 
-class TiledBackingStoreRemoteTileClient {
+class CoordinatedTileClient {
 public:
-    virtual ~TiledBackingStoreRemoteTileClient() { }
+    virtual ~CoordinatedTileClient() { }
     virtual void createTile(int tileID, const SurfaceUpdateInfo&, const WebCore::IntRect&) = 0;
     virtual void updateTile(int tileID, const SurfaceUpdateInfo&, const WebCore::IntRect&) = 0;
     virtual void removeTile(int tileID) = 0;
     virtual PassOwnPtr<WebCore::GraphicsContext> beginContentUpdate(const WebCore::IntSize&, ShareableSurface::Handle&, WebCore::IntPoint&) = 0;
 };
 
-class TiledBackingStoreRemoteTileBackend : public WebCore::TiledBackingStoreBackend {
+class CoordinatedTileBackend : public WebCore::TiledBackingStoreBackend {
 public:
-    static PassOwnPtr<WebCore::TiledBackingStoreBackend> create(TiledBackingStoreRemoteTileClient* client) { return adoptPtr(new TiledBackingStoreRemoteTileBackend(client)); }
+    static PassOwnPtr<WebCore::TiledBackingStoreBackend> create(CoordinatedTileClient* client) { return adoptPtr(new CoordinatedTileBackend(client)); }
     PassRefPtr<WebCore::Tile> createTile(WebCore::TiledBackingStore*, const WebCore::Tile::Coordinate&);
     void paintCheckerPattern(WebCore::GraphicsContext*, const WebCore::FloatRect&);
 
 private:
-    TiledBackingStoreRemoteTileBackend(TiledBackingStoreRemoteTileClient*);
-    TiledBackingStoreRemoteTileClient* m_client;
+    CoordinatedTileBackend(CoordinatedTileClient*);
+    CoordinatedTileClient* m_client;
 };
 
 
@@ -98,4 +98,4 @@ private:
 
 #endif // USE(TILED_BACKING_STORE)
 
-#endif // TiledBackingStoreRemoteTile
+#endif // CoordinatedTile

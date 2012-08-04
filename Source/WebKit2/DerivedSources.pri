@@ -51,8 +51,10 @@ VPATH = \
     WebProcess/ResourceCache \
     WebProcess/WebCoreSupport \
     WebProcess/WebPage \
+    WebProcess/WebPage/CoordinatedGraphics \
     WebProcess \
     UIProcess \
+    UIProcess/CoordinatedGraphics \
     UIProcess/Downloads \
     UIProcess/Notifications \
     UIProcess/Plugins \
@@ -93,10 +95,10 @@ MESSAGE_RECEIVERS = \
     WebNotificationManager.messages.in \
     WebFullScreenManager.messages.in \
     WebFullScreenManagerProxy.messages.in \
-    WebPage/DrawingArea.messages.in \
-    WebPage/LayerTreeCoordinator/LayerTreeCoordinator.messages.in \
-    WebPage/WebInspector.messages.in \
-    WebPage/WebPage.messages.in \
+    DrawingArea.messages.in \
+    LayerTreeCoordinator.messages.in \
+    WebInspector.messages.in \
+    WebPage.messages.in \
     WebPageProxy.messages.in \
     WebProcess.messages.in \
     WebProcessConnection.messages.in \

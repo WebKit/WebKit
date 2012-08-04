@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "TiledBackingStoreRemoteTile.h"
+#include "CoordinatedTile.h"
 
 #if USE(TILED_BACKING_STORE)
 
@@ -37,7 +37,7 @@ using namespace WebCore;
 
 namespace WebKit {
 
-TiledBackingStoreRemoteTile::TiledBackingStoreRemoteTile(TiledBackingStoreRemoteTileClient* client, TiledBackingStore* tiledBackingStore, const Coordinate& tileCoordinate)
+CoordinatedTile::CoordinatedTile(CoordinatedTileClient* client, TiledBackingStore* tiledBackingStore, const Coordinate& tileCoordinate)
     : m_client(client)
     , m_tiledBackingStore(tiledBackingStore)
     , m_coordinate(tileCoordinate)
@@ -47,18 +47,18 @@ TiledBackingStoreRemoteTile::TiledBackingStoreRemoteTile(TiledBackingStoreRemote
 {
 }
 
-TiledBackingStoreRemoteTile::~TiledBackingStoreRemoteTile()
+CoordinatedTile::~CoordinatedTile()
 {
     if (m_ID)
         m_client->removeTile(m_ID);
 }
 
-bool TiledBackingStoreRemoteTile::isDirty() const
+bool CoordinatedTile::isDirty() const
 {
     return !m_dirtyRect.isEmpty();
 }
 
-void TiledBackingStoreRemoteTile::invalidate(const IntRect& dirtyRect)
+void CoordinatedTile::invalidate(const IntRect& dirtyRect)
 {
     IntRect tileDirtyRect = intersection(dirtyRect, m_rect);
     if (tileDirtyRect.isEmpty())
@@ -67,7 +67,7 @@ void TiledBackingStoreRemoteTile::invalidate(const IntRect& dirtyRect)
     m_dirtyRect.unite(tileDirtyRect);
 }
 
-Vector<IntRect> TiledBackingStoreRemoteTile::updateBackBuffer()
+Vector<IntRect> CoordinatedTile::updateBackBuffer()
 {
     if (!isDirty())
         return Vector<IntRect>();
@@ -96,38 +96,38 @@ Vector<IntRect> TiledBackingStoreRemoteTile::updateBackBuffer()
     return Vector<IntRect>();
 }
 
-void TiledBackingStoreRemoteTile::swapBackBufferToFront()
+void CoordinatedTile::swapBackBufferToFront()
 {
     // Handled by tiledBackingStorePaintEnd.
 }
 
-bool TiledBackingStoreRemoteTile::isReadyToPaint() const
+bool CoordinatedTile::isReadyToPaint() const
 {
     return !!m_ID;
 }
 
-void TiledBackingStoreRemoteTile::paint(GraphicsContext* context, const IntRect& rect)
+void CoordinatedTile::paint(GraphicsContext* context, const IntRect& rect)
 {
     ASSERT_NOT_REACHED();
 }
 
-void TiledBackingStoreRemoteTile::resize(const IntSize& newSize)
+void CoordinatedTile::resize(const IntSize& newSize)
 {
     m_rect = IntRect(m_rect.location(), newSize);
     m_dirtyRect = m_rect;
 }
 
-TiledBackingStoreRemoteTileBackend::TiledBackingStoreRemoteTileBackend(TiledBackingStoreRemoteTileClient* client)
+CoordinatedTileBackend::CoordinatedTileBackend(CoordinatedTileClient* client)
     : m_client(client)
 {
 }
 
-PassRefPtr<WebCore::Tile> TiledBackingStoreRemoteTileBackend::createTile(WebCore::TiledBackingStore* tiledBackingStore, const WebCore::Tile::Coordinate& tileCoordinate)
+PassRefPtr<WebCore::Tile> CoordinatedTileBackend::createTile(WebCore::TiledBackingStore* tiledBackingStore, const WebCore::Tile::Coordinate& tileCoordinate)
 {
-    return TiledBackingStoreRemoteTile::create(m_client, tiledBackingStore, tileCoordinate);
+    return CoordinatedTile::create(m_client, tiledBackingStore, tileCoordinate);
 }
 
-void TiledBackingStoreRemoteTileBackend::paintCheckerPattern(WebCore::GraphicsContext*, const WebCore::FloatRect&)
+void CoordinatedTileBackend::paintCheckerPattern(WebCore::GraphicsContext*, const WebCore::FloatRect&)
 {
 }
 

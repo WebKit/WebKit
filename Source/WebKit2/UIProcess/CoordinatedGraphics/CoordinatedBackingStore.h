@@ -17,10 +17,10 @@
  Boston, MA 02110-1301, USA.
  */
 
-#ifndef LayerBackingStore_h
-#define LayerBackingStore_h
+#ifndef CoordinatedBackingStore_h
+#define CoordinatedBackingStore_h
 
-#if USE(UI_SIDE_COMPOSITING)
+#if USE(COORDINATED_GRAPHICS)
 
 #include "TextureMapper.h"
 #include "TextureMapperBackingStore.h"
@@ -30,9 +30,9 @@ namespace WebKit {
 
 class ShareableSurface;
 
-class LayerBackingStoreTile : public WebCore::TextureMapperTile {
+class CoordinatedBackingStoreTile : public WebCore::TextureMapperTile {
 public:
-    LayerBackingStoreTile(float scale = 1)
+    CoordinatedBackingStoreTile(float scale = 1)
         : TextureMapperTile(WebCore::FloatRect())
         , m_scale(scale)
         , m_repaintCount(0)
@@ -54,21 +54,21 @@ private:
     int m_repaintCount;
 };
 
-class LayerBackingStore : public WebCore::TextureMapperBackingStore {
+class CoordinatedBackingStore : public WebCore::TextureMapperBackingStore {
 public:
     void createTile(int, float);
     void removeTile(int);
     void updateTile(int, const WebCore::IntRect&, const WebCore::IntRect&, PassRefPtr<ShareableSurface>, const WebCore::IntPoint&);
-    static PassRefPtr<LayerBackingStore> create() { return adoptRef(new LayerBackingStore); }
+    static PassRefPtr<CoordinatedBackingStore> create() { return adoptRef(new CoordinatedBackingStore); }
     void commitTileOperations(WebCore::TextureMapper*);
     PassRefPtr<WebCore::BitmapTexture> texture() const;
     virtual void paintToTextureMapper(WebCore::TextureMapper*, const WebCore::FloatRect&, const WebCore::TransformationMatrix&, float, WebCore::BitmapTexture*);
 
 private:
-    LayerBackingStore()
+    CoordinatedBackingStore()
         : m_scale(1.)
     { }
-    HashMap<int, LayerBackingStoreTile> m_tiles;
+    HashMap<int, CoordinatedBackingStoreTile> m_tiles;
     Vector<int> m_tilesToRemove;
     float m_scale;
 };
@@ -76,4 +76,4 @@ private:
 } // namespace WebKit
 #endif
 
-#endif // LayerBackingStore_h
+#endif // CoordinatedBackingStore_h

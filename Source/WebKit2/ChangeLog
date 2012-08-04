@@ -1,3 +1,75 @@
+2012-08-04  No'am Rosenthal  <noam.rosenthal@nokia.com>
+
+        [Qt] UI_SIDE_COMPOSITING code has confusing names
+        https://bugs.webkit.org/show_bug.cgi?id=93164
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Renamed and consolidated code guarded under UI_SIDE_COMPOSITING, now under
+        USE(COORDINATED_GRAPHICS) guard and CoordinatedGraphics folders.
+
+        * CMakeLists.txt:
+        * DerivedSources.pri:
+        * Shared/WebCoreArgumentCoders.cpp:
+        (CoreIPC):
+        * Shared/WebCoreArgumentCoders.h:
+        * Shared/WebLayerTreeInfo.cpp:
+        * Shared/WebLayerTreeInfo.h:
+        * Target.pri:
+        * UIProcess/API/qt/qquickwebpage.cpp:
+        (QQuickWebPage::updatePaintNode):
+        * UIProcess/API/qt/raw/qrawwebview.cpp:
+        (QRawWebView::paint):
+        * UIProcess/CoordinatedGraphics/CoordinatedBackingStore.cpp: Renamed from Source/WebKit2/UIProcess/texmap/LayerBackingStore.cpp.
+        * UIProcess/CoordinatedGraphics/CoordinatedBackingStore.h: Renamed from Source/WebKit2/UIProcess/texmap/LayerBackingStore.h.
+        * UIProcess/CoordinatedGraphics/LayerTreeCoordinatorProxy.cpp: Renamed from Source/WebKit2/UIProcess/LayerTreeCoordinatorProxy.cpp.
+        * UIProcess/CoordinatedGraphics/LayerTreeCoordinatorProxy.h: Renamed from Source/WebKit2/UIProcess/LayerTreeCoordinatorProxy.h.
+        * UIProcess/CoordinatedGraphics/LayerTreeCoordinatorProxy.messages.in: Renamed from Source/WebKit2/UIProcess/LayerTreeCoordinatorProxy.messages.in.
+        * UIProcess/CoordinatedGraphics/LayerTreeRenderer.cpp: Renamed from Source/WebKit2/UIProcess/WebLayerTreeRenderer.cpp.
+        * UIProcess/CoordinatedGraphics/LayerTreeRenderer.h: Renamed from Source/WebKit2/UIProcess/WebLayerTreeRenderer.h.
+        * UIProcess/DrawingAreaProxy.cpp:
+        (WebKit):
+        * UIProcess/DrawingAreaProxy.h:
+        (DrawingAreaProxy):
+        * UIProcess/DrawingAreaProxyImpl.cpp:
+        (WebKit::DrawingAreaProxyImpl::DrawingAreaProxyImpl):
+        (WebKit::DrawingAreaProxyImpl::enterAcceleratedCompositingMode):
+        (WebKit):
+        * UIProcess/DrawingAreaProxyImpl.h:
+        (DrawingAreaProxyImpl):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didReceiveMessage):
+        * UIProcess/qt/QtWebPageSGNode.cpp:
+        (WebKit::ContentsSGNode::ContentsSGNode):
+        (WebKit::ContentsSGNode::layerTreeRenderer):
+        (ContentsSGNode):
+        (WebKit::QtWebPageSGNode::setRenderer):
+        * UIProcess/qt/QtWebPageSGNode.h:
+        (WebKit):
+        (QtWebPageSGNode):
+        * WebKit2.pri:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::scheduleAnimation):
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedGraphicsLayer.cpp: Renamed from Source/WebKit2/WebProcess/WebPage/LayerTreeCoordinator/WebGraphicsLayer.cpp.
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedGraphicsLayer.h: Renamed from Source/WebKit2/WebProcess/WebPage/LayerTreeCoordinator/WebGraphicsLayer.h.
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedTile.cpp: Renamed from Source/WebKit2/WebProcess/WebPage/TiledBackingStoreRemoteTile.cpp.
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedTile.h: Renamed from Source/WebKit2/WebProcess/WebPage/TiledBackingStoreRemoteTile.h.
+        * WebProcess/WebPage/CoordinatedGraphics/LayerTreeCoordinator.cpp: Renamed from Source/WebKit2/WebProcess/WebPage/LayerTreeCoordinator/LayerTreeCoordinator.cpp.
+        * WebProcess/WebPage/CoordinatedGraphics/LayerTreeCoordinator.h: Renamed from Source/WebKit2/WebProcess/WebPage/LayerTreeCoordinator/LayerTreeCoordinator.h.
+        * WebProcess/WebPage/CoordinatedGraphics/LayerTreeCoordinator.messages.in: Renamed from Source/WebKit2/WebProcess/WebPage/LayerTreeCoordinator/LayerTreeCoordinator.messages.in.
+        * WebProcess/WebPage/DrawingArea.h:
+        (DrawingArea):
+        * WebProcess/WebPage/DrawingAreaImpl.cpp:
+        (WebKit):
+        * WebProcess/WebPage/DrawingAreaImpl.h:
+        (DrawingAreaImpl):
+        * WebProcess/WebPage/LayerTreeHost.h:
+        (LayerTreeHost):
+        * WebProcess/WebPage/UpdateAtlas.cpp:
+        * WebProcess/WebPage/UpdateAtlas.h:
+        * WebProcess/qt/WebProcessMainQt.cpp:
+        (WebKit::WebProcessMainQt):
+
 2012-08-04  Christophe Dumez  <christophe.dumez@intel.com>
 
         [WK2] Move WebIntentData from Shared to UIProcess

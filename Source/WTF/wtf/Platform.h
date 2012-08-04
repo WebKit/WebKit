@@ -1017,7 +1017,7 @@
 
 /* Compositing on the UI-process in WebKit2 */
 #if PLATFORM(QT)
-#define WTF_USE_UI_SIDE_COMPOSITING 1
+#define WTF_USE_COORDINATED_GRAPHICS 1
 #endif
 
 #if PLATFORM(MAC) || PLATFORM(IOS)

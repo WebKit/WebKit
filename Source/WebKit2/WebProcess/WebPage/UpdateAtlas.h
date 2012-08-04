@@ -22,7 +22,7 @@
 
 #include "ShareableSurface.h"
 
-#if USE(UI_SIDE_COMPOSITING)
+#if USE(COORDINATED_GRAPHICS)
 namespace WebCore {
 class GraphicsContext;
 class IntRect;
