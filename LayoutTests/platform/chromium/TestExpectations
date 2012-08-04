@@ -3208,8 +3208,6 @@ BUGWK85951 WIN DEBUG : fast/css/hover-update.html = TEXT PASS
 // Requires ENABLE(MEDIA_CAPTURE)
 BUGWK85958 : fast/forms/file/file-input-capture.html = TEXT
 
-BUGWK85952 : http/tests/media/media-source/video-media-source-play.html = PASS TIMEOUT
-
 // Started flaking at around http://trac.webkit.org/changeset/116278.
 BUGWK85950 LINUX DEBUG : compositing/geometry/limit-layer-bounds-transformed-overflow.html = PASS TEXT
 
