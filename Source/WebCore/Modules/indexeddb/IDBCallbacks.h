@@ -30,9 +30,11 @@
 #define IDBCallbacks_h
 
 #include "DOMStringList.h"
+#include "IDBDatabaseBackendInterface.h"
 #include "IDBDatabaseError.h"
 #include "IDBKey.h"
 #include "IDBKeyPath.h"
+#include "IDBTransactionBackendInterface.h"
 #include "SerializedScriptValue.h"
 #include <wtf/Threading.h>
 
@@ -40,9 +42,7 @@
 
 namespace WebCore {
 class IDBCursorBackendInterface;
-class IDBDatabaseBackendInterface;
 class IDBObjectStoreBackendInterface;
-class IDBTransactionBackendInterface;
 
 // FIXME: All child classes need to be made threadsafe.
 class IDBCallbacks : public ThreadSafeRefCounted<IDBCallbacks> {
@@ -59,7 +59,9 @@ public:
     virtual void onSuccess(PassRefPtr<SerializedScriptValue>, PassRefPtr<IDBKey>, const IDBKeyPath&) = 0;
     virtual void onSuccessWithContinuation() = 0;
     virtual void onSuccessWithPrefetch(const Vector<RefPtr<IDBKey> >& keys, const Vector<RefPtr<IDBKey> >& primaryKeys, const Vector<RefPtr<SerializedScriptValue> >& values) = 0;
-    virtual void onBlocked() = 0;
+    virtual void onBlocked() { ASSERT_NOT_REACHED(); }
+    virtual void onBlocked(int64_t existingVersion) { ASSERT_NOT_REACHED(); }
+    virtual void onUpgradeNeeded(int64_t oldVersion, PassRefPtr<IDBTransactionBackendInterface>, PassRefPtr<IDBDatabaseBackendInterface>) { ASSERT_NOT_REACHED(); }
 };
 
 } // namespace WebCore

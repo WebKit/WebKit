@@ -57,6 +57,7 @@ public:
 
     void registerFrontendCallbacks(PassRefPtr<IDBDatabaseCallbacks>);
     void openConnection(PassRefPtr<IDBCallbacks>);
+    void openConnectionWithVersion(PassRefPtr<IDBCallbacks>, int64_t version);
     void deleteDatabase(PassRefPtr<IDBCallbacks>);
 
     // IDBDatabaseBackendInterface
@@ -71,11 +72,13 @@ public:
     IDBTransactionCoordinator* transactionCoordinator() const { return m_transactionCoordinator.get(); }
     void transactionStarted(PassRefPtr<IDBTransactionBackendImpl>);
     void transactionFinished(PassRefPtr<IDBTransactionBackendImpl>);
+    void transactionFinishedAndEventsFired(PassRefPtr<IDBTransactionBackendImpl>);
 
 private:
     IDBDatabaseBackendImpl(const String& name, IDBBackingStore* database, IDBTransactionCoordinator*, IDBFactoryBackendImpl*, const String& uniqueIdentifier);
 
     bool openInternal();
+    void runIntVersionChangeTransaction(int64_t requestedVersion, PassRefPtr<IDBCallbacks>);
     void loadObjectStores();
     int32_t connectionCount();
     void processPendingCalls();
@@ -83,6 +86,7 @@ private:
     static void createObjectStoreInternal(ScriptExecutionContext*, PassRefPtr<IDBDatabaseBackendImpl>, PassRefPtr<IDBObjectStoreBackendImpl>, PassRefPtr<IDBTransactionBackendImpl>);
     static void deleteObjectStoreInternal(ScriptExecutionContext*, PassRefPtr<IDBDatabaseBackendImpl>, PassRefPtr<IDBObjectStoreBackendImpl>, PassRefPtr<IDBTransactionBackendImpl>);
     static void setVersionInternal(ScriptExecutionContext*, PassRefPtr<IDBDatabaseBackendImpl>, const String& version, PassRefPtr<IDBCallbacks>, PassRefPtr<IDBTransactionBackendImpl>);
+    static void setIntVersionInternal(ScriptExecutionContext*, PassRefPtr<IDBDatabaseBackendImpl>, int64_t version, PassRefPtr<IDBCallbacks>, PassRefPtr<IDBTransactionBackendInterface>);
 
     // These are used as setVersion transaction abort tasks.
     static void removeObjectStoreFromMap(ScriptExecutionContext*, PassRefPtr<IDBDatabaseBackendImpl>, PassRefPtr<IDBObjectStoreBackendImpl>);
@@ -93,6 +97,7 @@ private:
     int64_t m_id;
     String m_name;
     String m_version;
+    int64_t m_intVersion;
 
     String m_identifier;
     // This might not need to be a RefPtr since the factory's lifetime is that of the page group, but it's better to be conservitive than sorry.
@@ -112,6 +117,10 @@ private:
 
     class PendingOpenCall;
     Deque<RefPtr<PendingOpenCall> > m_pendingOpenCalls;
+
+    class PendingOpenWithVersionCall;
+    Deque<RefPtr<PendingOpenWithVersionCall> > m_pendingOpenWithVersionCalls;
+    Deque<RefPtr<PendingOpenWithVersionCall> > m_pendingSecondHalfOpenWithVersionCalls;
 
     class PendingDeleteCall;
     Deque<RefPtr<PendingDeleteCall> > m_pendingDeleteCalls;

@@ -47,8 +47,9 @@ public:
     virtual ~IDBBackingStore() {};
 
     virtual void getDatabaseNames(Vector<String>& foundNames) = 0;
-    virtual bool getIDBDatabaseMetaData(const String& name, String& foundVersion, int64_t& foundId) = 0;
-    virtual bool createIDBDatabaseMetaData(const String& name, const String& version, int64_t& rowId) = 0;
+    virtual bool getIDBDatabaseMetaData(const String& name, String& foundStringVersion, int64_t& foundIntVersion, int64_t& foundId) = 0;
+    virtual bool createIDBDatabaseMetaData(const String& name, const String& stringVersion, int64_t intVersion, int64_t& rowId) = 0;
+    virtual bool updateIDBDatabaseIntVersion(int64_t rowId, int64_t intVersion) = 0;
     virtual bool updateIDBDatabaseMetaData(int64_t rowId, const String& version) = 0;
     virtual bool deleteDatabase(const String& name) = 0;
 

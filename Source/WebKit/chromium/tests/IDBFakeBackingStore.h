@@ -33,9 +33,10 @@ namespace WebCore {
 class IDBFakeBackingStore : public IDBBackingStore {
 public:
     virtual void getDatabaseNames(Vector<String>& foundNames) OVERRIDE { }
-    virtual bool getIDBDatabaseMetaData(const String& name, String& foundVersion, int64_t& foundId) OVERRIDE { return false; }
-    virtual bool createIDBDatabaseMetaData(const String& name, const String& version, int64_t& rowId) OVERRIDE { return true; }
+    virtual bool getIDBDatabaseMetaData(const String& name, String& foundVersion, int64_t& foundIntVersion, int64_t& foundId) OVERRIDE { return false; }
+    virtual bool createIDBDatabaseMetaData(const String& name, const String& version, int64_t intVersion, int64_t& rowId) OVERRIDE { return true; }
     virtual bool updateIDBDatabaseMetaData(int64_t rowId, const String& version) OVERRIDE { return false; }
+    virtual bool updateIDBDatabaseIntVersion(int64_t rowId, int64_t version) OVERRIDE { return false; }
     virtual bool deleteDatabase(const String& name) OVERRIDE { return false; }
 
     virtual void getObjectStores(int64_t databaseId, Vector<int64_t>& foundIds, Vector<String>& foundNames, Vector<IDBKeyPath>& foundKeyPaths, Vector<bool>& foundAutoIncrementFlags) OVERRIDE { }
