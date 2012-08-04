@@ -1,3 +1,9 @@
+2012-08-04  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Rebaseline after r124691.
+
+        * editing/deleting/smart-editing-disabled-expected.txt:
+
 2012-08-03  Ryosuke Niwa  <rniwa@webkit.org>
 
         Use testRunner instead of layoutTestController in tests still found to be using layoutTestController by grep
