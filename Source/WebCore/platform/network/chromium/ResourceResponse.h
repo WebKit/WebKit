@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
- * Copyright (C) 2008 Google, Inc.
+ * Copyright (C) 2012 Google, Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -123,11 +123,6 @@ namespace WebCore {
     private:
         friend class ResourceResponseBase;
 
-        // An opaque value that contains some information regarding the security of
-        // the connection for this request, such as SSL connection info (empty
-        // string if not over HTTPS).
-        CString m_securityInfo;
-
         void doUpdateResourceResponse()
         {
             notImplemented();
@@ -135,6 +130,11 @@ namespace WebCore {
 
         PassOwnPtr<CrossThreadResourceResponseData> doPlatformCopyData(PassOwnPtr<CrossThreadResourceResponseData>) const;
         void doPlatformAdopt(PassOwnPtr<CrossThreadResourceResponseData>);
+
+        // An opaque value that contains some information regarding the security of
+        // the connection for this request, such as SSL connection info (empty
+        // string if not over HTTPS).
+        CString m_securityInfo;
 
         // HTTP version used in the response, if known.
         HTTPVersion m_httpVersion;
@@ -181,6 +181,8 @@ namespace WebCore {
     };
 
     struct CrossThreadResourceResponseData : public CrossThreadResourceResponseDataBase {
+        CString m_securityInfo;
+        ResourceResponse::HTTPVersion m_httpVersion;
         long long m_appCacheID;
         KURL m_appCacheManifestURL;
         bool m_isMultipartPayload;

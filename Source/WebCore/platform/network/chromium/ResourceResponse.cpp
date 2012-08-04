@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Google, Inc.
+ * Copyright (C) 2012 Google, Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,6 +30,8 @@ namespace WebCore {
 
 PassOwnPtr<CrossThreadResourceResponseData> ResourceResponse::doPlatformCopyData(PassOwnPtr<CrossThreadResourceResponseData> data) const
 {
+    data->m_securityInfo = CString(m_securityInfo.data(), m_securityInfo.length());
+    data->m_httpVersion = m_httpVersion;
     data->m_appCacheID = m_appCacheID;
     data->m_appCacheManifestURL = m_appCacheManifestURL.copy();
     data->m_isMultipartPayload = m_isMultipartPayload;
@@ -38,14 +40,17 @@ PassOwnPtr<CrossThreadResourceResponseData> ResourceResponse::doPlatformCopyData
     data->m_wasAlternateProtocolAvailable = m_wasAlternateProtocolAvailable;
     data->m_wasFetchedViaProxy = m_wasFetchedViaProxy;
     data->m_responseTime = m_responseTime;
-    data->m_remoteIPAddress = m_remoteIPAddress;
+    data->m_remoteIPAddress = m_remoteIPAddress.isolatedCopy();
     data->m_remotePort = m_remotePort;
-    // Bug https://bugs.webkit.org/show_bug.cgi?id=60397 this doesn't support m_downloadedFile.
+    // Bug https://bugs.webkit.org/show_bug.cgi?id=60397 this doesn't support m_downloadedFile,
+    // or whatever values may be present in the opaque m_extraData structure.
     return data;
 }
 
 void ResourceResponse::doPlatformAdopt(PassOwnPtr<CrossThreadResourceResponseData> data)
 {
+    m_securityInfo = data->m_securityInfo;
+    m_httpVersion = data->m_httpVersion;
     m_appCacheID = data->m_appCacheID;
     m_appCacheManifestURL = data->m_appCacheManifestURL.copy();
     m_isMultipartPayload = data->m_isMultipartPayload;
@@ -56,7 +61,8 @@ void ResourceResponse::doPlatformAdopt(PassOwnPtr<CrossThreadResourceResponseDat
     m_responseTime = data->m_responseTime;
     m_remoteIPAddress = data->m_remoteIPAddress;
     m_remotePort = data->m_remotePort;
-    // Bug https://bugs.webkit.org/show_bug.cgi?id=60397 this doesn't support m_downloadedFile.
+    // Bug https://bugs.webkit.org/show_bug.cgi?id=60397 this doesn't support m_downloadedFile,
+    // or whatever values may be present in the opaque m_extraData structure.
 }
 
 } // namespace WebCore
