@@ -1,3 +1,23 @@
+2012-08-04  Robert Hogan  <robert@webkit.org>
+
+        Rebaseline Chromium results after r124697
+
+        Unreviewed, gardening.
+
+        * platform/chromium-mac-snowleopard/tables/mozilla_expected_failures/bugs/bug106966-expected.png:
+        * platform/chromium-mac-snowleopard/tables/mozilla_expected_failures/marvin/table_overflow_hidden_tbody-expected.png:
+        * platform/chromium-mac-snowleopard/tables/mozilla_expected_failures/marvin/table_overflow_hidden_tr-expected.png:
+        * platform/chromium-mac/tables/mozilla_expected_failures/bugs/bug106966-expected.png:
+        * platform/chromium-mac/tables/mozilla_expected_failures/bugs/bug106966-expected.txt:
+        * platform/chromium-mac/tables/mozilla_expected_failures/marvin/table_overflow_hidden_tbody-expected.png:
+        * platform/chromium-mac/tables/mozilla_expected_failures/marvin/table_overflow_hidden_tbody-expected.txt: Added.
+        * platform/chromium-mac/tables/mozilla_expected_failures/marvin/table_overflow_hidden_tr-expected.png:
+        * platform/chromium-mac/tables/mozilla_expected_failures/marvin/table_overflow_hidden_tr-expected.txt: Added.
+        * platform/chromium-win/tables/mozilla_expected_failures/bugs/bug106966-expected.png:
+        * platform/chromium-win/tables/mozilla_expected_failures/marvin/table_overflow_hidden_tbody-expected.png:
+        * platform/chromium-win/tables/mozilla_expected_failures/marvin/table_overflow_hidden_tr-expected.png:
+        * platform/chromium/TestExpectations:
+
 2012-08-03  Robert Hogan  <robert@webkit.org>
 
         CSS 2.1 failure: overflow-applies-to-001 fails
