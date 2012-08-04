@@ -469,8 +469,6 @@ webkit2_sources += \
 	Source/WebKit2/Shared/WebHitTestResult.h \
 	Source/WebKit2/Shared/WebImage.cpp \
 	Source/WebKit2/Shared/WebImage.h \
-	Source/WebKit2/Shared/WebIntentData.cpp \
-	Source/WebKit2/Shared/WebIntentData.h \
 	Source/WebKit2/Shared/WebIntentServiceInfo.cpp \
 	Source/WebKit2/Shared/WebIntentServiceInfo.h \
 	Source/WebKit2/Shared/WebKeyboardEvent.cpp \
@@ -871,6 +869,8 @@ webkit2_sources += \
 	Source/WebKit2/UIProcess/WebIconDatabaseClient.h \
 	Source/WebKit2/UIProcess/WebInspectorProxy.cpp \
 	Source/WebKit2/UIProcess/WebInspectorProxy.h \
+	Source/WebKit2/UIProcess/WebIntentData.cpp \
+	Source/WebKit2/UIProcess/WebIntentData.h \
 	Source/WebKit2/UIProcess/WebKeyValueStorageManagerProxy.cpp \
 	Source/WebKit2/UIProcess/WebKeyValueStorageManagerProxy.h \
 	Source/WebKit2/UIProcess/WebMediaCacheManagerProxy.cpp \

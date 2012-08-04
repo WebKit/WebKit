@@ -159,7 +159,6 @@ SET(WebKit2_SOURCES
     Shared/WebGraphicsContext.cpp
     Shared/WebHitTestResult.cpp
     Shared/WebImage.cpp
-    Shared/WebIntentData.cpp
     Shared/WebIntentServiceInfo.cpp
     Shared/WebKeyboardEvent.cpp
     Shared/WebLayerTreeInfo.cpp
@@ -253,6 +252,7 @@ SET(WebKit2_SOURCES
     UIProcess/WebIconDatabase.cpp
     UIProcess/WebIconDatabaseClient.cpp
     UIProcess/WebInspectorProxy.cpp
+    UIProcess/WebIntentData.cpp
     UIProcess/WebKeyValueStorageManagerProxy.cpp
     UIProcess/WebLayerTreeRenderer.cpp
     UIProcess/WebLoaderClient.cpp
