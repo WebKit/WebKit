@@ -80,10 +80,10 @@ void CCScrollbarLayerImpl::setScrollbarData(const WebScrollbar* scrollbar, WebKi
     scrollbar->getTickmarks(m_tickmarks);
 }
 
-static FloatRect toUVRect(const WebRect& r, const WebRect& bounds)
+static FloatRect toUVRect(const WebRect& r, const IntRect& bounds)
 {
-    return FloatRect(static_cast<float>(r.x) / bounds.width, static_cast<float>(r.y) / bounds.height,
-                     static_cast<float>(r.width) / bounds.width, static_cast<float>(r.height) / bounds.height);
+    return FloatRect(static_cast<float>(r.x) / bounds.width(), static_cast<float>(r.y) / bounds.height(),
+                     static_cast<float>(r.width) / bounds.width(), static_cast<float>(r.height) / bounds.height());
 }
 
 void CCScrollbarLayerImpl::scrollbarGeometry(WebRect& thumbRect, WebRect& backTrackRect, WebRect& foreTrackRect)
@@ -104,7 +104,7 @@ void CCScrollbarLayerImpl::appendQuads(CCQuadSink& quadList, const CCSharedQuadS
     scrollbarGeometry(thumbRect, backTrackRect, foreTrackRect);
 
     if (m_thumbResourceId && !thumbRect.isEmpty()) {
-        OwnPtr<CCTextureDrawQuad> quad = CCTextureDrawQuad::create(sharedQuadState, IntRect(thumbRect), m_thumbResourceId, premultipledAlpha, uvRect, flipped);
+        OwnPtr<CCTextureDrawQuad> quad = CCTextureDrawQuad::create(sharedQuadState, IntRect(thumbRect.x, thumbRect.y, thumbRect.width, thumbRect.height), m_thumbResourceId, premultipledAlpha, uvRect, flipped);
         quad->setNeedsBlending();
         quadList.append(quad.release());
     }
@@ -114,7 +114,7 @@ void CCScrollbarLayerImpl::appendQuads(CCQuadSink& quadList, const CCSharedQuadS
 
     // We only paint the track in two parts if we were given a texture for the forward track part.
     if (m_foreTrackResourceId && !foreTrackRect.isEmpty())
-        quadList.append(CCTextureDrawQuad::create(sharedQuadState, IntRect(foreTrackRect), m_foreTrackResourceId, premultipledAlpha, toUVRect(foreTrackRect, boundsRect), flipped));
+        quadList.append(CCTextureDrawQuad::create(sharedQuadState, IntRect(foreTrackRect.x, foreTrackRect.y, foreTrackRect.width, foreTrackRect.height), m_foreTrackResourceId, premultipledAlpha, toUVRect(foreTrackRect, boundsRect), flipped));
 
     // Order matters here: since the back track texture is being drawn to the entire contents rect, we must append it after the thumb and
     // fore track quads. The back track texture contains (and displays) the buttons.
@@ -146,7 +146,7 @@ WebKit::WebPoint CCScrollbarLayerImpl::CCScrollbar::location() const
 
 WebKit::WebSize CCScrollbarLayerImpl::CCScrollbar::size() const
 {
-    return m_owner->contentBounds();
+    return WebKit::WebSize(m_owner->contentBounds().width(), m_owner->contentBounds().height());
 }
 
 bool CCScrollbarLayerImpl::CCScrollbar::enabled() const

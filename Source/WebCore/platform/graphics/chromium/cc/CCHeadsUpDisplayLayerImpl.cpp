@@ -187,7 +187,7 @@ void CCHeadsUpDisplayLayerImpl::drawFPSCounter(SkCanvas* canvas, CCFrameRateCoun
             p = 1;
 
         // Plot this data point.
-        IntPoint cur(graphLeft + x, 1 + top + p*h);
+        SkPoint cur = SkPoint::Make(graphLeft + x, 1 + top + p*h);
         if (path.isEmpty())
             path.moveTo(cur);
         else
@@ -257,15 +257,16 @@ void CCHeadsUpDisplayLayerImpl::drawDebugRects(SkCanvas* canvas, CCDebugRectHist
             break;
         }
 
-        SkRect rect = debugRects[i].rect;
+        const FloatRect& rect = debugRects[i].rect;
+        SkRect skRect = SkRect::MakeXYWH(rect.x(), rect.y(), rect.width(), rect.height());
         SkPaint paint;
         paint.setColor(fillColor);
-        canvas->drawRect(rect, paint);
+        canvas->drawRect(skRect, paint);
 
         paint.setColor(strokeColor);
         paint.setStyle(SkPaint::kStroke_Style);
         paint.setStrokeWidth(2);
-        canvas->drawRect(rect, paint);
+        canvas->drawRect(skRect, paint);
     }
 }
 

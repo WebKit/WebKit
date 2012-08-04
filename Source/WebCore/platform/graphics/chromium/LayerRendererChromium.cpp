@@ -1309,8 +1309,8 @@ void LayerRendererChromium::getFramebufferPixels(void *pixels, const IntRect& re
 
     bool doWorkaround = needsIOSurfaceReadbackWorkaround();
 
-    Platform3DObject temporaryTexture = NullPlatform3DObject;
-    Platform3DObject temporaryFBO = NullPlatform3DObject;
+    Platform3DObject temporaryTexture = 0;
+    Platform3DObject temporaryFBO = 0;
 
     if (doWorkaround) {
         // On Mac OS X, calling glReadPixels against an FBO whose color attachment is an

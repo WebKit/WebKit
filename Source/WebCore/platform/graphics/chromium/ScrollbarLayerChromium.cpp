@@ -94,7 +94,8 @@ public:
     {
         WebKit::WebCanvas* canvas = skCanvas;
         // The following is a simplification of ScrollbarThemeComposite::paint.
-        m_painter.paintScrollbarBackground(canvas, m_scrollbar, contentRect);
+        WebKit::WebRect contentWebRect(contentRect.x(), contentRect.y(), contentRect.width(), contentRect.height());
+        m_painter.paintScrollbarBackground(canvas, m_scrollbar, contentWebRect);
 
         if (m_geometry.hasButtons(m_scrollbar)) {
             WebRect backButtonStartPaintRect = m_geometry.backButtonStartRect(m_scrollbar);
@@ -246,8 +247,8 @@ void ScrollbarLayerChromium::setTexturePriorities(const CCPriorityCalculator&)
         m_foreTrack->texture()->setRequestPriority(CCPriorityCalculator::uiPriority(drawsToRoot));
     }
     if (m_thumb) {
-        IntSize thumbSize = IntRect(m_geometry.thumbRect(m_scrollbar.get())).size();
-        m_thumb->texture()->setDimensions(thumbSize, m_textureFormat);
+        WebKit::WebRect thumbRect = m_geometry.thumbRect(m_scrollbar.get());
+        m_thumb->texture()->setDimensions(IntSize(thumbRect.width, thumbRect.height), m_textureFormat);
         m_thumb->texture()->setRequestPriority(CCPriorityCalculator::uiPriority(drawsToRoot));
     }
 }
@@ -259,16 +260,17 @@ void ScrollbarLayerChromium::update(CCTextureUpdater& updater, const CCOcclusion
 
     createTextureUpdaterIfNeeded();
 
-    IntPoint scrollbarOrigin(m_scrollbar->location());
+    IntPoint scrollbarOrigin(m_scrollbar->location().x, m_scrollbar->location().y);
     IntRect contentRect(scrollbarOrigin, contentBounds());
     updatePart(m_backTrackUpdater.get(), m_backTrack.get(), contentRect, updater, stats);
     if (m_foreTrack && m_foreTrackUpdater)
         updatePart(m_foreTrackUpdater.get(), m_foreTrack.get(), contentRect, updater, stats);
 
     // Consider the thumb to be at the origin when painting.
-    IntRect thumbRect = IntRect(IntPoint(), IntRect(m_geometry.thumbRect(m_scrollbar.get())).size());
-    if (!thumbRect.isEmpty())
-        updatePart(m_thumbUpdater.get(), m_thumb.get(), thumbRect, updater, stats);
+    WebKit::WebRect thumbRect = m_geometry.thumbRect(m_scrollbar.get());
+    IntRect originThumbRect = IntRect(0, 0, thumbRect.width, thumbRect.height);
+    if (!originThumbRect.isEmpty())
+        updatePart(m_thumbUpdater.get(), m_thumb.get(), originThumbRect, updater, stats);
 }
 
 }

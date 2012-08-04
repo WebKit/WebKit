@@ -71,7 +71,7 @@ void CCFontAtlas::drawOneLineOfTextInternal(SkCanvas* canvas, const String& text
         // If the ASCII code is out of bounds, then index 0 is used, which is just a plain rectangle glyph.
         int asciiIndex = (textLine[i] < 128) ? textLine[i] : 0;
         IntRect glyphBounds = m_asciiToRectTable[asciiIndex];
-        SkIRect source = glyphBounds;
+        SkIRect source = SkIRect::MakeXYWH(glyphBounds.x(), glyphBounds.y(), glyphBounds.width(), glyphBounds.height());
         canvas->drawBitmapRect(m_atlas, &source, SkRect::MakeXYWH(position.x(), position.y(), glyphBounds.width(), glyphBounds.height()));
         position.setX(position.x() + glyphBounds.width());
     }

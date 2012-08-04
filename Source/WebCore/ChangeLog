@@ -1,3 +1,32 @@
+2012-08-03  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Stop relying on implicit WebFoo <-> WebCore conversion operators in compositor
+        https://bugs.webkit.org/show_bug.cgi?id=93169
+
+        Reviewed by Adrienne Walker.
+
+        This removes the compositor's reliance on implicit conversion operators from Web* types to WebKit-internal
+        types, specifically WebRect <-> WebCore::IntRect and WebString <-> WTF::String.
+
+        * platform/graphics/chromium/CanvasLayerTextureUpdater.cpp:
+        (WebCore::CanvasLayerTextureUpdater::paintContents):
+        * platform/graphics/chromium/FrameBufferSkPictureCanvasLayerTextureUpdater.cpp:
+        (WebCore::FrameBufferSkPictureCanvasLayerTextureUpdater::updateTextureRect):
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::getFramebufferPixels):
+        * platform/graphics/chromium/ScrollbarLayerChromium.cpp:
+        (WebCore::ScrollbarLayerChromium::setTexturePriorities):
+        (WebCore::ScrollbarLayerChromium::update):
+        * platform/graphics/chromium/cc/CCFontAtlas.cpp:
+        (WebCore::CCFontAtlas::drawOneLineOfTextInternal):
+        * platform/graphics/chromium/cc/CCHeadsUpDisplayLayerImpl.cpp:
+        (WebCore::CCHeadsUpDisplayLayerImpl::drawFPSCounter):
+        (WebCore::CCHeadsUpDisplayLayerImpl::drawDebugRects):
+        * platform/graphics/chromium/cc/CCScrollbarLayerImpl.cpp:
+        (WebCore::toUVRect):
+        (WebCore::CCScrollbarLayerImpl::appendQuads):
+        (WebCore::CCScrollbarLayerImpl::CCScrollbar::size):
+
 2012-08-03  Michael Nordman  <michaeln@google.com>
 
         [Chromium] Cross-thread-copy a couple more recently added ResourceResponse data members, apparently

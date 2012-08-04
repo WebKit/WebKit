@@ -117,7 +117,7 @@ void FrameBufferSkPictureCanvasLayerTextureUpdater::updateTextureRect(WebGraphic
     canvas->translate(0.0, texture->size().height());
     canvas->scale(1.0, -1.0);
     // Only the region corresponding to destRect on the texture must be updated.
-    canvas->clipRect(SkRect(destRect));
+    canvas->clipRect(SkRect::MakeXYWH(destRect.x(), destRect.y(), destRect.width(), destRect.height()));
     // Translate the origin of contentRect to that of destRect.
     // Note that destRect is defined relative to sourceRect.
     canvas->translate(contentRect().x() - sourceRect.x() + destRect.x(),
