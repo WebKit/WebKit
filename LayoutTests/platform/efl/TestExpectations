@@ -847,3 +847,9 @@ BUGWK93073 : mathml/presentation/tables.xhtml = TEXT
 BUGWK93073 : mathml/presentation/tokenElements.xhtml = TEXT
 BUGWK93073 : mathml/presentation/under.xhtml = TEXT
 BUGWK93073 : mathml/presentation/underover.xhtml = TEXT
+
+// Require rebaseline after bug 93148
+BUGWK93148 : tables/mozilla_expected_failures/bugs/bug106966.html = TEXT
+BUGWK93148 : tables/mozilla_expected_failures/marvin/table_overflow_hidden_tbody.html  = TEXT
+BUGWK93148 : tables/mozilla_expected_failures/marvin/table_overflow_hidden_tr.html  = TEXT
+BUGWK93148 : fast/css/nested-layers-with-hover.html = TEXT

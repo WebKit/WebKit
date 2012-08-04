@@ -1,3 +1,58 @@
+2012-08-03  Robert Hogan  <robert@webkit.org>
+
+        CSS 2.1 failure: overflow-applies-to-001 fails
+        https://bugs.webkit.org/show_bug.cgi?id=93148
+
+        Reviewed by Eric Seidel.
+
+        * css2.1/20110323/overflow-applies-to-001-expected.html: Added.
+        * css2.1/20110323/overflow-applies-to-001.htm: Added.
+        * css2.1/20110323/overflow-applies-to-002-expected.html: Added.
+        * css2.1/20110323/overflow-applies-to-002.htm: Added.
+        * css2.1/20110323/overflow-applies-to-003-expected.html: Added.
+        * css2.1/20110323/overflow-applies-to-003.htm: Added.
+        * css2.1/20110323/overflow-applies-to-004-expected.html: Added.
+        * css2.1/20110323/overflow-applies-to-004.htm: Added.
+        * css2.1/20110323/overflow-applies-to-005-expected.html: Added.
+        * css2.1/20110323/overflow-applies-to-005.htm: Added.
+        * css2.1/20110323/overflow-applies-to-006-expected.html: Added.
+        * css2.1/20110323/overflow-applies-to-006.htm: Added.
+        * css2.1/20110323/overflow-applies-to-007-expected.html: Added.
+        * css2.1/20110323/overflow-applies-to-007.htm: Added.
+        * css2.1/20110323/overflow-applies-to-008-expected.html: Added.
+        * css2.1/20110323/overflow-applies-to-008.htm: Added.
+        * css2.1/20110323/overflow-applies-to-009-expected.html: Added.
+        * css2.1/20110323/overflow-applies-to-009.htm: Added.
+        * css2.1/20110323/overflow-applies-to-010-expected.html: Added.
+        * css2.1/20110323/overflow-applies-to-010.htm: Added.
+        * css2.1/20110323/overflow-applies-to-012-expected.html: Added.
+        * css2.1/20110323/overflow-applies-to-012.htm: Added.
+        * css2.1/20110323/overflow-applies-to-013-expected.html: Added.
+        * css2.1/20110323/overflow-applies-to-013.htm: Added.
+        * css2.1/20110323/overflow-applies-to-014-expected.html: Added.
+        * css2.1/20110323/overflow-applies-to-014.htm: Added.
+        * css2.1/20110323/overflow-applies-to-015-expected.html: Added.
+        * css2.1/20110323/overflow-applies-to-015.htm: Added.
+            Tests from the CSS test suite.
+
+        * fast/css/nested-layers-with-hover.html: Made this dumpAsText/waitUntilDone - the test relies on a simulated hover so
+            wasn't meaningful as a rendertree.
+
+        * platform/chromium-linux/tables/mozilla_expected_failures/bugs/bug106966-expected.png:
+        * platform/chromium-linux/tables/mozilla_expected_failures/marvin/table_overflow_hidden_tbody-expected.png:
+        * platform/chromium-linux/tables/mozilla_expected_failures/marvin/table_overflow_hidden_tr-expected.png:
+        * platform/chromium-win/fast/css/nested-layers-with-hover-expected.txt:
+        * platform/chromium-win/tables/mozilla_expected_failures/bugs/bug106966-expected.txt:
+        * platform/chromium-win/tables/mozilla_expected_failures/marvin/table_overflow_hidden_tbody-expected.txt:
+        * platform/chromium-win/tables/mozilla_expected_failures/marvin/table_overflow_hidden_tr-expected.txt:
+            These are all progressions and now render the same as FF and Opera.
+
+        * platform/chromium/TestExpectations:
+        * platform/efl/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/qt/TestExpectations:
+
 2012-08-04  Mike West  <mkwst@chromium.org>
 
         Unskip http/tests/security/contentSecurityPolicy tests on various ports.

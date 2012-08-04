@@ -6,6 +6,10 @@
     }
 </style>
         <script>
+            if (window.testRunner) {
+                testRunner.waitUntilDone();
+                testRunner.dumpAsText();
+            }
             function log(msg) {
                 var console = document.getElementById('console');
                 console.innerText = msg;
@@ -22,6 +26,8 @@
                     log("PASSED: The hover effect works!");
                 else
                     log("FAILED: The hover effect did not correctly propagate down the layer chain.");
+                if (window.testRunner)
+                    testRunner.notifyDone();
             }
         
             function runTest() {

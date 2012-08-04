@@ -3483,3 +3483,9 @@ BUGWK92968 SKIP : http/tests/appcache/abort-cache-ondownloading-resource-404.htm
 BUGWK92968 SKIP : http/tests/appcache/abort-cache-onchecking.html = PASS
 BUGWK92968 SKIP : http/tests/appcache/abort-cache-ondownloading.html = PASS
 BUGWK92968 SKIP : http/tests/appcache/abort-cache-onprogress.html = PASS
+
+// Require rebaseline after bug 93148
+BUGWK93148 MAC WIN : tables/mozilla_expected_failures/bugs/bug106966.html = IMAGE+TEXT
+BUGWK93148 MAC WIN : tables/mozilla_expected_failures/marvin/table_overflow_hidden_tbody.html  = IMAGE+TEXT
+BUGWK93148 MAC WIN : tables/mozilla_expected_failures/marvin/table_overflow_hidden_tr.html  = IMAGE+TEXT
+BUGWK93148 MAC WIN : fast/css/nested-layers-with-hover.html = TEXT

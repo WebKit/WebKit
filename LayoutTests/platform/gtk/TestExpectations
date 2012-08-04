@@ -36,6 +36,11 @@
 // Tests that require new results.
 //////////////////////////////////////////////////////////////////////////////////////////
 
+// Require rebaseline after bug 93148
+BUGWK93148 : tables/mozilla_expected_failures/bugs/bug106966.html = TEXT
+BUGWK93148 : tables/mozilla_expected_failures/marvin/table_overflow_hidden_tbody.html  = TEXT
+BUGWK93148 : tables/mozilla_expected_failures/marvin/table_overflow_hidden_tr.html  = TEXT
+BUGWK93148 : fast/css/nested-layers-with-hover.html = TEXT
 
 //////////////////////////////////////////////////////////////////////////////////////////
 // Expected failures
