@@ -6,9 +6,9 @@ var testCalled = false;
 
 function test() {
     if (!testCalled) {
-        if (window.layoutTestController) {
-            layoutTestController.dumpAsText();
-            layoutTestController.waitUntilDone();
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
         }
         testCalled = true;
         return;

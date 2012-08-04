@@ -1,9 +1,9 @@
 <html>
   <!-- See resources/frame-with-anchor-cross-origin.html for description of test -->
   <script>
-    if (window.layoutTestController) {
-        layoutTestController.waitUntilDone();
-        layoutTestController.dumpChildFramesAsText();
+    if (window.testRunner) {
+        testRunner.waitUntilDone();
+        testRunner.dumpChildFramesAsText();
     }
   </script>
   <!-- small same-origin child frame loading large cross-orgin grandchild frame -->

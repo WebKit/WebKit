@@ -2,19 +2,19 @@
 <html>
 <body>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.dumpChildFramesAsText();
-    layoutTestController.waitUntilDone();
-    layoutTestController.dumpBackForwardList();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.dumpChildFramesAsText();
+    testRunner.waitUntilDone();
+    testRunner.dumpBackForwardList();
  }
    
 onload = function()
 {
     if (sessionStorage.didNav) {
         delete sessionStorage.didNav;
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     } else {
         document.getElementById('the-form').submit();
     }

@@ -1,9 +1,9 @@
 <html>
 <head>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 loadedFirstURL = false;
@@ -17,8 +17,8 @@ function test()
         res2 = document.getElementById("result2");
     } catch (ex) {
         showErr("Exception: " + ex.description);
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     }
 }
 
@@ -41,8 +41,8 @@ function callback(errCode, streamDump)
         res2.innerHTML = newlinesToHTML(parse.res2);
     }
 
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
 // Format passed by plugin: four fields separated by \n\n:

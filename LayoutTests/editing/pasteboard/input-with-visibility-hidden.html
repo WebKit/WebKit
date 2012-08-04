@@ -7,8 +7,8 @@ You should see PASS below.</p>
 <input type="text" value="FAIL">
 <p><script>
 
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 
 var input = document.querySelector('input');
 input.focus();

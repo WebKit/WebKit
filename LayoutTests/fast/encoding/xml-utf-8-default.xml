@@ -5,6 +5,6 @@
 <p>When dumped into a text file by the test controller, this needs to be viewed as UTF-8:</p>
 <p>This is an em dash, —, this is is a delta symbol, ∆, this is an uppercase pi, ∏, and this is a lowercase pi, π.</p>
 <p>Characters from unicode plane 1, like mathematical bold script capital a, 𝓐, and mathematical bold fraktur small u, 𝖚, work too.</p>
-<script>if (window.layoutTestController) layoutTestController.dumpAsText();</script>
+<script>if (window.testRunner) testRunner.dumpAsText();</script>
 </body>
 </html>

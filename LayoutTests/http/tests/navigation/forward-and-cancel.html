@@ -9,24 +9,24 @@
 //    Important to cancel the load and ensure the history is not corrupted.
 // 6. Go forward and let slow URL load.
 //    Important for testing that navigation state is reset after stopping.
-if (window.layoutTestController) {
-    layoutTestController.clearBackForwardList();
-    layoutTestController.dumpBackForwardList();
-    layoutTestController.dumpAsText();
-    layoutTestController.queueLoad("resources/forward-and-cancel-frames-container.html");
-    layoutTestController.queueLoadingScript("frames[0].clickLink();");
-    layoutTestController.queueBackNavigation(1);
+if (window.testRunner) {
+    testRunner.clearBackForwardList();
+    testRunner.dumpBackForwardList();
+    testRunner.dumpAsText();
+    testRunner.queueLoad("resources/forward-and-cancel-frames-container.html");
+    testRunner.queueLoadingScript("frames[0].clickLink();");
+    testRunner.queueBackNavigation(1);
 
     // Go forward to slow URL in child frame, but stop right away.  This should
     // reset the backForward list to the previous entry.
-    layoutTestController.queueNonLoadingScript("setTimeout('history.forward();',0); setTimeout('window.stop();',10);");
+    testRunner.queueNonLoadingScript("setTimeout('history.forward();',0); setTimeout('window.stop();',10);");
 
     // Now go back to make sure the backForwardList is not corrupted.
-    layoutTestController.queueNonLoadingScript("setTimeout('history.forward();',50);");
-    layoutTestController.queueNonLoadingScript("setTimeout('layoutTestController.notifyDone();',100);");
+    testRunner.queueNonLoadingScript("setTimeout('history.forward();',50);");
+    testRunner.queueNonLoadingScript("setTimeout('testRunner.notifyDone();',100);");
 
     // Wait until we get back to this page.
-    layoutTestController.queueLoadingScript("layoutTestController.waitUntilDone();");
+    testRunner.queueLoadingScript("testRunner.waitUntilDone();");
 }
 </script>
 <p>This test checks that the backForward list is not corrupted when a frame load is canceled.

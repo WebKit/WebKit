@@ -7,11 +7,11 @@
 <p id="description"></p>
 <div id="console"></div>
 <script>
-if (window.layoutTestController) {
-	layoutTestController.waitUntilDone();
+if (window.testRunner) {
+	testRunner.waitUntilDone();
 	setTimeout(function() {
 		testPassed('No crash.');
-		layoutTestController.notifyDone();
+		testRunner.notifyDone();
 	}, 0);
 }
 

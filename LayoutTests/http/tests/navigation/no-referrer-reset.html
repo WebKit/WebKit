@@ -8,10 +8,10 @@ This tests whether referrer information gets properly set and reset when "norefe
 <script>
     window.name = "consoleWindow";
     window.noreferrerStepDone = false;
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.setCanOpenWindows(true);
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.setCanOpenWindows(true);
+        testRunner.waitUntilDone();
     }
 
     var target = document.getElementById("link");

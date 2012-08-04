@@ -2,14 +2,14 @@
 <head>
 <title>Multiple Back/Forward Entries</title>
 <script>
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.dumpBackForwardList();
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.dumpBackForwardList();
+        testRunner.waitUntilDone();
     }
     function loadDone() {
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     }
 </script>
 </head>

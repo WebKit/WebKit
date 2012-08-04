@@ -1,10 +1,10 @@
 <html>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.setCanOpenWindows();
-    layoutTestController.dumpBackForwardList();
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.setCanOpenWindows();
+    testRunner.dumpBackForwardList();
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 function createNewWindow() {

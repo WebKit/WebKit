@@ -52,8 +52,8 @@ function successTransactionCallback()
             top.frames[3].runTestInThirdFrame();
             return;
         case 4:
-            if (window.layoutTestController)
-                layoutTestController.notifyDone();
+            if (window.testRunner)
+                testRunner.notifyDone();
             return;
         default:
             throw "Bad 'frame' value: " + frame;

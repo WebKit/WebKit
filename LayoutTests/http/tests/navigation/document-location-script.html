@@ -4,14 +4,14 @@
     var n = document.location.search.substring(1);
     if (!n) {
       // page just opened
-      layoutTestController.dumpBackForwardList();
-      layoutTestController.dumpAsText();
-      layoutTestController.waitUntilDone();
+      testRunner.dumpBackForwardList();
+      testRunner.dumpAsText();
+      testRunner.waitUntilDone();
 
       document.location = "?1"
     } else {
       // loaded the ?1 navigation
-      layoutTestController.notifyDone();
+      testRunner.notifyDone();
   }
 </script>
 </head>

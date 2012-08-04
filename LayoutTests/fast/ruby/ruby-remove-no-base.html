@@ -1,10 +1,10 @@
 <html>
     <head>
         <script> 
-            if (window.layoutTestController)
+            if (window.testRunner)
             {
-                layoutTestController.dumpAsText();
-                layoutTestController.waitUntilDone();
+                testRunner.dumpAsText();
+                testRunner.waitUntilDone();
             }
             
             function runTest()
@@ -12,8 +12,8 @@
                 document.body.removeChild(document.getElementById("test"));
                 document.getElementById("result").innerHTML = "PASS";
                 
-                if (window.layoutTestController)
-                    layoutTestController.notifyDone();
+                if (window.testRunner)
+                    testRunner.notifyDone();
             }
         </script>
     </head>

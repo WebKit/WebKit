@@ -7,8 +7,8 @@
 		<key>WebResourceData</key>
 		<string>&lt;html&gt;&lt;head&gt;
 &lt;script&gt;
-if (window.layoutTestController)
-    layoutTestController.dumpDOMAsWebArchive();
+if (window.testRunner)
+    testRunner.dumpDOMAsWebArchive();
 &lt;/script&gt;
 &lt;link rel="stylesheet" href="http://localhost:8000/webarchive/resources/localhost-stylesheet.css" type="text/css"&gt;
 &lt;/head&gt;

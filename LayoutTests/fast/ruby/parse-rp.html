@@ -3,8 +3,8 @@
 <script>
 function test()
 {
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
     var markup = document.getElementById("ruby").outerHTML;
     if (markup == '<ruby id="ruby">base/<rp><span>left</span> rp/</rp><rt>text/</rt><rp>right <span>rp</span></rp></ruby>')
         result = "TEST PASSED: Markup was correct";

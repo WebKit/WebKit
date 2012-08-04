@@ -4,9 +4,9 @@
 summary { font-family: A; }
 </style>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 function loadComplete() { 
@@ -17,8 +17,8 @@ function loadComplete() {
 }
 
 function finish() {
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 </script>
 <body onload="loadComplete()">

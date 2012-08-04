@@ -3,9 +3,9 @@
 FAILURE
 <embed name="plg" type="application/x-webkit-test-netscape"></embed>
 <script>
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
     }
 
     plg.getURL("resources/slow-resource.pl");

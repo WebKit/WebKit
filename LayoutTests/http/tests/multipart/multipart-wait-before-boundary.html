@@ -1,17 +1,17 @@
 <html>
 <head>
     <script>
-        if (window.layoutTestController) {
-            layoutTestController.dumpAsText();
-            layoutTestController.waitUntilDone();
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
         }
         function childLoaded() {
             setTimeout("window.frames['iframe'].location = 'resources/multipart-wait-before-boundary.php?done=1'", 0);
         }
         function success() {
-            if (window.layoutTestController) {
+            if (window.testRunner) {
                 document.getElementById('status').innerHTML = 'SUCCESS';
-                layoutTestController.notifyDone();
+                testRunner.notifyDone();
             }
         }
     </script>

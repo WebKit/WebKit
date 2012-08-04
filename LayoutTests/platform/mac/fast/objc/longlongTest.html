@@ -27,12 +27,12 @@
 
             function test()
             {
-                if (!window.layoutTestController) {
+                if (!window.testRunner) {
                     log("This test can only be run under DumpRenderTree.");
                     return;
                 }
 
-                layoutTestController.dumpAsText();
+                testRunner.dumpAsText();
     
                 testLongLong(0, 0);
                 testLongLong(1, 1);

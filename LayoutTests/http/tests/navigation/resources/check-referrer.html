@@ -5,7 +5,7 @@ onload = function() {
   } else {
     document.body.innerText = "FAIL: document.referrer is \'" + document.referrer + "\'";
   }
-  if (window.layoutTestController)
-    layoutTestController.notifyDone();
+  if (window.testRunner)
+    testRunner.notifyDone();
 }
 </script>

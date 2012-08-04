@@ -2,8 +2,8 @@
 <head>
 <script>
 
-if (window.layoutTestController)
-    layoutTestController.setCustomPolicyDelegate(true, true);
+if (window.testRunner)
+    testRunner.setCustomPolicyDelegate(true, true);
 
 function runTest()
 {
@@ -12,8 +12,8 @@ function runTest()
     clickEvent.initEvent('click', false, true);
     link.dispatchEvent(clickEvent);
 
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
 </script>

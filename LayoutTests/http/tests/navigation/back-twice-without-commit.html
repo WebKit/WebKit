@@ -1,19 +1,19 @@
 <script>
-if (window.layoutTestController) {
+if (window.testRunner) {
     if (!window.localStorage.page1Started) {
         // On the first visit, clear the back forward list to start fresh,
         // then set up the test.
         window.localStorage.page1Started = true;
-        layoutTestController.clearBackForwardList();
-        layoutTestController.dumpBackForwardList();
-        layoutTestController.dumpAsText();
+        testRunner.clearBackForwardList();
+        testRunner.dumpBackForwardList();
+        testRunner.dumpAsText();
 
         // Visit two pages, then go back to page 2, which has a slow frame the 
         // second time, and then back to page 1 before page 2 commits.
-        layoutTestController.queueLoad("resources/back-twice-page-2.html");
-        layoutTestController.queueLoad("resources/back-twice-page-3.html");
-        layoutTestController.queueBackNavigation(1);
-        layoutTestController.queueBackNavigation(1);
+        testRunner.queueLoad("resources/back-twice-page-2.html");
+        testRunner.queueLoad("resources/back-twice-page-3.html");
+        testRunner.queueBackNavigation(1);
+        testRunner.queueBackNavigation(1);
     } else {
         delete window.localStorage.page1Started;
     }

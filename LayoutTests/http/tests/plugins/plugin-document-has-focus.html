@@ -1,10 +1,10 @@
 <html>
 <head>
 <script>
-    if (window.layoutTestController) {
-        layoutTestController.setCanOpenWindows();
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        testRunner.setCanOpenWindows();
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
     }
 
     window.open("resources/plugin-document-has-focus.pl", "blah")

@@ -69,12 +69,12 @@
     // ------------
 
     function test() {
-        if (!window.layoutTestController) {
+        if (!window.testRunner) {
             log("This test can only be run under DumpRenderTree.");
             return;
         }
 
-        layoutTestController.dumpAsText();
+        testRunner.dumpAsText();
 
         log("This tests the Private Objective-C DOM HTML Bindings API for selecting indexes of a <select> that also activate the \"change\" event.");
         wrapper("Select a single index in a normal <select>.", "single", testSingle);

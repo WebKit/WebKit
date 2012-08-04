@@ -6,10 +6,10 @@
 // document is not treated as the same document as the original document in
 // history.  See redirect-on-reload-updates-history-item.php for more details.
 
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.dumpBackForwardList();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.dumpBackForwardList();
+    testRunner.waitUntilDone();
 }
 onload = function() {
     setTimeout(function() {

@@ -290,7 +290,7 @@ BUGWKGTK SKIP : fast/css/image-set-parsing-invalid.html = TEXT
 // For now, Web Audio API is disabled
 BUGWKGTK SKIP : webaudio = TEXT
 
-// Needs layoutTestController.enableAutoResizeMode()
+// Needs testRunner.enableAutoResizeMode()
 BUGWKGTK SKIP : fast/autoresize = TEXT
 
 // The GTK+ build bots don't yet have the muscle to run WebGL tests.
@@ -989,7 +989,7 @@ BUGWK50740 : editing/spelling/spellcheck-queue.html = TEXT
 BUGWK50740 : editing/spelling/spellcheck-sequencenum.html = TEXT
 BUGWK50740 : editing/spelling/spellcheck-async-mutation.html = TEXT
 
-// DRT does not obey layoutTestController.addURLToRedirect()
+// DRT does not obey testRunner.addURLToRedirect()
 BUGWKGTK : http/tests/loading/cross-origin-XHR-willLoadRequest.html = TEXT
 
 BUGWK40272 : canvas/philip/tests/2d.imageData.object.round.html = TEXT
@@ -1003,10 +1003,10 @@ BUGWK53707 : http/tests/security/xss-DENIED-xsl-external-entity-redirect.xml = T
 BUGWKGTK : editing/spelling/grammar.html = TEXT
 BUGWKGTK : editing/spelling/grammar-paste.html = TEXT
 
-// layoutTestController::setTextDirection() is not implemented.
+// testRunner::setTextDirection() is not implemented.
 BUGWKGTK : fast/html/set-text-direction.html = TEXT
 
-// layoutTestController.overridePreference("WebKitDefaultFontSize"...) does not take into account screen DPI
+// testRunner.overridePreference("WebKitDefaultFontSize"...) does not take into account screen DPI
 BUGWK57160 : fast/harness/override-preferences-2.html = TEXT
 
 BUGWK58309 : fast/canvas/DrawImageSinglePixelStretch.html = TEXT
@@ -1026,7 +1026,7 @@ BUGWK61118 : fullscreen/full-screen-restrictions.html = TEXT
 
 BUGWK61630 : fast/events/dropzone-005.html = TEXT
 
-// Need layoutTestController.setShouldStayOnPageAfterHandlingBeforeUnload
+// Need testRunner.setShouldStayOnPageAfterHandlingBeforeUnload
 BUGWK67014 : fast/loader/form-submission-after-beforeunload-cancel.html = TEXT
 
 BUGWK67713 : accessibility/textbox-role-reports-selection.html = TEXT

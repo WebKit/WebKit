@@ -3,10 +3,10 @@
 <script type="text/javascript">
 function startTest()
 {
-    layoutTestController.dumpAsText();
-    layoutTestController.dumpChildFramesAsText();
-    layoutTestController.queueLoad("resources/reload-subframe.pl?type=iframe");
-    layoutTestController.queueReload();
+    testRunner.dumpAsText();
+    testRunner.dumpChildFramesAsText();
+    testRunner.queueLoad("resources/reload-subframe.pl?type=iframe");
+    testRunner.queueReload();
 }
 </script>
 </head>

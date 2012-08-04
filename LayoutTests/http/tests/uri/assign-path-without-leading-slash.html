@@ -4,9 +4,9 @@ This test should redirect to a landing page with a success result. If
 it fails to redirect, or redirects to an error page, then there is a bug.
 
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 </script>
 

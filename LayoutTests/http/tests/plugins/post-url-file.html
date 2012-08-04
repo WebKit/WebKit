@@ -4,17 +4,17 @@
     }
 
     function test() {
-        if (window.layoutTestController) {
-            layoutTestController.dumpAsText();
-            layoutTestController.dumpChildFramesAsText();
-            layoutTestController.waitUntilDone();
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.dumpChildFramesAsText();
+            testRunner.waitUntilDone();
         }
 
-        document.getElementById("result").onload = function() { layoutTestController.notifyDone(); }
+        document.getElementById("result").onload = function() { testRunner.notifyDone(); }
 
-        if (!plg.testPostURLFile("resources/dump-post.pl", "result", layoutTestController.pathToLocalResource("/tmp/post-url-file.txt"), "SUCCESS")) {
+        if (!plg.testPostURLFile("resources/dump-post.pl", "result", testRunner.pathToLocalResource("/tmp/post-url-file.txt"), "SUCCESS")) {
             log("FAIL: testPostURLFile returned false");
-            layoutTestController.notifyDone();
+            testRunner.notifyDone();
         }
     }
 </script>

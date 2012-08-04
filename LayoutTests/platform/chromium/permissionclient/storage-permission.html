@@ -2,8 +2,8 @@
 <head>
 <script>
 
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 
 function log(a)
 {
@@ -19,10 +19,10 @@ function runTest()
 
     localStorage.clear();
 
-    if (window.layoutTestController && layoutTestController.setStorageAllowed)
-        layoutTestController.setStorageAllowed(true);
+    if (window.testRunner && testRunner.setStorageAllowed)
+        testRunner.setStorageAllowed(true);
     else
-        log("This test requires layoutTestController.setStorageAllowed, so it be can't run in a browser.");
+        log("This test requires testRunner.setStorageAllowed, so it be can't run in a browser.");
     
     log("Length is " + localStorage.length);
     log("Value for FOO is " + localStorage.getItem("FOO"));
@@ -34,8 +34,8 @@ function runTest()
     log("Key for index 0 is " + localStorage.key(0));
     
     log("Disabling localStorage access.");
-    if (window.layoutTestController && layoutTestController.setStorageAllowed)
-        layoutTestController.setStorageAllowed(false);
+    if (window.testRunner && testRunner.setStorageAllowed)
+        testRunner.setStorageAllowed(false);
 
     log("Length is " + localStorage.length);
     log("Value for FOO is " + localStorage.getItem("FOO"));

@@ -1,8 +1,8 @@
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpBackForwardList();
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpBackForwardList();
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 onload = function() {
     window.location = 'resources/slow-resource.pl?delay=100';
@@ -15,8 +15,8 @@ onhashchange = function() {
 
 function done() {
     console.log('Visited fragment and waited.');
-    if (window.layoutTestController) {
-        layoutTestController.notifyDone();
+    if (window.testRunner) {
+        testRunner.notifyDone();
     }
 }
 

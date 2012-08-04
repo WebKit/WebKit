@@ -3,10 +3,10 @@
 <script>
 function setupAndRunFramesTest()
 {
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.dumpChildFramesAsText();
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.dumpChildFramesAsText();
+        testRunner.waitUntilDone();
     }
     top.frames[0].document.getElementById("console").innerText = "";
     top.frames[1].runTest();

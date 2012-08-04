@@ -1,9 +1,9 @@
 <html><head>
 <script language="javascript" type="text/javascript"><!--
 
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
     }
 
     function updateClock()
@@ -14,8 +14,8 @@
     function success()
     {
         document.getElementById("RESULT").innerHTML = "SUCCESS";
-        if (window.layoutTestController)
-            window.location = "data:text/html,SUCCESS<script>layoutTestController.notifyDone()</scr" + "ipt>";
+        if (window.testRunner)
+            window.location = "data:text/html,SUCCESS<script>testRunner.notifyDone()</scr" + "ipt>";
     }
 
 --></script>

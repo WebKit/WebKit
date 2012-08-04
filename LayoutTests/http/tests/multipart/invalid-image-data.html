@@ -1,13 +1,13 @@
 <html>
 <head>
     <script>
-        if (window.layoutTestController)
-            layoutTestController.waitUntilDone();
+        if (window.testRunner)
+            testRunner.waitUntilDone();
 
         function loadedFirstPart()
         {
-            if (window.layoutTestController)
-                setTimeout("layoutTestController.notifyDone()", 200);
+            if (window.testRunner)
+                setTimeout("testRunner.notifyDone()", 200);
         }
     </script>
 </head>

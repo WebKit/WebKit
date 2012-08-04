@@ -435,7 +435,7 @@ WONTFIX SKIP : dom/xhtml/level3/core/userdatahandler02.xhtml = TEXT
 WONTFIX SKIP : dom/xhtml/level3/core/userdatahandler03.xhtml = TEXT
 WONTFIX SKIP : dom/xhtml/level3/core/userdatahandler04.xhtml = TEXT
 // The IMAGE+TEXT failures below are due to erroneous tests that fail to actually load
-// the JS meant to test them (and thus fail to trigger layoutTestController.dumpAsText()).
+// the JS meant to test them (and thus fail to trigger testRunner.dumpAsText()).
 WONTFIX SKIP : dom/xhtml/level3/core/documentgetinputencoding03.xhtml = IMAGE+TEXT
 WONTFIX SKIP : dom/xhtml/level3/core/entitygetinputencoding02.xhtml = IMAGE+TEXT
 WONTFIX SKIP : dom/xhtml/level3/core/entitygetxmlversion02.xhtml = IMAGE+TEXT
@@ -884,7 +884,7 @@ BUGWK66377 : fast/dom/StyleSheet/gc-rule-children-wrappers.html = TEXT
 BUGCR24195 LINUX WIN : fast/repaint/bugzilla-6473.html = IMAGE+TEXT
 BUGCR24195 MAC : fast/repaint/bugzilla-6473.html = IMAGE
 
-// Implement layoutTestController.display()
+// Implement testRunner.display()
 BUGCR8630 LINUX WIN : fast/repaint/body-background-image.html = IMAGE IMAGE+TEXT
 
 // Relies on text metrics to pass. Rework to be meaningful for ports other than platform/mac.
@@ -895,7 +895,7 @@ BUGCR8630 LINUX WIN DEBUG : fast/reflections/inline-crash.html = IMAGE IMAGE+TEX
 BUGCR8630 LINUX WIN : fast/text/font-initial.html = IMAGE IMAGE+TEXT
 
 // Need a setAuthorAndUserStylesEnabled method in
-// layoutTestController. Now we have preference to enable/disable user
+// testRunner. Now we have preference to enable/disable user
 // styles(not work now), we still need to add a preference to enable/disable
 // styles of both author and user.
 // SKIP because it causes an additional error message in:
@@ -1082,7 +1082,7 @@ BUGCR38353 : http/tests/plugins/plugin-document-has-focus.html = TIMEOUT TEXT
 BUGCR108833 WIN : plugins/geturlnotify-during-document-teardown.html = CRASH
 BUGWK48655 : plugins/js-from-destroy.html = PASS CRASH
 
-// Requires layoutTestController.dispatchPendingLoadRequests
+// Requires testRunner.dispatchPendingLoadRequests
 BUGCR33211 WIN RELEASE : http/tests/loading/deleted-host-in-resource-load-delegate-callback.html = TIMEOUT
 BUGCR33211 WIN DEBUG : http/tests/loading/deleted-host-in-resource-load-delegate-callback.html = TIMEOUT
 BUGCR33211 LINUX MAC : http/tests/loading/deleted-host-in-resource-load-delegate-callback.html = TIMEOUT
@@ -1757,10 +1757,10 @@ BUGCR36966 : fast/loader/about-blank-hash-kept.html = TEXT
 BUGCR37896 LINUX WIN : fast/multicol/hit-test-above-or-below.html = TEXT
 
 // WebKit roll 56197:56239.
-// Needs layoutTestController.setMediaType() (implemented on Qt only)
+// Needs testRunner.setMediaType() (implemented on Qt only)
 BUGCR38656 : fast/media/print-restores-previous-mediatype.html = TEXT
 
-// Needs layoutTestController.setViewModeMediaFeature()
+// Needs testRunner.setViewModeMediaFeature()
 BUGCR40680 SKIP : fast/media/view-mode-media-feature.html = PASS
 BUGCR40680 SKIP : fast/media/media-query-list-02.html = PASS
 BUGCR40680 SKIP : fast/media/media-query-list-03.html = PASS
@@ -1800,7 +1800,7 @@ BUGWK71758 : fast/url/port.html = TEXT PASS
 // // Started failing at r58152
 // BUGWK38038 : fast/url/file-http-base.html = TEXT
 
-// New layoutTestController function added at r57993
+// New testRunner function added at r57993
 BUGCR42696 : http/tests/xmlhttprequest/cross-origin-authorization-with-embedder.html = TIMEOUT
 
 // WebKit roll 58304:58400
@@ -2355,7 +2355,7 @@ BUGWK60094 DEBUG : fast/encoding/parser-tests-100.html = PASS TIMEOUT
 BUGWK60094 DEBUG : fast/encoding/parser-tests-110.html = PASS TIMEOUT
 BUGWK60094 DEBUG : fast/encoding/parser-tests-120.html = PASS TIMEOUT
 
-// Flaky since creation because we lack layoutTestController.setSerializeHTTPLoads
+// Flaky since creation because we lack testRunner.setSerializeHTTPLoads
 BUGWK57593 : fast/preloader/document-write-2.html = TEXT
 BUGWK57593 : fast/preloader/document-write.html = TEXT
 

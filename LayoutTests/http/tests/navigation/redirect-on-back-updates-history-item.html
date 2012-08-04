@@ -7,10 +7,10 @@
 // document in history.  See redirect-on-back-updates-history-item.php for more
 // details.
 
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.dumpBackForwardList();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.dumpBackForwardList();
+    testRunner.waitUntilDone();
 }
 onload = function() {
     setTimeout(function() {

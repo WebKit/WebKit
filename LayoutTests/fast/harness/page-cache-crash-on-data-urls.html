@@ -2,8 +2,8 @@
 <script>
 window.finish = function()
 {
-    if (layoutTestController)
-        layoutTestController.notifyDone();
+    if (testRunner)
+        testRunner.notifyDone();
 }
 
 window.log = function(message) {
@@ -17,11 +17,11 @@ window.failure = function(message) {
 
 function test()
 {
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
-        layoutTestController.setCanOpenWindows();
-        layoutTestController.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+        testRunner.setCanOpenWindows();
+        testRunner.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
     }
     log("open page with data urls");
     window.open("resources/cached-page-with-data-urls.html");

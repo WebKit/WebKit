@@ -2,9 +2,9 @@
 <head>
 <script>
 var doTest = function () {
-    if (window.layoutTestController) {
-        window.layoutTestController.dumpAsText();
-        window.layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        window.testRunner.dumpAsText();
+        window.testRunner.waitUntilDone();
     }
     document.getElementById("form1").submit();
 };

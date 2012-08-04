@@ -1,10 +1,10 @@
 <html>
 <script>
-if (window.layoutTestController) {
-  layoutTestController.setCanOpenWindows();
-  layoutTestController.dumpAsText();
-  layoutTestController.waitUntilDone();
-  layoutTestController.globalFlag = false;
+if (window.testRunner) {
+  testRunner.setCanOpenWindows();
+  testRunner.dumpAsText();
+  testRunner.waitUntilDone();
+  testRunner.globalFlag = false;
 }
 
 var w = window.open("http://127.0.0.1:8000/misc/resources/content-iframe.html");
@@ -13,9 +13,9 @@ w.opener = null;
 function wait_to_start() {
   var child_window_opened;
 
-  // polling layoutTestController.globalFlag or w.document
-  if (window.layoutTestController) {
-    child_window_opened = layoutTestController.globalFlag;
+  // polling testRunner.globalFlag or w.document
+  if (window.testRunner) {
+    child_window_opened = testRunner.globalFlag;
   } else {
     // polling w.document is not very reliable cross browsers,
     // it works in chrome for manual testsing.
@@ -34,8 +34,8 @@ function wait_to_start() {
 
   w.close();
 
-  if (window.layoutTestController)
-    layoutTestController.notifyDone();
+  if (window.testRunner)
+    testRunner.notifyDone();
 }
 
 window.onload = wait_to_start;

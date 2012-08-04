@@ -144,8 +144,8 @@ shouldEvaluateTo("stats.median", alternateComputeStatistics.median(data));
 debug("");
 
 // runner.js marks this as an async test so we need to call notifyDone.
-if (window.layoutTestController)
-    layoutTestController.notifyDone();
+if (window.testRunner)
+    testRunner.notifyDone();
 </script>
 
 <script src="../../../fast/js/resources/js-test-post.js"></script>

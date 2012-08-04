@@ -8,10 +8,10 @@
         
         function test()
         {
-            if (window.layoutTestController) {
-                layoutTestController.dumpAsText();
-                layoutTestController.dumpBackForwardList();
-                layoutTestController.waitUntilDone();
+            if (window.testRunner) {
+                testRunner.dumpAsText();
+                testRunner.dumpBackForwardList();
+                testRunner.waitUntilDone();
             }
             setTimeout(test2, 0);
         }

@@ -6,9 +6,9 @@ of the referrer and window.opener should be empty below.
 <a id="link" href="resources/no-referrer-same-window-helper.php" rel="noreferrer">Start no referrer test</a>
 <script>
     window.name = "consoleWindow";
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
     }
 
     var target = document.getElementById("link");

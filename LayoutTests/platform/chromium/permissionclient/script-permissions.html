@@ -1,9 +1,9 @@
 <html>
 <head>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.dumpPermissionClientCallbacks();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.dumpPermissionClientCallbacks();
 }
 
 function log(a)
@@ -13,10 +13,10 @@ function log(a)
 
 function test()
 {
-    if (window.layoutTestController && layoutTestController.setScriptsAllowed)
-        layoutTestController.setScriptsAllowed(false);
+    if (window.testRunner && testRunner.setScriptsAllowed)
+        testRunner.setScriptsAllowed(false);
     else
-        log("This test requires layoutTestController.setScriptsAllowed, so it be can't run in a browser.");
+        log("This test requires testRunner.setScriptsAllowed, so it be can't run in a browser.");
 
     // Try to load an external script.
     var script = document.createElement('script');

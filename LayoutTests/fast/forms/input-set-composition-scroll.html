@@ -8,8 +8,8 @@ function log(s) {
     document.getElementById('log').appendChild(document.createTextNode(s + "\n"));
 }
 
-if (window.layoutTestController)
-    window.layoutTestController.dumpAsText();
+if (window.testRunner)
+    window.testRunner.dumpAsText();
 
 var input = document.querySelector('input');
 input.focus();

@@ -7,8 +7,8 @@ var mockAlpha = 1.1;
 var mockBeta = 2.2;
 var mockGamma = 3.3;
 
-if (window.layoutTestController)
-    layoutTestController.setMockDeviceOrientation(true, mockAlpha, true, mockBeta, true, mockGamma);
+if (window.testRunner)
+    testRunner.setMockDeviceOrientation(true, mockAlpha, true, mockBeta, true, mockGamma);
 else
     debug('This test can not be run without the LayoutTestController');
 

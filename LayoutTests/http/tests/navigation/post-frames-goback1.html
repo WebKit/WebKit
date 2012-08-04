@@ -2,11 +2,11 @@
 <html>
 <body>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.dumpChildFramesAsText();
-    layoutTestController.waitUntilDone();
-    layoutTestController.dumpBackForwardList();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.dumpChildFramesAsText();
+    testRunner.waitUntilDone();
+    testRunner.dumpBackForwardList();
 }
    
 onload = function()
@@ -14,8 +14,8 @@ onload = function()
     if (sessionStorage.didNav) {
         delete sessionStorage.didNav;
         delete sessionStorage.topShouldNavAndGoBack;
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     } else {
         sessionStorage.topShouldNavAndGoBack = true;
         document.getElementById('the-form').submit();

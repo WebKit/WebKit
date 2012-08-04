@@ -10,8 +10,8 @@
 &lt;link rel="stylesheet" type="text/css" href="resources/test-shift-jis.css"&gt;
 &lt;link rel="stylesheet" type="text/css" href="resources/test-utf-8.css"&gt;
 &lt;script&gt;
-if (window.layoutTestController)
-    layoutTestController.dumpDOMAsWebArchive();
+if (window.testRunner)
+    testRunner.dumpDOMAsWebArchive();
 &lt;/script&gt;
 &lt;/head&gt;
 &lt;body&gt;

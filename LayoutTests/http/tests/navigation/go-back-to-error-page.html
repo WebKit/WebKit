@@ -1,10 +1,10 @@
 <script>
-if (window.layoutTestController) {
-    layoutTestController.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
-    layoutTestController.dumpAsText();
-    layoutTestController.queueLoadHTMLString("<script>document.write('<div id=result>FAIL: The alternate HTML string was cached, but should not have been cached for an error page</div>');<\/script>", "resources", "http://127.0.0.1:8000/navigation/resources/page-treated-as-unreachable.html");
-    layoutTestController.queueLoad("resources/page-to-go-back-from.html");
-    layoutTestController.queueBackNavigation(1);
+if (window.testRunner) {
+    testRunner.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
+    testRunner.dumpAsText();
+    testRunner.queueLoadHTMLString("<script>document.write('<div id=result>FAIL: The alternate HTML string was cached, but should not have been cached for an error page</div>');<\/script>", "resources", "http://127.0.0.1:8000/navigation/resources/page-treated-as-unreachable.html");
+    testRunner.queueLoad("resources/page-to-go-back-from.html");
+    testRunner.queueBackNavigation(1);
 } else
     document.write('This test must be run by DumpRenderTree!')
 </script>

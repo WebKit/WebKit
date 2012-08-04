@@ -1,5 +1,172 @@
 2012-08-03  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Use testRunner instead of layoutTestController in tests still found to be using layoutTestController by grep
+        https://bugs.webkit.org/show_bug.cgi?id=93177
+
+        Reviewed by Adam Barth.
+
+        After this patch, neither grep nor spot light finds any tests that use layoutTestController
+        and we can safely land the patch on the bug 93173.
+
+        * editing/pasteboard/input-with-visibility-hidden.html:
+        * fast/encoding/resources/%25%u0435 0 %xx%%%ulike.html:
+        * fast/encoding/script-in-head.html:
+        * fast/encoding/tag-in-title.html:
+        * fast/encoding/tag-name-digit.html:
+        * fast/encoding/url-host-name-non-ascii.html:
+        * fast/encoding/xml-charset-utf16.html:
+        * fast/encoding/xml-utf-8-default.xml:
+        * fast/encoding/yahoo-mail.html:
+        * fast/encoding/yentest.html:
+        * fast/encoding/yentest2.html:
+        * fast/forms/datalist/input-appearance-range-with-datalist-zoomed.html:
+        * fast/forms/datalist/input-appearance-range-with-datalist.html:
+        * fast/forms/datalist/update-range-with-datalist.html:
+        * fast/forms/input-set-composition-scroll.html:
+        * fast/harness/internals-object.html:
+        * fast/harness/page-cache-crash-on-data-urls.html:
+        * fast/harness/perftests/perf-runner-compute-statistics.html:
+        * fast/harness/resources/modal-dialog.html:
+        * fast/harness/show-modal-dialog.html:
+        * fast/harness/user-preferred-language.html:
+        * fast/multicol/hit-test-end-of-column.html:
+        * fast/multicol/hit-test-gap-between-pages-flipped.html:
+        * fast/multicol/hit-test-gap-between-pages.html:
+        * fast/multicol/hit-test-gap-block-axis.html:
+        * fast/notifications/notifications-event-listener-crash.html:
+        * fast/parser/foster-parent.html:
+        * fast/ruby/after-doesnt-crash.html:
+        * fast/ruby/before-block-doesnt-crash.html:
+        * fast/ruby/before-doesnt-crash.html:
+        * fast/ruby/before-table-doesnt-crash.html:
+        * fast/ruby/generated-before-counter-doesnt-crash.html:
+        * fast/ruby/modify-positioned-ruby-text-crash.html:
+        * fast/ruby/parse-rp.html:
+        * fast/ruby/ruby-illegal-1.html:
+        * fast/ruby/ruby-illegal-2.html:
+        * fast/ruby/ruby-illegal-3.html:
+        * fast/ruby/ruby-illegal-4.html:
+        * fast/ruby/ruby-illegal-5.html:
+        * fast/ruby/ruby-illegal-6.html:
+        * fast/ruby/ruby-illegal-7.html:
+        * fast/ruby/ruby-illegal-combined.html:
+        * fast/ruby/ruby-overhang-crash.html:
+        * fast/ruby/ruby-remove-no-base.html:
+        * fast/ruby/ruby-remove.html:
+        * fast/ruby/ruby-text-indent.html:
+        * fast/ruby/rubyDOM-insert-rt-block-1.html:
+        * fast/ruby/rubyDOM-insert-rt-block-2.html:
+        * fast/ruby/rubyDOM-insert-rt-block-3.html:
+        * fast/ruby/rubyDOM-remove-rt-block-1.html:
+        * fast/ruby/rubyDOM-remove-rt-block-2.html:
+        * fast/ruby/rubyDOM-remove-rt-block-3.html:
+        * fast/runin/crash-when-reparent-sibling.html:
+        * fast/runin/nonblock-runin.html:
+        * fast/runin/progress-run-in-crash.html:
+        * fast/runin/run-in-layer-not-removed-crash.html:
+        * fast/runin/runin-continuations-crash.html:
+        * fast/runin/runin-reparent-crash.html:
+        * fast/runin/select-runin.html:
+        * fullscreen/empty-anonymous-block-continuation-crash.html:
+        * http/tests/misc/SVGFont-delayed-load.html:
+        * http/tests/misc/resources/a success.html:
+        * http/tests/misc/resources/content-iframe.html:
+        * http/tests/misc/resources/iframe-policy-1.html:
+        * http/tests/misc/resources/iframe-policy-2.html:
+        * http/tests/misc/resources/isindex-with-no-form-base-href-submit.html:
+        * http/tests/misc/resources/isindex-with-no-form-base-href.html:
+        * http/tests/misc/resources/redirect-to-external-url-iframe.html:
+        * http/tests/misc/resources/slow-preload-cancel-1.html:
+        * http/tests/misc/resources/success-notify-done.html:
+        * http/tests/misc/resources/webtiming-cross-origin-and-back1.html:
+        * http/tests/misc/script-500.html:
+        * http/tests/misc/script-no-store.html:
+        * http/tests/misc/set-window-opener-to-null.html:
+        * http/tests/misc/single-character-pi-stylesheet.xhtml:
+        * http/tests/misc/slow-loading-image-in-pattern.html:
+        * http/tests/misc/slow-preload-cancel.html:
+        * http/tests/misc/submit-post-keygen.html:
+        * http/tests/misc/svg-image-load-outlives-gc-without-crashing.html:
+        * http/tests/misc/text-refresh.html:
+        * http/tests/misc/timer-vs-loading.html:
+        * http/tests/misc/uncacheable-script-repeated.html:
+        * http/tests/misc/unloadable-script.html:
+        * http/tests/misc/video-poster-image-load-outlives-gc-without-crashing.html:
+        * http/tests/misc/webtiming-origins.html:
+        * http/tests/misc/will-send-request-returns-null-on-redirect.html:
+        * http/tests/misc/willCacheResponse-delegate-callback.html:
+        * http/tests/misc/window-dot-stop.html:
+        * http/tests/misc/window-open-then-write.html:
+        * http/tests/misc/write-from-dom-script.html:
+        * http/tests/misc/write-while-waiting.html:
+        * http/tests/misc/xslt-bad-import.html:
+        * http/tests/multipart/invalid-image-data-standalone.html:
+        * http/tests/multipart/invalid-image-data.html:
+        * http/tests/multipart/multipart-wait-before-boundary.html:
+        * http/tests/multipart/stop-crash.html:
+        * http/tests/navigation/:
+        * http/tests/plugins/create-v8-script-objects.html:
+        * http/tests/plugins/cross-frame-object-access.html:
+        * http/tests/plugins/get-url.html:
+        * http/tests/plugins/geturlnotify-from-npp-destroystream.html:
+        * http/tests/plugins/interrupted-get-url.html:
+        * http/tests/plugins/local-geturl-from-remote.html:
+        * http/tests/plugins/npapi-response-headers.html:
+        * http/tests/plugins/plugin-document-has-focus.html:
+        * http/tests/plugins/post-url-file.html:
+        * http/tests/plugins/resources/interrupted-get-url-success.html:
+        * http/tests/plugins/resources/third-party-cookie-accept-policy-iframe.html:
+        * http/tests/plugins/third-party-cookie-accept-policy.html:
+        * http/tests/resources/notify-done.html:
+        * http/tests/security/contentSecurityPolicy/1.1/scriptnonce-allowed.html:
+        * http/tests/security/contentSecurityPolicy/1.1/scriptnonce-blocked.html:
+        * http/tests/ssl/referer-301.html:
+        * http/tests/ssl/referer-303.html:
+        * http/tests/storage/callbacks-are-called-in-correct-context.html:
+        * http/tests/storage/resources/callbacks-are-called-in-correct-context-second-frame.html:
+        * http/tests/svg/change-id-with-pending-resources.html:
+        * http/tests/svg/tref-adoptNode-crash.html:
+        * http/tests/uri/assign-path-with-leading-slash.html:
+        * http/tests/uri/assign-path-without-leading-slash.html:
+        * http/tests/uri/escaped-entity.html:
+        * http/tests/uri/resolve-encoding-relative.html:
+        * http/tests/uri/resources/assign-path-landing.html:
+        * http/tests/uri/utf8-path.html:
+        * http/tests/webarchive/cross-origin-stylesheet-crash-expected.webarchive:
+        * http/tests/webarchive/cross-origin-stylesheet-crash.html:
+        * http/tests/webarchive/test-css-url-encoding-expected.webarchive:
+        * http/tests/webarchive/test-css-url-encoding-shift-jis-expected.webarchive:
+        * http/tests/webarchive/test-css-url-encoding-shift-jis.html:
+        * http/tests/webarchive/test-css-url-encoding-utf-8-expected.webarchive:
+        * http/tests/webarchive/test-css-url-encoding-utf-8.html:
+        * http/tests/webarchive/test-css-url-encoding.html:
+        * http/tests/webarchive/test-preload-resources-expected.webarchive:
+        * http/tests/webarchive/test-preload-resources.html:
+        * http/tests/webfont/fallback-font-while-loading.html:
+        * http/tests/websocket/resources/server-failed-to-start.html:
+        * http/tests/xmlhttprequest/reentrant-cancel.html:
+        * inspector/device-orientation-success.html:
+        * platform/chromium/TestExpectations:
+        * platform/chromium/permissionclient/image-permissions.html:
+        * platform/chromium/permissionclient/plugin-permission.html:
+        * platform/chromium/permissionclient/script-permissions.html:
+        * platform/chromium/permissionclient/storage-permission.html:
+        * platform/gtk/TestExpectations:
+        * platform/mac/editing/input/edit-dictated-text-with-alternative.html:
+        * platform/mac/editing/input/insert-dictated-text.html:
+        * platform/mac/fast/AppleScript/001.html:
+        * platform/mac/fast/AppleScript/array.html:
+        * platform/mac/fast/AppleScript/date.html:
+        * platform/mac/fast/objc/dom-html-select-activate.html:
+        * platform/mac/fast/objc/longlongTest.html:
+        * platform/qt/view/fixed-layout-size.html:
+        * platform/win/inverted-colors/non-composited.html:
+        * platform/win/svg/W3C-SVG-1.1/resources/run-webkit-tests-epilogue.html:
+        * platform/win/svg/W3C-SVG-1.1/resources/run-webkit-tests-prologue.html:
+        * webarchive/loading/resources/javascript-url-iframe-crash.webarchive:
+
+2012-08-03  Ryosuke Niwa  <rniwa@webkit.org>
+
         Some tests still refer to layoutTestController instead of testRunner
         https://bugs.webkit.org/show_bug.cgi?id=93176
 

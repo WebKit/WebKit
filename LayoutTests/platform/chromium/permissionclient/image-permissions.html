@@ -1,9 +1,9 @@
 <html>
 <head>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.dumpPermissionClientCallbacks();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.dumpPermissionClientCallbacks();
 }
 
 function log(a)
@@ -14,10 +14,10 @@ function log(a)
 function loaded()
 {
     log("PASS: first image loaded");
-    if (window.layoutTestController && layoutTestController.setImagesAllowed)
-        layoutTestController.setImagesAllowed(false);
+    if (window.testRunner && testRunner.setImagesAllowed)
+        testRunner.setImagesAllowed(false);
     else
-        log("This test requires layoutTestController.setImagesAllowed, so it be can't run in a browser.");
+        log("This test requires testRunner.setImagesAllowed, so it be can't run in a browser.");
 
     // Load an image not in cache.
     var img = document.createElement('img');

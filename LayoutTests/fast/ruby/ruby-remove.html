@@ -3,8 +3,8 @@
 <script>
 function test()
 {
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
     var ruby = document.getElementById("t");
     ruby.innerHTML = ''; // This line mustn't crash 
     document.getElementById("result").firstChild.data = 'SUCCESS!';

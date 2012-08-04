@@ -5,7 +5,7 @@
       document.URL.match('%25.*html') == '%25%u0435 0 %xx%%%ulike.html')
      document.getElementById('result').firstChild.nodeValue = 'SUCCESS';
 
-  layoutTestController.notifyDone();
+  testRunner.notifyDone();
 ">
 <p>Test for <a href="https://bugs.webkit.org/show_bug.cgi?id=6452">bug 6452</a> - 
 KURL::appendEscapingBadChars() should never escape percent characters.</p>

@@ -6,10 +6,10 @@ var testCalled = false;
 
 function test() {
     if (!testCalled) {
-        if (window.layoutTestController) {
-            layoutTestController.dumpAsText();
-            layoutTestController.overridePreference("WebKitHyperlinkAuditingEnabled", 1);
-            layoutTestController.waitUntilDone();
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.overridePreference("WebKitHyperlinkAuditingEnabled", 1);
+            testRunner.waitUntilDone();
         }
         testCalled = true;
         return;
@@ -21,13 +21,13 @@ function test() {
         xhr.send(null);
         if (xhr.status != 200) {
             document.getElementsByTagName("body")[0].appendChild(document.createTextNode("FAILED: cookie not set"));
-            if (window.layoutTestController)
-                layoutTestController.notifyDone();
+            if (window.testRunner)
+                testRunner.notifyDone();
         }
     } catch (e) {
         document.getElementsByTagName("body")[0].appendChild(document.createTextNode("FAILED: cookie not set"));
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     }
 
     if (window.eventSender) {

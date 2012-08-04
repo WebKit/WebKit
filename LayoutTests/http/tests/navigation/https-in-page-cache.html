@@ -1,9 +1,9 @@
 <script>
 
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
-    layoutTestController.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+    testRunner.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
 }
 
 if (location.protocol != "https:")

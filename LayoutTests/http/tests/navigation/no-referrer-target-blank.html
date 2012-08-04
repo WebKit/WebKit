@@ -5,10 +5,10 @@ of the referrer and window.opener should be empty below.<br/>
 <a id="link" href="resources/no-referrer-helper.php" rel="noreferrer" target="_blank">Start no referrer test</a>
 <script>
     window.name = "consoleWindow";
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.setCanOpenWindows(true);
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.setCanOpenWindows(true);
+        testRunner.waitUntilDone();
     }
 
     var target = document.getElementById("link");

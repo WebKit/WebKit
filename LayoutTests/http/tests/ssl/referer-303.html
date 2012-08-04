@@ -1,9 +1,9 @@
 <body>
 <a href="redir.php">Click me.<a/> The resulting request (as dumped on screen) should not have a Referer header.
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 if (location.protocol != "https:")

@@ -16,8 +16,8 @@
 &lt;link rel="alternate stylesheet" type="text/css" href="resources/test-preload-resources.css?6" title="gray"&gt;
 
 &lt;script&gt;
-if (window.layoutTestController)
-    layoutTestController.dumpDOMAsWebArchive();
+if (window.testRunner)
+    testRunner.dumpDOMAsWebArchive();
 &lt;/script&gt;
 
 &lt;/head&gt;&lt;body&gt;

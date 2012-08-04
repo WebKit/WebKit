@@ -1,17 +1,17 @@
 <html>
 <script>
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
     }
 
     function runTest() {
-        layoutTestController.dumpResourceLoadCallbacks();
-        layoutTestController.dumpWillCacheResponse();
+        testRunner.dumpResourceLoadCallbacks();
+        testRunner.dumpWillCacheResponse();
 
         var f = document.createElement('iframe');
         f.src = "resources/willCacheResponse-success.html";
-        f.onload = function() { if (window.layoutTestController) layoutTestController.notifyDone(); }
+        f.onload = function() { if (window.testRunner) testRunner.notifyDone(); }
         document.body.appendChild(f);    
     }
 </script>

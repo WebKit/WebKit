@@ -5,8 +5,8 @@ Test passes if it does not crash.<br />
 <body>
 <progress id="progress1" style="-webkit-appearance: none"></progress><div></div>
 <script>
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 
 document.body.offsetTop;
 progress1.style.display = 'run-in';

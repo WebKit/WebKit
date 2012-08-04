@@ -1,9 +1,9 @@
 <script>
-  if (window.layoutTestController) {
-      layoutTestController.dumpAsText();
-      layoutTestController.waitUntilDone();
-      layoutTestController.clearBackForwardList();
-      layoutTestController.dumpBackForwardList();
+  if (window.testRunner) {
+      testRunner.dumpAsText();
+      testRunner.waitUntilDone();
+      testRunner.clearBackForwardList();
+      testRunner.dumpBackForwardList();
    }
    window.location.href = 'resources/page-that-posts.html';
 </script>  

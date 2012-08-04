@@ -3,11 +3,11 @@
 <title>Test Bugzilla Bug 11756 - REGRESSION: link targeting a frame in another window does not work</title>
 <script type="text/javascript">
 <!--
-if (window.layoutTestController) {
-    layoutTestController.setCanOpenWindows();
-    layoutTestController.dumpAsText();
-    layoutTestController.dumpChildFramesAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.setCanOpenWindows();
+    testRunner.dumpAsText();
+    testRunner.dumpChildFramesAsText();
+    testRunner.waitUntilDone();
 }
 
 var runOnce = 0;

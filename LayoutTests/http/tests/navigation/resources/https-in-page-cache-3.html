@@ -6,8 +6,8 @@ window.onpageshow = function(evt) {
 
 	alert("The page was restored from the page cache. Good job!");
 
-	if (window.layoutTestController)
-		layoutTestController.notifyDone();
+	if (window.testRunner)
+		testRunner.notifyDone();
 }
 
 window.onload = function() {

@@ -7,8 +7,8 @@
 This text should be styled green.
 </p>
 <script>
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 
 if (!document.firstChild.data.match(/href="a"/))
     alert("Please don't rename the stylesheet - the test needs its URL to be single character");

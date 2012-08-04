@@ -1,11 +1,11 @@
 <html>
   <!-- Tests that 404s in frames are handled correctly -->
   <script>
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.dumpChildFramesAsText();
-        layoutTestController.clearBackForwardList();
-        layoutTestController.dumpBackForwardList();        
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.dumpChildFramesAsText();
+        testRunner.clearBackForwardList();
+        testRunner.dumpBackForwardList();        
     }
   </script>
   <frameset rows="90%,10%">

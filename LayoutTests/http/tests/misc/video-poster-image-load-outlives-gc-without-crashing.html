@@ -1,16 +1,16 @@
 <script>
 
-if (window.layoutTestController) {
-	layoutTestController.waitUntilDone();
-	layoutTestController.dumpAsText();
+if (window.testRunner) {
+	testRunner.waitUntilDone();
+	testRunner.dumpAsText();
 }
 
 function loaded() {
 	// If the garbage collection causes the image load to stop and therefore causes the load event to fire on the main frame, we failed.
 	alert("FAIL: The load event fired");
 	
-	if (window.layoutTestController)
-		layoutTestController.notifyDone();
+	if (window.testRunner)
+		testRunner.notifyDone();
 }
 
 </script>
@@ -26,8 +26,8 @@ This has a video element with an image for its poster frame.  That video element
 
 function finished() {
 	window.stop()
-	if (window.layoutTestController)
-		layoutTestController.notifyDone();
+	if (window.testRunner)
+		testRunner.notifyDone();
 }
 
 function forceGC() {

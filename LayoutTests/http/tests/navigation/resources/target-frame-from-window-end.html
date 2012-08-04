@@ -3,9 +3,9 @@
 <script type="text/javascript">
 function done()
 {
-    if (window.layoutTestController) {
+    if (window.testRunner) {
         // Allow child window to close to prevent hangs during testing
-        setTimeout("layoutTestController.notifyDone()", 100);
+        setTimeout("testRunner.notifyDone()", 100);
     }
 }
 </script>

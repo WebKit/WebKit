@@ -3,10 +3,10 @@
 <script>
     function runTests()
     {
-        if (window.layoutTestController) {
-            layoutTestController.dumpAsText();
-            layoutTestController.setCanOpenWindows();
-            layoutTestController.waitUntilDone();
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.setCanOpenWindows();
+            testRunner.waitUntilDone();
         }
         showModalDialog("resources/modal-dialog.html");
     }

@@ -2,9 +2,9 @@
 <script>
 var count = 0;
 
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 function addRandom()
@@ -23,8 +23,8 @@ setInterval(function() {
     } else if (document.getElementsByTagName("p").length == 2) {
         document.write(document.getElementsByTagName("p")[0].innerHTML == document.getElementsByTagName("p")[1].innerHTML ? 
             "FAIL<br>" : "PASS<br>");
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+        if (window.testRunner)
+            testRunner.notifyDone();
     }
 }, 10);
 </script>

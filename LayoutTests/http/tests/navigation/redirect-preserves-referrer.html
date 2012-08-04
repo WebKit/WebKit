@@ -2,9 +2,9 @@
 <head>
 <script>
 function start() {
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
         var link = document.getElementById("link");
         eventSender.mouseMoveTo(link.offsetLeft + 2, link.offsetTop + 2);
         eventSender.mouseDown();

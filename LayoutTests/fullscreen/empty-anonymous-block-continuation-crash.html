@@ -11,8 +11,8 @@ Test passes if it does not crash.
 </i>
 </summary>
 <script>
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 
 if ("webkitRequestFullScreen" in Element.prototype) {
 	var span = document.getElementById('test');

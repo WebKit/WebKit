@@ -1,15 +1,15 @@
 <html>
 <meta http-equiv="refresh" content="2">
 <script>
-    if (window.layoutTestController) {
-        layoutTestController.waitUntilDone();
-        layoutTestController.dumpAsText();
+    if (window.testRunner) {
+        testRunner.waitUntilDone();
+        testRunner.dumpAsText();
     }
     function testScroll() {
       window.setTimeout(function() {
           if (window.pageYOffset == 20) {
             document.body.innerHTML = "SUCCESS";
-            layoutTestController.notifyDone();
+            testRunner.notifyDone();
           } else
             window.scroll(0,20);
         }, 0);

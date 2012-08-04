@@ -23,8 +23,8 @@ function handleScriptOnError()
     <script onerror="handleScriptOnError()" id=test_script></script>
 
     <script>
-        if (window.layoutTestController)
-            layoutTestController.dumpAsText();
+        if (window.testRunner)
+            testRunner.dumpAsText();
 
         <!-- we are an HTTP test so the security origin will fail the file method -->
         document.getElementById('test_script').src = "file:///foobar";

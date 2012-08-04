@@ -5,8 +5,8 @@
         {
             var c = document.getElementById('console');
             c.innerHTML = document.getElementById('tf').value;
-            if (window.layoutTestController) {
-                layoutTestController.notifyDone();
+            if (window.testRunner) {
+                testRunner.notifyDone();
             }
         }
     </script>

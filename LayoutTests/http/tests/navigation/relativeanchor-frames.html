@@ -1,9 +1,9 @@
 <script type="text/javascript" src="resources/testcode.js"></script>
 <!-- %23 below is a #, which is escaped so the anchor applies to the subframe instead of the frameset. -->
 <script>
-    if(window.layoutTestController) {
-        layoutTestController.dumpChildFrameScrollPositions();
-        layoutTestController.dumpAsText();
+    if(window.testRunner) {
+        testRunner.dumpChildFrameScrollPositions();
+        testRunner.dumpAsText();
     }
     runBasicTest("resources/frameset.pl?frameURL=success200.html", "relativeanchor");
 </script>

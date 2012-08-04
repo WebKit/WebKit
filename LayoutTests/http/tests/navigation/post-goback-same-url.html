@@ -2,12 +2,12 @@
 <head>
 <script>
     
-if (window.layoutTestController) {
-    layoutTestController.dumpBackForwardList();
-    layoutTestController.dumpAsText();
-    layoutTestController.queueLoad("resources/post-goback-same-url.php");
-    layoutTestController.queueLoadingScript("submitForm()");
-    layoutTestController.queueBackNavigation(1);
+if (window.testRunner) {
+    testRunner.dumpBackForwardList();
+    testRunner.dumpAsText();
+    testRunner.queueLoad("resources/post-goback-same-url.php");
+    testRunner.queueLoadingScript("submitForm()");
+    testRunner.queueBackNavigation(1);
 }
     
 </script>

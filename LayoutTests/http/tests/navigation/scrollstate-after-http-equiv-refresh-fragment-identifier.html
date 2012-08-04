@@ -2,9 +2,9 @@
 <meta http-equiv="refresh" content="2">
 <script>
 
-if (window.layoutTestController) {
-    layoutTestController.waitUntilDone();
-    layoutTestController.dumpAsText();
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
 }
 function documentURLHash()
 {
@@ -24,7 +24,7 @@ function testScroll() {
   window.setTimeout(function() {
         if (window.pageYOffset == 100) {
           document.body.innerHTML = "SUCCESS";
-          layoutTestController.notifyDone();
+          testRunner.notifyDone();
         } else
           location.assign('scrollstate-after-http-equiv-refresh-fragment-identifier.html#1');
     }, 0);

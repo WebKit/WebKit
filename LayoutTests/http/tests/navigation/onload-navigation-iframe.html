@@ -4,10 +4,10 @@
 
 function runTest()
 {
-    if (window.layoutTestController) {
-        layoutTestController.dumpBackForwardList();
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        testRunner.dumpBackForwardList();
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
     }
 
     var form = document.getElementById("myForm");
@@ -28,8 +28,8 @@ function frameLoaded()
 {
     if (document.getElementById("myFrame").contentDocument.URL === "about:blank")
         return;
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
 </script>

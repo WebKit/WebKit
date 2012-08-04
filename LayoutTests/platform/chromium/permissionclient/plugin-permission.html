@@ -1,9 +1,9 @@
 <html>
 <head>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 function log(a) 
@@ -21,17 +21,17 @@ function test()
 
 function done()
 {
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
 function loadedFirst()
 {
     log("PASS: first plugin loaded");
-    if (window.layoutTestController && layoutTestController.setPluginsAllowed)
-        layoutTestController.setPluginsAllowed(false);
+    if (window.testRunner && testRunner.setPluginsAllowed)
+        testRunner.setPluginsAllowed(false);
     else
-        log("This test requires layoutTestController.setPluginsAllowed, so it be can't run in a browser.");
+        log("This test requires testRunner.setPluginsAllowed, so it be can't run in a browser.");
 
     var plugin = document.createElement('embed');
     plugin.setAttribute("type", "application/x-webkit-test-netscape");

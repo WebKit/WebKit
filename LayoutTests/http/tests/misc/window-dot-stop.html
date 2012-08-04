@@ -1,17 +1,17 @@
 <html>
 <script>
-    if (window.layoutTestController) {
-        layoutTestController.dumpResourceLoadCallbacks();
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        testRunner.dumpResourceLoadCallbacks();
+        testRunner.waitUntilDone();
     }
 </script>
 <body>
 This tests for the successful use of window.stop()<br>
 <iframe src="http://127.0.0.1:8000/incremental/slow-utf8-text.pl"></iframe><br>
 <script>
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    setTimeout("layoutTestController.notifyDone()", 0); 
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    setTimeout("testRunner.notifyDone()", 0); 
 }
 window.stop();
 </script>
