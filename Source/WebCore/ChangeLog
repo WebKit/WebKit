@@ -1,3 +1,36 @@
+2012-08-04  Adam Barth  <abarth@webkit.org>
+
+        [V8] Re-wire "target" half of the same-origin security check through Document rather than DOMWindow
+        https://bugs.webkit.org/show_bug.cgi?id=93079
+
+        Reviewed by Eric Seidel.
+
+        Before this patch, we were traversing from Nodes to Frames to
+        DOMWindows to SecurityOrigins when determing the "target" of an
+        operation for the same-origin policy security check. Rather than
+        detouring through DOMWindow, these security checks should operate in
+        terms of ScriptExecutionContexts (aka Documents) because that's the
+        canonical place we store SecurityOrigin objects.
+
+        A future patch will re-wire the "active" part of the security check to
+        use ScriptExecutionContexts as well and we'll be able to remove the
+        extra copy of SecurityOrigin that we keep in DOMWindow.
+
+        * bindings/generic/BindingSecurity.cpp:
+        (WebCore::canAccessDocument):
+        (WebCore::BindingSecurity::canAccessFrame):
+        (WebCore::BindingSecurity::shouldAllowAccessToNode):
+        * bindings/v8/BindingState.cpp:
+        (WebCore::immediatelyReportUnsafeAccessTo):
+        * bindings/v8/BindingState.h:
+        (WebCore):
+        * bindings/v8/V8DOMWindowShell.cpp:
+        (WebCore::reportUnsafeJavaScriptAccess):
+        * bindings/v8/V8Proxy.cpp:
+        (WebCore::V8Proxy::reportUnsafeAccessTo):
+        * bindings/v8/V8Proxy.h:
+        (V8Proxy):
+
 2012-08-03  Adam Barth  <abarth@webkit.org>
 
         Disabling eval changes the timing of DidCreateScriptContext

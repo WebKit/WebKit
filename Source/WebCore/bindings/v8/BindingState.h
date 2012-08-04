@@ -34,6 +34,7 @@
 namespace WebCore {
 
 class DOMWindow;
+class Document;
 class Frame;
 
 class BindingState {
@@ -53,7 +54,7 @@ Frame* firstFrame(BindingState*);
 // are any subtle differences between the currentFrame and the lexicalGlobalObject.
 Frame* currentFrame(BindingState*);
 
-void immediatelyReportUnsafeAccessTo(BindingState*, Frame*);
+void immediatelyReportUnsafeAccessTo(BindingState*, Document* targetDocument);
 
 }
 

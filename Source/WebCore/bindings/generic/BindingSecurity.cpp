@@ -42,40 +42,28 @@
 
 namespace WebCore {
 
-static bool canAccess(DOMWindow* activeWindow, DOMWindow* targetWindow)
+static bool canAccessDocument(BindingState* state, Document* targetDocument, bool reportError)
 {
-    ASSERT(targetWindow);
-    if (activeWindow == targetWindow)
-        return true;
-
-    if (!activeWindow)
+    // We have seen crashes were the target is 0, but we don't have a test case for it.
+    if (!targetDocument)
         return false;
 
-    SecurityOrigin* activeSecurityOrigin = activeWindow->securityOrigin();
-    SecurityOrigin* targetSecurityOrigin = targetWindow->securityOrigin();
-
-    // We have seen crashes were the security origin of the target has not been
-    // initialized. Defend against that.
-    if (!targetSecurityOrigin)
+    DOMWindow* active = activeWindow(state);
+    if (!active)
         return false;
 
-    if (activeSecurityOrigin->canAccess(targetSecurityOrigin))
+    if (active->securityOrigin()->canAccess(targetDocument->securityOrigin()))
         return true;
+
+    if (reportError)
+        immediatelyReportUnsafeAccessTo(state, targetDocument);
 
     return false;
 }
 
 bool BindingSecurity::canAccessFrame(BindingState* state, Frame* target, bool reportError)
 {
-    if (!target)
-        return false;
-
-    if (!canAccess(activeWindow(state), target->domWindow())) {
-        if (reportError)
-            immediatelyReportUnsafeAccessTo(state, target);
-        return false;
-    }
-    return true;
+    return target && canAccessDocument(state, target->document(), reportError);
 }
 
 bool BindingSecurity::shouldAllowAccessToNode(BindingState* state, Node* node)
@@ -83,6 +71,7 @@ bool BindingSecurity::shouldAllowAccessToNode(BindingState* state, Node* node)
     if (!node)
         return false;
 
+    // FIXME: We shouldn't need to go through the frame here because we already have the document.
     Frame* target = node->document()->frame();
     if (!target)
         return false;
