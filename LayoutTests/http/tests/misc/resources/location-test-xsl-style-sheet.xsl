@@ -15,8 +15,8 @@
             else
                 document.getElementById("pass").innerHTML = "<span>PASS</span>";
 
-            if (window.layoutTestController)
-                layoutTestController.dumpAsText();
+            if (window.testRunner)
+                testRunner.dumpAsText();
         }
 
      </script>

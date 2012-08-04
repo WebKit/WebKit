@@ -13,7 +13,7 @@ The Referrer displayed below should be empty.<br/>
     line.appendChild(document.createTextNode(document.getElementById("referrer").innerText == "Referrer:" ? "PASS" : "FAIL"));
     document.getElementById('console').appendChild(line);
     
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 </script>
 </body></html>

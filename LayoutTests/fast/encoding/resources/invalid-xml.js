@@ -23,8 +23,8 @@ function runNextTest()
     if (currentTest >= encodingTests.length) {
         var script = document.createElement("script");
         script.src = "../js/resources/js-test-post.js";
-        if (window.layoutTestController)
-            script.setAttribute("onload", "layoutTestController.notifyDone()");
+        if (window.testRunner)
+            script.setAttribute("onload", "testRunner.notifyDone()");
         document.body.appendChild(script);
         iframe.parentNode.removeChild(iframe);
         return;
@@ -32,8 +32,8 @@ function runNextTest()
     iframe.src = "resources/" + encodingTests[currentTest++];
 }
 
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
+if (window.testRunner)
+    testRunner.waitUntilDone();
 
 var iframe = document.createElement("iframe");
 document.body.appendChild(iframe);

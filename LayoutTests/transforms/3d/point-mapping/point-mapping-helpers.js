@@ -1,6 +1,6 @@
 
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
+if (window.testRunner)
+    testRunner.waitUntilDone();
 
 function mousemoved(e)
 {
@@ -45,14 +45,14 @@ function log(s)
 function runTest()
 {
     // In non-test mode, show the mouse coords for testing
-    if (window.layoutTestController)
+    if (window.testRunner)
       document.getElementById('mousepos').style.display = 'none';
     else
       document.body.addEventListener('mousemove', mousemoved, false);
 
     test();
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
 window.addEventListener('load', function() {

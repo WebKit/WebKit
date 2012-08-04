@@ -4,8 +4,8 @@
 <p>Tests for user agent string template</p>
 
 <script>
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
     }
 
     var userAgent = navigator.userAgent;

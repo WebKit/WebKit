@@ -397,9 +397,9 @@ function doAutomation(numberOfTests, initialValue, setValueFunction, automationF
 //
 function createAudioGraphAndTest(numberOfTests, initialValue, setValueFunction, automationFunction, testName, maxError, referenceFunction, jumpThreshold)
 {
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
     }
 
     window.jsTestIsAsync = true;

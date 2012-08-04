@@ -3,8 +3,8 @@
 <script>
 function runTest() {
 
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
 
     <?php if (isset($_SERVER['HTTP_REFERER']))
               echo 'document.write("FAIL: The server should not receive a referrer which is not set by user agent.");';

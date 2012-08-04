@@ -1,8 +1,8 @@
 <html>
 <body>
 <script>
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 
 var accept = "<?php echo $_SERVER["HTTP_ACCEPT"]; ?>";
 document.write("Accept: " + accept + "<br><br>");

@@ -15,4 +15,4 @@ if (!$failed) {
     print "PASS\n";
 }
 
-print "<script>if (window.layoutTestController) layoutTestController.notifyDone()</script>";
+print "<script>if (window.testRunner) testRunner.notifyDone()</script>";

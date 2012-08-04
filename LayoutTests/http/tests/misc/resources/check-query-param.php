@@ -15,8 +15,8 @@ function runTest()
         r.innerHTML = "FAILURE: query param is not converted to UTF-8. value=" +
         o.nodeValue;
         
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
 </script>

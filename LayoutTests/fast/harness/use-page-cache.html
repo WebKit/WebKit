@@ -2,8 +2,8 @@
 <script>
 window.finish = function()
 {
-    if (layoutTestController)
-        layoutTestController.notifyDone();
+    if (testRunner)
+        testRunner.notifyDone();
 }
 
 window.log = function(message) {
@@ -23,11 +23,11 @@ window.reportOnload = function() {
 
 function test()
 {
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
-        layoutTestController.setCanOpenWindows();
-        layoutTestController.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+        testRunner.setCanOpenWindows();
+        testRunner.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
     }
     log("open page-1");
     window.open("resources/cached-page-1.html");
@@ -35,7 +35,7 @@ function test()
 </script>
 
 <body onload="test()">
-<p>This test uses layoutTestController.overridePreference("WebKitUsesPageCachePreferenceKey", 1); to enable
+<p>This test uses testRunner.overridePreference("WebKitUsesPageCachePreferenceKey", 1); to enable
 back-forward WebKit page cache for the duration of the test.
 The test enables cache, navigates to page-1, then to page-2 and then does history.back() to page-1.
 On navigation back to page-1, test verifies that previously-initialized timer continues to fire and

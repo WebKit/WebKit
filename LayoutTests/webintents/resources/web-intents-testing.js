@@ -2,8 +2,8 @@
 function onSuccess(data) {
   debug("* got reply: " + data);
 
-  if (window.layoutTestController) {
-    window.layoutTestController.notifyDone();
+  if (window.testRunner) {
+    window.testRunner.notifyDone();
   }
 }
 
@@ -11,8 +11,8 @@ function onSuccess(data) {
 function onFailure(data) {
   debug("* got failure: " + data);
 
-  if (window.layoutTestController) {
-    window.layoutTestController.notifyDone();
+  if (window.testRunner) {
+    window.testRunner.notifyDone();
   }
 }
 
@@ -21,8 +21,8 @@ function startIntentWithCallbacks() {
   navigator.webkitStartActivity(new WebKitIntent("action1", "mime/type1", "test"), onSuccess, onFailure);
   debug("* sent intent");
 
-  if (window.layoutTestController) {
-    window.layoutTestController.waitUntilDone();
+  if (window.testRunner) {
+    window.testRunner.waitUntilDone();
   } else {
     alert('This test needs to run in DRT');
   }

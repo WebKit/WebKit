@@ -23,7 +23,7 @@ var checkPosition = (function() {
 
 function onKeyDown() {
     checkPosition();
-    layoutTestController.notifyDone();
+    testRunner.notifyDone();
     isSuccessfullyParsed();
 }
 
@@ -31,8 +31,8 @@ document.addEventListener('keydown', onKeyDown);
 
 description("Tests to ensure that touch events are delivered to an input element with type=range even when there are no touch event handlers in Javascript. This test is only expected to pass if ENABLE_TOUCH_SLIDER is defined.");
 
-if (window.layoutTestController) {
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.waitUntilDone();
 }
 
 if (window.eventSender) {

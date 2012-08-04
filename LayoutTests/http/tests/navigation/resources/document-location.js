@@ -1,17 +1,17 @@
 function start() {
-  if (window.layoutTestController) {
+  if (window.testRunner) {
     var n = document.location.search.substring(1);
     if (!n) {
       // page just opened
-      layoutTestController.dumpBackForwardList();
-      layoutTestController.dumpAsText();
-      layoutTestController.waitUntilDone();
+      testRunner.dumpBackForwardList();
+      testRunner.dumpAsText();
+      testRunner.waitUntilDone();
 
       // Location changes need to happen outside the onload handler to generate history entries.
       setTimeout(runTest, 0);
     } else {
       // loaded the ?1 navigation
-      layoutTestController.notifyDone();
+      testRunner.notifyDone();
     }
   }
 }

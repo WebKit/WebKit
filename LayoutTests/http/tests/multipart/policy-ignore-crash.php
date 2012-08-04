@@ -5,8 +5,8 @@ Content-type: text/html
 
 <p>This test passes if it does not crash.</p>
 <script>
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 </script>
 
 <?php

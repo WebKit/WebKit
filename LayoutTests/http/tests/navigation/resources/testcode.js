@@ -62,17 +62,17 @@ function jumpToAnchor() {
 // it's important to check that that we end up scrolled to the right place,
 // proving the anchor was visited.
 function runBasicTest(testCase, extraStep) {
-    if (window.layoutTestController) {
-        layoutTestController.dumpBackForwardList();
-        layoutTestController.queueLoad(testCase);
+    if (window.testRunner) {
+        testRunner.dumpBackForwardList();
+        testRunner.queueLoad(testCase);
         if (extraStep == "post") {
-            layoutTestController.queueNonLoadingScript("fillTestForm()");
-            layoutTestController.queueLoadingScript("submitFormWithPost()");
+            testRunner.queueNonLoadingScript("fillTestForm()");
+            testRunner.queueLoadingScript("submitFormWithPost()");
         } else if (extraStep == "postredirect") {
-            layoutTestController.queueNonLoadingScript("fillTestForm()");
-            layoutTestController.queueLoadingScript("submitFormWithPostRedirect()");
+            testRunner.queueNonLoadingScript("fillTestForm()");
+            testRunner.queueLoadingScript("submitFormWithPostRedirect()");
         } else if (extraStep == "relativeanchor") {
-            layoutTestController.queueNonLoadingScript("jumpToAnchor()");
+            testRunner.queueNonLoadingScript("jumpToAnchor()");
         }
     }
 }
@@ -88,30 +88,30 @@ function runBasicTest(testCase, extraStep) {
 // When we POST it is interesting to test going back to the post result,
 // and going back 2 pages to the original form.
 function runBackTest(testCase, howFarBack, extraStep) {
-    if (window.layoutTestController) {
-        layoutTestController.dumpBackForwardList();
-        layoutTestController.queueLoad(testCase);
-        layoutTestController.queueNonLoadingScript("fillTestForm()");
-        layoutTestController.queueNonLoadingScript("scrollDocDown()");
+    if (window.testRunner) {
+        testRunner.dumpBackForwardList();
+        testRunner.queueLoad(testCase);
+        testRunner.queueNonLoadingScript("fillTestForm()");
+        testRunner.queueNonLoadingScript("scrollDocDown()");
         if (extraStep == "post") {
-            layoutTestController.queueLoadingScript("submitFormWithPost()");
+            testRunner.queueLoadingScript("submitFormWithPost()");
         } else if (extraStep == "postredirect") {
-            layoutTestController.queueLoadingScript("submitFormWithPostRedirect()");
+            testRunner.queueLoadingScript("submitFormWithPostRedirect()");
         } else if (extraStep == "relativeanchor") {
-            layoutTestController.queueNonLoadingScript("jumpToAnchor()");
+            testRunner.queueNonLoadingScript("jumpToAnchor()");
         }
-        layoutTestController.queueLoad("resources/otherpage.html");
-        layoutTestController.queueBackNavigation(howFarBack);
+        testRunner.queueLoad("resources/otherpage.html");
+        testRunner.queueBackNavigation(howFarBack);
     }
 }
 
 // A sequence testing frames, where the given nav technique is used to
 // load a single child frame, after the load of the whole frameset.
 function runLoadChildFrameTest(testCase) {
-    if (window.layoutTestController) {
-        layoutTestController.dumpBackForwardList();
-        layoutTestController.queueLoad("resources/frameset.pl?frameURL=otherpage.html");
-        layoutTestController.queueLoad(testCase, "main");
+    if (window.testRunner) {
+        testRunner.dumpBackForwardList();
+        testRunner.queueLoad("resources/frameset.pl?frameURL=otherpage.html");
+        testRunner.queueLoad(testCase, "main");
     }
 }
 
@@ -120,14 +120,14 @@ function runLoadChildFrameTest(testCase) {
 // state save/restore.  Some browsers do not let you restablish the
 // set of subframes you were viewing when you go back in a case like this.
 function runLoadChildFrameBackTest(testCase) {
-    if (window.layoutTestController) {
-        layoutTestController.dumpBackForwardList();
-        layoutTestController.queueLoad("resources/frameset.pl?frameURL=otherpage.html");
-        layoutTestController.queueLoad(testCase, "main");
-        layoutTestController.queueNonLoadingScript("fillTestForm()");
-        layoutTestController.queueNonLoadingScript("scrollDocDown()");
-        layoutTestController.queueLoad("resources/otherpage.html");
-        layoutTestController.queueBackNavigation(1);
+    if (window.testRunner) {
+        testRunner.dumpBackForwardList();
+        testRunner.queueLoad("resources/frameset.pl?frameURL=otherpage.html");
+        testRunner.queueLoad(testCase, "main");
+        testRunner.queueNonLoadingScript("fillTestForm()");
+        testRunner.queueNonLoadingScript("scrollDocDown()");
+        testRunner.queueLoad("resources/otherpage.html");
+        testRunner.queueBackNavigation(1);
     }
 }
 
@@ -135,12 +135,12 @@ function runLoadChildFrameBackTest(testCase) {
 // A sequence testing reload.  The goals are that form state is cleared,
 // scroll state is restored, and nothing is added to b/f list.
 function runReloadTest(testCase) {
-    if (window.layoutTestController) {
-        layoutTestController.dumpBackForwardList();
-        layoutTestController.queueLoad(testCase);
-        layoutTestController.queueNonLoadingScript("fillTestForm()");
-        layoutTestController.queueNonLoadingScript("scrollDocDown()");
-        layoutTestController.queueReload();
+    if (window.testRunner) {
+        testRunner.dumpBackForwardList();
+        testRunner.queueLoad(testCase);
+        testRunner.queueNonLoadingScript("fillTestForm()");
+        testRunner.queueNonLoadingScript("scrollDocDown()");
+        testRunner.queueReload();
     }
 }
 
@@ -149,19 +149,19 @@ function runReloadTest(testCase) {
 // that this case should not preserve scroll state or form state, and not add
 // anything to the b/f list.
 function runLoadSameTest(testCase) {
-    layoutTestController.dumpBackForwardList();
-    layoutTestController.queueLoad(testCase);
-    layoutTestController.queueNonLoadingScript("fillTestForm()");
-    layoutTestController.queueNonLoadingScript("scrollDocDown()");
-    layoutTestController.queueLoad(testCase);
+    testRunner.dumpBackForwardList();
+    testRunner.queueLoad(testCase);
+    testRunner.queueNonLoadingScript("fillTestForm()");
+    testRunner.queueNonLoadingScript("scrollDocDown()");
+    testRunner.queueLoad(testCase);
 }
 
 // A sequence testing a reload after a redirect. The goal is to check
 // that in a reload we use the method set by the redirect, GET,
 // instead of the original one, POST.
 function runRedirectReloadTest(testCase) {
-    layoutTestController.dumpBackForwardList();
-    layoutTestController.queueLoad(testCase);
-    layoutTestController.queueLoadingScript("submitFormWithPostRedirectReload()");
-    layoutTestController.queueReload();
+    testRunner.dumpBackForwardList();
+    testRunner.queueLoad(testCase);
+    testRunner.queueLoadingScript("submitFormWithPostRedirectReload()");
+    testRunner.queueReload();
 }

@@ -15,8 +15,8 @@ function runTest()
         r.innerHTML = "FAILURE: keygen was not parsed correctly. value=" +
         o.nodeValue;
         
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
 </script>

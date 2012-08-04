@@ -1,7 +1,7 @@
 // To run these tests, load json_results.html in a browser.
 // You should see a series of PASS lines.
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 
 var testStyles = document.createElement('style');
 testStyles.innerText = ".test-pass { color: green; } .test-fail { color: red; }";

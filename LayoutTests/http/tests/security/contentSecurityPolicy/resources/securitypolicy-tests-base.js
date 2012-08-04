@@ -1,5 +1,5 @@
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 
 function log(msg) {
     var txt = document.createTextNode(msg);

@@ -4,8 +4,8 @@ header("Content-Type: text/html; charset=UTF-8");
 <html>
 <head>
 <script>
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 </script>
 </head>
 <body>

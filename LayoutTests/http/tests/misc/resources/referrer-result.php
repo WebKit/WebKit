@@ -9,8 +9,8 @@ if (referer.match(/referrer.html/)) {
     document.write("FAIL: Referer header does not contain the string 'referrer.html', value is '" + referer + "'");
 }
 
-if (window.layoutTestController)
-    layoutTestController.notifyDone();
+if (window.testRunner)
+    testRunner.notifyDone();
 </script>
 
 </body>

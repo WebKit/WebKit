@@ -30,8 +30,8 @@ onload = function() {
     break;
   case 3:
     document.getElementById("result").innerText = "PASS";
-    if (window.layoutTestController)
-      layoutTestController.notifyDone();
+    if (window.testRunner)
+      testRunner.notifyDone();
     break;
   }
 }

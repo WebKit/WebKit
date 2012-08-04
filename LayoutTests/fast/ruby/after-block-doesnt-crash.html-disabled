@@ -17,7 +17,7 @@
     </ruby>
 </ruby>
 <script>
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
 </script>
 This test passes if it doesn't crash.

@@ -20,8 +20,8 @@ function testsDone()
 
     isSuccessfullyParsed();
 
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
 function processResult(result)

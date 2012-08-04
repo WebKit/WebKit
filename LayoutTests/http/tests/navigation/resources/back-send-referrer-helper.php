@@ -23,8 +23,8 @@ window.name: <script>document.write(window.name)</script>
     } else if (window.name == 2) {
         history.go(-1);
     } else {
-        if (window.layoutTestController)
-            window.layoutTestController.notifyDone();
+        if (window.testRunner)
+            window.testRunner.notifyDone();
     }
 </script>
 

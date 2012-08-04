@@ -34,5 +34,5 @@ if (sizeof($_POST) > 0 || sizeof($_FILES) > 0) {
     echo "no POST data is present.<br>";
 }
 
-echo "<script>if (window.layoutTestController) layoutTestController.notifyDone();</script>"
+echo "<script>if (window.testRunner) testRunner.notifyDone();</script>"
 ?>

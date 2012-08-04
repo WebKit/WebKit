@@ -4,7 +4,7 @@ if (window.testRunner) {
     testRunner.setGeolocationPermission(true);
     testRunner.setMockGeolocationPosition(51.478, -0.166, 100);
 } else
-    debug('This test can not be run without the LayoutTestController');
+    debug('This test can not be run without the testRunner');
 
 document.body.onload = function() {
     navigator.geolocation.watchPosition(function() {});

@@ -56,5 +56,5 @@ function generateExponentialOscillatorSweep(oscillatorType) {
     context.oncomplete = finishAudioTest;
     context.startRendering();    
 
-    layoutTestController.waitUntilDone();
+    testRunner.waitUntilDone();
 }

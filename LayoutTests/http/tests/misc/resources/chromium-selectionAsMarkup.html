@@ -16,7 +16,7 @@ onload = function() {
     var range = document.createRange();
     range.selectNodeContents(document.getElementById("selection"));
     document.getSelection().addRange(range);
-    var sel = layoutTestController.selectionAsMarkup();
+    var sel = testRunner.selectionAsMarkup();
 
     var errors = "";
 
@@ -32,12 +32,12 @@ onload = function() {
     else
         document.body.innerText = errors;
 
-    layoutTestController.notifyDone();
+    testRunner.notifyDone();
 }
 </script>
 
 <p>
 This test makes sure that the markup used by print selection
 contains absolute urls and pushed down styles. This test depends
-on layoutTestController.
+on testRunner.
 </p>

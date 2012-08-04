@@ -14,7 +14,7 @@ print "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http:/
 print "<html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"pl\">\n";
 print "<head>\n";
 print "<script>\n";
-print "if (window.layoutTestController) layoutTestController.dumpAsText();\n";
+print "if (window.testRunner) testRunner.dumpAsText();\n";
 print "</script>";
 print "</head>\n";
 print "<body>\n";

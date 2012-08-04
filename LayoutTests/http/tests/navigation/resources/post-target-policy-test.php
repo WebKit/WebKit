@@ -6,9 +6,9 @@ function loaded()
 {
     if (window.sessionStorage.getItem("postedForm")) {
         window.sessionStorage.removeItem("postedForm");
-        if (window.layoutTestController) {
-            layoutTestController.setCustomPolicyDelegate(false);
-            layoutTestController.notifyDone();
+        if (window.testRunner) {
+            testRunner.setCustomPolicyDelegate(false);
+            testRunner.notifyDone();
         }
         return;
     }

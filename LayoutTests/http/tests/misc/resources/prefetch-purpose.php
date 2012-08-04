@@ -11,7 +11,7 @@ if (isset($_COOKIE['Purpose'])) {
 ?>
 
 <script>
-layoutTestController.notifyDone();
+testRunner.notifyDone();
 </script>
 
 <p>This test verifies that prefetches are sent with the HTTP request header

@@ -6,9 +6,9 @@
 </p>
 <pre id=log></pre>
 <script>
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
     }
 
     var log = document.getElementById("log");
@@ -26,8 +26,8 @@
             // Need to wait to see if we're called again.
             // event-stream.php sends a bunch of events before flushing, so if close() didn't take
             // effect we'd get a second message practically instantaneously, waiting 100ms should be ok.
-            if (window.layoutTestController)
-                layoutTestController.notifyDone();
+            if (window.testRunner)
+                testRunner.notifyDone();
         }, 100);
     }, false);
 

@@ -29,7 +29,7 @@ if (window.testRunner) {
     testRunner.setGeolocationPermission(true);
     testRunner.setMockGeolocationPosition(mockLatitude, mockLongitude, mockAccuracy);
 } else
-    debug('This test can not be run without the LayoutTestController');
+    debug('This test can not be run without the testRunner');
 
 // Initialize the cached Position
 navigator.geolocation.getCurrentPosition(function(p) {

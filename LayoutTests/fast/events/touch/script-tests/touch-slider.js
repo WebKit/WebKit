@@ -46,7 +46,7 @@ function onTouchEnd() {
 
 function onKeyDown() {
     isSuccessfullyParsed();
-    layoutTestController.notifyDone();
+    testRunner.notifyDone();
 }
 
 var sliderValue = 0;
@@ -105,8 +105,8 @@ document.addEventListener("keydown", onKeyDown, false);
 
 description("Tests that the touch events originating on an input element with type=range update the slider position. This test is only expected to pass if ENABLE_TOUCH_SLIDER is defined.");
 
-if (window.layoutTestController) {
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.waitUntilDone();
 }
 
 if (window.eventSender) {

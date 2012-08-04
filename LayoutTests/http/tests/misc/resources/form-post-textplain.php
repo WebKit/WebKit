@@ -19,8 +19,8 @@ if($data == "f1=This is field #1 &!@$%\n='<>\r\nf2=This is field #2 \"\"") {
 }
 ?>
 <script>
-if(window.layoutTestController)
-    layoutTestController.notifyDone();
+if(window.testRunner)
+    testRunner.notifyDone();
 </script>
 </body>
 </html>

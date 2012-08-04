@@ -32,7 +32,7 @@ if ($count eq 1) {
     print "<html>";
     print "<head>";
     print "<script type='text/javascript'>";
-    print "function startTest() { layoutTestController.dumpBackForwardList(); }";
+    print "function startTest() { testRunner.dumpBackForwardList(); }";
     print "</script>";
     print "</head>";
     print "<body onload='startTest();'>";

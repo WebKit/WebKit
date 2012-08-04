@@ -1,6 +1,6 @@
 <script>
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
+    if (window.testRunner)
+        testRunner.dumpAsText();
 </script>
 
 HTTPS is <?= $_SERVER['HTTPS'] ?>!

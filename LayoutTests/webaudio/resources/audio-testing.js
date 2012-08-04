@@ -1,5 +1,5 @@
-if (window.layoutTestController)
-    layoutTestController.overridePreference("WebKitWebAudioEnabled", "1");
+if (window.testRunner)
+    testRunner.overridePreference("WebKitWebAudioEnabled", "1");
 
 function writeString(s, a, offset) {
     for (var i = 0; i < s.length; ++i) {
@@ -97,8 +97,8 @@ function createAudioData(audioBuffer) {
 
 function finishAudioTest(event) {
     var audioData = createAudioData(event.renderedBuffer);
-    layoutTestController.setAudioData(audioData);
-    layoutTestController.notifyDone();
+    testRunner.setAudioData(audioData);
+    testRunner.notifyDone();
 }
 
 // Create an impulse in a buffer of length sampleFrameLength

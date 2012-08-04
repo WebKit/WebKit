@@ -10,7 +10,7 @@ if (window.testRunner) {
                                                     mockLongitude,
                                                     mockAccuracy);
 } else
-    debug('This test can not be run without the LayoutTestController');
+    debug('This test can not be run without the testRunner');
 
 var position;
 var successCallbackInvoked = false;

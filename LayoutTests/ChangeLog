@@ -1,3 +1,134 @@
+2012-08-03  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Some tests still refer to layoutTestController instead of testRunner
+        https://bugs.webkit.org/show_bug.cgi?id=93176
+
+        Reviewed by Adam Barth.
+
+        Apparently there are still some tests referring to layoutTestController.
+        Removed all of them as found by spotlight.
+
+        * batterystatus/script-tests/event-after-navigation.js:
+        * editing/deleting/smart-editing-disabled.html:
+        * fast/dom/Geolocation/script-tests/callback-exception.js:
+        * fast/dom/Geolocation/script-tests/clear-watch-invalid-id-crash.js:
+        * fast/dom/Geolocation/script-tests/disconnected-frame-permission-denied.js:
+        * fast/dom/Geolocation/script-tests/error.js:
+        * fast/dom/Geolocation/script-tests/maximum-age.js:
+        * fast/dom/Geolocation/script-tests/multiple-requests.js:
+        * fast/dom/Geolocation/script-tests/no-page-cache.js:
+        * fast/dom/Geolocation/script-tests/permission-denied-already-clear-watch.js:
+        * fast/dom/Geolocation/script-tests/permission-denied-already-error.js:
+        * fast/dom/Geolocation/script-tests/permission-denied-already-success.js:
+        * fast/dom/Geolocation/script-tests/permission-denied-stops-watches.js:
+        * fast/dom/Geolocation/script-tests/permission-denied.js:
+        * fast/dom/Geolocation/script-tests/position-string.js:
+        * fast/dom/Geolocation/script-tests/reentrant-error.js:
+        * fast/dom/Geolocation/script-tests/reentrant-permission-denied.js:
+        * fast/dom/Geolocation/script-tests/reentrant-success.js:
+        * fast/dom/Geolocation/script-tests/success.js:
+        * fast/dom/Geolocation/script-tests/timeout.js:
+        * fast/dom/Geolocation/script-tests/watch.js:
+        * fast/dom/Geolocation/script-tests/window-close-crash.js:
+        * fast/encoding/resources/char-encoding-utils.js:
+        (testsDone):
+        * fast/encoding/resources/dynamic-load-target.js:
+        * fast/encoding/resources/invalid-xml.js:
+        (runNextTest):
+        * fast/encoding/resources/parser-tests.js:
+        (dotest.window.receivedResults):
+        (dotest):
+        * fast/events/touch/script-tests/touch-slider-no-js-touch-listener.js:
+        * fast/events/touch/script-tests/touch-slider.js:
+        (onKeyDown):
+        * fast/harness/override-preferences-2-expected.txt:
+        * fast/harness/override-preferences-2.html:
+        * fast/harness/override-preferences-expected.txt:
+        * fast/harness/override-preferences.html:
+        * fast/harness/override-zzz-reset-expected.txt:
+        * fast/harness/override-zzz-reset.html:
+        * fast/harness/resources/results-test.js:
+        * fast/harness/use-page-cache-expected.txt:
+        * fast/harness/use-page-cache.html:
+        * fast/ruby/after-block-doesnt-crash.html-disabled:
+        * fast/ruby/after-table-doesnt-crash.html-disabled:
+        * fast/ruby/generated-after-counter-doesnt-crash.html-disabled:
+        * fast/ruby/generated-before-and-after-counter-doesnt-crash.html-disabled:
+        * http/tests/eventsource/eventsource-events-after-close.html:
+        * http/tests/misc/gmail-assert-on-load.html:
+        * http/tests/misc/resources/char-encoding-in-hidden-charset-field.php:
+        * http/tests/misc/resources/check-keygen-post.php:
+        * http/tests/misc/resources/check-query-param.php:
+        * http/tests/misc/resources/check-unnamed-file-included-in-formdata.php:
+        * http/tests/misc/resources/chromium-selectionAsMarkup.html:
+        * http/tests/misc/resources/delayed-log.php:
+        * http/tests/misc/resources/form-post-textplain.php:
+        * http/tests/misc/resources/location-test-xsl-style-sheet.xsl:
+        * http/tests/misc/resources/percent-sign-in-form-data-field-name.cgi:
+        * http/tests/misc/resources/post-echo-and-notify-done.cgi:
+        * http/tests/misc/resources/prefetch-purpose.php:
+        * http/tests/misc/resources/redirect-result.php:
+        * http/tests/misc/resources/referrer-main-resource.php:
+        * http/tests/misc/resources/referrer-result.php:
+        * http/tests/misc/xhtml.php:
+        * http/tests/misc/xmltokenizer-do-not-crash.pl:
+        * http/tests/multipart/multipart-replace-non-html-content.php:
+        * http/tests/multipart/policy-ignore-crash.php:
+        * http/tests/multipart/win-boundary-crash.html-disabled:
+        * http/tests/navigation/post-goback-repost-policy.html-disabled:
+        * http/tests/navigation/resources/back-send-referrer-helper.php:
+        * http/tests/navigation/resources/check-ping.php:
+        * http/tests/navigation/resources/document-location.js:
+        (start):
+        * http/tests/navigation/resources/form-target.pl:
+        * http/tests/navigation/resources/goback-with-policydelegate.php:
+        * http/tests/navigation/resources/no-referrer-helper.php:
+        * http/tests/navigation/resources/no-referrer-same-window-helper.php:
+        * http/tests/navigation/resources/notify-done.html:
+        * http/tests/navigation/resources/post-target-policy-test.php:
+        * http/tests/navigation/resources/redirect-cycle-1.pl:
+        * http/tests/navigation/resources/redirect302-metaredirect.pl:
+        * http/tests/navigation/resources/redirected-post-request-contents.php:
+        * http/tests/navigation/resources/submit-to-fragment.pl:
+        * http/tests/navigation/resources/testcode.js:
+        (runBasicTest):
+        (runBackTest):
+        (runLoadChildFrameTest):
+        (runLoadChildFrameBackTest):
+        (runReloadTest):
+        (runLoadSameTest):
+        (runRedirectReloadTest):
+        * http/tests/navigation/useragent.php:
+        * http/tests/resources/js-test-post.js:
+        * http/tests/resources/js-test-pre.js:
+        (finishJSTest):
+        * http/tests/security/contentSecurityPolicy/resources/securitypolicy-tests-base.js:
+        * http/tests/ssl/resources/no-http-referer.cgi:
+        * http/tests/ssl/verify-ssl-enabled.php:
+        * networkinformation/script-tests/event-after-navigation.js:
+        * platform/mac/fast/objc/script-tests/webScriptObject-hasWebScriptKey.js:
+        * platform/qt/svg/repaint/filter-repaint-expected.txt:
+        * transforms/3d/hit-testing/resources/hit-test-utils.js:
+        * transforms/3d/point-mapping/point-mapping-helpers.js:
+        (runTest):
+        * transitions/resources/transition-test-helpers.js:
+        (expected):
+        * transitions/transition-end-event-helpers.js:
+        (runTransitionTest.processEndEvents):
+        * webaudio/resources/audio-codec-test.js:
+        (runDecodingTest):
+        (finishedLoading):
+        * webaudio/resources/audio-testing.js:
+        (finishAudioTest):
+        * webaudio/resources/audioparam-testing.js:
+        (createAudioGraphAndTest):
+        * webaudio/resources/oscillator-testing.js:
+        (generateExponentialOscillatorSweep):
+        * webintents/resources/web-intents-testing.js:
+        (onSuccess):
+        (onFailure):
+        (startIntentWithCallbacks):
+
 2012-08-03  Ami Fischman  <fischman@chromium.org>
 
         [Chromium] Layout Test media/media-fragments/TC0080-TC0089.html is slow

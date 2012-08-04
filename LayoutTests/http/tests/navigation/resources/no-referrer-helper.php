@@ -24,8 +24,8 @@ function log(msg)
         consoleWindow.log("window.opener: " + (window.opener ? window.opener.location : ""));
     }
     
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 </script>
 
 </body></html>

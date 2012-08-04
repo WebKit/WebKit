@@ -1,6 +1,6 @@
 // svg/dynamic-updates tests set enablePixelTesting=true, as we want to dump text + pixel results
-if (self.layoutTestController)
-    layoutTestController.dumpAsText(self.enablePixelTesting);
+if (self.testRunner)
+    testRunner.dumpAsText(self.enablePixelTesting);
 
 var description, debug, successfullyParsed, errorMessage;
 
@@ -466,8 +466,8 @@ function finishJSTest()
     if (!self.wasPostTestScriptParsed)
         return;
     isSuccessfullyParsed();
-    if (self.jsTestIsAsync && self.layoutTestController)
-        layoutTestController.notifyDone();
+    if (self.jsTestIsAsync && self.testRunner)
+        testRunner.notifyDone();
 }
 
 function startWorker(testScriptURL, shared)

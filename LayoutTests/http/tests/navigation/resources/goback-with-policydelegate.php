@@ -4,8 +4,8 @@
 
 function loaded()
 {
-    if (window.layoutTestController)
-        layoutTestController.setCustomPolicyDelegate(true, true);
+    if (window.testRunner)
+        testRunner.setCustomPolicyDelegate(true, true);
 
     window.history.back();
 }

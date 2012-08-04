@@ -15,8 +15,8 @@ while ($line = fgets($pingFile)) {
 fclose($pingFile);
 unlink("ping.txt");
 echo "<script>";
-echo "if (window.layoutTestController)";
-echo "    layoutTestController.notifyDone();";
+echo "if (window.testRunner)";
+echo "    testRunner.notifyDone();";
 echo "</script>";
 echo "</body></html>";
 ?>

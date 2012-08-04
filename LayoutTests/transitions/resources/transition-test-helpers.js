@@ -209,8 +209,8 @@ function endTest()
 {
     document.getElementById('result').innerHTML = result;
 
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 
 function checkExpectedValueCallback(expected, index)
@@ -235,7 +235,7 @@ function runTest(expected, usePauseAPI)
         // We can only use the transition fast-forward mechanism if DRT implements pauseTransitionAtTimeOnElementWithId()
         if (hasPauseTransitionAPI && usePauseAPI) {
             if (tryToPauseTransition) {
-              if (!layoutTestController.pauseTransitionAtTimeOnElementWithId(property, time, elementId))
+              if (!testRunner.pauseTransitionAtTimeOnElementWithId(property, time, elementId))
                 window.console.log("Failed to pause '" + property + "' transition on element '" + elementId + "'");
             }
             checkExpectedValue(expected, i);
@@ -280,12 +280,12 @@ var hasPauseTransitionAPI;
 
 function runTransitionTest(expected, callback, usePauseAPI, doPixelTest)
 {
-    hasPauseTransitionAPI = ('layoutTestController' in window) && ('pauseTransitionAtTimeOnElementWithId' in layoutTestController);
+    hasPauseTransitionAPI = ('testRunner' in window) && ('pauseTransitionAtTimeOnElementWithId' in testRunner);
     
-    if (window.layoutTestController) {
+    if (window.testRunner) {
         if (!doPixelTest)
-            layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
+            testRunner.dumpAsText();
+        testRunner.waitUntilDone();
     }
     
     if (!expected)

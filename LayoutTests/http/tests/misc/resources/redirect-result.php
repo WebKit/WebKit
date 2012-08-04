@@ -1,8 +1,8 @@
 <html>
 <body>
 <script>
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 
 var userAgent = "<?php echo $_SERVER['HTTP_USER_AGENT']; ?>";
 if (userAgent.match(/WebKit/)) {

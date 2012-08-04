@@ -9,8 +9,8 @@ print <<HERE_DOC_END
 <html>
 <meta http-equiv="refresh" content="0;URL=redirect302-metaredirect.html">
 <script>
-    if (window.layoutTestController)
-        layoutTestController.waitUntilDone();
+    if (window.testRunner)
+        testRunner.waitUntilDone();
 </script>
 <body>
 Test failed! - This page uses a meta redirect to load another page.

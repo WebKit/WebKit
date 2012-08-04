@@ -51,8 +51,8 @@ if (sessionStorage.topShouldNavAndGoBack) {
   }
 }
 
-if (isDone && window.layoutTestController)
-    layoutTestController.notifyDone();
+if (isDone && window.testRunner)
+    testRunner.notifyDone();
 
 </script>
 </body>

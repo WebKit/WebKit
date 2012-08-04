@@ -8,7 +8,7 @@ var bufferLoader = 0;
 // select a context with a different sample rate.  The default value is |defaultSampleRate|.
 function runDecodingTest(url, optionalSampleRate) 
 {
-    if (!window.layoutTestController)
+    if (!window.testRunner)
         return;
 
     var sampleRate = (typeof optionalSampleRate === "undefined") ? defaultSampleRate : optionalSampleRate;
@@ -23,12 +23,12 @@ function runDecodingTest(url, optionalSampleRate)
     );
     
     bufferLoader.load();
-    layoutTestController.waitUntilDone();
+    testRunner.waitUntilDone();
 }
 
 function finishedLoading(bufferList)
 {
-    layoutTestController.setAudioData(createAudioData(bufferList[0]));
-    layoutTestController.notifyDone();
+    testRunner.setAudioData(createAudioData(bufferList[0]));
+    testRunner.notifyDone();
 }
 

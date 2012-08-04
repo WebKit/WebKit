@@ -33,8 +33,8 @@ function runTestsOnObject(objectParam) {
     debug("");
 }
 
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
+if (window.testRunner) {
+    testRunner.dumpAsText();
 
     debug("Test with a newly created, local, object => {}");
     runTestsOnObject({});

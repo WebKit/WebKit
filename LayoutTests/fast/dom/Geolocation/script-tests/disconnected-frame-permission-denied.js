@@ -6,7 +6,7 @@ if (window.testRunner) {
     testRunner.setGeolocationPermission(false);
     testRunner.setMockGeolocationPosition(51.478, -0.166, 100);
 } else
-    debug('This test can not be run without the LayoutTestController');
+    debug('This test can not be run without the testRunner');
 
 var error;
 function onIframeLoaded() {

@@ -7,8 +7,8 @@ echo str_pad('', 5000);
 ?>
 
 <script>
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 </script>
 
 <?php

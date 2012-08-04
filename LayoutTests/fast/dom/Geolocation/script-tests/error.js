@@ -7,7 +7,7 @@ if (window.testRunner) {
     testRunner.setGeolocationPermission(true);
     testRunner.setMockGeolocationError(mockCode, mockMessage);
 } else
-    debug('This test can not be run without the LayoutTestController');
+    debug('This test can not be run without the testRunner');
 
 var error;
 navigator.geolocation.getCurrentPosition(function(p) {

@@ -5,5 +5,5 @@ if ('とうきょう' == tokyo)
 else
     document.getElementById("target").innerHTML = "FAIL: Incorrect encoding used.  Expected '" + tokyo + "' but got '" + 'とうきょう' + "'.";
 
-if (window.layoutTestController) 
-    window.layoutTestController.notifyDone();
+if (window.testRunner) 
+    window.testRunner.notifyDone();

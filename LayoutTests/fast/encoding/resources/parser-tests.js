@@ -12,9 +12,9 @@ document.write('<p>This test suite was converted from http://www.hixie.ch/tests/
   '<p>(Tests are considered to pass even if they treat Win1254 and ISO-8859-4 as separate.)</p>' +
   '<p><iframe id="test"></iframe></p>');
 
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
 }
 
 var frame = document.getElementById('test');
@@ -49,8 +49,8 @@ function dotest() {
         else {
             frame.parentNode.removeChild(frame);
             document.getElementById('status').innerText = "Tests ran.";
-            if (window.layoutTestController)
-                layoutTestController.notifyDone();
+            if (window.testRunner)
+                testRunner.notifyDone();
         }
     };
 }

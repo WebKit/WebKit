@@ -5,7 +5,7 @@ if (window.testRunner) {
     testRunner.setCanOpenWindows();
     testRunner.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
 } else
-    debug('This test can not be run without the LayoutTestController');
+    debug('This test can not be run without the testRunner');
 
 var pageOneOnloadCount = 0;
 function reportPageOneOnload() {
