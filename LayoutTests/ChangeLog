@@ -1,3 +1,13 @@
+2012-08-03  Florin Malita  <fmalita@chromium.org>
+
+        [SVG] Tref target event listener cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=93004
+
+        Reviewed by Abhishek Arya.
+
+        * svg/custom/tref-nested-events-crash-expected.txt: Added.
+        * svg/custom/tref-nested-events-crash.svg: Added.
+
 2012-08-01  Ryosuke Niwa  <rniwa@webkit.org>
 
         Use testRunner instead of layoutTestController in fast/scrolling through fast/xsl tests

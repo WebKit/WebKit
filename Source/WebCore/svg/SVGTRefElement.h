@@ -27,7 +27,7 @@
 
 namespace WebCore {
 
-class TargetListener;
+class SVGTRefTargetEventListener;
 
 class SVGTRefElement : public SVGTextPositioningElement,
                        public SVGURIReference {
@@ -35,7 +35,7 @@ public:
     static PassRefPtr<SVGTRefElement> create(const QualifiedName&, Document*);
 
 private:
-    friend class TargetListener;
+    friend class SVGTRefTargetEventListener;
 
     SVGTRefElement(const QualifiedName&, Document*);
     virtual ~SVGTRefElement();
@@ -53,8 +53,6 @@ private:
     virtual InsertionNotificationRequest insertedInto(ContainerNode*) OVERRIDE;
     virtual void removedFrom(ContainerNode*) OVERRIDE;
 
-    void clearEventListener();
-
     void updateReferencedText();
 
     void detachTarget();
@@ -65,7 +63,7 @@ private:
         DECLARE_ANIMATED_STRING(Href, href)
     END_DECLARE_ANIMATED_PROPERTIES
 
-    RefPtr<TargetListener> m_eventListener;
+    RefPtr<SVGTRefTargetEventListener> m_targetListener;
 };
 
 } // namespace WebCore

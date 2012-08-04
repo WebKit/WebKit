@@ -42,7 +42,8 @@ namespace WebCore {
             CPPEventListenerType,
             ConditionEventListenerType,
             GObjectEventListenerType,
-            NativeEventListenerType
+            NativeEventListenerType,
+            SVGTRefTargetEventListenerType
         };
 
         virtual ~EventListener() { }
