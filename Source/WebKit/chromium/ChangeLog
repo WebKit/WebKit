@@ -1,3 +1,15 @@
+2012-08-03  Yaron Friedman  <yfriedman@chromium.org>
+
+        [Chrome-Android] - Prepare apk tests for switch to checked in SDK.
+        https://bugs.webkit.org/show_bug.cgi?id=92931
+
+        Reviewed by Adam Barth.
+
+        Pass Android-specific gyp variables to the native test generator
+        avoiding any dependencies on environment variables during build time.
+
+        * WebKitUnitTests.gyp:
+
 2012-08-03  David Grogan  <dgrogan@chromium.org>
 
         IndexedDB: Core upgradeneeded logic
