@@ -1,3 +1,15 @@
+2012-08-03  Nico Weber  <thakis@chromium.org>
+
+        [chromium] Add API to make it possible to request all variants of a WebImage
+        https://bugs.webkit.org/show_bug.cgi?id=92933
+
+        Reviewed by Adam Barth.
+
+        Part of http://crbug.com/138550
+
+        * chromium/public/WebImage.h:
+        (WebImage):
+
 2012-08-03  Alexandre Elias  <aelias@google.com>
 
         [chromium] Move ubercomp quads back into CC

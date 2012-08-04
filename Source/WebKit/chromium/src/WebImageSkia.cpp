@@ -38,10 +38,12 @@
 #include "platform/WebData.h"
 #include "platform/WebSize.h"
 
+#include <algorithm>
 #include <public/WebImage.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/PassRefPtr.h>
+#include <wtf/Vector.h>
 
 using namespace WebCore;
 
@@ -82,6 +84,36 @@ WebImage WebImage::fromData(const WebData& data, const WebSize& desiredSize)
         return WebImage();
 
     return WebImage(frame->bitmap());
+}
+
+WebVector<WebImage> WebImage::framesFromData(const WebData& data)
+{
+    // This is to protect from malicious images. It should be big enough that it's never hit in pracice.
+    const size_t maxFrameCount = 8;
+
+    ImageSource source;
+    source.setData(PassRefPtr<SharedBuffer>(data).get(), true);
+    if (!source.isSizeAvailable())
+        return WebVector<WebImage>();
+
+    // Frames are arranged by decreasing size, then decreasing bit depth.
+    // Keep the first frame at every size, has the highest bit depth.
+    const size_t frameCount = source.frameCount();
+    IntSize lastSize;
+
+    Vector<WebImage> frames;
+    for (size_t i = 0; i < std::min(frameCount, maxFrameCount); ++i) {
+        const IntSize frameSize = source.frameSizeAtIndex(i);
+        if (frameSize == lastSize)
+            continue;
+        lastSize = frameSize;
+
+        OwnPtr<NativeImageSkia> frame = adoptPtr(source.createFrameAtIndex(i));
+        if (frame)
+            frames.append(WebImage(frame->bitmap()));
+    }
+
+    return frames;
 }
 
 void WebImage::reset()
