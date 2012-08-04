@@ -1430,15 +1430,19 @@ DEFINE_STUB_FUNCTION(void, op_put_by_id)
     CallFrame* callFrame = stackFrame.callFrame;
     Identifier& ident = stackFrame.args[1].identifier();
     
+    CodeBlock* codeBlock = stackFrame.callFrame->codeBlock();
+    StructureStubInfo* stubInfo = &codeBlock->getStubInfo(STUB_RETURN_ADDRESS);
+    AccessType accessType = static_cast<AccessType>(stubInfo->accessType);
+
     PutPropertySlot slot(callFrame->codeBlock()->isStrictMode());
     stackFrame.args[0].jsValue().put(callFrame, ident, stackFrame.args[2].jsValue(), slot);
     
-    CodeBlock* codeBlock = stackFrame.callFrame->codeBlock();
-    StructureStubInfo* stubInfo = &codeBlock->getStubInfo(STUB_RETURN_ADDRESS);
-    if (!stubInfo->seenOnce())
-        stubInfo->setSeen();
-    else
-        JITThunks::tryCachePutByID(callFrame, codeBlock, STUB_RETURN_ADDRESS, stackFrame.args[0].jsValue(), slot, stubInfo, false);
+    if (accessType == static_cast<AccessType>(stubInfo->accessType)) {
+        if (!stubInfo->seenOnce())
+            stubInfo->setSeen();
+        else
+            JITThunks::tryCachePutByID(callFrame, codeBlock, STUB_RETURN_ADDRESS, stackFrame.args[0].jsValue(), slot, stubInfo, false);
+    }
     
     CHECK_FOR_EXCEPTION_AT_END();
 }
@@ -1449,18 +1453,22 @@ DEFINE_STUB_FUNCTION(void, op_put_by_id_direct)
     CallFrame* callFrame = stackFrame.callFrame;
     Identifier& ident = stackFrame.args[1].identifier();
     
+    CodeBlock* codeBlock = stackFrame.callFrame->codeBlock();
+    StructureStubInfo* stubInfo = &codeBlock->getStubInfo(STUB_RETURN_ADDRESS);
+    AccessType accessType = static_cast<AccessType>(stubInfo->accessType);
+
     PutPropertySlot slot(callFrame->codeBlock()->isStrictMode());
     JSValue baseValue = stackFrame.args[0].jsValue();
     ASSERT(baseValue.isObject());
     
     asObject(baseValue)->putDirect(callFrame->globalData(), ident, stackFrame.args[2].jsValue(), slot);
     
-    CodeBlock* codeBlock = stackFrame.callFrame->codeBlock();
-    StructureStubInfo* stubInfo = &codeBlock->getStubInfo(STUB_RETURN_ADDRESS);
-    if (!stubInfo->seenOnce())
-        stubInfo->setSeen();
-    else
-        JITThunks::tryCachePutByID(callFrame, codeBlock, STUB_RETURN_ADDRESS, stackFrame.args[0].jsValue(), slot, stubInfo, true);
+    if (accessType == static_cast<AccessType>(stubInfo->accessType)) {
+        if (!stubInfo->seenOnce())
+            stubInfo->setSeen();
+        else
+            JITThunks::tryCachePutByID(callFrame, codeBlock, STUB_RETURN_ADDRESS, stackFrame.args[0].jsValue(), slot, stubInfo, true);
+    }
     
     CHECK_FOR_EXCEPTION_AT_END();
 }
@@ -1521,14 +1529,18 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_get_by_id_method_check)
     CallFrame* callFrame = stackFrame.callFrame;
     Identifier& ident = stackFrame.args[1].identifier();
 
+    CodeBlock* codeBlock = stackFrame.callFrame->codeBlock();
+    MethodCallLinkInfo& methodCallLinkInfo = codeBlock->getMethodCallLinkInfo(STUB_RETURN_ADDRESS);
+    StructureStubInfo& stubInfo = codeBlock->getStubInfo(STUB_RETURN_ADDRESS);
+    AccessType accessType = static_cast<AccessType>(stubInfo.accessType);
+
     JSValue baseValue = stackFrame.args[0].jsValue();
     PropertySlot slot(baseValue);
     JSValue result = baseValue.get(callFrame, ident, slot);
     CHECK_FOR_EXCEPTION();
-
-    CodeBlock* codeBlock = stackFrame.callFrame->codeBlock();
-    MethodCallLinkInfo& methodCallLinkInfo = codeBlock->getMethodCallLinkInfo(STUB_RETURN_ADDRESS);
-    StructureStubInfo& stubInfo = codeBlock->getStubInfo(STUB_RETURN_ADDRESS);
+    
+    if (accessType != static_cast<AccessType>(stubInfo.accessType))
+        return JSValue::encode(result);
 
     if (!methodCallLinkInfo.seenOnce()) {
         methodCallLinkInfo.setSeen();
@@ -1595,14 +1607,18 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_get_by_id_method_check_update)
     CallFrame* callFrame = stackFrame.callFrame;
     Identifier& ident = stackFrame.args[1].identifier();
 
+    CodeBlock* codeBlock = stackFrame.callFrame->codeBlock();
+    MethodCallLinkInfo& methodCallLinkInfo = codeBlock->getMethodCallLinkInfo(STUB_RETURN_ADDRESS);
+    StructureStubInfo& stubInfo = codeBlock->getStubInfo(STUB_RETURN_ADDRESS);
+    AccessType accessType = static_cast<AccessType>(stubInfo.accessType);
+
     JSValue baseValue = stackFrame.args[0].jsValue();
     PropertySlot slot(baseValue);
     JSValue result = baseValue.get(callFrame, ident, slot);
     CHECK_FOR_EXCEPTION();
-
-    CodeBlock* codeBlock = stackFrame.callFrame->codeBlock();
-    MethodCallLinkInfo& methodCallLinkInfo = codeBlock->getMethodCallLinkInfo(STUB_RETURN_ADDRESS);
-    StructureStubInfo& stubInfo = codeBlock->getStubInfo(STUB_RETURN_ADDRESS);
+    
+    if (accessType != static_cast<AccessType>(stubInfo.accessType))
+        return JSValue::encode(result);
 
     ASSERT(methodCallLinkInfo.seenOnce());
 
@@ -1684,12 +1700,17 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_get_by_id)
     CallFrame* callFrame = stackFrame.callFrame;
     Identifier& ident = stackFrame.args[1].identifier();
 
+    CodeBlock* codeBlock = stackFrame.callFrame->codeBlock();
+    StructureStubInfo* stubInfo = &codeBlock->getStubInfo(STUB_RETURN_ADDRESS);
+    AccessType accessType = static_cast<AccessType>(stubInfo->accessType);
+
     JSValue baseValue = stackFrame.args[0].jsValue();
     PropertySlot slot(baseValue);
     JSValue result = baseValue.get(callFrame, ident, slot);
+    
+    if (accessType != static_cast<AccessType>(stubInfo->accessType))
+        return JSValue::encode(result);
 
-    CodeBlock* codeBlock = stackFrame.callFrame->codeBlock();
-    StructureStubInfo* stubInfo = &codeBlock->getStubInfo(STUB_RETURN_ADDRESS);
     if (!stubInfo->seenOnce())
         stubInfo->setSeen();
     else
@@ -1706,9 +1727,16 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_get_by_id_self_fail)
     CallFrame* callFrame = stackFrame.callFrame;
     Identifier& ident = stackFrame.args[1].identifier();
 
+    CodeBlock* codeBlock = callFrame->codeBlock();
+    StructureStubInfo* stubInfo = &codeBlock->getStubInfo(STUB_RETURN_ADDRESS);
+    AccessType accessType = static_cast<AccessType>(stubInfo->accessType);
+
     JSValue baseValue = stackFrame.args[0].jsValue();
     PropertySlot slot(baseValue);
     JSValue result = baseValue.get(callFrame, ident, slot);
+    
+    if (accessType != static_cast<AccessType>(stubInfo->accessType))
+        return JSValue::encode(result);
 
     CHECK_FOR_EXCEPTION();
 
@@ -1716,9 +1744,6 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_get_by_id_self_fail)
         && slot.isCacheable()
         && !baseValue.asCell()->structure()->isUncacheableDictionary()
         && slot.slotBase() == baseValue) {
-
-        CodeBlock* codeBlock = callFrame->codeBlock();
-        StructureStubInfo* stubInfo = &codeBlock->getStubInfo(STUB_RETURN_ADDRESS);
 
         ASSERT(slot.slotBase().isObject());
 
@@ -1813,20 +1838,26 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_get_by_id_proto_list)
     CallFrame* callFrame = stackFrame.callFrame;
     const Identifier& propertyName = stackFrame.args[1].identifier();
 
+    CodeBlock* codeBlock = callFrame->codeBlock();
+    StructureStubInfo* stubInfo = &codeBlock->getStubInfo(STUB_RETURN_ADDRESS);
+    AccessType accessType = static_cast<AccessType>(stubInfo->accessType);
+
     JSValue baseValue = stackFrame.args[0].jsValue();
     PropertySlot slot(baseValue);
     JSValue result = baseValue.get(callFrame, propertyName, slot);
 
     CHECK_FOR_EXCEPTION();
 
-    if (!baseValue.isCell() || !slot.isCacheable() || baseValue.asCell()->structure()->isDictionary() || baseValue.asCell()->structure()->typeInfo().prohibitsPropertyCaching()) {
+    if (accessType != static_cast<AccessType>(stubInfo->accessType)
+        || !baseValue.isCell()
+        || !slot.isCacheable()
+        || baseValue.asCell()->structure()->isDictionary()
+        || baseValue.asCell()->structure()->typeInfo().prohibitsPropertyCaching()) {
         ctiPatchCallByReturnAddress(callFrame->codeBlock(), STUB_RETURN_ADDRESS, FunctionPtr(cti_op_get_by_id_proto_fail));
         return JSValue::encode(result);
     }
 
     Structure* structure = baseValue.asCell()->structure();
-    CodeBlock* codeBlock = callFrame->codeBlock();
-    StructureStubInfo* stubInfo = &codeBlock->getStubInfo(STUB_RETURN_ADDRESS);
 
     ASSERT(slot.slotBase().isObject());
     JSObject* slotBaseObject = asObject(slot.slotBase());

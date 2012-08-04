@@ -1,5 +1,22 @@
 2012-08-03  Filip Pizlo  <fpizlo@apple.com>
 
+        Crashes in dfgBuildPutByIdList when clicking on just about anything on Google Maps
+        https://bugs.webkit.org/show_bug.cgi?id=92691
+
+        Reviewed by Mark Hahnenberg.
+
+        The state of the stubs was changing after we determined the type (by virtue of the slow path
+        function that was called), since the get or put (in this case put) could cause arbitrary
+        side effects. Perhaps a full-blown fix would be to eliminate our reliance of the slow path
+        function to determine what to do, but an easier fix for now is to have the slow path give up
+        if its assumptions were invalidated by a side effect.
+
+        * dfg/DFGOperations.cpp:
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+
+2012-08-03  Filip Pizlo  <fpizlo@apple.com>
+
         DFG handling of get_by_id should always inject a ForceOSRExit node if there is no prediction
         https://bugs.webkit.org/show_bug.cgi?id=93162
 
