@@ -1,3 +1,11 @@
+2012-08-04  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Unreviewed: Web Inspector: extend instrumenting methods set in ReportMemoryUsage clang plugin
+        Three methods addString, addVectorPtr and addInstrumentedVectorPtr were added to the list of instrumentation methods.
+
+        * clang/ReportMemoryUsagePlugin/ReportMemoryUsage.cpp:
+        (clang::ReportMemoryUsageConsumer::ReportMemoryUsageConsumer):
+
 2012-08-03  Yaron Friedman  <yfriedman@chromium.org>
 
         [Chrome-Android] - Prepare apk tests for switch to checked in SDK.

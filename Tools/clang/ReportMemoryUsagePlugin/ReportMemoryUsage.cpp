@@ -158,13 +158,16 @@ public:
         instrumentationMethods.push_back("addMember");
         instrumentationMethods.push_back("addInstrumentedMember");
         instrumentationMethods.push_back("addVector");
+        instrumentationMethods.push_back("addVectorPtr");
         instrumentationMethods.push_back("addInstrumentedVector");
+        instrumentationMethods.push_back("addInstrumentedVectorPtr");
         instrumentationMethods.push_back("addHashSet");
         instrumentationMethods.push_back("addInstrumentedHashSet");
         instrumentationMethods.push_back("addHashMap");
         instrumentationMethods.push_back("addInstrumentedHashMap");
         instrumentationMethods.push_back("addListHashSet");
         instrumentationMethods.push_back("addRawBuffer");
+        instrumentationMethods.push_back("addString");
     }
 
     virtual void HandleTranslationUnit(clang::ASTContext& context)
