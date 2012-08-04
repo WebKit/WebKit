@@ -32,6 +32,7 @@
 #include "V8DOMWindowShell.h"
 
 #include "BindingState.h"
+#include "ContentSecurityPolicy.h"
 #include "DateExtension.h"
 #include "DocumentLoader.h"
 #include "Frame.h"
@@ -337,6 +338,9 @@ bool V8DOMWindowShell::initContextIfNeeded()
     updateDocument();
 
     setSecurityToken();
+
+    if (m_frame->document())
+        v8Context->AllowCodeGenerationFromStrings(m_frame->document()->contentSecurityPolicy()->allowEval(0, ContentSecurityPolicy::SuppressReport));
 
     m_frame->loader()->client()->didCreateScriptContext(m_context, 0, 0);
 

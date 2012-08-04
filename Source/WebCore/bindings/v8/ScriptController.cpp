@@ -274,8 +274,6 @@ bool ScriptController::haveInterpreter() const
 
 void ScriptController::enableEval()
 {
-    // We don't call initContextIfNeeded because contexts have eval enabled by default.
-
     v8::HandleScope handleScope;
     v8::Handle<v8::Context> v8Context = proxy()->windowShell()->context();
     if (v8Context.IsEmpty())
@@ -286,9 +284,6 @@ void ScriptController::enableEval()
 
 void ScriptController::disableEval()
 {
-    if (!proxy()->windowShell()->initContextIfNeeded())
-        return;
-
     v8::HandleScope handleScope;
     v8::Handle<v8::Context> v8Context = proxy()->windowShell()->context();
     if (v8Context.IsEmpty())

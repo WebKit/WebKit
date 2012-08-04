@@ -1,3 +1,43 @@
+2012-08-03  Adam Barth  <abarth@webkit.org>
+
+        Disabling eval changes the timing of DidCreateScriptContext
+        https://bugs.webkit.org/show_bug.cgi?id=92189
+
+        Reviewed by Eric Seidel.
+
+        When we implemented Content-Security-Policy, we added the ability to
+        disable eval in the JavaScript engine. However, when we process the
+        Content-Security-Policy header, we might not have initialized the
+        script context for the given frame.
+
+        Previously, we would initialize the context, but that generates a
+        DidCreateScriptContext callback to the embedder earlier in the Document's
+        lifetime that before. A natural thing to do in this callback is to run
+        script to customize the script context, but Document isn't fully
+        initialized yet, which leads to odd bugs and general confusion.
+
+        In this patch, we delay actually disabling eval until we would have
+        created the scripting context previously. From the perspective of the
+        web platform, this has the same behavior. The only difference is that
+        now the DidCreateScriptContext notification occurs at the same time
+        regardless of whether Content-Security-Policy disables eval.
+
+        I tried to write a test for this change, but it was unclear to me how
+        to write a good test. I tried writing a Chromium WebKit unit test to no
+        avail. The good news is that this patch will be covered by the
+        PlatformAppBrowserTest.Iframes test in Chromium once
+        https://bugs.webkit.org/show_bug.cgi?id=93079 lands. That's not the
+        best way to test this change, but it might be sufficient.
+
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::initScript):
+        (WebCore::ScriptController::disableEval):
+        * bindings/v8/ScriptController.cpp:
+        (WebCore::ScriptController::enableEval):
+        (WebCore::ScriptController::disableEval):
+        * bindings/v8/V8DOMWindowShell.cpp:
+        (WebCore::V8DOMWindowShell::initContextIfNeeded):
+
 2012-08-03  James Robinson  <jamesr@chromium.org>
 
         [chromium] Stop relying on implicit WebFoo <-> WebCore conversion operators in compositor

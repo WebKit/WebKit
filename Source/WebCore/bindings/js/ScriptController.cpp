@@ -21,6 +21,7 @@
 #include "config.h"
 #include "ScriptController.h"
 
+#include "ContentSecurityPolicy.h"
 #include "Event.h"
 #include "EventNames.h"
 #include "Frame.h"
@@ -215,6 +216,9 @@ JSDOMWindowShell* ScriptController::initScript(DOMWrapperWorld* world)
 
     windowShell->window()->updateDocument();
 
+    if (m_frame->document())
+        windowShell->window()->setEvalEnabled(m_frame->document()->contentSecurityPolicy()->allowEval(0, ContentSecurityPolicy::SuppressReport));   
+
     if (Page* page = m_frame->page()) {
         attachDebugger(windowShell, page->debugger());
         windowShell->window()->setProfileGroup(page->group().identifier());
@@ -237,13 +241,16 @@ void ScriptController::enableEval()
 {
     JSDOMWindowShell* windowShell = existingWindowShell(mainThreadNormalWorld());
     if (!windowShell)
-        return; // Eval is enabled by default.
+        return;
     windowShell->window()->setEvalEnabled(true);
 }
 
 void ScriptController::disableEval()
 {
-    windowShell(mainThreadNormalWorld())->window()->setEvalEnabled(false);
+    JSDOMWindowShell* windowShell = existingWindowShell(mainThreadNormalWorld());
+    if (!windowShell)
+        return;
+    windowShell->window()->setEvalEnabled(false);
 }
 
 bool ScriptController::processingUserGesture()
