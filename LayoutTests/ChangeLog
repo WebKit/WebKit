@@ -1,3 +1,40 @@
+2012-08-03  David Barton  <dbarton@mathscribe.com>
+
+        Rebaseline MathML pixel tests with STIX fonts for Lion
+        https://bugs.webkit.org/show_bug.cgi?id=93163
+
+        Reviewed by Eric Seidel.
+
+        This is gardening in response to https://bugs.webkit.org/show_bug.cgi?id=93073, which
+        followed https://bugs.webkit.org/show_bug.cgi?id=43819. The latter turned on the STIX
+        fonts in the testing tools, and apparently the STIX fonts or their handling have been
+        changed (apparently improved) between Snow Leopard and Lion. I am therefore moving my
+        10 *-expected.txt files below to platform/mac-snowleopard, and putting the slightly
+        improved metrics in the 10 files in platform/mac.
+
+        * platform/mac-snowleopard/mathml: Added.
+        * platform/mac-snowleopard/mathml/presentation: Added.
+        * platform/mac-snowleopard/mathml/presentation/attributes-expected.txt: Added.
+        * platform/mac-snowleopard/mathml/presentation/fenced-mi-expected.txt: Added.
+        * platform/mac-snowleopard/mathml/presentation/fractions-expected.txt: Added.
+        * platform/mac-snowleopard/mathml/presentation/mo-expected.txt: Added.
+        * platform/mac-snowleopard/mathml/presentation/over-expected.txt: Added.
+        * platform/mac-snowleopard/mathml/presentation/roots-expected.txt: Added.
+        * platform/mac-snowleopard/mathml/presentation/row-expected.txt: Added.
+        * platform/mac-snowleopard/mathml/presentation/sub-expected.txt: Added.
+        * platform/mac-snowleopard/mathml/presentation/tokenElements-expected.txt: Added.
+        * platform/mac-snowleopard/mathml/presentation/underover-expected.txt: Added.
+        * platform/mac/mathml/presentation/attributes-expected.txt:
+        * platform/mac/mathml/presentation/fenced-mi-expected.txt:
+        * platform/mac/mathml/presentation/fractions-expected.txt:
+        * platform/mac/mathml/presentation/mo-expected.txt:
+        * platform/mac/mathml/presentation/over-expected.txt:
+        * platform/mac/mathml/presentation/roots-expected.txt:
+        * platform/mac/mathml/presentation/row-expected.txt:
+        * platform/mac/mathml/presentation/sub-expected.txt:
+        * platform/mac/mathml/presentation/tokenElements-expected.txt:
+        * platform/mac/mathml/presentation/underover-expected.txt:
+
 2012-08-03  Florin Malita  <fmalita@chromium.org>
 
         [SVG] Tref target event listener cleanup
