@@ -892,8 +892,8 @@ void notifyTestCompletion(NPP npp, NPObject* object)
 {
     NPVariant result;
     NPString script;
-    script.UTF8Characters = "javascript:window.layoutTestController.notifyDone();";
-    script.UTF8Length = strlen("javascript:window.layoutTestController.notifyDone();");
+    script.UTF8Characters = "javascript:window.testRunner.notifyDone();";
+    script.UTF8Length = strlen("javascript:window.testRunner.notifyDone();");
     browser->evaluate(npp, object, &script, &result);
     browser->releasevariantvalue(&result);
 }

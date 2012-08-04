@@ -254,12 +254,12 @@ void PluginTest::log(const char* format, ...)
 
 void PluginTest::waitUntilDone()
 {
-    executeScript("layoutTestController.waitUntilDone()");
+    executeScript("testRunner.waitUntilDone()");
 }
 
 void PluginTest::notifyDone()
 {
-    executeScript("layoutTestController.notifyDone()");
+    executeScript("testRunner.notifyDone()");
 }
 
 void PluginTest::registerCreateTestFunction(const string& identifier, CreateTestFunction createTestFunction)

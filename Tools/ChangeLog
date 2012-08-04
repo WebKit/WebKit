@@ -1,3 +1,36 @@
+2012-08-03  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Stop exposing window.layoutTestController in layout tests in favor of window.testRunner
+        https://bugs.webkit.org/show_bug.cgi?id=93173
+
+        Reviewed by Adam Barth.
+
+        Don't expose window.layoutTestController since all layout tests use window.testRunner
+        instead of window.layoutTestController as of r124685.
+
+        We can safely rename classes and files to use TestRunner once this patch is landed.
+
+        * DumpRenderTree/LayoutTestController.cpp:
+        (LayoutTestController::makeWindowObject):
+        * DumpRenderTree/TestNetscapePlugIn/PluginObject.cpp:
+        (notifyTestCompletion):
+        * DumpRenderTree/TestNetscapePlugIn/PluginTest.cpp:
+        (PluginTest::waitUntilDone):
+        (PluginTest::notifyDone):
+        * DumpRenderTree/TestNetscapePlugIn/Tests/mac/ConvertPoint.cpp:
+        (ConvertPoint::NPP_SetWindow):
+        * DumpRenderTree/TestNetscapePlugIn/main.cpp:
+        (handleEventCarbon):
+        (handleEventCocoa):
+        (handleEventWin):
+        * DumpRenderTree/chromium/TestShell.cpp:
+        (TestShell::bindJSObjectsToWindow):
+        * DumpRenderTree/qt/DumpRenderTreeQt.cpp:
+        (WebCore::DumpRenderTree::initJSObjects):
+        * Scripts/bencher:
+        * WebKitTestRunner/InjectedBundle/LayoutTestController.cpp:
+        (WTR::LayoutTestController::makeWindowObject):
+
 2012-08-04  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Unreviewed: Web Inspector: extend instrumenting methods set in ReportMemoryUsage clang plugin
