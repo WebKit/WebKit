@@ -1,3 +1,15 @@
+2012-08-03  Dave Tu  <dtu@chromium.org>
+
+        [chromium] Fix Renderer4.CompositorThreadImplDrawDelay histogram.
+        https://bugs.webkit.org/show_bug.cgi?id=93159
+
+        Reviewed by Adrienne Walker.
+
+        The histogram is using the frame number instead of the frame time by mistake.
+
+        * platform/graphics/chromium/cc/CCFrameRateCounter.cpp:
+        (WebCore::CCFrameRateCounter::markBeginningOfFrame):
+
 2012-08-03  David Grogan  <dgrogan@chromium.org>
 
         IndexedDB: Core upgradeneeded logic

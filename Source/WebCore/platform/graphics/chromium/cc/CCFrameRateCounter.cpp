@@ -66,17 +66,15 @@ CCFrameRateCounter::CCFrameRateCounter()
 
 void CCFrameRateCounter::markBeginningOfFrame(double timestamp)
 {
-    if (CCProxy::hasImplThread() && m_currentFrameNumber > 0) {
-        double lastFrameTimestamp = frameIndex(m_currentFrameNumber - 1);
-        double drawDelaySeconds = timestamp - lastFrameTimestamp;
-        double drawDelayMs = drawDelaySeconds * 1000.0;
+    m_timeStampHistory[frameIndex(m_currentFrameNumber)] = timestamp;
+    double frameIntervalSeconds = frameInterval(m_currentFrameNumber);
 
+    if (CCProxy::hasImplThread() && m_currentFrameNumber > 0) {
+        double drawDelayMs = frameIntervalSeconds * 1000.0;
         WebKit::Platform::current()->histogramCustomCounts("Renderer4.CompositorThreadImplDrawDelay", static_cast<int>(drawDelayMs), 1, 120, 60);
     }
 
-    m_timeStampHistory[frameIndex(m_currentFrameNumber)] = timestamp;
-    double delta = frameInterval(m_currentFrameNumber);
-    if (!isBadFrameInterval(delta) && delta > kDroppedFrameTime)
+    if (!isBadFrameInterval(frameIntervalSeconds) && frameIntervalSeconds > kDroppedFrameTime)
         ++m_droppedFrameCount;
 }
 
