@@ -1295,7 +1295,6 @@ editing/input/reveal-contenteditable-on-input-vertically.html
 
 # Media tests that time out unexpectedly
 # https://bugs.webkit.org/show_bug.cgi?id=81604
-media/media-fragments/TC0080-TC0089.html
 media/video-colorspace-yuv420.html
 media/video-colorspace-yuv422.html
 media/video-loop.html

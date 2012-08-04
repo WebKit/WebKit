@@ -1,5 +1,168 @@
 2012-08-03  Ami Fischman  <fischman@chromium.org>
 
+        [Chromium] Layout Test media/media-fragments/TC0080-TC0089.html is slow
+        https://bugs.webkit.org/show_bug.cgi?id=77523
+
+        Reviewed by Eric Carlson.
+
+        Before each of these layouttests contained 10 test cases, and would consistently skate
+        near the normal layouttest timeout (6s) on chromium, and some were Skipped on wk2 for slowness.
+        This patch splits out the cases so they each get their own timeout.
+
+        * media/media-fragments/TC0001-TC0009-expected.txt: Removed.
+        * media/media-fragments/TC0001-expected.txt: Added.
+        * media/media-fragments/TC0001.html: Copied from LayoutTests/media/media-fragments/TC0001-TC0009.html.
+        * media/media-fragments/TC0002-expected.txt: Added.
+        * media/media-fragments/TC0002.html: Renamed from LayoutTests/media/media-fragments/TC0010-TC0019.html.
+        * media/media-fragments/TC0003-expected.txt: Added.
+        * media/media-fragments/TC0003.html: Renamed from LayoutTests/media/media-fragments/TC0020-TC0029.html.
+        * media/media-fragments/TC0004-expected.txt: Added.
+        * media/media-fragments/TC0004.html: Renamed from LayoutTests/media/media-fragments/TC0030-TC0039.html.
+        * media/media-fragments/TC0005-expected.txt: Added.
+        * media/media-fragments/TC0005.html: Renamed from LayoutTests/media/media-fragments/TC0040-TC0049.html.
+        * media/media-fragments/TC0006-expected.txt: Added.
+        * media/media-fragments/TC0006.html: Renamed from LayoutTests/media/media-fragments/TC0050-TC0059.html.
+        * media/media-fragments/TC0009-expected.txt: Added.
+        * media/media-fragments/TC0009.html: Renamed from LayoutTests/media/media-fragments/TC0060-TC0069.html.
+        * media/media-fragments/TC0010-TC0019-expected.txt: Removed.
+        * media/media-fragments/TC0011-expected.txt: Added.
+        * media/media-fragments/TC0011.html: Renamed from LayoutTests/media/media-fragments/TC0070-TC0079.html.
+        * media/media-fragments/TC0012-expected.txt: Added.
+        * media/media-fragments/TC0012.html: Renamed from LayoutTests/media/media-fragments/TC0080-TC0089.html.
+        * media/media-fragments/TC0014-expected.txt: Added.
+        * media/media-fragments/TC0014.html: Renamed from LayoutTests/media/media-fragments/TC0090-TC0099.html.
+        * media/media-fragments/TC0015-expected.txt: Added.
+        * media/media-fragments/TC0015.html: Copied from LayoutTests/media/media-fragments/TC0001-TC0009.html.
+        * media/media-fragments/TC0017-expected.txt: Added.
+        * media/media-fragments/TC0017.html: Copied from LayoutTests/media/media-fragments/TC0001-TC0009.html.
+        * media/media-fragments/TC0020-TC0029-expected.txt: Removed.
+        * media/media-fragments/TC0024-expected.txt: Added.
+        * media/media-fragments/TC0024.html: Copied from LayoutTests/media/media-fragments/TC0001-TC0009.html.
+        * media/media-fragments/TC0027-expected.txt: Added.
+        * media/media-fragments/TC0027.html: Copied from LayoutTests/media/media-fragments/TC0001-TC0009.html.
+        * media/media-fragments/TC0028-expected.txt: Added.
+        * media/media-fragments/TC0028.html: Copied from LayoutTests/media/media-fragments/TC0001-TC0009.html.
+        * media/media-fragments/TC0029-expected.txt: Added.
+        * media/media-fragments/TC0029.html: Copied from LayoutTests/media/media-fragments/TC0001-TC0009.html.
+        * media/media-fragments/TC0030-TC0039-expected.txt: Removed.
+        * media/media-fragments/TC0030-expected.txt: Added.
+        * media/media-fragments/TC0030.html: Copied from LayoutTests/media/media-fragments/TC0001-TC0009.html.
+        * media/media-fragments/TC0031-expected.txt: Added.
+        * media/media-fragments/TC0031.html: Copied from LayoutTests/media/media-fragments/TC0001-TC0009.html.
+        * media/media-fragments/TC0032-expected.txt: Added.
+        * media/media-fragments/TC0032.html: Copied from LayoutTests/media/media-fragments/TC0001-TC0009.html.
+        * media/media-fragments/TC0033-expected.txt: Added.
+        * media/media-fragments/TC0033.html: Copied from LayoutTests/media/media-fragments/TC0001-TC0009.html.
+        * media/media-fragments/TC0034-expected.txt: Added.
+        * media/media-fragments/TC0034.html: Copied from LayoutTests/media/media-fragments/TC0001-TC0009.html.
+        * media/media-fragments/TC0035-expected.txt: Added.
+        * media/media-fragments/TC0035.html: Copied from LayoutTests/media/media-fragments/TC0001-TC0009.html.
+        * media/media-fragments/TC0036-expected.txt: Added.
+        * media/media-fragments/TC0036.html: Copied from LayoutTests/media/media-fragments/TC0001-TC0009.html.
+        * media/media-fragments/TC0037-expected.txt: Added.
+        * media/media-fragments/TC0037.html: Copied from LayoutTests/media/media-fragments/TC0001-TC0009.html.
+        * media/media-fragments/TC0038-expected.txt: Added.
+        * media/media-fragments/TC0038.html: Copied from LayoutTests/media/media-fragments/TC0001-TC0009.html.
+        * media/media-fragments/TC0039-expected.txt: Added.
+        * media/media-fragments/TC0039.html: Copied from LayoutTests/media/media-fragments/TC0001-TC0009.html.
+        * media/media-fragments/TC0044-expected.txt: Renamed from LayoutTests/media/media-fragments/TC0040-TC0049-expected.txt.
+        * media/media-fragments/TC0044.html: Copied from LayoutTests/media/media-fragments/TC0001-TC0009.html.
+        * media/media-fragments/TC0050-TC0059-expected.txt: Removed.
+        * media/media-fragments/TC0051-expected.txt: Added.
+        * media/media-fragments/TC0051.html: Copied from LayoutTests/media/media-fragments/TC0001-TC0009.html.
+        * media/media-fragments/TC0052-expected.txt: Added.
+        * media/media-fragments/TC0052.html: Copied from LayoutTests/media/media-fragments/TC0001-TC0009.html.
+        * media/media-fragments/TC0053-expected.txt: Added.
+        * media/media-fragments/TC0053.html: Copied from LayoutTests/media/media-fragments/TC0001-TC0009.html.
+        * media/media-fragments/TC0054-expected.txt: Added.
+        * media/media-fragments/TC0054.html: Copied from LayoutTests/media/media-fragments/TC0001-TC0009.html.
+        * media/media-fragments/TC0055-expected.txt: Added.
+        * media/media-fragments/TC0055.html: Copied from LayoutTests/media/media-fragments/TC0001-TC0009.html.
+        * media/media-fragments/TC0058-expected.txt: Added.
+        * media/media-fragments/TC0058.html: Copied from LayoutTests/media/media-fragments/TC0001-TC0009.html.
+        * media/media-fragments/TC0059-expected.txt: Added.
+        * media/media-fragments/TC0059.html: Copied from LayoutTests/media/media-fragments/TC0001-TC0009.html.
+        * media/media-fragments/TC0060-TC0069-expected.txt: Removed.
+        * media/media-fragments/TC0061-expected.txt: Added.
+        * media/media-fragments/TC0061.html: Copied from LayoutTests/media/media-fragments/TC0001-TC0009.html.
+        * media/media-fragments/TC0062-expected.txt: Added.
+        * media/media-fragments/TC0062.html: Copied from LayoutTests/media/media-fragments/TC0001-TC0009.html.
+        * media/media-fragments/TC0063-expected.txt: Added.
+        * media/media-fragments/TC0063.html: Copied from LayoutTests/media/media-fragments/TC0001-TC0009.html.
+        * media/media-fragments/TC0064-expected.txt: Added.
+        * media/media-fragments/TC0064.html: Copied from LayoutTests/media/media-fragments/TC0001-TC0009.html.
+        * media/media-fragments/TC0065-expected.txt: Added.
+        * media/media-fragments/TC0065.html: Copied from LayoutTests/media/media-fragments/TC0001-TC0009.html.
+        * media/media-fragments/TC0066-expected.txt: Added.
+        * media/media-fragments/TC0066.html: Copied from LayoutTests/media/media-fragments/TC0001-TC0009.html.
+        * media/media-fragments/TC0067-expected.txt: Added.
+        * media/media-fragments/TC0067.html: Copied from LayoutTests/media/media-fragments/TC0001-TC0009.html.
+        * media/media-fragments/TC0068-expected.txt: Added.
+        * media/media-fragments/TC0068.html: Copied from LayoutTests/media/media-fragments/TC0001-TC0009.html.
+        * media/media-fragments/TC0069-expected.txt: Added.
+        * media/media-fragments/TC0069.html: Copied from LayoutTests/media/media-fragments/TC0001-TC0009.html.
+        * media/media-fragments/TC0070-TC0079-expected.txt: Removed.
+        * media/media-fragments/TC0070-expected.txt: Added.
+        * media/media-fragments/TC0070.html: Copied from LayoutTests/media/media-fragments/TC0001-TC0009.html.
+        * media/media-fragments/TC0071-expected.txt: Added.
+        * media/media-fragments/TC0071.html: Copied from LayoutTests/media/media-fragments/TC0001-TC0009.html.
+        * media/media-fragments/TC0072-expected.txt: Added.
+        * media/media-fragments/TC0072.html: Copied from LayoutTests/media/media-fragments/TC0001-TC0009.html.
+        * media/media-fragments/TC0073-expected.txt: Added.
+        * media/media-fragments/TC0073.html: Copied from LayoutTests/media/media-fragments/TC0001-TC0009.html.
+        * media/media-fragments/TC0074-expected.txt: Added.
+        * media/media-fragments/TC0074.html: Copied from LayoutTests/media/media-fragments/TC0001-TC0009.html.
+        * media/media-fragments/TC0075-expected.txt: Added.
+        * media/media-fragments/TC0075.html: Copied from LayoutTests/media/media-fragments/TC0001-TC0009.html.
+        * media/media-fragments/TC0076-expected.txt: Added.
+        * media/media-fragments/TC0076.html: Copied from LayoutTests/media/media-fragments/TC0001-TC0009.html.
+        * media/media-fragments/TC0077-expected.txt: Added.
+        * media/media-fragments/TC0077.html: Copied from LayoutTests/media/media-fragments/TC0001-TC0009.html.
+        * media/media-fragments/TC0078-expected.txt: Added.
+        * media/media-fragments/TC0078.html: Copied from LayoutTests/media/media-fragments/TC0001-TC0009.html.
+        * media/media-fragments/TC0079-expected.txt: Added.
+        * media/media-fragments/TC0079.html: Copied from LayoutTests/media/media-fragments/TC0001-TC0009.html.
+        * media/media-fragments/TC0080-TC0089-expected.txt: Removed.
+        * media/media-fragments/TC0080-expected.txt: Added.
+        * media/media-fragments/TC0080.html: Copied from LayoutTests/media/media-fragments/TC0001-TC0009.html.
+        * media/media-fragments/TC0081-expected.txt: Added.
+        * media/media-fragments/TC0081.html: Copied from LayoutTests/media/media-fragments/TC0001-TC0009.html.
+        * media/media-fragments/TC0082-expected.txt: Added.
+        * media/media-fragments/TC0082.html: Copied from LayoutTests/media/media-fragments/TC0001-TC0009.html.
+        * media/media-fragments/TC0083-expected.txt: Added.
+        * media/media-fragments/TC0083.html: Copied from LayoutTests/media/media-fragments/TC0001-TC0009.html.
+        * media/media-fragments/TC0084-expected.txt: Added.
+        * media/media-fragments/TC0084.html: Copied from LayoutTests/media/media-fragments/TC0001-TC0009.html.
+        * media/media-fragments/TC0085-expected.txt: Added.
+        * media/media-fragments/TC0085.html: Copied from LayoutTests/media/media-fragments/TC0001-TC0009.html.
+        * media/media-fragments/TC0086-expected.txt: Added.
+        * media/media-fragments/TC0086.html: Copied from LayoutTests/media/media-fragments/TC0001-TC0009.html.
+        * media/media-fragments/TC0087-expected.txt: Added.
+        * media/media-fragments/TC0087.html: Copied from LayoutTests/media/media-fragments/TC0001-TC0009.html.
+        * media/media-fragments/TC0088-expected.txt: Added.
+        * media/media-fragments/TC0088.html: Copied from LayoutTests/media/media-fragments/TC0001-TC0009.html.
+        * media/media-fragments/TC0089-expected.txt: Added.
+        * media/media-fragments/TC0089.html: Copied from LayoutTests/media/media-fragments/TC0001-TC0009.html.
+        * media/media-fragments/TC0090-TC0099-expected.txt: Removed.
+        * media/media-fragments/TC0090-expected.txt: Added.
+        * media/media-fragments/TC0090.html: Copied from LayoutTests/media/media-fragments/TC0001-TC0009.html.
+        * media/media-fragments/TC0091-expected.txt: Added.
+        * media/media-fragments/TC0091.html: Copied from LayoutTests/media/media-fragments/TC0001-TC0009.html.
+        * media/media-fragments/TC0092-expected.txt: Added.
+        * media/media-fragments/TC0092.html: Copied from LayoutTests/media/media-fragments/TC0001-TC0009.html.
+        * media/media-fragments/TC0093-expected.txt: Added.
+        * media/media-fragments/TC0093.html: Copied from LayoutTests/media/media-fragments/TC0001-TC0009.html.
+        * media/media-fragments/TC0094-expected.txt: Added.
+        * media/media-fragments/TC0094.html: Renamed from LayoutTests/media/media-fragments/TC0001-TC0009.html.
+        * media/media-fragments/media-fragments.js:
+        (pause):
+        (canplaythrough):
+        (start):
+        * platform/chromium/TestExpectations:
+        * platform/wk2/Skipped:
+
+2012-08-03  Ami Fischman  <fischman@chromium.org>
+
         [Chromium] Layout Test http/tests/media/media-source/webm/video-media-source-*.html is flaky
         https://bugs.webkit.org/show_bug.cgi?id=85952
 

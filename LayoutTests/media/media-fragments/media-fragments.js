@@ -1,7 +1,5 @@
 
     var currentTest = null;
-    var firstTest;
-    var lastTest;
     var fragmentEndTime;
     var testData = 
     {
@@ -83,7 +81,7 @@
         var delta = Math.abs(video.currentTime - fragmentEndTime).toFixed(2);
         reportExpected((delta <= maximumStopDelta), ("video.currentTime - fragmentEndTime"), "<=", maximumStopDelta, delta);
 
-        setupNextTest();
+        endTest();
     }
 
     function canplaythrough()
@@ -107,39 +105,7 @@
             video.currentTime = (fragmentEndTime - 0.5);
             run("video.play()");
         } else
-            setupNextTest();
-    }
-
-    function setupNextTest()
-    {
-        currentTest = nextTestName();
-        if (!currentTest.length) {
-            consoleWrite("");
             endTest();
-            return;
-        }
-
-        var info = testData[currentTest];
-        consoleWrite("<br>Title: <b>" + currentTest + "</b>");
-        consoleWrite("Fragment: '<i>" + info.fragment + "</i>'");
-        consoleWrite("Comment: <i>" + info.comment + "</i>");
-        url = findMediaFile("video", "../content/counting") + "#" + info.fragment;
-        video.src = url;
-    }
-
-    function nextTestName()
-    {
-        var current = currentTest || firstTest;
-        var nextTestNumber = Number(current.match(/\d+$/)[0]) + (currentTest ? 1.0 : 0.0);
-        do {
-            if (nextTestNumber > Number(lastTest.substring(2)))
-                return "";
-
-            nextTest = "TC" + ("0000" + nextTestNumber).substr(-4);
-            if (testData[nextTest])
-                return nextTest;
-            ++nextTestNumber;
-        } while (1);
     }
 
     function start()
@@ -155,10 +121,14 @@
 
         waitForEvent("canplaythrough", canplaythrough);
         waitForEvent("pause", pause);
-        
-        var fileName = location.href.split('/').pop();
-        firstTest = fileName.substring(0, fileName.lastIndexOf("-"));
-        lastTest = fileName.substring(firstTest.length + 1, fileName.lastIndexOf("."));
 
-        setupNextTest();
+        var fileName = location.href.split('/').pop();
+        currentTest = fileName.substring(0, fileName.lastIndexOf("."));
+
+        var info = testData[currentTest];
+        consoleWrite("<br>Title: <b>" + currentTest + "</b>");
+        consoleWrite("Fragment: '<i>" + info.fragment + "</i>'");
+        consoleWrite("Comment: <i>" + info.comment + "</i>");
+        url = findMediaFile("video", "../content/counting") + "#" + info.fragment;
+        video.src = url;
     }
