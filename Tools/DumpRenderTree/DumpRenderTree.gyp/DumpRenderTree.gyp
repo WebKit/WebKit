@@ -226,6 +226,7 @@
                         '<(tools_dir)/DumpRenderTree/fonts/WebKitWeightWatcher700.ttf',
                         '<(tools_dir)/DumpRenderTree/fonts/WebKitWeightWatcher800.ttf',
                         '<(tools_dir)/DumpRenderTree/fonts/WebKitWeightWatcher900.ttf',
+                        '<(SHARED_INTERMEDIATE_DIR)/webkit/missingImage.png',
                         '<(SHARED_INTERMEDIATE_DIR)/webkit/textAreaResizeCorner.png',
                     ],
                 },{ # OS!="mac"

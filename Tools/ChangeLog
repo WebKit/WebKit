@@ -1,3 +1,15 @@
+2012-08-04  Nico Weber  <thakis@chromium.org>
+
+        [Chromium Mac] Tests are exiting early due to failures to load missingImage.png
+        https://bugs.webkit.org/show_bug.cgi?id=93186
+
+        Reviewed by Ryosuke Niwa.
+
+        Add missingImage.png to DumpRenderTree.app's Resource folder.
+        Depends on http://crrev.com/150037 rolling into webkit first.
+
+        * DumpRenderTree/DumpRenderTree.gyp/DumpRenderTree.gyp:
+
 2012-08-03  Ryosuke Niwa  <rniwa@webkit.org>
 
         Stop exposing window.layoutTestController in layout tests in favor of window.testRunner
