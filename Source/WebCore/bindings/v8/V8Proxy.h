@@ -218,11 +218,9 @@ namespace WebCore {
         // affect v8 contexts initialized after this call. Takes ownership of
         // the v8::Extension object passed.
         static void registerExtension(v8::Extension*);
-
-        static void registerExtensionWithV8(v8::Extension*);
         static bool registeredExtensionWithV8(v8::Extension*);
 
-        static const V8Extensions& extensions();
+        static V8Extensions& extensions();
 
         static void reportUnsafeAccessTo(Document* targetDocument);
 

@@ -78,12 +78,6 @@
 
 namespace WebCore {
 
-static V8Extensions& staticExtensionsList()
-{
-    DEFINE_STATIC_LOCAL(V8Extensions, extensions, ());
-    return extensions;
-}
-
 void batchConfigureAttributes(v8::Handle<v8::ObjectTemplate> instance, 
                               v8::Handle<v8::ObjectTemplate> proto, 
                               const BatchedAttribute* attributes, 
@@ -670,11 +664,10 @@ v8::Handle<v8::Value> V8Proxy::checkNewLegal(const v8::Arguments& args)
     return args.This();
 }
 
-void V8Proxy::registerExtensionWithV8(v8::Extension* extension)
+V8Extensions& V8Proxy::extensions()
 {
-    // If the extension exists in our list, it was already registered with V8.
-    if (!registeredExtensionWithV8(extension))
-        v8::RegisterExtension(extension);
+    DEFINE_STATIC_LOCAL(V8Extensions, extensions, ());
+    return extensions;
 }
 
 bool V8Proxy::registeredExtensionWithV8(v8::Extension* extension)
@@ -690,13 +683,10 @@ bool V8Proxy::registeredExtensionWithV8(v8::Extension* extension)
 
 void V8Proxy::registerExtension(v8::Extension* extension)
 {
-    registerExtensionWithV8(extension);
-    staticExtensionsList().append(extension);
-}
-
-const V8Extensions& V8Proxy::extensions()
-{
-    return staticExtensionsList();
+    // If the extension exists in our list, it was already registered with V8.
+    if (!registeredExtensionWithV8(extension))
+        v8::RegisterExtension(extension);
+    extensions().append(extension);
 }
 
 bool V8Proxy::setContextDebugId(int debugId)

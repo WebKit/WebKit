@@ -1,5 +1,28 @@
 2012-08-05  Kentaro Hara  <haraken@chromium.org>
 
+        [V8] Remove V8Proxy::registerExtensionWithV8()
+        https://bugs.webkit.org/show_bug.cgi?id=93115
+
+        Reviewed by Adam Barth.
+
+        V8Proxy::registerExtensionWithV8() is used by V8Proxy::registerExtension()
+        only. We can remove the redundant method.
+
+        In a follow-up patch, I will implement V8Proxy::registerExtentionIfNeeded()
+        and remove registerExtensionWithV8() and registerExtension().
+
+        No tests. No change in behavior.
+
+        * bindings/v8/V8Proxy.cpp:
+        (WebCore::staticExtensionsList): Just moved to near related methods.
+        (WebCore):
+        (WebCore::V8Proxy::extensions):
+        (WebCore::V8Proxy::registerExtension):
+        * bindings/v8/V8Proxy.h:
+        (V8Proxy):
+
+2012-08-05  Kentaro Hara  <haraken@chromium.org>
+
         [V8] Remove unused enum and typedefs in V8Proxy
         https://bugs.webkit.org/show_bug.cgi?id=93105
 
