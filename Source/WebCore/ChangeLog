@@ -1,3 +1,19 @@
+2012-08-05  Kentaro Hara  <haraken@chromium.org>
+
+        [V8] Remove unused enum and typedefs in V8Proxy
+        https://bugs.webkit.org/show_bug.cgi?id=93105
+
+        Reviewed by Adam Barth.
+
+        In preparation for removing V8Proxy, we can remove unused enum
+        and typedefs in V8Proxy.
+
+        No tests. No change in behavior.
+
+        * bindings/v8/V8Proxy.cpp:
+        * bindings/v8/V8Proxy.h:
+        (WebCore::throwError):
+
 2012-08-04  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/11875795> REGRESSION (tiled drawing): Page’s scroll bars flash with each character you type in a textarea (affects Wikipedia and YouTube)

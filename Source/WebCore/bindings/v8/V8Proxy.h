@@ -273,11 +273,6 @@ namespace WebCore {
             v8::ThrowException(exception);
         return v8::Undefined();
     }
-
-    enum IndependentMode {
-        MarkIndependent,
-        DoNotMarkIndependent
-    };
 }
 
 #endif // V8Proxy_h
