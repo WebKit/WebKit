@@ -168,6 +168,12 @@ PassRefPtr<StyleSheetContents> CachedCSSStyleSheet::restoreParsedStyleSheet(cons
 {
     if (!m_parsedStyleSheetCache)
         return 0;
+    if (m_parsedStyleSheetCache->hasFailedOrCanceledSubresources()) {
+        m_parsedStyleSheetCache->removedFromMemoryCache();
+        m_parsedStyleSheetCache.clear();
+        return 0;
+    }
+
     ASSERT(m_parsedStyleSheetCache->isCacheable());
     ASSERT(m_parsedStyleSheetCache->isInMemoryCache());
 

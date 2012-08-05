@@ -172,4 +172,13 @@ void CSSCrossfadeValue::CrossfadeSubimageObserverProxy::imageChanged(CachedImage
         m_ownerValue->crossfadeChanged(*rect);
 }
 
+bool CSSCrossfadeValue::hasFailedOrCanceledSubresources() const
+{
+    if (m_cachedFromImage && m_cachedFromImage->loadFailedOrCanceled())
+        return true;
+    if (m_cachedToImage && m_cachedToImage->loadFailedOrCanceled())
+        return true;
+    return false;
+}
+
 } // namespace WebCore

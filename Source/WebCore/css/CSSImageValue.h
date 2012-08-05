@@ -46,6 +46,8 @@ public:
 
     PassRefPtr<CSSValue> cloneForCSSOM() const;
 
+    bool hasFailedOrCanceledSubresources() const;
+
 protected:
     CSSImageValue(ClassType, const String& url);
 

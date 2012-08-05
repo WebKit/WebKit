@@ -1,3 +1,70 @@
+2012-08-05  Antti Koivisto  <antti@apple.com>
+
+        Don't reuse cached stylesheet with failed or canceled resource loads
+        https://bugs.webkit.org/show_bug.cgi?id=93203
+
+        Reviewed by Simon Fraser.
+
+        1) Go to apple.com
+        2) Reload repeatedly
+
+        Eventually you can get into state where some images don't load.
+        
+        The problem is that a cached stylesheet may end up pointing to image resources that have been canceled (by the reload).
+        If this happens they stay in the canceled state even when the stylesheet is applied to a new document.
+        
+        Fix by checking if all loads are complete (or pending) when restoring a cached stylesheet. The sheet is only used
+        if there are no failed or canceled loads. There are potential more sophisticated fixes but this is simple and safe.
+        Walking the sheet is fast and since it is only done on cache restore the cost is minimal.
+
+        No regression test yet though the new code does get exercised by the existing tests.
+
+        * css/CSSCrossfadeValue.cpp:
+        (WebCore::CSSCrossfadeValue::hasFailedOrCanceledSubresources):
+        (WebCore):
+        * css/CSSCrossfadeValue.h:
+        (CSSCrossfadeValue):
+        * css/CSSFontFaceSrcValue.cpp:
+        (WebCore::CSSFontFaceSrcValue::hasFailedOrCanceledSubresources):
+        (WebCore):
+        * css/CSSFontFaceSrcValue.h:
+        (CSSFontFaceSrcValue):
+        * css/CSSImageSetValue.cpp:
+        (WebCore::CSSImageSetValue::hasFailedOrCanceledSubresources):
+        (WebCore):
+        * css/CSSImageSetValue.h:
+        (CSSImageSetValue):
+        * css/CSSImageValue.cpp:
+        (WebCore::CSSImageValue::hasFailedOrCanceledSubresources):
+        (WebCore):
+        * css/CSSImageValue.h:
+        (CSSImageValue):
+        * css/CSSValue.cpp:
+        (WebCore::CSSValue::hasFailedOrCanceledSubresources):
+        (WebCore):
+        * css/CSSValue.h:
+        (CSSValue):
+        * css/CSSValueList.cpp:
+        (WebCore::CSSValueList::hasFailedOrCanceledSubresources):
+        (WebCore):
+        * css/CSSValueList.h:
+        (CSSValueList):
+        * css/StylePropertySet.cpp:
+        (WebCore::StylePropertySet::hasFailedOrCanceledSubresources):
+        (WebCore):
+        * css/StylePropertySet.h:
+        (StylePropertySet):
+        * css/StyleSheetContents.cpp:
+        (WebCore::childRulesHaveFailedOrCanceledSubresources):
+        (WebCore):
+        (WebCore::StyleSheetContents::hasFailedOrCanceledSubresources):
+        * css/StyleSheetContents.h:
+        (StyleSheetContents):
+        * loader/cache/CachedCSSStyleSheet.cpp:
+        (WebCore::CachedCSSStyleSheet::restoreParsedStyleSheet):
+        * loader/cache/CachedResource.h:
+        (WebCore::CachedResource::loadFailedOrCanceled):
+
 2012-08-05  Kentaro Hara  <haraken@chromium.org>
 
         [V8] Move V8Proxy methods that set DOM attributes/callbacks to V8Binding

@@ -79,6 +79,13 @@ void CSSFontFaceSrcValue::addSubresourceStyleURLs(ListHashSet<KURL>& urls, const
         addSubresourceURL(urls, styleSheet->completeURL(m_resource));
 }
 
+bool CSSFontFaceSrcValue::hasFailedOrCanceledSubresources() const
+{
+    if (!m_cachedFont)
+        return false;
+    return m_cachedFont->loadFailedOrCanceled();
+}
+
 CachedFont* CSSFontFaceSrcValue::cachedFont(Document* document)
 {
     if (!m_cachedFont) {

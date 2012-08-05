@@ -79,6 +79,7 @@ public:
     const String& charset() const { return m_parserContext.charset; }
 
     bool loadCompleted() const { return m_loadCompleted; }
+    bool hasFailedOrCanceledSubresources() const;
 
     KURL completeURL(const String& url) const;
     void addSubresourceStyleURLs(ListHashSet<KURL>&);

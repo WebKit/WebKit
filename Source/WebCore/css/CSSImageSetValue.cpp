@@ -139,6 +139,16 @@ String CSSImageSetValue::customCssText() const
     return "-webkit-image-set(" + CSSValueList::customCssText() + ")";
 }
 
+bool CSSImageSetValue::hasFailedOrCanceledSubresources() const
+{
+    if (!m_imageSet || !m_imageSet->isCachedImageSet())
+        return false;
+    CachedResource* cachedResource = static_cast<StyleCachedImageSet*>(m_imageSet.get())->cachedImage();
+    if (!cachedResource)
+        return true;
+    return cachedResource->loadFailedOrCanceled();
+}
+
 CSSImageSetValue::CSSImageSetValue(const CSSImageSetValue& cloneFrom)
     : CSSValueList(cloneFrom)
     , m_accessedBestFitImage(false)

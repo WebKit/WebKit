@@ -110,6 +110,8 @@ public:
 
     bool isMutable() const { return m_isMutable; }
 
+    bool hasFailedOrCanceledSubresources() const;
+
     static unsigned averageSizeInBytes();
     void reportMemoryUsage(MemoryObjectInfo*) const;
 

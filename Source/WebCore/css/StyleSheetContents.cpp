@@ -410,6 +410,46 @@ void StyleSheetContents::addSubresourceStyleURLs(ListHashSet<KURL>& urls)
     }
 }
 
+static bool childRulesHaveFailedOrCanceledSubresources(const Vector<RefPtr<StyleRuleBase> >& rules)
+{
+    for (unsigned i = 0; i < rules.size(); ++i) {
+        const StyleRuleBase* rule = rules[i].get();
+        switch (rule->type()) {
+        case StyleRuleBase::Style:
+            if (static_cast<const StyleRule*>(rule)->properties()->hasFailedOrCanceledSubresources())
+                return true;
+            break;
+        case StyleRuleBase::FontFace:
+            if (static_cast<const StyleRuleFontFace*>(rule)->properties()->hasFailedOrCanceledSubresources())
+                return true;
+            break;
+        case StyleRuleBase::Media:
+            if (childRulesHaveFailedOrCanceledSubresources(static_cast<const StyleRuleMedia*>(rule)->childRules()))
+                return true;
+            break;
+        case StyleRuleBase::Region:
+            if (childRulesHaveFailedOrCanceledSubresources(static_cast<const StyleRuleRegion*>(rule)->childRules()))
+                return true;
+            break;
+        case StyleRuleBase::Import:
+            ASSERT_NOT_REACHED();
+        case StyleRuleBase::Page:
+        case StyleRuleBase::Keyframes:
+        case StyleRuleBase::Unknown:
+        case StyleRuleBase::Charset:
+        case StyleRuleBase::Keyframe:
+            break;
+        }
+    }
+    return false;
+}
+
+bool StyleSheetContents::hasFailedOrCanceledSubresources() const
+{
+    ASSERT(isCacheable());
+    return childRulesHaveFailedOrCanceledSubresources(m_childRules);
+}
+
 StyleSheetContents* StyleSheetContents::parentStyleSheet() const
 {
     return m_ownerRule ? m_ownerRule->parentStyleSheet() : 0;
