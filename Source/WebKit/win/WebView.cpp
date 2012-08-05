@@ -2105,7 +2105,7 @@ bool WebView::registerWebViewWindowClass()
     wcex.style          = CS_DBLCLKS;
     wcex.lpfnWndProc    = WebViewWndProc;
     wcex.cbClsExtra     = 0;
-    wcex.cbWndExtra     = 4; // 4 bytes for the IWebView pointer
+    wcex.cbWndExtra     = sizeof(WebView*);
     wcex.hInstance      = gInstance;
     wcex.hIcon          = 0;
     wcex.hCursor        = ::LoadCursor(0, IDC_ARROW);

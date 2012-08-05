@@ -1,3 +1,18 @@
+2012-08-05  Patrick Gansterer  <paroga@webkit.org>
+
+        [WIN] Use sizeof() for cbWndExtra values
+        https://bugs.webkit.org/show_bug.cgi?id=93179
+
+        Reviewed by Eric Carlson.
+
+        Using sizof() instead of hardcoding the pointer size of
+        the 32bit platform allows us to use the code on 64bit too.
+
+        * FullscreenVideoController.cpp:
+        (FullscreenVideoController::registerHUDWindowClass):
+        * WebView.cpp:
+        (WebView::registerWebViewWindowClass):
+
 2012-07-26  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         [Mac] Fix build break on Apple win bot after r123711

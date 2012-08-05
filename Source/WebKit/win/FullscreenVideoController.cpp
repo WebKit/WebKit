@@ -422,7 +422,7 @@ void FullscreenVideoController::registerHUDWindowClass()
     wcex.style = CS_HREDRAW | CS_VREDRAW;
     wcex.lpfnWndProc = hudWndProc;
     wcex.cbClsExtra = 0;
-    wcex.cbWndExtra = 4;
+    wcex.cbWndExtra = sizeof(FullscreenVideoController*);
     wcex.hInstance = gInstance;
     wcex.hIcon = 0;
     wcex.hCursor = LoadCursor(0, IDC_ARROW);
