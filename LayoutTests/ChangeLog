@@ -1,3 +1,32 @@
+2012-08-04  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Test fixes after r124705. There were still few tests that used layoutTestController because
+        they were encoded in UTF-16 and UTF-32 and neither spot light nor grep could search through.
+
+        * editing/pasteboard/copy-paste-float.html:
+        * editing/selection/thai-word-at-document-end.html:
+        * fast/css/hexColor-isDigit-assert.html:
+        * fast/encoding/bom-in-content-utf16.html:
+        * fast/encoding/utf-32-big-endian-bom.html:
+        * fast/encoding/utf-32-big-endian-nobom.xml:
+        * fast/encoding/utf-32-little-endian-bom.html:
+        * fast/encoding/utf-32-little-endian-nobom.xml:
+        * fast/parser/test-unicode-characters-in-attribute-name.html:
+        * fast/ruby/text-emphasis.html:
+        * fast/text/offsetForPosition-cluster-at-zero.html:
+        * http/tests/misc/submit-get-in-utf16be.html:
+        * http/tests/misc/submit-get-in-utf16le.html:
+        * http/tests/misc/submit-get-in-utf32be.html:
+        * http/tests/misc/submit-get-in-utf32le.html:
+        * http/tests/misc/submit-post-in-utf16be.html:
+        * http/tests/misc/submit-post-in-utf16le.html:
+        * http/tests/misc/submit-post-in-utf32be.html:
+        * http/tests/misc/submit-post-in-utf32le.html:
+        * http/tests/misc/url-in-utf16be.html:
+        * http/tests/misc/url-in-utf16le.html:
+        * http/tests/misc/url-in-utf32be.html:
+        * http/tests/misc/url-in-utf32le.html:
+
 2012-08-04  Robert Hogan  <robert@webkit.org>
 
         Rebaseline Chromium results after r124697
