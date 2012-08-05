@@ -1,5 +1,16 @@
 2012-08-04  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Rebaseline fast/css-grid-layout/place-cell-by-index.html on Qt after r124671
+        since the test now passes (yay!).
+
+        Skip a test added by r124673 on Qt since it uses gestureTap (tracked by the bug 66272).
+
+        * platform/qt/Skipped:
+        * platform/qt/fast/css-grid-layout: Removed.
+        * platform/qt/fast/css-grid-layout/place-cell-by-index-expected.txt: Removed.
+
+2012-08-04  Ryosuke Niwa  <rniwa@webkit.org>
+
         Another test fixes after r124705. Revert erroneous changes in r124707 using binary editor.
 
         * fast/parser/test-unicode-characters-in-attribute-name.html:
