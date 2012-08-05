@@ -1,3 +1,15 @@
+2012-08-04  Ami Fischman  <fischman@chromium.org>
+
+        HTMLMediaElement may fire the seeked event before currentTime reaches the seek time
+        https://bugs.webkit.org/show_bug.cgi?id=92881
+
+        Reviewed by Eric Carlson.
+
+        Testing provided by media/video-seek-past-end-paused.html, hopefully demonstrating lack of redness on all ports/bots this time.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::mediaPlayerTimeChanged): don't finishSeek() until the media player is no longer seeking.
+
 2012-08-04  Dan Bernstein  <mitz@apple.com>
 
         Tried to fix the Qt Windows build after r124654.

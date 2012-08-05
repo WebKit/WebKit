@@ -3351,7 +3351,7 @@ void HTMLMediaElement::mediaPlayerTimeChanged(MediaPlayer*)
     invalidateCachedTime();
 
     // 4.8.10.9 step 14 & 15.  Needed if no ReadyState change is associated with the seek.
-    if (m_seeking && m_readyState >= HAVE_CURRENT_DATA)
+    if (m_seeking && m_readyState >= HAVE_CURRENT_DATA && !m_player->seeking())
         finishSeek();
     
     // Always call scheduleTimeupdateEvent when the media engine reports a time discontinuity, 
