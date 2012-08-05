@@ -1,5 +1,32 @@
 2012-08-05  Kentaro Hara  <haraken@chromium.org>
 
+        [V8] Move V8Proxy methods that set DOM attributes/callbacks to V8Binding
+        https://bugs.webkit.org/show_bug.cgi?id=93103
+
+        Reviewed by Adam Barth.
+
+        To remove V8Proxy, we can move V8Proxy methods that set DOM
+        attributes/callbacks to V8Binding.
+
+        No tests. No change in behavior.
+
+        * bindings/v8/V8Binding.cpp:
+        (WebCore::batchConfigureAttributes):
+        (WebCore):
+        (WebCore::batchConfigureCallbacks):
+        (WebCore::batchConfigureConstants):
+        * bindings/v8/V8Binding.h:
+        (BatchedAttribute):
+        (WebCore):
+        (WebCore::configureAttribute):
+        (BatchedConstant):
+        (BatchedCallback):
+        * bindings/v8/V8Proxy.cpp:
+        * bindings/v8/V8Proxy.h:
+        (WebCore):
+
+2012-08-05  Kentaro Hara  <haraken@chromium.org>
+
         [V8] Remove V8Proxy::registerExtensionWithV8()
         https://bugs.webkit.org/show_bug.cgi?id=93115
 
