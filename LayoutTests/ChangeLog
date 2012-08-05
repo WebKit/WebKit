@@ -1,5 +1,12 @@
 2012-08-04  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Another test fixes after r124705. Revert erroneous changes in r124707 using binary editor.
+
+        * fast/parser/test-unicode-characters-in-attribute-name.html:
+        * http/tests/misc/submit-post-in-utf16be.html:
+
+2012-08-04  Ryosuke Niwa  <rniwa@webkit.org>
+
         Test fixes after r124705. There were still few tests that used layoutTestController because
         they were encoded in UTF-16 and UTF-32 and neither spot light nor grep could search through.
 
