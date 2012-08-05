@@ -1,3 +1,18 @@
+2012-08-05  Ami Fischman  <fischman@chromium.org>
+
+        media/video-poster-blocked-by-willsendrequest.html isn't blocking poster on willsendrequest
+        https://bugs.webkit.org/show_bug.cgi?id=92824
+
+        Reviewed by Ryosuke Niwa.
+
+        Chromium/Mac/GTK DRTs appear not to clear the cache between tests so append a unique query-string param to avoid a cache hit in this test.
+        Filed 93195 for the chromium port, Mac has 82976, and GTK has 79760.
+
+        * media/video-poster-blocked-by-willsendrequest.html:
+        * platform/chromium/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/mac/Skipped:
+
 2012-08-04  Ami Fischman  <fischman@chromium.org>
 
         HTMLMediaElement may fire the seeked event before currentTime reaches the seek time

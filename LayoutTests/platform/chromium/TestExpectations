@@ -3188,8 +3188,6 @@ BUGWK86414 : fast/loader/javascript-url-in-embed.html = TEXT
 
 BUGDPRANKE : http/tests/security/sandboxed-iframe-modify-self.html = TEXT
 
-// The result of jquery/traversing.html is bleeding into this test.
-BUGDPRANKE : media/video-poster-blocked-by-willsendrequest.html = TEXT PASS
 BUGDPRANKE MAC : userscripts/user-style-all-frames.html = TEXT PASS
 
 // Interferes with the rAF tests that are enabled

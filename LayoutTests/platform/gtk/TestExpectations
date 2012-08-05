@@ -447,7 +447,6 @@ BUGWK80129 : fast/frames/flattening/iframe-flattening-out-of-view.html = TEXT PA
 BUGWK87363 : fast/frames/flattening/iframe-tiny.html = PASS TEXT
 
 BUGWK72698 : media/audio-garbage-collect.html = PASS TEXT
-BUGWK79760 : media/video-poster-blocked-by-willsendrequest.html = PASS TEXT
 
 BUGWK73772 : fast/table/multiple-captions-display.xhtml = PASS TEXT
 

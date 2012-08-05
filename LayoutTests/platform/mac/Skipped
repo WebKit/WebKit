@@ -759,7 +759,6 @@ plugins/multiple-plugins.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=82976
 media/W3C/video/networkState/networkState_during_progress.html
-media/video-poster-blocked-by-willsendrequest.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=82978
 inspector/styles/svg-style.xhtml
