@@ -1,5 +1,11 @@
 2012-08-04  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Another test fix after r124708.
+
+        * platform/mac/editing/selection/word-thai.html:
+
+2012-08-04  Ryosuke Niwa  <rniwa@webkit.org>
+
         Rebaseline fast/css-grid-layout/place-cell-by-index.html on Qt after r124671
         since the test now passes (yay!).
 
