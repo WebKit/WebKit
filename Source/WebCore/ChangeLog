@@ -1,3 +1,17 @@
+2012-08-04  Dan Bernstein  <mitz@apple.com>
+
+        <rdar://problem/11875795> REGRESSION (tiled drawing): Page’s scroll bars flash with each character you type in a textarea (affects Wikipedia and YouTube)
+        https://bugs.webkit.org/show_bug.cgi?id=91348
+
+        Reviewed by Andy Estes.
+
+        * platform/ScrollableArea.cpp:
+        (WebCore::ScrollableArea::scrollPositionChanged): Changed to call notifyContentAreaScrolled()
+        only if the scroll position after the change differs from what it was before the change.
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::scrollPosition): Added an override of this ScrollableArea function.
+        * rendering/RenderListBox.h:
+
 2012-08-04  Ami Fischman  <fischman@chromium.org>
 
         HTMLMediaElement may fire the seeked event before currentTime reaches the seek time
