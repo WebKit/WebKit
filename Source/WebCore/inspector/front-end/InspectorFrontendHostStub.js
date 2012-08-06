@@ -184,6 +184,11 @@ WebInspector.InspectorFrontendHostStub.prototype = {
 
     setZoomFactor: function(zoom)
     {
+    },
+
+    canInspectWorkers: function()
+    {
+        return true;
     }
 }
 

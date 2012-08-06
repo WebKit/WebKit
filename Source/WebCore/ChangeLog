@@ -1,3 +1,38 @@
+2012-08-06  Yury Semikhatsky  <yurys@chromium.org>
+
+        Web Inspector: rename WorkerAgent.setWorkerInspectionEnabled to WorkerAgent.enable and make it return error
+        https://bugs.webkit.org/show_bug.cgi?id=92545
+
+        Reviewed by Pavel Feldman.
+
+        - Replaced WorkerAgent.setWorkerInspectionEnabled with WorkerAgent.enable/disable
+        - Replaced Preferences.exposeWorkersInspection with InspectorFrontendHost.canInspectWorkers()
+          that tells if inspector front-end on the given platform can launch dedicated worker
+          front-end.
+
+        * inspector/Inspector.json:
+        * inspector/InspectorFrontendClient.h:
+        (InspectorFrontendClient):
+        * inspector/InspectorFrontendClientLocal.h:
+        (WebCore::InspectorFrontendClientLocal::canInspectWorkers):
+        * inspector/InspectorFrontendHost.cpp:
+        (WebCore::InspectorFrontendHost::canInspectWorkers):
+        (WebCore):
+        * inspector/InspectorFrontendHost.h:
+        (InspectorFrontendHost):
+        * inspector/InspectorFrontendHost.idl:
+        * inspector/InspectorWorkerAgent.cpp:
+        (WebCore::InspectorWorkerAgent::enable):
+        (WebCore):
+        (WebCore::InspectorWorkerAgent::disable):
+        * inspector/InspectorWorkerAgent.h:
+        (InspectorWorkerAgent):
+        * inspector/front-end/InspectorFrontendHostStub.js:
+        (.WebInspector.InspectorFrontendHostStub.prototype.setZoomFactor):
+        (.WebInspector.InspectorFrontendHostStub.prototype.canInspectWorkers):
+        * inspector/front-end/ScriptsPanel.js:
+        * inspector/front-end/Settings.js:
+
 2012-08-06  Mario Sanchez Prada  <msanchez@igalia.com>
 
         [WK2][GTK] Improvements for the new spell-checking API

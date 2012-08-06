@@ -79,6 +79,8 @@ public:
     void save(const String& url, const String& content, bool forceSaveAs);
     void append(const String& url, const String& content);
 
+    bool canInspectWorkers();
+
     // Called from [Custom] implementations.
     void showContextMenu(Event*, const Vector<ContextMenuItem>& items);
     void sendMessageToBackend(const String& message);

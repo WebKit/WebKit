@@ -1,3 +1,21 @@
+2012-08-06  Yury Semikhatsky  <yurys@chromium.org>
+
+        Web Inspector: rename WorkerAgent.setWorkerInspectionEnabled to WorkerAgent.enable and make it return error
+        https://bugs.webkit.org/show_bug.cgi?id=92545
+
+        Reviewed by Pavel Feldman.
+
+        Replaced Preferences.exposeWorkersInspection with InspectorFrontendHost.canInspectWorkers()
+        that tells if inspector front-end on the given platform can launch dedicated worker
+        front-end.
+
+        * src/InspectorFrontendClientImpl.cpp:
+        (WebKit::InspectorFrontendClientImpl::canInspectWorkers):
+        (WebKit):
+        * src/InspectorFrontendClientImpl.h:
+        (InspectorFrontendClientImpl):
+        * src/js/DevTools.js:
+
 2012-08-06  Keishi Hattori  <keishi@webkit.org>
 
         Remove minimum window size for PagePopup

@@ -41,7 +41,6 @@ var Preferences = {
     sharedWorkersDebugNote: undefined,
     localizeUI: true,
     exposeDisableCache: false,
-    exposeWorkersInspection: false,
     applicationTitle: "Web Inspector - %s",
     showHeapSnapshotObjectsHiddenProperties: false,
     showDockToRight: false,

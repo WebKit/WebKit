@@ -250,6 +250,17 @@ void InspectorFrontendHost::append(const String& url, const String& content)
         m_client->append(url, content);
 }
 
+bool InspectorFrontendHost::canInspectWorkers()
+{
+#if ENABLE(WORKERS)
+    if (m_client)
+        return m_client->canInspectWorkers();
+    return false;
+#else
+    return false;
+#endif
+}
+
 void InspectorFrontendHost::sendMessageToBackend(const String& message)
 {
     if (m_client)

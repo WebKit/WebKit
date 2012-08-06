@@ -140,15 +140,20 @@ void InspectorWorkerAgent::clearFrontend()
     destroyWorkerFrontendChannels();
 }
 
-void InspectorWorkerAgent::setWorkerInspectionEnabled(ErrorString*, bool value)
+void InspectorWorkerAgent::enable(ErrorString*)
 {
-    m_state->setBoolean(WorkerAgentState::workerInspectionEnabled, value);
+    m_state->setBoolean(WorkerAgentState::workerInspectionEnabled, true);
     if (!m_inspectorFrontend)
         return;
-    if (value)
-        createWorkerFrontendChannelsForExistingWorkers();
-    else
-        destroyWorkerFrontendChannels();
+    createWorkerFrontendChannelsForExistingWorkers();
+}
+
+void InspectorWorkerAgent::disable(ErrorString*)
+{
+    m_state->setBoolean(WorkerAgentState::workerInspectionEnabled, false);
+    if (!m_inspectorFrontend)
+        return;
+    destroyWorkerFrontendChannels();
 }
 
 void InspectorWorkerAgent::connectToWorker(ErrorString* error, int workerId)

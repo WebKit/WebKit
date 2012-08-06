@@ -62,7 +62,8 @@ public:
     void workerContextTerminated(WorkerContextProxy*);
 
     // Called from InspectorBackendDispatcher
-    virtual void setWorkerInspectionEnabled(ErrorString*, bool value);
+    virtual void enable(ErrorString*);
+    virtual void disable(ErrorString*);
     virtual void connectToWorker(ErrorString*, int workerId);
     virtual void disconnectFromWorker(ErrorString*, int workerId);
     virtual void sendMessageToWorker(ErrorString*, int workerId, const RefPtr<InspectorObject>& message);

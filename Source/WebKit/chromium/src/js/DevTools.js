@@ -39,7 +39,6 @@
     Preferences.localizeUI = false;
     Preferences.applicationTitle = "Developer Tools - %s";
     Preferences.exposeDisableCache = true;
-    Preferences.exposeWorkersInspection = true;
     Preferences.showDockToRight = true;
     Preferences.exposeFileSystemInspection = true;
 })();}

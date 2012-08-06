@@ -2997,10 +2997,10 @@
         "types": [],
         "commands": [
             {
-                "name": "setWorkerInspectionEnabled",
-                "parameters": [
-                    { "name": "value", "type": "boolean" }
-                ]
+                "name": "enable"
+            },
+            {
+                "name": "disable"
             },
             {
                 "name": "sendMessageToWorker",

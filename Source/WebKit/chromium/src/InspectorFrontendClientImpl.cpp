@@ -143,6 +143,11 @@ void InspectorFrontendClientImpl::append(const String& url, const String& conten
     m_client->append(url, content);
 }
 
+bool InspectorFrontendClientImpl::canInspectWorkers()
+{
+    return true;
+}
+
 void InspectorFrontendClientImpl::inspectedURLChanged(const String& url)
 {
     m_frontendPage->mainFrame()->document()->setTitle("Developer Tools - " + url);

@@ -72,6 +72,7 @@ public:
     virtual bool canSave();
     virtual void save(const WTF::String& urk, const WTF::String& content, bool forceSaveAs);
     virtual void append(const WTF::String& urk, const WTF::String& content);
+    virtual bool canInspectWorkers();
 
     virtual void inspectedURLChanged(const WTF::String&);
 

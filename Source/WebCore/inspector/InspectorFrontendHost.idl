@@ -56,6 +56,8 @@ module core {
         void save(in DOMString url, in DOMString content, in boolean forceSaveAs);
         void append(in DOMString url, in DOMString content);
 
+        boolean canInspectWorkers();
+
         [Custom] DOMString platform();
         [Custom] DOMString port();
         [Custom] void showContextMenu(in MouseEvent event, in DOMObject items);
