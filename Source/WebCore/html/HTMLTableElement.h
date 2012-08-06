@@ -65,8 +65,8 @@ public:
     String rules() const;
     String summary() const;
 
-    StylePropertySet* additionalCellStyle();
-    StylePropertySet* additionalGroupStyle(bool rows);
+    const StylePropertySet* additionalCellStyle();
+    const StylePropertySet* additionalGroupStyle(bool rows);
 
 private:
     HTMLTableElement(const QualifiedName&, Document*);
@@ -77,7 +77,7 @@ private:
     virtual bool isURLAttribute(const Attribute&) const OVERRIDE;
 
     // Used to obtain either a solid or outset border decl and to deal with the frame and rules attributes.
-    virtual StylePropertySet* additionalAttributeStyle() OVERRIDE;
+    virtual const StylePropertySet* additionalAttributeStyle() OVERRIDE;
 
     virtual void addSubresourceAttributeURLs(ListHashSet<KURL>&) const;
 

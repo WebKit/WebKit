@@ -114,7 +114,7 @@ void HTMLTableCellElement::parseAttribute(const Attribute& attribute)
         HTMLTablePartElement::parseAttribute(attribute);
 }
 
-StylePropertySet* HTMLTableCellElement::additionalAttributeStyle()
+const StylePropertySet* HTMLTableCellElement::additionalAttributeStyle()
 {
     if (HTMLTableElement* table = findParentTable())
         return table->additionalCellStyle();

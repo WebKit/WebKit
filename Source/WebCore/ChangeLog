@@ -1,3 +1,48 @@
+2012-08-06  Andreas Kling  <kling@webkit.org>
+
+        Pass presentational attribute StylePropertySets by const pointer where possible.
+        <http://webkit.org/b/93187>
+
+        Reviewed by Antti Koivisto.
+
+        Minor cleanup to enforce (at compile time) the fact that no methods that have the
+        side-effect of incurring immutable-to-mutable-StylePropertySet conversion.
+
+        This was already covered by assertions, we're just making it stricter and adding
+        some documentational flavor.
+
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::addElementStyleProperties):
+        (WebCore::StyleResolver::collectMatchingRulesForList):
+        * css/StyleResolver.h:
+        (StyleResolver):
+        * dom/ElementAttributeData.h:
+        (WebCore::ElementAttributeData::attributeStyle):
+        * dom/StyledElement.h:
+        (WebCore::StyledElement::additionalAttributeStyle):
+        (StyledElement):
+        (WebCore::StyledElement::attributeStyle):
+        * html/HTMLTableCellElement.cpp:
+        (WebCore::HTMLTableCellElement::additionalAttributeStyle):
+        * html/HTMLTableCellElement.h:
+        (HTMLTableCellElement):
+        * html/HTMLTableColElement.cpp:
+        (WebCore::HTMLTableColElement::additionalAttributeStyle):
+        * html/HTMLTableColElement.h:
+        (HTMLTableColElement):
+        * html/HTMLTableElement.cpp:
+        (WebCore::HTMLTableElement::additionalAttributeStyle):
+        (WebCore::HTMLTableElement::additionalCellStyle):
+        (WebCore::HTMLTableElement::additionalGroupStyle):
+        * html/HTMLTableElement.h:
+        (HTMLTableElement):
+        * html/HTMLTableSectionElement.cpp:
+        (WebCore::HTMLTableSectionElement::additionalAttributeStyle):
+        * html/HTMLTableSectionElement.h:
+        (HTMLTableSectionElement):
+        * inspector/InspectorCSSAgent.cpp:
+        (WebCore::InspectorCSSAgent::buildObjectForAttributesStyle):
+
 2012-08-06  Kihong Kwon  <kihong.kwon@samsung.com>
 
         Add DeviceProximityEvent interface

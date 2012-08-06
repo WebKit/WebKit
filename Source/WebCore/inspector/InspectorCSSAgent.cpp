@@ -1043,7 +1043,7 @@ PassRefPtr<TypeBuilder::CSS::CSSStyle> InspectorCSSAgent::buildObjectForAttribut
     if (!element->isStyledElement())
         return 0;
 
-    StylePropertySet* attributeStyle = static_cast<StyledElement*>(element)->attributeStyle();
+    const StylePropertySet* attributeStyle = static_cast<StyledElement*>(element)->attributeStyle();
     if (!attributeStyle)
         return 0;
 

@@ -863,7 +863,7 @@ void StyleResolver::addMatchedProperties(MatchResult& matchResult, const StylePr
     matchResult.matchedRules.append(rule);
 }
 
-inline void StyleResolver::addElementStyleProperties(MatchResult& result, StylePropertySet* propertySet, bool isCacheable)
+inline void StyleResolver::addElementStyleProperties(MatchResult& result, const StylePropertySet* propertySet, bool isCacheable)
 {
     if (!propertySet)
         return;
@@ -1184,7 +1184,7 @@ void StyleResolver::matchAllRules(MatchResult& result, bool includeSMILPropertie
         // FIXME: Media control shadow trees seem to have problems with caching.
         bool isInlineStyleCacheable = !m_styledElement->inlineStyle()->isMutable() && !m_styledElement->isInShadowTree();
         // FIXME: Constify.
-        addElementStyleProperties(result, const_cast<StylePropertySet*>(m_styledElement->inlineStyle()), isInlineStyleCacheable);
+        addElementStyleProperties(result, m_styledElement->inlineStyle(), isInlineStyleCacheable);
     }
 
 #if ENABLE(SVG)
@@ -1348,7 +1348,7 @@ bool StyleResolver::canShareStyleWithControl(StyledElement* element) const
 }
 
 // This function makes some assumptions that only make sense for attribute styles (we only compare CSSProperty::id() and CSSProperty::value().)
-static inline bool attributeStylesEqual(StylePropertySet* a, StylePropertySet* b)
+static inline bool attributeStylesEqual(const StylePropertySet* a, const StylePropertySet* b)
 {
     if (a == b)
         return true;
@@ -1401,8 +1401,8 @@ bool StyleResolver::canShareStyleWithElement(StyledElement* element) const
 #endif
     if (!!element->attributeStyle() != !!m_styledElement->attributeStyle())
         return false;
-    StylePropertySet* additionalAttributeStyleA = element->additionalAttributeStyle();
-    StylePropertySet* additionalAttributeStyleB = m_styledElement->additionalAttributeStyle();
+    const StylePropertySet* additionalAttributeStyleA = element->additionalAttributeStyle();
+    const StylePropertySet* additionalAttributeStyleB = m_styledElement->additionalAttributeStyle();
     if (!additionalAttributeStyleA != !additionalAttributeStyleB)
         return false;
     if (element->isLink() != m_element->isLink())

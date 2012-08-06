@@ -37,7 +37,7 @@ class StyledElement : public Element {
 public:
     virtual ~StyledElement();
 
-    virtual StylePropertySet* additionalAttributeStyle() { return 0; }
+    virtual const StylePropertySet* additionalAttributeStyle() { return 0; }
     void invalidateStyleAttribute();
 
     const StylePropertySet* inlineStyle() const { return attributeData() ? attributeData()->inlineStyle() : 0; }
@@ -51,7 +51,7 @@ public:
     
     virtual CSSStyleDeclaration* style() OVERRIDE;
 
-    StylePropertySet* attributeStyle();
+    const StylePropertySet* attributeStyle();
 
     const SpaceSplitString& classNames() const;
 
@@ -106,7 +106,7 @@ inline void StyledElement::invalidateStyleAttribute()
     clearIsStyleAttributeValid();
 }
 
-inline StylePropertySet* StyledElement::attributeStyle()
+inline const StylePropertySet* StyledElement::attributeStyle()
 {
     if (attributeStyleDirty())
         updateAttributeStyle();

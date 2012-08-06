@@ -57,7 +57,7 @@ private:
     virtual bool isPresentationAttribute(const QualifiedName&) const OVERRIDE;
     virtual void collectStyleForAttribute(const Attribute&, StylePropertySet*) OVERRIDE;
 
-    virtual StylePropertySet* additionalAttributeStyle() OVERRIDE;
+    virtual const StylePropertySet* additionalAttributeStyle() OVERRIDE;
 
     virtual bool isURLAttribute(const Attribute&) const OVERRIDE;
 

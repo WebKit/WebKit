@@ -60,7 +60,7 @@ public:
     void updateInlineStyleAvoidingMutation(StyledElement*, const String& text) const;
     void destroyInlineStyle(StyledElement*) const;
 
-    StylePropertySet* attributeStyle() const { return m_attributeStyle.get(); }
+    const StylePropertySet* attributeStyle() const { return m_attributeStyle.get(); }
     void setAttributeStyle(PassRefPtr<StylePropertySet> style) const { m_attributeStyle = style; }
 
     size_t length() const;

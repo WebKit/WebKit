@@ -45,7 +45,7 @@ private:
     virtual void parseAttribute(const Attribute&) OVERRIDE;
     virtual bool isPresentationAttribute(const QualifiedName&) const OVERRIDE;
     virtual void collectStyleForAttribute(const Attribute&, StylePropertySet*) OVERRIDE;
-    virtual StylePropertySet* additionalAttributeStyle() OVERRIDE;
+    virtual const StylePropertySet* additionalAttributeStyle() OVERRIDE;
 
     int m_span;
 };
