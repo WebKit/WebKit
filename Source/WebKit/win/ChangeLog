@@ -1,3 +1,26 @@
+2012-08-02  Lucas Forschler  <lforschler@apple.com>
+
+    Merge 122676
+
+    2012-07-14  Eric Carlson  <eric.carlson@apple.com>
+
+            Enable AVCF hardware video decoding
+            https://bugs.webkit.org/show_bug.cgi?id=90015
+            <rdar://problem/10770317>
+
+            Reviewed by Anders Carlsson.
+
+            * WebCoreSupport/WebChromeClient.cpp:
+            (WebChromeClient::graphicsDeviceAdapter): New, return the view's graphics adapter.
+            * WebCoreSupport/WebChromeClient.h:
+            (WebChromeClient):
+
+            * WebView.cpp:
+            (WebView::graphicsDeviceAdapter): New, return the layer tree host's graphics adapter.
+            * WebView.h:
+            (WebCore):
+            (WebView):
+
 2012-05-15  Lucas Forschler  <lforschler@apple.com>
 
     Merge 116687

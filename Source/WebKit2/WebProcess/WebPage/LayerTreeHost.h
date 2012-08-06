@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -41,6 +41,10 @@ class FloatPoint;
 class IntRect;
 class IntSize;
 class GraphicsLayer;
+
+#if PLATFORM(WIN) && USE(AVFOUNDATION)
+struct GraphicsDeviceAdapter;
+#endif
 }
 
 namespace WebKit {
@@ -95,6 +99,10 @@ public:
 
 #if PLATFORM(MAC)
     virtual void setLayerHostingMode(LayerHostingMode) { }
+#endif
+
+#if PLATFORM(WIN) && USE(AVFOUNDATION)
+    virtual WebCore::GraphicsDeviceAdapter* graphicsDeviceAdapter() const { return 0; }
 #endif
 
 protected:

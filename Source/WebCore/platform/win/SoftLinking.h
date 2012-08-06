@@ -79,6 +79,23 @@
         return ptr; \
     }\
 
+#define SOFT_LINK_LOADED_LIBRARY(library, functionName, resultType, callingConvention, parameterDeclarations) \
+    typedef resultType (callingConvention *functionName##PtrType) parameterDeclarations; \
+    static functionName##PtrType functionName##Ptr() \
+    { \
+        static functionName##PtrType ptr; \
+        static bool initialized; \
+        \
+        if (initialized) \
+            return ptr; \
+        initialized = true; \
+        \
+        static HINSTANCE libraryInstance = ::GetModuleHandle(L#library); \
+        \
+        ptr = reinterpret_cast<functionName##PtrType>(SOFT_LINK_GETPROCADDRESS(libraryInstance, #functionName)); \
+        return ptr; \
+    }\
+
 /*
     In order to soft link against functions decorated with __declspec(dllimport), we prepend "softLink_" to the function names.
     If you use SOFT_LINK_DLL_IMPORT(), you will also need to #define the function name to account for this, e.g.:
@@ -102,6 +119,36 @@
         return softLink##functionName parameterNames; \
     }
 
+#define SOFT_LINK_DLL_IMPORT_OPTIONAL(library, functionName, resultType, callingConvention, parameterDeclarations) \
+    typedef resultType (callingConvention *functionName##PtrType) parameterDeclarations; \
+    static functionName##PtrType functionName##Ptr() \
+    { \
+        static functionName##PtrType ptr; \
+        static bool initialized; \
+        \
+        if (initialized) \
+            return ptr; \
+        initialized = true; \
+        \
+        ptr = reinterpret_cast<resultType(callingConvention*)parameterDeclarations>(SOFT_LINK_GETPROCADDRESS(library##Library(), #functionName)); \
+        return ptr; \
+    }\
+
+#define SOFT_LINK_DLL_IMPORT_OPTIONAL(library, functionName, resultType, callingConvention, parameterDeclarations) \
+    typedef resultType (callingConvention *functionName##PtrType) parameterDeclarations; \
+    static functionName##PtrType functionName##Ptr() \
+    { \
+        static functionName##PtrType ptr; \
+        static bool initialized; \
+        \
+        if (initialized) \
+            return ptr; \
+        initialized = true; \
+        \
+        ptr = reinterpret_cast<resultType(callingConvention*)parameterDeclarations>(SOFT_LINK_GETPROCADDRESS(library##Library(), #functionName)); \
+        return ptr; \
+    }\
+
 /*
     Variables exported by a DLL need to be accessed through a function.
     If you use SOFT_LINK_VARIABLE_DLL_IMPORT(), you will also need to #define the variable name to account for this, e.g.:
@@ -114,6 +161,18 @@
     { \
         static variableType* ptr = reinterpret_cast<variableType*>(SOFT_LINK_GETPROCADDRESS(library##Library(), #variableName)); \
         ASSERT(ptr); \
+        return *ptr; \
+    }\
+
+/*
+    Note that this will only work for variable types for which a return value of 0 can signal an error.
+ */
+#define SOFT_LINK_VARIABLE_DLL_IMPORT_OPTIONAL(library, variableName, variableType) \
+    static variableType get_##variableName() \
+    { \
+        static variableType* ptr = reinterpret_cast<variableType*>(SOFT_LINK_GETPROCADDRESS(library##Library(), #variableName)); \
+        if (!ptr) \
+            return 0; \
         return *ptr; \
     }\
 

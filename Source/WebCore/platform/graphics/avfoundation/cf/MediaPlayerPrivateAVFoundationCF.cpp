@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,6 +32,7 @@
 #include "MediaPlayerPrivateAVFoundationCF.h"
 
 #include "ApplicationCacheResource.h"
+#include "COMPtr.h"
 #include "FloatConversion.h"
 #include "FrameView.h"
 #include "GraphicsContext.h"
@@ -44,9 +45,9 @@
 #include <AVFoundationCF/AVCFPlayerLayer.h>
 #include <AVFoundationCF/AVFoundationCF.h>
 #include <CoreMedia/CoreMedia.h>
-
 #include <delayimp.h>
 #include <dispatch/dispatch.h>
+#include <WebKitQuartzCoreAdditions/WKCACFTypes.h>
 #include <wtf/HashMap.h>
 #include <wtf/Threading.h>
 #include <wtf/UnusedParam.h>
@@ -87,7 +88,7 @@ public:
     void createAssetForURL(const String& url);
     void setAsset(AVCFURLAssetRef);
     
-    void createPlayer();
+    void createPlayer(IDirect3DDevice9*);
     void createPlayerItem();
     
     void checkPlayability();
@@ -137,6 +138,7 @@ private:
     RefPtr<PlatformCALayer> m_videoLayerWrapper;
 
     OwnPtr<LayerClient> m_layerClient;
+    COMPtr<IDirect3DDevice9Ex> m_d3dDevice;
 };
 
 uintptr_t AVFWrapper::s_nextAVFWrapperObjectID;
@@ -339,7 +341,7 @@ void MediaPlayerPrivateAVFoundationCF::createAVPlayer()
     ASSERT(m_avfWrapper);
     
     setDelayCallbacks(true);
-    m_avfWrapper->createPlayer();
+    m_avfWrapper->createPlayer(reinterpret_cast<IDirect3DDevice9*>(player()->graphicsDeviceAdapter()));
     setDelayCallbacks(false);
 }
 
@@ -355,8 +357,9 @@ void MediaPlayerPrivateAVFoundationCF::createAVPlayerItem()
 void MediaPlayerPrivateAVFoundationCF::createAVAssetForURL(const String& url)
 {
     ASSERT(!m_avfWrapper);
-    
+
     setDelayCallbacks(true);
+
     m_avfWrapper = new AVFWrapper(this);
     m_avfWrapper->createAssetForURL(url);
     setDelayCallbacks(false);
@@ -955,19 +958,35 @@ void AVFWrapper::disconnectAndDeleteAVFWrapper(void* context)
 void AVFWrapper::createAssetForURL(const String& url)
 {
     ASSERT(!avAsset());
-    
+
     RetainPtr<CFURLRef> urlRef(AdoptCF, KURL(ParsedURLString, url).createCFURL());
+
     AVCFURLAssetRef assetRef = AVCFURLAssetCreateWithURLAndOptions(kCFAllocatorDefault, urlRef.get(), 0, m_notificationQueue);
     m_avAsset.adoptCF(assetRef);
 }
 
-void AVFWrapper::createPlayer()
+void AVFWrapper::createPlayer(IDirect3DDevice9* d3dDevice)
 {
     ASSERT(!avPlayer() && avPlayerItem());
 
+    RetainPtr<CFMutableDictionaryRef> optionsRef(AdoptCF, CFDictionaryCreateMutable(kCFAllocatorDefault, 1, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
+
+    if (d3dDevice) {
+        // QI for an IDirect3DDevice9Ex interface, it is required to do HW video decoding.
+        COMPtr<IDirect3DDevice9Ex> d3dEx(Query, d3dDevice);
+        m_d3dDevice = d3dEx;
+    } else
+        m_d3dDevice = 0;
+
+    if (m_d3dDevice && AVCFPlayerEnableHardwareAcceleratedVideoDecoderKey)
+        CFDictionarySetValue(optionsRef.get(), AVCFPlayerEnableHardwareAcceleratedVideoDecoderKey, kCFBooleanTrue);
+
     // FIXME: We need a way to create a AVPlayer without an AVPlayerItem, see <rdar://problem/9877730>.
-    AVCFPlayerRef playerRef = AVCFPlayerCreateWithPlayerItemAndOptions(kCFAllocatorDefault, avPlayerItem(), 0, m_notificationQueue);
+    AVCFPlayerRef playerRef = AVCFPlayerCreateWithPlayerItemAndOptions(kCFAllocatorDefault, avPlayerItem(), optionsRef.get(), m_notificationQueue);
     m_avPlayer.adoptCF(playerRef);
+
+    if (m_d3dDevice && AVCFPlayerSetDirect3DDevicePtr())
+        AVCFPlayerSetDirect3DDevicePtr()(playerRef, m_d3dDevice.get());
 
     CFNotificationCenterRef center = CFNotificationCenterGetLocalCenter();
     ASSERT(center);

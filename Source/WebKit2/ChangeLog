@@ -1,5 +1,33 @@
 2012-08-02  Lucas Forschler  <lforschler@apple.com>
 
+    Merge 122676
+
+    2012-07-14  Eric Carlson  <eric.carlson@apple.com>
+
+            Enable AVCF hardware video decoding
+            https://bugs.webkit.org/show_bug.cgi?id=90015
+            <rdar://problem/10770317>
+
+            Reviewed by Anders Carlsson.
+
+            * DerivedSources.make: Define HAVE_AVCF if necessary.
+
+            * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+            (WebKit):
+            (WebKit::WebChromeClient::graphicsDeviceAdapter): New, return the layer tree host's
+                graphics adapter.
+            * WebProcess/WebCoreSupport/WebChromeClient.h:
+            (WebChromeClient):
+            * WebProcess/WebPage/LayerTreeHost.h:
+            (WebCore):
+            (LayerTreeHost):
+            (WebKit::LayerTreeHost::graphicsDeviceAdapter): New, default implementation.
+
+            * WebProcess/WebPage/ca/win/LayerTreeHostCAWin.h:
+            (LayerTreeHostCAWin):
+
+2012-08-02  Lucas Forschler  <lforschler@apple.com>
+
     Merge 123915
 
     2012-07-27  Anders Carlsson  <andersca@apple.com>

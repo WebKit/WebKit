@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -177,6 +177,8 @@ SOFT_LINK_DLL_IMPORT(AVFoundationCF, AVCFURLAssetCopyAudiovisualMIMETypes, CFArr
 SOFT_LINK_DLL_IMPORT(AVFoundationCF, AVCFURLAssetCreateWithURLAndOptions, AVCFURLAssetRef, __cdecl, (CFAllocatorRef allocator, CFURLRef URL, CFDictionaryRef options, dispatch_queue_t notificationQueue), (allocator, URL, options, notificationQueue))
 #define AVCFURLAssetCreateWithURLAndOptions softLink_AVCFURLAssetCreateWithURLAndOptions
 
+SOFT_LINK_DLL_IMPORT_OPTIONAL(AVFoundationCF, AVCFPlayerSetDirect3DDevice, void, __cdecl, (AVCFPlayerRef player, IDirect3DDevice9* d3dDevice))
+
 // Variables
 
 SOFT_LINK_VARIABLE_DLL_IMPORT(AVFoundationCF, AVCFAssetImageGeneratorApertureModeCleanAperture, const CFStringRef);
@@ -244,3 +246,6 @@ SOFT_LINK_VARIABLE_DLL_IMPORT(AVFoundationCF, AVCFPlayerItemTracksChangedNotific
 
 SOFT_LINK_VARIABLE_DLL_IMPORT(AVFoundationCF, AVCFPlayerRateChangedNotification, const CFStringRef);
 #define AVCFPlayerRateChangedNotification get_AVCFPlayerRateChangedNotification()
+
+SOFT_LINK_VARIABLE_DLL_IMPORT_OPTIONAL(AVFoundationCF, AVCFPlayerEnableHardwareAcceleratedVideoDecoderKey, const CFStringRef);
+#define AVCFPlayerEnableHardwareAcceleratedVideoDecoderKey get_AVCFPlayerEnableHardwareAcceleratedVideoDecoderKey()

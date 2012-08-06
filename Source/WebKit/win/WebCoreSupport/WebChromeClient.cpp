@@ -752,7 +752,13 @@ void WebChromeClient::scheduleCompositingLayerSync()
 {
     m_webView->flushPendingGraphicsLayerChangesSoon();
 }
+#endif
 
+#if PLATFORM(WIN) && USE(AVFOUNDATION)
+WebCore::GraphicsDeviceAdapter* WebChromeClient::graphicsDeviceAdapter() const
+{
+    return m_webView->graphicsDeviceAdapter();
+}
 #endif
 
 COMPtr<IWebUIDelegate> WebChromeClient::uiDelegate()
