@@ -1,3 +1,29 @@
+2012-08-06  Hayato Ito  <hayato@chromium.org>
+
+        Remove unused png files from platform/chromium-linux/fast/css/variables.
+        https://bugs.webkit.org/show_bug.cgi?id=93232
+
+        Reviewed by Tony Chang.
+
+        * platform/chromium-linux/fast/css/variables/block-cycle-test-expected.png: Removed.
+        * platform/chromium-linux/fast/css/variables/colors-test-expected.png: Removed.
+        * platform/chromium-linux/fast/css/variables/declaration-block-test-expected.png: Removed.
+        * platform/chromium-linux/fast/css/variables/font-test-expected.png: Removed.
+        * platform/chromium-linux/fast/css/variables/image-test-expected.png: Removed.
+        * platform/chromium-linux/fast/css/variables/import-test-expected.png: Removed.
+        * platform/chromium-linux/fast/css/variables/inline-style-test-expected.png: Removed.
+        * platform/chromium-linux/fast/css/variables/invalid-variable-test-expected.png: Removed.
+        * platform/chromium-linux/fast/css/variables/margin-test-expected.png: Removed.
+        * platform/chromium-linux/fast/css/variables/misplaced-import-test-expected.png: Removed.
+        * platform/chromium-linux/fast/css/variables/misplaced-variables-test-expected.png: Removed.
+        * platform/chromium-linux/fast/css/variables/multiple-blocks-test-expected.png: Removed.
+        * platform/chromium-linux/fast/css/variables/multiple-term-test-expected.png: Removed.
+        * platform/chromium-linux/fast/css/variables/override-test-expected.png: Removed.
+        * platform/chromium-linux/fast/css/variables/print-test-expected.png: Removed.
+        * platform/chromium-linux/fast/css/variables/remove-variable-test-expected.png: Removed.
+        * platform/chromium-linux/fast/css/variables/set-variable-test-expected.png: Removed.
+        * platform/chromium-linux/fast/css/variables/shorthand-test-expected.png: Removed.
+
 2012-08-06  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r124739.
