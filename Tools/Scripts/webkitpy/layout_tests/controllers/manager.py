@@ -336,8 +336,7 @@ class Manager(object):
     def _test_input_for_file(self, test_file):
         return TestInput(test_file,
             self._options.slow_time_out_ms if self._test_is_slow(test_file) else self._options.time_out_ms,
-            self._test_requires_lock(test_file),
-            self._port.reference_files(test_file) if self._options.shard_ref_tests else None)
+            self._test_requires_lock(test_file))
 
     def _test_requires_lock(self, test_file):
         """Return True if the test needs to be locked when
@@ -348,12 +347,6 @@ class Manager(object):
 
     def _test_is_slow(self, test_file):
         return self._expectations.has_modifier(test_file, test_expectations.SLOW)
-
-    def _is_ref_test(self, test_input):
-        if test_input.reference_files is None:
-            # Lazy initialization.
-            test_input.reference_files = self._port.reference_files(test_input.test_name)
-        return bool(test_input.reference_files)
 
     def needs_servers(self):
         return any(self._test_requires_lock(test_name) for test_name in self._test_names) and self._options.http

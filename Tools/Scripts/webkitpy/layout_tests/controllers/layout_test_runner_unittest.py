@@ -218,18 +218,10 @@ class SharderTests(unittest.TestCase):
         "perf/object-keys.html",
     ]
 
-    ref_tests = [
-        "http/tests/security/view-source-no-refresh.html",
-        "http/tests/websocket/tests/websocket-protocol-ignored.html",
-        "ietestcenter/Javascript/11.1.5_4-4-c-1.html",
-        "dom/html/level2/html/HTMLAnchorElement06.html",
-    ]
-
     def get_test_input(self, test_file):
-        return TestInput(test_file, requires_lock=(test_file.startswith('http') or test_file.startswith('perf')),
-                         reference_files=(['foo'] if test_file in self.ref_tests else None))
+        return TestInput(test_file, requires_lock=(test_file.startswith('http') or test_file.startswith('perf')))
 
-    def get_shards(self, num_workers, fully_parallel, shard_ref_tests=False, test_list=None, max_locked_shards=1):
+    def get_shards(self, num_workers, fully_parallel, test_list=None, max_locked_shards=1):
         def split(test_name):
             idx = test_name.rfind('/')
             if idx != -1:
@@ -237,7 +229,7 @@ class SharderTests(unittest.TestCase):
 
         self.sharder = Sharder(split, '/', max_locked_shards)
         test_list = test_list or self.test_list
-        return self.sharder.shard_tests([self.get_test_input(test) for test in test_list], num_workers, fully_parallel, shard_ref_tests)
+        return self.sharder.shard_tests([self.get_test_input(test) for test in test_list], num_workers, fully_parallel)
 
     def assert_shards(self, actual_shards, expected_shard_names):
         self.assertEquals(len(actual_shards), len(expected_shard_names))
@@ -267,26 +259,6 @@ class SharderTests(unittest.TestCase):
              ('fast/css', ['fast/css/display-none-inline-style-change-crash.html']),
              ('ietestcenter/Javascript', ['ietestcenter/Javascript/11.1.5_4-4-c-1.html'])])
 
-    def test_shard_by_dir_sharding_ref_tests(self):
-        locked, unlocked = self.get_shards(num_workers=2, fully_parallel=False, shard_ref_tests=True)
-
-        # Note that although there are tests in multiple dirs that need locks,
-        # they are crammed into a single shard in order to reduce the # of
-        # workers hitting the server at once.
-        self.assert_shards(locked,
-            [('locked_shard_1',
-              ['http/tests/websocket/tests/unicode.htm',
-               'http/tests/xmlhttprequest/supported-xml-content-types.html',
-               'perf/object-keys.html',
-               'http/tests/security/view-source-no-refresh.html',
-               'http/tests/websocket/tests/websocket-protocol-ignored.html'])])
-        self.assert_shards(unlocked,
-            [('animations', ['animations/keyframes.html']),
-             ('dom/html/level2/html', ['dom/html/level2/html/HTMLAnchorElement03.html']),
-             ('fast/css', ['fast/css/display-none-inline-style-change-crash.html']),
-             ('~ref:dom/html/level2/html', ['dom/html/level2/html/HTMLAnchorElement06.html']),
-             ('~ref:ietestcenter/Javascript', ['ietestcenter/Javascript/11.1.5_4-4-c-1.html'])])
-
     def test_shard_every_file(self):
         locked, unlocked = self.get_shards(num_workers=2, fully_parallel=True)
         self.assert_shards(locked,
@@ -311,23 +283,6 @@ class SharderTests(unittest.TestCase):
                'http/tests/websocket/tests/websocket-protocol-ignored.html',
                'http/tests/xmlhttprequest/supported-xml-content-types.html',
                'perf/object-keys.html'])])
-        self.assert_shards(unlocked,
-            [('unlocked_tests',
-              ['animations/keyframes.html',
-               'fast/css/display-none-inline-style-change-crash.html',
-               'dom/html/level2/html/HTMLAnchorElement03.html',
-               'ietestcenter/Javascript/11.1.5_4-4-c-1.html',
-               'dom/html/level2/html/HTMLAnchorElement06.html'])])
-
-    def test_shard_in_two_sharding_ref_tests(self):
-        locked, unlocked = self.get_shards(num_workers=1, fully_parallel=False, shard_ref_tests=True)
-        self.assert_shards(locked,
-            [('locked_tests',
-              ['http/tests/websocket/tests/unicode.htm',
-               'http/tests/xmlhttprequest/supported-xml-content-types.html',
-               'perf/object-keys.html',
-               'http/tests/security/view-source-no-refresh.html',
-               'http/tests/websocket/tests/websocket-protocol-ignored.html'])])
         self.assert_shards(unlocked,
             [('unlocked_tests',
               ['animations/keyframes.html',

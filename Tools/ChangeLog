@@ -1,3 +1,33 @@
+2012-08-06  Xianzhu Wang  <wangxianzhu@chromium.org>
+
+        Remove NRWT --shard-ref-tests
+        https://bugs.webkit.org/show_bug.cgi?id=91539
+
+        This is basically a revert of "[Chromium-Android] Run ref tests together to avoid expensive driver restarts"
+        (https://bugs.webkit.org/show_bug.cgi?id=91533, http://trac.webkit.org/changeset/122914),
+        with some conflicts resolved (because of refactory of Manager/LayoutTestRunner/Sharder classes).
+
+        Reviewed by Dirk Pranke.
+
+        * Scripts/webkitpy/layout_tests/controllers/layout_test_runner.py:
+        (LayoutTestRunner.run_tests):
+        (Sharder.shard_tests):
+        (Sharder._shard_in_two):
+        (Sharder._shard_by_directory):
+        * Scripts/webkitpy/layout_tests/controllers/layout_test_runner_unittest.py:
+        (SharderTests):
+        (SharderTests.get_test_input):
+        (SharderTests.get_shards):
+        (SharderTests.test_shard_by_dir):
+        (SharderTests.test_shard_in_two):
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        (Manager._test_input_for_file):
+        (Manager._test_is_slow):
+        * Scripts/webkitpy/layout_tests/port/chromium_android.py:
+        (ChromiumAndroidPort.__init__):
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        (parse_args):
+
 2012-08-06  Luciano Wolf  <luciano.wolf@openbossa.org>
 
         [Qt] Default sizes for input-text and text-area are different when running DRT/WTR
