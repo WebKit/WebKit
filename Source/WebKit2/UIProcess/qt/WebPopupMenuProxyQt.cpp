@@ -278,13 +278,11 @@ void WebPopupMenuProxyQt::showPopupMenu(const IntRect& rect, WebCore::TextDirect
         hidePopupMenu();
         return;
     }
-    QQuickWebViewPrivate::get(m_webView)->setDialogActive(true);
 }
 
 void WebPopupMenuProxyQt::hidePopupMenu()
 {
     m_itemSelector.clear();
-    QQuickWebViewPrivate::get(m_webView)->setDialogActive(false);
     m_context.clear();
 
     if (m_client) {

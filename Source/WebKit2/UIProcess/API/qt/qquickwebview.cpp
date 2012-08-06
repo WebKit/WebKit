@@ -270,7 +270,6 @@ QQuickWebViewPrivate::QQuickWebViewPrivate(QQuickWebView* viewport)
     , m_useDefaultContentItemSize(true)
     , m_navigatorQtObjectEnabled(false)
     , m_renderToOffscreenBuffer(false)
-    , m_dialogActive(false)
     , m_allowAnyHTTPSCertificateForLocalHost(false)
     , m_loadProgress(0)
 {
@@ -795,8 +794,11 @@ QQuickWebViewLegacyPrivate::QQuickWebViewLegacyPrivate(QQuickWebView* viewport)
 
 void QQuickWebViewLegacyPrivate::initialize(WKContextRef contextRef, WKPageGroupRef pageGroupRef)
 {
+    Q_Q(QQuickWebView);
     QQuickWebViewPrivate::initialize(contextRef, pageGroupRef);
-    enableMouseEvents();
+
+    q->setAcceptedMouseButtons(Qt::MouseButtonMask);
+    q->setAcceptHoverEvents(true);
 
     // Trigger setting of correct visibility flags after everything was allocated and initialized.
     _q_onVisibleChanged();
@@ -814,20 +816,6 @@ void QQuickWebViewLegacyPrivate::updateViewportSize()
     // has to be rendered on tiles, and in desktop mode it's all of it.
     webPageProxy->drawingArea()->setSize(viewportSize.toSize(), IntSize());
     webPageProxy->drawingArea()->setVisibleContentsRect(FloatRect(FloatPoint(), viewportSize), 1, FloatPoint());
-}
-
-void QQuickWebViewLegacyPrivate::enableMouseEvents()
-{
-    Q_Q(QQuickWebView);
-    q->setAcceptedMouseButtons(Qt::MouseButtonMask);
-    q->setAcceptHoverEvents(true);
-}
-
-void QQuickWebViewLegacyPrivate::disableMouseEvents()
-{
-    Q_Q(QQuickWebView);
-    q->setAcceptedMouseButtons(Qt::NoButton);
-    q->setAcceptHoverEvents(false);
 }
 
 qreal QQuickWebViewLegacyPrivate::zoomFactor() const
@@ -1685,36 +1673,25 @@ void QQuickWebView::platformInitialize()
 
 bool QQuickWebView::childMouseEventFilter(QQuickItem* item, QEvent* event)
 {
-    if (!isVisible() || !isEnabled() || !s_flickableViewportEnabled)
-        return QQuickFlickable::childMouseEventFilter(item, event);
-
-    Q_D(QQuickWebView);
-    if (d->m_dialogActive) {
-        event->ignore();
+    if (!isVisible() || !isEnabled())
         return false;
-    }
 
     // This function is used by MultiPointTouchArea and PinchArea to filter
     // touch events, thus to hinder the canvas from sending synthesized
     // mouse events to the Flickable implementation we need to reimplement
-    // childMouseEventFilter and filter incoming touch events as well.
+    // childMouseEventFilter to ignore touch and mouse events.
 
     switch (event->type()) {
     case QEvent::MouseButtonPress:
-        mousePressEvent(static_cast<QMouseEvent*>(event));
-        return event->isAccepted();
     case QEvent::MouseMove:
-        mouseMoveEvent(static_cast<QMouseEvent*>(event));
-        return event->isAccepted();
     case QEvent::MouseButtonRelease:
-        mouseReleaseEvent(static_cast<QMouseEvent*>(event));
-        return event->isAccepted();
     case QEvent::TouchBegin:
     case QEvent::TouchUpdate:
     case QEvent::TouchEnd:
-        touchEvent(static_cast<QTouchEvent*>(event));
-        return event->isAccepted();
+        // Force all mouse and touch events through the default propagation path.
+        return false;
     default:
+        ASSERT(event->type() == QEvent::UngrabMouse);
         break;
     }
 
@@ -1771,10 +1748,6 @@ void QQuickWebView::focusOutEvent(QFocusEvent* event)
 void QQuickWebView::touchEvent(QTouchEvent* event)
 {
     Q_D(QQuickWebView);
-    if (d->m_dialogActive) {
-        event->ignore();
-        return;
-    }
 
     bool lockingDisabled = flickableDirection() != AutoFlickDirection
                            || event->touchPoints().size() != 1

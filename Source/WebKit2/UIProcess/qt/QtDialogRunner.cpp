@@ -310,16 +310,7 @@ void QtDialogRunner::run()
         return;
 
     connect(context, SIGNAL(dismissed()), SLOT(quit()));
-
-    QQuickWebViewPrivate* webViewPrivate = QQuickWebViewPrivate::get(m_webView);
-
-    // FIXME: Change the way we disable mouse and touch events to use the
-    // concept of suspending instead (in this case event processing).
-    webViewPrivate->disableMouseEvents();
-    webViewPrivate->m_dialogActive = true;
     exec(); // Spin the event loop
-    webViewPrivate->m_dialogActive = false;
-    webViewPrivate->enableMouseEvents();
 }
 
 bool QtDialogRunner::initForAlert(const QString& message)

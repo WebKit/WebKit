@@ -71,9 +71,6 @@ public:
 
     virtual void onComponentComplete();
 
-    virtual void enableMouseEvents() { }
-    virtual void disableMouseEvents() { }
-
     virtual void provisionalLoadDidStart(const WTF::String& url);
     virtual void didReceiveServerRedirectForProvisionalLoad(const WTF::String& url);
     virtual void loadDidCommit();
@@ -124,8 +121,6 @@ public:
 
     QPointF contentPos() const;
     void setContentPos(const QPointF&);
-
-    void setDialogActive(bool active) { m_dialogActive = active; }
 
     void updateIcon();
 
@@ -194,7 +189,6 @@ protected:
     bool m_useDefaultContentItemSize;
     bool m_navigatorQtObjectEnabled;
     bool m_renderToOffscreenBuffer;
-    bool m_dialogActive;
     bool m_allowAnyHTTPSCertificateForLocalHost;
     WTF::String m_iconUrl;
     int m_loadProgress;
@@ -208,8 +202,6 @@ public:
     virtual void initialize(WKContextRef contextRef = 0, WKPageGroupRef pageGroupRef = 0);
 
     virtual void updateViewportSize();
-    virtual void enableMouseEvents();
-    virtual void disableMouseEvents();
 
     qreal zoomFactor() const;
     void setZoomFactor(qreal);

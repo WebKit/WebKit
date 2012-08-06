@@ -95,7 +95,6 @@ void WebColorChooserProxyQt::createItem(QObject* contextObject)
     m_colorChooser->setParentItem(m_webView);
 
     component->completeCreate();
-    QQuickWebViewPrivate::get(m_webView)->setDialogActive(true);
 }
 
 void WebColorChooserProxyQt::createContext(QQmlComponent* component, QObject* contextObject)
@@ -133,8 +132,6 @@ void WebColorChooserProxyQt::notifyColorSelected(const QColor& color)
 
 void WebColorChooserProxyQt::endChooser()
 {
-    QQuickWebViewPrivate::get(m_webView)->setDialogActive(false);
-
     m_colorChooser.clear();
     m_context.clear();
 
