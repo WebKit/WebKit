@@ -140,17 +140,25 @@ union JSTokenData {
     const Identifier* ident;
 };
 
-struct JSTokenInfo {
-    JSTokenInfo() : line(0) { }
+struct JSTokenLocation {
+    JSTokenLocation() : line(0), column(0) { }
+    JSTokenLocation(const JSTokenLocation& location)
+    {
+        line = location.line;
+        startOffset = location.startOffset;
+        endOffset = location.endOffset;
+        column = location.column;
+    }
     int line;
     int startOffset;
     int endOffset;
+    int column;
 };
 
 struct JSToken {
     JSTokenType m_type;
     JSTokenData m_data;
-    JSTokenInfo m_info;
+    JSTokenLocation m_location;
 };
 
 enum JSParserStrictness { JSParseNormal, JSParseStrict };

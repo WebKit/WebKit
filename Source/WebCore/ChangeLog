@@ -1,3 +1,33 @@
+2012-08-05  Peter Wang  <peter.wang@torchmobile.com.cn>
+
+        Web Inspector: [JSC] implement setting breakpoints by line:column
+        https://bugs.webkit.org/show_bug.cgi?id=53003
+
+        Reviewed by Geoffrey Garen.
+
+        Since JSC can provide column info now, ScriptDebugServer can use it to support "Pretty Print"
+        debug mode. The related interfaces derived from JSC::Debugger was added a parameter. 
+
+        No new tests for this patch.
+
+        * bindings/js/ScriptDebugServer.cpp:
+        (WebCore::ScriptDebugServer::setBreakpoint):
+        (WebCore::ScriptDebugServer::removeBreakpoint):
+        (WebCore):
+        (WebCore::ScriptDebugServer::updateCurrentStatementPosition):
+        (WebCore::ScriptDebugServer::hasBreakpoint):
+        (WebCore::ScriptDebugServer::createCallFrameAndPauseIfNeeded):
+        (WebCore::ScriptDebugServer::updateCallFrameAndPauseIfNeeded):
+        (WebCore::ScriptDebugServer::callEvent):
+        (WebCore::ScriptDebugServer::atStatement):
+        (WebCore::ScriptDebugServer::returnEvent):
+        (WebCore::ScriptDebugServer::exception):
+        (WebCore::ScriptDebugServer::willExecuteProgram):
+        (WebCore::ScriptDebugServer::didExecuteProgram):
+        (WebCore::ScriptDebugServer::didReachBreakpoint):
+        * bindings/js/ScriptDebugServer.h:
+        (ScriptDebugServer):
+
 2012-08-05  Luke Macpherson   <macpherson@chromium.org>
 
         Fix null pointer dereference when CSSParser::sinkFloatingValueList() returns null and is passed to storeVariableDeclaration().

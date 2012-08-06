@@ -506,7 +506,7 @@ namespace JSC {
         RegisterID* emitPushScope(RegisterID* scope);
         void emitPopScope();
 
-        void emitDebugHook(DebugHookID, int firstLine, int lastLine);
+        void emitDebugHook(DebugHookID, int firstLine, int lastLine, int column);
 
         int scopeDepth() { return m_dynamicScopeDepth + m_finallyDepth; }
         bool hasFinaliser() { return m_finallyDepth != 0; }

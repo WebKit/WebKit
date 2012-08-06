@@ -1525,7 +1525,8 @@ void CodeBlock::dump(ExecState* exec, const Vector<Instruction>::const_iterator&
             int debugHookID = (++it)->u.operand;
             int firstLine = (++it)->u.operand;
             int lastLine = (++it)->u.operand;
-            dataLog("[%4d] debug\t\t %s, %d, %d", location, debugHookName(debugHookID), firstLine, lastLine);
+            int column = (++it)->u.operand;
+            dataLog("[%4d] debug\t\t %s, %d, %d, %d", location, debugHookName(debugHookID), firstLine, lastLine, column);
             dumpBytecodeCommentAndNewLine(location);
             break;
         }

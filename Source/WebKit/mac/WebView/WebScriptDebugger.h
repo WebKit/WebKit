@@ -54,13 +54,13 @@ public:
     void initGlobalCallFrame(const JSC::DebuggerCallFrame&);
 
     virtual void sourceParsed(JSC::ExecState*, JSC::SourceProvider*, int errorLine, const JSC::UString& errorMsg);
-    virtual void callEvent(const JSC::DebuggerCallFrame&, intptr_t sourceID, int lineNumber);
-    virtual void atStatement(const JSC::DebuggerCallFrame&, intptr_t sourceID, int lineNumber);
-    virtual void returnEvent(const JSC::DebuggerCallFrame&, intptr_t sourceID, int lineNumber);
-    virtual void exception(const JSC::DebuggerCallFrame&, intptr_t sourceID, int lineNumber, bool hasHandler);
-    virtual void willExecuteProgram(const JSC::DebuggerCallFrame&, intptr_t sourceID, int lineno);
-    virtual void didExecuteProgram(const JSC::DebuggerCallFrame&, intptr_t sourceID, int lineno);
-    virtual void didReachBreakpoint(const JSC::DebuggerCallFrame&, intptr_t sourceID, int lineno);
+    virtual void callEvent(const JSC::DebuggerCallFrame&, intptr_t sourceID, int lineNumber, int columnNumber);
+    virtual void atStatement(const JSC::DebuggerCallFrame&, intptr_t sourceID, int lineNumber, int columnNumber);
+    virtual void returnEvent(const JSC::DebuggerCallFrame&, intptr_t sourceID, int lineNumber, int columnNumber);
+    virtual void exception(const JSC::DebuggerCallFrame&, intptr_t sourceID, int lineNumber, int columnNumber, bool hasHandler);
+    virtual void willExecuteProgram(const JSC::DebuggerCallFrame&, intptr_t sourceID, int lineno, int columnno);
+    virtual void didExecuteProgram(const JSC::DebuggerCallFrame&, intptr_t sourceID, int lineno, int columnno);
+    virtual void didReachBreakpoint(const JSC::DebuggerCallFrame&, intptr_t sourceID, int lineno, int columnno);
 
     JSC::JSGlobalObject* globalObject() const { return m_globalObject.get(); }
     WebScriptCallFrame *globalCallFrame() const { return m_globalCallFrame.get(); }

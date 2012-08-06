@@ -142,7 +142,7 @@ void WebScriptDebugger::sourceParsed(ExecState* exec, SourceProvider* sourceProv
     m_callingDelegate = false;
 }
 
-void WebScriptDebugger::callEvent(const DebuggerCallFrame& debuggerCallFrame, intptr_t sourceID, int lineNumber)
+void WebScriptDebugger::callEvent(const DebuggerCallFrame& debuggerCallFrame, intptr_t sourceID, int lineNumber, int columnNumber)
 {
     if (m_callingDelegate)
         return;
@@ -161,7 +161,7 @@ void WebScriptDebugger::callEvent(const DebuggerCallFrame& debuggerCallFrame, in
     m_callingDelegate = false;
 }
 
-void WebScriptDebugger::atStatement(const DebuggerCallFrame& debuggerCallFrame, intptr_t sourceID, int lineNumber)
+void WebScriptDebugger::atStatement(const DebuggerCallFrame& debuggerCallFrame, intptr_t sourceID, int lineNumber, int columnNumber)
 {
     if (m_callingDelegate)
         return;
@@ -180,7 +180,7 @@ void WebScriptDebugger::atStatement(const DebuggerCallFrame& debuggerCallFrame, 
     m_callingDelegate = false;
 }
 
-void WebScriptDebugger::returnEvent(const DebuggerCallFrame& debuggerCallFrame, intptr_t sourceID, int lineNumber)
+void WebScriptDebugger::returnEvent(const DebuggerCallFrame& debuggerCallFrame, intptr_t sourceID, int lineNumber, int columnNumber)
 {
     if (m_callingDelegate)
         return;
@@ -202,7 +202,7 @@ void WebScriptDebugger::returnEvent(const DebuggerCallFrame& debuggerCallFrame, 
     m_callingDelegate = false;
 }
 
-void WebScriptDebugger::exception(const DebuggerCallFrame& debuggerCallFrame, intptr_t sourceID, int lineNumber, bool hasHandler)
+void WebScriptDebugger::exception(const DebuggerCallFrame& debuggerCallFrame, intptr_t sourceID, int lineNumber, int columnNumber, bool hasHandler)
 {
     if (m_callingDelegate)
         return;
@@ -224,17 +224,17 @@ void WebScriptDebugger::exception(const DebuggerCallFrame& debuggerCallFrame, in
     m_callingDelegate = false;
 }
 
-void WebScriptDebugger::willExecuteProgram(const DebuggerCallFrame& debuggerCallFrame, intptr_t sourceID, int lineno)
+void WebScriptDebugger::willExecuteProgram(const DebuggerCallFrame& debuggerCallFrame, intptr_t sourceID, int lineno, int columnno)
 {
-    callEvent(debuggerCallFrame, sourceID, lineno);
+    callEvent(debuggerCallFrame, sourceID, lineno, columnno);
 }
 
-void WebScriptDebugger::didExecuteProgram(const DebuggerCallFrame& debuggerCallFrame, intptr_t sourceID, int lineno)
+void WebScriptDebugger::didExecuteProgram(const DebuggerCallFrame& debuggerCallFrame, intptr_t sourceID, int lineno, int columnno)
 {
-    returnEvent(debuggerCallFrame, sourceID, lineno);
+    returnEvent(debuggerCallFrame, sourceID, lineno, columnno);
 }
 
-void WebScriptDebugger::didReachBreakpoint(const DebuggerCallFrame&, intptr_t, int)
+void WebScriptDebugger::didReachBreakpoint(const DebuggerCallFrame&, intptr_t, int, int)
 {
     return;
 }

@@ -760,7 +760,7 @@ _llint_op_profile_did_call:
 _llint_op_debug:
     traceExecution()
     callSlowPath(_llint_slow_path_debug)
-    dispatch(4)
+    dispatch(5)
 
 
 _llint_native_call_trampoline:
