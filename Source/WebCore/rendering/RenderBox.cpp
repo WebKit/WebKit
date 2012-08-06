@@ -3952,8 +3952,6 @@ LayoutSize RenderBox::topLeftLocationOffset() const
         return locationOffset();
     
     LayoutRect rect(frameRect());
-    if (containerBlock->style()->shouldPlaceBlockDirectionScrollbarOnLogicalLeft())
-        rect.move(containerBlock->verticalScrollbarWidth(), 0);
     containerBlock->flipForWritingMode(rect); // FIXME: This is wrong if we are an absolutely positioned object enclosed by a relative-positioned inline.
     return LayoutSize(rect.x(), rect.y());
 }

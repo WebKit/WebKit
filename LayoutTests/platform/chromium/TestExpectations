@@ -3477,6 +3477,13 @@ BUGWK92968 SKIP : http/tests/appcache/abort-cache-onchecking.html = PASS
 BUGWK92968 SKIP : http/tests/appcache/abort-cache-ondownloading.html = PASS
 BUGWK92968 SKIP : http/tests/appcache/abort-cache-onprogress.html = PASS
 
+// Fails due to Bug 85856.
+BUGWK85856 : fast/block/float/028.html = TEXT IMAGE IMAGE+TEXT
+BUGWK85856 : fast/block/float/026.html = TEXT IMAGE IMAGE+TEXT
+BUGWK85856 : fast/overflow/unreachable-overflow-rtl-bug.html = TEXT IMAGE IMAGE+TEXT
+BUGWK85856 : scrollbars/rtl/div-absolute.html = TEXT
+BUGWK85856 : scrollbars/rtl/div-horizontal.html = TEXT
+
 // Bug 93148 changed this to a testRunner test and it started timing out on Mac.
 BUGWK93148 MAC : fast/css/nested-layers-with-hover.html = TIMEOUT
 

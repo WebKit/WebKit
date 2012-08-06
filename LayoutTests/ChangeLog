@@ -1,3 +1,14 @@
+2012-08-06  Hironori Bono  <hbono@chromium.org>
+
+        Rolling out for r123067 and r123572
+        https://bugs.webkit.org/show_bug.cgi?id=93234
+
+        Reviewed by Ryosuke Niwa.
+
+        This change marks tests that fail when rolling out my r123067 and r123572.
+
+        * platform/chromium/TestExpectations:
+
 2012-08-06  Andrei Bucur  <abucur@adobe.com>
 
         [CSS Regions] Add the NamedFlow.getRegions() API
