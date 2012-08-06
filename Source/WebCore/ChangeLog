@@ -1,3 +1,44 @@
+2012-08-06  Andrei Poenaru  <poenaru@adobe.com>
+
+        Web Inspector: Protocol: Add "namedFlowCreated" and "namedFlowRemoved" events
+        https://bugs.webkit.org/show_bug.cgi?id=92739
+
+        Reviewed by Pavel Feldman.
+
+        Implemented "namedFlowCreated" and "namedFlowRemoved" events.
+
+        Modified test: inspector/styles/protocol-css-regions-commands.html.
+
+        * dom/WebKitNamedFlowCollection.cpp:
+        (WebCore::WebKitNamedFlowCollection::ensureFlowWithName):
+        (WebCore::WebKitNamedFlowCollection::discardNamedFlow):
+        * inspector/Inspector.json:
+        * inspector/InspectorCSSAgent.cpp:
+        (WebCore::InspectorCSSAgent::reset):
+        (WebCore::InspectorCSSAgent::didCreateNamedFlow):
+        (WebCore):
+        (WebCore::InspectorCSSAgent::didRemoveNamedFlow):
+        (WebCore::InspectorCSSAgent::getNamedFlowCollection):
+        * inspector/InspectorCSSAgent.h:
+        (InspectorCSSAgent):
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore):
+        (WebCore::InspectorInstrumentation::didCreateNamedFlowImpl):
+        (WebCore::InspectorInstrumentation::didRemoveNamedFlowImpl):
+        * inspector/InspectorInstrumentation.h:
+        (InspectorInstrumentation):
+        (WebCore::InspectorInstrumentation::didCreateNamedFlow):
+        (WebCore):
+        (WebCore::InspectorInstrumentation::didRemoveNamedFlow):
+        * inspector/front-end/CSSStyleModel.js:
+        (WebInspector.CSSStyleModel.prototype._namedFlowCreated.callback):
+        (WebInspector.CSSStyleModel.prototype._namedFlowCreated):
+        (WebInspector.CSSStyleModel.prototype._namedFlowRemoved.callback):
+        (WebInspector.CSSStyleModel.prototype._namedFlowRemoved):
+        (WebInspector.CSSDispatcher.prototype.styleSheetChanged):
+        (WebInspector.CSSDispatcher.prototype.namedFlowCreated):
+        (WebInspector.CSSDispatcher.prototype.namedFlowRemoved):
+
 2012-08-06  Abhishek Arya  <inferno@chromium.org>
 
         Crash in FrameLoader::stopAllLoaders.

@@ -516,6 +516,7 @@ void InspectorCSSAgent::reset()
     m_cssStyleSheetToInspectorStyleSheet.clear();
     m_nodeToInspectorStyleSheet.clear();
     m_documentToInspectorStyleSheet.clear();
+    m_namedFlowCollectionsRequested.clear();
     resetPseudoStates();
 }
 
@@ -533,6 +534,24 @@ void InspectorCSSAgent::mediaQueryResultChanged()
 {
     if (m_frontend)
         m_frontend->mediaQueryResultChanged();
+}
+
+void InspectorCSSAgent::didCreateNamedFlow(Document* document, const AtomicString& name)
+{
+    int nodeId = m_domAgent->boundNodeId(document);
+    if (!nodeId || !m_namedFlowCollectionsRequested.contains(nodeId))
+        return;
+
+    m_frontend->namedFlowCreated(nodeId, name.string());
+}
+
+void InspectorCSSAgent::didRemoveNamedFlow(Document* document, const AtomicString& name)
+{
+    int nodeId = m_domAgent->boundNodeId(document);
+    if (!nodeId || !m_namedFlowCollectionsRequested.contains(nodeId))
+        return;
+
+    m_frontend->namedFlowRemoved(nodeId, name.string());
 }
 
 bool InspectorCSSAgent::forcePseudoState(Element* element, CSSSelector::PseudoType pseudoType)
@@ -810,6 +829,8 @@ void InspectorCSSAgent::getNamedFlowCollection(ErrorString* errorString, int nod
     Document* document = m_domAgent->assertDocument(errorString, nodeId);
     if (!document)
         return;
+
+    m_namedFlowCollectionsRequested.add(nodeId);
 
     Vector<String> namedFlowsVector = document->namedFlows()->namedFlowsNames();
     RefPtr<TypeBuilder::Array<String> > namedFlows = TypeBuilder::Array<String>::create();

@@ -36,6 +36,7 @@
 #include "SecurityContext.h"
 
 #include <wtf/HashMap.h>
+#include <wtf/HashSet.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 
@@ -97,6 +98,8 @@ public:
     virtual void disable(ErrorString*);
     void reset();
     void mediaQueryResultChanged();
+    void didCreateNamedFlow(Document*, const AtomicString& name);
+    void didRemoveNamedFlow(Document*, const AtomicString& name);
 
     virtual void getComputedStyleForNode(ErrorString*, int nodeId, const RefPtr<InspectorArray>* forcedPseudoClasses, RefPtr<TypeBuilder::Array<TypeBuilder::CSS::CSSComputedStyleProperty> >&);
     virtual void getInlineStylesForNode(ErrorString*, int nodeId, RefPtr<TypeBuilder::CSS::CSSStyle>& inlineStyle, RefPtr<TypeBuilder::CSS::CSSStyle>& attributes);
@@ -169,6 +172,7 @@ private:
     NodeToInspectorStyleSheet m_nodeToInspectorStyleSheet;
     DocumentToViaInspectorStyleSheet m_documentToInspectorStyleSheet;
     NodeIdToForcedPseudoState m_nodeIdToForcedPseudoState;
+    HashSet<int> m_namedFlowCollectionsRequested;
 
     int m_lastStyleSheetId;
 

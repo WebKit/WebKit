@@ -1,3 +1,15 @@
+2012-08-06  Andrei Poenaru  <poenaru@adobe.com>
+
+        Web Inspector: Protocol: Add "namedFlowCreated" and "namedFlowRemoved" events
+        https://bugs.webkit.org/show_bug.cgi?id=92739
+
+        Reviewed by Pavel Feldman.
+
+        Modified test so that it validates the implemented events.
+
+        * inspector/styles/protocol-css-regions-commands-expected.txt:
+        * inspector/styles/protocol-css-regions-commands.html:
+
 2012-08-06  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed GTK gardening, rebaselining a few HTMLProgressElement tests

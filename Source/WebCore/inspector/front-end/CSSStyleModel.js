@@ -56,7 +56,9 @@ WebInspector.CSSStyleModel.parseRuleArrayPayload = function(ruleArray)
 
 WebInspector.CSSStyleModel.Events = {
     StyleSheetChanged: "StyleSheetChanged",
-    MediaQueryResultChanged: "MediaQueryResultChanged"
+    MediaQueryResultChanged: "MediaQueryResultChanged",
+    NamedFlowCreated: "NamedFlowCreated",
+    NamedFlowRemoved: "NamedFlowRemoved"
 }
 
 WebInspector.CSSStyleModel.prototype = {
@@ -337,6 +339,54 @@ WebInspector.CSSStyleModel.prototype = {
             return;
 
         this.dispatchEventToListeners(WebInspector.CSSStyleModel.Events.StyleSheetChanged, { styleSheetId: styleSheetId, majorChange: majorChange });
+    },
+
+    /**
+     * @param {DOMAgent.NodeId} documentNodeId
+     * @param {string} name
+     */
+    _namedFlowCreated: function(documentNodeId, name)
+    {
+        if (!this.hasEventListeners(WebInspector.CSSStyleModel.Events.NamedFlowCreated))
+            return;
+
+        /**
+        * @param {WebInspector.DOMDocument} root
+        */
+        function callback(root)
+        {
+            // FIXME: At the moment we only want support for NamedFlows in the main document
+            if (documentNodeId !== root.id)
+                return;
+
+            this.dispatchEventToListeners(WebInspector.CSSStyleModel.Events.NamedFlowCreated, { documentNodeId: documentNodeId, name: name });
+        }
+
+        WebInspector.domAgent.requestDocument(callback.bind(this));
+    },
+
+    /**
+     * @param {DOMAgent.NodeId} documentNodeId
+     * @param {string} name
+     */
+    _namedFlowRemoved: function(documentNodeId, name)
+    {
+        if (!this.hasEventListeners(WebInspector.CSSStyleModel.Events.NamedFlowRemoved))
+            return;
+
+        /**
+        * @param {WebInspector.DOMDocument} root
+        */
+        function callback(root)
+        {
+            // FIXME: At the moment we only want support for NamedFlows in the main document
+            if (documentNodeId !== root.id)
+                return;
+
+            this.dispatchEventToListeners(WebInspector.CSSStyleModel.Events.NamedFlowRemoved, { documentNodeId: documentNodeId, name: name });
+        }
+
+        WebInspector.domAgent.requestDocument(callback.bind(this));
     },
 
     /**
@@ -1265,6 +1315,24 @@ WebInspector.CSSDispatcher.prototype = {
     styleSheetChanged: function(styleSheetId)
     {
         this._cssModel._fireStyleSheetChanged(styleSheetId);
+    },
+
+    /**
+     * @param {DOMAgent.NodeId} documentNodeId
+     * @param {string} name
+     */
+    namedFlowCreated: function(documentNodeId, name)
+    {
+        this._cssModel._namedFlowCreated(documentNodeId, name);
+    },
+
+    /**
+     * @param {DOMAgent.NodeId} documentNodeId
+     * @param {string} name
+     */
+    namedFlowRemoved: function(documentNodeId, name)
+    {
+        this._cssModel._namedFlowRemoved(documentNodeId, name);
     }
 }
 

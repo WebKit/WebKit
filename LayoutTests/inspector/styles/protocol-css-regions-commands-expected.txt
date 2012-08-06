@@ -1,7 +1,9 @@
-Tests the following commands:
+Tests the following commands and events:
 
 getNamedFlowCollection Bug 91607
 getFlowByName Bug 91855
+namedFlowCreated Bug 92739
+namedFlowRemoved Bug 92739
 
 
 Running: testGetNamedFlowCollection
@@ -18,4 +20,10 @@ overset: false
 Running: testGetFlowByName2
 === Name Flow "flow4" from main document ===
 There is no Named Flow "flow4" in the main document
+
+Running: testNamedFlowCreated
+NamedFlowCreated: "tmpNamedFlow"
+
+Running: testNamedFlowRemoved
+NamedFlowRemoved: "tmpNamedFlow"
 

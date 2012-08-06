@@ -232,6 +232,18 @@ void InspectorInstrumentation::willPopShadowRootImpl(InstrumentingAgents* instru
         domAgent->willPopShadowRoot(host, root);
 }
 
+void InspectorInstrumentation::didCreateNamedFlowImpl(InstrumentingAgents* instrumentingAgents, Document* document, const AtomicString& name)
+{
+    if (InspectorCSSAgent* cssAgent = instrumentingAgents->inspectorCSSAgent())
+        cssAgent->didCreateNamedFlow(document, name);
+}
+
+void InspectorInstrumentation::didRemoveNamedFlowImpl(InstrumentingAgents* instrumentingAgents, Document* document, const AtomicString& name)
+{
+    if (InspectorCSSAgent* cssAgent = instrumentingAgents->inspectorCSSAgent())
+        cssAgent->didRemoveNamedFlow(document, name);
+}
+
 void InspectorInstrumentation::mouseDidMoveOverElementImpl(InstrumentingAgents* instrumentingAgents, const HitTestResult& result, unsigned modifierFlags)
 {
     if (InspectorDOMAgent* domAgent = instrumentingAgents->inspectorDOMAgent())

@@ -18,6 +18,22 @@ function createDynamicElements()
     runTest();
 }
 
+function createNamedFlow()
+{
+    var article = document.createElement("article");
+    article.id = "tmpArticle";
+    article.style.webkitFlowInto = "tmpNamedFlow";
+
+    document.body.appendChild(article);
+}
+
+function removeNamedFlow()
+{
+    var article = document.getElementById("tmpArticle");
+
+    document.body.removeChild(article);
+}
+
 function test()
 {
     WebInspector.showPanel("elements");
@@ -99,6 +115,45 @@ function test()
                 next();
             }
         },
+
+        function testNamedFlowCreated(next)
+        {
+            WebInspector.cssModel.addEventListener(WebInspector.CSSStyleModel.Events.NamedFlowCreated, callback, this);
+            InspectorTest.evaluateInPage("createNamedFlow()");
+
+            function callback(event)
+            {
+                WebInspector.cssModel.removeEventListener(WebInspector.CSSStyleModel.Events.NamedFlowCreated, callback, this);
+
+                if (event.data.name !== "tmpNamedFlow") {
+                    Inspector.addResult("[!] Failed");
+                    InspectorTest.completeTest();
+                    return;
+                }
+
+                InspectorTest.addResult("NamedFlowCreated: \"tmpNamedFlow\"");
+                next();
+            }
+        },
+
+        function testNamedFlowRemoved(next)
+        {
+            WebInspector.cssModel.addEventListener(WebInspector.CSSStyleModel.Events.NamedFlowRemoved, callback, this);
+            InspectorTest.evaluateInPage("removeNamedFlow()");
+
+            function callback(event)
+            {
+                WebInspector.cssModel.removeEventListener(WebInspector.CSSStyleModel.Events.NamedFlowRemoved, callback, this);
+                if (event.data.name !== "tmpNamedFlow") {
+                    Inspector.addResult("[!] Failed");
+                    InspectorTest.completeTest();
+                    return;
+                }
+
+                InspectorTest.addResult("NamedFlowRemoved: \"tmpNamedFlow\"");
+                next();
+            }
+        }
     ]);
 }
 </script>
@@ -106,10 +161,12 @@ function test()
 
 <body onload="createDynamicElements()">
 <p>
-Tests the following commands:
+Tests the following commands and events:
 <ul>
     <li>getNamedFlowCollection <a href="https://bugs.webkit.org/show_bug.cgi?id=91607">Bug 91607</a></li>
     <li>getFlowByName <a href="https://bugs.webkit.org/show_bug.cgi?id=91855">Bug 91855</a></li>
+    <li>namedFlowCreated <a href="https://bugs.webkit.org/show_bug.cgi?id=92739">Bug 92739</a></li>
+    <li>namedFlowRemoved <a href="https://bugs.webkit.org/show_bug.cgi?id=92739">Bug 92739</a></li>
 </ul>
 </p>
 
