@@ -89,6 +89,8 @@ public:
     void flushLayerChanges();
     void createImage(int64_t, PassRefPtr<ShareableBitmap>);
     void destroyImage(int64_t);
+    void setAnimatedOpacity(uint32_t, float);
+    void setAnimatedTransform(uint32_t, const WebCore::TransformationMatrix&);
 
 private:
     PassOwnPtr<WebCore::GraphicsLayer> createLayer(WebLayerID);

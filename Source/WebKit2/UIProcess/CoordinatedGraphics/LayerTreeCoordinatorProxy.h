@@ -74,6 +74,8 @@ public:
     void syncCanvas(uint32_t id, const WebCore::IntSize& canvasSize, uint32_t graphicsSurfaceToken);
     void purgeBackingStores();
     LayerTreeRenderer* layerTreeRenderer() const { return m_renderer.get(); }
+    void setLayerAnimatedOpacity(uint32_t, float);
+    void setLayerAnimatedTransform(uint32_t, const WebCore::TransformationMatrix&);
 
 protected:
     void dispatchUpdate(const Function<void()>&);

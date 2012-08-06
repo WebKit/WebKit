@@ -530,6 +530,19 @@ WebCore::IntRect LayerTreeCoordinator::visibleContentsRect() const
     return m_visibleContentsRect;
 }
 
+
+void LayerTreeCoordinator::setLayerAnimatedOpacity(WebLayerID id, float opacity)
+{
+    m_shouldSyncFrame = true;
+    m_webPage->send(Messages::LayerTreeCoordinatorProxy::SetLayerAnimatedOpacity(id, opacity));
+}
+
+void LayerTreeCoordinator::setLayerAnimatedTransform(WebLayerID id, const TransformationMatrix& transform)
+{
+    m_shouldSyncFrame = true;
+    m_webPage->send(Messages::LayerTreeCoordinatorProxy::SetLayerAnimatedTransform(id, transform));
+}
+
 void LayerTreeCoordinator::setVisibleContentsRect(const IntRect& rect, float scale, const FloatPoint& trajectoryVector)
 {
     bool contentsRectDidChange = rect != m_visibleContentsRect;

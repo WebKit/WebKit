@@ -1,3 +1,59 @@
+2012-08-06  No'am Rosenthal  <noam.rosenthal@nokia.com>
+
+        [Qt] Use GraphicsLayerAnimation in LayerTreeCoordinator
+        https://bugs.webkit.org/show_bug.cgi?id=93147
+
+        Reviewed by Kenneth Rohde Christiansen
+
+        Allow controlling animations outside of WebCore. This is an intermediate step before moving
+        to threaded animations.
+
+        CoordinatedGraphicsLayer maintains the GraphicsLayerAnimation structures, and applies the
+        animation interpolation at the right time, before syncing the rest of the layer info and
+        the visible contents rect.
+
+        This also allows sending shorter IPC messages for animated opacity/transform changes,
+        without the rest of the layer info.
+
+        * UIProcess/CoordinatedGraphics/LayerTreeCoordinatorProxy.cpp:
+        (WebKit::LayerTreeCoordinatorProxy::setLayerAnimatedOpacity):
+        (WebKit):
+        (WebKit::LayerTreeCoordinatorProxy::setLayerAnimatedTransform):
+        * UIProcess/CoordinatedGraphics/LayerTreeCoordinatorProxy.h:
+        (LayerTreeCoordinatorProxy):
+        * UIProcess/CoordinatedGraphics/LayerTreeCoordinatorProxy.messages.in:
+        * UIProcess/CoordinatedGraphics/LayerTreeRenderer.cpp:
+        (WebKit::LayerTreeRenderer::setAnimatedOpacity):
+        (WebKit):
+        (WebKit::LayerTreeRenderer::setAnimatedTransform):
+        * UIProcess/CoordinatedGraphics/LayerTreeRenderer.h:
+        (LayerTreeRenderer):
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedGraphicsLayer.cpp:
+        (WebCore::CoordinatedGraphicsLayer::didChangeAnimatedProperties):
+        (WebCore):
+        (WebCore::CoordinatedGraphicsLayer::CoordinatedGraphicsLayer):
+        (WebCore::CoordinatedGraphicsLayer::syncLayerState):
+        (WebCore::CoordinatedGraphicsLayer::syncAnimatedProperties):
+        (WebCore::CoordinatedGraphicsLayer::syncCompositingStateForThisLayerOnly):
+        (WebCore::CoordinatedGraphicsLayer::computeTransformedVisibleRect):
+            account for the animated transform in the visible rect.
+
+        (WebCore::CoordinatedGraphicsLayer::addAnimation):
+        (WebCore::CoordinatedGraphicsLayer::pauseAnimation):
+        (WebCore::CoordinatedGraphicsLayer::removeAnimation):
+        (WebCore::CoordinatedGraphicsLayer::animationStartedTimerFired):
+        (WebCore::CoordinatedGraphicsLayer::setAnimatedTransform):
+        (WebCore::CoordinatedGraphicsLayer::setAnimatedOpacity):
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedGraphicsLayer.h:
+        (CoordinatedGraphicsLayerClient):
+        (CoordinatedGraphicsLayer):
+        * WebProcess/WebPage/CoordinatedGraphics/LayerTreeCoordinator.cpp:
+        (WebKit):
+        (WebKit::LayerTreeCoordinator::setLayerAnimatedOpacity):
+        (WebKit::LayerTreeCoordinator::setLayerAnimatedTransform):
+        * WebProcess/WebPage/CoordinatedGraphics/LayerTreeCoordinator.h:
+        (LayerTreeCoordinator):
+
 2012-08-06  Anders Carlsson  <andersca@apple.com>
 
         If the Apple Java plug-in is blocked and no runtime is installed, don't load it

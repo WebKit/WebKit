@@ -461,6 +461,22 @@ void LayerTreeRenderer::purgeGLResources()
     callOnMainThread(bind(&LayerTreeRenderer::purgeBackingStores, this));
 }
 
+void LayerTreeRenderer::setAnimatedOpacity(uint32_t id, float opacity)
+{
+    GraphicsLayer* layer = layerByID(id);
+    ASSERT(layer);
+
+    layer->setOpacity(opacity);
+}
+
+void LayerTreeRenderer::setAnimatedTransform(uint32_t id, const WebCore::TransformationMatrix& transform)
+{
+    GraphicsLayer* layer = layerByID(id);
+    ASSERT(layer);
+
+    layer->setTransform(transform);
+}
+
 void LayerTreeRenderer::purgeBackingStores()
 {
     if (m_layerTreeCoordinatorProxy)

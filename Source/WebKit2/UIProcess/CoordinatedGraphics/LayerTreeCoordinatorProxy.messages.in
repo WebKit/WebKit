@@ -34,5 +34,7 @@ messages -> LayerTreeCoordinatorProxy {
     DidRenderFrame()
     DidChangeScrollPosition(WebCore::IntPoint position)
     SyncCanvas(uint32_t id, WebCore::IntSize canvasSize, uint32_t graphicsSurfaceToken)
+    SetLayerAnimatedOpacity(uint32_t id, float opacity)
+    SetLayerAnimatedTransform(uint32_t id, WebCore::TransformationMatrix transform)
 }
 #endif

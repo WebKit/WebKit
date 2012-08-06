@@ -24,6 +24,7 @@
 #include "CoordinatedTile.h"
 #include "FloatPoint3D.h"
 #include "GraphicsLayer.h"
+#include "GraphicsLayerAnimation.h"
 #include "GraphicsLayerTransform.h"
 #include "Image.h"
 #include "IntSize.h"
@@ -63,6 +64,10 @@ public:
 #if PLATFORM(QT)
     virtual void syncCanvas(WebLayerID, const WebCore::IntSize& canvasSize, uint32_t graphicsSurfaceToken) = 0;
 #endif
+
+    virtual void setLayerAnimatedOpacity(WebLayerID, float) = 0;
+    virtual void setLayerAnimatedTransform(WebLayerID, const WebCore::TransformationMatrix&) = 0;
+
     virtual void attachLayer(WebCore::CoordinatedGraphicsLayer*) = 0;
     virtual void detachLayer(WebCore::CoordinatedGraphicsLayer*) = 0;
     virtual void syncFixedLayers() = 0;
@@ -74,7 +79,8 @@ namespace WebCore {
 
 class CoordinatedGraphicsLayer : public WebCore::GraphicsLayer
                        , public TiledBackingStoreClient
-                       , public WebKit::CoordinatedTileClient {
+                       , public WebKit::CoordinatedTileClient
+                       , public GraphicsLayerAnimation::Client {
 public:
     CoordinatedGraphicsLayer(GraphicsLayerClient*);
     virtual ~CoordinatedGraphicsLayer();
@@ -159,6 +165,14 @@ public:
     void updateContentBuffers();
     void purgeBackingStores();
 
+    // GraphicsLayerAnimation::Client
+    virtual void setAnimatedTransform(const TransformationMatrix&);
+    virtual void setAnimatedOpacity(float);
+
+    virtual bool addAnimation(const KeyframeValueList&, const IntSize&, const Animation*, const String&, double);
+    virtual void pauseAnimation(const String&, double);
+    virtual void removeAnimation(const String&);
+
 private:
     virtual void willBeDestroyed();
     WebKit::WebLayerID m_id;
@@ -172,16 +186,21 @@ private:
     bool m_shouldSyncLayerState: 1;
     bool m_shouldSyncChildren: 1;
     bool m_shouldSyncFilters: 1;
+    bool m_shouldSyncAnimatedProperties: 1;
     bool m_fixedToViewport : 1;
     bool m_canvasNeedsDisplay : 1;
 
     void notifyChange();
+    void didChangeAnimatedProperties();
     void didChangeGeometry();
     void didChangeLayerState();
     void didChangeChildren();
 #if ENABLE(CSS_FILTERS)
     void didChangeFilters();
 #endif
+
+    float m_effectiveOpacity;
+    TransformationMatrix m_effectiveTransform;
 
     void createBackingStore();
 
@@ -190,14 +209,19 @@ private:
     void adjustContentsScale();
     void computeTransformedVisibleRect();
     void syncLayerParameters();
+    void syncAnimatedProperties();
     void setShouldUpdateVisibleRect();
     float effectiveContentsScale();
+
+    void animationStartedTimerFired(WebCore::Timer<CoordinatedGraphicsLayer>*);
 
     WebKit::CoordinatedGraphicsLayerClient* m_CoordinatedGraphicsLayerClient;
     OwnPtr<WebCore::TiledBackingStore> m_mainBackingStore;
     OwnPtr<WebCore::TiledBackingStore> m_previousBackingStore;
     float m_contentsScale;
     PlatformLayer* m_canvasPlatformLayer;
+    Timer<CoordinatedGraphicsLayer> m_animationStartedTimer;
+    GraphicsLayerAnimations m_animations;
 };
 
 CoordinatedGraphicsLayer* toCoordinatedGraphicsLayer(GraphicsLayer*);

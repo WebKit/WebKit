@@ -77,6 +77,8 @@ public:
 
     virtual void syncLayerState(WebLayerID, const WebLayerInfo&);
     virtual void syncLayerChildren(WebLayerID, const Vector<WebLayerID>&);
+    virtual void setLayerAnimatedOpacity(WebLayerID, float);
+    virtual void setLayerAnimatedTransform(WebLayerID, const WebCore::TransformationMatrix&);
 #if ENABLE(CSS_FILTERS)
     virtual void syncLayerFilters(WebLayerID, const WebCore::FilterOperations&);
 #endif
