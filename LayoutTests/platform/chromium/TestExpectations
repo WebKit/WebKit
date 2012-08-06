@@ -1803,8 +1803,8 @@ BUGWK71758 : fast/url/port.html = TEXT PASS
 BUGCR42696 : http/tests/xmlhttprequest/cross-origin-authorization-with-embedder.html = TIMEOUT
 
 // WebKit roll 58304:58400
-BUGUKAI MAC : fast/text/international/bold-bengali.html = IMAGE
-BUGUKAI WIN7 : fast/text/international/bold-bengali.html = IMAGE+TEXT
+BUGWK93221 MAC : fast/text/international/bold-bengali.html = IMAGE
+BUGWK93221 WIN7 : fast/text/international/bold-bengali.html = IMAGE+TEXT
 
 // These 5,000+ tests are already being run by the V8 team (and have no chromium expectations).
 // They should be moved to the JavaScriptCore test suite.

@@ -1,3 +1,9 @@
+2012-08-05  Fumitoshi Ukai  <ukai@chromium.org>
+
+        Unreviewed test expectation updates.
+
+        * platform/chromium/TestExpectations: assign bug for fast/text/international/bold-bengali.html
+
 2012-08-05  Luke Macpherson   <macpherson@chromium.org>
 
         Enable fast/css/variables tests by default for chromium.
