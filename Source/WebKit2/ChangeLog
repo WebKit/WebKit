@@ -1,3 +1,24 @@
+2012-08-05  Benjamin Poulain  <bpoulain@apple.com>
+
+        Assert in checkValidity() in hashtable.h from WebGeolocationManager::didFailToDeterminePosition() when fetching http://html5demos.com/geo
+        https://bugs.webkit.org/show_bug.cgi?id=80386
+
+        Reviewed by Alexey Proskuryakov.
+
+        WebKit2's WebGeolocationManager was delivering events without accounting that each event
+        can modify the list of page that need delivery.
+        Any page can remove itself by invoking clearWatch() from the callback function. A page can also cause another
+        page to be removed.
+
+        This patch solves the issue by taking a copy of the list of page before delivery. Each page is
+        referenced as it can be deleted during the delivery.
+
+        Unfortunately, this cannot be tested due to missing features of WebKitTestRunner.
+
+        * WebProcess/Geolocation/WebGeolocationManager.cpp:
+        (WebKit::WebGeolocationManager::didChangePosition):
+        (WebKit::WebGeolocationManager::didFailToDeterminePosition):
+
 2012-08-04  No'am Rosenthal  <noam.rosenthal@nokia.com>
 
         [Qt] UI_SIDE_COMPOSITING code has confusing names

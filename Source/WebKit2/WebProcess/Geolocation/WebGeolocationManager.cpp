@@ -76,10 +76,10 @@ void WebGeolocationManager::didChangePosition(const WebGeolocationPosition::Data
 #if ENABLE(GEOLOCATION)
     RefPtr<GeolocationPosition> position = GeolocationPosition::create(data.timestamp, data.latitude, data.longitude, data.accuracy);
 
-    HashSet<WebPage*>::const_iterator it = m_pageSet.begin();
-    HashSet<WebPage*>::const_iterator end = m_pageSet.end();
-    for (; it != end; ++it) {
-        WebPage* page = *it;
+    Vector<RefPtr<WebPage> > webPageCopy;
+    copyToVector(m_pageSet, webPageCopy);
+    for (size_t i = 0; i < webPageCopy.size(); ++i) {
+        WebPage* page = webPageCopy[i].get();
         if (page->corePage())
             GeolocationController::from(page->corePage())->positionChanged(position.get());
     }
@@ -92,10 +92,10 @@ void WebGeolocationManager::didFailToDeterminePosition()
     // FIXME: Add localized error string.
     RefPtr<GeolocationError> error = GeolocationError::create(GeolocationError::PositionUnavailable, /* Localized error string */ String(""));
 
-    HashSet<WebPage*>::const_iterator it = m_pageSet.begin();
-    HashSet<WebPage*>::const_iterator end = m_pageSet.end();
-    for (; it != end; ++it) {
-        WebPage* page = *it;
+    Vector<RefPtr<WebPage> > webPageCopy;
+    copyToVector(m_pageSet, webPageCopy);
+    for (size_t i = 0; i < webPageCopy.size(); ++i) {
+        WebPage* page = webPageCopy[i].get();
         if (page->corePage())
             GeolocationController::from(page->corePage())->errorOccurred(error.get());
     }

@@ -504,6 +504,7 @@ fast/dom/Geolocation/delayed-permission-denied.html
 fast/dom/Geolocation/disconnected-frame-already.html
 fast/dom/Geolocation/disconnected-frame-permission-denied.html
 fast/dom/Geolocation/disconnected-frame.html
+fast/dom/Geolocation/error-clear-watch.html
 fast/dom/Geolocation/error.html
 fast/dom/Geolocation/maximum-age.html
 fast/dom/Geolocation/multiple-requests.html
@@ -516,6 +517,7 @@ fast/dom/Geolocation/position-string.html
 fast/dom/Geolocation/reentrant-error.html
 fast/dom/Geolocation/reentrant-permission-denied.html
 fast/dom/Geolocation/reentrant-success.html
+fast/dom/Geolocation/success-clear-watch.html
 fast/dom/Geolocation/success.html
 fast/dom/Geolocation/timeout.html
 fast/dom/Geolocation/timeout-clear-watch.html
