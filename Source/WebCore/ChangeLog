@@ -1,3 +1,9 @@
+2012-08-06  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix make distcheck.
+
+        * GNUmakefile.list.am: Remove unexistent header file.
+
 2012-08-06  Vineet Chaudhary  <rgf748@motorola.com>
 
         [JSC] Remove custom JSBindings for constructArrayBufferView()

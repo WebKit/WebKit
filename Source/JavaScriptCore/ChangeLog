@@ -1,3 +1,9 @@
+2012-08-06  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix make distcheck.
+
+        * GNUmakefile.list.am: Add missing header file.
+
 2012-08-05  Peter Wang  <peter.wang@torchmobile.com.cn>
 
         Web Inspector: [JSC] implement setting breakpoints by line:column
