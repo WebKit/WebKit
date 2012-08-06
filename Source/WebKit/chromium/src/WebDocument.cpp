@@ -229,6 +229,15 @@ WebReferrerPolicy WebDocument::referrerPolicy() const
     return static_cast<WebReferrerPolicy>(constUnwrap<Document>()->referrerPolicy());
 }
 
+WebElement WebDocument::createElement(const WebString& tagName)
+{
+    ExceptionCode ec = 0;
+    WebElement element(unwrap<Document>()->createElement(tagName, ec));
+    if (ec)
+        return WebElement();
+    return element;
+}
+
 WebAccessibilityObject WebDocument::accessibilityObject() const
 {
     const Document* document = constUnwrap<Document>();

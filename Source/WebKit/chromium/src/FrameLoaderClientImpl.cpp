@@ -1606,7 +1606,7 @@ bool FrameLoaderClientImpl::willCheckAndDispatchMessageEvent(
     if (event && event->source() && event->source()->document())
         source = WebFrameImpl::fromFrame(event->source()->document()->frame());
     return m_webFrame->client()->willCheckAndDispatchMessageEvent(
-        source, WebSecurityOrigin(target), WebDOMMessageEvent(event));
+        source, m_webFrame, WebSecurityOrigin(target), WebDOMMessageEvent(event));
 }
 
 #if ENABLE(WEB_INTENTS_TAG)

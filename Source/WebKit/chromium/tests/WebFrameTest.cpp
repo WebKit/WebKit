@@ -804,4 +804,35 @@ TEST_F(WebFrameTest, GetFullHtmlOfPage)
     EXPECT_TRUE(selectionHtml.isEmpty());
 }
 
+class TestDidCreateFrameWebFrameClient : public WebFrameClient {
+public:
+    TestDidCreateFrameWebFrameClient() : m_frameCount(0), m_parent(0)
+    {
+    }
+
+    virtual void didCreateFrame(WebFrame* parent, WebFrame* child) 
+    {
+        m_frameCount++;
+        if (!m_parent)
+            m_parent = parent;
+    }
+    
+    int m_frameCount;
+    WebFrame* m_parent;
+};
+
+TEST_F(WebFrameTest, DidCreateFrame)
+{
+    registerMockedHttpURLLoad("iframes_test.html");
+    registerMockedHttpURLLoad("visible_iframe.html");
+    registerMockedHttpURLLoad("invisible_iframe.html");
+    registerMockedHttpURLLoad("zero_sized_iframe.html");
+
+    TestDidCreateFrameWebFrameClient webFrameClient;
+    WebView* webView = FrameTestHelpers::createWebViewAndLoad(m_baseURL + "iframes_test.html", false, &webFrameClient);
+
+    EXPECT_EQ(webFrameClient.m_frameCount, 3); 
+    EXPECT_EQ(webFrameClient.m_parent, webView->mainFrame());
+}
+
 } // namespace

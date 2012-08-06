@@ -590,6 +590,16 @@ WebString WebFrameImpl::name() const
     return m_frame->tree()->uniqueName();
 }
 
+WebString WebFrameImpl::uniqueName() const
+{
+    return m_frame->tree()->uniqueName();
+}
+
+WebString WebFrameImpl::assignedName() const
+{
+    return m_frame->tree()->name();
+}
+
 void WebFrameImpl::setName(const WebString& name)
 {
     m_frame->tree()->setName(name);
@@ -2151,6 +2161,9 @@ PassRefPtr<Frame> WebFrameImpl::createChildFrame(
     // script in the page.
     if (!childFrame->tree()->parent())
         return 0;
+
+    if (m_client)
+        m_client->didCreateFrame(this, webframe.get());
 
     return childFrame.release();
 }

@@ -136,6 +136,13 @@ WebNodeList WebNode::childNodes()
     return WebNodeList(m_private->childNodes());
 }
 
+bool WebNode::appendChild(const WebNode& child) 
+{
+    ExceptionCode exceptionCode = 0;
+    m_private->appendChild(child, exceptionCode);
+    return !exceptionCode;
+}
+
 WebString WebNode::createMarkup() const
 {
     return WebCore::createMarkup(m_private.get());

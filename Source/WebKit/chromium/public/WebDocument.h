@@ -105,6 +105,7 @@ public:
     WEBKIT_EXPORT WebElement fullScreenElement() const;
     WEBKIT_EXPORT WebDOMEvent createEvent(const WebString& eventType);
     WEBKIT_EXPORT WebReferrerPolicy referrerPolicy() const;
+    WEBKIT_EXPORT WebElement createElement(const WebString& tagName);
 
     // Accessibility support. These methods should only be called on the
     // top-level document, because one accessibility cache spans all of

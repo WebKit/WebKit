@@ -93,7 +93,7 @@ public:
     // May return null.
     virtual WebApplicationCacheHost* createApplicationCacheHost(WebFrame*, WebApplicationCacheHostClient*) { return 0; }
 
-    
+
     // Services ------------------------------------------------------------
 
     // A frame specific cookie jar.  May return null, in which case
@@ -103,13 +103,15 @@ public:
 
     // General notifications -----------------------------------------------
 
-    // This frame has been detached from the view.
-    //
-    // FIXME: Do not use this in new code. Currently this is used by code in
-    // Chromium that errantly caches WebKit objects.
+    // A child frame was created in this frame. This is called when the frame
+    // is created and initialized.
+    virtual void didCreateFrame(WebFrame* parent, WebFrame* child) { }
+
+    // This frame has been detached from the view, but has not been closed yet.
     virtual void frameDetached(WebFrame*) { }
 
-    // This frame is about to be closed.
+    // This frame is about to be closed. This is called after frameDetached,
+    // when the document is being unloaded, due to new one committing.
     virtual void willClose(WebFrame*) { }
 
     // Load commands -------------------------------------------------------
@@ -405,6 +407,15 @@ public:
         WebFrame* source,
         WebSecurityOrigin target,
         WebDOMMessageEvent) { return false; }
+
+    virtual bool willCheckAndDispatchMessageEvent(
+        WebFrame* sourceFrame,
+        WebFrame* targetFrame,
+        WebSecurityOrigin target,
+        WebDOMMessageEvent event)
+    {
+        return willCheckAndDispatchMessageEvent(sourceFrame, target, event);
+    }
 
     // Asks the embedder if a specific user agent should be used for the given
     // URL. Non-empty strings indicate an override should be used. Otherwise,
