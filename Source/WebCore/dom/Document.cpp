@@ -6018,7 +6018,7 @@ DocumentLoader* Document::loader() const
 PassRefPtr<NodeList> Document::getItems(const String& typeNames)
 {
     // Since documet.getItem() is allowed for microdata, typeNames will be null string.
-    // In this case we need to create an unique string identifier to map such request in the cache.
+    // In this case we need to create an empty string identifier to map such request in the cache.
     String localTypeNames = typeNames.isNull() ? MicroDataItemList::undefinedItemType() : typeNames;
 
     return ensureRareData()->ensureNodeLists()->addCacheWithName<MicroDataItemList>(this, DynamicNodeList::MicroDataItemListType, localTypeNames);

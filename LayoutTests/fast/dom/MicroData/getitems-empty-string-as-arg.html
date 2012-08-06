@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../js/resources/js-test-pre.js"></script>
+<script src="resources/microdata-common.js"></script>
+</head>
+<body>
+<div itemscope itemtype="http://example.com/foo http://example.com/bar" id="one"></div>
+<div itemscope itemtype="http://example.com/foo" id="two">
+<div itemscope itemtype="http://example.com/foo data:text/plain" id="three"></div>
+</div>
+<div itemscope id="four"></div>
+<script>
+description("This test verifies that document.getItems() returns all top-level microdata items in the document when no tokens specified in the argement.")
+var one = document.getElementById('one');
+var two = document.getElementById('two');
+var three = document.getElementById('three');
+var four = document.getElementById('four');
+
+runTest(document.getItems(''), [one, two, three, four], "document.getItems('') with empty string as argument");
+runTest(document.getItems('  '), [one, two, three, four], "document.getItems('  ') string with spaces as argument");
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>
+

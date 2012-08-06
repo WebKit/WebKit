@@ -1,3 +1,16 @@
+2012-08-06  Arko Saha  <arko@motorola.com>
+
+        Microdata: document.getItems() must treat no token as no parameter.
+        https://bugs.webkit.org/show_bug.cgi?id=93071
+
+        Reviewed by Ryosuke Niwa.
+
+        Added test to verify that document.getItems() returns all top-level
+        microdata items in the document when no tokens specified in the argement.
+
+        * fast/dom/MicroData/getitems-empty-string-as-arg-expected.txt: Added.
+        * fast/dom/MicroData/getitems-empty-string-as-arg.html: Added.
+
 2012-08-06  Hayato Ito  <hayato@chromium.org>
 
         Remove unused png files from platform/chromium-linux/fast/css/variables.
