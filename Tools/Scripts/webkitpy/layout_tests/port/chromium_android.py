@@ -44,21 +44,20 @@ _log = logging.getLogger(__name__)
 
 # The root directory for test resources, which has the same structure as the
 # source root directory of Chromium.
-# This path is defined in base/base_paths_android.cc and
-# webkit/support/platform_support_android.cc.
+# This path is defined in Chromium's base/test/test_support_android.cc.
 DEVICE_SOURCE_ROOT_DIR = '/data/local/tmp/'
 COMMAND_LINE_FILE = DEVICE_SOURCE_ROOT_DIR + 'chrome-native-tests-command-line'
 
 # The directory to put tools and resources of DumpRenderTree.
-DEVICE_DRT_DIR = '/data/drt/'
+# If change this, must also change Tools/DumpRenderTree/chromium/TestShellAndroid.cpp
+# and Chromium's webkit/support/platform_support_android.cc.
+DEVICE_DRT_DIR = DEVICE_SOURCE_ROOT_DIR + 'drt/'
 DEVICE_FORWARDER_PATH = DEVICE_DRT_DIR + 'forwarder'
 DEVICE_DRT_STAMP_PATH = DEVICE_DRT_DIR + 'DumpRenderTree.stamp'
 
 DRT_APP_PACKAGE = 'org.chromium.native_test'
 DRT_ACTIVITY_FULL_NAME = DRT_APP_PACKAGE + '/.ChromeNativeTestActivity'
-DRT_APP_DIR = '/data/user/0/' + DRT_APP_PACKAGE + '/'
-DRT_APP_FILES_DIR = DEVICE_SOURCE_ROOT_DIR
-DRT_APP_CACHE_DIR = DRT_APP_DIR + 'cache/'
+DRT_APP_CACHE_DIR = DEVICE_DRT_DIR + 'cache/'
 
 # This only works for single core devices so far.
 # FIXME: Find a solution for multi-core devices.
@@ -241,6 +240,10 @@ class ChromiumAndroidPort(chromium.ChromiumPort):
         # See comments in ChromiumAndroidDriver.start().
         return ChromiumAndroidDriver(self, worker_number, pixel_tests=self.get_option('pixel_tests'), no_timeout=no_timeout)
 
+    def driver_cmd_line(self):
+        # Override to return the actual DumpRenderTree command line.
+        return self.create_driver(0)._drt_cmd_line(self.get_option('pixel_tests'), [])
+
     # Overridden private functions.
 
     def _build_path(self, *comps):
@@ -307,9 +310,9 @@ class ChromiumAndroidDriver(driver.Driver):
     def __init__(self, port, worker_number, pixel_tests, no_timeout=False):
         super(ChromiumAndroidDriver, self).__init__(port, worker_number, pixel_tests, no_timeout)
         self._pixel_tests = pixel_tests
-        self._in_fifo_path = DRT_APP_FILES_DIR + 'DumpRenderTree.in'
-        self._out_fifo_path = DRT_APP_FILES_DIR + 'DumpRenderTree.out'
-        self._err_fifo_path = DRT_APP_FILES_DIR + 'DumpRenderTree.err'
+        self._in_fifo_path = DEVICE_DRT_DIR + 'DumpRenderTree.in'
+        self._out_fifo_path = DEVICE_DRT_DIR + 'DumpRenderTree.out'
+        self._err_fifo_path = DEVICE_DRT_DIR + 'DumpRenderTree.err'
         self._read_stdout_process = None
         self._read_stderr_process = None
         self._forwarder_process = None
@@ -331,9 +334,11 @@ class ChromiumAndroidDriver(driver.Driver):
         # Required by webkit_support::GetWebKitRootDirFilePath().
         # Other directories will be created automatically by adb push.
         self._run_adb_command(['shell', 'mkdir', '-p', DEVICE_SOURCE_ROOT_DIR + 'chrome'])
+
         # Allow the DumpRenderTree app to fully access the directory.
-        # The native code needs the permission to write temporary files here.
-        self._run_adb_command(['shell', 'chmod', '777', DEVICE_SOURCE_ROOT_DIR])
+        # The native code needs the permission to write temporary files and create pipes here.
+        self._run_adb_command(['shell', 'mkdir', '-p', DEVICE_DRT_DIR])
+        self._run_adb_command(['shell', 'chmod', '777', DEVICE_DRT_DIR])
 
         self._push_executable()
         self._push_fonts()
@@ -359,6 +364,10 @@ class ChromiumAndroidDriver(driver.Driver):
                 raise AssertionError('Failed to install %s onto device: %s' % (drt_host_path, install_result))
             self._push_to_device(self._port._build_path('DumpRenderTree.pak'), DEVICE_DRT_DIR + 'DumpRenderTree.pak')
             self._push_to_device(self._port._build_path('DumpRenderTree_resources'), DEVICE_DRT_DIR + 'DumpRenderTree_resources')
+            # FIXME: Temporarily push pak and resources under the original /data/drt/ directory.
+            # Remove the following two lines after landing the chromium side of change.
+            self._push_to_device(self._port._build_path('DumpRenderTree.pak'), '/data/drt/DumpRenderTree.pak')
+            self._push_to_device(self._port._build_path('DumpRenderTree_resources'), '/data/drt/DumpRenderTree_resources')
             self._push_to_device(self._port._build_path('android_main_fonts.xml'), DEVICE_DRT_DIR + 'android_main_fonts.xml')
             self._push_to_device(self._port._build_path('android_fallback_fonts.xml'), DEVICE_DRT_DIR + 'android_fallback_fonts.xml')
             # Version control of test resources is dependent on executables,

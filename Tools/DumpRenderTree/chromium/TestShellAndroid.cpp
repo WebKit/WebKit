@@ -44,9 +44,12 @@
 
 namespace {
 
-const char fontMainConfigFile[] = "/data/drt/android_main_fonts.xml";
-const char fontFallbackConfigFile[] = "/data/drt/android_fallback_fonts.xml";
-const char fontsDir[] = "/data/drt/fonts/";
+// Must be same as DEVICE_DRT_DIR in Tools/Scripts/webkitpy/layout_tests/port/chromium_android.py.
+#define DEVICE_DRT_DIR "/data/local/tmp/drt/"
+
+const char fontMainConfigFile[] = DEVICE_DRT_DIR "android_main_fonts.xml";
+const char fontFallbackConfigFile[] = DEVICE_DRT_DIR "android_fallback_fonts.xml";
+const char fontsDir[] = DEVICE_DRT_DIR "fonts/";
 
 const char optionInFIFO[] = "--in-fifo=";
 const char optionOutFIFO[] = "--out-fifo=";
@@ -72,7 +75,9 @@ void removeArg(int index, int* argc, char*** argv)
 void createFIFO(const char* fifoPath)
 {
     unlink(fifoPath);
-    if (mkfifo(fifoPath, 0600)) {
+    // 0666 is rw-rw-rw-, to allow adb shell to read/write the fifo.
+    // Explicitly call chmod to ensure the mode is set despite umask.
+    if (mkfifo(fifoPath, 0666) || chmod(fifoPath, 0666)) {
         androidLogError("Failed to create fifo %s: %s\n", fifoPath, strerror(errno));
         exit(EXIT_FAILURE);
     }

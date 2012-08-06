@@ -1,3 +1,26 @@
+2012-08-06  Xianzhu Wang  <wangxianzhu@chromium.org>
+
+        [Chromium-Android] Store test executable, data and fonts in /data/local/tmp
+        https://bugs.webkit.org/show_bug.cgi?id=91910
+
+        /data/local/tmp is a directory with permission 0777 by default.
+        Place DumpRenderTree resources here so that both the native test app and
+        the NRWT script can access them even if adb shell isn't running as root.
+
+        Reviewed by Adam Barth.
+
+        * DumpRenderTree/chromium/TestShellAndroid.cpp:
+        (createFIFO): Set fifo mode to 0666 to allow unrooted adb shell to access.
+        * Scripts/webkitpy/layout_tests/port/chromium_android.py:
+        (ChromiumAndroidPort.driver_cmd_line):
+        (ChromiumAndroidDriver.__init__):
+        (ChromiumAndroidDriver._setup_test):
+        (ChromiumAndroidDriver._push_executable):
+        * Scripts/webkitpy/layout_tests/port/chromium_android_unittest.py:
+        (ChromiumAndroidPortTest.make_port):
+        (ChromiumAndroidPortTest.test_expectations_files):
+        (ChromiumAndroidDriverTest.test_drt_cmd_line):
+
 2012-08-06  Abhishek Arya  <inferno@chromium.org>
 
         [Chromium] Re-expose layoutTestController as various fuzzers depend on it

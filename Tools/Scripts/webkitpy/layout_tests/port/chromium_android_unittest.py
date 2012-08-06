@@ -112,6 +112,7 @@ class ChromiumAndroidPortTest(chromium_port_testcase.ChromiumPortTestCase):
     def make_port(self, **kwargs):
         port = super(ChromiumAndroidPortTest, self).make_port(**kwargs)
         self.mock_run_command = MockRunCommand()
+        self.mock_run_command.mock_one_device()
         port._executive = MockExecutive2(run_command_fn=self.mock_run_command.mock_run_command_fn)
         return port
 
@@ -127,10 +128,6 @@ class ChromiumAndroidPortTest(chromium_port_testcase.ChromiumPortTestCase):
         # FIXME: override this test temporarily while we're still upstreaming the android port and
         # using a custom expectations file.
         pass
-
-    def test_driver_cmd_line(self):
-        # Overriding PortTestCase.test_cmd_line(). Use ChromiumAndroidDriverTest.test_cmd_line() instead.
-        return
 
     def test_get_devices_no_device(self):
         port = self.make_port()
@@ -235,9 +232,9 @@ class ChromiumAndroidDriverTest(unittest.TestCase):
     def test_drt_cmd_line(self):
         cmd_line = self.driver._drt_cmd_line(True, ['--a'])
         self.assertTrue('--a' in cmd_line)
-        self.assertTrue('--in-fifo=' + chromium_android.DRT_APP_FILES_DIR + 'DumpRenderTree.in' in cmd_line)
-        self.assertTrue('--out-fifo=' + chromium_android.DRT_APP_FILES_DIR + 'DumpRenderTree.out' in cmd_line)
-        self.assertTrue('--err-fifo=' + chromium_android.DRT_APP_FILES_DIR + 'DumpRenderTree.err' in cmd_line)
+        self.assertTrue('--in-fifo=' + chromium_android.DEVICE_DRT_DIR + 'DumpRenderTree.in' in cmd_line)
+        self.assertTrue('--out-fifo=' + chromium_android.DEVICE_DRT_DIR + 'DumpRenderTree.out' in cmd_line)
+        self.assertTrue('--err-fifo=' + chromium_android.DEVICE_DRT_DIR + 'DumpRenderTree.err' in cmd_line)
 
     def test_read_prompt(self):
         self.driver._server_process = driver_unittest.MockServerProcess(lines=['root@android:/ # '])
