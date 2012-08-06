@@ -1,3 +1,12 @@
+2012-08-06  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Web Inspector: rename WorkerAgent.setWorkerInspectionEnabled to WorkerAgent.enable and make it return error
+        https://bugs.webkit.org/show_bug.cgi?id=92545
+
+        Unreviewed trivial test fix after r124765.
+
+        * http/tests/inspector-enabled/dedicated-workers-list.html:
+
 2012-08-06  Andrei Poenaru  <poenaru@adobe.com>
 
         Web Inspector: Protocol: Add "namedFlowCreated" and "namedFlowRemoved" events

@@ -29,12 +29,12 @@ function handleLoad()
 
 function test()
 {
-    WorkerAgent.setWorkerInspectionEnabled(false, didDisableWorkerInspection);
+    WorkerAgent.disable(didDisableWorkerInspection);
 
     function didDisableWorkerInspection()
     {
         WebInspector.workerManager.addEventListener(WebInspector.WorkerManager.Events.WorkerAdded, workerAdded, this);
-        WorkerAgent.setWorkerInspectionEnabled(true);
+        WorkerAgent.enable();
         InspectorTest.addResult("Worker inspection enabled");
     }
 
