@@ -1,3 +1,9 @@
+2012-08-06  Dmitry Titov  <dimich@chromium.org>
+
+        [Chromium] Not reviewed, linting TestExpectations.
+
+        * platform/chromium/TestExpectations:
+
 2012-08-06  Douglas Stockwell  <dstockwell@chromium.org>
 
         Crash in WebCore::RenderListItem::updateMarkerLocation

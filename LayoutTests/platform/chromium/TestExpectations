@@ -3458,8 +3458,6 @@ BUGCR131189 : platform/chromium/virtual/gpu/canvas/philip/tests/2d.transformatio
 
 BUGWK92835 MAC WIN DEBUG SLOW : svg/as-background-image/svg-as-background-5.html = PASS
 
-BUGWK82547 LION : fast/speech/input-appearance-searchandspeech.html = IMAGE PASS
-
 BUGWK92850 LINUX DEBUG : http/tests/websocket/tests/hybi/workers/close-code-and-reason.html = PASS CRASH
 
 BUGWK92938 : compositing/layer-creation/animation-overlap-with-children.html = TEXT PASS
@@ -3498,7 +3496,11 @@ BUGWK92275 : fast/multicol/vertical-lr/float-multicol.html = IMAGE+TEXT
 BUGWK92275 : fast/multicol/vertical-lr/nested-columns.html = IMAGE+TEXT
 BUGWK92275 : fast/multicol/vertical-rl/float-multicol.html = IMAGE+TEXT
 BUGWK92275 : fast/multicol/vertical-rl/nested-columns.html = IMAGE+TEXT
-BUGWK92275 : fast/speech/input-appearance-searchandspeech.html = IMAGE+TEXT
 BUGWK92275 : fast/table/colspanMinWidth-vertical.html = TEXT
+
+//BUGWK82547 LION : fast/speech/input-appearance-searchandspeech.html = IMAGE PASS
+// Need rebaseline after bug 92275. After rebaseline, uncomment the line above.
+BUGWK92275 : fast/speech/input-appearance-searchandspeech.html = IMAGE+TEXT IMAGE PASS
+
 
 BUGWK93247 : fast/lists/list-marker-remove-crash.html = CRASH
