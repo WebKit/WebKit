@@ -1,3 +1,19 @@
+2012-08-06  Sergey Rogulenko  <rogulenko@google.com>
+
+        Web Inspector: a tiny refactoring of Highlighter in InspectorDOMAgent
+        https://bugs.webkit.org/show_bug.cgi?id=93257
+
+        Reviewed by Pavel Feldman.
+
+        Moving error string setting inside highlightConfigFromInspectorObject.
+
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::setSearchingForNode):
+        (WebCore::InspectorDOMAgent::highlightConfigFromInspectorObject):
+        (WebCore::InspectorDOMAgent::highlightNode):
+        * inspector/InspectorDOMAgent.h:
+        (InspectorDOMAgent):
+
 2012-08-03  Yury Semikhatsky  <yurys@chromium.org>
 
         Web Inspector: add memory instrumentation for CSSValue and its descendants

@@ -1005,20 +1005,20 @@ void InspectorDOMAgent::setSearchingForNode(ErrorString* errorString, bool enabl
         return;
     m_searchingForNode = enabled;
     if (enabled) {
-        if (!highlightInspectorObject) {
-            *errorString = "Internal error: highlight configuration parameter is missing";
+        m_inspectModeHighlightConfig = highlightConfigFromInspectorObject(errorString, highlightInspectorObject);
+        if (!m_inspectModeHighlightConfig)
             return;
-        }
-        m_inspectModeHighlightConfig = highlightConfigFromInspectorObject(highlightInspectorObject);
-    }
-    else {
-        ErrorString error;
-        hideHighlight(&error);
-    }
+    } else
+        hideHighlight(errorString);
 }
 
-PassOwnPtr<HighlightConfig> InspectorDOMAgent::highlightConfigFromInspectorObject(InspectorObject* highlightInspectorObject)
+PassOwnPtr<HighlightConfig> InspectorDOMAgent::highlightConfigFromInspectorObject(ErrorString* errorString, InspectorObject* highlightInspectorObject)
 {
+    if (!highlightInspectorObject) {
+        *errorString = "Internal error: highlight configuration parameter is missing";
+        return nullptr;
+    }
+
     OwnPtr<HighlightConfig> highlightConfig = adoptPtr(new HighlightConfig());
     bool showInfo = false; // Default: false (do not show a tooltip).
     highlightInspectorObject->getBoolean("showInfo", &showInfo);
@@ -1049,14 +1049,15 @@ void InspectorDOMAgent::highlightNode(
     int nodeId,
     const RefPtr<InspectorObject>& highlightInspectorObject)
 {
-    if (Node* node = nodeForId(nodeId)) {
-        if (!highlightInspectorObject) {
-            *errorString = "Internal error: highlight configuration parameter is missing";
-            return;
-        }
-        OwnPtr<HighlightConfig> highlightConfig = highlightConfigFromInspectorObject(highlightInspectorObject.get());
-        m_overlay->highlightNode(node, *highlightConfig);
-    }
+    Node* node = nodeForId(nodeId);
+    if (!node)
+        return;
+
+    OwnPtr<HighlightConfig> highlightConfig = highlightConfigFromInspectorObject(errorString, highlightInspectorObject.get());
+    if (!highlightConfig)
+        return;
+
+    m_overlay->highlightNode(node, *highlightConfig);
 }
 
 void InspectorDOMAgent::highlightFrame(
