@@ -43,13 +43,13 @@ body { font-family: monospace; }
 <div id="console" class="block"></div>
 
 <script>
-    description("Tests Element.webkitRegionOverflow attribute")
+    description("Tests Element.webkitRegionOverset attribute")
     if (window.testRunner) {
         testRunner.dumpAsText();
     }
-    function regionOverflow(id) {
+    function regionOverset(id) {
         var e = document.getElementById(id);
-        return e.webkitRegionOverflow;
+        return e.webkitRegionOverset;
     }
     function flowContent(flowName) {
         var r = document.getElementById("region_1");
@@ -67,40 +67,39 @@ body { font-family: monospace; }
         var c = document.getElementById("content");
         c.style.width = 596;
     }
-    function test() {
-        shouldBeEqualToString("regionOverflow('article')", "undefined");
 
-        shouldBeEqualToString("regionOverflow('region_1')", "empty");
-        shouldBeEqualToString("regionOverflow('region_2')", "empty");
-        shouldBeEqualToString("regionOverflow('region_3')", "empty");
+    function test() {
+        shouldBeEqualToString("regionOverset('region_1')", "empty");
+        shouldBeEqualToString("regionOverset('region_2')", "empty");
+        shouldBeEqualToString("regionOverset('region_3')", "empty");
 
         debug("Flow content");
         flowContent("article");
 
-        shouldBeEqualToString("regionOverflow('region_1')", "overflow");
-        shouldBeEqualToString("regionOverflow('region_2')", "fit");
-        shouldBeEqualToString("regionOverflow('region_3')", "empty");
+        shouldBeEqualToString("regionOverset('region_1')", "overset");
+        shouldBeEqualToString("regionOverset('region_2')", "fit");
+        shouldBeEqualToString("regionOverset('region_3')", "empty");
 
         debug("Add more content");
         addMoreContent();
 
-        shouldBeEqualToString("regionOverflow('region_1')", "overflow");
-        shouldBeEqualToString("regionOverflow('region_2')", "overflow");
-        shouldBeEqualToString("regionOverflow('region_3')", "fit");
+        shouldBeEqualToString("regionOverset('region_1')", "overset");
+        shouldBeEqualToString("regionOverset('region_2')", "overset");
+        shouldBeEqualToString("regionOverset('region_3')", "fit");
 
         debug("Add visual overflow");
         addVisualOverflow();
 
-        shouldBeEqualToString("regionOverflow('region_1')", "overflow");
-        shouldBeEqualToString("regionOverflow('region_2')", "overflow");
-        shouldBeEqualToString("regionOverflow('region_3')", "overflow");
+        shouldBeEqualToString("regionOverset('region_1')", "overset");
+        shouldBeEqualToString("regionOverset('region_2')", "overset");
+        shouldBeEqualToString("regionOverset('region_3')", "overset");
 
         debug("Empty content");
         flowContent("no_article");
 
-        shouldBeEqualToString("regionOverflow('region_1')", "empty");
-        shouldBeEqualToString("regionOverflow('region_2')", "empty");
-        shouldBeEqualToString("regionOverflow('region_3')", "empty");
+        shouldBeEqualToString("regionOverset('region_1')", "empty");
+        shouldBeEqualToString("regionOverset('region_2')", "empty");
+        shouldBeEqualToString("regionOverset('region_3')", "empty");
     }
 
     test();

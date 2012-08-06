@@ -1989,30 +1989,40 @@ PassRefPtr<WebKitAnimationList> Element::webkitGetAnimations() const
     return animController->animationsForRenderer(renderer());
 }
 
-const AtomicString& Element::webkitRegionOverflow() const
+RenderRegion* Element::renderRegion() const
+{
+    if (renderer() && renderer()->isRenderRegion())
+        return toRenderRegion(renderer());
+
+    return 0;
+}
+
+const AtomicString& Element::webkitRegionOverset() const
 {
     document()->updateLayoutIgnorePendingStylesheets();
 
-    if (document()->cssRegionsEnabled() && renderer() && renderer()->isRenderRegion()) {
-        RenderRegion* region = toRenderRegion(renderer());
-        switch (region->regionState()) {
-        case RenderRegion::RegionFit: {
-            DEFINE_STATIC_LOCAL(AtomicString, fitState, ("fit"));
-            return fitState;
-        }
-        case RenderRegion::RegionEmpty: {
-            DEFINE_STATIC_LOCAL(AtomicString, emptyState, ("empty"));
-            return emptyState;
-        }
-        case RenderRegion::RegionOverflow: {
-            DEFINE_STATIC_LOCAL(AtomicString, overflowState, ("overflow"));
-            return overflowState;
-        }
-        default:
-            break;
-        }
-    }
     DEFINE_STATIC_LOCAL(AtomicString, undefinedState, ("undefined"));
+    if (!document()->cssRegionsEnabled() || !renderRegion())
+        return undefinedState;
+
+    switch (renderRegion()->regionState()) {
+    case RenderRegion::RegionFit: {
+        DEFINE_STATIC_LOCAL(AtomicString, fitState, ("fit"));
+        return fitState;
+    }
+    case RenderRegion::RegionEmpty: {
+        DEFINE_STATIC_LOCAL(AtomicString, emptyState, ("empty"));
+        return emptyState;
+    }
+    case RenderRegion::RegionOverset: {
+        DEFINE_STATIC_LOCAL(AtomicString, overflowState, ("overset"));
+        return overflowState;
+    }
+    case RenderRegion::RegionUndefined:
+        return undefinedState;
+    }
+
+    ASSERT_NOT_REACHED();
     return undefinedState;
 }
 

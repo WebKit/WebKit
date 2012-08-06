@@ -1,3 +1,33 @@
+2012-08-06  Andrei Bucur  <abucur@adobe.com>
+
+        [CSS Regions] Rename regionOverflow to regionOverset
+        https://bugs.webkit.org/show_bug.cgi?id=93256
+
+        Reviewed by Andreas Kling.
+
+        Link to spec: http://www.w3.org/TR/2012/WD-css3-regions-20120503/#dom-region-regionoverset
+        The regionOverflow property has been renamed to regionOverset in the latest working draft. This patch applies the change both externally and
+        internally in the code.
+
+        Tests: No new tests because this is not a functional change.
+
+        * dom/Element.cpp:
+        (WebCore::Element::renderRegion): Convenience method to access the renderer for a region element.
+        (WebCore):
+        (WebCore::Element::webkitRegionOverset):
+        * dom/Element.h:
+        (WebCore):
+        * dom/Element.idl:
+        * rendering/RenderFlowThread.cpp:
+        (WebCore::RenderFlowThread::paintIntoRegion):
+        (WebCore::RenderFlowThread::hitTestRegion):
+        (WebCore::RenderFlowThread::repaintRectangleInRegions):
+        (WebCore::RenderFlowThread::computeOverflowStateForRegions):
+        * rendering/RenderRegion.cpp:
+        (WebCore::RenderRegion::regionOversetRect):
+        * rendering/RenderRegion.h:
+        (RenderRegion):
+
 2012-08-06  Sergey Rogulenko  <rogulenko@google.com>
 
         Web Inspector: a tiny refactoring of Highlighter in InspectorDOMAgent

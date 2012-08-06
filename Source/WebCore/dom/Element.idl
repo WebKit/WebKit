@@ -142,7 +142,7 @@ module core {
         [Conditional=POINTER_LOCK, V8EnabledAtRuntime=pointerLock] void webkitRequestPointerLock();
 
         // CSS Regions API
-        readonly attribute DOMString webkitRegionOverflow;
+        readonly attribute DOMString webkitRegionOverset;
 
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
         readonly attribute [Conditional=UNDO_MANAGER] UndoManager undoManager;

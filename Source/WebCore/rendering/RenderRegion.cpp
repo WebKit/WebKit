@@ -62,7 +62,7 @@ LayoutUnit RenderRegion::logicalHeightForFlowThreadContent() const
     return m_flowThread->isHorizontalWritingMode() ? contentHeight() : contentWidth();
 }
 
-LayoutRect RenderRegion::regionOverflowRect() const
+LayoutRect RenderRegion::regionOversetRect() const
 {
     // FIXME: Would like to just use hasOverflowClip() but we aren't a block yet. When RenderRegion is eliminated and
     // folded into RenderBlock, switch to hasOverflowClip().

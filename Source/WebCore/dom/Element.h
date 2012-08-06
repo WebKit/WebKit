@@ -40,9 +40,10 @@ class ClientRectList;
 class DOMStringMap;
 class DOMTokenList;
 class ElementRareData;
-class IntSize;
-class ShadowRoot;
 class ElementShadow;
+class IntSize;
+class RenderRegion;
+class ShadowRoot;
 class WebKitAnimationList;
 
 enum SpellcheckAttributeState {
@@ -426,7 +427,8 @@ public:
     
     PassRefPtr<RenderStyle> styleForRenderer();
 
-    const AtomicString& webkitRegionOverflow() const;
+    RenderRegion* renderRegion() const;
+    const AtomicString& webkitRegionOverset() const;
 
     bool hasID() const;
     bool hasClass() const;

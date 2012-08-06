@@ -261,8 +261,8 @@ void RenderFlowThread::paintIntoRegion(PaintInfo& paintInfo, RenderRegion* regio
     // paintOffset contains the offset where the painting should occur
     // adjusted with the region padding and border.
     LayoutRect regionRect(region->regionRect());
-    LayoutRect regionOverflowRect(region->regionOverflowRect());
-    LayoutRect regionClippingRect(paintOffset + (regionOverflowRect.location() - regionRect.location()), regionOverflowRect.size());
+    LayoutRect regionOversetRect(region->regionOversetRect());
+    LayoutRect regionClippingRect(paintOffset + (regionOversetRect.location() - regionRect.location()), regionOversetRect.size());
 
     PaintInfo info(paintInfo);
     info.rect.intersect(pixelSnappedIntRect(regionClippingRect));
@@ -295,8 +295,8 @@ void RenderFlowThread::paintIntoRegion(PaintInfo& paintInfo, RenderRegion* regio
 bool RenderFlowThread::hitTestRegion(RenderRegion* region, const HitTestRequest& request, HitTestResult& result, const HitTestPoint& pointInContainer, const LayoutPoint& accumulatedOffset)
 {
     LayoutRect regionRect(region->regionRect());
-    LayoutRect regionOverflowRect = region->regionOverflowRect();
-    LayoutRect regionClippingRect(accumulatedOffset + (regionOverflowRect.location() - regionRect.location()), regionOverflowRect.size());
+    LayoutRect regionOversetRect = region->regionOversetRect();
+    LayoutRect regionClippingRect(accumulatedOffset + (regionOversetRect.location() - regionRect.location()), regionOversetRect.size());
     if (!regionClippingRect.contains(pointInContainer.point()))
         return false;
 
@@ -342,12 +342,12 @@ void RenderFlowThread::repaintRectangleInRegions(const LayoutRect& repaintRect, 
 
         // We only have to issue a repaint in this region if the region rect intersects the repaint rect.
         LayoutRect flippedRegionRect(region->regionRect());
-        LayoutRect flippedRegionOverflowRect(region->regionOverflowRect());
+        LayoutRect flippedRegionOversetRect(region->regionOversetRect());
         flipForWritingMode(flippedRegionRect); // Put the region rects into physical coordinates.
-        flipForWritingMode(flippedRegionOverflowRect);
+        flipForWritingMode(flippedRegionOversetRect);
 
         LayoutRect clippedRect(repaintRect);
-        clippedRect.intersect(flippedRegionOverflowRect);
+        clippedRect.intersect(flippedRegionOversetRect);
         if (clippedRect.isEmpty())
             continue;
 
@@ -694,21 +694,21 @@ void RenderFlowThread::computeOverflowStateForRegions(LayoutUnit oldClientAfterE
         if (flowMin <= 0)
             state = RenderRegion::RegionEmpty;
         if (flowMax > 0)
-            state = RenderRegion::RegionOverflow;
+            state = RenderRegion::RegionOverset;
         region->setRegionState(state);
         // determine whether the NamedFlow object should dispatch a regionLayoutUpdate event
-        // FIXME: currently it cannot determine whether a region whose regionOverflow state remained either "fit" or "overflow" has actually
+        // FIXME: currently it cannot determine whether a region whose regionOverset state remained either "fit" or "overset" has actually
         // changed, so it just assumes that the NamedFlow should dispatch the event
         if (previousState != state
             || state == RenderRegion::RegionFit
-            || state == RenderRegion::RegionOverflow)
+            || state == RenderRegion::RegionOverset)
             setDispatchRegionLayoutUpdateEvent(true);
     }
 
     // With the regions overflow state computed we can also set the overset flag for the named flow.
     // If there are no valid regions in the chain, overset is true
     RenderRegion* lastReg = lastRegion();
-    m_overset = lastReg ? lastReg->regionState() == RenderRegion::RegionOverflow : true;
+    m_overset = lastReg ? lastReg->regionState() == RenderRegion::RegionOverset : true;
 }
 
 bool RenderFlowThread::regionInRange(const RenderRegion* targetRegion, const RenderRegion* startRegion, const RenderRegion* endRegion) const

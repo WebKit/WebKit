@@ -1,3 +1,22 @@
+2012-08-06  Andrei Bucur  <abucur@adobe.com>
+
+        [CSS Regions] Rename regionOverflow to regionOverset
+        https://bugs.webkit.org/show_bug.cgi?id=93256
+
+        Reviewed by Andreas Kling.
+
+        Link to spec: http://www.w3.org/TR/2012/WD-css3-regions-20120503/#dom-region-regionoverset
+
+        The tests have been adapted to use webkitRegionOverset rather than webkitRegionOverflow.
+
+        * fast/regions/element-region-overflow-state-expected.txt: Removed.
+        * fast/regions/element-region-overflow-state-vertical-rl-expected.txt: Removed.
+        * fast/regions/element-region-overset-state-expected.txt: Added.
+        * fast/regions/element-region-overset-state-vertical-rl-expected.txt: Added.
+        * fast/regions/element-region-overset-state-vertical-rl.html: Renamed from LayoutTests/fast/regions/element-region-overflow-state-vertical-rl.html.
+        * fast/regions/element-region-overset-state.html: Renamed from LayoutTests/fast/regions/element-region-overflow-state.html.
+        * fast/regions/webkit-named-flow-first-empty-region-index.html:
+
 2012-08-06  Takashi Toyoshima  <toyoshim@chromium.org>
 
         Unreviewed, rebaseline for Mac10.6 against r124752

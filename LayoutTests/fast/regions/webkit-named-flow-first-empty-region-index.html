@@ -45,7 +45,7 @@
     shouldBe("namedFlow.firstEmptyRegionIndex", "1");
 
     // Add content until some is flowed inside second region
-    while (region2.webkitRegionOverflow == "empty") {
+    while (region2.webkitRegionOverset == "empty") {
         var p = document.createElement("p");
         p.appendChild(document.createTextNode("Content inside article"));
         document.getElementById("article").appendChild(p);

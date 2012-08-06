@@ -52,7 +52,7 @@ public:
 
     void setRegionRect(const LayoutRect& rect) { m_regionRect = rect; }
     LayoutRect regionRect() const { return m_regionRect; }
-    LayoutRect regionOverflowRect() const;
+    LayoutRect regionOversetRect() const;
 
     void attachRegion();
     void detachRegion();
@@ -88,7 +88,7 @@ public:
         RegionUndefined,
         RegionEmpty,
         RegionFit,
-        RegionOverflow
+        RegionOverset
     };
 
     RegionState regionState() const { return isValid() ? m_regionState : RegionUndefined; }
