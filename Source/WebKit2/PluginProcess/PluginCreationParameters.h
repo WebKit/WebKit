@@ -60,6 +60,12 @@ struct PluginCreationParameters {
 
     // Whether private browsing is enabled at the time of instantiation.
     bool isPrivateBrowsingEnabled;
+    
+    // If requesting synchronous initialization, whether this plugin had previously been requested asynchronously
+    bool asynchronousCreationIncomplete;
+
+    // Simulated initialization delay test asynchronous plugin initialization
+    bool artificialPluginInitializationDelayEnabled;
 
 #if USE(ACCELERATED_COMPOSITING)
     // Whether accelerated compositing is enabled.

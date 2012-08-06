@@ -1,3 +1,18 @@
+2012-08-03  Brady Eidson  <beidson@apple.com>
+
+        Out-of-process plug-ins should support asynchronous initialization
+        <rdar://problem/10598594> and https://bugs.webkit.org/show_bug.cgi?id=92919
+
+        Reviewed by Anders Carlsson.
+
+        Add tests to make sure a plug-in with a long running NPP_New does not block the web thread.
+
+        * platform/mac-wk2/plugins/slow/asynchronous-plugin-initialization-expected.txt: Added.
+        * platform/mac-wk2/plugins/slow/asynchronous-plugin-initialization-multiple-expected.txt: Added.
+        * platform/mac-wk2/plugins/slow/asynchronous-plugin-initialization-multiple.html: Added.
+        * platform/mac-wk2/plugins/slow/asynchronous-plugin-initialization.html: Added.
+        * platform/mac-wk2/plugins/slow/resources/asynchronous-plugin-initialization-multiple-finish.html: Added.
+
 2012-08-06  Pravin D  <pravind.2k4@gmai.com>
 
         Testcase LayoutTests/editing/input/editable-container-with-word-wrap-normal.html failing on Mac

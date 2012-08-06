@@ -80,7 +80,6 @@ private:
     virtual ~PluginView();
 
     void initializePlugin();
-    void destroyPlugin();
 
     void viewGeometryDidChange();
     void viewVisibilityDidChange();
@@ -164,12 +163,18 @@ private:
     virtual void setCookiesForURL(const String& urlString, const String& cookieString);
     virtual bool getAuthenticationInfo(const WebCore::ProtectionSpace&, String& username, String& password);
     virtual bool isPrivateBrowsingEnabled();
+    virtual bool asynchronousPluginInitializationEnabled() const;
+    virtual bool asynchronousPluginInitializationEnabledForAllPlugins() const;
+    virtual bool artificialPluginInitializationDelayEnabled() const;
     virtual void protectPluginFromDestruction();
     virtual void unprotectPluginFromDestruction();
 #if PLUGIN_ARCHITECTURE(X11)
     virtual uint64_t createPluginContainer();
     virtual void windowedPluginGeometryDidChange(const WebCore::IntRect& frameRect, const WebCore::IntRect& clipRect, uint64_t windowID);
 #endif
+
+    virtual void didInitializePlugin();
+    virtual void didFailToInitializePlugin();
 
     // WebFrame::LoadListener
     virtual void didFinishLoad(WebFrame*);
@@ -181,6 +186,7 @@ private:
     Plugin::Parameters m_parameters;
     
     bool m_isInitialized;
+    bool m_isWaitingForSynchronousInitialization;
     bool m_isWaitingUntilMediaCanStart;
     bool m_isBeingDestroyed;
 

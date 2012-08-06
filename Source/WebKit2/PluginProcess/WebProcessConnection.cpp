@@ -34,7 +34,9 @@
 #include "PluginCreationParameters.h"
 #include "PluginProcess.h"
 #include "PluginProcessConnectionMessages.h"
+#include "PluginProxyMessages.h"
 #include <WebCore/RunLoop.h>
+#include <unistd.h>
 
 using namespace WebCore;
 
@@ -160,6 +162,11 @@ void WebProcessConnection::didReceiveMessage(CoreIPC::Connection* connection, Co
 {
     ConnectionStack::CurrentConnectionPusher currentConnection(connectionStack(), connection);
 
+    if (messageID.is<CoreIPC::MessageClassWebProcessConnection>()) {
+        didReceiveWebProcessConnectionMessage(connection, messageID, arguments);
+        return;
+    }
+
     if (!arguments->destinationID()) {
         ASSERT_NOT_REACHED();
         return;
@@ -208,11 +215,20 @@ void WebProcessConnection::didClose(CoreIPC::Connection*)
         destroyPluginControllerProxy(pluginControllers[i]);
 }
 
-void WebProcessConnection::destroyPlugin(uint64_t pluginInstanceID)
+void WebProcessConnection::destroyPlugin(uint64_t pluginInstanceID, bool asynchronousCreationIncomplete)
 {
     PluginControllerProxy* pluginControllerProxy = m_pluginControllers.get(pluginInstanceID);
-    ASSERT(pluginControllerProxy);
-
+    
+    // If there is no PluginControllerProxy then this plug-in doesn't exist yet and we probably have nothing to do.
+    if (!pluginControllerProxy) {
+        // If the plugin we're supposed to destroy was requested asynchronously and doesn't exist yet,
+        // we need to flag the instance ID so it is not created later.
+        if (asynchronousCreationIncomplete)
+            m_asynchronousInstanceIDsToIgnore.add(pluginInstanceID);
+        
+        return;
+    }
+    
     destroyPluginControllerProxy(pluginControllerProxy);
 }
 
@@ -225,7 +241,7 @@ void WebProcessConnection::syncMessageSendTimedOut(CoreIPC::Connection*)
 {
 }
 
-void WebProcessConnection::createPlugin(const PluginCreationParameters& creationParameters, bool& result, bool& wantsWheelEvents, uint32_t& remoteLayerClientID)
+void WebProcessConnection::createPluginInternal(const PluginCreationParameters& creationParameters, bool& result, bool& wantsWheelEvents, uint32_t& remoteLayerClientID)
 {
     OwnPtr<PluginControllerProxy> pluginControllerProxy = PluginControllerProxy::create(this, creationParameters);
 
@@ -245,6 +261,58 @@ void WebProcessConnection::createPlugin(const PluginCreationParameters& creation
 #if PLATFORM(MAC)
     remoteLayerClientID = pluginControllerProxyPtr->remoteLayerClientID();
 #endif
+}
+
+void WebProcessConnection::createPlugin(const PluginCreationParameters& creationParameters, bool& result, bool& wantsWheelEvents, uint32_t& remoteLayerClientID)
+{
+    PluginControllerProxy* pluginControllerProxy = m_pluginControllers.get(creationParameters.pluginInstanceID);
+
+    // The plug-in we're being asked to create synchronously might already exist if we just finished creating it asynchronously.
+    // In that case we need to not create it again (but also need to return the correct information about its creation).
+    if (pluginControllerProxy) {
+        result = true;
+        wantsWheelEvents = pluginControllerProxy->wantsWheelEvents();
+#if PLATFORM(MAC)
+        remoteLayerClientID = pluginControllerProxy->remoteLayerClientID();
+#endif
+        return;
+    }
+    
+    // The plugin we're supposed to create might have been requested asynchronously before.
+    // In that case we need to create it synchronously now but flag the instance ID so we don't recreate it asynchronously later.
+    if (creationParameters.asynchronousCreationIncomplete)
+        m_asynchronousInstanceIDsToIgnore.add(creationParameters.pluginInstanceID);
+    
+    createPluginInternal(creationParameters, result, wantsWheelEvents, remoteLayerClientID);
+}
+
+void WebProcessConnection::createPluginAsynchronously(const PluginCreationParameters& creationParameters)
+{
+    // In the time since this plugin was requested asynchronously we might have created it synchronously or destroyed it.
+    // In either of those cases we need to ignore this creation request.
+    if (m_asynchronousInstanceIDsToIgnore.contains(creationParameters.pluginInstanceID)) {
+        m_asynchronousInstanceIDsToIgnore.remove(creationParameters.pluginInstanceID);
+        return;
+    }
+    
+    // This version of CreatePlugin is only used by plug-ins that are known to behave when started asynchronously.
+    bool result = false;
+    uint32_t remoteLayerClientID = 0;
+    bool wantsWheelEvents = false;
+    
+    if (creationParameters.artificialPluginInitializationDelayEnabled) {
+        unsigned artificialPluginInitializationDelay = 5;
+        sleep(artificialPluginInitializationDelay);
+    }
+
+    createPluginInternal(creationParameters, result, wantsWheelEvents, remoteLayerClientID);
+
+    if (!result) {
+        m_connection->sendSync(Messages::PluginProxy::DidFailToCreatePlugin(), Messages::PluginProxy::DidFailToCreatePlugin::Reply(), creationParameters.pluginInstanceID);
+        return;
+    }
+
+    m_connection->sendSync(Messages::PluginProxy::DidCreatePlugin(wantsWheelEvents, remoteLayerClientID), Messages::PluginProxy::DidCreatePlugin::Reply(), creationParameters.pluginInstanceID);
 }
 
 } // namespace WebKit

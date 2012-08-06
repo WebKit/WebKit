@@ -43,9 +43,9 @@ class PluginProxy;
     
 class PluginProcessConnection : public RefCounted<PluginProcessConnection>, CoreIPC::Connection::Client {
 public:
-    static PassRefPtr<PluginProcessConnection> create(PluginProcessConnectionManager* pluginProcessConnectionManager, const String& pluginPath, CoreIPC::Connection::Identifier connectionIdentifier)
+    static PassRefPtr<PluginProcessConnection> create(PluginProcessConnectionManager* pluginProcessConnectionManager, const String& pluginPath, CoreIPC::Connection::Identifier connectionIdentifier, bool supportsAsynchronousPluginInitialization)
     {
-        return adoptRef(new PluginProcessConnection(pluginProcessConnectionManager, pluginPath, connectionIdentifier));
+        return adoptRef(new PluginProcessConnection(pluginProcessConnectionManager, pluginPath, connectionIdentifier, supportsAsynchronousPluginInitialization));
     }
     ~PluginProcessConnection();
 
@@ -58,8 +58,10 @@ public:
 
     NPRemoteObjectMap* npRemoteObjectMap() const { return m_npRemoteObjectMap.get(); }
 
+    bool supportsAsynchronousPluginInitialization() const { return m_supportsAsynchronousPluginInitialization; }
+
 private:
-    PluginProcessConnection(PluginProcessConnectionManager* pluginProcessConnectionManager, const String& pluginPath, CoreIPC::Connection::Identifier connectionIdentifier);
+    PluginProcessConnection(PluginProcessConnectionManager*, const String& pluginPath, CoreIPC::Connection::Identifier connectionIdentifier, bool supportsAsynchronousInitialization);
 
     // CoreIPC::Connection::Client
     virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
@@ -82,6 +84,8 @@ private:
     HashMap<uint64_t, PluginProxy*> m_plugins;
 
     RefPtr<NPRemoteObjectMap> m_npRemoteObjectMap;
+    
+    bool m_supportsAsynchronousPluginInitialization;
 };
 
 } // namespace WebKit

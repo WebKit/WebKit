@@ -90,6 +90,8 @@ private:
     virtual bool isAcceleratedCompositingEnabled();
     virtual void pluginProcessCrashed();
     virtual void willSendEventToPlugin();
+    virtual void didInitializePlugin() OVERRIDE;
+    virtual void didFailToInitializePlugin() OVERRIDE;
 
 #if PLATFORM(MAC)
     virtual void pluginFocusOrWindowFocusChanged(bool);

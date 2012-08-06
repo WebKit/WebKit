@@ -1,0 +1,5 @@
+This finishes the test and see's how much time passed.
+Only one of the 20 plug-ins should have had it's NPP_New and NPP_Destroy run to completion, taking a bit over 550ms.
+The other 19 should never have been instantiated at all.
+PASS Appending plug-in elements then navigating away took between 550ms and 1100ms suggesting a single plug-in was created and then destroyed.
+

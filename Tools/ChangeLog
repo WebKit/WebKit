@@ -1,3 +1,19 @@
+2012-08-03  Brady Eidson  <beidson@apple.com>
+
+        Out-of-process plug-ins should support asynchronous initialization
+        <rdar://problem/10598594> and https://bugs.webkit.org/show_bug.cgi?id=92919
+
+        Reviewed by Anders Carlsson.
+
+        Add a plug-in with an NPP_New that takes 550ms (a reasonable trade-off between a solid test and a slow running test)
+        for testing asynchronous plug-in initialization.
+
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
+        * DumpRenderTree/TestNetscapePlugIn/Tests/SlowNPPNew.cpp: Copied from Source/WebKit2/Shared/Plugins/PluginProcessCreationParameters.h.
+        (SlowNPPNew):
+        (SlowNPPNew::SlowNPPNew):
+        (SlowNPPNew::NPP_New):
+
 2012-08-06  Xianzhu Wang  <wangxianzhu@chromium.org>
 
         [Chromium-Android] Virtual test suites fail

@@ -260,6 +260,7 @@ PluginView::PluginView(PassRefPtr<HTMLPlugInElement> pluginElement, PassRefPtr<P
     , m_webPage(webPage(m_pluginElement.get()))
     , m_parameters(parameters)
     , m_isInitialized(false)
+    , m_isWaitingForSynchronousInitialization(false)
     , m_isWaitingUntilMediaCanStart(false)
     , m_isBeingDestroyed(false)
     , m_pendingURLRequestsTimer(RunLoop::main(), this, &PluginView::pendingURLRequestsTimerFired)
@@ -285,7 +286,7 @@ PluginView::~PluginView()
     for (FrameLoadMap::iterator it = m_pendingFrameLoads.begin(), end = m_pendingFrameLoads.end(); it != end; ++it)
         it->first->setLoadListener(0);
 
-    if (m_plugin && m_isInitialized) {
+    if (m_plugin) {
         m_isBeingDestroyed = true;
         m_plugin->destroyPlugin();
         m_isBeingDestroyed = false;
@@ -487,15 +488,20 @@ void PluginView::initializePlugin()
             }
         }
     }
-    
-    if (!m_plugin->initialize(this, m_parameters)) {
-        // We failed to initialize the plug-in.
-        m_plugin = 0;
 
-        m_webPage->send(Messages::WebPageProxy::DidFailToInitializePlugin(m_parameters.mimeType));
-        return;
-    }
+    m_plugin->initialize(this, m_parameters);
     
+    // Plug-in initialization continued in didFailToInitializePlugin() or didInitializePlugin().
+}
+
+void PluginView::didFailToInitializePlugin()
+{
+    m_plugin = 0;
+    m_webPage->send(Messages::WebPageProxy::DidFailToInitializePlugin(m_parameters.mimeType));
+}
+
+void PluginView::didInitializePlugin()
+{
     m_isInitialized = true;
 
 #if PLATFORM(MAC)
@@ -539,6 +545,19 @@ PlatformLayer* PluginView::platformLayer() const
 
 JSObject* PluginView::scriptObject(JSGlobalObject* globalObject)
 {
+    // If we're already waiting for synchronous initialization of the plugin,
+    // calls to scriptObject() are from the plug-in itself and need to return 0;
+    if (m_isWaitingForSynchronousInitialization)
+        return 0;
+
+    // If the plug-in exists but is not initialized then we're still initializing asynchronously.
+    // We need to wait here until initialization has either succeeded or failed.
+    if (m_plugin->isBeingAsynchronouslyInitialized()) {
+        m_isWaitingForSynchronousInitialization = true;
+        m_plugin->waitForAsynchronousInitialization();
+        m_isWaitingForSynchronousInitialization = false;
+    }
+
     // The plug-in can be null here if it failed to initialize.
     if (!m_isInitialized || !m_plugin)
         return 0;
@@ -1248,6 +1267,21 @@ bool PluginView::isPrivateBrowsingEnabled()
         return true;
 
     return settings->privateBrowsingEnabled();
+}
+
+bool PluginView::asynchronousPluginInitializationEnabled() const
+{
+    return m_webPage->asynchronousPluginInitializationEnabled();
+}
+
+bool PluginView::asynchronousPluginInitializationEnabledForAllPlugins() const
+{
+    return m_webPage->asynchronousPluginInitializationEnabledForAllPlugins();
+}
+
+bool PluginView::artificialPluginInitializationDelayEnabled() const
+{
+    return m_webPage->artificialPluginInitializationDelayEnabled();
 }
 
 void PluginView::protectPluginFromDestruction()

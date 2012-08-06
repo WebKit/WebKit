@@ -1,0 +1,47 @@
+<head>
+<script src="../../../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body onload="runTest()">
+<p id="description"></p>
+<div id="console"></div>
+<script>
+
+function createTestPlugin(testName)
+{
+    var plugin = document.createElement("embed");
+    plugin.type = "application/x-webkit-test-netscape";
+    plugin.setAttribute('test', testName);
+
+    return plugin;
+}
+
+function runTest() 
+{
+    if (!window.testRunner) {
+        debug("This test can only run from within DumpRenderTree because it requires TestNetscapePlugin.\n");
+        return;
+    }
+
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+    testRunner.overridePreference("WebKit2AsynchronousPluginInitializationEnabled", "1");
+    testRunner.overridePreference("WebKit2AsynchronousPluginInitializationEnabledForAllPlugins", "1");
+
+    // Grab the time before we create and append 20 slow plug-ins.
+    sessionStorage.beforeDate = (new Date).valueOf();
+    
+    var plugins = new Array();
+    for (var i = 0; i < 20; ++i)
+        plugins[i] = createTestPlugin('slow-npp-new');
+    for (var i = 0; i < 20; ++i)
+        document.body.appendChild(plugins[i]);
+
+    // Try to force a layout so the plug-ins instantiate
+    var foo = document.body.offsetTop;
+    
+    setTimeout("location.href = 'resources/asynchronous-plugin-initialization-multiple-finish.html'", 0);
+}
+
+description("Tests that loading multiple slow initializing plug-ins and then navigating only has to wait for one of them to finish being destroyed.");
+
+</script>

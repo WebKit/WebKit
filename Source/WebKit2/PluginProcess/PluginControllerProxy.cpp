@@ -317,6 +317,18 @@ void PluginControllerProxy::willSendEventToPlugin()
     ASSERT_NOT_REACHED();
 }
 
+void PluginControllerProxy::didInitializePlugin()
+{
+    // This should only be called on the plugin in the web process.
+    ASSERT_NOT_REACHED();
+}
+
+void PluginControllerProxy::didFailToInitializePlugin()
+{
+    // This should only be called on the plugin in the web process.
+    ASSERT_NOT_REACHED();
+}
+
 float PluginControllerProxy::contentsScaleFactor()
 {
     return m_contentsScaleFactor;

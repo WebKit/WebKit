@@ -1,3 +1,153 @@
+2012-08-03  Brady Eidson  <beidson@apple.com>
+
+        Out-of-process plug-ins should support asynchronous initialization
+        <rdar://problem/10598594> and https://bugs.webkit.org/show_bug.cgi?id=92919
+
+        Reviewed by Anders Carlsson.
+
+        If a plug-in has been deemed capable of asynchronous initialization when run out of process...
+        ...then do that!
+
+        Add flags to communicate that this plugin create is meant to create a plug-in already requested asynchronously and
+        to include whether or not the initialize call should include an artificial delay (for testing):
+        * PluginProcess/PluginCreationParameters.cpp:
+        (WebKit::PluginCreationParameters::PluginCreationParameters):
+        (WebKit::PluginCreationParameters::encode):
+        (WebKit::PluginCreationParameters::decode):
+        * PluginProcess/PluginCreationParameters.h:
+        (PluginCreationParameters):
+
+        Add a flag for the UI Process to tell the PluginProcess that it supports asynchronous initialization:
+        * Shared/Plugins/PluginProcessCreationParameters.cpp:
+        (WebKit::PluginProcessCreationParameters::PluginProcessCreationParameters):
+        (WebKit::PluginProcessCreationParameters::encode):
+        (WebKit::PluginProcessCreationParameters::decode):
+        * Shared/Plugins/PluginProcessCreationParameters.h:
+        (PluginProcessCreationParameters):
+
+        Allow the UI Process to pass along whether the plug-on supports asynchronous initialization:
+        * UIProcess/Plugins/PluginProcessProxy.cpp:
+        (WebKit::PluginProcessProxy::pluginProcessCrashedOrFailedToLaunch):
+        (WebKit::PluginProcessProxy::didCreateWebProcessConnection):
+        * UIProcess/Plugins/PluginProcessProxy.h:
+        (PluginProcessProxy):
+        * UIProcess/Plugins/mac/PluginProcessProxyMac.mm:
+        (WebKit::PluginProcessProxy::platformInitializePluginProcess):
+        * UIProcess/WebProcessProxy.messages.in:
+
+        Allow the Plugin Process to pass whether or not it supports asynchronous initialization, originally determined
+        in the UI Process, along to the WebProcess:
+        * PluginProcess/PluginProcess.cpp:
+        (WebKit::PluginProcess::PluginProcess):
+        (WebKit::PluginProcess::initializePluginProcess):
+        (WebKit::PluginProcess::createWebProcessConnection):
+        * PluginProcess/PluginProcess.h:
+        (PluginProcess):
+        * UIProcess/Plugins/PluginProcessProxy.messages.in:
+
+        Add a flag so PluginProcessConnections remember whether or not they support asynchronous initialization:
+        * WebProcess/Plugins/PluginProcessConnection.cpp:
+        (WebKit::PluginProcessConnection::PluginProcessConnection):
+        (WebKit::PluginProcessConnection::setSupportsAsynchronousPluginInitialization):
+        (WebKit):
+        * WebProcess/Plugins/PluginProcessConnection.h:
+        (WebKit::PluginProcessConnection::create):
+        (WebKit::PluginProcessConnection::supportsAsynchronousPluginInitialization):
+        (PluginProcessConnection):
+
+        Create PluginProcessConnections with the flag passed down from the PluginProcess about whether or not they
+        support asynchronous initialization:
+        * WebProcess/Plugins/PluginProcessConnectionManager.cpp:
+        (WebKit::PluginProcessConnectionManager::getPluginProcessConnection):
+
+        Responding to messages from the WebProcess, most of the heavy decision making in asynchronous initialization is here:
+        * PluginProcess/WebProcessConnection.cpp:
+        (WebKit::asynchronousInstanceIDsToIgnore): A set of instance IDs to *not* create asynchronously later because we know
+          we no longer need to.
+        (WebKit):
+        (WebKit::WebProcessConnection::didReceiveMessage):
+        (WebKit::WebProcessConnection::destroyPlugin): If the plug-in doesn't exist but is awaiting asynchronous creation, flag 
+          this instance ID in the "asynchronous ignore set".
+        (WebKit::WebProcessConnection::createPluginInternal): Renamed from createPlugin, actually does the plug-in creation.
+        (WebKit::WebProcessConnection::createPlugin): Adds the instance ID to the "asynchronous ignore set" then calls createPluginInternal.
+        (WebKit::WebProcessConnection::createPluginAsynchronously): If the instance ID is in the "asynchronous ignore set", remove it from the
+          set and do nothing else. Otherwise, perform the initialization and then send the asynchronous result back to the WebProcess.
+        * PluginProcess/WebProcessConnection.h:
+        (WebProcessConnection):
+        * PluginProcess/WebProcessConnection.messages.in:
+
+        Add helpers for asynchronous initialization that all plug-in types must implement:
+        * WebProcess/Plugins/Plugin.h:
+        (Plugin):
+
+        Add helpers for asynchronous initialization that plug-in controllers can override:
+        * WebProcess/Plugins/PluginController.h:
+        (PluginController):
+        (WebKit::PluginController::asynchronousPluginInitializationEnabled):
+        (WebKit::PluginController::asynchronousPluginInitializationEnabledForAllPlugins):
+        (WebKit::PluginController::artificialPluginInitializationDelayEnabled):
+
+        Give PluginProxys the ability to initialize either asynchronously or synchronously, and also the ability to synchronously
+        wait for previously asynchronous initialization (in case their PluginScriptObject is required):
+        * WebProcess/Plugins/PluginProxy.cpp:
+        (WebKit::PluginProxy::PluginProxy):
+        (WebKit::PluginProxy::initialize): Store the plugin creation parameters as a member, and decide whether to try synchronous
+          or asynchronous initialization.
+        (WebKit):
+        (WebKit::PluginProxy::canInitializeAsynchronously): Answer based on preferences and what the PluginProcessConnection says
+          that it supports.
+        (WebKit::PluginProxy::waitForAsynchronousInitialization): Synchronously wait on initialization when asynchronous initialization
+          was previously requested.
+        (WebKit::PluginProxy::initializeSynchronously):
+        (WebKit::PluginProxy::didCreatePlugin): Double-check that we're still expecting asynchronous initialization, then call
+          through to didCreatePluginInternal.
+        (WebKit::PluginProxy::didCreatePluginInternal): Handle completion of initialization (both synchronously and asynchronously)
+        (WebKit::PluginProxy::didFailToCreatePlugin): Double-check that we're still expecting asynchronous initialization, then call
+          through to didFailToCreatePluginInternal.
+        (WebKit::PluginProxy::didFailToCreatePluginInternal): Handle failure to initialize (both synchronously and asynchronously)
+        (WebKit::PluginProxy::destroy):
+        * WebProcess/Plugins/PluginProxy.h:
+        (WebKit):
+        (WebKit::PluginProxy::isInitializingAsynchronously):
+        (PluginProxy):
+        * WebProcess/Plugins/PluginProxy.messages.in:
+
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::PluginView):
+        (WebKit::PluginView::~PluginView): Always destroy the plug-in even if it hasn't been initialized yet, as it might be initializing
+          right now.
+        (WebKit::PluginView::initializePlugin): Don't handle the result of initialization immediately. Break that out in to two
+          methods that will be called later.
+        (WebKit):
+        (WebKit::PluginView::didFailToInitializePlugin):
+        (WebKit::PluginView::didInitializePlugin):
+        (WebKit::PluginView::scriptObject): If we truly need the script object, then wait for a synchronous initialization of the plug-in.
+        (WebKit::PluginView::asynchronousPluginInitializationEnabled):
+        (WebKit::PluginView::asynchronousPluginInitializationEnabledForAllPlugins):
+        (WebKit::PluginView::artificialPluginInitializationDelayEnabled):
+        * WebProcess/Plugins/PluginView.h:
+        (PluginView):
+
+        These methods shouldn't be called in the PluginProcess, only in the WebProcess:
+        * PluginProcess/PluginControllerProxy.cpp:
+        (WebKit::PluginControllerProxy::didInitializePlugin):
+        (WebKit):
+        (WebKit::PluginControllerProxy::didFailToInitializePlugin):
+        * PluginProcess/PluginControllerProxy.h:
+        (PluginControllerProxy):
+
+        NetscapePlugin is for in-process plug-ins:
+        * WebProcess/Plugins/Netscape/NetscapePlugin.h:
+        (NetscapePlugin):
+        (WebKit::NetscapePlugin::waitForAsynchronousInitialization):
+        (WebKit::NetscapePlugin::isInitializingAsynchronously):
+
+        Built-in PDFView is currently only in-process:
+        * WebProcess/Plugins/PDF/BuiltInPDFView.h:
+        (BuiltInPDFView):
+        (WebKit::BuiltInPDFView::waitForAsynchronousInitialization):
+        (WebKit::BuiltInPDFView::isInitializingAsynchronously):
+
 2012-08-06  Luciano Wolf  <luciano.wolf@openbossa.org>
 
         [Qt] Default sizes for input-text and text-area are different when running DRT/WTR

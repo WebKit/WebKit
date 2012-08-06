@@ -68,6 +68,7 @@ PluginProxy::PluginProxy(const String& pluginPath)
     , m_waitingForPaintInResponseToUpdate(false)
     , m_wantsWheelEvents(false)
     , m_remoteLayerClientID(0)
+    , m_waitingOnAsynchronousInitialization(false)
 {
 }
 
@@ -93,38 +94,109 @@ bool PluginProxy::initialize(const Parameters& parameters)
     m_connection->addPluginProxy(this);
 
     // Ask the plug-in process to create a plug-in.
-    PluginCreationParameters creationParameters;
-    creationParameters.pluginInstanceID = m_pluginInstanceID;
-    creationParameters.windowNPObjectID = windowNPObjectID();
-    creationParameters.parameters = parameters;
-    creationParameters.userAgent = controller()->userAgent();
-    creationParameters.contentsScaleFactor = contentsScaleFactor();
-    creationParameters.isPrivateBrowsingEnabled = controller()->isPrivateBrowsingEnabled();
+    m_pendingPluginCreationParameters = adoptPtr(new PluginCreationParameters);
+
+    m_pendingPluginCreationParameters->pluginInstanceID = m_pluginInstanceID;
+    m_pendingPluginCreationParameters->windowNPObjectID = windowNPObjectID();
+    m_pendingPluginCreationParameters->parameters = parameters;
+    m_pendingPluginCreationParameters->userAgent = controller()->userAgent();
+    m_pendingPluginCreationParameters->contentsScaleFactor = contentsScaleFactor();
+    m_pendingPluginCreationParameters->isPrivateBrowsingEnabled = controller()->isPrivateBrowsingEnabled();
+    m_pendingPluginCreationParameters->artificialPluginInitializationDelayEnabled = controller()->artificialPluginInitializationDelayEnabled();
+
 #if USE(ACCELERATED_COMPOSITING)
-    creationParameters.isAcceleratedCompositingEnabled = controller()->isAcceleratedCompositingEnabled();
+    m_pendingPluginCreationParameters->isAcceleratedCompositingEnabled = controller()->isAcceleratedCompositingEnabled();
 #endif
 
+    if (!canInitializeAsynchronously())
+        return initializeSynchronously();
+
+    // Remember that we tried to create this plug-in asynchronously in case we need to create it synchronously later.
+    m_waitingOnAsynchronousInitialization = true;
+    PluginCreationParameters creationParameters(*m_pendingPluginCreationParameters.get());
+    m_connection->connection()->send(Messages::WebProcessConnection::CreatePluginAsynchronously(creationParameters), m_pluginInstanceID);
+    return true;
+}
+
+bool PluginProxy::canInitializeAsynchronously() const
+{
+    return controller()->asynchronousPluginInitializationEnabled() && (m_connection->supportsAsynchronousPluginInitialization() || controller()->asynchronousPluginInitializationEnabledForAllPlugins());
+}
+
+void PluginProxy::waitForAsynchronousInitialization()
+{
+    ASSERT(!m_isStarted);
+    ASSERT(m_waitingOnAsynchronousInitialization);
+
+    initializeSynchronously();
+}
+
+bool PluginProxy::initializeSynchronously()
+{
+    ASSERT(m_pendingPluginCreationParameters);
+
+    m_pendingPluginCreationParameters->asynchronousCreationIncomplete = m_waitingOnAsynchronousInitialization;
     bool result = false;
     bool wantsWheelEvents = false;
     uint32_t remoteLayerClientID = 0;
+    
+    PluginCreationParameters parameters(*m_pendingPluginCreationParameters.get());
 
-    if (!m_connection->connection()->sendSync(Messages::WebProcessConnection::CreatePlugin(creationParameters), Messages::WebProcessConnection::CreatePlugin::Reply(result, wantsWheelEvents, remoteLayerClientID), 0) || !result) {
-        m_connection->removePluginProxy(this);
-        return false;
-    }
+    if (!m_connection->connection()->sendSync(Messages::WebProcessConnection::CreatePlugin(parameters), Messages::WebProcessConnection::CreatePlugin::Reply(result, wantsWheelEvents, remoteLayerClientID), 0) || !result)
+        didFailToCreatePluginInternal();
+    else
+        didCreatePluginInternal(wantsWheelEvents, remoteLayerClientID);
+    
+    return result;
+}
 
+void PluginProxy::didCreatePlugin(bool wantsWheelEvents, uint32_t remoteLayerClientID)
+{
+    // We might have tried to create the plug-in sychronously while waiting on the asynchronous reply,
+    // in which case we should ignore this message.
+    if (!m_waitingOnAsynchronousInitialization)
+        return;
+
+    didCreatePluginInternal(wantsWheelEvents, remoteLayerClientID);
+}
+
+void PluginProxy::didFailToCreatePlugin()
+{
+    // We might have tried to create the plug-in sychronously while waiting on the asynchronous reply,
+    // in which case we should ignore this message.
+    if (!m_waitingOnAsynchronousInitialization)
+        return;
+
+    didFailToCreatePluginInternal();
+}
+
+void PluginProxy::didCreatePluginInternal(bool wantsWheelEvents, uint32_t remoteLayerClientID)
+{
     m_wantsWheelEvents = wantsWheelEvents;
     m_remoteLayerClientID = remoteLayerClientID;
     m_isStarted = true;
+    controller()->didInitializePlugin();
 
-    return true;
+    // Whether synchronously or asynchronously, this plug-in was created and we shouldn't need to remember
+    // anything about how.
+    m_pendingPluginCreationParameters.clear();
+    m_waitingOnAsynchronousInitialization = false;
+}
+
+void PluginProxy::didFailToCreatePluginInternal()
+{
+    m_connection->removePluginProxy(this);
+    controller()->didFailToInitializePlugin();
+
+    // Whether synchronously or asynchronously, this plug-in failed to create and we shouldn't need to remember
+    // anything about how.
+    m_pendingPluginCreationParameters.clear();
+    m_waitingOnAsynchronousInitialization = false;
 }
 
 void PluginProxy::destroy()
 {
-    ASSERT(m_isStarted);
-
-    m_connection->connection()->sendSync(Messages::WebProcessConnection::DestroyPlugin(m_pluginInstanceID), Messages::WebProcessConnection::DestroyPlugin::Reply(), 0);
+    m_connection->connection()->sendSync(Messages::WebProcessConnection::DestroyPlugin(m_pluginInstanceID, m_waitingOnAsynchronousInitialization), Messages::WebProcessConnection::DestroyPlugin::Reply(), 0);
 
     m_isStarted = false;
 

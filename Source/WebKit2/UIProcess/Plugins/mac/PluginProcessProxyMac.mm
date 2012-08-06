@@ -118,6 +118,9 @@ bool PluginProcessProxy::createPropertyListFile(const PluginModuleInfo& plugin)
 
 void PluginProcessProxy::platformInitializePluginProcess(PluginProcessCreationParameters& parameters)
 {
+    // For know only Flash is known to behave with asynchronous plug-in initialization.
+    parameters.supportsAsynchronousPluginInitialization = m_pluginInfo.bundleIdentifier == "com.macromedia.Flash Player.plugin";
+
 #if USE(ACCELERATED_COMPOSITING) && HAVE(HOSTED_CORE_ANIMATION)
     parameters.parentProcessName = [[NSProcessInfo processInfo] processName];
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
