@@ -349,6 +349,8 @@ namespace WebCore {
         virtual bool isPointerLocked() { return false; }
 #endif
 
+        virtual void logDiagnosticMessage(const String& message, const String& description, const String& status) { UNUSED_PARAM(message); UNUSED_PARAM(description); UNUSED_PARAM(status); }
+
     protected:
         virtual ~ChromeClient() { }
     };

@@ -124,6 +124,11 @@ void WKBundlePageDidExitFullScreen(WKBundlePageRef pageRef)
 #endif
 }
 
+void WKBundlePageSetDiagnosticLoggingClient(WKBundlePageRef pageRef, WKBundlePageDiagnosticLoggingClient* client)
+{
+    toImpl(pageRef)->initializeInjectedBundleDiagnosticLoggingClient(client);
+}
+
 WKBundlePageGroupRef WKBundlePageGetPageGroup(WKBundlePageRef pageRef)
 {
     return toAPI(toImpl(pageRef)->pageGroup());

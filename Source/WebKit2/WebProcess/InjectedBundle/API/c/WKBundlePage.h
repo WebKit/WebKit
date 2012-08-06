@@ -344,6 +344,18 @@ typedef struct WKBundlePageFullScreenClient WKBundlePageFullScreenClient;
 
 enum { kWKBundlePageFullScreenClientCurrentVersion = 1 };
 
+// MessageTrace client
+typedef void (*WKBundlePageDiagnosticLoggingCallback)(WKBundlePageRef page, WKStringRef message, WKStringRef description, WKStringRef success, const void* clientInfo);
+
+struct WKBundlePageDiagnosticLoggingClient {
+    int                                                                 version;
+    const void *                                                        clientInfo;
+    WKBundlePageDiagnosticLoggingCallback                               logDiagnosticMessage;
+};
+typedef struct WKBundlePageDiagnosticLoggingClient WKBundlePageDiagnosticLoggingClient;
+
+enum { kWKBundlePageDiagnosticLoggingClientCurrentVersion = 0 };
+
 WK_EXPORT void WKBundlePageWillEnterFullScreen(WKBundlePageRef page);
 WK_EXPORT void WKBundlePageDidEnterFullScreen(WKBundlePageRef page);
 WK_EXPORT void WKBundlePageWillExitFullScreen(WKBundlePageRef page);
@@ -358,8 +370,8 @@ WK_EXPORT void WKBundlePageSetPageLoaderClient(WKBundlePageRef page, WKBundlePag
 WK_EXPORT void WKBundlePageSetResourceLoadClient(WKBundlePageRef page, WKBundlePageResourceLoadClient* client);
 WK_EXPORT void WKBundlePageSetPolicyClient(WKBundlePageRef page, WKBundlePagePolicyClient* client);
 WK_EXPORT void WKBundlePageSetUIClient(WKBundlePageRef page, WKBundlePageUIClient* client);
-    
 WK_EXPORT void WKBundlePageSetFullScreenClient(WKBundlePageRef page, WKBundlePageFullScreenClient* client);
+WK_EXPORT void WKBundlePageSetDiagnosticLoggingClient(WKBundlePageRef page, WKBundlePageDiagnosticLoggingClient* client);
 
 WK_EXPORT WKBundlePageGroupRef WKBundlePageGetPageGroup(WKBundlePageRef page);
 WK_EXPORT WKBundleFrameRef WKBundlePageGetMainFrame(WKBundlePageRef page);

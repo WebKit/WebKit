@@ -319,6 +319,7 @@ HEADERS += \
     WebProcess/InjectedBundle/InjectedBundleHitTestResult.h \
     WebProcess/InjectedBundle/InjectedBundleNavigationAction.h \
     WebProcess/InjectedBundle/InjectedBundlePageContextMenuClient.h \
+    WebProcess/InjectedBundle/InjectedBundlePageDiagnosticLoggingClient.h \
     WebProcess/InjectedBundle/InjectedBundlePageFormClient.h \
     WebProcess/InjectedBundle/InjectedBundlePageFullScreenClient.h \
     WebProcess/InjectedBundle/InjectedBundlePagePolicyClient.h \
@@ -679,6 +680,7 @@ SOURCES += \
     WebProcess/InjectedBundle/InjectedBundleHitTestResult.cpp \
     WebProcess/InjectedBundle/InjectedBundleNavigationAction.cpp \
     WebProcess/InjectedBundle/InjectedBundlePageContextMenuClient.cpp \
+    WebProcess/InjectedBundle/InjectedBundlePageDiagnosticLoggingClient.cpp \    
     WebProcess/InjectedBundle/InjectedBundlePageEditorClient.cpp \
     WebProcess/InjectedBundle/InjectedBundlePageFormClient.cpp \
     WebProcess/InjectedBundle/InjectedBundlePageFullScreenClient.cpp \
