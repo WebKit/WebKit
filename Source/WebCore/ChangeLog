@@ -1,3 +1,36 @@
+2012-08-05  Kent Tamura  <tkent@chromium.org>
+
+        [Chromium-win] Use system locale for number representation
+        https://bugs.webkit.org/show_bug.cgi?id=93085
+
+        Reviewed by Hajime Morita.
+
+        We have used LocaleICU for number localization (presentation of <input
+        type=number>) even on Windows. This patch introduces number localization
+        feature with Windows API to LocaleWin, and we stop using LocaleICU on
+        Windows.
+
+        Tests: Add new test cases to WebKit/chromium/tests/LocaleWinTest.cpp.
+
+        * WebCore.gyp/WebCore.gyp:
+        - Stop using LocaleICU.{cpp,h} and LocalizedNumberICU.cpp.
+        - Add LocalizedNumberWin.cpp.
+        * platform/text/LocaleWin.cpp:
+        (WebCore::LocaleWin::LocaleWin):
+         - Initialize m_didInitializeNumberData.
+         - Use getLocaleInfo() to obtain LOCALE_IFIRSTDAYOFWEEK.
+        (WebCore::LocaleWin::getLocaleInfo):
+        Added. A helper to obtain integer locale value.
+        (WebCore::LocaleWin::initializeNumberLocalizerData):
+        Added. Prepare data for number localization, and pass it to NumberLocalizer.
+        * platform/text/LocaleWin.h:
+        (LocaleWin): Inherit NumberLocalizer, and declare some new members.
+        * platform/text/win/LocalizedNumberWin.cpp: Added.
+        (WebCore::convertToLocalizedNumber):
+        Forward to the corresponding function of LocaleWin.
+        (WebCore::convertFromLocalizedNumber): ditto.
+        (WebCore::localizedDecimalSeparator): ditto.
+
 2012-08-05  Philip Rogers  <pdr@google.com>
 
         Fix assertion during detach of SVG wrappers without baseVal

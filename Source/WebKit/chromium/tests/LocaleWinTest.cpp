@@ -57,10 +57,19 @@ protected:
     };
 
     // See http://msdn.microsoft.com/en-us/goglobal/bb964664.aspx
+    // Note that some locales are country-neutral.
     enum {
-        EnglishUS = 0x409,
-        FrenchFR = 0x40C,
-        JapaneseJP = 0x411,
+        ArabicEG = 0x0C01, // ar-eg
+        ChineseCN = 0x0804, // zh-cn
+        ChineseHK = 0x0C04, // zh-hk
+        ChineseTW = 0x0404, // zh-tw
+        German = 0x0407, // de
+        EnglishUS = 0x409, // en-us
+        FrenchFR = 0x40C, // fr
+        JapaneseJP = 0x411, // ja
+        KoreanKR = 0x0412, // ko
+        Persian = 0x0429, // fa
+        Spanish = 0x040A, // es
     };
 
     DateComponents dateComponents(int year, int month, int day)
@@ -130,6 +139,12 @@ protected:
     {
         OwnPtr<LocaleWin> locale = LocaleWin::create(lcid);
         return locale->timeAMPMLabels()[index];
+    }
+
+    String decimalSeparator(LCID lcid)
+    {
+        OwnPtr<LocaleWin> locale = LocaleWin::create(lcid);
+        return locale->localizedDecimalSeparator();
     }
 #endif
 };
@@ -328,4 +343,52 @@ TEST_F(LocaleWinTest, timeAMPMLabels)
     EXPECT_STREQ("\xE5\x8D\x88\xE5\x89\x8D", timeAMPMLabel(JapaneseJP, 0).utf8().data());
     EXPECT_STREQ("\xE5\x8D\x88\xE5\xBE\x8C", timeAMPMLabel(JapaneseJP, 1).utf8().data());
 }
+
+TEST_F(LocaleWinTest, decimalSeparator)
+{
+    EXPECT_STREQ(".", decimalSeparator(EnglishUS).utf8().data());
+    EXPECT_STREQ(",", decimalSeparator(FrenchFR).utf8().data());
+}
 #endif
+
+static void testNumberIsReversible(LCID lcid, const char* original, const char* shouldHave = 0)
+{
+    OwnPtr<LocaleWin> locale = LocaleWin::create(lcid);
+    String localized = locale->convertToLocalizedNumber(original);
+    if (shouldHave)
+        EXPECT_TRUE(localized.contains(shouldHave));
+    String converted = locale->convertFromLocalizedNumber(localized);
+    EXPECT_STREQ(original, converted.utf8().data());
+}
+
+void testNumbers(LCID lcid)
+{
+    testNumberIsReversible(lcid, "123456789012345678901234567890");
+    testNumberIsReversible(lcid, "-123.456");
+    testNumberIsReversible(lcid, ".456");
+    testNumberIsReversible(lcid, "-0.456");
+}
+
+TEST_F(LocaleWinTest, localizedNumberRoundTrip)
+{
+    testNumberIsReversible(EnglishUS, "123456789012345678901234567890");
+    testNumberIsReversible(EnglishUS, "-123.456", ".");
+    testNumberIsReversible(EnglishUS, ".456", ".");
+    testNumberIsReversible(EnglishUS, "-0.456", ".");
+
+    testNumberIsReversible(FrenchFR, "123456789012345678901234567890");
+    testNumberIsReversible(FrenchFR, "-123.456", ",");
+    testNumberIsReversible(FrenchFR, ".456", ",");
+    testNumberIsReversible(FrenchFR, "-0.456", ",");
+
+    // Test some of major locales.
+    testNumbers(ArabicEG);
+    testNumbers(German);
+    testNumbers(Spanish);
+    testNumbers(Persian);
+    testNumbers(JapaneseJP);
+    testNumbers(KoreanKR);
+    testNumbers(ChineseCN);
+    testNumbers(ChineseHK);
+    testNumbers(ChineseTW);
+}

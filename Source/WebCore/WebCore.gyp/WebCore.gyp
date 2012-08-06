@@ -1794,10 +1794,14 @@
             # SystemInfo.cpp is useful and we don't want to copy it.
             ['include', 'platform/win/SystemInfo\\.cpp$'],
 
+            ['exclude', 'platform/text/LocaleICU\\.cpp$'],
+            ['exclude', 'platform/text/LocaleICU\\.h$'],
             ['exclude', 'platform/text/LocalizedDateICU\.cpp$'],
+            ['exclude', 'platform/text/LocalizedNumberICU\.cpp$'],
             ['include', 'platform/text/LocalizedDateWin\.cpp$'],
             ['include', 'platform/text/LocaleWin\.cpp$'],
             ['include', 'platform/text/LocaleWin\.h$'],
+            ['include', 'platform/text/win/LocalizedNumberWin\\.cpp$'],
           ],
         },{ # OS!="win"
           'sources/': [

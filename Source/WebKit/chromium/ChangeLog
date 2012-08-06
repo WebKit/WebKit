@@ -1,3 +1,27 @@
+2012-08-05  Kent Tamura  <tkent@chromium.org>
+
+        [Chromium-win] Use system locale for number representation
+        https://bugs.webkit.org/show_bug.cgi?id=93085
+
+        Reviewed by Hajime Morita.
+
+        * WebKit.gypi:
+        Don't include Localized*ICUTest.cpp in Windows and OSX. They are unnecessary.
+        * tests/LocaleWinTest.cpp:
+        (LocaleWinTest): Add some LCID symbols.
+        (LocaleWinTest::decimalSeparator):
+        A helper for LocaleWinTest.decimalSeparator.
+        (TEST_F(LocaleWinTest, decimalSeparator)):
+        A test for LocaleWin::localizedDecimalSeparator(). This is a copy of the
+        corresponding test in LocalizedNumberICUTest.cpp.
+        (testNumberIsReversible):
+        A test helper LocaleWinTest.localizedNumberRoundTrip. This is a copy of
+        the corresponding test in LocalizedNumberICUTest.cpp.
+        (testNumbers): ditto.
+        (TEST_F(LocaleWinTest, localizedNumberRoundTrip)):
+        Tests for LocaleWin changes. This is a copy of the corresponding tests
+        in LocalizedNumberICUTest.cpp.
+
 2012-08-04  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed.  Rolled DEPS.

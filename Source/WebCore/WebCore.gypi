@@ -4485,6 +4485,7 @@
             'platform/text/qt/TextCodecQt.h',
             'platform/text/transcoder/FontTranscoder.cpp',
             'platform/text/transcoder/FontTranscoder.h',
+            'platform/text/win/LocalizedNumberWin.cpp',
             'platform/text/win/TextBreakIteratorInternalICUWin.cpp',
             'platform/text/win/TextCodecWin.cpp',
             'platform/text/win/TextCodecWin.h',

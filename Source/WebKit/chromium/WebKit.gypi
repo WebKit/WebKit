@@ -125,8 +125,6 @@
             'tests/LevelDBTest.cpp',
             'tests/LinkHighlightTest.cpp',
             'tests/ListenerLeakTest.cpp',
-            'tests/LocalizedDateICUTest.cpp',
-            'tests/LocalizedNumberICUTest.cpp',
             'tests/MemoryInfo.cpp',
             'tests/MemoryInstrumentationTest.cpp',
             'tests/MockCCQuadCuller.h',
@@ -193,6 +191,12 @@
                 'webkit_unittest_files': [
                     # Mac uses ScrollAnimatorMac instead of ScrollAnimatorNone.
                     'tests/ScrollAnimatorNoneTest.cpp',
+                ],
+            }],
+            ['os_posix==1 and OS!="mac"', {
+                'webkit_unittest_files': [
+                    'tests/LocalizedDateICUTest.cpp',
+                    'tests/LocalizedNumberICUTest.cpp',
                 ],
             }],
             ['toolkit_uses_gtk == 1', {
