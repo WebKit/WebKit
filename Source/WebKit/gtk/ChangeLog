@@ -1,3 +1,21 @@
+2012-08-06  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [EFL] [GTK] Register Protocol Handler Client is never deleted
+        https://bugs.webkit.org/show_bug.cgi?id=92745
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Added usage of OwnPtr to manage register protocol handler client pointer.
+
+        * WebCoreSupport/RegisterProtocolHandlerClientGtk.cpp:
+        (WebKit::RegisterProtocolHandlerClient::create): Factory function returning smart pointer.
+        (WebKit):
+        * WebCoreSupport/RegisterProtocolHandlerClientGtk.h:
+        (RegisterProtocolHandlerClient):
+        * webkit/webkitwebview.cpp:
+        (webkit_web_view_init):
+        * webkit/webkitwebviewprivate.h:
+
 2012-08-03  Mario Sanchez Prada  <msanchez@igalia.com>
 
         [GTK] Add a new and reusable enchant-based spellchecker in WebCore

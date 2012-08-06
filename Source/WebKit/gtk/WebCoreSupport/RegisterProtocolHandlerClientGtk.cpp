@@ -26,6 +26,11 @@
 
 namespace WebKit {
 
+PassOwnPtr<RegisterProtocolHandlerClient> RegisterProtocolHandlerClient::create()
+{
+    return adoptPtr(new RegisterProtocolHandlerClient);
+}
+
 RegisterProtocolHandlerClient::RegisterProtocolHandlerClient()
 {
 }

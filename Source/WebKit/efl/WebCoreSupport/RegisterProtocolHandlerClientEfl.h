@@ -31,10 +31,13 @@
 #if ENABLE(REGISTER_PROTOCOL_HANDLER) || ENABLE(CUSTOM_SCHEME_HANDLER)
 #include "RegisterProtocolHandlerClient.h"
 
+#include <wtf/PassOwnPtr.h>
+
 namespace WebCore {
 class RegisterProtocolHandlerClientEfl : public WebCore::RegisterProtocolHandlerClient {
 public:
-    explicit RegisterProtocolHandlerClientEfl(Evas_Object* view);
+    static PassOwnPtr<RegisterProtocolHandlerClientEfl> create(Evas_Object* view);
+
     ~RegisterProtocolHandlerClientEfl() { }
 
 #if ENABLE(REGISTER_PROTOCOL_HANDLER)
@@ -48,6 +51,8 @@ public:
 
 private:
     Evas_Object* m_view;
+
+    RegisterProtocolHandlerClientEfl(Evas_Object* view);
 };
 }
 

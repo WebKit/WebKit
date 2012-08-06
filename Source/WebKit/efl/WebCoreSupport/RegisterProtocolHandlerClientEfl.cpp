@@ -53,6 +53,11 @@ static void customHandlerDataDelete(Ewk_Custom_Handler_Data* data)
     delete data;
 }
 
+PassOwnPtr<RegisterProtocolHandlerClientEfl> RegisterProtocolHandlerClientEfl::create(Evas_Object* view)
+{
+    return adoptPtr(new RegisterProtocolHandlerClientEfl(view));
+}
+
 RegisterProtocolHandlerClientEfl::RegisterProtocolHandlerClientEfl(Evas_Object* view)
     : m_view(view)
 {

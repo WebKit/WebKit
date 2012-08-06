@@ -22,14 +22,20 @@
 #if ENABLE(REGISTER_PROTOCOL_HANDLER)
 #include "RegisterProtocolHandlerClient.h"
 
+#include <wtf/PassOwnPtr.h>
+
 namespace WebKit {
 
 class RegisterProtocolHandlerClient : public WebCore::RegisterProtocolHandlerClient {
 public:
-    RegisterProtocolHandlerClient();
+    static PassOwnPtr<RegisterProtocolHandlerClient> create();
+
     ~RegisterProtocolHandlerClient() { }
 
     virtual void registerProtocolHandler(const String& scheme, const String& baseURL, const String& url, const String& title);
+
+private:
+    RegisterProtocolHandlerClient();
 };
 
 }
