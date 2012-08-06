@@ -1224,7 +1224,7 @@ void RenderBlock::removeChild(RenderObject* oldChild)
 
         // If we are an empty anonymous block in the continuation chain,
         // we need to remove ourself and fix the continuation chain.
-        if (!beingDestroyed() && isAnonymousBlockContinuation()) {
+        if (!beingDestroyed() && isAnonymousBlockContinuation() && !oldChild->isListMarker()) {
             RenderObject* containingBlockIgnoringAnonymous = containingBlock();
             while (containingBlockIgnoringAnonymous && containingBlockIgnoringAnonymous->isAnonymousBlock())
                 containingBlockIgnoringAnonymous = containingBlockIgnoringAnonymous->containingBlock();

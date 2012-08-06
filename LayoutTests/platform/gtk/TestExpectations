@@ -1297,6 +1297,7 @@ BUGWK93073 : mathml/presentation/tokenElements.xhtml = TEXT
 BUGWK93073 : mathml/presentation/under.xhtml = TEXT
 BUGWK93073 : mathml/presentation/underover.xhtml = TEXT
 
+BUGWK93247 : fast/lists/list-marker-remove-crash.html = CRASH
 //////////////////////////////////////////////////////////////////////////////////////////
 // End of Tests failing
 //////////////////////////////////////////////////////////////////////////////////////////

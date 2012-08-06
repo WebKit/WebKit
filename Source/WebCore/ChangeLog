@@ -1,3 +1,20 @@
+2012-08-06  Douglas Stockwell  <dstockwell@chromium.org>
+
+        Crash in WebCore::RenderListItem::updateMarkerLocation
+        https://bugs.webkit.org/show_bug.cgi?id=90476
+
+        Reviewed by Abhishek Arya.
+
+        In some cases an anonymous block is destroyed when its last child is
+        removed. RenderListItem did not expect this and has it's own logic for
+        cleaning up such blocks when the list marker is removed. Detect this
+        case in RenderBlock::removeChild to defer to the logic in RenderListItem::updateListMarker.
+
+        Test: fast/lists/list-marker-remove-crash.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::removeChild):
+
 2012-08-06  Shawn Singh  <shawnsingh@chromium.org>
 
         [chromium] Non-preserves-3d requires explicit flattening of screen-space transform.

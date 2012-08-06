@@ -1,3 +1,13 @@
+2012-08-06  Douglas Stockwell  <dstockwell@chromium.org>
+
+        Crash in WebCore::RenderListItem::updateMarkerLocation
+        https://bugs.webkit.org/show_bug.cgi?id=90476
+
+        Reviewed by Abhishek Arya.
+
+        * fast/lists/list-marker-remove-crash-expected.txt: Added.
+        * fast/lists/list-marker-remove-crash.html: Added.
+
 2012-08-06  Csaba Osztrogonác  <ossy@webkit.org>
 
         Web Inspector: rename WorkerAgent.setWorkerInspectionEnabled to WorkerAgent.enable and make it return error

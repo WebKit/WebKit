@@ -3500,3 +3500,5 @@ BUGWK92275 : fast/multicol/vertical-rl/float-multicol.html = IMAGE+TEXT
 BUGWK92275 : fast/multicol/vertical-rl/nested-columns.html = IMAGE+TEXT
 BUGWK92275 : fast/speech/input-appearance-searchandspeech.html = IMAGE+TEXT
 BUGWK92275 : fast/table/colspanMinWidth-vertical.html = TEXT
+
+BUGWK93247 : fast/lists/list-marker-remove-crash.html = CRASH
