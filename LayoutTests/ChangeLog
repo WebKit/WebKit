@@ -1,3 +1,17 @@
+2012-08-06  Pravin D  <pravind.2k4@gmai.com>
+
+        Testcase LayoutTests/editing/input/editable-container-with-word-wrap-normal.html failing on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=93287
+
+        Reviewed by Ryosuke Niwa.
+
+        The testcase uses 'End' keypress event emulation to scroll the caret to the end of the line. As the behavior of 'End' keypress
+        is platform dependent, replacing it platform independent code.
+
+        * editing/input/editable-container-with-word-wrap-normal-expected.txt:
+        * editing/input/editable-container-with-word-wrap-normal.html:
+          Replaced 'End' keypress event with testRunner's execCommand() to make testcase behavior independent of platform.
+
 2012-08-06  Roger Fong  <roger_fong@apple.com>
 
         Layout Test: Windows specific tests needed for fast/css/getComputedStyle/computed-style.html & computed-style-without-renderer.html
