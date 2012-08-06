@@ -1,3 +1,9 @@
+2012-08-06  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Unreviewed. Roll out r124728 because of build bot test fail.
+
+        * Scripts/webkitpy/common/config/watchlist:
+
 2012-08-05  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Unreviewed. Change my email address for watch list.
