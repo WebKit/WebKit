@@ -1,0 +1,20 @@
+<html>
+<head>
+<script src="../../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<div id="result"></div>
+<script>
+description("This test is for checking availablity of proximity event.");
+
+shouldBeTrue("'onwebkitdeviceproximity' in window");
+
+shouldBeTrue("document.createEvent('DeviceProximityEvent') instanceof window.DeviceProximityEvent");
+shouldBeTrue("document.createEvent('DeviceProximityEvent') instanceof window.Event");
+shouldBeTrue("document.createEvent('DeviceProximityEvent').constructor === window.DeviceProximityEvent");
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>

@@ -11,6 +11,7 @@ SET(WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/Modules/networkinfo"
     "${WEBCORE_DIR}/Modules/notifications"
     "${WEBCORE_DIR}/Modules/protocolhandler"
+    "${WEBCORE_DIR}/Modules/proximity"
     "${WEBCORE_DIR}/Modules/quota"
     "${WEBCORE_DIR}/Modules/vibration"
     "${WEBCORE_DIR}/Modules/webaudio"
@@ -224,7 +225,9 @@ SET(WebCore_IDL_FILES
     Modules/notifications/WorkerContextNotifications.idl
 
     Modules/protocolhandler/NavigatorRegisterProtocolHandler.idl
-    
+
+    Modules/proximity/DeviceProximityEvent.idl
+
     Modules/quota/DOMWindowQuota.idl
     Modules/quota/StorageInfo.idl
     Modules/quota/StorageInfoErrorCallback.idl
@@ -852,6 +855,8 @@ SET(WebCore_SOURCES
     Modules/notifications/WorkerContextNotifications.cpp
 
     Modules/protocolhandler/NavigatorRegisterProtocolHandler.cpp
+
+    Modules/proximity/DeviceProximityEvent.cpp
 
     Modules/quota/DOMWindowQuota.cpp
     Modules/quota/StorageInfo.cpp

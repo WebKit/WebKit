@@ -313,6 +313,8 @@ module window {
         attribute [Conditional=DEVICE_ORIENTATION,V8EnabledAtRuntime] EventListener ondevicemotion;
         attribute [Conditional=DEVICE_ORIENTATION,V8EnabledAtRuntime] EventListener ondeviceorientation;
 
+        attribute [Conditional=PROXIMITY_EVENTS] EventListener onwebkitdeviceproximity;
+
         // EventTarget interface
         [Custom] void addEventListener(in DOMString type,
                                       in EventListener listener,
@@ -551,6 +553,7 @@ module window {
         attribute StorageEventConstructor StorageEvent;
         attribute [Conditional=INPUT_SPEECH] SpeechInputEventConstructor SpeechInputEvent;
         attribute [Conditional=WEBGL] WebGLContextEventConstructor WebGLContextEvent;
+        attribute [Conditional=PROXIMITY_EVENTS] DeviceProximityEventConstructor DeviceProximityEvent;
 
         attribute EventExceptionConstructor EventException;
 

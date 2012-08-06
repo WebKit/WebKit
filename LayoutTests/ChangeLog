@@ -1,3 +1,24 @@
+2012-08-06  Kihong Kwon  <kihong.kwon@samsung.com>
+
+        Add DeviceProximityEvent interface
+        https://bugs.webkit.org/show_bug.cgi?id=92942
+
+        Reviewed by Kentaro Hara.
+
+        Add tests for creating and handling the DeviceProximityEvent.
+
+        * fast/dom/Proximity/check-event-deviceproximity-expected.txt: Added.
+        * fast/dom/Proximity/check-event-deviceproximity.html: Added.
+        * fast/dom/Proximity/create-event-deviceproximity-expected.txt: Added.
+        * fast/dom/Proximity/create-event-deviceproximity.html: Added.
+        * fast/events/constructors/device-proximity-event-constructor-expected.txt: Added.
+        * fast/events/constructors/device-proximity-event-constructor.html: Added.
+        * platform/chromium/TestExpectations:
+        * platform/efl/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/mac/Skipped:
+        * platform/qt/Skipped:
+
 2012-08-06  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         [EFL] EFL's LayoutTestController needs removeAllVisitedLinks implementation

@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+
+description("This tests the constructor for the DeviceProximityEvent DOM class.");
+
+// No initializer is passed.
+shouldBe("new DeviceProximityEvent('eventType').bubbles", "true");
+shouldBe("new DeviceProximityEvent('eventType').cancelable", "false");
+shouldBe("new DeviceProximityEvent('eventType').value", "Infinity");
+shouldBe("new DeviceProximityEvent('eventType').min", "-Infinity");
+shouldBe("new DeviceProximityEvent('eventType').max", "Infinity");
+
+// bubbles is passed.
+shouldBe("new DeviceProximityEvent('eventType', { bubbles: false }).bubbles", "false");
+shouldBe("new DeviceProximityEvent('eventType', { bubbles: true }).bubbles", "true");
+
+// cancelable is passed.
+shouldBe("new DeviceProximityEvent('eventType', { cancelable: false }).cancelable", "false");
+shouldBe("new DeviceProximityEvent('eventType', { cancelable: true }).cancelable", "true");
+
+// value is passed.
+// Numbers within the double range.
+shouldBe("new DeviceProximityEvent('eventType', { value: 0 }).value", "0");
+shouldBe("new DeviceProximityEvent('eventType', { value: 1 }).value", "1");
+shouldBe("new DeviceProximityEvent('eventType', { value: 1.79769313486231570E+308 }).value", "1.79769313486231570E+308");
+shouldBe("new DeviceProximityEvent('eventType', { value: -1.79769313486231570E+308 }).value", "-1.79769313486231570E+308");
+
+// Numbers out of the double range.
+shouldBe("new DeviceProximityEvent('eventType', { value: 1.8E+308 }).value", "Infinity");
+shouldBe("new DeviceProximityEvent('eventType', { value: -1.8E+308 }).value", "-Infinity");
+shouldBe("new DeviceProximityEvent('eventType', { value: 123.45 }).value", "123.45");
+shouldBe("new DeviceProximityEvent('eventType', { value: NaN }).value", "NaN");
+
+// Non-numeric values.
+shouldBe("new DeviceProximityEvent('eventType', { value: undefined }).value", "NaN");
+shouldBe("new DeviceProximityEvent('eventType', { value: null }).value", "0");
+shouldBe("new DeviceProximityEvent('eventType', { value: '' }).value", "0");
+shouldBe("new DeviceProximityEvent('eventType', { value: '12345' }).value", "12345");
+shouldBe("new DeviceProximityEvent('eventType', { value: '12345a' }).value", "NaN");
+shouldBe("new DeviceProximityEvent('eventType', { value: 'abc' }).value", "NaN");
+shouldBe("new DeviceProximityEvent('eventType', { value: [] }).value", "0");
+shouldBe("new DeviceProximityEvent('eventType', { value: [12345] }).value", "12345");
+shouldBe("new DeviceProximityEvent('eventType', { value: [12345, 67890] }).value", "NaN");
+shouldBe("new DeviceProximityEvent('eventType', { value: {} }).value", "NaN");
+shouldBe("new DeviceProximityEvent('eventType', { value: {moemoe: 12345} }).value", "NaN");
+shouldBe("new DeviceProximityEvent('eventType', { value: {valueOf: function () { return 12345; }} }).value", "12345");
+
+// min is passed.
+// Numbers within the double range.
+shouldBe("new DeviceProximityEvent('eventType', { min: 0 }).min", "0");
+shouldBe("new DeviceProximityEvent('eventType', { min: 1 }).min", "1");
+shouldBe("new DeviceProximityEvent('eventType', { min: 1.79769313486231570E+308 }).min", "1.79769313486231570E+308");
+shouldBe("new DeviceProximityEvent('eventType', { min: -1.79769313486231570E+308 }).min", "-1.79769313486231570E+308");
+
+// Numbers out of the double range.
+shouldBe("new DeviceProximityEvent('eventType', { min: 1.8E+308 }).min", "Infinity");
+shouldBe("new DeviceProximityEvent('eventType', { min: -1.8E+308 }).min", "-Infinity");
+shouldBe("new DeviceProximityEvent('eventType', { min: 123.45 }).min", "123.45");
+shouldBe("new DeviceProximityEvent('eventType', { min: NaN }).min", "NaN");
+
+// Non-numeric mins.
+shouldBe("new DeviceProximityEvent('eventType', { min: undefined }).min", "NaN");
+shouldBe("new DeviceProximityEvent('eventType', { min: null }).min", "0");
+shouldBe("new DeviceProximityEvent('eventType', { min: '' }).min", "0");
+shouldBe("new DeviceProximityEvent('eventType', { min: '12345' }).min", "12345");
+shouldBe("new DeviceProximityEvent('eventType', { min: '12345a' }).min", "NaN");
+shouldBe("new DeviceProximityEvent('eventType', { min: 'abc' }).min", "NaN");
+shouldBe("new DeviceProximityEvent('eventType', { min: [] }).min", "0");
+shouldBe("new DeviceProximityEvent('eventType', { min: [12345] }).min", "12345");
+shouldBe("new DeviceProximityEvent('eventType', { min: [12345, 67890] }).min", "NaN");
+shouldBe("new DeviceProximityEvent('eventType', { min: {} }).min", "NaN");
+shouldBe("new DeviceProximityEvent('eventType', { min: {moemoe: 12345} }).min", "NaN");
+shouldBe("new DeviceProximityEvent('eventType', { min: {valueOf: function () { return 12345; }} }).min", "12345");
+
+// max is passed.
+// Numbers within the double range.
+shouldBe("new DeviceProximityEvent('eventType', { max: 0 }).max", "0");
+shouldBe("new DeviceProximityEvent('eventType', { max: 1 }).max", "1");
+shouldBe("new DeviceProximityEvent('eventType', { max: 1.79769313486231570E+308 }).max", "1.79769313486231570E+308");
+shouldBe("new DeviceProximityEvent('eventType', { max: -1.79769313486231570E+308 }).max", "-1.79769313486231570E+308");
+
+// Numbers out of the double range.
+shouldBe("new DeviceProximityEvent('eventType', { max: 1.8E+308 }).max", "Infinity");
+shouldBe("new DeviceProximityEvent('eventType', { max: -1.8E+308 }).max", "-Infinity");
+shouldBe("new DeviceProximityEvent('eventType', { max: 123.45 }).max", "123.45");
+shouldBe("new DeviceProximityEvent('eventType', { max: NaN }).max", "NaN");
+
+// Non-numeric maxs.
+shouldBe("new DeviceProximityEvent('eventType', { max: undefined }).max", "NaN");
+shouldBe("new DeviceProximityEvent('eventType', { max: null }).max", "0");
+shouldBe("new DeviceProximityEvent('eventType', { max: '' }).max", "0");
+shouldBe("new DeviceProximityEvent('eventType', { max: '12345' }).max", "12345");
+shouldBe("new DeviceProximityEvent('eventType', { max: '12345a' }).max", "NaN");
+shouldBe("new DeviceProximityEvent('eventType', { max: 'abc' }).max", "NaN");
+shouldBe("new DeviceProximityEvent('eventType', { max: [] }).max", "0");
+shouldBe("new DeviceProximityEvent('eventType', { max: [12345] }).max", "12345");
+shouldBe("new DeviceProximityEvent('eventType', { max: [12345, 67890] }).max", "NaN");
+shouldBe("new DeviceProximityEvent('eventType', { max: {} }).max", "NaN");
+shouldBe("new DeviceProximityEvent('eventType', { max: {moemoe: 12345} }).max", "NaN");
+shouldBe("new DeviceProximityEvent('eventType', { max: {valueOf: function () { return 12345; }} }).max", "12345");
+
+// All initializers are passed.
+shouldBe("new DeviceProximityEvent('eventType', { bubbles: true, cancelable: true, value: 1000, min: 0, max: 10000 }).bubbles", "true");
+shouldBe("new DeviceProximityEvent('eventType', { bubbles: true, cancelable: true, value: 1000, min: 0, max: 10000 }).cancelable", "true");
+shouldBe("new DeviceProximityEvent('eventType', { bubbles: true, cancelable: true, value: 1000, min: 0, max: 10000 }).value", "1000");
+shouldBe("new DeviceProximityEvent('eventType', { bubbles: true, cancelable: true, value: 1000, min: 0, max: 10000 }).min", "0");
+shouldBe("new DeviceProximityEvent('eventType', { bubbles: true, cancelable: true, value: 1000, min: 0, max: 10000 }).max", "10000");
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,0 +1,83 @@
+This tests the constructor for the DeviceProximityEvent DOM class.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS new DeviceProximityEvent('eventType').bubbles is true
+PASS new DeviceProximityEvent('eventType').cancelable is false
+PASS new DeviceProximityEvent('eventType').value is Infinity
+PASS new DeviceProximityEvent('eventType').min is -Infinity
+PASS new DeviceProximityEvent('eventType').max is Infinity
+PASS new DeviceProximityEvent('eventType', { bubbles: false }).bubbles is false
+PASS new DeviceProximityEvent('eventType', { bubbles: true }).bubbles is true
+PASS new DeviceProximityEvent('eventType', { cancelable: false }).cancelable is false
+PASS new DeviceProximityEvent('eventType', { cancelable: true }).cancelable is true
+PASS new DeviceProximityEvent('eventType', { value: 0 }).value is 0
+PASS new DeviceProximityEvent('eventType', { value: 1 }).value is 1
+PASS new DeviceProximityEvent('eventType', { value: 1.79769313486231570E+308 }).value is 1.79769313486231570E+308
+PASS new DeviceProximityEvent('eventType', { value: -1.79769313486231570E+308 }).value is -1.79769313486231570E+308
+PASS new DeviceProximityEvent('eventType', { value: 1.8E+308 }).value is Infinity
+PASS new DeviceProximityEvent('eventType', { value: -1.8E+308 }).value is -Infinity
+PASS new DeviceProximityEvent('eventType', { value: 123.45 }).value is 123.45
+PASS new DeviceProximityEvent('eventType', { value: NaN }).value is NaN
+PASS new DeviceProximityEvent('eventType', { value: undefined }).value is NaN
+PASS new DeviceProximityEvent('eventType', { value: null }).value is 0
+PASS new DeviceProximityEvent('eventType', { value: '' }).value is 0
+PASS new DeviceProximityEvent('eventType', { value: '12345' }).value is 12345
+PASS new DeviceProximityEvent('eventType', { value: '12345a' }).value is NaN
+PASS new DeviceProximityEvent('eventType', { value: 'abc' }).value is NaN
+PASS new DeviceProximityEvent('eventType', { value: [] }).value is 0
+PASS new DeviceProximityEvent('eventType', { value: [12345] }).value is 12345
+PASS new DeviceProximityEvent('eventType', { value: [12345, 67890] }).value is NaN
+PASS new DeviceProximityEvent('eventType', { value: {} }).value is NaN
+PASS new DeviceProximityEvent('eventType', { value: {moemoe: 12345} }).value is NaN
+PASS new DeviceProximityEvent('eventType', { value: {valueOf: function () { return 12345; }} }).value is 12345
+PASS new DeviceProximityEvent('eventType', { min: 0 }).min is 0
+PASS new DeviceProximityEvent('eventType', { min: 1 }).min is 1
+PASS new DeviceProximityEvent('eventType', { min: 1.79769313486231570E+308 }).min is 1.79769313486231570E+308
+PASS new DeviceProximityEvent('eventType', { min: -1.79769313486231570E+308 }).min is -1.79769313486231570E+308
+PASS new DeviceProximityEvent('eventType', { min: 1.8E+308 }).min is Infinity
+PASS new DeviceProximityEvent('eventType', { min: -1.8E+308 }).min is -Infinity
+PASS new DeviceProximityEvent('eventType', { min: 123.45 }).min is 123.45
+PASS new DeviceProximityEvent('eventType', { min: NaN }).min is NaN
+PASS new DeviceProximityEvent('eventType', { min: undefined }).min is NaN
+PASS new DeviceProximityEvent('eventType', { min: null }).min is 0
+PASS new DeviceProximityEvent('eventType', { min: '' }).min is 0
+PASS new DeviceProximityEvent('eventType', { min: '12345' }).min is 12345
+PASS new DeviceProximityEvent('eventType', { min: '12345a' }).min is NaN
+PASS new DeviceProximityEvent('eventType', { min: 'abc' }).min is NaN
+PASS new DeviceProximityEvent('eventType', { min: [] }).min is 0
+PASS new DeviceProximityEvent('eventType', { min: [12345] }).min is 12345
+PASS new DeviceProximityEvent('eventType', { min: [12345, 67890] }).min is NaN
+PASS new DeviceProximityEvent('eventType', { min: {} }).min is NaN
+PASS new DeviceProximityEvent('eventType', { min: {moemoe: 12345} }).min is NaN
+PASS new DeviceProximityEvent('eventType', { min: {valueOf: function () { return 12345; }} }).min is 12345
+PASS new DeviceProximityEvent('eventType', { max: 0 }).max is 0
+PASS new DeviceProximityEvent('eventType', { max: 1 }).max is 1
+PASS new DeviceProximityEvent('eventType', { max: 1.79769313486231570E+308 }).max is 1.79769313486231570E+308
+PASS new DeviceProximityEvent('eventType', { max: -1.79769313486231570E+308 }).max is -1.79769313486231570E+308
+PASS new DeviceProximityEvent('eventType', { max: 1.8E+308 }).max is Infinity
+PASS new DeviceProximityEvent('eventType', { max: -1.8E+308 }).max is -Infinity
+PASS new DeviceProximityEvent('eventType', { max: 123.45 }).max is 123.45
+PASS new DeviceProximityEvent('eventType', { max: NaN }).max is NaN
+PASS new DeviceProximityEvent('eventType', { max: undefined }).max is NaN
+PASS new DeviceProximityEvent('eventType', { max: null }).max is 0
+PASS new DeviceProximityEvent('eventType', { max: '' }).max is 0
+PASS new DeviceProximityEvent('eventType', { max: '12345' }).max is 12345
+PASS new DeviceProximityEvent('eventType', { max: '12345a' }).max is NaN
+PASS new DeviceProximityEvent('eventType', { max: 'abc' }).max is NaN
+PASS new DeviceProximityEvent('eventType', { max: [] }).max is 0
+PASS new DeviceProximityEvent('eventType', { max: [12345] }).max is 12345
+PASS new DeviceProximityEvent('eventType', { max: [12345, 67890] }).max is NaN
+PASS new DeviceProximityEvent('eventType', { max: {} }).max is NaN
+PASS new DeviceProximityEvent('eventType', { max: {moemoe: 12345} }).max is NaN
+PASS new DeviceProximityEvent('eventType', { max: {valueOf: function () { return 12345; }} }).max is 12345
+PASS new DeviceProximityEvent('eventType', { bubbles: true, cancelable: true, value: 1000, min: 0, max: 10000 }).bubbles is true
+PASS new DeviceProximityEvent('eventType', { bubbles: true, cancelable: true, value: 1000, min: 0, max: 10000 }).cancelable is true
+PASS new DeviceProximityEvent('eventType', { bubbles: true, cancelable: true, value: 1000, min: 0, max: 10000 }).value is 1000
+PASS new DeviceProximityEvent('eventType', { bubbles: true, cancelable: true, value: 1000, min: 0, max: 10000 }).min is 0
+PASS new DeviceProximityEvent('eventType', { bubbles: true, cancelable: true, value: 1000, min: 0, max: 10000 }).max is 10000
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

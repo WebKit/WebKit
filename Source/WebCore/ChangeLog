@@ -1,3 +1,42 @@
+2012-08-06  Kihong Kwon  <kihong.kwon@samsung.com>
+
+        Add DeviceProximityEvent interface
+        https://bugs.webkit.org/show_bug.cgi?id=92942
+
+        Reviewed by Kentaro Hara.
+
+        Spec : http://www.w3.org/TR/proximity/#idl-def-DeviceProximityEvent
+
+        Add DeviceProximityEvent interface of Proximity Events.
+        And add onwebkitdeviceproximity event handler to the DOMWindow.
+
+        Tests: fast/dom/Proximity/check-event-deviceproximity.html
+               fast/dom/Proximity/create-event-deviceproximity.html
+               fast/events/constructors/device-proximity-event-constructor.html
+
+        * CMakeLists.txt:
+        * Modules/proximity/DeviceProximityEvent.cpp: Added.
+        (WebCore):
+        (WebCore::DeviceProximityEvent::DeviceProximityEvent):
+        * Modules/proximity/DeviceProximityEvent.h: Added.
+        (WebCore):
+        (WebCore::DeviceProximityEventInit::DeviceProximityEventInit):
+        (DeviceProximityEventInit):
+        (DeviceProximityEvent):
+        (WebCore::DeviceProximityEvent::~DeviceProximityEvent):
+        (WebCore::DeviceProximityEvent::create):
+        (WebCore::DeviceProximityEvent::value):
+        (WebCore::DeviceProximityEvent::min):
+        (WebCore::DeviceProximityEvent::max):
+        (WebCore::DeviceProximityEvent::interfaceName):
+        * Modules/proximity/DeviceProximityEvent.idl: Added.
+        * dom/EventNames.h:
+        (WebCore):
+        * dom/EventNames.in:
+        * page/DOMWindow.h:
+        (DOMWindow):
+        * page/DOMWindow.idl:
+
 2012-08-06  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix make distcheck.

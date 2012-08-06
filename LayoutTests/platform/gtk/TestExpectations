@@ -393,6 +393,11 @@ BUGWK84186 SKIP : fast/text-autosizing = PASS
 
 // Dialog element is not yet enabled.
 BUGWK84635 SKIP : fast/dom/HTMLDialogElement = TEXT
+
+// Proximity Events is not supported.
+BUGWK92942 SKIP : fast/dom/Proximity = PASS
+BUGWK92942 SKIP : fast/events/constructors/device-proximity-event-constructor.html = PASS
+
 //////////////////////////////////////////////////////////////////////////////////////////
 // End of Expected failures
 //////////////////////////////////////////////////////////////////////////////////////////

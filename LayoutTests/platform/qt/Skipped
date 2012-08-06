@@ -495,6 +495,10 @@ http/tests/security/video-cross-origin-readback.html
 # https://bugs.webkit.org/show_bug.cgi?id=85558
 http/tests/security/contentSecurityPolicy/1.1
 
+# Proximity Events is now supported.
+fast/dom/Proximity
+fast/events/constructors/device-proximity-event-constructor.html
+
 # =========================================================================== #
 #       Drag and Drop Support in DRT.                                         #
 # =========================================================================== #

@@ -1,0 +1,29 @@
+<html>
+<head>
+<script src="../../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="result"></div>
+<div id="console"></div>
+<script>
+description('Tests that document.createEvent() works with deviceproximity');
+
+function handleDeviceProximity()
+{
+    testPassed("deviceproximity event is called properly.");
+}
+
+window.addEventListener('webkitdeviceproximity', handleDeviceProximity, false);
+
+try {
+    var event = document.createEvent("DeviceProximityEvent");
+    event.initEvent("webkitdeviceproximity", false, false);
+    window.dispatchEvent(event);
+} catch(e) {
+    testFailed("deviceproximity event doesn't appear to be enabled or implemented.");
+}
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>

@@ -238,6 +238,8 @@ namespace WebCore {
     \
     macro(webkitresourcetimingbufferfull) \
     \
+    macro(webkitdeviceproximity) \
+    \
 
 // end of DOM_EVENT_NAMES_FOR_EACH
 
