@@ -161,9 +161,6 @@ http/tests/appcache/origin-usage.html
 # EFL's LayoutTestController does not implement originsWithApplicationCache
 http/tests/appcache/origins-with-appcache.html
 
-# EFL's LayoutTestController does not implement removeAllVisitedLinks
-http/tests/globalhistory/history-delegate-basic-visited-links.html
-
 # EFL's LayoutTestController does not implement shadowPseudoId
 media/video-controls-transformed.html
 media/video-controls-visible-audio-only.html

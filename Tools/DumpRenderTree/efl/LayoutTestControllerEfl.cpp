@@ -786,7 +786,11 @@ void LayoutTestController::evaluateScriptInIsolatedWorld(unsigned worldID, JSObj
 
 void LayoutTestController::removeAllVisitedLinks()
 {
-    notImplemented();
+    Ewk_History* history = ewk_view_history_get(browser->mainView());
+    if (!history)
+        return;
+
+    ewk_history_clear(history);
 }
 
 bool LayoutTestController::callShouldCloseOnWebView()
