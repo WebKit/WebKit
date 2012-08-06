@@ -1,3 +1,19 @@
+2012-08-06  Abhishek Arya  <inferno@chromium.org>
+
+        Crash in FrameLoader::stopAllLoaders.
+        https://bugs.webkit.org/show_bug.cgi?id=90805
+
+        Reviewed by Nate Chapin.
+
+        Calling m_provisionalDocumentLoader->stopLoading() can blow away the frame
+        from underneath. Protect it with a RefPtr.
+
+        No new tests. We don't have a reliable testcase to reproduce this. However,
+        the crash and free stack from ClusterFuzz point clearly at the bug.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::stopAllLoaders):
+
 2012-08-06  Hironori Bono  <hbono@chromium.org>
 
         Rolling out my r123067 and r123572
