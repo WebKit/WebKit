@@ -794,3 +794,13 @@ void WKPreferencesResetTestRunnerOverrides(WKPreferencesRef preferencesRef)
     // are usually always the same (in the UI process), they are not sent to web process, not triggering the reset.
     toImpl(preferencesRef)->forceUpdate();
 }
+
+void WKPreferencesSetDiagnosticLoggingEnabled(WKPreferencesRef preferencesRef, bool enabled)
+{
+    toImpl(preferencesRef)->setDiagnosticLoggingEnabled(enabled);
+}
+
+bool WKPreferencesGetDiagnosticLoggingEnabled(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->diagnosticLoggingEnabled();
+}

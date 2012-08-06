@@ -111,6 +111,7 @@ namespace WebKit {
     macro(NotificationsEnabled, notificationsEnabled, Bool, bool, true) \
     macro(ShouldRespectImageOrientation, shouldRespectImageOrientation, Bool, bool, false) \
     macro(WantsBalancedSetDefersLoadingBehavior, wantsBalancedSetDefersLoadingBehavior, Bool, bool, false) \
+    macro(DiagnosticLoggingEnabled, diagnosticLoggingEnabled, Bool, bool, false) \
     \
 
 #define FOR_EACH_WEBKIT_DOUBLE_PREFERENCE(macro) \

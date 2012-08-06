@@ -267,6 +267,7 @@ Settings::Settings(Page* page)
     , m_shouldRespectImageOrientation(false)
     , m_wantsBalancedSetDefersLoadingBehavior(false)
     , m_needsDidFinishLoadOrderQuirk(false)
+    , m_diagnosticLoggingEnabled(false)
     , m_loadsImagesAutomaticallyTimer(this, &Settings::loadsImagesAutomaticallyTimerFired)
     , m_incrementalRenderingSuppressionTimeoutInSeconds(defaultIncrementalRenderingSuppressionTimeoutInSeconds)
 {

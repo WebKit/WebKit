@@ -398,6 +398,7 @@ static WebCacheModel cacheModelForMainBundle(void)
         [NSNumber numberWithBool:YES],  WebKitNotificationsEnabledKey,
         [NSNumber numberWithBool:NO],   WebKitShouldRespectImageOrientationKey,
         [NSNumber numberWithBool:NO],   WebKitWantsBalancedSetDefersLoadingBehaviorKey,
+        [NSNumber numberWithBool:NO],   WebKitDiagnosticLoggingEnabledKey,
 
         [NSNumber numberWithLongLong:ApplicationCacheStorage::noQuota()], WebKitApplicationCacheTotalQuota,
         [NSNumber numberWithLongLong:ApplicationCacheStorage::noQuota()], WebKitApplicationCacheDefaultOriginQuota,
@@ -1695,6 +1696,16 @@ static NSString *classIBCreatorID = nil;
 - (NSTimeInterval)incrementalRenderingSuppressionTimeoutInSeconds
 {
     return [self _floatValueForKey:WebKitIncrementalRenderingSuppressionTimeoutInSecondsKey];
+}
+
+- (BOOL)diagnosticLoggingEnabled
+{
+    return [self _boolValueForKey:WebKitDiagnosticLoggingEnabledKey];
+}
+
+- (void)setDiagnosticLoggingEnabled:(BOOL)enabled
+{
+    [self _setBoolValue:enabled forKey:WebKitDiagnosticLoggingEnabledKey];
 }
 
 @end

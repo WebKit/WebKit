@@ -301,4 +301,7 @@ extern NSString *WebPreferencesChangedInternalNotification;
 - (void)setIncrementalRenderingSuppressionTimeoutInSeconds:(NSTimeInterval)timeout;
 - (NSTimeInterval)incrementalRenderingSuppressionTimeoutInSeconds;
 
+- (BOOL)diagnosticLoggingEnabled;
+- (void)setDiagnosticLoggingEnabled:(BOOL)enabled;
+
 @end

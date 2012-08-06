@@ -2028,6 +2028,8 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
 
     settings->setShouldRespectImageOrientation(store.getBoolValueForKey(WebPreferencesKey::shouldRespectImageOrientationKey()));
 
+    settings->setDiagnosticLoggingEnabled(store.getBoolValueForKey(WebPreferencesKey::diagnosticLoggingEnabledKey()));
+
     platformPreferencesDidChange(store);
 
     if (m_drawingArea)
