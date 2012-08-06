@@ -1,3 +1,15 @@
+2012-08-06  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION(r124692): webarchive/loading/javascript-url-iframe-crash.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=93190
+
+        Reviewed by Adam Barth.
+
+        Apparently we can't just edit the markup in a webarchive file. Re-generated webarchive file
+        from a locally copied markup.
+
+        * webarchive/loading/resources/javascript-url-iframe-crash.webarchive:
+
 2012-08-06  Hironori Bono  <hbono@chromium.org>
 
         Rolling out for r123067 and r123572
