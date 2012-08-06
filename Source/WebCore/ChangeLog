@@ -1,3 +1,35 @@
+2012-08-06  Beth Dakin  <bdakin@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=93199
+        REGRESSION (r124489): Crash in FrameView::scrollContentsFastPath when 
+        scrolling Facebook and Google image search
+        -and corresponding-
+        <rdar://problem/12035066>
+
+        Reviewed by Anders Carlsson.
+
+        As the comment in setShouldUpdateScrollLayerPositionOnMainThread() 
+        indicates, the goal of adding a call to 
+        updateMainFrameScrollPositionAndScrollLayerPosition() within that 
+        function was just to make sure the layer position was up-to-date 
+        since that is what is not kept up to date when scrolling is happening 
+        on the scrolling thread. So I'm fixing this crash by having that code 
+        ONLY update the layer position instead of also updating the scroll 
+        position, since it was updating the scroll position that led to this 
+        crash.
+
+        New function updateMainFrameScrollLayerPosition() will update JUST 
+        the layer position.
+        * page/scrolling/ScrollingCoordinator.h:
+        (ScrollingCoordinator):        
+        * page/scrolling/ScrollingCoordinator.cpp:
+        (WebCore::ScrollingCoordinator::updateMainFrameScrollLayerPosition):
+
+        Update just the layer position here instead of the layer position and 
+        the scroll position.
+        (WebCore)::
+(WebCore::ScrollingCoordinator::setShouldUpdateScrollLayerPositionOnMainThread):
+
 2012-08-06  Anna Cavender  <annacc@chromium.org>
 
         MediaSource should use it's own list of source URLs
