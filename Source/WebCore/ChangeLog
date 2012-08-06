@@ -1,3 +1,36 @@
+2012-08-06  Vineet Chaudhary  <rgf748@motorola.com>
+
+        [JSC] Remove custom JSBindings for constructArrayBufferView()
+        https://bugs.webkit.org/show_bug.cgi?id=93097
+
+        Reviewed by Kentaro Hara.
+
+        Currently TypedArray files have the custom implementation of constructArrayBufferView().
+        We can can remove these modifying CodeGeneratorJS.pm
+
+        Tests: TestTypedArray.idl
+
+        * bindings/js/JSFloat32ArrayCustom.cpp: Removed custom call constructArrayBufferView().
+        * bindings/js/JSFloat64ArrayCustom.cpp: Ditto.
+        * bindings/js/JSInt16ArrayCustom.cpp: Ditto.
+        * bindings/js/JSInt32ArrayCustom.cpp: Ditto.
+        * bindings/js/JSUint16ArrayCustom.cpp: Ditto.
+        * bindings/js/JSUint32ArrayCustom.cpp: Ditto.
+        * bindings/scripts/CodeGeneratorJS.pm: Modified Generator code to generate bindings for
+        constructArrayBufferView()
+        (GenerateConstructorDefinition):
+        * bindings/scripts/IDLAttributes.txt: Added [TypedArray] attribute.
+        * bindings/scripts/test/JS/JSFloat64Array.cpp: Tests result.
+        (WebCore::JSFloat64ArrayConstructor::getConstructData):
+        (WebCore::JSFloat64ArrayConstructor::constructJSFloat64Array):
+        * bindings/scripts/test/TestTypedArray.idl: Test.
+        * html/canvas/Float32Array.idl: Using [TypedArray].
+        * html/canvas/Float64Array.idl: Ditto.
+        * html/canvas/Int16Array.idl: Ditto.
+        * html/canvas/Int32Array.idl: Ditto.
+        * html/canvas/Uint16Array.idl: Ditto.
+        * html/canvas/Uint32Array.idl: Ditto.
+
 2012-08-06  Shinya Kawanaka  <shinyak@chromium.org>
 
         AuthorShadowDOM for progress element

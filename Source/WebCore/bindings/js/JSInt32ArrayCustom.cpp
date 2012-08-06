@@ -48,14 +48,4 @@ JSC::JSValue JSInt32Array::set(JSC::ExecState* exec)
     return setWebGLArrayHelper<Int32Array, int>(exec, impl());
 }
 
-EncodedJSValue JSC_HOST_CALL JSInt32ArrayConstructor::constructJSInt32Array(ExecState* exec)
-{
-    JSInt32ArrayConstructor* jsConstructor = jsCast<JSInt32ArrayConstructor*>(exec->callee());
-    RefPtr<Int32Array> array = constructArrayBufferView<Int32Array, int>(exec);
-    if (!array.get())
-        // Exception has already been thrown.
-        return JSValue::encode(JSValue());
-    return JSValue::encode(asObject(toJS(exec, jsConstructor->globalObject(), array.get())));
-}
-
 } // namespace WebCore

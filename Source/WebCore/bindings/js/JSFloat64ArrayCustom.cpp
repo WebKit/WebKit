@@ -48,14 +48,4 @@ JSC::JSValue JSFloat64Array::set(JSC::ExecState* exec)
     return setWebGLArrayHelper<Float64Array, double>(exec, impl());
 }
 
-EncodedJSValue JSC_HOST_CALL JSFloat64ArrayConstructor::constructJSFloat64Array(ExecState* exec)
-{
-    JSFloat64ArrayConstructor* jsConstructor = jsCast<JSFloat64ArrayConstructor*>(exec->callee());
-    RefPtr<Float64Array> array = constructArrayBufferView<Float64Array, double>(exec);
-    if (!array.get())
-        // Exception has already been thrown.
-        return JSValue::encode(JSValue());
-    return JSValue::encode(asObject(toJS(exec, jsConstructor->globalObject(), array.get())));
-}
-
 } // namespace WebCore

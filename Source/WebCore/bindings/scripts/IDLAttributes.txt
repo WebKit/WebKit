@@ -106,6 +106,7 @@ TransferList=*
 TreatNullAs=NullString
 TreatReturnedNullStringAs=False|Null|Undefined
 TreatUndefinedAs=NullString
+TypedArray=*
 URL
 V8Custom
 V8CustomConstructor

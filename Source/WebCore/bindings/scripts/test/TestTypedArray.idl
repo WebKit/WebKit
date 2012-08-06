@@ -33,7 +33,8 @@ module html {
         JSGenerateToNativeObject,
         JSNoStaticTables,
         CustomToJSObject,
-        DoNotCheckConstants
+        DoNotCheckConstants,
+        TypedArray=double
     ] Float64Array : ArrayBufferView {
         Int32Array foo(in Float32Array array);
     };

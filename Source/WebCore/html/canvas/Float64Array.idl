@@ -33,7 +33,8 @@ module html {
         JSGenerateToNativeObject,
         JSNoStaticTables,
         CustomToJSObject,
-        DoNotCheckConstants
+        DoNotCheckConstants,
+        TypedArray=double
     ] Float64Array : ArrayBufferView {
         const unsigned long BYTES_PER_ELEMENT = 8;
 
