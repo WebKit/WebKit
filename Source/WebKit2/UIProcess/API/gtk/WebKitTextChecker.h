@@ -26,6 +26,7 @@
 #include <wtf/FastAllocBase.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/Vector.h>
+#include <wtf/text/CString.h>
 
 class WebKitTextChecker {
     WTF_MAKE_FAST_ALLOCATED;
@@ -43,14 +44,14 @@ public:
     void ignoreWord(const String& word);
 
     // To be called from WebKitWebContext only.
-    const String getSpellCheckingLanguages() { return m_spellCheckingLanguages; }
-    void setSpellCheckingLanguages(const String& spellCheckingLanguages);
+    const CString& getSpellCheckingLanguages();
+    void setSpellCheckingLanguages(const CString& spellCheckingLanguages);
 
 private:
     WebKitTextChecker();
 
     OwnPtr<WebCore::TextCheckerEnchant> m_textChecker;
-    String m_spellCheckingLanguages;
+    CString m_spellCheckingLanguages;
     bool m_spellCheckingEnabled;
 };
 

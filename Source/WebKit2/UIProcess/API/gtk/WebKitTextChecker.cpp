@@ -140,13 +140,15 @@ void WebKitTextChecker::setSpellCheckingEnabled(bool enabled)
     WKTextCheckerContinuousSpellCheckingEnabledStateChanged(enabled);
 }
 
-void WebKitTextChecker::setSpellCheckingLanguages(const String& languages)
+const CString& WebKitTextChecker::getSpellCheckingLanguages()
 {
-    if (m_spellCheckingLanguages == languages)
-        return;
-    m_spellCheckingLanguages = languages;
+    String spellCheckingLanguages = m_textChecker->getSpellCheckingLanguages();
+    m_spellCheckingLanguages = spellCheckingLanguages.isEmpty() ? CString() : spellCheckingLanguages.utf8();
+    return m_spellCheckingLanguages;
+}
 
-    // We need to update the languages in the enchant-based checker too.
-    m_textChecker->updateSpellCheckingLanguages(languages);
+void WebKitTextChecker::setSpellCheckingLanguages(const CString& languages)
+{
+    m_textChecker->updateSpellCheckingLanguages(String::fromUTF8(languages.data()));
 }
 #endif // ENABLE(SPELLCHECK)

@@ -24,12 +24,13 @@
 #include <pango/pango.h>
 #include <wtf/gobject/GOwnPtr.h>
 #include <wtf/text/CString.h>
+#include <wtf/text/StringBuilder.h>
 
 using namespace WebCore;
 
 static const size_t maximumNumberOfSuggestions = 10;
 
-static void getAvailableDictionariesCallback(const char* const languageTag, const char* const, const char* const, const char* const, void* data)
+static void enchantDictDescribeCallback(const char* const languageTag, const char* const, const char* const, const char* const, void* data)
 {
     Vector<CString>* dictionaries = static_cast<Vector<CString>*>(data);
     dictionaries->append(languageTag);
@@ -176,7 +177,7 @@ void TextCheckerEnchant::updateSpellCheckingLanguages(const String& languages)
         } else {
             // No dictionaries selected, we get one from the list.
             Vector<CString> allDictionaries;
-            enchant_broker_list_dicts(m_broker, getAvailableDictionariesCallback, &allDictionaries);
+            enchant_broker_list_dicts(m_broker, enchantDictDescribeCallback, &allDictionaries);
             if (!allDictionaries.isEmpty()) {
                 EnchantDict* dict = enchant_broker_request_dict(m_broker, allDictionaries[0].data());
                 spellDictionaries.append(dict);
@@ -185,6 +186,26 @@ void TextCheckerEnchant::updateSpellCheckingLanguages(const String& languages)
     }
     freeEnchantBrokerDictionaries();
     m_enchantDictionaries = spellDictionaries;
+}
+
+String TextCheckerEnchant::getSpellCheckingLanguages()
+{
+    if (m_enchantDictionaries.isEmpty())
+        return String();
+
+    // Get a Vector<CString> with the list of languages in use.
+    Vector<CString> currentDictionaries;
+    for (Vector<EnchantDict*>::const_iterator iter = m_enchantDictionaries.begin(); iter != m_enchantDictionaries.end(); ++iter)
+        enchant_dict_describe(*iter, enchantDictDescribeCallback, &currentDictionaries);
+
+    // Build the result String;
+    StringBuilder builder;
+    for (Vector<CString>::const_iterator iter = currentDictionaries.begin(); iter != currentDictionaries.end(); ++iter) {
+        if (iter != currentDictionaries.begin())
+            builder.append(",");
+        builder.append(String::fromUTF8(iter->data()));
+    }
+    return builder.toString();
 }
 
 void TextCheckerEnchant::freeEnchantBrokerDictionaries()

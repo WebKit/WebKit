@@ -77,7 +77,6 @@ struct _WebKitWebContextPrivate {
 #endif
 #if ENABLE(SPELLCHECK)
     OwnPtr<WebKitTextChecker> textChecker;
-    GOwnPtr<gchar> spellCheckingLanguages;
 #endif
 };
 
@@ -432,7 +431,7 @@ void webkit_web_context_register_uri_scheme(WebKitWebContext* context, const cha
  * webkit_web_context_get_spell_checking_enabled:
  * @context: a #WebKitWebContext
  *
- * Get the current status of the spell checking feature.
+ * Get whether spell checking feature is currently enabled.
  *
  * Returns: %TRUE If spell checking is enabled, or %FALSE otherwise.
  */
@@ -468,18 +467,24 @@ void webkit_web_context_set_spell_checking_enabled(WebKitWebContext* context, gb
  * @context: a #WebKitWebContext
  *
  * Get the the list of spell checking languages associated with
- * @context, separated by commas. See
- * webkit_web_context_set_spell_checking_languages() for more details
- * on the format of the languages in the list.
+ * @context separated by commas, or %NULL if no languages have been
+ * previously set.
+
+ * See webkit_web_context_set_spell_checking_languages() for more
+ * details on the format of the languages in the list.
  *
- * Returns: (transfer none): A comma separated list of languages.
+ * Returns: (transfer none): A comma separated list of languages if
+ * available, or %NULL otherwise.
  */
 const gchar* webkit_web_context_get_spell_checking_languages(WebKitWebContext* context)
 {
     g_return_val_if_fail(WEBKIT_IS_WEB_CONTEXT(context), 0);
 
 #if ENABLE(SPELLCHECK)
-    return context->priv->spellCheckingLanguages.get();
+    CString spellCheckingLanguages = context->priv->textChecker->getSpellCheckingLanguages();
+    if (spellCheckingLanguages.isNull())
+        return 0;
+    return spellCheckingLanguages.data();
 #else
     return 0;
 #endif
@@ -488,25 +493,28 @@ const gchar* webkit_web_context_get_spell_checking_languages(WebKitWebContext* c
 /**
  * webkit_web_context_set_spell_checking_languages:
  * @context: a #WebKitWebContext
- * @languages: (allow-none): new list of spell checking
- * languages separated by commas, or %NULL
+ * @languages: new list of spell checking languages separated by
+ * commas
  *
  * Set the list of spell checking languages to be used for spell
- * checking, separated by commas. In case %NULL is passed, the default
- * value as returned by gtk_get_default_language() will be used.
+ * checking, separated by commas.
  *
  * The locale string typically is in the form lang_COUNTRY, where lang
  * is an ISO-639 language code, and COUNTRY is an ISO-3166 country code.
  * For instance, sv_FI for Swedish as written in Finland or pt_BR
  * for Portuguese as written in Brazil.
+ *
+ * You need to call this function with a valid list of languages at
+ * least once in order to properly enable the spell checking feature
+ * in WebKit.
  */
 void webkit_web_context_set_spell_checking_languages(WebKitWebContext* context, const gchar* languages)
 {
     g_return_if_fail(WEBKIT_IS_WEB_CONTEXT(context));
+    g_return_if_fail(languages);
 
 #if ENABLE(SPELLCHECK)
-    context->priv->textChecker->setSpellCheckingLanguages(String(languages));
-    context->priv->spellCheckingLanguages.set(g_strdup(languages));
+    context->priv->textChecker->setSpellCheckingLanguages(languages);
 #endif
 }
 

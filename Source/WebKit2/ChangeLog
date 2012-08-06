@@ -1,3 +1,32 @@
+2012-08-06  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        [WK2][GTK] Improvements for the new spell-checking API
+        https://bugs.webkit.org/show_bug.cgi?id=93262
+
+        Reviewed by Carlos Garcia Campos.
+
+        Improve the way the new spell-checking API is implemented, by
+        using better internal representations for data, documenting better
+        the new functions and using better unit tests.
+
+        * UIProcess/API/gtk/WebKitTextChecker.cpp:
+        (WebKitTextChecker::getSpellCheckingLanguages): Just return the
+        value previously cached when calling to the setter function.
+        (WebKitTextChecker::setSpellCheckingLanguages): Update the text
+        checker in WebCore and cache the value returned from it.
+        * UIProcess/API/gtk/WebKitTextChecker.h:
+        (WebKitTextChecker): Use a CString instead of an String to cache
+        the list of spell checking languages. Update getter and setter.
+        * UIProcess/API/gtk/WebKitWebContext.cpp:
+        (_WebKitWebContextPrivate): No need to cache the spell checking
+        languages here anymore.
+        (webkit_web_context_get_spell_checking_languages): Improve
+        both implementation and documentation to be more consistent.
+        (webkit_web_context_set_spell_checking_languages): Make
+        'languages' a mandatory (non-NULL) parameter. Update documentation.
+        * UIProcess/API/gtk/tests/TestWebKitWebContext.cpp:
+        (testWebContextSpellChecker): Test even more situations.
+
 2012-08-06  Andras Becsi  <andras.becsi@nokia.com>
 
         [Qt][WK2] Remove workarounds from input event handling
