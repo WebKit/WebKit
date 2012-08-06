@@ -97,11 +97,6 @@ def run(port, options, args, regular_output=sys.stderr, buildbot_output=sys.stdo
         for warning in warnings:
             _log.warning(warning)
 
-        if options.help_printing:
-            printer.help_printing()
-            printer.cleanup()
-            return 0
-
         if options.lint_test_files:
             return lint(port, options)
 
@@ -485,7 +480,7 @@ def main(argv=None):
         traceback.print_exc(file=sys.stderr)
         raise
 
-    logging.getLogger().setLevel(logging.DEBUG if options.verbose else logging.INFO)
+    logging.getLogger().setLevel(logging.DEBUG if options.debug_rwt_logging else logging.INFO)
     return run(port, options, args)
 
 

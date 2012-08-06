@@ -60,10 +60,7 @@ from webkitpy.tool.mocktool import MockOptions
 
 def parse_args(extra_args=None, record_results=False, tests_included=False, new_results=False, print_nothing=True):
     extra_args = extra_args or []
-    if print_nothing:
-        args = ['--print', 'nothing']
-    else:
-        args = []
+    args = []
     if not '--platform' in extra_args:
         args.extend(['--platform', 'test'])
     if not record_results:
@@ -95,7 +92,7 @@ def passing_run(extra_args=None, port_obj=None, record_results=False, tests_incl
     buildbot_output = StringIO.StringIO()
     regular_output = StringIO.StringIO()
     res = run_webkit_tests.run(port_obj, options, parsed_args, buildbot_output=buildbot_output, regular_output=regular_output)
-    return res == 0 and not regular_output.getvalue() and not buildbot_output.getvalue()
+    return res == 0
 
 
 def logging_run(extra_args=None, port_obj=None, record_results=False, tests_included=False, host=None, new_results=False, shared_port=True):
@@ -185,9 +182,6 @@ unexpected_tests_count = 14
 class StreamTestingMixin(object):
     def assertContains(self, stream, string):
         self.assertTrue(string in stream.getvalue())
-
-    def assertContainsLine(self, stream, string):
-        self.assertTrue(string in stream.buflist)
 
     def assertEmpty(self, stream):
         self.assertFalse(stream.getvalue())
@@ -310,13 +304,13 @@ class MainTest(unittest.TestCase, StreamTestingMixin):
     def test_child_processes_2(self):
         if self.should_test_processes:
             _, _, regular_output, _ = logging_run(
-                ['--print', 'config', '--child-processes', '2'], shared_port=False)
+                ['--debug-rwt-logging', '--child-processes', '2'], shared_port=False)
             self.assertTrue(any(['Running 2 ' in line for line in regular_output.buflist]))
 
     def test_child_processes_min(self):
         if self.should_test_processes:
             _, _, regular_output, _ = logging_run(
-                ['--print', 'config', '--child-processes', '2', 'passes'],
+                ['--debug-rwt-logging', '--child-processes', '2', 'passes'],
                 tests_included=True, shared_port=False)
             self.assertTrue(any(['Running 1 ' in line for line in regular_output.buflist]))
 
@@ -349,12 +343,6 @@ class MainTest(unittest.TestCase, StreamTestingMixin):
         res, out, err, user = logging_run(['--full-results-html'])
         self.assertEqual(res, 0)
 
-    def test_help_printing(self):
-        res, out, err, user = logging_run(['--help-printing'])
-        self.assertEqual(res, 0)
-        self.assertEmpty(out)
-        self.assertNotEmpty(err)
-
     def test_hung_thread(self):
         res, out, err, user = logging_run(['--run-singly', '--time-out-ms=50',
                                           'failures/expected/hang.html'],
@@ -378,13 +366,13 @@ class MainTest(unittest.TestCase, StreamTestingMixin):
         res, out, err, user = logging_run(['resources'], tests_included=True)
         self.assertEqual(res, -1)
         self.assertEmpty(out)
-        self.assertContainsLine(err, 'No tests to run.\n')
+        self.assertContains(err, 'No tests to run.\n')
 
     def test_no_tests_found_2(self):
         res, out, err, user = logging_run(['foo'], tests_included=True)
         self.assertEqual(res, -1)
         self.assertEmpty(out)
-        self.assertContainsLine(err, 'No tests to run.\n')
+        self.assertContains(err, 'No tests to run.\n')
 
     def test_randomize_order(self):
         # FIXME: verify order was shuffled
@@ -439,11 +427,11 @@ class MainTest(unittest.TestCase, StreamTestingMixin):
         host = MockHost()
         res, out, err, _ = logging_run(['--iterations', '2',
                                         '--repeat-each', '4',
-                                        '--print', 'everything',
+                                        '--debug-rwt-logging',
                                         'passes/text.html', 'failures/expected/text.html'],
                                        tests_included=True, host=host, record_results=True)
-        self.assertContainsLine(out, "=> Results: 8/16 tests passed (50.0%)\n")
-        self.assertContainsLine(err, "All 16 tests ran as expected.\n")
+        self.assertContains(out, "=> Results: 8/16 tests passed (50.0%)\n")
+        self.assertContains(err, "All 16 tests ran as expected.\n")
 
     def test_run_chunk(self):
         # Test that we actually select the right chunk
@@ -863,7 +851,7 @@ class MainTest(unittest.TestCase, StreamTestingMixin):
         self.assertTrue(passing_run(['--additional-platform-directory', '/tmp/foo', '--additional-platform-directory', '/tmp/bar']))
 
         res, buildbot_output, regular_output, user = logging_run(['--additional-platform-directory', 'foo'])
-        self.assertContainsLine(regular_output, '--additional-platform-directory=foo is ignored since it is not absolute\n')
+        self.assertContains(regular_output, '--additional-platform-directory=foo is ignored since it is not absolute\n')
 
     def test_additional_expectations(self):
         host = MockHost()
@@ -989,7 +977,7 @@ class RebaselineTest(unittest.TestCase, StreamTestingMixin):
             baseline = file + "-expected" + ext
             baseline_msg = 'Writing new expected result "%s"\n' % baseline
             self.assertTrue(any(f.find(baseline) != -1 for f in file_list))
-            self.assertContainsLine(err, baseline_msg)
+            self.assertContains(err, baseline_msg)
 
     # FIXME: Add tests to ensure that we're *not* writing baselines when we're not
     # supposed to be.

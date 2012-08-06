@@ -40,113 +40,21 @@ from webkitpy.layout_tests.views.metered_stream import MeteredStream
 
 NUM_SLOW_TESTS_TO_LOG = 10
 
-PRINT_DEFAULT = "misc,one-line-progress,one-line-summary,unexpected,unexpected-results,updates"
+PRINT_QUIET = "one-line-progress,one-line-summary,unexpected,unexpected-results,updates"
+PRINT_DEFAULT = "config,misc,one-line-progress,one-line-summary,unexpected,unexpected-results,updates"
 PRINT_EVERYTHING = "actual,config,expected,misc,one-line-progress,one-line-summary,slowest,timing,unexpected,unexpected-results,updates"
-
-HELP_PRINTING = """
-Output for run-webkit-tests is controlled by a comma-separated list of
-values passed to --print.  Values either influence the overall output, or
-the output at the beginning of the run, during the run, or at the end:
-
-Overall options:
-    nothing             don't print anything. This overrides every other option
-    default             include the default options. This is useful for logging
-                        the default options plus additional settings.
-    everything          print (almost) everything (except the trace-* options,
-                        see below for the full list )
-    misc                print miscellaneous things like blank lines
-
-At the beginning of the run:
-    config              print the test run configuration
-    expected            print a summary of what is expected to happen
-                        (# passes, # failures, etc.)
-
-During the run:
-    one-line-progress   print a one-line progress message or bar
-    unexpected          print any unexpected results as they occur
-    updates             print updates on which stage is executing
-    trace-everything    print detailed info on every test's results
-                        (baselines, expectation, time it took to run). If
-                        this is specified it will override the '*-progress'
-                        options, the 'trace-unexpected' option, and the
-                        'unexpected' option.
-    trace-unexpected    like 'trace-everything', but only for tests with
-                        unexpected results. If this option is specified,
-                        it will override the 'unexpected' option.
-
-At the end of the run:
-    actual              print a summary of the actual results
-    slowest             print %(slowest)d slowest tests and the time they took
-    timing              print timing statistics
-    unexpected-results  print a list of the tests with unexpected results
-    one-line-summary    print a one-line summary of the run
-
-Notes:
-    - If 'nothing' is specified, it overrides all of the other options.
-    - Specifying --verbose is equivalent to --print everything plus it
-      changes the format of the log messages to add timestamps and other
-      information. If you specify --verbose and --print X, then X overrides
-      the --print everything implied by --verbose.
-
---print 'everything' is equivalent to --print '%(everything)s'.
-
-The default (--print default) is equivalent to --print '%(default)s'.
-""" % {'slowest': NUM_SLOW_TESTS_TO_LOG, 'everything': PRINT_EVERYTHING,
-       'default': PRINT_DEFAULT}
-
 
 def print_options():
     return [
-        # Note: We use print_options rather than just 'print' because print
-        # is a reserved word.
-        # Note: Also, we don't specify a default value so we can detect when
-        # no flag is specified on the command line and use different defaults
-        # based on whether or not --verbose is specified (since --print
-        # overrides --verbose).
-        optparse.make_option("--print", dest="print_options",
-            help=("controls print output of test run. "
-                  "Use --help-printing for more.")),
-        optparse.make_option("--help-printing", action="store_true",
-            help="show detailed help on controlling print output"),
-        optparse.make_option("-v", "--verbose", action="store_true",
-            default=False, help="include debug-level logging"),
-   ]
-
-
-def parse_print_options(print_options, verbose):
-    """Parse the options provided to --print and dedup and rank them.
-
-    Returns
-        a set() of switches that govern how logging is done
-
-    """
-    if print_options:
-        switches = set(print_options.split(','))
-    elif verbose:
-        switches = set(PRINT_EVERYTHING.split(','))
-    else:
-        switches = set(PRINT_DEFAULT.split(','))
-
-    if 'nothing' in switches:
-        return set()
-
-    if 'everything' in switches:
-        switches.discard('everything')
-        switches.update(set(PRINT_EVERYTHING.split(',')))
-
-    if 'default' in switches:
-        switches.discard('default')
-        switches.update(set(PRINT_DEFAULT.split(',')))
-
-    if 'trace-everything' in switches:
-        switches.discard('one-line-progress')
-        switches.discard('trace-unexpected')
-        switches.discard('unexpected')
-
-    if 'trace-unexpected' in switches:
-        switches.discard('unexpected')
-
-    return switches
+        optparse.make_option('-q', '--quiet', action='store_true', default=False,
+                             help='run quietly (errors, warnings, and progress only)'),
+        optparse.make_option('-v', '--verbose', action='store_true', default=False, dest='debug_rwt_logging',
+                             help='same as --debug-rwt-logging (for now)'),
+        optparse.make_option('--details', action='store_true', default=False,
+                             help='print detailed information about each test'),
+        optparse.make_option('--debug-rwt-logging', action='store_true', default=False,
+                             help='print timestamps and debug information for run-webkit-tests itself'),
+    ]
 
 
 class Printer(object):
@@ -175,8 +83,18 @@ class Printer(object):
         self._port = port
         self._options = options
         self._buildbot_stream = buildbot_output
-        self._meter = MeteredStream(regular_output, options.verbose, logger=logger)
-        self.switches = parse_print_options(options.print_options, options.verbose)
+
+        if options.debug_rwt_logging:
+            self.switches = PRINT_EVERYTHING.split(',')
+        elif options.quiet:
+            self.switches = PRINT_QUIET.split(',')
+        else:
+            self.switches = PRINT_DEFAULT.split(',')
+
+        if options.details:
+            self.switches.append('trace-everything')
+
+        self._meter = MeteredStream(regular_output, options.debug_rwt_logging, logger=logger)
 
     def cleanup(self):
         self._meter.cleanup()
@@ -190,9 +108,6 @@ class Printer(object):
 
     def enabled(self, option):
         return option in self.switches
-
-    def help_printing(self):
-        self._write(HELP_PRINTING)
 
     def print_config(self):
         """Prints the configuration for the test run."""
@@ -696,7 +611,7 @@ class Printer(object):
                 self._buildbot_stream.write("\n")
             self._buildbot_stream.write("\n")
 
-        if len(unexpected_results['tests']) and self._options.verbose:
+        if len(unexpected_results['tests']) and self._options.debug_rwt_logging:
             self._buildbot_stream.write("%s\n" % ("-" * 78))
 
     def write_update(self, msg):

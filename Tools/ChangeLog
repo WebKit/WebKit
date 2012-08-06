@@ -1,3 +1,55 @@
+2012-08-06  Dirk Pranke  <dpranke@chromium.org>
+
+        nrwt: clean up logging, part 1
+        https://bugs.webkit.org/show_bug.cgi?id=93018
+
+        Reviewed by Ojan Vafai.
+
+        remove --print, --help-printing from nrwt, add three new options:
+        --quiet, which just logs warnings,errors, and unexpected results
+        --debug-rwt-logging, a new name for --verbose
+        --details, to get the old --print trace-everything behavior
+
+        This patch does not implement the new "one line per test"
+        --verbose behavior specified in bug 88702, and there's a bunch
+        of internal cleanup I can do in printing.py that I'll defer to
+        a later patch to make things easier to review.
+
+        This patch deletes a lot of unit tests that are no longer
+        necessary since there aren't so many logging combinations.
+
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        (run):
+        (main):
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_integrationtest.py:
+        (parse_args):
+        (passing_run):
+        (StreamTestingMixin.assertContains):
+        (MainTest.test_child_processes_2):
+        (MainTest.test_child_processes_min):
+        (MainTest.test_full_results_html):
+        (MainTest.test_no_tests_found):
+        (MainTest.test_no_tests_found_2):
+        (MainTest.test_repeat_each_iterations_num_tests):
+        (MainTest.test_additional_platform_directory):
+        (RebaselineTest.assertBaselines):
+        * Scripts/webkitpy/layout_tests/views/printing.py:
+        (print_options):
+        (Printer.__init__):
+        (Printer.enabled):
+        (Printer.print_unexpected_results):
+        * Scripts/webkitpy/layout_tests/views/printing_unittest.py:
+        (TestUtilityFunctions.test_print_options):
+        (Testprinter.get_result_summary):
+        (Testprinter.test_configure_and_cleanup):
+        (Testprinter.test_print_config):
+        (Testprinter.test_print_one_line_summary):
+        (Testprinter.test_print_unexpected_results):
+        (test_details):
+        (test_default):
+        (test_quiet):
+        (test_verbose):
+
 2012-08-06  Xianzhu Wang  <wangxianzhu@chromium.org>
 
         [Chromium-Android] Store test executable, data and fonts in /data/local/tmp
