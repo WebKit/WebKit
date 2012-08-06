@@ -1,3 +1,16 @@
+2012-08-06  Abhishek Arya  <inferno@chromium.org>
+
+        [Chromium] Re-expose layoutTestController as various fuzzers depend on it
+        https://bugs.webkit.org/show_bug.cgi?id=93282
+
+        Reviewed by Ryosuke Niwa.
+
+        Unfortunately, various fuzzers used in the Chromium project still depends on
+        window.layoutTestController. Re-expose the object while they're making the transition.
+
+        * DumpRenderTree/chromium/TestShell.cpp:
+        (TestShell::bindJSObjectsToWindow):
+
 2012-08-06  Balazs Kelemen  <kbalazs@webkit.org>
 
         WTR should be able to load external resources

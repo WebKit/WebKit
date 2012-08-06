@@ -726,6 +726,7 @@ void TestShell::bindJSObjectsToWindow(WebFrame* frame)
 {
     WebTestingSupport::injectInternalsObject(frame);
     m_testInterfaces->bindTo(frame);
+    m_layoutTestController->bindToJavascript(frame, WebString::fromUTF8("layoutTestController"));
     m_layoutTestController->bindToJavascript(frame, WebString::fromUTF8("testRunner"));
 }
 
