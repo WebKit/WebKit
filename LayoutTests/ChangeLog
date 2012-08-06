@@ -1,3 +1,13 @@
+2012-08-05  Yoshifumi Inoue  <yosin@chromium.org>
+
+        [chromium] fast/forms/focus2.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=45061
+
+        Unreviewed. Chromium DRT sets tabsToLink to false. So, Chrimium DRT doesn't set focus to anchor.
+
+        * platform/chromium/TestExpectations: Removed fast/forms/focus2.html
+        * platform/chromium/fast/forms/focus2-expected.txt: Added.
+
 2012-08-05  Fumitoshi Ukai  <ukai@chromium.org>
 
         Unreviewed test expectation updates.

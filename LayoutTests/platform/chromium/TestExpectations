@@ -1991,9 +1991,6 @@ BUGCR53073 SKIP DEBUG : storage/websql/change-version.html = PASS
 // special-document machinery still works.
 BUGCR53546 WONTFIX LINUX : userscripts/user-script-video-document.html = TEXT
 
-// Not focusing an anchor when tab is pressed.
-BUGWK45061 : fast/forms/focus2.html = TEXT
-
 // Requires page cache.
 BUGWK45652 : fast/viewport/viewport-128.html = TIMEOUT
 
