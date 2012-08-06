@@ -76,5 +76,6 @@ TEST(TextureCopierTest, testDrawArraysCopy)
     int destTextureId = 2;
     IntSize size(256, 128);
     OwnPtr<AcceleratedTextureCopier> copier(AcceleratedTextureCopier::create(mockContext.get(), false));
-    copier->copyTexture(sourceTextureId, destTextureId, size);
+    TextureCopier::Parameters copy = { sourceTextureId, destTextureId, size };
+    copier->copyTexture(copy);
 }

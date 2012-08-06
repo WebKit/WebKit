@@ -37,6 +37,7 @@
 #include "cc/CCOverdrawMetrics.h"
 #include "cc/CCRenderingStats.h"
 #include "cc/CCSingleThreadProxy.h" // For DebugScopedSetImplThread
+#include "cc/CCTextureUpdateController.h"
 #include <gtest/gtest.h>
 #include <public/WebTransformationMatrix.h>
 
@@ -89,7 +90,7 @@ public:
 
     void updateTextures(int count = 500)
     {
-        m_updater.update(m_resourceProvider.get(), &m_copier, &m_uploader, count);
+        CCTextureUpdateController::updateTextures(m_resourceProvider.get(), &m_copier, &m_uploader, &m_updater, count);
     }
 public:
     OwnPtr<CCGraphicsContext> m_context;

@@ -120,9 +120,9 @@ void ThrottledTextureUploader::endUploads()
     m_pendingQueries.append(m_availableQueries.takeFirst());
 }
 
-void ThrottledTextureUploader::uploadTexture(LayerTextureUpdater::Texture* texture, CCResourceProvider* resourceProvider, const IntRect sourceRect, const IntRect destRect)
+void ThrottledTextureUploader::uploadTexture(CCResourceProvider* resourceProvider, Parameters upload)
 {
-    texture->updateRect(resourceProvider, sourceRect, destRect);
+    upload.texture->updateRect(resourceProvider, upload.sourceRect, upload.destRect);
 }
 
 void ThrottledTextureUploader::processQueries()

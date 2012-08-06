@@ -51,7 +51,7 @@ public:
     virtual bool isBusy() OVERRIDE;
     virtual void beginUploads() OVERRIDE;
     virtual void endUploads() OVERRIDE;
-    virtual void uploadTexture(LayerTextureUpdater::Texture*, CCResourceProvider*, const IntRect sourceRect, const IntRect destRect) OVERRIDE;
+    virtual void uploadTexture(CCResourceProvider*, Parameters) OVERRIDE;
 
 private:
     class Query {

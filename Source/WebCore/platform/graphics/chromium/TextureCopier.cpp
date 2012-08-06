@@ -66,13 +66,13 @@ AcceleratedTextureCopier::~AcceleratedTextureCopier()
         GLC(m_context, m_context->deleteFramebuffer(m_fbo));
 }
 
-void AcceleratedTextureCopier::copyTexture(unsigned sourceTextureId, unsigned destTextureId, const IntSize& size)
+void AcceleratedTextureCopier::copyTexture(Parameters parameters)
 {
     TRACE_EVENT0("cc", "TextureCopier::copyTexture");
 
     // Note: this code does not restore the viewport, bound program, 2D texture, framebuffer, buffer or blend enable.
     GLC(m_context, m_context->bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, m_fbo));
-    GLC(m_context, m_context->framebufferTexture2D(GraphicsContext3D::FRAMEBUFFER, GraphicsContext3D::COLOR_ATTACHMENT0, GraphicsContext3D::TEXTURE_2D, destTextureId, 0));
+    GLC(m_context, m_context->framebufferTexture2D(GraphicsContext3D::FRAMEBUFFER, GraphicsContext3D::COLOR_ATTACHMENT0, GraphicsContext3D::TEXTURE_2D, parameters.destTexture, 0));
 
 #if OS(ANDROID)
     // Clear destination to improve performance on tiling GPUs.
@@ -80,7 +80,7 @@ void AcceleratedTextureCopier::copyTexture(unsigned sourceTextureId, unsigned de
     GLC(m_context, m_context->clear(GraphicsContext3D::COLOR_BUFFER_BIT));
 #endif
 
-    GLC(m_context, m_context->bindTexture(GraphicsContext3D::TEXTURE_2D, sourceTextureId));
+    GLC(m_context, m_context->bindTexture(GraphicsContext3D::TEXTURE_2D, parameters.sourceTexture));
     GLC(m_context, m_context->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_MIN_FILTER, GraphicsContext3D::NEAREST));
     GLC(m_context, m_context->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_MAG_FILTER, GraphicsContext3D::NEAREST));
 
@@ -96,7 +96,7 @@ void AcceleratedTextureCopier::copyTexture(unsigned sourceTextureId, unsigned de
     GLC(m_context, m_context->enableVertexAttribArray(kPositionAttribute));
     GLC(m_context, m_context->bindBuffer(GraphicsContext3D::ARRAY_BUFFER, 0));
 
-    GLC(m_context, m_context->viewport(0, 0, size.width(), size.height()));
+    GLC(m_context, m_context->viewport(0, 0, parameters.size.width(), parameters.size.height()));
     GLC(m_context, m_context->disable(GraphicsContext3D::BLEND));
     GLC(m_context, m_context->drawArrays(GraphicsContext3D::TRIANGLE_FAN, 0, 4));
 

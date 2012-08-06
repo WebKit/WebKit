@@ -8413,6 +8413,8 @@
             'platform/graphics/chromium/cc/CCTextureDrawQuad.h',
             'platform/graphics/chromium/cc/CCTextureLayerImpl.cpp',
             'platform/graphics/chromium/cc/CCTextureLayerImpl.h',
+            'platform/graphics/chromium/cc/CCTextureUpdateController.cpp',
+            'platform/graphics/chromium/cc/CCTextureUpdateController.h',
             'platform/graphics/chromium/cc/CCTextureUpdater.cpp',
             'platform/graphics/chromium/cc/CCTextureUpdater.h',
             'platform/graphics/chromium/cc/CCThread.h',

@@ -45,7 +45,8 @@ public:
 
     virtual void appendCopy(unsigned sourceTexture, unsigned destinationTexture, WebSize size) OVERRIDE
     {
-        m_updater.appendCopy(sourceTexture, destinationTexture, size);
+        TextureCopier::Parameters copy = { sourceTexture, destinationTexture, size };
+        m_updater.appendCopy(copy);
     }
 
 private:

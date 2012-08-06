@@ -24,8 +24,9 @@
 
 #include "config.h"
 
-#include "cc/CCTextureUpdater.h"
+#include "cc/CCTextureUpdateController.h"
 
+#include "CCSchedulerTestCommon.h"
 #include "CCTiledLayerTestCommon.h"
 #include "FakeWebGraphicsContext3D.h"
 #include "GraphicsContext3DPrivate.h"
@@ -47,11 +48,11 @@ namespace {
 const int kFlushPeriodFull = 4;
 const int kFlushPeriodPartial = kFlushPeriodFull;
 
-class CCTextureUpdaterTest;
+class CCTextureUpdateControllerTest;
 
 class WebGraphicsContext3DForUploadTest : public FakeWebGraphicsContext3D {
 public:
-    WebGraphicsContext3DForUploadTest(CCTextureUpdaterTest *test)
+    WebGraphicsContext3DForUploadTest(CCTextureUpdateControllerTest *test)
         : m_test(test)
         , m_supportShallowFlush(true)
     { }
@@ -68,26 +69,22 @@ public:
     }
 
 private:
-    CCTextureUpdaterTest* m_test;
+    CCTextureUpdateControllerTest* m_test;
     bool m_supportShallowFlush;
 };
 
 
 class TextureUploaderForUploadTest : public FakeTextureUploader {
 public:
-    TextureUploaderForUploadTest(CCTextureUpdaterTest *test) : m_test(test) { }
+    TextureUploaderForUploadTest(CCTextureUpdateControllerTest *test) : m_test(test) { }
 
     virtual void beginUploads() OVERRIDE;
     virtual void endUploads() OVERRIDE;
-    virtual void uploadTexture(WebCore::LayerTextureUpdater::Texture*,
-                               WebCore::CCResourceProvider*,
-                               const WebCore::IntRect sourceRect,
-                               const WebCore::IntRect destRect) OVERRIDE;
+    virtual void uploadTexture(WebCore::CCResourceProvider*, Parameters) OVERRIDE;
 
 private:
-    CCTextureUpdaterTest* m_test;
+    CCTextureUpdateControllerTest* m_test;
 };
-
 
 class TextureForUploadTest : public LayerTextureUpdater::Texture {
 public:
@@ -96,10 +93,11 @@ public:
 };
 
 
-class CCTextureUpdaterTest : public Test {
+class CCTextureUpdateControllerTest : public Test {
 public:
-    CCTextureUpdaterTest()
-    : m_uploader(this)
+    CCTextureUpdateControllerTest()
+    : m_updater(adoptPtr(new CCTextureUpdater))
+    , m_uploader(this)
     , m_fullUploadCountExpected(0)
     , m_partialCountExpected(0)
     , m_totalUploadCountExpected(0)
@@ -193,8 +191,9 @@ protected:
         m_totalUploadCountExpected += count;
 
         const IntRect rect(0, 0, 300, 150);
+        const TextureUploader::Parameters upload = { &m_texture, rect, rect };
         for (int i = 0; i < count; i++)
-            m_updater.appendFullUpdate(&m_texture, rect, rect);
+            m_updater->appendFullUpload(upload);
     }
 
     void appendPartialUploadsToUpdater(int count)
@@ -203,8 +202,9 @@ protected:
         m_totalUploadCountExpected += count;
 
         const IntRect rect(0, 0, 100, 100);
+        const TextureUploader::Parameters upload = { &m_texture, rect, rect };
         for (int i = 0; i < count; i++)
-            m_updater.appendPartialUpdate(&m_texture, rect, rect);
+            m_updater->appendPartialUpload(upload);
     }
 
     void setMaxUploadCountPerUpdate(int count)
@@ -213,10 +213,10 @@ protected:
     }
 
 protected:
-    // Classes required to interact and test the CCTextureUpdater
+    // Classes required to interact and test the CCTextureUpdateController
     OwnPtr<CCGraphicsContext> m_context;
     OwnPtr<CCResourceProvider> m_resourceProvider;
-    CCTextureUpdater m_updater;
+    OwnPtr<CCTextureUpdater> m_updater;
     TextureForUploadTest m_texture;
     FakeTextureCopier m_copier;
     TextureUploaderForUploadTest m_uploader;
@@ -238,7 +238,6 @@ protected:
     int m_numPreviousFlushes;
 };
 
-
 void WebGraphicsContext3DForUploadTest::flush(void)
 {
     m_test->onFlush();
@@ -259,21 +258,18 @@ void TextureUploaderForUploadTest::endUploads()
     m_test->onEndUploads();
 }
 
-void TextureUploaderForUploadTest::uploadTexture(WebCore::LayerTextureUpdater::Texture* texture,
-                                                 WebCore::CCResourceProvider*,
-                                                 const WebCore::IntRect sourceRect,
-                                                 const WebCore::IntRect destRect)
+void TextureUploaderForUploadTest::uploadTexture(WebCore::CCResourceProvider*, Parameters)
 {
     m_test->onUpload();
 }
 
 
 // ZERO UPLOADS TESTS
-TEST_F(CCTextureUpdaterTest, ZeroUploads)
+TEST_F(CCTextureUpdateControllerTest, ZeroUploads)
 {
     appendFullUploadsToUpdater(0);
     appendPartialUploadsToUpdater(0);
-    m_updater.update(m_resourceProvider.get(), &m_copier, &m_uploader, m_totalUploadCountExpected);
+    CCTextureUpdateController::updateTextures(m_resourceProvider.get(), &m_copier, &m_uploader, m_updater.get(), m_totalUploadCountExpected);
 
     EXPECT_EQ(0, m_numBeginUploads);
     EXPECT_EQ(0, m_numEndUploads);
@@ -283,12 +279,12 @@ TEST_F(CCTextureUpdaterTest, ZeroUploads)
 
 
 // ONE UPLOAD TESTS
-TEST_F(CCTextureUpdaterTest, OneFullUpload)
+TEST_F(CCTextureUpdateControllerTest, OneFullUpload)
 {
     appendFullUploadsToUpdater(1);
     appendPartialUploadsToUpdater(0);
     DebugScopedSetImplThread implThread;
-    m_updater.update(m_resourceProvider.get(), &m_copier, &m_uploader, m_totalUploadCountExpected);
+    CCTextureUpdateController::updateTextures(m_resourceProvider.get(), &m_copier, &m_uploader, m_updater.get(), m_totalUploadCountExpected);
 
     EXPECT_EQ(1, m_numBeginUploads);
     EXPECT_EQ(1, m_numEndUploads);
@@ -296,12 +292,12 @@ TEST_F(CCTextureUpdaterTest, OneFullUpload)
     EXPECT_EQ(1, m_numPreviousUploads);
 }
 
-TEST_F(CCTextureUpdaterTest, OnePartialUpload)
+TEST_F(CCTextureUpdateControllerTest, OnePartialUpload)
 {
     appendFullUploadsToUpdater(0);
     appendPartialUploadsToUpdater(1);
     DebugScopedSetImplThread implThread;
-    m_updater.update(m_resourceProvider.get(), &m_copier, &m_uploader, m_totalUploadCountExpected);
+    CCTextureUpdateController::updateTextures(m_resourceProvider.get(), &m_copier, &m_uploader, m_updater.get(), m_totalUploadCountExpected);
 
     EXPECT_EQ(1, m_numBeginUploads);
     EXPECT_EQ(1, m_numEndUploads);
@@ -309,12 +305,12 @@ TEST_F(CCTextureUpdaterTest, OnePartialUpload)
     EXPECT_EQ(1, m_numPreviousUploads);
 }
 
-TEST_F(CCTextureUpdaterTest, OneFullOnePartialUpload)
+TEST_F(CCTextureUpdateControllerTest, OneFullOnePartialUpload)
 {
     appendFullUploadsToUpdater(1);
     appendPartialUploadsToUpdater(1);
     DebugScopedSetImplThread implThread;
-    m_updater.update(m_resourceProvider.get(), &m_copier, &m_uploader, m_totalUploadCountExpected);
+    CCTextureUpdateController::updateTextures(m_resourceProvider.get(), &m_copier, &m_uploader, m_updater.get(), m_totalUploadCountExpected);
 
     // We expect the full uploads to be followed by a flush
     // before the partial uploads begin.
@@ -333,12 +329,12 @@ const int fullNoRemainderCount = fullUploadFlushMultipler * kFlushPeriodFull;
 const int partialUploadFlushMultipler = 11;
 const int partialNoRemainderCount = partialUploadFlushMultipler * kFlushPeriodPartial;
 
-TEST_F(CCTextureUpdaterTest, ManyFullUploadsNoRemainder)
+TEST_F(CCTextureUpdateControllerTest, ManyFullUploadsNoRemainder)
 {
     appendFullUploadsToUpdater(fullNoRemainderCount);
     appendPartialUploadsToUpdater(0);
     DebugScopedSetImplThread implThread;
-    m_updater.update(m_resourceProvider.get(), &m_copier, &m_uploader, m_totalUploadCountExpected);
+    CCTextureUpdateController::updateTextures(m_resourceProvider.get(), &m_copier, &m_uploader, m_updater.get(), m_totalUploadCountExpected);
 
     EXPECT_EQ(1, m_numBeginUploads);
     EXPECT_EQ(1, m_numEndUploads);
@@ -346,12 +342,12 @@ TEST_F(CCTextureUpdaterTest, ManyFullUploadsNoRemainder)
     EXPECT_EQ(fullNoRemainderCount, m_numPreviousUploads);
 }
 
-TEST_F(CCTextureUpdaterTest, ManyPartialUploadsNoRemainder)
+TEST_F(CCTextureUpdateControllerTest, ManyPartialUploadsNoRemainder)
 {
     appendFullUploadsToUpdater(0);
     appendPartialUploadsToUpdater(partialNoRemainderCount);
     DebugScopedSetImplThread implThread;
-    m_updater.update(m_resourceProvider.get(), &m_copier, &m_uploader, m_totalUploadCountExpected);
+    CCTextureUpdateController::updateTextures(m_resourceProvider.get(), &m_copier, &m_uploader, m_updater.get(), m_totalUploadCountExpected);
 
     EXPECT_EQ(1, m_numBeginUploads);
     EXPECT_EQ(1, m_numEndUploads);
@@ -359,12 +355,12 @@ TEST_F(CCTextureUpdaterTest, ManyPartialUploadsNoRemainder)
     EXPECT_EQ(partialNoRemainderCount, m_numPreviousUploads);
 }
 
-TEST_F(CCTextureUpdaterTest, ManyFullManyPartialUploadsNoRemainder)
+TEST_F(CCTextureUpdateControllerTest, ManyFullManyPartialUploadsNoRemainder)
 {
     appendFullUploadsToUpdater(fullNoRemainderCount);
     appendPartialUploadsToUpdater(partialNoRemainderCount);
     DebugScopedSetImplThread implThread;
-    m_updater.update(m_resourceProvider.get(), &m_copier, &m_uploader, m_totalUploadCountExpected);
+    CCTextureUpdateController::updateTextures(m_resourceProvider.get(), &m_copier, &m_uploader, m_updater.get(), m_totalUploadCountExpected);
 
     EXPECT_EQ(1, m_numBeginUploads);
     EXPECT_EQ(1, m_numEndUploads);
@@ -382,12 +378,12 @@ const int fullMaxRemainderCount = fullNoRemainderCount - 1;
 const int partialMinRemainderCount = partialNoRemainderCount + 1;
 const int partialMaxRemainderCount = partialNoRemainderCount - 1;
 
-TEST_F(CCTextureUpdaterTest, ManyFullAndPartialMinRemainder)
+TEST_F(CCTextureUpdateControllerTest, ManyFullAndPartialMinRemainder)
 {
     appendFullUploadsToUpdater(fullMinRemainderCount);
     appendPartialUploadsToUpdater(partialMinRemainderCount);
     DebugScopedSetImplThread implThread;
-    m_updater.update(m_resourceProvider.get(), &m_copier, &m_uploader, m_totalUploadCountExpected);
+    CCTextureUpdateController::updateTextures(m_resourceProvider.get(), &m_copier, &m_uploader, m_updater.get(), m_totalUploadCountExpected);
 
     EXPECT_EQ(1, m_numBeginUploads);
     EXPECT_EQ(1, m_numEndUploads);
@@ -395,12 +391,12 @@ TEST_F(CCTextureUpdaterTest, ManyFullAndPartialMinRemainder)
     EXPECT_EQ(fullMinRemainderCount + partialMinRemainderCount, m_numPreviousUploads);
 }
 
-TEST_F(CCTextureUpdaterTest, ManyFullAndPartialUploadsMaxRemainder)
+TEST_F(CCTextureUpdateControllerTest, ManyFullAndPartialUploadsMaxRemainder)
 {
     appendFullUploadsToUpdater(fullMaxRemainderCount);
     appendPartialUploadsToUpdater(partialMaxRemainderCount);
     DebugScopedSetImplThread implThread;
-    m_updater.update(m_resourceProvider.get(), &m_copier, &m_uploader, m_totalUploadCountExpected);
+    CCTextureUpdateController::updateTextures(m_resourceProvider.get(), &m_copier, &m_uploader, m_updater.get(), m_totalUploadCountExpected);
 
     EXPECT_EQ(1, m_numBeginUploads);
     EXPECT_EQ(1, m_numEndUploads);
@@ -408,12 +404,12 @@ TEST_F(CCTextureUpdaterTest, ManyFullAndPartialUploadsMaxRemainder)
     EXPECT_EQ(fullMaxRemainderCount + partialMaxRemainderCount, m_numPreviousUploads);
 }
 
-TEST_F(CCTextureUpdaterTest, ManyFullMinRemainderManyPartialMaxRemainder)
+TEST_F(CCTextureUpdateControllerTest, ManyFullMinRemainderManyPartialMaxRemainder)
 {
     appendFullUploadsToUpdater(fullMinRemainderCount);
     appendPartialUploadsToUpdater(partialMaxRemainderCount);
     DebugScopedSetImplThread implThread;
-    m_updater.update(m_resourceProvider.get(), &m_copier, &m_uploader, m_totalUploadCountExpected);
+    CCTextureUpdateController::updateTextures(m_resourceProvider.get(), &m_copier, &m_uploader, m_updater.get(), m_totalUploadCountExpected);
 
     EXPECT_EQ(1, m_numBeginUploads);
     EXPECT_EQ(1, m_numEndUploads);
@@ -421,12 +417,12 @@ TEST_F(CCTextureUpdaterTest, ManyFullMinRemainderManyPartialMaxRemainder)
     EXPECT_EQ(fullMinRemainderCount + partialMaxRemainderCount, m_numPreviousUploads);
 }
 
-TEST_F(CCTextureUpdaterTest, ManyFullMaxRemainderManyPartialMinRemainder)
+TEST_F(CCTextureUpdateControllerTest, ManyFullMaxRemainderManyPartialMinRemainder)
 {
     appendFullUploadsToUpdater(fullMaxRemainderCount);
     appendPartialUploadsToUpdater(partialMinRemainderCount);
     DebugScopedSetImplThread implThread;
-    m_updater.update(m_resourceProvider.get(), &m_copier, &m_uploader, m_totalUploadCountExpected);
+    CCTextureUpdateController::updateTextures(m_resourceProvider.get(), &m_copier, &m_uploader, m_updater.get(), m_totalUploadCountExpected);
 
     EXPECT_EQ(1, m_numBeginUploads);
     EXPECT_EQ(1, m_numEndUploads);
@@ -444,7 +440,7 @@ int expectedFlushes(int uploads, int flushPeriod)
     return (uploads + flushPeriod - 1) / flushPeriod;
 }
 
-TEST_F(CCTextureUpdaterTest, TripleUpdateFinalUpdateFullAndPartial)
+TEST_F(CCTextureUpdateControllerTest, TripleUpdateFinalUpdateFullAndPartial)
 {
     const int kMaxUploadsPerUpdate = 40;
     const int kFullUploads = 100;
@@ -459,7 +455,7 @@ TEST_F(CCTextureUpdaterTest, TripleUpdateFinalUpdateFullAndPartial)
 
     // First update (40 full)
     DebugScopedSetImplThread implThread;
-    m_updater.update(m_resourceProvider.get(), &m_copier, &m_uploader, kMaxUploadsPerUpdate);
+    CCTextureUpdateController::updateTextures(m_resourceProvider.get(), &m_copier, &m_uploader, m_updater.get(), kMaxUploadsPerUpdate);
 
     EXPECT_EQ(1, m_numBeginUploads);
     EXPECT_EQ(1, m_numEndUploads);
@@ -471,7 +467,7 @@ TEST_F(CCTextureUpdaterTest, TripleUpdateFinalUpdateFullAndPartial)
     EXPECT_EQ(expectedPreviousUploads, m_numPreviousUploads);
 
     // Second update (40 full)
-    m_updater.update(m_resourceProvider.get(), &m_copier, &m_uploader, kMaxUploadsPerUpdate);
+    CCTextureUpdateController::updateTextures(m_resourceProvider.get(), &m_copier, &m_uploader, m_updater.get(), kMaxUploadsPerUpdate);
 
     EXPECT_EQ(2, m_numBeginUploads);
     EXPECT_EQ(2, m_numEndUploads);
@@ -483,7 +479,7 @@ TEST_F(CCTextureUpdaterTest, TripleUpdateFinalUpdateFullAndPartial)
     EXPECT_EQ(expectedPreviousUploads, m_numPreviousUploads);
 
     // Third update (20 full, 20 partial)
-    m_updater.update(m_resourceProvider.get(), &m_copier, &m_uploader, kMaxUploadsPerUpdate);
+    CCTextureUpdateController::updateTextures(m_resourceProvider.get(), &m_copier, &m_uploader, m_updater.get(), kMaxUploadsPerUpdate);
 
     EXPECT_EQ(3, m_numBeginUploads);
     EXPECT_EQ(3, m_numEndUploads);
@@ -499,7 +495,7 @@ TEST_F(CCTextureUpdaterTest, TripleUpdateFinalUpdateFullAndPartial)
     EXPECT_EQ(kFullUploads + kPartialUploads, m_numTotalUploads);
 }
 
-TEST_F(CCTextureUpdaterTest, TripleUpdateFinalUpdateAllPartial)
+TEST_F(CCTextureUpdateControllerTest, TripleUpdateFinalUpdateAllPartial)
 {
     const int kMaxUploadsPerUpdate = 40;
     const int kFullUploads = 70;
@@ -514,7 +510,7 @@ TEST_F(CCTextureUpdaterTest, TripleUpdateFinalUpdateAllPartial)
 
     // First update (40 full)
     DebugScopedSetImplThread implThread;
-    m_updater.update(m_resourceProvider.get(), &m_copier, &m_uploader, kMaxUploadsPerUpdate);
+    CCTextureUpdateController::updateTextures(m_resourceProvider.get(), &m_copier, &m_uploader, m_updater.get(), kMaxUploadsPerUpdate);
 
     EXPECT_EQ(1, m_numBeginUploads);
     EXPECT_EQ(1, m_numEndUploads);
@@ -526,7 +522,7 @@ TEST_F(CCTextureUpdaterTest, TripleUpdateFinalUpdateAllPartial)
     EXPECT_EQ(expectedPreviousUploads, m_numPreviousUploads);
 
     // Second update (30 full, optionally 10 partial)
-    m_updater.update(m_resourceProvider.get(), &m_copier, &m_uploader, kMaxUploadsPerUpdate);
+    CCTextureUpdateController::updateTextures(m_resourceProvider.get(), &m_copier, &m_uploader, m_updater.get(), kMaxUploadsPerUpdate);
 
     EXPECT_EQ(2, m_numBeginUploads);
     EXPECT_EQ(2, m_numEndUploads);
@@ -536,7 +532,7 @@ TEST_F(CCTextureUpdaterTest, TripleUpdateFinalUpdateAllPartial)
     // onFlush(), onUpload(), and onEndUpload() will do basic flush checks for us anyway.
 
     // Third update (30 partial OR 20 partial if 10 partial uploaded in second update)
-    m_updater.update(m_resourceProvider.get(), &m_copier, &m_uploader, kMaxUploadsPerUpdate);
+    CCTextureUpdateController::updateTextures(m_resourceProvider.get(), &m_copier, &m_uploader, m_updater.get(), kMaxUploadsPerUpdate);
 
     EXPECT_EQ(3, m_numBeginUploads);
     EXPECT_EQ(3, m_numEndUploads);
@@ -546,6 +542,5 @@ TEST_F(CCTextureUpdaterTest, TripleUpdateFinalUpdateAllPartial)
     // Final sanity checks
     EXPECT_EQ(kFullUploads + kPartialUploads, m_numTotalUploads);
 }
-
 
 } // namespace

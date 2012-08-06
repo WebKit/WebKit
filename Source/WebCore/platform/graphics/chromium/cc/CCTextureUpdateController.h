@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2012 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,42 +23,45 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CCTextureUpdater_h
-#define CCTextureUpdater_h
+#ifndef CCTextureUpdateController_h
+#define CCTextureUpdateController_h
 
-#include "TextureCopier.h"
-#include "TextureUploader.h"
-#include <wtf/Deque.h>
+#include "cc/CCTextureUpdater.h"
 #include <wtf/Noncopyable.h>
+#include <wtf/OwnPtr.h>
 
 namespace WebCore {
 
-class CCTextureUpdater {
-    WTF_MAKE_NONCOPYABLE(CCTextureUpdater);
+class TextureCopier;
+class TextureUploader;
+
+class CCTextureUpdateController {
+    WTF_MAKE_NONCOPYABLE(CCTextureUpdateController);
 public:
-    CCTextureUpdater();
-    virtual ~CCTextureUpdater();
+    static PassOwnPtr<CCTextureUpdateController> create(PassOwnPtr<CCTextureUpdater> updater, CCResourceProvider* resourceProvider, TextureCopier* copier, TextureUploader* uploader)
+    {
+        return adoptPtr(new CCTextureUpdateController(updater, resourceProvider, copier, uploader));
+    }
+    static size_t maxPartialTextureUpdates();
+    static void updateTextures(CCResourceProvider*, TextureCopier*, TextureUploader*, CCTextureUpdater*, size_t count);
 
-    void appendFullUpload(TextureUploader::Parameters);
-    void appendPartialUpload(TextureUploader::Parameters);
-    void appendCopy(TextureCopier::Parameters);
-
-    TextureUploader::Parameters takeFirstFullUpload();
-    TextureUploader::Parameters takeFirstPartialUpload();
-    TextureCopier::Parameters takeFirstCopy();
-
-    size_t fullUploadSize() const { return m_fullEntries.size(); }
-    size_t partialUploadSize() const { return m_partialEntries.size(); }
-    size_t copySize() const { return m_copyEntries.size(); }
+    virtual ~CCTextureUpdateController();
 
     bool hasMoreUpdates() const;
+    void updateMoreTextures();
 
-private:
-    Deque<TextureUploader::Parameters> m_fullEntries;
-    Deque<TextureUploader::Parameters> m_partialEntries;
-    Deque<TextureCopier::Parameters> m_copyEntries;
+    // Virtual for testing.
+    virtual size_t updateMoreTexturesSize() const;
+
+protected:
+    CCTextureUpdateController(PassOwnPtr<CCTextureUpdater>, CCResourceProvider*, TextureCopier*, TextureUploader*);
+
+    OwnPtr<CCTextureUpdater> m_updater;
+    CCResourceProvider* m_resourceProvider;
+    TextureCopier* m_copier;
+    TextureUploader* m_uploader;
 };
 
 }
 
-#endif // CCTextureUpdater_h
+#endif // CCTextureUpdateController_h

@@ -506,10 +506,11 @@ void TiledLayerChromium::updateTiles(bool idle, int left, int top, int right, in
             if (paintOffset.y() + destRect.height() > paintRect.height())
                 CRASH();
 
+            TextureUploader::Parameters upload = { tile->texture(), sourceRect, destRect };
             if (tile->partialUpdate)
-                updater.appendPartialUpdate(tile->texture(), sourceRect, destRect);
+                updater.appendPartialUpload(upload);
             else
-                updater.appendFullUpdate(tile->texture(), sourceRect, destRect);
+                updater.appendFullUpload(upload);
         }
     }
 }

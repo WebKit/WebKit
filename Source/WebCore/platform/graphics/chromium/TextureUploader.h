@@ -31,12 +31,18 @@ namespace WebCore {
 
 class TextureUploader {
 public:
+    struct Parameters {
+        LayerTextureUpdater::Texture* texture;
+        IntRect sourceRect;
+        IntRect destRect;
+    };
+
     virtual ~TextureUploader() { }
 
     virtual bool isBusy() = 0;
     virtual void beginUploads() = 0;
     virtual void endUploads() = 0;
-    virtual void uploadTexture(LayerTextureUpdater::Texture*, CCResourceProvider*, const IntRect sourceRect, const IntRect destRect) = 0;
+    virtual void uploadTexture(CCResourceProvider*, Parameters) = 0;
 };
 
 }

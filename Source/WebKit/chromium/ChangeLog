@@ -1,3 +1,20 @@
+2012-08-06  David Reveman  <reveman@chromium.org>
+
+        [Chromium] Refactor CCTextureUpdater into CCTextureUpdater and CCTextureUpdateController.
+        https://bugs.webkit.org/show_bug.cgi?id=92596
+
+        Reviewed by Adrienne Walker.
+
+        * WebKit.gypi:
+        * src/WebExternalTextureLayer.cpp:
+        * tests/CCTextureUpdateControllerTest.cpp: Renamed from Source/WebKit/chromium/tests/CCTextureUpdaterTest.cpp.
+        * tests/CCTiledLayerTestCommon.h:
+        (WebKitTests::FakeTextureCopier::copyTexture):
+        (WebKitTests::FakeTextureUploader::uploadTexture):
+        * tests/TextureCopierTest.cpp:
+        (TEST):
+        * tests/TiledLayerChromiumTest.cpp:
+
 2012-08-06  Shawn Singh  <shawnsingh@chromium.org>
 
         [chromium] Non-preserves-3d requires explicit flattening of screen-space transform.

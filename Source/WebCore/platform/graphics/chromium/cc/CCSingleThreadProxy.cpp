@@ -30,7 +30,7 @@
 #include "cc/CCDrawQuad.h"
 #include "cc/CCGraphicsContext.h"
 #include "cc/CCLayerTreeHost.h"
-#include "cc/CCTextureUpdater.h"
+#include "cc/CCTextureUpdateController.h"
 #include "cc/CCTimer.h"
 #include <wtf/CurrentTime.h>
 
@@ -206,12 +206,13 @@ void CCSingleThreadProxy::doCommit(CCTextureUpdater& updater)
 
         m_layerTreeHost->beginCommitOnImplThread(m_layerTreeHostImpl.get());
 
-        // CCTextureUpdater is non-blocking and will return without updating
-        // any textures if the uploader is busy. This shouldn't be a problem
-        // here as the throttled uploader isn't used in single thread mode.
-        // For correctness, loop until no more updates are pending.
+        // CCTextureUpdateController::updateTextures is non-blocking and will
+        // return without updating any textures if the uploader is busy. This
+        // shouldn't be a problem here as the throttled uploader isn't used in
+        // single thread mode. For correctness, loop until no more updates are
+        // pending.
         while (updater.hasMoreUpdates())
-            updater.update(m_layerTreeHostImpl->resourceProvider(), m_layerTreeHostImpl->layerRenderer()->textureCopier(), m_layerTreeHostImpl->layerRenderer()->textureUploader(), maxPartialTextureUpdates());
+            CCTextureUpdateController::updateTextures(m_layerTreeHostImpl->resourceProvider(), m_layerTreeHostImpl->layerRenderer()->textureCopier(), m_layerTreeHostImpl->layerRenderer()->textureUploader(), &updater, maxPartialTextureUpdates());
 
         m_layerTreeHost->finishCommitOnImplThread(m_layerTreeHostImpl.get());
 

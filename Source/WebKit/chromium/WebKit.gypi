@@ -87,7 +87,7 @@
             'tests/CCScrollbarAnimationControllerLinearFadeTest.cpp',
             'tests/CCSolidColorLayerImplTest.cpp',
             'tests/CCTestCommon.h',
-            'tests/CCTextureUpdaterTest.cpp',
+            'tests/CCTextureUpdateControllerTest.cpp',
             'tests/CCTiledLayerImplTest.cpp',
             'tests/CCTiledLayerTestCommon.h',
             'tests/CCTiledLayerTestCommon.cpp',
