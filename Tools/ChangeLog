@@ -1,3 +1,9 @@
+2012-08-05  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Unreviewed. Change my email address for watch list.
+
+        * Scripts/webkitpy/common/config/watchlist:
+
 2012-08-04  Nico Weber  <thakis@chromium.org>
 
         [Chromium Mac] Tests are exiting early due to failures to load missingImage.png
