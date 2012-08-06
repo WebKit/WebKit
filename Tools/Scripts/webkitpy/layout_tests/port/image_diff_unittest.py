@@ -49,4 +49,4 @@ class TestImageDiffer(unittest.TestCase):
     def test_diff_image(self):
         port = FakePort(['diff: 100% failed\n'])
         image_differ = ImageDiffer(port)
-        self.assertEquals(image_differ.diff_image('foo', 'bar', 0.1), ('', 100.0))
+        self.assertEquals(image_differ.diff_image('foo', 'bar', 0.1), ('', 100.0, None))

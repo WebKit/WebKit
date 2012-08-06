@@ -264,12 +264,18 @@ class SingleTestRunner(object):
             failures.append(test_failures.FailureMissingImageHash())
         elif driver_output.image_hash != expected_driver_output.image_hash:
             diff_result = self._port.diff_image(driver_output.image, expected_driver_output.image)
-            driver_output.image_diff = diff_result[0]
-            if driver_output.image_diff:
-                failures.append(test_failures.FailureImageHashMismatch(diff_result[1]))
+            err_str = diff_result[2]
+            if err_str:
+                _log.warning('  %s : %s' % (self._test_name, err_str))
+                failures.append(test_failures.FailureImageHashMismatch())
+                driver_output.error = (driver_output.error or '') + err_str
             else:
-                # See https://bugs.webkit.org/show_bug.cgi?id=69444 for why this isn't a full failure.
-                _log.warning('  %s -> pixel hash failed (but pixel test still passes)' % self._test_name)
+                driver_output.image_diff = diff_result[0]
+                if driver_output.image_diff:
+                    failures.append(test_failures.FailureImageHashMismatch(diff_result[1]))
+                else:
+                    # See https://bugs.webkit.org/show_bug.cgi?id=69444 for why this isn't a full failure.
+                    _log.warning('  %s -> pixel hash failed (but pixel test still passes)' % self._test_name)
         return failures
 
     def _run_reftest(self):
@@ -317,4 +323,8 @@ class SingleTestRunner(object):
                 failures.append(test_failures.FailureReftestMismatchDidNotOccur(reference_filename))
         elif driver_output1.image_hash != driver_output2.image_hash:
             failures.append(test_failures.FailureReftestMismatch(reference_filename))
+
+        # recompute in case we added to stderr during diff_image
+        has_stderr = driver_output1.has_stderr() or driver_output2.has_stderr()
+
         return TestResult(self._test_name, failures, total_test_time, has_stderr)

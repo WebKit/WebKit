@@ -1,5 +1,57 @@
 2012-08-06  Dirk Pranke  <dpranke@chromium.org>
 
+        nrwt: handle errors from image diff better
+        https://bugs.webkit.org/show_bug.cgi?id=92934
+
+        Reviewed by Ojan Vafai.
+
+        Currently if ImageDiff crashes, returns a weird exit code, or
+        produces any stderr output, it's basically swallowed. This
+        change ensures that we log errors to stderr, and also appends
+        the error to the stderr for the test (so it'll show up in
+        results.html).
+
+        Most importantly, it'll cause diff_image() to fail and we'll
+        report ImageHashMismatch ... this may be kinda untrue, but I
+        think it's better than ignoring the error.
+
+        * Scripts/webkitpy/layout_tests/controllers/single_test_runner.py:
+        (SingleTestRunner._compare_image):
+        (SingleTestRunner._compare_output_with_reference):
+        * Scripts/webkitpy/layout_tests/controllers/test_result_writer.py:
+        (write_test_result):
+        * Scripts/webkitpy/layout_tests/controllers/test_result_writer_unittest.py:
+        (TestResultWriterTest.test_reftest_diff_image.ImageDiffTestPort.diff_image):
+        (TestResultWriterTest):
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        (Port.diff_image):
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+        (ChromiumPort.diff_image):
+        * Scripts/webkitpy/layout_tests/port/chromium_port_testcase.py:
+        (ChromiumPortTestCase.test_diff_image_crashed):
+        * Scripts/webkitpy/layout_tests/port/driver.py:
+        (Driver.run_test):
+        * Scripts/webkitpy/layout_tests/port/image_diff.py:
+        (ImageDiffer.diff_image):
+        (ImageDiffer._read):
+        * Scripts/webkitpy/layout_tests/port/image_diff_unittest.py:
+        (TestImageDiffer.test_diff_image):
+        * Scripts/webkitpy/layout_tests/port/mock_drt_unittest.py:
+        (MockDRTPortTest.test_diff_image_crashed):
+        * Scripts/webkitpy/layout_tests/port/port_testcase.py:
+        (PortTestCase.test_diff_image):
+        (PortTestCase):
+        (PortTestCase.test_diff_image_crashed):
+        (PortTestCase.test_diff_image_crashed.make_proc):
+        * Scripts/webkitpy/layout_tests/port/server_process_mock.py:
+        (MockServerProcess.__init__):
+        * Scripts/webkitpy/layout_tests/port/test.py:
+        (TestPort.diff_image):
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_integrationtest.py:
+        (MainTest.test_tolerance.ImageDiffTestPort.diff_image):
+
+2012-08-06  Dirk Pranke  <dpranke@chromium.org>
+
         nrwt: clean up printing.py
         https://bugs.webkit.org/show_bug.cgi?id=93026
 
