@@ -501,6 +501,10 @@ CGFloat WKNSElasticDeltaForReboundDelta(CGFloat delta);
 CGFloat WKNSReboundDeltaForElasticDelta(CGFloat delta);
 #endif
 
+#if MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
+Boolean WKJLIsRuntimeAndWebComponentsInstalled(void);
+#endif
+
 #ifdef __cplusplus
 }
 #endif

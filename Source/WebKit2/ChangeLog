@@ -1,3 +1,29 @@
+2012-08-06  Anders Carlsson  <andersca@apple.com>
+
+        If the Apple Java plug-in is blocked and no runtime is installed, don't load it
+        https://bugs.webkit.org/show_bug.cgi?id=93289
+        <rdar://problem/11730092>
+
+        Reviewed by Dan Bernstein.
+
+        If the Apple Java plug-in is blocked, but there's no Java runtime installed (or the Java plug-in is disabled),
+        don't even include it in the plug-in info store.
+
+        * UIProcess/Plugins/PluginInfoStore.cpp:
+        (WebKit::PluginInfoStore::shouldBlockPlugin):
+        Since this is static now, it shouldn't be const.
+
+        * UIProcess/Plugins/PluginInfoStore.h:
+        (PluginInfoStore):
+        shouldBlockPlugin can be static.
+
+        * UIProcess/Plugins/mac/PluginInfoStoreMac.mm:
+        (WebKit::PluginInfoStore::shouldUsePlugin):
+        Return false if the Apple Java plug-in is blocked but Java isn't installed or enabled.
+
+        (WebKit::PluginInfoStore::shouldBlockPlugin):
+        Since this is static now, it shouldn't be const.
+
 2012-08-06  Mario Sanchez Prada  <msanchez@igalia.com>
 
         [WK2][GTK] Improvements for the new spell-checking API

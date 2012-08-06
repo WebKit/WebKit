@@ -56,7 +56,7 @@ public:
 
     // Return whether this plug-in should be blocked from being instantiated.
     // Note that the plug-in will still be seen by e.g. navigator.plugins
-    bool shouldBlockPlugin(const PluginModuleInfo&) const;
+    static bool shouldBlockPlugin(const PluginModuleInfo&);
 
 private:
     PluginModuleInfo findPluginForMIMEType(const String& mimeType) const;

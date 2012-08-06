@@ -123,10 +123,17 @@ bool PluginInfoStore::shouldUsePlugin(Vector<PluginModuleInfo>& alreadyLoadedPlu
     if (!checkForPreferredPlugin(alreadyLoadedPlugins, plugin, "com.apple.java.JavaAppletPlugin", "com.oracle.java.JavaAppletPlugin"))
         return false;
 
+#if MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
+    if (plugin.bundleIdentifier == "com.apple.java.JavaAppletPlugin" && shouldBlockPlugin(plugin) && !WKJLIsRuntimeAndWebComponentsInstalled()) {
+        // If the Apple Java plug-in is blocked and there's no Java runtime installed, just pretend that the plug-in doesn't exist.
+        return false;
+    }
+#endif
+
     return true;
 }
 
-bool PluginInfoStore::shouldBlockPlugin(const PluginModuleInfo& plugin) const
+bool PluginInfoStore::shouldBlockPlugin(const PluginModuleInfo& plugin)
 {
     return WKShouldBlockPlugin(plugin.bundleIdentifier, plugin.versionString);
 }

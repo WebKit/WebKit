@@ -1,3 +1,17 @@
+2012-08-06  Anders Carlsson  <andersca@apple.com>
+
+        If the Apple Java plug-in is blocked and no runtime is installed, don't load it
+        https://bugs.webkit.org/show_bug.cgi?id=93289
+        <rdar://problem/11730092>
+
+        Reviewed by Dan Bernstein.
+
+        Add WKJLIsRuntimeAndWebComponentsInstalled().
+
+        * WebKitSystemInterface.h:
+        * libWebKitSystemInterfaceLion.a:
+        * libWebKitSystemInterfaceMountainLion.a:
+
 2012-08-01  Jon Lee  <jonlee@apple.com>
 
         Update WKSI.
