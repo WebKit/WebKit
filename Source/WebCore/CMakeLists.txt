@@ -6,6 +6,7 @@ SET(WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/Modules/geolocation"
     "${WEBCORE_DIR}/Modules/indexeddb"
     "${WEBCORE_DIR}/Modules/intents"
+    "${WEBCORE_DIR}/Modules/mediasource"
     "${WEBCORE_DIR}/Modules/mediastream"
     "${WEBCORE_DIR}/Modules/networkinfo"
     "${WEBCORE_DIR}/Modules/notifications"
@@ -191,6 +192,9 @@ SET(WebCore_IDL_FILES
     Modules/intents/Intent.idl
     Modules/intents/IntentResultCallback.idl
     Modules/intents/NavigatorIntents.idl
+
+    Modules/mediasource/SourceBuffer.idl
+    Modules/mediasource/SourceBufferList.idl
 
     Modules/mediastream/DOMWindowMediaStream.idl
     Modules/mediastream/IceCallback.idl
@@ -816,6 +820,9 @@ SET(WebCore_SOURCES
     Modules/intents/Intent.cpp
     Modules/intents/IntentRequest.cpp
     Modules/intents/NavigatorIntents.cpp
+
+    Modules/mediasource/SourceBuffer.cpp
+    Modules/mediasource/SourceBufferList.cpp
 
     Modules/mediastream/IceCandidate.cpp
     Modules/mediastream/LocalMediaStream.cpp
@@ -2658,20 +2665,6 @@ SET(WebCoreTestSupport_SOURCES
     testing/Internals.cpp
     testing/InternalSettings.cpp
 )
-
-IF (ENABLE_MEDIA_SOURCE)
-    LIST(APPEND WebCore_INCLUDE_DIRECTORIES
-        ${WEBCORE_DIR}/Modules/mediasource
-    )
-    LIST(APPEND WebCore_IDL_FILES
-        Modules/mediasource/SourceBuffer.idl
-        Modules/mediasource/SourceBufferList.idl
-    )
-    LIST(APPEND WebCore_SOURCES
-        Modules/mediasource/SourceBuffer.cpp
-        Modules/mediasource/SourceBufferList.cpp
-    )
-ENDIF()
 
 # Modules that the bindings generator scripts may use
 SET(SCRIPTS_RESOLVE_SUPPLEMENTAL

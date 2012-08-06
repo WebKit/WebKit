@@ -1,3 +1,17 @@
+2012-08-05  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        [CMAKE] Move media source files from #ifdef ENABLE(MEDIA_SOURCE) to existing file list
+        https://bugs.webkit.org/show_bug.cgi?id=93219
+
+        Reviewed by Hajime Morita.
+
+        r122688 removed duplicating #ifdef guards from CMakeLists.txt. But, ENABLE_MEDIA_SOURCE is added to
+        CMakeList using duplicating #ifdef again.
+
+        No new tests. No change in behavior.
+
+        * CMakeLists.txt:
+
 2012-08-05  Peter Wang  <peter.wang@torchmobile.com.cn>
 
         Web Inspector: [JSC] implement setting breakpoints by line:column
