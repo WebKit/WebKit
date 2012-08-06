@@ -1,5 +1,11 @@
 2012-08-06  Takashi Toyoshima  <toyoshim@chromium.org>
 
+        Unreviewed, rebaseline for Mac10.6 against r124752
+
+        * platform/chromium-mac-snowleopard/fast/speech/input-appearance-searchandspeech-expected.png:
+
+2012-08-06  Takashi Toyoshima  <toyoshim@chromium.org>
+
         Unreviewed, rebaseline for r124754.
 
         * fast/dom/HTMLProgressElement/indeterminate-progress-001-expected.txt: Added.
