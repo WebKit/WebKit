@@ -1,3 +1,11 @@
+2012-08-06  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
+
+        [Qt] Unreviewed gardening.
+
+        * platform/qt/Skipped: Skip new SHADOW_DOM tests.
+        * platform/qt/fast/dom/HTMLProgressElement/indeterminate-progress-001-expected.txt: Rebase after r124754.
+        * platform/qt/fast/dom/HTMLProgressElement/progress-bar-value-pseudo-element-expected.txt: Rebase after r124754.
+
 2012-08-06  Kihong Kwon  <kihong.kwon@samsung.com>
 
         Add DeviceProximityEvent interface
