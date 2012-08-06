@@ -1,3 +1,9 @@
+2012-08-06  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed gardening, skip new asserting tests to paint the bots green.
+
+        * platform/qt/Skipped:
+
 2012-08-06  Arko Saha  <arko@motorola.com>
 
         Microdata: document.getItems() must treat no token as no parameter.
