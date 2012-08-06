@@ -1,95 +1,117 @@
 /*
- * Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
- * Copyright (C) 2009 Google Inc. All rights reserved.
+ * Copyright (C) 2012 Patrick Gansterer <paroga@paroga.com>
  *
- * The Original Code is Mozilla Communicator client code, released
- * March 31, 1998.
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
  *
- * The Initial Developer of the Original Code is
- * Netscape Communications Corporation.
- * Portions created by the Initial Developer are Copyright (C) 1998
- * the Initial Developer. All Rights Reserved.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
- *
- * Alternatively, the contents of this file may be used under the terms
- * of either the Mozilla Public License Version 1.1, found at
- * http://www.mozilla.org/MPL/ (the "MPL") or the GNU General Public
- * License Version 2.0, found at http://www.fsf.org/copyleft/gpl.html
- * (the "GPL"), in which case the provisions of the MPL or the GPL are
- * applicable instead of those above.  If you wish to allow use of your
- * version of this file only under the terms of one of those two
- * licenses (the MPL or the GPL) and not to allow others to use your
- * version of this file under the LGPL, indicate your decision by
- * deletingthe provisions above and replace them with the notice and
- * other provisions required by the MPL or the GPL, as the case may be.
- * If you do not delete the provisions above, a recipient may use your
- * version of this file under any of the LGPL, the MPL or the GPL.
+ * THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL APPLE OR ITS CONTRIBUTORS BE LIABLE FOR ANY
+ * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+ * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #include "config.h"
 #include "DateConversion.h"
 
-#include "CallFrame.h"
-#include "JSDateMath.h"
-#include "JSObject.h"
-#include "ScopeChain.h"
 #include "UString.h"
-#include <wtf/StringExtras.h>
-#include <wtf/text/CString.h>
+#include <wtf/Assertions.h>
+#include <wtf/DateMath.h>
+#include <wtf/text/StringBuilder.h>
 
 using namespace WTF;
 
 namespace JSC {
 
-void formatDate(const GregorianDateTime &t, DateConversionBuffer& buffer)
+template<int width>
+static inline void appendNumber(StringBuilder& builder, int value)
 {
-    snprintf(buffer, DateConversionBufferSize, "%s %s %02d %04d",
-        weekdayName[(t.weekDay() + 6) % 7],
-        monthName[t.month()], t.monthDay(), t.year());
-}
-
-void formatDateUTCVariant(const GregorianDateTime &t, DateConversionBuffer& buffer)
-{
-    snprintf(buffer, DateConversionBufferSize, "%s, %02d %s %04d",
-        weekdayName[(t.weekDay() + 6) % 7],
-        t.monthDay(), monthName[t.month()], t.year());
-}
-
-void formatTime(const GregorianDateTime &t, DateConversionBuffer& buffer)
-{
-    int offset = abs(t.utcOffset());
-    char timeZoneName[70];
-    struct tm gtm = t;
-    strftime(timeZoneName, sizeof(timeZoneName), "%Z", &gtm);
-
-    if (timeZoneName[0]) {
-        snprintf(buffer, DateConversionBufferSize, "%02d:%02d:%02d GMT%c%02d%02d (%s)",
-            t.hour(), t.minute(), t.second(),
-            t.utcOffset() < 0 ? '-' : '+', offset / (60*60), (offset / 60) % 60, timeZoneName);
-    } else {
-        snprintf(buffer, DateConversionBufferSize, "%02d:%02d:%02d GMT%c%02d%02d",
-            t.hour(), t.minute(), t.second(),
-            t.utcOffset() < 0 ? '-' : '+', offset / (60*60), (offset / 60) % 60);
+    int fillingZerosCount = width;
+    if (value < 0) {
+        builder.append('-');
+        value = -value;
+        --fillingZerosCount;
     }
+    String valueString = String::number(value);
+    fillingZerosCount -= valueString.length();
+    for (int i = 0; i < fillingZerosCount; ++i)
+        builder.append('0');
+    builder.append(valueString);
 }
 
-void formatTimeUTC(const GregorianDateTime &t, DateConversionBuffer& buffer)
+template<>
+void appendNumber<2>(StringBuilder& builder, int value)
 {
-    snprintf(buffer, DateConversionBufferSize, "%02d:%02d:%02d GMT", t.hour(), t.minute(), t.second());
+    ASSERT(0 <= value && value <= 99);
+    builder.append(static_cast<char>('0' + value / 10));
+    builder.append(static_cast<char>('0' + value % 10));
+}
+
+UString formatDateTime(const GregorianDateTime& t, DateTimeFormat format, bool asUTCVariant)
+{
+    bool appendDate = format & DateTimeFormatDate;
+    bool appendTime = format & DateTimeFormatTime;
+
+    StringBuilder builder;
+
+    if (appendDate) {
+        builder.append(weekdayName[(t.weekDay() + 6) % 7]);
+
+        if (asUTCVariant) {
+            builder.append(", ");
+            appendNumber<2>(builder, t.monthDay());
+            builder.append(' ');
+            builder.append(monthName[t.month()]);
+        } else {
+            builder.append(' ');
+            builder.append(monthName[t.month()]);
+            builder.append(' ');
+            appendNumber<2>(builder, t.monthDay());
+        }
+        builder.append(' ');
+        appendNumber<4>(builder, t.year());
+    }
+
+    if (appendDate && appendTime)
+        builder.append(' ');
+
+    if (appendTime) {
+        appendNumber<2>(builder, t.hour());
+        builder.append(':');
+        appendNumber<2>(builder, t.minute());
+        builder.append(':');
+        appendNumber<2>(builder, t.second());
+        builder.append(" GMT");
+
+        if (!asUTCVariant) {
+            int offset = abs(t.utcOffset()) / 60;
+            builder.append(t.utcOffset() < 0 ? '-' : '+');
+            appendNumber<2>(builder, offset / 60);
+            appendNumber<2>(builder, offset % 60);
+
+            struct tm gtm = t;
+            char timeZoneName[70];
+            strftime(timeZoneName, sizeof(timeZoneName), "%Z", &gtm);
+            if (timeZoneName[0]) {
+                builder.append(" (");
+                builder.append(timeZoneName);
+                builder.append(')');
+            }
+        }
+    }
+
+    return builder.toString().impl();
 }
 
 } // namespace JSC

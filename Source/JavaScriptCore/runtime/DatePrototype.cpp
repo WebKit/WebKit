@@ -340,6 +340,23 @@ static JSCell* formatLocaleDate(ExecState* exec, DateInstance* dateObject, doubl
 
 #endif // !PLATFORM(MAC) && !PLATFORM(IOS)
 
+static EncodedJSValue formateDateInstance(ExecState* exec, DateTimeFormat format, bool asUTCVariant)
+{
+    JSValue thisValue = exec->hostThisValue();
+    if (!thisValue.inherits(&DateInstance::s_info))
+        return throwVMTypeError(exec);
+
+    DateInstance* thisDateObj = asDateInstance(thisValue);
+
+    const GregorianDateTime* gregorianDateTime = asUTCVariant
+        ? thisDateObj->gregorianDateTimeUTC(exec)
+        : thisDateObj->gregorianDateTime(exec);
+    if (!gregorianDateTime)
+        return JSValue::encode(jsNontrivialString(exec, "Invalid Date"));
+
+    return JSValue::encode(jsNontrivialString(exec, formatDateTime(*gregorianDateTime, format, asUTCVariant)));
+}
+
 // Converts a list of arguments sent to a Date member function into milliseconds, updating
 // ms (representing milliseconds) and t (representing the rest of the date structure) appropriately.
 //
@@ -513,38 +530,14 @@ bool DatePrototype::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, 
 
 EncodedJSValue JSC_HOST_CALL dateProtoFuncToString(ExecState* exec)
 {
-    JSValue thisValue = exec->hostThisValue();
-    if (!thisValue.inherits(&DateInstance::s_info))
-        return throwVMTypeError(exec);
-
-    DateInstance* thisDateObj = asDateInstance(thisValue); 
-
-    const GregorianDateTime* gregorianDateTime = thisDateObj->gregorianDateTime(exec);
-    if (!gregorianDateTime)
-        return JSValue::encode(jsNontrivialString(exec, "Invalid Date"));
-    DateConversionBuffer date;
-    DateConversionBuffer time;
-    formatDate(*gregorianDateTime, date);
-    formatTime(*gregorianDateTime, time);
-    return JSValue::encode(jsMakeNontrivialString(exec, date, " ", time));
+    const bool asUTCVariant = false;
+    return formateDateInstance(exec, DateTimeFormatDateAndTime, asUTCVariant);
 }
 
 EncodedJSValue JSC_HOST_CALL dateProtoFuncToUTCString(ExecState* exec)
 {
-    JSValue thisValue = exec->hostThisValue();
-    if (!thisValue.inherits(&DateInstance::s_info))
-        return throwVMTypeError(exec);
-
-    DateInstance* thisDateObj = asDateInstance(thisValue); 
-
-    const GregorianDateTime* gregorianDateTime = thisDateObj->gregorianDateTimeUTC(exec);
-    if (!gregorianDateTime)
-        return JSValue::encode(jsNontrivialString(exec, "Invalid Date"));
-    DateConversionBuffer date;
-    DateConversionBuffer time;
-    formatDateUTCVariant(*gregorianDateTime, date);
-    formatTimeUTC(*gregorianDateTime, time);
-    return JSValue::encode(jsMakeNontrivialString(exec, date, " ", time));
+    const bool asUTCVariant = true;
+    return formateDateInstance(exec, DateTimeFormatDateAndTime, asUTCVariant);
 }
 
 EncodedJSValue JSC_HOST_CALL dateProtoFuncToISOString(ExecState* exec)
@@ -577,34 +570,14 @@ EncodedJSValue JSC_HOST_CALL dateProtoFuncToISOString(ExecState* exec)
 
 EncodedJSValue JSC_HOST_CALL dateProtoFuncToDateString(ExecState* exec)
 {
-    JSValue thisValue = exec->hostThisValue();
-    if (!thisValue.inherits(&DateInstance::s_info))
-        return throwVMTypeError(exec);
-
-    DateInstance* thisDateObj = asDateInstance(thisValue); 
-
-    const GregorianDateTime* gregorianDateTime = thisDateObj->gregorianDateTime(exec);
-    if (!gregorianDateTime)
-        return JSValue::encode(jsNontrivialString(exec, "Invalid Date"));
-    DateConversionBuffer date;
-    formatDate(*gregorianDateTime, date);
-    return JSValue::encode(jsNontrivialString(exec, date));
+    const bool asUTCVariant = false;
+    return formateDateInstance(exec, DateTimeFormatDate, asUTCVariant);
 }
 
 EncodedJSValue JSC_HOST_CALL dateProtoFuncToTimeString(ExecState* exec)
 {
-    JSValue thisValue = exec->hostThisValue();
-    if (!thisValue.inherits(&DateInstance::s_info))
-        return throwVMTypeError(exec);
-
-    DateInstance* thisDateObj = asDateInstance(thisValue); 
-
-    const GregorianDateTime* gregorianDateTime = thisDateObj->gregorianDateTime(exec);
-    if (!gregorianDateTime)
-        return JSValue::encode(jsNontrivialString(exec, "Invalid Date"));
-    DateConversionBuffer time;
-    formatTime(*gregorianDateTime, time);
-    return JSValue::encode(jsNontrivialString(exec, time));
+    const bool asUTCVariant = false;
+    return formateDateInstance(exec, DateTimeFormatTime, asUTCVariant);
 }
 
 EncodedJSValue JSC_HOST_CALL dateProtoFuncToLocaleString(ExecState* exec)
@@ -676,20 +649,8 @@ EncodedJSValue JSC_HOST_CALL dateProtoFuncGetUTCFullYear(ExecState* exec)
 
 EncodedJSValue JSC_HOST_CALL dateProtoFuncToGMTString(ExecState* exec)
 {
-    JSValue thisValue = exec->hostThisValue();
-    if (!thisValue.inherits(&DateInstance::s_info))
-        return throwVMTypeError(exec);
-
-    DateInstance* thisDateObj = asDateInstance(thisValue); 
-
-    const GregorianDateTime* gregorianDateTime = thisDateObj->gregorianDateTimeUTC(exec);
-    if (!gregorianDateTime)
-        return JSValue::encode(jsNontrivialString(exec, "Invalid Date"));
-    DateConversionBuffer date;
-    DateConversionBuffer time;
-    formatDateUTCVariant(*gregorianDateTime, date);
-    formatTimeUTC(*gregorianDateTime, time);
-    return JSValue::encode(jsMakeNontrivialString(exec, date, " ", time));
+    const bool asUTCVariant = true;
+    return formateDateInstance(exec, DateTimeFormatDateAndTime, asUTCVariant);
 }
 
 EncodedJSValue JSC_HOST_CALL dateProtoFuncGetMonth(ExecState* exec)

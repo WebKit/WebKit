@@ -168,11 +168,7 @@ static EncodedJSValue JSC_HOST_CALL callDate(ExecState* exec)
 {
     GregorianDateTime ts;
     msToGregorianDateTime(exec, currentTimeMS(), false, ts);
-    DateConversionBuffer date;
-    DateConversionBuffer time;
-    formatDate(ts, date);
-    formatTime(ts, time);
-    return JSValue::encode(jsMakeNontrivialString(exec, date, " ", time));
+    return JSValue::encode(jsNontrivialString(exec, formatDateTime(ts, DateTimeFormatDateAndTime, false)));
 }
 
 CallType DateConstructor::getCallData(JSCell*, CallData& callData)
