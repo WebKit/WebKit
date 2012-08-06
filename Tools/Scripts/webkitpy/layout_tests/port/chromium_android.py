@@ -27,6 +27,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import copy
 import logging
 import os
 import re
@@ -306,7 +307,7 @@ class ChromiumAndroidPort(chromium.ChromiumPort):
 class ChromiumAndroidDriver(driver.Driver):
     def __init__(self, port, worker_number, pixel_tests, no_timeout=False):
         super(ChromiumAndroidDriver, self).__init__(port, worker_number, pixel_tests, no_timeout)
-        self._pixel_tests = pixel_tests
+        self._cmd_line = None
         self._in_fifo_path = DEVICE_DRT_DIR + 'DumpRenderTree.in'
         self._out_fifo_path = DEVICE_DRT_DIR + 'DumpRenderTree.out'
         self._err_fifo_path = DEVICE_DRT_DIR + 'DumpRenderTree.err'
@@ -486,6 +487,8 @@ class ChromiumAndroidDriver(driver.Driver):
         return super(ChromiumAndroidDriver, self)._get_crash_log(stdout, stderr, newer_than)
 
     def cmd_line(self, pixel_tests, per_test_args):
+        # The returned command line is used to start _server_process. In our case, it's an interactive 'adb shell'.
+        # The command line passed to the DRT process is returned by _drt_cmd_line() instead.
         return self._adb_command + ['shell']
 
     def _file_exists_on_device(self, full_file_path):
@@ -518,12 +521,21 @@ class ChromiumAndroidDriver(driver.Driver):
                 not self._file_exists_on_device(self._out_fifo_path) and
                 not self._file_exists_on_device(self._err_fifo_path))
 
+    def run_test(self, driver_input):
+        base = self._port.lookup_virtual_test_base(driver_input.test_name)
+        if base:
+            driver_input = copy.copy(driver_input)
+            driver_input.args = self._port.lookup_virtual_test_args(driver_input.test_name)
+            driver_input.test_name = base
+        return super(ChromiumAndroidDriver, self).run_test(driver_input)
+
     def start(self, pixel_tests, per_test_args):
         # Only one driver instance is allowed because of the nature of Android activity.
-        # The single driver needs to switch between pixel test and no pixel test mode by itself.
-        if pixel_tests != self._pixel_tests:
+        # The single driver needs to restart DumpRenderTree when the command line changes.
+        cmd_line = self._drt_cmd_line(pixel_tests, per_test_args)
+        if cmd_line != self._cmd_line:
             self.stop()
-            self._pixel_tests = pixel_tests
+            self._cmd_line = cmd_line
         super(ChromiumAndroidDriver, self).start(pixel_tests, per_test_args)
 
     def _start(self, pixel_tests, per_test_args):
@@ -546,7 +558,7 @@ class ChromiumAndroidDriver(driver.Driver):
         self._forwarder_process.start()
 
         self._run_adb_command(['logcat', '-c'])
-        self._run_adb_command(['shell', 'echo'] + self._drt_cmd_line(pixel_tests, per_test_args) + ['>', COMMAND_LINE_FILE])
+        self._run_adb_command(['shell', 'echo'] + self._cmd_line + ['>', COMMAND_LINE_FILE])
         start_result = self._run_adb_command(['shell', 'am', 'start', '-e', 'RunInSubThread', '-n', DRT_ACTIVITY_FULL_NAME])
         if start_result.find('Exception') != -1:
             _log.error('Failed to start DumpRenderTree application. Exception:\n' + start_result)
