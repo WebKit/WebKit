@@ -1,3 +1,25 @@
+2012-08-05  Philip Rogers  <pdr@google.com>
+
+        Fix assertion during detach of SVG wrappers without baseVal
+        https://bugs.webkit.org/show_bug.cgi?id=93063
+
+        Reviewed by Nikolas Zimmermann.
+
+        r131583 introduced a change where SVGAnimatedListPropertyTearOff required
+        a baseVal to be set before detaching wrappers. This caused an assertion
+        to be hit if no baseVal was set.
+        This patch changes this behavior so that wrappers are detached even if
+        no baseVal is set.
+
+        Test: svg/animations/dynamic-modify-transform-without-baseval.html
+
+        * svg/properties/SVGAnimatedListPropertyTearOff.h:
+        (WebCore::SVGAnimatedListPropertyTearOff::detachListWrappers):
+        * svg/properties/SVGListProperty.h:
+        (WebCore::SVGListProperty::detachListWrappersAndResize): Extracted this static method for detaching wrappers without needing an SVGListProperty.
+        (SVGListProperty):
+        (WebCore::SVGListProperty::detachListWrappers):
+
 2012-08-05  Kihong Kwon  <kihong.kwon@samsung.com>
 
         Remove DeviceMotionEvent.h and DeviceOrientationEvent.h from Document.cpp

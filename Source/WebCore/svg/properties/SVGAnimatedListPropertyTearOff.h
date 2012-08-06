@@ -66,8 +66,7 @@ public:
 
     void detachListWrappers(unsigned newListSize)
     {
-        if (m_baseVal)
-            static_cast<ListProperty*>(m_baseVal.get())->detachListWrappers(newListSize);
+        ListProperty::detachListWrappersAndResize(&m_wrappers, newListSize);
     }
 
     PropertyType& currentAnimatedValue()
