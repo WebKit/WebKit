@@ -1,5 +1,23 @@
 2012-08-06  Balazs Kelemen  <kbalazs@webkit.org>
 
+        WTR should be able to load external resources
+        https://bugs.webkit.org/show_bug.cgi?id=89382
+
+        Reviewed by Ryosuke Niwa.
+
+        Allow to load an external resource as the main frame
+        and allow all subsequent external loads for such a main
+        frame. This behavior is necessary for being able to run
+        performance tests (https://bugs.webkit.org/show_bug.cgi?id=84008).
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::isLocalHost):
+        (WTR):
+        (WTR::isHTTPOrHTTPSScheme):
+        (WTR::InjectedBundlePage::willSendRequestForFrame):
+
+2012-08-06  Balazs Kelemen  <kbalazs@webkit.org>
+
         [WK2] REGRESSION(124596) lot of web process unresponsiveness appears on Apple bots
         https://bugs.webkit.org/show_bug.cgi?id=93120
 
