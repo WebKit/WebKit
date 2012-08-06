@@ -1,3 +1,15 @@
+2012-08-06  John J. Barton  <johnjbarton@chromium.org>
+
+        Web Inspector: WebInspector.linkifyStringAsFragment gives wrong typeof lineNumber
+        https://bugs.webkit.org/show_bug.cgi?id=93019
+
+        Reviewed by Pavel Feldman.
+
+        Add test for WebInspector.linkifyStringAsFragment()
+
+        * inspector/front-end/ResourceUtils.js:
+        (WebInspector.linkifyStringAsFragmentWithCustomLinkifier):
+
 2012-08-06  David Reveman  <reveman@chromium.org>
 
         [Chromium] Refactor CCTextureUpdater into CCTextureUpdater and CCTextureUpdateController.

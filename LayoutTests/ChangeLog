@@ -1,3 +1,16 @@
+2012-08-06  John J. Barton  <johnjbarton@chromium.org>
+
+        Web Inspector: WebInspector.linkifyStringAsFragment gives wrong typeof lineNumber
+        https://bugs.webkit.org/show_bug.cgi?id=93019
+
+        Reviewed by Pavel Feldman.
+
+        parseInt the RegExp match for lineNumber 
+        New test case added to linkify.html
+
+        * inspector/debugger/linkifier-expected.txt:
+        * inspector/debugger/linkifier.html:
+
 2012-08-06  Dmitry Titov  <dimich@chromium.org>
 
         [Chromium] Not reviewed, linting TestExpectations.

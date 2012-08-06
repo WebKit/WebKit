@@ -182,7 +182,7 @@ WebInspector.displayNameForURL = function(url)
 
 /**
  * @param {string} string
- * @param {function(string,string,string=):Node} linkifier
+ * @param {function(string,string,number=):Node} linkifier
  * @return {DocumentFragment}
  */
 WebInspector.linkifyStringAsFragmentWithCustomLinkifier = function(string, linkifier)
@@ -204,10 +204,14 @@ WebInspector.linkifyStringAsFragmentWithCustomLinkifier = function(string, linki
         var title = linkString;
         var realURL = (linkString.startsWith("www.") ? "http://" + linkString : linkString);
         var lineColumnMatch = lineColumnRegEx.exec(realURL);
-        if (lineColumnMatch)
+        var lineNumber;
+        if (lineColumnMatch) {
             realURL = realURL.substring(0, realURL.length - lineColumnMatch[0].length);
+            lineNumber = parseInt(lineColumnMatch[1], 10);
+            lineNumber = isNaN(lineNumber) ? undefined : lineNumber;
+        }
 
-        var linkNode = linkifier(title, realURL, lineColumnMatch ? lineColumnMatch[1] : undefined);
+        var linkNode = linkifier(title, realURL, lineNumber);
         container.appendChild(linkNode);
         string = string.substring(linkIndex + linkString.length, string.length);
     }
@@ -237,7 +241,7 @@ WebInspector.linkifyStringAsFragment = function(string)
     /**
      * @param {string} title
      * @param {string} url
-     * @param {string=} lineNumber
+     * @param {number=} lineNumber
      * @return {Node}
      */
     function linkifier(title, url, lineNumber)

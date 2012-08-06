@@ -41,6 +41,12 @@ function test()
             }
         }
 
+        var linkifyMe = "at triggerError (http://localhost/show/:22:11)";
+        var fragment = WebInspector.linkifyStringAsFragment(linkifyMe);
+        var anchor = fragment.querySelector('a');
+        InspectorTest.addResult("The string \"" + linkifyMe + " \" linkifies to url: " + anchor.href);
+        InspectorTest.addResult("The lineNumber is " + anchor.lineNumber + " with type " + (typeof anchor.lineNumber));
+
         linkifier = new WebInspector.Linkifier();
         var count1 = liveLocationsCount();
         link = linkifier.linkifyLocation(WebInspector.inspectedPageURL, 8, 0, "dummy-class");
