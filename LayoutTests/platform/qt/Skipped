@@ -2703,3 +2703,12 @@ fast/css/widget-region-parser.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=92914
 touchadjustment/touch-links-longpress.html
+
+# [Qt] REGRESSION(r124729): It made 6 inspector tests fail
+# https://bugs.webkit.org/show_bug.cgi?id=93228
+inspector/debugger/debugger-activation-crash2.html
+inspector/debugger/debugger-set-breakpoint-regex.html
+inspector/debugger/pause-in-internal-script.html
+inspector/debugger/script-formatter-breakpoints.html
+inspector/debugger/set-breakpoint.html
+inspector/debugger/watch-expressions-panel-switch.html
