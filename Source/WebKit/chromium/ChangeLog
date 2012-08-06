@@ -1,3 +1,17 @@
+2012-08-06  Adrienne Walker  <enne@google.com>
+
+        [chromium] REGRESSION(r124714): webkit_unit_tests asserts in Debug
+        https://bugs.webkit.org/show_bug.cgi?id=93297
+
+        Reviewed by James Robinson.
+
+        This is a quick fix to get debug unit tests working again by
+        implementing a virtual function that has ASSERT_NOT_REACHED in the
+        base class version.
+
+        * tests/ScrollAnimatorNoneTest.cpp:
+        (MockScrollableArea::scrollPosition):
+
 2012-08-06  Nasko Oskov  <nasko@chromium.org>
 
         Adding APIs to Chromium WebKit API to allow for creating and monitoring frame hierarchy.
