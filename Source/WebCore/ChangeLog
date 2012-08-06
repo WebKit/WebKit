@@ -1,3 +1,17 @@
+2012-08-05  Kihong Kwon  <kihong.kwon@samsung.com>
+
+        Remove DeviceMotionEvent.h and DeviceOrientationEvent.h from Document.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=93224
+
+        Reviewed by Kentaro Hara.
+
+        Need to remove DeviceMotionEvent.h and DeviceOrientationEvent.h from Document.cpp.
+        They are not used anymore in that file.
+
+        No new tests. No change in behavior.
+
+        * dom/Document.cpp:
+
 2012-08-05  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         [CMAKE] Move media source files from #ifdef ENABLE(MEDIA_SOURCE) to existing file list
