@@ -1,3 +1,16 @@
+2012-08-05  Yoshifumi Inoue  <yosin@chromium.org>
+
+        [chromium] form tests are flaky, mostly on Linux
+        https://bugs.webkit.org/show_bug.cgi?id=78620
+
+        Unreviewed. Update test expecations for
+          fast/forms/formaction-attribute.html
+          fast/forms/formmethod-attribute-button-html.html
+          fast/forms/formmethod-attribute-input-html.html
+        based on the latest dashboard.
+
+        * platform/chromium/TestExpectations:
+
 2012-08-05  Philip Rogers  <pdr@google.com>
 
         Fix assertion during detach of SVG wrappers without baseVal
