@@ -1,3 +1,23 @@
+2012-08-06  Anna Cavender  <annacc@chromium.org>
+
+        MediaSource should use it's own list of source URLs
+        https://bugs.webkit.org/show_bug.cgi?id=93285
+
+        Reviewed by Eric Carlson.
+
+        r124780 added MediaSource objects to PublicURLManager's streamURLs list,
+        piggy-backing on MEDIA_STREAM.  This patch creates a sourceURLs list so
+        that MediaSource can stand on its own.
+
+        Test: builds on Andriod even when MEDIA_STREAM is disabled.
+
+        * html/DOMURL.cpp:
+        (WebCore::DOMURL::createObjectURL):
+        * html/PublicURLManager.h:
+        (WebCore::PublicURLManager::contextDestroyed):
+        (PublicURLManager):
+        (WebCore::PublicURLManager::sourceURLs):
+
 2012-08-06  Nico Weber  <thakis@chromium.org>
 
         [chromium/mac] Unbreak debug builds with the 10.7 SDK

@@ -37,6 +37,11 @@
 #include "MediaStreamRegistry.h"
 #endif
 
+#if ENABLE(MEDIA_SOURCE)
+#include "MediaSource.h"
+#include "MediaSourceRegistry.h"
+#endif
+
 namespace WebCore {
 
 class ScriptExecutionContext;
@@ -56,17 +61,28 @@ public:
         for (HashSet<String>::iterator iter = m_streamURLs.begin(); iter != streamURLsEnd; ++iter)
             MediaStreamRegistry::registry().unregisterMediaStreamURL(KURL(ParsedURLString, *iter));
 #endif
+#if ENABLE(MEDIA_SOURCE)
+        HashSet<String>::iterator sourceURLsEnd = m_sourceURLs.end();
+        for (HashSet<String>::iterator iter = m_sourceURLs.begin(); iter != sourceURLsEnd; ++iter)
+            MediaSourceRegistry::registry().unregisterMediaSourceURL(KURL(ParsedURLString, *iter));
+#endif
     }
 
     HashSet<String>& blobURLs() { return m_blobURLs; }
 #if ENABLE(MEDIA_STREAM)
     HashSet<String>& streamURLs() { return m_streamURLs; }
 #endif
+#if ENABLE(MEDIA_SOURCE)
+    HashSet<String>& sourceURLs() { return m_sourceURLs; }
+#endif
 
 private:
     HashSet<String> m_blobURLs;
 #if ENABLE(MEDIA_STREAM)
     HashSet<String> m_streamURLs;
+#endif
+#if ENABLE(MEDIA_SOURCE)
+    HashSet<String> m_sourceURLs;
 #endif
 };
 
