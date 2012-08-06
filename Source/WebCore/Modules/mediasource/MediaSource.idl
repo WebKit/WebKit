@@ -27,57 +27,39 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+ 
+module html {
 
-#include "config.h"
-#include "SourceBuffer.h"
+    interface [
+        Conditional=MEDIA_SOURCE,
+        V8EnabledAtRuntime=mediaSource,
+        EventTarget,
+        Constructor,
+        CallWith=ScriptExecutionContext
+    ] MediaSource {
+        // All the source buffers created by this object.
+        readonly attribute SourceBufferList sourceBuffers;
 
-#if ENABLE(MEDIA_SOURCE)
+        // Subset of sourceBuffers that provide data for the selected/enabled tracks.
+        readonly attribute SourceBufferList activeSourceBuffers;
 
-#include "TimeRanges.h"
-#include <wtf/Uint8Array.h>
+        SourceBuffer addSourceBuffer(in DOMString type) raises (DOMException);
+        void removeSourceBuffer(in SourceBuffer buffer) raises (DOMException);
 
-namespace WebCore {
+        readonly attribute DOMString readyState;
+        
+        void endOfStream(in [Optional=DefaultIsNullString] DOMString error)
+            raises (DOMException);
+        
+        // EventTarget interface
+        void addEventListener(in DOMString type,
+                              in EventListener listener,
+                              in [Optional] boolean useCapture);
+        void removeEventListener(in DOMString type,
+                                 in EventListener listener,
+                                 in [Optional] boolean useCapture);
+        boolean dispatchEvent(in Event event)
+            raises(EventException);
+    };
 
-SourceBuffer::SourceBuffer(const String& id, PassRefPtr<MediaSource> source)
-    : m_id(id)
-    , m_source(source)
-{
 }
-
-SourceBuffer::~SourceBuffer()
-{
-}
-
-PassRefPtr<TimeRanges> SourceBuffer::buffered(ExceptionCode& ec) const
-{
-    if (!m_source) {
-        ec = INVALID_STATE_ERR;
-        return 0;
-    }
-
-    return m_source->buffered(id(), ec);
-}
-
-void SourceBuffer::append(PassRefPtr<Uint8Array> data, ExceptionCode& ec)
-{
-    if (!m_source) {
-        ec = INVALID_STATE_ERR;
-        return;
-    }
-
-    m_source->append(id(), data, ec);
-}
-
-void SourceBuffer::abort(ExceptionCode& ec)
-{
-    if (!m_source) {
-        ec = INVALID_STATE_ERR;
-        return;
-    }
-
-    m_source->abort(id(), ec);
-}
-
-} // namespace WebCore
-
-#endif

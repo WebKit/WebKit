@@ -11616,6 +11616,11 @@
 		B10B697E140C174000BC1C26 /* WebVTTTokenizer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebVTTTokenizer.cpp; sourceTree = "<group>"; };
 		B10B697F140C174000BC1C26 /* WebVTTTokenizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebVTTTokenizer.h; sourceTree = "<group>"; };
 		B1827492134CA4C100B98C2D /* CallbackFunction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CallbackFunction.cpp; sourceTree = "<group>"; };
+		B1A942DE15B5CE2200D525D1 /* MediaSource.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaSource.cpp; sourceTree = "<group>"; };
+		B1A942DF15B5CE2200D525D1 /* MediaSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaSource.h; sourceTree = "<group>"; };
+		B1A942E015B5CE2200D525D1 /* MediaSource.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = MediaSource.idl; sourceTree = "<group>"; };
+		B1A942E115B5CE2200D525D1 /* MediaSourceRegistry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaSourceRegistry.cpp; sourceTree = "<group>"; };
+		B1A942E215B5CE2200D525D1 /* MediaSourceRegistry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaSourceRegistry.h; sourceTree = "<group>"; };
 		B1A942E315B5CE2200D525D1 /* SourceBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SourceBuffer.cpp; sourceTree = "<group>"; };
 		B1A942E415B5CE2200D525D1 /* SourceBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SourceBuffer.h; sourceTree = "<group>"; };
 		B1A942E515B5CE2200D525D1 /* SourceBuffer.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SourceBuffer.idl; sourceTree = "<group>"; };
@@ -19058,6 +19063,11 @@
 		B1A942DD15B5CE2200D525D1 /* mediasource */ = {
 			isa = PBXGroup;
 			children = (
+				B1A942DE15B5CE2200D525D1 /* MediaSource.cpp */,
+				B1A942DF15B5CE2200D525D1 /* MediaSource.h */,
+				B1A942E015B5CE2200D525D1 /* MediaSource.idl */,
+				B1A942E115B5CE2200D525D1 /* MediaSourceRegistry.cpp */,
+				B1A942E215B5CE2200D525D1 /* MediaSourceRegistry.h */,
 				B1A942E315B5CE2200D525D1 /* SourceBuffer.cpp */,
 				B1A942E415B5CE2200D525D1 /* SourceBuffer.h */,
 				B1A942E515B5CE2200D525D1 /* SourceBuffer.idl */,

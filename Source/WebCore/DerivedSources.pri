@@ -624,6 +624,7 @@ contains(DEFINES, ENABLE_VIDEO_TRACK=1) {
 
 contains(DEFINES, ENABLE_MEDIA_SOURCE=1) {
   IDL_BINDINGS += \
+    $$PWD/Modules/mediasource/MediaSource.idl \
     $$PWD/Modules/mediasource/SourceBuffer.idl \
     $$PWD/Modules/mediasource/SourceBufferList.idl
 }

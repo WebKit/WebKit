@@ -29,53 +29,40 @@
  */
 
 #include "config.h"
-#include "SourceBuffer.h"
+#include "MediaSourceRegistry.h"
 
 #if ENABLE(MEDIA_SOURCE)
 
-#include "TimeRanges.h"
-#include <wtf/Uint8Array.h>
+#include "KURL.h"
+#include "MediaSource.h"
+#include <wtf/MainThread.h>
 
 namespace WebCore {
 
-SourceBuffer::SourceBuffer(const String& id, PassRefPtr<MediaSource> source)
-    : m_id(id)
-    , m_source(source)
+MediaSourceRegistry& MediaSourceRegistry::registry()
 {
+    // Since WebWorkers cannot obtain MediaSource objects, we should be on the main thread.
+    ASSERT(isMainThread());
+    DEFINE_STATIC_LOCAL(MediaSourceRegistry, instance, ());
+    return instance;
 }
 
-SourceBuffer::~SourceBuffer()
+void MediaSourceRegistry::registerMediaSourceURL(const KURL& url, PassRefPtr<MediaSource> source)
 {
+    ASSERT(isMainThread());
+    m_mediaSources.set(url.string(), source);
 }
 
-PassRefPtr<TimeRanges> SourceBuffer::buffered(ExceptionCode& ec) const
+void MediaSourceRegistry::unregisterMediaSourceURL(const KURL& url)
 {
-    if (!m_source) {
-        ec = INVALID_STATE_ERR;
-        return 0;
-    }
-
-    return m_source->buffered(id(), ec);
+    ASSERT(isMainThread());
+    m_mediaSources.remove(url.string());
 }
 
-void SourceBuffer::append(PassRefPtr<Uint8Array> data, ExceptionCode& ec)
+MediaSource* MediaSourceRegistry::lookupMediaSource(const String& url)
 {
-    if (!m_source) {
-        ec = INVALID_STATE_ERR;
-        return;
-    }
-
-    m_source->append(id(), data, ec);
-}
-
-void SourceBuffer::abort(ExceptionCode& ec)
-{
-    if (!m_source) {
-        ec = INVALID_STATE_ERR;
-        return;
-    }
-
-    m_source->abort(id(), ec);
+    ASSERT(isMainThread());
+    return m_mediaSources.get(url).get();
 }
 
 } // namespace WebCore

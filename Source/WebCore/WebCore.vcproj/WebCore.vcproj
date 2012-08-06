@@ -25086,6 +25086,22 @@
 				Name="mediasource"
 				>
 				<File
+					RelativePath="..\Modules\mediasource\MediaSource.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\Modules\mediasource\MediaSource.h"
+					>
+				</File>
+				<File
+					RelativePath="..\Modules\mediasource\MediaSourceRegistry.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\Modules\mediasource\MediaSourceRegistry.h"
+					>
+				</File>
+        <File
 					RelativePath="..\Modules\mediasource\SourceBuffer.cpp"
 					>
 				</File>
