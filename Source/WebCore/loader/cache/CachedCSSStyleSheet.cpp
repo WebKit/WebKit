@@ -32,6 +32,7 @@
 #include "CachedStyleSheetClient.h"
 #include "HTTPParsers.h"
 #include "MemoryCache.h"
+#include "MemoryInstrumentation.h"
 #include "SharedBuffer.h"
 #include "StyleSheetContents.h"
 #include "TextResourceDecoder.h"
@@ -196,6 +197,15 @@ void CachedCSSStyleSheet::saveParsedStyleSheet(PassRefPtr<StyleSheetContents> sh
     m_parsedStyleSheetCache->addedToMemoryCache();
 
     setDecodedSize(m_parsedStyleSheetCache->estimatedSizeInBytes());
+}
+
+void CachedCSSStyleSheet::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+{
+    MemoryClassInfo<CachedCSSStyleSheet> info(memoryObjectInfo, this, MemoryInstrumentation::CachedResourceCSS);
+    CachedResource::reportMemoryUsage(memoryObjectInfo);
+    info.addMember(m_decoder);
+    info.addInstrumentedMember(m_parsedStyleSheetCache);
+    info.addMember(m_decodedSheetText);
 }
 
 }

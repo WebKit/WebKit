@@ -31,7 +31,7 @@
 #include <wtf/Vector.h>
 
 namespace WebCore {
-    
+
     class PurgeableBuffer {
         WTF_MAKE_NONCOPYABLE(PurgeableBuffer);
     public:
@@ -50,7 +50,7 @@ namespace WebCore {
         bool wasPurged() const;
 
         bool makePurgeable(bool purgeable);
-        
+
     private:
         PurgeableBuffer(char* data, size_t);
     

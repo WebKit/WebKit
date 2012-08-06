@@ -1,3 +1,96 @@
+2012-08-06  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Web Inspector: native memory instrumentation: cover MemoryCache with MemoryInstrumentation
+        https://bugs.webkit.org/show_bug.cgi?id=91734
+
+        Reviewed by Yury Semikhatsky.
+
+        Old version of native memory instrumentation doesn't mark the memory cache objects as visited.
+        As a result MI could count the same objects multiple times.
+        The new version just traverses through MemoryCache the same way as through DOM.
+        Also not all the cached resource types were counted.
+
+        * dom/Document.cpp:
+        (WebCore::Document::reportMemoryUsage):
+        * dom/MemoryInstrumentation.h:
+        * inspector/InspectorMemoryAgent.cpp:
+        (MemoryBlockName):
+        (WebCore):
+        (WebCore::collectDomTreeInfo):
+        (WebCore::InspectorMemoryAgent::getProcessMemoryDistribution):
+        * loader/cache/CachedCSSStyleSheet.cpp:
+        (WebCore::CachedCSSStyleSheet::reportMemoryUsage):
+        (WebCore):
+        * loader/cache/CachedCSSStyleSheet.h:
+        (WebCore):
+        (CachedCSSStyleSheet):
+        * loader/cache/CachedFont.cpp:
+        (WebCore::CachedFont::reportMemoryUsage):
+        (WebCore):
+        * loader/cache/CachedFont.h:
+        (CachedFont):
+        * loader/cache/CachedImage.cpp:
+        (WebCore::CachedImage::reportMemoryUsage):
+        (WebCore):
+        * loader/cache/CachedImage.h:
+        (CachedImage):
+        * loader/cache/CachedRawResource.cpp:
+        (WebCore::CachedRawResource::reportMemoryUsage):
+        (WebCore):
+        * loader/cache/CachedRawResource.h:
+        (WebCore):
+        (CachedRawResource):
+        * loader/cache/CachedResource.cpp:
+        (WebCore::CachedResource::reportMemoryUsage):
+        (WebCore):
+        * loader/cache/CachedResource.h:
+        (WebCore):
+        (CachedResource):
+        * loader/cache/CachedResourceHandle.cpp:
+        (WebCore::CachedResourceHandleBase::reportMemoryUsage):
+        (WebCore):
+        * loader/cache/CachedResourceHandle.h:
+        (WebCore):
+        (CachedResourceHandleBase):
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore):
+        (WebCore::CachedResourceLoader::reportMemoryUsage):
+        * loader/cache/CachedResourceLoader.h:
+        (WebCore):
+        (CachedResourceLoader):
+        * loader/cache/CachedSVGDocument.cpp:
+        (WebCore::CachedSVGDocument::reportMemoryUsage):
+        (WebCore):
+        * loader/cache/CachedSVGDocument.h:
+        (CachedSVGDocument):
+        * loader/cache/CachedScript.cpp:
+        (WebCore::CachedScript::reportMemoryUsage):
+        (WebCore):
+        * loader/cache/CachedScript.h:
+        (WebCore):
+        (CachedScript):
+        * loader/cache/CachedShader.cpp:
+        (WebCore::CachedShader::reportMemoryUsage):
+        (WebCore):
+        * loader/cache/CachedShader.h:
+        (WebCore):
+        (CachedShader):
+        * loader/cache/CachedXSLStyleSheet.cpp:
+        (WebCore::CachedXSLStyleSheet::reportMemoryUsage):
+        (WebCore):
+        * loader/cache/CachedXSLStyleSheet.h:
+        (WebCore):
+        (CachedXSLStyleSheet):
+        * loader/cache/MemoryCache.cpp:
+        (WebCore::MemoryCache::reportMemoryUsage):
+        (WebCore):
+        * loader/cache/MemoryCache.h:
+        (WebCore):
+        (MemoryCache):
+        * platform/PurgeableBuffer.h:
+        (WebCore):
+        (PurgeableBuffer):
+
 2012-08-06  Douglas Stockwell  <dstockwell@chromium.org>
 
         Crash in WebCore::RenderListItem::updateMarkerLocation

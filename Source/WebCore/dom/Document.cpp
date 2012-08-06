@@ -6095,6 +6095,8 @@ void Document::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     info.addVector(m_customFonts);
     info.addMember(m_documentURI);
     info.addMember(m_baseTarget);
+    info.addInstrumentedMember(m_frame);
+    info.addInstrumentedMember(m_cachedResourceLoader);
     info.addInstrumentedMember(m_elemSheet);
     info.addInstrumentedMember(m_pageUserSheet);
     if (m_pageGroupUserSheets)

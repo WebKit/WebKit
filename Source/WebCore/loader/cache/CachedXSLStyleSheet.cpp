@@ -29,6 +29,7 @@
 
 #include "CachedResourceClientWalker.h"
 #include "CachedStyleSheetClient.h"
+#include "MemoryInstrumentation.h"
 #include "SharedBuffer.h"
 #include "TextResourceDecoder.h"
 #include <wtf/Vector.h>
@@ -94,6 +95,14 @@ void CachedXSLStyleSheet::error(CachedResource::Status status)
     ASSERT(errorOccurred());
     setLoading(false);
     checkNotify();
+}
+
+void CachedXSLStyleSheet::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+{
+    MemoryClassInfo<CachedXSLStyleSheet> info(memoryObjectInfo, this, MemoryInstrumentation::CachedResourceXSLT);
+    CachedResource::reportMemoryUsage(memoryObjectInfo);
+    info.addMember(m_sheet);
+    info.addMember(m_decoder);
 }
 
 #endif

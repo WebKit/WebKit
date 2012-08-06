@@ -877,5 +877,18 @@ void CachedResourceLoader::printPreloadStats()
         printf("IMAGES:  %d (%d hits, hit rate %d%%)\n", images, images - imageMisses, (images - imageMisses) * 100 / images);
 }
 #endif
-    
+
+void CachedResourceLoader::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+{
+    MemoryClassInfo<CachedResourceLoader> info(memoryObjectInfo, this, MemoryInstrumentation::Loader);
+    info.addHashMap(m_documentResources);
+    for (DocumentResourceMap::const_iterator i = m_documentResources.begin(); i != m_documentResources.end(); ++i) {
+        info.addMember(i->first);
+        info.addInstrumentedMember(i->second);
+    }
+    info.addHashSet(m_validatedURLs);
+    info.addListHashSet(*m_preloads);
+    info.addMember(m_pendingPreloads);
+}
+
 }

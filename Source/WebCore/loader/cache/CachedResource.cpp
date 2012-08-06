@@ -37,6 +37,7 @@
 #include "InspectorInstrumentation.h"
 #include "KURL.h"
 #include "Logging.h"
+#include "MemoryInstrumentation.h"
 #include "PurgeableBuffer.h"
 #include "ResourceHandle.h"
 #include "ResourceLoadScheduler.h"
@@ -798,6 +799,29 @@ void CachedResource::CachedResourceCallback::cancel()
 void CachedResource::CachedResourceCallback::timerFired(Timer<CachedResourceCallback>*)
 {
     m_resource->didAddClient(m_client);
+}
+
+void CachedResource::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+{
+    MemoryClassInfo<CachedResource> info(memoryObjectInfo, this, MemoryInstrumentation::CachedResource);
+    info.addMember(m_resourceRequest);
+    info.addHashSet(m_clients);
+    info.addMember(m_accept);
+    info.addInstrumentedMember(m_loader);
+    info.addMember(m_response);
+    info.addInstrumentedMember(m_data);
+    info.addMember(m_cachedMetadata.get());
+    info.addInstrumentedMember(m_nextInAllResourcesList);
+    info.addInstrumentedMember(m_prevInAllResourcesList);
+    info.addInstrumentedMember(m_nextInLiveResourcesList);
+    info.addInstrumentedMember(m_prevInLiveResourcesList);
+    info.addInstrumentedMember(m_owningCachedResourceLoader);
+    info.addInstrumentedMember(m_resourceToRevalidate);
+    info.addInstrumentedMember(m_proxyResource);
+    info.addInstrumentedHashSet(m_handlesToRevalidate);
+
+    if (m_purgeableData && !m_purgeableData->wasPurged())
+        info.addRawBuffer(m_purgeableData.get(), m_purgeableData->size());
 }
 
 }

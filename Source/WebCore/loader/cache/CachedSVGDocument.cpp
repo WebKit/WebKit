@@ -71,6 +71,14 @@ void CachedSVGDocument::data(PassRefPtr<SharedBuffer> data, bool allDataReceived
     checkNotify();
 }
 
+void CachedSVGDocument::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+{
+    MemoryClassInfo<CachedSVGDocument> info(memoryObjectInfo, this, MemoryInstrumentation::CachedResourceSVG);
+    CachedResource::reportMemoryUsage(memoryObjectInfo);
+    info.addInstrumentedMember(m_document);
+    info.addMember(m_decoder);
+}
+
 }
 
 #endif

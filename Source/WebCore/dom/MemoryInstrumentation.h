@@ -1,3 +1,4 @@
+
 /*
  * Copyright (C) 2012 Google Inc. All rights reserved.
  *
@@ -52,6 +53,15 @@ public:
         CSS,
         Binding,
         Loader,
+        MemoryCacheStructures,
+        CachedResource,
+        CachedResourceCSS,
+        CachedResourceFont,
+        CachedResourceImage,
+        CachedResourceScript,
+        CachedResourceSVG,
+        CachedResourceShader,
+        CachedResourceXSLT,
         LastTypeEntry
     };
 

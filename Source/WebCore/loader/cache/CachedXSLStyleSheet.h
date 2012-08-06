@@ -32,6 +32,7 @@
 namespace WebCore {
 
     class CachedResourceLoader;
+    class MemoryObjectInfo;
     class TextResourceDecoder;
 
 #if ENABLE(XSLT)
@@ -50,6 +51,8 @@ namespace WebCore {
         
         void checkNotify();
         
+        virtual void reportMemoryUsage(MemoryObjectInfo*) const OVERRIDE;
+
     protected:
         String m_sheet;
         RefPtr<TextResourceDecoder> m_decoder;

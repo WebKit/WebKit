@@ -47,6 +47,7 @@ class CachedResourceHandleBase;
 class CachedResourceLoader;
 class Frame;
 class InspectorResource;
+class MemoryObjectInfo;
 class PurgeableBuffer;
 class SecurityOrigin;
 class SubresourceLoader;
@@ -249,6 +250,8 @@ public:
 
     void setLoadFinishTime(double finishTime) { m_loadFinishTime = finishTime; }
     double loadFinishTime() const { return m_loadFinishTime; }
+
+    virtual void reportMemoryUsage(MemoryObjectInfo*) const;
 
 protected:
     void checkNotify();

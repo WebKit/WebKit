@@ -39,6 +39,7 @@ class CachedCSSStyleSheet;
 class CachedResource;
 class CachedResourceLoader;
 class KURL;
+class MemoryObjectInfo;
 class ScriptExecutionContext;
 class SecurityOrigin;
 struct SecurityOriginHash;
@@ -167,6 +168,8 @@ public:
     unsigned capacity() const { return m_capacity; }
     unsigned liveSize() const { return m_liveSize; }
     unsigned deadSize() const { return m_deadSize; }
+
+    void reportMemoryUsage(MemoryObjectInfo*) const;
 
 private:
     MemoryCache();

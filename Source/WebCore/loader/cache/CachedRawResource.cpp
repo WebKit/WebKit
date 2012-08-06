@@ -29,6 +29,7 @@
 #include "CachedResourceClient.h"
 #include "CachedResourceClientWalker.h"
 #include "CachedResourceLoader.h"
+#include "MemoryInstrumentation.h"
 #include "SharedBuffer.h"
 #include "SubresourceLoader.h"
 #include <wtf/PassRefPtr.h>
@@ -158,5 +159,12 @@ bool CachedRawResource::canReuse(const ResourceRequest& newRequest) const
     }
     return true;
 }
+
+void CachedRawResource::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+{
+    MemoryClassInfo<CachedRawResource> info(memoryObjectInfo, this, MemoryInstrumentation::CachedResource);
+    CachedResource::reportMemoryUsage(memoryObjectInfo);
+}
+
 
 } // namespace WebCore

@@ -30,6 +30,7 @@
 #include "MemoryCache.h"
 #include "CachedResourceClient.h"
 #include "CachedResourceClientWalker.h"
+#include "MemoryInstrumentation.h"
 #include "SharedBuffer.h"
 #include "TextResourceDecoder.h"
 #include <wtf/Vector.h>
@@ -125,5 +126,16 @@ void CachedScript::sourceProviderCacheSizeChanged(int delta)
     setDecodedSize(decodedSize() + delta);
 }
 #endif
+
+void CachedScript::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+{
+    MemoryClassInfo<CachedScript> info(memoryObjectInfo, this, MemoryInstrumentation::CachedResourceScript);
+    CachedResource::reportMemoryUsage(memoryObjectInfo);
+    info.addMember(m_script);
+    info.addMember(m_decoder);
+#if USE(JSC)
+    info.addMember(m_sourceProviderCache);
+#endif
+}
 
 } // namespace WebCore

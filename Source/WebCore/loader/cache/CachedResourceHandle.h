@@ -30,6 +30,8 @@
 
 namespace WebCore {
 
+class MemoryObjectInfo;
+
     class CachedResourceHandleBase {
     public:
         ~CachedResourceHandleBase() { if (m_resource) m_resource->unregisterHandle(this); }
@@ -40,6 +42,8 @@ namespace WebCore {
         // This conversion operator allows implicit conversion to bool but not to other integer types.
         typedef CachedResource* CachedResourceHandleBase::*UnspecifiedBoolType;
         operator UnspecifiedBoolType() const { return m_resource ? &CachedResourceHandleBase::m_resource : 0; }
+
+        void reportMemoryUsage(MemoryObjectInfo*) const;
 
     protected:
         CachedResourceHandleBase() : m_resource(0) {}
