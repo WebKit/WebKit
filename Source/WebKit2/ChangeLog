@@ -1,3 +1,70 @@
+2012-08-06  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        [WK2][GTK] Implement a new spell checker API for WebKit2GTK+
+        https://bugs.webkit.org/show_bug.cgi?id=90268
+
+        Reviewed by Martin Robinson.
+
+        Add a simple spell checking API to WK2, allowing to enable/disable
+        this feature and to define a list of languages associated to it.
+
+        * GNUmakefile.am: Add flags to handle the SPELLCHECK feature.
+        * GNUmakefile.list.am: Added new files
+
+        Added new internal class that will act both as the implementation
+        of TextCheckerClient and as the object WebKitWebContext will
+        depend on to implement the newly added API.
+
+        * UIProcess/API/gtk/WebKitTextChecker.cpp: Added.
+        (toTextChecker):
+        (continuousSpellCheckingEnabledCallback):
+        (setContinuousSpellCheckingEnabledCallback):
+        (checkSpellingOfStringCallback):
+        (guessesForWordCallback):
+        (learnWordCallback):
+        (ignoreWordCallback):
+        (WebKitTextChecker::~WebKitTextChecker):
+        (WebKitTextChecker::create):
+        (WebKitTextChecker::WebKitTextChecker):
+        (WebKitTextChecker::checkSpellingOfString):
+        (WebKitTextChecker::getGuessesForWord):
+        (WebKitTextChecker::learnWord):
+        (WebKitTextChecker::ignoreWord):
+        (WebKitTextChecker::setSpellCheckingEnabled):
+        (WebKitTextChecker::setSpellCheckingLanguages):
+        * UIProcess/API/gtk/WebKitTextChecker.h: Added.
+        (WebKitTextChecker):
+        (WebKitTextChecker::isSpellCheckingEnabled):
+        (WebKitTextChecker::getSpellCheckingLanguages):
+
+        Added WKTextChecker to WebKitPrivate.h, needed in WebKitTextChecker.
+
+        * UIProcess/API/gtk/WebKitPrivate.h:
+
+        Add new API to WebKitWebContext to allow enabling/disabling this
+        spell checking feature, and to set/get the list of languages used
+        to decide which dictionaries will be consulted.
+
+        * UIProcess/API/gtk/WebKitWebContext.cpp:
+        (_WebKitWebContextPrivate):
+        (createDefaultWebContext):
+        (webkit_web_context_get_spell_checking_enabled): New API.
+        (webkit_web_context_set_spell_checking_enabled): Ditto.
+        (webkit_web_context_get_spell_checking_languages): Ditto.
+        (webkit_web_context_set_spell_checking_languages): Ditto.
+        * UIProcess/API/gtk/WebKitWebContext.h:
+
+        New tests for checking the new API added to WebKitWebContext.
+
+        * UIProcess/API/gtk/tests/TestWebKitWebContext.cpp:
+        (testWebContextSpellChecker):
+        (beforeAll):
+
+        Update documentation with new sections and symbols.
+
+        * UIProcess/API/gtk/docs/webkit2gtk-docs.sgml:
+        * UIProcess/API/gtk/docs/webkit2gtk-sections.txt:
+
 2012-08-05  Benjamin Poulain  <bpoulain@apple.com>
 
         Assert in checkValidity() in hashtable.h from WebGeolocationManager::didFailToDeterminePosition() when fetching http://html5demos.com/geo
