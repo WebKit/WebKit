@@ -1,3 +1,9 @@
+2012-08-06  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update NEWS and configure.ac for 1.9.6 release
+
+        * configure.ac: Bump version numbers.
+
 2012-08-03  Patrick Gansterer  <paroga@webkit.org>
 
         [CMake][WIN] Disable C++ exceptions and RTTI

@@ -1,4 +1,24 @@
 =================
+WebKitGTK+ 1.9.6
+=================
+
+What's new in WebKitGTK+ 1.9.6?
+
+  - Add spell checker API to WebKit2 GTK+ API.
+  - Add WebKitWebView::submit-form signal to WebKit2 GTK+ API.
+  - Add API to get the suggested filename from a
+    WebKitNetworkResponse.
+  - Add webkit_web_view_get_snapshot() to WebKit1 API.
+  - Paste primary selection when middle clicking in X11 WebKit2.
+  - Make sure WebKitWebView always has a main resource and it has
+    already been set when the load has been committed, even for pages
+    loaded from the history cache in WebKit2.
+  - Fix a run time critical warning when gdk_window_get_cursor() is
+    called before WebKitWebView has been realized in WebKit2.
+  - Fix continuous insertion of newlines in Etherpad.
+  - Fix several memory leaks.
+
+=================
 WebKitGTK+ 1.9.5
 =================
 

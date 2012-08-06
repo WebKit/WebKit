@@ -1,3 +1,9 @@
+2012-08-06  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update NEWS and configure.ac for 1.9.6 release
+
+        * NEWS: Added release notes for 1.9.6.
+
 2012-08-06  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         [EFL] [GTK] Register Protocol Handler Client is never deleted
