@@ -1,3 +1,14 @@
+2012-08-05  Luke Macpherson   <macpherson@chromium.org>
+
+        Enable fast/css/variables tests by default for chromium.
+        https://bugs.webkit.org/show_bug.cgi?id=92610
+
+        Reviewed by Tony Chang.
+
+        Since variables are now compiled in by default on chromium there is no reason not to run these tests.
+
+        * platform/chromium/TestExpectations:
+
 2012-08-05  Joone Hur  <joone.hur@intel.com>
 
         Unreviewed EFL gardening.

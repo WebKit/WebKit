@@ -142,7 +142,6 @@ BUGWK73528 SKIP : networkinformation = PASS
 BUGGBILLOCK SKIP : webintents/intent-tag.html = PASS
 
 // CSS Variables are not yet enabled.
-BUGWK85580 SKIP : fast/css/variables = PASS
 BUGWK85580 SKIP : inspector/styles/variables = PASS
 
 // CSS image-resolution is not yet enabled.
