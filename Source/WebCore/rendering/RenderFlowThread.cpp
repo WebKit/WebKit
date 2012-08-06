@@ -431,7 +431,7 @@ LayoutUnit RenderFlowThread::regionRemainingLogicalHeightForLine(LayoutUnit posi
         // If IncludePageBoundary is set, the line exactly on the top edge of a
         // region will act as being part of the previous region.
         LayoutUnit regionHeight = isHorizontalWritingMode() ? region->regionRect().height() : region->regionRect().width();
-        remainingHeight = layoutMod(remainingHeight, regionHeight);
+        remainingHeight = intMod(remainingHeight, regionHeight);
     }
     return remainingHeight;
 }

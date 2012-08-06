@@ -561,6 +561,42 @@ inline FractionalLayoutUnit operator-(const FractionalLayoutUnit& a)
     return returnVal;
 }
 
+// For returning the remainder after a division with integer results.
+inline FractionalLayoutUnit intMod(const FractionalLayoutUnit& a, const FractionalLayoutUnit& b)
+{
+#if ENABLE(SUBPIXEL_LAYOUT)
+    // This calculates the modulo so that: a = static_cast<int>(a / b) * b + intMod(a, b).
+    FractionalLayoutUnit returnVal;
+    returnVal.setRawValue(a.rawValue() % b.rawValue());
+    return returnVal;
+#else
+    return a.rawValue() % b.rawValue();
+#endif
+}
+
+inline FractionalLayoutUnit operator%(const FractionalLayoutUnit& a, const FractionalLayoutUnit& b)
+{
+#if ENABLE(SUBPIXEL_LAYOUT)
+    // This calculates the modulo so that: a = (a / b) * b + a % b.
+    FractionalLayoutUnit returnVal;
+    long long rawVal = (static_cast<long long>(kFixedPointDenominator) * a.rawValue()) % b.rawValue();
+    returnVal.setRawValue(rawVal / kFixedPointDenominator);
+    return returnVal;
+#else
+    return a.rawValue() % b.rawValue();
+#endif
+}
+
+inline FractionalLayoutUnit operator%(const FractionalLayoutUnit& a, int b)
+{
+    return a % FractionalLayoutUnit(b);
+}
+
+inline FractionalLayoutUnit operator%(int a, const FractionalLayoutUnit& b)
+{
+    return FractionalLayoutUnit(a) % b;
+}
+
 inline FractionalLayoutUnit& operator+=(FractionalLayoutUnit& a, const FractionalLayoutUnit& b)
 {
     a = a + b;

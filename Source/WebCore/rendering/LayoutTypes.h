@@ -149,7 +149,7 @@ inline LayoutPoint toLayoutPoint(const LayoutSize& p)
 
 inline LayoutUnit layoutMod(const LayoutUnit& numerator, const LayoutUnit& denominator)
 {
-    return numerator.toInt() % denominator.toInt();
+    return numerator % denominator;
 }
 
 inline IntSize pixelSnappedIntSize(const FractionalLayoutSize& s, const FractionalLayoutPoint& p)

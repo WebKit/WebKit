@@ -1,3 +1,30 @@
+2012-08-06  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
+
+        Fix layoutMod in fractional layout units.
+        https://bugs.webkit.org/show_bug.cgi?id=92374
+
+        Reviewed by Levi Weintraub.
+
+        The modulo operation is upgraded from only being performed in integer to 
+        being performed in fractionalLayoutUnits, so that it returns an accurate
+        remainder for fractionalLayoutUnit division.
+
+        An alternative modulo operation is added and used to find the remainder
+        after division with natural integer results, for instance, the remainding
+        height after pagination.
+
+        No new functionality. No new tests.
+
+        * platform/FractionalLayoutUnit.h:
+        (WebCore::intMod):
+        (WebCore::operator%):
+        * rendering/LayoutTypes.h:
+        (WebCore::layoutMod):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::pageRemainingLogicalHeightForOffset):
+        * rendering/RenderFlowThread.cpp:
+        (WebCore::RenderFlowThread::regionRemainingLogicalHeightForLine):
+
 2012-08-06  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Web Inspector: native memory instrumentation: cover MemoryCache with MemoryInstrumentation
