@@ -1,3 +1,44 @@
+2012-08-06  Sergey Rogulenko  <rogulenko@google.com>
+
+        Web Inspector: extracting HighlightInfo from HighlightData in DOMNodeHighlighter
+        https://bugs.webkit.org/show_bug.cgi?id=91632
+
+        Reviewed by Pavel Feldman.
+
+        Extracted struct HighlightInfo from struct HighlightData in DOMNodeHighlighter.
+        Now InspectorOverlay receives node or rect to highlight together with highlightInfo.
+
+        * inspector/DOMNodeHighlighter.cpp:
+        (WebCore::InspectorOverlay::paint):
+        (WebCore::InspectorOverlay::getHighlight):
+        (WebCore::InspectorOverlay::hideHighlight):
+        (WebCore::InspectorOverlay::highlightNode):
+        (WebCore::InspectorOverlay::highlightRect):
+        (WebCore::InspectorOverlay::highlightedNode):
+        (WebCore::InspectorOverlay::update):
+        (WebCore::InspectorOverlay::drawNodeHighlight):
+        (WebCore):
+        (WebCore::InspectorOverlay::drawRectHighlight):
+        (WebCore::InspectorOverlay::drawPausedInDebugger):
+        * inspector/DOMNodeHighlighter.h:
+        (HighlightConfig):
+        (WebCore::Highlight::setColors):
+        (Highlight):
+        (InspectorOverlay):
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::clearFrontend):
+        (WebCore::InspectorDOMAgent::inspect):
+        (WebCore::InspectorDOMAgent::mouseDidMoveOverElement):
+        (WebCore::InspectorDOMAgent::setSearchingForNode):
+        (WebCore::InspectorDOMAgent::highlightConfigFromInspectorObject):
+        (WebCore::InspectorDOMAgent::setInspectModeEnabled):
+        (WebCore::InspectorDOMAgent::highlightRect):
+        (WebCore::InspectorDOMAgent::highlightNode):
+        (WebCore::InspectorDOMAgent::highlightFrame):
+        * inspector/InspectorDOMAgent.h:
+        (WebCore):
+        (InspectorDOMAgent):
+
 2012-08-06  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Unreviewed: Web Inspector: single line test fix for r124744.

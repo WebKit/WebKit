@@ -113,35 +113,35 @@ void drawOutlinedQuadWithClip(GraphicsContext& context, const FloatQuad& quad, c
     context.restore();
 }
 
-void drawHighlightForBox(GraphicsContext& context, const FloatQuad& contentQuad, const FloatQuad& paddingQuad, const FloatQuad& borderQuad, const FloatQuad& marginQuad, HighlightData* highlightData)
+void drawHighlightForBox(GraphicsContext& context, const FloatQuad& contentQuad, const FloatQuad& paddingQuad, const FloatQuad& borderQuad, const FloatQuad& marginQuad, const HighlightConfig& highlightConfig)
 {
-    bool hasMargin = highlightData->margin != Color::transparent;
-    bool hasBorder = highlightData->border != Color::transparent;
-    bool hasPadding = highlightData->padding != Color::transparent;
-    bool hasContent = highlightData->content != Color::transparent || highlightData->contentOutline != Color::transparent;
+    bool hasMargin = highlightConfig.margin != Color::transparent;
+    bool hasBorder = highlightConfig.border != Color::transparent;
+    bool hasPadding = highlightConfig.padding != Color::transparent;
+    bool hasContent = highlightConfig.content != Color::transparent || highlightConfig.contentOutline != Color::transparent;
 
     FloatQuad clipQuad;
     Color clipColor;
     if (hasMargin && (!hasBorder || marginQuad != borderQuad)) {
-        drawOutlinedQuadWithClip(context, marginQuad, borderQuad, highlightData->margin);
+        drawOutlinedQuadWithClip(context, marginQuad, borderQuad, highlightConfig.margin);
         clipQuad = borderQuad;
     }
     if (hasBorder && (!hasPadding || borderQuad != paddingQuad)) {
-        drawOutlinedQuadWithClip(context, borderQuad, paddingQuad, highlightData->border);
+        drawOutlinedQuadWithClip(context, borderQuad, paddingQuad, highlightConfig.border);
         clipQuad = paddingQuad;
     }
     if (hasPadding && (!hasContent || paddingQuad != contentQuad)) {
-        drawOutlinedQuadWithClip(context, paddingQuad, contentQuad, highlightData->padding);
+        drawOutlinedQuadWithClip(context, paddingQuad, contentQuad, highlightConfig.padding);
         clipQuad = contentQuad;
     }
     if (hasContent)
-        drawOutlinedQuad(context, contentQuad, highlightData->content, highlightData->contentOutline);
+        drawOutlinedQuad(context, contentQuad, highlightConfig.content, highlightConfig.contentOutline);
 }
 
-void drawHighlightForSVGRenderer(GraphicsContext& context, const Vector<FloatQuad>& absoluteQuads, HighlightData* highlightData)
+void drawHighlightForSVGRenderer(GraphicsContext& context, const Vector<FloatQuad>& absoluteQuads, const HighlightConfig& highlightConfig)
 {
     for (size_t i = 0; i < absoluteQuads.size(); ++i)
-        drawOutlinedQuad(context, absoluteQuads[i], highlightData->content, Color::transparent);
+        drawOutlinedQuad(context, absoluteQuads[i], highlightConfig.content, Color::transparent);
 }
 
 int drawSubstring(const TextRun& globalTextRun, int offset, int length, const Color& textColor, const Font& font, GraphicsContext& context, const LayoutRect& titleRect)
@@ -363,9 +363,8 @@ static void contentsQuadToPage(const FrameView* mainView, const FrameView* view,
     quad += mainView->scrollOffset();
 }
 
-static void getOrDrawNodeHighlight(GraphicsContext* context, HighlightData* highlightData, Highlight* highlight)
+static void getOrDrawNodeHighlight(GraphicsContext* context, Node* node, const HighlightConfig& highlightConfig, Highlight* highlight)
 {
-    Node* node = highlightData->node.get();
     RenderObject* renderer = node->renderer();
     Frame* containingFrame = node->document()->frame();
 
@@ -397,7 +396,7 @@ static void getOrDrawNodeHighlight(GraphicsContext* context, HighlightData* high
             contentsQuadToPage(mainView, containingView, highlight->quads[i]);
 
         if (context)
-            drawHighlightForSVGRenderer(*context, highlight->quads, highlightData);
+            drawHighlightForSVGRenderer(*context, highlight->quads, highlightConfig);
     } else if (renderer->isBox() || renderer->isRenderInline()) {
         LayoutRect contentBox;
         LayoutRect paddingBox;
@@ -451,7 +450,7 @@ static void getOrDrawNodeHighlight(GraphicsContext* context, HighlightData* high
         highlight->quads.append(absContentQuad);
 
         if (context)
-            drawHighlightForBox(*context, absContentQuad, absPaddingQuad, absBorderQuad, absMarginQuad, highlightData);
+            drawHighlightForBox(*context, absContentQuad, absPaddingQuad, absBorderQuad, absMarginQuad, highlightConfig);
     }
 
     // Draw node title if necessary.
@@ -459,16 +458,16 @@ static void getOrDrawNodeHighlight(GraphicsContext* context, HighlightData* high
     if (!node->isElementNode())
         return;
 
-    if (context && highlightData->showInfo)
+    if (context && highlightConfig.showInfo)
         drawElementTitle(*context, node, renderer, pixelSnappedIntRect(boundingBox), pixelSnappedIntRect(titleAnchorBox), visibleRect, containingFrame->settings());
 }
 
-static void getOrDrawRectHighlight(GraphicsContext* context, Page* page, HighlightData* highlightData, Highlight *highlight)
+static void getOrDrawRectHighlight(GraphicsContext* context, Page* page, IntRect* rect, const HighlightConfig& highlightConfig, Highlight *highlight)
 {
     if (!page)
         return;
 
-    FloatRect highlightRect(*(highlightData->rect));
+    FloatRect highlightRect(*rect);
 
     highlight->type = HighlightTypeRects;
     highlight->quads.append(highlightRect);
@@ -480,7 +479,7 @@ static void getOrDrawRectHighlight(GraphicsContext* context, Page* page, Highlig
             context->translate(-visibleRect.x(), -visibleRect.y());
         }
 
-        drawOutlinedQuad(*context, highlightRect, highlightData->content, highlightData->contentOutline);
+        drawOutlinedQuad(*context, highlightRect, highlightConfig.content, highlightConfig.contentOutline);
     }
 }
 
@@ -495,7 +494,8 @@ InspectorOverlay::InspectorOverlay(Page* page, InspectorClient* client)
 void InspectorOverlay::paint(GraphicsContext& context)
 {
     drawPausedInDebugger(context);
-    drawHighlight(context);
+    drawNodeHighlight(context);
+    drawRectHighlight(context);
 }
 
 void InspectorOverlay::drawOutline(GraphicsContext& context, const LayoutRect& rect, const Color& color)
@@ -506,19 +506,17 @@ void InspectorOverlay::drawOutline(GraphicsContext& context, const LayoutRect& r
 
 void InspectorOverlay::getHighlight(Highlight* highlight) const
 {
-    if (!m_highlightData)
+    if (!m_highlightNode && !m_highlightRect)
         return;
 
-    highlight->contentColor = m_highlightData->content;
-    highlight->paddingColor = m_highlightData->padding;
-    highlight->borderColor = m_highlightData->border;
-    highlight->marginColor = m_highlightData->margin;
     highlight->type = HighlightTypeRects;
-
-    if (m_highlightData->node)
-        getOrDrawNodeHighlight(0, m_highlightData.get(), highlight);
-    else if (m_highlightData->rect)
-        getOrDrawRectHighlight(0, m_page, m_highlightData.get(), highlight);
+    if (m_highlightNode) {
+        highlight->setColors(m_nodeHighlightConfig);
+        getOrDrawNodeHighlight(0, m_highlightNode.get(), m_nodeHighlightConfig, highlight);
+    } else {
+        highlight->setColors(m_rectHighlightConfig);
+        getOrDrawRectHighlight(0, m_page, m_highlightRect.get(), m_rectHighlightConfig, highlight);
+    }
 }
 
 void InspectorOverlay::setPausedInDebuggerMessage(const String* message)
@@ -529,57 +527,54 @@ void InspectorOverlay::setPausedInDebuggerMessage(const String* message)
 
 void InspectorOverlay::hideHighlight()
 {
-    if (m_highlightData) {
-        // FIXME: Clear entire highlight data here, store config upon setInspectModeEnabled
-        m_highlightData->rect.clear();
-        m_highlightData->node.clear();
-    }
+    m_highlightNode.clear();
+    m_highlightRect.clear();
     update();
 }
 
-void InspectorOverlay::highlightNode(Node* node)
+void InspectorOverlay::highlightNode(Node* node, const HighlightConfig& highlightConfig)
 {
-    if (m_highlightData)
-        m_highlightData->node = node;
+    m_nodeHighlightConfig = highlightConfig;
+    m_highlightNode = node;
     update();
 }
 
-void InspectorOverlay::setHighlightData(PassOwnPtr<HighlightData> highlightData)
+void InspectorOverlay::highlightRect(PassOwnPtr<IntRect> rect, const HighlightConfig& highlightConfig)
 {
-    m_highlightData = highlightData;
-    update();
-}
-
-void InspectorOverlay::clearHighlightData()
-{
-    m_highlightData.clear();
+    m_rectHighlightConfig = highlightConfig;
+    m_highlightRect = rect;
     update();
 }
 
 Node* InspectorOverlay::highlightedNode() const
 {
-    return m_highlightData ? m_highlightData->node.get() : 0;
+    return m_highlightNode.get();
 }
 
 void InspectorOverlay::update()
 {
-    // FIXME(91926) Refactor highlightNode to pass highlight data along with the call.
-    if ((m_highlightData && (m_highlightData->rect || m_highlightData->node)) || !m_pausedInDebuggerMessage.isNull())
+    if (m_highlightNode || m_highlightRect || !m_pausedInDebuggerMessage.isNull())
         m_client->highlight();
     else
         m_client->hideHighlight();
 }
 
-void InspectorOverlay::drawHighlight(GraphicsContext& context)
+void InspectorOverlay::drawNodeHighlight(GraphicsContext& context)
 {
-    if (!m_highlightData || (!m_highlightData->rect && !m_highlightData->node))
+    if (!m_highlightNode)
         return;
 
     Highlight highlight;
-    if (m_highlightData->node)
-        getOrDrawNodeHighlight(&context, m_highlightData.get(), &highlight);
-    else if (m_highlightData->rect)
-        getOrDrawRectHighlight(&context, m_page, m_highlightData.get(), &highlight);
+    getOrDrawNodeHighlight(&context, m_highlightNode.get(), m_nodeHighlightConfig, &highlight);
+}
+
+void InspectorOverlay::drawRectHighlight(GraphicsContext& context)
+{
+    if (!m_highlightRect)
+        return;
+
+    Highlight highlight;
+    getOrDrawRectHighlight(&context, m_page, m_highlightRect.get(), m_rectHighlightConfig, &highlight);
 }
 
 void InspectorOverlay::drawPausedInDebugger(GraphicsContext& context)
@@ -593,7 +588,7 @@ void InspectorOverlay::drawPausedInDebugger(GraphicsContext& context)
 
     Frame* frame = m_page->mainFrame();
     Settings* settings = frame->settings();
-    IntRect visibleRect = frame->view()->visibleContentRect();
+    IntRect visibleRect = IntRect(IntPoint(), frame->view()->visibleSize());
 
     context.setFillColor(backgroundColor, ColorSpaceDeviceRGB);
     context.fillRect(visibleRect);

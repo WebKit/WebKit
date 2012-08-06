@@ -232,9 +232,9 @@ void InspectorDOMAgent::clearFrontend()
 
     m_history.clear();
     m_domEditor.clear();
-    setSearchingForNode(false, 0);
 
     ErrorString error;
+    setSearchingForNode(&error, false, 0);
     hideHighlight(&error);
 
     m_frontend = 0;
@@ -953,7 +953,8 @@ bool InspectorDOMAgent::handleMousePress()
 
 void InspectorDOMAgent::inspect(Node* node)
 {
-    setSearchingForNode(false, 0);
+    ErrorString error;
+    setSearchingForNode(&error, false, 0);
 
     if (node->nodeType() != Node::ELEMENT_NODE && node->nodeType() != Node::DOCUMENT_NODE)
         node = node->parentNode();
@@ -994,66 +995,68 @@ void InspectorDOMAgent::mouseDidMoveOverElement(const HitTestResult& result, uns
     Node* node = result.innerNode();
     while (node && node->nodeType() == Node::TEXT_NODE)
         node = node->parentNode();
-    if (node)
-        m_overlay->highlightNode(node);
+    if (node && m_inspectModeHighlightConfig)
+        m_overlay->highlightNode(node, *m_inspectModeHighlightConfig);
 }
 
-void InspectorDOMAgent::setSearchingForNode(bool enabled, InspectorObject* highlightConfig)
+void InspectorDOMAgent::setSearchingForNode(ErrorString* errorString, bool enabled, InspectorObject* highlightInspectorObject)
 {
     if (m_searchingForNode == enabled)
         return;
     m_searchingForNode = enabled;
-    if (enabled)
-        setHighlightDataFromConfig(highlightConfig);
+    if (enabled) {
+        if (!highlightInspectorObject) {
+            *errorString = "Internal error: highlight configuration parameter is missing";
+            return;
+        }
+        m_inspectModeHighlightConfig = highlightConfigFromInspectorObject(highlightInspectorObject);
+    }
     else {
         ErrorString error;
         hideHighlight(&error);
-        m_overlay->clearHighlightData();
     }
 }
 
-bool InspectorDOMAgent::setHighlightDataFromConfig(InspectorObject* highlightConfig)
+PassOwnPtr<HighlightConfig> InspectorDOMAgent::highlightConfigFromInspectorObject(InspectorObject* highlightInspectorObject)
 {
-    if (!highlightConfig) {
-        m_overlay->clearHighlightData();
-        return false;
-    }
-
-    OwnPtr<HighlightData> highlightData = adoptPtr(new HighlightData());
+    OwnPtr<HighlightConfig> highlightConfig = adoptPtr(new HighlightConfig());
     bool showInfo = false; // Default: false (do not show a tooltip).
-    highlightConfig->getBoolean("showInfo", &showInfo);
-    highlightData->showInfo = showInfo;
-    highlightData->content = parseConfigColor("contentColor", highlightConfig);
-    highlightData->contentOutline = parseConfigColor("contentOutlineColor", highlightConfig);
-    highlightData->padding = parseConfigColor("paddingColor", highlightConfig);
-    highlightData->border = parseConfigColor("borderColor", highlightConfig);
-    highlightData->margin = parseConfigColor("marginColor", highlightConfig);
-    m_overlay->setHighlightData(highlightData.release());
-    return true;
+    highlightInspectorObject->getBoolean("showInfo", &showInfo);
+    highlightConfig->showInfo = showInfo;
+    highlightConfig->content = parseConfigColor("contentColor", highlightInspectorObject);
+    highlightConfig->contentOutline = parseConfigColor("contentOutlineColor", highlightInspectorObject);
+    highlightConfig->padding = parseConfigColor("paddingColor", highlightInspectorObject);
+    highlightConfig->border = parseConfigColor("borderColor", highlightInspectorObject);
+    highlightConfig->margin = parseConfigColor("marginColor", highlightInspectorObject);
+    return highlightConfig.release();
 }
 
-void InspectorDOMAgent::setInspectModeEnabled(ErrorString*, bool enabled, const RefPtr<InspectorObject>* highlightConfig)
+void InspectorDOMAgent::setInspectModeEnabled(ErrorString* errorString, bool enabled, const RefPtr<InspectorObject>* highlightConfig)
 {
-    setSearchingForNode(enabled, highlightConfig ? highlightConfig->get() : 0);
+    setSearchingForNode(errorString, enabled, highlightConfig ? highlightConfig->get() : 0);
 }
 
 void InspectorDOMAgent::highlightRect(ErrorString*, int x, int y, int width, int height, const RefPtr<InspectorObject>* color, const RefPtr<InspectorObject>* outlineColor)
 {
-    OwnPtr<HighlightData> highlightData = adoptPtr(new HighlightData());
-    highlightData->rect = adoptPtr(new IntRect(x, y, width, height));
-    highlightData->content = parseColor(color);
-    highlightData->contentOutline = parseColor(outlineColor);
-    m_overlay->setHighlightData(highlightData.release());
+    OwnPtr<HighlightConfig> highlightConfig = adoptPtr(new HighlightConfig());
+    highlightConfig->content = parseColor(color);
+    highlightConfig->contentOutline = parseColor(outlineColor);
+    m_overlay->highlightRect(adoptPtr(new IntRect(x, y, width, height)), *highlightConfig);
 }
 
 void InspectorDOMAgent::highlightNode(
-    ErrorString*,
+    ErrorString* errorString,
     int nodeId,
-    const RefPtr<InspectorObject>& highlightConfig)
+    const RefPtr<InspectorObject>& highlightInspectorObject)
 {
-    if (Node* node = nodeForId(nodeId))
-        if (setHighlightDataFromConfig(highlightConfig.get()))
-            m_overlay->highlightNode(node);
+    if (Node* node = nodeForId(nodeId)) {
+        if (!highlightInspectorObject) {
+            *errorString = "Internal error: highlight configuration parameter is missing";
+            return;
+        }
+        OwnPtr<HighlightConfig> highlightConfig = highlightConfigFromInspectorObject(highlightInspectorObject.get());
+        m_overlay->highlightNode(node, *highlightConfig);
+    }
 }
 
 void InspectorDOMAgent::highlightFrame(
@@ -1064,12 +1067,11 @@ void InspectorDOMAgent::highlightFrame(
 {
     Frame* frame = m_pageAgent->frameForId(frameId);
     if (frame && frame->ownerElement()) {
-        OwnPtr<HighlightData> highlightData = adoptPtr(new HighlightData());
-        highlightData->node = frame->ownerElement();
-        highlightData->showInfo = true; // Always show tooltips for frames.
-        highlightData->content = parseColor(color);
-        highlightData->contentOutline = parseColor(outlineColor);
-        m_overlay->setHighlightData(highlightData.release());
+        OwnPtr<HighlightConfig> highlightConfig = adoptPtr(new HighlightConfig());
+        highlightConfig->showInfo = true; // Always show tooltips for frames.
+        highlightConfig->content = parseColor(color);
+        highlightConfig->contentOutline = parseColor(outlineColor);
+        m_overlay->highlightNode(frame->ownerElement(), *highlightConfig);
     }
 }
 

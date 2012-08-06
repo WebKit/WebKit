@@ -48,17 +48,13 @@ class IntRect;
 class Node;
 class Page;
 
-struct HighlightData {
+struct HighlightConfig {
     Color content;
     Color contentOutline;
     Color padding;
     Color border;
     Color margin;
     bool showInfo;
-
-    // Either of these must be 0.
-    RefPtr<Node> node;
-    OwnPtr<IntRect> rect;
 };
 
 enum HighlightType {
@@ -67,6 +63,14 @@ enum HighlightType {
 };
 
 struct Highlight {
+    void setColors(const HighlightConfig& highlightConfig)
+    {
+        contentColor = highlightConfig.content;
+        paddingColor = highlightConfig.padding;
+        borderColor = highlightConfig.border;
+        marginColor = highlightConfig.margin;
+    }
+
     Color contentColor;
     Color paddingColor;
     Color borderColor;
@@ -92,9 +96,8 @@ public:
     void setPausedInDebuggerMessage(const String*);
 
     void hideHighlight();
-    void highlightNode(Node*);
-    void setHighlightData(PassOwnPtr<HighlightData>);
-    void clearHighlightData();
+    void highlightNode(Node*, const HighlightConfig&);
+    void highlightRect(PassOwnPtr<IntRect>, const HighlightConfig&);
 
     Node* highlightedNode() const;
 
@@ -102,13 +105,17 @@ private:
     InspectorOverlay(Page*, InspectorClient*);
 
     void update();
-    void drawHighlight(GraphicsContext&);
+    void drawNodeHighlight(GraphicsContext&);
+    void drawRectHighlight(GraphicsContext&);
     void drawPausedInDebugger(GraphicsContext&);
 
     Page* m_page;
     InspectorClient* m_client;
     String m_pausedInDebuggerMessage;
-    OwnPtr<HighlightData> m_highlightData;
+    RefPtr<Node> m_highlightNode;
+    HighlightConfig m_nodeHighlightConfig;
+    OwnPtr<IntRect> m_highlightRect;
+    HighlightConfig m_rectHighlightConfig;
 };
 
 } // namespace WebCore

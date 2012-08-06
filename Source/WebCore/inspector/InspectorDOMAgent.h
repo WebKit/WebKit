@@ -30,6 +30,7 @@
 #ifndef InspectorDOMAgent_h
 #define InspectorDOMAgent_h
 
+#include "DOMNodeHighlighter.h"
 #include "EventTarget.h"
 #include "InjectedScript.h"
 #include "InjectedScriptManager.h"
@@ -68,6 +69,8 @@ class Node;
 class RevalidateStyleAttributeTask;
 class ScriptValue;
 class ShadowRoot;
+
+struct HighlightConfig;
 
 typedef String ErrorString;
 
@@ -198,8 +201,8 @@ public:
 private:
     InspectorDOMAgent(InstrumentingAgents*, InspectorPageAgent*, InspectorState*, InjectedScriptManager*, InspectorOverlay*);
 
-    void setSearchingForNode(bool enabled, InspectorObject* highlightConfig);
-    bool setHighlightDataFromConfig(InspectorObject* highlightConfig);
+    void setSearchingForNode(ErrorString*, bool enabled, InspectorObject* highlightConfig);
+    PassOwnPtr<HighlightConfig> highlightConfigFromInspectorObject(InspectorObject* highlightInspectorObject);
 
     // Node-related methods.
     typedef HashMap<RefPtr<Node>, int> NodeToIdMap;
@@ -248,6 +251,7 @@ private:
     OwnPtr<RevalidateStyleAttributeTask> m_revalidateStyleAttrTask;
     RefPtr<Node> m_nodeToFocus;
     bool m_searchingForNode;
+    OwnPtr<HighlightConfig> m_inspectModeHighlightConfig;
     OwnPtr<InspectorHistory> m_history;
     OwnPtr<DOMEditor> m_domEditor;
     bool m_suppressAttributeModifiedEvent;
