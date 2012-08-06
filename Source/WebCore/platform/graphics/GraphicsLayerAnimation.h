@@ -41,13 +41,14 @@ public:
     GraphicsLayerAnimation()
         : m_keyframes(AnimatedPropertyInvalid)
     { }
-    GraphicsLayerAnimation(const KeyframeValueList&, const IntSize&, const Animation*, double, bool);
+    GraphicsLayerAnimation(const String&, const KeyframeValueList&, const IntSize&, const Animation*, double, bool);
     void apply(Client*);
     void pause(double);
     AnimationState state() const { return m_state; }
     void setState(AnimationState s) { m_state = s; }
     AnimatedPropertyID property() const { return m_keyframes.property(); }
     bool isActive() const;
+    String name() const { return m_name; }
 
 private:
     void applyInternal(Client*, const AnimationValue* from, const AnimationValue* to, float progress);
@@ -66,8 +67,8 @@ class GraphicsLayerAnimations {
 public:
     GraphicsLayerAnimations() { }
 
-    void add(const String&, const GraphicsLayerAnimation&);
-    void remove(const String& name) { m_animations.remove(name); }
+    void add(const GraphicsLayerAnimation&);
+    void remove(const String& name);
     void pause(const String&, double);
     void apply(GraphicsLayerAnimation::Client*);
     bool isEmpty() const { return m_animations.isEmpty(); }
@@ -76,7 +77,7 @@ public:
     bool hasActiveAnimationsOfType(AnimatedPropertyID type) const;
 
 private:
-    HashMap<String, Vector<GraphicsLayerAnimation> > m_animations;
+    Vector<GraphicsLayerAnimation> m_animations;
 };
 
 }

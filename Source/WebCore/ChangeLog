@@ -1,3 +1,31 @@
+2012-08-06  No'am Rosenthal  <noam.rosenthal@nokia.com>
+
+        GraphicsLayerAnimation shouldn't use HashMap<String>
+        https://bugs.webkit.org/show_bug.cgi?id=93284
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Use a vector containing all the animations instead of a map of String to Vector.
+        The HashMap contains very few elements, which makes it inefficient relatively to a vector.
+        This has been shown to be a bottleneck in valgrind.
+
+        Covered by existing animation tests.
+
+        * platform/graphics/GraphicsLayerAnimation.cpp:
+        (WebCore::GraphicsLayerAnimation::GraphicsLayerAnimation):
+        (WebCore::GraphicsLayerAnimations::hasActiveAnimationsOfType):
+        (WebCore::GraphicsLayerAnimations::hasRunningAnimations):
+        (WebCore::GraphicsLayerAnimations::add):
+        (WebCore::GraphicsLayerAnimations::pause):
+        (WebCore::GraphicsLayerAnimations::remove):
+        (WebCore::GraphicsLayerAnimations::apply):
+        * platform/graphics/GraphicsLayerAnimation.h:
+        (GraphicsLayerAnimation):
+        (WebCore::GraphicsLayerAnimation::name):
+        (GraphicsLayerAnimations):
+        * platform/graphics/texmap/GraphicsLayerTextureMapper.cpp:
+        (WebCore::GraphicsLayerTextureMapper::addAnimation):
+
 2012-08-06  Beth Dakin  <bdakin@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=93199

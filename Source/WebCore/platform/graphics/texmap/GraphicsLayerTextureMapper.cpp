@@ -378,7 +378,7 @@ bool GraphicsLayerTextureMapper::addAnimation(const KeyframeValueList& valueList
     if (valueList.property() == AnimatedPropertyWebkitTransform)
         listsMatch = validateTransformOperations(valueList, hasBigRotation) >= 0;
 
-    m_animations.add(keyframesName, GraphicsLayerAnimation(valueList, boxSize, anim, timeOffset, listsMatch));
+    m_animations.add(GraphicsLayerAnimation(keyframesName, valueList, boxSize, anim, timeOffset, listsMatch));
     notifyChange(TextureMapperLayer::AnimationChange);
     m_animationStartedTimer.startOneShot(0);
     return true;
