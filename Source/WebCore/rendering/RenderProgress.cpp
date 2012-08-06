@@ -33,7 +33,7 @@ using namespace std;
 
 namespace WebCore {
 
-RenderProgress::RenderProgress(HTMLProgressElement* element)
+RenderProgress::RenderProgress(HTMLElement* element)
     : RenderBlock(element)
     , m_position(HTMLProgressElement::InvalidPosition)
     , m_animationStartTime(0)
@@ -102,7 +102,14 @@ void RenderProgress::updateAnimationState()
 
 HTMLProgressElement* RenderProgress::progressElement() const
 {
-    return static_cast<HTMLProgressElement*>(node());
+    if (!node())
+        return 0;
+
+    if (isHTMLProgressElement(node()))
+        return toHTMLProgressElement(node());
+
+    ASSERT(node()->shadowHost());
+    return toHTMLProgressElement(node()->shadowHost());
 }    
 
 } // namespace WebCore

@@ -43,6 +43,7 @@ const double HTMLProgressElement::InvalidPosition = -2;
 
 HTMLProgressElement::HTMLProgressElement(const QualifiedName& tagName, Document* document)
     : LabelableElement(tagName, document)
+    , m_hasAuthorShadowRoot(false)
 {
     ASSERT(hasTagName(progressTag));
 }
@@ -58,14 +59,32 @@ PassRefPtr<HTMLProgressElement> HTMLProgressElement::create(const QualifiedName&
     return progress;
 }
 
-RenderObject* HTMLProgressElement::createRenderer(RenderArena* arena, RenderStyle*)
+RenderObject* HTMLProgressElement::createRenderer(RenderArena* arena, RenderStyle* style)
 {
+    if (!style->hasAppearance() || hasAuthorShadowRoot())
+        return RenderObject::createObject(this, style);
+
     return new (arena) RenderProgress(this);
 }
 
 bool HTMLProgressElement::childShouldCreateRenderer(const NodeRenderingContext& childContext) const
 {
     return childContext.isOnUpperEncapsulationBoundary() && HTMLElement::childShouldCreateRenderer(childContext);
+}
+
+RenderProgress* HTMLProgressElement::renderProgress() const
+{
+    if (renderer() && renderer()->isProgress())
+        return static_cast<RenderProgress*>(renderer());
+
+    RenderObject* renderObject = userAgentShadowRoot()->firstChild()->renderer();
+    ASSERT(!renderObject || renderObject->isProgress());
+    return static_cast<RenderProgress*>(renderObject);
+}
+
+void HTMLProgressElement::willAddAuthorShadowRoot()
+{
+    m_hasAuthorShadowRoot = true;
 }
 
 bool HTMLProgressElement::supportsFocus() const
@@ -134,10 +153,9 @@ bool HTMLProgressElement::isDeterminate() const
 void HTMLProgressElement::didElementStateChange()
 {
     m_value->setWidthPercentage(position() * 100);
-    if (renderer() && renderer()->isProgress()) {
-        RenderProgress* render = toRenderProgress(renderer());
+    if (RenderProgress* render = renderProgress()) {
         bool wasDeterminate = render->isDeterminate();
-        renderer()->updateFromElement();
+        render->updateFromElement();
         if (wasDeterminate != isDeterminate())
             setNeedsStyleRecalc();
     }
@@ -145,14 +163,18 @@ void HTMLProgressElement::didElementStateChange()
 
 void HTMLProgressElement::createShadowSubtree()
 {
-    ASSERT(!shadow());
+    ASSERT(!userAgentShadowRoot());
+           
+    RefPtr<ShadowRoot> root = ShadowRoot::create(this, ShadowRoot::UserAgentShadowRoot, ASSERT_NO_EXCEPTION);
+
+    RefPtr<ProgressInnerElement> inner = ProgressInnerElement::create(document());
+    root->appendChild(inner);
 
     RefPtr<ProgressBarElement> bar = ProgressBarElement::create(document());
     m_value = ProgressValueElement::create(document());
     bar->appendChild(m_value, ASSERT_NO_EXCEPTION);
 
-    RefPtr<ShadowRoot> root = ShadowRoot::create(this, ShadowRoot::UserAgentShadowRoot, ASSERT_NO_EXCEPTION);
-    root->appendChild(bar, ASSERT_NO_EXCEPTION);
+    inner->appendChild(bar, ASSERT_NO_EXCEPTION);
 }
 
 } // namespace

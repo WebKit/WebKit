@@ -6,7 +6,9 @@ A progress element should have a nested shadow box with a width specified:
 |   value="70"
 |   <shadow:root>
 |     <div>
-|       shadow:pseudoId="-webkit-progress-bar"
+|       shadow:pseudoId="-webkit-progress-inner-element"
 |       <div>
-|         style="width: 70%; "
-|         shadow:pseudoId="-webkit-progress-value"
+|         shadow:pseudoId="-webkit-progress-bar"
+|         <div>
+|           style="width: 70%; "
+|           shadow:pseudoId="-webkit-progress-value"

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="resources/replaced-element-styles.css">
+    <script src="resources/polyfill.js"></script>
+</head>
+<body>
+<div id="container">
+    <progress id="host" min="0" max="100" value="50"></progress>
+</div>
+
+<script>
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+var shadowRoot = new WebKitShadowRoot(host);
+shadowRoot.innerHTML = "<shadow></shadow><span>(after)</span>";
+
+setTimeout(function() {
+    host.setAttribute('value', 30);
+    if (window.testRunner)
+        testRunner.notifyDone();
+}, 0);
+</script>
+
+</body>
+</html>

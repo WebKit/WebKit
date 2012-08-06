@@ -1,3 +1,41 @@
+2012-08-06  Shinya Kawanaka  <shinyak@chromium.org>
+
+        AuthorShadowDOM for progress element
+        https://bugs.webkit.org/show_bug.cgi?id=91969
+
+        Reviewed by Hajime Morita.
+
+        Contains the following tests:
+          (1) progress element with AuthorShadowDOM
+          (2) progress element with multiple AuthorShadowDOM with a shadow element
+          (3) progress element with multiple AuthorShadowDOM without a shadow element
+          (4) progress element with AuthorShadowDOM with dynamic value update
+          (5) progress element with AuthorShadowDOM with style
+          (6) progress element with AuthorShadowDOM with -webkit-appearance: none
+
+        * fast/dom/HTMLProgressElement/progress-clone-expected.txt:
+        * fast/dom/HTMLProgressElement/progress-clone.html:
+        * fast/dom/HTMLProgressElement/progress-element-markup-expected.txt:
+        * fast/dom/shadow/resources/replaced-element-styles.css: Added.
+        (.progress-like):
+        (.progress-inner-element-like):
+        * fast/dom/shadow/shadowdom-for-progress-dynamic-expected.html: Added.
+        * fast/dom/shadow/shadowdom-for-progress-dynamic.html: Added.
+        * fast/dom/shadow/shadowdom-for-progress-expected.html: Added.
+        * fast/dom/shadow/shadowdom-for-progress-multiple-expected.html: Added.
+        * fast/dom/shadow/shadowdom-for-progress-multiple.html: Added.
+        * fast/dom/shadow/shadowdom-for-progress-with-style-expected.html: Added.
+        * fast/dom/shadow/shadowdom-for-progress-with-style.html: Added.
+        * fast/dom/shadow/shadowdom-for-progress-without-appearance-expected.html: Added.
+        * fast/dom/shadow/shadowdom-for-progress-without-appearance.html: Added.
+        * fast/dom/shadow/shadowdom-for-progress-without-shadow-element-expected.html: Added.
+        * fast/dom/shadow/shadowdom-for-progress-without-shadow-element.html: Added.
+        * fast/dom/shadow/shadowdom-for-progress.html: Added.
+        * platform/chromium-win/fast/dom/HTMLProgressElement/indeterminate-progress-001-expected.txt:
+        * platform/chromium-win/fast/dom/HTMLProgressElement/progress-bar-value-pseudo-element-expected.txt:
+        * platform/chromium-win/fast/dom/HTMLProgressElement/progress-writing-mode-expected.txt:
+        * platform/mac/TestExpectations:
+
 2012-08-06  Keishi Hattori  <keishi@webkit.org>
 
         Remove minimum window size for PagePopup

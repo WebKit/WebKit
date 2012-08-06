@@ -1,3 +1,78 @@
+2012-08-06  Shinya Kawanaka  <shinyak@chromium.org>
+
+        AuthorShadowDOM for progress element
+        https://bugs.webkit.org/show_bug.cgi?id=91969
+
+        Reviewed by Hajime Morita.
+
+        We add support for AuthorShadowDOM for progress element.
+
+        According to the Shadow DOM spec, a progress element should behave like having a UserAgentShadowRoot and
+        an element in UserAgentShadowRoot draws a real 'progress' bar. In this patch, we change the inner structure
+        of a progress element so that we can distribute an element having RenderProgress to AuthorShadowDOM.
+
+        Before this patch, a progress element has the following inner structure.
+
+            <progress>--UserAgentShadowRoot -- -- -- -- -- -- -- -- -- -- AuthorShadowRoot
+                               |
+                               +-- ProgressBarElement
+                               |
+                               +-- ProgressValueElement
+
+        After this patch, a progress element will have the following inner structure.
+
+            <progress>--UserAgentShadowRoot -- -- -- -- -- -- -- -- -- -- AuthorShadowRoot
+                               |
+                               +-- ProgressInnerElement
+                                           |
+                                           +-- ProgressBarElement
+                                           |
+                                           +-- ProgressValueElement
+
+
+        Tests: fast/dom/shadow/shadowdom-for-progress-dynamic.html
+               fast/dom/shadow/shadowdom-for-progress-multiple.html
+               fast/dom/shadow/shadowdom-for-progress-with-style.html
+               fast/dom/shadow/shadowdom-for-progress-without-appearance.html
+               fast/dom/shadow/shadowdom-for-progress-without-shadow-element.html
+               fast/dom/shadow/shadowdom-for-progress.html
+
+        * css/html.css:
+        (progress::-webkit-progress-inner-element):
+        * html/HTMLProgressElement.cpp:
+        (WebCore::HTMLProgressElement::HTMLProgressElement):
+        (WebCore::HTMLProgressElement::createRenderer):
+        (WebCore::HTMLProgressElement::renderProgress): Returns RenderProgress gotten from UserAgentShadowDOM.
+        (WebCore):
+        (WebCore::HTMLProgressElement::willAddAuthorShadowRoot):
+        (WebCore::HTMLProgressElement::didElementStateChange):
+        (WebCore::HTMLProgressElement::createShadowSubtree): Creates a new Shadow DOM structure.
+        * html/HTMLProgressElement.h:
+        (WebCore):
+        (WebCore::HTMLProgressElement::hasAuthorShadowRoot):
+        (HTMLProgressElement):
+        (WebCore::isHTMLProgressElement):
+        (WebCore::toHTMLProgressElement):
+        * html/shadow/ProgressShadowElement.cpp:
+        (WebCore::ProgressShadowElement::ProgressShadowElement):
+        (WebCore::ProgressShadowElement::progressElement):
+        (WebCore::ProgressInnerElement::ProgressInnerElement): We introduce a new element having RenderProgress
+        so that we can distribute an element having RenderProgress to AuthorShadowDOM.
+        (WebCore):
+        (WebCore::ProgressInnerElement::create):
+        (WebCore::ProgressInnerElement::shadowPseudoId):
+        (WebCore::ProgressInnerElement::createRenderer):
+        (WebCore::ProgressInnerElement::rendererIsNeeded):
+        * html/shadow/ProgressShadowElement.h:
+        (ProgressShadowElement):
+        (WebCore):
+        (ProgressInnerElement):
+        * rendering/RenderProgress.cpp:
+        (WebCore::RenderProgress::RenderProgress):
+        (WebCore::RenderProgress::progressElement):
+        * rendering/RenderProgress.h:
+        (RenderProgress):
+
 2012-08-06  Keishi Hattori  <keishi@webkit.org>
 
         Remove minimum window size for PagePopup

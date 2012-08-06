@@ -942,6 +942,14 @@ progress {
     vertical-align: -0.2em;
 }
 
+progress::-webkit-progress-inner-element {
+    -webkit-appearance: inherit;
+    -webkit-box-sizing: inherit;
+    -webkit-user-modify: read-only;
+    height: 100%;
+    width: 100%;
+}
+
 progress::-webkit-progress-bar {
     background-color: gray;
     height: 100%;

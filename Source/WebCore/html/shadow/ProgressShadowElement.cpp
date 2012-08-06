@@ -34,28 +34,56 @@
 #if ENABLE(PROGRESS_ELEMENT)
 #include "HTMLNames.h"
 #include "HTMLProgressElement.h"
-#include "RenderObject.h"
+#include "RenderProgress.h"
 
 namespace WebCore {
 
 using namespace HTMLNames;
 
-ProgressShadowElement::ProgressShadowElement(Document* document) 
+ProgressShadowElement::ProgressShadowElement(Document* document)
     : HTMLDivElement(HTMLNames::divTag, document)
 {
 }
 
 HTMLProgressElement* ProgressShadowElement::progressElement() const
 {
-    Element* element = shadowHost();
-    ASSERT(!element || element->hasTagName(progressTag));
-    return static_cast<HTMLProgressElement*>(element);
+    return toHTMLProgressElement(shadowHost());
 }
 
 bool ProgressShadowElement::rendererIsNeeded(const NodeRenderingContext& context)
 {
     RenderObject* progressRenderer = progressElement()->renderer();
     return progressRenderer && !progressRenderer->style()->hasAppearance() && HTMLDivElement::rendererIsNeeded(context);
+}
+
+ProgressInnerElement::ProgressInnerElement(Document* document)
+    : ProgressShadowElement(document)
+{    
+}
+
+PassRefPtr<ProgressInnerElement> ProgressInnerElement::create(Document* document)
+{
+    return adoptRef(new ProgressInnerElement(document));
+}
+
+const AtomicString& ProgressInnerElement::shadowPseudoId() const
+{
+    DEFINE_STATIC_LOCAL(AtomicString, pseudId, ("-webkit-progress-inner-element"));
+    return pseudId;
+}
+
+RenderObject* ProgressInnerElement::createRenderer(RenderArena* arena, RenderStyle*)
+{
+    return new (arena) RenderProgress(this);
+}
+
+bool ProgressInnerElement::rendererIsNeeded(const NodeRenderingContext& context)
+{
+    if (progressElement()->hasAuthorShadowRoot())
+        return HTMLDivElement::rendererIsNeeded(context);
+
+    RenderObject* progressRenderer = progressElement()->renderer();
+    return progressRenderer && !progressRenderer->style()->hasAppearance() && HTMLDivElement::rendererIsNeeded(context);    
 }
 
 const AtomicString& ProgressBarElement::shadowPseudoId() const

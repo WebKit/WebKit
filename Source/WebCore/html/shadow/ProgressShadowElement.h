@@ -45,7 +45,18 @@ public:
     ProgressShadowElement(Document*);
     HTMLProgressElement* progressElement() const;
 
+protected:
+    virtual bool rendererIsNeeded(const NodeRenderingContext&);
+};
+
+class ProgressInnerElement : public ProgressShadowElement {
+public:
+    ProgressInnerElement(Document*);
+
+    static PassRefPtr<ProgressInnerElement> create(Document*);
 private:
+    virtual RenderObject* createRenderer(RenderArena*, RenderStyle*) OVERRIDE;
+    virtual const AtomicString& shadowPseudoId() const;
     virtual bool rendererIsNeeded(const NodeRenderingContext&);
 };
 
@@ -64,7 +75,6 @@ inline PassRefPtr<ProgressBarElement> ProgressBarElement::create(Document* docum
 {
     return adoptRef(new ProgressBarElement(document));
 }
-
 
 class ProgressValueElement : public ProgressShadowElement {
 public:

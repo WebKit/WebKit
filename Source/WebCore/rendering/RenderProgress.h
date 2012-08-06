@@ -30,7 +30,7 @@ class HTMLProgressElement;
 
 class RenderProgress : public RenderBlock {
 public:
-    RenderProgress(HTMLProgressElement*);
+    RenderProgress(HTMLElement*);
     virtual ~RenderProgress();
 
     double position() const { return m_position; }
@@ -38,6 +38,7 @@ public:
     double animationStartTime() const { return m_animationStartTime; }
 
     bool isDeterminate() const;
+    virtual void updateFromElement();
 
     HTMLProgressElement* progressElement() const;
 
@@ -45,7 +46,6 @@ private:
     virtual const char* renderName() const { return "RenderProgress"; }
     virtual bool isProgress() const { return true; }
     virtual bool requiresForcedStyleRecalcPropagation() const { return true; }
-    virtual void updateFromElement();
     virtual bool canBeReplacedWithInlineRunIn() const OVERRIDE;
 
     void animationTimerFired(Timer<RenderProgress>*);
