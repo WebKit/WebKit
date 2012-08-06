@@ -91,7 +91,7 @@ void StyleRuleKeyframes::reportDescendantMemoryUsage(MemoryObjectInfo* memoryObj
 {
     MemoryClassInfo<StyleRuleKeyframes> info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
     info.addInstrumentedVector(m_keyframes);
-    info.addString(m_name);
+    info.addMember(m_name);
 }
 
 WebKitCSSKeyframesRule::WebKitCSSKeyframesRule(StyleRuleKeyframes* keyframesRule, CSSStyleSheet* parent)

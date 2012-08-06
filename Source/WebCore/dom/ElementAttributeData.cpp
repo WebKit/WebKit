@@ -290,7 +290,7 @@ void ElementAttributeData::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo)
     info.addInstrumentedMember(m_inlineStyleDecl);
     info.addInstrumentedMember(m_attributeStyle);
     info.addMember(m_classNames);
-    info.addString(m_idForStyleResolution);
+    info.addMember(m_idForStyleResolution);
     if (m_isMutable)
         info.addVectorPtr(m_mutableAttributeVector);
     else

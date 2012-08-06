@@ -91,7 +91,7 @@ private:
     {
         OwningTraits<T>::addObject(this, t, ownerObjectType);
     }
-    void addString(const String&, ObjectType);
+    void addObject(const String&, ObjectType);
     template <typename T> void addInstrumentedObject(const T& t, ObjectType ownerObjectType) { OwningTraits<T>::addInstrumentedObject(this, t, ownerObjectType); }
 
     template <typename HashMapType> void addHashMap(const HashMapType&, ObjectType, bool contentOnly = false);
@@ -189,8 +189,8 @@ public:
     template <typename VectorType> void addVectorPtr(const VectorType* const vector) { m_memoryInstrumentation->addVector(*vector, m_objectType, false); }
     void addRawBuffer(const void* const& buffer, size_t size) { m_memoryInstrumentation->addRawBuffer(buffer, m_objectType, size); }
 
-    void addString(const String& string) { m_memoryInstrumentation->addString(string, m_objectType); }
-    void addString(const AtomicString& string) { m_memoryInstrumentation->addString((const String&)string, m_objectType); }
+    void addMember(const String& string) { m_memoryInstrumentation->addObject(string, m_objectType); }
+    void addMember(const AtomicString& string) { m_memoryInstrumentation->addObject((const String&)string, m_objectType); }
 
 private:
     MemoryObjectInfo* m_memoryObjectInfo;
@@ -258,10 +258,6 @@ void MemoryInstrumentation::addObjectImpl(const RefPtr<T>* const& object, Object
         countObjectSize(ownerObjectType, sizeof(RefPtr<T>));
     addObjectImpl(object->get(), ownerObjectType, byPointer);
 }
-
-// Link time guard for string members. They produce link error is a string is reported via addObject.
-template <> void MemoryInstrumentation::addObjectImpl<AtomicString>(const AtomicString* const&, MemoryInstrumentation::ObjectType, MemoryInstrumentation::OwningType);
-template <> void MemoryInstrumentation::addObjectImpl<String>(const String* const&, MemoryInstrumentation::ObjectType, MemoryInstrumentation::OwningType);
 
 template <typename T>
 void MemoryInstrumentation::addObjectImpl(const T* const& object, ObjectType ownerObjectType, OwningType owningType)

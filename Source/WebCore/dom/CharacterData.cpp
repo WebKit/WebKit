@@ -96,7 +96,7 @@ void CharacterData::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo<CharacterData> info(memoryObjectInfo, this, MemoryInstrumentation::DOM);
     Node::reportMemoryUsage(memoryObjectInfo);
-    info.addString(m_data);
+    info.addMember(m_data);
 }
 
 void CharacterData::appendData(const String& data, ExceptionCode&)

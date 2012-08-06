@@ -6093,8 +6093,8 @@ void Document::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     info.addInstrumentedMember(m_styleResolver);
     ContainerNode::reportMemoryUsage(memoryObjectInfo);
     info.addVector(m_customFonts);
-    info.addString(m_documentURI);
-    info.addString(m_baseTarget);
+    info.addMember(m_documentURI);
+    info.addMember(m_baseTarget);
     info.addInstrumentedMember(m_elemSheet);
     info.addInstrumentedMember(m_pageUserSheet);
     if (m_pageGroupUserSheets)
@@ -6104,13 +6104,13 @@ void Document::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     info.addHashSet(m_nodeIterators);
     info.addHashSet(m_ranges);
     info.addListHashSet(m_styleSheetCandidateNodes);
-    info.addString(m_preferredStylesheetSet);
-    info.addString(m_selectedStylesheetSet);
-    info.addString(m_title.string());
-    info.addString(m_rawTitle.string());
-    info.addString(m_xmlEncoding);
-    info.addString(m_xmlVersion);
-    info.addString(m_contentLanguage);
+    info.addMember(m_preferredStylesheetSet);
+    info.addMember(m_selectedStylesheetSet);
+    info.addMember(m_title.string());
+    info.addMember(m_rawTitle.string());
+    info.addMember(m_xmlEncoding);
+    info.addMember(m_xmlVersion);
+    info.addMember(m_contentLanguage);
     info.addHashMap(m_documentNamedItemCollections);
     info.addHashMap(m_windowNamedItemCollections);
 #if ENABLE(DASHBOARD_SUPPORT)

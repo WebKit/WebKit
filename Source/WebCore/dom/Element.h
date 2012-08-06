@@ -439,7 +439,7 @@ public:
         MemoryClassInfo<Element> info(memoryObjectInfo, this, MemoryInstrumentation::DOM);
         ContainerNode::reportMemoryUsage(memoryObjectInfo);
         info.addInstrumentedMember(m_tagName);
-        info.addInstrumentedMember(attributeData());
+        info.addInstrumentedMember(m_attributeData);
     }
 
 #if ENABLE(UNDO_MANAGER)

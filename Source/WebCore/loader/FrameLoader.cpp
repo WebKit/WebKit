@@ -3229,7 +3229,7 @@ void FrameLoader::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     info.addInstrumentedMember(m_documentLoader.get());
     info.addInstrumentedMember(m_provisionalDocumentLoader.get());
     info.addInstrumentedMember(m_policyDocumentLoader.get());
-    info.addString(m_outgoingReferrer);
+    info.addMember(m_outgoingReferrer);
     info.addInstrumentedHashSet(m_openedFrames);
 }
 

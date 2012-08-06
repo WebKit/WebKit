@@ -36,7 +36,7 @@
 
 namespace WebCore {
 
-void MemoryInstrumentation::addString(const String& string, ObjectType objectType)
+void MemoryInstrumentation::addObject(const String& string, ObjectType objectType)
 {
     if (string.isNull() || visited(string.impl()))
         return;

@@ -40,7 +40,7 @@ void CSSCharsetRule::reportDescendantMemoryUsage(MemoryObjectInfo* memoryObjectI
 {
     MemoryClassInfo<CSSCharsetRule> info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
     CSSRule::reportBaseClassMemoryUsage(memoryObjectInfo);
-    info.addString(m_encoding);
+    info.addMember(m_encoding);
 }
 
 } // namespace WebCore

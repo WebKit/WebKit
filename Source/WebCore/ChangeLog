@@ -1,3 +1,55 @@
+2012-08-06  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Web Inspector: NMI: replace addString with addMember overload function.
+        https://bugs.webkit.org/show_bug.cgi?id=93201
+
+        Reviewed by Yury Semikhatsky.
+
+        It is impossible to implement nice instrumentation for template containers
+        content when we have different function names for different types.
+
+        Drive by: fix the most annoing warning in Element.h detected by our clang plugin.
+
+        * css/CSSCharsetRule.cpp:
+        (WebCore::CSSCharsetRule::reportDescendantMemoryUsage):
+        * css/CSSStyleSheet.cpp:
+        (WebCore::CSSStyleSheet::reportMemoryUsage):
+        * css/MediaQuery.cpp:
+        (WebCore::MediaQuery::reportMemoryUsage):
+        * css/MediaQueryExp.cpp:
+        (WebCore::MediaQueryExp::reportMemoryUsage):
+        * css/StyleRuleImport.cpp:
+        (WebCore::StyleRuleImport::reportDescendantMemoryUsage):
+        * css/StyleSheetContents.cpp:
+        (WebCore::StyleSheetContents::reportMemoryUsage):
+        * css/WebKitCSSKeyframeRule.cpp:
+        (WebCore::StyleKeyframe::reportMemoryUsage):
+        * css/WebKitCSSKeyframesRule.cpp:
+        (WebCore::StyleRuleKeyframes::reportDescendantMemoryUsage):
+        * dom/CharacterData.cpp:
+        (WebCore::CharacterData::reportMemoryUsage):
+        * dom/Document.cpp:
+        (WebCore::Document::reportMemoryUsage):
+        * dom/Element.h:
+        (WebCore::Element::reportMemoryUsage):
+        * dom/ElementAttributeData.cpp:
+        (WebCore::ElementAttributeData::reportMemoryUsage):
+        * dom/MemoryInstrumentation.cpp:
+        (WebCore::MemoryInstrumentation::addObject):
+        * dom/MemoryInstrumentation.h:
+        (MemoryInstrumentation):
+        (WebCore::MemoryClassInfo::addMember):
+        * dom/QualifiedName.h:
+        (WebCore::QualifiedName::QualifiedNameImpl::reportMemoryUsage):
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::reportMemoryUsage):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::reportMemoryUsage):
+        * rendering/style/StyleRareInheritedData.cpp:
+        (WebCore::StyleRareInheritedData::reportMemoryUsage):
+        * rendering/style/StyleRareNonInheritedData.cpp:
+        (WebCore::StyleRareNonInheritedData::reportMemoryUsage):
+
 2012-08-05  Kent Tamura  <tkent@chromium.org>
 
         [Chromium-win] Use system locale for number representation

@@ -179,7 +179,7 @@ void CSSStyleSheet::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo<CSSStyleSheet> info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
     info.addInstrumentedMember(m_contents);
-    info.addString(m_title);
+    info.addMember(m_title);
     info.addInstrumentedMember(m_mediaQueries);
     info.addInstrumentedMember(m_ownerNode);
     info.addInstrumentedMember(m_ownerRule);

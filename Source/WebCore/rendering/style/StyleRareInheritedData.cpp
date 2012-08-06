@@ -266,13 +266,13 @@ void StyleRareInheritedData::reportMemoryUsage(MemoryObjectInfo* memoryObjectInf
 {
     MemoryClassInfo<StyleRareInheritedData> info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
     info.addMember(textShadow);
-    info.addString(highlight);
+    info.addMember(highlight);
     info.addMember(cursorData);
-    info.addString(hyphenationString);
-    info.addString(locale);
-    info.addString(textEmphasisCustomMark);
+    info.addMember(hyphenationString);
+    info.addMember(locale);
+    info.addMember(textEmphasisCustomMark);
     info.addMember(quotes);
-    info.addString(m_lineGrid);
+    info.addMember(m_lineGrid);
 #if ENABLE(CSS_VARIABLES)
     info.addMember(m_variables);
 #endif

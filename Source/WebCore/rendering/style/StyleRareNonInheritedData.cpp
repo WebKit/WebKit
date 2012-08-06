@@ -311,8 +311,8 @@ void StyleRareNonInheritedData::reportMemoryUsage(MemoryObjectInfo* memoryObject
     info.addMember(m_transitions);
     info.addMember(m_wrapShapeInside);
     info.addMember(m_wrapShapeOutside);
-    info.addString(m_flowThread);
-    info.addString(m_regionThread);
+    info.addMember(m_flowThread);
+    info.addMember(m_regionThread);
 }
 
 } // namespace WebCore

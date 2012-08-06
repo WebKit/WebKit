@@ -90,7 +90,7 @@ void StyleKeyframe::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo<StyleKeyframe> info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
     info.addInstrumentedMember(m_properties);
-    info.addString(m_key);
+    info.addMember(m_key);
 }
 
 WebKitCSSKeyframeRule::WebKitCSSKeyframeRule(StyleKeyframe* keyframe, WebKitCSSKeyframesRule* parent)

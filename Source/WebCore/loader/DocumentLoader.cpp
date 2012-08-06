@@ -363,13 +363,13 @@ void DocumentLoader::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     info.addInstrumentedHashSet(m_subresourceLoaders);
     info.addInstrumentedHashSet(m_multipartSubresourceLoaders);
     info.addInstrumentedHashSet(m_plugInStreamLoaders);
-    info.addString(m_pageTitle.string());
-    info.addString(m_overrideEncoding);
+    info.addMember(m_pageTitle.string());
+    info.addMember(m_overrideEncoding);
     info.addVector(m_responses);
     info.addHashMap(m_pendingSubstituteResources);
     info.addHashSet(m_resourcesClientKnowsAbout);
     info.addVector(m_resourcesLoadedFromMemoryCacheForClientNotification);
-    info.addString(m_clientRedirectSourceForHistory);
+    info.addMember(m_clientRedirectSourceForHistory);
     info.addInstrumentedMember(m_mainResourceData);
 }
 

@@ -137,9 +137,9 @@ String MediaQuery::cssText() const
 void MediaQuery::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo<MediaQuery> info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
-    info.addString(m_mediaType);
+    info.addMember(m_mediaType);
     info.addInstrumentedVectorPtr(m_expressions);
-    info.addString(m_serializationCache);
+    info.addMember(m_serializationCache);
 }
 
 } //namespace
