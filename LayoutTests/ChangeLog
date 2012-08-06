@@ -1,3 +1,11 @@
+2012-08-06  Takashi Toyoshima  <toyoshim@chromium.org>
+
+        Unreviewed, rebaseline for r124745.
+
+        * platform/chromium-mac/fast/block/float/032-expected.txt:
+        * platform/chromium-mac/fast/speech/input-appearance-searchandspeech-expected.png:
+        * platform/chromium-mac/fast/speech/input-appearance-searchandspeech-expected.txt:
+
 2012-08-06  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed gardening, skip new asserting tests to paint the bots green.
