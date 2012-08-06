@@ -749,10 +749,10 @@ class MainTest(unittest.TestCase, StreamTestingMixin):
 
     def test_retrying_and_flaky_tests(self):
         host = MockHost()
-        res, out, err, _ = logging_run(['failures/flaky'], tests_included=True, host=host)
+        res, out, err, _ = logging_run(['--debug-rwt-logging', 'failures/flaky'], tests_included=True, host=host)
         self.assertEquals(res, 0)
         self.assertTrue('Retrying' in err.getvalue())
-        self.assertTrue('Unexpected flakiness' in out.getvalue())
+        self.assertTrue('unexpected flakiness' in out.getvalue())
         self.assertTrue(host.filesystem.exists('/tmp/layout-test-results/failures/flaky/text-actual.txt'))
         self.assertTrue(host.filesystem.exists('/tmp/layout-test-results/retries/tests_run0.txt'))
         self.assertFalse(host.filesystem.exists('/tmp/layout-test-results/retries/failures/flaky/text-actual.txt'))
@@ -764,8 +764,8 @@ class MainTest(unittest.TestCase, StreamTestingMixin):
         self.assertEquals(res, 1)
         self.assertTrue('Clobbering old results' in err.getvalue())
         self.assertTrue('flaky/text.html' in err.getvalue())
-        self.assertTrue('Unexpected text diff' in out.getvalue())
-        self.assertFalse('Unexpected flakiness' in out.getvalue())
+        self.assertTrue('unexpected text diff' in out.getvalue())
+        self.assertFalse('unexpected flakiness' in out.getvalue())
         self.assertTrue(host.filesystem.exists('/tmp/layout-test-results/failures/flaky/text-actual.txt'))
         self.assertFalse(host.filesystem.exists('retries'))
 

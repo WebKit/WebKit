@@ -72,7 +72,7 @@ class  Testprinter(unittest.TestCase):
         stream.buflist = []
         stream.buf = ''
 
-    def get_printer(self, args=None, tty=False):
+    def get_printer(self, args=None):
         args = args or []
         printing_options = printing.print_options()
         option_parser = optparse.OptionParser(option_list=printing_options)
@@ -82,7 +82,6 @@ class  Testprinter(unittest.TestCase):
         nproc = 2
 
         regular_output = StringIO.StringIO()
-        regular_output.isatty = lambda: tty
         buildbot_output = StringIO.StringIO()
         printer = printing.Printer(self._port, options, regular_output, buildbot_output)
         return printer, regular_output, buildbot_output
@@ -122,25 +121,30 @@ class  Testprinter(unittest.TestCase):
         printer.print_config()
         self.assertTrue('Baseline search path: test-mac-leopard -> test-mac-snowleopard -> generic' in err.getvalue())
 
+        self.reset(err)
+        printer._options.quiet = True
+        printer.print_config()
+        self.assertFalse('Baseline search path: test-mac-leopard -> test-mac-snowleopard -> generic' in err.getvalue())
+
     def test_print_one_line_summary(self):
         printer, err, out = self.get_printer()
-        printer.print_one_line_summary(1, 1, 0)
+        printer._print_one_line_summary(1, 1, 0)
         self.assertWritten(err, ["The test ran as expected.\n", "\n"])
 
         printer, err, out = self.get_printer()
-        printer.print_one_line_summary(1, 1, 0)
+        printer._print_one_line_summary(1, 1, 0)
         self.assertWritten(err, ["The test ran as expected.\n", "\n"])
 
         printer, err, out = self.get_printer()
-        printer.print_one_line_summary(2, 1, 1)
-        self.assertWritten(err, ["1 test ran as expected, 1 didn't:\n", "\n"])
+        printer._print_one_line_summary(2, 1, 1)
+        self.assertWritten(err, ["\n", "1 test ran as expected, 1 didn't:\n", "\n"])
 
         printer, err, out = self.get_printer()
-        printer.print_one_line_summary(3, 2, 1)
-        self.assertWritten(err, ["2 tests ran as expected, 1 didn't:\n", "\n"])
+        printer._print_one_line_summary(3, 2, 1)
+        self.assertWritten(err, ["\n", "2 tests ran as expected, 1 didn't:\n", "\n"])
 
         printer, err, out = self.get_printer()
-        printer.print_one_line_summary(3, 2, 0)
+        printer._print_one_line_summary(3, 2, 0)
         self.assertWritten(err, ['\n', "2 tests ran as expected (1 didn't run).\n", '\n'])
 
     def test_print_unexpected_results(self):
@@ -199,27 +203,27 @@ class  Testprinter(unittest.TestCase):
 
         # test everything running as expected
         ur = get_unexpected_results(expected=True, passing=False, flaky=False)
-        printer.print_unexpected_results(ur)
+        printer._print_unexpected_results(ur)
         self.assertEmpty(err)
         self.assertEmpty(out)
 
         # test failures
         printer, err, out = self.get_printer()
         ur = get_unexpected_results(expected=False, passing=False, flaky=False)
-        printer.print_unexpected_results(ur)
+        printer._print_unexpected_results(ur)
         self.assertEmpty(err)
         self.assertNotEmpty(out)
 
         # test unexpected flaky
         printer, err, out = self.get_printer()
         ur = get_unexpected_results(expected=False, passing=False, flaky=True)
-        printer.print_unexpected_results(ur)
+        printer._print_unexpected_results(ur)
         self.assertEmpty(err)
         self.assertNotEmpty(out)
 
         printer, err, out = self.get_printer()
         ur = get_unexpected_results(expected=False, passing=False, flaky=False)
-        printer.print_unexpected_results(ur)
+        printer._print_unexpected_results(ur)
         self.assertEmpty(err)
         self.assertNotEmpty(out)
 
@@ -229,13 +233,13 @@ BUGX : failures/expected/timeout.html = TIMEOUT
 """
         printer, err, out = self.get_printer()
         ur = get_unexpected_results(expected=False, passing=False, flaky=False)
-        printer.print_unexpected_results(ur)
+        printer._print_unexpected_results(ur)
         self.assertEmpty(err)
         self.assertNotEmpty(out)
 
         printer, err, out = self.get_printer()
         ur = get_unexpected_results(expected=False, passing=True, flaky=False)
-        printer.print_unexpected_results(ur)
+        printer._print_unexpected_results(ur)
         self.assertEmpty(err)
         self.assertNotEmpty(out)
 
@@ -247,29 +251,7 @@ BUGX : failures/expected/timeout.html = TIMEOUT
     def test_details(self):
         printer, err, _ = self.get_printer(['--details'])
         result = self.get_result('passes/image.html')
-        printer.print_test_result(result, expected=False, exp_str='', got_str='')
-        self.assertNotEmpty(err)
-
-    def test_default(self):
-        printer, err, _ = self.get_printer()
-        printer.print_timing("foo")
-        self.assertEmpty(err)
-        printer._print_config("foo")
-        self.assertNotEmpty(err)
-
-    def test_quiet(self):
-        printer, err, _ = self.get_printer(['--quiet'])
-        printer._print_config("foo")
-        printer.print_timing("foo")
-        self.assertEmpty(err)
-
-    def test_verbose(self):
-        printer, err, _ = self.get_printer(['--verbose'])
-        printer.print_timing("foo")
-        self.assertNotEmpty(err)
-
-        printer, err, _ = self.get_printer(['--verbose'])
-        printer._print_config("foo")
+        printer._print_test_result(result, expected=False, exp_str='', got_str='')
         self.assertNotEmpty(err)
 
 

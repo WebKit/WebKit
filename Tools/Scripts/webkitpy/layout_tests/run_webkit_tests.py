@@ -364,7 +364,6 @@ def parse_args(args=None):
         optparse.make_option("-n", "--dry-run", action="store_true",
             default=False,
             help="Do everything but actually run the tests or upload results."),
-        # old-run-webkit-tests has --valgrind instead of wrapper.
         optparse.make_option("--wrapper",
             help="wrapper command to insert before invocations of "
                  "DumpRenderTree; option is split on whitespace before "
@@ -379,7 +378,6 @@ def parse_args(args=None):
             help="Run all tests, even those marked SKIP in the test list (same as --skipped=ignore)"),
         optparse.make_option("--time-out-ms",
             help="Set the timeout for each test"),
-        # old-run-webkit-tests calls --randomize-order --random:
         optparse.make_option("--randomize-order", action="store_true",
             default=False, help=("Run tests in random order (useful "
                                 "for tracking down corruption)")),
@@ -388,13 +386,10 @@ def parse_args(args=None):
                  "of the layout tests")),
         optparse.make_option("--run-part", help=("Run a specified part (n:m), "
                   "the nth of m parts, of the layout tests")),
-        # old-run-webkit-tests calls --batch-size: --nthly n
-        #   Restart DumpRenderTree every n tests (default: 1000)
         optparse.make_option("--batch-size",
             help=("Run a the tests in batches (n), after every n tests, "
                   "DumpRenderTree is relaunched."), type="int", default=None),
-        # old-run-webkit-tests calls --run-singly: -1|--singly
-        # Isolate each test case run (implies --nthly 1 --verbose)
+        # old-run-webkit-tests has --run-singly imply --verbose.
         optparse.make_option("--run-singly", action="store_true",
             default=False, help="run a separate DumpRenderTree for each test"),
         optparse.make_option("--child-processes",

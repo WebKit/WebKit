@@ -140,7 +140,7 @@ class LayoutTestRunner(object):
                 pool.run(('test_list', shard.name, shard.test_inputs) for shard in all_shards)
         except KeyboardInterrupt:
             self._printer.flush()
-            self._printer.write('Interrupted, exiting ...')
+            self._printer.writeln('Interrupted, exiting ...')
             keyboard_interrupted = True
         except TestRunInterruptedException, e:
             _log.warning(e.reason)
