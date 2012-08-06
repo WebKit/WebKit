@@ -1,3 +1,17 @@
+2012-08-06  Adam Barth  <abarth@webkit.org>
+
+        [Chromium] WebTouchCandidatesInfo should be part of the Client API
+        https://bugs.webkit.org/show_bug.cgi?id=93088
+
+        Reviewed by Eric Seidel.
+
+        All the input related interfaces are part of the client (rather than
+        the platform) part of the API. This patch moves WebTouchCandidatesInfo
+        to the client part of the API.
+
+        * Platform.gypi:
+        * chromium/public/WebTouchCandidatesInfo.h: Removed.
+
 2012-08-03  Nico Weber  <thakis@chromium.org>
 
         [chromium] Add API to make it possible to request all variants of a WebImage

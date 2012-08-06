@@ -275,6 +275,7 @@
                 'public/WebTextInputType.h',
                 'public/WebTextRun.h',
                 'public/WebTimeRange.h',
+                'public/WebTouchCandidatesInfo.h',
                 'public/WebURLLoaderOptions.h',
                 'public/WebUserMediaClient.h',
                 'public/WebUserMediaRequest.h',

@@ -1,3 +1,14 @@
+2012-08-06  Adam Barth  <abarth@webkit.org>
+
+        [Chromium] WebTouchCandidatesInfo should be part of the Client API
+        https://bugs.webkit.org/show_bug.cgi?id=93088
+
+        Reviewed by Eric Seidel.
+
+        * WebKit.gyp:
+        * public/WebTouchCandidatesInfo.h: Copied from Source/Platform/chromium/public/WebTouchCandidatesInfo.h.
+        * src/WebViewImpl.cpp:
+
 2012-08-06  Adrienne Walker  <enne@google.com>
 
         [chromium] REGRESSION(r124714): webkit_unit_tests asserts in Debug

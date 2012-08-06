@@ -26,7 +26,7 @@
 #ifndef WebTouchCandidatesInfo_h
 #define WebTouchCandidatesInfo_h
 
-#include "WebRect.h"
+#include "platform/WebRect.h"
 
 namespace WebKit {
 

@@ -145,6 +145,7 @@
 #include "WebRuntimeFeatures.h"
 #include "WebSettingsImpl.h"
 #include "WebTextInputInfo.h"
+#include "WebTouchCandidatesInfo.h"
 #include "WebViewClient.h"
 #include "WheelEvent.h"
 #include "cc/CCProxy.h"
@@ -162,7 +163,6 @@
 #include <public/WebLayerTreeView.h>
 #include <public/WebPoint.h>
 #include <public/WebRect.h>
-#include <public/WebTouchCandidatesInfo.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/MainThread.h>
 #include <wtf/RefPtr.h>
