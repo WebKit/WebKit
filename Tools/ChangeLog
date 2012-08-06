@@ -1,3 +1,18 @@
+2012-08-06  Balazs Kelemen  <kbalazs@webkit.org>
+
+        [WK2] REGRESSION(124596) lot of web process unresponsiveness appears on Apple bots
+        https://bugs.webkit.org/show_bug.cgi?id=93120
+
+        Reviewed by Csaba Osztrogonác.
+
+        Set the short timeout back to 15 seconds and add more time to WebKitTestRunner
+        so it will be able to detect an unresponsive web process.
+
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        (Port.default_timeout_ms):
+        * WebKitTestRunner/TestController.cpp:
+        (WTR):
+
 2012-08-06  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix make distcheck.

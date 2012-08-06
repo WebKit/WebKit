@@ -52,11 +52,11 @@
 
 namespace WTR {
 
-// defaultLongTimeout + defaultShortTimeout should be less than 35,
+// defaultLongTimeout + defaultShortTimeout should be less than 50,
 // the default timeout value of the test harness so we can detect an
 // unresponsive web process.
 static const double defaultLongTimeout = 30;
-static const double defaultShortTimeout = 3;
+static const double defaultShortTimeout = 15;
 static const double defaultNoTimeout = -1;
 
 static WKURLRef blankURL()
