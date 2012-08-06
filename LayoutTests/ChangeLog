@@ -1,3 +1,17 @@
+2012-08-05  Joone Hur  <joone.hur@intel.com>
+
+        Unreviewed EFL gardening.
+
+        Marked the following test cases as known failures
+        tracked by the bug 93213, 93214, 92956, 93212.
+
+        fast/text/international/text-spliced-font.html
+        http/tests/loading/307-after-303-after-post.html
+        http/tests/security/contentSecurityPolicy/object-src-url-blocked.html
+        http/tests/incremental/slow-utf8-text.pl
+
+        * platform/efl/TestExpectations:
+
 2012-08-05  Benjamin Poulain  <bpoulain@apple.com>
 
         Assert in checkValidity() in hashtable.h from WebGeolocationManager::didFailToDeterminePosition() when fetching http://html5demos.com/geo
