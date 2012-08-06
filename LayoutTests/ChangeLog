@@ -1,3 +1,12 @@
+2012-08-06  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening, rebaselining a few HTMLProgressElement tests
+        after changes in r124754.
+
+        * platform/gtk/fast/dom/HTMLProgressElement/indeterminate-progress-001-expected.txt: Added.
+        * platform/gtk/fast/dom/HTMLProgressElement/progress-bar-value-pseudo-element-expected.txt: Added.
+        * platform/gtk/fast/dom/HTMLProgressElement/progress-writing-mode-expected.txt: Added.
+
 2012-08-06  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION(r124692): webarchive/loading/javascript-url-iframe-crash.html fails
