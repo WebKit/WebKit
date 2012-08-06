@@ -40,22 +40,29 @@ section .tooltip {
 <div id="container"></div>
 <script>
 
-function attachPlot(testName) {
-    var section = $('<section><h1></h1><div class="plot" style="width: 200px; height: 300px;"></div>'
+function createPlot(testName) {
+    var section = $('<section><h1></h1><div class="plot"></div>'
         + '<span class="tooltip"></span><section>');
     var unit = testUnits[testName];
+    section.children('.plot').css({'width': 100 * maxLength + 'px', 'height': '300px'});
     section.children('h1').html(testName + (unit ? ' (' + unit + ')' : ''));
     $('#container').append(section);
+    
+    attachPlot(testName, section);
+}
 
+function attachPlot(testName, section, minIsZero) {
     var averages = testResults[testName];
     var color = 'rgb(230,50,50)';
 
     var minMaxOptions = {lines: {show:true, lineWidth: 0},
         color: color,
-        points: {show: true, radius: 1}};
+        points: {show: true, radius: 1},
+        bars: {show: false}};
+
     function makeLowPlot(id, data) { return $.extend(true, {}, minMaxOptions, {id: id, data: data}); }    
     function makeHighPlot(from, to, fill, data) { return $.extend(true, {}, minMaxOptions,
-        {id: to, data: data, lines: {fill: fill}, fillBetween: from}); }
+        {id: to, data: data}); }
 
     var plotData = [
         makeLowPlot('min', testResultsMin[testName]),
@@ -67,21 +74,30 @@ function attachPlot(testName) {
     var plotContainer = section.children('.plot');
     $.plot(plotContainer, plotData, {
         xaxis: {
-            min: averages[0][0] - 0.25,
-            max: averages[averages.length - 1][0] + 0.25,
+            min: averages[0][0] - 0.5,
+            max: averages[averages.length - 1][0] + 0.5,
             tickSize: 1,
-            tickDecimals: 0,
-            tickFormatter: function (x) { return x >= 0 ? x : ''; }},
-        yaxis: {},
+            ticks: averages.map(function (value, index) {
+                var label = 'r' + webkitRevisions[index];
+                if (descriptions[index])
+                    label += ' &dash; ' + descriptions[index]
+                return [index, label];
+            }),
+        },
+        yaxis: {
+            min: minIsZero ? 0 : Math.max.apply(Math, $.map(testResultsMin[testName], function (entry) { return entry[1]; })) * 0.98,
+            max: Math.max.apply(Math, $.map(testResultsMax[testName], function (entry) { return entry[1]; })) * (minIsZero ? 1.1 : 1.01),
+        },
         crosshair: { mode: 'y' },
         series: { shadowSize: 0 },
+        bars: {show: true, align: 'center', barWidth: 0.5},
         lines: { show: false },
         points: { show: true },
         grid: {
             borderWidth: 2,
             backgroundColor: '#fff',
             hoverable: true,
-            autoHighlight: true,
+            autoHighlight: false,
         }
     });
 
@@ -95,13 +111,26 @@ function attachPlot(testName) {
         } else
             tooltip.hide();
     });
+    plotContainer.mouseout(function () {
+        tooltip.hide();
+    });
+
+    plotContainer.click(function (event) {
+        event.preventDefault();
+        attachPlot(testName, section, !minIsZero);
+    });
 }
 
 var results = JSON.parse(document.getElementById('json').textContent);
 var tests = [];
 var testResults = {}, testResultsMin = {}, testResultsMax = {}, testResultsStdevLow = {}, testResultsStdevHigh = {};
 var testUnits = {};
+var webkitRevisions = [];
+var descriptions = [];
+var maxLength = 0;
 $.each(results, function (index, entry) {
+    webkitRevisions.push(entry['webkit-revision']);
+    descriptions.push(entry['description']);
     $.each(entry.results, function (test, result) {
         if (tests.indexOf(test) < 0)
             tests.push(test);
@@ -125,10 +154,11 @@ $.each(results, function (index, entry) {
                 testResultsStdevHigh[test].push([index, result['avg'] + result['stdev']]);
             }
         }
+        maxLength = Math.max(maxLength, testResults[test].length);
         testUnits[test] = result.unit;
     });
 });
-$.each(tests.sort(), function (index, test) { attachPlot(test); });
+$.each(tests.sort(), function (index, test) { createPlot(test); });
 
 </script>
 </body>

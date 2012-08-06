@@ -102,6 +102,8 @@ class PerfTestsRunner(object):
                 help="Filename of the JSON file that summaries the results."),
             optparse.make_option("--source-json-path",
                 help="Path to a JSON file to be merged into the JSON file when --output-json-path is present."),
+            optparse.make_option("--description",
+                help="Add a description to the output JSON file if one is generated"),
             optparse.make_option("--test-results-server",
                 help="Upload the generated JSON file to the specified server when --output-json-path is present."),
             optparse.make_option("--webkit-test-runner", "-2", action="store_true",
@@ -170,7 +172,7 @@ class PerfTestsRunner(object):
         if not output_json_path:
             output_json_path = self._host.filesystem.join(self._port.perf_results_directory(), self._DEFAULT_JSON_FILENAME)
 
-        output = self._generate_results_dict(self._timestamp, options.platform, options.builder_name, options.build_number)
+        output = self._generate_results_dict(self._timestamp, options.description, options.platform, options.builder_name, options.build_number)
 
         if options.source_json_path:
             output = self._merge_source_json(options.source_json_path, output)
@@ -193,8 +195,10 @@ class PerfTestsRunner(object):
         else:
             self._port.show_results_html_file(results_page_path)
 
-    def _generate_results_dict(self, timestamp, platform, builder_name, build_number):
+    def _generate_results_dict(self, timestamp, description, platform, builder_name, build_number):
         contents = {'results': self._results}
+        if description:
+            contents['description'] = description
         for (name, path) in self._port.repository_paths():
             contents[name + '-revision'] = self._host.scm().svn_revision(path)
 

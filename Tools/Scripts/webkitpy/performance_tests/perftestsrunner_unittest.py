@@ -270,6 +270,16 @@ max 1120
             "inspector/pass.html:group_name:test_name": 42},
             "webkit-revision": 5678, "branch": "webkit-trunk"})
 
+    def test_run_with_description(self):
+        runner, port = self.create_runner(args=['--output-json-path=/mock-checkout/output.json',
+            '--test-results-server=some.host', '--description', 'some description'])
+        self._test_run_with_json_output(runner, port.host.filesystem)
+        self.assertEqual(json.loads(port.host.filesystem.read_text_file('/mock-checkout/output.json')), {
+            "timestamp": 123456789, "description": "some description", "results":
+            {"Bindings/event-target-wrapper": {"max": 1510, "avg": 1489.05, "median": 1487, "min": 1471, "stdev": 14.46, "unit": "ms"},
+            "inspector/pass.html:group_name:test_name": 42},
+            "webkit-revision": 5678, "branch": "webkit-trunk"})
+
     def create_runner_and_setup_results_template(self, args=[]):
         runner, port = self.create_runner(args)
         filesystem = port.host.filesystem

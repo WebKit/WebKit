@@ -1,3 +1,17 @@
+2012-08-06  Ryosuke Niwa  <rniwa@webkit.org>
+
+        run-webkit-tests should have ability to add description to its JSON output
+        https://bugs.webkit.org/show_bug.cgi?id=93296
+
+        Reviewed by Dirk Pranke.
+
+        Parse description and show it with the WebKit revision on the results page. Also use bar graphs
+        instead of line graphs since we're not depicting the time series here per arv's suggestion.
+        Finally, add the ability to adjust y-axis between the adjusted value and 0 (plot even doesn't adjust
+        y-axis automatically now) by a mouse click.
+
+        * resources/results-template.html:
+
 2012-08-04  Ryosuke Niwa  <rniwa@webkit.org>
 
         Use testRunner instead of layoutTestController in performance tests

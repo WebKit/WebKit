@@ -1,3 +1,19 @@
+2012-08-06  Ryosuke Niwa  <rniwa@webkit.org>
+
+        run-webkit-tests should have ability to add description to its JSON output
+        https://bugs.webkit.org/show_bug.cgi?id=93296
+
+        Reviewed by Dirk Pranke.
+
+        Add --description option.
+
+        * Scripts/webkitpy/performance_tests/perftestsrunner.py:
+        (PerfTestsRunner._parse_args):
+        (PerfTestsRunner._generate_and_show_results):
+        (PerfTestsRunner._generate_results_dict):
+        * Scripts/webkitpy/performance_tests/perftestsrunner_unittest.py:
+        (test_run_with_description):
+
 2012-08-06  Dirk Pranke  <dpranke@chromium.org>
 
         nrwt: handle errors from image diff better
