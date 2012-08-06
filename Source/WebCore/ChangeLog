@@ -1,3 +1,30 @@
+2012-08-03  Kent Tamura  <tkent@chromium.org>
+
+        [Chromium-win] Use the default locale only if the browser locale matches to it
+        https://bugs.webkit.org/show_bug.cgi?id=93083
+
+        Reviewed by Hajime Morita.
+
+        For a calendar picker, we have used month names and day-of-week names
+        obtained from the OS default locale. However, the year-month format and
+        [Today] [Clear] labels are decided with the browser locale. It made
+        calendar pickers with mixed languages.
+
+        To make calendar pickers with a single language, we use the OS default
+        locale only if the browser locale matches to it.
+        This patch changes the behavior for Windows Vista or later. No change
+        for Windows XP because of API support limitation.
+
+        No new tests.  Behavior for locale setting is not testable in WebKit.
+
+        * platform/text/LocaleWin.cpp:
+        (determineCurrentLCID):
+        Added. If the system has no LocaleNameToLCID API, just returns
+        LOCALE_USER_DEFAULT. Otherwise, if the system locale matches to the
+        browser locale, it returns LOCALE_USER_DEFAULT, otherwise it returns the
+        LCID for the browser locale.
+        (WebCore::LocaleWin::currentLocale): Uses determineCurrentLCID().
+
 2012-08-05  Antti Koivisto  <antti@apple.com>
 
         Don't reuse cached stylesheet with failed or canceled resource loads

@@ -35,6 +35,7 @@
 #if ENABLE(INPUT_TYPE_TIME_MULTIPLE_FIELDS)
 #include "DateTimeFormat.h"
 #endif
+#include "Language.h"
 #include "LocalizedStrings.h"
 #include <limits>
 #include <windows.h>
@@ -75,11 +76,30 @@ PassOwnPtr<LocaleWin> LocaleWin::create(LCID lcid)
     return adoptPtr(new LocaleWin(lcid));
 }
 
+static LCID determineCurrentLCID()
+{
+    LCID lcid = LOCALE_USER_DEFAULT;
+    // LocaleNameToLCID() is available since Windows Vista.
+    typedef LCID (WINAPI* LocaleNameToLCIDPtr)(LPCWSTR, DWORD);
+    LocaleNameToLCIDPtr localeNameToLCID = reinterpret_cast<LocaleNameToLCIDPtr>(::GetProcAddress(::GetModuleHandle(L"kernel32"), "LocaleNameToLCID"));
+    if (!localeNameToLCID)
+        return lcid;
+    // According to MSDN, 9 is enough for LOCALE_SISO639LANGNAME.
+    const size_t languageCodeBufferSize = 9;
+    WCHAR lowercaseLanguageCode[languageCodeBufferSize];
+    ::GetLocaleInfo(LOCALE_USER_DEFAULT, LOCALE_SISO639LANGNAME, lowercaseLanguageCode, languageCodeBufferSize);
+    String browserLanguage = defaultLanguage();
+    size_t dashPosition = browserLanguage.find('-');
+    if (dashPosition != notFound)
+        browserLanguage = browserLanguage.left(dashPosition);
+    if (!equalIgnoringCase(browserLanguage, String(lowercaseLanguageCode)))
+        lcid = localeNameToLCID(defaultLanguage().charactersWithNullTermination(), 0);
+    return lcid;
+}
+
 LocaleWin* LocaleWin::currentLocale()
 {
-    // Ideally we should make LCID from defaultLanguage(). But
-    // ::LocaleNameToLCID() is available since Windows Vista.
-    static LocaleWin* currentLocale = LocaleWin::create(LOCALE_USER_DEFAULT).leakPtr();
+    static LocaleWin* currentLocale = LocaleWin::create(determineCurrentLCID()).leakPtr();
     return currentLocale;
 }
 
