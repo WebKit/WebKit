@@ -1,3 +1,15 @@
+2012-08-06  Keishi Hattori  <keishi@webkit.org>
+
+        Remove minimum window size for PagePopup
+        https://bugs.webkit.org/show_bug.cgi?id=93100
+
+        Reviewed by Kent Tamura.
+
+        * platform/chromium-mac/platform/chromium/fast/forms/color/color-suggestion-picker-one-row-appearance-expected.png:
+        * platform/chromium-mac/platform/chromium/fast/forms/color/color-suggestion-picker-two-row-appearance-expected.png:
+        * platform/chromium/fast/forms/color/color-suggestion-picker-one-row-appearance.html: Added background color so we can check that we don't have extra white area.
+        * platform/chromium/fast/forms/color/color-suggestion-picker-two-row-appearance.html: Ditto.
+
 2012-08-06  Takashi Toyoshima  <toyoshim@chromium.org>
 
         Unreviewed, rebaseline for r124745.

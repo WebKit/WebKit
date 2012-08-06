@@ -34,6 +34,7 @@
 #include "CSSComputedStyleDeclaration.h"
 #include "CSSRuleList.h"
 #include "Chrome.h"
+#include "ChromeClient.h"
 #include "Console.h"
 #include "Crypto.h"
 #include "DOMApplicationCache.h"
@@ -308,14 +309,14 @@ void DOMWindow::dispatchAllPendingUnloadEvents()
 
 // This function:
 // 1) Validates the pending changes are not changing to NaN
-// 2) Constrains the window rect to no smaller than 100 in each dimension and no
-//    bigger than the the float rect's dimensions.
+// 2) Constrains the window rect to the minimum window size and no bigger than
+//    the the float rect's dimensions.
 // 3) Constrain window rect to within the top and left boundaries of the screen rect
 // 4) Constraint the window rect to within the bottom and right boundaries of the
 //    screen rect.
 // 5) Translate the window rect coordinates to be within the coordinate space of
 //    the screen rect.
-void DOMWindow::adjustWindowRect(const FloatRect& screen, FloatRect& window, const FloatRect& pendingChanges)
+void DOMWindow::adjustWindowRect(const FloatRect& screen, FloatRect& window, const FloatRect& pendingChanges) const
 {
     // Make sure we're in a valid state before adjusting dimensions.
     ASSERT(isfinite(screen.x()));
@@ -336,11 +337,13 @@ void DOMWindow::adjustWindowRect(const FloatRect& screen, FloatRect& window, con
         window.setWidth(pendingChanges.width());
     if (!isnan(pendingChanges.height()))
         window.setHeight(pendingChanges.height());
-    
-    // Resize the window to between 100 and the screen width and height.
-    window.setWidth(min(max(100.0f, window.width()), screen.width()));
-    window.setHeight(min(max(100.0f, window.height()), screen.height()));
-    
+
+    ASSERT(m_frame);
+    Page* page = m_frame->page();
+    FloatSize minimumSize = page ? m_frame->page()->chrome()->client()->minimumWindowSize() : FloatSize(100, 100);
+    window.setWidth(min(max(minimumSize.width(), window.width()), screen.width()));
+    window.setHeight(min(max(minimumSize.height(), window.height()), screen.height()));
+
     // Constrain the window position to the screen.
     window.setX(max(screen.x(), min(window.x(), screen.maxX() - window.width())));
     window.setY(max(screen.y(), min(window.y(), screen.maxY() - window.height())));

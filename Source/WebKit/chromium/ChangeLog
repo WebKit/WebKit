@@ -1,3 +1,12 @@
+2012-08-06  Keishi Hattori  <keishi@webkit.org>
+
+        Remove minimum window size for PagePopup
+        https://bugs.webkit.org/show_bug.cgi?id=93100
+
+        Reviewed by Kent Tamura.
+
+        * src/WebPagePopupImpl.cpp: Returns 0x0 so the page popup can be smaller than 100x100.
+
 2012-08-05  Kent Tamura  <tkent@chromium.org>
 
         [Chromium-win] Use system locale for number representation

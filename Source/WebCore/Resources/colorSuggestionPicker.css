@@ -56,7 +56,6 @@ body {
 
 .color-swatch-container {
     width: 100%;
-    min-height: 72px;
     max-height: 104px;
     overflow: auto;
     display: -webkit-flex;

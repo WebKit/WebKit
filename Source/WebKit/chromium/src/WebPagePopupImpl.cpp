@@ -123,6 +123,11 @@ private:
         return m_popup->m_webView;
     }
 
+    virtual FloatSize minimumWindowSize() const OVERRIDE
+    {
+        return FloatSize(0, 0);
+    }
+
     WebPagePopupImpl* m_popup;
 };
 
