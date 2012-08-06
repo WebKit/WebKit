@@ -1046,8 +1046,10 @@ PassRefPtr<StylePropertySet> StylePropertySet::copyPropertiesInSet(const CSSProp
     return StylePropertySet::create(list.data(), list.size());
 }
 
-CSSStyleDeclaration* StylePropertySet::ensureCSSStyleDeclaration() const
+CSSStyleDeclaration* StylePropertySet::ensureCSSStyleDeclaration()
 {
+    ASSERT(isMutable());
+
     if (m_ownsCSSOMWrapper) {
         ASSERT(!static_cast<CSSStyleDeclaration*>(propertySetCSSOMWrapperMap().get(this))->parentRule());
         ASSERT(!propertySetCSSOMWrapperMap().get(this)->parentElement());
@@ -1059,8 +1061,10 @@ CSSStyleDeclaration* StylePropertySet::ensureCSSStyleDeclaration() const
     return cssomWrapper;
 }
 
-CSSStyleDeclaration* StylePropertySet::ensureInlineCSSStyleDeclaration(const StyledElement* parentElement) const
+CSSStyleDeclaration* StylePropertySet::ensureInlineCSSStyleDeclaration(const StyledElement* parentElement)
 {
+    ASSERT(isMutable());
+
     if (m_ownsCSSOMWrapper) {
         ASSERT(propertySetCSSOMWrapperMap().get(this)->parentElement() == parentElement);
         return propertySetCSSOMWrapperMap().get(this);

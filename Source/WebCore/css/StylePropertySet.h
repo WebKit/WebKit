@@ -105,8 +105,8 @@ public:
     
     void clearParentElement(StyledElement*);
 
-    CSSStyleDeclaration* ensureCSSStyleDeclaration() const;
-    CSSStyleDeclaration* ensureInlineCSSStyleDeclaration(const StyledElement* parentElement) const;
+    CSSStyleDeclaration* ensureCSSStyleDeclaration();
+    CSSStyleDeclaration* ensureInlineCSSStyleDeclaration(const StyledElement* parentElement);
 
     bool isMutable() const { return m_isMutable; }
 

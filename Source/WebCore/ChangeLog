@@ -1,3 +1,55 @@
+2012-08-06  Andreas Kling  <kling@webkit.org>
+
+        Simplify CSSOM style declaration's grabbing at internals.
+        <http://webkit.org/b/93261>
+
+        Reviewed by Antti Koivisto.
+
+        It was already the case that StylePropertySets exposed in CSSOM were guaranteed mutable,
+        so remove the mechanism to convert immutable backing objects to mutable ones.
+
+        Made ensureCSSStyleDeclaration() non-const to prevent callers that may have an
+        immutable StylePropertySet from wrapping a CSSOM object around it.
+
+        * css/PropertySetCSSStyleDeclaration.h:
+        (PropertySetCSSStyleDeclaration):
+        * css/PropertySetCSSStyleDeclaration.cpp:
+        (WebCore::PropertySetCSSStyleDeclaration::length):
+        (WebCore::PropertySetCSSStyleDeclaration::item):
+        (WebCore::PropertySetCSSStyleDeclaration::cssText):
+        (WebCore::PropertySetCSSStyleDeclaration::setCssText):
+        (WebCore::PropertySetCSSStyleDeclaration::getPropertyCSSValue):
+        (WebCore::PropertySetCSSStyleDeclaration::getPropertyValue):
+        (WebCore::PropertySetCSSStyleDeclaration::getPropertyPriority):
+        (WebCore::PropertySetCSSStyleDeclaration::getPropertyShorthand):
+        (WebCore::PropertySetCSSStyleDeclaration::isPropertyImplicit):
+        (WebCore::PropertySetCSSStyleDeclaration::setProperty):
+        (WebCore::PropertySetCSSStyleDeclaration::removeProperty):
+        (WebCore::PropertySetCSSStyleDeclaration::getPropertyCSSValueInternal):
+        (WebCore::PropertySetCSSStyleDeclaration::getPropertyValueInternal):
+        (WebCore::PropertySetCSSStyleDeclaration::setPropertyInternal):
+        (WebCore::PropertySetCSSStyleDeclaration::copy):
+        (WebCore::PropertySetCSSStyleDeclaration::makeMutable):
+        (WebCore::PropertySetCSSStyleDeclaration::cssPropertyMatches):
+
+            Remove indirection and access StylePropertySet member directly.
+
+        * css/StylePropertySet.h:
+        * css/StylePropertySet.cpp:
+        (WebCore::StylePropertySet::ensureCSSStyleDeclaration):
+        (WebCore::StylePropertySet::ensureInlineCSSStyleDeclaration):
+
+            Made these two non-const. CSSOM wrappers should only ever be constructed around
+            mutable StylePropertySets.
+            Also added ASSERT(isMutable()).
+
+        * inspector/InspectorCSSAgent.cpp:
+        (WebCore::InspectorCSSAgent::buildObjectForAttributesStyle):
+
+            Cast away the constness of StyledElement::attributeStyle(). It's not pretty,
+            but these objects are guaranteed mutable, and there's an assertion to protect
+            us in ensureCSSStyleDeclaration() if something changes in the future.
+
 2012-08-06  Andrei Poenaru  <poenaru@adobe.com>
 
         Web Inspector: Protocol: Add "namedFlowCreated" and "namedFlowRemoved" events

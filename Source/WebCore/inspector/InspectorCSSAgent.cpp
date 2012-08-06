@@ -1068,7 +1068,7 @@ PassRefPtr<TypeBuilder::CSS::CSSStyle> InspectorCSSAgent::buildObjectForAttribut
     if (!attributeStyle)
         return 0;
 
-    RefPtr<InspectorStyle> inspectorStyle = InspectorStyle::create(InspectorCSSId(), attributeStyle->ensureCSSStyleDeclaration(), 0);
+    RefPtr<InspectorStyle> inspectorStyle = InspectorStyle::create(InspectorCSSId(), const_cast<StylePropertySet*>(attributeStyle)->ensureCSSStyleDeclaration(), 0);
     return inspectorStyle->buildObjectForStyle();
 }
 
