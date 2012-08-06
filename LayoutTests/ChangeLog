@@ -1,3 +1,15 @@
+2012-08-06  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r124739.
+        http://trac.webkit.org/changeset/124739
+        https://bugs.webkit.org/show_bug.cgi?id=93241
+
+        newly added test crash on chromium linux debug (Requested by
+        toyoshim on #webkit).
+
+        * fast/lists/list-marker-remove-crash-expected.txt: Removed.
+        * fast/lists/list-marker-remove-crash.html: Removed.
+
 2012-08-06  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
 
         Fix layoutMod in fractional layout units.
