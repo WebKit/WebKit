@@ -26,6 +26,7 @@
 
 #include "config.h"
 
+#include "QtInitializeTestFonts.h"
 #include "TestController.h"
 #include "qquickwebview_p.h"
 
@@ -117,6 +118,9 @@ int main(int argc, char** argv)
     }
 
     qputenv("QT_WEBKIT_THEME_NAME", "qstyle");
+
+    WebKit::initializeTestFonts();
+    QCoreApplication::setAttribute(Qt::AA_Use96Dpi, true);
 
     QQuickWebViewExperimental::setFlickableViewportEnabled(false);
     QApplication app(argc, argv);

@@ -1,3 +1,18 @@
+2012-08-06  Luciano Wolf  <luciano.wolf@openbossa.org>
+
+        [Qt] Default sizes for input-text and text-area are different when running DRT/WTR
+        https://bugs.webkit.org/show_bug.cgi?id=91990
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Initializing TestFonts information into WTR binary. Doing it 
+        later leads to wrong font names usage (Dejavu Serif instead
+        of Liberation Serif).
+
+        * WebKitTestRunner/Target.pri:
+        * WebKitTestRunner/qt/main.cpp:
+        (main):
+
 2012-08-06  Jeff Timanus  <twiz@chromium.org>
 
         Add twiz@{chromium|google}.org to the set of non-committer contributors.

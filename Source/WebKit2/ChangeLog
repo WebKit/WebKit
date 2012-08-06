@@ -1,3 +1,19 @@
+2012-08-06  Luciano Wolf  <luciano.wolf@openbossa.org>
+
+        [Qt] Default sizes for input-text and text-area are different when running DRT/WTR
+        https://bugs.webkit.org/show_bug.cgi?id=91990
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        WTR wasn't using the proper font types provided by testfonts directory.
+        The same approach as DRT was applied and now it takes info from QFont to
+        update the store variable.
+
+        * UIProcess/qt/WebPreferencesQt.cpp:
+        (WebKit::setStringValueIfInUserDefaults):
+        (WebKit):
+        (WebKit::WebPreferences::platformInitializeStore):
+
 2012-08-06  No'am Rosenthal  <noam.rosenthal@nokia.com>
 
         [Qt] Use GraphicsLayerAnimation in LayerTreeCoordinator

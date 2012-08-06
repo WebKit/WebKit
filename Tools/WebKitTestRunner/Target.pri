@@ -8,6 +8,7 @@ TEMPLATE = app
 TARGET = WebKitTestRunner
 
 HEADERS += \
+    $${ROOT_WEBKIT_DIR}/Tools/DumpRenderTree/qt/QtInitializeTestFonts.h \
     EventSenderProxy.h \
     PlatformWebView.h \
     StringFunctions.h \
@@ -15,6 +16,7 @@ HEADERS += \
     TestInvocation.h
 
 SOURCES += \
+    $${ROOT_WEBKIT_DIR}/Tools/DumpRenderTree/qt/QtInitializeTestFonts.cpp \
     qt/main.cpp \
     qt/EventSenderProxyQt.cpp \
     qt/PlatformWebViewQt.cpp \
@@ -30,6 +32,11 @@ QT = core gui widgets network testlib quick quick-private webkit
 WEBKIT += wtf javascriptcore webkit2
 
 DEFINES += USE_SYSTEM_MALLOC=1
+
+contains(DEFINES, HAVE_FONTCONFIG=1): PKGCONFIG += fontconfig
+
+INCLUDEPATH += \
+    $${ROOT_WEBKIT_DIR}/Tools/DumpRenderTree/qt
 
 PREFIX_HEADER = WebKitTestRunnerPrefix.h
 *-g++*:QMAKE_CXXFLAGS += "-include $$PREFIX_HEADER"
