@@ -1,3 +1,16 @@
+2012-08-06  Adam Barth  <abarth@webkit.org>
+
+        REGRESSION(124789): EWS errors out because --print option is missing
+        https://bugs.webkit.org/show_bug.cgi?id=93299
+
+        Unreviewed.
+
+        The --print option doesn't exist anymore.  Let's try --quiet instead.
+
+        * Scripts/webkitpy/tool/steps/runtests.py:
+        (RunTests.run):
+        * Scripts/webkitpy/tool/steps/runtests_unittest.py:
+
 2012-08-06  Ryosuke Niwa  <rniwa@webkit.org>
 
         run-webkit-tests should have ability to add description to its JSON output

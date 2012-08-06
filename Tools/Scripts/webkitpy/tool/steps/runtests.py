@@ -85,8 +85,7 @@ class RunTests(AbstractStep):
                 "--skip-failing-tests",
                 "--exit-after-n-failures=%s" % self.NON_INTERACTIVE_FAILURE_LIMIT_COUNT,
                 "--results-directory=%s" % self._tool.port().results_directory,
-                # We customize the printing options to avoid generating massive logs on the EWS and commit-queue.
-                "--print=actual,config,expected,misc,slowest,unexpected,unexpected-results",
+                "--quiet",
             ])
 
         if self._options.quiet:
