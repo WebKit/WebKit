@@ -1,3 +1,16 @@
+2012-08-06  Roger Fong  <roger_fong@apple.com>
+
+        Layout Test: Windows specific tests needed for fast/css/getComputedStyle/computed-style.html & computed-style-without-renderer.html
+        https://bugs.webkit.org/show_bug.cgi?id=93033
+
+        Reviewed by Tim Horton.
+
+        Windows specific computed-style and computed-style-without-renderer tests are needed since CSS3 Flexbox is disabled on windows,
+        see https://bugs.webkit.org/show_bug.cgi?id=92047, new CSS3 Flexbox properties no longer used.
+        
+        * platform/win/fast/css/getComputedStyle/computed-style-expected.txt: Added.
+        * platform/win/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt: Added.
+
 2012-07-31  Ojan Vafai  <ojan@chromium.org>
 
         need tests to ensure flexboxes play nicely with box-sizing
