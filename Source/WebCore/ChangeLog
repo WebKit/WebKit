@@ -1,3 +1,18 @@
+2012-08-06  Nico Weber  <thakis@chromium.org>
+
+        [chromium/mac] Unbreak debug builds with the 10.7 SDK
+        https://bugs.webkit.org/show_bug.cgi?id=93202
+
+        Reviewed by James Robinson.
+
+        FMGetATSFontRefFromFont() is not available with the 10.7 SDK
+        when targetting 10.6. Don't delete this code completely yet,
+        it's still used with the 10.6 SDK when targetting 10.6 (which
+        chromium's build bots use).
+
+        * platform/graphics/mac/SimpleFontDataMac.mm:
+        (WebCore):
+
 2012-07-31  Ojan Vafai  <ojan@chromium.org>
 
         need tests to ensure flexboxes play nicely with box-sizing
