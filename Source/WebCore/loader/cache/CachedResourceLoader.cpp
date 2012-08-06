@@ -887,7 +887,8 @@ void CachedResourceLoader::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo)
         info.addInstrumentedMember(i->second);
     }
     info.addHashSet(m_validatedURLs);
-    info.addListHashSet(*m_preloads);
+    if (m_preloads)
+        info.addListHashSet(*m_preloads);
     info.addMember(m_pendingPreloads);
 }
 
