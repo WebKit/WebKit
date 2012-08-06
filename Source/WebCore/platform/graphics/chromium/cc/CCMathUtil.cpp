@@ -360,4 +360,25 @@ FloatPoint CCMathUtil::projectPoint(const WebTransformationMatrix& transform, co
     return h.cartesianPoint2d();
 }
 
+void CCMathUtil::flattenTransformTo2d(WebTransformationMatrix& transform)
+{
+    // Set both the 3rd row and 3rd column to (0, 0, 1, 0).
+    //
+    // One useful interpretation of doing this operation:
+    //  - For x and y values, the new transform behaves effectively like an orthographic
+    //    projection was added to the matrix sequence.
+    //  - For z values, the new transform overrides any effect that the transform had on
+    //    z, and instead it preserves the z value for any points that are transformed.
+    //  - Because of linearity of transforms, this flattened transform also preserves the
+    //    effect that any subsequent (post-multiplied) transforms would have on z values.
+    //
+    transform.setM13(0);
+    transform.setM23(0);
+    transform.setM31(0);
+    transform.setM32(0);
+    transform.setM33(1);
+    transform.setM34(0);
+    transform.setM43(0);
+}
+
 } // namespace WebCore

@@ -1,3 +1,12 @@
+2012-08-06  Shawn Singh  <shawnsingh@chromium.org>
+
+        [chromium] Non-preserves-3d requires explicit flattening of screen-space transform.
+        https://bugs.webkit.org/show_bug.cgi?id=85808
+
+        Reviewed by Adrienne Walker.
+
+        * tests/CCLayerTreeHostCommonTest.cpp:
+
 2012-08-06  Yury Semikhatsky  <yurys@chromium.org>
 
         Web Inspector: rename WorkerAgent.setWorkerInspectionEnabled to WorkerAgent.enable and make it return error

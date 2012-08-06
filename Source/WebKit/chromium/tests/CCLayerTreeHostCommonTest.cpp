@@ -903,6 +903,51 @@ TEST(CCLayerTreeHostCommonTest, verifyTransformsForRenderSurfaceHierarchy)
     EXPECT_FLOAT_EQ(5, grandChildOfRS2->screenSpaceTransform().m42());
 }
 
+TEST(CCLayerTreeHostCommonTest, verifyTransformsForFlatteningLayer)
+{
+    // For layers that flatten their subtree, there should be an orthographic projection
+    // (for x and y values) in the middle of the transform sequence. Note that the way the
+    // code is currently implemented, it is not expected to use a canonical orthographic
+    // projection.
+
+    RefPtr<LayerChromium> root = LayerChromium::create();
+    RefPtr<LayerChromium> child = LayerChromium::create();
+    RefPtr<LayerChromiumWithForcedDrawsContent> grandChild = adoptRef(new LayerChromiumWithForcedDrawsContent());
+
+    WebTransformationMatrix rotationAboutYAxis;
+    rotationAboutYAxis.rotate3d(0, 30, 0);
+
+    const WebTransformationMatrix identityMatrix;
+    setLayerPropertiesForTesting(root.get(), identityMatrix, identityMatrix, FloatPoint::zero(), FloatPoint::zero(), IntSize(100, 100), false);
+    setLayerPropertiesForTesting(child.get(), rotationAboutYAxis, identityMatrix, FloatPoint::zero(), FloatPoint::zero(), IntSize(10, 10), false);
+    setLayerPropertiesForTesting(grandChild.get(), rotationAboutYAxis, identityMatrix, FloatPoint::zero(), FloatPoint::zero(), IntSize(10, 10), false);
+
+    root->addChild(child);
+    child->addChild(grandChild);
+    child->setForceRenderSurface(true);
+
+    // No layers in this test should preserve 3d.
+    ASSERT_FALSE(root->preserves3D());
+    ASSERT_FALSE(child->preserves3D());
+    ASSERT_FALSE(grandChild->preserves3D());
+
+    WebTransformationMatrix expectedChildDrawTransform = rotationAboutYAxis;
+    WebTransformationMatrix expectedChildScreenSpaceTransform = rotationAboutYAxis;
+    WebTransformationMatrix expectedGrandChildDrawTransform = rotationAboutYAxis; // draws onto child's renderSurface
+    WebTransformationMatrix expectedGrandChildScreenSpaceTransform = rotationAboutYAxis.to2dTransform() * rotationAboutYAxis;
+
+    executeCalculateDrawTransformsAndVisibility(root.get());
+
+    // The child's drawTransform should have been taken by its surface.
+    ASSERT_TRUE(child->renderSurface());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(expectedChildDrawTransform, child->renderSurface()->drawTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(expectedChildScreenSpaceTransform, child->renderSurface()->screenSpaceTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(identityMatrix, child->drawTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(expectedChildScreenSpaceTransform, child->screenSpaceTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(expectedGrandChildDrawTransform, grandChild->drawTransform());
+    EXPECT_TRANSFORMATION_MATRIX_EQ(expectedGrandChildScreenSpaceTransform, grandChild->screenSpaceTransform());
+}
+
 TEST(CCLayerTreeHostCommonTest, verifyRenderSurfaceListForRenderSurfaceWithClippedLayer)
 {
     RefPtr<LayerChromium> parent = LayerChromium::create();

@@ -556,6 +556,8 @@ static void calculateDrawTransformsInternal(LayerType* layer, LayerType* rootLay
 
     // layerScreenSpaceTransform represents the transform between root layer's "screen space" and local content space.
     WebTransformationMatrix layerScreenSpaceTransform = fullHierarchyMatrix;
+    if (!layer->preserves3D())
+        CCMathUtil::flattenTransformTo2d(layerScreenSpaceTransform);
     layerScreenSpaceTransform.multiply(drawTransform);
     layer->setScreenSpaceTransform(layerScreenSpaceTransform);
 
@@ -679,15 +681,8 @@ static void calculateDrawTransformsInternal(LayerType* layer, LayerType* rootLay
     }
 
     // Flatten to 2D if the layer doesn't preserve 3D.
-    if (!layer->preserves3D()) {
-        sublayerMatrix.setM13(0);
-        sublayerMatrix.setM23(0);
-        sublayerMatrix.setM31(0);
-        sublayerMatrix.setM32(0);
-        sublayerMatrix.setM33(1);
-        sublayerMatrix.setM34(0);
-        sublayerMatrix.setM43(0);
-    }
+    if (!layer->preserves3D())
+        CCMathUtil::flattenTransformTo2d(sublayerMatrix);
 
     // Apply the sublayer transform at the center of the layer.
     sublayerMatrix.multiply(layer->sublayerTransform());

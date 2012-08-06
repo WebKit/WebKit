@@ -113,6 +113,8 @@ public:
     static FloatPoint3D mapPoint(const WebKit::WebTransformationMatrix&, const FloatPoint3D&, bool& clipped);
     static FloatQuad projectQuad(const WebKit::WebTransformationMatrix&, const FloatQuad&, bool& clipped);
     static FloatPoint projectPoint(const WebKit::WebTransformationMatrix&, const FloatPoint&, bool& clipped);
+
+    static void flattenTransformTo2d(WebKit::WebTransformationMatrix&);
 };
 
 } // namespace WebCore
