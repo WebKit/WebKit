@@ -1,3 +1,17 @@
+2012-08-05  Luke Macpherson   <macpherson@chromium.org>
+
+        Fix null pointer dereference when CSSParser::sinkFloatingValueList() returns null and is passed to storeVariableDeclaration().
+        https://bugs.webkit.org/show_bug.cgi?id=92461
+
+        Reviewed by Eric Seidel.
+
+        Invalid variable lists could cause CSSGrammar.y to pass null as value to storeVariableDeclaration, so we now check for null.
+
+        Test: fast/css/variables/invalid-value-list-crash.html
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::storeVariableDeclaration):
+
 2012-08-03  Kent Tamura  <tkent@chromium.org>
 
         [Chromium-win] Use the default locale only if the browser locale matches to it

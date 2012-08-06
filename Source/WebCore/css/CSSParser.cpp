@@ -3025,6 +3025,10 @@ bool CSSParser::cssVariablesEnabled() const
 
 void CSSParser::storeVariableDeclaration(const CSSParserString& name, PassOwnPtr<CSSParserValueList> value, bool important)
 {
+    // When CSSGrammar.y encounters an invalid declaration it passes null for the CSSParserValueList, just bail.
+    if (!value)
+        return;
+    
     ASSERT(name.length > 12);
     AtomicString variableName = String(name.characters + 12, name.length - 12);
 

@@ -1,3 +1,15 @@
+2012-08-05  Luke Macpherson   <macpherson@chromium.org>
+
+        Fix null pointer dereference when CSSParser::sinkFloatingValueList() returns null and is passed to storeVariableDeclaration().
+        https://bugs.webkit.org/show_bug.cgi?id=92461
+
+        Reviewed by Eric Seidel.
+
+        Test case that causes CSSParser::storeVariableDeclaration to be passed a null value.
+
+        * fast/css/variables/invalid-value-list-crash-expected.txt: Added.
+        * fast/css/variables/invalid-value-list-crash.html: Added.
+
 2012-08-05  Kent Tamura  <tkent@chromium.org>
 
         [Chromium] Updte text expectation.

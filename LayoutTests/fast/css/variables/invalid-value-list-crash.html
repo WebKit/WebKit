@@ -1,0 +1,11 @@
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+internals.settings.setCSSVariablesEnabled(true);
+</script>
+<style>
+div {
+-webkit-var-a: -webkit-var(b) &#0;
+}
+</style>
+This test is successful if it does not crash.
