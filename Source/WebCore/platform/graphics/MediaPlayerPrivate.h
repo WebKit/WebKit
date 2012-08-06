@@ -155,6 +155,7 @@ public:
 
     virtual void setPrivateBrowsingMode(bool) { }
 
+    virtual String engineDescription() const { return emptyString(); }
 
 #if ENABLE(WEB_AUDIO)
     virtual AudioSourceProvider* audioSourceProvider() { return 0; }

@@ -137,6 +137,8 @@ private slots:
 private:
     void updateStates();
 
+    virtual String engineDescription() const { return "Qt"; }
+
 private:
     MediaPlayerPrivateQt(MediaPlayer*);
 

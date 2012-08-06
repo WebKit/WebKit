@@ -143,6 +143,8 @@ private:
     void updateStates();
     String userAgent(const String&) const;
 
+    virtual String engineDescription() const { return "BlackBerry"; }
+
     MediaPlayer* m_webCorePlayer;
     BlackBerry::Platform::MMRPlayer* m_platformPlayer;
 

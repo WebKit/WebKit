@@ -102,6 +102,8 @@ namespace WebCore {
         static MediaPlayer::SupportsType supportsType(const String& type, const String& codecs);
         static bool isAvailable();
 
+        virtual String engineDescription() const { return "WinCE"; }
+
         MediaPlayer* m_player;
         float m_seekTo;
         float m_endTime;

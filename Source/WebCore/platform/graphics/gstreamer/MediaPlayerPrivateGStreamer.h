@@ -149,6 +149,8 @@ class MediaPlayerPrivateGStreamer : public MediaPlayerPrivateInterface {
 
             void processBufferingStats(GstMessage*);
 
+            virtual String engineDescription() const { return "GStreamer"; }
+
         private:
             MediaPlayer* m_player;
             GstElement* m_playBin;
