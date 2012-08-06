@@ -114,6 +114,7 @@ void MediaQueryExp::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     MemoryClassInfo<MediaQueryExp> info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
     info.addMember(m_mediaFeature);
     info.addMember(m_serializationCache);
+    info.addInstrumentedMember(m_value);
 }
 
 } // namespace

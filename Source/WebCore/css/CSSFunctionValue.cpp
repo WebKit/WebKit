@@ -28,6 +28,7 @@
 
 #include "CSSParserValues.h"
 #include "CSSValueList.h"
+#include "MemoryInstrumentation.h"
 #include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
@@ -47,6 +48,13 @@ String CSSFunctionValue::customCssText() const
         result += m_args->cssText();
     result += ")";
     return result;
+}
+
+void CSSFunctionValue::reportDescendantMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+{
+    MemoryClassInfo<CSSFunctionValue> info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
+    info.addMember(m_name);
+    info.addInstrumentedMember(m_args);
 }
 
 }

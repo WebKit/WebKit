@@ -306,6 +306,8 @@ public:
     PassRefPtr<CSSPrimitiveValue> cloneForCSSOM() const;
     void setCSSOMSafe() { m_isCSSOMSafe = true; }
 
+    void reportDescendantMemoryUsage(MemoryObjectInfo*) const;
+
 private:
     // FIXME: int vs. unsigned overloading is too subtle to distinguish the color and identifier cases.
     CSSPrimitiveValue(int ident);

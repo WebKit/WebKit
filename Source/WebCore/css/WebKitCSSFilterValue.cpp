@@ -29,6 +29,7 @@
 #if ENABLE(CSS_FILTERS)
 
 #include "CSSValueList.h"
+#include "MemoryInstrumentation.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/text/WTFString.h>
 
@@ -108,6 +109,12 @@ WebKitCSSFilterValue::WebKitCSSFilterValue(const WebKitCSSFilterValue& cloneFrom
 PassRefPtr<WebKitCSSFilterValue> WebKitCSSFilterValue::cloneForCSSOM() const
 {
     return adoptRef(new WebKitCSSFilterValue(*this));
+}
+
+void WebKitCSSFilterValue::reportDescendantMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+{
+    MemoryClassInfo<WebKitCSSFilterValue> info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
+    CSSValueList::reportDescendantMemoryUsage(memoryObjectInfo);
 }
 
 }

@@ -74,6 +74,8 @@ public:
     
     PassRefPtr<WebKitCSSTransformValue> cloneForCSSOM() const;
 
+    void reportDescendantMemoryUsage(MemoryObjectInfo*) const;
+
 private:
     WebKitCSSTransformValue(TransformOperationType);
     WebKitCSSTransformValue(const WebKitCSSTransformValue& cloneFrom);

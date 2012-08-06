@@ -24,6 +24,7 @@
 #if ENABLE(SVG)
 #include "SVGPaint.h"
 
+#include "MemoryInstrumentation.h"
 #include "SVGException.h"
 #include "SVGURIReference.h"
 #include <wtf/text/WTFString.h>
@@ -109,6 +110,12 @@ SVGPaint::SVGPaint(const SVGPaint& cloneFrom)
 PassRefPtr<SVGPaint> SVGPaint::cloneForCSSOM() const
 {
     return adoptRef(new SVGPaint(*this));
+}
+
+void SVGPaint::reportDescendantMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+{
+    MemoryClassInfo<SVGPaint> info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
+    info.addMember(m_uri);
 }
 
 }

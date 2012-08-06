@@ -25,6 +25,7 @@
 #include "SVGColor.h"
 
 #include "CSSParser.h"
+#include "MemoryInstrumentation.h"
 #include "RGBColor.h"
 #include "SVGException.h"
 
@@ -102,6 +103,11 @@ SVGColor::SVGColor(ClassType classType, const SVGColor& cloneFrom)
 PassRefPtr<SVGColor> SVGColor::cloneForCSSOM() const
 {
     return adoptRef(new SVGColor(SVGColorClass, *this));
+}
+
+void SVGColor::reportDescendantMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+{
+    MemoryClassInfo<SVGColor> info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
 }
 
 }

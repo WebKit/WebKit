@@ -26,6 +26,7 @@
 #include "config.h"
 #include "CSSBorderImageSliceValue.h"
 
+#include "MemoryInstrumentation.h"
 #include "PlatformString.h"
 #include "Rect.h"
 
@@ -47,6 +48,12 @@ String CSSBorderImageSliceValue::customCssText() const
     if (m_fill)
         text += " fill";
     return text;
+}
+
+void CSSBorderImageSliceValue::reportDescendantMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+{
+    MemoryClassInfo<CSSBorderImageSliceValue> info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
+    info.addInstrumentedMember(m_slices);
 }
 
 } // namespace WebCore

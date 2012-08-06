@@ -102,11 +102,13 @@ private:
         OwningTraits<T>::addObject(this, t, ownerObjectType);
     }
     void addObject(const String&, ObjectType);
+    void addObject(const StringImpl*, ObjectType);
     template <typename T> void addInstrumentedObject(const T& t, ObjectType ownerObjectType) { OwningTraits<T>::addInstrumentedObject(this, t, ownerObjectType); }
-
     template <typename HashMapType> void addHashMap(const HashMapType&, ObjectType, bool contentOnly = false);
     template <typename HashSetType> void addHashSet(const HashSetType&, ObjectType, bool contentOnly = false);
     template <typename CollectionType> void addInstrumentedCollection(const CollectionType&, ObjectType, bool contentOnly = false);
+    template <typename MapType> void addInstrumentedMapEntries(const MapType&, ObjectType);
+    template <typename MapType> void addInstrumentedMapValues(const MapType&, ObjectType);
     template <typename ListHashSetType> void addListHashSet(const ListHashSetType&, ObjectType, bool contentOnly = false);
     template <typename VectorType> void addVector(const VectorType&, ObjectType, bool contentOnly = false);
     void addRawBuffer(const void* const& buffer, ObjectType ownerObjectType, size_t size)
@@ -190,10 +192,13 @@ public:
 
     template <typename HashMapType> void addHashMap(const HashMapType& map) { m_memoryInstrumentation->addHashMap(map, m_objectType, true); }
     template <typename HashSetType> void addHashSet(const HashSetType& set) { m_memoryInstrumentation->addHashSet(set, m_objectType, true); }
+    template <typename HashSetType> void addHashCountedSet(const HashSetType& set) { m_memoryInstrumentation->addHashSet(set, m_objectType, true); }
     template <typename HashSetType> void addInstrumentedHashSet(const HashSetType& set) { m_memoryInstrumentation->addInstrumentedCollection(set, m_objectType, true); }
     template <typename VectorType> void addInstrumentedVector(const VectorType& vector) { m_memoryInstrumentation->addInstrumentedCollection(vector, m_objectType, true); }
     template <typename VectorType> void addInstrumentedVectorPtr(const OwnPtr<VectorType>& vector) { m_memoryInstrumentation->addInstrumentedCollection(*vector, m_objectType, false); }
     template <typename VectorType> void addInstrumentedVectorPtr(const VectorType* const& vector) { m_memoryInstrumentation->addInstrumentedCollection(*vector, m_objectType, false); }
+    template <typename MapType> void addInstrumentedMapEntries(const MapType& map) { m_memoryInstrumentation->addInstrumentedMapEntries(map, m_objectType); }
+    template <typename MapType> void addInstrumentedMapValues(const MapType& map) { m_memoryInstrumentation->addInstrumentedMapValues(map, m_objectType); }
     template <typename ListHashSetType> void addListHashSet(const ListHashSetType& set) { m_memoryInstrumentation->addListHashSet(set, m_objectType, true); }
     template <typename VectorType> void addVector(const VectorType& vector) { m_memoryInstrumentation->addVector(vector, m_objectType, true); }
     template <typename VectorType> void addVectorPtr(const VectorType* const vector) { m_memoryInstrumentation->addVector(*vector, m_objectType, false); }
@@ -201,6 +206,7 @@ public:
 
     void addMember(const String& string) { m_memoryInstrumentation->addObject(string, m_objectType); }
     void addMember(const AtomicString& string) { m_memoryInstrumentation->addObject((const String&)string, m_objectType); }
+    void addMember(const StringImpl* string) { m_memoryInstrumentation->addObject(string, m_objectType); }
 
 private:
     MemoryObjectInfo* m_memoryObjectInfo;
@@ -304,6 +310,24 @@ void MemoryInstrumentation::addInstrumentedCollection(const CollectionType& coll
     typename CollectionType::const_iterator end = collection.end();
     for (typename CollectionType::const_iterator i = collection.begin(); i != end; ++i)
         addInstrumentedObject(*i, ownerObjectType);
+}
+
+template <typename MapType>
+void MemoryInstrumentation::addInstrumentedMapEntries(const MapType& map, ObjectType ownerObjectType)
+{
+    typename MapType::const_iterator end = map.end();
+    for (typename MapType::const_iterator i = map.begin(); i != end; ++i) {
+        addInstrumentedObject(i->first, ownerObjectType);
+        addInstrumentedObject(i->second, ownerObjectType);
+    }
+}
+
+template <typename MapType>
+void MemoryInstrumentation::addInstrumentedMapValues(const MapType& map, ObjectType ownerObjectType)
+{
+    typename MapType::const_iterator end = map.end();
+    for (typename MapType::const_iterator i = map.begin(); i != end; ++i)
+        addInstrumentedObject(i->second, ownerObjectType);
 }
 
 template<typename ListHashSetType>

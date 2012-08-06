@@ -31,6 +31,7 @@
 #include "Color.h"
 #include "Counter.h"
 #include "ExceptionCode.h"
+#include "MemoryInstrumentation.h"
 #include "Node.h"
 #include "Pair.h"
 #include "RGBColor.h"
@@ -1256,6 +1257,50 @@ PassRefPtr<CSSPrimitiveValue> CSSPrimitiveValue::cloneForCSSOM() const
         result->setCSSOMSafe();
 
     return result;
+}
+
+void CSSPrimitiveValue::reportDescendantMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+{
+    MemoryClassInfo<CSSPrimitiveValue> info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
+    switch (m_primitiveUnitType) {
+    case CSS_ATTR:
+    case CSS_COUNTER_NAME:
+    case CSS_PARSER_IDENTIFIER:
+    case CSS_PARSER_HEXCOLOR:
+    case CSS_STRING:
+    case CSS_URI:
+#if ENABLE(CSS_VARIABLES)
+    case CSS_VARIABLE_NAME:
+#endif
+        // FIXME: detect other cases when m_value is StringImpl*
+        info.addMember(m_value.string);
+        break;
+    case CSS_COUNTER:
+        info.addMember(m_value.counter);
+        break;
+    case CSS_RECT:
+        info.addMember(m_value.rect);
+        break;
+    case CSS_QUAD:
+        info.addMember(m_value.quad);
+        break;
+    case CSS_PAIR:
+        info.addMember(m_value.pair);
+        break;
+#if ENABLE(DASHBOARD_SUPPORT) || ENABLE(WIDGET_REGION)
+    case CSS_DASHBOARD_REGION:
+        info.addMember(m_value.region);
+        break;
+#endif
+    case CSS_SHAPE:
+        info.addMember(m_value.shape);
+        break;
+    case CSS_CALC:
+        info.addMember(m_value.calc);
+        break;
+    default:
+        break;
+    }
 }
 
 } // namespace WebCore

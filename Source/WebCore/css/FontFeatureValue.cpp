@@ -28,6 +28,7 @@
 
 #include "CSSParser.h"
 #include "CSSValueKeywords.h"
+#include "MemoryInstrumentation.h"
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
@@ -47,6 +48,12 @@ String FontFeatureValue::customCssText() const
     builder.append("' ");
     builder.append(String::number(m_value));
     return builder.toString();
+}
+
+void FontFeatureValue::reportDescendantMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+{
+    MemoryClassInfo<FontFeatureValue> info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
+    info.addMember(m_tag);
 }
 
 }

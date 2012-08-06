@@ -48,6 +48,8 @@ public:
     void removeReferencedElement(SVGElement*);
 #endif
 
+    void reportDescendantMemoryUsage(MemoryObjectInfo*) const;
+
 private:
     CSSCursorImageValue(const String& url, const IntPoint& hotSpot);
 

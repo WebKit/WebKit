@@ -39,6 +39,8 @@ public:
 
     String customCssText() const;
 
+    void reportDescendantMemoryUsage(MemoryObjectInfo*) const;
+
     RefPtr<CSSPrimitiveValue> style;
     RefPtr<CSSPrimitiveValue> variant;
     RefPtr<CSSPrimitiveValue> weight;

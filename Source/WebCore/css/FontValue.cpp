@@ -22,6 +22,7 @@
 
 #include "CSSValueList.h"
 #include "CSSPrimitiveValue.h"
+#include "MemoryInstrumentation.h"
 #include "PlatformString.h"
 #include <wtf/text/StringBuilder.h>
 
@@ -63,6 +64,17 @@ String FontValue::customCssText() const
     }
 
     return result.toString();
+}
+
+void FontValue::reportDescendantMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+{
+    MemoryClassInfo<FontValue> info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
+    info.addInstrumentedMember(style);
+    info.addInstrumentedMember(variant);
+    info.addInstrumentedMember(weight);
+    info.addInstrumentedMember(size);
+    info.addInstrumentedMember(lineHeight);
+    info.addInstrumentedMember(family);
 }
 
 }

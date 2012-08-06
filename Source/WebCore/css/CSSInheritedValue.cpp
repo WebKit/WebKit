@@ -21,6 +21,7 @@
 #include "config.h"
 #include "CSSInheritedValue.h"
 
+#include "MemoryInstrumentation.h"
 #include "PlatformString.h"
 
 namespace WebCore {
@@ -28,6 +29,11 @@ namespace WebCore {
 String CSSInheritedValue::customCssText() const
 {
     return "inherit";
+}
+
+void CSSInheritedValue::reportDescendantMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+{
+    MemoryClassInfo<CSSInheritedValue> info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
 }
 
 } // namespace WebCore

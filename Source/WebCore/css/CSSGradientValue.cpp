@@ -33,6 +33,7 @@
 #include "Image.h"
 #include "IntSize.h"
 #include "IntSizeHash.h"
+#include "MemoryInstrumentation.h"
 #include "NodeRenderStyle.h"
 #include "PlatformString.h"
 #include "RenderObject.h"
@@ -41,6 +42,13 @@
 using namespace std;
 
 namespace WebCore {
+
+void CSSGradientColorStop::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+{
+    MemoryClassInfo<CSSGradientColorStop> info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
+    info.addInstrumentedMember(m_position);
+    info.addInstrumentedMember(m_color);
+}
 
 PassRefPtr<Image> CSSGradientValue::image(RenderObject* renderer, const IntSize& size)
 {
@@ -452,6 +460,17 @@ bool CSSGradientValue::isCacheable() const
     return true;
 }
 
+void CSSGradientValue::reportBaseClassMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+{
+    MemoryClassInfo<CSSGradientValue> info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
+    CSSImageGeneratorValue::reportBaseClassMemoryUsage(memoryObjectInfo);
+    info.addInstrumentedMember(m_firstX);
+    info.addInstrumentedMember(m_firstY);
+    info.addInstrumentedMember(m_secondX);
+    info.addInstrumentedMember(m_secondY);
+    info.addInstrumentedVector(m_stops);
+}
+
 String CSSLinearGradientValue::customCssText() const
 {
     String result;
@@ -592,6 +611,13 @@ PassRefPtr<Gradient> CSSLinearGradientValue::createGradient(RenderObject* render
     addStops(gradient.get(), renderer, rootStyle, 1);
 
     return gradient.release();
+}
+
+void CSSLinearGradientValue::reportDescendantMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+{
+    MemoryClassInfo<CSSLinearGradientValue> info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
+    CSSGradientValue::reportBaseClassMemoryUsage(memoryObjectInfo);
+    info.addInstrumentedMember(m_angle);
 }
 
 String CSSRadialGradientValue::customCssText() const
@@ -889,6 +915,18 @@ PassRefPtr<Gradient> CSSRadialGradientValue::createGradient(RenderObject* render
     addStops(gradient.get(), renderer, rootStyle, maxExtent);
 
     return gradient.release();
+}
+
+void CSSRadialGradientValue::reportDescendantMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+{
+    MemoryClassInfo<CSSRadialGradientValue> info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
+    CSSGradientValue::reportBaseClassMemoryUsage(memoryObjectInfo);
+    info.addInstrumentedMember(m_firstRadius);
+    info.addInstrumentedMember(m_secondRadius);
+    info.addInstrumentedMember(m_shape);
+    info.addInstrumentedMember(m_sizingBehavior);
+    info.addInstrumentedMember(m_endHorizontalSize);
+    info.addInstrumentedMember(m_endVerticalSize);
 }
 
 } // namespace WebCore

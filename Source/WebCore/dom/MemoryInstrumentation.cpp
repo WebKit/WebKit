@@ -38,9 +38,14 @@ namespace WebCore {
 
 void MemoryInstrumentation::addObject(const String& string, ObjectType objectType)
 {
-    if (string.isNull() || visited(string.impl()))
+    addObject(string.impl(), objectType);
+}
+
+void MemoryInstrumentation::addObject(const StringImpl* stringImpl, ObjectType objectType)
+{
+    if (!stringImpl || visited(stringImpl))
         return;
-    countObjectSize(objectType, string.impl()->sizeInBytes());
+    countObjectSize(objectType, stringImpl->sizeInBytes());
 }
 
 } // namespace WebCore

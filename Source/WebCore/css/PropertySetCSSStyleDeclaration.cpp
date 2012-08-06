@@ -135,7 +135,8 @@ void PropertySetCSSStyleDeclaration::reportMemoryUsage(MemoryObjectInfo* memoryO
 {
     MemoryClassInfo<PropertySetCSSStyleDeclaration> info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
     info.addInstrumentedMember(m_propertySet);
-    // FIXME: add info.addInstrumentedHasMap(m_cssomCSSValueClones) when CSSValue is instrumented.
+    if (m_cssomCSSValueClones)
+        info.addInstrumentedMapEntries(*m_cssomCSSValueClones);
 }
 
 unsigned PropertySetCSSStyleDeclaration::length() const

@@ -45,6 +45,7 @@ struct CSSGradientColorStop {
     RefPtr<CSSPrimitiveValue> m_color;
     Color m_resolvedColor;
     bool m_colorIsDerivedFromElement;
+    void reportMemoryUsage(MemoryObjectInfo*) const;
 };
 
 class CSSGradientValue : public CSSImageGeneratorValue {
@@ -105,6 +106,8 @@ protected:
 
     bool isCacheable() const;
 
+    void reportBaseClassMemoryUsage(MemoryObjectInfo*) const;
+
     // Points. Some of these may be null for linear gradients.
     RefPtr<CSSPrimitiveValue> m_firstX;
     RefPtr<CSSPrimitiveValue> m_firstY;
@@ -138,6 +141,8 @@ public:
     {
         return adoptRef(new CSSLinearGradientValue(*this));
     }
+
+    void reportDescendantMemoryUsage(MemoryObjectInfo*) const;
 
 private:
     CSSLinearGradientValue(CSSGradientRepeat repeat, bool deprecatedType = false)
@@ -179,6 +184,8 @@ public:
 
     // Create the gradient for a given size.
     PassRefPtr<Gradient> createGradient(RenderObject*, const IntSize&);
+
+    void reportDescendantMemoryUsage(MemoryObjectInfo*) const;
 
 private:
     CSSRadialGradientValue(CSSGradientRepeat repeat, bool deprecatedType = false)

@@ -46,6 +46,8 @@ public:
     float numeratorValue() const { return m_numeratorValue; }
     float denominatorValue() const { return m_denominatorValue; }
 
+    void reportDescendantMemoryUsage(MemoryObjectInfo*) const;
+
 private:
     CSSAspectRatioValue(float numeratorValue, float denominatorValue)
         : CSSValue(AspectRatioClass)

@@ -30,6 +30,8 @@
 
 namespace WebCore {
 
+class MemoryObjectInfo;
+
 class CSSProperty {
 public:
     CSSProperty(CSSPropertyID propID, PassRefPtr<CSSValue> value, bool important = false, CSSPropertyID shorthandID = CSSPropertyInvalid, bool implicit = false)
@@ -58,6 +60,8 @@ public:
 
     static CSSPropertyID resolveDirectionAwareProperty(CSSPropertyID, TextDirection, WritingMode);
     static bool isInheritedProperty(CSSPropertyID);
+
+    void reportMemoryUsage(MemoryObjectInfo*) const;
 
 private:
     // Make sure the following fits in 4 bytes. Really.

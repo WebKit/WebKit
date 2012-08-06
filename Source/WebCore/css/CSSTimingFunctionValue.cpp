@@ -26,6 +26,7 @@
 #include "config.h"
 #include "CSSTimingFunctionValue.h"
 
+#include "MemoryInstrumentation.h"
 #include "PlatformString.h"
 
 namespace WebCore {
@@ -33,6 +34,11 @@ namespace WebCore {
 String CSSLinearTimingFunctionValue::customCssText() const
 {
     return "linear";
+}
+
+void CSSLinearTimingFunctionValue::reportDescendantMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+{
+    MemoryClassInfo<CSSLinearTimingFunctionValue> info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
 }
 
 String CSSCubicBezierTimingFunctionValue::customCssText() const
@@ -49,6 +55,11 @@ String CSSCubicBezierTimingFunctionValue::customCssText() const
     return text;
 }
 
+void CSSCubicBezierTimingFunctionValue::reportDescendantMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+{
+    MemoryClassInfo<CSSCubicBezierTimingFunctionValue> info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
+}
+
 String CSSStepsTimingFunctionValue::customCssText() const
 {
     String text("steps(");
@@ -57,6 +68,11 @@ String CSSStepsTimingFunctionValue::customCssText() const
     text += m_stepAtStart ? "start" : "end";
     text += ")";
     return text;
+}
+
+void CSSStepsTimingFunctionValue::reportDescendantMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+{
+    MemoryClassInfo<CSSStepsTimingFunctionValue> info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
 }
 
 } // namespace WebCore

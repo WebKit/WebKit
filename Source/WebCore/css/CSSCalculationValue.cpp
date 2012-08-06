@@ -33,6 +33,7 @@
 
 #include "CSSValueList.h"
 #include "Length.h"
+#include "MemoryInstrumentation.h"
 #include "StyleResolver.h"
 
 #include <wtf/OwnPtr.h>
@@ -85,6 +86,11 @@ String CSSCalcValue::customCssText() const
     if (expressionHasSingleTerm)
         result.append(')');
     return result.toString(); 
+}
+
+void CSSCalcValue::reportDescendantMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+{
+    MemoryClassInfo<CSSCalcValue> info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
 }
     
 double CSSCalcValue::clampToPermittedRange(double value) const
@@ -175,6 +181,12 @@ public:
         }
         return 0;        
     }
+
+    virtual void reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const OVERRIDE
+    {
+        MemoryClassInfo<CSSCalcPrimitiveValue> info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
+        info.addInstrumentedMember(m_value);
+    }
     
 private:
     explicit CSSCalcPrimitiveValue(CSSPrimitiveValue* value, bool isInteger)
@@ -258,6 +270,13 @@ public:
         const double leftValue = m_leftSide->computeLengthPx(currentStyle, rootStyle, multiplier, computingFontSize);
         const double rightValue = m_rightSide->computeLengthPx(currentStyle, rootStyle, multiplier, computingFontSize);
         return evaluate(leftValue, rightValue);
+    }
+
+    virtual void reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const OVERRIDE
+    {
+        MemoryClassInfo<CSSCalcBinaryOperation> info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
+        info.addInstrumentedMember(m_leftSide);
+        info.addInstrumentedMember(m_rightSide);
     }
 
     virtual String customCssText() const

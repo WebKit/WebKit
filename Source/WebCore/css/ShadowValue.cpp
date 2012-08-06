@@ -21,6 +21,7 @@
 #include "ShadowValue.h"
 
 #include "CSSPrimitiveValue.h"
+#include "MemoryInstrumentation.h"
 #include "PlatformString.h"
 
 namespace WebCore {
@@ -75,6 +76,17 @@ String ShadowValue::customCssText() const
     }
 
     return text;
+}
+
+void ShadowValue::reportDescendantMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+{
+    MemoryClassInfo<ShadowValue> info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
+    info.addInstrumentedMember(x);
+    info.addInstrumentedMember(y);
+    info.addInstrumentedMember(blur);
+    info.addInstrumentedMember(spread);
+    info.addInstrumentedMember(style);
+    info.addInstrumentedMember(color);
 }
 
 }

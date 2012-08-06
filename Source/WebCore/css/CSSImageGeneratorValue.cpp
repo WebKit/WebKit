@@ -30,6 +30,7 @@
 #include "CSSCrossfadeValue.h"
 #include "CSSGradientValue.h"
 #include "Image.h"
+#include "MemoryInstrumentation.h"
 #include "RenderObject.h"
 #include <wtf/text/WTFString.h>
 
@@ -106,6 +107,14 @@ Image* CSSImageGeneratorValue::getImage(RenderObject* renderer, const IntSize& s
 void CSSImageGeneratorValue::putImage(const IntSize& size, PassRefPtr<Image> image)
 {
     m_images.add(size, image);
+}
+
+void CSSImageGeneratorValue::reportBaseClassMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+{
+    MemoryClassInfo<CSSImageGeneratorValue> info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
+    info.addHashCountedSet(m_sizes);
+    info.addHashMap(m_clients);
+    info.addHashMap(m_images); // FIXME: instrument Image
 }
 
 PassRefPtr<Image> CSSImageGeneratorValue::image(RenderObject* renderer, const IntSize& size)

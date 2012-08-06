@@ -5637,6 +5637,24 @@ void StyleResolver::loadPendingResources()
 #endif
 }
 
+void StyleResolver::MatchedProperties::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+{
+    MemoryClassInfo<StyleResolver::MatchedProperties> info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
+    info.addInstrumentedMember(properties);
+}
+
+void StyleResolver::MatchedPropertiesCacheItem::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+{
+    MemoryClassInfo<StyleResolver::MatchedPropertiesCacheItem> info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
+    info.addInstrumentedVector(matchedProperties);
+}
+
+void MediaQueryResult::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+{
+    MemoryClassInfo<MediaQueryResult> info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
+    info.addInstrumentedMember(m_expression);
+}
+
 void StyleResolver::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo<StyleResolver> info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
@@ -5647,18 +5665,23 @@ void StyleResolver::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     info.addInstrumentedMember(m_uncommonAttributeRuleSet);
     info.addHashMap(m_keyframesRuleMap);
     info.addHashMap(m_matchedPropertiesCache);
+    info.addInstrumentedMapValues(m_matchedPropertiesCache);
     info.addVector(m_matchedRules);
 
-    // FIXME: Instrument StaticCSSRuleList and add m_ruleList here.
+    info.addInstrumentedMember(m_ruleList);
     info.addHashMap(m_pendingImageProperties);
-    info.addVector(m_viewportDependentMediaQueryResults);
+    info.addInstrumentedMapValues(m_pendingImageProperties);
+    info.addInstrumentedMember(m_lineHeightValue);
+    info.addInstrumentedVector(m_viewportDependentMediaQueryResults);
     info.addHashMap(m_styleRuleToCSSOMWrapperMap);
-    info.addHashSet(m_styleSheetCSSOMWrapperSet);
+    info.addInstrumentedMapEntries(m_styleRuleToCSSOMWrapperMap);
+    info.addInstrumentedHashSet(m_styleSheetCSSOMWrapperSet);
 #if ENABLE(CSS_FILTERS) && ENABLE(SVG)
     info.addHashMap(m_pendingSVGDocuments);
 #endif
 #if ENABLE(STYLE_SCOPED)
     info.addHashMap(m_scopedAuthorStyles);
+    info.addInstrumentedMapEntries(m_scopedAuthorStyles);
     info.addVector(m_scopeStack);
 #endif
 

@@ -29,7 +29,9 @@
 #include "CachedResourceLoader.h"
 #include "Document.h"
 #include "FontCustomPlatformData.h"
+#include "MemoryInstrumentation.h"
 #include "Node.h"
+#include "SVGFontFaceElement.h"
 #include "StyleSheetContents.h"
 
 namespace WebCore {
@@ -93,6 +95,17 @@ CachedFont* CSSFontFaceSrcValue::cachedFont(Document* document)
         m_cachedFont = document->cachedResourceLoader()->requestFont(request);
     }
     return m_cachedFont.get();
+}
+
+void CSSFontFaceSrcValue::reportDescendantMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+{
+    MemoryClassInfo<CSSFontFaceSrcValue> info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
+    info.addMember(m_resource);
+    info.addMember(m_format);
+    // FIXME: add m_cachedFont when MemoryCache is instrumented.
+#if ENABLE(SVG_FONTS)
+    info.addInstrumentedMember(m_svgFontFaceElement);
+#endif
 }
 
 }

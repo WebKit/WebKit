@@ -24,10 +24,11 @@
 #include "CSSCursorImageValue.h"
 #include "CSSParser.h"
 #include "CSSValueKeywords.h"
-#include "Document.h"
-#include "MemoryCache.h"
 #include "CachedImage.h"
 #include "CachedResourceLoader.h"
+#include "Document.h"
+#include "MemoryCache.h"
+#include "MemoryInstrumentation.h"
 #include "StyleCachedImage.h"
 #include "StylePendingImage.h"
 
@@ -123,6 +124,13 @@ PassRefPtr<CSSValue> CSSImageValue::cloneForCSSOM() const
     RefPtr<CSSPrimitiveValue> uriValue = CSSPrimitiveValue::create(m_url, CSSPrimitiveValue::CSS_URI);
     uriValue->setCSSOMSafe();
     return uriValue.release();
+}
+
+void CSSImageValue::reportDescendantMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+{
+    MemoryClassInfo<CSSImageValue> info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
+    info.addMember(m_url);
+    // No need to report m_image as it is counted as part of RenderArena.
 }
 
 } // namespace WebCore

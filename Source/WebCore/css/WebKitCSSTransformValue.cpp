@@ -27,6 +27,7 @@
 #include "WebKitCSSTransformValue.h"
 
 #include "CSSValueList.h"
+#include "MemoryInstrumentation.h"
 #include "PlatformString.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/text/StringBuilder.h>
@@ -102,6 +103,12 @@ WebKitCSSTransformValue::WebKitCSSTransformValue(const WebKitCSSTransformValue& 
 PassRefPtr<WebKitCSSTransformValue> WebKitCSSTransformValue::cloneForCSSOM() const
 {
     return adoptRef(new WebKitCSSTransformValue(*this));
+}
+
+void WebKitCSSTransformValue::reportDescendantMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+{
+    MemoryClassInfo<WebKitCSSTransformValue> info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
+    CSSValueList::reportDescendantMemoryUsage(memoryObjectInfo);
 }
 
 }

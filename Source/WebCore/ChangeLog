@@ -1,3 +1,205 @@
+2012-08-03  Yury Semikhatsky  <yurys@chromium.org>
+
+        Web Inspector: add memory instrumentation for CSSValue and its descendants
+        https://bugs.webkit.org/show_bug.cgi?id=93130
+
+        Reviewed by Pavel Feldman.
+
+        Added memory footprint reporting routine to CSSValue and its descendants.
+
+        Memory reporing for CSSValue is organized in a following way:
+        - CSSValue implements reportMemoryUsage method that switches by the value
+          type and calls reportDescendantMemoryUsage on the concrete type
+        - There may be some intermediate classes in the inheritance chain between
+          CSSValue and the leaf class implementing reportDescendantMemoryUsage. Those
+          intermediate classes implement reportBaseClassMemoryUsage method that can
+          be called from a descendant to collect memory information for the base class
+          members. Having reportDescendantMemoryUsage only on the leaf classes prevents
+          us from accidentally adding the intermediate classes to the switch block
+          in the CSSValue::reportMemoryUsage.
+
+        * css/CSSAspectRatioValue.cpp:
+        (WebCore::CSSAspectRatioValue::reportDescendantMemoryUsage):
+        (WebCore):
+        * css/CSSAspectRatioValue.h:
+        (CSSAspectRatioValue):
+        * css/CSSBorderImageSliceValue.cpp:
+        (WebCore::CSSBorderImageSliceValue::reportDescendantMemoryUsage):
+        (WebCore):
+        * css/CSSBorderImageSliceValue.h:
+        (CSSBorderImageSliceValue):
+        * css/CSSCalculationValue.cpp:
+        (WebCore):
+        (WebCore::CSSCalcValue::reportDescendantMemoryUsage):
+        (CSSCalcPrimitiveValue):
+        * css/CSSCalculationValue.h:
+        (CSSCalcExpressionNode):
+        (CSSCalcValue):
+        * css/CSSCanvasValue.cpp:
+        (WebCore::CSSCanvasValue::reportDescendantMemoryUsage):
+        (WebCore):
+        * css/CSSCanvasValue.h:
+        (CSSCanvasValue):
+        * css/CSSCrossfadeValue.cpp:
+        (WebCore::CSSCrossfadeValue::reportDescendantMemoryUsage):
+        (WebCore):
+        * css/CSSCrossfadeValue.h:
+        (CSSCrossfadeValue):
+        * css/CSSCursorImageValue.cpp:
+        (WebCore::CSSCursorImageValue::reportDescendantMemoryUsage):
+        (WebCore):
+        * css/CSSCursorImageValue.h:
+        (CSSCursorImageValue):
+        * css/CSSFontFaceSrcValue.cpp:
+        (WebCore::CSSFontFaceSrcValue::reportDescendantMemoryUsage):
+        (WebCore):
+        * css/CSSFontFaceSrcValue.h:
+        (CSSFontFaceSrcValue):
+        * css/CSSFunctionValue.cpp:
+        (WebCore::CSSFunctionValue::reportDescendantMemoryUsage):
+        (WebCore):
+        * css/CSSFunctionValue.h:
+        (CSSFunctionValue):
+        * css/CSSGradientValue.cpp:
+        (WebCore::CSSGradientColorStop::reportMemoryUsage):
+        (WebCore):
+        (WebCore::CSSGradientValue::reportBaseClassMemoryUsage):
+        (WebCore::CSSLinearGradientValue::reportDescendantMemoryUsage):
+        (WebCore::CSSRadialGradientValue::reportDescendantMemoryUsage):
+        * css/CSSGradientValue.h:
+        (CSSGradientColorStop):
+        (CSSGradientValue):
+        (CSSLinearGradientValue):
+        (CSSRadialGradientValue):
+        * css/CSSImageGeneratorValue.cpp:
+        (WebCore::CSSImageGeneratorValue::reportBaseClassMemoryUsage):
+        (WebCore):
+        * css/CSSImageGeneratorValue.h:
+        (CSSImageGeneratorValue):
+        * css/CSSImageSetValue.cpp:
+        (WebCore::CSSImageSetValue::reportDescendantMemoryUsage):
+        (WebCore):
+        (WebCore::CSSImageSetValue::ImageWithScale::reportMemoryUsage):
+        * css/CSSImageSetValue.h:
+        (ImageWithScale):
+        (CSSImageSetValue):
+        * css/CSSImageValue.cpp:
+        (WebCore::CSSImageValue::reportDescendantMemoryUsage):
+        (WebCore):
+        * css/CSSImageValue.h:
+        (CSSImageValue):
+        * css/CSSInheritedValue.cpp:
+        (WebCore::CSSInheritedValue::reportDescendantMemoryUsage):
+        (WebCore):
+        * css/CSSInheritedValue.h:
+        (CSSInheritedValue):
+        * css/CSSInitialValue.cpp:
+        (WebCore::CSSInitialValue::reportDescendantMemoryUsage):
+        (WebCore):
+        * css/CSSInitialValue.h:
+        (CSSInitialValue):
+        * css/CSSLineBoxContainValue.cpp:
+        (WebCore::CSSLineBoxContainValue::reportDescendantMemoryUsage):
+        (WebCore):
+        * css/CSSLineBoxContainValue.h:
+        (CSSLineBoxContainValue):
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore::CSSPrimitiveValue::reportDescendantMemoryUsage):
+        (WebCore):
+        * css/CSSPrimitiveValue.h:
+        (CSSPrimitiveValue):
+        * css/CSSReflectValue.cpp:
+        (WebCore::CSSReflectValue::reportDescendantMemoryUsage):
+        (WebCore):
+        * css/CSSReflectValue.h:
+        (CSSReflectValue):
+        * css/CSSTimingFunctionValue.cpp:
+        (WebCore::CSSLinearTimingFunctionValue::reportDescendantMemoryUsage):
+        (WebCore):
+        (WebCore::CSSCubicBezierTimingFunctionValue::reportDescendantMemoryUsage):
+        (WebCore::CSSStepsTimingFunctionValue::reportDescendantMemoryUsage):
+        * css/CSSTimingFunctionValue.h:
+        (CSSLinearTimingFunctionValue):
+        (CSSCubicBezierTimingFunctionValue):
+        (CSSStepsTimingFunctionValue):
+        * css/CSSUnicodeRangeValue.cpp:
+        (WebCore::CSSUnicodeRangeValue::reportDescendantMemoryUsage):
+        (WebCore):
+        * css/CSSUnicodeRangeValue.h:
+        (CSSUnicodeRangeValue):
+        * css/CSSValue.cpp:
+        (WebCore::TextCloneCSSValue::reportDescendantMemoryUsage):
+        (TextCloneCSSValue):
+        (WebCore::CSSValue::reportMemoryUsage):
+        (WebCore):
+        * css/CSSValue.h:
+        (WebCore):
+        (CSSValue):
+        * css/CSSValueList.cpp:
+        (WebCore::CSSValueList::reportDescendantMemoryUsage):
+        (WebCore):
+        * css/CSSValueList.h:
+        (CSSValueList):
+        * css/CSSVariableValue.h:
+        (WebCore::CSSVariableValue::reportDescendantMemoryUsage):
+        (CSSVariableValue):
+        * css/FontFeatureValue.cpp:
+        (WebCore::FontFeatureValue::reportDescendantMemoryUsage):
+        (WebCore):
+        * css/FontFeatureValue.h:
+        (FontFeatureValue):
+        * css/FontValue.cpp:
+        (WebCore::FontValue::reportDescendantMemoryUsage):
+        (WebCore):
+        * css/FontValue.h:
+        (FontValue):
+        * css/MediaQueryExp.cpp:
+        (WebCore::MediaQueryExp::reportMemoryUsage):
+        * css/ShadowValue.cpp:
+        (WebCore::ShadowValue::reportDescendantMemoryUsage):
+        (WebCore):
+        * css/ShadowValue.h:
+        (ShadowValue):
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::collectMatchingRulesForList):
+        * css/WebKitCSSFilterValue.cpp:
+        (WebCore::WebKitCSSFilterValue::reportDescendantMemoryUsage):
+        (WebCore):
+        * css/WebKitCSSFilterValue.h:
+        (WebKitCSSFilterValue):
+        * css/WebKitCSSSVGDocumentValue.cpp:
+        (WebCore::WebKitCSSSVGDocumentValue::reportDescendantMemoryUsage):
+        (WebCore):
+        * css/WebKitCSSSVGDocumentValue.h:
+        (WebKitCSSSVGDocumentValue):
+        * css/WebKitCSSShaderValue.cpp:
+        (WebCore::WebKitCSSShaderValue::reportDescendantMemoryUsage):
+        (WebCore):
+        * css/WebKitCSSShaderValue.h:
+        (WebKitCSSShaderValue):
+        * css/WebKitCSSTransformValue.cpp:
+        (WebCore::WebKitCSSTransformValue::reportDescendantMemoryUsage):
+        (WebCore):
+        * css/WebKitCSSTransformValue.h:
+        (WebKitCSSTransformValue):
+        * dom/MemoryInstrumentation.cpp:
+        (WebCore::MemoryInstrumentation::addString):
+        (WebCore):
+        * dom/MemoryInstrumentation.h:
+        (MemoryInstrumentation):
+        (WebCore::MemoryClassInfo::addHashCountedSet):
+        (WebCore::MemoryClassInfo::addMember):
+        * svg/SVGColor.cpp:
+        (WebCore::SVGColor::reportDescendantMemoryUsage):
+        (WebCore):
+        * svg/SVGColor.h:
+        (SVGColor):
+        * svg/SVGPaint.cpp:
+        (WebCore::SVGPaint::reportDescendantMemoryUsage):
+        (WebCore):
+        * svg/SVGPaint.h:
+        (SVGPaint):
+
 2012-08-06  Yury Semikhatsky  <yurys@chromium.org>
 
         Web Inspector: rename WorkerAgent.setWorkerInspectionEnabled to WorkerAgent.enable and make it return error

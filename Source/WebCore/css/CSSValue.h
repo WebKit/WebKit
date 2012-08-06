@@ -29,6 +29,7 @@
 
 namespace WebCore {
 
+class MemoryObjectInfo;
 class StyleSheetContents;
     
 // FIXME: The current CSSValue and subclasses should be turned into internal types (StyleValue).
@@ -118,6 +119,8 @@ public:
     void addSubresourceStyleURLs(ListHashSet<KURL>&, const StyleSheetContents*) const;
 
     bool hasFailedOrCanceledSubresources() const;
+
+    void reportMemoryUsage(MemoryObjectInfo*) const;
 
 protected:
 
