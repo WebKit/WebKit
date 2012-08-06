@@ -3435,7 +3435,6 @@ BUGWK91544 : media/media-continues-playing-after-replace-source.html = PASS TIME
 
 BUGWK92019 : fast/text/international/inline-plaintext-relayout-with-leading-neutrals.html = PASS IMAGE
 BUGWK92022 DEBUG : svg/W3C-SVG-1.1/struct-dom-06-b.svg = TEXT PASS
-BUGCR138583 : media/media-fragments/TC0010-TC0019.html = PASS CRASH
 
 BUGWK92026 DEBUG SNOWLEOPARD : css3/selectors3/xml/css3-modsel-179a.xml = PASS IMAGE+TEXT
 BUGWK92027 DEBUG SNOWLEOPARD : fast/performance/performance-now-timestamps.html = PASS TEXT
