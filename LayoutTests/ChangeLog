@@ -1,3 +1,21 @@
+2012-08-06  Takashi Toyoshima  <toyoshim@chromium.org>
+
+        Unreviewed, rebaseline for r124754.
+
+        * fast/dom/HTMLProgressElement/indeterminate-progress-001-expected.txt: Added.
+        * fast/dom/HTMLProgressElement/progress-bar-value-pseudo-element-expected.txt: Added.
+        * fast/dom/HTMLProgressElement/progress-writing-mode-expected.txt: Added.
+        * platform/chromium-mac/fast/dom/HTMLProgressElement/indeterminate-progress-001-expected.txt:
+        * platform/chromium-mac/fast/dom/HTMLProgressElement/progress-bar-value-pseudo-element-expected.txt:
+        * platform/chromium-mac/fast/dom/HTMLProgressElement/progress-writing-mode-expected.txt:
+        * platform/efl/fast/dom/HTMLProgressElement/indeterminate-progress-001-expected.txt: Removed.
+        * platform/efl/fast/dom/HTMLProgressElement/progress-bar-value-pseudo-element-expected.txt: Removed.
+        * platform/efl/fast/dom/HTMLProgressElement/progress-writing-mode-expected.txt: Removed.
+        * platform/gtk/fast/dom/HTMLProgressElement/indeterminate-progress-001-expected.txt: Removed.
+        * platform/gtk/fast/dom/HTMLProgressElement/progress-bar-value-pseudo-element-expected.txt: Removed.
+        * platform/gtk/fast/dom/HTMLProgressElement/progress-writing-mode-expected.txt: Removed.
+        * platform/qt/fast/dom/HTMLProgressElement/progress-writing-mode-expected.txt: Removed.
+
 2012-08-06  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
 
         [Qt] Unreviewed gardening.
