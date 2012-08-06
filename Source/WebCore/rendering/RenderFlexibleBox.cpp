@@ -360,11 +360,6 @@ Length RenderFlexibleBox::flexBasisForChild(RenderBox* child) const
     return flexLength;
 }
 
-Length RenderFlexibleBox::crossAxisLength() const
-{
-    return isHorizontalFlow() ? style()->height() : style()->width();
-}
-
 void RenderFlexibleBox::setCrossAxisExtent(LayoutUnit extent)
 {
     if (isHorizontalFlow())
@@ -410,7 +405,7 @@ LayoutUnit RenderFlexibleBox::computeLogicalClientHeight(SizeType heightType, co
     LayoutUnit heightIncludingScrollbar = computeContentLogicalHeightUsing(heightType, height);
     if (heightIncludingScrollbar == -1)
         return -1;
-    return std::max(LayoutUnit(0), heightIncludingScrollbar - scrollbarLogicalHeight());
+    return std::max(LayoutUnit(0), computeContentBoxLogicalHeight(heightIncludingScrollbar) - scrollbarLogicalHeight());
 }
 
 WritingMode RenderFlexibleBox::transformedWritingMode() const
@@ -609,7 +604,9 @@ LayoutUnit RenderFlexibleBox::preferredMainAxisContentExtentForChild(RenderBox* 
         LayoutUnit mainAxisExtent = hasOrthogonalFlow(child) ? child->logicalHeight() : child->maxPreferredLogicalWidth();
         return mainAxisExtent - mainAxisBorderAndPaddingExtentForChild(child);
     }
-    return std::max(LayoutUnit(0), minimumValueForLength(flexBasis, mainAxisContentExtent(), view()));
+    LayoutUnit extent = minimumValueForLength(flexBasis, mainAxisContentExtent(), view());
+    extent = isColumnFlow() ? child->computeContentBoxLogicalHeight(extent) : child->computeContentBoxLogicalWidth(extent);
+    return std::max(LayoutUnit(0), extent);
 }
 
 LayoutUnit RenderFlexibleBox::computeAvailableFreeSpace(LayoutUnit preferredMainAxisExtent)

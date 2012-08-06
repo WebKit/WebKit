@@ -1,3 +1,20 @@
+2012-07-31  Ojan Vafai  <ojan@chromium.org>
+
+        need tests to ensure flexboxes play nicely with box-sizing
+        https://bugs.webkit.org/show_bug.cgi?id=70771
+
+        Reviewed by Tony Chang.
+
+        Anytime we grab the width/height off of the RenderStyle, we need to adjust
+        it for box-sizing. Fortunately, we only do this two places in RenderFlexibleBox.
+        Also, delete crossAxisLength since it's unused.
+
+        Test: css3/flexbox/box-sizing.html
+
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::preferredMainAxisContentExtentForChild):
+        * rendering/RenderFlexibleBox.h:
+
 2012-08-06  John J. Barton  <johnjbarton@chromium.org>
 
         Web Inspector: WebInspector.linkifyStringAsFragment gives wrong typeof lineNumber
