@@ -1,5 +1,26 @@
 2012-08-06  Andrei Bucur  <abucur@adobe.com>
 
+        [CSS Regions] Add the NamedFlow.getRegions() API
+        https://bugs.webkit.org/show_bug.cgi?id=93240
+
+        Reviewed by Andreas Kling.
+
+        This patch adds the NamedFlow.getRegions() API call as specified by http://www.w3.org/TR/2012/WD-css3-regions-20120503/#dom-named-flow .
+        For now, WebKit supports only one type of regions, Element. The Region interface will be introduced when other interfaces will be capable
+        of becoming regions.
+
+        New test: fast/regions/webkit-named-flow-get-regions.html
+
+        * dom/WebKitNamedFlow.cpp:
+        (WebCore::WebKitNamedFlow::getRegionsByContent): Add a check not to include the pseudo-elements that are regions; those don't have a node attached.
+        (WebCore::WebKitNamedFlow::getRegions):
+        (WebCore):
+        * dom/WebKitNamedFlow.h:
+        (WebKitNamedFlow):
+        * dom/WebKitNamedFlow.idl:
+
+2012-08-06  Andrei Bucur  <abucur@adobe.com>
+
         [CSS Regions] Rename regionOverflow to regionOverset
         https://bugs.webkit.org/show_bug.cgi?id=93256
 

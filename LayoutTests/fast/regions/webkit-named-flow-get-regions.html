@@ -1,0 +1,66 @@
+<html>
+<head>
+<script src="../../fast/js/resources/js-test-pre.js"></script>
+<style>
+#article {
+    -webkit-flow-into: article;
+    border: 2px solid black;
+}
+#region_1, #region_2{
+    overflow:visible;
+    display:inline-block;
+    vertical-align:top;
+    margin:10px;
+}
+#region_1 { height:500px; width:200px; }
+#region_2 { height:50px; width:200px; }
+</style>
+</head>
+<body>
+<div id="article">
+    <div>
+        <div id="content" style="height: 300px; background-color: green;"></div>
+    </div>
+</div>
+
+<div id="region_1"></div>
+<div id="region_2"></div>
+
+<script>
+    description("Tests WebKitNamedFlow.getRegions() and the DOM order of the list")
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+    }
+
+    function getRegionAt(index) {
+        var flow = document.webkitGetFlowByName("article");
+        var regions = flow.getRegions();
+        if (regions.length <= index)
+            return null;
+
+        return regions[index];
+    }
+
+    function flowContent(flowName) {
+        var r = document.getElementById("region_1");
+        r.style.webkitFlowFrom = flowName;
+        r = document.getElementById("region_2");
+        r.style.webkitFlowFrom = flowName;
+    }
+
+    function test() {
+        debug("Flow content");
+        flowContent("article");
+
+        debug("Test if the regions are in DOM order");
+        shouldBeEqualToString("getRegionAt(0).id", "region_1");
+        shouldBeEqualToString("getRegionAt(1).id", "region_2");
+
+        debug("Empty content");
+        flowContent(null);
+    }
+    test();
+</script>
+<script src="../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

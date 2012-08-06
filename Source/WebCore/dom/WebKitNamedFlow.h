@@ -56,6 +56,7 @@ public:
     bool overset() const;
     int firstEmptyRegionIndex() const;
     PassRefPtr<NodeList> getRegionsByContent(Node*);
+    PassRefPtr<NodeList> getRegions();
     PassRefPtr<NodeList> getContent();
 
     using RefCounted<WebKitNamedFlow>::ref;

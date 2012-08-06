@@ -117,11 +117,36 @@ PassRefPtr<NodeList> WebKitNamedFlow::getRegionsByContent(Node* contentNode)
         const RenderRegionList& regionList = m_parentFlowThread->renderRegionList();
         for (RenderRegionList::const_iterator iter = regionList.begin(); iter != regionList.end(); ++iter) {
             const RenderRegion* renderRegion = *iter;
-            if (!renderRegion->isValid())
+            // FIXME: Pseudo-elements are not included in the list
+            if (!renderRegion->isValid() || !renderRegion->node())
                 continue;
             if (m_parentFlowThread->objectInFlowRegion(contentNode->renderer(), renderRegion))
                 regionNodes.append(renderRegion->node());
         }
+    }
+
+    return StaticNodeList::adopt(regionNodes);
+}
+
+PassRefPtr<NodeList> WebKitNamedFlow::getRegions()
+{
+    Vector<RefPtr<Node> > regionNodes;
+
+    if (m_flowManager->document())
+        m_flowManager->document()->updateLayoutIgnorePendingStylesheets();
+
+    // The renderer may be destroyed or created after the style update.
+    // Because this is called from JS, where the wrapper keeps a reference to the NamedFlow, no guard is necessary.
+    if (!m_parentFlowThread)
+        return StaticNodeList::adopt(regionNodes);
+
+    const RenderRegionList& regionList = m_parentFlowThread->renderRegionList();
+    for (RenderRegionList::const_iterator iter = regionList.begin(); iter != regionList.end(); ++iter) {
+        const RenderRegion* renderRegion = *iter;
+        // FIXME: Pseudo-elements are not included in the list
+        if (!renderRegion->isValid() || !renderRegion->node())
+            continue;
+        regionNodes.append(renderRegion->node());
     }
 
     return StaticNodeList::adopt(regionNodes);

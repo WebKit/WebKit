@@ -37,6 +37,7 @@ module core {
         readonly attribute boolean overset;
         readonly attribute long firstEmptyRegionIndex;
         NodeList getRegionsByContent(in Node contentNode);
+        NodeList getRegions();
         NodeList getContent();
         
         // EventTarget interface
