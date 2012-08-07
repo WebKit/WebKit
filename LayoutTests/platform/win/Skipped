@@ -1959,3 +1959,6 @@ fast/css/widget-region-parser.html
 
 # CSS image-orientation property not yet supported
 fast/css/image-orientation/
+
+# Test uses "required" form element property which currently does not work on Safari
+fast/forms/validation-message-user-modify.html

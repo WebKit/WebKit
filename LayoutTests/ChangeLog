@@ -1,3 +1,17 @@
+2012-08-06  Roger Fong  <roger_fong@apple.com>
+
+        LayoutTest: fast/forms/validation-message-user-modify.html fails.
+        https://bugs.webkit.org/show_bug.cgi?id=93207
+
+        Reviewed by Tim Horton.
+
+        This test uses the "required" form element property which currently does not work on Safari, 
+        see <rdar://problem/119655018>.
+        This test should not be run.
+
+        * platform/win/Skipped:
+        Adding test to skip list.
+        
 2012-08-06  Max Vujovic  <mvujovic@adobe.com>
 
         [CSS Shaders] Parse mix function
