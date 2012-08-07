@@ -1759,47 +1759,55 @@ PassRefPtr<Widget> WebFrameLoaderClient::createJavaAppletWidget(const IntSize& s
 
     WebBasePluginPackage *pluginPackage = [webView _pluginForMIMEType:MIMEType];
 
+    int errorCode = WebKitErrorJavaUnavailable;
+
     if (pluginPackage) {
-        if ([pluginPackage isKindOfClass:[WebPluginPackage class]]) {
-            // For some reason, the Java plug-in requires that we pass the dimension of the plug-in as attributes.
-            NSMutableArray *names = kit(paramNames);
-            NSMutableArray *values = kit(paramValues);
-            if (parameterValue(paramNames, paramValues, "width").isNull()) {
-                [names addObject:@"width"];
-                [values addObject:[NSString stringWithFormat:@"%d", size.width()]];
+        if (!WKShouldBlockPlugin([pluginPackage bundleIdentifier], [pluginPackage bundleVersion])) {
+            if ([pluginPackage isKindOfClass:[WebPluginPackage class]]) {
+                // For some reason, the Java plug-in requires that we pass the dimension of the plug-in as attributes.
+                NSMutableArray *names = kit(paramNames);
+                NSMutableArray *values = kit(paramValues);
+                if (parameterValue(paramNames, paramValues, "width").isNull()) {
+                    [names addObject:@"width"];
+                    [values addObject:[NSString stringWithFormat:@"%d", size.width()]];
+                }
+                if (parameterValue(paramNames, paramValues, "height").isNull()) {
+                    [names addObject:@"height"];
+                    [values addObject:[NSString stringWithFormat:@"%d", size.height()]];
+                }
+                view = pluginView(m_webFrame.get(), (WebPluginPackage *)pluginPackage, names, values, baseURL, kit(element), NO);
+                if (view)
+                    return adoptRef(new PluginWidget(view));
             }
-            if (parameterValue(paramNames, paramValues, "height").isNull()) {
-                [names addObject:@"height"];
-                [values addObject:[NSString stringWithFormat:@"%d", size.height()]];
+    #if ENABLE(NETSCAPE_PLUGIN_API)
+            else if ([pluginPackage isKindOfClass:[WebNetscapePluginPackage class]]) {
+                view = [[[NETSCAPE_PLUGIN_VIEW alloc] initWithFrame:NSMakeRect(0, 0, size.width(), size.height())
+                    pluginPackage:(WebNetscapePluginPackage *)pluginPackage
+                    URL:nil
+                    baseURL:baseURL
+                    MIMEType:MIMEType
+                    attributeKeys:kit(paramNames)
+                    attributeValues:kit(paramValues)
+                    loadManually:NO
+                    element:element] autorelease];
+                if (view)
+                    return adoptRef(new NetscapePluginWidget(static_cast<WebBaseNetscapePluginView *>(view)));
+            } else {
+                ASSERT_NOT_REACHED();
             }
-            view = pluginView(m_webFrame.get(), (WebPluginPackage *)pluginPackage, names, values, baseURL, kit(element), NO);
-            if (view)
-                return adoptRef(new PluginWidget(view));
-        } 
-#if ENABLE(NETSCAPE_PLUGIN_API)
-        else if ([pluginPackage isKindOfClass:[WebNetscapePluginPackage class]]) {
-            view = [[[NETSCAPE_PLUGIN_VIEW alloc] initWithFrame:NSMakeRect(0, 0, size.width(), size.height())
-                pluginPackage:(WebNetscapePluginPackage *)pluginPackage
-                URL:nil
-                baseURL:baseURL
-                MIMEType:MIMEType
-                attributeKeys:kit(paramNames)
-                attributeValues:kit(paramValues)
-                loadManually:NO
-                element:element] autorelease];
-            if (view)
-                return adoptRef(new NetscapePluginWidget(static_cast<WebBaseNetscapePluginView *>(view)));
+    #endif
         } else {
-            ASSERT_NOT_REACHED();
+            errorCode = WebKitErrorBlockedPlugInVersion;
+            if (element->renderer()->isEmbeddedObject())
+                toRenderEmbeddedObject(element->renderer())->setPluginUnavailabilityReason(RenderEmbeddedObject::InsecurePluginVersion);
         }
-#endif
     }
 
     if (!view) {
         WebResourceDelegateImplementationCache* implementations = WebViewGetResourceLoadDelegateImplementations(getWebView(m_webFrame.get()));
         if (implementations->plugInFailedWithErrorFunc) {
             NSString *pluginName = pluginPackage ? (NSString *)[pluginPackage pluginInfo].name : nil;
-            NSError *error = [[NSError alloc] _initWithPluginErrorCode:WebKitErrorJavaUnavailable contentURL:nil pluginPageURL:nil pluginName:pluginName MIMEType:MIMEType];
+            NSError *error = [[NSError alloc] _initWithPluginErrorCode:errorCode contentURL:nil pluginPageURL:nil pluginName:pluginName MIMEType:MIMEType];
             CallResourceLoadDelegate(implementations->plugInFailedWithErrorFunc, [m_webFrame.get() webView],
                                      @selector(webView:plugInFailedWithError:dataSource:), error, [m_webFrame.get() _dataSource]);
             [error release];

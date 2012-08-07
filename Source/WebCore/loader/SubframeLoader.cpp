@@ -229,8 +229,14 @@ PassRefPtr<Widget> SubframeLoader::createJavaAppletWidget(const IntSize& size, H
     RefPtr<Widget> widget;
     if (allowPlugins(AboutToInstantiatePlugin))
         widget = m_frame->loader()->client()->createJavaAppletWidget(size, element, baseURL, paramNames, paramValues);
-    if (!widget)
+
+    if (!widget) {
+        RenderEmbeddedObject* renderer = element->renderEmbeddedObject();
+
+        if (!renderer->showsUnavailablePluginIndicator())
+            renderer->setPluginUnavailabilityReason(RenderEmbeddedObject::PluginMissing);
         return 0;
+    }
 
     m_containsPlugins = true;
     return widget;
