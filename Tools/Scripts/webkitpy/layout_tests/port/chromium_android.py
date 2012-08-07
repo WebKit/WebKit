@@ -155,13 +155,6 @@ class ChromiumAndroidPort(chromium.ChromiumPort):
     def __init__(self, host, port_name, **kwargs):
         super(ChromiumAndroidPort, self).__init__(host, port_name, **kwargs)
 
-        if not hasattr(self._options, 'additional_drt_flag'):
-            self._options.additional_drt_flag = []
-        self._options.additional_drt_flag.append('--encode-binary')
-
-        # The Chromium port for Android always uses the hardware GPU path.
-        self._options.additional_drt_flag.append('--enable-hardware-gpu')
-
         self._operating_system = 'android'
         self._version = 'icecreamsandwich'
 
@@ -171,6 +164,10 @@ class ChromiumAndroidPort(chromium.ChromiumPort):
             self._devices = self._options.adb_device
         else:
             self._devices = []
+
+    def additional_drt_flag(self):
+        # The Chromium port for Android always uses the hardware GPU path.
+        return ['--encode-binary', '--enable-hardware-gpu']
 
     def default_timeout_ms(self):
         # Android platform has less computing power than desktop platforms.

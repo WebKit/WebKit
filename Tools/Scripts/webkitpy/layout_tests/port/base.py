@@ -143,6 +143,9 @@ class Port(object):
         self._reftest_list = {}
         self._results_directory = None
 
+    def additional_drt_flag(self):
+        return []
+
     def default_pixel_tests(self):
         # FIXME: Disable until they are run by default on build.webkit.org.
         return False

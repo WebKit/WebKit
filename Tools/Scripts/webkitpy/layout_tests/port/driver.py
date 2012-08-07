@@ -294,6 +294,7 @@ class Driver(object):
         # FIXME: We need to pass --timeout=SECONDS to WebKitTestRunner for WebKit2.
 
         cmd.extend(self._port.get_option('additional_drt_flag', []))
+        cmd.extend(self._port.additional_drt_flag())
 
         cmd.extend(per_test_args)
 

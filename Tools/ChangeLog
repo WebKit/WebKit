@@ -1,3 +1,27 @@
+2012-08-06  Wei James  <james.wei@intel.com>
+
+        [Chromium]duplicated command line options in Android LayoutTest
+        https://bugs.webkit.org/show_bug.cgi?id=93233
+
+        Reviewed by Tony Chang.
+
+        Duplicated options found in Android layout test command line:
+        --encode-binary and --enable-hardware-gpu.
+
+        If there are multiple ChromiumAndroidPort instances,
+        these two options will be appended for multiple times.
+
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        (Port.additional_drt_flag):
+        * Scripts/webkitpy/layout_tests/port/chromium_android.py:
+        (ChromiumAndroidPort.__init__):
+        (ChromiumAndroidPort.additional_drt_flag):
+        * Scripts/webkitpy/layout_tests/port/chromium_android_unittest.py:
+        (ChromiumAndroidTwoPortsTest):
+        (ChromiumAndroidTwoPortsTest.test_options_with_two_ports):
+        * Scripts/webkitpy/layout_tests/port/driver.py:
+        (Driver.cmd_line):
+
 2012-08-03  Brady Eidson  <beidson@apple.com>
 
         Out-of-process plug-ins should support asynchronous initialization

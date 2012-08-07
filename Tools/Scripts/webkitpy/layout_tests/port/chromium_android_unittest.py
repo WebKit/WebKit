@@ -39,7 +39,7 @@ from webkitpy.layout_tests.port import chromium_android
 from webkitpy.layout_tests.port import chromium_port_testcase
 from webkitpy.layout_tests.port import driver
 from webkitpy.layout_tests.port import driver_unittest
-
+from webkitpy.tool.mocktool import MockOptions
 
 class MockRunCommand(object):
     def __init__(self):
@@ -267,6 +267,22 @@ class ChromiumAndroidDriverTwoDriversTest(unittest.TestCase):
 
         cmd_line1 = driver1.cmd_line(True, ['anything'])
         self.assertEquals(['adb', '-s', mock_run_command._mock_devices[1], 'shell'], cmd_line1)
+
+
+class ChromiumAndroidTwoPortsTest(unittest.TestCase):
+    def test_options_with_two_ports(self):
+        options = MockOptions(additional_drt_flag=['--foo=bar', '--foo=baz'])
+        mock_run_command = MockRunCommand()
+        mock_run_command.mock_two_devices()
+        port0 = chromium_android.ChromiumAndroidPort(
+                MockSystemHost(executive=MockExecutive2(run_command_fn=mock_run_command.mock_run_command_fn)),
+                'chromium-android', options=options)
+        port1 = chromium_android.ChromiumAndroidPort(
+                MockSystemHost(executive=MockExecutive2(run_command_fn=mock_run_command.mock_run_command_fn)),
+                'chromium-android', options=options)
+        cmd_line = port1.driver_cmd_line()
+        self.assertEquals(cmd_line.count('--encode-binary'), 1)
+        self.assertEquals(cmd_line.count('--enable-hardware-gpu'), 1)
 
 
 if __name__ == '__main__':
