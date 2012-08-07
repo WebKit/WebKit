@@ -1,3 +1,10 @@
+2012-08-07  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed gardening.
+
+        * platform/qt-5.0/fast/dom/HTMLProgressElement/progress-writing-mode-expected.txt: Added.
+        * platform/qt/fast/dom/HTMLProgressElement/progress-writing-mode-expected.png: Removed.
+
 2012-08-07  Thiago Marcos P. Santos  <thiago.santos@intel.com>
 
         [GTK] Remove duplicated platform test expectations
