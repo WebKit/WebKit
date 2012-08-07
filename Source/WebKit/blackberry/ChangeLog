@@ -1,5 +1,17 @@
 2012-08-07  Konrad Piascik  <kpiascik@rim.com>
 
+        [BlackBerry] Add missing include in FrameLoaderClienBlackBerry after Base64 moved.
+        https://bugs.webkit.org/show_bug.cgi?id=93383
+
+        Reviewed by Rob Buis.
+
+        Base64 moved from platform/text to wtf/text, need to add mssing
+        include.
+
+        * WebCoreSupport/FrameLoaderClientBlackBerry.cpp:
+
+2012-08-07  Konrad Piascik  <kpiascik@rim.com>
+
         [BlackBerry] InspectorOverlay class duplicated in WebCore
         https://bugs.webkit.org/show_bug.cgi?id=93124
 

@@ -76,6 +76,7 @@
 #include <JavaScriptCore/APICast.h>
 #include <network/FilterStream.h>
 #include <network/NetworkRequest.h>
+#include <wtf/text/Base64.h>
 
 using WTF::String;
 using namespace WebCore;
