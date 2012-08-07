@@ -44,10 +44,12 @@ SUBDIRS += \
 !no_webkit2 {
     WEBKIT2_TESTS_DIR = $$PWD/WebKit2/UIProcess/API/qt/tests
 
-    SUBDIRS += \
+    contains(DEFINES, HAVE_QTQUICK=1):SUBDIRS += \
         $$WEBKIT2_TESTS_DIR/inspectorserver \
         $$WEBKIT2_TESTS_DIR/publicapi \
         $$WEBKIT2_TESTS_DIR/qquickwebview \
-        $$WEBKIT2_TESTS_DIR/qmltests \
+        $$WEBKIT2_TESTS_DIR/qmltests
+
+    SUBDIRS += \
         $$WEBKIT2_TESTS_DIR/qrawwebview
 }

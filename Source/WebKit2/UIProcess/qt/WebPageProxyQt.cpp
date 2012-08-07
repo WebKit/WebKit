@@ -27,13 +27,16 @@
 #include "WebPageProxy.h"
 
 #include "PageClient.h"
-#include "QtNetworkReplyData.h"
-#include "QtPageClient.h"
-#include "qquicknetworkreply_p.h"
 #include "WebPageMessages.h"
 #include "WebProcessProxy.h"
 #include <WebCore/Editor.h>
 #include <WebCore/NotImplemented.h>
+
+#if HAVE(QTQUICK)
+#include "QtNetworkReplyData.h"
+#include "QtPageClient.h"
+#include "qquicknetworkreply_p.h"
+#endif
 
 using namespace WebCore;
 
@@ -87,19 +90,23 @@ void WebPageProxy::registerApplicationScheme(const String& scheme)
 
 void WebPageProxy::resolveApplicationSchemeRequest(QtNetworkRequestData request)
 {
+#if HAVE(QTQUICK)
     RefPtr<QtRefCountedNetworkRequestData> requestData = adoptRef(new QtRefCountedNetworkRequestData(request));
     m_applicationSchemeRequests.add(requestData);
     static_cast<QtPageClient*>(m_pageClient)->handleApplicationSchemeRequest(requestData);
+#endif
 }
 
 void WebPageProxy::sendApplicationSchemeReply(const QQuickNetworkReply* reply)
 {
+#if HAVE(QTQUICK)
     RefPtr<QtRefCountedNetworkRequestData> requestData = reply->networkRequestData();
     if (m_applicationSchemeRequests.contains(requestData)) {
         RefPtr<QtRefCountedNetworkReplyData> replyData = reply->networkReplyData();
         process()->send(Messages::WebPage::ApplicationSchemeReply(replyData->data()), pageID());
         m_applicationSchemeRequests.remove(requestData);
     }
+#endif
 }
 
 void WebPageProxy::setUserScripts(const Vector<String>& scripts)

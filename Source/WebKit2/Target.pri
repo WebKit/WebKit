@@ -10,7 +10,6 @@ TARGET = WebKit2
 include(WebKit2.pri)
 
 WEBKIT += wtf javascriptcore webcore
-QT += qml quick quick-private
 
 CONFIG += staticlib
 
@@ -188,24 +187,6 @@ HEADERS += \
     UIProcess/API/cpp/WKRetainPtr.h \
     UIProcess/API/cpp/qt/WKStringQt.h \
     UIProcess/API/cpp/qt/WKURLQt.h \
-    UIProcess/API/qt/qwebpreferences_p.h \
-    UIProcess/API/qt/qwebpreferences_p_p.h \
-    UIProcess/API/qt/qwebdownloaditem_p.h \
-    UIProcess/API/qt/qwebdownloaditem_p_p.h \
-    UIProcess/API/qt/qwebpermissionrequest_p.h \
-    UIProcess/API/qt/qtwebsecurityorigin_p.h \
-    UIProcess/API/qt/qwebloadrequest_p.h \
-    UIProcess/API/qt/qwebnavigationrequest_p.h \
-    UIProcess/API/qt/qquickwebpage_p.h \
-    UIProcess/API/qt/qquickwebpage_p_p.h \
-    UIProcess/API/qt/qwebnavigationhistory_p.h \
-    UIProcess/API/qt/qwebnavigationhistory_p_p.h \
-    UIProcess/API/qt/qquickwebview_p.h \
-    UIProcess/API/qt/qquickwebview_p_p.h \
-    UIProcess/API/qt/qquicknetworkreply_p.h \
-    UIProcess/API/qt/qquicknetworkrequest_p.h \
-    UIProcess/API/qt/qquickurlschemedelegate_p.h \
-    UIProcess/API/qt/qwebkittest_p.h \
     UIProcess/API/qt/raw/qrawwebview_p.h \
     UIProcess/API/qt/raw/qrawwebview_p_p.h \
     UIProcess/Authentication/AuthenticationChallengeProxy.h \
@@ -285,26 +266,6 @@ HEADERS += \
     UIProcess/WebUIClient.h \
     UIProcess/WebVibrationProvider.h \
     UIProcess/WebVibrationProxy.h \
-    UIProcess/qt/QtWebContext.h \
-    UIProcess/qt/QtWebPageEventHandler.h \
-    UIProcess/qt/QtGestureRecognizer.h \
-    UIProcess/qt/QtPanGestureRecognizer.h \
-    UIProcess/qt/QtPinchGestureRecognizer.h \
-    UIProcess/qt/QtTapGestureRecognizer.h \
-    UIProcess/qt/QtWebError.h \
-    UIProcess/qt/QtDialogRunner.h \
-    UIProcess/qt/QtDownloadManager.h \
-    UIProcess/qt/QtPageClient.h \
-    UIProcess/qt/QtWebPageLoadClient.h \
-    UIProcess/qt/QtWebPagePolicyClient.h \
-    UIProcess/qt/QtWebPageSGNode.h \
-    UIProcess/qt/QtWebPageUIClient.h \
-    UIProcess/qt/QtViewportHandler.h \
-    UIProcess/qt/QtWebUndoController.h \
-    UIProcess/qt/QtWebIconDatabaseClient.h \
-    UIProcess/qt/WebContextMenuProxyQt.h \
-    UIProcess/qt/WebGeolocationProviderQt.h \
-    UIProcess/qt/WebPopupMenuProxyQt.h \
     WebProcess/ApplicationCache/WebApplicationCacheManager.h \
     WebProcess/Authentication/AuthenticationManager.h \
     WebProcess/Battery/WebBatteryManager.h \
@@ -564,20 +525,6 @@ SOURCES += \
     UIProcess/API/C/WKVibration.cpp \
     UIProcess/API/cpp/qt/WKStringQt.cpp \
     UIProcess/API/cpp/qt/WKURLQt.cpp \
-    UIProcess/API/qt/qwebdownloaditem.cpp \
-    UIProcess/API/qt/qwebpermissionrequest.cpp \
-    UIProcess/API/qt/qtwebsecurityorigin.cpp \
-    UIProcess/API/qt/qwebloadrequest.cpp \
-    UIProcess/API/qt/qwebnavigationrequest.cpp \
-    UIProcess/API/qt/qquickwebpage.cpp \
-    UIProcess/API/qt/qwebnavigationhistory.cpp \
-    UIProcess/API/qt/qquickwebview.cpp \
-    UIProcess/API/qt/qwebiconimageprovider.cpp \
-    UIProcess/API/qt/qquicknetworkreply.cpp \
-    UIProcess/API/qt/qquicknetworkrequest.cpp \
-    UIProcess/API/qt/qquickurlschemedelegate.cpp \
-    UIProcess/API/qt/qwebpreferences.cpp \
-    UIProcess/API/qt/qwebkittest.cpp \
     UIProcess/API/qt/raw/qrawwebview.cpp \
     UIProcess/Authentication/AuthenticationChallengeProxy.cpp \
     UIProcess/Authentication/AuthenticationDecisionListener.cpp \
@@ -591,7 +538,6 @@ SOURCES += \
     UIProcess/Downloads/DownloadProxy.cpp \
     UIProcess/DrawingAreaProxy.cpp \
     UIProcess/DrawingAreaProxyImpl.cpp \
-    UIProcess/qt/QtWebUndoController.cpp \
     UIProcess/FindIndicator.cpp \
     UIProcess/GeolocationPermissionRequestManagerProxy.cpp \
     UIProcess/GeolocationPermissionRequestProxy.cpp \
@@ -660,30 +606,13 @@ SOURCES += \
     UIProcess/WebVibrationProvider.cpp \
     UIProcess/WebVibrationProxy.cpp \
     UIProcess/qt/QtWebContext.cpp \
-    UIProcess/qt/QtWebPageEventHandler.cpp \
-    UIProcess/qt/QtGestureRecognizer.cpp \
-    UIProcess/qt/QtPanGestureRecognizer.cpp \
-    UIProcess/qt/QtPinchGestureRecognizer.cpp \
-    UIProcess/qt/QtTapGestureRecognizer.cpp \
-    UIProcess/qt/QtWebError.cpp \
-    UIProcess/qt/QtDialogRunner.cpp \
-    UIProcess/qt/QtDownloadManager.cpp \
-    UIProcess/qt/QtPageClient.cpp \
-    UIProcess/qt/QtWebPageLoadClient.cpp \
-    UIProcess/qt/QtWebPagePolicyClient.cpp \
-    UIProcess/qt/QtWebPageSGNode.cpp \
-    UIProcess/qt/QtWebPageUIClient.cpp \
+    UIProcess/qt/QtWebUndoController.cpp \
     UIProcess/qt/TextCheckerQt.cpp \
-    UIProcess/qt/QtViewportHandler.cpp \
-    UIProcess/qt/WebContextMenuProxyQt.cpp \
     UIProcess/qt/WebContextQt.cpp \
-    UIProcess/qt/WebGeolocationProviderQt.cpp \
     UIProcess/qt/WebFullScreenManagerProxyQt.cpp \
     UIProcess/qt/WebInspectorProxyQt.cpp \
     UIProcess/qt/WebPageProxyQt.cpp \
-    UIProcess/qt/WebPopupMenuProxyQt.cpp \
     UIProcess/qt/WebPreferencesQt.cpp \
-    UIProcess/qt/QtWebIconDatabaseClient.cpp \
     WebProcess/ApplicationCache/WebApplicationCacheManager.cpp \
     WebProcess/Authentication/AuthenticationManager.cpp \
     WebProcess/Battery/WebBatteryManager.cpp \
@@ -808,8 +737,92 @@ SOURCES += \
     WebProcess/qt/WebProcessMainQt.cpp \
     WebProcess/qt/WebProcessQt.cpp
 
-mac: {
+contains(DEFINES, HAVE_QTQUICK=1) {
+    QT += qml quick quick-private
 
+    HEADERS += \
+        UIProcess/API/qt/qwebpreferences_p.h \
+        UIProcess/API/qt/qwebpreferences_p_p.h \
+        UIProcess/API/qt/qwebdownloaditem_p.h \
+        UIProcess/API/qt/qwebdownloaditem_p_p.h \
+        UIProcess/API/qt/qwebpermissionrequest_p.h \
+        UIProcess/API/qt/qtwebsecurityorigin_p.h \
+        UIProcess/API/qt/qwebloadrequest_p.h \
+        UIProcess/API/qt/qwebnavigationrequest_p.h \
+        UIProcess/API/qt/qquickwebpage_p.h \
+        UIProcess/API/qt/qquickwebpage_p_p.h \
+        UIProcess/API/qt/qwebnavigationhistory_p.h \
+        UIProcess/API/qt/qwebnavigationhistory_p_p.h \
+        UIProcess/API/qt/qquickwebview_p.h \
+        UIProcess/API/qt/qquickwebview_p_p.h \
+        UIProcess/API/qt/qquicknetworkreply_p.h \
+        UIProcess/API/qt/qquicknetworkrequest_p.h \
+        UIProcess/API/qt/qquickurlschemedelegate_p.h \
+        UIProcess/API/qt/qwebkittest_p.h \
+        UIProcess/qt/QtWebContext.h \
+        UIProcess/qt/QtWebPageEventHandler.h \
+        UIProcess/qt/QtGestureRecognizer.h \
+        UIProcess/qt/QtPanGestureRecognizer.h \
+        UIProcess/qt/QtPinchGestureRecognizer.h \
+        UIProcess/qt/QtTapGestureRecognizer.h \
+        UIProcess/qt/QtWebError.h \
+        UIProcess/qt/QtDialogRunner.h \
+        UIProcess/qt/QtDownloadManager.h \
+        UIProcess/qt/QtPageClient.h \
+        UIProcess/qt/QtWebPageLoadClient.h \
+        UIProcess/qt/QtWebPagePolicyClient.h \
+        UIProcess/qt/QtWebPageSGNode.h \
+        UIProcess/qt/QtWebPageUIClient.h \
+        UIProcess/qt/QtViewportHandler.h \
+        UIProcess/qt/QtWebUndoController.h \
+        UIProcess/qt/QtWebIconDatabaseClient.h \
+        UIProcess/qt/WebContextMenuProxyQt.h \
+        UIProcess/qt/WebGeolocationProviderQt.h \
+        UIProcess/qt/WebPopupMenuProxyQt.h
+
+    SOURCES += \
+        UIProcess/API/qt/qwebdownloaditem.cpp \
+        UIProcess/API/qt/qwebpermissionrequest.cpp \
+        UIProcess/API/qt/qtwebsecurityorigin.cpp \
+        UIProcess/API/qt/qwebloadrequest.cpp \
+        UIProcess/API/qt/qwebnavigationrequest.cpp \
+        UIProcess/API/qt/qquickwebpage.cpp \
+        UIProcess/API/qt/qwebnavigationhistory.cpp \
+        UIProcess/API/qt/qquickwebview.cpp \
+        UIProcess/API/qt/qwebiconimageprovider.cpp \
+        UIProcess/API/qt/qquicknetworkreply.cpp \
+        UIProcess/API/qt/qquicknetworkrequest.cpp \
+        UIProcess/API/qt/qquickurlschemedelegate.cpp \
+        UIProcess/API/qt/qwebpreferences.cpp \
+        UIProcess/API/qt/qwebkittest.cpp \
+        UIProcess/qt/QtWebError.cpp \
+        UIProcess/qt/QtDialogRunner.cpp \
+        UIProcess/qt/QtDownloadManager.cpp \
+        UIProcess/qt/QtPageClient.cpp \
+        UIProcess/qt/QtWebPageLoadClient.cpp \
+        UIProcess/qt/QtWebPagePolicyClient.cpp \
+        UIProcess/qt/QtWebPageSGNode.cpp \
+        UIProcess/qt/QtWebPageEventHandler.cpp \
+        UIProcess/qt/QtGestureRecognizer.cpp \
+        UIProcess/qt/QtPanGestureRecognizer.cpp \
+        UIProcess/qt/QtPinchGestureRecognizer.cpp \
+        UIProcess/qt/QtTapGestureRecognizer.cpp \
+        UIProcess/qt/QtViewportHandler.cpp \
+        UIProcess/qt/WebContextMenuProxyQt.cpp \
+        UIProcess/qt/WebGeolocationProviderQt.cpp \
+        UIProcess/qt/WebPopupMenuProxyQt.cpp \
+        UIProcess/qt/QtWebIconDatabaseClient.cpp \
+        UIProcess/qt/QtWebPageUIClient.cpp
+
+    contains(DEFINES, ENABLE_INPUT_TYPE_COLOR=1) {
+        HEADERS += \
+            UIProcess/qt/WebColorChooserProxyQt.h
+        SOURCES += \
+            UIProcess/qt/WebColorChooserProxyQt.cpp
+    }
+}
+
+mac: {
     contains(DEFINES, WTF_USE_QTKIT=1) {
         DEFINES += NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
         INCLUDEPATH += \
@@ -864,12 +877,6 @@ contains(DEFINES, ENABLE_TOUCH_EVENTS=1) {
         Shared/qt/NativeWebTouchEventQt.cpp
 }
 
-contains(DEFINES, ENABLE_INPUT_TYPE_COLOR=1) {
-    HEADERS += \
-        UIProcess/qt/WebColorChooserProxyQt.h
-    SOURCES += \
-        UIProcess/qt/WebColorChooserProxyQt.cpp
-}
 
 contains(DEFINES, ENABLE_GEOLOCATION=1): QT += location
 

@@ -44,6 +44,10 @@ config_fontconfig:!mac {
     DEFINES += HAVE_FONTCONFIG=1
 }
 
+!contains(DEFINES, HAVE_QTQUICK=.) {
+    haveQtModule(quick): DEFINES += HAVE_QTQUICK=1
+}
+
 # We need libxml2 config test to determine to use libxml2 or not
 !contains(DEFINES, WTF_USE_LIBXML2=.) {
     config_libxml2: DEFINES += WTF_USE_LIBXML2=1

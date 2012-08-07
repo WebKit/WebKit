@@ -30,6 +30,7 @@ class QWebLoadRequest;
 #endif
 
 void addQtWebProcessToPath();
+#if defined(HAVE_QTQUICK) && HAVE_QTQUICK
 bool waitForSignal(QObject*, const char* signal, int timeout = 10000);
 bool waitForLoadSucceeded(QQuickWebView* webView, int timeout = 10000);
 bool waitForLoadFailed(QQuickWebView* webView, int timeout = 10000);
@@ -46,3 +47,4 @@ signals:
 private:
     QQuickWebView* m_webView;
 };
+#endif

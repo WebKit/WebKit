@@ -1,3 +1,22 @@
+2012-08-07  No'am Rosenthal  <noam.rosenthal@nokia.com>
+
+        [Qt] Make it possible to build without QtQuick
+
+        Reviewed by Simon Hausmann.
+
+        * Target.pri:
+        * UIProcess/API/qt/tests/tests.pri:
+        * UIProcess/API/qt/tests/util.cpp:
+        * UIProcess/API/qt/tests/util.h:
+        * UIProcess/qt/WebFullScreenManagerProxyQt.cpp:
+        (WebKit::WebFullScreenManagerProxy::invalidate):
+        (WebKit::WebFullScreenManagerProxy::enterFullScreen):
+        (WebKit::WebFullScreenManagerProxy::exitFullScreen):
+        * UIProcess/qt/WebPageProxyQt.cpp:
+        (WebKit::WebPageProxy::resolveApplicationSchemeRequest):
+        (WebKit::WebPageProxy::sendApplicationSchemeReply):
+        * WebKit2.pri:
+
 2012-07-19  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] Remove Qt 4 specific code paths

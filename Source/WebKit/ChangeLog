@@ -1,3 +1,11 @@
+2012-08-07  No'am Rosenthal  <noam.rosenthal@nokia.com>
+
+        [Qt] Make it possible to build without QtQuick
+
+        Reviewed by Simon Hausmann.
+
+        * WebKit1.pri:
+
 2012-07-19  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] Remove Qt 4 specific code paths

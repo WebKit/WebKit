@@ -26,8 +26,11 @@
 #include "WebFullScreenManagerMessages.h"
 #include "WebFullScreenManagerProxyMessages.h"
 #include "WebProcess.h"
-#include "qquickwebview_p.h"
 #include <WebCore/NotImplemented.h>
+
+#if HAVE(QTQUICK)
+#include "qquickwebview_p.h"
+#endif
 
 using namespace WebCore;
 
@@ -35,7 +38,9 @@ namespace WebKit {
 
 void WebFullScreenManagerProxy::invalidate()
 {
+#if HAVE(QTQUICK)
     m_webView = 0;
+#endif
 }
 
 void WebFullScreenManagerProxy::close()
@@ -52,14 +57,18 @@ bool WebFullScreenManagerProxy::isFullScreen()
 void WebFullScreenManagerProxy::enterFullScreen()
 {
     willEnterFullScreen();
+#if HAVE(QTQUICK)
     emit m_webView->experimental()->enterFullScreenRequested();
+#endif
     didEnterFullScreen();
 }
 
 void WebFullScreenManagerProxy::exitFullScreen()
 {
     willExitFullScreen();
+#if HAVE(QTQUICK)
     emit m_webView->experimental()->exitFullScreenRequested();
+#endif
     didExitFullScreen();
 }
 
