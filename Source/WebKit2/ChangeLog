@@ -1,5 +1,17 @@
 2012-08-07  No'am Rosenthal  <noam.rosenthal@nokia.com>
 
+        GraphicsLayerAnimation shouldn't use HashMap<String>
+        https://bugs.webkit.org/show_bug.cgi?id=93284
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Apply the changes to GraphicsLayerAnimation API.
+
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedGraphicsLayer.cpp:
+        (WebCore::CoordinatedGraphicsLayer::addAnimation):
+
+2012-08-07  No'am Rosenthal  <noam.rosenthal@nokia.com>
+
         [Qt] Make it possible to build without QtQuick
 
         Reviewed by Simon Hausmann.
