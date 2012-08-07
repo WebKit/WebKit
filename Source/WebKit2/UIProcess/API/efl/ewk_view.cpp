@@ -26,12 +26,15 @@
 #include "NativeWebWheelEvent.h"
 #include "PageClientImpl.h"
 #include "WKAPICast.h"
+#include "WKFindOptions.h"
 #include "WKRetainPtr.h"
 #include "WKString.h"
 #include "WKURL.h"
 #include "ewk_context.h"
 #include "ewk_context_private.h"
 #include "ewk_intent_private.h"
+#include "ewk_private.h"
+#include "ewk_view_find_client_private.h"
 #include "ewk_view_form_client_private.h"
 #include "ewk_view_loader_client_private.h"
 #include "ewk_view_policy_client_private.h"
@@ -664,6 +667,7 @@ Evas_Object* ewk_view_base_add(Evas* canvas, WKContextRef contextRef, WKPageGrou
     priv->pageClient = PageClientImpl::create(toImpl(contextRef), toImpl(pageGroupRef), ewkView);
 
     WKPageRef wkPage = toAPI(priv->pageClient->page());
+    ewk_view_find_client_attach(wkPage, ewkView);
     ewk_view_form_client_attach(wkPage, ewkView);
     ewk_view_loader_client_attach(wkPage, ewkView);
     ewk_view_policy_client_attach(wkPage, ewkView);
@@ -865,6 +869,17 @@ const char* ewk_view_title_get(const Evas_Object* ewkView)
     eina_stringshare_replace(&priv->title, title.data());
 
     return priv->title;
+}
+
+/**
+ * @internal
+ * Reports that the requested text was found.
+ *
+ * Emits signal: "text,found" with the number of matches.
+ */
+void ewk_view_text_found(Evas_Object* ewkView, unsigned int matchCount)
+{
+    evas_object_smart_callback_call(ewkView, "text,found", &matchCount);
 }
 
 /**
@@ -1314,4 +1329,36 @@ WKPageRef ewk_view_page_create(Evas_Object* ewkView)
         return 0;
 
     return static_cast<WKPageRef>(WKRetain(ewk_view_page_get(newEwkView)));
+}
+
+// EwkFindOptions should be matched up orders with WkFindOptions.
+COMPILE_ASSERT_MATCHING_ENUM(EWK_FIND_OPTIONS_CASE_INSENSITIVE, kWKFindOptionsCaseInsensitive);
+COMPILE_ASSERT_MATCHING_ENUM(EWK_FIND_OPTIONS_AT_WORD_STARTS, kWKFindOptionsAtWordStarts);
+COMPILE_ASSERT_MATCHING_ENUM(EWK_FIND_OPTIONS_TREAT_MEDIAL_CAPITAL_AS_WORD_START, kWKFindOptionsTreatMedialCapitalAsWordStart);
+COMPILE_ASSERT_MATCHING_ENUM(EWK_FIND_OPTIONS_BACKWARDS, kWKFindOptionsBackwards);
+COMPILE_ASSERT_MATCHING_ENUM(EWK_FIND_OPTIONS_WRAP_AROUND, kWKFindOptionsWrapAround);
+COMPILE_ASSERT_MATCHING_ENUM(EWK_FIND_OPTIONS_SHOW_OVERLAY, kWKFindOptionsShowOverlay);
+COMPILE_ASSERT_MATCHING_ENUM(EWK_FIND_OPTIONS_SHOW_FIND_INDICATOR, kWKFindOptionsShowFindIndicator);
+COMPILE_ASSERT_MATCHING_ENUM(EWK_FIND_OPTIONS_SHOW_HIGHLIGHT, kWKFindOptionsShowHighlight);
+
+Eina_Bool ewk_view_text_find(Evas_Object* ewkView, const char* text, Ewk_Find_Options options, unsigned int maxMatchCount)
+{
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, false);
+    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, false);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(text, false);
+
+    WKRetainPtr<WKStringRef> findText(AdoptWK, WKStringCreateWithUTF8CString(text));
+    WKPageFindString(toAPI(priv->pageClient->page()), findText.get(), static_cast<WKFindOptions>(options), maxMatchCount);
+
+    return true;
+}
+
+Eina_Bool ewk_view_text_find_highlight_clear(Evas_Object* ewkView)
+{
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, false);
+    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, false);
+
+    WKPageHideFindUI(toAPI(priv->pageClient->page()));
+
+    return true;
 }

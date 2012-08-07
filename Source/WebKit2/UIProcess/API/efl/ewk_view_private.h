@@ -69,6 +69,7 @@ void ewk_view_resource_load_finished(Evas_Object* ewkView, uint64_t resourceIden
 void ewk_view_resource_load_initiated(Evas_Object* ewkView, uint64_t resourceIdentifier, Ewk_Web_Resource* resource, Ewk_Url_Request* request);
 void ewk_view_resource_load_response(Evas_Object* ewkView, uint64_t resourceIdentifier, Ewk_Url_Response* response);
 void ewk_view_resource_request_sent(Evas_Object* ewkView, uint64_t resourceIdentifier, Ewk_Url_Request* request, Ewk_Url_Response* redirectResponse);
+void ewk_view_text_found(Evas_Object* ewkView, unsigned int matchCount);
 
 Evas_Object* ewk_view_base_add(Evas* canvas, WKContextRef, WKPageGroupRef);
 
