@@ -1491,10 +1491,6 @@ bool FrameView::scrollContentsFastPath(const IntSize& scrollDelta, const IntRect
             regionToUpdate.unite(updateRect);
     }
 
-    // The area to be painted by fixed objects exceeds 50% of the area of the view, we cannot use the fast path.
-    if (regionToUpdate.totalArea() > (clipRect.width() * clipRect.height() * 0.5))
-        return false;
-
     // 1) scroll
     hostWindow()->scroll(scrollDelta, rectToScroll, clipRect);
 

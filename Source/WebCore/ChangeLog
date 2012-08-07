@@ -1,3 +1,18 @@
+2012-08-07  Adrienne Walker  <enne@google.com>
+
+        50% fixed position coverage slow scroll heuristic is incorrect when invalidations aren't clipped
+        https://bugs.webkit.org/show_bug.cgi?id=92011
+
+        Reviewed by Simon Fraser.
+
+        The heuristic in scrollContentsFastPath to slow scroll by invalidating
+        the entire frame if fixed position elements cover 50% of the frame
+        takes away the ability of ports to make their own decisions about how
+        to best handle invalidations. Therefore, remove this heuristic.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::scrollContentsFastPath):
+
 2012-08-07  Konrad Piascik  <kpiascik@rim.com>
 
         [BlackBerry] Change how devicePixelRatio is set.
