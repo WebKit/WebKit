@@ -1,3 +1,9 @@
+2012-08-06  Takashi Toyoshima  <toyoshim@chromium.org>
+
+        Unreviewed, rebaseline for r124836.
+
+        * platform/chromium-mac/platform/chromium/fast/forms/color/color-suggestion-picker-appearance-expected.png:
+
 2012-08-06  Anna Cavender  <annacc@chromium.org>
 
         Update HTMLMediaElement to the new OO MediaSource API.
