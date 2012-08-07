@@ -515,8 +515,8 @@ void CCThreadProxy::beginFrame()
     if (request->contentsTexturesWereDeleted)
         m_layerTreeHost->evictAllContentTextures();
 
-    OwnPtr<CCTextureUpdater> updater = adoptPtr(new CCTextureUpdater);
-    m_layerTreeHost->updateLayers(*(updater.get()), request->memoryAllocationLimitBytes);
+    OwnPtr<CCTextureUpdateQueue> queue = adoptPtr(new CCTextureUpdateQueue);
+    m_layerTreeHost->updateLayers(*(queue.get()), request->memoryAllocationLimitBytes);
 
     // Once single buffered layers are committed, they cannot be modified until
     // they are drawn by the impl thread.
@@ -538,7 +538,7 @@ void CCThreadProxy::beginFrame()
         DebugScopedSetMainThreadBlocked mainThreadBlocked;
 
         CCCompletionEvent completion;
-        CCProxy::implThread()->postTask(createCCThreadTask(this, &CCThreadProxy::beginFrameCompleteOnImplThread, &completion, updater.release()));
+        CCProxy::implThread()->postTask(createCCThreadTask(this, &CCThreadProxy::beginFrameCompleteOnImplThread, &completion, queue.release()));
         completion.wait();
     }
 
@@ -546,7 +546,7 @@ void CCThreadProxy::beginFrame()
     m_layerTreeHost->didBeginFrame();
 }
 
-void CCThreadProxy::beginFrameCompleteOnImplThread(CCCompletionEvent* completion, PassOwnPtr<CCTextureUpdater> updater)
+void CCThreadProxy::beginFrameCompleteOnImplThread(CCCompletionEvent* completion, PassOwnPtr<CCTextureUpdateQueue> queue)
 {
     TRACE_EVENT0("cc", "CCThreadProxy::beginFrameCompleteOnImplThread");
     ASSERT(!m_commitCompletionEventOnImplThread);
@@ -559,7 +559,7 @@ void CCThreadProxy::beginFrameCompleteOnImplThread(CCCompletionEvent* completion
         return;
     }
 
-    m_currentTextureUpdateControllerOnImplThread = CCTextureUpdateController::create(updater, m_layerTreeHostImpl->resourceProvider(), m_layerTreeHostImpl->layerRenderer()->textureCopier(), m_layerTreeHostImpl->layerRenderer()->textureUploader());
+    m_currentTextureUpdateControllerOnImplThread = CCTextureUpdateController::create(queue, m_layerTreeHostImpl->resourceProvider(), m_layerTreeHostImpl->layerRenderer()->textureCopier(), m_layerTreeHostImpl->layerRenderer()->textureUploader());
     m_commitCompletionEventOnImplThread = completion;
 
     m_schedulerOnImplThread->beginFrameComplete();

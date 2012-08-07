@@ -83,7 +83,7 @@ protected:
     void resetUpdateState();
 
     // Prepare data needed to update textures that intersect with contentRect.
-    void updateContentRect(CCTextureUpdater&, const IntRect& contentRect, const CCOcclusionTracker*, CCRenderingStats&);
+    void updateContentRect(CCTextureUpdateQueue&, const IntRect& contentRect, const CCOcclusionTracker*, CCRenderingStats&);
 
     // After preparing an update, returns true if more painting is needed.
     bool needsIdlePaint(const IntRect& visibleContentRect);
@@ -106,7 +106,7 @@ private:
 
     void setTexturePrioritiesInRect(const CCPriorityCalculator&, const IntRect& visibleContentRect);
 
-    void updateTiles(bool idle, int left, int top, int right, int bottom, CCTextureUpdater&, const CCOcclusionTracker*, CCRenderingStats&);
+    void updateTiles(bool idle, int left, int top, int right, int bottom, CCTextureUpdateQueue&, const CCOcclusionTracker*, CCRenderingStats&);
 
     UpdatableTile* tileAt(int, int) const;
     UpdatableTile* createTile(int, int);

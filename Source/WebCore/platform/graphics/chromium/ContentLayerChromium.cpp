@@ -93,7 +93,7 @@ void ContentLayerChromium::setTexturePriorities(const CCPriorityCalculator& prio
     TiledLayerChromium::setTexturePriorities(priorityCalc);
 }
 
-void ContentLayerChromium::update(CCTextureUpdater& updater, const CCOcclusionTracker* occlusion, CCRenderingStats& stats)
+void ContentLayerChromium::update(CCTextureUpdateQueue& queue, const CCOcclusionTracker* occlusion, CCRenderingStats& stats)
 {
     createTextureUpdaterIfNeeded();
 
@@ -104,7 +104,7 @@ void ContentLayerChromium::update(CCTextureUpdater& updater, const CCOcclusionTr
     if (drawsContent())
         contentRect = visibleContentRect();
 
-    updateContentRect(updater, contentRect, occlusion, stats);
+    updateContentRect(queue, contentRect, occlusion, stats);
     m_needsDisplay = false;
 }
 

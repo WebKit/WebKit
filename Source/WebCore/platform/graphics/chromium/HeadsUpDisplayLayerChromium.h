@@ -38,7 +38,7 @@ public:
     static PassRefPtr<HeadsUpDisplayLayerChromium> create();
     virtual ~HeadsUpDisplayLayerChromium();
 
-    virtual void update(CCTextureUpdater&, const CCOcclusionTracker*, CCRenderingStats&) OVERRIDE;
+    virtual void update(CCTextureUpdateQueue&, const CCOcclusionTracker*, CCRenderingStats&) OVERRIDE;
     virtual bool drawsContent() const OVERRIDE { return true; }
 
     void setFontAtlas(PassOwnPtr<CCFontAtlas>);

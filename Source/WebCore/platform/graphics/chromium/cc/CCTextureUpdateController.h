@@ -26,7 +26,7 @@
 #ifndef CCTextureUpdateController_h
 #define CCTextureUpdateController_h
 
-#include "cc/CCTextureUpdater.h"
+#include "cc/CCTextureUpdateQueue.h"
 #include <wtf/Noncopyable.h>
 #include <wtf/OwnPtr.h>
 
@@ -38,12 +38,12 @@ class TextureUploader;
 class CCTextureUpdateController {
     WTF_MAKE_NONCOPYABLE(CCTextureUpdateController);
 public:
-    static PassOwnPtr<CCTextureUpdateController> create(PassOwnPtr<CCTextureUpdater> updater, CCResourceProvider* resourceProvider, TextureCopier* copier, TextureUploader* uploader)
+    static PassOwnPtr<CCTextureUpdateController> create(PassOwnPtr<CCTextureUpdateQueue> queue, CCResourceProvider* resourceProvider, TextureCopier* copier, TextureUploader* uploader)
     {
-        return adoptPtr(new CCTextureUpdateController(updater, resourceProvider, copier, uploader));
+        return adoptPtr(new CCTextureUpdateController(queue, resourceProvider, copier, uploader));
     }
     static size_t maxPartialTextureUpdates();
-    static void updateTextures(CCResourceProvider*, TextureCopier*, TextureUploader*, CCTextureUpdater*, size_t count);
+    static void updateTextures(CCResourceProvider*, TextureCopier*, TextureUploader*, CCTextureUpdateQueue*, size_t count);
 
     virtual ~CCTextureUpdateController();
 
@@ -54,9 +54,9 @@ public:
     virtual size_t updateMoreTexturesSize() const;
 
 protected:
-    CCTextureUpdateController(PassOwnPtr<CCTextureUpdater>, CCResourceProvider*, TextureCopier*, TextureUploader*);
+    CCTextureUpdateController(PassOwnPtr<CCTextureUpdateQueue>, CCResourceProvider*, TextureCopier*, TextureUploader*);
 
-    OwnPtr<CCTextureUpdater> m_updater;
+    OwnPtr<CCTextureUpdateQueue> m_queue;
     CCResourceProvider* m_resourceProvider;
     TextureCopier* m_copier;
     TextureUploader* m_uploader;

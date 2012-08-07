@@ -79,7 +79,7 @@ private:
     explicit CCSingleThreadProxy(CCLayerTreeHost*);
 
     bool commitAndComposite();
-    void doCommit(CCTextureUpdater&);
+    void doCommit(CCTextureUpdateQueue&);
     bool doComposite();
     void didSwapFrame();
 

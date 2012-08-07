@@ -63,7 +63,7 @@ struct CCAnimationEvent;
 class CCLayerAnimationDelegate;
 class CCLayerImpl;
 class CCLayerTreeHost;
-class CCTextureUpdater;
+class CCTextureUpdateQueue;
 class ScrollbarLayerChromium;
 struct CCAnimationEvent;
 struct CCRenderingStats;
@@ -216,7 +216,7 @@ public:
 
     // These methods typically need to be overwritten by derived classes.
     virtual bool drawsContent() const { return m_isDrawable; }
-    virtual void update(CCTextureUpdater&, const CCOcclusionTracker*, CCRenderingStats&) { }
+    virtual void update(CCTextureUpdateQueue&, const CCOcclusionTracker*, CCRenderingStats&) { }
     virtual bool needMoreUpdates() { return false; }
     virtual void setIsMask(bool) { }
     virtual void bindContentsTexture() { }

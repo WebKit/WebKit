@@ -27,7 +27,7 @@
 #include <public/WebExternalTextureLayer.h>
 
 #include "TextureLayerChromium.h"
-#include "cc/CCTextureUpdater.h"
+#include "cc/CCTextureUpdateQueue.h"
 #include <public/WebExternalTextureLayerClient.h>
 #include <public/WebFloatRect.h>
 #include <public/WebSize.h>
@@ -38,19 +38,19 @@ namespace WebKit {
 
 class WebTextureUpdaterImpl : public WebTextureUpdater {
 public:
-    explicit WebTextureUpdaterImpl(CCTextureUpdater& updater)
-        : m_updater(updater)
+    explicit WebTextureUpdaterImpl(CCTextureUpdateQueue& queue)
+        : m_queue(queue)
     {
     }
 
     virtual void appendCopy(unsigned sourceTexture, unsigned destinationTexture, WebSize size) OVERRIDE
     {
         TextureCopier::Parameters copy = { sourceTexture, destinationTexture, size };
-        m_updater.appendCopy(copy);
+        m_queue.appendCopy(copy);
     }
 
 private:
-    CCTextureUpdater& m_updater;
+    CCTextureUpdateQueue& m_queue;
 };
 
 class WebExternalTextureLayerImpl : public TextureLayerChromiumClient, public TextureLayerChromium {
@@ -61,9 +61,9 @@ public:
     {
     }
 
-    virtual unsigned prepareTexture(CCTextureUpdater& updater) OVERRIDE
+    virtual unsigned prepareTexture(CCTextureUpdateQueue& queue) OVERRIDE
     {
-        WebTextureUpdaterImpl updaterImpl(updater);
+        WebTextureUpdaterImpl updaterImpl(queue);
         return m_client->prepareTexture(updaterImpl);
     }
 

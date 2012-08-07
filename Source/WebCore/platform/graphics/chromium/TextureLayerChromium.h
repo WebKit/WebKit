@@ -40,9 +40,9 @@ namespace WebCore {
 class TextureLayerChromiumClient {
 public:
     // Called to prepare this layer's texture for compositing. The client may queue a texture
-    // upload or copy on the CCTextureUpdater.
+    // upload or copy on the CCTextureUpdateQueue.
     // Returns the texture ID to be used for compositing.
-    virtual unsigned prepareTexture(CCTextureUpdater&) = 0;
+    virtual unsigned prepareTexture(CCTextureUpdateQueue&) = 0;
 
     // Returns the context that is providing the texture. Used for rate limiting and detecting lost context.
     virtual WebKit::WebGraphicsContext3D* context() = 0;
@@ -87,7 +87,7 @@ public:
 
     virtual void setLayerTreeHost(CCLayerTreeHost*) OVERRIDE;
     virtual bool drawsContent() const OVERRIDE;
-    virtual void update(CCTextureUpdater&, const CCOcclusionTracker*, CCRenderingStats&) OVERRIDE;
+    virtual void update(CCTextureUpdateQueue&, const CCOcclusionTracker*, CCRenderingStats&) OVERRIDE;
     virtual void pushPropertiesTo(CCLayerImpl*) OVERRIDE;
 
 protected:

@@ -38,7 +38,7 @@ namespace WebCore {
 
 class Scrollbar;
 class ScrollbarThemeComposite;
-class CCTextureUpdater;
+class CCTextureUpdateQueue;
 
 class ScrollbarLayerChromium : public LayerChromium {
 public:
@@ -47,7 +47,7 @@ public:
 
     // LayerChromium interface
     virtual void setTexturePriorities(const CCPriorityCalculator&) OVERRIDE;
-    virtual void update(CCTextureUpdater&, const CCOcclusionTracker*, CCRenderingStats&) OVERRIDE;
+    virtual void update(CCTextureUpdateQueue&, const CCOcclusionTracker*, CCRenderingStats&) OVERRIDE;
     virtual void setLayerTreeHost(CCLayerTreeHost*) OVERRIDE;
     virtual void pushPropertiesTo(CCLayerImpl*) OVERRIDE;
 
@@ -60,7 +60,7 @@ protected:
     ScrollbarLayerChromium(PassOwnPtr<WebKit::WebScrollbar>, WebKit::WebScrollbarThemePainter, WebKit::WebScrollbarThemeGeometry, int scrollLayerId);
 
 private:
-    void updatePart(LayerTextureUpdater*, LayerTextureUpdater::Texture*, const IntRect&, CCTextureUpdater&, CCRenderingStats&);
+    void updatePart(LayerTextureUpdater*, LayerTextureUpdater::Texture*, const IntRect&, CCTextureUpdateQueue&, CCRenderingStats&);
     void createTextureUpdaterIfNeeded();
 
     OwnPtr<WebKit::WebScrollbar> m_scrollbar;

@@ -1,3 +1,87 @@
+2012-08-06  David Reveman  <reveman@chromium.org>
+
+        [Chromium] Rename CCTextureUpdater to CCTextureUpdateQueue.
+        https://bugs.webkit.org/show_bug.cgi?id=93293
+
+        Reviewed by Adrienne Walker.
+
+        No new tests.
+
+        * WebCore.gypi:
+        * platform/graphics/chromium/ContentLayerChromium.cpp:
+        (WebCore::ContentLayerChromium::update):
+        * platform/graphics/chromium/ContentLayerChromium.h:
+        (ContentLayerChromium):
+        * platform/graphics/chromium/HeadsUpDisplayLayerChromium.cpp:
+        (WebCore::HeadsUpDisplayLayerChromium::update):
+        * platform/graphics/chromium/HeadsUpDisplayLayerChromium.h:
+        (HeadsUpDisplayLayerChromium):
+        * platform/graphics/chromium/ImageLayerChromium.cpp:
+        (WebCore::ImageLayerChromium::update):
+        * platform/graphics/chromium/ImageLayerChromium.h:
+        (ImageLayerChromium):
+        * platform/graphics/chromium/LayerChromium.h:
+        (WebCore):
+        (WebCore::LayerChromium::update):
+        * platform/graphics/chromium/ScrollbarLayerChromium.cpp:
+        (WebCore::ScrollbarLayerChromium::updatePart):
+        (WebCore::ScrollbarLayerChromium::update):
+        * platform/graphics/chromium/ScrollbarLayerChromium.h:
+        (WebCore):
+        (ScrollbarLayerChromium):
+        * platform/graphics/chromium/TextureLayerChromium.cpp:
+        (WebCore::TextureLayerChromium::update):
+        * platform/graphics/chromium/TextureLayerChromium.h:
+        (TextureLayerChromiumClient):
+        (TextureLayerChromium):
+        * platform/graphics/chromium/TiledLayerChromium.cpp:
+        (WebCore::TiledLayerChromium::updateTiles):
+        (WebCore::TiledLayerChromium::updateContentRect):
+        * platform/graphics/chromium/TiledLayerChromium.h:
+        (TiledLayerChromium):
+        * platform/graphics/chromium/cc/CCLayerTreeHost.cpp:
+        (WebCore::CCLayerTreeHost::updateLayers):
+        (WebCore::CCLayerTreeHost::paintMasksForRenderSurface):
+        (WebCore::CCLayerTreeHost::paintLayerContents):
+        * platform/graphics/chromium/cc/CCLayerTreeHost.h:
+        (WebCore):
+        (CCLayerTreeHost):
+        * platform/graphics/chromium/cc/CCSingleThreadProxy.cpp:
+        (WebCore::CCSingleThreadProxy::doCommit):
+        (WebCore::CCSingleThreadProxy::commitAndComposite):
+        * platform/graphics/chromium/cc/CCSingleThreadProxy.h:
+        * platform/graphics/chromium/cc/CCTextureUpdateController.cpp:
+        (WebCore::CCTextureUpdateController::updateTextures):
+        (WebCore::CCTextureUpdateController::CCTextureUpdateController):
+        (WebCore::CCTextureUpdateController::hasMoreUpdates):
+        (WebCore::CCTextureUpdateController::updateMoreTextures):
+        * platform/graphics/chromium/cc/CCTextureUpdateController.h:
+        (WebCore::CCTextureUpdateController::create):
+        (CCTextureUpdateController):
+        * platform/graphics/chromium/cc/CCTextureUpdateQueue.cpp: Renamed from Source/WebCore/platform/graphics/chromium/cc/CCTextureUpdater.cpp.
+        (WebCore):
+        (WebCore::CCTextureUpdateQueue::CCTextureUpdateQueue):
+        (WebCore::CCTextureUpdateQueue::~CCTextureUpdateQueue):
+        (WebCore::CCTextureUpdateQueue::appendFullUpload):
+        (WebCore::CCTextureUpdateQueue::appendPartialUpload):
+        (WebCore::CCTextureUpdateQueue::appendCopy):
+        (WebCore::CCTextureUpdateQueue::takeFirstFullUpload):
+        (WebCore::CCTextureUpdateQueue::takeFirstPartialUpload):
+        (WebCore::CCTextureUpdateQueue::takeFirstCopy):
+        (WebCore::CCTextureUpdateQueue::hasMoreUpdates):
+        * platform/graphics/chromium/cc/CCTextureUpdateQueue.h: Renamed from Source/WebCore/platform/graphics/chromium/cc/CCTextureUpdater.h.
+        (WebCore):
+        (CCTextureUpdateQueue):
+        (WebCore::CCTextureUpdateQueue::fullUploadSize):
+        (WebCore::CCTextureUpdateQueue::partialUploadSize):
+        (WebCore::CCTextureUpdateQueue::copySize):
+        * platform/graphics/chromium/cc/CCThreadProxy.cpp:
+        (WebCore::CCThreadProxy::beginFrame):
+        (WebCore::CCThreadProxy::beginFrameCompleteOnImplThread):
+        * platform/graphics/chromium/cc/CCThreadProxy.h:
+        (WebCore):
+        (CCThreadProxy):
+
 2012-08-06  Anders Carlsson  <andersca@apple.com>
 
         Clear out the TileCache backpointer for all tile layers when the tile cache is destroyed

@@ -53,7 +53,7 @@ class CCLayerChromium;
 class CCLayerTreeHostImpl;
 class CCLayerTreeHostImplClient;
 class CCPrioritizedTextureManager;
-class CCTextureUpdater;
+class CCTextureUpdateQueue;
 class HeadsUpDisplayLayerChromium;
 class Region;
 struct CCScrollAndScaleSet;
@@ -186,7 +186,7 @@ public:
     virtual void acquireLayerTextures();
     // Returns false if we should abort this frame due to initialization failure.
     bool initializeLayerRendererIfNeeded();
-    void updateLayers(CCTextureUpdater&, size_t contentsMemoryLimitBytes);
+    void updateLayers(CCTextureUpdateQueue&, size_t contentsMemoryLimitBytes);
 
     CCLayerTreeHostClient* client() { return m_client; }
 
@@ -278,11 +278,11 @@ private:
 
     void initializeLayerRenderer();
 
-    void update(LayerChromium*, CCTextureUpdater&, const CCOcclusionTracker*);
-    bool paintLayerContents(const LayerList&, CCTextureUpdater&);
-    bool paintMasksForRenderSurface(LayerChromium*, CCTextureUpdater&);
+    void update(LayerChromium*, CCTextureUpdateQueue&, const CCOcclusionTracker*);
+    bool paintLayerContents(const LayerList&, CCTextureUpdateQueue&);
+    bool paintMasksForRenderSurface(LayerChromium*, CCTextureUpdateQueue&);
 
-    void updateLayers(LayerChromium*, CCTextureUpdater&);
+    void updateLayers(LayerChromium*, CCTextureUpdateQueue&);
 
     void prioritizeTextures(const LayerList&, CCOverdrawMetrics&); 
     void setPrioritiesForSurfaces(size_t surfaceMemoryBytes);

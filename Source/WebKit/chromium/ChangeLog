@@ -1,3 +1,25 @@
+2012-08-06  David Reveman  <reveman@chromium.org>
+
+        [Chromium] Rename CCTextureUpdater to CCTextureUpdateQueue.
+        https://bugs.webkit.org/show_bug.cgi?id=93293
+
+        Reviewed by Adrienne Walker.
+
+        * src/WebExternalTextureLayer.cpp:
+        (WebKit::WebTextureUpdaterImpl::WebTextureUpdaterImpl):
+        * tests/CCLayerTreeHostTest.cpp:
+        (WTF::CCLayerTreeHostTestLayerOcclusion::beginTest):
+        (WTF::CCLayerTreeHostTestLayerOcclusionWithFilters::beginTest):
+        (WTF::CCLayerTreeHostTestManySurfaces::beginTest):
+        * tests/CCTextureUpdateControllerTest.cpp:
+        * tests/CCThreadedTest.cpp:
+        * tests/CCTiledLayerTestCommon.cpp:
+        (WebKitTests::FakeTiledLayerChromium::update):
+        * tests/CCTiledLayerTestCommon.h:
+        (FakeTiledLayerChromium):
+        * tests/Canvas2DLayerBridgeTest.cpp:
+        * tests/TiledLayerChromiumTest.cpp:
+
 2012-08-06  Bear Travis  <betravis@adobe.com>
 
         [CSS Exclusions] Add a command-line flag to enable / disable exclusions

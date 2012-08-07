@@ -38,8 +38,8 @@ class CCInputHandler;
 class CCLayerTreeHost;
 class CCScheduler;
 class CCScopedThreadProxy;
+class CCTextureUpdateQueue;
 class CCTextureUpdateController;
-class CCTextureUpdater;
 class CCThread;
 class CCThreadProxyContextRecreationTimer;
 
@@ -126,7 +126,7 @@ private:
         IntRect rect;
     };
     void forceBeginFrameOnImplThread(CCCompletionEvent*);
-    void beginFrameCompleteOnImplThread(CCCompletionEvent*, PassOwnPtr<CCTextureUpdater>);
+    void beginFrameCompleteOnImplThread(CCCompletionEvent*, PassOwnPtr<CCTextureUpdateQueue>);
     void beginFrameAbortedOnImplThread();
     void requestReadbackOnImplThread(ReadbackRequest*);
     void requestStartPageScaleAnimationOnImplThread(IntSize targetPosition, bool useAnchor, float scale, double durationSec);

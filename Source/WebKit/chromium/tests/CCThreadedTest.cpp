@@ -42,7 +42,7 @@
 #include "cc/CCLayerTreeHostImpl.h"
 #include "cc/CCScopedThreadProxy.h"
 #include "cc/CCSingleThreadProxy.h"
-#include "cc/CCTextureUpdater.h"
+#include "cc/CCTextureUpdateQueue.h"
 #include "cc/CCThreadTask.h"
 #include "cc/CCTimingFunction.h"
 #include "platform/WebThread.h"

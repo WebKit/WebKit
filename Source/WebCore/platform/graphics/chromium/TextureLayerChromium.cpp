@@ -129,10 +129,10 @@ bool TextureLayerChromium::drawsContent() const
     return (m_client || m_textureId) && !m_contextLost && LayerChromium::drawsContent();
 }
 
-void TextureLayerChromium::update(CCTextureUpdater& updater, const CCOcclusionTracker*, CCRenderingStats&)
+void TextureLayerChromium::update(CCTextureUpdateQueue& queue, const CCOcclusionTracker*, CCRenderingStats&)
 {
     if (m_client) {
-        m_textureId = m_client->prepareTexture(updater);
+        m_textureId = m_client->prepareTexture(queue);
         m_contextLost = m_client->context()->getGraphicsResetStatusARB() != GraphicsContext3D::NO_ERROR;
     }
 

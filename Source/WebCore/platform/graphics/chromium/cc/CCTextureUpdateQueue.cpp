@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2012 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,49 +27,49 @@
 
 #if USE(ACCELERATED_COMPOSITING)
 
-#include "cc/CCTextureUpdater.h"
+#include "cc/CCTextureUpdateQueue.h"
 
 namespace WebCore {
 
-CCTextureUpdater::CCTextureUpdater()
+CCTextureUpdateQueue::CCTextureUpdateQueue()
 {
 }
 
-CCTextureUpdater::~CCTextureUpdater()
+CCTextureUpdateQueue::~CCTextureUpdateQueue()
 {
 }
 
-void CCTextureUpdater::appendFullUpload(TextureUploader::Parameters upload)
+void CCTextureUpdateQueue::appendFullUpload(TextureUploader::Parameters upload)
 {
     m_fullEntries.append(upload);
 }
 
-void CCTextureUpdater::appendPartialUpload(TextureUploader::Parameters upload)
+void CCTextureUpdateQueue::appendPartialUpload(TextureUploader::Parameters upload)
 {
     m_partialEntries.append(upload);
 }
 
-void CCTextureUpdater::appendCopy(TextureCopier::Parameters copy)
+void CCTextureUpdateQueue::appendCopy(TextureCopier::Parameters copy)
 {
     m_copyEntries.append(copy);
 }
 
-TextureUploader::Parameters CCTextureUpdater::takeFirstFullUpload()
+TextureUploader::Parameters CCTextureUpdateQueue::takeFirstFullUpload()
 {
     return m_fullEntries.takeFirst();
 }
 
-TextureUploader::Parameters CCTextureUpdater::takeFirstPartialUpload()
+TextureUploader::Parameters CCTextureUpdateQueue::takeFirstPartialUpload()
 {
     return m_partialEntries.takeFirst();
 }
 
-TextureCopier::Parameters CCTextureUpdater::takeFirstCopy()
+TextureCopier::Parameters CCTextureUpdateQueue::takeFirstCopy()
 {
     return m_copyEntries.takeFirst();
 }
 
-bool CCTextureUpdater::hasMoreUpdates() const
+bool CCTextureUpdateQueue::hasMoreUpdates() const
 {
     return m_fullEntries.size() || m_partialEntries.size() || m_copyEntries.size();
 }

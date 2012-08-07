@@ -35,7 +35,7 @@
 #include "cc/CCGraphicsContext.h"
 #include "cc/CCPrioritizedTexture.h"
 #include "cc/CCResourceProvider.h"
-#include "cc/CCTextureUpdater.h"
+#include "cc/CCTextureUpdateQueue.h"
 #include "cc/CCTiledLayerImpl.h"
 
 namespace WebKitTests {
@@ -122,7 +122,7 @@ public:
     const WebCore::FloatRect& lastNeedsDisplayRect() const { return m_lastNeedsDisplayRect; }
 
     // Updates the visibleContentRect().
-    virtual void update(WebCore::CCTextureUpdater&, const WebCore::CCOcclusionTracker*, WebCore::CCRenderingStats&) OVERRIDE;
+    virtual void update(WebCore::CCTextureUpdateQueue&, const WebCore::CCOcclusionTracker*, WebCore::CCRenderingStats&) OVERRIDE;
 
     virtual void setTexturePriorities(const WebCore::CCPriorityCalculator&) OVERRIDE;
 

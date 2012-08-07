@@ -34,7 +34,7 @@
 #include "cc/CCGraphicsContext.h"
 #include "cc/CCLayerTreeHostImpl.h"
 #include "cc/CCSettings.h"
-#include "cc/CCTextureUpdater.h"
+#include "cc/CCTextureUpdateQueue.h"
 #include "cc/CCTimingFunction.h"
 #include "platform/WebThread.h"
 #include <gmock/gmock.h>
@@ -1160,9 +1160,9 @@ public:
     int paintContentsCount() { return m_paintContentsCount; }
     void resetPaintContentsCount() { m_paintContentsCount = 0; }
 
-    virtual void update(CCTextureUpdater& updater, const CCOcclusionTracker* occlusion, CCRenderingStats& stats) OVERRIDE
+    virtual void update(CCTextureUpdateQueue& queue, const CCOcclusionTracker* occlusion, CCRenderingStats& stats) OVERRIDE
     {
-        ContentLayerChromium::update(updater, occlusion, stats);
+        ContentLayerChromium::update(queue, occlusion, stats);
         m_paintContentsCount++;
     }
 
@@ -1573,7 +1573,7 @@ class TestLayerChromium : public LayerChromium {
 public:
     static PassRefPtr<TestLayerChromium> create() { return adoptRef(new TestLayerChromium()); }
 
-    virtual void update(CCTextureUpdater&, const CCOcclusionTracker* occlusion, CCRenderingStats&) OVERRIDE
+    virtual void update(CCTextureUpdateQueue&, const CCOcclusionTracker* occlusion, CCRenderingStats&) OVERRIDE
     {
         // Gain access to internals of the CCOcclusionTracker.
         const TestCCOcclusionTracker* testOcclusion = static_cast<const TestCCOcclusionTracker*>(occlusion);
@@ -1628,8 +1628,8 @@ public:
         m_layerTreeHost->setRootLayer(rootLayer);
         m_layerTreeHost->setViewportSize(rootLayer->bounds(), rootLayer->bounds());
         ASSERT_TRUE(m_layerTreeHost->initializeLayerRendererIfNeeded());
-        CCTextureUpdater updater;
-        m_layerTreeHost->updateLayers(updater, std::numeric_limits<size_t>::max());
+        CCTextureUpdateQueue queue;
+        m_layerTreeHost->updateLayers(queue, std::numeric_limits<size_t>::max());
         m_layerTreeHost->commitComplete();
 
         EXPECT_EQ_RECT(IntRect(), grandChild->occludedScreenSpace().bounds());
@@ -1646,7 +1646,7 @@ public:
 
         m_layerTreeHost->setRootLayer(rootLayer);
         m_layerTreeHost->setViewportSize(rootLayer->bounds(), rootLayer->bounds());
-        m_layerTreeHost->updateLayers(updater, std::numeric_limits<size_t>::max());
+        m_layerTreeHost->updateLayers(queue, std::numeric_limits<size_t>::max());
         m_layerTreeHost->commitComplete();
 
         EXPECT_EQ_RECT(IntRect(), grandChild->occludedScreenSpace().bounds());
@@ -1664,7 +1664,7 @@ public:
 
         m_layerTreeHost->setRootLayer(rootLayer);
         m_layerTreeHost->setViewportSize(rootLayer->bounds(), rootLayer->bounds());
-        m_layerTreeHost->updateLayers(updater, std::numeric_limits<size_t>::max());
+        m_layerTreeHost->updateLayers(queue, std::numeric_limits<size_t>::max());
         m_layerTreeHost->commitComplete();
 
         EXPECT_EQ_RECT(IntRect(), grandChild->occludedScreenSpace().bounds());
@@ -1684,7 +1684,7 @@ public:
 
         m_layerTreeHost->setRootLayer(rootLayer);
         m_layerTreeHost->setViewportSize(rootLayer->bounds(), rootLayer->bounds());
-        m_layerTreeHost->updateLayers(updater, std::numeric_limits<size_t>::max());
+        m_layerTreeHost->updateLayers(queue, std::numeric_limits<size_t>::max());
         m_layerTreeHost->commitComplete();
 
         EXPECT_EQ_RECT(IntRect(), grandChild->occludedScreenSpace().bounds());
@@ -1706,7 +1706,7 @@ public:
 
         m_layerTreeHost->setRootLayer(rootLayer);
         m_layerTreeHost->setViewportSize(rootLayer->bounds(), rootLayer->bounds());
-        m_layerTreeHost->updateLayers(updater, std::numeric_limits<size_t>::max());
+        m_layerTreeHost->updateLayers(queue, std::numeric_limits<size_t>::max());
         m_layerTreeHost->commitComplete();
 
         EXPECT_EQ_RECT(IntRect(), grandChild->occludedScreenSpace().bounds());
@@ -1728,7 +1728,7 @@ public:
 
         m_layerTreeHost->setRootLayer(rootLayer);
         m_layerTreeHost->setViewportSize(rootLayer->bounds(), rootLayer->bounds());
-        m_layerTreeHost->updateLayers(updater, std::numeric_limits<size_t>::max());
+        m_layerTreeHost->updateLayers(queue, std::numeric_limits<size_t>::max());
         m_layerTreeHost->commitComplete();
 
         EXPECT_EQ_RECT(IntRect(), child2->occludedScreenSpace().bounds());
@@ -1751,7 +1751,7 @@ public:
 
         m_layerTreeHost->setRootLayer(rootLayer);
         m_layerTreeHost->setViewportSize(rootLayer->bounds(), rootLayer->bounds());
-        m_layerTreeHost->updateLayers(updater, std::numeric_limits<size_t>::max());
+        m_layerTreeHost->updateLayers(queue, std::numeric_limits<size_t>::max());
         m_layerTreeHost->commitComplete();
 
         EXPECT_EQ_RECT(IntRect(), grandChild->occludedScreenSpace().bounds());
@@ -1774,7 +1774,7 @@ public:
 
         m_layerTreeHost->setRootLayer(rootLayer);
         m_layerTreeHost->setViewportSize(rootLayer->bounds(), rootLayer->bounds());
-        m_layerTreeHost->updateLayers(updater, std::numeric_limits<size_t>::max());
+        m_layerTreeHost->updateLayers(queue, std::numeric_limits<size_t>::max());
         m_layerTreeHost->commitComplete();
 
         EXPECT_EQ_RECT(IntRect(), child2->occludedScreenSpace().bounds());
@@ -1836,8 +1836,8 @@ public:
         m_layerTreeHost->setRootLayer(rootLayer);
         m_layerTreeHost->setViewportSize(rootLayer->bounds(), rootLayer->bounds());
         ASSERT_TRUE(m_layerTreeHost->initializeLayerRendererIfNeeded());
-        CCTextureUpdater updater;
-        m_layerTreeHost->updateLayers(updater, std::numeric_limits<size_t>::max());
+        CCTextureUpdateQueue queue;
+        m_layerTreeHost->updateLayers(queue, std::numeric_limits<size_t>::max());
         m_layerTreeHost->commitComplete();
 
         EXPECT_EQ_RECT(IntRect(), child2->occludedScreenSpace().bounds());
@@ -1864,7 +1864,7 @@ public:
 
         m_layerTreeHost->setRootLayer(rootLayer);
         m_layerTreeHost->setViewportSize(rootLayer->bounds(), rootLayer->bounds());
-        m_layerTreeHost->updateLayers(updater, std::numeric_limits<size_t>::max());
+        m_layerTreeHost->updateLayers(queue, std::numeric_limits<size_t>::max());
         m_layerTreeHost->commitComplete();
 
         EXPECT_EQ_RECT(IntRect(), child2->occludedScreenSpace().bounds());
@@ -1925,8 +1925,8 @@ public:
         m_layerTreeHost->setRootLayer(layers[0].get());
         m_layerTreeHost->setViewportSize(layers[0]->bounds(), layers[0]->bounds());
         ASSERT_TRUE(m_layerTreeHost->initializeLayerRendererIfNeeded());
-        CCTextureUpdater updater;
-        m_layerTreeHost->updateLayers(updater, std::numeric_limits<size_t>::max());
+        CCTextureUpdateQueue queue;
+        m_layerTreeHost->updateLayers(queue, std::numeric_limits<size_t>::max());
         m_layerTreeHost->commitComplete();
 
         for (int i = 0; i < numSurfaces-1; ++i) {

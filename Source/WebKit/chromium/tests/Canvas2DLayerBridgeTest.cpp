@@ -34,7 +34,7 @@
 #include "WebKit.h"
 #include "cc/CCGraphicsContext.h"
 #include "cc/CCRenderingStats.h"
-#include "cc/CCTextureUpdater.h"
+#include "cc/CCTextureUpdateQueue.h"
 #include "platform/WebKitPlatformSupport.h"
 #include "platform/WebThread.h"
 
@@ -151,9 +151,9 @@ TEST(Canvas2DLayerBridgeTest2, testClearClient)
     OwnPtr<Canvas2DLayerBridge> bridge = Canvas2DLayerBridge::create(mainContext.get(), IntSize(100, 100), Deferred, 1);
     RefPtr<LayerChromium> layer = bridge->layer();
     bridge.clear();
-    CCTextureUpdater updater;
+    CCTextureUpdateQueue queue;
     CCRenderingStats stats;
-    layer->update(updater, 0, stats);
+    layer->update(queue, 0, stats);
 }
 
 } // namespace

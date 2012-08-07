@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2012 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,8 +23,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CCTextureUpdater_h
-#define CCTextureUpdater_h
+#ifndef CCTextureUpdateQueue_h
+#define CCTextureUpdateQueue_h
 
 #include "TextureCopier.h"
 #include "TextureUploader.h"
@@ -33,11 +33,11 @@
 
 namespace WebCore {
 
-class CCTextureUpdater {
-    WTF_MAKE_NONCOPYABLE(CCTextureUpdater);
+class CCTextureUpdateQueue {
+    WTF_MAKE_NONCOPYABLE(CCTextureUpdateQueue);
 public:
-    CCTextureUpdater();
-    virtual ~CCTextureUpdater();
+    CCTextureUpdateQueue();
+    virtual ~CCTextureUpdateQueue();
 
     void appendFullUpload(TextureUploader::Parameters);
     void appendPartialUpload(TextureUploader::Parameters);
@@ -61,4 +61,4 @@ private:
 
 }
 
-#endif // CCTextureUpdater_h
+#endif // CCTextureUpdateQueue_h

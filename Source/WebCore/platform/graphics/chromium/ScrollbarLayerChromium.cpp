@@ -32,7 +32,7 @@
 #include "LayerPainterChromium.h"
 #include "cc/CCLayerTreeHost.h"
 #include "cc/CCScrollbarLayerImpl.h"
-#include "cc/CCTextureUpdater.h"
+#include "cc/CCTextureUpdateQueue.h"
 #include <public/WebRect.h>
 
 using WebKit::WebRect;
@@ -206,7 +206,7 @@ void ScrollbarLayerChromium::createTextureUpdaterIfNeeded()
         m_thumb = m_thumbUpdater->createTexture(layerTreeHost()->contentsTextureManager());
 }
 
-void ScrollbarLayerChromium::updatePart(LayerTextureUpdater* painter, LayerTextureUpdater::Texture* texture, const IntRect& rect, CCTextureUpdater& updater, CCRenderingStats& stats)
+void ScrollbarLayerChromium::updatePart(LayerTextureUpdater* painter, LayerTextureUpdater::Texture* texture, const IntRect& rect, CCTextureUpdateQueue& queue, CCRenderingStats& stats)
 {
     // Skip painting and uploading if there are no invalidations and
     // we already have valid texture data.
@@ -227,7 +227,7 @@ void ScrollbarLayerChromium::updatePart(LayerTextureUpdater* painter, LayerTextu
 
     IntRect destRect(IntPoint(), rect.size());
     TextureUploader::Parameters upload = { texture, rect, destRect };
-    updater.appendFullUpload(upload);
+    queue.appendFullUpload(upload);
 }
 
 
@@ -254,7 +254,7 @@ void ScrollbarLayerChromium::setTexturePriorities(const CCPriorityCalculator&)
     }
 }
 
-void ScrollbarLayerChromium::update(CCTextureUpdater& updater, const CCOcclusionTracker*, CCRenderingStats& stats)
+void ScrollbarLayerChromium::update(CCTextureUpdateQueue& queue, const CCOcclusionTracker*, CCRenderingStats& stats)
 {
     if (contentBounds().isEmpty())
         return;
@@ -263,15 +263,15 @@ void ScrollbarLayerChromium::update(CCTextureUpdater& updater, const CCOcclusion
 
     IntPoint scrollbarOrigin(m_scrollbar->location().x, m_scrollbar->location().y);
     IntRect contentRect(scrollbarOrigin, contentBounds());
-    updatePart(m_backTrackUpdater.get(), m_backTrack.get(), contentRect, updater, stats);
+    updatePart(m_backTrackUpdater.get(), m_backTrack.get(), contentRect, queue, stats);
     if (m_foreTrack && m_foreTrackUpdater)
-        updatePart(m_foreTrackUpdater.get(), m_foreTrack.get(), contentRect, updater, stats);
+        updatePart(m_foreTrackUpdater.get(), m_foreTrack.get(), contentRect, queue, stats);
 
     // Consider the thumb to be at the origin when painting.
     WebKit::WebRect thumbRect = m_geometry.thumbRect(m_scrollbar.get());
     IntRect originThumbRect = IntRect(0, 0, thumbRect.width, thumbRect.height);
     if (!originThumbRect.isEmpty())
-        updatePart(m_thumbUpdater.get(), m_thumb.get(), originThumbRect, updater, stats);
+        updatePart(m_thumbUpdater.get(), m_thumb.get(), originThumbRect, queue, stats);
 }
 
 }

@@ -456,7 +456,7 @@ bool CCLayerTreeHost::initializeLayerRendererIfNeeded()
 }
 
 
-void CCLayerTreeHost::updateLayers(CCTextureUpdater& updater, size_t memoryAllocationLimitBytes)
+void CCLayerTreeHost::updateLayers(CCTextureUpdateQueue& queue, size_t memoryAllocationLimitBytes)
 {
     ASSERT(m_layerRendererInitialized);
     ASSERT(memoryAllocationLimitBytes);
@@ -469,10 +469,10 @@ void CCLayerTreeHost::updateLayers(CCTextureUpdater& updater, size_t memoryAlloc
 
     m_contentsTextureManager->setMaxMemoryLimitBytes(memoryAllocationLimitBytes);
 
-    updateLayers(rootLayer(), updater);
+    updateLayers(rootLayer(), queue);
 }
 
-void CCLayerTreeHost::updateLayers(LayerChromium* rootLayer, CCTextureUpdater& updater)
+void CCLayerTreeHost::updateLayers(LayerChromium* rootLayer, CCTextureUpdateQueue& queue)
 {
     TRACE_EVENT0("cc", "CCLayerTreeHost::updateLayers");
 
@@ -489,7 +489,7 @@ void CCLayerTreeHost::updateLayers(LayerChromium* rootLayer, CCTextureUpdater& u
     // Reset partial texture update requests.
     m_partialTextureUpdateRequests = 0;
 
-    bool needMoreUpdates = paintLayerContents(updateList, updater);
+    bool needMoreUpdates = paintLayerContents(updateList, queue);
     if (m_triggerIdleUpdates && needMoreUpdates)
         setNeedsCommit();
 
@@ -565,7 +565,7 @@ size_t CCLayerTreeHost::calculateMemoryForRenderSurfaces(const LayerList& update
     return readbackBytes + maxBackgroundTextureBytes + contentsTextureBytes;
 }
 
-bool CCLayerTreeHost::paintMasksForRenderSurface(LayerChromium* renderSurfaceLayer, CCTextureUpdater& updater)
+bool CCLayerTreeHost::paintMasksForRenderSurface(LayerChromium* renderSurfaceLayer, CCTextureUpdateQueue& queue)
 {
     // Note: Masks and replicas only exist for layers that own render surfaces. If we reach this point
     // in code, we already know that at least something will be drawn into this render surface, so the
@@ -574,19 +574,19 @@ bool CCLayerTreeHost::paintMasksForRenderSurface(LayerChromium* renderSurfaceLay
     bool needMoreUpdates = false;
     LayerChromium* maskLayer = renderSurfaceLayer->maskLayer();
     if (maskLayer) {
-        maskLayer->update(updater, 0, m_renderingStats);
+        maskLayer->update(queue, 0, m_renderingStats);
         needMoreUpdates |= maskLayer->needMoreUpdates();
     }
 
     LayerChromium* replicaMaskLayer = renderSurfaceLayer->replicaLayer() ? renderSurfaceLayer->replicaLayer()->maskLayer() : 0;
     if (replicaMaskLayer) {
-        replicaMaskLayer->update(updater, 0, m_renderingStats);
+        replicaMaskLayer->update(queue, 0, m_renderingStats);
         needMoreUpdates |= replicaMaskLayer->needMoreUpdates();
     }
     return needMoreUpdates;
 }
 
-bool CCLayerTreeHost::paintLayerContents(const LayerList& renderSurfaceLayerList, CCTextureUpdater& updater)
+bool CCLayerTreeHost::paintLayerContents(const LayerList& renderSurfaceLayerList, CCTextureUpdateQueue& queue)
 {
     // Use FrontToBack to allow for testing occlusion and performing culling during the tree walk.
     typedef CCLayerIterator<LayerChromium, Vector<RefPtr<LayerChromium> >, RenderSurfaceChromium, CCLayerIteratorActions::FrontToBack> CCLayerIteratorType;
@@ -604,10 +604,10 @@ bool CCLayerTreeHost::paintLayerContents(const LayerList& renderSurfaceLayerList
 
         if (it.representsTargetRenderSurface()) {
             ASSERT(it->renderSurface()->drawOpacity() || it->renderSurface()->drawOpacityIsAnimating());
-            needMoreUpdates |= paintMasksForRenderSurface(*it, updater);
+            needMoreUpdates |= paintMasksForRenderSurface(*it, queue);
         } else if (it.representsItself()) {
             ASSERT(!it->bounds().isEmpty());
-            it->update(updater, &occlusionTracker, m_renderingStats);
+            it->update(queue, &occlusionTracker, m_renderingStats);
             needMoreUpdates |= it->needMoreUpdates();
         }
 
