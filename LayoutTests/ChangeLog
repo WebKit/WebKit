@@ -1,3 +1,23 @@
+2012-08-07  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Move test cases related to link prerender to Skipped list except for chromium port
+        https://bugs.webkit.org/show_bug.cgi?id=93355
+
+        Reviewed by Adam Barth.
+
+        Below two test cases have tested by each port, which doesn't enable LINK_PRERENDER macro.
+        These test cases need to be moved to Skipped file until this feature is supported by each port.
+
+        fast/dom/HTMLLinkElement/prerender-insert-after-stop.html
+        fast/dom/HTMLLinkElement/prerender-remove-after-stop.html
+
+        * platform/efl/Skipped:
+        * platform/mac/Skipped:
+        * platform/qt/Skipped:
+        * platform/win/Skipped:
+        * platform/wincairo/Skipped:
+        * platform/wk2/Skipped:
+
 2012-08-07  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed GTK gardening, adding back platform-specific expectations that

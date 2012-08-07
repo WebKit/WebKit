@@ -103,6 +103,10 @@ fast/media/print-restores-previous-mediatype.html
 # defined(ENABLE_INPUT_TYPE_COLOR) is disabled
 fast/forms/color/input-color-onchange-event.html
 
+# ENABLE(LINK_PRERENDER) is disabled.
+fast/dom/HTMLLinkElement/prerender-insert-after-stop.html
+fast/dom/HTMLLinkElement/prerender-remove-after-stop.html
+
 # EFL's LayoutTestController does not implement keepWebHistory
 fast/history/visited-generated-content-test.html
 fast/history/visited-link-background-color.html
