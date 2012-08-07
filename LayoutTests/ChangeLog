@@ -1,3 +1,10 @@
+2012-08-07  Dmitry Titov  <dimich@chromium.org>
+
+        [Chromium] Unreviewed, TestExpectations update.
+        https://bugs.webkit.org/show_bug.cgi?id=72039
+
+        * platform/chromium/TestExpectations: Adding back the possible failure that was removed in http://trac.webkit.org/changeset/124734
+
 2012-08-07  W. James MacLean  <wjmaclean@chromium.org>
 
         [chromium] Add support to DumpRenderTree [EventSender] for GestureTapDown events.
