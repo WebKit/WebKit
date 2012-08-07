@@ -49,6 +49,7 @@ private:
 
     friend class WebCompositor;
     static void initialize(WebThread* implThread);
+    static bool threadingEnabled();
     static void shutdown();
 
     static bool s_initialized;

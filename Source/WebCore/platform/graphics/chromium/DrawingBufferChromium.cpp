@@ -36,8 +36,8 @@
 #include "Extensions3DChromium.h"
 #include "GraphicsContext3D.h"
 #include "GraphicsContext3DPrivate.h"
-#include "cc/CCProxy.h"
 #include <algorithm>
+#include <public/WebCompositor.h>
 #include <public/WebExternalTextureLayer.h>
 #include <public/WebExternalTextureLayerClient.h>
 #include <public/WebGraphicsContext3D.h>
@@ -81,7 +81,7 @@ DrawingBuffer::DrawingBuffer(GraphicsContext3D* context,
     , m_fbo(0)
     , m_colorBuffer(0)
     , m_frontColorBuffer(0)
-    , m_separateFrontTexture(m_preserveDrawingBuffer == Preserve || CCProxy::implThread())
+    , m_separateFrontTexture(m_preserveDrawingBuffer == Preserve || WebKit::WebCompositor::threadingEnabled())
     , m_depthStencilBuffer(0)
     , m_depthBuffer(0)
     , m_stencilBuffer(0)

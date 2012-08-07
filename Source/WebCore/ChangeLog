@@ -1,3 +1,26 @@
+2012-08-07  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Use WebCompositor interface in Platform API instead of CCProxy to query threaded compositor status
+        https://bugs.webkit.org/show_bug.cgi?id=93398
+
+        Reviewed by Adam Barth.
+
+        Converts non-compositor code that cares about threaded compositing status over to query WebCompositor instead of
+        CCProxy.
+
+        * page/scrolling/chromium/ScrollingCoordinatorChromium.cpp:
+        * platform/chromium/support/WebCompositorImpl.cpp:
+        (WebKit):
+        (WebKit::WebCompositor::threadingEnabled):
+        (WebKit::WebCompositor::onCompositorThread):
+        (WebKit::WebCompositorImpl::threadingEnabled):
+        * platform/chromium/support/WebCompositorImpl.h:
+        (WebCompositorImpl):
+        * platform/graphics/chromium/Canvas2DLayerBridge.cpp:
+        (WebCore::Canvas2DLayerBridge::Canvas2DLayerBridge):
+        * platform/graphics/chromium/DrawingBufferChromium.cpp:
+        (WebCore::DrawingBuffer::DrawingBuffer):
+
 2012-08-07  Anders Carlsson  <andersca@apple.com>
 
         Knob slot animation is flipped

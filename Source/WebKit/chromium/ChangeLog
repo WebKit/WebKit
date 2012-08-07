@@ -1,5 +1,22 @@
 2012-08-07  James Robinson  <jamesr@chromium.org>
 
+        [chromium] Use WebCompositor interface in Platform API instead of CCProxy to query threaded compositor status
+        https://bugs.webkit.org/show_bug.cgi?id=93398
+
+        Reviewed by Adam Barth.
+
+        Converts non-compositor code that cares about threaded compositing status over to query WebCompositor instead of
+        CCProxy.
+
+        * src/WebMediaPlayerClientImpl.cpp:
+        (WebKit::WebMediaPlayerClientImpl::supportsType):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::composite):
+        (WebKit::WebViewImpl::scheduleAnimation):
+        (WebKit::WebViewImpl::scheduleComposite):
+
+2012-08-07  James Robinson  <jamesr@chromium.org>
+
         [chromium] Move WebCompositor interface into Platform AP
         https://bugs.webkit.org/show_bug.cgi?id=93391
 

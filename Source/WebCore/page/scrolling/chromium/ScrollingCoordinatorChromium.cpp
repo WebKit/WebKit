@@ -35,7 +35,6 @@
 #include "RenderView.h"
 #include "ScrollbarThemeComposite.h"
 #include "WebScrollbarThemeGeometryNative.h"
-#include "cc/CCProxy.h"
 #include <public/WebScrollableLayer.h>
 #include <public/WebScrollbar.h>
 #include <public/WebScrollbarLayer.h>

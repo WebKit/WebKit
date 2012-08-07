@@ -34,7 +34,7 @@
 #include "SkCanvas.h"
 #include "SkDeferredCanvas.h"
 #include "TraceEvent.h"
-#include "cc/CCProxy.h"
+#include <public/WebCompositor.h>
 #include <public/WebGraphicsContext3D.h>
 
 using WebKit::WebExternalTextureLayer;
@@ -74,7 +74,7 @@ Canvas2DLayerBridge::Canvas2DLayerBridge(PassRefPtr<GraphicsContext3D> context, 
     // deferred. What we should be doing is to use a smarter heuristic based
     // on GPU resource monitoring and other factors to chose between single
     // and double buffering.
-    , m_useDoubleBuffering(CCProxy::hasImplThread() && deferralMode == NonDeferred)
+    , m_useDoubleBuffering(WebKit::WebCompositor::threadingEnabled() && deferralMode == NonDeferred)
     , m_frontBufferTexture(0)
     , m_backBufferTexture(textureId)
     , m_size(size)
@@ -98,7 +98,7 @@ Canvas2DLayerBridge::Canvas2DLayerBridge(PassRefPtr<GraphicsContext3D> context, 
 
     m_layer = WebExternalTextureLayer::create(this);
     m_layer.setTextureId(textureId);
-    m_layer.setRateLimitContext(!CCProxy::hasImplThread() || m_useDoubleBuffering);
+    m_layer.setRateLimitContext(!WebKit::WebCompositor::threadingEnabled() || m_useDoubleBuffering);
 }
 
 

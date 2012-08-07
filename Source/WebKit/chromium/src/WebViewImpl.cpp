@@ -148,13 +148,10 @@
 #include "WebTouchCandidatesInfo.h"
 #include "WebViewClient.h"
 #include "WheelEvent.h"
-#include "cc/CCProxy.h"
 #include "cc/CCSettings.h"
 #include "painting/GraphicsContextBuilder.h"
-#include "platform/WebKitPlatformSupport.h"
-#include "platform/WebString.h"
-#include "platform/WebVector.h"
 #include <public/Platform.h>
+#include <public/WebCompositor.h>
 #include <public/WebDragData.h>
 #include <public/WebFloatPoint.h>
 #include <public/WebGraphicsContext3D.h>
@@ -163,6 +160,8 @@
 #include <public/WebLayerTreeView.h>
 #include <public/WebPoint.h>
 #include <public/WebRect.h>
+#include <public/WebString.h>
+#include <public/WebVector.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/MainThread.h>
 #include <wtf/RefPtr.h>
@@ -1726,7 +1725,7 @@ void WebViewImpl::themeChanged()
 void WebViewImpl::composite(bool)
 {
 #if USE(ACCELERATED_COMPOSITING)
-    if (CCProxy::hasImplThread())
+    if (WebCompositor::threadingEnabled())
         m_layerTreeView.setNeedsRedraw();
     else {
         ASSERT(isAcceleratedCompositingActive());
@@ -3586,7 +3585,7 @@ WebCore::GraphicsLayer* WebViewImpl::rootGraphicsLayer()
 void WebViewImpl::scheduleAnimation()
 {
     if (isAcceleratedCompositingActive()) {
-        if (CCProxy::hasImplThread()) {
+        if (WebCompositor::threadingEnabled()) {
             ASSERT(!m_layerTreeView.isNull());
             m_layerTreeView.setNeedsAnimate();
         } else
@@ -3800,7 +3799,7 @@ void WebViewImpl::didRebindGraphicsContext(bool success)
 
 void WebViewImpl::scheduleComposite()
 {
-    ASSERT(!CCProxy::hasImplThread());
+    ASSERT(!WebCompositor::threadingEnabled());
     m_client->scheduleComposite();
 }
 
