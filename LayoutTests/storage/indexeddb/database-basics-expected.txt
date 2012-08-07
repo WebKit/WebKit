@@ -22,7 +22,7 @@ PASS db.name is "database-basics"
 PASS db.objectStoreNames is []
 PASS db.objectStoreNames.length is 0
 PASS db.objectStoreNames.contains('') is false
-PASS db.objectStoreNames[0] is null
+PASS db.objectStoreNames[0] is undefined.
 PASS db.objectStoreNames.item(0) is null
 db.createObjectStore("test123")
 PASS db.objectStoreNames is ['test123']

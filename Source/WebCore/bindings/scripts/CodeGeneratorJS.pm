@@ -2322,7 +2322,7 @@ sub GenerateImplementation
         push(@implContent, "    ASSERT_GC_OBJECT_INHERITS(thisObj, &s_info);\n");
         if (IndexGetterReturnsStrings($implClassName)) {
             $implIncludes{"KURL.h"} = 1;
-            push(@implContent, "    return jsStringOrNull(exec, thisObj->impl()->item(index));\n");
+            push(@implContent, "    return jsStringOrUndefined(exec, thisObj->impl()->item(index));\n");
         } else {
             push(@implContent, "    return toJS(exec, thisObj->globalObject(), static_cast<$implClassName*>(thisObj->impl())->item(index));\n");
         }

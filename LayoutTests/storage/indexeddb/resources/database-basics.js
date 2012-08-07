@@ -60,7 +60,7 @@ function createObjectStore()
     shouldBe("db.objectStoreNames", "[]");
     shouldBe("db.objectStoreNames.length", "0");
     shouldBe("db.objectStoreNames.contains('')", "false");
-    shouldBeNull("db.objectStoreNames[0]");
+    shouldBeUndefined("db.objectStoreNames[0]");
     shouldBeNull("db.objectStoreNames.item(0)");
 
     objectStore = evalAndLog('db.createObjectStore("test123")');

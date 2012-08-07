@@ -21,9 +21,9 @@ PASS element.htmlFor.toString() is "y"
 PASS list.value is "x"
 PASS list.value is ""
 PASS element.htmlFor.contains('x') is false
-PASS element.htmlFor[1] is null
+PASS element.htmlFor[1] is undefined.
 PASS element.htmlFor.contains('x') is true
-PASS element.htmlFor[1] is null
+PASS element.htmlFor[1] is undefined.
 - Testing add in presence of trailing white spaces.
 PASS element.htmlFor.toString() is "x y"
 PASS element.htmlFor.toString() is "x\t y"
@@ -44,9 +44,9 @@ PASS element.htmlFor[1] is "x"
 PASS element.htmlFor.item(1) is "x"
 PASS element.htmlFor[1] is "y"
 PASS element.htmlFor.item(1) is "y"
-PASS element.htmlFor[0] is null
+PASS element.htmlFor[0] is undefined.
 PASS element.htmlFor.item(0) is null
-PASS element.htmlFor[4] is null
+PASS element.htmlFor[4] is undefined.
 PASS element.htmlFor.item(4) is null
 PASS element.htmlFor[-1] is undefined.
 PASS element.htmlFor.item(-1) is null

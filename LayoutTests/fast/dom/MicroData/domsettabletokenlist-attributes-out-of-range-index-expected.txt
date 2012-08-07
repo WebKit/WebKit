@@ -1,0 +1,38 @@
+This test verifies itemType[index], itemRef[index], itemProp[index] behavior for out-of-range index.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Test itemType[index]
+PASS element.itemType.item(0) is null
+PASS element.itemType[0] is undefined.
+PASS element.itemType.item(1) is null
+PASS element.itemType[1] is undefined.
+PASS element.itemType.item(0) is null
+PASS element.itemType[0] is undefined.
+PASS element.itemType.item(-1) is null
+PASS element.itemType[-1] is undefined.
+
+Test itemRef[index]
+PASS element.itemRef.item(0) is null
+PASS element.itemRef[0] is undefined.
+PASS element.itemRef.item(1) is null
+PASS element.itemRef[1] is undefined.
+PASS element.itemRef.item(0) is null
+PASS element.itemRef[0] is undefined.
+PASS element.itemRef.item(-1) is null
+PASS element.itemRef[-1] is undefined.
+
+Test itemProp[index]
+PASS element.itemProp.item(0) is null
+PASS element.itemProp[0] is undefined.
+PASS element.itemProp.item(1) is null
+PASS element.itemProp[1] is undefined.
+PASS element.itemProp.item(0) is null
+PASS element.itemProp[0] is undefined.
+PASS element.itemProp.item(-1) is null
+PASS element.itemProp[-1] is undefined.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

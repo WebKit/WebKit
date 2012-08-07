@@ -1,3 +1,32 @@
+2012-08-06  Arko Saha  <arko@motorola.com>
+
+        Microdata: itemType[index] must be undefined for out-of-range index.
+        https://bugs.webkit.org/show_bug.cgi?id=92988
+
+        Reviewed by Kentaro Hara.
+
+        Added a test to verify itemType[index], itemRef[index], itemProp[index]
+        behavior for out-of-range index.
+
+        Rebased existing test cases for IndexedGetter property.
+
+        * fast/dom/HTMLElement/class-list-expected.txt:
+        * fast/dom/HTMLElement/class-list-quirks-expected.txt:
+        * fast/dom/HTMLElement/script-tests/class-list.js:
+        * fast/dom/HTMLOutputElement/dom-settable-token-list-expected.txt:
+        * fast/dom/HTMLOutputElement/script-tests/dom-settable-token-list.js:
+        * fast/dom/MicroData/domsettabletokenlist-attributes-out-of-range-index-expected.txt: Added.
+        * fast/dom/MicroData/domsettabletokenlist-attributes-out-of-range-index.html: Added.
+        * fast/dom/StyleSheet/css-medialist-item-expected.txt:
+        * fast/dom/StyleSheet/script-tests/css-medialist-item.js:
+        * storage/indexeddb/database-basics-expected.txt:
+        * storage/indexeddb/objectstore-basics-expected.txt:
+        * storage/indexeddb/objectstore-basics-workers-expected.txt:
+        * storage/indexeddb/resources/database-basics.js:
+        (createObjectStore):
+        * storage/indexeddb/resources/objectstore-basics.js:
+        (checkMetadata):
+
 2012-08-06  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         [EFL] Enable link prefetch

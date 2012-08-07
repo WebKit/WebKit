@@ -129,13 +129,13 @@ template<class Collection> static v8::Handle<v8::Array> collectionIndexedPropert
 
 
 // A template for indexed getters on collections of strings that should return null if the resulting string is a null string.
-template<class Collection> static v8::Handle<v8::Value> collectionStringOrNullIndexedPropertyGetter(uint32_t index, const v8::AccessorInfo& info)
+template<class Collection> static v8::Handle<v8::Value> collectionStringOrUndefinedIndexedPropertyGetter(uint32_t index, const v8::AccessorInfo& info)
 {
     // FIXME: assert that object must be a collection type
     ASSERT(V8DOMWrapper::maybeDOMWrapper(info.Holder()));
     Collection* collection = toNativeCollection<Collection>(info.Holder());
     String result = collection->item(index);
-    return v8StringOrNull(result, info.GetIsolate());
+    return v8StringOrUndefined(result, info.GetIsolate());
 }
 
 
@@ -164,9 +164,9 @@ template<class Collection, class ItemType> static void setCollectionNamedGetter(
 }
 
 // Add indexed getter returning a string or null to a function template for a collection.
-template<class Collection> static void setCollectionStringOrNullIndexedGetter(v8::Handle<v8::FunctionTemplate> desc)
+template<class Collection> static void setCollectionStringOrUndefinedIndexedGetter(v8::Handle<v8::FunctionTemplate> desc)
 {
-    desc->InstanceTemplate()->SetIndexedPropertyHandler(collectionStringOrNullIndexedPropertyGetter<Collection>, 0, 0, 0, collectionIndexedPropertyEnumerator<Collection>);
+    desc->InstanceTemplate()->SetIndexedPropertyHandler(collectionStringOrUndefinedIndexedPropertyGetter<Collection>, 0, 0, 0, collectionIndexedPropertyEnumerator<Collection>);
 }
 
 

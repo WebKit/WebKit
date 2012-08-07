@@ -21,7 +21,7 @@ Ensure that we can handle empty class name correctly
 PASS element.className is "x"
 PASS element.className is ""
 PASS element.classList.contains('x') is false
-PASS element.classList[1] is null
+PASS element.classList[1] is undefined.
 Testing add in presence of trailing white spaces.
 PASS element.className is "x y"
 PASS element.className is "x\t y"
@@ -45,9 +45,9 @@ PASS element.classList[1] is "x"
 PASS element.classList.item(1) is "x"
 PASS element.classList[1] is "y"
 PASS element.classList.item(1) is "y"
-PASS element.classList[0] is null
+PASS element.classList[0] is undefined.
 PASS element.classList.item(0) is null
-PASS element.classList[4] is null
+PASS element.classList[4] is undefined.
 PASS element.classList.item(4) is null
 PASS element.classList[-1] is undefined.
 PASS element.classList.item(-1) is null

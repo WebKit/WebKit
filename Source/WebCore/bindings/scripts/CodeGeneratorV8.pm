@@ -2352,7 +2352,7 @@ sub GenerateImplementationIndexer
             my $conversion = $indexer->extendedAttributes->{"TreatReturnedNullStringAs"};
             if ($conversion && $conversion eq "Null") {
                 push(@implContent, <<END);
-    setCollectionStringOrNullIndexedGetter<${interfaceName}>(desc);
+    setCollectionStringOrUndefinedIndexedGetter<${interfaceName}>(desc);
 END
             } else {
                 push(@implContent, <<END);

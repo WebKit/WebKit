@@ -126,8 +126,8 @@ function checkMetadata()
     shouldBe("store.indexNames.contains('indexFail')", "false");
     shouldBe("store.indexNames.contains('indexName')", "true");
     shouldBeEqualToString("store.indexNames[0]", "indexName");
-    shouldBeNull("store.indexNames[1]");
-    shouldBeNull("store.indexNames[100]");
+    shouldBeUndefined("store.indexNames[1]");
+    shouldBeUndefined("store.indexNames[100]");
     shouldBeNull("store.indexNames.item(1)");
     shouldBeNull("store.indexNames.item(100)");
     addData();

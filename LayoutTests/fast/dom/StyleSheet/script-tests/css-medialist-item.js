@@ -8,7 +8,7 @@ var mediaList = document.styleSheets[document.styleSheets.length - 1].media;
 shouldEvaluateTo('mediaList.length', 2);
 shouldBeEqualToString('mediaList[0]', 'screen');
 shouldBeEqualToString('mediaList[1]', 'print');
-shouldBeNull('mediaList[2]');
+shouldBeUndefined('mediaList[2]');
 shouldBeUndefined('mediaList[-1]')
 
 document.documentElement.removeChild(styleElement);
