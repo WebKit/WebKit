@@ -167,8 +167,10 @@ static const unsigned char IndexMetaDataTypeMaximum = 255;
 
 Vector<char> encodeByte(unsigned char c)
 {
-    Vector<char> v;
+    Vector<char, DefaultInlineBufferSize> v;
     v.append(c);
+
+    ASSERT(v.size() <= DefaultInlineBufferSize);
     return v;
 }
 
@@ -193,8 +195,10 @@ Vector<char> minIDBKey()
 
 Vector<char> encodeBool(bool b)
 {
-    Vector<char> ret(1);
-    ret[0] = b ? 1 : 0;
+    Vector<char, DefaultInlineBufferSize> ret;
+    ret.append(b ? 1 : 0);
+
+    ASSERT(ret.size() <= DefaultInlineBufferSize);
     return ret;
 }
 
@@ -208,7 +212,7 @@ Vector<char> encodeInt(int64_t nParam)
 {
     ASSERT(nParam >= 0);
     uint64_t n = static_cast<uint64_t>(nParam);
-    Vector<char> ret; // FIXME: Size this at creation.
+    Vector<char, DefaultInlineBufferSize> ret;
 
     do {
         unsigned char c = n;
@@ -216,6 +220,7 @@ Vector<char> encodeInt(int64_t nParam)
         n >>= 8;
     } while (n);
 
+    ASSERT(ret.size() <= DefaultInlineBufferSize);
     return ret;
 }
 
@@ -251,7 +256,7 @@ Vector<char> encodeVarInt(int64_t nParam)
 {
     ASSERT(nParam >= 0);
     uint64_t n = static_cast<uint64_t>(nParam);
-    Vector<char> ret; // FIXME: Size this at creation.
+    Vector<char, DefaultInlineBufferSize> ret;
 
     do {
         unsigned char c = n & 0x7f;
@@ -261,6 +266,7 @@ Vector<char> encodeVarInt(int64_t nParam)
         ret.append(c);
     } while (n);
 
+    ASSERT(ret.size() <= DefaultInlineBufferSize);
     return ret;
 }
 
@@ -283,14 +289,14 @@ const char* decodeVarInt(const char* p, const char* limit, int64_t& foundInt)
 
 Vector<char> encodeString(const String& s)
 {
-    Vector<char> ret; // FIXME: Size this at creation.
+    Vector<char> ret(s.length() * 2);
 
     for (unsigned i = 0; i < s.length(); ++i) {
         UChar u = s[i];
         unsigned char hi = u >> 8;
         unsigned char lo = u;
-        ret.append(hi);
-        ret.append(lo);
+        ret[2 * i] = hi;
+        ret[2 * i + 1] = lo;
     }
 
     return ret;
@@ -373,9 +379,10 @@ Vector<char> encodeDouble(double x)
 {
     // FIXME: It would be nice if we could be byte order independent.
     const char* p = reinterpret_cast<char*>(&x);
-    Vector<char> v;
+    Vector<char, DefaultInlineBufferSize> v;
     v.append(p, sizeof(x));
-    ASSERT(v.size() == sizeof(x));
+
+    ASSERT(v.size() <= DefaultInlineBufferSize);
     return v;
 }
 
@@ -392,12 +399,12 @@ const char* decodeDouble(const char* p, const char* limit, double* d)
 
 Vector<char> encodeIDBKey(const IDBKey& key)
 {
-    Vector<char> ret;
+    Vector<char, DefaultInlineBufferSize> ret;
     encodeIDBKey(key, ret);
     return ret;
 }
 
-void encodeIDBKey(const IDBKey& key, Vector<char>& into)
+void encodeIDBKey(const IDBKey& key, Vector<char, DefaultInlineBufferSize>& into)
 {
     size_t previousSize = into.size();
     ASSERT(key.isValid());
@@ -649,7 +656,7 @@ Vector<char> encodeIDBKeyPath(const IDBKeyPath& keyPath)
     // May be typed, or may be a raw string. An invalid leading
     // byte is used to identify typed coding. New records are
     // always written as typed.
-    Vector<char> ret;
+    Vector<char, DefaultInlineBufferSize> ret;
     ret.append(IDBKeyPathTypeCodedByte1);
     ret.append(IDBKeyPathTypeCodedByte2);
     ret.append(static_cast<char>(keyPath.type()));
@@ -893,12 +900,13 @@ Vector<char> KeyPrefix::encode() const
 
 
     unsigned char firstByte = (databaseIdString.size() - 1) << 5 | (objectStoreIdString.size() - 1) << 2 | (indexIdString.size() - 1);
-    Vector<char> ret;
+    Vector<char, DefaultInlineBufferSize> ret;
     ret.append(firstByte);
     ret.append(databaseIdString);
     ret.append(objectStoreIdString);
     ret.append(indexIdString);
 
+    ASSERT(ret.size() <= DefaultInlineBufferSize);
     return ret;
 }
 

@@ -1,3 +1,21 @@
+2012-08-07  Xingnan Wang  <xingnan.wang@intel.com>
+
+        IndexedDB: Size the Vector in encodeInt/encodeVarInt/encodeString
+        https://bugs.webkit.org/show_bug.cgi?id=91813
+
+        Reviewed by Kentaro Hara.
+
+        To avoid memory re-allocation in Vector, init the capability or size of Vector in encodeInt(), encodeVarInt(),
+        encodeBool(), encodeIDBKey() etc.
+
+        No new tests - Low level functions covered by existing layout tests and also covered by Chromium
+        webkit_unit_tests IDBLevelIDBCodingTest.* which validates the sizes of buffers returned by encodeVarInt.
+
+        * Modules/indexeddb/IDBLevelDBCoding.cpp:
+        (WebCore::IDBLevelDBCoding::encodeInt):
+        (WebCore::IDBLevelDBCoding::encodeVarInt):
+        (WebCore::IDBLevelDBCoding::encodeString):
+
 2012-08-06  Arko Saha  <arko@motorola.com>
 
         Microdata: itemType[index] must be undefined for out-of-range index.

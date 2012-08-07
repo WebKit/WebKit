@@ -43,6 +43,10 @@ namespace IDBLevelDBCoding {
 
 const unsigned char MinimumIndexId = 30;
 
+// As most of the IDBKeys and encoded values are short, we initialize some Vectors with a default inline buffer size
+// to reduce the memory re-allocations when the Vectors are appended.
+static const size_t DefaultInlineBufferSize = 32;
+
 Vector<char> encodeByte(unsigned char);
 const char* decodeByte(const char* p, const char* limit, unsigned char& foundChar);
 Vector<char> maxIDBKey();
@@ -60,7 +64,7 @@ const char* decodeStringWithLength(const char* p, const char* limit, String& fou
 int compareEncodedStringsWithLength(const char*& p, const char* limitP, const char*& q, const char* limitQ);
 Vector<char> encodeDouble(double);
 const char* decodeDouble(const char* p, const char* limit, double*);
-void encodeIDBKey(const IDBKey&, Vector<char>& into);
+void encodeIDBKey(const IDBKey&, Vector<char, DefaultInlineBufferSize>& into);
 Vector<char> encodeIDBKey(const IDBKey&);
 const char* decodeIDBKey(const char* p, const char* limit, RefPtr<IDBKey>& foundKey);
 const char* extractEncodedIDBKey(const char* start, const char* limit, Vector<char>* result);
