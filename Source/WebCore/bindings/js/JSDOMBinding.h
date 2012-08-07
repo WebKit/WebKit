@@ -22,6 +22,7 @@
 #ifndef JSDOMBinding_h
 #define JSDOMBinding_h
 
+#include "BindingState.h"
 #include "CSSImportRule.h"
 #include "CSSStyleDeclaration.h"
 #include "CSSStyleSheet.h"
@@ -408,12 +409,6 @@ enum ParameterDefaultPolicy {
     bool shouldAllowAccessToFrame(JSC::ExecState*, Frame*);
     bool shouldAllowAccessToFrame(JSC::ExecState*, Frame*, String& message);
     // FIXME: Implement allowAccessToDOMWindow(JSC::ExecState*, DOMWindow*);
-
-    // FIXME: Remove these functions in favor of activeContext and
-    // firstContext, which return ScriptExecutionContext*. We prefer to use
-    // ScriptExecutionContext* as the context object in the bindings.
-    DOMWindow* activeDOMWindow(JSC::ExecState*);
-    DOMWindow* firstDOMWindow(JSC::ExecState*);
 
     void printErrorMessageForFrame(Frame*, const String& message);
     JSC::JSValue objectToStringFunctionGetter(JSC::ExecState*, JSC::JSValue, JSC::PropertyName);

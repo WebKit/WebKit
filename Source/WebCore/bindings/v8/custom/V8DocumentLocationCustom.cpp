@@ -52,11 +52,11 @@ void V8Document::locationAccessorSetter(v8::Local<v8::String> name, v8::Local<v8
 
     BindingState* state = BindingState::instance();
 
-    DOMWindow* active = activeWindow(state);
+    DOMWindow* active = activeDOMWindow(state);
     if (!active)
         return;
 
-    DOMWindow* first = firstWindow(state);
+    DOMWindow* first = firstDOMWindow(state);
     if (!first)
         return;
 

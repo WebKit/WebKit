@@ -47,7 +47,7 @@ static bool canAccessDocument(BindingState* state, Document* targetDocument, boo
     if (!targetDocument)
         return false;
 
-    DOMWindow* active = activeWindow(state);
+    DOMWindow* active = activeDOMWindow(state);
     if (!active)
         return false;
 

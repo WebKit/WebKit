@@ -1,3 +1,62 @@
+2012-08-06  Adam Barth  <abarth@webkit.org>
+
+        JSC should use BindingState to determine the activeDOMWindow
+        https://bugs.webkit.org/show_bug.cgi?id=93307
+
+        Reviewed by Eric Seidel.
+
+        This patch moves activeDOMWindow from JSDOMBindings.cpp to
+        BindingState.cpp. This is a first step towards sharing the core
+        security logic in the bindings between JavaScriptCore and V8. Once the
+        logic is shared, we will be able to refactor the logic to avoid the
+        need for DOMWindow::m_securityOrigin.
+
+        This patch doesn't actually share any code (yet). It just sets the
+        stage by creating BindingState as a typedef of ExecState and adding the
+        appropriate files to the build systems.
+
+        This patch also renames activeWindow and firstWindow in the V8 bindings
+        to activeDOMWindow and firstDOMWindow to match the names in the
+        JavaScriptCore bindings.
+
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * UseJSC.cmake:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/generic/BindingSecurity.cpp:
+        (WebCore::canAccessDocument):
+        * bindings/js/JSBindingsAllInOne.cpp:
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore):
+        * bindings/js/JSDOMBinding.h:
+        (WebCore):
+        * bindings/v8/BindingState.cpp:
+        (WebCore::activeDOMWindow):
+        (WebCore::firstDOMWindow):
+        * bindings/v8/BindingState.h:
+        (WebCore):
+        * bindings/v8/custom/V8DOMWindowCustom.cpp:
+        (WebCore::V8DOMWindow::locationAccessorSetter):
+        (WebCore::handlePostMessageCallback):
+        (WebCore::V8DOMWindow::showModalDialogCallback):
+        (WebCore::V8DOMWindow::openCallback):
+        * bindings/v8/custom/V8DocumentLocationCustom.cpp:
+        (WebCore::V8Document::locationAccessorSetter):
+        * bindings/v8/custom/V8LocationCustom.cpp:
+        (WebCore::V8Location::hashAccessorSetter):
+        (WebCore::V8Location::hostAccessorSetter):
+        (WebCore::V8Location::hostnameAccessorSetter):
+        (WebCore::V8Location::hrefAccessorSetter):
+        (WebCore::V8Location::pathnameAccessorSetter):
+        (WebCore::V8Location::portAccessorSetter):
+        (WebCore::V8Location::protocolAccessorSetter):
+        (WebCore::V8Location::searchAccessorSetter):
+        (WebCore::V8Location::reloadCallback):
+        (WebCore::V8Location::replaceCallback):
+        (WebCore::V8Location::assignCallback):
+
 2012-08-05  Kent Tamura  <tkent@chromium.org>
 
         [Chromium-Mac] Use the default locale only if the browser locale matches to it

@@ -55,12 +55,12 @@ static v8::Handle<v8::Context> activeContext()
     return v8::Context::GetEntered();
 }
 
-DOMWindow* activeWindow(BindingState*)
+DOMWindow* activeDOMWindow(BindingState*)
 {
     return V8Proxy::retrieveWindow(activeContext());
 }
 
-DOMWindow* firstWindow(BindingState*)
+DOMWindow* firstDOMWindow(BindingState*)
 {
     return V8Proxy::retrieveWindow(v8::Context::GetEntered());
 }

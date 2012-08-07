@@ -31,13 +31,11 @@
 #ifndef BindingSecurity_h
 #define BindingSecurity_h
 
+#include "BindingState.h"
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-class BindingState;
-class DOMWindow;
-class Frame;
 class HTMLFrameElementBase;
 class Node;
 

@@ -55,7 +55,7 @@ void V8Location::hashAccessorSetter(v8::Local<v8::String> name, v8::Local<v8::Va
     // FIXME: Handle exceptions correctly.
     String hash = toWebCoreString(value);
 
-    impl->setHash(hash, activeWindow(state), firstWindow(state));
+    impl->setHash(hash, activeDOMWindow(state), firstDOMWindow(state));
 }
 
 void V8Location::hostAccessorSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
@@ -67,7 +67,7 @@ void V8Location::hostAccessorSetter(v8::Local<v8::String> name, v8::Local<v8::Va
     // FIXME: Handle exceptions correctly.
     String host = toWebCoreString(value);
 
-    impl->setHost(host, activeWindow(state), firstWindow(state));
+    impl->setHost(host, activeDOMWindow(state), firstDOMWindow(state));
 }
 
 void V8Location::hostnameAccessorSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
@@ -79,7 +79,7 @@ void V8Location::hostnameAccessorSetter(v8::Local<v8::String> name, v8::Local<v8
     // FIXME: Handle exceptions correctly.
     String hostname = toWebCoreString(value);
 
-    impl->setHostname(hostname, activeWindow(state), firstWindow(state));
+    impl->setHostname(hostname, activeDOMWindow(state), firstDOMWindow(state));
 }
 
 void V8Location::hrefAccessorSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
@@ -91,7 +91,7 @@ void V8Location::hrefAccessorSetter(v8::Local<v8::String> name, v8::Local<v8::Va
     // FIXME: Handle exceptions correctly.
     String href = toWebCoreString(value);
 
-    impl->setHref(href, activeWindow(state), firstWindow(state));
+    impl->setHref(href, activeDOMWindow(state), firstDOMWindow(state));
 }
 
 void V8Location::pathnameAccessorSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
@@ -103,7 +103,7 @@ void V8Location::pathnameAccessorSetter(v8::Local<v8::String> name, v8::Local<v8
     // FIXME: Handle exceptions correctly.
     String pathname = toWebCoreString(value);
 
-    impl->setPathname(pathname, activeWindow(state), firstWindow(state));
+    impl->setPathname(pathname, activeDOMWindow(state), firstDOMWindow(state));
 }
 
 void V8Location::portAccessorSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
@@ -115,7 +115,7 @@ void V8Location::portAccessorSetter(v8::Local<v8::String> name, v8::Local<v8::Va
     // FIXME: Handle exceptions correctly.
     String port = toWebCoreString(value);
 
-    impl->setPort(port, activeWindow(state), firstWindow(state));
+    impl->setPort(port, activeDOMWindow(state), firstDOMWindow(state));
 }
 
 void V8Location::protocolAccessorSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
@@ -128,7 +128,7 @@ void V8Location::protocolAccessorSetter(v8::Local<v8::String> name, v8::Local<v8
     String protocol = toWebCoreString(value);
 
     ExceptionCode ec = 0;
-    impl->setProtocol(protocol, activeWindow(state), firstWindow(state), ec);
+    impl->setProtocol(protocol, activeDOMWindow(state), firstDOMWindow(state), ec);
     if (UNLIKELY(ec))
         V8Proxy::setDOMException(ec, info.GetIsolate());
 }
@@ -142,7 +142,7 @@ void V8Location::searchAccessorSetter(v8::Local<v8::String> name, v8::Local<v8::
     // FIXME: Handle exceptions correctly.
     String search = toWebCoreString(value);
 
-    impl->setSearch(search, activeWindow(state), firstWindow(state));
+    impl->setSearch(search, activeDOMWindow(state), firstDOMWindow(state));
 }
 
 v8::Handle<v8::Value> V8Location::reloadAccessorGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
@@ -206,7 +206,7 @@ v8::Handle<v8::Value> V8Location::reloadCallback(const v8::Arguments& args)
     Location* impl = V8Location::toNative(args.Holder());
     BindingState* state = BindingState::instance();
 
-    impl->reload(activeWindow(state));
+    impl->reload(activeDOMWindow(state));
     return v8::Undefined();
 }
 
@@ -219,7 +219,7 @@ v8::Handle<v8::Value> V8Location::replaceCallback(const v8::Arguments& args)
     // FIXME: Handle exceptions correctly.
     String urlString = toWebCoreString(args[0]);
 
-    impl->replace(urlString, activeWindow(state), firstWindow(state));
+    impl->replace(urlString, activeDOMWindow(state), firstDOMWindow(state));
     return v8::Undefined();
 }
 
@@ -232,7 +232,7 @@ v8::Handle<v8::Value> V8Location::assignCallback(const v8::Arguments& args)
     // FIXME: Handle exceptions correctly.
     String urlString = toWebCoreString(args[0]);
 
-    impl->assign(urlString, activeWindow(state), firstWindow(state));
+    impl->assign(urlString, activeDOMWindow(state), firstDOMWindow(state));
     return v8::Undefined();
 }
 

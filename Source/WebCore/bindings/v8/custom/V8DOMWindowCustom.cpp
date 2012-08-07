@@ -189,11 +189,11 @@ void V8DOMWindow::locationAccessorSetter(v8::Local<v8::String> name, v8::Local<v
     DOMWindow* imp = V8DOMWindow::toNative(info.Holder());
     BindingState* state = BindingState::instance();
 
-    DOMWindow* active = activeWindow(state);
+    DOMWindow* active = activeDOMWindow(state);
     if (!active)
       return;
 
-    DOMWindow* first = firstWindow(state);
+    DOMWindow* first = firstDOMWindow(state);
     if (!first)
       return;
 
@@ -300,7 +300,7 @@ static v8::Handle<v8::Value> handlePostMessageCallback(const v8::Arguments& args
     // None of these need to be RefPtr because args and context are guaranteed
     // to hold on to them.
     DOMWindow* window = V8DOMWindow::toNative(args.Holder());
-    DOMWindow* source = activeWindow(BindingState::instance());
+    DOMWindow* source = activeDOMWindow(BindingState::instance());
 
     // If called directly by WebCore we don't have a calling context.
     if (!source)
@@ -441,7 +441,7 @@ v8::Handle<v8::Value> V8DOMWindow::showModalDialogCallback(const v8::Arguments& 
     DialogHandler handler(args[1]);
     String dialogFeaturesString = toWebCoreStringWithNullOrUndefinedCheck(args[2]);
 
-    impl->showModalDialog(urlString, dialogFeaturesString, activeWindow(state), firstWindow(state), setUpDialog, &handler);
+    impl->showModalDialog(urlString, dialogFeaturesString, activeDOMWindow(state), firstDOMWindow(state), setUpDialog, &handler);
 
     return handler.returnValue();
 }
@@ -459,7 +459,7 @@ v8::Handle<v8::Value> V8DOMWindow::openCallback(const v8::Arguments& args)
     AtomicString frameName = (args[1]->IsUndefined() || args[1]->IsNull()) ? "_blank" : AtomicString(toWebCoreString(args[1]));
     String windowFeaturesString = toWebCoreStringWithNullOrUndefinedCheck(args[2]);
 
-    RefPtr<DOMWindow> openedWindow = impl->open(urlString, frameName, windowFeaturesString, activeWindow(state), firstWindow(state));
+    RefPtr<DOMWindow> openedWindow = impl->open(urlString, frameName, windowFeaturesString, activeDOMWindow(state), firstDOMWindow(state));
     if (!openedWindow)
         return v8::Undefined();
 

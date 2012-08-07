@@ -69,11 +69,13 @@ SOURCES += \
     accessibility/AccessibilityTableRow.cpp \
     accessibility/AXObjectCache.cpp \
     bindings/generic/ActiveDOMCallback.cpp \
+    bindings/generic/BindingSecurity.cpp \
     bindings/generic/RuntimeEnabledFeatures.cpp
 
 SOURCES += \
      bindings/ScriptControllerBase.cpp \
      bindings/js/ArrayValue.cpp \
+     bindings/js/BindingState.cpp \
      bindings/js/CallbackFunction.cpp \
      bindings/js/DOMObjectHashTableMap.cpp \
      bindings/js/DOMWrapperWorld.cpp \
@@ -1280,9 +1282,11 @@ HEADERS += \
     accessibility/AXObjectCache.h \
     bindings/ScriptControllerBase.h \
     bindings/generic/ActiveDOMCallback.h \
+    bindings/generic/BindingSecurity.h \
     bindings/generic/RuntimeEnabledFeatures.h
 
 HEADERS += \
+    bindings/js/BindingState.h \
     bindings/js/CachedScriptSourceProvider.h \
     bindings/js/CallbackFunction.h \
     bindings/js/GCController.h \

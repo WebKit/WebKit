@@ -1924,6 +1924,8 @@
             'bindings/gobject/WebKitHTMLElementWrapperFactory.h',
             'bindings/js/ArrayValue.cpp',
             'bindings/js/ArrayValue.h',
+            'bindings/js/BindingState.cpp',
+            'bindings/js/BindingState.h',
             'bindings/js/CachedScriptSourceProvider.h',
             'bindings/js/CallbackFunction.cpp',
             'bindings/js/CallbackFunction.h',

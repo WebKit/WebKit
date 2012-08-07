@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Google Inc. All rights reserved.
+ * Copyright (C) 2012 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -31,30 +31,24 @@
 #ifndef BindingState_h
 #define BindingState_h
 
+#include <runtime/JSObject.h>
+
 namespace WebCore {
 
 class DOMWindow;
 class Document;
 class Frame;
 
-class BindingState {
-public:
-    // Currently, V8 uses a singleton for it's state.
-    // FIXME: Should we use v8::Isolate as the BindingState?
-    static BindingState* instance();
-};
+typedef JSC::ExecState BindingState;
 
 DOMWindow* activeDOMWindow(BindingState*);
 DOMWindow* firstDOMWindow(BindingState*);
 
-Frame* activeFrame(BindingState*);
-Frame* firstFrame(BindingState*);
+// FIXME: Implement these functions.
+inline Frame* activeFrame(BindingState*) { return 0; }
+inline Frame* firstFrame(BindingState*) { return 0; }
 
-// FIXME: When implementing this function for JSC, we need to understand if there
-// are any subtle differences between the currentFrame and the lexicalGlobalObject.
-Frame* currentFrame(BindingState*);
-
-void immediatelyReportUnsafeAccessTo(BindingState*, Document* targetDocument);
+inline void immediatelyReportUnsafeAccessTo(BindingState*, Document*) { }
 
 }
 

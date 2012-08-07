@@ -26,6 +26,7 @@
 // This all-in-one cpp file cuts down on template bloat to allow us to build our Windows release build.
 
 #include "ArrayValue.cpp"
+#include "BindingState.cpp"
 #include "CallbackFunction.cpp"
 #include "DOMObjectHashTableMap.cpp"
 #include "DOMWrapperWorld.cpp"

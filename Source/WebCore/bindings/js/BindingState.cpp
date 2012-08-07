@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Google Inc. All rights reserved.
+ * Copyright (C) 2012 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -28,34 +28,23 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef BindingState_h
-#define BindingState_h
+#include "config.h"
+#include "BindingState.h"
+
+#include "JSDOMWindowCustom.h"
+
+using namespace JSC;
 
 namespace WebCore {
 
-class DOMWindow;
-class Document;
-class Frame;
-
-class BindingState {
-public:
-    // Currently, V8 uses a singleton for it's state.
-    // FIXME: Should we use v8::Isolate as the BindingState?
-    static BindingState* instance();
-};
-
-DOMWindow* activeDOMWindow(BindingState*);
-DOMWindow* firstDOMWindow(BindingState*);
-
-Frame* activeFrame(BindingState*);
-Frame* firstFrame(BindingState*);
-
-// FIXME: When implementing this function for JSC, we need to understand if there
-// are any subtle differences between the currentFrame and the lexicalGlobalObject.
-Frame* currentFrame(BindingState*);
-
-void immediatelyReportUnsafeAccessTo(BindingState*, Document* targetDocument);
-
+DOMWindow* activeDOMWindow(ExecState* exec)
+{
+    return asJSDOMWindow(exec->lexicalGlobalObject())->impl();
 }
 
-#endif
+DOMWindow* firstDOMWindow(ExecState* exec)
+{
+    return asJSDOMWindow(exec->dynamicGlobalObject())->impl();
+}
+
+}

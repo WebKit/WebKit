@@ -221,16 +221,6 @@ void setDOMException(ExecState* exec, ExceptionCode ec)
 
 #undef TRY_TO_CREATE_EXCEPTION
 
-DOMWindow* activeDOMWindow(ExecState* exec)
-{
-    return asJSDOMWindow(exec->lexicalGlobalObject())->impl();
-}
-
-DOMWindow* firstDOMWindow(ExecState* exec)
-{
-    return asJSDOMWindow(exec->dynamicGlobalObject())->impl();
-}
-
 bool shouldAllowAccessToNode(ExecState* exec, Node* node)
 {
     return node && shouldAllowAccessToFrame(exec, node->document()->frame());

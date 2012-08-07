@@ -23,6 +23,7 @@ ENDIF ()
 
 LIST(APPEND WebCore_SOURCES
     bindings/js/ArrayValue.cpp
+    bindings/js/BindingState.cpp
     bindings/js/CallbackFunction.cpp
     bindings/js/DOMObjectHashTableMap.cpp
     bindings/js/DOMWrapperWorld.cpp
