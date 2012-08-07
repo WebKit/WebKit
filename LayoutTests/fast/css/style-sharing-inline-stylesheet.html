@@ -1,0 +1,20 @@
+<html lang=en>
+<head>
+<script src="../js/resources/js-test-pre.js"></script>
+<style>
+.testclass { background-color: red; }
+</style>
+</head>
+<body>
+<div class=testclass>first div</div>
+<style>
+.testclass { background-color: green; }
+</style>
+<div class=testclass>second div</div>
+
+<script>
+description("Test that inline stylesheet does not confuse style sharing.");
+shouldBe('window.getComputedStyle(document.getElementsByClassName("testclass")[1]).backgroundColor','"rgb(0, 128, 0)"');
+</script>
+<script src="../js/resources/js-test-post.js"></script>
+</body>

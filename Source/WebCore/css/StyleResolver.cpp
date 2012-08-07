@@ -1313,6 +1313,8 @@ bool StyleResolver::canShareStyleWithElement(StyledElement* element) const
         return false;
     if (element->inlineStyle())
         return false;
+    if (element->needsStyleRecalc())
+        return false;
 #if ENABLE(SVG)
     if (element->isSVGElement() && static_cast<SVGElement*>(element)->animatedSMILStyleProperties())
         return false;
