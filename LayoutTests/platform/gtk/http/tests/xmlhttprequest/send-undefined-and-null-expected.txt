@@ -1,4 +1,0 @@
-Tests that sending undefined or null results in an empty request body.
-PASS for undefined
-PASS for null
-

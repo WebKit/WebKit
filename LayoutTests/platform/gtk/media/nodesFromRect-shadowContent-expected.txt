@@ -1,8 +1,0 @@
-PASS All correct nodes found for rect
-PASS All correct nodes found for rect
-This test only runs in DRT!
-
-EXPECTED (video.controls != 'null') OK
-EVENT(canplaythrough)
-END OF TEST
-

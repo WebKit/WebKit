@@ -1,3 +1,104 @@
+2012-08-07  Thiago Marcos P. Santos  <thiago.santos@intel.com>
+
+        [GTK] Remove duplicated platform test expectations
+        https://bugs.webkit.org/show_bug.cgi?id=93352
+
+        Reviewed by Martin Robinson.
+
+        Remove platform test expectations that are the same as the global
+        expectations.
+
+        * platform/gtk/accessibility/dimensions-include-descendants-expected.txt: Removed.
+        * platform/gtk/css3/calc/getComputedStyle-margin-percentage-expected.txt: Removed.
+        * platform/gtk/editing/deleting/delete-line-011-expected.txt: Removed.
+        * platform/gtk/editing/deleting/delete-tab-001-expected.txt: Removed.
+        * platform/gtk/editing/deleting/delete-tab-004-expected.txt: Removed.
+        * platform/gtk/editing/deleting/smart-delete-002-expected.txt: Removed.
+        * platform/gtk/editing/pasteboard/5780697-2-expected.txt: Removed.
+        * platform/gtk/editing/pasteboard/interchange-newline-2-expected.txt: Removed.
+        * platform/gtk/editing/selection/after-line-break-expected.txt: Removed.
+        * platform/gtk/editing/selection/fake-drag-expected.txt: Removed.
+        * platform/gtk/editing/selection/move-by-word-visually-multi-line-expected.txt: Removed.
+        * platform/gtk/editing/style/smoosh-styles-003-expected.txt: Removed.
+        * platform/gtk/editing/style/style-3681552-fix-001-expected.txt: Removed.
+        * platform/gtk/editing/style/style-boundary-002-expected.txt: Removed.
+        * platform/gtk/editing/style/style-boundary-003-expected.txt: Removed.
+        * platform/gtk/editing/style/typing-style-001-expected.txt: Removed.
+        * platform/gtk/editing/style/typing-style-002-expected.txt: Removed.
+        * platform/gtk/fast/backgrounds/svg-as-mask-expected.txt: Removed.
+        * platform/gtk/fast/block/positioning/rtl-fixed-positioning-expected.txt: Removed.
+        * platform/gtk/fast/block/positioning/start-ignoring-before-expected.txt: Removed.
+        * platform/gtk/fast/borders/border-image-outset-split-inline-vertical-lr-expected.txt: Removed.
+        * platform/gtk/fast/borders/borderRadiusDashed01-expected.txt: Removed.
+        * platform/gtk/fast/borders/borderRadiusDashed02-expected.txt: Removed.
+        * platform/gtk/fast/borders/borderRadiusDashed03-expected.txt: Removed.
+        * platform/gtk/fast/borders/borderRadiusDotted01-expected.txt: Removed.
+        * platform/gtk/fast/borders/borderRadiusDotted02-expected.txt: Removed.
+        * platform/gtk/fast/borders/borderRadiusDotted03-expected.txt: Removed.
+        * platform/gtk/fast/borders/borderRadiusSolid01-expected.txt: Removed.
+        * platform/gtk/fast/borders/borderRadiusSolid02-expected.txt: Removed.
+        * platform/gtk/fast/borders/borderRadiusSolid03-expected.txt: Removed.
+        * platform/gtk/fast/borders/borderRadiusSolid04-expected.txt: Removed.
+        * platform/gtk/fast/box-shadow/box-shadow-radius-expected.txt: Removed.
+        * platform/gtk/fast/box-shadow/scaled-box-shadow-expected.txt: Removed.
+        * platform/gtk/fast/css-generated-content/before-content-continuation-chain-expected.txt: Removed.
+        * platform/gtk/fast/css-generated-content/first-letter-in-nested-before-table-expected.txt: Removed.
+        * platform/gtk/fast/css/font-face-cache-bug-expected.txt: Removed.
+        * platform/gtk/fast/css/font-face-repeated-url-expected.txt: Removed.
+        * platform/gtk/fast/css/font-family-pictograph-expected.txt: Removed.
+        * platform/gtk/fast/css/hsla-color-expected.txt: Removed.
+        * platform/gtk/fast/dom/HTMLMeterElement/meter-element-repaint-on-update-value-expected.txt: Removed.
+        * platform/gtk/fast/dom/Window/webkitConvertPoint-expected.txt: Removed.
+        * platform/gtk/fast/dom/call-a-constructor-as-a-function-expected.txt: Removed.
+        * platform/gtk/fast/dom/constructed-objects-prototypes-expected.txt: Removed.
+        * platform/gtk/fast/dynamic/dirty-float-in-clean-line-expected.txt: Removed.
+        * platform/gtk/fast/dynamic/float-at-line-break-expected.txt: Removed.
+        * platform/gtk/fast/dynamic/unicode-bidi-expected.txt: Removed.
+        * platform/gtk/fast/forms/implicit-submission-expected.txt: Removed.
+        * platform/gtk/fast/forms/onselect-textarea-expected.txt: Removed.
+        * platform/gtk/fast/html/details-position-expected.txt: Removed.
+        * platform/gtk/fast/lists/inline-before-content-after-list-marker-expected.txt: Removed.
+        * platform/gtk/fast/profiler/profiling-from-a-nested-location-but-stop-profiling-outside-the-nesting-expected.txt: Removed.
+        * platform/gtk/fast/reflections/reflection-masks-expected.txt: Removed.
+        * platform/gtk/fast/reflections/reflection-masks-opacity-expected.txt: Removed.
+        * platform/gtk/fast/ruby/float-overhang-from-ruby-text-expected.txt: Removed.
+        * platform/gtk/fast/ruby/overhang-horizontal-expected.txt: Removed.
+        * platform/gtk/fast/ruby/overhang-horizontal-no-overlap1-expected.txt: Removed.
+        * platform/gtk/fast/ruby/overhang-horizontal-no-overlap2-expected.txt: Removed.
+        * platform/gtk/fast/ruby/overhang-vertical-expected.txt: Removed.
+        * platform/gtk/fast/ruby/overhang-vertical-no-overlap1-expected.txt: Removed.
+        * platform/gtk/fast/ruby/overhang-vertical-no-overlap2-expected.txt: Removed.
+        * platform/gtk/fast/ruby/ruby-base-merge-block-children-crash-expected.txt: Removed.
+        * platform/gtk/fast/ruby/ruby-remove-no-base-expected.txt: Removed.
+        * platform/gtk/fast/ruby/ruby-text-before-child-split-expected.txt: Removed.
+        * platform/gtk/fast/runin/runin-div-before-child-expected.txt: Removed.
+        * platform/gtk/fast/runin/runin-into-div-with-float-child-expected.txt: Removed.
+        * platform/gtk/fast/runin/runin-not-go-into-float-expected.txt: Removed.
+        * platform/gtk/fast/runin/runin-table-before-child-expected.txt: Removed.
+        * platform/gtk/fast/table/max-width-integer-overflow-expected.txt: Removed.
+        * platform/gtk/fast/text/justify-nbsp-expected.txt: Removed.
+        * platform/gtk/fast/text/setData-dirty-lines-expected.txt: Removed.
+        * platform/gtk/fast/text/splitText-dirty-lines-expected.txt: Removed.
+        * platform/gtk/fast/writing-mode/table-percent-width-quirk-expected.txt: Removed.
+        * platform/gtk/http/tests/security/cross-frame-access-callback-explicit-domain-ALLOW-expected.txt: Removed.
+        * platform/gtk/http/tests/xmlhttprequest/send-undefined-and-null-expected.txt: Removed.
+        * platform/gtk/mathml/msub-anonymous-child-render-crash-expected.txt: Removed.
+        * platform/gtk/media/nodesFromRect-shadowContent-expected.txt: Removed.
+        * platform/gtk/svg/as-background-image/svg-as-background-1-expected.txt: Removed.
+        * platform/gtk/svg/as-background-image/svg-as-background-2-expected.txt: Removed.
+        * platform/gtk/svg/as-background-image/svg-as-background-3-expected.txt: Removed.
+        * platform/gtk/svg/as-background-image/svg-as-background-4-expected.txt: Removed.
+        * platform/gtk/svg/as-background-image/svg-as-background-5-expected.txt: Removed.
+        * platform/gtk/svg/as-background-image/svg-as-background-6-expected.txt: Removed.
+        * platform/gtk/svg/custom/getSubStringLength-expected.txt: Removed.
+        * platform/gtk/svg/custom/use-on-clip-path-with-transformation-expected.txt: Removed.
+        * platform/gtk/svg/custom/zero-path-square-cap-rendering-expected.txt: Removed.
+        * platform/gtk/svg/custom/zero-path-square-cap-rendering2-expected.txt: Removed.
+        * platform/gtk/svg/dom/altGlyph-dom-expected.txt: Removed.
+        * platform/gtk/svg/dom/css-transforms-expected.txt: Removed.
+        * platform/gtk/svg/hixie/links/001-expected.txt: Removed.
+        * platform/gtk/svg/text/small-fonts-expected.txt: Removed.
+
 2012-08-07  Takashi Toyoshima  <toyoshim@chromium.org>
 
         Unreviewed, rebaseline.
