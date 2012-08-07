@@ -1,3 +1,31 @@
+2012-08-07  Benjamin Poulain  <benjamin@webkit.org>
+
+        Use the initialization from literal for JSC's Identifiers
+        https://bugs.webkit.org/show_bug.cgi?id=93193
+
+        Reviewed by Geoffrey Garen.
+
+        This patches modify Identifier ot take advantage of the new initialization from literal.
+
+        In addition to the memory savings (~600bytes per instance), this gives us a 2% speed
+        improvement on CommonIdentifiers on average.
+
+        * runtime/CommonIdentifiers.cpp:
+        (JSC::CommonIdentifiers::CommonIdentifiers):
+        Null and empty strings are forbidden for literal initialization. Use the most efficient constructors
+        instead of a literal.
+
+        * runtime/Identifier.cpp:
+        (IdentifierASCIIStringTranslator):
+        Rename IdentifierCStringTranslator to IdentifierASCIIStringTranslator to make the text encoding
+        explicit.
+        (JSC::IdentifierASCIIStringTranslator::hash):
+        (JSC::IdentifierASCIIStringTranslator::equal):
+        (JSC::IdentifierASCIIStringTranslator::translate): Use the fast initialization from literal.
+        (JSC::Identifier::add):
+        * runtime/Identifier.h:
+        (JSC::Identifier::Identifier):
+
 2012-08-07  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt][Win] Remove pthreads linkage

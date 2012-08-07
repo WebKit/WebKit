@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2003, 2007, 2009 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003, 2007, 2009, 2012 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -23,14 +23,12 @@
 
 namespace JSC {
 
-static const char* const nullCString = 0;
-
 #define INITIALIZE_PROPERTY_NAME(name) , name(globalData, #name)
 #define INITIALIZE_KEYWORD(name) , name##Keyword(globalData, #name)
 
 CommonIdentifiers::CommonIdentifiers(JSGlobalData* globalData)
-    : nullIdentifier(globalData, nullCString)
-    , emptyIdentifier(globalData, "")
+    : nullIdentifier()
+    , emptyIdentifier(Identifier::EmptyIdentifier)
     , underscoreProto(globalData, "__proto__")
     , thisIdentifier(globalData, "this")
     , useStrictIdentifier(globalData, "use strict")

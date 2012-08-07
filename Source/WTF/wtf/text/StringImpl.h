@@ -46,7 +46,7 @@ typedef const struct __CFString * CFStringRef;
 // FIXME: This is a temporary layering violation while we move string code to WTF.
 // Landing the file moves in one patch, will follow on with patches to change the namespaces.
 namespace JSC {
-struct IdentifierCStringTranslator;
+struct IdentifierASCIIStringTranslator;
 namespace LLInt { class Data; }
 class LLIntOffsetsExtractor;
 template <typename T> struct IdentifierCharBufferTranslator;
@@ -69,7 +69,7 @@ typedef bool (*IsWhiteSpaceFunctionPtr)(UChar);
 
 class StringImpl {
     WTF_MAKE_NONCOPYABLE(StringImpl); WTF_MAKE_FAST_ALLOCATED;
-    friend struct JSC::IdentifierCStringTranslator;
+    friend struct JSC::IdentifierASCIIStringTranslator;
     friend struct JSC::IdentifierCharBufferTranslator<LChar>;
     friend struct JSC::IdentifierCharBufferTranslator<UChar>;
     friend struct JSC::IdentifierLCharFromUCharTranslator;

@@ -1,3 +1,12 @@
+2012-08-07  Benjamin Poulain  <benjamin@webkit.org>
+
+        Use the initialization from literal for JSC's Identifiers
+        https://bugs.webkit.org/show_bug.cgi?id=93193
+
+        Reviewed by Geoffrey Garen.
+
+        * wtf/text/StringImpl.h: Update the names for the HashTranslator used by Identifier.
+
 2012-07-19  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] Remove Qt 4 specific code paths

@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2003, 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003, 2006, 2007, 2008, 2009, 2012 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -35,12 +35,18 @@ namespace JSC {
         friend class Structure;
     public:
         Identifier() { }
+        enum EmptyIdentifierFlag { EmptyIdentifier };
+        Identifier(EmptyIdentifierFlag) : m_string(StringImpl::empty()) { }
 
-        Identifier(ExecState* exec, const char* s) : m_string(add(exec, s)) { } // Only to be used with string literals.
-        Identifier(ExecState* exec, StringImpl* rep) : m_string(add(exec, rep)) { } 
+        // Only to be used with string literals.
+        template<unsigned charactersCount>
+        Identifier(ExecState* exec, const char (&characters)[charactersCount]) : m_string(add(exec, characters)) { }
+        template<unsigned charactersCount>
+        Identifier(JSGlobalData* globalData, const char (&characters)[charactersCount]) : m_string(add(globalData, characters)) { }
+
+        Identifier(ExecState* exec, StringImpl* rep) : m_string(add(exec, rep)) { }
         Identifier(ExecState* exec, const UString& s) : m_string(add(exec, s.impl())) { }
 
-        Identifier(JSGlobalData* globalData, const char* s) : m_string(add(globalData, s)) { } // Only to be used with string literals.
         Identifier(JSGlobalData* globalData, const LChar* s, int length) : m_string(add(globalData, s, length)) { }
         Identifier(JSGlobalData* globalData, const UChar* s, int length) : m_string(add(globalData, s, length)) { }
         Identifier(JSGlobalData* globalData, StringImpl* rep) : m_string(add(globalData, rep)) { } 
@@ -80,8 +86,9 @@ namespace JSC {
         static bool equal(const StringImpl*, const UChar*, unsigned length);
         static bool equal(const StringImpl* a, const StringImpl* b) { return ::equal(a, b); }
 
-        JS_EXPORT_PRIVATE static PassRefPtr<StringImpl> add(ExecState*, const char*); // Only to be used with string literals.
-        static PassRefPtr<StringImpl> add(JSGlobalData*, const char*); // Only to be used with string literals.
+        // Only to be used with string literals.
+        static PassRefPtr<StringImpl> add(JSGlobalData*, const char*);
+        JS_EXPORT_PRIVATE static PassRefPtr<StringImpl> add(ExecState*, const char*);
 
     private:
         UString m_string;
