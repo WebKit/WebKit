@@ -1,3 +1,16 @@
+2012-08-06  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Add gyp variable to control which compositor target is depended on
+        https://bugs.webkit.org/show_bug.cgi?id=93165
+
+        Reviewed by Adam Barth.
+
+        This adds a use_libcc_for_compositor gyp variable to control whether webcore_platform links in the compositor
+        code from the webcore_chromium_compositor target or from cc from the chromium repo.
+
+        * WebCore.gyp/WebCore.gyp:
+        * WebCore.gypi:
+
 2012-08-06  Shinya Kawanaka  <shinyak@chromium.org>
 
         Crash in GenericEventQueue::timerFired since the owner of GenericEventQueue is deleted during dispatching events.

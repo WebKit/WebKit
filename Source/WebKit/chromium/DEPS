@@ -87,6 +87,8 @@ deps = {
   # webkit dependencies
   'webkit': Var('chromium_svn')+'/webkit@'+Var('chromium_rev'),
 
+  'cc':
+    Var('chromium_svn')+'/cc@'+Var('chromium_rev'),
   'gpu':
     Var('chromium_svn')+'/gpu@'+Var('chromium_rev'),
   'ipc':
@@ -116,7 +118,7 @@ deps = {
   'tools/win':
     Var('chromium_svn')+'/tools/win@'+Var('chromium_rev'),
   'ui':
-    Var('chromium_svn')+'/ui@'+Var('chromium_rev'), # needed by app
+    Var('chromium_svn')+'/ui@'+Var('chromium_rev'),
 
   # other third party
   'third_party/pyftpdlib/src':
