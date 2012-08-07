@@ -1935,6 +1935,9 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                 if (methodCallStatus.needsPrototypeCheck())
                     addToGraph(CheckStructure, OpInfo(m_graph.addStructureSet(methodCallStatus.prototypeStructure())), cellConstant(methodCallStatus.prototype()));
                 
+                // Keep the base of the access alive past the speculations.
+                addToGraph(Phantom, base);
+                
                 set(getInstruction[1].u.operand, cellConstant(methodCallStatus.function()));
             } else
                 set(getInstruction[1].u.operand, addToGraph(getByIdStatus.makesCalls() ? GetByIdFlush : GetById, OpInfo(identifier), OpInfo(prediction), base));

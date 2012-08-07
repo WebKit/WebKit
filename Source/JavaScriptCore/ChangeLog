@@ -1,3 +1,17 @@
+2012-08-06  Lucas Forschler  <lforschler@apple.com>
+
+    Merge patch for <rdar://problem/11781190>
+    
+    2012-07-24  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG method checks should keep the receiver of the property access alive until all checks complete.
+        <rdar://problem/11781190>
+    
+        Reviewed by Gavin Barraclough.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+
 2012-08-02  Lucas Forschler  <lforschler@apple.com>
 
     Merge 121307
