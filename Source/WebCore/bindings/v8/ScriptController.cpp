@@ -97,7 +97,7 @@ Frame* ScriptController::retrieveFrameForCurrentContext()
 
 bool ScriptController::canAccessFromCurrentOrigin(Frame *frame)
 {
-    return !v8::Context::InContext() || BindingSecurity::canAccessFrame(BindingState::instance(), frame, true);
+    return !v8::Context::InContext() || BindingSecurity::shouldAllowAccessToFrame(BindingState::instance(), frame);
 }
 
 ScriptController::ScriptController(Frame* frame)

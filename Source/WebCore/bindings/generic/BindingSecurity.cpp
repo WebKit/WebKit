@@ -42,7 +42,7 @@
 
 namespace WebCore {
 
-static bool canAccessDocument(BindingState* state, Document* targetDocument, bool reportError)
+static bool canAccessDocument(BindingState* state, Document* targetDocument, SecurityReportingOption reportingOption = ReportSecurityError)
 {
     if (!targetDocument)
         return false;
@@ -54,25 +54,25 @@ static bool canAccessDocument(BindingState* state, Document* targetDocument, boo
     if (active->securityOrigin()->canAccess(targetDocument->securityOrigin()))
         return true;
 
-    if (reportError)
+    if (reportingOption == ReportSecurityError)
         immediatelyReportUnsafeAccessTo(state, targetDocument);
 
     return false;
 }
 
-bool BindingSecurity::canAccessFrame(BindingState* state, Frame* target, bool reportError)
+bool BindingSecurity::shouldAllowAccessToFrame(BindingState* state, Frame* target, SecurityReportingOption reportingOption)
 {
-    return target && canAccessDocument(state, target->document(), reportError);
+    return target && canAccessDocument(state, target->document(), reportingOption);
 }
 
 bool BindingSecurity::shouldAllowAccessToNode(BindingState* state, Node* target)
 {
-    return target && canAccessDocument(state, target->document(), true);
+    return target && canAccessDocument(state, target->document());
 }
 
 bool BindingSecurity::allowSettingFrameSrcToJavascriptUrl(BindingState* state, HTMLFrameElementBase* frame, const String& value)
 {
-    return !protocolIsJavaScript(stripLeadingAndTrailingHTMLSpaces(value)) || canAccessDocument(state, frame->contentDocument(), true);
+    return !protocolIsJavaScript(stripLeadingAndTrailingHTMLSpaces(value)) || canAccessDocument(state, frame->contentDocument());
 }
 
 }

@@ -156,7 +156,7 @@ v8::Handle<v8::Value> V8Location::reloadAccessorGetter(v8::Local<v8::String> nam
         return privateTemplate->GetFunction();
     }
     Location* imp = V8Location::toNative(holder);
-    if (!BindingSecurity::canAccessFrame(BindingState::instance(), imp->frame(), false)) {
+    if (!BindingSecurity::shouldAllowAccessToFrame(BindingState::instance(), imp->frame(), DoNotReportSecurityError)) {
         static v8::Persistent<v8::FunctionTemplate> sharedTemplate = v8::Persistent<v8::FunctionTemplate>::New(v8::FunctionTemplate::New(V8Location::reloadCallback, v8::Handle<v8::Value>(), v8::Signature::New(V8Location::GetRawTemplate())));
         return sharedTemplate->GetFunction();
     }
@@ -174,7 +174,7 @@ v8::Handle<v8::Value> V8Location::replaceAccessorGetter(v8::Local<v8::String> na
         return privateTemplate->GetFunction();
     }
     Location* imp = V8Location::toNative(holder);
-    if (!BindingSecurity::canAccessFrame(BindingState::instance(), imp->frame(), false)) {
+    if (!BindingSecurity::shouldAllowAccessToFrame(BindingState::instance(), imp->frame(), DoNotReportSecurityError)) {
         static v8::Persistent<v8::FunctionTemplate> sharedTemplate = v8::Persistent<v8::FunctionTemplate>::New(v8::FunctionTemplate::New(V8Location::replaceCallback, v8::Handle<v8::Value>(), v8::Signature::New(V8Location::GetRawTemplate())));
         return sharedTemplate->GetFunction();
     }
@@ -193,7 +193,7 @@ v8::Handle<v8::Value> V8Location::assignAccessorGetter(v8::Local<v8::String> nam
         return privateTemplate->GetFunction();
     }
     Location* imp = V8Location::toNative(holder);
-    if (!BindingSecurity::canAccessFrame(BindingState::instance(), imp->frame(), false)) {
+    if (!BindingSecurity::shouldAllowAccessToFrame(BindingState::instance(), imp->frame(), DoNotReportSecurityError)) {
         static v8::Persistent<v8::FunctionTemplate> sharedTemplate = v8::Persistent<v8::FunctionTemplate>::New(v8::FunctionTemplate::New(V8Location::assignCallback, v8::Handle<v8::Value>(), v8::Signature::New(V8Location::GetRawTemplate())));
         return sharedTemplate->GetFunction();
     }
@@ -251,7 +251,7 @@ v8::Handle<v8::Value> V8Location::toStringCallback(const v8::Arguments& args)
     INC_STATS("DOM.Location.toString");
     v8::Handle<v8::Object> holder = args.Holder();
     Location* imp = V8Location::toNative(holder);
-    if (!BindingSecurity::canAccessFrame(BindingState::instance(), imp->frame(), true))
+    if (!BindingSecurity::shouldAllowAccessToFrame(BindingState::instance(), imp->frame()))
         return v8::Undefined();
     String result = imp->href();
     return v8String(result, args.GetIsolate());
@@ -261,14 +261,14 @@ bool V8Location::indexedSecurityCheck(v8::Local<v8::Object> host, uint32_t index
 {
     // Only allow same origin access
     Location* imp =  V8Location::toNative(host);
-    return BindingSecurity::canAccessFrame(BindingState::instance(), imp->frame(), false);
+    return BindingSecurity::shouldAllowAccessToFrame(BindingState::instance(), imp->frame(), DoNotReportSecurityError);
 }
 
 bool V8Location::namedSecurityCheck(v8::Local<v8::Object> host, v8::Local<v8::Value> key, v8::AccessType type, v8::Local<v8::Value>)
 {
     // Only allow same origin access
     Location* imp = V8Location::toNative(host);
-    return BindingSecurity::canAccessFrame(BindingState::instance(), imp->frame(), false);
+    return BindingSecurity::shouldAllowAccessToFrame(BindingState::instance(), imp->frame(), DoNotReportSecurityError);
 }
 
 v8::Handle<v8::Value> toV8(Location* impl, v8::Isolate* isolate)

@@ -123,7 +123,7 @@ bool InjectedScriptManager::canAccessInspectedWindow(ScriptState* scriptState)
     Frame* frame = V8DOMWindow::toNative(holder)->frame();
 
     v8::Context::Scope contextScope(context);
-    return BindingSecurity::canAccessFrame(BindingState::instance(), frame, false);
+    return BindingSecurity::shouldAllowAccessToFrame(BindingState::instance(), frame, DoNotReportSecurityError);
 }
 
 } // namespace WebCore

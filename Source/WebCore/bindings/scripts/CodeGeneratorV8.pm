@@ -768,7 +768,7 @@ static v8::Handle<v8::Value> ${funcName}AttrGetter(v8::Local<v8::String> name, c
         return privateTemplate->GetFunction();
     }
     ${implClassName}* imp = ${className}::toNative(holder);
-    if (!BindingSecurity::canAccessFrame(BindingState::instance(), imp->frame(), false)) {
+    if (!BindingSecurity::shouldAllowAccessToFrame(BindingState::instance(), imp->frame(), DoNotReportSecurityError)) {
         static v8::Persistent<v8::FunctionTemplate> sharedTemplate = v8::Persistent<v8::FunctionTemplate>::New($newTemplateString);
         return sharedTemplate->GetFunction();
     }
@@ -1093,7 +1093,7 @@ END
     if ($implClassName eq "DOMWindow" || $dataNode->extendedAttributes->{"CheckSecurity"}) {
         push(@implContentDecls, <<END);
     ${implClassName}* imp = V8${implClassName}::toNative(info.Holder());
-    if (!BindingSecurity::canAccessFrame(BindingState::instance(), imp->frame(), true))
+    if (!BindingSecurity::shouldAllowAccessToFrame(BindingState::instance(), imp->frame()))
         return;
 END
     }
@@ -1500,7 +1500,7 @@ END
         && !$function->signature->extendedAttributes->{"DoNotCheckSecurity"}) {
         # We have not find real use cases yet.
         push(@implContentDecls, <<END);
-    if (!BindingSecurity::canAccessFrame(BindingState::instance(), imp->frame(), true))
+    if (!BindingSecurity::shouldAllowAccessToFrame(BindingState::instance(), imp->frame()))
         return v8Undefined();
 END
     }

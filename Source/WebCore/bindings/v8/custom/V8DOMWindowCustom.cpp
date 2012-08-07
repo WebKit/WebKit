@@ -107,7 +107,7 @@ v8::Handle<v8::Value> WindowSetTimeoutImpl(const v8::Arguments& args, bool singl
     if (argumentCount >= 2)
         timeout = args[1]->Int32Value();
 
-    if (!BindingSecurity::canAccessFrame(BindingState::instance(), imp->frame(), true))
+    if (!BindingSecurity::shouldAllowAccessToFrame(BindingState::instance(), imp->frame()))
         return v8::Undefined();
 
     int id;
@@ -152,7 +152,7 @@ v8::Handle<v8::Value> V8DOMWindow::eventAccessorGetter(v8::Local<v8::String> nam
         return v8::Undefined();
 
     Frame* frame = V8DOMWindow::toNative(holder)->frame();
-    if (!BindingSecurity::canAccessFrame(BindingState::instance(), frame, true))
+    if (!BindingSecurity::shouldAllowAccessToFrame(BindingState::instance(), frame))
         return v8::Undefined();
 
     v8::Local<v8::Context> context = V8Proxy::context(frame);
@@ -173,7 +173,7 @@ void V8DOMWindow::eventAccessorSetter(v8::Local<v8::String> name, v8::Local<v8::
         return;
 
     Frame* frame = V8DOMWindow::toNative(holder)->frame();
-    if (!BindingSecurity::canAccessFrame(BindingState::instance(), frame, true))
+    if (!BindingSecurity::shouldAllowAccessToFrame(BindingState::instance(), frame))
         return;
 
     v8::Local<v8::Context> context = V8Proxy::context(frame);
@@ -205,7 +205,7 @@ void V8DOMWindow::openerAccessorSetter(v8::Local<v8::String> name, v8::Local<v8:
 {
     DOMWindow* imp = V8DOMWindow::toNative(info.Holder());
 
-    if (!BindingSecurity::canAccessFrame(BindingState::instance(), imp->frame(), true))
+    if (!BindingSecurity::shouldAllowAccessToFrame(BindingState::instance(), imp->frame()))
         return;
 
     // Opener can be shadowed if it is in the same domain.
@@ -234,7 +234,7 @@ v8::Handle<v8::Value> V8DOMWindow::addEventListenerCallback(const v8::Arguments&
 
     DOMWindow* imp = V8DOMWindow::toNative(args.Holder());
 
-    if (!BindingSecurity::canAccessFrame(BindingState::instance(), imp->frame(), true))
+    if (!BindingSecurity::shouldAllowAccessToFrame(BindingState::instance(), imp->frame()))
         return v8::Undefined();
 
     Document* doc = imp->document();
@@ -266,7 +266,7 @@ v8::Handle<v8::Value> V8DOMWindow::removeEventListenerCallback(const v8::Argumen
 
     DOMWindow* imp = V8DOMWindow::toNative(args.Holder());
 
-    if (!BindingSecurity::canAccessFrame(BindingState::instance(), imp->frame(), true))
+    if (!BindingSecurity::shouldAllowAccessToFrame(BindingState::instance(), imp->frame()))
         return v8::Undefined();
 
     Document* doc = imp->document();
@@ -433,7 +433,7 @@ v8::Handle<v8::Value> V8DOMWindow::showModalDialogCallback(const v8::Arguments& 
     INC_STATS("DOM.DOMWindow.showModalDialog()");
     DOMWindow* impl = V8DOMWindow::toNative(args.Holder());
     BindingState* state = BindingState::instance();
-    if (!BindingSecurity::canAccessFrame(state, impl->frame(), true))
+    if (!BindingSecurity::shouldAllowAccessToFrame(state, impl->frame()))
         return v8::Undefined();
 
     // FIXME: Handle exceptions properly.
@@ -451,7 +451,7 @@ v8::Handle<v8::Value> V8DOMWindow::openCallback(const v8::Arguments& args)
     INC_STATS("DOM.DOMWindow.open()");
     DOMWindow* impl = V8DOMWindow::toNative(args.Holder());
     BindingState* state = BindingState::instance();
-    if (!BindingSecurity::canAccessFrame(state, impl->frame(), true))
+    if (!BindingSecurity::shouldAllowAccessToFrame(state, impl->frame()))
         return v8::Undefined();
 
     // FIXME: Handle exceptions properly.
@@ -570,7 +570,7 @@ bool V8DOMWindow::namedSecurityCheck(v8::Local<v8::Object> host, v8::Local<v8::V
             return true;
     }
 
-    return BindingSecurity::canAccessFrame(BindingState::instance(), target, false);
+    return BindingSecurity::shouldAllowAccessToFrame(BindingState::instance(), target, DoNotReportSecurityError);
 }
 
 bool V8DOMWindow::indexedSecurityCheck(v8::Local<v8::Object> host, uint32_t index, v8::AccessType type, v8::Local<v8::Value>)
@@ -595,7 +595,7 @@ bool V8DOMWindow::indexedSecurityCheck(v8::Local<v8::Object> host, uint32_t inde
     if (type == v8::ACCESS_GET && childFrame && !host->HasRealIndexedProperty(index))
         return true;
 
-    return BindingSecurity::canAccessFrame(BindingState::instance(), target, false);
+    return BindingSecurity::shouldAllowAccessToFrame(BindingState::instance(), target, DoNotReportSecurityError);
 }
 
 v8::Handle<v8::Value> toV8(DOMWindow* window, v8::Isolate* isolate)
