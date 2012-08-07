@@ -57,6 +57,7 @@
 #include "SVGColor.h"
 #include "SVGPaint.h"
 #include "WebKitCSSFilterValue.h"
+#include "WebKitCSSMixFunctionValue.h"
 #include "WebKitCSSShaderValue.h"
 #include "WebKitCSSTransformValue.h"
 
@@ -228,6 +229,9 @@ void CSSValue::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
         static_cast<const CSSCalcValue*>(this)->reportDescendantMemoryUsage(memoryObjectInfo);
         return;
 #if ENABLE(CSS_FILTERS) && ENABLE(CSS_SHADERS)
+    case WebKitCSSMixFunctionValueClass:
+        static_cast<const WebKitCSSMixFunctionValue*>(this)->reportDescendantMemoryUsage(memoryObjectInfo);
+        return;
     case WebKitCSSShaderClass:
         static_cast<const WebKitCSSShaderValue*>(this)->reportDescendantMemoryUsage(memoryObjectInfo);
         return;
@@ -335,6 +339,8 @@ String CSSValue::cssText() const
     case WebKitCSSFilterClass:
         return static_cast<const WebKitCSSFilterValue*>(this)->customCssText();
 #if ENABLE(CSS_SHADERS)
+    case WebKitCSSMixFunctionValueClass:
+        return static_cast<const WebKitCSSMixFunctionValue*>(this)->customCssText();
     case WebKitCSSShaderClass:
         return static_cast<const WebKitCSSShaderValue*>(this)->customCssText();
 #endif
@@ -467,6 +473,9 @@ void CSSValue::destroy()
         delete static_cast<WebKitCSSFilterValue*>(this);
         return;
 #if ENABLE(CSS_SHADERS)
+    case WebKitCSSMixFunctionValueClass:
+        delete static_cast<WebKitCSSMixFunctionValue*>(this);
+        return;
     case WebKitCSSShaderClass:
         delete static_cast<WebKitCSSShaderValue*>(this);
         return;
@@ -505,6 +514,10 @@ PassRefPtr<CSSValue> CSSValue::cloneForCSSOM() const
 #if ENABLE(CSS_FILTERS)
     case WebKitCSSFilterClass:
         return static_cast<const WebKitCSSFilterValue*>(this)->cloneForCSSOM();
+#if ENABLE(CSS_SHADERS)
+    case WebKitCSSMixFunctionValueClass:
+        return static_cast<const WebKitCSSMixFunctionValue*>(this)->cloneForCSSOM();
+#endif
 #endif
     case WebKitCSSTransformClass:
         return static_cast<const WebKitCSSTransformValue*>(this)->cloneForCSSOM();

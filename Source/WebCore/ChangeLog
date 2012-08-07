@@ -1,3 +1,111 @@
+2012-08-06  Max Vujovic  <mvujovic@adobe.com>
+
+        [CSS Shaders] Parse mix function
+        https://bugs.webkit.org/show_bug.cgi?id=90101
+
+        Reviewed by Dirk Schulze.
+
+        Parse the mix function syntax for CSS Shaders as defined in the Filter Effects spec:
+        https://dvcs.w3.org/hg/FXTF/raw-file/tip/filters/index.html#FilterFunction
+
+        The fragment shader argument of the custom filter function can now be a mix function with
+        the following syntax:
+        mix(<uri> [ <blend-mode> || <alpha-compositing> ]?)
+
+        For example:
+        -webkit-filter: custom(url(shader.vert) mix(url(shader.frag multiply source-over))
+
+        The Filter Effects spec references the Compositing and Blending spec, which defines the
+        supported blend modes and alpha compositing modes.
+
+        Blend modes:
+        https://dvcs.w3.org/hg/FXTF/rawfile/tip/compositing/index.html#blend-mode
+
+        This patch adds all of the blend modes in the spec.
+
+        Alpha compositing modes:
+        https://dvcs.w3.org/hg/FXTF/rawfile/tip/compositing/index.html#alpha-compositing
+
+        This patch does not add any new CSS values for alpha compositing. Currently, we parse the
+        values that are the same between the spec and the -webkit-background-composite property,
+        including:
+            clear
+            copy
+            source-over
+            source-in
+            source-out
+            source-atop
+            destination-over
+            destination-in
+            destination-out
+            destination-atop
+            xor
+
+        In the future, we may need to add the following CSS values for alpha compositing:
+            lighter
+            destination
+
+        This is currently under discussion on the www-style mailing list:
+        http://lists.w3.org/Archives/Public/www-style/2012Aug/0123.html
+
+        No new test files. Add test cases in:
+            css3/filters/script-tests/custom-filter-property-computed-style.js:
+            css3/filters/script-tests/custom-filter-property-parsing-invalid.js:
+            css3/filters/script-tests/custom-filter-property-parsing.js:
+
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::valueForFilter):
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::isBlendMode):
+        (WebCore):
+        (WebCore::CSSParser::isCompositeOperator):
+        (WebCore::CSSParser::parseMixFunction):
+        (WebCore::CSSParser::parseCustomFilter):
+        * css/CSSParser.h:
+        (WebCore):
+        * css/CSSParserValues.h:
+        (WebCore::CSSParserValueList::currentIndex):
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        (WebCore):
+        (WebCore::CSSPrimitiveValue::operator BlendMode):
+        * css/CSSValue.cpp:
+        (WebCore::CSSValue::reportMemoryUsage):
+        (WebCore::CSSValue::cssText):
+        (WebCore::CSSValue::destroy):
+        (WebCore::CSSValue::cloneForCSSOM):
+        * css/CSSValue.h:
+        (WebCore::CSSValue::isWebKitCSSMixFunctionValue):
+        (CSSValue):
+        * css/CSSValueKeywords.in:
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::collectMatchingRulesForList):
+        * css/WebKitCSSMixFunctionValue.cpp: Added.
+        (WebCore):
+        (WebCore::WebKitCSSMixFunctionValue::WebKitCSSMixFunctionValue):
+        (WebCore::WebKitCSSMixFunctionValue::customCssText):
+        (WebCore::WebKitCSSMixFunctionValue::cloneForCSSOM):
+        (WebCore::WebKitCSSMixFunctionValue::reportDescendantMemoryUsage):
+        * css/WebKitCSSMixFunctionValue.h: Added.
+        (WebCore):
+        (WebKitCSSMixFunctionValue):
+        (WebCore::WebKitCSSMixFunctionValue::create):
+        * platform/graphics/GraphicsTypes.h:
+        * platform/graphics/filters/CustomFilterProgram.cpp:
+        (WebCore::CustomFilterProgram::CustomFilterProgram):
+        * platform/graphics/filters/CustomFilterProgram.h:
+        (WebCore::CustomFilterProgramMixSettings::CustomFilterProgramMixSettings):
+        (CustomFilterProgramMixSettings):
+        (WebCore):
+        * rendering/style/StyleCustomFilterProgram.h:
+        (WebCore::StyleCustomFilterProgram::create):
+        (WebCore::StyleCustomFilterProgram::StyleCustomFilterProgram):
+
 2012-08-06  No'am Rosenthal  <noam.rosenthal@nokia.com>
 
         GraphicsLayerAnimation shouldn't use HashMap<String>

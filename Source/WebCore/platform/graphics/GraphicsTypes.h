@@ -47,6 +47,25 @@ namespace WebCore {
         CompositeDifference
     };
 
+    enum BlendMode {
+        BlendModeNormal,
+        BlendModeMultiply,
+        BlendModeScreen,
+        BlendModeOverlay,
+        BlendModeDarken,
+        BlendModeLighten,
+        BlendModeColorDodge,
+        BlendModeColorBurn,
+        BlendModeHardLight,
+        BlendModeSoftLight,
+        BlendModeDifference,
+        BlendModeExclusion,
+        BlendModeHue,
+        BlendModeSaturation,
+        BlendModeColor,
+        BlendModeLuminosity
+    };
+
     enum GradientSpreadMethod {
         SpreadMethodPad,
         SpreadMethodReflect,

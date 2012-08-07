@@ -37,6 +37,369 @@ PASS filterRule.length is 1
 PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_CUSTOM
 PASS removeBaseURL(subRule.cssText) is 'custom(url(vertex.shader) url(fragment.shader))'
 
+Custom with mix function : custom(none mix(url(fragment.shader)))
+PASS cssRule.type is 1
+PASS declaration.length is 1
+PASS removeBaseURL(declaration.getPropertyValue('-webkit-filter')) is 'custom(none mix(url(fragment.shader)))'
+PASS jsWrapperClass(filterRule) is 'CSSValueList'
+FAIL jsWrapperClass(filterRule.__proto__) should be CSSValueListPrototype. Was Object.
+FAIL jsWrapperClass(filterRule.constructor) should be CSSValueListConstructor. Was Function.
+PASS filterRule.length is 1
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_CUSTOM
+PASS removeBaseURL(subRule.cssText) is 'custom(none mix(url(fragment.shader)))'
+
+Custom with mix function and blend mode normal : custom(none mix(url(fragment.shader) normal))
+PASS cssRule.type is 1
+PASS declaration.length is 1
+PASS removeBaseURL(declaration.getPropertyValue('-webkit-filter')) is 'custom(none mix(url(fragment.shader) normal))'
+PASS jsWrapperClass(filterRule) is 'CSSValueList'
+FAIL jsWrapperClass(filterRule.__proto__) should be CSSValueListPrototype. Was Object.
+FAIL jsWrapperClass(filterRule.constructor) should be CSSValueListConstructor. Was Function.
+PASS filterRule.length is 1
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_CUSTOM
+PASS removeBaseURL(subRule.cssText) is 'custom(none mix(url(fragment.shader) normal))'
+
+Custom with mix function and blend mode multiply : custom(none mix(url(fragment.shader) multiply))
+PASS cssRule.type is 1
+PASS declaration.length is 1
+PASS removeBaseURL(declaration.getPropertyValue('-webkit-filter')) is 'custom(none mix(url(fragment.shader) multiply))'
+PASS jsWrapperClass(filterRule) is 'CSSValueList'
+FAIL jsWrapperClass(filterRule.__proto__) should be CSSValueListPrototype. Was Object.
+FAIL jsWrapperClass(filterRule.constructor) should be CSSValueListConstructor. Was Function.
+PASS filterRule.length is 1
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_CUSTOM
+PASS removeBaseURL(subRule.cssText) is 'custom(none mix(url(fragment.shader) multiply))'
+
+Custom with mix function and blend mode screen : custom(none mix(url(fragment.shader) screen))
+PASS cssRule.type is 1
+PASS declaration.length is 1
+PASS removeBaseURL(declaration.getPropertyValue('-webkit-filter')) is 'custom(none mix(url(fragment.shader) screen))'
+PASS jsWrapperClass(filterRule) is 'CSSValueList'
+FAIL jsWrapperClass(filterRule.__proto__) should be CSSValueListPrototype. Was Object.
+FAIL jsWrapperClass(filterRule.constructor) should be CSSValueListConstructor. Was Function.
+PASS filterRule.length is 1
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_CUSTOM
+PASS removeBaseURL(subRule.cssText) is 'custom(none mix(url(fragment.shader) screen))'
+
+Custom with mix function and blend mode overlay : custom(none mix(url(fragment.shader) overlay))
+PASS cssRule.type is 1
+PASS declaration.length is 1
+PASS removeBaseURL(declaration.getPropertyValue('-webkit-filter')) is 'custom(none mix(url(fragment.shader) overlay))'
+PASS jsWrapperClass(filterRule) is 'CSSValueList'
+FAIL jsWrapperClass(filterRule.__proto__) should be CSSValueListPrototype. Was Object.
+FAIL jsWrapperClass(filterRule.constructor) should be CSSValueListConstructor. Was Function.
+PASS filterRule.length is 1
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_CUSTOM
+PASS removeBaseURL(subRule.cssText) is 'custom(none mix(url(fragment.shader) overlay))'
+
+Custom with mix function and blend mode darken : custom(none mix(url(fragment.shader) darken))
+PASS cssRule.type is 1
+PASS declaration.length is 1
+PASS removeBaseURL(declaration.getPropertyValue('-webkit-filter')) is 'custom(none mix(url(fragment.shader) darken))'
+PASS jsWrapperClass(filterRule) is 'CSSValueList'
+FAIL jsWrapperClass(filterRule.__proto__) should be CSSValueListPrototype. Was Object.
+FAIL jsWrapperClass(filterRule.constructor) should be CSSValueListConstructor. Was Function.
+PASS filterRule.length is 1
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_CUSTOM
+PASS removeBaseURL(subRule.cssText) is 'custom(none mix(url(fragment.shader) darken))'
+
+Custom with mix function and blend mode lighten : custom(none mix(url(fragment.shader) lighten))
+PASS cssRule.type is 1
+PASS declaration.length is 1
+PASS removeBaseURL(declaration.getPropertyValue('-webkit-filter')) is 'custom(none mix(url(fragment.shader) lighten))'
+PASS jsWrapperClass(filterRule) is 'CSSValueList'
+FAIL jsWrapperClass(filterRule.__proto__) should be CSSValueListPrototype. Was Object.
+FAIL jsWrapperClass(filterRule.constructor) should be CSSValueListConstructor. Was Function.
+PASS filterRule.length is 1
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_CUSTOM
+PASS removeBaseURL(subRule.cssText) is 'custom(none mix(url(fragment.shader) lighten))'
+
+Custom with mix function and blend mode color-dodge : custom(none mix(url(fragment.shader) color-dodge))
+PASS cssRule.type is 1
+PASS declaration.length is 1
+PASS removeBaseURL(declaration.getPropertyValue('-webkit-filter')) is 'custom(none mix(url(fragment.shader) color-dodge))'
+PASS jsWrapperClass(filterRule) is 'CSSValueList'
+FAIL jsWrapperClass(filterRule.__proto__) should be CSSValueListPrototype. Was Object.
+FAIL jsWrapperClass(filterRule.constructor) should be CSSValueListConstructor. Was Function.
+PASS filterRule.length is 1
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_CUSTOM
+PASS removeBaseURL(subRule.cssText) is 'custom(none mix(url(fragment.shader) color-dodge))'
+
+Custom with mix function and blend mode color-burn : custom(none mix(url(fragment.shader) color-burn))
+PASS cssRule.type is 1
+PASS declaration.length is 1
+PASS removeBaseURL(declaration.getPropertyValue('-webkit-filter')) is 'custom(none mix(url(fragment.shader) color-burn))'
+PASS jsWrapperClass(filterRule) is 'CSSValueList'
+FAIL jsWrapperClass(filterRule.__proto__) should be CSSValueListPrototype. Was Object.
+FAIL jsWrapperClass(filterRule.constructor) should be CSSValueListConstructor. Was Function.
+PASS filterRule.length is 1
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_CUSTOM
+PASS removeBaseURL(subRule.cssText) is 'custom(none mix(url(fragment.shader) color-burn))'
+
+Custom with mix function and blend mode hard-light : custom(none mix(url(fragment.shader) hard-light))
+PASS cssRule.type is 1
+PASS declaration.length is 1
+PASS removeBaseURL(declaration.getPropertyValue('-webkit-filter')) is 'custom(none mix(url(fragment.shader) hard-light))'
+PASS jsWrapperClass(filterRule) is 'CSSValueList'
+FAIL jsWrapperClass(filterRule.__proto__) should be CSSValueListPrototype. Was Object.
+FAIL jsWrapperClass(filterRule.constructor) should be CSSValueListConstructor. Was Function.
+PASS filterRule.length is 1
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_CUSTOM
+PASS removeBaseURL(subRule.cssText) is 'custom(none mix(url(fragment.shader) hard-light))'
+
+Custom with mix function and blend mode soft-light : custom(none mix(url(fragment.shader) soft-light))
+PASS cssRule.type is 1
+PASS declaration.length is 1
+PASS removeBaseURL(declaration.getPropertyValue('-webkit-filter')) is 'custom(none mix(url(fragment.shader) soft-light))'
+PASS jsWrapperClass(filterRule) is 'CSSValueList'
+FAIL jsWrapperClass(filterRule.__proto__) should be CSSValueListPrototype. Was Object.
+FAIL jsWrapperClass(filterRule.constructor) should be CSSValueListConstructor. Was Function.
+PASS filterRule.length is 1
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_CUSTOM
+PASS removeBaseURL(subRule.cssText) is 'custom(none mix(url(fragment.shader) soft-light))'
+
+Custom with mix function and blend mode difference : custom(none mix(url(fragment.shader) difference))
+PASS cssRule.type is 1
+PASS declaration.length is 1
+PASS removeBaseURL(declaration.getPropertyValue('-webkit-filter')) is 'custom(none mix(url(fragment.shader) difference))'
+PASS jsWrapperClass(filterRule) is 'CSSValueList'
+FAIL jsWrapperClass(filterRule.__proto__) should be CSSValueListPrototype. Was Object.
+FAIL jsWrapperClass(filterRule.constructor) should be CSSValueListConstructor. Was Function.
+PASS filterRule.length is 1
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_CUSTOM
+PASS removeBaseURL(subRule.cssText) is 'custom(none mix(url(fragment.shader) difference))'
+
+Custom with mix function and blend mode exclusion : custom(none mix(url(fragment.shader) exclusion))
+PASS cssRule.type is 1
+PASS declaration.length is 1
+PASS removeBaseURL(declaration.getPropertyValue('-webkit-filter')) is 'custom(none mix(url(fragment.shader) exclusion))'
+PASS jsWrapperClass(filterRule) is 'CSSValueList'
+FAIL jsWrapperClass(filterRule.__proto__) should be CSSValueListPrototype. Was Object.
+FAIL jsWrapperClass(filterRule.constructor) should be CSSValueListConstructor. Was Function.
+PASS filterRule.length is 1
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_CUSTOM
+PASS removeBaseURL(subRule.cssText) is 'custom(none mix(url(fragment.shader) exclusion))'
+
+Custom with mix function and blend mode hue : custom(none mix(url(fragment.shader) hue))
+PASS cssRule.type is 1
+PASS declaration.length is 1
+PASS removeBaseURL(declaration.getPropertyValue('-webkit-filter')) is 'custom(none mix(url(fragment.shader) hue))'
+PASS jsWrapperClass(filterRule) is 'CSSValueList'
+FAIL jsWrapperClass(filterRule.__proto__) should be CSSValueListPrototype. Was Object.
+FAIL jsWrapperClass(filterRule.constructor) should be CSSValueListConstructor. Was Function.
+PASS filterRule.length is 1
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_CUSTOM
+PASS removeBaseURL(subRule.cssText) is 'custom(none mix(url(fragment.shader) hue))'
+
+Custom with mix function and blend mode saturation : custom(none mix(url(fragment.shader) saturation))
+PASS cssRule.type is 1
+PASS declaration.length is 1
+PASS removeBaseURL(declaration.getPropertyValue('-webkit-filter')) is 'custom(none mix(url(fragment.shader) saturation))'
+PASS jsWrapperClass(filterRule) is 'CSSValueList'
+FAIL jsWrapperClass(filterRule.__proto__) should be CSSValueListPrototype. Was Object.
+FAIL jsWrapperClass(filterRule.constructor) should be CSSValueListConstructor. Was Function.
+PASS filterRule.length is 1
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_CUSTOM
+PASS removeBaseURL(subRule.cssText) is 'custom(none mix(url(fragment.shader) saturation))'
+
+Custom with mix function and blend mode color : custom(none mix(url(fragment.shader) color))
+PASS cssRule.type is 1
+PASS declaration.length is 1
+PASS removeBaseURL(declaration.getPropertyValue('-webkit-filter')) is 'custom(none mix(url(fragment.shader) color))'
+PASS jsWrapperClass(filterRule) is 'CSSValueList'
+FAIL jsWrapperClass(filterRule.__proto__) should be CSSValueListPrototype. Was Object.
+FAIL jsWrapperClass(filterRule.constructor) should be CSSValueListConstructor. Was Function.
+PASS filterRule.length is 1
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_CUSTOM
+PASS removeBaseURL(subRule.cssText) is 'custom(none mix(url(fragment.shader) color))'
+
+Custom with mix function and blend mode luminosity : custom(none mix(url(fragment.shader) luminosity))
+PASS cssRule.type is 1
+PASS declaration.length is 1
+PASS removeBaseURL(declaration.getPropertyValue('-webkit-filter')) is 'custom(none mix(url(fragment.shader) luminosity))'
+PASS jsWrapperClass(filterRule) is 'CSSValueList'
+FAIL jsWrapperClass(filterRule.__proto__) should be CSSValueListPrototype. Was Object.
+FAIL jsWrapperClass(filterRule.constructor) should be CSSValueListConstructor. Was Function.
+PASS filterRule.length is 1
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_CUSTOM
+PASS removeBaseURL(subRule.cssText) is 'custom(none mix(url(fragment.shader) luminosity))'
+
+Custom with mix function and alpha compositing mode clear : custom(none mix(url(fragment.shader) clear))
+PASS cssRule.type is 1
+PASS declaration.length is 1
+PASS removeBaseURL(declaration.getPropertyValue('-webkit-filter')) is 'custom(none mix(url(fragment.shader) clear))'
+PASS jsWrapperClass(filterRule) is 'CSSValueList'
+FAIL jsWrapperClass(filterRule.__proto__) should be CSSValueListPrototype. Was Object.
+FAIL jsWrapperClass(filterRule.constructor) should be CSSValueListConstructor. Was Function.
+PASS filterRule.length is 1
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_CUSTOM
+PASS removeBaseURL(subRule.cssText) is 'custom(none mix(url(fragment.shader) clear))'
+
+Custom with mix function and alpha compositing mode copy : custom(none mix(url(fragment.shader) copy))
+PASS cssRule.type is 1
+PASS declaration.length is 1
+PASS removeBaseURL(declaration.getPropertyValue('-webkit-filter')) is 'custom(none mix(url(fragment.shader) copy))'
+PASS jsWrapperClass(filterRule) is 'CSSValueList'
+FAIL jsWrapperClass(filterRule.__proto__) should be CSSValueListPrototype. Was Object.
+FAIL jsWrapperClass(filterRule.constructor) should be CSSValueListConstructor. Was Function.
+PASS filterRule.length is 1
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_CUSTOM
+PASS removeBaseURL(subRule.cssText) is 'custom(none mix(url(fragment.shader) copy))'
+
+Custom with mix function and alpha compositing mode source-over : custom(none mix(url(fragment.shader) source-over))
+PASS cssRule.type is 1
+PASS declaration.length is 1
+PASS removeBaseURL(declaration.getPropertyValue('-webkit-filter')) is 'custom(none mix(url(fragment.shader) source-over))'
+PASS jsWrapperClass(filterRule) is 'CSSValueList'
+FAIL jsWrapperClass(filterRule.__proto__) should be CSSValueListPrototype. Was Object.
+FAIL jsWrapperClass(filterRule.constructor) should be CSSValueListConstructor. Was Function.
+PASS filterRule.length is 1
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_CUSTOM
+PASS removeBaseURL(subRule.cssText) is 'custom(none mix(url(fragment.shader) source-over))'
+
+Custom with mix function and alpha compositing mode destination-over : custom(none mix(url(fragment.shader) destination-over))
+PASS cssRule.type is 1
+PASS declaration.length is 1
+PASS removeBaseURL(declaration.getPropertyValue('-webkit-filter')) is 'custom(none mix(url(fragment.shader) destination-over))'
+PASS jsWrapperClass(filterRule) is 'CSSValueList'
+FAIL jsWrapperClass(filterRule.__proto__) should be CSSValueListPrototype. Was Object.
+FAIL jsWrapperClass(filterRule.constructor) should be CSSValueListConstructor. Was Function.
+PASS filterRule.length is 1
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_CUSTOM
+PASS removeBaseURL(subRule.cssText) is 'custom(none mix(url(fragment.shader) destination-over))'
+
+Custom with mix function and alpha compositing mode source-in : custom(none mix(url(fragment.shader) source-in))
+PASS cssRule.type is 1
+PASS declaration.length is 1
+PASS removeBaseURL(declaration.getPropertyValue('-webkit-filter')) is 'custom(none mix(url(fragment.shader) source-in))'
+PASS jsWrapperClass(filterRule) is 'CSSValueList'
+FAIL jsWrapperClass(filterRule.__proto__) should be CSSValueListPrototype. Was Object.
+FAIL jsWrapperClass(filterRule.constructor) should be CSSValueListConstructor. Was Function.
+PASS filterRule.length is 1
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_CUSTOM
+PASS removeBaseURL(subRule.cssText) is 'custom(none mix(url(fragment.shader) source-in))'
+
+Custom with mix function and alpha compositing mode destination-in : custom(none mix(url(fragment.shader) destination-in))
+PASS cssRule.type is 1
+PASS declaration.length is 1
+PASS removeBaseURL(declaration.getPropertyValue('-webkit-filter')) is 'custom(none mix(url(fragment.shader) destination-in))'
+PASS jsWrapperClass(filterRule) is 'CSSValueList'
+FAIL jsWrapperClass(filterRule.__proto__) should be CSSValueListPrototype. Was Object.
+FAIL jsWrapperClass(filterRule.constructor) should be CSSValueListConstructor. Was Function.
+PASS filterRule.length is 1
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_CUSTOM
+PASS removeBaseURL(subRule.cssText) is 'custom(none mix(url(fragment.shader) destination-in))'
+
+Custom with mix function and alpha compositing mode source-out : custom(none mix(url(fragment.shader) source-out))
+PASS cssRule.type is 1
+PASS declaration.length is 1
+PASS removeBaseURL(declaration.getPropertyValue('-webkit-filter')) is 'custom(none mix(url(fragment.shader) source-out))'
+PASS jsWrapperClass(filterRule) is 'CSSValueList'
+FAIL jsWrapperClass(filterRule.__proto__) should be CSSValueListPrototype. Was Object.
+FAIL jsWrapperClass(filterRule.constructor) should be CSSValueListConstructor. Was Function.
+PASS filterRule.length is 1
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_CUSTOM
+PASS removeBaseURL(subRule.cssText) is 'custom(none mix(url(fragment.shader) source-out))'
+
+Custom with mix function and alpha compositing mode destination-out : custom(none mix(url(fragment.shader) destination-out))
+PASS cssRule.type is 1
+PASS declaration.length is 1
+PASS removeBaseURL(declaration.getPropertyValue('-webkit-filter')) is 'custom(none mix(url(fragment.shader) destination-out))'
+PASS jsWrapperClass(filterRule) is 'CSSValueList'
+FAIL jsWrapperClass(filterRule.__proto__) should be CSSValueListPrototype. Was Object.
+FAIL jsWrapperClass(filterRule.constructor) should be CSSValueListConstructor. Was Function.
+PASS filterRule.length is 1
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_CUSTOM
+PASS removeBaseURL(subRule.cssText) is 'custom(none mix(url(fragment.shader) destination-out))'
+
+Custom with mix function and alpha compositing mode source-atop : custom(none mix(url(fragment.shader) source-atop))
+PASS cssRule.type is 1
+PASS declaration.length is 1
+PASS removeBaseURL(declaration.getPropertyValue('-webkit-filter')) is 'custom(none mix(url(fragment.shader) source-atop))'
+PASS jsWrapperClass(filterRule) is 'CSSValueList'
+FAIL jsWrapperClass(filterRule.__proto__) should be CSSValueListPrototype. Was Object.
+FAIL jsWrapperClass(filterRule.constructor) should be CSSValueListConstructor. Was Function.
+PASS filterRule.length is 1
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_CUSTOM
+PASS removeBaseURL(subRule.cssText) is 'custom(none mix(url(fragment.shader) source-atop))'
+
+Custom with mix function and alpha compositing mode destination-atop : custom(none mix(url(fragment.shader) destination-atop))
+PASS cssRule.type is 1
+PASS declaration.length is 1
+PASS removeBaseURL(declaration.getPropertyValue('-webkit-filter')) is 'custom(none mix(url(fragment.shader) destination-atop))'
+PASS jsWrapperClass(filterRule) is 'CSSValueList'
+FAIL jsWrapperClass(filterRule.__proto__) should be CSSValueListPrototype. Was Object.
+FAIL jsWrapperClass(filterRule.constructor) should be CSSValueListConstructor. Was Function.
+PASS filterRule.length is 1
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_CUSTOM
+PASS removeBaseURL(subRule.cssText) is 'custom(none mix(url(fragment.shader) destination-atop))'
+
+Custom with mix function and alpha compositing mode xor : custom(none mix(url(fragment.shader) xor))
+PASS cssRule.type is 1
+PASS declaration.length is 1
+PASS removeBaseURL(declaration.getPropertyValue('-webkit-filter')) is 'custom(none mix(url(fragment.shader) xor))'
+PASS jsWrapperClass(filterRule) is 'CSSValueList'
+FAIL jsWrapperClass(filterRule.__proto__) should be CSSValueListPrototype. Was Object.
+FAIL jsWrapperClass(filterRule.constructor) should be CSSValueListConstructor. Was Function.
+PASS filterRule.length is 1
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_CUSTOM
+PASS removeBaseURL(subRule.cssText) is 'custom(none mix(url(fragment.shader) xor))'
+
+Custom with mix function and blend mode first, alpha compositing mode second : custom(none mix(url(fragment.shader) multiply clear))
+PASS cssRule.type is 1
+PASS declaration.length is 1
+PASS removeBaseURL(declaration.getPropertyValue('-webkit-filter')) is 'custom(none mix(url(fragment.shader) multiply clear))'
+PASS jsWrapperClass(filterRule) is 'CSSValueList'
+FAIL jsWrapperClass(filterRule.__proto__) should be CSSValueListPrototype. Was Object.
+FAIL jsWrapperClass(filterRule.constructor) should be CSSValueListConstructor. Was Function.
+PASS filterRule.length is 1
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_CUSTOM
+PASS removeBaseURL(subRule.cssText) is 'custom(none mix(url(fragment.shader) multiply clear))'
+
+Custom with mix function and alpha compositing mode first, blend mode second : custom(none mix(url(fragment.shader) clear multiply))
+PASS cssRule.type is 1
+PASS declaration.length is 1
+PASS removeBaseURL(declaration.getPropertyValue('-webkit-filter')) is 'custom(none mix(url(fragment.shader) clear multiply))'
+PASS jsWrapperClass(filterRule) is 'CSSValueList'
+FAIL jsWrapperClass(filterRule.__proto__) should be CSSValueListPrototype. Was Object.
+FAIL jsWrapperClass(filterRule.constructor) should be CSSValueListConstructor. Was Function.
+PASS filterRule.length is 1
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_CUSTOM
+PASS removeBaseURL(subRule.cssText) is 'custom(none mix(url(fragment.shader) clear multiply))'
+
+Custom with vertex shader and mix function : custom(url(vertex.shader) mix(url(fragment.shader)))
+PASS cssRule.type is 1
+PASS declaration.length is 1
+PASS removeBaseURL(declaration.getPropertyValue('-webkit-filter')) is 'custom(url(vertex.shader) mix(url(fragment.shader)))'
+PASS jsWrapperClass(filterRule) is 'CSSValueList'
+FAIL jsWrapperClass(filterRule.__proto__) should be CSSValueListPrototype. Was Object.
+FAIL jsWrapperClass(filterRule.constructor) should be CSSValueListConstructor. Was Function.
+PASS filterRule.length is 1
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_CUSTOM
+PASS removeBaseURL(subRule.cssText) is 'custom(url(vertex.shader) mix(url(fragment.shader)))'
+
+Custom with mix function in CAPS : custom(none MIX(url(fragment.shader)))
+PASS cssRule.type is 1
+PASS declaration.length is 1
+PASS removeBaseURL(declaration.getPropertyValue('-webkit-filter')) is 'custom(none mix(url(fragment.shader)))'
+PASS jsWrapperClass(filterRule) is 'CSSValueList'
+FAIL jsWrapperClass(filterRule.__proto__) should be CSSValueListPrototype. Was Object.
+FAIL jsWrapperClass(filterRule.constructor) should be CSSValueListConstructor. Was Function.
+PASS filterRule.length is 1
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_CUSTOM
+PASS removeBaseURL(subRule.cssText) is 'custom(none mix(url(fragment.shader)))'
+
+Custom with mix function and mesh size : custom(none mix(url(fragment.shader)), 10)
+PASS cssRule.type is 1
+PASS declaration.length is 1
+PASS removeBaseURL(declaration.getPropertyValue('-webkit-filter')) is 'custom(none mix(url(fragment.shader)), 10)'
+PASS jsWrapperClass(filterRule) is 'CSSValueList'
+FAIL jsWrapperClass(filterRule.__proto__) should be CSSValueListPrototype. Was Object.
+FAIL jsWrapperClass(filterRule.constructor) should be CSSValueListConstructor. Was Function.
+PASS filterRule.length is 1
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_CUSTOM
+PASS removeBaseURL(subRule.cssText) is 'custom(none mix(url(fragment.shader)), 10)'
+
 Custom with mesh size : custom(url(vertex.shader), 10)
 PASS cssRule.type is 1
 PASS declaration.length is 1
@@ -139,6 +502,17 @@ PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_CUSTOM
 PASS removeBaseURL(subRule.cssText) is 'custom(none url(fragment.shader))'
 PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_SEPIA
 PASS removeBaseURL(subRule.cssText) is 'sepia()'
+
+Custom in CAPS : CUSTOM(url(vertex.shader))
+PASS cssRule.type is 1
+PASS declaration.length is 1
+PASS removeBaseURL(declaration.getPropertyValue('-webkit-filter')) is 'custom(url(vertex.shader))'
+PASS jsWrapperClass(filterRule) is 'CSSValueList'
+FAIL jsWrapperClass(filterRule.__proto__) should be CSSValueListPrototype. Was Object.
+FAIL jsWrapperClass(filterRule.constructor) should be CSSValueListConstructor. Was Function.
+PASS filterRule.length is 1
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_CUSTOM
+PASS removeBaseURL(subRule.cssText) is 'custom(url(vertex.shader))'
 PASS successfullyParsed is true
 
 TEST COMPLETE

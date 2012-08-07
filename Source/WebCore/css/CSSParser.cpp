@@ -101,6 +101,7 @@
 #endif
 
 #if ENABLE(CSS_SHADERS)
+#include "WebKitCSSMixFunctionValue.h"
 #include "WebKitCSSShaderValue.h"
 #endif
 
@@ -7349,6 +7350,19 @@ PassRefPtr<CSSValueList> CSSParser::parseTransform()
     return list.release();
 }
 
+bool CSSParser::isBlendMode(int ident)
+{
+    return (ident >= CSSValueMultiply && ident <= CSSValueLuminosity)
+        || ident == CSSValueNormal
+        || ident == CSSValueOverlay;
+}
+
+bool CSSParser::isCompositeOperator(int ident)
+{
+    // FIXME: Add CSSValueDestination and CSSValueLighter when the Compositing spec updates.
+    return ident >= CSSValueClear && ident <= CSSValueXor;
+}
+
 #if ENABLE(CSS_FILTERS)
 
 static void filterInfoForName(const CSSParserString& name, WebKitCSSFilterValue::FilterOperationType& filterType, unsigned& maximumArgumentCount)
@@ -7392,6 +7406,53 @@ static bool acceptCommaOperator(CSSParserValueList* argsList)
     return true;
 }
 
+PassRefPtr<WebKitCSSMixFunctionValue> CSSParser::parseMixFunction(CSSParserValue* value)
+{
+    ASSERT(value->unit == CSSParserValue::Function && value->function);
+
+    if (!equalIgnoringCase(value->function->name, "mix("))
+        return 0;
+
+    CSSParserValueList* argsList = value->function->args.get();
+    unsigned numArgs = argsList->size();
+    if (numArgs < 1 || numArgs > 3)
+        return 0;
+    
+    RefPtr<WebKitCSSMixFunctionValue> mixFunction = WebKitCSSMixFunctionValue::create();
+
+    bool hasBlendMode = false;
+    bool hasAlphaCompositing = false;
+    CSSParserValue* arg;
+    while ((arg = argsList->current())) {
+        RefPtr<CSSValue> value;
+
+        unsigned argNumber = argsList->currentIndex();
+        if (!argNumber) {
+            if (arg->unit == CSSPrimitiveValue::CSS_URI) {
+                KURL shaderURL = completeURL(arg->string);
+                value = WebKitCSSShaderValue::create(shaderURL.string());
+            }
+        } else if (argNumber == 1 || argNumber == 2) {
+            if (!hasBlendMode && isBlendMode(arg->id)) {
+                hasBlendMode = true;
+                value = cssValuePool().createIdentifierValue(arg->id);
+            } else if (!hasAlphaCompositing && isCompositeOperator(arg->id)) {
+                hasAlphaCompositing = true;
+                value = cssValuePool().createIdentifierValue(arg->id);
+            }
+        }
+
+        if (!value)
+            return 0;
+
+        mixFunction->append(value.release());
+
+        arg = argsList->next();
+    }
+
+    return mixFunction;
+}
+
 PassRefPtr<WebKitCSSFilterValue> CSSParser::parseCustomFilter(CSSParserValue* value)
 {
     CSSParserValueList* argsList = value->function->args.get();
@@ -7403,7 +7464,13 @@ PassRefPtr<WebKitCSSFilterValue> CSSParser::parseCustomFilter(CSSParserValue* va
     // Custom filter syntax:
     //
     // vertexShader:    <uri> | none
-    // fragmentShader:  <uri> | none
+    // fragmentShader:  <uri> | none | mix(<uri> [ <blend-mode> || <alpha-compositing> ]?)
+    //
+    // blend-mode: normal | multiply | screen | overlay | darken | lighten | color-dodge |
+    //             color-burn | hard-light | soft-light | difference | exclusion | hue |
+    //             saturation | color | luminosity
+    // alpha-compositing: clear | src | dst | src-over | dst-over | src-in | dst-in |
+    //                    src-out | dst-out | src-atop | dst-atop | xor | plus
     //
     // box: filter-box | border-box | padding-box | content-box
     // vertexMesh:  +<integer>{1,2}[wsp<box>][wsp'detached']
@@ -7437,7 +7504,12 @@ PassRefPtr<WebKitCSSFilterValue> CSSParser::parseCustomFilter(CSSParserValue* va
             KURL shaderURL = completeURL(arg->string);
             value = WebKitCSSShaderValue::create(shaderURL.string());
             hadAtLeastOneCustomShader = true;
+        } else if (argsList->currentIndex() == 1 && arg->unit == CSSParserValue::Function) {
+            if (!(value = parseMixFunction(arg)))
+                return 0;
+            hadAtLeastOneCustomShader = true;
         }
+
         if (!value)
             break;
         shadersList->append(value.release());

@@ -37783,6 +37783,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\css\WebKitCSSMixFunctionValue.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\css\WebKitCSSMixFunctionValue.h"
+				>
+			</File>
+			<File
 				RelativePath="..\css\WebKitCSSRegionRule.cpp"
 				>
 			</File>

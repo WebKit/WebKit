@@ -80,6 +80,41 @@ testFilterRule("Custom with fragment shader",
 
 testFilterRule("Custom with both shaders",
             "custom(url(vertex.shader) url(fragment.shader))", "custom(url(vertex.shader) url(fragment.shader))");
+
+testFilterRule("Custom with mix function",
+            "custom(none mix(url(fragment.shader)))", "custom(none mix(url(fragment.shader)))");
+
+var blendModes = ["normal", "multiply", "screen", "overlay", "darken", "lighten", "color-dodge",
+            "color-burn", "hard-light", "soft-light", "difference", "exclusion", "hue", "saturation",
+            "color", "luminosity"];
+for (var i = 0; i < blendModes.length; i++) {
+    var blendMode = blendModes[i];
+    testFilterRule("Custom with mix function and blend mode " + blendMode,
+                "custom(none mix(url(fragment.shader) " + blendMode + "))", "custom(none mix(url(fragment.shader) " + blendMode + "))");
+}
+
+var alphaCompositingModes = ["clear", "copy", "source-over", "destination-over", "source-in", "destination-in",
+            "source-out", "destination-out", "source-atop", "destination-atop", "xor"];
+for (var i = 0; i < alphaCompositingModes.length; i++) {
+    var alphaCompositingMode = alphaCompositingModes[i];
+    testFilterRule("Custom with mix function and alpha compositing mode " + alphaCompositingMode,
+            "custom(none mix(url(fragment.shader) " + alphaCompositingMode + "))", "custom(none mix(url(fragment.shader) " + alphaCompositingMode + "))");
+}
+
+testFilterRule("Custom with mix function and blend mode first, alpha compositing mode second",
+            "custom(none mix(url(fragment.shader) multiply clear))", "custom(none mix(url(fragment.shader) multiply clear))");
+
+testFilterRule("Custom with mix function and alpha compositing mode first, blend mode second",
+            "custom(none mix(url(fragment.shader) clear multiply))", "custom(none mix(url(fragment.shader) clear multiply))");
+
+testFilterRule("Custom with vertex shader and mix function",
+            "custom(url(vertex.shader) mix(url(fragment.shader)))", "custom(url(vertex.shader) mix(url(fragment.shader)))");
+
+testFilterRule("Custom with mix function in CAPS",
+            "custom(none MIX(url(fragment.shader)))", "custom(none mix(url(fragment.shader)))");
+
+testFilterRule("Custom with mix function and mesh size",
+            "custom(none mix(url(fragment.shader)), 10)", "custom(none mix(url(fragment.shader)), 10)");
             
 testFilterRule("Custom with mesh size",
             "custom(url(vertex.shader), 10)", "custom(url(vertex.shader), 10)");
@@ -117,3 +152,6 @@ testFilterRule("Multiple with fragment shader",
             ["grayscale()",
             "custom(none url(fragment.shader))",
             "sepia()"]);
+
+testFilterRule("Custom in CAPS",
+            "CUSTOM(url(vertex.shader))", "custom(url(vertex.shader))");

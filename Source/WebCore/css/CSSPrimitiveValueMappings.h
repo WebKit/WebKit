@@ -3379,6 +3379,103 @@ template<> inline CSSPrimitiveValue::operator CustomFilterOperation::MeshBoxType
 }
 #endif // ENABLE(CSS_SHADERS)
 
+template<> inline CSSPrimitiveValue::CSSPrimitiveValue(BlendMode blendMode)
+    : CSSValue(PrimitiveClass)
+{
+    m_primitiveUnitType = CSS_IDENT;
+    switch (blendMode) {
+    case BlendModeNormal:
+        m_value.ident = CSSValueNormal;
+        break;
+    case BlendModeMultiply:
+        m_value.ident = CSSValueMultiply;
+        break;
+    case BlendModeScreen:
+        m_value.ident = CSSValueScreen;
+        break;
+    case BlendModeOverlay:
+        m_value.ident = CSSValueOverlay;
+        break;
+    case BlendModeDarken:
+        m_value.ident = CSSValueDarken;
+        break;
+    case BlendModeLighten:
+        m_value.ident = CSSValueLighten;
+        break;
+    case BlendModeColorDodge:
+        m_value.ident = CSSValueColorDodge;
+        break;
+    case BlendModeColorBurn:
+        m_value.ident = CSSValueColorBurn;
+        break;
+    case BlendModeHardLight:
+        m_value.ident = CSSValueHardLight;
+        break;
+    case BlendModeSoftLight:
+        m_value.ident = CSSValueSoftLight;
+        break;
+    case BlendModeDifference:
+        m_value.ident = CSSValueDifference;
+        break;
+    case BlendModeExclusion:
+        m_value.ident = CSSValueExclusion;
+        break;
+    case BlendModeHue:
+        m_value.ident = CSSValueHue;
+        break;
+    case BlendModeSaturation:
+        m_value.ident = CSSValueSaturation;
+        break;
+    case BlendModeColor:
+        m_value.ident = CSSValueColor;
+        break;
+    case BlendModeLuminosity:
+        m_value.ident = CSSValueLuminosity;
+        break;
+    }
+}
+
+template<> inline CSSPrimitiveValue::operator BlendMode() const
+{
+    switch (m_value.ident) {
+    case CSSValueNormal:
+        return BlendModeNormal;
+    case CSSValueMultiply:
+        return BlendModeMultiply;
+    case CSSValueScreen:
+        return BlendModeScreen;
+    case CSSValueOverlay:
+        return BlendModeOverlay;
+    case CSSValueDarken:
+        return BlendModeDarken;
+    case CSSValueLighten:
+        return BlendModeLighten;
+    case CSSValueColorDodge:
+        return BlendModeColorDodge;
+    case CSSValueColorBurn:
+        return BlendModeColorBurn;
+    case CSSValueHardLight:
+        return BlendModeHardLight;
+    case CSSValueSoftLight:
+        return BlendModeSoftLight;
+    case CSSValueDifference:
+        return BlendModeDifference;
+    case CSSValueExclusion:
+        return BlendModeExclusion;
+    case CSSValueHue:
+        return BlendModeHue;
+    case CSSValueSaturation:
+        return BlendModeSaturation;
+    case CSSValueColor:
+        return BlendModeColor;
+    case CSSValueLuminosity:
+        return BlendModeLuminosity;
+    default:
+        ASSERT_NOT_REACHED();
+        return BlendModeNormal;
+    }
+}
+
 #if ENABLE(SVG)
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(LineCap e)

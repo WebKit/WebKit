@@ -153,6 +153,7 @@
 #include "StyleCustomFilterProgram.h"
 #include "StylePendingShader.h"
 #include "StyleShader.h"
+#include "WebKitCSSMixFunctionValue.h"
 #include "WebKitCSSShaderValue.h"
 #endif
 
@@ -5287,7 +5288,34 @@ PassRefPtr<CustomFilterOperation> StyleResolver::createCustomFilterOperation(Web
 
     ASSERT(shadersList->length());
     RefPtr<StyleShader> vertexShader = styleShader(shadersList->itemWithoutBoundsCheck(0));
-    RefPtr<StyleShader> fragmentShader = (shadersList->length() > 1) ? styleShader(shadersList->itemWithoutBoundsCheck(1)) : 0;
+
+    RefPtr<StyleShader> fragmentShader;
+    CustomFilterProgramMixSettings mixSettings;
+    if (shadersList->length() > 1) {
+        CSSValue* fragmentShaderOrMixFunction = shadersList->itemWithoutBoundsCheck(1);
+        if (fragmentShaderOrMixFunction->isWebKitCSSMixFunctionValue()) {
+            mixSettings.enabled = true;
+            WebKitCSSMixFunctionValue* mixFunction = static_cast<WebKitCSSMixFunctionValue*>(fragmentShaderOrMixFunction);
+            CSSValueListIterator iterator(mixFunction);
+
+            ASSERT(mixFunction->length());
+            fragmentShader = styleShader(iterator.value());
+            iterator.advance();
+
+            ASSERT(mixFunction->length() <= 3);
+            while (iterator.hasMore()) {
+                CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(iterator.value());
+                if (CSSParser::isBlendMode(primitiveValue->getIdent()))
+                    mixSettings.blendMode = *primitiveValue;
+                else if (CSSParser::isCompositeOperator(primitiveValue->getIdent()))
+                    mixSettings.compositeOperator = *primitiveValue;
+                else
+                    ASSERT_NOT_REACHED();
+                iterator.advance();
+            }
+        } else
+            fragmentShader = styleShader(fragmentShaderOrMixFunction);
+    }
     
     unsigned meshRows = 1;
     unsigned meshColumns = 1;
@@ -5356,7 +5384,7 @@ PassRefPtr<CustomFilterOperation> StyleResolver::createCustomFilterOperation(Web
     if (parametersValue && !parseCustomFilterParameterList(parametersValue, parameterList))
         return 0;
     
-    RefPtr<StyleCustomFilterProgram> program = StyleCustomFilterProgram::create(vertexShader.release(), fragmentShader.release());
+    RefPtr<StyleCustomFilterProgram> program = StyleCustomFilterProgram::create(vertexShader.release(), fragmentShader.release(), mixSettings);
     return CustomFilterOperation::create(program.release(), parameterList, meshRows, meshColumns, meshBoxType, meshType);
 }
 #endif

@@ -77,6 +77,7 @@ public:
     void extend(CSSParserValueList&);
 
     unsigned size() const { return m_values.size(); }
+    unsigned currentIndex() { return m_current; }
     CSSParserValue* current() { return m_current < m_values.size() ? &m_values[m_current] : 0; }
     CSSParserValue* next() { ++m_current; return current(); }
     CSSParserValue* previous()

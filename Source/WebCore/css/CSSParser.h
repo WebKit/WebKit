@@ -64,6 +64,10 @@ class StyleKeyframe;
 class StyleSheetContents;
 class StyledElement;
 
+#if ENABLE(CSS_SHADERS)
+class WebKitCSSMixFunctionValue;
+#endif
+
 class CSSParser {
 public:
     CSSParser(const CSSParserContext&);
@@ -213,9 +217,13 @@ public:
     PassRefPtr<CSSValueList> parseFilter();
     PassRefPtr<WebKitCSSFilterValue> parseBuiltinFilterArguments(CSSParserValueList*, WebKitCSSFilterValue::FilterOperationType);
 #if ENABLE(CSS_SHADERS)
+    PassRefPtr<WebKitCSSMixFunctionValue> parseMixFunction(CSSParserValue*);
     PassRefPtr<WebKitCSSFilterValue> parseCustomFilter(CSSParserValue*);
 #endif
 #endif
+
+    static bool isBlendMode(int ident);
+    static bool isCompositeOperator(int ident);
 
     PassRefPtr<CSSValueList> parseTransform();
     bool parseTransformOrigin(CSSPropertyID propId, CSSPropertyID& propId1, CSSPropertyID& propId2, CSSPropertyID& propId3, RefPtr<CSSValue>&, RefPtr<CSSValue>&, RefPtr<CSSValue>&);

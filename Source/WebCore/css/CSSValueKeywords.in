@@ -937,6 +937,23 @@ filter-box
 detached
 #endif // CSS_SHADERS
 #endif // CSS_FILTERS
+// blend modes
+// normal
+multiply
+screen
+// overlay
+darken
+lighten
+color-dodge
+color-burn
+hard-light
+soft-light
+difference
+exclusion
+hue
+saturation
+color
+luminosity
 
 #if defined(ENABLE_CSS_IMAGE_RESOLUTION) && ENABLE_CSS_IMAGE_RESOLUTION
 from-image

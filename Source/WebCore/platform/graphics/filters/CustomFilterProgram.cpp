@@ -41,7 +41,8 @@
 
 namespace WebCore {
 
-CustomFilterProgram::CustomFilterProgram()
+CustomFilterProgram::CustomFilterProgram(CustomFilterProgramMixSettings mixSettings)
+    : m_mixSettings(mixSettings)
 {
     // Keep the constructor protected to prevent creating this object directly.
 }

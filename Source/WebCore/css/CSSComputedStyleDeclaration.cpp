@@ -68,6 +68,7 @@
 #include "CustomFilterNumberParameter.h"
 #include "CustomFilterOperation.h"
 #include "CustomFilterParameter.h"
+#include "WebKitCSSMixFunctionValue.h"
 #endif
 
 #if ENABLE(CSS_FILTERS)
@@ -878,10 +879,19 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::valueForFilter(RenderStyle* st
                 shadersList->append(program->vertexShader()->cssValue());
             else
                 shadersList->append(cssValuePool().createIdentifierValue(CSSValueNone));
-            if (program->fragmentShader())
+
+            const CustomFilterProgramMixSettings mixSettings = program->mixSettings();
+            if (mixSettings.enabled) {
+                RefPtr<WebKitCSSMixFunctionValue> mixFunction = WebKitCSSMixFunctionValue::create();
+                mixFunction->append(program->fragmentShader()->cssValue());
+                mixFunction->append(cssValuePool().createValue(mixSettings.blendMode));
+                mixFunction->append(cssValuePool().createValue(mixSettings.compositeOperator));
+                shadersList->append(mixFunction.release());
+            } else if (program->fragmentShader())
                 shadersList->append(program->fragmentShader()->cssValue());
             else
                 shadersList->append(cssValuePool().createIdentifierValue(CSSValueNone));
+
             filterValue->append(shadersList.release());
             
             RefPtr<CSSValueList> meshParameters = CSSValueList::createSpaceSeparated();

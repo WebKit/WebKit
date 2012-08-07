@@ -343,6 +343,7 @@ SOURCES += \
     css/WebKitCSSKeyframeRule.cpp \
     css/WebKitCSSKeyframesRule.cpp \
     css/WebKitCSSMatrix.cpp \
+    css/WebKitCSSMixFunctionValue.cpp \
     css/WebKitCSSRegionRule.cpp \
     css/WebKitCSSSVGDocumentValue.cpp \
     css/WebKitCSSShaderValue.cpp \
@@ -1477,6 +1478,7 @@ HEADERS += \
     css/WebKitCSSKeyframeRule.h \
     css/WebKitCSSKeyframesRule.h \
     css/WebKitCSSMatrix.h \
+    css/WebKitCSSMixFunctionValue.h \
     css/WebKitCSSRegionRule.h \
     css/WebKitCSSSVGDocumentValue.h \
     css/WebKitCSSShaderValue.h \

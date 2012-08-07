@@ -34,6 +34,71 @@ PASS cssRule.type is 1
 PASS declaration.length is 0
 PASS declaration.getPropertyValue('-webkit-filter') is null
 
+Mix function as vertex shader : custom(mix(url(shader)))
+PASS cssRule.type is 1
+PASS declaration.length is 0
+PASS declaration.getPropertyValue('-webkit-filter') is null
+
+Mix function with wrong name : custom(none fn(url(shader)))
+PASS cssRule.type is 1
+PASS declaration.length is 0
+PASS declaration.getPropertyValue('-webkit-filter') is null
+
+Mix function with 0 args : custom(none mix())
+PASS cssRule.type is 1
+PASS declaration.length is 0
+PASS declaration.getPropertyValue('-webkit-filter') is null
+
+Mix function with first arg not a URI : custom(none mix(none))
+PASS cssRule.type is 1
+PASS declaration.length is 0
+PASS declaration.getPropertyValue('-webkit-filter') is null
+
+Mix function with second arg not a blend mode or alpha compositing mode : custom(none mix(url(shader) 0))
+PASS cssRule.type is 1
+PASS declaration.length is 0
+PASS declaration.getPropertyValue('-webkit-filter') is null
+
+Mix function with third arg not a blend mode or alpha compositing mode : custom(none mix(url(shader) normal 0))
+PASS cssRule.type is 1
+PASS declaration.length is 0
+PASS declaration.getPropertyValue('-webkit-filter') is null
+
+Mix function with two blend modes : custom(none mix(url(shader) multiply screen))
+PASS cssRule.type is 1
+PASS declaration.length is 0
+PASS declaration.getPropertyValue('-webkit-filter') is null
+
+Mix function with two alpha compositing modes : custom(none mix(url(shader) source-over destination-over))
+PASS cssRule.type is 1
+PASS declaration.length is 0
+PASS declaration.getPropertyValue('-webkit-filter') is null
+
+Mix function with alpha compositing mode 'plus-darker', which should only apply to -webkit-background-composite : custom(none mix(url(shader) plus-darker))
+PASS cssRule.type is 1
+PASS declaration.length is 0
+PASS declaration.getPropertyValue('-webkit-filter') is null
+
+Mix function with alpha compositing mode 'plus-lighter', which should only apply to -webkit-background-composite : custom(none mix(url(shader) plus-lighter))
+PASS cssRule.type is 1
+PASS declaration.length is 0
+PASS declaration.getPropertyValue('-webkit-filter') is null
+
+Mix function with alpha compositing mode 'highlight', which should only apply to -webkit-background-composite : custom(none mix(url(shader) highlight))
+PASS cssRule.type is 1
+PASS declaration.length is 0
+PASS declaration.getPropertyValue('-webkit-filter') is null
+
+Mix function with 4 args : custom(none mix(url(shader) multiply clear normal))
+PASS cssRule.type is 1
+PASS declaration.length is 0
+PASS declaration.getPropertyValue('-webkit-filter') is null
+
+Mix function with comma separators : custom(none mix(url(shader), multiply, clear))
+PASS cssRule.type is 1
+PASS declaration.length is 0
+PASS declaration.getPropertyValue('-webkit-filter') is null
+
 No shader : custom(none, 10 20)
 PASS cssRule.type is 1
 PASS declaration.length is 0

@@ -1,3 +1,27 @@
+2012-08-06  Max Vujovic  <mvujovic@adobe.com>
+
+        [CSS Shaders] Parse mix function
+        https://bugs.webkit.org/show_bug.cgi?id=90101
+
+        Reviewed by Dirk Schulze.
+
+        Add tests for custom filter mix function parsing as defined in the Filter Effects spec:
+        https://dvcs.w3.org/hg/FXTF/raw-file/tip/filters/index.html#FilterFunction
+
+        Remove some mac-wk2 and chromium expectations because they are the same as the general 
+        expectations.
+
+        * css3/filters/custom/custom-filter-property-computed-style-expected.txt:
+        * css3/filters/custom/custom-filter-property-parsing-expected.txt:
+        * css3/filters/custom/custom-filter-property-parsing-invalid-expected.txt:
+        * css3/filters/script-tests/custom-filter-property-computed-style.js:
+        * css3/filters/script-tests/custom-filter-property-parsing-invalid.js:
+        * css3/filters/script-tests/custom-filter-property-parsing.js:
+        * platform/chromium/css3/filters/custom/custom-filter-property-computed-style-expected.txt:
+        * platform/chromium/css3/filters/custom/custom-filter-property-parsing-expected.txt:
+        * platform/chromium/css3/filters/custom/custom-filter-property-parsing-invalid-expected.txt: Removed.
+        * platform/mac-wk2/css3/filters/custom/custom-filter-property-computed-style-expected.txt: Removed.
+
 2012-08-03  Brady Eidson  <beidson@apple.com>
 
         Out-of-process plug-ins should support asynchronous initialization

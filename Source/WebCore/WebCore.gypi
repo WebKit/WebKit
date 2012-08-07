@@ -2623,6 +2623,8 @@
             'css/WebKitCSSKeyframesRule.h',
             'css/WebKitCSSMatrix.cpp',
             'css/WebKitCSSMatrix.h',
+            'css/WebKitCSSMixFunctionValue.cpp',
+            'css/WebKitCSSMixFunctionValue.h',
             'css/WebKitCSSRegionRule.cpp',
             'css/WebKitCSSRegionRule.h',
             'css/WebKitCSSShaderValue.cpp',

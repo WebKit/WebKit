@@ -32,6 +32,8 @@
 
 #if ENABLE(CSS_SHADERS)
 
+#include "GraphicsTypes.h"
+
 #include <wtf/HashCountedSet.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
@@ -42,6 +44,19 @@ class GraphicsContext3D;
 class CustomFilterCompiledProgram;
 class CustomFilterProgramClient;
 
+typedef struct CustomFilterProgramMixSettings {
+    CustomFilterProgramMixSettings()
+        : enabled(false)
+        , blendMode(BlendModeNormal)
+        , compositeOperator(CompositeSourceOver)
+    {
+    }
+    
+    bool enabled;
+    BlendMode blendMode;
+    CompositeOperator compositeOperator;
+} CustomFilterProgramMixSettings;
+
 // This is the base class for the StyleCustomFilterProgram class which knows how to keep
 // references to the cached shaders.
 class CustomFilterProgram: public RefCounted<CustomFilterProgram> {
@@ -50,6 +65,8 @@ public:
 
     virtual bool isLoaded() const = 0;
     
+    CustomFilterProgramMixSettings mixSettings() const { return m_mixSettings; }
+
     void addClient(CustomFilterProgramClient*);
     void removeClient(CustomFilterProgramClient*);
     
@@ -73,11 +90,12 @@ protected:
     virtual void didRemoveLastClient() = 0;
 
     // Keep the constructor protected to prevent creating this object directly.
-    CustomFilterProgram();
+    CustomFilterProgram(CustomFilterProgramMixSettings);
 
 private:
     typedef HashCountedSet<CustomFilterProgramClient*> CustomFilterProgramClientList;
     CustomFilterProgramClientList m_clients;
+    CustomFilterProgramMixSettings m_mixSettings;
 };
 
 }

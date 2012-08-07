@@ -34,6 +34,20 @@ testInvalidFilterRule("Too many shaders 1", "custom(url(shader1) url(shader2) ur
 testInvalidFilterRule("Too many shaders 2", "custom(none none none)");
 testInvalidFilterRule("Too many shaders 3", "custom(none url(shader1) url(shader2) url(shader2))");
 
+testInvalidFilterRule("Mix function as vertex shader", "custom(mix(url(shader)))");
+testInvalidFilterRule("Mix function with wrong name", "custom(none fn(url(shader)))");
+testInvalidFilterRule("Mix function with 0 args", "custom(none mix())");
+testInvalidFilterRule("Mix function with first arg not a URI", "custom(none mix(none))");
+testInvalidFilterRule("Mix function with second arg not a blend mode or alpha compositing mode", "custom(none mix(url(shader) 0))");
+testInvalidFilterRule("Mix function with third arg not a blend mode or alpha compositing mode", "custom(none mix(url(shader) normal 0))");
+testInvalidFilterRule("Mix function with two blend modes", "custom(none mix(url(shader) multiply screen))");
+testInvalidFilterRule("Mix function with two alpha compositing modes", "custom(none mix(url(shader) source-over destination-over))");
+testInvalidFilterRule("Mix function with alpha compositing mode 'plus-darker', which should only apply to -webkit-background-composite", "custom(none mix(url(shader) plus-darker))");
+testInvalidFilterRule("Mix function with alpha compositing mode 'plus-lighter', which should only apply to -webkit-background-composite", "custom(none mix(url(shader) plus-lighter))");
+testInvalidFilterRule("Mix function with alpha compositing mode 'highlight', which should only apply to -webkit-background-composite", "custom(none mix(url(shader) highlight))");
+testInvalidFilterRule("Mix function with 4 args", "custom(none mix(url(shader) multiply clear normal))");
+testInvalidFilterRule("Mix function with comma separators", "custom(none mix(url(shader), multiply, clear))");
+
 testInvalidFilterRule("No shader", "custom(none, 10 20)");
 testInvalidFilterRule("Too many mesh sizes", "custom(none, 10 20 30)");
 testInvalidFilterRule("Wrong mesh-box type - 'padding'", "custom(url(shader), padding)");
