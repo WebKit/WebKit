@@ -1,3 +1,14 @@
+2012-08-06  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        [EFL] Enable link prefetch
+        https://bugs.webkit.org/show_bug.cgi?id=93281
+
+        Reviewed by Kentaro Hara.
+
+        Unskip test cases related to link prefetch feature except for fast/dom/HTMLLinkElement/subresource.html.
+
+        * platform/efl/TestExpectations:
+
 2012-08-06  Takashi Toyoshima  <toyoshim@chromium.org>
 
         Unreviewed, rebaseline again for chromium-linux-x86.

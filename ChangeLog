@@ -1,3 +1,12 @@
+2012-08-06  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        [EFL] Enable link prefetch
+        https://bugs.webkit.org/show_bug.cgi?id=93281
+
+        Reviewed by Kentaro Hara.
+
+        * Source/cmake/OptionsEfl.cmake: Enable LINK_PREFETCH by default.
+
 2012-08-06  Xan Lopez  <xlopez@igalia.com>
 
         [GTK] Cleanup configure.ac build options output

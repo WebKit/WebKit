@@ -280,7 +280,7 @@ my @features = (
       define => "ENABLE_LEGACY_WEBKIT_BLOB_BUILDER", default => (isGtk() || isChromium() || isBlackBerry() || isEfl()), value => \$legacyWebKitBlobBuilderSupport },
 
     { option => "link-prefetch", desc => "Toggle Link Prefetch support",
-      define => "ENABLE_LINK_PREFETCH", default => isGtk(), value => \$linkPrefetchSupport },
+      define => "ENABLE_LINK_PREFETCH", default => (isGtk() || isEfl()), value => \$linkPrefetchSupport },
 
     { option => "link-prerender", desc => "Toggle Link Prerender support",
       define => "ENABLE_LINK_PRERENDER", default => 0, value => \$linkPrerenderSupport },
