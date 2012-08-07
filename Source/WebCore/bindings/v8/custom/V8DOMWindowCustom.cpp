@@ -605,7 +605,7 @@ v8::Handle<v8::Value> toV8(DOMWindow* window, v8::Isolate* isolate)
     // of the frame.
     Frame* frame = window->frame();
     if (!frame)
-        return v8::Handle<v8::Object>();
+        return v8Undefined();
 
     // Special case: Because of evaluateInIsolatedWorld() one DOMWindow can have
     // multiple contexts and multiple global objects associated with it. When
@@ -623,7 +623,7 @@ v8::Handle<v8::Value> toV8(DOMWindow* window, v8::Isolate* isolate)
     // Otherwise, return the global object associated with this frame.
     v8::Handle<v8::Context> context = V8Proxy::context(frame);
     if (context.IsEmpty())
-        return v8::Handle<v8::Object>();
+        return v8Undefined();
 
     v8::Handle<v8::Object> global = context->Global();
     ASSERT(!global.IsEmpty());

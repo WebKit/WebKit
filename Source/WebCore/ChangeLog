@@ -1,5 +1,28 @@
 2012-08-07  Kentaro Hara  <haraken@chromium.org>
 
+        [V8] Replace all V8 undefined values in the rest of custom bindings with v8Undefined()
+        https://bugs.webkit.org/show_bug.cgi?id=93220
+
+        Reviewed by Eric Seidel.
+
+        We should use v8Undefined() everywhere in V8 bindings.
+        This patch replaces all V8 undefined values in the rest of custom bindings
+        with v8Undefined().
+
+        No tests. No change in behavior.
+
+        * bindings/v8/custom/V8DOMStringMapCustom.cpp:
+        (WebCore::V8DOMStringMap::namedPropertyQuery): Simple refactoring not related to
+        this patch. Since other bindings are using 0 instead of v8::None, we should use 0 here too.
+        * bindings/v8/custom/V8DOMWindowCustom.cpp:
+        (WebCore::toV8):
+        * bindings/v8/custom/V8ScriptProfileCustom.cpp:
+        (WebCore::toV8):
+        * bindings/v8/custom/V8ScriptProfileNodeCustom.cpp:
+        (WebCore::toV8):
+
+2012-08-07  Kentaro Hara  <haraken@chromium.org>
+
         [V8] Remove #include V8BindingMacros.h
         https://bugs.webkit.org/show_bug.cgi?id=93312
 

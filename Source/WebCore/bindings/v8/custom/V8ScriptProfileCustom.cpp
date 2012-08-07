@@ -48,12 +48,12 @@ v8::Handle<v8::Value> toV8(ScriptProfile* impl, v8::Isolate* isolate)
     v8::Local<v8::Function> function = V8ScriptProfile::GetTemplate()->GetFunction();
     if (function.IsEmpty()) {
         // Return if allocation failed.
-        return v8::Local<v8::Object>();
+        return v8Undefined();
     }
     v8::Local<v8::Object> instance = SafeAllocation::newInstance(function);
     if (instance.IsEmpty()) {
         // Avoid setting the wrapper if allocation failed.
-        return v8::Local<v8::Object>();
+        return v8Undefined();
     }
     impl->ref();
     V8DOMWrapper::setDOMWrapper(instance, &V8ScriptProfile::info, impl);

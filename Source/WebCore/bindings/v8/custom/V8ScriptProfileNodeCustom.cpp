@@ -55,7 +55,7 @@ v8::Handle<v8::Value> toV8(ScriptProfileNode* impl, v8::Isolate* isolate)
     v8::Local<v8::Function> function = V8ScriptProfileNode::GetTemplate()->GetFunction();
     if (function.IsEmpty()) {
         // Return if allocation failed.
-        return v8::Local<v8::Object>();
+        return v8Undefined();
     }
     v8::Local<v8::Object> instance = SafeAllocation::newInstance(function);
     if (instance.IsEmpty()) {

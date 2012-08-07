@@ -378,7 +378,7 @@ namespace WebCore {
     {
         if (!value->IsObject()) {
             V8Proxy::throwTypeError();
-            return v8::Local<v8::Value>();
+            return v8Undefined();
         }
 
         v8::Local<v8::Value> v8Value(v8::Local<v8::Value>::New(value));
@@ -388,7 +388,7 @@ namespace WebCore {
 
         if (lengthValue->IsUndefined() || lengthValue->IsNull()) {
             V8Proxy::throwTypeError();
-            return v8::Local<v8::Value>();
+            return v8Undefined();
         }
 
         EXCEPTION_BLOCK(uint32_t, sequenceLength, lengthValue->Int32Value());

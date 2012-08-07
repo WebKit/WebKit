@@ -42,7 +42,7 @@ v8::Handle<v8::Integer> V8DOMStringMap::namedPropertyQuery(v8::Local<v8::String>
 {
     INC_STATS("DOM.DOMStringMap.NamedPropertyQuery");
     if (V8DOMStringMap::toNative(info.Holder())->contains(toWebCoreString(name)))
-        return v8Integer(v8::None, info.GetIsolate());
+        return v8Integer(0, info.GetIsolate());
     return v8::Handle<v8::Integer>();
 }
 
