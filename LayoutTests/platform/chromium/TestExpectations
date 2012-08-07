@@ -3482,4 +3482,4 @@ BUGWK85856 : scrollbars/rtl/div-horizontal.html = TEXT
 BUGWK93148 MAC : fast/css/nested-layers-with-hover.html = TIMEOUT
 
 
-BUGWK93247 : fast/lists/list-marker-remove-crash.html = CRASH
+BUGWK93247 DEBUG : fast/lists/list-marker-remove-crash.html = CRASH

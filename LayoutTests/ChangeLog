@@ -1,3 +1,16 @@
+2012-08-07  Csaba Osztrogonác  <ossy@webkit.org>
+
+        ASSERTION FAILED: isEndOfParagraph(endOfParagraphToMove) crash on fast/lists/list-marker-remove-crash.html after r124739
+        https://bugs.webkit.org/show_bug.cgi?id=93247
+
+        Unreviewed gardening. Add DEBUG modifier for fast/lists/list-marker-remove-crash.html, because there are asserts in debug mode only.
+
+        * platform/chromium/TestExpectations:
+        * platform/efl/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/qt/TestExpectations:
+
 2012-08-07  Abhishek Arya  <inferno@chromium.org>
 
         Crash in InlineFlowBox::deleteLine.

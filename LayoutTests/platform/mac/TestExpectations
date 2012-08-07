@@ -321,4 +321,4 @@ BUGWK93148 : tables/mozilla_expected_failures/marvin/table_overflow_hidden_tbody
 BUGWK93148 : tables/mozilla_expected_failures/marvin/table_overflow_hidden_tr.html  = TEXT
 BUGWK93148 : fast/css/nested-layers-with-hover.html = TEXT
 
-BUGWK93247 : fast/lists/list-marker-remove-crash.html = CRASH
+BUGWK93247 DEBUG : fast/lists/list-marker-remove-crash.html = CRASH
