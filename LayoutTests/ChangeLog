@@ -1,3 +1,24 @@
+2012-08-06  Keishi Hattori  <keishi@webkit.org>
+
+        [Chromium] Rebaseline test color-suggestion-picker-appearance.html
+        https://bugs.webkit.org/show_bug.cgi?id=92444
+
+        Unreviewed.
+
+        * platform/chromium-linux-x86/platform/chromium/fast/forms/color/color-suggestion-picker-appearance-expected.png: Removed.
+        * platform/chromium-linux/platform/chromium/fast/forms/color/color-suggestion-picker-appearance-expected.png:
+        * platform/chromium-linux/platform/chromium/fast/forms/color/color-suggestion-picker-one-row-appearance-expected.png: Added.
+        * platform/chromium-linux/platform/chromium/fast/forms/color/color-suggestion-picker-two-row-appearance-expected.png: Added.
+        * platform/chromium-mac-snowleopard/platform/chromium/fast/forms/color/color-suggestion-picker-appearance-expected.png:
+        * platform/chromium-mac-snowleopard/platform/chromium/fast/forms/color/color-suggestion-picker-one-row-appearance-expected.png: Added.
+        * platform/chromium-mac-snowleopard/platform/chromium/fast/forms/color/color-suggestion-picker-two-row-appearance-expected.png: Added.
+        * platform/chromium-mac/platform/chromium/fast/forms/color/color-suggestion-picker-appearance-expected.png:
+        * platform/chromium-win-xp/platform/chromium/fast/forms/color/color-suggestion-picker-appearance-expected.png: Removed.
+        * platform/chromium-win/platform/chromium/fast/forms/color/color-suggestion-picker-appearance-expected.png:
+        * platform/chromium-win/platform/chromium/fast/forms/color/color-suggestion-picker-one-row-appearance-expected.png: Added.
+        * platform/chromium-win/platform/chromium/fast/forms/color/color-suggestion-picker-two-row-appearance-expected.png: Added.
+        * platform/chromium/TestExpectations:
+
 2012-08-06  Luke Macpherson   <macpherson@chromium.org>
 
         Handle variables in CSSParser::parseValidPrimitive(), preventing null return value.
