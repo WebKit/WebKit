@@ -1,3 +1,17 @@
+2012-08-07  Konrad Piascik  <kpiascik@rim.com>
+
+        [BlackBerry] Change how devicePixelRatio is set.
+        https://bugs.webkit.org/show_bug.cgi?id=93385
+
+        Reviewed by Antonio Gomes.
+
+        Change devicePixelRatio to be set immediately after the page is created based
+        on the WebSetting.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::init):
+        (BlackBerry::WebKit::WebPagePrivate::recomputeVirtualViewportFromViewportArguments):
+
 2012-08-07  Antonio Gomes  <agomes@rim.com>
 
         [BlackBerry] [FullScreen] No need to scroll 'x' to 0 before entering fullscreen

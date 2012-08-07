@@ -533,6 +533,7 @@ void WebPagePrivate::init(const WebString& pageGroupName)
 
     m_webSettings = WebSettings::createFromStandardSettings();
     m_webSettings->setUserAgentString(defaultUserAgent());
+    m_page->setDeviceScaleFactor(m_webSettings->devicePixelRatio());
 
 #if USE(ACCELERATED_COMPOSITING)
     m_tapHighlight = DefaultTapHighlight::create(this);
@@ -3563,16 +3564,13 @@ void WebPage::resetVirtualViewportOnCommitted(bool reset)
 IntSize WebPagePrivate::recomputeVirtualViewportFromViewportArguments()
 {
     static const ViewportArguments defaultViewportArguments;
-    if (m_viewportArguments == defaultViewportArguments) {
-        m_page->setDeviceScaleFactor(1.0);
+    if (m_viewportArguments == defaultViewportArguments)
         return IntSize();
-    }
 
     int desktopWidth = defaultMaxLayoutSize().width();
     int deviceWidth = Platform::Graphics::Screen::primaryScreen()->width();
     int deviceHeight = Platform::Graphics::Screen::primaryScreen()->height();
     ViewportAttributes result = computeViewportAttributes(m_viewportArguments, desktopWidth, deviceWidth, deviceHeight, m_webSettings->devicePixelRatio(), m_defaultLayoutSize);
-    m_page->setDeviceScaleFactor(result.devicePixelRatio);
 
     setUserScalable(m_userScalable && result.userScalable);
     if (result.initialScale > 0)

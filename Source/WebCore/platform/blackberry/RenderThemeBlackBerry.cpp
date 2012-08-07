@@ -175,7 +175,7 @@ static float determineFullScreenMultiplier(Element* element)
         // To fix that, lets strips out the Page scale factor from the media controls multiplier.
         float scaleFactor = element->document()->view()->hostWindow()->platformPageClient()->currentZoomFactor();
         static ViewportArguments defaultViewportArguments;
-        float scaleFactorFudge = element->document()->page()->viewportArguments() != defaultViewportArguments ? .5 : .85;
+        float scaleFactorFudge = 1 / element->document()->page()->deviceScaleFactor();
         fullScreenMultiplier /= scaleFactor * scaleFactorFudge;
     }
 #endif

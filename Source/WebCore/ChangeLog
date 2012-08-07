@@ -1,3 +1,17 @@
+2012-08-07  Konrad Piascik  <kpiascik@rim.com>
+
+        [BlackBerry] Change how devicePixelRatio is set.
+        https://bugs.webkit.org/show_bug.cgi?id=93385
+
+        Reviewed by Antonio Gomes.
+
+        Update the theme to adjust to a constant devicePixelRatio.
+
+        Not testable.
+
+        * platform/blackberry/RenderThemeBlackBerry.cpp:
+        (WebCore::determineFullScreenMultiplier):
+
 2012-08-07  James Robinson  <jamesr@chromium.org>
 
         [chromium] Move WebCompositor interface into Platform API
