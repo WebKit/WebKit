@@ -24,8 +24,10 @@
  */
 
 #include "config.h"
+#include "ewk_view.h"
 
 #include "WKFrame.h"
+#include "ewk_back_forward_list_private.h"
 #include "ewk_intent.h"
 #include "ewk_intent_private.h"
 #include "ewk_intent_service.h"
@@ -123,6 +125,14 @@ static void didFailProvisionalLoadWithErrorForFrame(WKPageRef page, WKFrameRef f
     ewk_web_error_free(ewkError);
 }
 
+static void didChangeBackForwardList(WKPageRef page, WKBackForwardListItemRef addedItem, WKArrayRef removedItems, const void* clientInfo)
+{
+    Evas_Object* ewkView = static_cast<Evas_Object*>(const_cast<void*>(clientInfo));
+    ASSERT(ewkView);
+
+    ewk_back_forward_list_changed(ewk_view_back_forward_list_get(ewkView), addedItem, removedItems);
+}
+
 void ewk_view_loader_client_attach(WKPageRef pageRef, Evas_Object* ewkView)
 {
     WKPageLoaderClient loadClient;
@@ -144,5 +154,6 @@ void ewk_view_loader_client_attach(WKPageRef pageRef, Evas_Object* ewkView)
     loadClient.didStartProvisionalLoadForFrame = didStartProvisionalLoadForFrame;
     loadClient.didReceiveServerRedirectForProvisionalLoadForFrame = didReceiveServerRedirectForProvisionalLoadForFrame;
     loadClient.didFailProvisionalLoadWithErrorForFrame = didFailProvisionalLoadWithErrorForFrame;
+    loadClient.didChangeBackForwardList = didChangeBackForwardList;
     WKPageSetPageLoaderClient(pageRef, &loadClient);
 }

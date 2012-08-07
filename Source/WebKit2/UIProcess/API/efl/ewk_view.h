@@ -69,6 +69,7 @@
 #ifndef ewk_view_h
 #define ewk_view_h
 
+#include "ewk_back_forward_list.h"
 #include "ewk_context.h"
 #include "ewk_download_job.h"
 #include "ewk_intent.h"
@@ -355,6 +356,21 @@ EAPI Eina_Bool    ewk_view_back_possible(Evas_Object *o);
  * @return @c EINA_TRUE if it is possible to navigate forwards in the history, @c EINA_FALSE otherwise
  */
 EAPI Eina_Bool    ewk_view_forward_possible(Evas_Object *o);
+
+/**
+ * Gets the back-forward list associated with this view.
+ *
+ * The returned instance is unique for this view and thus multiple calls
+ * to this function with the same view as parameter returns the same
+ * handle. This handle is alive while view is alive, thus one
+ * might want to listen for EVAS_CALLBACK_DEL on given view
+ * (@a o) to know when to stop using returned handle.
+ *
+ * @param o view object to get navigation back-forward list
+ *
+ * @return the back-forward list instance handle associated with this view
+ */
+EAPI Ewk_Back_Forward_List *ewk_view_back_forward_list_get(const Evas_Object *o);
 
 /**
  * Gets the current title of the main frame.

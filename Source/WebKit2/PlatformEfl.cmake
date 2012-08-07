@@ -41,6 +41,8 @@ LIST(APPEND WebKit2_SOURCES
     UIProcess/API/efl/NetworkInfoProvider.cpp
     UIProcess/API/efl/PageClientImpl.cpp
     UIProcess/API/efl/VibrationProvider.cpp
+    UIProcess/API/efl/ewk_back_forward_list.cpp
+    UIProcess/API/efl/ewk_back_forward_list_item.cpp
     UIProcess/API/efl/ewk_context.cpp
     UIProcess/API/efl/ewk_context_download_client.cpp
     UIProcess/API/efl/ewk_context_request_manager_client.cpp
@@ -188,6 +190,8 @@ SET(ForwardingNetworkHeaders_NAME forwarding-headerSoup)
 CONFIGURE_FILE(efl/ewebkit2.pc.in ${CMAKE_BINARY_DIR}/WebKit2/efl/ewebkit2.pc @ONLY)
 SET (EWebKit2_HEADERS
     "${CMAKE_CURRENT_SOURCE_DIR}/UIProcess/API/efl/EWebKit2.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/UIProcess/API/efl/ewk_back_forward_list.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/UIProcess/API/efl/ewk_back_forward_list_item.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/UIProcess/API/efl/ewk_context.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/UIProcess/API/efl/ewk_cookie_manager.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/UIProcess/API/efl/ewk_download_job.h"

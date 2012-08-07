@@ -1,5 +1,54 @@
 2012-08-07  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
+        [EFL][WK2] Add back forward list API
+        https://bugs.webkit.org/show_bug.cgi?id=92345
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Added new Back Forward list API to EFL WK2. Ewk_Back_Forward_List and
+        Ewk_Back_Forward_List_Item structures were added. The new API is
+        mostly the same as one from UIProcess/API/C/{ WKBackForwardList.h, WKBackForwardListItem.h }.
+
+        * PlatformEfl.cmake:
+        * UIProcess/API/efl/ewk_back_forward_list.cpp: Added.
+        (_Ewk_Back_Forward_List):
+        (_Ewk_Back_Forward_List::_Ewk_Back_Forward_List):
+        (getOrCreateItem):
+        (webkit_back_forward_list_current_item_get):
+        (webkit_back_forward_list_back_item_get):
+        (webkit_back_forward_list_forward_item_get):
+        (webkit_back_forward_list_item_at_index_get):
+        (webkit_back_forward_list_length_get):
+        (ewk_back_forward_list_changed):
+        (ewk_back_forward_list_new):
+        (ewk_back_forward_list_free):
+        * UIProcess/API/efl/ewk_back_forward_list.h: Added.
+        * UIProcess/API/efl/ewk_back_forward_list_item.cpp: Added.
+        (getItemProperty):
+        (_Ewk_Back_Forward_List_Item):
+        (_Ewk_Back_Forward_List_Item::_Ewk_Back_Forward_List_Item):
+        (_Ewk_Back_Forward_List_Item::~_Ewk_Back_Forward_List_Item):
+        (ewk_back_forward_list_item_ref):
+        (ewk_back_forward_list_item_unref):
+        (ewk_back_forward_list_item_uri_get):
+        (ewk_back_forward_list_item_title_get):
+        (ewk_back_forward_list_item_original_uri_get):
+        (ewk_back_forward_list_item_new):
+        * UIProcess/API/efl/ewk_back_forward_list_item.h: Added.
+        * UIProcess/API/efl/ewk_back_forward_list_item_private.h: Added.
+        * UIProcess/API/efl/ewk_back_forward_list_private.h: Added.
+        * UIProcess/API/efl/ewk_view.cpp:
+        (_Ewk_View_Private_Data):
+        (_Ewk_View_Private_Data::_Ewk_View_Private_Data):
+        (_Ewk_View_Private_Data::~_Ewk_View_Private_Data):
+        (ewk_view_back_forward_list_get): New function to get back-forward list.
+        * UIProcess/API/efl/ewk_view.h:
+        * UIProcess/API/efl/ewk_view_loader_client.cpp:
+        (didChangeBackForwardList): The callback added to update back-forward list items cache.
+        (ewk_view_loader_client_attach):
+
+2012-08-07  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
         CUSTOM_SCHEME_HANDLER flag should depend on REGISTER_PROTOCOL_HANDLER
         https://bugs.webkit.org/show_bug.cgi?id=93081
 

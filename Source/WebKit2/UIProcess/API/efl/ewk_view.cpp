@@ -30,6 +30,7 @@
 #include "WKRetainPtr.h"
 #include "WKString.h"
 #include "WKURL.h"
+#include "ewk_back_forward_list_private.h"
 #include "ewk_context.h"
 #include "ewk_context_private.h"
 #include "ewk_intent_private.h"
@@ -71,6 +72,7 @@ struct _Ewk_View_Private_Data {
     const char* cursorGroup;
     Evas_Object* cursorObject;
     LoadingResourcesMap loadingResourcesMap;
+    Ewk_Back_Forward_List* backForwardList;
 
 #ifdef HAVE_ECORE_X
     bool isUsingEcoreX;
@@ -89,6 +91,7 @@ struct _Ewk_View_Private_Data {
         , customEncoding(0)
         , cursorGroup(0)
         , cursorObject(0)
+        , backForwardList(0)
 #ifdef HAVE_ECORE_X
         , isUsingEcoreX(false)
 #endif
@@ -109,6 +112,8 @@ struct _Ewk_View_Private_Data {
 
         if (cursorObject)
             evas_object_del(cursorObject);
+
+        ewk_back_forward_list_free(backForwardList);
     }
 };
 
@@ -665,6 +670,7 @@ Evas_Object* ewk_view_base_add(Evas* canvas, WKContextRef contextRef, WKPageGrou
     }
 
     priv->pageClient = PageClientImpl::create(toImpl(contextRef), toImpl(pageGroupRef), ewkView);
+    priv->backForwardList = ewk_back_forward_list_new(toAPI(priv->pageClient->page()->backForwardList()));
 
     WKPageRef wkPage = toAPI(priv->pageClient->page());
     ewk_view_find_client_attach(wkPage, ewkView);
@@ -1143,6 +1149,14 @@ Eina_Bool ewk_view_forward_possible(Evas_Object* ewkView)
     EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, false);
 
     return priv->pageClient->page()->canGoForward();
+}
+
+Ewk_Back_Forward_List* ewk_view_back_forward_list_get(const Evas_Object* ewkView)
+{
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, 0);
+    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, 0);
+
+    return priv->backForwardList;
 }
 
 void ewk_view_image_data_set(Evas_Object* ewkView, void* imageData, const IntSize& size)
