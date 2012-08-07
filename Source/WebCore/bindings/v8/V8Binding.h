@@ -41,6 +41,7 @@
 #include "V8GCController.h"
 #include "V8HiddenPropertyName.h"
 #include "V8Proxy.h"
+#include "V8ValueCache.h"
 #include <wtf/MathExtras.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/text/AtomicString.h>
@@ -53,75 +54,6 @@ namespace WebCore {
     class EventTarget;
     class ExternalStringVisitor;
     class MemoryObjectInfo;
-
-    class StringCache {
-    public:
-        StringCache() { }
-
-        v8::Local<v8::String> v8ExternalString(StringImpl* stringImpl, v8::Isolate* isolate)
-        {
-            if (m_lastStringImpl.get() == stringImpl) {
-                ASSERT(!m_lastV8String.IsNearDeath());
-                ASSERT(!m_lastV8String.IsEmpty());
-                return v8::Local<v8::String>::New(m_lastV8String);
-            }
-
-            return v8ExternalStringSlow(stringImpl, isolate);
-        }
-
-        void clearOnGC() 
-        {
-            m_lastStringImpl = 0;
-            m_lastV8String.Clear();
-        }
-
-        void remove(StringImpl*);
-
-        void reportMemoryUsage(MemoryObjectInfo*) const;
-
-    private:
-        v8::Local<v8::String> v8ExternalStringSlow(StringImpl*, v8::Isolate*);
-
-        HashMap<StringImpl*, v8::String*> m_stringCache;
-        v8::Persistent<v8::String> m_lastV8String;
-        // Note: RefPtr is a must as we cache by StringImpl* equality, not identity
-        // hence lastStringImpl might be not a key of the cache (in sense of identity)
-        // and hence it's not refed on addition.
-        RefPtr<StringImpl> m_lastStringImpl;
-    };
-
-    const int numberOfCachedSmallIntegers = 64;
-
-    class IntegerCache {
-    public:
-        IntegerCache() : m_initialized(false) { };
-        ~IntegerCache();
-
-        v8::Handle<v8::Integer> v8Integer(int value)
-        {
-            if (!m_initialized)
-                createSmallIntegers();
-            if (0 <= value && value < numberOfCachedSmallIntegers)
-                return m_smallIntegers[value];
-            return v8::Integer::New(value);
-        }
-
-        v8::Handle<v8::Integer> v8UnsignedInteger(unsigned value)
-        {
-            if (!m_initialized)
-                createSmallIntegers();
-            if (value < static_cast<unsigned>(numberOfCachedSmallIntegers))
-                return m_smallIntegers[value];
-            return v8::Integer::NewFromUnsigned(value);
-        }
-
-    private:
-        void createSmallIntegers();
-
-        v8::Persistent<v8::Integer> m_smallIntegers[numberOfCachedSmallIntegers];
-        bool m_initialized;
-    };
-
     class ScriptGCEventListener;
 
     class GCEventData {

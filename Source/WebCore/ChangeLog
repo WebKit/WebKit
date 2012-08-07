@@ -1,3 +1,51 @@
+2012-08-07  Kentaro Hara  <haraken@chromium.org>
+
+        [V8] Factor out V8Binding classes that manage V8 value's cache
+        https://bugs.webkit.org/show_bug.cgi?id=93343
+
+        Reviewed by Adam Barth.
+
+        We are factoring out V8Binding methods to separate files.
+        This patch moves V8Binding classes that manage V8 value's cache
+        to V8ValueCache.{h,cpp}.
+
+        No tests. No change in behavior.
+
+        * UseV8.cmake:
+        * WebCore.gypi:
+        * bindings/v8/V8Binding.cpp:
+        * bindings/v8/V8Binding.h:
+        (WebCore):
+        * bindings/v8/V8ValueCache.cpp: Added.
+        (WebCore):
+        (WebCore::makeExternalString):
+        (WebCore::cachedStringCallback):
+        (WebCore::StringCache::remove):
+        (WebCore::StringCache::v8ExternalStringSlow):
+        (WebCore::IntegerCache::createSmallIntegers):
+        (WebCore::IntegerCache::~IntegerCache):
+        * bindings/v8/V8ValueCache.h: Added.
+        (WebCore):
+        (StringCache):
+        (WebCore::StringCache::StringCache):
+        (WebCore::StringCache::v8ExternalString):
+        (WebCore::StringCache::clearOnGC):
+        (WebCoreStringResource):
+        (WebCore::WebCoreStringResource::WebCoreStringResource):
+        (WebCore::WebCoreStringResource::~WebCoreStringResource):
+        (WebCore::WebCoreStringResource::data):
+        (WebCore::WebCoreStringResource::length):
+        (WebCore::WebCoreStringResource::webcoreString):
+        (WebCore::WebCoreStringResource::atomicString):
+        (WebCore::WebCoreStringResource::visitStrings): This method is used by inspector
+        and thus is not performance-critical. To avoid circular #include dependency,
+        I moved the implementation to cpp.
+        (WebCore::WebCoreStringResource::toStringResource):
+        (IntegerCache):
+        (WebCore::IntegerCache::IntegerCache):
+        (WebCore::IntegerCache::v8Integer):
+        (WebCore::IntegerCache::v8UnsignedInteger):
+
 2012-08-07  James Robinson  <jamesr@chromium.org>
 
         [chromium] Switch PlatformLayer typedef to Platform API type for PLATFORM(CHROMIUM)

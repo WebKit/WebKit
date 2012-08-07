@@ -2282,6 +2282,8 @@
             'bindings/v8/V8RecursionScope.h',
             'bindings/v8/V8Utilities.cpp',
             'bindings/v8/V8Utilities.h',
+            'bindings/v8/V8ValueCache.cpp',
+            'bindings/v8/V8ValueCache.h',
             'bindings/v8/V8WindowErrorHandler.cpp',
             'bindings/v8/V8WindowErrorHandler.h',
             'bindings/v8/V8WorkerContextErrorHandler.cpp',
