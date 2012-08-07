@@ -146,7 +146,9 @@ DocumentThreadableLoader::~DocumentThreadableLoader()
 
 void DocumentThreadableLoader::cancel()
 {
-    // Cacnel can re-enter and m_resource might be null here as a result.
+    RefPtr<DocumentThreadableLoader> protect(this);
+
+    // Cancel can re-enter and m_resource might be null here as a result.
     if (m_client && m_resource) {
         ResourceError error(errorDomainWebKitInternal, 0, m_resource->url(), "Load cancelled");
         error.setIsCancellation(true);
