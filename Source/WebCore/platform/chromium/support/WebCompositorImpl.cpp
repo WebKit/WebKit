@@ -28,14 +28,10 @@
 #include "WebCompositorImpl.h"
 
 #include "CCThreadImpl.h"
-#include "GraphicsContext3D.h"
-#include "WebKit.h"
-#include "platform/WebKitPlatformSupport.h"
-#include "WebCompositorClient.h"
-#include "WebInputEvent.h"
 #include "cc/CCLayerTreeHost.h"
 #include "cc/CCProxy.h"
 #include "cc/CCSettings.h"
+#include <public/Platform.h>
 #include <wtf/ThreadingPrimitives.h>
 
 using namespace WebCore;

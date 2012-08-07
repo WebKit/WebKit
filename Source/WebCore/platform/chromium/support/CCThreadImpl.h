@@ -26,7 +26,6 @@
 #include <wtf/OwnPtr.h>
 #include <wtf/Threading.h>
 
-
 #ifndef CCThreadImpl_h
 #define CCThreadImpl_h
 

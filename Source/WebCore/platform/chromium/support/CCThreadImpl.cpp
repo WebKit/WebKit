@@ -25,13 +25,12 @@
 #include "config.h"
 #include "CCThreadImpl.h"
 
-#include "WebKit.h"
-#include "platform/WebKitPlatformSupport.h"
-#include "platform/WebThread.h"
 #include "cc/CCCompletionEvent.h"
-#include <stdint.h>
+#include <public/Platform.h>
+#include <public/WebThread.h>
 
-using namespace WebCore;
+using WebCore::CCThread;
+using WebCore::CCCompletionEvent;
 
 namespace WebKit {
 

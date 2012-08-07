@@ -26,7 +26,6 @@
 #include "config.h"
 #include "WebLayerTreeViewImpl.h"
 
-#include "CCThreadImpl.h"
 #include "GraphicsContext3DPrivate.h"
 #include "LayerChromium.h"
 #include "cc/CCLayerTreeHost.h"

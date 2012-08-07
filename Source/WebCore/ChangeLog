@@ -1,3 +1,50 @@
+2012-08-07  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Move WebCompositor interface into Platform API
+        https://bugs.webkit.org/show_bug.cgi?id=93391
+
+        Reviewed by Adam Barth.
+
+        Moves the support files for WebCompositor into WebCore/platform/support/. CCThreadImpl is a helper class used
+        only by WebCompositorImpl.
+
+        Refactor/renaming only, so no new tests.
+
+        * WebCore.gypi:
+        * platform/chromium/support/CCThreadImpl.cpp: Renamed from Source/WebKit/chromium/src/CCThreadImpl.cpp.
+        (WebKit):
+        (GetThreadIDTask):
+        (WebKit::GetThreadIDTask::GetThreadIDTask):
+        (WebKit::GetThreadIDTask::~GetThreadIDTask):
+        (WebKit::GetThreadIDTask::run):
+        (CCThreadTaskAdapter):
+        (WebKit::CCThreadTaskAdapter::CCThreadTaskAdapter):
+        (WebKit::CCThreadTaskAdapter::~CCThreadTaskAdapter):
+        (WebKit::CCThreadTaskAdapter::run):
+        (WebKit::CCThreadImpl::create):
+        (WebKit::CCThreadImpl::~CCThreadImpl):
+        (WebKit::CCThreadImpl::postTask):
+        (WebKit::CCThreadImpl::postDelayedTask):
+        (WebKit::CCThreadImpl::threadID):
+        (WebKit::CCThreadImpl::CCThreadImpl):
+        * platform/chromium/support/CCThreadImpl.h: Renamed from Source/WebKit/chromium/src/CCThreadImpl.h.
+        (WebKit):
+        (CCThreadImpl):
+        * platform/chromium/support/WebCompositorImpl.cpp: Renamed from Source/WebKit/chromium/src/WebCompositorImpl.cpp.
+        (WebKit):
+        (WebKit::WebCompositor::initialize):
+        (WebKit::WebCompositor::shutdown):
+        (WebKit::WebCompositor::setPerTilePaintingEnabled):
+        (WebKit::WebCompositor::setPartialSwapEnabled):
+        (WebKit::WebCompositor::setAcceleratedAnimationEnabled):
+        (WebKit::WebCompositorImpl::initialize):
+        (WebKit::WebCompositorImpl::initialized):
+        (WebKit::WebCompositorImpl::shutdown):
+        * platform/chromium/support/WebCompositorImpl.h: Renamed from Source/WebKit/chromium/src/WebCompositorImpl.h.
+        (WebCore):
+        (WebKit):
+        (WebCompositorImpl):
+
 2012-08-07  Abhishek Arya  <inferno@chromium.org>
 
         Crash in ContainerNode::cloneChildNodes.

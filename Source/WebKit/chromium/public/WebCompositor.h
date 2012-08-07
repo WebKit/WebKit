@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2012 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,43 +23,6 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebCompositor_h
-#define WebCompositor_h
-
-#define WEBCOMPOSITOR_OWNS_SETTINGS 1
-
-#include "platform/WebCommon.h"
-
-namespace WebKit {
-
-class WebInputEvent;
-class WebThread;
-
-// This class contains global routines for interacting with the
-// compositor.
-//
-// All calls to the WebCompositor must be made from the main thread.
-class WebCompositor {
-public:
-    // Initializes the compositor. Threaded compositing is enabled by passing in
-    // a non-null WebThread. No compositor classes or methods should be used
-    // prior to calling initialize.
-    WEBKIT_EXPORT static void initialize(WebThread*);
-
-    // Shuts down the compositor. This must be called when all compositor data
-    // types have been deleted. No compositor classes or methods should be used
-    // after shutdown.
-    WEBKIT_EXPORT static void shutdown();
-
-    // These may only be called before initialize.
-    WEBKIT_EXPORT static void setPerTilePaintingEnabled(bool);
-    WEBKIT_EXPORT static void setPartialSwapEnabled(bool);
-    WEBKIT_EXPORT static void setAcceleratedAnimationEnabled(bool);
-
-protected:
-    virtual ~WebCompositor() { }
-};
-
-} // namespace WebKit
-
-#endif
+// FIXME: This is a temporary forwarding header, remove once chromium-side code
+// stops using this include path.
+#include "../../../Platform/chromium/public/WebCompositor.h"
