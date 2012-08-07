@@ -23,7 +23,7 @@ layer at (8,8) size 500x750
     RenderBlock {H1} at (299,0) size 38x367
       RenderText {#text} at (0,0) size 36x169
         text run at (0,0) width 169: "Header Two"
-    RenderBlock (anonymous) at (358,0) size 223x367
+    RenderBlock (anonymous) at (358,0) size 222x367
       RenderText {#text} at (0,0) size 221x367
         text run at (0,0) width 337: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit."
         text run at (20,0) width 367: "Nulla varius enim ac mi. Curabitur sollicitudin felis quis lectus."
@@ -32,7 +32,7 @@ layer at (8,8) size 500x750
         text run at (80,0) width 365: "aliquam. Cras convallis adipiscing sem. Nam nonummy enim."
         text run at (100,0) width 329: "Nullam bibendum lobortis neque. Vestibulum velit orci,"
         text run at (120,0) width 309: "tempus euismod, pretium quis, interdum vitae, nulla."
-        text run at (142,0) width 321: "Phasellus eget ante et tortor condimentum vestibulum."
+        text run at (141,0) width 322: "Phasellus eget ante et tortor condimentum vestibulum."
         text run at (162,0) width 360: "Suspendisse hendrerit quam nec felis. Sed varius turpis vitae"
         text run at (182,0) width 350: "pede. Lorem ipsum dolor sit amet, consectetuer adipiscing"
         text run at (202,0) width 21: "elit."
@@ -42,12 +42,12 @@ layer at (8,8) size 500x750
     RenderBlock {H1} at (921,0) size 38x367
       RenderText {#text} at (0,0) size 36x177
         text run at (0,0) width 177: "Header Four"
-    RenderBlock (anonymous) at (980,0) size 41x367
-      RenderText {#text} at (0,0) size 39x337
+    RenderBlock (anonymous) at (979,0) size 41x367
+      RenderText {#text} at (0,0) size 40x337
         text run at (0,0) width 337: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit."
-        text run at (20,0) width 143: "Nulla varius enim ac mi."
+        text run at (20,0) width 144: "Nulla varius enim ac mi."
 layer at (668,8) size 240x367 backgroundClip at (0,0) size 785x1141 clip at (0,0) size 785x1141 outlineClip at (0,0) size 785x1141
-  RenderBlock {DIV} at (660,0) size 241x367
+  RenderBlock {DIV} at (659,0) size 241x367
     RenderText {#text} at (0,0) size 419x175
       text run at (0,0) width 169: "Lorem ipsum dolor sit amet,"
       text run at (20,0) width 164: "consectetuer adipiscing elit."

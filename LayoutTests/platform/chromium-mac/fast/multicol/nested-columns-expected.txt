@@ -23,7 +23,7 @@ layer at (8,8) size 750x500
     RenderBlock {H1} at (0,277) size 367x38
       RenderText {#text} at (0,0) size 169x37
         text run at (0,0) width 169: "Header Two"
-    RenderBlock (anonymous) at (0,336) size 367x201
+    RenderBlock (anonymous) at (0,336) size 367x200
       RenderText {#text} at (0,0) size 362x200
         text run at (0,0) width 354: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit."
         text run at (0,18) width 351: "Nulla varius enim ac mi. Curabitur sollicitudin felis quis"
@@ -34,7 +34,7 @@ layer at (8,8) size 750x500
         text run at (0,108) width 344: "neque. Vestibulum velit orci, tempus euismod, pretium"
         text run at (0,126) width 343: "quis, interdum vitae, nulla. Phasellus eget ante et tortor"
         text run at (0,144) width 343: "condimentum vestibulum. Suspendisse hendrerit quam"
-        text run at (0,164) width 362: "nec felis. Sed varius turpis vitae pede. Lorem ipsum dolor"
+        text run at (0,163) width 362: "nec felis. Sed varius turpis vitae pede. Lorem ipsum dolor"
         text run at (0,182) width 229: "sit amet, consectetuer adipiscing elit."
     RenderBlock {H1} at (0,557) size 367x38
       RenderText {#text} at (0,0) size 190x37
@@ -42,7 +42,7 @@ layer at (8,8) size 750x500
     RenderBlock {H1} at (0,853) size 367x38
       RenderText {#text} at (0,0) size 177x37
         text run at (0,0) width 177: "Header Four"
-    RenderBlock (anonymous) at (0,912) size 367x37
+    RenderBlock (anonymous) at (0,911) size 367x37
       RenderText {#text} at (0,0) size 354x36
         text run at (0,0) width 354: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit."
         text run at (0,18) width 154: "Nulla varius enim ac mi."

@@ -1,3 +1,84 @@
+2012-08-07  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
+
+        Unreviewed gardening. Rebased affected subpixel-sensitive tests after r124745.
+
+        * fast/multicol/nested-columns-expected.txt:
+        * fast/multicol/span/anonymous-split-block-crash-expected.txt:
+        * fast/multicol/span/clone-anonymous-block-non-inline-child-crash-expected.txt:
+        * fast/multicol/span/span-as-immediate-columns-child-expected.txt:
+        * fast/multicol/vertical-lr/nested-columns-expected.txt:
+        * platform/chromium-linux-x86/fast/multicol/vertical-rl/nested-columns-expected.png: Removed.
+        * platform/chromium-linux/fast/css/input-search-padding-expected.png:
+        * platform/chromium-linux/fast/css/input-search-padding-expected.txt:
+        * platform/chromium-linux/fast/forms/search-vertical-alignment-expected.png:
+        * platform/chromium-linux/fast/multicol/nested-columns-expected.png:
+        * platform/chromium-linux/fast/multicol/span/anonymous-split-block-crash-expected.png:
+        * platform/chromium-linux/fast/multicol/span/clone-anonymous-block-non-inline-child-crash-expected.png:
+        * platform/chromium-linux/fast/multicol/vertical-lr/float-multicol-expected.png:
+        * platform/chromium-linux/fast/multicol/vertical-lr/nested-columns-expected.png:
+        * platform/chromium-linux/fast/multicol/vertical-rl/float-multicol-expected.png:
+        * platform/chromium-linux/fast/multicol/vertical-rl/nested-columns-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/search-vertical-alignment-expected.png:
+        * platform/chromium-mac-snowleopard/fast/multicol/nested-columns-expected.png:
+        * platform/chromium-mac-snowleopard/fast/multicol/span/anonymous-split-block-crash-expected.png:
+        * platform/chromium-mac-snowleopard/fast/multicol/span/clone-anonymous-block-non-inline-child-crash-expected.png:
+        * platform/chromium-mac-snowleopard/fast/multicol/span/clone-anonymous-block-non-inline-child-crash-expected.txt: Removed.
+        * platform/chromium-mac-snowleopard/fast/multicol/vertical-lr/float-multicol-expected.png:
+        * platform/chromium-mac-snowleopard/fast/multicol/vertical-lr/nested-columns-expected.png:
+        * platform/chromium-mac-snowleopard/fast/multicol/vertical-rl/float-multicol-expected.png:
+        * platform/chromium-mac-snowleopard/fast/multicol/vertical-rl/nested-columns-expected.png:
+        * platform/chromium-mac/fast/forms/search-vertical-alignment-expected.png:
+        * platform/chromium-mac/fast/forms/search-vertical-alignment-expected.txt:
+        * platform/chromium-mac/fast/multicol/nested-columns-expected.png:
+        * platform/chromium-mac/fast/multicol/nested-columns-expected.txt:
+        * platform/chromium-mac/fast/multicol/span/anonymous-split-block-crash-expected.png:
+        * platform/chromium-mac/fast/multicol/span/anonymous-split-block-crash-expected.txt:
+        * platform/chromium-mac/fast/multicol/span/clone-anonymous-block-non-inline-child-crash-expected.png:
+        * platform/chromium-mac/fast/multicol/span/clone-anonymous-block-non-inline-child-crash-expected.txt:
+        * platform/chromium-mac/fast/multicol/span/span-as-immediate-columns-child-expected.txt:
+        * platform/chromium-mac/fast/multicol/vertical-lr/float-multicol-expected.png:
+        * platform/chromium-mac/fast/multicol/vertical-lr/float-multicol-expected.txt:
+        * platform/chromium-mac/fast/multicol/vertical-lr/nested-columns-expected.png:
+        * platform/chromium-mac/fast/multicol/vertical-lr/nested-columns-expected.txt:
+        * platform/chromium-mac/fast/multicol/vertical-rl/float-multicol-expected.png:
+        * platform/chromium-mac/fast/multicol/vertical-rl/float-multicol-expected.txt:
+        * platform/chromium-mac/fast/multicol/vertical-rl/nested-columns-expected.png:
+        * platform/chromium-mac/fast/multicol/vertical-rl/nested-columns-expected.txt:
+        * platform/chromium-mac/fast/speech/input-appearance-searchandspeech-expected.png:
+        * platform/chromium-win/fast/css/input-search-padding-expected.png:
+        * platform/chromium-win/fast/css/input-search-padding-expected.txt:
+        * platform/chromium-win/fast/forms/search-vertical-alignment-expected.png:
+        * platform/chromium-win/fast/forms/search-vertical-alignment-expected.txt:
+        * platform/chromium-win/fast/multicol/nested-columns-expected.png:
+        * platform/chromium-win/fast/multicol/nested-columns-expected.txt:
+        * platform/chromium-win/fast/multicol/span/anonymous-split-block-crash-expected.png:
+        * platform/chromium-win/fast/multicol/span/anonymous-split-block-crash-expected.txt:
+        * platform/chromium-win/fast/multicol/span/clone-anonymous-block-non-inline-child-crash-expected.png:
+        * platform/chromium-win/fast/multicol/span/clone-anonymous-block-non-inline-child-crash-expected.txt:
+        * platform/chromium-win/fast/multicol/span/span-as-immediate-columns-child-expected.txt:
+        * platform/chromium-win/fast/multicol/vertical-lr/float-multicol-expected.png:
+        * platform/chromium-win/fast/multicol/vertical-lr/float-multicol-expected.txt:
+        * platform/chromium-win/fast/multicol/vertical-lr/nested-columns-expected.png:
+        * platform/chromium-win/fast/multicol/vertical-lr/nested-columns-expected.txt:
+        * platform/chromium-win/fast/multicol/vertical-rl/float-multicol-expected.png:
+        * platform/chromium-win/fast/multicol/vertical-rl/float-multicol-expected.txt:
+        * platform/chromium-win/fast/multicol/vertical-rl/nested-columns-expected.png:
+        * platform/chromium-win/fast/multicol/vertical-rl/nested-columns-expected.txt:
+        * platform/chromium-win/fast/table/colspanMinWidth-vertical-expected.txt:
+        * platform/chromium/TestExpectations:
+        * platform/efl/fast/multicol/nested-columns-expected.txt: Removed.
+        * platform/efl/fast/multicol/span/anonymous-split-block-crash-expected.txt: Removed.
+        * platform/efl/fast/multicol/span/clone-anonymous-block-non-inline-child-crash-expected.txt: Removed.
+        * platform/efl/fast/multicol/span/span-as-immediate-columns-child-expected.txt: Removed.
+        * platform/efl/fast/multicol/vertical-lr/nested-columns-expected.txt: Removed.
+        * platform/efl/fast/multicol/vertical-rl/nested-columns-expected.txt: Removed.
+        * platform/gtk/fast/multicol/nested-columns-expected.txt: Removed.
+        * platform/gtk/fast/multicol/span/anonymous-split-block-crash-expected.txt: Removed.
+        * platform/gtk/fast/multicol/span/clone-anonymous-block-non-inline-child-crash-expected.txt: Removed.
+        * platform/gtk/fast/multicol/span/span-as-immediate-columns-child-expected.txt: Removed.
+        * platform/gtk/fast/multicol/vertical-lr/nested-columns-expected.txt: Removed.
+        * platform/gtk/fast/multicol/vertical-rl/nested-columns-expected.txt: Removed.
+
 2012-08-07  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Default sizes for input-text and text-area are different when running DRT/WTR

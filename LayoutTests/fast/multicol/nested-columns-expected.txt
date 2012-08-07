@@ -39,10 +39,10 @@ layer at (8,8) size 750x500
     RenderBlock {H1} at (0,557) size 367x37
       RenderText {#text} at (0,0) size 190x36
         text run at (0,0) width 190: "Header Three"
-    RenderBlock {H1} at (0,870) size 367x37
+    RenderBlock {H1} at (0,853) size 367x37
       RenderText {#text} at (0,0) size 177x36
         text run at (0,0) width 177: "Header Four"
-    RenderBlock (anonymous) at (0,928) size 367x36
+    RenderBlock (anonymous) at (0,911) size 367x36
       RenderText {#text} at (0,0) size 354x37
         text run at (0,0) width 354: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit."
         text run at (0,18) width 154: "Nulla varius enim ac mi."

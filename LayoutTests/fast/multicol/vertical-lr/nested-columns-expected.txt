@@ -39,16 +39,16 @@ layer at (8,8) size 500x750
     RenderBlock {H1} at (557,0) size 37x367
       RenderText {#text} at (0,0) size 36x190
         text run at (0,0) width 190: "Header Three"
-    RenderBlock {H1} at (870,0) size 37x367
+    RenderBlock {H1} at (853,0) size 37x367
       RenderText {#text} at (0,0) size 36x177
         text run at (0,0) width 177: "Header Four"
-    RenderBlock (anonymous) at (928,0) size 36x367
+    RenderBlock (anonymous) at (911,0) size 36x367
       RenderText {#text} at (0,0) size 37x354
         text run at (0,0) width 354: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit."
         text run at (18,0) width 154: "Nulla varius enim ac mi."
-layer at (623,8) size 234x367 backgroundClip at (0,0) size 785x758 clip at (0,0) size 785x758 outlineClip at (0,0) size 785x758
-  RenderBlock {DIV} at (615,0) size 234x367
-    RenderText {#text} at (0,0) size 415x175
+layer at (623,8) size 217x367 backgroundClip at (0,0) size 785x758 clip at (0,0) size 785x758 outlineClip at (0,0) size 785x758
+  RenderBlock {DIV} at (615,0) size 217x367
+    RenderText {#text} at (0,0) size 398x175
       text run at (0,0) width 139: "Lorem ipsum dolor sit"
       text run at (18,0) width 116: "amet, consectetuer"
       text run at (36,0) width 172: "adipiscing elit. Nulla varius"
@@ -61,14 +61,14 @@ layer at (623,8) size 234x367 backgroundClip at (0,0) size 785x758 clip at (0,0)
       text run at (162,0) width 124: "felis vel orci sagittis"
       text run at (180,0) width 147: "aliquam. Cras convallis"
       text run at (198,0) width 132: "adipiscing sem. Nam"
-      text run at (234,0) width 154: "nonummy enim. Nullam"
-      text run at (252,0) width 160: "bibendum lobortis neque."
-      text run at (270,0) width 136: "Vestibulum velit orci,"
-      text run at (288,0) width 158: "tempus euismod, pretium"
-      text run at (306,0) width 167: "quis, interdum vitae, nulla."
-      text run at (324,0) width 172: "Phasellus eget ante et tortor"
-      text run at (342,0) width 163: "condimentum vestibulum."
-      text run at (360,0) width 137: "Suspendisse hendrerit"
-      text run at (378,0) width 165: "quam nec felis. Sed varius"
-      text run at (396,0) width 111: "turpis vitae pede. "
+      text run at (217,0) width 154: "nonummy enim. Nullam"
+      text run at (235,0) width 160: "bibendum lobortis neque."
+      text run at (253,0) width 136: "Vestibulum velit orci,"
+      text run at (271,0) width 158: "tempus euismod, pretium"
+      text run at (289,0) width 167: "quis, interdum vitae, nulla."
+      text run at (307,0) width 172: "Phasellus eget ante et tortor"
+      text run at (325,0) width 163: "condimentum vestibulum."
+      text run at (343,0) width 137: "Suspendisse hendrerit"
+      text run at (361,0) width 165: "quam nec felis. Sed varius"
+      text run at (379,0) width 111: "turpis vitae pede. "
     RenderText {#text} at (0,0) size 0x0
