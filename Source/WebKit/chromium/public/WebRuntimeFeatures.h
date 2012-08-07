@@ -157,6 +157,9 @@ public:
     WEBKIT_EXPORT static void enableDialogElement(bool);
     WEBKIT_EXPORT static bool isDialogElementEnabled();
 
+    WEBKIT_EXPORT static void enableCSSExclusions(bool);
+    WEBKIT_EXPORT static bool isCSSExclusionsEnabled();
+
 private:
     WebRuntimeFeatures();
 };

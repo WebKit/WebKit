@@ -1,3 +1,20 @@
+2012-08-06  Bear Travis  <betravis@adobe.com>
+
+        [CSS Exclusions] Add a command-line flag to enable / disable exclusions
+        https://bugs.webkit.org/show_bug.cgi?id=91420
+
+        Reviewed by Dimitri Glazkov.
+
+        Adding the interface code to expose the css exclusions runtime flag to
+        Chromium.
+
+        * public/WebRuntimeFeatures.h:
+        (WebRuntimeFeatures): Adding getters/setters for cssExclusions
+        * src/WebRuntimeFeatures.cpp:
+        (WebKit::WebRuntimeFeatures::enableCSSExclusions):
+        (WebKit):
+        (WebKit::WebRuntimeFeatures::isCSSExclusionsEnabled):
+
 2012-08-06  Adam Barth  <abarth@webkit.org>
 
         [Chromium] WebTouchCandidatesInfo should be part of the Client API

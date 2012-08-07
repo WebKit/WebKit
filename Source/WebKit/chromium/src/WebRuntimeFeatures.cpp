@@ -639,5 +639,14 @@ bool WebRuntimeFeatures::isDialogElementEnabled()
 #endif
 }
 
+void WebRuntimeFeatures::enableCSSExclusions(bool enable)
+{
+    RuntimeEnabledFeatures::setCSSExclusionsEnabled(enable);
+}
+
+bool WebRuntimeFeatures::isCSSExclusionsEnabled()
+{
+    return RuntimeEnabledFeatures::cssExclusionsEnabled();
+}
 
 } // namespace WebKit
