@@ -609,7 +609,9 @@ void doMouseButtonEvent(GtkWidget* widget, GdkEventType eventType, int x, int y,
     event->button.state = modifiers;
     event->button.button = button;
 
+#ifndef GTK_API_VERSION_2
     event->button.device = gdk_device_manager_get_client_pointer(gdk_display_get_device_manager(gtk_widget_get_display(widget)));
+#endif
 
     int xRoot, yRoot;
     gdk_window_get_root_coords(gtk_widget_get_window(widget), x, y, &xRoot, &yRoot);

@@ -1,3 +1,9 @@
+2012-08-07  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix GTK+ build with GTK2 after r120918.
+
+        * tests/testwebview.c:
+
 2012-08-06  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Update NEWS and configure.ac for 1.9.6 release
