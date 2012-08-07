@@ -60,9 +60,7 @@ DRT_APP_PACKAGE = 'org.chromium.native_test'
 DRT_ACTIVITY_FULL_NAME = DRT_APP_PACKAGE + '/.ChromeNativeTestActivity'
 DRT_APP_CACHE_DIR = DEVICE_DRT_DIR + 'cache/'
 
-# This only works for single core devices so far.
-# FIXME: Find a solution for multi-core devices.
-SCALING_GOVERNOR = "/sys/devices/system/cpu/cpu0/cpufreq/scaling_governor"
+SCALING_GOVERNORS_PATTERN = "/sys/devices/system/cpu/cpu*/cpufreq/scaling_governor"
 
 # All the test cases are still served to DumpRenderTree through file protocol,
 # but we use a file-to-http feature to bridge the file request to host's http
@@ -312,7 +310,7 @@ class ChromiumAndroidDriver(driver.Driver):
         self._read_stderr_process = None
         self._forwarder_process = None
         self._has_setup = False
-        self._original_governor = None
+        self._original_governors = {}
         self._adb_command = ['adb', '-s', port._get_device_serial(worker_number)]
 
     def __del__(self):
@@ -359,10 +357,6 @@ class ChromiumAndroidDriver(driver.Driver):
                 raise AssertionError('Failed to install %s onto device: %s' % (drt_host_path, install_result))
             self._push_to_device(self._port._build_path('DumpRenderTree.pak'), DEVICE_DRT_DIR + 'DumpRenderTree.pak')
             self._push_to_device(self._port._build_path('DumpRenderTree_resources'), DEVICE_DRT_DIR + 'DumpRenderTree_resources')
-            # FIXME: Temporarily push pak and resources under the original /data/drt/ directory.
-            # Remove the following two lines after landing the chromium side of change.
-            self._push_to_device(self._port._build_path('DumpRenderTree.pak'), '/data/drt/DumpRenderTree.pak')
-            self._push_to_device(self._port._build_path('DumpRenderTree_resources'), '/data/drt/DumpRenderTree_resources')
             self._push_to_device(self._port._build_path('android_main_fonts.xml'), DEVICE_DRT_DIR + 'android_main_fonts.xml')
             self._push_to_device(self._port._build_path('android_fallback_fonts.xml'), DEVICE_DRT_DIR + 'android_fallback_fonts.xml')
             # Version control of test resources is dependent on executables,
@@ -460,15 +454,17 @@ class ChromiumAndroidDriver(driver.Driver):
 
     def _setup_performance(self):
         # Disable CPU scaling and drop ram cache to reduce noise in tests
-        if not self._original_governor:
-            self._original_governor = self._run_adb_command(['shell', 'cat', SCALING_GOVERNOR], ignore_error=True)
-            if self._original_governor:
-                self._run_adb_command(['shell', 'echo', 'performance', '>', SCALING_GOVERNOR])
+        if not self._original_governors:
+            governor_files = self._run_adb_command(['shell', 'ls', SCALING_GOVERNORS_PATTERN])
+            if governor_files.find('No such file or directory') == -1:
+                for file in governor_files.split():
+                    self._original_governors[file] = self._run_adb_command(['shell', 'cat', file]).strip()
+                    self._run_adb_command(['shell', 'echo', 'performance', '>', file])
 
     def _teardown_performance(self):
-        if self._original_governor:
-            self._run_adb_command(['shell', 'echo', self._original_governor, SCALING_GOVERNOR])
-        self._original_governor = None
+        for file, original_content in self._original_governors.items():
+            self._run_adb_command(['shell', 'echo', original_content, '>', file])
+        self._original_governors = {}
 
     def _command_wrapper(cls, wrapper_option):
         # Ignore command wrapper which is not applicable on Android.
