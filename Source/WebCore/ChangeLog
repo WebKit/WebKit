@@ -1,3 +1,40 @@
+2012-08-06  Anna Cavender  <annacc@chromium.org>
+
+        Update HTMLMediaElement to the new OO MediaSource API.
+        https://bugs.webkit.org/show_bug.cgi?id=91775
+
+        Reviewed by Eric Carlson.
+
+        This patch rips out the old-style MediaSource API and allows a
+        MediaSource object to be attached to HTMLMediaElement.
+        http://dvcs.w3.org/hg/html-media/raw-file/tip/media-source/media-source.html
+
+        Test: http/tests/media/media-source/video-media-source-add-and-remove-buffers.html
+
+        Tests: updates to http/tests/media/media-source/*
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore):
+        (WebCore::HTMLMediaElement::HTMLMediaElement): Remove old style API resources.
+        (WebCore::HTMLMediaElement::parseAttribute): Remove old style event attributes.
+        (WebCore::HTMLMediaElement::prepareForLoad): Set source state to "closed".
+        (WebCore::HTMLMediaElement::loadResource): Get MediaSource object from blob registry
+            look up and, if found, set it's MediaPlayer pointer to the current MediaPlayer.
+        (WebCore::HTMLMediaElement::noneSupported): Set source state to "closed".
+        (WebCore::HTMLMediaElement::mediaEngineError): Set source state to "closed".
+        (WebCore::HTMLMediaElement::mediaPlayerSourceOpened): Set source state to "open".
+        (WebCore::HTMLMediaElement::mediaPlayerSourceURL): Change to new blob URL.
+        (WebCore::HTMLMediaElement::seek): Check if source state is "closed".
+        (WebCore::HTMLMediaElement::setSourceState): Helper function so that we don't have to
+            keep checking for m_mediaSource.
+        (WebCore::HTMLMediaElement::userCancelledLoad): Set source state to "closed".
+        (WebCore::HTMLMediaElement::createMediaPlayer): If the current MediaPlayer is re-
+            created, notify the MediaSource and reset its MediaPlayer.
+
+        * html/HTMLMediaElement.h: Remove old style API code and add a MediaSource object.
+        (HTMLMediaElement):
+        * html/HTMLMediaElement.idl: Remove old style API.
+
 2012-08-06  Adam Barth  <abarth@webkit.org>
 
         BindingSecurity::shouldAllowAccessToFrame shouldn't use a raw boolean parameter

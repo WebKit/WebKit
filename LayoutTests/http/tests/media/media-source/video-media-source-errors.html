@@ -23,46 +23,46 @@
             function didNotSendInitSegmentFirst(runNextTestCase, videoTag)
             {
                 consoleWrite("Test appending a media segment before sending the initialization segment.");
-                segmentHelper.addSourceId();
+                segmentHelper.addSourceBuffer();
                 segmentHelper.appendMediaSegment(0);
             }
 
             function immediateDecodeErrorViaEndOfStream(runNextTestCase, videoTag)
             {
-                 consoleWrite("Test signalling a decode error with webkitSourceEndOfStream.");
-                 var videoTag = event.target;
-                 videoTag.webkitSourceEndOfStream(HTMLMediaElement.EOS_DECODE_ERR);
+                 consoleWrite("Test signalling a decode error with MediaSource.endOfStream.");
+                 mediaSource = event.target;
+                 mediaSource.endOfStream("decode");
             }
 
             function immediateNetworkErrorViaEndOfStream(runNextTestCase, videoTag)
             {
-                consoleWrite("Test signalling a network error with webkitSourceEndOfStream.");
-                var videoTag = event.target;
-                videoTag.webkitSourceEndOfStream(HTMLMediaElement.EOS_NETWORK_ERR);
+                consoleWrite("Test signalling a network error with MediaSource.endOfStream.");
+                mediaSource = event.target;
+                mediaSource.endOfStream("network");
             }
 
             function decodeErrorAfterHaveMetadata(runNextTestCase, videoTag)
             {
-                consoleWrite("Test signalling a decode error with webkitSourceEndOfStream after we have appended enough data to get to the HAVE_METADATA state.");
-                var videoTag = event.target;
-                segmentHelper.addSourceId();
+                consoleWrite("Test signalling a decode error with MediaSource.endOfStream after we have appended enough data to get to the HAVE_METADATA state.");
+                mediaSource = event.target;
+                segmentHelper.addSourceBuffer();
                 segmentHelper.appendInitSegment();
 
                 appendUntilMetadataLoaded(videoTag, function()
                 {
-                    videoTag.webkitSourceEndOfStream(HTMLMediaElement.EOS_DECODE_ERR);
+                    mediaSource.endOfStream("decode");
                 });
             }
 
             function networkErrorAfterHaveMetadata(runNextTestCase, videoTag)
             {
-                consoleWrite("Test signalling a network error with webkitSourceEndOfStream after we have appended enough data to get to the HAVE_METADATA state.");
-                var videoTag = event.target;
-                segmentHelper.addSourceId();
+                consoleWrite("Test signalling a network error with MediaSource.endOfStream after we have appended enough data to get to the HAVE_METADATA state.");
+                mediaSource = event.target;
+                segmentHelper.addSourceBuffer();
                 segmentHelper.appendInitSegment();
                 appendUntilMetadataLoaded(videoTag, function()
                 {
-                    videoTag.webkitSourceEndOfStream(HTMLMediaElement.EOS_NETWORK_ERR);
+                    mediaSource.endOfStream("network");
                 });
             }
 
@@ -70,11 +70,10 @@
             {
                 findMediaElement();
 
-                waitForEvent('loadstart');
                 waitForEvent('loadedmetadata');
-                waitForEvent('webkitsourceopen');
+                waitForEvent('webkitsourceopen', "", false, false, mediaSource);                          
                 waitForEvent('playing');
-                waitForEvent('webkitsourceended');
+                waitForEvent('webkitsourceended', "", false, false, mediaSource);
                 waitForEvent('ended');
                 waitForEvent('emptied');
 

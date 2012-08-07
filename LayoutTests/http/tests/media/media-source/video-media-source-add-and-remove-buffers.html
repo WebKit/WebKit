@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="/media-resources/video-test.js"></script>
+        <script src="/media/resources/media-source/webm/segment-info.js"></script>
+        <script src="media-source.js"></script>
+        <script>
+            var segmentHelper = new MediaSourceTest.SegmentHelper(WebMSegmentInfo.testWebM);
+            var defaultSourceMimetype = segmentHelper.segmentInfo.type;
+
+            function expectExceptionOnAddBuffer(type, error)
+            {
+                try {
+                    segmentHelper.sourceBuffer = mediaSource.addSourceBuffer(type);
+                    failTest("Expected an exception");
+                } catch (e) {
+                    if (!(e.code == error)) {
+                        failTest("Unexpected exception " + e);
+                        throw e;
+                    }
+                    consoleWrite("Got expected exception " + e);
+                }
+            }
+
+            function expectExceptionOnRemoveBuffer(buffer, error)
+            {
+                try {
+                    mediaSource.removeSourceBuffer(buffer);
+                    failTest("Expected an exception");
+                } catch (e) {
+                    if (!(e.code == error)) {
+                        failTest("Unexpected exception " + e);
+                        throw e;
+                    }
+                    consoleWrite("Got expected exception " + e);
+                }
+            }
+
+            function expectExceptionOnAppend(buf, error)
+            {
+                try {
+                    segmentHelper.sourceBuffer.append(buf);
+                    failTest("Expected an exception");
+                } catch (e) {
+                    if (!(e.code == error)) {
+                        failTest("Unexpected exception " + e);
+                        throw e;
+                    }
+                    consoleWrite("Got expected exception " + e);
+                }
+            }
+
+            function testAddBufferWhileClosed(videoTag)
+            {
+                consoleWrite("Test adding an ID while closed.");
+                expectExceptionOnAddBuffer(defaultSourceMimetype, DOMException.INVALID_STATE_ERR);
+            }
+
+            function testAddBufferFailureCases(runNextTestCase, videoTag)
+            {
+                consoleWrite("Test empty type.");
+                expectExceptionOnAddBuffer("", DOMException.INVALID_ACCESS_ERR);
+
+                consoleWrite("Test an unsupported type.");
+                expectExceptionOnAddBuffer("audio/x-unsupported-format", DOMException.NOT_SUPPORTED_ERR);
+
+                consoleWrite("Test a supported type with an unsupported codec.");
+                expectExceptionOnAddBuffer("video/webm; codecs=\"vp8, speex\"", DOMException.NOT_SUPPORTED_ERR);
+
+                consoleWrite("Test reaching sourceID limit.");
+                var reachedIdLimit = false;
+
+                // The 20 here is an arbitrary upper limit to make sure the test terminates. This test
+                // assumes that implementations won't support more than 20 sourceID's simultaneously.
+                for (var i = 0; i < 20; ++i) {
+                    try {
+                        mediaSource.addSourceBuffer(defaultSourceMimetype);
+                    } catch(e) {
+                        if (e.code != DOMException.QUOTA_EXCEEDED_ERR) {
+                            failTest("Unexpected exception " + e);
+                            throw e;
+                        }
+                        reachedIdLimit = true;
+                        break;
+                    }
+                }
+
+                if (!reachedIdLimit) {
+                    failTest("Failed to reach SourceID limit.");
+                    return;
+                }
+
+                consoleWrite("Test that SourceBuffers can't be added while in the ended state.");
+                mediaSource.endOfStream();
+                expectExceptionOnAddBuffer(defaultSourceMimetype, DOMException.INVALID_STATE_ERR);
+
+                runNextTestCase();
+            }
+
+            function testRemoveNullBuffer(runNextTestCase, videoTag)
+            {
+                consoleWrite("Test null buffer case");
+                expectExceptionOnRemoveBuffer(null, DOMException.INVALID_ACCESS_ERR);
+
+                runNextTestCase();
+            }
+
+            function testRemoveAgain(runNextTestCase, videoTag)
+            {
+                consoleWrite("Test removing a buffer that was already removed.");
+                segmentHelper.sourceBuffer = mediaSource.addSourceBuffer(defaultSourceMimetype);
+                mediaSource.removeSourceBuffer(segmentHelper.sourceBuffer);
+                expectExceptionOnRemoveBuffer(segmentHelper.sourceBuffer, DOMException.INVALID_STATE_ERR);
+
+                runNextTestCase();
+            }
+
+            function testRemoveBufferAfterEnded(runNextTestCase, videoTag)
+            {
+                consoleWrite("Test that a buffer can be removed while in the ended state.");
+                segmentHelper.sourceBuffer = mediaSource.addSourceBuffer(defaultSourceMimetype);
+                mediaSource.endOfStream();
+                mediaSource.removeSourceBuffer(segmentHelper.sourceBuffer);
+
+                runNextTestCase();
+            }
+
+            function testAddBufferAfterRemoving(runNextTestCase, videoTag)
+            {
+                consoleWrite("Test that a buffer can be added again after it is removed.");
+                segmentHelper.sourceBuffer = mediaSource.addSourceBuffer(defaultSourceMimetype);
+                mediaSource.removeSourceBuffer(segmentHelper.sourceBuffer);
+
+                try {
+                    segmentHelper.sourceBuffer = mediaSource.addSourceBuffer(defaultSourceMimetype);
+                } catch (e) {
+                    consoleWrite("Unexpected exception: " + e);
+                }
+
+                runNextTestCase();
+            }
+
+            function testAppendFailureCases(runNextTestCase, videoTag)
+            {
+                var initSegment = segmentHelper.initSegment;
+                var mediaSegment = segmentHelper.mediaSegments[0];
+
+                segmentHelper.sourceBuffer = mediaSource.addSourceBuffer(defaultSourceMimetype);
+
+                consoleWrite("Test a successful append.");
+                segmentHelper.sourceBuffer.append(initSegment);
+
+                consoleWrite("Test append with a null buffer.");
+                expectExceptionOnAppend(null, DOMException.INVALID_ACCESS_ERR);
+
+                consoleWrite("Test append after ended.");
+                mediaSource.endOfStream();
+                expectExceptionOnAppend(initSegment, DOMException.INVALID_STATE_ERR);
+
+                consoleWrite("Test append after buffer has been removed.");
+                mediaSource.removeSourceBuffer(segmentHelper.sourceBuffer);
+                expectExceptionOnAppend(initSegment, DOMException.INVALID_STATE_ERR);
+
+                runNextTestCase();
+            }
+
+            function onLoad()
+            {
+                findMediaElement();
+
+                mediaSource = new MediaSource();
+                waitForEvent('webkitsourceopen', "", false, false, mediaSource);
+
+                segmentHelper.init(video, function(success)
+                {
+                    if (!success) {
+                        failTest("Failed to load segment data");
+                        return;
+                    }
+
+                    testAddBufferWhileClosed(video);
+
+                    var testCases = [
+                        testAddBufferFailureCases,
+                        testRemoveNullBuffer,
+                        testRemoveAgain,
+                        testRemoveBufferAfterEnded,
+                        testAddBufferAfterRemoving,
+                        testAppendFailureCases,
+                    ];
+
+                    MediaSourceTest.startSourceOpenTesting(video, testCases);
+                });
+            }
+        </script>
+    </head>
+    <body onload="onLoad()">
+        <video> </video>
+        <p>Tests webkitSourceAddId() &amp; webkitSourceRemoveId() methods</p>
+    </body>
+</html>

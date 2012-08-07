@@ -9,28 +9,29 @@
 
             function onSourceOpen(event)
             {
-                segmentHelper.addSourceId();
+                segmentHelper.addSourceBuffer();
                 segmentHelper.appendInitSegment();
 
                 // Append just enough segments to include at least 1 second of media data.
                 var endIndex = segmentHelper.getMediaSegmentIndexForTimestamp(1);
                 for (var i = 0; i <= endIndex; i++)
                     segmentHelper.appendMediaSegment(i);
-                event.target.webkitSourceEndOfStream(HTMLMediaElement.EOS_NO_ERROR);
+                event.target.endOfStream();
             }
 
             function onLoad()
             {
                 findMediaElement();
 
+                mediaSource = new MediaSource();
+
                 waitForEventAndFail('error');
-                waitForEvent('loadstart');
-                waitForEvent('webkitsourceopen');
+                waitForEvent('webkitsourceopen', "", false, false, mediaSource);
                 waitForEvent('playing');
-                waitForEvent('webkitsourceended');
+                waitForEvent('webkitsourceended', "", false, false, mediaSource);
                 waitForEventAndEnd('ended');
 
-                video.addEventListener('webkitsourceopen', onSourceOpen);
+                mediaSource.addEventListener('webkitsourceopen', onSourceOpen);
 
                 segmentHelper.init(video, function(success)
                 {

@@ -1,3 +1,42 @@
+2012-08-06  Anna Cavender  <annacc@chromium.org>
+
+        Update HTMLMediaElement to the new OO MediaSource API.
+        https://bugs.webkit.org/show_bug.cgi?id=91775
+
+        Reviewed by Eric Carlson.
+
+        This patch rips out the old-style MediaSource API and allows a
+        MediaSource object to be attached to HTMLMediaElement.
+        http://dvcs.w3.org/hg/html-media/raw-file/tip/media-source/media-source.html
+
+        * http/tests/media/media-source/media-source.js:
+        (MediaSourceTest.SegmentHelper):
+        (MediaSourceTest.SegmentHelper.prototype.addSourceBuffer):
+        (MediaSourceTest.SegmentHelper.prototype.appendInitSegment):
+        (MediaSourceTest.SegmentHelper.prototype.appendMediaSegment):
+        (MediaSourceTest.SegmentHelper.prototype.appendUntilEndOfStream):
+        (MediaSourceTest.setSrcToMediaSourceTestURL):
+        (MediaSourceTest.defaultOnErrorChecks):
+        (MediaSourceTest.runOnSourceOpen.eventHandlerFunction):
+        (MediaSourceTest.runOnSourceOpen):
+        (MediaSourceTest.logSourceState):
+        (MediaSourceTest.expectSourceState):
+        * http/tests/media/media-source/video-media-source-abort-expected.txt:
+        * http/tests/media/media-source/video-media-source-abort.html:
+        * http/tests/media/media-source/video-media-source-add-and-remove-buffers-expected.txt: Renamed from LayoutTests/http/tests/media/media-source/video-media-source-add-and-remove-ids-expected.txt.
+        * http/tests/media/media-source/video-media-source-add-and-remove-buffers.html: Added.
+        * http/tests/media/media-source/video-media-source-add-and-remove-ids.html: Removed.
+        * http/tests/media/media-source/video-media-source-errors-expected.txt:
+        * http/tests/media/media-source/video-media-source-errors.html:
+        * http/tests/media/media-source/video-media-source-event-attributes-expected.txt:
+        * http/tests/media/media-source/video-media-source-event-attributes.html:
+        * http/tests/media/media-source/video-media-source-play-expected.txt:
+        * http/tests/media/media-source/video-media-source-play.html:
+        * http/tests/media/media-source/video-media-source-seek-expected.txt:
+        * http/tests/media/media-source/video-media-source-seek.html:
+        * http/tests/media/media-source/video-media-source-state-changes-expected.txt:
+        * http/tests/media/media-source/video-media-source-state-changes.html:
+
 2012-08-06  Yuta Kitamura  <yutak@chromium.org>
 
         WebSocket.send() should accept ArrayBufferView

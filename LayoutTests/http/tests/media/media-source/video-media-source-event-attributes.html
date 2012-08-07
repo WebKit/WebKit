@@ -3,22 +3,26 @@
    <head>
        <script src="/media-resources/video-test.js"></script>
        <script type="text/javascript">
-           function onSourceOpen(video)
+
+           var video = null;
+           var mediaSource = null;
+
+           function onSourceOpen()
            {
                consoleWrite("onSourceOpen()");
-
-               consoleWrite("Calling webkitSourceEndOfStream to trigger a webkitsourceended event.");
-               video.webkitSourceEndOfStream(HTMLMediaElement.EOS_NO_ERROR);
+               consoleWrite("Calling MediaSource.endOfStream to trigger a webkitsourceended event.");
+               mediaSource.endOfStream();
            }
 
-           function onSourceEnded(video)
+           function onSourceEnded()
            {
                consoleWrite("onSourceEnded()");
                consoleWrite("Setting src attribute to \"\" to trigger a webkitsourceclosed event.");
                video.src = "";
+               endTest();
            }
 
-           function onSourceClose(video)
+           function onSourceClose()
            {
                consoleWrite("onSourceClose()");
                endTest();
@@ -27,13 +31,17 @@
            function onLoad(e)
            {
                consoleWrite("onLoad()");
-               var video = document.getElementById('v');
-               video.src = video.webkitMediaSourceURL;
+               video = document.getElementById('v');
+               mediaSource = new MediaSource();
+               mediaSource.addEventListener('webkitsourceopen', onSourceOpen);
+               mediaSource.addEventListener('webkitsourceended', onSourceEnded);
+               mediaSource.addEventListener('webkitsourceclose', onSourceClose);
+               video.src = webkitURL.createObjectURL(mediaSource);
            }
        </script>
    </head>
    <body onload="onLoad()">
        <p>Test Media Source event handler attributes</p>
-       <video id='v' onwebkitsourceopen='onSourceOpen(this)' onwebkitsourceended='onSourceEnded(this);' onwebkitsourceclose='onSourceClose(this);'></video>
+       <video id='v'></video>
    </body>
 </html>
