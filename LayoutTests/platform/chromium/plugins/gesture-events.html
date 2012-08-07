@@ -21,6 +21,7 @@
         var positionX = plugin.offsetLeft + 10;
         var positionY = plugin.offsetTop + 10;
         eventSender.gestureTap(positionX, positionY);
+        eventSender.gestureTapDown(positionX, positionY);
         eventSender.gestureScrollBegin(positionX, positionY);
         eventSender.gestureScrollUpdate(30, 0);
         eventSender.gestureScrollEnd(0, 0);

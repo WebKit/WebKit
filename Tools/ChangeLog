@@ -1,3 +1,22 @@
+2012-08-07  W. James MacLean  <wjmaclean@chromium.org>
+
+        [chromium] Add support to DumpRenderTree [EventSender] for GestureTapDown events.
+        https://bugs.webkit.org/show_bug.cgi?id=93286
+
+        Reviewed by James Robinson.
+
+        Adds support to generate GestureTapDown events from EventSender, to facilitate
+        link highlighting layout tests.
+ 
+        Added a GestureTapEvent to one existing test, more tests to follow when LinkHighlight CLs start to land.
+
+        * DumpRenderTree/chromium/TestRunner/EventSender.cpp:
+        (EventSender::EventSender):
+        (EventSender::gestureTapDown):
+        (EventSender::gestureEvent):
+        * DumpRenderTree/chromium/TestRunner/EventSender.h:
+        (EventSender):
+
 2012-08-07  Marcelo Lira  <marcelo.lira@openbossa.org>
 
         [Qt] Add support for the Gamepad API

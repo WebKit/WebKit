@@ -286,6 +286,7 @@ EventSender::EventSender()
     bindMethod("gestureScrollFirstPoint", &EventSender::gestureScrollFirstPoint);
     bindMethod("gestureScrollUpdate", &EventSender::gestureScrollUpdate);
     bindMethod("gestureTap", &EventSender::gestureTap);
+    bindMethod("gestureTapDown", &EventSender::gestureTapDown);
     bindMethod("gestureLongPress", &EventSender::gestureLongPress);
     bindMethod("gestureTwoFingerTap", &EventSender::gestureTwoFingerTap);
     bindMethod("zoomPageIn", &EventSender::zoomPageIn);
@@ -1112,6 +1113,12 @@ void EventSender::gestureTap(const CppArgumentList& arguments, CppVariant* resul
     gestureEvent(WebInputEvent::GestureTap, arguments);
 }
 
+void EventSender::gestureTapDown(const CppArgumentList& arguments, CppVariant* result)
+{
+    result->setNull();
+    gestureEvent(WebInputEvent::GestureTapDown, arguments);
+}
+
 void EventSender::gestureLongPress(const CppArgumentList& arguments, CppVariant* result)
 {
     result->setNull();
@@ -1170,6 +1177,10 @@ void EventSender::gestureEvent(WebInputEvent::Type type, const CppArgumentList& 
             // Tap count.
             event.deltaX = static_cast<float>(arguments[2].toDouble());
         }
+        event.x = point.x;
+        event.y = point.y;
+        break;
+    case WebInputEvent::GestureTapDown:
         event.x = point.x;
         event.y = point.y;
         break;
