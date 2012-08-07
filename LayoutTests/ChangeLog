@@ -1,3 +1,25 @@
+2012-08-07  Alpha Lam  <hclam@chromium.org>
+
+        Share http/tests/media/video-load-and-stall.cgi for other tests
+        https://bugs.webkit.org/show_bug.cgi?id=93389
+
+        Reviewed by Eric Carlson.
+
+        Moving http/tests/media/video-laod-and-stall.cgi to
+        http/tests/resources/load-and-stall.cgi.
+
+        Also changes tests that use this file to point to the new location.
+
+        * http/tests/media/remove-while-loading.html:
+        * http/tests/media/video-play-stall-before-meta-data.html:
+        * http/tests/media/video-play-stall-seek.html:
+        * http/tests/media/video-play-stall.html:
+        * http/tests/resources/load-and-stall.cgi: Renamed from LayoutTests/http/tests/media/video-load-and-stall.cgi.
+        * http/tests/security/contentSecurityPolicy/media-src-allowed.html:
+        * http/tests/security/contentSecurityPolicy/media-src-blocked-expected.txt:
+        * http/tests/security/contentSecurityPolicy/media-src-blocked.html:
+        * platform/chromium/http/tests/security/contentSecurityPolicy/media-src-blocked-expected.txt:
+
 2012-08-07  Dean Jackson  <dino@apple.com>
 
         REGRESSION (r124723-r124741): 5 inspector/debugger tests failing on Apple Lion Debug WK1 (Tests)

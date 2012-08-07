@@ -21,6 +21,6 @@
     var mimeType = mimeTypeForFile(mediaFile);
 
     // Load should stall very early in the loading process.
-    video.src = "http://127.0.0.1:8000/media/video-load-and-stall.cgi?name=../../../media/" + mediaFile + "&mimeType=" + mimeType + "&stallAt=1&stallFor=4";
+    video.src = "http://127.0.0.1:8000/resources/load-and-stall.cgi?name=../../../media/" + mediaFile + "&mimeType=" + mimeType + "&stallAt=1&stallFor=4";
 
 </script>

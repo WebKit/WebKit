@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: Refused to load the media 'http://127.0.0.1:8000/media/video-load-and-stall.cgi?name=../../../media/content/test.ogv&mimeType=video/ogg&stallAt=100000' because it violates the following Content Security Policy directive: "media-src 'none'".
+CONSOLE MESSAGE: Refused to load the media 'http://127.0.0.1:8000/resources/load-and-stall.cgi?name=../../../media/content/test.ogv&mimeType=video/ogg&stallAt=100000' because it violates the following Content Security Policy directive: "media-src 'none'".
 
 END OF TEST
 This test passes if it doesn't alert failure.
