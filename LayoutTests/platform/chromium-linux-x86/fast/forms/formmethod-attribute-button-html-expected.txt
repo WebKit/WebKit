@@ -1,0 +1,13 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x46
+  RenderBlock {html} at (0,0) size 800x46
+    RenderBlock (anonymous) at (0,0) size 800x20
+      RenderText {#text} at (0,0) size 188x19
+        text run at (0,0) width 188: "Test passes if it does not crash."
+    RenderBlock {form} at (0,20) size 800x26
+      RenderButton {input} at (2,2) size 57x22 [bgcolor=#DDDDDD] [border: (2px outset #DDDDDD)]
+        RenderBlock (anonymous) at (8,3) size 41x16
+          RenderText at (0,0) size 41x16
+            text run at (0,0) width 41: "Submit"
+      RenderText {#text} at (0,0) size 0x0
