@@ -33,6 +33,7 @@
 #if ENABLE(SVG)
 #include "V8SVGDocument.h"
 
+#include "Frame.h"
 #include "V8IsolatedContext.h"
 #include "V8Proxy.h"
 

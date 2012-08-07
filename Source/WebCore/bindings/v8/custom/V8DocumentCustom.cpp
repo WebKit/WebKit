@@ -34,6 +34,7 @@
 #include "CanvasRenderingContext.h"
 #include "Document.h"
 #include "ExceptionCode.h"
+#include "Frame.h"
 #include "Node.h"
 #include "TouchList.h"
 #include "XPathNSResolver.h"

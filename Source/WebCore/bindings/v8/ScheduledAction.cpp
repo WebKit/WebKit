@@ -32,6 +32,7 @@
 #include "ScheduledAction.h"
 
 #include "Document.h"
+#include "Frame.h"
 #include "ScriptExecutionContext.h"
 #include "ScriptSourceCode.h"
 

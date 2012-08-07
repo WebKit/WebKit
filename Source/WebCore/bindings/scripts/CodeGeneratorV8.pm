@@ -756,6 +756,7 @@ sub GenerateDomainSafeFunctionGetter
 
     my $newTemplateString = GenerateNewFunctionTemplate($function, $implClassName, $signature);
 
+    AddToImplIncludes("Frame.h");
     push(@implContentDecls, <<END);
 static v8::Handle<v8::Value> ${funcName}AttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
@@ -995,6 +996,7 @@ END
         push(@implContentDecls, "        wrapper = toV8(result.get(), info.GetIsolate());\n");
         push(@implContentDecls, "        if (!wrapper.IsEmpty())\n");
         if ($dataNode->name eq "DOMWindow") {
+            AddToImplIncludes("Frame.h");
             push(@implContentDecls, "            V8DOMWrapper::setNamedHiddenWindowReference(imp->frame(), \"${attrName}\", wrapper);\n");
         } else {
             push(@implContentDecls, "            V8DOMWrapper::setNamedHiddenReference(info.Holder(), \"${attrName}\", wrapper);\n");
@@ -1091,6 +1093,7 @@ static void ${implClassName}ReplaceableAttrSetter(v8::Local<v8::String> name, v8
 END
 
     if ($implClassName eq "DOMWindow" || $dataNode->extendedAttributes->{"CheckSecurity"}) {
+        AddToImplIncludes("Frame.h");
         push(@implContentDecls, <<END);
     ${implClassName}* imp = V8${implClassName}::toNative(info.Holder());
     if (!BindingSecurity::shouldAllowAccessToFrame(BindingState::instance(), imp->frame()))
@@ -1499,6 +1502,7 @@ END
         || $interfaceName eq "DOMWindow")
         && !$function->signature->extendedAttributes->{"DoNotCheckSecurity"}) {
         # We have not find real use cases yet.
+        AddToImplIncludes("Frame.h");
         push(@implContentDecls, <<END);
     if (!BindingSecurity::shouldAllowAccessToFrame(BindingState::instance(), imp->frame()))
         return v8Undefined();
@@ -1964,6 +1968,7 @@ WrapperTypeInfo V8${implClassName}Constructor::info = { V8${implClassName}Constr
 END
     }
 
+    AddToImplIncludes("Frame.h");
     push(@implContent, <<END);
 static v8::Handle<v8::Value> V8${implClassName}ConstructorCallback(const v8::Arguments& args)
 {
@@ -3310,6 +3315,7 @@ END
 
     my $proxyInit;
     if (IsNodeSubType($dataNode)) {
+        AddToImplIncludes("Frame.h");
         $proxyInit = "impl->document()->frame() ? impl->document()->frame()->script()->proxy() : 0";
         # DocumentType nodes are the only nodes that may have a NULL document.
         if ($interfaceName eq "DocumentType") {
@@ -3335,6 +3341,7 @@ END
     # for every sort of object. For now, we special-case cross-origin visible
     # objects (i.e., those with CheckSecurity).
     if (IsVisibleAcrossOrigins($dataNode)) {
+        AddToImplIncludes("Frame.h");
         push(@implContent, <<END);
     if (impl->frame()) {
         proxy = impl->frame()->script()->proxy();

@@ -37,6 +37,7 @@
 #if USE(V8)
 #include "BindingState.h"
 #include "DOMWindow.h"
+#include "Frame.h"
 #include "NPV8Object.h"  // for PrivateIdentifier
 #include "Range.h"
 #include "V8ArrayBuffer.h"

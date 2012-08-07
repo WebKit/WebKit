@@ -27,6 +27,7 @@
 #include "WebCoreTestSupport.h"
 
 #include "Document.h"
+#include "Frame.h"
 #include "InternalSettings.h"
 #include "Internals.h"
 #include "ScriptExecutionContext.h"

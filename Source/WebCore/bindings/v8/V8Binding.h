@@ -34,7 +34,6 @@
 #include "BindingSecurity.h"
 #include "DOMDataStore.h"
 #include "Document.h"
-#include "Frame.h"
 #include "PlatformString.h"
 #include "V8BindingMacros.h"
 #include "V8DOMWrapper.h"

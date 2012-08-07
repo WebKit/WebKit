@@ -35,6 +35,7 @@
 #include "DocumentLoader.h"
 #include "EventTargetHeaders.h"
 #include "EventTargetInterfaces.h"
+#include "Frame.h"
 #include "FrameLoaderClient.h"
 #include "SafeAllocation.h"
 #include "StylePropertySet.h"

@@ -1,3 +1,17 @@
+2012-08-07  Kentaro Hara  <haraken@chromium.org>
+
+        [V8] Remove #include Frame.h from V8Binding.h
+        https://bugs.webkit.org/show_bug.cgi?id=93326
+
+        Reviewed by Adam Barth.
+
+        We want to remove unnecessary #include in V8Binding.h
+        to avoid circular include dependency.
+
+        No tests. No change in behavior.
+
+        * src/WebBindings.cpp:
+
 2012-08-07  James Robinson  <jamesr@chromium.org>
 
         [chromium] Switch PlatformLayer typedef to Platform API type for PLATFORM(CHROMIUM)
