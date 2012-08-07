@@ -1,3 +1,17 @@
+2012-08-06  Anders Carlsson  <andersca@apple.com>
+
+        Clear out the TileCache backpointer for all tile layers when the tile cache is destroyed
+        https://bugs.webkit.org/show_bug.cgi?id=93317
+        <rdar://problem/11566543>
+
+        Reviewed by Dean Jackson.
+
+        It seems that in some rare cases, the tile cache layer can be destroyed in the same transaction as tile layers
+        are being asked to paint. Make sure to null out the TileCache back pointer for all layers in the TileCache destructor.
+
+        * platform/graphics/ca/mac/TileCache.mm:
+        (WebCore::TileCache::~TileCache):
+
 2012-08-06  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r124816.
