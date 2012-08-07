@@ -1,3 +1,19 @@
+2012-08-07  Joone Hur  <joone.hur@intel.com>
+
+        Unreviewed EFL gardening.
+
+        Marked the following test cases as known failures
+        tracked by the bug 93228.
+
+        inspector/debugger/debugger-activation-crash2.html
+        inspector/debugger/debugger-set-breakpoint-regex.html
+        inspector/debugger/pause-in-internal-script.html
+        inspector/debugger/script-formatter-breakpoints.html
+        inspector/debugger/set-breakpoint.html
+        inspector/debugger/watch-expressions-panel-switch.html 
+
+        * platform/efl/TestExpectations:
+
 2012-08-06  Arko Saha  <arko@motorola.com>
 
         Microdata: itemType[index] must be undefined for out-of-range index.

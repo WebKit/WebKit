@@ -854,3 +854,11 @@ BUGWK92956 : http/tests/security/contentSecurityPolicy/object-src-url-blocked.ht
 BUGWK93212 : http/tests/incremental/slow-utf8-text.pl = TIMEOUT
 
 BUGWK93247 : fast/lists/list-marker-remove-crash.html = CRASH
+
+// These tests are failing after r124729
+BUGWK93228 : inspector/debugger/debugger-activation-crash2.html = TEXT
+BUGWK93328 : inspector/debugger/debugger-set-breakpoint-regex.html = TEXT
+BUGWK93328 : inspector/debugger/pause-in-internal-script.html = TEXT
+BUGWK93328 : inspector/debugger/script-formatter-breakpoints.html = TEXT
+BUGWK93328 : inspector/debugger/set-breakpoint.html = TEXT
+BUGWK93328 : inspector/debugger/watch-expressions-panel-switch.html = TEXT
