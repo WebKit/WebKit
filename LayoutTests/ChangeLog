@@ -1,3 +1,17 @@
+2012-08-07  Thiago Marcos P. Santos  <thiago.santos@intel.com>
+
+        [EFL] Add new baselines after r124754
+        https://bugs.webkit.org/show_bug.cgi?id=93350
+
+        Unreviewed gardening.
+
+        * platform/efl/fast/dom/HTMLLinkElement/prefetch-expected.txt: Added.
+        * platform/efl/fast/dom/HTMLProgressElement/indeterminate-progress-001-expected.png: Added.
+        * platform/efl/fast/dom/HTMLProgressElement/indeterminate-progress-001-expected.txt: Added.
+        * platform/efl/fast/dom/HTMLProgressElement/progress-bar-value-pseudo-element-expected.png:
+        * platform/efl/fast/dom/HTMLProgressElement/progress-bar-value-pseudo-element-expected.txt: Added.
+        * platform/efl/fast/dom/HTMLProgressElement/progress-writing-mode-expected.txt: Added.
+
 2012-08-07  Andrey Kosyakov  <caseq@chromium.org>
 
         Web Inspector: implement reusable progress bar
