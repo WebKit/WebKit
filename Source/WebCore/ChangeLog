@@ -1,3 +1,23 @@
+2012-08-07  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        CUSTOM_SCHEME_HANDLER flag should depend on REGISTER_PROTOCOL_HANDLER
+        https://bugs.webkit.org/show_bug.cgi?id=93081
+
+        Reviewed by Adam Barth.
+
+        CUSTOM_SCHEME_HANDLER #if guards are enclosed in the REGISTER_PROTOCOL_HANDLER guards.
+        The whole NavigatorRegisterProtocolHandler interface is conditional on REGISTER_PROTOCOL_HANDLER
+        CUSTOM_SCHEME_HANDLER-specific methods only are conditional on CUSTOM_SCHEME_HANDLER.
+
+        No new tests. No new functionality is added.
+
+        * Modules/protocolhandler/NavigatorRegisterProtocolHandler.cpp:
+        (WebCore::NavigatorRegisterProtocolHandler::registerProtocolHandler):
+        * Modules/protocolhandler/NavigatorRegisterProtocolHandler.h:
+        (NavigatorRegisterProtocolHandler):
+        * Modules/protocolhandler/NavigatorRegisterProtocolHandler.idl:
+        * Modules/protocolhandler/RegisterProtocolHandlerClient.h:
+
 2012-08-07  Xingnan Wang  <xingnan.wang@intel.com>
 
         IndexedDB: Size the Vector in encodeInt/encodeVarInt/encodeString

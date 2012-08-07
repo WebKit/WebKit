@@ -1,3 +1,21 @@
+2012-08-07  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        CUSTOM_SCHEME_HANDLER flag should depend on REGISTER_PROTOCOL_HANDLER
+        https://bugs.webkit.org/show_bug.cgi?id=93081
+
+        Reviewed by Adam Barth.
+
+        CUSTOM_SCHEME_HANDLER #if guards are enclosed in the REGISTER_PROTOCOL_HANDLER guards.
+
+        * WebCoreSupport/RegisterProtocolHandlerClientEfl.cpp:
+        (WebCore::RegisterProtocolHandlerClientEfl::registerProtocolHandler):
+        * WebCoreSupport/RegisterProtocolHandlerClientEfl.h:
+        * ewk/ewk_custom_handler.cpp:
+        (ewk_custom_handler_register_protocol_handler):
+        * ewk/ewk_custom_handler_private.h:
+        * ewk/ewk_view.cpp:
+        (_ewk_view_priv_new):
+
 2012-08-06  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         [EFL] [GTK] Register Protocol Handler Client is never deleted

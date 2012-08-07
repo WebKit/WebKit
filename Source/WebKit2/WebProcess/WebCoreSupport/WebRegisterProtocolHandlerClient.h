@@ -26,6 +26,8 @@
 #ifndef WebRegisterProtocolHandlerClient_h
 #define WebRegisterProtocolHandlerClient_h
 
+#if ENABLE(REGISTER_PROTOCOL_HANDLER)
+
 #include <WebCore/RegisterProtocolHandlerClient.h>
 #include <wtf/text/WTFString.h>
 
@@ -36,9 +38,7 @@ public:
     virtual ~WebRegisterProtocolHandlerClient() { }
 
 private:
-#if ENABLE(REGISTER_PROTOCOL_HANDLER)
     virtual void registerProtocolHandler(const String& scheme, const String& baseURL, const String& url, const String& title) OVERRIDE { }
-#endif
 
 #if ENABLE(CUSTOM_SCHEME_HANDLER)
     virtual CustomHandlersState isProtocolHandlerRegistered(const String&, const String&, const String&) { return CustomHandlersDeclined; }
@@ -48,4 +48,5 @@ private:
 
 }
 
+#endif // ENABLE(REGISTER_PROTOCOL_HANDLER)
 #endif // WebRegisterProtocolHandlerClient_h

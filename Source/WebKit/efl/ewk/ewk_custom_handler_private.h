@@ -24,11 +24,11 @@
 
 #if ENABLE(REGISTER_PROTOCOL_HANDLER)
 bool ewk_custom_handler_register_protocol_handler(Ewk_Custom_Handler_Data* data);
-#endif
 
 #if ENABLE(CUSTOM_SCHEME_HANDLER)
 Ewk_Custom_Handlers_State ewk_custom_handler_is_protocol_handler_registered(Ewk_Custom_Handler_Data* data);
 bool ewk_custom_handler_unregister_protocol_handler(Ewk_Custom_Handler_Data* data);
-#endif
 
+#endif // ENABLE(CUSTOM_SCHEME_HANDLER)
+#endif // ENABLE(REGISTER_PROTOCOL_HANDLER)
 #endif // ewk_custom_handler_private_h

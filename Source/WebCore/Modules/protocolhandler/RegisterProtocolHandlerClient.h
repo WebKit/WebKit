@@ -26,7 +26,7 @@
 #ifndef RegisterProtocolHandlerClient_h
 #define RegisterProtocolHandlerClient_h
 
-#if ENABLE(REGISTER_PROTOCOL_HANDLER) || ENABLE(CUSTOM_SCHEME_HANDLER)
+#if ENABLE(REGISTER_PROTOCOL_HANDLER)
 
 #include <wtf/text/WTFString.h>
 
@@ -37,10 +37,7 @@ class Page;
 class RegisterProtocolHandlerClient {
 public:
     virtual ~RegisterProtocolHandlerClient() { }
-
-#if ENABLE(REGISTER_PROTOCOL_HANDLER)
     virtual void registerProtocolHandler(const String& scheme, const String& baseURL, const String& url, const String& title) = 0;
-#endif
 
 #if ENABLE(CUSTOM_SCHEME_HANDLER)
     enum CustomHandlersState {
@@ -58,5 +55,5 @@ void provideRegisterProtocolHandlerTo(Page*, RegisterProtocolHandlerClient*);
 
 }
 
-#endif
+#endif // ENABLE(REGISTER_PROTOCOL_HANDLER)
 #endif // RegisterProtocolHandlerClient_h

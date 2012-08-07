@@ -25,9 +25,9 @@ module window {
     ] NavigatorRegisterProtocolHandler {
         [Conditional=REGISTER_PROTOCOL_HANDLER] void registerProtocolHandler(in DOMString scheme, in DOMString url, in DOMString title)
             raises(DOMException);
-        [Conditional=CUSTOM_SCHEME_HANDLER] DOMString isProtocolHandlerRegistered(in DOMString scheme, in DOMString url)
+        [Conditional=REGISTER_PROTOCOL_HANDLER&CUSTOM_SCHEME_HANDLER] DOMString isProtocolHandlerRegistered(in DOMString scheme, in DOMString url)
             raises(DOMException);
-        [Conditional=CUSTOM_SCHEME_HANDLER] void unregisterProtocolHandler(in DOMString scheme, in DOMString url)
+        [Conditional=REGISTER_PROTOCOL_HANDLER&CUSTOM_SCHEME_HANDLER] void unregisterProtocolHandler(in DOMString scheme, in DOMString url)
             raises(DOMException);
     };
 

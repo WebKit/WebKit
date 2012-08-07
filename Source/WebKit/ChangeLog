@@ -1,3 +1,14 @@
+2012-08-07  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        CUSTOM_SCHEME_HANDLER flag should depend on REGISTER_PROTOCOL_HANDLER
+        https://bugs.webkit.org/show_bug.cgi?id=93081
+
+        Reviewed by Adam Barth.
+
+        Modified PlatformEfl.cmake so that CUSTOM_SCHEME_HANDLER flag cannot act without REGISTER_PROTOCOL_HANDLER being set.
+
+        * PlatformEfl.cmake:
+
 2012-08-01  Antonio Gomes  <agomes@rim.com>
 
         [BlackBerry] Implement InRegionScroller class as a in-region scroll controller

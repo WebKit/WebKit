@@ -28,7 +28,7 @@
 #include "config.h"
 #include "RegisterProtocolHandlerClientEfl.h"
 
-#if ENABLE(REGISTER_PROTOCOL_HANDLER) || ENABLE(CUSTOM_SCHEME_HANDLER)
+#if ENABLE(REGISTER_PROTOCOL_HANDLER)
 
 #include "ewk_custom_handler_private.h"
 #include <wtf/text/CString.h>
@@ -63,7 +63,6 @@ RegisterProtocolHandlerClientEfl::RegisterProtocolHandlerClientEfl(Evas_Object* 
 {
 }
 
-#if ENABLE(REGISTER_PROTOCOL_HANDLER)
 void RegisterProtocolHandlerClientEfl::registerProtocolHandler(const String& scheme, const String& baseURL, const String& url, const String& title)
 {
     Ewk_Custom_Handler_Data* data = customHandlerDataCreate(m_view, scheme.utf8().data(), baseURL.utf8().data(), url.utf8().data());
@@ -72,7 +71,6 @@ void RegisterProtocolHandlerClientEfl::registerProtocolHandler(const String& sch
     eina_stringshare_del(data->title);
     customHandlerDataDelete(data);
 }
-#endif
 
 #if ENABLE(CUSTOM_SCHEME_HANDLER)
 RegisterProtocolHandlerClient::CustomHandlersState RegisterProtocolHandlerClientEfl::isProtocolHandlerRegistered(const String& scheme, const String& baseURL, const String& url)
@@ -94,4 +92,4 @@ void RegisterProtocolHandlerClientEfl::unregisterProtocolHandler(const String& s
 
 }
 
-#endif // ENABLE(REGISTER_PROTOCOL_HANDLER) || ENABLE(CUSTOM_SCHEME_HANDLER)
+#endif // ENABLE(REGISTER_PROTOCOL_HANDLER)

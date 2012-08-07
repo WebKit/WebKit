@@ -27,7 +27,7 @@
 #include "config.h"
 #include "NavigatorRegisterProtocolHandler.h"
 
-#if ENABLE(REGISTER_PROTOCOL_HANDLER) || ENABLE(CUSTOM_SCHEME_HANDLER)
+#if ENABLE(REGISTER_PROTOCOL_HANDLER)
 
 #include "Document.h"
 #include "ExceptionCode.h"
@@ -124,7 +124,6 @@ PassRefPtr<NavigatorRegisterProtocolHandler> NavigatorRegisterProtocolHandler::c
     return adoptRef(new NavigatorRegisterProtocolHandler(client));
 }
 
-#if ENABLE(REGISTER_PROTOCOL_HANDLER)
 void NavigatorRegisterProtocolHandler::registerProtocolHandler(Navigator* navigator, const String& scheme, const String& url, const String& title, ExceptionCode& ec)
 {
     if (!navigator->frame())
@@ -144,7 +143,6 @@ void NavigatorRegisterProtocolHandler::registerProtocolHandler(Navigator* naviga
 
     NavigatorRegisterProtocolHandler::from(navigator->frame()->page())->client()->registerProtocolHandler(scheme, baseURL, url, navigator->frame()->displayStringModifiedByEncoding(title));
 }
-#endif
 
 #if ENABLE(CUSTOM_SCHEME_HANDLER)
 static String customHandlersStateString(const RegisterProtocolHandlerClient::CustomHandlersState state)
@@ -216,5 +214,5 @@ void provideRegisterProtocolHandlerTo(Page* page, RegisterProtocolHandlerClient*
 
 } // namespace WebCore
 
-#endif // ENABLE(REGISTER_PROTOCOL_HANDLER) || ENABLE(CUSTOM_SCHEME_HANDLER)
+#endif // ENABLE(REGISTER_PROTOCOL_HANDLER)
 

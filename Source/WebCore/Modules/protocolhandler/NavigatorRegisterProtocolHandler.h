@@ -27,7 +27,7 @@
 #ifndef NavigatorRegisterProtocolHandler_h
 #define NavigatorRegisterProtocolHandler_h
 
-#if ENABLE(REGISTER_PROTOCOL_HANDLER) || ENABLE(CUSTOM_SCHEME_HANDLER)
+#if ENABLE(REGISTER_PROTOCOL_HANDLER)
 
 #include "RefCountedSupplement.h"
 #include "RegisterProtocolHandlerClient.h"
@@ -48,9 +48,7 @@ public:
     static const AtomicString& supplementName();
     static NavigatorRegisterProtocolHandler* from(Page*);
 
-#if ENABLE(REGISTER_PROTOCOL_HANDLER)
     static void registerProtocolHandler(Navigator*, const String& scheme, const String& url, const String& title, ExceptionCode&);
-#endif 
 
 #if ENABLE(CUSTOM_SCHEME_HANDLER)
     static String isProtocolHandlerRegistered(Navigator*, const String& scheme, const String& url, ExceptionCode&);
@@ -71,6 +69,6 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(REGISTER_PROTOCOL_HANDLER) || ENABLE(CUSTOM_SCHEME_HANDLER)
+#endif // ENABLE(REGISTER_PROTOCOL_HANDLER)
 
 #endif // NavigatorRegisterProtocolHandler_h

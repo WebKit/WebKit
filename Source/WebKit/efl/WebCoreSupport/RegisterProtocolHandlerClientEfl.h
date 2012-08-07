@@ -28,7 +28,7 @@
 #ifndef RegisterProtocolHandlerClientEfl_h
 #define RegisterProtocolHandlerClientEfl_h
 
-#if ENABLE(REGISTER_PROTOCOL_HANDLER) || ENABLE(CUSTOM_SCHEME_HANDLER)
+#if ENABLE(REGISTER_PROTOCOL_HANDLER)
 #include "RegisterProtocolHandlerClient.h"
 
 #include <wtf/PassOwnPtr.h>
@@ -39,10 +39,7 @@ public:
     static PassOwnPtr<RegisterProtocolHandlerClientEfl> create(Evas_Object* view);
 
     ~RegisterProtocolHandlerClientEfl() { }
-
-#if ENABLE(REGISTER_PROTOCOL_HANDLER)
     virtual void registerProtocolHandler(const String& scheme, const String& baseURL, const String& url, const String& title);
-#endif
 
 #if ENABLE(CUSTOM_SCHEME_HANDLER)
     virtual CustomHandlersState isProtocolHandlerRegistered(const String& scheme, const String& baseURL, const String& url);

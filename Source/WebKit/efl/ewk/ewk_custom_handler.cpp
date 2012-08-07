@@ -35,7 +35,6 @@ bool ewk_custom_handler_register_protocol_handler(Ewk_Custom_Handler_Data* data)
     evas_object_smart_callback_call(data->ewkView, "protocolhandler,registration,requested", data);
     return true;
 }
-#endif
 
 #if ENABLE(CUSTOM_SCHEME_HANDLER)
 /**
@@ -68,4 +67,6 @@ bool ewk_custom_handler_unregister_protocol_handler(Ewk_Custom_Handler_Data* dat
     evas_object_smart_callback_call(data->ewkView, "protocolhandler,unregistration,requested", data);
     return true;
 }
-#endif
+
+#endif // ENABLE(CUSTOM_SCHEME_HANDLER)
+#endif // ENABLE(REGISTER_PROTOCOL_HANDLER)
