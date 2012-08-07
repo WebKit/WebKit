@@ -22,13 +22,9 @@
 
 #if PLATFORM(QT)
 #include <qglobal.h>
-#if HAVE(QT5)
 #include <qopenglfunctions.h>
 #include <QOpenGLContext>
 #include <QSurface>
-#else
-#include <QGLContext>
-#endif
 #else
 #include <GL/gl.h>
 #endif

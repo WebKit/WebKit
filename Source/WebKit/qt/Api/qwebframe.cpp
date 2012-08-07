@@ -97,10 +97,6 @@
 #include <qregion.h>
 #include <qnetworkrequest.h>
 
-#if ENABLE(ORIENTATION_EVENTS) && !HAVE(QT5)
-QTM_USE_NAMESPACE
-#endif
-
 using namespace WebCore;
 
 // from text/qfont.cpp
@@ -650,11 +646,7 @@ QWebFrame::~QWebFrame()
 
     The ownership of \a object is specified using \a own.
 */
-#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
 void QWebFrame::addToJavaScriptWindowObject(const QString &name, QObject *object, ValueOwnership ownership)
-#else
-void QWebFrame::addToJavaScriptWindowObject(const QString &name, QObject *object, QScriptEngine::ValueOwnership ownership)
-#endif
 {
     if (!page()->settings()->testAttribute(QWebSettings::JavascriptEnabled))
         return;

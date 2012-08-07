@@ -1,3 +1,14 @@
+2012-07-19  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Remove Qt 4 specific code paths
+        https://bugs.webkit.org/show_bug.cgi?id=88161
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        * WebKit.pri:
+        * WebKit1.pri:
+        * WebKit1.pro:
+
 2012-08-07  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         CUSTOM_SCHEME_HANDLER flag should depend on REGISTER_PROTOCOL_HANDLER

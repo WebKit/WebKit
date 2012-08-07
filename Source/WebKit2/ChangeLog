@@ -1,3 +1,15 @@
+2012-07-19  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Remove Qt 4 specific code paths
+        https://bugs.webkit.org/show_bug.cgi?id=88161
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        * UIProcess/API/qt/qquickwebview.cpp:
+        * UIProcess/API/qt/tests/publicapi/tst_publicapi.cpp:
+        (gatherAPI):
+        * WebKit2.pri:
+
 2012-08-07  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         [EFL][WK2] Add back forward list API

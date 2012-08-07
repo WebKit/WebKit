@@ -19,8 +19,6 @@ isEmpty(OBJECTS_DIR): OBJECTS_DIR = obj/$$activeBuildConfig()
 DEFINES += \
     BUILDING_QT__=1
 
-haveQt(5): DEFINES += HAVE_QT5=1
-
 CONFIG(release, debug|release): DEFINES *= NDEBUG
 
 CONFIG += depend_includepath
@@ -148,11 +146,6 @@ contains(TEMPLATE, lib) {
 }
 
 contains(QT, webkit) {
-    haveQt(4) {
-        # Qt 4 still uses custom rules to depend on QtWebKit
-        load(qtwebkit)
-    }
-
     # In addition to the main shared QtWebKit library we also
     # need to link to any intermediate shared libraries.
     force_static_libs_as_shared {
@@ -238,43 +231,6 @@ for(subdir, SUBDIRS) {
     }
 }
 
-# Doing '$(MAKE) qmake' should recurse through all subdirs. In Qt5, this is
-# automatic (for 'qmake_all', while 'qmake' does not enter subdirs at all).
-haveQt(4):contains(TEMPLATE, subdirs):!no_recursive_qmake {
-    recursive_qmake.target = qmake_all
-
-    # We could do this using CONFIG += recurse but that adds
-    # a dependency for each recursive target on its makefile,
-    # while we want it to depend on *-qmake_all, so that we
-    # don't end up running qmake twice.
-
-    for(subdir, SUBDIRS) {
-        contains(NO_RECURSIVE_QMAKE_SUBDIRS, $${subdir}) {
-            debug(1, Skipping recursive qmake for $${subdir})
-            next()
-        }
-
-        subdir_config = $$eval($${subdir}.CONFIG)
-        contains(subdir_config, no_default_target):next()
-
-        debug(1, "Making qmake recursive for $$subdir")
-
-        variables = $$computeSubdirVariables($${subdir})
-
-        target_name = $$eval($${variables}.target)-recursive_qmake
-
-        eval($${target_name}.target = $$target_name)
-        eval($${target_name}.depends = $$eval($${variables}.target)-qmake_all)
-        commands = $$eval($${variables}.subdir_command) $(MAKE) -f $$eval($${variables}.makefile) qmake
-        eval($${target_name}.commands = $$commands)
-
-        QMAKE_EXTRA_TARGETS += $${target_name}
-        recursive_qmake.depends += $${target_name}
-    }
-
-    !isEmpty(recursive_qmake.depends): QMAKE_EXTRA_TARGETS += recursive_qmake
-}
-
 incremental.target = incremental
 incremental.commands = $(MAKE) -f $(MAKEFILE) qmake_all && $(MAKE) -f $(MAKEFILE)
 QMAKE_EXTRA_TARGETS += incremental
@@ -311,10 +267,5 @@ for(target, $$list($$unique(DEFAULT_TARGETS))) {
 # that also contains either of those two words, so we make DESTDIR
 # relative.
 DESTDIR = $$replace(DESTDIR, ^$${ROOT_BUILD_DIR}, $${BUILD_ROOT_RELATIVE_TO_OUT_PWD})
-
-# Since we loaded our own rules for depending on QtWebKit, and we
-# have no more logic that checks contains(QT, webkit), we unset it
-# here so that Qt will not add its own include and library paths.
-haveQt(4): QT -= webkit webkit-private
 
 load(default_post) # Load Qt's defaults

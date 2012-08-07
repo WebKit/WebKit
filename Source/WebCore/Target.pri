@@ -16,10 +16,6 @@ CONFIG += staticlib
 
 DEFINES += QT_MAKEDLL
 
-!haveQt(5) {
-    INCLUDEPATH += $$PWD/../WTF/wtf/qt/compat
-}
-
 RESOURCES += \
     $$PWD/WebCore.qrc
 
@@ -231,17 +227,13 @@ SOURCES += \
      bridge/qt/qt_class.cpp \
      bridge/qt/qt_instance.cpp \
      bridge/qt/qt_pixmapruntime.cpp \
+     bridge/qt/qt_runtime.cpp \
      bridge/runtime_array.cpp \
      bridge/runtime_method.cpp \
      bridge/runtime_object.cpp \
      bridge/runtime_root.cpp \
      testing/js/WebCoreTestSupport.cpp
 
-haveQt(5) {
-    SOURCES += bridge/qt/qt_runtime.cpp
-} else {
-    SOURCES += bridge/qt/qt_runtime_qt4.cpp
-}
 
 SOURCES += \
     Modules/filesystem/DOMFilePath.cpp \
@@ -2818,18 +2810,13 @@ mac {
         platform/text/cf/StringImplCF.cpp
 }
 
-haveQt(5) {
-    contains(QT_CONFIG,icu)|mac: SOURCES += platform/text/TextBreakIteratorICU.cpp
-    mac {
-        # For Mac we use the same SmartReplace implementation as the Apple port.
-        SOURCES += editing/SmartReplaceCF.cpp
-        INCLUDEPATH += $$PWD/icu
-    } else {
-        SOURCES += editing/SmartReplaceICU.cpp
-    }
+contains(QT_CONFIG,icu)|mac: SOURCES += platform/text/TextBreakIteratorICU.cpp
+mac {
+    # For Mac we use the same SmartReplace implementation as the Apple port.
+    SOURCES += editing/SmartReplaceCF.cpp
+    INCLUDEPATH += $$PWD/icu
 } else {
-    SOURCES += platform/text/qt/TextBreakIteratorQt.cpp \
-               editing/qt/SmartReplaceQt.cpp
+    SOURCES += editing/SmartReplaceICU.cpp
 }
 
 contains(DEFINES, ENABLE_NETSCAPE_PLUGIN_API=1) {
@@ -2848,11 +2835,6 @@ contains(DEFINES, ENABLE_NETSCAPE_PLUGIN_API=1) {
             SOURCES += \
                 plugins/qt/PluginPackageQt.cpp \
                 plugins/qt/PluginViewQt.cpp
-
-            haveQt(4) {
-                SOURCES += plugins/qt/PluginContainerQt.cpp
-                HEADERS += plugins/qt/PluginContainerQt.h
-            }
         }
     }
 

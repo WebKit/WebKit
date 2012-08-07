@@ -34,10 +34,8 @@
 #include "OpenGLShims.h"
 #include "QWebPageClient.h"
 #include "SharedBuffer.h"
-#if HAVE(QT5)
 #include <QWindow>
 #include <qpa/qplatformpixmap.h>
-#endif
 #include <wtf/UnusedParam.h>
 #include <wtf/text/CString.h>
 
@@ -255,7 +253,6 @@ void GraphicsContext3DPrivate::blitMultisampleFramebufferAndRestoreContext() con
     if (!m_context->m_attrs.antialias)
         return;
 
-#if HAVE(QT5)
     const QOpenGLContext* currentContext = QOpenGLContext::currentContext();
     QSurface* currentSurface = 0;
     if (currentContext != m_platformContext) {
@@ -265,35 +262,14 @@ void GraphicsContext3DPrivate::blitMultisampleFramebufferAndRestoreContext() con
     blitMultisampleFramebuffer();
     if (currentSurface)
         const_cast<QOpenGLContext*>(currentContext)->makeCurrent(currentSurface);
-#else
-    const QGLContext* currentContext = QGLContext::currentContext();
-    const QGLContext* widgetContext = m_surface->context();
-    if (currentContext != widgetContext)
-        m_surface->makeCurrent();
-    blitMultisampleFramebuffer();
-    if (currentContext) {
-        if (currentContext != widgetContext)
-            const_cast<QGLContext*>(currentContext)->makeCurrent();
-    } else
-        m_surface->doneCurrent();
-#endif
 }
 
 bool GraphicsContext3DPrivate::makeCurrentIfNeeded() const
 {
-#if HAVE(QT5)
     const QOpenGLContext* currentContext = QOpenGLContext::currentContext();
     if (currentContext == m_platformContext)
         return true;
     return m_platformContext->makeCurrent(m_surface);
-#else
-    const QGLContext* currentContext = QGLContext::currentContext();
-    const QGLContext* widgetContext = m_surface->context();
-    if (currentContext != widgetContext)
-        m_surface->makeCurrent();
-
-    return QGLContext::currentContext() == widgetContext;
-#endif
 }
 
 void GraphicsContext3DPrivate::createGraphicsSurfaces(const IntSize& size)

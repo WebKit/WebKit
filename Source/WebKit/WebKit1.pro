@@ -94,7 +94,7 @@ HEADERS += \
     $$PWD/qt/WebCoreSupport/PlatformStrategiesQt.h \
     $$PWD/qt/WebCoreSupport/WebEventConversion.h
 
-haveQt(5): contains(QT_CONFIG,accessibility) {
+contains(QT_CONFIG,accessibility) {
     SOURCES += $$PWD/qt/Api/qwebviewaccessible.cpp
     HEADERS += $$PWD/qt/Api/qwebviewaccessible_p.h 
 }

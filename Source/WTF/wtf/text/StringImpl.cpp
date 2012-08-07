@@ -69,7 +69,7 @@ StringImpl::~StringImpl()
         fastFree(const_cast<LChar*>(m_data8));
         return;
     }
-#if PLATFORM(QT) && HAVE(QT5)
+#if PLATFORM(QT)
     if (ownership == BufferAdoptedQString) {
         if (!m_qStringData->ref.deref())
             QStringData::deallocate(m_qStringData);
@@ -1657,7 +1657,7 @@ PassRefPtr<StringImpl> StringImpl::adopt(StringBuffer<UChar>& buffer)
     return adoptRef(new StringImpl(buffer.release(), length));
 }
 
-#if PLATFORM(QT) && HAVE(QT5)
+#if PLATFORM(QT)
 PassRefPtr<StringImpl> StringImpl::adopt(QStringData* qStringData)
 {
     ASSERT(qStringData);

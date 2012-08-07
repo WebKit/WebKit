@@ -99,16 +99,7 @@ JSValue QtClass::fallbackObject(ExecState* exec, Instance* inst, PropertyName id
         if (m.access() == QMetaMethod::Private)
             continue;
 
-#if !HAVE(QT5)
-        int iter = 0;
-        const char* signature = m.signature();
-        while (signature[iter] && signature[iter] != '(')
-            ++iter;
-
-        if (normal == QByteArray::fromRawData(signature, iter)) {
-#else
         if (normal == m.name()) {
-#endif
             QtRuntimeMetaMethod* val = QtRuntimeMetaMethod::create(exec, ustring, static_cast<QtInstance*>(inst), index, normal, false);
             qtinst->m_methods.insert(name, val);
             return val;

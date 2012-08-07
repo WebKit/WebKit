@@ -9,7 +9,6 @@ TEMPLATE = app
 TARGET = ImageDiff
 DESTDIR = $$ROOT_BUILD_DIR/bin
 
-QT = core gui
-haveQt(5): QT += widgets
+QT = core gui widgets
 
 SOURCES = ImageDiff.cpp

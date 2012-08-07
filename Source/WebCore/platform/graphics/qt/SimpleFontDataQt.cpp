@@ -148,12 +148,6 @@ void SimpleFontData::platformInit()
     float spaceWidth = fm.width(QLatin1Char(' '));
 #endif
 
-#if !HAVE(QT5)
-    // Qt subtracts 1 from the descent to account for the baseline,
-    // we add it back here to get correct metrics for WebKit.
-    descent += 1;
-#endif
-
     // The line spacing should always be >= (ascent + descent), but this
     // may be false in some cases due to misbehaving platform libraries.
     // Workaround from SimpleFontPango.cpp and SimpleFontFreeType.cpp

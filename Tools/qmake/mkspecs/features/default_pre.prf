@@ -56,12 +56,6 @@ win32* {
     isEmpty(pwd_starts_with_slash): CONFIG += win_cmd_shell
 }
 
-haveQt(4) {
-    # Make sure QMAKEPATH is set for recursive targets
-    win_cmd_shell: QMAKE_QMAKE = \(set QMAKEPATH=$$(QMAKEPATH)\) && $$QMAKE_QMAKE
-    else: QMAKE_QMAKE = QMAKEPATH=$$(QMAKEPATH) $$QMAKE_QMAKE
-}
-
 # Default location of generated sources
 GENERATED_SOURCES_DESTDIR = generated
 
@@ -82,33 +76,16 @@ win32-msvc*: MAKEFILE_NOOP_COMMAND = @echo >NUL
 scratchbox: PYTHON = python2.6
 else: PYTHON = python
 
-!haveQt(4, 8):!haveQt(5):!recursive_include: error("Building WebKit with Qt versions older than 4.8 is not supported.")
+!haveQt(5):!recursive_include: error("Building WebKit with Qt versions older than 5.0 is not supported.")
 
-!haveQt(5):!no_webkit2 {
-    root_project_file {
-        message("Building WebKit2 with Qt versions older than 5.0 is not supported. Disabling WebKit2.")
-        message("Read http://www.mail-archive.com/webkit-qt@lists.webkit.org/msg01674.html for more information.")
-    }
-    CONFIG += no_webkit2
-}
-
-haveQt(5): {
-    !haveQtModule(widgets)|!haveQtModule(printsupport) {
-        root_project_file: message("WebKit1 requires the QtWidgets and QtPrintSupport modules. Disabling WebKit1.")
-        CONFIG += no_webkit1
-    }
+!haveQtModule(widgets)|!haveQtModule(printsupport) {
+    root_project_file: message("WebKit1 requires the QtWidgets and QtPrintSupport modules. Disabling WebKit1.")
+    CONFIG += no_webkit1
 }
 
 # We use private_tests to detect developer build, since the destdir will
 # always be our webkit build dir. This might change as configure changes.
 contains(QT_CONFIG, private_tests): CONFIG += qt_developer_build
-
-haveQt(4) {
-    # Qt5 will automatically load the module files for us, but for Qt4
-    # we have to do it manually so that the various QT.webkit.foo names
-    # are available.
-    include($${ROOT_WEBKIT_DIR}/Tools/qmake/qt_webkit.pri)
-}
 
 # Set some defaults for specific platforms
 CONFIG += include_webinspector
@@ -116,8 +93,7 @@ CONFIG += include_webinspector
 # Try to locate sqlite3 source (for WebCore)
 SQLITE3SRCDIR = $$(SQLITE3SRCDIR)
 isEmpty(SQLITE3SRCDIR) {
-    haveQt(5): SQLITE3SRCDIR = $$QT.core.sources/../3rdparty/sqlite/
-    else: SQLITE3SRCDIR = $$[QT_INSTALL_PREFIX]/src/3rdparty/sqlite/
+    SQLITE3SRCDIR = $$QT.core.sources/../3rdparty/sqlite/
 }
 
 # --------- Make features available to JSC ------------

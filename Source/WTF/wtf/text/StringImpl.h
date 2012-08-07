@@ -31,7 +31,7 @@
 #include <wtf/Vector.h>
 #include <wtf/unicode/Unicode.h>
 
-#if PLATFORM(QT) && HAVE(QT5)
+#if PLATFORM(QT)
 #include <QString>
 #endif
 
@@ -88,7 +88,7 @@ private:
         BufferInternal,
         BufferOwned,
         BufferSubstring,
-#if PLATFORM(QT) && HAVE(QT5)
+#if PLATFORM(QT)
         BufferAdoptedQString
 #endif
         // NOTE: Adding more ownership types needs to extend m_hashAndFlags as we're at capacity
@@ -238,7 +238,7 @@ private:
         m_hashAndFlags = hash | BufferInternal;
     }
 
-#if PLATFORM(QT) && HAVE(QT5)
+#if PLATFORM(QT)
     // Used to create new strings that adopt an existing QString's data
     enum ConstructAdoptedQStringTag { ConstructAdoptedQString };
     StringImpl(QStringData* qStringData, ConstructAdoptedQStringTag)
@@ -364,7 +364,7 @@ public:
     WTF_EXPORT_STRING_API static PassRefPtr<StringImpl> adopt(StringBuffer<UChar>&);
     WTF_EXPORT_STRING_API static PassRefPtr<StringImpl> adopt(StringBuffer<LChar>&);
 
-#if PLATFORM(QT) && HAVE(QT5)
+#if PLATFORM(QT)
     static PassRefPtr<StringImpl> adopt(QStringData*);
 #endif
 
@@ -429,7 +429,7 @@ public:
             m_hashAndFlags &= ~s_hashFlagIsAtomic;
     }
 
-#if PLATFORM(QT) && HAVE(QT5)
+#if PLATFORM(QT)
     QStringData* qStringData() { return bufferOwnership() == BufferAdoptedQString ? m_qStringData : 0; }
 #endif
 
@@ -657,7 +657,7 @@ private:
         void* m_buffer;
         StringImpl* m_substringBuffer;
         mutable UChar* m_copyData16;
-#if PLATFORM(QT) && HAVE(QT5)
+#if PLATFORM(QT)
         QStringData* m_qStringData;
 #endif
     };

@@ -1,3 +1,51 @@
+2012-08-02  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Remove Qt 4 specific code paths
+        https://bugs.webkit.org/show_bug.cgi?id=88161
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        * Api/qgraphicswebview.cpp:
+        (QGraphicsWebView::sceneEvent):
+        * Api/qgraphicswebview.h:
+        * Api/qwebframe.cpp:
+        * Api/qwebframe.h:
+        * Api/qwebframe_p.h:
+        * Api/qwebpage.cpp:
+        (QWebPage::event):
+        * Api/qwebpage.h:
+        * Api/qwebsettings.cpp:
+        (QWebSettings::enablePersistentStorage):
+        * Api/qwebview.cpp:
+        (QWebView::QWebView):
+        (QWebView::event):
+        * Api/qwebview.h:
+        * WebCoreSupport/ChromeClientQt.cpp:
+        (WebCore::ChromeClientQt::setToolTip):
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::createPlugin):
+        * WebCoreSupport/GeolocationClientQt.cpp:
+        * WebCoreSupport/GeolocationClientQt.h:
+        * WebCoreSupport/PageClientQt.cpp:
+        (createPlatformGraphicsContext3DFromWidget):
+        (QWebPageClient::ownerWindow):
+        * WebCoreSupport/WebEventConversion.cpp:
+        (WebCore::WebKitPlatformTouchEvent::WebKitPlatformTouchEvent):
+        * declarative/declarative.pro:
+        * declarative/plugin.cpp:
+        * declarative/public.pri:
+        * examples/platformplugin/WebPlugin.cpp:
+        (WebPlugin::createExtension):
+        * examples/platformplugin/WebPlugin.h:
+        (WebPlugin):
+        * examples/platformplugin/platformplugin.pro:
+        * tests/qobjectbridge/tst_qobjectbridge.cpp:
+        (tst_QObjectBridge::arrayObjectEnumerable):
+        (tst_QObjectBridge::ownership):
+        (tst_QObjectBridge::qObjectWrapperWithSameIdentity):
+        * tests/tests.pri:
+        * tests/util.h:
+
 2012-08-01  Zeno Albisser  <zeno@webkit.org>
 
         [Qt]REGRESSION(r123786): It made 3 fast/animation tests fail.

@@ -25,12 +25,6 @@
 #include <QAccelerometerFilter>
 #include <wtf/RefPtr.h>
 
-#if !HAVE(QT5)
-using QTM_NAMESPACE::QAccelerometer;
-using QTM_NAMESPACE::QAccelerometerFilter;
-using QTM_NAMESPACE::QAccelerometerReading;
-#endif
-
 namespace WebCore {
 
 class DeviceMotionController;

@@ -137,51 +137,16 @@ defineTest(addStrictSubdirOrderBetween) {
     first_base_target = sub-$$replace(firstSubdirFile, [^a-zA-Z0-9_], -)
     second_base_target = sub-$$replace(secondSubdirFile, [^a-zA-Z0-9_], -)
 
-    haveQt(4) {
-        # Use a custom target for making the derived sources instead of the default ones,
-        # as the default ones depend on $(MAKEFILE), while we want to depend on *qmake_all.
-        # Without this rule we end up running qmake twice for the derived sources, as well as
-        # introducing a race condition where we run "qmake -o Makefile.DerivedSources" at the
-        # same time as we run "make -f Makefile.DerivedSources", resulting in make reading a
-        # half-written makefile.
-        derived_make_for_qmake.target = $${first_base_target}-make_for_qmake
-        derived_make_for_qmake.depends = $${first_base_target}-qmake_all
-        derived_make_for_qmake.commands = $(MAKE) -f $$eval($${firstSubdir}.makefile)
-        QMAKE_EXTRA_TARGETS += derived_make_for_qmake
+    # This target ensures that running "make qmake_all" will force both qmake and make
+    # to be run on the derived sources before running qmake on the target, so that
+    # qmake can pick up the right dependencies for the target based on the derived
+    # sources that were generated. Just "make qmake" is non-recursive anyway.
+    target_make_qmake.target = $${second_base_target}-qmake_all
+    target_make_qmake.depends = $${first_base_target}
+    QMAKE_EXTRA_TARGETS += target_make_qmake
 
-        # This target ensures that running "make qmake" will force both qmake and make
-        # to be run on the derived sources before running qmake on the target, so that
-        # qmake can pick up the right dependencies for the target based on the derived
-        # sources that were generated.
-        target_make_qmake.target = $${second_base_target}-qmake_all
-        target_make_qmake.depends = $${derived_make_for_qmake.target}
-        QMAKE_EXTRA_TARGETS += target_make_qmake
-
-        GNUmake {
-            # This target ensures that running make before any makefiles have been created
-            # will still force qmake and make to be run on the derived sources first.
-            target_make.target = $$eval($${secondSubdir}.makefile)
-
-            # We use order-only-prerequisites so that we can run make on the derived sources
-            # without triggering a qmake run on the target due to updated dependencies.
-            target_make.depends = "| $${first_base_target}-make_default-ordered"
-
-            QMAKE_EXTRA_TARGETS += target_make
-        }
-    } else {
-        # Qt5's qmake does most of the above for us already.
-
-        # This target ensures that running "make qmake_all" will force both qmake and make
-        # to be run on the derived sources before running qmake on the target, so that
-        # qmake can pick up the right dependencies for the target based on the derived
-        # sources that were generated. Just "make qmake" is non-recursive anyway.
-        target_make_qmake.target = $${second_base_target}-qmake_all
-        target_make_qmake.depends = $${first_base_target}
-        QMAKE_EXTRA_TARGETS += target_make_qmake
-
-        # Make things work even if qmake -r is used.
-        CONFIG += dont_recurse
-    }
+    # Make things work even if qmake -r is used.
+    CONFIG += dont_recurse
 
     export(SUBDIRS)
     export(NO_RECURSIVE_QMAKE_SUBDIRS)
@@ -223,7 +188,6 @@ defineTest(haveQtModule) {
     unset(module)
     module = $$1
 
-    haveQt(4):contains(QT_CONFIG, $${module}): return(true)
     haveQt(5):!isEmpty(QT.$${module}.name): return(true)
     return(false)
 }
@@ -310,48 +274,10 @@ defineTest(linkAgainstLibrary) {
     return(true)
 }
 
-defineTest(runSyncQt) {
-
-    build_pass:return(true)
-
-    haveQt(5) {
-        # Qt 5 will run synqt as part of defaults_pre, so no need to do anything
-    } else {
-        # Use our own copy of syncqt from Qt 4.8 to generate forwarding headers
-        syncqt = $$toSystemPath($${ROOT_WEBKIT_DIR}/Tools/qmake/syncqt-4.8)
-        command = $$syncqt
-        win32-msvc*: command = $$command -windows
-
-        outdir = $$toSystemPath($${ROOT_BUILD_DIR})
-
-        # The module root has to be the same as directory of the pro-file that generates
-        # the install rules (api.pri), otherwise the relative paths in the generated
-        # headers.pri will be incorrect.
-        module_rootdir = $$toSystemPath($${_PRO_FILE_PWD_})
-
-        module = $${TARGET}$${DIRLIST_SEPARATOR}$${module_rootdir}$${DIRLIST_SEPARATOR}$$toSystemPath(WebKit/qt/Api)
-        command = perl $${command} -outdir $${outdir} -separate-module $${module}
-        message(Running $$command)
-        !system($$command) {
-            error(Failed to run $${command})
-        }
-    }
-
-    return(true)
-}
-
 defineTest(xlibAvailable) {
-    haveQt(5) {
-        contains(QT_CONFIG, xcb-xlib) {
-            return(true)
-        } else {
-            return(false)
-        }
+    contains(QT_CONFIG, xcb-xlib) {
+        return(true)
     } else {
-        unix:!mac:!embedded {
-            return(true)
-        } else {
-            return(false)
-        }
+        return(false)
     }
 }

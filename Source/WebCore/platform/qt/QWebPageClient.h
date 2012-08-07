@@ -110,9 +110,7 @@ public:
     virtual void createPlatformGraphicsContext3D(PlatformGraphicsContext3D*,
                                                  PlatformGraphicsSurface3D*) = 0;
 #endif
-#if HAVE(QT5)
     virtual QWindow* ownerWindow() const;
-#endif
 
 protected:
 #ifndef QT_NO_CURSOR

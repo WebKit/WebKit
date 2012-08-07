@@ -66,11 +66,7 @@
 #endif
 
 #if !defined(QT_NO_NETWORKDISKCACHE) && !defined(QT_NO_DESKTOPSERVICES)
-#if HAVE(QT5)
 #include <QStandardPaths>
-#else
-#include <QDesktopServices>
-#endif
 #include <QtNetwork/QNetworkDiskCache>
 #endif
 
@@ -808,11 +804,7 @@ void LauncherWindow::setDiskCache(bool enable)
     QNetworkDiskCache* cache = 0;
     if (enable) {
         cache = new QNetworkDiskCache();
-#if HAVE(QT5)
         QString cacheLocation = QStandardPaths::writableLocation(QStandardPaths::CacheLocation);
-#else
-        QString cacheLocation = QDesktopServices::storageLocation(QDesktopServices::CacheLocation);
-#endif
         cache->setCacheDirectory(cacheLocation);
     }
     page()->networkAccessManager()->setCache(cache);

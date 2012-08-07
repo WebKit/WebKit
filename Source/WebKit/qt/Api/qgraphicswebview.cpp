@@ -309,9 +309,7 @@ bool QGraphicsWebView::sceneEvent(QEvent* event)
     if (d->page && (event->type() == QEvent::TouchBegin
                 || event->type() == QEvent::TouchEnd
                 || event->type() == QEvent::TouchUpdate
-#if HAVE(QT5)
                 || event->type() == QEvent::TouchCancel
-#endif
        )) {
         d->page->event(event);
 

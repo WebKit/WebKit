@@ -75,7 +75,6 @@
 #include <qeventloop.h>
 #include <qtooltip.h>
 #include <wtf/OwnPtr.h>
-#include <wtf/qt/UtilsQt.h>
 
 #if ENABLE(VIDEO) && ((USE(GSTREAMER) && !defined(GST_API_VERSION_1)) || USE(QT_MULTIMEDIA) || USE(QTKIT))
 #include "FullScreenVideoQt.h"
@@ -549,7 +548,7 @@ void ChromeClientQt::setToolTip(const String &tip, TextDirection)
         view->setToolTip(QString());
         QToolTip::hideText();
     } else {
-        QString dtip = QLatin1String("<p>") + escapeHtml(tip) + QLatin1String("</p>");
+        QString dtip = QLatin1String("<p>") + QString(tip).toHtmlEscaped() + QLatin1String("</p>");
         view->setToolTip(dtip);
     }
 #else

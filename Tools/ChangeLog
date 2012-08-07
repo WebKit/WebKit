@@ -1,3 +1,32 @@
+2012-08-02  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Remove Qt 4 specific code paths
+        https://bugs.webkit.org/show_bug.cgi?id=88161
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        * DumpRenderTree/qt/DumpRenderTree.pro:
+        * DumpRenderTree/qt/EventSenderQt.cpp:
+        (EventSender::touchCancel):
+        (EventSender::sendTouchEvent):
+        * DumpRenderTree/qt/EventSenderQt.h:
+        (EventSender):
+        * DumpRenderTree/qt/ImageDiff.pro:
+        * DumpRenderTree/qt/main.cpp:
+        (main):
+        * QtTestBrowser/QtTestBrowser.pro:
+        * QtTestBrowser/cookiejar.cpp:
+        (TestBrowserCookieJar::TestBrowserCookieJar):
+        * QtTestBrowser/launcherwindow.cpp:
+        (LauncherWindow::setDiskCache):
+        * qmake/configure.pri:
+        * qmake/mkspecs/features/default_post.prf:
+        * qmake/mkspecs/features/default_pre.prf:
+        * qmake/mkspecs/features/features.prf:
+        * qmake/mkspecs/features/functions.prf:
+        * qmake/mkspecs/features/qtwebkit.prf: Removed.
+        * qmake/mkspecs/features/unix/default_pre.prf:
+
 2012-08-07  Andras Becsi  <andras.becsi@nokia.com>
 
         [Qt][WK2] MiniBrowser should only synthesize multiple touch points if Ctrl is pressed

@@ -477,13 +477,11 @@ void EventSender::touchEnd()
     m_touchActive = false;
 }
 
-#if QT_VERSION >= 0x050000
 void EventSender::touchCancel()
 {
     sendTouchEvent(QEvent::TouchCancel);
     m_touchActive = false;
 }
-#endif
 
 void EventSender::clearTouchPoints()
 {
@@ -511,7 +509,6 @@ void EventSender::cancelTouchPoint(int index)
 
 void EventSender::sendTouchEvent(QEvent::Type type)
 {
-#if HAVE(QT5)
     static QTouchDevice* device = 0;
     if (!device) {
         device = new QTouchDevice;
@@ -520,9 +517,6 @@ void EventSender::sendTouchEvent(QEvent::Type type)
     }
 
     QTouchEvent event(type, device, m_touchModifiers);
-#else
-    QTouchEvent event(type, QTouchEvent::TouchScreen, m_touchModifiers);
-#endif
     event.setTouchPoints(m_touchPoints);
     sendEvent(m_page, &event);
     QList<QTouchEvent::TouchPoint>::Iterator it = m_touchPoints.begin();

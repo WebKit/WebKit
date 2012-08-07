@@ -144,11 +144,7 @@ static void gatherAPI(const QString& prefix, const QMetaMethod& method, QStringL
 {
     if (method.access() != QMetaMethod::Private) {
         const char* methodTypeName = !!strlen(method.typeName()) ? method.typeName() : "void";
-#if HAVE(QT5)
         *output << QString::fromLatin1("%1%2 --> %3").arg(prefix).arg(QString::fromLatin1(method.methodSignature())).arg(QString::fromLatin1(methodTypeName));
-#else
-        *output << QString::fromLatin1("%1%2 --> %3").arg(prefix).arg(method.signature()).arg(methodTypeName);
-#endif
 
         checkKnownType(methodTypeName);
         foreach (QByteArray paramType, method.parameterTypes())

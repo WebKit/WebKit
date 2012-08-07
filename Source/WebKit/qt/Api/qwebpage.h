@@ -26,11 +26,7 @@
 
 #include <QtCore/qobject.h>
 #include <QtCore/qurl.h>
-#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
 #include <QtWidgets/qwidget.h>
-#else
-#include <QtGui/qwidget.h>
-#endif
 
 QT_BEGIN_NAMESPACE
 class QNetworkProxy;

@@ -1604,22 +1604,13 @@ PassRefPtr<Widget> FrameLoaderClientQt::createPlugin(const IntSize& pluginSize, 
         Vector<String> params = paramNames;
         Vector<String> values = paramValues;
         if (mimeType == "application/x-shockwave-flash") {
-#if HAVE(QT5)
-            const bool shouldInjectWmode = true;
-#else
             // Inject wmode=opaque when there is no client or the client is not a QWebView.
-            QWebPageClient* client = m_webFrame->page()->d->client.get();
-            const bool shouldInjectWmode = !(client && qobject_cast<QWidget*>(client->pluginParent()));
-#endif
-            if (shouldInjectWmode) {
-                // Inject wmode=opaque when there is no client or the client is not a QWebView.
-                size_t wmodeIndex = params.find("wmode");
-                if (wmodeIndex == WTF::notFound) {
-                    params.append("wmode");
-                    values.append("opaque");
-                } else if (equalIgnoringCase(values[wmodeIndex], "window"))
-                    values[wmodeIndex] = "opaque";
-            }
+            size_t wmodeIndex = params.find("wmode");
+            if (wmodeIndex == WTF::notFound) {
+                params.append("wmode");
+                values.append("opaque");
+            } else if (equalIgnoringCase(values[wmodeIndex], "window"))
+                values[wmodeIndex] = "opaque";
         }
 
         RefPtr<PluginView> pluginView = PluginView::create(m_frame, pluginSize, element, url,

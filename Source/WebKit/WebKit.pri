@@ -37,7 +37,7 @@ HEADERS += \
     $$PWD/qt/Api/qwebplugindatabase_p.h \
     $$PWD/qt/Api/qhttpheader_p.h
 
-haveQt(5): contains(CONFIG, accessibility) {
+contains(CONFIG, accessibility) {
     SOURCES += $$PWD/qt/Api/qwebviewaccessible.cpp
     HEADERS += $$PWD/qt/Api/qwebviewaccessible_p.h
 }

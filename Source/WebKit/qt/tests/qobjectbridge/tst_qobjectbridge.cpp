@@ -37,12 +37,6 @@ Q_DECLARE_METATYPE(Qt::BrushStyle)
 Q_DECLARE_METATYPE(QVariantList)
 Q_DECLARE_METATYPE(QVariantMap)
 
-#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
-#define OwnershipClass QWebFrame
-#else
-#define OwnershipClass QScriptEngine
-#endif
-
 class MyQObject : public QObject {
     Q_OBJECT
 
@@ -2000,7 +1994,7 @@ void tst_QObjectBridge::arrayObjectEnumerable()
     QWebPage page;
     QWebFrame* frame = page.mainFrame();
     QObject* qobject = new StringListTestObject();
-    frame->addToJavaScriptWindowObject("test", qobject, OwnershipClass::ScriptOwnership);
+    frame->addToJavaScriptWindowObject("test", qobject, QWebFrame::ScriptOwnership);
 
     const QString script("var stringArray = test.stringList();"
                          "var result = '';"
@@ -2041,7 +2035,7 @@ void tst_QObjectBridge::ownership()
         {
             QWebPage page;
             QWebFrame* frame = page.mainFrame();
-            frame->addToJavaScriptWindowObject("test", ptr.data(), OwnershipClass::ScriptOwnership);
+            frame->addToJavaScriptWindowObject("test", ptr.data(), QWebFrame::ScriptOwnership);
         }
         QVERIFY(!ptr);
     }
@@ -2052,7 +2046,7 @@ void tst_QObjectBridge::ownership()
         {
             QWebPage page;
             QWebFrame* frame = page.mainFrame();
-            frame->addToJavaScriptWindowObject("test", ptr.data(), OwnershipClass::QtOwnership);
+            frame->addToJavaScriptWindowObject("test", ptr.data(), QWebFrame::QtOwnership);
         }
         QVERIFY(ptr.data() == before);
         delete ptr.data();
@@ -2062,7 +2056,7 @@ void tst_QObjectBridge::ownership()
         QObject* child = new QObject(parent);
         QWebPage page;
         QWebFrame* frame = page.mainFrame();
-        frame->addToJavaScriptWindowObject("test", child, OwnershipClass::QtOwnership);
+        frame->addToJavaScriptWindowObject("test", child, QWebFrame::QtOwnership);
         QVariant v = frame->evaluateJavaScript("test");
         QCOMPARE(qvariant_cast<QObject*>(v), child);
         delete parent;
@@ -2075,7 +2069,7 @@ void tst_QObjectBridge::ownership()
         {
             QWebPage page;
             QWebFrame* frame = page.mainFrame();
-            frame->addToJavaScriptWindowObject("test", ptr.data(), OwnershipClass::AutoOwnership);
+            frame->addToJavaScriptWindowObject("test", ptr.data(), QWebFrame::AutoOwnership);
         }
         // no parent, so it should be like ScriptOwnership
         QVERIFY(!ptr);
@@ -2087,7 +2081,7 @@ void tst_QObjectBridge::ownership()
         {
             QWebPage page;
             QWebFrame* frame = page.mainFrame();
-            frame->addToJavaScriptWindowObject("test", child.data(), OwnershipClass::AutoOwnership);
+            frame->addToJavaScriptWindowObject("test", child.data(), QWebFrame::AutoOwnership);
         }
         // has parent, so it should be like QtOwnership
         QVERIFY(child);
@@ -2129,7 +2123,7 @@ void tst_QObjectBridge::qObjectWrapperWithSameIdentity()
     QWebFrame* mainFrame = m_view->page()->mainFrame();
     QCOMPARE(mainFrame->toPlainText(), QString("test"));
 
-    mainFrame->addToJavaScriptWindowObject("test", new TestFactory, OwnershipClass::ScriptOwnership);
+    mainFrame->addToJavaScriptWindowObject("test", new TestFactory, QWebFrame::ScriptOwnership);
 
     mainFrame->evaluateJavaScript("triggerBug();");
     QCOMPARE(mainFrame->toPlainText(), QString("test1"));

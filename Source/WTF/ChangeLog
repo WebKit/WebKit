@@ -1,3 +1,24 @@
+2012-07-19  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Remove Qt 4 specific code paths
+        https://bugs.webkit.org/show_bug.cgi?id=88161
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        * WTF.pri:
+        * WTF.pro:
+        * wtf/qt/StringQt.cpp:
+        (WTF::String::String):
+        (WTF::String::operator QString):
+        * wtf/qt/UtilsQt.h: Removed.
+        * wtf/qt/compat/QGuiApplication: Removed.
+        * wtf/qt/compat/qguiapplication.h: Removed.
+        * wtf/text/StringImpl.cpp:
+        (WTF::StringImpl::~StringImpl):
+        (WTF):
+        * wtf/text/StringImpl.h:
+        (StringImpl):
+
 2012-08-06  Patrick Gansterer  <paroga@webkit.org>
 
         [WIN] Remove dependency on pthread from MachineStackMarker

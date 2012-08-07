@@ -30,22 +30,16 @@ contains(DEFINES, ENABLE_VIDEO=1):contains(DEFINES, WTF_USE_QTKIT=1) {
 }
 
 contains(DEFINES, ENABLE_DEVICE_ORIENTATION=1)|contains(DEFINES, ENABLE_ORIENTATION_EVENTS=1) {
-    haveQt(5) {
-        QT += sensors
-    } else {
-        CONFIG *= mobility
-        MOBILITY *= sensors
-    }
+    QT += sensors
 }
 
-contains(DEFINES, ENABLE_GEOLOCATION=1):haveQt(5): QT += location
+contains(DEFINES, ENABLE_GEOLOCATION=1): QT += location
 
 contains(CONFIG, texmap): DEFINES += WTF_USE_TEXTURE_MAPPER=1
 
 plugin_backend_xlib: PKGCONFIG += x11
 
-QT += network
-haveQt(5): QT += widgets printsupport quick
+QT += network widgets printsupport quick
 
 contains(DEFINES, WTF_USE_TEXTURE_MAPPER_GL=1)|contains(DEFINES, ENABLE_WEBGL=1) {
     QT *= opengl

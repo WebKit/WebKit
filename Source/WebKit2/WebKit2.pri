@@ -77,4 +77,4 @@ linux-*: {
 
 QT += qml quick
 
-contains(DEFINES, ENABLE_GEOLOCATION=1):haveQt(5): QT += location
+contains(DEFINES, ENABLE_GEOLOCATION=1): QT += location

@@ -74,9 +74,7 @@ public slots:
     void touchStart();
     void touchMove();
     void touchEnd();
-#if QT_VERSION >= 0x050000
     void touchCancel();
-#endif
     void zoomPageIn();
     void zoomPageOut();
     void textZoomIn();

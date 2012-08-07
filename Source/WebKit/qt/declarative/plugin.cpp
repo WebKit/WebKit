@@ -25,13 +25,8 @@
 #include "qdeclarativewebview_p.h"
 #endif
 
-#if (HAVE(QT5))
 #include <QtQml/qqml.h>
 #include <QtQml/qqmlextensionplugin.h>
-#else
-#include <QtDeclarative/qdeclarative.h>
-#include <QtDeclarative/qdeclarativeextensionplugin.h>
-#endif
 
 #if defined(HAVE_WEBKIT2)
 #include "private/qquickwebpage_p.h"
@@ -46,12 +41,8 @@
 
 QT_BEGIN_NAMESPACE
 
-#if QT_VERSION >= 0x050000
 class WebKitQmlPlugin : public QQmlExtensionPlugin {
     Q_PLUGIN_METADATA(IID "org.qt-project.Qt.QQmlExtensionInterface" FILE "plugin.json")
-#else
-class WebKitQmlPlugin : public QDeclarativeExtensionPlugin {
-#endif
     Q_OBJECT
 public:
 #if defined(HAVE_WEBKIT2)
@@ -88,7 +79,3 @@ public:
 QT_END_NAMESPACE
 
 #include "plugin.moc"
-
-#if QT_VERSION < 0x050000
-Q_EXPORT_PLUGIN2(qmlwebkitplugin, QT_PREPEND_NAMESPACE(WebKitQmlPlugin));
-#endif

@@ -46,11 +46,7 @@
 #include "FileSystem.h"
 
 #include <QApplication>
-#if HAVE(QT5)
 #include <QStandardPaths>
-#else
-#include <QDesktopServices>
-#endif
 #include <QDir>
 #include <QHash>
 #include <QSharedData>
@@ -1145,11 +1141,7 @@ void QWebSettings::enablePersistentStorage(const QString& path)
 
     if (path.isEmpty()) {
 
-#if HAVE(QT5)
         storagePath = QStandardPaths::writableLocation(QStandardPaths::DataLocation);
-#else
-        storagePath = QDesktopServices::storageLocation(QDesktopServices::DataLocation);
-#endif
         if (storagePath.isEmpty())
             storagePath = WebCore::pathByAppendingComponent(QDir::homePath(), QCoreApplication::applicationName());
     } else
@@ -1168,11 +1160,7 @@ void QWebSettings::enablePersistentStorage(const QString& path)
 #if ENABLE(NETSCAPE_PLUGIN_METADATA_CACHE)
     // All applications can share the common QtWebkit cache file(s).
     // Path is not configurable and uses QDesktopServices::CacheLocation by default.
-#if HAVE(QT5)
     QString cachePath = QStandardPaths::writableLocation(QStandardPaths::CacheLocation);
-#else
-    QString cachePath = QDesktopServices::storageLocation(QDesktopServices::CacheLocation);
-#endif
     WebCore::makeAllDirectories(cachePath);
 
     QFileInfo info(cachePath);

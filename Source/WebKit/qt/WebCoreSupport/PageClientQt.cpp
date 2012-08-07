@@ -33,9 +33,7 @@
 #endif
 
 #if USE(3D_GRAPHICS)
-#if HAVE(QT5)
 #include <QWindow>
-#endif
 
 static void createPlatformGraphicsContext3DFromWidget(QWidget* widget, PlatformGraphicsContext3D* context,
                                                       PlatformGraphicsSurface3D* surface)
@@ -54,13 +52,8 @@ static void createPlatformGraphicsContext3DFromWidget(QWidget* widget, PlatformG
     if (glWidget->isValid()) {
         // Geometry can be set to zero because m_glWidget is used only for its QGLContext.
         glWidget->setGeometry(0, 0, 0, 0);
-#if HAVE(QT5)
         *surface = glWidget->windowHandle();
         *context = glWidget->context()->contextHandle();
-#else
-        *surface = glWidget;
-        *context = const_cast<QGLContext*>(glWidget->context());
-#endif
     } else {
         delete glWidget;
         glWidget = 0;
@@ -74,7 +67,6 @@ static void createPlatformGraphicsContext3DFromWidget(QWidget* widget, PlatformG
 #include "texmap/TextureMapperLayer.h"
 #endif
 
-#if HAVE(QT5)
 QWindow* QWebPageClient::ownerWindow() const
 {
     QWidget* widget = ownerWidget();
@@ -86,7 +78,6 @@ QWindow* QWebPageClient::ownerWindow() const
         return nativeParent->windowHandle();
     return 0;
 }
-#endif
 
 namespace WebCore {
 

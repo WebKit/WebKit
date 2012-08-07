@@ -32,7 +32,6 @@
 #include "QtWebPageEventHandler.h"
 #include "QtWebPageLoadClient.h"
 #include "QtWebPagePolicyClient.h"
-#include "UtilsQt.h"
 #include "WebBackForwardList.h"
 #include "WebInspectorProxy.h"
 #include "WebInspectorServer.h"

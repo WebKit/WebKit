@@ -25,12 +25,6 @@
 #include <QRotationFilter>
 #include <wtf/RefPtr.h>
 
-#if !HAVE(QT5)
-using QTM_NAMESPACE::QRotationFilter;
-using QTM_NAMESPACE::QRotationReading;
-using QTM_NAMESPACE::QRotationSensor;
-#endif
-
 namespace WebCore {
 
 class DeviceOrientationProviderQt : public QRotationFilter {

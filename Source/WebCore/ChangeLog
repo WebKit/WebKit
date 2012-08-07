@@ -1,3 +1,78 @@
+2012-08-02  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Remove Qt 4 specific code paths
+        https://bugs.webkit.org/show_bug.cgi?id=88161
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        * Target.pri:
+        * WebCore.pri:
+        * bridge/qt/qt_class.cpp:
+        (JSC::Bindings::QtClass::fallbackObject):
+        * bridge/qt/qt_instance.cpp:
+        (JSC::Bindings::QtInstance::getPropertyNames):
+        (JSC::Bindings::QtInstance::stringValue):
+        (JSC::Bindings::QtField::setValueToInstance):
+        * bridge/qt/qt_runtime.h:
+        (QtConnectionObject):
+        * bridge/qt/qt_runtime_qt4.cpp: Removed.
+        * editing/qt/SmartReplaceQt.cpp: Removed.
+        * page/qt/EventHandlerQt.cpp:
+        (WebCore::EventHandler::tabsToAllFormControls):
+        * platform/graphics/GraphicsContext3D.h:
+        * platform/graphics/OpenGLShims.cpp:
+        (WebCore::getProcAddress):
+        * platform/graphics/OpenGLShims.h:
+        * platform/graphics/gstreamer/PlatformVideoWindowPrivate.h:
+        * platform/graphics/gstreamer/PlatformVideoWindowQt.cpp:
+        (FullScreenVideoWindow::FullScreenVideoWindow):
+        (FullScreenVideoWindow::keyPressEvent):
+        (FullScreenVideoWindow::event):
+        (FullScreenVideoWindow::showFullScreen):
+        (PlatformVideoWindow::PlatformVideoWindow):
+        * platform/graphics/qt/GraphicsContext3DQt.cpp:
+        (WebCore::GraphicsContext3DPrivate::blitMultisampleFramebufferAndRestoreContext):
+        (WebCore::GraphicsContext3DPrivate::makeCurrentIfNeeded):
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        (WebCore::GraphicsContext::releaseWindowsContext):
+        * platform/graphics/qt/ImageQt.cpp:
+        (WebCore::BitmapImage::create):
+        * platform/graphics/qt/SimpleFontDataQt.cpp:
+        (WebCore::SimpleFontData::platformInit):
+        * platform/graphics/texmap/TextureMapper.h:
+        * platform/graphics/texmap/TextureMapperGL.cpp:
+        (WebCore::TextureMapperGLData::SharedGLData::getCurrentGLContext):
+        * platform/qt/DeviceMotionProviderQt.h:
+        * platform/qt/DeviceOrientationProviderQt.h:
+        * platform/qt/KURLQt.cpp:
+        (WebCore::KURL::operator QUrl):
+        * platform/qt/PlatformScreenQt.cpp:
+        (WebCore::screenDepth):
+        (WebCore::screenDepthPerComponent):
+        (WebCore::screenIsMonochrome):
+        (WebCore::screenRect):
+        (WebCore::screenAvailableRect):
+        * platform/qt/QWebPageClient.h:
+        (QWebPageClient):
+        * platform/qt/RenderThemeQt.cpp:
+        * platform/text/qt/TextBreakIteratorQt.cpp: Removed.
+        * plugins/qt/PluginContainerQt.cpp: Removed.
+        * plugins/qt/PluginContainerQt.h: Removed.
+        * plugins/qt/PluginPackageQt.cpp:
+        (WebCore::PluginPackage::isPluginBlacklisted):
+        * plugins/qt/PluginViewQt.cpp:
+        (WebCore::PluginView::setFocus):
+        (WebCore::PluginView::paintUsingXPixmap):
+        (WebCore::setSharedXEventFields):
+        (WebCore::PluginView::setNPWindowIfNeeded):
+        (WebCore::PluginView::setParentVisible):
+        (WebCore::PluginView::platformGetValue):
+        (WebCore::PluginView::invalidateRect):
+        (WebCore::getVisualAndColormap):
+        (WebCore::PluginView::platformStart):
+        * plugins/win/PluginViewWin.cpp:
+        (windowHandleForPageClient):
+
 2012-08-06  Andrey Kosyakov  <caseq@chromium.org>
 
         Web Inspector: implement reusable progress bar

@@ -18,9 +18,8 @@ INCLUDEPATH += \
     $${ROOT_WEBKIT_DIR}/Source/WebKit/qt/WebCoreSupport \
     $${ROOT_WEBKIT_DIR}/Source/WTF
 
-QT = core gui network testlib webkit
+QT = core gui network testlib webkit widgets printsupport
 macx: QT += xml
-haveQt(5): QT += widgets printsupport
 
 contains(DEFINES, HAVE_FONTCONFIG=1): PKGCONFIG += fontconfig
 

@@ -113,7 +113,6 @@
 #include "SystemInfo.h"
 #endif // Q_OS_WIN32
 #include "TextIterator.h"
-#include "UtilsQt.h"
 #include "WebEventConversion.h"
 #include "WindowFeatures.h"
 #include "WorkerThread.h"
@@ -3162,9 +3161,7 @@ bool QWebPage::event(QEvent *ev)
     case QEvent::TouchBegin:
     case QEvent::TouchUpdate:
     case QEvent::TouchEnd:
-#if HAVE(QT5)
     case QEvent::TouchCancel:
-#endif
         // Return whether the default action was cancelled in the JS event handler
         return d->touchEvent(static_cast<QTouchEvent*>(ev));
 #ifndef QT_NO_PROPERTIES

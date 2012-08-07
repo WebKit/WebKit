@@ -24,9 +24,7 @@ contains(QT_CONFIG, reduce_exports):CONFIG += hide_symbols
 
 wince*:LIBS += $$QMAKE_LIBS_GUI
 
-QT += webkit webkit-private
-haveQt(4): QT += declarative
-haveQt(5): QT += widgets quick quick-private
+QT += webkit webkit-private widgets quick quick-private
 
 contains(DEFINES, HAVE_QQUICK1=1) {
     SOURCES += qdeclarativewebview.cpp

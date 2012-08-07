@@ -223,12 +223,8 @@ void QtInstance::getPropertyNames(ExecState* exec, PropertyNameArray& array)
         for (i = 0; i < methodCount; i++) {
             QMetaMethod method = meta->method(i);
             if (method.access() != QMetaMethod::Private) {
-#if HAVE(QT5)
                 QByteArray sig = method.methodSignature();
                 array.add(Identifier(exec, UString(sig.constData(), sig.length())));
-#else
-                array.add(Identifier(exec, method.signature()));
-#endif
             }
         }
     }
@@ -275,7 +271,6 @@ JSValue QtInstance::stringValue(ExecState* exec) const
             // Check to see how much we can call it
             if (m.access() != QMetaMethod::Private
                 && m.methodType() != QMetaMethod::Signal
-#if HAVE(QT5)
                 && m.parameterCount() == 0
                 && m.returnType() != QMetaType::Void) {
                 QVariant ret(m.returnType(), (void*)0);
@@ -286,20 +281,6 @@ JSValue QtInstance::stringValue(ExecState* exec) const
                     if (ret.isValid() && ret.canConvert(QVariant::String)) {
                         buf = ret.toString().toLatin1().constData(); // ### Latin 1? Ascii?
                         useDefault = false;
-#else
-                && m.parameterTypes().isEmpty()) {
-                const char* retsig = m.typeName();
-                if (retsig && *retsig) {
-                    QVariant ret(QMetaType::type(retsig), (void*)0);
-                    void * qargs[1];
-                    qargs[0] = ret.data();
-
-                    if (QMetaObject::metacall(obj, QMetaObject::InvokeMetaMethod, index, qargs) < 0) {
-                        if (ret.isValid() && ret.canConvert(QVariant::String)) {
-                            buf = ret.toString().toLatin1().constData(); // ### Latin 1? Ascii?
-                            useDefault = false;
-                        }
-#endif
                     }
                 }
             }
@@ -389,11 +370,7 @@ void QtField::setValueToInstance(ExecState* exec, const Instance* inst, JSValue 
     if (obj) {
         QMetaType::Type argtype = QMetaType::Void;
         if (m_type == MetaProperty)
-#if HAVE(QT5)
             argtype = (QMetaType::Type) m_property.userType();
-#else
-            argtype = (QMetaType::Type) QMetaType::type(m_property.typeName());
-#endif
 
         // dynamic properties just get any QVariant
         QVariant val = convertValueToQVariant(exec, aValue, argtype, 0);

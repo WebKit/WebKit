@@ -5,14 +5,7 @@
 # See 'Tools/qmake/README' for an overview of the build system
 # -------------------------------------------------------------------
 
-haveQt(4) {
-    QMAKEPATH = $$(QMAKEPATH)
-    isEmpty(QMAKEPATH)|!exists($${QMAKEPATH}/mkspecs) {
-        error("The environment variable QMAKEPATH needs to point to $WEBKITSRC/Tools/qmake")
-        # Otherwise we won't pick up the feature prf files needed for the build
-    }
-} else:!webkit_configured {
-    CONFIG += webkit_configured
+!webkit_configured {
     CONFIG += production_build
     include(Tools/qmake/configure.pri)
     the_config = $$CONFIG
