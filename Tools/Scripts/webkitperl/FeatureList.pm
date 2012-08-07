@@ -187,7 +187,7 @@ my @features = (
       define => "ENABLE_CSS_COMPOSITING", default => 0, value => \$cssCompositingSupport },
 
     { option => "css-variables", desc => "Toggle CSS Variable support",
-      define => "ENABLE_CSS_VARIABLES", default => isEfl(), value => \$cssVariablesSupport },
+      define => "ENABLE_CSS_VARIABLES", default => (isBlackBerry() || isEfl()), value => \$cssVariablesSupport },
 
     { option => "custom-scheme-handler", desc => "Toggle Custom Scheme Handler support",
       define => "ENABLE_CUSTOM_SCHEME_HANDLER", default => (isBlackBerry() || isEfl()), value => \$customSchemeHandlerSupport },

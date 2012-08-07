@@ -1,3 +1,14 @@
+2012-08-07  Rob Buis  <rbuis@rim.com>
+
+        [BlackBerry] Turn on CSS Variables
+        https://bugs.webkit.org/show_bug.cgi?id=93376
+
+        Reviewed by Antonio Gomes.
+
+        Turn on CSS Variables for BlackBerry port.
+
+        * Scripts/webkitperl/FeatureList.pm:
+
 2012-08-07  No'am Rosenthal  <noam.rosenthal@nokia.com>
 
         [Qt] Make it possible to build without QtQuick
