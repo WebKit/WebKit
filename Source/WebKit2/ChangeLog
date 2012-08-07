@@ -1,3 +1,15 @@
+2012-08-07  Csaba Osztrogonác  <ossy@webkit.org>
+
+       [Qt] New API tests introuduced in r119723 marked as fail, but pass
+       https://bugs.webkit.org/show_bug.cgi?id=88870
+
+        Reviewed by Alexis Menard.
+
+        Revert r119723, because there are 2 failing tests, and the author and
+        the reviewer of the original patch ignore the bug report long time ago.
+
+        * UIProcess/API/qt/tests/qmltests/WebView/tst_devicePixelRatio.qml: Removed.
+
 2012-08-07  No'am Rosenthal  <noam.rosenthal@nokia.com>
 
         GraphicsLayerAnimation shouldn't use HashMap<String>
