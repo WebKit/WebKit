@@ -1,3 +1,20 @@
+2012-08-07  Abhishek Arya  <inferno@chromium.org>
+
+        Crash in ContainerNode::cloneChildNodes.
+        https://bugs.webkit.org/show_bug.cgi?id=93378
+
+        Reviewed by Levi Weintraub.
+
+        Re-enabling the editing delete button controller in cloneChildNode was causing style changes,
+        thereby causing load events to fire. The load event can blow our nodes from underneath. This causes
+        crashes when we are nested inside cloneChildNodes. The patch just skips the delete button controller's
+        container element from being cloned and removes the hacky enable/disable logic. 
+
+        Test: fast/dom/clone-node-load-event-crash.html
+
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::cloneChildNodes):
+
 2012-08-07  No'am Rosenthal  <noam.rosenthal@nokia.com>
 
         GraphicsLayerAnimation shouldn't use HashMap<String>

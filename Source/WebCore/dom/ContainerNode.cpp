@@ -690,22 +690,16 @@ void ContainerNode::childrenChanged(bool changedByParser, Node*, Node*, int chil
 
 void ContainerNode::cloneChildNodes(ContainerNode *clone)
 {
-    // disable the delete button so it's elements are not serialized into the markup
-    bool isEditorEnabled = false;
-    if (document()->frame() && document()->frame()->editor()->canEdit()) {
-        FrameSelection* selection = document()->frame()->selection();
-        Element* root = selection ? selection->rootEditableElement() : 0;
-        isEditorEnabled = root && isDescendantOf(root);
+    HTMLElement* deleteButtonContainerElement = 0;
+    if (Frame* frame = document()->frame())
+        deleteButtonContainerElement = frame->editor()->deleteButtonController()->containerElement();
 
-        if (isEditorEnabled)
-            document()->frame()->editor()->deleteButtonController()->disable();
-    }
-    
     ExceptionCode ec = 0;
-    for (Node* n = firstChild(); n && !ec; n = n->nextSibling())
+    for (Node* n = firstChild(); n && !ec; n = n->nextSibling()) {
+        if (n == deleteButtonContainerElement)
+            continue;
         clone->appendChild(n->cloneNode(true), ec);
-    if (isEditorEnabled && document()->frame())
-        document()->frame()->editor()->deleteButtonController()->enable();
+    }
 }
 
 bool ContainerNode::getUpperLeftCorner(FloatPoint& point) const

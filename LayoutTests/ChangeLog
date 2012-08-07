@@ -1,3 +1,13 @@
+2012-08-07  Abhishek Arya  <inferno@chromium.org>
+
+        Crash in ContainerNode::cloneChildNodes.
+        https://bugs.webkit.org/show_bug.cgi?id=93378
+
+        Reviewed by Levi Weintraub.
+
+        * fast/dom/clone-node-load-event-crash-expected.txt: Added.
+        * fast/dom/clone-node-load-event-crash.html: Added.
+
 2012-08-07  Dmitry Titov  <dimich@chromium.org>
 
         [Chromium] Unreviewed, TestExpectations update.
