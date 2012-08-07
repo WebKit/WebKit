@@ -1,3 +1,15 @@
+2012-08-07  Joshua Bell  <jsbell@chromium.org>
+
+        REGRESSION(r124865): It broke the ARM Chromium build
+        https://bugs.webkit.org/show_bug.cgi?id=93364
+
+        Reviewed by Csaba Osztrogonác.
+
+        Mark large constant with LL to satisfy a picky compiler.
+
+        * tests/IDBLevelDBCodingTest.cpp:
+        (IDBLevelDBCoding::TEST):
+
 2012-08-07  Alexei Filippov  <alexeif@chromium.org>
 
         Web Inspector: make the MemoryClassInfo class a not-template
