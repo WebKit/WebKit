@@ -1,3 +1,91 @@
+2012-08-07  Gabor Ballabas  <gaborb@inf.u-szeged.hu>
+
+        Refactor emit*Inst functions and introduce toARMWord functions in DFG-JIT's traditional ARM port
+        https://bugs.webkit.org/show_bug.cgi?id=93266
+
+        Reviewed by Csaba Osztrogonác.
+
+        First part of a bigger refactoring issue trying to make traditional
+        ARM DFG-JIT port easier to read and understand.
+
+
+        * assembler/ARMAssembler.h:
+        (JSC::ARMAssembler::emitInstruction):
+        (JSC::ARMAssembler::emitDoublePrecisionInstruction):
+        (JSC::ARMAssembler::emitSinglePrecisionInstruction):
+        (JSC::ARMAssembler::and_r):
+        (JSC::ARMAssembler::ands_r):
+        (JSC::ARMAssembler::eor_r):
+        (JSC::ARMAssembler::eors_r):
+        (JSC::ARMAssembler::sub_r):
+        (JSC::ARMAssembler::subs_r):
+        (JSC::ARMAssembler::rsb_r):
+        (JSC::ARMAssembler::rsbs_r):
+        (JSC::ARMAssembler::add_r):
+        (JSC::ARMAssembler::adds_r):
+        (JSC::ARMAssembler::adc_r):
+        (JSC::ARMAssembler::adcs_r):
+        (JSC::ARMAssembler::sbc_r):
+        (JSC::ARMAssembler::sbcs_r):
+        (JSC::ARMAssembler::rsc_r):
+        (JSC::ARMAssembler::rscs_r):
+        (JSC::ARMAssembler::tst_r):
+        (JSC::ARMAssembler::teq_r):
+        (JSC::ARMAssembler::cmp_r):
+        (JSC::ARMAssembler::cmn_r):
+        (JSC::ARMAssembler::orr_r):
+        (JSC::ARMAssembler::orrs_r):
+        (JSC::ARMAssembler::mov_r):
+        (JSC::ARMAssembler::movw_r):
+        (JSC::ARMAssembler::movt_r):
+        (JSC::ARMAssembler::movs_r):
+        (JSC::ARMAssembler::bic_r):
+        (JSC::ARMAssembler::bics_r):
+        (JSC::ARMAssembler::mvn_r):
+        (JSC::ARMAssembler::mvns_r):
+        (JSC::ARMAssembler::mul_r):
+        (JSC::ARMAssembler::muls_r):
+        (JSC::ARMAssembler::mull_r):
+        (JSC::ARMAssembler::vmov_f64_r):
+        (JSC::ARMAssembler::vadd_f64_r):
+        (JSC::ARMAssembler::vdiv_f64_r):
+        (JSC::ARMAssembler::vsub_f64_r):
+        (JSC::ARMAssembler::vmul_f64_r):
+        (JSC::ARMAssembler::vcmp_f64_r):
+        (JSC::ARMAssembler::vsqrt_f64_r):
+        (JSC::ARMAssembler::vabs_f64_r):
+        (JSC::ARMAssembler::vneg_f64_r):
+        (JSC::ARMAssembler::ldr_imm):
+        (JSC::ARMAssembler::ldr_un_imm):
+        (JSC::ARMAssembler::dtr_u):
+        (JSC::ARMAssembler::dtr_ur):
+        (JSC::ARMAssembler::dtr_d):
+        (JSC::ARMAssembler::dtr_dr):
+        (JSC::ARMAssembler::dtrh_u):
+        (JSC::ARMAssembler::dtrh_ur):
+        (JSC::ARMAssembler::dtrh_d):
+        (JSC::ARMAssembler::dtrh_dr):
+        (JSC::ARMAssembler::fdtr_u):
+        (JSC::ARMAssembler::fdtr_d):
+        (JSC::ARMAssembler::push_r):
+        (JSC::ARMAssembler::pop_r):
+        (JSC::ARMAssembler::vmov_vfp64_r):
+        (JSC::ARMAssembler::vmov_arm64_r):
+        (JSC::ARMAssembler::vmov_vfp32_r):
+        (JSC::ARMAssembler::vmov_arm32_r):
+        (JSC::ARMAssembler::vcvt_f64_s32_r):
+        (JSC::ARMAssembler::vcvt_s32_f64_r):
+        (JSC::ARMAssembler::vcvt_u32_f64_r):
+        (JSC::ARMAssembler::vcvt_f64_f32_r):
+        (JSC::ARMAssembler::vcvt_f32_f64_r):
+        (JSC::ARMAssembler::vmrs_apsr):
+        (JSC::ARMAssembler::clz_r):
+        (JSC::ARMAssembler::bx):
+        (JSC::ARMAssembler::blx):
+        (JSC::ARMAssembler::linkJump):
+        (JSC::ARMAssembler::toARMWord):
+        (ARMAssembler):
+
 2012-08-06  Patrick Gansterer  <paroga@webkit.org>
 
         [WIN] Remove dependency on pthread from MachineStackMarker
