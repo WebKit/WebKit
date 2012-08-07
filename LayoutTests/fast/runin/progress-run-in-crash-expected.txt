@@ -1,0 +1,4 @@
+WebKit Bug 87274 - ASSERT failure toRenderProgress in HTMLProgressElement::didElementStateChange.
+Test passes if it does not crash.
+
+

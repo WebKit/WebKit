@@ -1776,6 +1776,9 @@ bool RenderBlock::handleRunInChild(RenderBox* child)
     Node* runInNode = child->node();
     if (runInNode && runInNode->hasTagName(selectTag))
         return false;
+    
+    if (runInNode && runInNode->hasTagName(progressTag)) 
+        return false;
 
     RenderBlock* blockRunIn = toRenderBlock(child);
     RenderObject* curr = blockRunIn->nextSibling();

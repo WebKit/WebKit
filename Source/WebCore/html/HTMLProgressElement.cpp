@@ -140,7 +140,7 @@ bool HTMLProgressElement::isDeterminate() const
 void HTMLProgressElement::didElementStateChange()
 {
     m_value->setWidthPercentage(position() * 100);
-    if (renderer()) {
+    if (renderer() && renderer()->isProgress()) {
         RenderProgress* render = toRenderProgress(renderer());
         bool wasDeterminate = render->isDeterminate();
         renderer()->updateFromElement();
