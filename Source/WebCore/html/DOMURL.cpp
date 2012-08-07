@@ -68,7 +68,7 @@ String DOMURL::createObjectURL(ScriptExecutionContext* scriptExecutionContext, M
         return String();
 
     MediaSourceRegistry::registry().registerMediaSourceURL(publicURL, source);
-    scriptExecutionContext->publicURLManager().sourceURLs().add(publicURL.string());
+    scriptExecutionContext->publicURLManager().streamURLs().add(publicURL.string());
 
     return publicURL.string();
 }
