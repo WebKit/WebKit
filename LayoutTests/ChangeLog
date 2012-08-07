@@ -1,3 +1,47 @@
+2012-08-06  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: Throw proper exceptions
+        https://bugs.webkit.org/show_bug.cgi?id=85513
+
+        Reviewed by Tony Chang.
+
+        Test all of the exception throwing clauses in the spec, unless they are
+        well covered elsewhere (indicated by a comment in the script).
+        
+        * storage/indexeddb/exceptions-expected.txt: Added.
+        * storage/indexeddb/exceptions.html: Added.
+        * storage/indexeddb/resources/exceptions.js: Added.
+        (test.request.onsuccess.request.onsuccess.request.onsuccess):
+        (test.request.onsuccess.request.onsuccess):
+        (test.request.onsuccess):
+        (test):
+        (testDatabase.request.onsuccess.trans.oncomplete):
+        (testDatabase.request.onsuccess):
+        (testDatabase):
+        (prepareStoreAndIndex.request.onsuccess):
+        (prepareStoreAndIndex):
+        (testObjectStore.request.onsuccess.trans.oncomplete):
+        (testObjectStore.request.onsuccess):
+        (testObjectStore):
+        (testIndex):
+        (testCursor.makeCursor.request.onsuccess):
+        (testCursor.makeCursor):
+        (testCursor.makeKeyCursor.request.onsuccess):
+        (testCursor.makeKeyCursor):
+        (testCursor.makeReverseCursor.request.onsuccess):
+        (testCursor.makeReverseCursor):
+        (testCursor.makeInlineCursor.request.onsuccess):
+        (testCursor.makeInlineCursor):
+        (testCursor.testCursorAdvance):
+        (testCursor.testCursorContinue):
+        (testCursor.testCursorDelete):
+        (testCursor.testCursorUpdate):
+        (testCursor.makeReadOnlyCursor.request.onsuccess):
+        (testCursor.makeReadOnlyCursor):
+        (testCursor.doReadOnlyCursorTests):
+        (testCursor):
+        (testTransaction):
+
 2012-08-06  Keishi Hattori  <keishi@webkit.org>
 
         [Chromium] Rebaseline test color-suggestion-picker-appearance.html
