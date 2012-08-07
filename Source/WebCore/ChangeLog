@@ -1,3 +1,34 @@
+2012-08-06  David Grogan  <dgrogan@chromium.org>
+
+        IndexedDB: Make leveldb store integer versions and migrate old schemas
+        https://bugs.webkit.org/show_bug.cgi?id=92883
+
+        Reviewed by Tony Chang.
+
+        Our first schema change. If an existing DB doesn't have integer
+        versions, this will add one to all object stores in the origin.
+
+        No new tests - chrome test for the migration forthcoming. Will involve
+        starting with a leveldb directory from an old build of chrome, opening
+        it up with the migration code in place, and checking the new database.
+        http://codereview.chromium.org/10826159/
+
+        * Modules/indexeddb/IDBLevelDBBackingStore.cpp:
+        (WebCore::putVarInt):
+        (WebCore):
+        (WebCore::setUpMetadata):
+        Uses the ASSERT-but-still-handle-corruption pattern recently discussed
+        in https://bugs.webkit.org/show_bug.cgi?id=92725#c13.
+
+        (WebCore::IDBLevelDBBackingStore::open):
+        (WebCore::IDBLevelDBBackingStore::getIDBDatabaseMetaData):
+        Because we can't store negative numbers, store 0 instead of -1.
+
+        (WebCore::IDBLevelDBBackingStore::createIDBDatabaseMetaData):
+        (WebCore::IDBLevelDBBackingStore::updateIDBDatabaseIntVersion):
+        * Modules/indexeddb/IDBLevelDBCoding.h:
+        * Modules/indexeddb/IDBMetadata.h:
+
 2012-08-06  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r124780.

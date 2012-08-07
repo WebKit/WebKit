@@ -141,7 +141,8 @@ public:
         OriginName = 0,
         DatabaseName = 1,
         UserVersion = 2,
-        MaxObjectStoreId = 3
+        MaxObjectStoreId = 3,
+        UserIntVersion = 4
     };
 
     static Vector<char> encode(int64_t databaseId, MetaDataType);

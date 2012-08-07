@@ -42,8 +42,10 @@ struct IDBObjectStoreMetadata;
 struct IDBIndexMetadata;
 
 struct IDBDatabaseMetadata {
+    // FIXME: These can probably be collapsed into 0.
     enum {
-        NoIntVersion = -1
+        NoIntVersion = -1,
+        DefaultIntVersion = 0
     };
 
     IDBDatabaseMetadata()

@@ -87,6 +87,12 @@ static bool putInt(DBOrTransaction* db, const Vector<char>& key, int64_t value)
 }
 
 template <typename DBOrTransaction>
+static bool putVarInt(DBOrTransaction* db, const Vector<char>& key, int64_t value)
+{
+    return db->put(key, encodeVarInt(value));
+}
+
+template <typename DBOrTransaction>
 static bool getString(DBOrTransaction* db, const Vector<char>& key, String& foundString)
 {
     Vector<char> result;
@@ -129,7 +135,7 @@ public:
     virtual const char* name() const { return "idb_cmp1"; }
 };
 
-static bool setUpMetadata(LevelDBDatabase* db)
+static bool setUpMetadata(LevelDBDatabase* db, const String& origin)
 {
     const Vector<char> metaDataKey = SchemaVersionKey::encode();
 
@@ -138,11 +144,39 @@ static bool setUpMetadata(LevelDBDatabase* db)
         schemaVersion = 0;
         if (!putInt(db, metaDataKey, schemaVersion))
             return false;
-    }
+    } else {
+        if (!schemaVersion) {
+            schemaVersion = 1;
+            RefPtr<LevelDBTransaction> transaction = LevelDBTransaction::create(db);
+            transaction->put(metaDataKey, encodeInt(schemaVersion));
 
-    // FIXME: Eventually, we'll need to be able to transition between schemas.
-    if (schemaVersion)
-        return false; // Don't know what to do with this version.
+            const Vector<char> startKey = DatabaseNameKey::encodeMinKeyForOrigin(origin);
+            const Vector<char> stopKey = DatabaseNameKey::encodeStopKeyForOrigin(origin);
+            OwnPtr<LevelDBIterator> it = db->createIterator();
+            for (it->seek(startKey); it->isValid() && compareKeys(it->key(), stopKey) < 0; it->next()) {
+                Vector<char> value;
+                bool ok = transaction->get(it->key(), value);
+                if (!ok) {
+                    ASSERT_NOT_REACHED();
+                    return false;
+                }
+                int databaseId = decodeInt(value.begin(), value.end());
+                Vector<char> intVersionKey = DatabaseMetaDataKey::encode(databaseId, DatabaseMetaDataKey::UserIntVersion);
+                transaction->put(intVersionKey, encodeVarInt(IDBDatabaseMetadata::DefaultIntVersion));
+                ok = transaction->get(it->key(), value);
+                if (!ok) {
+                    ASSERT_NOT_REACHED();
+                    return false;
+                }
+            }
+            bool ok = transaction->commit();
+            if (!ok) {
+                ASSERT_NOT_REACHED();
+                return false;
+            }
+        }
+        ASSERT(schemaVersion == 1);
+    }
 
     return true;
 }
@@ -208,7 +242,7 @@ PassRefPtr<IDBBackingStore> IDBLevelDBBackingStore::open(SecurityOrigin* securit
     RefPtr<IDBLevelDBBackingStore> backingStore(adoptRef(new IDBLevelDBBackingStore(fileIdentifier, factory, db.release())));
     backingStore->m_comparator = comparator.release();
 
-    if (!setUpMetadata(backingStore->m_db.get()))
+    if (!setUpMetadata(backingStore->m_db.get(), fileIdentifier))
         return PassRefPtr<IDBBackingStore>();
 
     return backingStore.release();
@@ -246,6 +280,12 @@ bool IDBLevelDBBackingStore::getIDBDatabaseMetaData(const String& name, String& 
     if (!ok)
         return false;
 
+    ok = getInt(m_db.get(), DatabaseMetaDataKey::encode(foundId, DatabaseMetaDataKey::UserIntVersion), foundIntVersion);
+    if (!ok)
+        return false;
+    if (foundIntVersion == IDBDatabaseMetadata::DefaultIntVersion)
+        foundIntVersion = IDBDatabaseMetadata::NoIntVersion;
+
     return true;
 }
 
@@ -275,12 +315,22 @@ bool IDBLevelDBBackingStore::createIDBDatabaseMetaData(const String& name, const
         return false;
     if (!putString(m_db.get(), DatabaseMetaDataKey::encode(rowId, DatabaseMetaDataKey::UserVersion), version))
         return false;
+    if (intVersion == IDBDatabaseMetadata::NoIntVersion)
+        intVersion = IDBDatabaseMetadata::DefaultIntVersion;
+    if (!putVarInt(m_db.get(), DatabaseMetaDataKey::encode(rowId, DatabaseMetaDataKey::UserIntVersion), intVersion))
+        return false;
     return true;
 }
 
 bool IDBLevelDBBackingStore::updateIDBDatabaseIntVersion(int64_t rowId, int64_t intVersion)
 {
-    // FIXME: Make this actually do something. http://wkb.ug/92883
+    ASSERT(m_currentTransaction);
+    // FIXME: Change this to strictly greater than 0 once we throw TypeError for
+    // bad versions.
+    ASSERT_WITH_MESSAGE(intVersion >= 0, "intVersion was %lld", static_cast<long long>(intVersion));
+    if (!putVarInt(m_currentTransaction.get(), DatabaseMetaDataKey::encode(rowId, DatabaseMetaDataKey::UserIntVersion), intVersion))
+        return false;
+
     return true;
 }
 
