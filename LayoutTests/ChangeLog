@@ -1,3 +1,15 @@
+2012-08-07  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: [regression r121673] restore link between the command and the result.
+        https://bugs.webkit.org/show_bug.cgi?id=93280
+
+        Reviewed by Vsevolod Vlasov.
+
+        * http/tests/inspector/console-test.js:
+        (initialize_ConsoleTest.InspectorTest.dumpConsoleMessages):
+        * inspector/console/console-originating-command-expected.txt: Added.
+        * inspector/console/console-originating-command.html: Added.
+
 2012-08-07  Seokju Kwon  <seokju.kwon@samsung.com>
 
         [EFL] Move some inspector tests into TestExpectations

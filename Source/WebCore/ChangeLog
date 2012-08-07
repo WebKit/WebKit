@@ -1,3 +1,19 @@
+2012-08-07  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: [regression r121673] restore link between the command and the result.
+        https://bugs.webkit.org/show_bug.cgi?id=93280
+
+        Reviewed by Vsevolod Vlasov.
+
+        Passing lost parameter along.
+
+        Test: inspector/console/console-originating-command.html
+
+        * inspector/front-end/ConsoleView.js:
+        (WebInspector.ConsoleView.prototype.runScript.runCallback):
+        (WebInspector.ConsoleView.prototype.runScript):
+        (WebInspector.ConsoleView.prototype._printResult):
+
 2012-08-07  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         CUSTOM_SCHEME_HANDLER flag should depend on REGISTER_PROTOCOL_HANDLER

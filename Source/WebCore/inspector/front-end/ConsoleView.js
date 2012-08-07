@@ -725,16 +725,16 @@ WebInspector.ConsoleView.prototype = {
                 return;
             }
             
-            this._printResult(result, wasThrown);
+            this._printResult(result, wasThrown, null);
         }
     },
 
-    _printResult: function(result, wasThrown)
+    _printResult: function(result, wasThrown, originatingCommand)
     {
         if (!result)
             return;
 
-        this._appendConsoleMessage(new WebInspector.ConsoleCommandResult(result, wasThrown, null, this._linkifier));
+        this._appendConsoleMessage(new WebInspector.ConsoleCommandResult(result, wasThrown, originatingCommand, this._linkifier));
     },
 
     _appendCommand: function(text, newPromptText, useCommandLineAPI, showResultOnly)
@@ -756,7 +756,7 @@ WebInspector.ConsoleView.prototype = {
                 WebInspector.settings.consoleHistory.set(this.prompt.historyData.slice(-30));
             }
             
-            this._printResult(result, wasThrown);
+            this._printResult(result, wasThrown, commandMessage);
         }
         this.evalInInspectedWindow(text, "console", useCommandLineAPI, false, false, printResult.bind(this));
 

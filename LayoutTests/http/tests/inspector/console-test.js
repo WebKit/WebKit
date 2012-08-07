@@ -6,13 +6,17 @@ InspectorTest.showConsolePanel = function()
     WebInspector.drawer.immediatelyFinishAnimation();
 }
 
-InspectorTest.dumpConsoleMessages = function()
+InspectorTest.dumpConsoleMessages = function(printOriginatingCommand)
 {
     var result = [];
     var messages = WebInspector.consoleView.messages;
     for (var i = 0; i < messages.length; ++i) {
         var element = messages[i].toMessageElement();
         InspectorTest.addResult(element.textContent.replace(/\u200b/g, ""));
+        if (printOriginatingCommand && messages[i].originatingCommand) {
+          var originatingElement = messages[i].originatingCommand.toMessageElement();
+          InspectorTest.addResult("Originating from: " + originatingElement.textContent.replace(/\u200b/g, ""));
+      }
     }
     return result;
 }
