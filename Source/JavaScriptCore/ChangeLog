@@ -1,3 +1,73 @@
+2012-08-07  Gabor Ballabas  <gaborb@inf.u-szeged.hu>
+
+        Refactor magic numbers in the ARM port of DFG-JIT
+        https://bugs.webkit.org/show_bug.cgi?id=93348
+
+        Reviewed by Eric Seidel.
+
+        Introduce new names for hard-coded magic numbers.
+        Refactor constant with confusing names to more descriptive ones.
+
+        * assembler/ARMAssembler.cpp:
+        (JSC::ARMAssembler::patchConstantPoolLoad):
+        (JSC::ARMAssembler::getOp2):
+        (JSC::ARMAssembler::genInt):
+        (JSC::ARMAssembler::getImm):
+        (JSC::ARMAssembler::moveImm):
+        (JSC::ARMAssembler::encodeComplexImm):
+        (JSC::ARMAssembler::dataTransfer32):
+        (JSC::ARMAssembler::dataTransfer16):
+        (JSC::ARMAssembler::dataTransferFloat):
+        (JSC::ARMAssembler::executableCopy):
+        * assembler/ARMAssembler.h:
+        (JSC::ARMAssembler::emitInstruction):
+        (JSC::ARMAssembler::ands_r):
+        (JSC::ARMAssembler::eors_r):
+        (JSC::ARMAssembler::subs_r):
+        (JSC::ARMAssembler::rsbs_r):
+        (JSC::ARMAssembler::adds_r):
+        (JSC::ARMAssembler::adcs_r):
+        (JSC::ARMAssembler::sbcs_r):
+        (JSC::ARMAssembler::rscs_r):
+        (JSC::ARMAssembler::tst_r):
+        (JSC::ARMAssembler::teq_r):
+        (JSC::ARMAssembler::cmp_r):
+        (JSC::ARMAssembler::cmn_r):
+        (JSC::ARMAssembler::orrs_r):
+        (JSC::ARMAssembler::movs_r):
+        (JSC::ARMAssembler::bics_r):
+        (JSC::ARMAssembler::mvns_r):
+        (JSC::ARMAssembler::muls_r):
+        (JSC::ARMAssembler::ldr_imm):
+        (JSC::ARMAssembler::ldr_un_imm):
+        (JSC::ARMAssembler::dtr_u):
+        (JSC::ARMAssembler::dtr_ur):
+        (JSC::ARMAssembler::dtr_dr):
+        (JSC::ARMAssembler::dtrh_u):
+        (JSC::ARMAssembler::dtrh_ur):
+        (JSC::ARMAssembler::fdtr_u):
+        (JSC::ARMAssembler::push_r):
+        (JSC::ARMAssembler::pop_r):
+        (JSC::ARMAssembler::getLdrImmAddress):
+        (JSC::ARMAssembler::getLdrImmAddressOnPool):
+        (JSC::ARMAssembler::patchConstantPoolLoad):
+        (JSC::ARMAssembler::repatchCompact):
+        (JSC::ARMAssembler::replaceWithJump):
+        (JSC::ARMAssembler::replaceWithLoad):
+        (JSC::ARMAssembler::replaceWithAddressComputation):
+        (JSC::ARMAssembler::getOp2Byte):
+        (JSC::ARMAssembler::getOp2Half):
+        (JSC::ARMAssembler::getImm16Op2):
+        (JSC::ARMAssembler::placeConstantPoolBarrier):
+        (JSC::ARMAssembler::getConditionalField):
+        * assembler/MacroAssemblerARM.cpp:
+        (JSC::MacroAssemblerARM::load32WithUnalignedHalfWords):
+        * assembler/MacroAssemblerARM.h:
+        (JSC::MacroAssemblerARM::and32):
+        (JSC::MacroAssemblerARM::branch32):
+        (JSC::MacroAssemblerARM::branchTest32):
+        (JSC::MacroAssemblerARM::branchTruncateDoubleToInt32):
+
 2012-08-07  Benjamin Poulain  <benjamin@webkit.org>
 
         Use the initialization from literal for JSC's Identifiers

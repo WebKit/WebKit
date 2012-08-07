@@ -137,8 +137,8 @@ public:
     void and32(TrustedImm32 imm, RegisterID dest)
     {
         ARMWord w = m_assembler.getImm(imm.m_value, ARMRegisters::S0, true);
-        if (w & ARMAssembler::OP2_INV_IMM)
-            m_assembler.bics_r(dest, dest, w & ~ARMAssembler::OP2_INV_IMM);
+        if (w & ARMAssembler::Op2InvertedImmediate)
+            m_assembler.bics_r(dest, dest, w & ~ARMAssembler::Op2InvertedImmediate);
         else
             m_assembler.ands_r(dest, dest, w);
     }
@@ -146,8 +146,8 @@ public:
     void and32(TrustedImm32 imm, RegisterID src, RegisterID dest)
     {
         ARMWord w = m_assembler.getImm(imm.m_value, ARMRegisters::S0, true);
-        if (w & ARMAssembler::OP2_INV_IMM)
-            m_assembler.bics_r(dest, src, w & ~ARMAssembler::OP2_INV_IMM);
+        if (w & ARMAssembler::Op2InvertedImmediate)
+            m_assembler.bics_r(dest, src, w & ~ARMAssembler::Op2InvertedImmediate);
         else
             m_assembler.ands_r(dest, src, w);
     }
@@ -555,8 +555,8 @@ public:
 
     Jump branch32(RelationalCondition cond, RegisterID left, TrustedImm32 right, int useConstantPool = 0)
     {
-        ARMWord tmp = (right.m_value == 0x80000000) ? ARMAssembler::INVALID_IMM : m_assembler.getOp2(-right.m_value);
-        if (tmp != ARMAssembler::INVALID_IMM)
+        ARMWord tmp = (right.m_value == 0x80000000) ? ARMAssembler::InvalidImmediate : m_assembler.getOp2(-right.m_value);
+        if (tmp != ARMAssembler::InvalidImmediate)
             m_assembler.cmn_r(left, tmp);
         else
             m_assembler.cmp_r(left, m_assembler.getImm(right.m_value, ARMRegisters::S0));
@@ -617,8 +617,8 @@ public:
     {
         ASSERT((cond == Zero) || (cond == NonZero));
         ARMWord w = m_assembler.getImm(mask.m_value, ARMRegisters::S0, true);
-        if (w & ARMAssembler::OP2_INV_IMM)
-            m_assembler.bics_r(ARMRegisters::S0, reg, w & ~ARMAssembler::OP2_INV_IMM);
+        if (w & ARMAssembler::Op2InvertedImmediate)
+            m_assembler.bics_r(ARMRegisters::S0, reg, w & ~ARMAssembler::Op2InvertedImmediate);
         else
             m_assembler.tst_r(reg, w);
         return Jump(m_assembler.jmp(ARMCondition(cond)));
@@ -1152,7 +1152,7 @@ public:
         m_assembler.bic_r(ARMRegisters::S0, ARMRegisters::S0, ARMAssembler::getOp2Byte(1));
 
         ARMWord w = ARMAssembler::getOp2(0x80000000);
-        ASSERT(w != ARMAssembler::INVALID_IMM);
+        ASSERT(w != ARMAssembler::InvalidImmediate);
         m_assembler.cmp_r(ARMRegisters::S0, w);
         return Jump(m_assembler.jmp(branchType == BranchIfTruncateFailed ? ARMAssembler::EQ : ARMAssembler::NE));
     }

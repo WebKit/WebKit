@@ -87,7 +87,7 @@ void MacroAssemblerARM::load32WithUnalignedHalfWords(BaseIndex address, Register
         m_assembler.moveImm(address.offset, ARMRegisters::S0);
         m_assembler.add_r(ARMRegisters::S0, ARMRegisters::S0, op2);
         m_assembler.dtrh_ur(ARMAssembler::LoadUint16, dest, address.base, ARMRegisters::S0);
-        m_assembler.add_r(ARMRegisters::S0, ARMRegisters::S0, ARMAssembler::OP2_IMM | 0x2);
+        m_assembler.add_r(ARMRegisters::S0, ARMRegisters::S0, ARMAssembler::Op2Immediate | 0x2);
         m_assembler.dtrh_ur(ARMAssembler::LoadUint16, ARMRegisters::S0, address.base, ARMRegisters::S0);
     }
     m_assembler.orr_r(dest, dest, m_assembler.lsl(ARMRegisters::S0, 16));
