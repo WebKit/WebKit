@@ -1,3 +1,15 @@
+2012-08-06  Charles Wei  <charles.wei@torchmobile.com.cn>
+
+        [BlackBerry] About: shows PAGE_CACHE not enabled.
+        https://bugs.webkit.org/show_bug.cgi?id=93216
+
+        Reviewed by Antonio Gomes.
+
+        Page cache is a feature that can be enabled/disabled at runtime, there's no
+        MACRO named PAGE_CACHE to control the feature.
+
+        * WebCoreSupport/AboutDataEnableFeatures.in:
+
 2012-08-03  Yong Li  <yoli@rim.com>
 
         [BlackBerry] FrameLoaderClient::restoreViewState() shouldn't trigger painting
