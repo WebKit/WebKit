@@ -1,3 +1,18 @@
+2012-08-06  Shinya Kawanaka  <shinyak@chromium.org>
+
+        Crash in GenericEventQueue::timerFired since the owner of GenericEventQueue is deleted during dispatching events.
+        https://bugs.webkit.org/show_bug.cgi?id=92946
+
+        Reviewed by Eric Carlson.
+
+        In GenericEventQueue::timerFired(), the owner of GenericEventQueue might be deleted.
+        We have to protect the owner of GenericEventQueue during dispatching events.
+
+        Test: media/event-queue-crash.html
+
+        * dom/GenericEventQueue.cpp:
+        (WebCore::GenericEventQueue::timerFired): Added a protection.
+
 2012-08-06  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: Remove IDBRequest::finishCursor() and plumbing

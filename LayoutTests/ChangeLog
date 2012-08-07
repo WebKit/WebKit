@@ -1,3 +1,13 @@
+2012-08-06  Shinya Kawanaka  <shinyak@chromium.org>
+
+        Crash in GenericEventQueue::timerFired since the owner of GenericEventQueue is deleted during dispatching events.
+        https://bugs.webkit.org/show_bug.cgi?id=92946
+
+        Reviewed by Eric Carlson.
+
+        * media/event-queue-crash-expected.txt: Added.
+        * media/event-queue-crash.html: Added.
+
 2012-08-06  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: Throw proper exceptions
