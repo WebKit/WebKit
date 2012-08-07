@@ -1,3 +1,14 @@
+2012-08-07  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt][Win] Remove pthreads linkage
+
+        Reviewed by Csaba Osztrogonác.
+
+        After r124823 linkage to pthreads is not needed anymore for the Windows
+        build.
+
+        * JavaScriptCore.pri:
+
 2012-08-07  Gabor Ballabas  <gaborb@inf.u-szeged.hu>
 
         Refactor emit*Inst functions and introduce toARMWord functions in DFG-JIT's traditional ARM port

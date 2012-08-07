@@ -32,15 +32,7 @@ INCLUDEPATH += \
     $$SOURCE_DIR/ForwardingHeaders \
     $$JAVASCRIPTCORE_GENERATED_SOURCES_DIR
 
-win32-* {
-    LIBS += -lwinmm
-
-    win32-g++* {
-        LIBS += -lpthreadGC2
-    } else:win32-msvc* {
-        LIBS += -lpthreadVC2
-    }
-}
+win32-*: LIBS += -lwinmm
 
 wince* {
     INCLUDEPATH += $$QT.core.sources/../3rdparty/ce-compat
