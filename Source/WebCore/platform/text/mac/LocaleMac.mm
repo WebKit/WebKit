@@ -33,6 +33,7 @@
 
 #import <Foundation/NSDateFormatter.h>
 #import <Foundation/NSLocale.h>
+#include "Language.h"
 #include "LocalizedDate.h"
 #include "LocalizedStrings.h"
 #include <wtf/DateMath.h>
@@ -74,9 +75,30 @@ PassOwnPtr<LocaleMac> LocaleMac::create(const String& localeIdentifier)
     return adoptPtr(new LocaleMac(localeIdentifier));
 }
 
+static inline String languageFromLocale(const String& locale)
+{
+    String normalizedLocale = locale;
+    normalizedLocale.replace('-', '_');
+    size_t separatorPosition = normalizedLocale.find('_');
+    if (separatorPosition == notFound)
+        return normalizedLocale;
+    return normalizedLocale.left(separatorPosition);
+}
+
+static NSLocale* determineLocale()
+{
+    NSLocale* currentLocale = [NSLocale currentLocale];
+    String currentLocaleLanguage = languageFromLocale(String([currentLocale localeIdentifier]));
+    String browserLanguage = languageFromLocale(defaultLanguage());
+    if (equalIgnoringCase(currentLocaleLanguage, browserLanguage))
+        return currentLocale;
+    // It seems initWithLocaleIdentifier accepts dash-separated locale identifier.
+    return [[NSLocale alloc] initWithLocaleIdentifier:defaultLanguage()];
+}
+
 LocaleMac* LocaleMac::currentLocale()
 {
-    static LocaleMac* currentLocale = new LocaleMac([NSLocale currentLocale]);
+    static LocaleMac* currentLocale = new LocaleMac(determineLocale());
     return currentLocale;
 }
 
