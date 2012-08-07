@@ -1,5 +1,41 @@
 2012-08-07  Csaba Osztrogonác  <ossy@webkit.org>
 
+        [Qt] Default sizes for input-text and text-area are different when running DRT/WTR
+        https://bugs.webkit.org/show_bug.cgi?id=91990
+
+        Unreviewed gardening, remove unnecessary expected files and unskip now passing tests after r124808.
+
+        * platform/qt-5.0-wk2/Skipped:
+        * platform/qt-5.0-wk2/editing/deleting/5144139-2-expected.txt: Removed.
+        * platform/qt-5.0-wk2/editing/pasteboard/4806874-expected.txt: Removed.
+        * platform/qt-5.0-wk2/editing/pasteboard/input-field-1-expected.txt: Removed.
+        * platform/qt-5.0-wk2/fast/block/float/overhanging-tall-block-expected.png: Removed.
+        * platform/qt-5.0-wk2/fast/block/float/overhanging-tall-block-expected.txt: Removed.
+        * platform/qt-5.0-wk2/fast/forms/box-shadow-override-expected.png: Removed.
+        * platform/qt-5.0-wk2/fast/forms/box-shadow-override-expected.txt: Removed.
+        * platform/qt-5.0-wk2/fast/forms/form-element-geometry-expected.png: Removed.
+        * platform/qt-5.0-wk2/fast/forms/form-element-geometry-expected.txt: Removed.
+        * platform/qt-5.0-wk2/fast/forms/input-disabled-color-expected.png: Removed.
+        * platform/qt-5.0-wk2/fast/forms/input-disabled-color-expected.txt: Removed.
+        * platform/qt-5.0-wk2/fast/forms/number/number-appearance-rtl-expected.png: Removed.
+        * platform/qt-5.0-wk2/fast/forms/number/number-appearance-rtl-expected.txt: Removed.
+        * platform/qt-5.0-wk2/fast/forms/number/number-appearance-spinbutton-disabled-readonly-expected.png: Removed.
+        * platform/qt-5.0-wk2/fast/forms/number/number-appearance-spinbutton-disabled-readonly-expected.txt: Removed.
+        * platform/qt-5.0-wk2/fast/forms/number/number-appearance-spinbutton-layer-expected.png: Removed.
+        * platform/qt-5.0-wk2/fast/forms/number/number-appearance-spinbutton-layer-expected.txt: Removed.
+        * platform/qt-5.0-wk2/fast/forms/placeholder-pseudo-style-expected.png: Removed.
+        * platform/qt-5.0-wk2/fast/forms/placeholder-pseudo-style-expected.txt: Removed.
+        * platform/qt-5.0-wk2/fast/forms/textarea-align-expected.png: Removed.
+        * platform/qt-5.0-wk2/fast/forms/textarea-align-expected.txt: Removed.
+        * platform/qt-5.0-wk2/fast/forms/textarea-setinnerhtml-expected.png: Removed.
+        * platform/qt-5.0-wk2/fast/forms/textarea-setinnerhtml-expected.txt: Removed.
+        * platform/qt-5.0-wk2/fast/table/003-expected.png: Removed.
+        * platform/qt-5.0-wk2/fast/table/003-expected.txt: Removed.
+        * platform/qt-5.0-wk2/svg/custom/inline-svg-in-xhtml-expected.png: Removed.
+        * platform/qt-5.0-wk2/svg/custom/inline-svg-in-xhtml-expected.txt: Removed.
+
+2012-08-07  Csaba Osztrogonác  <ossy@webkit.org>
+
         [Qt] Unreviewed gardening, unskip now passing tests.
 
         * platform/qt/TestExpectations:
