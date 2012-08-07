@@ -51,6 +51,8 @@
 #include "SecurityOrigin.h"
 #include "ThreadableWebSocketChannel.h"
 #include "WebSocketChannel.h"
+#include <wtf/ArrayBuffer.h>
+#include <wtf/ArrayBufferView.h>
 #include <wtf/HashSet.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
@@ -289,7 +291,26 @@ bool WebSocket::send(ArrayBuffer* binaryData, ExceptionCode& ec)
         return false;
     }
     ASSERT(m_channel);
-    return m_channel->send(*binaryData) == ThreadableWebSocketChannel::SendSuccess;
+    return m_channel->send(*binaryData, 0, binaryData->byteLength()) == ThreadableWebSocketChannel::SendSuccess;
+}
+
+bool WebSocket::send(ArrayBufferView* arrayBufferView, ExceptionCode& ec)
+{
+    LOG(Network, "WebSocket %p send arraybufferview %p", this, arrayBufferView);
+    ASSERT(arrayBufferView);
+    if (m_state == CONNECTING) {
+        ec = INVALID_STATE_ERR;
+        return false;
+    }
+    if (m_state == CLOSING || m_state == CLOSED) {
+        unsigned payloadSize = arrayBufferView->byteLength();
+        m_bufferedAmountAfterClose = saturateAdd(m_bufferedAmountAfterClose, payloadSize);
+        m_bufferedAmountAfterClose = saturateAdd(m_bufferedAmountAfterClose, getFramingOverhead(payloadSize));
+        return false;
+    }
+    ASSERT(m_channel);
+    RefPtr<ArrayBuffer> arrayBuffer(arrayBufferView->buffer());
+    return m_channel->send(*arrayBuffer, arrayBufferView->byteOffset(), arrayBufferView->byteLength()) == ThreadableWebSocketChannel::SendSuccess;
 }
 
 bool WebSocket::send(Blob* binaryData, ExceptionCode& ec)

@@ -153,10 +153,10 @@ ThreadableWebSocketChannel::SendResult WebSocketChannel::send(const String& mess
     return ThreadableWebSocketChannel::SendSuccess;
 }
 
-ThreadableWebSocketChannel::SendResult WebSocketChannel::send(const ArrayBuffer& binaryData)
+ThreadableWebSocketChannel::SendResult WebSocketChannel::send(const ArrayBuffer& binaryData, unsigned byteOffset, unsigned byteLength)
 {
-    LOG(Network, "WebSocketChannel %p send arraybuffer %p", this, &binaryData);
-    enqueueRawFrame(WebSocketFrame::OpCodeBinary, static_cast<const char*>(binaryData.data()), binaryData.byteLength());
+    LOG(Network, "WebSocketChannel %p send arraybuffer %p %u %u", this, &binaryData, byteOffset, byteLength);
+    enqueueRawFrame(WebSocketFrame::OpCodeBinary, static_cast<const char*>(binaryData.data()) + byteOffset, byteLength);
     return ThreadableWebSocketChannel::SendSuccess;
 }
 

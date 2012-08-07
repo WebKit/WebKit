@@ -1,3 +1,19 @@
+2012-08-06  Yuta Kitamura  <yutak@chromium.org>
+
+        WebSocket.send() should accept ArrayBufferView
+        https://bugs.webkit.org/show_bug.cgi?id=90877
+
+        Reviewed by Kent Tamura.
+
+        Two tests are added to check whether WebSocket.send(ArrayBufferView) works in the
+        main thread and in a worker.
+
+        * http/tests/websocket/tests/hybi/send-arraybufferview-expected.txt: Added.
+        * http/tests/websocket/tests/hybi/send-arraybufferview.html: Added.
+        * http/tests/websocket/tests/hybi/workers/resources/send-arraybufferview.js: Added.
+        * http/tests/websocket/tests/hybi/workers/send-arraybufferview-expected.txt: Added.
+        * http/tests/websocket/tests/hybi/workers/send-arraybufferview.html: Added.
+
 2012-08-06  Roger Fong  <roger_fong@apple.com>
 
         LayoutTest: fast/forms/input-set-composition-scroll.html is failing on Windows.

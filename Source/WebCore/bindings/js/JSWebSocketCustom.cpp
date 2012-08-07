@@ -37,6 +37,7 @@
 
 #include "ExceptionCode.h"
 #include "JSArrayBuffer.h"
+#include "JSArrayBufferView.h"
 #include "JSBlob.h"
 #include "JSEventListener.h"
 #include "KURL.h"
@@ -100,6 +101,8 @@ JSValue JSWebSocket::send(ExecState* exec)
     bool result;
     if (message.inherits(&JSArrayBuffer::s_info))
         result = impl()->send(toArrayBuffer(message), ec);
+    else if (message.inherits(&JSArrayBufferView::s_info))
+        result = impl()->send(toArrayBufferView(message), ec);
     else if (message.inherits(&JSBlob::s_info))
         result = impl()->send(toBlob(message), ec);
     else {

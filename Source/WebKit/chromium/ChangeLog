@@ -1,3 +1,14 @@
+2012-08-06  Yuta Kitamura  <yutak@chromium.org>
+
+        WebSocket.send() should accept ArrayBufferView
+        https://bugs.webkit.org/show_bug.cgi?id=90877
+
+        Reviewed by Kent Tamura.
+
+        * src/WebSocketImpl.cpp:
+        (WebKit::WebSocketImpl::sendArrayBuffer):
+        Apply change in function signature of WebSocketChannel::send().
+
 2012-08-06  James Robinson  <jamesr@chromium.org>
 
         [chromium] Remove lingering unwrap<>() calls in GraphicsLayerChromium.cpp

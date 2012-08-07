@@ -69,6 +69,7 @@ module websockets {
         // booleans, null, undefined and objects except ArrayBuffer and Blob). Current code
         // generator does not handle this rule correctly.
         // boolean send(in ArrayBuffer data) raises(DOMException);
+        // boolean send(in ArrayBufferView data) raises(DOMException);
         // boolean send(in Blob data) raises(DOMException);
         // boolean send(in DOMString data) raises(DOMException);
         [Custom] boolean send(in DOMString data) raises(DOMException);

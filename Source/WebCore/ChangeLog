@@ -1,3 +1,46 @@
+2012-08-06  Yuta Kitamura  <yutak@chromium.org>
+
+        WebSocket.send() should accept ArrayBufferView
+        https://bugs.webkit.org/show_bug.cgi?id=90877
+
+        Reviewed by Kent Tamura.
+
+        Accept ArrayBufferView as an argument of WebSocket.send() to comply with recent change
+        in specification: <http://html5.org/tools/web-apps-tracker?from=7084&to=7085>.
+
+        Once WebSocket.send(ArrayBuffer) was removed from the specification, but added back
+        in <http://html5.org/tools/web-apps-tracker?from=7202&to=7203>. Thus the functionality
+        of send(ArrayBuffer) is kept as-is.
+
+        Tests: http/tests/websocket/tests/hybi/send-arraybufferview.html
+               http/tests/websocket/tests/hybi/workers/send-arraybufferview.html
+
+        * Modules/websockets/ThreadableWebSocketChannel.h:
+        Change the signature of send() to receive offset and length so the clients can send
+        subrange of an ArrayBuffer.
+        * Modules/websockets/WebSocket.cpp:
+        (WebCore::WebSocket::send):
+        WebSocket.send(ArrayBufferView) is added, which puts the sub region of the given
+        ArrayBuffer into the outgoing frame queue.
+        * Modules/websockets/WebSocket.h:
+        * Modules/websockets/WebSocket.idl:
+        * Modules/websockets/WebSocketChannel.cpp:
+        (WebCore::WebSocketChannel::send):
+        * Modules/websockets/WebSocketChannel.h:
+        (WebSocketChannel):
+        * Modules/websockets/WorkerThreadableWebSocketChannel.cpp:
+        (WebCore::WorkerThreadableWebSocketChannel::send):
+        (WebCore::WorkerThreadableWebSocketChannel::Peer::send):
+        (WebCore::WorkerThreadableWebSocketChannel::Bridge::send):
+        Send only necessary part of data to the main thread.
+        * Modules/websockets/WorkerThreadableWebSocketChannel.h:
+        (WorkerThreadableWebSocketChannel):
+        (Bridge):
+        * bindings/js/JSWebSocketCustom.cpp:
+        (WebCore::JSWebSocket::send): Accept ArrayBufferView in send().
+        * bindings/v8/custom/V8WebSocketCustom.cpp:
+        (WebCore::V8WebSocket::sendCallback): Ditto.
+
 2012-08-06  James Robinson  <jamesr@chromium.org>
 
         [chromium] Add gyp variable to control which compositor target is depended on

@@ -38,6 +38,7 @@
 #include "Frame.h"
 #include "Settings.h"
 #include "V8ArrayBuffer.h"
+#include "V8ArrayBufferView.h"
 #include "V8Binding.h"
 #include "V8Blob.h"
 #include "V8Proxy.h"
@@ -127,6 +128,10 @@ v8::Handle<v8::Value> V8WebSocket::sendCallback(const v8::Arguments& args)
         ArrayBuffer* arrayBuffer = V8ArrayBuffer::toNative(v8::Handle<v8::Object>::Cast(message));
         ASSERT(arrayBuffer);
         result = webSocket->send(arrayBuffer, ec);
+    } else if (V8ArrayBufferView::HasInstance(message)) {
+        ArrayBufferView* arrayBufferView = V8ArrayBufferView::toNative(v8::Handle<v8::Object>::Cast(message));
+        ASSERT(arrayBufferView);
+        result = webSocket->send(arrayBufferView, ec);
     } else if (V8Blob::HasInstance(message)) {
         Blob* blob = V8Blob::toNative(v8::Handle<v8::Object>::Cast(message));
         ASSERT(blob);

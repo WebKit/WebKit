@@ -71,6 +71,7 @@ public:
 
     bool send(const String& message, ExceptionCode&);
     bool send(ArrayBuffer*, ExceptionCode&);
+    bool send(ArrayBufferView*, ExceptionCode&);
     bool send(Blob*, ExceptionCode&);
 
     void close(int code, const String& reason, ExceptionCode&);
