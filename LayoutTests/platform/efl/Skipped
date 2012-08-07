@@ -1118,18 +1118,6 @@ fast/profiler/dead-time.html
 # Needs a text rebaseline: 30px height difference.
 fast/block/basic/fieldset-stretch-to-legend.html
 
-# JSC doesn't support heap profiling
-inspector/profiler/heap-snapshot-inspect-dom-wrapper.html
-inspector/profiler/heap-snapshot-comparison-dom-groups-change.html
-inspector/profiler/heap-snapshot-comparison-show-all.html
-inspector/profiler/heap-snapshot-loader.html
-inspector/profiler/heap-snapshot-reveal-in-dominators-view.html
-inspector/profiler/heap-snapshot-summary-retainers.html
-inspector/profiler/heap-snapshot-summary-show-ranges.html
-inspector/profiler/heap-snapshot-summary-sorting-fields.html
-inspector/profiler/heap-snapshot-summary-sorting.html
-inspector/profiler/heap-snapshot-summary-sorting-instances.html
-
 # following tests started failing on EFL afrer r122952.
 http/tests/inspector/inspect-element.html
 http/tests/inspector/network/network-initiator.html
@@ -1142,11 +1130,6 @@ http/tests/inspector/resource-har-conversion.html
 http/tests/inspector/console-cd-completions.html
 http/tests/inspector/console-cross-origin-iframe-logging.html
 http/tests/inspector/resource-parameters.html
-http/tests/inspector/filesystem/request-directory-content.html
-http/tests/inspector/filesystem/request-file-content.html
-http/tests/inspector/filesystem/request-filesystem-root.html
-http/tests/inspector/filesystem/directory-tree.html
-http/tests/inspector/filesystem/request-metadata.html
 http/tests/inspector/console-cd.html
 http/tests/inspector/extensions-useragent.html
 http/tests/inspector/compiler-source-mapping-debug.html

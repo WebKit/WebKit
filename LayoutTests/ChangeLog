@@ -1,3 +1,15 @@
+2012-08-07  Seokju Kwon  <seokju.kwon@samsung.com>
+
+        [EFL] Move some inspector tests into TestExpectations
+        https://bugs.webkit.org/show_bug.cgi?id=92884
+
+        Unreviewed gardening.
+
+        New baselines after r123703.
+
+        * platform/efl/Skipped:
+        * platform/efl/TestExpectations:
+
 2012-08-07  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed GTK gardening.
