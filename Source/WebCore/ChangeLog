@@ -1,3 +1,9 @@
+2012-08-07  Florin Malita  <fmalita@chromium.org>
+
+        [Chromium] Unreviewed build fix after r124879.
+
+        * WebCore.gypi: Remove deleted file references.
+
 2012-08-07  George Staikos  <staikos@webkit.org>
 
         [BlackBerry] We should fail the HTTP auth silently for non-main loads
