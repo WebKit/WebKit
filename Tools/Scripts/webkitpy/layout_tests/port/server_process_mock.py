@@ -28,10 +28,10 @@
 
 
 class MockServerProcess(object):
-    def __init__(self, port_obj=None, name=None, cmd=None, env=None, universal_newlines=False, lines=None, crashed=False):
+    def __init__(self, port_obj=None, name=None, cmd=None, env=None, universal_newlines=False, lines=None):
         self.timed_out = False
         self.lines = lines or []
-        self.crashed = crashed
+        self.crashed = False
         self.writes = []
         self.cmd = cmd
         self.env = env

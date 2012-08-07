@@ -62,7 +62,8 @@ class ImageDiffer(object):
                 len(expected_contents), expected_contents))
             return self._read()
         except IOError as exception:
-            return (None, 0, "Failed to compute an image diff: %s" % str(exception))
+            _log.error("Failed to compute an image diff: %s" % str(exception))
+            return (True, 0)
 
     def _start(self, tolerance):
         command = [self._port._path_to_image_diff(), '--tolerance', str(tolerance)]
@@ -76,7 +77,7 @@ class ImageDiffer(object):
         output = None
         output_image = ""
 
-        while not self._process.timed_out and not self._process.has_crashed():
+        while True:
             output = self._process.read_stdout_line(deadline)
             if self._process.timed_out or self._process.has_crashed() or not output:
                 break
@@ -92,14 +93,12 @@ class ImageDiffer(object):
                 break
 
         stderr = self._process.pop_all_buffered_stderr()
-        err_str = ''
         if stderr:
-            err_str += "ImageDiff produced stderr output:\n" + stderr
+            _log.warn("ImageDiff produced stderr output:\n" + stderr)
         if self._process.timed_out:
-            err_str += "ImageDiff timed out\n"
+            _log.error("ImageDiff timed out")
         if self._process.has_crashed():
-            err_str += "ImageDiff crashed\n"
-
+            _log.error("ImageDiff crashed")
         # FIXME: There is no need to shut down the ImageDiff server after every diff.
         self._process.stop()
 
@@ -110,7 +109,7 @@ class ImageDiffer(object):
                 return [None, 0]
             diff_percent = float(m.group(1))
 
-        return (output_image, diff_percent, err_str or None)
+        return (output_image, diff_percent)
 
     def stop(self):
         if self._process:

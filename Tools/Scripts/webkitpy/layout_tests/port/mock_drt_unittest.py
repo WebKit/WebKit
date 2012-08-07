@@ -60,9 +60,6 @@ class MockDRTPortTest(port_testcase.PortTestCase):
     def test_diff_image(self):
         pass
 
-    def test_diff_image_crashed(self):
-        pass
-
     def test_uses_apache(self):
         pass
 
