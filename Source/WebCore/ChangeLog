@@ -1,3 +1,17 @@
+2012-08-07  Mike Reed  <reed@google.com>
+
+        reimplement fastMod w/o (soon to be) private skia macros
+        https://bugs.webkit.org/show_bug.cgi?id=93370
+
+        Reviewed by Adrienne Walker.
+
+        fastMod() reimplemented (same functionality) to stop using soon-to-be private macros in
+        SkMath.h. The new version is functionally identical.
+
+        No new tests -- existing layouttests exercise GraphicsContext::strokeArc(), the only caller
+
+        * platform/graphics/skia/GraphicsContextSkia.cpp:
+
 2012-08-07  Brian Anderson  <brianderson@chromium.org>
 
         Add CCDelayBasedTimeSource::setTimebaseAndInterval

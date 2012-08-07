@@ -68,14 +68,19 @@ namespace WebCore {
 
 namespace {
 
+// Return value % max, but account for value possibly being negative.
 inline int fastMod(int value, int max)
 {
-    int sign = SkExtractSign(value);
-
-    value = SkApplySign(value, sign);
+    bool isNeg = false;
+    if (value < 0) {
+        value = -value;
+        isNeg = true;
+    }
     if (value >= max)
         value %= max;
-    return SkApplySign(value, sign);
+    if (isNeg)
+        value = -value;
+    return value;
 }
 
 inline float square(float n)
