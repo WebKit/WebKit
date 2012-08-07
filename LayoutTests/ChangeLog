@@ -1,3 +1,17 @@
+2012-08-06  Roger Fong  <roger_fong@apple.com>
+
+        LayoutTest: fast/forms/input-set-composition-scroll.html is failing on Windows.
+        https://bugs.webkit.org/show_bug.cgi?id=93320
+
+        Reviewed by Tim Horton.
+
+        fast/forms/input-set-composition-scroll.html is failing after r120145
+        because TestInputController::setComposition() method has not been implemented.
+        It was added to skip list on Mac, see https://bugs.webkit.org/show_bug.cgi?id=89845 but not on Windows.
+
+        * platform/win/Skipped:
+        Adding test to skip list.        
+
 2012-08-06  Shinya Kawanaka  <shinyak@chromium.org>
 
         Crash in GenericEventQueue::timerFired since the owner of GenericEventQueue is deleted during dispatching events.

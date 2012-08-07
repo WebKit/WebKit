@@ -1962,3 +1962,6 @@ fast/css/image-orientation/
 
 # Test uses "required" form element property which currently does not work on Safari
 fast/forms/validation-message-user-modify.html
+
+# The textInputController.setComposition() implementation is missing
+fast/forms/input-set-composition-scroll.html
