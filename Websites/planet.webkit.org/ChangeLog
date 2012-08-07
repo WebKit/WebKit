@@ -1,3 +1,12 @@
+2012-08-07  Bruno de Oliveira Abinader  <bruno.abinader@basyskom.com>
+
+        Add Bruno Abinader's blog feed to Planet WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=92985
+
+        Reviewed by Eric Seidel.
+
+        * config.ini:
+
 2012-07-16  Michelangelo De Simone  <michelangelo@webkit.org>
 
         Adobe Web Platform Team Blog is missing from Planet WebKit
