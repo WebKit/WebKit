@@ -49,14 +49,4 @@ v8::Handle<v8::Value> V8Float64Array::setCallback(const v8::Arguments& args)
     return setWebGLArrayHelper<Float64Array, V8Float64Array>(args);
 }
 
-v8::Handle<v8::Value> toV8(Float64Array* impl, v8::Isolate* isolate)
-{
-    if (!impl)
-        return v8NullWithCheck(isolate);
-    v8::Handle<v8::Object> wrapper = V8Float64Array::wrap(impl, isolate);
-    if (!wrapper.IsEmpty())
-        wrapper->SetIndexedPropertiesToExternalArrayData(impl->baseAddress(), v8::kExternalDoubleArray, impl->length());
-    return wrapper;
-}
-
 } // namespace WebCore

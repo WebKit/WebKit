@@ -1,3 +1,40 @@
+2012-08-07  Vineet Chaudhary  <rgf748@motorola.com>
+
+        [V8] Remove custom toV8() calls for TypedArray.
+        https://bugs.webkit.org/show_bug.cgi?id=93248
+
+        Reviewed by Kentaro Hara.
+
+        With the support of [TypedArray] we can remove the custom calls toV8().
+        TypedArray spec : http://www.khronos.org/registry/typedarray/specs/latest/#7
+
+        Tests: TestTypedArray.idl
+        Tests under below folders should pass as this does not cause any behavioral changes.
+               fast/canvas/webgl
+               compositing/webgl
+
+        * bindings/js/JSInt8ArrayCustom.cpp:
+        * bindings/js/JSUint8ArrayCustom.cpp:
+        * bindings/js/JSUint8ClampedArrayCustom.cpp:
+        * bindings/scripts/CodeGeneratorV8.pm:
+        (GenerateImplementation): Modified Generator code to generate bindings for toV8().
+        (IsWrapperType):
+        (GetTypeNameOfExternalTypedArray): Method to get view type of TypedArray.
+        * bindings/scripts/test/V8/V8Float64Array.cpp: Tests results.
+        (WebCore::toV8):
+        * bindings/v8/custom/V8Float32ArrayCustom.cpp: Removed custom call toV8().
+        * bindings/v8/custom/V8Float64ArrayCustom.cpp: Ditto.
+        * bindings/v8/custom/V8Int16ArrayCustom.cpp: Ditto.
+        * bindings/v8/custom/V8Int32ArrayCustom.cpp: Ditto.
+        * bindings/v8/custom/V8Int8ArrayCustom.cpp: Ditto.
+        * bindings/v8/custom/V8Uint16ArrayCustom.cpp: Ditto.
+        * bindings/v8/custom/V8Uint32ArrayCustom.cpp: Ditto.
+        * bindings/v8/custom/V8Uint8ArrayCustom.cpp: Ditto.
+        * bindings/v8/custom/V8Uint8ClampedArrayCustom.cpp: Ditto.
+        * html/canvas/Int8Array.idl: Using TypedArray.
+        * html/canvas/Uint8Array.idl: Ditto.
+        * html/canvas/Uint8ClampedArray.idl: Ditto.
+
 2012-08-07  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: [regression r121673] restore link between the command and the result.

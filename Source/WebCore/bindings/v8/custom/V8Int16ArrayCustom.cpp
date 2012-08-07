@@ -53,14 +53,4 @@ v8::Handle<v8::Value> V8Int16Array::setCallback(const v8::Arguments& args)
     return setWebGLArrayHelper<Int16Array, V8Int16Array>(args);
 }
 
-v8::Handle<v8::Value> toV8(Int16Array* impl, v8::Isolate* isolate)
-{
-    if (!impl)
-        return v8NullWithCheck(isolate);
-    v8::Handle<v8::Object> wrapper = V8Int16Array::wrap(impl, isolate);
-    if (!wrapper.IsEmpty())
-        wrapper->SetIndexedPropertiesToExternalArrayData(impl->baseAddress(), v8::kExternalShortArray, impl->length());
-    return wrapper;
-}
-
 } // namespace WebCore

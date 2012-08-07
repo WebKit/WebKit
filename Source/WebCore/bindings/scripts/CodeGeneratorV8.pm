@@ -2594,6 +2594,22 @@ sub GenerateImplementation
         GenerateVisitDOMWrapper($dataNode, $implClassName);
     }
 
+    if ($dataNode->extendedAttributes->{"TypedArray"}) {
+        my $viewType = GetTypeNameOfExternalTypedArray($dataNode);
+        push(@implContent, <<END);
+v8::Handle<v8::Value> toV8($implClassName* impl, v8::Isolate* isolate)
+{
+    if (!impl)
+        return v8NullWithCheck(isolate);
+    v8::Handle<v8::Object> wrapper = V8${implClassName}::wrap(impl, isolate);
+    if (!wrapper.IsEmpty())
+        wrapper->SetIndexedPropertiesToExternalArrayData(impl->baseAddress(), $viewType, impl->length());
+    return wrapper;
+}
+
+END
+    }
+
     my $indexer;
     my $namedPropertyGetter;
     my @enabledPerContextFunctions;
@@ -3904,6 +3920,24 @@ sub IsWrapperType
 {
     my $type = $codeGenerator->StripModule(shift);
     return !($non_wrapper_types{$type});
+}
+
+sub GetTypeNameOfExternalTypedArray
+{
+    my $dataNode = shift;
+    my $interfaceName = $dataNode->name;
+    my $viewType = $dataNode->extendedAttributes->{"TypedArray"};
+    return "v8::kExternalByteArray" if $viewType eq "signed char" and $interfaceName eq "Int8Array";
+    return "v8::kExternalPixelArray" if $viewType eq "unsigned char" and $interfaceName eq "Uint8ClampedArray";
+    return "v8::kExternalUnsignedByteArray" if $viewType eq "unsigned char" and $interfaceName eq "Uint8Array";
+    return "v8::kExternalShortArray" if $viewType eq "short" and $interfaceName eq "Int16Array";
+    return "v8::kExternalUnsignedShortArray" if $viewType eq "unsigned short" and $interfaceName eq "Uint16Array";
+    return "v8::kExternalIntArray" if $viewType eq "int" and $interfaceName eq "Int32Array";
+    return "v8::kExternalUnsignedIntArray" if $viewType eq "unsigned int" and $interfaceName eq "Uint32Array";
+    return "v8::kExternalFloatArray" if $viewType eq "float" and $interfaceName eq "Float32Array";
+    return "v8::kExternalDoubleArray" if $viewType eq "double" and $interfaceName eq "Float64Array";
+
+    die "TypedArray of unknown type is found";
 }
 
 sub IsArrayType

@@ -33,7 +33,8 @@ module html {
         JSGenerateToNativeObject,
         JSNoStaticTables,
         CustomToJSObject,
-        DoNotCheckConstants
+        DoNotCheckConstants,
+        TypedArray=unsigned char
     ] Uint8ClampedArray : Uint8Array {
         const unsigned long BYTES_PER_ELEMENT = 1;
 

@@ -33,7 +33,8 @@ module html {
         JSGenerateToNativeObject,
         JSNoStaticTables,
         CustomToJSObject,
-        DoNotCheckConstants
+        DoNotCheckConstants,
+        TypedArray=signed char
     ] Int8Array : ArrayBufferView {
         const unsigned long BYTES_PER_ELEMENT = 1;
 

@@ -61,6 +61,16 @@ static v8::Handle<v8::Value> fooCallback(const v8::Arguments& args)
 
 } // namespace Float64ArrayV8Internal
 
+v8::Handle<v8::Value> toV8(Float64Array* impl, v8::Isolate* isolate)
+{
+    if (!impl)
+        return v8NullWithCheck(isolate);
+    v8::Handle<v8::Object> wrapper = V8Float64Array::wrap(impl, isolate);
+    if (!wrapper.IsEmpty())
+        wrapper->SetIndexedPropertiesToExternalArrayData(impl->baseAddress(), v8::kExternalDoubleArray, impl->length());
+    return wrapper;
+}
+
 static v8::Persistent<v8::FunctionTemplate> ConfigureV8Float64ArrayTemplate(v8::Persistent<v8::FunctionTemplate> desc)
 {
     desc->ReadOnlyPrototype();
