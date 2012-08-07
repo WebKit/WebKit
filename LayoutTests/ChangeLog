@@ -1,3 +1,9 @@
+2012-08-07  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed gardening, unskip now passing tests.
+
+        * platform/qt/TestExpectations:
+
 2012-08-07  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: [regression r121673] restore link between the command and the result.
