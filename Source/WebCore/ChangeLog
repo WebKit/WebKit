@@ -1,3 +1,33 @@
+2012-08-07  Peter Rybin  <peter.rybin@gmail.com>
+
+        Web Inspector: display function scope in UI
+        https://bugs.webkit.org/show_bug.cgi?id=90631
+
+        Reviewed by Yury Semikhatsky.
+
+        Two new tree element types added: function scope group node and scope node.
+        Scope node is only used to represent closure and catch scopes. Scopes that
+        have a real object beneath are represented as a property node.
+        A method that reads properties from RemoteObject and populate tree element
+        is factored out from RemoteObjectTreeElement for reuse.
+
+        * inspector/front-end/ObjectPropertiesSection.js:
+        (WebInspector.ObjectPropertyTreeElement.prototype.onpopulate):
+        (WebInspector.ObjectPropertyTreeElement.Populate.callback):
+        (WebInspector.ObjectPropertyTreeElement.Populate):
+        (WebInspector.FunctionScopeMainTreeElement):
+        (WebInspector.FunctionScopeMainTreeElement.prototype.onpopulate.didGetDetails):
+        (WebInspector.FunctionScopeMainTreeElement.prototype.onpopulate):
+        (WebInspector.FunctionScopeMainTreeElement.prototype.onattach):
+        (WebInspector.FunctionScopeMainTreeElement.prototype.update):
+        (WebInspector.ScopeTreeElement):
+        (WebInspector.ScopeTreeElement.prototype.onpopulate):
+        (WebInspector.ScopeTreeElement.prototype.onattach):
+        (WebInspector.ScopeTreeElement.prototype.update):
+        * inspector/front-end/RemoteObject.js:
+        (WebInspector.RemoteObjectProperty.fromScopeValue):
+
+
 2012-08-07  Vineet Chaudhary  <rgf748@motorola.com>
 
         [V8] Remove custom toV8() calls for TypedArray.

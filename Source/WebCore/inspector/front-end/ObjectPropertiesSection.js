@@ -226,31 +226,7 @@ WebInspector.ObjectPropertyTreeElement = function(property)
 WebInspector.ObjectPropertyTreeElement.prototype = {
     onpopulate: function()
     {
-        if (this.children.length && !this.shouldRefreshChildren)
-            return;
-
-        if (this.property.value.arrayLength() > WebInspector.ObjectPropertiesSection._arrayLoadThreshold) {
-            this.removeChildren();
-            WebInspector.ArrayGroupingTreeElement._populateArray(this, this.property.value, 0, this.property.value.arrayLength() - 1);
-            return;
-        }
-
-        function callback(properties)
-        {
-            this.removeChildren();
-            if (!properties)
-                return;
-
-            properties.sort(WebInspector.ObjectPropertiesSection.CompareProperties);
-            for (var i = 0; i < properties.length; ++i) {
-                if (this.treeOutline.section.skipProto && properties[i].name === "__proto__")
-                    continue;
-                properties[i].parentObject = this.property.value;
-                this.appendChild(new this.treeOutline.section.treeElementConstructor(properties[i]));
-            }
-        }
-
-        this.property.value.getOwnProperties(callback.bind(this));
+        return WebInspector.ObjectPropertyTreeElement.populate(this, this.property.value);
     },
 
     ondblclick: function(event)
@@ -305,7 +281,7 @@ WebInspector.ObjectPropertyTreeElement.prototype = {
             this.valueElement.addEventListener("contextmenu", this._contextMenuEventFired.bind(this), false);
 
         this.valueElement.title = description || "";
-        
+
         this.listItemElement.removeChildren();
 
         this.listItemElement.appendChild(this.nameElement);
@@ -468,7 +444,142 @@ WebInspector.ObjectPropertyTreeElement.prototype = {
     }
 }
 
+/**
+ * @param {TreeElement} treeElement
+ * @param {WebInspector.RemoteObject} value
+ */
+WebInspector.ObjectPropertyTreeElement.populate = function(treeElement, value) {
+    if (treeElement.children.length && !treeElement.shouldRefreshChildren)
+        return;
+
+    if (value.arrayLength() > WebInspector.ObjectPropertiesSection._arrayLoadThreshold) {
+        treeElement.removeChildren();
+        WebInspector.ArrayGroupingTreeElement._populateArray(treeElement, value, 0, value.arrayLength() - 1);
+        return;
+    }
+
+    function callback(properties)
+    {
+        treeElement.removeChildren();
+        if (!properties)
+            return;
+
+        properties.sort(WebInspector.ObjectPropertiesSection.CompareProperties);
+        for (var i = 0; i < properties.length; ++i) {
+            if (treeElement.treeOutline.section.skipProto && properties[i].name === "__proto__")
+                continue;
+            properties[i].parentObject = value;
+            treeElement.appendChild(new treeElement.treeOutline.section.treeElementConstructor(properties[i]));
+        }
+        if (value.type === "function")
+            treeElement.appendChild(new WebInspector.FunctionScopeMainTreeElement(value));
+    }
+
+    value.getOwnProperties(callback);
+}
+
 WebInspector.ObjectPropertyTreeElement.prototype.__proto__ = TreeElement.prototype;
+
+/**
+ * @constructor
+ * @extends {TreeElement}
+ * @param {WebInspector.RemoteObject} remoteObject
+ */
+WebInspector.FunctionScopeMainTreeElement = function(remoteObject)
+{
+    TreeElement.call(this, "<function scope>", null, false);
+    this.toggleOnClick = true;
+    this.selectable = false;
+    this._remoteObject = remoteObject;
+    this.hasChildren = true;
+}
+
+WebInspector.FunctionScopeMainTreeElement.prototype = {
+    onpopulate: function()
+    {
+        if (this.children.length && !this.shouldRefreshChildren)
+            return;
+
+        function didGetDetails(error, response)
+        {
+            if (error) {
+                console.error(error);
+                return;
+            }
+            this.removeChildren();
+
+            var scopeChain = response.scopeChain;
+            for (var i = 0; i < scopeChain.length; ++i) {
+                var scope = scopeChain[i];
+                var title = null;
+                var isTrueObject;
+
+                switch (scope.type) {
+                    case "local":
+                        // Not really expecting this scope type here.
+                        title = WebInspector.UIString("Local");
+                        isTrueObject = false;
+                        break;
+                    case "closure":
+                        title = WebInspector.UIString("Closure");
+                        isTrueObject = false;
+                        break;
+                    case "catch":
+                        title = WebInspector.UIString("Catch");
+                        isTrueObject = false;
+                        break;
+                    case "with":
+                        title = WebInspector.UIString("With Block");
+                        isTrueObject = true;
+                        break;
+                    case "global":
+                        title = WebInspector.UIString("Global");
+                        isTrueObject = true;
+                        break;
+                }
+
+                var remoteObject = WebInspector.RemoteObject.fromPayload(scope.object);
+                if (isTrueObject) {
+                    var property = WebInspector.RemoteObjectProperty.fromScopeValue(title, remoteObject);
+                    property.parentObject = null;
+                    this.appendChild(new this.treeOutline.section.treeElementConstructor(property));
+                } else {
+                    var scopeTreeElement = new WebInspector.ScopeTreeElement(title, null, remoteObject);
+                    this.appendChild(scopeTreeElement);
+                }
+            }
+
+        }
+        DebuggerAgent.getFunctionDetails(this._remoteObject.objectId, didGetDetails.bind(this));
+
+    }
+};
+
+WebInspector.FunctionScopeMainTreeElement.prototype.__proto__ = TreeElement.prototype;
+
+/**
+ * @constructor
+ * @extends {TreeElement}
+ * @param {WebInspector.RemoteObject} remoteObject
+ */
+WebInspector.ScopeTreeElement = function(title, subtitle, remoteObject)
+{
+    // TODO: use subtitle parameter.
+    TreeElement.call(this, title, null, false);
+    this.toggleOnClick = true;
+    this.selectable = false;
+    this._remoteObject = remoteObject;
+    this.hasChildren = true;
+}
+
+WebInspector.ScopeTreeElement.prototype = {
+    onpopulate: function()
+    {
+        return WebInspector.ObjectPropertyTreeElement.populate(this, this._remoteObject);
+    }
+};
+
+WebInspector.ScopeTreeElement.prototype.__proto__ = TreeElement.prototype;
 
 /**
  * @constructor
@@ -679,7 +790,7 @@ WebInspector.ArrayGroupingTreeElement.prototype = {
     {
         if (this._populated)
             return;
-        
+
         this._populated = true;
 
         if (this._propertyCount >= WebInspector.ArrayGroupingTreeElement._bucketThreshold) {

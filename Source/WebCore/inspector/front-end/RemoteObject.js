@@ -336,7 +336,7 @@ WebInspector.RemoteObject.prototype = {
 /**
  * @constructor
  * @param {string} name
- * @param {WebInspector.RemoteObject} value 
+ * @param {WebInspector.RemoteObject} value
  * @param {Object=} descriptor
  */
 WebInspector.RemoteObjectProperty = function(name, value, descriptor)
@@ -357,6 +357,18 @@ WebInspector.RemoteObjectProperty = function(name, value, descriptor)
 WebInspector.RemoteObjectProperty.fromPrimitiveValue = function(name, value)
 {
     return new WebInspector.RemoteObjectProperty(name, WebInspector.RemoteObject.fromPrimitiveValue(value));
+}
+
+/**
+ * @param {string} name
+ * @param {WebInspector.RemoteObject} value
+ * @return {WebInspector.RemoteObjectProperty}
+ */
+WebInspector.RemoteObjectProperty.fromScopeValue = function(name, value)
+{
+    var result = new WebInspector.RemoteObjectProperty(name, value);
+    result.writable = false;
+    return result;
 }
 
 // The below is a wrapper around a local object that provides an interface comaptible
