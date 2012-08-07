@@ -145,7 +145,7 @@ String CSSSelectorList::selectorsText() const
 
 void CSSSelectorList::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
-    MemoryClassInfo<CSSSelectorList> info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
+    MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
     info.addRawBuffer(m_selectorArray, length() * sizeof(CSSSelector));
 }
 

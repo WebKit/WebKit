@@ -68,7 +68,7 @@ String FontValue::customCssText() const
 
 void FontValue::reportDescendantMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
-    MemoryClassInfo<FontValue> info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
+    MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
     info.addInstrumentedMember(style);
     info.addInstrumentedMember(variant);
     info.addInstrumentedMember(weight);

@@ -111,7 +111,7 @@ void CSSImageGeneratorValue::putImage(const IntSize& size, PassRefPtr<Image> ima
 
 void CSSImageGeneratorValue::reportBaseClassMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
-    MemoryClassInfo<CSSImageGeneratorValue> info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
+    MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
     info.addHashCountedSet(m_sizes);
     info.addHashMap(m_clients);
     info.addHashMap(m_images); // FIXME: instrument Image

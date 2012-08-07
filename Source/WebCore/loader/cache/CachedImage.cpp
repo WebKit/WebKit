@@ -469,7 +469,7 @@ void CachedImage::changedInRect(const Image* image, const IntRect& rect)
 
 void CachedImage::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
-    MemoryClassInfo<CachedImage> info(memoryObjectInfo, this, MemoryInstrumentation::CachedResourceImage);
+    MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::CachedResourceImage);
     CachedResource::reportMemoryUsage(memoryObjectInfo);
     info.addMember(m_image);
 #if ENABLE(SVG)

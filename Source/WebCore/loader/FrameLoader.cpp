@@ -3229,7 +3229,7 @@ NetworkingContext* FrameLoader::networkingContext() const
 
 void FrameLoader::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
-    MemoryClassInfo<FrameLoader> info(memoryObjectInfo, this, MemoryInstrumentation::Loader);
+    MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::Loader);
     info.addInstrumentedMember(m_documentLoader.get());
     info.addInstrumentedMember(m_provisionalDocumentLoader.get());
     info.addInstrumentedMember(m_policyDocumentLoader.get());

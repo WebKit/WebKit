@@ -2817,7 +2817,7 @@ void Node::removedLastRef()
 
 void Node::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
-    MemoryClassInfo<Node> info(memoryObjectInfo, this, MemoryInstrumentation::DOM);
+    MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::DOM);
     TreeShared<Node, ContainerNode>::reportMemoryUsage(memoryObjectInfo);
     ScriptWrappable::reportMemoryUsage(memoryObjectInfo);
     info.addInstrumentedMember(m_document);

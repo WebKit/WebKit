@@ -162,7 +162,7 @@ bool CachedRawResource::canReuse(const ResourceRequest& newRequest) const
 
 void CachedRawResource::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
-    MemoryClassInfo<CachedRawResource> info(memoryObjectInfo, this, MemoryInstrumentation::CachedResource);
+    MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::CachedResource);
     CachedResource::reportMemoryUsage(memoryObjectInfo);
 }
 

@@ -1,3 +1,219 @@
+2012-08-07  Alexei Filippov  <alexeif@chromium.org>
+
+        Web Inspector: make the MemoryClassInfo class a not-template
+        https://bugs.webkit.org/show_bug.cgi?id=93265
+
+        Reviewed by Yury Semikhatsky.
+
+        * bindings/js/ScriptWrappable.h:
+        (WebCore::ScriptWrappable::reportMemoryUsage):
+        * bindings/v8/DOMDataStore.cpp:
+        (WebCore::DOMDataStore::reportMemoryUsage):
+        * bindings/v8/IntrusiveDOMWrapperMap.h:
+        (WebCore::ChunkedTable::reportMemoryUsage):
+        * bindings/v8/ScriptWrappable.h:
+        (WebCore::ScriptWrappable::reportMemoryUsage):
+        * bindings/v8/V8Binding.cpp:
+        (WebCore::V8BindingPerIsolateData::reportMemoryUsage):
+        (WebCore::StringCache::reportMemoryUsage):
+        * bindings/v8/V8DOMMap.h:
+        * css/CSSAspectRatioValue.cpp:
+        (WebCore::CSSAspectRatioValue::reportDescendantMemoryUsage):
+        * css/CSSBorderImageSliceValue.cpp:
+        (WebCore::CSSBorderImageSliceValue::reportDescendantMemoryUsage):
+        * css/CSSCalculationValue.cpp:
+        (WebCore::CSSCalcValue::reportDescendantMemoryUsage):
+        * css/CSSCanvasValue.cpp:
+        (WebCore::CSSCanvasValue::reportDescendantMemoryUsage):
+        * css/CSSCharsetRule.cpp:
+        (WebCore::CSSCharsetRule::reportDescendantMemoryUsage):
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::reportMemoryUsage):
+        * css/CSSCrossfadeValue.cpp:
+        (WebCore::CSSCrossfadeValue::reportDescendantMemoryUsage):
+        * css/CSSCursorImageValue.cpp:
+        (WebCore::CSSCursorImageValue::reportDescendantMemoryUsage):
+        * css/CSSFontFaceRule.cpp:
+        (WebCore::CSSFontFaceRule::reportDescendantMemoryUsage):
+        * css/CSSFontFaceSrcValue.cpp:
+        (WebCore::CSSFontFaceSrcValue::reportDescendantMemoryUsage):
+        * css/CSSFunctionValue.cpp:
+        (WebCore::CSSFunctionValue::reportDescendantMemoryUsage):
+        * css/CSSGradientValue.cpp:
+        (WebCore::CSSGradientColorStop::reportMemoryUsage):
+        (WebCore::CSSGradientValue::reportBaseClassMemoryUsage):
+        (WebCore::CSSLinearGradientValue::reportDescendantMemoryUsage):
+        (WebCore::CSSRadialGradientValue::reportDescendantMemoryUsage):
+        * css/CSSImageGeneratorValue.cpp:
+        (WebCore::CSSImageGeneratorValue::reportBaseClassMemoryUsage):
+        * css/CSSImageSetValue.cpp:
+        (WebCore::CSSImageSetValue::reportDescendantMemoryUsage):
+        (WebCore::CSSImageSetValue::ImageWithScale::reportMemoryUsage):
+        * css/CSSImageValue.cpp:
+        (WebCore::CSSImageValue::reportDescendantMemoryUsage):
+        * css/CSSImportRule.cpp:
+        (WebCore::CSSImportRule::reportDescendantMemoryUsage):
+        * css/CSSInheritedValue.cpp:
+        (WebCore::CSSInheritedValue::reportDescendantMemoryUsage):
+        * css/CSSInitialValue.cpp:
+        (WebCore::CSSInitialValue::reportDescendantMemoryUsage):
+        * css/CSSLineBoxContainValue.cpp:
+        (WebCore::CSSLineBoxContainValue::reportDescendantMemoryUsage):
+        * css/CSSMediaRule.cpp:
+        (WebCore::CSSMediaRule::reportDescendantMemoryUsage):
+        * css/CSSPageRule.cpp:
+        (WebCore::CSSPageRule::reportDescendantMemoryUsage):
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore::CSSPrimitiveValue::reportDescendantMemoryUsage):
+        * css/CSSProperty.cpp:
+        (WebCore::CSSProperty::reportMemoryUsage):
+        * css/CSSReflectValue.cpp:
+        (WebCore::CSSReflectValue::reportDescendantMemoryUsage):
+        * css/CSSRule.cpp:
+        (WebCore::CSSRule::reportBaseClassMemoryUsage):
+        * css/CSSRuleList.cpp:
+        (WebCore::StaticCSSRuleList::reportMemoryUsage):
+        * css/CSSRuleList.h:
+        * css/CSSSelectorList.cpp:
+        (WebCore::CSSSelectorList::reportMemoryUsage):
+        * css/CSSStyleRule.cpp:
+        (WebCore::CSSStyleRule::reportDescendantMemoryUsage):
+        * css/CSSStyleSheet.cpp:
+        (WebCore::CSSStyleSheet::reportMemoryUsage):
+        * css/CSSTimingFunctionValue.cpp:
+        (WebCore::CSSLinearTimingFunctionValue::reportDescendantMemoryUsage):
+        (WebCore::CSSCubicBezierTimingFunctionValue::reportDescendantMemoryUsage):
+        (WebCore::CSSStepsTimingFunctionValue::reportDescendantMemoryUsage):
+        * css/CSSUnicodeRangeValue.cpp:
+        (WebCore::CSSUnicodeRangeValue::reportDescendantMemoryUsage):
+        * css/CSSUnknownRule.h:
+        (WebCore::CSSUnknownRule::reportDescendantMemoryUsage):
+        * css/CSSValue.cpp:
+        (WebCore::TextCloneCSSValue::reportDescendantMemoryUsage):
+        * css/CSSValueList.cpp:
+        (WebCore::CSSValueList::reportDescendantMemoryUsage):
+        * css/CSSVariableValue.h:
+        (WebCore::CSSVariableValue::reportDescendantMemoryUsage):
+        * css/FontFeatureValue.cpp:
+        (WebCore::FontFeatureValue::reportDescendantMemoryUsage):
+        * css/FontValue.cpp:
+        (WebCore::FontValue::reportDescendantMemoryUsage):
+        * css/MediaList.cpp:
+        (WebCore::MediaQuerySet::reportMemoryUsage):
+        (WebCore::MediaList::reportMemoryUsage):
+        * css/MediaQuery.cpp:
+        (WebCore::MediaQuery::reportMemoryUsage):
+        * css/MediaQueryExp.cpp:
+        (WebCore::MediaQueryExp::reportMemoryUsage):
+        * css/PropertySetCSSStyleDeclaration.cpp:
+        (WebCore::PropertySetCSSStyleDeclaration::reportMemoryUsage):
+        (WebCore::StyleRuleCSSStyleDeclaration::reportMemoryUsage):
+        (WebCore::InlineCSSStyleDeclaration::reportMemoryUsage):
+        * css/ShadowValue.cpp:
+        (WebCore::ShadowValue::reportDescendantMemoryUsage):
+        * css/StylePropertySet.cpp:
+        (WebCore::StylePropertySet::reportMemoryUsage):
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::Features::reportMemoryUsage):
+        (WebCore::StyleResolver::collectMatchingRulesForList):
+        * css/StyleRule.cpp:
+        (WebCore::StyleRuleBase::reportMemoryUsage):
+        (WebCore::StyleRule::reportDescendantMemoryUsage):
+        (WebCore::StyleRulePage::reportDescendantMemoryUsage):
+        (WebCore::StyleRuleFontFace::reportDescendantMemoryUsage):
+        (WebCore::StyleRuleBlock::reportDescendantMemoryUsage):
+        (WebCore::StyleRuleMedia::reportDescendantMemoryUsage):
+        (WebCore::StyleRuleRegion::reportDescendantMemoryUsage):
+        * css/StyleRuleImport.cpp:
+        (WebCore::StyleRuleImport::reportDescendantMemoryUsage):
+        * css/StyleSheetContents.cpp:
+        (WebCore::StyleSheetContents::reportMemoryUsage):
+        * css/WebKitCSSFilterValue.cpp:
+        (WebCore::WebKitCSSFilterValue::reportDescendantMemoryUsage):
+        * css/WebKitCSSKeyframeRule.cpp:
+        (WebCore::StyleKeyframe::reportMemoryUsage):
+        (WebCore::WebKitCSSKeyframeRule::reportDescendantMemoryUsage):
+        * css/WebKitCSSKeyframesRule.cpp:
+        (WebCore::StyleRuleKeyframes::reportDescendantMemoryUsage):
+        (WebCore::WebKitCSSKeyframesRule::reportDescendantMemoryUsage):
+        * css/WebKitCSSMixFunctionValue.cpp:
+        (WebCore::WebKitCSSMixFunctionValue::reportDescendantMemoryUsage):
+        * css/WebKitCSSRegionRule.cpp:
+        (WebCore::WebKitCSSRegionRule::reportDescendantMemoryUsage):
+        * css/WebKitCSSSVGDocumentValue.cpp:
+        (WebCore::WebKitCSSSVGDocumentValue::reportDescendantMemoryUsage):
+        * css/WebKitCSSShaderValue.cpp:
+        (WebCore::WebKitCSSShaderValue::reportDescendantMemoryUsage):
+        * css/WebKitCSSTransformValue.cpp:
+        (WebCore::WebKitCSSTransformValue::reportDescendantMemoryUsage):
+        * dom/CharacterData.cpp:
+        (WebCore::CharacterData::reportMemoryUsage):
+        * dom/ContainerNode.h:
+        (WebCore::ContainerNode::reportMemoryUsage):
+        * dom/Document.cpp:
+        (WebCore::Document::reportMemoryUsage):
+        * dom/Element.h:
+        (WebCore::Element::reportMemoryUsage):
+        * dom/ElementAttributeData.cpp:
+        (WebCore::ElementAttributeData::reportMemoryUsage):
+        * dom/MemoryInstrumentation.h:
+        (MemoryInstrumentation):
+        (MemoryObjectInfo):
+        (WebCore::MemoryObjectInfo::reportObjectInfo):
+        (MemoryClassInfo):
+        (WebCore::MemoryClassInfo::MemoryClassInfo):
+        * dom/Node.cpp:
+        (WebCore::Node::reportMemoryUsage):
+        * dom/QualifiedName.h:
+        (WebCore::QualifiedName::QualifiedNameImpl::reportMemoryUsage):
+        (WebCore::QualifiedName::reportMemoryUsage):
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::reportMemoryUsage):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::reportMemoryUsage):
+        * loader/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::reportMemoryUsage):
+        * loader/cache/CachedCSSStyleSheet.cpp:
+        (WebCore::CachedCSSStyleSheet::reportMemoryUsage):
+        * loader/cache/CachedFont.cpp:
+        (WebCore::CachedFont::reportMemoryUsage):
+        * loader/cache/CachedImage.cpp:
+        (WebCore::CachedImage::reportMemoryUsage):
+        * loader/cache/CachedRawResource.cpp:
+        (WebCore::CachedRawResource::reportMemoryUsage):
+        * loader/cache/CachedResource.cpp:
+        (WebCore::CachedResource::reportMemoryUsage):
+        * loader/cache/CachedResourceHandle.cpp:
+        (WebCore::CachedResourceHandleBase::reportMemoryUsage):
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::reportMemoryUsage):
+        * loader/cache/CachedSVGDocument.cpp:
+        (WebCore::CachedSVGDocument::reportMemoryUsage):
+        * loader/cache/CachedScript.cpp:
+        (WebCore::CachedScript::reportMemoryUsage):
+        * loader/cache/CachedShader.cpp:
+        (WebCore::CachedShader::reportMemoryUsage):
+        * loader/cache/CachedXSLStyleSheet.cpp:
+        (WebCore::CachedXSLStyleSheet::reportMemoryUsage):
+        * loader/cache/MemoryCache.cpp:
+        (WebCore::MemoryCache::reportMemoryUsage):
+        * page/Frame.cpp:
+        (WebCore::Frame::reportMemoryUsage):
+        * platform/SharedBuffer.cpp:
+        (WebCore::SharedBuffer::reportMemoryUsage):
+        * platform/TreeShared.h:
+        (WebCore::TreeShared::reportMemoryUsage):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::reportMemoryUsage):
+        * rendering/style/StyleRareInheritedData.cpp:
+        (WebCore::StyleRareInheritedData::reportMemoryUsage):
+        * rendering/style/StyleRareNonInheritedData.cpp:
+        (WebCore::StyleRareNonInheritedData::reportMemoryUsage):
+        * svg/SVGColor.cpp:
+        (WebCore::SVGColor::reportDescendantMemoryUsage):
+        * svg/SVGPaint.cpp:
+        (WebCore::SVGPaint::reportDescendantMemoryUsage):
+
 2012-08-02  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] Remove Qt 4 specific code paths

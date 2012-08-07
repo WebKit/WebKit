@@ -99,7 +99,7 @@ CachedFont* CSSFontFaceSrcValue::cachedFont(Document* document)
 
 void CSSFontFaceSrcValue::reportDescendantMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
-    MemoryClassInfo<CSSFontFaceSrcValue> info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
+    MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
     info.addMember(m_resource);
     info.addMember(m_format);
     // FIXME: add m_cachedFont when MemoryCache is instrumented.

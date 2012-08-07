@@ -880,7 +880,7 @@ void CachedResourceLoader::printPreloadStats()
 
 void CachedResourceLoader::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
-    MemoryClassInfo<CachedResourceLoader> info(memoryObjectInfo, this, MemoryInstrumentation::Loader);
+    MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::Loader);
     info.addHashMap(m_documentResources);
     for (DocumentResourceMap::const_iterator i = m_documentResources.begin(); i != m_documentResources.end(); ++i) {
         info.addMember(i->first);

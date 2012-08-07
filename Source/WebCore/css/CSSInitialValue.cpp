@@ -33,7 +33,7 @@ String CSSInitialValue::customCssText() const
 
 void CSSInitialValue::reportDescendantMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
-    MemoryClassInfo<CSSInitialValue> info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
+    MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
 }
 
 } // namespace WebCore

@@ -289,7 +289,7 @@ bool StyleRareNonInheritedData::transitionDataEquivalent(const StyleRareNonInher
 
 void StyleRareNonInheritedData::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
-    MemoryClassInfo<StyleRareNonInheritedData> info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
+    MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
 #if ENABLE(DASHBOARD_SUPPORT)
     info.addVector(m_dashboardRegions);
 #endif

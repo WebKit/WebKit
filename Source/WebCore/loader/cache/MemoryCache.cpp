@@ -717,7 +717,7 @@ MemoryCache::Statistics MemoryCache::getStatistics()
 
 void MemoryCache::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
-    MemoryClassInfo<MemoryCache> info(memoryObjectInfo, this, MemoryInstrumentation::MemoryCacheStructures);
+    MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::MemoryCacheStructures);
     info.addHashMap(m_resources);
     CachedResourceMap::const_iterator e = m_resources.end();
     for (CachedResourceMap::const_iterator i = m_resources.begin(); i != e; ++i) {

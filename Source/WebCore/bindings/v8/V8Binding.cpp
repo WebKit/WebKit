@@ -93,7 +93,7 @@ void V8BindingPerIsolateData::dispose(v8::Isolate* isolate)
 
 void V8BindingPerIsolateData::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
-    MemoryClassInfo<V8BindingPerIsolateData> info(memoryObjectInfo, this, MemoryInstrumentation::Binding);
+    MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::Binding);
     info.addHashMap(m_rawTemplates);
     info.addHashMap(m_templates);
     info.addInstrumentedMember(m_stringCache);
@@ -596,7 +596,7 @@ v8::Persistent<v8::FunctionTemplate> getToStringTemplate()
 
 void StringCache::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
-    MemoryClassInfo<StringCache> info(memoryObjectInfo, this, MemoryInstrumentation::Binding);
+    MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::Binding);
     info.addHashMap(m_stringCache);
 }
     

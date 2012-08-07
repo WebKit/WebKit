@@ -286,7 +286,7 @@ void ElementAttributeData::detachAttrObjectsFromElement(Element* element) const
 
 void ElementAttributeData::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
-    MemoryClassInfo<ElementAttributeData> info(memoryObjectInfo, this, MemoryInstrumentation::DOM);
+    MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::DOM);
     info.addInstrumentedMember(m_inlineStyleDecl);
     info.addInstrumentedMember(m_attributeStyle);
     info.addMember(m_classNames);

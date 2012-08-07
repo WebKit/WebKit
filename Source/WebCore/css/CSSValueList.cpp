@@ -199,7 +199,7 @@ PassRefPtr<CSSValueList> CSSValueList::cloneForCSSOM() const
 
 void CSSValueList::reportDescendantMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
-    MemoryClassInfo<CSSValueList> info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
+    MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
     info.addInstrumentedVector(m_values);
 }
 

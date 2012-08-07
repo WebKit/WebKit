@@ -94,7 +94,7 @@ unsigned CharacterData::parserAppendData(const UChar* data, unsigned dataLength,
 
 void CharacterData::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
-    MemoryClassInfo<CharacterData> info(memoryObjectInfo, this, MemoryInstrumentation::DOM);
+    MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::DOM);
     Node::reportMemoryUsage(memoryObjectInfo);
     info.addMember(m_data);
 }

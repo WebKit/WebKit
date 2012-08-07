@@ -90,7 +90,7 @@ String CSSCalcValue::customCssText() const
 
 void CSSCalcValue::reportDescendantMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
-    MemoryClassInfo<CSSCalcValue> info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
+    MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
 }
     
 double CSSCalcValue::clampToPermittedRange(double value) const
@@ -184,7 +184,7 @@ public:
 
     virtual void reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const OVERRIDE
     {
-        MemoryClassInfo<CSSCalcPrimitiveValue> info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
+        MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
         info.addInstrumentedMember(m_value);
     }
     
@@ -274,7 +274,7 @@ public:
 
     virtual void reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const OVERRIDE
     {
-        MemoryClassInfo<CSSCalcBinaryOperation> info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
+        MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
         info.addInstrumentedMember(m_leftSide);
         info.addInstrumentedMember(m_rightSide);
     }

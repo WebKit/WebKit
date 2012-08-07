@@ -114,7 +114,7 @@ PassRefPtr<SVGPaint> SVGPaint::cloneForCSSOM() const
 
 void SVGPaint::reportDescendantMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
-    MemoryClassInfo<SVGPaint> info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
+    MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
     info.addMember(m_uri);
 }
 

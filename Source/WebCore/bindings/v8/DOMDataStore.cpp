@@ -121,7 +121,7 @@ void* DOMDataStore::getDOMWrapperMap(DOMWrapperMapType type)
 
 void DOMDataStore::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
-    MemoryClassInfo<DOMDataStore> info(memoryObjectInfo, this, MemoryInstrumentation::Binding);
+    MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::Binding);
     info.addInstrumentedMember(m_domNodeMap);
     info.addInstrumentedMember(m_activeDomNodeMap);
     info.addInstrumentedMember(m_domObjectMap);

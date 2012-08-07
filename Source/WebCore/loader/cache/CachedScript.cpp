@@ -129,7 +129,7 @@ void CachedScript::sourceProviderCacheSizeChanged(int delta)
 
 void CachedScript::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
-    MemoryClassInfo<CachedScript> info(memoryObjectInfo, this, MemoryInstrumentation::CachedResourceScript);
+    MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::CachedResourceScript);
     CachedResource::reportMemoryUsage(memoryObjectInfo);
     info.addMember(m_script);
     info.addMember(m_decoder);

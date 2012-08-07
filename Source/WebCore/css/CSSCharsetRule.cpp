@@ -38,7 +38,7 @@ String CSSCharsetRule::cssText() const
 
 void CSSCharsetRule::reportDescendantMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
-    MemoryClassInfo<CSSCharsetRule> info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
+    MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
     CSSRule::reportBaseClassMemoryUsage(memoryObjectInfo);
     info.addMember(m_encoding);
 }

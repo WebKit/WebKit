@@ -75,7 +75,7 @@ String CSSLineBoxContainValue::customCssText() const
 
 void CSSLineBoxContainValue::reportDescendantMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
-    MemoryClassInfo<CSSLineBoxContainValue> info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
+    MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
 }
 
 }

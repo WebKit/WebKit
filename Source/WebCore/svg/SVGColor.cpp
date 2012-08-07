@@ -107,7 +107,7 @@ PassRefPtr<SVGColor> SVGColor::cloneForCSSOM() const
 
 void SVGColor::reportDescendantMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
-    MemoryClassInfo<SVGColor> info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
+    MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
 }
 
 }

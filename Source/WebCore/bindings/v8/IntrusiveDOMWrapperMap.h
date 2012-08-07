@@ -104,7 +104,7 @@ class ChunkedTable {
 
     void reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     {
-        MemoryClassInfo<ChunkedTable> info(memoryObjectInfo, this, MemoryInstrumentation::Binding);
+        MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::Binding);
         for (Chunk* chunk = m_chunks; chunk; chunk = chunk->m_previous)
             info.addMember(chunk);
     }
@@ -186,7 +186,7 @@ public:
 
     virtual void reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const OVERRIDE
     {
-        MemoryClassInfo<IntrusiveDOMWrapperMap> info(memoryObjectInfo, this, MemoryInstrumentation::Binding);
+        MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::Binding);
         info.addInstrumentedMember(m_table);
     }
 

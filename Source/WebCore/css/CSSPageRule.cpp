@@ -97,7 +97,7 @@ void CSSPageRule::reattach(StyleRulePage* rule)
 
 void CSSPageRule::reportDescendantMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
-    MemoryClassInfo<CSSPageRule> info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
+    MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
     CSSRule::reportBaseClassMemoryUsage(memoryObjectInfo);
     info.addInstrumentedMember(m_pageRule);
     info.addInstrumentedMember(m_propertiesCSSOMWrapper);

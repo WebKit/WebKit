@@ -165,14 +165,14 @@ PassRefPtr<CSSImageSetValue> CSSImageSetValue::cloneForCSSOM() const
 
 void CSSImageSetValue::reportDescendantMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
-    MemoryClassInfo<CSSImageSetValue> info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
+    MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
     CSSValueList::reportDescendantMemoryUsage(memoryObjectInfo);
     info.addInstrumentedVector(m_imagesInSet);
 }
 
 void CSSImageSetValue::ImageWithScale::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
-    MemoryClassInfo<CSSImageSetValue::ImageWithScale> info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
+    MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
     info.addMember(imageURL);
 }
 

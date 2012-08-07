@@ -66,7 +66,7 @@ void CSSFontFaceRule::reattach(StyleRuleFontFace* rule)
 
 void CSSFontFaceRule::reportDescendantMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
-    MemoryClassInfo<CSSFontFaceRule> info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
+    MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
     CSSRule::reportBaseClassMemoryUsage(memoryObjectInfo);
     info.addInstrumentedMember(m_fontFaceRule);
     info.addInstrumentedMember(m_propertiesCSSOMWrapper);

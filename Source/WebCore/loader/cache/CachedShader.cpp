@@ -70,7 +70,7 @@ void CachedShader::data(PassRefPtr<SharedBuffer> data, bool allDataReceived)
 
 void CachedShader::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
-    MemoryClassInfo<CachedShader> info(memoryObjectInfo, this, MemoryInstrumentation::CachedResourceShader);
+    MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::CachedResourceShader);
     CachedResource::reportMemoryUsage(memoryObjectInfo);
     info.addMember(m_decoder);
     info.addMember(m_shaderString);

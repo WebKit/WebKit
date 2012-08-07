@@ -33,7 +33,7 @@ public:
 
     void reportDescendantMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     {
-        MemoryClassInfo<CSSUnknownRule> info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
+        MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
         CSSRule::reportBaseClassMemoryUsage(memoryObjectInfo);
     }
 };

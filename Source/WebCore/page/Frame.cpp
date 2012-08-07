@@ -690,7 +690,7 @@ void Frame::dispatchVisibilityStateChangeEvent()
 
 void Frame::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
-    MemoryClassInfo<Frame> info(memoryObjectInfo, this, MemoryInstrumentation::DOM);
+    MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::DOM);
     info.addInstrumentedMember(m_doc.get());
     info.addInstrumentedMember(m_loader);
 }

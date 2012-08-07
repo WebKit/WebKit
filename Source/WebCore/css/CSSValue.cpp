@@ -81,7 +81,7 @@ public:
 
     void reportDescendantMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     {
-        MemoryClassInfo<TextCloneCSSValue> info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
+        MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
         info.addMember(m_cssText);
     }
 

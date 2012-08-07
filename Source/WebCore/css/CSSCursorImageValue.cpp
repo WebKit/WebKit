@@ -135,7 +135,7 @@ void CSSCursorImageValue::removeReferencedElement(SVGElement* element)
 
 void CSSCursorImageValue::reportDescendantMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
-    MemoryClassInfo<CSSCursorImageValue> info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
+    MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
     CSSImageValue::reportDescendantMemoryUsage(memoryObjectInfo);
 #if ENABLE(SVG)
     info.addInstrumentedHashSet(m_referencedElements);

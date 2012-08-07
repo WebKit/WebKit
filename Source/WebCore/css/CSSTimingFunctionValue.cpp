@@ -38,7 +38,7 @@ String CSSLinearTimingFunctionValue::customCssText() const
 
 void CSSLinearTimingFunctionValue::reportDescendantMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
-    MemoryClassInfo<CSSLinearTimingFunctionValue> info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
+    MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
 }
 
 String CSSCubicBezierTimingFunctionValue::customCssText() const
@@ -57,7 +57,7 @@ String CSSCubicBezierTimingFunctionValue::customCssText() const
 
 void CSSCubicBezierTimingFunctionValue::reportDescendantMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
-    MemoryClassInfo<CSSCubicBezierTimingFunctionValue> info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
+    MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
 }
 
 String CSSStepsTimingFunctionValue::customCssText() const
@@ -72,7 +72,7 @@ String CSSStepsTimingFunctionValue::customCssText() const
 
 void CSSStepsTimingFunctionValue::reportDescendantMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
-    MemoryClassInfo<CSSStepsTimingFunctionValue> info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
+    MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
 }
 
 } // namespace WebCore

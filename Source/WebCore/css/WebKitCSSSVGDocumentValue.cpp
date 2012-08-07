@@ -66,7 +66,7 @@ String WebKitCSSSVGDocumentValue::customCssText() const
 
 void WebKitCSSSVGDocumentValue::reportDescendantMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
-    MemoryClassInfo<WebKitCSSSVGDocumentValue> info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
+    MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
     info.addMember(m_url);
     // FIXME: add m_document when cached resources are instrumented.
 }

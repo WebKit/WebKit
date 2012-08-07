@@ -88,7 +88,7 @@ public:
 
     virtual void reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const OVERRIDE
     {
-        MemoryClassInfo<LiveCSSRuleList<Rule> > info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
+        MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
         info.addInstrumentedMember(m_rule);
     }
     

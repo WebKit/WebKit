@@ -52,7 +52,7 @@ String CSSFunctionValue::customCssText() const
 
 void CSSFunctionValue::reportDescendantMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
-    MemoryClassInfo<CSSFunctionValue> info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
+    MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
     info.addMember(m_name);
     info.addInstrumentedMember(m_args);
 }

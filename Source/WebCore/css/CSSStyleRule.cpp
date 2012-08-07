@@ -130,7 +130,7 @@ void CSSStyleRule::reattach(StyleRule* rule)
 
 void CSSStyleRule::reportDescendantMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
-    MemoryClassInfo<CSSStyleRule> info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
+    MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
     CSSRule::reportBaseClassMemoryUsage(memoryObjectInfo);
     info.addInstrumentedMember(m_styleRule);
     info.addInstrumentedMember(m_propertiesCSSOMWrapper);

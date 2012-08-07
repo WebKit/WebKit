@@ -43,7 +43,7 @@ void CachedResourceHandleBase::setResource(CachedResource* resource)
 
 void CachedResourceHandleBase::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
-    MemoryClassInfo<CachedResourceHandleBase> info(memoryObjectInfo, this, MemoryInstrumentation::CachedResource);
+    MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::CachedResource);
     info.addInstrumentedMember(m_resource);
 }
 

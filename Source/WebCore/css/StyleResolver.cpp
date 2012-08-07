@@ -738,7 +738,7 @@ void StyleResolver::Features::clear()
 
 void StyleResolver::Features::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
-    MemoryClassInfo<StyleResolver::Features> info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
+    MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
     info.addHashSet(idsInRules);
     info.addHashSet(attrsInRules);
     info.addVector(siblingRules);
@@ -2513,7 +2513,7 @@ RuleData::RuleData(StyleRule* rule, CSSSelector* selector, unsigned position, bo
 
 void RuleData::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
-    MemoryClassInfo<RuleData> info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
+    MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
 }
 
 RuleSet::RuleSet()
@@ -2522,8 +2522,7 @@ RuleSet::RuleSet()
 {
 }
 
-
-static void reportAtomRuleMap(MemoryClassInfo<RuleSet>* info, const RuleSet::AtomRuleMap& atomicRuleMap)
+static void reportAtomRuleMap(MemoryClassInfo* info, const RuleSet::AtomRuleMap& atomicRuleMap)
 {
     info->addHashMap(atomicRuleMap);
     for (RuleSet::AtomRuleMap::const_iterator it = atomicRuleMap.begin(); it != atomicRuleMap.end(); ++it)
@@ -2532,7 +2531,7 @@ static void reportAtomRuleMap(MemoryClassInfo<RuleSet>* info, const RuleSet::Ato
 
 void RuleSet::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
-    MemoryClassInfo<RuleSet> info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
+    MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
     reportAtomRuleMap(&info, m_idRules);
     reportAtomRuleMap(&info, m_classRules);
     reportAtomRuleMap(&info, m_tagRules);
@@ -2546,7 +2545,7 @@ void RuleSet::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 
 void RuleSet::RuleSetSelectorPair::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
-    MemoryClassInfo<RuleSet::RuleSetSelectorPair> info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
+    MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
     info.addInstrumentedMember(ruleSet);
 }
 
@@ -5667,25 +5666,25 @@ void StyleResolver::loadPendingResources()
 
 void StyleResolver::MatchedProperties::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
-    MemoryClassInfo<StyleResolver::MatchedProperties> info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
+    MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
     info.addInstrumentedMember(properties);
 }
 
 void StyleResolver::MatchedPropertiesCacheItem::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
-    MemoryClassInfo<StyleResolver::MatchedPropertiesCacheItem> info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
+    MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
     info.addInstrumentedVector(matchedProperties);
 }
 
 void MediaQueryResult::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
-    MemoryClassInfo<MediaQueryResult> info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
+    MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
     info.addInstrumentedMember(m_expression);
 }
 
 void StyleResolver::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
-    MemoryClassInfo<StyleResolver> info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
+    MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
     info.addMember(m_style);
     info.addInstrumentedMember(m_authorStyle);
     info.addInstrumentedMember(m_userStyle);

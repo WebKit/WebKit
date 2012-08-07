@@ -110,7 +110,7 @@ void WebKitCSSRegionRule::reattach(StyleRuleRegion* rule)
 
 void WebKitCSSRegionRule::reportDescendantMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
-    MemoryClassInfo<WebKitCSSRegionRule> info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
+    MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
     CSSRule::reportBaseClassMemoryUsage(memoryObjectInfo);
     info.addInstrumentedMember(m_regionRule);
     info.addInstrumentedVector(m_childRuleCSSOMWrappers);

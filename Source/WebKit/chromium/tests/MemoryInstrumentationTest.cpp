@@ -55,7 +55,7 @@ public:
 
     virtual void reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     {
-        MemoryClassInfo<Instrumented> info(memoryObjectInfo, this, MemoryInstrumentation::DOM);
+        MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::DOM);
         info.addMember(m_notInstrumented);
     }
     NotInstrumented* m_notInstrumented;
@@ -119,7 +119,7 @@ public:
 
     virtual void reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     {
-        MemoryClassInfo<InstrumentedRefPtr> info(memoryObjectInfo, this, MemoryInstrumentation::DOM);
+        MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::DOM);
         info.addMember(m_notInstrumented);
     }
     NotInstrumented* m_notInstrumented;
@@ -152,7 +152,7 @@ public:
 
     virtual void reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     {
-        MemoryClassInfo<InstrumentedWithOwnPtr> info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
+        MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
         Instrumented::reportMemoryUsage(memoryObjectInfo);
         info.addMember(m_notInstrumentedOwnPtr);
     }
@@ -175,7 +175,7 @@ public:
 
     void reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     {
-        MemoryClassInfo<InstrumentedOther> info(memoryObjectInfo, this, MemoryInstrumentation::Other);
+        MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::Other);
     }
     int m_data;
 };
@@ -186,7 +186,7 @@ public:
 
     void reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     {
-        MemoryClassInfo<InstrumentedDOM> info(memoryObjectInfo, this, MemoryInstrumentation::DOM);
+        MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::DOM);
         info.addInstrumentedMember(m_instrumentedOther);
     }
     OwnPtr<InstrumentedOther> m_instrumentedOther;
@@ -207,7 +207,7 @@ class NonVirtualInstrumented {
 public:
     void reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     {
-        MemoryClassInfo<NonVirtualInstrumented> info(memoryObjectInfo, this, MemoryInstrumentation::DOM);
+        MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::DOM);
         info.addInstrumentedMember(m_instrumented);
     }
 

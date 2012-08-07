@@ -50,7 +50,7 @@ public:
 
     void reportDescendantMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     {
-        MemoryClassInfo<CSSVariableValue> info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
+        MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
         info.addMember(m_name);
         info.addMember(m_value);
     }

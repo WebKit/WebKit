@@ -40,7 +40,7 @@ String CSSUnicodeRangeValue::customCssText() const
 
 void CSSUnicodeRangeValue::reportDescendantMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
-    MemoryClassInfo<CSSUnicodeRangeValue> info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
+    MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
 }
 
 }

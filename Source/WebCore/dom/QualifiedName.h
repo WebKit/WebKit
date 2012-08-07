@@ -52,7 +52,7 @@ public:
 
         void reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
         {
-            MemoryClassInfo<QualifiedNameImpl> info(memoryObjectInfo, this, MemoryInstrumentation::DOM);
+            MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::DOM);
             info.addMember(m_prefix);
             info.addMember(m_localName);
             info.addMember(m_namespace);
@@ -103,7 +103,7 @@ public:
     
     void reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     {
-        MemoryClassInfo<QualifiedName> info(memoryObjectInfo, this, MemoryInstrumentation::DOM);
+        MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::DOM);
         info.addInstrumentedMember(m_impl);
     }
 private:

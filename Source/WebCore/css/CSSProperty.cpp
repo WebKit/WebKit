@@ -697,7 +697,7 @@ bool CSSProperty::isInheritedProperty(CSSPropertyID propertyID)
 
 void CSSProperty::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
-    MemoryClassInfo<CSSProperty> info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
+    MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
     info.addInstrumentedMember(m_value);
 }
 

@@ -264,7 +264,7 @@ bool StyleRareInheritedData::shadowDataEquivalent(const StyleRareInheritedData& 
 
 void StyleRareInheritedData::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
-    MemoryClassInfo<StyleRareInheritedData> info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
+    MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
     info.addMember(textShadow);
     info.addMember(highlight);
     info.addMember(cursorData);

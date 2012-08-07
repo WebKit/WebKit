@@ -80,7 +80,7 @@ String ShadowValue::customCssText() const
 
 void ShadowValue::reportDescendantMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
-    MemoryClassInfo<ShadowValue> info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
+    MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
     info.addInstrumentedMember(x);
     info.addInstrumentedMember(y);
     info.addInstrumentedMember(blur);

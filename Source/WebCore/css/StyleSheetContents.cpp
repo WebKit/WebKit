@@ -484,7 +484,7 @@ void StyleSheetContents::removedFromMemoryCache()
 
 void StyleSheetContents::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
-    MemoryClassInfo<StyleSheetContents> info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
+    MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
     info.addMember(m_originalURL);
     info.addMember(m_encodingFromCharsetRule);
     info.addVector(m_importRules);

@@ -56,7 +56,7 @@ private:
 
     virtual void reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const OVERRIDE
     {
-        MemoryClassInfo<StyleSheetCSSRuleList> info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
+        MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
         info.addInstrumentedMember(m_styleSheet);
     }
     
@@ -177,7 +177,7 @@ void CSSStyleSheet::reattachChildRuleCSSOMWrappers()
 
 void CSSStyleSheet::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
-    MemoryClassInfo<CSSStyleSheet> info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
+    MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
     info.addInstrumentedMember(m_contents);
     info.addMember(m_title);
     info.addInstrumentedMember(m_mediaQueries);

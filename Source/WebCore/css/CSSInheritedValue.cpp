@@ -33,7 +33,7 @@ String CSSInheritedValue::customCssText() const
 
 void CSSInheritedValue::reportDescendantMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
-    MemoryClassInfo<CSSInheritedValue> info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
+    MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
 }
 
 } // namespace WebCore

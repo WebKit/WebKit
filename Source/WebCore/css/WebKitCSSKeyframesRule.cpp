@@ -89,7 +89,7 @@ int StyleRuleKeyframes::findKeyframeIndex(const String& key) const
 
 void StyleRuleKeyframes::reportDescendantMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
-    MemoryClassInfo<StyleRuleKeyframes> info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
+    MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
     info.addInstrumentedVector(m_keyframes);
     info.addMember(m_name);
 }
@@ -208,7 +208,7 @@ void WebKitCSSKeyframesRule::reattach(StyleRuleKeyframes* rule)
 
 void WebKitCSSKeyframesRule::reportDescendantMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
-    MemoryClassInfo<WebKitCSSKeyframesRule> info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
+    MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
     CSSRule::reportBaseClassMemoryUsage(memoryObjectInfo);
     info.addInstrumentedMember(m_keyframesRule);
     info.addInstrumentedVector(m_childRuleCSSOMWrappers);

@@ -248,7 +248,7 @@ const Vector<char>& SharedBuffer::buffer() const
 
 void SharedBuffer::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
-    MemoryClassInfo<SharedBuffer> info(memoryObjectInfo, this, MemoryInstrumentation::Other);
+    MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::Other);
     info.addVector(m_buffer);
     info.addVector(m_segments);
     for (unsigned i = 0; i < m_segments.size(); ++i)

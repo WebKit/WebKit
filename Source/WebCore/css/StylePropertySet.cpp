@@ -1091,7 +1091,7 @@ unsigned StylePropertySet::averageSizeInBytes()
 
 void StylePropertySet::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
-    MemoryClassInfo<StylePropertySet> info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
+    MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
     if (m_isMutable)
         info.addVectorPtr(m_mutablePropertyVector);
     else

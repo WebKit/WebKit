@@ -530,7 +530,7 @@ AsyncFileStream* ResourceLoader::createAsyncFileStream(FileStreamClient* client)
 
 void ResourceLoader::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
-    MemoryClassInfo<ResourceLoader> info(memoryObjectInfo, this, MemoryInstrumentation::Loader);
+    MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::Loader);
     info.addMember(m_handle.get());
     info.addInstrumentedMember(m_frame);
     info.addInstrumentedMember(m_documentLoader);
