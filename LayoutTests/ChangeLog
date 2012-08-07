@@ -1,3 +1,13 @@
+2012-08-07  Abhishek Arya  <inferno@chromium.org>
+
+        Crash in InlineFlowBox::deleteLine.
+        https://bugs.webkit.org/show_bug.cgi?id=88795
+
+        Reviewed by Tony Chang.
+
+        * fullscreen/full-screen-line-boxes-crash-expected.txt: Added.
+        * fullscreen/full-screen-line-boxes-crash.html: Added.
+
 2012-08-07  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unreviewed gardening.
