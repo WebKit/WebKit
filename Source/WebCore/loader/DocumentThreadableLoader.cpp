@@ -146,7 +146,8 @@ DocumentThreadableLoader::~DocumentThreadableLoader()
 
 void DocumentThreadableLoader::cancel()
 {
-    if (m_client) {
+    // Cacnel can re-enter and m_resource might be null here as a result.
+    if (m_client && m_resource) {
         ResourceError error(errorDomainWebKitInternal, 0, m_resource->url(), "Load cancelled");
         error.setIsCancellation(true);
         didFail(error);
@@ -163,9 +164,13 @@ void DocumentThreadableLoader::setDefersLoading(bool value)
 
 void DocumentThreadableLoader::clearResource()
 {
-    if (m_resource) {
-        m_resource->removeClient(this);
+    // Script can cancel and restart a request reentrantly within removeClient(),
+    // which could lead to calling CachedResource::removeClient() multiple times for
+    // this DocumentThreadableLoader. Save off a copy of m_resource and clear it to
+    // prevent the reentrancy.
+    if (CachedResourceHandle<CachedRawResource> resource = m_resource) {
         m_resource = 0;
+        resource->removeClient(this);
     }
 }
 
