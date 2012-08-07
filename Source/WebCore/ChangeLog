@@ -1,3 +1,18 @@
+2012-08-07  Alexander Pavlov  <apavlov@chromium.org>
+
+        Web Inspector: Typing backslash in Console traverses the panel history when using German keyboard layout
+        https://bugs.webkit.org/show_bug.cgi?id=93357
+
+        Reviewed by Vsevolod Vlasov.
+
+        For some reason, in the German keyboard layout keyIdentifier for '\' is the same as that for '['
+        in the ordinary English-US layout.
+        Remove a too-safe-side check and never switch panels on key combinations that result in "keypress" events.
+
+        * inspector/front-end/InspectorView.js:
+        (WebInspector.InspectorView):
+        (WebInspector.InspectorView.prototype._keyPress):
+
 2012-08-07  Robin Cao  <robin.cao@torchmobile.com.cn>
 
         [BlackBerry] GL scissor test is accidentally turned off

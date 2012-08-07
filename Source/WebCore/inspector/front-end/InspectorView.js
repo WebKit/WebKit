@@ -44,13 +44,9 @@ WebInspector.InspectorView = function()
     document.addEventListener("keypress", this._keyPress.bind(this), false);
     this._panelOrder = [];
 
-    // Windows and Mac have two different definitions of '[', so accept both.
+    // Windows and Mac have two different definitions of '[' and ']', so accept both of each.
     this._openBracketIdentifiers = ["U+005B", "U+00DB"].keySet();
-    this._openBracketCharCode = "[".charCodeAt(0);
-
-    // Windows and Mac have two different definitions of ']', so accept both.
     this._closeBracketIdentifiers = ["U+005D", "U+00DD"].keySet();
-    this._closeBracketCharCode = "]".charCodeAt(0);
     this._footerElementContainer = this.element.createChild("div", "inspector-footer status-bar hidden");
     this._panelsElement = this.element.createChild("div", "fill");
 }
@@ -98,13 +94,8 @@ WebInspector.InspectorView.prototype = {
 
     _keyPress: function(event)
     {
-        if (!this._keyDownTimer)
-            return;
-
-        if (event.charCode === this._openBracketCharCode || event.charCode === this._closeBracketCharCode) {
-            clearTimeout(this._keyDownTimer);
-            delete this._keyDownTimer;
-        }
+        clearTimeout(this._keyDownTimer);
+        delete this._keyDownTimer;
     },
 
     _keyDown: function(event)
