@@ -1,3 +1,36 @@
+2012-08-07  Lucas Forschler  <lforschler@apple.com>
+
+    Merge 124393
+
+    2012-08-01  Brady Eidson  <beidson@apple.com>
+
+            Small part of "Out-of-process plug-ins should support asynchronous initialization."
+            <rdar://problem/10598594> and https://bugs.webkit.org/show_bug.cgi?id=92919
+
+            Reviewed by Anders Carlsson.
+
+            Add API-level preferences for:
+            - Is asynchronous plug-in initialization enabled.
+            - Is an artificial initialization delay (for testing purposes) enabled.
+
+            * Shared/WebPreferencesStore.h:
+            (WebKit):
+
+            * UIProcess/API/C/WKPreferences.cpp:
+            (WKPreferencesSetAsynchronousPluginInitializationEnabled):
+            (WKPreferencesGetAsynchronousPluginInitializationEnabled):
+            (WKPreferencesSetArtificialPluginInitializationDelayEnabled):
+            (WKPreferencesGetArtificialPluginInitializationDelayEnabled):
+            * UIProcess/API/C/WKPreferencesPrivate.h:
+
+            * WebProcess/WebPage/WebPage.cpp:
+            (WebKit::WebPage::WebPage):
+            (WebKit::WebPage::updatePreferences):
+            * WebProcess/WebPage/WebPage.h:
+            (WebKit::WebPage::asynchronousPluginInitializationEnabled):
+            (WebKit::WebPage::artificialPluginInitializationDelayEnabled):
+            (WebPage):
+
 2012-08-06  Lucas Forschler  <lforschler@apple.com>
 
     Merge 123907
