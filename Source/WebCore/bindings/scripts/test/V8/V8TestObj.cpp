@@ -38,7 +38,6 @@
 #include "ScriptProfile.h"
 #include "SerializedScriptValue.h"
 #include "V8Binding.h"
-#include "V8BindingMacros.h"
 #include "V8DOMStringList.h"
 #include "V8DOMWrapper.h"
 #include "V8Document.h"

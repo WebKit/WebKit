@@ -34,7 +34,6 @@
 #include "SerializedScriptValue.h"
 
 #include "V8Binding.h"
-#include "V8BindingMacros.h"
 #include "V8DOMWrapper.h"
 #include "V8Intent.h"
 #include "V8MessagePort.h"

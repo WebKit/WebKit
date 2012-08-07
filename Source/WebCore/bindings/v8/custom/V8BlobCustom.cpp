@@ -35,7 +35,6 @@
 #include "V8ArrayBuffer.h"
 #include "V8ArrayBufferView.h"
 #include "V8Binding.h"
-#include "V8BindingMacros.h"
 #include "V8Blob.h"
 #include "V8File.h"
 #include "V8Proxy.h"

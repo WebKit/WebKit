@@ -27,7 +27,6 @@
 #include "V8WebKitAnimation.h"
 
 #include "V8Binding.h"
-#include "V8BindingMacros.h"
 #include "V8Proxy.h"
 #include "WebKitAnimation.h"
 

@@ -37,7 +37,6 @@
 #include "SVGLengthContext.h"
 #include "SVGPropertyTearOff.h"
 #include "V8Binding.h"
-#include "V8BindingMacros.h"
 
 namespace WebCore {
 

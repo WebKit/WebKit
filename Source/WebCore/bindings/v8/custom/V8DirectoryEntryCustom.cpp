@@ -36,7 +36,6 @@
 #include "DirectoryEntry.h"
 #include "ExceptionCode.h"
 #include "V8Binding.h"
-#include "V8BindingMacros.h"
 #include "V8EntryCallback.h"
 #include "V8ErrorCallback.h"
 #include "V8Proxy.h"

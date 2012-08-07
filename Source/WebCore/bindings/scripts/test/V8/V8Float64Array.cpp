@@ -27,7 +27,6 @@
 #include "RuntimeEnabledFeatures.h"
 #include "V8ArrayBufferView.h"
 #include "V8Binding.h"
-#include "V8BindingMacros.h"
 #include "V8DOMWrapper.h"
 #include "V8Float32Array.h"
 #include "V8Int32Array.h"

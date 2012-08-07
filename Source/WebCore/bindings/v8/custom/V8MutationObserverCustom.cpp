@@ -37,7 +37,6 @@
 #include "ExceptionCode.h"
 #include "MutationObserver.h"
 #include "V8Binding.h"
-#include "V8BindingMacros.h"
 #include "V8DOMWrapper.h"
 #include "V8MutationCallback.h"
 #include "V8Proxy.h"

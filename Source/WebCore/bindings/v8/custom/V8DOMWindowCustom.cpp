@@ -56,7 +56,6 @@
 #include "SharedWorkerRepository.h"
 #include "Storage.h"
 #include "V8Binding.h"
-#include "V8BindingMacros.h"
 #include "V8EventListener.h"
 #include "V8GCForContextDispose.h"
 #include "V8HiddenPropertyName.h"

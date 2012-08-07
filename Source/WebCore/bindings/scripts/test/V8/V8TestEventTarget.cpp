@@ -26,7 +26,6 @@
 #include "ExceptionCode.h"
 #include "RuntimeEnabledFeatures.h"
 #include "V8Binding.h"
-#include "V8BindingMacros.h"
 #include "V8Collection.h"
 #include "V8DOMWrapper.h"
 #include "V8Event.h"

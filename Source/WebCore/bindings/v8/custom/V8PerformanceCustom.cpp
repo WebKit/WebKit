@@ -36,7 +36,6 @@
 
 #include "Performance.h"
 #include "V8Binding.h"
-#include "V8BindingMacros.h"
 #include "V8MemoryInfo.h"
 
 namespace WebCore {

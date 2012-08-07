@@ -1,5 +1,55 @@
 2012-08-07  Kentaro Hara  <haraken@chromium.org>
 
+        [V8] Remove #include V8BindingMacros.h
+        https://bugs.webkit.org/show_bug.cgi?id=93312
+
+        Reviewed by Eric Seidel.
+
+        We are factoring out V8Binding methods to separate files.
+        After the refactoring, V8Binding.h will include binding related
+        header files (e.g. V8BindingMacros.h, V8BindingHelper.h, etc), so that
+        custom V8 binding files just need to include V8Binding.h only.
+
+        We can remove '#include V8BindingMacros.h' from V8 binding files.
+
+        No tests. No change in behavior.
+
+        * bindings/scripts/CodeGeneratorV8.pm:
+        (GenerateNormalAttrSetter):
+        (GenerateParametersCheck):
+        (GenerateEventConstructorCallback):
+        (ConvertToV8Parameter):
+        * bindings/scripts/test/V8/V8Float64Array.cpp:
+        * bindings/scripts/test/V8/V8TestActiveDOMObject.cpp:
+        * bindings/scripts/test/V8/V8TestCustomNamedGetter.cpp:
+        * bindings/scripts/test/V8/V8TestEventConstructor.cpp:
+        * bindings/scripts/test/V8/V8TestEventTarget.cpp:
+        * bindings/scripts/test/V8/V8TestInterface.cpp:
+        * bindings/scripts/test/V8/V8TestMediaQueryListListener.cpp:
+        * bindings/scripts/test/V8/V8TestNamedConstructor.cpp:
+        * bindings/scripts/test/V8/V8TestObj.cpp:
+        * bindings/scripts/test/V8/V8TestSerializedScriptValueInterface.cpp:
+        * bindings/v8/ScriptController.cpp:
+        * bindings/v8/custom/V8BlobCustom.cpp:
+        * bindings/v8/custom/V8ConsoleCustom.cpp:
+        * bindings/v8/custom/V8DOMWindowCustom.cpp:
+        * bindings/v8/custom/V8DataViewCustom.cpp:
+        * bindings/v8/custom/V8DeviceMotionEventCustom.cpp:
+        * bindings/v8/custom/V8DeviceOrientationEventCustom.cpp:
+        * bindings/v8/custom/V8DirectoryEntryCustom.cpp:
+        * bindings/v8/custom/V8DirectoryEntrySyncCustom.cpp:
+        * bindings/v8/custom/V8IntentConstructor.cpp:
+        * bindings/v8/custom/V8MutationObserverCustom.cpp:
+        * bindings/v8/custom/V8PerformanceCustom.cpp:
+        * bindings/v8/custom/V8SQLTransactionCustom.cpp:
+        * bindings/v8/custom/V8SQLTransactionSyncCustom.cpp:
+        * bindings/v8/custom/V8SVGLengthCustom.cpp:
+        * bindings/v8/custom/V8WebGLRenderingContextCustom.cpp:
+        * bindings/v8/custom/V8WebKitAnimationCustom.cpp:
+        * bindings/v8/custom/V8WorkerContextCustom.cpp:
+
+2012-08-07  Kentaro Hara  <haraken@chromium.org>
+
         [V8] Remove #include Frame.h from V8Binding.h
         https://bugs.webkit.org/show_bug.cgi?id=93326
 

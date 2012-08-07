@@ -1115,8 +1115,6 @@ sub GenerateNormalAttrSetter
     my $implClassName = shift;
     my $interfaceName = shift;
 
-    AddToImplIncludes("V8BindingMacros.h");
-
     my $attrName = $attribute->signature->name;
     my $attrExt = $attribute->signature->extendedAttributes;
 
@@ -1739,7 +1737,6 @@ sub GenerateParametersCheck
             my $value = JSValueToNative($parameter, "MAYBE_MISSING_PARAMETER(args, $paramIndex, $parameterDefaultPolicy)", "args.GetIsolate()");
             $parameterCheckString .= "    " . ConvertToV8Parameter($parameter, $nativeType, $parameterName, $value) . "\n";
         } else {
-            AddToImplIncludes("V8BindingMacros.h");
             # If the "StrictTypeChecking" extended attribute is present, and the argument's type is an
             # interface type, then if the incoming value does not implement that interface, a TypeError
             # is thrown rather than silently passing NULL to the C++ code.
@@ -1878,7 +1875,6 @@ sub GenerateEventConstructorCallback
     my $implClassName = shift;
 
     AddToImplIncludes("Dictionary.h");
-    AddToImplIncludes("V8BindingMacros.h");
     push(@implContent, <<END);
 v8::Handle<v8::Value> V8${implClassName}::constructorCallback(const v8::Arguments& args)
 {
@@ -4161,7 +4157,6 @@ sub ConvertToV8Parameter
 
     die "Wrong native type passed: $nativeType" unless $nativeType =~ /^V8Parameter/;
     if ($signature->type eq "DOMString") {
-        AddToImplIncludes("V8BindingMacros.h");
         my $macro = "STRING_TO_V8PARAMETER_EXCEPTION_BLOCK";
         $macro .= "_$suffix" if $suffix;
         return "$macro($nativeType, $variableName, $value);"

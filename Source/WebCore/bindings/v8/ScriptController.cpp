@@ -55,7 +55,6 @@
 #include "Settings.h"
 #include "UserGestureIndicator.h"
 #include "V8Binding.h"
-#include "V8BindingMacros.h"
 #include "V8DOMWindow.h"
 #include "V8Event.h"
 #include "V8HiddenPropertyName.h"

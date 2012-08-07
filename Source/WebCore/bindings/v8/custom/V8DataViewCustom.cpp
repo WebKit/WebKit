@@ -28,7 +28,6 @@
 
 #include "V8ArrayBufferViewCustom.h"
 #include "V8Binding.h"
-#include "V8BindingMacros.h"
 #include "V8DataView.h"
 #include "V8Proxy.h"
 
