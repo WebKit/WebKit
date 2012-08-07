@@ -1,3 +1,23 @@
+2012-08-07  Antonio Gomes  <agomes@rim.com>
+
+        [BlackBerry][FullScreen] Remove the set/reset of touch modes code when entering/leaving fullscreen
+        https://bugs.webkit.org/show_bug.cgi?id=92520
+        PR #184511
+
+        Reviewed by Yong Li.
+        Internally reviewed by Gen Mak.
+
+        Remove touch mode set/reset when entering/leaving fullscreen
+        for media elements through the new FULLSCREEN_API code path.
+        The client now handles it.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::WebPagePrivate):
+        (BlackBerry::WebKit::WebPagePrivate::enterFullScreenForElement):
+        (BlackBerry::WebKit::WebPagePrivate::exitFullScreenForElement):
+        * Api/WebPage_p.h:
+        (WebPagePrivate):
+
 2012-08-07  Konrad Piascik  <kpiascik@rim.com>
 
         [BlackBerry] Add missing include in FrameLoaderClienBlackBerry after Base64 moved.

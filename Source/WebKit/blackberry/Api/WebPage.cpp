@@ -371,9 +371,6 @@ WebPagePrivate::WebPagePrivate(WebPage* webPage, WebPageClient* client, const In
 #if ENABLE(EVENT_MODE_METATAGS)
     , m_cursorEventMode(ProcessedCursorEvents)
     , m_touchEventMode(ProcessedTouchEvents)
-#if ENABLE(FULLSCREEN_API)
-    , m_touchEventModePriorGoingFullScreen(ProcessedTouchEvents)
-#endif
 #endif
 #if ENABLE(FULLSCREEN_API) && ENABLE(VIDEO)
     , m_scaleBeforeFullScreen(-1.0)
@@ -6095,10 +6092,6 @@ void WebPagePrivate::enterFullScreenForElement(Element* element)
         m_xScrollOffsetBeforeFullScreen = scrollPosition.x();
         m_mainFrame->view()->setScrollPosition(WebCore::IntPoint(0, scrollPosition.y()));
 
-#if ENABLE(EVENT_MODE_METATAGS)
-        m_touchEventModePriorGoingFullScreen = m_touchEventMode;
-        didReceiveTouchEventMode(PureTouchEventsWithMouseConversion);
-#endif
         // The current scale can be clamped to a greater minimum scale when we relayout contents during
         // the change of the viewport size. Cache the current scale so that we can restore it when
         // leaving fullscreen. Otherwise, it is possible that we will use the wrong scale.
@@ -6133,10 +6126,6 @@ void WebPagePrivate::exitFullScreenForElement(Element* element)
             WebCore::IntPoint(m_xScrollOffsetBeforeFullScreen, scrollPosition.y()));
         m_xScrollOffsetBeforeFullScreen = -1;
 
-#if ENABLE(EVENT_MODE_METATAGS)
-        didReceiveTouchEventMode(m_touchEventModePriorGoingFullScreen);
-        m_touchEventModePriorGoingFullScreen = ProcessedTouchEvents;
-#endif
         if (m_scaleBeforeFullScreen > 0) {
             // Restore the scale when leaving fullscreen. We can't use TransformationMatrix::scale(double) here, as it
             // will multiply the scale rather than set the scale.
