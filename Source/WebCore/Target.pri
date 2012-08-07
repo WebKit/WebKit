@@ -3028,13 +3028,9 @@ contains(DEFINES, ENABLE_FILE_SYSTEM=1) {
 
 contains(DEFINES, ENABLE_MEDIA_SOURCE=1) {
     HEADERS += \
-        Modules/mediasource/MediaSource.h \
-        Modules/mediasource/MediaSourceRegistry.h \
         Modules/mediasource/SourceBuffer.h \
         Modules/mediasource/SourceBufferList.h
     SOURCES += \
-        Modules/mediasource/MediaSource.cpp \
-        Modules/mediasource/MediaSourceRegistry.cpp \
         Modules/mediasource/SourceBuffer.cpp \
         Modules/mediasource/SourceBufferList.cpp
 }

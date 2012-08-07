@@ -383,8 +383,6 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSMediaError.h \
 	DerivedSources/WebCore/JSMediaList.cpp \
 	DerivedSources/WebCore/JSMediaList.h \
-	DerivedSources/WebCore/JSMediaSource.cpp \
-	DerivedSources/WebCore/JSMediaSource.h \
 	DerivedSources/WebCore/JSMediaStream.cpp \
 	DerivedSources/WebCore/JSMediaStream.h \
 	DerivedSources/WebCore/JSMediaStreamEvent.cpp \
@@ -702,7 +700,6 @@ dom_binding_idls += \
 	$(WebCore)/Modules/geolocation/PositionCallback.idl \
 	$(WebCore)/Modules/geolocation/PositionError.idl \
 	$(WebCore)/Modules/geolocation/PositionErrorCallback.idl \
-	$(WebCore)/Modules/mediasource/MediaSource.idl \
 	$(WebCore)/Modules/mediasource/SourceBuffer.idl \
 	$(WebCore)/Modules/mediasource/SourceBufferList.idl \
 	$(WebCore)/Modules/mediastream/DOMWindowMediaStream.idl \
@@ -1175,10 +1172,6 @@ webcore_modules_sources += \
 	Source/WebCore/Modules/indexeddb/PageGroupIndexedDatabase.h \
 	Source/WebCore/Modules/indexeddb/WorkerContextIndexedDatabase.cpp \
 	Source/WebCore/Modules/indexeddb/WorkerContextIndexedDatabase.h \
-	Source/WebCore/Modules/mediasource/MediaSource.cpp \
-	Source/WebCore/Modules/mediasource/MediaSource.h \
-	Source/WebCore/Modules/mediasource/MediaSourceRegistry.cpp \
-	Source/WebCore/Modules/mediasource/MediaSourceRegistry.h \
 	Source/WebCore/Modules/mediasource/SourceBuffer.cpp \
 	Source/WebCore/Modules/mediasource/SourceBuffer.h \
 	Source/WebCore/Modules/mediasource/SourceBufferList.cpp \

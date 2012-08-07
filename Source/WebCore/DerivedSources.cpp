@@ -237,9 +237,6 @@
 #include "JSMediaError.cpp"
 #include "JSMediaList.cpp"
 #include "JSMediaQueryList.cpp"
-#if ENABLE(MEDIA_SOURCE)
-#include "JSMediaSource.cpp"
-#endif
 #include "JSMemoryInfo.cpp"
 #include "JSMessageChannel.cpp"
 #include "JSMessageEvent.cpp"

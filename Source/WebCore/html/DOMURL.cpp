@@ -42,37 +42,12 @@
 #include <wtf/PassOwnPtr.h>
 #include <wtf/MainThread.h>
 
-#if ENABLE(MEDIA_SOURCE)
-#include "MediaSource.h"
-#include "MediaSourceRegistry.h"
-#endif
-
 #if ENABLE(MEDIA_STREAM)
 #include "MediaStream.h"
 #include "MediaStreamRegistry.h"
 #endif
 
 namespace WebCore {
-
-#if ENABLE(MEDIA_SOURCE)
-String DOMURL::createObjectURL(ScriptExecutionContext* scriptExecutionContext, MediaSource* source)
-{
-    // Since WebWorkers cannot obtain MediaSource objects, we should be on the main thread.
-    ASSERT(isMainThread());
-
-    if (!scriptExecutionContext || !source)
-        return String();
-
-    KURL publicURL = BlobURL::createPublicURL(scriptExecutionContext->securityOrigin());
-    if (publicURL.isEmpty())
-        return String();
-
-    MediaSourceRegistry::registry().registerMediaSourceURL(publicURL, source);
-    scriptExecutionContext->publicURLManager().streamURLs().add(publicURL.string());
-
-    return publicURL.string();
-}
-#endif
 
 #if ENABLE(MEDIA_STREAM)
 String DOMURL::createObjectURL(ScriptExecutionContext* scriptExecutionContext, MediaStream* stream)

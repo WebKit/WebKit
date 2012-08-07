@@ -34,7 +34,6 @@
 #if ENABLE(MEDIA_SOURCE)
 
 #include "ExceptionCode.h"
-#include "MediaSource.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
@@ -45,9 +44,9 @@ class TimeRanges;
 
 class SourceBuffer : public RefCounted<SourceBuffer> {
 public:
-    static PassRefPtr<SourceBuffer> create(const String& id, PassRefPtr<MediaSource> source)
+    static PassRefPtr<SourceBuffer> create(const String& id)
     {
-        return adoptRef(new SourceBuffer(id, source));
+        return adoptRef(new SourceBuffer(id));
     }
 
     virtual ~SourceBuffer();
@@ -60,13 +59,12 @@ public:
     
     const String& id() const { return m_id; }
 
-    void clear() { m_source.clear(); }
+    void clear() { }
 
 private:
-    explicit SourceBuffer(const String& id, PassRefPtr<MediaSource>);
+    explicit SourceBuffer(const String& id);
 
     String m_id;
-    RefPtr<MediaSource> m_source;
 };
 
 } // namespace WebCore

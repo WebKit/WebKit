@@ -194,7 +194,6 @@ SET(WebCore_IDL_FILES
     Modules/intents/IntentResultCallback.idl
     Modules/intents/NavigatorIntents.idl
 
-    Modules/mediasource/MediaSource.idl
     Modules/mediasource/SourceBuffer.idl
     Modules/mediasource/SourceBufferList.idl
 
@@ -825,7 +824,6 @@ SET(WebCore_SOURCES
     Modules/intents/IntentRequest.cpp
     Modules/intents/NavigatorIntents.cpp
 
-    Modules/mediasource/MediaSource.cpp
     Modules/mediasource/SourceBuffer.cpp
     Modules/mediasource/SourceBufferList.cpp
 

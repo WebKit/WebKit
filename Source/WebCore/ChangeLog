@@ -1,5 +1,49 @@
 2012-08-06  Sheriff Bot  <webkit.review.bot@gmail.com>
 
+        Unreviewed, rolling out r124780.
+        http://trac.webkit.org/changeset/124780
+        https://bugs.webkit.org/show_bug.cgi?id=93340
+
+        We don't want an incomplete feature set for the chromium
+        branch cut. (Requested by annacc on #webkit).
+
+        * CMakeLists.txt:
+        * DerivedSources.cpp:
+        * DerivedSources.make:
+        * DerivedSources.pri:
+        * GNUmakefile.list.am:
+        * Modules/mediasource/MediaSource.cpp: Removed.
+        * Modules/mediasource/MediaSource.h: Removed.
+        * Modules/mediasource/MediaSource.idl: Removed.
+        * Modules/mediasource/MediaSourceRegistry.cpp: Removed.
+        * Modules/mediasource/MediaSourceRegistry.h: Removed.
+        * Modules/mediasource/SourceBuffer.cpp:
+        (WebCore::SourceBuffer::SourceBuffer):
+        (WebCore::SourceBuffer::buffered):
+        (WebCore::SourceBuffer::append):
+        (WebCore::SourceBuffer::abort):
+        * Modules/mediasource/SourceBuffer.h:
+        (WebCore::SourceBuffer::create):
+        (WebCore::SourceBuffer::clear):
+        (SourceBuffer):
+        * Modules/mediasource/SourceBufferList.cpp:
+        * Modules/mediasource/SourceBufferList.h:
+        * Target.pri:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/EventTarget.h:
+        (WebCore):
+        * dom/EventTargetFactory.in:
+        * html/DOMURL.cpp:
+        * html/DOMURL.h:
+        (WebCore):
+        (DOMURL):
+        * html/DOMURL.idl:
+        * page/DOMWindow.idl:
+
+2012-08-06  Sheriff Bot  <webkit.review.bot@gmail.com>
+
         Unreviewed, rolling out r124798.
         http://trac.webkit.org/changeset/124798
         https://bugs.webkit.org/show_bug.cgi?id=93337
