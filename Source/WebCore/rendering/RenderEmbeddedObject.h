@@ -90,7 +90,7 @@ private:
 
 inline RenderEmbeddedObject* toRenderEmbeddedObject(RenderObject* object)
 {
-    ASSERT(!object || !strcmp(object->renderName(), "RenderEmbeddedObject"));
+    ASSERT(!object || object->isEmbeddedObject());
     return static_cast<RenderEmbeddedObject*>(object);
 }
 
