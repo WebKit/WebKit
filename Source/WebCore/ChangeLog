@@ -1,3 +1,28 @@
+2012-08-07  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL] Remove PlatformTouchEventEfl and PlatformTouchPointEfl
+        https://bugs.webkit.org/show_bug.cgi?id=93270
+
+        Reviewed by Eric Seidel.
+
+        PlatformTouchEventEfl and PlatformTouchPointEfl initialize PlatformTouchEvent
+        directly from Ewk_TouchEvent which is WebKit1/Efl API and they can not be
+        shared with WebKit2/Efl.
+
+        In order to remove this WebKit dependency from WebCore, this patch removes Efl
+        specific codes from PlatformTouchXXX and adds the classes which convert
+        Ewk_Touch_XXX to PlatformTouchXXX.
+
+        No new tests. Just a refactoring.
+
+        * PlatformEfl.cmake: Removed PlatformTouchEventEfl.cpp and PlatformTouchPointEfl.cpp
+        * platform/PlatformTouchEvent.h: Removed Efl specific codes.
+        (PlatformTouchEvent):
+        * platform/PlatformTouchPoint.h: Ditto.
+        (PlatformTouchPoint):
+        * platform/efl/PlatformTouchEventEfl.cpp: Removed.
+        * platform/efl/PlatformTouchPointEfl.cpp: Removed.
+
 2012-08-07  James Robinson  <jamesr@chromium.org>
 
         [chromium] Avoid dependending on implicit WebString -> String conversion in compositor

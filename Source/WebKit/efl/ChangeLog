@@ -1,3 +1,25 @@
+2012-08-07  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL] Remove PlatformTouchEventEfl and PlatformTouchPointEfl
+        https://bugs.webkit.org/show_bug.cgi?id=93270
+
+        Reviewed by Eric Seidel.
+
+        * ewk/ewk_frame.cpp:
+        (ewk_frame_feed_touch_event):
+        * ewk/ewk_touch_event.cpp: Added.
+        (WebKitPlatformTouchPoint):
+        (WebKitPlatformTouchPoint::WebKitPlatformTouchPoint):
+        Added to initialize members of PlatformTouchPoint.
+        (WebKitPlatformTouchEvent):
+        (WebKitPlatformTouchEvent::WebKitPlatformTouchEvent):
+        Added to initialize members of PlatformTouchEvent.
+        (EWKPrivate):
+        (EWKPrivate::platformTouchEvent):
+        Converted Ewk_Touch_Event to PlatformTouchEvent.
+        * ewk/ewk_touch_event_private.h: 
+        (EWKPrivate):
+
 2012-08-07  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         CUSTOM_SCHEME_HANDLER flag should depend on REGISTER_PROTOCOL_HANDLER

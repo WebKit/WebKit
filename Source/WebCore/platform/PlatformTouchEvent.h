@@ -32,10 +32,6 @@ class QTouchEvent;
 QT_END_NAMESPACE
 #endif
 
-#if PLATFORM(EFL)
-typedef struct _Eina_List Eina_List;
-#endif
-
 #if PLATFORM(BLACKBERRY)
 namespace BlackBerry {
 namespace Platform {
@@ -60,9 +56,7 @@ public:
     {
     }
 
-#if PLATFORM(EFL)
-    PlatformTouchEvent(const Eina_List*, const IntPoint, PlatformEvent::Type, PlatformEvent::Modifiers);
-#elif PLATFORM(BLACKBERRY)
+#if PLATFORM(BLACKBERRY)
     explicit PlatformTouchEvent(BlackBerry::Platform::TouchEvent*);
 #endif
 

@@ -136,6 +136,7 @@ LIST(APPEND WebKit_SOURCES
     efl/ewk/ewk_tiled_backing_store.cpp
     efl/ewk/ewk_tiled_matrix.cpp
     efl/ewk/ewk_tiled_model.cpp
+    efl/ewk/ewk_touch_event.cpp
     efl/ewk/ewk_util.cpp
     efl/ewk/ewk_view.cpp
     efl/ewk/ewk_view_single.cpp

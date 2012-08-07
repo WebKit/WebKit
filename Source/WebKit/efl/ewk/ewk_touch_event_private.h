@@ -1,21 +1,19 @@
 /*
- * Copyright (C) 2009-2010 Samsung Electronics
- *
- * All rights reserved.
+ * Copyright (C) 2012 Samsung Electronics
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
- * 1. Redistributions of source code must retain the above copyright
+ *  * Redistributions of source code must retain the above copyright
  *    notice, this list of conditions and the following disclaimer.
- * 2. Redistributions in binary form must reproduce the above copyright
+ *  * Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
  *
- * THIS SOFTWARE IS PROVIDED BY APPLE COMPUTER, INC. ``AS IS'' AND ANY
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS ``AS IS'' AND ANY
  * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE COMPUTER, INC. OR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE COPYRIGHT OWNER OR
  * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
  * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
  * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
@@ -25,19 +23,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "PlatformTouchPoint.h"
+#ifndef ewk_touch_event_private_h
+#define ewk_touch_event_private_h
 
-#if ENABLE(TOUCH_EVENTS)
+#include "PlatformTouchEvent.h"
+#include "ewk_frame.h"
 
-namespace WebCore {
+namespace EWKPrivate {
+WebCore::PlatformTouchEvent platformTouchEvent(Evas_Coord x, Evas_Coord y, Eina_List* points, Ewk_Touch_Event_Type action, unsigned modifiers);
+} // namespace EWKPrivate
 
-PlatformTouchPoint::PlatformTouchPoint(unsigned id, const IntPoint& windowPos, State state)
-    : m_id(id)
-    , m_state(state)
-    , m_screenPos(windowPos)
-    , m_pos(windowPos) { }
-
-}
-
-#endif
+#endif // ewk_touch_event_private_h
