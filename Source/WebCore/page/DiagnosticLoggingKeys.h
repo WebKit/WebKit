@@ -37,6 +37,8 @@ public:
     static const String& mediaLoadingFailedKey();
     static const String& pluginLoadedKey();
     static const String& pluginLoadingFailedKey();
+    static const String& pageContainsPluginKey();
+    static const String& pageContainsAtLeastOnePluginKey();
     
     // Success keys
     static const String& passKey();
