@@ -171,11 +171,7 @@ bool FECustomFilter::initializeContext()
     if (!m_context)
         return false;
     m_context->makeContextCurrent();
-    
-    // FIXME: The shader and the mesh can be shared across multiple elements when possible.
-    // Sharing the shader means it's no need to analyze / compile and upload to GPU again.
-    // https://bugs.webkit.org/show_bug.cgi?id=88427
-    m_compiledProgram = m_program->compileProgramWithContext(m_context.get());
+    m_compiledProgram = m_globalContext->getCompiledProgram(m_program->programInfo());
 
     // FIXME: Sharing the mesh would just save the time needed to upload it to the GPU, so I assume we could
     // benchmark that for performance.

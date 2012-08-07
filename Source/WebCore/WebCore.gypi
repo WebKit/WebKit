@@ -3690,6 +3690,8 @@
             'platform/graphics/filters/CustomFilterParameter.h',
             'platform/graphics/filters/CustomFilterProgram.cpp',
             'platform/graphics/filters/CustomFilterProgram.h',
+            'platform/graphics/filters/CustomFilterProgramInfo.cpp',
+            'platform/graphics/filters/CustomFilterProgramInfo.h',
             'platform/graphics/filters/CustomFilterCompiledProgram.cpp',
             'platform/graphics/filters/CustomFilterCompiledProgram.h',
             'platform/graphics/filters/CustomFilterMesh.cpp',

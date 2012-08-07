@@ -31673,6 +31673,14 @@
 						>
 					</File>
 					<File
+						RelativePath="..\platform\graphics\filters\CustomFilterProgramInfo.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\platform\graphics\filters\CustomFilterProgramInfo.h"
+						>
+					</File>
+					<File
 						RelativePath="..\platform\graphics\filters\CustomFilterProgramClient.h"
 						>
 					</File>

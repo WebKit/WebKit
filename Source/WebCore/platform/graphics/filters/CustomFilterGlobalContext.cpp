@@ -32,6 +32,7 @@
 #if ENABLE(CSS_SHADERS) && USE(3D_GRAPHICS)
 #include "CustomFilterGlobalContext.h"
 
+#include "CustomFilterCompiledProgram.h"
 #include "GraphicsContext3D.h"
 
 namespace WebCore {
@@ -42,6 +43,8 @@ CustomFilterGlobalContext::CustomFilterGlobalContext()
 
 CustomFilterGlobalContext::~CustomFilterGlobalContext()
 {
+    for (CustomFilterCompiledProgramsMap::iterator iter = m_programs.begin(); iter != m_programs.end(); ++iter)
+        iter->second->detachFromGlobalContext();
 }
 
 void CustomFilterGlobalContext::prepareContextIfNeeded(HostWindow* hostWindow)
@@ -57,6 +60,33 @@ void CustomFilterGlobalContext::prepareContextIfNeeded(HostWindow* hostWindow)
         return;
     m_context->makeContextCurrent();
     m_context->enable(GraphicsContext3D::DEPTH_TEST);
+}
+
+PassRefPtr<CustomFilterCompiledProgram> CustomFilterGlobalContext::getCompiledProgram(const CustomFilterProgramInfo& programInfo)
+{
+    // Check that the context is already prepared.
+    ASSERT(m_context);
+
+    CustomFilterCompiledProgramsMap::iterator iter = m_programs.find(programInfo);
+    if (iter != m_programs.end())
+        return iter->second;
+
+    RefPtr<CustomFilterCompiledProgram> compiledProgram = CustomFilterCompiledProgram::create(this, programInfo);
+    m_programs.set(programInfo, compiledProgram.get());
+    return compiledProgram.release();
+}
+
+void CustomFilterGlobalContext::removeCompiledProgram(const CustomFilterCompiledProgram* program)
+{
+    CustomFilterCompiledProgramsMap::iterator iter = m_programs.find(program->programInfo());
+    ASSERT(iter != m_programs.end());
+    m_programs.remove(iter);
+
+#ifndef NDEBUG
+    // Check that there's no way we could have the same program under a different key.
+    for (iter = m_programs.begin(); iter != m_programs.end(); ++iter)
+        ASSERT(iter->second != program);
+#endif
 }
 
 } // namespace WebCore

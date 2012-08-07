@@ -1,3 +1,17 @@
+2012-07-23  Alexandru Chiculita  <achicu@adobe.com>
+
+        [CSS Shaders] Reuse precompiled shaders across elements
+        https://bugs.webkit.org/show_bug.cgi?id=88427
+
+        Reviewed by Dean Jackson.
+
+        Added a new test to check for cases when CSS Shaders are removed and readded. Two cases are verified in the new test:
+        1. When all the shaders are removed.
+        2. When only some of the shaders are removed.
+
+        * css3/filters/custom/custom-filter-shader-reuse-expected.txt: Added.
+        * css3/filters/custom/custom-filter-shader-reuse.html: Added.
+
 2012-08-07  Thiago Marcos P. Santos  <thiago.santos@intel.com>
 
         [EFL] Add test expectation after r124874

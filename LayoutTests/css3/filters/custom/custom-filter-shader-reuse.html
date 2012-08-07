@@ -1,0 +1,74 @@
+<!-- This file should test that compiled custom-filters are shared between multiple elements and they do not crash. Test passes if there's no crash. -->
+<!doctype html>
+<html>
+    <head>
+        <title>Testing that compiled custom-filters are shared correctly between elements</title>
+        <script>
+            if (window.testRunner) {
+                window.testRunner.overridePreference("WebKitCSSCustomFilterEnabled", "1");
+                window.testRunner.overridePreference("WebKitWebGLEnabled", "1");
+                window.testRunner.dumpAsText(false);
+                // We need to run the tests after the downloading succeeded.
+                window.testRunner.waitUntilDone();
+            }
+
+            function changeState(state) {
+                document.body.className = state;
+                // Force a layout.
+                document.body.clientHeight;
+                if (window.testRunner) {
+                    // Force a rendering.
+                    window.testRunner.display();
+                }
+            }
+            
+            function runTest() {
+                // Turn the shaders on.
+                changeState("all-shaders-applied");
+                // Remove all the shaders, testing that the compiled shader cache is invalidate corectly.
+                changeState("");
+                // Add back just some of the shaders.
+                changeState("some-shaders-applied");
+                // Turn on all the shaders again, so that we test the destruction of the cache.
+                changeState("all-shaders-applied");
+                if (window.testRunner)
+                    window.testRunner.notifyDone();
+            }
+        </script>
+        <style>
+            body.all-shaders-applied .vertex_shader {
+                -webkit-filter: custom(url('../resources/vertex-offset.vs'));
+            }
+            body.all-shaders-applied .fragment_shader, 
+            body.some-shaders-applied .fragment_shader {
+                -webkit-filter: custom(none url('../resources/color-offset.fs'));
+            }
+            body.all-shaders-applied .both_shaders {
+                -webkit-filter: custom(url('../resources/vertex-offset.vs') url('../resources/color-offset.fs'));
+            }
+        </style>
+    </head>
+    <body onload="runTest()">
+        <img class="vertex_shader" src="../resources/reference.png" />
+        <img class="fragment_shader" src="../resources/reference.png" />
+        <img class="both_shaders" src="../resources/reference.png" />
+
+        <br />
+
+        <img class="vertex_shader" src="../resources/reference.png" />
+        <img class="fragment_shader" src="../resources/reference.png" />
+        <img class="both_shaders" src="../resources/reference.png" />
+
+        <br />
+
+        <img class="vertex_shader" src="../resources/reference.png" />
+        <img class="fragment_shader" src="../resources/reference.png" />
+        <img class="both_shaders" src="../resources/reference.png" />
+
+        <br />
+
+        <img class="vertex_shader" src="../resources/reference.png" />
+        <img class="fragment_shader" src="../resources/reference.png" />
+        <img class="both_shaders" src="../resources/reference.png" />
+    </body>
+</html>

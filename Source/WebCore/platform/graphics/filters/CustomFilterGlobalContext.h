@@ -31,12 +31,17 @@
 #define CustomFilterGlobalContext_h
 
 #if ENABLE(CSS_SHADERS) && USE(3D_GRAPHICS)
+#include "CustomFilterProgramInfo.h"
+#include <wtf/HashMap.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
 
+class CustomFilterCompiledProgram;
 class HostWindow;
 class GraphicsContext3D;
+
+typedef HashMap<CustomFilterProgramInfo, CustomFilterCompiledProgram*> CustomFilterCompiledProgramsMap;
 
 class CustomFilterGlobalContext {
 public:
@@ -47,8 +52,11 @@ public:
     
     void prepareContextIfNeeded(HostWindow*);
 
+    PassRefPtr<CustomFilterCompiledProgram> getCompiledProgram(const CustomFilterProgramInfo&);
+    void removeCompiledProgram(const CustomFilterCompiledProgram*);
 private:
     RefPtr<GraphicsContext3D> m_context;
+    CustomFilterCompiledProgramsMap m_programs;
 };
 
 } // namespace WebCore

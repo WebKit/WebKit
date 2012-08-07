@@ -1,3 +1,80 @@
+2012-07-23  Alexandru Chiculita  <achicu@adobe.com>
+
+        [CSS Shaders] Reuse precompiled shaders across elements
+        https://bugs.webkit.org/show_bug.cgi?id=88427
+
+        Reviewed by Dean Jackson.
+
+        Added CustomFilterProgramInfo as a link between the CustomFilterProgram and the CustomFilterCompiledProgram.
+        CustomFilterGlobalContext now acts as a cache for the compiled shaders. Note that only the shaders displayed on the page
+        are cached, making it useful in animations or when more elements share the same shader filter.
+
+        For CSS Shaders we need two files, vertex and fragment shaders, so that's why we have a CustomFilterProgram. 
+        CustomFilterProgram is the platform object, so StyleCustomFilterProgram implements it and is referenced from the RenderStyle.
+
+        StyleCustomFilterProgram is also the one that actually keeps references to the CachedShaders and has all the loading logic.
+        The only problem is that there might be multiple StyleCustomFilterProgram with the same set of CachedShaders.
+        That's why in this patch I've added CustomFilterProgramInfo as a simple class to be used as a key in a hash map.
+
+        For now CustomFilterProgramInfo should act similar to a pair<String, String>. There's only one exception: one of the strings
+        is allowed to be null. A null string is the placeholder for the default shader.
+
+        Note that alpha compositing and blending will be added to the CustomFilterProgramInfo after the mix() 
+        function parsing will land in https://bugs.webkit.org/show_bug.cgi?id=90101 .
+
+        Test: css3/filters/custom/custom-filter-shader-reuse.html
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/filters/CustomFilterCompiledProgram.cpp:
+        (WebCore::CustomFilterCompiledProgram::CustomFilterCompiledProgram):
+        (WebCore::CustomFilterCompiledProgram::getDefaultShaderString): Returns the default shader based on the type.
+        (WebCore):
+        (WebCore::CustomFilterCompiledProgram::compileShader): Added check for isNull and used the default shader in that case.
+        (WebCore::CustomFilterCompiledProgram::~CustomFilterCompiledProgram): Added call to CustomFilterGlobalContext::removeCompiledProgram.
+        * platform/graphics/filters/CustomFilterCompiledProgram.h:
+        (WebCore::CustomFilterCompiledProgram::detachFromGlobalContext): Called from ~CustomFilterGlobalContext, so that it doesn't call into a deleted object later when ~CustomFilterCompiledProgram is called. It should only happen when CustomFilterGlobalContext dies before the 
+        CustomFilterCompiledPrograms that it caches.
+        (WebCore):
+        * platform/graphics/filters/CustomFilterGlobalContext.cpp:
+        (WebCore::CustomFilterGlobalContext::~CustomFilterGlobalContext):
+        (WebCore::CustomFilterGlobalContext::getCompiledProgram): Gets or creates a compiled shader for a specific CustomFilterProgramInfo.
+        (WebCore):
+        (WebCore::CustomFilterGlobalContext::removeCompiledProgram): Called by ~CustomFilterCompiledProgram.
+        * platform/graphics/filters/CustomFilterGlobalContext.h:
+        (WebCore):
+        (CustomFilterGlobalContext):
+        * platform/graphics/filters/CustomFilterProgram.cpp:
+        (WebCore::CustomFilterProgram::programInfo):
+        * platform/graphics/filters/CustomFilterProgram.h:
+        (WebCore):
+        * platform/graphics/filters/CustomFilterProgramInfo.cpp: Added.
+        (WebCore):
+        (WebCore::hashPossiblyNullString): We need to allow null strings in the hash, so this is a helper to check for isNull 
+        before asking for the hash.
+        (WebCore::CustomFilterProgramInfo::CustomFilterProgramInfo):
+        (WebCore::CustomFilterProgramInfo::isEmptyValue):
+        (WebCore::CustomFilterProgramInfo::isHashTableDeletedValue):
+        (WebCore::CustomFilterProgramInfo::hash):
+        (WebCore::CustomFilterProgramInfo::operator==):
+        * platform/graphics/filters/CustomFilterProgramInfo.h: Added.
+        (WebCore):
+        (CustomFilterProgramInfo):
+        (WebCore::CustomFilterProgramInfo::vertexShaderString):
+        (WebCore::CustomFilterProgramInfo::fragmentShaderString):
+        (WebCore::CustomFilterProgramInfoHash::hash):
+        (WebCore::CustomFilterProgramInfoHash::equal):
+        (CustomFilterProgramInfoHash): Structures needed to make this a key in the hash map.
+        (CustomFilterProgramInfoHashTraits):
+        (WebCore::CustomFilterProgramInfoHashTraits::isEmptyValue): I've used the deleted strings value to mark a deleted
+        CustomFilterProgramInfo object. Those are not safe to compare to deleted, so there's a need to set safeToCompareToEmptyOrDeleted to false, meaning that there's a need to manually check for empty values.
+        (WTF):
+        * platform/graphics/filters/FECustomFilter.cpp:
+        (WebCore::FECustomFilter::initializeContext): Moved to using the cached shader instead.
+
 2012-08-07  Florin Malita  <fmalita@chromium.org>
 
         [Chromium] Unreviewed build fix after r124879.

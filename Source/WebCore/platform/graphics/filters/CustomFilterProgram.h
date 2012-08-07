@@ -43,6 +43,7 @@ namespace WebCore {
 class GraphicsContext3D;
 class CustomFilterCompiledProgram;
 class CustomFilterProgramClient;
+class CustomFilterProgramInfo;
 
 typedef struct CustomFilterProgramMixSettings {
     CustomFilterProgramMixSettings()
@@ -70,9 +71,7 @@ public:
     void addClient(CustomFilterProgramClient*);
     void removeClient(CustomFilterProgramClient*);
     
-#if USE(3D_GRAPHICS)
-    PassRefPtr<CustomFilterCompiledProgram> compileProgramWithContext(GraphicsContext3D*);
-#endif
+    CustomFilterProgramInfo programInfo() const;
 
     // StyleCustomFilterProgram has the only implementation for the following method. That means, it casts to StyleCustomFilterProgram
     // withouth checking the type. If you add another implementation, also add a mechanism to check for the correct type.

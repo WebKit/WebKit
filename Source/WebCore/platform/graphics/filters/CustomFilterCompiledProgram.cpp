@@ -32,6 +32,8 @@
 #if ENABLE(CSS_SHADERS) && USE(3D_GRAPHICS)
 #include "CustomFilterCompiledProgram.h"
  
+#include "CustomFilterGlobalContext.h"
+#include "CustomFilterProgramInfo.h"
 #include "GraphicsContext3D.h"
 
 namespace WebCore {
@@ -69,10 +71,10 @@ String CustomFilterCompiledProgram::defaultFragmentShaderString()
     return fragmentShaderString;
 }
 
-CustomFilterCompiledProgram::CustomFilterCompiledProgram(GraphicsContext3D* context, const String& vertexShaderString, const String& fragmentShaderString)
-    : m_context(context)
-    , m_vertexShaderString(!vertexShaderString.isNull() ? vertexShaderString : defaultVertexShaderString())
-    , m_fragmentShaderString(!fragmentShaderString.isNull() ? fragmentShaderString : defaultFragmentShaderString())
+CustomFilterCompiledProgram::CustomFilterCompiledProgram(CustomFilterGlobalContext* globalContext, const CustomFilterProgramInfo& programInfo)
+    : m_globalContext(globalContext)
+    , m_context(globalContext->context())
+    , m_programInfo(programInfo)
     , m_program(0)
     , m_positionAttribLocation(-1)
     , m_texAttribLocation(-1)
@@ -89,11 +91,11 @@ CustomFilterCompiledProgram::CustomFilterCompiledProgram(GraphicsContext3D* cont
 {
     m_context->makeContextCurrent();
     
-    Platform3DObject vertexShader = compileShader(GraphicsContext3D::VERTEX_SHADER, m_vertexShaderString);
+    Platform3DObject vertexShader = compileShader(GraphicsContext3D::VERTEX_SHADER, programInfo.vertexShaderString());
     if (!vertexShader)
         return;
     
-    Platform3DObject fragmentShader = compileShader(GraphicsContext3D::FRAGMENT_SHADER, m_fragmentShaderString);
+    Platform3DObject fragmentShader = compileShader(GraphicsContext3D::FRAGMENT_SHADER, programInfo.fragmentShaderString());
     if (!fragmentShader) {
         m_context->deleteShader(vertexShader);
         return;
@@ -112,10 +114,26 @@ CustomFilterCompiledProgram::CustomFilterCompiledProgram(GraphicsContext3D* cont
     m_isInitialized = true;
 }
 
+String CustomFilterCompiledProgram::getDefaultShaderString(GC3Denum shaderType)
+{
+    switch (shaderType) {
+    case GraphicsContext3D::VERTEX_SHADER:
+        return defaultVertexShaderString();
+    case GraphicsContext3D::FRAGMENT_SHADER:
+        return defaultFragmentShaderString();
+    default:
+        ASSERT_NOT_REACHED();
+        return String();
+    }
+}
+
 Platform3DObject CustomFilterCompiledProgram::compileShader(GC3Denum shaderType, const String& shaderString)
 {
     Platform3DObject shader = m_context->createShader(shaderType);
-    m_context->shaderSource(shader, shaderString);
+    if (shaderString.isNull())
+        m_context->shaderSource(shader, getDefaultShaderString(shaderType));
+    else
+        m_context->shaderSource(shader, shaderString);
     m_context->compileShader(shader);
     
     int compiled = 0;
@@ -173,6 +191,8 @@ int CustomFilterCompiledProgram::uniformLocationByName(const String& name)
     
 CustomFilterCompiledProgram::~CustomFilterCompiledProgram()
 {
+    if (m_globalContext)
+        m_globalContext->removeCompiledProgram(this);
     if (m_program) {
         m_context->makeContextCurrent();
         m_context->deleteProgram(m_program);
