@@ -418,7 +418,7 @@ class Printer(object):
             descriptions = TestExpectations.EXPECTATION_DESCRIPTIONS
             for key, tests in flaky.iteritems():
                 result = TestExpectations.EXPECTATIONS[key.lower()]
-                self._print_for_bot("unexpected flakiness: %s (%d)" % (descriptions[result][1], len(tests)))
+                self._print_for_bot("Unexpected flakiness: %s (%d)" % (descriptions[result][1], len(tests)))
                 tests.sort()
 
                 for test in tests:
@@ -435,7 +435,7 @@ class Printer(object):
             descriptions = TestExpectations.EXPECTATION_DESCRIPTIONS
             for key, tests in regressions.iteritems():
                 result = TestExpectations.EXPECTATIONS[key.lower()]
-                self._print_for_bot("Regressions: unexpected %s : (%d)" % (descriptions[result][1], len(tests)))
+                self._print_for_bot("Regressions: Unexpected %s : (%d)" % (descriptions[result][1], len(tests)))
                 tests.sort()
                 for test in tests:
                     self._print_for_bot("  %s = %s" % (test, key))

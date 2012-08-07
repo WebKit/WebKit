@@ -1,3 +1,17 @@
+2012-08-07  Csaba Osztrogonác  <ossy@webkit.org>
+
+        REGRESSION(r124800): It broke NRWT result parsing of build.webkit.org
+        https://bugs.webkit.org/show_bug.cgi?id=93346
+
+        Rubber-stamped by Simon Hausmann.
+
+        Change back "unexpected" to "Unexpected", because master.cfg's results parser expects it.
+
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_integrationtest.py:
+        (MainTest.test_retrying_and_flaky_tests):
+        * Scripts/webkitpy/layout_tests/views/printing.py:
+        (Printer._print_unexpected_results):
+
 2012-08-06  Balazs Kelemen  <kbalazs@webkit.org>
 
         [NRWT] runs platform specific tests that it shouldn't with --force
