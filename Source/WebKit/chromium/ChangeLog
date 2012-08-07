@@ -1,3 +1,12 @@
+2012-08-06  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Update chromium DEPS r150037 -> r150169
+        https://bugs.webkit.org/show_bug.cgi?id=93309
+
+        As the title says. Unreviewed.
+
+        * DEPS:
+
 2012-08-06  David Reveman  <reveman@chromium.org>
 
         [Chromium] Rename CCTextureUpdater to CCTextureUpdateQueue.
