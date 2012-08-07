@@ -52,6 +52,12 @@ public:
     {
         m_pendingTaskDelay = 0;
         m_pendingTask.clear();
+        m_runPendingTaskOnOverwrite = false;
+    }
+
+    void runPendingTaskOnOverwrite(bool enable)
+    {
+        m_runPendingTaskOnOverwrite = enable;
     }
 
     bool hasPendingTask() const { return m_pendingTask; }
@@ -71,6 +77,9 @@ public:
     virtual void postTask(PassOwnPtr<Task>) { ASSERT_NOT_REACHED(); }
     virtual void postDelayedTask(PassOwnPtr<Task> task, long long delay)
     {
+        if (m_runPendingTaskOnOverwrite && hasPendingTask())
+            runPendingTask();
+
         EXPECT_TRUE(!hasPendingTask());
         m_pendingTask = task;
         m_pendingTaskDelay = delay;
@@ -80,6 +89,7 @@ public:
 protected:
     OwnPtr<Task> m_pendingTask;
     long long m_pendingTaskDelay;
+    bool m_runPendingTaskOnOverwrite;
 };
 
 class FakeCCTimeSource : public WebCore::CCTimeSource {
@@ -93,6 +103,9 @@ public:
     virtual void setClient(WebCore::CCTimeSourceClient* client) OVERRIDE { m_client = client; }
     virtual void setActive(bool b) OVERRIDE { m_active = b; }
     virtual bool active() const OVERRIDE { return m_active; }
+    virtual void setTimebaseAndInterval(double timebase, double interval) OVERRIDE { }
+    virtual double lastTickTime() OVERRIDE { return 0; }
+    virtual double nextTickTime() OVERRIDE { return 0; }
 
     void tick()
     {

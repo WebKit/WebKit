@@ -58,8 +58,6 @@ public:
 
     void setActive(bool);
 
-    void setMaxPendingFrames(int);
-
     // Use the following methods to adjust target frame rate.
     //
     // Multiple frames can be in-progress, but for every didBeginFrame, a
@@ -70,6 +68,8 @@ public:
     void didFinishFrame();
     void didAbortAllPendingFrames();
     void setMaxFramesPending(int); // 0 for unlimited.
+
+    void setTimebaseAndInterval(double timebase, double intervalSeconds);
 
 protected:
     friend class CCFrameRateControllerTimeSourceAdapter;

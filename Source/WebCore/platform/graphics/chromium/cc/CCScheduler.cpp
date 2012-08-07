@@ -126,6 +126,11 @@ void CCScheduler::didRecreateContext()
     processScheduledActions();
 }
 
+void CCScheduler::setTimebaseAndInterval(double timebase, double intervalSeconds)
+{
+    m_frameRateController->setTimebaseAndInterval(timebase, intervalSeconds);
+}
+
 void CCScheduler::vsyncTick()
 {
     if (m_updateMoreResourcesPending) {

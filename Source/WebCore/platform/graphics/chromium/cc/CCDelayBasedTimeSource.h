@@ -44,8 +44,15 @@ public:
 
     virtual void setClient(CCTimeSourceClient* client) OVERRIDE { m_client = client; }
 
+    virtual void setTimebaseAndInterval(double timebase, double intervalSeconds) OVERRIDE;
+
     virtual void setActive(bool) OVERRIDE;
     virtual bool active() const OVERRIDE { return m_state != STATE_INACTIVE; }
+
+    // Get the last and next tick times.
+    // If not active, nextTickTime will return 0.
+    virtual double lastTickTime();
+    virtual double nextTickTime();
 
     // CCTimerClient implementation.
     virtual void onTimerFired() OVERRIDE;
@@ -62,10 +69,26 @@ protected:
         STATE_STARTING,
         STATE_ACTIVE,
     };
+
+    struct Parameters {
+        Parameters(double interval, double tickTarget)
+            : interval(interval), tickTarget(tickTarget)
+        { }
+        double interval;
+        double tickTarget;
+    };
+
     CCTimeSourceClient* m_client;
     bool m_hasTickTarget;
-    double m_intervalSeconds;
-    double m_tickTarget;
+    double m_lastTickTime;
+
+    // m_currentParameters should only be written by postNextTickTask.
+    // m_nextParameters will take effect on the next call to postNextTickTask.
+    // Maintaining a pending set of parameters allows nextTickTime() to always
+    // reflect the actual time we expect onTimerFired to be called.
+    Parameters m_currentParameters;
+    Parameters m_nextParameters;
+
     State m_state;
     CCThread* m_thread;
     CCTimer m_timer;

@@ -105,6 +105,8 @@ public:
     bool commitPending() const { return m_stateMachine.commitPending(); }
     bool redrawPending() const { return m_stateMachine.redrawPending(); }
 
+    void setTimebaseAndInterval(double timebase, double intervalSeconds);
+
     // CCFrameRateControllerClient implementation
     virtual void vsyncTick() OVERRIDE;
 

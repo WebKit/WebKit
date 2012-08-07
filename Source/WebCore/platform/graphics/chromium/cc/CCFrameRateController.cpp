@@ -98,6 +98,11 @@ void CCFrameRateController::setMaxFramesPending(int maxFramesPending)
     m_maxFramesPending = maxFramesPending;
 }
 
+void CCFrameRateController::setTimebaseAndInterval(double timebase, double intervalSeconds)
+{
+    m_timeSource->setTimebaseAndInterval(timebase, intervalSeconds);
+}
+
 void CCFrameRateController::onTimerTick()
 {
     ASSERT(m_active);

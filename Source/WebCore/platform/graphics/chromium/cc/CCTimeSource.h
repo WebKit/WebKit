@@ -50,6 +50,9 @@ public:
     virtual void setClient(CCTimeSourceClient*) = 0;
     virtual void setActive(bool) = 0;
     virtual bool active() const = 0;
+    virtual void setTimebaseAndInterval(double timebase, double intervalSeconds) = 0;
+    virtual double lastTickTime() = 0;
+    virtual double nextTickTime() = 0;
 };
 
 }

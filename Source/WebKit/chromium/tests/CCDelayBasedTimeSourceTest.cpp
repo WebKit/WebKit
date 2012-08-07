@@ -199,6 +199,120 @@ TEST(CCDelayBasedTimeSource, NextDelaySaneWhenHalfAfterRequestedTime)
     EXPECT_EQ(8, thread.pendingDelayMs());
 }
 
+// If the timebase and interval are updated with a jittery source, we want to
+// make sure we do not double tick.
+TEST(CCDelayBasedTimeSource, SaneHandlingOfJitteryTimebase)
+{
+    FakeCCThread thread;
+    FakeCCTimeSourceClient client;
+    double interval = 1.0 / 60.0;
+    RefPtr<FakeCCDelayBasedTimeSource> timer = FakeCCDelayBasedTimeSource::create(interval, &thread);
+    timer->setClient(&client);
+    timer->setActive(true);
+    // Run the first task, as that activates the timer and picks up a timebase.
+    thread.runPendingTask();
+
+    EXPECT_EQ(16, thread.pendingDelayMs());
+
+    // Jitter timebase ~1ms late
+    timer->setTimebaseAndInterval(interval + 0.001, interval);
+    timer->setMonotonicallyIncreasingTime(interval);
+    thread.runPendingTask();
+
+    // Without double tick prevention, pendingDelayMs would be 1.
+    EXPECT_EQ(17, thread.pendingDelayMs());
+
+    // Jitter timebase ~1ms early
+    timer->setTimebaseAndInterval(interval * 2 - 0.001, interval);
+    timer->setMonotonicallyIncreasingTime(interval * 2);
+    thread.runPendingTask();
+
+    EXPECT_EQ(15, thread.pendingDelayMs());
+}
+
+TEST(CCDelayBasedTimeSource, HanldlesSignificantTimebaseChangesImmediately)
+{
+    FakeCCThread thread;
+    FakeCCTimeSourceClient client;
+    double interval = 1.0 / 60.0;
+    RefPtr<FakeCCDelayBasedTimeSource> timer = FakeCCDelayBasedTimeSource::create(interval, &thread);
+    timer->setClient(&client);
+    timer->setActive(true);
+    // Run the first task, as that activates the timer and picks up a timebase.
+    thread.runPendingTask();
+
+    EXPECT_EQ(16, thread.pendingDelayMs());
+
+    // Tick, then shift timebase by +7ms.
+    timer->setMonotonicallyIncreasingTime(interval);
+    thread.runPendingTask();
+
+    EXPECT_EQ(16, thread.pendingDelayMs());
+
+    client.reset();
+    thread.runPendingTaskOnOverwrite(true);
+    timer->setTimebaseAndInterval(interval + 0.0070001, interval);
+    thread.runPendingTaskOnOverwrite(false);
+
+    EXPECT_FALSE(client.tickCalled()); // Make sure pending tasks were canceled.
+    EXPECT_EQ(7, thread.pendingDelayMs());
+
+    // Tick, then shift timebase by -7ms.
+    timer->setMonotonicallyIncreasingTime(interval + 0.0070001);
+    thread.runPendingTask();
+
+    EXPECT_EQ(16, thread.pendingDelayMs());
+
+    client.reset();
+    thread.runPendingTaskOnOverwrite(true);
+    timer->setTimebaseAndInterval(interval, interval);
+    thread.runPendingTaskOnOverwrite(false);
+
+    EXPECT_FALSE(client.tickCalled()); // Make sure pending tasks were canceled.
+    EXPECT_EQ(16-7, thread.pendingDelayMs());
+}
+
+TEST(CCDelayBasedTimeSource, HanldlesSignificantIntervalChangesImmediately)
+{
+    FakeCCThread thread;
+    FakeCCTimeSourceClient client;
+    double interval = 1.0 / 60.0;
+    RefPtr<FakeCCDelayBasedTimeSource> timer = FakeCCDelayBasedTimeSource::create(interval, &thread);
+    timer->setClient(&client);
+    timer->setActive(true);
+    // Run the first task, as that activates the timer and picks up a timebase.
+    thread.runPendingTask();
+
+    EXPECT_EQ(16, thread.pendingDelayMs());
+
+    // Tick, then double the interval.
+    timer->setMonotonicallyIncreasingTime(interval);
+    thread.runPendingTask();
+
+    EXPECT_EQ(16, thread.pendingDelayMs());
+
+    client.reset();
+    thread.runPendingTaskOnOverwrite(true);
+    timer->setTimebaseAndInterval(interval, interval * 2);
+    thread.runPendingTaskOnOverwrite(false);
+
+    EXPECT_FALSE(client.tickCalled()); // Make sure pending tasks were canceled.
+    EXPECT_EQ(33, thread.pendingDelayMs());
+
+    // Tick, then halve the interval.
+    timer->setMonotonicallyIncreasingTime(interval * 3);
+    thread.runPendingTask();
+
+    EXPECT_EQ(33, thread.pendingDelayMs());
+
+    client.reset();
+    thread.runPendingTaskOnOverwrite(true);
+    timer->setTimebaseAndInterval(interval * 3, interval);
+    thread.runPendingTaskOnOverwrite(false);
+
+    EXPECT_FALSE(client.tickCalled()); // Make sure pending tasks were canceled.
+    EXPECT_EQ(16, thread.pendingDelayMs());
+}
 
 TEST(CCDelayBasedTimeSourceTest, AchievesTargetRateWithNoNoise)
 {
