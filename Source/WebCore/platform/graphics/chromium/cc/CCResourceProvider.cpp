@@ -244,7 +244,8 @@ bool CCResourceProvider::initialize()
         // FIXME: Implement this path for software compositing.
         return false;
     }
-    String extensionsString = context3d->getString(GraphicsContext3D::EXTENSIONS);
+    WebKit::WebString extensionsWebString = context3d->getString(GraphicsContext3D::EXTENSIONS);
+    String extensionsString(extensionsWebString.data(), extensionsWebString.length());
     Vector<String> extensions;
     extensionsString.split(' ', extensions);
     bool useMapSub = false;

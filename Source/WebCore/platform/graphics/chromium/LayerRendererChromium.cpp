@@ -187,7 +187,8 @@ bool LayerRendererChromium::initialize()
 
     m_context->setContextLostCallback(this);
 
-    String extensionsString = m_context->getString(GraphicsContext3D::EXTENSIONS);
+    WebKit::WebString extensionsWebString = m_context->getString(GraphicsContext3D::EXTENSIONS);
+    String extensionsString(extensionsWebString.data(), extensionsWebString.length());
     Vector<String> extensionsList;
     extensionsString.split(' ', extensionsList);
     HashSet<String> extensions;

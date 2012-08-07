@@ -1,3 +1,15 @@
+2012-08-07  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Avoid dependending on implicit WebString -> String conversion in compositor
+        https://bugs.webkit.org/show_bug.cgi?id=93408
+
+        Reviewed by Adrienne Walker.
+
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::initialize):
+        * platform/graphics/chromium/cc/CCResourceProvider.cpp:
+        (WebCore::CCResourceProvider::initialize):
+
 2012-08-07  Kentaro Hara  <haraken@chromium.org>
 
         [V8] Factor out V8Binding methods that configures DOM attributes and methods
