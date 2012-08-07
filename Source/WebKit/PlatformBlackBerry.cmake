@@ -84,7 +84,6 @@ LIST(APPEND WebKit_SOURCES
     blackberry/WebCoreSupport/GeolocationControllerClientBlackBerry.cpp
     blackberry/WebCoreSupport/IconDatabaseClientBlackBerry.cpp
     blackberry/WebCoreSupport/InspectorClientBlackBerry.cpp
-    blackberry/WebCoreSupport/InspectorOverlay.cpp
     blackberry/WebCoreSupport/JavaScriptDebuggerBlackBerry.cpp
     blackberry/WebCoreSupport/NotificationPresenterImpl.cpp
     blackberry/WebCoreSupport/VibrationClientBlackBerry.cpp
@@ -102,6 +101,7 @@ LIST(APPEND WebKit_SOURCES
     blackberry/WebKitSupport/InputHandler.cpp
     blackberry/WebKitSupport/InRegionScrollableArea.cpp
     blackberry/WebKitSupport/InRegionScroller.cpp
+    blackberry/WebKitSupport/InspectorOverlay.cpp
     blackberry/WebKitSupport/RenderQueue.cpp
     blackberry/WebKitSupport/SelectionHandler.cpp
     blackberry/WebKitSupport/SelectionOverlay.cpp

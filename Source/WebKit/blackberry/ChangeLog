@@ -1,3 +1,31 @@
+2012-08-07  Konrad Piascik  <kpiascik@rim.com>
+
+        [BlackBerry] InspectorOverlay class duplicated in WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=93124
+
+        Reviewed by Rob Buis.
+
+        Moved files to better align with namespace names.
+
+        * WebKitSupport/InspectorOverlay.cpp: Renamed from Source/WebKit/blackberry/WebCoreSupport/InspectorOverlay.cpp.
+        (WebKit):
+        (BlackBerry::WebKit::InspectorOverlay::create):
+        (BlackBerry::WebKit::InspectorOverlay::InspectorOverlay):
+        (BlackBerry::WebKit::InspectorOverlay::notifySyncRequired):
+        (BlackBerry::WebKit::InspectorOverlay::paintContents):
+        (BlackBerry::WebKit::InspectorOverlay::showDebugBorders):
+        (BlackBerry::WebKit::InspectorOverlay::showRepaintCounter):
+        (BlackBerry::WebKit::InspectorOverlay::~InspectorOverlay):
+        (BlackBerry::WebKit::InspectorOverlay::clear):
+        (BlackBerry::WebKit::InspectorOverlay::update):
+        * WebKitSupport/InspectorOverlay.h: Renamed from Source/WebKit/blackberry/WebCoreSupport/InspectorOverlay.h.
+        (WebCore):
+        (WebKit):
+        (InspectorOverlay):
+        (InspectorOverlayClient):
+        (BlackBerry::WebKit::InspectorOverlay::setClient):
+        (BlackBerry::WebKit::InspectorOverlay::notifyAnimationStarted):
+
 2012-08-07  Mike Fenton  <mifenton@rim.com>
 
         [BlackBerry] Update API for spell checking suggestions.

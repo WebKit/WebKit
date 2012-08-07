@@ -1,3 +1,14 @@
+2012-08-07  Konrad Piascik  <kpiascik@rim.com>
+
+        [BlackBerry] InspectorOverlay class duplicated in WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=93124
+
+        Reviewed by Rob Buis.
+
+        Updated InspectorOverlay build path.
+
+        * PlatformBlackBerry.cmake:
+
 2012-08-07  No'am Rosenthal  <noam.rosenthal@nokia.com>
 
         [Qt] Make it possible to build without QtQuick
