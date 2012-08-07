@@ -1,3 +1,11 @@
+2012-08-07  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening, adding back platform-specific expectations that
+        somehow got removed in r124874.
+
+        * platform/gtk/fast/multicol/vertical-rl/nested-columns-expected.png: Added.
+        * platform/gtk/fast/multicol/vertical-rl/nested-columns-expected.txt: Added.
+
 2012-07-23  Alexandru Chiculita  <achicu@adobe.com>
 
         [CSS Shaders] Reuse precompiled shaders across elements
