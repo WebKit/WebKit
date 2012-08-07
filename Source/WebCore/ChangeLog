@@ -1,3 +1,56 @@
+2012-08-06  Andrey Kosyakov  <caseq@chromium.org>
+
+        Web Inspector: implement reusable progress bar
+        https://bugs.webkit.org/show_bug.cgi?id=93267
+
+        - Generic progress bar implementation to be used
+            by various long-running operations in inspector.
+
+        Test: inspector/progress-bar.html
+
+        Reviewed by Pavel Feldman.
+
+        * WebCore.gypi: Added ProgressBar.js
+        * WebCore.vcproj/WebCore.vcproj: ditto.
+        * inspector/compile-front-end.py: ditto.
+        * inspector/front-end/AdvancedSearchController.js: renamed style for stop button.
+        (WebInspector.SearchView):
+        * inspector/front-end/ProgressBar.js: Added.
+        (WebInspector.Progress): Interface for both ProgressIndicator and SubProgress.
+        (WebInspector.Progress.prototype.setTotalWork):
+        (WebInspector.Progress.prototype.setTitle):
+        (WebInspector.Progress.prototype.setWorked):
+        (WebInspector.Progress.prototype.done):
+        (WebInspector.Progress.prototype.isCanceled):
+        (WebInspector.ProgressIndicator): A UI control that implements Progress.
+        (WebInspector.ProgressIndicator.prototype.show):
+        (WebInspector.ProgressIndicator.prototype.hide):
+        (WebInspector.ProgressIndicator.prototype.done):
+        (WebInspector.ProgressIndicator.prototype._cancel):
+        (WebInspector.ProgressIndicator.prototype.isCanceled):
+        (WebInspector.ProgressIndicator.prototype.setTitle):
+        (WebInspector.ProgressIndicator.prototype.setTotalWork):
+        (WebInspector.ProgressIndicator.prototype.setWorked):
+        (WebInspector.CompositeProgress): A progress bar that is composed of several SubProgress bars and uses a Progress to display total progress of all tasks.
+        (WebInspector.CompositeProgress.prototype._childDone):
+        (WebInspector.CompositeProgress.prototype.createSubProgress):
+        (WebInspector.CompositeProgress.prototype._update):
+        (WebInspector.SubProgress): A child of CompositeProgress, implements Progress interface.
+        (WebInspector.SubProgress.prototype.isCanceled):
+        (WebInspector.SubProgress.prototype.setTitle):
+        (WebInspector.SubProgress.prototype.done):
+        (WebInspector.SubProgress.prototype.setTotalWork):
+        (WebInspector.SubProgress.prototype.setWorked):
+        * inspector/front-end/WebKit.qrc: Added ProgressBar.js
+        * inspector/front-end/inspector.css:
+        (.progress-bar-stop-button-item):
+        (.progress-bar-stop-button .glyph):
+        (.progress-bar-container):
+        (.progress-bar-container span):
+        (.progress-bar-container progress):
+        (.progress-bar-container button.status-bar-item):
+        * inspector/front-end/inspector.html:
+
 2012-08-07  Peter Rybin  <peter.rybin@gmail.com>
 
         Web Inspector: display function scope in UI

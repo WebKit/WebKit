@@ -6361,6 +6361,7 @@
             'inspector/front-end/ProfileDataGridTree.js',
             'inspector/front-end/ProfileLauncherView.js',
             'inspector/front-end/ProfilesPanel.js',
+            'inspector/front-end/ProgressBar.js',
             'inspector/front-end/PropertiesSection.js',
             'inspector/front-end/PropertiesSidebarPane.js',
             'inspector/front-end/RawSourceCode.js',

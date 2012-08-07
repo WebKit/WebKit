@@ -2593,13 +2593,13 @@ body.platform-mac .search-status-bar-progress {
     margin-top: 6px;
 }
 
-.search-status-bar-stop-button-item {
+.progress-bar-stop-button-item {
     width: 19px;
     height: 24px;
     overflow: hidden;
 }
 
-.search-status-bar-stop-button .glyph {
+.progress-bar-stop-button .glyph {
     -webkit-mask-position: -96px -48px;
     background-color: rgb(216, 0, 0) !important;
 }
@@ -2875,4 +2875,24 @@ body.platform-mac .search-status-bar-progress {
     right: 0;
     font-size: 11px;
     height: auto;
+}
+
+.progress-bar-container {
+    display: -webkit-flex;
+    margin: 0 8px;
+    -webkit-flex: 1 0;
+}
+
+.progress-bar-container span {
+    padding: 6px;
+}
+
+.progress-bar-container progress {
+    margin-top: 8px;
+    -webkit-flex: 1 0;
+}
+
+.progress-bar-container button.status-bar-item {
+    border-left: none;
+    margin-top: 1px;
 }

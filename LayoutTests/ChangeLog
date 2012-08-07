@@ -1,3 +1,13 @@
+2012-08-07  Andrey Kosyakov  <caseq@chromium.org>
+
+        Web Inspector: implement reusable progress bar
+        https://bugs.webkit.org/show_bug.cgi?id=93267
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/progress-bar-expected.txt: Added.
+        * inspector/progress-bar.html: Added.
+
 2012-08-07  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
 
         Unreviewed gardening. Rebased affected subpixel-sensitive tests after r124745.

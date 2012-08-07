@@ -215,8 +215,8 @@ WebInspector.SearchView = function(controller)
     this._searchProgressElement.className = "search-status-bar-progress";
     
     this._searchStopButtonItem = document.createElement("div");
-    this._searchStopButtonItem.className = "search-status-bar-stop-button-item";
-    this._searchStopStatusBarButton = new WebInspector.StatusBarButton(WebInspector.UIString("Stop search"), "search-status-bar-stop-button");
+    this._searchStopButtonItem.className = "progress-bar-stop-button-item";
+    this._searchStopStatusBarButton = new WebInspector.StatusBarButton(WebInspector.UIString("Stop search"), "progress-bar-stop-button");
     this._searchStopButtonItem.appendChild(this._searchStopStatusBarButton.element);
     this._searchStopStatusBarButton.addEventListener("click", this._searchStopButtonPressed, this);
     

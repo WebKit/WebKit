@@ -130,6 +130,7 @@ modules = [
             "Panel.js",
             "PanelEnablerView.js",
             "Popover.js",
+            "ProgressBar.js",
             "PropertiesSection.js",
             "SearchController.js",
             "Section.js",

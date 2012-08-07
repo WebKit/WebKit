@@ -75862,6 +75862,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\inspector\front-end\ProgressBar.js"
+					>
+				</File>
+				<File
 					RelativePath="..\inspector\front-end\PropertiesSection.js"
 					>
 				</File>

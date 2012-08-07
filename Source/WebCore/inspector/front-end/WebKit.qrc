@@ -114,6 +114,7 @@
     <file>ProfileDataGridTree.js</file>
     <file>ProfileLauncherView.js</file>
     <file>ProfilesPanel.js</file>
+    <file>ProgressBar.js</file>
     <file>PropertiesSection.js</file>
     <file>PropertiesSidebarPane.js</file>
     <file>RawSourceCode.js</file>
