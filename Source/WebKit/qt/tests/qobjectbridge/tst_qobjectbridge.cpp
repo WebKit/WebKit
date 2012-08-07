@@ -1825,9 +1825,7 @@ void tst_QObjectBridge::enumerate_data()
         << "dp1" << "dp2" << "dp3"
         // inherited signals and slots
         << "destroyed(QObject*)" << "destroyed()"
-#if defined(HAVE_QT5) && HAVE_QT5
         << "objectNameChanged(QString)"
-#endif
         << "deleteLater()"
         // not included because it's private:
         // << "_q_reregisterTimers(void*)"

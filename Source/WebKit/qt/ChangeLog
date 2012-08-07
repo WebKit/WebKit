@@ -1,3 +1,12 @@
+2012-08-07  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Unreviewed trivial fix: Missed HAVE_QT5 removal as part of r124879
+
+        Fixes failing auto-test.
+
+        * tests/qobjectbridge/tst_qobjectbridge.cpp:
+        (tst_QObjectBridge::enumerate_data):
+
 2012-08-02  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] Remove Qt 4 specific code paths
