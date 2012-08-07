@@ -152,7 +152,7 @@ private:
     void updateContentsRect();
     void updateContentsScale();
 
-    void setupContentsLayer(LayerChromium*);
+    void setupContentsLayer(WebKit::WebLayer);
     float contentsScale() const;
 
     int mapAnimationNameToId(const String& animationName);

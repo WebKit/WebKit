@@ -30,6 +30,8 @@
 #include "WebColor.h"
 #include "WebCommon.h"
 #include "WebPrivatePtr.h"
+#include "WebString.h"
+#include "WebVector.h"
 
 class SkMatrix44;
 namespace WebCore { class LayerChromium; }
@@ -73,6 +75,7 @@ public:
     WEBKIT_EXPORT void addChild(const WebLayer&);
     WEBKIT_EXPORT void insertChild(const WebLayer&, size_t index);
     WEBKIT_EXPORT void replaceChild(const WebLayer& reference, const WebLayer& newLayer);
+    WEBKIT_EXPORT void setChildren(const WebVector<WebLayer>&);
     WEBKIT_EXPORT void removeFromParent();
     WEBKIT_EXPORT void removeAllChildren();
 
@@ -90,6 +93,8 @@ public:
 
     WEBKIT_EXPORT void setMaskLayer(const WebLayer&);
     WEBKIT_EXPORT WebLayer maskLayer() const;
+
+    WEBKIT_EXPORT void setReplicaLayer(const WebLayer&);
 
     WEBKIT_EXPORT void setOpacity(float);
     WEBKIT_EXPORT float opacity() const;
@@ -138,6 +143,7 @@ public:
 
     WEBKIT_EXPORT void setDebugBorderColor(const WebColor&);
     WEBKIT_EXPORT void setDebugBorderWidth(float);
+    WEBKIT_EXPORT void setDebugName(WebString);
 
     // An animation delegate is notified when animations are started and
     // stopped. The WebLayer does not take ownership of the delegate, and it is
@@ -173,6 +179,10 @@ public:
     // Forces this layer to use a render surface. There is no benefit in doing
     // so, but this is to facilitate benchmarks and tests.
     WEBKIT_EXPORT void setForceRenderSurface(bool);
+
+    // Drops this layer's render surface, if it has one. Used to break cycles in some
+    // cases - if you aren't sure, you don't need to call this.
+    WEBKIT_EXPORT void clearRenderSurface();
 
     template<typename T> T to()
     {

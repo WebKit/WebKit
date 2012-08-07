@@ -1,3 +1,27 @@
+2012-08-06  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Remove lingering unwrap<>() calls in GraphicsLayerChromium.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=93319
+
+        Reviewed by Adrienne Walker.
+
+        Gets rid of all (but one) of the remaining unwrap<LayerChromium>() calls in GraphicsLayer chromium to avoid
+        punching through the WebLayer API.  Covered by many layout tests, mostly in compositing/
+
+        * platform/graphics/chromium/GraphicsLayerChromium.cpp:
+        (WebCore::GraphicsLayerChromium::willBeDestroyed):
+        (WebCore::GraphicsLayerChromium::setName):
+        (WebCore::GraphicsLayerChromium::updateNames):
+        (WebCore::GraphicsLayerChromium::setMaskLayer):
+        (WebCore::GraphicsLayerChromium::setReplicatedByLayer):
+        (WebCore::GraphicsLayerChromium::setContentsToImage):
+        (WebCore::GraphicsLayerChromium::setContentsToCanvas):
+        (WebCore::GraphicsLayerChromium::setContentsToMedia):
+        (WebCore::GraphicsLayerChromium::updateChildList):
+        (WebCore::GraphicsLayerChromium::setupContentsLayer):
+        * platform/graphics/chromium/GraphicsLayerChromium.h:
+        (GraphicsLayerChromium):
+
 2012-08-06  Adrienne Walker  <enne@google.com>
 
         [chromium] Convert WebScrollbarThemeGeometry from a concrete class to an interface

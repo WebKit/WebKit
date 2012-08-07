@@ -1,3 +1,15 @@
+2012-08-06  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Remove lingering unwrap<>() calls in GraphicsLayerChromium.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=93319
+
+        Reviewed by Adrienne Walker.
+
+        Adds a few more entry points to WebLayer that are being used by GraphicsLayerChromium.
+
+        * chromium/public/WebLayer.h:
+        (WebLayer):
+
 2012-08-06  Antoine Labour  <piman@chromium.org>
 
         [chromium] add sync points and GL_CHROMIUM_texture_mailbox entrypoints to WebGraphicsContext3D
