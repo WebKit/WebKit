@@ -22,8 +22,8 @@
 #ifndef MachineThreads_h
 #define MachineThreads_h
 
-#include <pthread.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/ThreadSpecific.h>
 #include <wtf/ThreadingPrimitives.h>
 
 namespace JSC {
@@ -55,7 +55,7 @@ namespace JSC {
         Heap* m_heap;
         Mutex m_registeredThreadsMutex;
         Thread* m_registeredThreads;
-        pthread_key_t m_threadSpecific;
+        WTF::ThreadSpecificKey m_threadSpecific;
     };
 
 } // namespace JSC

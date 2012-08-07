@@ -1,3 +1,26 @@
+2012-08-06  Patrick Gansterer  <paroga@webkit.org>
+
+        [WIN] Remove dependency on pthread from MachineStackMarker
+        https://bugs.webkit.org/show_bug.cgi?id=68429
+
+        Reviewed by Geoffrey Garen.
+
+        Windows has no support for calling a destructor for thread specific data.
+        Since we need more control over creating and deleting thread specific keys
+        we can not simply extend WTF::ThreadSpecific with this functionality.
+
+        All thread specific keys created via the new API get stored in a list.
+        After a thread function finished we iterate over this list and call
+        the registered destructor for every item if needed.
+
+        * wtf/ThreadSpecific.h:
+        (WTF):
+        (WTF::threadSpecificKeyCreate): Added wrapper around pthread_key_create.
+        (WTF::threadSpecificKeyDelete): Added wrapper around pthread_key_delete.
+        (WTF::threadSpecificSet): Added wrapper around pthread_setspecific.
+        (WTF::threadSpecificGet): Added wrapper around pthread_getspecific.
+        * wtf/ThreadSpecificWin.cpp:
+
 2012-08-04  No'am Rosenthal  <noam.rosenthal@nokia.com>
 
         [Qt] UI_SIDE_COMPOSITING code has confusing names

@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2008 Apple Inc. All rights reserved.
  * Copyright (C) 2009 Jian Li <jianli@chromium.org>
+ * Copyright (C) 2012 Patrick Gansterer <paroga@paroga.com>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -102,6 +103,33 @@ private:
 };
 
 #if USE(PTHREADS)
+
+typedef pthread_key_t ThreadSpecificKey;
+
+inline void threadSpecificKeyCreate(ThreadSpecificKey* key, void (*destructor)(void *))
+{
+    int error = pthread_key_create(key, destructor);
+    if (error)
+        CRASH();
+}
+
+inline void threadSpecificKeyDelete(ThreadSpecificKey key)
+{
+    int error = pthread_key_delete(key);
+    if (error)
+        CRASH();
+}
+
+inline void threadSpecificSet(ThreadSpecificKey key, void* value)
+{
+    pthread_setspecific(key, value);
+}
+
+inline void* threadSpecificGet(ThreadSpecificKey key)
+{
+    return pthread_getspecific(key);
+}
+
 template<typename T>
 inline ThreadSpecific<T>::ThreadSpecific()
 {
@@ -138,6 +166,14 @@ const int kMaxTlsKeySize = 256;
 
 WTF_EXPORT_PRIVATE long& tlsKeyCount();
 WTF_EXPORT_PRIVATE DWORD* tlsKeys();
+
+class PlatformThreadSpecificKey;
+typedef PlatformThreadSpecificKey* ThreadSpecificKey;
+
+void threadSpecificKeyCreate(ThreadSpecificKey*, void (*)(void *));
+void threadSpecificKeyDelete(ThreadSpecificKey);
+void threadSpecificSet(ThreadSpecificKey, void*);
+void* threadSpecificGet(ThreadSpecificKey);
 
 template<typename T>
 inline ThreadSpecific<T>::ThreadSpecific()

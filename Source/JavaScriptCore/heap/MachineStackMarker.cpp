@@ -141,10 +141,8 @@ MachineThreads::MachineThreads(Heap* heap)
 
 MachineThreads::~MachineThreads()
 {
-    if (m_threadSpecific) {
-        int error = pthread_key_delete(m_threadSpecific);
-        ASSERT_UNUSED(error, !error);
-    }
+    if (m_threadSpecific)
+        threadSpecificKeyDelete(m_threadSpecific);
 
     MutexLocker registeredThreadsLock(m_registeredThreadsMutex);
     for (Thread* t = m_registeredThreads; t;) {
@@ -181,19 +179,17 @@ void MachineThreads::makeUsableFromMultipleThreads()
     if (m_threadSpecific)
         return;
 
-    int error = pthread_key_create(&m_threadSpecific, removeThread);
-    if (error)
-        CRASH();
+    threadSpecificKeyCreate(&m_threadSpecific, removeThread);
 }
 
 void MachineThreads::addCurrentThread()
 {
     ASSERT(!m_heap->globalData()->exclusiveThread || m_heap->globalData()->exclusiveThread == currentThread());
 
-    if (!m_threadSpecific || pthread_getspecific(m_threadSpecific))
+    if (!m_threadSpecific || threadSpecificGet(m_threadSpecific))
         return;
 
-    pthread_setspecific(m_threadSpecific, this);
+    threadSpecificSet(m_threadSpecific, this);
     Thread* thread = new Thread(getCurrentPlatformThread(), wtfThreadData().stack().origin());
 
     MutexLocker lock(m_registeredThreadsMutex);
