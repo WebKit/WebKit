@@ -1,3 +1,16 @@
+2012-08-07  George Staikos  <staikos@webkit.org>
+
+        [BlackBerry] We should fail the HTTP auth silently for non-main loads
+        in the non-viewer process.
+        https://bugs.webkit.org/show_bug.cgi?id=93230
+
+        Reviewed by Rob Buis.
+
+        No way to test this in WebKit.
+
+        * platform/network/blackberry/NetworkJob.cpp: Add early return.
+        (WebCore::NetworkJob::sendRequestWithCredentials):
+
 2012-08-07  Alexander Pavlov  <apavlov@chromium.org>
 
         Web Inspector: Typing backslash in Console traverses the panel history when using German keyboard layout
