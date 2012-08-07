@@ -1,3 +1,18 @@
+2012-08-06  Luke Macpherson   <macpherson@chromium.org>
+
+        Handle variables in CSSParser::parseValidPrimitive(), preventing null return value.
+        https://bugs.webkit.org/show_bug.cgi?id=93235
+
+        Reviewed by Tony Chang.
+
+        By returning null here (and failing to handle the variable) the current code would cause null pointer dereferences in StyleResolver at several points.
+        Instead we create a primitive value for the variable reference and return it.
+
+        Test: fast/css/variables/invalid-font-reference.html
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValidPrimitive):
+
 2012-08-06  David Reveman  <reveman@chromium.org>
 
         [Chromium] Rename CCTextureUpdater to CCTextureUpdateQueue.

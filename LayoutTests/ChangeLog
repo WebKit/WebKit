@@ -1,3 +1,15 @@
+2012-08-06  Luke Macpherson   <macpherson@chromium.org>
+
+        Handle variables in CSSParser::parseValidPrimitive(), preventing null return value.
+        https://bugs.webkit.org/show_bug.cgi?id=93235
+
+        Reviewed by Tony Chang.
+
+        Exercises the code path where variables are parsed in CSSParser::parseValidPrimitive().
+
+        * fast/css/variables/invalid-font-reference-expected.txt: Added.
+        * fast/css/variables/invalid-font-reference.html: Added.
+
 2012-08-06  Roger Fong  <roger_fong@apple.com>
 
         LayoutTest: fast/forms/validation-message-user-modify.html fails.
