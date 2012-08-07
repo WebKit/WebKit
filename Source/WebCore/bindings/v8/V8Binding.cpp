@@ -367,32 +367,6 @@ v8::Persistent<v8::FunctionTemplate> createRawTemplate()
     return v8::Persistent<v8::FunctionTemplate>::New(result);
 }        
 
-v8::Local<v8::Signature> configureTemplate(v8::Persistent<v8::FunctionTemplate> desc,
-                                           const char *interfaceName,
-                                           v8::Persistent<v8::FunctionTemplate> parentClass,
-                                           int fieldCount,
-                                           const BatchedAttribute* attributes, 
-                                           size_t attributeCount,
-                                           const BatchedCallback* callbacks,
-                                           size_t callbackCount)
-{
-    desc->SetClassName(v8::String::New(interfaceName));
-    v8::Local<v8::ObjectTemplate> instance = desc->InstanceTemplate();
-    instance->SetInternalFieldCount(fieldCount);
-    if (!parentClass.IsEmpty())
-        desc->Inherit(parentClass);
-    if (attributeCount)
-        batchConfigureAttributes(instance, desc->PrototypeTemplate(),
-                                 attributes, attributeCount);
-    v8::Local<v8::Signature> defaultSignature = v8::Signature::New(desc);
-    if (callbackCount)
-        batchConfigureCallbacks(desc->PrototypeTemplate(),
-                                defaultSignature,
-                                static_cast<v8::PropertyAttribute>(v8::DontDelete),
-                                callbacks, callbackCount);
-    return defaultSignature;
-}
-
 v8::Persistent<v8::String> getToStringName()
 {
     v8::Persistent<v8::String>& toStringName = V8BindingPerIsolateData::current()->toStringName();
@@ -451,42 +425,6 @@ PassRefPtr<DOMStringList> v8ValueToWebCoreDOMStringList(v8::Handle<v8::Value> va
         ret->append(v8ValueToWebCoreString(indexedValue));
     }
     return ret.release();
-}
-
-void batchConfigureAttributes(v8::Handle<v8::ObjectTemplate> instance, 
-                              v8::Handle<v8::ObjectTemplate> proto, 
-                              const BatchedAttribute* attributes, 
-                              size_t attributeCount)
-{
-    for (size_t i = 0; i < attributeCount; ++i)
-        configureAttribute(instance, proto, attributes[i]);
-}
-
-void batchConfigureCallbacks(v8::Handle<v8::ObjectTemplate> proto, 
-                             v8::Handle<v8::Signature> signature, 
-                             v8::PropertyAttribute attributes,
-                             const BatchedCallback* callbacks,
-                             size_t callbackCount)
-{
-    for (size_t i = 0; i < callbackCount; ++i) {
-        proto->Set(v8::String::New(callbacks[i].name),
-                   v8::FunctionTemplate::New(callbacks[i].callback, 
-                                             v8::Handle<v8::Value>(),
-                                             signature),
-                   attributes);
-    }
-}
-
-void batchConfigureConstants(v8::Handle<v8::FunctionTemplate> functionDescriptor,
-                             v8::Handle<v8::ObjectTemplate> proto,
-                             const BatchedConstant* constants,
-                             size_t constantCount)
-{
-    for (size_t i = 0; i < constantCount; ++i) {
-        const BatchedConstant* constant = &constants[i];
-        functionDescriptor->Set(v8::String::New(constant->name), v8Integer(constant->value), v8::ReadOnly);
-        proto->Set(v8::String::New(constant->name), v8Integer(constant->value), v8::ReadOnly);
-    }
 }
 
 } // namespace WebCore

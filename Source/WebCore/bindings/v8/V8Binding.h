@@ -36,6 +36,7 @@
 #include "Document.h"
 #include "PlatformString.h"
 #include "V8BindingMacros.h"
+#include "V8ConfigureDOMAttributesAndMethods.h"
 #include "V8DOMWrapper.h"
 #include "V8GCController.h"
 #include "V8HiddenPropertyName.h"
@@ -534,18 +535,6 @@ namespace WebCore {
 
     v8::Persistent<v8::FunctionTemplate> createRawTemplate();
 
-    struct BatchedAttribute;
-    struct BatchedCallback;
-
-    v8::Local<v8::Signature> configureTemplate(v8::Persistent<v8::FunctionTemplate>,
-                                               const char* interfaceName,
-                                               v8::Persistent<v8::FunctionTemplate> parentClass,
-                                               int fieldCount,
-                                               const BatchedAttribute*,
-                                               size_t attributeCount,
-                                               const BatchedCallback*,
-                                               size_t callbackCount);
-
     v8::Persistent<v8::String> getToStringName();
     v8::Persistent<v8::FunctionTemplate> getToStringTemplate();
 
@@ -653,57 +642,6 @@ namespace WebCore {
         DefaultIsUndefined,
         DefaultIsNullString
     };
-
-    // The following Batch structs and methods are used for setting multiple
-    // properties on an ObjectTemplate, used from the generated bindings
-    // initialization (ConfigureXXXTemplate). This greatly reduces the binary
-    // size by moving from code driven setup to data table driven setup.
-
-    // BatchedAttribute translates into calls to SetAccessor() on either the
-    // instance or the prototype ObjectTemplate, based on |onProto|.
-    struct BatchedAttribute {
-        const char* const name;
-        v8::AccessorGetter getter;
-        v8::AccessorSetter setter;
-        WrapperTypeInfo* data;
-        v8::AccessControl settings;
-        v8::PropertyAttribute attribute;
-        bool onProto;
-    };
-
-    void batchConfigureAttributes(v8::Handle<v8::ObjectTemplate>, v8::Handle<v8::ObjectTemplate>, const BatchedAttribute*, size_t attributeCount);
-
-    template<class ObjectOrTemplate>
-    inline void configureAttribute(v8::Handle<ObjectOrTemplate> instance, v8::Handle<ObjectOrTemplate> proto, const BatchedAttribute& attribute)
-    {
-        (attribute.onProto ? proto : instance)->SetAccessor(v8::String::New(attribute.name),
-            attribute.getter,
-            attribute.setter,
-            v8::External::Wrap(attribute.data),
-            attribute.settings,
-            attribute.attribute);
-    }
-
-    // BatchedConstant translates into calls to Set() for setting up an object's
-    // constants. It sets the constant on both the FunctionTemplate and the
-    // ObjectTemplate. PropertyAttributes is always ReadOnly.
-    struct BatchedConstant {
-        const char* const name;
-        int value;
-    };
-
-    void batchConfigureConstants(v8::Handle<v8::FunctionTemplate>, v8::Handle<v8::ObjectTemplate>, const BatchedConstant*, size_t constantCount);
-
-    struct BatchedCallback {
-        const char* const name;
-        v8::InvocationCallback callback;
-    };
-
-    void batchConfigureCallbacks(v8::Handle<v8::ObjectTemplate>, 
-                                 v8::Handle<v8::Signature>,
-                                 v8::PropertyAttribute,
-                                 const BatchedCallback*, 
-                                 size_t callbackCount);
 
 } // namespace WebCore
 

@@ -2246,6 +2246,8 @@
             'bindings/v8/V8Binding.h',
             'bindings/v8/V8BindingPerContextData.cpp',
             'bindings/v8/V8BindingPerContextData.h',
+            'bindings/v8/V8ConfigureDOMAttributesAndMethods.cpp',
+            'bindings/v8/V8ConfigureDOMAttributesAndMethods.h',
             'bindings/v8/V8Collection.cpp',
             'bindings/v8/V8Collection.h',
             'bindings/v8/V8DOMMap.cpp',

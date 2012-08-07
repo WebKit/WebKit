@@ -1,5 +1,36 @@
 2012-08-07  Kentaro Hara  <haraken@chromium.org>
 
+        [V8] Factor out V8Binding methods that configures DOM attributes and methods
+        https://bugs.webkit.org/show_bug.cgi?id=93239
+
+        Reviewed by Adam Barth.
+
+        V8Binding is messy. This patch factors out V8Binding methods that configures
+        DOM attributes and methods into another file. This patch just moves the methods
+        from V8Binding.{h,cpp} to V8ConfigureDOMAttributesAndMethods.{h,cpp}.
+
+        No tests. No change in behavior.
+
+        * UseV8.cmake:
+        * WebCore.gypi:
+        * bindings/v8/V8Binding.cpp:
+        * bindings/v8/V8Binding.h:
+        (WebCore):
+        * bindings/v8/V8ConfigureDOMAttributesAndMethods.cpp: Added.
+        (WebCore):
+        (WebCore::batchConfigureAttributes):
+        (WebCore::batchConfigureConstants):
+        (WebCore::batchConfigureCallbacks):
+        (WebCore::configureTemplate):
+        * bindings/v8/V8ConfigureDOMAttributesAndMethods.h: Added.
+        (WebCore):
+        (BatchedAttribute):
+        (WebCore::configureAttribute):
+        (BatchedConstant):
+        (BatchedCallback):
+
+2012-08-07  Kentaro Hara  <haraken@chromium.org>
+
         [V8] Replace all V8 undefined values in the rest of custom bindings with v8Undefined()
         https://bugs.webkit.org/show_bug.cgi?id=93220
 
