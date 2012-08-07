@@ -158,6 +158,13 @@ contains(DEFINES, WTF_USE_QT_MOBILITY_SYSTEMINFO=1) {
      MOBILITY *= systeminfo
 }
 
+contains(DEFINES, ENABLE_GAMEPAD=1) {
+    INCLUDEPATH += \
+        $$SOURCE_DIR/platform/linux \
+        $$SOURCE_DIR/Modules/gamepad
+    PKGCONFIG += libudev
+}
+
 contains(DEFINES, ENABLE_VIDEO=1) {
     contains(DEFINES, WTF_USE_QTKIT=1) {
         INCLUDEPATH += $$SOURCE_DIR/platform/graphics/mac

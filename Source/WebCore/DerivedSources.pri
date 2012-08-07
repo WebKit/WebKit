@@ -613,6 +613,13 @@ contains(DEFINES, ENABLE_SVG=1) {
     $$PWD/svg/SVGZoomEvent.idl
 }
 
+contains(DEFINES, ENABLE_GAMEPAD=1) {
+  IDL_BINDINGS += \
+    $$PWD/Modules/gamepad/Gamepad.idl \
+    $$PWD/Modules/gamepad/GamepadList.idl \
+    $$PWD/Modules/gamepad/NavigatorGamepad.idl
+}
+
 contains(DEFINES, ENABLE_VIDEO_TRACK=1) {
   IDL_BINDINGS += \
     $$PWD/html/track/TextTrack.idl \

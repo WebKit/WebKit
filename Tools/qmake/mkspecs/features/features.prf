@@ -152,6 +152,11 @@ haveQtModule(sensors) {
     !no_webkit2: DEFINES += ENABLE_FULLSCREEN_API=1
 }
 
+# Gamepad API Support
+linux-*:!contains(DEFINES, ENABLE_GAMEPAD=.) {
+    packagesExist(libudev): DEFINES += ENABLE_GAMEPAD=1
+}
+
 # Xcomposite Support
 linux-*:config_libXcomposite: DEFINES += HAVE_XCOMPOSITE=1
 
@@ -215,6 +220,13 @@ for(define, DEFINES) {
     }
 }
 
+contains(DEFINES, ENABLE_GAMEPAD=1) {
+    !packagesExist(libudev) {
+        error("Gamepad API requires libudev to build. Please install libudev development files, or build WebKit without gamepad.")
+    } else:!linux-* {
+        error("Currently the Gamepad API is supported only on Linux, build WebKit without gamepad.")
+    }
+}
 
 # Slider Touch is sensible to use when compiling WebKit2
 haveQt(5):contains(DEFINES, ENABLE_TOUCH_EVENTS=1) {

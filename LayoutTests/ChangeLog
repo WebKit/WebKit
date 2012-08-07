@@ -1,3 +1,19 @@
+2012-08-07  Marcelo Lira  <marcelo.lira@openbossa.org>
+
+        [Qt] Add support for the Gamepad API
+        https://bugs.webkit.org/show_bug.cgi?id=90637
+
+        Reviewed by Alexis Menard.
+
+        This does not unskip the gamepad tests for the Qt port, since the flag is
+        optional the test would not pass without it. The user may unskip it manually.
+
+        On the other hand, the gamepad-polling-access.html test is still expected
+        to fail because it requires additional test infrastructure.
+        See https://bugs.webkit.org/show_bug.cgi?id=92873
+
+        * platform/qt/TestExpectations:
+
 2012-08-07  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Move test cases related to link prerender to Skipped list except for chromium port

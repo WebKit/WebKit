@@ -3086,6 +3086,22 @@ contains(DEFINES, ENABLE_QUOTA=1) {
         Modules/quota/StorageInfo.cpp
 }
 
+contains(DEFINES, ENABLE_GAMEPAD=1) {
+    HEADERS += \
+        Modules/gamepad/Gamepad.h\
+        Modules/gamepad/GamepadList.h \
+        Modules/gamepad/NavigatorGamepad.h \
+        platform/linux/GamepadDeviceLinux.h \
+        platform/Gamepads.h
+
+    SOURCES += \
+        Modules/gamepad/Gamepad.cpp \
+        Modules/gamepad/GamepadList.cpp \
+        Modules/gamepad/NavigatorGamepad.cpp \
+        platform/linux/GamepadDeviceLinux.cpp \
+        platform/qt/GamepadsQt.cpp
+}
+
 contains(DEFINES, ENABLE_VIDEO=1) {
     SOURCES += \
         html/HTMLAudioElement.cpp \

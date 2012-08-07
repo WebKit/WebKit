@@ -117,6 +117,9 @@ BUGWK84635 SKIP : fast/dom/HTMLDialogElement = TEXT
 // Skip tests in fast/text/shaping
 BUGWK90951 SKIP : fast/text/shaping = PASS
 
+// Missing test infrastructure, no gamepads available.
+BUGWK92873 SKIP : gamepad/gamepad-polling-access.html = TEXT
+
 // Flaky tests
 BUGWK91376 : http/tests/security/sandboxed-iframe-modify-self.html = TEXT PASS
 BUGWK91379 : http/tests/security/contentSecurityPolicy/policy-does-not-affect-child.html = TEXT PASS
