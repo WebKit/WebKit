@@ -90,18 +90,19 @@ class AutoinstallImportHook(object):
             self._install_webpagereplay()
 
     def _install_mechanize(self):
-        self._install("http://pypi.python.org/packages/source/m/mechanize/mechanize-0.2.5.tar.gz",
-                      "mechanize-0.2.5/mechanize")
+        return self._install("http://pypi.python.org/packages/source/m/mechanize/mechanize-0.2.5.tar.gz",
+                             "mechanize-0.2.5/mechanize")
 
     def _install_pep8(self):
-        self._install("http://pypi.python.org/packages/source/p/pep8/pep8-0.5.0.tar.gz#md5=512a818af9979290cd619cce8e9c2e2b",
-                      "pep8-0.5.0/pep8.py")
+        return self._install("http://pypi.python.org/packages/source/p/pep8/pep8-0.5.0.tar.gz#md5=512a818af9979290cd619cce8e9c2e2b",
+                             "pep8-0.5.0/pep8.py")
 
     def _install_pylint(self):
+        installed_something = False
         if not self._fs.exists(self._fs.join(_AUTOINSTALLED_DIR, "pylint")):
-            self._install('http://pypi.python.org/packages/source/p/pylint/pylint-0.25.1.tar.gz#md5=728bbc2b339bc3749af013709a7f87a5', 'pylint-0.25.1')
+            installed_something = self._install('http://pypi.python.org/packages/source/p/pylint/pylint-0.25.1.tar.gz#md5=728bbc2b339bc3749af013709a7f87a5', 'pylint-0.25.1')
             self._fs.move(self._fs.join(_AUTOINSTALLED_DIR, "pylint-0.25.1"), self._fs.join(_AUTOINSTALLED_DIR, "pylint"))
-
+        return installed_something
 
     # autoinstalled.buildbot is used by BuildSlaveSupport/build.webkit.org-config/mastercfg_unittest.py
     # and should ideally match the version of BuildBot used at build.webkit.org.
@@ -113,24 +114,24 @@ class AutoinstallImportHook(object):
         # without including other modules as a side effect.
         jinja_dir = self._fs.join(_AUTOINSTALLED_DIR, "jinja2")
         installer = AutoInstaller(append_to_search_path=True, target_dir=jinja_dir)
-        installer.install(url="http://pypi.python.org/packages/source/J/Jinja2/Jinja2-2.6.tar.gz#md5=1c49a8825c993bfdcf55bb36897d28a2",
-                          url_subpath="Jinja2-2.6/jinja2")
+        installed_something = installer.install(url="http://pypi.python.org/packages/source/J/Jinja2/Jinja2-2.6.tar.gz#md5=1c49a8825c993bfdcf55bb36897d28a2",
+                                                url_subpath="Jinja2-2.6/jinja2")
 
         SQLAlchemy_dir = self._fs.join(_AUTOINSTALLED_DIR, "sqlalchemy")
         installer = AutoInstaller(append_to_search_path=True, target_dir=SQLAlchemy_dir)
-        installer.install(url="http://pypi.python.org/packages/source/S/SQLAlchemy/SQLAlchemy-0.7.7.tar.gz#md5=ddf6df7e014cea318fa981364f3f93b9",
-                          url_subpath="SQLAlchemy-0.7.7/lib/sqlalchemy")
+        installed_something |= installer.install(url="http://pypi.python.org/packages/source/S/SQLAlchemy/SQLAlchemy-0.7.7.tar.gz#md5=ddf6df7e014cea318fa981364f3f93b9",
+                                                 url_subpath="SQLAlchemy-0.7.7/lib/sqlalchemy")
 
-        self._install("http://pypi.python.org/packages/source/b/buildbot/buildbot-0.8.6p1.tar.gz#md5=b6727d2810c692062c657492bcbeac6a", "buildbot-0.8.6p1/buildbot")
+        installed_something |= self._install("http://pypi.python.org/packages/source/b/buildbot/buildbot-0.8.6p1.tar.gz#md5=b6727d2810c692062c657492bcbeac6a", "buildbot-0.8.6p1/buildbot")
+        return installed_something
 
     def _install_coverage(self):
         installer = AutoInstaller(target_dir=_AUTOINSTALLED_DIR)
-        installer.install(url="http://pypi.python.org/packages/source/c/coverage/coverage-3.5.1.tar.gz#md5=410d4c8155a4dab222f2bc51212d4a24", url_subpath="coverage-3.5.1/coverage")
+        return installer.install(url="http://pypi.python.org/packages/source/c/coverage/coverage-3.5.1.tar.gz#md5=410d4c8155a4dab222f2bc51212d4a24", url_subpath="coverage-3.5.1/coverage")
 
     def _install_eliza(self):
         installer = AutoInstaller(target_dir=_AUTOINSTALLED_DIR)
-        installer.install(url="http://www.adambarth.com/webkit/eliza",
-                          target_name="eliza.py")
+        return installer.install(url="http://www.adambarth.com/webkit/eliza", target_name="eliza.py")
 
     def _install_irc(self):
         # Since irclib and ircbot are two top-level packages, we need to import
@@ -138,23 +139,26 @@ class AutoinstallImportHook(object):
         # organization purposes.
         irc_dir = self._fs.join(_AUTOINSTALLED_DIR, "irc")
         installer = AutoInstaller(target_dir=irc_dir)
-        installer.install(url="http://downloads.sourceforge.net/project/python-irclib/python-irclib/0.4.8/python-irclib-0.4.8.zip",
-                          url_subpath="irclib.py")
-        installer.install(url="http://downloads.sourceforge.net/project/python-irclib/python-irclib/0.4.8/python-irclib-0.4.8.zip",
+        installed_something = installer.install(url="http://downloads.sourceforge.net/project/python-irclib/python-irclib/0.4.8/python-irclib-0.4.8.zip",
+                                                url_subpath="irclib.py")
+        installed_something |= installer.install(url="http://downloads.sourceforge.net/project/python-irclib/python-irclib/0.4.8/python-irclib-0.4.8.zip",
                           url_subpath="ircbot.py")
+        return installed_something
 
     def _install_webpagereplay(self):
+        installed_something = False
         if not self._fs.exists(self._fs.join(_AUTOINSTALLED_DIR, "webpagereplay")):
-            self._install("http://web-page-replay.googlecode.com/files/webpagereplay-1.1.2.tar.gz", "webpagereplay-1.1.2")
+            installed_something = self._install("http://web-page-replay.googlecode.com/files/webpagereplay-1.1.2.tar.gz", "webpagereplay-1.1.2")
             self._fs.move(self._fs.join(_AUTOINSTALLED_DIR, "webpagereplay-1.1.2"), self._fs.join(_AUTOINSTALLED_DIR, "webpagereplay"))
 
         init_path = self._fs.join(_AUTOINSTALLED_DIR, "webpagereplay", "__init__.py")
         if not self._fs.exists(init_path):
             self._fs.write_text_file(init_path, "")
+        return installed_something
 
     def _install(self, url, url_subpath):
         installer = AutoInstaller(target_dir=_AUTOINSTALLED_DIR)
-        installer.install(url=url, url_subpath=url_subpath)
+        return installer.install(url=url, url_subpath=url_subpath)
 
 
 _hook = AutoinstallImportHook()
@@ -163,5 +167,7 @@ sys.meta_path.append(_hook)
 
 def autoinstall_everything():
     install_methods = [method for method in dir(_hook.__class__) if method.startswith('_install_')]
+    installed_something = False
     for method in install_methods:
-        getattr(_hook, method)()
+        installed_something |= getattr(_hook, method)()
+    return installed_something

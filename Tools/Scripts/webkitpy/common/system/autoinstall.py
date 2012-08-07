@@ -456,7 +456,7 @@ class AutoInstaller(object):
             _log.debug('URL for %s already downloaded.  Skipping...'
                        % target_name)
             _log.debug('    "%s"' % url)
-            return
+            return False
 
         self._log_transfer("Auto-installing package: %s" % target_name,
                             url, target_path, log_method=_log.info)
@@ -484,6 +484,7 @@ class AutoInstaller(object):
             shutil.rmtree(scratch_dir)
         _log.debug('Auto-installed %s to:' % target_name)
         _log.debug('    "%s"' % target_path)
+        return True
 
 
 if __name__=="__main__":

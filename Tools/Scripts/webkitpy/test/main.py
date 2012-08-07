@@ -126,7 +126,13 @@ class Tester(object):
         # and not have to worry about autoinstalling packages concurrently.
         self.printer.write_update("Checking autoinstalled packages ...")
         from webkitpy.thirdparty import autoinstall_everything
-        autoinstall_everything()
+        installed_something = autoinstall_everything()
+
+        # FIXME: There appears to be a bug in Python 2.6.1 that is causing multiprocessing
+        # to hang after we install the packages in a clean checkout.
+        if installed_something:
+            _log.warning("We installed new packages, so running things serially at first")
+            self._options.child_processes = 1
 
         if self._options.coverage:
             import webkitpy.thirdparty.autoinstalled.coverage as coverage

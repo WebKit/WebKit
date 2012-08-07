@@ -1,3 +1,33 @@
+2012-08-07  Dirk Pranke  <dpranke@chromium.org>
+
+        test-webkitpy hangs in a new checkout on snow leopard
+        https://bugs.webkit.org/show_bug.cgi?id=93301
+
+        Reviewed by Ryosuke Niwa.
+
+        This change works around what appears to be a bug in Python
+        2.6.1 (the version that ships on Mac Snow Leopard) that causes
+        the multiprocessing module to hang after we use the
+        autoinstaller; I'm guessing it's some sort of python sockets
+        issue. I was unable to reproduce this with 2.6.5 or newer
+        versions of Python.
+
+        * Scripts/webkitpy/common/system/autoinstall.py:
+        (AutoInstaller.install):
+        * Scripts/webkitpy/test/main.py:
+        (Tester._run_tests):
+        * Scripts/webkitpy/thirdparty/__init__.py:
+        (AutoinstallImportHook._install_mechanize):
+        (AutoinstallImportHook._install_pep8):
+        (AutoinstallImportHook._install_pylint):
+        (AutoinstallImportHook._install_buildbot):
+        (AutoinstallImportHook._install_coverage):
+        (AutoinstallImportHook._install_eliza):
+        (AutoinstallImportHook._install_irc):
+        (AutoinstallImportHook._install_webpagereplay):
+        (AutoinstallImportHook._install):
+        (autoinstall_everything):
+
 2012-08-07  Xianzhu Wang  <wangxianzhu@chromium.org>
 
         [Chromium-Android][NRWT] Fix 2 FIXMEs in chromium_android.py
