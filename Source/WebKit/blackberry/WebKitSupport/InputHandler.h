@@ -21,6 +21,7 @@
 
 #include <BlackBerryPlatformInputEvents.h>
 
+#include <imf/events.h>
 #include <imf/input_data.h>
 #include <map>
 #include <wtf/RefPtr.h>
@@ -44,6 +45,7 @@ class TextCheckingRequest;
 namespace BlackBerry {
 
 namespace Platform {
+class IntPoint;
 class KeyboardEvent;
 }
 
@@ -127,6 +129,9 @@ public:
     void requestCheckingOfString(WTF::PassRefPtr<WebCore::TextCheckingRequest>);
     void spellCheckingRequestProcessed(int32_t transactionId, spannable_string_t*);
     void spellCheckingRequestCancelled(int32_t id, bool isSequenceId = false);
+
+    bool shouldRequestSpellCheckingOptionsForPoint(Platform::IntPoint&, const WebCore::Element*, imf_sp_text_t&);
+    void requestSpellingCheckingOptions(const imf_sp_text_t&);
 
 private:
     enum PendingKeyboardStateChange { NoChange, Visible, NotVisible };
