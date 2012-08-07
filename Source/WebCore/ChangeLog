@@ -1,3 +1,17 @@
+2012-08-07  Robin Cao  <robin.cao@torchmobile.com.cn>
+
+        [BlackBerry] GL scissor test is accidentally turned off
+        https://bugs.webkit.org/show_bug.cgi?id=93360
+        PR #161020
+
+        Reviewed by Antonio Gomes.
+
+        The GL scissor test is accidentally turned off inside drawTextures().
+        This is wrong and should be removed.
+
+        * platform/graphics/blackberry/LayerCompositingThread.cpp:
+        (WebCore::LayerCompositingThread::drawTextures):
+
 2012-08-07  Abhishek Arya  <inferno@chromium.org>
 
         Crash in InlineFlowBox::deleteLine.

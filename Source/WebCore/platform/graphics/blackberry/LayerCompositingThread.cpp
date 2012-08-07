@@ -269,7 +269,6 @@ void LayerCompositingThread::drawTextures(double scale, int positionLocation, in
         m_layerRenderer->addLayerToReleaseTextureResourcesList(this);
         pthread_mutex_lock(m_frontBufferLock);
 
-        glDisable(GL_SCISSOR_TEST);
         glBindTexture(GL_TEXTURE_2D, m_texID);
         glVertexAttribPointer(positionLocation, 2, GL_FLOAT, GL_FALSE, 0, &m_transformedBounds);
         float upsideDown[4 * 2] = { 0, 1,  0, 0,  1, 0,  1, 1 };
