@@ -216,10 +216,16 @@ bool MiniBrowserApplication::notify(QObject* target, QEvent* event)
 
 void MiniBrowserApplication::updateTouchPoint(const QMouseEvent* mouseEvent, QTouchEvent::TouchPoint touchPoint, Qt::MouseButton mouseButton)
 {
+    // Ignore inserting additional touch points if Ctrl isn't held because it produces
+    // inconsistent touch events and results in assers in the gesture recognizers.
+    if (!m_holdingControl && m_touchPoints.size() && !m_touchPoints.contains(mouseButton))
+        return;
+
     if (m_holdingControl && touchPoint.state() == Qt::TouchPointReleased) {
         m_heldTouchPoints.insert(mouseButton);
         return;
     }
+
     // Gesture recognition uses the screen position for the initial threshold
     // but since the canvas translates touch events we actually need to pass
     // the screen position as the scene position to deliver the appropriate
