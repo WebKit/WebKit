@@ -1,3 +1,14 @@
+2012-08-06  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r124816.
+        http://trac.webkit.org/changeset/124816
+        https://bugs.webkit.org/show_bug.cgi?id=93311
+
+        made some tests crash (Requested by noamr on #webkit).
+
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedGraphicsLayer.cpp:
+        (WebCore::CoordinatedGraphicsLayer::addAnimation):
+
 2012-08-06  No'am Rosenthal  <noam.rosenthal@nokia.com>
 
         GraphicsLayerAnimation shouldn't use HashMap<String>
