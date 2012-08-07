@@ -1,3 +1,14 @@
+2012-08-06  Xan Lopez  <xlopez@igalia.com>
+
+        [GTK] Cleanup configure.ac build options output
+        https://bugs.webkit.org/show_bug.cgi?id=93245
+
+        Reviewed by Laszlo Gombos.
+
+        Remove duplicated elements, sort alphabetically.
+
+        * configure.ac: ditto.
+
 2012-08-06  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Update NEWS and configure.ac for 1.9.6 release

@@ -1546,28 +1546,27 @@ Build configuration:
 
 Features:
 =======
- WebGL                                                    : $enable_webgl
  Accelerated Compositing                                  : $enable_accelerated_compositing
  Animation API                                            : $enable_animation_api
  Blob support                                             : $enable_blob
- Color input support                                      : $enable_input_type_color
- CSS3 Flexbox support                                     : $enable_css3_flexbox
- CSS box-decoration-break support                         : $enable_css_box_decoration_break
- CSS Exclusions support                                   : $enable_css_exclusions
- CSS Regions support                                      : $enable_css_regions
- CSS Filters support                                      : $enable_css_filters
  CSS Compositing support                                  : $enable_css_compositing
+ CSS Exclusions support                                   : $enable_css_exclusions
+ CSS Filters support                                      : $enable_css_filters
+ CSS Regions support                                      : $enable_css_regions
+ CSS box-decoration-break support                         : $enable_css_box_decoration_break
+ CSS3 Flexbox support                                     : $enable_css3_flexbox
+ Color input support                                      : $enable_input_type_color
+ DOM mutation observer support                            : $enable_mutation_observers
  DeviceOrientation support                                : $enable_device_orientation
  Directory upload                                         : $enable_directory_upload
- DOM mutation observer support                            : $enable_mutation_observers
  Fast Mobile Scrolling                                    : $enable_fast_mobile_scrolling
  Filters support                                          : $enable_filters
  Fullscreen API support                                   : $enable_fullscreen_api
  Gamepad support                                          : $enable_gamepad
  Geolocation support                                      : $enable_geolocation
+ HTML5 FileSystem API support                             : $enable_file_system
  HTML5 channel messaging support                          : $enable_channel_messaging
  HTML5 data transfer items support                        : $enable_data_transfer_items
- HTML5 FileSystem API support                             : $enable_file_system
  HTML5 iframe seamless attribute support                  : $enable_iframe_seamless
  HTML5 meter element support                              : $enable_meter_tag
  HTML5 microdata support                                  : $enable_microdata
@@ -1575,35 +1574,35 @@ Features:
  HTML5 track element support                              : $enable_video_track
  HTML5 video element support                              : $enable_video
  Icon database support                                    : $enable_icon_database
- JavaScript debugger/profiler support                     : $enable_javascript_debugger
  JIT compilation                                          : $enable_jit
+ JavaScript debugger/profiler support                     : $enable_javascript_debugger
  Legacy WebKitBlobBuilder support                         : $enable_legacy_webkit_blob_builder
  Link prefetch support                                    : $enable_link_prefetch
+ MHTML support                                            : $enable_mhtml
  MathML support                                           : $enable_mathml
  Media source                                             : $enable_media_source
  Media statistics                                         : $enable_media_statistics
  Media stream support                                     : $enable_media_stream
- MHTML support                                            : $enable_mhtml
  Opcode stats                                             : $enable_opcode_stats
  Page Visibility API support                              : $enable_page_visibility_api
  Quota API support                                        : $enable_quota
  Register Protocol Handler support                        : $enable_register_protocol_handler
  RequestAnimationFrame support                            : $enable_request_animation_frame
+ SQL client-side database storage support                 : $enable_sql_database
+ SVG fonts support                                        : $enable_svg_fonts
+ SVG support                                              : $enable_svg
  Scripted speech support                                  : $enable_scripted_speech
  Shadow DOM support                                       : $enable_shadow_dom
  SharedWorkers support                                    : $enable_shared_workers
  Speech input support                                     : $enable_input_speech
  Spellcheck support                                       : $enable_spellcheck
- SQL client-side database storage support                 : $enable_sql_database
- SVG fonts support                                        : $enable_svg_fonts
- SVG support                                              : $enable_svg
  Text Autosizing support                                  : $enable_text_autosizing
  Touch Icon Loading support                               : $enable_touch_icon_loading
  Web Audio support                                        : $enable_web_audio
- WebGL                                                    : $enable_webgl
  Web Sockets support                                      : $enable_web_sockets
  Web Timing support                                       : $enable_web_timing
  Web Workers support                                      : $enable_workers
+ WebGL                                                    : $enable_webgl
  Widget region support                                    : $enable_widget_region
  XSLT support                                             : $enable_xslt
 
