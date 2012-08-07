@@ -6083,14 +6083,11 @@ void WebPagePrivate::enterFullScreenForElement(Element* element)
         // is so that exitFullScreenForElement() gets called later.
         enterFullscreenForNode(element);
     } else {
-        // When an element goes fullscreen, it gets cloned and added to a higher index
-        // wrapper/container node, created out of the DOM tree. This wrapper is fixed
-        // position, but since our fixed position logic respects only the 'y' coordinate,
-        // we temporarily scroll the WebPage to x:0 so that the wrapper gets properly
-        // positioned. The original scroll position is restored once element leaves fullscreen.
+        // When an element goes fullscreen, the viewport size changes and the scroll
+        // position might change. So we keep track of it here, in order to restore it
+        // once element leaves fullscreen.
         WebCore::IntPoint scrollPosition = m_mainFrame->view()->scrollPosition();
         m_xScrollOffsetBeforeFullScreen = scrollPosition.x();
-        m_mainFrame->view()->setScrollPosition(WebCore::IntPoint(0, scrollPosition.y()));
 
         // The current scale can be clamped to a greater minimum scale when we relayout contents during
         // the change of the viewport size. Cache the current scale so that we can restore it when

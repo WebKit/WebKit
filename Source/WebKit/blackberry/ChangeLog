@@ -1,5 +1,21 @@
 2012-08-07  Antonio Gomes  <agomes@rim.com>
 
+        [BlackBerry] [FullScreen] No need to scroll 'x' to 0 before entering fullscreen
+        https://bugs.webkit.org/show_bug.cgi?id=91750
+        PR #178293
+
+        Reviewed by Rob Buis.
+
+        We are not adjusting the 'left' CSS property of the fullscreen wrapper
+        properly, so no need to scroll 'x' to 0 anymore.
+
+        Internally reviewed by Jacky Jiang.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::enterFullScreenForElement):
+
+2012-08-07  Antonio Gomes  <agomes@rim.com>
+
         [BlackBerry][FullScreen] Remove the set/reset of touch modes code when entering/leaving fullscreen
         https://bugs.webkit.org/show_bug.cgi?id=92520
         PR #184511
