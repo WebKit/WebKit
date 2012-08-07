@@ -1,13 +1,14 @@
 Tests MediaSource API state transitions.
 
-webkitSourceState : closed
-EVENT(webkitsourceopen) : open
+webkitSourceState : SOURCE_CLOSED
+EVENT(loadstart)
+EVENT(webkitsourceopen) : SOURCE_OPEN
 onFirstSourceOpen
-EVENT(webkitsourceended) : ended
+EVENT(webkitsourceended) : SOURCE_ENDED
 onFirstSourceEnded
 EVENT(playing)
 triggerFirstSeek
-EVENT(webkitsourceopen) : open
+EVENT(webkitsourceopen) : SOURCE_OPEN
 EVENT(seeking)
 onFirstSeeking
 EVENT(seeked)
@@ -16,19 +17,21 @@ EVENT(seeking)
 onSecondSeeking
 EVENT(seeked)
 onSecondSeeked
-EVENT(webkitsourceclose) : closed
+EVENT(webkitsourceclose) : SOURCE_CLOSED
 onFirstSourceClose
 EVENT(emptied)
-EVENT(webkitsourceopen) : open
+EVENT(loadstart)
+EVENT(webkitsourceopen) : SOURCE_OPEN
 onSecondSourceOpen
-EVENT(webkitsourceended) : ended
+EVENT(webkitsourceended) : SOURCE_ENDED
 onSecondSourceEnded
 EVENT(playing)
 triggerSecondSourceClose
-EVENT(webkitsourceclose) : closed
+EVENT(webkitsourceclose) : SOURCE_CLOSED
 onSecondSourceClose
 EVENT(emptied)
-EVENT(webkitsourceopen) : open
+EVENT(loadstart)
+EVENT(webkitsourceopen) : SOURCE_OPEN
 onThirdSourceOpen
 END OF TEST
 

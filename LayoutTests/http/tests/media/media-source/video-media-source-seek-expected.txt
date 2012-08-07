@@ -1,5 +1,6 @@
 Tests seeking with MediaSource API
 
+EVENT(loadstart)
 EVENT(webkitsourceopen)
 EVENT(webkitsourceended)
 EVENT(playing)

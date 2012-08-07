@@ -16,7 +16,7 @@
                 if (firstOpen) {
                     firstOpen = false;
 
-                    segmentHelper.addSourceBuffer();
+                    segmentHelper.addSourceId();
                     segmentHelper.appendInitSegment();
                     segmentHelper.appendUntilEndOfStream(0);
                 }
@@ -38,7 +38,7 @@
                 var videoTag = event.target;
 
                 // Call abort to make sure the source buffer is in a state where it can accept new segments.
-                segmentHelper.sourceBuffer.abort();
+                videoTag.webkitSourceAbort(segmentHelper.SourceID);
 
                 var startIndex = segmentHelper.getMediaSegmentIndexForTimestamp(videoTag.currentTime);
                 segmentHelper.appendUntilEndOfStream(startIndex);
@@ -61,13 +61,14 @@
                 findMediaElement();
 
                 waitForEventAndFail('error');
-                waitForEvent('webkitsourceopen', "", false, false, mediaSource);
-                waitForEvent('webkitsourceended', "", false, false, mediaSource);
+                waitForEvent('loadstart');
+                waitForEvent('webkitsourceopen');
+                waitForEvent('webkitsourceended');
                 waitForEvent('playing');
                 waitForEvent('seeking');
                 waitForEventAndEnd('ended');
 
-                mediaSource.addEventListener('webkitsourceopen', onSourceOpen);
+                video.addEventListener('webkitsourceopen', onSourceOpen);
                 video.addEventListener('timeupdate', onTimeUpdate);
                 video.addEventListener('seeking', onSeeking);
                 video.addEventListener('seeked', onSeeked);

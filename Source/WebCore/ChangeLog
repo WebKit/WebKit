@@ -1,3 +1,37 @@
+2012-08-06  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r124848.
+        http://trac.webkit.org/changeset/124848
+        https://bugs.webkit.org/show_bug.cgi?id=93336
+
+        Caused 3 tests to crash on chromium Linux32/Mac10.6/Linux
+        (Requested by toyoshim on #webkit).
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore):
+        (WebCore::HTMLMediaElement::HTMLMediaElement):
+        (WebCore::HTMLMediaElement::parseAttribute):
+        (WebCore::HTMLMediaElement::prepareForLoad):
+        (WebCore::HTMLMediaElement::loadResource):
+        (WebCore::HTMLMediaElement::noneSupported):
+        (WebCore::HTMLMediaElement::mediaEngineError):
+        (WebCore::HTMLMediaElement::mediaPlayerSourceOpened):
+        (WebCore::HTMLMediaElement::isValidSourceId):
+        (WebCore::HTMLMediaElement::seek):
+        (WebCore::HTMLMediaElement::webkitSourceAddId):
+        (WebCore::HTMLMediaElement::webkitSourceRemoveId):
+        (WebCore::HTMLMediaElement::webkitSourceBuffered):
+        (WebCore::HTMLMediaElement::webkitSourceAppend):
+        (WebCore::HTMLMediaElement::webkitSourceAbort):
+        (WebCore::HTMLMediaElement::webkitSourceEndOfStream):
+        (WebCore::HTMLMediaElement::webkitSourceState):
+        (WebCore::HTMLMediaElement::setSourceState):
+        (WebCore::HTMLMediaElement::userCancelledLoad):
+        (WebCore::HTMLMediaElement::createMediaPlayer):
+        * html/HTMLMediaElement.h:
+        (HTMLMediaElement):
+        * html/HTMLMediaElement.idl:
+
 2012-08-06  Anna Cavender  <annacc@chromium.org>
 
         Update HTMLMediaElement to the new OO MediaSource API.

@@ -8,7 +8,7 @@
             var segmentHelper = new MediaSourceTest.SegmentHelper(WebMSegmentInfo.testWebM);
             var seekTime;
 
-            function appendMediaSegmentsForSeek(segmentSeekTime)
+            function appendMediaSegmentsForSeek(videoTag, segmentSeekTime)
             {
                 var index = segmentHelper.getMediaSegmentIndexForTimestamp(segmentSeekTime);
                 var endIndex = index + 2;
@@ -19,14 +19,14 @@
                 }
 
                 if (index >= totalMediaSegments) {
-                    mediaSource.endOfStream();
+                    videoTag.webkitSourceEndOfStream(HTMLMediaElement.EOS_NO_ERROR);
                     return;
                 }
             }
 
             function onSourceEvent(event)
             {
-                consoleWrite('EVENT(' + event.type + ') : ' + event.target.readyState);
+                consoleWrite('EVENT(' + event.type + ') : ' + MediaSourceTest.getSourceStateName(event.target.webkitSourceState));
             }
 
             function onFirstSourceOpen(event)
@@ -36,17 +36,17 @@
                 // This is the first time the source is opened. We just want to append
                 // the initialization segment and all media segments until the end of stream.
                 // This is testing the
-                // "closed" -> "open" -> "ended" transition path.
+                // SOURCE_CLOSED -> SOURCE_OPEN -> SOURCE_ENDED transition path.
 
-                var mediaSource = event.target;
-                mediaSource.removeEventListener('webkitsourceopen', onFirstSourceOpen);
-                segmentHelper.addSourceBuffer();
+                var videoTag = event.target;
+                videoTag.removeEventListener('webkitsourceopen', onFirstSourceOpen);
+                segmentHelper.addSourceId();
 
-                MediaSourceTest.expectSourceState(mediaSource, "open");
+                MediaSourceTest.expectSourceState(videoTag, HTMLMediaElement.SOURCE_OPEN);
 
                 segmentHelper.appendInitSegment();
 
-                mediaSource.addEventListener('webkitsourceended', onFirstSourceEnded);
+                videoTag.addEventListener('webkitsourceended', onFirstSourceEnded);
 
                 // Start appending media segments.
                 segmentHelper.appendUntilEndOfStream(0);
@@ -55,13 +55,12 @@
             function onFirstSourceEnded(event)
             {
                 consoleWrite("onFirstSourceEnded");
+                var videoTag = event.target;
+                videoTag.removeEventListener('webkitsourceended', onFirstSourceEnded);
 
-                var mediaSource = event.target;
-                mediaSource.removeEventListener('webkitsourceended', onFirstSourceEnded);
+                MediaSourceTest.expectSourceState(videoTag, videoTag.SOURCE_ENDED);
 
-                MediaSourceTest.expectSourceState(mediaSource, "ended");
-
-                video.addEventListener('playing', triggerFirstSeek);
+                videoTag.addEventListener('playing', triggerFirstSeek);
             }
 
             function triggerFirstSeek(event)
@@ -72,7 +71,7 @@
                 videoTag.removeEventListener('playing', triggerFirstSeek);
 
                 // Now that we have appended all of the media segments and ended the stream,
-                // lets do a seek to test the "ended" -> "open" transition.
+                // lets do a seek to test the SOURCE_ENDED -> SOURCE_OPEN transition.
                 videoTag.addEventListener('seeking', onFirstSeeking);
                 videoTag.addEventListener('seeked', onFirstSeeked);
                 videoTag.currentTime = seekTime;
@@ -85,10 +84,10 @@
                 var videoTag = event.target;
                 videoTag.removeEventListener('seeking', onFirstSeeking);
 
-                MediaSourceTest.expectSourceState(mediaSource, "open");
+                MediaSourceTest.expectSourceState(videoTag, HTMLMediaElement.SOURCE_OPEN);
 
                 // Start appending media segments.
-                appendMediaSegmentsForSeek(videoTag.currentTime);
+                appendMediaSegmentsForSeek(videoTag, videoTag.currentTime);
             }
 
             function onFirstSeeked(event)
@@ -98,9 +97,9 @@
                 var videoTag = event.target;
                 videoTag.removeEventListener('seeked', onFirstSeeked);
 
-                MediaSourceTest.expectSourceState(mediaSource, "open");
+                MediaSourceTest.expectSourceState(videoTag, HTMLMediaElement.SOURCE_OPEN);
 
-                // Now it is time to test seeking while still in "open".
+                // Now it is time to test seeking while still in SOURCE_OPEN.
                 videoTag.addEventListener('seeking', onSecondSeeking);
                 videoTag.addEventListener('seeked', onSecondSeeked);
                 videoTag.currentTime = seekTime;
@@ -113,23 +112,22 @@
                 var videoTag = event.target;
                 videoTag.removeEventListener('seeking', onSecondSeeking);
 
-                MediaSourceTest.expectSourceState(mediaSource, "open");
+                MediaSourceTest.expectSourceState(videoTag, HTMLMediaElement.SOURCE_OPEN);
 
                 // Start appending media segments.
-                appendMediaSegmentsForSeek(videoTag.currentTime);
+                appendMediaSegmentsForSeek(videoTag, videoTag.currentTime);
             }
 
             function onSecondSeeked(event)
             {
                 consoleWrite("onSecondSeeked");
-
                 var videoTag = event.target;
                 videoTag.removeEventListener('seeked', onSecondSeeked);
 
-                MediaSourceTest.expectSourceState(mediaSource, "open");
+                MediaSourceTest.expectSourceState(videoTag, HTMLMediaElement.SOURCE_OPEN);
 
-                // Test "open" -> "closed" -> "open" transition path.
-                mediaSource.addEventListener('webkitsourceclose', onFirstSourceClose);
+                // Test SOURCE_OPEN -> SOURCE_CLOSED -> SOURCE_OPEN transition path.
+                videoTag.addEventListener('webkitsourceclose', onFirstSourceClose);
                 MediaSourceTest.setSrcToMediaSourceTestURL(videoTag);
             }
 
@@ -137,27 +135,27 @@
             {
                 consoleWrite("onFirstSourceClose");
 
-                var mediaSource = event.target;
-                mediaSource.removeEventListener('webkitsourceclose', onFirstSourceClose);
+                var videoTag = event.target;
+                videoTag.removeEventListener('webkitsourceclose', onFirstSourceClose);
 
-                MediaSourceTest.expectSourceState(mediaSource, "closed");
+                MediaSourceTest.expectSourceState(videoTag, HTMLMediaElement.SOURCE_CLOSED);
 
-                mediaSource.addEventListener('webkitsourceopen', onSecondSourceOpen);
+                videoTag.addEventListener('webkitsourceopen', onSecondSourceOpen);
             }
 
             function onSecondSourceOpen(event)
             {
                 consoleWrite("onSecondSourceOpen");
 
-                var mediaSource = event.target;
-                mediaSource.removeEventListener('webkitsourceopen', onSecondSourceOpen);
-                segmentHelper.addSourceBuffer();
+                var videoTag = event.target;
+                videoTag.removeEventListener('webkitsourceopen', onSecondSourceOpen);
+                segmentHelper.addSourceId();
 
-                MediaSourceTest.expectSourceState(mediaSource, "open");
+                MediaSourceTest.expectSourceState(videoTag, HTMLMediaElement.SOURCE_OPEN);
 
                 segmentHelper.appendInitSegment();
 
-                mediaSource.addEventListener('webkitsourceended', onSecondSourceEnded);
+                videoTag.addEventListener('webkitsourceended', onSecondSourceEnded);
 
                 // Start appending media segments.
                 segmentHelper.appendUntilEndOfStream(0);
@@ -167,13 +165,13 @@
             {
                 consoleWrite("onSecondSourceEnded");
 
-                var mediaSource = event.target;
-                mediaSource.removeEventListener('webkitsourceended', onSecondSourceEnded);
+                var videoTag = event.target;
+                videoTag.removeEventListener('webkitsourceended', onSecondSourceEnded);
 
-                MediaSourceTest.expectSourceState(mediaSource, "ended");
+                MediaSourceTest.expectSourceState(videoTag, HTMLMediaElement.SOURCE_ENDED);
                 //MediaSourceTest.expectReadyState(videoTag, HTMLMediaElement.HAVE_NOTHING);
 
-                video.addEventListener('playing', triggerSecondSourceClose);
+                videoTag.addEventListener('playing', triggerSecondSourceClose);
             }
 
             function triggerSecondSourceClose(event)
@@ -183,8 +181,8 @@
                 var videoTag = event.target;
                 videoTag.removeEventListener('playing', triggerSecondSourceClose);
 
-                // Test "ended" -> "closed" -> "open" transition path.
-                mediaSource.addEventListener('webkitsourceclose', onSecondSourceClose);
+                // Test SOURCE_ENDED -> SOURCE_CLOSED -> SOURCE_OPEN transition path.
+                videoTag.addEventListener('webkitsourceclose', onSecondSourceClose);
                 MediaSourceTest.setSrcToMediaSourceTestURL(videoTag);
             }
 
@@ -192,22 +190,22 @@
             {
                 consoleWrite("onSecondSourceClose");
 
-                var mediaSource = event.target;
-                mediaSource.removeEventListener('webkitsourceclose', onSecondSourceClose);
-                MediaSourceTest.expectSourceState(mediaSource, "closed");
+                var videoTag = event.target;
+                videoTag.removeEventListener('webkitsourceclose', onSecondSourceClose);
+                MediaSourceTest.expectSourceState(videoTag, HTMLMediaElement.SOURCE_CLOSED);
 
-                mediaSource.addEventListener('webkitsourceopen', onThirdSourceOpen);
+                videoTag.addEventListener('webkitsourceopen', onThirdSourceOpen);
             }
 
             function onThirdSourceOpen(event)
             {
                 consoleWrite("onThirdSourceOpen");
 
-                var mediaSource = event.target;
-                mediaSource.removeEventListener('webkitsourceopen', onThirdSourceOpen);
-                segmentHelper.addSourceBuffer();
+                var videoTag = event.target;
+                videoTag.removeEventListener('webkitsourceopen', onThirdSourceOpen);
+                segmentHelper.addSourceId();
 
-                MediaSourceTest.expectSourceState(mediaSource, "open");
+                MediaSourceTest.expectSourceState(videoTag, HTMLMediaElement.SOURCE_OPEN);
 
                 endTest();
             }
@@ -216,22 +214,21 @@
             {
                 findMediaElement();
 
-                mediaSource = new MediaSource();
-
                 waitForEventAndFail('error');
+                waitForEvent('loadstart');
                 waitForEvent('playing');
                 waitForEvent('seeking');
                 waitForEvent('seeked');
                 waitForEvent('ended');
                 waitForEvent('emptied');
 
-                mediaSource.addEventListener('webkitsourceopen', onSourceEvent);
-                mediaSource.addEventListener('webkitsourceended', onSourceEvent);
-                mediaSource.addEventListener('webkitsourceclose', onSourceEvent);
+                video.addEventListener('webkitsourceopen', onSourceEvent);
+                video.addEventListener('webkitsourceended', onSourceEvent);
+                video.addEventListener('webkitsourceclose', onSourceEvent);
 
-                mediaSource.addEventListener('webkitsourceopen', onFirstSourceOpen);
+                video.addEventListener('webkitsourceopen', onFirstSourceOpen);
 
-                MediaSourceTest.logSourceState(mediaSource);
+                MediaSourceTest.logSourceState(video);
                 segmentHelper.init(video, function(success)
                 {
                     if (!success) {

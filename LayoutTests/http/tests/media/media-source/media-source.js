@@ -1,10 +1,9 @@
 var MediaSourceTest = {};
-var mediaSource = new MediaSource();
 
 MediaSourceTest.SegmentHelper = function(segmentInfo)
 {
     this.MediaSegmentsToLoad = 0;
-    this.sourceBuffer = null;
+    this.SourceID = 'sourceId';
 
     this.videoTag = null;
     this.segmentInfo = segmentInfo;
@@ -122,32 +121,32 @@ MediaSourceTest.SegmentHelper.prototype.getData_ = function (url, start, length,
     request.send();
 };
 
-MediaSourceTest.SegmentHelper.prototype.addSourceBuffer = function()
+MediaSourceTest.SegmentHelper.prototype.addSourceId = function()
 {
-    this.sourceBuffer = mediaSource.addSourceBuffer(this.segmentInfo.type);
+    this.videoTag.webkitSourceAddId(this.SourceID, this.segmentInfo.type);
 };
 
 MediaSourceTest.SegmentHelper.prototype.appendInitSegment = function()
 {
-    this.sourceBuffer.append(this.initSegment);
+    this.videoTag.webkitSourceAppend(this.SourceID, this.initSegment);
 };
 
 MediaSourceTest.SegmentHelper.prototype.appendMediaSegment = function(index)
 {
-    this.sourceBuffer.append(this.mediaSegments[index]);
+    this.videoTag.webkitSourceAppend(this.SourceID, this.mediaSegments[index]);
 };
 
 MediaSourceTest.SegmentHelper.prototype.appendUntilEndOfStream = function(startIndex)
 {
-    if (!this.sourceBuffer) {
-        failTest("MediaSource API is not available");
+    if (!this.videoTag.webkitSourceAppend) {
+        failTest("webkitSourceAppend() is not available");
         return;
     }
 
     for (var index = startIndex; index < this.mediaSegments.length; index++)
         this.appendMediaSegment(index);
 
-    mediaSource.endOfStream();
+    this.videoTag.webkitSourceEndOfStream(this.videoTag.EOS_NO_ERROR);
 };
 
 MediaSourceTest.SegmentHelper.prototype.getTimeForMediaSegment = function(index)
@@ -177,7 +176,7 @@ MediaSourceTest.setSrcToMediaSourceTestURL = function(videoTag)
         return;
     }
 
-    videoTag.src = webkitURL.createObjectURL(mediaSource);
+    videoTag.src = videoTag.webkitMediaSourceURL;
 };
 
 MediaSourceTest.mediaErrorString = function(videoTag)
@@ -207,9 +206,9 @@ MediaSourceTest.defaultOnErrorChecks = function(event)
 
     consoleWrite("EVENT(error) : " + MediaSourceTest.mediaErrorString(videoTag));
 
-    if (mediaSource.readyState != "closed") {
-        consoleWrite("Unexpected source state. Expected 'closed'" +
-                     " got " + mediaSource.readyState);
+    if (videoTag.webkitSourceState != HTMLMediaElement.SOURCE_CLOSED) {
+        consoleWrite("Unexpected source state. Expected SOURCE_CLOSED" +
+                     " got " + getSourceStateName(videoTag.webkitSourceState));
     }
 };
 
@@ -271,32 +270,42 @@ MediaSourceTest.runOnSourceOpen = function(videoTag, onOpenFunction)
 {
     var eventHandlerFunction = function (event)
     {
-        if (videoTag.networkState != HTMLMediaElement.NETWORK_LOADING &&
-            videoTag.networkState != HTMLMediaElement.NETWORK_IDLE) {
-            failTest("Unexpected network state. Expected " +
-                     HTMLMediaElement.NETWORK_LOADING + " or " +
-                     HTMLMediaElement.NETWORK_IDLE +
-                     " got " + videoTag.readyState);
-        }
         event.target.removeEventListener('webkitsourceopen', eventHandlerFunction);
         onOpenFunction();
     };
-
-    mediaSource.addEventListener('webkitsourceopen', eventHandlerFunction);
+    videoTag.addEventListener('webkitsourceopen', eventHandlerFunction);
     MediaSourceTest.setSrcToMediaSourceTestURL(videoTag);
 };
 
-MediaSourceTest.logSourceState = function(mediaSource)
+MediaSourceTest.logSourceState = function(videoTag)
 {
-    consoleWrite("webkitSourceState : " + mediaSource.readyState);
+    consoleWrite("webkitSourceState : " + MediaSourceTest.getSourceStateName(videoTag.webkitSourceState));
 };
 
-MediaSourceTest.expectSourceState = function(mediaSource, expected)
+MediaSourceTest.expectSourceState = function(videoTag, expected)
 {
-    if (mediaSource.readyState != expected) {
-        failTest("Unexpected source state. Expected " + expected +
-                 " got " + mediaSource.readyState);
+    if (videoTag.webkitSourceState != expected) {
+        failTest("Unexpected source state. Expected " +
+                 MediaSourceTest.getSourceStateName(expected) +
+                 " got " + MediaSourceTest.getSourceStateName(videoTag.webkitSourceState));
     }
+};
+
+MediaSourceTest.getSourceStateName = function(state)
+{
+    var stateName = "UNKNOWN";
+    switch (state) {
+        case HTMLMediaElement.SOURCE_CLOSED:
+            stateName = "SOURCE_CLOSED";
+            break;
+        case HTMLMediaElement.SOURCE_OPEN:
+            stateName = "SOURCE_OPEN";
+            break;
+        case HTMLMediaElement.SOURCE_ENDED:
+            stateName = "SOURCE_ENDED";
+            break;
+    }
+    return stateName;
 };
 
 MediaSourceTest.expectReadyState = function(videoTag, expected)

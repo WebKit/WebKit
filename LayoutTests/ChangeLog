@@ -1,3 +1,41 @@
+2012-08-06  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r124848.
+        http://trac.webkit.org/changeset/124848
+        https://bugs.webkit.org/show_bug.cgi?id=93336
+
+        Caused 3 tests to crash on chromium Linux32/Mac10.6/Linux
+        (Requested by toyoshim on #webkit).
+
+        * http/tests/media/media-source/media-source.js:
+        (MediaSourceTest.SegmentHelper):
+        (MediaSourceTest.SegmentHelper.prototype.addSourceId):
+        (MediaSourceTest.SegmentHelper.prototype.appendInitSegment):
+        (MediaSourceTest.SegmentHelper.prototype.appendMediaSegment):
+        (MediaSourceTest.SegmentHelper.prototype.appendUntilEndOfStream):
+        (MediaSourceTest.setSrcToMediaSourceTestURL):
+        (MediaSourceTest.defaultOnErrorChecks):
+        (MediaSourceTest.runOnSourceOpen.eventHandlerFunction):
+        (MediaSourceTest.runOnSourceOpen):
+        (MediaSourceTest.logSourceState):
+        (MediaSourceTest.expectSourceState):
+        (MediaSourceTest.getSourceStateName):
+        * http/tests/media/media-source/video-media-source-abort-expected.txt:
+        * http/tests/media/media-source/video-media-source-abort.html:
+        * http/tests/media/media-source/video-media-source-add-and-remove-buffers.html: Removed.
+        * http/tests/media/media-source/video-media-source-add-and-remove-ids-expected.txt: Renamed from LayoutTests/http/tests/media/media-source/video-media-source-add-and-remove-buffers-expected.txt.
+        * http/tests/media/media-source/video-media-source-add-and-remove-ids.html: Added.
+        * http/tests/media/media-source/video-media-source-errors-expected.txt:
+        * http/tests/media/media-source/video-media-source-errors.html:
+        * http/tests/media/media-source/video-media-source-event-attributes-expected.txt:
+        * http/tests/media/media-source/video-media-source-event-attributes.html:
+        * http/tests/media/media-source/video-media-source-play-expected.txt:
+        * http/tests/media/media-source/video-media-source-play.html:
+        * http/tests/media/media-source/video-media-source-seek-expected.txt:
+        * http/tests/media/media-source/video-media-source-seek.html:
+        * http/tests/media/media-source/video-media-source-state-changes-expected.txt:
+        * http/tests/media/media-source/video-media-source-state-changes.html:
+
 2012-08-06  Takashi Toyoshima  <toyoshim@chromium.org>
 
         Unreviewed, rebaseline for chromium-linux-x86.

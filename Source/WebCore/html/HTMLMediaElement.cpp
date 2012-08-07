@@ -111,11 +111,6 @@
 #include "DisplaySleepDisabler.h"
 #endif
 
-#if ENABLE(MEDIA_SOURCE)
-#include "MediaSource.h"
-#include "MediaSourceRegistry.h"
-#endif
-
 using namespace std;
 
 namespace WebCore {
@@ -150,7 +145,7 @@ static const char* boolString(bool val)
 
 #if ENABLE(MEDIA_SOURCE)
 // URL protocol used to signal that the media source API is being used.
-static const char* mediaSourceBlobProtocol = "blob";
+static const char* mediaSourceURLProtocol = "x-media-source";
 #endif
 
 using namespace HTMLNames;
@@ -224,6 +219,9 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document* docum
     , m_preload(MediaPlayer::Auto)
     , m_displayMode(Unknown)
     , m_processingMediaPlayerCallback(0)
+#if ENABLE(MEDIA_SOURCE)      
+    , m_sourceState(SOURCE_CLOSED)
+#endif
     , m_cachedTime(MediaPlayer::invalidTime())
     , m_cachedTimeWallClockUpdateTime(0)
     , m_minimumWallClockTimeToCacheMediaTime(0)
@@ -274,7 +272,7 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document* docum
     }
 
 #if ENABLE(MEDIA_SOURCE)
-    m_mediaSourceURL.setProtocol(mediaSourceBlobProtocol);
+    m_mediaSourceURL.setProtocol(mediaSourceURLProtocol);
     m_mediaSourceURL.setPath(createCanonicalUUIDString());
 #endif
 
@@ -423,6 +421,14 @@ void HTMLMediaElement::parseAttribute(const Attribute& attribute)
         setAttributeEventListener(eventNames().webkitbeginfullscreenEvent, createAttributeEventListener(this, attribute));
     else if (attribute.name() == onwebkitendfullscreenAttr)
         setAttributeEventListener(eventNames().webkitendfullscreenEvent, createAttributeEventListener(this, attribute));
+#if ENABLE(MEDIA_SOURCE)
+    else if (attribute.name() == onwebkitsourcecloseAttr)
+        setAttributeEventListener(eventNames().webkitsourcecloseEvent, createAttributeEventListener(this, attribute));
+    else if (attribute.name() == onwebkitsourceendedAttr)
+        setAttributeEventListener(eventNames().webkitsourceendedEvent, createAttributeEventListener(this, attribute));
+    else if (attribute.name() == onwebkitsourceopenAttr)
+        setAttributeEventListener(eventNames().webkitsourceopenEvent, createAttributeEventListener(this, attribute));
+#endif
     else
         HTMLElement::parseAttribute(attribute);
 }
@@ -687,10 +693,6 @@ void HTMLMediaElement::prepareForLoad()
     if (m_networkState == NETWORK_LOADING || m_networkState == NETWORK_IDLE)
         scheduleEvent(eventNames().abortEvent);
 
-#if ENABLE(MEDIA_SOURCE)
-    setSourceState(MediaSource::closedKeyword());
-#endif
-
 #if !ENABLE(PLUGIN_PROXY_FOR_VIDEO)
     createMediaPlayer();
 #else
@@ -698,6 +700,11 @@ void HTMLMediaElement::prepareForLoad()
         m_player->cancelLoad();
     else
         createMediaPlayerProxy();
+#endif
+
+#if ENABLE(MEDIA_SOURCE)
+    if (m_sourceState != SOURCE_CLOSED)
+        setSourceState(SOURCE_CLOSED);
 #endif
 
     // 4 - If the media element's networkState is not set to NETWORK_EMPTY, then run these substeps
@@ -920,16 +927,10 @@ void HTMLMediaElement::loadResource(const KURL& initialURL, ContentType& content
     }
     
 #if ENABLE(MEDIA_SOURCE)
-    if (url.protocolIs(mediaSourceBlobProtocol)) {
-        if (m_mediaSource)
-            m_mediaSource->setReadyState(MediaSource::closedKeyword());
-
-        m_mediaSource = adoptRef(MediaSourceRegistry::registry().lookupMediaSource(url.string()));
-
-        if (m_mediaSource) {
-            m_mediaSource->setMediaPlayer(m_player.get());
-            m_mediaSourceURL = url;
-        }
+    // If this is a media source URL, make sure it is the one for this media element.
+    if (url.protocolIs(mediaSourceURLProtocol) && url != m_mediaSourceURL) {
+        mediaLoadingFailed(MediaPlayer::FormatError);
+        return;
     }
 #endif
 
@@ -1431,7 +1432,8 @@ void HTMLMediaElement::noneSupported()
     scheduleEvent(eventNames().errorEvent);
 
 #if ENABLE(MEDIA_SOURCE)
-    setSourceState(MediaSource::closedKeyword());
+    if (m_sourceState != SOURCE_CLOSED)
+        setSourceState(SOURCE_CLOSED);
 #endif
 
     // 8 - Set the element's delaying-the-load-event flag to false. This stops delaying the load event.
@@ -1462,7 +1464,8 @@ void HTMLMediaElement::mediaEngineError(PassRefPtr<MediaError> err)
     scheduleEvent(eventNames().errorEvent);
 
 #if ENABLE(MEDIA_SOURCE)
-    setSourceState(MediaSource::closedKeyword());
+    if (m_sourceState != SOURCE_CLOSED)
+        setSourceState(SOURCE_CLOSED);
 #endif
 
     // 4 - Set the element's networkState attribute to the NETWORK_EMPTY value and queue a
@@ -1747,7 +1750,7 @@ void HTMLMediaElement::mediaPlayerSourceOpened()
 {
     beginProcessingMediaPlayerCallback();
 
-    setSourceState(MediaSource::openKeyword());
+    setSourceState(SOURCE_OPEN);
 
     endProcessingMediaPlayerCallback();
 }
@@ -1756,6 +1759,22 @@ String HTMLMediaElement::mediaPlayerSourceURL() const
 {
     return m_mediaSourceURL.string();
 }
+
+bool HTMLMediaElement::isValidSourceId(const String& id, ExceptionCode& ec) const
+{
+    if (id.isNull() || id.isEmpty()) {
+        ec = INVALID_ACCESS_ERR;
+        return false;
+    }
+
+    if (!m_sourceIDs.contains(id)) {
+        ec = SYNTAX_ERR;
+        return false;
+    }
+
+    return true;
+}
+
 #endif
 
 #if ENABLE(ENCRYPTED_MEDIA)
@@ -1979,8 +1998,8 @@ void HTMLMediaElement::seek(float time, ExceptionCode& ec)
 #if ENABLE(MEDIA_SOURCE)
     // Always notify the media engine of a seek if the source is not closed. This ensures that the source is
     // always in a flushed state when the 'seeking' event fires.
-    if (m_mediaSource && m_mediaSource->readyState() != MediaSource::closedKeyword())
-        noSeekRequired = false;
+    if (m_sourceState != SOURCE_CLOSED)
+      noSeekRequired = false;
 #endif
 
     if (noSeekRequired) {
@@ -2002,8 +2021,8 @@ void HTMLMediaElement::seek(float time, ExceptionCode& ec)
     m_sentEndEvent = false;
 
 #if ENABLE(MEDIA_SOURCE)
-    if (m_mediaSource && m_mediaSource->readyState() == MediaSource::endedKeyword())
-        setSourceState(MediaSource::openKeyword());
+    if (m_sourceState == SOURCE_ENDED)
+        setSourceState(SOURCE_OPEN);
 #endif
 
     // 8 - Set the current playback position to the given new playback position
@@ -2351,12 +2370,175 @@ void HTMLMediaElement::pauseInternal()
 }
 
 #if ENABLE(MEDIA_SOURCE)
-void HTMLMediaElement::setSourceState(const String& state)
-{
-    if (!m_mediaSource)
-         return;
 
-    m_mediaSource->setReadyState(state);
+void HTMLMediaElement::webkitSourceAddId(const String& id, const String& type, ExceptionCode& ec)
+{
+    if (id.isNull() || id.isEmpty()) {
+        ec = INVALID_ACCESS_ERR;
+        return;
+    }
+
+    if (m_sourceIDs.contains(id)) {
+        ec = INVALID_STATE_ERR;
+        return;
+    }
+
+    if (type.isNull() || type.isEmpty()) {
+        ec = INVALID_ACCESS_ERR;
+        return;
+    }
+
+    if (!m_player || m_currentSrc != m_mediaSourceURL || m_sourceState != SOURCE_OPEN) {
+        ec = INVALID_STATE_ERR;
+        return;
+    }
+
+    ContentType contentType(type);
+    Vector<String> codecs = contentType.codecs();
+
+    if (!codecs.size()) {
+        ec = NOT_SUPPORTED_ERR;
+        return;
+    }
+
+    switch (m_player->sourceAddId(id, contentType.type(), codecs)) {
+    case MediaPlayer::Ok:
+        m_sourceIDs.add(id);
+        return;
+    case MediaPlayer::NotSupported:
+        ec = NOT_SUPPORTED_ERR;
+        return;
+    case MediaPlayer::ReachedIdLimit:
+        ec = QUOTA_EXCEEDED_ERR;
+        return;
+    }
+
+    ASSERT_NOT_REACHED();
+}
+
+void HTMLMediaElement::webkitSourceRemoveId(const String& id, ExceptionCode& ec)
+{
+    if (!isValidSourceId(id, ec))
+        return;
+
+    if (!m_player || m_currentSrc != m_mediaSourceURL || m_sourceState == SOURCE_CLOSED) {
+        ec = INVALID_STATE_ERR;
+        return;
+    }
+
+    if (!m_player->sourceRemoveId(id))
+        ASSERT_NOT_REACHED();
+
+    m_sourceIDs.remove(id);
+}
+
+PassRefPtr<TimeRanges> HTMLMediaElement::webkitSourceBuffered(const String& id, ExceptionCode& ec)
+{
+    if (!isValidSourceId(id, ec))
+        return 0;
+
+    if (!m_player || m_currentSrc != m_mediaSourceURL || m_sourceState == SOURCE_CLOSED) {
+        ec = INVALID_STATE_ERR;
+        return 0;
+    }
+
+    return m_player->sourceBuffered(id);
+}
+
+void HTMLMediaElement::webkitSourceAppend(const String& id, PassRefPtr<Uint8Array> data, ExceptionCode& ec)
+{
+    if (!isValidSourceId(id, ec))
+        return;
+
+    if (!m_player || m_currentSrc != m_mediaSourceURL || m_sourceState != SOURCE_OPEN) {
+        ec = INVALID_STATE_ERR;
+        return;
+    }
+
+    if (!data.get()) {
+        ec = INVALID_ACCESS_ERR;
+        return;
+    }
+
+    if (!data->length())
+        return;
+
+    if (!m_player->sourceAppend(id, data->data(), data->length())) {
+        ec = SYNTAX_ERR;
+        return;
+    }
+}
+
+void HTMLMediaElement::webkitSourceAbort(const String& id, ExceptionCode& ec)
+{
+    if (!isValidSourceId(id, ec))
+        return;
+
+    if (!m_player || m_currentSrc != m_mediaSourceURL || m_sourceState != SOURCE_OPEN) {
+        ec = INVALID_STATE_ERR;
+        return;
+    }
+
+    if (!m_player->sourceAbort(id))
+        ASSERT_NOT_REACHED();
+}
+
+void HTMLMediaElement::webkitSourceEndOfStream(unsigned short status, ExceptionCode& ec)
+{
+    if (!m_player || m_currentSrc != m_mediaSourceURL || m_sourceState != SOURCE_OPEN) {
+        ec = INVALID_STATE_ERR;
+        return;
+    }
+
+    MediaPlayer::EndOfStreamStatus eosStatus = MediaPlayer::EosNoError;
+
+    switch (status) {
+    case EOS_NO_ERROR:
+        eosStatus = MediaPlayer::EosNoError;
+        break;
+    case EOS_NETWORK_ERR:
+        eosStatus = MediaPlayer::EosNetworkError;
+        break;
+    case EOS_DECODE_ERR:
+        eosStatus = MediaPlayer::EosDecodeError;
+        break;
+    default:
+        ec = SYNTAX_ERR;
+        return;
+    }
+
+    setSourceState(SOURCE_ENDED);
+    m_player->sourceEndOfStream(eosStatus);
+}
+
+HTMLMediaElement::SourceState HTMLMediaElement::webkitSourceState() const
+{
+    return m_sourceState;
+}
+
+void HTMLMediaElement::setSourceState(SourceState state)
+{
+    SourceState oldState = m_sourceState;
+    m_sourceState = static_cast<SourceState>(state);
+
+    if (m_sourceState == oldState)
+        return;
+
+    if (m_sourceState == SOURCE_CLOSED) {
+        m_sourceIDs.clear();
+        scheduleEvent(eventNames().webkitsourcecloseEvent);
+        return;
+    }
+
+    if (oldState == SOURCE_OPEN && m_sourceState == SOURCE_ENDED) {
+        scheduleEvent(eventNames().webkitsourceendedEvent);
+        return;
+    }
+
+    if (m_sourceState == SOURCE_OPEN) {
+        scheduleEvent(eventNames().webkitsourceopenEvent);
+        return;
+    }
 }
 #endif
 
@@ -3611,7 +3793,8 @@ void HTMLMediaElement::userCancelledLoad()
     scheduleEvent(eventNames().abortEvent);
 
 #if ENABLE(MEDIA_SOURCE)
-    setSourceState(MediaSource::closedKeyword());
+    if (m_sourceState != SOURCE_CLOSED)
+        setSourceState(SOURCE_CLOSED);
 #endif
 
     // 4 - If the media element's readyState attribute has a value equal to HAVE_NOTHING, set the 
@@ -4123,11 +4306,6 @@ void HTMLMediaElement::createMediaPlayer()
 #endif
         
     m_player = MediaPlayer::create(this);
-
-#if ENABLE(MEDIA_SOURCE)
-    if (m_mediaSource)
-        m_mediaSource->setMediaPlayer(m_player.get());
-#endif
 
 #if ENABLE(WEB_AUDIO)
     if (m_audioSourceNode) {
