@@ -1,3 +1,21 @@
+2012-08-07  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Do not disable network tracking while profiling cpu.
+        https://bugs.webkit.org/show_bug.cgi?id=93359
+
+        Reviewed by Yury Semikhatsky.
+
+        Removed network tracking enabling/disabling machinery.
+
+        * inspector/front-end/CPUProfileView.js:
+        (WebInspector.CPUProfileType.prototype.buttonClicked):
+        * inspector/front-end/NetworkManager.js:
+        (WebInspector.NetworkManager.get this):
+        (WebInspector.NetworkManager.get NetworkAgent):
+        (WebInspector.NetworkManager):
+        * inspector/front-end/ResourceTreeModel.js:
+        (WebInspector.ResourceTreeModel):
+
 2012-08-07  Alexei Filippov  <alexeif@chromium.org>
 
         Web Inspector: make the MemoryClassInfo class a not-template

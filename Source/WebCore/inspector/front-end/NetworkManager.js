@@ -49,8 +49,6 @@ WebInspector.NetworkManager = function()
 }
 
 WebInspector.NetworkManager.EventTypes = {
-    ResourceTrackingEnabled: "ResourceTrackingEnabled",
-    ResourceTrackingDisabled: "ResourceTrackingDisabled",
     RequestStarted: "RequestStarted",
     RequestUpdated: "RequestUpdated",
     RequestFinished: "RequestFinished",
@@ -94,24 +92,6 @@ WebInspector.NetworkManager._MIMETypes = {
 }
 
 WebInspector.NetworkManager.prototype = {
-    enableResourceTracking: function()
-    {
-        function callback(error)
-        {
-            this.dispatchEventToListeners(WebInspector.NetworkManager.EventTypes.ResourceTrackingEnabled);
-        }
-        NetworkAgent.enable(callback.bind(this));
-    },
-
-    disableResourceTracking: function()
-    {
-        function callback(error)
-        {
-            this.dispatchEventToListeners(WebInspector.NetworkManager.EventTypes.ResourceTrackingDisabled);
-        }
-        NetworkAgent.disable(callback.bind(this));
-    },
-
     /**
      * @param {string} url
      * @return {WebInspector.NetworkRequest}
