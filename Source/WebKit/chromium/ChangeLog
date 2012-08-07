@@ -1,3 +1,16 @@
+2012-08-07  Mihai Parparita  <mihaip@chromium.org>
+
+        [Chromium] Clean up WebScriptController.h comments
+        https://bugs.webkit.org/show_bug.cgi?id=93399
+
+        Reviewed by Adam Barth.
+
+        Remove references to overloaded WebScriptController::registerExtension
+        variants. They were removed in r68666.
+
+        * public/WebScriptController.h:
+        (WebScriptController):
+
 2012-08-07  Kentaro Hara  <haraken@chromium.org>
 
         [V8] Remove #include Frame.h from V8Binding.h
