@@ -882,8 +882,9 @@ class MainTest(unittest.TestCase, StreamTestingMixin):
         self.assertTrue(MainTest.has_test_of_type(batch_tests_run_http, 'websocket'))
 
     def test_platform_tests_are_found(self):
-        tests_run = get_tests_run(['http'], tests_included=True, flatten_batches=True)
-        self.assertTrue('platform/test-snow-leopard/http/test.html' in tests_run)
+        tests_run = get_tests_run(['--platform', 'test-mac-leopard', 'http'], tests_included=True, flatten_batches=True)
+        self.assertTrue('platform/test-mac-leopard/http/test.html' in tests_run)
+        self.assertFalse('platform/test-win-win7/http/test.html' in tests_run)
 
     def test_output_diffs(self):
         # Test to ensure that we don't generate -wdiff.html or -pretty.html if wdiff and PrettyPatch

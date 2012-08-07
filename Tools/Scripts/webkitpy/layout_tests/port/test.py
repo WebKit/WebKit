@@ -219,6 +219,10 @@ layer at (0,0) size 800x34
 
     tests.add('websocket/tests/passes/text.html')
 
+    # For testing test are properly included from platform directories.
+    tests.add('platform/test-mac-leopard/http/test.html')
+    tests.add('platform/test-win-win7/http/test.html')
+
     # For --no-http tests, test that platform specific HTTP tests are properly skipped.
     tests.add('platform/test-snow-leopard/http/test.html')
     tests.add('platform/test-snow-leopard/websocket/test.html')
