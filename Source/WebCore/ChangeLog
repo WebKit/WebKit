@@ -1,3 +1,21 @@
+2012-08-06  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: Remove IDBRequest::finishCursor() and plumbing
+        https://bugs.webkit.org/show_bug.cgi?id=93274
+
+        Reviewed by Tony Chang.
+
+        Delete an unused flag and code for setting it, rendered obsolete in r123275.
+
+        No new tests - no functional changes.
+
+        * Modules/indexeddb/IDBCursor.cpp:
+        (WebCore::IDBCursor::close):
+        * Modules/indexeddb/IDBRequest.cpp:
+        (WebCore::IDBRequest::IDBRequest):
+        * Modules/indexeddb/IDBRequest.h:
+        (IDBRequest):
+
 2012-08-06  James Robinson  <jamesr@chromium.org>
 
         [chromium] Remove lingering unwrap<>() calls in GraphicsLayerChromium.cpp

@@ -76,7 +76,6 @@ public:
     void markEarlyDeath();
     void setCursorDetails(IDBCursorBackendInterface::CursorType, IDBCursor::Direction);
     void setPendingCursor(PassRefPtr<IDBCursor>);
-    void finishCursor();
     void abort();
 
     // IDBCallbacks
@@ -129,7 +128,6 @@ private:
 
     ReadyState m_readyState;
     bool m_requestAborted; // May be aborted by transaction then receive async onsuccess; ignore vs. assert.
-    bool m_cursorFinished;
     bool m_contextStopped;
     Vector<RefPtr<Event> > m_enqueuedEvents;
 

@@ -58,7 +58,6 @@ IDBRequest::IDBRequest(ScriptExecutionContext* context, PassRefPtr<IDBAny> sourc
     , m_transaction(transaction)
     , m_readyState(PENDING)
     , m_requestAborted(false)
-    , m_cursorFinished(false)
     , m_contextStopped(false)
     , m_cursorType(IDBCursorBackendInterface::InvalidCursorType)
     , m_cursorDirection(IDBCursor::NEXT)
@@ -209,12 +208,6 @@ void IDBRequest::setResultCursor(PassRefPtr<IDBCursor> prpCursor)
     }
 
     m_result = IDBAny::create(IDBCursorWithValue::fromCursor(prpCursor));
-}
-
-void IDBRequest::finishCursor()
-{
-    ASSERT(m_readyState == PENDING || m_readyState == DONE);
-    m_cursorFinished = true;
 }
 
 void IDBRequest::onError(PassRefPtr<IDBDatabaseError> error)
