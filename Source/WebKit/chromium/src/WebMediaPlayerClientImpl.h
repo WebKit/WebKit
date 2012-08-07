@@ -98,7 +98,7 @@ public:
     virtual void load(const WTF::String& url);
     virtual void cancelLoad();
 #if USE(ACCELERATED_COMPOSITING)
-    virtual WebCore::PlatformLayer* platformLayer() const;
+    virtual WebKit::WebLayer* platformLayer() const;
 #endif
     virtual WebCore::PlatformMedia platformMedia() const;
     virtual void play();

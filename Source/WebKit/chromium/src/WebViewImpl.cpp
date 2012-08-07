@@ -82,7 +82,6 @@
 #include "InspectorInstrumentation.h"
 #include "KeyboardCodes.h"
 #include "KeyboardEvent.h"
-#include "LayerChromium.h"
 #include "LayerPainterChromium.h"
 #include "MIMETypeRegistry.h"
 #include "NodeRenderStyle.h"
@@ -3530,7 +3529,7 @@ void WebViewImpl::setRootGraphicsLayer(GraphicsLayer* layer)
     }
 
     if (layer)
-        m_rootLayer = WebLayer(layer->platformLayer());
+        m_rootLayer = *layer->platformLayer();
 
     if (!m_layerTreeView.isNull())
         m_layerTreeView.setRootLayer(layer ? &m_rootLayer : 0);

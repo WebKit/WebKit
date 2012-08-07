@@ -131,9 +131,7 @@ public:
 private:
     virtual void willBeDestroyed();
 
-    WebKit::WebLayer primaryLayer() const  { return m_transformLayer.isNull() ? m_layer : m_transformLayer; }
-    WebKit::WebLayer hostLayerForChildren() const;
-    WebKit::WebLayer layerForParent() const;
+    WebKit::WebLayer primaryLayer() const;
 
     void updateNames();
     void updateChildList();

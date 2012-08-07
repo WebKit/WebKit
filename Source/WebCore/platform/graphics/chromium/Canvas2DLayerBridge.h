@@ -60,7 +60,7 @@ public:
     virtual WebKit::WebGraphicsContext3D* context() OVERRIDE;
 
     SkCanvas* skCanvas(SkDevice*);
-    LayerChromium* layer() const;
+    WebKit::WebLayer* layer();
     void contextAcquired();
 
     unsigned backBufferTexture();

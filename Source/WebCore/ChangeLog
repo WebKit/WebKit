@@ -1,5 +1,44 @@
 2012-08-07  James Robinson  <jamesr@chromium.org>
 
+        [chromium] Switch PlatformLayer typedef to Platform API type for PLATFORM(CHROMIUM)
+        https://bugs.webkit.org/show_bug.cgi?id=93335
+
+        Reviewed by Adrienne Walker.
+
+        This converts the PlatformLayer typedef to WebKit::WebLayer (part of the chromium Platform API) for the
+        Chromium port. This involves some odd const_cast<>s in places since cross-platform interfaces assume that
+        PlatformLayer is a potentially heavy implementation class, but WebLayer is a thin smart pointer type.
+
+        * page/scrolling/chromium/ScrollingCoordinatorChromium.cpp:
+        (WebCore::createScrollbarLayer):
+        (WebCore::ScrollingCoordinator::setScrollLayer):
+        (WebCore::ScrollingCoordinator::setNonFastScrollableRegion):
+        (WebCore::ScrollingCoordinator::setLayerIsContainerForFixedPositionLayers):
+        (WebCore::ScrollingCoordinator::setLayerIsFixedToContainerLayer):
+        * platform/graphics/PlatformLayer.h:
+        (WebKit):
+        (WebCore):
+        * platform/graphics/chromium/Canvas2DLayerBridge.cpp:
+        (WebCore::Canvas2DLayerBridge::layer):
+        * platform/graphics/chromium/Canvas2DLayerBridge.h:
+        (Canvas2DLayerBridge):
+        * platform/graphics/chromium/DrawingBufferChromium.cpp:
+        (WebCore::DrawingBufferPrivate::layer):
+        * platform/graphics/chromium/GraphicsLayerChromium.cpp:
+        (WebCore::GraphicsLayerChromium::removeFromParent):
+        (WebCore::GraphicsLayerChromium::setDrawsContent):
+        (WebCore::GraphicsLayerChromium::setContentsVisible):
+        (WebCore::GraphicsLayerChromium::setMaskLayer):
+        (WebCore::GraphicsLayerChromium::setContentsToCanvas):
+        (WebCore::GraphicsLayerChromium::setContentsToMedia):
+        (WebCore::GraphicsLayerChromium::primaryLayer):
+        (WebCore::GraphicsLayerChromium::platformLayer):
+        (WebCore::GraphicsLayerChromium::updateChildList):
+        * platform/graphics/chromium/GraphicsLayerChromium.h:
+        (GraphicsLayerChromium):
+
+2012-08-07  James Robinson  <jamesr@chromium.org>
+
         [chromium] Use WebCompositor interface in Platform API instead of CCProxy to query threaded compositor status
         https://bugs.webkit.org/show_bug.cgi?id=93398
 

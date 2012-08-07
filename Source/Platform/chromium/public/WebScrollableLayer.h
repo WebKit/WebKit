@@ -29,6 +29,8 @@
 #include "WebCommon.h"
 #include "WebLayer.h"
 #include "WebPoint.h"
+#include "WebRect.h"
+#include "WebVector.h"
 
 namespace WebKit {
 
@@ -47,6 +49,10 @@ public:
     WEBKIT_EXPORT void setScrollable(bool);
     WEBKIT_EXPORT void setHaveWheelEventHandlers(bool);
     WEBKIT_EXPORT void setShouldScrollOnMainThread(bool);
+    WEBKIT_EXPORT void setNonFastScrollableRegion(const WebVector<WebRect>&);
+    WEBKIT_EXPORT void setIsContainerForFixedPositionLayers(bool);
+    WEBKIT_EXPORT void setFixedToContainerLayer(bool);
+
 
 #if WEBKIT_IMPLEMENTATION
     WebScrollableLayer(const WTF::PassRefPtr<WebCore::LayerChromium>& layer) : WebLayer(layer) { }

@@ -1,5 +1,42 @@
 2012-08-07  James Robinson  <jamesr@chromium.org>
 
+        [chromium] Switch PlatformLayer typedef to Platform API type for PLATFORM(CHROMIUM)
+        https://bugs.webkit.org/show_bug.cgi?id=93335
+
+        Reviewed by Adrienne Walker.
+
+        Update for new PlatformLayer typedef. This removes knowledge of WebCore::LayerChromium from all classes
+        except for NonCompositedContentHost, which still punches through for a few minor APIs that I'll address
+        in a separate patch.
+
+        * src/NonCompositedContentHost.cpp:
+        (WebKit::NonCompositedContentHost::NonCompositedContentHost):
+        (WebKit::NonCompositedContentHost::setScrollLayer):
+        (WebKit::NonCompositedContentHost::scrollLayer):
+        (WebKit::NonCompositedContentHost::notifySyncRequired):
+        * src/WebMediaPlayerClientImpl.cpp:
+        (WebKit::WebMediaPlayerClientImpl::platformLayer):
+        * src/WebMediaPlayerClientImpl.h:
+        (WebMediaPlayerClientImpl):
+        * src/WebPluginContainerImpl.cpp:
+        (WebKit::WebPluginContainerImpl::platformLayer):
+        * src/WebPluginContainerImpl.h:
+        (WebCore):
+        (WebPluginContainerImpl):
+        * src/WebScrollableLayer.cpp:
+        (WebKit::WebScrollableLayer::setNonFastScrollableRegion):
+        (WebKit):
+        (WebKit::WebScrollableLayer::setIsContainerForFixedPositionLayers):
+        (WebKit::WebScrollableLayer::setFixedToContainerLayer):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::setRootGraphicsLayer):
+        * tests/Canvas2DLayerBridgeTest.cpp:
+        * tests/GraphicsLayerChromiumTest.cpp:
+        (WebKitTests::GraphicsLayerChromiumTest::GraphicsLayerChromiumTest):
+        (WebKitTests::TEST_F):
+
+2012-08-07  James Robinson  <jamesr@chromium.org>
+
         [chromium] Use WebCompositor interface in Platform API instead of CCProxy to query threaded compositor status
         https://bugs.webkit.org/show_bug.cgi?id=93398
 

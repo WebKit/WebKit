@@ -52,7 +52,6 @@
 #include "FloatRect.h"
 #include "GraphicsContext.h"
 #include "Image.h"
-#include "LayerChromium.h"
 #include "LinkHighlight.h"
 #include "NativeImageSkia.h"
 #include "PlatformContextSkia.h"
@@ -204,7 +203,7 @@ bool GraphicsLayerChromium::replaceChild(GraphicsLayer* oldChild, GraphicsLayer*
 void GraphicsLayerChromium::removeFromParent()
 {
     GraphicsLayer::removeFromParent();
-    layerForParent().removeFromParent();
+    primaryLayer().removeFromParent();
 }
 
 void GraphicsLayerChromium::setPosition(const FloatPoint& point)
@@ -271,8 +270,8 @@ void GraphicsLayerChromium::setMasksToBounds(bool masksToBounds)
 
 void GraphicsLayerChromium::setDrawsContent(bool drawsContent)
 {
-    // Note carefully this early-exit is only correct because we also properly initialize
-    // LayerChromium::m_isDrawable whenever m_contentsLayer is set to a new layer in setupContentsLayer().
+    // Note carefully this early-exit is only correct because we also properly call
+    // WebLayer::setDrawsContent whenever m_contentsLayer is set to a new layer in setupContentsLayer().
     if (drawsContent == m_drawsContent)
         return;
 
@@ -282,8 +281,8 @@ void GraphicsLayerChromium::setDrawsContent(bool drawsContent)
 
 void GraphicsLayerChromium::setContentsVisible(bool contentsVisible)
 {
-    // Note carefully this early-exit is only correct because we also properly initialize
-    // LayerChromium::m_isDrawable whenever m_contentsLayer is set to a new layer in setupContentsLayer().
+    // Note carefully this early-exit is only correct because we also properly call
+    // WebLayer::setDrawsContent whenever m_contentsLayer is set to a new layer in setupContentsLayer().
     if (contentsVisible == m_contentsVisible)
         return;
 
@@ -410,7 +409,9 @@ void GraphicsLayerChromium::setMaskLayer(GraphicsLayer* maskLayer)
 
     GraphicsLayer::setMaskLayer(maskLayer);
 
-    WebLayer maskWebLayer(m_maskLayer ? m_maskLayer->platformLayer() : 0);
+    WebLayer maskWebLayer;
+    if (m_maskLayer)
+        maskWebLayer = *m_maskLayer->platformLayer();
     m_layer.setMaskLayer(maskWebLayer);
 }
 
@@ -498,8 +499,8 @@ void GraphicsLayerChromium::setContentsToCanvas(PlatformLayer* platformLayer)
 {
     bool childrenChanged = false;
     if (platformLayer) {
-        if (m_contentsLayer != WebLayer(platformLayer)) {
-            setupContentsLayer(WebLayer(platformLayer));
+        if (m_contentsLayer != *platformLayer) {
+            setupContentsLayer(*platformLayer);
             m_contentsLayerPurpose = ContentsLayerForCanvas;
             childrenChanged = true;
         }
@@ -577,7 +578,7 @@ void GraphicsLayerChromium::setContentsToMedia(PlatformLayer* layer)
     bool childrenChanged = false;
     if (layer) {
         if (m_contentsLayer.isNull() || m_contentsLayerPurpose != ContentsLayerForVideo) {
-            setupContentsLayer(WebLayer(layer));
+            setupContentsLayer(*layer);
             m_contentsLayerPurpose = ContentsLayerForVideo;
             childrenChanged = true;
         }
@@ -595,19 +596,14 @@ void GraphicsLayerChromium::setContentsToMedia(PlatformLayer* layer)
         updateChildList();
 }
 
-WebLayer GraphicsLayerChromium::hostLayerForChildren() const
+WebKit::WebLayer GraphicsLayerChromium::primaryLayer() const
 {
-    return m_transformLayer.isNull() ? m_layer :  m_transformLayer;
-}
-
-WebLayer GraphicsLayerChromium::layerForParent() const
-{
-    return m_transformLayer.isNull() ? m_layer :  m_transformLayer;
+    return m_transformLayer.isNull() ? m_layer : m_transformLayer;
 }
 
 PlatformLayer* GraphicsLayerChromium::platformLayer() const
 {
-    return primaryLayer().unwrap<LayerChromium>();
+    return const_cast<PlatformLayer*>(m_transformLayer.isNull() ? &m_layer : &m_transformLayer);
 }
 
 void GraphicsLayerChromium::setDebugBackgroundColor(const Color& color)
@@ -648,7 +644,7 @@ void GraphicsLayerChromium::updateChildList()
     for (size_t i = 0; i < numChildren; ++i) {
         GraphicsLayerChromium* curChild = static_cast<GraphicsLayerChromium*>(childLayers[i]);
 
-        newChildren.append(curChild->layerForParent());
+        newChildren.append(curChild->primaryLayer());
     }
 
     if (m_linkHighlight)

@@ -341,10 +341,10 @@ void WebMediaPlayerClientImpl::cancelLoad()
 }
 
 #if USE(ACCELERATED_COMPOSITING)
-LayerChromium* WebMediaPlayerClientImpl::platformLayer() const
+WebLayer* WebMediaPlayerClientImpl::platformLayer() const
 {
     ASSERT(m_supportsAcceleratedCompositing);
-    return m_videoLayer.unwrap<LayerChromium>();
+    return const_cast<WebVideoLayer*>(&m_videoLayer);
 }
 #endif
 

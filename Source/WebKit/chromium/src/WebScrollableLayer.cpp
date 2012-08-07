@@ -27,7 +27,7 @@
 #include <public/WebScrollableLayer.h>
 
 #include "LayerChromium.h"
-
+#include "Region.h"
 
 namespace WebKit {
 
@@ -49,6 +49,27 @@ void WebScrollableLayer::setHaveWheelEventHandlers(bool haveWheelEventHandlers)
 void WebScrollableLayer::setShouldScrollOnMainThread(bool shouldScrollOnMainThread)
 {
     m_private->setShouldScrollOnMainThread(shouldScrollOnMainThread);
+}
+
+void WebScrollableLayer::setNonFastScrollableRegion(const WebVector<WebRect>& rects)
+{
+    WebCore::Region region;
+    for (size_t i = 0; i < rects.size(); ++i) {
+        WebCore::IntRect rect = rects[i];
+        region.unite(rect);
+    }
+    m_private->setNonFastScrollableRegion(region);
+
+}
+
+void WebScrollableLayer::setIsContainerForFixedPositionLayers(bool enable)
+{
+    m_private->setIsContainerForFixedPositionLayers(enable);
+}
+
+void WebScrollableLayer::setFixedToContainerLayer(bool enable)
+{
+    m_private->setFixedToContainerLayer(enable);
 }
 
 } // namespace WebKit

@@ -95,7 +95,7 @@ public:
         WebCompositor::setAcceleratedAnimationEnabled(true);
         WebCompositor::initialize(0);
         m_graphicsLayer = static_pointer_cast<GraphicsLayerChromium>(GraphicsLayer::create(&m_client));
-        m_platformLayer = static_cast<LayerChromium*>(m_graphicsLayer->platformLayer());
+        m_platformLayer = m_graphicsLayer->platformLayer()->unwrap<LayerChromium>();
         m_layerTreeHost = MockLayerTreeHost::create();
         m_platformLayer->setLayerTreeHost(m_layerTreeHost.get());
     }
@@ -133,7 +133,7 @@ TEST_F(GraphicsLayerChromiumTest, updateLayerPreserves3DWithAnimations)
 
     m_graphicsLayer->setPreserves3D(true);
 
-    m_platformLayer = static_cast<LayerChromium*>(m_graphicsLayer->platformLayer());
+    m_platformLayer = m_graphicsLayer->platformLayer()->unwrap<LayerChromium>();
     ASSERT_TRUE(m_platformLayer);
 
     ASSERT_TRUE(m_platformLayer->hasActiveAnimation());
@@ -142,7 +142,7 @@ TEST_F(GraphicsLayerChromiumTest, updateLayerPreserves3DWithAnimations)
 
     m_graphicsLayer->setPreserves3D(false);
 
-    m_platformLayer = static_cast<LayerChromium*>(m_graphicsLayer->platformLayer());
+    m_platformLayer = m_graphicsLayer->platformLayer()->unwrap<LayerChromium>();
     ASSERT_TRUE(m_platformLayer);
 
     ASSERT_FALSE(m_platformLayer->hasActiveAnimation());

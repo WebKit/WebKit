@@ -1,5 +1,17 @@
 2012-08-07  James Robinson  <jamesr@chromium.org>
 
+        [chromium] Switch PlatformLayer typedef to Platform API type for PLATFORM(CHROMIUM)
+        https://bugs.webkit.org/show_bug.cgi?id=93335
+
+        Reviewed by Adrienne Walker.
+
+        Add APIs to control scrolling behavior on WebScrollableLayer.
+
+        * chromium/public/WebScrollableLayer.h:
+        (WebScrollableLayer):
+
+2012-08-07  James Robinson  <jamesr@chromium.org>
+
         [chromium] Use WebCompositor interface in Platform API instead of CCProxy to query threaded compositor status
         https://bugs.webkit.org/show_bug.cgi?id=93398
 

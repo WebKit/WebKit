@@ -569,12 +569,12 @@ void WebPluginContainerImpl::willDestroyPluginLoadObserver(WebPluginLoadObserver
 }
 
 #if USE(ACCELERATED_COMPOSITING)
-WebCore::LayerChromium* WebPluginContainerImpl::platformLayer() const
+WebLayer* WebPluginContainerImpl::platformLayer() const
 {
     if (m_textureId)
-        return m_textureLayer.unwrap<LayerChromium>();
+        return const_cast<WebExternalTextureLayer*>(&m_textureLayer);
     if (m_ioSurfaceId)
-        return m_ioSurfaceLayer.unwrap<LayerChromium>();
+        return const_cast<WebIOSurfaceLayer*>(&m_ioSurfaceLayer);
     return 0;
 }
 #endif

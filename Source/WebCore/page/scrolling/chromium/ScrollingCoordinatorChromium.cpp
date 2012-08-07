@@ -29,7 +29,6 @@
 
 #include "Frame.h"
 #include "FrameView.h"
-#include "LayerChromium.h"
 #include "Region.h"
 #include "RenderLayerCompositor.h"
 #include "RenderView.h"
@@ -42,8 +41,10 @@
 #include <public/WebScrollbarThemePainter.h>
 
 using WebKit::WebLayer;
+using WebKit::WebRect;
 using WebKit::WebScrollableLayer;
 using WebKit::WebScrollbarLayer;
+using WebKit::WebVector;
 
 namespace WebCore {
 
@@ -118,7 +119,7 @@ static WebScrollbarLayer createScrollbarLayer(Scrollbar* scrollbar, WebScrollabl
 
     if (scrollLayer.isNull()) {
         // FIXME: sometimes we get called before setScrollLayer, workaround by finding the scroll layout ourselves.
-        scrollLayer = WebScrollableLayer(scrollLayerForFrameView(frameView)->platformLayer());
+        scrollLayer = scrollLayerForFrameView(frameView)->platformLayer()->to<WebScrollableLayer>();
         ASSERT(!scrollLayer.isNull());
     }
 
@@ -148,7 +149,7 @@ static WebScrollbarLayer createScrollbarLayer(Scrollbar* scrollbar, WebScrollabl
     WebScrollbarLayer scrollbarLayer = WebScrollbarLayer::create(scrollbar, painter, geometry.release());
     scrollbarLayer.setScrollLayer(scrollLayer);
 
-    scrollbarGraphicsLayer->setContentsToMedia(scrollbarLayer.unwrap<LayerChromium>());
+    scrollbarGraphicsLayer->setContentsToMedia(&scrollbarLayer);
     scrollbarGraphicsLayer->setDrawsContent(false);
     scrollbarLayer.setOpaque(scrollbarGraphicsLayer->contentsOpaque());
 
@@ -173,13 +174,21 @@ void ScrollingCoordinator::frameViewVerticalScrollbarLayerDidChange(FrameView* f
 
 void ScrollingCoordinator::setScrollLayer(GraphicsLayer* scrollLayer)
 {
-    m_private->setScrollLayer(WebScrollableLayer(scrollLayer ? scrollLayer->platformLayer() : 0));
+    WebScrollableLayer layer;
+    if (scrollLayer)
+        layer = scrollLayer->platformLayer()->to<WebScrollableLayer>();
+    m_private->setScrollLayer(layer);
 }
 
 void ScrollingCoordinator::setNonFastScrollableRegion(const Region& region)
 {
-    if (m_private->hasScrollLayer())
-        m_private->scrollLayer().unwrap<LayerChromium>()->setNonFastScrollableRegion(region);
+    if (m_private->hasScrollLayer()) {
+        Vector<IntRect> rects = region.rects();
+        WebVector<WebRect> webRects(rects.size());
+        for (size_t i = 0; i < rects.size(); ++i)
+            webRects[i] = rects[i];
+        m_private->scrollLayer().setNonFastScrollableRegion(webRects);
+    }
 }
 
 void ScrollingCoordinator::setScrollParameters(const ScrollParameters&)
@@ -206,14 +215,14 @@ bool ScrollingCoordinator::supportsFixedPositionLayers() const
 
 void ScrollingCoordinator::setLayerIsContainerForFixedPositionLayers(GraphicsLayer* layer, bool enable)
 {
-    if (LayerChromium* platformLayer = layer->platformLayer())
-        platformLayer->setIsContainerForFixedPositionLayers(enable);
+    if (WebLayer* platformLayer = layer->platformLayer())
+        platformLayer->to<WebScrollableLayer>().setIsContainerForFixedPositionLayers(enable);
 }
 
 void ScrollingCoordinator::setLayerIsFixedToContainerLayer(GraphicsLayer* layer, bool enable)
 {
-    if (LayerChromium* platformLayer = layer->platformLayer())
-        platformLayer->setFixedToContainerLayer(enable);
+    if (WebLayer* platformLayer = layer->platformLayer())
+        platformLayer->to<WebScrollableLayer>().setFixedToContainerLayer(enable);
 }
 
 }

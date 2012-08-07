@@ -155,9 +155,9 @@ WebGraphicsContext3D* Canvas2DLayerBridge::context()
     return GraphicsContext3DPrivate::extractWebGraphicsContext3D(m_context.get());
 }
 
-LayerChromium* Canvas2DLayerBridge::layer() const
+WebKit::WebLayer* Canvas2DLayerBridge::layer()
 {
-    return m_layer.unwrap<LayerChromium>();
+    return &m_layer;
 }
 
 void Canvas2DLayerBridge::contextAcquired()

@@ -187,7 +187,7 @@ public:
         return GraphicsContext3DPrivate::extractWebGraphicsContext3D(m_drawingBuffer->graphicsContext3D());
     }
 
-    LayerChromium* layer() const { return m_layer.unwrap<LayerChromium>(); }
+    WebKit::WebLayer* layer() { return &m_layer; }
 
 private:
     DrawingBuffer* m_drawingBuffer;
