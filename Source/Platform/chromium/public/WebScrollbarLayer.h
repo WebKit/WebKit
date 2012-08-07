@@ -51,7 +51,7 @@ public:
     WEBKIT_EXPORT void setScrollLayer(const WebLayer);
 
 #if WEBKIT_IMPLEMENTATION
-    static WebScrollbarLayer create(WebCore::Scrollbar*, WebScrollbarThemePainter, WebScrollbarThemeGeometry);
+    static WebScrollbarLayer create(WebCore::Scrollbar*, WebScrollbarThemePainter, PassOwnPtr<WebScrollbarThemeGeometry>);
     explicit WebScrollbarLayer(const WTF::PassRefPtr<WebCore::ScrollbarLayerChromium>&);
     WebScrollbarLayer& operator=(const WTF::PassRefPtr<WebCore::ScrollbarLayerChromium>&);
     operator WTF::PassRefPtr<WebCore::ScrollbarLayerChromium>() const;

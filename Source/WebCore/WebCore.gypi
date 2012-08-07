@@ -8233,6 +8233,8 @@
             'platform/chromium/support/WebMediaStreamSourcesRequest.cpp',
             'platform/chromium/support/WebPrerender.cpp',
             'platform/chromium/support/WebRTCConfiguration.cpp',
+            'platform/chromium/support/WebScrollbarThemeGeometryNative.cpp',
+            'platform/chromium/support/WebScrollbarThemeGeometryNative.h',
             'platform/chromium/support/WebSharedGraphicsContext3D.cpp',
             'platform/chromium/support/WebThreadSafeData.cpp',
             'platform/chromium/support/WebTransformOperations.cpp',

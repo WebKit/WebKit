@@ -25,114 +25,122 @@
 
 #include "config.h"
 
-#include <public/WebScrollbarThemeGeometry.h>
+#include "WebScrollbarThemeGeometryNative.h"
 
 #include "ScrollbarThemeComposite.h"
 #include "WebScrollbarThemeClientImpl.h"
-#include <public/WebRect.h>
 #include <public/WebScrollbar.h>
 
 using namespace WebCore;
 
 namespace WebKit {
 
-void WebScrollbarThemeGeometry::assign(const WebScrollbarThemeGeometry& geometry)
+PassOwnPtr<WebKit::WebScrollbarThemeGeometryNative> WebScrollbarThemeGeometryNative::create(WebCore::ScrollbarThemeComposite* theme)
 {
-    // This is a pointer to a static object, so no ownership transferral.
-    m_theme = geometry.m_theme;
+    return adoptPtr(new WebScrollbarThemeGeometryNative(theme));
 }
 
-int WebScrollbarThemeGeometry::thumbPosition(WebScrollbar* scrollbar)
+WebScrollbarThemeGeometryNative::WebScrollbarThemeGeometryNative(WebCore::ScrollbarThemeComposite* theme)
+    : m_theme(theme)
+{
+}
+
+WebScrollbarThemeGeometryNative* WebScrollbarThemeGeometryNative::clone() const
+{
+    return new WebScrollbarThemeGeometryNative(m_theme);
+}
+
+int WebScrollbarThemeGeometryNative::thumbPosition(WebScrollbar* scrollbar)
 {
     WebScrollbarThemeClientImpl client(scrollbar);
     return m_theme->thumbPosition(&client);
 }
 
-int WebScrollbarThemeGeometry::thumbLength(WebScrollbar* scrollbar)
+int WebScrollbarThemeGeometryNative::thumbLength(WebScrollbar* scrollbar)
 {
     WebScrollbarThemeClientImpl client(scrollbar);
     return m_theme->thumbLength(&client);
 }
 
-int WebScrollbarThemeGeometry::trackPosition(WebScrollbar* scrollbar)
+int WebScrollbarThemeGeometryNative::trackPosition(WebScrollbar* scrollbar)
 {
     WebScrollbarThemeClientImpl client(scrollbar);
     return m_theme->trackPosition(&client);
 }
 
-int WebScrollbarThemeGeometry::trackLength(WebScrollbar* scrollbar)
+int WebScrollbarThemeGeometryNative::trackLength(WebScrollbar* scrollbar)
 {
     WebScrollbarThemeClientImpl client(scrollbar);
     return m_theme->trackLength(&client);
 }
 
-bool WebScrollbarThemeGeometry::hasButtons(WebScrollbar* scrollbar)
+bool WebScrollbarThemeGeometryNative::hasButtons(WebScrollbar* scrollbar)
 {
     WebScrollbarThemeClientImpl client(scrollbar);
     return m_theme->hasButtons(&client);
 }
 
-bool WebScrollbarThemeGeometry::hasThumb(WebScrollbar* scrollbar)
+bool WebScrollbarThemeGeometryNative::hasThumb(WebScrollbar* scrollbar)
 {
     WebScrollbarThemeClientImpl client(scrollbar);
     return m_theme->hasThumb(&client);
 }
 
-WebRect WebScrollbarThemeGeometry::trackRect(WebScrollbar* scrollbar)
+WebRect WebScrollbarThemeGeometryNative::trackRect(WebScrollbar* scrollbar)
 {
     WebScrollbarThemeClientImpl client(scrollbar);
     return m_theme->trackRect(&client);
 }
 
-WebRect WebScrollbarThemeGeometry::thumbRect(WebScrollbar* scrollbar)
+WebRect WebScrollbarThemeGeometryNative::thumbRect(WebScrollbar* scrollbar)
 {
     WebScrollbarThemeClientImpl client(scrollbar);
     return m_theme->thumbRect(&client);
 }
 
-int WebScrollbarThemeGeometry::minimumThumbLength(WebScrollbar* scrollbar)
+int WebScrollbarThemeGeometryNative::minimumThumbLength(WebScrollbar* scrollbar)
 {
     WebScrollbarThemeClientImpl client(scrollbar);
     return m_theme->minimumThumbLength(&client);
 }
 
-int WebScrollbarThemeGeometry::scrollbarThickness(WebScrollbar* scrollbar)
+int WebScrollbarThemeGeometryNative::scrollbarThickness(WebScrollbar* scrollbar)
 {
     WebScrollbarThemeClientImpl client(scrollbar);
     return m_theme->scrollbarThickness(client.controlSize());
 }
 
-WebRect WebScrollbarThemeGeometry::backButtonStartRect(WebScrollbar* scrollbar)
+WebRect WebScrollbarThemeGeometryNative::backButtonStartRect(WebScrollbar* scrollbar)
 {
     WebScrollbarThemeClientImpl client(scrollbar);
     return m_theme->backButtonRect(&client, BackButtonStartPart, false);
 }
 
-WebRect WebScrollbarThemeGeometry::backButtonEndRect(WebScrollbar* scrollbar)
+WebRect WebScrollbarThemeGeometryNative::backButtonEndRect(WebScrollbar* scrollbar)
 {
     WebScrollbarThemeClientImpl client(scrollbar);
     return m_theme->backButtonRect(&client, BackButtonEndPart, false);
 }
 
-WebRect WebScrollbarThemeGeometry::forwardButtonStartRect(WebScrollbar* scrollbar)
+WebRect WebScrollbarThemeGeometryNative::forwardButtonStartRect(WebScrollbar* scrollbar)
 {
     WebScrollbarThemeClientImpl client(scrollbar);
     return m_theme->forwardButtonRect(&client, ForwardButtonStartPart, false);
 }
 
-WebRect WebScrollbarThemeGeometry::forwardButtonEndRect(WebScrollbar* scrollbar)
+WebRect WebScrollbarThemeGeometryNative::forwardButtonEndRect(WebScrollbar* scrollbar)
 {
     WebScrollbarThemeClientImpl client(scrollbar);
     return m_theme->forwardButtonRect(&client, ForwardButtonEndPart, false);
 }
 
-WebRect WebScrollbarThemeGeometry::constrainTrackRectToTrackPieces(WebScrollbar* scrollbar, const WebRect& rect)
+WebRect WebScrollbarThemeGeometryNative::constrainTrackRectToTrackPieces(WebScrollbar* scrollbar, const WebRect& rect)
 {
     WebScrollbarThemeClientImpl client(scrollbar);
     return m_theme->constrainTrackRectToTrackPieces(&client, IntRect(rect));
 }
 
-void WebScrollbarThemeGeometry::splitTrack(WebScrollbar* scrollbar, const WebRect& webTrack, WebRect& webStartTrack, WebRect& webThumb, WebRect& webEndTrack)
+void WebScrollbarThemeGeometryNative::splitTrack(WebScrollbar* scrollbar, const WebRect& webTrack, WebRect& webStartTrack, WebRect& webThumb, WebRect& webEndTrack)
 {
     WebScrollbarThemeClientImpl client(scrollbar);
     IntRect track(webTrack);
@@ -144,11 +152,6 @@ void WebScrollbarThemeGeometry::splitTrack(WebScrollbar* scrollbar, const WebRec
     webStartTrack = startTrack;
     webThumb = thumb;
     webEndTrack = endTrack;
-}
-
-WebScrollbarThemeGeometry::WebScrollbarThemeGeometry(WebCore::ScrollbarThemeComposite* theme)
-    : m_theme(theme)
-{
 }
 
 } // namespace WebKit

@@ -38,7 +38,7 @@ void WebScrollbarLayer::setScrollLayer(const WebLayer layer)
     unwrap<ScrollbarLayerChromium>()->setScrollLayerId(id);
 }
 
-WebScrollbarLayer WebScrollbarLayer::create(WebCore::Scrollbar* scrollbar, WebScrollbarThemePainter painter, WebScrollbarThemeGeometry geometry)
+WebScrollbarLayer WebScrollbarLayer::create(WebCore::Scrollbar* scrollbar, WebScrollbarThemePainter painter, PassOwnPtr<WebScrollbarThemeGeometry> geometry)
 {
     return WebScrollbarLayer(ScrollbarLayerChromium::create(WebScrollbar::create(scrollbar), painter, geometry, 0));
 }

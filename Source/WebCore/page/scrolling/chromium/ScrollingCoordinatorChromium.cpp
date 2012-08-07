@@ -34,6 +34,7 @@
 #include "RenderLayerCompositor.h"
 #include "RenderView.h"
 #include "ScrollbarThemeComposite.h"
+#include "WebScrollbarThemeGeometryNative.h"
 #include "cc/CCProxy.h"
 #include <public/WebScrollableLayer.h>
 #include <public/WebScrollbar.h>
@@ -143,9 +144,9 @@ static WebScrollbarLayer createScrollbarLayer(Scrollbar* scrollbar, WebScrollabl
     // All Chromium scrollbar themes derive from ScrollbarThemeComposite.
     ScrollbarThemeComposite* themeComposite = static_cast<ScrollbarThemeComposite*>(scrollbar->theme());
     WebKit::WebScrollbarThemePainter painter(themeComposite);
-    WebKit::WebScrollbarThemeGeometry geometry(themeComposite);
+    OwnPtr<WebKit::WebScrollbarThemeGeometry> geometry(WebKit::WebScrollbarThemeGeometryNative::create(themeComposite));
 
-    WebScrollbarLayer scrollbarLayer = WebScrollbarLayer::create(scrollbar, painter, geometry);
+    WebScrollbarLayer scrollbarLayer = WebScrollbarLayer::create(scrollbar, painter, geometry.release());
     scrollbarLayer.setScrollLayer(scrollLayer);
 
     scrollbarGraphicsLayer->setContentsToMedia(scrollbarLayer.unwrap<LayerChromium>());

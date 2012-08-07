@@ -26,6 +26,7 @@
 
 #include "ScrollbarLayerChromium.h"
 
+#include "FakeWebScrollbarThemeGeometry.h"
 #include "Scrollbar.h"
 #include "Settings.h"
 #include "TreeSynchronizer.h"
@@ -98,7 +99,6 @@ TEST(ScrollbarLayerChromiumTest, resolveScrollLayerPointer)
     DebugScopedSetImplThread impl;
 
     RefPtr<MockScrollbar> mockScrollbar = adoptRef(new MockScrollbar);
-    WebKit::WebScrollbarThemeGeometry geometry(0);
     WebKit::WebScrollbarThemePainter painter(0);
 
     Settings::setMockScrollbarsEnabled(true);
@@ -106,7 +106,7 @@ TEST(ScrollbarLayerChromiumTest, resolveScrollLayerPointer)
         OwnPtr<WebKit::WebScrollbar> scrollbar = WebKit::WebScrollbar::create(mockScrollbar.get());
         RefPtr<LayerChromium> layerTreeRoot = LayerChromium::create();
         RefPtr<LayerChromium> child1 = LayerChromium::create();
-        RefPtr<LayerChromium> child2 = ScrollbarLayerChromium::create(scrollbar.release(), painter, geometry, child1->id());
+        RefPtr<LayerChromium> child2 = ScrollbarLayerChromium::create(scrollbar.release(), painter, WebKit::FakeWebScrollbarThemeGeometry::create(), child1->id());
         layerTreeRoot->addChild(child1);
         layerTreeRoot->addChild(child2);
 
@@ -123,7 +123,7 @@ TEST(ScrollbarLayerChromiumTest, resolveScrollLayerPointer)
         OwnPtr<WebKit::WebScrollbar> scrollbar = WebKit::WebScrollbar::create(mockScrollbar.get());
         RefPtr<LayerChromium> layerTreeRoot = LayerChromium::create();
         RefPtr<LayerChromium> child2 = LayerChromium::create();
-        RefPtr<LayerChromium> child1 = ScrollbarLayerChromium::create(scrollbar.release(), painter, geometry, child2->id());
+        RefPtr<LayerChromium> child1 = ScrollbarLayerChromium::create(scrollbar.release(), painter, WebKit::FakeWebScrollbarThemeGeometry::create(), child2->id());
         layerTreeRoot->addChild(child1);
         layerTreeRoot->addChild(child2);
 
@@ -142,7 +142,6 @@ TEST(ScrollbarLayerChromiumTest, scrollOffsetSynchronization)
     DebugScopedSetImplThread impl;
 
     RefPtr<MockScrollbar> mockScrollbar = adoptRef(new MockScrollbar);
-    WebKit::WebScrollbarThemeGeometry geometry(0);
     WebKit::WebScrollbarThemePainter painter(0);
 
     Settings::setMockScrollbarsEnabled(true);
@@ -150,7 +149,7 @@ TEST(ScrollbarLayerChromiumTest, scrollOffsetSynchronization)
     OwnPtr<WebKit::WebScrollbar> scrollbar = WebKit::WebScrollbar::create(mockScrollbar.get());
     RefPtr<LayerChromium> layerTreeRoot = LayerChromium::create();
     RefPtr<LayerChromium> contentLayer = LayerChromium::create();
-    RefPtr<LayerChromium> scrollbarLayer = ScrollbarLayerChromium::create(scrollbar.release(), painter, geometry, layerTreeRoot->id());
+    RefPtr<LayerChromium> scrollbarLayer = ScrollbarLayerChromium::create(scrollbar.release(), painter, WebKit::FakeWebScrollbarThemeGeometry::create(), layerTreeRoot->id());
     layerTreeRoot->addChild(contentLayer);
     layerTreeRoot->addChild(scrollbarLayer);
 

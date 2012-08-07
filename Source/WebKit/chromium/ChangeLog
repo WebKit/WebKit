@@ -1,3 +1,26 @@
+2012-08-06  Adrienne Walker  <enne@google.com>
+
+        [chromium] Convert WebScrollbarThemeGeometry from a concrete class to an interface
+        https://bugs.webkit.org/show_bug.cgi?id=93308
+
+        Reviewed by James Robinson.
+
+        Now that WebScrollbarThemeGeometry can have different implementations,
+        create a FakeWebScrollbarThemeGeometry for testing purposes rather
+        than just overriding a geometry-related virtual.
+
+        * WebKit.gyp:
+        * WebKit.gypi:
+        * src/WebScrollbarLayer.cpp:
+        (WebKit::WebScrollbarLayer::create):
+        * tests/CCLayerTreeHostImplTest.cpp:
+        * tests/FakeWebScrollbarThemeGeometry.h: Added.
+        (WebKit):
+        (FakeWebScrollbarThemeGeometry):
+        (WebKit::FakeWebScrollbarThemeGeometry::create):
+        * tests/ScrollbarLayerChromiumTest.cpp:
+        (WebCore::TEST):
+
 2012-08-06  James Robinson  <jamesr@chromium.org>
 
         [chromium] Update chromium DEPS r150037 -> r150169

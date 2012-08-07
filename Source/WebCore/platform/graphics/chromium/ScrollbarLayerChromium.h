@@ -43,7 +43,7 @@ class CCTextureUpdateQueue;
 class ScrollbarLayerChromium : public LayerChromium {
 public:
     virtual PassOwnPtr<CCLayerImpl> createCCLayerImpl();
-    static PassRefPtr<ScrollbarLayerChromium> create(PassOwnPtr<WebKit::WebScrollbar>, WebKit::WebScrollbarThemePainter, WebKit::WebScrollbarThemeGeometry, int scrollLayerId);
+    static PassRefPtr<ScrollbarLayerChromium> create(PassOwnPtr<WebKit::WebScrollbar>, WebKit::WebScrollbarThemePainter, PassOwnPtr<WebKit::WebScrollbarThemeGeometry>, int scrollLayerId);
 
     // LayerChromium interface
     virtual void setTexturePriorities(const CCPriorityCalculator&) OVERRIDE;
@@ -57,7 +57,7 @@ public:
     virtual ScrollbarLayerChromium* toScrollbarLayerChromium() { return this; }
 
 protected:
-    ScrollbarLayerChromium(PassOwnPtr<WebKit::WebScrollbar>, WebKit::WebScrollbarThemePainter, WebKit::WebScrollbarThemeGeometry, int scrollLayerId);
+    ScrollbarLayerChromium(PassOwnPtr<WebKit::WebScrollbar>, WebKit::WebScrollbarThemePainter, PassOwnPtr<WebKit::WebScrollbarThemeGeometry>, int scrollLayerId);
 
 private:
     void updatePart(LayerTextureUpdater*, LayerTextureUpdater::Texture*, const IntRect&, CCTextureUpdateQueue&, CCRenderingStats&);
@@ -65,7 +65,7 @@ private:
 
     OwnPtr<WebKit::WebScrollbar> m_scrollbar;
     WebKit::WebScrollbarThemePainter m_painter;
-    WebKit::WebScrollbarThemeGeometry m_geometry;
+    OwnPtr<WebKit::WebScrollbarThemeGeometry> m_geometry;
     int m_scrollLayerId;
 
     GC3Denum m_textureFormat;

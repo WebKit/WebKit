@@ -634,7 +634,6 @@
                 'src/WebScrollbarImpl.h',
                 'src/WebScrollbarThemeClientImpl.cpp',
                 'src/WebScrollbarThemeClientImpl.h',
-                'src/WebScrollbarThemeGeometry.cpp',
                 'src/WebScrollbarThemePainter.cpp',
                 'src/WebSearchableFormData.cpp',
                 'src/WebSecurityOrigin.cpp',

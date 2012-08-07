@@ -31,6 +31,7 @@
 #include "CCLayerTreeTestCommon.h"
 #include "CCTestCommon.h"
 #include "FakeWebGraphicsContext3D.h"
+#include "FakeWebScrollbarThemeGeometry.h"
 #include "LayerRendererChromium.h"
 #include "cc/CCHeadsUpDisplayLayerImpl.h"
 #include "cc/CCIOSurfaceLayerImpl.h"
@@ -2287,6 +2288,17 @@ public:
     }
 };
 
+class FakeWebScrollbarThemeGeometryNonEmpty : public FakeWebScrollbarThemeGeometry {
+    virtual WebRect trackRect(WebScrollbar*) OVERRIDE { return WebRect(0, 0, 10, 10); }
+    virtual WebRect thumbRect(WebScrollbar*) OVERRIDE { return WebRect(0, 5, 5, 2); }
+    virtual void splitTrack(WebScrollbar*, const WebRect& track, WebRect& startTrack, WebRect& thumb, WebRect& endTrack) OVERRIDE
+    {
+        thumb = WebRect(0, 5, 5, 2);
+        startTrack = WebRect(0, 5, 0, 5);
+        endTrack = WebRect(0, 0, 0, 5);
+    }
+};
+
 class FakeScrollbarLayerImpl : public CCScrollbarLayerImpl {
 public:
     static PassOwnPtr<FakeScrollbarLayerImpl> create(int id)
@@ -2301,6 +2313,7 @@ public:
         IntSize size(10, 10);
         GC3Denum format = GraphicsContext3D::RGBA;
         CCResourceProvider::TextureUsageHint hint = CCResourceProvider::TextureUsageAny;
+        setScrollbarGeometry(FakeWebScrollbarThemeGeometryNonEmpty::create());
 
         setBackTrackResourceId(provider->createResource(pool, size, format, hint));
         setForeTrackResourceId(provider->createResource(pool, size, format, hint));
@@ -2311,13 +2324,6 @@ protected:
     explicit FakeScrollbarLayerImpl(int id)
         : CCScrollbarLayerImpl(id)
     {
-    }
-
-    virtual void scrollbarGeometry(WebRect& thumbRect, WebRect& backTrackRect, WebRect& foreTrackRect) OVERRIDE
-    {
-        thumbRect = WebRect(0, 5, 5, 2);
-        backTrackRect = WebRect(0, 5, 0, 5);
-        foreTrackRect = WebRect(0, 0, 0, 5);
     }
 };
 

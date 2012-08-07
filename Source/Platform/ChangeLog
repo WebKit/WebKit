@@ -1,3 +1,18 @@
+2012-08-06  Adrienne Walker  <enne@google.com>
+
+        [chromium] Convert WebScrollbarThemeGeometry from a concrete class to an interface
+        https://bugs.webkit.org/show_bug.cgi?id=93308
+
+        Reviewed by James Robinson.
+
+        Convert WebScrollbarThemeGeometry to be an interface. Update
+        WebScrollbarLayer to take a pointer to this interface.
+
+        * chromium/public/WebScrollbarLayer.h:
+        (WebScrollbarLayer):
+        * chromium/public/WebScrollbarThemeGeometry.h:
+        (WebScrollbarThemeGeometry):
+
 2012-08-06  Adam Barth  <abarth@webkit.org>
 
         [Chromium] WebTouchCandidatesInfo should be part of the Client API

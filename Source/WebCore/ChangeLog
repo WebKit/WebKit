@@ -1,3 +1,71 @@
+2012-08-06  Adrienne Walker  <enne@google.com>
+
+        [chromium] Convert WebScrollbarThemeGeometry from a concrete class to an interface
+        https://bugs.webkit.org/show_bug.cgi?id=93308
+
+        Reviewed by James Robinson.
+
+        Convert WebScrollbarThemeGeometry to be an interface. Create a new
+        WebScrollbarThemeGeometryNative implementation to wrap a native theme
+        pointer.
+
+        Update ScrollbarLayerChromium/CCScrollbarLayerImpl to use a pointer to
+        this interface rather than a concrete member variable. Because both
+        layer types need to access the theme during painting or compositing
+        and either layer could go away at any time, the theme is cloned during
+        commit rather than dealing with refcounting across threads or having
+        one layer type be the sole owner.
+
+        * WebCore.gypi:
+        * page/scrolling/chromium/ScrollingCoordinatorChromium.cpp:
+        (WebCore::createScrollbarLayer):
+        * platform/chromium/support/WebScrollbarThemeGeometryNative.cpp: Renamed from Source/WebKit/chromium/src/WebScrollbarThemeGeometry.cpp.
+        (WebKit):
+        (WebKit::WebScrollbarThemeGeometryNative::create):
+        (WebKit::WebScrollbarThemeGeometryNative::WebScrollbarThemeGeometryNative):
+        (WebKit::WebScrollbarThemeGeometryNative::clone):
+        (WebKit::WebScrollbarThemeGeometryNative::thumbPosition):
+        (WebKit::WebScrollbarThemeGeometryNative::thumbLength):
+        (WebKit::WebScrollbarThemeGeometryNative::trackPosition):
+        (WebKit::WebScrollbarThemeGeometryNative::trackLength):
+        (WebKit::WebScrollbarThemeGeometryNative::hasButtons):
+        (WebKit::WebScrollbarThemeGeometryNative::hasThumb):
+        (WebKit::WebScrollbarThemeGeometryNative::trackRect):
+        (WebKit::WebScrollbarThemeGeometryNative::thumbRect):
+        (WebKit::WebScrollbarThemeGeometryNative::minimumThumbLength):
+        (WebKit::WebScrollbarThemeGeometryNative::scrollbarThickness):
+        (WebKit::WebScrollbarThemeGeometryNative::backButtonStartRect):
+        (WebKit::WebScrollbarThemeGeometryNative::backButtonEndRect):
+        (WebKit::WebScrollbarThemeGeometryNative::forwardButtonStartRect):
+        (WebKit::WebScrollbarThemeGeometryNative::forwardButtonEndRect):
+        (WebKit::WebScrollbarThemeGeometryNative::constrainTrackRectToTrackPieces):
+        (WebKit::WebScrollbarThemeGeometryNative::splitTrack):
+        * platform/chromium/support/WebScrollbarThemeGeometryNative.h: Added.
+        (WebKit):
+        (WebScrollbarThemeGeometryNative):
+        * platform/graphics/chromium/ScrollbarLayerChromium.cpp:
+        (WebCore::ScrollbarLayerChromium::create):
+        (WebCore::ScrollbarLayerChromium::ScrollbarLayerChromium):
+        (WebCore::ScrollbarLayerChromium::pushPropertiesTo):
+        (WebCore::ScrollbarBackgroundPainter::create):
+        (WebCore::ScrollbarBackgroundPainter::ScrollbarBackgroundPainter):
+        (ScrollbarBackgroundPainter):
+        (WebCore::ScrollbarThumbPainter::create):
+        (WebCore::ScrollbarThumbPainter::ScrollbarThumbPainter):
+        (ScrollbarThumbPainter):
+        (WebCore::ScrollbarLayerChromium::createTextureUpdaterIfNeeded):
+        (WebCore::ScrollbarLayerChromium::setTexturePriorities):
+        (WebCore::ScrollbarLayerChromium::update):
+        * platform/graphics/chromium/ScrollbarLayerChromium.h:
+        (ScrollbarLayerChromium):
+        * platform/graphics/chromium/cc/CCScrollbarLayerImpl.cpp:
+        (WebCore::CCScrollbarLayerImpl::setScrollbarGeometry):
+        (WebCore::CCScrollbarLayerImpl::setScrollbarData):
+        (WebCore::CCScrollbarLayerImpl::appendQuads):
+        * platform/graphics/chromium/cc/CCScrollbarLayerImpl.h:
+        (WebCore::CCScrollbarLayerImpl::scrollbarGeometry):
+        (CCScrollbarLayerImpl):
+
 2012-08-06  Adam Barth  <abarth@webkit.org>
 
         JSC should use BindingState to determine the activeDOMWindow

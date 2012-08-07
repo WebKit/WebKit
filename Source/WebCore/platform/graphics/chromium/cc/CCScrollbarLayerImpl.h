@@ -42,7 +42,9 @@ class CCScrollbarLayerImpl : public CCLayerImpl {
 public:
     static PassOwnPtr<CCScrollbarLayerImpl> create(int id);
 
-    void setScrollbarData(const WebKit::WebScrollbar*, WebKit::WebScrollbarThemeGeometry);
+    WebKit::WebScrollbarThemeGeometry* scrollbarGeometry() const { return m_geometry.get(); }
+    void setScrollbarGeometry(PassOwnPtr<WebKit::WebScrollbarThemeGeometry>);
+    void setScrollbarData(const WebKit::WebScrollbar*);
 
     void setBackTrackResourceId(CCResourceProvider::ResourceId id) { m_backTrackResourceId = id; }
     void setForeTrackResourceId(CCResourceProvider::ResourceId id) { m_foreTrackResourceId = id; }
@@ -65,8 +67,6 @@ public:
 
 protected:
     explicit CCScrollbarLayerImpl(int id);
-
-    virtual void scrollbarGeometry(WebKit::WebRect& thumbRect, WebKit::WebRect& backTrackRect, WebKit::WebRect& foreTrackRect);
 
 private:
     // nested class only to avoid namespace problem
@@ -103,7 +103,7 @@ private:
     CCResourceProvider::ResourceId m_foreTrackResourceId;
     CCResourceProvider::ResourceId m_thumbResourceId;
 
-    WebKit::WebScrollbarThemeGeometry m_geometry;
+    OwnPtr<WebKit::WebScrollbarThemeGeometry> m_geometry;
 
     // Data to implement CCScrollbar
     WebKit::WebScrollbar::ScrollbarOverlayStyle m_scrollbarOverlayStyle;

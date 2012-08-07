@@ -62,10 +62,13 @@ CCScrollbarLayerImpl::CCScrollbarLayerImpl(int id)
 {
 }
 
-void CCScrollbarLayerImpl::setScrollbarData(const WebScrollbar* scrollbar, WebKit::WebScrollbarThemeGeometry geometry)
+void CCScrollbarLayerImpl::setScrollbarGeometry(PassOwnPtr<WebKit::WebScrollbarThemeGeometry> geometry)
 {
     m_geometry = geometry;
+}
 
+void CCScrollbarLayerImpl::setScrollbarData(const WebScrollbar* scrollbar)
+{
     m_scrollbarOverlayStyle = scrollbar->scrollbarOverlayStyle();
     m_orientation = scrollbar->orientation();
     m_controlSize = scrollbar->controlSize();
@@ -86,13 +89,6 @@ static FloatRect toUVRect(const WebRect& r, const IntRect& bounds)
                      static_cast<float>(r.width) / bounds.width(), static_cast<float>(r.height) / bounds.height());
 }
 
-void CCScrollbarLayerImpl::scrollbarGeometry(WebRect& thumbRect, WebRect& backTrackRect, WebRect& foreTrackRect)
-{
-    m_geometry.splitTrack(&m_scrollbar, m_geometry.trackRect(&m_scrollbar), backTrackRect, thumbRect, foreTrackRect);
-    if (!m_geometry.hasThumb(&m_scrollbar))
-        thumbRect = WebRect();
-}
-
 void CCScrollbarLayerImpl::appendQuads(CCQuadSink& quadList, const CCSharedQuadState* sharedQuadState, bool&)
 {
     bool premultipledAlpha = false;
@@ -101,7 +97,9 @@ void CCScrollbarLayerImpl::appendQuads(CCQuadSink& quadList, const CCSharedQuadS
     IntRect boundsRect(IntPoint(), contentBounds());
 
     WebRect thumbRect, backTrackRect, foreTrackRect;
-    scrollbarGeometry(thumbRect, backTrackRect, foreTrackRect);
+    m_geometry->splitTrack(&m_scrollbar, m_geometry->trackRect(&m_scrollbar), backTrackRect, thumbRect, foreTrackRect);
+    if (!m_geometry->hasThumb(&m_scrollbar))
+        thumbRect = WebRect();
 
     if (m_thumbResourceId && !thumbRect.isEmpty()) {
         OwnPtr<CCTextureDrawQuad> quad = CCTextureDrawQuad::create(sharedQuadState, IntRect(thumbRect.x, thumbRect.y, thumbRect.width, thumbRect.height), m_thumbResourceId, premultipledAlpha, uvRect, flipped);

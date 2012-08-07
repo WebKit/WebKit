@@ -105,6 +105,7 @@
             'tests/FakeCCLayerTreeHostClient.h',
             'tests/FakeGraphicsContext3DTest.cpp',
             'tests/FakeWebGraphicsContext3D.h',
+            'tests/FakeWebScrollbarThemeGeometry.h',
             'tests/FilterOperationsTest.cpp',
             'tests/FloatQuadTest.cpp',
             'tests/FrameLoaderClientImplTest.cpp',
