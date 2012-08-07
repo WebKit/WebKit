@@ -1,3 +1,16 @@
+2012-08-07  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening.
+
+        Rebaselining after r124697. Also skipping two modal dialog tests that
+        take 30 seconds to run but are expected to fail.
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/fast/css/nested-layers-with-hover-expected.txt: Added.
+        * platform/gtk/tables/mozilla_expected_failures/bugs/bug106966-expected.txt:
+        * platform/gtk/tables/mozilla_expected_failures/marvin/table_overflow_hidden_tbody-expected.txt:
+        * platform/gtk/tables/mozilla_expected_failures/marvin/table_overflow_hidden_tr-expected.txt:
+
 2012-08-07  Joone Hur  <joone.hur@intel.com>
 
         Unreviewed EFL gardening.

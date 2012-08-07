@@ -36,11 +36,6 @@
 // Tests that require new results.
 //////////////////////////////////////////////////////////////////////////////////////////
 
-// Require rebaseline after bug 93148
-BUGWK93148 : tables/mozilla_expected_failures/bugs/bug106966.html = TEXT
-BUGWK93148 : tables/mozilla_expected_failures/marvin/table_overflow_hidden_tbody.html  = TEXT
-BUGWK93148 : tables/mozilla_expected_failures/marvin/table_overflow_hidden_tr.html  = TEXT
-BUGWK93148 : fast/css/nested-layers-with-hover.html = TEXT
 
 //////////////////////////////////////////////////////////////////////////////////////////
 // Expected failures
@@ -52,9 +47,9 @@ WONTFIX : fast/harness/sample-fail-mismatch-reftest.html = IMAGE
 // Modal dialogs will not be supported in WebKit1. These expectations should eventually
 // be moved into WebKit1-specific TestExpectations file (once it's created).
 WONTFIX : fast/animation/request-animation-frame-during-modal.html = TEXT
-WONTFIX : fast/events/show-modal-dialog-onblur-onfocus.html = TEXT
+WONTFIX SKIP : fast/events/show-modal-dialog-onblur-onfocus.html = TEXT
 WONTFIX : fast/events/scroll-event-during-modal-dialog.html = TEXT
-WONTFIX : fast/harness/show-modal-dialog.html = TEXT
+WONTFIX SKIP : fast/harness/show-modal-dialog.html = TEXT
 WONTFIX : http/tests/security/cross-frame-access-call.html = TEXT
 WONTFIX : http/tests/security/cross-frame-access-get.html = TEXT
 WONTFIX SKIP : inspector/console/console-long-eval-crash.html = TEXT
