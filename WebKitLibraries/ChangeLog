@@ -1,3 +1,17 @@
+2012-08-07  Lucas Forschler  <lforschler@apple.com>
+
+    Merge 124363
+
+    2012-08-01  Jon Lee  <jonlee@apple.com>
+
+            Update WKSI.
+
+            Reviewed by Mark Rowe.
+
+            * libWebKitSystemInterfaceLion.a:
+            * libWebKitSystemInterfaceMountainLion.a:
+            * libWebKitSystemInterfaceSnowLeopard.a:
+
 2012-07-30  Lucas Forschler  <lforschler@apple.com>
 
     Merge 123415
