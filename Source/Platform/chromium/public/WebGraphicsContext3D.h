@@ -171,6 +171,9 @@ public:
 
     virtual bool setParentContext(WebGraphicsContext3D* parentContext) { return false; }
 
+    virtual unsigned insertSyncPoint() { return 0; }
+    virtual void waitSyncPoint(unsigned) { }
+
     // Helper for software compositing path. Reads back the frame buffer into
     // the memory region pointed to by "pixels" with size "bufferSize". It is
     // expected that the storage for "pixels" covers (4 * width * height) bytes.
@@ -429,6 +432,11 @@ public:
 
     // GL_CHROMIUM_shallow_flush
     virtual void shallowFlushCHROMIUM() { }
+
+    // GL_CHROMIUM_texture_mailbox
+    virtual void genMailboxCHROMIUM(WGC3Dbyte* mailbox) { }
+    virtual void produceTextureCHROMIUM(WGC3Denum target, const WGC3Dbyte* mailbox) { }
+    virtual void consumeTextureCHROMIUM(WGC3Denum target, const WGC3Dbyte* mailbox) { }
 
     GrGLInterface* createGrGLInterface();
 

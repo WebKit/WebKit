@@ -1,3 +1,20 @@
+2012-08-06  Antoine Labour  <piman@chromium.org>
+
+        [chromium] add sync points and GL_CHROMIUM_texture_mailbox entrypoints to WebGraphicsContext3D
+        https://bugs.webkit.org/show_bug.cgi?id=93313
+
+        Reviewed by James Robinson.
+
+        Sync points already landed chromium-side, mailbos at https://chromiumcodereview.appspot.com/10829209/
+
+        * chromium/public/WebGraphicsContext3D.h:
+        (WebKit::WebGraphicsContext3D::insertSyncPoint):
+        (WebKit::WebGraphicsContext3D::waitSyncPoint):
+        (WebGraphicsContext3D):
+        (WebKit::WebGraphicsContext3D::genMailboxCHROMIUM):
+        (WebKit::WebGraphicsContext3D::produceTextureCHROMIUM):
+        (WebKit::WebGraphicsContext3D::consumeTextureCHROMIUM):
+
 2012-08-06  Adrienne Walker  <enne@google.com>
 
         [chromium] Convert WebScrollbarThemeGeometry from a concrete class to an interface
