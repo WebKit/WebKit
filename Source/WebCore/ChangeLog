@@ -1,3 +1,18 @@
+2012-08-08  Dan Bernstein  <mitz@apple.com>
+
+        REGRESSION (r123171): <svg> element with intrinsic size and max-width gets sized incorrectly
+        https://bugs.webkit.org/show_bug.cgi?id=93388
+
+        Reviewed by Beth Dakin.
+
+        Test: svg/css/max-width-3.html
+
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::computeAspectRatioInformationForRenderBox): Added code to set
+        m_intrinsicSize in the no-contentRenderer branch of this function so that the calls to
+        RenderBox::computeReplacedLogical{Height,Width} in the end use the right intrinsic size.
+        This is similar to what the contentRenderer branch of this function already does.
+
 2012-08-08  Keishi Hattori  <keishi@webkit.org>
 
         Make slider tick mark snapping threshold configurable for each platform

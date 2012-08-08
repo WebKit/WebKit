@@ -297,8 +297,11 @@ void RenderReplaced::computeAspectRatioInformationForRenderBox(RenderBox* conten
         }
     } else {
         computeIntrinsicRatioInformation(intrinsicSize, intrinsicRatio, isPercentageIntrinsicSize);
-        if (intrinsicRatio)
+        if (intrinsicRatio) {
             ASSERT(!isPercentageIntrinsicSize);
+            if (!intrinsicSize.isEmpty())
+                m_intrinsicSize = isHorizontalWritingMode() ? flooredIntSize(intrinsicSize) : flooredIntSize(intrinsicSize).transposedSize(); // FIXME: This introduces precision errors. We should convert m_intrinsicSize to be a float.
+        }
     }
 
     // Now constrain the intrinsic size along each axis according to minimum and maximum width/heights along the
