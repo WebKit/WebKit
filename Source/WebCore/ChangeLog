@@ -1,3 +1,23 @@
+2012-08-08  Beth Dakin  <bdakin@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=93393
+        Overflow regions sometimes repaint incorrectly after going into or 
+        coming out of compositing mode
+        -and corresponding-
+        <rdar://problem/12006463>
+
+        Reviewed by Simon Fraser.
+
+        My first patch to fix this bug removed an if (parent()) check that is 
+        needed to prevent a table crash seen in 
+        fast/table/table-row-compositing-repaint-crash.html  
+        The parent() check was actually added originally to prevent this same 
+        crash. See http://trac.webkit.org/changeset/110456  
+        This patch adds that check back, but really we should delay the 
+        computation of repaint rects if layout has not happened yet.
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::updateBacking):
+
 2012-08-08  Simon Fraser  <simon.fraser@apple.com>
 
         Avoid backing store on layers created for CoreAnimation plugins
