@@ -1,3 +1,17 @@
+2012-08-08  Alexey Proskuryakov  <ap@apple.com>
+
+        [WK2] MiniBrowser crashes on window.open()
+        https://bugs.webkit.org/show_bug.cgi?id=93413
+
+        Reviewed by Dan Bernstein.
+
+        * MiniBrowser/mac/BrowserWindowController.m: (createNewPage): This is a "create"
+        API, so it needs to return a retained result.
+
+        * MiniBrowser/mac/WebBundle/WebBundleMain.m: (didClearWindowObjectForFrame):
+        When this function is called, URL appears to be poorly defined. Sometimes, it's
+        the new URL, other times it's the old one. An "old" URL is null in a new page.
+
 2012-08-08  Loïc Yhuel  <loic.yhuel@softathome.com>
 
         [Qt] Compile errors with OpenGLES2

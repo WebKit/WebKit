@@ -412,7 +412,7 @@ static WKPageRef createNewPage(WKPageRef page, WKURLRequestRef request, WKDictio
     BrowserWindowController *controller = [[BrowserWindowController alloc] initWithContext:WKPageGetContext(page) pageGroup:WKPageGetPageGroup(page)];
     [controller loadWindow];
 
-    return controller->_webView.pageRef;
+    return WKRetain(controller->_webView.pageRef);
 }
 
 static void showPage(WKPageRef page, const void *clientInfo)
