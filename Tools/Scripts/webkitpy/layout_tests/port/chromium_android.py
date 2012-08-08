@@ -221,13 +221,6 @@ class ChromiumAndroidPort(chromium.ChromiumPort):
     def clean_up_test_run(self):
         super(ChromiumAndroidPort, self).stop_http_server()
 
-    def skipped_layout_tests(self, test_list):
-        return self._real_tests([
-            # Canvas tests are run as virtual gpu tests.
-            'fast/canvas',
-            'canvas/philip',
-        ])
-
     def create_driver(self, worker_number, no_timeout=False):
         # We don't want the default DriverProxy which is not compatible with our driver.
         # See comments in ChromiumAndroidDriver.start().

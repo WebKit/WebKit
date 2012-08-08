@@ -1,3 +1,13 @@
+2012-08-08  Xianzhu Wang  <wangxianzhu@chromium.org>
+
+        [Chromium-Android] Apply all Linux layout test expectations
+        https://bugs.webkit.org/show_bug.cgi?id=92653
+
+        Reviewed by Adam Barth.
+
+        * Scripts/webkitpy/layout_tests/port/chromium_android.py:
+        (ChromiumAndroidPort.skipped_layout_tests): Removed. Skip these tests in TestExpectations instead.
+
 2012-08-08  Josh Hawn  <jhawn@apple.com>
 
         Add MountainLion WebKit Bots.
