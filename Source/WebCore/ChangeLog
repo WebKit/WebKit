@@ -1,3 +1,19 @@
+2012-08-07  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: TabbedPane should use floating point width values for measuring.
+        https://bugs.webkit.org/show_bug.cgi?id=93349
+
+        Reviewed by Pavel Feldman.
+
+        TabbedPane now uses getBoundingClientRect().width instead of offsetWidth for more precise calculation.
+
+        * inspector/front-end/TabbedPane.js:
+        (WebInspector.TabbedPane.prototype._totalWidth):
+        (WebInspector.TabbedPane.prototype._updateTabsDropDown):
+        (WebInspector.TabbedPane.prototype._measureDropDownButton):
+        (WebInspector.TabbedPane.prototype._updateWidths):
+        (WebInspector.TabbedPaneTab.prototype._measure):
+
 2012-08-08  Douglas Stockwell  <dstockwell@chromium.org>
 
         'highlight' should not be parsed for a composite operation

@@ -304,9 +304,14 @@ WebInspector.TabbedPane.prototype = {
         return dropDownContainer;
     },
 
+    _totalWidth: function()
+    {
+        return this._headerContentsElement.getBoundingClientRect().width;
+    },
+
     _updateTabsDropDown: function()
     {
-        var tabsToShowIndexes = this._tabsToShowIndexes(this._tabs, this._tabsHistory, this._headerContentsElement.offsetWidth, this._measuredDropDownButtonWidth);
+        var tabsToShowIndexes = this._tabsToShowIndexes(this._tabs, this._tabsHistory, this._totalWidth(), this._measuredDropDownButtonWidth);
 
         for (var i = 0; i < this._tabs.length; ++i) {
             if (this._tabs[i]._shown && tabsToShowIndexes.indexOf(i) === -1)
@@ -362,7 +367,7 @@ WebInspector.TabbedPane.prototype = {
     {
         this._dropDownButton.addStyleClass("measuring");
         this._headerContentsElement.appendChild(this._dropDownButton);
-        this._measuredDropDownButtonWidth = this._dropDownButton.offsetWidth;
+        this._measuredDropDownButtonWidth = this._dropDownButton.getBoundingClientRect().width;
         this._headerContentsElement.removeChild(this._dropDownButton);
         this._dropDownButton.removeStyleClass("measuring");
     },
@@ -373,8 +378,7 @@ WebInspector.TabbedPane.prototype = {
         for (var tabId in this._tabs)
             measuredWidths.push(this._tabs[tabId].measuredWidth);
         
-        const roundingError = 5;
-        var maxWidth = this._calculateMaxWidth(measuredWidths, this._headerContentsElement.offsetWidth - 5);
+        var maxWidth = this._calculateMaxWidth(measuredWidths, this._totalWidth());
         
         for (var tabId in this._tabs) {
             var tab = this._tabs[tabId];
@@ -657,7 +661,7 @@ WebInspector.TabbedPaneTab.prototype = {
     {
         var measuringTabElement = this._createTabElement(true);
         this._measureElement.appendChild(measuringTabElement);
-        this._measuredWidth = measuringTabElement.offsetWidth;
+        this._measuredWidth = measuringTabElement.getBoundingClientRect().width;
         this._measureElement.removeChild(measuringTabElement);
     },
 
