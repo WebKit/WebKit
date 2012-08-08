@@ -309,6 +309,13 @@ void MediaPlayerPrivateGStreamer::load(const String& url)
         m_delayingLoad = true;
     }
 
+    // Reset network and ready states. Those will be set properly once
+    // the pipeline pre-rolled.
+    m_networkState = MediaPlayer::Loading;
+    m_player->networkStateChanged();
+    m_readyState = MediaPlayer::HaveNothing;
+    m_player->readyStateChanged();
+
     // GStreamer needs to have the pipeline set to a paused state to
     // start providing anything useful.
     gst_element_set_state(m_playBin, GST_STATE_PAUSED);

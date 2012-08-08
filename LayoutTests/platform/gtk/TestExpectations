@@ -1194,8 +1194,6 @@ BUGWK86137 : ietestcenter/css3/namespaces/prefix-007.xml = IMAGE
 BUGWK86139 : ietestcenter/css3/namespaces/prefix-010.xml = IMAGE
 BUGWK86142 : ietestcenter/css3/namespaces/syntax-021.xml = IMAGE
 
-BUGWK86310 : media/media-continues-playing-after-replace-source.html = TEXT
-
 BUGWK86443 : plugins/npruntime/delete-plugin-within-hasProperty-return-false.html = TEXT
 BUGWK86443 : plugins/npruntime/delete-plugin-within-hasProperty-return-true.html = TEXT
 BUGWK86443 : plugins/npruntime/delete-plugin-within-setProperty.html = TEXT

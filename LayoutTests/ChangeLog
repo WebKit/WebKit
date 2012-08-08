@@ -1,3 +1,15 @@
+2012-07-31  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] media/media-continues-playing-after-replace-source.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=86310
+
+        Reviewed by Eric Carlson.
+
+        Unflag now passing media test on GTK and EFL.
+
+        * platform/efl/TestExpectations:
+        * platform/gtk/TestExpectations:
+
 2012-08-08  Alexandru Chiculita  <achicu@adobe.com>
 
         [Chromium] Skia assert triggered by custom filter unmultiplied results

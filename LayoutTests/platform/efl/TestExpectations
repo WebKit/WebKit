@@ -657,9 +657,6 @@ BUGWK86137 : ietestcenter/css3/namespaces/prefix-007.xml = IMAGE
 BUGWK86139 : ietestcenter/css3/namespaces/prefix-010.xml = IMAGE
 BUGWK86142 : ietestcenter/css3/namespaces/syntax-021.xml = IMAGE
 
-// New test introduced in r116858 fails
-BUGWK86310 : media/media-continues-playing-after-replace-source.html = TEXT
-
 // Fullscreen API is enabled but not fully implemented.
 BUGWK86597 : fullscreen/video-controls-drag.html = TEXT
 BUGWK86187 : media/media-fullscreen-not-in-document.html = TEXT
