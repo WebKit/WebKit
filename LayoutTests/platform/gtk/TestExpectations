@@ -403,8 +403,6 @@ BUGWK92942 SKIP : fast/events/constructors/device-proximity-event-constructor.ht
 
 BUGWK74297 : http/tests/security/cross-origin-xsl-redirect-BLOCKED.html = CRASH PASS
 
-BUGWK63611 DEBUG : editing/pasteboard/interchange-newline-2.html = CRASH PASS
-
 BUGWK85811 DEBUG : fast/events/message-port-close.html = CRASH PASS
 
 BUGWK86443 : plugins/npruntime/delete-plugin-within-getProperty.html = CRASH
@@ -499,8 +497,6 @@ BUGWK84859 : fast/workers/storage/use-same-database-in-page-and-workers.html = P
 
 BUGWK83878 : media/track/track-mode.html = PASS TEXT
 BUGWK88867 : media/track/track-cue-rendering-snap-to-lines-not-set.html = PASS TEXT
-
-BUGWK63611 DEBUG : editing/pasteboard/interchange-newline-3.html = TEXT PASS
 
 BUGWK89663 : editing/deleting/delete-3800834-fix.html = PASS TEXT
 

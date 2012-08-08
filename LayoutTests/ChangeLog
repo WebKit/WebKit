@@ -1,3 +1,10 @@
+2012-08-07  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        Unreviewed. Remove fail expectations for tests that should not be
+        crashing anymore after r124997.
+
+        * platform/gtk/TestExpectations: Update test expectations.
+
 2012-08-07  Takashi Toyoshima  <toyoshim@chromium.org>
 
         Unreviewed, update expectation.
