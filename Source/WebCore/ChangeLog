@@ -1,3 +1,33 @@
+2012-08-08  Antonio Gomes  <agomes@rim.com>
+
+        [BlackBerry] Propagate GraphicsLayer::boundsOrigin down to the platform layers
+        https://bugs.webkit.org/show_bug.cgi?id=93478
+        PR #188657
+
+        Reviewed by Yong Li.
+
+        This property will be set from both WebKit and Compositing/UI
+        threads in order to fast scroll block elements.
+
+        No new tests, as it is a mid-step patch.
+
+        * platform/graphics/blackberry/GraphicsLayerBlackBerry.cpp:
+        (WebCore::GraphicsLayerBlackBerry::setBoundsOrigin):
+        (WebCore):
+        (WebCore::GraphicsLayerBlackBerry::updateBoundsOrigin):
+        * platform/graphics/blackberry/GraphicsLayerBlackBerry.h:
+        (GraphicsLayerBlackBerry):
+        * platform/graphics/blackberry/LayerCompositingThread.h:
+        (WebCore::LayerCompositingThread::setBoundsOrigin):
+        * platform/graphics/blackberry/LayerData.h:
+        (WebCore::LayerData::boundsOrigin):
+        (LayerData):
+        * platform/graphics/blackberry/LayerRenderer.cpp:
+        (WebCore::LayerRenderer::updateLayersRecursive):
+        * platform/graphics/blackberry/LayerWebKitThread.h:
+        (WebCore::LayerWebKitThread::setBoundsOrigin):
+        (LayerWebKitThread):
+
 2012-08-08  Nate Chapin  <japhet@chromium.org>
 
         [chromium] Upstream android's FlingAnimator

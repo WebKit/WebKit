@@ -85,6 +85,8 @@ public:
     const FilterOperations& filters() const { return m_filters; }
 #endif
 
+    virtual void setBoundsOrigin(const FloatPoint&);
+
     virtual void setBackgroundColor(const Color&);
     virtual void clearBackgroundColor();
 
@@ -143,6 +145,7 @@ private:
     void updateLayerPosition();
     void updateLayerSize();
     void updateAnchorPoint();
+    void updateBoundsOrigin();
     void updateTransform();
     void updateChildrenTransform();
     void updateMasksToBounds();

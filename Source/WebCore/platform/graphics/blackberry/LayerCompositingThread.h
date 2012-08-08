@@ -133,6 +133,7 @@ public:
     // These functions can also be used to update animated properties in LayerAnimation.
     void setPosition(const FloatPoint& position) { m_position = position; }
     void setAnchorPoint(const FloatPoint& anchorPoint) { m_anchorPoint = anchorPoint; }
+    void setBoundsOrigin(const FloatPoint& boundsOrigin) { m_boundsOrigin = boundsOrigin; }
     void setBounds(const IntSize& bounds) { m_bounds = bounds; }
     void setSizeIsScaleInvariant(bool invariant) { m_sizeIsScaleInvariant = invariant; }
     void setTransform(const TransformationMatrix& matrix) { m_transform = matrix; }
