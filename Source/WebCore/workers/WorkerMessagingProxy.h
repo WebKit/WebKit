@@ -99,11 +99,13 @@ namespace WebCore {
         virtual ~WorkerMessagingProxy();
 
         void workerContextDestroyedInternal();
+        static void workerObjectDestroyedInternal(ScriptExecutionContext*, WorkerMessagingProxy*);
         void reportPendingActivityInternal(bool confirmingMessage, bool hasPendingActivity);
         Worker* workerObject() const { return m_workerObject; }
 
         RefPtr<ScriptExecutionContext> m_scriptExecutionContext;
         Worker* m_workerObject;
+        bool m_mayBeDestroyed;
         RefPtr<DedicatedWorkerThread> m_workerThread;
 
         unsigned m_unconfirmedMessageCount; // Unconfirmed messages from worker object to worker thread.

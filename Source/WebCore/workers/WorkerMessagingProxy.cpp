@@ -250,6 +250,7 @@ WorkerContextProxy* WorkerContextProxy::create(Worker* worker)
 WorkerMessagingProxy::WorkerMessagingProxy(Worker* workerObject)
     : m_scriptExecutionContext(workerObject->scriptExecutionContext())
     , m_workerObject(workerObject)
+    , m_mayBeDestroyed(false)
     , m_unconfirmedMessageCount(0)
     , m_workerThreadHadPendingActivity(false)
     , m_askedToTerminate(false)
@@ -354,10 +355,16 @@ void WorkerMessagingProxy::workerThreadCreated(PassRefPtr<DedicatedWorkerThread>
 void WorkerMessagingProxy::workerObjectDestroyed()
 {
     m_workerObject = 0;
-    if (m_workerThread)
-        terminateWorkerContext();
+    m_scriptExecutionContext->postTask(createCallbackTask(&workerObjectDestroyedInternal, AllowCrossThreadAccess(this)));
+}
+
+void WorkerMessagingProxy::workerObjectDestroyedInternal(ScriptExecutionContext*, WorkerMessagingProxy* proxy)
+{
+    proxy->m_mayBeDestroyed = true;
+    if (proxy->m_workerThread)
+        proxy->terminateWorkerContext();
     else
-        workerContextDestroyedInternal();
+        proxy->workerContextDestroyedInternal();
 }
 
 #if ENABLE(INSPECTOR)
@@ -438,7 +445,7 @@ void WorkerMessagingProxy::workerContextDestroyedInternal()
 
     InspectorInstrumentation::workerContextTerminated(m_scriptExecutionContext.get(), this);
 
-    if (!m_workerObject)
+    if (m_mayBeDestroyed)
         delete this;
 }
 
