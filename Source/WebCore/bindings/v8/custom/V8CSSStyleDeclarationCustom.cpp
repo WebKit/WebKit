@@ -238,7 +238,7 @@ v8::Handle<v8::Value> V8CSSStyleDeclaration::namedPropertySetter(v8::Local<v8::S
     imp->setPropertyInternal(static_cast<CSSPropertyID>(propInfo->propID), propertyValue, false, ec);
 
     if (ec)
-        throwError(ec, info.GetIsolate());
+        V8Proxy::setDOMException(ec, info.GetIsolate());
 
     return value;
 }

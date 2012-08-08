@@ -108,7 +108,7 @@ static v8::Handle<v8::Value> storageSetter(v8::Local<v8::String> v8Name, v8::Loc
     ExceptionCode ec = 0;
     storage->setItem(name, value, ec);
     if (ec)
-        return throwError(ec, info.GetIsolate());
+        return V8Proxy::setDOMException(ec, info.GetIsolate());
 
     return v8Value;
 }

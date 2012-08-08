@@ -57,7 +57,7 @@ v8::Handle<v8::Value> V8NotificationCenter::createHTMLNotificationCallback(const
     RefPtr<Notification> notification = notificationCenter->createHTMLNotification(url, ec);
 
     if (ec)
-        return throwError(ec, args.GetIsolate());
+        return V8Proxy::setDOMException(ec, args.GetIsolate());
 
     notification->ref();
     return toV8(notification.get(), args.GetIsolate());
@@ -72,7 +72,7 @@ v8::Handle<v8::Value> V8NotificationCenter::createNotificationCallback(const v8:
     RefPtr<Notification> notification = notificationCenter->createNotification(toWebCoreString(args[0]), toWebCoreString(args[1]), toWebCoreString(args[2]), ec);
 
     if (ec)
-        return throwError(ec, args.GetIsolate());
+        return V8Proxy::setDOMException(ec, args.GetIsolate());
 
     notification->ref();
     return toV8(notification.get(), args.GetIsolate());
@@ -86,11 +86,11 @@ v8::Handle<v8::Value> V8NotificationCenter::requestPermissionCallback(const v8::
 
     // Make sure that script execution context is valid.
     if (!context)
-        return throwError(INVALID_STATE_ERR, args.GetIsolate());
+        return V8Proxy::setDOMException(INVALID_STATE_ERR, args.GetIsolate());
 
     // Requesting permission is only valid from a page context.
     if (context->isWorkerContext())
-        return throwError(NOT_SUPPORTED_ERR, args.GetIsolate());
+        return V8Proxy::setDOMException(NOT_SUPPORTED_ERR, args.GetIsolate());
 
     RefPtr<V8CustomVoidCallback> callback;
     if (args.Length() > 0) {

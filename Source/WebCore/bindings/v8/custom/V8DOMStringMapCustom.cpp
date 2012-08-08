@@ -80,7 +80,7 @@ v8::Handle<v8::Value> V8DOMStringMap::namedPropertySetter(v8::Local<v8::String> 
     ExceptionCode ec = 0;
     V8DOMStringMap::toNative(info.Holder())->setItem(toWebCoreString(name), toWebCoreString(value), ec);
     if (ec)
-        return throwError(ec, info.GetIsolate());
+        return V8Proxy::setDOMException(ec, info.GetIsolate());
     return value;
 }
 

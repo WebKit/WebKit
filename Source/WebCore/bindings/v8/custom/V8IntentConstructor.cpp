@@ -60,7 +60,7 @@ v8::Handle<v8::Value> V8Intent::constructorCallback(const v8::Arguments& args)
         ExceptionCode ec = 0;
         RefPtr<Intent> impl = Intent::create(ScriptState::current(), options, ec);
         if (ec)
-            return throwError(ec, args.GetIsolate());
+            return V8Proxy::setDOMException(ec, args.GetIsolate());
 
         v8::Handle<v8::Object> wrapper = args.Holder();
         V8DOMWrapper::setDOMWrapper(wrapper, &info, impl.get());
@@ -80,11 +80,11 @@ v8::Handle<v8::Value> V8Intent::constructorCallback(const v8::Arguments& args)
     bool dataDidThrow = false;
     RefPtr<SerializedScriptValue> data = SerializedScriptValue::create(args[2], &messagePortArrayTransferList, &arrayBufferArrayTransferList, dataDidThrow);
     if (dataDidThrow)
-        return throwError(DATA_CLONE_ERR, args.GetIsolate());
+        return V8Proxy::setDOMException(DATA_CLONE_ERR, args.GetIsolate());
 
     RefPtr<Intent> impl = Intent::create(action, type, data, messagePortArrayTransferList, ec);
     if (ec)
-        return throwError(ec, args.GetIsolate());
+        return V8Proxy::setDOMException(ec, args.GetIsolate());
 
     v8::Handle<v8::Object> wrapper = args.Holder();
     V8DOMWrapper::setDOMWrapper(wrapper, &info, impl.get());

@@ -57,7 +57,7 @@ v8::Handle<v8::Value> V8XMLHttpRequest::responseTextAccessorGetter(v8::Local<v8:
     ExceptionCode ec = 0;
     const String& text = xmlHttpRequest->responseText(ec);
     if (ec)
-        return throwError(ec, info.GetIsolate());
+        return V8Proxy::setDOMException(ec, info.GetIsolate());
     return v8String(text, info.GetIsolate());
 }
 
@@ -143,7 +143,7 @@ v8::Handle<v8::Value> V8XMLHttpRequest::openCallback(const v8::Arguments& args)
         xmlHttpRequest->open(method, url, ec);
 
     if (ec)
-        return throwError(ec, args.GetIsolate());
+        return V8Proxy::setDOMException(ec, args.GetIsolate());
 
     return v8::Undefined();
 }
@@ -200,7 +200,7 @@ v8::Handle<v8::Value> V8XMLHttpRequest::sendCallback(const v8::Arguments& args)
     }
 
     if (ec)
-        return throwError(ec, args.GetIsolate());
+        return V8Proxy::setDOMException(ec, args.GetIsolate());
 
     return v8::Undefined();
 }

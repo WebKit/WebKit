@@ -75,13 +75,13 @@ v8::Handle<v8::Value> V8DirectoryEntry::getDirectoryCallback(const v8::Arguments
     RefPtr<EntryCallback> successCallback;
     if (args.Length() > 2 && !args[2]->IsNull() && !args[2]->IsUndefined()) {
         if (!args[2]->IsObject())
-            return throwError(TYPE_MISMATCH_ERR, args.GetIsolate());
+            return V8Proxy::setDOMException(TYPE_MISMATCH_ERR, args.GetIsolate());
         successCallback = V8EntryCallback::create(args[2], getScriptExecutionContext());
     }
     RefPtr<ErrorCallback> errorCallback;
     if (args.Length() > 3 && !args[3]->IsNull() && !args[3]->IsUndefined()) {
         if (!args[3]->IsObject())
-            return throwError(TYPE_MISMATCH_ERR, args.GetIsolate());
+            return V8Proxy::setDOMException(TYPE_MISMATCH_ERR, args.GetIsolate());
         errorCallback = V8ErrorCallback::create(args[3], getScriptExecutionContext());
     }
     imp->getDirectory(path, flags, successCallback, errorCallback);
@@ -119,13 +119,13 @@ v8::Handle<v8::Value> V8DirectoryEntry::getFileCallback(const v8::Arguments& arg
     RefPtr<EntryCallback> successCallback;
     if (args.Length() > 2 && !args[2]->IsNull() && !args[2]->IsUndefined()) {
         if (!args[2]->IsObject())
-            return throwError(TYPE_MISMATCH_ERR, args.GetIsolate());
+            return V8Proxy::setDOMException(TYPE_MISMATCH_ERR, args.GetIsolate());
         successCallback = V8EntryCallback::create(args[2], getScriptExecutionContext());
     }
     RefPtr<ErrorCallback> errorCallback;
     if (args.Length() > 3 && !args[3]->IsNull() && !args[3]->IsUndefined()) {
         if (!args[3]->IsObject())
-            return throwError(TYPE_MISMATCH_ERR, args.GetIsolate());
+            return V8Proxy::setDOMException(TYPE_MISMATCH_ERR, args.GetIsolate());
         errorCallback = V8ErrorCallback::create(args[3], getScriptExecutionContext());
     }
     imp->getFile(path, flags, successCallback, errorCallback);

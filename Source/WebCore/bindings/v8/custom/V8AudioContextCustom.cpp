@@ -65,7 +65,7 @@ v8::Handle<v8::Value> V8AudioContext::constructorCallback(const v8::Arguments& a
         ExceptionCode ec = 0;
         audioContext = AudioContext::create(document, ec);
         if (ec)
-            return throwError(ec, args.GetIsolate());
+            return V8Proxy::setDOMException(ec, args.GetIsolate());
         if (!audioContext.get())
             return V8Proxy::throwError(V8Proxy::SyntaxError, "audio resources unavailable for AudioContext construction", args.GetIsolate());
     } else {
@@ -91,7 +91,7 @@ v8::Handle<v8::Value> V8AudioContext::constructorCallback(const v8::Arguments& a
         ExceptionCode ec = 0;
         audioContext = AudioContext::createOfflineContext(document, numberOfChannels, numberOfFrames, sampleRate, ec);
         if (ec)
-            return throwError(ec, args.GetIsolate());
+            return V8Proxy::setDOMException(ec, args.GetIsolate());
     }
 
     if (!audioContext.get())
