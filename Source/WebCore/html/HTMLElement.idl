@@ -92,6 +92,11 @@ module html {
         readonly attribute DOMString titleDisplayString;
 #endif
 
+#if defined(LANGUAGE_GOBJECT) && LANGUAGE_GOBJECT // Keep on HTMLElement for backwards compat.
+        attribute [Reflect=class] DOMString className;
+#endif
+
+
         void click();
     };
 

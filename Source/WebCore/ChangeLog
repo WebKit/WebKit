@@ -1,3 +1,18 @@
+2012-08-07  Erik Arvidsson  <arv@chromium.org>
+
+        Evolution, empathy no longer build with webkint 1.9.6:  webkit_dom_html_element_set_class_name is gone
+        https://bugs.webkit.org/show_bug.cgi?id=93384
+
+        Reviewed by Adam Barth.
+
+        The GObject bindings do not do inheritance so when className was moved from HTMLElement to Element,
+        webkit_dom_html_element_set_class_name was no longer defined. This patch re-adds the binding for the
+        GObject bindings to HTMLElement.
+
+        No new tests.
+
+        * html/HTMLElement.idl:
+
 2012-08-07  Dirk Pranke  <dpranke@chromium.org>
 
         fix chromium win build after r124945
