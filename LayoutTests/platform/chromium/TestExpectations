@@ -2540,9 +2540,6 @@ BUGWK82783 : css3/filters/filter-repaint-sepia.html = PASS IMAGE IMAGE+TEXT TEXT
 BUGWK82783 : css3/filters/nested-filter.html = PASS IMAGE IMAGE+TEXT TEXT MISSING
 BUGWK82783 WIN : css3/filters/blur-filter-page-scroll.html = PASS IMAGE IMAGE+TEXT TEXT MISSING
 
-BUGWK93404 WIN : css3/filters/custom/effect-custom-parameters.html = PASS IMAGE IMAGE+TEXT TEXT MISSING
-BUGWK93404 WIN : css3/filters/custom/effect-custom-combined-missing.html = PASS IMAGE IMAGE+TEXT TEXT MISSING
-BUGWK93404 WIN : css3/filters/custom/effect-color-check.html = PASS IMAGE IMAGE+TEXT TEXT MISSING
 
 // CSS Regions tests for region styling and scoped styles
 BUGWK49142 : fast/regions/style-scoped-in-flow-override-container-style.html = PASS IMAGE IMAGE+TEXT TEXT MISSING

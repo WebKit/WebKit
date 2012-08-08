@@ -1,3 +1,18 @@
+2012-08-08  Florin Malita  <fmalita@chromium.org>
+
+        [chromium][win] Rebaseline css3/filters/custom tests
+        https://bugs.webkit.org/show_bug.cgi?id=93404
+
+        Unreviewed gardening: updating Chromium results after 125044.
+
+        * platform/chromium-linux-x86/css3/filters/custom/effect-color-check-expected.png: Removed.
+        * platform/chromium-linux/css3/filters/custom/effect-color-check-expected.png: Removed.
+        * platform/chromium-win-xp/css3/filters/custom/effect-color-check-expected.png: Removed.
+        * platform/chromium-win/css3/filters/custom/effect-color-check-expected.png:
+        * platform/chromium-win/css3/filters/custom/effect-custom-combined-missing-expected.png:
+        * platform/chromium-win/css3/filters/custom/effect-custom-parameters-expected.png:
+        * platform/chromium/TestExpectations:
+
 2012-08-08  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed GTK gardening.
