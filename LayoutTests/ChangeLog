@@ -1,3 +1,9 @@
+2012-08-07  Takashi Toyoshima  <toyoshim@chromium.org>
+
+        Unreviewed, rebaseline for chromium Mac10.7
+
+        * platform/chromium-mac/fast/speech/input-appearance-searchandspeech-expected.png:
+
 2012-08-07  Ojan Vafai  <ojan@chromium.org>
 
         percentage margins + flex incorrectly overflows the flexbox
