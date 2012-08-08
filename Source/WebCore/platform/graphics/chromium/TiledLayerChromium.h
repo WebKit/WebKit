@@ -106,18 +106,20 @@ private:
 
     void setTexturePrioritiesInRect(const CCPriorityCalculator&, const IntRect& visibleContentRect);
 
-    void updateTiles(bool idle, int left, int top, int right, int bottom, CCTextureUpdateQueue&, const CCOcclusionTracker*, CCRenderingStats&);
+    void markOcclusionsAndRequestTextures(int left, int top, int right, int bottom, const CCOcclusionTracker*);
+
+    bool updateTiles(int left, int top, int right, int bottom, CCTextureUpdateQueue&, const CCOcclusionTracker*, CCRenderingStats&, bool& didPaint);
+    bool haveTexturesForTiles(int left, int top, int right, int bottom, bool ignoreOcclusions);
+    IntRect markTilesForUpdate(int left, int top, int right, int bottom, bool ignoreOcclusions);
+    void updateTileTextures(const IntRect& paintRect, int left, int top, int right, int bottom, CCTextureUpdateQueue&, const CCOcclusionTracker*, CCRenderingStats&);
 
     UpdatableTile* tileAt(int, int) const;
     UpdatableTile* createTile(int, int);
 
     GC3Denum m_textureFormat;
     bool m_skipsDraw;
-    bool m_skipsIdlePaint;
+    bool m_failedUpdate;
     LayerTextureUpdater::SampledTexelFormat m_sampledTexelFormat;
-
-    // Tracks if we've done any painting on this update cycle.
-    bool m_didPaint;
 
     TilingOption m_tilingOption;
     OwnPtr<CCLayerTilingData> m_tiler;

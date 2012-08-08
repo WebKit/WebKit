@@ -1,3 +1,61 @@
+2012-08-08  Eric Penner  <epenner@google.com>
+
+        [chromium] Refactor tile flags.
+        https://bugs.webkit.org/show_bug.cgi?id=93059
+
+        Reviewed by Adrienne Walker.
+
+        This has become a general refactoring patch to make updateTiles easier
+        to work with. The 'updated' flag had become convoluted and incorrect
+        and the function had lots of special cases piled into it which
+        makes for tangled depedancies that are hard to reason with.
+ 
+        This refactors the updated flag into two flags ('validForFrame',
+        and 'occluded') for the two purposes it is actually used for,
+        simplifies the use of those flags.
+
+        'validForFrame' is improved to work for all tiles that are not dirty
+        before painting begins, rather than just the tiles that get touched via
+        updateTiles().
+
+        This refactors updateTiles() into several functions that more clearly
+        illustrate all the depedancies that have accumulated in there. After
+        doing that I managed to separate the occlusion pass from the painting
+        passes, ecapsulating the difficult dependancies in one documented
+        function 'markOcclusionsAndRequestTextures'.
+
+        Now update tiles doesn't need the 'idle' flag, and returns didPaint
+        as an out-param. The last remaining wierd output is m_failedPaint
+        which is needed in place of m_skipsIdlePaint to prevent infinite 
+        paints from being requested.
+
+        As a last step I was going to merge LayerChromium::update() and
+        LayerChromium::needsMoreUpdates() by having update() just return
+        a boolean, but this proved to be a big change so I'm holding off
+        on that. That would let us remove the m_failedPaint and get rid
+        of needsIdlePaint() altogether.
+
+        Tested by many existing tests.
+
+        * platform/graphics/chromium/TiledLayerChromium.cpp:
+        (UpdatableTile):
+        (WebCore::UpdatableTile::resetUpdateState):
+        (WebCore::UpdatableTile::markForUpdate):
+        (WebCore::UpdatableTile::UpdatableTile):
+        (WebCore::TiledLayerChromium::TiledLayerChromium):
+        (WebCore::TiledLayerChromium::pushPropertiesTo):
+        (WebCore):
+        (WebCore::TiledLayerChromium::updateTiles):
+        (WebCore::TiledLayerChromium::markOcclusionsAndRequestTextures):
+        (WebCore::TiledLayerChromium::haveTexturesForTiles):
+        (WebCore::TiledLayerChromium::markTilesForUpdate):
+        (WebCore::TiledLayerChromium::updateTileTextures):
+        (WebCore::TiledLayerChromium::resetUpdateState):
+        (WebCore::TiledLayerChromium::updateContentRect):
+        (WebCore::TiledLayerChromium::needsIdlePaint):
+        * platform/graphics/chromium/TiledLayerChromium.h:
+        (TiledLayerChromium):
+
 2012-08-08  Beth Dakin  <bdakin@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=93393

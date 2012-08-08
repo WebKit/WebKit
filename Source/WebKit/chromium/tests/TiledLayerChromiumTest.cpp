@@ -1076,6 +1076,8 @@ TEST_F(TiledLayerChromiumTest, tilesPaintedWithOcclusion)
     EXPECT_EQ(3, occluded.overdrawMetrics().tilesCulledForUpload());
 
     layer->fakeLayerTextureUpdater()->clearPrepareRectCount();
+    layer->setTexturePriorities(m_priorityCalculator);
+    textureManager->prioritizeTextures();
 
     occluded.setOcclusion(IntRect(250, 200, 300, 100));
     layer->invalidateContentRect(IntRect(0, 0, 600, 600));
@@ -1087,6 +1089,8 @@ TEST_F(TiledLayerChromiumTest, tilesPaintedWithOcclusion)
     EXPECT_EQ(3 + 2, occluded.overdrawMetrics().tilesCulledForUpload());
 
     layer->fakeLayerTextureUpdater()->clearPrepareRectCount();
+    layer->setTexturePriorities(m_priorityCalculator);
+    textureManager->prioritizeTextures();
 
     occluded.setOcclusion(IntRect(250, 250, 300, 100));
     layer->invalidateContentRect(IntRect(0, 0, 600, 600));
@@ -1181,6 +1185,8 @@ TEST_F(TiledLayerChromiumTest, tilesNotPaintedWithoutInvalidation)
     EXPECT_EQ(3, occluded.overdrawMetrics().tilesCulledForUpload());
 
     layer->fakeLayerTextureUpdater()->clearPrepareRectCount();
+    layer->setTexturePriorities(m_priorityCalculator);
+    textureManager->prioritizeTextures();
 
     // Repaint without marking it dirty. The 3 culled tiles will be pre-painted now.
     layer->updateContentRect(m_queue, IntRect(0, 0, 600, 600), &occluded, m_stats);

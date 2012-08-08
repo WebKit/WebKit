@@ -1,3 +1,14 @@
+2012-08-08  Eric Penner  <epenner@google.com>
+
+        [chromium] Refactor tile flags.
+        https://bugs.webkit.org/show_bug.cgi?id=93059
+
+        Reviewed by Adrienne Walker.
+
+        Minor fixes to existing tests.
+
+        * tests/TiledLayerChromiumTest.cpp:
+
 2012-08-08  James Robinson  <jamesr@chromium.org>
 
         [chromium] Clean up WebKit.h and WebKitPlatformSupport.h includes in chromium/src

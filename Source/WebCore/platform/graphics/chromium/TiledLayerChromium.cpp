@@ -59,24 +59,40 @@ public:
     CCPrioritizedTexture* managedTexture() { return m_texture->texture(); }
 
     bool isDirty() const { return !dirtyRect.isEmpty(); }
-    void copyAndClearDirty()
+
+    // Reset update state for the current frame. This should occur before painting
+    // for all layers. Since painting one layer can invalidate another layer
+    // after it has already painted, mark all non-dirty tiles as valid before painting
+    // such that invalidations during painting won't prevent them from being pushed.
+    void resetUpdateState()
     {
+        updateRect = IntRect();
+        occluded = false;
+        partialUpdate = false;
+        validForFrame = !isDirty();
+    }
+
+    // This promises to update the tile and therefore also guarantees the tile
+    // will be valid for this frame. dirtyRect is copied into updateRect so
+    // we can continue to track re-entrant invalidations that occur during painting.
+    void markForUpdate()
+    {
+        validForFrame = true;
         updateRect = dirtyRect;
         dirtyRect = IntRect();
     }
-    // Returns whether the layer was dirty and not updated in the current frame. For tiles that were not culled, the
-    // updateRect holds the area of the tile that was updated. Otherwise, the area that would have been updated.
-    bool isDirtyForCurrentFrame() { return !dirtyRect.isEmpty() && (updateRect.isEmpty() || !updated); }
 
     IntRect dirtyRect;
     IntRect updateRect;
     bool partialUpdate;
-    bool updated;
+    bool validForFrame;
+    bool occluded;
     bool isInUseOnImpl;
 private:
     explicit UpdatableTile(PassOwnPtr<LayerTextureUpdater::Texture> texture)
         : partialUpdate(false)
-        , updated(false)
+        , validForFrame(false)
+        , occluded(false)
         , isInUseOnImpl(false)
         , m_texture(texture)
     {
@@ -89,9 +105,8 @@ TiledLayerChromium::TiledLayerChromium()
     : LayerChromium()
     , m_textureFormat(GraphicsContext3D::INVALID_ENUM)
     , m_skipsDraw(false)
-    , m_skipsIdlePaint(false)
+    , m_failedUpdate(false)
     , m_sampledTexelFormat(LayerTextureUpdater::SampledTexelFormatInvalid)
-    , m_didPaint(false)
     , m_tilingOption(AutoTile)
 {
     m_tiler = CCLayerTilingData::create(IntSize(), CCLayerTilingData::HasBorderTexels);
@@ -223,7 +238,7 @@ void TiledLayerChromium::pushPropertiesTo(CCLayerImpl* layer)
             invalidTiles.append(tile);
             continue;
         }
-        if (tile->isDirtyForCurrentFrame())
+        if (!tile->validForFrame)
             continue;
 
         tiledLayer->pushTileProperties(i, j, tile->managedTexture()->resourceId(), tile->opaqueRect());
@@ -345,86 +360,114 @@ bool TiledLayerChromium::tileNeedsBufferedUpdate(UpdatableTile* tile)
     return true;
 }
 
-void TiledLayerChromium::updateTiles(bool idle, int left, int top, int right, int bottom, CCTextureUpdateQueue& queue, const CCOcclusionTracker* occlusion, CCRenderingStats& stats)
+
+bool TiledLayerChromium::updateTiles(int left, int top, int right, int bottom, CCTextureUpdateQueue& queue, const CCOcclusionTracker* occlusion, CCRenderingStats& stats, bool& didPaint)
 {
+    didPaint = false;
     createTextureUpdaterIfNeeded();
 
-    // We shouldn't track any occlusion metrics during idle painting.
-    ASSERT(!idle || !occlusion);
+    bool ignoreOcclusions = !occlusion;
+    if (!haveTexturesForTiles(left, top, right, bottom, ignoreOcclusions)) {
+        m_failedUpdate = true;
+        return false;
+    }
 
-    // Create tiles as needed, expanding a dirty rect to contain all
-    // the dirty regions currently being drawn. All dirty tiles that are to be painted
-    // get their updateRect set to dirtyRect and dirtyRect cleared. This way if
-    // invalidateContentRect is invoked during updateContentRect we don't lose the request.
+    IntRect paintRect = markTilesForUpdate(left, top, right, bottom, ignoreOcclusions);
+
+    if (occlusion)
+        occlusion->overdrawMetrics().didPaint(paintRect);
+
+    if (paintRect.isEmpty())
+        return true;
+
+    didPaint = true;
+    updateTileTextures(paintRect, left, top, right, bottom, queue, occlusion, stats);
+    return true;
+}
+
+void TiledLayerChromium::markOcclusionsAndRequestTextures(int left, int top, int right, int bottom, const CCOcclusionTracker* occlusion)
+{
+    // There is some difficult dependancies between occlusions, recording occlusion metrics
+    // and requesting memory so those are encapsulated in this function:
+    // - We only want to call requestLate on unoccluded textures (to preserve
+    //   memory for other layers when near OOM).
+    // - We only want to record occlusion metrics if all memory requests succeed.
+
+    int occludedTileCount = 0;
+    bool succeeded = true;
+    for (int j = top; j <= bottom; ++j) {
+        for (int i = left; i <= right; ++i) {
+            UpdatableTile* tile = tileAt(i, j);
+            ASSERT(tile); // Did setTexturePriorities get skipped?
+            // FIXME: This should not ever be null.
+            if (!tile)
+                continue;
+            ASSERT(!tile->occluded); // Did resetUpdateState get skipped? Are we doing more than one occluded pass?
+            IntRect visibleTileRect = intersection(m_tiler->tileBounds(i, j), visibleContentRect());
+            if (occlusion && occlusion->occluded(this, visibleTileRect)) {
+                tile->occluded = true;
+                occludedTileCount++;
+            } else {
+                succeeded &= tile->managedTexture()->requestLate();
+            }
+        }
+    }
+
+    if (!succeeded)
+        return;
+
+    // FIXME: Remove the loop and just pass the count!
+    for (int i = 0; i < occludedTileCount; i++)
+        occlusion->overdrawMetrics().didCullTileForUpload();
+}
+
+bool TiledLayerChromium::haveTexturesForTiles(int left, int top, int right, int bottom, bool ignoreOcclusions)
+{
+    for (int j = top; j <= bottom; ++j) {
+        for (int i = left; i <= right; ++i) {
+            UpdatableTile* tile = tileAt(i, j);
+            ASSERT(tile); // Did setTexturePriorites get skipped?
+            // FIXME: This should not ever be null.
+            if (!tile)
+                continue;
+
+            // Ensure the entire tile is dirty if we don't have the texture.
+            if (!tile->managedTexture()->haveBackingTexture())
+                tile->dirtyRect = m_tiler->tileRect(tile);
+
+            // If using occlusion and the visible region of the tile is occluded,
+            // don't reserve a texture or update the tile.
+            if (tile->occluded && !ignoreOcclusions)
+                continue;
+
+            if (!tile->managedTexture()->canAcquireBackingTexture())
+                return false;
+        }
+    }
+    return true;
+}
+
+IntRect TiledLayerChromium::markTilesForUpdate(int left, int top, int right, int bottom, bool ignoreOcclusions)
+{
     IntRect paintRect;
     for (int j = top; j <= bottom; ++j) {
         for (int i = left; i <= right; ++i) {
             UpdatableTile* tile = tileAt(i, j);
             ASSERT(tile); // Did setTexturePriorites get skipped?
-            if (!tile)
-                tile = createTile(i, j);
-
-            // Temporary diagnostic crash
-            if (!m_tiler)
-                CRASH();
-
-            if (!tile->managedTexture()->haveBackingTexture()) {
-                // Sets the dirty rect to a full-sized tile with border texels.
-                tile->dirtyRect = m_tiler->tileRect(tile);
-            }
-
-            // When not idle painting, if the visible region of the tile is occluded, don't reserve a texture or update the tile.
-            // If any part of the tile is visible, then we need to update it so the tile is pushed to the impl thread.
-            if (!idle && occlusion) {
-                IntRect visibleTileRect = intersection(m_tiler->tileBounds(i, j), visibleContentRect());
-                if (occlusion->occluded(this, visibleTileRect)) {
-                    ASSERT(!tile->updated);
-                    continue;
-                }
-            }
-
-            // We come through this function multiple times during a commit, and updated should be true if the tile is not culled
-            // any single time through the function.
-            tile->updated = true;
-
-            // Always try to get memory for visible textures.
-            if (!idle && !tile->managedTexture()->canAcquireBackingTexture())
-                tile->managedTexture()->requestLate();
-
-            if (!tile->managedTexture()->canAcquireBackingTexture()) {
-                m_skipsIdlePaint = true;
-                if (!idle) {
-                    m_skipsDraw = true;
-                    m_tiler->reset();
-                }
-                return;
-            }
-
-            paintRect.unite(tile->dirtyRect);
-        }
-    }
-
-    // For tiles that were not culled, we are going to update the area currently marked as dirty. So
-    // clear that dirty area and mark it for update instead.
-    for (int j = top; j <= bottom; ++j) {
-        for (int i = left; i <= right; ++i) {
-            UpdatableTile* tile = tileAt(i, j);
             // FIXME: This should not ever be null.
             if (!tile)
                 continue;
-            if (tile->updated)
-                tile->copyAndClearDirty();
-            else if (!idle && occlusion && tile->isDirty())
-                occlusion->overdrawMetrics().didCullTileForUpload();
+            if (tile->occluded && !ignoreOcclusions)
+                continue;
+            paintRect.unite(tile->dirtyRect);
+            tile->markForUpdate();
         }
     }
+    return paintRect;
+}
 
-    if (paintRect.isEmpty())
-        return;
-
-    if (occlusion)
-        occlusion->overdrawMetrics().didPaint(paintRect);
-
+void TiledLayerChromium::updateTileTextures(const IntRect& paintRect, int left, int top, int right, int bottom, CCTextureUpdateQueue& queue, const CCOcclusionTracker* occlusion, CCRenderingStats& stats)
+{
     // The updateRect should be in layer space. So we have to convert the paintRect from content space to layer space.
     m_updateRect = FloatRect(paintRect);
     float widthScale = bounds().width() / static_cast<float>(contentBounds().width());
@@ -438,19 +481,16 @@ void TiledLayerChromium::updateTiles(bool idle, int left, int top, int right, in
     RefPtr<LayerTextureUpdater> protector(textureUpdater());
     IntRect paintedOpaqueRect;
     textureUpdater()->prepareToUpdate(paintRect, m_tiler->tileSize(), 1 / widthScale, 1 / heightScale, paintedOpaqueRect, stats);
-    m_didPaint = true;
 
     for (int j = top; j <= bottom; ++j) {
         for (int i = left; i <= right; ++i) {
             UpdatableTile* tile = tileAt(i, j);
+            ASSERT(tile); // Did setTexturePriorites get skipped?
             // FIXME: This should not ever be null.
             if (!tile)
                 continue;
 
             IntRect tileRect = m_tiler->tileBounds(i, j);
-
-            if (!tile->updated)
-                continue;
 
             // Use updateRect as the above loop copied the dirty rect for this frame to updateRect.
             const IntRect& dirtyRect = tile->updateRect;
@@ -605,33 +645,32 @@ void TiledLayerChromium::resetUpdateState()
         // FIXME: This should not ever be null.
         if (!tile)
             continue;
-        tile->updateRect = IntRect();
-        tile->updated = false;
-        tile->partialUpdate = false;
+        tile->resetUpdateState();
     }
 }
 
 void TiledLayerChromium::updateContentRect(CCTextureUpdateQueue& queue, const IntRect& contentRect, const CCOcclusionTracker* occlusion, CCRenderingStats& stats)
 {
     m_skipsDraw = false;
-    m_skipsIdlePaint = false;
-    m_didPaint = false;
-
+    m_failedUpdate = false;
     updateBounds();
 
     if (m_tiler->hasEmptyBounds())
         return;
 
+    bool didPaint = false;
+
     // Visible painting. Only paint visible tiles if the visible rect isn't empty.
     if (!contentRect.isEmpty()) {
         int left, top, right, bottom;
         m_tiler->contentRectToTileIndices(contentRect, left, top, right, bottom);
-        updateTiles(false, left, top, right, bottom, queue, occlusion, stats);
+        markOcclusionsAndRequestTextures(left, top, right, bottom, occlusion);
+        m_skipsDraw = !updateTiles(left, top, right, bottom, queue, occlusion, stats, didPaint);
+        if (m_skipsDraw)
+            m_tiler->reset();
+        if (m_skipsDraw || didPaint)
+            return;
     }
-
-    // Abort if we have already painted or run out of memory.
-    if (m_skipsIdlePaint || m_didPaint)
-        return;
 
     // If we have already painting everything visible. Do some pre-painting while idle.
     IntRect idlePaintContentRect = idlePaintRect(contentRect);
@@ -643,16 +682,13 @@ void TiledLayerChromium::updateContentRect(CCTextureUpdateQueue& queue, const In
 
     // If the layer is not visible, we have nothing to expand from, so instead we prepaint the outer-most set of tiles.
     if (contentRect.isEmpty()) {
-        updateTiles(true, prepaintLeft, prepaintTop, prepaintRight, prepaintTop, queue, 0, stats);
-        if (m_didPaint || m_skipsIdlePaint)
+        if (!updateTiles(prepaintLeft, prepaintTop, prepaintRight, prepaintTop, queue, 0, stats, didPaint) || didPaint)
             return;
-        updateTiles(true, prepaintLeft, prepaintBottom, prepaintRight, prepaintBottom, queue, 0, stats);
-        if (m_didPaint || m_skipsIdlePaint)
+        if (!updateTiles(prepaintLeft, prepaintBottom, prepaintRight, prepaintBottom, queue, 0, stats, didPaint) || didPaint)
             return;
-        updateTiles(true, prepaintLeft, prepaintTop, prepaintLeft, prepaintBottom, queue, 0, stats);
-        if (m_didPaint || m_skipsIdlePaint)
+        if (!updateTiles(prepaintLeft, prepaintTop, prepaintLeft, prepaintBottom, queue, 0, stats, didPaint) || didPaint)
             return;
-        updateTiles(true, prepaintRight, prepaintTop, prepaintRight, prepaintBottom, queue, 0, stats);
+        updateTiles(prepaintRight, prepaintTop, prepaintRight, prepaintBottom, queue, 0, stats, didPaint);
         return;
     }
 
@@ -660,42 +696,38 @@ void TiledLayerChromium::updateContentRect(CCTextureUpdateQueue& queue, const In
     m_tiler->contentRectToTileIndices(contentRect, left, top, right, bottom);
 
     // Otherwise, prepaint anything that was occluded but inside the layer's visible region.
-    updateTiles(true, left, top, right, bottom, queue, 0, stats);
-    if (m_didPaint || m_skipsIdlePaint)
+    if (!updateTiles(left, top, right, bottom, queue, 0, stats, didPaint) || didPaint)
         return;
 
     // Then expand outwards from the visible area until we find a dirty row or column to update.
-    while (!m_skipsIdlePaint && (left > prepaintLeft || top > prepaintTop || right < prepaintRight || bottom < prepaintBottom)) {
+    while (left > prepaintLeft || top > prepaintTop || right < prepaintRight || bottom < prepaintBottom) {
         if (bottom < prepaintBottom) {
             ++bottom;
-            updateTiles(true, left, bottom, right, bottom, queue, 0, stats);
-            if (m_didPaint || m_skipsIdlePaint)
-                break;
+            if (!updateTiles(left, bottom, right, bottom, queue, 0, stats, didPaint) || didPaint)
+                return;
         }
         if (top > prepaintTop) {
             --top;
-            updateTiles(true, left, top, right, top, queue, 0, stats);
-            if (m_didPaint || m_skipsIdlePaint)
-                break;
+            if (!updateTiles(left, top, right, top, queue, 0, stats, didPaint) || didPaint)
+                return;
         }
         if (left > prepaintLeft) {
             --left;
-            updateTiles(true, left, top, left, bottom, queue, 0, stats);
-            if (m_didPaint || m_skipsIdlePaint)
-                break;
+            if (!updateTiles(left, top, left, bottom, queue, 0, stats, didPaint) || didPaint)
+                return;
         }
         if (right < prepaintRight) {
             ++right;
-            updateTiles(true, right, top, right, bottom, queue, 0, stats);
-            if (m_didPaint || m_skipsIdlePaint)
-                break;
+            if (!updateTiles(right, top, right, bottom, queue, 0, stats, didPaint) || didPaint)
+                return;
         }
     }
 }
 
 bool TiledLayerChromium::needsIdlePaint(const IntRect& visibleContentRect)
 {
-    if (m_skipsIdlePaint)
+    // Don't trigger more paints if we failed (as we'll just fail again).
+    if (m_failedUpdate)
         return false;
 
     if (m_tiler->hasEmptyBounds())
@@ -718,7 +750,7 @@ bool TiledLayerChromium::needsIdlePaint(const IntRect& visibleContentRect)
             if (!tile)
                 continue;
 
-            bool updated = tile->updated;
+            bool updated = !tile->updateRect.isEmpty();
             bool canAcquire = tile->managedTexture()->canAcquireBackingTexture();
             bool dirty = tile->isDirty() || !tile->managedTexture()->haveBackingTexture();
             if (!updated && canAcquire && dirty)
