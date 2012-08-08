@@ -1,3 +1,9 @@
+2012-08-08  Dean Jackson  <dino@apple.com>
+
+        Unreviewed build fix for Mac port after http://trac.webkit.org/changeset/125051
+
+        * platform/mac/ClipboardMac.mm:
+
 2012-08-08  Xan Lopez  <xlopez@igalia.com>
 
         Evolution, empathy no longer build with webkint 1.9.6:  webkit_dom_html_element_set_class_name is gone
