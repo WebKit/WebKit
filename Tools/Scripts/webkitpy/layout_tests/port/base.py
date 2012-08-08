@@ -142,6 +142,7 @@ class Port(object):
         self._test_configuration = None
         self._reftest_list = {}
         self._results_directory = None
+        self._root_was_set = hasattr(options, 'root') and options.root
 
     def additional_drt_flag(self):
         return []
@@ -214,7 +215,7 @@ class Port(object):
         """This routine is used to ensure that the build is up to date
         and all the needed binaries are present."""
         # If we're using a pre-built copy of WebKit (--root), we assume it also includes a build of DRT.
-        if not self.get_option('root') and self.get_option('build') and not self._build_driver():
+        if not self._root_was_set and self.get_option('build') and not self._build_driver():
             return False
         if not self._check_driver():
             return False
@@ -1167,6 +1168,8 @@ class Port(object):
                 root_directory = self._config.build_directory(self.get_option('configuration'))
             # Set --root so that we can pass this to subprocesses and avoid making the
             # slow call to config.build_directory() N times in each worker.
+            # FIXME: This is like @memoized, but more annoying and fragile; there should be another
+            # way to propagate values without mutating the options list.
             self.set_option_default('root', root_directory)
         return self._filesystem.join(self._filesystem.abspath(root_directory), *comps)
 

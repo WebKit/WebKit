@@ -87,6 +87,10 @@ class MockDRTPortTest(port_testcase.PortTestCase):
     def test_get_crash_log(self):
         pass
 
+    def test_check_build(self):
+        pass
+
+
 class MockDRTTest(unittest.TestCase):
     def input_line(self, port, test_name, checksum=None):
         url = port.create_driver(0).test_to_uri(test_name)
