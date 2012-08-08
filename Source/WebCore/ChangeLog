@@ -1,3 +1,9 @@
+2012-08-08  Alexis Menard  <alexis.menard@openbossa.org>
+
+        Unreviewed build fix for Qt on Linux.
+
+        * platform/qt/GamepadsQt.cpp:
+
 2012-08-08  KwangYong Choi  <ky0.choi@samsung.com>
 
         [EFL] Support DataList for <input type="range">

@@ -37,6 +37,7 @@ extern "C" {
     #include <libudev.h>
 }
 
+#include <unistd.h>
 #include <wtf/HashMap.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/text/CString.h>
