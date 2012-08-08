@@ -1,3 +1,20 @@
+2012-08-07  Yoshifumi Inoue  <yosin@chromium.org>
+
+        translateZ(0) shifts file name in file input
+        https://bugs.webkit.org/show_bug.cgi?id=69248
+
+        Reviewed by Simon Fraser.
+
+        This patch changes to use relative y-coordinate rather than absolute
+        y-coordinate for baseline of text of input type "file" what we've already
+        done for file icon y-coordinate.
+
+        Test: file-appearance-transform-no-effects.html
+
+        * rendering/RenderFileUploadControl.cpp:
+        (WebCore::RenderFileUploadControl::paintObject): Changed to use paintOffset
+        instead of absoluteBoundingBoxRectIgnoringTransforms().
+
 2012-08-07  Kentaro Hara  <haraken@chromium.org>
 
         [V8] Replace throwError(ExceptionCode, Isolate*) with

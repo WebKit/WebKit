@@ -1,3 +1,16 @@
+2012-08-07  Yoshifumi Inoue  <yosin@chromium.org>
+
+        translateZ(0) shifts file name in file input
+        https://bugs.webkit.org/show_bug.cgi?id=69248
+
+        Reviewed by Simon Fraser.
+
+        This patch introduces a new test for input type "file" with CSS transform
+        translate(0).
+
+        * fast/forms/file/file-appearance-transform-no-effects-expected.html: Added. "-webkit-transform: translate(0)" should not have visual effects.
+        * fast/forms/file/file-appearance-transform-no-effects.html: Added.
+
 2012-08-07  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         [EFL] Unskip fast/dom/HTMLLinkElement/subresource.html
