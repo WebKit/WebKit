@@ -1,3 +1,23 @@
+2012-08-08  Antonio Gomes  <agomes@rim.com>
+
+        [BlackBerry] Make WebOverlayPrivate::scheduleCompositingRun a WebPagePrivate method.
+        https://bugs.webkit.org/show_bug.cgi?id=93480
+        PR #188682
+
+        Reviewed by Rob Buis.
+
+        ... this way it can be used by others.
+
+        No behavioural change. Another preparation patch.
+
+        * Api/WebOverlay.cpp:
+        (BlackBerry::WebKit::WebOverlayPrivate::scheduleCompositingRun):
+        * Api/WebPage.cpp:
+        (WebKit):
+        (BlackBerry::WebKit::WebPagePrivate::scheduleCompositingRun):
+        * Api/WebPage_p.h:
+        (WebPagePrivate):
+
 2012-08-08  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r124887.

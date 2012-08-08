@@ -232,15 +232,10 @@ void WebOverlayPrivate::drawContents(SkCanvas* canvas)
 
 void WebOverlayPrivate::scheduleCompositingRun()
 {
-    if (WebPagePrivate* page = this->page()) {
-        if (WebPageCompositorClient* compositorClient = page->compositor()->client()) {
-            double animationTime = compositorClient->requestAnimationFrame();
-            compositorClient->invalidate(animationTime);
-            return;
-        }
+    if (!page())
+        return;
 
-        page->blitVisibleContents();
-    }
+    page()->scheduleCompositingRun();
 }
 
 WebOverlayPrivateWebKitThread::WebOverlayPrivateWebKitThread(GraphicsLayerClient* client)

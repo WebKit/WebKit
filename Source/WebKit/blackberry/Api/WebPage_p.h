@@ -423,6 +423,8 @@ public:
     void suspendRootLayerCommit();
     void resumeRootLayerCommit();
     void blitVisibleContents();
+
+    void scheduleCompositingRun();
 #endif
 
     bool dispatchTouchEventToFullScreenPlugin(WebCore::PluginView*, const Platform::TouchEvent&);

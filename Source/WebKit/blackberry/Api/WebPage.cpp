@@ -145,6 +145,7 @@
 
 #if USE(ACCELERATED_COMPOSITING)
 #include "FrameLayers.h"
+#include "WebPageCompositorClient.h"
 #include "WebPageCompositor_p.h"
 #endif
 
@@ -6289,6 +6290,18 @@ void WebPagePrivate::blitVisibleContents()
 
     m_backingStore->d->blitVisibleContents();
 }
+
+void WebPagePrivate::scheduleCompositingRun()
+{
+    if (WebPageCompositorClient* compositorClient = compositor()->client()) {
+        double animationTime = compositorClient->requestAnimationFrame();
+        compositorClient->invalidate(animationTime);
+        return;
+    }
+
+    blitVisibleContents();
+}
+
 #endif
 
 void WebPage::setWebGLEnabled(bool enabled)
