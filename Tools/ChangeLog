@@ -1,3 +1,17 @@
+2012-08-07  Lucas Forschler  <lforschler@apple.com>
+
+    Merge 124649
+
+    2012-08-03  Brady Eidson  <beidson@apple.com>
+
+            Small part of "Out-of-process plug-ins should support asynchronous initialization."
+            <rdar://problem/10598594> and https://bugs.webkit.org/show_bug.cgi?id=92919
+
+            Reviewed by Anders Carlsson.
+
+            * WebKitTestRunner/TestController.cpp:
+            (WTR::TestController::resetStateToConsistentValues): Reset all preferences related to asynchronous plugin initialization.
+
 2012-08-06  Lucas Forschler  <lforschler@apple.com>
 
     Merge 121929
