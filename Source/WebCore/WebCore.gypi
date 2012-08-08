@@ -2252,6 +2252,8 @@
             'bindings/v8/V8BindingMacros.h',
             'bindings/v8/V8BindingPerContextData.cpp',
             'bindings/v8/V8BindingPerContextData.h',
+            'bindings/v8/V8BindingPerIsolateData.cpp',
+            'bindings/v8/V8BindingPerIsolateData.h',
             'bindings/v8/V8ConfigureDOMAttributesAndMethods.cpp',
             'bindings/v8/V8ConfigureDOMAttributesAndMethods.h',
             'bindings/v8/V8Collection.cpp',

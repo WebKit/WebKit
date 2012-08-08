@@ -36,6 +36,7 @@
 #include "Document.h"
 #include "PlatformString.h"
 #include "V8BindingMacros.h"
+#include "V8BindingPerIsolateData.h"
 #include "V8ConfigureDOMAttributesAndMethods.h"
 #include "V8DOMWrapper.h"
 #include "V8GCController.h"
@@ -68,125 +69,12 @@ namespace WebCore {
         }
         GCEventListeners& listeners() { return m_listeners; }
 
+        // FIXME: Make these members private.
         double startTime;
         size_t usedHeapSize;
 
     private:
         GCEventListeners m_listeners;
-    };
-
-    class ConstructorMode;
-
-#ifndef NDEBUG
-    typedef HashMap<v8::Value*, GlobalHandleInfo*> GlobalHandleMap;
-#endif
-
-    class V8BindingPerIsolateData {
-    public:
-        static V8BindingPerIsolateData* create(v8::Isolate*);
-        static void ensureInitialized(v8::Isolate*);
-        static V8BindingPerIsolateData* current(v8::Isolate* isolate = 0)
-        {
-            if (UNLIKELY(!isolate))
-                isolate = v8::Isolate::GetCurrent();
-            ASSERT(isolate->GetData());
-            return static_cast<V8BindingPerIsolateData*>(isolate->GetData()); 
-        }
-        static void dispose(v8::Isolate*);
-
-        typedef HashMap<WrapperTypeInfo*, v8::Persistent<v8::FunctionTemplate> > TemplateMap;
-
-        TemplateMap& rawTemplateMap() { return m_rawTemplates; }
-        TemplateMap& templateMap() { return m_templates; }
-        v8::Persistent<v8::String>& toStringName() { return m_toStringName; }
-        v8::Persistent<v8::FunctionTemplate>& toStringTemplate() { return m_toStringTemplate; }
-
-        v8::Persistent<v8::FunctionTemplate>& lazyEventListenerToStringTemplate()
-        {
-            return m_lazyEventListenerToStringTemplate;
-        }
-
-        StringCache* stringCache() { return &m_stringCache; }
-        IntegerCache* integerCache() { return &m_integerCache; }
-
-#if ENABLE(INSPECTOR)
-        void visitExternalStrings(ExternalStringVisitor*);
-#endif
-        DOMDataList& allStores() { return m_domDataList; }
-
-        V8HiddenPropertyName* hiddenPropertyName() { return &m_hiddenPropertyName; }
-        v8::Persistent<v8::Context>& auxiliaryContext() { return m_auxiliaryContext; }
-
-        void registerDOMDataStore(DOMDataStore* domDataStore) 
-        {
-            m_domDataList.append(domDataStore);
-        }
-
-        void unregisterDOMDataStore(DOMDataStore* domDataStore)
-        {
-            ASSERT(m_domDataList.find(domDataStore));
-            m_domDataList.remove(m_domDataList.find(domDataStore));
-        }
-
-
-        DOMDataStore* domDataStore() { return m_domDataStore; }
-        // DOMDataStore is owned outside V8BindingPerIsolateData.
-        void setDOMDataStore(DOMDataStore* store) { m_domDataStore = store; }
-
-        int recursionLevel() const { return m_recursionLevel; }
-        int incrementRecursionLevel() { return ++m_recursionLevel; }
-        int decrementRecursionLevel() { return --m_recursionLevel; }
-
-#ifndef NDEBUG
-        GlobalHandleMap& globalHandleMap() { return m_globalHandleMap; }
-
-        int internalScriptRecursionLevel() const { return m_internalScriptRecursionLevel; }
-        int incrementInternalScriptRecursionLevel() { return ++m_internalScriptRecursionLevel; }
-        int decrementInternalScriptRecursionLevel() { return --m_internalScriptRecursionLevel; }
-#endif
-
-        GCEventData& gcEventData() { return m_gcEventData; }
-
-        void reportMemoryUsage(MemoryObjectInfo*) const;
-
-        // Gives the system a hint that we should request garbage collection
-        // upon the next close or navigation event, because some expensive
-        // objects have been allocated that we want to take every opportunity
-        // to collect.
-        void setShouldCollectGarbageSoon() { m_shouldCollectGarbageSoon = true; }
-        void clearShouldCollectGarbageSoon() { m_shouldCollectGarbageSoon = false; }
-        bool shouldCollectGarbageSoon() const { return m_shouldCollectGarbageSoon; }
-
-    private:
-        explicit V8BindingPerIsolateData(v8::Isolate*);
-        ~V8BindingPerIsolateData();
-
-        TemplateMap m_rawTemplates;
-        TemplateMap m_templates;
-        v8::Persistent<v8::String> m_toStringName;
-        v8::Persistent<v8::FunctionTemplate> m_toStringTemplate;
-        v8::Persistent<v8::FunctionTemplate> m_lazyEventListenerToStringTemplate;
-        StringCache m_stringCache;
-        IntegerCache m_integerCache;
-
-        DOMDataList m_domDataList;
-        DOMDataStore* m_domDataStore;
-
-        V8HiddenPropertyName m_hiddenPropertyName;
-        v8::Persistent<v8::Context> m_auxiliaryContext;
-
-        bool m_constructorMode;
-        friend class ConstructorMode;
-
-        int m_recursionLevel;
-
-#ifndef NDEBUG
-        GlobalHandleMap m_globalHandleMap;
-        int m_internalScriptRecursionLevel;
-#endif
-        GCEventData m_gcEventData;
-
-        bool m_shouldCollectGarbageSoon;
     };
 
     class ConstructorMode {

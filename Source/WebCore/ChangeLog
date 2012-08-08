@@ -1,3 +1,67 @@
+2012-08-08  Kentaro Hara  <haraken@chromium.org>
+
+        [V8] Factor out V8BindingPerIsolateData from V8Binding to a separate file
+        https://bugs.webkit.org/show_bug.cgi?id=93333
+
+        Reviewed by Adam Barth.
+
+        This patch moves V8BindingPerIsolateData to V8BindingPerIsolateData.{h,cpp}.
+
+        To avoid circular #include dependency, I used OwnPtrs for m_stringCache,
+        m_integerCache, m_hiddenPropertyName and m_gcEventData.
+
+        No tests. No change in behavior.
+
+        * UseV8.cmake:
+        * WebCore.gypi:
+        * bindings/v8/ScriptGCEvent.cpp:
+        (WebCore::isolateGCEventData):
+        (WebCore::ScriptGCEvent::addEventListener):
+        (WebCore::ScriptGCEvent::removeEventListener):
+        (WebCore::ScriptGCEvent::gcPrologueCallback):
+        (WebCore::ScriptGCEvent::gcEpilogueCallback):
+        * bindings/v8/V8Binding.cpp:
+        * bindings/v8/V8Binding.h:
+        (GCEventData):
+        (WebCore):
+        * bindings/v8/V8BindingPerIsolateData.cpp: Added.
+        (WebCore):
+        (WebCore::V8BindingPerIsolateData::V8BindingPerIsolateData):
+        (WebCore::V8BindingPerIsolateData::~V8BindingPerIsolateData):
+        (WebCore::V8BindingPerIsolateData::create):
+        (WebCore::V8BindingPerIsolateData::ensureInitialized):
+        (WebCore::V8BindingPerIsolateData::dispose):
+        (WebCore::V8BindingPerIsolateData::reportMemoryUsage):
+        * bindings/v8/V8BindingPerIsolateData.h: Added.
+        (WebCore):
+        (V8BindingPerIsolateData):
+        (WebCore::V8BindingPerIsolateData::current):
+        (WebCore::V8BindingPerIsolateData::rawTemplateMap):
+        (WebCore::V8BindingPerIsolateData::templateMap):
+        (WebCore::V8BindingPerIsolateData::toStringName):
+        (WebCore::V8BindingPerIsolateData::toStringTemplate):
+        (WebCore::V8BindingPerIsolateData::lazyEventListenerToStringTemplate):
+        (WebCore::V8BindingPerIsolateData::stringCache):
+        (WebCore::V8BindingPerIsolateData::integerCache):
+        (WebCore::V8BindingPerIsolateData::allStores):
+        (WebCore::V8BindingPerIsolateData::hiddenPropertyName):
+        (WebCore::V8BindingPerIsolateData::auxiliaryContext):
+        (WebCore::V8BindingPerIsolateData::registerDOMDataStore):
+        (WebCore::V8BindingPerIsolateData::unregisterDOMDataStore):
+        (WebCore::V8BindingPerIsolateData::domDataStore):
+        (WebCore::V8BindingPerIsolateData::setDOMDataStore):
+        (WebCore::V8BindingPerIsolateData::recursionLevel):
+        (WebCore::V8BindingPerIsolateData::incrementRecursionLevel):
+        (WebCore::V8BindingPerIsolateData::decrementRecursionLevel):
+        (WebCore::V8BindingPerIsolateData::globalHandleMap):
+        (WebCore::V8BindingPerIsolateData::internalScriptRecursionLevel):
+        (WebCore::V8BindingPerIsolateData::incrementInternalScriptRecursionLevel):
+        (WebCore::V8BindingPerIsolateData::decrementInternalScriptRecursionLevel):
+        (WebCore::V8BindingPerIsolateData::gcEventData):
+        (WebCore::V8BindingPerIsolateData::setShouldCollectGarbageSoon):
+        (WebCore::V8BindingPerIsolateData::clearShouldCollectGarbageSoon):
+        (WebCore::V8BindingPerIsolateData::shouldCollectGarbageSoon):
+
 2012-08-08  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: show whitespace nodes if they are the only tag's children.

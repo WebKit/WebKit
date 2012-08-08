@@ -52,57 +52,6 @@
 
 namespace WebCore {
 
-
-V8BindingPerIsolateData::V8BindingPerIsolateData(v8::Isolate* isolate)
-    : m_domDataStore(0)
-    , m_constructorMode(ConstructorMode::CreateNewObject)
-    , m_recursionLevel(0)
-#ifndef NDEBUG
-    , m_internalScriptRecursionLevel(0)
-#endif
-    , m_shouldCollectGarbageSoon(false)
-{
-}
-
-V8BindingPerIsolateData::~V8BindingPerIsolateData()
-{
-}
-
-V8BindingPerIsolateData* V8BindingPerIsolateData::create(v8::Isolate* isolate)
-{
-    ASSERT(isolate);
-    ASSERT(!isolate->GetData());
-    V8BindingPerIsolateData* data = new V8BindingPerIsolateData(isolate);
-    isolate->SetData(data);
-    return data;
-}
-
-void V8BindingPerIsolateData::ensureInitialized(v8::Isolate* isolate) 
-{
-    ASSERT(isolate);
-    if (!isolate->GetData()) 
-        create(isolate);
-}
-
-void V8BindingPerIsolateData::dispose(v8::Isolate* isolate)
-{
-    void* data = isolate->GetData();
-    delete static_cast<V8BindingPerIsolateData*>(data);
-    isolate->SetData(0);
-}
-
-void V8BindingPerIsolateData::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
-{
-    MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::Binding);
-    info.addHashMap(m_rawTemplates);
-    info.addHashMap(m_templates);
-    info.addInstrumentedMember(m_stringCache);
-    info.addVector(m_domDataList);
-
-    for (size_t i = 0; i < m_domDataList.size(); i++)
-        info.addInstrumentedMember(m_domDataList[i]);
-}
-
 #if ENABLE(INSPECTOR)
 void V8BindingPerIsolateData::visitExternalStrings(ExternalStringVisitor* visitor)
 {
