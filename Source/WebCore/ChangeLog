@@ -1,3 +1,19 @@
+2012-08-07  Michelangelo De Simone  <michelangelo@webkit.org>
+
+        CSSParser::parseTransform() refactor to accept valueList as argument
+        https://bugs.webkit.org/show_bug.cgi?id=93295
+
+        Reviewed by Darin Adler.
+
+        CSS::parseTranform() is now accepting the related CSSParserValueList as
+        argument. This change will be used by the code to parse the 3d-transforms
+        within the custom() function, see bug #71443.
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue):
+        (WebCore::CSSParser::parseTransform):
+        * css/CSSParser.h:
+
 2012-08-07  Elliott Sprehn  <esprehn@gmail.com>
 
         Reimplement RenderQuote placement algorithm
