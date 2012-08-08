@@ -55,6 +55,8 @@ public:
     unsigned length() const;
     CSSRule* item(unsigned index) const;
 
+    void reattach(StyleRuleRegion*);
+
 private:
     WebKitCSSRegionRule(StyleRuleRegion*, CSSStyleSheet* parent);
 

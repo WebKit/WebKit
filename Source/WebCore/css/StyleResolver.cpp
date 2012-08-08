@@ -467,14 +467,14 @@ void StyleResolver::collectFeatures()
 }
 
 #if ENABLE(STYLE_SCOPED)
-const ContainerNode* StyleResolver::determineScope(const StyleSheetInternal* sheet)
+const ContainerNode* StyleResolver::determineScope(const CSSStyleSheet* sheet)
 {
     ASSERT(sheet);
 
     if (!RuntimeEnabledFeatures::styleScopedEnabled())
         return 0;
 
-    Node* ownerNode = sheet->singleOwnerNode();
+    Node* ownerNode = sheet->ownerNode();
     if (!ownerNode || !ownerNode->isHTMLElement() || !ownerNode->hasTagName(HTMLNames::styleTag))
         return 0;
 
@@ -513,7 +513,7 @@ void StyleResolver::appendAuthorStylesheets(unsigned firstNew, const Vector<RefP
             continue;
         StyleSheetInternal* sheet = cssSheet->internal();
 #if ENABLE(STYLE_SCOPED)
-        const ContainerNode* scope = determineScope(sheet);
+        const ContainerNode* scope = determineScope(cssSheet);
         if (scope) {
             ScopedRuleSetMap::AddResult addResult = m_scopedAuthorStyles.add(scope, nullptr);
             if (addResult.isNewEntry)

@@ -23,12 +23,15 @@
 #ifndef CSSRule_h
 #define CSSRule_h
 
-#include "CSSStyleSheet.h"
 #include "KURLHash.h"
 #include <wtf/ListHashSet.h>
+#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
+class CSSStyleSheet;
+class StyleRuleBase;
+struct CSSParserContext;
 typedef int ExceptionCode;
 
 class CSSRule : public RefCounted<CSSRule> {
@@ -98,6 +101,8 @@ public:
     String cssText() const;
     void setCssText(const String&, ExceptionCode&);
 
+    void reattach(StyleRuleBase*);
+
 protected:
     CSSRule(CSSStyleSheet* parent, Type type)
         : m_hasCachedSelectorText(false)
@@ -115,11 +120,7 @@ protected:
     bool hasCachedSelectorText() const { return m_hasCachedSelectorText; }
     void setHasCachedSelectorText(bool hasCachedSelectorText) const { m_hasCachedSelectorText = hasCachedSelectorText; }
 
-    const CSSParserContext& parserContext() const 
-    {
-        CSSStyleSheet* styleSheet = parentStyleSheet();
-        return styleSheet ? styleSheet->internal()->parserContext() : strictCSSParserContext();
-    }
+    const CSSParserContext& parserContext() const;
 
 private:
     mutable unsigned m_hasCachedSelectorText : 1;

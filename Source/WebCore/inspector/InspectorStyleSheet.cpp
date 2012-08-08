@@ -718,10 +718,10 @@ String InspectorStyleSheet::finalURL() const
 
 void InspectorStyleSheet::reparseStyleSheet(const String& text)
 {
+    CSSStyleSheet::RuleMutationScope mutationScope(m_pageStyleSheet.get());
     m_pageStyleSheet->internal()->clearRules();
     m_pageStyleSheet->internal()->parseString(text);
     m_pageStyleSheet->clearChildRuleCSSOMWrappers();
-    m_pageStyleSheet->styleSheetChanged();
     m_inspectorStyles.clear();
     fireStyleSheetChanged();
 }

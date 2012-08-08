@@ -505,7 +505,7 @@ private:
 #endif
 
 #if ENABLE(STYLE_SCOPED)
-    static const ContainerNode* determineScope(const StyleSheetInternal*);
+    static const ContainerNode* determineScope(const CSSStyleSheet*);
 
     typedef HashMap<const ContainerNode*, OwnPtr<RuleSet> > ScopedRuleSetMap;
 
