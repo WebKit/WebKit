@@ -1,3 +1,15 @@
+2012-08-08  KwangYong Choi  <ky0.choi@samsung.com>
+
+        [EFL] Support DataList for <input type="range">
+        https://bugs.webkit.org/show_bug.cgi?id=92634
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Update platform/efl/fast/forms/datalist/input-list-expected.txt because
+        range type of data list feature is passed.
+
+        * platform/efl/fast/forms/datalist/input-list-expected.txt:
+
 2012-08-08  Matt Arsenault  <arsenm2@gmail.com>
 
         Crash when inspecting an element with border-image

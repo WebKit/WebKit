@@ -166,6 +166,8 @@ public:
     virtual int sliderTickOffsetFromTrackCenter() const OVERRIDE;
 #endif
 
+    virtual bool supportsDataListUI(const AtomicString&) const OVERRIDE;
+
     virtual bool paintSliderThumb(RenderObject*, const PaintInfo&, const IntRect&);
 
     virtual void adjustInnerSpinButtonStyle(StyleResolver*, RenderStyle*, Element*) const;
