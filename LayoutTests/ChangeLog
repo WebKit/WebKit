@@ -1,3 +1,13 @@
+2012-08-08  Douglas Stockwell  <dstockwell@chromium.org>
+
+        'highlight' should not be parsed for a composite operation
+        https://bugs.webkit.org/show_bug.cgi?id=92615
+
+        Reviewed by Ryosuke Niwa.
+
+        * fast/backgrounds/composite-highlight-is-invalid-expected.txt: Added.
+        * fast/backgrounds/composite-highlight-is-invalid.html: Added.
+
 2012-08-08  Takashi Toyoshima  <toyoshim@chromium.org>
 
         Unreviewed, adding new results for chromium.

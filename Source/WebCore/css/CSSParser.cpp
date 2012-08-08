@@ -3860,7 +3860,7 @@ bool CSSParser::parseFillProperty(CSSPropertyID propId, CSSPropertyID& propId1, 
                 }
                 case CSSPropertyWebkitBackgroundComposite:
                 case CSSPropertyWebkitMaskComposite:
-                    if ((val->id >= CSSValueClear && val->id <= CSSValuePlusLighter) || val->id == CSSValueHighlight) {
+                    if (val->id >= CSSValueClear && val->id <= CSSValuePlusLighter) {
                         currValue = cssValuePool().createIdentifierValue(val->id);
                         m_valueList->next();
                     }

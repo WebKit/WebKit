@@ -1,3 +1,18 @@
+2012-08-08  Douglas Stockwell  <dstockwell@chromium.org>
+
+        'highlight' should not be parsed for a composite operation
+        https://bugs.webkit.org/show_bug.cgi?id=92615
+
+        Reviewed by Ryosuke Niwa.
+
+        r88144 removed support for highlight as a composite operation but did
+        not update the parser.
+
+        Test: fast/backgrounds/composite-highlight-is-invalid.html
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseFillProperty):
+
 2012-08-08  Takashi Sakamoto  <tasak@google.com>
 
         showNodePath should show the age of ShadowRoot
