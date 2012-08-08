@@ -549,14 +549,34 @@ bool NetscapePlugin::allowPopups() const
 }
 
 #if PLUGIN_ARCHITECTURE(MAC)
-static bool isTransparentSilverlightBackgroundValue(const String& backgroundValue)
+static bool isTransparentSilverlightBackgroundValue(const String& lowercaseBackgroundValue)
 {
-    // FIXME: We should handle all the cases from http://msdn.microsoft.com/en-us/library/cc838148(VS.95).aspx here
-    // instead of just hard-coding black.
-    if (backgroundValue == "#000000")
-        return false;
+    // This checks if the background color value is transparent, according to
+    // the forumat documented at http://msdn.microsoft.com/en-us/library/cc838148(VS.95).aspx
+    if (lowercaseBackgroundValue.startsWith('#')) {
+        if (lowercaseBackgroundValue.length() == 5 && lowercaseBackgroundValue[1] != 'f') {
+            // An 8-bit RGB value with alpha transparency, in the form #ARGB.
+            return true;
+        }
 
-    return true;
+        if (lowercaseBackgroundValue.length() == 9 && !(lowercaseBackgroundValue[1] == 'f' && lowercaseBackgroundValue[2] == 'f')) {
+            // A 16-bit RGB value with alpha transparency, in the form #AARRGGBB.
+            return true;
+        }
+    } else if (lowercaseBackgroundValue.startsWith("sc#")) {
+        Vector<String> components;
+        lowercaseBackgroundValue.substring(3).split(",", components);
+
+        // An ScRGB value with alpha transparency, in the form sc#A,R,G,B.
+        if (components.size() == 4) {
+            if (components[0].toDouble() < 1)
+                return true;
+        }
+    } else if (lowercaseBackgroundValue == "transparent")
+        return true;
+
+    // This is an opaque color.
+    return false;
 }
 #endif
 
@@ -596,7 +616,7 @@ bool NetscapePlugin::initialize(const Parameters& parameters)
     if (m_pluginModule->pluginQuirks().contains(PluginQuirks::MakeOpaqueUnlessTransparentSilverlightBackgroundAttributeExists)) {
         for (size_t i = 0; i < parameters.names.size(); ++i) {
             if (equalIgnoringCase(parameters.names[i], "background")) {
-                setIsTransparent(isTransparentSilverlightBackgroundValue(parameters.values[i]));
+                setIsTransparent(isTransparentSilverlightBackgroundValue(parameters.values[i].lower()));
                 break;
             }
         }

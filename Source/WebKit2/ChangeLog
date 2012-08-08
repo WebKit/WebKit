@@ -1,3 +1,17 @@
+2012-08-08  Anders Carlsson  <andersca@apple.com>
+
+        Make isTransparentSilverlightBackgroundValue handle all the possible transparent colors
+        https://bugs.webkit.org/show_bug.cgi?id=93532
+
+        Reviewed by Simon Fraser.
+
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+        (WebKit::isTransparentSilverlightBackgroundValue):
+        Check for all the possible transparent colors and assume that the color is opaque otherwise.
+
+        (WebKit::NetscapePlugin::initialize):
+        Pass the lowercase string to isTransparentSilverlightBackgroundValue.
+
 2012-08-08  Beth Dakin  <bdakin@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=92275
