@@ -1142,7 +1142,7 @@ void tst_QObjectBridge::callQtInvokable()
         QString type;
         QString ret = evalJS("myObject.myInvokableWithVoidStarArg(123)", type);
         QCOMPARE(type, sError);
-        QCOMPARE(ret, QLatin1String("TypeError: incompatible type of argument(s) in call to myInvokableWithVoidStarArg(); candidates were\n    myInvokableWithVoidStarArg(void*)"));
+        QCOMPARE(ret, QLatin1String("Error: incompatible type of argument(s) in call to myInvokableWithVoidStarArg(); candidates were\n    myInvokableWithVoidStarArg(void*)"));
         QCOMPARE(m_myObject->qtFunctionInvoked(), -1);
     }
 
@@ -1151,7 +1151,7 @@ void tst_QObjectBridge::callQtInvokable()
         QString type;
         QString ret = evalJS("myObject.myInvokableWithAmbiguousArg(123)", type);
         QCOMPARE(type, sError);
-        QCOMPARE(ret, QLatin1String("TypeError: ambiguous call of overloaded function myInvokableWithAmbiguousArg(); candidates were\n    myInvokableWithAmbiguousArg(int)\n    myInvokableWithAmbiguousArg(uint)"));
+        QCOMPARE(ret, QLatin1String("Error: ambiguous call of overloaded function myInvokableWithAmbiguousArg(); candidates were\n    myInvokableWithAmbiguousArg(int)\n    myInvokableWithAmbiguousArg(uint)"));
     }
 
     m_myObject->resetQtFunctionInvoked();
@@ -1380,7 +1380,7 @@ void tst_QObjectBridge::callQtInvokable()
         QString type;
         QString ret = evalJS("myObject.myInvokableWithIntArg()", type);
         QCOMPARE(type, sError);
-        QCOMPARE(ret, QLatin1String("SyntaxError: too few arguments in call to myInvokableWithIntArg(); candidates are\n    myInvokableWithIntArg(int,int)\n    myInvokableWithIntArg(int)"));
+        QCOMPARE(ret, QLatin1String("Error: too few arguments in call to myInvokableWithIntArg(); candidates are\n    myInvokableWithIntArg(int,int)\n    myInvokableWithIntArg(int)"));
     }
 
     // call function where not all types have been registered
@@ -1389,7 +1389,7 @@ void tst_QObjectBridge::callQtInvokable()
         QString type;
         QString ret = evalJS("myObject.myInvokableWithBrushStyleArg(0)", type);
         QCOMPARE(type, sError);
-        QCOMPARE(ret, QLatin1String("TypeError: cannot call myInvokableWithBrushStyleArg(): unknown type `Qt::BrushStyle'"));
+        QCOMPARE(ret, QLatin1String("Error: cannot call myInvokableWithBrushStyleArg(): unknown type `Qt::BrushStyle'"));
         QCOMPARE(m_myObject->qtFunctionInvoked(), -1);
     }
 
@@ -1399,7 +1399,7 @@ void tst_QObjectBridge::callQtInvokable()
         QString type;
         QString ret = evalJS("myObject.myInvokableWithQBrushArg(null)", type);
         QCOMPARE(type, sError);
-        QCOMPARE(ret, QLatin1String("TypeError: incompatible type of argument(s) in call to myInvokableWithQBrushArg(); candidates were\n    myInvokableWithQBrushArg(QBrush)"));
+        QCOMPARE(ret, QLatin1String("Error: incompatible type of argument(s) in call to myInvokableWithQBrushArg(); candidates were\n    myInvokableWithQBrushArg(QBrush)"));
         QCOMPARE(m_myObject->qtFunctionInvoked(), -1);
     }
 }

@@ -1,5 +1,19 @@
 2012-08-08  Simon Hausmann  <simon.hausmann@nokia.com>
 
+        [Qt] Port internal findMethodIndex method matcher to use JSC C API
+        https://bugs.webkit.org/show_bug.cgi?id=93463
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Adjust the expectations of the unit test for some of the exceptions the
+        method throws when signals/slots cannot be found/matched. The C API doesn't allow
+        us to create syntax (type) errors, only generic error exceptions.
+
+        * tests/qobjectbridge/tst_qobjectbridge.cpp:
+        (tst_QObjectBridge::callQtInvokable):
+
+2012-08-08  Simon Hausmann  <simon.hausmann@nokia.com>
+
         [Qt] Add unit test for QObject bindings for scriptable plugins
         https://bugs.webkit.org/show_bug.cgi?id=93462
 

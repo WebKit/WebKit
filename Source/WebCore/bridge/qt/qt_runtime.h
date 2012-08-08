@@ -271,6 +271,8 @@ void registerCustomType(int qtMetaTypeId, ConvertToVariantFunction, ConvertToJSV
 QVariant convertValueToQVariant(ExecState* exec, JSValue value, QMetaType::Type hint, int *distance);
 JSValue convertQVariantToValue(ExecState* exec, PassRefPtr<RootObject> root, const QVariant& variant);
 
+void setException(JSContextRef, JSValueRef* exception, const QString& text);
+
 } // namespace Bindings
 } // namespace JSC
 

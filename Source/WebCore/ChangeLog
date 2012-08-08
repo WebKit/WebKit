@@ -1,3 +1,23 @@
+2012-08-08  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Port internal findMethodIndex method matcher to use JSC C API
+        https://bugs.webkit.org/show_bug.cgi?id=93463
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Based on patch by No'am Rosenthal.
+
+        * bridge/qt/qt_runtime.cpp:
+        (JSC::Bindings::setException):
+        (Bindings):
+        (JSC::Bindings::findMethodIndex): Fixed also coding style while at it.
+        (JSC::Bindings::QtRuntimeMetaMethod::call): Use new findMethodIndex. The
+        created JSValueRefs should not need GC protection because we only support
+        up to 10 method arguments and thus they will live on the stack storage
+        of the vector.
+        * bridge/qt/qt_runtime.h:
+        (Bindings):
+
 2012-08-08  Alexander Pavlov  <apavlov@chromium.org>
 
         Web Inspector: move setTouchEventEmulationEnabled from DOMAgent to PageAgent
