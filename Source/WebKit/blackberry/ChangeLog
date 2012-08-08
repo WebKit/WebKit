@@ -1,3 +1,23 @@
+2012-08-08  Ed Baker  <edbaker@rim.com>
+
+        [BlackBerry] Add relayout after updating fixed reported size
+        https://bugs.webkit.org/show_bug.cgi?id=93116
+        PR #160059
+        
+        Reviewed by Antonio Gomes.
+        
+        Reviewed internally by Antonio Gomes.
+
+        On an orientation change and after fixed reported size is
+        updated perform a layout and update the fixed elements after
+        scrolling. This will recalculate the height and width of
+        fixed position elements using percentage values with the
+        new fixed reported size. Otherwise using the old fixed reported
+        size in the new orientation overflowing or clipping could occur.
+        
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::setViewportSize):
+
 2012-08-07  Charles Wei  <charles.wei@torchmobile.com.cn>
 
         [BlackBerry] always set PolicyAction to PolicyIgnore if the chrome returns false for acceptNavigationRequest

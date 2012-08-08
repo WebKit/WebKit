@@ -3916,6 +3916,8 @@ void WebPagePrivate::setViewportSize(const IntSize& transformedActualVisibleSize
         IntRect actualVisibleRect = enclosingIntRect(rotationMatrix.inverse().mapRect(FloatRect(viewportRect)));
         m_mainFrame->view()->setFixedReportedSize(actualVisibleRect.size());
         m_mainFrame->view()->repaintFixedElementsAfterScrolling();
+        requestLayoutIfNeeded();
+        m_mainFrame->view()->updateFixedElementsAfterScrolling();
     }
 
     // We're going to need to send a resize event to JavaScript because
