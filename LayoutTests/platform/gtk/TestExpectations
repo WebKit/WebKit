@@ -414,6 +414,11 @@ BUGWK89188 RELEASE : storage/websql/quota-tracking.html = CRASH PASS
 
 BUGWK90589 RELEASE : fast/css/user-drag-none.html = CRASH TIMEOUT
 
+BUGWK93501 : editing/inserting/insert-character-in-first-letter-crash.html = CRASH PASS
+BUGWK93501 : fast/css/first-letter-text-fragment-crash.html = CRASH PASS
+
+BUGWK93502 : fast/history/nested-visited-test.html = CRASH PASS
+
 //////////////////////////////////////////////////////////////////////////////////////////
 // End of Crashing tests
 //////////////////////////////////////////////////////////////////////////////////////////

@@ -1,3 +1,14 @@
+2012-08-08  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening.
+
+        Adding expectations for three tests that are flaky crashers:
+        - editing/inserting/insert-character-in-first-letter-crash.html
+        - fast/history/nested-visited-test.html
+        - fast/css/first-letter-text-fragment-crash.html
+
+        * platform/gtk/TestExpectations:
+
 2012-08-08  Anna Cavender  <annacc@chromium.org>
 
         Update HTMLMediaElement to the new OO MediaSource API.
