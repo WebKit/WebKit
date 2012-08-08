@@ -2639,6 +2639,7 @@ TEST_F(CCLayerTreeHostImplTest, textureCachingWithClipping)
     CCSettings::setPartialSwapEnabled(true);
 
     CCLayerTreeSettings settings;
+    settings.minimumOcclusionTrackingSize = IntSize();
     OwnPtr<CCLayerTreeHostImpl> myHostImpl = CCLayerTreeHostImpl::create(settings, this);
 
     CCLayerImpl* rootPtr;
@@ -2696,6 +2697,9 @@ TEST_F(CCLayerTreeHostImplTest, textureCachingWithClipping)
         quadVisibleRect = frame.renderPasses[0]->quadList()[1]->quadVisibleRect();
         EXPECT_INT_RECT_EQ(IntRect(0, 0, 100, 3), quadVisibleRect);
 
+        // Verify that the render surface texture is *not* clipped.
+        EXPECT_INT_RECT_EQ(IntRect(0, 0, 100, 100), frame.renderPasses[0]->framebufferOutputRect());
+
         EXPECT_EQ(CCDrawQuad::RenderPass, frame.renderPasses[1]->quadList()[0]->material());
         CCRenderPassDrawQuad* quad = static_cast<CCRenderPassDrawQuad*>(frame.renderPasses[1]->quadList()[0].get());
         EXPECT_FALSE(quad->contentsChangedSinceLastFrame().isEmpty());
@@ -2731,6 +2735,7 @@ TEST_F(CCLayerTreeHostImplTest, textureCachingWithOcclusion)
     CCSettings::setPartialSwapEnabled(false);
 
     CCLayerTreeSettings settings;
+    settings.minimumOcclusionTrackingSize = IntSize();
     OwnPtr<CCLayerTreeHostImpl> myHostImpl = CCLayerTreeHostImpl::create(settings, this);
 
     // Layers are structure as follows:
@@ -2786,11 +2791,11 @@ TEST_F(CCLayerTreeHostImplTest, textureCachingWithOcclusion)
         EXPECT_TRUE(myHostImpl->prepareToDraw(frame));
 
         // Must receive 3 render passes.
-        // For Root, there are 2 quads; for S1, there are 3 quads; for S2, there is 1 quad.
+        // For Root, there are 2 quads; for S1, there are 2 quads (1 is occluded); for S2, there is 2 quads.
         ASSERT_EQ(3U, frame.renderPasses.size());
 
         EXPECT_EQ(2U, frame.renderPasses[0]->quadList().size());
-        EXPECT_EQ(3U, frame.renderPasses[1]->quadList().size());
+        EXPECT_EQ(2U, frame.renderPasses[1]->quadList().size());
         EXPECT_EQ(2U, frame.renderPasses[2]->quadList().size());
 
         myHostImpl->drawLayers(frame);
@@ -2846,6 +2851,7 @@ TEST_F(CCLayerTreeHostImplTest, textureCachingWithOcclusionEarlyOut)
     CCSettings::setPartialSwapEnabled(false);
 
     CCLayerTreeSettings settings;
+    settings.minimumOcclusionTrackingSize = IntSize();
     OwnPtr<CCLayerTreeHostImpl> myHostImpl = CCLayerTreeHostImpl::create(settings, this);
 
     // Layers are structure as follows:
@@ -3123,6 +3129,7 @@ TEST_F(CCLayerTreeHostImplTest, textureCachingWithOcclusionPartialSwap)
     CCSettings::setPartialSwapEnabled(true);
 
     CCLayerTreeSettings settings;
+    settings.minimumOcclusionTrackingSize = IntSize();
     OwnPtr<CCLayerTreeHostImpl> myHostImpl = CCLayerTreeHostImpl::create(settings, this);
 
     // Layers are structure as follows:
@@ -3178,11 +3185,11 @@ TEST_F(CCLayerTreeHostImplTest, textureCachingWithOcclusionPartialSwap)
         EXPECT_TRUE(myHostImpl->prepareToDraw(frame));
 
         // Must receive 3 render passes.
-        // For Root, there are 2 quads; for S1, there are 3 quads; for S2, there is 1 quad.
+        // For Root, there are 2 quads; for S1, there are 2 quads (one is occluded); for S2, there is 2 quads.
         ASSERT_EQ(3U, frame.renderPasses.size());
 
         EXPECT_EQ(2U, frame.renderPasses[0]->quadList().size());
-        EXPECT_EQ(3U, frame.renderPasses[1]->quadList().size());
+        EXPECT_EQ(2U, frame.renderPasses[1]->quadList().size());
         EXPECT_EQ(2U, frame.renderPasses[2]->quadList().size());
 
         myHostImpl->drawLayers(frame);
@@ -3237,7 +3244,6 @@ TEST_F(CCLayerTreeHostImplTest, textureCachingWithOcclusionPartialSwap)
         myHostImpl->drawLayers(frame);
         myHostImpl->didDrawAllLayers(frame);
     }
-
 }
 
 TEST_F(CCLayerTreeHostImplTest, surfaceTextureCaching)
@@ -3245,6 +3251,7 @@ TEST_F(CCLayerTreeHostImplTest, surfaceTextureCaching)
     CCSettings::setPartialSwapEnabled(true);
 
     CCLayerTreeSettings settings;
+    settings.minimumOcclusionTrackingSize = IntSize();
     OwnPtr<CCLayerTreeHostImpl> myHostImpl = CCLayerTreeHostImpl::create(settings, this);
 
     CCLayerImpl* rootPtr;
@@ -3397,6 +3404,7 @@ TEST_F(CCLayerTreeHostImplTest, surfaceTextureCachingNoPartialSwap)
     CCSettings::setPartialSwapEnabled(false);
 
     CCLayerTreeSettings settings;
+    settings.minimumOcclusionTrackingSize = IntSize();
     OwnPtr<CCLayerTreeHostImpl> myHostImpl = CCLayerTreeHostImpl::create(settings, this);
 
     CCLayerImpl* rootPtr;
@@ -3420,6 +3428,12 @@ TEST_F(CCLayerTreeHostImplTest, surfaceTextureCachingNoPartialSwap)
         CCRenderPass* targetPass = frame.renderPassesById.get(quad->renderPassId());
         EXPECT_TRUE(targetPass->targetSurface()->contentsChanged());
 
+        EXPECT_TRUE(frame.renderPasses[0]->targetSurface()->contentsChanged());
+        EXPECT_TRUE(frame.renderPasses[1]->targetSurface()->contentsChanged());
+
+        EXPECT_FALSE(frame.renderPasses[0]->hasOcclusionFromOutsideTargetSurface());
+        EXPECT_FALSE(frame.renderPasses[1]->hasOcclusionFromOutsideTargetSurface());
+
         myHostImpl->drawLayers(frame);
         myHostImpl->didDrawAllLayers(frame);
     }
@@ -3434,6 +3448,8 @@ TEST_F(CCLayerTreeHostImplTest, surfaceTextureCachingNoPartialSwap)
         // and we have cached texture.
         ASSERT_EQ(1U, frame.renderPasses.size());
         EXPECT_EQ(1U, frame.renderPasses[0]->quadList().size());
+
+        EXPECT_FALSE(frame.renderPasses[0]->targetSurface()->contentsChanged());
 
         myHostImpl->drawLayers(frame);
         myHostImpl->didDrawAllLayers(frame);

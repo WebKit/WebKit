@@ -1,3 +1,17 @@
+2012-08-08  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] Enable occlusion tracker in the occlusion tests for surface cacheing
+        https://bugs.webkit.org/show_bug.cgi?id=93500
+
+        Reviewed by Adrienne Walker.
+
+        The occlusion tracker is not being used in these tests except to do
+        scissoring. We want to test occlusion with these occlusion tests,
+        and when scissoring is not part of occlusion tracker, these
+        tests would become useless otherwise.
+
+        * tests/CCLayerTreeHostImplTest.cpp:
+
 2012-08-08  Adam Barth  <abarth@webkit.org>
 
         Crash when reloading a Chromium "platform" app
