@@ -477,8 +477,8 @@ void NetscapePluginModule::determineQuirks()
 
     if (plugin.bundleIdentifier == "com.microsoft.SilverlightPlugin") {
         // Silverlight doesn't explicitly opt into transparency, so we'll do it whenever
-        // there's a 'background' attribute.
-        m_pluginQuirks.add(PluginQuirks::MakeTransparentIfBackgroundAttributeExists);
+        // there's a 'background' attribute that's set to a transparent color.
+        m_pluginQuirks.add(PluginQuirks::MakeOpaqueUnlessTransparentSilverlightBackgroundAttributeExists);
 
         // Silverlight has a workaround for a leak in Safari 2. This workaround is
         // applied when the user agent does not contain "Version/3" so we append it

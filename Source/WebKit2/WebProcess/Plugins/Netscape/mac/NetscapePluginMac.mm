@@ -1057,6 +1057,27 @@ PlatformLayer* NetscapePlugin::pluginLayer()
     return static_cast<PlatformLayer*>(m_pluginLayer.get());
 }
 
+static void makeCGLPresentLayerOpaque(CALayer *pluginRootLayer)
+{
+    // We look for a layer that's the only sublayer of the root layer that is an instance
+    // of the CGLPresentLayer class which in turn is a subclass of CAOpenGLLayer and make
+    // it opaque if all these conditions hold.
+
+    NSArray *sublayers = [pluginRootLayer sublayers];
+    if ([sublayers count] != 1)
+        return;
+
+    Class cglPresentLayerClass = NSClassFromString(@"CGLPresentLayer");
+    if (![cglPresentLayerClass isSubclassOfClass:[CAOpenGLLayer class]])
+        return;
+
+    CALayer *layer = [sublayers objectAtIndex:0];
+    if (![layer isKindOfClass:cglPresentLayerClass])
+        return;
+
+    [layer setOpaque:YES];
+}
+
 void NetscapePlugin::updatePluginLayer()
 {
     if (m_drawingModel != NPDrawingModelCoreAnimation)
@@ -1086,6 +1107,10 @@ void NetscapePlugin::updatePluginLayer()
         m_pluginLayer = reinterpret_cast<CALayer *>(value);
     else
         m_pluginLayer.adoptNS(reinterpret_cast<CALayer *>(value));
+
+    if (m_pluginModule->pluginQuirks().contains(PluginQuirks::MakeOpaqueUnlessTransparentSilverlightBackgroundAttributeExists) &&
+        !m_isTransparent)
+        makeCGLPresentLayerOpaque(m_pluginLayer.get());
 }
 
 #ifndef NP_NO_CARBON

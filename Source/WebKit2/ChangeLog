@@ -1,3 +1,33 @@
+2012-08-08  Anders Carlsson  <andersca@apple.com>
+
+        Make the Silverlight CAOpenGLLayer opaque if we know the plug-in contents is opaque to reduce blending
+        https://bugs.webkit.org/show_bug.cgi?id=93508
+        <rdar://problem/12056765>
+
+        Reviewed by Simon Fraser.
+
+        * Shared/Plugins/Netscape/mac/NetscapePluginModuleMac.mm:
+        (WebKit::NetscapePluginModule::determineQuirks):
+        * Shared/Plugins/PluginQuirks.h:
+        Rename the MakeTransparentIfBackgroundAttributeExists quirk to MakeOpaqueUnlessTransparentSilverlightBackgroundAttributeExists
+        since we'll explicitly check for opaque background colors (at least one opaque background color for now), instead of just making the
+        plug-in transparent whenever there's a background specified.
+
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+        (WebKit::isTransparentSilverlightBackgroundValue):
+        Helper function for determining if a background value is transparent. Just check for opaque black now and treat everything else as transparent.
+
+        (WebKit::NetscapePlugin::initialize):
+        Call isTransparentSilverlightBackgroundValue.
+
+        * WebProcess/Plugins/Netscape/mac/NetscapePluginMac.mm:
+        (WebKit::makeCGLPresentLayerOpaque):
+        Helper function for grabbing the CGLPresentLayer from the layer hierarchy and setting it to be opaque.
+
+        (WebKit::NetscapePlugin::updatePluginLayer):
+        Call makeCGLPresentLayerOpaque if the plug-in has the MakeOpaqueUnlessTransparentSilverlightBackgroundAttributeExists quirk and
+        the plug-in is not transparent.
+
 2012-08-08  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         [WK2] Coding style violation was brought with r125031
