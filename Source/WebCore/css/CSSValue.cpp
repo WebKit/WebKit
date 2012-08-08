@@ -114,6 +114,26 @@ void CSSValue::addSubresourceStyleURLs(ListHashSet<KURL>& urls, const StyleSheet
         static_cast<CSSReflectValue*>(this)->addSubresourceStyleURLs(urls, styleSheet);
 }
 
+bool CSSValue::hasFailedOrCanceledSubresources() const
+{
+    // This should get called for internal instances only.
+    ASSERT(!isCSSOMSafe());
+
+    if (isValueList())
+        return static_cast<const CSSValueList*>(this)->hasFailedOrCanceledSubresources();
+    if (classType() == FontFaceSrcClass)
+        return static_cast<const CSSFontFaceSrcValue*>(this)->hasFailedOrCanceledSubresources();
+    if (classType() == ImageClass)
+        return static_cast<const CSSImageValue*>(this)->hasFailedOrCanceledSubresources();
+    if (classType() == CrossfadeClass)
+        return static_cast<const CSSCrossfadeValue*>(this)->hasFailedOrCanceledSubresources();
+#if ENABLE(CSS_IMAGE_SET)
+    if (classType() == ImageSetClass)
+        return static_cast<const CSSImageSetValue*>(this)->hasFailedOrCanceledSubresources();
+#endif
+    return false;
+}
+
 String CSSValue::cssText() const
 {
     if (m_isTextClone) {

@@ -102,6 +102,16 @@ void CSSImageValue::clearCachedImage()
     m_accessedImage = false;
 }
 
+bool CSSImageValue::hasFailedOrCanceledSubresources() const
+{
+    if (!m_image || !m_image->isCachedImage())
+        return false;
+    CachedResource* cachedResource = static_cast<StyleCachedImage*>(m_image.get())->cachedImage();
+    if (!cachedResource)
+        return true;
+    return cachedResource->loadFailedOrCanceled();
+}
+
 String CSSImageValue::customCssText() const
 {
     return "url(" + quoteCSSURLIfNeeded(m_url) + ")";

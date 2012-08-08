@@ -206,6 +206,7 @@ public:
 
     bool wasCanceled() const { return m_status == Canceled; }
     bool errorOccurred() const { return (m_status == LoadError || m_status == DecodeError); }
+    bool loadFailedOrCanceled() { return m_status == Canceled || m_status == LoadError; }
 
     bool sendResourceLoadCallbacks() const { return m_options.sendLoadCallbacks == SendCallbacks; }
     

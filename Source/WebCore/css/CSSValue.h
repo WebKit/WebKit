@@ -109,6 +109,8 @@ public:
 
     void addSubresourceStyleURLs(ListHashSet<KURL>&, const StyleSheetInternal*);
 
+    bool hasFailedOrCanceledSubresources() const;
+
 protected:
 
     static const size_t ClassTypeBits = 5;

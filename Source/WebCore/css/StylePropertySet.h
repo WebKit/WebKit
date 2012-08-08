@@ -113,6 +113,8 @@ public:
     // FIXME: Expand the concept of mutable/immutable StylePropertySet.
     bool isMutable() const { return m_ownsCSSOMWrapper; }
 
+    bool hasFailedOrCanceledSubresources() const;
+
     static unsigned averageSizeInBytes();
 
 private:

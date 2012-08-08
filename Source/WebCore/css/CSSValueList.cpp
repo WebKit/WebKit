@@ -143,6 +143,15 @@ void CSSValueList::addSubresourceStyleURLs(ListHashSet<KURL>& urls, const StyleS
         m_values[i]->addSubresourceStyleURLs(urls, styleSheet);
 }
 
+bool CSSValueList::hasFailedOrCanceledSubresources() const
+{
+    for (unsigned i = 0; i < m_values.size(); ++i) {
+        if (m_values[i]->hasFailedOrCanceledSubresources())
+            return true;
+    }
+    return false;
+}
+
 CSSValueList::CSSValueList(const CSSValueList& cloneFrom)
     : CSSValue(cloneFrom.classType(), /* isCSSOMSafe */ true)
 {

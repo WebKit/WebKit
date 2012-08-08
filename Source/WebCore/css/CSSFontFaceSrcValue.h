@@ -67,6 +67,8 @@ public:
 
     void addSubresourceStyleURLs(ListHashSet<KURL>&, const StyleSheetInternal*);
 
+    bool hasFailedOrCanceledSubresources() const;
+
     CachedFont* cachedFont(Document*);
 
 private:
