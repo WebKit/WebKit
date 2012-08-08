@@ -27,6 +27,8 @@
 #define JSDictionary_h
 
 #include "MessagePort.h"
+#include <heap/Strong.h>
+#include <heap/StrongInlines.h>
 #include <interpreter/CallFrame.h>
 #include <wtf/Forward.h>
 
@@ -44,7 +46,7 @@ class JSDictionary {
 public:
     JSDictionary(JSC::ExecState* exec, JSC::JSObject* initializerObject)
         : m_exec(exec)
-        , m_initializerObject(initializerObject)
+        , m_initializerObject(exec->globalData(), initializerObject)
     {
     }
 
@@ -59,6 +61,7 @@ public:
     bool get(const char* propertyName, Result&) const;
 
     JSC::ExecState* execState() const { return m_exec; }
+    JSC::JSObject* initializerObject() const { return m_initializerObject.get(); }
     bool isValid() const { return m_exec && m_initializerObject; }
 
 private:
@@ -102,7 +105,7 @@ private:
 #endif
 
     JSC::ExecState* m_exec;
-    JSC::JSObject* m_initializerObject;
+    JSC::Strong<JSC::JSObject> m_initializerObject;
 };
 
 template <typename T, typename Result>

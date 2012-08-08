@@ -39,7 +39,7 @@ namespace WebCore {
 
 using namespace JSC;
 
-PassRefPtr<JSCustomXPathNSResolver> JSCustomXPathNSResolver::create(JSC::ExecState* exec, JSC::JSValue value)
+PassRefPtr<JSCustomXPathNSResolver> JSCustomXPathNSResolver::create(ExecState* exec, JSValue value)
 {
     if (value.isUndefinedOrNull())
         return 0;
@@ -50,12 +50,12 @@ PassRefPtr<JSCustomXPathNSResolver> JSCustomXPathNSResolver::create(JSC::ExecSta
         return 0;
     }
 
-    return adoptRef(new JSCustomXPathNSResolver(resolverObject, asJSDOMWindow(exec->dynamicGlobalObject())));
+    return adoptRef(new JSCustomXPathNSResolver(exec, resolverObject, asJSDOMWindow(exec->dynamicGlobalObject())));
 }
 
-JSCustomXPathNSResolver::JSCustomXPathNSResolver(JSObject* customResolver, JSDOMWindow* globalObject)
-    : m_customResolver(customResolver)
-    , m_globalObject(globalObject)
+JSCustomXPathNSResolver::JSCustomXPathNSResolver(ExecState* exec, JSObject* customResolver, JSDOMWindow* globalObject)
+    : m_customResolver(exec->globalData(), customResolver)
+    , m_globalObject(exec->globalData(), globalObject)
 {
 }
 
@@ -75,13 +75,13 @@ String JSCustomXPathNSResolver::lookupNamespaceURI(const String& prefix)
     CallData callData;
     CallType callType = getCallData(function, callData);
     if (callType == CallTypeNone) {
-        callType = m_customResolver->methodTable()->getCallData(m_customResolver, callData);
+        callType = m_customResolver->methodTable()->getCallData(m_customResolver.get(), callData);
         if (callType == CallTypeNone) {
             // FIXME: Pass actual line number and source URL.
             m_globalObject->impl()->console()->addMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, "XPathNSResolver does not have a lookupNamespaceURI method.");
             return String();
         }
-        function = m_customResolver;
+        function = m_customResolver.get();
     }
 
     RefPtr<JSCustomXPathNSResolver> selfProtector(this);
@@ -90,7 +90,7 @@ String JSCustomXPathNSResolver::lookupNamespaceURI(const String& prefix)
     args.append(jsString(exec, prefix));
 
     m_globalObject->globalData().timeoutChecker.start();
-    JSValue retval = JSMainThreadExecState::call(exec, function, callType, callData, m_customResolver, args);
+    JSValue retval = JSMainThreadExecState::call(exec, function, callType, callData, m_customResolver.get(), args);
     m_globalObject->globalData().timeoutChecker.stop();
 
     String result;

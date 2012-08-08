@@ -27,6 +27,8 @@
 #define JSCustomXPathNSResolver_h
 
 #include "XPathNSResolver.h"
+#include <heap/Strong.h>
+#include <heap/StrongInlines.h>
 #include <runtime/JSValue.h>
 #include <wtf/Forward.h>
 #include <wtf/RefPtr.h>
@@ -50,11 +52,11 @@ namespace WebCore {
         virtual String lookupNamespaceURI(const String& prefix);
 
     private:
-        JSCustomXPathNSResolver(JSC::JSObject*, JSDOMWindow*);
+        JSCustomXPathNSResolver(JSC::ExecState*, JSC::JSObject*, JSDOMWindow*);
 
-        // JSCustomXPathNSResolvers are always temporary, thus no need to GC protect the objects.
-        JSC::JSObject* m_customResolver;
-        JSDOMWindow* m_globalObject;
+        // JSCustomXPathNSResolvers are always temporary so using a Strong reference is safe here.
+        JSC::Strong<JSC::JSObject> m_customResolver;
+        JSC::Strong<JSDOMWindow> m_globalObject;
     };
 
 } // namespace WebCore
