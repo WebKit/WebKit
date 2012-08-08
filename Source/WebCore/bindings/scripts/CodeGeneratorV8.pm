@@ -1674,12 +1674,12 @@ sub GenerateParametersCheck
                 $parameterCheckString .= "    RefPtr<" . $parameter->type . "> $parameterName;\n";
                 $parameterCheckString .= "    if (args.Length() > $paramIndex && !args[$paramIndex]->IsNull() && !args[$paramIndex]->IsUndefined()) {\n";
                 $parameterCheckString .= "        if (!args[$paramIndex]->IsFunction())\n";
-                $parameterCheckString .= "            return throwError(TYPE_MISMATCH_ERR, args.GetIsolate());\n";
+                $parameterCheckString .= "            return V8Proxy::setDOMException(TYPE_MISMATCH_ERR, args.GetIsolate());\n";
                 $parameterCheckString .= "        $parameterName = ${className}::create(args[$paramIndex], getScriptExecutionContext());\n";
                 $parameterCheckString .= "    }\n";
             } else {
                 $parameterCheckString .= "    if (args.Length() <= $paramIndex || !args[$paramIndex]->IsFunction())\n";
-                $parameterCheckString .= "        return throwError(TYPE_MISMATCH_ERR, args.GetIsolate());\n";
+                $parameterCheckString .= "        return V8Proxy::setDOMException(TYPE_MISMATCH_ERR, args.GetIsolate());\n";
                 $parameterCheckString .= "    RefPtr<" . $parameter->type . "> $parameterName = ${className}::create(args[$paramIndex], getScriptExecutionContext());\n";
             }
         } elsif ($parameter->extendedAttributes->{"Clamp"}) {
@@ -1862,7 +1862,7 @@ END
 
     if ($raisesExceptions) {
         push(@implContent, "  fail:\n");
-        push(@implContent, "    return throwError(ec, args.GetIsolate());\n");
+        push(@implContent, "    return V8Proxy::setDOMException(ec, args.GetIsolate());\n");
     }
 
     push(@implContent, "}\n");
@@ -2037,7 +2037,7 @@ END
 
     if ($raisesExceptions) {
         push(@implContent, "  fail:\n");
-        push(@implContent, "    return throwError(ec, args.GetIsolate());\n");
+        push(@implContent, "    return V8Proxy::setDOMException(ec, args.GetIsolate());\n");
     }
 
     push(@implContent, "}\n");
