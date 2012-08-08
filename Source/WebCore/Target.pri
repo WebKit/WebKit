@@ -127,8 +127,6 @@ SOURCES += \
      bindings/js/JSEventTargetCustom.cpp \
      bindings/js/JSExceptionBase.cpp \
      bindings/js/JSFileReaderCustom.cpp \
-     bindings/js/JSFloat32ArrayCustom.cpp \
-     bindings/js/JSFloat64ArrayCustom.cpp \
      bindings/js/JSGeolocationCustom.cpp \
      bindings/js/JSHTMLAllCollectionCustom.cpp \
      bindings/js/JSHTMLAppletElementCustom.cpp \
@@ -154,9 +152,6 @@ SOURCES += \
      bindings/js/JSInjectedScriptHostCustom.cpp \
      bindings/js/JSInjectedScriptManager.cpp \
      bindings/js/JSInspectorFrontendHostCustom.cpp \
-     bindings/js/JSInt16ArrayCustom.cpp \
-     bindings/js/JSInt32ArrayCustom.cpp \
-     bindings/js/JSInt8ArrayCustom.cpp \
      bindings/js/JSLazyEventListener.cpp \
      bindings/js/JSLocationCustom.cpp \
      bindings/js/JSMainThreadExecState.cpp \
@@ -188,10 +183,6 @@ SOURCES += \
      bindings/js/JSTouchCustom.cpp \
      bindings/js/JSTouchListCustom.cpp \
      bindings/js/JSTreeWalkerCustom.cpp \
-     bindings/js/JSUint16ArrayCustom.cpp \
-     bindings/js/JSUint32ArrayCustom.cpp \
-     bindings/js/JSUint8ArrayCustom.cpp \
-     bindings/js/JSUint8ClampedArrayCustom.cpp \
      bindings/js/JSWebKitAnimationCustom.cpp \
      bindings/js/JSWebKitAnimationListCustom.cpp \
      bindings/js/JSWebKitCSSKeyframeRuleCustom.cpp \

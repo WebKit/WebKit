@@ -126,6 +126,7 @@ protected:
 // Functions
 
 JSC::EncodedJSValue JSC_HOST_CALL jsFloat64ArrayPrototypeFunctionFoo(JSC::ExecState*);
+JSC::EncodedJSValue JSC_HOST_CALL jsFloat64ArrayPrototypeFunctionSet(JSC::ExecState*);
 // Attributes
 
 JSC::JSValue jsFloat64ArrayConstructor(JSC::ExecState*, JSC::JSValue, JSC::PropertyName);

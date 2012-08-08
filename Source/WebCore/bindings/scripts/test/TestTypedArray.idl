@@ -26,7 +26,7 @@
 
 module html {
     interface [
-        CustomConstructor,
+        ConstructorTemplate=TypedArray,
         ConstructorParameters=123,
         NumericIndexedGetter,
         CustomIndexedSetter,
@@ -37,5 +37,6 @@ module html {
         TypedArray=double
     ] Float64Array : ArrayBufferView {
         Int32Array foo(in Float32Array array);
+        void set();
     };
 }

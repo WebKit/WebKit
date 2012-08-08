@@ -25,7 +25,7 @@
 
 module html {
     interface [
-        CustomConstructor,
+        ConstructorTemplate=TypedArray,
         ConstructorParameters=1,
         NumericIndexedGetter,
         CustomIndexedSetter,
@@ -43,6 +43,6 @@ module html {
 
         // void set(in Int16Array array, [Optional] in unsigned long offset);
         // void set(in sequence<long> array, [Optional] in unsigned long offset);
-        [Custom] void set();
+        void set();
     };
 }

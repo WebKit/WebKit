@@ -1375,13 +1375,6 @@
 		49EECF0D105070C400099FAB /* JSUint16Array.h in Headers */ = {isa = PBXBuildFile; fileRef = 49EECEFF105070C400099FAB /* JSUint16Array.h */; };
 		49EECF1B105072F300099FAB /* JSArrayBufferView.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49EECF19105072F300099FAB /* JSArrayBufferView.cpp */; };
 		49EECF1C105072F300099FAB /* JSArrayBufferView.h in Headers */ = {isa = PBXBuildFile; fileRef = 49EECF1A105072F300099FAB /* JSArrayBufferView.h */; };
-		49EECF7810508D9C00099FAB /* JSInt8ArrayCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49EECF7110508D9C00099FAB /* JSInt8ArrayCustom.cpp */; };
-		49EECF7910508D9C00099FAB /* JSFloat32ArrayCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49EECF7210508D9C00099FAB /* JSFloat32ArrayCustom.cpp */; };
-		49EECF7A10508D9C00099FAB /* JSInt32ArrayCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49EECF7310508D9C00099FAB /* JSInt32ArrayCustom.cpp */; };
-		49EECF7B10508D9C00099FAB /* JSInt16ArrayCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49EECF7410508D9C00099FAB /* JSInt16ArrayCustom.cpp */; };
-		49EECF7C10508D9C00099FAB /* JSUint8ArrayCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49EECF7510508D9C00099FAB /* JSUint8ArrayCustom.cpp */; };
-		49EECF7D10508D9C00099FAB /* JSUint32ArrayCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49EECF7610508D9C00099FAB /* JSUint32ArrayCustom.cpp */; };
-		49EECF7E10508D9C00099FAB /* JSUint16ArrayCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49EECF7710508D9C00099FAB /* JSUint16ArrayCustom.cpp */; };
 		49EED1421051969400099FAB /* JSCanvasRenderingContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49EED13C1051969400099FAB /* JSCanvasRenderingContext.cpp */; };
 		49EED1431051969400099FAB /* JSCanvasRenderingContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 49EED13D1051969400099FAB /* JSCanvasRenderingContext.h */; };
 		49EED1441051969400099FAB /* JSCanvasRenderingContext2D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49EED13E1051969400099FAB /* JSCanvasRenderingContext2D.cpp */; };
@@ -1828,7 +1821,6 @@
 		6E67D2A61280E8A4008758F7 /* Extensions3DOpenGL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6E67D2A41280E8A4008758F7 /* Extensions3DOpenGL.cpp */; };
 		6E67D2A71280E8A4008758F7 /* Extensions3DOpenGL.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E67D2A51280E8A4008758F7 /* Extensions3DOpenGL.h */; };
 		6E67D2A91280E8BD008758F7 /* Extensions3D.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E67D2A81280E8BD008758F7 /* Extensions3D.h */; };
-		6EBC5D85138B4CE000A0CF8A /* JSFloat64ArrayCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6EBC5D84138B4CE000A0CF8A /* JSFloat64ArrayCustom.cpp */; };
 		6EBC5EAF138B50F200A0CF8A /* JSFloat64Array.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6EBC5EAD138B50F200A0CF8A /* JSFloat64Array.cpp */; };
 		6EBC5EB0138B50F200A0CF8A /* JSFloat64Array.h in Headers */ = {isa = PBXBuildFile; fileRef = 6EBC5EAE138B50F200A0CF8A /* JSFloat64Array.h */; };
 		6EBF0E4812A8926100DB1709 /* OESTextureFloat.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6EBF0E4512A8926100DB1709 /* OESTextureFloat.cpp */; };
@@ -3106,7 +3098,6 @@
 		9001788112E0370700648462 /* JSOESStandardDerivatives.h in Headers */ = {isa = PBXBuildFile; fileRef = 9001787F12E0370700648462 /* JSOESStandardDerivatives.h */; };
 		91089D3214C33600005AFC49 /* JSUint8ClampedArray.h in Headers */ = {isa = PBXBuildFile; fileRef = 91089D3014C335CD005AFC49 /* JSUint8ClampedArray.h */; };
 		91089D3314C33605005AFC49 /* JSUint8ClampedArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 91089D2F14C335CD005AFC49 /* JSUint8ClampedArray.cpp */; };
-		91A3905B14C0F61100F67901 /* JSUint8ClampedArrayCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 91A3905A14C0F61100F67901 /* JSUint8ClampedArrayCustom.cpp */; };
 		9302B0BD0D79F82900C7EE83 /* PageGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9302B0BC0D79F82900C7EE83 /* PageGroup.cpp */; };
 		9302B0BF0D79F82C00C7EE83 /* PageGroup.h in Headers */ = {isa = PBXBuildFile; fileRef = 9302B0BE0D79F82C00C7EE83 /* PageGroup.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9305B24D098F1B6B00C28855 /* Timer.h in Headers */ = {isa = PBXBuildFile; fileRef = 9305B24C098F1B6B00C28855 /* Timer.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -8510,13 +8501,6 @@
 		49EECEFF105070C400099FAB /* JSUint16Array.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSUint16Array.h; sourceTree = "<group>"; };
 		49EECF19105072F300099FAB /* JSArrayBufferView.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSArrayBufferView.cpp; sourceTree = "<group>"; };
 		49EECF1A105072F300099FAB /* JSArrayBufferView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSArrayBufferView.h; sourceTree = "<group>"; };
-		49EECF7110508D9C00099FAB /* JSInt8ArrayCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSInt8ArrayCustom.cpp; sourceTree = "<group>"; };
-		49EECF7210508D9C00099FAB /* JSFloat32ArrayCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSFloat32ArrayCustom.cpp; sourceTree = "<group>"; };
-		49EECF7310508D9C00099FAB /* JSInt32ArrayCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSInt32ArrayCustom.cpp; sourceTree = "<group>"; };
-		49EECF7410508D9C00099FAB /* JSInt16ArrayCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSInt16ArrayCustom.cpp; sourceTree = "<group>"; };
-		49EECF7510508D9C00099FAB /* JSUint8ArrayCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSUint8ArrayCustom.cpp; sourceTree = "<group>"; };
-		49EECF7610508D9C00099FAB /* JSUint32ArrayCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSUint32ArrayCustom.cpp; sourceTree = "<group>"; };
-		49EECF7710508D9C00099FAB /* JSUint16ArrayCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSUint16ArrayCustom.cpp; sourceTree = "<group>"; };
 		49EED13C1051969400099FAB /* JSCanvasRenderingContext.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCanvasRenderingContext.cpp; sourceTree = "<group>"; };
 		49EED13D1051969400099FAB /* JSCanvasRenderingContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCanvasRenderingContext.h; sourceTree = "<group>"; };
 		49EED13E1051969400099FAB /* JSCanvasRenderingContext2D.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCanvasRenderingContext2D.cpp; sourceTree = "<group>"; };
@@ -8988,7 +8972,6 @@
 		6E67D2A51280E8A4008758F7 /* Extensions3DOpenGL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Extensions3DOpenGL.h; sourceTree = "<group>"; };
 		6E67D2A81280E8BD008758F7 /* Extensions3D.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Extensions3D.h; sourceTree = "<group>"; };
 		6EBC5D80138B4C4E00A0CF8A /* Float64Array.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = Float64Array.idl; path = canvas/Float64Array.idl; sourceTree = "<group>"; };
-		6EBC5D84138B4CE000A0CF8A /* JSFloat64ArrayCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSFloat64ArrayCustom.cpp; sourceTree = "<group>"; };
 		6EBC5EAD138B50F200A0CF8A /* JSFloat64Array.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSFloat64Array.cpp; sourceTree = "<group>"; };
 		6EBC5EAE138B50F200A0CF8A /* JSFloat64Array.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSFloat64Array.h; sourceTree = "<group>"; };
 		6EBF0E4512A8926100DB1709 /* OESTextureFloat.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = OESTextureFloat.cpp; path = canvas/OESTextureFloat.cpp; sourceTree = "<group>"; };
@@ -10248,7 +10231,6 @@
 		91089D2F14C335CD005AFC49 /* JSUint8ClampedArray.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSUint8ClampedArray.cpp; sourceTree = "<group>"; };
 		91089D3014C335CD005AFC49 /* JSUint8ClampedArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSUint8ClampedArray.h; sourceTree = "<group>"; };
 		91A3905814C0F4B900F67901 /* Uint8ClampedArray.idl */ = {isa = PBXFileReference; lastKnownFileType = text; name = Uint8ClampedArray.idl; path = canvas/Uint8ClampedArray.idl; sourceTree = "<group>"; };
-		91A3905A14C0F61100F67901 /* JSUint8ClampedArrayCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSUint8ClampedArrayCustom.cpp; sourceTree = "<group>"; };
 		930062D7159B45B600ACD48A /* NEONHelpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NEONHelpers.h; sourceTree = "<group>"; };
 		9302B0BC0D79F82900C7EE83 /* PageGroup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PageGroup.cpp; sourceTree = "<group>"; };
 		9302B0BE0D79F82C00C7EE83 /* PageGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PageGroup.h; sourceTree = "<group>"; };
@@ -20264,8 +20246,6 @@
 				893C485212499B06002B3D86 /* JSEntrySyncCustom.cpp */,
 				BCEFAF4D0C317E6900FA81F6 /* JSEventCustom.cpp */,
 				2E7582ED12764F260062628B /* JSFileReaderCustom.cpp */,
-				49EECF7210508D9C00099FAB /* JSFloat32ArrayCustom.cpp */,
-				6EBC5D84138B4CE000A0CF8A /* JSFloat64ArrayCustom.cpp */,
 				FE80D7A60E9C1ED2000D6F75 /* JSGeolocationCustom.cpp */,
 				BCE7B1920D4E86960075A539 /* JSHistoryCustom.cpp */,
 				BC97E42B10915B060010D361 /* JSHTMLAllCollectionCustom.cpp */,
@@ -20298,9 +20278,6 @@
 				7A0E76D410BF050700A0276E /* JSInjectedScriptHostCustom.cpp */,
 				F316396D1329487600A649CB /* JSInjectedScriptManager.cpp */,
 				7A74ECBC101839DA00BF939E /* JSInspectorFrontendHostCustom.cpp */,
-				49EECF7410508D9C00099FAB /* JSInt16ArrayCustom.cpp */,
-				49EECF7310508D9C00099FAB /* JSInt32ArrayCustom.cpp */,
-				49EECF7110508D9C00099FAB /* JSInt8ArrayCustom.cpp */,
 				FDEAAAFD12B02F4900DCF33B /* JSJavaScriptAudioNodeCustom.cpp */,
 				1C5FAEE60DCFDA6800D58F78 /* JSJavaScriptCallFrameCustom.cpp */,
 				BCE1C43F0D9830F4003B02F2 /* JSLocationCustom.cpp */,
@@ -20342,10 +20319,6 @@
 				07846384145B1B8E00A58DF1 /* JSTrackCustom.h */,
 				07B5A30A14687B8400A81ECE /* JSTrackEventCustom.cpp */,
 				516BB7920CE91E6800512F79 /* JSTreeWalkerCustom.cpp */,
-				49EECF7710508D9C00099FAB /* JSUint16ArrayCustom.cpp */,
-				49EECF7610508D9C00099FAB /* JSUint32ArrayCustom.cpp */,
-				49EECF7510508D9C00099FAB /* JSUint8ArrayCustom.cpp */,
-				91A3905A14C0F61100F67901 /* JSUint8ClampedArrayCustom.cpp */,
 				FD8E9BDE13D4CD2B0050DC72 /* JSWaveShaperNodeCustom.cpp */,
 				49EED14C1051971A00099FAB /* JSWebGLRenderingContextCustom.cpp */,
 				319E68861327C911004AC91A /* JSWebKitAnimationCustom.cpp */,
@@ -27036,9 +27009,7 @@
 				46DA844D1224A0710060D006 /* JSFileWriter.cpp in Sources */,
 				893C47BB1238A0A9002B3D86 /* JSFileWriterCallback.cpp in Sources */,
 				49EECF02105070C400099FAB /* JSFloat32Array.cpp in Sources */,
-				49EECF7910508D9C00099FAB /* JSFloat32ArrayCustom.cpp in Sources */,
 				6EBC5EAF138B50F200A0CF8A /* JSFloat64Array.cpp in Sources */,
-				6EBC5D85138B4CE000A0CF8A /* JSFloat64ArrayCustom.cpp in Sources */,
 				FE80DA630E9C4703000D6F75 /* JSGeolocation.cpp in Sources */,
 				FE80D7AB0E9C1ED2000D6F75 /* JSGeolocationCustom.cpp in Sources */,
 				FE80DA650E9C4703000D6F75 /* JSGeoposition.cpp in Sources */,
@@ -27165,11 +27136,8 @@
 				7A0E771E10C00DB100A0276E /* JSInspectorFrontendHost.cpp in Sources */,
 				7A74ECBD101839DA00BF939E /* JSInspectorFrontendHostCustom.cpp in Sources */,
 				49EECF06105070C400099FAB /* JSInt16Array.cpp in Sources */,
-				49EECF7B10508D9C00099FAB /* JSInt16ArrayCustom.cpp in Sources */,
 				49EECF04105070C400099FAB /* JSInt32Array.cpp in Sources */,
-				49EECF7A10508D9C00099FAB /* JSInt32ArrayCustom.cpp in Sources */,
 				49C7B9951042D2D30009D447 /* JSInt8Array.cpp in Sources */,
-				49EECF7810508D9C00099FAB /* JSInt8ArrayCustom.cpp in Sources */,
 				FDA15ECD12B03F61003A583A /* JSJavaScriptAudioNode.cpp in Sources */,
 				FDEAAAFE12B02F4900DCF33B /* JSJavaScriptAudioNodeCustom.cpp in Sources */,
 				1C5FAED10DCFD90100D58F78 /* JSJavaScriptCallFrame.cpp in Sources */,
@@ -27453,13 +27421,9 @@
 				516BB7940CE91E6800512F79 /* JSTreeWalkerCustom.cpp in Sources */,
 				A86629D009DA2B48009633A5 /* JSUIEvent.cpp in Sources */,
 				49EECF0C105070C400099FAB /* JSUint16Array.cpp in Sources */,
-				49EECF7E10508D9C00099FAB /* JSUint16ArrayCustom.cpp in Sources */,
 				49EECF0A105070C400099FAB /* JSUint32Array.cpp in Sources */,
-				49EECF7D10508D9C00099FAB /* JSUint32ArrayCustom.cpp in Sources */,
 				49EECF08105070C400099FAB /* JSUint8Array.cpp in Sources */,
-				49EECF7C10508D9C00099FAB /* JSUint8ArrayCustom.cpp in Sources */,
 				91089D3314C33605005AFC49 /* JSUint8ClampedArray.cpp in Sources */,
-				91A3905B14C0F61100F67901 /* JSUint8ClampedArrayCustom.cpp in Sources */,
 				7B1EA0CE1576C5B50060177D /* JSUndoManager.cpp in Sources */,
 				15C77094100D3CA8005BA267 /* JSValidityState.cpp in Sources */,
 				FD82D7F713D4C8BD004E4372 /* JSWaveShaperNode.cpp in Sources */,

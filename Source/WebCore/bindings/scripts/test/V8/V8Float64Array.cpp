@@ -26,6 +26,7 @@
 #include "ExceptionCode.h"
 #include "RuntimeEnabledFeatures.h"
 #include "V8ArrayBufferView.h"
+#include "V8ArrayBufferViewCustom.h"
 #include "V8Binding.h"
 #include "V8DOMWrapper.h"
 #include "V8Float32Array.h"
@@ -58,6 +59,12 @@ static v8::Handle<v8::Value> fooCallback(const v8::Arguments& args)
     return toV8(imp->foo(array), args.GetIsolate());
 }
 
+static v8::Handle<v8::Value> setCallback(const v8::Arguments& args)
+{
+    INC_STATS("DOM.Float64Array.set");
+    return setWebGLArrayHelper<Float64Array, V8Float64Array>(args);
+}
+
 } // namespace Float64ArrayV8Internal
 
 v8::Handle<v8::Value> toV8(Float64Array* impl, v8::Isolate* isolate)
@@ -70,6 +77,16 @@ v8::Handle<v8::Value> toV8(Float64Array* impl, v8::Isolate* isolate)
     return wrapper;
 }
 
+static const BatchedCallback Float64ArrayCallbacks[] = {
+    {"set", Float64ArrayV8Internal::setCallback},
+};
+
+v8::Handle<v8::Value> V8Float64Array::constructorCallback(const v8::Arguments& args)
+{
+    INC_STATS("DOM.Float64Array.Contructor");
+    return constructWebGLArray<Float64Array, V8Float64Array, double>(args, &info, v8::kExternalDoubleArray);
+}
+
 static v8::Persistent<v8::FunctionTemplate> ConfigureV8Float64ArrayTemplate(v8::Persistent<v8::FunctionTemplate> desc)
 {
     desc->ReadOnlyPrototype();
@@ -77,7 +94,7 @@ static v8::Persistent<v8::FunctionTemplate> ConfigureV8Float64ArrayTemplate(v8::
     v8::Local<v8::Signature> defaultSignature;
     defaultSignature = configureTemplate(desc, "Float64Array", V8ArrayBufferView::GetTemplate(), V8Float64Array::internalFieldCount,
         0, 0,
-        0, 0);
+        Float64ArrayCallbacks, WTF_ARRAY_LENGTH(Float64ArrayCallbacks));
     UNUSED_PARAM(defaultSignature); // In some cases, it will not be used.
     desc->SetCallHandler(V8Float64Array::constructorCallback);
     v8::Local<v8::ObjectTemplate> instance = desc->InstanceTemplate();

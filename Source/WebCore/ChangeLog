@@ -1,3 +1,80 @@
+2012-08-08  Vineet Chaudhary  <rgf748@motorola.com>
+
+        Remove All Custom binding code for TypedArray.
+        https://bugs.webkit.org/show_bug.cgi?id=93371
+
+        Reviewed by Kentaro Hara.
+
+        Removing Custom bindings completely with help of [TypedArray] attribute.
+
+        Tests: TestTypedArray.idl
+        There should not be any behavioral change and all tests should pass.
+
+        * GNUmakefile.list.am: Removed Custom files.
+        * Target.pri: Ditto.
+        * UseJSC.cmake: Ditto.
+        * UseV8.cmake: Ditto.
+        * WebCore.gypi: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+        * bindings/js/JSBindingsAllInOne.cpp: Ditto.
+        * bindings/js/JSFloat32ArrayCustom.cpp: Removed.
+        * bindings/js/JSFloat64ArrayCustom.cpp: Removed.
+        * bindings/js/JSInt16ArrayCustom.cpp: Removed.
+        * bindings/js/JSInt32ArrayCustom.cpp: Removed.
+        * bindings/js/JSInt8ArrayCustom.cpp: Removed.
+        * bindings/js/JSUint16ArrayCustom.cpp: Removed.
+        * bindings/js/JSUint32ArrayCustom.cpp: Removed.
+        * bindings/js/JSUint8ArrayCustom.cpp: Removed.
+        * bindings/js/JSUint8ClampedArrayCustom.cpp: Removed.
+        * bindings/scripts/CodeGeneratorCPP.pm:
+        (GenerateHeader): Skip implementaion for TypedArray.
+        (GenerateImplementation): Skip implementaion for TypedArray.
+        * bindings/scripts/CodeGeneratorGObject.pm:
+        (GenerateFunction): Skip implementaion for TypedArray.
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateImplementation): Generates binding for set() call.
+        (GenerateConstructorDefinition): ConstructorTemplate implementation for TypedArray.
+        * bindings/scripts/CodeGeneratorObjC.pm:
+        (GenerateHeader): Skip implementaion for TypedArray.
+        (GenerateImplementation): Skip implementaion for TypedArray.
+        * bindings/scripts/CodeGeneratorV8.pm:
+        (GenerateFunctionCallback): Generates binding for setCallback().
+        (GenerateTypedArrayConstructorCallback): Generates binding for constructorCallback().
+        (GenerateImplementation):
+        * bindings/scripts/IDLAttributes.txt: Support ConstructorTemplate for TypedArray as well.
+        * bindings/scripts/test/JS/JSFloat64Array.cpp: Binding tests results.
+        (WebCore::toJS):
+        (WebCore::JSFloat64Array::indexSetter):
+        (WebCore::JSFloat64ArrayConstructor::getConstructData):
+        (WebCore::jsFloat64ArrayPrototypeFunctionFoo):
+        (WebCore::jsFloat64ArrayPrototypeFunctionSet):
+        * bindings/scripts/test/JS/JSFloat64Array.h: Binding tests results.
+        * bindings/scripts/test/TestTypedArray.idl: Binding tests.
+        * bindings/scripts/test/V8/V8Float64Array.cpp: Binding tests results.
+        (WebCore::Float64ArrayV8Internal::setCallback):
+        (Float64ArrayV8Internal):
+        (WebCore):
+        (WebCore::V8Float64Array::constructorCallback):
+        (WebCore::ConfigureV8Float64ArrayTemplate):
+        * bindings/v8/custom/V8Float32ArrayCustom.cpp: Removed.
+        * bindings/v8/custom/V8Float64ArrayCustom.cpp: Removed.
+        * bindings/v8/custom/V8Int16ArrayCustom.cpp: Removed.
+        * bindings/v8/custom/V8Int32ArrayCustom.cpp: Removed.
+        * bindings/v8/custom/V8Int8ArrayCustom.cpp: Removed.
+        * bindings/v8/custom/V8Uint16ArrayCustom.cpp: Removed.
+        * bindings/v8/custom/V8Uint32ArrayCustom.cpp: Removed.
+        * bindings/v8/custom/V8Uint8ArrayCustom.cpp: Removed.
+        * bindings/v8/custom/V8Uint8ClampedArrayCustom.cpp: Removed.
+        * html/canvas/Float32Array.idl: Using [ConstructorTemplate = TypedArray] instead of custom implementaion.
+        * html/canvas/Float64Array.idl: Ditto.
+        * html/canvas/Int16Array.idl: Ditto.
+        * html/canvas/Int32Array.idl: Ditto.
+        * html/canvas/Int8Array.idl: Ditto.
+        * html/canvas/Uint16Array.idl: Ditto.
+        * html/canvas/Uint32Array.idl: Ditto.
+        * html/canvas/Uint8Array.idl: Ditto.
+        * html/canvas/Uint8ClampedArray.idl: Ditto.
+
 2012-08-08  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] 0.11 build broken (again)

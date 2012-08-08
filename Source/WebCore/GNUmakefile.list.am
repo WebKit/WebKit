@@ -1460,8 +1460,6 @@ webcore_sources += \
 	Source/WebCore/bindings/js/JSExceptionBase.cpp \
 	Source/WebCore/bindings/js/JSExceptionBase.h \
 	Source/WebCore/bindings/js/JSFileReaderCustom.cpp \
-	Source/WebCore/bindings/js/JSFloat32ArrayCustom.cpp \
-	Source/WebCore/bindings/js/JSFloat64ArrayCustom.cpp \
 	Source/WebCore/bindings/js/JSGeolocationCustom.cpp \
 	Source/WebCore/bindings/js/JSHTMLAllCollectionCustom.cpp \
 	Source/WebCore/bindings/js/JSHTMLAppletElementCustom.cpp \
@@ -1494,9 +1492,6 @@ webcore_sources += \
 	Source/WebCore/bindings/js/JSInjectedScriptHostCustom.cpp \
 	Source/WebCore/bindings/js/JSInjectedScriptManager.cpp \
 	Source/WebCore/bindings/js/JSInspectorFrontendHostCustom.cpp \
-	Source/WebCore/bindings/js/JSInt16ArrayCustom.cpp \
-	Source/WebCore/bindings/js/JSInt32ArrayCustom.cpp \
-	Source/WebCore/bindings/js/JSInt8ArrayCustom.cpp \
 	Source/WebCore/bindings/js/JSJavaScriptCallFrameCustom.cpp \
 	Source/WebCore/bindings/js/JSLazyEventListener.cpp \
 	Source/WebCore/bindings/js/JSLazyEventListener.h \
@@ -1548,10 +1543,6 @@ webcore_sources += \
 	Source/WebCore/bindings/js/JSTrackCustom.h \
 	Source/WebCore/bindings/js/JSTrackEventCustom.cpp \
 	Source/WebCore/bindings/js/JSTreeWalkerCustom.cpp \
-	Source/WebCore/bindings/js/JSUint16ArrayCustom.cpp \
-	Source/WebCore/bindings/js/JSUint32ArrayCustom.cpp \
-	Source/WebCore/bindings/js/JSUint8ArrayCustom.cpp \
-	Source/WebCore/bindings/js/JSUint8ClampedArrayCustom.cpp \
 	Source/WebCore/bindings/js/JSWebKitAnimationCustom.cpp \
 	Source/WebCore/bindings/js/JSWebKitAnimationListCustom.cpp \
 	Source/WebCore/bindings/js/JSWebKitCSSKeyframeRuleCustom.cpp \

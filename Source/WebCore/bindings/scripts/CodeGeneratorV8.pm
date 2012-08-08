@@ -1474,6 +1474,16 @@ END
 
     push(@implContentDecls, GenerateArgumentsCountCheck($function, $dataNode));
 
+    if ($name eq "set" and $dataNode->extendedAttributes->{"TypedArray"}) {
+        AddToImplIncludes("V8ArrayBufferViewCustom.h");
+        push(@implContentDecls, <<END);
+    return setWebGLArrayHelper<$implClassName, V8${implClassName}>(args);
+}
+
+END
+        return;
+    }
+
     my ($svgPropertyType, $svgListPropertyType, $svgNativeType) = GetSVGPropertyTypes($implClassName);
 
     if ($svgNativeType) {
@@ -1927,6 +1937,24 @@ END
 
     push(@implContent, <<END);
     return true;
+}
+
+END
+}
+
+sub GenerateTypedArrayConstructorCallback
+{
+    my $dataNode = shift;
+    my $implClassName = shift;
+    my $viewType = GetTypeNameOfExternalTypedArray($dataNode);
+    my $type = $dataNode->extendedAttributes->{"TypedArray"};
+    AddToImplIncludes("V8ArrayBufferViewCustom.h");
+
+    push(@implContent, <<END);
+v8::Handle<v8::Value> V8${implClassName}::constructorCallback(const v8::Arguments& args)
+{
+    INC_STATS("DOM.${implClassName}.Contructor");
+    return constructWebGLArray<$implClassName, V8${implClassName}, $type>(args, &info, $viewType);
 }
 
 END
@@ -2758,6 +2786,8 @@ END
         GenerateConstructorCallback($dataNode->constructor, $dataNode, $interfaceName);
     } elsif (IsConstructorTemplate($dataNode, "Event")) {
         GenerateEventConstructorCallback($dataNode, $interfaceName);
+    } elsif (IsConstructorTemplate($dataNode, "TypedArray")) {
+        GenerateTypedArrayConstructorCallback($dataNode, $interfaceName);
     }
 
     my $access_check = "";

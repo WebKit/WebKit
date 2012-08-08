@@ -2213,6 +2213,13 @@ sub GenerateImplementation
                 if ($isCustom) {
                     push(@implContent, "    return JSValue::encode(castedThis->" . $functionImplementationName . "(exec));\n");
                 } else {
+                    if ($function->signature->name eq "set" and $dataNode->extendedAttributes->{"TypedArray"}) {
+                        my $viewType = $dataNode->extendedAttributes->{"TypedArray"};
+                        push(@implContent, "    return JSValue::encode(setWebGLArrayHelper<$implType, $viewType>(exec, castedThis->impl()));\n");
+                        push(@implContent, "}\n\n");
+                        next;
+                    }
+
                     push(@implContent, "    $implType* impl = static_cast<$implType*>(castedThis->impl());\n");
                     if ($svgPropertyType) {
                         push(@implContent, "    if (impl->isReadOnly()) {\n");
@@ -3722,6 +3729,30 @@ END
 }
 
 END
+        } elsif (IsConstructorTemplate($dataNode, "TypedArray")) {
+            $implIncludes{"JSArrayBufferViewHelper.h"} = 1;
+            my $viewType = $dataNode->extendedAttributes->{"TypedArray"};
+            push(@$outputArray, "EncodedJSValue JSC_HOST_CALL ${constructorClassName}::construct${className}(ExecState* exec)\n");
+            push(@$outputArray, "{\n");
+            push(@$outputArray, "    ${constructorClassName}* jsConstructor = jsCast<${constructorClassName}*>(exec->callee());\n");
+            push(@$outputArray, "    RefPtr<$interfaceName> array = constructArrayBufferView<$interfaceName, $viewType>(exec);\n");
+            push(@$outputArray, "    if (!array.get())\n");
+            push(@$outputArray, "        // Exception has already been thrown.\n");
+            push(@$outputArray, "        return JSValue::encode(JSValue());\n");
+            push(@$outputArray, "    return JSValue::encode(asObject(toJS(exec, jsConstructor->globalObject(), array.get())));\n");
+            push(@$outputArray, "}\n\n");
+
+            push(@$outputArray, "JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, ${interfaceName}* object)\n");
+            push(@$outputArray, "{\n");
+            push(@$outputArray, "    return toJSArrayBufferView<${className}>(exec, globalObject, object);\n");
+            push(@$outputArray, "}\n\n");
+
+            if ($dataNode->extendedAttributes->{"CustomIndexedSetter"}) {
+                push(@$outputArray, "void ${className}::indexSetter(JSC::ExecState* exec, unsigned index, JSC::JSValue value)\n");
+                push(@$outputArray, "{\n");
+                push(@$outputArray, "    impl()->set(index, value.toNumber(exec));\n");
+                push(@$outputArray, "}\n\n");
+            }
         } elsif (!($dataNode->extendedAttributes->{"JSCustomConstructor"} || $dataNode->extendedAttributes->{"CustomConstructor"}) && (!$dataNode->extendedAttributes->{"NamedConstructor"} || $generatingNamedConstructor)) {
             push(@$outputArray, "EncodedJSValue JSC_HOST_CALL ${constructorClassName}::construct${className}(ExecState* exec)\n");
             push(@$outputArray, "{\n");
@@ -3789,20 +3820,6 @@ END
             push(@$outputArray, "{\n");
             push(@$outputArray, "    constructData.native.function = construct${className};\n");
             push(@$outputArray, "    return ConstructTypeHost;\n");
-            push(@$outputArray, "}\n\n");
-        }
-
-        if ($dataNode->extendedAttributes->{"TypedArray"}) {
-            $implIncludes{"JSArrayBufferViewHelper.h"} = 1;
-            my $viewType = $dataNode->extendedAttributes->{"TypedArray"};
-            push(@$outputArray, "EncodedJSValue JSC_HOST_CALL ${constructorClassName}::construct${className}(ExecState* exec)\n");
-            push(@$outputArray, "{\n");
-            push(@$outputArray, "    ${constructorClassName}* jsConstructor = jsCast<${constructorClassName}*>(exec->callee());\n");
-            push(@$outputArray, "    RefPtr<$interfaceName> array = constructArrayBufferView<$interfaceName, $viewType>(exec);\n");
-            push(@$outputArray, "    if (!array.get())\n");
-            push(@$outputArray, "        // Exception has already been thrown.\n");
-            push(@$outputArray, "        return JSValue::encode(JSValue());\n");
-            push(@$outputArray, "    return JSValue::encode(asObject(toJS(exec, jsConstructor->globalObject(), array.get())));\n");
             push(@$outputArray, "}\n\n");
         }
     }

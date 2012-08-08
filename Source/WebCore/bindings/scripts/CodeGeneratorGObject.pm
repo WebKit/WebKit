@@ -800,6 +800,8 @@ sub GenerateFunction {
         return;
     }
 
+    return if ($function->signature->name eq "set" and $parentNode->extendedAttributes->{"TypedArray"});
+
     my $functionSigName = $function->signature->name;
     my $functionSigType = $prefix eq "set_" ? "void" : $function->signature->type;
     my $functionName = "webkit_dom_" . $decamelize . "_" . $prefix . decamelize($functionSigName);
