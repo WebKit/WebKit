@@ -31,6 +31,7 @@
 #ifndef LocaleMac_h
 #define LocaleMac_h
 
+#include "NumberLocalizer.h"
 #include <wtf/Forward.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/Vector.h>
@@ -43,7 +44,7 @@ namespace WebCore {
 
 class DateComponents;
 
-class LocaleMac {
+class LocaleMac : public NumberLocalizer {
 public:
     static PassOwnPtr<LocaleMac> create(const String&);
     static LocaleMac* currentLocale();
@@ -68,6 +69,7 @@ private:
     explicit LocaleMac(NSLocale*);
     explicit LocaleMac(const String&);
     NSDateFormatter *createShortDateFormatter();
+    virtual void initializeNumberLocalizerData() OVERRIDE;
 
     RetainPtr<NSLocale> m_locale;
 #if ENABLE(CALENDAR_PICKER)
@@ -83,6 +85,7 @@ private:
     String m_localizedShortTimeFormatText;
     Vector<String> m_timeAMPMLabels;
 #endif
+    bool m_didInitializeNumberData;
 };
 
 } // namespace WebCore

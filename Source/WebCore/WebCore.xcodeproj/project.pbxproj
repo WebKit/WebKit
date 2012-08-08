@@ -6203,6 +6203,8 @@
 		F5122C901547FA1B0028A93B /* PagePopupDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = F5122C8F1547FA1B0028A93B /* PagePopupDriver.h */; };
 		F5142C69123F12B000F5BD4C /* LocalizedNumber.h in Headers */ = {isa = PBXBuildFile; fileRef = F5142C68123F12B000F5BD4C /* LocalizedNumber.h */; };
 		F52AD5E41534245F0059FBE6 /* EmptyClients.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F52AD5E31534245F0059FBE6 /* EmptyClients.cpp */; };
+		F544F78815CFB2A800AF33A8 /* NumberLocalizer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F544F78615CFB2A800AF33A8 /* NumberLocalizer.cpp */; };
+		F544F78915CFB2A800AF33A8 /* NumberLocalizer.h in Headers */ = {isa = PBXBuildFile; fileRef = F544F78715CFB2A800AF33A8 /* NumberLocalizer.h */; };
 		F553B89315BE26C000B134C9 /* WrapShapes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F553B89215BE26C000B134C9 /* WrapShapes.cpp */; };
 		F55B3DAD1251F12D003EF269 /* BaseTextInputType.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F55B3D791251F12D003EF269 /* BaseTextInputType.cpp */; };
 		F55B3DAE1251F12D003EF269 /* BaseTextInputType.h in Headers */ = {isa = PBXBuildFile; fileRef = F55B3D7A1251F12D003EF269 /* BaseTextInputType.h */; };
@@ -6254,6 +6256,8 @@
 		F55B3DDE1251F12D003EF269 /* URLInputType.h in Headers */ = {isa = PBXBuildFile; fileRef = F55B3DAA1251F12D003EF269 /* URLInputType.h */; };
 		F55B3DDF1251F12D003EF269 /* WeekInputType.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F55B3DAB1251F12D003EF269 /* WeekInputType.cpp */; };
 		F55B3DE01251F12D003EF269 /* WeekInputType.h in Headers */ = {isa = PBXBuildFile; fileRef = F55B3DAC1251F12D003EF269 /* WeekInputType.h */; };
+		F5973DE015CFB2030027F804 /* LocaleMac.h in Headers */ = {isa = PBXBuildFile; fileRef = F5973DDE15CFB2030027F804 /* LocaleMac.h */; };
+		F5973DE115CFB2030027F804 /* LocaleMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = F5973DDF15CFB2030027F804 /* LocaleMac.mm */; };
 		F59C95FF1255B23F000623C0 /* BaseDateAndTimeInputType.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F59C95FD1255B23F000623C0 /* BaseDateAndTimeInputType.cpp */; };
 		F59C96001255B23F000623C0 /* BaseDateAndTimeInputType.h in Headers */ = {isa = PBXBuildFile; fileRef = F59C95FE1255B23F000623C0 /* BaseDateAndTimeInputType.h */; };
 		F5A154271279534D00D0B0C0 /* ValidationMessage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F5A154251279534D00D0B0C0 /* ValidationMessage.cpp */; };
@@ -13557,6 +13561,8 @@
 		F523D30302DE4476018635CA /* Range.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Range.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F523D30402DE4476018635CA /* Range.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = Range.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F52AD5E31534245F0059FBE6 /* EmptyClients.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EmptyClients.cpp; sourceTree = "<group>"; };
+		F544F78615CFB2A800AF33A8 /* NumberLocalizer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NumberLocalizer.cpp; sourceTree = "<group>"; };
+		F544F78715CFB2A800AF33A8 /* NumberLocalizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NumberLocalizer.h; sourceTree = "<group>"; };
 		F553B89215BE26C000B134C9 /* WrapShapes.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WrapShapes.cpp; path = style/WrapShapes.cpp; sourceTree = "<group>"; };
 		F55B3D791251F12D003EF269 /* BaseTextInputType.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BaseTextInputType.cpp; sourceTree = "<group>"; };
 		F55B3D7A1251F12D003EF269 /* BaseTextInputType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BaseTextInputType.h; sourceTree = "<group>"; };
@@ -13614,6 +13620,8 @@
 		F587864902DE3A9A01EA4122 /* CachePolicy.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = CachePolicy.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F587866202DE3B1101EA4122 /* SSLKeyGenerator.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = SSLKeyGenerator.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F587868402DE3B8601EA4122 /* Cursor.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = Cursor.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		F5973DDE15CFB2030027F804 /* LocaleMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocaleMac.h; sourceTree = "<group>"; };
+		F5973DDF15CFB2030027F804 /* LocaleMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LocaleMac.mm; sourceTree = "<group>"; };
 		F59C95FD1255B23F000623C0 /* BaseDateAndTimeInputType.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BaseDateAndTimeInputType.cpp; sourceTree = "<group>"; };
 		F59C95FE1255B23F000623C0 /* BaseDateAndTimeInputType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BaseDateAndTimeInputType.h; sourceTree = "<group>"; };
 		F5A154251279534D00D0B0C0 /* ValidationMessage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ValidationMessage.cpp; sourceTree = "<group>"; };
@@ -19910,6 +19918,8 @@
 				A5732B0C136A16C4005C8D7C /* LocalizedDate.h */,
 				A5732B0E136A1715005C8D7C /* LocalizedDateNone.cpp */,
 				F5142C68123F12B000F5BD4C /* LocalizedNumber.h */,
+				F544F78615CFB2A800AF33A8 /* NumberLocalizer.cpp */,
+				F544F78715CFB2A800AF33A8 /* NumberLocalizer.h */,
 				BC76AC110DD7AD5C00415F34 /* ParserUtilities.h */,
 				B2C3D9FB0D006C1D00EF6F26 /* PlatformString.h */,
 				379E371413736A6600B9E919 /* QuotedPrintable.cpp */,
@@ -19964,6 +19974,8 @@
 				B2AFFC850D00A5DF0030074D /* character-sets.txt */,
 				B2C3D9FA0D006C1D00EF6F26 /* CharsetData.h */,
 				375CD239119D44EA00A2A859 /* HyphenationMac.mm */,
+				F5973DDE15CFB2030027F804 /* LocaleMac.h */,
+				F5973DDF15CFB2030027F804 /* LocaleMac.mm */,
 				F5CC42DB12F801CA00D5F7E3 /* LocalizedNumberMac.mm */,
 				B2AFFC860D00A5DF0030074D /* mac-encodings.txt */,
 				B2AFFC870D00A5DF0030074D /* make-charset-table.pl */,
@@ -24256,6 +24268,7 @@
 				656D37320ADBA5DE00A4554D /* LoaderNSURLExtras.h in Headers */,
 				7EE6846912D26E3800E79415 /* LoaderRunLoopCF.h in Headers */,
 				06E81ED70AB5D5E900C87837 /* LocalCurrentGraphicsContext.h in Headers */,
+				F5973DE015CFB2030027F804 /* LocaleMac.h in Headers */,
 				7633A72613D8B33A008501B6 /* LocaleToScriptMapping.h in Headers */,
 				89878568122CA064003AABDA /* LocalFileSystem.h in Headers */,
 				A5732B0D136A16C4005C8D7C /* LocalizedDate.h in Headers */,
@@ -24376,6 +24389,7 @@
 				1A927FD41416A15B003A83C8 /* nptypes.h in Headers */,
 				93500F3213FDE3BE0099EC24 /* NSScrollerImpDetails.h in Headers */,
 				F55B3DC81251F12D003EF269 /* NumberInputType.h in Headers */,
+				F544F78915CFB2A800AF33A8 /* NumberLocalizer.h in Headers */,
 				1A569D120D7E2B82007C3983 /* objc_class.h in Headers */,
 				1A569D140D7E2B82007C3983 /* objc_header.h in Headers */,
 				1A569D150D7E2B82007C3983 /* objc_instance.h in Headers */,
@@ -27549,6 +27563,7 @@
 				656D37330ADBA5DE00A4554D /* LoaderNSURLExtras.mm in Sources */,
 				7EE6846812D26E3800E79415 /* LoaderRunLoopCF.cpp in Sources */,
 				06E81EEC0AB5DA9700C87837 /* LocalCurrentGraphicsContext.mm in Sources */,
+				F5973DE115CFB2030027F804 /* LocaleMac.mm in Sources */,
 				7633A72713D8B33A008501B6 /* LocaleToScriptMappingDefault.cpp in Sources */,
 				89878567122CA064003AABDA /* LocalFileSystem.cpp in Sources */,
 				A5732B0F136A1715005C8D7C /* LocalizedDateNone.cpp in Sources */,
@@ -27650,6 +27665,7 @@
 				1A569D0D0D7E2B82007C3983 /* npruntime.cpp in Sources */,
 				52F52E1114A0134F00ACC397 /* NSScrollerImpDetails.mm in Sources */,
 				F55B3DC71251F12D003EF269 /* NumberInputType.cpp in Sources */,
+				F544F78815CFB2A800AF33A8 /* NumberLocalizer.cpp in Sources */,
 				1A569D130D7E2B82007C3983 /* objc_class.mm in Sources */,
 				1A569D160D7E2B82007C3983 /* objc_instance.mm in Sources */,
 				1A569D180D7E2B82007C3983 /* objc_runtime.mm in Sources */,

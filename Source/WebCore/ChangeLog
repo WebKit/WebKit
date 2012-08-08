@@ -1,3 +1,43 @@
+2012-08-07  Kent Tamura  <tkent@chromium.org>
+
+        [Mac] Do not reformat numbers in <input type=number>
+        https://bugs.webkit.org/show_bug.cgi?id=93236
+
+        Reviewed by Hajime Morita.
+
+        We had bugs such as stripping leading zeros, dropping lower digits of
+        large numbers because we parse a user-input string to a double value,
+        and generate a string from the double value.
+
+        In order to avoid such reformatting, we use
+        platform/text/NumberLocalizer, which maps ASCII digits to the
+        corresponding localized digits.
+
+        Test: fast/forms/number/number-lossless-localization.html
+
+        * WebCore.xcodeproj/project.pbxproj:
+        Add the following files:
+         - platform/text/NumberLocalizer.cpp
+         - platform/text/NumberLocalizer.h
+         - platform/mac/LocaleMac.h
+         - platform/mac/LocaleMac.mm
+        * platform/text/mac/LocaleMac.h:
+        (LocaleMac): Inherit NumberLocalizer, and declare
+        initializeNumberLocalizerData() for it.
+        Add m_didInitializeNumberData flag.
+        * platform/text/mac/LocaleMac.mm:
+        (WebCore::LocaleMac::LocaleMac): Initialize m_didInitializeNumberData
+        (WebCore::LocaleMac::initializeNumberLocalizerData):
+        Added. Prepare data for number localization, and call
+        NumberLocalizer::setNumberLocalizerData().
+        A tricky part is to format 9876543210 for m_locale. It seems OSX doesn't
+        have API to get localized digits.
+        * platform/text/mac/LocalizedNumberMac.mm:
+        Remove many lines, and calls the corresponding functions of LocaleMac.
+        (WebCore::convertToLocalizedNumber):
+        (WebCore::convertFromLocalizedNumber):
+        (WebCore::localizedDecimalSeparator):
+
 2012-08-07  Kentaro Hara  <haraken@chromium.org>
 
         [V8] Move V8BindingMacros.h from bindings/v8/custom/ to bindings/v8/

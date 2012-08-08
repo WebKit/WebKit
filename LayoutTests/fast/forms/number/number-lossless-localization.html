@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<body>
+<script src="../../js/resources/js-test-pre.js"></script>
+<input type="number" id="number1">
+<script>
+var numberInput = document.getElementById('number1');
+numberInput.focus();
+// Note that this test doesn't work in a locale in which people don't use 0-9
+// for numbers.
+document.execCommand('inserttext', false, '0000123456789012345678901234567890123456789');
+numberInput.blur();
+shouldBeEqualToString('numberInput.value', '0000123456789012345678901234567890123456789');
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>

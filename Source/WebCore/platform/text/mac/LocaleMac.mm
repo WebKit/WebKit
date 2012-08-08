@@ -58,11 +58,13 @@ static NSDateFormatter* createDateTimeFormatter(NSLocale* locale, NSDateFormatte
 
 LocaleMac::LocaleMac(NSLocale* locale)
     : m_locale(locale)
+    , m_didInitializeNumberData(false)
 {
 }
 
 LocaleMac::LocaleMac(const String& localeIdentifier)
     : m_locale([[NSLocale alloc] initWithLocaleIdentifier:localeIdentifier])
+    , m_didInitializeNumberData(false)
 {
 }
 
@@ -267,4 +269,36 @@ const Vector<String>& LocaleMac::timeAMPMLabels()
     return m_timeAMPMLabels;
 }
 #endif
+
+void LocaleMac::initializeNumberLocalizerData()
+{
+    if (m_didInitializeNumberData)
+        return;
+    m_didInitializeNumberData = true;
+
+    RetainPtr<NSNumberFormatter> formatter(AdoptNS, [[NSNumberFormatter alloc] init]);
+    [formatter.get() setLocale:m_locale.get()];
+    [formatter.get() setNumberStyle:NSNumberFormatterDecimalStyle];
+    [formatter.get() setUsesGroupingSeparator:NO];
+
+    RetainPtr<NSNumber> sampleNumber(AdoptNS, [[NSNumber alloc] initWithDouble:9876543210]);
+    String nineToZero([formatter.get() stringFromNumber:sampleNumber.get()]);
+    if (nineToZero.length() != 10)
+        return;
+    Vector<String, DecimalSymbolsSize> symbols;
+    for (unsigned i = 0; i < 10; ++i)
+        symbols.append(nineToZero.substring(9 - i, 1));
+    ASSERT(symbols.size() == DecimalSeparatorIndex);
+    symbols.append(String([formatter.get() decimalSeparator]));
+    ASSERT(symbols.size() == GroupSeparatorIndex);
+    symbols.append(String([formatter.get() groupingSeparator]));
+    ASSERT(symbols.size() == DecimalSymbolsSize);
+
+    String positivePrefix([formatter.get() positivePrefix]);
+    String positiveSuffix([formatter.get() positiveSuffix]);
+    String negativePrefix([formatter.get() negativePrefix]);
+    String negativeSuffix([formatter.get() negativeSuffix]);
+    setNumberLocalizerData(symbols, positivePrefix, positiveSuffix, negativePrefix, negativeSuffix);
+}
+
 }

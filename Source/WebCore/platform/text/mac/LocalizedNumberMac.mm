@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2011,2012 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -31,99 +31,25 @@
 #import "config.h"
 #import "LocalizedNumber.h"
 
-#import <Foundation/NSNumberFormatter.h>
-#import <limits>
-#import <wtf/dtoa.h>
-#import <wtf/MainThread.h>
-#import <wtf/MathExtras.h>
-#import <wtf/RetainPtr.h>
-#import <wtf/text/CString.h>
-
-using namespace std;
+#include "LocaleMac.h"
 
 namespace WebCore {
 
-static RetainPtr<NSNumberFormatter> createFormatterForCurrentLocale()
+String convertToLocalizedNumber(const String& canonicalNumberString, unsigned)
 {
-    RetainPtr<NSNumberFormatter> formatter(AdoptNS, [[NSNumberFormatter alloc] init]);
-    [formatter.get() setLocalizesFormat:YES];
-    [formatter.get() setNumberStyle:NSNumberFormatterDecimalStyle];
-    return formatter;
-}
-
-static RetainPtr<NSNumberFormatter> createFormatterForCurrentLocaleForDisplay()
-{
-    RetainPtr<NSNumberFormatter> formatter = createFormatterForCurrentLocale();
-    [formatter.get() setUsesGroupingSeparator:NO];
-    return formatter;
-}
-
-static NSNumberFormatter *numberFormatterForParsing()
-{
-    ASSERT(isMainThread());
-    static NSNumberFormatter *formatter = createFormatterForCurrentLocale().leakRef();
-    return formatter;    
-}
-
-static NSNumberFormatter *numberFormatterForDisplay()
-{
-    ASSERT(isMainThread());
-    static NSNumberFormatter *formatter = createFormatterForCurrentLocaleForDisplay().leakRef();
-    return formatter;
-}
-
-static double parseLocalizedNumber(const String& numberString)
-{
-    if (numberString.isEmpty())
-        return numeric_limits<double>::quiet_NaN();
-    NSNumber *number = [numberFormatterForParsing() numberFromString:numberString];
-    if (!number)
-        return numeric_limits<double>::quiet_NaN();
-    return [number doubleValue];
-}
-
-static String formatLocalizedNumber(double inputNumber, unsigned fractionDigits)
-{
-    RetainPtr<NSNumber> number(AdoptNS, [[NSNumber alloc] initWithDouble:inputNumber]);
-    RetainPtr<NSNumberFormatter> formatter = numberFormatterForDisplay();
-    [formatter.get() setMaximumFractionDigits:fractionDigits];
-    return String([formatter.get() stringFromNumber:number.get()]);
-}
-
-String convertToLocalizedNumber(const String& canonicalNumberString, unsigned fractionDigits)
-{
-    // FIXME: We should not do parse-then-format. It makes some
-    // problems such as removing leading zeros, changing trailing
-    // digits to zeros.
-    // FIXME: We should not use the fractionDigits argument.
-
-    double doubleValue = canonicalNumberString.toDouble();
-    // The input string must be valid.
-    return formatLocalizedNumber(doubleValue, fractionDigits);
-
+    return LocaleMac::currentLocale()->convertToLocalizedNumber(canonicalNumberString);
 }
 
 String convertFromLocalizedNumber(const String& localizedNumberString)
 {
-    // FIXME: We should not do parse-then-format. It makes some
-    // problems such as removing leading zeros, changing trailing
-    // digits to zeros.
-
-    double doubleValue = parseLocalizedNumber(localizedNumberString);
-    if (!isfinite(doubleValue))
-        return localizedNumberString;
-    NumberToStringBuffer buffer;
-    return String(numberToString(doubleValue, buffer));
+    return LocaleMac::currentLocale()->convertFromLocalizedNumber(localizedNumberString);
 }
 
 #if ENABLE(INPUT_TYPE_TIME_MULTIPLE_FIELDS)
-
 String localizedDecimalSeparator()
 {
-    RetainPtr<NSNumberFormatter> formatter = numberFormatterForDisplay();
-    return String([formatter.get() decimalSeparator]);
+    return LocaleMac::currentLocale()->localizedDecimalSeparator();
 }
-
 #endif
 
 } // namespace WebCore
