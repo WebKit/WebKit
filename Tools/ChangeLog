@@ -1,3 +1,13 @@
+2012-08-08  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [WK2] [WTR] Refactoring: LayoutTestController::shouldDumpProgressFinishedCallback() should be const
+        https://bugs.webkit.org/show_bug.cgi?id=93457
+
+        Reviewed by Csaba Osztrogonác.
+
+        * WebKitTestRunner/InjectedBundle/LayoutTestController.h:
+        (WTR::LayoutTestController::shouldDumpProgressFinishedCallback): Added constness.
+
 2012-08-07  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed typo fix after r124988.

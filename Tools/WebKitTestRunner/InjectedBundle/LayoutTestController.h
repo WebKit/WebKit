@@ -161,7 +161,7 @@ public:
     bool shouldDumpPixels() const { return m_dumpPixels; }
     bool shouldDumpFullScreenCallbacks() const { return m_dumpFullScreenCallbacks; }
     bool shouldDumpFrameLoadCallbacks() const { return m_dumpFrameLoadCallbacks; }
-    bool shouldDumpProgressFinishedCallback() { return m_dumpProgressFinishedCallback; }
+    bool shouldDumpProgressFinishedCallback() const { return m_dumpProgressFinishedCallback; }
     bool isPolicyDelegateEnabled() const { return m_policyDelegateEnabled; }
     bool isPolicyDelegatePermissive() const { return m_policyDelegatePermissive; }
 
