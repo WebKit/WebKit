@@ -1,3 +1,26 @@
+2012-08-08  Xan Lopez  <xlopez@igalia.com>
+
+        Evolution, empathy no longer build with webkint 1.9.6:  webkit_dom_html_element_set_class_name is gone
+        https://bugs.webkit.org/show_bug.cgi?id=93384
+
+        Reviewed by Adam Barth.
+
+        Provide custom backwards compatibility wrappers for HTMLElement
+        className accessors, since the attribute was moved to Element. The
+        previous fix attempted to define the attribute twice (once in each
+        class), but this is wrong, just provide again the old accessors
+        making them forward to the new methods.
+
+        * bindings/gobject/WebKitDOMCustom.cpp:
+        (webkit_dom_html_element_get_class_name): provide again
+        get_class_name for backwards compatibility.
+        (webkit_dom_html_element_set_class_name): provide again
+        set_class_name for backwards compatibility.
+        * bindings/gobject/WebKitDOMCustom.h: ditto.
+        * html/HTMLElement.idl: remove the className attribute
+        definition. Since it's already present in Element this will break
+        our bindings.
+
 2012-08-07  Ojan Vafai  <ojan@chromium.org>
 
         percentage height/width values in quirks mode are incorrectly resolved in flexbox children

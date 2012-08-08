@@ -49,6 +49,18 @@ webkit_dom_blob_webkit_slice(WebKitDOMBlob* self, gint64 start, gint64 end, cons
     return webkit_dom_blob_slice(self, start, end, content_type);
 }
 
+gchar*
+webkit_dom_html_element_get_class_name(WebKitDOMHTMLElement* element)
+{
+    return webkit_dom_element_get_class_name(WEBKIT_DOM_ELEMENT(element));
+}
+
+void
+webkit_dom_html_element_set_class_name(WebKitDOMHTMLElement* element, const gchar* value)
+{
+    webkit_dom_element_set_class_name(WEBKIT_DOM_ELEMENT(element), value);
+}
+
 void
 webkit_dom_html_form_element_dispatch_form_change(WebKitDOMHTMLFormElement* self)
 {
