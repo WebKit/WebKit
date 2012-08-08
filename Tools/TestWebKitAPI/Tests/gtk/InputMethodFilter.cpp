@@ -27,6 +27,7 @@
 
 #include "GtkInputMethodFilter.h"
 #include "WTFStringUtilities.h"
+#include <gdk/gdkkeysyms.h>
 #include <gtk/gtk.h>
 #include <wtf/gobject/GOwnPtr.h>
 #include <wtf/gobject/GRefPtr.h>

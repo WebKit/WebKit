@@ -1,3 +1,10 @@
+2012-08-08  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix GTK+ build with GTK2 after r121475.
+
+        * TestWebKitAPI/Tests/gtk/InputMethodFilter.cpp: Add missing
+        include required when building with GTK2.
+
 2012-08-08  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         [WK2] [WTR] Provide Resource Response dumping.
