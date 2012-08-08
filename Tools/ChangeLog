@@ -1,5 +1,32 @@
 2012-08-07  Dirk Pranke  <dpranke@chromium.org>
 
+        [NRWT] Would like an output mode similar to ORWT verbose one
+        https://bugs.webkit.org/show_bug.cgi?id=88702
+
+        Reviewed by Ryosuke Niwa.
+
+        Change the --verbose logging for new-run-webkit-tests so that
+        it matches ORWT more; we just print one line per test. Use
+        --debug-rwt-logging to get the full debug stream (aka old ORWT
+        --verbose).
+
+        * Scripts/webkitpy/layout_tests/models/test_expectations.py:
+        (TestExpectations):
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        (_set_up_derived_options):
+        (parse_args):
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_integrationtest.py:
+        (MainTest.test_retrying_and_flaky_tests):
+        * Scripts/webkitpy/layout_tests/views/printing.py:
+        (print_options):
+        (Printer._print_result_summary_entry):
+        (Printer._print_one_line_summary):
+        (Printer._print_test_result):
+        (Printer._print_baseline):
+        (Printer._print_unexpected_results):
+
+2012-08-07  Dirk Pranke  <dpranke@chromium.org>
+
         nrwt: handle errors from image diff better
         https://bugs.webkit.org/show_bug.cgi?id=92934
 

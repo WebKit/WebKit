@@ -177,6 +177,9 @@ def _set_up_derived_options(port, options):
 
         options.pixel_test_directories = list(varified_dirs)
 
+    if options.run_singly:
+        options.verbose = True
+
     return warnings
 
 
@@ -389,9 +392,8 @@ def parse_args(args=None):
         optparse.make_option("--batch-size",
             help=("Run a the tests in batches (n), after every n tests, "
                   "DumpRenderTree is relaunched."), type="int", default=None),
-        # old-run-webkit-tests has --run-singly imply --verbose.
         optparse.make_option("--run-singly", action="store_true",
-            default=False, help="run a separate DumpRenderTree for each test"),
+            default=False, help="run a separate DumpRenderTree for each test (implies --verbose)"),
         optparse.make_option("--child-processes",
             help="Number of DumpRenderTrees to run in parallel."),
         # FIXME: Display default number of child processes that will run.

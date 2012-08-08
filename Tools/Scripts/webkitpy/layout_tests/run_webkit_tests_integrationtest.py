@@ -764,7 +764,7 @@ class MainTest(unittest.TestCase, StreamTestingMixin):
         self.assertEquals(res, 1)
         self.assertTrue('Clobbering old results' in err.getvalue())
         self.assertTrue('flaky/text.html' in err.getvalue())
-        self.assertTrue('Unexpected text diff' in out.getvalue())
+        self.assertTrue('Unexpected text failures' in out.getvalue())
         self.assertFalse('Unexpected flakiness' in out.getvalue())
         self.assertTrue(host.filesystem.exists('/tmp/layout-test-results/failures/flaky/text-actual.txt'))
         self.assertFalse(host.filesystem.exists('retries'))
