@@ -1,3 +1,23 @@
+2012-08-07  Joshua Bell  <jsbell@chromium.org>
+
+        Layout Test storage/indexeddb/intversion-omit-parameter.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=92952
+
+        Reviewed by Tony Chang.
+
+        Account for events being propagated from the back-end to front-end after
+        front-end context is stopped (i.e. document is being destroyed). The IDBRequest
+        lifecycle was tightened up in http://trac.webkit.org/changeset/123275 with more
+        asserts but the stopped state wasn't accounted for.
+
+        Test: [chromium] webkit_unit_tests --gtest_filter='IDBRequestTest.EventsAfterStopping'
+
+        * Modules/indexeddb/IDBRequest.cpp:
+        (WebCore::IDBRequest::abort):
+        (WebCore::IDBRequest::onError):
+        (WebCore::IDBRequest::onSuccess):
+        (WebCore::IDBRequest::onSuccessWithContinuation):
+
 2012-08-07  Kentaro Hara  <haraken@chromium.org>
 
         Optimize Element::getAttributeNode() by replacing String with AtomicString

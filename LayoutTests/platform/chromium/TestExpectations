@@ -3461,9 +3461,6 @@ BUGWK92938 : compositing/layer-creation/animation-overlap-with-children.html = T
 
 BUGWK92941 WIN MAC : accessibility/loading-iframe-updates-axtree.html = CRASH PASS
 
-// Flakily crashing after http://trac.webkit.org/changeset/124402
-BUGWK92952 DEBUG : storage/indexeddb/intversion-omit-parameter.html = CRASH PASS
-
 // Tests added by bug 76270. According to bug 92968, they should be skipped in Chromium.
 BUGWK92968 SKIP : http/tests/appcache/abort-cache-onchecking-manifest-404.html = PASS
 BUGWK92968 SKIP : http/tests/appcache/abort-cache-onchecking-resource-404.html = PASS

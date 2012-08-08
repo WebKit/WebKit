@@ -118,6 +118,7 @@
             'tests/IDBFakeBackingStore.h',
             'tests/IDBKeyPathTest.cpp',
             'tests/IDBLevelDBCodingTest.cpp',
+            'tests/IDBRequestTest.cpp',
             'tests/ImageLayerChromiumTest.cpp',
             'tests/KeyboardTest.cpp',
             'tests/KURLTest.cpp',

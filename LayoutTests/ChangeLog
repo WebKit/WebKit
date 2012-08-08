@@ -1,3 +1,14 @@
+2012-08-07  Joshua Bell  <jsbell@chromium.org>
+
+        Layout Test storage/indexeddb/intversion-omit-parameter.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=92952
+
+        Reviewed by Tony Chang.
+
+        Remove expectation now that flakiness should be resolved.
+
+        * platform/chromium/TestExpectations:
+
 2012-08-07  Yoshifumi Inoue  <yosin@chromium.org>
 
         translateZ(0) shifts file name in file input

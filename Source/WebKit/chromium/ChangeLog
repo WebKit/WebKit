@@ -1,3 +1,18 @@
+2012-08-07  Joshua Bell  <jsbell@chromium.org>
+
+        Layout Test storage/indexeddb/intversion-omit-parameter.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=92952
+
+        Reviewed by Tony Chang.
+
+        Added test to exercise WebCore::IDBRequest event callbacks after
+        the script context has stopped and ensure no asserts are hit.
+
+        * WebKit.gypi:
+        * tests/IDBRequestTest.cpp: Added.
+        (WebCore):
+        (WebCore::TEST):
+
 2012-08-07  Fady Samuel  <fsamuel@chromium.org>
 
         Allow plugins to decide whether they are keyboard focusable

@@ -114,6 +114,8 @@ protected:
     RefPtr<DOMError> m_error;
 
 private:
+    bool shouldEnqueueEvent() const;
+
     // EventTarget
     virtual void refEventTarget() { ref(); }
     virtual void derefEventTarget() { deref(); }
