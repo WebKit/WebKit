@@ -1,3 +1,18 @@
+2012-08-07  Charles Wei  <charles.wei@torchmobile.com.cn>
+
+        [BlackBerry] always set PolicyAction to PolicyIgnore if the chrome returns false for acceptNavigationRequest
+        https://bugs.webkit.org/show_bug.cgi?id=93251
+
+        Reviewed by George Staikos.
+
+        In acceptNavigationRequest(), webkit will ask if the chrome will accept the navigation request.
+        We will take this chance to see if the request is an internal-webkit protocol, otherwise,
+        we will try to launch an external application to handle the request, and ask webkit to ignore
+        the request by returning false in acceptNavigationRequest().
+
+        * WebCoreSupport/FrameLoaderClientBlackBerry.cpp:
+        (WebCore::FrameLoaderClientBlackBerry::dispatchDecidePolicyForNavigationAction):
+
 2012-08-07  Konrad Piascik  <kpiascik@rim.com>
 
         [BlackBerry] Change how devicePixelRatio is set.

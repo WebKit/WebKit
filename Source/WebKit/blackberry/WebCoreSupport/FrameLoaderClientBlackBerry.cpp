@@ -214,24 +214,23 @@ void FrameLoaderClientBlackBerry::dispatchDecidePolicyForNavigationAction(FrameP
         bool isFragmentScroll = url.hasFragmentIdentifier() && url != currentUrl && equalIgnoringFragmentIdentifier(currentUrl, url);
         decision = decidePolicyForExternalLoad(request, isFragmentScroll);
 
-        // Let the client have a chance to say whether this navigation should
-        // be ignored or not.
+        // Let the client have a chance to say whether this navigation should be ignored or not.
         NetworkRequest platformRequest;
         request.initializePlatformRequest(platformRequest, cookiesEnabled());
         if (platformRequest.getTargetType() == NetworkRequest::TargetIsUnknown)
             platformRequest.setTargetType(isMainFrame() ? NetworkRequest::TargetIsMainFrame : NetworkRequest::TargetIsSubframe);
 
-        if (isMainFrame() && !m_webPagePrivate->m_client->acceptNavigationRequest(
-            platformRequest, BlackBerry::Platform::NavigationType(action.type()))) {
-            if (action.type() == NavigationTypeFormSubmitted
-                || action.type() == NavigationTypeFormResubmitted)
-                m_frame->loader()->resetMultipleFormSubmissionProtection();
-
-            if (action.type() == NavigationTypeLinkClicked && url.hasFragmentIdentifier()) {
-                ResourceRequest emptyRequest;
-                m_frame->loader()->activeDocumentLoader()->setLastCheckedRequest(emptyRequest);
-            }
+        if (!m_webPagePrivate->m_client->acceptNavigationRequest(platformRequest, BlackBerry::Platform::NavigationType(action.type()))) {
             decision = PolicyIgnore;
+            if (isMainFrame()) {
+                if (action.type() == NavigationTypeFormSubmitted || action.type() == NavigationTypeFormResubmitted)
+                    m_frame->loader()->resetMultipleFormSubmissionProtection();
+
+                if (action.type() == NavigationTypeLinkClicked && url.hasFragmentIdentifier()) {
+                    ResourceRequest emptyRequest;
+                    m_frame->loader()->activeDocumentLoader()->setLastCheckedRequest(emptyRequest);
+                }
+            }
         }
     }
 
