@@ -145,6 +145,8 @@ private:
     void setWheelEventHandlerCount(unsigned);
     void setShouldUpdateScrollLayerPositionOnMainThread(bool);
 
+    void updateMainFrameScrollLayerPosition();
+
     Page* m_page;
 
     bool m_forceMainThreadScrollLayerPositionUpdates;
