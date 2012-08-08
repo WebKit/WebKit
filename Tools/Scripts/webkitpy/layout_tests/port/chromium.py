@@ -190,18 +190,16 @@ class ChromiumPort(Port):
                                        override_step, logging)
 
     def diff_image(self, expected_contents, actual_contents, tolerance=None):
-        # FIXME: need unit tests for this.
-
         # tolerance is not used in chromium. Make sure caller doesn't pass tolerance other than zero or None.
         assert (tolerance is None) or tolerance == 0
 
         # If only one of them exists, return that one.
         if not actual_contents and not expected_contents:
-            return (None, 0)
+            return (None, 0, None)
         if not actual_contents:
-            return (expected_contents, 0)
+            return (expected_contents, 0, None)
         if not expected_contents:
-            return (actual_contents, 0)
+            return (actual_contents, 0, None)
 
         tempdir = self._filesystem.mkdtemp()
 
@@ -221,28 +219,22 @@ class ChromiumPort(Port):
         comand = [executable, '--diff', native_actual_filename, native_expected_filename, native_diff_filename]
 
         result = None
+        err_str = None
         try:
             exit_code = self._executive.run_command(comand, return_exit_code=True)
             if exit_code == 0:
                 # The images are the same.
                 result = None
-            elif exit_code != 1:
-                _log.error("image diff returned an exit code of %s" % exit_code)
-                # Returning None here causes the script to think that we
-                # successfully created the diff even though we didn't.
-                # FIXME: Consider raising an exception here, so that the error
-                # is not accidentally overlooked while the test passes.
-                result = None
-        except OSError, e:
-            if e.errno == errno.ENOENT or e.errno == errno.EACCES:
-                _compare_available = False
-            else:
-                raise
-        finally:
-            if exit_code == 1:
+            elif exit_code == 1:
                 result = self._filesystem.read_binary_file(native_diff_filename)
+            else:
+                err_str = "image diff returned an exit code of %s" % exit_code
+        except OSError, e:
+            err_str = 'error running image diff: %s' % str(e)
+        finally:
             self._filesystem.rmtree(str(tempdir))
-        return (result, 0)  # FIXME: how to get % diff?
+
+        return (result, 0, err_str or None)  # FIXME: how to get % diff?
 
     def path_from_chromium_base(self, *comps):
         """Returns the full path to path made by joining the top of the

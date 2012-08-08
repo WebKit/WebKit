@@ -319,7 +319,7 @@ class Port(object):
         return expected_audio != actual_audio
 
     def diff_image(self, expected_contents, actual_contents, tolerance=None):
-        """Compare two images and return a tuple of an image diff, and a percentage difference (0-100).
+        """Compare two images and return a tuple of an image diff, a percentage difference (0-100), and an error string.
 
         |tolerance| should be a percentage value (0.0 - 100.0).
         If it is omitted, the port default tolerance value is used.
@@ -327,9 +327,9 @@ class Port(object):
         If an error occurs (like ImageDiff isn't found, or crashes, we log an error and return True (for a diff).
         """
         if not actual_contents and not expected_contents:
-            return (None, 0)
+            return (None, 0, None)
         if not actual_contents or not expected_contents:
-            return (True, 0)
+            return (True, 0, None)
         if not self._image_differ:
             self._image_differ = image_diff.ImageDiffer(self)
         self.set_option_default('tolerance', 0.1)

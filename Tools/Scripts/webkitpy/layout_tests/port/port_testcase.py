@@ -259,18 +259,31 @@ class PortTestCase(unittest.TestCase):
 
         port._server_process_constructor = make_proc
         port.setup_test_run()
-        self.assertEquals(port.diff_image('foo', 'bar'), ('', 100.0))
+        self.assertEquals(port.diff_image('foo', 'bar'), ('', 100.0, None))
         self.assertEquals(self.proc.cmd[1:3], ["--tolerance", "0.1"])
 
-        self.assertEquals(port.diff_image('foo', 'bar', None), ('', 100.0))
+        self.assertEquals(port.diff_image('foo', 'bar', None), ('', 100.0, None))
         self.assertEquals(self.proc.cmd[1:3], ["--tolerance", "0.1"])
 
-        self.assertEquals(port.diff_image('foo', 'bar', 0), ('', 100.0))
+        self.assertEquals(port.diff_image('foo', 'bar', 0), ('', 100.0, None))
         self.assertEquals(self.proc.cmd[1:3], ["--tolerance", "0"])
 
         port.clean_up_test_run()
         self.assertTrue(self.proc.stopped)
         self.assertEquals(port._image_differ, None)
+
+    def test_diff_image_crashed(self):
+        port = self.make_port()
+        self.proc = None
+
+        def make_proc(port, nm, cmd, env):
+            self.proc = MockServerProcess(port, nm, cmd, env, crashed=True)
+            return self.proc
+
+        port._server_process_constructor = make_proc
+        port.setup_test_run()
+        self.assertEquals(port.diff_image('foo', 'bar'), ('', 0, 'ImageDiff crashed\n'))
+        port.clean_up_test_run()
 
     def test_check_wdiff(self):
         port = self.make_port()

@@ -158,6 +158,11 @@ class ChromiumPortTestCase(port_testcase.PortTestCase):
             exception_raised = True
         self.assertFalse(exception_raised)
 
+    def test_diff_image_crashed(self):
+        port = ChromiumPortTestCase.TestLinuxPort()
+        port._executive = MockExecutive2(exit_code=2)
+        self.assertEquals(port.diff_image("EXPECTED", "ACTUAL"), (None, 0, 'image diff returned an exit code of 2'))
+
     def test_expectations_files(self):
         port = self.make_port()
         port.port_name = 'chromium'

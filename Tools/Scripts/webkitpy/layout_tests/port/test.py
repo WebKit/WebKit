@@ -406,8 +406,8 @@ class TestPort(Port):
     def diff_image(self, expected_contents, actual_contents, tolerance=None):
         diffed = actual_contents != expected_contents
         if diffed:
-            return ["< %s\n---\n> %s\n" % (expected_contents, actual_contents), 1]
-        return (None, 0)
+            return ("< %s\n---\n> %s\n" % (expected_contents, actual_contents), 1, None)
+        return (None, 0, None)
 
     def layout_tests_dir(self):
         return LAYOUT_TEST_DIR
