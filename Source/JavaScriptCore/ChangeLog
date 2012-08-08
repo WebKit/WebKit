@@ -1,3 +1,17 @@
+2012-08-08  Patrick Gansterer  <paroga@webkit.org>
+
+        [WIN] Use GetTimeZoneInformation() for getting the timezone name
+        https://bugs.webkit.org/show_bug.cgi?id=91936
+
+        Reviewed by Ryosuke Niwa.
+
+        The MS CRT implementation of strftime calls the same functions in the background.
+        Using them directly avoids the overhead of parsing the format string and removes
+        the dependency on strftime() for WinCE where this function does not exist.
+
+        * runtime/DateConversion.cpp:
+        (JSC::formatTime):
+
 2012-08-07  Gabor Ballabas  <gaborb@inf.u-szeged.hu>
 
         Refactor magic numbers in the ARM port of DFG-JIT

@@ -30,6 +30,10 @@
 #include <wtf/DateMath.h>
 #include <wtf/text/StringBuilder.h>
 
+#if OS(WINDOWS)
+#include <windows.h>
+#endif
+
 using namespace WTF;
 
 namespace JSC {
@@ -100,9 +104,15 @@ UString formatDateTime(const GregorianDateTime& t, DateTimeFormat format, bool a
             appendNumber<2>(builder, offset / 60);
             appendNumber<2>(builder, offset % 60);
 
+#if OS(WINDOWS)
+            TIME_ZONE_INFORMATION timeZoneInformation;
+            GetTimeZoneInformation(&timeZoneInformation);
+            const WCHAR* timeZoneName = t.isDST() ? timeZoneInformation.DaylightName : timeZoneInformation.StandardName;
+#else
             struct tm gtm = t;
             char timeZoneName[70];
             strftime(timeZoneName, sizeof(timeZoneName), "%Z", &gtm);
+#endif
             if (timeZoneName[0]) {
                 builder.append(" (");
                 builder.append(timeZoneName);
