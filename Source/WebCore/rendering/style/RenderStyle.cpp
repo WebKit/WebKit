@@ -580,9 +580,6 @@ StyleDifference RenderStyle::diff(const RenderStyle* other, unsigned& changedCon
         return StyleDifferenceLayout;
     }
 
-    if (!QuotesData::equals(rareInheritedData->quotes.get(), other->rareInheritedData->quotes.get()))
-        return StyleDifferenceLayout;
-
 #if ENABLE(SVG)
     // SVGRenderStyle::diff() might have returned StyleDifferenceRepaint, eg. if fill changes.
     // If eg. the font-size changed at the same time, we're not allowed to return StyleDifferenceRepaint,

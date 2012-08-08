@@ -1,3 +1,43 @@
+2012-08-07  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r124969.
+        http://trac.webkit.org/changeset/124969
+        https://bugs.webkit.org/show_bug.cgi?id=93436
+
+        Causes assertion failure in RenderQueue (Requested by toyoshim
+        on #webkit).
+
+        * rendering/RenderObjectChildList.cpp:
+        (WebCore::RenderObjectChildList::removeChildNode):
+        (WebCore::RenderObjectChildList::appendChildNode):
+        (WebCore::RenderObjectChildList::insertChildNode):
+        * rendering/RenderQuote.cpp:
+        (WebCore::adjustDepth):
+        (WebCore::RenderQuote::RenderQuote):
+        (WebCore::RenderQuote::~RenderQuote):
+        (WebCore::RenderQuote::willBeDestroyed):
+        (WebCore::RenderQuote::renderName):
+        (WebCore):
+        (WebCore::RenderQuote::placeQuote):
+        (WebCore::RenderQuote::originalText):
+        (WebCore::RenderQuote::computePreferredLogicalWidths):
+        (WebCore::RenderQuote::rendererSubtreeAttached):
+        (WebCore::RenderQuote::rendererRemovedFromTree):
+        (WebCore::RenderQuote::styleDidChange):
+        * rendering/RenderQuote.h:
+        (RenderQuote):
+        (WebCore::RenderQuote::isQuote):
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::RenderView):
+        * rendering/RenderView.h:
+        (WebCore):
+        (RenderView):
+        (WebCore::RenderView::addRenderQuote):
+        (WebCore::RenderView::removeRenderQuote):
+        (WebCore::RenderView::hasRenderQuotes):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::diff):
+
 2012-08-07  Kentaro Hara  <haraken@chromium.org>
 
         Optimize ChildNode{Insertion,Removal}Notifier::notify() by lazily taking a snapshot of child nodes
