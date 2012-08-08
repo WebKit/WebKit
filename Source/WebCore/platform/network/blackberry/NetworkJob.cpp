@@ -186,9 +186,7 @@ void NetworkJob::handleNotifyStatusReceived(int status, const String& message)
 
     m_response.setHTTPStatusText(message);
 
-    if (!isError(m_extendedStatusCode))
-        storeCredentials();
-    else if (isUnauthorized(m_extendedStatusCode)) {
+    if (isUnauthorized(m_extendedStatusCode)) {
         purgeCredentials();
         BlackBerry::Platform::log(BlackBerry::Platform::LogLevelCritical, "Authentication failed, purge the stored credentials for this site.");
     }
@@ -277,6 +275,7 @@ void NetworkJob::notifyAuthReceived(BlackBerry::Platform::NetworkRequest::AuthTy
                                                                                          challenge.error());
             }
         }
+        storeCredentials();
         return;
     }
 

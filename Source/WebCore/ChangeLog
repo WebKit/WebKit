@@ -1,3 +1,27 @@
+2012-08-07  Joe Mason  <jmason@rim.com>
+
+        Fix regression in credential storage when using Negotiate auth
+        https://bugs.webkit.org/show_bug.cgi?id=93386
+
+        Reviewed by George Staikos.
+
+        r124205 regressed credential storage and lookup.  It added code to update the scheme used in
+        credential storage if the scheme chosen by the network stack is different from that requested by
+        webkit (currently this is only used when webkit requests Negotiate auth, but the Negotiate
+        infrastructure isn't set up correctly, so the network stack falls back to another auth type, usually
+        NTLM).  But the credentials are saved when a "success" status is received, and the scheme in the
+        credentials is not updated until notifyAuthReceived is called to report the actual auth scheme used.
+        The result is that the credentials are stored with the wrong auth scheme and can never be retreived.
+
+        Fixed by delaying the credential save until notifyAuthReceived.
+
+        RIM PR 166514
+        Internally reviewed by George Staikos
+
+        * platform/network/blackberry/NetworkJob.cpp:
+        (WebCore::NetworkJob::handleNotifyStatusReceived): Stop storing credentials here.
+        (WebCore::NetworkJob::notifyAuthReceived): Store credentials here instead.
+
 2012-08-07  Kent Tamura  <tkent@chromium.org>
 
         [Mac] Do not reformat numbers in <input type=number>
