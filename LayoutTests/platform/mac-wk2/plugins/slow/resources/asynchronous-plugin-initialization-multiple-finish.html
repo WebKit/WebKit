@@ -1,0 +1,33 @@
+<head>
+<script src="../../../../../fast/js/resources/js-test-pre.js"></script>
+</head>
+
+<body onload="loaded();">
+This finishes the test and see's how much time passed.<br>
+Only one of the 20 plug-ins should have had it's NPP_New and NPP_Destroy run to completion, taking a bit over 550ms.<br>
+The other 19 should never have been instantiated at all.<br>
+<div id="console"></div>
+</body>
+<script>
+
+function loaded() {
+    if (!window.testRunner) {
+        alert("Can only be run using WebKitTestRunner");
+        return;
+    }
+    
+    var timeLapsed = (new Date).valueOf() - sessionStorage.beforeDate;
+
+    if (timeLapsed > 1100)
+        testFailed("Appending plug-in elements then navigating away took over 1100ms (" + timeLapsed + "ms) so more than one plug-in was probably being initialized before any were destroyed.");
+    if (timeLapsed < 550)
+        testFailed("Appending plug-in elements then navigating away took less than 550ms (" + timeLapsed + "ms).  We expected a single plug-in to be created and then destroyed and that didn't happen.");
+    else
+        testPassed("Appending plug-in elements then navigating away took between 550ms and 1100ms suggesting a single plug-in was created and then destroyed.");
+
+    testRunner.notifyDone();
+}
+
+</script>
+
+

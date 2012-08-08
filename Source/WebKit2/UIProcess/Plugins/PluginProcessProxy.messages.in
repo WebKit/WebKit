@@ -23,7 +23,7 @@
 #if ENABLE(PLUGIN_PROCESS)
 
 messages -> PluginProcessProxy {
-    DidCreateWebProcessConnection(CoreIPC::Attachment connectionIdentifier)
+    DidCreateWebProcessConnection(CoreIPC::Attachment connectionIdentifier, bool supportsAsynchronousPluginInitialization)
 
     DidGetSitesWithData(Vector<WTF::String> sites, uint64_t callbackID)
     DidClearSiteData(uint64_t callbackID)

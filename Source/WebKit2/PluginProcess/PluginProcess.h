@@ -99,6 +99,8 @@ private:
     // The plug-in module.
     RefPtr<NetscapePluginModule> m_pluginModule;
     
+    bool m_supportsAsynchronousPluginInitialization;
+    
 #if USE(ACCELERATED_COMPOSITING) && PLATFORM(MAC)
     // The Mach port used for accelerated compositing.
     mach_port_t m_compositingRenderServerPort;

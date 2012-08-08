@@ -74,6 +74,12 @@ messages -> PluginProxy {
     # Update geometry of windowed plugin widget
     WindowedPluginGeometryDidChange(WebCore::IntRect frameRect, WebCore::IntRect clipRect, uint64_t windowID)
 #endif
+
+    # Tells the WebProcess that the plug-in was successfully initialized asynchronously
+    DidCreatePlugin(bool wantsWheelEvents, uint32_t remoteLayerClientID) -> ()
+    
+    # Tells the WebProcess that the plug-in failed to initialize.
+    DidFailToCreatePlugin() -> ()
 }
 
 #endif

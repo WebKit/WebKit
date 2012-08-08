@@ -57,8 +57,9 @@ PluginProcessConnection* PluginProcessConnectionManager::getPluginProcessConnect
     }
 
     CoreIPC::Attachment encodedConnectionIdentifier;
+    bool supportsAsynchronousInitialization;
     if (!WebProcess::shared().connection()->sendSync(Messages::WebProcessProxy::GetPluginProcessConnection(pluginPath),
-                                                     Messages::WebProcessProxy::GetPluginProcessConnection::Reply(encodedConnectionIdentifier), 0))
+                                                     Messages::WebProcessProxy::GetPluginProcessConnection::Reply(encodedConnectionIdentifier, supportsAsynchronousInitialization), 0))
         return 0;
 
 #if PLATFORM(MAC)
@@ -71,7 +72,7 @@ PluginProcessConnection* PluginProcessConnectionManager::getPluginProcessConnect
         return 0;
 #endif
 
-    RefPtr<PluginProcessConnection> pluginProcessConnection = PluginProcessConnection::create(this, pluginPath, connectionIdentifier);
+    RefPtr<PluginProcessConnection> pluginProcessConnection = PluginProcessConnection::create(this, pluginPath, connectionIdentifier, supportsAsynchronousInitialization);
     m_pluginProcessConnections.append(pluginProcessConnection);
 
     {
