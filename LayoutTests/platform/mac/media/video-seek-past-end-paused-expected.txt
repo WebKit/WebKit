@@ -15,3 +15,4 @@ EXPECTED (mediaElement.currentTime == 'mediaElement.duration'), OBSERVED '6.0266
 EXPECTED (video.ended == 'true'), OBSERVED 'false' FAIL
 
 END OF TEST
+
