@@ -56,8 +56,8 @@ v8::Handle<v8::Value> V8TestNode::constructorCallback(const v8::Arguments& args)
     v8::Handle<v8::Object> wrapper = args.Holder();
 
     V8DOMWrapper::setDOMWrapper(wrapper, &info, impl.get());
-    V8DOMWrapper::setJSWrapperForDOMNode(impl.release(), v8::Persistent<v8::Object>::New(wrapper), args.GetIsolate());
-    return args.Holder();
+    V8DOMWrapper::setJSWrapperForDOMNode(impl.release(), wrapper, args.GetIsolate());
+    return wrapper;
 }
 
 static v8::Persistent<v8::FunctionTemplate> ConfigureV8TestNodeTemplate(v8::Persistent<v8::FunctionTemplate> desc)
@@ -130,13 +130,10 @@ v8::Handle<v8::Object> V8TestNode::wrapSlow(PassRefPtr<TestNode> impl, v8::Isola
         context->Exit();
     if (UNLIKELY(wrapper.IsEmpty()))
         return wrapper;
-
-    v8::Persistent<v8::Object> wrapperHandle = v8::Persistent<v8::Object>::New(wrapper);
-
+    v8::Persistent<v8::Object> wrapperHandle = V8DOMWrapper::setJSWrapperForDOMNode(impl, wrapper, isolate);
     if (!hasDependentLifetime)
         wrapperHandle.MarkIndependent();
     wrapperHandle.SetWrapperClassId(v8DOMSubtreeClassId);
-    V8DOMWrapper::setJSWrapperForDOMNode(impl, wrapperHandle, isolate);
     return wrapper;
 }
 

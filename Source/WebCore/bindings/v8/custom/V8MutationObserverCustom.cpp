@@ -68,9 +68,10 @@ v8::Handle<v8::Value> V8MutationObserver::constructorCallback(const v8::Argument
     RefPtr<MutationCallback> callback = V8MutationCallback::create(arg, context);
     RefPtr<MutationObserver> observer = MutationObserver::create(callback.release());
 
-    V8DOMWrapper::setDOMWrapper(args.Holder(), &info, observer.get());
-    V8DOMWrapper::setJSWrapperForDOMObject(observer.release(), v8::Persistent<v8::Object>::New(args.Holder()));
-    return args.Holder();
+    v8::Handle<v8::Object> wrapper = args.Holder();
+    V8DOMWrapper::setDOMWrapper(wrapper, &info, observer.get());
+    V8DOMWrapper::setJSWrapperForDOMObject(observer.release(), wrapper);
+    return wrapper;
 }
 
 } // namespace WebCore

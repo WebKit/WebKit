@@ -72,9 +72,10 @@ v8::Handle<v8::Value> V8ArrayBuffer::constructorCallback(const v8::Arguments& ar
     if (!buffer.get())
         return V8Proxy::throwError(V8Proxy::RangeError, "ArrayBuffer size is not a small enough positive integer.", args.GetIsolate());
     // Transform the holder into a wrapper object for the array.
-    V8DOMWrapper::setDOMWrapper(args.Holder(), &info, buffer.get());
-    V8DOMWrapper::setJSWrapperForDOMObject(buffer.release(), v8::Persistent<v8::Object>::New(args.Holder()));
-    return args.Holder();
+    v8::Handle<v8::Object> wrapper = args.Holder();
+    V8DOMWrapper::setDOMWrapper(wrapper, &info, buffer.get());
+    V8DOMWrapper::setJSWrapperForDOMObject(buffer.release(), wrapper);
+    return wrapper;
 }
 
 } // namespace WebCore

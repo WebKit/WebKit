@@ -85,9 +85,10 @@ v8::Handle<v8::Value> V8TestEventConstructor::constructorCallback(const v8::Argu
 
     RefPtr<TestEventConstructor> event = TestEventConstructor::create(type, eventInit);
 
-    V8DOMWrapper::setDOMWrapper(args.Holder(), &info, event.get());
-    V8DOMWrapper::setJSWrapperForDOMObject(event.release(), v8::Persistent<v8::Object>::New(args.Holder()), args.GetIsolate());
-    return args.Holder();
+    v8::Handle<v8::Object> wrapper = args.Holder();
+    V8DOMWrapper::setDOMWrapper(wrapper, &info, event.get());
+    V8DOMWrapper::setJSWrapperForDOMObject(event.release(), wrapper, args.GetIsolate());
+    return wrapper;
 }
 
 bool fillTestEventConstructorInit(TestEventConstructorInit& eventInit, const Dictionary& options)
@@ -153,12 +154,9 @@ v8::Handle<v8::Object> V8TestEventConstructor::wrapSlow(PassRefPtr<TestEventCons
     wrapper = V8DOMWrapper::instantiateV8Object(proxy, &info, impl.get());
     if (UNLIKELY(wrapper.IsEmpty()))
         return wrapper;
-
-    v8::Persistent<v8::Object> wrapperHandle = v8::Persistent<v8::Object>::New(wrapper);
-
+    v8::Persistent<v8::Object> wrapperHandle = V8DOMWrapper::setJSWrapperForDOMObject(impl, wrapper, isolate);
     if (!hasDependentLifetime)
         wrapperHandle.MarkIndependent();
-    V8DOMWrapper::setJSWrapperForDOMObject(impl, wrapperHandle, isolate);
     return wrapper;
 }
 

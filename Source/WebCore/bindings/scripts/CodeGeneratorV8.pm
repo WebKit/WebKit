@@ -1856,8 +1856,8 @@ END
     push(@implContent, <<END);
 
     V8DOMWrapper::setDOMWrapper(wrapper, &info, impl.get());
-    V8DOMWrapper::setJSWrapperFor${DOMObject}(impl.release(), v8::Persistent<v8::Object>::New(wrapper), args.GetIsolate());
-    return args.Holder();
+    V8DOMWrapper::setJSWrapperFor${DOMObject}(impl.release(), wrapper, args.GetIsolate());
+    return wrapper;
 END
 
     if ($raisesExceptions) {
@@ -1899,9 +1899,10 @@ v8::Handle<v8::Value> V8${implClassName}::constructorCallback(const v8::Argument
 
     RefPtr<${implClassName}> event = ${implClassName}::create(type, eventInit);
 
-    V8DOMWrapper::setDOMWrapper(args.Holder(), &info, event.get());
-    V8DOMWrapper::setJSWrapperForDOMObject(event.release(), v8::Persistent<v8::Object>::New(args.Holder()), args.GetIsolate());
-    return args.Holder();
+    v8::Handle<v8::Object> wrapper = args.Holder();
+    V8DOMWrapper::setDOMWrapper(wrapper, &info, event.get());
+    V8DOMWrapper::setJSWrapperForDOMObject(event.release(), wrapper, args.GetIsolate());
+    return wrapper;
 }
 
 bool fill${implClassName}Init(${implClassName}Init& eventInit, const Dictionary& options)
@@ -2031,8 +2032,8 @@ END
     push(@implContent, <<END);
 
     V8DOMWrapper::setDOMWrapper(wrapper, &V8${implClassName}Constructor::info, impl.get());
-    V8DOMWrapper::setJSWrapperFor${DOMObject}(impl.release(), v8::Persistent<v8::Object>::New(wrapper), args.GetIsolate());
-    return args.Holder();
+    V8DOMWrapper::setJSWrapperFor${DOMObject}(impl.release(), wrapper, args.GetIsolate());
+    return wrapper;
 END
 
     if ($raisesExceptions) {
@@ -3390,9 +3391,7 @@ END
     }
 
     push(@implContent, <<END);
-
-    v8::Persistent<v8::Object> wrapperHandle = v8::Persistent<v8::Object>::New(wrapper);
-
+    v8::Persistent<v8::Object> wrapperHandle = V8DOMWrapper::setJSWrapperFor${domMapName}(impl, wrapper, isolate);
     if (!hasDependentLifetime)
         wrapperHandle.MarkIndependent();
 END
@@ -3402,7 +3401,6 @@ END
 END
     }
     push(@implContent, <<END);
-    V8DOMWrapper::setJSWrapperFor${domMapName}(impl, wrapperHandle, isolate);
     return wrapper;
 }
 END

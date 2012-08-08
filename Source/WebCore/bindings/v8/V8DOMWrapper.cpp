@@ -71,18 +71,22 @@
 
 namespace WebCore {
 
-void V8DOMWrapper::setJSWrapperForDOMNode(PassRefPtr<Node> node, v8::Persistent<v8::Object> wrapper, v8::Isolate* isolate)
+v8::Persistent<v8::Object> V8DOMWrapper::setJSWrapperForDOMNode(PassRefPtr<Node> node, v8::Handle<v8::Object> wrapper, v8::Isolate* isolate)
 {
-    ASSERT(maybeDOMWrapper(wrapper));
+    v8::Persistent<v8::Object> wrapperHandle = v8::Persistent<v8::Object>::New(wrapper);
+    ASSERT(maybeDOMWrapper(wrapperHandle));
     ASSERT(!node->isActiveNode());
-    getDOMNodeMap(isolate).set(node.leakRef(), wrapper);
+    getDOMNodeMap(isolate).set(node.leakRef(), wrapperHandle);
+    return wrapperHandle;
 }
 
-void V8DOMWrapper::setJSWrapperForActiveDOMNode(PassRefPtr<Node> node, v8::Persistent<v8::Object> wrapper, v8::Isolate* isolate)
+v8::Persistent<v8::Object> V8DOMWrapper::setJSWrapperForActiveDOMNode(PassRefPtr<Node> node, v8::Handle<v8::Object> wrapper, v8::Isolate* isolate)
 {
-    ASSERT(maybeDOMWrapper(wrapper));
+    v8::Persistent<v8::Object> wrapperHandle = v8::Persistent<v8::Object>::New(wrapper);
+    ASSERT(maybeDOMWrapper(wrapperHandle));
     ASSERT(node->isActiveNode());
-    getActiveDOMNodeMap(isolate).set(node.leakRef(), wrapper);
+    getActiveDOMNodeMap(isolate).set(node.leakRef(), wrapperHandle);
+    return wrapperHandle;
 }
 
 v8::Local<v8::Function> V8DOMWrapper::constructorForType(WrapperTypeInfo* type, DOMWindow* window)

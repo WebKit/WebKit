@@ -1,3 +1,93 @@
+2012-08-07  Kentaro Hara  <haraken@chromium.org>
+
+        [V8] Remove a bunch of Persistent::New()s on setJSWrapperForXXXObject()
+        https://bugs.webkit.org/show_bug.cgi?id=93342
+
+        Reviewed by Adam Barth.
+
+        There are a lot of custom bindings like this:
+
+            V8DOMWrapper::setJSWrapperForDOMObject(impl.release(), v8::Persistent<v8::Object>::New(args.Holder()));
+
+        Manually written Persistent::New() is error-prone. We can remove the
+        Persistent::New() by allocating the Persistent handle inside
+        setJSWrapperForDOMObject().
+
+        A new setJSWrapperForDOMObject() receives a wrapper object, allocates
+        the Persistent handle of the wrapper object, and return the Persistent handle.
+
+        No tests. No change in behavior.
+
+        * bindings/scripts/CodeGeneratorV8.pm:
+        (GenerateConstructorCallback):
+        (GenerateEventConstructorCallback):
+        (GenerateNamedConstructorCallback):
+        (GenerateToV8Converters):
+        * bindings/scripts/test/V8/V8Float64Array.cpp:
+        (WebCore::V8Float64Array::wrapSlow):
+        * bindings/scripts/test/V8/V8TestActiveDOMObject.cpp:
+        (WebCore::V8TestActiveDOMObject::wrapSlow):
+        * bindings/scripts/test/V8/V8TestCustomNamedGetter.cpp:
+        (WebCore::V8TestCustomNamedGetter::wrapSlow):
+        * bindings/scripts/test/V8/V8TestEventConstructor.cpp:
+        (WebCore::V8TestEventConstructor::constructorCallback):
+        (WebCore::V8TestEventConstructor::wrapSlow):
+        * bindings/scripts/test/V8/V8TestEventTarget.cpp:
+        (WebCore::V8TestEventTarget::wrapSlow):
+        * bindings/scripts/test/V8/V8TestException.cpp:
+        (WebCore::V8TestException::wrapSlow):
+        * bindings/scripts/test/V8/V8TestInterface.cpp:
+        (WebCore::V8TestInterface::constructorCallback):
+        (WebCore::V8TestInterface::wrapSlow):
+        * bindings/scripts/test/V8/V8TestMediaQueryListListener.cpp:
+        (WebCore::V8TestMediaQueryListListener::wrapSlow):
+        * bindings/scripts/test/V8/V8TestNamedConstructor.cpp:
+        (WebCore::V8TestNamedConstructorConstructorCallback):
+        (WebCore::V8TestNamedConstructor::wrapSlow):
+        * bindings/scripts/test/V8/V8TestNode.cpp:
+        (WebCore::V8TestNode::constructorCallback):
+        (WebCore::V8TestNode::wrapSlow):
+        * bindings/scripts/test/V8/V8TestObj.cpp:
+        (WebCore::V8TestObj::constructorCallback):
+        (WebCore::V8TestObj::wrapSlow):
+        * bindings/scripts/test/V8/V8TestSerializedScriptValueInterface.cpp:
+        (WebCore::V8TestSerializedScriptValueInterface::constructorCallback):
+        (WebCore::V8TestSerializedScriptValueInterface::wrapSlow):
+        * bindings/v8/V8DOMWindowShell.cpp:
+        (WebCore::V8DOMWindowShell::installDOMWindow):
+        * bindings/v8/V8DOMWrapper.cpp:
+        (WebCore::V8DOMWrapper::setJSWrapperForDOMNode):
+        (WebCore::V8DOMWrapper::setJSWrapperForActiveDOMNode):
+        * bindings/v8/V8DOMWrapper.h:
+        (V8DOMWrapper):
+        (WebCore::V8DOMWrapper::setJSWrapperForDOMObject):
+        (WebCore::V8DOMWrapper::setJSWrapperForActiveDOMObject):
+        * bindings/v8/WorkerContextExecutionProxy.cpp:
+        (WebCore::WorkerContextExecutionProxy::initContextIfNeeded):
+        * bindings/v8/custom/V8ArrayBufferCustom.cpp:
+        (WebCore::V8ArrayBuffer::constructorCallback):
+        * bindings/v8/custom/V8ArrayBufferViewCustom.h:
+        (WebCore::wrapArrayBufferView):
+        (WebCore::constructWebGLArray):
+        * bindings/v8/custom/V8DOMFormDataCustom.cpp:
+        (WebCore::V8DOMFormData::constructorCallback):
+        * bindings/v8/custom/V8DataViewCustom.cpp:
+        (WebCore::V8DataView::constructorCallback):
+        * bindings/v8/custom/V8HTMLImageElementConstructor.cpp:
+        (WebCore::v8HTMLImageElementConstructorCallback):
+        * bindings/v8/custom/V8IntentConstructor.cpp:
+        (WebCore::V8Intent::constructorCallback):
+        * bindings/v8/custom/V8MessageChannelConstructor.cpp:
+        (WebCore::V8MessageChannel::constructorCallback):
+        * bindings/v8/custom/V8MutationObserverCustom.cpp:
+        (WebCore::V8MutationObserver::constructorCallback):
+        * bindings/v8/custom/V8WebKitPointConstructor.cpp:
+        (WebCore::V8WebKitPoint::constructorCallback):
+        * bindings/v8/custom/V8WebSocketCustom.cpp:
+        (WebCore::V8WebSocket::constructorCallback):
+        * bindings/v8/custom/V8XMLHttpRequestConstructor.cpp:
+        (WebCore::V8XMLHttpRequest::constructorCallback):
+
 2012-08-07  Erik Arvidsson  <arv@chromium.org>
 
         Evolution, empathy no longer build with webkint 1.9.6:  webkit_dom_html_element_set_class_name is gone

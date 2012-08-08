@@ -63,9 +63,10 @@ v8::Handle<v8::Value> V8XMLHttpRequest::constructorCallback(const v8::Arguments&
     if (V8IsolatedContext* isolatedContext = V8IsolatedContext::getEntered())
         securityOrigin = isolatedContext->securityOrigin();
     RefPtr<XMLHttpRequest> xmlHttpRequest = XMLHttpRequest::create(context, securityOrigin);
-    V8DOMWrapper::setDOMWrapper(args.Holder(), &info, xmlHttpRequest.get());
-    V8DOMWrapper::setJSWrapperForActiveDOMObject(xmlHttpRequest.release(), v8::Persistent<v8::Object>::New(args.Holder()));
-    return args.Holder();
+    v8::Handle<v8::Object> wrapper = args.Holder();
+    V8DOMWrapper::setDOMWrapper(wrapper, &info, xmlHttpRequest.get());
+    V8DOMWrapper::setJSWrapperForActiveDOMObject(xmlHttpRequest.release(), wrapper);
+    return wrapper;
 }
 
 } // namespace WebCore

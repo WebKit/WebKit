@@ -85,9 +85,10 @@ static v8::Handle<v8::Value> v8HTMLImageElementConstructorCallback(const v8::Arg
     }
 
     RefPtr<HTMLImageElement> image = HTMLImageElement::createForJSConstructor(document, optionalWidth, optionalHeight);
-    V8DOMWrapper::setDOMWrapper(args.Holder(), &V8HTMLImageElementConstructor::info, image.get());
-    V8DOMWrapper::setJSWrapperForDOMNode(image.release(), v8::Persistent<v8::Object>::New(args.Holder()));
-    return args.Holder();
+    v8::Handle<v8::Object> wrapper = args.Holder();
+    V8DOMWrapper::setDOMWrapper(wrapper, &V8HTMLImageElementConstructor::info, image.get());
+    V8DOMWrapper::setJSWrapperForDOMNode(image.release(), wrapper);
+    return wrapper;
 }
 
 v8::Persistent<v8::FunctionTemplate> V8HTMLImageElementConstructor::GetTemplate()

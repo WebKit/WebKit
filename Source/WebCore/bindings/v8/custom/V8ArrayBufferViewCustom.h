@@ -51,10 +51,10 @@ v8::Handle<v8::Value> wrapArrayBufferView(const v8::Arguments& args, WrapperType
     V8DOMWrapper::setDOMWrapper(args.Holder(), type, array.get());
     if (hasIndexer)
         args.Holder()->SetIndexedPropertiesToExternalArrayData(array.get()->baseAddress(), arrayType, array.get()->length());
-    v8::Persistent<v8::Object> wrapper = v8::Persistent<v8::Object>::New(args.Holder());
-    wrapper.MarkIndependent();
-    V8DOMWrapper::setJSWrapperForDOMObject(array.release(), wrapper);
-    return args.Holder();
+    v8::Handle<v8::Object> wrapper = args.Holder();
+    v8::Persistent<v8::Object> wrapperHandle = V8DOMWrapper::setJSWrapperForDOMObject(array.release(), wrapper);
+    wrapperHandle.MarkIndependent();
+    return wrapper;
 }
 
 // Template function used by the ArrayBufferView*Constructor callbacks.
@@ -194,10 +194,10 @@ v8::Handle<v8::Value> constructWebGLArray(const v8::Arguments& args, WrapperType
         }
     }
 
-    v8::Persistent<v8::Object> wrapper = v8::Persistent<v8::Object>::New(args.Holder());
-    wrapper.MarkIndependent();
-    V8DOMWrapper::setJSWrapperForDOMObject(array.release(), wrapper);
-    return args.Holder();
+    v8::Handle<v8::Object> wrapper = args.Holder();
+    v8::Persistent<v8::Object> wrapperHandle = V8DOMWrapper::setJSWrapperForDOMObject(array.release(), wrapper);
+    wrapperHandle.MarkIndependent();
+    return wrapper;
 }
 
 template <class CPlusPlusArrayType, class JavaScriptWrapperArrayType>

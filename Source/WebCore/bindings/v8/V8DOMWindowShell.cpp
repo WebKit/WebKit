@@ -416,7 +416,7 @@ bool V8DOMWindowShell::installDOMWindow(v8::Handle<v8::Context> context, DOMWind
     // Wrap the window.
     V8DOMWrapper::setDOMWrapper(jsWindow, &V8DOMWindow::info, window);
     V8DOMWrapper::setDOMWrapper(v8::Handle<v8::Object>::Cast(jsWindow->GetPrototype()), &V8DOMWindow::info, window);
-    V8DOMWrapper::setJSWrapperForDOMObject(PassRefPtr<DOMWindow>(window), v8::Persistent<v8::Object>::New(jsWindow));
+    V8DOMWrapper::setJSWrapperForDOMObject(PassRefPtr<DOMWindow>(window), jsWindow);
 
     // Insert the window instance as the prototype of the shadow object.
     v8::Handle<v8::Object> v8RealGlobal = v8::Handle<v8::Object>::Cast(context->Global()->GetPrototype());

@@ -65,9 +65,10 @@ v8::Handle<v8::Value> V8WebKitPoint::constructorCallback(const v8::Arguments& ar
         }
     }
     RefPtr<WebKitPoint> point = WebKitPoint::create(x, y);
-    V8DOMWrapper::setDOMWrapper(args.Holder(), &info, point.get());
-    V8DOMWrapper::setJSWrapperForDOMObject(point.release(), v8::Persistent<v8::Object>::New(args.Holder()));
-    return args.Holder();
+    v8::Handle<v8::Object> wrapper = args.Holder();
+    V8DOMWrapper::setDOMWrapper(wrapper, &info, point.get());
+    V8DOMWrapper::setJSWrapperForDOMObject(point.release(), wrapper);
+    return wrapper;
 }
 
 } // namespace WebCore

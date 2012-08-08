@@ -108,9 +108,10 @@ v8::Handle<v8::Value> V8WebSocket::constructorCallback(const v8::Arguments& args
     if (ec)
         return throwError(ec, args.GetIsolate());
 
-    V8DOMWrapper::setDOMWrapper(args.Holder(), &info, webSocket.get());
-    V8DOMWrapper::setJSWrapperForActiveDOMObject(webSocket.release(), v8::Persistent<v8::Object>::New(args.Holder()));
-    return args.Holder();
+    v8::Handle<v8::Object> wrapper = args.Holder();
+    V8DOMWrapper::setDOMWrapper(wrapper, &info, webSocket.get());
+    V8DOMWrapper::setJSWrapperForActiveDOMObject(webSocket.release(), wrapper);
+    return wrapper;
 }
 
 v8::Handle<v8::Value> V8WebSocket::sendCallback(const v8::Arguments& args)
