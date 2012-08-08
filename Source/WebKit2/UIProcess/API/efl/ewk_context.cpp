@@ -118,6 +118,17 @@ WKContextRef ewk_context_WKContext_get(const Ewk_Context* ewkContext)
 
 /**
  * @internal
+ * Create Ewk_Context from WKContext.
+ */
+Ewk_Context* ewk_context_new_from_WKContext(WKContextRef contextRef)
+{
+    EINA_SAFETY_ON_NULL_RETURN_VAL(contextRef, 0);
+
+    return new Ewk_Context(contextRef);
+}
+
+/**
+ * @internal
  * Registers that a new download has been requested.
  */
 void ewk_context_download_job_add(Ewk_Context* ewkContext, Ewk_Download_Job* ewkDownload)

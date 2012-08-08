@@ -611,7 +611,7 @@ static void _ewk_view_smart_color_set(Evas_Object* ewkView, int red, int green, 
     g_parentSmartClass.color_set(ewkView, red, green, blue, alpha);
 }
 
-Eina_Bool ewk_view_smart_class_init(Ewk_View_Smart_Class* api)
+Eina_Bool ewk_view_smart_class_set(Ewk_View_Smart_Class* api)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(api, false);
 
@@ -656,16 +656,46 @@ static inline Evas_Smart* _ewk_view_smart_class_new(void)
     static Evas_Smart* smart = 0;
 
     if (EINA_UNLIKELY(!smart)) {
-        ewk_view_smart_class_init(&api);
+        ewk_view_smart_class_set(&api);
         smart = evas_smart_class_new(&api.sc);
     }
 
     return smart;
 }
 
-Evas_Object* ewk_view_base_add(Evas* canvas, WKContextRef contextRef, WKPageGroupRef pageGroupRef)
+static void _ewk_view_initialize(Evas_Object* ewkView, Ewk_Context* context, WKPageGroupRef pageGroupRef)
 {
-    Evas_Object* ewkView = evas_object_smart_add(canvas, _ewk_view_smart_class_new());
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData);
+    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv)
+    EINA_SAFETY_ON_NULL_RETURN(context);
+
+    if (priv->pageClient)
+        return;
+
+    priv->pageClient = PageClientImpl::create(toImpl(ewk_context_WKContext_get(context)), toImpl(pageGroupRef), ewkView);
+    priv->backForwardList = ewk_back_forward_list_new(toAPI(priv->pageClient->page()->backForwardList()));
+
+#if USE(COORDINATED_GRAPHICS)
+    priv->viewportHandler = EflViewportHandler::create(priv->pageClient.get());
+#endif
+
+    WKPageRef wkPage = toAPI(priv->pageClient->page());
+    ewk_view_find_client_attach(wkPage, ewkView);
+    ewk_view_form_client_attach(wkPage, ewkView);
+    ewk_view_loader_client_attach(wkPage, ewkView);
+    ewk_view_policy_client_attach(wkPage, ewkView);
+    ewk_view_resource_load_client_attach(wkPage, ewkView);
+    ewk_view_ui_client_attach(wkPage, ewkView);
+
+    ewk_view_theme_set(ewkView, DEFAULT_THEME_PATH"/default.edj");
+}
+
+static Evas_Object* _ewk_view_add_with_smart(Evas* canvas, Evas_Smart* smart)
+{
+    EINA_SAFETY_ON_NULL_RETURN_VAL(canvas, 0);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(smart, 0);
+
+    Evas_Object* ewkView = evas_object_smart_add(canvas, smart);
     if (!ewkView)
         return 0;
 
@@ -681,29 +711,44 @@ Evas_Object* ewk_view_base_add(Evas* canvas, WKContextRef contextRef, WKPageGrou
         return 0;
     }
 
-    priv->pageClient = PageClientImpl::create(toImpl(contextRef), toImpl(pageGroupRef), ewkView);
-    priv->backForwardList = ewk_back_forward_list_new(toAPI(priv->pageClient->page()->backForwardList()));
+    return ewkView;
+}
 
-    WKPageRef wkPage = toAPI(priv->pageClient->page());
-    ewk_view_find_client_attach(wkPage, ewkView);
-    ewk_view_form_client_attach(wkPage, ewkView);
-    ewk_view_loader_client_attach(wkPage, ewkView);
-    ewk_view_policy_client_attach(wkPage, ewkView);
-    ewk_view_resource_load_client_attach(wkPage, ewkView);
-    ewk_view_ui_client_attach(wkPage, ewkView);
+/**
+ * @internal
+ * Constructs a ewk_view Evas_Object with WKType parameters.
+ */
+Evas_Object* ewk_view_base_add(Evas* canvas, WKContextRef contextRef, WKPageGroupRef pageGroupRef)
+{
+    EINA_SAFETY_ON_NULL_RETURN_VAL(canvas, 0);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(contextRef, 0);
+    Evas_Object* ewkView = _ewk_view_add_with_smart(canvas, _ewk_view_smart_class_new());
+    if (!ewkView)
+        return 0;
 
-    ewk_view_theme_set(ewkView, DEFAULT_THEME_PATH"/default.edj");
+    _ewk_view_initialize(ewkView, ewk_context_new_from_WKContext(contextRef), pageGroupRef);
 
-#if USE(COORDINATED_GRAPHICS)
-    priv->viewportHandler = EflViewportHandler::create(priv->pageClient.get());
-#endif
+    return ewkView;
+}
+
+Evas_Object* ewk_view_smart_add(Evas* canvas, Evas_Smart* smart, Ewk_Context* context)
+{
+    EINA_SAFETY_ON_NULL_RETURN_VAL(canvas, 0);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(smart, 0);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(context, 0);
+
+    Evas_Object* ewkView = _ewk_view_add_with_smart(canvas, smart);
+    if (!ewkView)
+        return 0;
+
+    _ewk_view_initialize(ewkView, context, 0);
 
     return ewkView;
 }
 
 Evas_Object* ewk_view_add_with_context(Evas* canvas, Ewk_Context* context)
 {
-    return ewk_view_base_add(canvas, ewk_context_WKContext_get(context), 0);
+    return ewk_view_smart_add(canvas, _ewk_view_smart_class_new(), context);
 }
 
 Evas_Object* ewk_view_add(Evas* canvas)

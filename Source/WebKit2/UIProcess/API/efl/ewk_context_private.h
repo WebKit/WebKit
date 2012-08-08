@@ -27,6 +27,7 @@ typedef struct _Ewk_Download_Job Ewk_Download_Job;
 typedef struct _Ewk_Url_Scheme_Request Ewk_Url_Scheme_Request;
 
 WKContextRef ewk_context_WKContext_get(const Ewk_Context*);
+Ewk_Context* ewk_context_new_from_WKContext(WKContextRef);
 WKSoupRequestManagerRef ewk_context_request_manager_get(const Ewk_Context*);
 void ewk_context_url_scheme_request_received(Ewk_Context*, Ewk_Url_Scheme_Request*);
 

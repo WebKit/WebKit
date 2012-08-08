@@ -1,3 +1,30 @@
+2012-08-08  Eunmi Lee  <eunmi15.lee@samsung.com>
+
+        [EFL][WK2] Make ewk_view inheritable in the WebKit2.
+        https://bugs.webkit.org/show_bug.cgi?id=90054
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Make the ewk_view inheritable by exposing ewk_view_smart_class_set()
+        API. Additionally, the ewk_view_smart_add() API is added to create
+        Evas_Object for WebKit2 EFL. The default initialization is done in the
+        ewk_view_smart_add(), so the object which inherits the ewk_view should
+        use ewk_view_smart_add() instead of evas_object_smart_add() to create
+        Evas_Object.
+
+        * UIProcess/API/efl/ewk_context.cpp:
+        (ewk_context_new_from_WKContext):
+        * UIProcess/API/efl/ewk_context_private.h:
+        * UIProcess/API/efl/ewk_view.cpp:
+        (ewk_view_smart_class_set):
+        (_ewk_view_smart_class_new):
+        (_ewk_view_initialize):
+        (_ewk_view_add_with_smart):
+        (ewk_view_base_add):
+        (ewk_view_smart_add):
+        (ewk_view_add_with_context):
+        * UIProcess/API/efl/ewk_view.h:
+
 2012-08-08  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
 
         [Qt] WebProcess hangs on plugin initialization.

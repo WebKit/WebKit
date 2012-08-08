@@ -238,6 +238,44 @@ enum _Ewk_Find_Options {
 typedef enum _Ewk_Find_Options Ewk_Find_Options;
 
 /**
+ * Sets the smart class APIs, enabling view to be inherited.
+ *
+ * @param api class definition to set, all members with the
+ *        exception of @a Evas_Smart_Class->data may be overridden, must
+ *        @b not be @c NULL
+ *
+ * @note @a Evas_Smart_Class->data is used to implement type checking and
+ *       is not supposed to be changed/overridden. If you need extra
+ *       data for your smart class to work, just extend
+ *       Ewk_View_Smart_Class instead.
+ *       The Evas_Object which inherits the ewk_view should use
+ *       ewk_view_smart_add() to create Evas_Object instead of
+ *       evas_object_smart_add() because it performs additional initialization
+ *       for the ewk_view.
+ *
+ * @return @c EINA_TRUE on success or @c EINA_FALSE on failure (probably
+ *         version mismatch)
+ *
+ * @see ewk_view_smart_add()
+ */
+EAPI Eina_Bool ewk_view_smart_class_set(Ewk_View_Smart_Class *api);
+
+/**
+ * Creates a new EFL WebKit view object with Evas_Smart and Ewk_Context.
+ *
+ * @note The Evas_Object which inherits the ewk_view should create its
+ *       Evas_Object using this API instead of evas_object_smart_add()
+ *       because the default initialization for ewk_view is done in this API.
+ *
+ * @param e canvas object where to create the view object
+ * @param smart Evas_Smart object. Its type should be EWK_VIEW_TYPE_STR
+ * @param context Ewk_Context object which is used for initializing
+ *
+ * @return view object on success or @c NULL on failure
+ */
+Evas_Object *ewk_view_smart_add(Evas *e, Evas_Smart *smart, Ewk_Context *context);
+
+/**
  * Creates a new EFL WebKit view object.
  *
  * @param e canvas object where to create the view object
