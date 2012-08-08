@@ -37,10 +37,8 @@ namespace WebCore {
 
 // Converts the specified number string to another number string
 // localized for the browser's current locale. The input string must
-// conform to HTML floating-point numbers, and is not empty. The
-// fractionDigits argument is deprecated. The function implementaion
-// should not use the argument.
-String convertToLocalizedNumber(const String&, unsigned fractionDigits);
+// conform to HTML floating-point numbers, and is not empty.
+String convertToLocalizedNumber(const String&);
 
 // Converts the specified localized number string to a number string
 // in the HTML floating-point number format. The input string is

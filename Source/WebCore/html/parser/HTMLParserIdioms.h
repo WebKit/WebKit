@@ -51,8 +51,6 @@ Decimal parseToDecimalForNumberType(const String&);
 Decimal parseToDecimalForNumberType(const String&, const Decimal& fallbackValue);
 double parseToDoubleForNumberType(const String&);
 double parseToDoubleForNumberType(const String&, double fallbackValue);
-double parseToDoubleForNumberTypeWithDecimalPlaces(const String&, unsigned*);
-double parseToDoubleForNumberTypeWithDecimalPlaces(const String&, unsigned*, double fallbackValue);
 
 // http://www.whatwg.org/specs/web-apps/current-work/#rules-for-parsing-integers
 bool parseHTMLInteger(const String&, int&);

@@ -239,13 +239,7 @@ String NumberInputType::localizeValue(const String& proposedValue) const
     // We don't localize scientific notations.
     if (proposedValue.find(isE) != notFound)
         return proposedValue;
-    // FIXME: The following three lines should be removed when we
-    // remove the second argument of convertToLocalizedNumber().
-    // Note: parseToDoubleForNumberTypeWithDecimalPlaces set zero to decimalPlaces
-    // if currentValue isn't valid floating pointer number.
-    unsigned decimalPlace;
-    parseToDoubleForNumberTypeWithDecimalPlaces(proposedValue, &decimalPlace);
-    return convertToLocalizedNumber(proposedValue, decimalPlace);
+    return convertToLocalizedNumber(proposedValue);
 }
 
 String NumberInputType::visibleValue() const

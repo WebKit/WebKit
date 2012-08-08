@@ -37,7 +37,7 @@ using namespace std;
 
 namespace WebCore {
 
-String convertToLocalizedNumber(const String& canonicalNumberString, unsigned)
+String convertToLocalizedNumber(const String& canonicalNumberString)
 {
     return canonicalNumberString;
 }

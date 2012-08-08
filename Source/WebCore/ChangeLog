@@ -1,3 +1,35 @@
+2012-08-07  Kent Tamura  <tkent@chromium.org>
+
+        Remove fractionDigits argument of WebCore::convertToLocalizedNumber()
+        https://bugs.webkit.org/show_bug.cgi?id=93435
+
+        Reviewed by Kentaro Hara.
+
+        Remove the fractionDigits argument of convertToLocalizedNumber because
+        we don't use it any more. Also, we can remove
+        parseToDoubleForNumberTypeWithDecimalPlaces() functions, which are used
+        to obtain the fractionDigits argument.
+
+        No new tests because of no behavior changes.
+
+        * platform/text/LocalizedNumber.h:
+        (WebCore): Remove the fractionDigits argument of convertToLocalizedNumber.
+        * platform/text/LocalizedNumberICU.cpp:
+        (WebCore::convertToLocalizedNumber): ditto.
+        * platform/text/LocalizedNumberNone.cpp:
+        (WebCore::convertToLocalizedNumber): ditto.
+        * platform/text/mac/LocalizedNumberMac.mm:
+        (WebCore::convertToLocalizedNumber): ditto.
+        * platform/text/win/LocalizedNumberWin.cpp:
+        (WebCore::convertToLocalizedNumber): ditto.
+
+        * html/NumberInputType.cpp:
+        (WebCore::NumberInputType::localizeValue):
+        Remove the code to make the decimalPlace value.
+        * html/parser/HTMLParserIdioms.cpp:
+        Remove parseToDoubleForNumberTypeWithDecimalPlaces.
+        * html/parser/HTMLParserIdioms.h: ditto.
+
 2012-08-08  Mario Sanchez Prada  <msanchez@igalia.com>
 
         REGRESSION(r65062): out of bound access in TextIterator (5 editing tests) on GTK

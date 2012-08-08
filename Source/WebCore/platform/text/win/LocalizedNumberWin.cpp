@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-String convertToLocalizedNumber(const String& canonicalNumberString, unsigned fractionDigits)
+String convertToLocalizedNumber(const String& canonicalNumberString)
 {
     return LocaleWin::currentLocale()->convertToLocalizedNumber(canonicalNumberString);
 }
