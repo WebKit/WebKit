@@ -6,5 +6,6 @@ uniform float add;
 void main()
 {
     // Offset the color value with "add" on each color channel.
-    gl_FragColor = texture2D(u_texture, v_texCoord) + add;
+    vec4 sourceColor = texture2D(u_texture, v_texCoord);
+    gl_FragColor = vec4(sourceColor.xyz + add, sourceColor.a);
 }

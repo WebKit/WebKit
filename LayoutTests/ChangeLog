@@ -1,3 +1,29 @@
+2012-08-08  Alexandru Chiculita  <achicu@adobe.com>
+
+        [Chromium] Skia assert triggered by custom filter unmultiplied results
+        https://bugs.webkit.org/show_bug.cgi?id=92758
+
+        Reviewed by Dean Jackson.
+
+        Updated the shaders to output un-premultiplied colors. Also, updated the output results where needed.
+
+        * css3/filters/custom/custom-filter-shader-cache-expected.png:
+        * css3/filters/custom/effect-color-check-expected.png:
+        * css3/filters/custom/effect-custom-combined-missing-expected.png:
+        * css3/filters/custom/effect-custom-expected.png:
+        * css3/filters/custom/effect-custom-parameters-expected.png:
+        * css3/filters/custom/filter-repaint-custom-expected.png:
+        * css3/filters/custom/missing-custom-filter-shader-expected.png:
+        * css3/filters/resources/color-add.fs:
+        * css3/filters/resources/color-fill.fs:
+        * platform/chromium/TestExpectations: Disabled the following tests on Windows. They need a rebaseline.
+        * platform/chromium-linux/css3/filters/custom/effect-color-check-expected.png:
+        * platform/chromium-linux/css3/filters/custom/effect-custom-combined-missing-expected.png:
+        * platform/chromium-linux/css3/filters/custom/effect-custom-parameters-expected.png:
+        * platform/chromium-mac/css3/filters/custom/effect-color-check-expected.png:
+        * platform/chromium-mac/css3/filters/custom/effect-custom-combined-missing-expected.png:
+        * platform/chromium-mac/css3/filters/custom/effect-custom-parameters-expected.png:
+
 2012-08-08  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: store last evaluation result in $_
