@@ -40,7 +40,6 @@
 #include "V8HTMLAppletElement.h"
 #include "V8HTMLEmbedElement.h"
 #include "V8HTMLObjectElement.h"
-#include "V8Helpers.h"
 #include "V8NPUtils.h"
 #include "V8Proxy.h"
 #include "npruntime_impl.h"

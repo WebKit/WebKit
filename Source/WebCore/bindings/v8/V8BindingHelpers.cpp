@@ -29,7 +29,7 @@
 */
 
 #include "config.h"
-#include "V8Helpers.h"
+#include "V8BindingHelpers.h"
 
 #include "DOMWindow.h"
 #include "Frame.h"

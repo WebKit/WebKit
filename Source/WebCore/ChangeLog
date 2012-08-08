@@ -1,5 +1,32 @@
 2012-08-08  Kentaro Hara  <haraken@chromium.org>
 
+        [V8] Rename V8Helpers to V8BindingHelpers
+        https://bugs.webkit.org/show_bug.cgi?id=93318
+
+        Reviewed by Eric Seidel.
+
+        For naming consistency, a file including binding utility methods
+        should be prefixed by "V8Binding". In a follow-up patch, I'll move
+        methods from V8Binding to V8BindingHelpers.
+
+        In addition this patch makes V8Binding.h include V8BindingHelpers.h,
+        and removes #include V8BindingHelpers.h from binding files.
+
+        No tests. No change in behavior.
+
+        * UseV8.cmake:
+        * WebCore.gypi:
+        * bindings/v8/NPV8Object.cpp:
+        * bindings/v8/V8BindingHelpers.cpp: Renamed from Source/WebCore/bindings/v8/V8Helpers.cpp.
+        (WebCore):
+        (WebCore::toV8Context):
+        (WebCore::toV8Proxy):
+        * bindings/v8/V8BindingHelpers.h: Renamed from Source/WebCore/bindings/v8/V8Helpers.h.
+        (WebCore):
+        * bindings/v8/V8NPObject.cpp:
+
+2012-08-08  Kentaro Hara  <haraken@chromium.org>
+
         'class WrapperTypeInfo' should be 'struct WrapperTypeInfo'
 
         Unreviewed. Build fix for r125015.

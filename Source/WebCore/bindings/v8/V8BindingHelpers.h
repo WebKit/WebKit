@@ -28,19 +28,20 @@
 * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#ifndef V8Helpers_h
-#define V8Helpers_h
+#ifndef V8BindingHelpers_h
+#define V8BindingHelpers_h
 
 #include "npruntime_internal.h"
 #include <v8.h>
 
 namespace WebCore {
-    class V8Proxy;
 
-    v8::Local<v8::Context> toV8Context(NPP, NPObject*);
+class V8Proxy;
 
-    V8Proxy* toV8Proxy(NPObject*);
+v8::Local<v8::Context> toV8Context(NPP, NPObject*);
+
+V8Proxy* toV8Proxy(NPObject*);
 
 } // namespace WebCore
 
-#endif // V8Helpers_h
+#endif // V8BindingHelpers_h

@@ -46,6 +46,7 @@ LIST(APPEND WebCore_SOURCES
     bindings/v8/StaticDOMDataStore.cpp
     bindings/v8/V8AbstractEventListener.cpp
     bindings/v8/V8Binding.cpp
+    bindings/v8/V8BindingHelpers.cpp
     bindings/v8/V8BindingPerIsolateData.cpp
     bindings/v8/V8ConfigureDOMAttributesAndMethods.cpp,
     bindings/v8/V8Collection.cpp
@@ -56,7 +57,6 @@ LIST(APPEND WebCore_SOURCES
     bindings/v8/V8EventListenerList.cpp
     bindings/v8/V8GCController.cpp
     bindings/v8/V8GCForContextDispose.cpp
-    bindings/v8/V8Helpers.cpp
     bindings/v8/V8HiddenPropertyName.cpp
     bindings/v8/V8IsolatedContext.cpp
     bindings/v8/V8LazyEventListener.cpp

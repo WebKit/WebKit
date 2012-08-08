@@ -35,6 +35,7 @@
 #include "DOMDataStore.h"
 #include "Document.h"
 #include "PlatformString.h"
+#include "V8BindingHelpers.h"
 #include "V8BindingMacros.h"
 #include "V8BindingPerIsolateData.h"
 #include "V8ConfigureDOMAttributesAndMethods.h"
