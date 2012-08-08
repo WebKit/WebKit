@@ -57,6 +57,7 @@ ADD_DEFINITIONS(-DUSER_PROCESSES)
 LIST(APPEND WebKit_SOURCES
     blackberry/Api/BackingStore.cpp
     blackberry/Api/BlackBerryGlobal.cpp
+    blackberry/Api/InRegionScroller.cpp
     blackberry/Api/WebAnimation.cpp
     blackberry/Api/WebKitMIMETypeConverter.cpp
     blackberry/Api/WebKitTextCodec.cpp
@@ -100,7 +101,6 @@ LIST(APPEND WebKit_SOURCES
     blackberry/WebKitSupport/InPageSearchManager.cpp
     blackberry/WebKitSupport/InputHandler.cpp
     blackberry/WebKitSupport/InRegionScrollableArea.cpp
-    blackberry/WebKitSupport/InRegionScroller.cpp
     blackberry/WebKitSupport/InspectorOverlay.cpp
     blackberry/WebKitSupport/RenderQueue.cpp
     blackberry/WebKitSupport/SelectionHandler.cpp

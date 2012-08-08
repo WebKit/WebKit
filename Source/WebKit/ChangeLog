@@ -1,3 +1,12 @@
+2012-08-08  Antonio Gomes  <agomes@rim.com>
+
+        [BlackBerry] Tie up the scrolling machinery to the graphics tree when applicable for in-region scroll
+        https://bugs.webkit.org/show_bug.cgi?id=93482
+
+        Reviewed by Rob Buis.
+
+        * PlatformBlackBerry.cmake: Build system adaptation.
+
 2012-08-07  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL] Remove PlatformTouchEventEfl and PlatformTouchPointEfl

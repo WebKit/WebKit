@@ -1,5 +1,77 @@
 2012-08-08  Antonio Gomes  <agomes@rim.com>
 
+        [BlackBerry] Tie up the scrolling machinery to the graphics tree when applicable for in-region scroll
+        https://bugs.webkit.org/show_bug.cgi?id=93482
+        PR #187672
+        Make InRegionScroller a simple public webkit/ API
+        PR #188677
+
+        Reviewed by Rob Buis.
+
+        In order to prepare InRegionScroller to be a public API
+        in webkit/, the patch:
+
+        1) Renamed the current InRegionScroller class to InRegionScrollerPrivate;
+        2) Moved InRegionScroller.cpp|h from WebKitSupport/ to Api/;
+        3) Renamed InRegionScroller.h to InRegionScroller_p.h;
+        4) Added a new public class implementation to InRegionScroller.h;
+        5) Adapted WebPage and TouchEventHandler classes to use InRegionScroller::d directly.
+
+        The most important API here is '::compositedSetScrollPosition'
+
+        It is a  UI/Compositing thread method only and sets the associated LayerCompositingThread
+        (camouflaged as a unsigned) for each created InRegionScrollableArea that supports
+        composited scrolling.
+
+        The way ::compositedSetScrollPosition "scrolls" a layer is by setting the boundsOrigin
+        property to the LayerCompositingThread's 'override' property in the UI/Compositing thread.
+
+        * Api/InRegionScroller.cpp: Renamed from Source/WebKit/blackberry/WebKitSupport/InRegionScroller.cpp.
+        (WebKit):
+        (BlackBerry::WebKit::InRegionScroller::InRegionScroller):
+        (BlackBerry::WebKit::InRegionScroller::~InRegionScroller):
+        (BlackBerry::WebKit::InRegionScroller::compositedSetScrollPosition):
+        (BlackBerry::WebKit::InRegionScrollerPrivate::InRegionScrollerPrivate):
+        (BlackBerry::WebKit::InRegionScrollerPrivate::setNode):
+        (BlackBerry::WebKit::InRegionScrollerPrivate::node):
+        (BlackBerry::WebKit::InRegionScrollerPrivate::reset):
+        (BlackBerry::WebKit::InRegionScrollerPrivate::hasNode):
+        (BlackBerry::WebKit::InRegionScrollerPrivate::canScroll):
+        (BlackBerry::WebKit::InRegionScrollerPrivate::compositedSetScrollPosition):
+        (BlackBerry::WebKit::InRegionScrollerPrivate::scrollBy):
+        (BlackBerry::WebKit::InRegionScrollerPrivate::inRegionScrollableAreasForPoint):
+        (BlackBerry::WebKit::InRegionScrollerPrivate::scrollNodeRecursively):
+        (BlackBerry::WebKit::InRegionScrollerPrivate::scrollRenderer):
+        (BlackBerry::WebKit::InRegionScrollerPrivate::adjustScrollDelta):
+        (BlackBerry::WebKit::canScrollInnerFrame):
+        (BlackBerry::WebKit::canScrollRenderBox):
+        (BlackBerry::WebKit::parentLayer):
+        (BlackBerry::WebKit::enclosingLayerNode):
+        (BlackBerry::WebKit::isNonRenderViewFixedPositionedContainer):
+        (BlackBerry::WebKit::pushBackInRegionScrollable):
+        * Api/InRegionScroller.h: Copied from Source/WebKit/blackberry/WebKitSupport/InRegionScroller.h.
+        (WebKit):
+        (InRegionScroller):
+        * Api/InRegionScroller_p.h: Renamed from Source/WebKit/blackberry/WebKitSupport/InRegionScroller.h.
+        (WebCore):
+        (WebKit):
+        (InRegionScrollerPrivate):
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::scrollBy):
+        (BlackBerry::WebKit::WebPagePrivate::notifyInRegionScrollStatusChanged):
+        (BlackBerry::WebKit::WebPagePrivate::clearDocumentData):
+        (BlackBerry::WebKit::WebPagePrivate::setScrollOriginPoint):
+        (BlackBerry::WebKit::WebPage::inRegionScroller):
+        (WebKit):
+        * Api/WebPage.h:
+        (WebKit):
+        * WebKitSupport/InRegionScrollableArea.cpp:
+        (BlackBerry::WebKit::InRegionScrollableArea::InRegionScrollableArea):
+        * WebKitSupport/TouchEventHandler.cpp:
+        (BlackBerry::WebKit::TouchEventHandler::drawTapHighlight):
+
+2012-08-08  Antonio Gomes  <agomes@rim.com>
+
         [BlackBerry] Make WebOverlayPrivate::scheduleCompositingRun a WebPagePrivate method.
         https://bugs.webkit.org/show_bug.cgi?id=93480
         PR #188682

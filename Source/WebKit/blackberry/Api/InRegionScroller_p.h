@@ -16,10 +16,11 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef InRegionScroller_h
-#define InRegionScroller_h
+#ifndef InRegionScroller_p_h
+#define InRegionScroller_p_h
 
-#include "IntRect.h"
+#include "IntSize.h"
+#include "IntPoint.h"
 
 #include <interaction/ScrollViewBase.h>
 #include <vector>
@@ -35,10 +36,9 @@ namespace WebKit {
 
 class WebPagePrivate;
 
-class InRegionScroller {
-
+class InRegionScrollerPrivate {
 public:
-    InRegionScroller(WebPagePrivate*);
+    InRegionScrollerPrivate(WebPagePrivate*);
 
     void setNode(WebCore::Node*);
     WebCore::Node* node() const;
@@ -48,17 +48,18 @@ public:
     bool hasNode() const;
 
     bool scrollBy(const Platform::IntSize& delta);
+    bool compositedSetScrollPosition(unsigned camouflagedLayer, const WebCore::IntPoint& scrollPosition);
 
     std::vector<Platform::ScrollViewBase*> inRegionScrollableAreasForPoint(const WebCore::IntPoint&);
-private:
 
+    WebPagePrivate* m_webPage;
+
+private:
     bool scrollNodeRecursively(WebCore::Node*, const WebCore::IntSize& delta);
     bool scrollRenderer(WebCore::RenderObject*, const WebCore::IntSize& delta);
-
     void adjustScrollDelta(const WebCore::IntPoint& maxOffset, const WebCore::IntPoint& currentOffset, WebCore::IntSize& delta) const;
 
     RefPtr<WebCore::Node> m_inRegionScrollStartingNode;
-    WebPagePrivate* m_webPage;
 };
 
 }

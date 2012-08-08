@@ -63,6 +63,7 @@ namespace WebKit {
 class BackingStore;
 class BackingStoreClient;
 class BackingStorePrivate;
+class InRegionScroller;
 class RenderQueue;
 class WebOverlay;
 class WebPageClient;
@@ -178,6 +179,8 @@ public:
     void setScrollOriginPoint(const Platform::IntPoint&);
 
     BackingStore* backingStore() const;
+
+    InRegionScroller* inRegionScroller() const;
 
     bool zoomToFit();
     bool zoomToOneOne();

@@ -71,6 +71,7 @@
 #include "IconDatabaseClientBlackBerry.h"
 #include "InPageSearchManager.h"
 #include "InRegionScrollableArea.h"
+#include "InRegionScroller_p.h"
 #include "InputHandler.h"
 #include "InspectorBackendDispatcher.h"
 #include "InspectorClientBlackBerry.h"
@@ -1522,7 +1523,7 @@ bool WebPagePrivate::scrollBy(int deltaX, int deltaY, bool scrollMainFrame)
             delta.width() < 0 ? -untransformedCopiedDelta.width() : untransformedCopiedDelta.width(),
             delta.height() < 0 ? -untransformedCopiedDelta.height(): untransformedCopiedDelta.height());
 
-        if (m_inRegionScroller->scrollBy(delta)) {
+        if (m_inRegionScroller->d->scrollBy(delta)) {
             m_selectionHandler->selectionPositionChanged();
             // FIXME: We have code in place to handle scrolling and clipping tap highlight
             // on in-region scrolling. As soon as it is fast enough (i.e. we have it backed by
@@ -1548,9 +1549,9 @@ bool WebPage::scrollBy(const Platform::IntSize& delta, bool scrollMainFrame)
 
 void WebPagePrivate::notifyInRegionScrollStatusChanged(bool status)
 {
-    if (!status && m_inRegionScroller->hasNode()) {
-        enqueueRenderingOfClippedContentOfScrollableNodeAfterInRegionScrolling(m_inRegionScroller->node());
-        m_inRegionScroller->reset();
+    if (!status && m_inRegionScroller->d->hasNode()) {
+        enqueueRenderingOfClippedContentOfScrollableNodeAfterInRegionScrolling(m_inRegionScroller->d->node());
+        m_inRegionScroller->d->reset();
     }
 }
 
@@ -2633,8 +2634,8 @@ void WebPagePrivate::clearDocumentData(const Document* documentGoingAway)
     if (m_currentBlockZoomAdjustedNode && m_currentBlockZoomAdjustedNode->document() == documentGoingAway)
         m_currentBlockZoomAdjustedNode = 0;
 
-    if (m_inRegionScroller->hasNode() && m_inRegionScroller->node()->document() == documentGoingAway)
-        m_inRegionScroller->reset();
+    if (m_inRegionScroller->d->hasNode() && m_inRegionScroller->d->node()->document() == documentGoingAway)
+        m_inRegionScroller->d->reset();
 
     if (documentGoingAway->frame())
         m_inputHandler->frameUnloaded(documentGoingAway->frame());
@@ -4211,12 +4212,12 @@ bool WebPage::touchEvent(const Platform::TouchEvent& event)
 
 void WebPagePrivate::setScrollOriginPoint(const Platform::IntPoint& point)
 {
-    m_inRegionScroller->reset();
+    m_inRegionScroller->d->reset();
 
     if (!m_hasInRegionScrollableAreas)
         return;
 
-    m_client->notifyInRegionScrollingStartingPointChanged(m_inRegionScroller->inRegionScrollableAreasForPoint(point));
+    m_client->notifyInRegionScrollingStartingPointChanged(m_inRegionScroller->d->inRegionScrollableAreasForPoint(point));
 }
 
 void WebPage::setScrollOriginPoint(const Platform::IntPoint& point)
@@ -4652,6 +4653,11 @@ void WebPage::selectAtPoint(const Platform::IntPoint& location)
 BackingStore* WebPage::backingStore() const
 {
     return d->m_backingStore;
+}
+
+InRegionScroller* WebPage::inRegionScroller() const
+{
+    return d->m_inRegionScroller.get();
 }
 
 bool WebPage::zoomToFit()
