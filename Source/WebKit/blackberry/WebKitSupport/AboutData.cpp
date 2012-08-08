@@ -255,7 +255,9 @@ static String memoryPage()
 
     page += "<div class='box'><div class='box-title'>Process memory usage summary</div><table class='fixed-table'><col width=75%><col width=25%>";
 
-    page += numberToHTMLTr("Total memory usage (malloc + JSC)", mallocInfo.usmblks + mallocInfo.uordblks + jscMemoryStat.stackBytes + jscMemoryStat.JITBytes + mainHeap.capacity());
+    page += numberToHTMLTr("Total used memory (malloc + JSC)", mallocInfo.usmblks + mallocInfo.uordblks + jscMemoryStat.stackBytes + jscMemoryStat.JITBytes + mainHeap.capacity());
+
+    page += numberToHTMLTr("Total committed memory", BlackBerry::Platform::totalCommittedMemory());
 
     struct stat processInfo;
     if (!stat(String::format("/proc/%u/as", getpid()).latin1().data(), &processInfo))
@@ -306,6 +308,125 @@ static String memoryPage()
     page += "</body></html>";
     return page;
 }
+
+#if !defined(PUBLIC_BUILD) || !PUBLIC_BUILD
+class MemoryTracker {
+public:
+    static MemoryTracker& instance();
+    void start();
+    void stop();
+    bool isActive() const { return m_memoryTrackingTimer.isActive(); }
+    void clear() { m_peakTotalUsedMemory = 0; m_peakTotalCommittedMemory = 0; m_peakTotalMappedMemory = 0; }
+    void updateMemoryPeaks(Timer<MemoryTracker>*);
+    unsigned peakTotalUsedMemory() const { return m_peakTotalUsedMemory; }
+    unsigned peakTotalCommittedMemory() const {return m_peakTotalCommittedMemory; }
+    unsigned peakTotalMappedMemory() const { return m_peakTotalMappedMemory; }
+
+private:
+    MemoryTracker();
+    Timer<MemoryTracker> m_memoryTrackingTimer;
+    unsigned m_peakTotalUsedMemory;
+    unsigned m_peakTotalCommittedMemory;
+    unsigned m_peakTotalMappedMemory;
+};
+
+MemoryTracker::MemoryTracker()
+    : m_memoryTrackingTimer(this, &MemoryTracker::updateMemoryPeaks)
+    , m_peakTotalUsedMemory(0)
+    , m_peakTotalCommittedMemory(0)
+    , m_peakTotalMappedMemory(0)
+{
+}
+
+MemoryTracker& MemoryTracker::instance()
+{
+    DEFINE_STATIC_LOCAL(MemoryTracker, s_memoryTracker, ());
+    return s_memoryTracker;
+}
+
+void MemoryTracker::start()
+{
+    clear();
+    if (!m_memoryTrackingTimer.isActive())
+        m_memoryTrackingTimer.start(0, 0.01);
+}
+
+void MemoryTracker::stop()
+{
+    m_memoryTrackingTimer.stop();
+}
+
+void MemoryTracker::updateMemoryPeaks(Timer<MemoryTracker>*)
+{
+    // JS engine memory usage.
+    JSC::GlobalMemoryStatistics jscMemoryStat = JSC::globalMemoryStatistics();
+    JSC::Heap& mainHeap = JSDOMWindow::commonJSGlobalData()->heap;
+
+    // Malloc info.
+    struct mallinfo mallocInfo = mallinfo();
+
+    // Malloc and JSC memory.
+    unsigned totalUsedMemory = static_cast<unsigned>(mallocInfo.usmblks + mallocInfo.uordblks + jscMemoryStat.stackBytes + jscMemoryStat.JITBytes + mainHeap.capacity());
+    if (totalUsedMemory > m_peakTotalUsedMemory)
+        m_peakTotalUsedMemory = totalUsedMemory;
+
+    unsigned totalCommittedMemory = BlackBerry::Platform::totalCommittedMemory();
+    if (totalCommittedMemory > m_peakTotalCommittedMemory)
+        m_peakTotalCommittedMemory = totalCommittedMemory;
+
+    struct stat processInfo;
+    if (!stat(String::format("/proc/%u/as", getpid()).latin1().data(), &processInfo)) {
+        unsigned totalMappedMemory = static_cast<unsigned>(processInfo.st_size);
+        if (totalMappedMemory > m_peakTotalMappedMemory)
+            m_peakTotalMappedMemory = totalMappedMemory;
+    }
+}
+
+static String memoryPeaksToHtmlTable(MemoryTracker& memoryTracker)
+{
+    return String("<table class='fixed-table'><col width=75%><col width=25%>")
+        + numberToHTMLTr("Total used memory(malloc + JSC):", memoryTracker.peakTotalUsedMemory())
+        + numberToHTMLTr("Total committed memory:", memoryTracker.peakTotalCommittedMemory())
+        + numberToHTMLTr("Total mapped memory:", memoryTracker.peakTotalMappedMemory())
+        + "</table>";
+}
+
+static String memoryLivePage(String memoryLiveCommand)
+{
+    String page;
+
+    page = writeHeader("Memory Live Page")
+        + "<div class='box'><div class='box-title'>Memory Peaks</div>"
+        + "<div style='font-size:12px;color:#1BE0C9'>\"about:memory-live/start\": start tracking memory peaks.</div>"
+        + "<div style='font-size:12px;color:#1BE0C9'>\"about:memory-live\": show memory peaks every 30ms.</div>"
+        + "<div style='font-size:12px;color:#1BE0C9'>\"about:memory-live/stop\": stop tracking and show memory peaks.</div><br>";
+
+    MemoryTracker& memoryTracker = MemoryTracker::instance();
+    if (memoryLiveCommand.isEmpty()) {
+        if (!memoryTracker.isActive())
+            page += "<div style='font-size:15px;color:#E6F032'>Memory tracker isn't running, please use \"about:memory-live/start\" to start the tracker.</div>";
+        else {
+            page += memoryPeaksToHtmlTable(memoryTracker);
+            page += "<script type=\"text/javascript\">setInterval(function(){window.location.reload()},30);</script>";
+        }
+    } else if (equalIgnoringCase(memoryLiveCommand, "/start")) {
+        memoryTracker.start();
+        page += "<div style='font-size:15px;color:#E6F032'>Memory tracker is running.</div>";
+    } else if (equalIgnoringCase(memoryLiveCommand, "/stop")) {
+        if (!memoryTracker.isActive())
+            page += "<div style='font-size:15px;color:#E6F032'>Memory tracker isn't running.</div>";
+        else {
+            memoryTracker.stop();
+            page += memoryPeaksToHtmlTable(memoryTracker);
+            page += "<div style='font-size:15px;color:#E6F032'>Memory tracker is stopped.</div>";
+        }
+    } else
+        page += "<div style='font-size:15spx;color:#E6F032'>Unknown command! Please input a correct command!</div>";
+
+    page += "</div><br></div></body></html>";
+    return page;
+}
+#endif
 
 static String cachePage(String cacheCommand)
 {
@@ -409,6 +530,9 @@ String aboutData(String aboutWhat)
 
     if (BlackBerry::Platform::debugSetting() > 0 && equalIgnoringCase(aboutWhat, "config"))
         return configPage();
+
+    if (aboutWhat.startsWith("memory-live"))
+        return memoryLivePage(aboutWhat.substring(11));
 #endif
 
     return String();

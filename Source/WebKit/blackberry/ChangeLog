@@ -1,3 +1,41 @@
+2012-08-08  Jacky Jiang  <zhajiang@rim.com>
+
+        [BlackBerry] Implement about:memory-live
+        https://bugs.webkit.org/show_bug.cgi?id=93153
+
+        Reviewed by Yong Li.
+        Patch by Jacky Jiang  <zhajiang@rim.com>
+
+        Implementing about:memory-live to track memory peaks:
+        - about:memory-live/start: start tracking memory peaks.
+        - about:memory-live: show memory peaks every 30ms.
+        - about:memory-live/stop: stop tracking and show memory peaks.
+
+        Mainly track the following memory peaks:
+        - Total used memory (malloc + JSC).
+        - Total committed memory.
+        - Total mapped memory.
+
+        Add total committed memory for about:memory
+
+        * WebKitSupport/AboutData.cpp:
+        (BlackBerry::WebKit::memoryPage):
+        (WebKit):
+        (MemoryTracker):
+        (BlackBerry::WebKit::MemoryTracker::isActive):
+        (BlackBerry::WebKit::MemoryTracker::clear):
+        (BlackBerry::WebKit::MemoryTracker::peakTotalUsedMemory):
+        (BlackBerry::WebKit::MemoryTracker::peakTotalCommittedMemory):
+        (BlackBerry::WebKit::MemoryTracker::peakTotalMappedMemory):
+        (BlackBerry::WebKit::MemoryTracker::MemoryTracker):
+        (BlackBerry::WebKit::MemoryTracker::instance):
+        (BlackBerry::WebKit::MemoryTracker::start):
+        (BlackBerry::WebKit::MemoryTracker::stop):
+        (BlackBerry::WebKit::MemoryTracker::updateMemoryPeaks):
+        (BlackBerry::WebKit::memoryPeaksToHtmlTable):
+        (BlackBerry::WebKit::memoryLivePage):
+        (BlackBerry::WebKit::aboutData):
+
 2012-08-08  Antonio Gomes  <agomes@rim.com>
 
         [BlackBerry] Tie up the scrolling machinery to the graphics tree when applicable for in-region scroll
