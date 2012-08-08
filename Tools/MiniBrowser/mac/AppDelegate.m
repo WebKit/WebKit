@@ -153,6 +153,8 @@ static void populateVisitedLinks(WKContextRef context, const void *clientInfo)
         WKStringRef pageGroupIdentifier = WKStringCreateWithCFString(CFSTR("MiniBrowser"));
         _pageGroup = WKPageGroupCreateWithIdentifier(pageGroupIdentifier);
         WKRelease(pageGroupIdentifier);
+
+        _browserWindows = [[NSMutableSet alloc] init];
     }
 
     return self;
@@ -162,8 +164,14 @@ static void populateVisitedLinks(WKContextRef context, const void *clientInfo)
 {
     BrowserWindowController *controller = [[BrowserWindowController alloc] initWithContext:[self getCurrentContext] pageGroup:_pageGroup];
     [[controller window] makeKeyAndOrderFront:sender];
+    [_browserWindows addObject:[controller window]];
     
     [controller loadURLString:defaultURL];
+}
+
+- (void)browserWindowWillClose:(NSWindow *)window
+{
+    [_browserWindows removeObject:window];
 }
 
 - (WKContextRef)getCurrentContext
@@ -215,13 +223,11 @@ static void populateVisitedLinks(WKContextRef context, const void *clientInfo)
 
 - (void)applicationWillTerminate:(NSNotification *)notification
 {
-    NSArray* windows = [NSApp windows];
-    for (NSWindow* window in windows) {
+    for (NSWindow* window in _browserWindows) {
         id delegate = [window delegate];
-        if ([delegate isKindOfClass:[BrowserWindowController class]]) {
-            BrowserWindowController *controller = (BrowserWindowController *)delegate;
-            [controller applicationTerminating];
-        }
+        assert([delegate isKindOfClass:[BrowserWindowController class]]);
+        BrowserWindowController *controller = (BrowserWindowController *)delegate;
+        [controller applicationTerminating];
     }
 
     WKRelease(_processContext);
@@ -233,8 +239,10 @@ static void populateVisitedLinks(WKContextRef context, const void *clientInfo)
     NSArray* windows = [NSApp windows];
     for (NSWindow* window in windows) {
         id delegate = [window delegate];
-        if ([delegate isKindOfClass:[BrowserWindowController class]])
-            return (BrowserWindowController *)delegate;
+        assert([delegate isKindOfClass:[BrowserWindowController class]]);
+        BrowserWindowController *controller = (BrowserWindowController *)delegate;
+        assert([_browserWindows containsObject:[controller window]]);
+        return controller;
     }
 
     return 0;

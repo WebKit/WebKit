@@ -1,3 +1,31 @@
+2012-08-08  Alexey Proskuryakov  <ap@apple.com>
+
+        [WK2] MiniBrowser crashes on quit if any windows were previously closed
+        https://bugs.webkit.org/show_bug.cgi?id=93529
+
+        Reviewed by John Sullivan.
+
+        * MiniBrowser/mac/AppDelegate.h:
+        * MiniBrowser/mac/AppDelegate.m:
+        (-[BrowserAppDelegate init]):
+        (-[BrowserAppDelegate newWindow:]):
+        (-[BrowserAppDelegate browserWindowWillClose:]):
+        (-[BrowserAppDelegate applicationWillTerminate:]):
+        (-[BrowserAppDelegate frontmostBrowserWindowController]):
+        Track browser windows explicitly, not relying on [NSApp windows]. Closed windows
+        are not automatically removed from the list until deallocated, so a refcounting
+        error can result in working on a closed window.
+
+        * MiniBrowser/mac/BrowserWindowController.m:
+        (-[BrowserWindowController dealloc]): Moved code from -windowWillClose: here.
+        Releasing data members is -dealloc's job.
+        (-[BrowserWindowController windowWillClose:]): Notify BrowserAppDelegate that
+        the window is no longer open. Autorelease self, making sure that WKView and
+        then WebPageProxy get released.
+        (-[BrowserWindowController applicationTerminating]): Don't release _webView.pageRef.
+        WKView is responsible for its lifetime.
+        (closePage): Ditto.
+
 2012-08-08  Xianzhu Wang  <wangxianzhu@chromium.org>
 
         [Chromium-Android] Apply all Linux layout test expectations

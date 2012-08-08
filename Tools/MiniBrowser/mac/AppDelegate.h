@@ -34,9 +34,12 @@ typedef unsigned long ProcessModel;
     WKContextRef _threadContext;
     WKContextRef _processContext;
     WKPageGroupRef _pageGroup;
+    NSMutableSet *_browserWindows;
 }
 
 - (WKContextRef)getCurrentContext;
+
+- (void)browserWindowWillClose:(NSWindow *)window;
 
 - (IBAction)setSharedProcessProcessModel:(id)sender;
 - (IBAction)setSharedThreadProcessModel:(id)sender;
