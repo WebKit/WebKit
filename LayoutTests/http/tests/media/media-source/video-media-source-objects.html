@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="/media-resources/video-test.js"></script>
+        <script src="/media/resources/media-source/webm/segment-info.js"></script>
+        <script src="media-source.js"></script>
+        <script>
+            var segmentHelper = new MediaSourceTest.SegmentHelper(WebMSegmentInfo.testWebM);
+
+            function onSourceOpen(event)
+            {
+                consoleWrite("Test MediaSource object type");
+                testExpected("mediaSource", event.target);
+                testExpected("mediaSource instanceof window.MediaSource", true);
+
+                consoleWrite("");
+                consoleWrite("Add a SourceBuffer");
+
+                testExpected("mediaSource.sourceBuffers.length", 0);
+
+                mediaSource.sourceBuffers.addEventListener('webkitaddsourcebuffer', onSourceBufferAdded);
+
+                run("segmentHelper.addSourceBuffer()");
+
+                consoleWrite("");
+                consoleWrite("Test SourceBuffer object type");
+                testExpected("segmentHelper.sourceBuffer instanceof window.SourceBuffer", true);
+                testExpected("mediaSource.sourceBuffers[0] instanceof window.SourceBuffer", true);
+
+                consoleWrite("");
+                consoleWrite("Append init segment");
+                testExpected("mediaSource.sourceBuffers[0].buffered.length", 0);
+                segmentHelper.appendInitSegment();
+
+                // Append just enough segments to include at least 1 second of media data.
+                consoleWrite("");
+                consoleWrite("Append 1 second of data.");
+                var endIndex = segmentHelper.getMediaSegmentIndexForTimestamp(1);
+                for (var i = 0; i <= endIndex; i++)
+                    segmentHelper.appendMediaSegment(i);
+                testExpected("mediaSource.sourceBuffers[0].buffered.length", 1);
+                testExpected("mediaSource.sourceBuffers[0].buffered.start(0)", 0);
+                testExpected("mediaSource.sourceBuffers[0].buffered.end(0)", 1, '>');
+
+                consoleWrite("");
+                consoleWrite("Remove SourceBuffer");
+
+                mediaSource.sourceBuffers.addEventListener('webkitremovesourcebuffer', onSourceBufferRemoved);
+
+                run("mediaSource.removeSourceBuffer(segmentHelper.sourceBuffer)");
+
+                consoleWrite("Test that addSourceBuffer() throws and error when the MediaSource is not associated with a media element.");
+                var mediaSource2 = new MediaSource();
+                video.src = webkitURL.createObjectURL(mediaSource2);
+                try {
+                    mediaSource.addSourceBuffer('video/webm; codecs="vorbis,vp8"');
+                } catch (e) {
+                    consoleWrite("Got expected exception " + e);
+                }
+
+                endTest();
+            }
+            
+            function onSourceBufferAdded(event)
+            {
+                testExpected("mediaSource.sourceBuffers.length", 1);
+
+                consoleWrite("");
+                consoleWrite("Test SourceBufferList object type:");
+                testExpected("mediaSource.sourceBuffers", event.target);
+                testExpected("mediaSource.sourceBuffers instanceof window.SourceBufferList", true);
+            }
+
+            function onSourceBufferRemoved(event)
+            {
+                testExpected("mediaSource.sourceBuffers.length", 0);
+                testExpected("mediaSource.sourceBuffers", event.target);
+
+                consoleWrite("");
+                consoleWrite("Test that append() throws an error after SourceBuffer has been removed.");
+                try {
+                    segmentHelper.appendMediaSegment(0);
+                } catch (e) {
+                    consoleWrite("Got expected exception " + e);
+                }
+
+                consoleWrite("Test that buffered throws an error after SourceBuffer has been removed.");
+                try {
+                    testExpected(segmentHelper.sourceBuffer.buffered, 0);
+                } catch (e) {
+                    consoleWrite("Got expected exception " + e);
+                }
+                testExpected("mediaSource.sourceBuffers.length", 0);
+            }
+
+            function onLoad()
+            {
+                findMediaElement();
+
+                mediaSource = new MediaSource();
+
+                waitForEventAndFail('error');
+                waitForEvent('webkitsourceopen', "", false, false, mediaSource);
+                waitForEvent('webkitsourceended', "", false, false, mediaSource);
+
+                mediaSource.addEventListener('webkitsourceopen', onSourceOpen);
+
+                segmentHelper.init(video, function(success)
+                {
+                    if (!success) {
+                        failTest("Failed to load segment data");
+                        return;
+                    }
+
+                    MediaSourceTest.setSrcToMediaSourceTestURL(video);
+                });
+            }
+        </script>
+    </head>
+    <body onload="onLoad()">
+        <video> </video>
+        <p>Tests MediaSource, SourceBuffer, and SourceBufferList objects.</p>
+    </body>
+</html>

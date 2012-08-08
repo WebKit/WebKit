@@ -1,0 +1,42 @@
+Tests MediaSource, SourceBuffer, and SourceBufferList objects.
+
+EVENT(webkitsourceopen)
+Test MediaSource object type
+EXPECTED (mediaSource == '[object MediaSource]') OK
+EXPECTED (mediaSource instanceof window.MediaSource == 'true') OK
+
+Add a SourceBuffer
+EXPECTED (mediaSource.sourceBuffers.length == '0') OK
+RUN(segmentHelper.addSourceBuffer())
+EXPECTED (mediaSource.sourceBuffers.length == '1') OK
+
+Test SourceBufferList object type:
+EXPECTED (mediaSource.sourceBuffers == '[object SourceBufferList]') OK
+EXPECTED (mediaSource.sourceBuffers instanceof window.SourceBufferList == 'true') OK
+
+Test SourceBuffer object type
+EXPECTED (segmentHelper.sourceBuffer instanceof window.SourceBuffer == 'true') OK
+EXPECTED (mediaSource.sourceBuffers[0] instanceof window.SourceBuffer == 'true') OK
+
+Append init segment
+EXPECTED (mediaSource.sourceBuffers[0].buffered.length == '0') OK
+
+Append 1 second of data.
+EXPECTED (mediaSource.sourceBuffers[0].buffered.length == '1') OK
+EXPECTED (mediaSource.sourceBuffers[0].buffered.start(0) == '0') OK
+EXPECTED (mediaSource.sourceBuffers[0].buffered.end(0) > '1') OK
+
+Remove SourceBuffer
+RUN(mediaSource.removeSourceBuffer(segmentHelper.sourceBuffer))
+EXPECTED (mediaSource.sourceBuffers.length == '0') OK
+EXPECTED (mediaSource.sourceBuffers == '[object SourceBufferList]') OK
+
+Test that append() throws an error after SourceBuffer has been removed.
+Got expected exception Error: INVALID_STATE_ERR: DOM Exception 11
+Test that buffered throws an error after SourceBuffer has been removed.
+Got expected exception Error: INVALID_STATE_ERR: DOM Exception 11
+EXPECTED (mediaSource.sourceBuffers.length == '0') OK
+Test that addSourceBuffer() throws and error when the MediaSource is not associated with a media element.
+Got expected exception Error: INVALID_STATE_ERR: DOM Exception 11
+END OF TEST
+

@@ -9,7 +9,7 @@
 
             function abortDuringInitSegment(runNextTestCase, videoTag)
             {
-                segmentHelper.addSourceId();
+                segmentHelper.addSourceBuffer();
 
                 consoleWrite("Test aborting during initialization segment.");
                 try {
@@ -17,10 +17,10 @@
                     var partialInitSegment = initSegment.subarray(0, initSegment.length / 2);
 
                     consoleWrite("Appending partial initialization segment.");
-                    videoTag.webkitSourceAppend(segmentHelper.SourceID, partialInitSegment);
+                    segmentHelper.sourceBuffer.append(partialInitSegment);
 
                     consoleWrite("Aborting append.");
-                    videoTag.webkitSourceAbort(segmentHelper.SourceID);
+                    segmentHelper.sourceBuffer.abort();
 
                     consoleWrite("Appending full initialization segment.");
                     segmentHelper.appendInitSegment();
@@ -42,7 +42,7 @@
 
             function abortDuringMediaSegment(runNextTestCase, videoTag)
             {
-                segmentHelper.addSourceId();
+                segmentHelper.addSourceBuffer();
 
                 consoleWrite("Test aborting in the middle of a media segment.");
                 try {
@@ -51,10 +51,10 @@
                     var partialMediaSegment = mediaSegment.subarray(0, mediaSegment.length / 2);
 
                     consoleWrite("Appending partial media segment.");
-                    videoTag.webkitSourceAppend(segmentHelper.SourceID, partialMediaSegment);
+                    segmentHelper.sourceBuffer.append(partialMediaSegment);
 
                     consoleWrite("Aborting append.");
-                    videoTag.webkitSourceAbort(segmentHelper.SourceID);
+                    segmentHelper.sourceBuffer.abort();
 
                     consoleWrite("Appending full media segment.");
                     segmentHelper.appendMediaSegment(0);
@@ -77,11 +77,10 @@
             {
                 findMediaElement();
 
-                waitForEvent('loadstart');
                 waitForEvent('loadeddata');
-                waitForEvent('webkitsourceopen');
+                waitForEvent('webkitsourceopen', "", false, false, mediaSource);
                 waitForEvent('playing');
-                waitForEvent('webkitsourceended');
+                waitForEvent('webkitsourceended', "", false, false, mediaSource);
                 waitForEvent('ended');
                 waitForEvent('emptied');
 

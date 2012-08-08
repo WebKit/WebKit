@@ -2,41 +2,36 @@ Tests error cases with MediaSource API
 
 
 running didNotSendInitSegmentFirst
-EVENT(loadstart)
 EVENT(webkitsourceopen)
 Test appending a media segment before sending the initialization segment.
 EVENT(error) : MEDIA_ERR_SRC_NOT_SUPPORTED
 
 running immediateDecodeErrorViaEndOfStream
 EVENT(emptied)
-EVENT(loadstart)
 EVENT(webkitsourceopen)
-Test signalling a decode error with webkitSourceEndOfStream.
+Test signalling a decode error with MediaSource.endOfStream.
 EVENT(webkitsourceended)
 EVENT(error) : MEDIA_ERR_SRC_NOT_SUPPORTED
 
 running immediateNetworkErrorViaEndOfStream
 EVENT(emptied)
-EVENT(loadstart)
 EVENT(webkitsourceopen)
-Test signalling a network error with webkitSourceEndOfStream.
+Test signalling a network error with MediaSource.endOfStream.
 EVENT(webkitsourceended)
 EVENT(error) : MEDIA_ERR_SRC_NOT_SUPPORTED
 
 running decodeErrorAfterHaveMetadata
 EVENT(emptied)
-EVENT(loadstart)
 EVENT(webkitsourceopen)
-Test signalling a decode error with webkitSourceEndOfStream after we have appended enough data to get to the HAVE_METADATA state.
+Test signalling a decode error with MediaSource.endOfStream after we have appended enough data to get to the HAVE_METADATA state.
 EVENT(loadedmetadata)
 EVENT(webkitsourceended)
 EVENT(error) : MEDIA_ERR_DECODE
 
 running networkErrorAfterHaveMetadata
 EVENT(emptied)
-EVENT(loadstart)
 EVENT(webkitsourceopen)
-Test signalling a network error with webkitSourceEndOfStream after we have appended enough data to get to the HAVE_METADATA state.
+Test signalling a network error with MediaSource.endOfStream after we have appended enough data to get to the HAVE_METADATA state.
 EVENT(loadedmetadata)
 EVENT(webkitsourceended)
 EVENT(error) : MEDIA_ERR_NETWORK
