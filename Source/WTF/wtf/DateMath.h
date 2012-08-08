@@ -113,6 +113,7 @@ using WTF::dayInYear;
 using WTF::minutesPerHour;
 using WTF::monthFromDayInYear;
 using WTF::msPerDay;
+using WTF::msPerHour;
 using WTF::msPerMinute;
 using WTF::msPerSecond;
 using WTF::msToYear;

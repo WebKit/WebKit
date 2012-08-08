@@ -1,3 +1,16 @@
+2012-08-07  Yoshifumi Inoue  <yosin@chromium.org>
+
+        [WTF] Add using WTF::msPerHour into DateMath.h
+        https://bugs.webkit.org/show_bug.cgi?id=93428
+
+        Reviewed by Kent Tamura.
+
+        This patch adds "using WTF::msPerHour" into DateMath.h for some codes
+        which will use it, e.g. bug 92960. Note: DateMath.h already has had
+        using statements for msPerDay, msPerMinute and msPerSecond.
+
+        * wtf/DateMath.h: Added "using WTF::msPerHour".
+
 2012-08-07  Benjamin Poulain  <benjamin@webkit.org>
 
         Use the initialization from literal for JSC's Identifiers
