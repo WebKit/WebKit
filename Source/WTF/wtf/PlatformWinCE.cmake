@@ -1,7 +1,5 @@
 LIST(APPEND WTF_HEADERS
     unicode/wchar/UnicodeWchar.h
-
-    ${3RDPARTY_DIR}/ce-compat/ce_time.h
 )
 
 LIST(APPEND WTF_SOURCES
@@ -17,8 +15,6 @@ LIST(APPEND WTF_SOURCES
 
     win/MainThreadWin.cpp
     win/OwnPtrWin.cpp
-
-    ${3RDPARTY_DIR}/ce-compat/ce_time.c
 )
 
 LIST(APPEND WTF_LIBRARIES

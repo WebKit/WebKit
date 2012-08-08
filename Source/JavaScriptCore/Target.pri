@@ -26,10 +26,6 @@ CONFIG += staticlib
     }
 }
 
-wince* {
-    SOURCES += $$QT.core.sources/../3rdparty/ce-compat/ce_time.c
-}
-
 include(yarr/yarr.pri)
 
 INSTALLDEPS += all

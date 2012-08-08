@@ -1,3 +1,14 @@
+2012-08-08  Patrick Gansterer  <paroga@webkit.org>
+
+        Remove ce_time.(cpp|h) from list of source files
+        https://bugs.webkit.org/show_bug.cgi?id=93446
+
+        Reviewed by Simon Hausmann.
+
+        r125004 removed the last dependency on functions defined in ce_time.cpp.
+
+        * wtf/PlatformWinCE.cmake:
+
 2012-08-08  Alvaro Lopez Ortega  <alvaro@alobbs.com>
 
         Atomics.h has incorrect GCC test for ext/atomicity.h when using LSB compilers
