@@ -1,3 +1,30 @@
+2012-08-08  Adam Barth  <abarth@webkit.org>
+
+        Crash when reloading a Chromium "platform" app
+        https://bugs.webkit.org/show_bug.cgi?id=93497
+
+        Reviewed by Eric Seidel.
+
+        The framework for Chromium "platform" apps executes a big blob of
+        script during the didCreateScriptContext callback. This blob of scripts
+        interacts with a bunch of JavaScript objects and triggers a number of
+        security checks.
+
+        When reloading a frame, the didCreateScriptContext is called during
+        Frame::setDocument (as a consequence of calling
+        ScriptController::updateDocument). At that time, the SecurityOrigin
+        object hasn't yet been copied over to the DOMWindow, and we crash
+        trying to grab it.
+
+        The long-term fix for this bug is to fix
+        https://bugs.webkit.org/show_bug.cgi?id=75793, at which point there
+        will no longer be a SecurityOrigin object on DOMWindow. In the
+        meantime, however, we can fix this crash by null checking the
+        DOMWindow's SecurityOrigin object.
+
+        * bindings/generic/BindingSecurity.cpp:
+        (WebCore::canAccessDocument):
+
 2012-08-08  Dean Jackson  <dino@apple.com>
 
         Unreviewed build fix for Mac port after http://trac.webkit.org/changeset/125051

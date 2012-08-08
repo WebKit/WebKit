@@ -804,6 +804,25 @@ TEST_F(WebFrameTest, GetFullHtmlOfPage)
     EXPECT_TRUE(selectionHtml.isEmpty());
 }
 
+class TestExecuteScriptDuringDidCreateScriptContext : public WebFrameClient {
+public:
+    virtual void didCreateScriptContext(WebFrame* frame, v8::Handle<v8::Context> context, int extensionGroup, int worldId) OVERRIDE
+    {
+        frame->executeScript(WebScriptSource("window.history = 'replaced';"));
+    }
+};
+
+TEST_F(WebFrameTest, ExecuteScriptDuringDidCreateScriptContext)
+{
+    registerMockedHttpURLLoad("hello_world.html");
+
+    TestExecuteScriptDuringDidCreateScriptContext webFrameClient;
+    WebView* webView = FrameTestHelpers::createWebViewAndLoad(m_baseURL + "hello_world.html", true, &webFrameClient);
+
+    webView->mainFrame()->reload();
+    webkit_support::ServeAsynchronousMockedRequests();
+}
+
 class TestDidCreateFrameWebFrameClient : public WebFrameClient {
 public:
     TestDidCreateFrameWebFrameClient() : m_frameCount(0), m_parent(0)
