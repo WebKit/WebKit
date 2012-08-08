@@ -207,6 +207,24 @@
 
 2012-08-08  Andrew Scherkus  <scherkus@chromium.org>
 
+        Remove suspend handler from media/event-attributes.html
+        https://bugs.webkit.org/show_bug.cgi?id=93522
+
+        Reviewed by Eric Carlson.
+
+        r125054 fixed a bug where the suspend event wasn't being fired when the media engine had
+        completely loaded the media. Unfortunately this caused media/event-attributes.html to be
+        non-deterministic as to when the suspend event would fire relative to other events (i.e.,
+        loadstart vs loadedmetadata).
+
+        Since the suspend event is covered by http/tests/media/video-load-suspend.html we can remove
+        the onsuspend handler from media/event-attributes.html.
+
+        * media/event-attributes-expected.txt: Adjust expectations.
+        * media/event-attributes.html: Remove onsuspend handler.
+
+2012-08-08  Andrew Scherkus  <scherkus@chromium.org>
+
         Fire suspend event whenever network state is set to NETWORK_IDLE.
         https://bugs.webkit.org/show_bug.cgi?id=93052
 
