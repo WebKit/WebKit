@@ -201,8 +201,8 @@ public:
     // Returns the absolute bounding box translated into screen coordinates:
     IntRect screenRect() const;
 
-    void removeAttribute(const String& name);
-    void removeAttributeNS(const String& namespaceURI, const String& localName);
+    void removeAttribute(const AtomicString& name);
+    void removeAttributeNS(const AtomicString& namespaceURI, const AtomicString& localName);
 
     PassRefPtr<Attr> detachAttribute(size_t index);
 

@@ -1490,12 +1490,12 @@ void Element::removeAttribute(size_t index)
     mutableAttributeData()->removeAttribute(index, this);
 }
 
-void Element::removeAttribute(const String& name)
+void Element::removeAttribute(const AtomicString& name)
 {
     if (!attributeData())
         return;
 
-    String localName = shouldIgnoreAttributeCase(this) ? name.lower() : name;
+    AtomicString localName = shouldIgnoreAttributeCase(this) ? name.lower() : name;
     size_t index = attributeData()->getAttributeItemIndex(localName, false);
     if (index == notFound)
         return;
@@ -1503,7 +1503,7 @@ void Element::removeAttribute(const String& name)
     mutableAttributeData()->removeAttribute(index, this);
 }
 
-void Element::removeAttributeNS(const String& namespaceURI, const String& localName)
+void Element::removeAttributeNS(const AtomicString& namespaceURI, const AtomicString& localName)
 {
     removeAttribute(QualifiedName(nullAtom, localName, namespaceURI));
 }
