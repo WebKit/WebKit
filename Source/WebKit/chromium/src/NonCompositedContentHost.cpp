@@ -30,12 +30,10 @@
 #include "FloatPoint.h"
 #include "FloatRect.h"
 #include "GraphicsLayer.h"
-#include "LayerChromium.h"
 #include "PlatformContextSkia.h"
 #include "WebViewImpl.h"
+#include <public/WebContentLayer.h>
 #include <public/WebFloatPoint.h>
-
-using WebCore::LayerChromium;
 
 namespace WebKit {
 
@@ -50,10 +48,11 @@ NonCompositedContentHost::NonCompositedContentHost(WebViewImpl* webView)
     m_graphicsLayer->setName("non-composited content");
 #endif
     m_graphicsLayer->setDrawsContent(true);
-    m_graphicsLayer->platformLayer()->unwrap<LayerChromium>()->setIsNonCompositedContent(true);
-    m_graphicsLayer->platformLayer()->setOpaque(true);
+    WebContentLayer layer = m_graphicsLayer->platformLayer()->to<WebContentLayer>();
+    layer.setUseLCDText(true);
+    layer.setOpaque(true);
 #if !OS(ANDROID)
-    m_graphicsLayer->platformLayer()->unwrap<LayerChromium>()->setDrawCheckerboardForMissingTiles(true);
+    layer.setDrawCheckerboardForMissingTiles(true);
 #endif
 }
 

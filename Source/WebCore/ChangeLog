@@ -1,3 +1,31 @@
+2012-08-07  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Only use public Platform API in NonCompositedContentHost
+        https://bugs.webkit.org/show_bug.cgi?id=93423
+
+        Reviewed by Adrienne Walker.
+
+        This renames the "NonCompositedContentHost" flag to "useLCDText", which is the primary purpose of the flag. We
+        also use this flag to control whether we have border texels or not on the "root" layer, but I can't think of a
+        clean name that encapsulates both behaviors.
+
+        * platform/graphics/chromium/LayerChromium.cpp:
+        (WebCore::LayerChromium::LayerChromium):
+        (WebCore::LayerChromium::setUseLCDText):
+        (WebCore::LayerChromium::pushPropertiesTo):
+        * platform/graphics/chromium/LayerChromium.h:
+        (LayerChromium):
+        (WebCore::LayerChromium::useLCDText):
+        * platform/graphics/chromium/TiledLayerChromium.cpp:
+        (WebCore::TiledLayerChromium::setUseLCDText):
+        * platform/graphics/chromium/TiledLayerChromium.h:
+        * platform/graphics/chromium/cc/CCLayerImpl.cpp:
+        (WebCore::CCLayerImpl::CCLayerImpl):
+        * platform/graphics/chromium/cc/CCLayerImpl.h:
+        (WebCore::CCLayerImpl::setUseLCDText):
+        (WebCore::CCLayerImpl::useLCDText):
+        (CCLayerImpl):
+
 2012-08-08  Beth Dakin  <bdakin@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=93393

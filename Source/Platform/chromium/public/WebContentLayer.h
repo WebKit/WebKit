@@ -60,6 +60,17 @@ public:
     // Set to apply a scale factor used when painting and drawing this layer's content. Defaults to 1.0.
     WEBKIT_EXPORT void setContentsScale(float);
 
+    // Set to render text in this layer with LCD antialiasing. Only set if you know that this layer will be
+    // drawn in a way where this makes sense - i.e. opaque background, not rotated or scaled, etc.
+    // Defaults to false;
+    WEBKIT_EXPORT void setUseLCDText(bool);
+
+    // Set to draw a system-defined checkerboard if the compositor would otherwise draw a tile in this layer
+    // and the actual contents are unavailable. If false, the compositor will draw the layer's background color
+    // for these tiles.
+    // Defaults to false.
+    WEBKIT_EXPORT void setDrawCheckerboardForMissingTiles(bool);
+
 #if WEBKIT_IMPLEMENTATION
     WebContentLayer(const WTF::PassRefPtr<WebCore::ContentLayerChromium>&);
     WebContentLayer& operator=(const WTF::PassRefPtr<WebCore::ContentLayerChromium>&);

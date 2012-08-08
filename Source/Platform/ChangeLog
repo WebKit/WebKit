@@ -1,3 +1,15 @@
+2012-08-07  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Only use public Platform API in NonCompositedContentHost
+        https://bugs.webkit.org/show_bug.cgi?id=93423
+
+        Reviewed by Adrienne Walker.
+
+        Adds setters to control text antialiasing and checkerboarding behavior for content layers.
+
+        * chromium/public/WebContentLayer.h:
+        (WebContentLayer):
+
 2012-08-08  Nate Chapin  <japhet@chromium.org>
 
         [chromium] Upstream android's FlingAnimator

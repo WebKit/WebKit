@@ -1,3 +1,25 @@
+2012-08-07  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Only use public Platform API in NonCompositedContentHost
+        https://bugs.webkit.org/show_bug.cgi?id=93423
+
+        Reviewed by Adrienne Walker.
+
+        Switches to using Web*Layer APIs in NonCompositedContentHost instead of reaching in to the LayerChromium and
+        updates unit tests for the nonCompositedContent->useLCDText flag rename.
+
+        * src/NonCompositedContentHost.cpp:
+        (WebKit::NonCompositedContentHost::NonCompositedContentHost):
+        * src/WebContentLayer.cpp:
+        (WebKit::WebContentLayer::setUseLCDText):
+        (WebKit):
+        (WebKit::WebContentLayer::setDrawCheckerboardForMissingTiles):
+        * src/WebViewImpl.cpp:
+        * tests/CCLayerImplTest.cpp:
+        (WebCore::TEST):
+        * tests/CCLayerTreeHostImplTest.cpp:
+        * tests/LayerChromiumTest.cpp:
+
 2012-08-08  Alec Flett  <alecflett@chromium.org>
 
         IndexedDB: new enums and openCursor stub

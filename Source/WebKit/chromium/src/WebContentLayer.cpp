@@ -53,6 +53,16 @@ void WebContentLayer::setContentsScale(float scale)
     m_private->setContentsScale(scale);
 }
 
+void WebContentLayer::setUseLCDText(bool enable)
+{
+    m_private->setUseLCDText(enable);
+}
+
+void WebContentLayer::setDrawCheckerboardForMissingTiles(bool enable)
+{
+    m_private->setDrawCheckerboardForMissingTiles(enable);
+}
+
 WebContentLayer::WebContentLayer(const PassRefPtr<ContentLayerChromium>& node)
     : WebScrollableLayer(node)
 {

@@ -843,7 +843,7 @@ TEST_F(CCLayerTreeHostImplTest, scrollNonCompositedRoot)
     IntSize surfaceSize(10, 10);
 
     OwnPtr<CCLayerImpl> contentLayer = CCLayerImpl::create(1);
-    contentLayer->setIsNonCompositedContent(true);
+    contentLayer->setUseLCDText(true);
     contentLayer->setDrawsContent(true);
     contentLayer->setPosition(FloatPoint(0, 0));
     contentLayer->setAnchorPoint(FloatPoint(0, 0));

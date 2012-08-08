@@ -150,8 +150,8 @@ public:
     void setUseParentBackfaceVisibility(bool useParentBackfaceVisibility) { m_useParentBackfaceVisibility = useParentBackfaceVisibility; }
     bool useParentBackfaceVisibility() const { return m_useParentBackfaceVisibility; }
 
-    void setIsNonCompositedContent(bool isNonCompositedContent) { m_isNonCompositedContent = isNonCompositedContent; }
-    bool isNonCompositedContent() const { return m_isNonCompositedContent; }
+    void setUseLCDText(bool useLCDText) { m_useLCDText = useLCDText; }
+    bool useLCDText() const { return m_useLCDText; }
 
     void setSublayerTransform(const WebKit::WebTransformationMatrix&);
     const WebKit::WebTransformationMatrix& sublayerTransform() const { return m_sublayerTransform; }
@@ -341,7 +341,7 @@ private:
     bool m_drawCheckerboardForMissingTiles;
     WebKit::WebTransformationMatrix m_sublayerTransform;
     WebKit::WebTransformationMatrix m_transform;
-    bool m_isNonCompositedContent;
+    bool m_useLCDText;
 
     bool m_drawsContent;
     bool m_forceRenderSurface;

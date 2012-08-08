@@ -147,7 +147,6 @@
 #include "WebTouchCandidatesInfo.h"
 #include "WebViewClient.h"
 #include "WheelEvent.h"
-#include "cc/CCSettings.h"
 #include "painting/GraphicsContextBuilder.h"
 #include <public/Platform.h>
 #include <public/WebCompositor.h>

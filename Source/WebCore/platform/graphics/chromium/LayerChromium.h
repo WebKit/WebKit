@@ -200,8 +200,8 @@ public:
     void setUseParentBackfaceVisibility(bool useParentBackfaceVisibility) { m_useParentBackfaceVisibility = useParentBackfaceVisibility; }
     bool useParentBackfaceVisibility() const { return m_useParentBackfaceVisibility; }
 
-    virtual void setIsNonCompositedContent(bool);
-    bool isNonCompositedContent() const { return m_isNonCompositedContent; }
+    virtual void setUseLCDText(bool);
+    bool useLCDText() const { return m_useLCDText; }
 
     virtual void setLayerTreeHost(CCLayerTreeHost*);
 
@@ -377,7 +377,7 @@ private:
     bool m_masksToBounds;
     bool m_opaque;
     bool m_doubleSided;
-    bool m_isNonCompositedContent;
+    bool m_useLCDText;
     bool m_preserves3D;
     bool m_useParentBackfaceVisibility;
     bool m_alwaysReserveTextures;

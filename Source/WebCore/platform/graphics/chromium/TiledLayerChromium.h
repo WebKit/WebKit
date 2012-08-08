@@ -52,7 +52,7 @@ public:
 
     virtual void setNeedsDisplayRect(const FloatRect&) OVERRIDE;
 
-    virtual void setIsNonCompositedContent(bool) OVERRIDE;
+    virtual void setUseLCDText(bool) OVERRIDE;
 
     virtual void setLayerTreeHost(CCLayerTreeHost*) OVERRIDE;
 

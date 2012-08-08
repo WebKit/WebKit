@@ -291,16 +291,16 @@ void TiledLayerChromium::setNeedsDisplayRect(const FloatRect& dirtyRect)
     LayerChromium::setNeedsDisplayRect(dirtyRect);
 }
 
-void TiledLayerChromium::setIsNonCompositedContent(bool isNonCompositedContent)
+void TiledLayerChromium::setUseLCDText(bool useLCDText)
 {
-    LayerChromium::setIsNonCompositedContent(isNonCompositedContent);
+    LayerChromium::setUseLCDText(useLCDText);
 
     CCLayerTilingData::BorderTexelOption borderTexelOption;
 #if OS(ANDROID)
     // Always want border texels and GL_LINEAR due to pinch zoom.
     borderTexelOption = CCLayerTilingData::HasBorderTexels;
 #else
-    borderTexelOption = isNonCompositedContent ? CCLayerTilingData::NoBorderTexels : CCLayerTilingData::HasBorderTexels;
+    borderTexelOption = useLCDText ? CCLayerTilingData::NoBorderTexels : CCLayerTilingData::HasBorderTexels;
 #endif
     setBorderTexelOption(borderTexelOption);
 }

@@ -78,7 +78,7 @@ LayerChromium::LayerChromium()
     , m_masksToBounds(false)
     , m_opaque(false)
     , m_doubleSided(true)
-    , m_isNonCompositedContent(false)
+    , m_useLCDText(false)
     , m_preserves3D(false)
     , m_useParentBackfaceVisibility(false)
     , m_alwaysReserveTextures(false)
@@ -110,9 +110,9 @@ LayerChromium::~LayerChromium()
     removeAllChildren();
 }
 
-void LayerChromium::setIsNonCompositedContent(bool isNonCompositedContent)
+void LayerChromium::setUseLCDText(bool useLCDText)
 {
-    m_isNonCompositedContent = isNonCompositedContent;
+    m_useLCDText = useLCDText;
 }
 
 void LayerChromium::setLayerTreeHost(CCLayerTreeHost* host)
@@ -544,7 +544,7 @@ void LayerChromium::pushPropertiesTo(CCLayerImpl* layer)
     layer->setDrawsContent(drawsContent());
     layer->setFilters(filters());
     layer->setBackgroundFilters(backgroundFilters());
-    layer->setIsNonCompositedContent(m_isNonCompositedContent);
+    layer->setUseLCDText(m_useLCDText);
     layer->setMasksToBounds(m_masksToBounds);
     layer->setScrollable(m_scrollable);
     layer->setShouldScrollOnMainThread(m_shouldScrollOnMainThread);
