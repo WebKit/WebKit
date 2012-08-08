@@ -3485,8 +3485,6 @@
             'platform/efl/PlatformKeyboardEventEfl.cpp',
             'platform/efl/PlatformMouseEventEfl.cpp',
             'platform/efl/PlatformScreenEfl.cpp',
-            'platform/efl/PlatformTouchEventEfl.cpp',
-            'platform/efl/PlatformTouchPointEfl.cpp',
             'platform/efl/PlatformWheelEventEfl.cpp',
             'platform/efl/PopupMenuEfl.cpp',
             'platform/efl/PopupMenuEfl.h',
