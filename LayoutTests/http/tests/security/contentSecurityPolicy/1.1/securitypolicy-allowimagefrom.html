@@ -8,7 +8,7 @@
       else
           log('FAIL image is not allowed when no policy exists.');
 
-      injectPolicy("img-src http://notexample.com/;");
+      injectPolicy("img-src http://notexample.com;");
 
       if (!document.SecurityPolicy.allowsImageFrom('http://example.com/'))
           log('PASS image is not allowed when policy exists.');

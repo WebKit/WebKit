@@ -1,6 +1,16 @@
+CONSOLE MESSAGE: The source list for Content Security Policy directive 'script-src' contains the source 'http://127.0.0.1:*/'. Content Security Policy 1.0 supports only schemes, hosts, and ports. Paths might be supported in the future, but for now, '/' is being ignored. Be careful.
+CONSOLE MESSAGE: The source list for Content Security Policy directive 'script-src' contains the source 'http://127.0.0.1:*/path'. Content Security Policy 1.0 supports only schemes, hosts, and ports. Paths might be supported in the future, but for now, '/path' is being ignored. Be careful.
+CONSOLE MESSAGE: The source list for Content Security Policy directive 'script-src' contains the source 'http://127.0.0.1:*/path?query=string'. Content Security Policy 1.0 supports only schemes, hosts, and ports. Paths might be supported in the future, but for now, '/path?query=string' is being ignored. Be careful.
+CONSOLE MESSAGE: The source list for Content Security Policy directive 'script-src' contains the source 'http://127.0.0.1:*/path#anchor'. Content Security Policy 1.0 supports only schemes, hosts, and ports. Paths might be supported in the future, but for now, '/path#anchor' is being ignored. Be careful.
+CONSOLE MESSAGE: The source list for Content Security Policy directive 'script-src' contains the source 'http://127.0.0.1:8000/'. Content Security Policy 1.0 supports only schemes, hosts, and ports. Paths might be supported in the future, but for now, '/' is being ignored. Be careful.
+CONSOLE MESSAGE: The source list for Content Security Policy directive 'script-src' contains the source 'http://127.0.0.1:8000/path'. Content Security Policy 1.0 supports only schemes, hosts, and ports. Paths might be supported in the future, but for now, '/path' is being ignored. Be careful.
+CONSOLE MESSAGE: The source list for Content Security Policy directive 'script-src' contains the source 'http://127.0.0.1:8000/path?query=string'. Content Security Policy 1.0 supports only schemes, hosts, and ports. Paths might be supported in the future, but for now, '/path?query=string' is being ignored. Be careful.
+CONSOLE MESSAGE: The source list for Content Security Policy directive 'script-src' contains the source 'http://127.0.0.1:8000/path#anchor'. Content Security Policy 1.0 supports only schemes, hosts, and ports. Paths might be supported in the future, but for now, '/path#anchor' is being ignored. Be careful.
+CONSOLE MESSAGE: The source list for Content Security Policy directive 'script-src' contains the source 'http://127.0.0.1:8000/thisisa'. Content Security Policy 1.0 supports only schemes, hosts, and ports. Paths might be supported in the future, but for now, '/thisisa' is being ignored. Be careful.
 CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'pathwithasemicolon'.
 
-Paths should be ignored when evaluating sources.
+CONSOLE MESSAGE: The source list for Content Security Policy directive 'script-src' contains the source 'http://127.0.0.1:8000/this'. Content Security Policy 1.0 supports only schemes, hosts, and ports. Paths might be supported in the future, but for now, '/this' is being ignored. Be careful.
+Paths should be ignored when evaluating sources. This test passes if FAIL does not appear in the output, and each of the tests generates a warning about the path component.
 
 
 

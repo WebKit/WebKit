@@ -9,7 +9,7 @@
           log('FAIL connection is not allowed when no policy exists.');
 
 
-      injectPolicy("connect-src http://notexample.com/;");
+      injectPolicy("connect-src http://notexample.com;");
 
       if (!document.SecurityPolicy.allowsConnectionTo('http://example.com/'))
           log('PASS connection is not allowed when policy exists.');

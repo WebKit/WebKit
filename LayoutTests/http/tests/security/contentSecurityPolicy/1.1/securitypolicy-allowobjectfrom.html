@@ -8,7 +8,7 @@
       else
           log('FAIL object is not allowed when no policy exists.');
 
-      injectPolicy("object-src http://notexample.com/;");
+      injectPolicy("object-src http://notexample.com;");
 
       if (!document.SecurityPolicy.allowsObjectFrom('http://example.com/'))
           log('PASS object is not allowed when policy exists.');

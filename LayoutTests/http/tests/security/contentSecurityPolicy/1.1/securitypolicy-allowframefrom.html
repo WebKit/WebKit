@@ -8,7 +8,7 @@
       else
           log('FAIL frame is not allowed when no policy exists.');
 
-      injectPolicy("frame-src http://notexample.com/;");
+      injectPolicy("frame-src http://notexample.com;");
 
       if (!document.SecurityPolicy.allowsFrameFrom('http://example.com/'))
           log('PASS frame is not allowed when policy exists.');

@@ -8,7 +8,7 @@
       else
           log('FAIL script is not allowed when no policy exists.');
 
-      injectPolicy("script-src http://notexample.com/;");
+      injectPolicy("script-src http://notexample.com;");
 
       if (!document.SecurityPolicy.allowsScriptFrom('http://example.com/'))
           log('PASS script is not allowed when policy exists.');

@@ -8,7 +8,7 @@
       else
           log('FAIL style is not allowed when no policy exists.');
 
-      injectPolicy("style-src http://notexample.com/;");
+      injectPolicy("style-src http://notexample.com;");
 
       if (!document.SecurityPolicy.allowsStyleFrom('http://example.com/'))
           log('PASS style is not allowed when policy exists.');

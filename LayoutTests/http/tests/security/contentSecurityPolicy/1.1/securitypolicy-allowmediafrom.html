@@ -8,7 +8,7 @@
       else
           log('FAIL media is not allowed when no policy exists.');
 
-      injectPolicy("media-src http://notexample.com/;");
+      injectPolicy("media-src http://notexample.com;");
 
       if (!document.SecurityPolicy.allowsMediaFrom('http://example.com/'))
           log('PASS media is not allowed when policy exists.');

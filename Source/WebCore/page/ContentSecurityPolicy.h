@@ -98,6 +98,7 @@ public:
 
     void reportDuplicateDirective(const String&) const;
     void reportInvalidNonce(const String&) const;
+    void reportIgnoredPathComponent(const String& directiveName, const String& completeSource, const String& path) const;
     void reportUnrecognizedDirective(const String&) const;
     void reportViolation(const String& directiveText, const String& consoleMessage, const KURL& blockedURL, const Vector<KURL>& reportURIs, const String& header, const String& contextURL = String(), const WTF::OrdinalNumber& contextLine = WTF::OrdinalNumber::beforeFirst(), PassRefPtr<ScriptCallStack> = 0) const;
 

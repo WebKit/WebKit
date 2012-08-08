@@ -8,7 +8,7 @@
       else
           log('FAIL document.SecurityPolicy.reportURIs has length ' + document.SecurityPolicy.reportURIs.length + ' when no policy exists.');
 
-      injectPolicy('report-uri http://example.com/');
+      injectPolicy('report-uri http://example.com');
 
       if (document.SecurityPolicy.reportURIs.length === 1)
           log('PASS document.SecurityPolicy.reportURIs has length 1 when policy exists.');

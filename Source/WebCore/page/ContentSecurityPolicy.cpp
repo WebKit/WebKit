@@ -185,7 +185,7 @@ private:
 
 class CSPSourceList {
 public:
-    explicit CSPSourceList(ContentSecurityPolicy*);
+    CSPSourceList(ContentSecurityPolicy*, const String& directiveName);
 
     void parse(const String&);
     bool matches(const KURL&);
@@ -195,7 +195,7 @@ public:
 private:
     void parse(const UChar* begin, const UChar* end);
 
-    bool parseSource(const UChar* begin, const UChar* end, String& scheme, String& host, int& port, bool& hostHasWildcard, bool& portHasWildcard);
+    bool parseSource(const UChar* begin, const UChar* end, String& scheme, String& host, int& port, String& path, bool& hostHasWildcard, bool& portHasWildcard);
     bool parseScheme(const UChar* begin, const UChar* end, String& scheme);
     bool parseHost(const UChar* begin, const UChar* end, String& host, bool& hostHasWildcard);
     bool parsePort(const UChar* begin, const UChar* end, int& port, bool& portHasWildcard);
@@ -208,13 +208,15 @@ private:
 
     ContentSecurityPolicy* m_policy;
     Vector<CSPSource> m_list;
+    String m_directiveName;
     bool m_allowStar;
     bool m_allowInline;
     bool m_allowEval;
 };
 
-CSPSourceList::CSPSourceList(ContentSecurityPolicy* policy)
+CSPSourceList::CSPSourceList(ContentSecurityPolicy* policy, const String& directiveName)
     : m_policy(policy)
+    , m_directiveName(directiveName)
     , m_allowStar(false)
     , m_allowInline(false)
     , m_allowEval(false)
@@ -256,14 +258,16 @@ void CSPSourceList::parse(const UChar* begin, const UChar* end)
             return; // We represent 'none' as an empty m_list.
         isFirstSourceInList = false;
 
-        String scheme, host;
+        String scheme, host, path;
         int port = 0;
         bool hostHasWildcard = false;
         bool portHasWildcard = false;
 
-        if (parseSource(beginSource, position, scheme, host, port, hostHasWildcard, portHasWildcard)) {
+        if (parseSource(beginSource, position, scheme, host, port, path, hostHasWildcard, portHasWildcard)) {
             if (scheme.isEmpty())
                 scheme = m_policy->securityOrigin()->protocol();
+            if (!path.isEmpty())
+                m_policy->reportIgnoredPathComponent(m_directiveName, String(beginSource, position - beginSource), path);
             m_list.append(CSPSource(scheme, host, port, hostHasWildcard, portHasWildcard));
         }
 
@@ -276,11 +280,9 @@ void CSPSourceList::parse(const UChar* begin, const UChar* end)
 //                   / "'self'"
 //
 bool CSPSourceList::parseSource(const UChar* begin, const UChar* end,
-                                String& scheme, String& host, int& port,
+                                String& scheme, String& host, int& port, String& path,
                                 bool& hostHasWildcard, bool& portHasWildcard)
 {
-    String path; // FIXME: We're ignoring the path component for now.
-
     if (begin == end)
         return false;
 
@@ -517,7 +519,7 @@ void CSPSourceList::addSourceUnsafeEval()
 class CSPDirective {
 public:
     CSPDirective(const String& name, const String& value, ContentSecurityPolicy* policy)
-        : m_sourceList(policy)
+        : m_sourceList(policy, name)
         , m_text(name + ' ' + value)
         , m_selfURL(policy->url())
     {
@@ -1292,6 +1294,12 @@ void ContentSecurityPolicy::reportDuplicateDirective(const String& name) const
 void ContentSecurityPolicy::reportInvalidNonce(const String& nonce) const
 {
     String message = makeString("Ignoring invalid Content Security Policy script nonce: '", nonce, "'.\n");
+    logToConsole(message);
+}
+
+void ContentSecurityPolicy::reportIgnoredPathComponent(const String& directiveName, const String& completeSource, const String& path) const
+{
+    String message = makeString("The source list for Content Security Policy directive '", directiveName, "' contains the source '", completeSource, "'. Content Security Policy 1.0 supports only schemes, hosts, and ports. Paths might be supported in the future, but for now, '", path, "' is being ignored. Be careful.");
     logToConsole(message);
 }
 

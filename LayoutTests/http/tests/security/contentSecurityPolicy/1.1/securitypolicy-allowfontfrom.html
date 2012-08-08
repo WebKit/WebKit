@@ -8,7 +8,7 @@
       else
           log('FAIL font is not allowed when no policy exists.');
 
-      injectPolicy("font-src http://notexample.com/;");
+      injectPolicy("font-src http://notexample.com;");
 
       if (!document.SecurityPolicy.allowsFontFrom('http://example.com/'))
           log('PASS font is not allowed when policy exists.');

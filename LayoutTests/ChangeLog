@@ -1,3 +1,28 @@
+2012-08-08  Mike West  <mkwst@chromium.org>
+
+        Until CSP fully supports paths, we should log a warning if we encounter a source with a path.
+        https://bugs.webkit.org/show_bug.cgi?id=93468
+
+        Reviewed by Adam Barth.
+
+        * http/tests/security/contentSecurityPolicy/1.1/securitypolicy-allowconnectionto.html:
+        * http/tests/security/contentSecurityPolicy/1.1/securitypolicy-allowfontfrom.html:
+        * http/tests/security/contentSecurityPolicy/1.1/securitypolicy-allowframefrom.html:
+        * http/tests/security/contentSecurityPolicy/1.1/securitypolicy-allowimagefrom.html:
+        * http/tests/security/contentSecurityPolicy/1.1/securitypolicy-allowmediafrom.html:
+        * http/tests/security/contentSecurityPolicy/1.1/securitypolicy-allowobjectfrom.html:
+        * http/tests/security/contentSecurityPolicy/1.1/securitypolicy-allowscriptfrom.html:
+        * http/tests/security/contentSecurityPolicy/1.1/securitypolicy-allowstylefrom.html:
+        * http/tests/security/contentSecurityPolicy/1.1/securitypolicy-reporturi.html:
+            All of the SecurityPolicy API tests with source lists contained
+            sources with a trailing `/`. I've fixed that oversight.
+        * http/tests/security/contentSecurityPolicy/source-list-parsing-05-expected.txt:
+        * http/tests/security/contentSecurityPolicy/source-list-parsing-05.html:
+        * http/tests/security/contentSecurityPolicy/source-list-parsing-06-expected.txt:
+        * http/tests/security/contentSecurityPolicy/source-list-parsing-06.html:
+            Updating the text of the test, and updating them to include the new
+            console warnings.
+
 2012-08-08  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: generate preview for the objects dumped into the console upon logging.
