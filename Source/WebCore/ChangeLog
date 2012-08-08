@@ -1,3 +1,70 @@
+2012-08-07  Kentaro Hara  <haraken@chromium.org>
+
+        Optimize ChildNode{Insertion,Removal}Notifier::notify() by lazily taking a snapshot of child nodes
+        https://bugs.webkit.org/show_bug.cgi?id=92965
+
+        Reviewed by Adam Barth.
+
+        This patch improves performance of Dromaeo/dom-modify by 8.2% in both Chromium and Safari.
+
+        [Mac/Safari]     4590.33 runs/s  =>  4965.79 runs/s  (+8.18%)
+        [Chromium/Linux] 3970.63 runs/s  =>  4299.65 runs/s  (+8.29%)
+
+        notifyDescendantRemovedFromDocument() cannot iterate child nodes in this way:
+
+        void notifyDescendantRemovedFromDocument(Node* node) {
+            for (Node* child = node->firstChild(); child; child = child->nextSibling()) {
+                ...;
+                notifyNodeRemovedFromDocument(child);
+            }
+        }
+
+        This is because notifyNodeRemovedFromDocument(child) might dispatch events
+        and the events might change child trees. To avoid security issues, the current
+        code takes a snapshot of child nodes before starting the iteration.
+
+        void notifyDescendantRemovedFromDocument(Node* node) {
+            NodeVector children;
+            getChildNodes(node, children); // Take a snapshot.
+            for (int i = 0; i < children.size(); i++) {
+                ...;
+                notifyNodeRemovedFromDocument(children[i]);
+            }
+        }
+
+        Based on the observation that in almost all cases events won't be dispatched
+        from inside notifyNodeRemovedFromDocument(), this patch implements
+        a "lazy" snapshot. The snapshot is taken at the point where
+        EventDispatcher::dispatchEvent() is invoked. The snapshot is not taken unless
+        any event is dispatched.
+
+        No tests. Confirm that all existing tests pass.
+        Actually, at present there is (should be) no case where an event is
+        dispatched from inside notifyNodeRemovedFromDocument(). Even DOMNodeInserted
+        and DOMNodeRemoved events are not dispatched. Originally the snapshot was
+        implemented "just in case" to protect the code from future attacks.
+        I manually confirmed that the lazy snapshot works correctly by inserting
+        takeChildNodesSnapshot() to notifyDescendantRemovedFromDocument()
+        in a random manner.
+
+        * dom/ContainerNode.cpp:
+        (WebCore):
+        * dom/ContainerNode.h:
+        (ChildNodesLazySnapshot):
+        (WebCore::ChildNodesLazySnapshot::ChildNodesLazySnapshot):
+        (WebCore::ChildNodesLazySnapshot::~ChildNodesLazySnapshot):
+        (WebCore::ChildNodesLazySnapshot::nextNode):
+        (WebCore::ChildNodesLazySnapshot::takeSnapshot):
+        (WebCore::ChildNodesLazySnapshot::nextSnapshot):
+        (WebCore::ChildNodesLazySnapshot::hasSnapshot):
+        (WebCore::ChildNodesLazySnapshot::takeChildNodesLazySnapshot):
+        (WebCore):
+        * dom/ContainerNodeAlgorithms.cpp:
+        (WebCore::ChildNodeInsertionNotifier::notifyDescendantInsertedIntoDocument):
+        (WebCore::ChildNodeRemovalNotifier::notifyDescendantRemovedFromDocument):
+        * dom/EventDispatcher.cpp:
+        (WebCore::EventDispatcher::dispatchEvent):
+
 2012-08-07  Ojan Vafai  <ojan@chromium.org>
 
         percentage margins + flex incorrectly overflows the flexbox

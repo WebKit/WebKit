@@ -27,6 +27,7 @@
 #include "EventDispatcher.h"
 
 #include "ComposedShadowTreeWalker.h"
+#include "ContainerNode.h"
 #include "ElementShadow.h"
 #include "EventContext.h"
 #include "EventDispatchMediator.h"
@@ -246,6 +247,8 @@ bool EventDispatcher::dispatchEvent(PassRefPtr<Event> prpEvent)
     m_eventDispatched = true;
 #endif
     RefPtr<Event> event = prpEvent;
+    ChildNodesLazySnapshot::takeChildNodesLazySnapshot();
+
     event->setTarget(eventTargetRespectingSVGTargetRules(m_node.get()));
     ASSERT(!eventDispatchForbidden());
     ASSERT(event->target());

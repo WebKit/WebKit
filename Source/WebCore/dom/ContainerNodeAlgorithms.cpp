@@ -34,16 +34,15 @@ namespace WebCore {
 
 void ChildNodeInsertionNotifier::notifyDescendantInsertedIntoDocument(ContainerNode* node)
 {
-    NodeVector children;
-    getChildNodes(node, children);
-    for (size_t i = 0; i < children.size(); ++i) {
+    ChildNodesLazySnapshot snapshot(node);
+    while (Node* child = snapshot.nextNode()) {
         // If we have been removed from the document during this loop, then
         // we don't want to tell the rest of our children that they've been
         // inserted into the document because they haven't.
-        if (node->inDocument() && children[i]->parentNode() == node)
-            notifyNodeInsertedIntoDocument(children[i].get());
+        if (node->inDocument() && child->parentNode() == node)
+            notifyNodeInsertedIntoDocument(child);
     }
-        
+
     if (!node->isElementNode())
         return;
 
@@ -67,14 +66,13 @@ void ChildNodeInsertionNotifier::notifyDescendantInsertedIntoTree(ContainerNode*
 
 void ChildNodeRemovalNotifier::notifyDescendantRemovedFromDocument(ContainerNode* node)
 {
-    NodeVector children;
-    getChildNodes(node, children);
-    for (size_t i = 0; i < children.size(); ++i) {
+    ChildNodesLazySnapshot snapshot(node);
+    while (Node* child = snapshot.nextNode()) {
         // If we have been added to the document during this loop, then we
         // don't want to tell the rest of our children that they've been
         // removed from the document because they haven't.
-        if (!node->inDocument() && children[i]->parentNode() == node)
-            notifyNodeRemovedFromDocument(children[i].get());
+        if (!node->inDocument() && child->parentNode() == node)
+            notifyNodeRemovedFromDocument(child);
     }
 
     if (!node->isElementNode())

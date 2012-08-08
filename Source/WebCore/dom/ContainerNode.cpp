@@ -60,6 +60,8 @@ static NodeCallbackQueue* s_postAttachCallbackQueue;
 static size_t s_attachDepth;
 static bool s_shouldReEnableMemoryCacheCallsAfterAttach;
 
+ChildNodesLazySnapshot* ChildNodesLazySnapshot::latestSnapshot = 0;
+
 static void collectTargetNodes(Node* node, NodeVector& nodes)
 {
     if (node->nodeType() != Node::DOCUMENT_FRAGMENT_NODE) {

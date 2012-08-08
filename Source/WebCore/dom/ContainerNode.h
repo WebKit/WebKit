@@ -27,6 +27,9 @@
 #include "ExceptionCodePlaceholder.h"
 #include "Node.h"
 
+#include <wtf/OwnPtr.h>
+#include <wtf/Vector.h>
+
 namespace WebCore {
 
 class FloatPoint;
@@ -297,6 +300,73 @@ inline void getChildNodes(Node* node, NodeVector& nodes)
     for (Node* child = node->firstChild(); child; child = child->nextSibling())
         nodes.append(child);
 }
+
+class ChildNodesLazySnapshot {
+    WTF_MAKE_NONCOPYABLE(ChildNodesLazySnapshot);
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    explicit ChildNodesLazySnapshot(Node* parentNode)
+        : m_parentNode(parentNode)
+        , m_currentNode(parentNode->firstChild())
+        , m_currentIndex(0)
+    {
+        m_nextSnapshot = latestSnapshot;
+        latestSnapshot = this;
+    }
+
+    ~ChildNodesLazySnapshot()
+    {
+        latestSnapshot = m_nextSnapshot;
+    }
+
+    // Returns 0 if there is no next Node.
+    Node* nextNode()
+    {
+        if (LIKELY(!hasSnapshot())) {
+            Node* node = m_currentNode;
+            if (m_currentNode)
+                m_currentNode = m_currentNode->nextSibling();
+            return node;
+        }
+        Vector<RefPtr<Node> >* nodeVector = m_childNodes.get();
+        if (m_currentIndex >= nodeVector->size())
+            return 0;
+        return (*nodeVector)[m_currentIndex++].get();
+    }
+
+    void takeSnapshot()
+    {
+        if (hasSnapshot())
+            return;
+        m_childNodes = adoptPtr(new Vector<RefPtr<Node> >());
+        Node* node = m_currentNode;
+        while (node) {
+            m_childNodes->append(node);
+            node = node->nextSibling();
+        }
+    }
+
+    ChildNodesLazySnapshot* nextSnapshot() { return m_nextSnapshot; }
+    bool hasSnapshot() { return !!m_childNodes.get(); }
+
+    static void takeChildNodesLazySnapshot()
+    {
+        ChildNodesLazySnapshot* snapshot = latestSnapshot;
+        while (snapshot && !snapshot->hasSnapshot()) {
+            snapshot->takeSnapshot();
+            snapshot = snapshot->nextSnapshot();
+        }
+    }
+
+private:
+    static ChildNodesLazySnapshot* latestSnapshot;
+
+    Node* m_parentNode;
+    Node* m_currentNode;
+    unsigned m_currentIndex;
+    OwnPtr<Vector<RefPtr<Node> > > m_childNodes; // Lazily instantiated.
+    ChildNodesLazySnapshot* m_nextSnapshot;
+};
 
 } // namespace WebCore
 
