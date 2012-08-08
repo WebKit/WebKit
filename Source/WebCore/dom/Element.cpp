@@ -1205,14 +1205,6 @@ ShadowRoot* Element::userAgentShadowRoot() const
     return 0;
 }
 
-ShadowRoot* Element::ensureShadowRoot()
-{
-    if (ElementShadow* shadow = this->shadow())
-        return shadow->oldestShadowRoot();
-
-    return ShadowRoot::create(this, ShadowRoot::UserAgentShadowRoot).get();
-}
-
 const AtomicString& Element::shadowPseudoId() const
 {
     return hasRareData() ? elementRareData()->m_shadowPseudoId : nullAtom;

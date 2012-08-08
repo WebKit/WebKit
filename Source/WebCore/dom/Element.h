@@ -277,10 +277,6 @@ public:
 
     ShadowRoot* userAgentShadowRoot() const;
 
-    // FIXME: Remove Element::ensureShadowRoot
-    // https://bugs.webkit.org/show_bug.cgi?id=77608
-    ShadowRoot* ensureShadowRoot();
-
     virtual const AtomicString& shadowPseudoId() const;
     void setShadowPseudoId(const AtomicString&, ExceptionCode& = ASSERT_NO_EXCEPTION);
 

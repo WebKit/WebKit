@@ -1,3 +1,19 @@
+2012-08-08  Shinya Kawanaka  <shinyak@chromium.org>
+
+        Remove Element::ensureShadowRoot
+        https://bugs.webkit.org/show_bug.cgi?id=77608
+
+        Reviewed by Ryosuke Niwa.
+
+        Since Element::ensureShadowRoot is not used anymore, we can remove this safely.
+
+        No new tests, no change in behavior.
+
+        * WebCore.order:
+        * dom/Element.cpp:
+        * dom/Element.h:
+        (Element):
+
 2012-08-08  Kentaro Hara  <haraken@chromium.org>
 
         Remove an unused member variable.
