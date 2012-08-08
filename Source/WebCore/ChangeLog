@@ -1,5 +1,21 @@
 2012-08-07  Kentaro Hara  <haraken@chromium.org>
 
+        [V8] Move V8BindingMacros.h from bindings/v8/custom/ to bindings/v8/
+        https://bugs.webkit.org/show_bug.cgi?id=93254
+
+        Reviewed by Eric Seidel.
+
+        V8BindingMacros.h should exist in bindings/v8/.
+        This patch also moves related enums from V8Binding.h to V8BindingMacros.h.
+
+        No tests. No change in behavior.
+
+        * WebCore.gypi:
+        * bindings/v8/V8BindingMacros.h: Renamed from Source/WebCore/bindings/v8/custom/V8BindingMacros.h.
+        (WebCore):
+
+2012-08-07  Kentaro Hara  <haraken@chromium.org>
+
         [V8] StringCache::m_lastStringImpl and StringCache::m_lastV8String should be in sync
         https://bugs.webkit.org/show_bug.cgi?id=93065
 

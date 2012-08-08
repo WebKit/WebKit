@@ -28,6 +28,16 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#ifndef V8BindingMacros_h
+#define V8BindingMacros_h
+
+namespace WebCore {
+
+enum ParameterDefaultPolicy {
+    DefaultIsUndefined,
+    DefaultIsNullString
+};
+
 #define EXCEPTION_BLOCK(type, var, value) \
     type var;                             \
     {                                     \
@@ -49,3 +59,7 @@
 
 #define MAYBE_MISSING_PARAMETER(args, index, policy) \
     (((policy) == DefaultIsNullString && (index) >= (args).Length()) ? (v8::Local<v8::Value>()) : ((args)[(index)]))
+
+} // namespace WebCore
+
+#endif // V8BindingMacros_h

@@ -638,11 +638,6 @@ namespace WebCore {
         return V8ParameterBase::prepareBase();
     }
 
-    enum ParameterDefaultPolicy {
-        DefaultIsUndefined,
-        DefaultIsNullString
-    };
-
 } // namespace WebCore
 
 #endif // V8Binding_h
