@@ -1,3 +1,12 @@
+2012-08-08  Kentaro Hara  <haraken@chromium.org>
+
+        'class WrapperTypeInfo' should be 'struct WrapperTypeInfo'
+
+        Unreviewed. Build fix for r125015.
+
+        * bindings/v8/V8BindingPerIsolateData.h:
+        (WebCore):
+
 2012-08-08  Matt Arsenault  <arsenm2@gmail.com>
 
         Crash when inspecting an element with border-image

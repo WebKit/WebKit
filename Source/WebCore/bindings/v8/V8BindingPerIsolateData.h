@@ -39,7 +39,7 @@ class IntegerCache;
 class MemoryObjectInfo;
 class StringCache;
 class V8HiddenPropertyName;
-class WrapperTypeInfo;
+struct WrapperTypeInfo;
 
 #if ENABLE(INSPECTOR)
 class ExternalStringVisitor;
