@@ -1,3 +1,17 @@
+2012-08-08  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [WK2] Coding style violation was brought with r125031
+        https://bugs.webkit.org/show_bug.cgi?id=93503
+
+        Reviewed by Alexey Proskuryakov.
+
+        WKURLResponseCopyMimeType is corrected to WKURLResponseCopyMIMEType.
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::InjectedBundlePage::didReceiveResponseForResource):
+        * WebKitTestRunner/InjectedBundle/LayoutTestController.h:
+        (WTR::LayoutTestController::dumpProgressFinishedCallback): Removed trailing whitespace that was brought with the same revision.
+
 2012-08-08  Peter Beverloo  <peter@chromium.org>
 
         Buildmaster changes in preparation of a Chromium Android tester

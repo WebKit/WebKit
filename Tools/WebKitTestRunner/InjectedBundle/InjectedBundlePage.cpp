@@ -1000,7 +1000,7 @@ void InjectedBundlePage::didReceiveResponseForResource(WKBundlePageRef, WKBundle
 
     WKRetainPtr<WKURLRef> url = adoptWK(WKURLResponseCopyURL(response));
     WKRetainPtr<WKStringRef> urlString = adoptWK(WKURLCopyLastPathComponent(url.get()));
-    WKRetainPtr<WKStringRef> mimeTypeString = adoptWK(WKURLResponseCopyMimeType(response));
+    WKRetainPtr<WKStringRef> mimeTypeString = adoptWK(WKURLResponseCopyMIMEType(response));
 
     InjectedBundle::shared().stringBuilder()->append(toWTFString(urlString));
     InjectedBundle::shared().stringBuilder()->append(" has MIME type ");

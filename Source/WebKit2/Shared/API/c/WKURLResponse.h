@@ -36,7 +36,7 @@ WK_EXPORT WKTypeID WKURLResponseGetTypeID();
 
 WK_EXPORT WKURLRef WKURLResponseCopyURL(WKURLResponseRef);
 
-WK_EXPORT WKStringRef WKURLResponseCopyMimeType(WKURLResponseRef);
+WK_EXPORT WKStringRef WKURLResponseCopyMIMEType(WKURLResponseRef);
 
 #ifdef __cplusplus
 }

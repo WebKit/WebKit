@@ -42,7 +42,7 @@ WKURLRef WKURLResponseCopyURL(WKURLResponseRef responseRef)
     return toCopiedURLAPI(toImpl(responseRef)->resourceResponse().url());
 }
 
-WKStringRef WKURLResponseCopyMimeType(WKURLResponseRef responseRef)
+WKStringRef WKURLResponseCopyMIMEType(WKURLResponseRef responseRef)
 {
     return toCopiedAPI(toImpl(responseRef)->resourceResponse().mimeType());
 }

@@ -78,7 +78,7 @@ public:
     void dumpTitleChanges() { m_dumpTitleChanges = true; }
     void dumpFullScreenCallbacks() { m_dumpFullScreenCallbacks = true; }
     void dumpFrameLoadCallbacks() { setShouldDumpFrameLoadCallbacks(true); }
-    void dumpProgressFinishedCallback() { setShouldDumpProgressFinishedCallback(true); }    
+    void dumpProgressFinishedCallback() { setShouldDumpProgressFinishedCallback(true); }
     void dumpResourceResponseMIMETypes() { m_dumpResourceResponseMIMETypes = true; }
 
     void setShouldDumpFrameLoadCallbacks(bool value) { m_dumpFrameLoadCallbacks = value; }
