@@ -1,5 +1,18 @@
 2012-08-08  Anders Carlsson  <andersca@apple.com>
 
+        REGRESSION: Crash when plug-in initialization fails
+        https://bugs.webkit.org/show_bug.cgi?id=93534
+        <rdar://problem/12059786>
+
+        Reviewed by Simon Fraser.
+
+        Protect the PluginProxy while calling out to functions that could cause it to be destroyed.
+
+        * WebProcess/Plugins/PluginProxy.cpp:
+        (WebKit::PluginProxy::didFailToCreatePluginInternal):
+
+2012-08-08  Anders Carlsson  <andersca@apple.com>
+
         Make isTransparentSilverlightBackgroundValue handle all the possible transparent colors
         https://bugs.webkit.org/show_bug.cgi?id=93532
 
