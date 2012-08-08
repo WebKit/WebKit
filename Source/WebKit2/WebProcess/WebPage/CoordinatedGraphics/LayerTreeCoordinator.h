@@ -53,6 +53,7 @@ public:
     virtual void setNonCompositedContentsNeedDisplay(const WebCore::IntRect&);
     virtual void scrollNonCompositedContents(const WebCore::IntRect& scrollRect, const WebCore::IntSize& scrollOffset);
     virtual void forceRepaint();
+    virtual bool forceRepaintAsync(uint64_t callbackID);
     virtual void sizeDidChange(const WebCore::IntSize& newSize);
 
     virtual void didInstallPageOverlay();
@@ -139,6 +140,7 @@ private:
     void layerFlushTimerFired(WebCore::Timer<LayerTreeCoordinator>*);
     WebCore::Timer<LayerTreeCoordinator> m_layerFlushTimer;
     bool m_layerFlushSchedulingEnabled;
+    uint64_t m_forceRepaintAsyncCallbackID;
 };
 
 }

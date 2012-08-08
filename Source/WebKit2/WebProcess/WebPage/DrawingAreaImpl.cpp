@@ -199,6 +199,11 @@ void DrawingAreaImpl::forceRepaint()
     display();
 }
 
+bool DrawingAreaImpl::forceRepaintAsync(uint64_t callbackID)
+{
+    return m_layerTreeHost && m_layerTreeHost->forceRepaintAsync(callbackID);
+}
+
 void DrawingAreaImpl::didInstallPageOverlay()
 {
     if (m_layerTreeHost)

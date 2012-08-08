@@ -1,3 +1,34 @@
+2012-08-08  Balazs Kelemen  <kbalazs@webkit.org>
+
+        [Qt] Snowshoe desktop crashes when opening a new tab
+        https://bugs.webkit.org/show_bug.cgi?id=92753
+
+        Reviewed by Jocelyn Turcotte.
+
+        Change back forceRepaint to consider the UI process state.
+        It has been tweaked to satisfy the needs of WKPageForceRepaint but
+        it has other callers so this new behavior was not safe. This patch
+        implements WebPage::forceRepaintAsync for testing purposes. It is
+        done by LayerTreeCoordinator that holds the callback and sends the
+        reply message in the next flushPendingLayerChanges. In theory it
+        could be implemented for the non conposited path in DrawingAreaImpl
+        as well but neither it is needed nor can I test it.
+
+        * WebProcess/WebPage/CoordinatedGraphics/LayerTreeCoordinator.cpp:
+        (WebKit::LayerTreeCoordinator::LayerTreeCoordinator):
+        (WebKit::LayerTreeCoordinator::forceRepaintAsync):
+        (WebKit):
+        (WebKit::LayerTreeCoordinator::flushPendingLayerChanges):
+        * WebProcess/WebPage/CoordinatedGraphics/LayerTreeCoordinator.h:
+        (LayerTreeCoordinator):
+        * WebProcess/WebPage/DrawingAreaImpl.cpp:
+        (WebKit::DrawingAreaImpl::forceRepaintAsync):
+        (WebKit):
+        * WebProcess/WebPage/DrawingAreaImpl.h:
+        (DrawingAreaImpl):
+        * WebProcess/WebPage/LayerTreeHost.h:
+        (WebKit::LayerTreeHost::forceRepaintAsync):
+
 2012-08-08  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         [WK2] [WTR] Provide Resource Response dumping.

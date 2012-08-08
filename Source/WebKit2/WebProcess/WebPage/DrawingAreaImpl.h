@@ -57,6 +57,7 @@ private:
     virtual bool layerTreeStateIsFrozen() const { return m_layerTreeStateIsFrozen; }
     virtual LayerTreeHost* layerTreeHost() const { return m_layerTreeHost.get(); }
     virtual void forceRepaint();
+    virtual bool forceRepaintAsync(uint64_t callbackID);
 
     virtual void didInstallPageOverlay();
     virtual void didUninstallPageOverlay();
