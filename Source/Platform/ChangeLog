@@ -1,3 +1,21 @@
+2012-08-08  Nate Chapin  <japhet@chromium.org>
+
+        [chromium] Upstream android's FlingAnimator
+        https://bugs.webkit.org/show_bug.cgi?id=92900
+
+        Reviewed by James Robinson.
+
+        No new tests yet, will be added once this code is called.
+
+        * Platform.gypi:
+        * chromium/public/Platform.h:
+        (WebKit):
+        (WebKit::Platform::createFlingAnimator):
+        * chromium/public/WebFlingAnimator.h: Added.
+        (WebKit):
+        (WebFlingAnimator):
+        (WebKit::WebFlingAnimator::~WebFlingAnimator):
+
 2012-08-07  James Robinson  <jamesr@chromium.org>
 
         [chromium] Switch PlatformLayer typedef to Platform API type for PLATFORM(CHROMIUM)

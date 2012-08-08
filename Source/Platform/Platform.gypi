@@ -57,6 +57,7 @@
             'chromium/public/WebFileUtilities.h',
             'chromium/public/WebFilterOperation.h',
             'chromium/public/WebFilterOperations.h',
+            'chromium/public/WebFlingAnimator.h',
             'chromium/public/WebFloatAnimationCurve.h',
             'chromium/public/WebFloatKeyframe.h',
             'chromium/public/WebFloatPoint.h',
