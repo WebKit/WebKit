@@ -2635,11 +2635,6 @@ void WebPageProxy::setMediaVolume(float volume)
 }
 
 #if PLATFORM(QT)
-void WebPageProxy::didChangeContentsSize(const IntSize& size)
-{
-    m_pageClient->didChangeContentsSize(size);
-}
-
 void WebPageProxy::didFindZoomableArea(const IntPoint& target, const IntRect& area)
 {
     m_pageClient->didFindZoomableArea(target, area);
@@ -2680,6 +2675,13 @@ void WebPageProxy::handleDownloadRequest(DownloadProxy* download)
     m_pageClient->handleDownloadRequest(download);
 }
 #endif // PLATFORM(QT) || PLATFORM(EFL)
+
+#if PLATFORM(QT) || PLATFORM(EFL)
+void WebPageProxy::didChangeContentsSize(const IntSize& size)
+{
+    m_pageClient->didChangeContentsSize(size);
+}
+#endif
 
 #if ENABLE(TOUCH_EVENTS)
 void WebPageProxy::needTouchEvents(bool needTouchEvents)

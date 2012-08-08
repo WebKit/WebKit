@@ -53,6 +53,10 @@
 #include <Evas_GL.h>
 #endif
 
+#if USE(COORDINATED_GRAPHICS)
+#include "EflViewportHandler.h"
+#endif
+
 using namespace WebKit;
 using namespace WebCore;
 
@@ -65,6 +69,10 @@ static void _ewk_view_priv_loading_resources_clear(LoadingResourcesMap& loadingR
 
 struct _Ewk_View_Private_Data {
     OwnPtr<PageClientImpl> pageClient;
+#if USE(COORDINATED_GRAPHICS)
+    OwnPtr<EflViewportHandler> viewportHandler;
+#endif
+
     const char* uri;
     const char* title;
     const char* theme;
@@ -530,6 +538,10 @@ static void _ewk_view_smart_calculate(Evas_Object* ewkView)
     evas_object_geometry_get(ewkView, &x, &y, &width, &height);
 
     if (smartData->changed.size) {
+#if USE(COORDINATED_GRAPHICS)
+        priv->viewportHandler->updateViewportSize(IntSize(width, height));
+#endif
+
         if (priv->pageClient->page()->drawingArea())
             priv->pageClient->page()->drawingArea()->setSize(IntSize(width, height), IntSize());
 
@@ -681,6 +693,10 @@ Evas_Object* ewk_view_base_add(Evas* canvas, WKContextRef contextRef, WKPageGrou
     ewk_view_ui_client_attach(wkPage, ewkView);
 
     ewk_view_theme_set(ewkView, DEFAULT_THEME_PATH"/default.edj");
+
+#if USE(COORDINATED_GRAPHICS)
+    priv->viewportHandler = EflViewportHandler::create(priv->pageClient.get());
+#endif
 
     return ewkView;
 }
@@ -1043,6 +1059,13 @@ void ewk_view_display(Evas_Object* ewkView, const IntRect& rect)
     if (!smartData->image)
         return;
 
+#if USE(COORDINATED_GRAPHICS)
+    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv);
+
+    evas_gl_make_current(priv->evasGl, priv->evasGlSurface, priv->evasGlContext);
+    priv->viewportHandler->display(rect);
+#endif
+
     evas_object_image_data_update_add(smartData->image, rect.x(), rect.y(), rect.width(), rect.height());
 }
 
@@ -1375,4 +1398,14 @@ Eina_Bool ewk_view_text_find_highlight_clear(Evas_Object* ewkView)
     WKPageHideFindUI(toAPI(priv->pageClient->page()));
 
     return true;
+}
+
+void ewk_view_contents_size_changed(const Evas_Object* ewkView, const IntSize& size)
+{
+#if USE(COORDINATED_GRAPHICS)
+    EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData);
+    EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv);
+
+    priv->viewportHandler->didChangeContentsSize(size);
+#endif
 }

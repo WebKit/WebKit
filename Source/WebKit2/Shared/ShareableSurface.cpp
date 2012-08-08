@@ -20,6 +20,7 @@
 #include "config.h"
 #include "ShareableSurface.h"
 
+#include "GraphicsContext.h"
 #include "WebCoreArgumentCoders.h"
 
 #if USE(TEXTURE_MAPPER)

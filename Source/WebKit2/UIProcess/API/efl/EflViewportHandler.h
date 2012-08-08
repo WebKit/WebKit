@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2012 Samsung Electronics. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,51 +23,44 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "LayerTreeHost.h"
-
-#if USE(CA)
-#if PLATFORM(MAC)
-#include "LayerTreeHostCAMac.h"
-#elif PLATFORM(WIN)
-#include "LayerTreeHostCAWin.h"
-#endif
-#endif
+#ifndef EflViewportHandler_h
+#define EflViewportHandler_h
 
 #if USE(COORDINATED_GRAPHICS)
-#include "LayerTreeCoordinator.h"
-#endif
 
-#if PLATFORM(GTK) && USE(TEXTURE_MAPPER_GL)
-#include "LayerTreeHostGtk.h"
-#endif
-
-using namespace WebCore;
+#include "PageClientImpl.h"
+#include <wtf/PassOwnPtr.h>
 
 namespace WebKit {
 
-PassRefPtr<LayerTreeHost> LayerTreeHost::create(WebPage* webPage)
-{
-#if PLATFORM(MAC)
-    return LayerTreeHostCAMac::create(webPage);
-#elif PLATFORM(WIN) && HAVE(WKQCA)
-    return LayerTreeHostCAWin::create(webPage);
-#elif USE(COORDINATED_GRAPHICS)
-    return LayerTreeCoordinator::create(webPage);
-#elif PLATFORM(GTK) && USE(TEXTURE_MAPPER_GL)
-    return LayerTreeHostGtk::create(webPage);
-#else
-    return 0;
-#endif
-}
+class EflViewportHandler {
+public:
+    static PassOwnPtr<EflViewportHandler> create(PageClientImpl* pageClientImpl)
+    {
+        return adoptPtr(new EflViewportHandler(pageClientImpl));
+    }
+    ~EflViewportHandler();
 
-LayerTreeHost::LayerTreeHost(WebPage* webPage)
-    : m_webPage(webPage)
-{
-}
+    DrawingAreaProxy* drawingArea() const { return m_pageClientImpl->page()->drawingArea(); }
+    WebCore::IntSize viewSize() { return m_viewportSize; }
 
-LayerTreeHost::~LayerTreeHost()
-{
-}
+    void display(const WebCore::IntRect& rect);
+    void updateViewportSize(const WebCore::IntSize& viewportSize);
+    void setVisibleContentsRect(const WebCore::IntPoint&, float, const WebCore::FloatPoint&);
+    void didChangeContentsSize(const WebCore::IntSize& size);
+
+private:
+    explicit EflViewportHandler(PageClientImpl*);
+
+    PageClientImpl* m_pageClientImpl;
+    WebCore::IntRect m_visibleContentRect;
+    WebCore::IntSize m_contentsSize;
+    WebCore::IntSize m_viewportSize;
+    float m_scaleFactor;
+};
 
 } // namespace WebKit
+
+#endif
+
+#endif // EflViewportHandler_h

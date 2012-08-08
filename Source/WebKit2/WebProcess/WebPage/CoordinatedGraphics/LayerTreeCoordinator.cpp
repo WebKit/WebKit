@@ -26,6 +26,7 @@
 
 #include "config.h"
 
+#if USE(COORDINATED_GRAPHICS)
 #include "LayerTreeCoordinator.h"
 
 #include "CoordinatedGraphicsLayer.h"
@@ -571,12 +572,10 @@ void LayerTreeCoordinator::setVisibleContentsRect(const IntRect& rect, float sca
         m_shouldSendScrollPositionUpdate = true;
 }
 
-#if USE(COORDINATED_GRAPHICS)
 void LayerTreeCoordinator::scheduleAnimation()
 {
     scheduleLayerFlush();
 }
-#endif
 
 void LayerTreeCoordinator::renderNextFrame()
 {
@@ -620,3 +619,4 @@ PassOwnPtr<WebCore::GraphicsContext> LayerTreeCoordinator::beginContentUpdate(co
 }
 
 } // namespace WebKit
+#endif // USE(COORDINATED_GRAPHICS)

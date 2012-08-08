@@ -15,6 +15,7 @@ SET(WebKit2_INCLUDE_DIRECTORIES
     "${WEBKIT2_DIR}/UIProcess/API/C"
     "${WEBKIT2_DIR}/UIProcess/API/cpp"
     "${WEBKIT2_DIR}/UIProcess/Authentication"
+    "${WEBKIT2_DIR}/UIProcess/CoordinatedGraphics"
     "${WEBKIT2_DIR}/UIProcess/Downloads"
     "${WEBKIT2_DIR}/UIProcess/Launcher"
     "${WEBKIT2_DIR}/UIProcess/Notifications"
@@ -42,6 +43,7 @@ SET(WebKit2_INCLUDE_DIRECTORIES
     "${WEBKIT2_DIR}/WebProcess/Plugins/Netscape"
     "${WEBKIT2_DIR}/WebProcess/WebCoreSupport"
     "${WEBKIT2_DIR}/WebProcess/WebPage"
+    "${WEBKIT2_DIR}/WebProcess/WebPage/CoordinatedGraphics"
     "${WEBCORE_DIR}"
     "${WEBCORE_DIR}/Modules/battery"
     "${WEBCORE_DIR}/Modules/intents"
@@ -71,6 +73,8 @@ SET(WebKit2_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/platform/graphics/filters"
     "${WEBCORE_DIR}/platform/graphics/harfbuzz"
     "${WEBCORE_DIR}/platform/graphics/harfbuzz/ng"
+    "${WEBCORE_DIR}/platform/graphics/surfaces"
+    "${WEBCORE_DIR}/platform/graphics/texmap"
     "${WEBCORE_DIR}/platform/graphics/transforms"
     "${WEBCORE_DIR}/platform/network"
     "${WEBCORE_DIR}/platform/sql"
@@ -141,7 +145,9 @@ SET(WebKit2_SOURCES
     Shared/SecurityOriginData.cpp
     Shared/SessionState.cpp
     Shared/ShareableBitmap.cpp
+    Shared/ShareableSurface.cpp
     Shared/StatisticsData.cpp
+    Shared/SurfaceUpdateInfo.cpp
     Shared/UpdateInfo.cpp
     Shared/VisitedLinkTable.cpp
     Shared/WebBackForwardListItem.cpp
@@ -323,6 +329,7 @@ SET(WebKit2_SOURCES
     UIProcess/Authentication/WebCredential.cpp
     UIProcess/Authentication/WebProtectionSpace.cpp
 
+    UIProcess/CoordinatedGraphics/CoordinatedBackingStore.cpp
     UIProcess/CoordinatedGraphics/LayerTreeCoordinatorProxy.cpp
     UIProcess/CoordinatedGraphics/LayerTreeRenderer.cpp
     
@@ -461,6 +468,7 @@ SET(WebKit2_SOURCES
     WebProcess/WebPage/LayerTreeHost.cpp
     WebProcess/WebPage/PageOverlay.cpp
     WebProcess/WebPage/TapHighlightController.cpp
+    WebProcess/WebPage/UpdateAtlas.cpp
     WebProcess/WebPage/WebBackForwardListProxy.cpp
     WebProcess/WebPage/WebContextMenu.cpp
     WebProcess/WebPage/WebFrame.cpp
@@ -472,6 +480,7 @@ SET(WebKit2_SOURCES
 
     WebProcess/WebPage/CoordinatedGraphics/CoordinatedGraphicsLayer.cpp
     WebProcess/WebPage/CoordinatedGraphics/CoordinatedTile.cpp
+    WebProcess/WebPage/CoordinatedGraphics/LayerTreeCoordinator.cpp
 )
 
 SET(WebKit2_MESSAGES_IN_FILES

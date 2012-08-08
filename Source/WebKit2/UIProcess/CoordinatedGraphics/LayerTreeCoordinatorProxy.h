@@ -36,9 +36,11 @@
 #include <wtf/Functional.h>
 #include <wtf/HashSet.h>
 
+#if PLATFORM(QT)
 QT_BEGIN_NAMESPACE
 class QSGNode;
 QT_END_NAMESPACE
+#endif
 
 namespace WebKit {
 

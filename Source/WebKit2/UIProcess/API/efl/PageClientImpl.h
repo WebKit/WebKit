@@ -112,6 +112,8 @@ private:
     virtual void pageDidRequestScroll(const WebCore::IntPoint&);
 #endif
 
+    virtual void didChangeContentsSize(const WebCore::IntSize&);
+
 private:
     RefPtr<WebPageProxy> m_page;
     Evas_Object* m_viewWidget;

@@ -73,12 +73,16 @@ messages -> WebPageProxy {
     PageDidRequestScroll(WebCore::IntPoint point)
 #endif
 #if PLATFORM(QT)
-    DidChangeContentsSize(WebCore::IntSize newSize)
     DidFindZoomableArea(WebCore::IntPoint target, WebCore::IntRect area)
     AuthenticationRequiredRequest(WTF::String hostname, WTF::String realm, WTF::String prefilledUsername) -> (WTF::String username, WTF::String password)
     CertificateVerificationRequest(WTF::String hostname) -> (bool ignoreErrors)
     ProxyAuthenticationRequiredRequest(WTF::String hostname, uint16_t port, WTF::String prefilledUsername) -> (WTF::String username, WTF::String password)
 #endif
+
+#if PLATFORM(QT) || PLATFORM(EFL)
+    DidChangeContentsSize(WebCore::IntSize newSize)
+#endif
+
 #if ENABLE(TOUCH_EVENTS)
     NeedTouchEvents(bool needTouchEvents)
 #endif

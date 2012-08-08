@@ -831,9 +831,13 @@ private:
 #endif
 
 #if PLATFORM(QT)
-    void didChangeContentsSize(const WebCore::IntSize&);
     void didFindZoomableArea(const WebCore::IntPoint&, const WebCore::IntRect&);
 #endif
+
+#if PLATFORM(QT) || PLATFORM(EFL)
+    void didChangeContentsSize(const WebCore::IntSize&);
+#endif
+
 #if ENABLE(TOUCH_EVENTS)
     void needTouchEvents(bool);
 #endif

@@ -20,6 +20,8 @@
 #ifndef LayerTreeCoordinator_h
 #define LayerTreeCoordinator_h
 
+#if USE(COORDINATED_GRAPHICS)
+
 #include "CoordinatedGraphicsLayer.h"
 #include "LayerTreeContext.h"
 #include "LayerTreeHost.h"
@@ -88,9 +90,7 @@ public:
     virtual void syncFixedLayers();
 
     virtual PassOwnPtr<WebCore::GraphicsContext> beginContentUpdate(const WebCore::IntSize&, ShareableBitmap::Flags, ShareableSurface::Handle&, WebCore::IntPoint&);
-#if USE(COORDINATED_GRAPHICS)
     virtual void scheduleAnimation() OVERRIDE;
-#endif
 
 protected:
     explicit LayerTreeCoordinator(WebPage*);
@@ -142,5 +142,7 @@ private:
 };
 
 }
+
+#endif
 
 #endif // LayerTreeCoordinator_h

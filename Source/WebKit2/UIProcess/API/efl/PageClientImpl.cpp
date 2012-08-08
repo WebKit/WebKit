@@ -31,7 +31,9 @@
 #include "NotImplemented.h"
 #include "WebContext.h"
 #include "WebContextMenuProxy.h"
+#include "WebPageGroup.h"
 #include "WebPageProxy.h"
+#include "WebPreferences.h"
 #include "ewk_context.h"
 #include "ewk_context_private.h"
 #include "ewk_download_job.h"
@@ -46,6 +48,13 @@ PageClientImpl::PageClientImpl(WebContext* context, WebPageGroup* pageGroup, Eva
     : m_viewWidget(viewWidget)
 {
     m_page = context->createWebPage(this, pageGroup);
+
+#if USE(COORDINATED_GRAPHICS)
+    m_page->pageGroup()->preferences()->setAcceleratedCompositingEnabled(true);
+    m_page->pageGroup()->preferences()->setForceCompositingMode(true);
+    m_page->setUseFixedLayout(true);
+#endif
+
     m_page->initializeWebPage();
 }
 
@@ -294,5 +303,10 @@ void PageClientImpl::pageDidRequestScroll(const IntPoint&)
     notImplemented();
 }
 #endif
+
+void PageClientImpl::didChangeContentsSize(const WebCore::IntSize& size)
+{
+    ewk_view_contents_size_changed(m_viewWidget, size);
+}
 
 } // namespace WebKit

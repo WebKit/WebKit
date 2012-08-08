@@ -67,29 +67,18 @@ namespace WebCore {
 }
 #endif
 
-#if PLATFORM(QT)
+#if USE(COORDINATED_GRAPHICS)
 namespace WebCore {
-    class Animation;
     class FloatPoint3D;
-    class Matrix3DTransformOperation;
-    class MatrixTransformOperation;
-    class PerspectiveTransformOperation;
-    class RotateTransformOperation;
-    class ScaleTransformOperation;
-    class SkewTransformOperation;
-    class TimingFunction;
-    class TransformOperation;
-    class TransformOperations;
     class TransformationMatrix;
-    class TranslateTransformOperation;
     struct Length;
 }
-#endif
 
-#if USE(COORDINATED_GRAPHICS) && ENABLE(CSS_FILTERS)
+#if ENABLE(CSS_FILTERS)
 namespace WebCore {
     class FilterOperations;
 }
+#endif
 #endif
 
 namespace CoreIPC {

@@ -38,6 +38,7 @@ LIST(APPEND WebKit2_SOURCES
     UIProcess/API/C/soup/WKSoupRequestManager.cpp
 
     UIProcess/API/efl/BatteryProvider.cpp
+    UIProcess/API/efl/EflViewportHandler.cpp
     UIProcess/API/efl/NetworkInfoProvider.cpp
     UIProcess/API/efl/PageClientImpl.cpp
     UIProcess/API/efl/VibrationProvider.cpp
@@ -151,6 +152,7 @@ LIST(APPEND WebKit2_LIBRARIES
     ${EFREET_LIBRARIES}
     ${Freetype_LIBRARIES}
     ${LIBXML2_LIBRARIES}
+    ${OPENGL_LIBRARIES}
     ${SQLITE_LIBRARIES}
     ${FONTCONFIG_LIBRARIES}
     ${PNG_LIBRARY}
@@ -172,6 +174,7 @@ LIST (APPEND WebProcess_LIBRARIES
     ${EVAS_LIBRARIES}
     ${LIBXML2_LIBRARIES}
     ${LIBXSLT_LIBRARIES}
+    ${OPENGL_LIBRARIES}
     ${SQLITE_LIBRARIES}
 )
 

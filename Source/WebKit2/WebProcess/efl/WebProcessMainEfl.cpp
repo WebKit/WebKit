@@ -36,6 +36,10 @@
 #include <unistd.h>
 #include <wtf/MainThread.h>
 
+#if USE(COORDINATED_GRAPHICS)
+#include "CoordinatedGraphicsLayer.h"
+#endif
+
 using namespace WebCore;
 
 namespace WebKit {
@@ -75,6 +79,10 @@ WK_EXPORT int WebProcessMainEfl(int argc, char* argv[])
         soup_session_add_feature(session, SOUP_SESSION_FEATURE(resolverEfl));
         g_object_unref(resolverEfl);
     }
+
+#if USE(COORDINATED_GRAPHICS)
+    CoordinatedGraphicsLayer::initFactory();
+#endif
 
     int socket = atoi(argv[1]);
     WebProcess::shared().initialize(socket, RunLoop::main());

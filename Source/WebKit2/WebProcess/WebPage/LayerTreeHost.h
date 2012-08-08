@@ -119,7 +119,7 @@ protected:
 #endif
 };
 
-#if !PLATFORM(WIN) && !PLATFORM(QT)
+#if !PLATFORM(WIN) && !USE(COORDINATED_GRAPHICS)
 inline bool LayerTreeHost::supportsAcceleratedCompositing()
 {
     return true;

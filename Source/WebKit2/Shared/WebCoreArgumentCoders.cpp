@@ -49,6 +49,7 @@
 #if USE(COORDINATED_GRAPHICS)
 #include <WebCore/Animation.h>
 #include <WebCore/FloatPoint3D.h>
+#include <WebCore/Length.h>
 #include <WebCore/TransformationMatrix.h>
 
 #if ENABLE(CSS_FILTERS)

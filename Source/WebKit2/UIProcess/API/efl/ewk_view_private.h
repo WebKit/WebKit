@@ -70,6 +70,7 @@ void ewk_view_resource_load_initiated(Evas_Object* ewkView, uint64_t resourceIde
 void ewk_view_resource_load_response(Evas_Object* ewkView, uint64_t resourceIdentifier, Ewk_Url_Response* response);
 void ewk_view_resource_request_sent(Evas_Object* ewkView, uint64_t resourceIdentifier, Ewk_Url_Request* request, Ewk_Url_Response* redirectResponse);
 void ewk_view_text_found(Evas_Object* ewkView, unsigned int matchCount);
+void ewk_view_contents_size_changed(const Evas_Object* ewkView, const WebCore::IntSize&);
 
 Evas_Object* ewk_view_base_add(Evas* canvas, WKContextRef, WKPageGroupRef);
 

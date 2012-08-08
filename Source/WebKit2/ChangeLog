@@ -1,3 +1,62 @@
+2012-08-07  YoungTaeck Song  <youngtaeck.song@samsung.com>
+
+        [WK2][EFL] Implement accelerated compositing on WK2 Efl port
+        https://bugs.webkit.org/show_bug.cgi?id=89840
+
+        Reviewed by Noam Rosenthal.
+
+        Implement accelerated composition with TiledBackingStore on WK2 Efl port.
+        This implementation is based on COORDINATED_GRAPHICS.
+
+        * CMakeLists.txt:
+        * PlatformEfl.cmake:
+        * Shared/ShareableSurface.cpp:
+        * Shared/WebCoreArgumentCoders.cpp:
+        * Shared/WebCoreArgumentCoders.h:
+        * UIProcess/API/efl/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::PageClientImpl):
+        (WebKit::PageClientImpl::didChangeContentsSize):
+        (WebKit):
+        * UIProcess/API/efl/PageClientImpl.h:
+        (PageClientImpl):
+        * UIProcess/API/efl/ViewportProcessor.cpp: Added.
+        (WebKit):
+        (WebKit::ViewportProcessor::ViewportProcessor):
+        (WebKit::ViewportProcessor::~ViewportProcessor):
+        (WebKit::ViewportProcessor::display):
+        (WebKit::ViewportProcessor::updateViewportSize):
+        (WebKit::ViewportProcessor::setVisibleContentsRect):
+        (WebKit::ViewportProcessor::didChangeContentsSize):
+        * UIProcess/API/efl/ViewportProcessor.h: Added.
+        (WebKit):
+        (ViewportProcessor):
+        (WebKit::ViewportProcessor::create):
+        (WebKit::ViewportProcessor::drawingArea):
+        (WebKit::ViewportProcessor::viewSize):
+        * UIProcess/API/efl/ewk_view.cpp:
+        (_Ewk_View_Private_Data):
+        (_ewk_view_smart_calculate):
+        (ewk_view_base_add):
+        (ewk_view_display):
+        (ewk_view_contents_size_changed):
+        * UIProcess/API/efl/ewk_view_private.h:
+        * UIProcess/PageClient.h:
+        (PageClient):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit):
+        (WebKit::WebPageProxy::didChangeContentsSize):
+        * UIProcess/WebPageProxy.h:
+        (WebPageProxy):
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/WebPage/LayerTreeCoordinator/LayerTreeCoordinator.cpp:
+        * WebProcess/WebPage/LayerTreeCoordinator/LayerTreeCoordinator.h:
+        * WebProcess/WebPage/LayerTreeHost.cpp:
+        (WebKit::LayerTreeHost::create):
+        * WebProcess/WebPage/LayerTreeHost.h:
+        (WebKit):
+        * WebProcess/efl/WebProcessMainEfl.cpp:
+        (WebKit::WebProcessMainEfl):
+
 2012-08-07  Csaba Osztrogonác  <ossy@webkit.org>
 
        [Qt] New API tests introuduced in r119723 marked as fail, but pass
