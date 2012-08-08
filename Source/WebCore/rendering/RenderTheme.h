@@ -215,6 +215,8 @@ public:
 #endif
 
 #if ENABLE(DATALIST_ELEMENT)
+    // Returns the threshold distance for snapping to a slider tick mark.
+    virtual LayoutUnit sliderTickSnappingThreshold() const;
     // Returns size of one slider tick mark for a horizontal track.
     // For vertical tracks we rotate it and use it. i.e. Width is always length along the track.
     virtual IntSize sliderTickSize() const = 0;

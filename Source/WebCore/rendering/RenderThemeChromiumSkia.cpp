@@ -591,6 +591,13 @@ bool RenderThemeChromiumSkia::shouldShowPlaceholderWhenFocused() const
     return true;
 }
 
+#if ENABLE(DATALIST_ELEMENT)
+LayoutUnit RenderThemeChromiumSkia::sliderTickSnappingThreshold() const
+{
+    return RenderThemeChromiumCommon::sliderTickSnappingThreshold();
+}
+#endif
+
 #if ENABLE(PROGRESS_ELEMENT)
 
 //

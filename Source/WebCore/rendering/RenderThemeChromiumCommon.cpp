@@ -41,4 +41,9 @@ bool RenderThemeChromiumCommon::supportsDataListUI(const AtomicString& type)
         || type == InputTypeNames::range();
 }
 
+LayoutUnit RenderThemeChromiumCommon::sliderTickSnappingThreshold()
+{
+    return 5;
+}
+
 }

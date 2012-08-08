@@ -192,6 +192,13 @@ String RenderThemeChromiumMac::extraDefaultStyleSheet()
            String(themeChromiumUserAgentStyleSheet, sizeof(themeChromiumUserAgentStyleSheet));
 }
 
+#if ENABLE(DATALIST_ELEMENT)
+LayoutUnit RenderThemeChromiumMac::sliderTickSnappingThreshold() const
+{
+    return RenderThemeChromiumCommon::sliderTickSnappingThreshold();
+}
+#endif
+
 #if ENABLE(CALENDAR_PICKER)
 CString RenderThemeChromiumMac::extraCalendarPickerStyleSheet()
 {

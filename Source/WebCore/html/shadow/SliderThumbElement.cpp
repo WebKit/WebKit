@@ -275,14 +275,16 @@ void SliderThumbElement::setPositionFromPoint(const LayoutPoint& point)
     Decimal value = stepRange.clampValue(stepRange.valueFromProportion(fraction));
 
 #if ENABLE(DATALIST_ELEMENT)
-    Decimal closest = input->findClosestTickMarkValue(value);
-    if (closest.isFinite()) {
-        double closestFraction = stepRange.proportionFromValue(closest).toDouble();
-        double closestRatio = isVertical || !renderBox()->style()->isLeftToRightDirection() ? 1.0 - closestFraction : closestFraction;
-        LayoutUnit closestPosition = trackSize * closestRatio;
-        const LayoutUnit snapThreshold = 3;
-        if ((closestPosition - position).abs() < snapThreshold)
-            value = closest;
+    const LayoutUnit snappingThreshold = renderer()->theme()->sliderTickSnappingThreshold();
+    if (snappingThreshold > 0) {
+        Decimal closest = input->findClosestTickMarkValue(value);
+        if (closest.isFinite()) {
+            double closestFraction = stepRange.proportionFromValue(closest).toDouble();
+            double closestRatio = isVertical || !renderBox()->style()->isLeftToRightDirection() ? 1.0 - closestFraction : closestFraction;
+            LayoutUnit closestPosition = trackSize * closestRatio;
+            if ((closestPosition - position).abs() <= snappingThreshold)
+                value = closest;
+        }
     }
 #endif
 

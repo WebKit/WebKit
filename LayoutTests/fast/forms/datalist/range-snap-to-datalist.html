@@ -4,7 +4,7 @@
 <script src="../../js/resources/js-test-pre.js"></script>
 </head>
 <body>
-<p id="description">Tests if clicking close to a tick mark snaps to it.</p>
+<p id="description">Tests if clicking close to a tick mark snaps to it. Result will change depending on the return value of RenderTheme::sliderTickSnappingThreshold().</p>
 <div id="console"></div>
 <input id="input" type=range min=0 max=1000 step=1 list=target style="width: 100px">
 <datalist id="target">
@@ -20,41 +20,26 @@ function clickSlider(offsetLeft) {
 }
 function resetSliderPosition() {
     clickSlider(0);
-    shouldBe('input.value', '"0"');
+    if (input.value !== "0") {
+    	testFailed('Failed to reset slider position');
+    }
 }
-resetSliderPosition();
-clickSlider(45);
-shouldBeTrue('parseInt(input.value, 10) < 500');
-resetSliderPosition();
-clickSlider(46);
-shouldBeTrue('parseInt(input.value, 10) < 500');
-resetSliderPosition();
-clickSlider(47);
-shouldBeTrue('parseInt(input.value, 10) < 500');
-resetSliderPosition();
-clickSlider(48);
-shouldBe('input.value', "'500'");
-resetSliderPosition();
-clickSlider(49);
-shouldBe('input.value', "'500'");
-resetSliderPosition();
-clickSlider(50);
-shouldBe('input.value', "'500'");
-resetSliderPosition();
-clickSlider(51);
-shouldBe('input.value', "'500'");
-resetSliderPosition();
-clickSlider(52);
-shouldBe('input.value', "'500'");
-resetSliderPosition();
-clickSlider(53);
-shouldBeTrue('parseInt(input.value, 10) > 500');
-resetSliderPosition();
-clickSlider(54);
-shouldBeTrue('parseInt(input.value, 10) > 500');
-resetSliderPosition();
-clickSlider(55);
-shouldBeTrue('parseInt(input.value, 10) > 500');
+function test(position) {
+	resetSliderPosition();
+	clickSlider(position);
+	var value = parseInt(input.value, 10);
+	if (value < 500) {
+		debug('value for ' + position + ' is &lt;500');
+	} else if (value > 500) {
+		debug('value for ' + position + ' is &gt;500');
+	} else {
+		debug('value for ' + position + ' is =500');
+	}
+}
+
+for (var i = 40; i <= 60; ++i) {
+	test(i);
+}
 </script>
 
 <script src="../../js/resources/js-test-post.js"></script>

@@ -963,6 +963,11 @@ bool RenderTheme::paintMeter(RenderObject*, const PaintInfo&, const IntRect&)
 #endif
 
 #if ENABLE(DATALIST_ELEMENT)
+LayoutUnit RenderTheme::sliderTickSnappingThreshold() const
+{
+    return 0;
+}
+
 void RenderTheme::paintSliderTicks(RenderObject* o, const PaintInfo& paintInfo, const IntRect& rect)
 {
     Node* node = o->node();

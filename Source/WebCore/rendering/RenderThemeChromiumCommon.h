@@ -27,6 +27,7 @@
 #ifndef RenderThemeChromiumCommon_h
 #define RenderThemeChromiumCommon_h
 
+#include "LayoutTypes.h"
 #include <wtf/text/AtomicString.h>
 
 namespace WebCore {
@@ -34,6 +35,7 @@ namespace WebCore {
 class RenderThemeChromiumCommon {
 public:
     static bool supportsDataListUI(const AtomicString& type);
+    static LayoutUnit sliderTickSnappingThreshold();
 };
 
 }
