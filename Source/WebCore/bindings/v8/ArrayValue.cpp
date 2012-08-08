@@ -34,6 +34,7 @@ namespace WebCore {
 ArrayValue& ArrayValue::operator=(const ArrayValue& other)
 {
     m_array = other.m_array;
+    m_isolate = other.m_isolate;
     return *this;
 }
 
@@ -63,7 +64,9 @@ bool ArrayValue::get(size_t index, Dictionary& value) const
     if (indexedValue.IsEmpty() || !indexedValue->IsObject())
         return false;
 
-    value = Dictionary(indexedValue);
+    ASSERT(m_isolate);
+    ASSERT(m_isolate == v8::Isolate::GetCurrent());
+    value = Dictionary(indexedValue, m_isolate);
     return true;
 }
 

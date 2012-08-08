@@ -1180,14 +1180,14 @@ static v8::Handle<v8::Value> optionsObjectCallback(const v8::Arguments& args)
     if (args.Length() < 1)
         return V8Proxy::throwNotEnoughArgumentsError(args.GetIsolate());
     TestObj* imp = V8TestObj::toNative(args.Holder());
-    EXCEPTION_BLOCK(Dictionary, oo, MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined));
+    EXCEPTION_BLOCK(Dictionary, oo, Dictionary(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined), args.GetIsolate()));
     if (!oo.isUndefinedOrNull() && !oo.isObject())
         return V8Proxy::throwTypeError("Not an object.", args.GetIsolate());
     if (args.Length() <= 1) {
         imp->optionsObject(oo);
         return v8Undefined();
     }
-    EXCEPTION_BLOCK(Dictionary, ooo, MAYBE_MISSING_PARAMETER(args, 1, DefaultIsUndefined));
+    EXCEPTION_BLOCK(Dictionary, ooo, Dictionary(MAYBE_MISSING_PARAMETER(args, 1, DefaultIsUndefined), args.GetIsolate()));
     if (!ooo.isUndefinedOrNull() && !ooo.isObject())
         return V8Proxy::throwTypeError("Not an object.", args.GetIsolate());
     imp->optionsObject(oo, ooo);

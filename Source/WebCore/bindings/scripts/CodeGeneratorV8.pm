@@ -1892,7 +1892,7 @@ v8::Handle<v8::Value> V8${implClassName}::constructorCallback(const v8::Argument
     STRING_TO_V8PARAMETER_EXCEPTION_BLOCK(V8Parameter<>, type, args[0]);
     ${implClassName}Init eventInit;
     if (args.Length() >= 2) {
-        EXCEPTION_BLOCK(Dictionary, options, args[1]);
+        EXCEPTION_BLOCK(Dictionary, options, Dictionary(args[1], args.GetIsolate()));
         if (!fill${implClassName}Init(eventInit, options))
             return v8Undefined();
     }
@@ -3744,7 +3744,7 @@ sub JSValueToNative
 
     if ($type eq "Dictionary") {
         AddToImplIncludes("Dictionary.h");
-        return $value;
+        return "Dictionary($value, $getIsolate)";
     }
 
     if ($type eq "DOMObject") {

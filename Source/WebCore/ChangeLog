@@ -1,3 +1,47 @@
+2012-08-08  Kentaro Hara  <haraken@chromium.org>
+
+        [V8] Pass Isolate to ArrayValue and Dictionary
+        https://bugs.webkit.org/show_bug.cgi?id=93315
+
+        Reviewed by Adam Barth.
+
+        This patch passes Isolate to ArrayValue and Dictionary.
+
+        Rationale 1: We want to replace V8Proxy::throwError(ExceptionCode)
+        with setDOMException(ExceptionCode, Isolate*). For the replacement,
+        we need to pass Isolate to V8Utilities::extractTransferables().
+        To pass Isolate to V8Utilities::extractTransferables(), ( ...omitted... ),
+        we need to pass Isolate to ArrayValue and Dictionary.
+
+        Rationale 2: JSC already passes ExecState to ArrayValue and Dictionary.
+
+        Tests: storage/indexeddb/*
+               fast/files/*
+
+        * bindings/scripts/CodeGeneratorV8.pm:
+        (GenerateEventConstructorCallback):
+        (JSValueToNative):
+        * bindings/scripts/test/V8/V8TestEventConstructor.cpp:
+        (WebCore::V8TestEventConstructor::constructorCallback):
+        * bindings/scripts/test/V8/V8TestObj.cpp:
+        (WebCore::TestObjV8Internal::optionsObjectCallback):
+        * bindings/v8/ArrayValue.cpp:
+        (WebCore::ArrayValue::operator=):
+        (WebCore::ArrayValue::get):
+        * bindings/v8/ArrayValue.h:
+        (WebCore::ArrayValue::ArrayValue):
+        (ArrayValue):
+        * bindings/v8/Dictionary.cpp:
+        (WebCore::Dictionary::Dictionary):
+        (WebCore::Dictionary::operator=):
+        (WebCore::Dictionary::get):
+        * bindings/v8/Dictionary.h:
+        (Dictionary):
+        * bindings/v8/custom/V8BlobCustom.cpp:
+        (WebCore::V8Blob::constructorCallback):
+        * bindings/v8/custom/V8IntentConstructor.cpp:
+        (WebCore::V8Intent::constructorCallback):
+
 2012-08-08  Yury Semikhatsky  <yurys@chromium.org>
 
         Web Inspector: cached images memory instrumentation regression after r124744

@@ -61,12 +61,15 @@
 namespace WebCore {
 
 Dictionary::Dictionary()
+    : m_isolate(0)
 {
 }
 
-Dictionary::Dictionary(const v8::Local<v8::Value>& options)
+Dictionary::Dictionary(const v8::Local<v8::Value>& options, v8::Isolate* isolate)
     : m_options(options)
+    , m_isolate(isolate)
 {
+    ASSERT(m_isolate);
 }
 
 Dictionary::~Dictionary()
@@ -76,6 +79,7 @@ Dictionary::~Dictionary()
 Dictionary& Dictionary::operator=(const Dictionary& optionsObject)
 {
     m_options = optionsObject.m_options;
+    m_isolate = optionsObject.m_isolate;
     return *this;
 }
 
@@ -419,8 +423,11 @@ bool Dictionary::get(const String& key, Dictionary& value) const
     if (!getKey(key, v8Value))
         return false;
 
-    if (v8Value->IsObject())
-        value = Dictionary(v8Value);
+    if (v8Value->IsObject()) {
+        ASSERT(m_isolate);
+        ASSERT(m_isolate == v8::Isolate::GetCurrent());
+        value = Dictionary(v8Value, m_isolate);
+    }
 
     return true;
 }
@@ -452,7 +459,9 @@ bool Dictionary::get(const String& key, ArrayValue& value) const
     if (!v8Value->IsArray())
         return false;
 
-    value = ArrayValue(v8::Local<v8::Array>::Cast(v8Value));
+    ASSERT(m_isolate);
+    ASSERT(m_isolate == v8::Isolate::GetCurrent());
+    value = ArrayValue(v8::Local<v8::Array>::Cast(v8Value), m_isolate);
     return true;
 }
 

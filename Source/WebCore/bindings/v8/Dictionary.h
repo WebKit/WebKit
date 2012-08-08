@@ -52,7 +52,7 @@ class TrackBase;
 class Dictionary {
 public:
     Dictionary();
-    Dictionary(const v8::Local<v8::Value>& options);
+    Dictionary(const v8::Local<v8::Value>& options, v8::Isolate*);
     ~Dictionary();
 
     Dictionary& operator=(const Dictionary&);
@@ -104,6 +104,7 @@ private:
     static void operator delete(void *);
 
     v8::Local<v8::Value> m_options;
+    v8::Isolate* m_isolate;
 };
 
 }

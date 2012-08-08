@@ -56,7 +56,7 @@ v8::Handle<v8::Value> V8Intent::constructorCallback(const v8::Arguments& args)
     if (args.Length() == 1) {
         // Use the dictionary constructor. This block will return if the
         // argument isn't a valid Dictionary.
-        EXCEPTION_BLOCK(Dictionary, options, args[0]);
+        EXCEPTION_BLOCK(Dictionary, options, Dictionary(args[0], args.GetIsolate()));
         ExceptionCode ec = 0;
         RefPtr<Intent> impl = Intent::create(ScriptState::current(), options, ec);
         if (ec)

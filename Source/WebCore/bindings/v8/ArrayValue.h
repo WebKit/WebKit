@@ -34,8 +34,13 @@ class Dictionary;
 
 class ArrayValue {
 public:
-    ArrayValue() { }
-    explicit ArrayValue(const v8::Local<v8::Array>& array) : m_array(array) { }
+    ArrayValue() : m_isolate(0) { }
+    explicit ArrayValue(const v8::Local<v8::Array>& array, v8::Isolate* isolate)
+        : m_array(array)
+        , m_isolate(isolate)
+    {
+        ASSERT(m_isolate);
+    }
     ~ArrayValue() { }
 
     ArrayValue& operator=(const ArrayValue&);
@@ -52,6 +57,7 @@ private:
     static void operator delete(void *);
 
     v8::Local<v8::Array> m_array;
+    v8::Isolate* m_isolate;
 };
 
 }
