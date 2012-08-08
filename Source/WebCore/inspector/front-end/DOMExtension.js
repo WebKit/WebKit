@@ -253,18 +253,6 @@ Element.prototype.createChild = function(elementName, className)
 DocumentFragment.prototype.createChild = Element.prototype.createChild;
 
 /**
- * @param {string} text
- */
-Element.prototype.createTextChild = function(text)
-{
-    var element = this.ownerDocument.createTextNode(text);
-    this.appendChild(element);
-    return element;
-}
-
-DocumentFragment.prototype.createTextChild = Element.prototype.createTextChild;
-
-/**
  * @return {number}
  */
 Element.prototype.totalOffsetLeft = function()

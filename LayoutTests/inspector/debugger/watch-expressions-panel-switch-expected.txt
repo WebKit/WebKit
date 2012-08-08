@@ -6,7 +6,7 @@ Script source was shown.
 Set timer for test function.
 Watch expressions updated.
 [expanded]  
-    window.document: #document
+    window.document: HTMLDocument
     windowa.document: ReferenceError: Can't find variable: windowa
 Debugger was disabled.
 

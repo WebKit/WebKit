@@ -7,15 +7,6 @@ CONSOLE MESSAGE: line 35: [object NodeList]
 CONSOLE MESSAGE: line 41: 1,2,
 CONSOLE MESSAGE: line 44: [object Object]
 CONSOLE MESSAGE: line 51: [object Arguments]
-CONSOLE MESSAGE: line 15: [object NodeList]
-CONSOLE MESSAGE: line 19: [object HTMLCollection]
-CONSOLE MESSAGE: line 23: [object HTMLOptionsCollection]
-CONSOLE MESSAGE: line 27: [object HTMLAllCollection]
-CONSOLE MESSAGE: line 31: [object HTMLCollection]
-CONSOLE MESSAGE: line 35: [object NodeList]
-CONSOLE MESSAGE: line 41: 1,2,
-CONSOLE MESSAGE: line 44: [object Object]
-CONSOLE MESSAGE: line 51: [object Arguments]
 Tests that console nicely formats HTML Collections and NodeLists.
 
 [<select id="sel" name="sel">…</select>] console-format-collections.html:15
@@ -29,14 +20,4 @@ Tests that console nicely formats HTML Collections and NodeLists.
 [1, Array[2]] console-format-collections.html:41
 NonArrayWithLength console-format-collections.html:44
 [1, "2"] console-format-collections.html:51
-[<select>] console-format-collections.html:15
- console-format-collections.html:19
-[<option>, <option>, selectedIndex: 0] console-format-collections.html:23
- console-format-collections.html:27
- console-format-collections.html:31
-[<input>, <input>] console-format-collections.html:35
-[1, Array[2]] console-format-collections.html:41
-NonArrayWithLength {keys: Array[0]} console-format-collections.html:44
-[1, "2"] console-format-collections.html:51
-Page reloaded.
 

@@ -1025,7 +1025,6 @@ body.platform-linux .monospace, body.platform-linux .source-code {
 .console-group-messages .section .header .title {
     color: black;
     font-weight: normal;
-    line-height: 13px;
 }
 
 .console-group-messages .section .properties li .info {
@@ -1086,15 +1085,6 @@ body.platform-linux .monospace, body.platform-linux .source-code {
 
 .console-formatted-null, .console-formatted-undefined {
     color: rgb(128, 128, 128);
-}
-
-.console-formatted-preview-node,
-.section .console-formatted-node {
-    color: rgb(136, 18, 128);
-}
-
-.console-object-preview {
-    font-style: italic;
 }
 
 .error-message {
@@ -1590,7 +1580,7 @@ li.editing .swatch, li.editing .enabled-button,  li.editing-sub-part .delete-but
     display: inline;
 }
 
-.section .properties .name, .event-properties .name, .console-formatted-object .name {
+.section .properties .name, .event-properties .name {
     color: rgb(136, 19, 145);
 }
 

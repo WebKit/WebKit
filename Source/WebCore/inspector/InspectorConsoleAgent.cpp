@@ -83,12 +83,12 @@ void InspectorConsoleAgent::enable(ErrorString*)
 
     if (m_expiredConsoleMessageCount) {
         ConsoleMessage expiredMessage(OtherMessageSource, LogMessageType, WarningMessageLevel, String::format("%d console messages are not shown.", m_expiredConsoleMessageCount), "", 0, "");
-        expiredMessage.addToFrontend(m_frontend, m_injectedScriptManager, false);
+        expiredMessage.addToFrontend(m_frontend, m_injectedScriptManager);
     }
 
     size_t messageCount = m_consoleMessages.size();
     for (size_t i = 0; i < messageCount; ++i)
-        m_consoleMessages[i]->addToFrontend(m_frontend, m_injectedScriptManager, false);
+        m_consoleMessages[i]->addToFrontend(m_frontend, m_injectedScriptManager);
 }
 
 void InspectorConsoleAgent::disable(ErrorString*)
@@ -281,7 +281,7 @@ void InspectorConsoleAgent::addConsoleMessage(PassOwnPtr<ConsoleMessage> console
         m_previousMessage = consoleMessage.get();
         m_consoleMessages.append(consoleMessage);
         if (m_frontend && m_state->getBoolean(ConsoleAgentState::consoleMessagesEnabled))
-            m_previousMessage->addToFrontend(m_frontend, m_injectedScriptManager, true);
+            m_previousMessage->addToFrontend(m_frontend, m_injectedScriptManager);
     }
 
     if (!m_frontend && m_consoleMessages.size() >= maximumConsoleMessages) {

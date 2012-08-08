@@ -14,7 +14,7 @@ function onload()
     console.log('Object %o', {'foo' : 'bar' });
 
     var array = ["test", "test2"]; array.length = 10;
-    array.foo = {}; 
+    array.foo = "bar"; 
     array[4] = "test4";
 
     console.log(array);
@@ -65,10 +65,10 @@ function test()
         {
             var next = current + 1;
             if (next == total.description) {
-                InspectorTest.expandConsoleMessages();
                 InspectorTest.dumpConsoleMessages();
                 InspectorTest.completeTest();
-            } else
+               }
+            else
                 loopOverGlobals(next, total);
         }
 

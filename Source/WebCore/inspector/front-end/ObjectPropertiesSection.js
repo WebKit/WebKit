@@ -28,7 +28,7 @@
  * @constructor
  * @extends {WebInspector.PropertiesSection}
  * @param {WebInspector.RemoteObject=} object
- * @param {string|Element=} title
+ * @param {string=} title
  * @param {string=} subtitle
  * @param {string=} emptyPlaceholder
  * @param {boolean=} ignoreHasOwnProperty
@@ -45,7 +45,7 @@ WebInspector.ObjectPropertiesSection = function(object, title, subtitle, emptyPl
     this.editable = true;
     this.skipProto = false;
 
-    WebInspector.PropertiesSection.call(this, title || "", subtitle);
+    WebInspector.PropertiesSection.call(this, title, subtitle);
 }
 
 WebInspector.ObjectPropertiesSection._arrayLoadThreshold = 100;

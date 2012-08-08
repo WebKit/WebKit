@@ -1,3 +1,32 @@
+2012-08-08  Pavel Feldman  <pfeldman@chromium.org>
+
+        REGRESSION(r125046): Breaks debug build (assertion in protocol type checks) (Requested by pfeldman on #webkit).
+        https://bugs.webkit.org/show_bug.cgi?id=93505
+
+        Not reviewed: roll out.
+
+        * inspector/console/command-line-api-inspect-expected.txt:
+        * inspector/console/console-dir-expected.txt:
+        * inspector/console/console-eval-global-expected.txt:
+        * inspector/console/console-eval-global.html:
+        * inspector/console/console-format-collections-expected.txt:
+        * inspector/console/console-format-collections.html:
+        * inspector/console/console-format-expected.txt:
+        * inspector/console/console-format.html:
+        * inspector/console/console-log-document-proto-expected.txt:
+        * inspector/console/console-log-document-proto.html:
+        * inspector/console/console-log-toString-object-expected.txt:
+        * inspector/debugger/watch-expressions-panel-switch-expected.txt:
+        * inspector/elements/event-listener-sidebar-expected.txt:
+        * inspector/elements/event-listeners-about-blank-expected.txt:
+        * platform/chromium/inspector/console/console-dir-expected.txt:
+        * platform/chromium/inspector/console/console-eval-global-expected.txt: Copied from LayoutTests/inspector/console/console-eval-global-expected.txt.
+        * platform/chromium/inspector/console/console-format-collections-expected.txt:
+        * platform/chromium/inspector/console/console-format-expected.txt: Copied from LayoutTests/inspector/console/console-format-expected.txt.
+        * platform/chromium/inspector/console/console-log-document-proto-expected.txt:
+        * platform/chromium/inspector/debugger/watch-expressions-panel-switch-expected.txt:
+        * platform/chromium/inspector/elements/event-listener-sidebar-expected.txt: Copied from LayoutTests/inspector/elements/event-listener-sidebar-expected.txt.
+
 2012-08-08  Florin Malita  <fmalita@chromium.org>
 
         [chromium][win] Rebaseline css3/filters/custom tests
