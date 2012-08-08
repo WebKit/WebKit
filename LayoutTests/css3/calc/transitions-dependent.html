@@ -73,20 +73,24 @@ function runTest(expected)
         var property = expected[i][2];
         var expectedValue = expected[i][3];
         var dependsOn = expected[i][4];
-        
         if (window.testRunner) {
             window.testRunner.pauseTransitionAtTimeOnElementWithId(property, time, dependsOn);
             window.testRunner.pauseTransitionAtTimeOnElementWithId(property, time, elementId);
             var actual = window.getComputedStyle(document.getElementById(elementId)).getPropertyCSSValue(property).getFloatValue(CSSPrimitiveValue.CSS_NUMBER);
             var result = document.getElementById("result");
-
             if (actual == expectedValue)
                 result.innerHTML += 'PASS - "' + property + '" property for "' + elementId +'" element at ' + time + 's was: ' + actual + '<br/>';
             else
                 result.innerHTML += 'FAIL - "' + property + '" property for "' + elementId +'" element at ' + time + 's expected: ' + expectedValue + ' but saw: ' + actual + '<br/>';
         }
-            
     }
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+function loadListener()
+{
+    waitForAnimationStart(function(){runTest(expectedValues);});
 }
 
 for (var i = 0; i < transitioningElements.length; i++) {
@@ -94,6 +98,7 @@ for (var i = 0; i < transitioningElements.length; i++) {
     element.className += " go";
 }
 
-window.addEventListener("load", function() { waitForAnimationStart(runTest(expectedValues)); }, false);
+window.addEventListener("load", loadListener, false);
+window.testRunner.waitUntilDone();
 
 </script>

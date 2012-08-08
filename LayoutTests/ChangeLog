@@ -1,3 +1,26 @@
+2012-08-08  Roger Fong  <roger_fong@apple.com>
+
+        css3/calc/transitions-dependent.html was causing css3/calc/transitions.html to fail
+        https://bugs.webkit.org/show_bug.cgi?id=93515
+
+        Reviewed by Tim Horton.
+
+        The transitions-dependent.html test was causing the transitions.html test to fail.
+        This was a result of a timeout callback set in the first test that was only being fired
+        in the second test because the first test did not use waitUntilDone/notifyDone. 
+        The second test printed out an extra TypeError: 'undefined' error message because the callback 
+        was defined in the first test and was thus 'undefined' by the time it was called while the second test
+        was running.
+        
+        In addition, the test contained the following line:
+        window.addEventListener("load", function() { waitForAnimationStart(runTest(expectedValues)); }, false);
+        which does not work as intended because the parameter to waitForAnimationStart should have been a function
+        that calls runTest, not the call to the runTest function itself, which calls the method immediately.
+
+        * css3/calc/transitions-dependent.html:
+        Added waitUntilDone/notifyDone.
+        Fixed function parameter.
+
 2012-08-08  Florin Malita  <fmalita@chromium.org>
 
         [Chromium] Unreviewed gardening: Chromium results for compositing/repaint/newly-composited-on-scroll.html.
