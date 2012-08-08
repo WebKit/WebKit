@@ -1,3 +1,14 @@
+2012-08-08  Loïc Yhuel  <loic.yhuel@softathome.com>
+
+        [Qt] Compile errors with OpenGLES2
+        https://bugs.webkit.org/show_bug.cgi?id=93206
+
+        Reviewed by Noam Rosenthal.
+
+        Fix build with OpenGLES2 on Linux desktop
+
+        * platform/graphics/OpenGLESShims.h: removed unused define conflicting with gl2ext.h from ANGLE
+
 2012-08-08  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: store last evaluation result in $_

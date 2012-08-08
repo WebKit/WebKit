@@ -164,7 +164,7 @@ linux-*:config_libXcomposite: DEFINES += HAVE_XCOMPOSITE=1
 haveQt(5):linux-*:config_libXrender: DEFINES += HAVE_XRENDER=1
 
 # GLX Support
-haveQt(5):linux-*:config_glx: DEFINES += HAVE_GLX=1
+haveQt(5):linux-*:config_glx:!contains(QT_CONFIG, opengles2): DEFINES += HAVE_GLX=1
 
 # Support for Graphics Surface
 !contains(DEFINES, WTF_USE_GRAPHICS_SURFACE=.) {
