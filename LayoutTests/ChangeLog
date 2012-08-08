@@ -1,3 +1,17 @@
+2012-08-08  Simon Fraser  <simon.fraser@apple.com>
+
+        Avoid backing store on layers created for CoreAnimation plugins
+        https://bugs.webkit.org/show_bug.cgi?id=93526
+        <rdar://problem/12052828>
+
+        Reviewed by Dean Jackson.
+
+        Test for backing store on CoreAnimation-based plugins in various
+        configurations.
+
+        * compositing/plugins/no-backing-store-expected.txt: Added.
+        * compositing/plugins/no-backing-store.html: Added.
+
 2012-08-08  Jeff Timanus  <twiz@chromium.org>
 
         [Chromium] Updating fast/canvas/webgl/gl-teximage.html to prevent valid variations in results from causing test failures.

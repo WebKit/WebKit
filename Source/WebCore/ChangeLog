@@ -1,3 +1,21 @@
+2012-08-08  Simon Fraser  <simon.fraser@apple.com>
+
+        Avoid backing store on layers created for CoreAnimation plugins
+        https://bugs.webkit.org/show_bug.cgi?id=93526
+        <rdar://problem/12052828>
+
+        Reviewed by Dean Jackson.
+
+        We create a compositing layer for <embed> objects whose plug-in supports
+        the CoreAnimation rendering model. When the embed's renderer is not styled,
+        we can avoid allocating backing store for it.
+
+        Test: compositing/plugins/no-backing-store.html
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::isCompositedPlugin):
+        (WebCore::RenderLayerBacking::isSimpleContainerCompositingLayer):
+
 2012-08-08  Erik Arvidsson  <arv@chromium.org>
 
         DOM4: classList should be defined on Element and not on HTMLElement

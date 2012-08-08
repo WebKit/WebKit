@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style type="text/css" media="screen">
+    embed {
+      margin: 10px;
+    }
+  </style>
+  <script type="text/javascript" charset="utf-8">
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+
+    function doTest()
+    {
+        // Need to wait for compositing layers to be updated. FIXME remove.
+        window.setTimeout(function() {
+            if (window.testRunner) {
+                document.getElementById('layers').innerHTML = testRunner.layerTreeAsText();
+                testRunner.notifyDone();
+            }
+        }, 0)
+    }
+    window.addEventListener('load', doTest, false);
+  </script>
+</head>
+<body>
+  
+    <!-- Not layer-backed -->
+    <embed type="application/x-webkit-test-netscape" width="100" height="100">
+
+    <!-- Layer-backed, no need for backing store -->
+    <embed type="application/x-webkit-test-netscape" width="100" height="100" drawingmodel="coreanimation">
+
+    <!-- Both these need backing store -->
+    <embed style="background-color: blue;" type="application/x-webkit-test-netscape" width="100" height="100" drawingmodel="coreanimation">
+    <embed style="border: 1px solid black;" type="application/x-webkit-test-netscape" width="100" height="100" drawingmodel="coreanimation">
+
+    <pre id="layers">Layer tree appears here in DRT.</pre>
+</body>
+</html>

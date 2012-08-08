@@ -895,16 +895,23 @@ bool RenderLayerBacking::paintsChildren() const
     return false;
 }
 
+static bool isCompositedPlugin(RenderObject* renderer)
+{
+    return renderer->isEmbeddedObject() && toRenderEmbeddedObject(renderer)->allowsAcceleratedCompositing();
+}
+
 // A "simple container layer" is a RenderLayer which has no visible content to render.
 // It may have no children, or all its children may be themselves composited.
 // This is a useful optimization, because it allows us to avoid allocating backing store.
 bool RenderLayerBacking::isSimpleContainerCompositingLayer() const
 {
     RenderObject* renderObject = renderer();
-    if (renderObject->isReplaced() ||       // replaced objects are not containers
-        renderObject->hasMask())            // masks require special treatment
+    if (renderObject->hasMask()) // masks require special treatment
         return false;
 
+    if (renderObject->isReplaced() && !isCompositedPlugin(renderObject))
+            return false;
+    
     if (paintsBoxDecorations() || paintsChildren())
         return false;
     
