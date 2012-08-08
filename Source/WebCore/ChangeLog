@@ -1,3 +1,19 @@
+2012-08-08  Matt Arsenault  <arsenm2@gmail.com>
+
+        Crash when inspecting an element with border-image
+        https://bugs.webkit.org/show_bug.cgi?id=93380
+
+        Reviewed by Tim Horton.
+
+        The second value in the CSSPair should be the same as the first if
+        we are in a shorthand and the next value is not a
+        border-image-repeat keyword.
+
+        Test: fast/css/parse-border-image-repeat-null-crash.html
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseBorderImageRepeat):
+
 2012-08-08  Kentaro Hara  <haraken@chromium.org>
 
         [V8] Factor out V8BindingPerIsolateData from V8Binding to a separate file

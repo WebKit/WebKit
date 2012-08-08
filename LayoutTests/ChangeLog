@@ -1,3 +1,16 @@
+2012-08-08  Matt Arsenault  <arsenm2@gmail.com>
+
+        Crash when inspecting an element with border-image
+        https://bugs.webkit.org/show_bug.cgi?id=93380
+
+        Reviewed by Tim Horton.
+
+        Add a test that ensures css Text on a border image shorthand with
+        border-image-repeat does not crash.
+
+        * fast/css/parse-border-image-repeat-null-crash-expected.txt: Added.
+        * fast/css/parse-border-image-repeat-null-crash.html: Added.
+
 2012-08-08  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: show white space nodes if they are the only tag's children.

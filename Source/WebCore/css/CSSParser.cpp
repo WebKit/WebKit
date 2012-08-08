@@ -6149,6 +6149,7 @@ bool CSSParser::parseBorderImageRepeat(RefPtr<CSSValue>& result)
             // We need to rewind the value list, so that when its advanced we'll
             // end up back at this value.
             m_valueList->previous();
+            secondValue = firstValue;
         }
     } else
         secondValue = firstValue;
