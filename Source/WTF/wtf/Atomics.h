@@ -72,7 +72,7 @@
 #elif OS(ANDROID)
 #include <sys/atomics.h>
 #elif COMPILER(GCC)
-#if (__GNUC__ > 4) || ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 2))
+#if ((__GNUC__ > 4) || ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 2))) && !defined(__LSB_VERSION__)
 #include <ext/atomicity.h>
 #else
 #include <bits/atomicity.h>

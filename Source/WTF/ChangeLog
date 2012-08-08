@@ -1,3 +1,14 @@
+2012-08-08  Alvaro Lopez Ortega  <alvaro@alobbs.com>
+
+        Atomics.h has incorrect GCC test for ext/atomicity.h when using LSB compilers
+        https://bugs.webkit.org/show_bug.cgi?id=51974
+
+        Reviewed by Simon Hausmann.
+
+        * wtf/Atomics.h: Inhibits the inclusion of the atomicity.h GNU C++
+        extension when compiling with a LSB compliant compiler. Thanks to
+        Craig Scott for the new precompiler check code.
+
 2012-08-07  Yoshifumi Inoue  <yosin@chromium.org>
 
         [WTF] Add using WTF::msPerHour into DateMath.h
