@@ -1,3 +1,12 @@
+2012-08-08  Dean Jackson  <dino@apple.com>
+
+        REGRESSION (r124416): fast/forms/basic-selects.html failing on Lion Debug Tests
+        https://bugs.webkit.org/show_bug.cgi?id=93538
+
+        Unreviewed test expectations update after regression from r124416 on Mac ports.
+
+        * platform/mac/TestExpectations:
+
 2012-08-08  Simon Fraser  <simon.fraser@apple.com>
 
         Avoid backing store on layers created for CoreAnimation plugins
