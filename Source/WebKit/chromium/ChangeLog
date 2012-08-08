@@ -1,3 +1,18 @@
+2012-08-07  Kentaro Hara  <haraken@chromium.org>
+
+        [V8] Implement V8Proxy::registerExtensionIfNeeded() and remove redundant methods
+        https://bugs.webkit.org/show_bug.cgi?id=93209
+
+        Reviewed by Adam Barth.
+
+        By implementing V8Proxy::registerExtensionIfNeeded(), we can remove
+        registeredExtensionWithV8() and registerExtension().
+
+        No tests. No change in behavior.
+
+        * src/WebScriptController.cpp:
+        (WebKit::WebScriptController::registerExtension):
+
 2012-08-07  James Robinson  <jamesr@chromium.org>
 
         [chromium] Add new gclient-managed cc directory to Source/WebKit/chromium/.gitignore

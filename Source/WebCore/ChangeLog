@@ -1,3 +1,22 @@
+2012-08-07  Kentaro Hara  <haraken@chromium.org>
+
+        [V8] Implement V8Proxy::registerExtensionIfNeeded() and remove redundant methods
+        https://bugs.webkit.org/show_bug.cgi?id=93209
+
+        Reviewed by Adam Barth.
+
+        By implementing V8Proxy::registerExtensionIfNeeded(), we can remove
+        registeredExtensionWithV8() and registerExtension().
+
+        No tests. No change in behavior.
+
+        * bindings/v8/V8DOMWindowShell.cpp:
+        (WebCore::V8DOMWindowShell::createNewContext):
+        * bindings/v8/V8Proxy.cpp:
+        (WebCore::V8Proxy::registerExtensionIfNeeded):
+        * bindings/v8/V8Proxy.h:
+        (V8Proxy):
+
 2012-08-07  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL] Remove PlatformTouchEventEfl and PlatformTouchPointEfl

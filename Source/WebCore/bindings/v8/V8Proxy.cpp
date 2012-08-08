@@ -634,22 +634,14 @@ V8Extensions& V8Proxy::extensions()
     return extensions;
 }
 
-bool V8Proxy::registeredExtensionWithV8(v8::Extension* extension)
+void V8Proxy::registerExtensionIfNeeded(v8::Extension* extension)
 {
     const V8Extensions& registeredExtensions = extensions();
     for (size_t i = 0; i < registeredExtensions.size(); ++i) {
         if (registeredExtensions[i] == extension)
-            return true;
+            return;
     }
-
-    return false;
-}
-
-void V8Proxy::registerExtension(v8::Extension* extension)
-{
-    // If the extension exists in our list, it was already registered with V8.
-    if (!registeredExtensionWithV8(extension))
-        v8::RegisterExtension(extension);
+    v8::RegisterExtension(extension);
     extensions().append(extension);
 }
 

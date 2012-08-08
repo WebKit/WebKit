@@ -366,13 +366,12 @@ v8::Persistent<v8::Context> V8DOMWindowShell::createNewContext(v8::Handle<v8::Ob
         return result;
 
     // Used to avoid sleep calls in unload handlers.
-    if (!V8Proxy::registeredExtensionWithV8(DateExtension::get()))
-        V8Proxy::registerExtension(DateExtension::get());
+    V8Proxy::registerExtensionIfNeeded(DateExtension::get());
 
 #if ENABLE(JAVASCRIPT_I18N_API)
     // Enables experimental i18n API in V8.
-    if (RuntimeEnabledFeatures::javaScriptI18NAPIEnabled() && !V8Proxy::registeredExtensionWithV8(v8_i18n::Extension::get()))
-        V8Proxy::registerExtension(v8_i18n::Extension::get());
+    if (RuntimeEnabledFeatures::javaScriptI18NAPIEnabled())
+        V8Proxy::registerExtensionIfNeeded(v8_i18n::Extension::get());
 #endif
 
     // Dynamically tell v8 about our extensions now.

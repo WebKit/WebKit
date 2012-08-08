@@ -166,9 +166,7 @@ namespace WebCore {
         // Registers a v8 extension to be available on webpages. Will only
         // affect v8 contexts initialized after this call. Takes ownership of
         // the v8::Extension object passed.
-        static void registerExtension(v8::Extension*);
-        static bool registeredExtensionWithV8(v8::Extension*);
-
+        static void registerExtensionIfNeeded(v8::Extension*);
         static V8Extensions& extensions();
 
         static void reportUnsafeAccessTo(Document* targetDocument);
