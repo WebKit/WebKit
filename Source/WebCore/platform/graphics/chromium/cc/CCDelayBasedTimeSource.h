@@ -44,6 +44,7 @@ public:
 
     virtual void setClient(CCTimeSourceClient* client) OVERRIDE { m_client = client; }
 
+    // CCTimeSource implementation
     virtual void setTimebaseAndInterval(double timebase, double intervalSeconds) OVERRIDE;
 
     virtual void setActive(bool) OVERRIDE;
@@ -51,8 +52,8 @@ public:
 
     // Get the last and next tick times.
     // If not active, nextTickTime will return 0.
-    virtual double lastTickTime();
-    virtual double nextTickTime();
+    virtual double lastTickTime() OVERRIDE;
+    virtual double nextTickTime() OVERRIDE;
 
     // CCTimerClient implementation.
     virtual void onTimerFired() OVERRIDE;

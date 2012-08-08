@@ -63,7 +63,7 @@ public:
 
     virtual void appendQuads(CCQuadSink&, const CCSharedQuadState*, bool& hadMissingTiles) OVERRIDE;
 
-    void didLoseContext() OVERRIDE;
+    virtual void didLoseContext() OVERRIDE;
 
 protected:
     explicit CCScrollbarLayerImpl(int id);

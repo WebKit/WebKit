@@ -58,8 +58,8 @@ public:
     static PassRefPtr<BitmapCanvasLayerTextureUpdater> create(PassOwnPtr<LayerPainterChromium>);
     virtual ~BitmapCanvasLayerTextureUpdater();
 
-    virtual PassOwnPtr<LayerTextureUpdater::Texture> createTexture(CCPrioritizedTextureManager*);
-    virtual SampledTexelFormat sampledTexelFormat(GC3Denum textureFormat);
+    virtual PassOwnPtr<LayerTextureUpdater::Texture> createTexture(CCPrioritizedTextureManager*) OVERRIDE;
+    virtual SampledTexelFormat sampledTexelFormat(GC3Denum textureFormat) OVERRIDE;
     virtual void prepareToUpdate(const IntRect& contentRect, const IntSize& tileSize, float contentsWidthScale, float contentsHeightScale, IntRect& resultingOpaqueRect, CCRenderingStats&) OVERRIDE;
     void updateTextureRect(CCResourceProvider*, CCPrioritizedTexture*, const IntRect& sourceRect, const IntRect& destRect);
 

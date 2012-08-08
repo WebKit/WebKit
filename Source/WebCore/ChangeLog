@@ -1,3 +1,24 @@
+2012-08-08  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Add missing OVERRIDE and virtual annotations in compositor
+        https://bugs.webkit.org/show_bug.cgi?id=93438
+
+        Reviewed by Adrienne Walker.
+
+        As the title suggests.
+
+        * platform/graphics/chromium/BitmapCanvasLayerTextureUpdater.h:
+        (BitmapCanvasLayerTextureUpdater):
+        * platform/graphics/chromium/ScrollbarLayerChromium.h:
+        (ScrollbarLayerChromium):
+        * platform/graphics/chromium/SolidColorLayerChromium.h:
+        (SolidColorLayerChromium):
+        * platform/graphics/chromium/cc/CCDelayBasedTimeSource.h:
+        * platform/graphics/chromium/cc/CCFrameRateController.h:
+        (CCFrameRateController):
+        * platform/graphics/chromium/cc/CCScrollbarLayerImpl.h:
+        (CCScrollbarLayerImpl):
+
 2012-08-08  Eric Penner  <epenner@google.com>
 
         [chromium] Refactor tile flags.

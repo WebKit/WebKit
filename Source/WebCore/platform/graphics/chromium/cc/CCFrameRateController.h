@@ -52,7 +52,7 @@ public:
     explicit CCFrameRateController(PassRefPtr<CCTimeSource>);
     // Alternate form of CCFrameRateController with unthrottled frame-rate.
     explicit CCFrameRateController(CCThread*);
-    ~CCFrameRateController();
+    virtual ~CCFrameRateController();
 
     void setClient(CCFrameRateControllerClient* client) { m_client = client; }
 

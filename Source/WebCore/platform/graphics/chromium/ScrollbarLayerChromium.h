@@ -42,7 +42,7 @@ class CCTextureUpdateQueue;
 
 class ScrollbarLayerChromium : public LayerChromium {
 public:
-    virtual PassOwnPtr<CCLayerImpl> createCCLayerImpl();
+    virtual PassOwnPtr<CCLayerImpl> createCCLayerImpl() OVERRIDE;
     static PassRefPtr<ScrollbarLayerChromium> create(PassOwnPtr<WebKit::WebScrollbar>, WebKit::WebScrollbarThemePainter, PassOwnPtr<WebKit::WebScrollbarThemeGeometry>, int scrollLayerId);
 
     // LayerChromium interface
@@ -54,7 +54,7 @@ public:
     int scrollLayerId() const { return m_scrollLayerId; }
     void setScrollLayerId(int id) { m_scrollLayerId = id; }
 
-    virtual ScrollbarLayerChromium* toScrollbarLayerChromium() { return this; }
+    virtual ScrollbarLayerChromium* toScrollbarLayerChromium() OVERRIDE { return this; }
 
 protected:
     ScrollbarLayerChromium(PassOwnPtr<WebKit::WebScrollbar>, WebKit::WebScrollbarThemePainter, PassOwnPtr<WebKit::WebScrollbarThemeGeometry>, int scrollLayerId);

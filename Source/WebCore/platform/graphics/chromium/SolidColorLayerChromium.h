@@ -36,7 +36,7 @@ namespace WebCore {
 // setBackgroundColor() on the base class.
 class SolidColorLayerChromium : public LayerChromium {
 public:
-    virtual PassOwnPtr<CCLayerImpl> createCCLayerImpl();
+    virtual PassOwnPtr<CCLayerImpl> createCCLayerImpl() OVERRIDE;
     static PassRefPtr<SolidColorLayerChromium> create();
 
     virtual ~SolidColorLayerChromium();
