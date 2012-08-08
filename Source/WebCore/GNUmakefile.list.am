@@ -2734,8 +2734,6 @@ webcore_sources += \
 	Source/WebCore/inspector/ContentSearchUtils.h \
 	Source/WebCore/inspector/DOMEditor.cpp \
 	Source/WebCore/inspector/DOMEditor.h \
-	Source/WebCore/inspector/DOMNodeHighlighter.cpp \
-	Source/WebCore/inspector/DOMNodeHighlighter.h \
 	Source/WebCore/inspector/DOMPatchSupport.cpp \
 	Source/WebCore/inspector/DOMPatchSupport.h \
 	Source/WebCore/inspector/IdentifiersFactory.cpp \
@@ -2800,6 +2798,8 @@ webcore_sources += \
 	Source/WebCore/inspector/InspectorInstrumentation.h \
 	Source/WebCore/inspector/InspectorMemoryAgent.cpp \
 	Source/WebCore/inspector/InspectorMemoryAgent.h \
+	Source/WebCore/inspector/InspectorOverlay.cpp \
+	Source/WebCore/inspector/InspectorOverlay.h \
 	Source/WebCore/inspector/InspectorPageAgent.cpp \
 	Source/WebCore/inspector/InspectorPageAgent.h \
 	Source/WebCore/inspector/InspectorProfilerAgent.cpp \

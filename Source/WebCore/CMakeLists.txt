@@ -1508,7 +1508,6 @@ SET(WebCore_SOURCES
     inspector/ConsoleMessage.cpp
     inspector/ContentSearchUtils.cpp
     inspector/DOMEditor.cpp
-    inspector/DOMNodeHighlighter.cpp
     inspector/DOMPatchSupport.cpp
     inspector/IdentifiersFactory.cpp
     inspector/InjectedScript.cpp
@@ -1540,6 +1539,7 @@ SET(WebCore_SOURCES
     inspector/InspectorIndexedDBAgent.cpp
     inspector/InspectorInstrumentation.cpp
     inspector/InspectorMemoryAgent.cpp
+    inspector/InspectorOverlay.cpp
     inspector/InspectorProfilerAgent.cpp
     inspector/InspectorResourceAgent.cpp
     inspector/InspectorRuntimeAgent.cpp

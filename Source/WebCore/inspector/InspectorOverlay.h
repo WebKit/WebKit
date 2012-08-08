@@ -26,8 +26,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DOMNodeHighlighter_h
-#define DOMNodeHighlighter_h
+#ifndef InspectorOverlay_h
+#define InspectorOverlay_h
 
 #include "Color.h"
 #include "FloatQuad.h"
@@ -121,4 +121,4 @@ private:
 } // namespace WebCore
 
 
-#endif // DOMNodeHighlighter_h
+#endif // InspectorOverlay_h

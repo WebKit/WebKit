@@ -34,7 +34,6 @@
 
 #include "InspectorController.h"
 
-#include "DOMNodeHighlighter.h"
 #include "Frame.h"
 #include "GraphicsContext.h"
 #include "IdentifiersFactory.h"
@@ -57,6 +56,7 @@
 #include "InspectorIndexedDBAgent.h"
 #include "InspectorInstrumentation.h"
 #include "InspectorMemoryAgent.h"
+#include "InspectorOverlay.h"
 #include "InspectorPageAgent.h"
 #include "InspectorProfilerAgent.h"
 #include "InspectorResourceAgent.h"

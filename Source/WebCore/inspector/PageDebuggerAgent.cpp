@@ -35,7 +35,7 @@
 #include "PageDebuggerAgent.h"
 
 #include "Console.h"
-#include "DOMNodeHighlighter.h"
+#include "InspectorOverlay.h"
 #include "Page.h"
 #include "PageScriptDebugServer.h"
 

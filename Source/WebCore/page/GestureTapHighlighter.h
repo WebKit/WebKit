@@ -43,4 +43,4 @@ Path pathForNodeHighlight(const Node*);
 
 } // namespace WebCore
 
-#endif // DOMNodeHighlighter_h
+#endif // GestureTapHighlighter__h

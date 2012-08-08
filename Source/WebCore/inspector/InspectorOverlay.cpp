@@ -30,7 +30,7 @@
 
 #if ENABLE(INSPECTOR)
 
-#include "DOMNodeHighlighter.h"
+#include "InspectorOverlay.h"
 
 #include "Element.h"
 #include "FontCache.h"

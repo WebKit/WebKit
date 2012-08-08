@@ -1,3 +1,49 @@
+2012-08-08  Sergey Rogulenko  <rogulenko@google.com>
+
+        Web Inspector: renaming DOMNodeHighlighter to InspectorOverlay
+        https://bugs.webkit.org/show_bug.cgi?id=93253
+
+        Reviewed by Pavel Feldman.
+
+        Renaming DOMNodeHighlighter to InspectorOverlay where necessary.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * inspector/InspectorAllInOne.cpp:
+        * inspector/InspectorController.cpp:
+        * inspector/InspectorDOMAgent.cpp:
+        * inspector/InspectorDOMAgent.h:
+        * inspector/InspectorOverlay.cpp: Renamed from Source/WebCore/inspector/DOMNodeHighlighter.cpp.
+        (WebCore::InspectorOverlay::InspectorOverlay):
+        (WebCore):
+        (WebCore::InspectorOverlay::paint):
+        (WebCore::InspectorOverlay::drawOutline):
+        (WebCore::InspectorOverlay::getHighlight):
+        (WebCore::InspectorOverlay::setPausedInDebuggerMessage):
+        (WebCore::InspectorOverlay::hideHighlight):
+        (WebCore::InspectorOverlay::highlightNode):
+        (WebCore::InspectorOverlay::highlightRect):
+        (WebCore::InspectorOverlay::highlightedNode):
+        (WebCore::InspectorOverlay::update):
+        (WebCore::InspectorOverlay::drawNodeHighlight):
+        (WebCore::InspectorOverlay::drawRectHighlight):
+        (WebCore::InspectorOverlay::drawPausedInDebugger):
+        * inspector/InspectorOverlay.h: Renamed from Source/WebCore/inspector/DOMNodeHighlighter.h.
+        (WebCore):
+        (HighlightConfig):
+        (WebCore::Highlight::setColors):
+        (Highlight):
+        (InspectorOverlay):
+        (WebCore::InspectorOverlay::create):
+        * inspector/InspectorPageAgent.cpp:
+        * inspector/PageDebuggerAgent.cpp:
+        * page/GestureTapHighlighter.h:
+        * testing/Internals.cpp:
+
 2012-08-08  Chris Guan  <chris.guan@torchmobile.com.cn>
 
         [Blackberry] missing a Multipart header when m_multipartResponse is null

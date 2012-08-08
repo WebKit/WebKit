@@ -733,7 +733,6 @@ SOURCES += \
     inspector/ConsoleMessage.cpp \
     inspector/ContentSearchUtils.cpp \
     inspector/DOMEditor.cpp \
-    inspector/DOMNodeHighlighter.cpp \
     inspector/DOMPatchSupport.cpp \
     inspector/IdentifiersFactory.cpp \
     inspector/InjectedScript.cpp \
@@ -762,6 +761,7 @@ SOURCES += \
     inspector/InspectorHistory.cpp \
     inspector/InspectorInstrumentation.cpp \
     inspector/InspectorMemoryAgent.cpp \
+    inspector/InspectorOverlay.cpp \
     inspector/InspectorPageAgent.cpp \
     inspector/InspectorProfilerAgent.cpp \
     inspector/InspectorResourceAgent.cpp \
@@ -1839,7 +1839,6 @@ HEADERS += \
     inspector/ConsoleMessage.h \
     inspector/ContentSearchUtils.h \
     inspector/DOMEditor.h \
-    inspector/DOMNodeHighlighter.h \
     inspector/DOMPatchSupport.h \
     inspector/IdentifiersFactory.h \
     inspector/InjectedScript.h \
@@ -1870,6 +1869,7 @@ HEADERS += \
     inspector/InspectorHistory.h \
     inspector/InspectorInstrumentation.h \
     inspector/InspectorMemoryAgent.h \
+    inspector/InspectorOverlay.h \
     inspector/InspectorPageAgent.h \
     inspector/InspectorProfilerAgent.h \
     inspector/InspectorResourceAgent.h \

@@ -1448,8 +1448,6 @@
 		4E19592C0A39DACC00220FE5 /* MediaQueryEvaluator.h in Headers */ = {isa = PBXBuildFile; fileRef = 4E1959260A39DACC00220FE5 /* MediaQueryEvaluator.h */; };
 		4E19592D0A39DACC00220FE5 /* MediaQueryExp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4E1959270A39DACC00220FE5 /* MediaQueryExp.cpp */; };
 		4E19592E0A39DACC00220FE5 /* MediaQueryExp.h in Headers */ = {isa = PBXBuildFile; fileRef = 4E1959280A39DACC00220FE5 /* MediaQueryExp.h */; };
-		4F1442281339FD6200E0D6F8 /* DOMNodeHighlighter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4F1442261339FD6200E0D6F8 /* DOMNodeHighlighter.cpp */; };
-		4F1442291339FD6200E0D6F8 /* DOMNodeHighlighter.h in Headers */ = {isa = PBXBuildFile; fileRef = 4F1442271339FD6200E0D6F8 /* DOMNodeHighlighter.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		4F1534DE11B532EC0021FD86 /* EditingBehavior.h in Headers */ = {isa = PBXBuildFile; fileRef = 4F1534DD11B532EC0021FD86 /* EditingBehavior.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		4F1534E011B533020021FD86 /* EditingBehaviorTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 4F1534DF11B533020021FD86 /* EditingBehaviorTypes.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		4F2D205412EAE7B3005C2874 /* InspectorAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = 4F2D205212EAE7B3005C2874 /* InspectorAgent.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1969,6 +1967,8 @@
 		7B1EA0CF1576C5B50060177D /* JSUndoManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 7B1EA0CD1576C5B50060177D /* JSUndoManager.h */; };
 		7B9184D215758E420092AA93 /* UndoManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B9184CF15758E420092AA93 /* UndoManager.cpp */; };
 		7B9184D315758E420092AA93 /* UndoManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 7B9184D015758E420092AA93 /* UndoManager.h */; };
+		7C522D4B15B477E8009B7C95 /* InspectorOverlay.cpp */ = {isa = PBXBuildFile; fileRef = 7C522D4915B477E8009B7C95 /* InspectorOverlay.cpp */; };
+		7C522D4C15B478B2009B7C95 /* InspectorOverlay.h */ = {isa = PBXBuildFile; fileRef = 7C522D4A15B477E8009B7C95 /* InspectorOverlay.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7E33CD01127F340D00BE8F17 /* PurgePriority.h in Headers */ = {isa = PBXBuildFile; fileRef = 7E33CD00127F340D00BE8F17 /* PurgePriority.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7E37EF2E1339208800B29250 /* SubresourceLoaderCF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7E37EF2D1339208800B29250 /* SubresourceLoaderCF.cpp */; };
 		7E99AF510B13846468FB01A5 /* WindowFocusAllowedIndicator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7E99AF520B13846468FB01A5 /* WindowFocusAllowedIndicator.cpp */; };
@@ -8586,8 +8586,6 @@
 		4E1959260A39DACC00220FE5 /* MediaQueryEvaluator.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = MediaQueryEvaluator.h; sourceTree = "<group>"; };
 		4E1959270A39DACC00220FE5 /* MediaQueryExp.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = MediaQueryExp.cpp; sourceTree = "<group>"; };
 		4E1959280A39DACC00220FE5 /* MediaQueryExp.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = MediaQueryExp.h; sourceTree = "<group>"; };
-		4F1442261339FD6200E0D6F8 /* DOMNodeHighlighter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DOMNodeHighlighter.cpp; sourceTree = "<group>"; };
-		4F1442271339FD6200E0D6F8 /* DOMNodeHighlighter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMNodeHighlighter.h; sourceTree = "<group>"; };
 		4F1534DD11B532EC0021FD86 /* EditingBehavior.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EditingBehavior.h; sourceTree = "<group>"; };
 		4F1534DF11B533020021FD86 /* EditingBehaviorTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EditingBehaviorTypes.h; sourceTree = "<group>"; };
 		4F2D205212EAE7B3005C2874 /* InspectorAgent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorAgent.h; sourceTree = "<group>"; };
@@ -9148,6 +9146,8 @@
 		7B9184CF15758E420092AA93 /* UndoManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UndoManager.cpp; sourceTree = "<group>"; };
 		7B9184D015758E420092AA93 /* UndoManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UndoManager.h; sourceTree = "<group>"; };
 		7B9184D115758E420092AA93 /* UndoManager.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = UndoManager.idl; sourceTree = "<group>"; };
+		7C522D4915B477E8009B7C95 /* InspectorOverlay.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorOverlay.cpp; sourceTree = "<group>"; };
+		7C522D4A15B478B2009B7C95 /* InspectorOverlay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorOverlay.h; sourceTree = "<group>"; };
 		7C60128060078BB70E367A95 /* DNSResolveQueue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DNSResolveQueue.cpp; sourceTree = "<group>"; };
 		7E33CD00127F340D00BE8F17 /* PurgePriority.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PurgePriority.h; sourceTree = "<group>"; };
 		7E37EF2D1339208800B29250 /* SubresourceLoaderCF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SubresourceLoaderCF.cpp; path = cf/SubresourceLoaderCF.cpp; sourceTree = "<group>"; };
@@ -14565,8 +14565,6 @@
 				59102FBA14327D3B003C9D04 /* ContentSearchUtils.h */,
 				7AABA25714BC613300AA9A11 /* DOMEditor.cpp */,
 				7AABA25814BC613300AA9A11 /* DOMEditor.h */,
-				4F1442261339FD6200E0D6F8 /* DOMNodeHighlighter.cpp */,
-				4F1442271339FD6200E0D6F8 /* DOMNodeHighlighter.h */,
 				7A54881614E432A1006AE05A /* DOMPatchSupport.cpp */,
 				7A54881514E432A1006AE05A /* DOMPatchSupport.h */,
 				5913A23F13D49EBA00F5B05C /* IdentifiersFactory.cpp */,
@@ -14638,6 +14636,8 @@
 				20D629251253690B00081543 /* InspectorInstrumentation.h */,
 				7AA51DD3148506A900AD2752 /* InspectorMemoryAgent.cpp */,
 				7AA51DD4148506A900AD2752 /* InspectorMemoryAgent.h */,
+				7C522D4915B477E8009B7C95 /* InspectorOverlay.cpp */,
+				7C522D4A15B478B2009B7C95 /* InspectorOverlay.h */,
 				4F6FDD621341DEDD001F8EE3 /* InspectorPageAgent.cpp */,
 				4F6FDD631341DEDD001F8EE3 /* InspectorPageAgent.h */,
 				9F0D6B2C121BFEBA006C0288 /* InspectorProfilerAgent.cpp */,
@@ -22792,7 +22792,6 @@
 				85E711D20AC5D5350053270F /* DOMNamedNodeMapInternal.h in Headers */,
 				853BF4DB0ABB6B55008647BB /* DOMNode.h in Headers */,
 				854075260AD6C66700620C57 /* DOMNodeFilter.h in Headers */,
-				4F1442291339FD6200E0D6F8 /* DOMNodeHighlighter.h in Headers */,
 				85B498FB0ADB340200925CBB /* DOMNodeInternal.h in Headers */,
 				85526C370AB0A17E000302EA /* DOMNodeIterator.h in Headers */,
 				850B41C20AD9E7E700A6ED4F /* DOMNodeIteratorInternal.h in Headers */,
@@ -23656,6 +23655,7 @@
 				7ACD88D414C08BD60084EDD2 /* InspectorIndexedDBAgent.h in Headers */,
 				20D629271253690B00081543 /* InspectorInstrumentation.h in Headers */,
 				7AA51DD6148506A900AD2752 /* InspectorMemoryAgent.h in Headers */,
+				7C522D4C15B478B2009B7C95 /* InspectorOverlay.h in Headers */,
 				4F6FDD651341DEDD001F8EE3 /* InspectorPageAgent.h in Headers */,
 				9F0D6B2F121BFEBA006C0288 /* InspectorProfilerAgent.h in Headers */,
 				82AB1776125C826700C5069D /* InspectorResourceAgent.h in Headers */,
@@ -26220,7 +26220,6 @@
 				85C7F5C00AAFB7CD004014DD /* DOMMutationEvent.mm in Sources */,
 				8518DD790A9CF31B0091B7A6 /* DOMNamedNodeMap.mm in Sources */,
 				853BF4DC0ABB6B55008647BB /* DOMNode.mm in Sources */,
-				4F1442281339FD6200E0D6F8 /* DOMNodeHighlighter.cpp in Sources */,
 				85526C380AB0A17E000302EA /* DOMNodeIterator.mm in Sources */,
 				85ACAA8E0A9B759C00671E90 /* DOMNodeList.mm in Sources */,
 				85CA96EB0A9624E900690CCF /* DOMNotation.mm in Sources */,
@@ -26827,6 +26826,7 @@
 				7ACD88D314C08BD60084EDD2 /* InspectorIndexedDBAgent.cpp in Sources */,
 				20D629261253690B00081543 /* InspectorInstrumentation.cpp in Sources */,
 				7AA51DD5148506A900AD2752 /* InspectorMemoryAgent.cpp in Sources */,
+				7C522D4B15B477E8009B7C95 /* InspectorOverlay.cpp in Sources */,
 				4F6FDD641341DEDD001F8EE3 /* InspectorPageAgent.cpp in Sources */,
 				9F0D6B2E121BFEBA006C0288 /* InspectorProfilerAgent.cpp in Sources */,
 				82AB1775125C826700C5069D /* InspectorResourceAgent.cpp in Sources */,

@@ -30,12 +30,12 @@
 #ifndef InspectorDOMAgent_h
 #define InspectorDOMAgent_h
 
-#include "DOMNodeHighlighter.h"
 #include "EventTarget.h"
 #include "InjectedScript.h"
 #include "InjectedScriptManager.h"
 #include "InspectorBaseAgent.h"
 #include "InspectorFrontend.h"
+#include "InspectorOverlay.h"
 #include "InspectorValues.h"
 #include "Timer.h"
 
