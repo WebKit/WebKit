@@ -400,12 +400,13 @@ LayoutUnit RenderFlexibleBox::mainAxisContentExtent()
     return contentLogicalWidth();
 }
 
-LayoutUnit RenderFlexibleBox::computeLogicalClientHeight(SizeType heightType, const Length& height)
+LayoutUnit RenderFlexibleBox::computeMainAxisExtentForChild(RenderBox* child, SizeType sizeType, const Length& size, LayoutUnit maximumValue)
 {
-    LayoutUnit heightIncludingScrollbar = computeContentLogicalHeightUsing(heightType, height);
-    if (heightIncludingScrollbar == -1)
-        return -1;
-    return std::max(LayoutUnit(0), computeContentBoxLogicalHeight(heightIncludingScrollbar) - scrollbarLogicalHeight());
+    // FIXME: This is wrong for orthogonal flows. It should use the flexbox's writing-mode, not the child's in order
+    // to figure out the logical height/width.
+    if (isColumnFlow())
+        return child->computeLogicalClientHeight(sizeType, size);
+    return child->computeContentBoxLogicalWidth(valueForLength(size, maximumValue, view()));
 }
 
 WritingMode RenderFlexibleBox::transformedWritingMode() const
@@ -604,9 +605,7 @@ LayoutUnit RenderFlexibleBox::preferredMainAxisContentExtentForChild(RenderBox* 
         LayoutUnit mainAxisExtent = hasOrthogonalFlow(child) ? child->logicalHeight() : child->maxPreferredLogicalWidth();
         return mainAxisExtent - mainAxisBorderAndPaddingExtentForChild(child);
     }
-    LayoutUnit extent = minimumValueForLength(flexBasis, mainAxisContentExtent(), view());
-    extent = isColumnFlow() ? child->computeContentBoxLogicalHeight(extent) : child->computeContentBoxLogicalWidth(extent);
-    return std::max(LayoutUnit(0), extent);
+    return std::max(LayoutUnit(0), computeMainAxisExtentForChild(child, MainOrPreferredSize, flexBasis, mainAxisContentExtent()));
 }
 
 LayoutUnit RenderFlexibleBox::computeAvailableFreeSpace(LayoutUnit preferredMainAxisExtent)
@@ -813,25 +812,23 @@ LayoutUnit RenderFlexibleBox::lineBreakLength()
 
 LayoutUnit RenderFlexibleBox::adjustChildSizeForMinAndMax(RenderBox* child, LayoutUnit childSize, LayoutUnit flexboxAvailableContentExtent)
 {
+    // FIXME: Support intrinsic min/max lengths.
     Length max = isHorizontalFlow() ? child->style()->maxWidth() : child->style()->maxHeight();
-    Length min = isHorizontalFlow() ? child->style()->minWidth() : child->style()->minHeight();
-    RenderView* renderView = view();
-    // FIXME: valueForLength isn't quite right in quirks mode: percentage heights should check parents until a value is found.
-    // https://bugs.webkit.org/show_bug.cgi?id=81809
-    if (max.isSpecified() && childSize > valueForLength(max, flexboxAvailableContentExtent, renderView))
-        childSize = valueForLength(max, flexboxAvailableContentExtent, renderView);
-
-    if (min.isSpecified() && childSize < valueForLength(min, flexboxAvailableContentExtent, renderView))
-        return valueForLength(min, flexboxAvailableContentExtent, renderView);
-
-    // FIXME: Support min/max sizes of fit-content, max-content and fill-available.
-    if (min.isAuto()) {
-        LayoutUnit minContent = hasOrthogonalFlow(child) ? child->logicalHeight() : child->minPreferredLogicalWidth();
-        minContent -= mainAxisBorderAndPaddingExtentForChild(child);
-        return std::max(childSize, minContent);
+    if (max.isSpecified()) {
+        LayoutUnit maxExtent = computeMainAxisExtentForChild(child, MaxSize, max, flexboxAvailableContentExtent);
+        if (maxExtent != -1 && childSize > maxExtent)
+            childSize = maxExtent;
     }
 
-    return childSize;
+    Length min = isHorizontalFlow() ? child->style()->minWidth() : child->style()->minHeight();
+    LayoutUnit minExtent = 0;
+    if (min.isSpecified())
+        minExtent = computeMainAxisExtentForChild(child, MinSize, min, flexboxAvailableContentExtent);
+    else if (min.isAuto()) {
+        minExtent = hasOrthogonalFlow(child) ? child->logicalHeight() : child->minPreferredLogicalWidth();
+        minExtent -= mainAxisBorderAndPaddingExtentForChild(child);
+    }
+    return std::max(childSize, minExtent);
 }
 
 bool RenderFlexibleBox::computeNextFlexLine(OrderIterator& iterator, OrderedFlexItemList& orderedChildren, LayoutUnit& preferredMainAxisExtent, float& totalFlexGrow, float& totalWeightedFlexShrink, LayoutUnit& minMaxAppliedMainAxisExtent)

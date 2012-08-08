@@ -1,3 +1,33 @@
+2012-08-07  Ojan Vafai  <ojan@chromium.org>
+
+        percentage height/width values in quirks mode are incorrectly resolved in flexbox children
+        https://bugs.webkit.org/show_bug.cgi?id=81809
+
+        Reviewed by Tony Chang.
+
+        When computing percentage logical heights we need to use the RenderBox helper methods
+        to make sure we handle all the edge cases correctly (e.g. walk up the containing block
+        ancestor chain in quirks mode until we find a definite size).
+
+        For widths, the containing block always has a definite size, so all we need to do
+        is call computeContentBoxLogicalWidth(valueForLength(...)), although I'm not sure
+        this does the right thing for the intrinsic sizing keywords.
+
+        Tests: css3/flexbox/box-sizing-min-max-sizes.html
+               css3/flexbox/percentage-sizes-quirks.html
+               css3/flexbox/percentage-sizes.html
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::computeLogicalClientHeight):
+        (WebCore):
+        * rendering/RenderBox.h:
+        (RenderBox):
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::computeMainAxisSizeForChild):
+        (WebCore::RenderFlexibleBox::preferredMainAxisContentExtentForChild):
+        (WebCore::RenderFlexibleBox::adjustChildSizeForMinAndMax):
+        * rendering/RenderFlexibleBox.h:
+
 2012-08-08  Andrew Scherkus  <scherkus@chromium.org>
 
         Fire suspend event whenever network state is set to NETWORK_IDLE.

@@ -85,7 +85,7 @@ private:
     LayoutUnit mainAxisExtent() const;
     LayoutUnit crossAxisContentExtent() const;
     LayoutUnit mainAxisContentExtent();
-    LayoutUnit computeLogicalClientHeight(SizeType, const Length& height);
+    LayoutUnit computeMainAxisExtentForChild(RenderBox* child, SizeType, const Length& size, LayoutUnit maximumValue);
     WritingMode transformedWritingMode() const;
     LayoutUnit flowAwareBorderStart() const;
     LayoutUnit flowAwareBorderEnd() const;

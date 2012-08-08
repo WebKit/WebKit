@@ -2061,6 +2061,14 @@ LayoutUnit RenderBox::computeLogicalHeightUsing(SizeType heightType, const Lengt
     return logicalHeight;
 }
 
+LayoutUnit RenderBox::computeLogicalClientHeight(SizeType heightType, const Length& height)
+{
+    LayoutUnit heightIncludingScrollbar = computeContentLogicalHeightUsing(heightType, height);
+    if (heightIncludingScrollbar == -1)
+        return -1;
+    return std::max(LayoutUnit(0), computeContentBoxLogicalHeight(heightIncludingScrollbar) - scrollbarLogicalHeight());
+}
+
 LayoutUnit RenderBox::computeContentLogicalHeightUsing(SizeType heightType, const Length& height)
 {
     if (height.isAuto())

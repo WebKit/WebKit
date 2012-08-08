@@ -1,3 +1,17 @@
+2012-08-07  Ojan Vafai  <ojan@chromium.org>
+
+        percentage height/width values in quirks mode are incorrectly resolved in flexbox children
+        https://bugs.webkit.org/show_bug.cgi?id=81809
+
+        Reviewed by Tony Chang.
+
+        * css3/flexbox/box-sizing-min-max-sizes-expected.txt: Added.
+        * css3/flexbox/box-sizing-min-max-sizes.html: Added.
+        * css3/flexbox/percentage-sizes-expected.txt: Added.
+        * css3/flexbox/percentage-sizes-quirks-expected.txt: Added.
+        * css3/flexbox/percentage-sizes-quirks.html: Added.
+        * css3/flexbox/percentage-sizes.html: Added.
+
 2012-08-08  Andrew Scherkus  <scherkus@chromium.org>
 
         Fire suspend event whenever network state is set to NETWORK_IDLE.
