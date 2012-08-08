@@ -1,3 +1,10 @@
+2012-08-07  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed typo fix after r124988.
+
+        * Scripts/webkitpy/layout_tests/models/test_expectations.py:
+        (TestExpectations):
+
 2012-08-07  YoungTaeck Song  <youngtaeck.song@samsung.com>
 
         [WK2][EFL] Implement accelerated compositing on WK2 Efl port

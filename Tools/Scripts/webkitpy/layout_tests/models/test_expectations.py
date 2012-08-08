@@ -699,7 +699,7 @@ class TestExpectations(object):
                                 AUDIO: ('audio failures', 'failed', ' (audio diff)'),
                                 CRASH: ('crashes', 'crashed', ''),
                                 TIMEOUT: ('timeouts', 'timed out', ''),
-                                MISSING: ('no expected result found', 'no expected results found', '')}
+                                MISSING: ('no expected results found', 'no expected result found', '')}
 
     EXPECTATION_ORDER = (PASS, CRASH, TIMEOUT, MISSING, IMAGE_PLUS_TEXT, TEXT, IMAGE, AUDIO, SKIP)
 
