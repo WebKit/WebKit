@@ -1,5 +1,17 @@
 2012-08-07  Dirk Pranke  <dpranke@chromium.org>
 
+        REGRESSION: PrettyPatchTest.test_pretty_diff_encodings has been failing on Chromium Windows
+        https://bugs.webkit.org/show_bug.cgi?id=93192
+
+        Unreviewed, build fix.
+
+        Disabling the test for now as PrettyPatch is just broken on win32.
+
+        * Scripts/webkitpy/common/prettypatch_unittest.py:
+        (test_pretty_diff_encodings):
+
+2012-08-07  Dirk Pranke  <dpranke@chromium.org>
+
         [NRWT] Would like an output mode similar to ORWT verbose one
         https://bugs.webkit.org/show_bug.cgi?id=88702
 

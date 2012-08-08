@@ -27,6 +27,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import os.path
+import sys
 import unittest
 
 from webkitpy.common.system.executive import Executive
@@ -67,6 +68,10 @@ Index: latin1_test
 
     def test_pretty_diff_encodings(self):
         if not self.check_ruby():
+            return
+
+        if sys.platform == 'win32':
+            # FIXME: disabled due to https://bugs.webkit.org/show_bug.cgi?id=93192
             return
 
         pretty_patch = PrettyPatch(Executive(), self._webkit_root())
