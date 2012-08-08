@@ -1,3 +1,29 @@
+2012-08-07  Kentaro Hara  <haraken@chromium.org>
+
+        Optimize Element::getAttributeNode() by replacing String with AtomicString
+        https://bugs.webkit.org/show_bug.cgi?id=90274
+
+        Reviewed by Adam Barth.
+
+        Based on the observation described in this ChangeLog
+        (http://trac.webkit.org/changeset/121439), this patch optimizes
+        the performance of Element::getAttributeNode() by replacing String
+        with AtomicString.
+
+        Performance test: https://bugs.webkit.org/attachment.cgi?id=150147
+
+        getAttributeNode (Chromium/Linux):
+        375.20ms => 310.80ms
+
+        getAttributeNodeNS (Chromium/Linux):
+        684.40ms => 539.00ms
+
+        * dom/Element.cpp:
+        (WebCore::Element::getAttributeNode):
+        (WebCore::Element::getAttributeNodeNS):
+        * dom/Element.h:
+        (Element):
+
 2012-08-07  Michelangelo De Simone  <michelangelo@webkit.org>
 
         CSSParser::parseTransform() refactor to accept valueList as argument

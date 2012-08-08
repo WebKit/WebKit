@@ -1516,7 +1516,7 @@ void Element::removeAttributeNS(const String& namespaceURI, const String& localN
     removeAttribute(QualifiedName(nullAtom, localName, namespaceURI));
 }
 
-PassRefPtr<Attr> Element::getAttributeNode(const String& name)
+PassRefPtr<Attr> Element::getAttributeNode(const AtomicString& name)
 {
     const ElementAttributeData* attributeData = updatedAttributeData();
     if (!attributeData)
@@ -1524,7 +1524,7 @@ PassRefPtr<Attr> Element::getAttributeNode(const String& name)
     return attributeData->getAttributeNode(name, shouldIgnoreAttributeCase(this), this);
 }
 
-PassRefPtr<Attr> Element::getAttributeNodeNS(const String& namespaceURI, const String& localName)
+PassRefPtr<Attr> Element::getAttributeNodeNS(const AtomicString& namespaceURI, const AtomicString& localName)
 {
     const ElementAttributeData* attributeData = updatedAttributeData();
     if (!attributeData)
