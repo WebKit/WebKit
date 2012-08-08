@@ -225,7 +225,7 @@ WebInspector.ConsoleMessageImpl.prototype = {
             if (shouldFormatMessage && parameters[i].type === "string")
                 formattedResult.appendChild(document.createTextNode(parameters[i].description));
             else
-                formattedResult.appendChild(this._formatParameter(parameters[i]));
+                formattedResult.appendChild(this._formatParameter(parameters[i], false, true));
             if (i < parameters.length - 1)
                 formattedResult.appendChild(document.createTextNode(" "));
         }
@@ -234,8 +234,9 @@ WebInspector.ConsoleMessageImpl.prototype = {
 
     /**
      * @param {boolean=} forceObjectFormat
+     * @param {boolean=} includePreview
      */
-    _formatParameter: function(output, forceObjectFormat)
+    _formatParameter: function(output, forceObjectFormat, includePreview)
     {
         var type;
         if (forceObjectFormat)
@@ -253,7 +254,7 @@ WebInspector.ConsoleMessageImpl.prototype = {
 
         var span = document.createElement("span");
         span.className = "console-formatted-" + type + " source-code";
-        formatter.call(this, output, span);
+        formatter.call(this, output, span, includePreview);
         return span;
     },
 
@@ -262,11 +263,96 @@ WebInspector.ConsoleMessageImpl.prototype = {
         elem.appendChild(document.createTextNode(val));
     },
 
-    _formatParameterAsObject: function(obj, elem)
+    _formatParameterAsObject: function(obj, elem, includePreview)
     {
-        var section = new WebInspector.ObjectPropertiesSection(obj, obj.description);
+        this._formatParameterAsArrayOrObject(obj, obj.description, elem, includePreview);
+    },
+
+    /**
+     * @param {WebInspector.RemoteObject} obj
+     * @param {string} description
+     * @param {Element} elem
+     * @param {boolean} includePreview
+     */
+    _formatParameterAsArrayOrObject: function(obj, description, elem, includePreview)
+    {
+        var titleElement = document.createElement("span");
+        if (description)
+            titleElement.createTextChild(description);
+        if (includePreview && obj.previewProperties) {
+            titleElement.addStyleClass("console-object-preview");
+            var lossless = this._appendObjectPreview(obj, description, titleElement);
+            if (lossless) {
+                elem.appendChild(titleElement);
+                return;
+            }
+        }
+        var section = new WebInspector.ObjectPropertiesSection(obj, titleElement);
         section.enableContextMenu();
         elem.appendChild(section.element);
+    },
+
+    /**
+     * @param {WebInspector.RemoteObject} obj
+     * @param {string} description
+     * @param {Element} titleElement
+     * @return {boolean} true iff preview captured all information.
+     */
+    _appendObjectPreview: function(obj, description, titleElement)
+    {
+        var preview = obj.previewProperties;
+        var isLosslessPreview = true;
+        var isArray = obj.subtype === "array";
+
+        if (description)
+            titleElement.createTextChild(" ");
+        titleElement.createTextChild(isArray ? "[" : "{");
+        for (var i = 0; i < preview.length; ++i) {
+            var property = preview[i];
+            if (property === "lossy") {
+                isLosslessPreview = false;
+                continue;
+            }
+            if (property === "overflow") {
+                titleElement.createChild("span").textContent = "\u2026";
+                break;
+            }
+
+            var name = property[0];
+            var type = property[1];
+            var value = property[2];
+
+            if (i > 0)
+                titleElement.createTextChild(", ");
+
+            if (!isArray || name != i) {
+                titleElement.createChild("span", "name").textContent = name;
+                titleElement.createTextChild(": ");
+            }
+
+            var span = titleElement.createChild("span", "console-formatted-" + type);
+            switch (type) {
+            case "object":
+                var subtype = property[3];
+                if (subtype === "node")
+                    span.addStyleClass("console-formatted-preview-node");
+                else if (subtype === "regexp")
+                    span.addStyleClass("console-formatted-string");
+                span.textContent = value;
+                break;
+            case "string":
+                span.textContent = "\"" + value.replace(/\n/g, "\u21B5") + "\"";
+                break;
+            case "null":
+            case "undefined":
+                span.textContent = type;
+                break;
+            default:
+                span.textContent = String(value);
+            }
+        }
+        titleElement.createTextChild(isArray ? "]" : "}");
+        return isLosslessPreview;
     },
 
     _formatParameterAsNode: function(object, elem)
@@ -276,7 +362,7 @@ WebInspector.ConsoleMessageImpl.prototype = {
             if (!nodeId) {
                 // Sometimes DOM is loaded after the sync message is being formatted, so we get no
                 // nodeId here. So we fall back to object formatting here.
-                this._formatParameterAsObject(object, elem);
+                this._formatParameterAsObject(object, elem, false);
                 return;
             }
             var treeOutline = new WebInspector.ElementsTreeOutline(false, false, true);
@@ -293,6 +379,11 @@ WebInspector.ConsoleMessageImpl.prototype = {
 
     _formatParameterAsArray: function(array, elem)
     {
+        if (array.previewProperties) {
+            this._formatParameterAsArrayOrObject(array, "", elem, true);
+            return;
+        }
+
         const maxFlatArrayLength = 100;
         if (array.arrayLength() > maxFlatArrayLength)
             this._formatParameterAsObject(array, elem);
@@ -352,7 +443,7 @@ WebInspector.ConsoleMessageImpl.prototype = {
             lastNonEmptyIndex = i;
             if (i < length - 1)
                 elem.appendChild(document.createTextNode(", "));
-        }       
+        }
         appendUndefined(elem, length);
 
         elem.appendChild(document.createTextNode("]"));
@@ -361,7 +452,7 @@ WebInspector.ConsoleMessageImpl.prototype = {
     _formatAsArrayEntry: function(output)
     {
         // Prevent infinite expansion of cross-referencing arrays.
-        return this._formatParameter(output, output.subtype && output.subtype === "array");
+        return this._formatParameter(output, output.subtype && output.subtype === "array", false);
     },
 
     _formatWithSubstitutionString: function(parameters, formattedResult)
@@ -370,7 +461,7 @@ WebInspector.ConsoleMessageImpl.prototype = {
 
         function parameterFormatter(force, obj)
         {
-            return this._formatParameter(obj, force);
+            return this._formatParameter(obj, force, false);
         }
 
         function valueFormatter(obj)

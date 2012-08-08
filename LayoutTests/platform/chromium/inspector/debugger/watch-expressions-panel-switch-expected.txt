@@ -6,7 +6,7 @@ Script source was shown.
 Set timer for test function.
 Watch expressions updated.
 [expanded]  
-    window.document: HTMLDocument
+    window.document: #document
     windowa.document: ReferenceError: windowa is not defined
 Debugger was disabled.
 

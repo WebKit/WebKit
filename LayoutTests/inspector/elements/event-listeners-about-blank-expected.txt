@@ -7,7 +7,7 @@ Tests event listeners output in the Elements sidebar panel when the listeners ar
     isAttribute: false
     lineNumber: 9
     listenerBody: function f() {}
-    node: HTMLBodyElement
+    node: <body>
     sourceName: [clipped-for-test]/LayoutTests/inspector/elements/event-listeners-about-blank.html
     type: click
     useCapture: true
@@ -17,7 +17,7 @@ Tests event listeners output in the Elements sidebar panel when the listeners ar
     isAttribute: false
     lineNumber: 9
     listenerBody: function f() {}
-    node: HTMLDivElement
+    node: <div>
     sourceName: [clipped-for-test]/LayoutTests/inspector/elements/event-listeners-about-blank.html
     type: hover
     useCapture: true

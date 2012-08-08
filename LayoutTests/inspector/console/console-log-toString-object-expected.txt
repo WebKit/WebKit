@@ -3,5 +3,5 @@ CONSOLE MESSAGE: line 7:
 Tests that passing an object which throws on string conversion into console.log won't crash inspected Page. The test passes if it doesn't crash. Bug 57557
 
 Page reloaded.
-Object console-log-toString-object.html:7
+Object {toString: Object} console-log-toString-object.html:7
 

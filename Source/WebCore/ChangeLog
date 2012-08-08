@@ -1,3 +1,62 @@
+2012-08-08  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: generate preview for the objects dumped into the console upon logging.
+        https://bugs.webkit.org/show_bug.cgi?id=35801
+
+        Reviewed by Vsevolod Vlasov.
+
+        As of today, dumping an object (array) into console will result in objects' properties being
+        read upon console object expansion (i.e. lazily). This means that dumping the same object while
+        mutating it will be hard to debug using the console.
+
+        This change starts generating abbreviated previews for objects / arrays at the moment of their
+        logging and passes this information along into the front-end. This only happens when the front-end
+        is already opened, it only works for console.log(), not live console interaction.
+
+        Covered by the existing console tests + collections test has been expanded to capture both: pre and post-
+        front-end opening scenarios.
+
+        * inspector/ConsoleMessage.cpp:
+        (WebCore::ConsoleMessage::addToFrontend):
+        * inspector/ConsoleMessage.h:
+        (ConsoleMessage):
+        * inspector/InjectedScript.cpp:
+        (WebCore::InjectedScript::wrapObject):
+        * inspector/InjectedScript.h:
+        (InjectedScript):
+        * inspector/InjectedScriptSource.js:
+        (.):
+        * inspector/Inspector.json:
+        * inspector/InspectorConsoleAgent.cpp:
+        (WebCore::InspectorConsoleAgent::enable):
+        (WebCore::InspectorConsoleAgent::addConsoleMessage):
+        * inspector/front-end/ConsoleMessage.js:
+        (WebInspector.ConsoleMessageImpl.prototype._format):
+        (WebInspector.ConsoleMessageImpl.prototype._formatParameter):
+        (WebInspector.ConsoleMessageImpl.prototype._formatParameterAsObject):
+        (WebInspector.ConsoleMessageImpl.prototype._formatParameterAsArrayOrObject):
+        (WebInspector.ConsoleMessageImpl.prototype._appendObjectPreview):
+        (WebInspector.ConsoleMessageImpl.prototype._formatParameterAsNode):
+        (WebInspector.ConsoleMessageImpl.prototype._formatParameterAsArray):
+        (WebInspector.ConsoleMessageImpl.prototype._printArray):
+        (WebInspector.ConsoleMessageImpl.prototype._formatAsArrayEntry):
+        (WebInspector.ConsoleMessageImpl.prototype._formatWithSubstitutionString):
+        * inspector/front-end/DOMExtension.js:
+        (Element.prototype.createTextChild):
+        * inspector/front-end/ObjectPropertiesSection.js:
+        (WebInspector.ObjectPropertiesSection):
+        * inspector/front-end/PropertiesSection.js:
+        * inspector/front-end/RemoteObject.js:
+        (WebInspector.RemoteObject):
+        (WebInspector.RemoteObject.fromPayload):
+        (WebInspector.RemoteObject.prototype.get previewProperties):
+        * inspector/front-end/Section.js:
+        * inspector/front-end/inspector.css:
+        (.console-group-messages .section .header .title):
+        (.section .console-formatted-node):
+        (.console-object-preview):
+        (.section .properties .name, .event-properties .name, .console-formatted-object .name):
+
 2012-07-31  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] media/media-continues-playing-after-replace-source.html fails

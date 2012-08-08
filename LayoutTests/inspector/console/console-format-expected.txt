@@ -55,7 +55,7 @@ Object Object console-format.html:14
 ["test", "test2", undefined × 2, "test4", undefined × 5] console-format.html:21
 Array[10] console-format.html:22
 /^url\(\s*(?:(?:"(?:[^\\\"]|(?:\\[\da-f]{1,6}\s?|\.))*"|'(?:[^\\\']|(?:\\[\da-f]{1,6}\s?|\.))*')|(?:[!#$%&*-~\w]|(?:\\[\da-f]{1,6}\s?|\.))*)\s*\)/i console-format.html:54
-[/^url\(\s*(?:(?:"(?:[^\\\"]|(?:\\[\da-f]{1,6}\s?|\.))*"|'(?:[^\\\']|(?:\\[\da-f]{1,6}\s?|\.))*')|(?:[!#$%&*-~\w]|(?:\\[\da-f]{1,6}\s?|\.))*)\s*\)/i] console-format.html:55
+[/^url\(\s*(?:(?:"(?:[^\\\"]|(?:\\[\da-f]{1,6}\s?|\…?:[!#$%&*-~\w]|(?:\\[\da-f]{1,6}\s?|\.))*)\s*\)/i] console-format.html:55
 globals[0]
 /^url\(\s*(?:(?:"(?:[^\\\"]|(?:\\[\da-f]{1,6}\s?|\.))*"|'(?:[^\\\']|(?:\\[\da-f]{1,6}\s?|\.))*')|(?:[!#$%&*-~\w]|(?:\\[\da-f]{1,6}\s?|\.))*)\s*\)/i
 /foo\\bar\sbaz/i console-format.html:54
@@ -74,10 +74,10 @@ Error console-format.html:54
 [Error] console-format.html:55
 globals[4]
 Error
-<body onload="onload()">…</body> console-format.html:54
-[<body onload="onload()">…</body>] console-format.html:55
+<body onload="onload()"> console-format.html:54
+[<body>] console-format.html:55
 globals[5]
-<body onload="onload()">…</body>
+<body onload="onload()">
 function () { return 1; } console-format.html:54
 [function () { return 1; }] console-format.html:55
 globals[6]
@@ -109,17 +109,17 @@ undefined console-format.html:54
 globals[11]
 undefined
 attr="" console-format.html:54
-[attr=""] console-format.html:55
+[attr] console-format.html:55
 globals[12]
 attr=""
-attr="value" console-format.html:54
-[attr="value"] console-format.html:55
+attr="value""value" console-format.html:54
+[attr] console-format.html:55
 globals[13]
-attr="value"
-id="x" console-format.html:54
-[id="x"] console-format.html:55
+attr="value""value"
+id="x""x" console-format.html:54
+[id] console-format.html:55
 globals[14]
-id="x"
+id="x""x"
 Object console-format.html:54
 [Object] console-format.html:55
 globals[15]
