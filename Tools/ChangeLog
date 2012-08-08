@@ -1,3 +1,15 @@
+2012-08-08  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt][Win] Fix compilation of DumpRenderTree
+        https://bugs.webkit.org/show_bug.cgi?id=93461
+
+        Reviewed by Tor Arne Vestbø.
+
+        DRT includes stdint.h, for which we have wrappers in Source/JavaScriptCore/os-win32. Use these not only
+        for libraries but any building template.
+
+        * qmake/mkspecs/features/default_post.prf:
+
 2012-08-08  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         [WK2] [WTR] Refactoring: LayoutTestController::shouldDumpProgressFinishedCallback() should be const
