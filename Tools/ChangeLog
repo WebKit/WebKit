@@ -1,3 +1,36 @@
+2012-08-08  Peter Beverloo  <peter@chromium.org>
+
+        Buildmaster changes in preparation of a Chromium Android tester
+        https://bugs.webkit.org/show_bug.cgi?id=92251
+
+        Reviewed by Adam Barth.
+
+        Slightly update the build master's configuration in preparation of adding
+        a Chromium Android tester.
+
+        The change in built-product-archive is required as the out/ directory
+        for Android has a number of unstripped .so binaries and unaligned APKs,
+        causing the default release.zip file to be 2.7 gigabytes. By excluding
+        these file types, the file is only 59.7 megabytes. We can't disable
+        them for all of Chromium, as Mac and Linux do use their .so files.
+
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+        (ArchiveBuiltProduct): Pass the full platform name instead of just the
+            generic type, i.e. chromium-android instead of chromium.
+        (ExtractBuiltProduct): Dito, stay consistent for this script.
+        (RunUnitTests): Pass --chromium-android as well as --chromium. Since we
+            now read the full platform name, stay on the safe side with 'win'
+            even though there (as far as I know) is no win-* platform.
+        (RunChromiumWebKitUnitTests): Dito. The platform wasn't being passed
+            at all, but we'll be needing different handling here.
+        (unitTestsSupported): Next to refactoring work required, as we'll be
+            running this test on a device, there is no reason to disable this
+            in the master's configuration.
+        * BuildSlaveSupport/built-product-archive:
+        (main): Determine the generic platform.
+        (archiveBuiltProduct): Use an identical set of ignorePatterns, but
+            extend the list with .so, .pak and -unaligned.apk for Android.
+
 2012-08-08  Adam Barth  <abarth@webkit.org>
 
         Unreviewed. Stop running tests on the mac-ews while we wait for more

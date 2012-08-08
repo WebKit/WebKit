@@ -51,14 +51,15 @@ def main():
         parser.error("Action is required")
         return 1
 
-    if not determineWebKitBuildDirectory(options.platform, options.configuration):
+    genericPlatform = options.platform.split('-', 1)[0]
+    if not determineWebKitBuildDirectory(genericPlatform, options.configuration):
         print >> sys.stderr, "Could not determine build directory"
         return 1
 
     if action == 'archive':
-        return archiveBuiltProduct(options.configuration, options.platform)
+        return archiveBuiltProduct(options.configuration, genericPlatform, options.platform)
     else:
-        return extractBuiltProduct(options.configuration, options.platform)
+        return extractBuiltProduct(options.configuration, genericPlatform)
 
 
 def determineWebKitBuildDirectory(platform, configuration):
@@ -116,7 +117,7 @@ def createZip(directoryToZip, configuration, archiveConfigurationOnMac=False):
         return subprocess.call(["zip", "-y", "-r", archiveFile, "."], cwd=directoryToZip)
 
 
-def archiveBuiltProduct(configuration, platform):
+def archiveBuiltProduct(configuration, platform, fullPlatform):
     assert platform in ('mac', 'win', 'qt', 'gtk', 'efl', 'chromium')
 
     configurationBuildDirectory = os.path.join(_buildDirectory, configuration.title())
@@ -164,10 +165,14 @@ def archiveBuiltProduct(configuration, platform):
     elif platform == 'chromium':
         thinDirectory = os.path.join(configurationBuildDirectory, "thin")
 
+        ignorePatterns = ['.svn', '*.a', '*.d', '*.dSYM', '*.o', '*.ilk', '*.lib', '*.idb',
+                          'BuildLog.htm', '*.obj', '*.pdb', '*.pch', '*.tlog', '*.lastbuildstate']
+
+        if fullPlatform and fullPlatform == 'chromium-android':
+            ignorePatterns.extend(['*.so', '*.pak', '*-unaligned.apk'])
+
         removeDirectoryIfExists(thinDirectory)
-        copyBuildFiles(configurationBuildDirectory, thinDirectory,
-            ['.svn', '*.a', '*.d', '*.dSYM', '*.o', '*.ilk', '*.lib', '*.idb', 'BuildLog.htm', '*.obj',
-            '*.pdb', '*.pch', '*.tlog', '*.lastbuildstate'])
+        copyBuildFiles(configurationBuildDirectory, thinDirectory, ignorePatterns)
         if createZip(thinDirectory, configuration):
             return 1
 
