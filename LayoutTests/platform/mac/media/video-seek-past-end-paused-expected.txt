@@ -1,0 +1,17 @@
+Test that seeking a paused video past its end sets currentTime to duration and leaves the video paused.
+
+EVENT(canplaythrough)
+EXPECTED (video.paused == 'true') OK
+EXPECTED (video.ended == 'false') OK
+RUN(video.play())
+
+EXPECTED (video.paused == 'false') OK
+EXPECTED (mediaElement.currentTime > '0') OK
+
+EXPECTED (video.paused == 'true') OK
+
+EXPECTED (video.paused == 'true') OK
+EXPECTED (mediaElement.currentTime == 'mediaElement.duration'), OBSERVED '6.026666641235352' FAIL
+EXPECTED (video.ended == 'true'), OBSERVED 'false' FAIL
+
+END OF TEST

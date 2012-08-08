@@ -1,3 +1,12 @@
+2012-08-07  Eric Carlson  <eric.carlson@apple.com>
+
+        REGRESSION (r124710-r124713): media/video-seek-past-end-paused.html failing on Apple Lion Debug WK1 (Tests)
+        https://bugs.webkit.org/show_bug.cgi?id=93394
+
+        Unreviewed. Adding new results for failing tests on Mac.
+
+        * platform/mac/media/video-seek-past-end-paused-expected.txt: Added.
+
 2012-08-07  Kent Tamura  <tkent@chromium.org>
 
         [Mac] Do not reformat numbers in <input type=number>
