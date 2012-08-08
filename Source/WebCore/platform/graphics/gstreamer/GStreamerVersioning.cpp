@@ -22,6 +22,7 @@
 #include "GStreamerVersioning.h"
 
 #include "IntSize.h"
+#include <wtf/UnusedParam.h>
 
 void webkitGstObjectRefSink(GstObject* gstObject)
 {
@@ -103,5 +104,24 @@ void setGstElementClassMetadata(GstElementClass* elementClass, const char* name,
     gst_element_class_set_metadata(elementClass, name, longName, description, author);
 #else
     gst_element_class_set_details_simple(elementClass, name, longName, description, author);
+#endif
+}
+
+bool gstObjectIsFloating(GstObject* gstObject)
+{
+#ifdef GST_API_VERSION_1
+    return g_object_is_floating(G_OBJECT(gstObject));
+#else
+    return GST_OBJECT_IS_FLOATING(gstObject);
+#endif
+}
+
+void notifyGstTagsOnPad(GstElement* element, GstPad* pad, GstTagList* tags)
+{
+#ifdef GST_API_VERSION_1
+    UNUSED_PARAM(element);
+    gst_pad_push_event(GST_PAD_CAST(pad), gst_event_new_tag(tags));
+#else
+    gst_element_found_tags_for_pad(element, pad, tags);
 #endif
 }

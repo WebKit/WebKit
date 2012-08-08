@@ -1,3 +1,14 @@
+2012-08-08  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] 0.11 build broken (again)
+        https://bugs.webkit.org/show_bug.cgi?id=93474
+
+        Reviewed by Martin Robinson.
+
+        * configure.ac: Disable media-stream build if GStreamer 0.11
+        support is enabled, due to farstream-0.1 still messing up with
+        gstreamer-0.10 include path.
+
 2012-08-07  YoungTaeck Song  <youngtaeck.song@samsung.com>
 
         [WK2][EFL] Implement accelerated compositing on WK2 Efl port

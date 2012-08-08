@@ -470,6 +470,11 @@ AC_SUBST(ENCHANT_CFLAGS)
 AC_SUBST(ENCHANT_LIBS)
 fi
 
+# farstream-0.1 depends on gstreamer 0.10 currently. Disable
+# media_stream if gstreamer 0.11 build support is enabled.
+if test "$GST_API_VERSION" = "1.0"; then
+   enable_media_stream=false
+fi
 if test "$enable_media_stream" = "yes"; then
    PKG_CHECK_MODULES([FARSTREAM], [farstream-0.1],
                      [have_farstream=yes], [enable_media_stream=false])
