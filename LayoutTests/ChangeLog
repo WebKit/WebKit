@@ -1,3 +1,13 @@
+2012-08-08  Takashi Toyoshima  <toyoshim@chromium.org>
+
+        Unreviewed, adding new results for chromium.
+
+        http://trac.webkit.org/changeset/124986 this change added new results
+        for Mac and it has a high priority. Then, we need to add specific
+        results for chromium.
+
+        * platform/chromium/media/video-seek-past-end-paused-expected.txt: Added.
+
 2012-08-07  Mario Sanchez Prada  <msanchez@igalia.com>
 
         Unreviewed. Remove fail expectations for tests that should not be
