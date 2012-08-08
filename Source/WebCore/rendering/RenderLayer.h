@@ -673,6 +673,7 @@ private:
     void dirtyAncestorChainHasSelfPaintingLayerDescendantStatus();
 
     void computeRepaintRects(LayoutPoint* offsetFromRoot = 0);
+    void computeRepaintRectsIncludingDescendants();
     void clearRepaintRects();
 
     void clipToRect(RenderLayer* rootLayer, GraphicsContext*, const LayoutRect& paintDirtyRect, const ClipRect&,

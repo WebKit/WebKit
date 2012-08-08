@@ -485,6 +485,17 @@ void RenderLayer::computeRepaintRects(LayoutPoint* offsetFromRoot)
     m_outlineBox = renderer()->outlineBoundsForRepaint(repaintContainer, offsetFromRoot);
 }
 
+
+void RenderLayer::computeRepaintRectsIncludingDescendants()
+{
+    // FIXME: computeRepaintRects() has to walk up the parent chain for every layer to compute the rects.
+    // We should make this more efficient.
+    computeRepaintRects();
+
+    for (RenderLayer* layer = firstChild(); layer; layer = layer->nextSibling())
+        layer->computeRepaintRectsIncludingDescendants();
+}
+
 void RenderLayer::clearRepaintRects()
 {
     ASSERT(!m_hasVisibleContent);

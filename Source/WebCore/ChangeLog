@@ -1,3 +1,26 @@
+2012-08-08  Beth Dakin  <bdakin@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=93393
+        Overflow regions sometimes repaint incorrectly after going into or 
+        coming out of compositing mode
+        -and corresponding-
+        <rdar://problem/12006463>
+
+        Reviewed by Simon Fraser.
+
+        New RenderLayer function computeRepaintRectsIncludingDescendants()
+        * rendering/RenderLayer.cpp:
+        (WebCore):
+        (WebCore::RenderLayer::computeRepaintRectsIncludingDescendants):
+        * rendering/RenderLayer.h:
+        (RenderLayer):
+
+        It is not sufficient to compute repaint rects just for the current 
+        layer when compositing changes. They must be recomputed for all 
+        descendant layers as well.
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::updateBacking):
+
 2012-08-08  Alec Flett  <alecflett@chromium.org>
 
         IndexedDB: new enums and openCursor stub

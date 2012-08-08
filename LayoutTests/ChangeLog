@@ -1,3 +1,17 @@
+2012-08-08  Beth Dakin  <bdakin@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=93393
+        Overflow regions sometimes repaint incorrectly after going into or 
+        coming out of compositing mode
+        -and corresponding-
+        <rdar://problem/12006463>
+
+        Reviewed by Simon Fraser.
+
+        * compositing/repaint/newly-composited-on-scroll.html: Added.
+        * platform/mac/compositing/repaint/newly-composited-on-scroll-expected.png: Added.
+        * platform/mac/compositing/repaint/newly-composited-on-scroll-expected.txt: Added.
+
 2012-08-08  Eric Carlson  <eric.carlson@apple.com>
 
         REGRESSION (r124710-r124713): media/video-seek-past-end-paused.html failing on Apple Lion Debug WK1 (Tests)
