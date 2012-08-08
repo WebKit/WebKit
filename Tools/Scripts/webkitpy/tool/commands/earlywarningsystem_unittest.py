@@ -82,6 +82,7 @@ class EarlyWarningSytemTest(QueuesTest):
     def test_builder_ewses(self):
         self._test_builder_ews(MacEWS())
         self._test_builder_ews(ChromiumWindowsEWS())
+        self._test_builder_ews(ChromiumAndroidEWS())
         self._test_builder_ews(QtEWS())
         self._test_builder_ews(QtWK2EWS())
         self._test_builder_ews(GtkEWS())

@@ -1,3 +1,20 @@
+2012-08-08  Peter Beverloo  <peter@chromium.org>
+
+        Introduce cr-android bots in the EWS system
+        https://bugs.webkit.org/show_bug.cgi?id=93472
+
+        Reviewed by Adam Barth.
+
+        This adds the queue to the EWS scripts. Two builders are ready to be
+        attached to the queue. All webkitpy tests pass with this change applied.
+
+        * QueueStatusServer/model/queues.py:
+        (Queue):
+        * Scripts/webkitpy/tool/commands/earlywarningsystem.py:
+        (ChromiumAndroidEWS):
+        * Scripts/webkitpy/tool/commands/earlywarningsystem_unittest.py:
+        (EarlyWarningSytemTest.test_builder_ewses):
+
 2012-08-08  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix GTK+ build with GTK2 after r121475.

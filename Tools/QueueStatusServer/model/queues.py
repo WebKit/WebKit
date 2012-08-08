@@ -40,6 +40,7 @@ class Queue(object):
         "commit-queue",
         "style-queue",
         "chromium-ews",  # aka cr-linux-ews
+        "cr-android-ews",
         "qt-ews",
         "qt-wk2-ews",
         "gtk-ews",
