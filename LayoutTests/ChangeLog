@@ -1,3 +1,12 @@
+2012-08-08  Dean Jackson  <dino@apple.com>
+
+        css3/flexbox/content-height-with-scrollbars.html failing image test on Lion and MountainLion
+        https://bugs.webkit.org/show_bug.cgi?id=93530
+
+        Unreviewed test expectations update.
+
+        * platform/mac/TestExpectations:
+
 2012-08-08  Erik Arvidsson  <arv@chromium.org>
 
         DOM4: classList should be defined on Element and not on HTMLElement

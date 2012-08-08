@@ -329,3 +329,6 @@ BUGWK93387 :  inspector/debugger/pause-in-internal-script.html = TEXT
 BUGWK93387 :  inspector/debugger/watch-expressions-panel-switch.html = TEXT
 BUGWK93387 :  inspector/debugger/debugger-activation-crash2.html = TEXT
 BUGWK93387 :  inspector/debugger/debugger-set-breakpoint-regex.html = TEXT
+
+// Image test (only just) failing on Lion and Mountain Lion
+BUGWK93530 : css3/flexbox/content-height-with-scrollbars.html = IMAGE
