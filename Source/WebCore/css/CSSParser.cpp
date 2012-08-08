@@ -4854,7 +4854,7 @@ PassRefPtr<CSSValueList> CSSParser::parseFontFamily()
     bool inFamily = false;
 
     while (value) {
-        if (value->id == CSSValueInitial || value->id == CSSValueInherit)
+        if (value->id == CSSValueInitial || value->id == CSSValueInherit || value->id == CSSValueDefault)
             return 0;
         CSSParserValue* nextValue = m_valueList->next();
         bool nextValBreaksFont = !nextValue ||

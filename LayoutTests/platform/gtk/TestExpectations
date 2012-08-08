@@ -900,7 +900,6 @@ BUGWKGTK : canvas/philip/tests/2d.text.draw.space.collapse.space.html = TEXT
 BUGWKGTK : canvas/philip/tests/2d.text.draw.space.collapse.start.html = TEXT
 BUGWKGTK : canvas/philip/tests/2d.text.font.parse.basic.html = TEXT
 BUGWKGTK : canvas/philip/tests/2d.text.font.parse.complex.html = TEXT
-BUGWKGTK : canvas/philip/tests/2d.text.font.parse.invalid.html = TEXT
 BUGWKGTK : canvas/philip/tests/2d.text.font.parse.size.percentage.html = TEXT
 BUGWKGTK : canvas/philip/tests/2d.text.font.parse.size.percentage.default.html = TEXT
 BUGWKGTK : canvas/philip/tests/2d.text.font.parse.system.html = TEXT

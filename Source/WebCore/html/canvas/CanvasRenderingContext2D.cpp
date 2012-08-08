@@ -1996,6 +1996,10 @@ void CanvasRenderingContext2D::setFont(const String& newFont)
     if (parsedStyle->isEmpty())
         return;
 
+    RefPtr<CSSValue> fontValue = parsedStyle->getPropertyCSSValue(CSSPropertyFont);
+    if (fontValue && fontValue->isInheritedValue())
+        return;
+
     // The parse succeeded.
     realizeSaves();
     modifiableState().m_unparsedFont = newFont;

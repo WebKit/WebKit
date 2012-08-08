@@ -1,3 +1,20 @@
+2012-08-08  Thiago Marcos P. Santos  <thiago.santos@intel.com>
+
+        CanvasRenderContext2D::setFont() should ignore inherited properties and default keyword value
+        https://bugs.webkit.org/show_bug.cgi?id=93491
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Unskipped tests that are now passing after this fix and removed wrong
+        expectations.
+
+        * platform/chromium/TestExpectations:
+        * platform/chromium/canvas/philip/tests/2d.text.font.parse.invalid-expected.txt: Removed.
+        * platform/efl/Skipped:
+        * platform/gtk/TestExpectations:
+        * platform/mac/canvas/philip/tests/2d.text.font.parse.invalid-expected.txt: Removed.
+        * platform/qt/Skipped:
+
 2012-08-08  Roger Fong  <roger_fong@apple.com>
 
         css3/calc/transitions-dependent.html was causing css3/calc/transitions.html to fail

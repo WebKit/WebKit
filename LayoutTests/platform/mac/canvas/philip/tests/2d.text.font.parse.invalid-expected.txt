@@ -1,2 +1,0 @@
-Failed assertion ctx.font === '20px serif' (got inherit[string], expected 20px serif[string])
-Failed assertion ctx.font === '20px serif' (got 10px default[string], expected 20px serif[string])
