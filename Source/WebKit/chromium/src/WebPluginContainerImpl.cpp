@@ -39,14 +39,7 @@
 #include "WebElement.h"
 #include "WebInputEvent.h"
 #include "WebInputEventConversion.h"
-#include "WebKit.h"
 #include "WebPlugin.h"
-#include "platform/WebRect.h"
-#include "platform/WebString.h"
-#include "platform/WebURL.h"
-#include "platform/WebURLError.h"
-#include "platform/WebURLRequest.h"
-#include "platform/WebVector.h"
 #include "WebViewImpl.h"
 #include "WrappedResourceResponse.h"
 
@@ -78,6 +71,12 @@
 #include "WheelEvent.h"
 #include <public/Platform.h>
 #include <public/WebClipboard.h>
+#include <public/WebRect.h>
+#include <public/WebString.h>
+#include <public/WebURL.h>
+#include <public/WebURLError.h>
+#include <public/WebURLRequest.h>
+#include <public/WebVector.h>
 
 #if ENABLE(GESTURE_EVENTS)
 #include "PlatformGestureEvent.h"

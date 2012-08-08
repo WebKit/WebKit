@@ -31,8 +31,6 @@
 #include "config.h"
 #include <wtf/OSRandomSource.h>
 
-#include "WebKit.h"
-
 #include <public/Platform.h>
 
 namespace WTF {

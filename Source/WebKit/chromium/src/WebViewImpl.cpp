@@ -132,7 +132,6 @@
 #include "WebInputElement.h"
 #include "WebInputEvent.h"
 #include "WebInputEventConversion.h"
-#include "WebKit.h"
 #include "WebMediaPlayerAction.h"
 #include "WebNode.h"
 #include "WebPagePopupImpl.h"

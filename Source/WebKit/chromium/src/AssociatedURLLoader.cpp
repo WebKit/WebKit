@@ -40,16 +40,14 @@
 #include "WebApplicationCacheHost.h"
 #include "WebDataSource.h"
 #include "WebFrameImpl.h"
-#include "WebKit.h"
 #include "WrappedResourceRequest.h"
 #include "WrappedResourceResponse.h"
 #include "XMLHttpRequest.h"
-#include "platform/WebHTTPHeaderVisitor.h"
-#include "platform/WebKitPlatformSupport.h"
-#include "platform/WebString.h"
-#include "platform/WebURLError.h"
-#include "platform/WebURLLoaderClient.h"
-#include "platform/WebURLRequest.h"
+#include <public/WebHTTPHeaderVisitor.h>
+#include <public/WebString.h>
+#include <public/WebURLError.h>
+#include <public/WebURLLoaderClient.h>
+#include <public/WebURLRequest.h>
 #include <wtf/HashSet.h>
 #include <wtf/text/WTFString.h>
 

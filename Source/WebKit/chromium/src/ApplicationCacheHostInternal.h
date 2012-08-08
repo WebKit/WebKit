@@ -35,9 +35,7 @@
 #include "WebApplicationCacheHostClient.h"
 #include "WebFrameClient.h"
 #include "WebFrameImpl.h"
-#include "WebKit.h"
-#include "platform/WebKitPlatformSupport.h"
-#include "platform/WebURL.h"
+#include <public/WebURL.h>
 
 namespace WebCore {
 

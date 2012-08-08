@@ -35,8 +35,6 @@
 #include "ScriptExecutionContext.h"
 #include "SerializedScriptValue.h"
 
-#include "WebKit.h"
-
 #include <public/Platform.h>
 #include <public/WebMessagePortChannel.h>
 #include <public/WebString.h>

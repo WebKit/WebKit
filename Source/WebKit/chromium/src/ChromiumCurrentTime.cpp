@@ -29,10 +29,9 @@
  */
 
 #include "config.h"
-#include <wtf/CurrentTime.h>
 
-#include "WebKit.h"
-#include "platform/WebKitPlatformSupport.h"
+#include <public/Platform.h>
+#include <wtf/CurrentTime.h>
 
 namespace WTF {
 

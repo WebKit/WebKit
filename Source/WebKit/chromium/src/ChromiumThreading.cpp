@@ -29,12 +29,9 @@
  */
 
 #include "config.h"
+
+#include <public/Platform.h>
 #include <wtf/chromium/ChromiumThreading.h>
-
-#include "WebKit.h"
-#include "platform/WebKitPlatformSupport.h"
-
-#include <wtf/MainThread.h>
 
 namespace WTF {
 

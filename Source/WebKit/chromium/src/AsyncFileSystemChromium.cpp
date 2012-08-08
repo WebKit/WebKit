@@ -41,9 +41,6 @@
 #include "WebFileInfo.h"
 #include "WebFileSystemCallbacksImpl.h"
 #include "WebFileWriter.h"
-#include "WebKit.h"
-#include "platform/WebFileSystem.h"
-#include "platform/WebKitPlatformSupport.h"
 #include <public/Platform.h>
 #include <public/WebFileSystem.h>
 #include <wtf/text/CString.h>
@@ -102,7 +99,7 @@ PassOwnPtr<AsyncFileSystem> AsyncFileSystem::create()
 }
 
 AsyncFileSystemChromium::AsyncFileSystemChromium()
-    : m_webFileSystem(WebKit::webKitPlatformSupport()->fileSystem())
+    : m_webFileSystem(WebKit::Platform::current()->fileSystem())
 {
     ASSERT(m_webFileSystem);
 }

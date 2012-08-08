@@ -52,7 +52,6 @@
 #include "MessageEvent.h"
 #include "MouseEvent.h"
 #include "Page.h"
-#include "PlatformString.h"
 #include "PluginData.h"
 #include "PluginDataChromium.h"
 #include "ProgressTracker.h"
@@ -69,7 +68,6 @@
 #include "WebFrameImpl.h"
 #include "WebIntentRequest.h"
 #include "WebIntentServiceInfo.h"
-#include "WebKit.h"
 #include "WebNode.h"
 #include "WebPermissionClient.h"
 #include "WebPlugin.h"
@@ -83,14 +81,15 @@
 #include "WindowFeatures.h"
 #include "WrappedResourceRequest.h"
 #include "WrappedResourceResponse.h"
-#include "platform/WebKitPlatformSupport.h"
 #include "platform/WebURL.h"
 #include "platform/WebURLError.h"
 #include "platform/WebVector.h"
+#include <public/Platform.h>
 #include <public/WebMimeRegistry.h>
 
 #include <wtf/StringExtras.h>
 #include <wtf/text/CString.h>
+#include <wtf/text/WTFString.h>
 
 #if USE(V8)
 #include <v8.h>

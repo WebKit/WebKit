@@ -35,14 +35,13 @@
 
 #include "AsyncFileWriterClient.h"
 #include "CrossThreadTask.h"
-#include "platform/WebCString.h"
 #include "WebFileWriter.h"
-#include "WebKit.h"
 #include "WebWorkerBase.h"
 #include "WorkerContext.h"
 #include "WorkerLoaderProxy.h"
 #include "WorkerThread.h"
 #include <public/Platform.h>
+#include <public/WebCString.h>
 #include <public/WebFileSystem.h>
 #include <wtf/MainThread.h>
 #include <wtf/Threading.h>

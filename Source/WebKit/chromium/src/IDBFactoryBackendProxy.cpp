@@ -43,9 +43,7 @@
 #include "WebIDBDatabaseError.h"
 #include "WebIDBFactory.h"
 #include "WebKit.h"
-#include "platform/WebKitPlatformSupport.h"
 #include "WebPermissionClient.h"
-#include "platform/WebVector.h"
 #include "WebViewImpl.h"
 #include "WebWorkerBase.h"
 #include "WebWorkerClientImpl.h"
@@ -53,6 +51,8 @@
 #include "WorkerLoaderProxy.h"
 #include "WorkerScriptController.h"
 #include "WorkerThread.h"
+#include "platform/WebKitPlatformSupport.h"
+#include <public/WebVector.h>
 
 
 using namespace WebCore;

@@ -40,8 +40,6 @@
 #include "NotImplemented.h"
 #include "WebFileSystemCallbacksImpl.h"
 #include "WebFileWriter.h"
-#include "WebKit.h"
-#include "platform/WebKitPlatformSupport.h"
 #include "WebWorkerBase.h"
 #include "WorkerAsyncFileWriterChromium.h"
 #include "WorkerContext.h"

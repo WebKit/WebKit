@@ -1,5 +1,37 @@
 2012-08-08  James Robinson  <jamesr@chromium.org>
 
+        [chromium] Clean up WebKit.h and WebKitPlatformSupport.h includes in chromium/src
+        https://bugs.webkit.org/show_bug.cgi?id=93539
+
+        Reviewed by Adam Barth.
+
+        Most of these files don't need either WebKit.h or WebKitPlatformSupport.h. Some need <public/Platform.h>, and
+        some are relying on the forwarding headers. This updates includes to what is actually needed and points platform
+        includes at <public/Foo.h> instead of "platform/Foo.h" where possible.
+
+        * src/ApplicationCacheHostInternal.h:
+        * src/AssociatedURLLoader.cpp:
+        * src/AsyncFileSystemChromium.cpp:
+        (WebCore::AsyncFileSystemChromium::AsyncFileSystemChromium):
+        * src/BlobRegistryProxy.cpp:
+        * src/ChromiumCurrentTime.cpp:
+        * src/ChromiumOSRandomSource.cpp:
+        * src/ChromiumThreading.cpp:
+        * src/EditorClientImpl.cpp:
+        * src/FrameLoaderClientImpl.cpp:
+        * src/IDBFactoryBackendProxy.cpp:
+        * src/LocalizedStrings.cpp:
+        * src/PlatformMessagePortChannel.cpp:
+        * src/WebCompositorInputHandlerImpl.cpp:
+        * src/WebMediaPlayerClientImpl.cpp:
+        * src/WebPluginContainerImpl.cpp:
+        * src/WebViewImpl.cpp:
+        * src/WebWorkerClientImpl.cpp:
+        * src/WorkerAsyncFileSystemChromium.cpp:
+        * src/WorkerFileWriterCallbacksBridge.cpp:
+
+2012-08-08  James Robinson  <jamesr@chromium.org>
+
         [chromium] Clean up includes in compositor unit tests
         https://bugs.webkit.org/show_bug.cgi?id=93531
 

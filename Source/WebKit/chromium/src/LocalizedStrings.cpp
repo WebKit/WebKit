@@ -34,11 +34,9 @@
 #include "IntSize.h"
 #include "NotImplemented.h"
 
-#include "WebKit.h"
-#include "platform/WebKitPlatformSupport.h"
-#include "platform/WebString.h"
-
+#include <public/Platform.h>
 #include <public/WebLocalizedString.h>
+#include <public/WebString.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/WTFString.h>
 

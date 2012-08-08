@@ -23,7 +23,6 @@
 #include "WebFrameClient.h"
 #include "WebFrameImpl.h"
 #include "WebHelperPluginImpl.h"
-#include "WebKit.h"
 #include "WebMediaPlayer.h"
 #include "WebViewImpl.h"
 #include <public/Platform.h>

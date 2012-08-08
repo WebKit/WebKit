@@ -33,10 +33,8 @@
 #include "WebCompositorImpl.h"
 #include "WebCompositorInputHandlerClient.h"
 #include "WebInputEvent.h"
-#include "WebKit.h"
 #include "cc/CCActiveGestureAnimation.h"
 #include "cc/CCProxy.h"
-#include "platform/WebKitPlatformSupport.h"
 #include <wtf/ThreadingPrimitives.h>
 
 using namespace WebCore;
