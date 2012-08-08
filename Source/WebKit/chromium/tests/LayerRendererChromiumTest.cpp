@@ -28,11 +28,11 @@
 #include "CCTestCommon.h"
 #include "FakeWebGraphicsContext3D.h"
 #include "GraphicsContext3D.h"
-#include "WebCompositor.h"
 #include "cc/CCDrawQuad.h"
 #include "cc/CCPrioritizedTextureManager.h"
 #include "cc/CCSettings.h"
 #include "cc/CCSingleThreadProxy.h"
+#include <public/WebCompositor.h>
 
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>

@@ -29,10 +29,9 @@
 #include "CCSchedulerTestCommon.h"
 #include "CCTiledLayerTestCommon.h"
 #include "FakeWebGraphicsContext3D.h"
-#include "GraphicsContext3DPrivate.h"
-#include "WebCompositor.h"
 #include "cc/CCSingleThreadProxy.h" // For DebugScopedSetImplThread
-#include "platform/WebThread.h"
+#include <public/WebCompositor.h>
+#include <public/WebThread.h>
 
 #include <gtest/gtest.h>
 #include <wtf/RefPtr.h>

@@ -26,16 +26,12 @@
 
 #include "CCThreadedTest.h"
 
-#include "AnimationIdVendor.h"
 #include "CCAnimationTestCommon.h"
 #include "CCOcclusionTrackerTestCommon.h"
 #include "CCTiledLayerTestCommon.h"
 #include "ContentLayerChromium.h"
 #include "FakeWebGraphicsContext3D.h"
-#include "GraphicsContext3DPrivate.h"
 #include "LayerChromium.h"
-#include "WebCompositor.h"
-#include "WebKit.h"
 #include "cc/CCActiveAnimation.h"
 #include "cc/CCLayerAnimationController.h"
 #include "cc/CCLayerImpl.h"
@@ -45,11 +41,12 @@
 #include "cc/CCTextureUpdateQueue.h"
 #include "cc/CCThreadTask.h"
 #include "cc/CCTimingFunction.h"
-#include "platform/WebThread.h"
 #include <gmock/gmock.h>
 #include <public/Platform.h>
+#include <public/WebCompositor.h>
 #include <public/WebFilterOperation.h>
 #include <public/WebFilterOperations.h>
+#include <public/WebThread.h>
 #include <wtf/Locker.h>
 #include <wtf/MainThread.h>
 #include <wtf/PassRefPtr.h>

@@ -23,19 +23,19 @@
  */
 
 #include "config.h"
-#include "platform/WebLayer.h"
+#include <public/WebLayer.h>
 
 #include "CompositorFakeWebGraphicsContext3D.h"
-#include "WebCompositor.h"
-#include "platform/WebContentLayer.h"
-#include "platform/WebContentLayerClient.h"
-#include "platform/WebExternalTextureLayer.h"
-#include "platform/WebFloatPoint.h"
-#include "platform/WebFloatRect.h"
-#include "platform/WebLayerTreeView.h"
-#include "platform/WebLayerTreeViewClient.h"
-#include "platform/WebRect.h"
-#include "platform/WebSize.h"
+#include <public/WebCompositor.h>
+#include <public/WebContentLayer.h>
+#include <public/WebContentLayerClient.h>
+#include <public/WebExternalTextureLayer.h>
+#include <public/WebFloatPoint.h>
+#include <public/WebFloatRect.h>
+#include <public/WebLayerTreeView.h>
+#include <public/WebLayerTreeViewClient.h>
+#include <public/WebRect.h>
+#include <public/WebSize.h>
 
 #include <gmock/gmock.h>
 

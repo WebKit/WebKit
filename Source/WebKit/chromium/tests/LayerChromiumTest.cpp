@@ -29,13 +29,12 @@
 #include "CCLayerTreeTestCommon.h"
 #include "FakeCCLayerTreeHostClient.h"
 #include "LayerPainterChromium.h"
-#include "NonCompositedContentHost.h"
-#include "WebCompositor.h"
 #include "cc/CCLayerImpl.h"
 #include "cc/CCLayerTreeHost.h"
 #include "cc/CCSingleThreadProxy.h"
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
+#include <public/WebCompositor.h>
 #include <public/WebTransformationMatrix.h>
 
 using namespace WebCore;

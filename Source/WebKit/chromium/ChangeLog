@@ -1,3 +1,29 @@
+2012-08-08  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Clean up includes in compositor unit tests
+        https://bugs.webkit.org/show_bug.cgi?id=93531
+
+        Reviewed by Adrienne Walker.
+
+        This removes unused includes and updates Platform API headers to use the <public/Web...> style paths.
+
+        * tests/CCAnimationTestCommon.cpp:
+        * tests/CCKeyframedAnimationCurveTest.cpp:
+        * tests/CCLayerAnimationControllerTest.cpp:
+        * tests/CCLayerTreeHostCommonTest.cpp:
+        * tests/CCLayerTreeHostTest.cpp:
+        (WTF::CCLayerTreeHostTestLayerAddedWithAnimation::beginTest):
+        * tests/CCOcclusionTrackerTest.cpp:
+        * tests/CCTextureUpdateControllerTest.cpp:
+        * tests/CCThreadedTest.cpp:
+        * tests/FakeWebGraphicsContext3D.h:
+        * tests/LayerChromiumTest.cpp:
+        * tests/LayerRendererChromiumTest.cpp:
+        * tests/TiledLayerChromiumTest.cpp:
+        * tests/WebCompositorInputHandlerImplTest.cpp:
+        * tests/WebLayerTest.cpp:
+        * tests/WebLayerTreeViewTest.cpp:
+
 2012-08-07  James Robinson  <jamesr@chromium.org>
 
         [chromium] Only use public Platform API in NonCompositedContentHost

@@ -26,20 +26,18 @@
 
 #include "cc/CCLayerTreeHost.h"
 
-#include "AnimationIdVendor.h"
 #include "CCOcclusionTrackerTestCommon.h"
 #include "CCThreadedTest.h"
 #include "ContentLayerChromium.h"
-#include "GraphicsContext3DPrivate.h"
 #include "cc/CCGraphicsContext.h"
 #include "cc/CCLayerTreeHostImpl.h"
 #include "cc/CCSettings.h"
 #include "cc/CCTextureUpdateQueue.h"
 #include "cc/CCTimingFunction.h"
-#include "platform/WebThread.h"
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 #include <public/Platform.h>
+#include <public/WebThread.h>
 #include <wtf/MainThread.h>
 #include <wtf/OwnArrayPtr.h>
 
@@ -2140,7 +2138,7 @@ public:
 
         // Any valid CCAnimationCurve will do here.
         OwnPtr<CCAnimationCurve> curve(CCEaseTimingFunction::create());
-        OwnPtr<CCActiveAnimation> animation(CCActiveAnimation::create(curve.release(), AnimationIdVendor::getNextAnimationId(), AnimationIdVendor::getNextGroupId(), CCActiveAnimation::Opacity));
+        OwnPtr<CCActiveAnimation> animation(CCActiveAnimation::create(curve.release(), 1, 1, CCActiveAnimation::Opacity));
         layer->layerAnimationController()->addAnimation(animation.release());
 
         // We add the animation *before* attaching the layer to the tree.

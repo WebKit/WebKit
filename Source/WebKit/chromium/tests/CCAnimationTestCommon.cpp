@@ -26,9 +26,7 @@
 
 #include "CCAnimationTestCommon.h"
 
-#include "GraphicsLayer.h"
 #include "LayerChromium.h"
-#include "TranslateTransformOperation.h"
 #include "cc/CCKeyframedAnimationCurve.h"
 #include "cc/CCLayerAnimationController.h"
 #include "cc/CCLayerImpl.h"

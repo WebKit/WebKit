@@ -24,15 +24,15 @@
 
 #include "config.h"
 
-#include "platform/WebLayerTreeView.h"
+#include <public/WebLayerTreeView.h>
 
 #include "CompositorFakeWebGraphicsContext3D.h"
-#include "WebCompositor.h"
-#include "public/WebLayer.h"
-#include "public/WebLayerTreeViewClient.h"
-#include "public/WebThread.h"
 #include <gmock/gmock.h>
 #include <public/Platform.h>
+#include <public/WebCompositor.h>
+#include <public/WebLayer.h>
+#include <public/WebLayerTreeViewClient.h>
+#include <public/WebThread.h>
 
 using namespace WebKit;
 using testing::Mock;

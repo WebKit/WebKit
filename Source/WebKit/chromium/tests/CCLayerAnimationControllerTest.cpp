@@ -27,8 +27,6 @@
 #include "cc/CCLayerAnimationController.h"
 
 #include "CCAnimationTestCommon.h"
-#include "GraphicsLayer.h"
-#include "Length.h"
 #include "cc/CCActiveAnimation.h"
 #include "cc/CCAnimationCurve.h"
 

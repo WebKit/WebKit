@@ -27,14 +27,14 @@
 
 #include "WebCompositorInputHandlerImpl.h"
 
-#include "WebCompositor.h"
 #include "WebCompositorInputHandlerClient.h"
 #include "WebInputEvent.h"
 #include "cc/CCActiveGestureAnimation.h"
 #include "cc/CCInputHandler.h"
 #include "cc/CCSingleThreadProxy.h"
-#include "platform/WebFloatPoint.h"
-#include "platform/WebPoint.h"
+#include <public/WebCompositor.h>
+#include <public/WebFloatPoint.h>
+#include <public/WebPoint.h>
 
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>

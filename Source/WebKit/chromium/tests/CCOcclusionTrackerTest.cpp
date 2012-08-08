@@ -31,7 +31,6 @@
 #include "CCOcclusionTrackerTestCommon.h"
 #include "LayerChromium.h"
 #include "Region.h"
-#include "TranslateTransformOperation.h"
 #include "cc/CCLayerAnimationController.h"
 #include "cc/CCLayerImpl.h"
 #include "cc/CCLayerTreeHostCommon.h"

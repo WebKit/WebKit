@@ -26,9 +26,6 @@
 
 #include "cc/CCKeyframedAnimationCurve.h"
 
-#include "Length.h"
-#include "TranslateTransformOperation.h"
-
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 #include <public/WebTransformOperations.h>

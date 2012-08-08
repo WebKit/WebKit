@@ -33,12 +33,12 @@
 #include "FakeCCGraphicsContext.h"
 #include "FakeCCLayerTreeHostClient.h"
 #include "LayerPainterChromium.h"
-#include "WebCompositor.h"
 #include "cc/CCOverdrawMetrics.h"
 #include "cc/CCRenderingStats.h"
 #include "cc/CCSingleThreadProxy.h" // For DebugScopedSetImplThread
 #include "cc/CCTextureUpdateController.h"
 #include <gtest/gtest.h>
+#include <public/WebCompositor.h>
 #include <public/WebTransformationMatrix.h>
 
 using namespace WebCore;

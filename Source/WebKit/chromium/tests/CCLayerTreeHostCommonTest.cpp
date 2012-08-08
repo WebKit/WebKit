@@ -30,7 +30,6 @@
 #include "CCLayerTreeTestCommon.h"
 #include "ContentLayerChromium.h"
 #include "LayerChromium.h"
-#include "TranslateTransformOperation.h"
 #include "cc/CCLayerAnimationController.h"
 #include "cc/CCLayerImpl.h"
 #include "cc/CCLayerSorter.h"
