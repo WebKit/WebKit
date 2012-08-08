@@ -15,6 +15,7 @@ WebKitUnitTests.xcodeproj
 .gclient
 .gclient_entries
 base/
+cc/
 chromium_deps/
 crypto/
 depot_tools/

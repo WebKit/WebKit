@@ -1,3 +1,12 @@
+2012-08-07  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Add new gclient-managed cc directory to Source/WebKit/chromium/.gitignore
+        https://bugs.webkit.org/show_bug.cgi?id=93403
+
+        Reviewed by Eric Seidel.
+
+        * .gitignore:
+
 2012-08-07  Mihai Parparita  <mihaip@chromium.org>
 
         [Chromium] Clean up WebScriptController.h comments
