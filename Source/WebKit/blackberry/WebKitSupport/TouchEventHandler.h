@@ -45,6 +45,7 @@ public:
     void resetLastFatFingersResult() { m_lastFatFingersResult.reset(); }
 
 private:
+    unsigned spellCheck(Platform::TouchPoint&);
     void handleFatFingerPressed();
 
     void drawTapHighlight();

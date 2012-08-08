@@ -50,7 +50,6 @@
 #include "RenderText.h"
 #include "RenderTextControl.h"
 #include "RenderWidget.h"
-#include "RenderedDocumentMarker.h"
 #include "ScopePointer.h"
 #include "SelectPopupClient.h"
 #include "SelectionHandler.h"
@@ -65,11 +64,11 @@
 #include <BlackBerryPlatformLog.h>
 #include <BlackBerryPlatformMisc.h>
 #include <BlackBerryPlatformSettings.h>
+#include <imf/events.h>
 #include <sys/keycodes.h>
 
 #define ENABLE_INPUT_LOG 0
 #define ENABLE_FOCUS_LOG 0
-#define ENABLE_SPELLING_LOG 0
 
 static const unsigned MaxLearnTextDataSize = 500;
 
@@ -87,12 +86,6 @@ using namespace WebCore;
 #else
 #define FocusLog(severity, format, ...)
 #endif // ENABLE_FOCUS_LOG
-
-#if ENABLE_SPELLING_LOG
-#define SpellingLog(severity, format, ...) logAlways(severity, format, ## __VA_ARGS__)
-#else
-#define SpellingLog(severity, format, ...)
-#endif // ENABLE_SPELLING_LOG
 
 namespace BlackBerry {
 namespace WebKit {
@@ -653,52 +646,6 @@ SpellChecker* InputHandler::getSpellChecker()
             return editor->spellChecker();
 
     return 0;
-}
-
-bool InputHandler::shouldRequestSpellCheckingOptionsForPoint(Platform::IntPoint& point, const Element* touchedElement, imf_sp_text_t& spellCheckingOptionRequest)
-{
-    if (!isActiveTextEdit() || touchedElement != m_currentFocusElement)
-        return false;
-
-    LayoutPoint contentPos(m_webPage->mapFromViewportToContents(point));
-    contentPos = DOMSupport::convertPointToFrame(m_webPage->mainFrame(), m_webPage->focusedOrMainFrame(), roundedIntPoint(contentPos));
-
-    Document* document = m_currentFocusElement->document();
-    ASSERT(document);
-
-    RenderedDocumentMarker* marker = document->markers()->renderedMarkerContainingPoint(contentPos, DocumentMarker::Spelling);
-    if (!marker)
-        return false;
-
-    SpellingLog(LogLevelInfo, "InputHandler::shouldRequestSpellCheckingOptionsForPoint Found spelling marker at point %d, %d", point.x(), point.y());
-
-    // imf_sp_text_t should be generated in pixel viewport coordinates.
-    WebCore::IntRect rect = m_webPage->mapToTransformed(m_webPage->focusedOrMainFrame()->view()->contentsToWindow(enclosingIntRect(marker->renderedRect())));
-    m_webPage->clipToTransformedContentsRect(rect);
-
-    spellCheckingOptionRequest.text_rect.x = rect.x();
-    spellCheckingOptionRequest.text_rect.y = rect.y();
-    spellCheckingOptionRequest.text_rect.width = rect.width();
-    spellCheckingOptionRequest.text_rect.height = rect.height();
-    spellCheckingOptionRequest.text_rect.anchor_x = point.x();
-    spellCheckingOptionRequest.text_rect.anchor_y = point.y();
-    spellCheckingOptionRequest.startTextPosition = marker->startOffset();
-    spellCheckingOptionRequest.endTextPosition = marker->endOffset();
-
-    return true;
-}
-
-void InputHandler::requestSpellingCheckingOptions(const imf_sp_text_t& spellCheckingOptionRequest)
-{
-    SpellingLog(LogLevelInfo, "InputHandler::requestSpellingCheckingOptions Sending request:\ntext_rect.x = %d\ntext_rect.y = %d" \
-                              "\ntext_rect.width = %d\ntext_rect.height = %d\ntext_rect.anchor_x = %d\ntext_rect.anchor_y = %d" \
-                              "\nstartTextPosition = %d\nendTextPosition = %d", spellCheckingOptionRequest.text_rect.x,
-                              spellCheckingOptionRequest.text_rect.y, spellCheckingOptionRequest.text_rect.width, spellCheckingOptionRequest.text_rect.height,
-                              spellCheckingOptionRequest.text_rect.anchor_x, spellCheckingOptionRequest.text_rect.anchor_y,
-                              spellCheckingOptionRequest.startTextPosition, spellCheckingOptionRequest.endTextPosition);
-
-    if (spellCheckingOptionRequest.startTextPosition || spellCheckingOptionRequest.endTextPosition)
-        m_webPage->m_client->requestSpellingCheckingOptions(spellCheckingOptionRequest);
 }
 
 void InputHandler::setElementUnfocused(bool refocusOccuring)
