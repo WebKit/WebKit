@@ -1,3 +1,27 @@
+2012-08-08  Dirk Pranke  <dpranke@chromium.org>
+
+        webkit-patch rebaseline-expectations needs to support multiple expectations files
+        https://bugs.webkit.org/show_bug.cgi?id=89051
+
+        Reviewed by Adam Barth.
+
+        fixed the bug described above, added unit test in
+        test_expectations_unittest, and updated the tool tests
+        to not contain all of the "missing skia expectations" warnings.
+
+        * Scripts/webkitpy/layout_tests/models/test_expectations.py:
+        (TestExpectations.remove_rebaselined_tests):
+        (TestExpectations.remove_rebaselined_tests.without_rebaseline_modifier):
+        * Scripts/webkitpy/layout_tests/models/test_expectations_unittest.py:
+        (RebaseliningTest.assertRemove):
+        (RebaseliningTest.test_remove):
+        * Scripts/webkitpy/tool/commands/rebaseline.py:
+        (RebaselineExpectations._update_expectations_files):
+        (RebaselineExpectations.execute):
+        * Scripts/webkitpy/tool/commands/rebaseline_unittest.py:
+        (TestRebaseline.test_rebaseline_updates_expectations_file_noop):
+        (test_rebaseline_expectations):
+
 2012-08-08  Alexey Proskuryakov  <ap@apple.com>
 
         [WK2] MiniBrowser crashes on quit if any windows were previously closed

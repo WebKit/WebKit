@@ -321,16 +321,13 @@ class RebaselineExpectations(AbstractParallelRebaselineCommand):
     name = "rebaseline-expectations"
     help_text = "Rebaselines the tests indicated in TestExpectations."
 
-    def _update_expectations_file(self, port_name):
+    def _update_expectations_files(self, port_name):
         port = self._tool.port_factory.get(port_name)
 
-        # FIXME: This will intentionally skip over any REBASELINE expectations that were in an overrides file.
-        # This is not good, but avoids having the overrides getting written into the main file.
-        # See https://bugs.webkit.org/show_bug.cgi?id=88456 for context. This will no longer be needed
-        # once we properly support cascading expectations files.
         expectations = TestExpectations(port, include_overrides=False)
-        path = port.path_to_test_expectations_file()
-        self._tool.filesystem.write_text_file(path, expectations.remove_rebaselined_tests(expectations.get_rebaselining_failures()))
+        for path in port.expectations_dict():
+            if self._tool.filesystem.exists(path):
+                self._tool.filesystem.write_text_file(path, expectations.remove_rebaselined_tests(expectations.get_rebaselining_failures(), path))
 
     def _tests_to_rebaseline(self, port):
         tests_to_rebaseline = {}
@@ -361,7 +358,7 @@ class RebaselineExpectations(AbstractParallelRebaselineCommand):
         self._rebaseline(options, self._test_list)
 
         for port_name in tool.port_factory.all_port_names():
-            self._update_expectations_file(port_name)
+            self._update_expectations_files(port_name)
 
 
 class Rebaseline(AbstractParallelRebaselineCommand):

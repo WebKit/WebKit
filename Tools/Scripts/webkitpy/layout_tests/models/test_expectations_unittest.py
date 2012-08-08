@@ -456,9 +456,9 @@ BUGY WIN DEBUG : failures/expected/foo.html = CRASH
 
 class RebaseliningTest(Base):
     """Test rebaselining-specific functionality."""
-    def assertRemove(self, input_expectations, tests, expected_expectations):
+    def assertRemove(self, input_expectations, tests, expected_expectations, filename):
         self.parse_exp(input_expectations, is_lint_mode=False)
-        actual_expectations = self._exp.remove_rebaselined_tests(tests)
+        actual_expectations = self._exp.remove_rebaselined_tests(tests, filename)
         self.assertEqual(expected_expectations, actual_expectations)
 
     def test_remove(self):
@@ -467,7 +467,19 @@ class RebaseliningTest(Base):
                           'BUGZ REBASELINE : failures/expected/crash.html = CRASH\n',
                           ['failures/expected/text.html'],
                           'BUGY : failures/expected/image.html = IMAGE\n'
-                          'BUGZ REBASELINE : failures/expected/crash.html = CRASH\n')
+                          'BUGZ REBASELINE : failures/expected/crash.html = CRASH\n',
+                          'expectations')
+
+        # test that we don't remove lines from the expectations if we're asking for the overrides
+        self.assertRemove('BUGX REBASELINE : failures/expected/text.html = TEXT\n'
+                          'BUGY : failures/expected/image.html = IMAGE\n'
+                          'BUGZ REBASELINE : failures/expected/crash.html = CRASH\n',
+                          ['failures/expected/text.html'],
+                          'BUGX REBASELINE : failures/expected/text.html = TEXT\n'
+                          'BUGY : failures/expected/image.html = IMAGE\n'
+                          'BUGZ REBASELINE : failures/expected/crash.html = CRASH\n',
+                          'overrides')
+
 
     def test_no_get_rebaselining_failures(self):
         self.parse_exp(self.get_basic_expectations())

@@ -852,10 +852,13 @@ class TestExpectations(object):
 
         return TestExpectationSerializer.list_to_string(self._expectations, self._parser._test_configuration_converter, modified_expectations)
 
-    def remove_rebaselined_tests(self, except_these_tests):
-        """Returns a copy of the expectations with the tests removed."""
+    def remove_rebaselined_tests(self, except_these_tests, filename):
+        """Returns a copy of the expectations in the file with the tests removed."""
         def without_rebaseline_modifier(expectation):
-            return not (not expectation.is_invalid() and expectation.name in except_these_tests and "rebaseline" in expectation.modifiers)
+            return not (not expectation.is_invalid() and
+                        expectation.name in except_these_tests and
+                        "rebaseline" in expectation.modifiers and
+                        filename == expectation.filename)
 
         return TestExpectationSerializer.list_to_string(filter(without_rebaseline_modifier, self._expectations))
 
