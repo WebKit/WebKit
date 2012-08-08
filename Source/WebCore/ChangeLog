@@ -1,3 +1,36 @@
+2012-08-07  Hayato Ito  <hayato@chromium.org>
+
+        Don't re-use the same EventDispatcher instance to dispatch events.
+        https://bugs.webkit.org/show_bug.cgi?id=93322
+
+        Reviewed by Dimitri Glazkov.
+
+        It is potentially dangerous to call
+        EventDispatcher::dispatchEvent(PassRefPtr<Event>) twice for the
+        same EventDispatcher instance.  Some member functions in
+        EventDispatcher assume that dispatchEvent(PassRefPtr<Event>) is
+        never called more than once in its life cycle.
+
+        For example, EventDispatcher::ensureEventAncestor never
+        recalculates ancestors of node even when
+        dispatchEvent(PassRefPtr<Event)) is called again with a different
+        event parameter.
+
+        A 'dblclick' event violates this rule. A 'dblclick' dispatching
+        reuses the same dispatcher instance.  So stop re-using the same
+        dispatcher and add ASSERT to make sure dispatchEvent() is never
+        called more than once.
+
+        No new tests, no change in functionality.
+
+        * dom/EventDispatcher.cpp:
+        (WebCore::EventDispatcher::EventDispatcher):
+        (WebCore::EventDispatcher::dispatchEvent):
+        * dom/EventDispatcher.h:
+        (EventDispatcher):
+        * dom/MouseEvent.cpp:
+        (WebCore::MouseEventDispatchMediator::dispatchEvent):
+
 2012-08-07  Joshua Bell  <jsbell@chromium.org>
 
         Layout Test storage/indexeddb/intversion-omit-parameter.html is flaky

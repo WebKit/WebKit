@@ -207,22 +207,21 @@ bool MouseEventDispatchMediator::dispatchEvent(EventDispatcher* dispatcher) cons
     dispatcher->dispatchEvent(event());
     bool swallowEvent = event()->defaultHandled() || event()->defaultPrevented();
 
+    if (event()->type() != eventNames().clickEvent || event()->detail() != 2)
+        return swallowEvent;
     // Special case: If it's a double click event, we also send the dblclick event. This is not part
     // of the DOM specs, but is used for compatibility with the ondblclick="" attribute. This is treated
     // as a separate event in other DOM-compliant browsers like Firefox, and so we do the same.
-    if (event()->type() == eventNames().clickEvent && event()->detail() == 2) {
-        RefPtr<MouseEvent> doubleClickEvent = MouseEvent::create();
-        doubleClickEvent->initMouseEvent(eventNames().dblclickEvent, event()->bubbles(), event()->cancelable(), event()->view(),
-                event()->detail(), event()->screenX(), event()->screenY(), event()->clientX(), event()->clientY(),
-                event()->ctrlKey(), event()->altKey(), event()->shiftKey(), event()->metaKey(),
-                event()->button(), relatedTarget);
-        if (event()->defaultHandled())
-            doubleClickEvent->setDefaultHandled();
-        dispatcher->dispatchEvent(doubleClickEvent);
-        if (doubleClickEvent->defaultHandled() || doubleClickEvent->defaultPrevented())
-            swallowEvent = true;
-    }
-
+    RefPtr<MouseEvent> doubleClickEvent = MouseEvent::create();
+    doubleClickEvent->initMouseEvent(eventNames().dblclickEvent, event()->bubbles(), event()->cancelable(), event()->view(),
+                                     event()->detail(), event()->screenX(), event()->screenY(), event()->clientX(), event()->clientY(),
+                                     event()->ctrlKey(), event()->altKey(), event()->shiftKey(), event()->metaKey(),
+                                     event()->button(), relatedTarget);
+    if (event()->defaultHandled())
+        doubleClickEvent->setDefaultHandled();
+    EventDispatcher::dispatchEvent(dispatcher->node(), MouseEventDispatchMediator::create(doubleClickEvent));
+    if (doubleClickEvent->defaultHandled() || doubleClickEvent->defaultPrevented())
+        return true;
     return swallowEvent;
 }
 

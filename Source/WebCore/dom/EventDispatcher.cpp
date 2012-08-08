@@ -201,6 +201,9 @@ void EventDispatcher::adjustRelatedTarget(Event* event, PassRefPtr<EventTarget> 
 EventDispatcher::EventDispatcher(Node* node)
     : m_node(node)
     , m_ancestorsInitialized(false)
+#ifndef NDEBUG
+    , m_eventDispatched(false)
+#endif
 {
     ASSERT(node);
     m_view = node->document()->view();
@@ -238,6 +241,10 @@ void EventDispatcher::ensureEventAncestors(Event* event)
 
 bool EventDispatcher::dispatchEvent(PassRefPtr<Event> prpEvent)
 {
+#ifndef NDEBUG
+    ASSERT(!m_eventDispatched);
+    m_eventDispatched = true;
+#endif
     RefPtr<Event> event = prpEvent;
     event->setTarget(eventTargetRespectingSVGTargetRules(m_node.get()));
     ASSERT(!eventDispatchForbidden());
