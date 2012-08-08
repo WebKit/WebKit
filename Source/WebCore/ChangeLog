@@ -1,3 +1,11 @@
+2012-08-08  Dean Jackson  <dino@apple.com>
+
+        Unreviewed build fix for Mac port after http://trac.webkit.org/changeset/125051
+
+        Add CachedImageClient.h to project.
+
+        * WebCore.xcodeproj/project.pbxproj:
+
 2012-08-08  Antonio Gomes  <agomes@rim.com>
 
         [BlackBerry] Add boundsOrigin accessors to LayerOverride

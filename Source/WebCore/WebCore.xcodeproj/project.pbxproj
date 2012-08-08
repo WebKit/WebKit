@@ -921,6 +921,7 @@
 		319E69B313299BBD004AC91A /* WebKitAnimation.h in Headers */ = {isa = PBXBuildFile; fileRef = 319E69AD13299BBD004AC91A /* WebKitAnimation.h */; };
 		319E69B513299BBD004AC91A /* WebKitAnimationList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 319E69AF13299BBD004AC91A /* WebKitAnimationList.cpp */; };
 		319E69B613299BBD004AC91A /* WebKitAnimationList.h in Headers */ = {isa = PBXBuildFile; fileRef = 319E69B013299BBD004AC91A /* WebKitAnimationList.h */; };
+		319FBD5F15D2F464009640A6 /* CachedImageClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 319FBD5D15D2F444009640A6 /* CachedImageClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		31C0FF210E4CEB6E007D6FE5 /* WebKitAnimationEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 31C0FF1B0E4CEB6E007D6FE5 /* WebKitAnimationEvent.cpp */; };
 		31C0FF220E4CEB6E007D6FE5 /* WebKitAnimationEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 31C0FF1C0E4CEB6E007D6FE5 /* WebKitAnimationEvent.h */; };
 		31C0FF240E4CEB6E007D6FE5 /* WebKitTransitionEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 31C0FF1E0E4CEB6E007D6FE5 /* WebKitTransitionEvent.cpp */; };
@@ -7983,6 +7984,7 @@
 		319E69AF13299BBD004AC91A /* WebKitAnimationList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebKitAnimationList.cpp; sourceTree = "<group>"; };
 		319E69B013299BBD004AC91A /* WebKitAnimationList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebKitAnimationList.h; sourceTree = "<group>"; };
 		319E69B113299BBD004AC91A /* WebKitAnimationList.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebKitAnimationList.idl; sourceTree = "<group>"; };
+		319FBD5D15D2F444009640A6 /* CachedImageClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CachedImageClient.h; sourceTree = "<group>"; };
 		31C0FF1B0E4CEB6E007D6FE5 /* WebKitAnimationEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebKitAnimationEvent.cpp; sourceTree = "<group>"; };
 		31C0FF1C0E4CEB6E007D6FE5 /* WebKitAnimationEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebKitAnimationEvent.h; sourceTree = "<group>"; };
 		31C0FF1D0E4CEB6E007D6FE5 /* WebKitAnimationEvent.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebKitAnimationEvent.idl; sourceTree = "<group>"; };
@@ -19025,6 +19027,7 @@
 				BC64B4CA0CB4295D005F2B62 /* CachedFont.h */,
 				BCB16C020979C3BD00467741 /* CachedImage.cpp */,
 				BCB16C030979C3BD00467741 /* CachedImage.h */,
+				319FBD5D15D2F444009640A6 /* CachedImageClient.h */,
 				D0EDA772143E303C0028E383 /* CachedRawResource.cpp */,
 				D0EDA773143E303C0028E383 /* CachedRawResource.h */,
 				BCB16C060979C3BD00467741 /* CachedResource.cpp */,
@@ -25391,6 +25394,7 @@
 				FD537353137B651800008DCE /* ZeroPole.h in Headers */,
 				A24BF77B15CC3BAF003191F2 /* WebKitCSSMixFunctionValue.h in Headers */,
 				50D88CB615BDFDAA001809F4 /* CustomFilterProgramInfo.h in Headers */,
+				319FBD5F15D2F464009640A6 /* CachedImageClient.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
