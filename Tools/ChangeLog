@@ -1,3 +1,17 @@
+2012-08-08  Josh Hawn  <jhawn@apple.com>
+
+        Add MountainLion WebKit Bots.
+        https://bugs.webkit.org/show_bug.cgi?id=93417
+
+        Reviewed by Stephanie Lewis.
+
+        Mountain Lion is now available, so we've added the appropriate Apple bots,
+        mirroring the configuration of the Lion bots.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json:
+        Added 10 "apple-mini-###" slaves.
+        Added MountainLion Builders and Schedulers.
+
 2012-08-08  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         [WK2] Coding style violation was brought with r125031
