@@ -1,0 +1,31 @@
+<html>
+<head>
+<script src=../../media-resources/media-file.js></script>
+<script src=../../media-resources/video-test.js></script>
+<script>
+    var file = findMediaFile("video", "http://127.0.0.1:8000/resources/test");
+
+    function init()
+    {
+        findMediaElement();
+        run("video.src = file");
+        waitForEvent('loadstart', onLoadStart);
+    }
+
+    function onLoadStart()
+    {
+        waitForEvent('suspend', onSuspend);
+    }
+
+    function onSuspend()
+    {
+        testExpected("video.networkState", HTMLMediaElement.NETWORK_IDLE, "==");
+        endTest();
+    }
+</script>
+</head>
+<body onload="init()">
+    <p>Test that the load eventually suspends and returns to NETWORK_IDLE.</p>
+    <video></video>
+</body>
+</html>

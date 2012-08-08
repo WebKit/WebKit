@@ -1,0 +1,8 @@
+Test that the load eventually suspends and returns to NETWORK_IDLE.
+
+RUN(video.src = file)
+EVENT(loadstart)
+EVENT(suspend)
+EXPECTED (video.networkState == '1') OK
+END OF TEST
+

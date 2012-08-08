@@ -1,3 +1,21 @@
+2012-08-08  Andrew Scherkus  <scherkus@chromium.org>
+
+        Fire suspend event whenever network state is set to NETWORK_IDLE.
+        https://bugs.webkit.org/show_bug.cgi?id=93052
+
+        Reviewed by Eric Carlson.
+
+        There was a regression in the Chromium port (http://crbug.com/139511) that revealed we didn't
+        have a layout test for suspend events. Upon further investigation it appeared we also had a bug
+        where we didn't fire the suspend event when a media engine reported they had completely loaded
+        the media.
+
+        Covered by new test http/tests/media/video-load-suspend.html.
+
+        * http/tests/media/video-load-suspend-expected.txt: Added.
+        * http/tests/media/video-load-suspend.html: Added.
+        * media/event-attributes-expected.txt: Updated to include suspend event.
+
 2012-08-08  Tom Sepez  <tsepez@chromium.org>
 
         Video element image loader must persist after element detach.  

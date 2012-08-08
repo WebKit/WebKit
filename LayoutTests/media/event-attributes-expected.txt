@@ -1,4 +1,5 @@
 EVENT(loadstart)
+EVENT(suspend)
 EVENT(durationchange)
 EVENT(loadedmetadata)
 EVENT(loadeddata)

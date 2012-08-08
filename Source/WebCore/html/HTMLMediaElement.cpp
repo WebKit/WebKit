@@ -1581,7 +1581,6 @@ void HTMLMediaElement::setNetworkState(MediaPlayer::NetworkState state)
     if (state == MediaPlayer::Idle) {
         if (m_networkState > NETWORK_IDLE) {
             changeNetworkStateFromLoadingToIdle();
-            scheduleEvent(eventNames().suspendEvent);
             setShouldDelayLoadEvent(false);
         } else {
             m_networkState = NETWORK_IDLE;
@@ -1613,6 +1612,7 @@ void HTMLMediaElement::changeNetworkStateFromLoadingToIdle()
     // Schedule one last progress event so we guarantee that at least one is fired
     // for files that load very quickly.
     scheduleEvent(eventNames().progressEvent);
+    scheduleEvent(eventNames().suspendEvent);
     m_networkState = NETWORK_IDLE;
 }
 
