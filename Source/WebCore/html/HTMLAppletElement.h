@@ -39,7 +39,7 @@ private:
     virtual bool rendererIsNeeded(const NodeRenderingContext&) OVERRIDE;
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*) OVERRIDE;
 
-    virtual RenderWidget* renderWidgetForJSBindings();
+    virtual RenderWidget* renderWidgetForJSBindings() const;
     virtual void updateWidget(PluginCreationOption) OVERRIDE;
 
     bool canEmbedJava() const;

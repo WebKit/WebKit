@@ -59,6 +59,7 @@ public:
 
     // FIXME: This is a hack that works around the fact that the WebKit2 PluginView isn't a ScrollableArea.
     virtual bool wantsWheelEvents() { return false; }
+    virtual bool supportsKeyboardFocus() const { return false; }
 
 protected:
     explicit PluginViewBase(PlatformWidget widget = 0) : Widget(widget) { }

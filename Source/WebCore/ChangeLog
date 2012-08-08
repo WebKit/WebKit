@@ -1,3 +1,32 @@
+2012-08-07  Fady Samuel  <fsamuel@chromium.org>
+
+        Allow plugins to decide whether they are keyboard focusable
+        https://bugs.webkit.org/show_bug.cgi?id=88958
+
+        Reviewed by Anders Carlsson.
+
+        * dom/Node.h:
+        (WebCore::Node::isPluginElement):
+        * html/HTMLEmbedElement.cpp:
+        (WebCore::HTMLEmbedElement::renderWidgetForJSBindings):
+        * html/HTMLEmbedElement.h:
+        (HTMLEmbedElement):
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::renderWidgetForJSBindings):
+        * html/HTMLObjectElement.h:
+        (HTMLObjectElement):
+        * html/HTMLPlugInElement.cpp:
+        (WebCore::HTMLPlugInElement::pluginWidget):
+        (WebCore::HTMLPlugInElement::isKeyboardFocusable):
+        (WebCore):
+        (WebCore::HTMLPlugInElement::isPluginElement):
+        * html/HTMLPlugInElement.h:
+        (HTMLPlugInElement):
+        * page/FocusController.cpp:
+        (WebCore::FocusController::advanceFocusInDocumentOrder):
+        * plugins/PluginViewBase.h:
+        (WebCore::PluginViewBase::supportsKeyboardFocus):
+
 2012-08-07  Anna Cavender  <annacc@chromium.org>
 
         Create a MediaSource object.

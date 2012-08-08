@@ -65,6 +65,7 @@ public:
     // from the plugin. The value would be associated with the name attribute
     // of the corresponding object element.
     virtual bool getFormValue(WebString&) { return false; }
+    virtual bool supportsKeyboardFocus() const { return false; }
 
     virtual void paint(WebCanvas*, const WebRect&) = 0;
 

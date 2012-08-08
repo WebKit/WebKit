@@ -1,3 +1,20 @@
+2012-08-07  Fady Samuel  <fsamuel@chromium.org>
+
+        Allow plugins to decide whether they are keyboard focusable
+        https://bugs.webkit.org/show_bug.cgi?id=88958
+
+        Reviewed by Anders Carlsson.
+
+        * public/WebPlugin.h:
+        (WebKit::WebPlugin::supportsKeyboardFocus):
+        * src/WebInputEventConversion.cpp:
+        (WebKit::WebKeyboardEventBuilder::WebKeyboardEventBuilder):
+        * src/WebPluginContainerImpl.cpp:
+        (WebKit::WebPluginContainerImpl::supportsKeyboardFocus):
+        (WebKit):
+        * src/WebPluginContainerImpl.h:
+        (WebPluginContainerImpl):
+
 2012-08-07  Kentaro Hara  <haraken@chromium.org>
 
         [V8] Implement V8Proxy::registerExtensionIfNeeded() and remove redundant methods

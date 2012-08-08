@@ -560,6 +560,11 @@ bool WebPluginContainerImpl::getFormValue(String& value)
     return false;
 }
 
+bool WebPluginContainerImpl::supportsKeyboardFocus() const
+{
+    return m_webPlugin->supportsKeyboardFocus();
+}
+
 void WebPluginContainerImpl::willDestroyPluginLoadObserver(WebPluginLoadObserver* observer)
 {
     size_t pos = m_pluginLoadObservers.find(observer);

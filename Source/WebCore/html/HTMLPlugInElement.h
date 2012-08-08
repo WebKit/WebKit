@@ -45,7 +45,7 @@ public:
 
     PassScriptInstance getInstance();
 
-    Widget* pluginWidget();
+    Widget* pluginWidget() const;
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
     NPObject* getNPObject();
@@ -72,7 +72,10 @@ private:
 
     virtual void defaultEventHandler(Event*);
 
-    virtual RenderWidget* renderWidgetForJSBindings() = 0;
+    virtual RenderWidget* renderWidgetForJSBindings() const = 0;
+
+    virtual bool isKeyboardFocusable(KeyboardEvent*) const;
+    virtual bool isPluginElement() const;
 
 private:
     mutable ScriptInstance m_instance;

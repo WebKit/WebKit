@@ -73,7 +73,7 @@ PassRefPtr<HTMLObjectElement> HTMLObjectElement::create(const QualifiedName& tag
     return adoptRef(new HTMLObjectElement(tagName, document, form, createdByParser));
 }
 
-RenderWidget* HTMLObjectElement::renderWidgetForJSBindings()
+RenderWidget* HTMLObjectElement::renderWidgetForJSBindings() const
 {
     document()->updateLayoutIgnorePendingStylesheets();
     return renderPart(); // This will return 0 if the renderer is not a RenderPart.
