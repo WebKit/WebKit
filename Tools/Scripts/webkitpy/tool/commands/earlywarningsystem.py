@@ -203,4 +203,3 @@ class ChromiumAndroidEWS(AbstractChromiumEWS):
 class MacEWS(AbstractEarlyWarningSystem):
     name = "mac-ews"
     port_name = "mac"
-    _default_run_tests = True
