@@ -1,5 +1,12 @@
 2012-08-08  Florin Malita  <fmalita@chromium.org>
 
+        [Chromium] Unreviewed gardening: Chromium results for compositing/repaint/newly-composited-on-scroll.html.
+
+        * platform/chromium-mac/compositing/repaint/newly-composited-on-scroll-expected.png: Added.
+        * platform/chromium-win/compositing/repaint/newly-composited-on-scroll-expected.png: Added.
+
+2012-08-08  Florin Malita  <fmalita@chromium.org>
+
         [Chromium] Unreviewed gardening: compositing/plugins/no-backing-store.html yields incorrect results.
 
         * platform/chromium/TestExpectations:
