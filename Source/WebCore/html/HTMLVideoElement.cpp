@@ -87,14 +87,6 @@ void HTMLVideoElement::attach()
 #endif
 }
 
-void HTMLVideoElement::detach()
-{
-    HTMLMediaElement::detach();
-    
-    if (!shouldDisplayPosterImage() && m_imageLoader)
-        m_imageLoader.clear();
-}
-
 void HTMLVideoElement::collectStyleForAttribute(const Attribute& attribute, StylePropertySet* style)
 {
     if (attribute.name() == widthAttr)

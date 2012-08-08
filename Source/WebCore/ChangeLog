@@ -1,3 +1,19 @@
+2012-08-08  Tom Sepez  <tsepez@chromium.org>
+
+        Video element image loader must persist after element detach.  
+        https://bugs.webkit.org/show_bug.cgi?id=90801
+
+        Reviewed by Eric Carlson.
+
+        We rely on the OwnPtr in the element to cleanup the loader.     
+
+        Test: fast/dom/beforeload/remove-video-poster-in-beforeload-listener.html
+
+        * html/HTMLVideoElement.cpp:
+        (WebCore):
+        * html/HTMLVideoElement.h:
+        (HTMLVideoElement):
+
 2012-08-08  Nikhil Bhargava  <nbhargava@google.com>
 
         Improve RenderObject.h compile time - split CachedImage and CachedImageClient

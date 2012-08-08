@@ -1,3 +1,15 @@
+2012-08-08  Tom Sepez  <tsepez@chromium.org>
+
+        Video element image loader must persist after element detach.  
+        https://bugs.webkit.org/show_bug.cgi?id=90801
+
+        Reviewed by Eric Carlson.
+
+        We rely on the OwnPtr in the element to cleanup the loader.     
+
+        * fast/dom/beforeload/remove-video-poster-in-beforeload-listener-expected.txt: Added.
+        * fast/dom/beforeload/remove-video-poster-in-beforeload-listener.html: Added.
+
 2012-08-08  Dan Bernstein  <mitz@apple.com>
 
         REGRESSION (r123171): <svg> element with intrinsic size and max-width gets sized incorrectly
