@@ -33,6 +33,8 @@ LIST(APPEND WebKit2_SOURCES
     Shared/soup/WebCoreArgumentCodersSoup.cpp
 
     UIProcess/API/C/efl/WKView.cpp
+    
+    UIProcess/API/cpp/efl/WKEinaSharedString.cpp
 
     UIProcess/API/C/soup/WKContextSoup.cpp
     UIProcess/API/C/soup/WKSoupRequestManager.cpp
@@ -124,6 +126,7 @@ LIST(APPEND WebKit2_INCLUDE_DIRECTORIES
     "${WEBKIT2_DIR}/Shared/soup"
     "${WEBKIT2_DIR}/UIProcess/API/C/efl"
     "${WEBKIT2_DIR}/UIProcess/API/C/soup"
+    "${WEBKIT2_DIR}/UIProcess/API/cpp/efl"
     "${WEBKIT2_DIR}/UIProcess/API/efl"
     "${WEBKIT2_DIR}/UIProcess/soup"
     "${WEBKIT2_DIR}/WebProcess/Downloads/soup"

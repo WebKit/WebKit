@@ -1,3 +1,21 @@
+2012-08-08  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [EFL] EFL Webkit needs a class wrapping eina stringshare
+        https://bugs.webkit.org/show_bug.cgi?id=93229
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Added a new auxiliary class wrapping Eina Stringshare and providing
+        more convenient C++ interface for using it. 
+
+        * PlatformEfl.cmake:
+        * UIProcess/API/cpp/efl/WKEinaSharedString.cpp: Added.
+        (:m_string):
+        (WKEinaSharedString::~WKEinaSharedString):
+        (WKEinaSharedString::operator=):
+        * UIProcess/API/cpp/efl/WKEinaSharedString.h: Added.
+        (WebKit):
+
 2012-08-08  Balazs Kelemen  <kbalazs@webkit.org>
 
         [Qt] Snowshoe desktop crashes when opening a new tab

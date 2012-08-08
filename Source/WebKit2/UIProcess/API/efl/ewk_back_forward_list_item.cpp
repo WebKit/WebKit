@@ -28,42 +28,9 @@
 
 #include "WKAPICast.h"
 #include "WKBackForwardListItem.h"
-#include "WKRetainPtr.h"
-#include "WKString.h"
-#include "WKURL.h"
-#include <wtf/text/CString.h>
+#include "WKEinaSharedString.h"
 
 using namespace WebKit;
-
-class WKEinaSharedString {
-public:
-    template <typename WKRefType>
-    WKEinaSharedString(WKAdoptTag, WKRefType strRef)
-        : m_string(0)
-    {
-        if (strRef) {
-            m_string = eina_stringshare_add(toImpl(strRef)->string().utf8().data());
-            ASSERT(m_string);
-            WKRelease(strRef); // Have stored a copy into eina_stringshare, do not need adopted strRef.
-        }
-    }
-
-    template <typename WKRefType>
-    WKEinaSharedString(WKRefType strRef)
-        : m_string(0)
-    {
-        if (strRef) {
-            m_string = eina_stringshare_add(toImpl(strRef)->string().utf8().data());
-            ASSERT(m_string);
-        }
-    }
-
-    ~WKEinaSharedString() { eina_stringshare_del(m_string); }
-    inline operator const char* () const { return m_string; }
-
-private:
-    const char* m_string;
-};
 
 /**
  * \struct  _Ewk_Back_Forward_List
