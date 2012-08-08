@@ -29,7 +29,8 @@ Bringing things back
 Wrapper identity: identity
 Event AttrRemoved: H2
 Event AttrRemoved: H2
-Event ChildNodeCountUpdated: UL
+Event CharacterDataModified: 
+Event NodeInserted: LI
 ==========8<==========
 <div id="container" style="display:none">
 <p>WebKit is used by <a href="http://www.apple.com/safari/">Safari</a>, Dashboard, etc..</p>

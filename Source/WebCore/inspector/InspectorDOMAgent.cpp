@@ -1280,15 +1280,17 @@ PassRefPtr<TypeBuilder::Array<String> > InspectorDOMAgent::buildArrayForElementA
 PassRefPtr<TypeBuilder::Array<TypeBuilder::DOM::Node> > InspectorDOMAgent::buildArrayForContainerChildren(Node* container, int depth, NodeToIdMap* nodesMap)
 {
     RefPtr<TypeBuilder::Array<TypeBuilder::DOM::Node> > children = TypeBuilder::Array<TypeBuilder::DOM::Node>::create();
-    Node* child = innerFirstChild(container);
-
     if (depth == 0) {
         // Special-case the only text child - pretend that container's children have been requested.
-        if (child && child->nodeType() == Node::TEXT_NODE && !innerNextSibling(child))
-            return buildArrayForContainerChildren(container, 1, nodesMap);
+        Node* firstChild = container->firstChild();
+        if (firstChild && firstChild->nodeType() == Node::TEXT_NODE && !firstChild->nextSibling()) {
+            children->addItem(buildObjectForNode(firstChild, 0, nodesMap));
+            m_childrenRequested.add(bind(container, nodesMap));
+        }
         return children.release();
     }
 
+    Node* child = innerFirstChild(container);
     depth--;
     m_childrenRequested.add(bind(container, nodesMap));
 

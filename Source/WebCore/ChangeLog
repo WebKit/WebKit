@@ -1,3 +1,15 @@
+2012-08-08  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: show whitespace nodes if they are the only tag's children.
+        https://bugs.webkit.org/show_bug.cgi?id=93441
+
+        Reviewed by Vsevolod Vlasov.
+
+        Pass whitespace node info into the front-end when it is the only element's child.
+
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::buildArrayForContainerChildren):
+
 2012-08-08  Kentaro Hara  <haraken@chromium.org>
 
         [V8] Pass Isolate to ArrayValue and Dictionary

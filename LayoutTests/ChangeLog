@@ -1,3 +1,13 @@
+2012-08-08  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: show white space nodes if they are the only tag's children.
+        https://bugs.webkit.org/show_bug.cgi?id=93441
+
+        Reviewed by Vsevolod Vlasov.
+
+        * inspector/elements/set-outer-html-2-expected.txt:
+        * inspector/styles/styles-update-from-js.html:
+
 2012-08-08  Yury Semikhatsky  <yurys@chromium.org>
 
         Web Inspector: cached images memory instrumentation regression after r124744
