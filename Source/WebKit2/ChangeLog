@@ -1,3 +1,15 @@
+2012-08-08  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
+
+        [Qt] WebProcess hangs on plugin initialization.
+        https://bugs.webkit.org/show_bug.cgi?id=93272
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        * UIProcess/Plugins/PluginProcessProxy.cpp:
+        (WebKit::PluginProcessProxy::didFinishLaunching): Ensure PluginProcessConnectionManager is informed of plugin crashes.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage): Let setIsInWindow set canStartMedia asynchronously.
+
 2012-08-08  Andras Becsi  <andras.becsi@nokia.com>
 
         [Qt][WK2] Set the fixed layout setting before creating the page

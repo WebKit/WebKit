@@ -303,13 +303,7 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
     WebCore::provideVibrationTo(m_page.get(), new WebVibrationClient(this));
 #endif
 
-    // Qt does not yet call setIsInWindow. Until it does, just leave
-    // this line out so plug-ins and video will work. Eventually all platforms
-    // should call setIsInWindow and this comment and #if should be removed,
-    // leaving behind the setCanStartMedia call.
-#if !PLATFORM(QT)
     m_page->setCanStartMedia(false);
-#endif
 
     updatePreferences(parameters.store);
 
