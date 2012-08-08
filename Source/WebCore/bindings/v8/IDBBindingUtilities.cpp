@@ -126,7 +126,7 @@ v8::Handle<v8::Value> getNthValueOnKeyPath(v8::Handle<v8::Value>& rootValue, con
     ASSERT(index <= keyPathElements.size());
     for (size_t i = 0; i < index; ++i) {
         if (!get(currentValue, keyPathElements[i]))
-            return v8::Handle<v8::Value>();
+            return v8Undefined();
     }
 
     return currentValue;
@@ -143,7 +143,7 @@ v8::Handle<v8::Value> ensureNthValueOnKeyPath(v8::Handle<v8::Value>& rootValue, 
         if (!get(currentValue, keyPathElement)) {
             v8::Handle<v8::Object> object = v8::Object::New();
             if (!set(parentValue, keyPathElement, object))
-                return v8::Handle<v8::Value>();
+                return v8Undefined();
             currentValue = object;
         }
     }

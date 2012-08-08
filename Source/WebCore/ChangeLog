@@ -1,3 +1,39 @@
+2012-08-07  Kentaro Hara  <haraken@chromium.org>
+
+        [V8] Replace v8::Handle<v8::Value>() in bindings/v8/* with v8Undefined()
+        https://bugs.webkit.org/show_bug.cgi?id=93211
+
+        Reviewed by Eric Seidel.
+
+        We should use v8Undefined() everywhere in V8 bindings.
+        Replacing v8::Local<v8::Value>() etc with v8Undefined() can cause build
+        errors due to type conversion mismatch. I'll do the replacement in follow-up
+        patches.
+
+        No tests. No change in behavior.
+
+        * bindings/v8/IDBBindingUtilities.cpp:
+        (WebCore):
+        * bindings/v8/ScriptDebugServer.cpp:
+        (WebCore::ScriptDebugServer::pauseOnExceptionsState):
+        (WebCore::ScriptDebugServer::handleV8DebugEvent):
+        * bindings/v8/SerializedScriptValue.cpp:
+        * bindings/v8/V8Binding.cpp:
+        (WebCore::batchConfigureCallbacks):
+        * bindings/v8/V8Collection.h:
+        (WebCore::getV8Object):
+        (WebCore::collectionNamedPropertyGetter):
+        * bindings/v8/V8DOMWrapper.cpp:
+        (WebCore::V8DOMWrapper::convertEventTargetToV8Object):
+        * bindings/v8/V8NPObject.cpp:
+        (WebCore::npObjectGetProperty):
+        (WebCore::npObjectSetProperty):
+        * bindings/v8/V8Proxy.cpp:
+        (WebCore::V8Proxy::setDOMException):
+        (WebCore::V8Proxy::throwError):
+        * bindings/v8/WorkerScriptDebugServer.cpp:
+        (WebCore::WorkerScriptDebugServer::addListener):
+
 2012-08-07  Joe Mason  <jmason@rim.com>
 
         Fix regression in credential storage when using Negotiate auth

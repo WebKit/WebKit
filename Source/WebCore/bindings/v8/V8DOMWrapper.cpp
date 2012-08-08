@@ -273,7 +273,7 @@ v8::Handle<v8::Value> V8DOMWrapper::convertEventTargetToV8Object(EventTarget* ta
     DOM_EVENT_TARGET_INTERFACES_FOR_EACH(TRY_TO_WRAP_WITH_INTERFACE)
 
     ASSERT_NOT_REACHED();
-    return v8::Handle<v8::Value>();
+    return v8Undefined();
 }
 
 PassRefPtr<EventListener> V8DOMWrapper::getEventListener(v8::Local<v8::Value> value, bool isAttribute, ListenerLookupType lookup)

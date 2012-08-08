@@ -45,7 +45,7 @@ namespace WebCore {
 template<class T> static v8::Handle<v8::Value> getV8Object(T* implementation, v8::Isolate* isolate)
 {
     if (!implementation)
-        return v8::Handle<v8::Value>();
+        return v8Undefined();
     return toV8(implementation, isolate);
 }
 
@@ -74,9 +74,9 @@ template<class Collection, class ItemType> static v8::Handle<v8::Value> getNamed
 template<class Collection, class ItemType> static v8::Handle<v8::Value> collectionNamedPropertyGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
     if (!info.Holder()->GetRealNamedPropertyInPrototypeChain(name).IsEmpty())
-        return v8::Handle<v8::Value>();
+        return v8Undefined();
     if (info.Holder()->HasRealNamedCallbackProperty(name))
-        return v8::Handle<v8::Value>();
+        return v8Undefined();
 
     return getNamedPropertyOfCollection<Collection, ItemType>(name, info.Holder(), info.GetIsolate());
 }

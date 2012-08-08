@@ -491,7 +491,7 @@ static void DOMExceptionStackSetter(v8::Local<v8::String> name, v8::Local<v8::Va
 v8::Handle<v8::Value> V8Proxy::setDOMException(int ec, v8::Isolate* isolate)
 {
     if (ec <= 0 || v8::V8::IsExecutionTerminating())
-        return v8::Handle<v8::Value>();
+        return v8Undefined();
 
     if (ec == NATIVE_TYPE_ERR) {
         const char* message = 0;
@@ -506,7 +506,7 @@ v8::Handle<v8::Value> V8Proxy::setDOMException(int ec, v8::Isolate* isolate)
     }
 
     if (exception.IsEmpty())
-        return v8::Handle<v8::Value>();
+        return v8Undefined();
 
     // Attach an Error object to the DOMException. This is then lazily used to get the stack value.
     v8::Handle<v8::Value> error = v8::Exception::Error(v8String(description.description, isolate));
@@ -534,7 +534,7 @@ v8::Handle<v8::Value> V8Proxy::throwError(ErrorType type, const char* message, v
         return v8::ThrowException(v8::Exception::Error(v8String(message, isolate)));
     default:
         ASSERT_NOT_REACHED();
-        return v8::Handle<v8::Value>();
+        return v8Undefined();
     }
 }
 

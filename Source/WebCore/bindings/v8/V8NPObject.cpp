@@ -200,7 +200,7 @@ static v8::Handle<v8::Value> npObjectGetProperty(v8::Local<v8::Object> self, NPI
         NPVariant result;
         VOID_TO_NPVARIANT(result);
         if (!npObject->_class->getProperty(npObject, identifier, &result))
-            return v8::Handle<v8::Value>();
+            return v8Undefined();
 
         v8::Handle<v8::Value> returnValue;
         if (_NPN_IsAlive(npObject))
@@ -234,7 +234,7 @@ static v8::Handle<v8::Value> npObjectGetProperty(v8::Local<v8::Object> self, NPI
         return v8Function;
     }
 
-    return v8::Handle<v8::Value>();
+    return v8Undefined();
 }
 
 v8::Handle<v8::Value> npObjectNamedPropertyGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
@@ -289,7 +289,7 @@ static v8::Handle<v8::Value> npObjectSetProperty(v8::Local<v8::Object> self, NPI
         if (success)
             return value; // Intercept the call.
     }
-    return v8::Handle<v8::Value>();
+    return v8Undefined();
 }
 
 

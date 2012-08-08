@@ -730,7 +730,7 @@ private:
     class ErrorState : public StateBase {
     public:
         ErrorState()
-            : StateBase(v8::Handle<v8::Value>(), 0)
+            : StateBase(v8Undefined(), 0)
         {
         }
 

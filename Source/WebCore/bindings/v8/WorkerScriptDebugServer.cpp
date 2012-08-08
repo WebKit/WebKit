@@ -72,7 +72,7 @@ void WorkerScriptDebugServer::addListener(ScriptDebugListener* listener)
         return;
 
     v8::Handle<v8::Function> getScriptsFunction = v8::Local<v8::Function>::Cast(m_debuggerScript.get()->Get(v8::String::New("getWorkerScripts")));
-    v8::Handle<v8::Value> argv[] = { v8::Handle<v8::Value>() };
+    v8::Handle<v8::Value> argv[] = { v8Undefined() };
     v8::Handle<v8::Value> value = getScriptsFunction->Call(m_debuggerScript.get(), 0, argv);
     if (value.IsEmpty())
         return;

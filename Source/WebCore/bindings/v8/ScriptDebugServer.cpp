@@ -137,7 +137,7 @@ ScriptDebugServer::PauseOnExceptionsState ScriptDebugServer::pauseOnExceptionsSt
     v8::HandleScope scope;
     v8::Context::Scope contextScope(v8::Debug::GetDebugContext());
 
-    v8::Handle<v8::Value> argv[] = { v8::Handle<v8::Value>() };
+    v8::Handle<v8::Value> argv[] = { v8Undefined() };
     v8::Handle<v8::Value> result = callDebuggerMethod("pauseOnExceptionsState", 0, argv);
     return static_cast<ScriptDebugServer::PauseOnExceptionsState>(result->Int32Value());
 }
@@ -363,7 +363,7 @@ void ScriptDebugServer::handleV8DebugEvent(const v8::Debug::EventDetails& eventD
                 v8::Handle<v8::Object> eventData = eventDetails.GetEventData();
                 v8::Handle<v8::Value> exceptionGetterValue = eventData->Get(v8::String::New("exception"));
                 ASSERT(!exceptionGetterValue.IsEmpty() && exceptionGetterValue->IsFunction());
-                v8::Handle<v8::Value> argv[] = { v8::Handle<v8::Value>() };
+                v8::Handle<v8::Value> argv[] = { v8Undefined() };
                 V8RecursionScope::MicrotaskSuppression scope;
                 exception = v8::Handle<v8::Function>::Cast(exceptionGetterValue)->Call(eventData, 0, argv);
             }

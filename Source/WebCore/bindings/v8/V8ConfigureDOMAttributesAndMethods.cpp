@@ -61,7 +61,7 @@ void batchConfigureCallbacks(v8::Handle<v8::ObjectTemplate> proto,
                              size_t callbackCount)
 {
     for (size_t i = 0; i < callbackCount; ++i)
-        proto->Set(v8::String::New(callbacks[i].name), v8::FunctionTemplate::New(callbacks[i].callback, v8::Handle<v8::Value>(), signature), attributes);
+        proto->Set(v8::String::New(callbacks[i].name), v8::FunctionTemplate::New(callbacks[i].callback, v8Undefined(), signature), attributes);
 }
 
 v8::Local<v8::Signature> configureTemplate(v8::Persistent<v8::FunctionTemplate> desc,
