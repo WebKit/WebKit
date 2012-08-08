@@ -40,6 +40,13 @@ class WebIDBCursor {
 public:
     virtual ~WebIDBCursor() { }
 
+    enum Direction {
+        Next = 0,
+        NextNoDuplicate = 1,
+        Prev = 2,
+        PrevNoDuplicate = 3,
+    };
+
     virtual WebIDBKey key() const
     {
         WEBKIT_ASSERT_NOT_REACHED();

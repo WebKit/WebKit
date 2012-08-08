@@ -49,6 +49,11 @@ class IDBTransactionBackendInterface : public ThreadSafeRefCounted<IDBTransactio
 public:
     virtual ~IDBTransactionBackendInterface() { }
 
+    enum TaskType {
+        NormalTask = 0,
+        PreemptiveTask
+    };
+
     virtual PassRefPtr<IDBObjectStoreBackendInterface> objectStore(const String& name, ExceptionCode&) = 0;
     virtual void didCompleteTaskEvents() = 0;
     virtual void commit() = 0;

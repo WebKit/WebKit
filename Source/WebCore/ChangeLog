@@ -1,3 +1,18 @@
+2012-08-08  Alec Flett  <alecflett@chromium.org>
+
+        IndexedDB: new enums and openCursor stub
+        https://bugs.webkit.org/show_bug.cgi?id=93410
+
+        Reviewed by Adam Barth.
+
+        Introduce a new TaskType enum that will be used to prioritize
+        internal tasks. This is preliminary staging for
+        https://bugs.webkit.org/show_bug.cgi?id=91125.
+
+        No new tests, coming in bug 91125.
+
+        * Modules/indexeddb/IDBTransactionBackendInterface.h:
+
 2012-08-08  Pavel Feldman  <pfeldman@chromium.org>
 
         REGRESSION(r125046): Breaks debug build (assertion in protocol type checks) (Requested by pfeldman on #webkit).

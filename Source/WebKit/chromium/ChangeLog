@@ -1,3 +1,22 @@
+2012-08-08  Alec Flett  <alecflett@chromium.org>
+
+        IndexedDB: new enums and openCursor stub
+        https://bugs.webkit.org/show_bug.cgi?id=93410
+
+        Reviewed by Adam Barth.
+
+        This stubs out the TaskType and Direction enums that will be
+        required to land the chromium side of
+        https://bugs.webkit.org/show_bug.cgi?id=91125.
+
+        * public/WebIDBCursor.h:
+        * public/WebIDBObjectStore.h:
+        (WebKit::WebIDBObjectStore::setIndexKeys):
+        (WebKit::WebIDBObjectStore::setIndexesReady):
+        (WebIDBObjectStore):
+        (WebKit::WebIDBObjectStore::openCursor):
+        * public/WebIDBTransaction.h:
+
 2012-08-08  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Enable occlusion tracker in the occlusion tests for surface cacheing
