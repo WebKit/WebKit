@@ -1,3 +1,90 @@
+2012-08-08  Mike West  <mkwst@chromium.org>
+
+        Refactor console logging out of CSPDirectiveList into ContentSecurityPolicy
+        https://bugs.webkit.org/show_bug.cgi?id=93205
+
+        Reviewed by Adam Barth.
+
+        We currently pass a protected resource's ScriptExecutionContext down
+        into CSPDirectiveList in order to log errors, grab the SecurityOrigin,
+        resolve relative URLs, and one or two other bits. This implementation
+        requires us to maintain state inside of low-level objects that shouldn't
+        really know about the ScriptExecutionContext, and makes logging errors
+        difficult, as CSPDirectiveList is the only piece of the puzzle that can
+        interact with the console.
+
+        This patch removes the dependence on ScriptExecutionContext, replacing
+        it with a pointer to the ContentSecurityPolicy object itself. The low-
+        level objects like CSPDirectiveList now make requests to the policy
+        object, which understands how to resolve them. This gives a cleaner
+        separation between the CSP implementation and the rest of WebCore, and
+        opens the door for future patches that teach the remaining low-level
+        objects about the policy in which they're contained in order to improve
+        error logging.
+
+        This should be a purely internal refactoring of the location from which
+        warnings are logged to the console. No new tests have been added; the
+        behavior should be covered by the existing CSP tests.
+
+        * page/ContentSecurityPolicy.cpp:
+        (CSPSourceList):
+        (WebCore::CSPSourceList::CSPSourceList):
+            Pass the policy object into CSPSourceList, rather than a pointer to
+            ScriptExecutionContext.
+        (WebCore::CSPSourceList::parse):
+        (WebCore::CSPSourceList::addSourceSelf):
+            Read the SecurityOrigin from the policy object, rather than from the
+            ScriptExecutionContext.
+        (WebCore::CSPDirective::CSPDirective):
+            Pass the policy object into CSPDirective, rather than a pointer to
+            ScriptExecutionContext. Use it to read the protected resource's
+            URL.
+        (CSPDirectiveList):
+        (WebCore::CSPDirectiveList::CSPDirectiveList):
+            Pass the policy object into CSPSourceList, rather than a pointer to
+            ScriptExecutionContext.
+        (WebCore::CSPDirectiveList::create):
+            Move the enforcement of eval restrictions out of CSPDirectiveList,
+            and into ContentSecurityPolicy::ContentSecurityPolicy.
+        (WebCore::CSPDirectiveList::reportViolation):
+            Move most of the logic out of this method, and into
+            ContentSecurityPolicy::reportViolation.
+        (WebCore::CSPDirectiveList::parseDirective):
+            Use the policy object for logging.
+        (WebCore::CSPDirectiveList::parseReportURI):
+            Use the policy object for logging, and URL completion.
+        (WebCore::CSPDirectiveList::parseScriptNonce):
+            Use the policy object for logging.
+        (WebCore::CSPDirectiveList::setCSPDirective):
+            Use the policy object for logging.
+        (WebCore::CSPDirectiveList::applySandboxPolicy):
+            Use the policy object for logging, and move enforcement to
+            ContentSecurityPolicy::enforceSandboxFlags.
+        (WebCore::CSPDirectiveList::addDirective):
+            Use the policy object for logging.
+        (WebCore::ContentSecurityPolicy::didReceiveHeader):
+            Pass the policy object to CSPDirectiveList, and disable eval if
+            necessary after parsing the policy.
+        (WebCore::ContentSecurityPolicy::securityOrigin):
+        (WebCore):
+        (WebCore::ContentSecurityPolicy::url):
+        (WebCore::ContentSecurityPolicy::completeURL):
+        (WebCore::ContentSecurityPolicy::enforceSandboxFlags):
+            Move the enforcement of the sandbox directive out of
+            CSPDirectiveList and into the policy object.
+        (WebCore::ContentSecurityPolicy::reportViolation):
+        (WebCore::ContentSecurityPolicy::reportUnrecognizedDirective):
+        (WebCore::ContentSecurityPolicy::reportDuplicateDirective):
+        (WebCore::ContentSecurityPolicy::reportInvalidNonce):
+            Move CSPDirectiveList::logXXX out to the policy object. The
+            directive list is now responsible for reporting errors and
+            violations; the policy decides what to do with them.
+        (WebCore::ContentSecurityPolicy::logToConsole):
+            Wrap the call to addConsoleMessage to make it simpler for the
+            various ContentSecurityPolicy::reportXXX methods.
+        * page/ContentSecurityPolicy.h:
+        (WebCore):
+
 2012-08-08  Kentaro Hara  <haraken@chromium.org>
 
         [V8] Rename V8Helpers to V8BindingHelpers

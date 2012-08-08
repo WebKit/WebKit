@@ -30,6 +30,7 @@
 #include <wtf/PassOwnPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
+#include <wtf/text/TextPosition.h>
 #include <wtf/text/WTFString.h>
 
 namespace WTF {
@@ -42,7 +43,9 @@ class CSPDirectiveList;
 class ScriptCallStack;
 class DOMStringList;
 class ScriptExecutionContext;
+class SecurityOrigin;
 
+typedef int SandboxFlags;
 typedef Vector<OwnPtr<CSPDirectiveList> > CSPDirectiveListVector;
 
 class ContentSecurityPolicy {
@@ -93,8 +96,20 @@ public:
     bool isActive() const;
     void gatherReportURIs(DOMStringList&) const;
 
+    void reportDuplicateDirective(const String&) const;
+    void reportInvalidNonce(const String&) const;
+    void reportUnrecognizedDirective(const String&) const;
+    void reportViolation(const String& directiveText, const String& consoleMessage, const KURL& blockedURL, const Vector<KURL>& reportURIs, const String& header, const String& contextURL = String(), const WTF::OrdinalNumber& contextLine = WTF::OrdinalNumber::beforeFirst(), PassRefPtr<ScriptCallStack> = 0) const;
+
+    const KURL& url() const;
+    KURL completeURL(const String&) const;
+    SecurityOrigin* securityOrigin() const;
+    void enforceSandboxFlags(SandboxFlags) const;
+
 private:
     explicit ContentSecurityPolicy(ScriptExecutionContext*);
+
+    void logToConsole(const String& message, const String& contextURL = String(), const WTF::OrdinalNumber& contextLine = WTF::OrdinalNumber::beforeFirst(), PassRefPtr<ScriptCallStack> = 0) const;
 
     ScriptExecutionContext* m_scriptExecutionContext;
     bool m_overrideInlineStyleAllowed;
