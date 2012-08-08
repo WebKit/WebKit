@@ -1,5 +1,17 @@
 2012-08-07  Csaba Osztrogonác  <ossy@webkit.org>
 
+        [NRWT] REGRESSION(r124967): New tests without expected results handled as failures
+        https://bugs.webkit.org/show_bug.cgi?id=93434
+
+        Reviewed by Tony Chang.
+
+        Change back "missing results" to "no expected result found", because master.cfg's results parser expects it.
+
+        * Scripts/webkitpy/layout_tests/models/test_expectations.py:
+        (TestExpectations):
+
+2012-08-07  Csaba Osztrogonác  <ossy@webkit.org>
+
         buildbot: Remove the configuration of hfreyther*
         https://bugs.webkit.org/show_bug.cgi?id=91849
 
