@@ -117,6 +117,9 @@ RenderObject* RenderObjectChildList::removeChildNode(RenderObject* owner, Render
         if (oldChild->isRenderRegion())
             toRenderRegion(oldChild)->detachRegion();
 
+        if (oldChild->isQuote())
+            toRenderQuote(oldChild)->detachQuote();
+
         if (oldChild->inRenderFlowThread()) {
             if (oldChild->isBox())
                 oldChild->enclosingRenderFlowThread()->removeRenderBoxRegionInfo(toRenderBox(oldChild));
@@ -158,7 +161,6 @@ RenderObject* RenderObjectChildList::removeChildNode(RenderObject* owner, Render
     // by skipping this step when destroying the entire tree.
     if (!owner->documentBeingDestroyed()) {
         RenderCounter::rendererRemovedFromTree(oldChild);
-        RenderQuote::rendererRemovedFromTree(oldChild);
     }
 
     if (AXObjectCache::accessibilityEnabled())
@@ -210,13 +212,16 @@ void RenderObjectChildList::appendChildNode(RenderObject* owner, RenderObject* n
         if (newChild->isRenderRegion())
             toRenderRegion(newChild)->attachRegion();
 
+        // You can't attachQuote() otherwise the quote would be attached too early
+        // and get the wrong depth since generated content is inserted into anonymous
+        // renderers before going into the main render tree.
+
         if (RenderNamedFlowThread* containerFlowThread = renderNamedFlowThreadContainer(owner))
             containerFlowThread->addFlowChild(newChild);
     }
 
     if (!owner->documentBeingDestroyed()) {
         RenderCounter::rendererSubtreeAttached(newChild);
-        RenderQuote::rendererSubtreeAttached(newChild);
     }
     newChild->setNeedsLayoutAndPrefWidthsRecalc(); // Goes up the containing block hierarchy.
     if (!owner->normalChildNeedsLayout())
@@ -279,13 +284,15 @@ void RenderObjectChildList::insertChildNode(RenderObject* owner, RenderObject* c
         if (child->isRenderRegion())
             toRenderRegion(child)->attachRegion();
 
+        // Calling attachQuote() here would be too early (before anonymous renderers are inserted)
+        // see appendChild() for more explanation.
+
         if (RenderNamedFlowThread* containerFlowThread = renderNamedFlowThreadContainer(owner))
             containerFlowThread->addFlowChild(child, beforeChild);
     }
 
     if (!owner->documentBeingDestroyed()) {
         RenderCounter::rendererSubtreeAttached(child);
-        RenderQuote::rendererSubtreeAttached(child);
     }
     child->setNeedsLayoutAndPrefWidthsRecalc();
     if (!owner->normalChildNeedsLayout())
