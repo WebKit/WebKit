@@ -62,7 +62,7 @@
                     { "name": "efl-linux-slave-1", "platform": "efl" },
                     { "name": "efl-linux-slave-2", "platform": "efl" },
                     { "name": "efl-linux-slave-3", "platform": "efl" },
-                    { "name": "efl-linux-slave-4", "platform": "efl" },
+                    { "name": "efl-linux-slave-4", "platform": "efl" }
                   ],
 
     "builders":   [ { "name": "Apple SnowLeopard Release (Build)", "type": "Build", "builddir": "snowleopard-release",
