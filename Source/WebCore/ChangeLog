@@ -1,3 +1,26 @@
+2012-08-08  Beth Dakin  <bdakin@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=92275
+        Need a way to get a snapshot image that does not show the selection
+        -and corresponding-
+        <rdar://problem/11956802>
+
+        Reviewed by Anders Carlsson.
+
+        New function FrameView::paintContentsForSnapshot() has the option to 
+        exclude selection from the snapshot.
+
+        Export new function
+        * WebCore.exp.in:
+
+        Clear the selection from the RenderView when selection is to be excluded. Restore 
+        all of this information via FrameSelection::updateAppearance() after calling 
+        paintContents().
+        * page/FrameView.cpp:
+        (WebCore::FrameView::paintContentsForSnapshot):
+        (WebCore):
+        * page/FrameView.h:
+
 2012-08-07  James Robinson  <jamesr@chromium.org>
 
         [chromium] Only use public Platform API in NonCompositedContentHost

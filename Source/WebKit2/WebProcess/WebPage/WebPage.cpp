@@ -1191,43 +1191,27 @@ void WebPage::uninstallPageOverlay(PageOverlay* pageOverlay, bool fadeOut)
 #endif
 }
 
-PassRefPtr<WebImage> WebPage::snapshotInViewCoordinates(const IntRect& rect, ImageOptions options)
+static ImageOptions snapshotOptionsToImageOptions(SnapshotOptions snapshotOptions)
+{
+    unsigned imageOptions = 0;
+
+    if (snapshotOptions & SnapshotOptionsShareable)
+        imageOptions |= ImageOptionsShareable;
+
+    return static_cast<ImageOptions>(imageOptions);
+}
+
+PassRefPtr<WebImage> WebPage::scaledSnapshotWithOptions(const IntRect& rect, double scaleFactor, SnapshotOptions options)
 {
     FrameView* frameView = m_mainFrame->coreFrame()->view();
     if (!frameView)
         return 0;
 
     IntSize bitmapSize = rect.size();
-    float deviceScaleFactor = corePage()->deviceScaleFactor();
-    bitmapSize.scale(deviceScaleFactor);
-
-    RefPtr<WebImage> snapshot = WebImage::create(bitmapSize, options);
-    if (!snapshot->bitmap())
-        return 0;
-    
-    OwnPtr<WebCore::GraphicsContext> graphicsContext = snapshot->bitmap()->createGraphicsContext();
-    graphicsContext->applyDeviceScaleFactor(deviceScaleFactor);
-    graphicsContext->translate(-rect.x(), -rect.y());
-
-    frameView->updateLayoutAndStyleIfNeededRecursive();
-
-    PaintBehavior oldBehavior = frameView->paintBehavior();
-    frameView->setPaintBehavior(oldBehavior | PaintBehaviorFlattenCompositingLayers);
-    frameView->paint(graphicsContext.get(), rect);
-    frameView->setPaintBehavior(oldBehavior);
-
-    return snapshot.release();
-}
-
-PassRefPtr<WebImage> WebPage::scaledSnapshotInDocumentCoordinates(const IntRect& rect, double scaleFactor, ImageOptions options)
-{
-    FrameView* frameView = m_mainFrame->coreFrame()->view();
-    if (!frameView)
-        return 0;
-
     float combinedScaleFactor = scaleFactor * corePage()->deviceScaleFactor();
-    IntSize size(ceil(rect.width() * combinedScaleFactor), ceil(rect.height() * combinedScaleFactor));
-    RefPtr<WebImage> snapshot = WebImage::create(size, options);
+    bitmapSize.scale(combinedScaleFactor);
+
+    RefPtr<WebImage> snapshot = WebImage::create(bitmapSize, snapshotOptionsToImageOptions(options));
     if (!snapshot->bitmap())
         return 0;
 
@@ -1235,19 +1219,13 @@ PassRefPtr<WebImage> WebPage::scaledSnapshotInDocumentCoordinates(const IntRect&
     graphicsContext->applyDeviceScaleFactor(combinedScaleFactor);
     graphicsContext->translate(-rect.x(), -rect.y());
 
-    frameView->updateLayoutAndStyleIfNeededRecursive();
+    FrameView::SelectionInSnaphot shouldPaintSelection = FrameView::IncludeSelection;
+    if (options & SnapshotOptionsExcludeSelectionHighlighting)
+        shouldPaintSelection = FrameView::ExcludeSelection;
 
-    PaintBehavior oldBehavior = frameView->paintBehavior();
-    frameView->setPaintBehavior(oldBehavior | PaintBehaviorFlattenCompositingLayers);
-    frameView->paintContents(graphicsContext.get(), rect);
-    frameView->setPaintBehavior(oldBehavior);
+    frameView->paintContentsForSnapshot(graphicsContext.get(), rect, shouldPaintSelection);
 
     return snapshot.release();
-}
-
-PassRefPtr<WebImage> WebPage::snapshotInDocumentCoordinates(const IntRect& rect, ImageOptions options)
-{
-    return scaledSnapshotInDocumentCoordinates(rect, 1, options);
 }
 
 void WebPage::pageDidScroll()
