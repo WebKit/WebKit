@@ -2264,7 +2264,6 @@ BUGCR71783 LION SNOWLEOPARD : scrollbars/custom-scrollbar-with-incomplete-style.
 // GPU
 /////////////////////////////////////////////////////////////////////////////
 
-BUGWK89494 : platform/chromium/virtual/gpu/fast/canvas/webgl/gl-teximage.html = TEXT
 
 BUGWK47923 : compositing/geometry/limit-layer-bounds-opacity-transition.html = TIMEOUT
 

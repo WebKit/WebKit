@@ -238,14 +238,19 @@ function runTests(imgs) {
     // Not sure the exact count here because gamma does effect drawing into the
     // canvas but it should be close to 50% so I'll pass 45%
     for (var jj = 0; jj < 3; ++jj) {
+      // Only display the actual percentage string when outside of the test
+      // harness, to prevent safe variation from causing failures.
+      var inDumpRenderTree = window.testRunner;
       assertMsg(ge128Count[jj] > 256 * 0.45,
                 "Half the pixels in channel " + jj +
-                " should be >= 128,128,128. found " +
-                ((ge128Count[jj] / 256) * 100).toFixed() + "%");
+                " should be >= 128,128,128. " +
+                (!inDumpRenderTree ? "found " +
+                    ((ge128Count[jj] / 256) * 100).toFixed() + "%" : ""));
       assertMsg(lt128Count[jj] > 256 * 0.45,
                 "Half the pixels in channel " + jj +
-                " should be < 128,128,128. found " +
-                ((lt128Count[jj] / 256) * 100).toFixed() + "%");
+                " should be < 128,128,128. " +
+                (!inDumpRenderTree ? "found " +
+                    ((lt128Count[jj] / 256) * 100).toFixed() + "%" : ""));
     }
   }
 
@@ -399,4 +404,3 @@ function runTests(imgs) {
 </script>
 </body>
 </html>
-

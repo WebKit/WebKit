@@ -48,19 +48,19 @@ PASS pixels should be same regardless of gamma settings.
 
 check pixels are UN pre-multiplied
 PASS getError was expected value: NO_ERROR : Should be no errors from setup.
-PASS Half the pixels in channel 0 should be >= 128,128,128. found 49%
-PASS Half the pixels in channel 0 should be < 128,128,128. found 51%
-PASS Half the pixels in channel 1 should be >= 128,128,128. found 49%
-PASS Half the pixels in channel 1 should be < 128,128,128. found 51%
-PASS Half the pixels in channel 2 should be >= 128,128,128. found 49%
-PASS Half the pixels in channel 2 should be < 128,128,128. found 51%
+PASS Half the pixels in channel 0 should be >= 128,128,128. 
+PASS Half the pixels in channel 0 should be < 128,128,128. 
+PASS Half the pixels in channel 1 should be >= 128,128,128. 
+PASS Half the pixels in channel 1 should be < 128,128,128. 
+PASS Half the pixels in channel 2 should be >= 128,128,128. 
+PASS Half the pixels in channel 2 should be < 128,128,128. 
 PASS getError was expected value: NO_ERROR : Should be no errors from setup.
-PASS Half the pixels in channel 0 should be >= 128,128,128. found 50%
-PASS Half the pixels in channel 0 should be < 128,128,128. found 50%
-PASS Half the pixels in channel 1 should be >= 128,128,128. found 50%
-PASS Half the pixels in channel 1 should be < 128,128,128. found 50%
-PASS Half the pixels in channel 2 should be >= 128,128,128. found 50%
-PASS Half the pixels in channel 2 should be < 128,128,128. found 50%
+PASS Half the pixels in channel 0 should be >= 128,128,128. 
+PASS Half the pixels in channel 0 should be < 128,128,128. 
+PASS Half the pixels in channel 1 should be >= 128,128,128. 
+PASS Half the pixels in channel 1 should be < 128,128,128. 
+PASS Half the pixels in channel 2 should be >= 128,128,128. 
+PASS Half the pixels in channel 2 should be < 128,128,128. 
 
 check canvas pixels are UN pre-multiplied
 PASS getError was expected value: NO_ERROR : Should be no errors from setup.

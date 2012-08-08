@@ -1,3 +1,16 @@
+2012-08-08  Jeff Timanus  <twiz@chromium.org>
+
+        [Chromium] Updating fast/canvas/webgl/gl-teximage.html to prevent valid variations in results from causing test failures.
+        https://bugs.webkit.org/show_bug.cgi?id=89494
+
+        Reviewed by Adrienne Walker.
+
+        * fast/canvas/webgl/gl-teximage-expected.txt:
+        * fast/canvas/webgl/gl-teximage.html: Only display the actual percentage of passing pixels when outside of DRT.
+        * platform/chromium/TestExpectations:
+        * platform/efl/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2012-08-08  Dean Jackson  <dino@apple.com>
 
         Rebaseline fast/box-sizing/box-sizing.html and compositing/overflow/clip-descendents.html
