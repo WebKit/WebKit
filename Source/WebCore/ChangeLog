@@ -1,3 +1,74 @@
+2012-08-07  Anna Cavender  <annacc@chromium.org>
+
+        Create a MediaSource object.
+        https://bugs.webkit.org/show_bug.cgi?id=91773
+
+        Reviewed by Eric Carlson.
+
+        MediaSource object is needed in order to implement the new
+        object-oriented MediaSource API:
+        http://dvcs.w3.org/hg/html-media/raw-file/tip/media-source/media-source.html
+
+        No new tests - will be able to test after landing:
+        https://bugs.webkit.org/show_bug.cgi?id=91775
+
+        Adding new files to build files:
+        * CMakeLists.txt:
+        * DerivedSources.cpp:
+        * DerivedSources.make:
+        * DerivedSources.pri:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+
+        New MediaSource object:
+        * Modules/mediasource/MediaSource.cpp: Added.
+        * Modules/mediasource/MediaSource.h: Added.
+        * Modules/mediasource/MediaSource.idl: Added.
+
+        Create a registry for the blob storage and lookup:
+        * Modules/mediasource/MediaSourceRegistry.cpp: Added.
+        * Modules/mediasource/MediaSourceRegistry.h: Added.
+
+        Connect SourceBuffer to MediaSource:
+        * Modules/mediasource/SourceBuffer.cpp:
+        (WebCore::SourceBuffer::SourceBuffer):
+        (WebCore::SourceBuffer::buffered): Forward call to MediaSource.
+        (WebCore::SourceBuffer::append): Ditto.
+        (WebCore::SourceBuffer::abort): Ditto.
+        * Modules/mediasource/SourceBuffer.h:
+        (WebCore::SourceBuffer::create): Add a MediaSource to the constructor.
+        (WebCore::SourceBuffer::clear): Clear the MediaSource.
+        (SourceBuffer):
+        * Modules/mediasource/SourceBufferList.cpp: include SourceBuffer.h
+        * Modules/mediasource/SourceBufferList.h:
+
+        Make MediaSource an EventTarget:
+        * dom/EventTarget.h:
+        (WebCore):
+        * dom/EventTargetFactory.in:
+
+        Enable creation of MediaSource object URL from JavaScript:
+        * html/DOMURL.cpp:
+        (WebCore):
+        (WebCore::DOMURL::createObjectURL):
+        (WebCore::DOMURL::revokeObjectURL):
+        * html/DOMURL.h:
+        (WebCore):
+        (DOMURL):
+        * html/DOMURL.idl:
+        * html/PublicURLManager.h: create a new sourceURLs list for storing
+            reigstered MediaSource URLS.
+        (WebCore::PublicURLManager::contextDestroyed): make sure everything is
+            removed from the sourceURLs list upon destruction.
+        (PublicURLManager):
+        (WebCore::PublicURLManager::sourceURLs): getter for the sourceURLs list.
+
+        New MediaSource constructor:
+        * page/DOMWindow.idl:
+
 2012-08-07  Kentaro Hara  <haraken@chromium.org>
 
         [V8] Implement V8Proxy::registerExtensionIfNeeded() and remove redundant methods

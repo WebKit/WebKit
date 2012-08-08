@@ -28,56 +28,36 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "SourceBuffer.h"
+#ifndef MediaSourceRegistry_h
+#define MediaSourceRegistry_h
 
 #if ENABLE(MEDIA_SOURCE)
 
-#include "TimeRanges.h"
-#include <wtf/Uint8Array.h>
+#include <wtf/HashMap.h>
+#include <wtf/PassRefPtr.h>
+#include <wtf/text/StringHash.h>
 
 namespace WebCore {
 
-SourceBuffer::SourceBuffer(const String& id, PassRefPtr<MediaSource> source)
-    : m_id(id)
-    , m_source(source)
-{
-}
+class KURL;
+class MediaSource;
 
-SourceBuffer::~SourceBuffer()
-{
-}
+class MediaSourceRegistry {
+public:
+    // Returns a single instance of MediaSourceRegistry.
+    static MediaSourceRegistry& registry();
 
-PassRefPtr<TimeRanges> SourceBuffer::buffered(ExceptionCode& ec) const
-{
-    if (!m_source) {
-        ec = INVALID_STATE_ERR;
-        return 0;
-    }
+    // Registers a blob URL referring to the specified media source.
+    void registerMediaSourceURL(const KURL&, PassRefPtr<MediaSource>);
+    void unregisterMediaSourceURL(const KURL&);
 
-    return m_source->buffered(id(), ec);
-}
+    MediaSource* lookupMediaSource(const String& url);
 
-void SourceBuffer::append(PassRefPtr<Uint8Array> data, ExceptionCode& ec)
-{
-    if (!m_source) {
-        ec = INVALID_STATE_ERR;
-        return;
-    }
-
-    m_source->append(id(), data, ec);
-}
-
-void SourceBuffer::abort(ExceptionCode& ec)
-{
-    if (!m_source) {
-        ec = INVALID_STATE_ERR;
-        return;
-    }
-
-    m_source->abort(id(), ec);
-}
+private:
+    HashMap<String, RefPtr<MediaSource> > m_mediaSources;
+};
 
 } // namespace WebCore
 
+#endif
 #endif

@@ -28,57 +28,83 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SourceBufferList_h
-#define SourceBufferList_h
+#ifndef MediaSource_h
+#define MediaSource_h
 
 #if ENABLE(MEDIA_SOURCE)
 
-#include "EventTarget.h"
+#include "ContextDestructionObserver.h"
+#include "MediaPlayer.h"
+#include "SourceBuffer.h"
+#include "SourceBufferList.h"
 #include <wtf/RefCounted.h>
-#include <wtf/Vector.h>
 
 namespace WebCore {
 
-class SourceBuffer;
-
-class SourceBufferList : public RefCounted<SourceBufferList>, public EventTarget {
+class MediaSource : public RefCounted<MediaSource>, public EventTarget, public ContextDestructionObserver {
 public:
-    static PassRefPtr<SourceBufferList> create(ScriptExecutionContext* context)
+    static const String& openKeyword()
     {
-        return adoptRef(new SourceBufferList(context));
+        DEFINE_STATIC_LOCAL(const String, open, ("open"));
+        return open;
     }
-    virtual ~SourceBufferList() { }
 
-    unsigned long length() const;
-    SourceBuffer* item(unsigned index) const;
+    static const String& closedKeyword()
+    {
+        DEFINE_STATIC_LOCAL(const String, closed, ("closed"));
+        return closed;
+    }
 
-    void add(PassRefPtr<SourceBuffer>);
-    bool remove(SourceBuffer*);
-    void clear();
+    static const String& endedKeyword()
+    {
+        DEFINE_STATIC_LOCAL(const String, ended, ("ended"));
+        return ended;
+    }
+
+    static PassRefPtr<MediaSource> create(ScriptExecutionContext*);
+    virtual ~MediaSource() { }
+
+    SourceBufferList* sourceBuffers();
+    SourceBufferList* activeSourceBuffers();
+
+    SourceBuffer* addSourceBuffer(const String& type, ExceptionCode&);
+    void removeSourceBuffer(SourceBuffer*, ExceptionCode&);
+
+    const String& readyState() const;
+    void setReadyState(const String&);
+
+    void endOfStream(const String& error, ExceptionCode&);
+
+    void setMediaPlayer(MediaPlayer* player) { m_player = player; }
+    
+    PassRefPtr<TimeRanges> buffered(const String& id, ExceptionCode&) const;
+    void append(const String& id, PassRefPtr<Uint8Array> data, ExceptionCode&);
+    void abort(const String& id, ExceptionCode&);
 
     // EventTarget interface
     virtual const AtomicString& interfaceName() const OVERRIDE;
     virtual ScriptExecutionContext* scriptExecutionContext() const OVERRIDE;
 
-    using RefCounted<SourceBufferList>::ref;
-    using RefCounted<SourceBufferList>::deref;
-
-protected:
-    virtual EventTargetData* eventTargetData() OVERRIDE;
-    virtual EventTargetData* ensureEventTargetData() OVERRIDE;
+    using RefCounted<MediaSource>::ref;
+    using RefCounted<MediaSource>::deref;
 
 private:
-    explicit SourceBufferList(ScriptExecutionContext*);
+    explicit MediaSource(ScriptExecutionContext*);
 
-    void createAndFireEvent(const AtomicString&);
+    virtual EventTargetData* eventTargetData() OVERRIDE;
+    virtual EventTargetData* ensureEventTargetData() OVERRIDE;
 
     virtual void refEventTarget() OVERRIDE { ref(); }
     virtual void derefEventTarget() OVERRIDE { deref(); }
 
     EventTargetData m_eventTargetData;
-    ScriptExecutionContext* m_scriptExecutionContext;
 
-    Vector<RefPtr<SourceBuffer> > m_list;
+    String m_readyState;
+    MediaPlayer* m_player;
+
+    RefPtr<SourceBufferList> m_sourceBuffers;
+    RefPtr<SourceBufferList> m_activeSourceBuffers;
+    int m_nextSourceBufferId;
 };
 
 } // namespace WebCore

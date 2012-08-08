@@ -36,6 +36,7 @@
 namespace WebCore {
 
 class Blob;
+class MediaSource;
 class MediaStream;
 class ScriptExecutionContext;
 
@@ -49,6 +50,9 @@ public:
 
     static String createObjectURL(ScriptExecutionContext*, Blob*);
     static void revokeObjectURL(ScriptExecutionContext*, const String&);
+#if ENABLE(MEDIA_SOURCE)
+    static String createObjectURL(ScriptExecutionContext*, MediaSource*);
+#endif
 #if ENABLE(MEDIA_STREAM)
     static String createObjectURL(ScriptExecutionContext*, MediaStream*);
 #endif

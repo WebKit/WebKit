@@ -56,6 +56,7 @@ namespace WebCore {
     class JavaScriptAudioNode;
     class LocalMediaStream;
     class MediaController;
+    class MediaSource;
     class MediaStream;
     class MessagePort;
     class Node;

@@ -35,6 +35,7 @@ namespace WebCore {
 
 MediaStreamRegistry& MediaStreamRegistry::registry()
 {
+    // Since WebWorkers cannot obtain MediaSource objects, we should be on the main thread.
     ASSERT(isMainThread());
     DEFINE_STATIC_LOCAL(MediaStreamRegistry, instance, ());
     return instance;

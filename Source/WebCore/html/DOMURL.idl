@@ -33,6 +33,9 @@ module html {
         JSNoStaticTables,
         InterfaceName=URL
     ] DOMURL {
+#if defined(ENABLE_MEDIA_SOURCE) && ENABLE_MEDIA_SOURCE
+        [CallWith=ScriptExecutionContext,TreatReturnedNullStringAs=Null] static DOMString createObjectURL(in MediaSource? source);
+#endif
 #if defined(ENABLE_MEDIA_STREAM) && ENABLE_MEDIA_STREAM
         [CallWith=ScriptExecutionContext,TreatReturnedNullStringAs=Null] static DOMString createObjectURL(in MediaStream? stream);
 #endif
