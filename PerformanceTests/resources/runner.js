@@ -1,5 +1,8 @@
 // There are tests for computeStatistics() located in LayoutTests/fast/harness/perftests
 
+// We need access to console.memory for the memory measurements
+internals.settings.setMemoryInfoEnabled(true);
+
 var PerfTestRunner = {};
 
 // To make the benchmark results predictable, we replace Math.random with a
