@@ -42,6 +42,7 @@
 #include "WrapperTypeInfo.h"
 #include <v8.h>
 #include <wtf/Forward.h>
+#include <wtf/HashMap.h>
 #include <wtf/PassRefPtr.h> // so generated bindings don't have to
 #include <wtf/Vector.h>
 #include <wtf/text/TextPosition.h>
@@ -71,6 +72,16 @@ namespace WebCore {
     // The list of extensions that are registered for use with V8.
     typedef WTF::Vector<v8::Extension*> V8Extensions;
 
+    // Note: although the pointer is raw, the instance is kept alive by a strong
+    // reference to the v8 context it contains, which is not made weak until we
+    // call world->destroy().
+    //
+    // FIXME: We want to eventually be holding window shells instead of the
+    //        IsolatedContext directly.
+    typedef HashMap<int, V8IsolatedContext*> IsolatedWorldMap;
+
+    typedef HashMap<int, RefPtr<SecurityOrigin> > IsolatedWorldSecurityOriginMap;
+
     class V8Proxy {
     public:
         // The types of javascript errors that can be thrown.
@@ -98,8 +109,6 @@ namespace WebCore {
         // Array, and so-on), and its own wrappers for all DOM nodes and DOM
         // constructors.
         v8::Local<v8::Array> evaluateInIsolatedWorld(int worldID, const Vector<ScriptSourceCode>& sources, int extensionGroup);
-
-        void setIsolatedWorldSecurityOrigin(int worldID, PassRefPtr<SecurityOrigin>);
 
         // Evaluate a script file in the current execution environment.
         // The caller must hold an execution context.
@@ -171,6 +180,12 @@ namespace WebCore {
 
         static void reportUnsafeAccessTo(Document* targetDocument);
 
+        // FIXME: Move m_isolatedWorlds to ScriptController and remove this getter.
+        IsolatedWorldMap& isolatedWorlds() { return m_isolatedWorlds; }
+
+        // FIXME: Move m_isolatedWorldSecurityOrigins to ScriptController and remove this getter.
+        IsolatedWorldSecurityOriginMap& isolatedWorldSecurityOrigins() { return m_isolatedWorldSecurityOrigins; }
+
     private:
         void resetIsolatedWorlds();
 
@@ -189,17 +204,8 @@ namespace WebCore {
         // The isolated worlds we are tracking for this frame. We hold them alive
         // here so that they can be used again by future calls to
         // evaluateInIsolatedWorld().
-        //
-        // Note: although the pointer is raw, the instance is kept alive by a strong
-        // reference to the v8 context it contains, which is not made weak until we
-        // call world->destroy().
-        //
-        // FIXME: We want to eventually be holding window shells instead of the
-        //        IsolatedContext directly.
-        typedef HashMap<int, V8IsolatedContext*> IsolatedWorldMap;
         IsolatedWorldMap m_isolatedWorlds;
         
-        typedef HashMap<int, RefPtr<SecurityOrigin> > IsolatedWorldSecurityOriginMap;
         IsolatedWorldSecurityOriginMap m_isolatedWorldSecurityOrigins;
     };
 

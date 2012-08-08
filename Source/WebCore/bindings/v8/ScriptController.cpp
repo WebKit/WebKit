@@ -181,7 +181,11 @@ void ScriptController::evaluateInIsolatedWorld(unsigned worldID, const Vector<Sc
 
 void ScriptController::setIsolatedWorldSecurityOrigin(int worldID, PassRefPtr<SecurityOrigin> securityOrigin)
 {
-    m_proxy->setIsolatedWorldSecurityOrigin(worldID, securityOrigin);
+    ASSERT(worldID);
+    m_proxy->isolatedWorldSecurityOrigins().set(worldID, securityOrigin);
+    IsolatedWorldMap::iterator iter = m_proxy->isolatedWorlds().find(worldID);
+    if (iter != m_proxy->isolatedWorlds().end())
+        iter->second->setSecurityOrigin(securityOrigin);
 }
 
 // Evaluate a script file in the environment of this proxy.

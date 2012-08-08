@@ -1,3 +1,28 @@
+2012-08-07  Kentaro Hara  <haraken@chromium.org>
+
+        [V8] Move setIsolatedWorldSecurityOrigin() from V8Proxy to ScriptController
+        https://bugs.webkit.org/show_bug.cgi?id=93334
+
+        Reviewed by Adam Barth.
+
+        The goal is to move factor out V8Proxy methods to ScriptController.
+        As a starting point, this patch moves setIsolatedWorldSecurityOrigin().
+
+        isolatedWorlds() and isolatedWorldSecurityOrigins() are temporary methods.
+        They will be soon removed after moving all related methods
+        and m_isolatedWorlds and m_isolatedWorldSecurityOrigins.
+
+        No tests. No change in behavior.
+
+        * bindings/v8/ScriptController.cpp:
+        (WebCore::ScriptController::setIsolatedWorldSecurityOrigin):
+        * bindings/v8/V8Proxy.cpp:
+        * bindings/v8/V8Proxy.h:
+        (WebCore):
+        (V8Proxy):
+        (WebCore::V8Proxy::isolatedWorlds):
+        (WebCore::V8Proxy::isolatedWorldSecurityOrigins):
+
 2012-08-07  Yoshifumi Inoue  <yosin@chromium.org>
 
         translateZ(0) shifts file name in file input

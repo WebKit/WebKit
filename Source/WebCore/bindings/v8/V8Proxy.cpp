@@ -218,16 +218,6 @@ v8::Local<v8::Array> V8Proxy::evaluateInIsolatedWorld(int worldID, const Vector<
     return handleScope.Close(results);
 }
 
-void V8Proxy::setIsolatedWorldSecurityOrigin(int worldID, PassRefPtr<SecurityOrigin> prpSecurityOriginIn)
-{
-    ASSERT(worldID);
-    RefPtr<SecurityOrigin> securityOrigin = prpSecurityOriginIn;
-    m_isolatedWorldSecurityOrigins.set(worldID, securityOrigin);
-    IsolatedWorldMap::iterator iter = m_isolatedWorlds.find(worldID);
-    if (iter != m_isolatedWorlds.end())
-        iter->second->setSecurityOrigin(securityOrigin);
-}
-
 PassOwnPtr<v8::ScriptData> V8Proxy::precompileScript(v8::Handle<v8::String> code, CachedScript* cachedScript)
 {
     // A pseudo-randomly chosen ID used to store and retrieve V8 ScriptData from
