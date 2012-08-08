@@ -283,7 +283,9 @@ max 1120
     def create_runner_and_setup_results_template(self, args=[]):
         runner, port = self.create_runner(args)
         filesystem = port.host.filesystem
-        filesystem.write_text_file(runner._base_path + '/resources/results-template.html', 'BEGIN<?WebKitPerfTestRunnerInsertionPoint?>END')
+        filesystem.write_text_file(runner._base_path + '/resources/results-template.html',
+            'BEGIN<script src="%AbsolutePathToWebKitTrunk%/some.js"></script>'
+            '<script src="%AbsolutePathToWebKitTrunk%/other.js"></script><script>%PeformanceTestsResultsJSON%</script>END')
         filesystem.write_text_file(runner._base_path + '/Dromaeo/resources/dromaeo/web/lib/jquery-1.6.4.js', 'jquery content')
         return runner, port
 
@@ -328,14 +330,32 @@ max 1120
         json_output = port.host.filesystem.read_text_file('/mock-checkout/output.json')
         self.assertEqual(json.loads(json_output), [expected_entry])
         self.assertEqual(filesystem.read_text_file('/mock-checkout/output.html'),
-            'BEGIN<script>jquery content</script><script id="json">' + json_output + '</script>END')
+            'BEGIN<script src="/test.checkout/some.js"></script><script src="/test.checkout/other.js"></script>'
+            '<script>%s</script>END' % json_output)
         self.assertEqual(page_shown[0], '/mock-checkout/output.html')
 
         self._test_run_with_json_output(runner, filesystem)
         json_output = port.host.filesystem.read_text_file('/mock-checkout/output.json')
         self.assertEqual(json.loads(json_output), [expected_entry, expected_entry])
         self.assertEqual(filesystem.read_text_file('/mock-checkout/output.html'),
-            'BEGIN<script>jquery content</script><script id="json">' + json_output + '</script>END')
+            'BEGIN<script src="/test.checkout/some.js"></script><script src="/test.checkout/other.js"></script>'
+            '<script>%s</script>END' % json_output)
+
+    def test_run_respects_no_show_results(self):
+        show_results_html_file = lambda path: page_shown.append(path)
+
+        runner, port = self.create_runner_and_setup_results_template(args=['--output-json-path=/mock-checkout/output.json'])
+        page_shown = []
+        port.show_results_html_file = show_results_html_file
+        self._test_run_with_json_output(runner, port.host.filesystem)
+        self.assertEqual(page_shown[0], '/mock-checkout/output.html')
+
+        runner, port = self.create_runner_and_setup_results_template(args=['--output-json-path=/mock-checkout/output.json',
+            '--no-show-results'])
+        page_shown = []
+        port.show_results_html_file = show_results_html_file
+        self._test_run_with_json_output(runner, port.host.filesystem)
+        self.assertEqual(page_shown, [])
 
     def test_run_with_bad_output_json(self):
         runner, port = self.create_runner_and_setup_results_template(args=['--output-json-path=/mock-checkout/output.json'])

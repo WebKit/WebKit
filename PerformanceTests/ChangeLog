@@ -1,3 +1,21 @@
+2012-08-07  Ryosuke Niwa  <rniwa@webkit.org>
+
+        run-perf-tests should support --no-show-results
+        https://bugs.webkit.org/show_bug.cgi?id=93409
+
+        Reviewed by Dirk Pranke.
+
+        Add a flot as a separate file and load it as an external resource.
+
+        Also include scripts as external resources from both local filesystem and webkit.org
+        so that it continues to work regardless of where you put it.
+
+        It breaks when someone else receives the file and save it somewhere and doesn't have
+        a network connection but that seems like a scenario we don't care that much.
+
+        * resources/jquery.flot.min.js: Added.
+        * resources/results-template.html:
+
 2012-08-06  Ryosuke Niwa  <rniwa@webkit.org>
 
         run-webkit-tests should have ability to add description to its JSON output
