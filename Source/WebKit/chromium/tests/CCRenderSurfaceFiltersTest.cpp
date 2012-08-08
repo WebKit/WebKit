@@ -27,7 +27,6 @@
 #include "cc/CCRenderSurfaceFilters.h"
 
 #include "CompositorFakeWebGraphicsContext3D.h"
-#include "GraphicsContext3DPrivate.h"
 #include <gtest/gtest.h>
 #include <public/WebFilterOperation.h>
 #include <public/WebFilterOperations.h>

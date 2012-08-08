@@ -1005,7 +1005,7 @@ public:
     virtual void beginTest()
     {
         m_layerTreeHost->setViewportSize(IntSize(20, 20), IntSize(20, 20));
-        m_layerTreeHost->setBackgroundColor(Color::gray);
+        m_layerTreeHost->setBackgroundColor(SK_ColorGRAY);
         m_layerTreeHost->setPageScaleFactorAndLimits(5, 5, 5);
 
         postSetNeedsCommitToMainThread();
@@ -1014,7 +1014,7 @@ public:
     virtual void commitCompleteOnCCThread(CCLayerTreeHostImpl* impl)
     {
         EXPECT_EQ(IntSize(20, 20), impl->layoutViewportSize());
-        EXPECT_EQ(Color::gray, impl->backgroundColor());
+        EXPECT_EQ(SK_ColorGRAY, impl->backgroundColor());
         EXPECT_EQ(5, impl->pageScale());
 
         endTest();

@@ -27,6 +27,7 @@
 #define FakeWebScrollbarThemeGeometry_h
 
 #include <public/WebScrollbarThemeGeometry.h>
+#include <wtf/PassOwnPtr.h>
 
 namespace WebKit {
 

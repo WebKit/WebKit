@@ -26,8 +26,8 @@
 
 #include "ThrottledTextureUploader.h"
 
+#include "Extensions3DChromium.h"
 #include "FakeWebGraphicsContext3D.h"
-#include "GraphicsContext3DPrivate.h"
 
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>

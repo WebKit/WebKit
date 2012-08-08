@@ -1,3 +1,23 @@
+2012-08-08  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Fix up includes and types in chromium compositor unit tests
+        https://bugs.webkit.org/show_bug.cgi?id=93553
+
+        Reviewed by Adrienne Walker.
+
+        This removes some unused GraphicsContext3DPrivate.h includes and adds some includes that were being implicitely
+        depending upon - mostly for wtf/PassOwnPtr.h.
+
+        * tests/CCLayerTreeHostTest.cpp:
+        (::CCLayerTreeHostTestCommit::beginTest):
+        (::CCLayerTreeHostTestCommit::commitCompleteOnCCThread):
+        * tests/CCRenderSurfaceFiltersTest.cpp:
+        * tests/CompositorFakeWebGraphicsContext3D.h:
+        * tests/FakeGraphicsContext3DTest.cpp:
+        * tests/FakeWebScrollbarThemeGeometry.h:
+        * tests/TextureCopierTest.cpp:
+        * tests/ThrottledTextureUploaderTest.cpp:
+
 2012-08-08  Eric Penner  <epenner@google.com>
 
         [chromium] Refactor tile flags.

@@ -26,6 +26,7 @@
 #define CompositorFakeWebGraphicsContext3D_h
 
 #include "FakeWebGraphicsContext3D.h"
+#include <wtf/PassOwnPtr.h>
 
 namespace WebKit {
 

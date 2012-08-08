@@ -26,9 +26,10 @@
 #include "config.h"
 
 #include "FakeWebGraphicsContext3D.h"
-
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
+#include <wtf/OwnPtr.h>
+#include <wtf/PassOwnPtr.h>
 
 using namespace WebCore;
 using namespace WebKit;
