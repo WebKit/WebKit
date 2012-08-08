@@ -1,3 +1,17 @@
+2012-08-08  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: store last evaluation result in $_
+        https://bugs.webkit.org/show_bug.cgi?id=93377
+
+        Reviewed by Vsevolod Vlasov.
+
+        All "console" evaluations end up in that variable on command line API.
+
+        Test: inspector/console/console-last-result.html
+
+        * inspector/InjectedScriptSource.js:
+        (.):
+
 2012-08-08  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] Port internal findMethodIndex method matcher to use JSC C API

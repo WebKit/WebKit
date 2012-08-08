@@ -404,7 +404,7 @@ InjectedScript.prototype = {
     {
         try {
             return { wasThrown: false,
-                     result: this._wrapObject(this._evaluateOn(evalFunction, object, expression, isEvalOnCallFrame, injectCommandLineAPI), objectGroup, returnByValue) };
+                     result: this._wrapObject(this._evaluateOn(evalFunction, object, objectGroup, expression, isEvalOnCallFrame, injectCommandLineAPI), objectGroup, returnByValue) };
         } catch (e) {
             return this._createThrownValue(e, objectGroup);
         }
@@ -428,12 +428,13 @@ InjectedScript.prototype = {
     /**
      * @param {Function} evalFunction
      * @param {Object} object
+     * @param {string} objectGroup
      * @param {string} expression
      * @param {boolean} isEvalOnCallFrame
      * @param {boolean} injectCommandLineAPI
      * @return {*}
      */
-    _evaluateOn: function(evalFunction, object, expression, isEvalOnCallFrame, injectCommandLineAPI)
+    _evaluateOn: function(evalFunction, object, objectGroup, expression, isEvalOnCallFrame, injectCommandLineAPI)
     {
         // Only install command line api object for the time of evaluation.
         // Surround the expression in with statements to inject our command line API so that
@@ -444,7 +445,10 @@ InjectedScript.prototype = {
                 inspectedWindow.console._commandLineAPI = new CommandLineAPI(this._commandLineAPIImpl, isEvalOnCallFrame ? object : null);
                 expression = "with ((window && window.console && window.console._commandLineAPI) || {}) {\n" + expression + "\n}";
             }
-            return evalFunction.call(object, expression);
+            var result = evalFunction.call(object, expression);
+            if (objectGroup === "console")
+                this._lastResult = result;
+            return result;
         } finally {
             if (injectCommandLineAPI && inspectedWindow.console)
                 delete inspectedWindow.console._commandLineAPI;
@@ -797,6 +801,8 @@ function CommandLineAPI(commandLineAPIImpl, callFrame)
 
         this.__defineGetter__("$" + i, commandLineAPIImpl._inspectedObject.bind(commandLineAPIImpl, i));
     }
+
+    this.$_ = injectedScript._lastResult;
 }
 
 /**

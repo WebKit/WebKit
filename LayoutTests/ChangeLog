@@ -1,3 +1,13 @@
+2012-08-08  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: store last evaluation result in $_
+        https://bugs.webkit.org/show_bug.cgi?id=93377
+
+        Reviewed by Vsevolod Vlasov.
+
+        * inspector/console/console-last-result-expected.txt: Added.
+        * inspector/console/console-last-result.html: Added.
+
 2012-08-08  KwangYong Choi  <ky0.choi@samsung.com>
 
         [EFL] Support DataList for <input type="range">
