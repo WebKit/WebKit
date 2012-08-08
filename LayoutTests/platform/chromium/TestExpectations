@@ -2619,6 +2619,8 @@ BUGWK65199 LINUX ANDROID WIN SNOWLEOPARD : fast/writing-mode/broken-ideograph-sm
 
 BUGWK65453 MAC : fast/css/outline-auto-empty-rects.html = IMAGE
 
+BUGWK93546 : compositing/plugins/no-backing-store.html = PASS TEXT
+
 // For some reason, these tests are running as pixel tests most of the time instead of dumping as text.
 BUGWK74694 : http/tests/cache/history-only-cached-subresource-loads.html = MISSING PASS
 BUGWK74694 : http/tests/cache/history-only-cached-subresource-loads-max-age-https.html = MISSING PASS

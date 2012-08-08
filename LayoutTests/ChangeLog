@@ -1,3 +1,9 @@
+2012-08-08  Florin Malita  <fmalita@chromium.org>
+
+        [Chromium] Unreviewed gardening: compositing/plugins/no-backing-store.html yields incorrect results.
+
+        * platform/chromium/TestExpectations:
+
 2012-08-08  Dean Jackson  <dino@apple.com>
 
         REGRESSION (r124416): fast/forms/basic-selects.html failing on Lion Debug Tests
