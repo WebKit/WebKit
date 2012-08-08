@@ -1,3 +1,13 @@
+2012-08-07  Ojan Vafai  <ojan@chromium.org>
+
+        percentage margins + flex incorrectly overflows the flexbox
+        https://bugs.webkit.org/show_bug.cgi?id=93411
+
+        Reviewed by Tony Chang.
+
+        * css3/flexbox/percent-margins-expected.txt: Added.
+        * css3/flexbox/percent-margins.html: Added.
+
 2012-08-07  Eric Carlson  <eric.carlson@apple.com>
 
         REGRESSION (r124710-r124713): media/video-seek-past-end-paused.html failing on Apple Lion Debug WK1 (Tests)

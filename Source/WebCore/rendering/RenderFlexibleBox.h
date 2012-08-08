@@ -119,6 +119,7 @@ private:
     LayoutUnit availableAlignmentSpaceForChild(LayoutUnit lineCrossAxisExtent, RenderBox*);
     LayoutUnit marginBoxAscentForChild(RenderBox*);
 
+    LayoutUnit computeMarginValue(Length margin, LayoutUnit availableSize, RenderView*);
     void computeMainAxisPreferredSizes(bool relayoutChildren, OrderHashSet&);
     LayoutUnit lineBreakLength();
     LayoutUnit adjustChildSizeForMinAndMax(RenderBox*, LayoutUnit childSize, LayoutUnit flexboxAvailableContentExtent);

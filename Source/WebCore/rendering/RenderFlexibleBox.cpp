@@ -758,6 +758,14 @@ LayoutUnit RenderFlexibleBox::marginBoxAscentForChild(RenderBox* child)
     return ascent + flowAwareMarginBeforeForChild(child);
 }
 
+LayoutUnit RenderFlexibleBox::computeMarginValue(Length margin, LayoutUnit availableSize, RenderView* view)
+{
+    // CSS always computes percent margins with respect to the containing block's width, even for margin-top/margin-bottom.
+    if (margin.isPercent())
+        availableSize = logicalWidth();
+    return minimumValueForLength(margin, availableSize, view);
+}
+
 void RenderFlexibleBox::computeMainAxisPreferredSizes(bool relayoutChildren, OrderHashSet& orderValues)
 {
     LayoutUnit flexboxAvailableContentExtent = mainAxisContentExtent();
@@ -780,11 +788,11 @@ void RenderFlexibleBox::computeMainAxisPreferredSizes(bool relayoutChildren, Ord
         // Before running the flex algorithm, 'auto' has a margin of 0.
         // Also, if we're not auto sizing, we don't do a layout that computes the start/end margins.
         if (isHorizontalFlow()) {
-            child->setMarginLeft(minimumValueForLength(child->style()->marginLeft(), flexboxAvailableContentExtent, renderView));
-            child->setMarginRight(minimumValueForLength(child->style()->marginRight(), flexboxAvailableContentExtent, renderView));
+            child->setMarginLeft(computeMarginValue(child->style()->marginLeft(), flexboxAvailableContentExtent, renderView));
+            child->setMarginRight(computeMarginValue(child->style()->marginRight(), flexboxAvailableContentExtent, renderView));
         } else {
-            child->setMarginTop(minimumValueForLength(child->style()->marginTop(), flexboxAvailableContentExtent, renderView));
-            child->setMarginBottom(minimumValueForLength(child->style()->marginBottom(), flexboxAvailableContentExtent, renderView));
+            child->setMarginTop(computeMarginValue(child->style()->marginTop(), flexboxAvailableContentExtent, renderView));
+            child->setMarginBottom(computeMarginValue(child->style()->marginBottom(), flexboxAvailableContentExtent, renderView));
         }
     }
 }
