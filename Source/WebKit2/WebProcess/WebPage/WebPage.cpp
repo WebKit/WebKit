@@ -120,6 +120,10 @@
 #include <WebCore/Range.h>
 #include <WebCore/VisiblePosition.h>
 
+#if ENABLE(MHTML)
+#include <WebCore/MHTMLArchive.h>
+#endif
+
 #if ENABLE(PLUGIN_PROCESS)
 #if PLATFORM(MAC)
 #include "MachPort.h"
@@ -1856,6 +1860,22 @@ void WebPage::getContentsAsString(uint64_t callbackID)
     String resultString = m_mainFrame->contentsAsString();
     send(Messages::WebPageProxy::StringCallback(resultString, callbackID));
 }
+
+#if ENABLE(MHTML)
+void WebPage::getContentsAsMHTMLData(uint64_t callbackID, bool useBinaryEncoding)
+{
+    CoreIPC::DataReference dataReference;
+
+    RefPtr<SharedBuffer> buffer = useBinaryEncoding
+        ? MHTMLArchive::generateMHTMLDataUsingBinaryEncoding(m_page.get())
+        : MHTMLArchive::generateMHTMLData(m_page.get());
+
+    if (buffer)
+        dataReference = CoreIPC::DataReference(reinterpret_cast<const uint8_t*>(buffer->data()), buffer->size());
+
+    send(Messages::WebPageProxy::DataCallback(dataReference, callbackID));
+}
+#endif
 
 void WebPage::getRenderTreeExternalRepresentation(uint64_t callbackID)
 {

@@ -582,6 +582,13 @@ void WKPageGetContentsAsString_b(WKPageRef pageRef, WKPageGetSourceForFrameBlock
 }
 #endif
 
+void WKPageGetContentsAsMHTMLData(WKPageRef pageRef, bool useBinaryEncoding, void* context, WKPageGetContentsAsMHTMLDataFunction callback)
+{
+#if ENABLE(MHTML)
+    toImpl(pageRef)->getContentsAsMHTMLData(DataCallback::create(context, callback), useBinaryEncoding);
+#endif
+}
+
 void WKPageForceRepaint(WKPageRef pageRef, void* context, WKPageForceRepaintFunction callback)
 {
     toImpl(pageRef)->forceRepaint(VoidCallback::create(context, callback));

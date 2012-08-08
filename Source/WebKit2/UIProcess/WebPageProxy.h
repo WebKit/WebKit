@@ -528,6 +528,9 @@ public:
 #endif
 
     void getContentsAsString(PassRefPtr<StringCallback>);
+#if ENABLE(MHTML)
+    void getContentsAsMHTMLData(PassRefPtr<DataCallback>, bool useBinaryEncoding);
+#endif
     void getMainResourceDataOfFrame(WebFrameProxy*, PassRefPtr<DataCallback>);
     void getResourceDataFromFrame(WebFrameProxy*, WebURL*, PassRefPtr<DataCallback>);
     void getRenderTreeExternalRepresentation(PassRefPtr<StringCallback>);

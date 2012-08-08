@@ -1656,6 +1656,21 @@ void WebPageProxy::getContentsAsString(PassRefPtr<StringCallback> prpCallback)
     process()->send(Messages::WebPage::GetContentsAsString(callbackID), m_pageID);
 }
 
+#if ENABLE(MHTML)
+void WebPageProxy::getContentsAsMHTMLData(PassRefPtr<DataCallback> prpCallback, bool useBinaryEncoding)
+{
+    RefPtr<DataCallback> callback = prpCallback;
+    if (!isValid()) {
+        callback->invalidate();
+        return;
+    }
+
+    uint64_t callbackID = callback->callbackID();
+    m_dataCallbacks.set(callbackID, callback.get());
+    process()->send(Messages::WebPage::GetContentsAsMHTMLData(callbackID, useBinaryEncoding), m_pageID);
+}
+#endif
+
 void WebPageProxy::getSelectionOrContentsAsString(PassRefPtr<StringCallback> prpCallback)
 {
     RefPtr<StringCallback> callback = prpCallback;

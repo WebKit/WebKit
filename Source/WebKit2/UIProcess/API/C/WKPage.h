@@ -465,6 +465,9 @@ typedef void (^WKPageGetContentsAsStringBlock)(WKStringRef, WKErrorRef);
 WK_EXPORT void WKPageGetContentsAsString_b(WKPageRef page, WKPageGetContentsAsStringBlock block);
 #endif
 
+typedef void (*WKPageGetContentsAsMHTMLDataFunction)(WKDataRef, WKErrorRef, void*);
+WK_EXPORT void WKPageGetContentsAsMHTMLData(WKPageRef page, bool useBinaryEncoding, void* context, WKPageGetContentsAsMHTMLDataFunction function);
+
 typedef void (*WKPageForceRepaintFunction)(WKErrorRef, void*);
 WK_EXPORT void WKPageForceRepaint(WKPageRef page, void* context, WKPageForceRepaintFunction function);
 

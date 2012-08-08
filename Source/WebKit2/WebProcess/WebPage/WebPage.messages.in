@@ -91,6 +91,9 @@ messages -> WebPage {
 
     # Callbacks.
     GetContentsAsString(uint64_t callbackID)
+#if ENABLE(MHTML)
+    GetContentsAsMHTMLData(uint64_t callbackID, bool useBinaryEncoding)
+#endif
     GetMainResourceDataOfFrame(uint64_t frameID, uint64_t callbackID)
     GetResourceDataFromFrame(uint64_t frameID, WTF::String resourceURL, uint64_t callbackID)
     GetRenderTreeExternalRepresentation(uint64_t callbackID)
