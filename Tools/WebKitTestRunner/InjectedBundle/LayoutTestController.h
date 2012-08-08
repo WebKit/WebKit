@@ -78,7 +78,8 @@ public:
     void dumpTitleChanges() { m_dumpTitleChanges = true; }
     void dumpFullScreenCallbacks() { m_dumpFullScreenCallbacks = true; }
     void dumpFrameLoadCallbacks() { setShouldDumpFrameLoadCallbacks(true); }
-    void dumpProgressFinishedCallback() { setShouldDumpProgressFinishedCallback(true); }
+    void dumpProgressFinishedCallback() { setShouldDumpProgressFinishedCallback(true); }    
+    void dumpResourceResponseMIMETypes() { m_dumpResourceResponseMIMETypes = true; }
 
     void setShouldDumpFrameLoadCallbacks(bool value) { m_dumpFrameLoadCallbacks = value; }
     void setShouldDumpProgressFinishedCallback(bool value) { m_dumpProgressFinishedCallback = value; }
@@ -162,6 +163,8 @@ public:
     bool shouldDumpFullScreenCallbacks() const { return m_dumpFullScreenCallbacks; }
     bool shouldDumpFrameLoadCallbacks() const { return m_dumpFrameLoadCallbacks; }
     bool shouldDumpProgressFinishedCallback() const { return m_dumpProgressFinishedCallback; }
+    bool shouldDumpResourceResponseMIMETypes() const { return m_dumpResourceResponseMIMETypes; }
+
     bool isPolicyDelegateEnabled() const { return m_policyDelegateEnabled; }
     bool isPolicyDelegatePermissive() const { return m_policyDelegatePermissive; }
 
@@ -246,6 +249,7 @@ private:
     bool m_dumpFullScreenCallbacks;
     bool m_dumpFrameLoadCallbacks;
     bool m_dumpProgressFinishedCallback;
+    bool m_dumpResourceResponseMIMETypes;
     bool m_waitToDump; // True if waitUntilDone() has been called, but notifyDone() has not yet been called.
     bool m_testRepaint;
     bool m_testRepaintSweepHorizontally;

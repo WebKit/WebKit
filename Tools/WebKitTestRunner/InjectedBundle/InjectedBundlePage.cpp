@@ -990,8 +990,22 @@ WKURLRequestRef InjectedBundlePage::willSendRequestForFrame(WKBundlePageRef, WKB
     return request;
 }
 
-void InjectedBundlePage::didReceiveResponseForResource(WKBundlePageRef, WKBundleFrameRef, uint64_t, WKURLResponseRef)
+void InjectedBundlePage::didReceiveResponseForResource(WKBundlePageRef, WKBundleFrameRef, uint64_t, WKURLResponseRef response)
 {
+    if (!InjectedBundle::shared().isTestRunning())
+        return;
+
+    if (!InjectedBundle::shared().layoutTestController()->shouldDumpResourceResponseMIMETypes())
+        return;
+
+    WKRetainPtr<WKURLRef> url = adoptWK(WKURLResponseCopyURL(response));
+    WKRetainPtr<WKStringRef> urlString = adoptWK(WKURLCopyLastPathComponent(url.get()));
+    WKRetainPtr<WKStringRef> mimeTypeString = adoptWK(WKURLResponseCopyMimeType(response));
+
+    InjectedBundle::shared().stringBuilder()->append(toWTFString(urlString));
+    InjectedBundle::shared().stringBuilder()->append(" has MIME type ");
+    InjectedBundle::shared().stringBuilder()->append(toWTFString(mimeTypeString));
+    InjectedBundle::shared().stringBuilder()->append("\n");
 }
 
 void InjectedBundlePage::didReceiveContentLengthForResource(WKBundlePageRef, WKBundleFrameRef, uint64_t, uint64_t)

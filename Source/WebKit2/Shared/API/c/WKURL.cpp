@@ -59,3 +59,8 @@ WKStringRef WKURLCopyScheme(WKURLRef url)
 {
     return toCopiedAPI(toImpl(url)->protocol());
 }
+
+WKStringRef WKURLCopyLastPathComponent(WKURLRef url)
+{
+    return toCopiedAPI(toImpl(url)->lastPathComponent());
+}

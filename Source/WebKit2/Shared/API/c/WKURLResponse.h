@@ -34,6 +34,10 @@ extern "C" {
 
 WK_EXPORT WKTypeID WKURLResponseGetTypeID();
 
+WK_EXPORT WKURLRef WKURLResponseCopyURL(WKURLResponseRef);
+
+WK_EXPORT WKStringRef WKURLResponseCopyMimeType(WKURLResponseRef);
+
 #ifdef __cplusplus
 }
 #endif

@@ -1,3 +1,24 @@
+2012-08-08  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [WK2] [WTR] Provide Resource Response dumping.
+        https://bugs.webkit.org/show_bug.cgi?id=93454
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Several new getter functions were added to WKURLResponse and WKURL, so that WTR has
+        necessary data for dumping.
+
+        * Shared/API/c/WKURL.cpp:
+        (WKURLCopyLastPathComponent):
+        * Shared/API/c/WKURL.h:
+        * Shared/API/c/WKURLResponse.cpp:
+        (WKURLResponseCopyURL): Returns URL of the response.
+        (WKURLResponseCopyMimeType): Returns MIME type of the response. 
+        * Shared/API/c/WKURLResponse.h:
+        * Shared/WebURL.h:
+        (WebKit::WebURL::lastPathComponent): Returns last path component of the URL.
+        (WebURL):
+
 2012-08-08  Eunmi Lee  <eunmi15.lee@samsung.com>
 
         [EFL][WK2] Make ewk_view inheritable in the WebKit2.

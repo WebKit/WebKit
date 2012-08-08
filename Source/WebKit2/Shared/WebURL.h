@@ -63,6 +63,12 @@ public:
         return m_parsedURL->isValid() ? m_parsedURL->protocol() : String();
     }
 
+    String lastPathComponent() const
+    {
+        parseURLIfNecessary();
+        return m_parsedURL->isValid() ? m_parsedURL->lastPathComponent() : String();
+    }
+
 private:
     WebURL(const String& string)
         : m_string(string)

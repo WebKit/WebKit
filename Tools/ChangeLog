@@ -1,3 +1,23 @@
+2012-08-08  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [WK2] [WTR] Provide Resource Response dumping.
+        https://bugs.webkit.org/show_bug.cgi?id=93454
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Added missing dumpResourceResponseMIMETypes() method to testRunner. Provided resource response dumping.
+
+        * WebKitTestRunner/InjectedBundle/Bindings/LayoutTestController.idl:
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::InjectedBundlePage::didReceiveResponseForResource):
+        * WebKitTestRunner/InjectedBundle/LayoutTestController.cpp:
+        (WTR::LayoutTestController::LayoutTestController):
+        * WebKitTestRunner/InjectedBundle/LayoutTestController.h:
+        (WTR::LayoutTestController::dumpProgressFinishedCallback):
+        (WTR::LayoutTestController::dumpResourceResponseMIMETypes):
+        (WTR::LayoutTestController::shouldDumpResourceResponseMIMETypes):
+        (LayoutTestController):
+
 2012-08-08  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt][Win] Fix compilation of DumpRenderTree
