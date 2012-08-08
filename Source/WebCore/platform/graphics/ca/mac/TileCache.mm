@@ -73,6 +73,11 @@ TileCache::TileCache(WebTileCacheLayer* tileCacheLayer, const IntSize& tileSize)
 TileCache::~TileCache()
 {
     ASSERT(isMainThread());
+
+    for (TileMap::iterator it = m_tiles.begin(), end = m_tiles.end(); it != end; ++it) {
+        WebTileLayer* tileLayer = it->second.get();
+        [tileLayer setTileCache:0];
+    }
 }
 
 void TileCache::tileCacheLayerBoundsChanged()
