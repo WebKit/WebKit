@@ -55,8 +55,10 @@ void StringCache::remove(StringImpl* stringImpl)
     m_stringCache.remove(stringImpl);
     // Make sure that already disposed m_lastV8String is not used in
     // StringCache::v8ExternalString().
-    if (m_lastStringImpl.get() == stringImpl)
+    if (m_lastStringImpl.get() == stringImpl) {
         m_lastStringImpl = 0;
+        m_lastV8String.Clear();
+    }
 }
 
 v8::Local<v8::String> StringCache::v8ExternalStringSlow(StringImpl* stringImpl, v8::Isolate* isolate)

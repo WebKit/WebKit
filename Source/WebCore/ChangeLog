@@ -1,3 +1,23 @@
+2012-08-07  Kentaro Hara  <haraken@chromium.org>
+
+        [V8] StringCache::m_lastStringImpl and StringCache::m_lastV8String should be in sync
+        https://bugs.webkit.org/show_bug.cgi?id=93065
+
+        Reviewed by Eric Seidel.
+
+        StringCache::m_lastStringImpl caches a StringImpl that was accessed most
+        recently. StringCache::m_lastV8String caches Persistent<String> corresponding
+        to the StringImpl. Hence m_lastStringImpl and m_lastV8String should be in sync.
+
+        However, StringCache::remove() breaks the sync. StringCache::remove() clears
+        m_lastStringImpl but does not clear m_lastV8String. As far as I analyze the code,
+        this won't cause any problem, but we should fix it just in case.
+
+        No tests. No change in behavior.
+
+        * bindings/v8/V8Binding.cpp:
+        (WebCore::StringCache::remove):
+
 2012-08-07  Hayato Ito  <hayato@chromium.org>
 
         Don't re-use the same EventDispatcher instance to dispatch events.
