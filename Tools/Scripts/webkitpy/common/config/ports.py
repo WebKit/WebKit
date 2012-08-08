@@ -59,6 +59,7 @@ class DeprecatedPort(object):
     def port(port_name):
         ports = {
             "chromium": ChromiumPort,
+            "chromium-android": ChromiumAndroidPort,
             "chromium-xvfb": ChromiumXVFBPort,
             "gtk": GtkPort,
             "mac": MacPort,
@@ -191,6 +192,20 @@ class ChromiumPort(DeprecatedPort):
 
     def run_javascriptcore_tests_command(self):
         return None
+
+
+class ChromiumAndroidPort(ChromiumPort):
+    port_flag_name = "chromium-android"
+
+    def update_webkit_command(self, non_interactive=False):
+        command = super(ChromiumAndroidPort, self).update_webkit_command(non_interactive=non_interactive)
+        command.append("--chromium-android")
+        return command
+
+    def build_webkit_command(self, build_style=None):
+        command = super(ChromiumAndroidPort, self).build_webkit_command(build_style=build_style)
+        command.append("--chromium-android")
+        return command
 
 
 class ChromiumXVFBPort(ChromiumPort):

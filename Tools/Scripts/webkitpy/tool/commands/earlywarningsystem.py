@@ -194,6 +194,7 @@ class ChromiumWindowsEWS(AbstractChromiumEWS):
 
 class ChromiumAndroidEWS(AbstractChromiumEWS):
     name = "cr-android-ews"
+    port_name = "chromium-android"
     watchers = AbstractChromiumEWS.watchers + [
         "peter+ews@chromium.org",
     ]

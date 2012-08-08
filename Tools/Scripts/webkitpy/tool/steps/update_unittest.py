@@ -28,7 +28,7 @@
 
 import unittest
 
-from webkitpy.common.config.ports import ChromiumPort, ChromiumXVFBPort
+from webkitpy.common.config.ports import ChromiumPort, ChromiumAndroidPort, ChromiumXVFBPort
 from webkitpy.tool.mocktool import MockOptions, MockTool
 from webkitpy.tool.steps.update import Update
 
@@ -47,6 +47,9 @@ class UpdateTest(unittest.TestCase):
         tool._deprecated_port = ChromiumXVFBPort()
         self.assertEqual(["Tools/Scripts/update-webkit", "--chromium", "--force-update"], step._update_command())
 
+        tool._deprecated_port = ChromiumAndroidPort()
+        self.assertEqual(["Tools/Scripts/update-webkit", "--chromium", "--force-update", "--chromium-android"], step._update_command())
+
     def test_update_command_interactive(self):
         tool = MockTool()
         options = MockOptions(non_interactive=False)
@@ -58,3 +61,6 @@ class UpdateTest(unittest.TestCase):
 
         tool._deprecated_port = ChromiumXVFBPort()
         self.assertEqual(["Tools/Scripts/update-webkit", "--chromium"], step._update_command())
+
+        tool._deprecated_port = ChromiumAndroidPort()
+        self.assertEqual(["Tools/Scripts/update-webkit", "--chromium", "--chromium-android"], step._update_command())

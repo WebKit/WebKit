@@ -1,3 +1,28 @@
+2012-08-08  Peter Beverloo  <peter@chromium.org>
+
+        The cr-android EWS should actually be building Chromium for Android
+        https://bugs.webkit.org/show_bug.cgi?id=93489
+
+        Reviewed by Adam Barth.
+
+        The cr-android EWS bots should be building Chromium for Android, which
+        requires some additional flags to Chromium's default configuration.
+
+        * Scripts/webkitdirs.pm:
+        (buildChromium):
+        * Scripts/webkitpy/common/config/ports.py:
+        (DeprecatedPort.port):
+        (ChromiumAndroidPort):
+        (ChromiumAndroidPort.update_webkit_command):
+        (ChromiumAndroidPort.build_webkit_command):
+        * Scripts/webkitpy/common/config/ports_unittest.py:
+        (DeprecatedPortTest.test_chromium_android_port):
+        * Scripts/webkitpy/tool/commands/earlywarningsystem.py:
+        (ChromiumAndroidEWS):
+        * Scripts/webkitpy/tool/steps/update_unittest.py:
+        (UpdateTest.test_update_command_non_interactive):
+        (UpdateTest.test_update_command_interactive):
+
 2012-08-08  Alexey Proskuryakov  <ap@apple.com>
 
         [WK2] MiniBrowser crashes on window.open()

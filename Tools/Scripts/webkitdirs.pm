@@ -2579,7 +2579,9 @@ sub buildChromium($@)
 
     # We might need to update DEPS or re-run GYP if things have changed.
     if (checkForArgumentAndRemoveFromArrayRef("--update-chromium", \@options)) {
-        system("perl", "Tools/Scripts/update-webkit-chromium", "--force") == 0 or die $!;
+        my @updateCommand = ("perl", "Tools/Scripts/update-webkit-chromium", "--force");
+        push @updateCommand, "--chromium-android" if isChromiumAndroid();
+        system(@updateCommand) == 0 or die $!;
     }
 
     my $result = 1;
