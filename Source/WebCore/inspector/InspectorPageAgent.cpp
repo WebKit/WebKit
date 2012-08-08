@@ -93,6 +93,9 @@ static const char pageAgentScreenHeightOverride[] = "pageAgentScreenHeightOverri
 static const char pageAgentFontScaleFactorOverride[] = "pageAgentFontScaleFactorOverride";
 static const char pageAgentFitWindow[] = "pageAgentFitWindow";
 static const char showPaintRects[] = "showPaintRects";
+#if ENABLE(TOUCH_EVENTS)
+static const char touchEventEmulationEnabled[] = "touchEventEmulationEnabled";
+#endif
 }
 
 static bool decodeSharedBuffer(PassRefPtr<SharedBuffer> buffer, const String& textEncodingName, String* result)
@@ -335,6 +338,9 @@ void InspectorPageAgent::clearFrontend()
 {
     ErrorString error;
     disable(&error);
+#if ENABLE(TOUCH_EVENTS)
+    updateTouchEventEmulationInPage(false);
+#endif
     m_frontend = 0;
 }
 
@@ -353,6 +359,9 @@ void InspectorPageAgent::restore()
 
         if (m_inspectorAgent->didCommitLoadFired())
             frameNavigated(m_page->mainFrame()->loader()->documentLoader());
+#if ENABLE(TOUCH_EVENTS)
+        updateTouchEventEmulationInPage(m_state->getBoolean(PageAgentState::touchEventEmulationEnabled));
+#endif
     }
 }
 
@@ -973,6 +982,15 @@ void InspectorPageAgent::updateViewMetrics(int width, int height, double fontSca
     InspectorInstrumentation::mediaQueryResultChanged(document);
 }
 
+#if ENABLE(TOUCH_EVENTS)
+void InspectorPageAgent::updateTouchEventEmulationInPage(bool enabled)
+{
+    m_state->setBoolean(PageAgentState::touchEventEmulationEnabled, enabled);
+    if (mainFrame() && mainFrame()->settings())
+        mainFrame()->settings()->setTouchEventEmulationEnabled(enabled);
+}
+#endif
+
 void InspectorPageAgent::setGeolocationOverride(ErrorString* error, const double* latitude, const double* longitude, const double* accuracy)
 {
 #if ENABLE (GEOLOCATION)
@@ -1068,6 +1086,19 @@ DeviceOrientationData* InspectorPageAgent::overrideDeviceOrientation(DeviceOrien
     if (m_deviceOrientation)
         deviceOrientation = m_deviceOrientation.get();
     return deviceOrientation;
+}
+
+void InspectorPageAgent::setTouchEmulationEnabled(ErrorString* error, bool enabled)
+{
+#if ENABLE(TOUCH_EVENTS)
+    if (m_state->getBoolean(PageAgentState::touchEventEmulationEnabled) == enabled)
+        return;
+    UNUSED_PARAM(error);
+    updateTouchEventEmulationInPage(enabled);
+#else
+    *error = "Touch events emulation not supported";
+    UNUSED_PARAM(enabled);
+#endif
 }
 
 } // namespace WebCore

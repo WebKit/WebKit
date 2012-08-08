@@ -1278,7 +1278,7 @@ WebInspector.DOMAgent.prototype = {
             this._addTouchEventsScriptId = scriptId;
         }
 
-        DOMAgent.setTouchEmulationEnabled(emulationEnabled);
+        PageAgent.setTouchEmulationEnabled(emulationEnabled);
     },
 
     markUndoableState: function()

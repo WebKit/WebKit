@@ -1,3 +1,27 @@
+2012-08-08  Alexander Pavlov  <apavlov@chromium.org>
+
+        Web Inspector: move setTouchEventEmulationEnabled from DOMAgent to PageAgent
+        https://bugs.webkit.org/show_bug.cgi?id=93437
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/Inspector.json:
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::clearFrontend):
+        (WebCore::InspectorDOMAgent::restore):
+        * inspector/InspectorDOMAgent.h:
+        (InspectorDOMAgent):
+        * inspector/InspectorPageAgent.cpp:
+        (PageAgentState):
+        (WebCore::InspectorPageAgent::clearFrontend):
+        (WebCore::InspectorPageAgent::restore):
+        (WebCore):
+        (WebCore::InspectorPageAgent::updateTouchEventEmulationInPage):
+        (WebCore::InspectorPageAgent::setTouchEmulationEnabled):
+        * inspector/InspectorPageAgent.h:
+        * inspector/front-end/DOMAgent.js:
+        (WebInspector.DOMAgent.prototype._emulateTouchEventsChanged):
+
 2012-08-08  Alexis Menard  <alexis.menard@openbossa.org>
 
         Unreviewed build fix for Qt on Linux.

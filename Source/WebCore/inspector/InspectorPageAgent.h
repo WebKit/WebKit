@@ -117,6 +117,7 @@ public:
     virtual void setDeviceOrientationOverride(ErrorString*, double, double, double);
     virtual void clearDeviceOrientationOverride(ErrorString*);
     virtual void canOverrideDeviceOrientation(ErrorString*, bool*);
+    virtual void setTouchEmulationEnabled(ErrorString*, bool);
 
     // Geolocation override helpers.
     GeolocationPosition* overrideGeolocationPosition(GeolocationPosition*);
@@ -154,6 +155,9 @@ public:
 private:
     InspectorPageAgent(InstrumentingAgents*, Page*, InspectorAgent*, InspectorState*, InjectedScriptManager*, InspectorClient*, InspectorOverlay*);
     void updateViewMetrics(int, int, double, bool);
+#if ENABLE(TOUCH_EVENTS)
+    void updateTouchEventEmulationInPage(bool);
+#endif
 
     PassRefPtr<TypeBuilder::Page::Frame> buildObjectForFrame(Frame*);
     PassRefPtr<TypeBuilder::Page::FrameResourceTree> buildObjectForFrameTree(Frame*);
