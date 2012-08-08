@@ -1,3 +1,20 @@
+2012-08-08  Chris Guan  <chris.guan@torchmobile.com.cn>
+
+        [Blackberry] missing a Multipart header when m_multipartResponse is null
+        https://bugs.webkit.org/show_bug.cgi?id=93440
+
+        Reviewed by George Staikos.
+
+        when m_multipartResponse is null, we just created new one but not called 
+        setHTTPHeaderField. So we missed this received multipart Header. We should 
+        call setHTTPHeaderField for each reveived header.
+
+        No new tests, because those current multipart test cases (http/tests/multipart/*) 
+        are enough.
+
+        * platform/network/blackberry/NetworkJob.cpp:
+        (WebCore::NetworkJob::handleNotifyMultipartHeaderReceived):
+
 2012-08-08  Mike West  <mkwst@chromium.org>
 
         Refactor console logging out of CSPDirectiveList into ContentSecurityPolicy

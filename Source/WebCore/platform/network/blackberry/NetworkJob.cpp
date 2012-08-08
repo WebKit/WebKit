@@ -348,14 +348,14 @@ void NetworkJob::handleNotifyMultipartHeaderReceived(const String& key, const St
         }
 
         m_multipartResponse->setIsMultipartPayload(true);
-    } else {
-        if (key.lower() == "content-type") {
-            String contentType = value.lower();
-            m_multipartResponse->setMimeType(extractMIMETypeFromMediaType(contentType));
-            m_multipartResponse->setTextEncodingName(extractCharsetFromMediaType(contentType));
-        }
-        m_multipartResponse->setHTTPHeaderField(key, value);
     }
+
+    if (key.lower() == "content-type") {
+        String contentType = value.lower();
+        m_multipartResponse->setMimeType(extractMIMETypeFromMediaType(contentType));
+        m_multipartResponse->setTextEncodingName(extractCharsetFromMediaType(contentType));
+    }
+    m_multipartResponse->setHTTPHeaderField(key, value);
 }
 
 void NetworkJob::handleSetCookieHeader(const String& value)
