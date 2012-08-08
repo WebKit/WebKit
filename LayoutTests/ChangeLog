@@ -1,3 +1,12 @@
+2012-08-08  Dean Jackson  <dino@apple.com>
+
+        Rebaseline fast/box-sizing/box-sizing.html and compositing/overflow/clip-descendents.html
+        https://bugs.webkit.org/show_bug.cgi?id=92904
+
+        Unreviewed test expectations update. The IMAGE test was passing on Lion and Mountain Lion.
+
+        * platform/mac/TestExpectations:
+
 2012-08-08  Xianzhu Wang  <wangxianzhu@chromium.org>
 
         [Chromium-Android] Apply all Linux layout test expectations
