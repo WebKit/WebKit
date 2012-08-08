@@ -1,3 +1,15 @@
+2012-08-07  Hayato Ito  <hayato@chromium.org>
+
+        Unreviewed build fix after http://trac.webkit.org/changeset/124975
+
+        Remove assertion introduced in r124975.
+
+        * dom/EventDispatcher.cpp:
+        (WebCore::EventDispatcher::EventDispatcher):
+        (WebCore::EventDispatcher::dispatchEvent):
+        * dom/EventDispatcher.h:
+        (EventDispatcher):
+
 2012-08-07  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r124969.
