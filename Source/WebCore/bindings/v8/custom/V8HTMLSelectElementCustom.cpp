@@ -51,7 +51,7 @@ v8::Handle<v8::Value> V8HTMLSelectElement::indexedPropertyGetter(uint32_t index,
     ASSERT(V8DOMWrapper::maybeDOMWrapper(info.Holder()));
     RefPtr<Node> result = V8HTMLSelectElement::toNative(info.Holder())->item(index);
     if (!result)
-        return v8::Handle<v8::Value>();
+        return v8Undefined();
 
     return toV8(result.release(), info.GetIsolate());
 }

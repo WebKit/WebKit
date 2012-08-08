@@ -83,11 +83,11 @@ v8::Local<v8::Object> V8HTMLDocument::WrapInShadowObject(v8::Local<v8::Object> w
 v8::Handle<v8::Value> V8HTMLDocument::GetNamedProperty(HTMLDocument* htmlDocument, const AtomicString& key, v8::Isolate* isolate)
 {
     if (!htmlDocument->hasNamedItem(key.impl()) && !htmlDocument->hasExtraNamedItem(key.impl()))
-        return v8::Handle<v8::Value>();
+        return v8Undefined();
 
     RefPtr<HTMLCollection> items = htmlDocument->documentNamedItems(key);
     if (items->isEmpty())
-        return v8::Handle<v8::Value>();
+        return v8Undefined();
 
     if (items->hasExactlyOneItem()) {
         Node* node = items->item(0);

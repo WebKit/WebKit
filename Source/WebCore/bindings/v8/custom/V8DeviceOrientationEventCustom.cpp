@@ -94,7 +94,7 @@ v8::Handle<v8::Value> V8DeviceOrientationEvent::initDeviceOrientationEventCallba
     bool absolute = args[6]->BooleanValue();
     RefPtr<DeviceOrientationData> orientation = DeviceOrientationData::create(alphaProvided, alpha, betaProvided, beta, gammaProvided, gamma, absoluteProvided, absolute);
     imp->initDeviceOrientationEvent(type, bubbles, cancelable, orientation.get());
-    return v8::Handle<v8::Value>();
+    return v8Undefined();
 }
 
 } // namespace WebCore

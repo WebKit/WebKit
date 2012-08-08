@@ -195,14 +195,14 @@ v8::Handle<v8::Value> V8CSSStyleDeclaration::namedPropertyGetter(v8::Local<v8::S
     INC_STATS("DOM.CSSStyleDeclaration.NamedPropertyGetter");
     // First look for API defined attributes on the style declaration object.
     if (info.Holder()->HasRealNamedCallbackProperty(name))
-        return v8::Handle<v8::Value>();
+        return v8Undefined();
 
     // Search the style declaration.
     CSSPropertyInfo* propInfo = cssPropertyInfo(name);
 
     // Do not handle non-property names.
     if (!propInfo)
-        return v8::Handle<v8::Value>();
+        return v8Undefined();
 
     CSSStyleDeclaration* imp = V8CSSStyleDeclaration::toNative(info.Holder());
     RefPtr<CSSValue> cssValue = imp->getPropertyCSSValueInternal(static_cast<CSSPropertyID>(propInfo->propID));
@@ -228,7 +228,7 @@ v8::Handle<v8::Value> V8CSSStyleDeclaration::namedPropertySetter(v8::Local<v8::S
     CSSStyleDeclaration* imp = V8CSSStyleDeclaration::toNative(info.Holder());
     CSSPropertyInfo* propInfo = cssPropertyInfo(name);
     if (!propInfo)
-        return v8::Handle<v8::Value>();
+        return v8Undefined();
 
     String propertyValue = toWebCoreStringWithNullCheck(value);
     if (propInfo->hadPixelOrPosPrefix)

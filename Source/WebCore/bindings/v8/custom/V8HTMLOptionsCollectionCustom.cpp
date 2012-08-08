@@ -119,7 +119,7 @@ v8::Handle<v8::Value> V8HTMLOptionsCollection::indexedPropertyGetter(uint32_t in
 
     RefPtr<Node> result = collection->item(index);
     if (!result)
-        return v8::Handle<v8::Value>();
+        return v8Undefined();
 
     return toV8(result.release(), info.GetIsolate());
 }

@@ -51,7 +51,7 @@ v8::Handle<v8::Value> V8DOMStringMap::namedPropertyGetter(v8::Local<v8::String> 
     INC_STATS("DOM.DOMStringMap.NamedPropertyGetter");
     String value = V8DOMStringMap::toNative(info.Holder())->item(toWebCoreString(name));
     if (value.isNull())
-        return v8::Handle<v8::Value>();
+        return v8Undefined();
     return v8StringOrUndefined(value, info.GetIsolate());
 }
 

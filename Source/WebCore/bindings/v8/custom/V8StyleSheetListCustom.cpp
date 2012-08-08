@@ -44,13 +44,13 @@ v8::Handle<v8::Value> V8StyleSheetList::namedPropertyGetter(v8::Local<v8::String
     INC_STATS("DOM.StyleSheetList.NamedPropertyGetter");
 
     if (info.Holder()->HasRealNamedProperty(name))
-        return v8::Handle<v8::Value>();
+        return v8Undefined();
 
     // Search style sheet.
     StyleSheetList* imp = V8StyleSheetList::toNative(info.Holder());
     HTMLStyleElement* item = imp->getNamedItem(toWebCoreString(name));
     if (!item)
-        return v8::Handle<v8::Value>();
+        return v8Undefined();
 
     return toV8(item->sheet(), info.GetIsolate());
 }

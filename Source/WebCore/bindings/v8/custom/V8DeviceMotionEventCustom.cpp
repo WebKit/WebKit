@@ -175,7 +175,7 @@ v8::Handle<v8::Value> V8DeviceMotionEvent::initDeviceMotionEventCallback(const v
     double interval = args[6]->NumberValue();
     RefPtr<DeviceMotionData> deviceMotionData = DeviceMotionData::create(acceleration, accelerationIncludingGravity, rotationRate, intervalProvided, interval);
     imp->initDeviceMotionEvent(type, bubbles, cancelable, deviceMotionData.get());
-    return v8::Handle<v8::Value>();
+    return v8Undefined();
 }
 
 } // namespace WebCore

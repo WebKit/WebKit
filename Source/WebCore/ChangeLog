@@ -1,5 +1,79 @@
 2012-08-07  Kentaro Hara  <haraken@chromium.org>
 
+        [V8] Replace v8::Handle<v8::Value>() in custom bindings with v8Undefined()
+        https://bugs.webkit.org/show_bug.cgi?id=93215
+
+        Reviewed by Eric Seidel.
+
+        We should use v8Undefined() everywhere in V8 bindings.
+
+        No tests. No change in behavior.
+
+        * bindings/v8/custom/V8CSSStyleDeclarationCustom.cpp:
+        (WebCore::V8CSSStyleDeclaration::namedPropertyGetter):
+        (WebCore::V8CSSStyleDeclaration::namedPropertySetter):
+        * bindings/v8/custom/V8ConsoleCustom.cpp:
+        (WebCore::V8Console::traceCallback):
+        (WebCore::V8Console::assertCallback):
+        (WebCore::V8Console::profileCallback):
+        (WebCore::V8Console::profileEndCallback):
+        * bindings/v8/custom/V8DOMStringMapCustom.cpp:
+        (WebCore::V8DOMStringMap::namedPropertyGetter):
+        * bindings/v8/custom/V8DOMWindowCustom.cpp:
+        (WebCore::V8DOMWindow::indexedPropertyGetter):
+        (WebCore::V8DOMWindow::namedPropertyGetter):
+        * bindings/v8/custom/V8DataViewCustom.cpp:
+        (WebCore::V8DataView::setInt8Callback):
+        (WebCore::V8DataView::setUint8Callback):
+        * bindings/v8/custom/V8DeviceMotionEventCustom.cpp:
+        (WebCore::V8DeviceMotionEvent::initDeviceMotionEventCallback):
+        * bindings/v8/custom/V8DeviceOrientationEventCustom.cpp:
+        (WebCore::V8DeviceOrientationEvent::initDeviceOrientationEventCallback):
+        * bindings/v8/custom/V8DirectoryEntryCustom.cpp:
+        (WebCore::V8DirectoryEntry::getDirectoryCallback):
+        (WebCore::V8DirectoryEntry::getFileCallback):
+        * bindings/v8/custom/V8HTMLAllCollectionCustom.cpp:
+        (WebCore::getNamedItems):
+        (WebCore::V8HTMLAllCollection::namedPropertyGetter):
+        * bindings/v8/custom/V8HTMLCollectionCustom.cpp:
+        (WebCore::getNamedItems):
+        (WebCore::V8HTMLCollection::namedPropertyGetter):
+        * bindings/v8/custom/V8HTMLDocumentCustom.cpp:
+        (WebCore::V8HTMLDocument::GetNamedProperty):
+        * bindings/v8/custom/V8HTMLFormElementCustom.cpp:
+        (WebCore::V8HTMLFormElement::indexedPropertyGetter):
+        (WebCore::V8HTMLFormElement::namedPropertyGetter):
+        * bindings/v8/custom/V8HTMLFrameSetElementCustom.cpp:
+        (WebCore::V8HTMLFrameSetElement::namedPropertyGetter):
+        * bindings/v8/custom/V8HTMLOptionsCollectionCustom.cpp:
+        (WebCore::V8HTMLOptionsCollection::indexedPropertyGetter):
+        * bindings/v8/custom/V8HTMLPlugInElementCustom.cpp:
+        (WebCore::npObjectNamedGetter):
+        (WebCore::npObjectNamedSetter):
+        (WebCore::npObjectIndexedGetter):
+        (WebCore::npObjectIndexedSetter):
+        * bindings/v8/custom/V8HTMLSelectElementCustom.cpp:
+        (WebCore::V8HTMLSelectElement::indexedPropertyGetter):
+        * bindings/v8/custom/V8LocationCustom.cpp:
+        (WebCore::V8Location::reloadAccessorGetter):
+        (WebCore::V8Location::replaceAccessorGetter):
+        (WebCore::V8Location::assignAccessorGetter):
+        * bindings/v8/custom/V8NamedNodeMapCustom.cpp:
+        (WebCore::V8NamedNodeMap::indexedPropertyGetter):
+        (WebCore::V8NamedNodeMap::namedPropertyGetter):
+        * bindings/v8/custom/V8NodeListCustom.cpp:
+        (WebCore::V8NodeList::namedPropertyGetter):
+        * bindings/v8/custom/V8SVGLengthCustom.cpp:
+        (WebCore::V8SVGLength::convertToSpecifiedUnitsCallback):
+        * bindings/v8/custom/V8StorageCustom.cpp:
+        (WebCore::storageGetter):
+        (WebCore::V8Storage::namedPropertyGetter):
+        (WebCore::storageSetter):
+        * bindings/v8/custom/V8StyleSheetListCustom.cpp:
+        (WebCore::V8StyleSheetList::namedPropertyGetter):
+
+2012-08-07  Kentaro Hara  <haraken@chromium.org>
+
         [V8] Replace v8::Handle<v8::Value>() in bindings/v8/* with v8Undefined()
         https://bugs.webkit.org/show_bug.cgi?id=93211
 
