@@ -26,7 +26,7 @@
 #ifndef ClipboardQt_h
 #define ClipboardQt_h
 
-#include "CachedImage.h"
+#include "CachedImageClient.h"
 #include "Clipboard.h"
 
 QT_BEGIN_NAMESPACE

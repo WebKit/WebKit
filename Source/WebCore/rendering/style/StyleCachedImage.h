@@ -24,11 +24,13 @@
 #ifndef StyleCachedImage_h
 #define StyleCachedImage_h
 
-#include "CachedImage.h"
+#include "CachedImageClient.h"
 #include "CachedResourceHandle.h"
 #include "StyleImage.h"
 
 namespace WebCore {
+
+class CachedImage;
 
 class StyleCachedImage : public StyleImage, private CachedImageClient {
     WTF_MAKE_FAST_ALLOCATED;

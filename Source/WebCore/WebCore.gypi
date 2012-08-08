@@ -202,6 +202,7 @@
             'loader/archive/mhtml/MHTMLParser.h',
             'loader/cache/CachePolicy.h',
             'loader/cache/CachedImage.h',
+            'loader/cache/CachedImageClient.h',
             'loader/cache/CachedRawResource.h',
             'loader/cache/CachedResource.h',
             'loader/cache/CachedResourceClient.h',

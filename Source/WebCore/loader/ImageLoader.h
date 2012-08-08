@@ -24,6 +24,7 @@
 #define ImageLoader_h
 
 #include "CachedImage.h"
+#include "CachedImageClient.h"
 #include "CachedResourceHandle.h"
 #include "Element.h"
 #include <wtf/OwnPtr.h>

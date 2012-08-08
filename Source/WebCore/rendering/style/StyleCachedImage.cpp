@@ -24,6 +24,7 @@
 #include "config.h"
 #include "StyleCachedImage.h"
 
+#include "CachedImage.h"
 #include "RenderObject.h"
 
 namespace WebCore {

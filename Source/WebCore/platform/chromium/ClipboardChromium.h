@@ -30,7 +30,7 @@
 #ifndef ClipboardChromium_h
 #define ClipboardChromium_h
 
-#include "CachedImage.h"
+#include "CachedImageClient.h"
 #include "ChromiumDataObject.h"
 #include "Clipboard.h"
 #include "DataTransferItem.h"

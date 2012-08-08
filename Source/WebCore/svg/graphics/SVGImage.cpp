@@ -34,6 +34,7 @@
 #include "EmptyClients.h"
 #include "FrameView.h"
 #include "ImageBuffer.h"
+#include "ImageObserver.h"
 #include "RenderSVGRoot.h"
 #include "SVGDocument.h"
 #include "SVGSVGElement.h"

@@ -28,7 +28,7 @@
 
 #if ENABLE(CSS_IMAGE_SET)
 
-#include "CachedImage.h"
+#include "CachedImageClient.h"
 #include "CachedResourceHandle.h"
 #include "StyleImage.h"
 

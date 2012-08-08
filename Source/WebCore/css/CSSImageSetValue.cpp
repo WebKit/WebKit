@@ -30,6 +30,7 @@
 
 #include "CSSImageValue.h"
 #include "CSSPrimitiveValue.h"
+#include "CachedImage.h"
 #include "CachedResourceLoader.h"
 #include "Document.h"
 #include "MemoryInstrumentation.h"

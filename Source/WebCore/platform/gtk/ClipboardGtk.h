@@ -27,7 +27,7 @@
 #ifndef ClipboardGtk_h
 #define ClipboardGtk_h
 
-#include "CachedImage.h"
+#include "CachedImageClient.h"
 #include "Clipboard.h"
 #include "DataObjectGtk.h"
 

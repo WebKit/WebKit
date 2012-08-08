@@ -25,7 +25,7 @@
 #include "CachedImage.h"
 
 #include "BitmapImage.h"
-#include "MemoryCache.h"
+#include "CachedImageClient.h"
 #include "CachedResourceClient.h"
 #include "CachedResourceClientWalker.h"
 #include "CachedResourceLoader.h"
@@ -33,6 +33,7 @@
 #include "FrameLoaderClient.h"
 #include "FrameLoaderTypes.h"
 #include "FrameView.h"
+#include "MemoryCache.h"
 #include "Page.h"
 #include "RenderObject.h"
 #include "Settings.h"

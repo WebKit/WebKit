@@ -27,7 +27,7 @@
 #define ClipboardWin_h
 
 #include "COMPtr.h"
-#include "CachedImage.h"
+#include "CachedImageClient.h"
 #include "Clipboard.h"
 #include "DragData.h"
 

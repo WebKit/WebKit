@@ -1,3 +1,36 @@
+2012-08-08  Nikhil Bhargava  <nbhargava@google.com>
+
+        Improve RenderObject.h compile time - split CachedImage and CachedImageClient
+        https://bugs.webkit.org/show_bug.cgi?id=93400
+
+        Reviewed by Eric Seidel.
+
+        Splits loader/cache/CachedImage.h into two files. The remaining changes are to repair existing #includes
+
+        No new tests. No changes to existing functions/functionality.
+
+        * css/CSSCrossfadeValue.h:
+        * loader/ImageLoader.h:
+        * loader/cache/CachedImage.cpp:
+        * loader/cache/CachedImage.h:
+        (WebCore):
+        * loader/cache/CachedImageClient.h: Added.
+        (WebCore):
+        (CachedImageClient):
+        (WebCore::CachedImageClient::~CachedImageClient):
+        (WebCore::CachedImageClient::expectedType):
+        (WebCore::CachedImageClient::resourceClientType):
+        (WebCore::CachedImageClient::imageChanged):
+        (WebCore::CachedImageClient::willRenderImage):
+        * platform/chromium/ClipboardChromium.h:
+        * rendering/RenderObject.h:
+        (WebCore):
+        * rendering/style/StyleCachedImage.cpp:
+        * rendering/style/StyleCachedImage.h:
+        (WebCore):
+        * rendering/style/StyleCachedImageSet.h:
+        * svg/graphics/SVGImage.cpp:
+
 2012-08-08  Dan Bernstein  <mitz@apple.com>
 
         REGRESSION (r123171): <svg> element with intrinsic size and max-width gets sized incorrectly

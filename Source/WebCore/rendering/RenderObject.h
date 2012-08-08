@@ -26,8 +26,7 @@
 #ifndef RenderObject_h
 #define RenderObject_h
 
-#include "CachedImage.h"
-#include "Document.h"
+#include "CachedImageClient.h"
 #include "Element.h"
 #include "FractionalLayoutUnit.h"
 #include "FloatQuad.h"
@@ -46,6 +45,7 @@ namespace WebCore {
 class AffineTransform;
 class AnimationController;
 class Cursor;
+class Document;
 class HitTestPoint;
 class HitTestResult;
 class InlineBox;
