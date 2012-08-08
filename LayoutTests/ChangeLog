@@ -1,5 +1,12 @@
 2012-08-07  Takashi Toyoshima  <toyoshim@chromium.org>
 
+        Unreviewed, update expectation.
+        https://bugs.webkit.org/show_bug.cgi?id=93439
+
+        * platform/chromium/TestExpectations:
+
+2012-08-07  Takashi Toyoshima  <toyoshim@chromium.org>
+
         Unreviewed, rebaseline for chromium Mac10.7
 
         * platform/chromium-mac/fast/speech/input-appearance-searchandspeech-expected.png:

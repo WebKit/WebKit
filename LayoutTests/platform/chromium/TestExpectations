@@ -1542,6 +1542,8 @@ BUGCR23473 MAC : fast/repaint/transform-relative-position.html = IMAGE
 BUGCR23473 MAC : fast/repaint/transform-repaint-descendants.html = IMAGE
 BUGCR23473 MAC : fast/repaint/transform-replaced-shadows.html = IMAGE
 
+BUGWK93439 LION SNOWLEOPARD : fast/forms/file/file-appearance-transform-no-effects.html = IMAGE
+
 // -----------------------------------------------------------------
 // END MAC PORT TESTS
 // -----------------------------------------------------------------
