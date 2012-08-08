@@ -853,7 +853,7 @@ void StreamingClient::didReceiveResponse(ResourceHandle*, const ResourceResponse
         gst_tag_list_free(tags);
 #endif
     else
-        notifyGstTagsOnPad(GST_ELEMENT(m_src), tags, m_src->priv->srcpad);
+        notifyGstTagsOnPad(GST_ELEMENT(m_src), m_src->priv->srcpad, tags);
 }
 
 void StreamingClient::didReceiveData(ResourceHandle* handle, const char* data, int length, int encodedDataLength)
