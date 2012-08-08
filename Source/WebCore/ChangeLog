@@ -1,3 +1,10 @@
+2012-08-07  Dean Jackson  <dino@apple.com>
+
+        Unreviewed build fix for Mac port after http://trac.webkit.org/changeset/124954
+
+        * html/HTMLPlugInElement.cpp:
+        (WebCore::HTMLPlugInElement::isKeyboardFocusable):
+
 2012-08-07  Kentaro Hara  <haraken@chromium.org>
 
         [V8] Move setIsolatedWorldSecurityOrigin() from V8Proxy to ScriptController

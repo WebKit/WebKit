@@ -38,6 +38,7 @@
 #include "RenderWidget.h"
 #include "Settings.h"
 #include "Widget.h"
+#include <wtf/UnusedParam.h>
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
 #include "npruntime_impl.h"
@@ -193,6 +194,7 @@ void HTMLPlugInElement::defaultEventHandler(Event* event)
 
 bool HTMLPlugInElement::isKeyboardFocusable(KeyboardEvent* event) const
 {
+    UNUSED_PARAM(event);
     if (!document()->page())
         return false;
 
