@@ -1,3 +1,16 @@
+2012-08-08  Benjamin Poulain  <benjamin@webkit.org>
+
+        Calling internals from the performance test runner prevents manual running
+        https://bugs.webkit.org/show_bug.cgi?id=93527
+
+        Reviewed by Ryosuke Niwa.
+
+        Since r125065, it is impossible to run the Performance tests manually. The problem is
+        "internals" is not defined when running outside the test runner, so the whole script
+        evaluation fails.
+
+        * resources/runner.js: Verify is window.internals is available before invoking something on it.
+
 2012-08-08  Zoltan Horvath  <zoltan@webkit.org>
 
         Set access to MemoryInfo enabled for the performance tests
