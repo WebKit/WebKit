@@ -1,3 +1,16 @@
+2012-08-08  Erik Arvidsson  <arv@chromium.org>
+
+        DOM4: classList should be defined on Element and not on HTMLElement
+        https://bugs.webkit.org/show_bug.cgi?id=93015
+
+        Reviewed by Adam Barth.
+
+        DOM4 specs that Element should have the classList WebIDL attribute. This moves the
+        attribute to the correct IDL file.
+
+        * fast/dom/Element/class-list-expected.txt: Added.
+        * fast/dom/Element/class-list.html: Added.
+
 2012-08-08  Beth Dakin  <bdakin@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=93393

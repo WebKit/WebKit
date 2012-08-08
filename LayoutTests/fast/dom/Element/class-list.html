@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<script src="../../js/resources/js-test-pre.js"></script>
+<script>
+description('Tests that classList works on non HTMLElements');
+
+var htmlElement = document.createElement('div');
+htmlElement.setAttribute('class', 'foo');
+shouldBeTrue('htmlElement.classList instanceof DOMTokenList');
+
+var svgElement = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+svgElement.setAttribute('class', 'foo');
+shouldBeTrue('svgElement.classList instanceof DOMTokenList');
+
+
+var xmlElement = document.createElementNS('http://www.example.com', 'xml');
+xmlElement.setAttribute('class', 'foo');
+shouldBeTrue('xmlElement.classList instanceof DOMTokenList');
+
+</script>
+<script src="../../js/resources/js-test-post.js"></script>

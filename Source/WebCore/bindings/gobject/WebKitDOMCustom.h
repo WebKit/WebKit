@@ -32,6 +32,7 @@ WEBKIT_API gboolean webkit_dom_html_input_element_is_edited(WebKitDOMHTMLInputEl
 WEBKIT_API WebKitDOMBlob* webkit_dom_blob_webkit_slice(WebKitDOMBlob* self, gint64 start, gint64 end, const gchar* content_type);
 WEBKIT_API gchar* webkit_dom_html_element_get_class_name(WebKitDOMHTMLElement* element);
 WEBKIT_API void webkit_dom_html_element_set_class_name(WebKitDOMHTMLElement* element, const gchar* value);
+WEBKIT_API WebKitDOMDOMTokenList* webkit_dom_html_element_get_class_list(WebKitDOMHTMLElement* element);
 WEBKIT_API void webkit_dom_html_form_element_dispatch_form_change(WebKitDOMHTMLFormElement* self);
 WEBKIT_API void webkit_dom_html_form_element_dispatch_form_input(WebKitDOMHTMLFormElement* self);
 

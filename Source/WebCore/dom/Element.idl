@@ -97,6 +97,7 @@ module core {
         NodeList getElementsByClassName(in [Optional=DefaultIsUndefined] DOMString name);
 
         attribute [Reflect=class] DOMString className;
+        readonly attribute DOMTokenList classList;
 
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
         readonly attribute DOMStringMap dataset;

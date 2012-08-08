@@ -32,7 +32,6 @@ module html {
                  attribute [Reflect] DOMString lang;
                  attribute boolean             translate;
                  attribute [Reflect] DOMString dir;
-                 readonly attribute DOMTokenList classList;
 
                  attribute long              tabIndex;
                  attribute boolean           draggable;
