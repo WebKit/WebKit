@@ -1,3 +1,18 @@
+2012-08-08  Takashi Sakamoto  <tasak@google.com>
+
+        showNodePath should show the age of ShadowRoot
+        https://bugs.webkit.org/show_bug.cgi?id=93347
+
+        Reviewed by Ryosuke Niwa.
+
+        No new tests, because this patch is for fixing a bug of a method for
+        debugging. If NDEBUG is defined, the method is not compiled.
+
+        * dom/Node.cpp:
+        (WebCore::Node::showNodePathForThis):
+        Fixed the bug to obtain the oldest shadow root from a shadow root.
+        oldestShadowRootFor only works for an element node, not for a shadow root.
+
 2012-08-07  Kent Tamura  <tkent@chromium.org>
 
         Remove fractionDigits argument of WebCore::convertToLocalizedNumber()

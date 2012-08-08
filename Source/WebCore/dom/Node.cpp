@@ -2132,7 +2132,7 @@ void Node::showNodePathForThis() const
         const Node* node = chain[index - 1];
         if (node->isShadowRoot()) {
             int count = 0;
-            for (ShadowRoot* shadowRoot = oldestShadowRootFor(node); shadowRoot && shadowRoot != node; shadowRoot = shadowRoot->youngerShadowRoot())
+            for (ShadowRoot* shadowRoot = oldestShadowRootFor(toShadowRoot(node)->host()); shadowRoot && shadowRoot != node; shadowRoot = shadowRoot->youngerShadowRoot())
                 ++count;
             fprintf(stderr, "/#shadow-root[%d]", count);
             continue;
