@@ -1,3 +1,23 @@
+2012-08-08  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Add unit test for QObject bindings for scriptable plugins
+        https://bugs.webkit.org/show_bug.cgi?id=93462
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        The bindings code is subject to refactoring in the future, so added a unit test to verify that
+        accessing an embedded QWidget from JavaScript goes through the QObject bindings.
+
+        * tests/qobjectbridge/tst_qobjectbridge.cpp:
+        (tst_QObjectBridge):
+        (TestPluginWidget):
+        (TestPluginWidget::TestPluginWidget):
+        (TestPluginWidget::slotWithReturnValue):
+        (TestWebPage):
+        (TestWebPage::TestWebPage):
+        (TestWebPage::createPlugin):
+        (tst_QObjectBridge::scriptablePlugin):
+
 2012-08-07  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Unreviewed trivial fix: Missed HAVE_QT5 removal as part of r124879

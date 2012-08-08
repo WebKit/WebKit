@@ -652,6 +652,7 @@ private slots:
     void qObjectWrapperWithSameIdentity();
     void introspectQtMethods_data();
     void introspectQtMethods();
+    void scriptablePlugin();
 
 private:
     QString evalJS(const QString& s)
@@ -2179,6 +2180,48 @@ void tst_QObjectBridge::webElementSlotOnly()
     m_page->mainFrame()->addToJavaScriptWindowObject("myWebElementSlotObject", &object);
     evalJS("myWebElementSlotObject.doSomethingWithWebElement(document.body)");
     QCOMPARE(evalJS("myWebElementSlotObject.tagName"), QString("BODY"));
+}
+
+class TestPluginWidget : public QWidget {
+    Q_OBJECT
+public:
+    TestPluginWidget() { }
+
+public slots:
+    int slotWithReturnValue() { return 42; }
+};
+
+class TestWebPage : public QWebPage {
+    Q_OBJECT
+public:
+    TestWebPage(QObject* parent = 0)
+        : QWebPage(parent)
+        , creationCount(0)
+    { }
+
+    int creationCount;
+
+protected:
+    virtual QObject* createPlugin(const QString&, const QUrl&, const QStringList&, const QStringList&)
+    {
+        creationCount++;
+        return new TestPluginWidget;
+    }
+};
+
+void tst_QObjectBridge::scriptablePlugin()
+{
+    QWebView view;
+    TestWebPage* page = new TestWebPage;
+    view.setPage(page);
+    page->setParent(&view);
+    view.settings()->setAttribute(QWebSettings::PluginsEnabled, true);
+
+    page->mainFrame()->setHtml("<object width=100 height=100 type=\"application/x-qt-plugin\"></object>");
+    QCOMPARE(page->creationCount, 1);
+
+    QVariant result = page->mainFrame()->evaluateJavaScript("document.querySelector(\"object\").slotWithReturnValue()");
+    QCOMPARE(result.toString(), QLatin1String("42"));
 }
 
 QTEST_MAIN(tst_QObjectBridge)
