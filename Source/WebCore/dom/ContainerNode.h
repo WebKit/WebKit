@@ -306,8 +306,7 @@ class ChildNodesLazySnapshot {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit ChildNodesLazySnapshot(Node* parentNode)
-        : m_parentNode(parentNode)
-        , m_currentNode(parentNode->firstChild())
+        : m_currentNode(parentNode->firstChild())
         , m_currentIndex(0)
     {
         m_nextSnapshot = latestSnapshot;
@@ -361,7 +360,6 @@ public:
 private:
     static ChildNodesLazySnapshot* latestSnapshot;
 
-    Node* m_parentNode;
     Node* m_currentNode;
     unsigned m_currentIndex;
     OwnPtr<Vector<RefPtr<Node> > > m_childNodes; // Lazily instantiated.

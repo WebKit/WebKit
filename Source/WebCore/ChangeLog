@@ -1,3 +1,13 @@
+2012-08-08  Kentaro Hara  <haraken@chromium.org>
+
+        Remove an unused member variable.
+
+        Unreviewed, build fix for r124990.
+
+        * dom/ContainerNode.h:
+        (WebCore::ChildNodesLazySnapshot::ChildNodesLazySnapshot):
+        (ChildNodesLazySnapshot):
+
 2012-08-07  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: TabbedPane should use floating point width values for measuring.
