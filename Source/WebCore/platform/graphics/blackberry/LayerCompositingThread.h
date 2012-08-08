@@ -83,6 +83,10 @@ public:
     float opacity() const { return m_opacity; }
     void setOpacity(float) { m_opacity = opacity; m_opacitySet = true; }
 
+    bool isBoundsOriginSet() const { return m_boundsOriginSet; }
+    FloatPoint boundsOrigin() const { return m_boundsOrigin; }
+    void setBoundsOrigin(const FloatPoint& origin) { m_boundsOrigin = origin; m_boundsOriginSet = true; }
+
     const Vector<RefPtr<LayerAnimation> >& animations() const { return m_animations; }
     void addAnimation(PassRefPtr<LayerAnimation> animation) { m_animations.append(animation); }
     void removeAnimation(const String& name);
@@ -95,6 +99,7 @@ private:
         , m_boundsSet(false)
         , m_transformSet(false)
         , m_opacitySet(false)
+        , m_boundsOriginSet(false)
     {
     }
 
@@ -103,6 +108,7 @@ private:
     IntSize m_bounds;
     TransformationMatrix m_transform;
     float m_opacity;
+    FloatPoint m_boundsOrigin;
 
     Vector<RefPtr<LayerAnimation> > m_animations;
 
@@ -111,6 +117,7 @@ private:
     unsigned m_boundsSet : 1;
     unsigned m_transformSet : 1;
     unsigned m_opacitySet : 1;
+    unsigned m_boundsOriginSet : 1;
 };
 
 class LayerFilterRendererAction;

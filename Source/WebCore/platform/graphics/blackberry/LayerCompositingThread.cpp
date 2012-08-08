@@ -519,6 +519,8 @@ bool LayerCompositingThread::updateAnimations(double currentTime)
             m_transform = m_override->transform();
         if (m_override->isOpacitySet())
             m_opacity = m_override->opacity();
+        if (m_override->isBoundsOriginSet())
+            m_boundsOrigin = m_override->boundsOrigin();
 
         for (size_t i = 0; i < m_override->animations().size(); ++i) {
             LayerAnimation* animation = m_override->animations()[i].get();

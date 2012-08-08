@@ -1,5 +1,28 @@
 2012-08-08  Antonio Gomes  <agomes@rim.com>
 
+        [BlackBerry] Add boundsOrigin accessors to LayerOverride
+        https://bugs.webkit.org/show_bug.cgi?id=93479
+        PR #188677
+
+        Reviewed by Yong Li.
+
+        This is needed in order to allow us to directly set the boundsOrigin value
+        to the LayerCompositingThread and avoid it to get overridden by the respective
+        LayerWebKitThread's boundsOrigin value in the next commit.
+
+        No new tests, since this is another preparation PR.
+
+        * platform/graphics/blackberry/LayerCompositingThread.cpp:
+        (WebCore::LayerCompositingThread::updateAnimations):
+        * platform/graphics/blackberry/LayerCompositingThread.h:
+        (WebCore::LayerOverride::isBoundsOriginSet):
+        (WebCore::LayerOverride::boundsOrigin):
+        (WebCore::LayerOverride::setBoundsOrigin):
+        (LayerOverride):
+        (WebCore::LayerOverride::LayerOverride):
+
+2012-08-08  Antonio Gomes  <agomes@rim.com>
+
         [BlackBerry] Propagate GraphicsLayer::boundsOrigin down to the platform layers
         https://bugs.webkit.org/show_bug.cgi?id=93478
         PR #188657
