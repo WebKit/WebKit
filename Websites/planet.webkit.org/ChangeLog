@@ -1,3 +1,19 @@
+2012-08-08  Peter Beverloo  <peter@chromium.org>
+
+        Remove several non-updated blogs from Planet WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=92973
+
+        Reviewed by Eric Seidel.
+
+        Adam Treat's blog was last updated in 2009.
+        Justin Haygood's blog was last updated in 2008.
+        Mike Smith seems to have moved to Google+ entirely.
+        Pierre-Luc Beaudoin's blog is unavailable, cached copy says the last (non-WebKit specific update) was in 2010.
+        Cameron Zwarich' summer of JSC no longer exists.
+        Anthony Ricaud's blog was last updated in 2009.
+
+        * config.ini:
+
 2012-08-07  Bruno de Oliveira Abinader  <bruno.abinader@basyskom.com>
 
         Add Bruno Abinader's blog feed to Planet WebKit
