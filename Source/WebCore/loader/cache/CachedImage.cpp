@@ -471,7 +471,11 @@ void CachedImage::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::CachedResourceImage);
     CachedResource::reportMemoryUsage(memoryObjectInfo);
-    info.addMember(m_image);
+    if (m_image) {
+        if (m_image->data())
+            info.addRawBuffer(m_image->data(), m_image->data()->size());
+        info.addRawBuffer(m_image.get(), decodedSize());
+    }
 #if ENABLE(SVG)
     info.addMember(m_svgImageCache);
 #endif

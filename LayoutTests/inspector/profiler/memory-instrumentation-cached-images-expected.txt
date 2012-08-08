@@ -1,0 +1,6 @@
+This test checks that CachedImages size reported by the memory agent includes images decoded size. Bug 93366
+
+
+didReceiveMemorySnapshot
+PASS: CachedImages size is OK.
+
