@@ -6,17 +6,15 @@ include("../header.inc");
 <p>To download a pre-built bundle containing the latest WebKit, visit <a href="http://nightly.webkit.org/">WebKit Nightly Builds</a>.</p>
 
 <h2>Browsing the Code</h2>
-<p>To browse the source code online, visit <a href="http://trac.webkit.org/browser">WebKit Trac</a>.
+<p>To browse the source code online, visit <a href="https://trac.webkit.org/browser">WebKit Trac</a>.
 
-<h2>Checking Out</h2>
-<p>To work with the WebKit source tree, you will need a Subversion client installed.
+<h2>Checking Out with Subversion</h2>
+<p>To work with the WebKit source tree, you will need a Subversion or a Git client installed.
 See <a href="tools.html">Installing Developer Tools</a> for information on how
 to install Subversion.</p>
 <div class="mac-instructions">
 <h4>Mac OS X</h4>
 <ol>
-<li><p>Install a Subversion Client</p>
-<p>Subversion (svn) is the source code management tool used by the WebKit Open Source Project. A <a href="http://homepage.mac.com/hiirem/svkbuilds.html">Subversion 1.4 client for Mac OS X 10.4</a> is available.</p>
 <li><p>Open Terminal</p>
 <p>Terminal resides in /Applications/Utilities. The Finder Go menu provides a quick way to navigate there.</p>
 </ol>
@@ -32,9 +30,10 @@ to install Subversion.</p>
 
 <ol>
 <li><p>Type this command to check out the WebKit source tree:</p>
-<p class="code">svn checkout http://svn.webkit.org/repository/webkit/trunk WebKit</p>
+<p class="code">svn checkout https://svn.webkit.org/repository/webkit/trunk WebKit</p>
 <p>Alternatively you can download a snapshot of the WebKit source tree from 
-<a href="http://nightly.webkit.org/files/WebKit-SVN-source.tar.bz2">http://nightly.webkit.org/files/WebKit-SVN-source.tar.bz2</a>.  It is updated every six hours.</p>
+<a href="http://nightly.webkit.org/files/WebKit-SVN-source.tar.bz2">http://nightly.webkit.org/files/WebKit-SVN-source.tar.bz2</a>.  It is updated every six hours. Note the archived checkout uses an HTTP connection. We recommend running the following command to use HTTPS instead:</p>
+<p class="code">svn switch --relocate http://svn.webkit.org/repository/webkit/trunk https://svn.webkit.org/repository/webkit/trunk</p>
 </li>
 </ol>
 
@@ -57,6 +56,12 @@ download additional libraries that are needed to build.</p>
 
 <p>Once you have a current tree, the next step is
 <a href="build.html">building WebKit</a>.</p>
+
+<h2>Checking Out with Git</h2>
+<p>To work with the WebKit source tree using a Git client, install a Git client with Subversion support and run the following command on your terminal:</p>
+<p class="code">git clone git://git.webkit.org/WebKit.git WebKit</p>
+
+<p>If you want to be able to commit changes to the Subversion repository, or just want to check out branches that aren't contained in WebKit.git, you will need track the Subversion repository. For information about this, and other aspects of using Git with WebKit, read <a href="http://trac.webkit.org/wiki/UsingGitWithWebKit">the wiki page</a>.</p>
 
 <h2>Keeping up to Date</h2>
 <p>At any time, you can rerun the <code>update-webkit</code> script to update

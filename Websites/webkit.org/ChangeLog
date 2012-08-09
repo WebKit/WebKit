@@ -1,3 +1,18 @@
+2012-08-09  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Recommend the use of https and mention git on building/checkout.html
+        https://bugs.webkit.org/show_bug.cgi?id=93657
+
+        Reviewed by Mark Rowe.
+
+        This page was quite out-dated. Stop mentioning about how to install subversion on OS X 10.4
+        because the paragraph right above it refers to buliding/tools.html for that.
+
+        Recommend the use of HTTPS connection for the Subversion checkout and also mention how to
+        checkout using a Git client.
+
+        * building/checkout.html:
+
 2012-07-27  Adam Barth  <abarth@webkit.org>
 
         Writing a blog post for new reviewers doesn't add value to the blog
