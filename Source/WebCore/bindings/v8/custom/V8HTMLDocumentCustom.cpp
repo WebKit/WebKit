@@ -46,6 +46,7 @@
 #include "V8Node.h"
 #include "V8Proxy.h"
 #include "V8RecursionScope.h"
+#include <wtf/text/StringBuilder.h>
 #include <wtf/OwnArrayPtr.h>
 #include <wtf/RefPtr.h>
 #include <wtf/StdLibExtras.h>
@@ -109,10 +110,10 @@ v8::Handle<v8::Value> V8HTMLDocument::GetNamedProperty(HTMLDocument* htmlDocumen
 //   document.write() --> document.write("")
 static String writeHelperGetString(const v8::Arguments& args)
 {
-    String str = "";
+    StringBuilder builder;
     for (int i = 0; i < args.Length(); ++i)
-        str += toWebCoreString(args[i]);
-    return str;
+        builder.append(toWebCoreString(args[i]));
+    return builder.toString();
 }
 
 v8::Handle<v8::Value> V8HTMLDocument::writeCallback(const v8::Arguments& args)

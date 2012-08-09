@@ -1,3 +1,17 @@
+2012-08-08  Jae Hyun Park  <jae.park@company100.net>
+
+        writeHelperGetString in V8HTMLDocument uses += to concatenate strings
+        https://bugs.webkit.org/show_bug.cgi?id=93035
+
+        Reviewed by Adam Barth.
+
+        Use a StringBuilder instead of String concatenation because StringBuilder is generally faster.
+
+        No new functionality, so no new tests.
+
+        * bindings/v8/custom/V8HTMLDocumentCustom.cpp:
+        (WebCore::writeHelperGetString):
+
 2012-08-08  Adrienne Walker  <enne@google.com>
 
         [chromium] Move scrollbar pointer into WebScrollbarThemePainter
