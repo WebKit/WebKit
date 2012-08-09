@@ -1,3 +1,13 @@
+2012-08-08  MORITA Hajime  <morrita@google.com>
+
+        [SVG] load events shouldn't be fired during Node::insrtedInto()
+        https://bugs.webkit.org/show_bug.cgi?id=92969
+
+        Reviewed by Ryosuke Niwa.
+
+        * svg/custom/loadevents-async-expected.txt: Added.
+        * svg/custom/loadevents-async.html: Added.
+
 2012-08-08  Tony Chang  <tony@chromium.org>
 
         css3/flexbox/content-height-with-scrollbars.html failing on non-fractional pixel layout machines

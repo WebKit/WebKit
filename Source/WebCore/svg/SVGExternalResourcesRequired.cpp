@@ -103,7 +103,7 @@ void SVGExternalResourcesRequired::insertedIntoDocument(SVGElement* targetElemen
     if (externalResourcesRequiredBaseValue())
         return;
     setHaveFiredLoadEvent(true);
-    targetElement->sendSVGLoadEventIfPossible();
+    targetElement->sendSVGLoadEventIfPossibleAsynchronously();
 }
 
 void SVGExternalResourcesRequired::finishParsingChildren()

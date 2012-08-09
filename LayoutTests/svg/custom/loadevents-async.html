@@ -1,0 +1,31 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+description("This test ensures that tree mutation on the load doesn't break consistency.");
+var invoked = false;
+var spanElement = document.createElementNS("http://www.w3.org/1999/xhtml", "span");
+var divElement = document.createElementNS("http://www.w3.org/1999/xhtml", "div");
+var useElement = document.createElementNS("http://www.w3.org/2000/svg", "use");
+var emptyDocument = document.implementation.createDocument("", "", null);
+
+document.body.appendChild(spanElement);
+divElement.appendChild(useElement);
+useElement.addEventListener("load", function () { emptyDocument.adoptNode(useElement); invoked = true; }, false);
+spanElement.appendChild(divElement);
+document.body.appendChild(useElement);
+shouldBeFalse("invoked");
+
+jsTestIsAsync = true;
+setTimeout(function() {
+    shouldBeTrue("invoked");
+    finishJSTest();
+}, 1);
+
+</script>
+<script src="../../fast/js/resources/js-test-post.js"></script>
+<body>
+</html>

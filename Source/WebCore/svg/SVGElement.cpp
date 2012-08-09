@@ -477,6 +477,22 @@ void SVGElement::sendSVGLoadEventIfPossible(bool sendParentLoadEvents)
     }
 }
 
+void SVGElement::sendSVGLoadEventIfPossibleAsynchronously()
+{
+    svgLoadEventTimer()->startOneShot(0);
+}
+
+void SVGElement::svgLoadEventTimerFired(Timer<SVGElement>*)
+{
+    sendSVGLoadEventIfPossible();
+}
+
+Timer<SVGElement>* SVGElement::svgLoadEventTimer()
+{
+    ASSERT_NOT_REACHED();
+    return 0;
+}
+
 void SVGElement::finishParsingChildren()
 {
     StyledElement::finishParsingChildren();

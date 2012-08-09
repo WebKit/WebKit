@@ -1,3 +1,34 @@
+2012-08-08  MORITA Hajime  <morrita@google.com>
+
+        [SVG] load events shouldn't be fired during Node::insrtedInto()
+        https://bugs.webkit.org/show_bug.cgi?id=92969
+
+        Reviewed by Ryosuke Niwa.
+
+        Event dispatches during insertedInto() allow event handlers to
+        break DOM tree cosistency. This chagne makes them async for load
+        events which are dispatched during insertedInto() call. This
+        prevents event handlers from breaking tree consistency while the
+        notification traversal.
+
+        Test: svg/custom/loadevents-async.html
+
+        * svg/SVGElement.cpp:
+        (WebCore::SVGElement::sendSVGLoadEventIfPossibleAsynchronously): Added.
+        (WebCore):
+        (WebCore::SVGElement::svgLoadEventTimerFired): Added.
+        (WebCore::SVGElement::svgLoadEventTimer):
+        - Added a stub. Implemented in SVGScriptElement, SVGStopElement, SVGUseElement
+          where the load event happens.
+        * svg/SVGElement.h:
+        (SVGElement):
+        * svg/SVGExternalResourcesRequired.cpp:
+        (WebCore::SVGExternalResourcesRequired::insertedIntoDocument):
+        - Replaces event dispatch call with async version.
+        * svg/SVGScriptElement.h:
+        * svg/SVGStyleElement.h:
+        * svg/SVGUseElement.h:
+
 2012-08-08  Adam Barth  <abarth@webkit.org>
 
         Implement JSDOMWindow*::allowsAccessFrom* in terms of BindingSecurity
