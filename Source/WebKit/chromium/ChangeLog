@@ -1,3 +1,15 @@
+2012-08-08  Alexei Svitkine  <asvitkine@chromium.org>
+
+        [chromium/mac] Map NSEventPhaseMayBegin appropriately on 10.8
+        https://bugs.webkit.org/show_bug.cgi?id=93535
+
+        Reviewed by Dimitri Glazkov.
+
+        This enables putting two fingers on the track pad to show overlay scroll bars on 10.8+.
+
+        * src/mac/WebInputEventFactory.mm:
+        (WebKit::phaseForNSEventPhase):
+
 2012-08-08  James Robinson  <jamesr@chromium.org>
 
         [chromium] Fix up includes and types in chromium compositor unit tests

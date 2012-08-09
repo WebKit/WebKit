@@ -43,8 +43,7 @@ enum {
     NSEventPhaseStationary  = 0x1 << 1,
     NSEventPhaseChanged     = 0x1 << 2,
     NSEventPhaseEnded       = 0x1 << 3,
-    NSEventPhaseCancelled   = 0x1 << 4,
-    NSEventPhaseMayBegin    = 0x1 << 5
+    NSEventPhaseCancelled   = 0x1 << 4
 };
 typedef NSUInteger NSEventPhase;
 
@@ -54,6 +53,15 @@ typedef NSUInteger NSEventPhase;
 @end
 
 #endif  // __MAC_OS_X_VERSION_MAX_ALLOWED < 1070
+
+#if __MAC_OS_X_VERSION_MAX_ALLOWED < 1080
+
+// Additional Mountain Lion APIs.
+enum {
+    NSEventPhaseMayBegin    = 0x1 << 5
+};
+
+#endif  // __MAC_OS_X_VERSION_MAX_ALLOWED < 1080
 
 // Do not __MAC_OS_X_VERSION_MAX_ALLOWED here because of a bug in the 10.5 SDK,
 // see <http://lists.webkit.org/pipermail/webkit-dev/2012-July/021442.html>.
@@ -759,7 +767,7 @@ WebMouseEvent WebInputEventFactory::mouseEvent(NSEvent* event, NSView* view)
 
 static WebMouseWheelEvent::Phase phaseForNSEventPhase(NSEventPhase eventPhase)
 {
-    uint32_t phase = WebMouseWheelEvent::PhaseNone; 
+    uint32_t phase = WebMouseWheelEvent::PhaseNone;
     if (eventPhase & NSEventPhaseBegan)
         phase |= WebMouseWheelEvent::PhaseBegan;
     if (eventPhase & NSEventPhaseStationary)
@@ -770,6 +778,8 @@ static WebMouseWheelEvent::Phase phaseForNSEventPhase(NSEventPhase eventPhase)
         phase |= WebMouseWheelEvent::PhaseEnded;
     if (eventPhase & NSEventPhaseCancelled)
         phase |= WebMouseWheelEvent::PhaseCancelled;
+    if (eventPhase & NSEventPhaseMayBegin)
+        phase |= WebMouseWheelEvent::PhaseMayBegin;
     return static_cast<WebMouseWheelEvent::Phase>(phase);
 }
 
