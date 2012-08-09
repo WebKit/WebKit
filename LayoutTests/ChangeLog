@@ -1,3 +1,12 @@
+2012-08-09  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed gardening, paint the bots green.
+
+        * platform/qt-5.0-wk2/Skipped: Skip failing tests.
+        * platform/qt-5.0-wk2/fast/forms/mailto/advanced-get-expected.txt: Added because of whitespace differenced.
+        * platform/qt-5.0-wk2/fast/forms/mailto/advanced-put-expected.txt: Added because of whitespace differenced.
+        * platform/qt/TestExpectations: Mark an asserting test as crash.
+
 2012-08-09  Bruno de Oliveira Abinader  <bruno.abinader@basyskom.com>
 
         [css3-text] Add suport for -webkit-text-decoration-line
