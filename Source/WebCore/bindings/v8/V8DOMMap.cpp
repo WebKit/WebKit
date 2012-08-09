@@ -42,12 +42,12 @@ namespace WebCore {
 DOMDataStoreHandle::DOMDataStoreHandle()
     : m_store(adoptPtr(new ScopedDOMDataStore()))
 {
-    V8BindingPerIsolateData::current()->registerDOMDataStore(m_store.get());
+    V8PerIsolateData::current()->registerDOMDataStore(m_store.get());
 }
 
 DOMDataStoreHandle::~DOMDataStoreHandle()
 {
-    V8BindingPerIsolateData::current()->unregisterDOMDataStore(m_store.get());
+    V8PerIsolateData::current()->unregisterDOMDataStore(m_store.get());
 }
 
 DOMNodeMapping& getDOMNodeMap(v8::Isolate* isolate)

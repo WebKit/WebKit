@@ -44,7 +44,7 @@ static v8::Local<v8::String> makeExternalString(const String& string)
 static void cachedStringCallback(v8::Persistent<v8::Value> wrapper, void* parameter)
 {
     StringImpl* stringImpl = static_cast<StringImpl*>(parameter);
-    V8BindingPerIsolateData::current()->stringCache()->remove(stringImpl);
+    V8PerIsolateData::current()->stringCache()->remove(stringImpl);
     wrapper.Dispose();
     stringImpl->deref();
 }

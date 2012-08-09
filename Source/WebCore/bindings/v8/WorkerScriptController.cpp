@@ -60,7 +60,7 @@ WorkerScriptController::WorkerScriptController(WorkerContext* workerContext)
     , m_executionForbidden(false)
     , m_executionScheduledToTerminate(false)
 {
-    V8BindingPerIsolateData* data = V8BindingPerIsolateData::create(m_isolate);
+    V8PerIsolateData* data = V8PerIsolateData::create(m_isolate);
     data->allStores().append(&m_DOMDataStore);
     data->setDOMDataStore(&m_DOMDataStore);
     m_isolate->Enter();
@@ -77,7 +77,7 @@ WorkerScriptController::~WorkerScriptController()
     WebKit::Platform::current()->didStopWorkerRunLoop(WebKit::WebWorkerRunLoop(&m_workerContext->thread()->runLoop()));
 #endif
     m_proxy.clear();
-    V8BindingPerIsolateData::dispose(m_isolate);
+    V8PerIsolateData::dispose(m_isolate);
     m_isolate->Exit();
     m_isolate->Dispose();
 }

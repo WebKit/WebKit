@@ -37,11 +37,11 @@
 #include "PlatformString.h"
 #include "V8BindingHelpers.h"
 #include "V8BindingMacros.h"
-#include "V8BindingPerIsolateData.h"
 #include "V8ConfigureDOMAttributesAndMethods.h"
 #include "V8DOMWrapper.h"
 #include "V8GCController.h"
 #include "V8HiddenPropertyName.h"
+#include "V8PerIsolateData.h"
 #include "V8Proxy.h"
 #include "V8ValueCache.h"
 #include <wtf/MathExtras.h>
@@ -87,18 +87,18 @@ namespace WebCore {
 
         ConstructorMode()
         {
-            V8BindingPerIsolateData* data = V8BindingPerIsolateData::current();
+            V8PerIsolateData* data = V8PerIsolateData::current();
             m_previous = data->m_constructorMode;
             data->m_constructorMode = WrapExistingObject;
         }
 
         ~ConstructorMode()
         {
-            V8BindingPerIsolateData* data = V8BindingPerIsolateData::current();
+            V8PerIsolateData* data = V8PerIsolateData::current();
             data->m_constructorMode = m_previous;
         }
 
-        static bool current() { return V8BindingPerIsolateData::current()->m_constructorMode; }
+        static bool current() { return V8PerIsolateData::current()->m_constructorMode; }
 
     private:
         bool m_previous;
@@ -138,7 +138,7 @@ namespace WebCore {
         if (!stringImpl)
             return isolate ? v8::String::Empty(isolate) : v8::String::Empty();
 
-        V8BindingPerIsolateData* data = V8BindingPerIsolateData::current(isolate);
+        V8PerIsolateData* data = V8PerIsolateData::current(isolate);
         return data->stringCache()->v8ExternalString(stringImpl, isolate);
     }
 
@@ -150,13 +150,13 @@ namespace WebCore {
 
     inline v8::Handle<v8::Integer> v8Integer(int value, v8::Isolate* isolate = 0)
     {
-        V8BindingPerIsolateData* data = V8BindingPerIsolateData::current(isolate);
+        V8PerIsolateData* data = V8PerIsolateData::current(isolate);
         return data->integerCache()->v8Integer(value);
     }
 
     inline v8::Handle<v8::Integer> v8UnsignedInteger(unsigned value, v8::Isolate* isolate = 0)
     {
-        V8BindingPerIsolateData* data = V8BindingPerIsolateData::current(isolate);
+        V8PerIsolateData* data = V8PerIsolateData::current(isolate);
         return data->integerCache()->v8UnsignedInteger(value);
     }
 

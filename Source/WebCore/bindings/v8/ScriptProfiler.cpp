@@ -195,7 +195,7 @@ void ScriptProfiler::visitNodeWrappers(NodeWrapperVisitor* visitor)
 
 void ScriptProfiler::visitExternalStrings(ExternalStringVisitor* visitor)
 {
-    V8BindingPerIsolateData::current()->visitExternalStrings(visitor);
+    V8PerIsolateData::current()->visitExternalStrings(visitor);
 }
 
 void ScriptProfiler::visitExternalArrays(ExternalArrayVisitor* visitor)
@@ -222,7 +222,7 @@ void ScriptProfiler::visitExternalArrays(ExternalArrayVisitor* visitor)
 
 void ScriptProfiler::collectBindingMemoryInfo(MemoryInstrumentation* instrumentation)
 {
-    V8BindingPerIsolateData* data = V8BindingPerIsolateData::current();
+    V8PerIsolateData* data = V8PerIsolateData::current();
     instrumentation->addRootObject(data);
 }
 

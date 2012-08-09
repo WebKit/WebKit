@@ -47,7 +47,7 @@ LIST(APPEND WebCore_SOURCES
     bindings/v8/V8AbstractEventListener.cpp
     bindings/v8/V8Binding.cpp
     bindings/v8/V8BindingHelpers.cpp
-    bindings/v8/V8BindingPerIsolateData.cpp
+    bindings/v8/V8PerIsolateData.cpp
     bindings/v8/V8ConfigureDOMAttributesAndMethods.cpp,
     bindings/v8/V8Collection.cpp
     bindings/v8/V8DOMMap.cpp

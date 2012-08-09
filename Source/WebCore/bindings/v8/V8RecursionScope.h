@@ -60,24 +60,24 @@ public:
     explicit V8RecursionScope(ScriptExecutionContext* context)
         : m_isDocumentContext(context && context->isDocument())
     {
-        V8BindingPerIsolateData::current()->incrementRecursionLevel();
+        V8PerIsolateData::current()->incrementRecursionLevel();
     }
 
     ~V8RecursionScope()
     {
-        if (!V8BindingPerIsolateData::current()->decrementRecursionLevel())
+        if (!V8PerIsolateData::current()->decrementRecursionLevel())
             didLeaveScriptContext();
     }
 
     static int recursionLevel()
     {
-        return V8BindingPerIsolateData::current()->recursionLevel();
+        return V8PerIsolateData::current()->recursionLevel();
     }
 
 #ifndef NDEBUG
     static bool properlyUsed()
     {
-        return recursionLevel() > 0 || V8BindingPerIsolateData::current()->internalScriptRecursionLevel() > 0;
+        return recursionLevel() > 0 || V8PerIsolateData::current()->internalScriptRecursionLevel() > 0;
     }
 #endif
 
@@ -86,14 +86,14 @@ public:
         MicrotaskSuppression()
         {
 #ifndef NDEBUG
-            V8BindingPerIsolateData::current()->incrementInternalScriptRecursionLevel();
+            V8PerIsolateData::current()->incrementInternalScriptRecursionLevel();
 #endif
         }
 
         ~MicrotaskSuppression()
         {
 #ifndef NDEBUG
-            V8BindingPerIsolateData::current()->decrementInternalScriptRecursionLevel();
+            V8PerIsolateData::current()->decrementInternalScriptRecursionLevel();
 #endif
         }
     };

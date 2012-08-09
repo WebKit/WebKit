@@ -1,3 +1,147 @@
+2012-08-09  Kentaro Hara  <haraken@chromium.org>
+
+        [V8] Rename V8BindingPerIsolateData to V8PerIsolateData
+        https://bugs.webkit.org/show_bug.cgi?id=93592
+
+        Reviewed by Adam Barth.
+
+        For a better name. See discussion in bug 93333.
+
+        No tests. No change in behavior.
+
+        * UseV8.cmake:
+        * WebCore.gypi:
+        * bindings/scripts/CodeGeneratorV8.pm:
+        (GenerateImplementation):
+        * bindings/scripts/test/V8/V8Float64Array.cpp:
+        (WebCore::V8Float64Array::GetRawTemplate):
+        (WebCore::V8Float64Array::GetTemplate):
+        * bindings/scripts/test/V8/V8TestActiveDOMObject.cpp:
+        (WebCore::V8TestActiveDOMObject::GetRawTemplate):
+        (WebCore::V8TestActiveDOMObject::GetTemplate):
+        * bindings/scripts/test/V8/V8TestCustomNamedGetter.cpp:
+        (WebCore::V8TestCustomNamedGetter::GetRawTemplate):
+        (WebCore::V8TestCustomNamedGetter::GetTemplate):
+        * bindings/scripts/test/V8/V8TestEventConstructor.cpp:
+        (WebCore::V8TestEventConstructor::GetRawTemplate):
+        (WebCore::V8TestEventConstructor::GetTemplate):
+        * bindings/scripts/test/V8/V8TestEventTarget.cpp:
+        (WebCore::V8TestEventTarget::GetRawTemplate):
+        (WebCore::V8TestEventTarget::GetTemplate):
+        * bindings/scripts/test/V8/V8TestException.cpp:
+        (WebCore::V8TestException::GetRawTemplate):
+        (WebCore::V8TestException::GetTemplate):
+        * bindings/scripts/test/V8/V8TestInterface.cpp:
+        (WebCore::V8TestInterface::GetRawTemplate):
+        (WebCore::V8TestInterface::GetTemplate):
+        * bindings/scripts/test/V8/V8TestMediaQueryListListener.cpp:
+        (WebCore::V8TestMediaQueryListListener::GetRawTemplate):
+        (WebCore::V8TestMediaQueryListListener::GetTemplate):
+        * bindings/scripts/test/V8/V8TestNamedConstructor.cpp:
+        (WebCore::V8TestNamedConstructor::GetRawTemplate):
+        (WebCore::V8TestNamedConstructor::GetTemplate):
+        * bindings/scripts/test/V8/V8TestNode.cpp:
+        (WebCore::V8TestNode::GetRawTemplate):
+        (WebCore::V8TestNode::GetTemplate):
+        * bindings/scripts/test/V8/V8TestObj.cpp:
+        (WebCore::V8TestObj::GetRawTemplate):
+        (WebCore::V8TestObj::GetTemplate):
+        * bindings/scripts/test/V8/V8TestSerializedScriptValueInterface.cpp:
+        (WebCore::V8TestSerializedScriptValueInterface::GetRawTemplate):
+        (WebCore::V8TestSerializedScriptValueInterface::GetTemplate):
+        * bindings/v8/DOMData.cpp:
+        (WebCore::DOMData::getCurrentStore):
+        * bindings/v8/DOMDataStore.cpp:
+        (WebCore::DOMDataStore::allStores):
+        * bindings/v8/ScriptGCEvent.cpp:
+        (WebCore::isolateGCEventData):
+        * bindings/v8/ScriptProfiler.cpp:
+        (WebCore::ScriptProfiler::visitExternalStrings):
+        (WebCore::ScriptProfiler::collectBindingMemoryInfo):
+        * bindings/v8/StaticDOMDataStore.cpp:
+        (WebCore::StaticDOMDataStore::StaticDOMDataStore):
+        (WebCore::StaticDOMDataStore::~StaticDOMDataStore):
+        * bindings/v8/V8Binding.cpp:
+        (WebCore::V8PerIsolateData::visitExternalStrings):
+        (WebCore::getToStringName):
+        (WebCore::getToStringTemplate):
+        * bindings/v8/V8Binding.h:
+        (WebCore::ConstructorMode::ConstructorMode):
+        (WebCore::ConstructorMode::~ConstructorMode):
+        (WebCore::ConstructorMode::current):
+        (WebCore::v8ExternalString):
+        (WebCore::v8Integer):
+        (WebCore::v8UnsignedInteger):
+        * bindings/v8/V8DOMMap.cpp:
+        (WebCore::DOMDataStoreHandle::DOMDataStoreHandle):
+        (WebCore::DOMDataStoreHandle::~DOMDataStoreHandle):
+        * bindings/v8/V8DOMWindowShell.cpp:
+        (WebCore::V8DOMWindowShell::initContextIfNeeded):
+        * bindings/v8/V8GCController.cpp:
+        (WebCore::currentGlobalHandleMap):
+        (WebCore::V8GCController::gcPrologue):
+        * bindings/v8/V8HiddenPropertyName.cpp:
+        (WebCore):
+        * bindings/v8/V8LazyEventListener.cpp:
+        (WebCore::V8LazyEventListener::prepareListenerObject):
+        * bindings/v8/V8PerIsolateData.cpp: Renamed from Source/WebCore/bindings/v8/V8BindingPerIsolateData.cpp.
+        (WebCore):
+        (WebCore::V8PerIsolateData::V8PerIsolateData):
+        (WebCore::V8PerIsolateData::~V8PerIsolateData):
+        (WebCore::V8PerIsolateData::create):
+        (WebCore::V8PerIsolateData::ensureInitialized):
+        (WebCore::V8PerIsolateData::dispose):
+        (WebCore::V8PerIsolateData::reportMemoryUsage):
+        * bindings/v8/V8PerIsolateData.h: Renamed from Source/WebCore/bindings/v8/V8BindingPerIsolateData.h.
+        (WebCore):
+        (V8PerIsolateData):
+        (WebCore::V8PerIsolateData::current):
+        (WebCore::V8PerIsolateData::rawTemplateMap):
+        (WebCore::V8PerIsolateData::templateMap):
+        (WebCore::V8PerIsolateData::toStringName):
+        (WebCore::V8PerIsolateData::toStringTemplate):
+        (WebCore::V8PerIsolateData::lazyEventListenerToStringTemplate):
+        (WebCore::V8PerIsolateData::stringCache):
+        (WebCore::V8PerIsolateData::integerCache):
+        (WebCore::V8PerIsolateData::allStores):
+        (WebCore::V8PerIsolateData::hiddenPropertyName):
+        (WebCore::V8PerIsolateData::auxiliaryContext):
+        (WebCore::V8PerIsolateData::registerDOMDataStore):
+        (WebCore::V8PerIsolateData::unregisterDOMDataStore):
+        (WebCore::V8PerIsolateData::domDataStore):
+        (WebCore::V8PerIsolateData::setDOMDataStore):
+        (WebCore::V8PerIsolateData::recursionLevel):
+        (WebCore::V8PerIsolateData::incrementRecursionLevel):
+        (WebCore::V8PerIsolateData::decrementRecursionLevel):
+        (WebCore::V8PerIsolateData::globalHandleMap):
+        (WebCore::V8PerIsolateData::internalScriptRecursionLevel):
+        (WebCore::V8PerIsolateData::incrementInternalScriptRecursionLevel):
+        (WebCore::V8PerIsolateData::decrementInternalScriptRecursionLevel):
+        (WebCore::V8PerIsolateData::gcEventData):
+        (WebCore::V8PerIsolateData::setShouldCollectGarbageSoon):
+        (WebCore::V8PerIsolateData::clearShouldCollectGarbageSoon):
+        (WebCore::V8PerIsolateData::shouldCollectGarbageSoon):
+        * bindings/v8/V8Proxy.cpp:
+        (WebCore::V8Proxy::hintForGCIfNecessary):
+        * bindings/v8/V8RecursionScope.h:
+        (WebCore::V8RecursionScope::V8RecursionScope):
+        (WebCore::V8RecursionScope::~V8RecursionScope):
+        (WebCore::V8RecursionScope::recursionLevel):
+        (WebCore::V8RecursionScope::properlyUsed):
+        (WebCore::V8RecursionScope::MicrotaskSuppression::MicrotaskSuppression):
+        (WebCore::V8RecursionScope::MicrotaskSuppression::~MicrotaskSuppression):
+        * bindings/v8/V8Utilities.cpp:
+        (WebCore::V8AuxiliaryContext::auxiliaryContext):
+        * bindings/v8/V8ValueCache.cpp:
+        (WebCore::cachedStringCallback):
+        * bindings/v8/WorkerContextExecutionProxy.cpp:
+        (WebCore::WorkerContextExecutionProxy::initIsolate):
+        * bindings/v8/WorkerScriptController.cpp:
+        (WebCore::WorkerScriptController::WorkerScriptController):
+        (WebCore::WorkerScriptController::~WorkerScriptController):
+        * bindings/v8/custom/V8HTMLCanvasElementCustom.cpp:
+        (WebCore::V8HTMLCanvasElement::getContextCallback):
+
 2012-08-09  Mike West  <mkwst@chromium.org>
 
         Invalid Content Security Policy sources should generate console warnings.

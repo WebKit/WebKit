@@ -53,7 +53,7 @@
 namespace WebCore {
 
 #if ENABLE(INSPECTOR)
-void V8BindingPerIsolateData::visitExternalStrings(ExternalStringVisitor* visitor)
+void V8PerIsolateData::visitExternalStrings(ExternalStringVisitor* visitor)
 {
     v8::HandleScope handleScope;
     class VisitorImpl : public v8::ExternalResourceVisitor {
@@ -318,7 +318,7 @@ v8::Persistent<v8::FunctionTemplate> createRawTemplate()
 
 v8::Persistent<v8::String> getToStringName()
 {
-    v8::Persistent<v8::String>& toStringName = V8BindingPerIsolateData::current()->toStringName();
+    v8::Persistent<v8::String>& toStringName = V8PerIsolateData::current()->toStringName();
     if (toStringName.IsEmpty())
         toStringName = v8::Persistent<v8::String>::New(v8::String::New("toString"));
     return *toStringName;
@@ -343,7 +343,7 @@ static v8::Handle<v8::Value> constructorToString(const v8::Arguments& args)
 
 v8::Persistent<v8::FunctionTemplate> getToStringTemplate()
 {
-    v8::Persistent<v8::FunctionTemplate>& toStringTemplate = V8BindingPerIsolateData::current()->toStringTemplate();
+    v8::Persistent<v8::FunctionTemplate>& toStringTemplate = V8PerIsolateData::current()->toStringTemplate();
     if (toStringTemplate.IsEmpty())
         toStringTemplate = v8::Persistent<v8::FunctionTemplate>::New(v8::FunctionTemplate::New(constructorToString));
     return toStringTemplate;

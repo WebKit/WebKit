@@ -99,7 +99,7 @@ DOMDataStore::~DOMDataStore()
 
 DOMDataList& DOMDataStore::allStores()
 {
-    return V8BindingPerIsolateData::current()->allStores();
+    return V8PerIsolateData::current()->allStores();
 }
 
 void* DOMDataStore::getDOMWrapperMap(DOMWrapperMapType type)

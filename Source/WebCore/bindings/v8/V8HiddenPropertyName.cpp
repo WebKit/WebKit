@@ -46,7 +46,7 @@ namespace WebCore {
 #define V8_DEFINE_HIDDEN_PROPERTY(name) \
 v8::Handle<v8::String> V8HiddenPropertyName::name() \
 { \
-    V8HiddenPropertyName* hiddenPropertyName = V8BindingPerIsolateData::current()->hiddenPropertyName(); \
+    V8HiddenPropertyName* hiddenPropertyName = V8PerIsolateData::current()->hiddenPropertyName(); \
     if (hiddenPropertyName->m_##name.IsEmpty()) { \
         hiddenPropertyName->m_##name = createString(V8_HIDDEN_PROPERTY_PREFIX V8_AS_STRING(name)); \
     } \

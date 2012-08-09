@@ -1,3 +1,17 @@
+2012-08-09  Kentaro Hara  <haraken@chromium.org>
+
+        [V8] Rename V8BindingPerIsolateData to V8PerIsolateData
+        https://bugs.webkit.org/show_bug.cgi?id=93592
+
+        Reviewed by Adam Barth.
+
+        For a better name. See discussion in bug 93333.
+
+        No tests. No change in behavior.
+
+        * src/WebKit.cpp:
+        (WebKit::initialize):
+
 2012-08-06  Nat Duca  <nduca@chromium.org>
 
         [chromium] Expose CCGraphicsContext as WebCompositorOutputSurface

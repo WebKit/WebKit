@@ -105,7 +105,7 @@ void initialize(WebKitPlatformSupport* webKitPlatformSupport)
 
     v8::V8::SetEntropySource(&generateEntropy);
     v8::V8::Initialize();
-    WebCore::V8BindingPerIsolateData::ensureInitialized(v8::Isolate::GetCurrent());
+    WebCore::V8PerIsolateData::ensureInitialized(v8::Isolate::GetCurrent());
 
 #if ENABLE(MUTATION_OBSERVERS)
     // currentThread will always be non-null in production, but can be null in Chromium unit tests.

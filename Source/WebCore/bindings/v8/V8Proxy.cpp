@@ -448,7 +448,7 @@ void V8Proxy::resetIsolatedWorlds()
 
 void V8Proxy::hintForGCIfNecessary()
 {
-    V8BindingPerIsolateData* data = V8BindingPerIsolateData::current();
+    V8PerIsolateData* data = V8PerIsolateData::current();
     if (data->shouldCollectGarbageSoon()) {
         const int longIdlePauseInMs = 1000;
         data->clearShouldCollectGarbageSoon();

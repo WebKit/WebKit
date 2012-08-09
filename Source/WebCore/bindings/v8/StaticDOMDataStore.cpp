@@ -45,12 +45,12 @@ StaticDOMDataStore::StaticDOMDataStore()
     m_activeDomNodeMap = &m_staticActiveDomNodeMap;
     m_domObjectMap = &m_staticDomObjectMap;
     m_activeDomObjectMap = &m_staticActiveDomObjectMap;
-    V8BindingPerIsolateData::current()->registerDOMDataStore(this);
+    V8PerIsolateData::current()->registerDOMDataStore(this);
 }
 
 StaticDOMDataStore::~StaticDOMDataStore()
 {
-    V8BindingPerIsolateData::current()->unregisterDOMDataStore(this);
+    V8PerIsolateData::current()->unregisterDOMDataStore(this);
 }
 
 } // namespace WebCore

@@ -213,7 +213,7 @@ void V8LazyEventListener::prepareListenerObject(ScriptExecutionContext* context)
     // other use. That fails miserably if the actual wrapper source is
     // returned.
     v8::Persistent<v8::FunctionTemplate>& toStringTemplate =
-        V8BindingPerIsolateData::current()->lazyEventListenerToStringTemplate();
+        V8PerIsolateData::current()->lazyEventListenerToStringTemplate();
     if (toStringTemplate.IsEmpty())
         toStringTemplate = v8::Persistent<v8::FunctionTemplate>::New(v8::FunctionTemplate::New(V8LazyEventListenerToString));
     v8::Local<v8::Function> toStringFunction;

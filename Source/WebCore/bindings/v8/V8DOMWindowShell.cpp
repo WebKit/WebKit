@@ -299,7 +299,7 @@ bool V8DOMWindowShell::initContextIfNeeded()
 #if ENABLE(JAVASCRIPT_DEBUGGER)
         ScriptProfiler::initialize();
 #endif
-        V8BindingPerIsolateData::ensureInitialized(v8::Isolate::GetCurrent());
+        V8PerIsolateData::ensureInitialized(v8::Isolate::GetCurrent());
 
         isV8Initialized = true;
     }

@@ -24,13 +24,13 @@
  */
 
 #include "config.h"
-#include "V8BindingPerIsolateData.h"
+#include "V8PerIsolateData.h"
 
 #include "V8Binding.h"
 
 namespace WebCore {
 
-V8BindingPerIsolateData::V8BindingPerIsolateData(v8::Isolate* isolate)
+V8PerIsolateData::V8PerIsolateData(v8::Isolate* isolate)
     : m_stringCache(adoptPtr(new StringCache()))
     , m_integerCache(adoptPtr(new IntegerCache()))
     , m_domDataStore(0)
@@ -45,34 +45,34 @@ V8BindingPerIsolateData::V8BindingPerIsolateData(v8::Isolate* isolate)
 {
 }
 
-V8BindingPerIsolateData::~V8BindingPerIsolateData()
+V8PerIsolateData::~V8PerIsolateData()
 {
 }
 
-V8BindingPerIsolateData* V8BindingPerIsolateData::create(v8::Isolate* isolate)
+V8PerIsolateData* V8PerIsolateData::create(v8::Isolate* isolate)
 {
     ASSERT(isolate);
     ASSERT(!isolate->GetData());
-    V8BindingPerIsolateData* data = new V8BindingPerIsolateData(isolate);
+    V8PerIsolateData* data = new V8PerIsolateData(isolate);
     isolate->SetData(data);
     return data;
 }
 
-void V8BindingPerIsolateData::ensureInitialized(v8::Isolate* isolate) 
+void V8PerIsolateData::ensureInitialized(v8::Isolate* isolate) 
 {
     ASSERT(isolate);
     if (!isolate->GetData()) 
         create(isolate);
 }
 
-void V8BindingPerIsolateData::dispose(v8::Isolate* isolate)
+void V8PerIsolateData::dispose(v8::Isolate* isolate)
 {
     void* data = isolate->GetData();
-    delete static_cast<V8BindingPerIsolateData*>(data);
+    delete static_cast<V8PerIsolateData*>(data);
     isolate->SetData(0);
 }
 
-void V8BindingPerIsolateData::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+void V8PerIsolateData::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::Binding);
     info.addHashMap(m_rawTemplates);

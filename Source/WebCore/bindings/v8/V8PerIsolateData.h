@@ -23,8 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef V8BindingPerIsolateData_h
-#define V8BindingPerIsolateData_h
+#ifndef V8PerIsolateData_h
+#define V8PerIsolateData_h
 
 #include <v8.h>
 #include <wtf/HashMap.h>
@@ -52,16 +52,16 @@ class GlobalHandleInfo;
 typedef HashMap<v8::Value*, GlobalHandleInfo*> GlobalHandleMap;
 #endif
 
-class V8BindingPerIsolateData {
+class V8PerIsolateData {
 public:
-    static V8BindingPerIsolateData* create(v8::Isolate*);
+    static V8PerIsolateData* create(v8::Isolate*);
     static void ensureInitialized(v8::Isolate*);
-    static V8BindingPerIsolateData* current(v8::Isolate* isolate = 0)
+    static V8PerIsolateData* current(v8::Isolate* isolate = 0)
     {
         if (UNLIKELY(!isolate))
             isolate = v8::Isolate::GetCurrent();
         ASSERT(isolate->GetData());
-        return static_cast<V8BindingPerIsolateData*>(isolate->GetData()); 
+        return static_cast<V8PerIsolateData*>(isolate->GetData()); 
     }
     static void dispose(v8::Isolate*);
 
@@ -99,7 +99,7 @@ public:
         m_domDataList.remove(m_domDataList.find(domDataStore));
     }
 
-    // DOMDataStore is owned outside V8BindingPerIsolateData.
+    // DOMDataStore is owned outside V8PerIsolateData.
     DOMDataStore* domDataStore() { return m_domDataStore; }
     void setDOMDataStore(DOMDataStore* store) { m_domDataStore = store; }
 
@@ -128,8 +128,8 @@ public:
     bool shouldCollectGarbageSoon() const { return m_shouldCollectGarbageSoon; }
 
 private:
-    explicit V8BindingPerIsolateData(v8::Isolate*);
-    ~V8BindingPerIsolateData();
+    explicit V8PerIsolateData(v8::Isolate*);
+    ~V8PerIsolateData();
 
     TemplateMap m_rawTemplates;
     TemplateMap m_templates;
@@ -160,4 +160,4 @@ private:
 
 } // namespace WebCore
 
-#endif // V8BindingPerIsolateData_h
+#endif // V8PerIsolateData_h

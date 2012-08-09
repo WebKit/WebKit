@@ -63,7 +63,7 @@ V8AuxiliaryContext::~V8AuxiliaryContext()
 
 v8::Persistent<v8::Context>& V8AuxiliaryContext::auxiliaryContext()
 {
-    v8::Persistent<v8::Context>& context = V8BindingPerIsolateData::current()->auxiliaryContext();
+    v8::Persistent<v8::Context>& context = V8PerIsolateData::current()->auxiliaryContext();
     if (context.IsEmpty())
         context = v8::Context::New();
     return context;

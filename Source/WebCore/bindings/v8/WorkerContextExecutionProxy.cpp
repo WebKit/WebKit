@@ -127,7 +127,7 @@ void WorkerContextExecutionProxy::initIsolate()
     resource_constraints.set_stack_limit(&here - kWorkerMaxStackSize / sizeof(uint32_t*));
     v8::SetResourceConstraints(&resource_constraints);
 
-    V8BindingPerIsolateData::ensureInitialized(v8::Isolate::GetCurrent());
+    V8PerIsolateData::ensureInitialized(v8::Isolate::GetCurrent());
 }
 
 bool WorkerContextExecutionProxy::initContextIfNeeded()
