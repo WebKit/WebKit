@@ -23,9 +23,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// FIXME: We should expose process model via an API header.
 enum ProcessModel {
+    kProcessModelSharedSecondaryProcess,
     kProcessModelSharedSecondaryThread,
-    kProcessModelSharedSecondaryProcess
+    kProcessModelMultipleSecondaryProcesses
 };
 typedef unsigned long ProcessModel;
 

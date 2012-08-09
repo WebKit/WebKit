@@ -1,3 +1,18 @@
+2012-08-09  Alexey Proskuryakov  <ap@apple.com>
+
+        [WK2] Add a process model constant for multiple processes
+        https://bugs.webkit.org/show_bug.cgi?id=93642
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/ProcessModel.h: Added ProcessModelMultipleSecondaryProcesses.
+        Deleted ProcessModelSecondaryProcess in favor of more descriptive ProcessModelSharedSecondaryProcess - 
+        these used to behave the same.
+
+        * UIProcess/WebContext.cpp: (WebKit::WebContext::create): Changed to use ProcessModelSharedSecondaryProcess.
+
+        * UIProcess/WebProcessProxy.h: Removed an unncessary include of ProcessModel.h.
+
 2012-08-09  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/12035637> 32-bit PluginProcess launches without appropriate DYLD environment variables if UI process is 64-bit only
