@@ -1,3 +1,16 @@
+2012-08-08  Kent Tamura  <tkent@chromium.org>
+
+        [Chromium-mac] Switch to LocalizedNumberMac from LocalizedNumberICU
+        https://bugs.webkit.org/show_bug.cgi?id=93432
+
+        Reviewed by Hajime Morita.
+
+        No new tests. Covered by fast/forms/number/number-lossless-localization.html,
+        and WebKit/chromium/tests/LocaleMacTest.cpp.
+
+        * WebCore.gyp/WebCore.gyp:
+        Exclude locale-relatef files for ICU, and include files for Mac.
+
 2012-08-08  Hayato Ito  <hayato@chromium.org>
 
         EventDispatcher::dispatchSimulatedClick should not reuse the same EventDispatcher instance.

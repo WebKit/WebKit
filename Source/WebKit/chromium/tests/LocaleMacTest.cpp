@@ -118,6 +118,12 @@ protected:
         OwnPtr<LocaleMac> locale = LocaleMac::create(localeString);
         return locale->timeAMPMLabels()[index];
     }
+
+    String decimalSeparator(const String& localeString)
+    {
+        OwnPtr<LocaleMac> locale = LocaleMac::create(localeString);
+        return locale->localizedDecimalSeparator();
+    }
 #endif
 };
 
@@ -207,4 +213,44 @@ TEST_F(LocaleMacTest, timeAMPMLabels)
     EXPECT_STREQ("\xE5\x8D\x88\xE5\x89\x8D", timeAMPMLabel("ja_JP", 0).utf8().data());
     EXPECT_STREQ("\xE5\x8D\x88\xE5\xBE\x8C", timeAMPMLabel("ja_JP", 1).utf8().data());
 }
+
+TEST_F(LocaleMacTest, decimalSeparator)
+{
+    EXPECT_STREQ(".", decimalSeparator("en_US").utf8().data());
+    EXPECT_STREQ(",", decimalSeparator("fr_FR").utf8().data());
+}
 #endif
+
+static void testNumberIsReversible(const String& localeString, const char* original, const char* shouldHave = 0)
+{
+    OwnPtr<LocaleMac> locale = LocaleMac::create(localeString);
+    String localized = locale->convertToLocalizedNumber(original);
+    if (shouldHave)
+        EXPECT_TRUE(localized.contains(shouldHave));
+    String converted = locale->convertFromLocalizedNumber(localized);
+    EXPECT_STREQ(original, converted.utf8().data());
+}
+
+void testNumbers(const String& localeString, const char* decimalSeparatorShouldBe = 0)
+{
+    testNumberIsReversible(localeString, "123456789012345678901234567890");
+    testNumberIsReversible(localeString, "-123.456", decimalSeparatorShouldBe);
+    testNumberIsReversible(localeString, ".456", decimalSeparatorShouldBe);
+    testNumberIsReversible(localeString, "-0.456", decimalSeparatorShouldBe);
+}
+
+TEST_F(LocaleMacTest, localizedNumberRoundTrip)
+{
+    // Test some of major locales.
+    testNumbers("en_US", ".");
+    testNumbers("fr_FR", ",");
+    testNumbers("ar");
+    testNumbers("de_DE");
+    testNumbers("es_ES");
+    testNumbers("fa");
+    testNumbers("ja_JP");
+    testNumbers("ko_KR");
+    testNumbers("zh_CN");
+    testNumbers("zh_HK");
+    testNumbers("zh_TW");
+}

@@ -1,3 +1,19 @@
+2012-08-08  Kent Tamura  <tkent@chromium.org>
+
+        [Chromium-mac] Switch to LocalizedNumberMac from LocalizedNumberICU
+        https://bugs.webkit.org/show_bug.cgi?id=93432
+
+        Reviewed by Hajime Morita.
+
+        * tests/LocaleMacTest.cpp:
+        Add some tests for number localization. They are similar to tests in
+        LocaleWinTest and LocalizedNumberICUTest.cpp
+        (LocaleMacTest):
+        (LocaleMacTest::decimalSeparator):
+        (TEST_F):
+        (testNumberIsReversible):
+        (testNumbers):
+
 2012-08-08  Adrienne Walker  <enne@google.com>
 
         [chromium] Move scrollbar pointer into WebScrollbarThemePainter
