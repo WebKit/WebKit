@@ -828,15 +828,24 @@ Pair* CSSPrimitiveValue::getPairValue(ExceptionCode& ec) const
     return m_value.pair;
 }
 
-static String formatNumber(double number)
+static String formatNumber(double number, const char* suffix, unsigned suffixLength)
 {
     DecimalNumber decimal(number);
 
-    StringBuffer<UChar> buffer(decimal.bufferLengthForStringDecimal());
+    StringBuffer<UChar> buffer(decimal.bufferLengthForStringDecimal() + suffixLength);
     unsigned length = decimal.toStringDecimal(buffer.characters(), buffer.length());
-    ASSERT_UNUSED(length, length == buffer.length());
+    ASSERT(length + suffixLength == buffer.length());
+
+    for (unsigned i = 0; i < suffixLength; ++i)
+        buffer[length + i] = suffix[i];
 
     return String::adopt(buffer);
+}
+
+template <unsigned characterCount>
+ALWAYS_INLINE static String formatNumber(double number, const char (&characters)[characterCount])
+{
+    return formatNumber(number, characters, characterCount - 1);
 }
 
 String CSSPrimitiveValue::customCssText() const
@@ -856,72 +865,72 @@ String CSSPrimitiveValue::customCssText() const
             break;
         case CSS_NUMBER:
         case CSS_PARSER_INTEGER:
-            text = formatNumber(m_value.num);
+            text = formatNumber(m_value.num, "");
             break;
         case CSS_PERCENTAGE:
-            text = formatNumber(m_value.num) + "%";
+            text = formatNumber(m_value.num, "%");
             break;
         case CSS_EMS:
-            text = formatNumber(m_value.num) + "em";
+            text = formatNumber(m_value.num, "em");
             break;
         case CSS_EXS:
-            text = formatNumber(m_value.num) + "ex";
+            text = formatNumber(m_value.num, "ex");
             break;
         case CSS_REMS:
-            text = formatNumber(m_value.num) + "rem";
+            text = formatNumber(m_value.num, "rem");
             break;
         case CSS_PX:
-            text = formatNumber(m_value.num) + "px";
+            text = formatNumber(m_value.num, "px");
             break;
         case CSS_CM:
-            text = formatNumber(m_value.num) + "cm";
+            text = formatNumber(m_value.num, "cm");
             break;
 #if ENABLE(CSS_IMAGE_RESOLUTION)
         case CSS_DPPX:
-            text = formatNumber(m_value.num) + "dppx";
+            text = formatNumber(m_value.num, "dppx");
             break;
         case CSS_DPI:
-            text = formatNumber(m_value.num) + "dpi";
+            text = formatNumber(m_value.num, "dpi");
             break;
         case CSS_DPCM:
-            text = formatNumber(m_value.num) + "dpcm";
+            text = formatNumber(m_value.num, "dpcm");
             break;
 #endif
         case CSS_MM:
-            text = formatNumber(m_value.num) + "mm";
+            text = formatNumber(m_value.num, "mm");
             break;
         case CSS_IN:
-            text = formatNumber(m_value.num) + "in";
+            text = formatNumber(m_value.num, "in");
             break;
         case CSS_PT:
-            text = formatNumber(m_value.num) + "pt";
+            text = formatNumber(m_value.num, "pt");
             break;
         case CSS_PC:
-            text = formatNumber(m_value.num) + "pc";
+            text = formatNumber(m_value.num, "pc");
             break;
         case CSS_DEG:
-            text = formatNumber(m_value.num) + "deg";
+            text = formatNumber(m_value.num, "deg");
             break;
         case CSS_RAD:
-            text = formatNumber(m_value.num) + "rad";
+            text = formatNumber(m_value.num, "rad");
             break;
         case CSS_GRAD:
-            text = formatNumber(m_value.num) + "grad";
+            text = formatNumber(m_value.num, "grad");
             break;
         case CSS_MS:
-            text = formatNumber(m_value.num) + "ms";
+            text = formatNumber(m_value.num, "ms");
             break;
         case CSS_S:
-            text = formatNumber(m_value.num) + "s";
+            text = formatNumber(m_value.num, "s");
             break;
         case CSS_HZ:
-            text = formatNumber(m_value.num) + "hz";
+            text = formatNumber(m_value.num, "hz");
             break;
         case CSS_KHZ:
-            text = formatNumber(m_value.num) + "khz";
+            text = formatNumber(m_value.num, "khz");
             break;
         case CSS_TURN:
-            text = formatNumber(m_value.num) + "turn";
+            text = formatNumber(m_value.num, "turn");
             break;
         case CSS_DIMENSION:
             // FIXME
@@ -1113,13 +1122,13 @@ String CSSPrimitiveValue::customCssText() const
             text = m_value.shape->cssText();
             break;
         case CSS_VW:
-            text = formatNumber(m_value.num) + "vw";
+            text = formatNumber(m_value.num, "vw");
             break;
         case CSS_VH:
-            text = formatNumber(m_value.num) + "vh";
+            text = formatNumber(m_value.num, "vh");
             break;
         case CSS_VMIN:
-            text = formatNumber(m_value.num) + "vmin";
+            text = formatNumber(m_value.num, "vmin");
             break;
 #if ENABLE(CSS_VARIABLES)
         case CSS_VARIABLE_NAME:

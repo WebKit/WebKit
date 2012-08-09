@@ -1,3 +1,26 @@
+2012-08-09  Benjamin Poulain  <bpoulain@apple.com>
+
+        Append the unit in place when generating the text value of a CSSPrimitiveValue
+        https://bugs.webkit.org/show_bug.cgi?id=93572
+
+        Reviewed by Andreas Kling.
+
+        Previously, the units were added to the formatted number by the operator+. This would create
+        a new WTF::String for the unit, then use String::append() to add it to the number.
+
+        This was ineffective because it required one malloc for the unit, followed by a realloc + copying
+        the bytes.
+
+        This patch adds handling for the unit directly in formatNumber() so that we only do one malloc
+        and append the units in place.
+
+        Avoiding the intermediate string is both more efficient (9% faster as seen from JavaScript)
+        and generate more compact code (~8kb less code on x86_64).
+
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore::formatNumber):
+        (WebCore::CSSPrimitiveValue::customCssText):
+
 2012-08-09  Elliott Sprehn  <esprehn@gmail.com>
 
         Reimplement RenderQuote placement algorithm
