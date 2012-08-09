@@ -75486,6 +75486,30 @@
 					>
 				</File>
 				<File
+					RelativePath="..\inspector\front-end\cm\codemirror.css"
+					>
+				</File>
+				<File
+					RelativePath="..\inspector\front-end\cm\codemirror.js"
+					>
+				</File>
+				<File
+					RelativePath="..\inspector\front-end\cm\css.js"
+					>
+				</File>
+				<File
+					RelativePath="..\inspector\front-end\cm\htmlmixed.js"
+					>
+				</File>
+				<File
+					RelativePath="..\inspector\front-end\cm\javascript.js"
+					>
+				</File>
+				<File
+					RelativePath="..\inspector\front-end\cm\xml.js"
+					>
+				</File>
+				<File
 					RelativePath="..\inspector\front-end\Database.js"
 					>
 				</File>

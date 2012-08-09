@@ -978,6 +978,7 @@
                     '<(PRODUCT_DIR)/resources/inspector/ScriptFormatterWorker.js',
                     '<(PRODUCT_DIR)/resources/inspector/devTools.css',
                     '<(PRODUCT_DIR)/resources/inspector/devtools_extension_api.js',
+                    '<@(webinspector_standalone_js_files)',
                     '<@(webinspector_standalone_css_files)',
                 ],
                 'images': [
@@ -1092,6 +1093,12 @@
                         ],
                         'outputs': ['<(PRODUCT_DIR)/resources/inspector/DevTools.js'],
                         'action': ['python', '<@(_script_name)', '<@(_input_page)', '<@(_search_path)', '<@(_outputs)'],
+                    }],
+                    'copies': [{
+                        'destination': '<(PRODUCT_DIR)/resources/inspector',
+                        'files': [
+                            '<@(webinspector_standalone_js_files)',
+                        ],
                     }],
                 },
                 {

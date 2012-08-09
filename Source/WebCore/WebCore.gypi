@@ -6438,9 +6438,11 @@
             'inspector/front-end/inspectorSyntaxHighlight.css',
             'inspector/front-end/popover.css',
             '<@(webinspector_standalone_css_files)',
+            '<@(webinspector_standalone_js_files)',
         ],
         'webinspector_standalone_css_files': [
             'inspector/front-end/auditsPanel.css',
+            'inspector/front-end/cm/codemirror.css',
             'inspector/front-end/dataGrid.css',
             'inspector/front-end/elementsPanel.css',
             'inspector/front-end/filteredItemSelectionDialog.css',
@@ -6463,6 +6465,13 @@
             'inspector/front-end/textEditor.css',
             'inspector/front-end/textPrompt.css',
             'inspector/front-end/timelinePanel.css',
+        ],
+        'webinspector_standalone_js_files': [
+            'inspector/front-end/cm/codemirror.js',
+            'inspector/front-end/cm/css.js',
+            'inspector/front-end/cm/htmlmixed.js',
+            'inspector/front-end/cm/javascript.js',
+            'inspector/front-end/cm/xml.js',
         ],
         'webinspector_uglifyjs_files': [
             'inspector/front-end/UglifyJS/parse-js.js',

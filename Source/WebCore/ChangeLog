@@ -1,3 +1,23 @@
+2012-08-09  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: add codemirror library as an experiment
+        https://bugs.webkit.org/show_bug.cgi?id=93620
+
+        Reviewed by Vsevolod Vlasov.
+
+        This change adds codemirror, deploys it, but does not include it into the inspector.html. Clients need to fetch it
+        using XHR and eval into the inspector's context to use as a part of their experiments.
+
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * inspector/front-end/WebKit.qrc:
+        * inspector/front-end/cm/LICENSE: Added.
+        * inspector/front-end/cm/codemirror.css: Added.
+        (.CodeMirror):
+        * inspector/front-end/cm/xml.js: Added.
+        (CodeMirror.defineMode.):
+        (CodeMirror.defineMode):
+
 2012-08-09  Xan Lopez  <xlopez@igalia.com>
 
         1.9.6 drops symbols, breaking compatibility

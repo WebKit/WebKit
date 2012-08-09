@@ -32,6 +32,12 @@
     <file>CSSKeywordCompletions.js</file>
     <file>CSSSelectorProfileView.js</file>
     <file>CSSStyleModel.js</file>
+    <file>cm/codemirror.css</file>
+    <file>cm/codemirror.js</file>
+    <file>cm/css.js</file>
+    <file>cm/htmlmixed.js</file>
+    <file>cm/javascript.js</file>
+    <file>cm/xml.js</file>
     <file>Database.js</file>
     <file>DatabaseQueryView.js</file>
     <file>DatabaseTableView.js</file>
