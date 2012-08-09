@@ -45,7 +45,6 @@ public:
     virtual ~WebSettingsImpl() { }
 
     virtual bool deviceSupportsTouch();
-    virtual bool forceSoftwareCompositing() const { return m_forceSoftwareCompositing; }
     virtual bool scrollAnimatorEnabled() const;
     virtual bool viewportEnabled() const { return m_viewportEnabled; }
     virtual void setAccelerated2dCanvasEnabled(bool);
@@ -94,7 +93,6 @@ public:
     virtual void setFixedPositionCreatesStackingContext(bool);
     virtual void setFontRenderingModeNormal();
     virtual void setForceCompositingMode(bool);
-    virtual void setForceSoftwareCompositing(bool);
     virtual void setFrameFlatteningEnabled(bool);
     virtual void setFullScreenEnabled(bool);
     virtual void setHyperlinkAuditingEnabled(bool);
@@ -164,7 +162,6 @@ public:
 
 private:
     WebCore::Settings* m_settings;
-    bool m_forceSoftwareCompositing;
     bool m_showFPSCounter;
     bool m_showPlatformLayerTree;
     bool m_showPaintRects;

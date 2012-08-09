@@ -27,7 +27,7 @@
 #define WebLayerTreeViewClient_h
 
 namespace WebKit {
-class WebGraphicsContext3D;
+class WebCompositorOutputSurface;
 struct WebSize;
 class WebThread;
 
@@ -55,13 +55,22 @@ public:
     // compositor thread through the WebCompositor interface.
     virtual void applyScrollAndScale(const WebSize& scrollDelta, float scaleFactor) = 0;
 
-    // Creates a 3D context suitable for the compositing. This may be called
-    // more than once if the context gets lost.
-    virtual WebGraphicsContext3D* createContext3D() = 0;
+    // DEPRECATED: Creates a 3D context suitable for the compositing. This may be called
+    // more than once if the context gets lost. This will be removed once
+    // downstream dependencies have been removed.
+    virtual WebGraphicsContext3D* createContext3D() { return 0; }
 
-    // Signals a successful rebinding of the 3D context (e.g. after a lost
+    // DEPRECATED: Signals a successful rebinding of the 3D context (e.g. after a lost
     // context event).
-    virtual void didRebindGraphicsContext(bool success) = 0;
+    virtual void didRebindGraphicsContext(bool) { return; }
+
+    // Creates the output surface. This may be called more than once
+    // if the context gets lost.
+    virtual WebCompositorOutputSurface* createOutputSurface() { return 0; }
+
+    // Signals a successful recreation of the output surface (e.g. after a lost
+    // 3D context event).
+    virtual void didRecreateOutputSurface(bool success) { }
 
     // Indicates that a frame will be committed to the impl side of the compositor
     // for rendering.

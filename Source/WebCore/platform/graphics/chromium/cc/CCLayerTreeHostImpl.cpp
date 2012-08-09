@@ -527,6 +527,11 @@ void CCLayerTreeHostImpl::setMemoryAllocationLimitBytes(size_t bytes)
     m_client->setNeedsCommitOnImplThread();
 }
 
+void CCLayerTreeHostImpl::onVSyncParametersChanged(double monotonicTimebase, double intervalInSeconds)
+{
+    m_client->onVSyncParametersChanged(monotonicTimebase, intervalInSeconds);
+}
+
 void CCLayerTreeHostImpl::drawLayers(const FrameData& frame)
 {
     TRACE_EVENT0("cc", "CCLayerTreeHostImpl::drawLayers");
@@ -676,7 +681,11 @@ void CCLayerTreeHostImpl::setVisible(bool visible)
 
 bool CCLayerTreeHostImpl::initializeLayerRenderer(PassOwnPtr<CCGraphicsContext> context, TextureUploaderOption textureUploader)
 {
+    if (!context->bindToClient(this))
+        return false;
+
     WebKit::WebGraphicsContext3D* context3d = context->context3D();
+
     if (!context3d) {
         // FIXME: Implement this path for software compositing.
         return false;

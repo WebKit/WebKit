@@ -28,6 +28,8 @@
 #include "config.h"
 
 #include "CompositorFakeWebGraphicsContext3D.h"
+#include "FakeWebCompositorOutputSurface.h"
+
 #include "cc/CCLayerTreeHost.h"
 
 namespace WebCore {
@@ -39,12 +41,13 @@ public:
     virtual void updateAnimations(double monotonicFrameBeginTime) OVERRIDE { }
     virtual void layout() OVERRIDE { }
     virtual void applyScrollAndScale(const IntSize& scrollDelta, float pageScale) OVERRIDE { }
-    virtual PassOwnPtr<WebKit::WebGraphicsContext3D> createContext3D() OVERRIDE
+
+    virtual PassOwnPtr<WebKit::WebCompositorOutputSurface> createOutputSurface() OVERRIDE
     {
         WebKit::WebGraphicsContext3D::Attributes attrs;
-        return WebKit::CompositorFakeWebGraphicsContext3D::create(WebKit::WebGraphicsContext3D::Attributes());
+        return WebKit::FakeWebCompositorOutputSurface::create(WebKit::CompositorFakeWebGraphicsContext3D::create(attrs));
     }
-    virtual void didRecreateContext(bool success) OVERRIDE { }
+    virtual void didRecreateOutputSurface(bool success) OVERRIDE { }
     virtual void willCommit() OVERRIDE { }
     virtual void didCommit() OVERRIDE { }
     virtual void didCommitAndDrawFrame() OVERRIDE { }

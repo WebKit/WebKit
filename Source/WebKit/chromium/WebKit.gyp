@@ -300,6 +300,8 @@
                 'public/platform/WebCanvas.h',
                 'public/platform/WebColor.h',
                 'public/platform/WebCommon.h',
+                'public/platform/WebCompositorOutputSurface.h',
+                'public/platform/WebCompositorOutputSurfaceClient.h',
                 'public/platform/WebContentLayer.h',
                 'public/platform/WebContentLayerClient.h',
                 'public/platform/WebData.h',

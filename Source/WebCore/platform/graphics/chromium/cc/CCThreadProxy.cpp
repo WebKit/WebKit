@@ -237,7 +237,7 @@ bool CCThreadProxy::recreateContext()
     OwnPtr<CCGraphicsContext> context = m_layerTreeHost->createContext();
     if (!context)
         return false;
-    if (m_layerTreeHost->needsSharedContext() && !m_layerTreeHost->settings().forceSoftwareCompositing)
+    if (m_layerTreeHost->needsSharedContext())
         if (!WebSharedGraphicsContext3D::createCompositorThreadContext())
             return false;
 
@@ -322,6 +322,13 @@ void CCThreadProxy::onSwapBuffersCompleteOnImplThread()
     TRACE_EVENT0("cc", "CCThreadProxy::onSwapBuffersCompleteOnImplThread");
     m_schedulerOnImplThread->didSwapBuffersComplete();
     m_mainThreadProxy->postTask(createCCThreadTask(this, &CCThreadProxy::didCompleteSwapBuffers));
+}
+
+void CCThreadProxy::onVSyncParametersChanged(double monotonicTimebase, double intervalInSeconds)
+{
+    ASSERT(isImplThread());
+    TRACE_EVENT0("cc", "CCThreadProxy::onVSyncParametersChanged");
+    // FIXME: route this into the scheduler once the scheduler supports vsync.
 }
 
 void CCThreadProxy::setNeedsCommitOnImplThread()
@@ -468,7 +475,7 @@ void CCThreadProxy::beginFrame()
         return;
     }
 
-    if (m_layerTreeHost->needsSharedContext() && !m_layerTreeHost->settings().forceSoftwareCompositing && !WebSharedGraphicsContext3D::haveCompositorThreadContext())
+    if (m_layerTreeHost->needsSharedContext() && !WebSharedGraphicsContext3D::haveCompositorThreadContext())
         WebSharedGraphicsContext3D::createCompositorThreadContext();
 
     OwnPtr<BeginFrameAndCommitState> request(m_pendingBeginFrameRequest.release());

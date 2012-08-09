@@ -149,6 +149,7 @@
 #include "painting/GraphicsContextBuilder.h"
 #include <public/Platform.h>
 #include <public/WebCompositor.h>
+#include <public/WebCompositorOutputSurface.h>
 #include <public/WebDragData.h>
 #include <public/WebFloatPoint.h>
 #include <public/WebGraphicsContext3D.h>
@@ -3635,7 +3636,6 @@ void WebViewImpl::setIsAcceleratedCompositingActive(bool active)
         layerTreeViewSettings.showPlatformLayerTree = settingsImpl()->showPlatformLayerTree();
         layerTreeViewSettings.showPaintRects = settingsImpl()->showPaintRects();
         layerTreeViewSettings.renderVSyncEnabled = settingsImpl()->renderVSyncEnabled();
-        layerTreeViewSettings.forceSoftwareCompositing = settings()->forceSoftwareCompositing();
 
         layerTreeViewSettings.defaultTileSize = settingsImpl()->defaultTileSize();
         layerTreeViewSettings.maxUntiledLayerSize = settingsImpl()->maxUntiledLayerSize();
@@ -3687,47 +3687,63 @@ void WebViewImpl::setIsAcceleratedCompositingActive(bool active)
 
 #endif
 
-PassOwnPtr<WebKit::WebGraphicsContext3D> WebViewImpl::createCompositorGraphicsContext3D()
-{
-    if (settings()->forceSoftwareCompositing())
-        CRASH();
+namespace {
 
-    // Explicitly disable antialiasing for the compositor. As of the time of
-    // this writing, the only platform that supported antialiasing for the
-    // compositor was Mac OS X, because the on-screen OpenGL context creation
-    // code paths on Windows and Linux didn't yet have multisampling support.
-    // Mac OS X essentially always behaves as though it's rendering offscreen.
-    // Multisampling has a heavy cost especially on devices with relatively low
-    // fill rate like most notebooks, and the Mac implementation would need to
-    // be optimized to resolve directly into the IOSurface shared between the
-    // GPU and browser processes. For these reasons and to avoid platform
-    // disparities we explicitly disable antialiasing.
+// Adapts a pure WebGraphicsContext3D into a WebCompositorOutputSurface until
+// downstream code can be updated to produce output surfaces directly.
+class WebGraphicsContextToOutputSurfaceAdapter : public WebCompositorOutputSurface {
+public:
+    explicit WebGraphicsContextToOutputSurfaceAdapter(PassOwnPtr<WebGraphicsContext3D> context)
+        : m_context3D(context)
+        , m_client(0)
+    {
+    }
+
+    virtual bool bindToClient(WebCompositorOutputSurfaceClient* client) OVERRIDE
+    {
+        ASSERT(client);
+        if (!m_context3D->makeContextCurrent())
+            return false;
+        m_client = client;
+        return true;
+    }
+
+    virtual const Capabilities& capabilities() const OVERRIDE
+    {
+        return m_capabilities;
+    }
+
+    virtual WebGraphicsContext3D* context3D() const OVERRIDE
+    {
+        return m_context3D.get();
+    }
+
+    virtual void sendFrameToParentCompositor(const WebCompositorFrame&) OVERRIDE
+    {
+    }
+
+private:
+    OwnPtr<WebGraphicsContext3D> m_context3D;
+    Capabilities m_capabilities;
+    WebCompositorOutputSurfaceClient* m_client;
+};
+
+} // namespace
+
+WebGraphicsContext3D* WebViewImpl::createContext3D()
+{
+    // Temporarily, if the output surface can't be created, create a WebGraphicsContext3D
+    // directly. This allows bootstrapping the output surface system while downstream
+    // users of the API still use the old approach.
     WebKit::WebGraphicsContext3D::Attributes attributes;
     attributes.antialias = false;
     attributes.shareResources = true;
-
-    OwnPtr<WebGraphicsContext3D> webContext = adoptPtr(client()->createGraphicsContext3D(attributes));
-    if (!webContext)
-        return nullptr;
-
-    return webContext.release();
+    return m_client->createGraphicsContext3D(attributes);
 }
 
-WebKit::WebGraphicsContext3D* WebViewImpl::createContext3D()
+WebCompositorOutputSurface* WebViewImpl::createOutputSurface()
 {
-    if (settings()->forceSoftwareCompositing())
-        CRASH();
-
-    OwnPtr<WebKit::WebGraphicsContext3D> webContext;
-
-    // If we've already created an onscreen context for this view, return that.
-    if (m_temporaryOnscreenGraphicsContext3D)
-        webContext = m_temporaryOnscreenGraphicsContext3D.release();
-    else // Otherwise make a new one.
-        webContext = createCompositorGraphicsContext3D();
-    // The caller takes ownership of this object, but since there's no equivalent of PassOwnPtr<> in the WebKit API
-    // we return a raw pointer.
-    return webContext.leakPtr();
+    return m_client->createOutputSurface();
 }
 
 void WebViewImpl::applyScrollAndScale(const WebSize& scrollDelta, float pageScaleDelta)
@@ -3777,7 +3793,11 @@ void WebViewImpl::didCompleteSwapBuffers()
 
 void WebViewImpl::didRebindGraphicsContext(bool success)
 {
+    didRecreateOutputSurface(success);
+}
 
+void WebViewImpl::didRecreateOutputSurface(bool success)
+{
     // Switch back to software rendering mode, if necessary
     if (!success) {
         ASSERT(m_isAcceleratedCompositingActive);

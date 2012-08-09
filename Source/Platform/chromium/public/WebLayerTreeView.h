@@ -52,7 +52,6 @@ public:
     struct Settings {
         Settings()
             : acceleratePainting(false)
-            , forceSoftwareCompositing(false)
             , showFPSCounter(false)
             , showPlatformLayerTree(false)
             , showPaintRects(false)
@@ -64,7 +63,6 @@ public:
         }
 
         bool acceleratePainting;
-        bool forceSoftwareCompositing;
         bool showFPSCounter;
         bool showPlatformLayerTree;
         bool showPaintRects;
@@ -72,6 +70,7 @@ public:
         double refreshRate;
         WebSize defaultTileSize;
         WebSize maxUntiledLayerSize;
+
 #if WEBKIT_IMPLEMENTATION
         operator WebCore::CCLayerTreeSettings() const;
 #endif

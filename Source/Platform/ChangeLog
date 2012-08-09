@@ -1,3 +1,39 @@
+2012-08-06  Nat Duca  <nduca@chromium.org>
+
+        [chromium] Expose CCGraphicsContext as WebCompositorOutputSurface
+        https://bugs.webkit.org/show_bug.cgi?id=92890
+
+        Reviewed by James Robinson.
+
+        The CCGraphicsContext was introduced as a wrapper around the 2D
+        and 3D output for the compositor. However, it is a CC only
+        concept. We want to be able to make 2D and ubercomp-mode IPCs on
+        behalf of the compositor. This patch allows this by pushing this
+        abstraction out to the Chrome-visible layer of the compositor,
+        changing the name to OutputSurface based on discussions on
+        wkb.ug/90736. A future patch will rename the CCGraphicsContext to
+        CCOutputSurface.
+
+        * Platform.gypi:
+        * chromium/public/WebCompositorOutputSurface.h: Added.
+        (WebKit):
+        (WebCompositorOutputSurface):
+        (WebKit::WebCompositorOutputSurface::~WebCompositorOutputSurface):
+        (WebKit::WebCompositorOutputSurface::Capabilities::Capabilities):
+        (Capabilities):
+        * chromium/public/WebCompositorOutputSurfaceClient.h: Added.
+        (WebKit):
+        (WebCompositorOutputSurfaceClient):
+        (WebKit::WebCompositorOutputSurfaceClient::~WebCompositorOutputSurfaceClient):
+        * chromium/public/WebLayerTreeView.h:
+        (WebKit::WebLayerTreeView::Settings::Settings):
+        (Settings):
+        * chromium/public/WebLayerTreeViewClient.h:
+        (WebKit):
+        (WebLayerTreeViewClient):
+        (WebKit::WebLayerTreeViewClient::createContext3D):
+        (WebKit::WebLayerTreeViewClient::createOutputSurface):
+
 2012-08-09  Nat Duca  <nduca@chromium.org>
 
         Unreviewed, rolling out r125212.

@@ -28,6 +28,7 @@
 
 #include "CompositorFakeWebGraphicsContext3D.h"
 #include "Extensions3DChromium.h"
+#include "FakeWebCompositorOutputSurface.h"
 #include "cc/CCGraphicsContext.h"
 #include "cc/CCSingleThreadProxy.h" // For DebugScopedSetImplThread
 #include <gtest/gtest.h>
@@ -188,7 +189,7 @@ private:
 class CCResourceProviderTest : public testing::Test {
 public:
     CCResourceProviderTest()
-        : m_context(CCGraphicsContext::create3D(ResourceProviderContext::create()))
+        : m_context(FakeWebCompositorOutputSurface::create(ResourceProviderContext::create()))
         , m_resourceProvider(CCResourceProvider::create(m_context.get()))
     {
     }

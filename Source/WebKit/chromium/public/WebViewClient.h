@@ -53,6 +53,7 @@ class WebAccessibilityObject;
 class WebBatteryStatusClient;
 class WebColorChooser;
 class WebColorChooserClient;
+class WebCompositorOutputSurface;
 class WebDeviceOrientationClient;
 class WebDragData;
 class WebElement;
@@ -118,9 +119,11 @@ public:
     // Create a session storage namespace object associated with this WebView.
     virtual WebStorageNamespace* createSessionStorageNamespace(unsigned quota) { return 0; }
 
-    // Creates a graphics context that renders to the client's WebView.
+    // DEPRECATED: Creates a graphics context that renders to the client's WebView.
     virtual WebGraphicsContext3D* createGraphicsContext3D(const WebGraphicsContext3D::Attributes&) { return 0; }
 
+    // Creates the output surface that renders to the client's WebView.
+    virtual WebCompositorOutputSurface* createOutputSurface() { return 0; }
 
     // Misc ----------------------------------------------------------------
 
