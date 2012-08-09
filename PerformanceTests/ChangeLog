@@ -1,5 +1,17 @@
 2012-08-09  Zoltan Horvath  <zoltan@webkit.org>
 
+        Add memory measurement to balls.html and dromaeorunner.js
+        https://bugs.webkit.org/show_bug.cgi?id=93617
+
+        Reviewed by Adam Barth.
+
+        Since we added memory measurement support to performance tests we need to modify these tests.
+
+        * Animation/balls.html:
+        * Dromaeo/resources/dromaeorunner.js:
+
+2012-08-09  Zoltan Horvath  <zoltan@webkit.org>
+
         JSHeap and FastMallocStatistics based memory measurement for performance-tests
         https://bugs.webkit.org/show_bug.cgi?id=90858
 

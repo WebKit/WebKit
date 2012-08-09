@@ -252,7 +252,8 @@
         var stats = PerfTestRunner.computeStatistics(frameRates, "fps");
         statistics.push(stats);
 
-        PerfTestRunner.printStatistics(stats);
+        PerfTestRunner.printStatistics(stats, "Time:");
+        PerfTestRunner.getAndPrintMemoryStatistics();
 
         if (++run < MAX_RUNS) {
             PerfTestRunner.log("<br>===================================================<br>");
