@@ -1,3 +1,19 @@
+2012-08-08  Ming Xie  <mxie@rim.com>
+
+        [BlackBerry] Fix "-fPIC" define in the BlackBerry build
+        https://bugs.webkit.org/show_bug.cgi?id=93548
+
+        Reviewed by Rob Buis.
+
+        In the current CMake release (version 2.8.5), ${CMAKE_SHARED
+        _LIBRARY_C_FLAGS} and ${CMAKE_SHARED_LIBRARY_CXX_FLAGS} is
+        set to empty (See cmake/Modules/Platform/QNX.cmake)
+
+        This breaks the assumption which WebKit CMake build system 
+        makes in Source/cmake/WebKitHelper.cmake
+
+        * Source/cmake/OptionsBlackBerry.cmake:
+
 2012-08-08  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] 0.11 build broken (again)

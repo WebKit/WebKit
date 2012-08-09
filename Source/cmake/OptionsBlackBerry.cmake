@@ -96,6 +96,11 @@ FIND_STAGING_LIBRARY(PROFILING_LIBRARY profilingS)
 FIND_STAGING_LIBRARY(LIB_INPUT_UTILITIES input_utilities)
 FIND_STAGING_LIBRARY(OTS_LIBRARY ots)
 
+# Add "-fPIC" to CMAKE_SHARED_LIBRARY_C_FLAGS and CMAKE_SHARED_LIBRARY_CXX_FLAGS
+# This is because "-fPIC" is not included in the default defines under Modules/Platform/QNX.cmake
+SET(CMAKE_SHARED_LIBRARY_C_FLAGS "-fPIC ${CMAKE_SHARED_LIBRARY_C_FLAGS}")
+SET(CMAKE_SHARED_LIBRARY_CXX_FLAGS "-fPIC ${CMAKE_SHARED_LIBRARY_CXX_FLAGS}")
+
 # Show unresolved symbols when doing the final shared object link
 IF (PROFILING)
     SET(BLACKBERRY_LINK_FLAGS "-Wl,-z,defs -Wl,-zrelro -Wl,-E")
