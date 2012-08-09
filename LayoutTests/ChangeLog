@@ -1,3 +1,13 @@
+2012-08-09  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: improve large array logging experience
+        https://bugs.webkit.org/show_bug.cgi?id=93499
+
+        Reviewed by Vsevolod Vlasov.
+
+        * inspector/console/console-big-array-expected.txt:
+        * inspector/console/console-big-array.html:
+
 2012-08-09  MORITA Hajime  <morrita@google.com>
 
         DOMCharacterDataModified should not be fired inside shadows

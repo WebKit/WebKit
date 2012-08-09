@@ -7,7 +7,7 @@
 function onload()
 {
     var a = [];
-    for (var i = 0; i < 25; ++i)
+    for (var i = 0; i < 42; ++i)
         a[i] = i;
     a[100] = 100;
     console.dir(a);
@@ -23,6 +23,8 @@ function onload()
 
 function test()
 {
+    WebInspector.ArrayGroupingTreeElement._bucketThreshold = 20;
+
     var messages = WebInspector.console.messages;
     var sections = [];
     for (var i = 0; i < messages.length; ++i) {
@@ -42,7 +44,7 @@ function test()
     var populated = false;
     function populateCalled()
     {
-        populated = this._toIndex === 24;
+        populated = this._toIndex == 100;
     }
 
     InspectorTest.runAfterPendingDispatches(expandRecursively);

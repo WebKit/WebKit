@@ -1,3 +1,17 @@
+2012-08-09  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: improve large array logging experience
+        https://bugs.webkit.org/show_bug.cgi?id=93499
+
+        Reviewed by Vsevolod Vlasov.
+
+        Group elements in chunks of 100, not smaller. 
+
+        * inspector/front-end/ObjectPropertiesSection.js:
+        (WebInspector.FunctionScopeMainTreeElement):
+        (WebInspector.FunctionScopeMainTreeElement.prototype.onpopulate):
+        (WebInspector.ArrayGroupingTreeElement._populateRanges):
+
 2012-08-09  MORITA Hajime  <morrita@google.com>
 
         DOMCharacterDataModified should not be fired inside shadows
