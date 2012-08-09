@@ -182,10 +182,10 @@ WebInspector.DefaultTextEditor.prototype = {
         this._mainPanel.clearLineHighlight();
     },
 
-    freeCachedElements: function()
+    _freeCachedElements: function()
     {
-        this._mainPanel.freeCachedElements();
-        this._gutterPanel.freeCachedElements();
+        this._mainPanel._freeCachedElements();
+        this._gutterPanel._freeCachedElements();
     },
 
     /**
@@ -521,6 +521,7 @@ WebInspector.DefaultTextEditor.prototype = {
 
         if (!this.readOnly())
             WebInspector.markBeingEdited(this.element, false);
+        this._freeCachedElements();
     }
 }
 
@@ -877,13 +878,13 @@ WebInspector.TextEditorGutterPanel = function(textModel, syncDecorationsForLineL
 
     this.element.addEventListener("scroll", this._scroll.bind(this), false);
 
-    this.freeCachedElements();
+    this._freeCachedElements();
     this._buildChunks();
     this._decorations = {};
 }
 
 WebInspector.TextEditorGutterPanel.prototype = {
-    freeCachedElements: function()
+    _freeCachedElements: function()
     {
         this._cachedRows = [];
     },
@@ -1201,7 +1202,7 @@ WebInspector.TextEditorMainPanel = function(textModel, url, syncScrollListener, 
     this._container.addEventListener("DOMNodeInserted", this._handleDOMUpdatesCallback, false);
     this._container.addEventListener("DOMSubtreeModified", this._handleDOMUpdatesCallback, false);
 
-    this.freeCachedElements();
+    this._freeCachedElements();
     this._buildChunks();
 }
 
@@ -1376,7 +1377,7 @@ WebInspector.TextEditorMainPanel.prototype = {
         }
     },
 
-    freeCachedElements: function()
+    _freeCachedElements: function()
     {
         this._cachedSpans = [];
         this._cachedTextNodes = [];

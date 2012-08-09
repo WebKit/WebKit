@@ -42,7 +42,11 @@ WebInspector.SourceFrame = function(contentProvider)
     this._contentProvider = contentProvider;
 
     var textEditorDelegate = new WebInspector.TextEditorDelegateForSourceFrame(this);
-    this._textEditor = new WebInspector.DefaultTextEditor(this._url, textEditorDelegate);
+
+    if (WebInspector.experimentsSettings.codemirror.isEnabled())
+        this._textEditor = new WebInspector.CodeMirrorTextEditor(this._url, textEditorDelegate);
+    else
+        this._textEditor = new WebInspector.DefaultTextEditor(this._url, textEditorDelegate);
 
     this._currentSearchResultIndex = -1;
     this._searchResults = [];
@@ -94,8 +98,6 @@ WebInspector.SourceFrame.prototype = {
     willHide: function()
     {
         WebInspector.View.prototype.willHide.call(this);
-        if (this.loaded)
-            this._textEditor.freeCachedElements();
 
         this._clearLineHighlight();
         this._clearLineToReveal();

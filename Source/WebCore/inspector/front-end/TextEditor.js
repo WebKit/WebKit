@@ -85,8 +85,6 @@ WebInspector.TextEditor.prototype = {
 
     clearLineHighlight: function() { },
 
-    freeCachedElements: function() { },
-
     /**
      * @return {Array.<Element>}
      */

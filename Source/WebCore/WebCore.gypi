@@ -6253,6 +6253,7 @@
             'inspector/front-end/BreakpointsSidebarPane.js',
             'inspector/front-end/CallStackSidebarPane.js',
             'inspector/front-end/Checkbox.js',
+            'inspector/front-end/CodeMirrorTextEditor.js',
             'inspector/front-end/Color.js',
             'inspector/front-end/CompilerScriptMapping.js',
             'inspector/front-end/ConsoleMessage.js',
@@ -6443,6 +6444,7 @@
         'webinspector_standalone_css_files': [
             'inspector/front-end/auditsPanel.css',
             'inspector/front-end/cm/codemirror.css',
+            'inspector/front-end/cmdevtools.css',
             'inspector/front-end/dataGrid.css',
             'inspector/front-end/elementsPanel.css',
             'inspector/front-end/filteredItemSelectionDialog.css',

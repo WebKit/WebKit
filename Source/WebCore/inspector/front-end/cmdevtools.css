@@ -1,0 +1,28 @@
+.CodeMirror-scroll {
+  height: 100% !important;
+}
+
+.CodeMirror {
+  line-height: 1.2em !important;
+}
+
+.cm-s-web-inspector-js span.cm-keyword {color: rgb(170, 13, 145);}
+.cm-s-web-inspector-js span.cm-number {color: rgb(28, 0, 207);}
+.cm-s-web-inspector-js span.cm-comment {color: rgb(0, 116, 0);}
+.cm-s-web-inspector-js span.cm-string {color: rgb(196, 26, 22);}
+.cm-s-web-inspector-js span.cm-string-2 {color: rgb(196, 26, 22);}
+
+.cm-s-web-inspector-css span.cm-keyword { color: rgb(7, 144, 154);}
+.cm-s-web-inspector-css span.cm-number {color: rgb(50, 0, 255);}
+.cm-s-web-inspector-css span.cm-comment {color: rgb(0, 116, 0);}
+.cm-s-web-inspector-css span.cm-string {color: rgb(7, 144, 154);}
+.cm-s-web-inspector-css span.cm-string-2 {color: rgb(7, 144, 154);}
+.cm-s-web-inspector-css span.cm-link {color: rgb(7, 144, 154);}
+.cm-s-web-inspector-css span.cm-variable {color: rgb(200, 0, 0);}
+
+.cm-s-web-inspector-html span.cm-meta {color: rgb(192, 192, 192);}
+.cm-s-web-inspector-html span.cm-comment {color: rgb(35, 110, 37);}
+.cm-s-web-inspector-html span.cm-string {color: rgb(26, 26, 166);}
+.cm-s-web-inspector-html span.cm-tag {color: rgb(136, 18, 128);}
+.cm-s-web-inspector-html span.cm-attribute {color: rgb(153, 69, 0);}
+.cm-s-web-inspector-html span.cm-link {color: #00e;}

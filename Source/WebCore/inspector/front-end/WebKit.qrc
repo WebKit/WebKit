@@ -15,6 +15,7 @@
     <file>BreakpointsSidebarPane.js</file>
     <file>CallStackSidebarPane.js</file>
     <file>Checkbox.js</file>
+    <file>CodeMirrorTextEditor.js</file>
     <file>Color.js</file>
     <file>CompilerScriptMapping.js</file>
     <file>ConsoleMessage.js</file>
@@ -204,6 +205,7 @@
     <file>UglifyJS/parse-js.js</file>
     <file>auditsPanel.css</file>
     <file>dataGrid.css</file>
+    <file>cmdevtools.css</file>
     <file>dialog.css</file>
     <file>elementsPanel.css</file>
     <file>filteredItemSelectionDialog.css</file>

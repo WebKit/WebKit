@@ -1,3 +1,65 @@
+2012-08-09  Jan Keromnes  <janx@linux.com>
+
+        Web Inspector: replace the Web Inspector editor with CodeMirror
+        https://bugs.webkit.org/show_bug.cgi?id=92769
+
+        Reviewed by Pavel Feldman.
+
+        Integrating CodeMirror as a devtools experiment. Currently supporting
+        basic editing, search/replacing, and saving. Missing proper breakpoints
+        wiring, debugging, message bubbles, popovers and context menus. WIP.
+
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * inspector/compile-front-end.py:
+        * inspector/front-end/CodeMirrorTextEditor.js: Added.
+        (WebInspector.CodeMirrorTextEditor.this._codeMirror.CodeMirror):
+        (WebInspector.CodeMirrorTextEditor):
+        (WebInspector.CodeMirrorTextEditor.prototype.set mimeType):
+        (WebInspector.CodeMirrorTextEditor.prototype.setReadOnly):
+        (WebInspector.CodeMirrorTextEditor.prototype.readOnly):
+        (WebInspector.CodeMirrorTextEditor.prototype.defaultFocusedElement):
+        (WebInspector.CodeMirrorTextEditor.prototype.focus):
+        (WebInspector.CodeMirrorTextEditor.prototype.revealLine):
+        (WebInspector.CodeMirrorTextEditor.prototype.addDecoration):
+        (WebInspector.CodeMirrorTextEditor.prototype.removeDecoration):
+        (WebInspector.CodeMirrorTextEditor.prototype.markAndRevealRange):
+        (WebInspector.CodeMirrorTextEditor.prototype.highlightLine):
+        (WebInspector.CodeMirrorTextEditor.prototype.clearLineHighlight):
+        (WebInspector.CodeMirrorTextEditor.prototype.freeCachedElements):
+        (WebInspector.CodeMirrorTextEditor.prototype.elementsToRestoreScrollPositionsFor):
+        (WebInspector.CodeMirrorTextEditor.prototype.inheritScrollPositions):
+        (WebInspector.CodeMirrorTextEditor.prototype.beginUpdates):
+        (WebInspector.CodeMirrorTextEditor.prototype.endUpdates):
+        (WebInspector.CodeMirrorTextEditor.prototype.onResize):
+        (WebInspector.CodeMirrorTextEditor.prototype.editRange):
+        (WebInspector.CodeMirrorTextEditor.prototype._onChange):
+        (WebInspector.CodeMirrorTextEditor.prototype._commitEditing):
+        (WebInspector.CodeMirrorTextEditor.prototype.scrollToLine):
+        (WebInspector.CodeMirrorTextEditor.prototype.selection):
+        (WebInspector.CodeMirrorTextEditor.prototype.lastSelection):
+        (WebInspector.CodeMirrorTextEditor.prototype.setSelection):
+        (WebInspector.CodeMirrorTextEditor.prototype.setText):
+        (WebInspector.CodeMirrorTextEditor.prototype.text):
+        (WebInspector.CodeMirrorTextEditor.prototype.range):
+        (WebInspector.CodeMirrorTextEditor.prototype.line):
+        (WebInspector.CodeMirrorTextEditor.prototype.get linesCount):
+        (WebInspector.CodeMirrorTextEditor.prototype.setAttribute):
+        (WebInspector.CodeMirrorTextEditor.prototype.getAttribute):
+        (WebInspector.CodeMirrorTextEditor.prototype.removeAttribute):
+        (WebInspector.CodeMirrorTextEditor.prototype.wasShown):
+        (WebInspector.CodeMirrorTextEditor.prototype.willHide):
+        (WebInspector.CodeMirrorTextEditor.prototype._textChanged):
+        (WebInspector.CodeMirrorTextEditor.prototype._toPos):
+        (WebInspector.CodeMirrorTextEditor.prototype._toRange):
+        * inspector/front-end/Settings.js:
+        (WebInspector.ExperimentsSettings):
+        * inspector/front-end/SourceFrame.js:
+        (WebInspector.SourceFrame):
+        * inspector/front-end/WebKit.qrc:
+        * inspector/front-end/cmdevtools.css: Added.
+        * inspector/front-end/inspector.html:
+
 2012-08-09  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Do partial-swap scissoring on quads during draw instead of on layers
