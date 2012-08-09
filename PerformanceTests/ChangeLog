@@ -1,3 +1,23 @@
+2012-08-09  Zoltan Horvath  <zoltan@webkit.org>
+
+        JSHeap and FastMallocStatistics based memory measurement for performance-tests
+        https://bugs.webkit.org/show_bug.cgi?id=90858
+
+        Reviewed Ryosuke Niwa.
+
+        Measure the memory usage of the performancetests with the help of the windows.memory.usedJSHeapSize
+        object and the window.internals.fastMallocStatistics() function call.
+
+        * resources/runner.js:
+        (PerfTestRunner.logStatistics):
+        (PerfTestRunner.printStatistics):
+        (PerfTestRunner.storeHeapResults):
+        (PerfTestRunner.getUsedFastMallocHeap):
+        (PerfTestRunner.getUsedJSHeap):
+        (PerfTestRunner.getAndPrintMemoryStatistics):
+        (PerfTestRunner.ignoreWarmUpAndLog):
+        (PerfTestRunner.initAndStartLoop):
+
 2012-08-08  Benjamin Poulain  <benjamin@webkit.org>
 
         Calling internals from the performance test runner prevents manual running

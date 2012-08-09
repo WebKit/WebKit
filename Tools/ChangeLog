@@ -1,3 +1,18 @@
+2012-08-09  Zoltan Horvath  <zoltan@webkit.org>
+
+        JSHeap and FastMallocStatistics based memory measurement for performance-tests
+        https://bugs.webkit.org/show_bug.cgi?id=90858
+
+        Reviewed by Ryosuke Niwa.
+
+        Measure the memory usage of the performancetests with the help of the windows.memory.usedJSHeapSize
+        object and the window.internals.fastMallocStatistics() function call.
+
+        * Scripts/webkitpy/performance_tests/perftest.py:
+        (PerfTest):
+        (PerfTest.parse_output):
+        (PerfTest.output_statistics):
+
 2012-08-09  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt][Win] Build system bug revealed by r124835
