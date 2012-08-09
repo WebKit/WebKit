@@ -33,7 +33,6 @@
 #include "Extensions3DOpenGL.h"
 #include "GraphicsContext3DPrivate.h"
 #include "Image.h"
-#include "ImageSource.h"
 #include "NotImplemented.h"
 #include "OpenGLShims.h"
 #include "PlatformContextCairo.h"

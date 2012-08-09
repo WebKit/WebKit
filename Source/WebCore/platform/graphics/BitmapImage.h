@@ -31,7 +31,6 @@
 #include "Image.h"
 #include "Color.h"
 #include "ImageOrientation.h"
-#include "ImageSource.h"
 #include "IntSize.h"
 
 #if PLATFORM(MAC)

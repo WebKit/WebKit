@@ -29550,10 +29550,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\platform\graphics\NativeImagePtr.h"
-					>
-				</File>
-				<File
 					RelativePath="..\platform\graphics\Path.cpp"
 					>
 				</File>

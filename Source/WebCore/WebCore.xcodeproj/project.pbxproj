@@ -1429,7 +1429,6 @@
 		4B3043CD0AE0373B00A82647 /* Editor.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B3043CB0AE0373B00A82647 /* Editor.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		4B3480930EEF50D400AC1B41 /* ImageSourceCGMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4B3480910EEF50D400AC1B41 /* ImageSourceCGMac.mm */; };
 		4B3480940EEF50D400AC1B41 /* ImageSourceCG.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B3480920EEF50D400AC1B41 /* ImageSourceCG.h */; };
-		6B3480940EEF50D400AC1B41 /* NativeImagePtr.h in Headers */ = {isa = PBXBuildFile; fileRef = 6B3480920EEF50D400AC1B41 /* NativeImagePtr.h */; };
 		4B6FA6F40C39E48C00087011 /* SmartReplace.h in Headers */ = {isa = PBXBuildFile; fileRef = 4B6FA6F20C39E48C00087011 /* SmartReplace.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		4B6FA6F50C39E48C00087011 /* SmartReplace.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4B6FA6F30C39E48C00087011 /* SmartReplace.cpp */; };
 		4B6FA6F70C39E4A100087011 /* SmartReplaceCF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4B6FA6F60C39E4A100087011 /* SmartReplaceCF.cpp */; };
@@ -8560,7 +8559,6 @@
 		4B3043CB0AE0373B00A82647 /* Editor.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Editor.h; sourceTree = "<group>"; };
 		4B3480910EEF50D400AC1B41 /* ImageSourceCGMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ImageSourceCGMac.mm; sourceTree = "<group>"; };
 		4B3480920EEF50D400AC1B41 /* ImageSourceCG.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageSourceCG.h; sourceTree = "<group>"; };
-		6B3480920EEF50D400AC1B41 /* NativeImagePtr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NativeImagePtr.h; sourceTree = "<group>"; };
 		4B6FA6F20C39E48C00087011 /* SmartReplace.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SmartReplace.h; sourceTree = "<group>"; };
 		4B6FA6F30C39E48C00087011 /* SmartReplace.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SmartReplace.cpp; sourceTree = "<group>"; };
 		4B6FA6F60C39E4A100087011 /* SmartReplaceCF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SmartReplaceCF.cpp; sourceTree = "<group>"; };
@@ -19675,7 +19673,6 @@
 				B27535320B053814002CE64F /* IntPointCG.cpp */,
 				B27535330B053814002CE64F /* IntRectCG.cpp */,
 				B27535340B053814002CE64F /* IntSizeCG.cpp */,
-				6B3480920EEF50D400AC1B41 /* NativeImagePtr.h */,
 				B27535350B053814002CE64F /* PathCG.cpp */,
 				A80A38FD0E50CC8200A25EBC /* PatternCG.cpp */,
 				B27535360B053814002CE64F /* PDFDocumentImage.cpp */,
@@ -24329,7 +24326,6 @@
 				C6F08FBD1430FE8F00685849 /* MutationRecord.h in Headers */,
 				A81872230977D3C0005826D9 /* NamedNodeMap.h in Headers */,
 				A818721E0977D3C0005826D9 /* NameNodeList.h in Headers */,
-				6B3480940EEF50D400AC1B41 /* NativeImagePtr.h in Headers */,
 				E10B9B6C0B747599003ED890 /* NativeXPathNSResolver.h in Headers */,
 				93CCF0270AF6C52900018E89 /* NavigationAction.h in Headers */,
 				979F43D41075E44A0000F83B /* NavigationScheduler.h in Headers */,

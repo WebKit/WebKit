@@ -2086,7 +2086,6 @@ HEADERS += \
     platform/graphics/IntPointHash.h \
     platform/graphics/IntRect.h \
     platform/graphics/MediaPlayer.h \
-    platform/graphics/NativeImagePtr.h \
     platform/graphics/opentype/OpenTypeVerticalData.h \
     platform/graphics/Path.h \
     platform/graphics/PathTraversalState.h \
