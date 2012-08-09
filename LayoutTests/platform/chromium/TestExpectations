@@ -1289,6 +1289,8 @@ BUGWK84854 LINUX ANDROID : svg/batik/text/verticalTextOnPath.svg = IMAGE PASS
 BUGWK85107 : svg/as-image/svg-as-relative-image-with-explicit-size.html = PASS IMAGE
 BUGWK85107 : svg/as-image/animated-svg-as-image.html = PASS IMAGE
 
+BUGWK93589 SLOW SNOWLEOPARD DEBUG : svg/dom/SVGScriptElement/script-change-externalResourcesRequired-while-loading.svg = PASS
+
 // -----------------------------------------------------------------
 // End SVG TESTS
 // -----------------------------------------------------------------
