@@ -47,9 +47,11 @@ public:
     virtual const CCLayerTreeSettings& settings() const = 0;
     virtual void didLoseContext() = 0;
     virtual void onSwapBuffersComplete() = 0;
-    virtual void setFullRootLayerDamage() = 0;
     virtual void releaseContentsTextures() = 0;
+    virtual void setFullRootLayerDamage() = 0;
     virtual void setMemoryAllocationLimitBytes(size_t) = 0;
+protected:
+    virtual ~CCRendererClient() { }
 };
 
 class CCRenderer {

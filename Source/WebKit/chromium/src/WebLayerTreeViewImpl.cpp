@@ -39,12 +39,59 @@
 
 using namespace WebCore;
 
+namespace {
+
+// Adapts a pure WebGraphicsContext3D into a WebCompositorOutputSurface until
+// downstream code can be updated to produce output surfaces directly.
+class WebGraphicsContextToOutputSurfaceAdapter : public WebKit::WebCompositorOutputSurface {
+public:
+    explicit WebGraphicsContextToOutputSurfaceAdapter(PassOwnPtr<WebKit::WebGraphicsContext3D> context)
+        : m_context3D(context)
+        , m_client(0)
+    {
+    }
+
+    virtual bool bindToClient(WebKit::WebCompositorOutputSurfaceClient* client) OVERRIDE
+    {
+        ASSERT(client);
+        if (!m_context3D->makeContextCurrent())
+            return false;
+        m_client = client;
+        return true;
+    }
+
+    virtual const Capabilities& capabilities() const OVERRIDE
+    {
+        return m_capabilities;
+    }
+
+    virtual WebKit::WebGraphicsContext3D* context3D() const OVERRIDE
+    {
+        return m_context3D.get();
+    }
+
+    virtual void sendFrameToParentCompositor(const WebKit::WebCompositorFrame&) OVERRIDE
+    {
+    }
+
+private:
+    OwnPtr<WebKit::WebGraphicsContext3D> m_context3D;
+    Capabilities m_capabilities;
+    WebKit::WebCompositorOutputSurfaceClient* m_client;
+};
+
+}
+
 namespace WebKit {
 
 // Converts messages from CCLayerTreeHostClient to WebLayerTreeViewClient.
 class WebLayerTreeViewClientAdapter : public WebCore::CCLayerTreeHostClient {
 public:
-    WebLayerTreeViewClientAdapter(WebLayerTreeViewClient* client) : m_client(client) { }
+    WebLayerTreeViewClientAdapter(WebLayerTreeViewClient* client)
+        : m_client(client)
+        , m_usingRealOutputSurface(false)
+    {
+    }
     virtual ~WebLayerTreeViewClientAdapter() { }
 
     // CCLayerTreeHostClient implementation
@@ -53,11 +100,33 @@ public:
     virtual void updateAnimations(double monotonicFrameBeginTime) OVERRIDE { m_client->updateAnimations(monotonicFrameBeginTime); }
     virtual void layout() OVERRIDE { m_client->layout(); }
     virtual void applyScrollAndScale(const WebCore::IntSize& scrollDelta, float pageScale) OVERRIDE { m_client->applyScrollAndScale(scrollDelta, pageScale); }
-    virtual PassOwnPtr<WebGraphicsContext3D> createContext3D() OVERRIDE
+    virtual PassOwnPtr<WebCompositorOutputSurface> createOutputSurface() OVERRIDE
     {
-        return adoptPtr(m_client->createContext3D());
+        WebCompositorOutputSurface* outputSurface = m_client->createOutputSurface();
+        if (outputSurface) {
+            m_usingRealOutputSurface = true;
+            return adoptPtr(outputSurface);
+        }
+
+        // Temporarily, if the output surface can't be created, create a WebGraphicsContext3D
+        // directly. This allows bootstrapping the output surface system while downstream
+        // users of the API still use the old approach.
+        WebGraphicsContext3D* context = m_client->createContext3D();
+        if (!context)
+            return nullptr;
+
+        m_usingRealOutputSurface = false;
+        return adoptPtr(new WebGraphicsContextToOutputSurfaceAdapter(adoptPtr(context)));
     }
-    virtual void didRecreateContext(bool success) OVERRIDE { m_client->didRebindGraphicsContext(success); }
+
+    virtual void didRecreateOutputSurface(bool success) OVERRIDE
+    {
+        if (m_usingRealOutputSurface) {
+            m_client->didRecreateOutputSurface(success);
+            return;
+        }
+        m_client->didRebindGraphicsContext(success);
+    }
     virtual void willCommit() OVERRIDE { m_client->willCommit(); }
     virtual void didCommit() OVERRIDE { m_client->didCommit(); }
     virtual void didCommitAndDrawFrame() OVERRIDE { m_client->didCommitAndDrawFrame(); }
@@ -66,6 +135,7 @@ public:
 
 private:
     WebLayerTreeViewClient* m_client;
+    bool m_usingRealOutputSurface;
 };
 
 PassOwnPtr<WebLayerTreeViewImpl> WebLayerTreeViewImpl::create(WebLayerTreeViewClient* client, const WebLayer& root, const WebLayerTreeView::Settings& settings)

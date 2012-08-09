@@ -26,6 +26,7 @@
 #include "LayerRendererChromium.h"
 
 #include "CCTestCommon.h"
+#include "FakeWebCompositorOutputSurface.h"
 #include "FakeWebGraphicsContext3D.h"
 #include "GraphicsContext3D.h"
 #include "cc/CCDrawQuad.h"
@@ -128,7 +129,7 @@ protected:
     LayerRendererChromiumTest()
         : m_suggestHaveBackbufferYes(1, true)
         , m_suggestHaveBackbufferNo(1, false)
-        , m_context(CCGraphicsContext::create3D(adoptPtr(new FrameCountingMemoryAllocationSettingContext())))
+        , m_context(FakeWebCompositorOutputSurface::create(adoptPtr(new FrameCountingMemoryAllocationSettingContext())))
         , m_resourceProvider(CCResourceProvider::create(m_context.get()))
         , m_layerRendererChromium(&m_mockClient, m_resourceProvider.get())
     {
@@ -318,7 +319,7 @@ TEST(LayerRendererChromiumTest2, initializationDoesNotMakeSynchronousCalls)
 {
     CCScopedSettings scopedSettings;
     FakeCCRendererClient mockClient;
-    OwnPtr<CCGraphicsContext> context(CCGraphicsContext::create3D(adoptPtr(new ForbidSynchronousCallContext)));
+    OwnPtr<CCGraphicsContext> context(FakeWebCompositorOutputSurface::create(adoptPtr(new ForbidSynchronousCallContext)));
     OwnPtr<CCResourceProvider> resourceProvider(CCResourceProvider::create(context.get()));
     FakeLayerRendererChromium layerRendererChromium(&mockClient, resourceProvider.get());
 
@@ -362,7 +363,7 @@ TEST(LayerRendererChromiumTest2, initializationWithQuicklyLostContextDoesNotAsse
 {
     CCScopedSettings scopedSettings;
     FakeCCRendererClient mockClient;
-    OwnPtr<CCGraphicsContext> context(CCGraphicsContext::create3D(adoptPtr(new LoseContextOnFirstGetContext)));
+    OwnPtr<CCGraphicsContext> context(FakeWebCompositorOutputSurface::create(adoptPtr(new LoseContextOnFirstGetContext)));
     OwnPtr<CCResourceProvider> resourceProvider(CCResourceProvider::create(context.get()));
     FakeLayerRendererChromium layerRendererChromium(&mockClient, resourceProvider.get());
 
@@ -384,7 +385,7 @@ public:
 TEST(LayerRendererChromiumTest2, initializationWithoutGpuMemoryManagerExtensionSupportShouldDefaultToNonZeroAllocation)
 {
     FakeCCRendererClient mockClient;
-    OwnPtr<CCGraphicsContext> context(CCGraphicsContext::create3D(adoptPtr(new ContextThatDoesNotSupportMemoryManagmentExtensions)));
+    OwnPtr<CCGraphicsContext> context(FakeWebCompositorOutputSurface::create(adoptPtr(new ContextThatDoesNotSupportMemoryManagmentExtensions)));
     OwnPtr<CCResourceProvider> resourceProvider(CCResourceProvider::create(context.get()));
     FakeLayerRendererChromium layerRendererChromium(&mockClient, resourceProvider.get());
 
@@ -411,7 +412,7 @@ private:
 TEST(LayerRendererChromiumTest2, opaqueBackground)
 {
     FakeCCRendererClient mockClient;
-    OwnPtr<CCGraphicsContext> ccContext(CCGraphicsContext::create3D(adoptPtr(new ClearCountingContext)));
+    OwnPtr<CCGraphicsContext> ccContext(FakeWebCompositorOutputSurface::create(adoptPtr(new ClearCountingContext)));
     ClearCountingContext* context = static_cast<ClearCountingContext*>(ccContext->context3D());
     OwnPtr<CCResourceProvider> resourceProvider(CCResourceProvider::create(ccContext.get()));
     FakeLayerRendererChromium layerRendererChromium(&mockClient, resourceProvider.get());
@@ -434,7 +435,7 @@ TEST(LayerRendererChromiumTest2, opaqueBackground)
 TEST(LayerRendererChromiumTest2, transparentBackground)
 {
     FakeCCRendererClient mockClient;
-    OwnPtr<CCGraphicsContext> ccContext(CCGraphicsContext::create3D(adoptPtr(new ClearCountingContext)));
+    OwnPtr<CCGraphicsContext> ccContext(FakeWebCompositorOutputSurface::create(adoptPtr(new ClearCountingContext)));
     ClearCountingContext* context = static_cast<ClearCountingContext*>(ccContext->context3D());
     OwnPtr<CCResourceProvider> resourceProvider(CCResourceProvider::create(ccContext.get()));
     FakeLayerRendererChromium layerRendererChromium(&mockClient, resourceProvider.get());

@@ -53,7 +53,6 @@ public:
         EditingBehaviorUnix
     };
 
-    virtual bool forceSoftwareCompositing() const = 0;
     virtual bool scrollAnimatorEnabled() const = 0;
     virtual bool viewportEnabled() const = 0;
     virtual void setAccelerated2dCanvasEnabled(bool) = 0;
@@ -102,7 +101,6 @@ public:
     virtual void setFixedPositionCreatesStackingContext(bool) = 0;
     virtual void setFontRenderingModeNormal() = 0;
     virtual void setForceCompositingMode(bool) = 0;
-    virtual void setForceSoftwareCompositing(bool) = 0;
     virtual void setFrameFlatteningEnabled(bool) = 0;
     virtual void setFullScreenEnabled(bool) = 0;
     virtual void setHyperlinkAuditingEnabled(bool) = 0;

@@ -1,3 +1,43 @@
+2012-08-06  Nat Duca  <nduca@chromium.org>
+
+        [chromium] Expose CCGraphicsContext as WebCompositorOutputSurface
+        https://bugs.webkit.org/show_bug.cgi?id=92890
+
+        Reviewed by James Robinson.
+
+        * platform/graphics/chromium/cc/CCGraphicsContext.h:
+        (WebCore):
+        * platform/graphics/chromium/cc/CCLayerTreeHost.cpp:
+        (WebCore::CCLayerTreeHost::initializeLayerRenderer):
+        (WebCore::CCLayerTreeHost::recreateContext):
+        (WebCore::CCLayerTreeHost::createContext):
+        * platform/graphics/chromium/cc/CCLayerTreeHost.h:
+        (WebCore):
+        (CCLayerTreeHostClient):
+        (WebCore::CCLayerTreeSettings::CCLayerTreeSettings):
+        (CCLayerTreeSettings):
+        * platform/graphics/chromium/cc/CCLayerTreeHostImpl.cpp:
+        (WebCore::CCLayerTreeHostImpl::onVSyncParametersChanged):
+        (WebCore):
+        (WebCore::CCLayerTreeHostImpl::initializeLayerRenderer):
+        * platform/graphics/chromium/cc/CCLayerTreeHostImpl.h:
+        (CCLayerTreeHostImplClient):
+        * platform/graphics/chromium/cc/CCProxy.h:
+        (WebKit):
+        (WebCore):
+        * platform/graphics/chromium/cc/CCRenderer.h:
+        (CCRendererClient):
+        (WebCore::CCRendererClient::~CCRendererClient):
+        * platform/graphics/chromium/cc/CCResourceProvider.cpp:
+        * platform/graphics/chromium/cc/CCResourceProvider.h:
+        * platform/graphics/chromium/cc/CCSingleThreadProxy.h:
+        * platform/graphics/chromium/cc/CCThreadProxy.cpp:
+        (WebCore::CCThreadProxy::recreateContext):
+        (WebCore::CCThreadProxy::onVSyncParametersChanged):
+        (WebCore):
+        (WebCore::CCThreadProxy::beginFrame):
+        * platform/graphics/chromium/cc/CCThreadProxy.h:
+
 2012-08-09  Bruno de Oliveira Abinader  <bruno.abinader@basyskom.com>
 
         [css3-text] Add suport for -webkit-text-decoration-line

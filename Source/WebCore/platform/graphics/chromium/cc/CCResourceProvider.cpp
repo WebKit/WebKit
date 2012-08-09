@@ -30,7 +30,6 @@
 #include "IntRect.h"
 #include "LayerRendererChromium.h" // For the GLC() macro
 #include "LayerTextureSubImage.h"
-#include "cc/CCGraphicsContext.h"
 #include "cc/CCProxy.h"
 #include <public/WebGraphicsContext3D.h>
 

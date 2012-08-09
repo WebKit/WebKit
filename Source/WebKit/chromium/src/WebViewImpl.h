@@ -312,8 +312,10 @@ public:
     virtual void didBeginFrame();
     virtual void updateAnimations(double monotonicFrameBeginTime);
     virtual void applyScrollAndScale(const WebSize&, float);
-    virtual WebGraphicsContext3D* createContext3D();
-    virtual void didRebindGraphicsContext(bool);
+    virtual WebGraphicsContext3D* createContext3D() OVERRIDE;
+    virtual void didRebindGraphicsContext(bool success) OVERRIDE;
+    virtual WebCompositorOutputSurface* createOutputSurface() OVERRIDE;
+    virtual void didRecreateOutputSurface(bool success) OVERRIDE;
     virtual void willCommit();
     virtual void didCommit();
     virtual void didCommitAndDrawFrame();
@@ -536,8 +538,6 @@ public:
 #endif
 
     virtual WebGraphicsContext3D* sharedGraphicsContext3D();
-
-    PassOwnPtr<WebGraphicsContext3D> createCompositorGraphicsContext3D();
 
     virtual void setVisibilityState(WebPageVisibilityState, bool);
 
@@ -832,10 +832,6 @@ private:
     OwnPtr<SpeechRecognitionClientProxy> m_speechRecognitionClient;
 #endif
 
-    // If we attempt to fetch the on-screen GraphicsContext3D before
-    // the compositor has been turned on, we need to instantiate it
-    // early. This member holds on to the GC3D in this case.
-    OwnPtr<WebGraphicsContext3D> m_temporaryOnscreenGraphicsContext3D;
     OwnPtr<DeviceOrientationClientProxy> m_deviceOrientationClientProxy;
     OwnPtr<GeolocationClientProxy> m_geolocationClientProxy;
 #if ENABLE(BATTERY_STATUS)

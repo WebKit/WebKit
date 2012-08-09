@@ -31,6 +31,7 @@
 #include "cc/CCLayerSorter.h"
 #include "cc/CCRenderPass.h"
 #include "cc/CCRenderer.h"
+#include <public/WebCompositorOutputSurfaceClient.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/RefPtr.h>
 
@@ -54,13 +55,16 @@ class CCLayerTreeHostImplClient {
 public:
     virtual void didLoseContextOnImplThread() = 0;
     virtual void onSwapBuffersCompleteOnImplThread() = 0;
+    virtual void onVSyncParametersChanged(double monotonicTimebase, double intervalInSeconds) = 0;
     virtual void setNeedsRedrawOnImplThread() = 0;
     virtual void setNeedsCommitOnImplThread() = 0;
     virtual void postAnimationEventsToMainThreadOnImplThread(PassOwnPtr<CCAnimationEventsVector>, double wallClockTime) = 0;
 };
 
 // CCLayerTreeHostImpl owns the CCLayerImpl tree as well as associated rendering state
-class CCLayerTreeHostImpl : public CCInputHandlerClient, CCRendererClient {
+class CCLayerTreeHostImpl : public CCInputHandlerClient,
+                            public CCRendererClient,
+                            public WebKit::WebCompositorOutputSurfaceClient {
     WTF_MAKE_NONCOPYABLE(CCLayerTreeHostImpl);
     typedef Vector<CCLayerImpl*> CCLayerList;
 
@@ -111,6 +115,9 @@ public:
     virtual void setFullRootLayerDamage() OVERRIDE;
     virtual void releaseContentsTextures() OVERRIDE;
     virtual void setMemoryAllocationLimitBytes(size_t) OVERRIDE;
+
+    // WebCompositorOutputSurfaceClient implementation.
+    virtual void onVSyncParametersChanged(double monotonicTimebase, double intervalInSeconds) OVERRIDE;
 
     // Implementation
     bool canDraw();

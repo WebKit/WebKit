@@ -133,7 +133,7 @@ void CCLayerTreeHost::initializeLayerRenderer()
     TRACE_EVENT0("cc", "CCLayerTreeHost::initializeLayerRenderer");
     if (!m_proxy->initializeLayerRenderer()) {
         // Uh oh, better tell the client that we can't do anything with this context.
-        m_client->didRecreateContext(false);
+        m_client->didRecreateOutputSurface(false);
         return;
     }
 
@@ -166,7 +166,7 @@ CCLayerTreeHost::RecreateResult CCLayerTreeHost::recreateContext()
         m_numTimesRecreateShouldFail--;
 
     if (recreated) {
-        m_client->didRecreateContext(true);
+        m_client->didRecreateOutputSurface(true);
         m_contextLost = false;
         return RecreateSucceeded;
     }
@@ -185,7 +185,7 @@ CCLayerTreeHost::RecreateResult CCLayerTreeHost::recreateContext()
 
     // We have tried too many times to recreate the context. Tell the host to fall
     // back to software rendering.
-    m_client->didRecreateContext(false);
+    m_client->didRecreateOutputSurface(false);
     return RecreateFailedAndGaveUp;
 }
 
@@ -282,9 +282,7 @@ void CCLayerTreeHost::commitComplete()
 
 PassOwnPtr<CCGraphicsContext> CCLayerTreeHost::createContext()
 {
-    if (settings().forceSoftwareCompositing)
-        return CCGraphicsContext::create2D();
-    return CCGraphicsContext::create3D(m_client->createContext3D());
+    return m_client->createOutputSurface();
 }
 
 PassOwnPtr<CCLayerTreeHostImpl> CCLayerTreeHost::createLayerTreeHostImpl(CCLayerTreeHostImplClient* client)

@@ -23,21 +23,19 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef FakeCCGraphicsContext_h
-#define FakeCCGraphicsContext_h
-
-#include "CompositorFakeWebGraphicsContext3D.h"
-#include "FakeWebCompositorOutputSurface.h"
-#include "cc/CCGraphicsContext.h"
-#include <public/WebCompositorOutputSurface.h>
+#ifndef WebCompositorOutputSurfaceClient_h
+#define WebCompositorOutputSurfaceClient_h
 
 namespace WebKit {
 
-static inline PassOwnPtr<WebCore::CCGraphicsContext> createFakeCCGraphicsContext()
-{
-    return FakeWebCompositorOutputSurface::create(CompositorFakeWebGraphicsContext3D::create(WebGraphicsContext3D::Attributes()));
+class WebCompositorOutputSurfaceClient {
+public:
+    virtual void onVSyncParametersChanged(double monotonicTimebase, double intervalInSeconds) = 0;
+
+protected:
+    ~WebCompositorOutputSurfaceClient() { }
+};
+
 }
 
-} // namespace WebKit
-
-#endif // FakeCCGraphicsContext_h
+#endif

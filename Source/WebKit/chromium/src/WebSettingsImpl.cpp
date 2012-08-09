@@ -47,7 +47,6 @@ namespace WebKit {
 
 WebSettingsImpl::WebSettingsImpl(Settings* settings)
     : m_settings(settings)
-    , m_forceSoftwareCompositing(false)
     , m_showFPSCounter(false)
     , m_showPlatformLayerTree(false)
     , m_showPaintRects(false)
@@ -411,11 +410,6 @@ void WebSettingsImpl::setAcceleratedCompositingEnabled(bool enabled)
 void WebSettingsImpl::setForceCompositingMode(bool enabled)
 {
     m_settings->setForceCompositingMode(enabled);
-}
-
-void WebSettingsImpl::setForceSoftwareCompositing(bool enabled)
-{
-    m_forceSoftwareCompositing = enabled;
 }
 
 void WebSettingsImpl::setMockScrollbarsEnabled(bool enabled)
