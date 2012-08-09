@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../js/resources/js-test-pre.js"></script>
+<script src="resources/microdata-common.js"></script>
+</head>
+<body>
+<script>
+description("Test to verify HTMLPropertiesCollection and PropertyNodeList interfaces behavior on changing id attribute.");
+
+var parent = createElement('div', {}, '<div itemprop="foo"><div itemprop="bar"></div></div><div itemscope itemref="id1"></div>');
+var item = parent.childNodes[1];
+document.body.appendChild(parent);
+
+shouldBe("item.properties.length", "0");
+shouldBeNull("item.properties.item(0)");
+shouldBeUndefined("item.properties[0]");
+shouldBe("item.properties.namedItem('foo').length", "0");
+shouldBeNull("item.properties.namedItem('foo').item(0)");
+shouldBeUndefined("item.properties.namedItem('foo')[0]");
+shouldBe("item.properties.namedItem('bar').length", "0");
+shouldBeNull("item.properties.namedItem('bar').item(0)");
+shouldBeUndefined("item.properties.namedItem('bar')[0]");
+shouldBe("item.properties.names.length", "0");
+shouldBeNull("item.properties.names.item(0)");
+shouldBeUndefined("item.properties.names[0]");
+
+debug("");
+debug("Set parent.firstChild.id to 'id1'");
+parent.firstChild.id = 'id1';
+shouldBe("item.properties.length", "2");
+shouldBe("item.properties.item(0)", "parent.firstChild");
+shouldBe("item.properties[0]", "parent.firstChild");
+shouldBe("item.properties.item(1)", "parent.firstChild.firstChild");
+shouldBe("item.properties[1]", "parent.firstChild.firstChild");
+shouldBe("item.properties.namedItem('foo').length", "1");
+shouldBe("item.properties.namedItem('foo').item(0)", "parent.firstChild");
+shouldBe("item.properties.namedItem('foo')[0]", "parent.firstChild");
+shouldBe("item.properties.namedItem('bar').length", "1");
+shouldBe("item.properties.namedItem('bar').item(0)", "parent.firstChild.firstChild");
+shouldBe("item.properties.namedItem('bar')[0]", "parent.firstChild.firstChild");
+shouldBe("item.properties.names.length", "2");
+shouldBe("item.properties.names.item(0)", "'foo'");
+shouldBe("item.properties.names[0]", "'foo'");
+shouldBe("item.properties.names.item(1)", "'bar'");
+shouldBe("item.properties.names[1]", "'bar'");
+
+debug("");
+debug("Remove id attribute from parent.firstChild");
+parent.firstChild.removeAttribute('id');
+shouldBe("item.properties.length", "0");
+shouldBeNull("item.properties.item(0)");
+shouldBeUndefined("item.properties[0]");
+shouldBe("item.properties.namedItem('foo').length", "0");
+shouldBeNull("item.properties.namedItem('foo').item(0)");
+shouldBeUndefined("item.properties.namedItem('foo')[0]");
+shouldBe("item.properties.namedItem('bar').length", "0");
+shouldBeNull("item.properties.namedItem('bar').item(0)");
+shouldBeUndefined("item.properties.namedItem('bar')[0]");
+shouldBe("item.properties.names.length", "0");
+shouldBeNull("item.properties.names.item(0)");
+shouldBeUndefined("item.properties.names[0]");
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>

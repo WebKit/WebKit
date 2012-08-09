@@ -26,15 +26,13 @@
 
 #include "CollectionType.h"
 #include "Document.h"
+#include "Element.h"
 #include "HTMLNames.h"
 #include "NodeList.h"
 #include <wtf/Forward.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
-
-class Element;
-class Node;
 
 enum NodeListRootType {
     NodeListIsRootedAtNode,
@@ -70,7 +68,7 @@ public:
     }
 
 public:
-    ALWAYS_INLINE bool isRootedAtDocument() const { return m_rootType == NodeListIsRootedAtDocument; }
+    ALWAYS_INLINE bool isRootedAtDocument() const { return m_rootType == NodeListIsRootedAtDocument || ownerNodeHasItemRefAttribute(); }
     ALWAYS_INLINE NodeListInvalidationType invalidationType() const { return static_cast<NodeListInvalidationType>(m_invalidationType); }
     ALWAYS_INLINE CollectionType type() const { return static_cast<CollectionType>(m_collectionType); }
     Node* ownerNode() const { return m_ownerNode.get(); }
@@ -166,13 +164,24 @@ ALWAYS_INLINE bool DynamicNodeListCacheBase::shouldInvalidateTypeOnAttributeChan
         return attrName == HTMLNames::hrefAttr;
     case InvalidateOnItemAttrChange:
 #if ENABLE(MICRODATA)
-        return attrName == HTMLNames::itemscopeAttr || attrName == HTMLNames::itempropAttr || attrName == HTMLNames::itemtypeAttr || attrName == HTMLNames::itemrefAttr;
+        return attrName == HTMLNames::itemscopeAttr || attrName == HTMLNames::itempropAttr
+            || attrName == HTMLNames::itemtypeAttr || attrName == HTMLNames::itemrefAttr || attrName == HTMLNames::idAttr;
 #endif // Intentionally fall through
     case DoNotInvalidateOnAttributeChanges:
         return false;
     case InvalidateOnAnyAttrChange:
         return true;
     }
+    return false;
+}
+
+ALWAYS_INLINE bool DynamicNodeListCacheBase::ownerNodeHasItemRefAttribute() const
+{
+#if ENABLE(MICRODATA)
+    if (m_rootType == NodeListIsRootedAtDocumentIfOwnerHasItemrefAttr)
+        return toElement(ownerNode())->fastHasAttribute(HTMLNames::itemrefAttr);
+#endif
+
     return false;
 }
 

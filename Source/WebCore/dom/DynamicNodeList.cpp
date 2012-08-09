@@ -49,16 +49,6 @@ Node* DynamicNodeListCacheBase::rootNode() const
     return m_ownerNode.get();
 }
 
-ALWAYS_INLINE bool DynamicNodeListCacheBase::ownerNodeHasItemRefAttribute() const
-{
-#if ENABLE(MICRODATA)
-    if (m_rootType == NodeListIsRootedAtDocumentIfOwnerHasItemrefAttr)
-        return toElement(ownerNode())->fastHasAttribute(HTMLNames::itemrefAttr);
-#endif
-
-    return false;
-}
-
 void DynamicNodeListCacheBase::invalidateCache() const
 {
     m_cachedItem = 0;

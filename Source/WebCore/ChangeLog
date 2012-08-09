@@ -1,3 +1,24 @@
+2012-08-08  Arko Saha  <arko@motorola.com>
+
+        Microdata: PropertyNodeList cache should be invalidated on id attribute change.
+        https://bugs.webkit.org/show_bug.cgi?id=93485
+
+        Reviewed by Ryosuke Niwa.
+
+        Invalidate PropertyNodeList cache when id attribute of an element changed/modified.
+
+        Test: fast/dom/MicroData/propertiescollection-on-changing-id-attr.html
+
+        * dom/DynamicNodeList.cpp: Moved ownerNodeHasItemRefAttribute() method to DynamicNodeList.h
+        (WebCore):
+        * dom/DynamicNodeList.h:
+        (WebCore):
+        (WebCore::DynamicNodeListCacheBase::isRootedAtDocument): Return true if owner has itemref
+        attribute specified with root type NodeListIsRootedAtDocumentIfOwnerHasItemrefAttr.
+        (WebCore::DynamicNodeListCacheBase::shouldInvalidateTypeOnAttributeChange): Return true if
+        attrName is id attribute in case of InvalidateOnItemAttrChange.
+        (WebCore::DynamicNodeListCacheBase::ownerNodeHasItemRefAttribute):
+
 2012-08-09  Arko Saha  <arko@motorola.com>
 
         Microdata: HTMLPropertiesCollection does not contain all properties when item is not attached to the DOM tree.
