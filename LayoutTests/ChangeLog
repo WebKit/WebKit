@@ -1,3 +1,14 @@
+2012-08-09  Brady Eidson  <beidson@apple.com>
+
+        Layout Test fast/forms/autocomplete-off-with-default-value-does-not-clear.html is failing (on Chromium)
+        https://bugs.webkit.org/show_bug.cgi?id=93586
+
+        Not reviewed (fixing a test failure).
+
+        This test is only valid for platforms with the page cache enabled.
+
+        * platform/chromium/TestExpectations: Skip fast/forms/autocomplete-off-with-default-value-does-not-clear.html
+
 2012-08-09  Florin Malita  <fmalita@chromium.org>
 
         [Chromium] Unreviewed gardening: updated expectations for console-format-collections.html.

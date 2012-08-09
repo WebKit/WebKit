@@ -553,6 +553,7 @@ WONTFIX SKIP : fast/overflow/horizontal-scroll-after-back.html = TIMEOUT
 WONTFIX SKIP : http/tests/navigation/https-in-page-cache.html = PASS
 WONTFIX SKIP : loader/go-back-to-different-window-size.html = TIMEOUT TEXT
 WONTFIX SKIP : media/restore-from-page-cache.html = TIMEOUT
+WONTFIX SKIP : fast/forms/autocomplete-off-with-default-value-does-not-clear.html = TIMEOUT
 
 // Tests that rely on cross-process MessagePorts.  No point in running them in
 // test_shell, since we'd have to use a completely different implementation from
