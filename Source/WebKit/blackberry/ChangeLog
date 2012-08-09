@@ -1,3 +1,14 @@
+2012-08-09  Leo Yang  <leoyang@rim.com>
+
+        [BlackBerry] Export InRegionScroller to fix build
+        https://bugs.webkit.org/show_bug.cgi?id=93635
+
+        Reviewed by Antonio Gomes.
+
+        Build fix.
+
+        * Api/InRegionScroller.h:
+
 2012-08-08  Jacky Jiang  <zhajiang@rim.com>
 
         [BlackBerry] Implement about:memory-live

@@ -19,6 +19,8 @@
 #ifndef InRegionScroller_h
 #define InRegionScroller_h
 
+#include "BlackBerryGlobal.h"
+
 #include <BlackBerryPlatformPrimitives.h>
 
 namespace BlackBerry {
@@ -28,7 +30,7 @@ class InRegionScrollerPrivate;
 class TouchEventHandler;
 class WebPagePrivate;
 
-class InRegionScroller {
+class BLACKBERRY_EXPORT InRegionScroller {
 public:
     InRegionScroller(WebPagePrivate*);
     ~InRegionScroller();
