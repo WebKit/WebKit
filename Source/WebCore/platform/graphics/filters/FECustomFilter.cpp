@@ -123,9 +123,28 @@ void FECustomFilter::deleteRenderBuffers()
 
 void FECustomFilter::platformApplySoftware()
 {
+    if (!applyShader())
+        clearShaderResult();
+}
+
+void FECustomFilter::clearShaderResult()
+{
+    clearResult();
     Uint8ClampedArray* dstPixelArray = createUnmultipliedImageResult();
     if (!dstPixelArray)
         return;
+
+    FilterEffect* in = inputEffect(0);
+    setIsAlphaImage(in->isAlphaImage());
+    IntRect effectDrawingRect = requestedRegionOfInputImageData(in->absolutePaintRect());
+    in->copyUnmultipliedImage(dstPixelArray, effectDrawingRect);
+}
+
+bool FECustomFilter::applyShader()
+{
+    Uint8ClampedArray* dstPixelArray = createUnmultipliedImageResult();
+    if (!dstPixelArray)
+        return false;
 
     FilterEffect* in = inputEffect(0);
     IntRect effectDrawingRect = requestedRegionOfInputImageData(in->absolutePaintRect());
@@ -134,7 +153,7 @@ void FECustomFilter::platformApplySoftware()
     IntSize newContextSize(effectDrawingRect.size());
     bool hadContext = m_context;
     if (!m_context && !initializeContext())
-        return;
+        return false;
     m_context->makeContextCurrent();
     
     if (!hadContext || m_contextSize != newContextSize)
@@ -143,12 +162,12 @@ void FECustomFilter::platformApplySoftware()
 #if !PLATFORM(BLACKBERRY) // BlackBerry defines its own Texture class.
     // Do not draw the filter if the input image cannot fit inside a single GPU texture.
     if (m_inputTexture->tiles().numTilesX() != 1 || m_inputTexture->tiles().numTilesY() != 1)
-        return;
+        return false;
 #endif
     
     // The shader had compiler errors. We cannot draw anything.
     if (!m_compiledProgram->isInitialized())
-        return;
+        return false;
 
     m_context->bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, m_frameBuffer);
     m_context->viewport(0, 0, newContextSize.width(), newContextSize.height());
@@ -162,6 +181,8 @@ void FECustomFilter::platformApplySoftware()
     
     ASSERT(static_cast<size_t>(newContextSize.width() * newContextSize.height() * 4) == dstPixelArray->length());
     m_context->readPixels(0, 0, newContextSize.width(), newContextSize.height(), GraphicsContext3D::RGBA, GraphicsContext3D::UNSIGNED_BYTE, dstPixelArray->data());
+
+    return true;
 }
 
 bool FECustomFilter::initializeContext()

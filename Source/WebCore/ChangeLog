@@ -1,3 +1,28 @@
+2012-08-08  Alexandru Chiculita  <achicu@adobe.com>
+
+        [CSS Shaders] Invalid shaders should act as pass-through filters
+        https://bugs.webkit.org/show_bug.cgi?id=93405
+
+        Reviewed by Dean Jackson.
+
+        If the shader fails to apply then clearShaderResult will just copy the result of the previous filter
+        to the output of the current filter.
+
+        Test: css3/filters/custom/invalid-custom-filter-shader.html
+
+        * platform/graphics/filters/FECustomFilter.cpp:
+        (WebCore::FECustomFilter::platformApplySoftware):
+        (WebCore):
+        (WebCore::FECustomFilter::clearShaderResult):
+        (WebCore::FECustomFilter::applyShader):
+        * platform/graphics/filters/FECustomFilter.h:
+        (FECustomFilter):
+        * rendering/style/StyleCustomFilterProgram.h: The test was exposing the fact that if the shaders were referencing the same
+        file then StyleCustomFilterProgram will never complete the load. Having the same file for both the vertex and the fragment shader
+        cannot really work, because the shaders would not compile anyway, thus triggering an invalid shader. 
+        I'm fixing it part of this change because the current test actually exposes that on Safari Mac builds. See the note in the LayoutTest/ChangeLog.
+        (WebCore::StyleCustomFilterProgram::notifyFinished):
+
 2012-08-08  Adam Barth  <abarth@webkit.org>
 
         Rewire the same-origin checks for the JavaScriptCore bindings through BindingSecurity

@@ -72,6 +72,8 @@ private:
                    CustomFilterOperation::MeshType);
     ~FECustomFilter();
     
+    bool applyShader();
+    void clearShaderResult();
     bool initializeContext();
     void deleteRenderBuffers();
     void resizeContext(const IntSize& newContextSize);

@@ -106,9 +106,10 @@ public:
     {
         if (resource->errorOccurred())
             return;
+        // Note that m_cachedVertexShader might be equal to m_cachedFragmentShader and it would only get one event in that case.
         if (resource == m_cachedVertexShader.get())
             m_isVertexShaderLoaded = true;
-        else if (resource == m_cachedFragmentShader.get())
+        if (resource == m_cachedFragmentShader.get())
             m_isFragmentShaderLoaded = true;
         if (isLoaded())
             notifyClients();

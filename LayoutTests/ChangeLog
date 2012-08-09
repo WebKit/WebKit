@@ -1,3 +1,19 @@
+2012-08-08  Alexandru Chiculita  <achicu@adobe.com>
+
+        [CSS Shaders] Invalid shaders should act as pass-through filters
+        https://bugs.webkit.org/show_bug.cgi?id=93405
+
+        Reviewed by Dean Jackson.
+
+        Note that invalid-custom-filter-shader-expected.html is actually using another builtin filter,
+        just to make sure we trigger the whole FilterEffectRenderer on the images, otherwise the result will be
+        slightly different because of the conversion errors. Having another filter like grayscale(0) will trigger
+        the same precission errors on the result of the expected html.
+
+        * css3/filters/custom/invalid-custom-filter-shader-expected.html: Added.
+        * css3/filters/custom/invalid-custom-filter-shader.html: Added.
+        * css3/filters/resources/invalid-shader.vs: Added.
+
 2012-08-08  Brady Eidson  <beidson@apple.com>
 
         Google search query text reverts to original search query after multiple searches
