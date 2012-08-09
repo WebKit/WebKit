@@ -1,0 +1,16 @@
+<!doctype html>
+<html>
+<p>Test for <a href="https://bugs.webkit.org/show_bug.cgi?id=93204">WebKit Bug 93204</a> Region attached to the removed flow thread crash.</p>
+<p>The test passes if it does not crash or assert.</p>
+<p>PASS</p>
+
+<div id="test">
+<span style='content: "Invisible"; -webkit-writing-mode: horizontal-bt; -webkit-flow-from: flow4; '></span><span>><div style='counter-increment: ident53 523; -webkit-flow-from: flow4; '>>
+</div>
+<script>
+    var testNode = document.getElementById("test");
+    testNode.parentNode.removeChild(testNode);
+    if (window.testRunner)
+        window.testRunner.dumpAsText();
+</script>
+</html>

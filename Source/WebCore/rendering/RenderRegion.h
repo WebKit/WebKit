@@ -106,6 +106,9 @@ private:
     void restoreRegionObjectsOriginalStyle();
     void setObjectStyleInRegion(RenderObject*, PassRefPtr<RenderStyle>, bool objectRegionStyleCached);
     void printRegionObjectsStyles();
+
+    void checkRegionStyle();
+
     RenderFlowThread* m_flowThread;
 
     // If this RenderRegion is displayed as part of another named flow,

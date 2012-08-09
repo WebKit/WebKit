@@ -151,7 +151,7 @@ RenderObject* RenderObject::createObject(Node* node, RenderStyle* style)
     if (node->hasTagName(rtTag) && style->display() == BLOCK)
         return new (arena) RenderRubyText(node);
     if (doc->cssRegionsEnabled() && style->isDisplayRegionType() && !style->regionThread().isEmpty() && doc->renderView())
-        return new (arena) RenderRegion(node, doc->renderView()->flowThreadController()->ensureRenderFlowThreadWithName(style->regionThread()));
+        return new (arena) RenderRegion(node, 0);
     switch (style->display()) {
     case NONE:
         return 0;

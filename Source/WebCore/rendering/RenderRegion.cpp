@@ -140,6 +140,18 @@ bool RenderRegion::nodeAtPoint(const HitTestRequest& request, HitTestResult& res
     return false;
 }
 
+void RenderRegion::checkRegionStyle()
+{
+    ASSERT(m_flowThread);
+    bool customRegionStyle = false;
+    if (node()) {
+        Element* regionElement = static_cast<Element*>(node());
+        customRegionStyle = view()->document()->styleResolver()->checkRegionStyle(regionElement);
+    }
+    setHasCustomRegionStyle(customRegionStyle);
+    m_flowThread->checkRegionsWithStyling();
+}
+
 void RenderRegion::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
 {
     RenderReplaced::styleDidChange(diff, oldStyle);
@@ -152,13 +164,7 @@ void RenderRegion::styleDidChange(StyleDifference diff, const RenderStyle* oldSt
         return;
     }
 
-    bool customRegionStyle = false;
-    if (node()) {
-        Element* regionElement = static_cast<Element*>(node());
-        customRegionStyle = view()->document()->styleResolver()->checkRegionStyle(regionElement);
-    }
-    setHasCustomRegionStyle(customRegionStyle);
-    m_flowThread->checkRegionsWithStyling();
+    checkRegionStyle();
 }
 
 void RenderRegion::layout()
@@ -189,14 +195,15 @@ void RenderRegion::attachRegion()
     if (documentBeingDestroyed())
         return;
 
-    if (!m_flowThread && isValid()) {
-        // We have to recreate the named flow if the named flow was deleted because
-        // the region detached was the last one from the named flow.
-        m_flowThread = view()->flowThreadController()->ensureRenderFlowThreadWithName(style()->regionThread());
-        // The region will be marked as valid after being checked that it is not
-        // part of a circular dependency.
-        setIsValid(false);
-    }
+    ASSERT(!m_flowThread);
+    // Initialize the flow thread reference and create the flow thread object if needed.
+    // The flow thread lifetime is influenced by the number of regions attached to it,
+    // and we are attaching the region to the flow thread.
+    m_flowThread = view()->flowThreadController()->ensureRenderFlowThreadWithName(style()->regionThread());
+
+    // A region is valid if it is not part of a circular reference, which is checked below
+    // and in RenderNamedFlowThread::addRegionToThread.
+    setIsValid(false);
 
     // By now the flow thread should already be added to the rendering tree,
     // so we go up the rendering parents and check that this region is not part of the same
@@ -210,8 +217,7 @@ void RenderRegion::attachRegion()
             // cannot change, so it is not worth adding it to the list.
             if (m_flowThread == m_parentNamedFlowThread) {
                 m_flowThread = 0;
-                // This region is not valid for this flow thread (as being part of a circular dependency),
-                // so we should not attempt to recreate it in attachRegion.
+                // This region is not valid for this flow thread (as being part of a circular dependency).
                 setIsValid(false);
                 return;
             }
@@ -220,6 +226,10 @@ void RenderRegion::attachRegion()
     }
 
     m_flowThread->addRegionToThread(this);
+
+    // The region just got attached to the flow thread, lets check whether
+    // it has region styling rules associated.
+    checkRegionStyle();
 }
 
 void RenderRegion::detachRegion()

@@ -1,3 +1,15 @@
+2012-08-09  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        CSSRegions: Crash when attaching a region to the removed named flow
+        https://bugs.webkit.org/show_bug.cgi?id=93204
+
+        Reviewed by Abhishek Arya.
+
+        Add test reproducing the crash.
+
+        * fast/regions/region-attached-wrong-flow-crash-expected.txt: Added.
+        * fast/regions/region-attached-wrong-flow-crash.html: Added.
+
 2012-08-09  Dean Jackson  <dino@apple.com>
 
         (r125185) http/tests/images/jpg-img-partial-load.html timeout on Lion
