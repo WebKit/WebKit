@@ -1,3 +1,57 @@
+2012-08-09  Dirk Pranke  <dpranke@chromium.org>
+
+        nrwt: should log progress like ninja does
+        https://bugs.webkit.org/show_bug.cgi?id=93563
+
+        Reviewed by Ojan Vafai.
+
+        This change modifies the output of nrwt in the
+        non--debug-rwt-logging modes.
+
+        In non-verbose mode, the output changes from:
+          "Testing (50%): 96 ran as expected, 4 didn't, 100 left"
+        to:
+          "[100/200] foo.html (+4)"
+        or:
+          "[100/200] foo.html failed  unexpectedly (text diff)"
+
+        which indicates the earliest test currently running (optionally plus the
+        count of other currently-executing tests if we're running tests in parallel)
+        or the result of said test.
+
+        If the test produces unexpected results, that line is flushed
+        rather than erased (so we no longer need the %d didn't running
+        tally).
+
+        In --verbose mode, the output is similar, but every test gets a
+        line (and tests are logged in order of them being started, not
+        order of them being completed) (and in --details mode, the
+        first line of each test matches --verbose but the other lines
+        are unchanged).
+        
+        The overall result should be easier to read and is simpler to
+        implement as well (apart from managing the number of tests that
+        have started but not completed, which is slightly annoying).
+
+        This also matches the output style for test-webkitpy, more-or-less.
+
+        * Scripts/webkitpy/layout_tests/controllers/layout_test_runner.py:
+        (LayoutTestRunner.run_tests):
+        (LayoutTestRunner._update_summary_with_result):
+        (LayoutTestRunner._handle_started_test):
+        * Scripts/webkitpy/layout_tests/controllers/layout_test_runner_unittest.py:
+        (FakePrinter):
+        (FakePrinter.print_started_test):
+        (FakePrinter.print_finished_test):
+        * Scripts/webkitpy/layout_tests/views/printing.py:
+        (Printer.__init__):
+        (Printer.print_started_test):
+        (Printer.print_finished_test):
+        (Printer._print_test_trace):
+        (Printer._print_progress):
+        * Scripts/webkitpy/layout_tests/views/printing_unittest.py:
+        (test_details):
+
 2012-08-09  Alexey Proskuryakov  <ap@apple.com>
 
         [WK2] Add a process model constant for multiple processes

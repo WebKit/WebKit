@@ -251,7 +251,8 @@ BUGX : failures/expected/timeout.html = TIMEOUT
     def test_details(self):
         printer, err, _ = self.get_printer(['--details'])
         result = self.get_result('passes/image.html')
-        printer._print_test_result(result, expected=False, exp_str='', got_str='')
+        printer.print_started_test('passes/image.html')
+        printer.print_finished_test(result, expected=False, exp_str='', got_str='')
         self.assertNotEmpty(err)
 
 

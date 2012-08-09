@@ -44,10 +44,16 @@ TestExpectations = test_expectations.TestExpectations
 
 
 class FakePrinter(object):
+    num_completed = 0
+    num_tests = 0
+
     def print_workers_and_shards(self, num_workers, num_shards, num_locked_shards):
         pass
 
-    def print_finished_test(self, result, expected, exp_str, got_str, result_summary, retrying, test_names):
+    def print_started_test(self, test_name):
+        pass
+
+    def print_finished_test(self, result, expected, exp_str, got_str):
         pass
 
     def write(self, msg):

@@ -68,10 +68,14 @@ class Printer(object):
     By default the buildbot-parsed code gets logged to stdout, and regular
     output gets logged to stderr."""
     def __init__(self, port, options, regular_output, buildbot_output, logger=None):
+        self.num_completed = 0
+        self.num_tests = 0
         self._port = port
         self._options = options
         self._buildbot_stream = buildbot_output
         self._meter = MeteredStream(regular_output, options.debug_rwt_logging, logger=logger)
+        self._running_tests = []
+        self._completed_tests = []
 
     def cleanup(self):
         self._meter.cleanup()
@@ -320,20 +324,47 @@ class Printer(object):
         self._print_quiet(summary)
         self._print_quiet("")
 
-    def print_finished_test(self, result, expected, exp_str, got_str, result_summary, retrying, test_files_list):
-        self._print_test_result(result, expected, exp_str, got_str)
-        self._print_progress(result_summary, retrying, test_files_list)
+    def print_started_test(self, test_name):
+        self._running_tests.append(test_name)
+        if len(self._running_tests) > 1:
+            suffix = ' (+%d)' % (len(self._running_tests) - 1)
+        else:
+            suffix = ''
+        if self._options.verbose:
+            write = self._meter.write_update
+        else:
+            write = self._meter.write_throttled_update
+        write('[%d/%d] %s%s' % (self.num_completed, self.num_tests, test_name, suffix))
 
-    def _print_test_result(self, result, expected, exp_str, got_str):
+    def print_finished_test(self, result, expected, exp_str, got_str):
+        self.num_completed += 1
+        test_name = result.test_name
         if self._options.details:
             self._print_test_trace(result, exp_str, got_str)
         elif (self._options.verbose and not self._options.debug_rwt_logging) or not expected:
             desc = TestExpectations.EXPECTATION_DESCRIPTIONS[result.type]
-            self.writeln("%s %s%s%s" % (result.test_name, desc[1], "" if expected else " unexpectedly", desc[2]))
+            suffix = ' ' + desc[1]
+            if not expected:
+                suffix += ' unexpectedly' + desc[2]
+            self.writeln("[%d/%d] %s%s" % (self.num_completed, self.num_tests, test_name, suffix))
+        elif self.num_completed == self.num_tests:
+            self._meter.write_update('')
+        else:
+            desc = TestExpectations.EXPECTATION_DESCRIPTIONS[result.type]
+            suffix = ' ' + desc[1]
+            if test_name == self._running_tests[0]:
+                self._completed_tests.insert(0, [test_name, suffix])
+            else:
+                self._completed_tests.append([test_name, suffix])
+
+            for test_name, suffix in self._completed_tests:
+                self._meter.write_throttled_update('[%d/%d] %s%s' % (self.num_completed, self.num_tests, test_name, suffix))
+            self._completed_tests = []
+        self._running_tests.remove(test_name)
 
     def _print_test_trace(self, result, exp_str, got_str):
         test_name = result.test_name
-        self._print_default('trace: %s' % test_name)
+        self._print_default('[%d/%d] %s' % (self.num_completed, self.num_tests, test_name))
 
         base = self._port.lookup_virtual_test_base(test_name)
         if base:
@@ -359,20 +390,6 @@ class Printer(object):
 
     def _print_progress(self, result_summary, retrying, test_list):
         """Print progress through the tests as determined by --print."""
-        if result_summary.remaining == 0:
-            self._meter.write_update('')
-            return
-
-        percent_complete = 100 * (result_summary.expected +
-            result_summary.unexpected) / result_summary.total
-        action = "Testing"
-        if retrying:
-            action = "Retrying"
-
-        self._meter.write_throttled_update("%s (%d%%): %d ran as expected, %d didn't, %d left" %
-            (action, percent_complete, result_summary.expected,
-             result_summary.unexpected, result_summary.remaining))
-
     def _print_unexpected_results(self, unexpected_results):
         # Prints to the buildbot stream
         passes = {}

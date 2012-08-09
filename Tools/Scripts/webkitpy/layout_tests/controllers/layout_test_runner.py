@@ -101,6 +101,8 @@ class LayoutTestRunner(object):
         self._needs_websockets = needs_websockets
         self._retrying = retrying
         self._test_files_list = [test_input.test_name for test_input in test_inputs]
+        self._printer.num_tests = len(self._test_files_list)
+        self._printer.num_completed = 0
 
         self._all_results = []
         self._group_stats = {}
@@ -202,8 +204,7 @@ class LayoutTestRunner(object):
 
         result_summary.add(result, expected, self._test_is_slow(result.test_name))
 
-        # FIXME: there's too many arguments to this function.
-        self._printer.print_finished_test(result, expected, exp_str, got_str, result_summary, self._retrying, self._test_files_list)
+        self._printer.print_finished_test(result, expected, exp_str, got_str)
 
         self._interrupt_if_at_failure_limits(result_summary)
 
@@ -237,8 +238,7 @@ class LayoutTestRunner(object):
         raise AssertionError('unknown message %s received from %s, args=%s' % (name, source, repr(args)))
 
     def _handle_started_test(self, worker_name, test_input, test_timeout_sec):
-        # FIXME: log that we've started another test.
-        pass
+        self._printer.print_started_test(test_input.test_name)
 
     def _handle_finished_test_list(self, worker_name, list_name, num_tests, elapsed_time):
         self._group_stats[list_name] = (num_tests, elapsed_time)
