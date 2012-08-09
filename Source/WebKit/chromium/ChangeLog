@@ -1,3 +1,15 @@
+2012-08-09  Shawn Singh  <shawnsingh@chromium.org>
+
+        [chromium] Pass mask scale and offset to shaders for correct masking
+        https://bugs.webkit.org/show_bug.cgi?id=93558
+
+        Reviewed by Adrienne Walker.
+
+        Updated one unit test that needed additional args in a
+        constructor, but no change in behavior of the test.
+
+        * tests/CCLayerTreeHostImplTest.cpp:
+
 2012-08-09  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: add codemirror library as an experiment

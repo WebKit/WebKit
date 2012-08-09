@@ -686,6 +686,8 @@ void LayerRendererChromium::drawRenderPassQuad(DrawingFrame& frame, const CCRend
     int shaderQuadLocation = -1;
     int shaderEdgeLocation = -1;
     int shaderMaskSamplerLocation = -1;
+    int shaderMaskTexCoordScaleLocation = -1;
+    int shaderMaskTexCoordOffsetLocation = -1;
     int shaderMatrixLocation = -1;
     int shaderAlphaLocation = -1;
     if (useAA && maskTextureId) {
@@ -696,6 +698,8 @@ void LayerRendererChromium::drawRenderPassQuad(DrawingFrame& frame, const CCRend
         shaderQuadLocation = program->vertexShader().pointLocation();
         shaderEdgeLocation = program->fragmentShader().edgeLocation();
         shaderMaskSamplerLocation = program->fragmentShader().maskSamplerLocation();
+        shaderMaskTexCoordScaleLocation = program->fragmentShader().maskTexCoordScaleLocation();
+        shaderMaskTexCoordOffsetLocation = program->fragmentShader().maskTexCoordOffsetLocation();
         shaderMatrixLocation = program->vertexShader().matrixLocation();
         shaderAlphaLocation = program->fragmentShader().alphaLocation();
     } else if (!useAA && maskTextureId) {
@@ -704,6 +708,8 @@ void LayerRendererChromium::drawRenderPassQuad(DrawingFrame& frame, const CCRend
         GLC(context(), context()->uniform1i(program->fragmentShader().samplerLocation(), 0));
 
         shaderMaskSamplerLocation = program->fragmentShader().maskSamplerLocation();
+        shaderMaskTexCoordScaleLocation = program->fragmentShader().maskTexCoordScaleLocation();
+        shaderMaskTexCoordOffsetLocation = program->fragmentShader().maskTexCoordOffsetLocation();
         shaderMatrixLocation = program->vertexShader().matrixLocation();
         shaderAlphaLocation = program->fragmentShader().alphaLocation();
     } else if (useAA && !maskTextureId) {
@@ -725,8 +731,12 @@ void LayerRendererChromium::drawRenderPassQuad(DrawingFrame& frame, const CCRend
     }
 
     if (shaderMaskSamplerLocation != -1) {
+        ASSERT(shaderMaskTexCoordScaleLocation != 1);
+        ASSERT(shaderMaskTexCoordOffsetLocation != 1);
         GLC(context(), context()->activeTexture(GraphicsContext3D::TEXTURE1));
         GLC(context(), context()->uniform1i(shaderMaskSamplerLocation, 1));
+        GLC(context(), context()->uniform2f(shaderMaskTexCoordScaleLocation, quad->maskTexCoordScaleX(), quad->maskTexCoordScaleY()));
+        GLC(context(), context()->uniform2f(shaderMaskTexCoordOffsetLocation, quad->maskTexCoordOffsetX(), quad->maskTexCoordOffsetY()));
         context()->bindTexture(GraphicsContext3D::TEXTURE_2D, maskTextureId);
         GLC(context(), context()->activeTexture(GraphicsContext3D::TEXTURE0));
     }

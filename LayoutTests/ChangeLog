@@ -1,3 +1,18 @@
+2012-08-09  Shawn Singh  <shawnsingh@chromium.org>
+
+        [chromium] Pass mask scale and offset to shaders for correct masking
+        https://bugs.webkit.org/show_bug.cgi?id=93558
+
+        Reviewed by Adrienne Walker.
+
+        Added a layout test that checks the mask does not accidentally get
+        resized when it is inside of an overflow div.
+
+        * compositing/masks/mask-of-clipped-layer-expected.png: Added.
+        * compositing/masks/mask-of-clipped-layer-expected.txt: Added.
+        * compositing/masks/mask-of-clipped-layer.html: Added.
+        * compositing/resources/alpha-blocks.png: Added.
+
 2012-08-09  Mihnea Ovidenie  <mihnea@adobe.com>
 
         CSSRegions: Crash when attaching a region to the removed named flow

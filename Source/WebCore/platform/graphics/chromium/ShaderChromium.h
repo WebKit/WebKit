@@ -282,11 +282,15 @@ public:
     int alphaLocation() const { return m_alphaLocation; }
     int samplerLocation() const { return m_samplerLocation; }
     int maskSamplerLocation() const { return m_maskSamplerLocation; }
+    int maskTexCoordScaleLocation() const { return m_maskTexCoordScaleLocation; }
+    int maskTexCoordOffsetLocation() const { return m_maskTexCoordOffsetLocation; }
 
 private:
     int m_samplerLocation;
     int m_maskSamplerLocation;
     int m_alphaLocation;
+    int m_maskTexCoordScaleLocation;
+    int m_maskTexCoordOffsetLocation;
 };
 
 class FragmentShaderRGBATexAlphaMaskAA {
@@ -299,12 +303,16 @@ public:
     int samplerLocation() const { return m_samplerLocation; }
     int maskSamplerLocation() const { return m_maskSamplerLocation; }
     int edgeLocation() const { return m_edgeLocation; }
+    int maskTexCoordScaleLocation() const { return m_maskTexCoordScaleLocation; }
+    int maskTexCoordOffsetLocation() const { return m_maskTexCoordOffsetLocation; }
 
 private:
     int m_samplerLocation;
     int m_maskSamplerLocation;
     int m_alphaLocation;
     int m_edgeLocation;
+    int m_maskTexCoordScaleLocation;
+    int m_maskTexCoordOffsetLocation;
 };
 
 class FragmentShaderYUVVideo {

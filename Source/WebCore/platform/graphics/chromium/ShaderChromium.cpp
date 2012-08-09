@@ -656,6 +656,7 @@ FragmentShaderRGBATexAlphaMask::FragmentShaderRGBATexAlphaMask()
     : m_samplerLocation(-1)
     , m_maskSamplerLocation(-1)
     , m_alphaLocation(-1)
+    , m_maskTexCoordScaleLocation(-1)
 {
 }
 
@@ -665,14 +666,18 @@ void FragmentShaderRGBATexAlphaMask::init(WebGraphicsContext3D* context, unsigne
         "s_texture",
         "s_mask",
         "alpha",
+        "maskTexCoordScale",
+        "maskTexCoordOffset",
     };
-    int locations[3];
+    int locations[5];
 
     getProgramUniformLocations(context, program, shaderUniforms, WTF_ARRAY_LENGTH(shaderUniforms), WTF_ARRAY_LENGTH(locations), locations, usingBindUniform, baseUniformIndex);
 
     m_samplerLocation = locations[0];
     m_maskSamplerLocation = locations[1];
     m_alphaLocation = locations[2];
+    m_maskTexCoordScaleLocation = locations[3];
+    m_maskTexCoordOffsetLocation = locations[4];
     ASSERT(m_samplerLocation != -1 && m_maskSamplerLocation != -1 && m_alphaLocation != -1);
 }
 
@@ -683,11 +688,14 @@ String FragmentShaderRGBATexAlphaMask::getShaderString() const
         varying vec2 v_texCoord;
         uniform sampler2D s_texture;
         uniform sampler2D s_mask;
+        uniform vec2 maskTexCoordScale;
+        uniform vec2 maskTexCoordOffset;
         uniform float alpha;
         void main()
         {
             vec4 texColor = texture2D(s_texture, v_texCoord);
-            vec4 maskColor = texture2D(s_mask, v_texCoord);
+            vec2 maskTexCoord = vec2(maskTexCoordOffset.x + v_texCoord.x * maskTexCoordScale.x, maskTexCoordOffset.y + v_texCoord.y * maskTexCoordScale.y);
+            vec4 maskColor = texture2D(s_mask, maskTexCoord);
             gl_FragColor = vec4(texColor.x, texColor.y, texColor.z, texColor.w) * alpha * maskColor.w;
         }
     );
@@ -698,6 +706,7 @@ FragmentShaderRGBATexAlphaMaskAA::FragmentShaderRGBATexAlphaMaskAA()
     , m_maskSamplerLocation(-1)
     , m_alphaLocation(-1)
     , m_edgeLocation(-1)
+    , m_maskTexCoordScaleLocation(-1)
 {
 }
 
@@ -708,8 +717,10 @@ void FragmentShaderRGBATexAlphaMaskAA::init(WebGraphicsContext3D* context, unsig
         "s_mask",
         "alpha",
         "edge",
+        "maskTexCoordScale",
+        "maskTexCoordOffset",
     };
-    int locations[4];
+    int locations[6];
 
     getProgramUniformLocations(context, program, shaderUniforms, WTF_ARRAY_LENGTH(shaderUniforms), WTF_ARRAY_LENGTH(locations), locations, usingBindUniform, baseUniformIndex);
 
@@ -717,6 +728,8 @@ void FragmentShaderRGBATexAlphaMaskAA::init(WebGraphicsContext3D* context, unsig
     m_maskSamplerLocation = locations[1];
     m_alphaLocation = locations[2];
     m_edgeLocation = locations[3];
+    m_maskTexCoordScaleLocation = locations[4];
+    m_maskTexCoordOffsetLocation = locations[5];
     ASSERT(m_samplerLocation != -1 && m_maskSamplerLocation != -1 && m_alphaLocation != -1 && m_edgeLocation != -1);
 }
 
@@ -727,12 +740,15 @@ String FragmentShaderRGBATexAlphaMaskAA::getShaderString() const
         varying vec2 v_texCoord;
         uniform sampler2D s_texture;
         uniform sampler2D s_mask;
+        uniform vec2 maskTexCoordScale;
+        uniform vec2 maskTexCoordOffset;
         uniform float alpha;
         uniform vec3 edge[8];
         void main()
         {
             vec4 texColor = texture2D(s_texture, v_texCoord);
-            vec4 maskColor = texture2D(s_mask, v_texCoord);
+            vec2 maskTexCoord = vec2(maskTexCoordOffset.x + v_texCoord.x * maskTexCoordScale.x, maskTexCoordOffset.y + v_texCoord.y * maskTexCoordScale.y);
+            vec4 maskColor = texture2D(s_mask, maskTexCoord);
             vec3 pos = vec3(gl_FragCoord.xy, 1);
             float a0 = clamp(dot(edge[0], pos), 0.0, 1.0);
             float a1 = clamp(dot(edge[1], pos), 0.0, 1.0);

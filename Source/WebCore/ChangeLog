@@ -1,3 +1,47 @@
+2012-08-09  Shawn Singh  <shawnsingh@chromium.org>
+
+        [chromium] Pass mask scale and offset to shaders for correct masking
+        https://bugs.webkit.org/show_bug.cgi?id=93558
+
+        Reviewed by Adrienne Walker.
+
+        In chromium compositor code, the mask was accidentally mapped 1:1
+        to the layer's renderSurface, rather than the layer itself. This
+        patch adds a layout test that reproduces the error and fixes the
+        problem. The solution we opted for in this patch is to pass a
+        scale and offset to the fragment shader, so that the correct
+        texture coordinate lookup is computed by the fragment shader.
+
+        Test: compositing/masks/mask-of-clipped-layer.html
+
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::drawRenderPassQuad):
+        * platform/graphics/chromium/ShaderChromium.cpp:
+        (WebCore::FragmentShaderRGBATexAlphaMask::FragmentShaderRGBATexAlphaMask):
+        (WebCore::FragmentShaderRGBATexAlphaMask::init):
+        (WebCore::FragmentShaderRGBATexAlphaMask::getShaderString):
+        (WebCore::FragmentShaderRGBATexAlphaMaskAA::FragmentShaderRGBATexAlphaMaskAA):
+        (WebCore::FragmentShaderRGBATexAlphaMaskAA::init):
+        (WebCore::FragmentShaderRGBATexAlphaMaskAA::getShaderString):
+        * platform/graphics/chromium/ShaderChromium.h:
+        (WebCore::FragmentShaderRGBATexAlphaMask::maskTexCoordScaleLocation):
+        (WebCore::FragmentShaderRGBATexAlphaMask::maskTexCoordOffsetLocation):
+        (FragmentShaderRGBATexAlphaMask):
+        (WebCore::FragmentShaderRGBATexAlphaMaskAA::maskTexCoordScaleLocation):
+        (WebCore::FragmentShaderRGBATexAlphaMaskAA::maskTexCoordOffsetLocation):
+        (FragmentShaderRGBATexAlphaMaskAA):
+        * platform/graphics/chromium/cc/CCRenderPassDrawQuad.cpp:
+        (WebCore::CCRenderPassDrawQuad::create):
+        (WebCore::CCRenderPassDrawQuad::CCRenderPassDrawQuad):
+        * platform/graphics/chromium/cc/CCRenderPassDrawQuad.h:
+        (CCRenderPassDrawQuad):
+        (WebCore::CCRenderPassDrawQuad::maskTexCoordScaleX):
+        (WebCore::CCRenderPassDrawQuad::maskTexCoordScaleY):
+        (WebCore::CCRenderPassDrawQuad::maskTexCoordOffsetX):
+        (WebCore::CCRenderPassDrawQuad::maskTexCoordOffsetY):
+        * platform/graphics/chromium/cc/CCRenderSurface.cpp:
+        (WebCore::CCRenderSurface::appendQuads):
+
 2012-08-09  Mihnea Ovidenie  <mihnea@adobe.com>
 
         CSSRegions: Crash when attaching a region to the removed named flow
