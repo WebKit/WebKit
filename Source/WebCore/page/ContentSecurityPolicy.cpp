@@ -874,12 +874,19 @@ bool CSPDirectiveList::parseDirective(const UChar* begin, const UChar* end, Stri
     const UChar* position = begin;
     skipWhile<isASCIISpace>(position, end);
 
+    // Empty directive (e.g. ";;;"). Exit early.
+    if (position == end)
+        return false;
+
     const UChar* nameBegin = position;
     skipWhile<isDirectiveNameCharacter>(position, end);
 
     // The directive-name must be non-empty.
-    if (nameBegin == position)
+    if (nameBegin == position) {
+        skipWhile<isNotASCIISpace>(position, end);
+        m_policy->reportUnrecognizedDirective(String(nameBegin, position - nameBegin));
         return false;
+    }
 
     name = String(nameBegin, position - nameBegin);
 

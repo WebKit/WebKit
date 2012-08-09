@@ -1,3 +1,32 @@
+2012-08-09  Mike West  <mkwst@chromium.org>
+
+        Content Security Policy directives that begin with an invalid character should log a console warning.
+        https://bugs.webkit.org/show_bug.cgi?id=93622
+
+        Reviewed by Adam Barth.
+
+        CSP directives containing unrecognized characters somewhere in the
+        middle were caught and logged by the current algorithm. We additionally
+        caught the case in which the directive begins with an invalid character,
+        but we silently ignored it. Now we're slightly more vocal.
+
+        This change also exits 'parseDirective' early in the case where the
+        directive text is empty, or filled only with whitespace. There doesn't
+        seem to be any value in flagging that case, as it has no impact on the
+        way the policy would have been interpreted (that is, 'img-src *;;...'
+        doesn't change in meaning by ignoring the empty directive between the
+        semicolons).
+
+        Test: http/tests/security/contentSecurityPolicy/directive-parsing-05.html
+
+        * page/ContentSecurityPolicy.cpp:
+        (WebCore::CSPDirectiveList::parseDirective):
+            Two changes: first, we now exit early if the entire directive text
+            is empty (e.g. ';;;' or ';      ;'); second, if the directive begins
+            with a character that doesn't match 'isDirectiveNameCharacter', then
+            we advance either to the next space, or the end of the value, and
+            report an unrecognized directive to the policy.
+
 2012-08-09  Shawn Singh  <shawnsingh@chromium.org>
 
         [chromium] Pass mask scale and offset to shaders for correct masking

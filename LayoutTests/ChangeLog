@@ -1,3 +1,13 @@
+2012-08-09  Mike West  <mkwst@chromium.org>
+
+        Content Security Policy directives with an invalid character should log a console warning.
+        https://bugs.webkit.org/show_bug.cgi?id=93622
+
+        Reviewed by Adam Barth.
+
+        * http/tests/security/contentSecurityPolicy/directive-parsing-05-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/directive-parsing-05.html: Added.
+
 2012-08-09  Ryosuke Niwa  <rniwa@webkit.org>
 
         Fix a test after r125178.
