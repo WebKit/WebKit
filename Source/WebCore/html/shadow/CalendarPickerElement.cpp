@@ -148,7 +148,7 @@ void CalendarPickerElement::detach()
 
 IntSize CalendarPickerElement::contentSize()
 {
-    return IntSize(100, 100);
+    return IntSize(0, 0);
 }
 
 void CalendarPickerElement::writeDocument(DocumentWriter& writer)

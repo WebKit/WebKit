@@ -1,3 +1,15 @@
+2012-08-09  Keishi Hattori  <keishi@webkit.org>
+
+        Page popups can show up at wrong locations
+        https://bugs.webkit.org/show_bug.cgi?id=93556
+
+        Reviewed by Kent Tamura.
+
+        No new tests. Cannot test popup position.
+
+        * html/shadow/CalendarPickerElement.cpp:
+        (WebCore::CalendarPickerElement::contentSize):
+
 2012-08-08  Andrey Kosyakov  <caseq@chromium.org>
 
         Web Inspector: display progress bar while loading timeline data

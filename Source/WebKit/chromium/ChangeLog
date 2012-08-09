@@ -1,3 +1,26 @@
+2012-08-09  Keishi Hattori  <keishi@webkit.org>
+
+        Page popups can show up at wrong locations
+        https://bugs.webkit.org/show_bug.cgi?id=93556
+
+        Reviewed by Kent Tamura.
+
+        We were showing the popup at wrong positions. When there isn't enough
+        room below and above the element it adjusts the position but we weren't
+        resetting the adjustment when we resize the popup. This patch will make
+        the popup adjust the popup position each time we resize.
+
+        * src/ColorChooserUIController.cpp:
+        (WebKit::ColorChooserUIController::contentSize):
+        * src/WebPagePopupImpl.cpp:
+        (WevKit::PagePopupChromeClient::setWindowRect):
+        (WebKit::WebPagePopupImpl::init): Use reposition().
+        (WebKit::WebPagePopupImpl::reposition): Repositions the page popup based on the popup size.
+        (WebKit):
+        (WebKit::WebPagePopupImpl::resize): Use reposition().
+        * src/WebPagePopupImpl.h:
+        (WebPagePopupImpl):
+
 2012-08-09  Peter Beverloo  <peter@chromium.org>
 
         [Chromium] Pull in the android_tools directory for Android

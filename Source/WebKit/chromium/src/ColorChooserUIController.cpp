@@ -92,7 +92,7 @@ void ColorChooserUIController::didEndChooser()
 
 WebCore::IntSize ColorChooserUIController::contentSize()
 {
-    return WebCore::IntSize(300, 300);
+    return WebCore::IntSize(0, 0);
 }
 
 void ColorChooserUIController::writeDocument(WebCore::DocumentWriter& writer)
