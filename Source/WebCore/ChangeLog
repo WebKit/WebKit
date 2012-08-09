@@ -1,3 +1,16 @@
+2012-08-08  Shane Stephens  <shanestephens@google.com>
+
+        Compile flag for CSS Hierarchies
+        https://bugs.webkit.org/show_bug.cgi?id=92433
+
+        Reviewed by Tony Chang.
+
+        Note that this flag is disabled on all platforms for now.
+
+        No new tests since there's no functional change.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2012-08-08  Kent Tamura  <tkent@chromium.org>
 
         [Chromium-mac] Switch to LocalizedNumberMac from LocalizedNumberICU

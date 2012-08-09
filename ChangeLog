@@ -1,3 +1,12 @@
+2012-08-08  Shane Stephens  <shanestephens@google.com>
+
+        Compile flag for CSS Hierarchies
+        https://bugs.webkit.org/show_bug.cgi?id=92433
+
+        Reviewed by Tony Chang.
+
+        * Source/cmake/WebKitFeatures.cmake:
+
 2012-08-08  Ming Xie  <mxie@rim.com>
 
         [BlackBerry] Fix "-fPIC" define in the BlackBerry build

@@ -1,3 +1,12 @@
+2012-08-08  Shane Stephens  <shanestephens@google.com>
+
+        Compile flag for CSS Hierarchies
+        https://bugs.webkit.org/show_bug.cgi?id=92433
+
+        Reviewed by Tony Chang.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2012-08-08  Benjamin Poulain  <bpoulain@apple.com>
 
         Use char* instead of LChar* for the public interface of String construction from literals

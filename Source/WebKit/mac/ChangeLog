@@ -1,3 +1,12 @@
+2012-08-08  Shane Stephens  <shanestephens@google.com>
+
+        Compile flag for CSS Hierarchies
+        https://bugs.webkit.org/show_bug.cgi?id=92433
+
+        Reviewed by Tony Chang.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2012-08-05  Peter Wang  <peter.wang@torchmobile.com.cn>
 
         Web Inspector: [JSC] implement setting breakpoints by line:column
