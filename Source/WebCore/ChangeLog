@@ -1,3 +1,36 @@
+2012-08-09  Adam Barth  <abarth@webkit.org>
+
+        Sandboxing view source documents is ineffective
+        https://bugs.webkit.org/show_bug.cgi?id=93660
+
+        Reviewed by Eric Seidel.
+
+        Prior to this patch, Document::setIsViewSource changed the
+        SecurityOrigin object on Document but didn't update the copy on
+        DOMWindow. As a consequence, the security checks that use the copy on
+        DOMWindow didn't notice the change and acted as if the document wasn't
+        sandboxed.
+
+        This bug wasn't present for most view source documents because
+        HTMLViewSourceDocument sets the flag in its constructor. However, for
+        view source documents created by the XMLTreeViewer, the bit was set at
+        the end of parsing rather than during construction.
+
+        This mechansim is really more of a mitigation than an important
+        security check, and I was tempted to remove the sandboxing entirely
+        given that sandboxing a document at the end of parsing isn't overly
+        effective anyway. However, we can worry about that issue in a future
+        patch.
+
+        For the time being, this patch just synchronizes DOMWindow and
+        Document's copy of the SecurityOrigin. The long-term solution here, of
+        course, is to keep working on fixing
+        https://bugs.webkit.org/show_bug.cgi?id=75793, which this patch gets us
+        one (small) step closer to fixing.
+
+        * dom/Document.cpp:
+        (WebCore::Document::setIsViewSource):
+
 2012-08-09  Benjamin Poulain  <bpoulain@apple.com>
 
         Append the unit in place when generating the text value of a CSSPrimitiveValue

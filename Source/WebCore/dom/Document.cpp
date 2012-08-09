@@ -2043,6 +2043,7 @@ void Document::setIsViewSource(bool isViewSource)
         return;
 
     setSecurityOrigin(SecurityOrigin::createUnique());
+    didUpdateSecurityOrigin();
 }
 
 void Document::combineCSSFeatureFlags()
