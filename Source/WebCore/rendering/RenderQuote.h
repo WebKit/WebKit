@@ -21,6 +21,9 @@
 #ifndef RenderQuote_h
 #define RenderQuote_h
 
+#include "Document.h"
+#include "QuotesData.h"
+#include "RenderStyle.h"
 #include "RenderStyleConstants.h"
 #include "RenderText.h"
 
@@ -30,24 +33,25 @@ class RenderQuote : public RenderText {
 public:
     RenderQuote(Document*, const QuoteType);
     virtual ~RenderQuote();
+    void attachQuote();
+    void detachQuote();
 
-    static void rendererSubtreeAttached(RenderObject*);
-    static void rendererRemovedFromTree(RenderObject*);
-protected:
-    virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
-    virtual void willBeDestroyed();
 private:
-    virtual const char* renderName() const;
-    virtual bool isQuote() const { return true; };
-    virtual PassRefPtr<StringImpl> originalText() const;
-    virtual void computePreferredLogicalWidths(float leadWidth);
+    virtual void willBeDestroyed() OVERRIDE;
+    virtual const char* renderName() const OVERRIDE { return "RenderQuote"; };
+    virtual bool isQuote() const OVERRIDE { return true; };
+    virtual PassRefPtr<StringImpl> originalText() const OVERRIDE;
+    virtual void computePreferredLogicalWidths(float leadWidth) OVERRIDE;
+
     const QuotesData* quotesData() const;
+    void updateDepth();
+    bool isAttached() { return m_attached; }
 
     QuoteType m_type;
     int m_depth;
     RenderQuote* m_next;
     RenderQuote* m_previous;
-    void placeQuote();
+    bool m_attached;
 };
 
 inline RenderQuote* toRenderQuote(RenderObject* object)

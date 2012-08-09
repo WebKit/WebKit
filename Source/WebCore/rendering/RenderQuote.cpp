@@ -21,118 +21,33 @@
 #include "config.h"
 #include "RenderQuote.h"
 
-#include "Document.h"
-#include "QuotesData.h"
-#include "RenderStyle.h"
 #include <wtf/text/AtomicString.h>
 
-#define UNKNOWN_DEPTH -1
+#define U(x) ((const UChar*)L##x)
 
 namespace WebCore {
-static inline void adjustDepth(int &depth, QuoteType type)
-{
-    switch (type) {
-    case OPEN_QUOTE:
-    case NO_OPEN_QUOTE:
-        ++depth;
-        break;
-    case CLOSE_QUOTE:
-    case NO_CLOSE_QUOTE:
-        if (depth)
-            --depth;
-        break;
-    default:
-        ASSERT_NOT_REACHED();
-    }
-}
 
 RenderQuote::RenderQuote(Document* node, QuoteType quote)
     : RenderText(node, StringImpl::empty())
     , m_type(quote)
-    , m_depth(UNKNOWN_DEPTH)
+    , m_depth(0)
     , m_next(0)
     , m_previous(0)
+    , m_attached(false)
 {
-    view()->addRenderQuote();
 }
 
 RenderQuote::~RenderQuote()
 {
+    ASSERT(!m_attached);
+    ASSERT(!m_next && !m_previous);
 }
 
 void RenderQuote::willBeDestroyed()
 {
-    if (view())
-        view()->removeRenderQuote();
+    detachQuote();
     RenderText::willBeDestroyed();
 }
-
-const char* RenderQuote::renderName() const
-{
-    return "RenderQuote";
-}
-
-// This function places a list of quote renderers starting at "this" in the list of quote renderers already
-// in the document's renderer tree.
-// The assumptions are made (for performance):
-// 1. The list of quotes already in the renderers tree of the document is already in a consistent state
-// (All quote renderers are linked and have the correct depth set)
-// 2. The quote renderers of the inserted list are in a tree of renderers of their own which has been just
-// inserted in the main renderer tree with its root as child of some renderer.
-// 3. The quote renderers in the inserted list have depths consistent with their position in the list relative
-// to "this", thus if "this" does not need to change its depth upon insertion, the other renderers in the list don't
-// need to either.
-void RenderQuote::placeQuote()
-{
-    RenderQuote* head = this;
-    ASSERT(!head->m_previous);
-    RenderQuote* tail = 0;
-    for (RenderObject* predecessor = head->previousInPreOrder(); predecessor; predecessor = predecessor->previousInPreOrder()) {
-        if (!predecessor->isQuote())
-            continue;
-        head->m_previous = toRenderQuote(predecessor);
-        if (head->m_previous->m_next) {
-            // We need to splice the list of quotes headed by head into the document's list of quotes.
-            tail = head;
-            while (tail->m_next)
-                 tail = tail->m_next;
-            tail->m_next = head->m_previous->m_next;
-            ASSERT(tail->m_next->m_previous == head->m_previous);
-            tail->m_next->m_previous =  tail;
-            tail = tail->m_next; // This marks the splicing point here there may be a depth discontinuity
-        }
-        head->m_previous->m_next = head;
-        ASSERT(head->m_previous->m_depth != UNKNOWN_DEPTH);
-        break;
-    }
-    int newDepth;
-    if (!head->m_previous) {
-        newDepth = 0;
-        goto skipNewDepthCalc;
-    }
-    newDepth = head->m_previous->m_depth;
-    do {
-        adjustDepth(newDepth, head->m_previous->m_type);
-skipNewDepthCalc:
-        if (head->m_depth == newDepth) { // All remaining depth should be correct except if splicing was done.
-            if (!tail) // We've done the post splicing section already or there was no splicing.
-                break;
-            head = tail; // Continue after the splicing point
-            tail = 0; // Mark the possible splicing point discontinuity fixed.
-            newDepth = head->m_previous->m_depth;
-            continue;
-        }
-        head->m_depth = newDepth;
-        // FIXME: If the width and height of the quotation characters does not change we may only need to
-        // Invalidate the renderer's area not a relayout.
-        head->setNeedsLayoutAndPrefWidthsRecalc();
-        head = head->m_next;
-        if (head == tail) // We are at the splicing point
-            tail = 0; // Mark the possible depth discontinuity fixed.
-    } while (head);
-}
-
-#define U(x) ((const UChar*)L##x)
 
 typedef HashMap<AtomicString, const QuotesData*, CaseFoldingHash> QuotesMap;
 
@@ -157,27 +72,24 @@ static const QuotesData* basicQuotesData()
 
 PassRefPtr<StringImpl> RenderQuote::originalText() const
 {
-    if (!parent())
-        return 0;
-    ASSERT(m_depth != UNKNOWN_DEPTH);
-    const QuotesData* quotes = quotesData();
     switch (m_type) {
     case NO_OPEN_QUOTE:
     case NO_CLOSE_QUOTE:
         return StringImpl::empty();
     case CLOSE_QUOTE:
         // FIXME: When m_depth is 0 we should return empty string.
-        return quotes->getCloseQuote(std::max(m_depth - 1, 0)).impl();
+        return quotesData()->getCloseQuote(std::max(m_depth - 1, 0)).impl();
     case OPEN_QUOTE:
-        return quotes->getOpenQuote(m_depth).impl();
-    default:
-        ASSERT_NOT_REACHED();
-        return StringImpl::empty();
+        return quotesData()->getOpenQuote(m_depth).impl();
     }
+    ASSERT_NOT_REACHED();
+    return StringImpl::empty();
 }
 
 void RenderQuote::computePreferredLogicalWidths(float lead)
 {
+    if (!m_attached)
+        attachQuote();
     setTextInternal(originalText());
     RenderText::computePreferredLogicalWidths(lead);
 }
@@ -196,58 +108,98 @@ const QuotesData* RenderQuote::quotesData() const
     return quotes;
 }
 
-void RenderQuote::rendererSubtreeAttached(RenderObject* renderer)
+void RenderQuote::attachQuote()
 {
-    ASSERT(renderer->view());
-    if (!renderer->view()->hasRenderQuotes())
-        return;
-    for (RenderObject* descendant = renderer; descendant; descendant = descendant->nextInPreOrder(renderer))
-        if (descendant->isQuote()) {
-            toRenderQuote(descendant)->placeQuote();
-            break;
-        }
-}
+    ASSERT(view());
+    ASSERT(!m_attached);
+    ASSERT(!m_next && !m_previous);
 
-void RenderQuote::rendererRemovedFromTree(RenderObject* renderer)
-{
-    ASSERT(renderer->view());
-    if (!renderer->view()->hasRenderQuotes())
-        return;
-    for (RenderObject* descendant = renderer; descendant; descendant = descendant->nextInPreOrder(renderer))
-        if (descendant->isQuote()) {
-            RenderQuote* removedQuote = toRenderQuote(descendant);
-            RenderQuote* lastQuoteBefore = removedQuote->m_previous;
-            removedQuote->m_previous = 0;
-            int depth = removedQuote->m_depth;
-            for (descendant = descendant->nextInPreOrder(renderer); descendant; descendant = descendant->nextInPreOrder(renderer))
-                if (descendant->isQuote())
-                    removedQuote = toRenderQuote(descendant);
-            RenderQuote* quoteAfter = removedQuote->m_next;
-            removedQuote->m_next = 0;
-            if (lastQuoteBefore)
-                lastQuoteBefore->m_next = quoteAfter;
-            if (quoteAfter) {
-                quoteAfter->m_previous = lastQuoteBefore;
-                do {
-                    if (depth == quoteAfter->m_depth)
-                        break;
-                    quoteAfter->m_depth = depth;
-                    quoteAfter->setNeedsLayoutAndPrefWidthsRecalc();
-                    adjustDepth(depth, quoteAfter->m_type);
-                    quoteAfter = quoteAfter->m_next;
-                } while (quoteAfter);
-            }
-            break;
-        }
-}
-
-void RenderQuote::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
-{
-    const QuotesData* newQuotes = style()->quotes();
-    const QuotesData* oldQuotes = oldStyle ? oldStyle->quotes() : 0;
-    if (!QuotesData::equals(newQuotes, oldQuotes))
+    // FIXME: Don't set pref widths dirty during layout. See updateDepth() for
+    // more detail.
+    if (!isRooted()) {
         setNeedsLayoutAndPrefWidthsRecalc();
-    RenderText::styleDidChange(diff, oldStyle);
+        return;
+    }
+
+    if (!view()->renderQuoteHead()) {
+        view()->setRenderQuoteHead(this);
+        m_attached = true;
+        return;
+    }
+
+    for (RenderObject* predecessor = previousInPreOrder(); predecessor; predecessor = predecessor->previousInPreOrder()) {
+        // Skip unattached predecessors to avoid having stale m_previous pointers
+        // if the previous node is never attached and is then destroyed.
+        if (!predecessor->isQuote() || !toRenderQuote(predecessor)->isAttached())
+            continue;
+        m_previous = toRenderQuote(predecessor);
+        m_next = m_previous->m_next;
+        m_previous->m_next = this;
+        if (m_next)
+            m_next->m_previous = this;
+        break;
+    }
+
+    if (!m_previous) {
+        m_next = view()->renderQuoteHead();
+        view()->setRenderQuoteHead(this);
+    }
+    m_attached = true;
+
+    for (RenderQuote* quote = this; quote; quote = quote->m_next)
+        quote->updateDepth();
+
+    ASSERT(!m_next || m_next->m_attached);
+    ASSERT(!m_previous || m_previous->m_attached);
+}
+
+void RenderQuote::detachQuote()
+{
+    ASSERT(!m_next || m_next->m_attached);
+    ASSERT(!m_previous || m_previous->m_attached);
+    if (!m_attached)
+        return;
+    if (m_previous)
+        m_previous->m_next = m_next;
+    else if (view())
+        view()->setRenderQuoteHead(m_next);
+    if (m_next)
+        m_next->m_previous = m_previous;
+    if (!documentBeingDestroyed()) {
+        for (RenderQuote* quote = m_next; quote; quote = quote->m_next)
+            quote->updateDepth();
+    }
+    m_attached = false;
+    m_next = 0;
+    m_previous = 0;
+    m_depth = 0;
+}
+
+void RenderQuote::updateDepth()
+{
+    ASSERT(m_attached);
+    int oldDepth = m_depth;
+    m_depth = 0;
+    if (m_previous) {
+        m_depth = m_previous->m_depth;
+        switch (m_previous->m_type) {
+        case OPEN_QUOTE:
+        case NO_OPEN_QUOTE:
+            m_depth++;
+            break;
+        case CLOSE_QUOTE:
+        case NO_CLOSE_QUOTE:
+            if (m_depth)
+                m_depth--;
+            break;
+        }
+    }
+    // FIXME: Don't call setNeedsLayout or dirty our preferred widths during layout.
+    // This is likely to fail anyway as one of our ancestor will call setNeedsLayout(false),
+    // preventing the future layout to occur on |this|. The solution is to move that to a
+    // pre-layout phase.
+    if (oldDepth != m_depth)
+        setNeedsLayoutAndPrefWidthsRecalc();
 }
 
 } // namespace WebCore

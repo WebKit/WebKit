@@ -62,7 +62,7 @@ RenderView::RenderView(Node* node, FrameView* view)
     , m_pageLogicalHeightChanged(false)
     , m_layoutState(0)
     , m_layoutStateDisableCount(0)
-    , m_renderQuoteCount(0)
+    , m_renderQuoteHead(0)
     , m_renderCounterCount(0)
 {
     // Clear our anonymous bit, set because RenderObject assumes

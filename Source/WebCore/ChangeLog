@@ -1,3 +1,46 @@
+2012-08-09  Elliott Sprehn  <esprehn@gmail.com>
+
+        Reimplement RenderQuote placement algorithm
+        https://bugs.webkit.org/show_bug.cgi?id=93056
+
+        Reviewed by Eric Seidel.
+
+        Greatly simplify the code that maintains the linked list of RenderQuotes. Now RenderQuote
+        is placed into the linked list in computePreferredLogicalWidths on first access and is
+        detached when destroyed (or explicitly removed).
+
+        The new algorithm doesn't require walking up the tree of renderers when there are no
+        RenderQuotes in the tree yet, and also removes the need to walk over every subtree
+        when inserting in rendererSubtreeAttached.
+
+        No new tests because this patch doesn't change any behavior.
+
+        * rendering/RenderObjectChildList.cpp:
+        (WebCore::RenderObjectChildList::removeChildNode): Call detachQuote when removing from a child list.
+        (WebCore::RenderObjectChildList::appendChildNode):
+        (WebCore::RenderObjectChildList::insertChildNode):
+        * rendering/RenderQuote.cpp:
+        (WebCore::RenderQuote::RenderQuote):
+        (WebCore::RenderQuote::~RenderQuote):
+        (WebCore::RenderQuote::willBeDestroyed): Call detachQuote to ensure all destroyed quotes are detached.
+        (WebCore::RenderQuote::originalText):
+        (WebCore::RenderQuote::computePreferredLogicalWidths): Attach quote before computing the width.
+        (WebCore):
+        (WebCore::RenderQuote::attachQuote): Puts the RenderQuote in the linked list of quotes and computes the depth.
+        (WebCore::RenderQuote::detachQuote): Removes the quote from the linked list.
+        (WebCore::RenderQuote::updateDepth):
+        * rendering/RenderQuote.h:
+        (RenderQuote):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::diff): Return StyleDifferenceLayout if quotes change and remove check in styleDidChange in RenderQuote.
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::RenderView):
+        * rendering/RenderView.h:
+        (WebCore):
+        (WebCore::RenderView::setRenderQuoteHead):
+        (WebCore::RenderView::renderQuoteHead): Stores the first quote in the document.
+        (RenderView):
+
 2012-08-06  Nat Duca  <nduca@chromium.org>
 
         [chromium] Expose CCGraphicsContext as WebCompositorOutputSurface
