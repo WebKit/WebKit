@@ -1,3 +1,16 @@
+2012-08-09  Peter Beverloo  <peter@chromium.org>
+
+        [Chromium] Pull in the android_tools directory for Android
+        https://bugs.webkit.org/show_bug.cgi?id=84843
+
+        Reviewed by Jochen Eisinger.
+
+        Pull in the android_tools directory for Chromium Android checkouts. This
+        repository, living in Chromium's, contains checked in versions of the
+        Android NDK and SDK meant to make builds and updates easier.
+
+        * DEPS:
+
 2012-08-08  Shane Stephens  <shanestephens@google.com>
 
         Compile flag for CSS Hierarchies

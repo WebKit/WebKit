@@ -179,12 +179,14 @@ deps_os = {
       From('chromium_deps', 'src/third_party/openssl'),
   },
   'android': {
-    'tools/android':
-      Var('chromium_svn') + '/tools/android@' + Var('chromium_rev'),
-    'third_party/freetype':
-      From('chromium_deps', 'src/third_party/freetype'),
+    'third_party/android_tools':
+      From('chromium_deps', 'src/third_party/android_tools'),
     'third_party/aosp':
       From('chromium_deps', 'src/third_party/aosp'),
+    'third_party/freetype':
+      From('chromium_deps', 'src/third_party/freetype'),
+    'tools/android':
+      Var('chromium_svn') + '/tools/android@' + Var('chromium_rev'),
   },
 }
 
