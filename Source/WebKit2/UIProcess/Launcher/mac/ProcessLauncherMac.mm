@@ -169,7 +169,7 @@ void ProcessLauncher::launchProcess()
         posix_spawnattr_setflags(&attr, flags);
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
-        DynamicLinkerEnvironmentExtractor environmentExtractor([[NSBundle mainBundle] executablePath], architecture);
+        DynamicLinkerEnvironmentExtractor environmentExtractor([[NSBundle mainBundle] executablePath], _NSGetMachExecuteHeader()->cputype);
         environmentExtractor.getExtractedEnvironmentVariables(environmentVariables);
 #endif
 

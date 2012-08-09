@@ -1,3 +1,14 @@
+2012-08-09  Dan Bernstein  <mitz@apple.com>
+
+        <rdar://problem/12035637> 32-bit PluginProcess launches without appropriate DYLD environment variables if UI process is 64-bit only
+        https://bugs.webkit.org/show_bug.cgi?id=93596
+
+        Reviewed by Mark Rowe.
+
+        * UIProcess/Launcher/mac/ProcessLauncherMac.mm:
+        (WebKit::ProcessLauncher::launchProcess): Changed to pass the current architecture, rather than
+        the intended child process architecture, to the DynamicLinkerEnvironmentExtractor constructor.
+
 2012-08-09  Tim Horton  <timothy_horton@apple.com>
 
         Add optional debug logging for tiled scrolling
