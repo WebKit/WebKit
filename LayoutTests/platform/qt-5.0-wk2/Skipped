@@ -465,4 +465,4 @@ fast/events/media-focus-in-standalone-media-document.html
 
 # New http/tests/securitycontentSecurityPolicy/object-src-url-blocked.html introduced in r124371 fails on EFL, GTK, Qt
 # https://bugs.webkit.org/show_bug.cgi?id=92963
-http/tests/securitycontentSecurityPolicy/object-src-url-blocked.html
+http/tests/security/contentSecurityPolicy/object-src-url-blocked.html
