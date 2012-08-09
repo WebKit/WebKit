@@ -1,3 +1,17 @@
+2012-08-09  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        REGRESSION (r124997): Flaky crashes in two tests
+        https://bugs.webkit.org/show_bug.cgi?id=93501
+
+        Reviewed by Martin Robinson.
+
+        Add missing null check to make sure we early return if the
+        accessibility object does not have a valid parent exposed in the
+        accessibility hierarchy.
+
+        * accessibility/gtk/AXObjectCacheAtk.cpp:
+        (WebCore::emitTextChanged): Add missing null check.
+
 2012-08-09  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: generate preview for the objects dumped into the console upon logging.
