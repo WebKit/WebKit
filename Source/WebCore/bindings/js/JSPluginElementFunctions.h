@@ -44,6 +44,34 @@ namespace WebCore {
     bool runtimeObjectCustomPut(JSC::ExecState*, const JSC::Identifier&, JSC::JSValue, JSHTMLElement*, JSC::PutPropertySlot&);
     JSC::CallType runtimeObjectGetCallData(JSHTMLElement*, JSC::CallData&);
 
+    template <class Type, class Base> bool pluginElementCustomGetOwnPropertySlot(JSC::ExecState* exec, const JSC::Identifier& propertyName, JSC::PropertySlot& slot, Type* element)
+    {
+        if (!element->globalObject()->world()->isNormal()) {
+            if (JSC::getStaticValueSlot<Type, Base>(exec, element->s_info.staticPropHashTable, element, propertyName, slot))
+                return true;
+
+            JSC::JSValue proto = element->prototype();
+            if (proto.isObject() && JSC::jsCast<JSC::JSObject*>(asObject(proto))->hasProperty(exec, propertyName))
+                return false;
+        }
+        
+        return runtimeObjectCustomGetOwnPropertySlot(exec, propertyName, slot, element);
+    }
+
+    template <class Type, class Base> bool pluginElementCustomGetOwnPropertyDescriptor(JSC::ExecState* exec, const JSC::Identifier& propertyName, JSC::PropertyDescriptor& descriptor, Type* element)
+    {
+        if (!element->globalObject()->world()->isNormal()) {
+            if (JSC::getStaticValueDescriptor<Type, Base>(exec, element->s_info.staticPropHashTable, element, propertyName, descriptor))
+                return true;
+
+            JSC::JSValue proto = element->prototype();
+            if (proto.isObject() && JSC::jsCast<JSC::JSObject*>(asObject(proto))->hasProperty(exec, propertyName))
+                return false;
+        }
+
+        return runtimeObjectCustomGetOwnPropertyDescriptor(exec, propertyName, descriptor, element);
+    }
+
 } // namespace WebCore
 
 #endif // JSPluginElementFunctions_h

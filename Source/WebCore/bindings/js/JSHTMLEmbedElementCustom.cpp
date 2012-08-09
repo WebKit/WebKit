@@ -35,12 +35,12 @@ using namespace JSC;
 
 bool JSHTMLEmbedElement::getOwnPropertySlotDelegate(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
-    return runtimeObjectCustomGetOwnPropertySlot(exec, propertyName, slot, this);
+    return pluginElementCustomGetOwnPropertySlot<JSHTMLEmbedElement, Base>(exec, propertyName, slot, this);
 }
 
 bool JSHTMLEmbedElement::getOwnPropertyDescriptorDelegate(ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
 {
-    return runtimeObjectCustomGetOwnPropertyDescriptor(exec, propertyName, descriptor, this);
+    return pluginElementCustomGetOwnPropertyDescriptor<JSHTMLEmbedElement, Base>(exec, propertyName, descriptor, this);
 }
 
 bool JSHTMLEmbedElement::putDelegate(ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)

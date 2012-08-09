@@ -450,6 +450,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\Tests\PluginScriptableObjectOverridesAllProperties.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\Tests\PrivateBrowsing.cpp"
 				>
 			</File>

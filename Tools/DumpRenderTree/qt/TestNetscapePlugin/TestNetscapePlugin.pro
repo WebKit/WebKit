@@ -28,6 +28,7 @@ SOURCES += \
     Tests/NullNPPGetValuePointer.cpp \
     Tests/PassDifferentNPPStruct.cpp \
     Tests/PluginScriptableNPObjectInvokeDefault.cpp \
+    Tests/PluginScriptableObjectOverridesAllProperties.cpp \
     Tests/PrivateBrowsing.cpp
 
 WEBKIT += webcore # For NPAPI headers
