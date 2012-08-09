@@ -3484,3 +3484,6 @@ BUGWK93566 DEBUG : fast/parser/iframe-sets-parent-to-javascript-url.html = PASS 
 BUGWK93567 DEBUG : fast/parser/javascript-url-compat-mode.html = PASS TEXT
 BUGWK93569 DEBUG : http/tests/navigation/lockedhistory-iframe.html = PASS TIMEOUT TEXT
 BUGWK93568 DEBUG : http/tests/misc/window-dot-stop.html = PASS TEXT
+
+BUGWK93586 : fast/forms/autocomplete-off-with-default-value-does-not-clear.html = TIMEOUT
+
