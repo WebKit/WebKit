@@ -267,7 +267,9 @@ bool Dictionary::get(const String& key, MessagePortArray& value) const
     if (!getKey(key, v8Value))
         return false;
 
-    return getMessagePortArray(v8Value, value);
+    ASSERT(m_isolate);
+    ASSERT(m_isolate == v8::Isolate::GetCurrent());
+    return getMessagePortArray(v8Value, value, m_isolate);
 }
 
 bool Dictionary::get(const String& key, HashSet<AtomicString>& value) const

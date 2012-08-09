@@ -83,7 +83,7 @@ void createHiddenDependency(v8::Handle<v8::Object> object, v8::Local<v8::Value> 
     cacheArray->Set(v8Integer(cacheArray->Length()), value);
 }
 
-bool extractTransferables(v8::Local<v8::Value> value, MessagePortArray& ports, ArrayBufferArray& arrayBuffers)
+bool extractTransferables(v8::Local<v8::Value> value, MessagePortArray& ports, ArrayBufferArray& arrayBuffers, v8::Isolate* isolate)
 {
     if (isUndefinedOrNull(value)) {
         ports.resize(0);
@@ -107,7 +107,7 @@ bool extractTransferables(v8::Local<v8::Value> value, MessagePortArray& ports, A
         v8::Local<v8::Value> transferrable = transferrables->Get(i);
         // Validation of non-null objects, per HTML5 spec 10.3.3.
         if (isUndefinedOrNull(transferrable)) {
-            throwError(DATA_CLONE_ERR);
+            V8Proxy::setDOMException(DATA_CLONE_ERR, isolate);
             return false;
         }
         // Validation of Objects implementing an interface, per WebIDL spec 4.1.15.
@@ -123,10 +123,10 @@ bool extractTransferables(v8::Local<v8::Value> value, MessagePortArray& ports, A
     return true;
 }
 
-bool getMessagePortArray(v8::Local<v8::Value> value, MessagePortArray& ports)
+bool getMessagePortArray(v8::Local<v8::Value> value, MessagePortArray& ports, v8::Isolate* isolate)
 {
     ArrayBufferArray arrayBuffers;
-    bool result = extractTransferables(value, ports, arrayBuffers);
+    bool result = extractTransferables(value, ports, arrayBuffers, isolate);
     if (!result)
         return false;
     if (arrayBuffers.size() > 0) {

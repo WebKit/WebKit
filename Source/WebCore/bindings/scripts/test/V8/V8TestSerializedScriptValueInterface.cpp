@@ -129,7 +129,7 @@ static v8::Handle<v8::Value> acceptTransferListCallback(const v8::Arguments& arg
     MessagePortArray messagePortArrayTransferList;
     ArrayBufferArray arrayBufferArrayTransferList;
     if (args.Length() > 1) {
-        if (!extractTransferables(args[1], messagePortArrayTransferList, arrayBufferArrayTransferList))
+        if (!extractTransferables(args[1], messagePortArrayTransferList, arrayBufferArrayTransferList, args.GetIsolate()))
             return V8Proxy::throwTypeError("Could not extract transferables");
     }
     bool dataDidThrow = false;
@@ -155,7 +155,7 @@ static v8::Handle<v8::Value> multiTransferListCallback(const v8::Arguments& args
     MessagePortArray messagePortArrayTx;
     ArrayBufferArray arrayBufferArrayTx;
     if (args.Length() > 1) {
-        if (!extractTransferables(args[1], messagePortArrayTx, arrayBufferArrayTx))
+        if (!extractTransferables(args[1], messagePortArrayTx, arrayBufferArrayTx, args.GetIsolate()))
             return V8Proxy::throwTypeError("Could not extract transferables");
     }
     bool firstDidThrow = false;
@@ -173,7 +173,7 @@ static v8::Handle<v8::Value> multiTransferListCallback(const v8::Arguments& args
     MessagePortArray messagePortArrayTxx;
     ArrayBufferArray arrayBufferArrayTxx;
     if (args.Length() > 3) {
-        if (!extractTransferables(args[3], messagePortArrayTxx, arrayBufferArrayTxx))
+        if (!extractTransferables(args[3], messagePortArrayTxx, arrayBufferArrayTxx, args.GetIsolate()))
             return V8Proxy::throwTypeError("Could not extract transferables");
     }
     bool secondDidThrow = false;
@@ -223,7 +223,7 @@ v8::Handle<v8::Value> V8TestSerializedScriptValueInterface::constructorCallback(
     MessagePortArray messagePortArrayTransferList;
     ArrayBufferArray arrayBufferArrayTransferList;
     if (args.Length() > 2) {
-        if (!extractTransferables(args[2], messagePortArrayTransferList, arrayBufferArrayTransferList))
+        if (!extractTransferables(args[2], messagePortArrayTransferList, arrayBufferArrayTransferList, args.GetIsolate()))
             return V8Proxy::throwTypeError("Could not extract transferables");
     }
     bool dataDidThrow = false;

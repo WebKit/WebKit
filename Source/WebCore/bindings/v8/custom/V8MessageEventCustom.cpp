@@ -128,7 +128,7 @@ v8::Handle<v8::Value> V8MessageEvent::initMessageEventCallback(const v8::Argumen
 
     if (!isUndefinedOrNull(args[7])) {
         portArray = adoptPtr(new MessagePortArray);
-        if (!getMessagePortArray(args[7], *portArray))
+        if (!getMessagePortArray(args[7], *portArray, args.GetIsolate()))
             return v8::Undefined();
     }
     event->initMessageEvent(typeArg, canBubbleArg, cancelableArg, dataArg, originArg, lastEventIdArg, sourceArg, portArray.release());

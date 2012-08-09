@@ -74,7 +74,7 @@ v8::Handle<v8::Value> V8Intent::constructorCallback(const v8::Arguments& args)
     MessagePortArray messagePortArrayTransferList;
     ArrayBufferArray arrayBufferArrayTransferList;
     if (args.Length() > 3) {
-        if (!extractTransferables(args[3], messagePortArrayTransferList, arrayBufferArrayTransferList))
+        if (!extractTransferables(args[3], messagePortArrayTransferList, arrayBufferArrayTransferList, args.GetIsolate()))
             return V8Proxy::throwTypeError("Could not extract transferables", args.GetIsolate());
     }
     bool dataDidThrow = false;

@@ -211,13 +211,6 @@ namespace WebCore {
 
     v8::Local<v8::Context> toV8Context(ScriptExecutionContext*, const WorldContextHandle& worldContext);
 
-    inline v8::Handle<v8::Primitive> throwError(ExceptionCode ec, v8::Isolate* isolate = 0)
-    {
-        if (!v8::V8::IsExecutionTerminating())
-            V8Proxy::setDOMException(ec, isolate);
-        return v8::Undefined();
-    }
-
     inline v8::Handle<v8::Primitive> throwError(v8::Local<v8::Value> exception, v8::Isolate* isolate = 0)
     {
         if (!v8::V8::IsExecutionTerminating())

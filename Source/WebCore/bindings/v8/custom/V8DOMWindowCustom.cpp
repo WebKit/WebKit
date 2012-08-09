@@ -323,7 +323,7 @@ static v8::Handle<v8::Value> handlePostMessageCallback(const v8::Arguments& args
                 targetOriginArgIndex = 2;
                 transferablesArgIndex = 1;
             }
-            if (!extractTransferables(args[transferablesArgIndex], portArray, arrayBufferArray))
+            if (!extractTransferables(args[transferablesArgIndex], portArray, arrayBufferArray, args.GetIsolate()))
                 return v8::Undefined();
         } 
         targetOrigin = toWebCoreStringWithNullOrUndefinedCheck(args[targetOriginArgIndex]);

@@ -1,5 +1,48 @@
 2012-08-09  Kentaro Hara  <haraken@chromium.org>
 
+        [V8] Remove V8Proxy::throwError(ExceptionCode&)
+        https://bugs.webkit.org/show_bug.cgi?id=93605
+
+        Reviewed by Adam Barth.
+
+        (1) Pass Isolate around to V8Utilities::extractTransferables().
+        (2) Replace throwError(ExceptionCode&) in V8Utilities::extractTransferables()
+        with setDOMException(ExceptionCode&, Isolate*), which completely removes
+        V8Proxy::throwError(ExceptionCode&) from the code base.
+        (3) Remove V8Proxy::throwError(ExceptionCode&).
+
+        No tests. No change in behavior.
+
+        * bindings/scripts/CodeGeneratorV8.pm:
+        (GenerateParametersCheck):
+        * bindings/scripts/test/V8/V8TestSerializedScriptValueInterface.cpp:
+        (WebCore::TestSerializedScriptValueInterfaceV8Internal::acceptTransferListCallback):
+        (WebCore::TestSerializedScriptValueInterfaceV8Internal::multiTransferListCallback):
+        (WebCore::V8TestSerializedScriptValueInterface::constructorCallback):
+        * bindings/v8/Dictionary.cpp:
+        (WebCore::Dictionary::get):
+        * bindings/v8/V8Proxy.h:
+        (WebCore):
+        * bindings/v8/V8Utilities.cpp:
+        (WebCore::extractTransferables):
+        (WebCore::getMessagePortArray):
+        * bindings/v8/V8Utilities.h:
+        (WebCore):
+        * bindings/v8/custom/V8DOMWindowCustom.cpp:
+        (WebCore::handlePostMessageCallback):
+        * bindings/v8/custom/V8DedicatedWorkerContextCustom.cpp:
+        (WebCore::handlePostMessageCallback):
+        * bindings/v8/custom/V8IntentConstructor.cpp:
+        (WebCore::V8Intent::constructorCallback):
+        * bindings/v8/custom/V8MessageEventCustom.cpp:
+        (WebCore::V8MessageEvent::initMessageEventCallback):
+        * bindings/v8/custom/V8MessagePortCustom.cpp:
+        (WebCore::handlePostMessageCallback):
+        * bindings/v8/custom/V8WorkerCustom.cpp:
+        (WebCore::handlePostMessageCallback):
+
+2012-08-09  Kentaro Hara  <haraken@chromium.org>
+
         [V8] Rename V8BindingPerIsolateData to V8PerIsolateData
         https://bugs.webkit.org/show_bug.cgi?id=93592
 

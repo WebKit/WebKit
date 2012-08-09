@@ -54,7 +54,7 @@ static v8::Handle<v8::Value> handlePostMessageCallback(const v8::Arguments& args
     MessagePortArray ports;
     ArrayBufferArray arrayBuffers;
     if (args.Length() > 1) {
-        if (!extractTransferables(args[1], ports, arrayBuffers))
+        if (!extractTransferables(args[1], ports, arrayBuffers, args.GetIsolate()))
             return v8::Undefined();
     }
     bool didThrow = false;
