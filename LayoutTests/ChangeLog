@@ -1,3 +1,12 @@
+2012-08-09  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [EFL] Gardening after r125102
+        https://bugs.webkit.org/show_bug.cgi?id=93593
+
+        Unreviewed gardening.
+
+        * platform/efl/TestExpectations: Included newly added compositing/plugins/no-backing-store.html test.
+
 2012-08-09  'Pavel Feldman'  <pfeldman@chromium.org>
 
         Web Inspector: follow up to r125174 - fix subtype use.

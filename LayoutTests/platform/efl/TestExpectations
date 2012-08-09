@@ -426,6 +426,7 @@ BUGWK82294 : compositing/overflow/content-gains-scrollbars.html = TEXT
 BUGWK82294 : compositing/overflow/content-loses-scrollbars.html = TEXT
 BUGWK82294 : compositing/overflow/overflow-scrollbar-layers.html = TEXT
 BUGWK82294 : compositing/overflow/resize-painting.html = TEXT
+BUGWK82294 : compositing/plugins/no-backing-store.html = TEXT
 BUGWK82294 : compositing/plugins/small-to-large-composited-plugin.html = TEXT
 BUGWK82294 : compositing/rtl/rtl-absolute-overflow-scrolled.html = TEXT
 BUGWK82294 : compositing/rtl/rtl-absolute-overflow.html = TEXT
