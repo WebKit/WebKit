@@ -106,7 +106,7 @@ bool PluginView::dispatchNPEvent(NPEvent& event)
         return false;
 
     PluginView::setCurrentPluginView(this);
-    JSC::JSLock::DropAllLocks dropAllLocks(JSC::SilenceAssertionsOnly);
+    JSC::JSLock::DropAllLocks dropAllLocks(JSDOMWindowBase::commonJSGlobalData());
     setCallingPlugin(true);
 
     bool accepted = !m_plugin->pluginFuncs()->event(m_instance, &event);
@@ -276,7 +276,7 @@ void PluginView::paint(GraphicsContext* context, const IntRect& rect)
 
 void PluginView::handleKeyboardEvent(KeyboardEvent* event)
 {
-    JSC::JSLock::DropAllLocks dropAllLocks(JSC::SilenceAssertionsOnly);
+    JSC::JSLock::DropAllLocks dropAllLocks(JSDOMWindowBase::commonJSGlobalData());
 
     if (!m_isStarted || m_status != PluginStatusLoadedSuccessfully)
         return;
@@ -406,7 +406,7 @@ static void setXCrossingEventSpecificFields(XEvent* xEvent, MouseEvent* event, c
 
 void PluginView::handleMouseEvent(MouseEvent* event)
 {
-    JSC::JSLock::DropAllLocks dropAllLocks(JSC::SilenceAssertionsOnly);
+    JSC::JSLock::DropAllLocks dropAllLocks(JSDOMWindowBase::commonJSGlobalData());
 
     if (!m_isStarted || m_status != PluginStatusLoadedSuccessfully)
         return;
@@ -535,7 +535,7 @@ void PluginView::setNPWindowIfNeeded()
     }
 
     PluginView::setCurrentPluginView(this);
-    JSC::JSLock::DropAllLocks dropAllLocks(JSC::SilenceAssertionsOnly);
+    JSC::JSLock::DropAllLocks dropAllLocks(JSDOMWindowBase::commonJSGlobalData());
     setCallingPlugin(true);
     m_plugin->pluginFuncs()->setwindow(m_instance, &m_npWindow);
     setCallingPlugin(false);
@@ -857,7 +857,7 @@ bool PluginView::platformStart()
 #if defined(XP_UNIX)
     if (m_plugin->pluginFuncs()->getvalue) {
         PluginView::setCurrentPluginView(this);
-        JSC::JSLock::DropAllLocks dropAllLocks(JSC::SilenceAssertionsOnly);
+        JSC::JSLock::DropAllLocks dropAllLocks(JSDOMWindowBase::commonJSGlobalData());
         setCallingPlugin(true);
         m_plugin->pluginFuncs()->getvalue(m_instance, NPPVpluginNeedsXEmbed, &m_needsXEmbed);
         setCallingPlugin(false);

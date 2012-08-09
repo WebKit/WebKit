@@ -156,15 +156,9 @@ static size_t heapSizeForHint(HeapSize heapSize)
     return smallHeapSize;
 }
 
-static inline bool isValidSharedInstanceThreadState()
+static inline bool isValidSharedInstanceThreadState(JSGlobalData* globalData)
 {
-    if (!JSLock::lockCount())
-        return false;
-
-    if (!JSLock::currentThreadIsHoldingLock())
-        return false;
-
-    return true;
+    return globalData->apiLock().currentThreadIsHoldingLock();
 }
 
 static inline bool isValidThreadState(JSGlobalData* globalData)
@@ -172,7 +166,7 @@ static inline bool isValidThreadState(JSGlobalData* globalData)
     if (globalData->identifierTable != wtfThreadData().currentIdentifierTable())
         return false;
 
-    if (globalData->isSharedInstance() && !isValidSharedInstanceThreadState())
+    if (globalData->isSharedInstance() && !isValidSharedInstanceThreadState(globalData))
         return false;
 
     return true;
@@ -321,7 +315,6 @@ Heap::Heap(JSGlobalData* globalData, HeapSize heapSize)
     , m_objectSpace(this)
     , m_storageSpace(this)
     , m_markListSet(0)
-    , m_activityCallback(DefaultGCActivityCallback::create(this))
     , m_machineThreads(this)
     , m_sharedData(globalData)
     , m_slotVisitor(m_sharedData)
@@ -331,6 +324,7 @@ Heap::Heap(JSGlobalData* globalData, HeapSize heapSize)
     , m_globalData(globalData)
     , m_lastGCLength(0)
     , m_lastCodeDiscardTime(WTF::currentTime())
+    , m_activityCallback(DefaultGCActivityCallback::create(this))
 {
     m_storageSpace.init();
 }
@@ -414,7 +408,7 @@ void Heap::didAbandon(size_t bytes)
 void Heap::protect(JSValue k)
 {
     ASSERT(k);
-    ASSERT(JSLock::currentThreadIsHoldingLock() || !m_globalData->isSharedInstance());
+    ASSERT(m_globalData->apiLock().currentThreadIsHoldingLock());
 
     if (!k.isCell())
         return;
@@ -425,7 +419,7 @@ void Heap::protect(JSValue k)
 bool Heap::unprotect(JSValue k)
 {
     ASSERT(k);
-    ASSERT(JSLock::currentThreadIsHoldingLock() || !m_globalData->isSharedInstance());
+    ASSERT(m_globalData->apiLock().currentThreadIsHoldingLock());
 
     if (!k.isCell())
         return false;
@@ -753,6 +747,7 @@ void Heap::collect(SweepToggle sweepToggle)
     SamplingRegion samplingRegion("Garbage Collection");
     
     GCPHASE(Collect);
+    ASSERT(globalData()->apiLock().currentThreadIsHoldingLock());
     ASSERT(globalData()->identifierTable == wtfThreadData().currentIdentifierTable());
     ASSERT(m_isSafeToCollect);
     JAVASCRIPTCORE_GC_BEGIN();
@@ -838,14 +833,14 @@ void Heap::resetAllocators()
     m_weakSet.resetAllocator();
 }
 
-void Heap::setActivityCallback(PassOwnPtr<GCActivityCallback> activityCallback)
+void Heap::setActivityCallback(GCActivityCallback* activityCallback)
 {
     m_activityCallback = activityCallback;
 }
 
 GCActivityCallback* Heap::activityCallback()
 {
-    return m_activityCallback.get();
+    return m_activityCallback;
 }
 
 void Heap::didAllocate(size_t bytes)

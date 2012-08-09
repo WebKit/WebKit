@@ -82,7 +82,7 @@ Node* InjectedScriptHost::scriptValueAsNode(ScriptValue value)
 
 ScriptValue InjectedScriptHost::nodeAsScriptValue(ScriptState* state, Node* node)
 {
-    JSLock lock(SilenceAssertionsOnly);
+    JSLockHolder lock(state);
     return ScriptValue(state->globalData(), toJS(state, deprecatedGlobalObjectForPrototype(state), node));
 }
 
@@ -95,7 +95,7 @@ JSValue JSInjectedScriptHost::inspectedObject(ExecState* exec)
     if (!object)
         return jsUndefined();
 
-    JSLock lock(SilenceAssertionsOnly);
+    JSLockHolder lock(exec);
     ScriptValue scriptValue = object->get(exec);
     if (scriptValue.hasNoValue())
         return jsUndefined();

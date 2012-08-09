@@ -73,7 +73,7 @@ void CInstance::moveGlobalExceptionToExecState(ExecState* exec)
         return;
 
     {
-        JSLock lock(SilenceAssertionsOnly);
+        JSLockHolder lock(exec);
         throwError(exec, createError(exec, globalExceptionString()));
     }
 
@@ -182,7 +182,7 @@ JSValue CInstance::invokeMethod(ExecState* exec, RuntimeMethod* runtimeMethod)
     VOID_TO_NPVARIANT(resultVariant);
 
     {
-        JSLock::DropAllLocks dropAllLocks(SilenceAssertionsOnly);
+        JSLock::DropAllLocks dropAllLocks(exec);
         ASSERT(globalExceptionString().isNull());
         retval = _object->_class->invoke(_object, ident, cArgs.data(), count, &resultVariant);
         moveGlobalExceptionToExecState(exec);
@@ -217,7 +217,7 @@ JSValue CInstance::invokeDefaultMethod(ExecState* exec)
     NPVariant resultVariant;
     VOID_TO_NPVARIANT(resultVariant);
     {
-        JSLock::DropAllLocks dropAllLocks(SilenceAssertionsOnly);
+        JSLock::DropAllLocks dropAllLocks(exec);
         ASSERT(globalExceptionString().isNull());
         retval = _object->_class->invokeDefault(_object, cArgs.data(), count, &resultVariant);
         moveGlobalExceptionToExecState(exec);
@@ -256,7 +256,7 @@ JSValue CInstance::invokeConstruct(ExecState* exec, const ArgList& args)
     NPVariant resultVariant;
     VOID_TO_NPVARIANT(resultVariant);
     {
-        JSLock::DropAllLocks dropAllLocks(SilenceAssertionsOnly);
+        JSLock::DropAllLocks dropAllLocks(exec);
         ASSERT(globalExceptionString().isNull());
         retval = _object->_class->construct(_object, cArgs.data(), count, &resultVariant);
         moveGlobalExceptionToExecState(exec);
@@ -315,7 +315,7 @@ void CInstance::getPropertyNames(ExecState* exec, PropertyNameArray& nameArray)
     NPIdentifier* identifiers;
 
     {
-        JSLock::DropAllLocks dropAllLocks(SilenceAssertionsOnly);
+        JSLock::DropAllLocks dropAllLocks(exec);
         ASSERT(globalExceptionString().isNull());
         bool ok = _object->_class->enumerate(_object, &identifiers, &count);
         moveGlobalExceptionToExecState(exec);

@@ -49,7 +49,7 @@ bool ScriptValue::getString(ScriptState* scriptState, String& result) const
 {
     if (!m_value)
         return false;
-    JSLock lock(SilenceAssertionsOnly);
+    JSLockHolder lock(scriptState);
     UString ustring;
     if (!m_value.get().getString(scriptState, ustring))
         return false;
@@ -167,6 +167,7 @@ static PassRefPtr<InspectorValue> jsToInspectorValue(ScriptState* scriptState, J
 
 PassRefPtr<InspectorValue> ScriptValue::toInspectorValue(ScriptState* scriptState) const
 {
+    JSC::JSLockHolder holder(scriptState);
     return jsToInspectorValue(scriptState, m_value.get(), InspectorValue::maxDepth);
 }
 #endif // ENABLE(INSPECTOR)

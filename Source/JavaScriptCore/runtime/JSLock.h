@@ -23,6 +23,9 @@
 
 #include <wtf/Assertions.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/RefPtr.h>
+#include <wtf/TCSpinLock.h>
+#include <wtf/Threading.h>
 
 namespace JSC {
 
@@ -30,8 +33,9 @@ namespace JSC {
     // important to lock before doing anything that allocates a
     // JavaScript data structure or that interacts with shared state
     // such as the protect count hash table. The simplest way to lock
-    // is to create a local JSLock object in the scope where the lock 
-    // must be held. The lock is recursive so nesting is ok. The JSLock 
+    // is to create a local JSLockHolder object in the scope where the lock 
+    // must be held and pass it the context that requires protection. 
+    // The lock is recursive so nesting is ok. The JSLock 
     // object also acts as a convenience short-hand for running important
     // initialization routines.
 
@@ -44,62 +48,69 @@ namespace JSC {
     // DropAllLocks object takes care to release the JSLock only if your
     // thread acquired it to begin with.
 
-    // For contexts other than the single shared one, implicit locking is not done,
-    // but we still need to perform all the counting in order to keep debug
-    // assertions working, so that clients that use the shared context don't break.
-
     class ExecState;
     class JSGlobalData;
 
-    enum JSLockBehavior { SilenceAssertionsOnly, LockForReal };
+    // This class is used to protect the initialization of the legacy single 
+    // shared JSGlobalData.
+    class GlobalJSLock {
+        WTF_MAKE_NONCOPYABLE(GlobalJSLock);
+    public:
+        JS_EXPORT_PRIVATE GlobalJSLock();
+        JS_EXPORT_PRIVATE ~GlobalJSLock();
+    };
+
+    class JSLockHolder {
+    public:
+        JS_EXPORT_PRIVATE JSLockHolder(JSGlobalData*);
+        JS_EXPORT_PRIVATE JSLockHolder(JSGlobalData&);
+        JS_EXPORT_PRIVATE JSLockHolder(ExecState*);
+
+        JS_EXPORT_PRIVATE ~JSLockHolder();
+    private:
+        RefPtr<JSGlobalData> m_globalData;
+    };
 
     class JSLock {
         WTF_MAKE_NONCOPYABLE(JSLock);
     public:
-        JS_EXPORT_PRIVATE JSLock(ExecState*);
-        JSLock(JSGlobalData*);
+        JSLock();
+        JS_EXPORT_PRIVATE ~JSLock();
 
-        JSLock(JSLockBehavior lockBehavior)
-            : m_lockBehavior(lockBehavior)
-        {
-#ifdef NDEBUG
-            // Locking "not for real" is a debug-only feature.
-            if (lockBehavior == SilenceAssertionsOnly)
-                return;
-#endif
-            lock(lockBehavior);
-        }
+        JS_EXPORT_PRIVATE void lock();
+        JS_EXPORT_PRIVATE void unlock();
 
-        ~JSLock()
-        { 
-#ifdef NDEBUG
-            // Locking "not for real" is a debug-only feature.
-            if (m_lockBehavior == SilenceAssertionsOnly)
-                return;
-#endif
-            unlock(m_lockBehavior); 
-        }
-        
-        JS_EXPORT_PRIVATE static void lock(JSLockBehavior);
-        JS_EXPORT_PRIVATE static void unlock(JSLockBehavior);
         static void lock(ExecState*);
         static void unlock(ExecState*);
+        static void lock(JSGlobalData&);
+        static void unlock(JSGlobalData&);
 
-        JS_EXPORT_PRIVATE static intptr_t lockCount();
-        JS_EXPORT_PRIVATE static bool currentThreadIsHoldingLock();
+        JS_EXPORT_PRIVATE bool currentThreadIsHoldingLock();
 
-        JSLockBehavior m_lockBehavior;
+        unsigned dropAllLocks();
+        unsigned dropAllLocksUnconditionally();
+        void grabAllLocks(unsigned lockCount);
+
+        SpinLock m_spinLock;
+        Mutex m_lock;
+        ThreadIdentifier m_ownerThread;
+        intptr_t m_lockCount;
+        unsigned m_lockDropDepth;
 
         class DropAllLocks {
             WTF_MAKE_NONCOPYABLE(DropAllLocks);
         public:
-            JS_EXPORT_PRIVATE DropAllLocks(ExecState* exec);
-            JS_EXPORT_PRIVATE DropAllLocks(JSLockBehavior);
+            // This is a hack to allow Mobile Safari to always release the locks since 
+            // hey depend on the behavior that DropAllLocks does indeed always drop all 
+            // locks, which isn't always the case with the default behavior.
+            enum AlwaysDropLocksTag { DontAlwaysDropLocks = 0, AlwaysDropLocks };
+            JS_EXPORT_PRIVATE DropAllLocks(ExecState* exec, AlwaysDropLocksTag alwaysDropLocks = DontAlwaysDropLocks);
+            JS_EXPORT_PRIVATE DropAllLocks(JSGlobalData*, AlwaysDropLocksTag alwaysDropLocks = DontAlwaysDropLocks);
             JS_EXPORT_PRIVATE ~DropAllLocks();
             
         private:
             intptr_t m_lockCount;
-            JSLockBehavior m_lockBehavior;
+            RefPtr<JSGlobalData> m_globalData;
         };
     };
 

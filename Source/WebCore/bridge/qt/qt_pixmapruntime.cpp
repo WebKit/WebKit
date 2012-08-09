@@ -418,7 +418,7 @@ RuntimeObject* QtPixmapInstance::newRuntimeObject(ExecState* exec)
 
 JSObject* QtPixmapInstance::createPixmapRuntimeObject(ExecState* exec, PassRefPtr<RootObject> root, const QVariant& data)
 {
-    JSLock lock(SilenceAssertionsOnly);
+    JSLockHolder lock(exec);
     RefPtr<QtPixmapInstance> instance = adoptRef(new QtPixmapInstance(root, data));
     return instance->createRuntimeObject(exec);
 }

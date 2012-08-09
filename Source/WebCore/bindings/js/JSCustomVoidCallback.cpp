@@ -63,7 +63,7 @@ void JSCustomVoidCallback::handleEvent()
 
     RefPtr<JSCustomVoidCallback> protect(this);
         
-    JSC::JSLock lock(SilenceAssertionsOnly);
+    JSC::JSLockHolder lock(m_data->globalObject()->globalData());
     MarkedArgumentBuffer args;
     m_data->invokeCallback(args);
 }

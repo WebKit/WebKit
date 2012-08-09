@@ -58,5 +58,13 @@ void DefaultGCActivityCallback::cancel()
 {
 }
 
+void DefaultGCActivityCallback::didStartVMShutdown()
+{
+}
+
+void DefaultGCActivityCallback::invalidate()
+{
+}
+
 }
 

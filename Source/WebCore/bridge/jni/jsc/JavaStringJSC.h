@@ -28,6 +28,7 @@
 #define JavaStringJSC_h
 
 #include "JNIUtility.h"
+#include "JSDOMWindowBase.h"
 #include "JavaInstanceJSC.h"
 
 #include <runtime/JSLock.h>
@@ -52,20 +53,20 @@ public:
 
     JavaString()
     {
-        JSLock lock(SilenceAssertionsOnly);
+        JSLockHolder lock(WebCore::JSDOMWindowBase::commonJSGlobalData());
         m_impl = UString().impl();
     }
 
     ~JavaString()
     {
-        JSLock lock(SilenceAssertionsOnly);
+        JSLockHolder lock(WebCore::JSDOMWindowBase::commonJSGlobalData());
         m_impl = 0;
     }
 
     const char* utf8() const
     {
         if (!m_utf8String.data()) {
-            JSLock lock(SilenceAssertionsOnly);
+            JSLockHolder lock(WebCore::JSDOMWindowBase::commonJSGlobalData());
             m_utf8String = UString(m_impl).utf8();
         }
         return m_utf8String.data();
@@ -79,7 +80,7 @@ private:
         int size = e->GetStringLength(s);
         const jchar* uc = getUCharactersFromJStringInEnv(e, s);
         {
-            JSLock lock(SilenceAssertionsOnly);
+            JSLockHolder lock(WebCore::JSDOMWindowBase::commonJSGlobalData());
             m_impl = UString(reinterpret_cast<const UChar*>(uc), size).impl();
         }
         releaseUCharactersForJStringInEnv(e, s, uc);

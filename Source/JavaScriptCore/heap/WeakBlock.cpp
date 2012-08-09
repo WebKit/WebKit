@@ -129,8 +129,10 @@ void WeakBlock::visitDeadWeakImpls(HeapRootVisitor&)
         if (weakImpl->state() > WeakImpl::Dead)
             continue;
 
-        if (Heap::isMarked(weakImpl->jsValue().asCell()))
+        if (Heap::isMarked(weakImpl->jsValue().asCell())) {
+            ASSERT(weakImpl->state() == WeakImpl::Live);
             continue;
+        }
 
         weakImpl->setState(WeakImpl::Dead);
     }

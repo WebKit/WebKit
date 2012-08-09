@@ -126,7 +126,6 @@ using namespace std;
 using JSC::JSGlobalObject;
 using JSC::JSLock;
 using JSC::JSValue;
-using JSC::SilenceAssertionsOnly;
 
 #define FLASH_REDRAW 0
 
@@ -2577,8 +2576,8 @@ HRESULT WebFrame::stringByEvaluatingJavaScriptInScriptWorld(IWebScriptWorld* iWo
     if (!result || !result.isBoolean() && !result.isString() && !result.isNumber())
         return S_OK;
 
-    JSLock lock(SilenceAssertionsOnly);
     JSC::ExecState* exec = anyWorldGlobalObject->globalExec();
+    JSC::JSLockHolder lock(exec);
     String resultString = ustringToString(result.toString(exec)->value(exec));
     *evaluationResult = BString(resultString).release();
 

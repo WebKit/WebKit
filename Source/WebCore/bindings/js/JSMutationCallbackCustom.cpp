@@ -34,6 +34,7 @@
 
 #include "JSMutationCallback.h"
 
+#include "JSDOMWindowBase.h"
 #include "JSMutationRecord.h"
 #include "JSWebKitMutationObserver.h"
 #include "ScriptExecutionContext.h"
@@ -50,7 +51,7 @@ bool JSMutationCallback::handleEvent(MutationRecordArray* mutations, WebKitMutat
 
     RefPtr<JSMutationCallback> protect(this);
 
-    JSLock lock(SilenceAssertionsOnly);
+    JSLockHolder lock(JSDOMWindowBase::commonJSGlobalData());
 
     ExecState* exec = m_data->globalObject()->globalExec();
 

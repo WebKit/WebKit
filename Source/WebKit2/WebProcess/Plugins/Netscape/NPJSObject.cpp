@@ -97,7 +97,7 @@ bool NPJSObject::hasMethod(NPIdentifier methodName)
     if (!exec)
         return false;
 
-    JSLock lock(SilenceAssertionsOnly);
+    JSLockHolder lock(exec);
 
     JSValue value = m_jsObject->get(exec, identifierFromIdentifierRep(exec, identifierRep));    
     exec->clearException();
@@ -117,7 +117,7 @@ bool NPJSObject::invoke(NPIdentifier methodName, const NPVariant* arguments, uin
     if (!exec)
         return false;
     
-    JSLock lock(SilenceAssertionsOnly);
+    JSLockHolder lock(exec);
 
     JSValue function = m_jsObject->get(exec, identifierFromIdentifierRep(exec, identifierRep));
     return invoke(exec, m_objectMap->globalObject(), function, arguments, argumentCount, result);
@@ -129,7 +129,7 @@ bool NPJSObject::invokeDefault(const NPVariant* arguments, uint32_t argumentCoun
     if (!exec)
         return false;
 
-    JSLock lock(SilenceAssertionsOnly);
+    JSLockHolder lock(exec);
 
     JSValue function = m_jsObject.get();
     return invoke(exec, m_objectMap->globalObject(), function, arguments, argumentCount, result);
@@ -143,7 +143,7 @@ bool NPJSObject::hasProperty(NPIdentifier identifier)
     if (!exec)
         return false;
     
-    JSLock lock(SilenceAssertionsOnly);
+    JSLockHolder lock(exec);
 
     bool result;
     if (identifierRep->isString())
@@ -163,7 +163,7 @@ bool NPJSObject::getProperty(NPIdentifier propertyName, NPVariant* result)
     if (!exec)
         return false;
 
-    JSLock lock(SilenceAssertionsOnly);
+    JSLockHolder lock(exec);
     JSValue jsResult;
     if (identifierRep->isString())
         jsResult = m_jsObject->get(exec, identifierFromIdentifierRep(exec, identifierRep));
@@ -183,7 +183,7 @@ bool NPJSObject::setProperty(NPIdentifier propertyName, const NPVariant* value)
     if (!exec)
         return false;
     
-    JSLock lock(SilenceAssertionsOnly);
+    JSLockHolder lock(exec);
 
     JSValue jsValue = m_objectMap->convertNPVariantToJSValue(exec, m_objectMap->globalObject(), *value);
     if (identifierRep->isString()) {
@@ -204,7 +204,7 @@ bool NPJSObject::removeProperty(NPIdentifier propertyName)
     if (!exec)
         return false;
 
-    JSLock lock(SilenceAssertionsOnly);
+    JSLockHolder lock(exec);
     if (identifierRep->isString()) {
         Identifier identifier = identifierFromIdentifierRep(exec, identifierRep);
         
@@ -233,7 +233,7 @@ bool NPJSObject::enumerate(NPIdentifier** identifiers, uint32_t* identifierCount
     if (!exec)
         return false;
     
-    JSLock lock(SilenceAssertionsOnly);
+    JSLockHolder lock(exec);
 
     PropertyNameArray propertyNames(exec);
     m_jsObject->methodTable()->getPropertyNames(m_jsObject.get(), exec, propertyNames, ExcludeDontEnumProperties);
@@ -255,7 +255,7 @@ bool NPJSObject::construct(const NPVariant* arguments, uint32_t argumentCount, N
     if (!exec)
         return false;
 
-    JSLock lock(SilenceAssertionsOnly);
+    JSLockHolder lock(exec);
 
     ConstructData constructData;
     ConstructType constructType = getConstructData(m_jsObject.get(), constructData);

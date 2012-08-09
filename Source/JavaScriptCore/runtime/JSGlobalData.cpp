@@ -34,6 +34,7 @@
 #include "CommonIdentifiers.h"
 #include "DebuggerActivation.h"
 #include "FunctionConstructor.h"
+#include "GCActivityCallback.h"
 #include "GetterSetter.h"
 #include "HostCallReturnValue.h"
 #include "Interpreter.h"
@@ -178,8 +179,8 @@ JSGlobalData::JSGlobalData(GlobalDataType globalDataType, ThreadStackType thread
     interpreter = new Interpreter;
 
     // Need to be careful to keep everything consistent here
+    JSLockHolder lock(this);
     IdentifierTable* existingEntryIdentifierTable = wtfThreadData().setCurrentIdentifierTable(identifierTable);
-    JSLock lock(SilenceAssertionsOnly);
     structureStructure.set(*this, Structure::createStructure(*this));
     debuggerActivationStructure.set(*this, DebuggerActivation::createStructure(*this, 0, jsNull()));
     activationStructure.set(*this, JSActivation::createStructure(*this, 0, jsNull()));
@@ -218,6 +219,8 @@ JSGlobalData::JSGlobalData(GlobalDataType globalDataType, ThreadStackType thread
 
 JSGlobalData::~JSGlobalData()
 {
+    ASSERT(!m_apiLock.currentThreadIsHoldingLock());
+    heap.activityCallback()->didStartVMShutdown();
     heap.lastChanceToFinalize();
 
     delete interpreter;
@@ -305,6 +308,7 @@ bool JSGlobalData::sharedInstanceExists()
 
 JSGlobalData& JSGlobalData::sharedInstance()
 {
+    GlobalJSLock globalLock;
     JSGlobalData*& instance = sharedInstanceInternal();
     if (!instance) {
         instance = adoptRef(new JSGlobalData(APIShared, ThreadStackTypeSmall, SmallHeap)).leakRef();
@@ -315,7 +319,6 @@ JSGlobalData& JSGlobalData::sharedInstance()
 
 JSGlobalData*& JSGlobalData::sharedInstanceInternal()
 {
-    ASSERT(JSLock::currentThreadIsHoldingLock());
     static JSGlobalData* sharedInstance;
     return sharedInstance;
 }

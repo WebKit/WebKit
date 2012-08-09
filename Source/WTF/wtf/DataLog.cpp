@@ -28,10 +28,10 @@
 #include <stdarg.h>
 #include <wtf/Threading.h>
 
-#define DATA_LOG_TO_FILE 0
+#define DATA_LOG_TO_FILE 1
 
 // Uncomment to force logging to the given file regardless of what the environment variable says.
-// #define DATA_LOG_FILENAME "/tmp/WTFLog.txt"
+#define DATA_LOG_FILENAME "/tmp/WTFLog.txt"
 
 namespace WTF {
 

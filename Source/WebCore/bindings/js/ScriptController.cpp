@@ -133,7 +133,7 @@ ScriptValue ScriptController::evaluateInWorld(const ScriptSourceCode& sourceCode
     const String* savedSourceURL = m_sourceURL;
     m_sourceURL = &sourceURL;
 
-    JSLock lock(SilenceAssertionsOnly);
+    JSLockHolder lock(exec);
 
     RefPtr<Frame> protect = m_frame;
 
@@ -177,7 +177,7 @@ void ScriptController::clearWindowShell(bool goingIntoPageCache)
     if (m_windowShells.isEmpty())
         return;
 
-    JSLock lock(SilenceAssertionsOnly);
+    JSLockHolder lock(JSDOMWindowBase::commonJSGlobalData());
 
     for (ShellMap::iterator iter = m_windowShells.begin(); iter != m_windowShells.end(); ++iter) {
         JSDOMWindowShell* windowShell = iter->second.get();
@@ -209,7 +209,7 @@ JSDOMWindowShell* ScriptController::initScript(DOMWrapperWorld* world)
 {
     ASSERT(!m_windowShells.contains(world));
 
-    JSLock lock(SilenceAssertionsOnly);
+    JSLockHolder lock(world->globalData());
 
     JSDOMWindowShell* windowShell = createWindowShell(world);
 
@@ -276,9 +276,10 @@ void ScriptController::updateDocument()
     if (!m_frame->document())
         return;
 
-    JSLock lock(SilenceAssertionsOnly);
-    for (ShellMap::iterator iter = m_windowShells.begin(); iter != m_windowShells.end(); ++iter)
+    for (ShellMap::iterator iter = m_windowShells.begin(); iter != m_windowShells.end(); ++iter) {
+        JSLockHolder lock(iter->first->globalData());
         iter->second->window()->updateDocument();
+    }
 }
 
 void ScriptController::updateSecurityOrigin()
@@ -292,7 +293,7 @@ Bindings::RootObject* ScriptController::cacheableBindingRootObject()
         return 0;
 
     if (!m_cacheableBindingRootObject) {
-        JSLock lock(SilenceAssertionsOnly);
+        JSLockHolder lock(JSDOMWindowBase::commonJSGlobalData());
         m_cacheableBindingRootObject = Bindings::RootObject::create(0, globalObject(pluginWorld()));
     }
     return m_cacheableBindingRootObject.get();
@@ -304,7 +305,7 @@ Bindings::RootObject* ScriptController::bindingRootObject()
         return 0;
 
     if (!m_bindingRootObject) {
-        JSLock lock(SilenceAssertionsOnly);
+        JSLockHolder lock(JSDOMWindowBase::commonJSGlobalData());
         m_bindingRootObject = Bindings::RootObject::create(0, globalObject(pluginWorld()));
     }
     return m_bindingRootObject.get();
@@ -336,9 +337,9 @@ NPObject* ScriptController::windowScriptNPObject()
         if (canExecuteScripts(NotAboutToExecuteScript)) {
             // JavaScript is enabled, so there is a JavaScript window object.
             // Return an NPObject bound to the window object.
-            JSC::JSLock lock(SilenceAssertionsOnly);
-            JSObject* win = windowShell(pluginWorld())->window();
+            JSDOMWindow* win = windowShell(pluginWorld())->window();
             ASSERT(win);
+            JSC::JSLockHolder lock(win->globalExec());
             Bindings::RootObject* root = bindingRootObject();
             m_windowScriptNPObject = _NPN_CreateScriptObject(0, win, root);
         } else {
@@ -370,8 +371,8 @@ JSObject* ScriptController::jsObjectForPluginElement(HTMLPlugInElement* plugin)
         return 0;
 
     // Create a JSObject bound to this element
-    JSLock lock(SilenceAssertionsOnly);
     JSDOMWindow* globalObj = globalObject(pluginWorld());
+    JSLockHolder lock(globalObj->globalExec());
     // FIXME: is normal okay? - used for NP plugins?
     JSValue jsElementValue = toJS(globalObj->globalExec(), globalObj, plugin);
     if (!jsElementValue || !jsElementValue.isObject())
@@ -405,7 +406,7 @@ void ScriptController::cleanupScriptObjectsForPlugin(void* nativeHandle)
 
 void ScriptController::clearScriptObjects()
 {
-    JSLock lock(SilenceAssertionsOnly);
+    JSLockHolder lock(JSDOMWindowBase::commonJSGlobalData());
 
     RootObjectMap::const_iterator end = m_rootObjects.end();
     for (RootObjectMap::const_iterator it = m_rootObjects.begin(); it != end; ++it)

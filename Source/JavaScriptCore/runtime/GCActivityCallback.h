@@ -47,6 +47,8 @@ public:
     virtual void willCollect() { }
     virtual void synchronize() { }
     virtual void cancel() { }
+    virtual void didStartVMShutdown() { }
+    virtual void invalidate() { }
 
 protected:
     GCActivityCallback() {}
@@ -56,15 +58,18 @@ struct DefaultGCActivityCallbackPlatformData;
 
 class DefaultGCActivityCallback : public GCActivityCallback {
 public:
-    static PassOwnPtr<DefaultGCActivityCallback> create(Heap*);
+    static DefaultGCActivityCallback* create(Heap*);
 
     DefaultGCActivityCallback(Heap*);
+
     virtual ~DefaultGCActivityCallback();
 
     virtual void didAllocate(size_t);
     virtual void willCollect();
     virtual void synchronize();
     virtual void cancel();
+    virtual void didStartVMShutdown();
+    virtual void invalidate();
 
 #if USE(CF)
 protected:
@@ -76,9 +81,9 @@ private:
     OwnPtr<DefaultGCActivityCallbackPlatformData> d;
 };
 
-inline PassOwnPtr<DefaultGCActivityCallback> DefaultGCActivityCallback::create(Heap* heap)
+inline DefaultGCActivityCallback* DefaultGCActivityCallback::create(Heap* heap)
 {
-    return adoptPtr(new DefaultGCActivityCallback(heap));
+    return new DefaultGCActivityCallback(heap);
 }
 
 }

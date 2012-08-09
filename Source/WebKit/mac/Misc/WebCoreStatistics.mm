@@ -58,31 +58,31 @@ using namespace WebCore;
 
 + (size_t)javaScriptObjectsCount
 {
-    JSLock lock(SilenceAssertionsOnly);
+    JSLockHolder lock(JSDOMWindow::commonJSGlobalData());
     return JSDOMWindow::commonJSGlobalData()->heap.objectCount();
 }
 
 + (size_t)javaScriptGlobalObjectsCount
 {
-    JSLock lock(SilenceAssertionsOnly);
+    JSLockHolder lock(JSDOMWindow::commonJSGlobalData());
     return JSDOMWindow::commonJSGlobalData()->heap.globalObjectCount();
 }
 
 + (size_t)javaScriptProtectedObjectsCount
 {
-    JSLock lock(SilenceAssertionsOnly);
+    JSLockHolder lock(JSDOMWindow::commonJSGlobalData());
     return JSDOMWindow::commonJSGlobalData()->heap.protectedObjectCount();
 }
 
 + (size_t)javaScriptProtectedGlobalObjectsCount
 {
-    JSLock lock(SilenceAssertionsOnly);
+    JSLockHolder lock(JSDOMWindow::commonJSGlobalData());
     return JSDOMWindow::commonJSGlobalData()->heap.protectedGlobalObjectCount();
 }
 
 + (NSCountedSet *)javaScriptProtectedObjectTypeCounts
 {
-    JSLock lock(SilenceAssertionsOnly);
+    JSLockHolder lock(JSDOMWindow::commonJSGlobalData());
     
     NSCountedSet *result = [NSCountedSet set];
 
@@ -97,7 +97,7 @@ using namespace WebCore;
 
 + (NSCountedSet *)javaScriptObjectTypeCounts
 {
-    JSLock lock(SilenceAssertionsOnly);
+    JSLockHolder lock(JSDOMWindow::commonJSGlobalData());
     
     NSCountedSet *result = [NSCountedSet set];
 
@@ -162,13 +162,13 @@ using namespace WebCore;
 
 + (BOOL)shouldPrintExceptions
 {
-    JSLock lock(SilenceAssertionsOnly);
+    JSLockHolder lock(JSDOMWindow::commonJSGlobalData());
     return Console::shouldPrintExceptions();
 }
 
 + (void)setShouldPrintExceptions:(BOOL)print
 {
-    JSLock lock(SilenceAssertionsOnly);
+    JSLockHolder lock(JSDOMWindow::commonJSGlobalData());
     Console::setShouldPrintExceptions(print);
 }
 
@@ -196,7 +196,7 @@ using namespace WebCore;
 {
     WTF::FastMallocStatistics fastMallocStatistics = WTF::fastMallocStatistics();
     
-    JSLock lock(SilenceAssertionsOnly);
+    JSLockHolder lock(JSDOMWindow::commonJSGlobalData());
     size_t heapSize = JSDOMWindow::commonJSGlobalData()->heap.size();
     size_t heapFree = JSDOMWindow::commonJSGlobalData()->heap.capacity() - heapSize;
     GlobalMemoryStatistics globalMemoryStats = globalMemoryStatistics();
@@ -240,7 +240,7 @@ using namespace WebCore;
 
 + (size_t)javaScriptReferencedObjectsCount
 {
-    JSLock lock(SilenceAssertionsOnly);
+    JSLockHolder lock(JSDOMWindow::commonJSGlobalData());
     return JSDOMWindow::commonJSGlobalData()->heap.protectedObjectCount();
 }
 

@@ -91,7 +91,7 @@ void ScheduledAction::execute(ScriptExecutionContext* context)
 void ScheduledAction::executeFunctionInContext(JSGlobalObject* globalObject, JSValue thisValue, ScriptExecutionContext* context)
 {
     ASSERT(m_function);
-    JSLock lock(SilenceAssertionsOnly);
+    JSLockHolder lock(context->globalData());
 
     CallData callData;
     CallType callType = getCallData(m_function.get(), callData);

@@ -229,7 +229,7 @@ QVariant convertValueToQVariant(ExecState* exec, JSValue value, QMetaType::Type 
         return QVariant();
     }
 
-    JSLock lock(SilenceAssertionsOnly);
+    JSLockHolder lock(exec);
     JSRealType type = valueRealType(exec, value);
     if (hint == QMetaType::Void) {
         switch(type) {
@@ -823,7 +823,7 @@ JSValue convertQVariantToValue(ExecState* exec, PassRefPtr<RootObject> root, con
         return jsNull();
     }
 
-    JSLock lock(SilenceAssertionsOnly);
+    JSLockHolder lock(exec);
 
     if (type == QMetaType::Bool)
         return jsBoolean(variant.toBool());
@@ -1419,7 +1419,7 @@ EncodedJSValue QtRuntimeMetaMethod::call(ExecState* exec)
         return JSValue::encode(jsUndefined());
 
     // We have to pick a method that matches..
-    JSLock lock(SilenceAssertionsOnly);
+    JSLockHolder lock(exec);
 
     QObject *obj = d->m_instance->getObject();
     if (obj) {
@@ -1558,7 +1558,7 @@ EncodedJSValue QtRuntimeConnectionMethod::call(ExecState* exec)
 {
     QtRuntimeConnectionMethodData* d = static_cast<QtRuntimeConnectionMethod *>(exec->callee())->d_func();
 
-    JSLock lock(SilenceAssertionsOnly);
+    JSLockHolder lock(exec);
 
     QObject* sender = d->m_instance->getObject();
 

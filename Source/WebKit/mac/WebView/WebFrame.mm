@@ -104,7 +104,6 @@ using namespace HTMLNames;
 using JSC::JSGlobalObject;
 using JSC::JSLock;
 using JSC::JSValue;
-using JSC::SilenceAssertionsOnly;
 
 /*
 Here is the current behavior matrix for four types of navigations:
@@ -611,8 +610,8 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     if (!result || (!result.isBoolean() && !result.isString() && !result.isNumber()))
         return @"";
 
-    JSLock lock(SilenceAssertionsOnly);
     JSC::ExecState* exec = _private->coreFrame->script()->globalObject(mainThreadNormalWorld())->globalExec();
+    JSC::JSLockHolder lock(exec);
     return ustringToString(result.toString(exec)->value(exec));
 }
 
@@ -1163,8 +1162,8 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     if (!result || (!result.isBoolean() && !result.isString() && !result.isNumber()))
         return @"";
 
-    JSLock lock(SilenceAssertionsOnly);
     JSC::ExecState* exec = anyWorldGlobalObject->globalExec();
+    JSC::JSLockHolder lock(exec);
     return ustringToString(result.toString(exec)->value(exec));
 }
 

@@ -98,7 +98,7 @@ HRESULT STDMETHODCALLTYPE WebCoreStatistics::javaScriptObjectsCount(
     if (!count)
         return E_POINTER;
 
-    JSLock lock(SilenceAssertionsOnly);
+    JSLockHolder lock(JSDOMWindow::commonJSGlobalData());
     *count = (UINT)JSDOMWindow::commonJSGlobalData()->heap.objectCount();
     return S_OK;
 }
@@ -109,7 +109,7 @@ HRESULT STDMETHODCALLTYPE WebCoreStatistics::javaScriptGlobalObjectsCount(
     if (!count)
         return E_POINTER;
 
-    JSLock lock(SilenceAssertionsOnly);
+    JSLockHolder lock(JSDOMWindow::commonJSGlobalData());
     *count = (UINT)JSDOMWindow::commonJSGlobalData()->heap.globalObjectCount();
     return S_OK;
 }
@@ -120,7 +120,7 @@ HRESULT STDMETHODCALLTYPE WebCoreStatistics::javaScriptProtectedObjectsCount(
     if (!count)
         return E_POINTER;
 
-    JSLock lock(SilenceAssertionsOnly);
+    JSLockHolder lock(JSDOMWindow::commonJSGlobalData());
     *count = (UINT)JSDOMWindow::commonJSGlobalData()->heap.protectedObjectCount();
     return S_OK;
 }
@@ -131,7 +131,7 @@ HRESULT STDMETHODCALLTYPE WebCoreStatistics::javaScriptProtectedGlobalObjectsCou
     if (!count)
         return E_POINTER;
 
-    JSLock lock(SilenceAssertionsOnly);
+    JSLockHolder lock(JSDOMWindow::commonJSGlobalData());
     *count = (UINT)JSDOMWindow::commonJSGlobalData()->heap.protectedGlobalObjectCount();
     return S_OK;
 }
@@ -139,7 +139,7 @@ HRESULT STDMETHODCALLTYPE WebCoreStatistics::javaScriptProtectedGlobalObjectsCou
 HRESULT STDMETHODCALLTYPE WebCoreStatistics::javaScriptProtectedObjectTypeCounts( 
     /* [retval][out] */ IPropertyBag2** typeNamesAndCounts)
 {
-    JSLock lock(SilenceAssertionsOnly);
+    JSLockHolder lock(JSDOMWindow::commonJSGlobalData());
     OwnPtr<TypeCountSet> jsObjectTypeNames(JSDOMWindow::commonJSGlobalData()->heap.protectedObjectTypeCounts());
     typedef TypeCountSet::const_iterator Iterator;
     Iterator end = jsObjectTypeNames->end();

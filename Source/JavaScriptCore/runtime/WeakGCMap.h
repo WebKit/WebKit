@@ -127,8 +127,9 @@ public:
         return AddResult(iterator(result.iterator), result.isNewEntry);
     }
 
-    void set(JSGlobalData&, const KeyType& key, ExternalType value)
+    void set(JSGlobalData& globalData, const KeyType& key, ExternalType value)
     {
+        ASSERT_UNUSED(globalData, globalData.apiLock().currentThreadIsHoldingLock());
         typename MapType::AddResult result = m_map.add(key, 0);
         if (!result.isNewEntry)
             WeakSet::deallocate(result.iterator->second);

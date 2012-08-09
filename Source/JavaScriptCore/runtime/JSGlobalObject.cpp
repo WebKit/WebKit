@@ -111,8 +111,6 @@ template <typename T> static inline void visitIfNeeded(SlotVisitor& visitor, Wri
 
 JSGlobalObject::~JSGlobalObject()
 {
-    ASSERT(JSLock::currentThreadIsHoldingLock());
-
     if (m_debugger)
         m_debugger->detach(this);
 
@@ -129,7 +127,7 @@ void JSGlobalObject::destroy(JSCell* cell)
 
 void JSGlobalObject::init(JSObject* thisValue)
 {
-    ASSERT(JSLock::currentThreadIsHoldingLock());
+    ASSERT(globalData().apiLock().currentThreadIsHoldingLock());
     
     structure()->disableSpecificFunctionTracking();
 

@@ -136,8 +136,10 @@ void RootObject::gcProtect(JSObject* jsObject)
 {
     ASSERT(m_isValid);
     
-    if (!m_protectCountSet.contains(jsObject))
+    if (!m_protectCountSet.contains(jsObject)) {
+        JSC::JSLockHolder holder(&globalObject()->globalData());
         JSC::gcProtect(jsObject);
+    }
     m_protectCountSet.add(jsObject);
 }
 
@@ -148,8 +150,10 @@ void RootObject::gcUnprotect(JSObject* jsObject)
     if (!jsObject)
         return;
 
-    if (m_protectCountSet.count(jsObject) == 1)
+    if (m_protectCountSet.count(jsObject) == 1) {
+        JSC::JSLockHolder holder(&globalObject()->globalData());
         JSC::gcUnprotect(jsObject);
+    }
     m_protectCountSet.remove(jsObject);
 }
 

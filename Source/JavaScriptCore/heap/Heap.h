@@ -99,7 +99,7 @@ namespace JSC {
         MachineThreads& machineThreads() { return m_machineThreads; }
 
         JS_EXPORT_PRIVATE GCActivityCallback* activityCallback();
-        JS_EXPORT_PRIVATE void setActivityCallback(PassOwnPtr<GCActivityCallback>);
+        JS_EXPORT_PRIVATE void setActivityCallback(GCActivityCallback*);
 
         // true if an allocation or collection is in progress
         inline bool isBusy();
@@ -228,8 +228,6 @@ namespace JSC {
         Vector<Vector<ValueStringPair>* > m_tempSortingVectors;
         HashSet<MarkedArgumentBuffer*>* m_markListSet;
 
-        OwnPtr<GCActivityCallback> m_activityCallback;
-        
         MachineThreads m_machineThreads;
         
         MarkStackThreadSharedData m_sharedData;
@@ -248,6 +246,8 @@ namespace JSC {
         double m_lastCodeDiscardTime;
 
         DoublyLinkedList<FunctionExecutable> m_functions;
+        
+        GCActivityCallback* m_activityCallback;
     };
 
     inline bool Heap::shouldCollect()

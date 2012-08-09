@@ -51,6 +51,9 @@ struct DefaultGCActivityCallbackPlatformData {
     RetainPtr<CFRunLoopRef> runLoop;
     CFRunLoopTimerContext context;
     double delay;
+    DefaultGCActivityCallback* thisObject;
+    JSGlobalData* globalData;
+    Mutex shutdownMutex;
 };
 
 const double gcTimeSlicePerMB = 0.01; // Percentage of CPU time we will spend to reclaim 1 MB
@@ -62,17 +65,30 @@ const CFTimeInterval hour = 60 * 60;
 
 void DefaultGCActivityCallbackPlatformData::timerDidFire(CFRunLoopTimerRef, void *info)
 {
-    Heap* heap = static_cast<Heap*>(info);
-    APIEntryShim shim(heap->globalData());
-#if !PLATFORM(IOS)
-    double startTime = WTF::monotonicallyIncreasingTime();
-    if (heap->isPagedOut(startTime + pagingTimeOut)) {
-        heap->activityCallback()->cancel();
-        heap->increaseLastGCLength(pagingTimeOut);
+    DefaultGCActivityCallbackPlatformData* d = static_cast<DefaultGCActivityCallbackPlatformData*>(info);
+    d->shutdownMutex.lock();
+    if (!d->globalData) {
+        d->shutdownMutex.unlock();
+        delete d->thisObject;
         return;
     }
+    {
+        // We don't ref here to prevent us from resurrecting the ref count of a "dead" JSGlobalData.
+        APIEntryShim shim(d->globalData, APIEntryShimWithoutLock::DontRefGlobalData);
+
+        Heap* heap = &d->globalData->heap;
+#if !PLATFORM(IOS)
+        double startTime = WTF::monotonicallyIncreasingTime();
+        if (heap->isPagedOut(startTime + pagingTimeOut)) {
+            heap->activityCallback()->cancel();
+            heap->increaseLastGCLength(pagingTimeOut);
+            d->shutdownMutex.unlock();
+            return;
+        }
 #endif
-    heap->collectAllGarbage();
+        heap->collectAllGarbage();
+    }
+    d->shutdownMutex.unlock();
 }
 
 DefaultGCActivityCallback::DefaultGCActivityCallback(Heap* heap)
@@ -96,11 +112,33 @@ void DefaultGCActivityCallback::commonConstructor(Heap* heap, CFRunLoopRef runLo
     d = adoptPtr(new DefaultGCActivityCallbackPlatformData);
 
     memset(&d->context, 0, sizeof(CFRunLoopTimerContext));
-    d->context.info = heap;
+    d->context.info = d.get();
+    d->thisObject = this;
+    d->globalData = heap->globalData();
     d->runLoop = runLoop;
     d->timer.adoptCF(CFRunLoopTimerCreate(0, decade, decade, 0, 0, DefaultGCActivityCallbackPlatformData::timerDidFire, &d->context));
     d->delay = decade;
     CFRunLoopAddTimer(d->runLoop.get(), d->timer.get(), kCFRunLoopCommonModes);
+}
+
+void DefaultGCActivityCallback::invalidate()
+{
+    d->globalData = 0;
+    // We set the next fire date in the distant past to cause the timer to immediately fire so that
+    // the timer on the remote thread realizes that the VM is shutting down.
+    CFRunLoopTimerSetNextFireDate(d->timer.get(), CFAbsoluteTimeGetCurrent() - decade);
+}
+
+void DefaultGCActivityCallback::didStartVMShutdown()
+{
+    if (CFRunLoopGetCurrent() == d->runLoop.get()) {
+        invalidate();
+        delete this;
+        return;
+    }
+    ASSERT(!d->globalData->apiLock().currentThreadIsHoldingLock());
+    MutexLocker locker(d->shutdownMutex);
+    invalidate();
 }
 
 static void scheduleTimer(DefaultGCActivityCallbackPlatformData* d, double newDelay)
@@ -124,7 +162,7 @@ void DefaultGCActivityCallback::didAllocate(size_t bytes)
     // We pretend it's one byte so that we don't ignore this allocation entirely.
     if (!bytes)
         bytes = 1;
-    Heap* heap = static_cast<Heap*>(d->context.info);
+    Heap* heap = &static_cast<DefaultGCActivityCallbackPlatformData*>(d->context.info)->globalData->heap;
     double gcTimeSlice = std::min((static_cast<double>(bytes) / MB) * gcTimeSlicePerMB, maxGCTimeSlice);
     double newDelay = heap->lastGCLength() / gcTimeSlice;
     scheduleTimer(d.get(), newDelay);

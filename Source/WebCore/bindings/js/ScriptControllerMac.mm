@@ -111,7 +111,7 @@ WebScriptObject* ScriptController::windowScriptObject()
         return 0;
 
     if (!m_windowScriptObject) {
-        JSC::JSLock lock(JSC::SilenceAssertionsOnly);
+        JSC::JSLockHolder lock(JSDOMWindowBase::commonJSGlobalData());
         JSC::Bindings::RootObject* root = bindingRootObject();
         m_windowScriptObject = [WebScriptObject scriptObjectForJSObject:toRef(windowShell(pluginWorld())) originRootObject:root rootObject:root];
     }

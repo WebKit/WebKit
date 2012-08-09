@@ -58,19 +58,19 @@ void ScriptCallArgumentHandler::appendArgument(const ScriptValue& argument)
 
 void ScriptCallArgumentHandler::appendArgument(const String& argument)
 {
-    JSLock lock(SilenceAssertionsOnly);
+    JSLockHolder lock(m_exec);
     m_arguments.append(jsString(m_exec, argument));
 }
 
 void ScriptCallArgumentHandler::appendArgument(const JSC::UString& argument)
 {
-    JSLock lock(SilenceAssertionsOnly);
+    JSLockHolder lock(m_exec);
     m_arguments.append(jsString(m_exec, argument));
 }
 
 void ScriptCallArgumentHandler::appendArgument(const char* argument)
 {
-    JSLock lock(SilenceAssertionsOnly);
+    JSLockHolder lock(m_exec);
     m_arguments.append(jsString(m_exec, UString(argument)));
 }
 
@@ -81,31 +81,31 @@ void ScriptCallArgumentHandler::appendArgument(JSC::JSValue argument)
 
 void ScriptCallArgumentHandler::appendArgument(long argument)
 {
-    JSLock lock(SilenceAssertionsOnly);
+    JSLockHolder lock(m_exec);
     m_arguments.append(jsNumber(argument));
 }
 
 void ScriptCallArgumentHandler::appendArgument(long long argument)
 {
-    JSLock lock(SilenceAssertionsOnly);
+    JSLockHolder lock(m_exec);
     m_arguments.append(jsNumber(argument));
 }
 
 void ScriptCallArgumentHandler::appendArgument(unsigned int argument)
 {
-    JSLock lock(SilenceAssertionsOnly);
+    JSLockHolder lock(m_exec);
     m_arguments.append(jsNumber(argument));
 }
 
 void ScriptCallArgumentHandler::appendArgument(unsigned long argument)
 {
-    JSLock lock(SilenceAssertionsOnly);
+    JSLockHolder lock(m_exec);
     m_arguments.append(jsNumber(argument));
 }
 
 void ScriptCallArgumentHandler::appendArgument(int argument)
 {
-    JSLock lock(SilenceAssertionsOnly);
+    JSLockHolder lock(m_exec);
     m_arguments.append(jsNumber(argument));
 }
 
@@ -125,7 +125,7 @@ ScriptValue ScriptFunctionCall::call(bool& hadException, bool reportExceptions)
 {
     JSObject* thisObject = m_thisObject.jsObject();
 
-    JSLock lock(SilenceAssertionsOnly);
+    JSLockHolder lock(m_exec);
 
     JSValue function = thisObject->get(m_exec, Identifier(m_exec, stringToUString(m_name)));
     if (m_exec->hadException()) {
@@ -163,7 +163,7 @@ ScriptObject ScriptFunctionCall::construct(bool& hadException, bool reportExcept
 {
     JSObject* thisObject = m_thisObject.jsObject();
 
-    JSLock lock(SilenceAssertionsOnly);
+    JSLockHolder lock(m_exec);
 
     JSObject* constructor = asObject(thisObject->get(m_exec, Identifier(m_exec, stringToUString(m_name))));
     if (m_exec->hadException()) {
@@ -205,7 +205,7 @@ ScriptValue ScriptCallback::call()
 
 ScriptValue ScriptCallback::call(bool& hadException)
 {
-    JSLock lock(SilenceAssertionsOnly);
+    JSLockHolder lock(m_exec);
 
     CallData callData;
     CallType callType = getCallData(m_function.jsValue(), callData);

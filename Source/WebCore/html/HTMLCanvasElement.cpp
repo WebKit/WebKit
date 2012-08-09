@@ -552,7 +552,7 @@ void HTMLCanvasElement::createImageBuffer() const
     m_contextStateSaver = adoptPtr(new GraphicsContextStateSaver(*m_imageBuffer->context()));
 
 #if USE(JSC)
-    JSC::JSLock lock(JSC::SilenceAssertionsOnly);
+    JSC::JSLockHolder lock(scriptExecutionContext()->globalData());
     size_t numBytes = 4 * m_imageBuffer->internalSize().width() * m_imageBuffer->internalSize().height();
     scriptExecutionContext()->globalData()->heap.reportExtraMemoryCost(numBytes);
 #endif

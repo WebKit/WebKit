@@ -294,7 +294,7 @@ EncodedJSValue JSC_HOST_CALL functionJSCStack(ExecState* exec)
 
 EncodedJSValue JSC_HOST_CALL functionGC(ExecState* exec)
 {
-    JSLock lock(SilenceAssertionsOnly);
+    JSLockHolder lock(exec);
     exec->heap()->collectAllGarbage();
     return JSValue::encode(jsUndefined());
 }
@@ -302,7 +302,7 @@ EncodedJSValue JSC_HOST_CALL functionGC(ExecState* exec)
 #ifndef NDEBUG
 EncodedJSValue JSC_HOST_CALL functionReleaseExecutableMemory(ExecState* exec)
 {
-    JSLock lock(SilenceAssertionsOnly);
+    JSLockHolder lock(exec);
     exec->globalData().releaseExecutableMemory();
     return JSValue::encode(jsUndefined());
 }
@@ -662,9 +662,9 @@ static void parseArguments(int argc, char** argv, CommandLine& options)
 
 int jscmain(int argc, char** argv)
 {
-    JSLock lock(SilenceAssertionsOnly);
-
+    
     RefPtr<JSGlobalData> globalData = JSGlobalData::create(ThreadStackTypeLarge, LargeHeap);
+    JSLockHolder lock(globalData.get());
 
     CommandLine options;
     parseArguments(argc, argv, options);

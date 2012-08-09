@@ -2707,7 +2707,7 @@ END
             push(@implContent, "    if (!canInvokeCallback())\n");
             push(@implContent, "        return true;\n\n");
             push(@implContent, "    RefPtr<$className> protect(this);\n\n");
-            push(@implContent, "    JSLock lock(SilenceAssertionsOnly);\n\n");
+            push(@implContent, "    JSLockHolder lock(m_data->globalObject()->globalData());\n\n");
             push(@implContent, "    ExecState* exec = m_data->globalObject()->globalExec();\n");
             push(@implContent, "    MarkedArgumentBuffer args;\n");
 

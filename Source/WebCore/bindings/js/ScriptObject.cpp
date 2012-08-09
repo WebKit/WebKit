@@ -61,7 +61,7 @@ static bool handleException(ScriptState* scriptState)
 
 bool ScriptGlobalObject::set(ScriptState* scriptState, const char* name, const ScriptObject& value)
 {
-    JSLock lock(SilenceAssertionsOnly);
+    JSLockHolder lock(scriptState);
     scriptState->lexicalGlobalObject()->putDirect(scriptState->globalData(), Identifier(scriptState, name), value.jsObject());
     return handleException(scriptState);
 }
@@ -69,7 +69,7 @@ bool ScriptGlobalObject::set(ScriptState* scriptState, const char* name, const S
 #if ENABLE(INSPECTOR)
 bool ScriptGlobalObject::set(ScriptState* scriptState, const char* name, InspectorFrontendHost* value)
 {
-    JSLock lock(SilenceAssertionsOnly);
+    JSLockHolder lock(scriptState);
     JSDOMGlobalObject* globalObject = jsCast<JSDOMGlobalObject*>(scriptState->lexicalGlobalObject());
     globalObject->putDirect(scriptState->globalData(), Identifier(scriptState, name), toJS(scriptState, globalObject, value));
     return handleException(scriptState);
@@ -77,7 +77,7 @@ bool ScriptGlobalObject::set(ScriptState* scriptState, const char* name, Inspect
 
 bool ScriptGlobalObject::set(ScriptState* scriptState, const char* name, InjectedScriptHost* value)
 {
-    JSLock lock(SilenceAssertionsOnly);
+    JSLockHolder lock(scriptState);
     JSDOMGlobalObject* globalObject = jsCast<JSDOMGlobalObject*>(scriptState->lexicalGlobalObject());
     globalObject->putDirect(scriptState->globalData(), Identifier(scriptState, name), toJS(scriptState, globalObject, value));
     return handleException(scriptState);
@@ -86,7 +86,7 @@ bool ScriptGlobalObject::set(ScriptState* scriptState, const char* name, Injecte
 
 bool ScriptGlobalObject::get(ScriptState* scriptState, const char* name, ScriptObject& value)
 {
-    JSLock lock(SilenceAssertionsOnly);
+    JSLockHolder lock(scriptState);
     JSValue jsValue = scriptState->lexicalGlobalObject()->get(scriptState, Identifier(scriptState, name));
     if (!jsValue)
         return false;
@@ -100,7 +100,7 @@ bool ScriptGlobalObject::get(ScriptState* scriptState, const char* name, ScriptO
 
 bool ScriptGlobalObject::remove(ScriptState* scriptState, const char* name)
 {
-    JSLock lock(SilenceAssertionsOnly);
+    JSLockHolder lock(scriptState);
     scriptState->lexicalGlobalObject()->methodTable()->deleteProperty(scriptState->lexicalGlobalObject(), scriptState, Identifier(scriptState, name));
     return handleException(scriptState);
 }

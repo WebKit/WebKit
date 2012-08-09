@@ -40,7 +40,7 @@ JSNodeFilterCondition::JSNodeFilterCondition(JSGlobalData&, NodeFilter* owner, J
 
 short JSNodeFilterCondition::acceptNode(JSC::ExecState* exec, Node* filterNode) const
 {
-    JSLock lock(SilenceAssertionsOnly);
+    JSLockHolder lock(exec);
 
     if (!m_filter)
         return NodeFilter::FILTER_ACCEPT;
