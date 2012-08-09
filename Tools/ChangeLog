@@ -1,3 +1,18 @@
+2012-08-08  Dirk Pranke  <dpranke@chromium.org>
+
+        update bot parsing of new-run-webkit-tests' output
+        https://bugs.webkit.org/show_bug.cgi?id=93537
+
+        Reviewed by Ryosuke Niwa.
+
+        This change updates the way we parse the output from
+        new-run-webkit-tests on the bots so that we can show a summary
+        of the results properly after I re-land the changes that were
+        reverted in r124994 and r124870.
+
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+        (RunWebKitTests._parseNewRunWebKitTestsOutput):
+
 2012-08-08  Shane Stephens  <shanestephens@google.com>
 
         Compile flag for CSS Hierarchies
