@@ -622,7 +622,7 @@ WONTFIX SKIP : platform/chromium/virtual/gpu/fast/canvas/canvas-gradient-addStop
 WONTFIX SKIP LINUX ANDROID WIN : fast/events/option-tab.html = PASS
 
 // This is a test to make WebKit behave like AppKit on Mac.
-WONTFIX SKIP WIN LINUX : platform/mac/editing/deleting/backward-delete.html = TEXT
+WONTFIX SKIP WIN LINUX ANDROID : platform/mac/editing/deleting/backward-delete.html = TEXT
 
 // Ignored because we do not have OBJC bindings
 WONTFIX SKIP : editing/pasteboard/paste-RTFD.html = PASS

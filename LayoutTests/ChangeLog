@@ -1,3 +1,12 @@
+2012-08-08  Xingnan Wang  <xingnan.wang@intel.com>
+
+        Skip platform/mac/editing/deleting/backward-delete.html on android
+        https://bugs.webkit.org/show_bug.cgi?id=90585
+
+        Reviewed by Adam Barth.
+
+        * platform/chromium/TestExpectations:
+
 2012-08-05  Kinuko Yasuda  <kinuko@chromium.org>
 
         Unprefix window.webkitURL
