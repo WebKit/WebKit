@@ -42,6 +42,11 @@ namespace WebCore {
 
 using namespace VectorMath;
 
+WaveTable* Oscillator::s_waveTableSine = 0;
+WaveTable* Oscillator::s_waveTableSquare = 0;
+WaveTable* Oscillator::s_waveTableSawtooth = 0;
+WaveTable* Oscillator::s_waveTableTriangle = 0;
+
 PassRefPtr<Oscillator> Oscillator::create(AudioContext* context, float sampleRate)
 {
     return adoptRef(new Oscillator(context, sampleRate));
@@ -78,30 +83,40 @@ Oscillator::~Oscillator()
 
 void Oscillator::setType(unsigned short type)
 {
-    RefPtr<WaveTable> waveTable;
+    WaveTable* waveTable = 0;
     float sampleRate = this->sampleRate();
 
     switch (type) {
     case SINE:
-        waveTable = WaveTable::createSine(sampleRate);
+        if (!s_waveTableSine)
+            s_waveTableSine = WaveTable::createSine(sampleRate).leakRef();
+        waveTable = s_waveTableSine;
         break;
     case SQUARE:
-        waveTable = WaveTable::createSquare(sampleRate);
+        if (!s_waveTableSquare)
+            s_waveTableSquare = WaveTable::createSquare(sampleRate).leakRef();
+        waveTable = s_waveTableSquare;
         break;
     case SAWTOOTH:
-        waveTable = WaveTable::createSawtooth(sampleRate);
+        if (!s_waveTableSawtooth)
+            s_waveTableSawtooth = WaveTable::createSawtooth(sampleRate).leakRef();
+        waveTable = s_waveTableSawtooth;
         break;
     case TRIANGLE:
-        waveTable = WaveTable::createTriangle(sampleRate);
+        if (!s_waveTableTriangle)
+            s_waveTableTriangle = WaveTable::createTriangle(sampleRate).leakRef();
+        waveTable = s_waveTableTriangle;
         break;
     case CUSTOM:
-        // FIXME: throw exception since setWaveTable() method must be called explicitly.
+    default:
+        // FIXME: throw exception for invalid types or if the type is CUSTOM since setWaveTable()
+        // method must be called explicitly in that case.
         return;
         break;
     }
 
+    setWaveTable(waveTable);
     m_type = type;
-    setWaveTable(waveTable.get());
 }
 
 bool Oscillator::calculateSampleAccuratePhaseIncrements(size_t framesToProcess)

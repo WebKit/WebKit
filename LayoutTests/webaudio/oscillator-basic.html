@@ -1,0 +1,72 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<!--
+Create an oscillator of each type and verify that the type is set correctly.
+-->
+<html>
+<head>
+<link rel="stylesheet" href="../fast/js/resources/js-test-style.css"/>
+<script type="text/javascript" src="resources/audio-testing.js"></script>
+<script type="text/javascript" src="../fast/js/resources/js-test-pre.js"></script>
+</head>
+
+<body>
+<div id="description"></div>
+<div id="console"></div>
+
+<script>
+description("Basic test of setting Oscillator node types.");
+
+var sampleRate = 44100;
+var renderLengthSeconds = 0.25;
+
+var oscTypes = [{type: 0, name: "SINE"},
+                {type: 1, name: "SQUARE"},
+                {type: 2, name: "SAWTOOTH"},
+                {type: 3, name: "TRIANGLE"},
+                {type: 4, name: "CUSTOM"}];
+
+function runTest() 
+{
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+    
+    window.jsTestIsAsync = true;
+        
+    // Create offline audio context.
+    var context = new webkitAudioContext(2, sampleRate * renderLengthSeconds, sampleRate);
+    var osc = context.createOscillator();
+
+    // Set each possible oscillator type (except CUSTOM) and verify that the type is correct.
+    for (var k = 0; k < oscTypes.length - 1; ++k) {
+        osc.type = oscTypes[k].type
+        if (osc.type == oscTypes[k].type)
+            testPassed("Oscillator correctly set to " + oscTypes[k].name + " type.");
+        else
+            testFailed("Oscillator set to " + oscTypes[k].name + " type, but returns " + oscTypes[osc.type].name + " type.");
+    }
+
+    // Now set a custom oscillator
+    var coeffA = new Float32Array([0, 1, 0.5]);
+    var coeffB = new Float32Array([0, 0, 0]);        
+    var wavetable = context.createWaveTable(coeffA, coeffB);
+    osc.setWaveTable(wavetable);
+    if (osc.type == osc.CUSTOM)
+        testPassed("Oscillator correctly set to CUSTOM type.");
+    else
+        testFailed("Oscillator set to CUSTOM type, but returns " + oscTypes[osc.type].name + " type.");
+
+    finishJSTest();
+}
+
+runTest();
+successfullyParsed = true;
+
+</script>
+
+<script src="../fast/js/resources/js-test-post.js"></script>
+
+</body>
+</html>

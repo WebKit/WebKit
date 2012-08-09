@@ -1,3 +1,25 @@
+2012-08-08  Raymond Toy  <rtoy@google.com>
+
+        Creating "basic waveform" Oscillator nodes is not efficient
+        https://bugs.webkit.org/show_bug.cgi?id=93194
+
+        Reviewed by Chris Rogers.
+
+        Cache the wavetables for the basic types so they don't have to be
+        recomputed every time.
+
+        Also fix a bug where oscillator type was always set to CUSTOM
+        instead of the specified oscillator type.  Test added for this.
+
+        Test: webaudio/oscillator-basic.html
+
+        * Modules/webaudio/Oscillator.cpp:
+        (WebCore):
+        (WebCore::Oscillator::setType): Use cached wavetables; fix bug in
+        setting the oscillator type.
+        * Modules/webaudio/Oscillator.h: 
+        (Oscillator): Define static variables to hold cached wavetables.
+
 2012-08-08  Tom Sepez  <tsepez@chromium.org>
 
         Avoid ASSERT(m_workerContext->isSharedWorkerContext()) in WorkerScriptController::initScript()
