@@ -143,7 +143,7 @@ static WebScrollbarLayer createScrollbarLayer(Scrollbar* scrollbar, WebScrollabl
 
     // All Chromium scrollbar themes derive from ScrollbarThemeComposite.
     ScrollbarThemeComposite* themeComposite = static_cast<ScrollbarThemeComposite*>(scrollbar->theme());
-    WebKit::WebScrollbarThemePainter painter(themeComposite);
+    WebKit::WebScrollbarThemePainter painter(themeComposite, scrollbar);
     OwnPtr<WebKit::WebScrollbarThemeGeometry> geometry(WebKit::WebScrollbarThemeGeometryNative::create(themeComposite));
 
     WebScrollbarLayer scrollbarLayer = WebScrollbarLayer::create(scrollbar, painter, geometry.release());

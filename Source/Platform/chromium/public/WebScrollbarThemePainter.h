@@ -30,6 +30,7 @@
 
 namespace WebCore {
 class ScrollbarThemeComposite;
+class Scrollbar;
 };
 
 namespace WebKit {
@@ -40,7 +41,7 @@ struct WebRect;
 class WebScrollbarThemePainter {
 public:
     WebScrollbarThemePainter() : m_theme(0) { }
-    WebScrollbarThemePainter(const WebScrollbarThemePainter& geometry) { assign(geometry); }
+    WebScrollbarThemePainter(const WebScrollbarThemePainter& painter) { assign(painter); }
     virtual ~WebScrollbarThemePainter() { }
     WebScrollbarThemePainter& operator=(const WebScrollbarThemePainter& painter)
     {
@@ -51,19 +52,19 @@ public:
     bool isNull() const { return m_theme; }
     WEBKIT_EXPORT void assign(const WebScrollbarThemePainter&);
 
-    WEBKIT_EXPORT void paintScrollbarBackground(WebCanvas*, WebScrollbar*, const WebRect&);
-    WEBKIT_EXPORT void paintTrackBackground(WebCanvas*, WebScrollbar*, const WebRect&);
-    WEBKIT_EXPORT void paintBackTrackPart(WebCanvas*, WebScrollbar*, const WebRect&);
-    WEBKIT_EXPORT void paintForwardTrackPart(WebCanvas*, WebScrollbar*, const WebRect&);
-    WEBKIT_EXPORT void paintBackButtonStart(WebCanvas*, WebScrollbar*, const WebRect&);
-    WEBKIT_EXPORT void paintBackButtonEnd(WebCanvas*, WebScrollbar*, const WebRect&);
-    WEBKIT_EXPORT void paintForwardButtonStart(WebCanvas*, WebScrollbar*, const WebRect&);
-    WEBKIT_EXPORT void paintForwardButtonEnd(WebCanvas*, WebScrollbar*, const WebRect&);
-    WEBKIT_EXPORT void paintTickmarks(WebCanvas*, WebScrollbar*, const WebRect&);
-    WEBKIT_EXPORT void paintThumb(WebCanvas*, WebScrollbar*, const WebRect&);
+    WEBKIT_EXPORT void paintScrollbarBackground(WebCanvas*, const WebRect&);
+    WEBKIT_EXPORT void paintTrackBackground(WebCanvas*, const WebRect&);
+    WEBKIT_EXPORT void paintBackTrackPart(WebCanvas*, const WebRect&);
+    WEBKIT_EXPORT void paintForwardTrackPart(WebCanvas*, const WebRect&);
+    WEBKIT_EXPORT void paintBackButtonStart(WebCanvas*, const WebRect&);
+    WEBKIT_EXPORT void paintBackButtonEnd(WebCanvas*, const WebRect&);
+    WEBKIT_EXPORT void paintForwardButtonStart(WebCanvas*, const WebRect&);
+    WEBKIT_EXPORT void paintForwardButtonEnd(WebCanvas*, const WebRect&);
+    WEBKIT_EXPORT void paintTickmarks(WebCanvas*, const WebRect&);
+    WEBKIT_EXPORT void paintThumb(WebCanvas*, const WebRect&);
 
 #if WEBKIT_IMPLEMENTATION
-    WebScrollbarThemePainter(WebCore::ScrollbarThemeComposite*);
+    WebScrollbarThemePainter(WebCore::ScrollbarThemeComposite*, WebCore::Scrollbar*);
 #endif
 
 private:
@@ -72,6 +73,12 @@ private:
     // called from the painter may not be thread-safe, so all calls must be made
     // from the same thread that it is created on.
     WebCore::ScrollbarThemeComposite* m_theme;
+
+    // It is assumed that the constructor of this paint object is responsible
+    // for the lifetime of this scrollbar. The painter has to use the real
+    // scrollbar (and not a WebScrollbar wrapper) due to static_casts for
+    // RenderScrollbar and pointer-based HashMap lookups for Lion scrollbars.
+    WebCore::Scrollbar* m_scrollbar;
 };
 
 } // namespace WebKit

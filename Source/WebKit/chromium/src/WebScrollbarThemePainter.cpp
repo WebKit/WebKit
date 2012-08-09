@@ -28,10 +28,9 @@
 #include <public/WebScrollbarThemePainter.h>
 
 #include "PlatformContextSkia.h"
+#include "Scrollbar.h"
 #include "ScrollbarThemeComposite.h"
-#include "WebScrollbarThemeClientImpl.h"
 #include <public/WebRect.h>
-#include <public/WebScrollbar.h>
 
 using namespace WebCore;
 
@@ -41,103 +40,95 @@ void WebScrollbarThemePainter::assign(const WebScrollbarThemePainter& painter)
 {
     // This is a pointer to a static object, so no ownership transferral.
     m_theme = painter.m_theme;
+    m_scrollbar = painter.m_scrollbar;
 }
 
-void WebScrollbarThemePainter::paintScrollbarBackground(WebCanvas* canvas, WebScrollbar* scrollbar, const WebRect& rect)
+void WebScrollbarThemePainter::paintScrollbarBackground(WebCanvas* canvas, const WebRect& rect)
 {
     SkRect clip = SkRect::MakeXYWH(rect.x, rect.y, rect.width, rect.height);
     canvas->clipRect(clip);
 
-    WebScrollbarThemeClientImpl client(scrollbar);
     PlatformContextSkia platformContext(canvas);
     platformContext.setDrawingToImageBuffer(true);
     GraphicsContext context(&platformContext);
-    m_theme->paintScrollbarBackground(&context, &client);
+    m_theme->paintScrollbarBackground(&context, m_scrollbar);
 }
 
-void WebScrollbarThemePainter::paintTrackBackground(WebCanvas* canvas, WebScrollbar* scrollbar, const WebRect& rect)
+void WebScrollbarThemePainter::paintTrackBackground(WebCanvas* canvas, const WebRect& rect)
 {
-    WebScrollbarThemeClientImpl client(scrollbar);
     PlatformContextSkia platformContext(canvas);
     platformContext.setDrawingToImageBuffer(true);
     GraphicsContext context(&platformContext);
-    m_theme->paintTrackBackground(&context, &client, IntRect(rect));
+    m_theme->paintTrackBackground(&context, m_scrollbar, IntRect(rect));
 }
 
-void WebScrollbarThemePainter::paintBackTrackPart(WebCanvas* canvas, WebScrollbar* scrollbar, const WebRect& rect)
+void WebScrollbarThemePainter::paintBackTrackPart(WebCanvas* canvas, const WebRect& rect)
 {
-    WebScrollbarThemeClientImpl client(scrollbar);
     PlatformContextSkia platformContext(canvas);
     platformContext.setDrawingToImageBuffer(true);
     GraphicsContext context(&platformContext);
-    m_theme->paintTrackPiece(&context, &client, IntRect(rect), WebCore::BackTrackPart);
+    m_theme->paintTrackPiece(&context, m_scrollbar, IntRect(rect), WebCore::BackTrackPart);
 }
 
-void WebScrollbarThemePainter::paintForwardTrackPart(WebCanvas* canvas, WebScrollbar* scrollbar, const WebRect& rect)
+void WebScrollbarThemePainter::paintForwardTrackPart(WebCanvas* canvas, const WebRect& rect)
 {
-    WebScrollbarThemeClientImpl client(scrollbar);
     PlatformContextSkia platformContext(canvas);
     platformContext.setDrawingToImageBuffer(true);
     GraphicsContext context(&platformContext);
-    m_theme->paintTrackPiece(&context, &client, IntRect(rect), WebCore::ForwardTrackPart);
+    m_theme->paintTrackPiece(&context, m_scrollbar, IntRect(rect), WebCore::ForwardTrackPart);
 }
 
-void WebScrollbarThemePainter::paintBackButtonStart(WebCanvas* canvas, WebScrollbar* scrollbar, const WebRect& rect)
+void WebScrollbarThemePainter::paintBackButtonStart(WebCanvas* canvas, const WebRect& rect)
 {
-    WebScrollbarThemeClientImpl client(scrollbar);
     PlatformContextSkia platformContext(canvas);
     platformContext.setDrawingToImageBuffer(true);
     GraphicsContext context(&platformContext);
-    m_theme->paintButton(&context, &client, IntRect(rect), WebCore::BackButtonStartPart);
+    m_theme->paintButton(&context, m_scrollbar, IntRect(rect), WebCore::BackButtonStartPart);
 }
 
-void WebScrollbarThemePainter::paintBackButtonEnd(WebCanvas* canvas, WebScrollbar* scrollbar, const WebRect& rect)
+void WebScrollbarThemePainter::paintBackButtonEnd(WebCanvas* canvas, const WebRect& rect)
 {
-    WebScrollbarThemeClientImpl client(scrollbar);
     PlatformContextSkia platformContext(canvas);
     platformContext.setDrawingToImageBuffer(true);
     GraphicsContext context(&platformContext);
-    m_theme->paintButton(&context, &client, IntRect(rect), WebCore::BackButtonEndPart);
+    m_theme->paintButton(&context, m_scrollbar, IntRect(rect), WebCore::BackButtonEndPart);
 }
 
-void WebScrollbarThemePainter::paintForwardButtonStart(WebCanvas* canvas, WebScrollbar* scrollbar, const WebRect& rect)
+void WebScrollbarThemePainter::paintForwardButtonStart(WebCanvas* canvas, const WebRect& rect)
 {
-    WebScrollbarThemeClientImpl client(scrollbar);
     PlatformContextSkia platformContext(canvas);
     platformContext.setDrawingToImageBuffer(true);
     GraphicsContext context(&platformContext);
-    m_theme->paintButton(&context, &client, IntRect(rect), WebCore::ForwardButtonStartPart);
+    m_theme->paintButton(&context, m_scrollbar, IntRect(rect), WebCore::ForwardButtonStartPart);
 }
 
-void WebScrollbarThemePainter::paintForwardButtonEnd(WebCanvas* canvas, WebScrollbar* scrollbar, const WebRect& rect)
+void WebScrollbarThemePainter::paintForwardButtonEnd(WebCanvas* canvas, const WebRect& rect)
 {
-    WebScrollbarThemeClientImpl client(scrollbar);
     PlatformContextSkia platformContext(canvas);
     platformContext.setDrawingToImageBuffer(true);
     GraphicsContext context(&platformContext);
-    m_theme->paintButton(&context, &client, IntRect(rect), WebCore::ForwardButtonEndPart);
+    m_theme->paintButton(&context, m_scrollbar, IntRect(rect), WebCore::ForwardButtonEndPart);
 }
 
-void WebScrollbarThemePainter::paintTickmarks(WebCanvas* canvas, WebScrollbar* scrollbar, const WebRect& rect)
+void WebScrollbarThemePainter::paintTickmarks(WebCanvas* canvas, const WebRect& rect)
 {
-    WebScrollbarThemeClientImpl client(scrollbar);
     PlatformContextSkia platformContext(canvas);
     platformContext.setDrawingToImageBuffer(true);
     GraphicsContext context(&platformContext);
-    m_theme->paintTickmarks(&context, &client, IntRect(rect));
+    m_theme->paintTickmarks(&context, m_scrollbar, IntRect(rect));
 }
 
-void WebScrollbarThemePainter::paintThumb(WebCanvas* canvas, WebScrollbar* scrollbar, const WebRect& rect)
+void WebScrollbarThemePainter::paintThumb(WebCanvas* canvas, const WebRect& rect)
 {
-    WebScrollbarThemeClientImpl client(scrollbar);
     PlatformContextSkia platformContext(canvas);
     platformContext.setDrawingToImageBuffer(true);
     GraphicsContext context(&platformContext);
-    m_theme->paintThumb(&context, &client, IntRect(rect));
+    m_theme->paintThumb(&context, m_scrollbar, IntRect(rect));
 }
 
-WebScrollbarThemePainter::WebScrollbarThemePainter(WebCore::ScrollbarThemeComposite* theme)
+WebScrollbarThemePainter::WebScrollbarThemePainter(WebCore::ScrollbarThemeComposite* theme, WebCore::Scrollbar* scrollbar)
     : m_theme(theme)
+    , m_scrollbar(scrollbar)
 {
 }
 

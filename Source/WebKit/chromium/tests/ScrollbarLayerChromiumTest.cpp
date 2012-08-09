@@ -99,7 +99,7 @@ TEST(ScrollbarLayerChromiumTest, resolveScrollLayerPointer)
     DebugScopedSetImplThread impl;
 
     RefPtr<MockScrollbar> mockScrollbar = adoptRef(new MockScrollbar);
-    WebKit::WebScrollbarThemePainter painter(0);
+    WebKit::WebScrollbarThemePainter painter(0, mockScrollbar.get());
 
     Settings::setMockScrollbarsEnabled(true);
     {
@@ -142,7 +142,7 @@ TEST(ScrollbarLayerChromiumTest, scrollOffsetSynchronization)
     DebugScopedSetImplThread impl;
 
     RefPtr<MockScrollbar> mockScrollbar = adoptRef(new MockScrollbar);
-    WebKit::WebScrollbarThemePainter painter(0);
+    WebKit::WebScrollbarThemePainter painter(0, mockScrollbar.get());
 
     Settings::setMockScrollbarsEnabled(true);
 

@@ -1,3 +1,30 @@
+2012-08-08  Adrienne Walker  <enne@google.com>
+
+        [chromium] Move scrollbar pointer into WebScrollbarThemePainter
+        https://bugs.webkit.org/show_bug.cgi?id=93541
+
+        Reviewed by James Robinson.
+
+        Fix WebScrollbarThemePainter implementation to make direct calls on
+        the scrollbar rather than through the WebScrollbarThemeClientImpl
+        adapter.
+
+        * src/WebScrollbarThemePainter.cpp:
+        (WebKit::WebScrollbarThemePainter::assign):
+        (WebKit::WebScrollbarThemePainter::paintScrollbarBackground):
+        (WebKit::WebScrollbarThemePainter::paintTrackBackground):
+        (WebKit::WebScrollbarThemePainter::paintBackTrackPart):
+        (WebKit::WebScrollbarThemePainter::paintForwardTrackPart):
+        (WebKit::WebScrollbarThemePainter::paintBackButtonStart):
+        (WebKit::WebScrollbarThemePainter::paintBackButtonEnd):
+        (WebKit::WebScrollbarThemePainter::paintForwardButtonStart):
+        (WebKit::WebScrollbarThemePainter::paintForwardButtonEnd):
+        (WebKit::WebScrollbarThemePainter::paintTickmarks):
+        (WebKit::WebScrollbarThemePainter::paintThumb):
+        (WebKit::WebScrollbarThemePainter::WebScrollbarThemePainter):
+        * tests/ScrollbarLayerChromiumTest.cpp:
+        (WebCore::TEST):
+
 2012-08-08  Alexei Svitkine  <asvitkine@chromium.org>
 
         [chromium/mac] Map NSEventPhaseMayBegin appropriately on 10.8

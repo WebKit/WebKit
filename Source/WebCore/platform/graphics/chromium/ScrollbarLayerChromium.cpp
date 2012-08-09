@@ -98,34 +98,34 @@ public:
         WebKit::WebCanvas* canvas = skCanvas;
         // The following is a simplification of ScrollbarThemeComposite::paint.
         WebKit::WebRect contentWebRect(contentRect.x(), contentRect.y(), contentRect.width(), contentRect.height());
-        m_painter.paintScrollbarBackground(canvas, m_scrollbar, contentWebRect);
+        m_painter.paintScrollbarBackground(canvas, contentWebRect);
 
         if (m_geometry->hasButtons(m_scrollbar)) {
             WebRect backButtonStartPaintRect = m_geometry->backButtonStartRect(m_scrollbar);
-            m_painter.paintBackButtonStart(canvas, m_scrollbar, backButtonStartPaintRect);
+            m_painter.paintBackButtonStart(canvas, backButtonStartPaintRect);
 
             WebRect backButtonEndPaintRect = m_geometry->backButtonEndRect(m_scrollbar);
-            m_painter.paintBackButtonEnd(canvas, m_scrollbar, backButtonEndPaintRect);
+            m_painter.paintBackButtonEnd(canvas, backButtonEndPaintRect);
 
             WebRect forwardButtonStartPaintRect = m_geometry->forwardButtonStartRect(m_scrollbar);
-            m_painter.paintForwardButtonStart(canvas, m_scrollbar, forwardButtonStartPaintRect);
+            m_painter.paintForwardButtonStart(canvas, forwardButtonStartPaintRect);
 
             WebRect forwardButtonEndPaintRect = m_geometry->forwardButtonEndRect(m_scrollbar);
-            m_painter.paintForwardButtonEnd(canvas, m_scrollbar, forwardButtonEndPaintRect);
+            m_painter.paintForwardButtonEnd(canvas, forwardButtonEndPaintRect);
         }
 
         WebRect trackPaintRect = m_geometry->trackRect(m_scrollbar);
-        m_painter.paintTrackBackground(canvas, m_scrollbar, trackPaintRect);
+        m_painter.paintTrackBackground(canvas, trackPaintRect);
 
         bool thumbPresent = m_geometry->hasThumb(m_scrollbar);
         if (thumbPresent) {
             if (m_trackPart == WebKit::WebScrollbar::ForwardTrackPart)
-                m_painter.paintForwardTrackPart(canvas, m_scrollbar, trackPaintRect);
+                m_painter.paintForwardTrackPart(canvas, trackPaintRect);
             else
-                m_painter.paintBackTrackPart(canvas, m_scrollbar, trackPaintRect);
+                m_painter.paintBackTrackPart(canvas, trackPaintRect);
         }
 
-        m_painter.paintTickmarks(canvas, m_scrollbar, trackPaintRect);
+        m_painter.paintTickmarks(canvas, trackPaintRect);
     }
 private:
     ScrollbarBackgroundPainter(WebKit::WebScrollbar* scrollbar, WebKit::WebScrollbarThemePainter painter, WebKit::WebScrollbarThemeGeometry* geometry, WebKit::WebScrollbar::ScrollbarPart trackPart)
@@ -158,7 +158,7 @@ public:
         WebRect thumbRect = m_geometry->thumbRect(m_scrollbar);
         thumbRect.x = 0;
         thumbRect.y = 0;
-        m_painter.paintThumb(canvas, m_scrollbar, thumbRect);
+        m_painter.paintThumb(canvas, thumbRect);
     }
 
 private:
