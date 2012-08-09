@@ -30,7 +30,6 @@
 #include "CCLayerTestCommon.h"
 #include "CCLayerTreeTestCommon.h"
 #include "CCTestCommon.h"
-#include "FakeWebCompositorOutputSurface.h"
 #include "FakeWebGraphicsContext3D.h"
 #include "FakeWebScrollbarThemeGeometry.h"
 #include "LayerRendererChromium.h"
@@ -82,7 +81,6 @@ public:
 
     virtual void didLoseContextOnImplThread() OVERRIDE { }
     virtual void onSwapBuffersCompleteOnImplThread() OVERRIDE { }
-    virtual void onVSyncParametersChanged(double, double) OVERRIDE { }
     virtual void setNeedsRedrawOnImplThread() OVERRIDE { m_didRequestRedraw = true; }
     virtual void setNeedsCommitOnImplThread() OVERRIDE { m_didRequestCommit = true; }
     virtual void postAnimationEventsToMainThreadOnImplThread(PassOwnPtr<CCAnimationEventsVector>, double wallClockTime) OVERRIDE { }
@@ -178,7 +176,7 @@ public:
 protected:
     PassOwnPtr<CCGraphicsContext> createContext()
     {
-        return FakeWebCompositorOutputSurface::create(adoptPtr(new FakeWebGraphicsContext3D));
+        return CCGraphicsContext::create3D(adoptPtr(new FakeWebGraphicsContext3D));
     }
 
     DebugScopedSetImplThread m_alwaysImplThread;
@@ -1580,7 +1578,7 @@ public:
 // viewport size is never set.
 TEST_F(CCLayerTreeHostImplTest, reshapeNotCalledUntilDraw)
 {
-    OwnPtr<CCGraphicsContext> ccContext = FakeWebCompositorOutputSurface::create(adoptPtr(new ReshapeTrackerContext));
+    OwnPtr<CCGraphicsContext> ccContext = CCGraphicsContext::create3D(adoptPtr(new ReshapeTrackerContext));
     ReshapeTrackerContext* reshapeTracker = static_cast<ReshapeTrackerContext*>(ccContext->context3D());
     m_hostImpl->initializeLayerRenderer(ccContext.release(), UnthrottledUploader);
 
@@ -1623,7 +1621,7 @@ private:
 // where it should request to swap only the subBuffer that is damaged.
 TEST_F(CCLayerTreeHostImplTest, partialSwapReceivesDamageRect)
 {
-    OwnPtr<CCGraphicsContext> ccContext = FakeWebCompositorOutputSurface::create(adoptPtr(new PartialSwapTrackerContext));
+    OwnPtr<CCGraphicsContext> ccContext = CCGraphicsContext::create3D(adoptPtr(new PartialSwapTrackerContext));
     PartialSwapTrackerContext* partialSwapTracker = static_cast<PartialSwapTrackerContext*>(ccContext->context3D());
 
     // This test creates its own CCLayerTreeHostImpl, so
@@ -1835,7 +1833,7 @@ public:
 
 TEST_F(CCLayerTreeHostImplTest, noPartialSwap)
 {
-    OwnPtr<CCGraphicsContext> context = FakeWebCompositorOutputSurface::create(adoptPtr(new MockContext));
+    OwnPtr<CCGraphicsContext> context = CCGraphicsContext::create3D(adoptPtr(new MockContext));
     MockContext* mockContext = static_cast<MockContext*>(context->context3D());
     MockContextHarness harness(mockContext);
 
@@ -1854,7 +1852,7 @@ TEST_F(CCLayerTreeHostImplTest, noPartialSwap)
 
 TEST_F(CCLayerTreeHostImplTest, partialSwap)
 {
-    OwnPtr<CCGraphicsContext> context = FakeWebCompositorOutputSurface::create(adoptPtr(new MockContext));
+    OwnPtr<CCGraphicsContext> context = CCGraphicsContext::create3D(adoptPtr(new MockContext));
     MockContext* mockContext = static_cast<MockContext*>(context->context3D());
     MockContextHarness harness(mockContext);
 
@@ -1912,7 +1910,7 @@ static PassOwnPtr<CCLayerTreeHostImpl> setupLayersForOpacity(bool partialSwap, C
 {
     CCSettings::setPartialSwapEnabled(partialSwap);
 
-    OwnPtr<CCGraphicsContext> context = FakeWebCompositorOutputSurface::create(adoptPtr(new PartialSwapContext));
+    OwnPtr<CCGraphicsContext> context = CCGraphicsContext::create3D(adoptPtr(new PartialSwapContext));
 
     CCLayerTreeSettings settings;
     OwnPtr<CCLayerTreeHostImpl> myHostImpl = CCLayerTreeHostImpl::create(settings, client);
@@ -2070,7 +2068,7 @@ public:
 TEST_F(CCLayerTreeHostImplTest, finishAllRenderingAfterContextLost)
 {
     // The context initialization will fail, but we should still be able to call finishAllRendering() without any ill effects.
-    m_hostImpl->initializeLayerRenderer(FakeWebCompositorOutputSurface::create(adoptPtr(new FakeWebGraphicsContext3DMakeCurrentFails)), UnthrottledUploader);
+    m_hostImpl->initializeLayerRenderer(CCGraphicsContext::create3D(adoptPtr(new FakeWebGraphicsContext3DMakeCurrentFails)), UnthrottledUploader);
     m_hostImpl->finishAllRendering();
 }
 
@@ -2352,7 +2350,7 @@ TEST_F(CCLayerTreeHostImplTest, dontUseOldResourcesAfterLostContext)
     rootLayer->addChild(scrollbarLayer.release());
 
     // Use a context that supports IOSurfaces
-    m_hostImpl->initializeLayerRenderer(FakeWebCompositorOutputSurface::create(adoptPtr(new FakeWebGraphicsContext3DWithIOSurface)), UnthrottledUploader);
+    m_hostImpl->initializeLayerRenderer(CCGraphicsContext::create3D(adoptPtr(new FakeWebGraphicsContext3DWithIOSurface)), UnthrottledUploader);
 
     hwVideoFrame.setTextureId(m_hostImpl->resourceProvider()->graphicsContext3D()->createTexture());
 
@@ -2368,7 +2366,7 @@ TEST_F(CCLayerTreeHostImplTest, dontUseOldResourcesAfterLostContext)
 
     // Lose the context, replacing it with a StrictWebGraphicsContext3DWithIOSurface,
     // that will warn if any resource from the previous context gets used.
-    m_hostImpl->initializeLayerRenderer(FakeWebCompositorOutputSurface::create(adoptPtr(new StrictWebGraphicsContext3DWithIOSurface)), UnthrottledUploader);
+    m_hostImpl->initializeLayerRenderer(CCGraphicsContext::create3D(adoptPtr(new StrictWebGraphicsContext3DWithIOSurface)), UnthrottledUploader);
 
     // Create dummy resources so that looking up an old resource will get an
     // invalid texture id mapping.
@@ -2479,7 +2477,7 @@ TEST_F(CCLayerTreeHostImplTest, layersFreeTextures)
     rootLayer->addChild(ioSurfaceLayer.release());
 
     // Lose the context, replacing it with a TrackingWebGraphicsContext3D (which the CCLayerTreeHostImpl takes ownership of).
-    OwnPtr<CCGraphicsContext> ccContext(FakeWebCompositorOutputSurface::create(adoptPtr(new TrackingWebGraphicsContext3D)));
+    OwnPtr<CCGraphicsContext> ccContext(CCGraphicsContext::create3D(adoptPtr(new TrackingWebGraphicsContext3D)));
     TrackingWebGraphicsContext3D* trackingWebGraphicsContext = static_cast<TrackingWebGraphicsContext3D*>(ccContext->context3D());
     m_hostImpl->initializeLayerRenderer(ccContext.release(), UnthrottledUploader);
 
@@ -2507,7 +2505,7 @@ public:
 
 TEST_F(CCLayerTreeHostImplTest, hasTransparentBackground)
 {
-    OwnPtr<CCGraphicsContext> context = FakeWebCompositorOutputSurface::create(adoptPtr(new MockDrawQuadsToFillScreenContext));
+    OwnPtr<CCGraphicsContext> context = CCGraphicsContext::create3D(adoptPtr(new MockDrawQuadsToFillScreenContext));
     MockDrawQuadsToFillScreenContext* mockContext = static_cast<MockDrawQuadsToFillScreenContext*>(context->context3D());
 
     // Run test case
@@ -2551,7 +2549,7 @@ static void addDrawingLayerTo(CCLayerImpl* parent, int id, const IntRect& layerR
 
 static void setupLayersForTextureCaching(CCLayerTreeHostImpl* layerTreeHostImpl, CCLayerImpl*& rootPtr, CCLayerImpl*& intermediateLayerPtr, CCLayerImpl*& surfaceLayerPtr, CCLayerImpl*& childPtr, const IntSize& rootSize)
 {
-    OwnPtr<CCGraphicsContext> context = FakeWebCompositorOutputSurface::create(adoptPtr(new PartialSwapContext));
+    OwnPtr<CCGraphicsContext> context = CCGraphicsContext::create3D(adoptPtr(new PartialSwapContext));
 
     layerTreeHostImpl->initializeLayerRenderer(context.release(), UnthrottledUploader);
     layerTreeHostImpl->setViewportSize(rootSize, rootSize);
@@ -2595,7 +2593,7 @@ TEST_F(CCLayerTreeHostImplTest, textureCachingWithClipping)
     CCLayerImpl* rootPtr;
     CCLayerImpl* surfaceLayerPtr;
 
-    OwnPtr<CCGraphicsContext> context = FakeWebCompositorOutputSurface::create(adoptPtr(new PartialSwapContext));
+    OwnPtr<CCGraphicsContext> context = CCGraphicsContext::create3D(adoptPtr(new PartialSwapContext));
 
     IntSize rootSize(100, 100);
 
@@ -2707,7 +2705,7 @@ TEST_F(CCLayerTreeHostImplTest, textureCachingWithOcclusion)
     CCLayerImpl* layerS1Ptr;
     CCLayerImpl* layerS2Ptr;
 
-    OwnPtr<CCGraphicsContext> context = FakeWebCompositorOutputSurface::create(adoptPtr(new PartialSwapContext));
+    OwnPtr<CCGraphicsContext> context = CCGraphicsContext::create3D(adoptPtr(new PartialSwapContext));
 
     IntSize rootSize(1000, 1000);
 
@@ -2820,7 +2818,7 @@ TEST_F(CCLayerTreeHostImplTest, textureCachingWithOcclusionEarlyOut)
     CCLayerImpl* layerS1Ptr;
     CCLayerImpl* layerS2Ptr;
 
-    OwnPtr<CCGraphicsContext> context = FakeWebCompositorOutputSurface::create(adoptPtr(new PartialSwapContext));
+    OwnPtr<CCGraphicsContext> context = CCGraphicsContext::create3D(adoptPtr(new PartialSwapContext));
 
     IntSize rootSize(1000, 1000);
 
@@ -2934,7 +2932,7 @@ TEST_F(CCLayerTreeHostImplTest, textureCachingWithOcclusionExternalOverInternal)
     CCLayerImpl* layerS1Ptr;
     CCLayerImpl* layerS2Ptr;
 
-    OwnPtr<CCGraphicsContext> context = FakeWebCompositorOutputSurface::create(adoptPtr(new PartialSwapContext));
+    OwnPtr<CCGraphicsContext> context = CCGraphicsContext::create3D(adoptPtr(new PartialSwapContext));
 
     IntSize rootSize(1000, 1000);
 
@@ -3017,7 +3015,7 @@ TEST_F(CCLayerTreeHostImplTest, textureCachingWithOcclusionExternalNotAligned)
     CCLayerImpl* rootPtr;
     CCLayerImpl* layerS1Ptr;
 
-    OwnPtr<CCGraphicsContext> context = FakeWebCompositorOutputSurface::create(adoptPtr(new PartialSwapContext));
+    OwnPtr<CCGraphicsContext> context = CCGraphicsContext::create3D(adoptPtr(new PartialSwapContext));
 
     IntSize rootSize(1000, 1000);
 
@@ -3102,7 +3100,7 @@ TEST_F(CCLayerTreeHostImplTest, textureCachingWithOcclusionPartialSwap)
     CCLayerImpl* layerS1Ptr;
     CCLayerImpl* layerS2Ptr;
 
-    OwnPtr<CCGraphicsContext> context = FakeWebCompositorOutputSurface::create(adoptPtr(new PartialSwapContext));
+    OwnPtr<CCGraphicsContext> context = CCGraphicsContext::create3D(adoptPtr(new PartialSwapContext));
 
     IntSize rootSize(1000, 1000);
 
@@ -3223,7 +3221,7 @@ TEST_F(CCLayerTreeHostImplTest, textureCachingWithScissor)
     IntRect childRect(10, 10, 50, 50);
     IntRect grandChildRect(5, 5, 150, 150);
 
-    OwnPtr<CCGraphicsContext> context = FakeWebCompositorOutputSurface::create(adoptPtr(new PartialSwapContext));
+    OwnPtr<CCGraphicsContext> context = CCGraphicsContext::create3D(adoptPtr(new PartialSwapContext));
     myHostImpl->initializeLayerRenderer(context.release(), UnthrottledUploader);
 
     root->setAnchorPoint(FloatPoint(0, 0));

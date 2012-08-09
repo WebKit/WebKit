@@ -58,8 +58,6 @@ public:
     virtual void applyScrollAndScale(const WebSize& scrollDelta, float scaleFactor) { }
     virtual WebGraphicsContext3D* createContext3D() { return CompositorFakeWebGraphicsContext3D::create(WebGraphicsContext3D::Attributes()).leakPtr(); }
     virtual void didRebindGraphicsContext(bool success) { }
-    virtual WebCompositorOutputSurface* createOutputSurface() { return 0; }
-    virtual void didRebindOutputSurface(bool success) { }
     virtual void willCommit() { }
     virtual void didCommitAndDrawFrame() { }
     virtual void didCompleteSwapBuffers() { }

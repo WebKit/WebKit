@@ -30,7 +30,6 @@
 #include "CCOcclusionTrackerTestCommon.h"
 #include "CCTiledLayerTestCommon.h"
 #include "ContentLayerChromium.h"
-#include "FakeWebCompositorOutputSurface.h"
 #include "FakeWebGraphicsContext3D.h"
 #include "LayerChromium.h"
 #include "cc/CCActiveAnimation.h"
@@ -99,9 +98,9 @@ CompositorFakeWebGraphicsContext3DWithTextureTracking::CompositorFakeWebGraphics
 {
 }
 
-PassOwnPtr<WebCompositorOutputSurface> TestHooks::createOutputSurface()
+PassOwnPtr<WebGraphicsContext3D> TestHooks::createContext()
 {
-    return FakeWebCompositorOutputSurface::create(CompositorFakeWebGraphicsContext3DWithTextureTracking::create(WebGraphicsContext3D::Attributes()));
+    return CompositorFakeWebGraphicsContext3DWithTextureTracking::create(WebGraphicsContext3D::Attributes());
 }
 
 PassOwnPtr<MockLayerTreeHostImpl> MockLayerTreeHostImpl::create(TestHooks* testHooks, const CCLayerTreeSettings& settings, CCLayerTreeHostImplClient* client)
@@ -223,9 +222,9 @@ public:
         m_testHooks->applyScrollAndScale(scrollDelta, scale);
     }
 
-    virtual PassOwnPtr<WebCompositorOutputSurface> createOutputSurface() OVERRIDE
+    virtual PassOwnPtr<WebGraphicsContext3D> createContext3D() OVERRIDE
     {
-        return m_testHooks->createOutputSurface();
+        return m_testHooks->createContext();
     }
 
     virtual void willCommit() OVERRIDE
@@ -246,9 +245,9 @@ public:
     {
     }
 
-    virtual void didRecreateOutputSurface(bool succeeded) OVERRIDE
+    virtual void didRecreateContext(bool succeeded) OVERRIDE
     {
-        m_testHooks->didRecreateOutputSurface(succeeded);
+        m_testHooks->didRecreateContext(succeeded);
     }
 
     virtual void scheduleComposite() OVERRIDE

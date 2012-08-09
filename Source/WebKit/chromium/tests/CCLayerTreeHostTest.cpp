@@ -1948,7 +1948,7 @@ public:
 
 SINGLE_AND_MULTI_THREAD_TEST_F(CCLayerTreeHostTestManySurfaces)
 
-// A loseContext(1) should lead to a didRecreateOutputSurface(true)
+// A loseContext(1) should lead to a didRecreateContext(true)
 class CCLayerTreeHostTestSetSingleLostContext : public CCLayerTreeHostTest {
 public:
     CCLayerTreeHostTestSetSingleLostContext()
@@ -1965,7 +1965,7 @@ public:
         m_layerTreeHost->loseContext(1);
     }
 
-    virtual void didRecreateOutputSurface(bool succeeded)
+    virtual void didRecreateContext(bool succeeded)
     {
         EXPECT_TRUE(succeeded);
         endTest();
@@ -1981,7 +1981,7 @@ TEST_F(CCLayerTreeHostTestSetSingleLostContext, runMultiThread)
     runTest(true);
 }
 
-// A loseContext(10) should lead to a didRecreateOutputSurface(false), and
+// A loseContext(10) should lead to a didRecreateContext(false), and
 // a finishAllRendering() should not hang.
 class CCLayerTreeHostTestSetRepeatedLostContext : public CCLayerTreeHostTest {
 public:
@@ -1999,7 +1999,7 @@ public:
         m_layerTreeHost->loseContext(10);
     }
 
-    virtual void didRecreateOutputSurface(bool succeeded)
+    virtual void didRecreateContext(bool succeeded)
     {
         EXPECT_FALSE(succeeded);
         m_layerTreeHost->finishAllRendering();

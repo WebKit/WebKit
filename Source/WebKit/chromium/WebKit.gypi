@@ -104,7 +104,6 @@
             'tests/EventListenerTest.cpp',
             'tests/FakeCCLayerTreeHostClient.h',
             'tests/FakeGraphicsContext3DTest.cpp',
-            'tests/FakeWebCompositorOutputSurface.h',
             'tests/FakeWebGraphicsContext3D.h',
             'tests/FakeWebScrollbarThemeGeometry.h',
             'tests/FilterOperationsTest.cpp',

@@ -58,7 +58,7 @@ public:
     virtual void applyScrollAndScale(const WebCore::IntSize&, float) { }
     virtual void updateAnimations(double monotonicTime) { }
     virtual void layout() { }
-    virtual void didRecreateOutputSurface(bool succeeded) { }
+    virtual void didRecreateContext(bool succeeded) { }
     virtual void didAddAnimation() { }
     virtual void didCommit() { }
     virtual void didCommitAndDrawFrame() { }
@@ -68,7 +68,7 @@ public:
     virtual void notifyAnimationStarted(double time) OVERRIDE { }
     virtual void notifyAnimationFinished(double time) OVERRIDE { }
 
-    virtual PassOwnPtr<WebKit::WebCompositorOutputSurface> createOutputSurface();
+    virtual PassOwnPtr<WebKit::WebGraphicsContext3D> createContext();
 };
 
 class TimeoutTask;

@@ -29,7 +29,6 @@
 
 #include "GraphicsContext3D.h"
 #include "IntSize.h"
-#include "cc/CCGraphicsContext.h"
 #include <wtf/HashMap.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
@@ -42,6 +41,7 @@ class WebGraphicsContext3D;
 
 namespace WebCore {
 
+class CCGraphicsContext;
 class CCScopedLockResourceForRead;
 class CCScopedLockResourceForWrite;
 class IntRect;

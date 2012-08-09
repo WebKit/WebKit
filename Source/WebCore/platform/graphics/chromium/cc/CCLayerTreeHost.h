@@ -25,6 +25,8 @@
 #ifndef CCLayerTreeHost_h
 #define CCLayerTreeHost_h
 
+#include "GraphicsContext3D.h"
+#include "GraphicsTypes3D.h"
 #include "IntRect.h"
 #include "RateLimiter.h"
 #include "SkColor.h"
@@ -46,6 +48,7 @@
 namespace WebCore {
 
 class CCFontAtlas;
+class CCGraphicsContext;
 class CCLayerChromium;
 class CCLayerTreeHostImpl;
 class CCLayerTreeHostImplClient;
@@ -63,8 +66,8 @@ public:
     virtual void updateAnimations(double frameBeginTime) = 0;
     virtual void layout() = 0;
     virtual void applyScrollAndScale(const IntSize& scrollDelta, float pageScale) = 0;
-    virtual PassOwnPtr<WebKit::WebCompositorOutputSurface> createOutputSurface() = 0;
-    virtual void didRecreateOutputSurface(bool success) = 0;
+    virtual PassOwnPtr<WebKit::WebGraphicsContext3D> createContext3D() = 0;
+    virtual void didRecreateContext(bool success) = 0;
     virtual void willCommit() = 0;
     virtual void didCommit() = 0;
     virtual void didCommitAndDrawFrame() = 0;
@@ -80,6 +83,7 @@ protected:
 struct CCLayerTreeSettings {
     CCLayerTreeSettings()
             : acceleratePainting(false)
+            , forceSoftwareCompositing(false)
             , showFPSCounter(false)
             , showPlatformLayerTree(false)
             , showPaintRects(false)
@@ -97,6 +101,7 @@ struct CCLayerTreeSettings {
     { }
 
     bool acceleratePainting;
+    bool forceSoftwareCompositing;
     bool showFPSCounter;
     bool showPlatformLayerTree;
     bool showPaintRects;

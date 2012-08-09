@@ -46,6 +46,7 @@ namespace WebKit {
 WebLayerTreeView::Settings::operator CCLayerTreeSettings() const
 {
     CCLayerTreeSettings settings;
+    settings.forceSoftwareCompositing = forceSoftwareCompositing;
     settings.showFPSCounter = showFPSCounter;
     settings.showPlatformLayerTree = showPlatformLayerTree;
     settings.showPaintRects = showPaintRects;

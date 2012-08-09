@@ -26,7 +26,6 @@
 #define CCProxy_h
 
 #include "IntRect.h"
-#include <public/WebCompositorOutputSurface.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/PassRefPtr.h>
@@ -35,6 +34,7 @@
 namespace WebCore {
 
 class CCThread;
+class CCGraphicsContext;
 struct CCRenderingStats;
 struct LayerRendererCapabilities;
 

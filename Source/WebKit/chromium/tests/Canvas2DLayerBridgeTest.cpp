@@ -26,7 +26,6 @@
 
 #include "Canvas2DLayerBridge.h"
 
-#include "FakeWebCompositorOutputSurface.h"
 #include "FakeWebGraphicsContext3D.h"
 #include "GraphicsContext3DPrivate.h"
 #include "ImageBuffer.h"
@@ -76,7 +75,7 @@ protected:
     void fullLifecycleTest(ThreadMode threadMode, DeferralMode deferralMode)
     {
         RefPtr<GraphicsContext3D> mainContext = GraphicsContext3DPrivate::createGraphicsContextFromWebContext(adoptPtr(new MockCanvasContext));
-        OwnPtr<CCGraphicsContext> ccImplContext = FakeWebCompositorOutputSurface::create(adoptPtr(new MockCanvasContext));
+        OwnPtr<CCGraphicsContext> ccImplContext = CCGraphicsContext::create3D(adoptPtr(new MockCanvasContext));
 
         MockCanvasContext& mainMock = *static_cast<MockCanvasContext*>(GraphicsContext3DPrivate::extractWebGraphicsContext3D(mainContext.get()));
         MockCanvasContext& implMock = *static_cast<MockCanvasContext*>(ccImplContext->context3D());

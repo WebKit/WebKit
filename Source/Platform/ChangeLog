@@ -1,3 +1,21 @@
+2012-08-09  Nat Duca  <nduca@chromium.org>
+
+        Unreviewed, rolling out r125212.
+        http://trac.webkit.org/changeset/125212
+        https://bugs.webkit.org/show_bug.cgi?id=92890
+
+        Compile failure on mac dbg builder
+
+        * Platform.gypi:
+        * chromium/public/WebCompositorOutputSurface.h: Removed.
+        * chromium/public/WebCompositorOutputSurfaceClient.h: Removed.
+        * chromium/public/WebLayerTreeView.h:
+        (WebKit::WebLayerTreeView::Settings::Settings):
+        (Settings):
+        * chromium/public/WebLayerTreeViewClient.h:
+        (WebKit):
+        (WebLayerTreeViewClient):
+
 2012-08-06  Nat Duca  <nduca@chromium.org>
 
         [chromium] Expose CCGraphicsContext as WebCompositorOutputSurface

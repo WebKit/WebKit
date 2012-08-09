@@ -44,8 +44,6 @@
             'chromium/public/WebClipboard.h',
             'chromium/public/WebColor.h',
             'chromium/public/WebCommon.h',
-            'chromium/public/WebCompositorOutputSurface.h',
-            'chromium/public/WebCompositorOutputSurfaceClient.h',
             'chromium/public/WebContentLayer.h',
             'chromium/public/WebContentLayerClient.h',
             'chromium/public/WebCookie.h',

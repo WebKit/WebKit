@@ -26,7 +26,6 @@
 #ifndef CCGraphicsContext_h
 #define CCGraphicsContext_h
 
-#include <public/WebCompositorOutputSurface.h>
 #include <public/WebGraphicsContext3D.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/OwnPtr.h>
@@ -34,8 +33,28 @@
 
 namespace WebCore {
 
-// FIXME: rename fully to CCOutputSurface.
-typedef WebKit::WebCompositorOutputSurface CCGraphicsContext;
+
+class CCGraphicsContext {
+    WTF_MAKE_NONCOPYABLE(CCGraphicsContext);
+public:
+    static PassOwnPtr<CCGraphicsContext> create2D()
+    {
+        return adoptPtr(new CCGraphicsContext());
+    }
+    static PassOwnPtr<CCGraphicsContext> create3D(PassOwnPtr<WebKit::WebGraphicsContext3D> context3D)
+    {
+        return adoptPtr(new CCGraphicsContext(context3D));
+    }
+
+    WebKit::WebGraphicsContext3D* context3D() { return m_context3D.get(); }
+
+private:
+    CCGraphicsContext() { }
+    explicit CCGraphicsContext(PassOwnPtr<WebKit::WebGraphicsContext3D> context3D)
+        : m_context3D(context3D) { }
+
+    OwnPtr<WebKit::WebGraphicsContext3D> m_context3D;
+};
 
 }
 

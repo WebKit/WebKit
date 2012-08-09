@@ -1,3 +1,59 @@
+2012-08-09  Nat Duca  <nduca@chromium.org>
+
+        Unreviewed, rolling out r125212.
+        http://trac.webkit.org/changeset/125212
+        https://bugs.webkit.org/show_bug.cgi?id=92890
+
+        Compile failure on mac dbg builder
+
+        * WebKit.gyp:
+        * WebKit.gypi:
+        * public/WebSettings.h:
+        * public/WebViewClient.h:
+        (WebKit):
+        (WebViewClient):
+        * src/WebLayerTreeView.cpp:
+        (WebKit::WebLayerTreeView::Settings::operator CCLayerTreeSettings):
+        * src/WebLayerTreeViewImpl.cpp:
+        (WebKit::WebLayerTreeViewClientAdapter::WebLayerTreeViewClientAdapter):
+        * src/WebSettingsImpl.cpp:
+        (WebKit::WebSettingsImpl::WebSettingsImpl):
+        (WebKit::WebSettingsImpl::setForceSoftwareCompositing):
+        (WebKit):
+        * src/WebSettingsImpl.h:
+        (WebKit::WebSettingsImpl::forceSoftwareCompositing):
+        (WebSettingsImpl):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::setIsAcceleratedCompositingActive):
+        (WebKit::WebViewImpl::createCompositorGraphicsContext3D):
+        (WebKit::WebViewImpl::createContext3D):
+        (WebKit::WebViewImpl::didRebindGraphicsContext):
+        * src/WebViewImpl.h:
+        (WebViewImpl):
+        * tests/CCLayerTreeHostImplTest.cpp:
+        * tests/CCLayerTreeHostTest.cpp:
+        (WTF):
+        (WTF::CCLayerTreeHostTestSetSingleLostContext::didRecreateContext):
+        (WTF::CCLayerTreeHostTestSetRepeatedLostContext::didRecreateContext):
+        * tests/CCResourceProviderTest.cpp:
+        (WebKit::CCResourceProviderTest::CCResourceProviderTest):
+        * tests/CCTextureUpdateControllerTest.cpp:
+        * tests/CCThreadedTest.cpp:
+        (WebKitTests::TestHooks::createContext):
+        * tests/CCThreadedTest.h:
+        (WebKitTests::TestHooks::didRecreateContext):
+        * tests/Canvas2DLayerBridgeTest.cpp:
+        (Canvas2DLayerBridgeTest::fullLifecycleTest):
+        * tests/FakeCCGraphicsContext.h:
+        (WebKit::createFakeCCGraphicsContext):
+        * tests/FakeCCLayerTreeHostClient.h:
+        * tests/FakeWebCompositorOutputSurface.h: Removed.
+        * tests/LayerRendererChromiumTest.cpp:
+        (LayerRendererChromiumTest::LayerRendererChromiumTest):
+        (TEST):
+        * tests/WebLayerTest.cpp:
+        * tests/WebLayerTreeViewTest.cpp:
+
 2012-08-09  Kentaro Hara  <haraken@chromium.org>
 
         [V8] Rename V8BindingPerIsolateData to V8PerIsolateData

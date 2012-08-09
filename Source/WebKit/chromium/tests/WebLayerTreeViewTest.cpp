@@ -27,7 +27,6 @@
 #include <public/WebLayerTreeView.h>
 
 #include "CompositorFakeWebGraphicsContext3D.h"
-#include "FakeWebCompositorOutputSurface.h"
 #include <gmock/gmock.h>
 #include <public/Platform.h>
 #include <public/WebCompositor.h>
@@ -49,13 +48,8 @@ public:
     MOCK_METHOD0(didBeginFrame, void());
     virtual void layout() OVERRIDE { }
     virtual void applyScrollAndScale(const WebSize& scrollDelta, float scaleFactor) OVERRIDE { }
-
-    virtual WebCompositorOutputSurface* createOutputSurface() OVERRIDE
-    {
-        return FakeWebCompositorOutputSurface::create(CompositorFakeWebGraphicsContext3D::create(WebGraphicsContext3D::Attributes())).leakPtr();
-    }
-    virtual void didRebindOutputSurface(bool) OVERRIDE { }
-
+    virtual WebGraphicsContext3D* createContext3D() OVERRIDE { return CompositorFakeWebGraphicsContext3D::create(WebGraphicsContext3D::Attributes()).leakPtr(); }
+    virtual void didRebindGraphicsContext(bool success) OVERRIDE { }
     MOCK_METHOD0(willCommit, void());
     MOCK_METHOD0(didCommit, void());
     virtual void didCommitAndDrawFrame() OVERRIDE { }
