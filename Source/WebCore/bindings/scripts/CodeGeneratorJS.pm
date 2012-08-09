@@ -485,11 +485,7 @@ sub GenerateGetOwnPropertyDescriptorBody
     
     my @getOwnPropertyDescriptorImpl = ();
     if ($dataNode->extendedAttributes->{"CheckSecurity"}) {
-        if ($interfaceName eq "DOMWindow") {
-            push(@implContent, "    if (!thisObject->allowsAccessFrom(exec))\n");
-        } else {
-            push(@implContent, "    if (!shouldAllowAccessToFrame(exec, thisObject->impl()->frame()))\n");
-        }
+        push(@implContent, "    if (!shouldAllowAccessToFrame(exec, thisObject->impl()->frame()))\n");
         push(@implContent, "        return false;\n");
     }
     
@@ -1780,7 +1776,7 @@ sub GenerateImplementation
                 if ($dataNode->extendedAttributes->{"CheckSecurity"} &&
                     !$attribute->signature->extendedAttributes->{"DoNotCheckSecurity"} &&
                     !$attribute->signature->extendedAttributes->{"DoNotCheckSecurityOnGetter"}) {
-                    push(@implContent, "    if (!castedThis->allowsAccessFrom(exec))\n");
+                    push(@implContent, "    if (!shouldAllowAccessToFrame(exec, castedThis->impl()->frame()))\n");
                     push(@implContent, "        return jsUndefined();\n");
                 }
 
@@ -1895,7 +1891,7 @@ sub GenerateImplementation
                 push(@implContent, "    ${className}* domObject = jsCast<$className*>(asObject(slotBase));\n");
 
                 if ($dataNode->extendedAttributes->{"CheckSecurity"}) {
-                    push(@implContent, "    if (!domObject->allowsAccessFrom(exec))\n");
+                    push(@implContent, "    if (!shouldAllowAccessToFrame(exec, domObject->impl()->frame()))\n");
                     push(@implContent, "        return jsUndefined();\n");
                 }
 
@@ -1969,11 +1965,7 @@ sub GenerateImplementation
                             push(@implContent, "    UNUSED_PARAM(exec);\n");
 
                             if ($dataNode->extendedAttributes->{"CheckSecurity"} && !$attribute->signature->extendedAttributes->{"DoNotCheckSecurity"}) {
-                                if ($interfaceName eq "DOMWindow") {
-                                    push(@implContent, "    if (!jsCast<$className*>(thisObject)->allowsAccessFrom(exec))\n");
-                                } else {
-                                    push(@implContent, "    if (!shouldAllowAccessToFrame(exec, jsCast<$className*>(thisObject)->impl()->frame()))\n");
-                                }
+                                push(@implContent, "    if (!shouldAllowAccessToFrame(exec, jsCast<$className*>(thisObject)->impl()->frame()))\n");
                                 push(@implContent, "        return;\n");
                             }
 
@@ -2098,11 +2090,7 @@ sub GenerateImplementation
                 push(@implContent, "void ${constructorFunctionName}(ExecState* exec, JSObject* thisObject, JSValue value)\n");
                 push(@implContent, "{\n");
                 if ($dataNode->extendedAttributes->{"CheckSecurity"}) {
-                    if ($interfaceName eq "DOMWindow") {
-                        push(@implContent, "    if (!jsCast<$className*>(thisObject)->allowsAccessFrom(exec))\n");
-                    } else {
-                        push(@implContent, "    if (!shouldAllowAccessToFrame(exec, jsCast<$className*>(thisObject)->impl()->frame()))\n");
-                    }
+                    push(@implContent, "    if (!shouldAllowAccessToFrame(exec, jsCast<$className*>(thisObject)->impl()->frame()))\n");
                     push(@implContent, "        return;\n");
                 }
 
@@ -2206,7 +2194,7 @@ sub GenerateImplementation
 
                 if ($dataNode->extendedAttributes->{"CheckSecurity"} and
                     !$function->signature->extendedAttributes->{"DoNotCheckSecurity"}) {
-                    push(@implContent, "    if (!castedThis->allowsAccessFrom(exec))\n");
+                    push(@implContent, "    if (!shouldAllowAccessToFrame(exec, castedThis->impl()->frame()))\n");
                     push(@implContent, "        return JSValue::encode(jsUndefined());\n");
                 }
 
