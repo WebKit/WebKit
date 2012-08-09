@@ -338,3 +338,6 @@ BUGWK93552 : inspector/device-orientation-success.html = TEXT
 
 // Tests requiring rebaseling afer bug 93475
 BUGWK93475 : fast/block/float/overhanging-tall-block.html = TEXT
+
+// (r125185) http/tests/images/jpg-img-partial-load.html timeout on Lion
+BUGWK93636 : http/tests/images/jpg-img-partial-load.html = TIMEOUT

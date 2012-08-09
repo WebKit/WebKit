@@ -1,3 +1,12 @@
+2012-08-09  Dean Jackson  <dino@apple.com>
+
+        (r125185) http/tests/images/jpg-img-partial-load.html timeout on Lion
+        https://bugs.webkit.org/show_bug.cgi?id=93636
+
+        Unreviewed test expectations update.
+
+        * platform/mac/TestExpectations:
+
 2012-08-09  Florin Malita  <fmalita@chromium.org>
 
         [Chromium] Updated expectations for script-change-externalResourcesRequired-while-loading.svg
