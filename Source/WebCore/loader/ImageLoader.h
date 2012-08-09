@@ -85,6 +85,8 @@ private:
     void updateRenderer();
 
     Element* m_element;
+    void setImageWithoutConsideringPendingLoadEvent(CachedImage*);
+
     CachedResourceHandle<CachedImage> m_image;
     AtomicString m_failedLoadURL;
     bool m_hasPendingBeforeLoadEvent : 1;

@@ -118,6 +118,15 @@ ImageLoader::~ImageLoader()
 
 void ImageLoader::setImage(CachedImage* newImage)
 {
+    setImageWithoutConsideringPendingLoadEvent(newImage);
+
+    // Only consider updating the protection ref-count of the Element immediately before returning
+    // from this function as doing so might result in the destruction of this ImageLoader.
+    updatedHasPendingLoadEvent();
+}
+
+void ImageLoader::setImageWithoutConsideringPendingLoadEvent(CachedImage* newImage)
+{
     ASSERT(m_failedLoadURL.isEmpty());
     CachedImage* oldImage = m_image.get();
     if (newImage != oldImage) {
@@ -257,7 +266,7 @@ void ImageLoader::notifyFinished(CachedResource* resource)
         && !m_element->document()->securityOrigin()->canRequest(image()->response().url())
         && !resource->passesAccessControlCheck(m_element->document()->securityOrigin())) {
 
-        setImage(0);
+        setImageWithoutConsideringPendingLoadEvent(0);
 
         m_hasPendingErrorEvent = true;
         errorEventSender().dispatchEventSoon(this);
@@ -266,6 +275,10 @@ void ImageLoader::notifyFinished(CachedResource* resource)
         m_element->document()->addConsoleMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, consoleMessage);
 
         ASSERT(!m_hasPendingLoadEvent);
+
+        // Only consider updating the protection ref-count of the Element immediately before returning
+        // from this function as doing so might result in the destruction of this ImageLoader.
+        updatedHasPendingLoadEvent();
         return;
     }
 
