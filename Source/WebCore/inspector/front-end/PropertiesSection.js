@@ -30,6 +30,7 @@
 /**
  * @constructor
  * @extends {WebInspector.Section}
+ * @param {string|Element} title
  * @param {string=} subtitle
  */
 WebInspector.PropertiesSection = function(title, subtitle)

@@ -133,7 +133,7 @@ static TypeBuilder::Console::ConsoleMessage::Level::Enum messageLevelValue(Messa
     return TypeBuilder::Console::ConsoleMessage::Level::Log;
 }
 
-void ConsoleMessage::addToFrontend(InspectorFrontend::Console* frontend, InjectedScriptManager* injectedScriptManager)
+void ConsoleMessage::addToFrontend(InspectorFrontend::Console* frontend, InjectedScriptManager* injectedScriptManager, bool generatePreview)
 {
     RefPtr<TypeBuilder::Console::ConsoleMessage> jsonObj = TypeBuilder::Console::ConsoleMessage::create()
         .setSource(messageSourceValue(m_source))
@@ -151,7 +151,7 @@ void ConsoleMessage::addToFrontend(InspectorFrontend::Console* frontend, Injecte
         if (!injectedScript.hasNoValue()) {
             RefPtr<TypeBuilder::Array<TypeBuilder::Runtime::RemoteObject> > jsonArgs = TypeBuilder::Array<TypeBuilder::Runtime::RemoteObject>::create();
             for (unsigned i = 0; i < m_arguments->argumentCount(); ++i) {
-                RefPtr<TypeBuilder::Runtime::RemoteObject> inspectorValue = injectedScript.wrapObject(m_arguments->argumentAt(i), "console");
+                RefPtr<TypeBuilder::Runtime::RemoteObject> inspectorValue = injectedScript.wrapObject(m_arguments->argumentAt(i), "console", generatePreview);
                 if (!inspectorValue) {
                     ASSERT_NOT_REACHED();
                     return;

@@ -1,5 +1,5 @@
 CONSOLE MESSAGE: line 6: [object HTMLDocumentPrototype]
-Test that console.log(document.__proto__) won't result in an exception when the message is formatted in the inspector.Bug 27169.
+Test that console.dir(document.__proto__) won't result in an exception when the message is formatted in the inspector.Bug 27169.
 
 HTMLDocumentPrototype console-log-document-proto.html:6
 

@@ -1,7 +1,0 @@
-Tests that simple evaluations may be performed in the console on global object.
-
-foo
-"fooValue"
-bar1
-ReferenceError: bar1 is not defined
-

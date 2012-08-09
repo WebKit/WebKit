@@ -71,12 +71,13 @@ InjectedScript.prototype = {
      * @param {*} object
      * @param {string} groupName
      * @param {boolean} canAccessInspectedWindow
+     * @param {boolean} generatePreview
      * @return {Object}
      */
-    wrapObject: function(object, groupName, canAccessInspectedWindow)
+    wrapObject: function(object, groupName, canAccessInspectedWindow, generatePreview)
     {
         if (canAccessInspectedWindow)
-            return this._wrapObject(object, groupName);
+            return this._wrapObject(object, groupName, false, generatePreview);
 
         var result = {};
         result.type = typeof object;
@@ -128,12 +129,13 @@ InjectedScript.prototype = {
      * @param {*} object
      * @param {string=} objectGroupName
      * @param {boolean=} forceValueType
+     * @param {boolean=} generatePreview
      * @return {InjectedScript.RemoteObject}
      */
-    _wrapObject: function(object, objectGroupName, forceValueType)
+    _wrapObject: function(object, objectGroupName, forceValueType, generatePreview)
     {
         try {
-            return new InjectedScript.RemoteObject(object, objectGroupName, forceValueType);
+            return new InjectedScript.RemoteObject(object, objectGroupName, forceValueType, generatePreview);
         } catch (e) {
             try {
                 var description = injectedScript._describe(e);
@@ -404,7 +406,7 @@ InjectedScript.prototype = {
     {
         try {
             return { wasThrown: false,
-                     result: this._wrapObject(this._evaluateOn(evalFunction, object, objectGroup, expression, isEvalOnCallFrame, injectCommandLineAPI), objectGroup, returnByValue) };
+                     result: this._wrapObject(this._evaluateOn(evalFunction, object, objectGroup, expression, isEvalOnCallFrame, injectCommandLineAPI), objectGroup, returnByValue, false) };
         } catch (e) {
             return this._createThrownValue(e, objectGroup);
         }
@@ -635,6 +637,19 @@ InjectedScript.prototype = {
         if (subtype === "date")
             return this._toString(obj);
 
+        if (subtype === "node") {
+            var description = obj.nodeName.toLowerCase();
+            switch (obj.nodeType) {
+            case 1 /* Node.ELEMENT_NODE */:
+                description =  "<" + description + ">";
+                break;
+            case 10 /*Node.DOCUMENT_TYPE_NODE */:
+                description = "<!DOCTYPE " + description + ">";
+                break;
+            }
+            return description;
+        }
+
         var className = InjectedScriptHost.internalConstructorName(obj);
         if (subtype === "array") {
             if (typeof obj.length === "number")
@@ -678,8 +693,9 @@ var injectedScript = new InjectedScript();
  * @param {*} object
  * @param {string=} objectGroupName
  * @param {boolean=} forceValueType
+ * @param {boolean=} generatePreview
  */
-InjectedScript.RemoteObject = function(object, objectGroupName, forceValueType)
+InjectedScript.RemoteObject = function(object, objectGroupName, forceValueType, generatePreview)
 {
     this.type = typeof object;
     if (injectedScript.isPrimitiveValue(object) || object === null || forceValueType) {
@@ -698,13 +714,104 @@ InjectedScript.RemoteObject = function(object, objectGroupName, forceValueType)
     }
 
     this.objectId = injectedScript._bind(object, objectGroupName);
-    var subtype = injectedScript._subtype(object)
+    var subtype = injectedScript._subtype(object);
     if (subtype)
         this.subtype = subtype;
     this.className = InjectedScriptHost.internalConstructorName(object);
     this.description = injectedScript._describe(object);
+
+    if (generatePreview && (this.type === "object" || injectedScript._isHTMLAllCollection(object)))
+        this._generatePreview(/** @type {!Object} */ object);
 }
 
+InjectedScript.RemoteObject.prototype = {
+    /**
+     * @param {!Object} object
+     */
+    _generatePreview: function(object)
+    {
+        var preview = {};
+        var isArray = this.subtype === "array";
+        var elementsToDump = isArray ? 100 : 5;
+  
+        var propertyNames = Object.getOwnPropertyNames(object);
+        preview.lossless = true;
+        preview.overflow = false;
+        var properties = preview.properties = [];
+
+        try {
+            for (var i = 0; i < propertyNames.length; ++i) {
+                if (properties.length >= elementsToDump) {
+                    preview.overflow = true;
+                    preview.lossless = false;
+                    break;
+                }
+                var name = propertyNames[i];
+                if (isArray && name === "length")
+                    continue;
+
+                var descriptor = Object.getOwnPropertyDescriptor(object, name);
+                if (!("value" in descriptor) || !descriptor.enumerable) {
+                    preview.lossless = false;
+                    continue;
+                }
+
+                var value = descriptor.value;
+                if (value === null) {
+                    properties.push({ name: name, type: "object", value: "null" });
+                    continue;
+                }
+    
+                const maxLength = 100;
+                var type = typeof value;
+
+                if (InjectedScript.primitiveTypes[type]) {
+                    if (type === "string") {
+                        if (value.length > maxLength) {
+                            value = this._abbreviateString(value, maxLength, true);
+                            preview.lossless = false;
+                        }
+                        value = "\"" + value.replace(/\n/g, "\u21B5") + "\"";
+                    }
+                    properties.push({ name: name, type: type, value: value + "" });
+                    continue;
+                }
+    
+                preview.lossless = false;
+
+                if (type === "function")
+                    continue;
+
+                var property = { name: name, type: type, value: this._abbreviateString(injectedScript._describe(value), maxLength, subtype === "regexp") };
+                var subtype = injectedScript._subtype(value);
+                if (subtype)
+                    property.subtype = subtype;
+                properties.push(property);
+            }
+            if (properties.length)
+                this.preview = preview;
+        } catch (e) {
+        }
+    },
+
+    /**
+     * @param {string} string
+     * @param {number} maxLength
+     * @param {boolean=} middle
+     * @returns
+     */
+    _abbreviateString: function(string, maxLength, middle)
+    {
+        if (string.length <= maxLength)
+            return string;
+        if (middle) {
+            var leftHalf = maxLength >> 1;
+            var rightHalf = maxLength - leftHalf - 1;
+            return string.substr(0, leftHalf) + "\u2026" + string.substr(string.length - rightHalf, rightHalf);
+        }
+        return string.substr(0, maxLength) + "\u2026";
+    }
+}
 /**
  * @constructor
  * @param {number} ordinal

@@ -1,3 +1,32 @@
+2012-08-09  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: generate preview for the objects dumped into the console upon logging.
+        https://bugs.webkit.org/show_bug.cgi?id=35801
+
+        Reviewed by Vsevolod Vlasov.
+
+        * inspector/console/command-line-api-inspect-expected.txt:
+        * inspector/console/console-dir-expected.txt:
+        * inspector/console/console-eval-global-expected.txt:
+        * inspector/console/console-eval-global.html:
+        * inspector/console/console-format-collections-expected.txt:
+        * inspector/console/console-format-collections.html:
+        * inspector/console/console-format-expected.txt:
+        * inspector/console/console-format.html:
+        * inspector/console/console-log-document-proto-expected.txt:
+        * inspector/console/console-log-document-proto.html:
+        * inspector/console/console-log-toString-object-expected.txt:
+        * inspector/debugger/watch-expressions-panel-switch-expected.txt:
+        * inspector/elements/event-listener-sidebar-expected.txt:
+        * inspector/elements/event-listeners-about-blank-expected.txt:
+        * platform/chromium/inspector/console/console-dir-expected.txt:
+        * platform/chromium/inspector/console/console-eval-global-expected.txt: Removed.
+        * platform/chromium/inspector/console/console-format-collections-expected.txt:
+        * platform/chromium/inspector/console/console-format-expected.txt: Removed.
+        * platform/chromium/inspector/console/console-log-document-proto-expected.txt:
+        * platform/chromium/inspector/debugger/watch-expressions-panel-switch-expected.txt:
+        * platform/chromium/inspector/elements/event-listener-sidebar-expected.txt: Removed.
+
 2012-08-09  Kristóf Kosztyó  <kkristof@inf.u-szeged.hu>
 
         [Qt] Unreviewed gardening.

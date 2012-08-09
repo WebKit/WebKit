@@ -12,7 +12,7 @@ Array[2]
     __proto__: Array[0] console-dir.html:9
 
 NodeList[1]
-    0: HTMLHtmlElement
+    0: <html>
     length: 1
     __proto__: NodeList console-dir.html:10
 

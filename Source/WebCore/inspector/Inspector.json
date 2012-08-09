@@ -456,7 +456,30 @@
                     { "name": "className", "type": "string", "optional": true, "description": "Object class (constructor) name. Specified for <code>object</code> type values only." },
                     { "name": "value", "type": "any", "optional": true, "description": "Remote object value (in case of primitive values or JSON values if it was requested)." },
                     { "name": "description", "type": "string", "optional": true, "description": "String representation of the object." },
-                    { "name": "objectId", "$ref": "RemoteObjectId", "optional": true, "description": "Unique object identifier (for non-primitive values)." }
+                    { "name": "objectId", "$ref": "RemoteObjectId", "optional": true, "description": "Unique object identifier (for non-primitive values)." },
+                    { "name": "preview", "$ref": "ObjectPreview", "optional": true, "description": "Preview containsing abbreviated property values.", "hidden": true }
+                ]
+            },
+            {
+                "id": "ObjectPreview",
+                "type": "object",
+                "hidden": true,
+                "description": "Object containing abbreviated remote object value.",
+                "properties": [
+                    { "name": "lossless", "type": "boolean", "description": "Determines whether preview is lossless (contains all information of the original object)." },
+                    { "name": "overflow", "type": "boolean", "description": "True iff some of the properties of the original did not fit." },
+                    { "name": "properties", "type": "array", "items": { "$ref": "PropertyPreview" }, "description": "List of the properties." }
+                ]
+            },
+            {
+                "id": "PropertyPreview",
+                "type": "object",
+                "hidden": true,
+                "properties": [
+                    { "name": "name", "type": "string", "description": "Property name." },
+	                { "name": "type", "type": "string", "enum": ["object", "function", "undefined", "string", "number", "boolean"], "description": "Object type." },
+	                { "name": "value", "type": "string", "optional": true, "description": "User-friendly property value string." },
+	                { "name": "subtype", "type": "string", "optional": true, "enum": ["array", "null", "node", "regexp", "date"], "description": "Object subtype hint. Specified for <code>object</code> type values only." }
                 ]
             },
             {

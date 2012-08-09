@@ -56,7 +56,7 @@ public:
     ConsoleMessage(MessageSource, MessageType, MessageLevel, const String& m, const String& responseUrl, const String& requestId);
     ~ConsoleMessage();
 
-    void addToFrontend(InspectorFrontend::Console*, InjectedScriptManager*);
+    void addToFrontend(InspectorFrontend::Console*, InjectedScriptManager*, bool generatePreview);
     void updateRepeatCountInConsole(InspectorFrontend::Console*);
     void incrementCount() { ++m_repeatCount; }
     bool isEqual(ConsoleMessage* msg) const;
