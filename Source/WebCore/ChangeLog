@@ -1,3 +1,16 @@
+2012-08-09  Xan Lopez  <xlopez@igalia.com>
+
+        1.9.6 drops symbols, breaking compatibility
+        https://bugs.webkit.org/show_bug.cgi?id=93477
+
+        Reviewed by Carlos Garcia Campos.
+
+        Expose documentURI as writable again for the GObject DOM
+        bindings. DOM4 makes it read-only, but we need to revert to the
+        old state for compatibility reasons, just like Objective C.
+
+        * dom/Document.idl: ditto.
+
 2012-08-09  Mario Sanchez Prada  <msanchez@igalia.com>
 
         REGRESSION (r124997): Flaky crashes in two tests
