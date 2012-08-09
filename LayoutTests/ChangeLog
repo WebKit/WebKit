@@ -1,3 +1,28 @@
+2012-08-09  Robert Hogan  <robert@webkit.org>
+
+        CSS 2.1 failure: 'Text-indent' only affects a line if it is the first formatted line of an element
+        https://bugs.webkit.org/show_bug.cgi?id=63185
+
+        Reviewed by Eric Seidel.
+
+        * css2.1/20110323/text-indent-014-expected.html: Added.
+        * css2.1/20110323/text-indent-014.htm: Added.
+        * fast/css/text-indent-first-line-001-expected.html: Added.
+        * fast/css/text-indent-first-line-001.html: Added.
+        * fast/css/text-indent-first-line-002-expected.html: Added.
+        * fast/css/text-indent-first-line-002.html: Added.
+        * fast/css/text-indent-first-line-003-expected.html: Added.
+        * fast/css/text-indent-first-line-003.html: Added.
+        * fast/css/text-indent-first-line-004-expected.html: Added.
+        * fast/css/text-indent-first-line-004.html: Added.
+        * fast/css/text-indent-first-line-005-expected.html: Added.
+        * fast/css/text-indent-first-line-005.html: Added.
+          Text-indent in the span here is inherited from the div. CSS 2.1: "Since the 'text-indent' 
+          property inherits, when specified on a block element, it will affect descendant 
+          inline-block elements."
+        * fast/css/text-indent-first-line-006-expected.html: Added.
+        * fast/css/text-indent-first-line-006.html: Added.
+
 2012-08-09  Roger Fong  <roger_fong@apple.com>
 
         Gardening LayoutTests/platform/win/fast/canvas tests folder.
