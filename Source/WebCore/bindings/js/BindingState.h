@@ -48,7 +48,7 @@ DOMWindow* firstDOMWindow(BindingState*);
 inline Frame* activeFrame(BindingState*) { return 0; }
 inline Frame* firstFrame(BindingState*) { return 0; }
 
-inline void immediatelyReportUnsafeAccessTo(BindingState*, Document*) { }
+void immediatelyReportUnsafeAccessTo(BindingState*, Document* target);
 
 }
 

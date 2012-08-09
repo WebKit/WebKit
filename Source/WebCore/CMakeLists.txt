@@ -973,6 +973,7 @@ SET(WebCore_SOURCES
     bindings/ScriptControllerBase.cpp
 
     bindings/generic/ActiveDOMCallback.cpp
+    bindings/generic/BindingSecurity.cpp
     bindings/generic/RuntimeEnabledFeatures.cpp
 
     css/CSSAspectRatioValue.cpp

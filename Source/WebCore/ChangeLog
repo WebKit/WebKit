@@ -1,3 +1,41 @@
+2012-08-08  Adam Barth  <abarth@webkit.org>
+
+        Rewire the same-origin checks for the JavaScriptCore bindings through BindingSecurity
+        https://bugs.webkit.org/show_bug.cgi?id=93382
+
+        Reviewed by Eric Seidel.
+
+        This patch rewires the same-origin policy checks in the JavaScriptCore
+        bindings to use the implementation in BindingSecurity.cpp, which is now
+        shared by JavaScriptCore and V8. There are still a few places were we
+        use the JSDOMWindowCustom-based code path, but I plan to change those
+        in a follow up patch in the interest of keeping this patch as small as
+        possible.
+
+        This patch as two main benefits:
+
+        1) We no longer need to maintain duplicate code in the JSC and the V8
+           bindings for as delicate an area as the same-origin check.
+           Previously, the two implementations accomplished the same task using
+           a slightly different mechansim. After this patch, they use the same
+           mechanism, which means we only need to convince ourselves that one
+           implementation is correct.
+
+        2) This patch will make it easier to remove DOMWindow::m_securityOrigin
+           because there will be only one piece of code that needs to change.
+           Prior to this patch, we would have had to change both
+           implementations of the same-origin policy not to rely upon
+           DOMWindow::m_securityOrigin.
+
+        * bindings/js/BindingState.cpp:
+        (WebCore::immediatelyReportUnsafeAccessTo):
+        (WebCore):
+        * bindings/js/BindingState.h:
+        (WebCore):
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::shouldAllowAccessToNode):
+        (WebCore::shouldAllowAccessToFrame):
+
 2012-08-08  Brady Eidson  <beidson@apple.com>
 
         Google search query text reverts to original search query after multiple searches
