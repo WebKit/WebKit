@@ -1,3 +1,15 @@
+2012-08-08  Benjamin Poulain  <bpoulain@apple.com>
+
+        Use char* instead of LChar* for the public interface of String construction from literals
+        https://bugs.webkit.org/show_bug.cgi?id=93402
+
+        Reviewed by Michael Saboff.
+
+        Update JSC' Identifier to use StringImpl::createFromLiteral with a char*.
+
+        * runtime/Identifier.cpp:
+        (JSC::IdentifierASCIIStringTranslator::translate):
+
 2012-08-08  Patrick Gansterer  <paroga@webkit.org>
 
         Remove ce_time.(cpp|h) from list of source files

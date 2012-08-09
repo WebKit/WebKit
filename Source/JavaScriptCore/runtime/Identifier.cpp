@@ -60,7 +60,7 @@ struct IdentifierASCIIStringTranslator {
     static void translate(StringImpl*& location, const LChar* c, unsigned hash)
     {
         size_t length = strlen(reinterpret_cast<const char*>(c));
-        location = StringImpl::createFromLiteral(c, length).leakRef();
+        location = StringImpl::createFromLiteral(reinterpret_cast<const char*>(c), length).leakRef();
         location->setHash(hash);
     }
 };

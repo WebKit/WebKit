@@ -38,7 +38,7 @@ TEST(WTF, StringImplCreationFromLiteral)
     ASSERT_TRUE(stringWithTemplate->hasTerminatingNullCharacter());
 
     const char* programmaticStringData = "Explicit Size Literal";
-    RefPtr<StringImpl> programmaticString = StringImpl::createFromLiteral(reinterpret_cast<const LChar*>(programmaticStringData), strlen(programmaticStringData));
+    RefPtr<StringImpl> programmaticString = StringImpl::createFromLiteral(programmaticStringData, strlen(programmaticStringData));
     ASSERT_EQ(strlen(programmaticStringData), programmaticString->length());
     ASSERT_TRUE(equal(programmaticString.get(), programmaticStringData));
     ASSERT_EQ(programmaticStringData, reinterpret_cast<const char*>(programmaticString->characters8()));

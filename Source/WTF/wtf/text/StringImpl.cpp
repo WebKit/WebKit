@@ -82,9 +82,9 @@ StringImpl::~StringImpl()
     m_substringBuffer->deref();
 }
 
-PassRefPtr<StringImpl> StringImpl::createFromLiteral(const LChar* characters, unsigned length)
+PassRefPtr<StringImpl> StringImpl::createFromLiteral(const char* characters, unsigned length)
 {
-    ASSERT(charactersAreAllASCII<LChar>(characters, length));
+    ASSERT(charactersAreAllASCII<LChar>(reinterpret_cast<const LChar*>(characters), length));
     return adoptRef(new StringImpl(characters, length, ConstructFromLiteral));
 }
 

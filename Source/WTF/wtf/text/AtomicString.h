@@ -53,12 +53,12 @@ public:
 
     enum ConstructFromLiteralTag { ConstructFromLiteral };
     AtomicString(const char* characters, unsigned length, ConstructFromLiteralTag)
-        : m_string(addFromLiteralData(reinterpret_cast<const LChar*>(characters), length))
+        : m_string(addFromLiteralData(characters, length))
     {
     }
     template<unsigned charactersCount>
     ALWAYS_INLINE AtomicString(const char (&characters)[charactersCount], ConstructFromLiteralTag)
-        : m_string(addFromLiteralData(reinterpret_cast<const LChar*>(characters), charactersCount - 1))
+        : m_string(addFromLiteralData(characters, charactersCount - 1))
     {
         COMPILE_ASSERT(charactersCount > 1, AtomicStringFromLiteralNotEmpty);
         COMPILE_ASSERT((charactersCount - 1 <= ((unsigned(~0) - sizeof(StringImpl)) / sizeof(LChar))), AtomicStringFromLiteralCannotOverflow);
@@ -169,7 +169,7 @@ private:
             return r;
         return addSlowCase(r);
     }
-    WTF_EXPORT_STRING_API static PassRefPtr<StringImpl> addFromLiteralData(const LChar *characters, unsigned length);
+    WTF_EXPORT_STRING_API static PassRefPtr<StringImpl> addFromLiteralData(const char* characters, unsigned length);
     WTF_EXPORT_STRING_API static PassRefPtr<StringImpl> addSlowCase(StringImpl*);
     WTF_EXPORT_STRING_API static AtomicString fromUTF8Internal(const char*, const char*);
 };
