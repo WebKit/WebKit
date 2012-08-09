@@ -1,0 +1,3 @@
+This page has a text input element with a default value and autocomplete set to off. When restored from the page cache its value should *not* be cleared.
+
+SomeNonDefaultValue

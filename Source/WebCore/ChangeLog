@@ -1,3 +1,25 @@
+2012-08-08  Brady Eidson  <beidson@apple.com>
+
+        Google search query text reverts to original search query after multiple searches
+        <rdar://problem/10800686> and https://bugs.webkit.org/show_bug.cgi?id=93544
+
+        Reviewed by Darin Adler.
+
+        For security sensitive fields we normally clear "autocomplete=off" form elements when
+        restoring a page from the page cache.
+        
+        If the element is textual and has a defaultValue then "clearing" it actually restores 
+        the default value.
+        
+        There's no scenario we can imagine where that makes sense so we should not reset the 
+        value in such fields.
+
+        Test: fast/forms/autocomplete-off-with-default-value-does-not-clear.html
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::parseAttribute): Update suspension callback registration as needed.
+        (WebCore::HTMLInputElement::needsSuspensionCallback): Don't reset text fields with a non-empty default value.
+
 2012-08-08  Raymond Toy  <rtoy@google.com>
 
         Creating "basic waveform" Oscillator nodes is not efficient
