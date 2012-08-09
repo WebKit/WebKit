@@ -1,3 +1,26 @@
+2012-08-09  MORITA Hajime  <morrita@google.com>
+
+        DOMCharacterDataModified should not be fired inside shadows
+        https://bugs.webkit.org/show_bug.cgi?id=93427
+
+        Reviewed by Ryosuke Niwa.
+
+        Added two tests. This also fixes existing test, which cover the wrong behavior.
+
+        * fast/dom/shadow/suppress-mutation-events-in-shadow-characterdata-expected.txt: Added.
+        * fast/dom/shadow/suppress-mutation-events-in-shadow-characterdata.html: Added.
+        * fast/events/dom-character-data-modified-textarea-crash.html:
+        - DOMCharacterDataModified shouldn't be fired in this case.
+          Fixed to allow test to terminate without the event.
+          Note that The event was fired by <textarea>, which is fixed by this change.
+        * fast/forms/textarea-and-mutation-events-appending-text-expected.txt: Added.
+        * fast/forms/textarea-and-mutation-events-appending-text.html: Added.
+        * svg/custom/tref-nested-events-crash.svg:
+        - DOMCharacterDataModified shouldn't be fired in this case.
+          Fixed to allow test to terminate without the event.
+          Note that The event was fired by SVGShadowText, which is just an implentation detail and
+          should not be exposed.
+
 2012-08-09  Takashi Toyoshima  <toyoshim@chromium.org>
 
         Unreviewed, update TestExpectations for chromium gardening.

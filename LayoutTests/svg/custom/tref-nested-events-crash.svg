@@ -31,6 +31,8 @@
                 setTimeout('testRunner.notifyDone()', 0);
         }, false); 
         document.adoptNode(tspan); 
+        if (window.testRunner)
+            setTimeout('testRunner.notifyDone()', 10);
     }
   </script>
 </svg>

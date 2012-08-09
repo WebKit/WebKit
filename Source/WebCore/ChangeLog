@@ -1,3 +1,21 @@
+2012-08-09  MORITA Hajime  <morrita@google.com>
+
+        DOMCharacterDataModified should not be fired inside shadows
+        https://bugs.webkit.org/show_bug.cgi?id=93427
+
+        Reviewed by Ryosuke Niwa.
+
+        CharacterData::dispatchModifiedEvent() fires DOMCharacterDataModified event even if
+        the node is in shadow. But it shouldn't. Check dispatchChildInsertionEvents() and
+        dispatchChildRemovalEvents() to see how other MutationEvents are suppressed behind shadows.
+        This change follows the same path to suppress DOMCharacterDataModified.
+
+        Tests: fast/dom/shadow/suppress-mutation-events-in-shadow-characterdata.html
+               fast/forms/textarea-and-mutation-events-appending-text.html
+
+        * dom/CharacterData.cpp:
+        (WebCore::CharacterData::dispatchModifiedEvent):
+
 2012-08-09  Eric Seidel  <eric@webkit.org>
 
         Use m_everHadLayout in RenderObject::checkForRepaintDuringLayout()
