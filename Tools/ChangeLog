@@ -1,3 +1,24 @@
+2012-08-08  Dirk Pranke  <dpranke@chromium.org>
+
+        nrwt: rename finder.py to layout_test_finder.py
+        https://bugs.webkit.org/show_bug.cgi?id=93557
+
+        Reviewed by Ryosuke Niwa.
+
+        One last cleanup per old review feedback from rniwa.
+
+        * Scripts/webkitpy/layout_tests/controllers/layout_test_finder.py: Renamed from Tools/Scripts/webkitpy/layout_tests/controllers/finder.py.
+        (LayoutTestFinder):
+        (LayoutTestFinder.__init__):
+        (LayoutTestFinder.find_tests):
+        (LayoutTestFinder._strip_test_dir_prefixes):
+        (LayoutTestFinder._strip_test_dir_prefix):
+        (LayoutTestFinder._read_test_names_from_file):
+        (LayoutTestFinder._strip_comments):
+        (LayoutTestFinder.skip_tests):
+        (LayoutTestFinder.split_into_chunks):
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+
 2012-08-08  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add Perf EWS IRC bot

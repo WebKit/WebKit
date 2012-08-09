@@ -45,7 +45,7 @@ import sys
 import time
 
 from webkitpy.common import message_pool
-from webkitpy.layout_tests.controllers.finder import LayoutTestFinder
+from webkitpy.layout_tests.controllers.layout_test_finder import LayoutTestFinder
 from webkitpy.layout_tests.controllers.layout_test_runner import LayoutTestRunner, TestRunInterruptedException, WorkerException
 from webkitpy.layout_tests.controllers.test_result_writer import TestResultWriter
 from webkitpy.layout_tests.layout_package import json_layout_results_generator
