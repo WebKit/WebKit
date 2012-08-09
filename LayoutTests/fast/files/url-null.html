@@ -10,8 +10,8 @@
 <script>
 description("Test URL methods with null arguments.");
 
-shouldBe("webkitURL.createObjectURL(null)", "null");
-evalAndLog("webkitURL.revokeObjectURL(null)");
+shouldBe("URL.createObjectURL(null)", "null");
+evalAndLog("URL.revokeObjectURL(null)");
 var successfullyParsed = true;
 
 </script>

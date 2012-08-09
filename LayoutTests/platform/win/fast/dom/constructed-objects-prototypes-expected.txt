@@ -43,6 +43,8 @@ PASS (new inner.ProgressEvent()).isInner is true
 PASS (new inner.ProgressEvent()).constructor.isInner is true
 PASS (new inner.StorageEvent()).isInner is true
 PASS (new inner.StorageEvent()).constructor.isInner is true
+PASS (new inner.URL()).isInner is true
+PASS (new inner.URL()).constructor.isInner is true
 PASS (new inner.WebKitAnimationEvent()).isInner is true
 PASS (new inner.WebKitAnimationEvent()).constructor.isInner is true
 PASS (new inner.WebKitCSSMatrix()).isInner is true

@@ -26,9 +26,9 @@ function load()
         testRunner.waitUntilDone();
     }
     win = window.open();
-    if (win.webkitURL)
+    if (win.URL)
     {
-        url = win.webkitURL;
+        url = win.URL;
         win.location = "nothing";
         setTimeout(crash, 0);
         return;

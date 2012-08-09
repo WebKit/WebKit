@@ -11,7 +11,7 @@ function test()
 {
     log("Test that createObjectURL with no argument should throw an exception.");
     try {
-        var url = webkitURL.createObjectURL();
+        var url = URL.createObjectURL();
         log("FAIL");
     } catch(err) {
         log("PASS: " + err.message);

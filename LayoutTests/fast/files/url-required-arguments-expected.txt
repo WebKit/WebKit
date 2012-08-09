@@ -2,8 +2,8 @@ Test required arguments of URL object.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
-PASS webkitURL.createObjectURL() threw exception TypeError: Not enough arguments.
-PASS webkitURL.revokeObjectURL() threw exception TypeError: Not enough arguments.
+PASS URL.createObjectURL() threw exception TypeError: Not enough arguments.
+PASS URL.revokeObjectURL() threw exception TypeError: Not enough arguments.
 PASS successfullyParsed is true
 
 TEST COMPLETE

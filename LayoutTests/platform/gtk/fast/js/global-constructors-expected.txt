@@ -344,7 +344,7 @@ PASS XPathResult.toString() is '[object XPathResultConstructor]'
 PASS XSLTProcessor.toString() is '[object XSLTProcessorConstructor]'
 FAIL webkitMediaStream.toString() should be [object webkitMediaStreamConstructor]. Was [object MediaStreamConstructor].
 FAIL webkitPeerConnection00.toString() should be [object webkitPeerConnection00Constructor]. Was [object PeerConnection00Constructor].
-FAIL webkitURL.toString() should be [object webkitURLConstructor]. Was [object URLConstructor].
+PASS URL.toString() is '[object URLConstructor]'
 PASS successfullyParsed is true
 
 TEST COMPLETE

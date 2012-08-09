@@ -89,7 +89,8 @@ module threads {
         attribute FileReaderSyncConstructor FileReaderSync;
 #endif
 
-        attribute [Conditional=BLOB] DOMURLConstructor webkitURL;
+        attribute [Conditional=BLOB] DOMURLConstructor URL;
+        attribute [Conditional=BLOB] DOMURLConstructor webkitURL; // FIXME: deprecate this.
 
         attribute ArrayBufferConstructor ArrayBuffer; // Usable with new operator
         attribute Int8ArrayConstructor Int8Array; // Usable with new operator

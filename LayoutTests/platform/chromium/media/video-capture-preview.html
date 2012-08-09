@@ -18,7 +18,7 @@ function startPreview()
 function gotStream(stream)
 {
     consoleWrite("got a stream");
-    previewURL = webkitURL.createObjectURL(stream);
+    previewURL = URL.createObjectURL(stream);
     startPreview();
     consoleWrite("start preview");
     localStream = stream;

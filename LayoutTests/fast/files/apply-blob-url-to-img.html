@@ -17,7 +17,7 @@ function onInputFileChange()
     var img = document.getElementById('imgToReplace');
     log("Old image: " + img.width + " x " + img.height);
     img.onload = onImgLoad;
-    img.src = window.webkitURL.createObjectURL(file);
+    img.src = window.URL.createObjectURL(file);
 }
 
 function onImgLoad()

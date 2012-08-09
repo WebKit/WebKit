@@ -15,7 +15,7 @@ function runTest()
         "    postMessage('Hello from worker');",
         "};"
     ].join('\n');
-    var blobURL = webkitURL.createObjectURL(new Blob([string]));
+    var blobURL = URL.createObjectURL(new Blob([string]));
     var worker = new Worker(blobURL);
     worker.onmessage = function(event) {
         log(event.data);

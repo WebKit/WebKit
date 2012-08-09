@@ -19,7 +19,7 @@ function sendXMLHttpRequest(method, url)
 onmessage = function(event)
 {
     var file = event.data;
-    var fileURL = webkitURL.createObjectURL(file);
+    var fileURL = URL.createObjectURL(file);
 
     log("Test that XMLHttpRequest GET succeeds.");
     sendXMLHttpRequest("GET", fileURL);
@@ -29,7 +29,7 @@ onmessage = function(event)
     sendXMLHttpRequest("POST", fileURL);
 
     log("Test that XMLHttpRequest GET fails after the blob URL is revoked.");
-    webkitURL.revokeObjectURL(fileURL);
+    URL.revokeObjectURL(fileURL);
     sendXMLHttpRequest("GET", fileURL);
 
     log("DONE");

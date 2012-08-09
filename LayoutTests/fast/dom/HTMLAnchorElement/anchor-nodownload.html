@@ -27,7 +27,7 @@ function runTest()
     var string = "<!doctype html><html><head><title>Title</title><script>if (window.testRunner) testRunner.dumpAsText(); </" + "script></head><body>PASS</body><script>if (window.testRunner) testRunner.notifyDone();</scr" + "ipt></html>";
     var blob = new Blob([string], {type: "text/html"});
     var link = document.getElementById("blob-url");
-    link.href = window.webkitURL.createObjectURL(blob);
+    link.href = window.URL.createObjectURL(blob);
     click(link);
 }
 runTest();

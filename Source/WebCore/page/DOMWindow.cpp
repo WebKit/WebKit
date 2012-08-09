@@ -421,9 +421,6 @@ DOMWindow::~DOMWindow()
         ASSERT(!m_sessionStorage);
         ASSERT(!m_localStorage);
         ASSERT(!m_applicationCache);
-#if ENABLE(BLOB)
-        ASSERT(!m_domURL);
-#endif
     }
 #endif
 
@@ -590,9 +587,6 @@ void DOMWindow::clearDOMWindowProperties()
     m_sessionStorage = 0;
     m_localStorage = 0;
     m_applicationCache = 0;
-#if ENABLE(BLOB)
-    m_domURL = 0;
-#endif
 }
 
 bool DOMWindow::isCurrentlyDisplayedInFrame() const

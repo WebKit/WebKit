@@ -9,7 +9,7 @@ function paste(event)
     for (var i = 0; i < items.length; ++i) {
         if (items[i].kind == 'file' && items[i].type == 'image/png') {
             var blob = items[i].getAsFile();
-            var url = window.webkitURL.createObjectURL(blob);
+            var url = window.URL.createObjectURL(blob);
             document.getElementById('dest').src = url;
         }
     }

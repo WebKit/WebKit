@@ -11,22 +11,22 @@ function test()
 {
     log("Test calling revokeObjectURL with no argument.");
     try {
-        var url = webkitURL.revokeObjectURL();
+        var url = URL.revokeObjectURL();
         log("FAIL");
     } catch(err) {
         log("PASS: " + err.message);
     }
 
     log("Test calling revokeObjectURL with empty URL.");
-    webkitURL.revokeObjectURL("");
+    URL.revokeObjectURL("");
     log("PASS");
 
     log("Test calling revokeObjectURL with invalid URL.");
-    webkitURL.revokeObjectURL("[foo bar]");
+    URL.revokeObjectURL("[foo bar]");
     log("PASS");
 
     log("Test calling revokeObjectURL with non-existent URL.");
-    webkitURL.revokeObjectURL("blob:non-existent");
+    URL.revokeObjectURL("blob:non-existent");
     log("PASS");
 
     log("DONE");

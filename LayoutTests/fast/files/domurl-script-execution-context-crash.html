@@ -3,7 +3,7 @@
 function crash()
 {
     try {
-        e.apply(w, ['webkitURL']);
+        e.apply(w, ['URL']);
     } catch (ex) { }
     document.body.innerHTML = "PASS: null security context for URL did not crash";
     if (window.testRunner)

@@ -341,7 +341,7 @@ PASS XPathResult.toString() is '[object XPathResultConstructor]'
 PASS XSLTProcessor.toString() is '[object XSLTProcessorConstructor]'
 FAIL webkitAudioContext.toString() should be [object webkitAudioContextConstructor]. Was [object AudioContextConstructor].
 FAIL webkitAudioPannerNode.toString() should be [object webkitAudioPannerNodeConstructor]. Was [object AudioPannerNodeConstructor].
-FAIL webkitURL.toString() should be [object webkitURLConstructor]. Was [object URLConstructor].
+PASS URL.toString() is '[object webkitURLConstructor]'
 PASS successfullyParsed is true
 
 TEST COMPLETE

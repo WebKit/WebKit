@@ -24,7 +24,7 @@ iframe.onload = function () {
 };
 
 var b = new Blob(['<h1>PASS (1/1)</h1>'], { type: 'text/html' });
-iframe.src = webkitURL.createObjectURL(b);
+iframe.src = URL.createObjectURL(b);
 </script>
 </body>
 </html>

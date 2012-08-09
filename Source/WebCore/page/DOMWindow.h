@@ -452,10 +452,6 @@ namespace WebCore {
 #if ENABLE(WEB_TIMING)
         mutable RefPtr<Performance> m_performance;
 #endif
-
-#if ENABLE(BLOB)
-        mutable RefPtr<DOMURL> m_domURL;
-#endif
     };
 
     inline String DOMWindow::status() const

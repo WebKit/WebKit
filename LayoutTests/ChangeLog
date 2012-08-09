@@ -1,3 +1,54 @@
+2012-08-05  Kinuko Yasuda  <kinuko@chromium.org>
+
+        Unprefix window.webkitURL
+        https://bugs.webkit.org/show_bug.cgi?id=93034
+
+        Reviewed by Jian Li.
+
+        Adding unprefixed window.URL as other browsers like FireFox and Opera 12 seem to have the API unprefixed.
+        (This patch doesn't remove webkitURL yet as Safari and Chrome has exposed the URL for a while now.)
+
+        Changed most of the window.URL test code to use unprefixed version.
+        To verify webkitURL is still available left webkitURL related tests in
+        fast/dom/DOMURL/check-instanceof-domurl-functions.html.
+
+        * editing/pasteboard/data-transfer-items-image-png.html:
+        * fast/dom/DOMURL/check-instanceof-domurl-functions-expected.txt:
+        * fast/dom/DOMURL/check-instanceof-domurl-functions.html:
+        * fast/dom/HTMLAnchorElement/anchor-download-unset.html:
+        * fast/dom/HTMLAnchorElement/anchor-download.html:
+        * fast/dom/HTMLAnchorElement/anchor-nodownload-set.html:
+        * fast/dom/HTMLAnchorElement/anchor-nodownload.html:
+        * fast/dom/constructed-objects-prototypes-expected.txt:
+        * fast/dom/window-domurl-crash.html:
+        * fast/files/apply-blob-url-to-img.html:
+        * fast/files/apply-blob-url-to-xhr.html:
+        * fast/files/create-blob-url-crash.html:
+        * fast/files/domurl-script-execution-context-crash.html:
+        * fast/files/revoke-blob-url.html:
+        * fast/files/url-null-expected.txt:
+        * fast/files/url-null.html:
+        * fast/files/url-required-arguments-expected.txt:
+        * fast/files/url-required-arguments.html:
+        * fast/files/workers/inline-worker-via-blob-url.html:
+        * fast/files/workers/resources/worker-apply-blob-url-to-xhr.js:
+        * fast/js/constructor-length.html:
+        * http/tests/fileapi/create-blob-url-from-data-url.html:
+        * http/tests/security/mixedContent/blob-url-in-iframe.html:
+        * platform/chromium-win/compositing/geometry/object-clip-rects-assertion-expected.txt:
+        * platform/chromium/fast/files/url-required-arguments-expected.txt:
+        * platform/chromium/media/video-capture-preview.html:
+        * platform/gtk/fast/dom/constructed-objects-prototypes-expected.txt:
+        * platform/gtk/fast/files/url-required-arguments-expected.txt:
+        * platform/gtk/fast/js/constructor-length-expected.txt:
+        * platform/gtk/fast/js/global-constructors-expected.txt:
+        * platform/mac/fast/js/constructor-length-expected.txt:
+        * platform/mac/fast/js/global-constructors-expected.txt:
+        * platform/qt-5.0/fast/js/global-constructors-expected.txt:
+        * platform/qt/fast/dom/constructed-objects-prototypes-expected.txt:
+        * platform/qt/fast/js/constructor-length-expected.txt:
+        * platform/qt/fast/js/global-constructors-expected.txt:
+
 2012-08-08  Wei James  <james.wei@intel.com>
 
         nested fragment parser test slow on Android

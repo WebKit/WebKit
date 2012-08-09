@@ -1,3 +1,21 @@
+2012-08-05  Kinuko Yasuda  <kinuko@chromium.org>
+
+        Unprefix window.webkitURL
+        https://bugs.webkit.org/show_bug.cgi?id=93034
+
+        Reviewed by Jian Li.
+
+        Adding unprefixed window.URL as other browsers like FireFox and Opera 12 seem to have the API unprefixed.
+        (This patch doesn't remove webkitURL yet as Safari and Chrome has exposed the URL for a while now.)
+
+        Test: fast/dom/DOMURL/check-instanceof-domurl-functions.html
+
+        * page/DOMWindow.cpp:
+        * page/DOMWindow.h:
+        (DOMWindow):
+        * page/DOMWindow.idl:
+        * workers/WorkerContext.idl:
+
 2012-08-08  MORITA Hajime  <morrita@google.com>
 
         [SVG] load events shouldn't be fired during Node::insrtedInto()

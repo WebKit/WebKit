@@ -2,8 +2,8 @@ Test URL methods with null arguments.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
-PASS webkitURL.createObjectURL(null) is null
-webkitURL.revokeObjectURL(null)
+PASS URL.createObjectURL(null) is null
+URL.revokeObjectURL(null)
 PASS successfullyParsed is true
 
 TEST COMPLETE
