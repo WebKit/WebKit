@@ -393,13 +393,9 @@ class MockBugzilla(object):
         log("MOCK bug comment: bug_id=%s, cc=%s\n--- Begin comment ---\n%s\n--- End comment ---\n" % (
             bug_id, cc, comment_text))
 
-    def add_attachment_to_bug(self,
-                              bug_id,
-                              file_or_string,
-                              description,
-                              filename=None,
-                              comment_text=None):
-        log("MOCK add_attachment_to_bug: bug_id=%s, description=%s filename=%s" % (bug_id, description, filename))
+    def add_attachment_to_bug(self, bug_id, file_or_string, description, filename=None, comment_text=None, mimetype=None):
+        log("MOCK add_attachment_to_bug: bug_id=%s, description=%s filename=%s mimetype=%s" %
+            (bug_id, description, filename, mimetype))
         if comment_text:
             log("-- Begin comment --")
             log(comment_text)

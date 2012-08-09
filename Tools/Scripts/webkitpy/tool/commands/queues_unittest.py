@@ -173,7 +173,7 @@ class AbstractPatchQueueTest(CommandsTest):
         queue._options = Mock()
         queue._options.port = None
         patch = queue._tool.bugs.fetch_attachment(10001)
-        expected_stderr = """MOCK add_attachment_to_bug: bug_id=50000, description=Archive of layout-test-results from bot filename=layout-test-results.zip
+        expected_stderr = """MOCK add_attachment_to_bug: bug_id=50000, description=Archive of layout-test-results from bot filename=layout-test-results.zip mimetype=None
 -- Begin comment --
 The attached test failures were seen while running run-webkit-tests on the mock-queue.
 Port: MockPort  Platform: MockPlatform 1.0
@@ -405,14 +405,14 @@ The commit-queue just saw foo/bar.html flake (Text diff mismatch) while processi
 Port: MockPort  Platform: MockPlatform 1.0
 --- End comment ---
 
-MOCK add_attachment_to_bug: bug_id=50002, description=Failure diff from bot filename=failure.diff
+MOCK add_attachment_to_bug: bug_id=50002, description=Failure diff from bot filename=failure.diff mimetype=None
 MOCK bug comment: bug_id=50002, cc=None
 --- Begin comment ---
 The commit-queue just saw bar/baz.html flake (Text diff mismatch) while processing attachment 10000 on bug 50000.
 Port: MockPort  Platform: MockPlatform 1.0
 --- End comment ---
 
-MOCK add_attachment_to_bug: bug_id=50002, description=Archive of layout-test-results from bot filename=layout-test-results.zip
+MOCK add_attachment_to_bug: bug_id=50002, description=Archive of layout-test-results from bot filename=layout-test-results.zip mimetype=None
 MOCK bug comment: bug_id=50000, cc=None
 --- Begin comment ---
 The commit-queue encountered the following flaky tests while processing attachment 10000:

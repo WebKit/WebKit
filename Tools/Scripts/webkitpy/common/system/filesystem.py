@@ -262,6 +262,9 @@ class FileSystem(object):
         """Delete the directory rooted at path, whether empty or not."""
         shutil.rmtree(path, ignore_errors=True)
 
+    def copytree(self, source, destination):
+        shutil.copytree(source, destination)
+
     def split(self, path):
         """Return (dirname, basename + '.' + ext)"""
         return os.path.split(path)

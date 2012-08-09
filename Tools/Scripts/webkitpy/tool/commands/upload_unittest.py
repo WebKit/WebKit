@@ -79,7 +79,7 @@ MOCK: user.open_url: http://example.com/50000
         options = MockOptions()
         options.comment = "extra comment"
         options.description = "file description"
-        expected_stderr = """MOCK add_attachment_to_bug: bug_id=50000, description=file description filename=None
+        expected_stderr = """MOCK add_attachment_to_bug: bug_id=50000, description=file description filename=None mimetype=None
 -- Begin comment --
 extra comment
 -- End comment --
@@ -90,7 +90,7 @@ extra comment
         options = MockOptions()
         options.comment = None
         options.description = None
-        expected_stderr = """MOCK add_attachment_to_bug: bug_id=50000, description=file.txt filename=None
+        expected_stderr = """MOCK add_attachment_to_bug: bug_id=50000, description=file.txt filename=None mimetype=None
 """
         self.assert_execute_outputs(AttachToBug(), [50000, "path/to/file.txt"], options=options, expected_stderr=expected_stderr)
 

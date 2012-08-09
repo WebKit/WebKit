@@ -69,10 +69,10 @@ class MockSCM(object):
         return ["MockFile1"]
 
     def head_svn_revision(self):
-        return 1234
+        return '1234'
 
     def svn_revision(self, path):
-        return 5678
+        return '5678'
 
     def create_patch(self, git_commit, changed_files=None):
         return "Patch1"

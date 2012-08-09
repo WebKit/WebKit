@@ -578,19 +578,14 @@ class Bugzilla(object):
             return file_object.name
         return "bug-%s-%s.%s" % (bug_id, timestamp(), extension)
 
-    def add_attachment_to_bug(self,
-                              bug_id,
-                              file_or_string,
-                              description,
-                              filename=None,
-                              comment_text=None):
+    def add_attachment_to_bug(self, bug_id, file_or_string, description, filename=None, comment_text=None, mimetype=None):
         self.authenticate()
         log('Adding attachment "%s" to %s' % (description, self.bug_url_for_bug_id(bug_id)))
         self.browser.open(self.add_attachment_url(bug_id))
         self.browser.select_form(name="entryform")
         file_object = self._file_object_for_upload(file_or_string)
         filename = filename or self._filename_for_upload(file_object, bug_id)
-        self._fill_attachment_form(description, file_object, filename=filename)
+        self._fill_attachment_form(description, file_object, filename=filename, mimetype=mimetype)
         if comment_text:
             log(comment_text)
             self.browser['comment'] = comment_text

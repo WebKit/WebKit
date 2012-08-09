@@ -268,7 +268,7 @@ max 1120
             "timestamp": 123456789, "results":
             {"Bindings/event-target-wrapper": {"max": 1510, "avg": 1489.05, "median": 1487, "min": 1471, "stdev": 14.46, "unit": "ms"},
             "inspector/pass.html:group_name:test_name": 42},
-            "webkit-revision": 5678, "branch": "webkit-trunk"})
+            "webkit-revision": "5678", "branch": "webkit-trunk"})
 
     def test_run_with_description(self):
         runner, port = self.create_runner(args=['--output-json-path=/mock-checkout/output.json',
@@ -278,7 +278,7 @@ max 1120
             "timestamp": 123456789, "description": "some description", "results":
             {"Bindings/event-target-wrapper": {"max": 1510, "avg": 1489.05, "median": 1487, "min": 1471, "stdev": 14.46, "unit": "ms"},
             "inspector/pass.html:group_name:test_name": 42},
-            "webkit-revision": 5678, "branch": "webkit-trunk"})
+            "webkit-revision": "5678", "branch": "webkit-trunk"})
 
     def create_runner_and_setup_results_template(self, args=[]):
         runner, port = self.create_runner(args)
@@ -310,7 +310,7 @@ max 1120
             "timestamp": 123456789, "results":
             {"Bindings/event-target-wrapper": {"max": 1510, "avg": 1489.05, "median": 1487, "min": 1471, "stdev": 14.46, "unit": "ms"},
             "inspector/pass.html:group_name:test_name": 42},
-            "webkit-revision": 5678, "branch": "webkit-trunk"}])
+            "webkit-revision": "5678", "branch": "webkit-trunk"}])
 
         self.assertTrue(filesystem.isfile(output_json_path))
         self.assertTrue(filesystem.isfile(results_page_path))
@@ -324,7 +324,7 @@ max 1120
 
         expected_entry = {"timestamp": 123456789, "results": {"Bindings/event-target-wrapper":
             {"max": 1510, "avg": 1489.05, "median": 1487, "min": 1471, "stdev": 14.46, "unit": "ms"},
-            "inspector/pass.html:group_name:test_name": 42}, "webkit-revision": 5678, "branch": "webkit-trunk"}
+            "inspector/pass.html:group_name:test_name": 42}, "webkit-revision": "5678", "branch": "webkit-trunk"}
 
         self.maxDiff = None
         json_output = port.host.filesystem.read_text_file('/mock-checkout/output.json')
@@ -373,7 +373,7 @@ max 1120
             "timestamp": 123456789, "results":
             {"Bindings/event-target-wrapper": {"max": 1510, "avg": 1489.05, "median": 1487, "min": 1471, "stdev": 14.46, "unit": "ms"},
             "inspector/pass.html:group_name:test_name": 42},
-            "webkit-revision": 5678, "branch": "webkit-trunk",
+            "webkit-revision": "5678", "branch": "webkit-trunk",
             "key": "value"})
 
     def test_run_with_bad_json_source(self):
@@ -394,7 +394,7 @@ max 1120
             "timestamp": 123456789, "results":
             {"Bindings/event-target-wrapper": {"max": 1510, "avg": 1489.05, "median": 1487, "min": 1471, "stdev": 14.46, "unit": "ms"},
             "inspector/pass.html:group_name:test_name": 42.0},
-            "webkit-revision": 5678, "some-revision": 5678, "branch": "webkit-trunk"})
+            "webkit-revision": "5678", "some-revision": "5678", "branch": "webkit-trunk"})
 
     def test_run_with_upload_json(self):
         runner, port = self.create_runner(args=['--output-json-path=/mock-checkout/output.json',

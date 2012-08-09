@@ -378,6 +378,16 @@ class MockFileSystem(object):
 
         self.dirs = set(filter(lambda d: not d.startswith(path), self.dirs))
 
+    def copytree(self, source, destination):
+        source = self.normpath(source)
+        destination = self.normpath(destination)
+
+        for source_file in self.files:
+            if source_file.startswith(source):
+                destination_path = self.join(destination, self.relpath(source_file, source))
+                self.maybe_make_directory(self.dirname(destination_path))
+                self.files[destination_path] = self.files[source_file]
+
     def split(self, path):
         idx = path.rfind(self.sep)
         if idx == -1:

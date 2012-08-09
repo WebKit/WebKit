@@ -1,3 +1,78 @@
+2012-08-08  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add Perf EWS IRC bot
+        https://bugs.webkit.org/show_bug.cgi?id=92913
+
+        Reviewed by Dirk Pranke.
+
+        Adds the preliminary implementation of perfalizer, a IRC bot that runs performance tests
+        based on IRC requests.
+
+        * Scripts/webkitpy/common/checkout/scm/scm_mock.py:
+        (MockSCM.head_svn_revision): The actual implementation returns string, so match that.
+        (MockSCM.svn_revision): Ditto.
+        * Scripts/webkitpy/common/net/bugzilla/bugzilla.py:
+        (Bugzilla.add_attachment_to_bug): Added mimetype.
+        * Scripts/webkitpy/common/net/bugzilla/bugzilla_mock.py:
+        (MockBugzilla.add_attachment_to_bug): Ditto.
+        * Scripts/webkitpy/common/system/filesystem.py:
+        (FileSystem.copytree): Added.
+        * Scripts/webkitpy/common/system/filesystem_mock.py:
+        (MockFileSystem.copytree): Added.
+        * Scripts/webkitpy/performance_tests/perftestsrunner_unittest.py: Rebaselined tests
+        that had assumed revision numbers were integers.
+        (test_run_with_json_output):
+        (test_run_with_description):
+        (test_run_generates_json_by_default):
+        (test_run_generates_and_show_results_page):
+        (test_run_with_json_source):
+        (test_run_with_multiple_repositories):
+        * Scripts/webkitpy/tool/bot/flakytestreporter_unittest.py:
+        * Scripts/webkitpy/tool/commands/__init__.py:
+        * Scripts/webkitpy/tool/commands/perfalizer.py: Added.
+        (PerfalizerTask):
+        (PerfalizerTask.__init__):
+        (PerfalizerTask._copy_build_product_without_patch):
+        (PerfalizerTask.run):
+        (PerfalizerTask.parent_command):
+        (PerfalizerTask.run_webkit_patch):
+        (PerfalizerTask._json_path):
+        (PerfalizerTask._results_page_path):
+        (PerfalizerTask._run_perf_test):
+        (PerfalizerTask.run_command):
+        (PerfalizerTask.command_passed):
+        (PerfalizerTask.command_failed):
+        (PerfalizerTask.refetch_patch):
+        (PerfalizerTask.expected_failures):
+        (PerfalizerTask.build_style):
+        (PerfTest): IRC command.
+        (PerfTest.execute):
+        (Perfalizer): IRC bot.
+        (Perfalizer.begin_work_queue):
+        (Perfalizer.work_item_log_path):
+        (Perfalizer._is_old_failure):
+        (Perfalizer.next_work_item):
+        (Perfalizer.process_work_item):
+        (Perfalizer.handle_unexpected_error):
+        (Perfalizer.handle_script_error):
+        * Scripts/webkitpy/tool/commands/perfalizer_unittest.py: Added.
+        (PerfalizerTaskTest):
+        (PerfalizerTaskTest._create_and_run_perfalizer):
+        (PerfalizerTaskTest._create_and_run_perfalizer.logger):
+        (PerfalizerTaskTest._create_and_run_perfalizer.run_webkit_patch):
+        (PerfalizerTaskTest._create_and_run_perfalizer.run_perf_test):
+        (PerfalizerTaskTest.test_run):
+        (PerfalizerTaskTest.test_run_with_clean_fails):
+        (PerfalizerTaskTest.test_run_with_update_fails):
+        (PerfalizerTaskTest.test_run_with_build_fails):
+        (PerfalizerTaskTest.test_run_with_perf_test_fails):
+        (PerfalizerTaskTest.test_run_without_results_page):
+        * Scripts/webkitpy/tool/commands/queues_unittest.py:
+        (AbstractPatchQueueTest.test_upload_results_archive_for_patch): Rebaselined.
+        * Scripts/webkitpy/tool/commands/upload_unittest.py:
+        (test_attach_to_bug): Ditto.
+        (test_attach_to_bug_no_description_or_comment): Ditto.
+
 2012-08-08  Dirk Pranke  <dpranke@chromium.org>
 
         webkit-patch rebaseline-expectations needs to support multiple expectations files
