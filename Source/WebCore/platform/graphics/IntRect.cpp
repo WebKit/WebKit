@@ -36,14 +36,14 @@ using std::min;
 namespace WebCore {
 
 IntRect::IntRect(const FloatRect& r)
-    : m_location(IntPoint(static_cast<int>(r.x()), static_cast<int>(r.y())))
-    , m_size(IntSize(static_cast<int>(r.width()), static_cast<int>(r.height())))
+    : m_location(clampToInteger(r.x()), clampToInteger(r.y()))
+    , m_size(clampToInteger(r.width()), clampToInteger(r.height()))
 {
 }
 
 IntRect::IntRect(const FractionalLayoutRect& r)
-    : m_location(flooredIntPoint(r.location()))
-    , m_size(flooredIntSize(r.size()))
+    : m_location(r.x(), r.y())
+    , m_size(r.width(), r.height())
 {
 }
 

@@ -1,3 +1,54 @@
+2012-08-09  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
+
+        Floored and truncated rounded confused.
+        https://bugs.webkit.org/show_bug.cgi?id=93475
+
+        Reviewed by Levi Weintraub.
+
+        Fix the common mistake of confusing truncating (round towards zero) and
+        flooring (round down). They are only identical for positive numbers,
+        not for negative numbers.
+
+        This patch fixes instances of misimplemented or misused floor in the
+        layout and geometric code. And also uses the new correct implementations
+        to clean up the code for enclosingRect.
+
+        * platform/FractionalLayoutUnit.h:
+        (WebCore::FractionalLayoutUnit::fromFloatFloor):
+        (FractionalLayoutUnit):
+        (WebCore::FractionalLayoutUnit::ceil):
+        (WebCore::FractionalLayoutUnit::floor):
+        * platform/graphics/FloatPoint.h:
+        (WebCore::FloatPoint::FloatPoint):
+        (WebCore::roundedIntPoint):
+        (WebCore::flooredIntPoint):
+        (WebCore::ceiledIntPoint):
+        (WebCore::flooredIntSize):
+        * platform/graphics/FloatRect.cpp:
+        (WebCore::enclosingIntRect):
+        (WebCore::enclosedIntRect):
+        * platform/graphics/FloatSize.h:
+        (WebCore::roundedIntSize):
+        (WebCore::flooredIntSize):
+        (WebCore::flooredIntPoint):
+        * platform/graphics/FractionalLayoutPoint.h:
+        (WebCore::flooredIntPoint):
+        (WebCore::flooredFractionalLayoutPoint):
+        (WebCore::ceiledFractionalLayoutPoint):
+        * platform/graphics/FractionalLayoutRect.cpp:
+        (WebCore::enclosingIntRect):
+        (WebCore::enclosingFractionalLayoutRect):
+        * platform/graphics/FractionalLayoutSize.h:
+        (WebCore::flooredIntSize):
+        * platform/graphics/IntRect.cpp:
+        (WebCore::IntRect::IntRect):
+        * rendering/LayoutTypes.h:
+        (WebCore::flooredLayoutPoint):
+        (WebCore::floorToInt):
+        (WebCore::isIntegerValue):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::convertToLayerCoords):
+
 2012-08-07  Andrey Kosyakov  <caseq@chromium.org>
 
         Web Inspector: use WebInspector.ProgressIndicator in AdvancedSearchController

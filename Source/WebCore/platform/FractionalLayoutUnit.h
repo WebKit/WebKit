@@ -95,6 +95,14 @@ public:
         return v;
     }
 
+    static FractionalLayoutUnit fromFloatFloor(float value)
+    {
+        REPORT_OVERFLOW(isInBounds(value));
+        FractionalLayoutUnit v;
+        v.m_value = floorf(value * kFixedPointDenominator);
+        return v;
+    }
+
     static FractionalLayoutUnit fromFloatRound(float value)
     {
         if (value >= 0)
@@ -146,9 +154,9 @@ public:
 #endif
     {
 #if ENABLE(SUBPIXEL_LAYOUT)
-        if (m_value > 0)
+        if (m_value >= 0)
             return (m_value + kFixedPointDenominator - 1) / kFixedPointDenominator;
-        return (m_value - kFixedPointDenominator + 1) / kFixedPointDenominator;
+        return toInt();
 #else
         return m_value;
 #endif
@@ -166,7 +174,13 @@ public:
 
     int floor() const
     {
-        return toInt();
+#if ENABLE(SUBPIXEL_LAYOUT)
+        if (m_value >= 0)
+            return toInt();
+        return (m_value - kFixedPointDenominator + 1) / kFixedPointDenominator;
+#else
+        return m_value;
+#endif
     }
 
     static float epsilon() { return 1.0f / kFixedPointDenominator; }

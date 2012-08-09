@@ -151,7 +151,7 @@ inline bool operator!=(const FractionalLayoutSize& a, const FractionalLayoutSize
 
 inline IntSize flooredIntSize(const FractionalLayoutSize& s)
 {
-    return IntSize(s.width().toInt(), s.height().toInt());
+    return IntSize(s.width().floor(), s.height().floor());
 }
 
 inline IntSize roundedIntSize(const FractionalLayoutSize& s)

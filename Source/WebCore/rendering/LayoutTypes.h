@@ -91,17 +91,12 @@ inline LayoutPoint roundedLayoutPoint(const FloatPoint& p)
 
 inline LayoutPoint flooredLayoutPoint(const FloatPoint& p)
 {
-    return LayoutPoint(p.x(), p.y());
+    return flooredFractionalLayoutPoint(p);
 }
 
 inline LayoutPoint flooredLayoutPoint(const FloatSize& s)
 {
-    return LayoutPoint(s.width(), s.height());
-}
-
-inline LayoutSize flooredLayoutSize(const FloatPoint& p)
-{
-    return LayoutSize(p.x(), p.y());
+    return flooredLayoutPoint(FloatPoint(s));
 }
 
 inline int roundToInt(LayoutUnit value)
@@ -111,7 +106,7 @@ inline int roundToInt(LayoutUnit value)
 
 inline int floorToInt(LayoutUnit value)
 {
-    return value.toInt();
+    return value.floor();
 }
 
 inline LayoutUnit roundedLayoutUnit(float value)
@@ -164,7 +159,7 @@ inline IntRect pixelSnappedIntRect(LayoutPoint location, LayoutSize size)
 
 inline bool isIntegerValue(const LayoutUnit value)
 {
-    return value.floor() == value;
+    return value.toInt() == value;
 }
 
 } // namespace WebCore

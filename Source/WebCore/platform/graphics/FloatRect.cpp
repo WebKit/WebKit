@@ -214,26 +214,20 @@ void FloatRect::fitToPoints(const FloatPoint& p0, const FloatPoint& p1, const Fl
 
 IntRect enclosingIntRect(const FloatRect& rect)
 {
-    float left = floorf(rect.x());
-    float top = floorf(rect.y());
-    float width = ceilf(rect.maxX()) - left;
-    float height = ceilf(rect.maxY()) - top;
-    
-    return IntRect(clampToInteger(left), clampToInteger(top), 
-                   clampToInteger(width), clampToInteger(height));
+    IntPoint location = flooredIntPoint(rect.minXMinYCorner());
+    IntPoint maxPoint = ceiledIntPoint(rect.maxXMaxYCorner());
+
+    return IntRect(location, maxPoint - location);
 }
 
 IntRect enclosedIntRect(const FloatRect& rect)
 {
-    int x = clampToInteger(ceilf(rect.x()));
-    int y = clampToInteger(ceilf(rect.y()));
-    float maxX = clampToInteger(floorf(rect.maxX()));
-    float maxY = clampToInteger(floorf(rect.maxY()));
-    // A rect of width 0 should not become a rect of width -1 due to ceil/floor.
-    int width = max(clampToInteger(maxX - x), 0);
-    int height = max(clampToInteger(maxY - y), 0);
+    IntPoint location = ceiledIntPoint(rect.minXMinYCorner());
+    IntPoint maxPoint = flooredIntPoint(rect.maxXMaxYCorner());
+    IntSize size = maxPoint - location;
+    size.clampNegativeToZero();
 
-    return IntRect(x, y, width, height);
+    return IntRect(location, size);
 }
 
 IntRect roundedIntRect(const FloatRect& rect)

@@ -77,6 +77,7 @@ public:
     FloatPoint(float x, float y) : m_x(x), m_y(y) { }
     FloatPoint(const IntPoint&);
     FloatPoint(const FractionalLayoutPoint&);
+    explicit FloatPoint(const FloatSize& size) : m_x(size.width()), m_y(size.height()) { }
 
     static FloatPoint zero() { return FloatPoint(); }
 
@@ -243,17 +244,22 @@ inline float operator*(const FloatPoint& a, const FloatPoint& b)
 
 inline IntPoint roundedIntPoint(const FloatPoint& p)
 {
-    return IntPoint(static_cast<int>(roundf(p.x())), static_cast<int>(roundf(p.y())));
+    return IntPoint(clampToInteger(roundf(p.x())), clampToInteger(roundf(p.y())));
 }
 
 inline IntPoint flooredIntPoint(const FloatPoint& p)
 {
-    return IntPoint(static_cast<int>(p.x()), static_cast<int>(p.y()));
+    return IntPoint(clampToInteger(floorf(p.x())), clampToInteger(floorf(p.y())));
+}
+
+inline IntPoint ceiledIntPoint(const FloatPoint& p)
+{
+    return IntPoint(clampToInteger(ceilf(p.x())), clampToInteger(ceilf(p.y())));
 }
 
 inline IntSize flooredIntSize(const FloatPoint& p)
 {
-    return IntSize(static_cast<int>(p.x()), static_cast<int>(p.y()));
+    return IntSize(clampToInteger(floorf(p.x())), clampToInteger(floorf(p.y())));
 }
 
 float findSlope(const FloatPoint& p1, const FloatPoint& p2, float& c);

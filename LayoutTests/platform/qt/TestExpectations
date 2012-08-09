@@ -137,3 +137,6 @@ BUGWK93148 : tables/mozilla_expected_failures/marvin/table_overflow_hidden_tr.ht
 BUGWK93148 : fast/css/nested-layers-with-hover.html = TEXT
 
 BUGWK93247 DEBUG : fast/lists/list-marker-remove-crash.html = CRASH
+
+// Test requiring rebaseling afer bug 93475
+BUGWK93475 : fast/block/float/overhanging-tall-block.html = TEXT

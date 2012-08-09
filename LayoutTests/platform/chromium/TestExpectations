@@ -3489,3 +3489,6 @@ BUGWK93568 DEBUG : http/tests/misc/window-dot-stop.html = PASS TEXT
 
 BUGWK93586 : fast/forms/autocomplete-off-with-default-value-does-not-clear.html = TIMEOUT
 
+// Tests requiring rebaseling afer bug 93475
+BUGWK93475 : fast/block/float/overhanging-tall-block.html = TEXT
+BUGWK93475 : fast/html/details-writing-mode.html = IMAGE

@@ -186,12 +186,12 @@ inline bool operator!=(const FloatSize& a, const FloatSize& b)
 
 inline IntSize roundedIntSize(const FloatSize& p)
 {
-    return IntSize(static_cast<int>(roundf(p.width())), static_cast<int>(roundf(p.height())));
+    return IntSize(clampToInteger(roundf(p.width())), clampToInteger(roundf(p.height())));
 }
 
 inline IntSize flooredIntSize(const FloatSize& p)
 {
-    return IntSize(static_cast<int>(p.width()), static_cast<int>(p.height()));
+    return IntSize(clampToInteger(floorf(p.width())), clampToInteger(floorf(p.height())));
 }
 
 inline IntSize expandedIntSize(const FloatSize& p)
@@ -201,7 +201,7 @@ inline IntSize expandedIntSize(const FloatSize& p)
 
 inline IntPoint flooredIntPoint(const FloatSize& p)
 {
-    return IntPoint(static_cast<int>(p.width()), static_cast<int>(p.height()));
+    return IntPoint(clampToInteger(floorf(p.width())), clampToInteger(floorf(p.height())));
 }
 
 } // namespace WebCore

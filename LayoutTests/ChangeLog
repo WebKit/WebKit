@@ -1,3 +1,14 @@
+2012-08-09  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
+
+        Floored and truncated rounded confused.
+        https://bugs.webkit.org/show_bug.cgi?id=93475
+
+        Reviewed by Levi Weintraub.
+
+        * platform/chromium/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/qt/TestExpectations:
+
 2012-08-09  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: improve large array logging experience
