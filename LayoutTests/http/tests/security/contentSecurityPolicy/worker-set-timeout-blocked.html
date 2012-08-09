@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="X-WebKit-CSP" content="script-src 'self' 'unsafe-inline'"/>
+<script>
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
+</script>
+</head>
+<body>
+<script>
+try {
+    var worker = new Worker('http://127.0.0.1:8000/security/contentSecurityPolicy/resources/worker-set-timeout.js');
+    worker.onmessage = function (event) {
+        alert(event.data);
+        if (window.testRunner)
+            testRunner.notifyDone();
+    };
+} catch (e) {
+    alert(e);
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+</script>
+</body>
+</html>

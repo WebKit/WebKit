@@ -1,3 +1,34 @@
+2012-08-08  Tom Sepez  <tsepez@chromium.org>
+
+        Avoid ASSERT(m_workerContext->isSharedWorkerContext()) in WorkerScriptController::initScript()
+        https://bugs.webkit.org/show_bug.cgi?id=93521
+
+        Reviewed by Adam Barth.
+
+        Changes WorkerContext and its subclasses so that we do not call functions that rely upon subclass
+        virtual methods from the superclass constructor.
+
+        Test: http/tests/security/contentSecurityPolicy/worker-set-timeout-blocked.html
+
+        * workers/DedicatedWorkerContext.cpp:
+        (WebCore):
+        (WebCore::DedicatedWorkerContext::create):
+        (WebCore::DedicatedWorkerContext::DedicatedWorkerContext):
+        * workers/DedicatedWorkerContext.h:
+        (DedicatedWorkerContext):
+        * workers/SharedWorkerContext.cpp:
+        (WebCore):
+        (WebCore::SharedWorkerContext::create):
+        (WebCore::SharedWorkerContext::SharedWorkerContext):
+        * workers/SharedWorkerContext.h:
+        (SharedWorkerContext):
+        * workers/WorkerContext.cpp:
+        (WebCore::WorkerContext::WorkerContext):
+        (WebCore::WorkerContext::applyContentSecurityPolicyFromString):
+        (WebCore):
+        * workers/WorkerContext.h:
+        (WorkerContext):
+
 2012-08-08  Thiago Marcos P. Santos  <thiago.santos@intel.com>
 
         CanvasRenderContext2D::setFont() should ignore inherited properties and default keyword value

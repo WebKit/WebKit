@@ -1,3 +1,14 @@
+2012-08-08  Tom Sepez  <tsepez@chromium.org>
+
+        Avoid ASSERT(m_workerContext->isSharedWorkerContext()) in WorkerScriptController::initScript()
+        https://bugs.webkit.org/show_bug.cgi?id=93521
+
+        Reviewed by Adam Barth.
+
+        * http/tests/security/contentSecurityPolicy/resources/worker-set-timeout.js: Added.
+        * http/tests/security/contentSecurityPolicy/worker-set-timeout-blocked-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/worker-set-timeout-blocked.html: Added.
+
 2012-08-08  Dean Jackson  <dino@apple.com>
 
         (r124484) inspector/device-orientation-success.html failing on Mac ports
