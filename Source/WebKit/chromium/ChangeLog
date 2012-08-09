@@ -1,3 +1,18 @@
+2012-08-09  Alec Flett  <alecflett@chromium.org>
+
+        IndexedDB: additional chromium signature for openCursor
+        https://bugs.webkit.org/show_bug.cgi?id=93637
+
+        Reviewed by Adam Barth.
+
+        Stub out the TaskType-based openCursor in the chromium API.
+
+        * src/WebIDBObjectStoreImpl.cpp:
+        (WebKit::WebIDBObjectStoreImpl::openCursor):
+        * src/WebIDBObjectStoreImpl.h:
+        (WebKit::WebIDBObjectStoreImpl::openCursor):
+        (WebIDBObjectStoreImpl):
+
 2012-08-09  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Do partial-swap scissoring on quads during draw instead of on layers

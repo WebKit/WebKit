@@ -106,8 +106,9 @@ void WebIDBObjectStoreImpl::deleteIndex(const WebString& name, const WebIDBTrans
     m_objectStore->deleteIndex(name, transaction.getIDBTransactionBackendInterface(), ec);
 }
 
-void WebIDBObjectStoreImpl::openCursor(const WebIDBKeyRange& keyRange, unsigned short direction, WebIDBCallbacks* callbacks, const WebIDBTransaction& transaction, WebExceptionCode& ec)
+void WebIDBObjectStoreImpl::openCursor(const WebIDBKeyRange& keyRange, WebIDBCursor::Direction direction, WebIDBCallbacks* callbacks, WebIDBTransaction::TaskType, const WebIDBTransaction& transaction, WebExceptionCode& ec)
 {
+    // FIXME: Pass along TaskType when the API becomes available.
     m_objectStore->openCursor(keyRange, direction, IDBCallbacksProxy::create(adoptPtr(callbacks)), transaction.getIDBTransactionBackendInterface(), ec);
 }
 
