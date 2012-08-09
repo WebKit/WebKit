@@ -1,5 +1,11 @@
 2012-08-09  Florin Malita  <fmalita@chromium.org>
 
+        [Chromium] Unreviewed gardening: updated Win results for 125160.
+
+        * platform/chromium-win/svg/custom/use-detach-expected.png:
+
+2012-08-09  Florin Malita  <fmalita@chromium.org>
+
         [Chromium] Unreviewed gardening: updated results for 125167.
 
         * platform/chromium-linux/svg/custom/pattern-userSpaceOnUse-userToBaseTransform-expected.txt:
