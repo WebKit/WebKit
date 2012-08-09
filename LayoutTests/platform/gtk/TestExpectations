@@ -1266,7 +1266,6 @@ BUGWK92063 : fast/css/sticky/parsing-position-sticky.html = TEXT
 BUGWK92100 : accessibility/canvas-accessibilitynodeobject.html = TEXT
 
 // These tests depend on subpixel layout.
-BUGWK92352 : css3/flexbox/content-height-with-scrollbars.html = IMAGE
 BUGWK92352 : css3/flexbox/flex-rounding.html = TEXT
 
 BUGWK93073 : mathml/presentation/attributes.xhtml = TEXT

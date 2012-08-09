@@ -815,9 +815,6 @@ BUGWK92942 SKIP : fast/events/constructors/device-proximity-event-constructor.ht
 BUGWK80219 : fast/box-sizing/box-sizing.html = IMAGE+TEXT
 BUGWK80219 : compositing/overflow/clip-descendents.html = TEXT
 
-// This test is failing after being added at r124278
-BUGWK92958 : css3/flexbox/content-height-with-scrollbars.html = IMAGE
-
 // This test is failing after being added at r124549
 BUGWK93074 : fast/forms/datalist/range-snap-to-datalist.html = TEXT
 

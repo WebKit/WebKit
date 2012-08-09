@@ -1,3 +1,16 @@
+2012-08-08  Tony Chang  <tony@chromium.org>
+
+        css3/flexbox/content-height-with-scrollbars.html failing on non-fractional pixel layout machines
+        https://bugs.webkit.org/show_bug.cgi?id=93530
+
+        Unreviewed, fixing the test to not depend on rounding behavior.
+
+        * css3/flexbox/content-height-with-scrollbars-expected.html: Use a fixed width.
+        * css3/flexbox/content-height-with-scrollbars.html: Use a fixed width.
+        * platform/efl/TestExpectations: Remove failing expectation.
+        * platform/gtk/TestExpectations: Remove failing expectation.
+        * platform/mac/TestExpectations: Remove failing expectation.
+
 2012-08-08  Dirk Pranke  <dpranke@chromium.org>
 
         Unreviewed TestExpectations cleanup and a new baseline.
