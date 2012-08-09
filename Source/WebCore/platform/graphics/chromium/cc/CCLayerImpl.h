@@ -177,9 +177,6 @@ public:
     bool drawOpacityIsAnimating() const { return m_drawOpacityIsAnimating; }
     void setDrawOpacityIsAnimating(bool drawOpacityIsAnimating) { m_drawOpacityIsAnimating = drawOpacityIsAnimating; }
 
-    const IntRect& scissorRect() const { return m_scissorRect; }
-    void setScissorRect(const IntRect& rect) { m_scissorRect = rect; }
-
     CCLayerImpl* renderTarget() const { ASSERT(!m_renderTarget || m_renderTarget->renderSurface()); return m_renderTarget; }
     void setRenderTarget(CCLayerImpl* target) { m_renderTarget = target; }
 
@@ -385,10 +382,6 @@ private:
 #ifndef NDEBUG
     bool m_betweenWillDrawAndDidDraw;
 #endif
-
-    // During drawing, identifies the region outside of which nothing should be drawn.
-    // Uses target surface's space.
-    IntRect m_scissorRect;
 
     // Render surface associated with this layer. The layer and its descendants
     // will render to this surface.

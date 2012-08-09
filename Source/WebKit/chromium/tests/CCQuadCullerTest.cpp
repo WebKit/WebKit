@@ -27,6 +27,7 @@
 #include "cc/CCQuadCuller.h"
 
 #include "cc/CCLayerTilingData.h"
+#include "cc/CCMathUtil.h"
 #include "cc/CCOcclusionTracker.h"
 #include "cc/CCOverdrawMetrics.h"
 #include "cc/CCSingleThreadProxy.h"
@@ -80,6 +81,7 @@ static PassOwnPtr<CCTiledLayerImpl> makeLayer(CCTiledLayerImpl* parent, const We
             layer->pushTileProperties(i, j, resourceId++, tileOpaqueRect);
         }
 
+    IntRect rectInTarget = CCMathUtil::mapClippedRect(layer->drawTransform(), layer->visibleContentRect());
     if (!parent) {
         layer->createRenderSurface();
         surfaceLayerList.append(layer.get());
@@ -87,7 +89,9 @@ static PassOwnPtr<CCTiledLayerImpl> makeLayer(CCTiledLayerImpl* parent, const We
     } else {
         layer->setRenderTarget(parent->renderTarget());
         parent->renderSurface()->layerList().append(layer.get());
+        rectInTarget.unite(CCMathUtil::mapClippedRect(parent->drawTransform(), parent->visibleContentRect()));
     }
+    layer->setDrawableContentRect(rectInTarget);
 
     return layer.release();
 }

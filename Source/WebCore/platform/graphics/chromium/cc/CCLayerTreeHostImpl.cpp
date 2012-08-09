@@ -256,15 +256,9 @@ void CCLayerTreeHostImpl::calculateRenderSurfaceLayerList(CCLayerList& renderSur
     {
         TRACE_EVENT0("cc", "CCLayerTreeHostImpl::calcDrawEtc");
         CCLayerTreeHostCommon::calculateDrawTransforms(m_rootLayerImpl.get(), deviceViewportSize(), m_deviceScaleFactor, &m_layerSorter, layerRendererCapabilities().maxTextureSize, renderSurfaceLayerList);
+        CCLayerTreeHostCommon::calculateVisibleRects(renderSurfaceLayerList);
 
         trackDamageForAllSurfaces(m_rootLayerImpl.get(), renderSurfaceLayerList);
-
-        if (layerRendererCapabilities().usingPartialSwap)
-            m_rootScissorRect = m_rootLayerImpl->renderSurface()->damageTracker()->currentDamageRect();
-        else
-            m_rootScissorRect = FloatRect(FloatPoint(0, 0), deviceViewportSize());
-
-        CCLayerTreeHostCommon::calculateVisibleAndScissorRects(renderSurfaceLayerList, m_rootScissorRect);
     }
 }
 
@@ -276,8 +270,6 @@ bool CCLayerTreeHostImpl::calculateRenderPasses(FrameData& frame)
 
     TRACE_EVENT1("cc", "CCLayerTreeHostImpl::calculateRenderPasses", "renderSurfaceLayerList.size()", static_cast<long long unsigned>(frame.renderSurfaceLayerList->size()));
 
-    m_rootLayerImpl->setScissorRect(enclosingIntRect(m_rootScissorRect));
-
     // Create the render passes in dependency order.
     HashMap<CCRenderSurface*, CCRenderPass*> surfacePassMap;
     for (int surfaceIndex = frame.renderSurfaceLayerList->size() - 1; surfaceIndex >= 0 ; --surfaceIndex) {
@@ -286,6 +278,7 @@ bool CCLayerTreeHostImpl::calculateRenderPasses(FrameData& frame)
 
         int renderPassId = renderSurfaceLayer->id();
         OwnPtr<CCRenderPass> pass = CCRenderPass::create(renderSurface, renderPassId);
+        pass->setDamageRect(renderSurface->damageTracker()->currentDamageRect());
         pass->setFilters(renderSurfaceLayer->filters());
         pass->setBackgroundFilters(renderSurfaceLayer->backgroundFilters());
 
@@ -295,7 +288,7 @@ bool CCLayerTreeHostImpl::calculateRenderPasses(FrameData& frame)
     }
 
     bool recordMetricsForFrame = true; // FIXME: In the future, disable this when about:tracing is off.
-    CCOcclusionTrackerImpl occlusionTracker(enclosingIntRect(m_rootScissorRect), recordMetricsForFrame);
+    CCOcclusionTrackerImpl occlusionTracker(m_rootLayerImpl->renderSurface()->contentRect(), recordMetricsForFrame);
     occlusionTracker.setMinimumTrackingSize(m_settings.minimumOcclusionTrackingSize);
 
     if (settings().showOccludingRects)
@@ -317,10 +310,10 @@ bool CCLayerTreeHostImpl::calculateRenderPasses(FrameData& frame)
 
         occlusionTracker.enterLayer(it);
 
-        if (it.representsContributingRenderSurface() && !it->renderSurface()->scissorRect().isEmpty()) {
+        if (it.representsContributingRenderSurface()) {
             CCRenderPass* contributingRenderPass = surfacePassMap.get(it->renderSurface());
             pass->appendQuadsForRenderSurfaceLayer(*it, contributingRenderPass, &occlusionTracker);
-        } else if (it.representsItself() && !it->visibleContentRect().isEmpty() && !it->scissorRect().isEmpty()) {
+        } else if (it.representsItself() && !it->visibleContentRect().isEmpty()) {
             bool hasOcclusionFromOutsideTargetSurface;
             if (occlusionTracker.occluded(*it, it->visibleContentRect(), &hasOcclusionFromOutsideTargetSurface)) {
                 if (hasOcclusionFromOutsideTargetSurface)
@@ -545,10 +538,15 @@ void CCLayerTreeHostImpl::drawLayers(const FrameData& frame)
     // RenderWidget.
     m_fpsCounter->markBeginningOfFrame(currentTime());
 
-    m_layerRenderer->drawFrame(frame.renderPasses, frame.renderPassesById, m_rootScissorRect);
+    m_layerRenderer->drawFrame(frame.renderPasses, frame.renderPassesById);
 
-    for (unsigned int i = 0; i < frame.renderPasses.size(); i++)
+    for (unsigned int i = 0; i < frame.renderPasses.size(); i++) {
         frame.renderPasses[i]->targetSurface()->damageTracker()->didDrawDamagedArea();
+
+        // Once a RenderPass has been drawn, its damage should be cleared in
+        // case the RenderPass will be reused next frame.
+        frame.renderPasses[i]->setDamageRect(FloatRect());
+    }
 
     if (m_settings.showDebugRects())
         m_debugRectHistory->saveDebugRectsForCurrentFrame(m_rootLayerImpl.get(), *frame.renderSurfaceLayerList, frame.occludingScreenSpaceRects, settings());
@@ -584,7 +582,7 @@ bool CCLayerTreeHostImpl::swapBuffers()
     ASSERT(m_layerRenderer);
 
     m_fpsCounter->markEndOfFrame();
-    return m_layerRenderer->swapBuffers(enclosingIntRect(m_rootScissorRect));
+    return m_layerRenderer->swapBuffers();
 }
 
 void CCLayerTreeHostImpl::didLoseContext()

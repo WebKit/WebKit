@@ -1,3 +1,95 @@
+2012-08-09  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] Do partial-swap scissoring on quads during draw instead of on layers
+        https://bugs.webkit.org/show_bug.cgi?id=91800
+
+        Reviewed by Adrienne Walker.
+
+        Computing the scissor rect for each render pass is now done in
+        LayerRendererChromium::drawRenderPass() instead of being done for each
+        layer and then copied into the quads. This allows us to always push a
+        full frame of quads (and include damage rects) from a child compositor,
+        and do partial-swap scissoring in the host compositor.
+
+        This also make partial-swap functionality completely contained within
+        LayerRendererChromium!
+
+        The scissorRect is removed from all layers, and the concept of
+        scissorRect is now misplaced in CCOcclusionTracker, so the variables
+        and methods in the tracker should be renamed to more appropriate
+        things.
+
+        Covered by existing tests, as well as: CCLayerTreeHostImplTest.textureCachingWithScissor
+
+        * platform/graphics/chromium/LayerChromium.h:
+        (LayerChromium):
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::clearFramebuffer):
+        (WebCore::LayerRendererChromium::renderPassTextureSize):
+        (WebCore::LayerRendererChromium::drawFrame):
+        (WebCore::LayerRendererChromium::drawRenderPass):
+        (WebCore::LayerRendererChromium::drawQuad):
+        (WebCore::LayerRendererChromium::drawDebugBorderQuad):
+        (WebCore::LayerRendererChromium::drawBackgroundFilters):
+        (WebCore::LayerRendererChromium::drawTileQuad):
+        (WebCore::LayerRendererChromium::swapBuffers):
+        (WebCore::LayerRendererChromium::useRenderPass):
+        (WebCore::LayerRendererChromium::setScissorToRect):
+        * platform/graphics/chromium/LayerRendererChromium.h:
+        (LayerRendererChromium):
+        (DrawingFrame):
+        * platform/graphics/chromium/RenderSurfaceChromium.cpp:
+        * platform/graphics/chromium/RenderSurfaceChromium.h:
+        (RenderSurfaceChromium):
+        * platform/graphics/chromium/cc/CCDrawQuad.h:
+        (WebCore::CCDrawQuad::clippedRectInTarget):
+        * platform/graphics/chromium/cc/CCLayerImpl.cpp:
+        (WebCore::CCLayerImpl::createSharedQuadState):
+        * platform/graphics/chromium/cc/CCLayerImpl.h:
+        (CCLayerImpl):
+        * platform/graphics/chromium/cc/CCLayerTreeHost.cpp:
+        (WebCore::CCLayerTreeHost::updateLayers):
+        (WebCore::CCLayerTreeHost::paintLayerContents):
+        * platform/graphics/chromium/cc/CCLayerTreeHostCommon.cpp:
+        (WebCore::calculateVisibleRectsInternal):
+        (WebCore::CCLayerTreeHostCommon::calculateVisibleRects):
+        * platform/graphics/chromium/cc/CCLayerTreeHostCommon.h:
+        (CCLayerTreeHostCommon):
+        * platform/graphics/chromium/cc/CCLayerTreeHostImpl.cpp:
+        (WebCore::CCLayerTreeHostImpl::calculateRenderSurfaceLayerList):
+        (WebCore::CCLayerTreeHostImpl::calculateRenderPasses):
+        (WebCore::CCLayerTreeHostImpl::drawLayers):
+        (WebCore::CCLayerTreeHostImpl::swapBuffers):
+        * platform/graphics/chromium/cc/CCLayerTreeHostImpl.h:
+        (CCLayerTreeHostImpl):
+        * platform/graphics/chromium/cc/CCOcclusionTracker.cpp:
+        (WebCore::::layerScissorRectInTargetSurface):
+        * platform/graphics/chromium/cc/CCRenderPass.cpp:
+        (WebCore::CCRenderPass::CCRenderPass):
+        (WebCore::CCRenderPass::appendQuadsToFillScreen):
+        * platform/graphics/chromium/cc/CCRenderPass.h:
+        (CCRenderPass):
+        (WebCore::CCRenderPass::transformToRootTarget):
+        (WebCore::CCRenderPass::outputRect):
+        (WebCore::CCRenderPass::damageRect):
+        (WebCore::CCRenderPass::setDamageRect):
+        * platform/graphics/chromium/cc/CCRenderSurface.cpp:
+        (WebCore::computeClippedRectInTarget):
+        (WebCore):
+        (WebCore::CCRenderSurface::createSharedQuadState):
+        (WebCore::CCRenderSurface::createReplicaSharedQuadState):
+        * platform/graphics/chromium/cc/CCRenderSurface.h:
+        (CCRenderSurface):
+        * platform/graphics/chromium/cc/CCRenderer.h:
+        (CCRenderer):
+        * platform/graphics/chromium/cc/CCSharedQuadState.cpp:
+        (WebCore::CCSharedQuadState::create):
+        (WebCore::CCSharedQuadState::CCSharedQuadState):
+        * platform/graphics/chromium/cc/CCSharedQuadState.h:
+        (CCSharedQuadState):
+        * platform/graphics/chromium/cc/CCTiledLayerImpl.cpp:
+        (WebCore::CCTiledLayerImpl::appendQuads):
+
 2012-08-09  Mike West  <mkwst@chromium.org>
 
         Content Security Policy directives that begin with an invalid character should log a console warning.

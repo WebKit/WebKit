@@ -289,8 +289,6 @@ private:
 
     CCLayerSorter m_layerSorter;
 
-    FloatRect m_rootScissorRect;
-
     // List of visible layers for the most recently prepared frame. Used for
     // rendering and input event hit testing.
     CCLayerList m_renderSurfaceLayerList;

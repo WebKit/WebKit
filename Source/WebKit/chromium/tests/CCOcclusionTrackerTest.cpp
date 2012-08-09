@@ -261,8 +261,7 @@ protected:
         ASSERT(!root->renderSurface());
 
         CCLayerTreeHostCommon::calculateDrawTransforms(root, root->bounds(), 1, &layerSorter, dummyMaxTextureSize, m_renderSurfaceLayerListImpl);
-
-        CCLayerTreeHostCommon::calculateVisibleAndScissorRects(m_renderSurfaceLayerListImpl, root->renderSurface()->contentRect());
+        CCLayerTreeHostCommon::calculateVisibleRects(m_renderSurfaceLayerListImpl);
 
         m_layerIterator = m_layerIteratorBegin = Types::LayerIterator::begin(&m_renderSurfaceLayerListImpl);
     }
@@ -275,8 +274,7 @@ protected:
         ASSERT(!root->renderSurface());
 
         CCLayerTreeHostCommon::calculateDrawTransforms(root, root->bounds(), 1, dummyMaxTextureSize, m_renderSurfaceLayerListChromium);
-
-        CCLayerTreeHostCommon::calculateVisibleAndScissorRects(m_renderSurfaceLayerListChromium, root->renderSurface()->contentRect());
+        CCLayerTreeHostCommon::calculateVisibleRects(m_renderSurfaceLayerListChromium);
 
         m_layerIterator = m_layerIteratorBegin = Types::LayerIterator::begin(&m_renderSurfaceLayerListChromium);
     }
@@ -624,20 +622,6 @@ protected:
         EXPECT_INT_RECT_EQ(IntRect(10, 430, 60, 70), occlusion.occlusionInTargetSurface().bounds());
         EXPECT_EQ(1u, occlusion.occlusionInTargetSurface().rects().size());
 
-        EXPECT_TRUE(occlusion.occluded(child, IntRect(10, 430, 60, 70)));
-        EXPECT_FALSE(occlusion.occluded(child, IntRect(9, 430, 60, 70)));
-        EXPECT_FALSE(occlusion.occluded(child, IntRect(10, 429, 60, 70)));
-        EXPECT_FALSE(occlusion.occluded(child, IntRect(10, 430, 61, 70)));
-        EXPECT_FALSE(occlusion.occluded(child, IntRect(10, 430, 60, 71)));
-
-        occlusion.useDefaultLayerScissorRect();
-        EXPECT_TRUE(occlusion.occluded(child, IntRect(10, 430, 60, 70)));
-        EXPECT_TRUE(occlusion.occluded(child, IntRect(9, 430, 60, 70)));
-        EXPECT_TRUE(occlusion.occluded(child, IntRect(10, 429, 60, 70)));
-        EXPECT_TRUE(occlusion.occluded(child, IntRect(10, 430, 61, 70)));
-        EXPECT_TRUE(occlusion.occluded(child, IntRect(10, 430, 60, 71)));
-        occlusion.setLayerScissorRect(IntRect(0, 0, 1000, 1000));
-
         this->leaveContributingSurface(child, occlusion);
         this->enterLayer(parent, occlusion);
 
@@ -728,45 +712,10 @@ protected:
 
         this->enterContributingSurface(child, occlusion);
 
-        EXPECT_TRUE(occlusion.occluded(child, IntRect(10, 430, 60, 70)));
-        EXPECT_FALSE(occlusion.occluded(child, IntRect(9, 430, 60, 70)));
-        EXPECT_FALSE(occlusion.occluded(child, IntRect(10, 429, 60, 70)));
-        EXPECT_FALSE(occlusion.occluded(child, IntRect(11, 430, 60, 70)));
-        EXPECT_FALSE(occlusion.occluded(child, IntRect(10, 431, 60, 70)));
-
-        occlusion.useDefaultLayerScissorRect();
-        EXPECT_TRUE(occlusion.occluded(child, IntRect(10, 430, 60, 70)));
-        EXPECT_TRUE(occlusion.occluded(child, IntRect(9, 430, 60, 70)));
-        EXPECT_TRUE(occlusion.occluded(child, IntRect(10, 429, 60, 70)));
-        EXPECT_TRUE(occlusion.occluded(child, IntRect(11, 430, 60, 70)));
-        EXPECT_TRUE(occlusion.occluded(child, IntRect(10, 431, 60, 70)));
-        occlusion.setLayerScissorRect(IntRect(-10, -10, 1000, 1000));
-
-        EXPECT_TRUE(occlusion.unoccludedContentRect(child, IntRect(10, 430, 60, 70)).isEmpty());
-        // This is the little piece not occluded by child2
-        EXPECT_INT_RECT_EQ(IntRect(9, 430, 1, 10), occlusion.unoccludedContentRect(child, IntRect(9, 430, 60, 70)));
-        // This extends past both sides of child2, so it will be the original rect.
-        EXPECT_INT_RECT_EQ(IntRect(9, 430, 60, 80), occlusion.unoccludedContentRect(child, IntRect(9, 430, 60, 80)));
-        // This extends past two adjacent sides of child2, and should included the unoccluded parts of each side.
-        // This also demonstrates that the rect can be arbitrary and does not get clipped to the layer's visibleContentRect().
-        EXPECT_INT_RECT_EQ(IntRect(-10, 430, 20, 70), occlusion.unoccludedContentRect(child, IntRect(-10, 430, 60, 70)));
-        // This extends past three adjacent sides of child2, so it should contain the unoccluded parts of each side. The left
-        // and bottom edges are completely unoccluded for some row/column so we get back the original query rect.
-        EXPECT_INT_RECT_EQ(IntRect(-10, 430, 60, 80), occlusion.unoccludedContentRect(child, IntRect(-10, 430, 60, 80)));
-        EXPECT_INT_RECT_EQ(IntRect(10, 429, 60, 1), occlusion.unoccludedContentRect(child, IntRect(10, 429, 60, 70)));
-        EXPECT_INT_RECT_EQ(IntRect(70, 430, 1, 70), occlusion.unoccludedContentRect(child, IntRect(11, 430, 60, 70)));
-        EXPECT_INT_RECT_EQ(IntRect(10, 500, 60, 1), occlusion.unoccludedContentRect(child, IntRect(10, 431, 60, 70)));
-
-        occlusion.useDefaultLayerScissorRect();
-        EXPECT_TRUE(occlusion.unoccludedContentRect(child, IntRect(10, 430, 60, 70)).isEmpty());
-        EXPECT_TRUE(occlusion.unoccludedContentRect(child, IntRect(9, 430, 60, 70)).isEmpty());
-        EXPECT_TRUE(occlusion.unoccludedContentRect(child, IntRect(9, 430, 60, 80)).isEmpty());
-        EXPECT_TRUE(occlusion.unoccludedContentRect(child, IntRect(-10, 430, 60, 70)).isEmpty());
-        EXPECT_TRUE(occlusion.unoccludedContentRect(child, IntRect(-10, 430, 60, 80)).isEmpty());
-        EXPECT_TRUE(occlusion.unoccludedContentRect(child, IntRect(10, 429, 60, 70)).isEmpty());
-        EXPECT_TRUE(occlusion.unoccludedContentRect(child, IntRect(11, 430, 60, 70)).isEmpty());
-        EXPECT_TRUE(occlusion.unoccludedContentRect(child, IntRect(10, 431, 60, 70)).isEmpty());
-        occlusion.setLayerScissorRect(IntRect(0, 0, 1000, 1000));
+        EXPECT_INT_RECT_EQ(IntRect(30, 30, 70, 70), occlusion.occlusionInScreenSpace().bounds());
+        EXPECT_EQ(2u, occlusion.occlusionInScreenSpace().rects().size());
+        EXPECT_INT_RECT_EQ(IntRect(10, 430, 60, 70), occlusion.occlusionInTargetSurface().bounds());
+        EXPECT_EQ(1u, occlusion.occlusionInTargetSurface().rects().size());
 
         // Occlusion in |child2| should get merged with the |child| surface we are leaving now.
         this->leaveContributingSurface(child, occlusion);

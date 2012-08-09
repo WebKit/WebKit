@@ -55,7 +55,7 @@ void executeCalculateDrawTransformsAndVisibility(CCLayerImpl* root, Vector<CCLay
     ASSERT_FALSE(renderSurfaceLayerList.size());
 
     CCLayerTreeHostCommon::calculateDrawTransforms(root, root->bounds(), 1, &layerSorter, dummyMaxTextureSize, renderSurfaceLayerList);
-    CCLayerTreeHostCommon::calculateVisibleAndScissorRects(renderSurfaceLayerList, root->renderSurface()->contentRect());
+    CCLayerTreeHostCommon::calculateVisibleRects(renderSurfaceLayerList);
 }
 
 void clearDamageForAllSurfaces(CCLayerImpl* layer)

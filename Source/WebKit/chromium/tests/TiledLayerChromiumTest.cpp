@@ -150,6 +150,7 @@ TEST_F(TiledLayerChromiumTest, pushOccludedDirtyTiles)
 
     // The tile size is 100x100, so this invalidates and then paints two tiles.
     layer->setBounds(IntSize(100, 200));
+    layer->setDrawableContentRect(IntRect(0, 0, 100, 200));
     layer->setVisibleContentRect(IntRect(0, 0, 100, 200));
     layer->invalidateContentRect(IntRect(0, 0, 100, 200));
 
@@ -1043,6 +1044,7 @@ TEST_F(TiledLayerChromiumTest, tilesPaintedWithoutOcclusion)
 
     // The tile size is 100x100, so this invalidates and then paints two tiles.
     layer->setBounds(IntSize(100, 200));
+    layer->setDrawableContentRect(IntRect(0, 0, 100, 200));
     layer->setVisibleContentRect(IntRect(0, 0, 100, 200));
     layer->invalidateContentRect(IntRect(0, 0, 100, 200));
 
@@ -1063,6 +1065,7 @@ TEST_F(TiledLayerChromiumTest, tilesPaintedWithOcclusion)
     layer->setBounds(IntSize(600, 600));
 
     occluded.setOcclusion(IntRect(200, 200, 300, 100));
+    layer->setDrawableContentRect(IntRect(IntPoint(), layer->contentBounds()));
     layer->setVisibleContentRect(IntRect(IntPoint(), layer->contentBounds()));
     layer->invalidateContentRect(IntRect(0, 0, 600, 600));
 
@@ -1114,6 +1117,7 @@ TEST_F(TiledLayerChromiumTest, tilesPaintedWithOcclusionAndVisiblityConstraints)
 
     // The partially occluded tiles (by the 150 occlusion height) are visible beyond the occlusion, so not culled.
     occluded.setOcclusion(IntRect(200, 200, 300, 150));
+    layer->setDrawableContentRect(IntRect(0, 0, 600, 360));
     layer->setVisibleContentRect(IntRect(0, 0, 600, 360));
     layer->invalidateContentRect(IntRect(0, 0, 600, 600));
 
@@ -1130,6 +1134,7 @@ TEST_F(TiledLayerChromiumTest, tilesPaintedWithOcclusionAndVisiblityConstraints)
 
     // Now the visible region stops at the edge of the occlusion so the partly visible tiles become fully occluded.
     occluded.setOcclusion(IntRect(200, 200, 300, 150));
+    layer->setDrawableContentRect(IntRect(0, 0, 600, 350));
     layer->setVisibleContentRect(IntRect(0, 0, 600, 350));
     layer->invalidateContentRect(IntRect(0, 0, 600, 600));
     layer->setTexturePriorities(m_priorityCalculator);
@@ -1145,6 +1150,7 @@ TEST_F(TiledLayerChromiumTest, tilesPaintedWithOcclusionAndVisiblityConstraints)
 
     // Now the visible region is even smaller than the occlusion, it should have the same result.
     occluded.setOcclusion(IntRect(200, 200, 300, 150));
+    layer->setDrawableContentRect(IntRect(0, 0, 600, 340));
     layer->setVisibleContentRect(IntRect(0, 0, 600, 340));
     layer->invalidateContentRect(IntRect(0, 0, 600, 600));
     layer->setTexturePriorities(m_priorityCalculator);
@@ -1169,6 +1175,7 @@ TEST_F(TiledLayerChromiumTest, tilesNotPaintedWithoutInvalidation)
     layer->setBounds(IntSize(600, 600));
 
     occluded.setOcclusion(IntRect(200, 200, 300, 100));
+    layer->setDrawableContentRect(IntRect(0, 0, 600, 600));
     layer->setVisibleContentRect(IntRect(0, 0, 600, 600));
     layer->invalidateContentRect(IntRect(0, 0, 600, 600));
     layer->setTexturePriorities(m_priorityCalculator);
@@ -1214,6 +1221,7 @@ TEST_F(TiledLayerChromiumTest, tilesPaintedWithOcclusionAndTransforms)
     layer->setDrawTransform(screenTransform);
 
     occluded.setOcclusion(IntRect(100, 100, 150, 50));
+    layer->setDrawableContentRect(IntRect(IntPoint(), layer->contentBounds()));
     layer->setVisibleContentRect(IntRect(IntPoint(), layer->contentBounds()));
     layer->invalidateContentRect(IntRect(0, 0, 600, 600));
     layer->setTexturePriorities(m_priorityCalculator);
@@ -1245,6 +1253,7 @@ TEST_F(TiledLayerChromiumTest, tilesPaintedWithOcclusionAndScaling)
     layer->setScreenSpaceTransform(drawTransform);
 
     occluded.setOcclusion(IntRect(200, 200, 300, 100));
+    layer->setDrawableContentRect(IntRect(IntPoint(), layer->contentBounds()));
     layer->setVisibleContentRect(IntRect(IntPoint(), layer->contentBounds()));
     layer->invalidateContentRect(IntRect(0, 0, 600, 600));
     layer->setTexturePriorities(m_priorityCalculator);
@@ -1265,6 +1274,7 @@ TEST_F(TiledLayerChromiumTest, tilesPaintedWithOcclusionAndScaling)
     // a different layer space. In this case the occluded region catches the
     // blown up tiles.
     occluded.setOcclusion(IntRect(200, 200, 300, 200));
+    layer->setDrawableContentRect(IntRect(IntPoint(), layer->contentBounds()));
     layer->setVisibleContentRect(IntRect(IntPoint(), layer->contentBounds()));
     layer->invalidateContentRect(IntRect(0, 0, 600, 600));
     layer->setTexturePriorities(m_priorityCalculator);
@@ -1285,6 +1295,7 @@ TEST_F(TiledLayerChromiumTest, tilesPaintedWithOcclusionAndScaling)
     layer->setDrawTransform(screenTransform);
 
     occluded.setOcclusion(IntRect(100, 100, 150, 100));
+    layer->setDrawableContentRect(IntRect(IntPoint(), layer->contentBounds()));
     layer->setVisibleContentRect(IntRect(IntPoint(), layer->contentBounds()));
     layer->invalidateContentRect(IntRect(0, 0, 600, 600));
     layer->setTexturePriorities(m_priorityCalculator);
@@ -1313,6 +1324,7 @@ TEST_F(TiledLayerChromiumTest, visibleContentOpaqueRegion)
     IntRect visibleBounds = IntRect(0, 0, 100, 150);
 
     layer->setBounds(contentBounds.size());
+    layer->setDrawableContentRect(visibleBounds);
     layer->setVisibleContentRect(visibleBounds);
     layer->setDrawOpacity(1);
 
@@ -1406,6 +1418,7 @@ TEST_F(TiledLayerChromiumTest, pixelsPaintedMetrics)
     IntRect visibleBounds = IntRect(0, 0, 100, 300);
 
     layer->setBounds(contentBounds.size());
+    layer->setDrawableContentRect(visibleBounds);
     layer->setVisibleContentRect(visibleBounds);
     layer->setDrawOpacity(1);
 
@@ -1465,6 +1478,7 @@ TEST_F(TiledLayerChromiumTest, dontAllocateContentsWhenTargetSurfaceCantBeAlloca
 
     root->setBounds(rootRect.size());
     root->setAnchorPoint(FloatPoint());
+    root->setDrawableContentRect(rootRect);
     root->setVisibleContentRect(rootRect);
     root->addChild(surface);
 
@@ -1478,11 +1492,13 @@ TEST_F(TiledLayerChromiumTest, dontAllocateContentsWhenTargetSurfaceCantBeAlloca
     child->setAnchorPoint(FloatPoint());
     child->setPosition(childRect.location());
     child->setVisibleContentRect(childRect);
+    child->setDrawableContentRect(rootRect);
 
     child2->setBounds(child2Rect.size());
     child2->setAnchorPoint(FloatPoint());
     child2->setPosition(child2Rect.location());
     child2->setVisibleContentRect(child2Rect);
+    child2->setDrawableContentRect(rootRect);
 
     ccLayerTreeHost->setRootLayer(root);
     ccLayerTreeHost->setViewportSize(rootRect.size(), rootRect.size());
@@ -1653,6 +1669,7 @@ TEST_F(TiledLayerChromiumTest, nonIntegerContentsScaleIsNotDistortedDuringPaint)
     IntRect contentRect(0, 0, 45, 47);
     EXPECT_EQ(contentRect.size(), layer->contentBounds());
     layer->setVisibleContentRect(contentRect);
+    layer->setDrawableContentRect(contentRect);
 
     layer->setTexturePriorities(m_priorityCalculator);
     textureManager->prioritizeTextures();
@@ -1688,6 +1705,7 @@ TEST_F(TiledLayerChromiumTest, nonIntegerContentsScaleIsNotDistortedDuringInvali
 
     IntRect contentRect(IntPoint(), layer->contentBounds());
     layer->setVisibleContentRect(contentRect);
+    layer->setDrawableContentRect(contentRect);
 
     layer->setTexturePriorities(m_priorityCalculator);
     textureManager->prioritizeTextures();

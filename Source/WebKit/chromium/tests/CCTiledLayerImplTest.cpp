@@ -52,6 +52,8 @@ static PassOwnPtr<CCTiledLayerImpl> createLayer(const IntSize& tileSize, const I
     layer->setDrawOpacity(1);
     layer->setBounds(layerSize);
     layer->setContentBounds(layerSize);
+    layer->createRenderSurface();
+    layer->setRenderTarget(layer.get());
 
     CCResourceProvider::ResourceId resourceId = 1;
     for (int i = 0; i < tiler->numTilesX(); ++i)

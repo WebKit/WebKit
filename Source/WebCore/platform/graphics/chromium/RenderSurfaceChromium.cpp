@@ -60,11 +60,5 @@ FloatRect RenderSurfaceChromium::drawableContentRect() const
     return drawableContentRect;
 }
 
-FloatRect RenderSurfaceChromium::computeRootScissorRectInCurrentSurface(const FloatRect& rootScissorRect) const
-{
-    WebTransformationMatrix inverseScreenSpaceTransform = m_screenSpaceTransform.inverse();
-    return CCMathUtil::projectClippedRect(inverseScreenSpaceTransform, rootScissorRect);
-}
-
 }
 #endif // USE(ACCELERATED_COMPOSITING)

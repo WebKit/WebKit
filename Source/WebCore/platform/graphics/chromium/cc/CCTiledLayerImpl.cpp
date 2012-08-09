@@ -35,6 +35,7 @@
 #include "cc/CCCheckerboardDrawQuad.h"
 #include "cc/CCDebugBorderDrawQuad.h"
 #include "cc/CCLayerTilingData.h"
+#include "cc/CCMathUtil.h"
 #include "cc/CCQuadSink.h"
 #include "cc/CCSolidColorDrawQuad.h"
 #include "cc/CCTileDrawQuad.h"
@@ -182,7 +183,10 @@ void CCTiledLayerImpl::appendQuads(CCQuadSink& quadList, const CCSharedQuadState
             float tileHeight = static_cast<float>(m_tiler->tileSize().height());
             IntSize textureSize(tileWidth, tileHeight);
 
-            bool useAA = m_tiler->hasBorderTexels() && !sharedQuadState->isLayerAxisAlignedIntRect();
+            bool clipped = false;
+            FloatQuad visibleContentInTargetQuad = CCMathUtil::mapQuad(drawTransform(), FloatQuad(visibleContentRect()), clipped);
+            bool isAxisAlignedInTarget = !clipped && visibleContentInTargetQuad.isRectilinear();
+            bool useAA = m_tiler->hasBorderTexels() && !isAxisAlignedInTarget;
 
             bool leftEdgeAA = !i && useAA;
             bool topEdgeAA = !j && useAA;

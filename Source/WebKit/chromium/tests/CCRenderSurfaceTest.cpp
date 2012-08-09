@@ -94,10 +94,15 @@ TEST(CCRenderSurfaceTest, sanityCheckSurfaceCreatesCorrectSharedQuadState)
     // This will fake that we are on the correct thread for testing purposes.
     DebugScopedSetImplThread setImplThread;
 
-    OwnPtr<CCLayerImpl> owningLayer = CCLayerImpl::create(1);
+    OwnPtr<CCLayerImpl> rootLayer = CCLayerImpl::create(1);
+
+    OwnPtr<CCLayerImpl> owningLayer = CCLayerImpl::create(2);
     owningLayer->createRenderSurface();
     ASSERT_TRUE(owningLayer->renderSurface());
+    owningLayer->setRenderTarget(owningLayer.get());
     CCRenderSurface* renderSurface = owningLayer->renderSurface();
+
+    rootLayer->addChild(owningLayer.release());
 
     IntRect contentRect = IntRect(IntPoint::zero(), IntSize(50, 50));
     IntRect clipRect = IntRect(IntPoint(5, 5), IntSize(40, 40));
@@ -108,7 +113,6 @@ TEST(CCRenderSurfaceTest, sanityCheckSurfaceCreatesCorrectSharedQuadState)
     renderSurface->setDrawTransform(origin);
     renderSurface->setContentRect(contentRect);
     renderSurface->setClipRect(clipRect);
-    renderSurface->setScissorRect(clipRect);
     renderSurface->setDrawOpacity(1);
 
     OwnPtr<CCSharedQuadState> sharedQuadState = renderSurface->createSharedQuadState(0);
@@ -116,7 +120,6 @@ TEST(CCRenderSurfaceTest, sanityCheckSurfaceCreatesCorrectSharedQuadState)
     EXPECT_EQ(30, sharedQuadState->quadTransform.m41());
     EXPECT_EQ(40, sharedQuadState->quadTransform.m42());
     EXPECT_EQ(contentRect, IntRect(sharedQuadState->visibleContentRect));
-    EXPECT_EQ(clipRect, IntRect(sharedQuadState->scissorRect));
     EXPECT_EQ(1, sharedQuadState->opacity);
     EXPECT_FALSE(sharedQuadState->opaque);
 }

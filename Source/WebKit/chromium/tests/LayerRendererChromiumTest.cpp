@@ -147,7 +147,7 @@ protected:
 
     void swapBuffers()
     {
-        m_layerRendererChromium.swapBuffers(IntRect());
+        m_layerRendererChromium.swapBuffers();
     }
 
     FrameCountingMemoryAllocationSettingContext* context() { return static_cast<FrameCountingMemoryAllocationSettingContext*>(m_context->context3D()); }
@@ -224,7 +224,7 @@ TEST_F(LayerRendererChromiumTest, DiscardedBackbufferIsRecreatedForScopeDuration
     EXPECT_EQ(1, m_mockClient.setFullRootLayerDamageCount());
 
     m_layerRendererChromium.setVisible(true);
-    m_layerRendererChromium.drawFrame(m_mockClient.renderPassesInDrawOrder(), m_mockClient.renderPasses(), FloatRect());
+    m_layerRendererChromium.drawFrame(m_mockClient.renderPassesInDrawOrder(), m_mockClient.renderPasses());
     EXPECT_FALSE(m_layerRendererChromium.isFramebufferDiscarded());
 
     swapBuffers();
@@ -239,7 +239,7 @@ TEST_F(LayerRendererChromiumTest, FramebufferDiscardedAfterReadbackWhenNotVisibl
     EXPECT_EQ(1, m_mockClient.setFullRootLayerDamageCount());
 
     char pixels[4];
-    m_layerRendererChromium.drawFrame(m_mockClient.renderPassesInDrawOrder(), m_mockClient.renderPasses(), FloatRect());
+    m_layerRendererChromium.drawFrame(m_mockClient.renderPassesInDrawOrder(), m_mockClient.renderPasses());
     EXPECT_FALSE(m_layerRendererChromium.isFramebufferDiscarded());
 
     m_layerRendererChromium.getFramebufferPixels(pixels, IntRect(0, 0, 1, 1));
@@ -420,7 +420,7 @@ TEST(LayerRendererChromiumTest2, opaqueBackground)
 
     EXPECT_TRUE(layerRendererChromium.initialize());
 
-    layerRendererChromium.drawFrame(mockClient.renderPassesInDrawOrder(), mockClient.renderPasses(), FloatRect());
+    layerRendererChromium.drawFrame(mockClient.renderPassesInDrawOrder(), mockClient.renderPasses());
 
     // On DEBUG builds, render passes with opaque background clear to blue to
     // easily see regions that were not drawn on the screen.
@@ -443,7 +443,7 @@ TEST(LayerRendererChromiumTest2, transparentBackground)
 
     EXPECT_TRUE(layerRendererChromium.initialize());
 
-    layerRendererChromium.drawFrame(mockClient.renderPassesInDrawOrder(), mockClient.renderPasses(), FloatRect());
+    layerRendererChromium.drawFrame(mockClient.renderPassesInDrawOrder(), mockClient.renderPasses());
 
     EXPECT_EQ(1, context->clearCount());
 }

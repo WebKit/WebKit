@@ -80,14 +80,14 @@ public:
     virtual void decideRenderPassAllocationsForFrame(const CCRenderPassList&) OVERRIDE;
     virtual bool haveCachedResourcesForRenderPassId(int id) const OVERRIDE;
 
-    virtual void drawFrame(const CCRenderPassList&, const CCRenderPassIdHashMap&, const FloatRect& rootScissorRect) OVERRIDE;
+    virtual void drawFrame(const CCRenderPassList&, const CCRenderPassIdHashMap&) OVERRIDE;
 
     // waits for rendering to finish
     virtual void finish() OVERRIDE;
 
     virtual void doNoOp() OVERRIDE;
     // puts backbuffer onscreen
-    virtual bool swapBuffers(const IntRect& subBuffer) OVERRIDE;
+    virtual bool swapBuffers() OVERRIDE;
 
     static void debugGLCall(WebKit::WebGraphicsContext3D*, const char* command, const char* file, int line);
 
@@ -122,6 +122,8 @@ private:
         const CCScopedTexture* currentTexture;
         OwnPtr<CCScopedLockResourceForWrite> currentFramebufferLock;
 
+        FloatRect rootDamageRect;
+
         WebKit::WebTransformationMatrix projectionMatrix;
         WebKit::WebTransformationMatrix windowMatrix;
 
@@ -135,10 +137,10 @@ private:
     static void toGLMatrix(float*, const WebKit::WebTransformationMatrix&);
 
     void beginDrawingFrame();
-    void drawRenderPass(DrawingFrame&, const CCRenderPass*, const FloatRect& framebufferDamageRect);
+    void drawRenderPass(DrawingFrame&, const CCRenderPass*);
     void finishDrawingFrame();
 
-    void drawQuad(DrawingFrame&, const CCDrawQuad*);
+    void drawQuad(DrawingFrame&, const CCDrawQuad*, FloatRect scissorRect);
     void drawCheckerboardQuad(DrawingFrame&, const CCCheckerboardDrawQuad*);
     void drawDebugBorderQuad(DrawingFrame&, const CCDebugBorderDrawQuad*);
     PassOwnPtr<CCScopedTexture> drawBackgroundFilters(DrawingFrame&, const CCRenderPassDrawQuad*, const WebKit::WebFilterOperations&, const WebKit::WebTransformationMatrix& deviceTransform);
@@ -167,7 +169,7 @@ private:
 
     bool bindFramebufferToTexture(DrawingFrame&, const CCScopedTexture*, const IntRect& viewportRect);
 
-    void clearFramebuffer(DrawingFrame&, const FloatRect& framebufferDamageRect);
+    void clearFramebuffer(DrawingFrame&);
 
     bool makeContextCurrent();
 
@@ -279,6 +281,7 @@ private:
 
     WebKit::WebGraphicsContext3D* m_context;
 
+    IntRect m_swapBufferRect;
     bool m_isViewportChanged;
     bool m_isFramebufferDiscarded;
     bool m_isUsingBindUniform;

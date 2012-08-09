@@ -481,9 +481,7 @@ void CCLayerTreeHost::updateLayers(LayerChromium* rootLayer, CCTextureUpdateQueu
     {
         TRACE_EVENT0("cc", "CCLayerTreeHost::updateLayers::calcDrawEtc");
         CCLayerTreeHostCommon::calculateDrawTransforms(rootLayer, deviceViewportSize(), m_deviceScaleFactor, layerRendererCapabilities().maxTextureSize, updateList);
-
-        FloatRect rootScissorRect(FloatPoint(0, 0), deviceViewportSize());
-        CCLayerTreeHostCommon::calculateVisibleAndScissorRects(updateList, rootScissorRect);
+        CCLayerTreeHostCommon::calculateVisibleRects(updateList);
     }
 
     // Reset partial texture update requests.
@@ -593,7 +591,7 @@ bool CCLayerTreeHost::paintLayerContents(const LayerList& renderSurfaceLayerList
 
     bool needMoreUpdates = false;
     bool recordMetricsForFrame = true; // FIXME: In the future, disable this when about:tracing is off.
-    CCOcclusionTracker occlusionTracker(IntRect(IntPoint(), deviceViewportSize()), recordMetricsForFrame);
+    CCOcclusionTracker occlusionTracker(m_rootLayer->renderSurface()->contentRect(), recordMetricsForFrame);
     occlusionTracker.setMinimumTrackingSize(m_settings.minimumOcclusionTrackingSize);
 
     prioritizeTextures(renderSurfaceLayerList, occlusionTracker.overdrawMetrics());

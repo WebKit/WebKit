@@ -471,7 +471,7 @@ IntRect CCOcclusionTrackerBase<LayerType, RenderSurfaceType>::layerScissorRectIn
 {
     // FIXME: we could remove this helper function, but unit tests currently override this
     //        function, and they need to be verified/adjusted before this can be removed.
-    return layer->scissorRect();
+    return layer->drawableContentRect();
 }
 
 // Declare the possible functions here for the linker.

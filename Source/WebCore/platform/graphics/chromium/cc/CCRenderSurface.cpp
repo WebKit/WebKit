@@ -161,22 +161,38 @@ bool CCRenderSurface::surfacePropertyChangedOnlyFromDescendant() const
     return m_surfacePropertyChanged && !m_owningLayer->layerPropertyChanged();
 }
 
+static inline IntRect computeClippedRectInTarget(const CCLayerImpl* owningLayer)
+{
+    ASSERT(owningLayer->parent());
+
+    const CCLayerImpl* renderTarget = owningLayer->parent()->renderTarget();
+    const CCRenderSurface* self = owningLayer->renderSurface();
+
+    IntRect clippedRectInTarget = self->clipRect();
+    if (owningLayer->backgroundFilters().hasFilterThatMovesPixels()) {
+        // If the layer has background filters that move pixels, we cannot scissor as tightly.
+        // FIXME: this should be able to be a tighter scissor, perhaps expanded by the filter outsets?
+        clippedRectInTarget = renderTarget->renderSurface()->contentRect();
+    } else if (clippedRectInTarget.isEmpty()) {
+        // For surfaces, empty clipRect means that the surface does not clip anything.
+        clippedRectInTarget = enclosingIntRect(intersection(renderTarget->renderSurface()->contentRect(), self->drawableContentRect()));
+    } else
+        clippedRectInTarget.intersect(enclosingIntRect(self->drawableContentRect()));
+    return clippedRectInTarget;
+}
+
 PassOwnPtr<CCSharedQuadState> CCRenderSurface::createSharedQuadState(int id) const
 {
+    IntRect clippedRectInTarget = computeClippedRectInTarget(m_owningLayer);
     bool isOpaque = false;
-    return CCSharedQuadState::create(id, m_drawTransform, m_contentRect, m_scissorRect, m_drawOpacity, isOpaque);
+    return CCSharedQuadState::create(id, m_drawTransform, m_contentRect, clippedRectInTarget, m_drawOpacity, isOpaque);
 }
 
 PassOwnPtr<CCSharedQuadState> CCRenderSurface::createReplicaSharedQuadState(int id) const
 {
+    IntRect clippedRectInTarget = computeClippedRectInTarget(m_owningLayer);
     bool isOpaque = false;
-    return CCSharedQuadState::create(id, m_replicaDrawTransform, m_contentRect, m_scissorRect, m_drawOpacity, isOpaque);
-}
-
-FloatRect CCRenderSurface::computeRootScissorRectInCurrentSurface(const FloatRect& rootScissorRect) const
-{
-    WebTransformationMatrix inverseScreenSpaceTransform = m_screenSpaceTransform.inverse();
-    return CCMathUtil::projectClippedRect(inverseScreenSpaceTransform, rootScissorRect);
+    return CCSharedQuadState::create(id, m_replicaDrawTransform, m_contentRect, clippedRectInTarget, m_drawOpacity, isOpaque);
 }
 
 void CCRenderSurface::appendQuads(CCQuadSink& quadList, CCSharedQuadState* sharedQuadState, bool forReplica, int renderPassId)

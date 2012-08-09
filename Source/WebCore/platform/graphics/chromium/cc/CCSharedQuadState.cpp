@@ -28,32 +28,22 @@
 #include "cc/CCSharedQuadState.h"
 
 #include "FloatQuad.h"
-#include "cc/CCMathUtil.h"
 
 namespace WebCore {
 
-PassOwnPtr<CCSharedQuadState> CCSharedQuadState::create(int id, const WebKit::WebTransformationMatrix& quadTransform, const IntRect& visibleContentRect, const IntRect& scissorRect, float opacity, bool opaque)
+PassOwnPtr<CCSharedQuadState> CCSharedQuadState::create(int id, const WebKit::WebTransformationMatrix& quadTransform, const IntRect& visibleContentRect, const IntRect& clippedRectInTarget, float opacity, bool opaque)
 {
-    return adoptPtr(new CCSharedQuadState(id, quadTransform, visibleContentRect, scissorRect, opacity, opaque));
+    return adoptPtr(new CCSharedQuadState(id, quadTransform, visibleContentRect, clippedRectInTarget, opacity, opaque));
 }
 
-CCSharedQuadState::CCSharedQuadState(int id, const WebKit::WebTransformationMatrix& quadTransform, const IntRect& visibleContentRect, const IntRect& scissorRect, float opacity, bool opaque)
+CCSharedQuadState::CCSharedQuadState(int id, const WebKit::WebTransformationMatrix& quadTransform, const IntRect& visibleContentRect, const IntRect& clippedRectInTarget, float opacity, bool opaque)
     : id(id)
     , quadTransform(quadTransform)
     , visibleContentRect(visibleContentRect)
-    , scissorRect(scissorRect)
+    , clippedRectInTarget(clippedRectInTarget)
     , opacity(opacity)
     , opaque(opaque)
 {
-}
-
-bool CCSharedQuadState::isLayerAxisAlignedIntRect() const
-{
-    // Note: this doesn't consider window or projection matrices.
-    // Assume that they're orthonormal and have integer scales and translations.
-    bool clipped = false;
-    FloatQuad quad = CCMathUtil::mapQuad(quadTransform, FloatQuad(IntRect(visibleContentRect)), clipped);
-    return !clipped && quad.isRectilinear() && quad.boundingBox().isExpressibleAsIntRect();
 }
 
 }

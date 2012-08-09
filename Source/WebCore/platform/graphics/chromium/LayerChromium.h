@@ -162,9 +162,6 @@ public:
     const IntRect& visibleContentRect() const { return m_visibleContentRect; }
     void setVisibleContentRect(const IntRect& visibleContentRect) { m_visibleContentRect = visibleContentRect; }
 
-    const IntRect& scissorRect() const { return m_scissorRect; }
-    void setScissorRect(const IntRect& scissorRect) { m_scissorRect = scissorRect; }
-
     void setScrollPosition(const IntPoint&);
     const IntPoint& scrollPosition() const { return m_scrollPosition; }
 
@@ -350,10 +347,6 @@ private:
     // Uses layer's content space.
     IntRect m_visibleContentRect;
 
-    // During drawing, identifies the region outside of which nothing should be drawn.
-    // This is the intersection of the layer's drawableContentRect and damage (if damage tracking is enabled).
-    // Uses target surface's space.
-    IntRect m_scissorRect;
     IntPoint m_scrollPosition;
     IntSize m_maxScrollPosition;
     bool m_scrollable;

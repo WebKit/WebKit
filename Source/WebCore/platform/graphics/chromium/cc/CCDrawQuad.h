@@ -62,12 +62,11 @@ public:
     IntRect quadRect() const { return m_quadRect; }
     const WebKit::WebTransformationMatrix& quadTransform() const { return m_sharedQuadState->quadTransform; }
     IntRect visibleContentRect() const { return m_sharedQuadState->visibleContentRect; }
-    IntRect scissorRect() const { return m_sharedQuadState->scissorRect; }
+    IntRect clippedRectInTarget() const { return m_sharedQuadState->clippedRectInTarget; }
     float opacity() const { return m_sharedQuadState->opacity; }
     // For the purposes of blending, what part of the contents of this quad are opaque?
     IntRect opaqueRect() const;
     bool needsBlending() const { return m_needsBlending || !opaqueRect().contains(m_quadVisibleRect); }
-    bool isLayerAxisAlignedIntRect() const { return m_sharedQuadState->isLayerAxisAlignedIntRect(); }
 
     // Allows changing the rect that gets drawn to make it smaller. Parameter passed
     // in will be clipped to quadRect().

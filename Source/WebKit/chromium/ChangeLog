@@ -1,3 +1,50 @@
+2012-08-09  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] Do partial-swap scissoring on quads during draw instead of on layers
+        https://bugs.webkit.org/show_bug.cgi?id=91800
+
+        Reviewed by Adrienne Walker.
+
+        * tests/CCDamageTrackerTest.cpp:
+        (WebKitTests::executeCalculateDrawTransformsAndVisibility):
+        * tests/CCLayerIteratorTest.cpp:
+        * tests/CCLayerTreeHostCommonTest.cpp:
+        Removed tests of the scissor rect here, as they are no longer
+        computed within CCLayerTreeHostCommon. Verify that the scissor
+        does not affect texture caching in CCLayerTreeHostImplTest now.
+        Previous scissor would affect the texture cache decisions, but
+        this was incorrect, as damaged areas are always inside the
+        scissor rect, and anything outside the scissor rect should
+        be considered as valid and complete (assuming no external
+        occlusion, which is computed outside the scissor rect now also).
+
+        * tests/CCLayerTreeHostImplTest.cpp:
+        Removed didDrawNotCalledOnScissoredLayer test, as this no longer
+        applies. didDraw will be called on layers that are outside the
+        partial swap rect, regardless.
+
+        Removed partialSwapNoUpdate test, and merged its functionality into
+        the partialSwap test while updating its expectations.
+
+        Added textureCachingWithScissor, which is loosely based on the
+        CCLayerTreeHostCommonTest.scissorRectWithClip test.
+
+        * tests/CCOcclusionTrackerTest.cpp:
+        (WebKitTests::CCOcclusionTrackerTest::calcDrawEtc):
+        (WebKitTests::CCOcclusionTrackerTestChildInRotatedChild::runMyTest):
+        (WebKitTests::CCOcclusionTrackerTestVisitTargetTwoTimes::runMyTest):
+        * tests/CCQuadCullerTest.cpp:
+        * tests/CCRenderSurfaceTest.cpp:
+        * tests/CCSolidColorLayerImplTest.cpp:
+        (CCLayerTestCommon::TEST):
+        * tests/CCTiledLayerImplTest.cpp:
+        (CCLayerTestCommon::createLayer):
+        * tests/LayerRendererChromiumTest.cpp:
+        (LayerRendererChromiumTest::swapBuffers):
+        (TEST_F):
+        (TEST):
+        * tests/TiledLayerChromiumTest.cpp:
+
 2012-08-09  Shawn Singh  <shawnsingh@chromium.org>
 
         [chromium] Pass mask scale and offset to shaders for correct masking
