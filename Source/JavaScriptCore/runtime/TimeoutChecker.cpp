@@ -80,6 +80,11 @@ static inline unsigned getCPUTime()
     GetThreadTimes(GetCurrentThread(), &creationTime, &exitTime, &kernelTime.fileTime, &userTime.fileTime);
     
     return userTime.fileTimeAsLong / 10000 + kernelTime.fileTimeAsLong / 10000;
+#elif OS(QNX)
+    struct timespec time;
+    if (clock_gettime(CLOCK_THREAD_CPUTIME_ID, &time))
+        CRASH();
+    return time.tv_sec * 1000.0 + time.tv_nsec / 1.0e6;
 #else
     // FIXME: We should return the time the current thread has spent executing.
 

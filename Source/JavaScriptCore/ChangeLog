@@ -1,3 +1,17 @@
+2012-08-09  Yong Li  <yoli@rim.com>
+
+        [QNX] Implement getCPUTime() for OS(QNX)
+        https://bugs.webkit.org/show_bug.cgi?id=93516
+
+        Reviewed by George Staikos.
+
+        Implement getCPUTime() with CLOCK_THREAD_CPUTIME_ID so it will tell
+        exactly how long the current thread has spent without being impacted
+        by other things.
+
+        * runtime/TimeoutChecker.cpp:
+        (JSC::getCPUTime):
+
 2012-08-08  Shane Stephens  <shanestephens@google.com>
 
         Compile flag for CSS Hierarchies
