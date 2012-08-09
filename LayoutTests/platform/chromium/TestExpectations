@@ -3492,4 +3492,4 @@ BUGWK93586 : fast/forms/autocomplete-off-with-default-value-does-not-clear.html 
 // Tests requiring rebaseling afer bug 93475
 BUGWK93475 : fast/block/float/overhanging-tall-block.html = TEXT
 BUGWK93475 : fast/html/details-writing-mode.html = IMAGE
-BUGWK93475 : svg/custom/pattern-userSpaceOnUse-userToBaseTransform.xhtml = TEXT
+

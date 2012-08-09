@@ -38,5 +38,5 @@ layer at (420,48) size 202x302
       RenderSVGInlineText {#text} at (0,0) size 162x19
         chunk 1 text run 1 at (5.00,280.00) startOffset 0 endOffset 24 width 162.00: "+Accelerated Compositing"
     RenderSVGContainer {g} at (421,49) size 200x200
-      RenderSVGRect {rect} at (421,149) size 101x101 [fill={[type=PATTERN] [id="pattern"]}] [x=0.00] [y=100.00] [width=100.00] [height=100.00]
-      RenderSVGRect {rect} at (521,49) size 101x101 [fill={[type=PATTERN] [id="pattern"]}] [x=100.00] [y=0.00] [width=100.00] [height=100.00]
+      RenderSVGRect {rect} at (421,149) size 100x100 [fill={[type=PATTERN] [id="pattern"]}] [x=0.00] [y=100.00] [width=100.00] [height=100.00]
+      RenderSVGRect {rect} at (521,49) size 100x100 [fill={[type=PATTERN] [id="pattern"]}] [x=100.00] [y=0.00] [width=100.00] [height=100.00]

@@ -33,10 +33,10 @@ layer at (0,0) size 800x363
         text run at (408,327) width 4: " "
       RenderText {#text} at (0,0) size 0x0
 layer at (420,48) size 202x302
-  RenderSVGRoot {svg} at (420,48) size 203x288
+  RenderSVGRoot {svg} at (420,48) size 202x287
     RenderSVGText {text} at (5,265) size 162x19 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 162x19
         chunk 1 text run 1 at (5.00,280.00) startOffset 0 endOffset 24 width 162.00: "+Accelerated Compositing"
-    RenderSVGContainer {g} at (421,49) size 201x201
-      RenderSVGRect {rect} at (421,149) size 101x101 [fill={[type=PATTERN] [id="pattern"]}] [x=0.00] [y=100.00] [width=100.00] [height=100.00]
-      RenderSVGRect {rect} at (521,49) size 101x101 [fill={[type=PATTERN] [id="pattern"]}] [x=100.00] [y=0.00] [width=100.00] [height=100.00]
+    RenderSVGContainer {g} at (421,49) size 200x200
+      RenderSVGRect {rect} at (421,149) size 100x100 [fill={[type=PATTERN] [id="pattern"]}] [x=0.00] [y=100.00] [width=100.00] [height=100.00]
+      RenderSVGRect {rect} at (521,49) size 100x100 [fill={[type=PATTERN] [id="pattern"]}] [x=100.00] [y=0.00] [width=100.00] [height=100.00]
