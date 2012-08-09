@@ -1,3 +1,9 @@
+2012-08-09  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Another build fix after r125178.
+
+        * resources/runner.js:
+
 2012-08-09  Zoltan Horvath  <zoltan@webkit.org>
 
         Add memory measurement to balls.html and dromaeorunner.js

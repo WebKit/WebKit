@@ -1,3 +1,10 @@
+2012-08-09  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Fix a test after r125178.
+
+        * fast/harness/perftests/runs-per-second-log-expected.txt:
+        * fast/harness/perftests/runs-per-second-log.html:
+
 2012-08-09  Shawn Singh  <shawnsingh@chromium.org>
 
         [chromium] Pass mask scale and offset to shaders for correct masking

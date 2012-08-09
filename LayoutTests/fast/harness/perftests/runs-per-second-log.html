@@ -14,10 +14,12 @@ PerfTestRunner._perSecondRunnerIterator = function (callsPerIteration) {
     return 1000 / runs;
 }
 
+PerfTestRunner.storeHeapResults = function () { }
+
 var printStatistics = PerfTestRunner.printStatistics;
 PerfTestRunner.printStatistics = function (statistics) {
     statistics.stdev = statistics.stdev.toPrecision(3);
-    return printStatistics.call(PerfTestRunner, statistics);
+    return printStatistics.call(PerfTestRunner, statistics, 'Time:');
 }
 
 PerfTestRunner.runPerSecond({

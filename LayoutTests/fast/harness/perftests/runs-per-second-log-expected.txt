@@ -8,7 +8,7 @@ Ignoring warm-up run (0 runs/s)
 4 runs/s
 5 runs/s
 
-
+Time:
 avg 3 runs/s
 median 3 runs/s
 stdev 1.41 runs/s

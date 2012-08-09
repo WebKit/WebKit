@@ -128,7 +128,7 @@ PerfTestRunner._runLoop = function () {
         if (this._description)
             this.log("Description: " + this._description);
         this.logStatistics(this._results, this.unit, "Time:");
-        if (window.internals) {
+        if (this._jsHeapResults.length) {
             this.logStatistics(this._jsHeapResults, "bytes", "JS Heap:");
             this.logStatistics(this._fastMallocHeapResults, "bytes", "FastMalloc:");
         }
