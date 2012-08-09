@@ -1,5 +1,14 @@
 2012-08-09  Peter Beverloo  <peter@chromium.org>
 
+        Unreviewed, rolling out r125171.
+        http://trac.webkit.org/changeset/125171
+
+        Broke the Chromium Android build.
+
+        * DEPS:
+
+2012-08-09  Peter Beverloo  <peter@chromium.org>
+
         Unreviewed.  Rolled DEPS.
 
         * DEPS:
