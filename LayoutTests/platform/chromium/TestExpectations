@@ -36,6 +36,7 @@ BUGCR24182 SLOW : fast/js/regexp-overflow.html = PASS
 BUGCR24182 SNOWLEOPARD DEBUG : fast/js/repeat-cached-vm-reentry.html = PASS TIMEOUT
 BUGCR24182 SLOW DEBUG : fast/js/toString-and-valueOf-override.html = PASS
 BUGCR24182 SLOW SNOWLEOPARD DEBUG : fast/loader/javascript-url-iframe-crash.html = PASS
+BUGCR24182 SLOW ANDROID : fast/parser/nested-fragment-parser-crash.html = PASS
 BUGCR24182 SLOW DEBUG : html5lib/webkit-resumer.html = PASS
 BUGCR24182 SLOW WIN DEBUG : http/tests/cache/stopped-revalidation.html = PASS
 BUGCR24182 SLOW WIN RELEASE : http/tests/loading/onload-vs-immediate-refresh.pl = PASS
