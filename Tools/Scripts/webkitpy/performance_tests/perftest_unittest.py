@@ -49,11 +49,12 @@ class MainTest(unittest.TestCase):
             'Running 20 times',
             'Ignoring warm-up run (1115)',
             '',
-            'avg 1100',
-            'median 1101',
-            'stdev 11',
-            'min 1080',
-            'max 1120']), image=None, image_hash=None, audio=None)
+            'Time:',
+            'avg 1100 ms',
+            'median 1101 ms',
+            'stdev 11 ms',
+            'min 1080 ms',
+            'max 1120 ms']), image=None, image_hash=None, audio=None)
         output_capture = OutputCapture()
         output_capture.capture_output()
         try:
@@ -61,6 +62,7 @@ class MainTest(unittest.TestCase):
             self.assertEqual(test.parse_output(output),
                 {'some-test': {'avg': 1100.0, 'median': 1101.0, 'min': 1080.0, 'max': 1120.0, 'stdev': 11.0, 'unit': 'ms'}})
         finally:
+            pass
             actual_stdout, actual_stderr, actual_logs = output_capture.restore_output()
         self.assertEqual(actual_stdout, '')
         self.assertEqual(actual_stderr, '')
@@ -73,11 +75,12 @@ class MainTest(unittest.TestCase):
             '',
             'some-unrecognizable-line',
             '',
-            'avg 1100',
-            'median 1101',
-            'stdev 11',
-            'min 1080',
-            'max 1120']), image=None, image_hash=None, audio=None)
+            'Time:'
+            'avg 1100 ms',
+            'median 1101 ms',
+            'stdev 11 ms',
+            'min 1080 ms',
+            'max 1120 ms']), image=None, image_hash=None, audio=None)
         output_capture = OutputCapture()
         output_capture.capture_output()
         try:

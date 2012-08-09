@@ -87,21 +87,23 @@ Ignoring warm-up run (1502)
 1475
 1471
 
-avg 1489.05
-median 1487
-stdev 14.46
-min 1471
-max 1510
+Time:
+avg 1489.05 ms
+median 1487 ms
+stdev 14.46 ms
+min 1471 ms
+max 1510 ms
 """
             elif driver_input.test_name.endswith('some-parser.html'):
                 text = """Running 20 times
 Ignoring warm-up run (1115)
 
-avg 1100
-median 1101
-stdev 11
-min 1080
-max 1120
+Time:
+avg 1100 ms
+median 1101 ms
+stdev 11 ms
+min 1080 ms
+max 1120 ms
 """
             return DriverOutput(text, '', '', '', crash=crash, timeout=timeout)
 

@@ -1,3 +1,15 @@
+2012-08-09  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Build fix after r125178.
+
+        * Scripts/webkitpy/performance_tests/perftest.py:
+        (PerfTest.parse_output): Don't include non-time results in the JSON output.
+        * Scripts/webkitpy/performance_tests/perftest_unittest.py: Updated the test outputs so to match
+        actual test outputs.
+        (MainTest.test_parse_output):
+        (MainTest.test_parse_output_with_failing_line):
+        * Scripts/webkitpy/performance_tests/perftestsrunner_unittest.py: Ditto.
+
 2012-08-09  Zoltan Horvath  <zoltan@webkit.org>
 
         JSHeap and FastMallocStatistics based memory measurement for performance-tests

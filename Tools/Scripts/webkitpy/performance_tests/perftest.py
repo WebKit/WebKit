@@ -156,7 +156,7 @@ class PerfTest(object):
         if results[self._result_classes[1]] and results[self._result_classes[2]]:
             self.output_statistics(test_name + "/JSHeap", results[self._result_classes[1]])
             self.output_statistics(test_name + "/FastMalloc", results[self._result_classes[2]])
-        return {test_name: results}
+        return {test_name: results['Time:']}
 
     def output_statistics(self, test_name, results, description_string=None):
         unit = results['unit']
