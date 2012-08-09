@@ -1,3 +1,11 @@
+2012-08-09  Florin Malita  <fmalita@chromium.org>
+
+        [Chromium] Updated expectations for script-change-externalResourcesRequired-while-loading.svg
+
+        Unreviewed gardening.
+
+        * platform/chromium/TestExpectations:
+
 2012-08-09  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         [EFL] Gardening after r125102
