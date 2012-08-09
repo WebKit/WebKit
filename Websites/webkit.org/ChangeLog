@@ -1,5 +1,11 @@
 2012-08-09  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Address one more review comment.
+
+        * building/checkout.html:
+
+2012-08-09  Ryosuke Niwa  <rniwa@webkit.org>
+
         Recommend the use of https and mention git on building/checkout.html
         https://bugs.webkit.org/show_bug.cgi?id=93657
 
