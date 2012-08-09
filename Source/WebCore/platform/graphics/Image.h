@@ -30,8 +30,9 @@
 #include "Color.h"
 #include "ColorSpace.h"
 #include "GraphicsTypes.h"
-#include "ImageSource.h"
+#include "ImageOrientation.h"
 #include "IntRect.h"
+#include "NativeImagePtr.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
