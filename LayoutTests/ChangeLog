@@ -1,3 +1,12 @@
+2012-08-08  Dean Jackson  <dino@apple.com>
+
+        (r124484) inspector/device-orientation-success.html failing on Mac ports
+        https://bugs.webkit.org/show_bug.cgi?id=93552
+
+        Unreviewed test expectations update. inspector/device-orientation-success.html missing console output.
+
+        * platform/mac/TestExpectations:
+
 2012-08-08  Thiago Marcos P. Santos  <thiago.santos@intel.com>
 
         CanvasRenderContext2D::setFont() should ignore inherited properties and default keyword value

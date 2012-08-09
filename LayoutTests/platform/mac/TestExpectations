@@ -336,3 +336,5 @@ BUGWK93530 : css3/flexbox/content-height-with-scrollbars.html = IMAGE
 // REGRESSION (r124416): fast/forms/basic-selects.html failing on Lion Debug Tests
 BUGWK93538 : fast/forms/basic-selects.html = TEXT
 
+// (r124484) inspector/device-orientation-success.html failing on Mac ports
+BUGWK93552 : inspector/device-orientation-success.html = TEXT
