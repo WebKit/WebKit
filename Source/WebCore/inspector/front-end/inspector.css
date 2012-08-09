@@ -2579,20 +2579,6 @@ body.platform-mac .search-drawer-header input[type="checkbox"].search-config-che
     float:left;
 }
 
-.search-status-bar-progress {
-    height: 11px;
-    width: 100px;
-    float: left;
-}
-
-body:not(.platform-mac) .search-status-bar-progress {
-    margin-top: 7px;
-}
-
-body.platform-mac .search-status-bar-progress {
-    margin-top: 6px;
-}
-
 .progress-bar-stop-button-item {
     width: 19px;
     height: 24px;
@@ -2888,8 +2874,12 @@ body.platform-mac .search-status-bar-progress {
 }
 
 .progress-bar-container progress {
-    margin-top: 8px;
+    margin-top: 7px;
     -webkit-flex: 1 0;
+}
+
+body.platform-mac .progress-bar-container progress {
+    margin-top: 6px;
 }
 
 .progress-bar-container button.status-bar-item {

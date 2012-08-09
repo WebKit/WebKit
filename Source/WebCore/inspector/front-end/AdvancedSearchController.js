@@ -211,15 +211,7 @@ WebInspector.SearchView = function(controller)
     this._searchStatusBarElement.className = "search-status-bar-item";
     this._searchMessageElement = this._searchStatusBarElement.createChild("div");
     this._searchMessageElement.className = "search-status-bar-message";
-    this._searchProgressElement = document.createElement("progress");
-    this._searchProgressElement.className = "search-status-bar-progress";
-    
-    this._searchStopButtonItem = document.createElement("div");
-    this._searchStopButtonItem.className = "progress-bar-stop-button-item";
-    this._searchStopStatusBarButton = new WebInspector.StatusBarButton(WebInspector.UIString("Stop search"), "progress-bar-stop-button");
-    this._searchStopButtonItem.appendChild(this._searchStopStatusBarButton.element);
-    this._searchStopStatusBarButton.addEventListener("click", this._searchStopButtonPressed, this);
-    
+
     this._searchResultsMessageElement = document.createElement("span");
     this._searchResultsMessageElement.className = "search-results-status-bar-message";
 
@@ -262,13 +254,11 @@ WebInspector.SearchView.prototype = {
     {
         this.resetResults();
         this._resetCounters();
-        
-        this._totalSearchResultsCount = totalSearchResultsCount;
 
         this._searchMessageElement.textContent = WebInspector.UIString("Searching...");
-        this._searchStatusBarElement.appendChild(this._searchProgressElement);
-        this._searchStatusBarElement.appendChild(this._searchStopButtonItem);
-        this._updateSearchProgress();
+        this._progressIndicator = new WebInspector.ProgressIndicator();
+        this._progressIndicator.setTotalWork(totalSearchResultsCount);
+        this._progressIndicator.show(this._searchStatusBarElement);
         
         this._updateSearchResultsMessage();
         
@@ -283,12 +273,6 @@ WebInspector.SearchView.prototype = {
             this._searchResultsMessageElement.textContent = WebInspector.UIString("Found %d matches in %d files.", this._searchMatchesCount, this._nonEmptySearchResultsCount);
         else
             this._searchResultsMessageElement.textContent = "";
-    },
-
-    _updateSearchProgress: function()
-    {
-        this._searchProgressElement.setAttribute("max", this._totalSearchResultsCount);
-        this._searchProgressElement.setAttribute("value", this._searchResultsCount);
     },
 
     resetResults: function()
@@ -327,7 +311,10 @@ WebInspector.SearchView.prototype = {
         if (searchResult.searchMatches.length)
             this._nonEmptySearchResultsCount++;
         this._updateSearchResultsMessage();
-        this._updateSearchProgress();
+        if (this._progressIndicator.isCanceled())
+            this._onCancel();
+        else
+            this._progressIndicator.setWorked(this._searchResultsCount);
     },
 
     /**
@@ -335,9 +322,8 @@ WebInspector.SearchView.prototype = {
      */
     searchFinished: function(finished)
     {
+        this._progressIndicator.done();
         this._searchMessageElement.textContent = finished ? WebInspector.UIString("Search finished.") : WebInspector.UIString("Search interrupted.");
-        this._searchStatusBarElement.removeChild(this._searchProgressElement);
-        this._searchStatusBarElement.removeChild(this._searchStopButtonItem);
     },
 
     focus: function()
@@ -386,7 +372,7 @@ WebInspector.SearchView.prototype = {
         this._regexCheckbox.checked = searchConfig.isRegex;
     },
 
-    _searchStopButtonPressed: function()
+    _onCancel: function()
     {
         this._controller.stopSearch();
         this.focus();

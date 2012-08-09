@@ -1,3 +1,28 @@
+2012-08-07  Andrey Kosyakov  <caseq@chromium.org>
+
+        Web Inspector: use WebInspector.ProgressIndicator in AdvancedSearchController
+        https://bugs.webkit.org/show_bug.cgi?id=93362
+
+        Reviewed by Vsevolod Vlasov.
+
+        - drop custom status bar used in AdvancedSearchController, use WebInspector.ProgressIndicator;
+        - perform additional cancelation check after invoking searchResultCallback to account for stopSearch called from within callback;
+        - fix compilation warnings in ProgressBar;
+
+        * inspector/front-end/AdvancedSearchController.js:
+        (WebInspector.SearchView):
+        (WebInspector.SearchView.prototype.searchStarted):
+        (WebInspector.SearchView.prototype.addSearchResult):
+        (WebInspector.SearchView.prototype.searchFinished):
+        (WebInspector.SearchView.prototype._onCancel):
+        * inspector/front-end/ProgressBar.js:
+        (WebInspector.CompositeProgress.prototype.createSubProgress):
+        * inspector/front-end/ScriptsSearchScope.js:
+        (WebInspector.ScriptsSearchScope.prototype.performSearch.searchCallbackWrapper):
+        * inspector/front-end/inspector.css:
+        (.progress-bar-container progress):
+        (body.platform-mac .progress-bar-container progress):
+
 2012-08-09  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: improve large array logging experience

@@ -77,9 +77,12 @@ WebInspector.ScriptsSearchScope.prototype = {
                 searchFinishedCallback(false);
                 return;
             }
-                
             var searchResult = new WebInspector.FileBasedSearchResultsPane.SearchResult(uiSourceCode, searchMatches);
             searchResultCallback(searchResult);
+            if (searchId !== this._searchId) {
+                searchFinishedCallback(false);
+                return;
+            }
             continueSearch.call(this);
         }
         

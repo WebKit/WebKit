@@ -165,11 +165,10 @@ WebInspector.CompositeProgress.prototype = {
 
     /**
      * @param {number=} weight
-     * @param {number=} totalWork
      */
-    createSubProgress: function(weight, totalWork)
+    createSubProgress: function(weight)
     {
-        var child = new WebInspector.SubProgress(this, weight, totalWork);
+        var child = new WebInspector.SubProgress(this, weight);
         this._children.push(child);
         return child;
     },
@@ -194,7 +193,6 @@ WebInspector.CompositeProgress.prototype = {
  * @implements {WebInspector.Progress}
  * @param {WebInspector.CompositeProgress} composite
  * @param {number=} weight
- * @param {number=} totalWork
  */
 WebInspector.SubProgress = function(composite, weight)
 {
