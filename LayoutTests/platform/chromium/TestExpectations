@@ -841,10 +841,10 @@ WONTFIX XP : css3/font-feature-settings-rendering.html = IMAGE+TEXT PASS
 
 // These test the CoreAnimation plugin model which we never intend to support on
 // Windows and Linux.
-WONTFIX SKIP WIN LINUX : compositing/plugins/1x1-composited-plugin.html = IMAGE+TEXT
-WONTFIX SKIP WIN LINUX : compositing/plugins/composited-plugin.html = IMAGE+TEXT
-WONTFIX SKIP WIN LINUX : compositing/plugins/large-to-small-composited-plugin.html = TEXT
-WONTFIX SKIP WIN LINUX : compositing/plugins/small-to-large-composited-plugin.html = TEXT
+WONTFIX SKIP WIN LINUX ANDROID : compositing/plugins/1x1-composited-plugin.html = IMAGE+TEXT
+WONTFIX SKIP WIN LINUX ANDROID : compositing/plugins/composited-plugin.html = IMAGE+TEXT
+WONTFIX SKIP WIN LINUX ANDROID : compositing/plugins/large-to-small-composited-plugin.html = TEXT
+WONTFIX SKIP WIN LINUX ANDROID : compositing/plugins/small-to-large-composited-plugin.html = TEXT
 
 // Mac's popup behavior is different.
 WONTFIX MAC SKIP : fast/forms/select/menulist-onchange-fired-with-key-up-down.html = PASS
