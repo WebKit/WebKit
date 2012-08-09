@@ -1,3 +1,17 @@
+2012-08-09  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt][Win] Build system bug revealed by r124835
+        https://bugs.webkit.org/show_bug.cgi?id=93339
+
+        Reviewed by Tor Arne Vestbø.
+
+        Don't add "LC_ALL=c" on Windows in svnRevisionForDirectory() and in pathRelativeToSVNRepositoryRootForPath().
+
+        * Scripts/VCSUtils.pm:
+        (isWindows): Copied from webkitdirs.pm.
+        (svnRevisionForDirectory):
+        (pathRelativeToSVNRepositoryRootForPath):
+
 2012-08-08  Dirk Pranke  <dpranke@chromium.org>
 
         update bot parsing of new-run-webkit-tests' output

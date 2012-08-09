@@ -366,6 +366,11 @@ sub determineVCSRoot()
     return determineSVNRoot();
 }
 
+sub isWindows()
+{
+    return ($^O eq "MSWin32") || 0;
+}
+
 sub svnRevisionForDirectory($)
 {
     my ($dir) = @_;
@@ -373,10 +378,15 @@ sub svnRevisionForDirectory($)
 
     if (isSVNDirectory($dir)) {
         my $escapedDir = escapeSubversionPath($dir);
-        my $svnInfo = `LC_ALL=C svn info $escapedDir | grep Revision:`;
+        my $command = "svn info $escapedDir | grep Revision:";
+        $command = "LC_ALL=C $command" if !isWindows();
+        my $svnInfo = `$command`;
         ($revision) = ($svnInfo =~ m/Revision: (\d+).*/g);
     } elsif (isGitDirectory($dir)) {
-        my $gitLog = `cd $dir && LC_ALL=C git log --grep='git-svn-id: ' -n 1 | grep git-svn-id:`;
+        my $command = "git log --grep='git-svn-id: ' -n 1 | grep git-svn-id:";
+        $command = "LC_ALL=C $command" if !isWindows();
+        $command = "cd $dir && $command";
+        my $gitLog = `$command`;
         ($revision) = ($gitLog =~ m/ +git-svn-id: .+@(\d+) /g);
     }
     if (!defined($revision)) {
@@ -394,9 +404,13 @@ sub pathRelativeToSVNRepositoryRootForPath($)
     my $svnInfo;
     if (isSVN()) {
         my $escapedRelativePath = escapeSubversionPath($relativePath);
-        $svnInfo = `LC_ALL=C svn info $escapedRelativePath`;
+        my $command = "svn info $escapedRelativePath";
+        $command = "LC_ALL=C $command" if !isWindows();
+        $svnInfo = `$command`;
     } elsif (isGit()) {
-        $svnInfo = `LC_ALL=C git svn info $relativePath`;
+        my $command = "git svn info $relativePath";
+        $command = "LC_ALL=C $command" if !isWindows();
+        $svnInfo = `$command`;
     }
 
     $svnInfo =~ /.*^URL: (.*?)$/m;
