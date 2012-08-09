@@ -1,3 +1,46 @@
+2012-08-08  Alpha Lam  <hclam@chromium.org>
+
+        Remove image decoding in some BitmapImage metadata functions
+        https://bugs.webkit.org/show_bug.cgi?id=93171
+
+        Reviewed by Simon Fraser.
+
+        These two metadata functions were decoding an entire frame:
+        - frameOrientationAtIndex
+        - frameHasAlphaAtIndex
+
+        This change removes image decoding from these two methods. This is for
+        preparation of having asynchronous image decoding, intending to reduce
+        code location that trigger image decoding.
+
+        frameOrientationAtIndex() doesn't require decoding a frame. This method
+        is only implemented in CG port in ImageSourceCG.cpp which doesn't do
+        image decoding.
+
+        frameHasAlphaAtIndex() is used to optimize certain drawing operations
+        and accelerated compositing. This change uses a heuristic for non-CG
+        port to determine if an image has alpha. If an image is not yet
+        decoded the function answers having alpha. Only if a frame is decoded
+        and cached that the alpha state of the frame is returned. This is an
+        admissible heuristic that postpone answering the question until a frame
+        is decoded.
+
+        Tested this change with a fully loaded image and partially loaded image
+        with background color.
+
+        Test: http/tests/images/jpg-img-partial-load.html
+
+        * platform/graphics/BitmapImage.cpp:
+        (WebCore::BitmapImage::frameHasAlphaAtIndex):
+        (WebCore::BitmapImage::frameOrientationAtIndex):
+        * platform/graphics/ImageSource.cpp:
+        (WebCore::ImageSource::frameHasAlphaAtIndex):
+        * platform/image-decoders/ImageDecoder.cpp:
+        (WebCore::ImageDecoder::frameHasAlphaAtIndex):
+        (WebCore):
+        * platform/image-decoders/ImageDecoder.h:
+        (ImageDecoder):
+
 2012-08-08  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r125146.

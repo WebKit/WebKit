@@ -184,14 +184,9 @@ ImageOrientation ImageSource::orientationAtIndex(size_t index) const
 
 bool ImageSource::frameHasAlphaAtIndex(size_t index)
 {
-    // When a frame has not finished decoding, always mark it as having alpha.
-    // Ports that check the result of this function to determine their
-    // compositing op need this in order to not draw the undecoded portion as
-    // black.
-    // TODO: Perhaps we should ensure that each individual decoder returns true
-    // in this case.
-    return !frameIsCompleteAtIndex(index)
-        || m_decoder->frameBufferAtIndex(index)->hasAlpha();
+    if (!m_decoder)
+        return true;
+    return m_decoder->frameHasAlphaAtIndex(index);
 }
 
 bool ImageSource::frameIsCompleteAtIndex(size_t index)

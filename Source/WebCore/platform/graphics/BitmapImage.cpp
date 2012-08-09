@@ -322,11 +322,13 @@ NativeImagePtr BitmapImage::nativeImageForCurrentFrame()
 
 bool BitmapImage::frameHasAlphaAtIndex(size_t index)
 {
-    // When a frame has not finished decoding, always mark it as having alpha.
-    // See ImageSource::framehasAlphaAtIndex for explanation of why incomplete images claim to have alpha.
-    if (!ensureFrameIsCached(index))
+    if (m_frames.size() <= index)
         return true;
-    return m_frames[index].m_hasAlpha;
+
+    if (m_frames[index].m_haveMetadata)
+        return m_frames[index].m_hasAlpha;
+
+    return m_source.frameHasAlphaAtIndex(index);
 }
 
 bool BitmapImage::currentFrameHasAlpha()
@@ -341,9 +343,13 @@ ImageOrientation BitmapImage::currentFrameOrientation()
 
 ImageOrientation BitmapImage::frameOrientationAtIndex(size_t index)
 {
-    if (!ensureFrameIsCached(index))
+    if (m_frames.size() <= index)
         return DefaultImageOrientation;
-    return m_frames[index].m_orientation;
+
+    if (m_frames[index].m_haveMetadata)
+        return m_frames[index].m_orientation;
+
+    return m_source.orientationAtIndex(index);
 }
 
 #if !ASSERT_DISABLED

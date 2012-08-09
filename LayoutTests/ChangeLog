@@ -1,3 +1,26 @@
+2012-08-08  Alpha Lam  <hclam@chromium.org>
+
+        Test rendering JPEG <img> with CSS background
+        https://bugs.webkit.org/show_bug.cgi?id=93171
+
+        Reviewed by Simon Fraser.
+
+        Tests defer answering the alpha state for BitmapImage not yet
+        decoded doesn't affect rendering results.
+
+        Test: http/tests/images/jpg-img-partial-load.html
+
+        Tests the rendering results of a partially loaded JPEG image.
+        The image should be green in the top region and blue in the
+        lower region. The blue is the background color revealed by
+        full alpha of the undecoded region.
+
+        * fast/images/resources/green-256x256.jpg: Added.
+        * http/tests/images/jpg-img-partial-load-expected.png: Added.
+        * http/tests/images/jpg-img-partial-load-expected.txt: Added.
+        * http/tests/images/jpg-img-partial-load.html: Added.
+        * http/tests/resources/load-and-stall.php: Added.
+
 2012-08-08  Xingnan Wang  <xingnan.wang@intel.com>
 
         Skip CoreAnimation plugin model tests on android

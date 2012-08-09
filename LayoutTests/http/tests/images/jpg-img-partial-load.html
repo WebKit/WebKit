@@ -1,0 +1,30 @@
+<html>
+<head>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText(true);
+    testRunner.waitUntilDone();
+}
+
+function checkWidth()
+{
+    var image = document.getElementById("image");
+    if (image.width == 256 && window.testRunner)
+        testRunner.notifyDone();
+
+    setTimeout(checkWidth, 1);
+}
+
+function runTest()
+{
+    var image = document.getElementById("image");
+    image.src = "http://127.0.0.1:8000/resources/load-and-stall.php?name=../../../fast/images/resources/green-256x256.jpg&mimeType=image%2Fjpeg&stallAt=1025&stallFor=60";
+
+    setTimeout(checkWidth, 1);
+}
+</script>
+</head>
+<body onload="setTimeout('runTest()', 1);" style="background-color: yellow;">
+<img id="image" style="background-color: blue;">
+</body>
+</html>
