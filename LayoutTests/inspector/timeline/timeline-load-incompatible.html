@@ -11,8 +11,9 @@ function test()
     InspectorFrontendHost.save = save;
     var data = [{"startTime":1310749854316.8408,"data":{"requestId":43,"url":"http://www.webkit.org/","requestMethod":"GET"},"type":"UnknownRecordType","usedHeapSize":1819936,"totalHeapSize":7629120}];
 
+    var mockProgress = new WebInspector.Progress();
     try {
-        WebInspector.panels.timeline._model._loadNextChunk(data, 0);
+        WebInspector.panels.timeline._model._loadNextChunk(mockProgress, data, 0);
     } catch (e) {
         InspectorTest.addResult("failed");
         InspectorTest.completeTest();

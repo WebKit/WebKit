@@ -1,3 +1,15 @@
+2012-08-08  Andrey Kosyakov  <caseq@chromium.org>
+
+        Web Inspector: display progress bar while loading timeline data
+        https://bugs.webkit.org/show_bug.cgi?id=92762
+
+        Reviewed by Pavel Feldman.
+
+        - fix loading tests to pass mock progress indicator;
+
+        * inspector/timeline/timeline-load-incompatible.html:
+        * inspector/timeline/timeline-load.html:
+
 2012-08-09  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
 
         Floored and truncated rounded confused.

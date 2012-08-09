@@ -159,26 +159,59 @@ WebInspector.TimelineModel.prototype = {
         this.dispatchEventToListeners(WebInspector.TimelineModel.Events.RecordAdded, record);
     },
 
-    _loadNextChunk: function(data, index)
+    /**
+     * @param {WebInspector.Progress} progress
+     * @param {Array.<Object>} data
+     * @param {number} index
+     */
+    _loadNextChunk: function(progress, data, index)
     {
-        for (var i = 0; i < 20 && index < data.length; ++i, ++index)
+        if (progress.isCanceled()) {
+            this.reset();
+            progress.done();
+            return;
+        }
+        progress.setWorked(index);
+
+        for (var i = 0; i < 100 && index < data.length; ++i, ++index)
             this._addRecord(data[index]);
 
         if (index !== data.length)
-            setTimeout(this._loadNextChunk.bind(this, data, index), 0);
+            setTimeout(this._loadNextChunk.bind(this, progress, data, index), 0);
+        else
+            progress.done();
     },
 
-    loadFromFile: function(file)
+    /**
+     * @param {!Blob} file
+     * @param {WebInspector.Progress} progress
+     */
+    loadFromFile: function(file, progress)
     {
+        var compositeProgress = new WebInspector.CompositeProgress(progress);
+        var loadingProgress = compositeProgress.createSubProgress(1);
+        var parsingProgress = compositeProgress.createSubProgress(1);
+        var processingProgress = compositeProgress.createSubProgress(1);
+
+        function parseAndImportData(data)
+        {
+            var records = JSON.parse(data);
+            parsingProgress.done();
+            this.reset();
+            processingProgress.setTotalWork(records.length);
+            this._loadNextChunk(processingProgress, records, 1);
+        }
+
         function onLoad(e)
         {
-            var data = JSON.parse(e.target.result);
-            this.reset();
-            this._loadNextChunk(data, 1);
+            loadingProgress.done();
+            parsingProgress.setTotalWork(1);
+            setTimeout(parseAndImportData.bind(this, e.target.result), 0);
         }
 
         function onError(e)
         {
+            progress.done();
             switch(e.target.error.code) {
             case e.target.error.NOT_FOUND_ERR:
                 WebInspector.log(WebInspector.UIString('Timeline.loadFromFile: File "%s" not found.', file.name));
@@ -193,9 +226,18 @@ WebInspector.TimelineModel.prototype = {
             }
         }
 
+        function onProgress(e)
+        {
+            if (e.lengthComputable)
+                loadingProgress.setWorked(e.loaded / e.total);
+        }
+
         var reader = new FileReader();
         reader.onload = onLoad.bind(this);
         reader.onerror = onError;
+        reader.onprogress = onProgress;
+        loadingProgress.setTitle(WebInspector.UIString("Loading\u2026"));
+        loadingProgress.setTotalWork(1);
         reader.readAsText(file);
     },
 

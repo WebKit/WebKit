@@ -45,7 +45,7 @@ WebInspector.TimelinePanel = function()
     this._overviewPane.addEventListener(WebInspector.TimelineOverviewPane.Events.ModeChanged, this._overviewModeChanged, this);
     this._overviewPane.show(this.element);
 
-    this.element.addEventListener("contextmenu", this._contextMenu.bind(this), true);
+    this.element.addEventListener("contextmenu", this._contextMenu.bind(this), false);
     this.element.tabIndex = 0;
 
     this._sidebarBackgroundElement = document.createElement("div");
@@ -102,7 +102,7 @@ WebInspector.TimelinePanel = function()
     var shortRecordThresholdTitle = Number.secondsToString(WebInspector.TimelinePresentationModel.shortRecordThreshold);
     this._showShortRecordsTitleText = WebInspector.UIString("Show the records that are shorter than %s", shortRecordThresholdTitle);
     this._hideShortRecordsTitleText = WebInspector.UIString("Hide the records that are shorter than %s", shortRecordThresholdTitle);
-    this._createStatusbarButtons();
+    this._createStatusBarItems();
 
     this._frameMode = false;
     this._boundariesAreValid = true;
@@ -202,16 +202,10 @@ WebInspector.TimelinePanel.prototype = {
 
     get statusBarItems()
     {
-        var statusBarItems = [
-            this.toggleFilterButton.element,
-            this.toggleTimelineButton.element,
-            this.clearButton.element, this.garbageCollectButton.element,
-            this._glueParentButton.element,
-            this.statusBarFilters,
+        return this._statusBarButtons.select("element").concat([
+            this._miscStatusBarItems,
             this.recordsCounter
-        ];
-
-        return statusBarItems;
+        ]);
     },
 
     defaultFocusedElement: function()
@@ -219,37 +213,46 @@ WebInspector.TimelinePanel.prototype = {
         return this.element;
     },
 
-    _createStatusbarButtons: function()
+    _createStatusBarItems: function()
     {
-        this.toggleTimelineButton = new WebInspector.StatusBarButton(WebInspector.UIString("Record"), "record-profile-status-bar-item");
-        this.toggleTimelineButton.addEventListener("click", this._toggleTimelineButtonClicked, this);
-
-        this.clearButton = new WebInspector.StatusBarButton(WebInspector.UIString("Clear"), "clear-status-bar-item");
-        this.clearButton.addEventListener("click", this._clearPanel, this);
+        this._statusBarButtons = [];
 
         this.toggleFilterButton = new WebInspector.StatusBarButton(this._hideShortRecordsTitleText, "timeline-filter-status-bar-item");
         this.toggleFilterButton.addEventListener("click", this._toggleFilterButtonClicked, this);
+        this._statusBarButtons.push(this.toggleFilterButton);
+
+        this.toggleTimelineButton = new WebInspector.StatusBarButton(WebInspector.UIString("Record"), "record-profile-status-bar-item");
+        this.toggleTimelineButton.addEventListener("click", this._toggleTimelineButtonClicked, this);
+        this._statusBarButtons.push(this.toggleTimelineButton);
+
+        this.clearButton = new WebInspector.StatusBarButton(WebInspector.UIString("Clear"), "clear-status-bar-item");
+        this.clearButton.addEventListener("click", this._clearPanel, this);
+        this._statusBarButtons.push(this.clearButton);
 
         this.garbageCollectButton = new WebInspector.StatusBarButton(WebInspector.UIString("Collect Garbage"), "garbage-collect-status-bar-item");
         this.garbageCollectButton.addEventListener("click", this._garbageCollectButtonClicked, this);
-
-        this.recordsCounter = document.createElement("span");
-        this.recordsCounter.className = "timeline-records-counter";
+        this._statusBarButtons.push(this.garbageCollectButton);
 
         this._glueParentButton = new WebInspector.StatusBarButton(WebInspector.UIString("Glue asynchronous events to causes"), "glue-async-status-bar-item");
         this._glueParentButton.toggled = true;
         this._presentationModel.setGlueRecords(true);
         this._glueParentButton.addEventListener("click", this._glueParentButtonClicked, this);
+        this._statusBarButtons.push(this._glueParentButton);
 
-        this.statusBarFilters = document.createElement("div");
-        this.statusBarFilters.className = "status-bar-items";
+        this._miscStatusBarItems = document.createElement("div");
+        this._miscStatusBarItems.className = "status-bar-items";
+
+        this._statusBarFilters = this._miscStatusBarItems.createChild("div");
         var categories = WebInspector.TimelinePresentationModel.categories();
         for (var categoryName in categories) {
             var category = categories[categoryName];
             if (category.overviewStripGroupIndex < 0)
                 continue;
-            this.statusBarFilters.appendChild(this._createTimelineCategoryStatusBarCheckbox(category, this._onCategoryCheckboxClicked.bind(this, category)));
+            this._statusBarFilters.appendChild(this._createTimelineCategoryStatusBarCheckbox(category, this._onCategoryCheckboxClicked.bind(this, category)));
         }
+
+        this.recordsCounter = document.createElement("span");
+        this.recordsCounter.className = "timeline-records-counter";
     },
 
     _createTimelineCategoryStatusBarCheckbox: function(category, onCheckboxClicked)
@@ -280,6 +283,19 @@ WebInspector.TimelinePanel.prototype = {
     {
         category.hidden = !event.target.checked;
         this._scheduleRefresh(true);
+    },
+
+    /**
+     * @param {?WebInspector.ProgressIndicator} indicator
+     */
+    _setOperationInProgress: function(indicator)
+    {
+        this._operationInProgress = !!indicator;
+        for (var i = 0; i < this._statusBarButtons.length; ++i)
+            this._statusBarButtons[i].disabled = this._operationInProgress;
+        this._glueParentButton.disabled = this._operationInProgress || !!this._frameController;
+        this._miscStatusBarItems.removeChildren();
+        this._miscStatusBarItems.appendChild(indicator ? indicator.element : this._statusBarFilters);
     },
 
     _registerShortcuts: function()
@@ -318,23 +334,30 @@ WebInspector.TimelinePanel.prototype = {
     {
         var contextMenu = new WebInspector.ContextMenu();
         if (InspectorFrontendHost.canSave())
-            contextMenu.appendItem(WebInspector.UIString("Save Timeline data\u2026"), this._saveToFile.bind(this));
-        contextMenu.appendItem(WebInspector.UIString("Load Timeline data\u2026"), this._fileSelectorElement.click.bind(this._fileSelectorElement));
+            contextMenu.appendItem(WebInspector.UIString("Save Timeline data\u2026"), this._saveToFile.bind(this), this._operationInProgress);
+        contextMenu.appendItem(WebInspector.UIString("Load Timeline data\u2026"), this._fileSelectorElement.click.bind(this._fileSelectorElement), this._operationInProgress);
         contextMenu.show(event);
     },
 
     _saveToFile: function()
     {
+        if (this._operationInProgress)
+            return;
         this._model.saveToFile();
     },
 
     _loadFromFile: function()
     {
+        if (this._operationInProgress)
+            return;
         if (this.toggleTimelineButton.toggled) {
             this.toggleTimelineButton.toggled = false;
             this._model.stopRecord();
         }
-        this._model.loadFromFile(this._fileSelectorElement.files[0]);
+        var progressIndicator = new WebInspector.ProgressIndicator();
+        progressIndicator.addEventListener(WebInspector.ProgressIndicator.Events.Done, this._setOperationInProgress.bind(this, null));
+        this._setOperationInProgress(progressIndicator);
+        this._model.loadFromFile(this._fileSelectorElement.files[0], progressIndicator);
         this._createFileSelector();
     },
 
@@ -466,6 +489,8 @@ WebInspector.TimelinePanel.prototype = {
 
     _toggleTimelineButtonClicked: function()
     {
+        if (this._operationInProgress)
+            return;
         if (this.toggleTimelineButton.toggled)
             this._model.stopRecord();
         else {
@@ -548,7 +573,7 @@ WebInspector.TimelinePanel.prototype = {
         this.onResize();
         this._overviewPane.sidebarResized(width);
         // Min width = <number of buttons on the left> * 31
-        this.statusBarFilters.style.left = Math.max((this.statusBarItems.length + 2) * 31, width) + "px";
+        this._miscStatusBarItems.style.left = Math.max((this._statusBarButtons.length + 3) * 31, width) + "px";
         this._memoryStatistics.setSidebarWidth(width);
         this._timelineGrid.gridHeaderElement.style.left = width + "px";
     },

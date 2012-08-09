@@ -20,7 +20,8 @@ function test()
         {"startTime":1310749855137.989,"data":{"requestId":49,"url":"http://www.webkit.org/css/purple.css","requestMethod":"GET"},"type":"ResourceSendRequest","usedHeapSize":2367192,"totalHeapSize":7629120},
         {"startTime":1310749855138.308,"data":{"requestId":50,"url":"http://www.webkit.org/css/gray.css","requestMethod":"GET"},"type":"ResourceSendRequest","usedHeapSize":2367192,"totalHeapSize":7629120}];
 
-    WebInspector.panels.timeline._model._loadNextChunk(data, 0);
+    var mockProgress = new WebInspector.Progress();
+    WebInspector.panels.timeline._model._loadNextChunk(mockProgress, data, 0);
 
     function loadNextChunk()
     {
