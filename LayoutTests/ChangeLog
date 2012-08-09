@@ -1,3 +1,12 @@
+2012-08-09  Kristóf Kosztyó  <kkristof@inf.u-szeged.hu>
+
+        [Qt] Unreviewed gardening.
+
+        * platform/qt-5.0/fast/js/global-constructors-expected.txt:
+        * platform/qt/Skipped:
+        * platform/qt/fast/dom/constructed-objects-prototypes-expected.txt:
+        * platform/qt/fast/events/keyevent-iframe-removed-crash-expected.txt: Added.
+
 2012-08-09  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
 
         Unreviewed, update TestExpectations with one more test to rebase after r125167

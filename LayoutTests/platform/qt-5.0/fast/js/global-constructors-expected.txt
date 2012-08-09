@@ -311,6 +311,7 @@ PASS TextMetrics.toString() is '[object TextMetricsConstructor]'
 PASS TimeRanges.toString() is '[object TimeRangesConstructor]'
 PASS TouchEvent.toString() is '[object TouchEventConstructor]'
 PASS UIEvent.toString() is '[object UIEventConstructor]'
+PASS URL.toString() is '[object URLConstructor]'
 PASS WebGLContextEvent.toString() is '[object WebGLContextEventConstructor]'
 PASS WebKitAnimationEvent.toString() is '[object WebKitAnimationEventConstructor]'
 PASS WebKitCSSFilterValue.toString() is '[object WebKitCSSFilterValueConstructor]'
@@ -335,7 +336,7 @@ PASS XPathEvaluator.toString() is '[object XPathEvaluatorConstructor]'
 PASS XPathException.toString() is '[object XPathExceptionConstructor]'
 PASS XPathResult.toString() is '[object XPathResultConstructor]'
 PASS XSLTProcessor.toString() is '[object XSLTProcessorConstructor]'
-PASS URL.toString() is '[object URLConstructor]'
+FAIL webkitURL.toString() should be [object webkitURLConstructor]. Was [object URLConstructor].
 PASS successfullyParsed is true
 
 TEST COMPLETE
