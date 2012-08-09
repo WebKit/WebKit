@@ -1,3 +1,21 @@
+2012-08-09  Roger Fong  <roger_fong@apple.com>
+
+        Gardening LayoutTests/platform/win/fast/canvas tests folder.
+        https://bugs.webkit.org/show_bug.cgi?id=93633
+
+        Reviewed by Tim Horton.
+
+        These tests pass now.
+        Adjusting expected results.
+        Removing other failing results.
+
+        * platform/win/fast/canvas/canvas-draw-canvas-on-canvas-shadow-expected.txt:
+            This test is now passing. Modifying to passing results since Mac fallback results are failing.
+        * platform/win/fast/canvas/canvas-scale-drawImage-shadow-expected.txt: Removed.
+        * platform/win/fast/canvas/canvas-scale-fillPath-shadow-expected.txt: Removed.
+        * platform/win/fast/canvas/canvas-scale-fillRect-shadow-expected.txt: Removed.
+        * platform/win/fast/canvas/canvas-transforms-fillRect-shadow-expected.txt: Removed.
+
 2012-08-09  Mike West  <mkwst@chromium.org>
 
         Content Security Policy directives with an invalid character should log a console warning.
