@@ -782,8 +782,8 @@ InjectedScript.RemoteObject.prototype = {
                 if (type === "function")
                     continue;
 
-                var property = { name: name, type: type, value: this._abbreviateString(injectedScript._describe(value), maxLength, subtype === "regexp") };
                 var subtype = injectedScript._subtype(value);
+                var property = { name: name, type: type, value: this._abbreviateString(injectedScript._describe(value), maxLength, subtype === "regexp") };
                 if (subtype)
                     property.subtype = subtype;
                 properties.push(property);

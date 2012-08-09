@@ -1,3 +1,11 @@
+2012-08-09  'Pavel Feldman'  <pfeldman@chromium.org>
+
+        Web Inspector: follow up to r125174 - fix subtype use.
+
+        Not reviewed.
+
+        * inspector/console/console-format-expected.txt:
+
 2012-08-09  Brady Eidson  <beidson@apple.com>
 
         Layout Test fast/forms/autocomplete-off-with-default-value-does-not-clear.html is failing (on Chromium)
