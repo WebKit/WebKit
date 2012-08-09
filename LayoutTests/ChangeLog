@@ -1,3 +1,10 @@
+2012-08-08  Dirk Pranke  <dpranke@chromium.org>
+
+        Unreviewed TestExpectations cleanup and a new baseline.
+
+        * platform/chromium/TestExpectations:
+        * platform/chromium/http/tests/security/sandboxed-iframe-modify-self-expected.txt: Added.
+
 2012-08-08  Erik Arvidsson  <arv@chromium.org>
 
         Fix invalid test

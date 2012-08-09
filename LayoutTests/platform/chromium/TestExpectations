@@ -2426,39 +2426,16 @@ BUGWK60103 MAC : fast/replaced/border-radius-clip.html = IMAGE+TEXT
 // Need to figure out why this is slow.
 BUGWK60131 SLOW : fast/css/visited-link-hang.html = PASS
 
-// webkit roll : 84350:84431
-BUGDPRANKE LINUX ANDROID MAC : transitions/interrupt-zero-duration.html = PASS TEXT
-
 // pulled in from downstream during webkit roll 84350:84431
 BUGCASEQ LINUX ANDROID WIN : fast/forms/input-text-drag-down.html = IMAGE+TEXT
 
-BUGDPRANKE MAC DEBUG : transitions/cancel-transition.html = PASS TEXT
-
-BUGDPRANKE DEBUG : fast/notifications/notifications-display-close-events.html = PASS TIMEOUT
-
-BUGDPRANKE : http/tests/navigation/lockedhistory-iframe.html = PASS TIMEOUT TEXT
-BUGDPRANKE : fast/parser/iframe-sets-parent-to-javascript-url.html = PASS TEXT
-
-BUGDPRANKE WIN DEBUG : http/tests/misc/empty-file-formdata.html = PASS TIMEOUT
-BUGDPRANKE WIN DEBUG : http/tests/xmlhttprequest/access-control-preflight-headers-async.html = PASS TIMEOUT
-
 // Introduced in r84443
 BUGWK59063 : fast/images/animated-gif-restored-from-bfcache.html = TEXT
-
-// more failures for triaging, fails on deps bots at least?
-BUGDPRANKE : http/tests/navigation/redirect-on-back-updates-history-item.html = PASS TIMEOUT
-
-BUGDPRANKE : fast/dom/Document/document-reopen.html = PASS TEXT
-BUGDPRANKE : fast/parser/javascript-url-compat-mode.html = PASS TEXT
 
 BUGWK56702 WIN DEBUG : http/tests/navigation/ping-cross-origin-from-https.html = PASS TIMEOUT
 
 BUGCR86338 : fast/loader/file-protocol-fragment.html = TEXT
 BUGCR86340 : fast/filesystem/file-writer-write-overlapped.html = PASS TEXT
-
-// flakiness on deps bots (noted ~ r83108)
-BUGDPRANKE WIN DEBUG : http/tests/eventsource/eventsource-reconnect.html = PASS TEXT
-BUGDPRANKE WIN : http/tests/navigation/ping-same-origin.html = PASS TIMEOUT TEXT
 
 // These seem to be minor differences (used to be debug only, started failing in release since about r116225).
 BUGWK60135 SNOWLEOPARD : fast/text/international/thai-line-breaks.html = PASS IMAGE
@@ -2476,8 +2453,6 @@ BUGWK70886 DEBUG : fast/events/change-overflow-on-overflow-change.html = PASS TI
 BUGWK60112 : fast/css/epub-properties.html = TEXT
 
 BUGWK60136 WIN : http/tests/xmlviewer/dumpAsText/xmlviewer.xml = PASS TEXT
-
-BUGDPRANKE DEBUG : http/tests/misc/window-dot-stop.html = PASS TEXT
 
 // New test added in r85454. Actual failure.
 BUGWK91676 : fast/js/mozilla/strict/assign-to-callee-name.html = TEXT
@@ -3210,10 +3185,6 @@ BUGWK68744 : fast/block/float/float-not-removed-from-next-sibling4.html = IMAGE
 // broken in/after r115646
 BUGWK86414 : fast/loader/javascript-url-in-embed.html = TEXT
 
-BUGDPRANKE : http/tests/security/sandboxed-iframe-modify-self.html = TEXT
-
-BUGDPRANKE MAC : userscripts/user-style-all-frames.html = TEXT PASS
-
 // Interferes with the rAF tests that are enabled
 BUGWK85689 SKIP : fast/animation/request-animation-frame-disabled.html = TEXT
 
@@ -3506,3 +3477,9 @@ BUGWK93148 MAC : fast/css/nested-layers-with-hover.html = TIMEOUT
 
 
 BUGWK93247 DEBUG : fast/lists/list-marker-remove-crash.html = CRASH
+
+BUGWK93565 DEBUG : fast/dom/Document/document-reopen.html = PASS TEXT
+BUGWK93566 DEBUG : fast/parser/iframe-sets-parent-to-javascript-url.html = PASS TEXT
+BUGWK93567 DEBUG : fast/parser/javascript-url-compat-mode.html = PASS TEXT
+BUGWK93569 DEBUG : http/tests/navigation/lockedhistory-iframe.html = PASS TIMEOUT TEXT
+BUGWK93568 DEBUG : http/tests/misc/window-dot-stop.html = PASS TEXT
