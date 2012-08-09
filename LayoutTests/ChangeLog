@@ -1,3 +1,18 @@
+2012-08-09  Eric Seidel  <eric@webkit.org>
+
+        Use m_everHadLayout in RenderObject::checkForRepaintDuringLayout()
+        https://bugs.webkit.org/show_bug.cgi?id=20885
+
+        Reviewed by Dan Bernstein.
+
+        Updated result.  Appears to be a progression.  I suspect
+        we were over-drawing the <g> container before and now we're
+        just drawing the two objects which change.
+
+        * platform/chromium-mac/svg/custom/use-detach-expected.png:
+        * platform/chromium-linux/svg/custom/use-detach-expected.png:
+        * platform/mac/svg/custom/use-detach-expected.png:
+
 2012-08-08  Arko Saha  <arko@motorola.com>
 
         Microdata: PropertyNodeList cache should be invalidated on id attribute change.

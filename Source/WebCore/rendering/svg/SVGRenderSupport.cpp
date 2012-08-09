@@ -207,6 +207,7 @@ void SVGRenderSupport::layoutChildren(RenderObject* start, bool selfNeedsLayout)
 
     for (RenderObject* child = start->firstChild(); child; child = child->nextSibling()) {
         bool needsLayout = selfNeedsLayout;
+        bool childEverHadLayout = child->everHadLayout();
 
         if (transformChanged) {
             // If the transform changed we need to update the text metrics (note: this also happens for layoutSizeChanged=true).
@@ -232,15 +233,19 @@ void SVGRenderSupport::layoutChildren(RenderObject* start, bool selfNeedsLayout)
             }
         }
 
-        if (needsLayout) {
+        if (needsLayout)
             child->setNeedsLayout(true, MarkOnlyThis);
+
+        if (child->needsLayout()) {
             child->layout();
-        } else {
-            if (child->needsLayout())
-                child->layout();
-            else if (layoutSizeChanged)
-                notlayoutedObjects.add(child);
-        }
+            // Renderers are responsible for repainting themselves when changing, except
+            // for the initial paint to avoid potential double-painting caused by non-sensical "old" bounds.
+            // We could handle this in the individual objects, but for now it's easier to have
+            // parent containers call repaint().  (RenderBlock::layout* has similar logic.)
+            if (!childEverHadLayout)
+                child->repaint();
+        } else if (layoutSizeChanged)
+            notlayoutedObjects.add(child);
 
         ASSERT(!child->needsLayout());
     }
