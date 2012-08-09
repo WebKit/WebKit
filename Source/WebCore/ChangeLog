@@ -1,3 +1,28 @@
+2012-08-08  Hayato Ito  <hayato@chromium.org>
+
+        EventDispatcher::dispatchSimulatedClick should not reuse the same EventDispatcher instance.
+        https://bugs.webkit.org/show_bug.cgi?id=93452
+
+        Reviewed by Dimitri Glazkov.
+
+        This is a follow up patch after r124975.  There is yet another
+        place where the same EventDispatcher instance is reused across
+        event dispatching.
+
+        In addition to that, in order to simulate a real click, we must
+        different dispatchers because we must recalculate event ancestors
+        each time.  Current implementation wrongly freezes event ancestors
+        at the first event dispatching.
+
+        No new tests, no change in functionality.
+
+        * dom/EventDispatcher.cpp:
+        (WebCore::EventDispatcher::dispatchSimulatedClick):
+        (WebCore::EventDispatcher::EventDispatcher):
+        (WebCore::EventDispatcher::dispatchEvent):
+        * dom/EventDispatcher.h:
+        (EventDispatcher):
+
 2012-08-08  Jae Hyun Park  <jae.park@company100.net>
 
         writeHelperGetString in V8HTMLDocument uses += to concatenate strings

@@ -163,8 +163,6 @@ void EventDispatcher::dispatchSimulatedClick(Node* node, PassRefPtr<Event> under
     if (node->disabled())
         return;
 
-    EventDispatcher dispatcher(node);
-
     if (!gNodesDispatchingSimulatedClicks)
         gNodesDispatchingSimulatedClicks = new HashSet<Node*>;
     else if (gNodesDispatchingSimulatedClicks->contains(node))
@@ -174,14 +172,14 @@ void EventDispatcher::dispatchSimulatedClick(Node* node, PassRefPtr<Event> under
 
     // send mousedown and mouseup before the click, if requested
     if (sendMouseEvents)
-        dispatcher.dispatchEvent(SimulatedMouseEvent::create(eventNames().mousedownEvent, node->document()->defaultView(), underlyingEvent));
+        EventDispatcher(node).dispatchEvent(SimulatedMouseEvent::create(eventNames().mousedownEvent, node->document()->defaultView(), underlyingEvent));
     node->setActive(true, showPressedLook);
     if (sendMouseEvents)
-        dispatcher.dispatchEvent(SimulatedMouseEvent::create(eventNames().mouseupEvent, node->document()->defaultView(), underlyingEvent));
+        EventDispatcher(node).dispatchEvent(SimulatedMouseEvent::create(eventNames().mouseupEvent, node->document()->defaultView(), underlyingEvent));
     node->setActive(false);
 
     // always send click
-    dispatcher.dispatchEvent(SimulatedMouseEvent::create(eventNames().clickEvent, node->document()->defaultView(), underlyingEvent));
+    EventDispatcher(node).dispatchEvent(SimulatedMouseEvent::create(eventNames().clickEvent, node->document()->defaultView(), underlyingEvent));
 
     gNodesDispatchingSimulatedClicks->remove(node);
 }
@@ -202,6 +200,9 @@ void EventDispatcher::adjustRelatedTarget(Event* event, PassRefPtr<EventTarget> 
 EventDispatcher::EventDispatcher(Node* node)
     : m_node(node)
     , m_ancestorsInitialized(false)
+#ifndef NDEBUG
+    , m_eventDispatched(false)
+#endif
 {
     ASSERT(node);
     m_view = node->document()->view();
@@ -239,6 +240,10 @@ void EventDispatcher::ensureEventAncestors(Event* event)
 
 bool EventDispatcher::dispatchEvent(PassRefPtr<Event> prpEvent)
 {
+#ifndef NDEBUG
+    ASSERT(!m_eventDispatched);
+    m_eventDispatched = true;
+#endif
     RefPtr<Event> event = prpEvent;
     ChildNodesLazySnapshot::takeChildNodesLazySnapshot();
 

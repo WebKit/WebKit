@@ -96,6 +96,9 @@ private:
     RefPtr<Node> m_node;
     RefPtr<FrameView> m_view;
     bool m_ancestorsInitialized;
+#ifndef NDEBUG
+    bool m_eventDispatched;
+#endif
 };
 
 inline Node* EventDispatcher::node() const
