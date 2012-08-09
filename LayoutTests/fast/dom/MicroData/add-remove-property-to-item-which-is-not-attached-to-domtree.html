@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../js/resources/js-test-pre.js"></script>
+<script src="resources/microdata-common.js"></script>
+</head>
+<body>
+<script>
+description("Test to ensure that modifing properties of an item which is not attached to the DOM tree must update its HTMLPropertiesCollection.");
+var parent = createElement('div', {}, '<div itemprop="foo" id="id1"></div><div itemscope><div itemprop="bar"></div></div>');
+var item = parent.childNodes[1];
+
+shouldBe("item.properties.length", "1");
+shouldBe("item.properties.item(0)", "item.firstChild");
+shouldBe("item.properties[0]", "item.firstChild");
+
+debug("");
+debug("Add properties through itemref attribute.");
+item.setAttribute("itemref", "id1");
+shouldBe("item.properties.length", "2");
+shouldBe("item.properties.item(0)", "parent.firstChild");
+shouldBe("item.properties[0]", "parent.firstChild");
+shouldBe("item.properties.item(1)", "item.firstChild");
+shouldBe("item.properties[1]", "item.firstChild");
+
+debug("");
+debug("Add property to ref element");
+parent.firstChild.appendChild(createElement('div', {itemprop: 'qux'}));
+shouldBe("item.properties.length", "3");
+shouldBe("item.properties.item(0)", "parent.firstChild");
+shouldBe("item.properties[0]", "parent.firstChild");
+shouldBe("item.properties.item(1)", "parent.firstChild.firstChild");
+shouldBe("item.properties[1]", "parent.firstChild.firstChild");
+shouldBe("item.properties.item(2)", "item.firstChild");
+shouldBe("item.properties[2]", "item.firstChild");
+
+debug("");
+debug("Add properties direct to the item");
+item.appendChild(createElement('div', {itemprop: 'baz'}));
+shouldBe("item.properties.length", "4");
+shouldBe("item.properties.item(3)", "item.childNodes[1]");
+shouldBe("item.properties[3]", "item.childNodes[1]");
+
+debug("");
+debug("Remove property");
+item.removeChild(item.lastChild);
+shouldBe("item.properties.length", "3");
+shouldBeNull("item.properties.item(3)");
+shouldBeUndefined("item.properties[3]");
+
+debug("");
+debug("Remove property from ref element");
+parent.firstChild.removeChild(parent.firstChild.firstChild);
+shouldBe("item.properties.length", "2");
+shouldBe("item.properties.item(0)", "parent.firstChild");
+shouldBe("item.properties[0]", "parent.firstChild");
+shouldBe("item.properties.item(1)", "item.firstChild");
+shouldBe("item.properties[1]", "item.firstChild");
+
+debug("");
+debug("Remove property added through itemref");
+item.removeAttribute("itemref");
+shouldBe("item.properties.length", "1");
+shouldBe("item.properties.item(0)", "item.firstChild");
+shouldBe("item.properties[0]", "item.firstChild");
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>

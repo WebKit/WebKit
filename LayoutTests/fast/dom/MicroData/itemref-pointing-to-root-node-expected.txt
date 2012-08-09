@@ -1,0 +1,20 @@
+Test HTMLPropertiesCollection when itemref pointing to the root node.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Created element of type: div
+Set attribute: id, value: id1
+PASS item.properties.length is 1
+PASS item.properties.item(0) is root.firstChild
+PASS item.properties[0] is root.firstChild
+PASS item.properties.namedItem('foo').length is 1
+PASS item.properties.namedItem('foo').item(0) is root.firstChild
+PASS item.properties.namedItem('foo')[0] is root.firstChild
+PASS item.properties.names.length is 1
+PASS item.properties.names.item(0) is 'foo'
+PASS item.properties.names[0] is 'foo'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

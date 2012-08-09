@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../js/resources/js-test-pre.js"></script>
+<script src="resources/microdata-common.js"></script>
+</head>
+<body>
+<script>
+description("Test HTMLPropertiesCollection when itemref pointing to the root node.");
+
+var root = createElement('div', {id: 'id1'}, '<div itemprop="foo"></div><div itemscope itemref="id1"></div>');
+var item = root.lastChild;
+shouldBe("item.properties.length", "1");
+shouldBe("item.properties.item(0)", "root.firstChild");
+shouldBe("item.properties[0]", "root.firstChild");
+shouldBe("item.properties.namedItem('foo').length", "1");
+shouldBe("item.properties.namedItem('foo').item(0)", "root.firstChild");
+shouldBe("item.properties.namedItem('foo')[0]", "root.firstChild");
+shouldBe("item.properties.names.length", "1");
+shouldBe("item.properties.names.item(0)", "'foo'");
+shouldBe("item.properties.names[0]", "'foo'");
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>

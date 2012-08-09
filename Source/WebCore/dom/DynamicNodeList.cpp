@@ -33,8 +33,19 @@ namespace WebCore {
 
 Node* DynamicNodeListCacheBase::rootNode() const
 {
-    if ((isRootedAtDocument() || ownerNodeHasItemRefAttribute()) && m_ownerNode->inDocument())
+    if (isRootedAtDocument() && m_ownerNode->inDocument())
         return m_ownerNode->document();
+
+    if (ownerNodeHasItemRefAttribute()) {
+        if (m_ownerNode->inDocument())
+            return m_ownerNode->document();
+
+        Node* root = m_ownerNode.get();
+        while (Node* parent = root->parentNode())
+            root = parent;
+        return root;
+    }
+
     return m_ownerNode.get();
 }
 

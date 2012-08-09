@@ -1,0 +1,55 @@
+Test to ensure that modifing properties of an item which is not attached to the DOM tree must update its HTMLPropertiesCollection.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Created element of type: div
+PASS item.properties.length is 1
+PASS item.properties.item(0) is item.firstChild
+PASS item.properties[0] is item.firstChild
+
+Add properties through itemref attribute.
+PASS item.properties.length is 2
+PASS item.properties.item(0) is parent.firstChild
+PASS item.properties[0] is parent.firstChild
+PASS item.properties.item(1) is item.firstChild
+PASS item.properties[1] is item.firstChild
+
+Add property to ref element
+Created element of type: div
+Set attribute: itemprop, value: qux
+PASS item.properties.length is 3
+PASS item.properties.item(0) is parent.firstChild
+PASS item.properties[0] is parent.firstChild
+PASS item.properties.item(1) is parent.firstChild.firstChild
+PASS item.properties[1] is parent.firstChild.firstChild
+PASS item.properties.item(2) is item.firstChild
+PASS item.properties[2] is item.firstChild
+
+Add properties direct to the item
+Created element of type: div
+Set attribute: itemprop, value: baz
+PASS item.properties.length is 4
+PASS item.properties.item(3) is item.childNodes[1]
+PASS item.properties[3] is item.childNodes[1]
+
+Remove property
+PASS item.properties.length is 3
+PASS item.properties.item(3) is null
+PASS item.properties[3] is undefined.
+
+Remove property from ref element
+PASS item.properties.length is 2
+PASS item.properties.item(0) is parent.firstChild
+PASS item.properties[0] is parent.firstChild
+PASS item.properties.item(1) is item.firstChild
+PASS item.properties[1] is item.firstChild
+
+Remove property added through itemref
+PASS item.properties.length is 1
+PASS item.properties.item(0) is item.firstChild
+PASS item.properties[0] is item.firstChild
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

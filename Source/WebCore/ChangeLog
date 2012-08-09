@@ -1,3 +1,27 @@
+2012-08-09  Arko Saha  <arko@motorola.com>
+
+        Microdata: HTMLPropertiesCollection does not contain all properties when item is not attached to the DOM tree.
+        https://bugs.webkit.org/show_bug.cgi?id=93456
+
+        Reviewed by Ryosuke Niwa.
+
+        HTMLPropertiesCollection does not contain the item properties added through
+        itemref attribute when item is not attached to the DOM tree. We need to
+        find the root node of the item if its not attached in the document.
+
+        It is also possible that itemref attribute of item refers to the root node.
+        Made changes in getItemRefElements() method so that the traversal should
+        start from the root node.
+
+        Tests: fast/dom/MicroData/add-remove-property-to-item-which-is-not-attached-to-domtree.html
+               fast/dom/MicroData/item-not-attached-to-domtree.html
+               fast/dom/MicroData/itemref-pointing-to-root-node.html
+
+        * dom/DynamicNodeList.cpp:
+        (WebCore::DynamicNodeListCacheBase::rootNode):
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::getItemRefElements):
+
 2012-08-09  Tim Horton  <timothy_horton@apple.com>
 
         Add optional debug logging for tiled scrolling

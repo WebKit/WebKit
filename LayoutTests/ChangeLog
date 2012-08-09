@@ -1,3 +1,20 @@
+2012-08-09  Arko Saha  <arko@motorola.com>
+
+        Microdata: HTMLPropertiesCollection does not contain all properties when item is not attached to the DOM tree.
+        https://bugs.webkit.org/show_bug.cgi?id=93456
+
+        Reviewed by Ryosuke Niwa.
+
+        Added tests to ensure that HTMLPropertiesCollection contains all item properties
+        when item is not attached to the DOM tree.
+
+        * fast/dom/MicroData/add-remove-property-to-item-which-is-not-attached-to-domtree-expected.txt: Added.
+        * fast/dom/MicroData/add-remove-property-to-item-which-is-not-attached-to-domtree.html: Added.
+        * fast/dom/MicroData/item-not-attached-to-domtree-expected.txt: Added.
+        * fast/dom/MicroData/item-not-attached-to-domtree.html: Added.
+        * fast/dom/MicroData/itemref-pointing-to-root-node-expected.txt: Added.
+        * fast/dom/MicroData/itemref-pointing-to-root-node.html: Added.
+
 2012-08-08  Alpha Lam  <hclam@chromium.org>
 
         Test rendering JPEG <img> with CSS background

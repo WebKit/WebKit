@@ -1010,16 +1010,24 @@ void HTMLElement::getItemRefElements(Vector<HTMLElement*>& itemRefElements)
     if (!fastHasAttribute(itemscopeAttr))
         return;
 
-    if (!fastHasAttribute(itemrefAttr)) {
+    if (!fastHasAttribute(itemrefAttr) || !itemRef()->length()) {
         itemRefElements.append(this);
         return;
     }
 
     DOMSettableTokenList* itemRefs = itemRef();
     RefPtr<DOMSettableTokenList> processedItemRef = DOMSettableTokenList::create();
-    Node* rootNode = treeScope()->rootNode();
 
-    for (Node* current = rootNode->firstChild(); current; current = current->traverseNextNode(rootNode)) {
+    Node* rootNode;
+    if (inDocument())
+        rootNode = document();
+    else {
+        rootNode = this;
+        while (Node* parent = rootNode->parentNode())
+            rootNode = parent;
+    }
+
+    for (Node* current = rootNode; current; current = current->traverseNextNode(rootNode)) {
         if (!current->isHTMLElement())
             continue;
         HTMLElement* element = toHTMLElement(current);
