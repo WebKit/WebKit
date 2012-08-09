@@ -80,11 +80,6 @@ ComplexTextController::ComplexTextController(const Font* font, const TextRun& ru
     m_item.string = m_normalizedBuffer.get();
     m_item.stringLength = m_normalizedBufferLength;
 
-#if OS(ANDROID)
-    // Kerning does not currently work on Android.
-    m_item.shaperFlags = HB_ShaperFlag_NoKerning;
-#endif
-
     reset(startingX);
     m_startingY = startingY;
 

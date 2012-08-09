@@ -1,3 +1,19 @@
+2012-08-09  Iain Merrick  <husky@chromium.org>
+
+        [chromium] Enable kerning on Android
+        https://bugs.webkit.org/show_bug.cgi?id=92737
+
+        Reviewed by Adam Barth.
+
+        This #ifdef was incorrectly copied from our forked WebKit repository
+        while unforking our Android-specific changes. Kerning works without
+        any known problems.
+
+        Covered by existing tests (layout and instrumentation tests).
+
+        * platform/graphics/harfbuzz/ComplexTextControllerHarfBuzz.cpp:
+        (WebCore::ComplexTextController::ComplexTextController):
+
 2012-08-09  'Pavel Feldman'  <pfeldman@chromium.org>
 
         Web Inspector: follow up to r125174 - fix subtype use.
