@@ -36,7 +36,6 @@
 
 #include "InjectedScriptManager.h"
 
-#include "BindingSecurity.h"
 #include "ExceptionCode.h"
 #include "JSDOMWindow.h"
 #include "JSDOMWindowCustom.h"
@@ -86,7 +85,7 @@ bool InjectedScriptManager::canAccessInspectedWindow(ScriptState* scriptState)
     JSDOMWindow* inspectedWindow = toJSDOMWindow(scriptState->lexicalGlobalObject());
     if (!inspectedWindow)
         return false;
-    return BindingSecurity::shouldAllowAccessToFrame(scriptState, inspectedWindow->impl()->frame(), DoNotReportSecurityError);
+    return inspectedWindow->allowsAccessFromNoErrorMessage(scriptState);
 }
 
 } // namespace WebCore

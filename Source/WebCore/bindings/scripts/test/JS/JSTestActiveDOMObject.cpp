@@ -153,7 +153,7 @@ bool JSTestActiveDOMObject::getOwnPropertyDescriptor(JSObject* object, ExecState
 JSValue jsTestActiveDOMObjectExcitingAttr(ExecState* exec, JSValue slotBase, PropertyName)
 {
     JSTestActiveDOMObject* castedThis = jsCast<JSTestActiveDOMObject*>(asObject(slotBase));
-    if (!shouldAllowAccessToFrame(exec, castedThis->impl()->frame()))
+    if (!castedThis->allowsAccessFrom(exec))
         return jsUndefined();
     UNUSED_PARAM(exec);
     TestActiveDOMObject* impl = static_cast<TestActiveDOMObject*>(castedThis->impl());
@@ -165,7 +165,7 @@ JSValue jsTestActiveDOMObjectExcitingAttr(ExecState* exec, JSValue slotBase, Pro
 JSValue jsTestActiveDOMObjectConstructor(ExecState* exec, JSValue slotBase, PropertyName)
 {
     JSTestActiveDOMObject* domObject = jsCast<JSTestActiveDOMObject*>(asObject(slotBase));
-    if (!shouldAllowAccessToFrame(exec, domObject->impl()->frame()))
+    if (!domObject->allowsAccessFrom(exec))
         return jsUndefined();
     return JSTestActiveDOMObject::getConstructor(exec, domObject->globalObject());
 }
@@ -182,7 +182,7 @@ EncodedJSValue JSC_HOST_CALL jsTestActiveDOMObjectPrototypeFunctionExcitingFunct
         return throwVMTypeError(exec);
     JSTestActiveDOMObject* castedThis = jsCast<JSTestActiveDOMObject*>(asObject(thisValue));
     ASSERT_GC_OBJECT_INHERITS(castedThis, &JSTestActiveDOMObject::s_info);
-    if (!shouldAllowAccessToFrame(exec, castedThis->impl()->frame()))
+    if (!castedThis->allowsAccessFrom(exec))
         return JSValue::encode(jsUndefined());
     TestActiveDOMObject* impl = static_cast<TestActiveDOMObject*>(castedThis->impl());
     if (exec->argumentCount() < 1)

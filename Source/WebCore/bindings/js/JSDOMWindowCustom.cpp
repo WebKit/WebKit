@@ -112,7 +112,7 @@ static JSValue namedItemGetter(ExecState* exec, JSValue slotBase, PropertyName p
     JSDOMWindowBase* thisObj = jsCast<JSDOMWindow*>(asObject(slotBase));
     Document* document = thisObj->impl()->frame()->document();
 
-    ASSERT(shouldAllowAccessToFrame(exec, thisObj->impl()->frame()));
+    ASSERT(thisObj->allowsAccessFrom(exec));
     ASSERT(document);
     ASSERT(document->isHTMLDocument());
 
@@ -158,7 +158,7 @@ bool JSDOMWindow::getOwnPropertySlot(JSCell* cell, ExecState* exec, PropertyName
     // because we always allow access to some function, just different ones depending whether access
     // is allowed.
     String errorMessage;
-    bool allowsAccess = shouldAllowAccessToFrame(exec, thisObject->impl()->frame(), errorMessage);
+    bool allowsAccess = thisObject->allowsAccessFrom(exec, errorMessage);
 
     // Look for overrides before looking at any of our own properties, but ignore overrides completely
     // if this is cross-domain access.
@@ -166,7 +166,7 @@ bool JSDOMWindow::getOwnPropertySlot(JSCell* cell, ExecState* exec, PropertyName
         return true;
 
     // We need this code here because otherwise JSDOMWindowBase will stop the search before we even get to the
-    // prototype due to the blanket same origin check at the end of getOwnPropertySlot.
+    // prototype due to the blanket same origin (allowsAccessFrom) check at the end of getOwnPropertySlot.
     // Also, it's important to get the implementation straight out of the DOMWindow prototype regardless of
     // what prototype is actually set on this object.
     entry = JSDOMWindowPrototype::s_info.propHashTable(exec)->entry(exec, propertyName);
@@ -272,7 +272,7 @@ bool JSDOMWindow::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, Pr
 {
     JSDOMWindow* thisObject = jsCast<JSDOMWindow*>(object);
     // Never allow cross-domain getOwnPropertyDescriptor
-    if (!shouldAllowAccessToFrame(exec, thisObject->impl()->frame()))
+    if (!thisObject->allowsAccessFrom(exec))
         return false;
 
     const HashEntry* entry;
@@ -349,7 +349,7 @@ void JSDOMWindow::put(JSCell* cell, ExecState* exec, PropertyName propertyName, 
 
     // Optimization: access JavaScript global variables directly before involving the DOM.
     if (thisObject->JSGlobalObject::hasOwnPropertyForWrite(exec, propertyName)) {
-        if (shouldAllowAccessToFrame(exec, thisObject->impl()->frame()))
+        if (thisObject->allowsAccessFrom(exec))
             JSGlobalObject::put(thisObject, exec, propertyName, value, slot);
         return;
     }
@@ -357,7 +357,7 @@ void JSDOMWindow::put(JSCell* cell, ExecState* exec, PropertyName propertyName, 
     if (lookupPut<JSDOMWindow>(exec, propertyName, value, s_info.propHashTable(exec), thisObject))
         return;
 
-    if (shouldAllowAccessToFrame(exec, thisObject->impl()->frame()))
+    if (thisObject->allowsAccessFrom(exec))
         Base::put(thisObject, exec, propertyName, value, slot);
 }
 
@@ -365,7 +365,7 @@ bool JSDOMWindow::deleteProperty(JSCell* cell, ExecState* exec, PropertyName pro
 {
     JSDOMWindow* thisObject = jsCast<JSDOMWindow*>(cell);
     // Only allow deleting properties by frames in the same origin.
-    if (!shouldAllowAccessToFrame(exec, thisObject->impl()->frame()))
+    if (!thisObject->allowsAccessFrom(exec))
         return false;
     return Base::deleteProperty(thisObject, exec, propertyName);
 }
@@ -374,7 +374,7 @@ void JSDOMWindow::getPropertyNames(JSObject* object, ExecState* exec, PropertyNa
 {
     JSDOMWindow* thisObject = jsCast<JSDOMWindow*>(object);
     // Only allow the window to enumerated by frames in the same origin.
-    if (!shouldAllowAccessToFrame(exec, thisObject->impl()->frame()))
+    if (!thisObject->allowsAccessFrom(exec))
         return;
     Base::getPropertyNames(thisObject, exec, propertyNames, mode);
 }
@@ -383,7 +383,7 @@ void JSDOMWindow::getOwnPropertyNames(JSObject* object, ExecState* exec, Propert
 {
     JSDOMWindow* thisObject = jsCast<JSDOMWindow*>(object);
     // Only allow the window to enumerated by frames in the same origin.
-    if (!shouldAllowAccessToFrame(exec, thisObject->impl()->frame()))
+    if (!thisObject->allowsAccessFrom(exec))
         return;
     Base::getOwnPropertyNames(thisObject, exec, propertyNames, mode);
 }
@@ -392,7 +392,7 @@ bool JSDOMWindow::defineOwnProperty(JSC::JSObject* object, JSC::ExecState* exec,
 {
     JSDOMWindow* thisObject = jsCast<JSDOMWindow*>(object);
     // Only allow defining properties in this way by frames in the same origin, as it allows setters to be introduced.
-    if (!shouldAllowAccessToFrame(exec, thisObject->impl()->frame()))
+    if (!thisObject->allowsAccessFrom(exec))
         return false;
 
     // Don't allow shadowing location using accessor properties.
@@ -412,7 +412,7 @@ void JSDOMWindow::setLocation(ExecState* exec, JSValue value)
     if (Frame* activeFrame = activeDOMWindow(exec)->frame()) {
         if (Settings* settings = activeFrame->settings()) {
             if (settings->usesDashboardBackwardCompatibilityMode() && !activeFrame->tree()->parent()) {
-                if (shouldAllowAccessToFrame(exec, impl()->frame()))
+                if (allowsAccessFrom(exec))
                     putDirect(exec->globalData(), Identifier(exec, "location"), value);
                 return;
             }

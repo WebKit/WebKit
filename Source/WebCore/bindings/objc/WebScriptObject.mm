@@ -241,11 +241,7 @@ static void _didExecute(WebScriptObject *obj)
     if (!_private->originRootObject->isValid())
         return false;
 
-    // It's not actually correct to call shouldAllowAccessToFrame in this way because
-    // JSDOMWindowBase* isn't the right object to represent the currently executing
-    // JavaScript. Instead, we should use ExecState, like we do elsewhere.
-    JSDOMWindowBase* target = jsCast<JSDOMWindowBase*>(root->globalObject());
-    return shouldAllowAccessToFrame(_private->originRootObject->globalObject()->globalExec(), target->impl()->frame());
+    return jsCast<JSDOMWindowBase*>(root->globalObject())->allowsAccessFrom(_private->originRootObject->globalObject());
 }
 
 - (oneway void)release
