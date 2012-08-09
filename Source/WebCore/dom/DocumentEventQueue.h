@@ -38,6 +38,7 @@ namespace WebCore {
 
 class Event;
 class DocumentEventQueueTimer;
+class MemoryObjectInfo;
 class Node;
 class ScriptExecutionContext;
 
@@ -57,6 +58,8 @@ public:
     virtual void close() OVERRIDE;
 
     void enqueueOrDispatchScrollEvent(PassRefPtr<Node>, ScrollEventTargetType);
+
+    void reportMemoryUsage(MemoryObjectInfo*) const;
 
 private:
     explicit DocumentEventQueue(ScriptExecutionContext*);

@@ -31,6 +31,7 @@
 
 namespace WebCore {
 
+    class MemoryInstrumentation;
     class EventTarget;
     class EventDispatcher;
 
@@ -151,6 +152,8 @@ namespace WebCore {
         virtual Clipboard* clipboard() const { return 0; }
 
         bool isBeingDispatched() const { return eventPhase(); }
+
+        virtual void reportMemoryUsage(MemoryObjectInfo*) const;
 
     protected:
         Event();

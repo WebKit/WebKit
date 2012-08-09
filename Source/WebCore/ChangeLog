@@ -1,3 +1,26 @@
+2012-08-09  Yury Semikhatsky  <yurys@chromium.org>
+
+        Web Inspector: DocumentEventQueue memory instrumentation
+        https://bugs.webkit.org/show_bug.cgi?id=93604
+
+        Reviewed by Pavel Feldman.
+
+        Provided DocumentEventQueue:: reportMemoryUsage implementation.
+
+        * dom/Document.cpp:
+        (WebCore::Document::reportMemoryUsage):
+        * dom/DocumentEventQueue.cpp:
+        (WebCore::DocumentEventQueue::reportMemoryUsage):
+        (WebCore):
+        * dom/DocumentEventQueue.h:
+        (WebCore):
+        * dom/Event.cpp:
+        (WebCore::Event::reportMemoryUsage):
+        (WebCore):
+        * dom/Event.h:
+        (WebCore):
+        (Event):
+
 2012-08-09  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: add codemirror library as an experiment
