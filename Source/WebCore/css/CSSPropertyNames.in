@@ -351,6 +351,7 @@ z-index
 -webkit-rtl-ordering
 -webkit-text-combine
 -epub-text-combine = -webkit-text-combine
+-webkit-text-decoration-line
 -webkit-text-decorations-in-effect
 -webkit-text-emphasis
 -epub-text-emphasis = -webkit-text-emphasis

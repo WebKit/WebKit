@@ -1,3 +1,31 @@
+2012-08-09  Bruno de Oliveira Abinader  <bruno.abinader@basyskom.com>
+
+        [css3-text] Add suport for -webkit-text-decoration-line
+        https://bugs.webkit.org/show_bug.cgi?id=90959
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        This patch implements the "text-decoration-line" property specified in CSS3
+        working draft, with "-webkit-" prefix. The specification can be found below:
+        http://dev.w3.org/csswg/css3-text/#text-decoration-line
+
+        Additionally, Mozilla implementation details can be found here:
+        https://developer-dev.allizom.org/en-US/docs/CSS/text-decoration-line
+
+        It is important to notice that "-webkit-text-decoration-line" and
+        "text-decoration" properties shares the same property handlers, however, the
+        former resets the latter if value from latter doesn't have "important" value
+        set (same behavior as Firefox). In a rare case where both properties have
+        "important" value set, the text decoration gets value from the last parsed
+        property.
+
+        * fast/css/getComputedStyle/computed-style-expected.txt:
+        * fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+        * fast/css/getComputedStyle/resources/property-names.js:
+        * fast/css/text-decoration-line-expected.html: Added.
+        * fast/css/text-decoration-line.html: Added.
+        * svg/css/getComputedStyle-basic-expected.txt:
+
 2012-08-09  Robert Hogan  <robert@webkit.org>
 
         CSS 2.1 failure: 'Text-indent' only affects a line if it is the first formatted line of an element

@@ -176,6 +176,7 @@ static const CSSPropertyID computedProperties[] = {
     CSSPropertyTabSize,
     CSSPropertyTextAlign,
     CSSPropertyTextDecoration,
+    CSSPropertyWebkitTextDecorationLine,
     CSSPropertyTextIndent,
     CSSPropertyTextRendering,
     CSSPropertyTextShadow,
@@ -1190,6 +1191,7 @@ static PassRefPtr<CSSValue> renderUnicodeBidiFlagsToCSSValue(EUnicodeBidi unicod
 
 static PassRefPtr<CSSValue> renderTextDecorationFlagsToCSSValue(int textDecoration)
 {
+    // Blink value is ignored.
     RefPtr<CSSValueList> list = CSSValueList::createSpaceSeparated();
     if (textDecoration & UNDERLINE)
         list->append(cssValuePool().createIdentifierValue(CSSValueUnderline));
@@ -1197,8 +1199,6 @@ static PassRefPtr<CSSValue> renderTextDecorationFlagsToCSSValue(int textDecorati
         list->append(cssValuePool().createIdentifierValue(CSSValueOverline));
     if (textDecoration & LINE_THROUGH)
         list->append(cssValuePool().createIdentifierValue(CSSValueLineThrough));
-    if (textDecoration & BLINK)
-        list->append(cssValuePool().createIdentifierValue(CSSValueBlink));
 
     if (!list->length())
         return cssValuePool().createIdentifierValue(CSSValueNone);
@@ -1948,6 +1948,7 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(CSSPropert
         case CSSPropertyTextAlign:
             return cssValuePool().createValue(style->textAlign());
         case CSSPropertyTextDecoration:
+        case CSSPropertyWebkitTextDecorationLine:
             return renderTextDecorationFlagsToCSSValue(style->textDecoration());
         case CSSPropertyWebkitTextDecorationsInEffect:
             return renderTextDecorationFlagsToCSSValue(style->textDecorationsInEffect());

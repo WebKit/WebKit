@@ -2100,31 +2100,11 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
     case CSSPropertyTextDecoration:
     case CSSPropertyWebkitTextDecorationsInEffect:
         // none | [ underline || overline || line-through || blink ] | inherit
-        if (id == CSSValueNone) {
-            validPrimitive = true;
-        } else {
-            RefPtr<CSSValueList> list = CSSValueList::createSpaceSeparated();
-            bool isValid = true;
-            while (isValid && value) {
-                switch (value->id) {
-                case CSSValueBlink:
-                    break;
-                case CSSValueUnderline:
-                case CSSValueOverline:
-                case CSSValueLineThrough:
-                    list->append(cssValuePool().createIdentifierValue(value->id));
-                    break;
-                default:
-                    isValid = false;
-                }
-                value = m_valueList->next();
-            }
-            if (list->length() && isValid) {
-                parsedValue = list.release();
-                m_valueList->next();
-            }
-        }
-        break;
+        return parseTextDecoration(propId, important);
+
+    case CSSPropertyWebkitTextDecorationLine:
+        // none | [ underline || overline || line-through ] | inherit
+        return parseTextDecoration(propId, important);
 
     case CSSPropertyZoom:          // normal | reset | document | <number> | <percentage> | inherit
         if (id == CSSValueNormal || id == CSSValueReset || id == CSSValueDocument)
@@ -7930,6 +7910,56 @@ bool CSSParser::parsePerspectiveOrigin(CSSPropertyID propId, CSSPropertyID& prop
     }
 
     return value;
+}
+
+void CSSParser::addTextDecorationProperty(CSSPropertyID propId, PassRefPtr<CSSValue> value, bool important)
+{
+    // The text-decoration-line property takes priority over text-decoration, unless the latter has important priority set.
+    if (propId == CSSPropertyTextDecoration && !important && m_currentShorthand == CSSPropertyInvalid) {
+        for (unsigned i = 0; i < m_parsedProperties.size(); ++i) {
+            if (m_parsedProperties[i].id() == CSSPropertyWebkitTextDecorationLine)
+                return;
+        }
+    }
+    addProperty(propId, value, important);
+}
+
+bool CSSParser::parseTextDecoration(CSSPropertyID propId, bool important)
+{
+    CSSParserValue* value = m_valueList->current();
+    if (value->id == CSSValueNone) {
+        addTextDecorationProperty(propId, cssValuePool().createExplicitInitialValue(), important);
+        m_valueList->next();
+        return true;
+    }
+
+    RefPtr<CSSValueList> list = CSSValueList::createSpaceSeparated();
+    bool isValid = true;
+    while (isValid && value) {
+        switch (value->id) {
+        case CSSValueBlink:
+            // Blink value is not accepted by -webkit-text-decoration-line.
+            isValid = propId != CSSPropertyWebkitTextDecorationLine;
+            break;
+        case CSSValueUnderline:
+        case CSSValueOverline:
+        case CSSValueLineThrough:
+            list->append(cssValuePool().createIdentifierValue(value->id));
+            break;
+        default:
+            isValid = false;
+            break;
+        }
+        if (isValid)
+            value = m_valueList->next();
+    }
+
+    if (list->length() && isValid) {
+        addTextDecorationProperty(propId, list.release(), important);
+        return true;
+    }
+
+    return false;
 }
 
 bool CSSParser::parseTextEmphasisStyle(bool important)

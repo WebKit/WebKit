@@ -1,3 +1,42 @@
+2012-08-09  Bruno de Oliveira Abinader  <bruno.abinader@basyskom.com>
+
+        [css3-text] Add suport for -webkit-text-decoration-line
+        https://bugs.webkit.org/show_bug.cgi?id=90959
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        This patch implements the "text-decoration-line" property specified in CSS3
+        working draft, with "-webkit-" prefix. The specification can be found below:
+        http://dev.w3.org/csswg/css3-text/#text-decoration-line
+
+        Additionally, Mozilla implementation details can be found here:
+        https://developer-dev.allizom.org/en-US/docs/CSS/text-decoration-line
+
+        It is important to notice that "-webkit-text-decoration-line" and
+        "text-decoration" properties shares the same property handlers, however, the
+        former resets the latter if value from latter doesn't have "important" value
+        set (same behavior as Firefox). In a rare case where both properties have
+        "important" value set, the text decoration gets value from the last parsed
+        property.
+
+        Test: fast/css/text-decoration-line.html
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::renderTextDecorationFlagsToCSSValue):
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue):
+        (WebCore::CSSParser::addTextDecorationProperty):
+        (WebCore::CSSParser::parseTextDecoration):
+        * css/CSSParser.h:
+        * css/CSSProperty.cpp:
+        (WebCore::CSSProperty::isInheritedProperty):
+        * css/CSSPropertyNames.in:
+        * css/StyleBuilder.cpp:
+        (WebCore::StyleBuilder::StyleBuilder):
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::collectMatchingRulesForList):
+
 2012-08-09  Huang Dongsung  <luxtella@company100.net>
 
         Extract the definition of NativeImagePtr from ImageSource.h into NativeImagePtr.h.

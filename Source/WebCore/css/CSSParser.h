@@ -231,6 +231,9 @@ public:
 
     bool parseTextEmphasisStyle(bool important);
 
+    void addTextDecorationProperty(CSSPropertyID, PassRefPtr<CSSValue>, bool important);
+    bool parseTextDecoration(CSSPropertyID propId, bool important);
+
     bool parseLineBoxContain(bool important);
     bool parseCalculation(CSSParserValue*, CalculationPermittedValueRange);
 
