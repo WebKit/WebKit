@@ -873,3 +873,13 @@ bool WKPreferencesGetArtificialPluginInitializationDelayEnabled(WKPreferencesRef
 {
     return toImpl(preferencesRef)->artificialPluginInitializationDelayEnabled();
 }
+
+void WKPreferencesSetScrollingPerformanceLoggingEnabled(WKPreferencesRef preferencesRef, bool enabled)
+{
+    toImpl(preferencesRef)->setScrollingPerformanceLoggingEnabled(enabled);
+}
+
+bool WKPreferencesGetScrollingPerformanceLoggingEnabled(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->scrollingPerformanceLoggingEnabled();
+}

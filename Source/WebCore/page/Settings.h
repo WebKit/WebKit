@@ -604,6 +604,9 @@ namespace WebCore {
         void setThirdPartyStorageBlockingEnabled(bool enabled) { m_thirdPartyStorageBlockingEnabled = enabled; }
         bool thirdPartyStorageBlockingEnabled() const { return m_thirdPartyStorageBlockingEnabled; }
 
+        void setScrollingPerformanceLoggingEnabled(bool);
+        bool scrollingPerformanceLoggingEnabled() { return m_scrollingPerformanceLoggingEnabled; }
+
 #if USE(JSC)
         static void setShouldRespectPriorityInCSSAttributeSetters(bool);
         static bool shouldRespectPriorityInCSSAttributeSetters();
@@ -793,6 +796,8 @@ namespace WebCore {
         bool m_diagnosticLoggingEnabled : 1;
 
         bool m_thirdPartyStorageBlockingEnabled : 1;
+
+        bool m_scrollingPerformanceLoggingEnabled : 1;
 
         Timer<Settings> m_loadsImagesAutomaticallyTimer;
         void loadsImagesAutomaticallyTimerFired(Timer<Settings>*);

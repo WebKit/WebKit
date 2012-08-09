@@ -50,6 +50,7 @@ ScrollingTree::ScrollingTree(ScrollingCoordinator* scrollingCoordinator)
     , m_canGoForward(false)
     , m_mainFramePinnedToTheLeft(false)
     , m_mainFramePinnedToTheRight(false)
+    , m_scrollingPerformanceLoggingEnabled(false)
 {
 }
 
@@ -216,6 +217,16 @@ bool ScrollingTree::willWheelEventStartSwipeGesture(const PlatformWheelEvent& wh
         return true;
 
     return false;
+}
+
+void ScrollingTree::setScrollingPerformanceLoggingEnabled(bool flag)
+{
+    m_scrollingPerformanceLoggingEnabled = flag;
+}
+
+bool ScrollingTree::scrollingPeformanceLoggingEnabled()
+{
+    return m_scrollingPerformanceLoggingEnabled;
 }
 
 } // namespace WebCore

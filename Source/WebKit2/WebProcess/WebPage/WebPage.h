@@ -575,6 +575,9 @@ public:
     bool artificialPluginInitializationDelayEnabled() const { return m_artificialPluginInitializationDelayEnabled; }
     void setArtificialPluginInitializationDelayEnabled(bool enabled) { m_artificialPluginInitializationDelayEnabled = enabled; }
 
+    bool scrollingPerformanceLoggingEnabled() const { return m_scrollingPerformanceLoggingEnabled; }
+    void setScrollingPerformanceLoggingEnabled(bool);
+
 private:
     WebPage(uint64_t pageID, const WebPageCreationParameters&);
 
@@ -770,6 +773,8 @@ private:
     bool m_asynchronousPluginInitializationEnabled;
     bool m_asynchronousPluginInitializationEnabledForAllPlugins;
     bool m_artificialPluginInitializationDelayEnabled;
+
+    bool m_scrollingPerformanceLoggingEnabled;
 
 #if PLATFORM(MAC)
     // Whether the containing window is visible or not.

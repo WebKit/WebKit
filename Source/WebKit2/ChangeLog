@@ -1,3 +1,27 @@
+2012-08-09  Tim Horton  <timothy_horton@apple.com>
+
+        Add optional debug logging for tiled scrolling
+        https://bugs.webkit.org/show_bug.cgi?id=93305
+
+        Reviewed by Simon Fraser.
+
+        Add a new boolean preference, ScrollingPerformanceLoggingEnabled, which will be used to toggle
+        the WebCore parts of this change.
+
+        * Shared/WebPreferencesStore.h: Add ScrollingPerformanceLoggingEnabled.
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetScrollingPerformanceLoggingEnabled): Added.
+        (WKPreferencesGetScrollingPerformanceLoggingEnabled): Added.
+        * UIProcess/API/C/WKPreferencesPrivate.h: Add getters and setters for ScrollingPerformanceLoggingEnabled.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage): Add ScrollingPerformanceLoggingEnabled.
+        (WebKit::WebPage::updatePreferences): Add ScrollingPerformanceLoggingEnabled.
+        (WebKit::WebPage::setScrollingPerformanceLoggingEnabled): Propagate settings changes through to FrameView.
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::scrollingPerformanceLoggingEnabled): Add a getter for the setting so that TiledCoreAnimationDrawingArea can access it.
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::updatePreferences): Pass ScrollingPerformanceLoggingEnabled down into the scrolling thread.
+
 2012-08-08  Shane Stephens  <shanestephens@google.com>
 
         Compile flag for CSS Hierarchies

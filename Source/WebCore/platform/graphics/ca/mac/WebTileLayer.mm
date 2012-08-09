@@ -27,9 +27,14 @@
 #import "WebTileLayer.h"
 
 #import "TileCache.h"
+#import <wtf/CurrentTime.h>
 #import <wtf/UnusedParam.h>
 
 using namespace WebCore;
+
+@interface WebTileLayer (ScrollingPerformanceLoggingInternal)
+- (void)logFilledFreshTile;
+@end
 
 @implementation WebTileLayer
 
@@ -43,8 +48,12 @@ using namespace WebCore;
 
 - (void)drawInContext:(CGContextRef)context
 {
-    if (_tileCache)
+    if (_tileCache) {
         _tileCache->drawLayer(self, context);
+
+        if (_tileCache->scrollingPerformanceLoggingEnabled())
+            [self logFilledFreshTile];
+    }
 }
 
 - (void)setTileCache:(WebCore::TileCache*)tileCache
@@ -55,6 +64,20 @@ using namespace WebCore;
 - (unsigned)incrementRepaintCount
 {
     return ++_repaintCount;
+}
+
+- (unsigned)repaintCount
+{
+    return _repaintCount;
+}
+
+- (void)logFilledFreshTile
+{
+    IntRect visiblePart(enclosingIntRect([self frame]));
+    visiblePart.intersect(_tileCache->visibleRect());
+
+    if ([self repaintCount] == 1 && !visiblePart.isEmpty())
+        printf("SCROLLING: Filled visible fresh tile. Time: %f Unfilled Pixels: %u\n", WTF::monotonicallyIncreasingTime(), _tileCache->blankPixelCount());
 }
 
 @end

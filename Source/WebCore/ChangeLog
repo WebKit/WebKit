@@ -1,3 +1,77 @@
+2012-08-09  Tim Horton  <timothy_horton@apple.com>
+
+        Add optional debug logging for tiled scrolling
+        https://bugs.webkit.org/show_bug.cgi?id=93305
+
+        Reviewed by Simon Fraser.
+
+        Add scrolling performance logging to ScrollingTreeNodeMac and WebTileLayer, which will log
+        the amount of unpainted area exposed during scrolling and painting, respectively.
+
+        The logging output looks like this:
+
+            SCROLLING: Exposed tileless area. Time: 1344464850.154839 Unfilled Pixels: 1122008
+            SCROLLING: Filled visible fresh tile. Time: 1344464850.575303 Unfilled Pixels: 1078272
+            SCROLLING: Filled visible fresh tile. Time: 1344464850.676569 Unfilled Pixels: 823808
+            SCROLLING: Filled visible fresh tile. Time: 1344464850.795877 Unfilled Pixels: 569344
+            SCROLLING: Filled visible fresh tile. Time: 1344464850.846940 Unfilled Pixels: 524288
+            SCROLLING: Filled visible fresh tile. Time: 1344464850.984113 Unfilled Pixels: 262144
+            SCROLLING: Filled visible fresh tile. Time: 1344464851.027985 Unfilled Pixels: 0
+
+        No new tests, as this is just debugging logging.
+
+        * WebCore.exp.in:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::setScrollingPerformanceLoggingEnabled):
+        Added setScrollingPerformanceLoggingEnabled, passes flag into TiledBacking.
+
+        * page/FrameView.h:
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings):
+        (WebCore::Settings::setScrollingPerformanceLoggingEnabled):
+        Added setScrollingPerformanceLoggingEnabled, passes flag into FrameView.
+
+        * page/Settings.h:
+        (WebCore::Settings::scrollingPerformanceLoggingEnabled):
+        * page/scrolling/ScrollingTree.cpp:
+        (WebCore::ScrollingTree::ScrollingTree):
+        (WebCore::ScrollingTree::setScrollingPerformanceLoggingEnabled):
+        (WebCore::ScrollingTree::scrollingPeformanceLoggingEnabled):
+        Added ScrollingPerformanceLoggingEnabled setter/getter; this is where it's accessed from ScrollingTreeNodeMac.
+
+        * page/scrolling/ScrollingTree.h:
+        * page/scrolling/mac/ScrollingTreeNodeMac.h:
+        (ScrollingTreeNodeMac):
+        * page/scrolling/mac/ScrollingTreeNodeMac.mm:
+        (WebCore::ScrollingTreeNodeMac::setScrollPosition):
+        When updating scroll position, conditionally log the amount of unpainted area that was just exposed.
+
+        (WebCore::ScrollingTreeNodeMac::logExposedTilelessArea):
+        * platform/graphics/TiledBacking.h:
+        (WebCore::TiledBacking::TiledBacking):
+        (WebCore::TiledBacking::setScrollingPerformanceLoggingEnabled):
+        (WebCore::TiledBacking::scrollingPerformanceLoggingEnabled):
+        Added ScrollingPerformanceLoggingEnabled setter/getter; this is where it's accessed from WebTileLayer.
+
+        * platform/graphics/ca/mac/TileCache.h:
+        (WebCore::TileCache::visibleRect):
+        * platform/graphics/ca/mac/TileCache.mm:
+        (WebCore::TileCache::blankPixelCount):
+        (WebCore::TileCache::blankPixelCountForTiles):
+        Compute the exposed, unpainted area of the tile cache by iterating over the layers,
+        checking if they've been painted, and subtracting painted layers from the total visible area.
+
+        * platform/graphics/ca/mac/WebTileLayer.h:
+        * platform/graphics/ca/mac/WebTileLayer.mm:
+        (-[WebTileLayer drawInContext:]):
+        (-[WebTileLayer repaintCount]):
+        (-[WebTileLayer logFilledFreshTile]):
+        When painting a WebTileLayer, conditionally log the amount of unpainted area remaining after painting said tile.
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::RenderLayerBacking):
+        Plumb ScrollingPerformanceLoggingEnabled through to TiledBacking.
+
 2012-08-08  Alpha Lam  <hclam@chromium.org>
 
         Remove image decoding in some BitmapImage metadata functions

@@ -74,6 +74,8 @@ private:
 
     void updateMainFramePinState(const IntPoint& scrollPosition);
 
+    void logExposedUnfilledArea();
+
     ScrollElasticityController m_scrollElasticityController;
     RetainPtr<CFRunLoopTimerRef> m_snapRubberbandTimer;
 

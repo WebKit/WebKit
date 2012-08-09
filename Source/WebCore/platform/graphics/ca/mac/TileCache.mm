@@ -28,6 +28,7 @@
 
 #import "IntRect.h"
 #import "PlatformCALayer.h"
+#import "Region.h"
 #import "WebLayer.h"
 #import "WebTileCacheLayer.h"
 #import "WebTileLayer.h"
@@ -309,6 +310,34 @@ void TileCache::scheduleTileRevalidation(double interval)
 void TileCache::tileRevalidationTimerFired(Timer<TileCache>*)
 {
     revalidateTiles();
+}
+
+unsigned TileCache::blankPixelCount() const
+{
+    WebTileLayerList tiles(m_tiles.size());
+    tiles.appendRange(m_tiles.begin().values(), m_tiles.end().values());
+
+    return blankPixelCountForTiles(tiles, m_visibleRect, IntPoint(0,0));
+}
+
+unsigned TileCache::blankPixelCountForTiles(const WebTileLayerList& tiles, IntRect visibleRect, IntPoint tileTranslation)
+{
+    Region paintedVisibleTiles;
+
+    for (WebTileLayerList::const_iterator it = tiles.begin(), end = tiles.end(); it != end; ++it) {
+        const WebTileLayer* tileLayer = it->get();
+
+        IntRect visiblePart(CGRectOffset([tileLayer frame], tileTranslation.x(), tileTranslation.y()));
+        visiblePart.intersect(visibleRect);
+
+        if (!visiblePart.isEmpty() && [tileLayer repaintCount])
+            paintedVisibleTiles.unite(visiblePart);
+    }
+
+    Region uncoveredRegion(visibleRect);
+    uncoveredRegion.subtract(paintedVisibleTiles);
+
+    return uncoveredRegion.totalArea();
 }
 
 void TileCache::revalidateTiles()

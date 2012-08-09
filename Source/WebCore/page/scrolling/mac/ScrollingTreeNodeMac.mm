@@ -31,6 +31,12 @@
 #include "PlatformWheelEvent.h"
 #include "ScrollingTree.h"
 #include "ScrollingTreeState.h"
+#include "Settings.h"
+#include "TileCache.h"
+#include "WebTileLayer.h"
+
+#include <wtf/CurrentTime.h>
+#include <wtf/Deque.h>
 
 namespace WebCore {
 
@@ -233,6 +239,9 @@ void ScrollingTreeNodeMac::setScrollPosition(const IntPoint& scrollPosition)
     newScrollPosition = newScrollPosition.expandedTo(minimumScrollPosition());
 
     setScrollPositionWithoutContentEdgeConstraints(newScrollPosition);
+
+    if (scrollingTree()->scrollingPeformanceLoggingEnabled())
+        logExposedUnfilledArea();
 }
 
 void ScrollingTreeNodeMac::setScrollPositionWithoutContentEdgeConstraints(const IntPoint& scrollPosition)
@@ -286,6 +295,39 @@ void ScrollingTreeNodeMac::updateMainFramePinState(const IntPoint& scrollPositio
     bool pinnedToTheRight = scrollPosition.x() >= maximumScrollPosition().x();
 
     scrollingTree()->setMainFramePinState(pinnedToTheLeft, pinnedToTheRight);
+}
+
+void ScrollingTreeNodeMac::logExposedUnfilledArea()
+{
+    Region paintedVisibleTiles;
+
+    Deque<CALayer*> layerQueue;
+    layerQueue.append(m_scrollLayer.get());
+    WebTileLayerList tiles;
+
+    while(!layerQueue.isEmpty() && tiles.isEmpty()) {
+        CALayer* layer = layerQueue.takeFirst();
+        NSArray* sublayers = [[layer sublayers] copy];
+
+        // If this layer is the parent of a tile, it is the parent of all of the tiles and nothing else.
+        if ([[sublayers objectAtIndex:0] isKindOfClass:[WebTileLayer class]]) {
+            for (CALayer* sublayer in sublayers) {
+                ASSERT([sublayer isKindOfClass:[WebTileLayer class]]);
+                tiles.append(static_cast<WebTileLayer*>(sublayer));
+            }
+        } else {
+            for (CALayer* sublayer in sublayers)
+                layerQueue.append(sublayer);
+        }
+
+        [sublayers release];
+    }
+
+    IntPoint scrollPosition = this->scrollPosition();
+    unsigned unfilledArea = TileCache::blankPixelCountForTiles(tiles, viewportRect(), IntPoint(-scrollPosition.x(), -scrollPosition.y()));
+
+    if (unfilledArea)
+        printf("SCROLLING: Exposed tileless area. Time: %f Unfilled Pixels: %u\n", WTF::monotonicallyIncreasingTime(), unfilledArea);
 }
 
 } // namespace WebCore

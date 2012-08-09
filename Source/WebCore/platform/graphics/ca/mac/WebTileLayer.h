@@ -37,6 +37,7 @@ namespace WebCore {
 
 - (void)setTileCache:(WebCore::TileCache*)tileCache;
 - (unsigned)incrementRepaintCount;
+- (unsigned)repaintCount;
 @end
 
 

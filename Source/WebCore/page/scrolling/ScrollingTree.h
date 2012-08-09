@@ -97,6 +97,9 @@ public:
     void setDebugRootLayer(CALayer *);
 #endif
 
+    void setScrollingPerformanceLoggingEnabled(bool flag);
+    bool scrollingPeformanceLoggingEnabled();
+
 private:
     explicit ScrollingTree(ScrollingCoordinator*);
 
@@ -115,6 +118,8 @@ private:
     bool m_canGoForward;
     bool m_mainFramePinnedToTheLeft;
     bool m_mainFramePinnedToTheRight;
+
+    bool m_scrollingPerformanceLoggingEnabled;
 
 #if PLATFORM(MAC)
     RetainPtr<CALayer> m_debugInfoLayer;
