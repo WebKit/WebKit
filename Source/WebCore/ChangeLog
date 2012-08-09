@@ -1,3 +1,40 @@
+2012-08-09  Mike West  <mkwst@chromium.org>
+
+        Invalid Content Security Policy sources should generate console warnings.
+        https://bugs.webkit.org/show_bug.cgi?id=93599
+
+        Reviewed by Adam Barth.
+
+        Given a Content Security Policy directive, we're currently correctly
+        ignoring sources that we can't parse: "'slef'", "http:///", etc. have
+        no effect on the protected resource's active policy. We're not, however
+        telling the developer what we're doing, which can lead to confusion.
+        This patch adds a console warning whenever an invalid source expression
+        is encountered while parsing a directive in order to make WebKit's
+        behavior more transparent to the developer.
+
+        There should be no functional change as a result of this patch: the
+        policy should be parsed exactly as before, it should simply be more
+        verbose.
+
+        Test: http/tests/security/contentSecurityPolicy/source-list-parsing-07.html
+
+        * page/ContentSecurityPolicy.cpp:
+        (WebCore::CSPSourceList::parse):
+            Two changes: First, if 'parseSource' returns false, then log a
+            warning to the developer's console. Second, if both the source and
+            host are empty, but parsing succeeded, then we know we're dealing
+            with either a wildcard- or keyword-source that was properly handled
+            inside 'parseSource', so jump to the next source.
+        (WebCore::CSPSourceList::parseSource):
+            Wildcard- and keyword-sources now return 'true'. They parsed
+            correctly, after all.
+        (WebCore::ContentSecurityPolicy::reportInvalidSourceExpression):
+            Log a console warning if an invalid source expression is present in
+            a CSP directive's value.
+        (WebCore):
+        * page/ContentSecurityPolicy.h:
+
 2012-08-06  Nat Duca  <nduca@chromium.org>
 
         [chromium] Expose CCGraphicsContext as WebCompositorOutputSurface

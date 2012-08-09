@@ -4,8 +4,6 @@
 <script src='resources/multiple-iframe-test.js'></script>
 <script>
 var tests = [
-    ['no',  'script-src https://127.?.0.1:*', 'resources/script.js'],
-    ['yes', 'script-src https://127.0.0.1:\t*  ', 'resources/script.js'],
     ['yes', 'script-src\thttp://127.0.0.1:8000', 'resources/script.js'],
     ['yes', 'script-src http://127.0.0.1:8000   \t ', 'resources/script.js'],
     ['yes', 'script-src http://127.0.0.1:* ', 'resources/script.js']
@@ -14,5 +12,5 @@ var tests = [
 </head>
 <body onload="test()">
   <p>
-    None of these scripts should execute even though there are parse errors in the policy.
+    These scripts should execute even though there are parse errors in the policy.
   </p>

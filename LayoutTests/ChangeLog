@@ -1,3 +1,17 @@
+2012-08-09  Mike West  <mkwst@chromium.org>
+
+        Invalid Content Security Policy sources should generate console warnings.
+        https://bugs.webkit.org/show_bug.cgi?id=93599
+
+        Reviewed by Adam Barth.
+
+        * http/tests/security/contentSecurityPolicy/source-list-parsing-02-expected.txt:
+        * http/tests/security/contentSecurityPolicy/source-list-parsing-02.html:
+            Move two invalid source tests out into 07.
+        * http/tests/security/contentSecurityPolicy/source-list-parsing-07-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/source-list-parsing-07.html: Added.
+            Many invalid source tests, all of which should generate warnings.
+
 2012-08-09  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unreviewed gardening, paint the bots green.

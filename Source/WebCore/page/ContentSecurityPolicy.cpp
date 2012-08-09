@@ -264,12 +264,18 @@ void CSPSourceList::parse(const UChar* begin, const UChar* end)
         bool portHasWildcard = false;
 
         if (parseSource(beginSource, position, scheme, host, port, path, hostHasWildcard, portHasWildcard)) {
+            // Wildcard hosts and keyword sources ('self', 'unsafe-inline',
+            // etc.) aren't stored in m_list, but as attributes on the source
+            // list itself.
+            if (scheme.isEmpty() && host.isEmpty())
+                continue;
             if (scheme.isEmpty())
                 scheme = m_policy->securityOrigin()->protocol();
             if (!path.isEmpty())
                 m_policy->reportIgnoredPathComponent(m_directiveName, String(beginSource, position - beginSource), path);
             m_list.append(CSPSource(scheme, host, port, hostHasWildcard, portHasWildcard));
-        }
+        } else
+            m_policy->reportInvalidSourceExpression(m_directiveName, String(beginSource, position - beginSource));
 
         ASSERT(position == end || isASCIISpace(*position));
      }
@@ -288,22 +294,22 @@ bool CSPSourceList::parseSource(const UChar* begin, const UChar* end,
 
     if (end - begin == 1 && *begin == '*') {
         addSourceStar();
-        return false;
+        return true;
     }
 
     if (equalIgnoringCase("'self'", begin, end - begin)) {
         addSourceSelf();
-        return false;
+        return true;
     }
 
     if (equalIgnoringCase("'unsafe-inline'", begin, end - begin)) {
         addSourceUnsafeInline();
-        return false;
+        return true;
     }
 
     if (equalIgnoringCase("'unsafe-eval'", begin, end - begin)) {
         addSourceUnsafeEval();
-        return false;
+        return true;
     }
 
     const UChar* position = begin;
@@ -1307,6 +1313,12 @@ void ContentSecurityPolicy::reportInvalidNonce(const String& nonce) const
 void ContentSecurityPolicy::reportIgnoredPathComponent(const String& directiveName, const String& completeSource, const String& path) const
 {
     String message = makeString("The source list for Content Security Policy directive '", directiveName, "' contains the source '", completeSource, "'. Content Security Policy 1.0 supports only schemes, hosts, and ports. Paths might be supported in the future, but for now, '", path, "' is being ignored. Be careful.");
+    logToConsole(message);
+}
+
+void ContentSecurityPolicy::reportInvalidSourceExpression(const String& directiveName, const String& source) const
+{
+    String message = makeString("The source list for Content Security Policy directive '", directiveName, "' contains an invalid source: '", source, "'. It will be ignored.");
     logToConsole(message);
 }
 
