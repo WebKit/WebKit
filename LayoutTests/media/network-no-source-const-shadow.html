@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <script src="../fast/js/resources/js-test-pre.js"></script>
 <script>
-description("Test that NETWORK_NO_SOURCE is immutable at the appropriate times");
+description("Test that NETWORK_NO_SOURCE is immutable");
 
 shouldBe("HTMLMediaElement.NETWORK_NO_SOURCE", "3");
 shouldBe("HTMLMediaElement.prototype.NETWORK_NO_SOURCE", "3");
@@ -16,6 +16,6 @@ element.NETWORK_NO_SOURCE = 15;
 
 shouldBe("HTMLMediaElement.NETWORK_NO_SOURCE", "3");
 shouldBe("HTMLAudioElement.prototype.NETWORK_NO_SOURCE", "3");
-shouldBe("element.NETWORK_NO_SOURCE", "15");
+shouldBe("element.NETWORK_NO_SOURCE", "3");
 </script>
 <script src="../fast/js/resources/js-test-post.js"></script>

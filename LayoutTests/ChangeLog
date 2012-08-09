@@ -1,3 +1,16 @@
+2012-08-08  Erik Arvidsson  <arv@chromium.org>
+
+        Fix invalid test
+        https://bugs.webkit.org/show_bug.cgi?id=93543
+
+        Reviewed by Kentaro Hara.
+
+        The HTMLMediaElement.prototype.NETWORK_NO_SOURCE is non writable so assigning to the element instance should
+        be ignored.
+
+        * media/network-no-source-const-shadow-expected.txt:
+        * media/network-no-source-const-shadow.html:
+
 2012-08-08  Alexandru Chiculita  <achicu@adobe.com>
 
         [CSS Shaders] Invalid shaders should act as pass-through filters
