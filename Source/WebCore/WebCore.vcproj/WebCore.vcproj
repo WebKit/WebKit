@@ -29549,6 +29549,10 @@
 					RelativePath="..\platform\graphics\MediaPlayer.h"
 					>
 				</File>
+ 				<File
+					RelativePath="..\platform\graphics\NativeImagePtr.h"
+					>
+				</File>
 				<File
 					RelativePath="..\platform\graphics\Path.cpp"
 					>

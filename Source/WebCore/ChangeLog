@@ -1,3 +1,32 @@
+2012-08-09  Huang Dongsung  <luxtella@company100.net>
+
+        Extract the definition of NativeImagePtr from ImageSource.h into NativeImagePtr.h.
+        https://bugs.webkit.org/show_bug.cgi?id=93466
+
+        Reviewed by Adam Barth.
+
+        Image.h includes ImageSource.h in order to know the definition of NativeImagePtr.
+        But Image does not need to know the definition of ImageSource. So, this patch
+        extracts the definition of NativeImagePtr from ImageSource.h into NativeImagePtr.h.
+
+        This is a preparation for asynchronous image decoding. Async decoding
+        will need a callback function, which sends a NativeImagePtr to clients, and the
+        callback must know the definition of NativeImagePtr, not ImageSource.
+
+        No new tests, behavior is unchanged.
+
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/BitmapImage.h:
+        * platform/graphics/Image.h:
+        * platform/graphics/ImageSource.h:
+        (WebCore):
+        * platform/graphics/NativeImagePtr.h: Added.
+        (WebCore):
+
 2012-08-09  Robert Hogan  <robert@webkit.org>
 
         CSS 2.1 failure: 'Text-indent' only affects a line if it is the first formatted line of an element
