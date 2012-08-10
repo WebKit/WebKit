@@ -442,10 +442,6 @@ public:
     {
         emit mySignalWithDateTimeArg(dt);
     }
-    void emitMySignalWithRegexArg(QRegExp r)
-    {
-        emit mySignalWithRegexArg(r);
-    }
 
 public Q_SLOTS:
     void mySlot()
@@ -542,12 +538,6 @@ public Q_SLOTS:
         m_actuals << arg;
     }
 
-    void myOverloadedSlot(const QRegExp &arg)
-    {
-        m_qtFunctionInvoked = 34;
-        m_actuals << arg;
-    }
-
     void myOverloadedSlot(const QVariant &arg)
     {
         m_qtFunctionInvoked = 35;
@@ -575,7 +565,6 @@ Q_SIGNALS:
     void mySignalWithDoubleArg(double);
     void mySignal2(bool arg = false);
     void mySignalWithDateTimeArg(QDateTime);
-    void mySignalWithRegexArg(QRegExp);
 
 private:
     int m_intValue;
@@ -1747,11 +1736,6 @@ void tst_QObjectBridge::overloadedSlots()
     evalJS("myObject.myOverloadedSlot(new Date())");
     QCOMPARE(m_myObject->qtFunctionInvoked(), 32);
 
-    // should pick myOverloadedSlot(QRegExp)
-    m_myObject->resetQtFunctionInvoked();
-    evalJS("myObject.myOverloadedSlot(new RegExp())");
-    QCOMPARE(m_myObject->qtFunctionInvoked(), 34);
-
     // should pick myOverloadedSlot(QVariant)
     /* XFAIL
     m_myObject->resetQtFunctionInvoked();
@@ -1971,8 +1955,6 @@ void tst_QObjectBridge::typeConversion()
     QCOMPARE(evalJS("window.__date_equals"), sTrue);
     evalJS("delete window.__date_equals");
     evalJS("myObject.mySignalWithDateTimeArg.disconnect(checkDate); delete checkDate;");
-
-    // ### RegExps
 }
 
 class StringListTestObject : public QObject {

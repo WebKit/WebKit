@@ -1,3 +1,19 @@
+2012-08-10  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Remove QRegExp <> JS RegExp conversion
+        https://bugs.webkit.org/show_bug.cgi?id=93716
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Removed tests that cover the automatic QRegExp <> JS RegExp conversion. See WebCore
+        ChangeLog for details.
+
+        * tests/qobjectbridge/tst_qobjectbridge.cpp:
+        (MyQObject::emitMySignalWithDateTimeArg):
+        (MyQObject):
+        (tst_QObjectBridge::overloadedSlots):
+        (tst_QObjectBridge::typeConversion):
+
 2012-08-09  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] Remove support for __qt_sender__ in QObject bridge

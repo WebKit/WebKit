@@ -40,8 +40,6 @@
 #include "JSUint8ClampedArray.h"
 #include "ObjectPrototype.h"
 #include "PropertyNameArray.h"
-#include "RegExpConstructor.h"
-#include "RegExpObject.h"
 #include "qdatetime.h"
 #include "qdebug.h"
 #include "qmetaobject.h"
@@ -101,7 +99,6 @@ typedef enum {
     Boolean,
     String,
     Date,
-    RegExp,
     Array,
     QObj,
     Object,
@@ -114,7 +111,7 @@ typedef enum {
 QDebug operator<<(QDebug dbg, const JSRealType &c)
 {
      const char *map[] = { "Variant", "Number", "Boolean", "String", "Date",
-         "RegExp", "Array", "RTObject", "Object", "Null", "RTArray"};
+         "Array", "RTObject", "Object", "Null", "RTArray"};
 
      dbg.nospace() << "JSType(" << ((int)c) << ", " <<  map[c] << ")";
 
@@ -174,8 +171,6 @@ static JSRealType valueRealType(ExecState* exec, JSValue val)
             return Array;
         else if (object->inherits(&DateInstance::s_info))
             return Date;
-        else if (object->inherits(&RegExpObject::s_info))
-            return RegExp;
         else if (object->inherits(&RuntimeObject::s_info))
             return QObj;
         return Object;
@@ -257,9 +252,6 @@ QVariant convertValueToQVariant(ExecState* exec, JSValue value, QMetaType::Type 
                 break;
             case Date:
                 hint = QMetaType::QDateTime;
-                break;
-            case RegExp:
-                hint = QMetaType::QRegExp;
                 break;
             case Object:
                 if (object->inherits(&NumberObject::s_info))
@@ -584,43 +576,6 @@ QVariant convertValueToQVariant(ExecState* exec, JSValue value, QMetaType::Type 
             }
             break;
 
-        case QMetaType::QRegExp:
-            if (type == RegExp) {
-/*
-                RegExpObject *re = static_cast<RegExpObject*>(object);
-*/
-                // Attempt to convert.. a bit risky
-                UString ustring = value.toString(exec)->value(exec);
-                QString qstring = QString((const QChar*)ustring.impl()->characters(), ustring.length());
-
-                // this is of the form '/xxxxxx/i'
-                int firstSlash = qstring.indexOf(QLatin1Char('/'));
-                int lastSlash = qstring.lastIndexOf(QLatin1Char('/'));
-                if (firstSlash >=0 && lastSlash > firstSlash) {
-                    QRegExp realRe;
-
-                    realRe.setPattern(qstring.mid(firstSlash + 1, lastSlash - firstSlash - 1));
-
-                    if (qstring.mid(lastSlash + 1).contains(QLatin1Char('i')))
-                        realRe.setCaseSensitivity(Qt::CaseInsensitive);
-
-                    ret = QVariant::fromValue(realRe);
-                    dist = 0;
-                } else {
-                    qConvDebug() << "couldn't parse a JS regexp";
-                }
-            } else if (type == String) {
-                UString ustring = value.toString(exec)->value(exec);
-                QString qstring = QString((const QChar*)ustring.impl()->characters(), ustring.length());
-
-                QRegExp re(qstring);
-                if (re.isValid()) {
-                    ret = QVariant::fromValue(re);
-                    dist = 10;
-                }
-            }
-            break;
-
         case QMetaType::QObjectStar:
             if (type == QObj) {
                 QtInstance* qtinst = QtInstance::getInstance(object);
@@ -851,20 +806,6 @@ JSValue convertQVariantToValue(ExecState* exec, PassRefPtr<RootObject> root, con
         type == QMetaType::Float ||
         type == QMetaType::Double)
         return jsNumber(variant.toDouble());
-
-    if (type == QMetaType::QRegExp) {
-        QRegExp re = variant.value<QRegExp>();
-
-        if (re.isValid()) {
-            UString pattern((UChar*)re.pattern().utf16(), re.pattern().length());
-            RegExpFlags flags = (re.caseSensitivity() == Qt::CaseInsensitive) ? FlagIgnoreCase : NoFlags;
-
-            JSC::RegExp* regExp = JSC::RegExp::create(exec->globalData(), pattern, flags);
-            if (regExp->isValid())
-                return RegExpObject::create(exec, exec->lexicalGlobalObject(), exec->lexicalGlobalObject()->regExpStructure(), regExp);
-            return jsNull();
-        }
-    }
 
     if (type == QMetaType::QDateTime ||
         type == QMetaType::QDate ||
