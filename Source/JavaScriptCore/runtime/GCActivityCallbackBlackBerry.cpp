@@ -25,8 +25,6 @@
 
 namespace JSC {
 
-static const size_t bytesWorthGC = 4 * 1024 * 1024;
-
 DefaultGCActivityCallback::DefaultGCActivityCallback(Heap* heap)
     : GCActivityCallback(heap->globalData())
 {
@@ -40,7 +38,7 @@ void DefaultGCActivityCallback::doWork()
 
 void DefaultGCActivityCallback::didAllocate(size_t bytesAllocated)
 {
-    if (bytesAllocated < bytesWorthGC || m_timer.started())
+    if (m_timer.started())
         return;
 
     // Try using ~5% CPU time.

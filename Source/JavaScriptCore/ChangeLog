@@ -1,3 +1,15 @@
+2012-08-10  Yong Li  <yoli@rim.com>
+
+        [BlackBerry] GCActivityCallback should always schedule GC even allocated bytes is a small number
+        https://bugs.webkit.org/show_bug.cgi?id=93650
+
+        Reviewed by Rob Buis.
+
+        Even a small number of allocated JS objects could hold expensive resources.
+
+        * runtime/GCActivityCallbackBlackBerry.cpp:
+        (JSC::DefaultGCActivityCallback::didAllocate):
+
 2012-08-09  Yong Li  <yoli@rim.com>
 
         [QNX] Implement getCPUTime() for OS(QNX)
