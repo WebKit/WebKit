@@ -38,7 +38,7 @@ class SVGElementInstanceList;
 class SVGStyledElement;
 
 // SVGElementInstance mimics Node, but without providing all its functionality
-class SVGElementInstance : public TreeShared<SVGElementInstance, SVGElementInstance>, public EventTarget {
+class SVGElementInstance : public EventTarget, public TreeShared<SVGElementInstance, SVGElementInstance> {
 public:
     static PassRefPtr<SVGElementInstance> create(SVGUseElement* correspondingUseElement, SVGUseElement* directUseElement, PassRefPtr<SVGElement> originalElement)
     {

@@ -73,6 +73,8 @@ EventTarget* toEventTarget(JSC::JSValue value)
     if (value.inherits(&JSDOMWindowShell::s_info))
         return jsCast<JSDOMWindowShell*>(asObject(value))->impl();
 
+    TRY_TO_UNWRAP_WITH_INTERFACE(EventTarget)
+    // FIXME: Remove this once all event targets extend EventTarget
     DOM_EVENT_TARGET_INTERFACES_FOR_EACH(TRY_TO_UNWRAP_WITH_INTERFACE)
     return 0;
 }

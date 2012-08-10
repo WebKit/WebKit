@@ -1,3 +1,65 @@
+2012-08-02  Dominic Cooney  <dominicc@chromium.org>
+
+        SVGElementInstance should have EventTarget on the prototype chain
+        https://bugs.webkit.org/show_bug.cgi?id=88232
+
+        Reviewed by Adam Barth.
+
+        SVG 1.1 specifies that SVGElementInstance has EventTarget as its
+        parent interface:
+        <http://www.w3.org/TR/SVG/struct.html#InterfaceSVGElementInstance>
+        Match the spec by putting EventTarget on the prototype chain of
+        SVGElementInstance instead of redundantly declaring
+        addEventListener, removeEventListener and dispatchEvent on the
+        SVGElementInstance interface. This is an incremental step to make
+        all EventTargets do it this way, being tracked in bug 67312.
+
+        Covered by existing tests, eg
+        svg/custom/use-instanceRoot-as-event-target.xhtml
+
+        * CMakeLists.txt: Finding base interface types requires
+        searching directories with the IDLs of base interfaces.
+        * DerivedSources.cpp: Add generated JSEventTarget.cpp.
+        * DerivedSources.make: (Search paths again -- see CMakeLists.txt)
+        * DerivedSources.pri: "
+        * bindings/js/JSEventTargetCustom.cpp:
+        (WebCore::toEventTarget): Try to unwrap EventTargets simply as
+        EventTargets. When all EventTargets do this consistently this
+        function will be simplified.
+        * bindings/js/JSSVGElementInstanceCustom.cpp:
+        (WebCore::JSSVGElementInstance::visitChildren): SVGElementInstance
+        skips walking its event listener list because it forwards
+        listeners to its corresponding element.
+        * bindings/scripts/CodeGenerator.pm:
+        (IsStrictSubtype): For finding what is an EventTarget based on
+        parent interface.
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateHeader): Extend the heuristic for what is an
+        EventTarget. When all EventTargets are handled consistently this
+        will be simplified.
+        (GenerateImplementation):
+        * bindings/scripts/CodeGeneratorV8.pm: Extend the heuristic for
+        what is an EventTarget, and remove some of the special-casing for
+        EventTarget.
+        (GenerateHeader):
+        (GetInternalFields):
+        (GenerateImplementation):
+        (BaseInterfaceName):
+        (GenerateToV8Converters):
+        (GetNativeType):
+        (JSValueToNative):
+        (GetV8HeaderName):
+        * bindings/scripts/test/V8/V8Float64Array.cpp:
+        (WebCore::V8Float64Array::wrapSlow): Add assertions.
+        * bindings/scripts/test/V8/V8TestNode.cpp:
+        (WebCore::V8TestNode::wrapSlow):
+        * svg/SVGElementInstance.h: Must extend EventTarget first so that
+        static_cast<EventTarget*>(elementInstance) is the same pointer as
+        elementInstance, similar to how static_cast<Node*>(element) is the
+        same pointer as element.
+        * svg/SVGElementInstance.idl: Extend EventTarget; no longer need
+        to declare add/removeEventListener and dispatchEvent.
+
 2012-08-09  Vivek Galatage  <vivekgalatage@gmail.com>
 
         Web Inspector: Remove unused method InspectorResourceAgent::clearCache from Resource Agent.

@@ -107,11 +107,17 @@ SET(WebCore_INCLUDE_DIRECTORIES
 )
 
 SET(WebCore_IDL_INCLUDES
+    Modules/battery
     Modules/filesystem
     Modules/gamepad
     Modules/geolocation
     Modules/indexeddb
+    Modules/intents
+    Modules/mediastream
+    Modules/networkinfo
     Modules/quota
+    Modules/speech
+    Modules/vibration
     Modules/webaudio
     Modules/webdatabase
     Modules/websockets
@@ -121,8 +127,11 @@ SET(WebCore_IDL_INCLUDES
     fileapi
     html
     html/canvas
+    html/shadow
+    html/track
     inspector
     loader/appcache
+    notifications
     page
     plugins
     storage

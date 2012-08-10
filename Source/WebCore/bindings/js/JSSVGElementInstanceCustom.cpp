@@ -30,8 +30,7 @@
 
 #include "JSSVGElementInstance.h"
 
-#include "JSNode.h"
-#include "SVGElementInstance.h"
+#include "JSEventTarget.h"
 
 namespace WebCore {
 
@@ -41,7 +40,9 @@ void JSSVGElementInstance::visitChildren(JSC::JSCell* cell, JSC::SlotVisitor& vi
     ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
     COMPILE_ASSERT(StructureFlags & JSC::OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
     ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());
-    Base::visitChildren(thisObject, visitor);
+    // Skip JSEventTarget::visitChildren because event listener registration is
+    // forwarded to the corresponding element.
+    JSEventTarget::Base::visitChildren(thisObject, visitor);
     visitor.addOpaqueRoot(root(thisObject->impl()->correspondingElement()));
 }
 

@@ -678,8 +678,7 @@ sub GenerateHeader
     my $hasRealParent = @{$dataNode->parents} > 0;
     my $hasParent = $hasLegacyParent || $hasRealParent;
     my $parentClassName = GetParentClassName($dataNode);
-    my $eventTarget = $dataNode->extendedAttributes->{"EventTarget"};
-    my $needsMarkChildren = $dataNode->extendedAttributes->{"JSCustomMarkFunction"} || $dataNode->extendedAttributes->{"EventTarget"};
+    my $needsMarkChildren = $dataNode->extendedAttributes->{"JSCustomMarkFunction"} || $dataNode->extendedAttributes->{"EventTarget"} || $dataNode->name eq "EventTarget";
 
     # - Add default header template and header protection
     push(@headerContentHeader, GenerateHeaderContentHeader($dataNode));
@@ -1375,8 +1374,8 @@ sub GenerateImplementation
     my $hasParent = $hasLegacyParent || $hasRealParent;
     my $parentClassName = GetParentClassName($dataNode);
     my $visibleInterfaceName = $codeGenerator->GetVisibleInterfaceName($dataNode);
-    my $eventTarget = $dataNode->extendedAttributes->{"EventTarget"};
-    my $needsMarkChildren = $dataNode->extendedAttributes->{"JSCustomMarkFunction"} || $dataNode->extendedAttributes->{"EventTarget"};
+    my $eventTarget = $dataNode->extendedAttributes->{"EventTarget"} || $codeGenerator->IsStrictSubtype($dataNode, "EventTarget");
+    my $needsMarkChildren = $dataNode->extendedAttributes->{"JSCustomMarkFunction"} || $dataNode->extendedAttributes->{"EventTarget"} || $dataNode->name eq "EventTarget";
 
     # - Add default header template
     push(@implContentHeader, GenerateImplementationContentHeader($dataNode));
@@ -2275,7 +2274,7 @@ sub GenerateImplementation
             push(@implContent, "    COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);\n");
             push(@implContent, "    ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());\n");
             push(@implContent, "    Base::visitChildren(thisObject, visitor);\n");
-            if ($dataNode->extendedAttributes->{"EventTarget"}) {
+            if ($dataNode->extendedAttributes->{"EventTarget"} || $dataNode->name eq "EventTarget") {
                 push(@implContent, "    thisObject->impl()->visitJSEventListeners(visitor);\n");
             }
             if ($numCachedAttributes > 0) {

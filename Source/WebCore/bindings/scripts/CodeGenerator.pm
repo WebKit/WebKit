@@ -708,4 +708,22 @@ sub GetVisibleInterfaceName
     return $interfaceName ? $interfaceName : $dataNode->name;
 }
 
+sub IsStrictSubtype
+{
+    my $object = shift;
+    my $dataNode = shift;
+    my $interfaceName = shift;
+    my $found = 0;
+
+    $object->ForAllParents($dataNode, sub {
+        my $interface = shift;
+        if ($object->StripModule($interface->name) eq $interfaceName) {
+            $found = 1;
+        }
+        return "prune" if $found;
+    }, 0, 1);
+
+    return $found;
+}
+
 1;
