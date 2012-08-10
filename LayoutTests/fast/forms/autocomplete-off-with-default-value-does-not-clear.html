@@ -1,0 +1,33 @@
+<script>
+
+if (window.testRunner) {
+	testRunner.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
+	testRunner.dumpAsText();
+	testRunner.waitUntilDone();
+}
+
+function loaded()
+{
+	document.getElementById("testInput").value = "SomeNonDefaultValue";
+	setTimeout("location.href = 'resources/go-back.html'", 0);
+}
+
+function pageShown(evt)
+{
+	if (evt.persisted)
+		setTimeout("finishUp()", 0);
+}
+
+function finishUp()
+{
+	document.getElementById("logger").innerText = document.getElementById("testInput").value;
+	if (window.testRunner)
+		testRunner.notifyDone();
+}
+
+</script>
+<body onload="loaded()" onpageshow="pageShown(event)">
+This page has a text input element with a default value and autocomplete set to off.  When restored from the page cache its value should *not* be cleared.<br>
+<input id="testInput" type="test" autocomplete="off" value="DefaultValue">
+<div id="logger"></div>
+</body>

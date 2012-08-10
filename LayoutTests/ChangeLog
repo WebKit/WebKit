@@ -1,4 +1,19 @@
-2012-08-010  Lucas Forschler  <lforschler@apple.com>
+2012-08-10  Lucas Forschler  <lforschler@apple.com>
+
+    Merge r125124.
+
+    2012-08-08  Brady Eidson  <beidson@apple.com>
+
+            Google search query text reverts to original search query after multiple searches
+            <rdar://problem/10800686> and https://bugs.webkit.org/show_bug.cgi?id=93544
+
+            Reviewed by Darin Adler.
+
+            * fast/forms/autocomplete-off-with-default-value-does-not-clear-expected.txt: Added.
+            * fast/forms/autocomplete-off-with-default-value-does-not-clear.html: Added.
+            * fast/forms/resources/go-back.html: Added.
+
+2012-08-10  Lucas Forschler  <lforschler@apple.com>
 
     Rollout r124961.
     This was r124815 on trunk.
