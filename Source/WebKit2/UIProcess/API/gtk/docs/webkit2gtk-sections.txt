@@ -62,6 +62,7 @@ webkit_web_context_get_type
 WebKitWebView
 WebKitLoadEvent
 WebKitPolicyDecisionType
+WebKitSaveMode
 
 <SUBSECTION Editing Commands>
 WEBKIT_EDITING_COMMAND_CUT
@@ -105,6 +106,10 @@ webkit_web_view_get_javascript_global_context
 webkit_web_view_run_javascript
 webkit_web_view_run_javascript_finish
 webkit_web_view_can_show_mime_type
+webkit_web_view_save
+webkit_web_view_save_finish
+webkit_web_view_save_to_file
+webkit_web_view_save_to_file_finish
 
 <SUBSECTION WebKitJavascriptResult>
 WebKitJavascriptResult

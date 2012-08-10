@@ -1,3 +1,35 @@
+2012-08-10  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        [WK2][GTK] Implement new API to save a web page using MHTML
+        https://bugs.webkit.org/show_bug.cgi?id=89873
+
+        Reviewed by Carlos Garcia Campos.
+
+        Implemented new asynchronous API in WebKitWebView for saving a web
+        page to a GInputStream or to a file, using MHTML as the only
+        supported method at the moment.
+
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (ViewSaveAsyncData):
+        (webViewFileSavedCallback):
+        (webViewMHTMLDataGotCallback):
+        (webkit_web_view_save):
+        (webkit_web_view_save_finish):
+        (webkit_web_view_save_to_file):
+        (webkit_web_view_save_to_file_finish):
+        * UIProcess/API/gtk/WebKitWebView.h:
+
+        Added new unit test.
+
+        * UIProcess/API/gtk/tests/TestWebKitWebView.cpp:
+        (testWebViewSave):
+        (beforeAll):
+        (afterAll):
+
+        Updated documentation files with new symbols.
+
+        * UIProcess/API/gtk/docs/webkit2gtk-sections.txt:
+
 2012-08-09  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Handle SSL errors for SOUP

@@ -2400,3 +2400,171 @@ gboolean webkit_web_view_can_show_mime_type(WebKitWebView* webView, const char* 
     WebPageProxy* page = webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(webView));
     return page->canShowMIMEType(String::fromUTF8(mimeType));
 }
+
+struct ViewSaveAsyncData {
+    WKRetainPtr<WKDataRef> wkData;
+    GRefPtr<GFile> file;
+    GRefPtr<GCancellable> cancellable;
+};
+WEBKIT_DEFINE_ASYNC_DATA_STRUCT(ViewSaveAsyncData)
+
+static void fileReplaceContentsCallback(GObject* object, GAsyncResult* result, gpointer data)
+{
+    GFile* file = G_FILE(object);
+    GRefPtr<GSimpleAsyncResult> savedToFileResult = adoptGRef(G_SIMPLE_ASYNC_RESULT(data));
+
+    GError* error = 0;
+    if (!g_file_replace_contents_finish(file, result, 0, &error))
+        g_simple_async_result_take_error(savedToFileResult.get(), error);
+
+    g_simple_async_result_complete(savedToFileResult.get());
+}
+
+static void getContentsAsMHTMLDataCallback(WKDataRef wkData, WKErrorRef, void* context)
+{
+    GRefPtr<GSimpleAsyncResult> result = adoptGRef(G_SIMPLE_ASYNC_RESULT(context));
+    ViewSaveAsyncData* data = static_cast<ViewSaveAsyncData*>(g_simple_async_result_get_op_res_gpointer(result.get()));
+    GError* error = 0;
+
+    if (g_cancellable_set_error_if_cancelled(data->cancellable.get(), &error))
+        g_simple_async_result_take_error(result.get(), error);
+    else {
+        // We need to retain the data until the asyncronous process
+        // initiated by the user has finished completely.
+        data->wkData = wkData;
+
+        // If we are saving to a file we need to write the data on disk before finishing.
+        if (g_simple_async_result_get_source_tag(result.get()) == webkit_web_view_save_to_file) {
+            ASSERT(G_IS_FILE(data->file.get()));
+            g_file_replace_contents_async(data->file.get(), reinterpret_cast<const gchar*>(WKDataGetBytes(data->wkData.get())), WKDataGetSize(data->wkData.get()), 0, FALSE, G_FILE_CREATE_REPLACE_DESTINATION,
+                                          data->cancellable.get(), fileReplaceContentsCallback, g_object_ref(result.get()));
+            return;
+        }
+    }
+
+    g_simple_async_result_complete(result.get());
+}
+
+/**
+ * webkit_web_view_save:
+ * @web_view: a #WebKitWebView
+ * @save_mode: the #WebKitSaveMode specifying how the web page should be saved.
+ * @cancellable: (allow-none): a #GCancellable or %NULL to ignore
+ * @callback: (scope async): a #GAsyncReadyCallback to call when the request is satisfied
+ * @user_data: (closure): the data to pass to callback function
+ *
+ * Asynchronously save the current web page associated to the
+ * #WebKitWebView into a self-contained format using the mode
+ * specified in @save_mode.
+ *
+ * When the operation is finished, @callback will be called. You can
+ * then call webkit_web_view_save_finish() to get the result of the
+ * operation.
+ */
+void webkit_web_view_save(WebKitWebView* webView, WebKitSaveMode saveMode, GCancellable* cancellable, GAsyncReadyCallback callback, gpointer userData)
+{
+    g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
+
+    // We only support MHTML at the moment.
+    g_return_if_fail(saveMode == WEBKIT_SAVE_MODE_MHTML);
+
+    GSimpleAsyncResult* result = g_simple_async_result_new(G_OBJECT(webView), callback, userData,
+                                                           reinterpret_cast<gpointer>(webkit_web_view_save));
+    ViewSaveAsyncData* data = createViewSaveAsyncData();
+    data->cancellable = cancellable;
+    g_simple_async_result_set_op_res_gpointer(result, data, reinterpret_cast<GDestroyNotify>(destroyViewSaveAsyncData));
+
+    WKPageRef wkPage = toAPI(webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(webView)));
+    WKPageGetContentsAsMHTMLData(wkPage, false, result, getContentsAsMHTMLDataCallback);
+}
+
+/**
+ * webkit_web_view_save_finish:
+ * @web_view: a #WebKitWebView
+ * @result: a #GAsyncResult
+ * @error: return location for error or %NULL to ignore
+ *
+ * Finish an asynchronous operation started with webkit_web_view_save().
+ *
+ * Returns: (transfer full): a #GInputStream with the result of saving
+ *    the current web page or %NULL in case of error.
+ */
+GInputStream* webkit_web_view_save_finish(WebKitWebView* webView, GAsyncResult* result, GError** error)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), 0);
+    g_return_val_if_fail(G_IS_ASYNC_RESULT(result), 0);
+
+    GSimpleAsyncResult* simple = G_SIMPLE_ASYNC_RESULT(result);
+    g_warn_if_fail(g_simple_async_result_get_source_tag(simple) == webkit_web_view_save);
+
+    if (g_simple_async_result_propagate_error(simple, error))
+        return 0;
+
+    GInputStream* dataStream = g_memory_input_stream_new();
+    ViewSaveAsyncData* data = static_cast<ViewSaveAsyncData*>(g_simple_async_result_get_op_res_gpointer(simple));
+    gsize length = WKDataGetSize(data->wkData.get());
+    if (length)
+        g_memory_input_stream_add_data(G_MEMORY_INPUT_STREAM(dataStream), g_memdup(WKDataGetBytes(data->wkData.get()), length), length, g_free);
+
+    return dataStream;
+}
+
+/**
+ * webkit_web_view_save_to_file:
+ * @web_view: a #WebKitWebView
+ * @file: the #GFile where the current web page should be saved to.
+ * @save_mode: the #WebKitSaveMode specifying how the web page should be saved.
+ * @cancellable: (allow-none): a #GCancellable or %NULL to ignore
+ * @callback: (scope async): a #GAsyncReadyCallback to call when the request is satisfied
+ * @user_data: (closure): the data to pass to callback function
+ *
+ * Asynchronously save the current web page associated to the
+ * #WebKitWebView into a self-contained format using the mode
+ * specified in @save_mode and writing it to @file.
+ *
+ * When the operation is finished, @callback will be called. You can
+ * then call webkit_web_view_save_to_file_finish() to get the result of the
+ * operation.
+ */
+void webkit_web_view_save_to_file(WebKitWebView* webView, GFile* file, WebKitSaveMode saveMode, GCancellable* cancellable, GAsyncReadyCallback callback, gpointer userData)
+{
+    g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
+    g_return_if_fail(G_IS_FILE(file));
+
+    // We only support MHTML at the moment.
+    g_return_if_fail(saveMode == WEBKIT_SAVE_MODE_MHTML);
+
+    GSimpleAsyncResult* result = g_simple_async_result_new(G_OBJECT(webView), callback, userData,
+                                                           reinterpret_cast<gpointer>(webkit_web_view_save_to_file));
+    ViewSaveAsyncData* data = createViewSaveAsyncData();
+    data->file = file;
+    data->cancellable = cancellable;
+    g_simple_async_result_set_op_res_gpointer(result, data, reinterpret_cast<GDestroyNotify>(destroyViewSaveAsyncData));
+
+    WKPageRef wkPage = toAPI(webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(webView)));
+    WKPageGetContentsAsMHTMLData(wkPage, false, result, getContentsAsMHTMLDataCallback);
+}
+
+/**
+ * webkit_web_view_save_to_file_finish:
+ * @web_view: a #WebKitWebView
+ * @result: a #GAsyncResult
+ * @error: return location for error or %NULL to ignore
+ *
+ * Finish an asynchronous operation started with webkit_web_view_save_to_file().
+ *
+ * Returns: %TRUE if the web page was successfully saved to a file or %FALSE otherwise.
+ */
+gboolean webkit_web_view_save_to_file_finish(WebKitWebView* webView, GAsyncResult* result, GError** error)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), FALSE);
+    g_return_val_if_fail(G_IS_ASYNC_RESULT(result), FALSE);
+
+    GSimpleAsyncResult* simple = G_SIMPLE_ASYNC_RESULT(result);
+    g_warn_if_fail(g_simple_async_result_get_source_tag(simple) == webkit_web_view_save_to_file);
+
+    if (g_simple_async_result_propagate_error(simple, error))
+        return FALSE;
+
+    return TRUE;
+}

@@ -118,6 +118,17 @@ typedef enum {
     WEBKIT_LOAD_FINISHED
 } WebKitLoadEvent;
 
+/**
+ * WebKitSaveMode:
+ * @WEBKIT_SAVE_MODE_MHTML: Save the current page using the MHTML format.
+ *
+ * Enum values to specify the different ways in which a #WebKitWebView
+ * can save its current web page into a self-contained file.
+ */
+typedef enum {
+    WEBKIT_SAVE_MODE_MHTML
+} WebKitSaveMode;
+
 struct _WebKitWebView {
     WebKitWebViewBase parent;
 
@@ -318,6 +329,31 @@ webkit_web_view_get_inspector                      (WebKitWebView             *w
 WEBKIT_API gboolean
 webkit_web_view_can_show_mime_type                 (WebKitWebView             *web_view,
                                                     const gchar               *mime_type);
+
+WEBKIT_API void
+webkit_web_view_save                               (WebKitWebView             *web_view,
+                                                    WebKitSaveMode             save_mode,
+                                                    GCancellable              *cancellable,
+                                                    GAsyncReadyCallback        callback,
+                                                    gpointer                   user_data);
+
+WEBKIT_API GInputStream *
+webkit_web_view_save_finish                        (WebKitWebView             *web_view,
+                                                    GAsyncResult              *result,
+                                                    GError                   **error);
+
+WEBKIT_API void
+webkit_web_view_save_to_file                       (WebKitWebView             *web_view,
+                                                    GFile                     *file,
+                                                    WebKitSaveMode             save_mode,
+                                                    GCancellable              *cancellable,
+                                                    GAsyncReadyCallback        callback,
+                                                    gpointer                   user_data);
+
+WEBKIT_API gboolean
+webkit_web_view_save_to_file_finish                (WebKitWebView             *web_view,
+                                                    GAsyncResult              *result,
+                                                    GError                   **error);
 
 G_END_DECLS
 

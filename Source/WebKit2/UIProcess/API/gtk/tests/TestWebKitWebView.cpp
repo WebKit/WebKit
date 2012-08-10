@@ -21,6 +21,7 @@
 #include "WebViewTest.h"
 #include <JavaScriptCore/JSStringRef.h>
 #include <JavaScriptCore/JSValueRef.h>
+#include <glib/gstdio.h>
 #include <wtf/HashSet.h>
 #include <wtf/gobject/GRefPtr.h>
 #include <wtf/text/StringHash.h>
@@ -946,6 +947,102 @@ static void testWebViewSubmitForm(FormClientTest* test, gconstpointer)
     g_assert_cmpstr(static_cast<char*>(g_hash_table_lookup(values, "password")), ==, "secret");
 }
 
+class SaveWebViewTest: public WebViewTest {
+public:
+    MAKE_GLIB_TEST_FIXTURE(SaveWebViewTest);
+
+    SaveWebViewTest()
+        : m_tempDirectory(g_dir_make_tmp("WebKit2SaveViewTest-XXXXXX", 0))
+    {
+    }
+
+    ~SaveWebViewTest()
+    {
+        if (G_IS_FILE(m_file.get()))
+            g_file_delete(m_file.get(), 0, 0);
+
+        if (G_IS_INPUT_STREAM(m_inputStream.get()))
+            g_input_stream_close(m_inputStream.get(), 0, 0);
+
+        if (m_tempDirectory)
+            g_rmdir(m_tempDirectory.get());
+    }
+
+    static void webViewSavedToStreamCallback(GObject* object, GAsyncResult* result, SaveWebViewTest* test)
+    {
+        GOwnPtr<GError> error;
+        test->m_inputStream = adoptGRef(webkit_web_view_save_finish(test->m_webView, result, &error.outPtr()));
+        g_assert(G_IS_INPUT_STREAM(test->m_inputStream.get()));
+        g_assert(!error);
+
+        test->quitMainLoop();
+    }
+
+    static void webViewSavedToFileCallback(GObject* object, GAsyncResult* result, SaveWebViewTest* test)
+    {
+        GOwnPtr<GError> error;
+        g_assert(webkit_web_view_save_to_file_finish(test->m_webView, result, &error.outPtr()));
+        g_assert(!error);
+
+        test->quitMainLoop();
+    }
+
+    void saveAndWaitForStream()
+    {
+        webkit_web_view_save(m_webView, WEBKIT_SAVE_MODE_MHTML, 0, reinterpret_cast<GAsyncReadyCallback>(webViewSavedToStreamCallback), this);
+        g_main_loop_run(m_mainLoop);
+    }
+
+    void saveAndWaitForFile()
+    {
+        m_saveDestinationFilePath.set(g_build_filename(m_tempDirectory.get(), "testWebViewSaveResult.mht", NULL));
+        m_file = adoptGRef(g_file_new_for_path(m_saveDestinationFilePath.get()));
+        webkit_web_view_save_to_file(m_webView, m_file.get(), WEBKIT_SAVE_MODE_MHTML, 0, reinterpret_cast<GAsyncReadyCallback>(webViewSavedToFileCallback), this);
+        g_main_loop_run(m_mainLoop);
+    }
+
+    GOwnPtr<char> m_tempDirectory;
+    GOwnPtr<char> m_saveDestinationFilePath;
+    GRefPtr<GInputStream> m_inputStream;
+    GRefPtr<GFile> m_file;
+};
+
+static void testWebViewSave(SaveWebViewTest* test, gconstpointer)
+{
+    test->loadHtml("<html>"
+                   "<body>"
+                   "  <p>A paragraph with plain text</p>"
+                   "  <p>"
+                   "    A red box: <img src='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAIAAAD91JpzAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH3AYWDTMVwnSZnwAAAB1pVFh0Q29tbWVudAAAAAAAQ3JlYXRlZCB3aXRoIEdJTVBkLmUHAAAAFklEQVQI12P8z8DAwMDAxMDAwMDAAAANHQEDK+mmyAAAAABJRU5ErkJggg=='></br>"
+                   "    A blue box: <img src='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAIAAAD91JpzAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH3AYWDTMvBHhALQAAAB1pVFh0Q29tbWVudAAAAAAAQ3JlYXRlZCB3aXRoIEdJTVBkLmUHAAAAFklEQVQI12Nk4PnPwMDAxMDAwMDAAAALrwEPPIs1pgAAAABJRU5ErkJggg=='>"
+                   "  </p>"
+                   "</body>"
+                   "</html>", 0);
+    test->waitUntilLoadFinished();
+
+    // Write to a file and to an input stream.
+    test->saveAndWaitForFile();
+    test->saveAndWaitForStream();
+
+    // We should have exactly the same amount of bytes in the file
+    // than those coming from the GInputStream. We don't compare the
+    // strings read since the 'Date' field and the boundaries will be
+    // different on each case. MHTML functionality will be tested by
+    // Layout tests, so checking the amount of bytes is enough.
+    GOwnPtr<GError> error;
+    gchar buffer[512] = { 0 };
+    gssize readBytes = 0;
+    gssize totalBytesFromStream = 0;
+    while (readBytes = g_input_stream_read(test->m_inputStream.get(), &buffer, 512, 0, &error.outPtr())) {
+        g_assert(!error);
+        totalBytesFromStream += readBytes;
+    }
+
+    // Check that the file exists and that it contains the same amount of bytes.
+    GRefPtr<GFileInfo> fileInfo = adoptGRef(g_file_query_info(test->m_file.get(), G_FILE_ATTRIBUTE_STANDARD_SIZE, static_cast<GFileQueryInfoFlags>(0), 0, 0));
+    g_assert_cmpint(g_file_info_get_size(fileInfo.get()), ==, totalBytesFromStream);
+}
+
 void beforeAll()
 {
     WebViewTest::add("WebKitWebView", "default-context", testWebViewDefaultContext);
@@ -965,6 +1062,7 @@ void beforeAll()
     FullScreenClientTest::add("WebKitWebView", "fullscreen", testWebViewFullScreen);
     WebViewTest::add("WebKitWebView", "can-show-mime-type", testWebViewCanShowMIMEType);
     FormClientTest::add("WebKitWebView", "submit-form", testWebViewSubmitForm);
+    SaveWebViewTest::add("WebKitWebView", "save", testWebViewSave);
 }
 
 void afterAll()
