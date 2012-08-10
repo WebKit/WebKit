@@ -1,3 +1,38 @@
+2012-08-10  Max Vujovic  <mvujovic@adobe.com>
+
+        [CSS Shaders] Add blend mode and composite op to compiled program cache key
+        https://bugs.webkit.org/show_bug.cgi?id=93623
+
+        Reviewed by Dirk Schulze.
+
+        Right now, only the vertex shader string and the fragment shader string are hashed
+        to create a key for the compiled program. However, in a future patch, WebKit will
+        rewrite the fragment shader based on the blend mode and composite op specified by
+        the author. This means that the unique key for a compiled program is (original
+        vertex shader string, original fragment shader string, blend mode, composite
+        operator). This patch adds blend mode and composite operator in the hash for the
+        key.
+
+        No new tests. The state of the compiled program cache is not exposed to a web
+        page. Existing tests should ensure this change doesn't break current
+        functionality. Additional tests will be added in a future patch that implements
+        shader rewriting based on blend mode and composite op.
+
+        * platform/graphics/filters/CustomFilterProgram.cpp:
+        (WebCore::CustomFilterProgram::programInfo):
+        * platform/graphics/filters/CustomFilterProgram.h:
+        (WebCore):
+        * platform/graphics/filters/CustomFilterProgramInfo.cpp:
+        (WebCore::CustomFilterProgramInfo::CustomFilterProgramInfo):
+        (WebCore::CustomFilterProgramInfo::hash):
+        (WebCore::CustomFilterProgramInfo::operator==):
+        * platform/graphics/filters/CustomFilterProgramInfo.h:
+        (WebCore::CustomFilterProgramMixSettings::CustomFilterProgramMixSettings):
+        (CustomFilterProgramMixSettings):
+        (WebCore::CustomFilterProgramMixSettings::operator==):
+        (WebCore):
+        (CustomFilterProgramInfo):
+
 2012-08-10  Alice Cheng  <alice_cheng@apple.com>
 
         Part 1 of: Extend -webkit-user-select with a new value "all"

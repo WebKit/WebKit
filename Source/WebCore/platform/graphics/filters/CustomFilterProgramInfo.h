@@ -31,17 +31,38 @@
 #define CustomFilterProgramInfo_h
 
 #if ENABLE(CSS_SHADERS)
+#include "GraphicsTypes.h"
+
 #include <wtf/HashTraits.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
+
+struct CustomFilterProgramMixSettings {
+    CustomFilterProgramMixSettings()
+        : enabled(false)
+        , blendMode(BlendModeNormal)
+        , compositeOperator(CompositeSourceOver)
+    {
+    }
+    
+    bool operator==(const CustomFilterProgramMixSettings& o) const
+    {
+        return (!enabled && !o.enabled)
+            || (blendMode == o.blendMode && compositeOperator == o.compositeOperator);
+    }
+    
+    bool enabled;
+    BlendMode blendMode;
+    CompositeOperator compositeOperator;
+};
 
 // CustomFilterProgramInfo is the key used to link CustomFilterProgram with CustomFilterCompiledProgram.
 // It can be used as a key in a HashMap, with the note that at least one of Strings needs to be non-null. 
 // Null strings are placeholders for the default shader.
 class CustomFilterProgramInfo {
 public:
-    CustomFilterProgramInfo(const String&, const String&);
+    CustomFilterProgramInfo(const String&, const String&, const CustomFilterProgramMixSettings&);
 
     CustomFilterProgramInfo();
     bool isEmptyValue() const;
@@ -57,9 +78,7 @@ public:
 private:
     String m_vertexShaderString;
     String m_fragmentShaderString;
-
-    // FIXME: Alpha compositing and blending will come here after mix() function parsing will land.
-    // https://bugs.webkit.org/show_bug.cgi?id=90101
+    CustomFilterProgramMixSettings m_mixSettings;
 };
 
 struct CustomFilterProgramInfoHash {

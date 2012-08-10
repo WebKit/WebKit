@@ -81,7 +81,7 @@ void CustomFilterProgram::notifyClients()
 CustomFilterProgramInfo CustomFilterProgram::programInfo() const
 {
     ASSERT(isLoaded());
-    return CustomFilterProgramInfo(vertexShaderString(), fragmentShaderString());
+    return CustomFilterProgramInfo(vertexShaderString(), fragmentShaderString(), m_mixSettings);
 }
 
 } // namespace WebCore

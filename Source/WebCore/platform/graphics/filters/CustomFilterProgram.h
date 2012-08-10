@@ -32,7 +32,7 @@
 
 #if ENABLE(CSS_SHADERS)
 
-#include "GraphicsTypes.h"
+#include "CustomFilterProgramInfo.h"
 
 #include <wtf/HashCountedSet.h>
 #include <wtf/RefCounted.h>
@@ -43,20 +43,6 @@ namespace WebCore {
 class GraphicsContext3D;
 class CustomFilterCompiledProgram;
 class CustomFilterProgramClient;
-class CustomFilterProgramInfo;
-
-typedef struct CustomFilterProgramMixSettings {
-    CustomFilterProgramMixSettings()
-        : enabled(false)
-        , blendMode(BlendModeNormal)
-        , compositeOperator(CompositeSourceOver)
-    {
-    }
-    
-    bool enabled;
-    BlendMode blendMode;
-    CompositeOperator compositeOperator;
-} CustomFilterProgramMixSettings;
 
 // This is the base class for the StyleCustomFilterProgram class which knows how to keep
 // references to the cached shaders.

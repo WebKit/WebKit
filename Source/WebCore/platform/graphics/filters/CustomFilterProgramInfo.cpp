@@ -64,19 +64,27 @@ bool CustomFilterProgramInfo::isHashTableDeletedValue() const
         && m_fragmentShaderString.isHashTableDeletedValue();
 }
 
-CustomFilterProgramInfo::CustomFilterProgramInfo(const String& vertexShader, const String& fragmentShader)
+CustomFilterProgramInfo::CustomFilterProgramInfo(const String& vertexShader, const String& fragmentShader, const CustomFilterProgramMixSettings& mixSettings)
     : m_vertexShaderString(vertexShader)
     , m_fragmentShaderString(fragmentShader)
+    , m_mixSettings(mixSettings)
 {
     // At least one of the shaders needs to be non-null.
     ASSERT(!m_vertexShaderString.isNull() || !m_fragmentShaderString.isNull());
 }
 
-unsigned CustomFilterProgramInfo::hash() const 
+unsigned CustomFilterProgramInfo::hash() const
 {
     // At least one of the shaders needs to be non-null.
     ASSERT(!m_vertexShaderString.isNull() || !m_fragmentShaderString.isNull());
-    return WTF::intHash((static_cast<uint64_t>(hashPossiblyNullString(m_vertexShaderString)) << 32 | hashPossiblyNullString(m_fragmentShaderString)));
+    uintptr_t hashCodes[5] = {
+        hashPossiblyNullString(m_vertexShaderString),
+        hashPossiblyNullString(m_fragmentShaderString),
+        m_mixSettings.enabled,
+        m_mixSettings.enabled ? m_mixSettings.blendMode : 0,
+        m_mixSettings.enabled ? m_mixSettings.compositeOperator : 0
+    };
+    return StringHasher::hashMemory<sizeof(hashCodes)>(&hashCodes);
 }
 
 bool CustomFilterProgramInfo::operator==(const CustomFilterProgramInfo& o) const 
@@ -84,7 +92,8 @@ bool CustomFilterProgramInfo::operator==(const CustomFilterProgramInfo& o) const
     ASSERT(!isHashTableDeletedValue());
     ASSERT(!o.isHashTableDeletedValue());
     return m_vertexShaderString == o.m_vertexShaderString
-        && m_fragmentShaderString == o.m_fragmentShaderString;
+        && m_fragmentShaderString == o.m_fragmentShaderString
+        && m_mixSettings == o.m_mixSettings;
 }
 
 } // namespace WebCore
