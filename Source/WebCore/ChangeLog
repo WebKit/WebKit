@@ -1,3 +1,28 @@
+2012-08-09  Erik Arvidsson  <arv@chromium.org>
+
+        [V8] Fix issues with [DoNotCheckSecurity] which depended on non ES5 compliant behavior
+        https://bugs.webkit.org/show_bug.cgi?id=93555
+
+        Reviewed by Kentaro Hara.
+
+        Before this change we were relying on a V8 bug where instance properties could be shadow
+        read only properties on the prototype. With this change we no longer depend on this incorrect
+        V8 behavior and instead use a hidden v8 property that is only returned if the code can access
+        the frame.
+
+        No new tests. No change in behavior.
+
+        * bindings/scripts/CodeGeneratorV8.pm:
+        (GenerateDomainSafeFunctionGetter):
+        (GenerateDomainSafeFunctionSetter):
+        (GenerateNonStandardFunction):
+        (GenerateImplementation):
+        * bindings/scripts/test/V8/V8TestActiveDOMObject.cpp:
+        (WebCore::TestActiveDOMObjectV8Internal::postMessageAttrGetter):
+        (WebCore::TestActiveDOMObjectV8Internal::TestActiveDOMObjectDomainSafeFunctionSetter):
+        (TestActiveDOMObjectV8Internal):
+        (WebCore::ConfigureV8TestActiveDOMObjectTemplate):
+
 2012-08-09  David Grogan  <dgrogan@chromium.org>
 
         IndexedDB: intversion-long-queue.html fails an assert

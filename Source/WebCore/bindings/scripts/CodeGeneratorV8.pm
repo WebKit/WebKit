@@ -773,7 +773,34 @@ static v8::Handle<v8::Value> ${funcName}AttrGetter(v8::Local<v8::String> name, c
         static v8::Persistent<v8::FunctionTemplate> sharedTemplate = v8::Persistent<v8::FunctionTemplate>::New($newTemplateString);
         return sharedTemplate->GetFunction();
     }
+
+    v8::Local<v8::Value> hiddenValue = info.This()->GetHiddenValue(name);
+    if (!hiddenValue.IsEmpty())
+        return hiddenValue;
+
     return privateTemplate->GetFunction();
+}
+
+END
+}
+
+sub GenerateDomainSafeFunctionSetter
+{
+    my $implClassName = shift;
+    my $className = "V8" . $implClassName;
+
+    push(@implContentDecls, <<END);
+static void ${implClassName}DomainSafeFunctionSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
+{
+    INC_STATS("DOM.$implClassName._set");
+    v8::Handle<v8::Object> holder = V8DOMWrapper::lookupDOMWrapper(${className}::GetTemplate(), info.This());
+    if (holder.IsEmpty())
+        return;
+    ${implClassName}* imp = ${className}::toNative(holder);
+    if (!BindingSecurity::shouldAllowAccessToFrame(BindingState::instance(), imp->frame()))
+        return;
+
+    info.This()->SetHiddenValue(name, value);
 }
 
 END
@@ -2277,25 +2304,14 @@ sub GenerateNonStandardFunction
 
     if ($attrExt->{"DoNotCheckSecurity"} &&
         ($dataNode->extendedAttributes->{"CheckSecurity"} || $interfaceName eq "DOMWindow")) {
-        # Mark the accessor as ReadOnly and set it on the proto object so
-        # it can be shadowed. This is really a hack to make it work.
-        # There are several sceneria to call into the accessor:
-        #   1) from the same domain: "window.open":
-        #      the accessor finds the DOM wrapper in the proto chain;
-        #   2) from the same domain: "window.__proto__.open":
-        #      the accessor will NOT find a DOM wrapper in the prototype chain
-        #   3) from another domain: "window.open":
-        #      the access find the DOM wrapper in the prototype chain
-        #   "window.__proto__.open" from another domain will fail when
-        #   accessing '__proto__'
-        #
-        # The solution is very hacky and fragile, it really needs to be replaced
-        # by a better solution.
-        $property_attributes .= " | v8::ReadOnly";
+        # Functions that are marked DoNotCheckSecurity are always readable but if they are changed
+        # and then accessed on a different domain we do not return the underlying value but instead
+        # return a new copy of the original function. This is achieved by storing the changed value
+        # as hidden property.
         push(@implContent, <<END);
 
     // $commentInfo
-    ${conditional}$template->SetAccessor(v8::String::New("$name"), ${interfaceName}V8Internal::${name}AttrGetter, 0, v8Undefined(), v8::ALL_CAN_READ, static_cast<v8::PropertyAttribute>($property_attributes));
+    ${conditional}$template->SetAccessor(v8::String::New("$name"), ${interfaceName}V8Internal::${name}AttrGetter, ${interfaceName}V8Internal::${interfaceName}DomainSafeFunctionSetter, v8Undefined(), v8::ALL_CAN_READ, static_cast<v8::PropertyAttribute>($property_attributes));
 END
         return;
     }
@@ -2644,6 +2660,7 @@ END
     my $namedPropertyGetter;
     my @enabledPerContextFunctions;
     my @normalFunctions;
+    my $needsDomainSafeFunctionSetter = 0;
     # Generate methods for functions.
     foreach my $function (@{$dataNode->functions}) {
         my $isCustom = $function->signature->extendedAttributes->{"Custom"} || $function->signature->extendedAttributes->{"V8Custom"};
@@ -2668,6 +2685,7 @@ END
         if (($dataNode->extendedAttributes->{"CheckSecurity"} || ($interfaceName eq "DOMWindow")) && $function->signature->extendedAttributes->{"DoNotCheckSecurity"}) {
             if (!$isCustom || $function->{overloadIndex} == 1) {
                 GenerateDomainSafeFunctionGetter($function, $implClassName);
+                $needsDomainSafeFunctionSetter = 1;
             }
         }
 
@@ -2677,6 +2695,10 @@ END
         } else {
             push(@normalFunctions, $function);
         }
+    }
+
+    if ($needsDomainSafeFunctionSetter) {
+        GenerateDomainSafeFunctionSetter($implClassName);
     }
 
     # Attributes

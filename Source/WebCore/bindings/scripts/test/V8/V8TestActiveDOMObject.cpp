@@ -87,7 +87,25 @@ static v8::Handle<v8::Value> postMessageAttrGetter(v8::Local<v8::String> name, c
         static v8::Persistent<v8::FunctionTemplate> sharedTemplate = v8::Persistent<v8::FunctionTemplate>::New(v8::FunctionTemplate::New(TestActiveDOMObjectV8Internal::postMessageCallback, v8Undefined(), v8::Signature::New(V8TestActiveDOMObject::GetRawTemplate())));
         return sharedTemplate->GetFunction();
     }
+
+    v8::Local<v8::Value> hiddenValue = info.This()->GetHiddenValue(name);
+    if (!hiddenValue.IsEmpty())
+        return hiddenValue;
+
     return privateTemplate->GetFunction();
+}
+
+static void TestActiveDOMObjectDomainSafeFunctionSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
+{
+    INC_STATS("DOM.TestActiveDOMObject._set");
+    v8::Handle<v8::Object> holder = V8DOMWrapper::lookupDOMWrapper(V8TestActiveDOMObject::GetTemplate(), info.This());
+    if (holder.IsEmpty())
+        return;
+    TestActiveDOMObject* imp = V8TestActiveDOMObject::toNative(holder);
+    if (!BindingSecurity::shouldAllowAccessToFrame(BindingState::instance(), imp->frame(), ReportSecurityError))
+        return;
+
+    info.This()->SetHiddenValue(name, value);
 }
 
 } // namespace TestActiveDOMObjectV8Internal
@@ -119,7 +137,7 @@ static v8::Persistent<v8::FunctionTemplate> ConfigureV8TestActiveDOMObjectTempla
     proto->Set(v8::String::New("excitingFunction"), v8::FunctionTemplate::New(TestActiveDOMObjectV8Internal::excitingFunctionCallback, v8Undefined(), excitingFunctionSignature));
 
     // Function 'postMessage' (ExtAttr: 'DoNotCheckSecurity')
-    proto->SetAccessor(v8::String::New("postMessage"), TestActiveDOMObjectV8Internal::postMessageAttrGetter, 0, v8Undefined(), v8::ALL_CAN_READ, static_cast<v8::PropertyAttribute>(v8::DontDelete | v8::ReadOnly));
+    proto->SetAccessor(v8::String::New("postMessage"), TestActiveDOMObjectV8Internal::postMessageAttrGetter, TestActiveDOMObjectV8Internal::TestActiveDOMObjectDomainSafeFunctionSetter, v8Undefined(), v8::ALL_CAN_READ, static_cast<v8::PropertyAttribute>(v8::DontDelete));
 
     // Custom toString template
     desc->Set(getToStringName(), getToStringTemplate());
