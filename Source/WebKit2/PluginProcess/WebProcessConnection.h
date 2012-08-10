@@ -30,7 +30,6 @@
 
 #include "Connection.h"
 #include "Plugin.h"
-#include <wtf/HashSet.h>
 #include <wtf/RefCounted.h>
 
 namespace WebKit {
@@ -68,19 +67,14 @@ private:
     virtual void syncMessageSendTimedOut(CoreIPC::Connection*);
 
     // Message handlers.
-    void didReceiveWebProcessConnectionMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
     void didReceiveSyncWebProcessConnectionMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*, OwnPtr<CoreIPC::ArgumentEncoder>&);
     void createPlugin(const PluginCreationParameters&, bool& result, bool& wantsWheelEvents, uint32_t& remoteLayerClientID);
-    void createPluginAsynchronously(const PluginCreationParameters&);
-    void destroyPlugin(uint64_t pluginInstanceID, bool asynchronousCreationIncomplete);
-    
-    void createPluginInternal(const PluginCreationParameters&, bool& result, bool& wantsWheelEvents, uint32_t& remoteLayerClientID);
+    void destroyPlugin(uint64_t pluginInstanceID);
 
     RefPtr<CoreIPC::Connection> m_connection;
 
     HashMap<uint64_t, PluginControllerProxy*> m_pluginControllers;
     RefPtr<NPRemoteObjectMap> m_npRemoteObjectMap;
-    HashSet<uint64_t> m_asynchronousInstanceIDsToIgnore;
 };
 
 } // namespace WebKit

@@ -48,7 +48,6 @@ struct PluginProcessCreationParameters {
     static bool decode(CoreIPC::ArgumentDecoder*, PluginProcessCreationParameters&);
 
     String pluginPath;
-    bool supportsAsynchronousPluginInitialization;
 
 #if PLATFORM(MAC)
     String parentProcessName;

@@ -137,9 +137,9 @@ void PluginProcessProxy::pluginProcessCrashedOrFailedToLaunch()
         RefPtr<Messages::WebProcessProxy::GetPluginProcessConnection::DelayedReply> reply = m_pendingConnectionReplies.takeFirst();
 
 #if PLATFORM(MAC)
-        reply->send(CoreIPC::Attachment(0, MACH_MSG_TYPE_MOVE_SEND), false);
+        reply->send(CoreIPC::Attachment(0, MACH_MSG_TYPE_MOVE_SEND));
 #elif USE(UNIX_DOMAIN_SOCKETS)
-        reply->send(CoreIPC::Attachment(), false);
+        reply->send(CoreIPC::Attachment());
 #else
         notImplemented();
 #endif
@@ -228,7 +228,7 @@ void PluginProcessProxy::didFinishLaunching(ProcessLauncher*, CoreIPC::Connectio
     m_numPendingConnectionRequests = 0;
 }
 
-void PluginProcessProxy::didCreateWebProcessConnection(const CoreIPC::Attachment& connectionIdentifier, bool supportsAsynchronousPluginInitialization)
+void PluginProcessProxy::didCreateWebProcessConnection(const CoreIPC::Attachment& connectionIdentifier)
 {
     ASSERT(!m_pendingConnectionReplies.isEmpty());
 
@@ -236,9 +236,9 @@ void PluginProcessProxy::didCreateWebProcessConnection(const CoreIPC::Attachment
     RefPtr<Messages::WebProcessProxy::GetPluginProcessConnection::DelayedReply> reply = m_pendingConnectionReplies.takeFirst();
 
 #if PLATFORM(MAC)
-    reply->send(CoreIPC::Attachment(connectionIdentifier.port(), MACH_MSG_TYPE_MOVE_SEND), supportsAsynchronousPluginInitialization);
+    reply->send(CoreIPC::Attachment(connectionIdentifier.port(), MACH_MSG_TYPE_MOVE_SEND));
 #elif USE(UNIX_DOMAIN_SOCKETS)
-    reply->send(connectionIdentifier, supportsAsynchronousPluginInitialization);
+    reply->send(connectionIdentifier);
 #else
     notImplemented();
 #endif
