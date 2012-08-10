@@ -27,6 +27,7 @@ InspectorTest.startTimeline = function(callback)
 {
     InspectorTest._timelineRecords = [];
     WebInspector.panels.timeline.toggleTimelineButton.toggled = true;
+    WebInspector.panels.timeline._model._collectionEnabled = true;
     TimelineAgent.start(callback);
     function addRecord(record)
     {
@@ -62,12 +63,13 @@ InspectorTest.stopTimeline = function(callback)
     function didStop()
     {
         WebInspector.panels.timeline.toggleTimelineButton.toggled = false;
+        WebInspector.panels.timeline._model._collectionEnabled = false;
         callback(InspectorTest._timelineRecords);
     }
     TimelineAgent.stop(didStop);
 };
 
-InspectorTest.performActionsAndPrint = function(actions, typeName)
+InspectorTest.performActionsAndPrint = function(actions, typeName, includeTimeStamps)
 {
     InspectorTest.startTimeline(step1);
     function step1()
@@ -83,18 +85,31 @@ InspectorTest.performActionsAndPrint = function(actions, typeName)
     function step3()
     {
         InspectorTest.printTimelineRecords(typeName);
+        if (includeTimeStamps) {
+            InspectorTest.addResult("Timestamp records: ");
+            InspectorTest.printTimestampRecords(typeName);
+        }
         InspectorTest.completeTest();
     }
 };
 
 InspectorTest.printTimelineRecords = function(typeName, formatter)
 {
-    for (var i = 0; i < InspectorTest._timelineRecords.length; ++i) {
-        var record = InspectorTest._timelineRecords[i];
-        if (typeName && record.type === WebInspector.TimelineModel.RecordType[typeName])
-            InspectorTest.printTimelineRecordProperties(record);
+    InspectorTest.innerPrintTimelineRecords(InspectorTest._timelineRecords, typeName, formatter);
+};
+
+InspectorTest.printTimestampRecords = function(typeName, formatter)
+{
+    InspectorTest.innerPrintTimelineRecords(WebInspector.panels.timeline._timeStampRecords.select("_record"), typeName, formatter);
+};
+
+InspectorTest.innerPrintTimelineRecords = function(records, typeName, formatter)
+{
+    for (var i = 0; i < records.length; ++i) {
+        if (typeName && records[i].type === WebInspector.TimelineModel.RecordType[typeName])
+            InspectorTest.printTimelineRecordProperties(records[i]);
         if (formatter)
-            formatter(record);
+            formatter(records[i]);
     }
 };
 

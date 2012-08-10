@@ -1,3 +1,24 @@
+2012-08-10  Andrey Kosyakov  <caseq@chromium.org>
+
+        Web Inspector: console.timeStamp() marked are not shown in Timeline overview
+        https://bugs.webkit.org/show_bug.cgi?id=93697
+
+        Reviewed by Pavel Feldman.
+
+        - add support for dumpting timestamp records to timeline test suite;
+        - dump timestamp records for TimeStamp tests;
+
+        * inspector/timeline/timeline-test.js:
+        (initialize_Timeline.InspectorTest.stopTimeline):
+        (initialize_Timeline.InspectorTest.performActionsAndPrint.step3):
+        (initialize_Timeline.InspectorTest.performActionsAndPrint):
+        (initialize_Timeline.InspectorTest.printTimelineRecords):
+        (initialize_Timeline.InspectorTest.printTimestampRecords):
+        (initialize_Timeline.InspectorTest.innerPrintTimelineRecords):
+        * inspector/timeline/timeline-time-stamp-expected.txt:
+        * inspector/timeline/timeline-time-stamp.html:
+        * platform/chromium/inspector/timeline/timeline-time-stamp-expected.txt: Removed.
+
 2012-08-10  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [CSS Regions] region-overflow: break still renders the content that does not fit in the last region.

@@ -12,4 +12,17 @@ TimeStamp Properties:
     totalHeapSize : <number>
     counters : <object>
 }
+Timestamp records: 
+TimeStamp Properties:
+{
+    startTime : <number>
+    stackTrace : <object>
+    data : {
+        message : "TIME STAMP"
+    }
+    type : "TimeStamp"
+    usedHeapSize : <number>
+    totalHeapSize : <number>
+    counters : <object>
+}
 

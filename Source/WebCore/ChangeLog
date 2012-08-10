@@ -1,3 +1,15 @@
+2012-08-10  Andrey Kosyakov  <caseq@chromium.org>
+
+        Web Inspector: console.timeStamp() marked are not shown in Timeline overview
+        https://bugs.webkit.org/show_bug.cgi?id=93697
+
+        Reviewed by Pavel Feldman.
+
+        - ignore frameId on TimeStamp records, consider it's always an event divider.
+
+        * inspector/front-end/TimelinePresentationModel.js:
+        (WebInspector.TimelinePresentationModel.isEventDivider):
+
 2012-08-10  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [CSS Regions] region-overflow: break still renders the content that does not fit in the last region.

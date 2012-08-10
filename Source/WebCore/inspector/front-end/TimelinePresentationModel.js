@@ -128,7 +128,9 @@ WebInspector.TimelinePresentationModel.categoryForRecord = function(record)
 WebInspector.TimelinePresentationModel.isEventDivider = function(record)
 {
     var recordTypes = WebInspector.TimelineModel.RecordType;
-    if (record.type === recordTypes.MarkDOMContent || record.type === recordTypes.MarkLoad || record.type === recordTypes.TimeStamp) {
+    if (record.type === recordTypes.TimeStamp)
+        return true;
+    if (record.type === recordTypes.MarkDOMContent || record.type === recordTypes.MarkLoad) {
         var mainFrame = WebInspector.resourceTreeModel.mainFrame;
         if (mainFrame && mainFrame.id === record.frameId)
             return true;
