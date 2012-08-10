@@ -1,3 +1,10 @@
+2012-08-10  Ojan Vafai  <ojan@chromium.org>
+
+        Wrap INLINE_FLEX in a #if ENABLE(CSS3_FLEXBOX).
+        Unreviewed build fix.
+
+        * rendering/style/RenderStyle.h:
+
 2012-08-10  Dan Bernstein  <mitz@apple.com>
 
         Renamed the “Modules/webaudio” group in the Xcode project to “webaudio” and moved it into

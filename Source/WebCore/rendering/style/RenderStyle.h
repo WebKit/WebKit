@@ -1740,7 +1740,11 @@ private:
 
     bool isDisplayReplacedType(EDisplay display) const
     {
-        return display == INLINE_BLOCK || display == INLINE_BOX || display == INLINE_FLEX || display == INLINE_TABLE || display == INLINE_GRID;
+        return display == INLINE_BLOCK || display == INLINE_BOX
+#if ENABLE(CSS3_FLEXBOX)
+            || display == INLINE_FLEX
+#endif
+            || display == INLINE_TABLE || display == INLINE_GRID;
     }
 
     bool isDisplayInlineType(EDisplay display) const
