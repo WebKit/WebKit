@@ -1,3 +1,13 @@
+2012-08-10  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
+
+        [Qt] Uninitialized flags in CoordinatedGraphicsLayer
+        https://bugs.webkit.org/show_bug.cgi?id=93719
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedGraphicsLayer.cpp:
+        (WebCore::CoordinatedGraphicsLayer::CoordinatedGraphicsLayer):
+
 2012-08-10  Mario Sanchez Prada  <msanchez@igalia.com>
 
         [WK2][GTK] Implement new API to save a web page using MHTML
