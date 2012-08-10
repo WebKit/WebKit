@@ -1,3 +1,50 @@
+2012-08-09  Jer Noble  <jer.noble@apple.com>
+
+        Use the new AVPlayerItemVideoOutput API in MediaPlayerPrivateAVFoundation.
+        https://bugs.webkit.org/show_bug.cgi?id=93591
+
+        Reviewed by Eric Carlson.
+
+        Support the new AVPlayerItemVideoOutput API from Mountain Lion, which has much increased performance over
+        AVAssetImageGenerator.
+
+        No new tests; Performance change only, no net change in functionality.
+
+        AVPlayerItemVideoOutput requires an attached CALayer for rendering to occur.  Make the rendering modes non-exclusive, 
+        so layer-rendering and context-rendering can exist simultaneously:
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.h: Make the MediaRenderingMode enum
+            a bitfield.
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.cpp:
+        (WebCore::MediaPlayerPrivateAVFoundation::currentRenderingModes): Renamed from currentRenderingMode().
+        (WebCore::MediaPlayerPrivateAVFoundation::setUpVideoRendering): Check for the presence of the MediaRenderingToLayer bit.
+        (WebCore::MediaPlayerPrivateAVFoundation::prepareForRendering): Ditto.
+        (WebCore::MediaPlayerPrivateAVFoundation::updateStates): Ditto.
+
+        Pull out existing the AVAssetImageGenerator into its own functions:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createImageGenerator):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::destroyImageGenerator):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::paintWithImageGenerator):
+
+        Add new AVPlayerItemVideoOutput equivalent functions:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createVideoOutput):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::destroyVideoOutput):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createPixelBuffer):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::paintWithVideoOutput):
+
+        Switch between the AVAssetImageGenerator and AVPlayerItemVideoOutput functions from
+        within the original functions:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createContextVideoRenderer):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::destroyContextVideoRenderer):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::hasContextRenderer):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::paint):
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createImageForTimeInRect): Call the 
+            AVAssetImageGenerator creation function directly.
+
 2012-08-10  Abhishek Arya  <inferno@chromium.org>
 
         Crash on accessing a removed layout root in FrameView::scheduleRelayout.

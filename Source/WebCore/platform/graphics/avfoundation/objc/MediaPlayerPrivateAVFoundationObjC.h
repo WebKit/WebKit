@@ -33,6 +33,7 @@
 OBJC_CLASS AVAsset;
 OBJC_CLASS AVPlayer;
 OBJC_CLASS AVPlayerItem;
+OBJC_CLASS AVPlayerItemVideoOutput;
 OBJC_CLASS AVPlayerLayer;
 OBJC_CLASS AVAssetImageGenerator;
 OBJC_CLASS WebCoreAVFMovieObserver;
@@ -42,6 +43,7 @@ typedef struct objc_object *id;
 #endif
 
 typedef struct CGImage *CGImageRef;
+typedef struct __CVBuffer *CVPixelBufferRef;
 
 namespace WebCore {
 
@@ -110,7 +112,17 @@ private:
 
     virtual bool hasSingleSecurityOrigin() const;
 
+#if __MAC_OS_X_VERSION_MIN_REQUIRED < 1080
+    void createImageGenerator();
+    void destroyImageGenerator();
     RetainPtr<CGImageRef> createImageForTimeInRect(float, const IntRect&);
+    void paintWithImageGenerator(GraphicsContext*, const IntRect&);
+#else
+    void createVideoOutput();
+    void destroyVideoOutput();
+    RetainPtr<CVPixelBufferRef> createPixelBuffer();
+    void paintWithVideoOutput(GraphicsContext*, const IntRect&);
+#endif
 
     MediaPlayer* m_player;
     RetainPtr<AVAsset> m_avAsset;
@@ -118,10 +130,16 @@ private:
     RetainPtr<AVPlayerItem> m_avPlayerItem;
     RetainPtr<AVPlayerLayer> m_videoLayer;
     RetainPtr<WebCoreAVFMovieObserver> m_objcObserver;
-    RetainPtr<AVAssetImageGenerator> m_imageGenerator;
     RetainPtr<id> m_timeObserver;
     bool m_videoFrameHasDrawn;
     bool m_haveCheckedPlayability;
+
+#if __MAC_OS_X_VERSION_MIN_REQUIRED < 1080
+    RetainPtr<AVAssetImageGenerator> m_imageGenerator;
+#else
+    RetainPtr<AVPlayerItemVideoOutput> m_videoOutput;
+    RetainPtr<CVPixelBufferRef> m_lastImage;
+#endif
 };
 
 }

@@ -56,6 +56,7 @@ SOFT_LINK(CoreMedia, CMTimeRangeGetEnd, CMTime, (CMTimeRange range), (range))
 
 SOFT_LINK_CLASS(AVFoundation, AVPlayer)
 SOFT_LINK_CLASS(AVFoundation, AVPlayerItem)
+SOFT_LINK_CLASS(AVFoundation, AVPlayerItemVideoOutput)
 SOFT_LINK_CLASS(AVFoundation, AVPlayerLayer)
 SOFT_LINK_CLASS(AVFoundation, AVURLAsset)
 SOFT_LINK_CLASS(AVFoundation, AVAssetImageGenerator)
@@ -73,6 +74,7 @@ SOFT_LINK_CONSTANT(CoreMedia, kCMTimeZero, CMTime)
 
 #define AVPlayer getAVPlayerClass()
 #define AVPlayerItem getAVPlayerItemClass()
+#define AVPlayerItemVideoOutput getAVPlayerItemVideoOutputClass()
 #define AVPlayerLayer getAVPlayerLayerClass()
 #define AVURLAsset getAVURLAssetClass()
 #define AVAssetImageGenerator getAVAssetImageGeneratorClass()
@@ -183,12 +185,26 @@ bool MediaPlayerPrivateAVFoundationObjC::hasLayerRenderer() const
 
 bool MediaPlayerPrivateAVFoundationObjC::hasContextRenderer() const
 {
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
+    return m_videoOutput;
+#else
     return m_imageGenerator;
+#endif
 }
 
 void MediaPlayerPrivateAVFoundationObjC::createContextVideoRenderer()
 {
-    LOG(Media, "MediaPlayerPrivateAVFoundationObjC::createContextVideoRenderer(%p)", this);
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
+    createVideoOutput();
+#else
+    createImageGenerator();
+#endif
+}
+
+#if __MAC_OS_X_VERSION_MIN_REQUIRED < 1080
+void MediaPlayerPrivateAVFoundationObjC::createImageGenerator()
+{
+    LOG(Media, "MediaPlayerPrivateAVFoundationObjC::createImageGenerator(%p)", this);
 
     if (!m_avAsset || m_imageGenerator)
         return;
@@ -202,16 +218,28 @@ void MediaPlayerPrivateAVFoundationObjC::createContextVideoRenderer()
 
     LOG(Media, "MediaPlayerPrivateAVFoundationObjC::createImageGenerator(%p) - returning %p", this, m_imageGenerator.get());
 }
+#endif
 
 void MediaPlayerPrivateAVFoundationObjC::destroyContextVideoRenderer()
+{
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
+    destroyVideoOutput();
+#else
+    destroyImageGenerator();
+#endif
+}
+
+#if __MAC_OS_X_VERSION_MIN_REQUIRED < 1080
+void MediaPlayerPrivateAVFoundationObjC::destroyImageGenerator()
 {
     if (!m_imageGenerator)
         return;
 
-    LOG(Media, "MediaPlayerPrivateAVFoundationObjC::destroyContextVideoRenderer(%p) - destroying  %p", this, m_imageGenerator.get());
+    LOG(Media, "MediaPlayerPrivateAVFoundationObjC::destroyImageGenerator(%p) - destroying  %p", this, m_imageGenerator.get());
 
     m_imageGenerator = 0;
 }
+#endif
 
 void MediaPlayerPrivateAVFoundationObjC::createVideoLayer()
 {
@@ -611,6 +639,21 @@ void MediaPlayerPrivateAVFoundationObjC::paint(GraphicsContext* context, const I
     setDelayCallbacks(true);
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
+    paintWithVideoOutput(context, rect);
+#else
+    paintWithImageGenerator(context, rect);
+#endif
+
+    END_BLOCK_OBJC_EXCEPTIONS;
+    setDelayCallbacks(false);
+
+    m_videoFrameHasDrawn = true;
+}
+
+#if __MAC_OS_X_VERSION_MIN_REQUIRED < 1080
+void MediaPlayerPrivateAVFoundationObjC::paintWithImageGenerator(GraphicsContext* context, const IntRect& rect)
+{
     RetainPtr<CGImageRef> image = createImageForTimeInRect(currentTime(), rect);
     if (image) {
         GraphicsContextStateSaver stateSaver(*context);
@@ -621,12 +664,8 @@ void MediaPlayerPrivateAVFoundationObjC::paint(GraphicsContext* context, const I
         CGContextDrawImage(context->platformContext(), CGRectMake(0, 0, paintRect.width(), paintRect.height()), image.get());
         image = 0;
     }
-
-    END_BLOCK_OBJC_EXCEPTIONS;
-    setDelayCallbacks(false);
-
-    m_videoFrameHasDrawn = true;
 }
+#endif
 
 static HashSet<String> mimeTypeCache()
 {
@@ -644,10 +683,11 @@ static HashSet<String> mimeTypeCache()
     return cache;
 } 
 
+#if __MAC_OS_X_VERSION_MIN_REQUIRED < 1080
 RetainPtr<CGImageRef> MediaPlayerPrivateAVFoundationObjC::createImageForTimeInRect(float time, const IntRect& rect)
 {
     if (!m_imageGenerator)
-        createContextVideoRenderer();
+        createImageGenerator();
     ASSERT(m_imageGenerator);
 
 #if !LOG_DISABLED
@@ -664,6 +704,7 @@ RetainPtr<CGImageRef> MediaPlayerPrivateAVFoundationObjC::createImageForTimeInRe
 
     return image;
 }
+#endif
 
 void MediaPlayerPrivateAVFoundationObjC::getSupportedTypes(HashSet<String>& supportedTypes)
 {
@@ -780,6 +821,81 @@ bool MediaPlayerPrivateAVFoundationObjC::hasSingleSecurityOrigin() const
     RefPtr<SecurityOrigin> requestedOrigin = SecurityOrigin::createFromString(assetURL());
     return resolvedOrigin->isSameSchemeHostPort(requestedOrigin.get());
 }
+
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
+void MediaPlayerPrivateAVFoundationObjC::createVideoOutput()
+{
+    LOG(Media, "MediaPlayerPrivateAVFoundationObjC::createVideoOutput(%p)", this);
+
+    if (!m_avPlayerItem || m_videoOutput)
+        return;
+
+    NSDictionary* attributes = [NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithUnsignedInt:k32BGRAPixelFormat], kCVPixelBufferPixelFormatTypeKey,
+                                nil];
+    m_videoOutput.adoptNS([[AVPlayerItemVideoOutput alloc] initWithPixelBufferAttributes:attributes]);
+    ASSERT(m_videoOutput);
+
+    [m_avPlayerItem.get() addOutput:m_videoOutput.get()];
+
+    LOG(Media, "MediaPlayerPrivateAVFoundationObjC::createVideoOutput(%p) - returning %p", this, m_videoOutput.get());
+}
+
+void MediaPlayerPrivateAVFoundationObjC::destroyVideoOutput()
+{
+    if (!m_videoOutput)
+        return;
+
+    if (m_avPlayerItem)
+        [m_avPlayerItem.get() removeOutput:m_videoOutput.get()];
+    LOG(Media, "MediaPlayerPrivateAVFoundationObjC::destroyVideoOutput(%p) - destroying  %p", this, m_videoOutput.get());
+
+    m_videoOutput = 0;
+}
+
+RetainPtr<CVPixelBufferRef> MediaPlayerPrivateAVFoundationObjC::createPixelBuffer()
+{
+    if (!m_videoOutput)
+        createVideoOutput();
+    ASSERT(m_videoOutput);
+
+#if !LOG_DISABLED
+    double start = WTF::currentTime();
+#endif
+
+    RetainPtr<CVPixelBufferRef> buffer = adoptCF([m_videoOutput.get() copyPixelBufferForItemTime:[m_avPlayerItem.get() currentTime] itemTimeForDisplay:nil]);
+
+#if !LOG_DISABLED
+    double duration = WTF::currentTime() - start;
+    LOG(Media, "MediaPlayerPrivateAVFoundationObjC::createPixelBuffer() - creating buffer took %.4f", this, narrowPrecisionToFloat(duration));
+#endif
+
+    return buffer;
+}
+
+void MediaPlayerPrivateAVFoundationObjC::paintWithVideoOutput(GraphicsContext* context, const IntRect& rect)
+{
+    RetainPtr<CVPixelBufferRef> pixelBuffer = createPixelBuffer();
+
+    // Calls to copyPixelBufferForItemTime:itemTimeForDisplay: may return nil if the pixel buffer
+    // for the requested time has already been retrieved. In this case, the last valid image (if any)
+    // should be displayed.
+    if (pixelBuffer)
+        m_lastImage = pixelBuffer;
+
+    if (m_lastImage) {
+        GraphicsContextStateSaver stateSaver(*context);
+        context->translate(rect.x(), rect.y() + rect.height());
+        context->scale(FloatSize(1.0f, -1.0f));
+        RetainPtr<CIImage> image(AdoptNS, [[CIImage alloc] initWithCVImageBuffer:m_lastImage.get()]);
+
+        // ciContext does not use a RetainPtr for results of contextWithCGContext:, as the returned value
+        // is autoreleased, and there is no non-autoreleased version of that function.
+        CIContext* ciContext = [CIContext contextWithCGContext:context->platformContext() options:nil];
+        [ciContext drawImage:image.get() inRect:rect fromRect:rect];
+    }
+}
+
+#endif
 
 NSArray* assetMetadataKeyNames()
 {

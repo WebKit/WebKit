@@ -116,6 +116,10 @@ void MediaPlayerPrivateAVFoundation::setUpVideoRendering()
 
     MediaRenderingMode currentMode = currentRenderingMode();
     MediaRenderingMode preferredMode = preferredRenderingMode();
+
+    if (preferredMode == MediaRenderingNone)
+        preferredMode = MediaRenderingToContext;
+
     if (currentMode == preferredMode && currentMode != MediaRenderingNone)
         return;
 
