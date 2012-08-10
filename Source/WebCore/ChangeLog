@@ -1,3 +1,148 @@
+2012-08-10  Yoshifumi Inoue  <yosin@chromium.org>
+
+        [Forms] Introduce shadow elements for multiple fields time input UI
+        https://bugs.webkit.org/show_bug.cgi?id=92960
+
+        Reviewed by Kent Tamura.
+
+        This patch introduces shadow elements for multiple fields time input UI:
+            - DateTimeAMPMFieldElement - field UI for AM/PM
+            - DateTimeEditElement - container of multiple DateTimeFieldElement
+            - DateTimeFieldElement - base class of field UI
+            - DateTimeHourFieldElement - field UI for hour
+            - DateTimeMillisecondFieldElement - field UI for millisecond
+            - DateTimeMinuteFieldElement - field UI for minute
+            - DateTimeNumericFieldElement - base class of numeric field UI.
+            - DateTimeSecondFieldElement - field UI for second
+            - DateTimeSymbolicFieldElement - base class for symbolic field UI
+        inside of ENABLE_INPUT_TYPE_TIME_MULTIPLE_FIELDS build flag.
+
+        No new tests. This patch doesn't change behavior.
+
+        * WebCore.gypi: Changed to include html/shadow/DateTimeEditElement.cpp,
+        html/shadow/DateTimeEdditElement.h, html/shadow/DateTimeFieldElement.cpp,
+        html/shadow/DateTimeFieldElement.h, html/shadow/DateTimeFieldElements.cpp,
+        html/shadow/DateTimeFieldElements.h, html/shadow/DateTimeNumericFieldElement.cpp,
+        html/shadow/DateTimeNumericFieldElement.h, html/shadow/DateTimeSymbolicFieldElement.cpp,
+        and html/shadow/DateTimeSymbolicFieldElement.h.
+        * html/shadow/DateTimeEditElement.cpp: Added.
+        (DateTimeEditBuilder):
+        (WebCore::DateTimeEditBuilder::DateTimeEditBuilder):
+        (WebCore::DateTimeEditBuilder::build):
+        (WebCore::DateTimeEditBuilder::needMillisecondField):
+        (WebCore::DateTimeEditBuilder::needMinuteField):
+        (WebCore::DateTimeEditBuilder::needSecondField):
+        (WebCore::DateTimeEditBuilder::shouldMillisecondFieldReadOnly):
+        (WebCore::DateTimeEditBuilder::shouldMinuteFieldReadOnly):
+        (WebCore::DateTimeEditBuilder::shouldSecondFieldReadOnly):
+        (WebCore::DateTimeEditBuilder::visitField):
+        (WebCore::DateTimeEditBuilder::visitLiteral):
+        (WebCore::DateTimeEditElement::EditControlOwner::~EditControlOwner):
+        (WebCore::DateTimeEditElement::DateTimeEditElement):
+        (WebCore::DateTimeEditElement::~DateTimeEditElement):
+        (WebCore::DateTimeEditElement::addField):
+        (WebCore::DateTimeEditElement::create):
+        (WebCore::DateTimeEditElement::disabledStateChanged): Called when owner's disabled state is changed.
+        (WebCore::DateTimeEditElement::fieldAt):
+        (WebCore::DateTimeEditElement::focusFieldAt):
+        (WebCore::DateTimeEditElement::handleKeyboardEvent):
+        (WebCore::DateTimeEditElement::fieldValueChanged):
+        (WebCore::DateTimeEditElement::focusOnNextField):
+        (WebCore::DateTimeEditElement::handleMouseEvent):
+        (WebCore::DateTimeEditElement::isDisabled):
+        (WebCore::DateTimeEditElement::isReadOnly):
+        (WebCore::DateTimeEditElement::layout):
+        (WebCore::DateTimeEditElement::nextFieldIndex):
+        (WebCore::DateTimeEditElement::previousFieldIndex):
+        (WebCore::DateTimeEditElement::readOnlyStateChanged): Called when owner's readOnly state is changed.
+        (WebCore::DateTimeEditElement::resetLayout):
+        (WebCore::DateTimeEditElement::defaultEventHandler):
+        (WebCore::DateTimeEditElement::setValueAsDate):
+        (WebCore::DateTimeEditElement::setEmptyValue):
+        (WebCore::DateTimeEditElement::spinButtonStepDown):
+        (WebCore::DateTimeEditElement::spinButtonStepUp):
+        (WebCore::DateTimeEditElement::updateUIState):
+        (WebCore::DateTimeEditElement::valueAsDouble):
+        * html/shadow/DateTimeEditElement.h: Added.
+        (DateTimeEditElement):
+        (EditControlOwner):
+        (WebCore::DateTimeEditElement::removeEditControlOwner):
+        * html/shadow/DateTimeFieldElement.cpp: Added.
+        (WebCore::DateTimeFieldElement::FieldEventHandler::~FieldEventHandler):
+        (WebCore::DateTimeFieldElement::DateTimeFieldElement):
+        (WebCore::DateTimeFieldElement::defaultEventHandler):
+        (WebCore::DateTimeFieldElement::defaultKeyboardEventHandler):
+        (WebCore::DateTimeFieldElement::focusOnNextField):
+        (WebCore::DateTimeFieldElement::initialize):
+        (WebCore::DateTimeFieldElement::isReadOnly):
+        (WebCore::DateTimeFieldElement::setReadOnly):
+        (WebCore::DateTimeFieldElement::updateVisibleValue):
+        (WebCore::DateTimeFieldElement::valueAsDouble):
+        * html/shadow/DateTimeFieldElement.h: Added.
+        (DateTimeFieldElement):
+        (FieldEventHandler):
+        (WebCore::DateTimeFieldElement::removeEventHandler):
+        * html/shadow/DateTimeFieldElements.cpp: Added.
+        (WebCore::DateTimeAMPMFieldElement::DateTimeAMPMFieldElement):
+        (WebCore::DateTimeAMPMFieldElement::create):
+        (WebCore::DateTimeAMPMFieldElement::setValueAsDate):
+        (WebCore::DateTimeAMPMFieldElement::unitInMillisecond):
+        (WebCore::DateTimeHourFieldElement::DateTimeHourFieldElement):
+        (WebCore::DateTimeHourFieldElement::create):
+        (WebCore::DateTimeHourFieldElement::setValueAsDate):
+        (WebCore::DateTimeHourFieldElement::setValueAsInteger):
+        (WebCore::DateTimeHourFieldElement::unitInMillisecond):
+        (WebCore::DateTimeHourFieldElement::valueAsInteger):
+        (WebCore::DateTimeMillisecondFieldElement::DateTimeMillisecondFieldElement):
+        (WebCore::DateTimeMillisecondFieldElement::create):
+        (WebCore::DateTimeMillisecondFieldElement::setValueAsDate):
+        (WebCore::DateTimeMillisecondFieldElement::unitInMillisecond):
+        (WebCore::DateTimeMinuteFieldElement::DateTimeMinuteFieldElement):
+        (WebCore::DateTimeMinuteFieldElement::create):
+        (WebCore::DateTimeMinuteFieldElement::setValueAsDate):
+        (WebCore::DateTimeMinuteFieldElement::unitInMillisecond):
+        (WebCore::DateTimeSecondFieldElement::DateTimeSecondFieldElement):
+        (WebCore::DateTimeSecondFieldElement::create):
+        (WebCore::DateTimeSecondFieldElement::setValueAsDate):
+        (WebCore::DateTimeSecondFieldElement::unitInMillisecond):
+        * html/shadow/DateTimeFieldElements.h: Added.
+        (DateTimeAMPMFieldElement):
+        (DateTimeHourFieldElement):
+        (DateTimeMillisecondFieldElement):
+        (DateTimeMinuteFieldElement):
+        (DateTimeSecondFieldElement):
+        * html/shadow/DateTimeNumericFieldElement.cpp: Added.
+        (WebCore::displaySizeOfNumber):
+        (WebCore::DateTimeNumericFieldElement::Range::Range):
+        (WebCore::DateTimeNumericFieldElement::Range::clumpValue):
+        (WebCore::DateTimeNumericFieldElement::DateTimeNumericFieldElement):
+        (WebCore::DateTimeNumericFieldElement::handleKeyboardEvent):
+        (WebCore::DateTimeNumericFieldElement::hasValue):
+        (WebCore::DateTimeNumericFieldElement::setEmptyValue):
+        (WebCore::DateTimeNumericFieldElement::setValueAsInteger):
+        (WebCore::DateTimeNumericFieldElement::stepDown):
+        (WebCore::DateTimeNumericFieldElement::stepUp):
+        (WebCore::DateTimeNumericFieldElement::value):
+        (WebCore::DateTimeNumericFieldElement::valueAsInteger):
+        (WebCore::DateTimeNumericFieldElement::visibleValue):
+        * html/shadow/DateTimeNumericFieldElement.h: Added.
+        (DateTimeNumericFieldElement):
+        (WebCore::DateTimeNumericFieldElement::clumpValue):
+        (WebCore::DateTimeNumericFieldElement::range):
+        * html/shadow/DateTimeSymbolicFieldElement.cpp: Added.
+        (WebCore::DateTimeSymbolicFieldElement::DateTimeSymbolicFieldElement):
+        (WebCore::DateTimeSymbolicFieldElement::handleKeyboardEvent):
+        (WebCore::DateTimeSymbolicFieldElement::hasValue):
+        (WebCore::DateTimeSymbolicFieldElement::setEmptyValue):
+        (WebCore::DateTimeSymbolicFieldElement::setValueAsInteger):
+        (WebCore::DateTimeSymbolicFieldElement::stepDown):
+        (WebCore::DateTimeSymbolicFieldElement::stepUp):
+        (WebCore::DateTimeSymbolicFieldElement::value):
+        (WebCore::DateTimeSymbolicFieldElement::valueAsInteger):
+        (WebCore::DateTimeSymbolicFieldElement::visibleValue):
+        * html/shadow/DateTimeSymbolicFieldElement.h: Added.
+        (DateTimeSymbolicFieldElement):
+
 2012-08-10  Tony Chang  <tony@chromium.org>
 
         implement display: -webkit-inline-flex
