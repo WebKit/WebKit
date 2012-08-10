@@ -20,6 +20,7 @@
 #define WebPage_h
 
 #include "BlackBerryGlobal.h"
+#include "JavaScriptVariant.h"
 #include "WebString.h"
 
 #include <BlackBerryPlatformGuardedPointer.h>
@@ -106,7 +107,7 @@ public:
     // Takes a UTF16 encoded script that is used explicitly by the pattern matching code
     bool executeJavaScriptInIsolatedWorld(const std::wstring& script, JavaScriptDataType& returnType, WebString& returnValue);
 
-    bool executeJavaScriptFunction(const std::vector<std::string> &script, const std::vector<std::string> &args, JavaScriptDataType& returnType, WebString& returnValue);
+    void executeJavaScriptFunction(const std::vector<std::string> &function, const std::vector<JavaScriptVariant> &args, JavaScriptVariant& returnValue);
 
     void initializeIconDataBase();
 

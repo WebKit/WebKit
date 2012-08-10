@@ -69,6 +69,7 @@ LIST(APPEND WebKit_SOURCES
     blackberry/Api/WebSettings.cpp
     blackberry/Api/WebString.cpp
     blackberry/Api/WebViewportArguments.cpp
+    blackberry/Api/JavaScriptVariant.cpp
     blackberry/WebCoreSupport/AutofillManager.cpp
     blackberry/WebCoreSupport/CacheClientBlackBerry.cpp
     blackberry/WebCoreSupport/ChromeClientBlackBerry.cpp

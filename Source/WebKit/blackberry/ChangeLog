@@ -1,3 +1,44 @@
+2012-08-10  Benjamin C Meyer  <bmeyer@rim.com>
+
+        Introduce JavaScriptVariant object.
+        https://bugs.webkit.org/show_bug.cgi?id=93644
+
+        The JavaScriptVariant can be used for functions that return results from
+        JavaScript such as executeJavaScript or functions that take arguments
+        to pass a variable to JavaScript and they want to make sure the type
+        is correct.
+
+        Convert executeJavaScriptFunction() to use this data type as the
+        example, other functions will be converted in the future.
+
+        PR 14929
+
+        Internally reviewed by Joe Mason
+        Reviewed by Adam Treat
+
+        * Api/JavaScriptVariant.cpp: Added.
+        (WebKit):
+        (BlackBerry::WebKit::JSValueRefToBlackBerryJavaScriptVariant):
+        (BlackBerry::WebKit::BlackBerryJavaScriptVariantToJSValueRef):
+        (BlackBerry::WebKit::JavaScriptVariant::JavaScriptVariant):
+        (BlackBerry::WebKit::JavaScriptVariant::~JavaScriptVariant):
+        (BlackBerry::WebKit::JavaScriptVariant::operator=):
+        (BlackBerry::WebKit::JavaScriptVariant::setType):
+        (BlackBerry::WebKit::JavaScriptVariant::type):
+        (BlackBerry::WebKit::JavaScriptVariant::setDouble):
+        (BlackBerry::WebKit::JavaScriptVariant::doubleValue):
+        (BlackBerry::WebKit::JavaScriptVariant::setString):
+        (BlackBerry::WebKit::JavaScriptVariant::stringValue):
+        (BlackBerry::WebKit::JavaScriptVariant::setBoolean):
+        (BlackBerry::WebKit::JavaScriptVariant::booleanValue):
+        * Api/JavaScriptVariant.h: Added.
+        (WebKit):
+        * Api/JavaScriptVariant_p.h: Added.
+        (WebKit):
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPage::executeJavaScriptFunction):
+        * Api/WebPage.h:
+
 2012-08-09  Leo Yang  <leoyang@rim.com>
 
         [BlackBerry] Export InRegionScroller to fix build

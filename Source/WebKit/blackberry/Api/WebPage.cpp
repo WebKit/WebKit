@@ -78,6 +78,7 @@
 #include "InspectorController.h"
 #include "InspectorOverlay.h"
 #include "JavaScriptDebuggerBlackBerry.h"
+#include "JavaScriptVariant_p.h"
 #include "LayerWebKitThread.h"
 #include "NetworkManager.h"
 #include "NodeRenderStyle.h"
@@ -846,24 +847,25 @@ bool WebPage::executeJavaScriptInIsolatedWorld(const char* script, JavaScriptDat
     return d->executeJavaScriptInIsolatedWorld(sourceCode, returnType, returnValue);
 }
 
-bool WebPage::executeJavaScriptFunction(const std::vector<std::string> &function, const std::vector<std::string> &args, JavaScriptDataType& returnType, WebString& returnValue)
+void WebPage::executeJavaScriptFunction(const std::vector<std::string> &function, const std::vector<JavaScriptVariant> &args, JavaScriptVariant& returnValue)
 {
-    if (!d->m_mainFrame)
-        return false;
+    if (!d->m_mainFrame) {
+        returnValue.setType(JavaScriptVariant::Exception);
+        return;
+    }
+
     JSC::Bindings::RootObject* root = d->m_mainFrame->script()->bindingRootObject();
-    if (!root)
-        return false;
+    if (!root) {
+        returnValue.setType(JavaScriptVariant::Exception);
+        return;
+    }
+
     JSC::ExecState* exec = root->globalObject()->globalExec();
     JSGlobalContextRef ctx = toGlobalRef(exec);
 
-    WTF::Vector<JSStringRef> argList(args.size());
     WTF::Vector<JSValueRef> argListRef(args.size());
-    for (unsigned i = 0; i < args.size(); ++i) {
-        JSStringRef str = JSStringCreateWithUTF8CString(args[i].c_str());
-        argList[i] = str;
-        JSValueRef strRef = JSValueMakeString(ctx, str);
-        argListRef[i] = strRef;
-    }
+    for (unsigned i = 0; i < args.size(); ++i)
+        argListRef[i] = BlackBerryJavaScriptVariantToJSValueRef(ctx, args[i]);
 
     JSValueRef windowObjectValue = windowObject();
     JSObjectRef obj = JSValueToObject(ctx, windowObjectValue, 0);
@@ -882,49 +884,13 @@ bool WebPage::executeJavaScriptFunction(const std::vector<std::string> &function
     if (functionObject && thisObject)
         result = JSObjectCallAsFunction(ctx, functionObject, thisObject, args.size(), argListRef.data(), 0);
 
-    for (unsigned i = 0; i < args.size(); ++i)
-        JSStringRelease(argList[i]);
-
     JSC::JSValue value = toJS(exec, result);
-
     if (!value) {
-        returnType = JSException;
-        return false;
+        returnValue.setType(JavaScriptVariant::Exception);
+        return;
     }
 
-    JSType type = JSValueGetType(ctx, result);
-
-    switch (type) {
-    case kJSTypeNull:
-        returnType = JSNull;
-        break;
-    case kJSTypeBoolean:
-        returnType = JSBoolean;
-        break;
-    case kJSTypeNumber:
-        returnType = JSNumber;
-        break;
-    case kJSTypeString:
-        returnType = JSString;
-        break;
-    case kJSTypeObject:
-        returnType = JSObject;
-        break;
-    case kJSTypeUndefined:
-    default:
-        returnType = JSUndefined;
-        break;
-    }
-
-    if (returnType == JSBoolean || returnType == JSNumber || returnType == JSString || returnType == JSObject) {
-        JSStringRef stringRef = JSValueToStringCopy(ctx, result, 0);
-        size_t bufferSize = JSStringGetMaximumUTF8CStringSize(stringRef);
-        WTF::Vector<char> buffer(bufferSize);
-        JSStringGetUTF8CString(stringRef, buffer.data(), bufferSize);
-        returnValue = WebString::fromUtf8(buffer.data());
-    }
-
-    return true;
+    returnValue = JSValueRefToBlackBerryJavaScriptVariant(ctx, result);
 }
 
 void WebPagePrivate::stopCurrentLoad()
