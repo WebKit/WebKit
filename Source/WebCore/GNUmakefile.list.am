@@ -2987,6 +2987,7 @@ webcore_sources += \
 	Source/WebCore/loader/SubframeLoader.h \
 	Source/WebCore/loader/SubresourceLoader.cpp \
 	Source/WebCore/loader/SubresourceLoader.h \
+	Source/WebCore/loader/SubstituteData.cpp \
 	Source/WebCore/loader/SubstituteData.h \
 	Source/WebCore/loader/SubstituteResource.h \
 	Source/WebCore/loader/TextResourceDecoder.cpp \

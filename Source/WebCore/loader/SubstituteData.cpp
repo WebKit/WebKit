@@ -29,33 +29,20 @@
  */
 
 #include "config.h"
-#include "MemoryInstrumentation.h"
+#include "SubstituteData.h"
 
-#include "KURL.h"
-#include <wtf/text/StringImpl.h>
-#include <wtf/text/WTFString.h>
+#include "MemoryInstrumentation.h"
 
 namespace WebCore {
 
-void MemoryInstrumentation::addObject(const String& string, ObjectType objectType)
+void SubstituteData::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
-    addObject(string.impl(), objectType);
+    MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::Loader);
+    info.addInstrumentedMember(m_content);
+    info.addMember(m_mimeType);
+    info.addMember(m_textEncoding);
+    info.addMember(m_failingURL);
+    info.addMember(m_responseURL);
 }
 
-void MemoryInstrumentation::addObject(const StringImpl* stringImpl, ObjectType objectType)
-{
-    if (!stringImpl || visited(stringImpl))
-        return;
-    countObjectSize(objectType, stringImpl->sizeInBytes());
 }
-
-void MemoryInstrumentation::addObject(const KURL& url, ObjectType objectType)
-{
-    if (visited(&url))
-        return;
-    addObject(url.string(), objectType);
-    if (url.innerURL())
-        addObject(url.innerURL(), objectType);
-}
-
-} // namespace WebCore

@@ -544,6 +544,15 @@ void MainResourceLoader::didFail(const ResourceError& error)
     receivedError(error);
 }
 
+void MainResourceLoader::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+{
+    MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::Loader);
+    ResourceLoader::reportMemoryUsage(memoryObjectInfo);
+    info.addMember(m_initialRequest);
+    info.addInstrumentedMember(m_substituteData);
+    info.addMember(m_dataLoadTimer);
+}
+
 void MainResourceLoader::handleEmptyLoad(const KURL& url, bool forURLScheme)
 {
     String mimeType;

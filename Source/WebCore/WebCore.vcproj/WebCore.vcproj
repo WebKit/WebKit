@@ -27631,6 +27631,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\loader\SubstituteData.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\loader\SubstituteData.h"
 				>
 			</File>

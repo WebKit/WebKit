@@ -188,6 +188,7 @@
             'loader/ResourceLoaderOptions.h',
             'loader/SubframeLoader.h',
             'loader/SubresourceLoader.h',
+            'loader/SubstituteData.cpp',
             'loader/SubstituteData.h',
             'loader/SubstituteResource.h',
             'loader/TextResourceDecoder.h',

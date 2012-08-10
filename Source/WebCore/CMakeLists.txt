@@ -1605,6 +1605,7 @@ SET(WebCore_SOURCES
     loader/SinkDocument.cpp
     loader/SubframeLoader.cpp
     loader/SubresourceLoader.cpp
+    loader/SubstituteData.cpp
     loader/TextResourceDecoder.cpp
     loader/TextTrackLoader.cpp
     loader/ThreadableLoader.cpp

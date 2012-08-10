@@ -34,6 +34,8 @@
 
 namespace WebCore {
 
+    class MemoryObjectInfo;
+
     class SubstituteData {
     public:
         SubstituteData() { }
@@ -54,6 +56,8 @@ namespace WebCore {
         const String& textEncoding() const { return m_textEncoding; }
         const KURL& failingURL() const { return m_failingURL; }
         const KURL& responseURL() const { return m_responseURL; }
+
+        void reportMemoryUsage(MemoryObjectInfo*) const;
         
     private:
         RefPtr<SharedBuffer> m_content;

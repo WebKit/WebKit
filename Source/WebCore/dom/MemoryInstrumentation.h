@@ -41,6 +41,7 @@
 namespace WebCore {
 
 template <typename T> class DataRef;
+class KURL;
 class MemoryObjectInfo;
 
 class MemoryInstrumentation {
@@ -103,6 +104,7 @@ private:
     }
     void addObject(const String&, ObjectType);
     void addObject(const StringImpl*, ObjectType);
+    void addObject(const KURL&, ObjectType);
     template <typename T> void addInstrumentedObject(const T& t, ObjectType ownerObjectType) { OwningTraits<T>::addInstrumentedObject(this, t, ownerObjectType); }
     template <typename HashMapType> void addHashMap(const HashMapType&, ObjectType, bool contentOnly = false);
     template <typename HashSetType> void addHashSet(const HashSetType&, ObjectType, bool contentOnly = false);
@@ -207,6 +209,7 @@ public:
     void addMember(const String& string) { m_memoryInstrumentation->addObject(string, m_objectType); }
     void addMember(const AtomicString& string) { m_memoryInstrumentation->addObject((const String&)string, m_objectType); }
     void addMember(const StringImpl* string) { m_memoryInstrumentation->addObject(string, m_objectType); }
+    void addMember(const KURL& url) { m_memoryInstrumentation->addObject(url, m_objectType); }
 
 private:
     MemoryObjectInfo* m_memoryObjectInfo;

@@ -486,6 +486,7 @@ void StyleSheetContents::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) c
 {
     MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::CSS);
     info.addMember(m_originalURL);
+    info.addMember(m_finalURL);
     info.addMember(m_encodingFromCharsetRule);
     info.addVector(m_importRules);
     info.addInstrumentedVector(m_childRules);

@@ -6144,6 +6144,7 @@
 		F33F0282120947F200E5743A /* ScriptProfile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F33F0281120947F200E5743A /* ScriptProfile.cpp */; };
 		F33F053D120B0DA500E5743A /* InspectorDebuggerAgent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F33F053B120B0DA500E5743A /* InspectorDebuggerAgent.cpp */; };
 		F33F053E120B0DA500E5743A /* InspectorDebuggerAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = F33F053C120B0DA500E5743A /* InspectorDebuggerAgent.h */; };
+		F343A70A15D3F56E0032D016 /* SubstituteData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F343A70915D3F56E0032D016 /* SubstituteData.cpp */; };
 		F344C7141125B82C00F26EEE /* InspectorFrontendClient.h in Headers */ = {isa = PBXBuildFile; fileRef = F344C7121125B82C00F26EEE /* InspectorFrontendClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		F344C75311294D9D00F26EEE /* InspectorFrontendClientLocal.h in Headers */ = {isa = PBXBuildFile; fileRef = F344C75211294D9D00F26EEE /* InspectorFrontendClientLocal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		F344C75811294FF600F26EEE /* InspectorFrontendClientLocal.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F344C75711294FF600F26EEE /* InspectorFrontendClientLocal.cpp */; };
@@ -13487,6 +13488,7 @@
 		F33F0281120947F200E5743A /* ScriptProfile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScriptProfile.cpp; sourceTree = "<group>"; };
 		F33F053B120B0DA500E5743A /* InspectorDebuggerAgent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorDebuggerAgent.cpp; sourceTree = "<group>"; };
 		F33F053C120B0DA500E5743A /* InspectorDebuggerAgent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorDebuggerAgent.h; sourceTree = "<group>"; };
+		F343A70915D3F56E0032D016 /* SubstituteData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SubstituteData.cpp; sourceTree = "<group>"; };
 		F344C7121125B82C00F26EEE /* InspectorFrontendClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorFrontendClient.h; sourceTree = "<group>"; };
 		F344C75211294D9D00F26EEE /* InspectorFrontendClientLocal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorFrontendClientLocal.h; sourceTree = "<group>"; };
 		F344C75711294FF600F26EEE /* InspectorFrontendClientLocal.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorFrontendClientLocal.cpp; sourceTree = "<group>"; };
@@ -20563,6 +20565,7 @@
 				D000ED2611C1B9CD00C47726 /* SubframeLoader.h */,
 				93E227DF0AF589AD00D48324 /* SubresourceLoader.cpp */,
 				656D37300ADBA5DE00A4554D /* SubresourceLoader.h */,
+				F343A70915D3F56E0032D016 /* SubstituteData.cpp */,
 				659A7D120B6DB4D9001155B3 /* SubstituteData.h */,
 				1A8F6B010DB53006001DB794 /* SubstituteResource.h */,
 				F523D27802DE43D7018635CA /* TextResourceDecoder.cpp */,
@@ -28062,6 +28065,7 @@
 				F55B3DD31251F12D003EF269 /* SubmitInputType.cpp in Sources */,
 				93E227E40AF589AD00D48324 /* SubresourceLoader.cpp in Sources */,
 				7E37EF2E1339208800B29250 /* SubresourceLoaderCF.cpp in Sources */,
+				F343A70A15D3F56E0032D016 /* SubstituteData.cpp in Sources */,
 				93B2D8180F9920EE006AE6B2 /* SuddenTermination.mm in Sources */,
 				087558C513B4A57D00F49307 /* SurrogatePairAwareTextIterator.cpp in Sources */,
 				62C1217C11AB9E77003C462C /* SuspendableTimer.cpp in Sources */,

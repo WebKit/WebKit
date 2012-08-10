@@ -835,6 +835,7 @@ SOURCES += \
     loader/SinkDocument.cpp \
     loader/SubframeLoader.cpp \
     loader/SubresourceLoader.cpp \
+    loader/SubstituteData.cpp \
     loader/TextResourceDecoder.cpp \
     loader/ThreadableLoader.cpp \
     page/animation/AnimationBase.cpp \
@@ -1930,6 +1931,7 @@ HEADERS += \
     loader/ProgressTracker.h \
     loader/ResourceLoader.h \
     loader/SubresourceLoader.h \
+    loader/SubstituteData.h \
     loader/TextResourceDecoder.h \
     loader/TextTrackLoader.h \
     loader/ThreadableLoader.h \

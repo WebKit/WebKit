@@ -6094,6 +6094,12 @@ void Document::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     info.addInstrumentedMember(m_styleResolver);
     ContainerNode::reportMemoryUsage(memoryObjectInfo);
     info.addVector(m_customFonts);
+    info.addMember(m_url);
+    info.addMember(m_baseURL);
+    info.addMember(m_baseURLOverride);
+    info.addMember(m_baseElementURL);
+    info.addMember(m_cookieURL);
+    info.addMember(m_firstPartyForCookies);
     info.addMember(m_documentURI);
     info.addMember(m_baseTarget);
     info.addInstrumentedMember(m_frame);

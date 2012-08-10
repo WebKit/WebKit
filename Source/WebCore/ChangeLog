@@ -1,3 +1,47 @@
+2012-08-10  Yury Semikhatsky  <yurys@chromium.org>
+
+        Web Inspector: further ResourceLoader memory instrumentation
+        https://bugs.webkit.org/show_bug.cgi?id=93692
+
+        Reviewed by Vsevolod Vlasov.
+
+        Added missing parts to ResourceLoader and its descendants memory instrumentation.
+        Added special logic for KURL and report the urls where we have them in instrumented classes.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/StyleSheetContents.cpp:
+        (WebCore::StyleSheetContents::reportMemoryUsage):
+        * dom/Document.cpp:
+        (WebCore::Document::reportMemoryUsage):
+        * dom/MemoryInstrumentation.cpp:
+        (WebCore::MemoryInstrumentation::addObject):
+        (WebCore):
+        * dom/MemoryInstrumentation.h:
+        (WebCore):
+        (MemoryInstrumentation):
+        (WebCore::MemoryClassInfo::addMember):
+        * loader/MainResourceLoader.cpp:
+        (WebCore::MainResourceLoader::reportMemoryUsage):
+        (WebCore):
+        * loader/MainResourceLoader.h:
+        (MainResourceLoader):
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::reportMemoryUsage):
+        (WebCore):
+        * loader/SubresourceLoader.h:
+        (SubresourceLoader):
+        * loader/SubstituteData.cpp: Copied from Source/WebCore/dom/MemoryInstrumentation.cpp.
+        (WebCore):
+        (WebCore::SubstituteData::reportMemoryUsage):
+        * loader/SubstituteData.h:
+        (WebCore):
+        (SubstituteData):
+
 2012-08-10  Yoshifumi Inoue  <yosin@chromium.org>
 
         [Forms] Introduce shadow elements for multiple fields time input UI

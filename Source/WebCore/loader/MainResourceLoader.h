@@ -73,6 +73,8 @@ namespace WebCore {
 
         bool isLoadingMultipartContent() const { return m_loadingMultipartContent; }
 
+        virtual void reportMemoryUsage(MemoryObjectInfo*) const OVERRIDE;
+
     private:
         explicit MainResourceLoader(Frame*);
 
