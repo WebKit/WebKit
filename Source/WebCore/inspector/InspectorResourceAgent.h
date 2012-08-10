@@ -133,8 +133,6 @@ public:
     virtual void setUserAgentOverride(ErrorString*, const String& userAgent);
     virtual void setExtraHTTPHeaders(ErrorString*, const RefPtr<InspectorObject>&);
     virtual void getResponseBody(ErrorString*, const String& requestId, String* content, bool* base64Encoded);
-    // FIXME: this seems to be unsued.
-    void clearCache(ErrorString*, const String* const optionalPreservedLoaderId);
 
     virtual void canClearBrowserCache(ErrorString*, bool*);
     virtual void clearBrowserCache(ErrorString*);

@@ -1,3 +1,18 @@
+2012-08-09  Vivek Galatage  <vivekgalatage@gmail.com>
+
+        Web Inspector: Remove unused method InspectorResourceAgent::clearCache from Resource Agent.
+        https://bugs.webkit.org/show_bug.cgi?id=93675
+
+        Reviewed by Pavel Feldman.
+
+        Removing unused method declaration for clearCache in InspectorResourceAgent. It's marked as FIXME.
+        Hence cleaning up.
+
+        No new tests as cleanup.
+
+        * inspector/InspectorResourceAgent.h:
+        (InspectorResourceAgent):
+
 2012-08-09  Peter Rybin  <peter.rybin@gmail.com>
 
         Web Inspector: CodeGeneratorInspector.py: add complete support for TypeBuilder::Array
