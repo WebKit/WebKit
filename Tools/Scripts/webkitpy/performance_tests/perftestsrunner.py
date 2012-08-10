@@ -99,9 +99,9 @@ class PerfTestsRunner(object):
             optparse.make_option("--no-results", action="store_false", dest="generate_results", default=True,
                 help="Do no generate results JSON and results page."),
             optparse.make_option("--output-json-path",
-                help="Filename of the JSON file that summaries the results."),
+                help="Path to generate a JSON file at; may contain previous results if it already exists."),
             optparse.make_option("--source-json-path",
-                help="Path to a JSON file to be merged into the JSON file when --output-json-path is present."),
+                help="Only used on bots. Path to a JSON file to be merged into the JSON file when --output-json-path is present."),
             optparse.make_option("--description",
                 help="Add a description to the output JSON file if one is generated"),
             optparse.make_option("--no-show-results", action="store_false", default=True, dest="show_results",
@@ -168,12 +168,15 @@ class PerfTestsRunner(object):
 
         return unexpected
 
+    def _output_json_path(self):
+        output_json_path = self._options.output_json_path
+        if output_json_path:
+            return output_json_path
+        return self._host.filesystem.join(self._port.perf_results_directory(), self._DEFAULT_JSON_FILENAME)
+
     def _generate_and_show_results(self):
         options = self._options
-        output_json_path = options.output_json_path
-        if not output_json_path:
-            output_json_path = self._host.filesystem.join(self._port.perf_results_directory(), self._DEFAULT_JSON_FILENAME)
-
+        output_json_path = self._output_json_path()
         output = self._generate_results_dict(self._timestamp, options.description, options.platform, options.builder_name, options.build_number)
 
         if options.source_json_path:

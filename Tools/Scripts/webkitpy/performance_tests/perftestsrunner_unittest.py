@@ -105,6 +105,31 @@ stdev 11 ms
 min 1080 ms
 max 1120 ms
 """
+            elif driver_input.test_name.endswith('memory-test.html'):
+                text = """Running 20 times
+Ignoring warm-up run (1115)
+
+Time:
+avg 1100 ms
+median 1101 ms
+stdev 11 ms
+min 1080 ms
+max 1120 ms
+
+JS Heap:
+avg 832000 bytes
+median 829000 bytes
+stdev 15000 bytes
+min 811000 bytes
+max 848000 bytes
+
+FastMalloc:
+avg 532000 bytes
+median 529000 bytes
+stdev 13000 bytes
+min 511000 bytes
+max 548000 bytes
+"""
             return DriverOutput(text, '', '', '', crash=crash, timeout=timeout)
 
         def start(self):
@@ -122,6 +147,9 @@ max 1120 ms
         runner._host.filesystem.maybe_make_directory(runner._base_path, 'inspector')
         runner._host.filesystem.maybe_make_directory(runner._base_path, 'Bindings')
         runner._host.filesystem.maybe_make_directory(runner._base_path, 'Parser')
+
+        filesystem = runner._host.filesystem
+        runner.load_output_json = lambda: json.loads(filesystem.read_text_file(runner._output_json_path()))
         return runner, test_port
 
     def run_test(self, test_name):
@@ -227,6 +255,33 @@ max 1120 ms
         'median= 1101.0 ms, stdev= 11.0 ms, min= 1080.0 ms, max= 1120.0 ms',
         '', '']))
 
+    def test_run_memory_test(self):
+        runner, port = self.create_runner_and_setup_results_template()
+        runner._timestamp = 123456789
+        port.host.filesystem.write_text_file(runner._base_path + '/Parser/memory-test.html', 'some content')
+
+        output = OutputCapture()
+        output.capture_output()
+        try:
+            unexpected_result_count = runner.run()
+        finally:
+            stdout, stderr, log = output.restore_output()
+        self.assertEqual(unexpected_result_count, 0)
+        self.assertEqual(log, '\n'.join([
+            'Running 1 tests',
+            'Running Parser/memory-test.html (1 of 1)',
+            'RESULT Parser: memory-test= 1100.0 ms',
+            'median= 1101.0 ms, stdev= 11.0 ms, min= 1080.0 ms, max= 1120.0 ms',
+            'RESULT Parser: memory-test: JSHeap= 832000.0 bytes',
+            'median= 829000.0 bytes, stdev= 15000.0 bytes, min= 811000.0 bytes, max= 848000.0 bytes',
+            'RESULT Parser: memory-test: FastMalloc= 532000.0 bytes',
+            'median= 529000.0 bytes, stdev= 13000.0 bytes, min= 511000.0 bytes, max= 548000.0 bytes',
+            '', '']))
+        results = runner.load_output_json()[0]['results']
+        self.assertEqual(results['Parser/memory-test'], {'min': 1080.0, 'max': 1120.0, 'median': 1101.0, 'stdev': 11.0, 'avg': 1100.0, 'unit': 'ms'})
+        self.assertEqual(results['Parser/memory-test:JSHeap'], {'min': 811000.0, 'max': 848000.0, 'median': 829000.0, 'stdev': 15000.0, 'avg': 832000.0, 'unit': 'bytes'})
+        self.assertEqual(results['Parser/memory-test:FastMalloc'], {'min': 511000.0, 'max': 548000.0, 'median': 529000.0, 'stdev': 13000.0, 'avg': 532000.0, 'unit': 'bytes'})
+
     def _test_run_with_json_output(self, runner, filesystem, upload_suceeds=True, expected_exit_code=0):
         filesystem.write_text_file(runner._base_path + '/inspector/pass.html', 'some content')
         filesystem.write_text_file(runner._base_path + '/Bindings/event-target-wrapper.html', 'some content')
@@ -262,24 +317,25 @@ max 1120 ms
 
         return uploaded[0]
 
+    _event_target_wrapper_and_inspector_results = {
+        "Bindings/event-target-wrapper": {"max": 1510, "avg": 1489.05, "median": 1487, "min": 1471, "stdev": 14.46, "unit": "ms"},
+        "inspector/pass.html:group_name:test_name": 42}
+
     def test_run_with_json_output(self):
         runner, port = self.create_runner(args=['--output-json-path=/mock-checkout/output.json',
             '--test-results-server=some.host'])
         self._test_run_with_json_output(runner, port.host.filesystem)
-        self.assertEqual(json.loads(port.host.filesystem.read_text_file('/mock-checkout/output.json')), {
-            "timestamp": 123456789, "results":
-            {"Bindings/event-target-wrapper": {"max": 1510, "avg": 1489.05, "median": 1487, "min": 1471, "stdev": 14.46, "unit": "ms"},
-            "inspector/pass.html:group_name:test_name": 42},
+        self.assertEqual(runner.load_output_json(), {
+            "timestamp": 123456789, "results": self._event_target_wrapper_and_inspector_results,
             "webkit-revision": "5678", "branch": "webkit-trunk"})
 
     def test_run_with_description(self):
         runner, port = self.create_runner(args=['--output-json-path=/mock-checkout/output.json',
             '--test-results-server=some.host', '--description', 'some description'])
         self._test_run_with_json_output(runner, port.host.filesystem)
-        self.assertEqual(json.loads(port.host.filesystem.read_text_file('/mock-checkout/output.json')), {
-            "timestamp": 123456789, "description": "some description", "results":
-            {"Bindings/event-target-wrapper": {"max": 1510, "avg": 1489.05, "median": 1487, "min": 1471, "stdev": 14.46, "unit": "ms"},
-            "inspector/pass.html:group_name:test_name": 42},
+        self.assertEqual(runner.load_output_json(), {
+            "timestamp": 123456789, "description": "some description",
+            "results": self._event_target_wrapper_and_inspector_results,
             "webkit-revision": "5678", "branch": "webkit-trunk"})
 
     def create_runner_and_setup_results_template(self, args=[]):
@@ -309,9 +365,7 @@ max 1120 ms
         self._test_run_with_json_output(runner, port.host.filesystem)
 
         self.assertEqual(json.loads(port.host.filesystem.read_text_file(output_json_path)), [{
-            "timestamp": 123456789, "results":
-            {"Bindings/event-target-wrapper": {"max": 1510, "avg": 1489.05, "median": 1487, "min": 1471, "stdev": 14.46, "unit": "ms"},
-            "inspector/pass.html:group_name:test_name": 42},
+            "timestamp": 123456789, "results": self._event_target_wrapper_and_inspector_results,
             "webkit-revision": "5678", "branch": "webkit-trunk"}])
 
         self.assertTrue(filesystem.isfile(output_json_path))
@@ -324,9 +378,8 @@ max 1120 ms
         filesystem = port.host.filesystem
         self._test_run_with_json_output(runner, filesystem)
 
-        expected_entry = {"timestamp": 123456789, "results": {"Bindings/event-target-wrapper":
-            {"max": 1510, "avg": 1489.05, "median": 1487, "min": 1471, "stdev": 14.46, "unit": "ms"},
-            "inspector/pass.html:group_name:test_name": 42}, "webkit-revision": "5678", "branch": "webkit-trunk"}
+        expected_entry = {"timestamp": 123456789, "results": self._event_target_wrapper_and_inspector_results,
+            "webkit-revision": "5678", "branch": "webkit-trunk"}
 
         self.maxDiff = None
         json_output = port.host.filesystem.read_text_file('/mock-checkout/output.json')
@@ -371,12 +424,9 @@ max 1120 ms
             '--source-json-path=/mock-checkout/source.json', '--test-results-server=some.host'])
         port.host.filesystem.write_text_file('/mock-checkout/source.json', '{"key": "value"}')
         self._test_run_with_json_output(runner, port.host.filesystem)
-        self.assertEqual(json.loads(port.host.filesystem.files['/mock-checkout/output.json']), {
-            "timestamp": 123456789, "results":
-            {"Bindings/event-target-wrapper": {"max": 1510, "avg": 1489.05, "median": 1487, "min": 1471, "stdev": 14.46, "unit": "ms"},
-            "inspector/pass.html:group_name:test_name": 42},
-            "webkit-revision": "5678", "branch": "webkit-trunk",
-            "key": "value"})
+        self.assertEqual(runner.load_output_json(), {
+            "timestamp": 123456789, "results": self._event_target_wrapper_and_inspector_results,
+            "webkit-revision": "5678", "branch": "webkit-trunk", "key": "value"})
 
     def test_run_with_bad_json_source(self):
         runner, port = self.create_runner(args=['--output-json-path=/mock-checkout/output.json',
@@ -392,10 +442,8 @@ max 1120 ms
             '--test-results-server=some.host'])
         port.repository_paths = lambda: [('webkit', '/mock-checkout'), ('some', '/mock-checkout/some')]
         self._test_run_with_json_output(runner, port.host.filesystem)
-        self.assertEqual(json.loads(port.host.filesystem.files['/mock-checkout/output.json']), {
-            "timestamp": 123456789, "results":
-            {"Bindings/event-target-wrapper": {"max": 1510, "avg": 1489.05, "median": 1487, "min": 1471, "stdev": 14.46, "unit": "ms"},
-            "inspector/pass.html:group_name:test_name": 42.0},
+        self.assertEqual(runner.load_output_json(), {
+            "timestamp": 123456789, "results": self._event_target_wrapper_and_inspector_results,
             "webkit-revision": "5678", "some-revision": "5678", "branch": "webkit-trunk"})
 
     def test_run_with_upload_json(self):

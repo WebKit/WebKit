@@ -111,58 +111,64 @@ class PerfTest(object):
                 return True
         return False
 
+    _description_regex = re.compile(r'^Description: (?P<description>.*)$', re.IGNORECASE)
+    _result_classes = ['Time', 'JS Heap', 'FastMalloc']
+    _result_class_regex = re.compile(r'^(?P<resultclass>' + r'|'.join(_result_classes) + '):')
     _statistics_keys = ['avg', 'median', 'stdev', 'min', 'max', 'unit']
-    _result_classes = ['Time:', 'JS Heap:', 'FastMalloc:']
+    _score_regex = re.compile(r'^(?P<key>' + r'|'.join(_statistics_keys) + r')\s+(?P<value>[0-9\.]+)\s*(?P<unit>.*)')
 
     def parse_output(self, output):
-        got_a_result = False
         test_failed = False
-        results = dict([(name, dict()) for name in self._result_classes])
-        score_regex = re.compile(r'^(?P<key>' + r'|'.join(self._statistics_keys) + r')\s+(?P<value>[0-9\.]+)\s*(?P<unit>.*)')
-        description_regex = re.compile(r'^Description: (?P<description>.*)$', re.IGNORECASE)
+        results = {}
+        ordered_results_keys = []
+        test_name = re.sub(r'\.\w+$', '', self._test_name)
         description_string = ""
-        result_class_regex = re.compile(r'^(?P<resultclass>' + r'|'.join(self._result_classes) + ')')
-
         result_class = ""
         for line in re.split('\n', output.text):
-            description = description_regex.match(line)
+            description = self._description_regex.match(line)
             if description:
                 description_string = description.group('description')
                 continue
 
-            result_class_match = result_class_regex.match(line)
+            result_class_match = self._result_class_regex.match(line)
             if result_class_match:
                 result_class = result_class_match.group('resultclass')
                 continue
 
-            score = score_regex.match(line)
+            score = self._score_regex.match(line)
             if score:
                 key = score.group('key')
                 value = float(score.group('value'))
                 unit = score.group('unit')
-                results[result_class]['unit'] = unit
-                results[result_class][key] = value
+                name = test_name
+                if result_class != 'Time':
+                    name += ':' + result_class.replace(' ', '')
+                if name not in ordered_results_keys:
+                    ordered_results_keys.append(name)
+                results.setdefault(name, {})
+                results[name]['unit'] = unit
+                results[name][key] = value
                 continue
 
             if not self._should_ignore_line_in_parser_test_result(line):
                 test_failed = True
                 _log.error(line)
 
-        if test_failed or set(self._statistics_keys) != set(results[self._result_classes[0]].keys()):
+        if test_failed or set(self._statistics_keys) != set(results[test_name].keys()):
             return None
 
-        test_name = re.sub(r'\.\w+$', '', self._test_name)
-        self.output_statistics(test_name, results[self._result_classes[0]], description_string)
-        if results[self._result_classes[1]] and results[self._result_classes[2]]:
-            self.output_statistics(test_name + "/JSHeap", results[self._result_classes[1]])
-            self.output_statistics(test_name + "/FastMalloc", results[self._result_classes[2]])
-        return {test_name: results['Time:']}
+        for result_name in ordered_results_keys:
+            if result_name == test_name:
+                self.output_statistics(result_name, results[result_name], description_string)
+            else:
+                self.output_statistics(result_name, results[result_name])
+        return results
 
     def output_statistics(self, test_name, results, description_string=None):
         unit = results['unit']
         if description_string:
             _log.info('DESCRIPTION: %s' % description_string)
-        _log.info('RESULT %s= %s %s' % (test_name.replace('/', ': '), results['avg'], unit))
+        _log.info('RESULT %s= %s %s' % (test_name.replace(':', ': ').replace('/', ': '), results['avg'], unit))
         _log.info(', '.join(['%s= %s %s' % (key, results[key], unit) for key in self._statistics_keys[1:5]]))
 
 
@@ -174,7 +180,6 @@ class ChromiumStylePerfTest(PerfTest):
 
     def parse_output(self, output):
         test_failed = False
-        got_a_result = False
         results = {}
         for line in re.split('\n', output.text):
             resultLine = ChromiumStylePerfTest._chromium_style_result_regex.match(line)

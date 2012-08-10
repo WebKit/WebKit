@@ -1,3 +1,39 @@
+2012-08-10  Ryosuke Niwa  <rniwa@webkit.org>
+
+        run-perf-tests should upload memory statistics to perf-o-matic
+        https://bugs.webkit.org/show_bug.cgi?id=93690
+
+        Reviewed by Dirk Pranke.
+
+        Upload JS Heap and FastMalloc results for a test X/Y as: X/Y:JSHeap and X/Y:FastMalloc.
+        Note "JS Heap" is converted to the CamelCase JSHeap.
+
+        Also did some refactoring in PerfTest.parse_output and PerfTestRunnerTest and updated
+        some helps in PerfTest.parse_output per arv's comments.
+
+        * Scripts/webkitpy/performance_tests/perftest.py:
+        (PerfTest):
+        (PerfTest.parse_output): Include JSHeap and FastMalloc statistics in results as well as of Time.
+        Also refactored it to avoid hard-coding indices in _result_classes and moved complied regular
+        exressions out of the function to avoid re-compiling them every time the method runs.
+        (PerfTest.output_statistics): Convert ':' to ': ' as well as '/'.
+        (ChromiumStylePerfTest.parse_output): Removed an unused variable.
+        * Scripts/webkitpy/performance_tests/perftestsrunner.py:
+        (PerfTestsRunner._parse_args): Uploaded some helps per arv's feedback.
+        (PerfTestsRunner._output_json_path): Extracted from _generate_and_show_results to be used in
+        PerfTestRunnerTest.create_runner.
+        (PerfTestsRunner._generate_and_show_results):
+        * Scripts/webkitpy/performance_tests/perftestsrunner_unittest.py:
+        (create_runner): Extracted runner.load_output_json from various tests.
+        (test_run_memory_test): Added.
+        (PerfTestRunner): Extracted _event_target_wrapper_and_inspector_results from various tests.
+        (test_run_with_json_output):
+        (test_run_with_description):
+        (test_run_generates_json_by_default):
+        (test_run_generates_and_show_results_page):
+        (test_run_with_json_source):
+        (test_run_with_multiple_repositories):
+
 2012-08-10  Benjamin Poulain  <bpoulain@apple.com>
 
         Add support for String initialization from literal to WTFString
