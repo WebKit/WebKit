@@ -8,6 +8,7 @@ TimeStamp Properties:
         message : "MARK TIMELINE"
     }
     type : "TimeStamp"
+    frameId : <string>
     usedHeapSize : <number>
     totalHeapSize : <number>
     counters : <object>

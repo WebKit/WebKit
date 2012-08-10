@@ -121,12 +121,12 @@ public:
     void willEvaluateScript(const String&, int, Frame*);
     void didEvaluateScript();
 
-    void didTimeStamp(const String&);
+    void didTimeStamp(Frame*, const String&);
     void didMarkDOMContentEvent(Frame*);
     void didMarkLoadEvent(Frame*);
 
-    void time(const String&);
-    void timeEnd(const String&);
+    void time(Frame*, const String&);
+    void timeEnd(Frame*, const String&);
 
     void didScheduleResourceRequest(const String& url, Frame*);
     void willSendResourceRequest(unsigned long, const ResourceRequest&, Frame*);

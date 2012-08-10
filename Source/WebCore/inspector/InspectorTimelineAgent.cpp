@@ -378,19 +378,19 @@ void InspectorTimelineAgent::didFinishLoadingResource(unsigned long identifier, 
     appendRecord(TimelineRecordFactory::createResourceFinishData(IdentifiersFactory::requestId(identifier), didFail, finishTime * 1000), TimelineRecordType::ResourceFinish, false, frame);
 }
 
-void InspectorTimelineAgent::didTimeStamp(const String& message)
+void InspectorTimelineAgent::didTimeStamp(Frame* frame, const String& message)
 {
-    appendRecord(TimelineRecordFactory::createTimeStampData(message), TimelineRecordType::TimeStamp, true, 0);
+    appendRecord(TimelineRecordFactory::createTimeStampData(message), TimelineRecordType::TimeStamp, true, frame);
 }
 
-void InspectorTimelineAgent::time(const String& message)
+void InspectorTimelineAgent::time(Frame* frame, const String& message)
 {
-    appendRecord(TimelineRecordFactory::createTimeStampData(message), TimelineRecordType::Time, true, 0);
+    appendRecord(TimelineRecordFactory::createTimeStampData(message), TimelineRecordType::Time, true, frame);
 }
 
-void InspectorTimelineAgent::timeEnd(const String& message)
+void InspectorTimelineAgent::timeEnd(Frame* frame, const String& message)
 {
-    appendRecord(TimelineRecordFactory::createTimeStampData(message), TimelineRecordType::TimeEnd, true, 0);
+    appendRecord(TimelineRecordFactory::createTimeStampData(message), TimelineRecordType::TimeEnd, true, frame);
 }
 
 void InspectorTimelineAgent::didMarkDOMContentEvent(Frame* frame)

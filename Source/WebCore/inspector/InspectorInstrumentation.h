@@ -202,9 +202,9 @@ public:
     static void addMessageToConsole(WorkerContext*, MessageSource, MessageType, MessageLevel, const String& message, const String&, unsigned lineNumber);
 #endif
     static void consoleCount(Page*, PassRefPtr<ScriptArguments>, PassRefPtr<ScriptCallStack>);
-    static void startConsoleTiming(Page*, const String& title);
-    static void stopConsoleTiming(Page*, const String& title, PassRefPtr<ScriptCallStack>);
-    static void consoleTimeStamp(Page*, PassRefPtr<ScriptArguments>);
+    static void startConsoleTiming(Frame*, const String& title);
+    static void stopConsoleTiming(Frame*, const String& title, PassRefPtr<ScriptCallStack>);
+    static void consoleTimeStamp(Frame*, PassRefPtr<ScriptArguments>);
 
     static void didRequestAnimationFrame(Document*, int callbackId);
     static void didCancelAnimationFrame(Document*, int callbackId);
@@ -378,9 +378,9 @@ private:
     static void addMessageToConsoleImpl(InstrumentingAgents*, MessageSource, MessageType, MessageLevel, const String& message, PassRefPtr<ScriptArguments>, PassRefPtr<ScriptCallStack>);
     static void addMessageToConsoleImpl(InstrumentingAgents*, MessageSource, MessageType, MessageLevel, const String& message, const String& scriptId, unsigned lineNumber);
     static void consoleCountImpl(InstrumentingAgents*, PassRefPtr<ScriptArguments>, PassRefPtr<ScriptCallStack>);
-    static void startConsoleTimingImpl(InstrumentingAgents*, const String& title);
-    static void stopConsoleTimingImpl(InstrumentingAgents*, const String& title, PassRefPtr<ScriptCallStack>);
-    static void consoleTimeStampImpl(InstrumentingAgents*, PassRefPtr<ScriptArguments>);
+    static void startConsoleTimingImpl(InstrumentingAgents*, Frame*, const String& title);
+    static void stopConsoleTimingImpl(InstrumentingAgents*, Frame*, const String& title, PassRefPtr<ScriptCallStack>);
+    static void consoleTimeStampImpl(InstrumentingAgents*, Frame*, PassRefPtr<ScriptArguments>);
 
     static void didRequestAnimationFrameImpl(InstrumentingAgents*, int callbackId, Frame*);
     static void didCancelAnimationFrameImpl(InstrumentingAgents*, int callbackId, Frame*);

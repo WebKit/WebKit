@@ -81,28 +81,28 @@ inline void InspectorInstrumentation::consoleCount(Page* page, PassRefPtr<Script
 #endif
 }
 
-inline void InspectorInstrumentation::startConsoleTiming(Page* page, const String& title)
+inline void InspectorInstrumentation::startConsoleTiming(Frame* frame, const String& title)
 {
 #if ENABLE(INSPECTOR)
-    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForPage(page))
-        startConsoleTimingImpl(instrumentingAgents, title);
+    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForFrame(frame))
+        startConsoleTimingImpl(instrumentingAgents, frame, title);
 #endif
 }
 
-inline void InspectorInstrumentation::stopConsoleTiming(Page* page, const String& title, PassRefPtr<ScriptCallStack> stack)
+inline void InspectorInstrumentation::stopConsoleTiming(Frame* frame, const String& title, PassRefPtr<ScriptCallStack> stack)
 {
 #if ENABLE(INSPECTOR)
-    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForPage(page))
-        stopConsoleTimingImpl(instrumentingAgents, title, stack);
+    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForFrame(frame))
+        stopConsoleTimingImpl(instrumentingAgents, frame, title, stack);
 #endif
 }
 
-inline void InspectorInstrumentation::consoleTimeStamp(Page* page, PassRefPtr<ScriptArguments> arguments)
+inline void InspectorInstrumentation::consoleTimeStamp(Frame* frame, PassRefPtr<ScriptArguments> arguments)
 {
 #if ENABLE(INSPECTOR)
     FAST_RETURN_IF_NO_FRONTENDS(void());
-    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForPage(page))
-        consoleTimeStampImpl(instrumentingAgents, arguments);
+    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForFrame(frame))
+        consoleTimeStampImpl(instrumentingAgents, frame, arguments);
 #endif
 }
 

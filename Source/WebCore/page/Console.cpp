@@ -262,7 +262,7 @@ void Console::count(PassRefPtr<ScriptArguments> arguments, PassRefPtr<ScriptCall
 
 void Console::markTimeline(PassRefPtr<ScriptArguments> arguments, PassRefPtr<ScriptCallStack>)
 {
-    InspectorInstrumentation::consoleTimeStamp(page(), arguments);
+    InspectorInstrumentation::consoleTimeStamp(m_frame, arguments);
 }
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
@@ -308,7 +308,7 @@ void Console::profileEnd(const String& title, ScriptState* state, PassRefPtr<Scr
 
 void Console::time(const String& title)
 {
-    InspectorInstrumentation::startConsoleTiming(page(), title);
+    InspectorInstrumentation::startConsoleTiming(m_frame, title);
 #if PLATFORM(CHROMIUM)
     TRACE_EVENT_COPY_ASYNC_BEGIN0("webkit", title.utf8().data(), this);
 #endif
@@ -319,12 +319,12 @@ void Console::timeEnd(PassRefPtr<ScriptArguments>, PassRefPtr<ScriptCallStack> c
 #if PLATFORM(CHROMIUM)
     TRACE_EVENT_COPY_ASYNC_END0("webkit", title.utf8().data(), this);
 #endif
-    InspectorInstrumentation::stopConsoleTiming(page(), title, callStack);
+    InspectorInstrumentation::stopConsoleTiming(m_frame, title, callStack);
 }
 
 void Console::timeStamp(PassRefPtr<ScriptArguments> arguments, PassRefPtr<ScriptCallStack>)
 {
-    InspectorInstrumentation::consoleTimeStamp(page(), arguments);
+    InspectorInstrumentation::consoleTimeStamp(m_frame, arguments);
 }
 
 void Console::group(PassRefPtr<ScriptArguments> arguments, PassRefPtr<ScriptCallStack> callStack)

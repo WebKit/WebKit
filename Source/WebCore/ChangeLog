@@ -1,3 +1,35 @@
+2012-08-10  Andrey Kosyakov  <caseq@chromium.org>
+
+        Web Inspector: add frame ids to TimeStamp, Time and TimeEnd records in Timeline
+        https://bugs.webkit.org/show_bug.cgi?id=93699
+
+        Reviewed by Pavel Feldman.
+
+        - plumb Frame from Console to TimelineAgent and use it to add frameId to 3 timeline records;
+
+        * inspector/InspectorConsoleInstrumentation.h:
+        (WebCore::InspectorInstrumentation::startConsoleTiming):
+        (WebCore::InspectorInstrumentation::stopConsoleTiming):
+        (WebCore::InspectorInstrumentation::consoleTimeStamp):
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore):
+        (WebCore::InspectorInstrumentation::startConsoleTimingImpl):
+        (WebCore::InspectorInstrumentation::stopConsoleTimingImpl):
+        (WebCore::InspectorInstrumentation::consoleTimeStampImpl):
+        * inspector/InspectorInstrumentation.h:
+        (InspectorInstrumentation):
+        * inspector/InspectorTimelineAgent.cpp:
+        (WebCore::InspectorTimelineAgent::didTimeStamp):
+        (WebCore::InspectorTimelineAgent::time):
+        (WebCore::InspectorTimelineAgent::timeEnd):
+        * inspector/InspectorTimelineAgent.h:
+        (InspectorTimelineAgent):
+        * page/Console.cpp:
+        (WebCore::Console::markTimeline):
+        (WebCore::Console::time):
+        (WebCore::Console::timeEnd):
+        (WebCore::Console::timeStamp):
+
 2012-08-10  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] Fix failing assertions when using JSC C API in QObject bridge

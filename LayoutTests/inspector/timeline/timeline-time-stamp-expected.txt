@@ -8,6 +8,7 @@ TimeStamp Properties:
         message : "TIME STAMP"
     }
     type : "TimeStamp"
+    frameId : <string>
     usedHeapSize : <number>
     totalHeapSize : <number>
     counters : <object>
@@ -21,6 +22,7 @@ TimeStamp Properties:
         message : "TIME STAMP"
     }
     type : "TimeStamp"
+    frameId : <string>
     usedHeapSize : <number>
     totalHeapSize : <number>
     counters : <object>
