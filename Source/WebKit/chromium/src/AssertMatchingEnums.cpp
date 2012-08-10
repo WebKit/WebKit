@@ -49,11 +49,13 @@
 #include "GeolocationError.h"
 #include "GeolocationPosition.h"
 #include "HTMLInputElement.h"
+#include "IDBCursor.h"
 #include "IDBDatabaseException.h"
 #include "IDBFactoryBackendInterface.h"
 #include "IDBKey.h"
 #include "IDBKeyPath.h"
 #include "IDBMetadata.h"
+#include "IDBTransactionBackendInterface.h"
 #include "IceOptions.h"
 #include "IconURL.h"
 #include "MediaPlayer.h"
@@ -84,11 +86,13 @@
 #include "WebFontDescription.h"
 #include "WebGeolocationError.h"
 #include "WebGeolocationPosition.h"
+#include "WebIDBCursor.h"
 #include "WebIDBDatabaseException.h"
 #include "WebIDBFactory.h"
 #include "WebIDBKey.h"
 #include "WebIDBKeyPath.h"
 #include "WebIDBMetadata.h"
+#include "WebIDBTransaction.h"
 #include "WebIconURL.h"
 #include "WebInputElement.h"
 #include "WebMediaPlayer.h"
@@ -482,6 +486,14 @@ COMPILE_ASSERT_MATCHING_ENUM(WebIDBKeyPath::StringType, IDBKeyPath::StringType);
 COMPILE_ASSERT_MATCHING_ENUM(WebIDBKeyPath::ArrayType, IDBKeyPath::ArrayType);
 
 COMPILE_ASSERT_MATCHING_ENUM(WebIDBMetadata::NoIntVersion, IDBDatabaseMetadata::NoIntVersion);
+
+COMPILE_ASSERT_MATCHING_ENUM(WebIDBCursor::Next, IDBCursor::NEXT);
+COMPILE_ASSERT_MATCHING_ENUM(WebIDBCursor::NextNoDuplicate, IDBCursor::NEXT_NO_DUPLICATE);
+COMPILE_ASSERT_MATCHING_ENUM(WebIDBCursor::Prev, IDBCursor::PREV);
+COMPILE_ASSERT_MATCHING_ENUM(WebIDBCursor::PrevNoDuplicate, IDBCursor::PREV_NO_DUPLICATE);
+
+COMPILE_ASSERT_MATCHING_ENUM(WebIDBTransaction::PreemptiveTask, IDBTransactionBackendInterface::PreemptiveTask);
+COMPILE_ASSERT_MATCHING_ENUM(WebIDBTransaction::NormalTask, IDBTransactionBackendInterface::NormalTask);
 #endif
 
 #if ENABLE(FILE_SYSTEM)
