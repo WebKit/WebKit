@@ -58,6 +58,8 @@ const AtomicString& IDBVersionChangeRequest::interfaceName() const
 
 void IDBVersionChangeRequest::onBlocked()
 {
+    if (!shouldEnqueueEvent())
+        return;
     ASSERT(!m_errorCode && m_errorMessage.isNull() && !m_result);
     enqueueEvent(IDBVersionChangeEvent::create(m_version, eventNames().blockedEvent));
 }

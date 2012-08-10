@@ -108,14 +108,14 @@ public:
 protected:
     IDBRequest(ScriptExecutionContext*, PassRefPtr<IDBAny> source, IDBTransaction*);
     void enqueueEvent(PassRefPtr<Event>);
+    bool shouldEnqueueEvent() const;
+
     RefPtr<IDBAny> m_result;
     unsigned short m_errorCode;
     String m_errorMessage;
     RefPtr<DOMError> m_error;
 
 private:
-    bool shouldEnqueueEvent() const;
-
     // EventTarget
     virtual void refEventTarget() { ref(); }
     virtual void derefEventTarget() { deref(); }

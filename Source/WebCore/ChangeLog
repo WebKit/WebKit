@@ -1,3 +1,20 @@
+2012-08-09  David Grogan  <dgrogan@chromium.org>
+
+        IndexedDB: intversion-long-queue.html fails an assert
+        https://bugs.webkit.org/show_bug.cgi?id=92783
+
+        Reviewed by Tony Chang.
+
+        onBlocked needs the same shouldEnqueueEvent check that the other
+        event generators have.
+
+        Tests: intversion-long-queue is no longer skipped.
+
+        * Modules/indexeddb/IDBRequest.h:
+        (IDBRequest):
+        * Modules/indexeddb/IDBVersionChangeRequest.cpp:
+        (WebCore::IDBVersionChangeRequest::onBlocked):
+
 2012-08-09  Eric Penner  <epenner@google.com>
 
         [chromium] Paint animated layers immediately to avoid animation hiccups.

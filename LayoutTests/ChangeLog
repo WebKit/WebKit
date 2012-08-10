@@ -1,3 +1,17 @@
+2012-08-09  David Grogan  <dgrogan@chromium.org>
+
+        IndexedDB: intversion-long-queue.html fails an assert
+        https://bugs.webkit.org/show_bug.cgi?id=92783
+
+        Reviewed by Tony Chang.
+
+        * platform/chromium/TestExpectations:
+        * storage/indexeddb/intversion-long-queue-expected.txt:
+        Add some FAIL lines that will be fixed when patch from 92897 lands.
+        This patch doesn't actually change any behavior,
+        intversion-long-queue-expected.txt was generated with 92897 patched in
+        and the test was skipped so it didn't matter.
+
 2012-08-09  Julien Chaffraix  <jchaffraix@webkit.org>
 
         REGRESSION(r117339): cell in block-level table in inline-block are aligned with their last line box
