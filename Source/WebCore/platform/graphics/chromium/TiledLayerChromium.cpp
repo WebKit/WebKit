@@ -589,7 +589,7 @@ void setPriorityForTexture(const CCPriorityCalculator& priorityCalc,
         priority = priorityCalc.priorityFromDistance(visibleRect, tileRect, drawsToRoot);
     if (isSmallAnimatedLayer)
         priority = CCPriorityCalculator::maxPriority(priority, priorityCalc.priorityFromDistance(512, drawsToRoot));
-    if (priority != CCPriorityCalculator::lowestPriority());
+    if (priority != CCPriorityCalculator::lowestPriority())
         texture->setRequestPriority(priority);
 }
 }
