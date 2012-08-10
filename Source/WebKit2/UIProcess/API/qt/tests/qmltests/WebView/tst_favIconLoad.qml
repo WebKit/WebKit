@@ -36,7 +36,7 @@ TestWebView {
             compare(spy.count, 0)
             var url = Qt.resolvedUrl("../common/favicon.html")
             webView.url = url
-            verify(webView.waitForLoadSucceeded())
+            spy.wait()
             compare(spy.count, 1)
             compare(favicon.width, 48)
             compare(favicon.height, 48)
@@ -46,7 +46,7 @@ TestWebView {
             compare(spy.count, 0)
             var url = Qt.resolvedUrl("../common/favicon2.html?favicon=load should work with#whitespace!")
             webView.url = url
-            verify(webView.waitForLoadSucceeded())
+            spy.wait()
             compare(spy.count, 1)
             compare(favicon.width, 16)
             compare(favicon.height, 16)

@@ -1,3 +1,14 @@
+2012-08-10  Rafael Brandao  <rafael.lobo@openbossa.org>
+
+        [Qt] WebViewLoadFavIcon::test_favIconLoad() fails
+        https://bugs.webkit.org/show_bug.cgi?id=91888
+
+        Reviewed by Simon Hausmann.
+
+        * UIProcess/API/qt/tests/qmltests/WebView/tst_favIconLoad.qml:
+        We should wait for iconChanged signal instead of loadFinished,
+        there was no guarantee that at that point we would get it already.
+
 2012-08-10  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
 
         [Qt] Uninitialized flags in CoordinatedGraphicsLayer
