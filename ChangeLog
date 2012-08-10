@@ -1,3 +1,14 @@
+2012-08-10  Rob Buis  <rbuis@rim.com>
+
+        [BlackBerry] Enable relro link option for JSC executable
+        https://bugs.webkit.org/show_bug.cgi?id=93726
+
+        Reviewed by Yong Li.
+
+        Enable relro link option for JSC executable.
+
+        * Source/cmake/OptionsBlackBerry.cmake:
+
 2012-08-09  Raphael Kubo da Costa  <rakuco@webkit.org>
 
         [CMake] Bump minimum required version to 2.8.3.

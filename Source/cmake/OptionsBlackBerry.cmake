@@ -103,16 +103,16 @@ SET(CMAKE_SHARED_LIBRARY_CXX_FLAGS "-fPIC ${CMAKE_SHARED_LIBRARY_CXX_FLAGS}")
 
 # Show unresolved symbols when doing the final shared object link
 IF (PROFILING)
-    SET(BLACKBERRY_LINK_FLAGS "-Wl,-z,defs -Wl,-zrelro -Wl,-E")
+    SET(BLACKBERRY_LINK_FLAGS "-Wl,-z,defs -Wl,-z,relro -Wl,-E")
 ELSE (PROFILING)
-    SET(BLACKBERRY_LINK_FLAGS "-Wl,-z,defs -Wl,-zrelro")
+    SET(BLACKBERRY_LINK_FLAGS "-Wl,-z,defs -Wl,-z,relro")
 ENDIF ()
 
 # Set custom CFLAGS for our port
 IF (CMAKE_COMPILER_IS_GNUCC)
     SET(CMAKE_CXX_FLAGS "-fstack-protector -fno-rtti -Wformat -Wformat-security -Werror=format-security ${CMAKE_CXX_FLAGS}")
     SET(CMAKE_C_FLAGS "-fstack-protector -fno-rtti -Wformat -Wformat-security -Werror=format-security ${CMAKE_C_FLAGS}")
-    SET(JSC_LINK_FLAGS "-N1024K")
+    SET(JSC_LINK_FLAGS "-Wl,-z,defs -Wl,-z,relro -N1024K")
 ENDIF ()
 
 IF (PROFILING)
