@@ -1,3 +1,65 @@
+2012-08-10  Martin Leutelt  <martin.leutelt@basyskom.com>
+
+        [Qt] Dotted borders not drawn with rounded dots
+        https://bugs.webkit.org/show_bug.cgi?id=92383
+
+        Reviewed by Noam Rosenthal.
+
+        The dots in borders with dotted style were previously drawn with
+        rectangular dots. The CSS spec specifies that the dots should be
+        rounded dots. This patch fixes this behavior for the Qt port.
+
+        No new tests, existing ones have been updated with new expected
+        results.
+
+        * platform/qt/css2.1/t170602-bdr-conflct-w-04-d-expected.png:
+        * platform/qt/css2.1/t170602-bdr-conflct-w-14-d-expected.png:
+        * platform/qt/css2.1/t170602-bdr-conflct-w-24-d-expected.png:
+        * platform/qt/css2.1/t170602-bdr-conflct-w-34-d-expected.png:
+        * platform/qt/css2.1/t170602-bdr-conflct-w-41-d-expected.png:
+        * platform/qt/css2.1/t170602-bdr-conflct-w-42-d-expected.png:
+        * platform/qt/css2.1/t170602-bdr-conflct-w-43-d-expected.png:
+        * platform/qt/css2.1/t170602-bdr-conflct-w-44-d-expected.png:
+        * platform/qt/css2.1/t170602-bdr-conflct-w-49-d-expected.png:
+        * platform/qt/css2.1/t170602-bdr-conflct-w-94-d-expected.png:
+        * platform/qt/editing/inserting/editing-empty-divs-expected.png:
+        * platform/qt/fast/backgrounds/repeat/negative-offset-repeat-expected.png:
+        * platform/qt/fast/css/margin-top-bottom-dynamic-expected.png:
+        * platform/qt/fast/layers/opacity-outline-expected.png:
+        * platform/qt/fast/lists/ordered-list-with-no-ol-tag-expected.png:
+        * platform/qt/fast/multicol/progression-reverse-expected.png:
+        * platform/qt/fast/overflow/overflow-with-local-background-attachment-expected.png:
+        * platform/qt/fast/table/border-collapsing/001-expected.png:
+        * platform/qt/fast/table/border-collapsing/001-vertical-expected.png:
+        * platform/qt/svg/custom/no-inherited-dashed-stroke-expected.png:
+        * platform/qt/svg/transforms/svg-css-transforms-expected.png:
+        * platform/qt/tables/mozilla/bugs/bug22019-expected.png:
+        * platform/qt/tables/mozilla/bugs/bug2947-expected.png:
+        * platform/qt/tables/mozilla/bugs/bug6674-expected.png:
+        * platform/qt/tables/mozilla/marvin/backgr_layers-opacity-expected.png:
+        * platform/qt/tables/mozilla/marvin/backgr_position-table-expected.png:
+        * platform/qt/tables/mozilla/marvin/backgr_simple-table-cell-expected.png:
+        * platform/qt/tables/mozilla/marvin/backgr_simple-table-column-expected.png:
+        * platform/qt/tables/mozilla/marvin/backgr_simple-table-column-group-expected.png:
+        * platform/qt/tables/mozilla/marvin/backgr_simple-table-expected.png:
+        * platform/qt/tables/mozilla/marvin/backgr_simple-table-row-expected.png:
+        * platform/qt/tables/mozilla/marvin/backgr_simple-table-row-group-expected.png:
+        * platform/qt/tables/mozilla_expected_failures/marvin/backgr_border-table-cell-expected.png:
+        * platform/qt/tables/mozilla_expected_failures/marvin/backgr_border-table-column-expected.png:
+        * platform/qt/tables/mozilla_expected_failures/marvin/backgr_border-table-column-group-expected.png:
+        * platform/qt/tables/mozilla_expected_failures/marvin/backgr_border-table-expected.png:
+        * platform/qt/tables/mozilla_expected_failures/marvin/backgr_border-table-quirks-expected.png:
+        * platform/qt/tables/mozilla_expected_failures/marvin/backgr_border-table-row-expected.png:
+        * platform/qt/tables/mozilla_expected_failures/marvin/backgr_border-table-row-group-expected.png:
+        * platform/qt/tables/mozilla_expected_failures/marvin/backgr_fixed-bg-expected.png:
+        * platform/qt/tables/mozilla_expected_failures/marvin/backgr_layers-hide-expected.png:
+        * platform/qt/tables/mozilla_expected_failures/marvin/backgr_position-table-cell-expected.png:
+        * platform/qt/tables/mozilla_expected_failures/marvin/backgr_position-table-column-expected.png:
+        * platform/qt/tables/mozilla_expected_failures/marvin/backgr_position-table-column-group-expected.png:
+        * platform/qt/tables/mozilla_expected_failures/marvin/backgr_position-table-row-expected.png:
+        * platform/qt/tables/mozilla_expected_failures/marvin/backgr_position-table-row-group-expected.png:
+        * platform/qt/transforms/svg-vs-css-expected.png:
+
 2012-08-10  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: render arrays as dir in case they were logged into console prior to the front-end opening.

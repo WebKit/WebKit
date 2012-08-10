@@ -1,3 +1,23 @@
+2012-08-10  Martin Leutelt  <martin.leutelt@basyskom.com>
+
+        [Qt] Dotted borders not drawn with rounded dots
+        https://bugs.webkit.org/show_bug.cgi?id=92383
+
+        Reviewed by Noam Rosenthal.
+
+        The dots in borders with dotted style were previously drawn with
+        rectangular dots. The CSS spec specifies that the dots should be
+        rounded dots. This patch fixes this behavior for the Qt port.
+
+        No new tests, existing ones have been updated with new expected
+        results.
+
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        (WebCore::adjustPointsForDottedLine):
+        (WebCore):
+        (WebCore::drawLineEndpointsForStyle):
+        (WebCore::GraphicsContext::drawLine):
+
 2012-08-10  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: render arrays as dir in case they were logged into console prior to the front-end opening.
