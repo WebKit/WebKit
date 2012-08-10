@@ -224,6 +224,8 @@ sub SkipAttribute
 
     return 1 if $attribute->signature->type =~ /Constructor$/;
 
+    return 1 if $codeGenerator->IsTypedArrayType($attribute->signature->type);
+
     if ($codeGenerator->GetArrayType($attribute->signature->type)) {
         return 1;
     }

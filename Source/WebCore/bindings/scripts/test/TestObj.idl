@@ -67,6 +67,9 @@ module test {
         attribute [Reflect=customContentBooleanAttr] boolean reflectedCustomBooleanAttr;
         attribute [Reflect=customContentURLAttr, URL] DOMString reflectedCustomURLAttr;
 
+        // TypedArray attribute
+        attribute Float32Array typedArrayAttr;
+
         // Methods
         void    voidMethod();
         void    voidMethodWithArgs(in long longArg, in DOMString strArg, in TestObj objArg);

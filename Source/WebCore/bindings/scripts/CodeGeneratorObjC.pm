@@ -469,6 +469,7 @@ sub SkipAttribute
 
     $codeGenerator->AssertNotSequenceType($attribute->signature->type);
     return 1 if $codeGenerator->GetArrayType($attribute->signature->type);
+    return 1 if $codeGenerator->IsTypedArrayType($attribute->signature->type);
 
     # This is for DynamicsCompressorNode.idl
     if ($attribute->signature->name eq "release") {

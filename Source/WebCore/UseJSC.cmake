@@ -278,7 +278,6 @@ IF (ENABLE_WEB_AUDIO)
         bindings/js/JSAudioContextCustom.cpp
         bindings/js/JSConvolverNodeCustom.cpp
         bindings/js/JSJavaScriptAudioNodeCustom.cpp
-        bindings/js/JSWaveShaperNodeCustom.cpp
     )
 ENDIF ()
 

@@ -179,6 +179,8 @@ sub SkipAttribute {
         return 1;
     }
 
+    return 1 if $codeGenerator->IsTypedArrayType($propType);
+
     $codeGenerator->AssertNotSequenceType($propType);
 
     if ($codeGenerator->GetArrayType($propType)) {

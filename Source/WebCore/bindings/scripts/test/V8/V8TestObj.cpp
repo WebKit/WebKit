@@ -41,6 +41,7 @@
 #include "V8DOMStringList.h"
 #include "V8DOMWrapper.h"
 #include "V8Document.h"
+#include "V8Float32Array.h"
 #include "V8IsolatedContext.h"
 #include "V8Proxy.h"
 #include "V8SVGDocument.h"
@@ -55,6 +56,7 @@
 #include "V8c.h"
 #include "V8d.h"
 #include "V8e.h"
+#include <wtf/Float32Array.h>
 #include <wtf/GetPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
@@ -413,6 +415,22 @@ static void reflectedCustomURLAttrAttrSetter(v8::Local<v8::String> name, v8::Loc
     TestObj* imp = V8TestObj::toNative(info.Holder());
     STRING_TO_V8PARAMETER_EXCEPTION_BLOCK_VOID(V8Parameter<WithNullCheck>, v, value);
     imp->setAttribute(WebCore::HTMLNames::customContentURLAttrAttr, v);
+    return;
+}
+
+static v8::Handle<v8::Value> typedArrayAttrAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
+{
+    INC_STATS("DOM.TestObj.typedArrayAttr._get");
+    TestObj* imp = V8TestObj::toNative(info.Holder());
+    return toV8(imp->typedArrayAttr(), info.GetIsolate());
+}
+
+static void typedArrayAttrAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
+{
+    INC_STATS("DOM.TestObj.typedArrayAttr._set");
+    TestObj* imp = V8TestObj::toNative(info.Holder());
+    Float32Array* v = V8Float32Array::HasInstance(value) ? V8Float32Array::toNative(v8::Handle<v8::Object>::Cast(value)) : 0;
+    imp->setTypedArrayAttr(WTF::getPtr(v));
     return;
 }
 
@@ -1966,6 +1984,8 @@ static const BatchedAttribute TestObjAttrs[] = {
     {"reflectedCustomBooleanAttr", TestObjV8Internal::reflectedCustomBooleanAttrAttrGetter, TestObjV8Internal::reflectedCustomBooleanAttrAttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
     // Attribute 'reflectedCustomURLAttr' (Type: 'attribute' ExtAttr: 'URL Reflect')
     {"reflectedCustomURLAttr", TestObjV8Internal::reflectedCustomURLAttrAttrGetter, TestObjV8Internal::reflectedCustomURLAttrAttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
+    // Attribute 'typedArrayAttr' (Type: 'attribute' ExtAttr: '')
+    {"typedArrayAttr", TestObjV8Internal::typedArrayAttrAttrGetter, TestObjV8Internal::typedArrayAttrAttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
     // Attribute 'attrWithGetterException' (Type: 'attribute' ExtAttr: '')
     {"attrWithGetterException", TestObjV8Internal::attrWithGetterExceptionAttrGetter, TestObjV8Internal::attrWithGetterExceptionAttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
     // Attribute 'attrWithSetterException' (Type: 'attribute' ExtAttr: '')
