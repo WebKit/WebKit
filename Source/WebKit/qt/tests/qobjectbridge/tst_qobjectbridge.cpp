@@ -1417,7 +1417,7 @@ void tst_QObjectBridge::connectAndDisconnect()
         QCOMPARE(type, sError);
     }
 
-    evalJS("myHandler = function() { window.gotSignal = true; window.signalArgs = arguments; window.slotThisObject = this; window.signalSender = __qt_sender__; }");
+    evalJS("myHandler = function() { window.gotSignal = true; window.signalArgs = arguments; window.slotThisObject = this; }");
 
     QCOMPARE(evalJS("myObject.mySignal.connect(myHandler)"), sUndefined);
 
@@ -1425,7 +1425,6 @@ void tst_QObjectBridge::connectAndDisconnect()
     evalJS("myObject.mySignal()");
     QCOMPARE(evalJS("gotSignal"), sTrue);
     QCOMPARE(evalJS("signalArgs.length == 0"), sTrue);
-    QCOMPARE(evalJS("signalSender"), evalJS("myObject"));
     QCOMPARE(evalJS("slotThisObject == window"), sTrue);
 
     evalJS("gotSignal = false");
@@ -1489,7 +1488,6 @@ void tst_QObjectBridge::connectAndDisconnect()
     QCOMPARE(evalJS("gotSignal"), sTrue);
     QCOMPARE(evalJS("signalArgs.length == 0"), sTrue);
     QCOMPARE(evalJS("slotThisObject"), evalJS("otherObject"));
-    QCOMPARE(evalJS("signalSender"), evalJS("myObject"));
     QCOMPARE(evalJS("slotThisObject.name"), QLatin1String("foo"));
     QCOMPARE(evalJS("myObject.mySignal.disconnect(otherObject, myHandler)"), sUndefined);
 
@@ -1500,7 +1498,6 @@ void tst_QObjectBridge::connectAndDisconnect()
     QCOMPARE(evalJS("gotSignal"), sTrue);
     QCOMPARE(evalJS("signalArgs.length == 1"), sTrue);
     QCOMPARE(evalJS("slotThisObject == yetAnotherObject"), sTrue);
-    QCOMPARE(evalJS("signalSender == myObject"), sTrue);
     QCOMPARE(evalJS("slotThisObject.name"), QLatin1String("bar"));
     QCOMPARE(evalJS("myObject.mySignal2.disconnect(yetAnotherObject, myHandler)"), sUndefined);
 
@@ -1510,7 +1507,6 @@ void tst_QObjectBridge::connectAndDisconnect()
     QCOMPARE(evalJS("gotSignal"), sTrue);
     QCOMPARE(evalJS("signalArgs.length == 1"), sTrue);
     QCOMPARE(evalJS("slotThisObject == myObject"), sTrue);
-    QCOMPARE(evalJS("signalSender == myObject"), sTrue);
     QCOMPARE(evalJS("myObject.mySignal2.disconnect(myObject, myHandler)"), sUndefined);
 
     // connect(obj, string)

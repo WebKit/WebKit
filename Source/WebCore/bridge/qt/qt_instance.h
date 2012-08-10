@@ -85,9 +85,6 @@ public:
         QStack<QObject*> m_stack;
     };
 
-    // Used to implement '__qt_sender__'.
-    static QtSenderStack* qtSenderStack();
-
 private:
 
     class QtWeakObjectReference {

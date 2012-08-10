@@ -1,3 +1,20 @@
+2012-08-09  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Remove support for __qt_sender__ in QObject bridge
+        https://bugs.webkit.org/show_bug.cgi?id=93649
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Support for __qt_sender__ has also been removed from QtScript/QJSEngine. The right
+        JavaScript solution to the problem is Function.prototype.bind.
+
+        * Api/qwebframe.cpp:
+        (QWebFramePrivate::didClearWindowObject):
+        * Api/qwebframe_p.h:
+        (QWebFramePrivate):
+        * tests/qobjectbridge/tst_qobjectbridge.cpp:
+        (tst_QObjectBridge::connectAndDisconnect):
+
 2012-08-08  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] Port internal findMethodIndex method matcher to use JSC C API

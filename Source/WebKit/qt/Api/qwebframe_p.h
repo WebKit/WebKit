@@ -129,11 +129,6 @@ public:
 #if ENABLE(ORIENTATION_EVENTS)
     QOrientationSensor m_orientation;
 #endif // ENABLE(ORIENTATION_EVENTS).
-
-private:
-#if USE(JSC)
-    void addQtSenderToGlobalObject();
-#endif
 };
 
 class QWebHitTestResultPrivate {

@@ -488,43 +488,7 @@ void QWebFramePrivate::_q_orientationChanged()
 
 void QWebFramePrivate::didClearWindowObject()
 {
-    if (page->settings()->testAttribute(QWebSettings::JavascriptEnabled))
-        addQtSenderToGlobalObject();
     emit q->javaScriptWindowObjectCleared();
-}
-
-static JSValueRef qtSenderCallback(JSContextRef context, JSObjectRef, JSObjectRef, size_t, const JSValueRef[], JSValueRef*)
-{
-    QObject* sender = JSC::Bindings::QtInstance::qtSenderStack()->top();
-    if (!sender)
-        return JSValueMakeUndefined(context);
-
-    JSC::ExecState* exec = ::toJS(context);
-    RefPtr<JSC::Bindings::RootObject> rootObject = JSC::Bindings::findRootObject(exec->dynamicGlobalObject());
-    JSC::JSObject* jsSender = JSC::Bindings::QtInstance::getQtInstance(sender, rootObject, JSC::Bindings::QtInstance::QtOwnership)->createRuntimeObject(exec);
-    return ::toRef(jsSender);
-}
-
-void QWebFramePrivate::addQtSenderToGlobalObject()
-{
-    JSDOMWindow* window = toJSDOMWindow(frame, mainThreadNormalWorld());
-    Q_ASSERT(window);
-
-    JSC::ExecState* exec = window->globalExec();
-    Q_ASSERT(exec);
-    JSC::JSLockHolder lock(exec);
-
-    JSContextRef context = ::toRef(exec);
-    JSRetainPtr<JSStringRef> propertyName(Adopt, JSStringCreateWithUTF8CString("__qt_sender__"));
-    JSObjectRef function = JSObjectMakeFunctionWithCallback(context, propertyName.get(), qtSenderCallback);
-
-    // JSC public API doesn't support setting a Getter for a property of a given object, https://bugs.webkit.org/show_bug.cgi?id=61374.
-    JSC::PropertyDescriptor descriptor;
-    descriptor.setGetter(::toJS(function));
-    descriptor.setSetter(JSC::jsUndefined());
-    descriptor.setEnumerable(false);
-    descriptor.setConfigurable(false);
-    window->methodTable()->defineOwnProperty(window, exec, propertyName.get()->identifier(&exec->globalData()), descriptor, false);
 }
 
 /*!

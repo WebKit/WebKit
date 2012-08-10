@@ -1862,13 +1862,6 @@ int QtConnectionObject::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
 }
 // End of moc-generated code
 
-static bool isJavaScriptFunction(JSObjectRef object)
-{
-    CallData callData;
-    JSObject* jsObject = toJS(object);
-    return jsObject->methodTable()->getCallData(jsObject, callData) == CallTypeJS;
-}
-
 void QtConnectionObject::execute(void** argv)
 {
     QObject* sender = m_senderInstance->getObject();
@@ -1897,14 +1890,7 @@ void QtConnectionObject::execute(void** argv)
         args[i] = ::toRef(exec, convertQVariantToValue(exec, rootObject, QVariant(argType, argv[i+1])));
     }
 
-    const bool updateQtSender = isJavaScriptFunction(m_receiverFunction);
-    if (updateQtSender)
-        QtInstance::qtSenderStack()->push(QObject::sender());
-
     JSObjectCallAsFunction(m_context, m_receiverFunction, m_receiver, argc, args.data(), 0);
-
-    if (updateQtSender)
-        QtInstance::qtSenderStack()->pop();
 }
 
 bool QtConnectionObject::match(JSContextRef context, QObject* sender, int signalIndex, JSObjectRef receiver, JSObjectRef receiverFunction)
