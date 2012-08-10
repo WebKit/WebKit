@@ -1,3 +1,28 @@
+2012-08-09  Peter Rybin  <peter.rybin@gmail.com>
+
+        Web Inspector: CodeGeneratorInspector.py: add complete support for TypeBuilder::Array
+        https://bugs.webkit.org/show_bug.cgi?id=93559
+
+        Reviewed by Pavel Feldman.
+
+        Missing binding methods are added to templates. Core assert methods are declared in a helper class now.
+
+        * inspector/CodeGeneratorInspector.py:
+        (RawTypes.BaseType.generate_validate_method):
+        (RawTypes.BaseType.get_raw_validator_call_text):
+        (RawTypes.generate_validate_methods):
+        (RawTypes.Int.generate_validate_method):
+        (RawTypes.Int.get_raw_validator_call_text):
+        (RawTypes.Number.get_validate_method_params.ValidateMethodParams):
+        (RawTypes.Any.generate_validate_method):
+        (RawTypes.Any.get_raw_validator_call_text):
+        (RawTypes.Array.get_validate_method_params.ValidateMethodParams):
+        (RawTypes.Array.get_validate_method_params):
+        (PlainObjectBinding.get_validator_call_text):
+        (RuntimeCastHelper):
+        (Generator):
+        (Generator.go):
+
 2012-08-09  Sukolsak Sakshuwong  <sukolsak@google.com>
 
         Mouse-select then Cut, results in preceding character being lost

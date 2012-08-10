@@ -237,29 +237,11 @@ class RawTypes(object):
         @classmethod
         def request_raw_internal_runtime_cast(cls):
             if not cls.need_internal_runtime_cast_:
-                RawTypes.types_to_generate_validator_.append(cls)
                 cls.need_internal_runtime_cast_ = True
 
         @classmethod
-        def generate_validate_method(cls, writer):
-            params = cls.get_validate_method_params()
-            writer.newline("static void assert%s(InspectorValue* value)\n" % params.name)
-            writer.newline("{\n")
-            writer.newline("    ASSERT(value->type() == InspectorValue::Type%s);\n" % params.as_method_name)
-            writer.newline("}\n\n\n")
-
-        @classmethod
         def get_raw_validator_call_text(cls):
-            return "assert%s" % cls.get_validate_method_params().name
-
-    types_to_generate_validator_ = []
-
-    @classmethod
-    def generate_validate_methods(cls, writer):
-        for t in cls.types_to_generate_validator_:
-            if t.need_internal_runtime_cast_:
-                t.generate_validate_method(writer)
-
+            return "RuntimeCastHelper::assertType<InspectorValue::Type%s>" % cls.get_validate_method_params().template_type
 
     class String(BaseType):
         @staticmethod
@@ -279,8 +261,7 @@ class RawTypes(object):
         @staticmethod
         def get_validate_method_params():
             class ValidateMethodParams:
-                name = "String"
-                as_method_name = "String"
+                template_type = "String"
             return ValidateMethodParams
 
         @staticmethod
@@ -317,18 +298,8 @@ class RawTypes(object):
             return "number"
 
         @classmethod
-        def generate_validate_method(cls, writer):
-            writer.newline("static void assertInt(InspectorValue* value)\n")
-            writer.newline("{\n")
-            writer.newline("    double v;\n")
-            writer.newline("    bool castRes = value->asNumber(&v);\n")
-            writer.newline("    ASSERT_UNUSED(castRes, castRes);\n")
-            writer.newline("    ASSERT(static_cast<double>(static_cast<int>(v)) == v);\n")
-            writer.newline("}\n\n\n")
-
-        @classmethod
         def get_raw_validator_call_text(cls):
-            return "assertInt"
+            return "RuntimeCastHelper::assertInt"
 
         @staticmethod
         def get_output_pass_model():
@@ -366,8 +337,7 @@ class RawTypes(object):
         @staticmethod
         def get_validate_method_params():
             class ValidateMethodParams:
-                name = "Double"
-                as_method_name = "Number"
+                template_type = "Number"
             return ValidateMethodParams
 
         @staticmethod
@@ -404,8 +374,7 @@ class RawTypes(object):
         @staticmethod
         def get_validate_method_params():
             class ValidateMethodParams:
-                name = "Boolean"
-                as_method_name = "Boolean"
+                template_type = "Boolean"
             return ValidateMethodParams
 
         @staticmethod
@@ -448,8 +417,7 @@ class RawTypes(object):
         @staticmethod
         def get_validate_method_params():
             class ValidateMethodParams:
-                name = "Object"
-                as_method_name = "Object"
+                template_type = "Object"
             return ValidateMethodParams
 
         @staticmethod
@@ -484,15 +452,8 @@ class RawTypes(object):
             raise Exception("Unsupported")
 
         @staticmethod
-        def generate_validate_method(writer):
-            writer.newline("static void assertAny(InspectorValue*)\n")
-            writer.newline("{\n")
-            writer.newline("    // No-op.\n")
-            writer.newline("}\n\n\n")
-
-        @staticmethod
         def get_raw_validator_call_text():
-            return "assertAny"
+            return "RuntimeCastHelper::assertAny"
 
         @staticmethod
         def get_output_pass_model():
@@ -533,7 +494,9 @@ class RawTypes(object):
 
         @staticmethod
         def get_validate_method_params():
-            raise Exception("TODO")
+            class ValidateMethodParams:
+                template_type = "Array"
+            return ValidateMethodParams
 
         @staticmethod
         def get_output_pass_model():
@@ -1452,7 +1415,7 @@ class TypeBindings:
 
                     @staticmethod
                     def get_validator_call_text():
-                        return "assertObject"
+                        return "RuntimeCastHelper::assertType<InspectorValue::TypeObject>"
 
                     @classmethod
                     def get_array_item_c_type_text(cls):
@@ -2267,6 +2230,19 @@ inline int ExactlyInt::cast_to_int<int>(int i) { return i; }
 template<>
 inline int ExactlyInt::cast_to_int<unsigned int>(unsigned int i) { return i; }
 
+class RuntimeCastHelper {
+public:
+#if !ASSERT_DISABLED
+    template<InspectorValue::Type TYPE>
+    static void assertType(InspectorValue* value)
+    {
+        ASSERT(value->type() == TYPE);
+    }
+    static void assertAny(InspectorValue*);
+    static void assertInt(InspectorValue* value);
+#endif
+};
+
 
 // This class provides "Traits" type for the input type T. It is programmed using C++ template specialization
 // technique. By default it simply takes "ItemTraits" type from T, but it doesn't work with the base types.
@@ -2332,10 +2308,12 @@ struct StructItemTraits {
         array->pushValue(value);
     }
 
+#if """ + VALIDATOR_IFDEF_NAME + """
     template<typename T>
     static void assertCorrectValue(InspectorValue* value) {
         T::assertCorrectValue(value);
     }
+#endif  // !ASSERT_DISABLED
 };
 
 template<>
@@ -2345,6 +2323,13 @@ struct ArrayItemHelper<String> {
         {
             array->pushString(value);
         }
+
+#if """ + VALIDATOR_IFDEF_NAME + """
+        template<typename T>
+        static void assertCorrectValue(InspectorValue* value) {
+            RuntimeCastHelper::assertType<InspectorValue::TypeString>(value);
+        }
+#endif  // !ASSERT_DISABLED
     };
 };
 
@@ -2355,6 +2340,47 @@ struct ArrayItemHelper<int> {
         {
             array->pushInt(value);
         }
+
+#if """ + VALIDATOR_IFDEF_NAME + """
+        template<typename T>
+        static void assertCorrectValue(InspectorValue* value) {
+            RuntimeCastHelper::assertInt(value);
+        }
+#endif  // !ASSERT_DISABLED
+    };
+};
+
+template<>
+struct ArrayItemHelper<double> {
+    struct Traits {
+        static void pushRaw(InspectorArray* array, double value)
+        {
+            array->pushNumber(value);
+        }
+
+#if """ + VALIDATOR_IFDEF_NAME + """
+        template<typename T>
+        static void assertCorrectValue(InspectorValue* value) {
+            RuntimeCastHelper::assertType<InspectorValue::TypeNumber>(value);
+        }
+#endif  // !ASSERT_DISABLED
+    };
+};
+
+template<>
+struct ArrayItemHelper<bool> {
+    struct Traits {
+        static void pushRaw(InspectorArray* array, bool value)
+        {
+            array->pushBoolean(value);
+        }
+
+#if """ + VALIDATOR_IFDEF_NAME + """
+        template<typename T>
+        static void assertCorrectValue(InspectorValue* value) {
+            RuntimeCastHelper::assertType<InspectorValue::TypeBoolean>(value);
+        }
+#endif  // !ASSERT_DISABLED
     };
 };
 
@@ -2365,6 +2391,13 @@ struct ArrayItemHelper<InspectorValue> {
         {
             array->pushValue(value);
         }
+
+#if """ + VALIDATOR_IFDEF_NAME + """
+        template<typename T>
+        static void assertCorrectValue(InspectorValue* value) {
+            RuntimeCastHelper::assertAny(value);
+        }
+#endif  // !ASSERT_DISABLED
     };
 };
 
@@ -2375,6 +2408,30 @@ struct ArrayItemHelper<InspectorObject> {
         {
             array->pushValue(value);
         }
+
+#if """ + VALIDATOR_IFDEF_NAME + """
+        template<typename T>
+        static void assertCorrectValue(InspectorValue* value) {
+            RuntimeCastHelper::assertType<InspectorValue::TypeObject>(value);
+        }
+#endif  // !ASSERT_DISABLED
+    };
+};
+
+template<>
+struct ArrayItemHelper<InspectorArray> {
+    struct Traits {
+        static void pushRefPtr(InspectorArray* array, PassRefPtr<InspectorArray> value)
+        {
+            array->pushArray(value);
+        }
+
+#if """ + VALIDATOR_IFDEF_NAME + """
+        template<typename T>
+        static void assertCorrectValue(InspectorValue* value) {
+            RuntimeCastHelper::assertType<InspectorValue::TypeArray>(value);
+        }
+#endif  // !ASSERT_DISABLED
     };
 };
 
@@ -2385,6 +2442,13 @@ struct ArrayItemHelper<TypeBuilder::Array<T> > {
         {
             array->pushValue(value);
         }
+
+#if """ + VALIDATOR_IFDEF_NAME + """
+        template<typename S>
+        static void assertCorrectValue(InspectorValue* value) {
+            S::assertCorrectValue(value);
+        }
+#endif  // !ASSERT_DISABLED
     };
 };
 
@@ -2428,6 +2492,20 @@ String getEnumConstantValue(int code) {
 $implCode
 
 #if """ + VALIDATOR_IFDEF_NAME + """
+
+void TypeBuilder::RuntimeCastHelper::assertAny(InspectorValue*)
+{
+    // No-op.
+}
+
+
+void TypeBuilder::RuntimeCastHelper::assertInt(InspectorValue* value)
+{
+    double v;
+    bool castRes = value->asNumber(&v);
+    ASSERT_UNUSED(castRes, castRes);
+    ASSERT(static_cast<double>(static_cast<int>(v)) == v);
+}
 
 $validatorCode
 
@@ -2545,14 +2623,11 @@ class Generator:
     type_builder_fragments = []
     type_builder_forwards = []
     validator_impl_list = []
-    validator_impl_raw_types_list = []
     type_builder_impl_list = []
 
 
     @staticmethod
     def go():
-        Generator.validator_impl_list.append(Generator.validator_impl_raw_types_list)
-
         Generator.process_types(type_map)
 
         first_cycle_guardable_list_list = [
@@ -2624,8 +2699,6 @@ class Generator:
                 for l in reversed(first_cycle_guardable_list_list):
                     domain_guard.generate_close(l)
             Generator.backend_js_domain_initializer_list.append("\n")
-
-        RawTypes.generate_validate_methods(Writer(Generator.validator_impl_raw_types_list, ""))
 
     @staticmethod
     def process_event(json_event, domain_name, frontend_method_declaration_lines):
