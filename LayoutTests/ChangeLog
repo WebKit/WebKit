@@ -1,3 +1,9 @@
+2012-08-09  Yuta Kitamura  <yutak@chromium.org>
+
+        Unreviewed. Remove duplicate test expectation entry causing a lint error.
+
+        * platform/chromium/TestExpectations:
+
 2012-08-09  Xianzhu Wang  <wangxianzhu@chromium.org>
 
         [Chromium-Android] Skip layout tests directories that are not applicable
