@@ -141,7 +141,7 @@ sub AddIncludesForType
 
     # When we're finished with the one-file-per-class
     # reorganization, we won't need these special cases.
-    if (IsTypedArrayType($type)) {
+    if ($codeGenerator->IsTypedArrayType($type)) {
         AddToImplIncludes("wtf/${type}.h");
     }
     if (!$codeGenerator->IsPrimitiveType($type) and !$codeGenerator->IsStringType($type) and !$codeGenerator->SkipIncludeHeader($type) and $type ne "Date") {
@@ -337,7 +337,7 @@ sub GenerateHeader
 
     push(@headerContent, "\n");
     push(@headerContent, "class FloatRect;\n") if $svgPropertyType && $svgPropertyType eq "FloatRect";
-    push(@headerContent, "class Dictionary;\n") if IsConstructorTemplate($dataNode, "Event");
+    push(@headerContent, "class Dictionary;\n") if $codeGenerator->IsConstructorTemplate($dataNode, "Event");
 
     my $nativeType = GetNativeTypeForConversions($dataNode, $interfaceName);
     if ($dataNode->extendedAttributes->{"NamedConstructor"}) {
@@ -543,7 +543,7 @@ inline v8::Handle<v8::Value> toV8(PassRefPtr< ${nativeType} > impl, v8::Isolate*
 }
 END
 
-    if (IsConstructorTemplate($dataNode, "Event")) {
+    if ($codeGenerator->IsConstructorTemplate($dataNode, "Event")) {
         push(@headerContent, "\nbool fill${implClassName}Init(${implClassName}Init&, const Dictionary&);\n");
     }
 
@@ -584,7 +584,7 @@ sub GetHeaderClassInclude
     if ($className =~ /SVGPathSeg/) {
         $className =~ s/Abs|Rel//;
     }
-    return "wtf/${className}.h" if IsTypedArrayType($className);
+    return "wtf/${className}.h" if $codeGenerator->IsTypedArrayType($className);
     return "" if ($codeGenerator->SkipIncludeHeader($className));
     return "${className}.h";
 }
@@ -726,14 +726,6 @@ sub IsConstructable
     my $dataNode = shift;
 
     return $dataNode->extendedAttributes->{"CustomConstructor"} || $dataNode->extendedAttributes->{"V8CustomConstructor"} || $dataNode->extendedAttributes->{"Constructor"} || $dataNode->extendedAttributes->{"ConstructorTemplate"};
-}
-
-sub IsConstructorTemplate
-{
-    my $dataNode = shift;
-    my $template = shift;
-
-    return $dataNode->extendedAttributes->{"ConstructorTemplate"} && $dataNode->extendedAttributes->{"ConstructorTemplate"} eq $template;
 }
 
 sub GenerateDomainSafeFunctionGetter
@@ -1390,7 +1382,7 @@ sub GenerateParametersCheckExpression
         } elsif ($parameter->extendedAttributes->{"Callback"}) {
             # For Callbacks only checks if the value is null or object.
             push(@andExpression, "(${value}->IsNull() || ${value}->IsFunction())");
-        } elsif (IsArrayType($type) || $codeGenerator->GetSequenceType($type)) {
+        } elsif ($codeGenerator->IsArrayType($type) || $codeGenerator->GetSequenceType($type)) {
             # FIXME: Add proper support for T[], T[]?, sequence<T>.
             if ($parameter->isNullable) {
                 push(@andExpression, "(${value}->IsNull() || ${value}->IsArray())");
@@ -2515,17 +2507,6 @@ sub GenerateImplementationMasqueradesAsUndefined
     }
 }
 
-sub IsTypedArrayType
-{
-    my $type = shift;
-    return 1 if (($type eq "ArrayBuffer") or ($type eq "ArrayBufferView"));
-    return 1 if (($type eq "Uint8Array") or ($type eq "Uint8ClampedArray") or ($type eq "Uint16Array") or ($type eq "Uint32Array"));
-    return 1 if (($type eq "Int8Array") or ($type eq "Int16Array") or ($type eq "Int32Array"));
-    return 1 if (($type eq "Float32Array") or ($type eq "Float64Array"));
-    return 0;
-}
-
-
 sub GenerateImplementation
 {
     my $object = shift;
@@ -2798,9 +2779,9 @@ END
         GenerateNamedConstructorCallback($dataNode->constructor, $dataNode, $interfaceName);
     } elsif ($dataNode->extendedAttributes->{"Constructor"} && !($dataNode->extendedAttributes->{"V8CustomConstructor"} || $dataNode->extendedAttributes->{"CustomConstructor"})) {
         GenerateConstructorCallback($dataNode->constructor, $dataNode, $interfaceName);
-    } elsif (IsConstructorTemplate($dataNode, "Event")) {
+    } elsif ($codeGenerator->IsConstructorTemplate($dataNode, "Event")) {
         GenerateEventConstructorCallback($dataNode, $interfaceName);
-    } elsif (IsConstructorTemplate($dataNode, "TypedArray")) {
+    } elsif ($codeGenerator->IsConstructorTemplate($dataNode, "TypedArray")) {
         GenerateTypedArrayConstructorCallback($dataNode, $interfaceName);
     }
 
@@ -4005,13 +3986,6 @@ sub GetTypeNameOfExternalTypedArray
     return "v8::kExternalDoubleArray" if $viewType eq "double" and $interfaceName eq "Float64Array";
 
     die "TypedArray of unknown type is found";
-}
-
-sub IsArrayType
-{
-    my $type = $codeGenerator->StripModule(shift);
-    # FIXME: Add proper support for T[], T[]?, sequence<T>.
-    return $type =~ m/\[\]$/;
 }
 
 sub IsDOMNodeType
