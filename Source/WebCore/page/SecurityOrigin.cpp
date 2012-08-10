@@ -133,6 +133,7 @@ SecurityOrigin::SecurityOrigin(const KURL& url)
     , m_isUnique(false)
     , m_universalAccess(false)
     , m_domainWasSetInDOM(false)
+    , m_blockThirdPartyStorage(false)
     , m_enforceFilePathSeparation(false)
     , m_needsDatabaseIdentifierQuirkForFiles(false)
 {
@@ -158,6 +159,7 @@ SecurityOrigin::SecurityOrigin()
     , m_universalAccess(false)
     , m_domainWasSetInDOM(false)
     , m_canLoadLocalResources(false)
+    , m_blockThirdPartyStorage(false)
     , m_enforceFilePathSeparation(false)
     , m_needsDatabaseIdentifierQuirkForFiles(false)
 {
@@ -174,6 +176,7 @@ SecurityOrigin::SecurityOrigin(const SecurityOrigin* other)
     , m_universalAccess(other->m_universalAccess)
     , m_domainWasSetInDOM(other->m_domainWasSetInDOM)
     , m_canLoadLocalResources(other->m_canLoadLocalResources)
+    , m_blockThirdPartyStorage(other->m_blockThirdPartyStorage)
     , m_enforceFilePathSeparation(other->m_enforceFilePathSeparation)
     , m_needsDatabaseIdentifierQuirkForFiles(other->m_needsDatabaseIdentifierQuirkForFiles)
 {
@@ -388,6 +391,17 @@ bool SecurityOrigin::canDisplay(const KURL& url) const
     return true;
 }
 
+bool SecurityOrigin::canAccessLocalStorage(const SecurityOrigin* topOrigin) const
+{
+    if (isUnique())
+        return false;
+
+    if (m_blockThirdPartyStorage && topOrigin->isThirdParty(this))
+        return false;
+
+    return true;
+}
+
 SecurityOrigin::Policy SecurityOrigin::canShowNotifications() const
 {
     if (m_universalAccess)
@@ -395,6 +409,20 @@ SecurityOrigin::Policy SecurityOrigin::canShowNotifications() const
     if (isUnique())
         return AlwaysDeny;
     return Ask;
+}
+
+bool SecurityOrigin::isThirdParty(const SecurityOrigin* child) const
+{
+    if (child->m_universalAccess)
+        return false;
+
+    if (this == child)
+        return false;
+
+    if (isUnique() || child->isUnique())
+        return true;
+
+    return !isSameSchemeHostPort(child);
 }
 
 void SecurityOrigin::grantLoadLocalResources()

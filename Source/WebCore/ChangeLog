@@ -1,3 +1,38 @@
+2012-08-09  Jeffrey Pfau  <jpfau@apple.com>
+
+        Allow blocking of third-party localStorage and sessionStorage
+        https://bugs.webkit.org/show_bug.cgi?id=93390
+
+        Reviewed by Adam Barth.
+
+        Add checks for if a page is third-party and third-party storage blocking is enabled while accessing storage.
+
+        Tests: http/tests/security/cross-origin-local-storage-allowed.html
+               http/tests/security/cross-origin-local-storage.html
+               http/tests/security/cross-origin-session-storage-allowed.html
+               http/tests/security/cross-origin-session-storage.html
+               http/tests/security/same-origin-document-domain-storage-allowed.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::initSecurityContext): Initialize securityOrigin with knowledge of if we should block third-party storage.
+        * page/DOMWindow.cpp: Check if the origin trying to access storage is third-party relative to the top document.
+        (WebCore::DOMWindow::sessionStorage):
+        (WebCore::DOMWindow::localStorage):
+        * page/SecurityOrigin.cpp: Add a call in Security origin to see if another origin counts as a third-party.
+        (WebCore::SecurityOrigin::SecurityOrigin):
+        (WebCore::SecurityOrigin::canAccessLocalStorage):
+        (WebCore):
+        (WebCore::SecurityOrigin::isThirdParty):
+        * page/SecurityOrigin.h:
+        (WebCore::SecurityOrigin::blockThirdPartyStorage):
+        (SecurityOrigin):
+        * testing/InternalSettings.cpp: Add an internals.settings hook for setting third-party storage blocking enabled.
+        (WebCore::InternalSettings::setThirdPartyStorageBlockingEnabled):
+        (WebCore):
+        * testing/InternalSettings.h:
+        (InternalSettings):
+        * testing/InternalSettings.idl:
+
 2012-08-10  Arko Saha  <arko@motorola.com>
 
         REGRESSION(r125159): ASSERTION FAILED: m_listsInvalidatedAtDocument.contains(list) in Document::unregisterNodeListCache.

@@ -620,4 +620,10 @@ void InternalSettings::setMemoryInfoEnabled(bool enabled, ExceptionCode& ec)
     settings()->setMemoryInfoEnabled(enabled);
 }
 
+void InternalSettings::setThirdPartyStorageBlockingEnabled(bool enabled, ExceptionCode& ec)
+{
+    InternalSettingsGuardForSettings();
+    settings()->setThirdPartyStorageBlockingEnabled(enabled);
+}
+
 }

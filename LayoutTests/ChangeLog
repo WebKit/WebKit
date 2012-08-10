@@ -1,3 +1,26 @@
+2012-08-09  Jeffrey Pfau  <jpfau@apple.com>
+
+        Allow blocking of third-party localStorage and sessionStorage
+        https://bugs.webkit.org/show_bug.cgi?id=93390
+
+        Reviewed by Adam Barth.
+
+        Created tests for testing accessing localStorage and selfStorage from a third party and first party when third-party blocking is on and off.
+
+        * http/tests/security/cross-origin-local-storage-allowed-expected.txt: Added.
+        * http/tests/security/cross-origin-local-storage-allowed.html: Added.
+        * http/tests/security/cross-origin-local-storage-expected.txt: Added.
+        * http/tests/security/cross-origin-local-storage.html: Added.
+        * http/tests/security/cross-origin-session-storage-allowed-expected.txt: Added.
+        * http/tests/security/cross-origin-session-storage-allowed.html: Added.
+        * http/tests/security/cross-origin-session-storage-expected.txt: Added.
+        * http/tests/security/cross-origin-session-storage.html: Added.
+        * http/tests/security/same-origin-document-domain-storage-allowed-expected.html: Added.
+        * http/tests/security/same-origin-document-domain-storage-allowed.html: Added.
+        * http/tests/security/resources/document-domain-iframe-for-local-storage.html: Added.
+        * http/tests/security/resources/cross-origin-iframe-for-local-storage.html: Added.
+        * http/tests/security/resources/cross-origin-iframe-for-session-storage.html: Added.
+
 2012-08-10  Arko Saha  <arko@motorola.com>
 
         REGRESSION(r125159): ASSERTION FAILED: m_listsInvalidatedAtDocument.contains(list) in Document::unregisterNodeListCache.

@@ -5015,6 +5015,8 @@ void Document::initSecurityContext()
                 securityOrigin()->enforceFilePathSeparation();
             }
         }
+        if (settings->thirdPartyStorageBlockingEnabled())
+            securityOrigin()->blockThirdPartyStorage();
     }
 
     Document* parentDocument = ownerElement() ? ownerElement()->document() : 0;
