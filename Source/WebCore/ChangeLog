@@ -1,3 +1,23 @@
+2012-08-10  Tony Chang  <tony@chromium.org>
+
+        implement display: -webkit-inline-flex
+        https://bugs.webkit.org/show_bug.cgi?id=77772
+
+        Reviewed by Ojan Vafai.
+
+        The crashes last time were because we were marking too much of the tree for relayout. During some editing
+        operations, this causes a layout when we're in an inconsistent state.
+
+        Tests: css3/flexbox/inline-flex-crash.html
+               css3/flexbox/inline-flex-crash2.html
+               css3/flexbox/inline-flex.html
+
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::computeMainAxisPreferredSizes): Only layout the child.
+        (WebCore::RenderFlexibleBox::layoutAndPlaceChildren): Only layout the child.
+        (WebCore::RenderFlexibleBox::applyStretchAlignmentToChild): Only layout the child.
+        * rendering/style/RenderStyle.h: Include INLINE_FLEX as an inline and replaced display type.
+
 2012-08-10  Vineet Chaudhary  <rgf748@motorola.com>
 
         Moving the common code from CodegeneratorJS/V8.pm to Codegenerator.pm

@@ -1,3 +1,19 @@
+2012-08-10  Tony Chang  <tony@chromium.org>
+
+        implement display: -webkit-inline-flex
+        https://bugs.webkit.org/show_bug.cgi?id=77772
+
+        Reviewed by Ojan Vafai.
+
+        Include 2 crash tests that caused this to be reverted the last time.
+
+        * css3/flexbox/inline-flex-crash-expected.txt: Added.
+        * css3/flexbox/inline-flex-crash.html: Added.
+        * css3/flexbox/inline-flex-crash2-expected.txt: Added.
+        * css3/flexbox/inline-flex-crash2.html: Added.
+        * css3/flexbox/inline-flex-expected.html: Added.
+        * css3/flexbox/inline-flex.html: Added.
+
 2012-08-10  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed GTK gardening, rebaselining after r125167.

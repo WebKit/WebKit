@@ -780,7 +780,7 @@ void RenderFlexibleBox::computeMainAxisPreferredSizes(bool relayoutChildren, Ord
         Length childMainAxisMin = isHorizontalFlow() ? child->style()->minWidth() : child->style()->minHeight();
         if (hasOrthogonalFlow(child) && (flexBasisForChild(child).isAuto() || childMainAxisMin.isAuto())) {
             if (!relayoutChildren)
-                child->setChildNeedsLayout(true);
+                child->setChildNeedsLayout(true, MarkOnlyThis);
             child->layoutIfNeeded();
         }
 
@@ -1019,7 +1019,7 @@ void RenderFlexibleBox::layoutAndPlaceChildren(LayoutUnit& crossAxisOffset, cons
         LayoutUnit childPreferredSize = childSizes[i] + mainAxisBorderAndPaddingExtentForChild(child);
         setLogicalOverrideSize(child, childPreferredSize);
         // FIXME: Can avoid laying out here in some cases. See https://webkit.org/b/87905.
-        child->setChildNeedsLayout(true);
+        child->setChildNeedsLayout(true, MarkOnlyThis);
         child->layoutIfNeeded();
 
         updateAutoMarginsInMainAxis(child, autoMarginOffset);
@@ -1243,14 +1243,14 @@ void RenderFlexibleBox::applyStretchAlignmentToChild(RenderBox* child, LayoutUni
         if (child->logicalHeight() != logicalHeightBefore) {
             child->setOverrideLogicalContentHeight(child->logicalHeight() - child->borderAndPaddingLogicalHeight());
             child->setLogicalHeight(0);
-            child->setChildNeedsLayout(true);
+            child->setChildNeedsLayout(true, MarkOnlyThis);
             child->layoutIfNeeded();
         }
     } else if (isColumnFlow() && child->style()->logicalWidth().isAuto() && isMultiline()) {
         // FIXME: Handle min-width and max-width.
         LayoutUnit childWidth = lineCrossAxisExtent - crossAxisMarginExtentForChild(child);
         child->setOverrideLogicalContentWidth(std::max(ZERO_LAYOUT_UNIT, childWidth));
-        child->setChildNeedsLayout(true);
+        child->setChildNeedsLayout(true, MarkOnlyThis);
         child->layoutIfNeeded();
     }
 }
