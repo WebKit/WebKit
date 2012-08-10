@@ -4,8 +4,8 @@ layer at (0,0) size 800x34529475 backgroundClip at (0,0) size 800x17895697 clip 
   RenderBlock {HTML} at (0,0) size 800x34529476
     RenderBody {BODY} at (8,8) size 784x34529460
       RenderBlock {DIV} at (0,0) size 784x11509821
-      RenderBlock {DIV} at (0,11509823) size 784x23019636
-      RenderBlock {DIV} at (0,34529460) size 784x0
+      RenderBlock {DIV} at (0,11509823) size 784x23019637
+      RenderBlock {DIV} at (0,34529461) size 784x1
 layer at (10,10) size 161x11509817 clip at (11,11) size 159x11509815
   RenderTextControl {TEXTAREA} at (2,1) size 161x11509818 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
     RenderBlock {DIV} at (3,3) size 155x13

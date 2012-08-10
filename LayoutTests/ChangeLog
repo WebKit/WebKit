@@ -1,3 +1,13 @@
+2012-08-10  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
+
+        Unreviewed gardening, rebaselining marked tests from r125167.
+
+        * platform/chromium-mac/fast/block/float/overhanging-tall-block-expected.txt:
+        * platform/chromium-win/fast/block/float/overhanging-tall-block-expected.txt:
+        * platform/chromium/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/mac/fast/block/float/overhanging-tall-block-expected.txt:
+
 2012-08-10  Tony Chang  <tony@chromium.org>
 
         implement display: -webkit-inline-flex
