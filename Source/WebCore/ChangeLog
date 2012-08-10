@@ -1,3 +1,21 @@
+2012-08-10  Abhishek Arya  <inferno@chromium.org>
+
+        Crash on accessing a removed layout root in FrameView::scheduleRelayout.
+        https://bugs.webkit.org/show_bug.cgi?id=91368
+
+        Reviewed by Levi Weintraub.
+
+        We were calling setNeedsLayoutAndPrefWidthsRecalc() in RenderBlock::collapseAnonymousBoxChild
+        even when documentBeingDestroyed() was true. This ends up accessing stale layout root and bypasses
+        mitigation added in r109406. There is no need to waste time merging up anonymous blocks in
+        RenderBlock::removeChild when documentBeingDestroyed() is true.
+
+        No new tests. The test is time sensitive, requires a bunch of reloads, and only reproduces on chromium linux.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::collapseAnonymousBoxChild):
+        (WebCore::RenderBlock::removeChild):
+
 2012-08-10  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/11855229> When in paginated mode, the layout timer fires continually
