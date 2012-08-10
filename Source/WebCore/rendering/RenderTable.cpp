@@ -1206,16 +1206,33 @@ void RenderTable::updateFirstLetter()
 {
 }
 
-enum LineBox { FirstLineBox, LastLineBox };
-
-static LayoutUnit getLineBoxBaseline(const RenderTable* table, LineBox lineBox)
+LayoutUnit RenderTable::baselinePosition(FontBaseline baselineType, bool firstLine, LineDirectionMode direction, LinePositionMode linePositionMode) const
 {
-    if (table->isWritingModeRoot())
+    LayoutUnit baseline = firstLineBoxBaseline();
+    if (baseline != -1)
+        return baseline;
+
+    return RenderBox::baselinePosition(baselineType, firstLine, direction, linePositionMode);
+}
+
+LayoutUnit RenderTable::lastLineBoxBaseline() const
+{
+    // Tables don't contribute their baseline towards the computation of an inline-block's baseline.
+    return -1;
+}
+
+LayoutUnit RenderTable::firstLineBoxBaseline() const
+{
+    // The baseline of a 'table' is the same as the 'inline-table' baseline per CSS 3 Flexbox (CSS 2.1
+    // doesn't define the baseline of a 'table' only an 'inline-table').
+    // This is also needed to properly determine the baseline of a cell if it has a table child.
+
+    if (isWritingModeRoot())
         return -1;
 
-    table->recalcSectionsIfNeeded();
+    recalcSectionsIfNeeded();
 
-    const RenderTableSection* topNonEmptySection = table->topNonEmptySection();
+    const RenderTableSection* topNonEmptySection = this->topNonEmptySection();
     if (!topNonEmptySection)
         return -1;
 
@@ -1223,24 +1240,8 @@ static LayoutUnit getLineBoxBaseline(const RenderTable* table, LineBox lineBox)
     if (baseline > 0)
         return topNonEmptySection->logicalTop() + baseline;
 
-    // The 'first' linebox baseline in a table in the absence of any text in the first section
-    // is the top of the table.
-    if (lineBox == FirstLineBox)
-        return topNonEmptySection->logicalTop();
-
-    // The 'last' linebox baseline in a table is the baseline of text in the first
-    // cell in the first row/section, so if there is no text do not return a baseline.
+    // FIXME: A table row always has a baseline per CSS 2.1. Will this return the right value?
     return -1;
-}
-
-LayoutUnit RenderTable::lastLineBoxBaseline() const
-{
-    return getLineBoxBaseline(this, LastLineBox);
-}
-
-LayoutUnit RenderTable::firstLineBoxBaseline() const
-{
-    return getLineBoxBaseline(this, FirstLineBox);
 }
 
 LayoutRect RenderTable::overflowClipRect(const LayoutPoint& location, RenderRegion* region, OverlayScrollbarSizeRelevancy relevancy)
