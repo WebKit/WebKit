@@ -1,3 +1,12 @@
+2012-08-10  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        [BlackBerry] Fix wrong include path for notifications.
+        https://bugs.webkit.org/show_bug.cgi?id=93714
+
+        Reviewed by Rob Buis.
+
+        * PlatformBlackBerry.cmake: Change path from notifications to Modules/notifications.
+
 2012-08-08  Antonio Gomes  <agomes@rim.com>
 
         [BlackBerry] Tie up the scrolling machinery to the graphics tree when applicable for in-region scroll
