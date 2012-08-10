@@ -80,6 +80,9 @@ WK_EXPORT int WebProcessMainGtk(int argc, char* argv[])
     soup_session_add_feature(session, SOUP_SESSION_FEATURE(soupCache.get()));
     soup_cache_load(soupCache.get());
 
+    // This is for compatibility, it will be removed when UI process can handle SSL errors.
+    WebCore::ResourceHandle::setIgnoreSSLErrors(true);
+
     RunLoop::run();
 
     return 0;

@@ -34,6 +34,7 @@
 #include "Frame.h"
 #include "GOwnPtrSoup.h"
 #include "HTTPParsers.h"
+#include "LocalizedStrings.h"
 #include "Logging.h"
 #include "MIMETypeRegistry.h"
 #include "NotImplemented.h"
@@ -55,7 +56,9 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>
+#include <wtf/SHA1.h>
 #include <wtf/gobject/GRefPtr.h>
+#include <wtf/text/Base64.h>
 #include <wtf/text/CString.h>
 
 #if ENABLE(BLOB)
@@ -158,6 +161,42 @@ private:
     GRefPtr<GMainLoop> m_mainLoop;
 };
 
+class HostTLSCertificateSet {
+public:
+    void add(GTlsCertificate* certificate)
+    {
+        String certificateHash = computeCertificateHash(certificate);
+        if (!certificateHash.isEmpty())
+            m_certificates.add(certificateHash);
+    }
+
+    bool contains(GTlsCertificate* certificate)
+    {
+        return m_certificates.contains(computeCertificateHash(certificate));
+    }
+
+private:
+    static String computeCertificateHash(GTlsCertificate* certificate)
+    {
+        GByteArray* data = 0;
+        g_object_get(G_OBJECT(certificate), "certificate", &data, NULL);
+        if (!data)
+            return String();
+
+        static const size_t sha1HashSize = 20;
+        GRefPtr<GByteArray> certificateData = adoptGRef(data);
+        SHA1 sha1;
+        sha1.addBytes(certificateData->data, certificateData->len);
+
+        Vector<uint8_t, sha1HashSize> digest;
+        sha1.computeHash(digest);
+
+        return base64Encode(reinterpret_cast<const char*>(digest.data()), sha1HashSize);
+    }
+
+    HashSet<String> m_certificates;
+};
+
 static void cleanupSoupRequestOperation(ResourceHandle*, bool isDestroying);
 static void sendRequestCallback(GObject*, GAsyncResult*, gpointer);
 static void readCallback(GObject*, GAsyncResult*, gpointer);
@@ -166,6 +205,21 @@ static bool startNonHTTPRequest(ResourceHandle*, KURL);
 #if ENABLE(WEB_TIMING)
 static int  milisecondsSinceRequest(double requestTime);
 #endif
+
+static bool gIgnoreSSLErrors = false;
+
+static HashSet<String>& allowsAnyHTTPSCertificateHosts()
+{
+    DEFINE_STATIC_LOCAL(HashSet<String>, hosts, ());
+    return hosts;
+}
+
+typedef HashMap<String, HostTLSCertificateSet> CertificatesMap;
+static CertificatesMap& clientCertificates()
+{
+    DEFINE_STATIC_LOCAL(CertificatesMap, certificates, ());
+    return certificates;
+}
 
 ResourceHandleInternal::~ResourceHandleInternal()
 {
@@ -349,6 +403,13 @@ static ResourceError convertSoupErrorToResourceError(GError* error, SoupRequest*
                          String::fromUTF8(error->message));
 }
 
+static inline bool hasUnignoredTLSErrors(ResourceHandle* handle)
+{
+    return handle->getInternal()->m_response.soupMessageTLSErrors()
+        && !gIgnoreSSLErrors
+        && !allowsAnyHTTPSCertificateHosts().contains(handle->firstRequest().url().host().lower());
+}
+
 static void sendRequestCallback(GObject* source, GAsyncResult* res, gpointer data)
 {
     RefPtr<ResourceHandle> handle = static_cast<ResourceHandle*>(data);
@@ -384,6 +445,18 @@ static void sendRequestCallback(GObject* source, GAsyncResult* res, gpointer dat
             d->m_response.setSniffedContentType(sniffedType);
         }
         d->m_response.updateFromSoupMessage(soupMessage);
+
+        if (hasUnignoredTLSErrors(handle.get())) {
+            CertificatesMap::iterator iter = clientCertificates().find(handle->firstRequest().url().host().lower());
+            if (iter == clientCertificates().end() || !iter->second.contains(d->m_response.soupMessageCertificate())) {
+                GOwnPtr<char> uri(soup_uri_to_string(soup_request_get_uri(d->m_soupRequest.get()), FALSE));
+                client->didFail(handle.get(), ResourceError(g_quark_to_string(SOUP_HTTP_ERROR), SOUP_STATUS_SSL_FAILED,
+                                                            uri.get(), unacceptableTLSCertificate(),
+                                                            d->m_response.soupMessageTLSErrors(), d->m_response.soupMessageCertificate()));
+                cleanupSoupRequestOperation(handle.get());
+                return;
+            }
+        }
     } else {
         d->m_response.setURL(handle->firstRequest().url());
         const gchar* contentType = soup_request_get_content_type(d->m_soupRequest.get());
@@ -737,6 +810,21 @@ void ResourceHandle::cancel()
         soup_session_cancel_message(d->soupSession(), d->m_soupMessage.get(), SOUP_STATUS_CANCELLED);
     else if (d->m_cancellable)
         g_cancellable_cancel(d->m_cancellable.get());
+}
+
+void ResourceHandle::setHostAllowsAnyHTTPSCertificate(const String& host)
+{
+    allowsAnyHTTPSCertificateHosts().add(host.lower());
+}
+
+void ResourceHandle::setClientCertificate(const String& host, GTlsCertificate* certificate)
+{
+    clientCertificates().add(host.lower(), HostTLSCertificateSet()).iterator->second.add(certificate);
+}
+
+void ResourceHandle::setIgnoreSSLErrors(bool ignoreSSLErrors)
+{
+    gIgnoreSSLErrors = ignoreSSLErrors;
 }
 
 static bool hasBeenSent(ResourceHandle* handle)

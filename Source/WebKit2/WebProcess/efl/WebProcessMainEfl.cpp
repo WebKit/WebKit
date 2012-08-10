@@ -84,6 +84,8 @@ WK_EXPORT int WebProcessMainEfl(int argc, char* argv[])
     CoordinatedGraphicsLayer::initFactory();
 #endif
 
+    WebCore::ResourceHandle::setIgnoreSSLErrors(true);
+
     int socket = atoi(argv[1]);
     WebProcess::shared().initialize(socket, RunLoop::main());
     RunLoop::run();

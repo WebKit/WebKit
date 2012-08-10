@@ -1,3 +1,15 @@
+2012-08-09  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Handle SSL errors for SOUP
+        https://bugs.webkit.org/show_bug.cgi?id=90267
+
+        Reviewed by Martin Robinson.
+
+        Ignore SSL errors by default for compatibility.
+
+        * ewk/ewk_main.cpp:
+        (_ewk_init_body):
+
 2012-08-07  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL] Remove PlatformTouchEventEfl and PlatformTouchPointEfl

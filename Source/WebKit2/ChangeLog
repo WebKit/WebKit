@@ -1,3 +1,17 @@
+2012-08-09  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Handle SSL errors for SOUP
+        https://bugs.webkit.org/show_bug.cgi?id=90267
+
+        Reviewed by Martin Robinson.
+
+        Ignore SSL errors by default for compatibility.
+
+        * WebProcess/efl/WebProcessMainEfl.cpp:
+        (WebKit::WebProcessMainEfl):
+        * WebProcess/gtk/WebProcessMainGtk.cpp:
+        (WebKit::WebProcessMainGtk):
+
 2012-08-09  Alexey Proskuryakov  <ap@apple.com>
 
         [WK2] Add a process model constant for multiple processes

@@ -27,6 +27,9 @@
 #define ResourceError_h
 
 #include "ResourceErrorBase.h"
+#include <wtf/gobject/GRefPtr.h>
+
+typedef struct _GTlsCertificate GTlsCertificate;
 
 namespace WebCore {
 
@@ -34,13 +37,29 @@ class ResourceError : public ResourceErrorBase
 {
 public:
     ResourceError()
+        : m_tlsErrors(0)
     {
     }
 
     ResourceError(const String& domain, int errorCode, const String& failingURL, const String& localizedDescription)
         : ResourceErrorBase(domain, errorCode, failingURL, localizedDescription)
+        , m_tlsErrors(0)
     {
     }
+
+    ResourceError(const String& domain, int errorCode, const String& failingURL, const String& localizedDescription, unsigned tlsErrors, GTlsCertificate* certificate)
+        : ResourceErrorBase(domain, errorCode, failingURL, localizedDescription)
+        , m_tlsErrors(tlsErrors)
+        , m_certificate(certificate)
+    {
+    }
+
+    unsigned tlsErrors() const { return m_tlsErrors; }
+    GTlsCertificate* certificate() const { return m_certificate.get(); }
+
+private:
+    unsigned m_tlsErrors;
+    GRefPtr<GTlsCertificate> m_certificate;
 };
 
 }

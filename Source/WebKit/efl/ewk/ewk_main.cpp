@@ -176,5 +176,7 @@ Eina_Bool _ewk_init_body(void)
     SoupSessionFeature* auth_dialog = static_cast<SoupSessionFeature*>(g_object_new(EWK_TYPE_SOUP_AUTH_DIALOG, 0));
     soup_session_add_feature(session, auth_dialog);
 
+    WebCore::ResourceHandle::setIgnoreSSLErrors(true);
+
     return true;
 }

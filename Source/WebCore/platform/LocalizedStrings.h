@@ -220,6 +220,9 @@ namespace WebCore {
     String dateFormatMonthText();
     String dateFormatDayInMonthText();
 #endif
+#if USE(SOUP)
+    String unacceptableTLSCertificate();
+#endif
 
 #if !PLATFORM(CHROMIUM)
 #define WEB_UI_STRING(string, description) WebCore::localizedString(string)

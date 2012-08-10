@@ -531,6 +531,8 @@ void webkitInit()
     soup_session_add_feature(session, authDialog);
     g_object_unref(authDialog);
 
+    WebCore::ResourceHandle::setIgnoreSSLErrors(true);
+
 #if USE(CLUTTER)
     gtk_clutter_init(0, 0);
 #endif
