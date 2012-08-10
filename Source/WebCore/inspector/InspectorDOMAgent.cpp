@@ -449,6 +449,19 @@ void InspectorDOMAgent::discardBindings()
     m_childrenRequested.clear();
 }
 
+int InspectorDOMAgent::pushNodeToFrontend(ErrorString* errorString, int documentNodeId, Node* nodeToPush)
+{
+    Document* document = assertDocument(errorString, documentNodeId);
+    if (!document)
+        return 0;
+    if (nodeToPush->document() != document) {
+        *errorString = "Node is not part of the document with given id";
+        return 0;
+    }
+
+    return pushNodePathToFrontend(nodeToPush);
+}
+
 Node* InspectorDOMAgent::nodeForId(int id)
 {
     if (!id)

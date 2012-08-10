@@ -45,7 +45,7 @@ class WebKitNamedFlowCollection : public RefCounted<WebKitNamedFlowCollection> {
 public:
     static PassRefPtr<WebKitNamedFlowCollection> create(Document* doc) { return adoptRef(new WebKitNamedFlowCollection(doc)); }
 
-    Vector<String> namedFlowsNames();
+    Vector<RefPtr<WebKitNamedFlow> > namedFlows();
     WebKitNamedFlow* flowByName(const String&);
     PassRefPtr<WebKitNamedFlow> ensureFlowWithName(const String&);
 

@@ -38,7 +38,7 @@ function test()
 {
     WebInspector.showPanel("elements");
     InspectorTest.runTestSuite([
-        function testGetNamedFlowCollection(next)
+        function testGetNamedFlowCollection1(next)
         {
             WebInspector.domAgent.requestDocument(documentCallback);
 
@@ -49,7 +49,7 @@ function test()
 
             function namedFlowCallback(namedFlows)
             {
-                InspectorTest.addResult("=== CSS Named Flows ===");
+                InspectorTest.addResult("=== CSS Named Flows in main document ===");
 
                 if (!namedFlows) {
                     InspectorTest.addResult("[!] Failed to get Named Flows");
@@ -57,11 +57,42 @@ function test()
                     return;
                 }
 
-                namedFlows.sort();
+                namedFlows.sort(function (nf1, nf2) {
+                    return ((nf1.name == nf2.name) ? 0 : ((nf1.name > nf2.name) ? 1 : -1));
+                });
 
                 for (var i = 0; i < namedFlows.length; ++i)
-                    InspectorTest.addResult(namedFlows[i]);
+                    printNamedFlow(namedFlows[i]);
 
+                next();
+            }
+        },
+
+        function testGetNamedFlowCollection2(next)
+        {
+            WebInspector.domAgent.requestDocument(documentCallback);
+
+            function documentCallback(document)
+            {
+                WebInspector.domAgent.querySelector(document.id, "#fake-document", querySelectorCallback);
+            }
+
+            function querySelectorCallback(nodeId)
+            {
+                WebInspector.cssModel.getNamedFlowCollectionAsync(nodeId, namedFlowCallback);
+            }
+
+            function namedFlowCallback(namedFlows)
+            {
+                InspectorTest.addResult("=== CSS Named Flows in #fake-document ===");
+
+                if (namedFlows) {
+                    InspectorTest.addResult("[!] Failed");
+                    InspectorTest.completeTest();
+                    return;
+                }
+
+                InspectorTest.addResult("#fake-document is not a document")
                 next();
             }
         },
@@ -85,8 +116,7 @@ function test()
                     return;
                 }
 
-                InspectorTest.addResult("name: " + namedFlow.name);
-                InspectorTest.addResult("overset: " + namedFlow.overset);
+                printNamedFlow(namedFlow);
 
                 next();
             }
@@ -155,6 +185,13 @@ function test()
             }
         }
     ]);
+
+    function printNamedFlow(namedFlow)
+    {
+        InspectorTest.addResult("* Named Flow \"" + namedFlow.name + "\"");
+        InspectorTest.addResult("Content Elements: " + namedFlow.content.length);
+        InspectorTest.addResult("Regions: " + namedFlow.regions.length);
+    }
 }
 </script>
 </head>
@@ -172,12 +209,17 @@ Tests the following commands and events:
 
 <article style="-webkit-flow-into: flow1"></article>
 <div style="-webkit-flow-from: flow1"></div>
+<div style="-webkit-flow-from: flow1"></div>
+<div style="-webkit-flow-from: flow1"></div>
 
 <article style="-webkit-flow-into: flow2"></article>
+<div style="-webkit-flow-from: flow2"></div>
 <div style="-webkit-flow-from: flow2"></div>
 
 <article style="-webkit-flow-into: flow3"></article>
 <div style="-webkit-flow-from: flow3"></div>
+
+<div id="fake-document"></div>
 
 <iframe></iframe>
 

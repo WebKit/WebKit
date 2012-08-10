@@ -6,16 +6,27 @@ namedFlowCreated Bug 92739
 namedFlowRemoved Bug 92739
 
 
-Running: testGetNamedFlowCollection
-=== CSS Named Flows ===
-flow1
-flow2
-flow3
+Running: testGetNamedFlowCollection1
+=== CSS Named Flows in main document ===
+* Named Flow "flow1"
+Content Elements: 1
+Regions: 3
+* Named Flow "flow2"
+Content Elements: 1
+Regions: 2
+* Named Flow "flow3"
+Content Elements: 1
+Regions: 1
+
+Running: testGetNamedFlowCollection2
+=== CSS Named Flows in #fake-document ===
+#fake-document is not a document
 
 Running: testGetFlowByName1
 === Named Flow "flow2" from main document ===
-name: flow2
-overset: false
+* Named Flow "flow2"
+Content Elements: 1
+Regions: 2
 
 Running: testGetFlowByName2
 === Name Flow "flow4" from main document ===

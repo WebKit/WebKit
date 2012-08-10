@@ -47,6 +47,7 @@
 #include "InstrumentingAgents.h"
 #include "Node.h"
 #include "NodeList.h"
+#include "RenderRegion.h"
 #include "StylePropertySet.h"
 #include "StylePropertyShorthand.h"
 #include "StyleResolver.h"
@@ -824,39 +825,37 @@ void InspectorCSSAgent::getSupportedCSSProperties(ErrorString*, RefPtr<TypeBuild
     cssProperties = properties.release();
 }
 
-void InspectorCSSAgent::getNamedFlowCollection(ErrorString* errorString, int nodeId, RefPtr<TypeBuilder::Array<String> >& result)
+void InspectorCSSAgent::getNamedFlowCollection(ErrorString* errorString, int documentNodeId, RefPtr<TypeBuilder::Array<TypeBuilder::CSS::NamedFlow> >& result)
 {
-    Document* document = m_domAgent->assertDocument(errorString, nodeId);
+    Document* document = m_domAgent->assertDocument(errorString, documentNodeId);
     if (!document)
         return;
 
-    m_namedFlowCollectionsRequested.add(nodeId);
+    m_namedFlowCollectionsRequested.add(documentNodeId);
+    Vector<RefPtr<WebKitNamedFlow> > namedFlowsVector = document->namedFlows()->namedFlows();
+    RefPtr<TypeBuilder::Array<TypeBuilder::CSS::NamedFlow> > namedFlows = TypeBuilder::Array<TypeBuilder::CSS::NamedFlow>::create();
 
-    Vector<String> namedFlowsVector = document->namedFlows()->namedFlowsNames();
-    RefPtr<TypeBuilder::Array<String> > namedFlows = TypeBuilder::Array<String>::create();
 
-    for (Vector<String>::iterator it = namedFlowsVector.begin(); it != namedFlowsVector.end(); ++it)
-        namedFlows->addItem(*it);
+    for (Vector<RefPtr<WebKitNamedFlow> >::iterator it = namedFlowsVector.begin(); it != namedFlowsVector.end(); ++it)
+        namedFlows->addItem(buildObjectForNamedFlow(errorString, it->get(), documentNodeId));
 
     result = namedFlows.release();
 }
 
-void InspectorCSSAgent::getFlowByName(ErrorString* errorString, int nodeId, const String& flowName, RefPtr<TypeBuilder::CSS::NamedFlow>& result)
+void InspectorCSSAgent::getFlowByName(ErrorString* errorString, int documentNodeId, const String& flowName, RefPtr<TypeBuilder::CSS::NamedFlow>& result)
 {
-    Document* document = m_domAgent->assertDocument(errorString, nodeId);
+    Document* document = m_domAgent->assertDocument(errorString, documentNodeId);
     if (!document)
         return;
 
-    WebKitNamedFlow* namedFlow = document->namedFlows()->flowByName(flowName);
-    if (!namedFlow) {
+    WebKitNamedFlow* webkitNamedFlow = document->namedFlows()->flowByName(flowName);
+    if (!webkitNamedFlow) {
         *errorString = "No target CSS Named Flow found";
         return;
     }
 
-    result = TypeBuilder::CSS::NamedFlow::create()
-        .setNodeId(nodeId)
-        .setName(flowName)
-        .setOverset(namedFlow->overset());
+    RefPtr<WebKitNamedFlow> protector(webkitNamedFlow);
+    result = buildObjectForNamedFlow(errorString, webkitNamedFlow, documentNodeId);
 }
 
 void InspectorCSSAgent::startSelectorProfiler(ErrorString*)
@@ -1070,6 +1069,61 @@ PassRefPtr<TypeBuilder::CSS::CSSStyle> InspectorCSSAgent::buildObjectForAttribut
 
     RefPtr<InspectorStyle> inspectorStyle = InspectorStyle::create(InspectorCSSId(), const_cast<StylePropertySet*>(attributeStyle)->ensureCSSStyleDeclaration(), 0);
     return inspectorStyle->buildObjectForStyle();
+}
+
+PassRefPtr<TypeBuilder::Array<TypeBuilder::CSS::Region> > InspectorCSSAgent::buildArrayForRegions(ErrorString* errorString, PassRefPtr<NodeList> regionList, int documentNodeId)
+{
+    RefPtr<TypeBuilder::Array<TypeBuilder::CSS::Region> > regions = TypeBuilder::Array<TypeBuilder::CSS::Region>::create();
+
+    for (unsigned i = 0; i < regionList->length(); ++i) {
+        TypeBuilder::CSS::Region::RegionOverset::Enum regionOverset;
+
+        switch (toElement(regionList->item(i))->renderRegion()->regionState()) {
+        case RenderRegion::RegionFit:
+            regionOverset = TypeBuilder::CSS::Region::RegionOverset::Fit;
+            break;
+        case RenderRegion::RegionEmpty:
+            regionOverset = TypeBuilder::CSS::Region::RegionOverset::Empty;
+            break;
+        case RenderRegion::RegionOverset:
+            regionOverset = TypeBuilder::CSS::Region::RegionOverset::Overset;
+            break;
+        case RenderRegion::RegionUndefined:
+            continue;
+        default:
+            ASSERT_NOT_REACHED();
+            continue;
+        }
+
+        RefPtr<TypeBuilder::CSS::Region> region = TypeBuilder::CSS::Region::create()
+            .setRegionOverset(regionOverset)
+            // documentNodeId was previously asserted
+            .setNodeId(m_domAgent->pushNodeToFrontend(errorString, documentNodeId, regionList->item(i)));
+
+        regions->addItem(region);
+    }
+
+    return regions.release();
+}
+
+PassRefPtr<TypeBuilder::CSS::NamedFlow> InspectorCSSAgent::buildObjectForNamedFlow(ErrorString* errorString, WebKitNamedFlow* webkitNamedFlow, int documentNodeId)
+{
+    RefPtr<NodeList> contentList = webkitNamedFlow->getContent();
+    RefPtr<TypeBuilder::Array<int> > content = TypeBuilder::Array<int>::create();
+
+    for (unsigned i = 0; i < contentList->length(); ++i) {
+        // documentNodeId was previously asserted
+        content->addItem(m_domAgent->pushNodeToFrontend(errorString, documentNodeId, contentList->item(i)));
+    }
+
+    RefPtr<TypeBuilder::CSS::NamedFlow> namedFlow = TypeBuilder::CSS::NamedFlow::create()
+        .setDocumentNodeId(documentNodeId)
+        .setName(webkitNamedFlow->name().string())
+        .setOverset(webkitNamedFlow->overset())
+        .setContent(content)
+        .setRegions(buildArrayForRegions(errorString, webkitNamedFlow->getRegions(), documentNodeId));
+
+    return namedFlow.release();
 }
 
 void InspectorCSSAgent::didRemoveDocument(Document* document)

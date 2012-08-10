@@ -2206,12 +2206,24 @@
                 ]
             },
             {
+                "id": "Region",
+                "type": "object",
+                "properties": [
+                    { "name": "regionOverset", "type": "string", "enum": ["overset", "fit", "empty"], "description": "The \"overset\" attribute of a Named Flow." },
+                    { "name": "nodeId", "$ref": "DOM.NodeId", "description": "The corresponding DOM node id." }
+                ],
+                "description": "This object represents a region that flows from a Named Flow.",
+                "hidden": true
+            },
+            {
                 "id": "NamedFlow",
                 "type": "object",
                 "properties": [
-                    { "name": "nodeId", "$ref": "DOM.NodeId", "description": "The document node id." },
+                    { "name": "documentNodeId", "$ref": "DOM.NodeId", "description": "The document node id." },
                     { "name": "name", "type": "string", "description": "Named Flow identifier." },
-                    { "name": "overset", "type": "boolean", "description": "The \"overset\" attribute of a Named Flow." }
+                    { "name": "overset", "type": "boolean", "description": "The \"overset\" attribute of a Named Flow." },
+                    { "name": "content", "type": "array", "items": { "$ref": "DOM.NodeId" }, "description": "An array of nodes that flow into the Named Flow." },
+                    { "name": "regions", "type": "array", "items": { "$ref": "Region" }, "description": "An array of regions associated with the Named Flow." }
                 ],
                 "description": "This object represents a Named Flow.",
                 "hidden": true
@@ -2364,10 +2376,10 @@
             {
                 "name": "getNamedFlowCollection",
                 "parameters": [
-                    { "name": "nodeId", "$ref": "DOM.NodeId", "description": "The document node id for which to get the Named Flow Collection." }
+                    { "name": "documentNodeId", "$ref": "DOM.NodeId", "description": "The document node id for which to get the Named Flow Collection." }
                 ],
                 "returns": [
-                    { "name": "namedFlows", "type": "array", "items": { "type": "string" }, "description": "An array containing the Named Flows in the document." }
+                    { "name": "namedFlows", "type": "array", "items": { "$ref": "NamedFlow" }, "description": "An array containing the Named Flows in the document." }
                 ],
                 "description": "Returns the Named Flows from the document.",
                 "hidden": true
@@ -2375,7 +2387,7 @@
             {
                 "name": "getFlowByName",
                 "parameters": [
-                    { "name": "nodeId", "$ref": "DOM.NodeId", "description": "The document node id." },
+                    { "name": "documentNodeId", "$ref": "DOM.NodeId", "description": "The document node id." },
                     { "name": "name", "type": "string", "description": "Named Flow identifier." }
                 ],
                 "returns": [
@@ -2400,7 +2412,7 @@
             {
                 "name": "namedFlowCreated",
                 "parameters": [
-                    { "name": "nodeId", "$ref": "DOM.NodeId", "description": "The document node id." },
+                    { "name": "documentNodeId", "$ref": "DOM.NodeId", "description": "The document node id." },
                     { "name": "namedFlow", "type": "string", "description": "Identifier of the new Named Flow." }
                 ],
                 "description": "Fires when a Named Flow is created.",
@@ -2409,7 +2421,7 @@
             {
                 "name": "namedFlowRemoved",
                 "parameters": [
-                    { "name": "nodeId", "$ref": "DOM.NodeId", "description": "The document node id." },
+                    { "name": "documentNodeId", "$ref": "DOM.NodeId", "description": "The document node id." },
                     { "name": "namedFlow", "type": "string", "description": "Identifier of the removed Named Flow." }
                 ],
                 "description": "Fires when a Named Flow is removed: has no associated content nodes and regions.",

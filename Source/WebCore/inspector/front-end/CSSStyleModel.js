@@ -164,21 +164,21 @@ WebInspector.CSSStyleModel.prototype = {
 
     /**
      * @param {DOMAgent.NodeId} nodeId
-     * @param {function(?Array.<string>)} userCallback
+     * @param {function(?Array.<WebInspector.NamedFlow>)} userCallback
      */
     getNamedFlowCollectionAsync: function(nodeId, userCallback)
     {
         /**
-         * @param {function(?Array.<string>)} userCallback
+         * @param {function(?Array.<WebInspector.NamedFlow>)} userCallback
          * @param {?Protocol.Error} error
-         * @param {?Array.<string>=} namedFlowPayload
+         * @param {?Array.<CSSAgent.NamedFlow>=} namedFlowPayload
          */
         function callback(userCallback, error, namedFlowPayload)
         {
             if (error || !namedFlowPayload)
                 userCallback(null);
             else
-                userCallback(namedFlowPayload);
+                userCallback(WebInspector.NamedFlow.parsePayloadArray(namedFlowPayload));
         }
 
         CSSAgent.getNamedFlowCollection(nodeId, callback.bind(this, userCallback));
@@ -1345,6 +1345,8 @@ WebInspector.NamedFlow = function(payload)
     this.nodeId = payload.nodeId;
     this.name = payload.name;
     this.overset = payload.overset;
+    this.content = payload.content;
+    this.regions = payload.regions;
 }
 
 /**
@@ -1354,6 +1356,17 @@ WebInspector.NamedFlow = function(payload)
 WebInspector.NamedFlow.parsePayload = function(payload)
 {
     return new WebInspector.NamedFlow(payload);
+}
+
+/**
+ * @param {?Array.<CSSAgent.NamedFlow>=} namedFlowPayload
+ * @return {?Array.<WebInspector.NamedFlow>}
+ */
+WebInspector.NamedFlow.parsePayloadArray = function(payloadArray)
+{
+    for (var i = 0; i < payloadArray.length; ++i)
+        payloadArray[i] = WebInspector.NamedFlow.parsePayload(payloadArray[i]);
+    return payloadArray;
 }
 
 /**

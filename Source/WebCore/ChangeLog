@@ -1,3 +1,41 @@
+2012-08-10  Andrei Poenaru  <poenaru@adobe.com>
+
+        Web Inspector: Protocol Extension: Refactor protocol extension for CSS Regions
+        https://bugs.webkit.org/show_bug.cgi?id=92089
+
+        Reviewed by Pavel Feldman.
+
+        Replaced "WebKitNamedFlowCollection::namedFlowsNames" with "WebKitNamedFlowCollection::namedFlows" to return a Vector of "WebKitNamedFlow"s,
+        instead of a Vector of Strings.
+
+        Added the "Region" type to Inspector.json.
+        Changed the "NamedFlow" type and the "getNamedFlowCollection" function in Inspector.json.
+
+        Modified existing test: inspector/styles/protocol-css-regions-commands.html
+
+        * dom/WebKitNamedFlowCollection.cpp:
+        (WebCore::WebKitNamedFlowCollection::namedFlows):
+        * dom/WebKitNamedFlowCollection.h:
+        (WebKitNamedFlowCollection):
+        * inspector/Inspector.json:
+        * inspector/InspectorCSSAgent.cpp:
+        (WebCore::InspectorCSSAgent::getNamedFlowCollection):
+        (WebCore::InspectorCSSAgent::getFlowByName):
+        (WebCore::InspectorCSSAgent::buildArrayForRegions):
+        (WebCore):
+        (WebCore::InspectorCSSAgent::buildObjectForNamedFlow):
+        * inspector/InspectorCSSAgent.h:
+        (InspectorCSSAgent):
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::pushNodeToFrontend):
+        (WebCore):
+        * inspector/InspectorDOMAgent.h:
+        (InspectorDOMAgent):
+        * inspector/front-end/CSSStyleModel.js:
+        (WebInspector.CSSStyleModel.prototype.getNamedFlowCollectionAsync):
+        (WebInspector.NamedFlow):
+        (WebInspector.NamedFlow.parsePayloadArray):
+
 2012-08-10  Keishi Hattori  <keishi@webkit.org>
 
         Resize calandar and color suggestion popups to show error message

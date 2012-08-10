@@ -44,15 +44,15 @@ WebKitNamedFlowCollection::WebKitNamedFlowCollection(Document* doc)
 {
 }
 
-Vector<String> WebKitNamedFlowCollection::namedFlowsNames()
+Vector<RefPtr<WebKitNamedFlow> > WebKitNamedFlowCollection::namedFlows()
 {
-    Vector<String> namedFlows;
+    Vector<RefPtr<WebKitNamedFlow> > namedFlows;
 
     for (NamedFlowSet::iterator it = m_namedFlows.begin(); it != m_namedFlows.end(); ++it) {
         if ((*it)->flowState() == WebKitNamedFlow::FlowStateNull)
             continue;
 
-        namedFlows.append((*it)->name().string());
+        namedFlows.append(RefPtr<WebKitNamedFlow>(*it));
     }
 
     return namedFlows;

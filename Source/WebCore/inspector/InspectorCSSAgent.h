@@ -113,8 +113,8 @@ public:
     virtual void setRuleSelector(ErrorString*, const RefPtr<InspectorObject>& ruleId, const String& selector, RefPtr<TypeBuilder::CSS::CSSRule>& result);
     virtual void addRule(ErrorString*, int contextNodeId, const String& selector, RefPtr<TypeBuilder::CSS::CSSRule>& result);
     virtual void getSupportedCSSProperties(ErrorString*, RefPtr<TypeBuilder::Array<TypeBuilder::CSS::CSSPropertyInfo> >& result);
-    virtual void getNamedFlowCollection(ErrorString*, int nodeId, RefPtr<TypeBuilder::Array<String> >& result);
-    virtual void getFlowByName(ErrorString*, int nodeId, const String& flowName, RefPtr<TypeBuilder::CSS::NamedFlow>& result);
+    virtual void getNamedFlowCollection(ErrorString*, int documentNodeId, RefPtr<TypeBuilder::Array<TypeBuilder::CSS::NamedFlow> >& result);
+    virtual void getFlowByName(ErrorString*, int documentNodeId, const String& flowName, RefPtr<TypeBuilder::CSS::NamedFlow>& result);
 
     virtual void startSelectorProfiler(ErrorString*);
     virtual void stopSelectorProfiler(ErrorString*, RefPtr<TypeBuilder::CSS::SelectorProfile>&);
@@ -153,6 +153,8 @@ private:
 
     PassRefPtr<TypeBuilder::Array<TypeBuilder::CSS::CSSRule> > buildArrayForRuleList(CSSRuleList*, StyleResolver*);
     PassRefPtr<TypeBuilder::CSS::CSSStyle> buildObjectForAttributesStyle(Element*);
+    PassRefPtr<TypeBuilder::Array<TypeBuilder::CSS::Region> > buildArrayForRegions(ErrorString*, PassRefPtr<NodeList>, int documentNodeId);
+    PassRefPtr<TypeBuilder::CSS::NamedFlow> buildObjectForNamedFlow(ErrorString*, WebKitNamedFlow*, int documentNodeId);
 
     // InspectorDOMAgent::DOMListener implementation
     virtual void didRemoveDocument(Document*);

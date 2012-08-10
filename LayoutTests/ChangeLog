@@ -1,3 +1,15 @@
+2012-08-10  Andrei Poenaru  <poenaru@adobe.com>
+
+        Web Inspector: Protocol Extension: Refactor protocol extension for CSS Regions
+        https://bugs.webkit.org/show_bug.cgi?id=92089
+
+        Reviewed by Pavel Feldman.
+
+        Changed the test to validate the changes made to the protocol.
+
+        * inspector/styles/protocol-css-regions-commands-expected.txt:
+        * inspector/styles/protocol-css-regions-commands.html:
+
 2012-08-10  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
 
         Unreviewed gardening, rebaselining marked tests from r125167.
