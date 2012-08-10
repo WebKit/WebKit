@@ -1,3 +1,18 @@
+2012-08-09  MORITA Hajime  <morrita@google.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=93587
+        Node::replaceChild() can create bad DOM topology with MutationEvent, Part 2
+
+        Reviewed by Kent Tamura.
+
+        This is a followup of r124156. replaceChild() has yet another hidden
+        MutationEvent trigger. This change added a guard for it.
+
+        Test: fast/events/mutation-during-replace-child-2.html
+
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::replaceChild):
+
 2012-08-09  Kentaro Hara  <haraken@chromium.org>
 
         [V8] V8Utilities::throwTypeMismatchException() should use setDOMException()

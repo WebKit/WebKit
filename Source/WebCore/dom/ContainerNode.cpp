@@ -283,6 +283,11 @@ bool ContainerNode::replaceChild(PassRefPtr<Node> newChild, Node* oldChild, Exce
     if (ec)
         return false;
 
+    // Does this yet another check because collectChildrenAndRemoveFromOldParent() fires a MutationEvent.
+    checkReplaceChild(newChild.get(), oldChild, ec);
+    if (ec)
+        return false;
+
     InspectorInstrumentation::willInsertDOMNode(document(), this);
 
     // Add the new child(ren)
