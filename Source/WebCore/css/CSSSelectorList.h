@@ -48,6 +48,16 @@ public:
     CSSSelector* first() const { return m_selectorArray ? m_selectorArray : 0; }
     static CSSSelector* next(CSSSelector*);
     bool hasOneSelector() const { return m_selectorArray && !next(m_selectorArray); }
+    CSSSelector* selectorAt(size_t index) const { return &m_selectorArray[index]; }
+
+    size_t indexOfNextSelectorAfter(size_t index) const
+    {
+        CSSSelector* current = selectorAt(index);
+        current = next(current);
+        if (!current)
+            return notFound;
+        return current - m_selectorArray;
+    }
 
     bool selectorsNeedNamespaceResolution();
     bool hasUnknownPseudoElements() const;

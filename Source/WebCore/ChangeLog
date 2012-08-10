@@ -1,3 +1,33 @@
+2012-08-10  Andreas Kling  <kling@webkit.org>
+
+        CSS: Shrink RuleData by storing selector as index rather than pointer.
+        <http://webkit.org/b/93712>
+
+        Reviewed by Antti Koivisto.
+
+        Pack the selector's index in the rule in the RuleData bitfield, effectively
+        shrinking each RuleData by 8 bytes.
+
+        * css/CSSSelectorList.h:
+        (WebCore::CSSSelectorList::selectorAt):
+        (WebCore::CSSSelectorList::indexOfNextSelectorAfter):
+
+            Add helpers to CSSSelectorList to iterate by index.
+
+        * css/StyleResolver.cpp:
+        (RuleData):
+        (WebCore::RuleData::selector):
+        (WebCore::RuleData::selectorIndex):
+        (SameSizeAsRuleData):
+        (RuleSet):
+        (WebCore::makeRuleSet):
+        (WebCore::StyleResolver::collectMatchingRulesForList):
+        * css/StyleResolver.h:
+        (WebCore::StyleResolver::RuleFeature::RuleFeature):
+        (RuleFeature):
+
+            Store selector indices instead of CSSSelector* pointers.
+
 2012-08-10  Vineet Chaudhary  <rgf748@motorola.com>
 
         Remove custom bindings from WaveShaperNode.
