@@ -560,77 +560,31 @@ void TiledLayerChromium::setTexturePriorities(const CCPriorityCalculator& priori
     setTexturePrioritiesInRect(priorityCalc, visibleContentRect());
 }
 
-namespace {
-// This picks a small animated layer to be anything less than one viewport. This
-// is specifically for page transitions which are viewport-sized layers. The extra
-// 64 pixels is due to these layers being slightly larger than the viewport in some cases.
-bool isSmallAnimatedLayer(TiledLayerChromium* layer)
-{
-    if (!layer->drawTransformIsAnimating() && !layer->screenSpaceTransformIsAnimating())
-        return false;
-    IntSize viewportSize = layer->layerTreeHost() ? layer->layerTreeHost()->deviceViewportSize() : IntSize();
-    IntRect contentRect(IntPoint::zero(), layer->contentBounds());
-    return contentRect.width() <= viewportSize.width() + 64
-        && contentRect.height() <= viewportSize.height() + 64;
-}
-
-// FIXME: Remove this and make this based on distance once distance can be calculated
-// for offscreen layers. For now, prioritize all small animated layers after 512
-// pixels of pre-painting.
-void setPriorityForTexture(const CCPriorityCalculator& priorityCalc,
-                           const IntRect& visibleRect,
-                           const IntRect& tileRect,
-                           bool drawsToRoot,
-                           bool isSmallAnimatedLayer,
-                           CCPrioritizedTexture* texture)
-{
-    int priority = CCPriorityCalculator::lowestPriority();
-    if (!visibleRect.isEmpty())
-        priority = priorityCalc.priorityFromDistance(visibleRect, tileRect, drawsToRoot);
-    if (isSmallAnimatedLayer)
-        priority = CCPriorityCalculator::maxPriority(priority, priorityCalc.priorityFromDistance(512, drawsToRoot));
-    if (priority != CCPriorityCalculator::lowestPriority())
-        texture->setRequestPriority(priority);
-}
-}
-
 void TiledLayerChromium::setTexturePrioritiesInRect(const CCPriorityCalculator& priorityCalc, const IntRect& visibleContentRect)
 {
     updateBounds();
     resetUpdateState();
 
-    if (m_tiler->hasEmptyBounds())
-        return;
-
+    IntRect prepaintRect = idlePaintRect(visibleContentRect);
     bool drawsToRoot = !renderTarget()->parent();
-    bool smallAnimatedLayer = isSmallAnimatedLayer(this);
 
     // Minimally create the tiles in the desired pre-paint rect.
-    IntRect createTilesRect = idlePaintRect(visibleContentRect);
-    if (!createTilesRect.isEmpty()) {
+    if (!prepaintRect.isEmpty()) {
         int left, top, right, bottom;
-        m_tiler->contentRectToTileIndices(createTilesRect, left, top, right, bottom);
-        for (int j = top; j <= bottom; ++j) {
-            for (int i = left; i <= right; ++i) {
+        m_tiler->contentRectToTileIndices(prepaintRect, left, top, right, bottom);
+        for (int j = top; j <= bottom; ++j)
+            for (int i = left; i <= right; ++i)
                 if (!tileAt(i, j))
                     createTile(i, j);
-            }
-        }
     }
-
-    // Also, minimally create all tiles for small animated layers and also
-    // double-buffer them since they we have limited their size to be reasonable.
-    IntRect doubleBufferedRect = visibleContentRect;
-    if (smallAnimatedLayer)
-        doubleBufferedRect = IntRect(IntPoint::zero(), contentBounds());
 
     // Create additional textures for double-buffered updates when needed.
     // These textures must stay alive while the updated textures are incrementally
     // uploaded, swapped atomically via pushProperties, and finally deleted
     // after the commit is complete, after which they can be recycled.
-    if (!doubleBufferedRect.isEmpty()) {
+    if (!visibleContentRect.isEmpty()) {
         int left, top, right, bottom;
-        m_tiler->contentRectToTileIndices(doubleBufferedRect, left, top, right, bottom);
+        m_tiler->contentRectToTileIndices(visibleContentRect, left, top, right, bottom);
         for (int j = top; j <= bottom; ++j) {
             for (int i = left; i <= right; ++i) {
                 UpdatableTile* tile = tileAt(i, j);
@@ -646,10 +600,9 @@ void TiledLayerChromium::setTexturePrioritiesInRect(const CCPriorityCalculator& 
                     continue;
                 }
 
-                IntRect tileRect = m_tiler->tileRect(tile);
-                tile->dirtyRect = tileRect;
+                tile->dirtyRect = m_tiler->tileRect(tile);
                 LayerTextureUpdater::Texture* backBuffer = tile->texture();
-                setPriorityForTexture(priorityCalc, visibleContentRect, tile->dirtyRect, drawsToRoot, smallAnimatedLayer, backBuffer->texture());
+                backBuffer->texture()->setRequestPriority(priorityCalc.priorityFromVisibility(true, drawsToRoot));
                 OwnPtr<CCPrioritizedTexture> frontBuffer = CCPrioritizedTexture::create(backBuffer->texture()->textureManager(),
                                                                                         backBuffer->texture()->size(),
                                                                                         backBuffer->texture()->format());
@@ -660,14 +613,18 @@ void TiledLayerChromium::setTexturePrioritiesInRect(const CCPriorityCalculator& 
         }
     }
 
-    // Now update priorities on all tiles we have in the layer, no matter where they are.
+    // Now set priorities on all tiles.
     for (CCLayerTilingData::TileMap::const_iterator iter = m_tiler->tiles().begin(); iter != m_tiler->tiles().end(); ++iter) {
         UpdatableTile* tile = static_cast<UpdatableTile*>(iter->second.get());
-        // FIXME: This should not ever be null.
-        if (!tile)
-            continue;
         IntRect tileRect = m_tiler->tileRect(tile);
-        setPriorityForTexture(priorityCalc, visibleContentRect, tileRect, drawsToRoot, smallAnimatedLayer, tile->managedTexture());
+        // FIXME: This indicates the "small animated layer" case. This special case
+        // can be removed soon with better priorities, but for now paint these layers after
+        // 512 pixels of pre-painting. Later we can just pass an animating flag etc. to the
+        // calculator and it can take care of this special case if we still need it.
+        if (visibleContentRect.isEmpty() && !prepaintRect.isEmpty())
+            tile->managedTexture()->setRequestPriority(priorityCalc.priorityFromDistance(512, drawsToRoot));
+        else if (!visibleContentRect.isEmpty())
+            tile->managedTexture()->setRequestPriority(priorityCalc.priorityFromDistance(visibleContentRect, tileRect, drawsToRoot));
     }
 }
 
@@ -703,44 +660,44 @@ void TiledLayerChromium::updateContentRect(CCTextureUpdateQueue& queue, const In
 
     bool didPaint = false;
 
-    // Animation pre-paint. If the layer is small, try to paint it all
-    // immediately whether or not it is occluded, to avoid paint/upload
-    // hiccups while it is animating.
-    if (isSmallAnimatedLayer(this)) {
+    // Visible painting. Only paint visible tiles if the visible rect isn't empty.
+    if (!contentRect.isEmpty()) {
         int left, top, right, bottom;
-        m_tiler->contentRectToTileIndices(IntRect(IntPoint::zero(), contentBounds()), left, top, right, bottom);
-        updateTiles(left, top, right, bottom, queue, 0, stats, didPaint);
-        if (didPaint)
+        m_tiler->contentRectToTileIndices(contentRect, left, top, right, bottom);
+        markOcclusionsAndRequestTextures(left, top, right, bottom, occlusion);
+        m_skipsDraw = !updateTiles(left, top, right, bottom, queue, occlusion, stats, didPaint);
+        if (m_skipsDraw)
+            m_tiler->reset();
+        if (m_skipsDraw || didPaint)
             return;
-        // This was an attempt to paint the entire layer so if we fail it's okay,
-        // just fallback on painting visible etc. below.
-        m_failedUpdate = false;
     }
-
-    if (contentRect.isEmpty())
-        return;
-
-    // Visible painting. First occlude visible tiles and paint the non-occluded tiles.
-    int left, top, right, bottom;
-    m_tiler->contentRectToTileIndices(contentRect, left, top, right, bottom);
-    markOcclusionsAndRequestTextures(left, top, right, bottom, occlusion);
-    m_skipsDraw = !updateTiles(left, top, right, bottom, queue, occlusion, stats, didPaint);
-    if (m_skipsDraw)
-        m_tiler->reset();
-    if (m_skipsDraw || didPaint)
-        return;
 
     // If we have already painting everything visible. Do some pre-painting while idle.
     IntRect idlePaintContentRect = idlePaintRect(contentRect);
     if (idlePaintContentRect.isEmpty())
         return;
 
-    // Prepaint anything that was occluded but inside the layer's visible region.
-    if (!updateTiles(left, top, right, bottom, queue, 0, stats, didPaint) || didPaint)
-        return;
-
     int prepaintLeft, prepaintTop, prepaintRight, prepaintBottom;
     m_tiler->contentRectToTileIndices(idlePaintContentRect, prepaintLeft, prepaintTop, prepaintRight, prepaintBottom);
+
+    // If the layer is not visible, we have nothing to expand from, so instead we prepaint the outer-most set of tiles.
+    if (contentRect.isEmpty()) {
+        if (!updateTiles(prepaintLeft, prepaintTop, prepaintRight, prepaintTop, queue, 0, stats, didPaint) || didPaint)
+            return;
+        if (!updateTiles(prepaintLeft, prepaintBottom, prepaintRight, prepaintBottom, queue, 0, stats, didPaint) || didPaint)
+            return;
+        if (!updateTiles(prepaintLeft, prepaintTop, prepaintLeft, prepaintBottom, queue, 0, stats, didPaint) || didPaint)
+            return;
+        updateTiles(prepaintRight, prepaintTop, prepaintRight, prepaintBottom, queue, 0, stats, didPaint);
+        return;
+    }
+
+    int left, top, right, bottom;
+    m_tiler->contentRectToTileIndices(contentRect, left, top, right, bottom);
+
+    // Otherwise, prepaint anything that was occluded but inside the layer's visible region.
+    if (!updateTiles(left, top, right, bottom, queue, 0, stats, didPaint) || didPaint)
+        return;
 
     // Then expand outwards from the visible area until we find a dirty row or column to update.
     while (left > prepaintLeft || top > prepaintTop || right < prepaintRight || bottom < prepaintBottom) {
@@ -785,6 +742,9 @@ bool TiledLayerChromium::needsIdlePaint(const IntRect& visibleContentRect)
 
     for (int j = top; j <= bottom; ++j) {
         for (int i = left; i <= right; ++i) {
+            // If the visibleContentRect is empty, then we are painting the outer-most set of tiles only.
+            if (visibleContentRect.isEmpty() && i != left && i != right && j != top && j != bottom)
+                continue;
             UpdatableTile* tile = tileAt(i, j);
             ASSERT(tile); // Did setTexturePriorities get skipped?
             if (!tile)
@@ -803,6 +763,16 @@ bool TiledLayerChromium::needsIdlePaint(const IntRect& visibleContentRect)
 IntRect TiledLayerChromium::idlePaintRect(const IntRect& visibleContentRect)
 {
     IntRect contentRect(IntPoint::zero(), contentBounds());
+
+    // For layers that are animating transforms but not visible at all, we don't know what part
+    // of them is going to become visible. For small layers we return the entire layer, for larger
+    // ones we avoid prepainting the layer at all.
+    if (visibleContentRect.isEmpty()) {
+        bool isSmallLayer = m_tiler->numTilesX() <= 9 && m_tiler->numTilesY() <= 9 && m_tiler->numTilesX() * m_tiler->numTilesY() <= 9;
+        if ((drawTransformIsAnimating() || screenSpaceTransformIsAnimating()) && isSmallLayer)
+            return contentRect;
+        return IntRect();
+    }
 
     // FIXME: This can be made a lot larger now! We should increase
     //        this slowly while insuring it doesn't cause any perf issues.

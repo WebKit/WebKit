@@ -497,72 +497,6 @@ TEST_F(TiledLayerChromiumTest, pushTilesLayerMarkedDirtyDuringPaintOnPreviousLay
     EXPECT_TRUE(layer2Impl->hasTileAt(0, 1));
 }
 
-TEST_F(TiledLayerChromiumTest, paintSmallAnimatedLayersImmediately)
-{
-    // Create a CCLayerTreeHost that has the right viewportsize,
-    // so the layer is considered small enough.
-    WebKit::WebCompositor::initialize(0);
-    FakeCCLayerTreeHostClient fakeCCLayerTreeHostClient;
-    OwnPtr<CCLayerTreeHost> ccLayerTreeHost = CCLayerTreeHost::create(&fakeCCLayerTreeHostClient, CCLayerTreeSettings());
-
-    bool runOutOfMemory[2] = {false, true};
-    for (int i = 0; i < 2; i++) {
-        // Create a layer with 4x4 tiles.
-        int layerWidth  = 4 * FakeTiledLayerChromium::tileSize().width();
-        int layerHeight = 4 * FakeTiledLayerChromium::tileSize().height();
-        int memoryForLayer = layerWidth * layerHeight * 4;
-        IntSize viewportSize = IntSize(layerWidth, layerHeight);
-        ccLayerTreeHost->setViewportSize(viewportSize, viewportSize);
-
-        // Use 8x4 tiles to run out of memory.
-        if (runOutOfMemory[i])
-            layerWidth *= 2;
-
-        OwnPtr<CCPrioritizedTextureManager> textureManager = CCPrioritizedTextureManager::create(memoryForLayer, 1024, CCRenderer::ContentPool);
-        DebugScopedSetImplThread implThread;
-
-        RefPtr<FakeTiledLayerChromium> layer = adoptRef(new FakeTiledLayerChromium(textureManager.get()));
-        OwnPtr<FakeCCTiledLayerImpl> layerImpl(adoptPtr(new FakeCCTiledLayerImpl(1)));
-
-        // Full size layer with half being visible.
-        IntSize contentBounds(layerWidth, layerHeight);
-        IntRect contentRect(IntPoint::zero(), contentBounds);
-        IntRect visibleRect(IntPoint::zero(), IntSize(layerWidth / 2, layerHeight));
-
-        // Pretend the layer is animating.
-        layer->setDrawTransformIsAnimating(true);
-        layer->setBounds(contentBounds);
-        layer->setVisibleContentRect(visibleRect);
-        layer->invalidateContentRect(contentRect);
-        layer->setLayerTreeHost(ccLayerTreeHost.get());
-
-        // The layer should paint it's entire contents on the first paint
-        // if it is close to the viewport size and has the available memory.
-        layer->setTexturePriorities(m_priorityCalculator);
-        textureManager->prioritizeTextures();
-        layer->updateContentRect(m_queue, visibleRect, 0, m_stats);
-        updateTextures();
-        layer->pushPropertiesTo(layerImpl.get());
-
-        // We should have all the tiles for the small animated layer.
-        // We should still have the visible tiles when we didn't
-        // have enough memory for all the tiles.
-        if (!runOutOfMemory[i]) {
-            for (int i = 0; i < 4; ++i) {
-                for (int j = 0; j < 4; ++j)
-                    EXPECT_TRUE(layerImpl->hasTileAt(i, j));
-            }
-        } else {
-            for (int i = 0; i < 8; ++i) {
-                for (int j = 0; j < 4; ++j)
-                    EXPECT_EQ(layerImpl->hasTileAt(i, j), i < 4);
-            }
-        }
-    }
-    ccLayerTreeHost.clear();
-    WebKit::WebCompositor::shutdown();
-}
-
 TEST_F(TiledLayerChromiumTest, idlePaintOutOfMemory)
 {
     // The tile size is 100x100. Setup 3x3 tiles with one 1x1 visible tile in the center.
@@ -675,6 +609,79 @@ TEST_F(TiledLayerChromiumTest, idlePaintNonVisibleLayers)
     }
 }
 
+static void testHaveOuterTiles(FakeCCTiledLayerImpl* layerImpl, int width, int height, int have)
+{
+    for (int i = 0; i < width; ++i) {
+        for (int j = 0; j < height; ++j) {
+            bool hasTile = i < have || j < have || i >= width - have || j >= height - have;
+            EXPECT_EQ(hasTile, layerImpl->hasTileAt(i, j));
+        }
+    }
+}
+
+TEST_F(TiledLayerChromiumTest, idlePaintNonVisibleAnimatingLayers)
+{
+    OwnPtr<CCPrioritizedTextureManager> textureManager = CCPrioritizedTextureManager::create(8000*8000*8, 1024, CCRenderer::ContentPool);
+    DebugScopedSetImplThread implThread;
+
+    int tileWidth = FakeTiledLayerChromium::tileSize().width();
+    int tileHeight = FakeTiledLayerChromium::tileSize().height();
+    int width[] = { 1, 2, 3, 4, 9, 10, 0 };
+    int height[] = { 1, 2, 3, 4, 9, 10, 0 };
+
+    for (int j = 0; height[j]; ++j) {
+        for (int i = 0; width[i]; ++i) {
+            RefPtr<FakeTiledLayerChromium> layer = adoptRef(new FakeTiledLayerChromium(textureManager.get()));
+            OwnPtr<FakeCCTiledLayerImpl> layerImpl(adoptPtr(new FakeCCTiledLayerImpl(1)));
+
+            // Pretend the layer is animating.
+            layer->setDrawTransformIsAnimating(true);
+
+            IntSize contentBounds(width[i] * tileWidth, height[j] * tileHeight);
+            IntRect contentRect(IntPoint::zero(), contentBounds);
+            IntRect visibleRect;
+
+            layer->setBounds(contentBounds);
+            layer->setVisibleContentRect(visibleRect);
+            layer->invalidateContentRect(contentRect);
+
+            layer->setTexturePriorities(m_priorityCalculator);
+            textureManager->prioritizeTextures();
+
+            // If idlePaintRect gives back a non-empty result then we should paint it. Otherwise,
+            // we shoud paint nothing.
+            bool shouldPrepaint = !layer->idlePaintRect(visibleRect).isEmpty();
+
+            // Normally we don't allow non-visible layers to pre-paint, but if they are animating then we should.
+            EXPECT_EQ(shouldPrepaint, layer->needsIdlePaint(visibleRect));
+
+            // If the layer is to be prepainted at all, then after four updates we should have the outer row/columns painted.
+            for (int k = 0; k < 4; ++k) {
+                layer->setTexturePriorities(m_priorityCalculator);
+                textureManager->prioritizeTextures();
+
+                layer->updateContentRect(m_queue, visibleRect, 0, m_stats);
+                updateTextures();
+                layer->pushPropertiesTo(layerImpl.get());
+            }
+
+            testHaveOuterTiles(layerImpl.get(), width[i], height[j], shouldPrepaint ? 1 : 0);
+
+            // We don't currently idle paint past the outermost tiles.
+            EXPECT_FALSE(layer->needsIdlePaint(visibleRect));
+            for (int k = 0; k < 4; ++k) {
+                layer->setTexturePriorities(m_priorityCalculator);
+                textureManager->prioritizeTextures();
+
+                layer->updateContentRect(m_queue, visibleRect, 0, m_stats);
+                updateTextures();
+                layer->pushPropertiesTo(layerImpl.get());
+            }
+
+            testHaveOuterTiles(layerImpl.get(), width[i], height[j], shouldPrepaint ? 1 : 0);
+        }
+    }
+}
 
 TEST_F(TiledLayerChromiumTest, invalidateFromPrepare)
 {
