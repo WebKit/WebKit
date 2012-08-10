@@ -31,7 +31,7 @@
 #ifndef V8DOMWindowShell_h
 #define V8DOMWindowShell_h
 
-#include "V8BindingPerContextData.h"
+#include "V8PerContextData.h"
 #include "WrapperTypeInfo.h"
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
@@ -78,7 +78,7 @@ public:
 
     void destroyGlobal();
 
-    V8BindingPerContextData* perContextData() { return m_perContextData.get(); }
+    V8PerContextData* perContextData() { return m_perContextData.get(); }
 
 private:
     V8DOMWindowShell(Frame*);
@@ -97,7 +97,7 @@ private:
 
     Frame* m_frame;
 
-    OwnPtr<V8BindingPerContextData> m_perContextData;
+    OwnPtr<V8PerContextData> m_perContextData;
 
     v8::Persistent<v8::Context> m_context;
     v8::Persistent<v8::Object> m_global;

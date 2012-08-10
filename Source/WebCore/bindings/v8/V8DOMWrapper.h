@@ -52,7 +52,7 @@ namespace WebCore {
     class EventTarget;
     class Frame;
     class Node;
-    class V8BindingPerContextData;
+    class V8PerContextData;
     class V8Proxy;
     class WorkerContext;
     class XPathResolver;
@@ -148,9 +148,9 @@ namespace WebCore {
             return domNodeMap.get(node);
         }
     private:
-        static V8BindingPerContextData* perContextData(V8Proxy*);
+        static V8PerContextData* perContextData(V8Proxy*);
 #if ENABLE(WORKERS)
-        static V8BindingPerContextData* perContextData(WorkerContext*);
+        static V8PerContextData* perContextData(WorkerContext*);
 #endif
     };
 

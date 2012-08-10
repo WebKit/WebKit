@@ -428,7 +428,7 @@ Frame* V8Proxy::retrieveFrame(v8::Handle<v8::Context> context)
     return 0;
 }
 
-V8BindingPerContextData* V8Proxy::retrievePerContextData(Frame* frame)
+V8PerContextData* V8Proxy::retrievePerContextData(Frame* frame)
 {
     V8IsolatedContext* isolatedContext;
     if (UNLIKELY(!!(isolatedContext = V8IsolatedContext::getEntered())))

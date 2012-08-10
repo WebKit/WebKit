@@ -41,7 +41,6 @@
 #include "StylePropertySet.h"
 #include "V8AbstractEventListener.h"
 #include "V8Binding.h"
-#include "V8BindingPerContextData.h"
 #include "V8Collection.h"
 #include "V8EventListener.h"
 #include "V8EventListenerList.h"
@@ -52,6 +51,7 @@
 #include "V8NamedNodeMap.h"
 #include "V8NodeFilterCondition.h"
 #include "V8NodeList.h"
+#include "V8PerContextData.h"
 #include "V8Proxy.h"
 #include "V8StyleSheet.h"
 #include "V8WorkerContextEventListener.h"
@@ -95,7 +95,7 @@ v8::Local<v8::Function> V8DOMWrapper::constructorForType(WrapperTypeInfo* type, 
     if (!frame)
         return v8::Local<v8::Function>();
 
-    if (V8BindingPerContextData* contextData = V8Proxy::retrievePerContextData(frame))
+    if (V8PerContextData* contextData = V8Proxy::retrievePerContextData(frame))
         return contextData->constructorForType(type);
 
     return v8::Local<v8::Function>();
@@ -110,14 +110,14 @@ v8::Local<v8::Function> V8DOMWrapper::constructorForType(WrapperTypeInfo* type, 
 }
 #endif
 
-V8BindingPerContextData* V8DOMWrapper::perContextData(V8Proxy* proxy)
+V8PerContextData* V8DOMWrapper::perContextData(V8Proxy* proxy)
 {
     V8DOMWindowShell* shell = proxy->windowShell();
     return shell ? shell->perContextData() : 0;
 }
 
 #if ENABLE(WORKERS)
-V8BindingPerContextData* V8DOMWrapper::perContextData(WorkerContext*)
+V8PerContextData* V8DOMWrapper::perContextData(WorkerContext*)
 {
     WorkerScriptController* controller = WorkerScriptController::controllerForContext();
     WorkerContextExecutionProxy* proxy = controller ? controller->proxy() : 0;
@@ -171,7 +171,7 @@ v8::Local<v8::Object> V8DOMWrapper::instantiateV8Object(V8Proxy* proxy, WrapperT
 #if ENABLE(WORKERS)
     WorkerContext* workerContext = 0;
 #endif
-    V8BindingPerContextData* contextData = 0;
+    V8PerContextData* contextData = 0;
     V8IsolatedContext* isolatedContext;
     if (UNLIKELY(!!(isolatedContext = V8IsolatedContext::getEntered()))) {
         contextData = isolatedContext->perContextData();

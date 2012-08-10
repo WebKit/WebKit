@@ -62,7 +62,7 @@ namespace WebCore {
     class ScriptExecutionContext;
     class ScriptSourceCode;
     class SecurityOrigin;
-    class V8BindingPerContextData;
+    class V8PerContextData;
     class V8EventListener;
     class V8IsolatedContext;
     class WorldContextHandle;
@@ -134,7 +134,7 @@ namespace WebCore {
         // a context.
         static Frame* retrieveFrame(v8::Handle<v8::Context>);
 
-        static V8BindingPerContextData* retrievePerContextData(Frame*);
+        static V8PerContextData* retrievePerContextData(Frame*);
 
         // Returns V8 Context of a frame. If none exists, creates
         // a new context. It is potentially slow and consumes memory.

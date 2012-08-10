@@ -1,3 +1,61 @@
+2012-08-09  Kentaro Hara  <haraken@chromium.org>
+
+        [V8] Rename V8BindingPerContextData to V8PerContextData
+        https://bugs.webkit.org/show_bug.cgi?id=93595
+
+        Reviewed by Adam Barth.
+
+        For a better name. See discussion in bug 93333.
+
+        No tests. No change in behavior.
+
+        * UseV8.cmake: Added V8PerContextData.cpp. The fact that missing V8BindingPerContextData.cpp
+        has not caused any problem indicates that UseV8.cmake is not used at all?
+        * WebCore.gypi:
+        * bindings/v8/V8DOMWindowShell.cpp:
+        (WebCore::V8DOMWindowShell::initContextIfNeeded):
+        * bindings/v8/V8DOMWindowShell.h:
+        (WebCore::V8DOMWindowShell::perContextData):
+        (V8DOMWindowShell):
+        * bindings/v8/V8DOMWrapper.cpp:
+        (WebCore::V8DOMWrapper::constructorForType):
+        (WebCore::V8DOMWrapper::perContextData):
+        (WebCore::V8DOMWrapper::instantiateV8Object):
+        * bindings/v8/V8DOMWrapper.h:
+        (WebCore):
+        (V8DOMWrapper):
+        * bindings/v8/V8IsolatedContext.cpp:
+        (WebCore::V8IsolatedContext::V8IsolatedContext):
+        * bindings/v8/V8IsolatedContext.h:
+        (WebCore):
+        (WebCore::V8IsolatedContext::perContextData):
+        (V8IsolatedContext):
+        * bindings/v8/V8PerContextData.cpp: Renamed from Source/WebCore/bindings/v8/V8BindingPerContextData.cpp.
+        (WebCore):
+        (WebCore::V8PerContextData::dispose):
+        (WebCore::V8PerContextData::init):
+        (WebCore::V8PerContextData::createWrapperFromCacheSlowCase):
+        (WebCore::V8PerContextData::constructorForTypeSlowCase):
+        * bindings/v8/V8PerContextData.h: Renamed from Source/WebCore/bindings/v8/V8BindingPerContextData.h.
+        (WebCore):
+        (V8PerContextData):
+        (WebCore::V8PerContextData::create):
+        (WebCore::V8PerContextData::~V8PerContextData):
+        (WebCore::V8PerContextData::createWrapperFromCache):
+        (WebCore::V8PerContextData::constructorForType):
+        (WebCore::V8PerContextData::V8PerContextData):
+        * bindings/v8/V8Proxy.cpp:
+        (WebCore::V8Proxy::retrievePerContextData):
+        * bindings/v8/V8Proxy.h:
+        (WebCore):
+        (V8Proxy):
+        * bindings/v8/WorkerContextExecutionProxy.cpp:
+        (WebCore::WorkerContextExecutionProxy::initContextIfNeeded):
+        * bindings/v8/WorkerContextExecutionProxy.h:
+        (WebCore):
+        (WebCore::WorkerContextExecutionProxy::perContextData):
+        (WorkerContextExecutionProxy):
+
 2012-08-09  Erik Arvidsson  <arv@chromium.org>
 
         HTMLElement.classList cannot remove classnames with uppercase characters

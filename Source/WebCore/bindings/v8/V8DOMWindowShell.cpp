@@ -50,7 +50,6 @@
 #include "StorageNamespace.h"
 #include "StylePropertySet.h"
 #include "V8Binding.h"
-#include "V8BindingPerContextData.h"
 #include "V8Collection.h"
 #include "V8DOMMap.h"
 #include "V8DOMWindow.h"
@@ -60,6 +59,7 @@
 #include "V8HiddenPropertyName.h"
 #include "V8History.h"
 #include "V8Location.h"
+#include "V8PerContextData.h"
 #include "V8Proxy.h"
 #include "WorkerContextExecutionProxy.h"
 
@@ -324,7 +324,7 @@ bool V8DOMWindowShell::initContextIfNeeded()
 #endif
     }
 
-    m_perContextData = V8BindingPerContextData::create(m_context);
+    m_perContextData = V8PerContextData::create(m_context);
     if (!m_perContextData->init()) {
         disposeContextHandles();
         return false;

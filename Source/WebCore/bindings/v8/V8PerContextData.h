@@ -28,8 +28,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef V8BindingPerContextData_h
-#define V8BindingPerContextData_h
+#ifndef V8PerContextData_h
+#define V8PerContextData_h
 
 #include "OwnHandle.h"
 #include "WrapperTypeInfo.h"
@@ -39,14 +39,14 @@
 
 namespace WebCore {
 
-class V8BindingPerContextData {
+class V8PerContextData {
 public:
-    static PassOwnPtr<V8BindingPerContextData> create(v8::Handle<v8::Context> context)
+    static PassOwnPtr<V8PerContextData> create(v8::Handle<v8::Context> context)
     {
-        return adoptPtr(new V8BindingPerContextData(context));
+        return adoptPtr(new V8PerContextData(context));
     }
 
-    ~V8BindingPerContextData()
+    ~V8PerContextData()
     {
         dispose();
     }
@@ -71,7 +71,7 @@ public:
     }
 
 private:
-    explicit V8BindingPerContextData(v8::Handle<v8::Context> context)
+    explicit V8PerContextData(v8::Handle<v8::Context> context)
         : m_context(context)
     {
     }
@@ -96,4 +96,4 @@ private:
 
 } // namespace WebCore
 
-#endif // V8BindingPerContextData_h
+#endif // V8PerContextData_h

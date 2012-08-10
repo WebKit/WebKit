@@ -29,13 +29,13 @@
  */
 
 #include "config.h"
-#include "V8BindingPerContextData.h"
+#include "V8PerContextData.h"
 
 #include "SafeAllocation.h"
 
 namespace WebCore {
 
-void V8BindingPerContextData::dispose()
+void V8PerContextData::dispose()
 {
     {
         WrapperBoilerplateMap::iterator it = m_wrapperBoilerplates.begin();
@@ -71,7 +71,7 @@ void V8BindingPerContextData::dispose()
     m_##name##Prototype.set(prototypeValue); \
 }
 
-bool V8BindingPerContextData::init()
+bool V8PerContextData::init()
 {
     v8::Handle<v8::String> prototypeString = v8::String::NewSymbol("prototype");
     if (prototypeString.IsEmpty())
@@ -85,7 +85,7 @@ bool V8BindingPerContextData::init()
 
 #undef V8_STORE_PRIMORDIAL
 
-v8::Local<v8::Object> V8BindingPerContextData::createWrapperFromCacheSlowCase(WrapperTypeInfo* type)
+v8::Local<v8::Object> V8PerContextData::createWrapperFromCacheSlowCase(WrapperTypeInfo* type)
 {
     ASSERT(!m_errorPrototype.get().IsEmpty());
     ASSERT(!m_objectPrototype.get().IsEmpty());
@@ -100,7 +100,7 @@ v8::Local<v8::Object> V8BindingPerContextData::createWrapperFromCacheSlowCase(Wr
     return v8::Local<v8::Object>();
 }
 
-v8::Local<v8::Function> V8BindingPerContextData::constructorForTypeSlowCase(WrapperTypeInfo* type)
+v8::Local<v8::Function> V8PerContextData::constructorForTypeSlowCase(WrapperTypeInfo* type)
 {
     ASSERT(!m_errorPrototype.get().IsEmpty());
     ASSERT(!m_objectPrototype.get().IsEmpty());

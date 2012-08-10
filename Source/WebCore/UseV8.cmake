@@ -61,6 +61,7 @@ LIST(APPEND WebCore_SOURCES
     bindings/v8/V8IsolatedContext.cpp
     bindings/v8/V8LazyEventListener.cpp
     bindings/v8/V8NodeFilterCondition.cpp
+    bindings/v8/V8PerContextData.cpp
     bindings/v8/V8Proxy.cpp
     bindings/v8/V8RecursionScope.cpp
     bindings/v8/V8Utilities.cpp

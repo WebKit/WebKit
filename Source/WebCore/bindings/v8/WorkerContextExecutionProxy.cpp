@@ -42,10 +42,10 @@
 #include "SharedWorker.h"
 #include "SharedWorkerContext.h"
 #include "V8Binding.h"
-#include "V8BindingPerContextData.h"
 #include "V8DOMMap.h"
 #include "V8DOMWindowShell.h"
 #include "V8DedicatedWorkerContext.h"
+#include "V8PerContextData.h"
 #include "V8Proxy.h"
 #include "V8RecursionScope.h"
 #include "V8SharedWorkerContext.h"
@@ -153,7 +153,7 @@ bool WorkerContextExecutionProxy::initContextIfNeeded()
 
     v8::Context::Scope scope(context);
 
-    m_perContextData = V8BindingPerContextData::create(m_context);
+    m_perContextData = V8PerContextData::create(m_context);
     if (!m_perContextData->init()) {
         dispose();
         return false;

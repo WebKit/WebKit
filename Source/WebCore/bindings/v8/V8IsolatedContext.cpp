@@ -36,8 +36,8 @@
 #include "FrameLoaderClient.h"
 #include "InspectorInstrumentation.h"
 #include "SecurityOrigin.h"
-#include "V8BindingPerContextData.h"
 #include "V8DOMWindow.h"
+#include "V8PerContextData.h"
 #include "V8Proxy.h"
 #include <wtf/StringExtras.h>
 
@@ -87,7 +87,7 @@ V8IsolatedContext::V8IsolatedContext(V8Proxy* proxy, int extensionGroup, int wor
 
     getGlobalObject(m_context->get())->SetPointerInInternalField(V8DOMWindow::enteredIsolatedWorldIndex, this);
 
-    m_perContextData = V8BindingPerContextData::create(m_context->get());
+    m_perContextData = V8PerContextData::create(m_context->get());
     m_perContextData->init();
 
     // FIXME: This will go away once we have a windowShell for the isolated world.
