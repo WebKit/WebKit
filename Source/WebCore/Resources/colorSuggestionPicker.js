@@ -71,6 +71,19 @@ function createElement(tagName, opt_class, opt_text) {
 }
 
 /**
+ * @param {!number} width
+ * @param {!number} height
+ */
+function resizeWindow(width, height) {
+    if (window.frameElement) {
+        window.frameElement.style.width = width + "px";
+        window.frameElement.style.height = height + "px";
+    } else {
+        window.resizeTo(width, height);
+    }
+}
+
+/**
  * @param {Event} event
  */
 function handleMessage(event) {
@@ -85,9 +98,10 @@ function initialize(args) {
     var main = $("main");
     main.innerHTML = "";
     var errorString = validateArguments(args);
-    if (errorString)
+    if (errorString) {
         main.textContent = "Internal error: " + errorString;
-    else
+        resizeWindow(main.offsetWidth, main.offsetHeight);
+    } else
         new ColorPicker(main, args);
 }
 
@@ -180,12 +194,7 @@ ColorPicker.prototype._layout = function() {
     this._otherButton = otherButton;
     var elementWidth = this._element.offsetWidth;
     var elementHeight = this._element.offsetHeight;
-    if (window.frameElement) {
-        window.frameElement.style.width = elementWidth + "px";
-        window.frameElement.style.height = elementHeight + "px";
-    } else {
-        window.resizeTo(elementWidth, elementHeight);
-    }
+    resizeWindow(elementWidth, elementHeight);
 };
 
 ColorPicker.prototype.selectColorAtIndex = function(index) {

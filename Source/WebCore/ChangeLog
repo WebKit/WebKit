@@ -1,3 +1,25 @@
+2012-08-10  Keishi Hattori  <keishi@webkit.org>
+
+        Resize calandar and color suggestion popups to show error message
+        https://bugs.webkit.org/show_bug.cgi?id=93695
+
+        Reviewed by Kent Tamura.
+
+        r125169 made PagePopupClient::contentSize() return zero size and so to
+        see the error message, we need to resize the page popup.
+
+        No new tests. Not user facing.
+
+        * Resources/calendarPicker.js:
+        (resizeWindow): Resizes popup window to given size.
+        (showMain): Initiates transition to show the main element.
+        (initialize):
+        (fixWindowSize):
+        * Resources/colorSuggestionPicker.js:
+        (resizeWindow):
+        (initialize):
+        (ColorPicker.prototype._layout):
+
 2012-08-10  Yury Semikhatsky  <yurys@chromium.org>
 
         Web Inspector: further ResourceLoader memory instrumentation

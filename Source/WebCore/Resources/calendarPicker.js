@@ -223,6 +223,25 @@ function serializeDate(year, month, day) {
     return yearString + "-" + ("0" + (month + 1)).substr(-2, 2) + "-" + ("0" + day).substr(-2, 2);
 }
 
+/**
+ * @param {!number} width
+ * @param {!number} height
+ */
+function resizeWindow(width, height) {
+    if (window.frameElement) {
+        window.frameElement.style.width = width + "px";
+        window.frameElement.style.height = height + "px";
+    } else {
+        window.resizeTo(width, height);
+    }
+}
+
+function showMain() {
+    var main = $("main");
+    main.style.webkitTransition = "opacity 0.1s ease";
+    main.style.opacity = "1";
+}
+
 // ----------------------------------------------------------------
 // Initialization
 
@@ -285,9 +304,11 @@ function initialize(args) {
     main.classList.add(ClassNames.NoFocusRing);
 
     var errorString = validateArguments(args);
-    if (errorString)
+    if (errorString) {
         main.textContent = "Internal error: " + errorString;
-    else {
+        resizeWindow(main.offsetWidth, main.offsetHeight);
+        showMain();
+    } else {
         global.params = args;
         checkLimits();
         layout();
@@ -336,14 +357,8 @@ function fixWindowSize() {
     daysAreaElement.style.tableLayout = "fixed";
     document.getElementsByClassName(ClassNames.YearMonthUpper)[0].style.display = "-webkit-box";
     document.getElementsByClassName(ClassNames.MonthSelectorBox)[0].style.display = "block";
-    main.style.webkitTransition = "opacity 0.1s ease";
-    main.style.opacity = "1";
-    if (window.frameElement) {
-        window.frameElement.style.width = desiredBodyWidth + "px";
-        window.frameElement.style.height = mainHeight + "px";
-    } else {
-        window.resizeTo(desiredBodyWidth, mainHeight);
-    }
+    resizeWindow(desiredBodyWidth, mainHeight);
+    showMain();
 }
 
 function checkLimits() {
