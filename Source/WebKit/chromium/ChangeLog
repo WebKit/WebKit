@@ -1,3 +1,12 @@
+2012-08-09  Nat Duca  <nduca@chromium.org>
+
+        [chromium] Remove missing files from WebKit.gyp introduced by r125219
+        https://bugs.webkit.org/show_bug.cgi?id=93671
+
+        Unreviewed. Fixing windows build.
+
+        * WebKit.gyp:
+
 2012-08-09  Alec Flett  <alecflett@chromium.org>
 
         IndexedDB: add AssertMatchingEnums for Direction and TaskType
