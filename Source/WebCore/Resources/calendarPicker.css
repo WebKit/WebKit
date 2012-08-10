@@ -82,7 +82,7 @@ body {
 }
 
 .month-selector-popup {
-    -webkit-box-sizing: border-box;
+    -webkit-box-sizing: content-box;
     -webkit-box-shadow:
         0 0 0 1px rgba(0,0,0,0.1),
         0 5px 1px 1px rgba(0,0,0,0.1),
@@ -91,6 +91,7 @@ body {
     background: #fff;
     display: none;
     max-height: 10.8em;
+    overflow-x: hidden;
     overflow-y: auto;
     position: absolute;
     white-space: nowrap;

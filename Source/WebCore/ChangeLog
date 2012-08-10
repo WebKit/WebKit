@@ -1,3 +1,19 @@
+2012-08-10  Kevin Ellis  <kevers@chromium.org>
+
+        Horizontal scrollbar appears in the month-year selector of input[type=date]
+        https://bugs.webkit.org/show_bug.cgi?id=93517
+
+        Reviewed by Kent Tamura.
+
+        Update size of the month-year selector popup to account for the
+        width of the vertical scrollbar being platform dependent.
+
+        * Resources/calendarPicker.css:
+        (.month-selector-popup): Suppress horizontal scrolling.
+        * Resources/calendarPicker.js:
+        (YearMonthController.prototype.attachTo): Add a sizer element to facilitate determining the scrollbar width.
+        (YearMonthController.prototype._showPopup): Use computed scrollbar width for popup resizing.
+
 2012-08-10  Alexander Pavlov  <apavlov@chromium.org>
 
         Web Inspector: Unreviewed, fix frontend compilability after r125268.

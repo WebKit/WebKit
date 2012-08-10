@@ -51,6 +51,7 @@ var ClassNames = {
     MonthSelectorPopup: "month-selector-popup",
     MonthSelectorPopupContents: "month-selector-popup-contents",
     MonthSelectorPopupEntry: "month-selector-popup-entry",
+    MonthSelectorPopupSizer: "month-selector-popup-sizer",
     MonthSelectorWall: "month-selector-wall",
     NoFocusRing: "no-focus-ring",
     NotThisMonth: "not-this-month",
@@ -458,6 +459,9 @@ YearMonthController.prototype.attachTo = function(main) {
     this._monthPopup.tabIndex = 0;
     this._monthPopupContents = createElement("div", ClassNames.MonthSelectorPopupContents);
     this._monthPopup.appendChild(this._monthPopupContents);
+    // Sizer used to determine the width of the viewport in the popup menu.
+    var sizer = createElement("div", ClassNames.MonthSelectorPopupSizer);
+    this._monthPopup.appendChild(sizer);
     box.appendChild(this._monthPopup);
     this._month = createElement("div", ClassNames.MonthSelector);
     this._month.addEventListener("click", bind(this._showPopup, this), false);
@@ -613,7 +617,10 @@ YearMonthController.prototype._showPopup = function() {
            if (bottom > popupHeight)
                this._monthPopup.scrollTop = bottom - popupHeight;
         }
-        this._monthPopup.style.webkitPaddingEnd = '15px';
+        var sizer = document.querySelector("." + ClassNames.MonthSelectorPopupSizer);
+        var scrollWidth = this._monthPopupContents.clientWidth - sizer.clientWidth;
+        if (scrollWidth > 0)
+            this._monthPopup.style.webkitPaddingEnd = scrollWidth + 'px';
     }
     this._monthPopup.focus();
 };
