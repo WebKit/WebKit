@@ -1,3 +1,25 @@
+2012-08-10  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
+
+        [Transforms] Hit test issue with large scale() transform
+        https://bugs.webkit.org/show_bug.cgi?id=23170
+
+        Reviewed by Simon Fraser.
+
+        By using normal rounding to determine the top-left corner of the
+        hit-tested rectangle, we end up offsetting the hit test by up to
+        half a pixel, once scaled to x60, this creates a 30px error.
+
+        Normal rounding is replaced with floored rounding which means the
+        hit-tested pixel will now always be the pixel containing the
+        point.
+
+        Test: fast/transforms/hit-test-large-scale.html
+
+        * rendering/HitTestResult.cpp:
+        (WebCore::HitTestPoint::HitTestPoint):
+        (WebCore::HitTestPoint::intersectsRect):
+        (WebCore::HitTestPoint::rectForPoint):
+
 2012-08-10  Florin Malita  <fmalita@chromium.org>
 
         Unreviewed gardening: build fix for 32bit platforms after 125294.

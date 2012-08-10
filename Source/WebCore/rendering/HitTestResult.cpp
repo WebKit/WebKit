@@ -67,7 +67,7 @@ HitTestPoint::HitTestPoint(const LayoutPoint& point)
 }
 
 HitTestPoint::HitTestPoint(const FloatPoint& point)
-    : m_point(roundedLayoutPoint(point))
+    : m_point(flooredLayoutPoint(point))
     , m_boundingBox(rectForPoint(m_point, 0, 0, 0, 0))
     , m_transformedPoint(point)
     , m_transformedRect(m_boundingBox)
@@ -83,7 +83,7 @@ HitTestPoint::HitTestPoint(const FloatPoint& point, const FloatQuad& quad)
     , m_region(0)
     , m_isRectBased(true)
 {
-    m_point = roundedLayoutPoint(point);
+    m_point = flooredLayoutPoint(point);
     m_boundingBox = enclosingIntRect(quad.boundingBox());
     m_isRectilinear = quad.isRectilinear();
 }
@@ -181,7 +181,7 @@ bool HitTestPoint::intersects(const FloatRect& rect) const
 
 IntRect HitTestPoint::rectForPoint(const LayoutPoint& point, unsigned topPadding, unsigned rightPadding, unsigned bottomPadding, unsigned leftPadding)
 {
-    IntPoint actualPoint(roundedIntPoint(point));
+    IntPoint actualPoint(flooredIntPoint(point));
     actualPoint -= IntSize(leftPadding, topPadding);
 
     IntSize actualPadding(leftPadding + rightPadding, topPadding + bottomPadding);

@@ -9,5 +9,5 @@ Element at 365, 340 has id "bottomLayer": PASS
 Element at 35, 260 has id "bottomLayer": PASS
 Element at 370, 280 has id "bottomLayer": PASS
 Element at 35, 340 has id "backgroundLayer": PASS
-Element at 370, 340 has id "backgroundLayer": PASS
+Element at 371, 340 has id "backgroundLayer": PASS
 

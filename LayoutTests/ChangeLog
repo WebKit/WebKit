@@ -1,3 +1,21 @@
+2012-08-10  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
+
+        [Transforms] Hit test issue with large scale() transform
+        https://bugs.webkit.org/show_bug.cgi?id=23170
+
+        Reviewed by Simon Fraser.
+
+        New test checking that we can hit the bottom-right part of an element with
+        a large scale transformation.
+
+        Modified test-input on perspective-clipped.html, since it was mathematically
+        0.1px inside the transformed target, but used to miss due to bad rounding.
+
+        * fast/transforms/hit-test-large-scale-expected.txt: Added.
+        * fast/transforms/hit-test-large-scale.html: Added.
+        * transforms/3d/hit-testing/perspective-clipped-expected.txt:
+        * transforms/3d/hit-testing/perspective-clipped.html:
+
 2012-08-10  Takashi Sakamoto  <tasak@google.com>
 
         box-shadow creates incorrect shadow when border-radius is too large.
