@@ -1,3 +1,13 @@
+2012-08-10  Dan Bernstein  <mitz@apple.com>
+
+        <rdar://problem/11855229> When in paginated mode, the layout timer fires continually
+        https://bugs.webkit.org/show_bug.cgi?id=91038
+
+        Reviewed by Simon Fraser.
+
+        * page/Page.cpp:
+        (WebCore::Page::pageCount): Changed to only trigger layout if needed.
+
 2012-08-10  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         [CMAKE] Fix wrong idl include path in CMakeList.txt
