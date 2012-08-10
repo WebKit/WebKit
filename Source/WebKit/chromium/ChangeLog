@@ -1,3 +1,19 @@
+2012-08-10  Iain Merrick  <husky@google.com>
+
+        [chromium] Upstream Android changes to WebFrameImpl::selectRange
+        https://bugs.webkit.org/show_bug.cgi?id=92513
+
+        Reviewed by Ryosuke Niwa.
+
+        This change is driven by the Chromium port on the Android platform,
+        but it should be suitable for other touch-based platforms. We reuse
+        selectionExtentRespectingEditingBoundary (extracted from EventHandler
+        into VisibleSelection).
+
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::selectRange):
+        (WebKit::WebFrameImpl::visiblePositionForWindowPoint):
+
 2012-08-10  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Remove targetSurface pointer from CCRenderPass

@@ -1458,11 +1458,22 @@ bool WebFrameImpl::selectWordAroundCaret()
 
 void WebFrameImpl::selectRange(const WebPoint& start, const WebPoint& end)
 {
-    VisibleSelection selection(visiblePositionForWindowPoint(start),
-                               visiblePositionForWindowPoint(end));
+    VisiblePosition startPosition = visiblePositionForWindowPoint(start);
+    VisiblePosition endPosition = visiblePositionForWindowPoint(end);
 
-    if (frame()->selection()->shouldChangeSelection(selection))
-        frame()->selection()->setSelection(selection, CharacterGranularity);
+    // To correctly handle editable boundaries, we adjust the selection by setting its extent
+    // while keeping its base fixed. For a touch-based UI, this means that moving the selection
+    // handles behaves like a drag-select with the mouse, which is what we want here. If both
+    // endpoints changed, we need to set the extent twice.
+    // FIXME: the WebFrame::SelectRange API should explicitly state which endpoint is moving.
+    VisibleSelection newSelection = frame()->selection()->selection();
+    if (startPosition != newSelection.visibleStart())
+        newSelection = VisibleSelection(newSelection.visibleEnd(), startPosition);
+    if (endPosition != newSelection.visibleEnd())
+        newSelection = VisibleSelection(newSelection.visibleStart(), endPosition);
+
+    if (frame()->selection()->shouldChangeSelection(newSelection))
+        frame()->selection()->setSelection(newSelection, CharacterGranularity);
 }
 
 void WebFrameImpl::selectRange(const WebRange& webRange)
@@ -1484,13 +1495,9 @@ VisiblePosition WebFrameImpl::visiblePositionForWindowPoint(const WebPoint& poin
 
     frame()->document()->renderView()->layer()->hitTest(request, result);
 
-    // Matching the logic in MouseEventWithHitTestResults::targetNode()
-    Node* node = result.innerNode();
+    Node* node = EventHandler::targetNode(result);
     if (!node)
         return VisiblePosition();
-    Element* element = node->parentElement();
-    if (!node->inDocument() && element && element->inDocument())
-        node = element;
 
     return node->renderer()->positionForPoint(result.localPoint());
 }

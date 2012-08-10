@@ -1,3 +1,15 @@
+2012-08-10  Iain Merrick  <husky@google.com>
+
+        [chromium] Upstream Android changes to WebFrameImpl::selectRange
+        https://bugs.webkit.org/show_bug.cgi?id=92513
+
+        Reviewed by Ryosuke Niwa.
+
+        Make this function public we so can call it from the WebKit layer.
+
+        * page/EventHandler.h:
+        (EventHandler):
+
 2012-08-10  Mario Sanchez Prada  <msanchez@igalia.com>
 
         [GTK] Broken implementation of AtkText and AtkEditableText for password fields
