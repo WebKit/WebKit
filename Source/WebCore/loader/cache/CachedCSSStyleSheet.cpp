@@ -59,10 +59,13 @@ CachedCSSStyleSheet::~CachedCSSStyleSheet()
 void CachedCSSStyleSheet::didAddClient(CachedResourceClient* c)
 {
     ASSERT(c->resourceClientType() == CachedStyleSheetClient::expectedType());
+    // CachedResource::didAddClient() must be before setCSSStyleSheet(),
+    // because setCSSStyleSheet() may cause scripts to be executed, which could destroy 'c' if it is an instance of HTMLLinkElement.
+    // see the comment of HTMLLinkElement::setCSSStyleSheet.
+    CachedResource::didAddClient(c);
+
     if (!isLoading())
         static_cast<CachedStyleSheetClient*>(c)->setCSSStyleSheet(m_resourceRequest.url(), m_response.url(), m_decoder->encoding().name(), this);
-
-    CachedResource::didAddClient(c);
 }
 
 void CachedCSSStyleSheet::setEncoding(const String& chs)
