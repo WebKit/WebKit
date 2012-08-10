@@ -1,9 +1,4 @@
-Check behavior of name attribute for various form elements
-
-On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
-
-
-Test cases for button
+Reflected DOMString attribute test for button/@name
 Initial value:
 PASS element.name is ""
 PASS element.getAttribute("name") is null
@@ -33,7 +28,7 @@ PASS element.setAttribute("name", 456); element.name is "456"
 PASS element.getAttribute("name") is "456"
 
 
-Test cases for fieldset
+Reflected DOMString attribute test for fieldset/@name
 Initial value:
 PASS element.name is ""
 PASS element.getAttribute("name") is null
@@ -63,7 +58,7 @@ PASS element.setAttribute("name", 456); element.name is "456"
 PASS element.getAttribute("name") is "456"
 
 
-Test cases for form
+Reflected DOMString attribute test for form/@name
 Initial value:
 PASS element.name is ""
 PASS element.getAttribute("name") is null
@@ -93,7 +88,7 @@ PASS element.setAttribute("name", 456); element.name is "456"
 PASS element.getAttribute("name") is "456"
 
 
-Test cases for input
+Reflected DOMString attribute test for input/@name
 Initial value:
 PASS element.name is ""
 PASS element.getAttribute("name") is null
@@ -123,7 +118,37 @@ PASS element.setAttribute("name", 456); element.name is "456"
 PASS element.getAttribute("name") is "456"
 
 
-Test cases for keygen
+Reflected DOMString attribute test for input/@step
+Initial value:
+PASS element.step is ""
+PASS element.getAttribute("step") is null
+Setting a value via the IDL attribute:
+PASS element.step = "foo"; element.step is "foo"
+PASS element.getAttribute("step") is "foo"
+Setting a value via the content attribute:
+PASS element.setAttribute("step", " bar\n"); element.step is " bar\n"
+PASS element.getAttribute("step") is " bar\n"
+Setting null via the IDL attribute:
+PASS element.step = null; element.step is ""
+PASS element.getAttribute("step") is null
+Setting null via the content attribute:
+PASS element.setAttribute("step", null); element.step is "null"
+PASS element.getAttribute("step") is "null"
+Setting undefined via the IDL attribute:
+PASS element.step = undefined; element.step is "undefined"
+PASS element.getAttribute("step") is "undefined"
+Setting undefined via the content attribute:
+PASS element.setAttribute("step", undefined); element.step is "undefined"
+PASS element.getAttribute("step") is "undefined"
+Setting non-string via the IDL attribute:
+PASS element.step = 123; element.step is "123"
+PASS element.getAttribute("step") is "123"
+Setting non-string via the content attribute:
+PASS element.setAttribute("step", 456); element.step is "456"
+PASS element.getAttribute("step") is "456"
+
+
+Reflected DOMString attribute test for keygen/@name
 Initial value:
 PASS element.name is ""
 PASS element.getAttribute("name") is null
@@ -153,7 +178,7 @@ PASS element.setAttribute("name", 456); element.name is "456"
 PASS element.getAttribute("name") is "456"
 
 
-Test cases for object
+Reflected DOMString attribute test for object/@name
 Initial value:
 PASS element.name is ""
 PASS element.getAttribute("name") is null
@@ -183,7 +208,7 @@ PASS element.setAttribute("name", 456); element.name is "456"
 PASS element.getAttribute("name") is "456"
 
 
-Test cases for output
+Reflected DOMString attribute test for output/@name
 Initial value:
 PASS element.name is ""
 PASS element.getAttribute("name") is null
@@ -213,7 +238,7 @@ PASS element.setAttribute("name", 456); element.name is "456"
 PASS element.getAttribute("name") is "456"
 
 
-Test cases for select
+Reflected DOMString attribute test for select/@name
 Initial value:
 PASS element.name is ""
 PASS element.getAttribute("name") is null
@@ -243,7 +268,7 @@ PASS element.setAttribute("name", 456); element.name is "456"
 PASS element.getAttribute("name") is "456"
 
 
-Test cases for textarea
+Reflected DOMString attribute test for textarea/@name
 Initial value:
 PASS element.name is ""
 PASS element.getAttribute("name") is null

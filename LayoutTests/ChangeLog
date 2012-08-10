@@ -1,3 +1,25 @@
+2012-08-09  Kent Tamura  <tkent@chromium.org>
+
+        Add DOMString reflection test
+        https://bugs.webkit.org/show_bug.cgi?id=93681
+
+        Reviewed by Hajime Morita.
+
+        Introduce fast/dom/domstring-atribute-reflection.html, which
+        should have tess for all of reflected DOMString IDL attribute,
+        like fast/dom/boolean-attribute-reflection.html and
+        URL-attribute-reflectin.html.
+
+        As the first step, integrate fast/forms/input-step.html and
+        fast/form/name-attribute.html into
+        domstring-attribute-reflection.html.
+
+        * fast/dom/domstring-attribute-reflection-expected.txt: Renamed from LayoutTests/fast/forms/name-attribute-expected.txt.
+        * fast/dom/domstring-attribute-reflection.html: Added.
+        * fast/forms/input-step-expected.txt: Removed.
+        * fast/forms/input-step.html: Removed.
+        * fast/forms/name-attribute.html: Removed.
+
 2012-08-09  Sukolsak Sakshuwong  <sukolsak@google.com>
 
         Mouse-select then Cut, results in preceding character being lost
