@@ -735,7 +735,6 @@ generateBindings.commands = perl -I$$PWD/bindings/scripts $$generateBindings.scr
                             --include $$PWD/storage \
                             --include $$PWD/svg \
                             --include $$PWD/testing \
-                            --include $$PWD/websockets \
                             --include $$PWD/workers \
                             --include $$PWD/xml \
                             --outputDir ${QMAKE_FUNC_FILE_OUT_PATH} \

@@ -1,3 +1,10 @@
+2012-08-10  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Unreviewed trivial build fix: Avoid passing a non-existance WebCore/websockets directory
+        to the generators, which produces unnecessary warnings. The module lives now in WebCore/Modules/websockets.
+
+        * DerivedSources.pri:
+
 2012-08-10  Andrey Kosyakov  <caseq@chromium.org>
 
         Web Inspector: add frame ids to TimeStamp, Time and TimeEnd records in Timeline
