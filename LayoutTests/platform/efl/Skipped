@@ -1046,7 +1046,7 @@ http/tests/xmlhttprequest/failed-auth.html
 http/tests/xmlhttprequest/logout.html
 http/tests/xmlhttprequest/remember-bad-password.html
 http/tests/xmlhttprequest/redirect-cross-origin-tripmine.html
-http/tests/xmlviewer/extensions-api.html
+xmlviewer/extensions-api.html
 
 # These test -apple- and -khtml- prefixed CSS properties, which we don't support.
 inspector/styles/vendor-prefixes.html

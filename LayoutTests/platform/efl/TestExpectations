@@ -147,6 +147,7 @@ BUGWKEFL SKIP : inspector/device-orientation-success.html = TEXT
 //////////////////////////////////////////////////////////////////////////////////////////
 
 BUGWK93096 : webintents/web-intents-obj-constructor.html = CRASH
+BUGWK93654 DEBUG : fast/events/keyevent-iframe-removed-crash.html = CRASH
 
 //////////////////////////////////////////////////////////////////////////////////////////
 // FLAKY TESTS
@@ -815,9 +816,6 @@ BUGWK92942 SKIP : fast/events/constructors/device-proximity-event-constructor.ht
 // Needs rebaseline after https://bugs.webkit.org/show_bug.cgi?id=80219
 BUGWK80219 : fast/box-sizing/box-sizing.html = IMAGE+TEXT
 BUGWK80219 : compositing/overflow/clip-descendents.html = TEXT
-
-// This test is failing after being added at r124549
-BUGWK93074 : fast/forms/datalist/range-snap-to-datalist.html = TEXT
 
 // These tests are failing after r124512
 BUGWK93073 : mathml/presentation/attributes.xhtml = TEXT

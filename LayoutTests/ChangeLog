@@ -1,3 +1,15 @@
+2012-08-10  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
+
+        [EFL] Gardening of failing tests
+        https://bugs.webkit.org/show_bug.cgi?id=93700
+
+        Unreviewed EFL gardening.
+
+        * platform/efl/Skipped: Test extensions-api.html moved out of
+        the http directory in r125222.
+        * platform/efl/TestExpectations: Add failing tests to the Test
+        Expectations and unskip passing test.
+
 2012-08-10  Andrei Poenaru  <poenaru@adobe.com>
 
         Web Inspector: Protocol Extension: Refactor protocol extension for CSS Regions
