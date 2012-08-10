@@ -70,7 +70,7 @@ using namespace HTMLNames;
     StyleRuleBase* rule;
     Vector<RefPtr<StyleRuleBase> >* ruleList;
     CSSParserSelector* selector;
-    Vector<OwnPtr<CSSParserSelector> >* selectorList;
+    CSSSelectorVector* selectorList;
     CSSSelector::MarginBoxType marginBox;
     CSSSelector::Relation relation;
     MediaQuerySet* mediaList;
@@ -333,9 +333,9 @@ webkit_value:
     WEBKIT_VALUE_SYM '{' maybe_space expr '}' {
         if ($4) {
             parser->m_valueList = parser->sinkFloatingValueList($4);
-            int oldParsedProperties = parser->m_parsedProperties.size();
+            int oldParsedProperties = parser->m_parsedProperties->size();
             if (!parser->parseValue(parser->m_id, parser->m_important))
-                parser->rollbackLastProperties(parser->m_parsedProperties.size() - oldParsedProperties);
+                parser->rollbackLastProperties(parser->m_parsedProperties->size() - oldParsedProperties);
             parser->m_valueList = nullptr;
         }
     }
@@ -912,7 +912,7 @@ ruleset:
 selector_list:
     selector %prec UNIMPORTANT_TOK {
         if ($1) {
-            $$ = parser->reusableSelectorVector();
+            $$ = parser->selectorVector();
             $$->shrink(0);
             $$->append(parser->sinkFloatingSelector($1));
             parser->updateLastSelectorLineAndPosition();
@@ -1248,7 +1248,7 @@ pseudo:
             $$ = parser->createFloatingSelector();
             $$->setMatch(CSSSelector::PseudoClass);
 
-            Vector<OwnPtr<CSSParserSelector> > selectorVector;
+            CSSSelectorVector selectorVector;
             selectorVector.append(parser->sinkFloatingSelector($4));
             $$->adoptSelectorVector(selectorVector);
 
@@ -1334,10 +1334,10 @@ declaration:
         bool isPropertyParsed = false;
         if ($1 && $4) {
             parser->m_valueList = parser->sinkFloatingValueList($4);
-            int oldParsedProperties = parser->m_parsedProperties.size();
+            int oldParsedProperties = parser->m_parsedProperties->size();
             $$ = parser->parseValue(static_cast<CSSPropertyID>($1), $5);
             if (!$$)
-                parser->rollbackLastProperties(parser->m_parsedProperties.size() - oldParsedProperties);
+                parser->rollbackLastProperties(parser->m_parsedProperties->size() - oldParsedProperties);
             else
                 isPropertyParsed = true;
             parser->m_valueList = nullptr;

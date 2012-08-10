@@ -244,6 +244,7 @@ CSSParser::CSSParser(const CSSParserContext& context)
     , m_important(false)
     , m_id(CSSPropertyInvalid)
     , m_styleSheet(0)
+    , m_parsedProperties(adoptPtr(new ParsedPropertyVector))
     , m_selectorListForParseSelector(0)
     , m_numParsedPropertiesBeforeMarginBox(INVALID_NUM_PARSED_PROPERTIES)
     , m_inParseShorthand(0)
@@ -263,6 +264,7 @@ CSSParser::CSSParser(const CSSParserContext& context)
     , m_lastSelectorLineNumber(0)
     , m_allowImportRules(true)
     , m_allowNamespaceDeclarations(true)
+    , m_selectorVector(adoptPtr(new CSSSelectorVector))
 {
 #if YYDEBUG > 0
     cssyydebug = 1;
@@ -1152,9 +1154,9 @@ bool CSSParser::parseValue(StylePropertySet* declaration, CSSPropertyID property
     bool ok = false;
     if (m_hasFontFaceOnlyValues)
         deleteFontFaceOnlyValues();
-    if (!m_parsedProperties.isEmpty()) {
+    if (!m_parsedProperties->isEmpty()) {
         ok = true;
-        declaration->addParsedProperties(m_parsedProperties);
+        declaration->addParsedProperties(*m_parsedProperties);
         clearProperties();
     }
 
@@ -1175,7 +1177,7 @@ bool CSSParser::parseColor(RGBA32& color, const String& string, bool strict)
     if (!parser.parseColor(string))
         return false;
 
-    CSSValue* value = parser.m_parsedProperties.first().value();
+    CSSValue* value = parser.m_parsedProperties->first().value();
     if (!value->isPrimitiveValue())
         return false;
 
@@ -1193,7 +1195,7 @@ bool CSSParser::parseColor(const String& string)
     cssyyparse(this);
     m_rule = 0;
 
-    return !m_parsedProperties.isEmpty() && m_parsedProperties.first().id() == CSSPropertyColor;
+    return !m_parsedProperties->isEmpty() && m_parsedProperties->first().id() == CSSPropertyColor;
 }
 
 bool CSSParser::parseSystemColor(RGBA32& color, const String& string, Document* document)
@@ -1243,9 +1245,9 @@ bool CSSParser::parseDeclaration(StylePropertySet* declaration, const String& st
     bool ok = false;
     if (m_hasFontFaceOnlyValues)
         deleteFontFaceOnlyValues();
-    if (!m_parsedProperties.isEmpty()) {
+    if (!m_parsedProperties->isEmpty()) {
         ok = true;
-        declaration->addParsedProperties(m_parsedProperties);
+        declaration->addParsedProperties(*m_parsedProperties);
         clearProperties();
     }
 
@@ -1282,14 +1284,14 @@ PassOwnPtr<MediaQuery> CSSParser::parseMediaQuery(const String& string)
 }
 
 #if ENABLE(CSS_VARIABLES)
-static inline void filterProperties(bool important, const CSSParser::ParsedPropertyVector& input, Vector<CSSProperty, 256>& output, size_t& unusedEntries, BitArray<numCSSProperties>& seenProperties, HashSet<AtomicString>& seenVariables)
+static inline void filterProperties(bool important, const CSSParser::ParsedPropertyVector* input, Vector<CSSProperty, 256>& output, size_t& unusedEntries, BitArray<numCSSProperties>& seenProperties, HashSet<AtomicString>& seenVariables)
 #else
-static inline void filterProperties(bool important, const CSSParser::ParsedPropertyVector& input, Vector<CSSProperty, 256>& output, size_t& unusedEntries, BitArray<numCSSProperties>& seenProperties)
+static inline void filterProperties(bool important, const CSSParser::ParsedPropertyVector* input, Vector<CSSProperty, 256>& output, size_t& unusedEntries, BitArray<numCSSProperties>& seenProperties)
 #endif
 {
     // Add properties in reverse order so that highest priority definitions are reached first. Duplicate definitions can then be ignored when found.
-    for (int i = input.size() - 1; i >= 0; --i) {
-        const CSSProperty& property = input[i];
+    for (int i = input->size() - 1; i >= 0; --i) {
+        const CSSProperty& property = input->at(i);
         if (property.isImportant() != important)
             continue;
 #if ENABLE(CSS_VARIABLES)
@@ -1313,17 +1315,17 @@ static inline void filterProperties(bool important, const CSSParser::ParsedPrope
 PassRefPtr<StylePropertySet> CSSParser::createStylePropertySet()
 {
     BitArray<numCSSProperties> seenProperties;
-    size_t unusedEntries = m_parsedProperties.size();
+    size_t unusedEntries = m_parsedProperties->size();
     Vector<CSSProperty, 256> results(unusedEntries);
 
     // Important properties have higher priority, so add them first. Duplicate definitions can then be ignored when found.
 #if ENABLE(CSS_VARIABLES)
     HashSet<AtomicString> seenVariables;
-    filterProperties(true, m_parsedProperties, results, unusedEntries, seenProperties, seenVariables);
-    filterProperties(false, m_parsedProperties, results, unusedEntries, seenProperties, seenVariables);
+    filterProperties(true, m_parsedProperties.get(), results, unusedEntries, seenProperties, seenVariables);
+    filterProperties(false, m_parsedProperties.get(), results, unusedEntries, seenProperties, seenVariables);
 #else
-    filterProperties(true, m_parsedProperties, results, unusedEntries, seenProperties);
-    filterProperties(false, m_parsedProperties, results, unusedEntries, seenProperties);
+    filterProperties(true, m_parsedProperties.get(), results, unusedEntries, seenProperties);
+    filterProperties(false, m_parsedProperties.get(), results, unusedEntries, seenProperties);
 #endif
     if (unusedEntries)
         results.remove(0, unusedEntries);
@@ -1333,19 +1335,19 @@ PassRefPtr<StylePropertySet> CSSParser::createStylePropertySet()
 
 void CSSParser::addProperty(CSSPropertyID propId, PassRefPtr<CSSValue> value, bool important, bool implicit)
 {
-    m_parsedProperties.append(CSSProperty(propId, value, important, m_currentShorthand, m_implicitShorthand || implicit));
+    m_parsedProperties->append(CSSProperty(propId, value, important, m_currentShorthand, m_implicitShorthand || implicit));
 }
 
 void CSSParser::rollbackLastProperties(int num)
 {
     ASSERT(num >= 0);
-    ASSERT(m_parsedProperties.size() >= static_cast<unsigned>(num));
-    m_parsedProperties.shrink(m_parsedProperties.size() - num);
+    ASSERT(m_parsedProperties->size() >= static_cast<unsigned>(num));
+    m_parsedProperties->shrink(m_parsedProperties->size() - num);
 }
 
 void CSSParser::clearProperties()
 {
-    m_parsedProperties.clear();
+    m_parsedProperties->clear();
     m_numParsedPropertiesBeforeMarginBox = INVALID_NUM_PARSED_PROPERTIES;
     m_hasFontFaceOnlyValues = false;
 }
@@ -1761,7 +1763,7 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
         ShorthandScope scope(this, propId);
         if (num != 1 || !parseValue(CSSPropertyOverflowX, important))
             return false;
-        CSSValue* value = m_parsedProperties.last().value();
+        CSSValue* value = m_parsedProperties->last().value();
         addProperty(CSSPropertyOverflowY, value, important);
         return true;
     }
@@ -1784,7 +1786,7 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
             ShorthandScope scope(this, CSSPropertyBorderSpacing);
             if (!parseValue(CSSPropertyWebkitBorderHorizontalSpacing, important))
                 return false;
-            CSSValue* value = m_parsedProperties.last().value();
+            CSSValue* value = m_parsedProperties->last().value();
             addProperty(CSSPropertyWebkitBorderVerticalSpacing, value, important);
             return true;
         }
@@ -2411,7 +2413,7 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
             ShorthandScope scope(this, CSSPropertyWebkitMarginCollapse);
             if (!parseValue(webkitMarginCollapseShorthand().properties()[0], important))
                 return false;
-            CSSValue* value = m_parsedProperties.last().value();
+            CSSValue* value = m_parsedProperties->last().value();
             addProperty(webkitMarginCollapseShorthand().properties()[1], value, important);
             return true;
         }
@@ -3244,7 +3246,7 @@ bool CSSParser::parse4Values(CSSPropertyID propId, const CSSPropertyID *properti
         case 1: {
             if (!parseValue(properties[0], important))
                 return false;
-            CSSValue *value = m_parsedProperties.last().value();
+            CSSValue* value = m_parsedProperties->last().value();
             ImplicitScope implicitScope(this, PropertyImplicit);
             addProperty(properties[1], value, important);
             addProperty(properties[2], value, important);
@@ -3254,17 +3256,17 @@ bool CSSParser::parse4Values(CSSPropertyID propId, const CSSPropertyID *properti
         case 2: {
             if (!parseValue(properties[0], important) || !parseValue(properties[1], important))
                 return false;
-            CSSValue *value = m_parsedProperties[m_parsedProperties.size() - 2].value();
+            CSSValue* value = m_parsedProperties->at(m_parsedProperties->size() - 2).value();
             ImplicitScope implicitScope(this, PropertyImplicit);
             addProperty(properties[2], value, important);
-            value = m_parsedProperties[m_parsedProperties.size() - 2].value();
+            value = m_parsedProperties->at(m_parsedProperties->size() - 2).value();
             addProperty(properties[3], value, important);
             break;
         }
         case 3: {
             if (!parseValue(properties[0], important) || !parseValue(properties[1], important) || !parseValue(properties[2], important))
                 return false;
-            CSSValue *value = m_parsedProperties[m_parsedProperties.size() - 2].value();
+            CSSValue* value = m_parsedProperties->at(m_parsedProperties->size() - 2).value();
             ImplicitScope implicitScope(this, PropertyImplicit);
             addProperty(properties[3], value, important);
             break;
@@ -7768,7 +7770,7 @@ bool CSSParser::parseFlowThread(const String& flowName)
 
     m_rule = 0;
 
-    return ((m_parsedProperties.size() == 1) && (m_parsedProperties.first().id() == CSSPropertyWebkitFlowInto));
+    return ((m_parsedProperties->size() == 1) && (m_parsedProperties->first().id() == CSSPropertyWebkitFlowInto));
 }
 
 // none | <ident>
@@ -7916,8 +7918,8 @@ void CSSParser::addTextDecorationProperty(CSSPropertyID propId, PassRefPtr<CSSVa
 {
     // The text-decoration-line property takes priority over text-decoration, unless the latter has important priority set.
     if (propId == CSSPropertyTextDecoration && !important && m_currentShorthand == CSSPropertyInvalid) {
-        for (unsigned i = 0; i < m_parsedProperties.size(); ++i) {
-            if (m_parsedProperties[i].id() == CSSPropertyWebkitTextDecorationLine)
+        for (unsigned i = 0; i < m_parsedProperties->size(); ++i) {
+            if (m_parsedProperties->at(i).id() == CSSPropertyWebkitTextDecorationLine)
                 return;
         }
     }
@@ -9477,14 +9479,14 @@ PassOwnPtr<CSSParserSelector> CSSParser::sinkFloatingSelector(CSSParserSelector*
     return adoptPtr(selector);
 }
 
-Vector<OwnPtr<CSSParserSelector> >* CSSParser::createFloatingSelectorVector()
+CSSSelectorVector* CSSParser::createFloatingSelectorVector()
 {
-    Vector<OwnPtr<CSSParserSelector> >* selectorVector = new Vector<OwnPtr<CSSParserSelector> >;
+    CSSSelectorVector* selectorVector = new CSSSelectorVector;
     m_floatingSelectorVectors.add(selectorVector);
     return selectorVector;
 }
 
-PassOwnPtr<Vector<OwnPtr<CSSParserSelector> > > CSSParser::sinkFloatingSelectorVector(Vector<OwnPtr<CSSParserSelector> >* selectorVector)
+PassOwnPtr<CSSSelectorVector > CSSParser::sinkFloatingSelectorVector(CSSSelectorVector* selectorVector)
 {
     if (selectorVector) {
         ASSERT(m_floatingSelectorVectors.contains(selectorVector));
@@ -9677,7 +9679,7 @@ StyleRuleKeyframes* CSSParser::createKeyframesRule(const String& name, PassOwnPt
     return rulePtr;
 }
 
-StyleRuleBase* CSSParser::createStyleRule(Vector<OwnPtr<CSSParserSelector> >* selectors)
+StyleRuleBase* CSSParser::createStyleRule(CSSSelectorVector* selectors)
 {
     StyleRule* result = 0;
     if (selectors) {
@@ -9699,8 +9701,8 @@ StyleRuleBase* CSSParser::createStyleRule(Vector<OwnPtr<CSSParserSelector> >* se
 StyleRuleBase* CSSParser::createFontFaceRule()
 {
     m_allowImportRules = m_allowNamespaceDeclarations = false;
-    for (unsigned i = 0; i < m_parsedProperties.size(); ++i) {
-        CSSProperty& property = m_parsedProperties[i];
+    for (unsigned i = 0; i < m_parsedProperties->size(); ++i) {
+        CSSProperty& property = m_parsedProperties->at(i);
         if (property.id() == CSSPropertyFontVariant && property.value()->isPrimitiveValue())
             property.wrapValueInCommaSeparatedList();
         else if (property.id() == CSSPropertyFontFamily && (!property.value()->isValueList() || static_cast<CSSValueList*>(property.value())->length() != 1)) {
@@ -9791,7 +9793,7 @@ StyleRuleBase* CSSParser::createPageRule(PassOwnPtr<CSSParserSelector> pageSelec
     StyleRulePage* pageRule = 0;
     if (pageSelector) {
         RefPtr<StyleRulePage> rule = StyleRulePage::create();
-        Vector<OwnPtr<CSSParserSelector> > selectorVector;
+        CSSSelectorVector selectorVector;
         selectorVector.append(pageSelector);
         rule->parserAdoptSelectorVector(selectorVector);
         rule->setProperties(createStylePropertySet());
@@ -9803,7 +9805,7 @@ StyleRuleBase* CSSParser::createPageRule(PassOwnPtr<CSSParserSelector> pageSelec
     return pageRule;
 }
 
-void CSSParser::setReusableRegionSelectorVector(Vector<OwnPtr<CSSParserSelector> >* selectors)
+void CSSParser::setReusableRegionSelectorVector(CSSSelectorVector* selectors)
 {
     if (selectors)
         m_reusableRegionSelectorVector.swap(*selectors);
@@ -9839,22 +9841,22 @@ StyleRuleBase* CSSParser::createMarginAtRule(CSSSelector::MarginBoxType /* margi
 
 void CSSParser::startDeclarationsForMarginBox()
 {
-    m_numParsedPropertiesBeforeMarginBox = m_parsedProperties.size();
+    m_numParsedPropertiesBeforeMarginBox = m_parsedProperties->size();
 }
 
 void CSSParser::endDeclarationsForMarginBox()
 {
-    rollbackLastProperties(m_parsedProperties.size() - m_numParsedPropertiesBeforeMarginBox);
+    rollbackLastProperties(m_parsedProperties->size() - m_numParsedPropertiesBeforeMarginBox);
     m_numParsedPropertiesBeforeMarginBox = INVALID_NUM_PARSED_PROPERTIES;
 }
 
 void CSSParser::deleteFontFaceOnlyValues()
 {
     ASSERT(m_hasFontFaceOnlyValues);
-    for (unsigned i = 0; i < m_parsedProperties.size();) {
-        CSSProperty& property = m_parsedProperties[i];
+    for (unsigned i = 0; i < m_parsedProperties->size();) {
+        CSSProperty& property = m_parsedProperties->at(i);
         if (property.id() == CSSPropertyFontVariant && property.value()->isValueList()) {
-            m_parsedProperties.remove(i);
+            m_parsedProperties->remove(i);
             continue;
         }
         ++i;

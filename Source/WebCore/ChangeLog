@@ -1,3 +1,77 @@
+2012-08-09  Shane Stephens  <shanestephens@google.com>
+
+        Convert CSSParser's m_reusableSelectorVector to OwnPtr and rename to m_selectorVector.
+        https://bugs.webkit.org/show_bug.cgi?id=93574
+
+        Reviewed by Ojan Vafai.
+
+        This is preparatory work for CSS Hierarchies (see wkb.ug/79939).
+        CSS Hierarchies works by pushing selectorVectors onto a stack while nested selectorVectors are parsed.
+        For this reason, the selectorVector in CSSParser can't be re-used between selector parses within a set of
+        nested selectors. This patch wraps the selectorVector in an OwnPtr but does not otherwise modify its use.
+
+        Similarly, CSSParser::m_parsedProperties is converted from a direct ParsedPropertyVector included
+        as a member of CSSParser to an OwnPtr.
+
+        Once Hierarchies are introduced, when a selectorVector is stacked a new one will be created 
+        and stored in m_selectorVector (see wkb.ug/79939 for context). However, an accompanying unstacking
+        mechanism ensures that selectorVectors will be reused in all circumstances where they currently are.
+
+        This patch also introduces a CSSSelectorVector typedef to simplify and improve readability of 
+        type signatures in and around CSSParser.
+
+        No new tests as this patch doesn't introduce new functionality.
+
+        * css/CSSGrammar.y:
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::CSSParser):
+        (WebCore::CSSParser::parseValue):
+        (WebCore::CSSParser::parseColor):
+        (WebCore::CSSParser::parseDeclaration):
+        (WebCore):
+        (WebCore::filterProperties):
+        (WebCore::CSSParser::createStylePropertySet):
+        (WebCore::CSSParser::addProperty):
+        (WebCore::CSSParser::rollbackLastProperties):
+        (WebCore::CSSParser::clearProperties):
+        (WebCore::CSSParser::parse4Values):
+        (WebCore::CSSParser::parseFlowThread):
+        (WebCore::CSSParser::createFloatingSelectorVector):
+        (WebCore::CSSParser::sinkFloatingSelectorVector):
+        (WebCore::CSSParser::createStyleRule):
+        (WebCore::CSSParser::createFontFaceRule):
+        (WebCore::CSSParser::createPageRule):
+        (WebCore::CSSParser::setReusableRegionSelectorVector):
+        (WebCore::CSSParser::startDeclarationsForMarginBox):
+        (WebCore::CSSParser::endDeclarationsForMarginBox):
+        (WebCore::CSSParser::deleteFontFaceOnlyValues):
+
+        m_reusableSelectorVector renamed to m_selectorVector and wrapped in OwnPtr.
+        m_parsedProperties wrapped in OwnPtr.
+        * css/CSSParser.h:
+        (WebCore::CSSParser::hasProperties):
+        (WebCore::CSSParser::selectorVector): function renamed from reusableSelectorVector
+        (CSSParser): 
+        (WebCore::CSSParser::reusableRegionSelectorVector):
+        * css/CSSParserValues.cpp:
+        (WebCore::CSSParserSelector::adoptSelectorVector):
+        * css/CSSParserValues.h: CSSSelectorVector typedef added
+        (WebCore):
+        (CSSParserSelector):
+        * css/CSSSelectorList.cpp:
+        (WebCore::CSSSelectorList::adoptSelectorVector):
+        * css/CSSSelectorList.h:
+        (CSSSelectorList):
+        * css/SVGCSSParser.cpp:
+        (WebCore::CSSParser::parseSVGValue):
+        * css/StyleRule.cpp:
+        (WebCore::StyleRuleRegion::StyleRuleRegion):
+        * css/StyleRule.h:
+        (WebCore::StyleRule::parserAdoptSelectorVector):
+        (WebCore::StyleRulePage::parserAdoptSelectorVector):
+        (WebCore::StyleRuleRegion::create):
+        (StyleRuleRegion):
+
 2012-08-02  Dominic Cooney  <dominicc@chromium.org>
 
         SVGElementInstance should have EventTarget on the prototype chain

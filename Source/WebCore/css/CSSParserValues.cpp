@@ -114,7 +114,7 @@ CSSParserSelector::~CSSParserSelector()
     }
 }
 
-void CSSParserSelector::adoptSelectorVector(Vector<OwnPtr<CSSParserSelector> >& selectorVector)
+void CSSParserSelector::adoptSelectorVector(CSSSelectorVector& selectorVector)
 {
     CSSSelectorList* selectorList = fastNew<CSSSelectorList>();
     selectorList->adoptSelectorVector(selectorVector);
