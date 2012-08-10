@@ -6,8 +6,6 @@ EXPORTS
     ??0Collator@WTF@@QAE@PBD@Z
     ??0DateInstance@JSC@@IAE@PAVExecState@1@PAVStructure@1@@Z
     ??0DefaultGCActivityCallback@JSC@@QAE@PAVHeap@1@@Z
-    ??0DropAllLocks@JSLock@JSC@@QAE@PAVExecState@2@@Z
-    ??0DropAllLocks@JSLock@JSC@@QAE@PAVJSGlobalData@2@@Z
     ??0DynamicGlobalObjectScope@JSC@@QAE@AAVJSGlobalData@1@PAVJSGlobalObject@1@@Z 
     ??0InternalFunction@JSC@@IAE@PAVJSGlobalObject@1@PAVStructure@1@@Z
     ??0JSLockHolder@JSC@@QAE@AAVJSGlobalData@1@@Z
@@ -325,7 +323,6 @@ EXPORTS
     ?suggestedNewPropertyStorageSize@Structure@JSC@@QAEIXZ
     ?symbolTableGet@JSVariableObject@JSC@@IAE_NABVIdentifier@2@AAVPropertyDescriptor@2@@Z
     ?synthesizePrototype@JSValue@JSC@@QBEPAVJSObject@2@PAVExecState@2@@Z
-    ?sweeper@Heap@JSC@@QAEPAVIncrementalSweeper@2@XZ
     ?thisObject@DebuggerCallFrame@JSC@@QBEPAVJSObject@2@XZ
     ?throwError@JSC@@YA?AVJSValue@1@PAVExecState@1@V21@@Z
     ?throwError@JSC@@YAPAVJSObject@1@PAVExecState@1@PAV21@@Z
