@@ -1,3 +1,17 @@
+2012-08-10  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        [GTK] Broken implementation of AtkText and AtkEditableText for password fields
+        https://bugs.webkit.org/show_bug.cgi?id=93621
+
+        Reviewed by Chris Fleizach.
+
+        Update unit test to ensure that password input fields behave
+        as expected when inserting and removing characters in them.
+
+        * tests/testatk.c:
+        (testWebkitAtkTextChangedNotifications): Updated unit test to
+        cover the special case of password input fields.
+
 2012-08-09  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Handle SSL errors for SOUP

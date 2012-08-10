@@ -257,6 +257,8 @@ public:
     virtual String descriptionForMSAA() const;
     virtual AccessibilityRole roleValueForMSAA() const;
 
+    virtual String passwordFieldValue() const;
+
 protected:
     RenderObject* m_renderer;
     
