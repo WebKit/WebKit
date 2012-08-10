@@ -88,6 +88,13 @@ PassRefPtr<StringImpl> StringImpl::createFromLiteral(const char* characters, uns
     return adoptRef(new StringImpl(characters, length, ConstructFromLiteral));
 }
 
+PassRefPtr<StringImpl> StringImpl::createFromLiteral(const char* characters)
+{
+    size_t length = strlen(characters);
+    ASSERT(charactersAreAllASCII<LChar>(reinterpret_cast<const LChar*>(characters), length));
+    return adoptRef(new StringImpl(characters, length, ConstructFromLiteral));
+}
+
 PassRefPtr<StringImpl> StringImpl::createUninitialized(unsigned length, LChar*& data)
 {
     if (!length) {

@@ -1,3 +1,40 @@
+2012-08-10  Benjamin Poulain  <bpoulain@apple.com>
+
+        Add support for String initialization from literal to WTFString
+        https://bugs.webkit.org/show_bug.cgi?id=93426
+
+        Reviewed by Anders Carlsson.
+
+        This patch adds two constructor to WTF::String in order to support fast initialization from literal:
+        -String(ASCIILiteral): Constructor similar to String(const char*) while being faster. This constructor
+         does not incur any overhead over String(const char*).
+        -String(char[], ConstructFromLiteralTag): Template constructor that encode explicitely the size of the
+         string.
+
+        String(ASCIILiteral) is expected to be used in most cases to avoid regressions. This constructor was
+        added because of what we have learned from r124922: inlining the string length in the code causes a code bloat
+        that is not always welcome.
+
+        Regarding performance of string initialization, the constructors performance are (6 characters string):
+        -String(ASCIILiteral): 16% faster.
+        -String(char[], ConstructFromLiteralTag): 33% faster (the delta increases with the string length).
+
+        In addition, no memory is allocated for the characters.
+
+        * wtf/text/StringImpl.cpp:
+        * wtf/text/StringImpl.h:
+        (WTF::StringImpl::createFromLiteral): Extend StringImpl::createFromLiteral to have a version
+        with strlen() which avoids loading one extra argument.
+        * wtf/text/WTFString.cpp:
+        (WTF::String::String):
+        * wtf/text/WTFString.h:
+        (WTF::String::String):
+        (ASCIILiteral): This class is aimed at making the construction of WTFString from a literal very easy.
+        By using the explicit constructor ASCIILiteral(char *), one can expect the implicit conversion to String
+        when needed.
+        (WTF::ASCIILiteral::ASCIILiteral):
+        (WTF::ASCIILiteral::operator const char*):
+
 2012-08-08  Benjamin Poulain  <bpoulain@apple.com>
 
         Use char* instead of LChar* for the public interface of String construction from literals

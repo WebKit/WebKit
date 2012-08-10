@@ -1,3 +1,17 @@
+2012-08-10  Benjamin Poulain  <bpoulain@apple.com>
+
+        Add support for String initialization from literal to WTFString
+        https://bugs.webkit.org/show_bug.cgi?id=93426
+
+        Reviewed by Anders Carlsson.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WTF/StringImpl.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WTF/WTFString.cpp: Copied from Tools/TestWebKitAPI/Tests/WTF/StringImpl.cpp.
+        (TestWebKitAPI):
+        (TestWebKitAPI::TEST):
+
 2012-08-10  Xianzhu Wang  <wangxianzhu@chromium.org>
 
         NRWT crashes when DRT with --encode-binary crashes just before it dumps pixels
