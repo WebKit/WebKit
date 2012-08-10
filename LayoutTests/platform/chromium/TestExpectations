@@ -172,26 +172,6 @@ WONTFIX SKIP : platform/qt/plugins/qt-qwidget-plugin.html = PASS
 WONTFIX SKIP : platform/qt/fast/forms = PASS
 WONTFIX MAC WIN : platform/chromium-linux = TEXT IMAGE IMAGE+TEXT
 WONTFIX SKIP LINUX MAC : platform/win = PASS
-WONTFIX SKIP ANDROID : platform/gtk = PASS
-WONTFIX SKIP ANDROID : platform/mac = PASS
-WONTFIX SKIP ANDROID : platform/mac-wk2 = PASS
-WONTFIX SKIP ANDROID : platform/qt = PASS
-WONTFIX SKIP ANDROID : platform/win = PASS
-
-// Android doesn't support plugins.
-WONTFIX SKIP ANDROID : plugins = PASS
-WONTFIX SKIP ANDROID : http/tests/plugins = PASS
-WONTFIX SKIP ANDROID : compositing/plugins = PASS
-
-// Android doesn't have inspector front-end.
-WONTFIX SKIP ANDROID : inspector = PASS
-WONTFIX SKIP ANDROID : http/tests/inspector = PASS
-WONTFIX SKIP ANDROID : http/tests/inspector-enabled = PASS
-WONTFIX SKIP ANDROID : platform/chromium/inspector = PASS
-
-// Android always run the following test with hardware GPU enabled (using the platform/chromium/virtual version).
-WONTFIX SKIP ANDROID : canvas/philip = PASS
-WONTFIX SKIP ANDROID : fast/canvas = PASS
 
 // These tests are for -apple- and -khtml- prefixes, which we don't support
 WONTFIX SKIP : inspector/styles/vendor-prefixes.html = TIMEOUT

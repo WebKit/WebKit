@@ -221,6 +221,44 @@ class ChromiumAndroidPort(chromium.ChromiumPort):
     def clean_up_test_run(self):
         super(ChromiumAndroidPort, self).stop_http_server()
 
+    def skipped_layout_tests(self, test_list):
+        # This method is more convenient to skip whole directories than SKIP in TestExpectations
+        # because its higher priority.
+        # Still use TestExpectations to skip individual tests.
+        return self._real_tests([
+            # Only run these tests as virtual gpu tests.
+            'canvas/philip',
+            'fast/canvas',
+
+            # Skip tests of other platforms to save time.
+            'platform/gtk',
+            'platform/mac',
+            'platform/mac-wk2',
+            'platform/qt',
+            'platform/win',
+
+            # Features not supported.
+            'compositing/plugins',
+            'plugins',
+            'http/tests/plugins',
+            'platform/chromium/compositing/plugins',
+            'platform/chromium/plugins',
+
+            'http/tests/inspector',
+            'http/tests/inspector-enabled',
+            'inspector',
+            'platform/chromium/inspector',
+
+            'accessibility',
+            'platform/chromium/accessibility',
+
+            'fast/dom/MediaStream',
+            'fast/mediastream',
+            'fast/notifications',
+            'fast/speech',
+            'webaudio',
+        ])
+
     def create_driver(self, worker_number, no_timeout=False):
         # We don't want the default DriverProxy which is not compatible with our driver.
         # See comments in ChromiumAndroidDriver.start().

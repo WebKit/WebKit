@@ -1,3 +1,15 @@
+2012-08-09  Xianzhu Wang  <wangxianzhu@chromium.org>
+
+        [Chromium-Android] Skip layout tests directories that are not applicable
+        https://bugs.webkit.org/show_bug.cgi?id=93670
+
+        Reviewed by Dirk Pranke.
+
+        Removed 'WONTFIX ANDROID SKIP' lines for whole directories added in r125094.
+        Use ChromiumAndroidPort.skipped_layout_tests() instead.
+
+        * platform/chromium/TestExpectations:
+
 2012-08-09  Erik Arvidsson  <arv@chromium.org>
 
         HTMLElement.classList cannot remove classnames with uppercase characters

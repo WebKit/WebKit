@@ -1,3 +1,17 @@
+2012-08-09  Xianzhu Wang  <wangxianzhu@chromium.org>
+
+        [Chromium-Android] Skip layout tests directories that are not applicable
+        https://bugs.webkit.org/show_bug.cgi?id=93670
+
+        Reviewed by Dirk Pranke.
+
+        Added back ChromiumAndroidPort.skipped_layout_tests to skip some whole directories.
+        The method is more convenient to skip whole directories than SKIP in TestExpectations
+        because its higher priority. Will still use TestExpectations to skip individual tests.
+
+        * Scripts/webkitpy/layout_tests/port/chromium_android.py:
+        (ChromiumAndroidPort.skipped_layout_tests):
+
 2012-08-09  Elliott Sprehn  <esprehn@chromium.org>
 
         Add myself to the Contributor list.
