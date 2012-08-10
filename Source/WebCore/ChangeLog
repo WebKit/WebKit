@@ -1,3 +1,23 @@
+2012-08-09  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Crash in WebCore::RenderTable::cellBefore
+        https://bugs.webkit.org/show_bug.cgi?id=91160
+
+        Reviewed by Abhishek Arya.
+
+        The issue was that we wouldn't properly set the row index on row in a newly split table. When inserting
+        the cell into the new row, we would try to repaint the cell which would access the row index and crash.
+        This came from splitAnonymousBoxesAroundChild calling RenderObjectChildList::insertChildNode directly
+        which doesn't invoke the row setting logic (RenderTableSection::addChild for example but we cannot call
+        addChild due to concern over splitting flows in the general case).
+
+        Test: fast/table/split-anonymous-boxes-around-table-repaint-crash.html
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::splitAnonymousBoxesAroundChild):
+        Dirty our parent box, which forces a cell recomputation which will set the row index. This needs to
+        be done *before* we insert the child to avoid crashing when repainting the new child.
+
 2012-08-09  Erik Arvidsson  <arv@chromium.org>
 
         [V8] Fix issues with [DoNotCheckSecurity] which depended on non ES5 compliant behavior

@@ -1,3 +1,13 @@
+2012-08-09  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Crash in WebCore::RenderTable::cellBefore
+        https://bugs.webkit.org/show_bug.cgi?id=91160
+
+        Reviewed by Abhishek Arya.
+
+        * fast/table/split-anonymous-boxes-around-table-repaint-crash-expected.txt: Added.
+        * fast/table/split-anonymous-boxes-around-table-repaint-crash.html: Added.
+
 2012-08-09  Roger Fong  <roger_fong@apple.com>
 
         LayoutTest: fast/forms/select/menulist-popup-crash.html timeout on Windows.
