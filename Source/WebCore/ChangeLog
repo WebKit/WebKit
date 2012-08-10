@@ -1,3 +1,17 @@
+2012-08-10  Florin Malita  <fmalita@chromium.org>
+
+        Improved RuleData packing on some 32-bit platforms
+        https://bugs.webkit.org/show_bug.cgi?id=93737
+
+        Reviewed by Andreas Kling.
+
+        Certain 32-bit plarforms use an 8-byte alignment for uint64_t. We can save 4 bytes per
+        object on these platforms by using two naturally-aligning unsigned ints instead.
+
+        * css/StyleResolver.cpp:
+        (RuleData):
+        (SameSizeAsRuleData):
+
 2012-08-10  Max Vujovic  <mvujovic@adobe.com>
 
         [CSS Shaders] Add blend mode and composite op to compiled program cache key

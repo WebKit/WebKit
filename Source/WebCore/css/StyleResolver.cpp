@@ -223,26 +223,27 @@ public:
 
 private:
     StyleRule* m_rule;
-    uint64_t m_selectorIndex : 12;
+    unsigned m_selectorIndex : 12;
     // This number was picked fairly arbitrarily. We can probably lower it if we need to.
     // Some simple testing showed <100,000 RuleData's on large sites.
-    uint64_t m_position : 20;
-    uint64_t m_specificity : 24;
-    uint64_t m_hasFastCheckableSelector : 1;
-    uint64_t m_hasMultipartSelector : 1;
-    uint64_t m_hasRightmostSelectorMatchingHTMLBasedOnRuleHash : 1;
-    uint64_t m_containsUncommonAttributeSelector : 1;
-    uint64_t m_linkMatchType : 2; //  SelectorChecker::LinkMatchMask
-    uint64_t m_hasDocumentSecurityOrigin : 1;
-    uint64_t m_isInRegionRule : 1;
+    unsigned m_position : 20;
+    unsigned m_specificity : 24;
+    unsigned m_hasFastCheckableSelector : 1;
+    unsigned m_hasMultipartSelector : 1;
+    unsigned m_hasRightmostSelectorMatchingHTMLBasedOnRuleHash : 1;
+    unsigned m_containsUncommonAttributeSelector : 1;
+    unsigned m_linkMatchType : 2; //  SelectorChecker::LinkMatchMask
+    unsigned m_hasDocumentSecurityOrigin : 1;
+    unsigned m_isInRegionRule : 1;
     // Use plain array instead of a Vector to minimize memory overhead.
     unsigned m_descendantSelectorIdentifierHashes[maximumIdentifierCount];
 };
     
 struct SameSizeAsRuleData {
     void* a;
-    uint64_t b;
-    unsigned c[4];
+    unsigned b;
+    unsigned c;
+    unsigned d[4];
 };
 
 COMPILE_ASSERT(sizeof(RuleData) == sizeof(SameSizeAsRuleData), RuleData_should_stay_small);
