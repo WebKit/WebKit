@@ -1305,8 +1305,6 @@ BUGWK93727 RELEASE : fullscreen/full-screen-iframe-not-allowed.html = TEXT PASS
 BUGWK93727 RELEASE : fullscreen/exit-full-screen-iframe.html = TEXT PASS
 BUGWK93727 RELEASE : svg/custom/use-instanceRoot-as-event-target.xhtml = TEXT PASS
 
-BUGWK93718 : css3/flexbox/inline-flex-crash2.html = TEXT
-
 //////////////////////////////////////////////////////////////////////////////////////////
 // End of Tests failing
 //////////////////////////////////////////////////////////////////////////////////////////

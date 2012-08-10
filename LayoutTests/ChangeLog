@@ -1,3 +1,12 @@
+2012-08-10  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening.
+
+        Removing expectation for css3/flexbox/inline-flex-crash2.html after
+        the fix for it was landed in r125302.
+
+        * platform/gtk/TestExpectations:
+
 2012-08-10  Ojan Vafai  <ojan@chromium.org>
 
         New test introduced in r125262 css3/flexbox/inline-flex-crash2.html fails
