@@ -1,3 +1,9 @@
+2012-08-10  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed.  Rolled DEPS.
+
+        * DEPS:
+
 2012-08-10  Iain Merrick  <husky@google.com>
 
         [chromium] Upstream Android changes to WebFrameImpl::selectRange
