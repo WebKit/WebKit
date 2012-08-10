@@ -46,7 +46,7 @@ CCFontAtlas::~CCFontAtlas()
 {
 }
 
-void CCFontAtlas::drawText(SkCanvas* canvas, const String& text, const IntPoint& destPosition, const IntSize& clip) const
+void CCFontAtlas::drawText(SkCanvas* canvas, const SkPaint& paint, const String& text, const IntPoint& destPosition, const IntSize& clip) const
 {
     ASSERT(CCProxy::isImplThread());
 
@@ -55,14 +55,14 @@ void CCFontAtlas::drawText(SkCanvas* canvas, const String& text, const IntPoint&
 
     IntPoint position = destPosition;
     for (size_t i = 0; i < lines.size(); ++i) {
-        drawOneLineOfTextInternal(canvas, lines[i], position);
+        drawOneLineOfTextInternal(canvas, paint, lines[i], position);
         position.setY(position.y() + m_fontHeight);
         if (position.y() > clip.height())
             return;
     }
 }
 
-void CCFontAtlas::drawOneLineOfTextInternal(SkCanvas* canvas, const String& textLine, const IntPoint& destPosition) const
+void CCFontAtlas::drawOneLineOfTextInternal(SkCanvas* canvas, const SkPaint& paint, const String& textLine, const IntPoint& destPosition) const
 {
     ASSERT(CCProxy::isImplThread());
 
@@ -72,7 +72,7 @@ void CCFontAtlas::drawOneLineOfTextInternal(SkCanvas* canvas, const String& text
         int asciiIndex = (textLine[i] < 128) ? textLine[i] : 0;
         IntRect glyphBounds = m_asciiToRectTable[asciiIndex];
         SkIRect source = SkIRect::MakeXYWH(glyphBounds.x(), glyphBounds.y(), glyphBounds.width(), glyphBounds.height());
-        canvas->drawBitmapRect(m_atlas, &source, SkRect::MakeXYWH(position.x(), position.y(), glyphBounds.width(), glyphBounds.height()));
+        canvas->drawBitmapRect(m_atlas, &source, SkRect::MakeXYWH(position.x(), position.y(), glyphBounds.width(), glyphBounds.height()), &paint);
         position.setX(position.x() + glyphBounds.width());
     }
 }

@@ -31,6 +31,7 @@
 #include "GraphicsContext3D.h"
 #include "LayerRendererChromium.h"
 #include "SkBitmap.h"
+#include "SkColorMatrixFilter.h"
 #include "SkPaint.h"
 #include "cc/CCDebugRectHistory.h"
 #include "cc/CCFontAtlas.h"
@@ -42,6 +43,23 @@
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
+
+static inline SkPaint createPaint()
+{
+    // The SkCanvas is in RGBA but the shader is expecting BGRA, so we need to
+    // swizzle our colors when drawing to the SkCanvas.
+    SkColorMatrix swizzleMatrix;
+    for (int i = 0; i < 20; ++i)
+        swizzleMatrix.fMat[i] = 0;
+    swizzleMatrix.fMat[0 + 5 * 2] = 1;
+    swizzleMatrix.fMat[1 + 5 * 1] = 1;
+    swizzleMatrix.fMat[2 + 5 * 0] = 1;
+    swizzleMatrix.fMat[3 + 5 * 3] = 1;
+
+    SkPaint paint;
+    paint.setColorFilter(new SkColorMatrixFilter(swizzleMatrix))->unref();
+    return paint;
+}
 
 CCHeadsUpDisplayLayerImpl::CCHeadsUpDisplayLayerImpl(int id)
     : CCLayerImpl(id)
@@ -119,7 +137,7 @@ void CCHeadsUpDisplayLayerImpl::drawHudContents(SkCanvas* canvas)
     const CCLayerTreeSettings& settings = layerTreeHostImpl()->settings();
 
     if (settings.showPlatformLayerTree) {
-        SkPaint paint;
+        SkPaint paint = createPaint();
         paint.setColor(SkColorSetARGB(192, 0, 0, 0));
         canvas->drawRect(SkRect::MakeXYWH(0, 0, bounds().width(), bounds().height()), paint);
     }
@@ -138,7 +156,7 @@ void CCHeadsUpDisplayLayerImpl::drawHudContents(SkCanvas* canvas)
 
     if (settings.showPlatformLayerTree && m_fontAtlas) {
         String layerTree = layerTreeHostImpl()->layerTreeAsText();
-        m_fontAtlas->drawText(canvas, layerTree, IntPoint(2, platformLayerTreeTop), bounds());
+        m_fontAtlas->drawText(canvas, createPaint(), layerTree, IntPoint(2, platformLayerTreeTop), bounds());
     }
 
     if (settings.showDebugRects())
@@ -156,7 +174,7 @@ void CCHeadsUpDisplayLayerImpl::drawFPSCounter(SkCanvas* canvas, CCFrameRateCoun
     // Draw FPS graph.
     const double loFPS = 0;
     const double hiFPS = 80;
-    SkPaint paint;
+    SkPaint paint = createPaint();
     paint.setColor(SkColorSetRGB(154, 205, 50));
     canvas->drawRect(SkRect::MakeXYWH(2 + textWidth, top, graphWidth, height / 2), paint);
 
@@ -207,13 +225,13 @@ void CCHeadsUpDisplayLayerImpl::drawFPSCounterText(SkCanvas* canvas, CCFrameRate
     fpsCounter->getAverageFPSAndStandardDeviation(averageFPS, stdDeviation);
 
     // Draw background.
-    SkPaint paint;
+    SkPaint paint = createPaint();
     paint.setColor(SK_ColorBLACK);
     canvas->drawRect(SkRect::MakeXYWH(2, top, width, height), paint);
 
     // Draw FPS text.
     if (m_fontAtlas)
-        m_fontAtlas->drawText(canvas, String::format("FPS: %4.1f +/- %3.1f", averageFPS, stdDeviation), IntPoint(10, height / 3), IntSize(width, height));
+        m_fontAtlas->drawText(canvas, createPaint(), String::format("FPS: %4.1f +/- %3.1f", averageFPS, stdDeviation), IntPoint(10, height / 3), IntSize(width, height));
 }
 
 void CCHeadsUpDisplayLayerImpl::drawDebugRects(SkCanvas* canvas, CCDebugRectHistory* debugRectHistory)
@@ -259,7 +277,7 @@ void CCHeadsUpDisplayLayerImpl::drawDebugRects(SkCanvas* canvas, CCDebugRectHist
 
         const FloatRect& rect = debugRects[i].rect;
         SkRect skRect = SkRect::MakeXYWH(rect.x(), rect.y(), rect.width(), rect.height());
-        SkPaint paint;
+        SkPaint paint = createPaint();
         paint.setColor(fillColor);
         canvas->drawRect(skRect, paint);
 

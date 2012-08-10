@@ -1,5 +1,32 @@
 2012-08-10  Dana Jansens  <danakj@chromium.org>
 
+        [chromium] Fix the colors in the debugging HUD
+        https://bugs.webkit.org/show_bug.cgi?id=93656
+
+        Reviewed by Adrienne Walker.
+
+        The R and B channels became swapped in our compositor debug HUD when
+        wkb.ug/92182 happened. This corrects the problem by swizzling the
+        color channels when we draw to the SkCanvas, so that it matches the
+        expectations of the shader.
+
+        Chromium bug: crbug.com/139908
+
+        * platform/graphics/chromium/cc/CCFontAtlas.cpp:
+        (WebCore::CCFontAtlas::drawText):
+        (WebCore::CCFontAtlas::drawOneLineOfTextInternal):
+        * platform/graphics/chromium/cc/CCFontAtlas.h:
+        (CCFontAtlas):
+        * platform/graphics/chromium/cc/CCHeadsUpDisplayLayerImpl.cpp:
+        (WebCore::createPaint):
+        (WebCore):
+        (WebCore::CCHeadsUpDisplayLayerImpl::drawHudContents):
+        (WebCore::CCHeadsUpDisplayLayerImpl::drawFPSCounter):
+        (WebCore::CCHeadsUpDisplayLayerImpl::drawFPSCounterText):
+        (WebCore::CCHeadsUpDisplayLayerImpl::drawDebugRects):
+
+2012-08-10  Dana Jansens  <danakj@chromium.org>
+
         [chromium] Remove scissor from the namings in CCOcclusionTracker
         https://bugs.webkit.org/show_bug.cgi?id=93630
 
