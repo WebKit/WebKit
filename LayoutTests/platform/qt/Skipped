@@ -685,7 +685,7 @@ http/tests/local/blob/send-data-blob.html
 
 # [Qt] XML Viewer fails due to specifics in the parser implementation
 # https://bugs.webkit.org/show_bug.cgi?id=55302
-http/tests/xmlviewer/extensions-api.html
+xmlviewer/extensions-api.html
 http/tests/xmlviewer/dumpAsText/svg.xml
 http/tests/xmlviewer/dumpAsText/xlink.xml
 http/tests/xmlviewer/dumpAsText/xmlviewer-charset-cp1251.xml
@@ -2731,3 +2731,7 @@ inspector/debugger/watch-expressions-panel-switch.html
 # https://bugs.webkit.org/show_bug.cgi?id=93246
 fast/js/dfg-peephole-compare-final-object-to-final-object-or-other-when-both-proven-final-object.html
 fast/js/dfg-compare-final-object-to-final-object-or-other-when-both-proven-final-object.html
+
+# New test introduced in r125262 css3/flexbox/inline-flex-crash2.html fails
+# https://bugs.webkit.org/show_bug.cgi?id=93718
+css3/flexbox/inline-flex-crash2.html
