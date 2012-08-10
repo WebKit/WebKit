@@ -254,7 +254,7 @@ void Notification::taskTimerFired(Timer<Notification>* timer)
 
 
 #if ENABLE(NOTIFICATIONS)
-const String& Notification::permissionLevel(ScriptExecutionContext* context)
+const String& Notification::permission(ScriptExecutionContext* context)
 {
     ASSERT(context->isDocument());
     ASSERT(static_cast<Document*>(context)->page());

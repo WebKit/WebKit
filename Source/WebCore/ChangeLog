@@ -1,3 +1,22 @@
+2012-08-10  Jon Lee  <jonlee@apple.com>
+
+        Change Notification.permissionLevel() to Notification.permission
+        https://bugs.webkit.org/show_bug.cgi?id=88919
+        <rdar://problem/11650319>
+
+        Reviewed by Kentaro Hara.
+
+        Retrieving the permission level has changed to Notification.permission, per this discussion:
+        http://lists.w3.org/Archives/Public/public-web-notification/2012Jun/0000.html
+
+        Test: fast/notifications/notifications-permission.html
+
+        * Modules/notifications/Notification.cpp: Rename to match attribute name.
+        (WebCore::Notification::permission):
+        * Modules/notifications/Notification.h: Rename to match attribute name.
+        (Notification):
+        * Modules/notifications/Notification.idl: Change to static readonly attribute.
+
 2012-08-10  Kentaro Hara  <haraken@chromium.org>
 
         [V8] Remove collectIsolatedContexts() from V8Proxy

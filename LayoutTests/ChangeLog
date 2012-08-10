@@ -1,3 +1,16 @@
+2012-08-10  Jon Lee  <jonlee@apple.com>
+
+        Change Notification.permissionLevel() to Notification.permission
+        https://bugs.webkit.org/show_bug.cgi?id=88919
+        <rdar://problem/11650319>
+
+        Reviewed by Kentaro Hara.
+
+        * fast/notifications/notifications-permission-expected.txt: Added.
+        * fast/notifications/notifications-permission.html: Added.
+        * platform/chromium/TestExpectations: V8 does not properly support IDL static
+        attributes. This is tracked in bug 93488.
+
 2012-08-10  Andrey Kosyakov  <caseq@chromium.org>
 
         Web Inspector: add frame ids to TimeStamp, Time and TimeEnd records in Timeline
