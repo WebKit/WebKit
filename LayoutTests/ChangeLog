@@ -1,3 +1,43 @@
+2012-08-09  Matt Falkenhagen  <falken@chromium.org>
+
+        Move some CSS -webkit-locale tests out of fast/text/
+        https://bugs.webkit.org/show_bug.cgi?id=93571
+
+        Reviewed by Alexey Proskuryakov.
+
+        Move the tests from fast/text/ to fast/css/, as they are not text-related.
+
+        * fast/css/content-language-case-insensitivity-expected.txt: Renamed from LayoutTests/fast/text/content-language-case-insensitivity-expected.txt.
+        * fast/css/content-language-case-insensitivity.html: Renamed from LayoutTests/fast/text/content-language-case-insensitivity.html.
+        * fast/css/content-language-comma-separated-list-expected.txt: Renamed from LayoutTests/fast/text/content-language-comma-separated-list-expected.txt.
+        * fast/css/content-language-comma-separated-list.html: Renamed from LayoutTests/fast/text/content-language-comma-separated-list.html.
+        * fast/css/content-language-dynamically-added-expected.txt: Renamed from LayoutTests/fast/text/content-language-dynamically-added-expected.txt.
+        * fast/css/content-language-dynamically-added.html: Renamed from LayoutTests/fast/text/content-language-dynamically-added.html.
+        * fast/css/content-language-dynamically-changed-expected.txt: Renamed from LayoutTests/fast/text/content-language-dynamically-changed-expected.txt.
+        * fast/css/content-language-dynamically-changed.html: Renamed from LayoutTests/fast/text/content-language-dynamically-changed.html.
+        * fast/css/content-language-dynamically-removed-expected.txt: Renamed from LayoutTests/fast/text/content-language-dynamically-removed-expected.txt.
+        * fast/css/content-language-dynamically-removed.html: Renamed from LayoutTests/fast/text/content-language-dynamically-removed.html.
+        * fast/css/content-language-empty-expected.txt: Renamed from LayoutTests/fast/text/content-language-empty-expected.txt.
+        * fast/css/content-language-empty.html: Renamed from LayoutTests/fast/text/content-language-empty.html.
+        * fast/css/content-language-late-expected.txt: Renamed from LayoutTests/fast/text/content-language-late-expected.txt.
+        * fast/css/content-language-late.html: Renamed from LayoutTests/fast/text/content-language-late.html.
+        * fast/css/content-language-mapped-to-webkit-locale-expected.txt: Renamed from LayoutTests/fast/text/content-language-mapped-to-webkit-locale-expected.txt.
+        * fast/css/content-language-mapped-to-webkit-locale.html: Renamed from LayoutTests/fast/text/content-language-mapped-to-webkit-locale.html.
+        * fast/css/content-language-multiple-expected.txt: Renamed from LayoutTests/fast/text/content-language-multiple-expected.txt.
+        * fast/css/content-language-multiple.html: Renamed from LayoutTests/fast/text/content-language-multiple.html.
+        * fast/css/content-language-no-content-expected.txt: Renamed from LayoutTests/fast/text/content-language-no-content-expected.txt.
+        * fast/css/content-language-no-content.html: Renamed from LayoutTests/fast/text/content-language-no-content.html.
+        * fast/css/content-language-only-whitespace-expected.txt: Renamed from LayoutTests/fast/text/content-language-only-whitespace-expected.txt.
+        * fast/css/content-language-only-whitespace.html: Renamed from LayoutTests/fast/text/content-language-only-whitespace.html.
+        * fast/css/content-language-with-whitespace-expected.txt: Renamed from LayoutTests/fast/text/content-language-with-whitespace-expected.txt.
+        * fast/css/content-language-with-whitespace.html: Renamed from LayoutTests/fast/text/content-language-with-whitespace.html.
+        * fast/css/lang-mapped-to-webkit-locale-dynamic-expected.txt: Renamed from LayoutTests/fast/text/lang-mapped-to-webkit-locale-dynamic-expected.txt.
+        * fast/css/lang-mapped-to-webkit-locale-dynamic.xhtml: Renamed from LayoutTests/fast/text/lang-mapped-to-webkit-locale-dynamic.xhtml.
+        * fast/css/lang-mapped-to-webkit-locale-expected.txt: Renamed from LayoutTests/fast/text/lang-mapped-to-webkit-locale-expected.txt.
+        * fast/css/lang-mapped-to-webkit-locale.xhtml: Renamed from LayoutTests/fast/text/lang-mapped-to-webkit-locale.xhtml.
+        * fast/css/xml-lang-ignored-in-html-expected.txt: Renamed from LayoutTests/fast/text/xml-lang-ignored-in-html-expected.txt.
+        * fast/css/xml-lang-ignored-in-html.html: Renamed from LayoutTests/fast/text/xml-lang-ignored-in-html.html.
+
 2012-08-09  Kent Tamura  <tkent@chromium.org>
 
         Add DOMString reflection test
