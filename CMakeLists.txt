@@ -1,4 +1,4 @@
-CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
+CMAKE_MINIMUM_REQUIRED(VERSION 2.8.3)
 PROJECT(WebKit)
 
 # Set a default build type if and only if user did not define one as command

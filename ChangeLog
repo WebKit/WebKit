@@ -1,3 +1,21 @@
+2012-08-09  Raphael Kubo da Costa  <rakuco@webkit.org>
+
+        [CMake] Bump minimum required version to 2.8.3.
+        https://bugs.webkit.org/show_bug.cgi?id=93450
+
+        Reviewed by Daniel Bates.
+
+        Following the discussion in bug 93189, it was decided that bumping
+        the minimum required version from 2.8.0 to 2.8.3 was a good thing
+        due to additional features, such as improved
+        FIND_PACKAGE_HANDLE_STANDARD_ARGS() support and better argument
+        handling in the PKG_CHECK_MODULES() call.
+
+        CMake 2.8.3 was released almost two years ago, so people are
+        expected to have it or a later version installed.
+
+        * CMakeLists.txt:
+
 2012-08-08  Shane Stephens  <shanestephens@google.com>
 
         Compile flag for CSS Hierarchies
