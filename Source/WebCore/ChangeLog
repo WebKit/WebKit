@@ -1,3 +1,14 @@
+2012-08-10  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        [CMAKE] Fix wrong idl include path in CMakeList.txt
+        https://bugs.webkit.org/show_bug.cgi?id=93715
+
+        Reviewed by Rob Buis.
+
+        No new tests. No change in behavior.
+
+        * CMakeLists.txt: Fix notifications path.
+
 2012-08-10  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
 
         [Transforms] Hit test issue with large scale() transform

@@ -115,6 +115,7 @@ SET(WebCore_IDL_INCLUDES
     Modules/intents
     Modules/mediastream
     Modules/networkinfo
+    Modules/notifications
     Modules/quota
     Modules/speech
     Modules/vibration
@@ -131,7 +132,6 @@ SET(WebCore_IDL_INCLUDES
     html/track
     inspector
     loader/appcache
-    notifications
     page
     plugins
     storage
