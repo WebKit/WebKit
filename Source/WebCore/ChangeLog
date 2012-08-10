@@ -1,3 +1,10 @@
+2012-08-10  Florin Malita  <fmalita@chromium.org>
+
+        Unreviewed gardening: build fix for 32bit platforms after 125294.
+
+        * css/StyleResolver.cpp:
+        (RuleData):
+
 2012-08-10  Takashi Sakamoto  <tasak@google.com>
 
         box-shadow creates incorrect shadow when border-radius is too large
