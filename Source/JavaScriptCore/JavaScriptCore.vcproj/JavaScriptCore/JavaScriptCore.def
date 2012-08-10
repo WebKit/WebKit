@@ -6,6 +6,8 @@ EXPORTS
     ??0Collator@WTF@@QAE@PBD@Z
     ??0DateInstance@JSC@@IAE@PAVExecState@1@PAVStructure@1@@Z
     ??0DefaultGCActivityCallback@JSC@@QAE@PAVHeap@1@@Z
+    ??0DropAllLocks@JSLock@JSC@@QAE@PAVExecState@2@W4AlwaysDropLocksTag@012@@Z
+    ??0DropAllLocks@JSLock@JSC@@QAE@PAVJSGlobalData@2@W4AlwaysDropLocksTag@012@@Z
     ??0DynamicGlobalObjectScope@JSC@@QAE@AAVJSGlobalData@1@PAVJSGlobalObject@1@@Z 
     ??0InternalFunction@JSC@@IAE@PAVJSGlobalObject@1@PAVStructure@1@@Z
     ??0JSLockHolder@JSC@@QAE@AAVJSGlobalData@1@@Z

@@ -1,4 +1,11 @@
 2012-08-10  Lucas Forschler  <lforschler@apple.com>
+    
+    Windows build fix after merging radar 12050720.
+    Add missing symbols.
+    
+    * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+
+2012-08-10  Lucas Forschler  <lforschler@apple.com>
 
     Windows build fix after merging radar 12050720.
     Part 2 - removing symbols.
