@@ -1702,7 +1702,8 @@ QtConnectionObject::QtConnectionObject(JSContextRef context, PassRefPtr<QtInstan
     , m_receiver(receiver)
     , m_receiverFunction(receiverFunction)
 {
-    JSValueProtect(m_context, m_receiver);
+    if (m_receiver)
+        JSValueProtect(m_context, m_receiver);
     JSValueProtect(m_context, m_receiverFunction);
 }
 
@@ -1712,7 +1713,8 @@ QtConnectionObject::~QtConnectionObject()
     // which is its QObject parent.
     QtRuntimeConnectionMethod::connections.remove(m_originalSender, this);
 
-    JSValueUnprotect(m_context, m_receiver);
+    if (m_receiver)
+        JSValueUnprotect(m_context, m_receiver);
     JSValueUnprotect(m_context, m_receiverFunction);
 }
 
@@ -1839,7 +1841,7 @@ bool QtConnectionObject::match(JSContextRef context, QObject* sender, int signal
     if (sender != m_originalSender || signalIndex != m_signalIndex)
         return false;
     JSValueRef* ignoredException = 0;
-    const bool receiverMatch = (!receiver && !m_receiver) || JSValueIsEqual(context, receiver, m_receiver, ignoredException);
+    const bool receiverMatch = (!receiver && !m_receiver) || (receiver && m_receiver && JSValueIsEqual(context, receiver, m_receiver, ignoredException));
     return receiverMatch && JSValueIsEqual(context, receiverFunction, m_receiverFunction, ignoredException);
 }
 
