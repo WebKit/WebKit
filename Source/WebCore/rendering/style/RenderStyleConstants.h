@@ -198,7 +198,7 @@ enum EUserDrag {
 // CSS3 User Select Values
 
 enum EUserSelect {
-    SELECT_NONE, SELECT_TEXT
+    SELECT_NONE, SELECT_TEXT, SELECT_ALL
 };
 
 // Word Break Values. Matches WinIE, rather than CSS3

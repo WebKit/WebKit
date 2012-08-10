@@ -2366,6 +2366,9 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EUserSelect e)
         case SELECT_TEXT:
             m_value.ident = CSSValueText;
             break;
+        case SELECT_ALL:
+            m_value.ident = CSSValueAll;
+            break;
     }
 }
 
@@ -2378,6 +2381,8 @@ template<> inline CSSPrimitiveValue::operator EUserSelect() const
             return SELECT_NONE;
         case CSSValueText:
             return SELECT_TEXT;
+        case CSSValueAll:
+            return SELECT_ALL;
         default:
             ASSERT_NOT_REACHED();
             return SELECT_TEXT;

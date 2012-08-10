@@ -1,3 +1,17 @@
+2012-08-10  Alice Cheng  <alice_cheng@apple.com>
+
+        Part 1 of: Extend -webkit-user-select with a new value "all"
+        <rdar://problem/10161404>
+        https://bugs.webkit.org/show_bug.cgi?id=93562
+
+        Reviewed by Dan Bernstein.
+
+        Modify the enum to resolve ambiguous reference
+
+        * webkit/webkitwebview.cpp:
+        (webkit_web_view_class_init): Modify the ambiguous enum
+        (webkit_web_view_select_all): Modify the ambiguous enum
+
 2012-08-10  Mario Sanchez Prada  <msanchez@igalia.com>
 
         [GTK] Broken implementation of AtkText and AtkEditableText for password fields

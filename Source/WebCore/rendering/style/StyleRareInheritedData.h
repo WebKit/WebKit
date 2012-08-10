@@ -89,7 +89,7 @@ public:
     unsigned khtmlLineBreak : 1; // EKHTMLLineBreak
     unsigned textSizeAdjust : 1; // An Apple extension.
     unsigned resize : 2; // EResize
-    unsigned userSelect : 1;  // EUserSelect
+    unsigned userSelect : 2; // EUserSelect
     unsigned colorSpace : 1; // ColorSpace
     unsigned speak : 3; // ESpeak
     unsigned hyphens : 2; // Hyphens

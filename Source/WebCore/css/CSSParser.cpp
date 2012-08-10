@@ -836,8 +836,8 @@ static inline bool isValidKeywordPropertyAndValue(CSSPropertyID propertyId, int 
         if (valueID == CSSValueReadOnly || valueID == CSSValueReadWrite || valueID == CSSValueReadWritePlaintextOnly)
             return true;
         break;
-    case CSSPropertyWebkitUserSelect: // auto | none | text
-        if (valueID == CSSValueAuto || valueID == CSSValueNone || valueID == CSSValueText)
+    case CSSPropertyWebkitUserSelect: // auto | none | text | all
+        if (valueID == CSSValueAuto || valueID == CSSValueNone || valueID == CSSValueText || valueID == CSSValueAll)
             return true;
         break;
 #if ENABLE(CSS_EXCLUSIONS)

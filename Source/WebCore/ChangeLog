@@ -1,3 +1,24 @@
+2012-08-10  Alice Cheng  <alice_cheng@apple.com>
+
+        Part 1 of: Extend -webkit-user-select with a new value "all"
+        <rdar://problem/10161404>
+        https://bugs.webkit.org/show_bug.cgi?id=93562
+
+        Reviewed by Dan Bernstein.
+
+        Parse the new "all" value for -webkit-user-select
+
+        Test: editing/selection/user-select-all-parsing.html
+
+        * css/CSSParser.cpp:
+        (WebCore::isValidKeywordPropertyAndValue): Add new value all
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue): Add new value all
+        (WebCore::CSSPrimitiveValue::operator EUserSelect): Add one more bit to store the new property value
+        * rendering/style/RenderStyleConstants.h: Add new value all
+        * rendering/style/StyleRareInheritedData.h: Add new value all
+        (StyleRareInheritedData):
+
 2012-08-10  Iain Merrick  <husky@google.com>
 
         [chromium] Upstream Android changes to WebFrameImpl::selectRange
