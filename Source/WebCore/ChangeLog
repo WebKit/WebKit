@@ -1,3 +1,21 @@
+2012-08-10  Erik Arvidsson  <arv@chromium.org>
+
+        [V8] Enable es5_readonly
+        https://bugs.webkit.org/show_bug.cgi?id=91031
+
+        Reviewed by Adam Barth.
+
+        This turns on the es5_readonly flag for V8. This makes V8 match the ES5 spec regarding
+        non writable properties on the prototype chain. JSC already behaves the right so this
+        just makes V8 behave the same.
+
+        Updated test expectations.
+
+        * bindings/v8/V8DOMWindowShell.cpp:
+        (WebCore::V8DOMWindowShell::initContextIfNeeded):
+        * bindings/v8/WorkerContextExecutionProxy.cpp:
+        (WebCore::WorkerContextExecutionProxy::initIsolate):
+
 2012-08-10  Kentaro Hara  <haraken@chromium.org>
 
         [V8] Introduce V8DOMConfiguration class and make batchConfigureXXX() methods static

@@ -301,6 +301,10 @@ bool V8DOMWindowShell::initContextIfNeeded()
 #endif
         V8PerIsolateData::ensureInitialized(v8::Isolate::GetCurrent());
 
+        // FIXME: Remove the following 2 lines when V8 default has changed.
+        const char es5ReadonlyFlag[] = "--es5_readonly";
+        v8::V8::SetFlagsFromString(es5ReadonlyFlag, sizeof(es5ReadonlyFlag));
+
         isV8Initialized = true;
     }
 

@@ -1,3 +1,17 @@
+2012-08-10  Erik Arvidsson  <arv@chromium.org>
+
+        [V8] Enable es5_readonly
+        https://bugs.webkit.org/show_bug.cgi?id=91031
+
+        Reviewed by Adam Barth.
+
+        This turns on the es5_readonly flag for V8. This makes V8 match the ES5 spec regarding
+        non writable properties on the prototype chain. JSC already behaves the right so this
+        just makes V8 behave the same.
+
+
+        * platform/chromium/media/network-no-source-const-shadow-expected.txt: Added.
+
 2012-08-10  Martin Leutelt  <martin.leutelt@basyskom.com>
 
         [Qt] Dotted borders not drawn with rounded dots
