@@ -46,7 +46,7 @@ template<typename LayerType, typename RenderSurfaceType>
 class CCOcclusionTrackerBase {
     WTF_MAKE_NONCOPYABLE(CCOcclusionTrackerBase);
 public:
-    CCOcclusionTrackerBase(IntRect scissorRectInScreenSpace, bool recordMetricsForFrame);
+    CCOcclusionTrackerBase(IntRect rootTargetRect, bool recordMetricsForFrame);
 
     // Called at the beginning of each step in the CCLayerIterator's front-to-back traversal.
     void enterLayer(const CCLayerIteratorPosition<LayerType>&);
@@ -66,7 +66,7 @@ public:
     CCOverdrawMetrics& overdrawMetrics() const { return *m_overdrawMetrics.get(); }
 
     // Gives the region of the screen that is not occluded by something opaque.
-    Region computeVisibleRegionInScreen() const { return subtract(Region(m_scissorRectInScreenSpace), m_stack.last().occlusionInScreen); }
+    Region computeVisibleRegionInScreen() const { return subtract(Region(m_rootTargetRect), m_stack.last().occlusionInScreen); }
 
     void setMinimumTrackingSize(const IntSize& size) { m_minimumTrackingSize = size; }
 
@@ -92,7 +92,7 @@ protected:
     Vector<StackObject, 1> m_stack;
 
     // Allow tests to override this.
-    virtual IntRect layerScissorRectInTargetSurface(const LayerType*) const;
+    virtual IntRect layerClipRectInTarget(const LayerType*) const;
 
 private:
     // Called when visiting a layer representing itself. If the target was not already current, then this indicates we have entered a new surface subtree.
@@ -109,7 +109,7 @@ private:
     // Add the layer's occlusion to the tracked state.
     void markOccludedBehindLayer(const LayerType*);
 
-    IntRect m_scissorRectInScreenSpace;
+    IntRect m_rootTargetRect;
     OwnPtr<CCOverdrawMetrics> m_overdrawMetrics;
     IntSize m_minimumTrackingSize;
 

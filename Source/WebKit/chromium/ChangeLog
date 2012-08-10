@@ -1,3 +1,67 @@
+2012-08-10  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] Remove scissor from the namings in CCOcclusionTracker
+        https://bugs.webkit.org/show_bug.cgi?id=93630
+
+        Reviewed by Adrienne Walker.
+
+        * tests/CCOcclusionTrackerTest.cpp:
+        (WebKitTests::TestCCOcclusionTrackerWithClip::TestCCOcclusionTrackerWithClip):
+        (WebKitTests::TestCCOcclusionTrackerWithClip::setLayerClipRect):
+        (WebKitTests::TestCCOcclusionTrackerWithClip::useDefaultLayerClipRect):
+        (WebKitTests::TestCCOcclusionTrackerWithClip::layerClipRectInTarget):
+        (TestCCOcclusionTrackerWithClip):
+        (WebKitTests::CCOcclusionTrackerTestIdentityTransforms::runMyTest):
+        (WebKitTests::CCOcclusionTrackerTestRotatedChild::runMyTest):
+        (WebKitTests::CCOcclusionTrackerTestTranslatedChild::runMyTest):
+        (WebKitTests::CCOcclusionTrackerTestChildInRotatedChild::runMyTest):
+        (WebKitTests::CCOcclusionTrackerTestVisitTargetTwoTimes::runMyTest):
+        (WebKitTests::CCOcclusionTrackerTestSurfaceRotatedOffAxis::runMyTest):
+        (WebKitTests::CCOcclusionTrackerTestSurfaceWithTwoOpaqueChildren::runMyTest):
+        (WebKitTests::CCOcclusionTrackerTestOverlappingSurfaceSiblings::runMyTest):
+        (WebKitTests::CCOcclusionTrackerTestOverlappingSurfaceSiblingsWithTwoTransforms::runMyTest):
+        (WebKitTests::CCOcclusionTrackerTestFilters::runMyTest):
+        (WebKitTests::CCOcclusionTrackerTestReplicaDoesOcclude::runMyTest):
+        (WebKitTests::CCOcclusionTrackerTestReplicaWithClipping::runMyTest):
+        (WebKitTests::CCOcclusionTrackerTestReplicaWithMask::runMyTest):
+        (WebKitTests::CCOcclusionTrackerTestLayerClipRectOutsideChild::runMyTest):
+        (WebKitTests):
+        (WebKitTests::CCOcclusionTrackerTestViewportRectOutsideChild::runMyTest):
+        (WebKitTests::CCOcclusionTrackerTestLayerClipRectOverChild::runMyTest):
+        (WebKitTests::CCOcclusionTrackerTestViewportRectOverChild::runMyTest):
+        (WebKitTests::CCOcclusionTrackerTestLayerClipRectPartlyOverChild::runMyTest):
+        (WebKitTests::CCOcclusionTrackerTestViewportRectPartlyOverChild::runMyTest):
+        (WebKitTests::CCOcclusionTrackerTestLayerClipRectOverNothing::runMyTest):
+        (WebKitTests::CCOcclusionTrackerTestViewportRectOverNothing::runMyTest):
+        (WebKitTests::CCOcclusionTrackerTestLayerClipRectForLayerOffOrigin::runMyTest):
+        (WebKitTests::CCOcclusionTrackerTestOpaqueContentsRegionEmpty::runMyTest):
+        (WebKitTests::CCOcclusionTrackerTestOpaqueContentsRegionNonEmpty::runMyTest):
+        (WebKitTests::CCOcclusionTrackerTest3dTransform::runMyTest):
+        (WebKitTests::CCOcclusionTrackerTestUnsorted3dLayers::runMyTest):
+        (WebKitTests::CCOcclusionTrackerTestPerspectiveTransform::runMyTest):
+        (WebKitTests::CCOcclusionTrackerTestPerspectiveTransformBehindCamera::runMyTest):
+        (WebKitTests::CCOcclusionTrackerTestLayerBehindCameraDoesNotOcclude::runMyTest):
+        (WebKitTests::CCOcclusionTrackerTestLargePixelsOccludeInsideClipRect::runMyTest):
+        (WebKitTests::CCOcclusionTrackerTestAnimationOpacity1OnMainThread::runMyTest):
+        (WebKitTests::CCOcclusionTrackerTestAnimationOpacity0OnMainThread::runMyTest):
+        (WebKitTests::CCOcclusionTrackerTestAnimationTranslateOnMainThread::runMyTest):
+        (WebKitTests::CCOcclusionTrackerTestSurfaceOcclusionTranslatesToParent::runMyTest):
+        (WebKitTests::CCOcclusionTrackerTestSurfaceOcclusionTranslatesWithClipping::runMyTest):
+        (WebKitTests::CCOcclusionTrackerTestReplicaOccluded::runMyTest):
+        (WebKitTests::CCOcclusionTrackerTestSurfaceWithReplicaUnoccluded::runMyTest):
+        (WebKitTests::CCOcclusionTrackerTestSurfaceAndReplicaOccludedDifferently::runMyTest):
+        (WebKitTests::CCOcclusionTrackerTestSurfaceChildOfSurface::runMyTest):
+        (WebKitTests::CCOcclusionTrackerTestTopmostSurfaceIsClippedToViewport::runMyTest):
+        (WebKitTests::CCOcclusionTrackerTestSurfaceChildOfClippingSurface::runMyTest):
+        (WebKitTests::CCOcclusionTrackerTestDontOccludePixelsNeededForBackgroundFilter::runMyTest):
+        (WebKitTests::CCOcclusionTrackerTestTwoBackgroundFiltersReduceOcclusionTwice::runMyTest):
+        (WebKitTests::CCOcclusionTrackerTestDontOccludePixelsNeededForBackgroundFilterWithClip::runMyTest):
+        (WebKitTests::CCOcclusionTrackerTestDontReduceOcclusionBelowBackgroundFilter::runMyTest):
+        (WebKitTests::CCOcclusionTrackerTestDontReduceOcclusionIfBackgroundFilterIsOccluded::runMyTest):
+        (WebKitTests::CCOcclusionTrackerTestReduceOcclusionWhenBackgroundFilterIsPartiallyOccluded::runMyTest):
+        (WebKitTests::CCOcclusionTrackerTestMinimumTrackingSize::runMyTest):
+        * tests/TiledLayerChromiumTest.cpp:
+
 2012-08-10  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r125230 and r125238.

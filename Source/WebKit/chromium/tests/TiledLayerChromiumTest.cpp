@@ -58,7 +58,7 @@ class TestCCOcclusionTracker : public CCOcclusionTracker {
 public:
     TestCCOcclusionTracker()
         : CCOcclusionTracker(IntRect(0, 0, 1000, 1000), true)
-        , m_scissorRectInScreen(IntRect(0, 0, 1000, 1000))
+        , m_layerClipRectInTarget(IntRect(0, 0, 1000, 1000))
     {
         // Pretend we have visited a render surface.
         m_stack.append(StackObject());
@@ -67,10 +67,10 @@ public:
     void setOcclusion(const Region& occlusion) { m_stack.last().occlusionInScreen = occlusion; }
 
 protected:
-    virtual IntRect layerScissorRectInTargetSurface(const LayerChromium* layer) const { return m_scissorRectInScreen; }
+    virtual IntRect layerClipRectInTarget(const LayerChromium* layer) const OVERRIDE { return m_layerClipRectInTarget; }
 
 private:
-    IntRect m_scissorRectInScreen;
+    IntRect m_layerClipRectInTarget;
 };
 
 class TiledLayerChromiumTest : public testing::Test {

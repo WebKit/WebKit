@@ -1,3 +1,30 @@
+2012-08-10  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] Remove scissor from the namings in CCOcclusionTracker
+        https://bugs.webkit.org/show_bug.cgi?id=93630
+
+        Reviewed by Adrienne Walker.
+
+        As a followup to wkb.ug/91800 which stops using partial-swap scissor
+        in the occlusion tracker, this does a large rename to the occlusion
+        tracker and affected tests to remove "scissor" from the names of its
+        variables and methods, instead reflecting their new behaviour.
+
+        * platform/graphics/chromium/cc/CCOcclusionTracker.cpp:
+        (WebCore::::CCOcclusionTrackerBase):
+        (WebCore::addOcclusionBehindLayer):
+        (WebCore::::markOccludedBehindLayer):
+        (WebCore::testContentRectOccluded):
+        (WebCore::::occluded):
+        (WebCore::computeUnoccludedContentRect):
+        (WebCore::::unoccludedContentRect):
+        (WebCore::::unoccludedContributingSurfaceContentRect):
+        (WebCore::::layerClipRectInTarget):
+        (WebCore):
+        * platform/graphics/chromium/cc/CCOcclusionTracker.h:
+        (CCOcclusionTrackerBase):
+        (WebCore::CCOcclusionTrackerBase::computeVisibleRegionInScreen):
+
 2012-08-10  Jon Lee  <jonlee@apple.com>
 
         Change Notification.permissionLevel() to Notification.permission
