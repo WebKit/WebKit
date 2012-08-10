@@ -1,3 +1,24 @@
+2012-08-10  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: render arrays as dir in case they were logged into console prior to the front-end opening.
+        https://bugs.webkit.org/show_bug.cgi?id=93713
+
+        Reviewed by Vsevolod Vlasov.
+
+        Dumping potentially outdated arrays using the "dir" representation.
+
+        * inspector/front-end/ConsoleMessage.js:
+        (WebInspector.ConsoleMessageImpl):
+        (WebInspector.ConsoleMessageImpl.prototype._formatParameterAsArray):
+        (WebInspector.ConsoleMessageImpl.prototype.clone):
+        * inspector/front-end/ConsoleModel.js:
+        (WebInspector.ConsoleModel.prototype.enableAgent.callback):
+        (WebInspector.ConsoleModel.prototype.enablingConsole):
+        (WebInspector.ConsoleMessage.create):
+        (WebInspector.ConsoleDispatcher.prototype.messageAdded):
+        * inspector/front-end/ConsoleView.js:
+        (WebInspector.ConsoleMessage.create):
+
 2012-08-10  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Fix the colors in the debugging HUD

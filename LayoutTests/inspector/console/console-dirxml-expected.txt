@@ -7,5 +7,5 @@ Tests that console logging dumps proper messages.
 #document console-dirxml.html:12
 #document-fragment console-dirxml.html:13
 <p></p> console-dirxml.html:14
-[<p></p>] console-dirxml.html:15
+Array[1] console-dirxml.html:15
 

@@ -43,8 +43,9 @@
  * @param {Array.<RuntimeAgent.RemoteObject>=} parameters
  * @param {ConsoleAgent.StackTrace=} stackTrace
  * @param {WebInspector.NetworkRequest=} request
+ * @param {boolean=} isOutdated
  */
-WebInspector.ConsoleMessageImpl = function(source, level, message, linkifier, type, url, line, repeatCount, parameters, stackTrace, request)
+WebInspector.ConsoleMessageImpl = function(source, level, message, linkifier, type, url, line, repeatCount, parameters, stackTrace, request, isOutdated)
 {
     WebInspector.ConsoleMessage.call(this, source, level, url, line, repeatCount);
 
@@ -54,6 +55,7 @@ WebInspector.ConsoleMessageImpl = function(source, level, message, linkifier, ty
     this._parameters = parameters;
     this._stackTrace = stackTrace;
     this._request = request;
+    this._isOutdated = isOutdated;
 
     this._customFormatters = {
         "object": this._formatParameterAsObject,
@@ -361,7 +363,7 @@ WebInspector.ConsoleMessageImpl.prototype = {
         }
 
         const maxFlatArrayLength = 100;
-        if (array.arrayLength() > maxFlatArrayLength)
+        if (this._isOutdated || array.arrayLength() > maxFlatArrayLength)
             this._formatParameterAsObject(array, elem, false);
         else
             array.getOwnProperties(this._printArray.bind(this, array, elem));
@@ -713,7 +715,7 @@ WebInspector.ConsoleMessageImpl.prototype = {
      */
     clone: function()
     {
-        return WebInspector.ConsoleMessage.create(this.source, this.level, this._messageText, this.type, this.url, this.line, this.repeatCount, this._parameters, this._stackTrace, this._request);
+        return WebInspector.ConsoleMessage.create(this.source, this.level, this._messageText, this.type, this.url, this.line, this.repeatCount, this._parameters, this._stackTrace, this._request, this._isOutdated);
     }
 }
 

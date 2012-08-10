@@ -16,14 +16,14 @@ CONSOLE MESSAGE: line 24: [object Float32Array]
 CONSOLE MESSAGE: line 25: [object Float64Array]
 Tests that console logging detects external arrays as arrays.
 
-[0, 0, 0, 0, 0, 0, 0, 0, 0, 0] console-external-array.html:9
-[0, 0, 0, 0, 0, 0, 0, 0, 0, 0] console-external-array.html:10
-[0, 0, 0, 0, 0, 0, 0, 0, 0, 0] console-external-array.html:11
-[0, 0, 0, 0, 0, 0, 0, 0, 0, 0] console-external-array.html:12
-[0, 0, 0, 0, 0, 0, 0, 0, 0, 0] console-external-array.html:13
-[0, 0, 0, 0, 0, 0, 0, 0, 0, 0] console-external-array.html:14
-[0, 0, 0, 0, 0, 0, 0, 0, 0, 0] console-external-array.html:15
-[0, 0, 0, 0, 0, 0, 0, 0, 0, 0] console-external-array.html:16
+Int8Array[10] console-external-array.html:9
+Int16Array[10] console-external-array.html:10
+Int32Array[10] console-external-array.html:11
+Uint8Array[10] console-external-array.html:12
+Uint16Array[10] console-external-array.html:13
+Uint32Array[10] console-external-array.html:14
+Float32Array[10] console-external-array.html:15
+Float64Array[10] console-external-array.html:16
 Int8Array[10] console-external-array.html:18
 Int16Array[10] console-external-array.html:19
 Int32Array[10] console-external-array.html:20

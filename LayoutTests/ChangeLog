@@ -1,3 +1,18 @@
+2012-08-10  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: render arrays as dir in case they were logged into console prior to the front-end opening.
+        https://bugs.webkit.org/show_bug.cgi?id=93713
+
+        Reviewed by Vsevolod Vlasov.
+
+        * inspector/console/console-dirxml-expected.txt:
+        * inspector/console/console-external-array-expected.txt:
+        * inspector/console/console-format-collections-expected.txt:
+        * inspector/console/console-format-expected.txt:
+        * inspector/console/console-format.html:
+        * inspector/console/console-tests-expected.txt:
+        * platform/chromium/inspector/console/console-format-collections-expected.txt:
+
 2012-08-10  Jon Lee  <jonlee@apple.com>
 
         Change Notification.permissionLevel() to Notification.permission

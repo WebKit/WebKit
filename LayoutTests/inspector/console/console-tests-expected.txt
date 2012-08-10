@@ -41,6 +41,6 @@ undefined console-tests.html:26 console-message console-log-level
 #document console-tests.html:27 console-message console-log-level
 function () { } console-tests.html:28 console-message console-log-level
 function f() { } console-tests.html:29 console-message console-log-level
-[1, 2, 3] console-tests.html:30 console-message console-log-level
+Array[3] console-tests.html:30 console-message console-log-level
 /regexp.*/ console-tests.html:31 console-message console-log-level
 
