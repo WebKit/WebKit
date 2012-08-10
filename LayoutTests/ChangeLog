@@ -1,3 +1,11 @@
+2012-08-10  Florin Malita  <fmalita@chromium.org>
+
+        [Chromium] Updated results for fast/borders/border-shadow-large-radius.html.
+
+        Unreviewed gardening.
+
+        * platform/chromium-win/fast/borders/border-shadow-large-radius-expected.png: Added.
+
 2012-08-10  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed GTK gardening.
