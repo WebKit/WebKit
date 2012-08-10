@@ -1,3 +1,30 @@
+2012-08-10  Jer Noble  <jer.noble@apple.com>
+
+        no timeupdate events emitted for media controller
+        https://bugs.webkit.org/show_bug.cgi?id=93745
+
+        Reviewed by Eric Carlson.
+
+        Generate timeupdate events while the current position is changing.
+
+        Test: media/media-controller-timeupdate.html
+
+        Enforce the spec requirement that the timeupdate event is fired no more often
+        than every 250ms.
+        * html/MediaController.cpp:
+        (MediaController::scheduleTimeupdateEvent):
+
+        Add a periodic firing timer to generate timeupdate events during playback.
+        * html/MediaController.cpp:
+        (MediaController::startTimeupdateTimer):
+        (MediaController::timeupdateTimerFired):
+
+        * html/MediaController.cpp:
+        (MediaController::MediaController): Initialize m_previousTimeupdateTime.
+        (MediaController::setCurrentTime): Call scheduleTimeUpdateEvent.
+        (MediaController::updatePlaybackState): Start and stop the timeupdate timer.
+        * html/MediaController.h:
+        
 2012-08-09  Jeffrey Pfau  <jpfau@apple.com>
 
         Allow blocking of third-party localStorage and sessionStorage

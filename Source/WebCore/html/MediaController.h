@@ -125,6 +125,9 @@ private:
     void asyncEventTimerFired(Timer<MediaController>*);
     void clearPositionTimerFired(Timer<MediaController>*);
     bool hasEnded() const;
+    void scheduleTimeupdateEvent();
+    void timeupdateTimerFired(Timer<MediaController>*);
+    void startTimeupdateTimer();
 
     // EventTarget
     virtual void refEventTarget() { ref(); }
@@ -152,6 +155,8 @@ private:
     bool m_closedCaptionsVisible;
     PassRefPtr<Clock> m_clock;
     ScriptExecutionContext* m_scriptExecutionContext;
+    Timer<MediaController> m_timeupdateTimer;
+    double m_previousTimeupdateTime;
 };
 
 } // namespace WebCore

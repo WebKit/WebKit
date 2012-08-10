@@ -56,6 +56,8 @@ MediaController::MediaController(ScriptExecutionContext* context)
     , m_closedCaptionsVisible(false)
     , m_clock(Clock::create())
     , m_scriptExecutionContext(context)
+    , m_timeupdateTimer(this, &MediaController::timeupdateTimerFired)
+    , m_previousTimeupdateTime(0)
 {
 }
 
@@ -171,6 +173,8 @@ void MediaController::setCurrentTime(float time, ExceptionCode& code)
     // Seek each slaved media element to the new playback position relative to the media element timeline.
     for (size_t index = 0; index < m_mediaElements.size(); ++index)
         m_mediaElements[index]->seek(time, code);
+
+    scheduleTimeupdateEvent();
 }
 
 void MediaController::play()
@@ -395,14 +399,17 @@ void MediaController::updatePlaybackState()
     case WAITING:
         eventName = eventNames().waitingEvent;
         m_clock->stop();
+        m_timeupdateTimer.stop();
         break;
     case ENDED:
         eventName = eventNames().endedEvent;
         m_clock->stop();
+        m_timeupdateTimer.stop();
         break;
     case PLAYING:
         eventName = eventNames().playingEvent;
         m_clock->start();
+        startTimeupdateTimer();
         break;
     default:
         ASSERT_NOT_REACHED();
@@ -603,6 +610,35 @@ void MediaController::returnToRealtime()
 const AtomicString& MediaController::interfaceName() const
 {
     return eventNames().interfaceForMediaController;
+}
+
+// The spec says to fire periodic timeupdate events (those sent while playing) every
+// "15 to 250ms", we choose the slowest frequency
+static const double maxTimeupdateEventFrequency = 0.25;
+
+void MediaController::startTimeupdateTimer()
+{
+    if (m_timeupdateTimer.isActive())
+        return;
+
+    m_timeupdateTimer.startRepeating(maxTimeupdateEventFrequency);
+}
+
+void MediaController::timeupdateTimerFired(Timer<MediaController>*)
+{
+    scheduleTimeupdateEvent();
+}
+
+void MediaController::scheduleTimeupdateEvent()
+{
+    double now = WTF::currentTime();
+    double timedelta = now - m_previousTimeupdateTime;
+
+    if (timedelta < maxTimeupdateEventFrequency)
+        return;
+
+    scheduleEvent(eventNames().timeupdateEvent);
+    m_previousTimeupdateTime = now;
 }
 
 #endif

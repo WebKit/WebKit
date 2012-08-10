@@ -1,3 +1,15 @@
+2012-08-10  Jer Noble  <jer.noble@apple.com>
+
+        no timeupdate events emitted for media controller
+        https://bugs.webkit.org/show_bug.cgi?id=93745
+
+        Reviewed by Eric Carlson.
+
+        New test checking that the timeupdate event is emmitted correctly during playback.
+
+        * media/media-controller-timeupdate-expected.txt: Added.
+        * media/media-controller-timeupdate.html: Added.
+
 2012-08-09  Jeffrey Pfau  <jpfau@apple.com>
 
         Allow blocking of third-party localStorage and sessionStorage
