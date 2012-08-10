@@ -102,7 +102,7 @@ static void TestActiveDOMObjectDomainSafeFunctionSetter(v8::Local<v8::String> na
     if (holder.IsEmpty())
         return;
     TestActiveDOMObject* imp = V8TestActiveDOMObject::toNative(holder);
-    if (!BindingSecurity::shouldAllowAccessToFrame(BindingState::instance(), imp->frame(), ReportSecurityError))
+    if (!BindingSecurity::shouldAllowAccessToFrame(BindingState::instance(), imp->frame()))
         return;
 
     info.This()->SetHiddenValue(name, value);

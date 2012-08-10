@@ -1,3 +1,10 @@
+2012-08-09  Kentaro Hara  <haraken@chromium.org>
+
+        Unreviewed. Updated run-binding-tests results.
+
+        * bindings/scripts/test/V8/V8TestActiveDOMObject.cpp:
+        (WebCore::TestActiveDOMObjectV8Internal::TestActiveDOMObjectDomainSafeFunctionSetter):
+
 2012-08-09  Luke Macpherson   <macpherson@chromium.org>
 
         Fix null pointer deref in RenderFileUploadControl::computePreferredLogicalWidth().
