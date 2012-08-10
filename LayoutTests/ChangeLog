@@ -1,3 +1,15 @@
+2012-08-10  Takashi Sakamoto  <tasak@google.com>
+
+        box-shadow creates incorrect shadow when border-radius is too large.
+        https://bugs.webkit.org/show_bug.cgi?id=72103
+
+        Reviewed by Simon Fraser.
+
+        * fast/borders/border-shadow-large-radius.html: Added.
+        * fast/borders/border-shadow-large-radius-expected.txt: Added.
+        * platform/chromium-linux/fast/borders/border-shadow-large-radius-expected.png: Added.
+        * platform/chromium-mac/fast/borders/border-shadow-large-radius-expected.png: Added.
+
 2012-08-10  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed GTK gardening.

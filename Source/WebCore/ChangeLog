@@ -1,3 +1,26 @@
+2012-08-10  Takashi Sakamoto  <tasak@google.com>
+
+        box-shadow creates incorrect shadow when border-radius is too large
+        https://bugs.webkit.org/show_bug.cgi?id=72103
+
+        Reviewed by Simon Fraser.
+
+        Added a code for adjusting a rounded rect before paintBoxShadow in
+        a similar way to getRoundedRectFor.
+
+        Test: fast/borders/border-shadow-large-radius.html
+
+        * platform/graphics/RoundedRect.cpp:
+        (WebCore::RoundedRect::adjustRadii):
+        Added a new method to set radii's scale to fit into rect.
+        * platform/graphics/RoundedRect.h:
+        (RoundedRect):
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::paintBoxShadow):
+        A rounded rect for box-shadow is not checked whether the raii matches
+        the rect or not. Added the code to adjust radii's scale if the rounded
+        rect is not renderable, the case: RoundedRect::isRenderable is false.
+
 2012-08-10  Ojan Vafai  <ojan@chromium.org>
 
         Wrap INLINE_FLEX in a #if ENABLE(CSS3_FLEXBOX).

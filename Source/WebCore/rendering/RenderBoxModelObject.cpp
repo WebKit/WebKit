@@ -2526,6 +2526,8 @@ void RenderBoxModelObject::paintBoxShadow(const PaintInfo& info, const LayoutRec
                     context->fillRect(fillRect.rect(), Color::black, s->colorSpace());
                 else {
                     fillRect.expandRadii(shadowSpread);
+                    if (!fillRect.isRenderable())
+                        fillRect.adjustRadii();
                     context->fillRoundedRect(fillRect, Color::black, s->colorSpace());
                 }
             } else {

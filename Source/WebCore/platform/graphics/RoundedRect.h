@@ -94,6 +94,7 @@ public:
     void excludeLogicalEdges(bool isHorizontal, bool excludeLogicalLeftEdge, bool excludeLogicalRightEdge);
 
     bool isRenderable() const;
+    void adjustRadii();
 
 private:
     IntRect m_rect;

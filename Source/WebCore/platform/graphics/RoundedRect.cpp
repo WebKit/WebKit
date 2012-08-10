@@ -162,4 +162,14 @@ bool RoundedRect::isRenderable() const
         && m_radii.bottomLeft().height() + m_radii.bottomRight().height() <= m_rect.height();
 }
 
+void RoundedRect::adjustRadii()
+{
+    int maxRadiusWidth = std::max(m_radii.topLeft().width() + m_radii.topRight().width(), m_radii.bottomLeft().width() + m_radii.bottomRight().width());
+    int maxRadiusHeight = std::max(m_radii.topLeft().height() + m_radii.bottomLeft().height(), m_radii.topRight().height() + m_radii.bottomRight().height());
+    if (maxRadiusWidth > maxRadiusHeight)
+        m_radii.scale(static_cast<float>(m_rect.width()) / maxRadiusWidth);
+    else
+        m_radii.scale(static_cast<float>(m_rect.height()) / maxRadiusHeight);
+}
+
 } // namespace WebCore
