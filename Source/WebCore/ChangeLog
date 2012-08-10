@@ -1,3 +1,19 @@
+2012-08-10  Kentaro Hara  <haraken@chromium.org>
+
+        [V8] Remove collectIsolatedContexts() from V8Proxy
+        https://bugs.webkit.org/show_bug.cgi?id=93682
+
+        Reviewed by Adam Barth.
+
+        We want to remove V8Proxy. This patch removes V8Proxy::collectIsolatedContexts().
+
+        No tests. No change in behavior.
+
+        * bindings/v8/ScriptController.cpp:
+        (WebCore::ScriptController::collectIsolatedContexts):
+        * bindings/v8/V8Proxy.cpp:
+        (WebCore::V8Proxy::collectIsolatedContexts):
+
 2012-08-10  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] Unreviewed trivial build fix: Avoid passing a non-existance WebCore/websockets directory

@@ -170,7 +170,6 @@ namespace WebCore {
 
         bool setContextDebugId(int id);
         static int contextDebugId(v8::Handle<v8::Context>);
-        void collectIsolatedContexts(Vector<std::pair<ScriptState*, SecurityOrigin*> >&);
 
         // Registers a v8 extension to be available on webpages. Will only
         // affect v8 contexts initialized after this call. Takes ownership of
