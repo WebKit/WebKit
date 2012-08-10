@@ -1,3 +1,11 @@
+2012-08-10  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening.
+
+        Adding failure expectations for failures introduced in r125133 and r125262.
+
+        * platform/gtk/TestExpectations:
+
 2012-08-10  Erik Arvidsson  <arv@chromium.org>
 
         [V8] Enable es5_readonly

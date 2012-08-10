@@ -419,6 +419,15 @@ BUGWK93501 : fast/css/first-letter-text-fragment-crash.html = CRASH PASS
 
 BUGWK93502 : fast/history/nested-visited-test.html = CRASH PASS
 
+BUGWK93247 DEBUG : fast/lists/list-marker-remove-crash.html = CRASH
+
+BUGWK93727 DEBUG : fast/events/keyevent-iframe-removed-crash.html = CRASH PASS
+BUGWK93727 DEBUG : fullscreen/full-screen-iframe-zIndex.html = CRASH PASS
+BUGWK93727 DEBUG : fullscreen/full-screen-iframe-allowed.html = CRASH PASS
+BUGWK93727 DEBUG : fullscreen/full-screen-iframe-not-allowed.html = CRASH PASS
+BUGWK93727 DEBUG : fullscreen/exit-full-screen-iframe.html = CRASH PASS
+BUGWK93727 DEBUG : svg/custom/use-instanceRoot-as-event-target.xhtml = CRASH PASS
+
 //////////////////////////////////////////////////////////////////////////////////////////
 // End of Crashing tests
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -1289,7 +1298,15 @@ BUGWK93073 : mathml/presentation/tokenElements.xhtml = TEXT
 BUGWK93073 : mathml/presentation/under.xhtml = TEXT
 BUGWK93073 : mathml/presentation/underover.xhtml = TEXT
 
-BUGWK93247 DEBUG : fast/lists/list-marker-remove-crash.html = CRASH
+BUGWK93727 RELEASE : fast/events/keyevent-iframe-removed-crash.html = TEXT PASS
+BUGWK93727 RELEASE : fullscreen/full-screen-iframe-zIndex.html = TEXT PASS
+BUGWK93727 RELEASE : fullscreen/full-screen-iframe-allowed.html = TEXT PASS
+BUGWK93727 RELEASE : fullscreen/full-screen-iframe-not-allowed.html = TEXT PASS
+BUGWK93727 RELEASE : fullscreen/exit-full-screen-iframe.html = TEXT PASS
+BUGWK93727 RELEASE : svg/custom/use-instanceRoot-as-event-target.xhtml = TEXT PASS
+
+BUGWK93718 : css3/flexbox/inline-flex-crash2.html = TEXT
+
 //////////////////////////////////////////////////////////////////////////////////////////
 // End of Tests failing
 //////////////////////////////////////////////////////////////////////////////////////////
