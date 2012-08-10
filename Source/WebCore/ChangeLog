@@ -1,3 +1,28 @@
+2012-08-10  Tony Chang  <tony@chromium.org>
+
+        Remove unused isFlexingChildren and make m_flexingChildren a local variable
+        https://bugs.webkit.org/show_bug.cgi?id=93689
+
+        Reviewed by Ojan Vafai.
+
+        isFlexingChildren() is never called, so we can remove it.
+
+        m_flexingChildren is now only used locally, so remove the member variable and use a local variable.
+
+        No new tests, this is just a refactoring.
+
+        * rendering/RenderDeprecatedFlexibleBox.cpp:
+        (WebCore::RenderDeprecatedFlexibleBox::RenderDeprecatedFlexibleBox):
+        (WebCore::RenderDeprecatedFlexibleBox::layoutBlock):
+        (WebCore::RenderDeprecatedFlexibleBox::layoutHorizontalBox): Make flexingChildren a local.
+        (WebCore::RenderDeprecatedFlexibleBox::layoutVerticalBox): Make flexingChildren a local.
+        (WebCore::RenderDeprecatedFlexibleBox::applyLineClamp): No need to set m_flexingChildren since it's not used
+        outside of RenderDeprecatedFlexibleBox.
+        * rendering/RenderDeprecatedFlexibleBox.h:
+        (RenderDeprecatedFlexibleBox): Remove m_flexingChildren and don't bit pack the remaining bool since it doesn't
+        do anything for 1 bool.
+        * rendering/RenderObject.h:
+
 2012-08-10  Sam D  <dsam2912@gmail.com>
 
         Web Inspector: Search matches count view is flaky.

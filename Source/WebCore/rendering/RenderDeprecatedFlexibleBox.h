@@ -49,7 +49,6 @@ public:
     virtual bool avoidsFloats() const { return true; }
 
     virtual bool isDeprecatedFlexibleBox() const { return true; }
-    virtual bool isFlexingChildren() const { return m_flexingChildren; }
     virtual bool isStretchingChildren() const { return m_stretchingChildren; }
 
     void placeChild(RenderBox* child, const LayoutPoint& location);
@@ -61,8 +60,7 @@ protected:
     bool isVertical() const { return style()->boxOrient() == VERTICAL; }
     bool isHorizontal() const { return style()->boxOrient() == HORIZONTAL; }
 
-    bool m_flexingChildren : 1;
-    bool m_stretchingChildren : 1;
+    bool m_stretchingChildren;
 
 private:
     void applyLineClamp(FlexBoxIterator&, bool relayoutChildren);
