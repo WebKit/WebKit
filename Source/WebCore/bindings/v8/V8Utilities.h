@@ -60,7 +60,7 @@ namespace WebCore {
 
     ScriptExecutionContext* getScriptExecutionContext();
 
-    void throwTypeMismatchException(v8::Isolate*);
+    void setTypeMismatchException(v8::Isolate*);
 
     enum CallbackAllowedValueFlag {
         CallbackAllowUndefined = 1,
@@ -102,7 +102,7 @@ namespace WebCore {
 
         if (!value->IsFunction()) {
             succeeded = false;
-            throwTypeMismatchException(isolate);
+            setTypeMismatchException(isolate);
             return 0;
         }
 

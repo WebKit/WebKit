@@ -1,3 +1,23 @@
+2012-08-09  Kentaro Hara  <haraken@chromium.org>
+
+        [V8] V8Utilities::throwTypeMismatchException() should use setDOMException()
+        https://bugs.webkit.org/show_bug.cgi?id=93610
+
+        Reviewed by Adam Barth.
+
+        Given that V8Utilities::throwTypeMismatchException() throws a DOM exception,
+        we should use setDOMException() instead of throwError().
+
+        This patch also renames throwTypeMismatchException() to setTypeMismatchException().
+
+        No tests. I couldn't figure out how to trigger the call path.
+        Either way this is just a minor change of error message.
+
+        * bindings/v8/V8Utilities.cpp:
+        (WebCore::setTypeMismatchException):
+        * bindings/v8/V8Utilities.h:
+        (WebCore::createFunctionOnlyCallback):
+
 2012-08-09  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Crash in WebCore::RenderTable::cellBefore
