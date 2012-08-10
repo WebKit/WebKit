@@ -1,3 +1,17 @@
+2012-08-09  Luke Macpherson   <macpherson@chromium.org>
+
+        Fix null pointer deref in RenderFileUploadControl::computePreferredLogicalWidth().
+        https://bugs.webkit.org/show_bug.cgi?id=93579
+
+        Reviewed by Kent Tamura.
+
+        Checks the upload control has a non-null button renderer before dereferencing.
+
+        Test: fast/forms/file/file-crash-by-display-none-button.html
+
+        * rendering/RenderFileUploadControl.cpp:
+        (WebCore::RenderFileUploadControl::computePreferredLogicalWidths):
+
 2012-08-09  Kentaro Hara  <haraken@chromium.org>
 
         [V8] Rename V8BindingPerContextData to V8PerContextData

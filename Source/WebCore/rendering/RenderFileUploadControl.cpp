@@ -194,7 +194,8 @@ void RenderFileUploadControl::computePreferredLogicalWidths()
         const String label = theme()->fileListDefaultLabel(node()->toInputElement()->multiple());
         float defaultLabelWidth = font.width(constructTextRun(this, font, label, style, TextRun::AllowTrailingExpansion));
         if (HTMLInputElement* button = uploadButton())
-            defaultLabelWidth += button->renderer()->maxPreferredLogicalWidth() + afterButtonSpacing;
+            if (RenderObject* buttonRenderer = button->renderer())
+                defaultLabelWidth += buttonRenderer->maxPreferredLogicalWidth() + afterButtonSpacing;
         m_maxPreferredLogicalWidth = static_cast<int>(ceilf(max(minDefaultLabelWidth, defaultLabelWidth)));
     }
 
