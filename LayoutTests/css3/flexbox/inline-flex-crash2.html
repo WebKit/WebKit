@@ -4,8 +4,8 @@ This test passes if it doesn't crash.
 
 <div id='container' contentEditable><a><img><div id="el0" style="display: -webkit-inline-flex"><pre>AAAAA</pre></div></a></div>
 <script>
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+if (window.testRunner)
+    testRunner.dumpAsText();
 
 window.getSelection().selectAllChildren(document.getElementById('container'));
 document.execCommand('FormatBlock', false, '<h5>');

@@ -1,3 +1,13 @@
+2012-08-10  Ojan Vafai  <ojan@chromium.org>
+
+        New test introduced in r125262 css3/flexbox/inline-flex-crash2.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=93718
+
+        Test uses layoutTestController instead of testRunner.
+
+        * css3/flexbox/inline-flex-crash2.html:
+        * platform/qt/Skipped:
+
 2012-08-10  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed GTK gardening.
