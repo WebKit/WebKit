@@ -347,11 +347,11 @@ void JSLock::grabAllLocks(unsigned)
 {
 }
 
-JSLock::DropAllLocks::DropAllLocks(ExecState*)
+JSLock::DropAllLocks::DropAllLocks(ExecState*, AlwaysDropLocksTag)
 {
 }
 
-JSLock::DropAllLocks::DropAllLocks(JSGlobalData*)
+JSLock::DropAllLocks::DropAllLocks(JSGlobalData*, AlwaysDropLocksTag)
 {
 }
 
