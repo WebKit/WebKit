@@ -1342,7 +1342,7 @@ WebInspector.CSSDispatcher.prototype = {
  */
 WebInspector.NamedFlow = function(payload)
 {
-    this.nodeId = payload.nodeId;
+    this.nodeId = payload.documentNodeId;
     this.name = payload.name;
     this.overset = payload.overset;
     this.content = payload.content;
@@ -1362,11 +1362,15 @@ WebInspector.NamedFlow.parsePayload = function(payload)
  * @param {?Array.<CSSAgent.NamedFlow>=} namedFlowPayload
  * @return {?Array.<WebInspector.NamedFlow>}
  */
-WebInspector.NamedFlow.parsePayloadArray = function(payloadArray)
+WebInspector.NamedFlow.parsePayloadArray = function(namedFlowPayload)
 {
-    for (var i = 0; i < payloadArray.length; ++i)
-        payloadArray[i] = WebInspector.NamedFlow.parsePayload(payloadArray[i]);
-    return payloadArray;
+    if (!namedFlowPayload)
+        return null;
+
+    var parsedArray = [];
+    for (var i = 0; i < namedFlowPayload.length; ++i)
+        parsedArray[i] = WebInspector.NamedFlow.parsePayload(namedFlowPayload[i]);
+    return parsedArray;
 }
 
 /**

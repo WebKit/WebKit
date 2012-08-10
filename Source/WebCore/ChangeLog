@@ -1,3 +1,11 @@
+2012-08-10  Alexander Pavlov  <apavlov@chromium.org>
+
+        Web Inspector: Unreviewed, fix frontend compilability after r125268.
+
+        * inspector/front-end/CSSStyleModel.js:
+        (WebInspector.NamedFlow):
+        (WebInspector.NamedFlow.parsePayloadArray):
+
 2012-08-10  Martin Leutelt  <martin.leutelt@basyskom.com>
 
         [Qt] Dotted borders not drawn with rounded dots
