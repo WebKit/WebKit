@@ -1,3 +1,16 @@
+2012-08-10  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        [GTK] Broken implementation of AtkText and AtkEditableText for password fields
+        https://bugs.webkit.org/show_bug.cgi?id=93621
+
+        Rubber-stamped by Ryosuke Niwa.
+
+        Fix Apple Win build, by avoiding to generate unreachable sections
+        of code in AccessibilityRenderObject::passwordFieldValue().
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::passwordFieldValue):
+
 2012-08-10  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Remove targetSurface pointer from CCRenderPass

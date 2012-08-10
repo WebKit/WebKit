@@ -3932,11 +3932,7 @@ AccessibilityRole AccessibilityRenderObject::roleValueForMSAA() const
 
 String AccessibilityRenderObject::passwordFieldValue() const
 {
-#if !PLATFORM(GTK)
-    // It seems only GTK is interested in this at the moment.
-    return String();
-#endif
-
+#if PLATFORM(GTK)
     ASSERT(isPasswordField());
 
     // Look for the RenderText object in the RenderObject tree for this input field.
@@ -3949,6 +3945,10 @@ String AccessibilityRenderObject::passwordFieldValue() const
 
     // Return the text that is actually being rendered in the input field.
     return static_cast<RenderText*>(renderer)->textWithoutTranscoding();
+#else
+    // It seems only GTK is interested in this at the moment.
+    return String();
+#endif
 }
 
 ScrollableArea* AccessibilityRenderObject::getScrollableAreaIfScrollable() const
