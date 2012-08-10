@@ -1,3 +1,14 @@
+2012-08-09  Joone Hur  <joone.hur@intel.com>
+
+        [EFL] Unreviewed gardening
+
+        Rebaseline compositing/repaint/newly-composited-on-scroll.html on EFL after r125086.
+        Rebaseline fast/forms/datalist/range-snap-to-datalist.html on EFL after r125048.
+
+        * platform/efl/compositing/repaint/newly-composited-on-scroll-expected.png: Added.
+        * platform/efl/compositing/repaint/newly-composited-on-scroll-expected.txt: Added.
+        * platform/efl/fast/forms/datalist/range-snap-to-datalist-expected.txt: Added.
+
 2012-08-09  Mike Lawther  <mikelawther@chromium.org>
 
         Unreviewed gardening.
