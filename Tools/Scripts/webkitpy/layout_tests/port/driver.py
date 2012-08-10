@@ -440,7 +440,7 @@ class ContentBlock(object):
         self.decoded_content = None
 
     def decode_content(self):
-        if self.encoding == 'base64':
+        if self.encoding == 'base64' and self.content is not None:
             self.decoded_content = base64.b64decode(self.content)
         else:
             self.decoded_content = self.content

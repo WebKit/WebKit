@@ -1,5 +1,15 @@
 2012-08-10  Xianzhu Wang  <wangxianzhu@chromium.org>
 
+        NRWT crashes when DRT with --encode-binary crashes just before it dumps pixels
+        https://bugs.webkit.org/show_bug.cgi?id=93728
+
+        Reviewed by Dirk Pranke.
+
+        * Scripts/webkitpy/layout_tests/port/driver.py:
+        (ContentBlock.decode_content): Check self.content is not None before calling base64.b64decode().
+
+2012-08-10  Xianzhu Wang  <wangxianzhu@chromium.org>
+
         [Chromium-Android][NRWT] Executable might not be pushed correctly when there are multiple builds
         https://bugs.webkit.org/show_bug.cgi?id=93688
 
