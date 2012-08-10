@@ -52,7 +52,7 @@ static v8::Handle<v8::Value> anotherFunctionCallback(const v8::Arguments& args)
 
 } // namespace TestCustomNamedGetterV8Internal
 
-static const BatchedCallback TestCustomNamedGetterCallbacks[] = {
+static const V8DOMConfiguration::BatchedCallback TestCustomNamedGetterCallbacks[] = {
     {"anotherFunction", TestCustomNamedGetterV8Internal::anotherFunctionCallback},
 };
 
@@ -61,7 +61,7 @@ static v8::Persistent<v8::FunctionTemplate> ConfigureV8TestCustomNamedGetterTemp
     desc->ReadOnlyPrototype();
 
     v8::Local<v8::Signature> defaultSignature;
-    defaultSignature = configureTemplate(desc, "TestCustomNamedGetter", v8::Persistent<v8::FunctionTemplate>(), V8TestCustomNamedGetter::internalFieldCount,
+    defaultSignature = V8DOMConfiguration::configureTemplate(desc, "TestCustomNamedGetter", v8::Persistent<v8::FunctionTemplate>(), V8TestCustomNamedGetter::internalFieldCount,
         0, 0,
         TestCustomNamedGetterCallbacks, WTF_ARRAY_LENGTH(TestCustomNamedGetterCallbacks));
     UNUSED_PARAM(defaultSignature); // In some cases, it will not be used.

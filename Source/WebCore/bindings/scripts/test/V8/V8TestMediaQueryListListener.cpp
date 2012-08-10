@@ -53,7 +53,7 @@ static v8::Handle<v8::Value> methodCallback(const v8::Arguments& args)
 
 } // namespace TestMediaQueryListListenerV8Internal
 
-static const BatchedCallback TestMediaQueryListListenerCallbacks[] = {
+static const V8DOMConfiguration::BatchedCallback TestMediaQueryListListenerCallbacks[] = {
     {"method", TestMediaQueryListListenerV8Internal::methodCallback},
 };
 
@@ -62,7 +62,7 @@ static v8::Persistent<v8::FunctionTemplate> ConfigureV8TestMediaQueryListListene
     desc->ReadOnlyPrototype();
 
     v8::Local<v8::Signature> defaultSignature;
-    defaultSignature = configureTemplate(desc, "TestMediaQueryListListener", v8::Persistent<v8::FunctionTemplate>(), V8TestMediaQueryListListener::internalFieldCount,
+    defaultSignature = V8DOMConfiguration::configureTemplate(desc, "TestMediaQueryListListener", v8::Persistent<v8::FunctionTemplate>(), V8TestMediaQueryListListener::internalFieldCount,
         0, 0,
         TestMediaQueryListListenerCallbacks, WTF_ARRAY_LENGTH(TestMediaQueryListListenerCallbacks));
     UNUSED_PARAM(defaultSignature); // In some cases, it will not be used.

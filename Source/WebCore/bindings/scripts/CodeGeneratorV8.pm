@@ -2699,7 +2699,7 @@ END
     $attributes = \@normalAttributes;
     # Put the attributes that disallow shadowing on the shadow object.
     if (@disallowsShadowing) {
-        push(@implContent, "static const BatchedAttribute shadowAttrs[] = {\n");
+        push(@implContent, "static const V8DOMConfiguration::BatchedAttribute shadowAttrs[] = {\n");
         GenerateBatchedAttributeData($dataNode, \@disallowsShadowing);
         push(@implContent, "};\n\n");
     }
@@ -2707,7 +2707,7 @@ END
     my $has_attributes = 0;
     if (@$attributes) {
         $has_attributes = 1;
-        push(@implContent, "static const BatchedAttribute ${interfaceName}Attrs[] = {\n");
+        push(@implContent, "static const V8DOMConfiguration::BatchedAttribute ${interfaceName}Attrs[] = {\n");
         GenerateBatchedAttributeData($dataNode, $attributes);
         push(@implContent, "};\n\n");
     }
@@ -2722,7 +2722,7 @@ END
         next if !IsStandardFunction($dataNode, $function);
         if (!$has_callbacks) {
             $has_callbacks = 1;
-            push(@implContent, "static const BatchedCallback ${interfaceName}Callbacks[] = {\n");
+            push(@implContent, "static const V8DOMConfiguration::BatchedCallback ${interfaceName}Callbacks[] = {\n");
         }
         my $name = $function->signature->name;
         my $callback = GetFunctionTemplateCallbackName($function, $interfaceName);
@@ -2741,7 +2741,7 @@ END
     my @constantsEnabledAtRuntime;
     if (@{$dataNode->constants}) {
         $has_constants = 1;
-        push(@implContent, "static const BatchedConstant ${interfaceName}Consts[] = {\n");
+        push(@implContent, "static const V8DOMConfiguration::BatchedConstant ${interfaceName}Consts[] = {\n");
     }
     foreach my $constant (@{$dataNode->constants}) {
         my $name = $constant->name;
@@ -2796,7 +2796,7 @@ END
         push(@implContent, <<END);
 static v8::Persistent<v8::ObjectTemplate> ConfigureShadowObjectTemplate(v8::Persistent<v8::ObjectTemplate> templ)
 {
-    batchConfigureAttributes(templ, v8::Handle<v8::ObjectTemplate>(), shadowAttrs, WTF_ARRAY_LENGTH(shadowAttrs));
+    V8DOMConfiguration::batchConfigureAttributes(templ, v8::Handle<v8::ObjectTemplate>(), shadowAttrs, WTF_ARRAY_LENGTH(shadowAttrs));
 
     // Install a security handler with V8.
     templ->SetAccessCheckCallbacks(V8DOMWindow::namedSecurityCheck, V8DOMWindow::indexedSecurityCheck, v8::External::Wrap(&V8DOMWindow::info));
@@ -2822,12 +2822,12 @@ END
         my $enable_function = GetRuntimeEnableFunctionName($dataNode);
         push(@implContent, <<END);
     if (!${enable_function}())
-        defaultSignature = configureTemplate(desc, \"\", $parentClassTemplate, V8${interfaceName}::internalFieldCount, 0, 0, 0, 0);
+        defaultSignature = V8DOMConfiguration::configureTemplate(desc, \"\", $parentClassTemplate, V8${interfaceName}::internalFieldCount, 0, 0, 0, 0);
     else
 END
     }
     push(@implContent,  <<END);
-    defaultSignature = configureTemplate(desc, \"${visibleInterfaceName}\", $parentClassTemplate, V8${interfaceName}::internalFieldCount,
+    defaultSignature = V8DOMConfiguration::configureTemplate(desc, \"${visibleInterfaceName}\", $parentClassTemplate, V8${interfaceName}::internalFieldCount,
 END
     # Set up our attributes if we have them
     if ($has_attributes) {
@@ -2878,10 +2878,10 @@ END
         my $conditionalString = $codeGenerator->GenerateConditionalString($runtime_attr->signature);
         push(@implContent, "\n#if ${conditionalString}\n") if $conditionalString;
         push(@implContent, "    if (${enable_function}()) {\n");
-        push(@implContent, "        static const BatchedAttribute attrData =\\\n");
+        push(@implContent, "        static const V8DOMConfiguration::BatchedAttribute attrData =\\\n");
         GenerateSingleBatchedAttribute($interfaceName, $runtime_attr, ";", "    ");
         push(@implContent, <<END);
-        configureAttribute(instance, proto, attrData);
+        V8DOMConfiguration::configureAttribute(instance, proto, attrData);
     }
 END
         push(@implContent, "\n#endif // ${conditionalString}\n") if $conditionalString;
@@ -2896,8 +2896,8 @@ END
         push(@implContent, "\n#if ${conditionalString}\n") if $conditionalString;
         push(@implContent, "    if (${enable_function}()) {\n");
         push(@implContent, <<END);
-        static const BatchedConstant constData = {"${name}", static_cast<signed int>(${value})};
-        batchConfigureConstants(desc, proto, &constData, 1);
+        static const V8DOMConfiguration::BatchedConstant constData = {"${name}", static_cast<signed int>(${value})};
+        V8DOMConfiguration::batchConfigureConstants(desc, proto, &constData, 1);
 END
         push(@implContent, "    }\n");
         push(@implContent, "\n#endif // ${conditionalString}\n") if $conditionalString;
@@ -2924,7 +2924,7 @@ END
 
     if ($has_constants) {
         push(@implContent, <<END);
-    batchConfigureConstants(desc, proto, ${interfaceName}Consts, WTF_ARRAY_LENGTH(${interfaceName}Consts));
+    V8DOMConfiguration::batchConfigureConstants(desc, proto, ${interfaceName}Consts, WTF_ARRAY_LENGTH(${interfaceName}Consts));
 END
     }
 
@@ -3015,10 +3015,10 @@ END
                 my $conditionalString = $codeGenerator->GenerateConditionalString($runtimeAttr->signature);
                 push(@implContent, "\n#if ${conditionalString}\n") if $conditionalString;
                 push(@implContent, "    if (${enableFunction}(impl->document())) {\n");
-                push(@implContent, "        static const BatchedAttribute attrData =\\\n");
+                push(@implContent, "        static const V8DOMConfiguration::BatchedAttribute attrData =\\\n");
                 GenerateSingleBatchedAttribute($interfaceName, $runtimeAttr, ";", "    ");
                 push(@implContent, <<END);
-        configureAttribute(instance, proto, attrData);
+        V8DOMConfiguration::configureAttribute(instance, proto, attrData);
 END
                 push(@implContent, "    }\n");
                 push(@implContent, "#endif // ${conditionalString}\n") if $conditionalString;

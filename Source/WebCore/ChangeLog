@@ -1,3 +1,72 @@
+2012-08-10  Kentaro Hara  <haraken@chromium.org>
+
+        [V8] Introduce V8DOMConfiguration class and make batchConfigureXXX() methods static
+        https://bugs.webkit.org/show_bug.cgi?id=93615
+
+        Reviewed by Adam Barth.
+
+        Per the discussion in bug 93239,
+
+        (1) Rename V8ConfigureDOMAttributesAndMethods to V8DOMConfiguration.
+        (2) Introduce V8DOMConfiguration class and make batchConfigureXXX() methods static.
+
+        No tests. No change in behavior.
+
+        * UseV8.cmake:
+        * WebCore.gypi:
+        * bindings/scripts/CodeGeneratorV8.pm:
+        (GenerateImplementation):
+        * bindings/scripts/test/V8/V8Float64Array.cpp:
+        (WebCore):
+        (WebCore::ConfigureV8Float64ArrayTemplate):
+        * bindings/scripts/test/V8/V8TestActiveDOMObject.cpp:
+        (WebCore):
+        (WebCore::ConfigureV8TestActiveDOMObjectTemplate):
+        * bindings/scripts/test/V8/V8TestCustomNamedGetter.cpp:
+        (WebCore):
+        (WebCore::ConfigureV8TestCustomNamedGetterTemplate):
+        * bindings/scripts/test/V8/V8TestEventConstructor.cpp:
+        (WebCore):
+        (WebCore::ConfigureV8TestEventConstructorTemplate):
+        * bindings/scripts/test/V8/V8TestEventTarget.cpp:
+        (WebCore):
+        (WebCore::ConfigureV8TestEventTargetTemplate):
+        * bindings/scripts/test/V8/V8TestException.cpp:
+        (WebCore):
+        (WebCore::ConfigureV8TestExceptionTemplate):
+        * bindings/scripts/test/V8/V8TestInterface.cpp:
+        (WebCore):
+        (WebCore::ConfigureV8TestInterfaceTemplate):
+        * bindings/scripts/test/V8/V8TestMediaQueryListListener.cpp:
+        (WebCore):
+        (WebCore::ConfigureV8TestMediaQueryListListenerTemplate):
+        * bindings/scripts/test/V8/V8TestNamedConstructor.cpp:
+        (WebCore::ConfigureV8TestNamedConstructorTemplate):
+        * bindings/scripts/test/V8/V8TestNode.cpp:
+        (WebCore::ConfigureV8TestNodeTemplate):
+        * bindings/scripts/test/V8/V8TestObj.cpp:
+        (WebCore):
+        (WebCore::ConfigureV8TestObjTemplate):
+        (WebCore::V8TestObj::installPerContextProperties):
+        * bindings/scripts/test/V8/V8TestSerializedScriptValueInterface.cpp:
+        (WebCore):
+        (WebCore::ConfigureV8TestSerializedScriptValueInterfaceTemplate):
+        * bindings/v8/V8Binding.h:
+        * bindings/v8/V8ConfigureDOMAttributesAndMethods.h: Removed.
+        * bindings/v8/V8DOMConfiguration.cpp: Renamed from Source/WebCore/bindings/v8/V8ConfigureDOMAttributesAndMethods.cpp.
+        (WebCore):
+        (WebCore::V8DOMConfiguration::batchConfigureAttributes):
+        (WebCore::V8DOMConfiguration::batchConfigureConstants):
+        (WebCore::V8DOMConfiguration::batchConfigureCallbacks):
+        (WebCore::V8DOMConfiguration::configureTemplate):
+        * bindings/v8/V8DOMConfiguration.h: Added.
+        (WebCore):
+        (V8DOMConfiguration):
+        (BatchedAttribute):
+        (WebCore::V8DOMConfiguration::configureAttribute):
+        (BatchedConstant):
+        (BatchedCallback):
+
 2012-08-10  Andreas Kling  <kling@webkit.org>
 
         CSS: Shrink RuleData by storing selector as index rather than pointer.

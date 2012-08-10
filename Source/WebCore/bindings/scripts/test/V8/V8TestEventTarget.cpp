@@ -103,7 +103,7 @@ static v8::Handle<v8::Value> dispatchEventCallback(const v8::Arguments& args)
 
 } // namespace TestEventTargetV8Internal
 
-static const BatchedCallback TestEventTargetCallbacks[] = {
+static const V8DOMConfiguration::BatchedCallback TestEventTargetCallbacks[] = {
     {"item", TestEventTargetV8Internal::itemCallback},
     {"addEventListener", TestEventTargetV8Internal::addEventListenerCallback},
     {"removeEventListener", TestEventTargetV8Internal::removeEventListenerCallback},
@@ -114,7 +114,7 @@ static v8::Persistent<v8::FunctionTemplate> ConfigureV8TestEventTargetTemplate(v
     desc->ReadOnlyPrototype();
 
     v8::Local<v8::Signature> defaultSignature;
-    defaultSignature = configureTemplate(desc, "TestEventTarget", v8::Persistent<v8::FunctionTemplate>(), V8TestEventTarget::internalFieldCount,
+    defaultSignature = V8DOMConfiguration::configureTemplate(desc, "TestEventTarget", v8::Persistent<v8::FunctionTemplate>(), V8TestEventTarget::internalFieldCount,
         0, 0,
         TestEventTargetCallbacks, WTF_ARRAY_LENGTH(TestEventTargetCallbacks));
     UNUSED_PARAM(defaultSignature); // In some cases, it will not be used.

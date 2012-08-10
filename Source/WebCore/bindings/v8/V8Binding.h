@@ -37,7 +37,7 @@
 #include "PlatformString.h"
 #include "V8BindingHelpers.h"
 #include "V8BindingMacros.h"
-#include "V8ConfigureDOMAttributesAndMethods.h"
+#include "V8DOMConfiguration.h"
 #include "V8DOMWrapper.h"
 #include "V8GCController.h"
 #include "V8HiddenPropertyName.h"

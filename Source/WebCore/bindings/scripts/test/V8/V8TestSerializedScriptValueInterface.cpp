@@ -190,7 +190,7 @@ static v8::Handle<v8::Value> multiTransferListCallback(const v8::Arguments& args
 
 } // namespace TestSerializedScriptValueInterfaceV8Internal
 
-static const BatchedAttribute TestSerializedScriptValueInterfaceAttrs[] = {
+static const V8DOMConfiguration::BatchedAttribute TestSerializedScriptValueInterfaceAttrs[] = {
     // Attribute 'value' (Type: 'attribute' ExtAttr: '')
     {"value", TestSerializedScriptValueInterfaceV8Internal::valueAttrGetter, TestSerializedScriptValueInterfaceV8Internal::valueAttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
     // Attribute 'readonlyValue' (Type: 'readonly attribute' ExtAttr: '')
@@ -203,7 +203,7 @@ static const BatchedAttribute TestSerializedScriptValueInterfaceAttrs[] = {
     {"cachedReadonlyValue", TestSerializedScriptValueInterfaceV8Internal::cachedReadonlyValueAttrGetter, 0, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
 };
 
-static const BatchedCallback TestSerializedScriptValueInterfaceCallbacks[] = {
+static const V8DOMConfiguration::BatchedCallback TestSerializedScriptValueInterfaceCallbacks[] = {
     {"acceptTransferList", TestSerializedScriptValueInterfaceV8Internal::acceptTransferListCallback},
     {"multiTransferList", TestSerializedScriptValueInterfaceV8Internal::multiTransferListCallback},
 };
@@ -244,7 +244,7 @@ static v8::Persistent<v8::FunctionTemplate> ConfigureV8TestSerializedScriptValue
     desc->ReadOnlyPrototype();
 
     v8::Local<v8::Signature> defaultSignature;
-    defaultSignature = configureTemplate(desc, "TestSerializedScriptValueInterface", v8::Persistent<v8::FunctionTemplate>(), V8TestSerializedScriptValueInterface::internalFieldCount,
+    defaultSignature = V8DOMConfiguration::configureTemplate(desc, "TestSerializedScriptValueInterface", v8::Persistent<v8::FunctionTemplate>(), V8TestSerializedScriptValueInterface::internalFieldCount,
         TestSerializedScriptValueInterfaceAttrs, WTF_ARRAY_LENGTH(TestSerializedScriptValueInterfaceAttrs),
         TestSerializedScriptValueInterfaceCallbacks, WTF_ARRAY_LENGTH(TestSerializedScriptValueInterfaceCallbacks));
     UNUSED_PARAM(defaultSignature); // In some cases, it will not be used.

@@ -55,7 +55,7 @@ static v8::Handle<v8::Value> attr2AttrGetter(v8::Local<v8::String> name, const v
 
 } // namespace TestEventConstructorV8Internal
 
-static const BatchedAttribute TestEventConstructorAttrs[] = {
+static const V8DOMConfiguration::BatchedAttribute TestEventConstructorAttrs[] = {
     // Attribute 'attr1' (Type: 'readonly attribute' ExtAttr: '')
     {"attr1", TestEventConstructorV8Internal::attr1AttrGetter, 0, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
     // Attribute 'attr2' (Type: 'readonly attribute' ExtAttr: 'InitializedByEventConstructor')
@@ -102,7 +102,7 @@ static v8::Persistent<v8::FunctionTemplate> ConfigureV8TestEventConstructorTempl
     desc->ReadOnlyPrototype();
 
     v8::Local<v8::Signature> defaultSignature;
-    defaultSignature = configureTemplate(desc, "TestEventConstructor", v8::Persistent<v8::FunctionTemplate>(), V8TestEventConstructor::internalFieldCount,
+    defaultSignature = V8DOMConfiguration::configureTemplate(desc, "TestEventConstructor", v8::Persistent<v8::FunctionTemplate>(), V8TestEventConstructor::internalFieldCount,
         TestEventConstructorAttrs, WTF_ARRAY_LENGTH(TestEventConstructorAttrs),
         0, 0);
     UNUSED_PARAM(defaultSignature); // In some cases, it will not be used.
