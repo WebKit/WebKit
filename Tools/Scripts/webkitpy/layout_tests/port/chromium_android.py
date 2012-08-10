@@ -379,7 +379,7 @@ class ChromiumAndroidDriver(driver.Driver):
                                    os.stat(forwarder_host_path).st_mtime)))
         device_stamp = int(float(self._run_adb_command([
             'shell', 'cat %s 2>/dev/null || echo 0' % DEVICE_DRT_STAMP_PATH])))
-        if device_stamp < host_stamp:
+        if device_stamp != host_stamp:
             _log.debug('Pushing executable')
             self._push_to_device(forwarder_host_path, DEVICE_FORWARDER_PATH)
             self._run_adb_command(['uninstall', DRT_APP_PACKAGE])

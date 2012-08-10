@@ -1,3 +1,17 @@
+2012-08-10  Xianzhu Wang  <wangxianzhu@chromium.org>
+
+        [Chromium-Android][NRWT] Executable might not be pushed correctly when there are multiple builds
+        https://bugs.webkit.org/show_bug.cgi?id=93688
+
+        Reviewed by Dirk Pranke.
+
+        There might be other better methods, but this change is the smallest.
+        I think the chance of equal timestamp can be ignored because we flock
+        to avoid concurrent linkers.
+
+        * Scripts/webkitpy/layout_tests/port/chromium_android.py:
+        (ChromiumAndroidDriver._push_executable): Changed '<' to '!=' to compare the timestamp.
+
 2012-08-09  Xianzhu Wang  <wangxianzhu@chromium.org>
 
         [Chromium-Android] Skip layout tests directories that are not applicable
