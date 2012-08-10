@@ -261,9 +261,6 @@ BUGWK84167 : fast/css-generated-content/nested-tables-with-before-after-content-
 BUGWK84167 : fast/inline-block/001.html = TEXT
 BUGWK84167 : tables/mozilla/bugs/bug2479-2.html = TEXT
 
-// Flaky in transition test framework
-BUGWK90234 : css3/calc/transitions.html = PASS TEXT
-
 // Needs rebaseline after bug 86441
 BUGWK86441 : fast/multicol/shadow-breaking.html = IMAGE
 
