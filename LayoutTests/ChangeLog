@@ -1,3 +1,14 @@
+2012-08-10  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSS Regions] region-overflow: break still renders the content that does not fit in the last region.
+        https://bugs.webkit.org/show_bug.cgi?id=92996
+
+        Reviewed by Julien Chaffraix.
+
+        Modified expected result for original test to match the behavior described in the regions spec.
+
+        * fast/regions/region-overflow-break-expected.html:
+
 2012-08-10  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
 
         [EFL] Gardening of failing tests

@@ -68,7 +68,8 @@ LayoutRect RenderRegion::regionOversetRect() const
     // folded into RenderBlock, switch to hasOverflowClip().
     bool clipX = style()->overflowX() != OVISIBLE;
     bool clipY = style()->overflowY() != OVISIBLE;
-    if ((clipX && clipY) || !isValid() || !m_flowThread)
+    bool isLastRegionWithRegionOverflowBreak = (isLastRegion() && (style()->regionOverflow() == BreakRegionOverflow));
+    if ((clipX && clipY) || !isValid() || !m_flowThread || isLastRegionWithRegionOverflowBreak)
         return regionRect();
 
     LayoutRect flowThreadOverflow = m_flowThread->visualOverflowRect();

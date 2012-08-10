@@ -1,3 +1,20 @@
+2012-08-10  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSS Regions] region-overflow: break still renders the content that does not fit in the last region.
+        https://bugs.webkit.org/show_bug.cgi?id=92996
+
+        Reviewed by Julien Chaffraix.
+
+        Flow content that follows the last break in the last region, if any, should not be rendered
+        for the regions with region-overflow: break.
+        http://www.w3.org/TR/css3-regions/#the-region-overflow-property
+
+        Modified the expected result for existing test fast/regions/region-overflow-break.html
+        to reflect the correct behavior.
+
+        * rendering/RenderRegion.cpp:
+        (WebCore::RenderRegion::regionOversetRect):
+
 2012-08-10  Andrei Poenaru  <poenaru@adobe.com>
 
         Web Inspector: Protocol Extension: Refactor protocol extension for CSS Regions
