@@ -1,3 +1,9 @@
+2012-08-10  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening, rebaselining after r125167.
+
+        * platform/gtk/fast/block/float/overhanging-tall-block-expected.txt:
+
 2012-08-10  Arko Saha  <arko@motorola.com>
 
         itemType.add should treat \t as a space.
