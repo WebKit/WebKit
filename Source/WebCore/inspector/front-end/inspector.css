@@ -366,8 +366,9 @@ body.detached.platform-mac-snowleopard #toolbar-dropdown {
 
 .search-results-matches {
     display: inline-block;
-    min-width: 70px;
+    min-width: 50px;
     min-height: 10px;
+    margin-right: 36px;
     text-align: right;
     font-size: 11px;
     padding: 0 4px;

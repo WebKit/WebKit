@@ -1,3 +1,17 @@
+2012-08-10  Sam D  <dsam2912@gmail.com>
+
+        Web Inspector: Search matches count view is flaky.
+        https://bugs.webkit.org/show_bug.cgi?id=93451
+
+        Reviewed by Pavel Feldman.
+
+        Modified css properties for aligning search panel.
+
+        No new tests.UI change.
+
+        * inspector/front-end/inspector.css:
+        (.search-results-matches):
+
 2012-08-09  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] Remove support for __qt_sender__ in QObject bridge
