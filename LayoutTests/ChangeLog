@@ -1,3 +1,22 @@
+2012-08-10  Arko Saha  <arko@motorola.com>
+
+        itemType.add should treat \t as a space.
+        https://bugs.webkit.org/show_bug.cgi?id=92991
+
+        Reviewed by Ryosuke Niwa.
+
+        Added test to verifiy itemtype, itemref, itemprop attributes behavior on adding
+        a token in presence of trailing space characters.
+        Rebased existing test cases.
+
+        * fast/dom/HTMLElement/class-list-expected.txt:
+        * fast/dom/HTMLElement/class-list-quirks-expected.txt:
+        * fast/dom/HTMLElement/script-tests/class-list.js:
+        * fast/dom/HTMLOutputElement/dom-settable-token-list-expected.txt:
+        * fast/dom/HTMLOutputElement/script-tests/dom-settable-token-list.js:
+        * fast/dom/MicroData/domsettabletokenlist-attributes-add-token-expected.txt: Added.
+        * fast/dom/MicroData/domsettabletokenlist-attributes-add-token.html: Added.
+
 2012-08-09  Matt Falkenhagen  <falken@chromium.org>
 
         Move some CSS -webkit-locale tests out of fast/text/

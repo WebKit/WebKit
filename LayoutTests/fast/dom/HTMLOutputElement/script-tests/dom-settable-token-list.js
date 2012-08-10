@@ -101,7 +101,7 @@ shouldBeEqualToString('element.htmlFor.toString()', 'x y');
 
 createElement('x\t');
 element.htmlFor.add('y');
-shouldBeEqualToString('element.htmlFor.toString()', 'x\t y');
+shouldBeEqualToString('element.htmlFor.toString()', 'x\ty');
 
 createElement(' ');
 element.htmlFor.add('y');

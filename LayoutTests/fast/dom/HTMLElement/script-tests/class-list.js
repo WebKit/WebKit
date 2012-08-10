@@ -100,7 +100,7 @@ shouldBeEqualToString('element.className', 'x y');
 
 createElement('x\t');
 element.classList.add('y');
-shouldBeEqualToString('element.className', 'x\t y');
+shouldBeEqualToString('element.className', 'x\ty');
 
 createElement(' ');
 element.classList.add('y');

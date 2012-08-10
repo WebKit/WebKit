@@ -24,7 +24,7 @@ PASS element.classList.contains('x') is false
 PASS element.classList[1] is undefined.
 Testing add in presence of trailing white spaces.
 PASS element.className is "x y"
-PASS element.className is "x\t y"
+PASS element.className is "x\ty"
 PASS element.className is " y"
 Test invalid tokens
 PASS element.classList.contains('') threw expected DOMException with code 12

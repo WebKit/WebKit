@@ -56,8 +56,9 @@ String DOMTokenList::addToken(const AtomicString& input, const AtomicString& tok
 
     StringBuilder builder;
     builder.append(input);
-    if (input[input.length()-1] != ' ')
+    if (!isHTMLSpace(input[input.length() - 1]))
         builder.append(' ');
+
     builder.append(token);
     return builder.toString();
 }

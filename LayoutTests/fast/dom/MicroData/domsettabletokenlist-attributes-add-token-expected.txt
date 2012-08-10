@@ -1,0 +1,29 @@
+This test verifies itemtype, itemref, itemprop attributes behavior on adding a token in presence of trailing space characters.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Test itemRef attribute's behavior
+PASS itemRef.add should treat ' ' as a space
+PASS itemRef.add should treat '\t' as a space
+PASS itemRef.add should treat '\f' as a space
+PASS itemRef.add should treat '\r' as a space
+PASS itemRef.add should treat '\n' as a space
+
+Test itemType attribute's behavior
+PASS itemType.add should treat ' ' as a space
+PASS itemType.add should treat '\t' as a space
+PASS itemType.add should treat '\f' as a space
+PASS itemType.add should treat '\r' as a space
+PASS itemType.add should treat '\n' as a space
+
+Test itemProp attribute's behavior
+PASS itemType.add should treat ' ' as a space
+PASS itemType.add should treat '\t' as a space
+PASS itemType.add should treat '\f' as a space
+PASS itemType.add should treat '\r' as a space
+PASS itemType.add should treat '\n' as a space
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

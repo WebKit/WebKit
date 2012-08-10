@@ -1,3 +1,23 @@
+2012-08-10  Arko Saha  <arko@motorola.com>
+
+        itemType.add should treat \t as a space.
+        https://bugs.webkit.org/show_bug.cgi?id=92991
+
+        Reviewed by Ryosuke Niwa.
+
+        Earlier we used to append a space character i.e, ' ' to the string builder
+        if the last character of input string is not a space character in addToken()
+        method. We should add an space character if the last character of input is
+        not a HTML Space character like, '\n', '\r', '\t', '\f' or ' '.
+
+        We can observe the same behavior in FireFox, Opera and IE. They also treat
+        HTML space character as a space.
+
+        Test: fast/dom/MicroData/domsettabletokenlist-attributes-add-token.html
+
+        * html/DOMTokenList.cpp:
+        (WebCore::DOMTokenList::addToken):
+
 2012-08-10  Tony Chang  <tony@chromium.org>
 
         Remove unused isFlexingChildren and make m_flexingChildren a local variable
