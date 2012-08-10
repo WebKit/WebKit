@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>This test is successful if it does not crash.</p>
+<div id='elementWithItemProp' itemprop='foo'></div>
+<div itemscope></div>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+function gc()
+{
+    if (window.GCController)
+        return GCController.collect();
+
+    for (var i = 0; i < 10000; i++) // force garbage collection
+        var s = new String("");
+}
+
+var testElement = document.getItems()[0];
+var propertyNodeList = testElement.properties.namedItem('foo');
+testElement.setAttribute("itemref", "elementWithItemProp");
+propertyNodeList = 0;
+gc();
+</script>
+</body>
+</html>
