@@ -45,6 +45,7 @@ public:
     static inline int lowestPriority() { return std::numeric_limits<int>::max(); }
     static inline bool priorityIsLower(int a, int b) { return a > b; }
     static inline bool priorityIsHigher(int a, int b) { return a < b; }
+    static inline bool maxPriority(int a, int b) { return priorityIsHigher(a, b) ? a : b; }
 };
 
 }

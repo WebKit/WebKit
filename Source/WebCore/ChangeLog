@@ -1,3 +1,49 @@
+2012-08-09  Eric Penner  <epenner@google.com>
+
+        [chromium] Paint animated layers immediately to avoid animation hiccups.
+        https://bugs.webkit.org/show_bug.cgi?id=93028
+
+        Reviewed by Adrienne Walker.
+
+        This is a technique used on Android, which is very prone
+        to hiccups in animations. Paint the entire layer if it is
+        of reasonable size such that there is no hiccups when the
+        animation reaches unpainted content. The reasonable size
+        is choosen for page-transitions specifically, as this was
+        the problem case (animations would just jump to the end).
+
+        Since we already have a special case this just modifies it
+        and replaces the unit test with a new one. This can be
+        improved/simplified further when distances/directions are
+        available for the animated layers.
+
+        Replaced one test.
+
+        * platform/graphics/chromium/TiledLayerChromium.cpp:
+        (UpdatableTile):
+        (WebCore::UpdatableTile::resetUpdateState):
+        (WebCore::UpdatableTile::markForUpdate):
+        (WebCore::UpdatableTile::UpdatableTile):
+        (WebCore::TiledLayerChromium::TiledLayerChromium):
+        (WebCore::TiledLayerChromium::pushPropertiesTo):
+        (WebCore):
+        (WebCore::TiledLayerChromium::updateTiles):
+        (WebCore::TiledLayerChromium::markOcclusionsAndRequestTextures):
+        (WebCore::TiledLayerChromium::haveTexturesForTiles):
+        (WebCore::TiledLayerChromium::markTilesForUpdate):
+        (WebCore::TiledLayerChromium::updateTileTextures):
+        (WebCore::TiledLayerChromium::setTexturePrioritiesInRect):
+        (WebCore::TiledLayerChromium::resetUpdateState):
+        (WebCore::TiledLayerChromium::updateContentRect):
+        (WebCore::TiledLayerChromium::needsIdlePaint):
+        (WebCore::TiledLayerChromium::idlePaintRect):
+        * platform/graphics/chromium/TiledLayerChromium.h:
+        (TiledLayerChromium):
+        * platform/graphics/chromium/cc/CCLayerTilingData.cpp:
+        (WebCore::CCLayerTilingData::contentRectToTileIndices):
+        * platform/graphics/chromium/cc/CCPriorityCalculator.h:
+        (WebCore::CCPriorityCalculator::maxPriority):
+
 2012-08-09  Julien Chaffraix  <jchaffraix@webkit.org>
 
         REGRESSION(r117339): cell in block-level table in inline-block are aligned with their last line box

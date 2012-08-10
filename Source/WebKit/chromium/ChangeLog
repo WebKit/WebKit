@@ -1,3 +1,14 @@
+2012-08-09  Eric Penner  <epenner@google.com>
+
+        [chromium] Paint animated layers immediately to avoid animation hiccups.
+        https://bugs.webkit.org/show_bug.cgi?id=93028
+
+        Reviewed by Adrienne Walker.
+
+        Replaced one test. Test painting full animated layer.
+
+        * tests/TiledLayerChromiumTest.cpp:
+
 2012-08-09  Nat Duca  <nduca@chromium.org>
 
         [chromium] Remove missing files from WebKit.gyp introduced by r125219
