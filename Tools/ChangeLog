@@ -1,3 +1,14 @@
+2012-08-09  Elliott Sprehn  <esprehn@chromium.org>
+
+        Add myself to the Contributor list.
+        https://bugs.webkit.org/show_bug.cgi?id=93653
+
+        Reviewed by Dirk Pranke.
+
+        Add my email to the contributor list.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2012-08-09  Dirk Pranke  <dpranke@chromium.org>
 
         nrwt: should log progress like ninja does
