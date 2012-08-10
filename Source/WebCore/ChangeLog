@@ -1,3 +1,23 @@
+2012-08-10  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] Remove targetSurface pointer from CCRenderPass
+        https://bugs.webkit.org/show_bug.cgi?id=93734
+
+        Reviewed by Adrienne Walker.
+
+        This removes the CCRenderSurface pointer from the CCRenderPass
+        structure, allowing it to be serialized and used across processes
+        freely.
+
+        No new tests; no intended change in behaviour.
+
+        * platform/graphics/chromium/cc/CCLayerTreeHostImpl.cpp:
+        (WebCore::CCLayerTreeHostImpl::drawLayers):
+        * platform/graphics/chromium/cc/CCRenderPass.cpp:
+        (WebCore::CCRenderPass::CCRenderPass):
+        * platform/graphics/chromium/cc/CCRenderPass.h:
+        (CCRenderPass):
+
 2012-08-10  Mario Sanchez Prada  <msanchez@igalia.com>
 
         [GTK] Broken implementation of AtkText and AtkEditableText for password fields

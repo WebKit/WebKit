@@ -65,7 +65,6 @@ public:
     const CCQuadList& quadList() const { return m_quadList; }
 
     int id() const { return m_id; }
-    CCRenderSurface* targetSurface() const { return m_targetSurface; }
 
     // FIXME: Modify this transform when merging the RenderPass into a parent compositor.
     // Transforms from quad's original content space to the root target's content space.
@@ -92,7 +91,6 @@ protected:
     CCRenderPass(CCRenderSurface*, int id);
 
     int m_id;
-    CCRenderSurface* m_targetSurface;
     CCQuadList m_quadList;
     WebKit::WebTransformationMatrix m_transformToRootTarget;
     IntRect m_outputRect;

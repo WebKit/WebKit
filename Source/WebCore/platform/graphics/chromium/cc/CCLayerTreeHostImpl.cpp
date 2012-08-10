@@ -545,18 +545,17 @@ void CCLayerTreeHostImpl::drawLayers(const FrameData& frame)
 
     m_layerRenderer->drawFrame(frame.renderPasses, frame.renderPassesById);
 
-    for (unsigned int i = 0; i < frame.renderPasses.size(); i++) {
-        frame.renderPasses[i]->targetSurface()->damageTracker()->didDrawDamagedArea();
-
-        // Once a RenderPass has been drawn, its damage should be cleared in
-        // case the RenderPass will be reused next frame.
-        frame.renderPasses[i]->setDamageRect(FloatRect());
-    }
-
     if (m_settings.showDebugRects())
         m_debugRectHistory->saveDebugRectsForCurrentFrame(m_rootLayerImpl.get(), *frame.renderSurfaceLayerList, frame.occludingScreenSpaceRects, settings());
 
+    // Once a RenderPass has been drawn, its damage should be cleared in
+    // case the RenderPass will be reused next frame.
+    for (unsigned int i = 0; i < frame.renderPasses.size(); i++)
+        frame.renderPasses[i]->setDamageRect(FloatRect());
+
     // The next frame should start by assuming nothing has changed, and changes are noted as they occur.
+    for (unsigned int i = 0; i < frame.renderSurfaceLayerList->size(); i++)
+        (*frame.renderSurfaceLayerList)[i]->renderSurface()->damageTracker()->didDrawDamagedArea();
     m_rootLayerImpl->resetAllChangeTrackingForSubtree();
 }
 

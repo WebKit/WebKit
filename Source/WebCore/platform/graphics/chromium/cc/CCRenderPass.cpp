@@ -45,7 +45,6 @@ PassOwnPtr<CCRenderPass> CCRenderPass::create(CCRenderSurface* targetSurface, in
 
 CCRenderPass::CCRenderPass(CCRenderSurface* targetSurface, int id)
     : m_id(id)
-    , m_targetSurface(targetSurface)
     , m_transformToRootTarget(targetSurface->screenSpaceTransform())
     , m_outputRect(targetSurface->contentRect())
     , m_hasTransparentBackground(true)

@@ -1,3 +1,16 @@
+2012-08-10  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] Remove targetSurface pointer from CCRenderPass
+        https://bugs.webkit.org/show_bug.cgi?id=93734
+
+        Reviewed by Adrienne Walker.
+
+        Use the RenderPass's damageRect instead of the surface's damageRect
+        directly to test the same things without requiring a pointer to
+        the surface that generated the RenderPass.
+
+        * tests/CCLayerTreeHostImplTest.cpp:
+
 2012-08-10  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r125310.
