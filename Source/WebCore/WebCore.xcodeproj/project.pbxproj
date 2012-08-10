@@ -14064,7 +14064,6 @@
 				1AE82EC90CAAE177002237AE /* storage */,
 				B22277CA0D00BF1E0071B782 /* svg */,
 				417DA4CD13734204007C57FB /* testing */,
-				FD315FA212B025B100C1A359 /* Modules/webaudio */,
 				2E4346310F546A6800B0F1BA /* workers */,
 				E1F0424309839389006694EA /* xml */,
 				656580EC09D12B20000E61D7 /* Derived Sources */,
@@ -17635,6 +17634,7 @@
 				B1A942DD15B5CE2200D525D1 /* mediasource */,
 				333F703D0FB49C16008E12A6 /* notifications */,
 				89F60B08157F68350075E157 /* quota */,
+				FD315FA212B025B100C1A359 /* webaudio */,
 				97BC69D51505F054001B74AC /* webdatabase */,
 				97AABCF714FA09B5007457AE /* websockets */,
 			);
@@ -21837,7 +21837,7 @@
 			path = opengl;
 			sourceTree = "<group>";
 		};
-		FD315FA212B025B100C1A359 /* Modules/webaudio */ = {
+		FD315FA212B025B100C1A359 /* webaudio */ = {
 			isa = PBXGroup;
 			children = (
 				FD5686C713AC180200B69C68 /* AsyncAudioDecoder.cpp */,
@@ -21953,6 +21953,7 @@
 				FD581FB21520F93B003A7A75 /* WaveTable.h */,
 				FD581FB31520F93B003A7A75 /* WaveTable.idl */,
 			);
+			name = webaudio;
 			path = Modules/webaudio;
 			sourceTree = "<group>";
 		};
