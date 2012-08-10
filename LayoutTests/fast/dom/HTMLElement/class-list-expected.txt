@@ -72,6 +72,8 @@ PASS typeof DOMTokenList.prototype is "object"
 PASS typeof element.classList is "object"
 PASS element.classList.constructor is DOMTokenList
 PASS element.classList === element.classList is true
+PASS document.body.classList.contains("FAIL") is true
+PASS document.body.className is ""
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -170,10 +170,12 @@ void StyledElement::classAttributeChanged(const AtomicString& newClassString)
     if (hasClass) {
         const bool shouldFoldCase = document()->inQuirksMode();
         ensureAttributeData()->setClass(newClassString, shouldFoldCase);
-        if (DOMTokenList* classList = optionalClassList())
-            static_cast<ClassList*>(classList)->reset(newClassString);
     } else if (attributeData())
         mutableAttributeData()->clearClass();
+
+    if (DOMTokenList* classList = optionalClassList())
+        static_cast<ClassList*>(classList)->reset(newClassString);
+
     setNeedsStyleRecalc();
 }
 

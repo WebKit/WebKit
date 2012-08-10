@@ -1,3 +1,24 @@
+2012-08-09  Erik Arvidsson  <arv@chromium.org>
+
+        HTMLElement.classList cannot remove classnames with uppercase characters
+        https://bugs.webkit.org/show_bug.cgi?id=93628
+
+        Reviewed by Alexey Proskuryakov.
+
+        Before this patch we were trying to be smart and determine whether we needed the update m_classNamesForQuirksMode
+        based on whether m_classNamesForQuirksMode.isNull(), however, m_classNamesForQuirksMode.isNull() is true when the
+        class name is the empty string.
+
+        We also did not update m_classNamesForQuirksMode when the class attribute was cleared.
+
+        Updated tests.
+
+        * dom/StyledElement.cpp:
+        (WebCore::StyledElement::classAttributeChanged):
+        * html/ClassList.cpp:
+        (WebCore::ClassList::reset):
+        (WebCore::ClassList::classNames):
+
 2012-08-09  Yuta Kitamura  <yutak@chromium.org>
 
         Unreviewed, Chromium-mac (clang) build fix for r125230.

@@ -259,3 +259,9 @@ shouldBeEqualToString('typeof element.classList', 'object');
 shouldEvaluateTo('element.classList.constructor', 'DOMTokenList');
 
 shouldBeTrue('element.classList === element.classList');
+
+// Bug 93628
+document.body.classList.add('FAIL');
+shouldBeTrue('document.body.classList.contains("FAIL")');
+document.body.classList.remove('FAIL');
+shouldBeEqualToString('document.body.className', '');

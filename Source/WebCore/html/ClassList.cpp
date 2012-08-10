@@ -131,14 +131,14 @@ String ClassList::toString() const
 
 void ClassList::reset(const String& newClassName)
 {
-    if (!m_classNamesForQuirksMode.isNull())
+    if (m_element->document()->inQuirksMode())
         m_classNamesForQuirksMode.set(newClassName, false);
 }
 
 const SpaceSplitString& ClassList::classNames() const
 {
     ASSERT(m_element->hasClass());
-    if (!m_classNamesForQuirksMode.isNull())
+    if (m_element->document()->inQuirksMode())
         return m_classNamesForQuirksMode;
     return m_element->attributeData()->classNames();
 }
