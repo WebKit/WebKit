@@ -985,9 +985,10 @@ void Editor::cut()
     RefPtr<Range> selection = selectedRange();
     if (shouldDeleteRange(selection.get())) {
         updateMarkersForWordsAffectedByEditing(true);
-        if (enclosingTextFormControl(m_frame->selection()->start()))
-            Pasteboard::generalPasteboard()->writePlainText(selectedText());
-        else
+        if (enclosingTextFormControl(m_frame->selection()->start())) {
+            Pasteboard::generalPasteboard()->writePlainText(selectedText(),
+                canSmartCopyOrDelete() ? Pasteboard::CanSmartReplace : Pasteboard::CannotSmartReplace);
+        } else
             Pasteboard::generalPasteboard()->writeSelection(selection.get(), canSmartCopyOrDelete(), m_frame);
         didWriteSelectionToPasteboard();
         deleteSelectionWithSmartDelete(canSmartCopyOrDelete());
@@ -1003,9 +1004,10 @@ void Editor::copy()
         return;
     }
 
-    if (enclosingTextFormControl(m_frame->selection()->start()))
-        Pasteboard::generalPasteboard()->writePlainText(selectedText());
-    else {
+    if (enclosingTextFormControl(m_frame->selection()->start())) {
+        Pasteboard::generalPasteboard()->writePlainText(selectedText(),
+            canSmartCopyOrDelete() ? Pasteboard::CanSmartReplace : Pasteboard::CannotSmartReplace);
+    } else {
         Document* document = m_frame->document();
         if (HTMLImageElement* imageElement = imageElementFromImageDocument(document))
             Pasteboard::generalPasteboard()->writeImage(imageElement, document->url(), document->title());

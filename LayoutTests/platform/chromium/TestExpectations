@@ -152,6 +152,9 @@ BUGWK85262 SKIP : fast/css/image-resolution = PASS
 // CSS image-orientation is not yet enabled.
 BUGWK89052 SKIP : fast/css/image-orientation = PASS
 
+// Chromium does not support smart pasting in text controls yet.
+BUGWK60830 SKIP : editing/pasteboard/smart-paste-in-text-control.html = PASS
+
 // Chromium needs larger media files to test buffering this way.
 BUGWK88172 SKIP : http/tests/media/video-buffered.html = PASS
 

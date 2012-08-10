@@ -76,7 +76,7 @@ void Pasteboard::writeURL(KURL const& url, String const&, Frame*)
     BlackBerry::Platform::Clipboard::writeURL(url.string().utf8().data());
 }
 
-void Pasteboard::writePlainText(const String& text)
+void Pasteboard::writePlainText(const String& text, SmartReplaceOption)
 {
     BlackBerry::Platform::Clipboard::writePlainText(text.utf8().data());
 }

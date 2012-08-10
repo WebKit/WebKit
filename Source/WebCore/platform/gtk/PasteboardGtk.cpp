@@ -68,14 +68,15 @@ void Pasteboard::writeSelection(Range* selectedRange, bool canSmartCopyOrDelete,
     helper->writeClipboardContents(clipboard, canSmartCopyOrDelete ? PasteboardHelper::IncludeSmartPaste : PasteboardHelper::DoNotIncludeSmartPaste);
 }
 
-void Pasteboard::writePlainText(const String& text)
+void Pasteboard::writePlainText(const String& text, SmartReplaceOption smartReplaceOption)
 {
     GtkClipboard* clipboard = gtk_clipboard_get_for_display(gdk_display_get_default(), GDK_SELECTION_CLIPBOARD);
     DataObjectGtk* dataObject = DataObjectGtk::forClipboard(clipboard);
     dataObject->clearAll();
 
     dataObject->setText(text);
-    PasteboardHelper::defaultPasteboardHelper()->writeClipboardContents(clipboard);
+    PasteboardHelper::defaultPasteboardHelper()->writeClipboardContents(clipboard,
+        (smartReplaceOption == CanSmartReplace) ? PasteboardHelper::IncludeSmartPaste : PasteboardHelper::DoNotIncludeSmartPaste);
 }
 
 void Pasteboard::writeURL(const KURL& url, const String& label, Frame* frame)

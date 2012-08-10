@@ -120,7 +120,7 @@ void InjectedScriptHost::clearConsoleMessages()
 
 void InjectedScriptHost::copyText(const String& text)
 {
-    Pasteboard::generalPasteboard()->writePlainText(text);
+    Pasteboard::generalPasteboard()->writePlainText(text, Pasteboard::CannotSmartReplace);
 }
 
 ScriptValue InjectedScriptHost::InspectableObject::get(ScriptState*)

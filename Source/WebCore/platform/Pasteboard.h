@@ -76,6 +76,11 @@ class SharedBuffer;
 class Pasteboard {
     WTF_MAKE_NONCOPYABLE(Pasteboard); WTF_MAKE_FAST_ALLOCATED;
 public:
+    enum SmartReplaceOption {
+        CanSmartReplace,
+        CannotSmartReplace
+    };
+
 #if PLATFORM(MAC)
     // This is required to support OS X services.
     void writeSelectionForTypes(const Vector<String>& pasteboardTypes, bool canSmartCopyOrDelete, Frame*);
@@ -86,7 +91,7 @@ public:
     
     static Pasteboard* generalPasteboard();
     void writeSelection(Range*, bool canSmartCopyOrDelete, Frame*);
-    void writePlainText(const String&);
+    void writePlainText(const String&, SmartReplaceOption);
     void writeURL(const KURL&, const String&, Frame* = 0);
     void writeImage(Node*, const KURL&, const String& title);
     void writeClipboard(Clipboard*);

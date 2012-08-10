@@ -142,7 +142,7 @@ bool ClipboardWx::hasData()
 
 void ClipboardWx::writePlainText(const WTF::String& text)
 {
-    Pasteboard::generalPasteboard()->writePlainText(text);
+    Pasteboard::generalPasteboard()->writePlainText(text, Pasteboard::CannotSmartReplace);
 }
 
 }

@@ -61,7 +61,7 @@ void Pasteboard::writeSelection(Range* selectedRange, bool canSmartCopyOrDelete,
     }
 }
 
-void Pasteboard::writePlainText(const String& text)
+void Pasteboard::writePlainText(const String& text, SmartReplaceOption)
 {
     if (wxTheClipboard->Open()) {
         wxTheClipboard->SetData( new wxTextDataObject(text) );

@@ -144,7 +144,7 @@ void Pasteboard::writeSelection(Range* selectedRange, bool canSmartCopyOrDelete,
     }
 }
 
-void Pasteboard::writePlainText(const String& text)
+void Pasteboard::writePlainText(const String& text, SmartReplaceOption smartReplaceOption)
 {
     clear();
 
@@ -156,6 +156,14 @@ void Pasteboard::writePlainText(const String& text)
         if (!::SetClipboardData(CF_UNICODETEXT, cbData))
             ::GlobalFree(cbData);
         ::CloseClipboard();
+    }
+
+    // enable smart-replacing later on by putting dummy data on the pasteboard
+    if (smartReplaceOption == CanSmartReplace) {
+        if (::OpenClipboard(m_owner)) {
+            ::SetClipboardData(WebSmartPasteFormat, 0);
+            ::CloseClipboard();
+        }
     }
 }
 

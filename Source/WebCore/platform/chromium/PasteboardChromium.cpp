@@ -98,8 +98,9 @@ void Pasteboard::writeSelection(Range* selectedRange, bool canSmartCopyOrDelete,
     WebKit::Platform::current()->clipboard()->writeHTML(html, url, plainText, canSmartCopyOrDelete);
 }
 
-void Pasteboard::writePlainText(const String& text)
+void Pasteboard::writePlainText(const String& text, SmartReplaceOption)
 {
+    // FIXME: add support for smart replace
 #if OS(WINDOWS)
     String plainText(text);
     replaceNewlinesWithWindowsStyleNewlines(plainText);

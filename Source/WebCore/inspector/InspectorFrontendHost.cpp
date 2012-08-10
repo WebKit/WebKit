@@ -222,7 +222,7 @@ String InspectorFrontendHost::hiddenPanels()
 
 void InspectorFrontendHost::copyText(const String& text)
 {
-    Pasteboard::generalPasteboard()->writePlainText(text);
+    Pasteboard::generalPasteboard()->writePlainText(text, Pasteboard::CannotSmartReplace);
 }
 
 void InspectorFrontendHost::openInNewTab(const String& url)

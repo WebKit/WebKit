@@ -46,7 +46,7 @@ Pasteboard::Pasteboard()
     notImplemented();
 }
 
-void Pasteboard::writePlainText(const String&)
+void Pasteboard::writePlainText(const String&, SmartReplaceOption)
 {
     notImplemented();
 }

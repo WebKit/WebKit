@@ -204,12 +204,17 @@ void Pasteboard::writeSelectionForTypes(const Vector<String>& pasteboardTypes, b
         platformStrategies()->pasteboardStrategy()->setBufferForType(0, WebSmartPastePboardType, m_pasteboardName);
 }
 
-void Pasteboard::writePlainText(const String& text)
+void Pasteboard::writePlainText(const String& text, SmartReplaceOption smartReplaceOption)
 {
     Vector<String> types;
     types.append(NSStringPboardType);
+    if (smartReplaceOption == CanSmartReplace)
+        types.append(WebSmartPastePboardType);
+
     platformStrategies()->pasteboardStrategy()->setTypes(types, m_pasteboardName);
     platformStrategies()->pasteboardStrategy()->setStringForType(text, NSStringPboardType, m_pasteboardName);
+    if (smartReplaceOption == CanSmartReplace)
+        platformStrategies()->pasteboardStrategy()->setBufferForType(0, WebSmartPastePboardType, m_pasteboardName);
 }
     
 void Pasteboard::writeSelection(Range*, bool canSmartCopyOrDelete, Frame* frame)

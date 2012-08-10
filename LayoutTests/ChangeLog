@@ -1,3 +1,14 @@
+2012-08-09  Sukolsak Sakshuwong  <sukolsak@google.com>
+
+        Mouse-select then Cut, results in preceding character being lost
+        https://bugs.webkit.org/show_bug.cgi?id=60830
+
+        Reviewed by Ryosuke Niwa.
+
+        * editing/pasteboard/smart-paste-in-text-control-expected.txt: Added.
+        * editing/pasteboard/smart-paste-in-text-control.html: Added.
+        * platform/chromium/TestExpectations:
+
 2012-08-09  Joone Hur  <joone.hur@intel.com>
 
         [EFL] Unreviewed gardening
