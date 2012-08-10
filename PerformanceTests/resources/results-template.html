@@ -78,7 +78,7 @@ function attachPlot(testName, section, minIsZero) {
             }),
         },
         yaxis: {
-            min: minIsZero ? 0 : Math.max.apply(Math, $.map(testResultsMin[testName], function (entry) { return entry[1]; })) * 0.98,
+            min: minIsZero ? 0 : Math.min.apply(Math, $.map(testResultsMin[testName], function (entry) { return entry[1]; })) * 0.98,
             max: Math.max.apply(Math, $.map(testResultsMax[testName], function (entry) { return entry[1]; })) * (minIsZero ? 1.1 : 1.01),
         },
         crosshair: { mode: 'y' },
