@@ -1760,8 +1760,16 @@ static inline IMP getMethod(id o, SEL s)
     // Representations for URL schemes work at the top level.
     if (forMainFrame && [self _representationExistsForURLScheme:scheme])
         return YES;
-        
-    return [scheme _webkit_isCaseInsensitiveEqualToString:@"applewebdata"];
+
+    if ([scheme _webkit_isCaseInsensitiveEqualToString:@"applewebdata"])
+        return YES;
+
+#if ENABLE(BLOB)
+    if ([scheme _webkit_isCaseInsensitiveEqualToString:@"blob"])
+        return YES;
+#endif
+
+    return NO;
 }
 
 + (BOOL)_canHandleRequest:(NSURLRequest *)request

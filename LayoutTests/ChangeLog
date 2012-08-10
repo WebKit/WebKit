@@ -1,3 +1,14 @@
+2012-08-09  Kinuko Yasuda  <kinuko@chromium.org>
+
+        http/tests/security/mixedContent/blob-url-in-iframe.html fails on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=88736
+
+        Reviewed by Alexey Proskuryakov.
+
+        Remove security/mixedContent/blob-url-in-iframe.html as it should pass with this patch.
+
+        * platform/mac/Skipped:
+
 2012-08-09  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Crash in WebCore::RenderTable::cellBefore

@@ -1,3 +1,15 @@
+2012-08-09  Kinuko Yasuda  <kinuko@chromium.org>
+
+        http/tests/security/mixedContent/blob-url-in-iframe.html fails on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=88736
+
+        Reviewed by Alexey Proskuryakov.
+
+        WebView::_canHandleRequest should return true for "blob:" URL so that it can be shown in iframe.
+
+        * WebView/WebView.mm:
+        (+[WebView _canHandleRequest:forMainFrame:]):
+
 2012-08-08  Shane Stephens  <shanestephens@google.com>
 
         Compile flag for CSS Hierarchies
