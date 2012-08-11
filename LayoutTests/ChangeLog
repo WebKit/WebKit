@@ -1,3 +1,17 @@
+2012-08-10  Roger Fong  <roger_fong@apple.com>
+
+        LayoutTest: fast/forms/basic-selects.html rebaselined.
+        https://bugs.webkit.org/show_bug.cgi?id=93751
+
+        Reviewed by Tim Horton.
+
+        As per https://bugs.webkit.org/show_bug.cgi?id=92833, 
+        this test needs to be rebaselined for other platforms.
+        Rebaselining for Windows.
+
+        * platform/win/fast/forms/basic-selects-expected.txt:
+        Rebaselining.
+        
 2012-08-10  Elliott Sprehn  <esprehn@gmail.com>
 
         RenderQuote corrupts doubly linked list on insertion before head of list
