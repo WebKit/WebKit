@@ -832,12 +832,12 @@ static String formatNumber(double number, const char* suffix, unsigned suffixLen
 {
     DecimalNumber decimal(number);
 
-    StringBuffer<UChar> buffer(decimal.bufferLengthForStringDecimal() + suffixLength);
+    StringBuffer<LChar> buffer(decimal.bufferLengthForStringDecimal() + suffixLength);
     unsigned length = decimal.toStringDecimal(buffer.characters(), buffer.length());
     ASSERT(length + suffixLength == buffer.length());
 
     for (unsigned i = 0; i < suffixLength; ++i)
-        buffer[length + i] = suffix[i];
+        buffer[length + i] = static_cast<LChar>(suffix[i]);
 
     return String::adopt(buffer);
 }

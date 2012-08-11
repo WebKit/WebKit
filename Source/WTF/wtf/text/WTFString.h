@@ -158,8 +158,8 @@ public:
 
     static String adopt(StringBuffer<LChar>& buffer) { return StringImpl::adopt(buffer); }
     static String adopt(StringBuffer<UChar>& buffer) { return StringImpl::adopt(buffer); }
-    template<size_t inlineCapacity>
-    static String adopt(Vector<UChar, inlineCapacity>& vector) { return StringImpl::adopt(vector); }
+    template<typename CharacterType, size_t inlineCapacity>
+    static String adopt(Vector<CharacterType, inlineCapacity>& vector) { return StringImpl::adopt(vector); }
 
     bool isNull() const { return !m_impl; }
     bool isEmpty() const { return !m_impl || !m_impl->length(); }
@@ -557,7 +557,8 @@ inline void append(Vector<UChar>& vector, const String& string)
     vector.append(string.characters(), string.length());
 }
 
-inline void appendNumber(Vector<UChar>& vector, unsigned char number)
+template<typename CharacterType>
+inline void appendNumber(Vector<CharacterType>& vector, unsigned char number)
 {
     int numberLength = number > 99 ? 3 : (number > 9 ? 2 : 1);
     size_t vectorSize = vector.size();

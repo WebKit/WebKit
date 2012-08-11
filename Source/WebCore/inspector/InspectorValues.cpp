@@ -625,7 +625,7 @@ void InspectorBasicValue::writeJSON(StringBuilder* output) const
         else
             output->append(falseString, 5);
     } else if (type() == TypeNumber) {
-        NumberToUStringBuffer buffer;
+        NumberToLStringBuffer buffer;
         if (!isfinite(m_doubleValue)) {
             output->append(nullString, 4);
             return;

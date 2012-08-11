@@ -99,13 +99,13 @@ unsigned DecimalNumber::bufferLengthForStringExponential() const
     return length;
 }
 
-unsigned DecimalNumber::toStringDecimal(UChar* buffer, unsigned bufferLength) const
+unsigned DecimalNumber::toStringDecimal(LChar* buffer, unsigned bufferLength) const
 {
     ASSERT_UNUSED(bufferLength, bufferLength >= bufferLengthForStringDecimal());
 
     // Should always be at least one digit to add to the string!
     ASSERT(m_precision);
-    UChar* next = buffer;
+    LChar* next = buffer;
 
     // if the exponent is negative the number decimal representation is of the form:
     // [<sign>]0.[<zeros>]<significand>
@@ -155,13 +155,13 @@ unsigned DecimalNumber::toStringDecimal(UChar* buffer, unsigned bufferLength) co
     return next - buffer;
 }
 
-unsigned DecimalNumber::toStringExponential(UChar* buffer, unsigned bufferLength) const
+unsigned DecimalNumber::toStringExponential(LChar* buffer, unsigned bufferLength) const
 {
     ASSERT_UNUSED(bufferLength, bufferLength >= bufferLengthForStringExponential());
 
     // Should always be at least one digit to add to the string!
     ASSERT(m_precision);
-    UChar* next = buffer;
+    LChar* next = buffer;
 
     // Add the sign
     if (m_sign)

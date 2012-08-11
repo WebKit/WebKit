@@ -84,8 +84,8 @@ public:
     WTF_EXPORT_PRIVATE unsigned bufferLengthForStringDecimal() const;
     WTF_EXPORT_PRIVATE unsigned bufferLengthForStringExponential() const;
 
-    WTF_EXPORT_PRIVATE unsigned toStringDecimal(UChar* buffer, unsigned bufferLength) const;
-    WTF_EXPORT_PRIVATE unsigned toStringExponential(UChar* buffer, unsigned bufferLength) const;
+    WTF_EXPORT_PRIVATE unsigned toStringDecimal(LChar* buffer, unsigned bufferLength) const;
+    WTF_EXPORT_PRIVATE unsigned toStringExponential(LChar* buffer, unsigned bufferLength) const;
 
     bool sign() const { return m_sign; }
     int exponent() const { return m_exponent; }

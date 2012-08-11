@@ -1,3 +1,21 @@
+2012-08-11  Benjamin Poulain  <bpoulain@apple.com>
+
+        Do the DecimalNumber to String conversion on 8 bits
+        https://bugs.webkit.org/show_bug.cgi?id=93683
+
+        Reviewed by Andreas Kling.
+
+        Numbers converted to string for CSS are unlikely to ever be concatenated with a 16bits string.
+        This patch change the conversion to be done to 8bits string in order to reduce memory allocations.
+
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore::formatNumber):
+        * inspector/InspectorValues.cpp:
+        (WebCore::InspectorBasicValue::writeJSON):
+        * platform/graphics/Color.cpp:
+        (WebCore::Color::serialized): Instead of allocating a static WTF::String, we can simply append the
+        string literal to the output vector.
+
 2012-08-11  Benjamin Poulain  <benjamin@webkit.org>
 
         WebCore::findAtomicString(PropertyName) always convert the name to 16bits

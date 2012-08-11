@@ -40,7 +40,7 @@ WTF_EXPORT_PRIVATE void dtoaRoundDP(DtoaBuffer result, double dd, int ndigits, b
 // Size = 80 for sizeof(DtoaBuffer) + some sign bits, decimal point, 'e', exponent digits.
 const unsigned NumberToStringBufferLength = 96;
 typedef char NumberToStringBuffer[NumberToStringBufferLength];
-typedef UChar NumberToUStringBuffer[NumberToStringBufferLength];
+typedef LChar NumberToLStringBuffer[NumberToStringBufferLength];
 
 WTF_EXPORT_PRIVATE const char* numberToString(double, NumberToStringBuffer);
 WTF_EXPORT_PRIVATE const char* numberToFixedPrecisionString(double, unsigned significantFigures, NumberToStringBuffer, bool truncateTrailingZeros = false);
@@ -72,7 +72,7 @@ inline double parseDouble(const UChar* string, size_t length, size_t& parsedLeng
 } // namespace WTF
 
 using WTF::NumberToStringBuffer;
-using WTF::NumberToUStringBuffer;
+using WTF::NumberToLStringBuffer;
 using WTF::numberToString;
 using WTF::numberToFixedPrecisionString;
 using WTF::numberToFixedWidthString;

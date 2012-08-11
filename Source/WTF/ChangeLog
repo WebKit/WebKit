@@ -1,3 +1,27 @@
+2012-08-11  Benjamin Poulain  <bpoulain@apple.com>
+
+        Do the DecimalNumber to String conversion on 8 bits
+        https://bugs.webkit.org/show_bug.cgi?id=93683
+
+        Reviewed by Andreas Kling.
+
+        Modify DecimalNumber to do the conversion to string on LChar instead of UChar.
+
+        * wtf/DecimalNumber.cpp:
+        (WTF::DecimalNumber::toStringDecimal):
+        (WTF::DecimalNumber::toStringExponential):
+        * wtf/DecimalNumber.h:
+        (DecimalNumber):
+        * wtf/dtoa.h:
+        * wtf/text/StringBuffer.h:
+        (WTF::StringBuffer::operator[]): StringBuffer::operator[] was incorrectly typed to UChar, making
+        the method impossible to instanciate with LChar.
+        * wtf/text/WTFString.h:
+        (String):
+        (WTF::String::adopt): String::adopt() is modified to work with both LChar and UChar. StringImpl
+        already support that.
+        (WTF::appendNumber): Add support for any type that can instanciate the template.
+
 2012-08-11  Benjamin Poulain  <benjamin@webkit.org>
 
         WebCore::findAtomicString(PropertyName) always convert the name to 16bits

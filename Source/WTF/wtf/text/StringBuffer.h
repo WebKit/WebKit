@@ -71,7 +71,7 @@ public:
     unsigned length() const { return m_length; }
     CharType* characters() { return m_data; }
 
-    UChar& operator[](unsigned i) { ASSERT(i < m_length); return m_data[i]; }
+    CharType& operator[](unsigned i) { ASSERT(i < m_length); return m_data[i]; }
 
     CharType* release() { CharType* data = m_data; m_data = 0; return data; }
 
