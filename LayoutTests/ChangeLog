@@ -1,5 +1,19 @@
 2012-08-10  Roger Fong  <roger_fong@apple.com>
 
+        Layout Test: plugins/nested-plugin-objects.html passes but causes subsequent test to fail on Windows.
+        https://bugs.webkit.org/show_bug.cgi?id=93741
+
+        Reviewed by Tim Horton.
+
+        plugins/nested-plugin-objects.html passes but causes subsequent test to fail on Windows.
+        plugins/netscape-dom-access-and-reload.html fails as a result.
+        Or if I skip that test, then plugins/netscape-dom-access.html fails (the next test in the list).
+
+        * platform/win/Skipped:
+        Added plugins/nested-plugin-objects.html to skip list.
+
+2012-08-10  Roger Fong  <roger_fong@apple.com>
+
         LayoutTest: fast/forms/basic-selects.html rebaselined.
         https://bugs.webkit.org/show_bug.cgi?id=93751
 

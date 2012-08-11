@@ -1973,3 +1973,6 @@ fast/forms/input-set-composition-scroll.html
 # https://bugs.webkit.org/show_bug.cgi?id=93667
 # Test times out
 fast/forms/select/menulist-popup-crash.html
+
+# This test causes any following plugins test to crash
+plugins/nested-plugin-objects.html
