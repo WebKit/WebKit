@@ -372,6 +372,20 @@ void FrameLoaderClientQt::dispatchWillPerformClientRedirect(const KURL& url, dou
     notImplemented();
 }
 
+void FrameLoaderClientQt::dispatchDidNavigateWithinPage()
+{
+    if (!m_webFrame)
+        return;
+
+    FrameLoader* loader = m_frame->loader();
+    bool loaderCompleted = !(loader->activeDocumentLoader() && loader->activeDocumentLoader()->isLoadingInAPISense());
+
+    if (!loaderCompleted)
+        return;
+
+    dispatchDidCommitLoad();
+    dispatchDidFinishLoad();
+}
 
 void FrameLoaderClientQt::dispatchDidChangeLocationWithinPage()
 {
@@ -391,7 +405,7 @@ void FrameLoaderClientQt::dispatchDidPushStateWithinPage()
     if (dumpFrameLoaderCallbacks)
         printf("%s - dispatchDidPushStateWithinPage\n", qPrintable(drtDescriptionSuitableForTestResult(m_frame)));
 
-    notImplemented();
+    dispatchDidNavigateWithinPage();
 }
 
 void FrameLoaderClientQt::dispatchDidReplaceStateWithinPage()
@@ -399,7 +413,7 @@ void FrameLoaderClientQt::dispatchDidReplaceStateWithinPage()
     if (dumpFrameLoaderCallbacks)
         printf("%s - dispatchDidReplaceStateWithinPage\n", qPrintable(drtDescriptionSuitableForTestResult(m_frame)));
 
-    notImplemented();
+    dispatchDidNavigateWithinPage();
 }
 
 void FrameLoaderClientQt::dispatchDidPopStateWithinPage()
@@ -407,7 +421,7 @@ void FrameLoaderClientQt::dispatchDidPopStateWithinPage()
     if (dumpFrameLoaderCallbacks)
         printf("%s - dispatchDidPopStateWithinPage\n", qPrintable(drtDescriptionSuitableForTestResult(m_frame)));
 
-    notImplemented();
+    // No need to call dispatchDidNavigateWithinPage here, it's already been done in loadInSameDocument().
 }
 
 void FrameLoaderClientQt::dispatchWillClose()
