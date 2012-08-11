@@ -504,6 +504,10 @@ const char* WKFilterAddData(WebFilterEvaluator *, const char* data, int* length)
 const char* WKFilterDataComplete(WebFilterEvaluator *, int* length);
 #endif
 
+#if MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
+Boolean WKJLIsRuntimeAndWebComponentsInstalled(void);
+#endif
+
 #ifdef __cplusplus
 }
 #endif
