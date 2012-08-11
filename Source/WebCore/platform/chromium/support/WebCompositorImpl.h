@@ -26,7 +26,7 @@
 #ifndef WebCompositorImpl_h
 #define WebCompositorImpl_h
 
-#include "WebCompositor.h"
+#include <public/WebCompositor.h>
 
 #include <wtf/HashSet.h>
 #include <wtf/Noncopyable.h>

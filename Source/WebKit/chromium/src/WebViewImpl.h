@@ -50,14 +50,14 @@
 #include "WebNavigationPolicy.h"
 #include "WebView.h"
 #include "WebViewBenchmarkSupportImpl.h"
-#include "platform/WebFloatQuad.h"
-#include "platform/WebLayer.h"
-#include "platform/WebLayerTreeView.h"
-#include "platform/WebLayerTreeViewClient.h"
-#include "platform/WebPoint.h"
-#include "platform/WebRect.h"
-#include "platform/WebSize.h"
-#include "platform/WebString.h"
+#include <public/WebFloatQuad.h>
+#include <public/WebLayer.h>
+#include <public/WebLayerTreeView.h>
+#include <public/WebLayerTreeViewClient.h>
+#include <public/WebPoint.h>
+#include <public/WebRect.h>
+#include <public/WebSize.h>
+#include <public/WebString.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/RefCounted.h>
 

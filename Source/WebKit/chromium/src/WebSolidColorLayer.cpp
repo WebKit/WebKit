@@ -24,10 +24,10 @@
  */
 
 #include "config.h"
-#include "platform/WebSolidColorLayer.h"
+#include <public/WebSolidColorLayer.h>
 
 #include "WebSolidColorLayerImpl.h"
-#include "platform/WebFloatRect.h"
+#include <public/WebFloatRect.h>
 
 namespace WebKit {
 

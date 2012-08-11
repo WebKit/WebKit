@@ -26,8 +26,6 @@
 #ifndef WebCompositor_h
 #define WebCompositor_h
 
-#define WEBCOMPOSITOR_OWNS_SETTINGS 1
-
 #include "WebCommon.h"
 
 namespace WebKit {

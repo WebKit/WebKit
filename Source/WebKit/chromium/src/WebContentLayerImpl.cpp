@@ -26,12 +26,9 @@
 #include "config.h"
 #include "WebContentLayerImpl.h"
 
-#include "platform/WebContentLayerClient.h"
-#include "platform/WebFloatRect.h"
-#include "platform/WebRect.h"
-#include "GraphicsContext.h"
-#include "platform/WebCanvas.h"
-#include "PlatformContextSkia.h"
+#include <public/WebContentLayerClient.h>
+#include <public/WebFloatRect.h>
+#include <public/WebRect.h>
 
 using namespace WebCore;
 

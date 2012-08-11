@@ -1,3 +1,14 @@
+2012-08-09  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Remove forwarding headers for compositor-related WebKit API and update includes
+        https://bugs.webkit.org/show_bug.cgi?id=93669
+
+        Reviewed by Adam Barth.
+
+        Updates all includes for compositor-related headers to refer consistently to the Platform API location.
+
+        * platform/chromium/support/WebCompositorImpl.h:
+
 2012-08-10  James Robinson  <jamesr@chromium.org>
 
         Unreviewed build fix.

@@ -26,16 +26,15 @@
 #include "config.h"
 #include "WebLayerTreeViewImpl.h"
 
-#include "GraphicsContext3DPrivate.h"
 #include "LayerChromium.h"
 #include "cc/CCLayerTreeHost.h"
 #include "cc/CCThreadProxy.h"
-#include "platform/WebGraphicsContext3D.h"
-#include "platform/WebLayer.h"
-#include "platform/WebLayerTreeView.h"
-#include "platform/WebLayerTreeViewClient.h"
-#include "platform/WebSize.h"
-#include "platform/WebThread.h"
+#include <public/WebGraphicsContext3D.h>
+#include <public/WebLayer.h>
+#include <public/WebLayerTreeView.h>
+#include <public/WebLayerTreeViewClient.h>
+#include <public/WebSize.h>
+#include <public/WebThread.h>
 
 using namespace WebCore;
 

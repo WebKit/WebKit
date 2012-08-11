@@ -24,20 +24,19 @@
  */
 
 #include "config.h"
-#include "platform/WebLayerTreeView.h"
+#include <public/WebLayerTreeView.h>
 
-#include "GraphicsContext3DPrivate.h"
 #include "LayerChromium.h"
 #include "WebLayerTreeViewImpl.h"
 #include "cc/CCFontAtlas.h"
 #include "cc/CCGraphicsContext.h"
 #include "cc/CCLayerTreeHost.h"
 #include "cc/CCRenderingStats.h"
-#include "platform/WebLayer.h"
-#include "platform/WebPoint.h"
-#include "platform/WebRect.h"
-#include "platform/WebSize.h"
+#include <public/WebLayer.h>
+#include <public/WebPoint.h>
+#include <public/WebRect.h>
 #include <public/WebRenderingStats.h>
+#include <public/WebSize.h>
 
 using namespace WebCore;
 

@@ -36,7 +36,6 @@
 #include "LayoutTestController.h"
 #include "MockWebPrerenderingSupport.h"
 #include "platform/WebArrayBufferView.h"
-#include "WebCompositor.h"
 #include "WebDataSource.h"
 #include "WebDocument.h"
 #include "WebElement.h"
@@ -44,23 +43,23 @@
 #include "WebHistoryItem.h"
 #include "WebIDBFactory.h"
 #include "WebTestingSupport.h"
-#include "platform/WebThread.h"
-#include "WebKit.h"
-#include "platform/WebKitPlatformSupport.h"
 #include "WebPermissions.h"
-#include "platform/WebPoint.h"
 #include "WebRuntimeFeatures.h"
 #include "WebScriptController.h"
 #include "WebSettings.h"
-#include "platform/WebSize.h"
-#include "platform/WebString.h"
-#include "platform/WebURLRequest.h"
-#include "platform/WebURLResponse.h"
 #include "WebView.h"
 #include "WebViewHost.h"
 #include "skia/ext/platform_canvas.h"
 #include "webkit/support/webkit_support.h"
 #include "webkit/support/webkit_support_gfx.h"
+#include <public/Platform.h>
+#include <public/WebCompositor.h>
+#include <public/WebPoint.h>
+#include <public/WebSize.h>
+#include <public/WebString.h>
+#include <public/WebThread.h>
+#include <public/WebURLRequest.h>
+#include <public/WebURLResponse.h>
 #include <algorithm>
 #include <cctype>
 #include <vector>
@@ -163,7 +162,7 @@ void TestShell::initialize()
     WTF::initializeThreading();
 
     if (m_threadedCompositingEnabled) {
-        m_webCompositorThread = adoptPtr(WebKit::webKitPlatformSupport()->createThread("Compositor"));
+        m_webCompositorThread = adoptPtr(WebKit::Platform::current()->createThread("Compositor"));
         WebCompositor::initialize(m_webCompositorThread.get());
     } else
         WebCompositor::initialize(0);

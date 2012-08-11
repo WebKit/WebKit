@@ -1,3 +1,35 @@
+2012-08-09  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Remove forwarding headers for compositor-related WebKit API and update includes
+        https://bugs.webkit.org/show_bug.cgi?id=93669
+
+        Reviewed by Adam Barth.
+
+        This updates all includes for compositor-related headers to refer consistently to the Platform API location and
+        removes the now-unneeded forwarding headers in the client API location. I also updated and resorted other
+        platform API includes in modified header blocks.
+
+        * WebKit.gyp:
+        * public/WebCompositor.h: Removed.
+        * public/platform/WebContentLayer.h: Removed.
+        * public/platform/WebContentLayerClient.h: Removed.
+        * public/platform/WebExternalTextureLayer.h: Removed.
+        * public/platform/WebLayer.h: Removed.
+        * public/platform/WebLayerTreeView.h: Removed.
+        * public/platform/WebLayerTreeViewClient.h: Removed.
+        * public/platform/WebSolidColorLayer.h: Removed.
+        * src/WebCompositorInputHandlerImpl.h:
+        * src/WebContentLayerImpl.cpp:
+        * src/WebLayer.cpp:
+        * src/WebLayerTreeView.cpp:
+        * src/WebLayerTreeViewImpl.cpp:
+        * src/WebLayerTreeViewImpl.h:
+        * src/WebSolidColorLayer.cpp:
+        * src/WebViewImpl.h:
+        * tests/Canvas2DLayerBridgeTest.cpp:
+        * tests/GraphicsLayerChromiumTest.cpp:
+        * tests/TextureLayerChromiumTest.cpp:
+
 2012-08-10  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed.  Rolled DEPS.

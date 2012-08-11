@@ -36,11 +36,10 @@
 #include "Matrix3DTransformOperation.h"
 #include "RotateTransformOperation.h"
 #include "TranslateTransformOperation.h"
-#include "WebCompositor.h"
-
 #include "cc/CCLayerTreeHost.h"
 #include "cc/CCLayerTreeHostImpl.h"
 #include "cc/CCSingleThreadProxy.h"
+#include <public/WebCompositor.h>
 
 #include <gtest/gtest.h>
 #include <public/WebGraphicsContext3D.h>

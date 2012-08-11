@@ -33,8 +33,8 @@
 
 #include "MockWebKitPlatformSupport.h"
 #include "TestShell.h"
-#include "WebCompositor.h"
 #include "webkit/support/webkit_support.h"
+#include <public/WebCompositor.h>
 #include <v8/include/v8-testing.h>
 #include <v8/include/v8.h>
 #include <wtf/OwnPtr.h>

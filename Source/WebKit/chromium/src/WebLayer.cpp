@@ -24,12 +24,10 @@
  */
 
 #include "config.h"
-#include "platform/WebLayer.h"
+#include <public/WebLayer.h>
 
-#include "Color.h"
 #include "LayerChromium.h"
 #include "SkMatrix44.h"
-#include "TransformationMatrix.h"
 #include "WebLayerImpl.h"
 #include <public/WebFilterOperations.h>
 #include <public/WebFloatPoint.h>

@@ -31,13 +31,12 @@
 #include "GraphicsContext3DPrivate.h"
 #include "ImageBuffer.h"
 #include "LayerChromium.h"
-#include "WebCompositor.h"
-#include "WebKit.h"
 #include "cc/CCGraphicsContext.h"
 #include "cc/CCRenderingStats.h"
 #include "cc/CCTextureUpdateQueue.h"
-#include "platform/WebKitPlatformSupport.h"
-#include "platform/WebThread.h"
+#include <public/Platform.h>
+#include <public/WebCompositor.h>
+#include <public/WebThread.h>
 
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
