@@ -69,14 +69,14 @@ void HTMLPropertiesCollection::updateRefElements() const
     toHTMLElement(base())->getItemRefElements(m_itemRefElements);
 }
 
-static Node* nextNodeWithProperty(Node* base, Node* node)
+static Node* nextNodeWithProperty(Node* rootNode, Node* previous, Node* ownerNode)
 {
     // An Microdata item may contain properties which in turn are items themselves. Properties can
     // also themselves be groups of name-value pairs, by putting the itemscope attribute on the element
     // that declares the property. If the property has an itemscope attribute specified then we need
     // to traverse the next sibling.
-    return node == base || (node->isHTMLElement() && !toHTMLElement(node)->fastHasAttribute(itemscopeAttr))
-            ? node->traverseNextNode(base) : node->traverseNextSibling(base);
+    return previous == ownerNode || (previous->isHTMLElement() && !toHTMLElement(previous)->fastHasAttribute(itemscopeAttr))
+            ? previous->traverseNextNode(rootNode) : previous->traverseNextSibling(rootNode);
 }
 
 Element* HTMLPropertiesCollection::virtualItemAfter(unsigned& offsetInArray, Element* previousItem) const
@@ -90,13 +90,14 @@ Element* HTMLPropertiesCollection::virtualItemAfter(unsigned& offsetInArray, Ele
     return 0;
 }
 
-HTMLElement* HTMLPropertiesCollection::virtualItemAfter(HTMLElement* base, Element* previous) const
+HTMLElement* HTMLPropertiesCollection::virtualItemAfter(HTMLElement* rootNode, Element* previous) const
 {
     Node* current;
-    current = previous ? nextNodeWithProperty(base, previous) : base;
+    Node* ownerNode = this->ownerNode();
+    current = previous ? nextNodeWithProperty(rootNode, previous, ownerNode) : rootNode;
 
-    for (; current; current = nextNodeWithProperty(base, current)) {
-        if (!current->isHTMLElement())
+    for (; current; current = nextNodeWithProperty(rootNode, current, ownerNode)) {
+        if (current == ownerNode || !current->isHTMLElement())
             continue;
         HTMLElement* element = toHTMLElement(current);
         if (element->fastHasAttribute(itempropAttr) && element->itemProp()->length()) {

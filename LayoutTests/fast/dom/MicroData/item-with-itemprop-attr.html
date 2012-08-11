@@ -1,0 +1,42 @@
+<html>
+<head>
+<script src="../../js/resources/js-test-pre.js"></script>
+<script src="resources/microdata-common.js"></script>
+</head>
+<body>
+<script>
+description("Test to ensure that item with itemprop attribute should not include itself in its HTMLPropetiesCollection.");
+
+var parent = createElement('div', {itemscope: 'itemscope'}, '<div itemscope itemprop="foo"><div itemprop="bar"></div></div>');
+var item = parent.firstChild;
+
+function executeTest()
+{
+    shouldBe("item.properties.length", "1");
+    shouldBe("item.properties.item(0)", "item.firstChild");
+    shouldBe("item.properties[0]", "item.firstChild");
+    shouldBe("item.properties.namedItem('foo').length", "0");
+    shouldBeNull("item.properties.namedItem('foo').item(0)");
+    shouldBeUndefined("item.properties.namedItem('foo')[0]");
+    shouldBe("item.properties.namedItem('bar').length", "1");
+    shouldBe("item.properties.namedItem('bar').item(0)", "item.firstChild");
+    shouldBe("item.properties.namedItem('bar')[0]", "item.firstChild");
+    shouldBe("item.properties.names.length", "1");
+    shouldBeFalse("item.properties.names.contains('foo')");
+    shouldBeTrue("item.properties.names.contains('bar')");
+    shouldBe("item.properties.names.item(0)", "'bar'");
+    shouldBe("item.properties.names[0]", "'bar'");
+}
+
+debug("");
+debug("Item not attached to dom tree");
+executeTest();
+
+debug("");
+debug("Attached item to dom tree");
+document.body.appendChild(parent);
+executeTest();
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,0 +1,38 @@
+Test to verify HTMLPropertiesCollection's behavior of Microdata item with itemprop attribute and itemref pointing to itself.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Created element of type: div
+Set attribute: itemscope, value: itemscope
+Set attribute: id, value: id1
+Set attribute: itemref, value: id1
+Set attribute: itemprop, value: foo
+
+Item not attached to dom tree
+PASS item.properties.length is 0
+PASS item.properties.item(0) is null
+PASS item.properties[0] is undefined.
+PASS item.properties.namedItem('foo').length is 0
+PASS item.properties.namedItem('foo').item(0) is null
+PASS item.properties.namedItem('foo')[0] is undefined.
+PASS item.properties.names.length is 0
+PASS item.properties.names.contains('foo') is false
+PASS item.properties.names.item(0) is null
+PASS item.properties.names.length[0] is undefined.
+
+Attached item to dom tree
+PASS item.properties.length is 0
+PASS item.properties.item(0) is null
+PASS item.properties[0] is undefined.
+PASS item.properties.namedItem('foo').length is 0
+PASS item.properties.namedItem('foo').item(0) is null
+PASS item.properties.namedItem('foo')[0] is undefined.
+PASS item.properties.names.length is 0
+PASS item.properties.names.contains('foo') is false
+PASS item.properties.names.item(0) is null
+PASS item.properties.names.length[0] is undefined.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

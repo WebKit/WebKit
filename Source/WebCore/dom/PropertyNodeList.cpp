@@ -78,7 +78,7 @@ void PropertyNodeList::updateRefElements() const
 
 bool PropertyNodeList::nodeMatches(Element* testElement) const
 {
-    if (!testElement->isHTMLElement() || !testElement->fastHasAttribute(itempropAttr))
+    if (!testElement->isHTMLElement() || !testElement->fastHasAttribute(itempropAttr) || testElement == ownerNode())
         return false;
 
     for (unsigned i = 0; i < m_itemRefElementsCache.size(); ++i) {

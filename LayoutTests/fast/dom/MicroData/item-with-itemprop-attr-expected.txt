@@ -1,0 +1,43 @@
+Test to ensure that item with itemprop attribute should not include itself in its HTMLPropetiesCollection.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Created element of type: div
+Set attribute: itemscope, value: itemscope
+
+Item not attached to dom tree
+PASS item.properties.length is 1
+PASS item.properties.item(0) is item.firstChild
+PASS item.properties[0] is item.firstChild
+PASS item.properties.namedItem('foo').length is 0
+PASS item.properties.namedItem('foo').item(0) is null
+PASS item.properties.namedItem('foo')[0] is undefined.
+PASS item.properties.namedItem('bar').length is 1
+PASS item.properties.namedItem('bar').item(0) is item.firstChild
+PASS item.properties.namedItem('bar')[0] is item.firstChild
+PASS item.properties.names.length is 1
+PASS item.properties.names.contains('foo') is false
+PASS item.properties.names.contains('bar') is true
+PASS item.properties.names.item(0) is 'bar'
+PASS item.properties.names[0] is 'bar'
+
+Attached item to dom tree
+PASS item.properties.length is 1
+PASS item.properties.item(0) is item.firstChild
+PASS item.properties[0] is item.firstChild
+PASS item.properties.namedItem('foo').length is 0
+PASS item.properties.namedItem('foo').item(0) is null
+PASS item.properties.namedItem('foo')[0] is undefined.
+PASS item.properties.namedItem('bar').length is 1
+PASS item.properties.namedItem('bar').item(0) is item.firstChild
+PASS item.properties.namedItem('bar')[0] is item.firstChild
+PASS item.properties.names.length is 1
+PASS item.properties.names.contains('foo') is false
+PASS item.properties.names.contains('bar') is true
+PASS item.properties.names.item(0) is 'bar'
+PASS item.properties.names[0] is 'bar'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

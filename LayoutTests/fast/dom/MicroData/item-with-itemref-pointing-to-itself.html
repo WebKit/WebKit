@@ -1,0 +1,37 @@
+<html>
+<head>
+<script src="../../js/resources/js-test-pre.js"></script>
+<script src="resources/microdata-common.js"></script>
+</head>
+<body>
+<script>
+description("Test to verify HTMLPropertiesCollection's behavior of Microdata item with itemprop attribute and itemref pointing to itself.");
+
+var item = createElement('div', {itemscope: 'itemscope', id: 'id1', itemref:'id1', itemprop:'foo'});
+
+function executeTest()
+{
+    shouldBe("item.properties.length", "0");
+    shouldBeNull("item.properties.item(0)");
+    shouldBeUndefined("item.properties[0]");
+    shouldBe("item.properties.namedItem('foo').length", "0");
+    shouldBeNull("item.properties.namedItem('foo').item(0)");
+    shouldBeUndefined("item.properties.namedItem('foo')[0]");
+    shouldBe("item.properties.names.length", "0");
+    shouldBeFalse("item.properties.names.contains('foo')");
+    shouldBeNull("item.properties.names.item(0)");
+    shouldBeUndefined("item.properties.names.length[0]");
+}
+
+debug("");
+debug("Item not attached to dom tree");
+executeTest();
+
+debug("");
+debug("Attached item to dom tree");
+document.body.appendChild(item);
+executeTest();
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>

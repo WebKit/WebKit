@@ -1,3 +1,18 @@
+2012-08-10  Arko Saha  <arko@motorola.com>
+
+        Microdata: item with itemprop attribute should not include the item itself in the HTMLPropertiesCollection.
+        https://bugs.webkit.org/show_bug.cgi?id=93717
+
+        Reviewed by Ryosuke Niwa.
+
+        Added test to ensure that item with itemprop attribute should not include
+        itself in its HTMLPropetiesCollection.
+
+        * fast/dom/MicroData/item-with-itemprop-attr-expected.txt: Added.
+        * fast/dom/MicroData/item-with-itemprop-attr.html: Added.
+        * fast/dom/MicroData/item-with-itemref-pointing-to-itself-expected.txt: Added.
+        * fast/dom/MicroData/item-with-itemref-pointing-to-itself.html: Added.
+
 2012-08-10  Roger Fong  <roger_fong@apple.com>
 
         Layout Test: plugins/nested-plugin-objects.html passes but causes subsequent test to fail on Windows.
