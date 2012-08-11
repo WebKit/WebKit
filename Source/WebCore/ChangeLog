@@ -1,3 +1,14 @@
+2012-08-11  Benjamin Poulain  <benjamin@webkit.org>
+
+        WebCore::findAtomicString(PropertyName) always convert the name to 16bits
+        https://bugs.webkit.org/show_bug.cgi?id=93685
+
+        Reviewed by Geoffrey Garen.
+
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::findAtomicString):
+        Use the new AtomicString::find() to avoid calling StringImpl::characters().
+
 2012-08-11  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
 
         [Qt] Remove QtSenderStack now we do not support __qt_sender__ anymore in Qt bridge

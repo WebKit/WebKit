@@ -56,7 +56,7 @@ struct IdentifierLCharFromUCharTranslator;
 namespace WTF {
 
 struct CStringTranslator;
-struct HashAndCharactersTranslator;
+template<typename CharacterType> struct HashAndCharactersTranslator;
 struct HashAndUTF8CharactersTranslator;
 struct CharBufferFromLiteralDataTranslator;
 struct SubstringTranslator;
@@ -74,7 +74,7 @@ class StringImpl {
     friend struct JSC::IdentifierCharBufferTranslator<UChar>;
     friend struct JSC::IdentifierLCharFromUCharTranslator;
     friend struct WTF::CStringTranslator;
-    friend struct WTF::HashAndCharactersTranslator;
+    template<typename CharacterType> friend struct WTF::HashAndCharactersTranslator;
     friend struct WTF::HashAndUTF8CharactersTranslator;
     friend struct WTF::CharBufferFromLiteralDataTranslator;
     friend struct WTF::SubstringTranslator;

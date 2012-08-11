@@ -1,3 +1,31 @@
+2012-08-11  Benjamin Poulain  <benjamin@webkit.org>
+
+        WebCore::findAtomicString(PropertyName) always convert the name to 16bits
+        https://bugs.webkit.org/show_bug.cgi?id=93685
+
+        Reviewed by Geoffrey Garen.
+
+        Previously, WebCore::findAtomicString() was causing a conversion for the 8bit property name
+        to a 16bits due to the call to StringImpl::character16().
+
+        This patch fixes the issue by adding support for both 8bits and 16bits string in AtomicString::find().
+
+        * wtf/text/AtomicString.cpp:
+        (HashAndCharacters):
+        (WTF::HashAndCharactersTranslator::hash):
+        (WTF::HashAndCharactersTranslator::equal):
+        (WTF::HashAndCharactersTranslator::translate):
+        Use a template to make the struct and the translator independant of the CharacterType.
+
+        (WTF::AtomicString::add):
+        (WTF::findString):
+        (WTF::AtomicString::find): Change the API to take a StringImpl*. AtomicString can use
+        it efficiently to find the right string.
+        * wtf/text/AtomicString.h:
+        (AtomicString):
+        * wtf/text/StringImpl.h:
+        (StringImpl): Adapt the friends translator to support the template.
+
 2012-08-10  Benjamin Poulain  <bpoulain@apple.com>
 
         Add support for String initialization from literal to WTFString

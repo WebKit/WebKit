@@ -115,7 +115,7 @@ AtomicStringImpl* findAtomicString(PropertyName propertyName)
     if (!impl)
         return 0;
     ASSERT(impl->existingHash());
-    return AtomicString::find(impl->characters(), impl->length(), impl->existingHash());
+    return AtomicString::find(impl);
 }
 
 String valueToStringWithNullCheck(ExecState* exec, JSValue value)
