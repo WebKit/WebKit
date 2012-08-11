@@ -4815,7 +4815,6 @@ webcoregtk_sources += \
 	Source/WebCore/accessibility/gtk/WebKitAccessibleUtil.h \
 	Source/WebCore/accessibility/gtk/WebKitAccessibleWrapperAtk.cpp \
 	Source/WebCore/accessibility/gtk/WebKitAccessibleWrapperAtk.h \
-	Source/WebCore/bindings/js/ScriptControllerGtk.cpp \
 	Source/WebCore/editing/gtk/FrameSelectionGtk.cpp \
 	Source/WebCore/page/gtk/DragControllerGtk.cpp \
 	Source/WebCore/page/gtk/EventHandlerGtk.cpp \

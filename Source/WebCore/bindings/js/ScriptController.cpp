@@ -35,6 +35,7 @@
 #include "NP_jsobject.h"
 #include "Page.h"
 #include "PageGroup.h"
+#include "PluginView.h"
 #include "ScriptSourceCode.h"
 #include "ScriptValue.h"
 #include "ScriptableDocumentParser.h"
@@ -387,6 +388,16 @@ NPObject* ScriptController::createScriptObjectForPluginElement(HTMLPlugInElement
     return _NPN_CreateScriptObject(0, object, bindingRootObject());
 }
 
+#endif
+
+#if !PLATFORM(MAC) && !PLATFORM(QT)
+PassRefPtr<JSC::Bindings::Instance> ScriptController::createScriptInstanceForWidget(Widget* widget)
+{
+    if (!widget->isPluginView())
+        return 0;
+
+    return static_cast<PluginView*>(widget)->bindingInstance();
+}
 #endif
 
 JSObject* ScriptController::jsObjectForPluginElement(HTMLPlugInElement* plugin)

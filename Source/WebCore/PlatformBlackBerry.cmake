@@ -129,7 +129,6 @@ LIST(APPEND WebCore_INCLUDE_DIRECTORIES
 
 # BlackBerry sources
 LIST(APPEND WebCore_SOURCES
-    bindings/js/ScriptControllerBlackBerry.cpp
     editing/blackberry/EditorBlackBerry.cpp
     editing/blackberry/SmartReplaceBlackBerry.cpp
     page/blackberry/AccessibilityObjectBlackBerry.cpp

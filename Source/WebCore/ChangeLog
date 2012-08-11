@@ -1,3 +1,33 @@
+2012-08-10  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [BlackBerry][EFL][GTK][WIN][WX] Remove ScriptControllerXXX.cpp to reduce duplication
+        https://bugs.webkit.org/show_bug.cgi?id=61424
+
+        Reviewed by Rob Buis.
+
+        ScriptControllerBlackBerry, ScriptControllerEfl, ScriptControllerGtk,
+        ScriptControllerWin and ScriptControllerWx are almost same.
+        In order to reduce duplication, this patch moves codes to ScriptController
+        and removes them.
+
+        No behavior change. Just a refactoring.
+
+        * GNUmakefile.list.am:
+        * PlatformBlackBerry.cmake:
+        * PlatformEfl.cmake:
+        * PlatformWinCE.cmake:
+        * WebCore.gypi:
+        * bindings/js/JSBindingsAllInOne.cpp:
+        * bindings/js/ScriptController.cpp:
+        (WebCore):
+        (WebCore::ScriptController::createScriptInstanceForWidget):
+        Moved from ScriptControllerXXX.cpp
+        * bindings/js/ScriptControllerBlackBerry.cpp: Removed.
+        * bindings/js/ScriptControllerEfl.cpp: Removed.
+        * bindings/js/ScriptControllerGtk.cpp: Removed.
+        * bindings/js/ScriptControllerWin.cpp: Removed.
+        * bindings/js/ScriptControllerWx.cpp: Removed.
+
 2012-08-10  Elliott Sprehn  <esprehn@gmail.com>
 
         RenderQuote corrupts doubly linked list on insertion before head of list

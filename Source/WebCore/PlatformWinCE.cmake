@@ -16,8 +16,6 @@ LIST(APPEND WebCore_INCLUDE_DIRECTORIES
 )
 
 LIST(APPEND WebCore_SOURCES
-    bindings/js/ScriptControllerWin.cpp
-
     page/win/DragControllerWin.cpp
     page/win/EventHandlerWin.cpp
     page/wince/FrameWinCE.cpp

@@ -18,7 +18,6 @@ LIST(APPEND WebCore_INCLUDE_DIRECTORIES
 
 LIST(APPEND WebCore_SOURCES
   accessibility/efl/AccessibilityObjectEfl.cpp
-  bindings/js/ScriptControllerEfl.cpp
   page/efl/DragControllerEfl.cpp
   page/efl/EventHandlerEfl.cpp
   platform/Cursor.cpp
