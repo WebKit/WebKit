@@ -1,3 +1,14 @@
+2012-08-11  Abhishek Arya  <inferno@chromium.org>
+
+        Unreviewed. 
+
+        Removing newly added assert in r125351 since it is exposing
+        legitimate layout bugs in few tests. We will re-add the assert
+        after fixing those bugs. Failures are tracked in webkit bug 93766. 
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::removeFromTrackedRendererMaps):
+
 2012-08-11  Levi Weintraub  <leviw@chromium.org>
 
         Track block's positioned objects like percent-height descendants
