@@ -143,6 +143,8 @@ void RenderQuote::attachQuote()
     if (!m_previous) {
         m_next = view()->renderQuoteHead();
         view()->setRenderQuoteHead(this);
+        if (m_next)
+            m_next->m_previous = this;
     }
     m_attached = true;
 
@@ -150,7 +152,9 @@ void RenderQuote::attachQuote()
         quote->updateDepth();
 
     ASSERT(!m_next || m_next->m_attached);
+    ASSERT(!m_next || m_next->m_previous == this);
     ASSERT(!m_previous || m_previous->m_attached);
+    ASSERT(!m_previous || m_previous->m_next == this);
 }
 
 void RenderQuote::detachQuote()

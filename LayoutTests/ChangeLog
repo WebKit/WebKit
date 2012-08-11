@@ -1,3 +1,16 @@
+2012-08-10  Elliott Sprehn  <esprehn@gmail.com>
+
+        RenderQuote corrupts doubly linked list on insertion before head of list
+        https://bugs.webkit.org/show_bug.cgi?id=93750
+
+        Reviewed by Abhishek Arya.
+
+        Test for moving around RenderQuote nodes before each other in an
+        existing document to catch corruption in the linked list of RenderQuote.
+
+        * fast/css-generated-content/quote-crash-93750-expected.txt: Added.
+        * fast/css-generated-content/quote-crash-93750.html: Added.
+
 2012-08-10  Dean Jackson  <dino@apple.com>
 
         REGRESSION (r124416): fast/forms/basic-selects.html failing on Lion Debug Tests
