@@ -1,3 +1,15 @@
+2012-08-11  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        [EFL] Bump harfbuzz dependency to v0.9.2
+        https://bugs.webkit.org/show_bug.cgi?id=93762
+
+        Reviewed by Eric Seidel.
+
+        EFL port has used harfbuzz 0.9.0 ver. However, the 0.9.2 version was released on 10th Aug 2012.
+        In addition, 0.9.0 ver. was disappeared. So, EFL port needs to use 0.9.2 ver. from now on.
+
+        * efl/jhbuild.modules:
+
 2012-08-10  Ryosuke Niwa  <rniwa@webkit.org>
 
         run-perf-tests should upload memory statistics to perf-o-matic

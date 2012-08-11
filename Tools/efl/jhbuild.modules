@@ -147,11 +147,11 @@
   </autotools>
 
  <autotools id="harfbuzz" autogen-sh="configure">
-   <branch module="software/harfbuzz/release/harfbuzz-20120627.tar.bz2" version="0.9.0"
-           checkoutdir="harfbuzz-0.9.0"
+   <branch module="software/harfbuzz/release/harfbuzz-0.9.2.tar.bz2" version="0.9.2"
+           checkoutdir="harfbuzz-0.9.2"
            repo="freedesktop.org"
-           hash="sha256:562a187b84a2b5bd38f87e898f5f18aa918a41db62adbc17f6fcfd8fa1755485"
-           md5sum="18e6a8d847259441723a26e299792d55">
+           hash="sha256:c9b581d6357a32043b84ec78179390b582448de790deb487dfdb90b632dc8558"
+           md5sum="f1c1a2793b44b4d6613f58cc92caa366">
    </branch>
  </autotools>
 
