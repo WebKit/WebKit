@@ -1,3 +1,14 @@
+2012-08-11  Jon Lee  <jonlee@apple.com>
+
+        webarchive/ignore-noscript-if-scripting.html expected results should use .webarchive extension
+        https://bugs.webkit.org/show_bug.cgi?id=93736
+        <rdar://problem/12077654>
+
+        Reviewed by Eric Seidel.
+
+        Because the test uses dumpDOMAsWebArchive(), the expected results extension should be .webarchive instead of .txt.
+        * webarchive/ignore-noscript-if-scripting-enabled-expected.webarchive: Renamed from LayoutTests/webarchive/ignore-noscript-if-scripting-enabled-expected.txt.
+
 2012-08-11  Levi Weintraub  <leviw@chromium.org>
 
         Track block's positioned objects like percent-height children
