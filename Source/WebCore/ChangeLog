@@ -1,3 +1,15 @@
+2012-08-11  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        [Qt] Remove QtSenderStack now we do not support __qt_sender__ anymore in Qt bridge
+        https://bugs.webkit.org/show_bug.cgi?id=93767
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Dead code after patch of bug 93649.
+
+        * bridge/qt/qt_instance.h:
+        (QtInstance):
+
 2012-08-11  Abhishek Arya  <inferno@chromium.org>
 
         Unreviewed. 

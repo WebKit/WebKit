@@ -22,7 +22,6 @@
 
 #include "BridgeJSC.h"
 #include <QPointer>
-#include <QStack>
 #include "Weak.h"
 #include "runtime_root.h"
 #include <qhash.h>
@@ -75,15 +74,6 @@ public:
     void removeUnusedMethods();
 
     static QtInstance* getInstance(JSObject*);
-
-    class QtSenderStack {
-    public:
-        QObject* top() const { return m_stack.isEmpty() ? 0 : m_stack.top(); }
-        void push(QObject* object) { m_stack.push(object); }
-        void pop() { Q_ASSERT(!m_stack.isEmpty()); m_stack.pop(); }
-    private:
-        QStack<QObject*> m_stack;
-    };
 
 private:
 
