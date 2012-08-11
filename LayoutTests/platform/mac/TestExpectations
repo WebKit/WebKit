@@ -334,4 +334,4 @@ BUGWK93538 : fast/forms/basic-selects.html = TEXT
 BUGWK93552 : inspector/device-orientation-success.html = TEXT
 
 // (r125185) http/tests/images/jpg-img-partial-load.html timeout on Lion
-BUGWK93636 : http/tests/images/jpg-img-partial-load.html = TIMEOUT
+BUGWK93636 : http/tests/images/jpg-img-partial-load.html = TEXT
