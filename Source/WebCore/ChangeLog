@@ -1,3 +1,55 @@
+2012-08-11  Levi Weintraub  <leviw@chromium.org>
+
+        Track block's positioned objects like percent-height descendants
+        https://bugs.webkit.org/show_bug.cgi?id=89848
+
+        Reviewed by Abhishek Arya.
+
+        The previous method for tracking a RenderBlock's out-of-flow positioned descendants was error prone,
+        subject to becoming inconsistent, and in the case of removePositionedObjects, inefficient. This patch 
+        extracts the algorithm used for percent height descendants and re-uses it for positioned objects. This same
+        method could further be re-used for floats.
+
+        This change removes the m_positionedObjects pointer, which brings RenderBlock's size down (yay!).
+
+        Test: fast/block/positioning/relayout-nested-positioned-elements-crash-2.html
+
+        * rendering/RenderBlock.cpp:
+        (SameSizeAsRenderBlock):
+        (WebCore):
+        (WebCore::removeBlockFromDescendantAndContainerMaps):
+        (WebCore::RenderBlock::~RenderBlock):
+        (WebCore::RenderBlock::addOverflowFromPositionedObjects):
+        (WebCore::RenderBlock::layoutBlockChildren):
+        (WebCore::RenderBlock::layoutPositionedObjects):
+        (WebCore::RenderBlock::markPositionedObjectsForLayout):
+        (WebCore::clipOutPositionedObjects):
+        (WebCore::RenderBlock::selectionGaps):
+        (WebCore::RenderBlock::insertIntoTrackedRendererMaps):
+        (WebCore::RenderBlock::removeFromTrackedRendererMaps):
+        (WebCore::RenderBlock::positionedObjects):
+        (WebCore::RenderBlock::insertPositionedObject):
+        (WebCore::RenderBlock::removePositionedObject):
+        (WebCore::RenderBlock::removePositionedObjects):
+        (WebCore::RenderBlock::addPercentHeightDescendant):
+        (WebCore::RenderBlock::removePercentHeightDescendant):
+        (WebCore::RenderBlock::percentHeightDescendants):
+        (WebCore::RenderBlock::checkPositionedObjectsNeedLayout):
+        * rendering/RenderBlock.h:
+        (WebCore):
+        (RenderBlock):
+        (WebCore::RenderBlock::hasPositionedObjects):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::removeFloatingOrPositionedChildFromBlockLists):
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::moveChildTo): Changing the fixme to reflect the assumption that the caller
+        has taken care of updating the positioned renderer maps is a decision not a bug. The ASSERT should help
+        assure this.
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::layoutRows):
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::setFixedPositionedObjectsNeedLayout):
+
 2012-08-10  Joshua Netterfield  <jnetterfield@rim.com>
 
         [WebGL] Add support for EXT_robustness

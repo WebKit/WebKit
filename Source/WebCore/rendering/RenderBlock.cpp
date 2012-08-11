@@ -71,7 +71,7 @@ namespace WebCore {
 using namespace HTMLNames;
 
 struct SameSizeAsRenderBlock : public RenderBox {
-    void* pointers[3];
+    void* pointers[2];
     RenderObjectChildList children;
     RenderLineBoxList lineBoxes;
     uint32_t bitfields;
@@ -96,11 +96,11 @@ struct SameSizeAsMarginInfo {
 typedef WTF::HashMap<const RenderBox*, ColumnInfo*> ColumnInfoMap;
 static ColumnInfoMap* gColumnInfoMap = 0;
 
-typedef WTF::HashMap<const RenderBlock*, HashSet<RenderBox*>*> PercentHeightDescendantsMap;
-static PercentHeightDescendantsMap* gPercentHeightDescendantsMap = 0;
+static TrackedDescendantsMap* gPositionedDescendantsMap = 0;
+static TrackedDescendantsMap* gPercentHeightDescendantsMap = 0;
 
-typedef WTF::HashMap<const RenderBox*, HashSet<RenderBlock*>*> PercentHeightContainerMap;
-static PercentHeightContainerMap* gPercentHeightContainerMap = 0;
+static TrackedContainerMap* gPositionedContainerMap = 0;
+static TrackedContainerMap* gPercentHeightContainerMap = 0;
     
 typedef WTF::HashMap<RenderBlock*, ListHashSet<RenderInline*>*> ContinuationOutlineTableMap;
 
@@ -196,6 +196,26 @@ RenderBlock::RenderBlock(Node* node)
     COMPILE_ASSERT(sizeof(RenderBlock::MarginInfo) == sizeof(SameSizeAsMarginInfo), MarginInfo_should_stay_small);
 }
 
+static void removeBlockFromDescendantAndContainerMaps(RenderBlock* block, TrackedDescendantsMap*& descendantMap, TrackedContainerMap*& containerMap)
+{
+    if (TrackedRendererListHashSet* descendantSet = descendantMap->take(block)) {
+        TrackedRendererListHashSet::iterator end = descendantSet->end();
+        for (TrackedRendererListHashSet::iterator descendant = descendantSet->begin(); descendant != end; ++descendant) {
+            HashSet<RenderBlock*>* containerSet = containerMap->get(*descendant);
+            ASSERT(containerSet);
+            if (!containerSet)
+                continue;
+            ASSERT(containerSet->contains(block));
+            containerSet->remove(block);
+            if (containerSet->isEmpty()) {
+                containerMap->remove(*descendant);
+                delete containerSet;
+            }
+        }
+        delete descendantSet;
+    }
+}
+
 RenderBlock::~RenderBlock()
 {
     if (m_floatingObjects)
@@ -204,24 +224,10 @@ RenderBlock::~RenderBlock()
     if (hasColumns())
         delete gColumnInfoMap->take(this);
 
-    if (gPercentHeightDescendantsMap) {
-        if (HashSet<RenderBox*>* descendantSet = gPercentHeightDescendantsMap->take(this)) {
-            HashSet<RenderBox*>::iterator end = descendantSet->end();
-            for (HashSet<RenderBox*>::iterator descendant = descendantSet->begin(); descendant != end; ++descendant) {
-                HashSet<RenderBlock*>* containerSet = gPercentHeightContainerMap->get(*descendant);
-                ASSERT(containerSet);
-                if (!containerSet)
-                    continue;
-                ASSERT(containerSet->contains(this));
-                containerSet->remove(this);
-                if (containerSet->isEmpty()) {
-                    gPercentHeightContainerMap->remove(*descendant);
-                    delete containerSet;
-                }
-            }
-            delete descendantSet;
-        }
-    }
+    if (gPercentHeightDescendantsMap)
+        removeBlockFromDescendantAndContainerMaps(this, gPercentHeightDescendantsMap, gPercentHeightContainerMap);
+    if (gPositionedDescendantsMap)
+        removeBlockFromDescendantAndContainerMaps(this, gPositionedDescendantsMap, gPositionedContainerMap);
 }
 
 void RenderBlock::willBeDestroyed()
@@ -1660,20 +1666,21 @@ void RenderBlock::addOverflowFromFloats()
 
 void RenderBlock::addOverflowFromPositionedObjects()
 {
-    if (!m_positionedObjects)
+    TrackedRendererListHashSet* positionedDescendants = positionedObjects();
+    if (!positionedDescendants)
         return;
 
     RenderBox* positionedObject;
-    Iterator end = m_positionedObjects->end();
-    for (Iterator it = m_positionedObjects->begin(); it != end; ++it) {
+    TrackedRendererListHashSet::iterator end = positionedDescendants->end();
+    for (TrackedRendererListHashSet::iterator it = positionedDescendants->begin(); it != end; ++it) {
         positionedObject = *it;
         
         // Fixed positioned elements don't contribute to layout overflow, since they don't scroll with the content.
         if (positionedObject->style()->position() != FixedPosition) {
-            int x = positionedObject->x();
+            LayoutUnit x = positionedObject->x();
             if (style()->shouldPlaceBlockDirectionScrollbarOnLogicalLeft())
                 x -= verticalScrollbarWidth();
-            addOverflowFromChild(positionedObject, IntSize(x, positionedObject->y()));
+            addOverflowFromChild(positionedObject, LayoutSize(x, positionedObject->y()));
         }
     }
 }
@@ -2280,9 +2287,9 @@ void RenderBlock::setLogicalTopForChild(RenderBox* child, LayoutUnit logicalTop,
 void RenderBlock::layoutBlockChildren(bool relayoutChildren, LayoutUnit& maxFloatLogicalBottom)
 {
     if (gPercentHeightDescendantsMap) {
-        if (HashSet<RenderBox*>* descendants = gPercentHeightDescendantsMap->get(this)) {
-            HashSet<RenderBox*>::iterator end = descendants->end();
-            for (HashSet<RenderBox*>::iterator it = descendants->begin(); it != end; ++it) {
+        if (TrackedRendererListHashSet* descendants = gPercentHeightDescendantsMap->get(this)) {
+            TrackedRendererListHashSet::iterator end = descendants->end();
+            for (TrackedRendererListHashSet::iterator it = descendants->begin(); it != end; ++it) {
                 RenderBox* box = *it;
                 while (box != this) {
                     if (box->normalChildNeedsLayout())
@@ -2561,15 +2568,16 @@ bool RenderBlock::simplifiedLayout()
 
 void RenderBlock::layoutPositionedObjects(bool relayoutChildren)
 {
-    if (!m_positionedObjects)
+    TrackedRendererListHashSet* positionedDescendants = positionedObjects();
+    if (!positionedDescendants)
         return;
         
     if (hasColumns())
         view()->layoutState()->clearPaginationInformation(); // Positioned objects are not part of the column flow, so they don't paginate with the columns.
 
     RenderBox* r;
-    Iterator end = m_positionedObjects->end();
-    for (Iterator it = m_positionedObjects->begin(); it != end; ++it) {
+    TrackedRendererListHashSet::iterator end = positionedDescendants->end();
+    for (TrackedRendererListHashSet::iterator it = positionedDescendants->begin(); it != end; ++it) {
         r = *it;
         // When a non-positioned block element moves, it may have positioned children that are implicitly positioned relative to the
         // non-positioned block.  Rather than trying to detect all of these movement cases, we just always lay out positioned
@@ -2625,10 +2633,11 @@ void RenderBlock::layoutPositionedObjects(bool relayoutChildren)
 
 void RenderBlock::markPositionedObjectsForLayout()
 {
-    if (m_positionedObjects) {
+    TrackedRendererListHashSet* positionedDescendants = positionedObjects();
+    if (positionedDescendants) {
         RenderBox* r;
-        Iterator end = m_positionedObjects->end();
-        for (Iterator it = m_positionedObjects->begin(); it != end; ++it) {
+        TrackedRendererListHashSet::iterator end = positionedDescendants->end();
+        for (TrackedRendererListHashSet::iterator it = positionedDescendants->begin(); it != end; ++it) {
             r = *it;
             r->setChildNeedsLayout(true);
         }
@@ -3250,13 +3259,13 @@ void RenderBlock::paintSelection(PaintInfo& paintInfo, const LayoutPoint& paintO
     }
 }
 
-static void clipOutPositionedObjects(const PaintInfo* paintInfo, const LayoutPoint& offset, RenderBlock::PositionedObjectsListHashSet* positionedObjects)
+static void clipOutPositionedObjects(const PaintInfo* paintInfo, const LayoutPoint& offset, TrackedRendererListHashSet* positionedObjects)
 {
     if (!positionedObjects)
         return;
     
-    RenderBlock::PositionedObjectsListHashSet::const_iterator end = positionedObjects->end();
-    for (RenderBlock::PositionedObjectsListHashSet::const_iterator it = positionedObjects->begin(); it != end; ++it) {
+    TrackedRendererListHashSet::const_iterator end = positionedObjects->end();
+    for (TrackedRendererListHashSet::const_iterator it = positionedObjects->begin(); it != end; ++it) {
         RenderBox* r = *it;
         paintInfo->context->clipOut(IntRect(offset.x() + r->x(), offset.y() + r->y(), r->width(), r->height()));
     }
@@ -3294,10 +3303,10 @@ GapRects RenderBlock::selectionGaps(RenderBlock* rootBlock, const LayoutPoint& r
         LayoutRect flippedBlockRect(offsetFromRootBlock.width(), offsetFromRootBlock.height(), width(), height());
         rootBlock->flipForWritingMode(flippedBlockRect);
         flippedBlockRect.moveBy(rootBlockPhysicalPosition);
-        clipOutPositionedObjects(paintInfo, flippedBlockRect.location(), m_positionedObjects.get());
+        clipOutPositionedObjects(paintInfo, flippedBlockRect.location(), positionedObjects());
         if (isBody() || isRoot()) // The <body> must make sure to examine its containingBlock's positioned objects.
             for (RenderBlock* cb = containingBlock(); cb && !cb->isRenderView(); cb = cb->containingBlock())
-                clipOutPositionedObjects(paintInfo, LayoutPoint(cb->x(), cb->y()), cb->m_positionedObjects.get()); // FIXME: Not right for flipped writing modes.
+                clipOutPositionedObjects(paintInfo, LayoutPoint(cb->x(), cb->y()), cb->positionedObjects()); // FIXME: Not right for flipped writing modes.
         if (m_floatingObjects) {
             const FloatingObjectSet& floatingObjectSet = m_floatingObjects->set();
             FloatingObjectSetIterator end = floatingObjectSet.end();
@@ -3588,6 +3597,69 @@ RenderBlock* RenderBlock::blockBeforeWithinSelectionRoot(LayoutSize& offset) con
     return beforeBlock;
 }
 
+void RenderBlock::insertIntoTrackedRendererMaps(RenderBox* descendant, TrackedDescendantsMap*& descendantsMap, TrackedContainerMap*& containerMap)
+{
+    if (!descendantsMap) {
+        descendantsMap = new TrackedDescendantsMap;
+        containerMap = new TrackedContainerMap;
+    }
+    
+    TrackedRendererListHashSet* descendantSet = descendantsMap->get(this);
+    if (!descendantSet) {
+        descendantSet = new TrackedRendererListHashSet;
+        descendantsMap->set(this, descendantSet);
+    }
+    bool added = descendantSet->add(descendant).isNewEntry;
+    if (!added) {
+        ASSERT(containerMap->get(descendant));
+        ASSERT(containerMap->get(descendant)->contains(this));
+        return;
+    }
+    
+    HashSet<RenderBlock*>* containerSet = containerMap->get(descendant);
+    if (!containerSet) {
+        containerSet = new HashSet<RenderBlock*>;
+        containerMap->set(descendant, containerSet);
+    }
+    ASSERT(!containerSet->contains(this));
+    containerSet->add(this);
+}
+
+void RenderBlock::removeFromTrackedRendererMaps(RenderBox* descendant, TrackedDescendantsMap*& descendantsMap, TrackedContainerMap*& containerMap)
+{
+    if (!descendantsMap)
+        return;
+    
+    HashSet<RenderBlock*>* containerSet = containerMap->take(descendant);
+    if (!containerSet)
+        return;
+    
+    HashSet<RenderBlock*>::iterator end = containerSet->end();
+    for (HashSet<RenderBlock*>::iterator it = containerSet->begin(); it != end; ++it) {
+        RenderBlock* container = *it;
+        ASSERT(descendant->isDescendantOf(container));
+        TrackedRendererListHashSet* descendantSet = descendantsMap->get(container);
+        ASSERT(descendantSet);
+        if (!descendantSet)
+            continue;
+        ASSERT(descendantSet->contains(descendant));
+        descendantSet->remove(descendant);
+        if (descendantSet->isEmpty()) {
+            descendantsMap->remove(container);
+            delete descendantSet;
+        }
+    }
+    
+    delete containerSet;
+}
+
+TrackedRendererListHashSet* RenderBlock::positionedObjects() const
+{
+    if (gPositionedDescendantsMap)
+        return gPositionedDescendantsMap->get(this);
+    return 0;
+}
+
 void RenderBlock::insertPositionedObject(RenderBox* o)
 {
     ASSERT(!isAnonymousBlock());
@@ -3595,31 +3667,27 @@ void RenderBlock::insertPositionedObject(RenderBox* o)
     if (o->isRenderFlowThread())
         return;
     
-    // Create the list of special objects if we don't aleady have one
-    if (!m_positionedObjects)
-        m_positionedObjects = adoptPtr(new PositionedObjectsListHashSet);
-
-    m_positionedObjects->add(o);
+    insertIntoTrackedRendererMaps(o, gPositionedDescendantsMap, gPositionedContainerMap);
 }
 
 void RenderBlock::removePositionedObject(RenderBox* o)
 {
-    if (m_positionedObjects)
-        m_positionedObjects->remove(o);
+    removeFromTrackedRendererMaps(o, gPositionedDescendantsMap, gPositionedContainerMap);
 }
 
 void RenderBlock::removePositionedObjects(RenderBlock* o)
 {
-    if (!m_positionedObjects)
+    TrackedRendererListHashSet* positionedDescendants = positionedObjects();
+    if (!positionedDescendants)
         return;
     
     RenderBox* r;
     
-    Iterator end = m_positionedObjects->end();
+    TrackedRendererListHashSet::iterator end = positionedDescendants->end();
     
     Vector<RenderBox*, 16> deadObjects;
 
-    for (Iterator it = m_positionedObjects->begin(); it != end; ++it) {
+    for (TrackedRendererListHashSet::iterator it = positionedDescendants->begin(); it != end; ++it) {
         r = *it;
         if (!o || r->isDescendantOf(o)) {
             if (o)
@@ -3638,7 +3706,7 @@ void RenderBlock::removePositionedObjects(RenderBlock* o)
     }
     
     for (unsigned i = 0; i < deadObjects.size(); i++)
-        m_positionedObjects->remove(deadObjects.at(i));
+        removePositionedObject(deadObjects.at(i));
 }
 
 RenderBlock::FloatingObject* RenderBlock::insertFloatingObject(RenderBox* o)
@@ -3916,60 +3984,15 @@ void RenderBlock::newLine(EClear clear)
 
 void RenderBlock::addPercentHeightDescendant(RenderBox* descendant)
 {
-    if (!gPercentHeightDescendantsMap) {
-        gPercentHeightDescendantsMap = new PercentHeightDescendantsMap;
-        gPercentHeightContainerMap = new PercentHeightContainerMap;
-    }
-
-    HashSet<RenderBox*>* descendantSet = gPercentHeightDescendantsMap->get(this);
-    if (!descendantSet) {
-        descendantSet = new HashSet<RenderBox*>;
-        gPercentHeightDescendantsMap->set(this, descendantSet);
-    }
-    bool added = descendantSet->add(descendant).isNewEntry;
-    if (!added) {
-        ASSERT(gPercentHeightContainerMap->get(descendant));
-        ASSERT(gPercentHeightContainerMap->get(descendant)->contains(this));
-        return;
-    }
-
-    HashSet<RenderBlock*>* containerSet = gPercentHeightContainerMap->get(descendant);
-    if (!containerSet) {
-        containerSet = new HashSet<RenderBlock*>;
-        gPercentHeightContainerMap->set(descendant, containerSet);
-    }
-    ASSERT(!containerSet->contains(this));
-    containerSet->add(this);
+    insertIntoTrackedRendererMaps(descendant, gPercentHeightDescendantsMap, gPercentHeightContainerMap);
 }
 
 void RenderBlock::removePercentHeightDescendant(RenderBox* descendant)
 {
-    if (!gPercentHeightContainerMap)
-        return;
-
-    HashSet<RenderBlock*>* containerSet = gPercentHeightContainerMap->take(descendant);
-    if (!containerSet)
-        return;
-
-    HashSet<RenderBlock*>::iterator end = containerSet->end();
-    for (HashSet<RenderBlock*>::iterator it = containerSet->begin(); it != end; ++it) {
-        RenderBlock* container = *it;
-        HashSet<RenderBox*>* descendantSet = gPercentHeightDescendantsMap->get(container);
-        ASSERT(descendantSet);
-        if (!descendantSet)
-            continue;
-        ASSERT(descendantSet->contains(descendant));
-        descendantSet->remove(descendant);
-        if (descendantSet->isEmpty()) {
-            gPercentHeightDescendantsMap->remove(container);
-            delete descendantSet;
-        }
-    }
-
-    delete containerSet;
+    removeFromTrackedRendererMaps(descendant, gPercentHeightDescendantsMap, gPercentHeightContainerMap);
 }
 
-HashSet<RenderBox*>* RenderBlock::percentHeightDescendants() const
+TrackedRendererListHashSet* RenderBlock::percentHeightDescendants() const
 {
     return gPercentHeightDescendantsMap ? gPercentHeightDescendantsMap->get(this) : 0;
 }
@@ -7430,9 +7453,12 @@ RenderBlock* RenderBlock::createAnonymousColumnSpanWithParentRenderer(const Rend
 #ifndef NDEBUG
 void RenderBlock::checkPositionedObjectsNeedLayout()
 {
-    if (PositionedObjectsListHashSet* positionedObjects = this->positionedObjects()) {
-        PositionedObjectsListHashSet::const_iterator end = positionedObjects->end();
-        for (PositionedObjectsListHashSet::const_iterator it = positionedObjects->begin(); it != end; ++it) {
+    if (!gPositionedDescendantsMap)
+        return;
+
+    if (TrackedRendererListHashSet* positionedDescendantSet = positionedObjects()) {
+        TrackedRendererListHashSet::const_iterator end = positionedDescendantSet->end();
+        for (TrackedRendererListHashSet::const_iterator it = positionedDescendantSet->begin(); it != end; ++it) {
             RenderBox* currBox = *it;
             ASSERT(!currBox->needsLayout());
         }

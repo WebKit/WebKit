@@ -587,9 +587,9 @@ void RenderTableSection::layoutRows()
                 }
             }
 
-            if (HashSet<RenderBox*>* percentHeightDescendants = cell->percentHeightDescendants()) {
-                HashSet<RenderBox*>::iterator end = percentHeightDescendants->end();
-                for (HashSet<RenderBox*>::iterator it = percentHeightDescendants->begin(); it != end; ++it) {
+            if (ListHashSet<RenderBox*>* percentHeightDescendants = cell->percentHeightDescendants()) {
+                ListHashSet<RenderBox*>::iterator end = percentHeightDescendants->end();
+                for (ListHashSet<RenderBox*>::iterator it = percentHeightDescendants->begin(); it != end; ++it) {
                     RenderBox* box = *it;
                     if (!box->isReplaced() && !box->scrollsOverflow() && !flexAllChildren)
                         continue;

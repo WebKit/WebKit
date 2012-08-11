@@ -1,3 +1,16 @@
+2012-08-11  Levi Weintraub  <leviw@chromium.org>
+
+        Track block's positioned objects like percent-height children
+        https://bugs.webkit.org/show_bug.cgi?id=89848
+
+        Reviewed by Abhishek Arya.
+
+        Adding another test to confirm that RenderBlock's positioned children lists don't become
+        inconsistent.
+
+        * fast/block/positioning/relayout-nested-positioned-elements-crash-2-expected.txt: Added.
+        * fast/block/positioning/relayout-nested-positioned-elements-crash-2.html: Added.
+
 2012-08-10  Arko Saha  <arko@motorola.com>
 
         Microdata: item with itemprop attribute should not include the item itself in the HTMLPropertiesCollection.
