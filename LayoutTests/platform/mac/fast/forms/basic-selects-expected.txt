@@ -47,7 +47,7 @@ layer at (0,0) size 800x486
         RenderMenuList {SELECT} at (257,79) size 49x18 [color=#808080] [bgcolor=#FFFFFF]
           RenderBlock (anonymous) at (0,0) size 49x18
             RenderText at (8,2) size 18x13
-              text run at (8,2) width 18: "foo"
+              text run at (8,2) width 18: "bar"
         RenderText {#text} at (308,78) size 8x18
           text run at (308,78) width 8: "b"
         RenderBR {BR} at (316,78) size 0x18

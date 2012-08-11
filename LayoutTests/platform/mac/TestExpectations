@@ -327,9 +327,6 @@ BUGWK93387 :  inspector/debugger/watch-expressions-panel-switch.html = TEXT
 BUGWK93387 :  inspector/debugger/debugger-activation-crash2.html = TEXT
 BUGWK93387 :  inspector/debugger/debugger-set-breakpoint-regex.html = TEXT
 
-// REGRESSION (r124416): fast/forms/basic-selects.html failing on Lion Debug Tests
-BUGWK93538 : fast/forms/basic-selects.html = TEXT
-
 // (r124484) inspector/device-orientation-success.html failing on Mac ports
 BUGWK93552 : inspector/device-orientation-success.html = TEXT
 

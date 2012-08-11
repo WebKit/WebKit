@@ -1,5 +1,17 @@
 2012-08-10  Dean Jackson  <dino@apple.com>
 
+        REGRESSION (r124416): fast/forms/basic-selects.html failing on Lion Debug Tests
+        https://bugs.webkit.org/show_bug.cgi?id=93538
+
+        Unreviewed gardening. Rebaseline of this test for Mac ports, and
+        remove expected failure.
+
+        * platform/mac/TestExpectations:
+        * platform/mac/fast/forms/basic-selects-expected.png:
+        * platform/mac/fast/forms/basic-selects-expected.txt:
+
+2012-08-10  Dean Jackson  <dino@apple.com>
+
         Unreviewed gardening. Missing platform expectations for this test. Results
         are identical to chromium-mac at present.
 
