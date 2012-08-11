@@ -32,6 +32,7 @@
 #include "ExceptionCode.h"
 #include "HTMLMediaElement.h"
 #include "TimeRanges.h"
+#include <wtf/CurrentTime.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/AtomicString.h>
 

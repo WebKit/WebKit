@@ -1,3 +1,12 @@
+2012-08-10  James Robinson  <jamesr@chromium.org>
+
+        Unreviewed build fix.
+
+        r125337 added a call to WTF::currentTime() in MediaController.cpp, but that file didn't #include
+        <wtf/CurrentTime.h>. This file is indirectly picked up on the include paths for some ports, but not all.
+
+        * html/MediaController.cpp:
+
 2012-08-10  Jer Noble  <jer.noble@apple.com>
 
         no timeupdate events emitted for media controller
