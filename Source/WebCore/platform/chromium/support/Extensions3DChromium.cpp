@@ -29,6 +29,7 @@
 
 #include "GraphicsContext3D.h"
 #include "GraphicsContext3DPrivate.h"
+#include "NotImplemented.h"
 #include <public/WebGraphicsContext3D.h>
 
 namespace WebCore {
@@ -180,5 +181,21 @@ void Extensions3DChromium::shallowFlushCHROMIUM()
 {
     return m_private->webContext()->shallowFlushCHROMIUM();
 }
+
+void Extensions3DChromium::readnPixelsEXT(int x, int y, GC3Dsizei width, GC3Dsizei height, GC3Denum format, GC3Denum type, GC3Dsizei bufSize, void *data)
+{
+    notImplemented();
+}
+
+void Extensions3DChromium::getnUniformfvEXT(GC3Duint program, int location, GC3Dsizei bufSize, float *params)
+{
+    notImplemented();
+}
+
+void Extensions3DChromium::getnUniformivEXT(GC3Duint program, int location, GC3Dsizei bufSize, int *params)
+{
+    notImplemented();
+}
+
 
 } // namespace WebCore

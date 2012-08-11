@@ -126,6 +126,11 @@ public:
     // GL_CHROMIUM_shallow_flush
     virtual void shallowFlushCHROMIUM();
 
+    // GL_EXT_robustness
+    virtual void readnPixelsEXT(int x, int y, GC3Dsizei width, GC3Dsizei height, GC3Denum format, GC3Denum type, GC3Dsizei bufSize, void *data);
+    virtual void getnUniformfvEXT(GC3Duint program, int location, GC3Dsizei bufSize, float *params);
+    virtual void getnUniformivEXT(GC3Duint program, int location, GC3Dsizei bufSize, int *params);
+
 private:
     // Instances of this class are strictly owned by the GraphicsContext3D implementation and do not
     // need to be instantiated by any other code.

@@ -143,6 +143,21 @@ void Extensions3DOpenGLCommon::initializeAvailableExtensions()
     m_initializedAvailableExtensions = true;
 }
 
+void Extensions3DOpenGLCommon::readnPixelsEXT(int, int, GC3Dsizei, GC3Dsizei, GC3Denum, GC3Denum, GC3Dsizei, void *)
+{
+    m_context->synthesizeGLError(GL_INVALID_OPERATION);
+}
+
+void Extensions3DOpenGLCommon::getnUniformfvEXT(GC3Duint, int, GC3Dsizei, float *)
+{
+    m_context->synthesizeGLError(GL_INVALID_OPERATION);
+}
+
+void Extensions3DOpenGLCommon::getnUniformivEXT(GC3Duint, int, GC3Dsizei, int *)
+{
+    m_context->synthesizeGLError(GL_INVALID_OPERATION);
+}
+
 } // namespace WebCore
 
 #endif // USE(3D_GRAPHICS)

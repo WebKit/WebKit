@@ -1,3 +1,15 @@
+2012-08-10  Joshua Netterfield  <jnetterfield@rim.com>
+
+        [WebGL] Add support for EXT_robustness
+        https://bugs.webkit.org/show_bug.cgi?id=93379
+
+        Reviewed by George Staikos.
+
+        RIM PR# 147510
+        Internally reviewed by Arvid Nilsson.
+
+        * CMakeLists.txt: Build system adaptation.
+
 2012-08-10  Benjamin C Meyer  <bmeyer@rim.com>
 
         Introduce JavaScriptVariant object.

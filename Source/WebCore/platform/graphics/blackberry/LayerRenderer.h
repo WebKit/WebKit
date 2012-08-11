@@ -29,12 +29,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-
 #ifndef LayerRenderer_h
 #define LayerRenderer_h
 
 #if USE(ACCELERATED_COMPOSITING)
 
+#include "Extensions3DOpenGLES.h"
 #include "IntRect.h"
 #include "LayerData.h"
 #include "LayerFilterRenderer.h"
@@ -206,6 +206,9 @@ private:
     LayerSet m_layersLockingTextureResources;
 
     BlackBerry::Platform::Graphics::GLES2Context* m_context;
+
+    bool m_isRobustnessSupported;
+    PFNGLGETGRAPHICSRESETSTATUSEXTPROC m_glGetGraphicsResetStatusEXT;
 
     LayerRenderingResults m_lastRenderingResults;
     bool m_needsCommit;

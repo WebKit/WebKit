@@ -52,6 +52,11 @@ public:
 
     virtual String getTranslatedShaderSourceANGLE(Platform3DObject);
 
+    // EXT Robustness - uses getGraphicsResetStatusARB()
+    virtual void readnPixelsEXT(int x, int y, GC3Dsizei width, GC3Dsizei height, GC3Denum format, GC3Denum type, GC3Dsizei bufSize, void *data);
+    virtual void getnUniformfvEXT(GC3Duint program, int location, GC3Dsizei bufSize, float *params);
+    virtual void getnUniformivEXT(GC3Duint program, int location, GC3Dsizei bufSize, int *params);
+
 protected:
     friend class Extensions3DOpenGLES;
     Extensions3DOpenGLCommon(GraphicsContext3D*);

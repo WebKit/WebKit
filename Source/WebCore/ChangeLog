@@ -1,3 +1,71 @@
+2012-08-10  Joshua Netterfield  <jnetterfield@rim.com>
+
+        [WebGL] Add support for EXT_robustness
+        https://bugs.webkit.org/show_bug.cgi?id=93379
+
+        Reviewed by George Staikos.
+
+        Take advantage of EXT robustness in WebKit.
+
+        This commit makes WebKit use readnPixelsEXT, getnUniformfvEXT and
+        getnUniformivEXT instead of readPixels, getUniformfv and getUniformiv
+        when possible, and sets up the reset notification behaviour for
+        GLES platforms.
+
+        The reset behaviour has not yet been implemented in the BlackBerry
+        compositing thread, so for now on BlackBerry we just abort when
+        the context has been reset. This prevents undefined behaviour, but
+        can be improved in the future.
+
+        No new tests are needed because no new functionality is introduced.
+        Support for ARB robustness reset notification behaviour is already
+        in WebKit, and EXT robustness' reset notifcation behaviour is the
+        same. readnPixelsEXT replaces WebKit's existing mechanisms of
+        preventing buffer overflows.
+
+        RIM PR# 147510
+        Internally reviewed by Arvid Nilsson.
+
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore):
+        (WebCore::WebGLRenderingContext::setupFlags):
+        (WebCore::WebGLRenderingContext::getUniform):
+        (WebCore::WebGLRenderingContext::readPixels):
+        * html/canvas/WebGLRenderingContext.h:
+        (WebGLRenderingContext):
+        * platform/chromium/support/Extensions3DChromium.cpp:
+        (WebCore::Extensions3DChromium::readnPixelsEXT):
+        (WebCore):
+        (WebCore::Extensions3DChromium::getnUniformfvEXT):
+        (WebCore::Extensions3DChromium::getnUniformivEXT):
+        * platform/graphics/Extensions3D.h:
+        * platform/graphics/blackberry/GraphicsContext3DBlackBerry.cpp:
+        (WebCore::GraphicsContext3D::setContextLostCallback):
+        * platform/graphics/blackberry/LayerRenderer.cpp:
+        (WebCore::LayerRenderer::LayerRenderer):
+        (WebCore::LayerRenderer::makeContextCurrent):
+        * platform/graphics/blackberry/LayerRenderer.h:
+        (LayerRenderer):
+        * platform/graphics/chromium/Extensions3DChromium.h:
+        * platform/graphics/opengl/Extensions3DOpenGLCommon.cpp:
+        (WebCore::Extensions3DOpenGLCommon::readnPixelsEXT):
+        (WebCore):
+        (WebCore::Extensions3DOpenGLCommon::getnUniformfvEXT):
+        (WebCore::Extensions3DOpenGLCommon::getnUniformivEXT):
+        * platform/graphics/opengl/Extensions3DOpenGLCommon.h:
+        (Extensions3DOpenGLCommon):
+        * platform/graphics/opengl/Extensions3DOpenGLES.cpp:
+        (WebCore::Extensions3DOpenGLES::Extensions3DOpenGLES):
+        (WebCore::Extensions3DOpenGLES::getGraphicsResetStatusARB):
+        (WebCore):
+        (WebCore::Extensions3DOpenGLES::setEXTContextLostCallback):
+        (WebCore::Extensions3DOpenGLES::readnPixelsEXT):
+        (WebCore::Extensions3DOpenGLES::getnUniformfvEXT):
+        (WebCore::Extensions3DOpenGLES::getnUniformivEXT):
+        (WebCore::Extensions3DOpenGLES::supportsExtension):
+        * platform/graphics/opengl/Extensions3DOpenGLES.h:
+        (Extensions3DOpenGLES):
+
 2012-08-10  Arko Saha  <arko@motorola.com>
 
         Microdata: item with itemprop attribute should not include the item itself in the HTMLPropertiesCollection.

@@ -494,6 +494,7 @@ public:
     bool m_isErrorGeneratedOnOutOfBoundsAccesses;
     bool m_isResourceSafe;
     bool m_isDepthStencilSupported;
+    bool m_isRobustnessEXTSupported;
 
     bool m_synthesizedErrorsToConsole;
     int m_numGLErrorsToConsoleAllowed;

@@ -388,8 +388,9 @@ void GraphicsContext3D::paintToCanvas(const unsigned char* imagePixels, int imag
     context->drawImage(bitmapImage.get(), ColorSpaceDeviceRGB, dst, src, CompositeCopy, RespectImageOrientation, false);
 }
 
-void GraphicsContext3D::setContextLostCallback(PassOwnPtr<ContextLostCallback>)
+void GraphicsContext3D::setContextLostCallback(PassOwnPtr<ContextLostCallback> callback)
 {
+    static_cast<Extensions3DOpenGLES*>(getExtensions())->setEXTContextLostCallback(callback);
 }
 
 void GraphicsContext3D::setErrorMessageCallback(PassOwnPtr<ErrorMessageCallback>)

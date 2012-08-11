@@ -33,11 +33,15 @@
 #include <EGL/egl.h>
 #include <wtf/Vector.h>
 
+#if PLATFORM(BLACKBERRY)
+#include <BlackBerryPlatformLog.h>
+#endif
 
 namespace WebCore {
 
 Extensions3DOpenGLES::Extensions3DOpenGLES(GraphicsContext3D* context)
     : Extensions3DOpenGLCommon(context)
+    , m_contextResetStatus(GL_NO_ERROR)
     , m_supportsOESvertexArrayObject(false)
     , m_supportsIMGMultisampledRenderToTexture(false)
     , m_glFramebufferTexture2DMultisampleIMG(0)
@@ -46,6 +50,10 @@ Extensions3DOpenGLES::Extensions3DOpenGLES(GraphicsContext3D* context)
     , m_glDeleteVertexArraysOES(0)
     , m_glGenVertexArraysOES(0)
     , m_glIsVertexArrayOES(0)
+    , m_glGetGraphicsResetStatusEXT(0)
+    , m_glReadnPixelsEXT(0)
+    , m_glGetnUniformfvEXT(0)
+    , m_glGetnUniformivEXT(0)
 {
 }
 
@@ -137,6 +145,77 @@ void Extensions3DOpenGLES::bindVertexArrayOES(Platform3DObject array)
         m_context->synthesizeGLError(GL_INVALID_OPERATION);
 }
 
+int Extensions3DOpenGLES::getGraphicsResetStatusARB()
+{
+    // FIXME: This does not call getGraphicsResetStatusARB, but instead getGraphicsResetStatusEXT.
+    // The return codes from the two extensions are identical and their purpose is the same, so it
+    // may be best to rename getGraphicsResetStatusARB() to getGraphicsResetStatus().
+    if (m_contextResetStatus != GL_NO_ERROR)
+        return m_contextResetStatus;
+    if (m_glGetGraphicsResetStatusEXT) {
+        m_context->makeContextCurrent();
+        int reasonForReset = m_glGetGraphicsResetStatusEXT();
+        if (reasonForReset != GL_NO_ERROR) {
+#if PLATFORM(BLACKBERRY)
+            // We cannot yet recreate our compositing thread, so just quit.
+            BlackBerry::Platform::logAlways(BlackBerry::Platform::LogLevelCritical, "Robust OpenGL context has been reset. Aborting.");
+            CRASH();
+#endif
+            ASSERT(m_contextLostCallback);
+            if (m_contextLostCallback)
+                m_contextLostCallback->onContextLost();
+            m_contextResetStatus = reasonForReset;
+        }
+        return reasonForReset;
+    }
+
+    m_context->synthesizeGLError(GL_INVALID_OPERATION);
+    return false;
+}
+
+void Extensions3DOpenGLES::setEXTContextLostCallback(PassOwnPtr<GraphicsContext3D::ContextLostCallback> callback)
+{
+    m_contextLostCallback = callback;
+}
+
+void Extensions3DOpenGLES::readnPixelsEXT(int x, int y, GC3Dsizei width, GC3Dsizei height, GC3Denum format, GC3Denum type, GC3Dsizei bufSize, void *data)
+{
+    if (m_glReadnPixelsEXT) {
+        m_context->makeContextCurrent();
+        // FIXME: remove the two glFlush calls when the driver bug is fixed, i.e.,
+        // all previous rendering calls should be done before reading pixels.
+        ::glFlush();
+
+        // FIXME: If non-BlackBerry platforms use this, they will need to implement
+        // their anti-aliasing code here.
+        m_glReadnPixelsEXT(x, y, width, height, format, type, bufSize, data);
+        return;
+    }
+
+    m_context->synthesizeGLError(GL_INVALID_OPERATION);
+}
+
+void Extensions3DOpenGLES::getnUniformfvEXT(GC3Duint program, int location, GC3Dsizei bufSize, float *params)
+{
+    if (m_glGetnUniformfvEXT) {
+        m_context->makeContextCurrent();
+        m_glGetnUniformfvEXT(program, location, bufSize, params);
+        return;
+    }
+
+    m_context->synthesizeGLError(GL_INVALID_OPERATION);
+}
+
+void Extensions3DOpenGLES::getnUniformivEXT(GC3Duint program, int location, GC3Dsizei bufSize, int *params)
+{
+    if (m_glGetnUniformivEXT) {
+        m_context->makeContextCurrent();
+        m_glGetnUniformivEXT(program, location, bufSize, params);
+        return;
+    }
+
+    m_context->synthesizeGLError(GL_INVALID_OPERATION);
+}
 
 bool Extensions3DOpenGLES::supportsExtension(const String& name)
 {
@@ -151,6 +230,11 @@ bool Extensions3DOpenGLES::supportsExtension(const String& name)
             m_glFramebufferTexture2DMultisampleIMG = reinterpret_cast<PFNGLFRAMEBUFFERTEXTURE2DMULTISAMPLEIMG>(eglGetProcAddress("glFramebufferTexture2DMultisampleIMG"));
             m_glRenderbufferStorageMultisampleIMG = reinterpret_cast<PFNGLRENDERBUFFERSTORAGEMULTISAMPLEIMG>(eglGetProcAddress("glRenderbufferStorageMultisampleIMG"));
             m_supportsIMGMultisampledRenderToTexture = true;
+        } else if (name == "GL_EXT_robustness" && !m_glGetGraphicsResetStatusEXT) {
+            m_glGetGraphicsResetStatusEXT = reinterpret_cast<PFNGLGETGRAPHICSRESETSTATUSEXTPROC>(eglGetProcAddress("glGetGraphicsResetStatusEXT"));
+            m_glReadnPixelsEXT = reinterpret_cast<PFNGLREADNPIXELSEXTPROC>(eglGetProcAddress("glReadnPixelsEXT"));
+            m_glGetnUniformfvEXT = reinterpret_cast<PFNGLGETNUNIFORMFVEXTPROC>(eglGetProcAddress("glGetnUniformfvEXT"));
+            m_glGetnUniformivEXT = reinterpret_cast<PFNGLGETNUNIFORMIVEXTPROC>(eglGetProcAddress("glGetnUniformivEXT"));
         }
         return true;
     }

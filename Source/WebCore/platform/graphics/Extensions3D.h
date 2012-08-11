@@ -177,6 +177,11 @@ public:
 
     // GL_CHROMIUM_copy_texture
     virtual void copyTextureCHROMIUM(GC3Denum, Platform3DObject, Platform3DObject, GC3Dint, GC3Denum) = 0;
+
+    // EXT Robustness - uses getGraphicsResetStatusARB
+    virtual void readnPixelsEXT(int x, int y, GC3Dsizei width, GC3Dsizei height, GC3Denum format, GC3Denum type, GC3Dsizei bufSize, void *data) = 0;
+    virtual void getnUniformfvEXT(GC3Duint program, int location, GC3Dsizei bufSize, float *params) = 0;
+    virtual void getnUniformivEXT(GC3Duint program, int location, GC3Dsizei bufSize, int *params) = 0;
 };
 
 } // namespace WebCore
