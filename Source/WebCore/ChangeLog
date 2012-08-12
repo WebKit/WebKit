@@ -1,3 +1,15 @@
+2012-08-12  Ami Fischman  <fischman@chromium.org>
+
+        Stop Y-flipping CROS/ARM video textures
+        https://bugs.webkit.org/show_bug.cgi?id=93769
+
+        Reviewed by Eric Seidel.
+
+        No new tests; there's no cros/arm bot yet, sadly.
+
+        * platform/graphics/chromium/cc/CCVideoLayerImpl.cpp:
+        (WebCore::CCVideoLayerImpl::appendQuads): drop the single-platform Y-flipping in prep for the platform doing the flip natively.
+
 2012-08-12  Mihnea Ovidenie  <mihnea@adobe.com>
 
         CSSRegions: Crash when using style in region for removed element.
