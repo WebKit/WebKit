@@ -270,5 +270,8 @@ inspector/debugger/debugger-completions-on-call-frame.html
 inspector/extensions/extensions-panel.html
 inspector/extensions/extensions-sidebar.html
 jquery/attributes.html
+
+# Bug 89072: WTR does not print information about Web Intents MessagePorts
 webintents/web-intents-invoke-port.html
+webintents/web-intents-obj-constructor.html
 

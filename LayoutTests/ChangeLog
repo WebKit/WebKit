@@ -1,3 +1,16 @@
+2012-08-12  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL][WK2] Skip webintents/web-intents-obj-constructor.html test
+        https://bugs.webkit.org/show_bug.cgi?id=93778
+
+        Unreviewed EFL gardening.
+
+        Skip webintents/web-intents-obj-constructor.html for
+        WebKit2 EFL until WTR can print information about the
+        MessagePorts in a Web Intent (Bug 89072).
+
+        * platform/efl-wk2/Skipped:
+
 2012-08-12  Takashi Sakamoto  <tasak@google.com>
 
         webkit fails IETC namespaces/prefix-007.xml
