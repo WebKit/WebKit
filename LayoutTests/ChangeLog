@@ -1,3 +1,15 @@
+2012-08-12  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        CSSRegions: Crash when using style in region for removed element.
+        https://bugs.webkit.org/show_bug.cgi?id=93276
+
+        Reviewed by Abhishek Arya.
+
+        Added test reproducing the problem.
+
+        * fast/regions/removed-element-style-in-region-crash-expected.txt: Added.
+        * fast/regions/removed-element-style-in-region-crash.html: Added.
+
 2012-08-12  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL][WK2] Skip webintents/web-intents-obj-constructor.html test

@@ -399,6 +399,10 @@ void RenderRegion::computeChildrenStyleInRegion(const RenderObject* object)
  
 void RenderRegion::setObjectStyleInRegion(RenderObject* object, PassRefPtr<RenderStyle> styleInRegion, bool objectRegionStyleCached)
 {
+    ASSERT(object->inRenderFlowThread());
+    if (!object->inRenderFlowThread())
+        return;
+
     RefPtr<RenderStyle> objectOriginalStyle = object->style();
     object->setStyleInternal(styleInRegion);
 

@@ -554,6 +554,7 @@ RenderBlock* RenderBlock::clone() const
         // generated content added yet.
         cloneBlock->setChildrenInline(cloneBlock->firstChild() ? cloneBlock->firstChild()->isInline() : childrenInline());
     }
+    cloneBlock->setInRenderFlowThread(inRenderFlowThread());
     return cloneBlock;
 }
 

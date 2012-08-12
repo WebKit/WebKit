@@ -1,0 +1,26 @@
+<!doctype html>
+<html>
+    <head>
+        <style>
+            #article1 { -webkit-flow-into: flow1; }
+            #region1  { -webkit-flow-from: flow1; }
+            @-webkit-region #region1 { div { background-color: green; } }
+        </style>
+    </head>
+    <body>
+        <p>Test for <a href="https://bugs.webkit.org/show_bug.cgi?id=93276">WebKit Bug 93276</a> Crash when using style in region for removed element.</p>
+        <p>The test passes if it does not crash or assert.</p>
+        <p>PASS</p>
+        <div id="article1">
+            <span><span id="span1"><div></div></span></span>
+        </div>
+        <div id="region1"><div>
+        <script>
+            if (window.testRunner)
+                window.testRunner.dumpAsText();
+            document.body.offsetTop;
+            child = document.getElementById("span1");
+            child.parentNode.removeChild(child);
+        </script>
+    </body>
+</html>

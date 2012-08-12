@@ -1,3 +1,39 @@
+2012-08-12  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        CSSRegions: Crash when using style in region for removed element.
+        https://bugs.webkit.org/show_bug.cgi?id=93276
+
+        Reviewed by Abhishek Arya.
+
+        When a RenderInline object from within a render flow thread is split, the cloned
+        hierarchy built during the split process does not have the inRenderFlowThread bit
+        set properly. If the cloned hierarchy is flowed into a region with region style rules,
+        we compute the style in region also for objects that do not have inRenderFlowThread bit
+        set and we store the computed style in region for caching purposes. But we only remove
+        an object style in region information if that object has the inRenderFlowThread bit set.
+        Under these circumstances, it is possible to remove a object with cached style in region
+        and without inRenderFlowThread bit set from the render tree and leave the associated cached
+        information un-removed. Such information will be accesses during the next paint phase of
+        the region, thus resulting a crash.
+
+        The fix is to modify RenderBlock::clone() and RenderInline::clone() functions to also copy the inRenderFlowThread bit
+        from the source into the clone, therefore the cloned hierarchies will have the inRenderFlowThread
+        bit set properly.
+
+        Test: fast/regions/removed-element-style-in-region-crash.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::clone):
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::clone): Replace former static RenderInline::cloneInline with member RenderInline::clone.
+        (WebCore::RenderInline::splitInlines):
+        * rendering/RenderInline.h:
+        (RenderInline):
+        * rendering/RenderRegion.cpp:
+        (WebCore::RenderRegion::setObjectStyleInRegion):
+        Added an assert to make sure that when we are computing style in region, we are doing for objects
+        with inRenderFlowThread set. Also, bail out early in this case to prevent further crashes.
+
 2012-08-12  Huang Dongsung  <luxtella@company100.net>
 
         Set the access qualifier of two methods to query frame specific info of BitmapImage to protected.
