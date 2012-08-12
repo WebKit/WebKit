@@ -21,8 +21,6 @@
 		BCBD384011B08A6800E01E54 /* WebBundleMain.m in Sources */ = {isa = PBXBuildFile; fileRef = BCBD383D11B08A3100E01E54 /* WebBundleMain.m */; };
 		BCBD384411B08AAD00E01E54 /* WebKit2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BC8FB5A7116AA1FE0080D413 /* WebKit2.framework */; };
 		BCBD38D011B08C0200E01E54 /* WebBundle.bundle in Copy WebBundle */ = {isa = PBXBuildFile; fileRef = BCBD381D11B0898200E01E54 /* WebBundle.bundle */; };
-		BCE625EE117FC80E00572433 /* BrowserStatisticsWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = BCE625ED117FC80E00572433 /* BrowserStatisticsWindow.xib */; };
-		BCE625F1117FC82700572433 /* BrowserStatisticsWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = BCE625F0117FC82700572433 /* BrowserStatisticsWindowController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -74,9 +72,6 @@
 		BCA8CBE011E578A000812FB7 /* WebBundle.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = WebBundle.xcconfig; sourceTree = "<group>"; };
 		BCBD381D11B0898200E01E54 /* WebBundle.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WebBundle.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		BCBD383D11B08A3100E01E54 /* WebBundleMain.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WebBundleMain.m; sourceTree = "<group>"; };
-		BCE625ED117FC80E00572433 /* BrowserStatisticsWindow.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = BrowserStatisticsWindow.xib; path = mac/BrowserStatisticsWindow.xib; sourceTree = "<group>"; };
-		BCE625EF117FC82700572433 /* BrowserStatisticsWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BrowserStatisticsWindowController.h; path = mac/BrowserStatisticsWindowController.h; sourceTree = "<group>"; };
-		BCE625F0117FC82700572433 /* BrowserStatisticsWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BrowserStatisticsWindowController.m; path = mac/BrowserStatisticsWindowController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -112,8 +107,6 @@
 				256AC3D90F4B6AC300CF3369 /* AppDelegate.m */,
 				BC329496116A941B008635D0 /* BrowserWindowController.h */,
 				BC329497116A941B008635D0 /* BrowserWindowController.m */,
-				BCE625EF117FC82700572433 /* BrowserStatisticsWindowController.h */,
-				BCE625F0117FC82700572433 /* BrowserStatisticsWindowController.m */,
 				51E244F811EFCE07008228D1 /* MBToolbarItem.h */,
 				51E244F911EFCE07008228D1 /* MBToolbarItem.m */,
 			);
@@ -167,7 +160,6 @@
 			children = (
 				BC3294A2116A9852008635D0 /* BrowserWindow.xib */,
 				1DDD58150DA1D0A300B32029 /* MainMenu.xib */,
-				BCE625ED117FC80E00572433 /* BrowserStatisticsWindow.xib */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -274,7 +266,6 @@
 			files = (
 				BC72B89511E57E07001EB4EA /* MainMenu.xib in Resources */,
 				BC72B89611E57E0F001EB4EA /* BrowserWindow.xib in Resources */,
-				BCE625EE117FC80E00572433 /* BrowserStatisticsWindow.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -295,7 +286,6 @@
 				256AC3DA0F4B6AC300CF3369 /* AppDelegate.m in Sources */,
 				BC329487116A92E2008635D0 /* main.m in Sources */,
 				BC329498116A941B008635D0 /* BrowserWindowController.m in Sources */,
-				BCE625F1117FC82700572433 /* BrowserStatisticsWindowController.m in Sources */,
 				51E244FA11EFCE07008228D1 /* MBToolbarItem.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

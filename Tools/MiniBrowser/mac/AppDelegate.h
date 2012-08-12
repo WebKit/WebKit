@@ -23,28 +23,12 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// FIXME: We should expose process model via an API header.
-enum ProcessModel {
-    kProcessModelSharedSecondaryProcess,
-    kProcessModelSharedSecondaryThread,
-    kProcessModelMultipleSecondaryProcesses
-};
-typedef unsigned long ProcessModel;
-
 @interface BrowserAppDelegate : NSObject <NSApplicationDelegate> {
-    ProcessModel _currentProcessModel;
-    WKContextRef _threadContext;
     WKContextRef _processContext;
     WKPageGroupRef _pageGroup;
     NSMutableSet *_browserWindows;
 }
 
-- (WKContextRef)getCurrentContext;
-
 - (void)browserWindowWillClose:(NSWindow *)window;
-
-- (IBAction)setSharedProcessProcessModel:(id)sender;
-- (IBAction)setSharedThreadProcessModel:(id)sender;
-- (IBAction)showStatisticsWindow:(id)sender;
 
 @end

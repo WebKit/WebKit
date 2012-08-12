@@ -1,5 +1,30 @@
 2012-08-11  Sam Weinig  <sam@webkit.org>
 
+        Remove ability to run MiniBrowser in threaded mode, it hasn't worked for a long time
+        https://bugs.webkit.org/show_bug.cgi?id=93774
+
+        Reviewed by Dan Bernstein.
+
+        Remove support for opening windows using the shared thread WKContextRef. WKContextGetSharedThreadContext()
+        is going away, due to not working for a long time, and the first step is removing all the callers.
+
+        While here, remove the BrowserStatisticsWindow, which was not providing interesting information.
+
+        * MiniBrowser/MiniBrowser.xcodeproj/project.pbxproj:
+        * MiniBrowser/mac/AppDelegate.h:
+        * MiniBrowser/mac/AppDelegate.m:
+        (-[BrowserAppDelegate init]):
+        (-[BrowserAppDelegate newWindow:]):
+        (-[BrowserAppDelegate openPanelDidEnd:returnCode:contextInfo:]):
+        * MiniBrowser/mac/BrowserStatisticsWindow.xib: Removed.
+        * MiniBrowser/mac/BrowserStatisticsWindowController.h: Removed.
+        * MiniBrowser/mac/BrowserStatisticsWindowController.m: Removed.
+        * MiniBrowser/mac/MainMenu.xib:
+        * MiniBrowser/win/BrowserView.cpp:
+        (BrowserView::create):
+
+2012-08-11  Sam Weinig  <sam@webkit.org>
+
         Enable XPC Service based WebProcess with runtime flag
         https://bugs.webkit.org/show_bug.cgi?id=93773
 

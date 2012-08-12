@@ -24,5 +24,4 @@
  */
 
 @interface MBToolbarItem : NSToolbarItem
-{ }
 @end
