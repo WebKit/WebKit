@@ -26,6 +26,10 @@
 #include "config.h"
 #include "DFGDriver.h"
 
+#include "JSObject.h"
+#include "JSString.h"
+#include "ScopeChain.h"
+
 #if ENABLE(DFG_JIT)
 
 #include "DFGArgumentsSimplificationPhase.h"

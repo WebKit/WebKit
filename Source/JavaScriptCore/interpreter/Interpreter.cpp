@@ -712,7 +712,7 @@ bool Interpreter::isOpcode(Opcode opcode)
 #if ENABLE(COMPUTED_GOTO_CLASSIC_INTERPRETER) || ENABLE(LLINT)
 #if !ENABLE(LLINT)
     if (!m_classicEnabled)
-        return opcode >= 0 && static_cast<OpcodeID>(bitwise_cast<uintptr_t>(opcode)) <= op_end;
+        return static_cast<OpcodeID>(bitwise_cast<uintptr_t>(opcode)) <= op_end;
 #endif
     return opcode != HashTraits<Opcode>::emptyValue()
         && !HashTraits<Opcode>::isDeletedValue(opcode)
