@@ -1,5 +1,24 @@
 2012-08-12  Arvid Nilsson  <anilsson@rim.com>
 
+        [BlackBerry] Tap highlight flashes checkerboard after pinch zoom
+        https://bugs.webkit.org/show_bug.cgi?id=93601
+
+        Reviewed by Antonio Gomes.
+
+        Since the tap highlight is usually rather small, we can reimplement
+        GraphicsLayerClient::contentsVisible() to always return true in order
+        to keep all AC layer tiles cached all the time.
+
+        PR 189895
+
+        * WebKitSupport/DefaultTapHighlight.cpp:
+        (BlackBerry::WebKit::DefaultTapHighlight::contentsVisible):
+        (WebKit):
+        * WebKitSupport/DefaultTapHighlight.h:
+        (DefaultTapHighlight):
+
+2012-08-12  Arvid Nilsson  <anilsson@rim.com>
+
         [BlackBerry] Tap highlight sometimes doesn't disappear
         https://bugs.webkit.org/show_bug.cgi?id=93711
 

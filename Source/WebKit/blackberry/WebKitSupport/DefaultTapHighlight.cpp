@@ -158,6 +158,13 @@ bool DefaultTapHighlight::showRepaintCounter(const GraphicsLayer* layer) const
     return m_page->showRepaintCounter(layer);
 }
 
+bool DefaultTapHighlight::contentsVisible(const GraphicsLayer*, const IntRect& contentRect) const
+{
+    // This layer is typically small enough that we can afford to cache all tiles and never
+    // risk checkerboarding.
+    return true;
+}
+
 } // namespace WebKit
 } // namespace BlackBerry
 

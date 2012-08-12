@@ -58,6 +58,7 @@ public:
     virtual void paintContents(const WebCore::GraphicsLayer*, WebCore::GraphicsContext&, WebCore::GraphicsLayerPaintingPhase, const WebCore::IntRect& inClip);
     virtual bool showDebugBorders(const WebCore::GraphicsLayer*) const;
     virtual bool showRepaintCounter(const WebCore::GraphicsLayer*) const;
+    virtual bool contentsVisible(const WebCore::GraphicsLayer*, const WebCore::IntRect& contentRect) const;
 
 private:
     DefaultTapHighlight(WebPagePrivate*);
