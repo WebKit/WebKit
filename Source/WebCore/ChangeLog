@@ -1,3 +1,24 @@
+2012-08-12  Pravin D  <pravind.2k4@gmail.com>
+
+        table cell.cellIndex should return -1 if there is no parent table
+        https://bugs.webkit.org/show_bug.cgi?id=93738
+
+        Reviewed by Eric Seidel.
+
+        According to the HTML5 spec the cellIndex of a table cell(td/th) whose parent is not a table row
+        must be -1. Currently we are returning zero. This patch fixes this behavior. 
+
+        Test: fast/table/cellIndex-of-cell-with-different-parents.html
+
+        * html/HTMLTableCellElement.cpp:
+        (WebCore::HTMLTableCellElement::cellIndex):
+          If the parent of the cell is not a table row, -1 is returned. Otherwise a value greater
+          than or equal to zero is return.
+
+        * rendering/RenderTableCell.h:
+        (RenderTableCell):
+         Removed dead code and made minor webkit style related fix.
+
 2012-08-12  Leandro Gracia Gil  <leandrogracia@chromium.org>
 
         [Chromium] Implement the find-in-page match rects API

@@ -38,11 +38,7 @@ enum IncludeBorderColorOrNot { DoNotIncludeBorderColor, IncludeBorderColor };
 class RenderTableCell : public RenderBlock {
 public:
     explicit RenderTableCell(Node*);
-
-    // FIXME: need to implement cellIndex
-    int cellIndex() const { return 0; }
-    void setCellIndex(int) { }
-
+    
     unsigned colSpan() const;
     unsigned rowSpan() const;
 
@@ -116,7 +112,7 @@ public:
     virtual LayoutUnit paddingLeft() const OVERRIDE;
     virtual LayoutUnit paddingRight() const OVERRIDE;
     
-    // FIXME: For now we just assume the cell has the same block flow direction as the table.  It's likely we'll
+    // FIXME: For now we just assume the cell has the same block flow direction as the table. It's likely we'll
     // create an extra anonymous RenderBlock to handle mixing directionality anyway, in which case we can lock
     // the block flow directionality of the cells to the table's directionality.
     virtual LayoutUnit paddingBefore() const OVERRIDE;
