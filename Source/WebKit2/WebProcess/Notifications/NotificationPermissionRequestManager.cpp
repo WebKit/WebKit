@@ -55,8 +55,11 @@ PassRefPtr<NotificationPermissionRequestManager> NotificationPermissionRequestMa
 }
 
 NotificationPermissionRequestManager::NotificationPermissionRequestManager(WebPage* page)
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
     : m_page(page)
+#endif
 {
+    (void)page;
 }
 
 #if ENABLE(NOTIFICATIONS)

@@ -72,7 +72,9 @@ private:
     HashMap<RefPtr<WebCore::SecurityOrigin>, uint64_t> m_originToIDMap;
     HashMap<uint64_t, RefPtr<WebCore::SecurityOrigin> > m_idToOriginMap;
 
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
     WebPage* m_page;
+#endif
 };
 
 inline bool isRequestIDValid(uint64_t id)

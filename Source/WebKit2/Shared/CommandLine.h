@@ -48,8 +48,6 @@ public:
     }
 
 private:
-    bool m_parsedSuccessfully;
-
     HashMap<String, String> m_args;
 };
 

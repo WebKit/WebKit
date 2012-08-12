@@ -1,3 +1,17 @@
+2012-08-12  Nuno Lopes  <nlopes@apple.com>
+
+        Fix build with recent clang.
+        https://bugs.webkit.org/show_bug.cgi?id=90701
+
+        Reviewed by Eric Seidel.
+
+        * Shared/CommandLine.h:
+        (CommandLine):
+        * WebProcess/Notifications/NotificationPermissionRequestManager.cpp:
+        (WebKit::NotificationPermissionRequestManager::NotificationPermissionRequestManager):
+        * WebProcess/Notifications/NotificationPermissionRequestManager.h:
+        (NotificationPermissionRequestManager):
+
 2012-08-11  Sam Weinig  <sam@webkit.org>
 
         Fix the build.
