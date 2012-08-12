@@ -5,6 +5,10 @@ import os
 import StringIO
 import unittest
 
+# Show DepricationWarnings come from buildbot - it isn't default with Python 2.7 or newer.
+# See https://bugs.webkit.org/show_bug.cgi?id=90161 for details.
+import warnings
+warnings.simplefilter('default')
 
 class BuildBotConfigLoader(object):
     def _add_webkitpy_to_sys_path(self):
