@@ -1,5 +1,48 @@
 2012-08-11  Sam Weinig  <sam@webkit.org>
 
+        [WK2] Get rid of ProcessModelSharedSecondaryThread
+        https://bugs.webkit.org/show_bug.cgi?id=93652
+
+        Reviewed by Dan Bernstein.
+
+        The threaded model for WebKit2 has been broken a long time and its continued existence in
+        the code only serves to confuse. It's time to say good bye to it.
+
+        * UIProcess/API/C/WKContext.cpp:
+        * UIProcess/API/C/WKContextPrivate.h:
+        Remove WKContextGetSharedThreadContext().
+
+        * UIProcess/ProcessModel.h:
+        Remove ProcessModelSharedSecondaryThread from the ProcessModel enum.
+
+        * UIProcess/WebContext.cpp:
+        * UIProcess/WebContext.h:
+        Remove WebContext::sharedThreadContext().
+
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::~WebProcessProxy):
+        (WebKit::WebProcessProxy::connect):
+        (WebKit::WebProcessProxy::isLaunching):
+        * UIProcess/WebProcessProxy.h:
+        Remove the ThreadLauncher member and stop deriving from ThreadLauncher::Client.
+
+        * UIProcess/Launcher/ThreadLauncher.cpp: Removed.
+        * UIProcess/Launcher/ThreadLauncher.h: Removed.
+        * UIProcess/Launcher/efl/ThreadLauncherEfl.cpp: Removed.
+        * UIProcess/Launcher/gtk/ThreadLauncherGtk.cpp: Removed.
+        * UIProcess/Launcher/mac/ThreadLauncherMac.mm: Removed.
+        * UIProcess/Launcher/qt/ThreadLauncherQt.cpp: Removed.
+        * UIProcess/Launcher/win/ThreadLauncherWin.cpp: Removed.
+        * WebKit2.xcodeproj/project.pbxproj:
+        * win/WebKit2.vcproj:
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * PlatformEfl.cmake:
+        * Target.pri:
+        Remove ThreadLauncher files.
+
+2012-08-11  Sam Weinig  <sam@webkit.org>
+
         Enable XPC Service based WebProcess with runtime flag
         https://bugs.webkit.org/show_bug.cgi?id=93773
 

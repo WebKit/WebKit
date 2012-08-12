@@ -79,8 +79,6 @@ class WebContext : public APIObject, private CoreIPC::Connection::QueueClient {
 public:
     static const Type APIType = TypeContext;
 
-    static WebContext* sharedThreadContext();
-
     static PassRefPtr<WebContext> create(const String& injectedBundlePath);
     virtual ~WebContext();
 

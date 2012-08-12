@@ -772,11 +772,8 @@ webkit2_sources += \
 	Source/WebKit2/UIProcess/gtk/WebPopupMenuProxyGtk.h \
 	Source/WebKit2/UIProcess/gtk/WebPreferencesGtk.cpp \
 	Source/WebKit2/UIProcess/Launcher/gtk/ProcessLauncherGtk.cpp \
-	Source/WebKit2/UIProcess/Launcher/gtk/ThreadLauncherGtk.cpp \
 	Source/WebKit2/UIProcess/Launcher/ProcessLauncher.cpp \
 	Source/WebKit2/UIProcess/Launcher/ProcessLauncher.h \
-	Source/WebKit2/UIProcess/Launcher/ThreadLauncher.cpp \
-	Source/WebKit2/UIProcess/Launcher/ThreadLauncher.h \
 	Source/WebKit2/UIProcess/Notifications/NotificationPermissionRequest.cpp \
 	Source/WebKit2/UIProcess/Notifications/NotificationPermissionRequest.h \
 	Source/WebKit2/UIProcess/Notifications/NotificationPermissionRequestManagerProxy.cpp \

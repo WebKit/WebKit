@@ -340,7 +340,6 @@ SET(WebKit2_SOURCES
     UIProcess/InspectorServer/WebSocketServerConnection.cpp
 
     UIProcess/Launcher/ProcessLauncher.cpp
-    UIProcess/Launcher/ThreadLauncher.cpp
 
     UIProcess/Notifications/NotificationPermissionRequest.cpp
     UIProcess/Notifications/NotificationPermissionRequestManagerProxy.cpp

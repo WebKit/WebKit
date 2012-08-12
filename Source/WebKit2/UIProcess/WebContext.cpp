@@ -94,13 +94,6 @@ namespace WebKit {
 
 DEFINE_DEBUG_ONLY_GLOBAL(WTF::RefCountedLeakCounter, webContextCounter, ("WebContext"));
 
-WebContext* WebContext::sharedThreadContext()
-{
-    RunLoop::initializeMainRunLoop();
-    static WebContext* context = adoptRef(new WebContext(ProcessModelSharedSecondaryThread, String())).leakRef();
-    return context;
-}
-
 PassRefPtr<WebContext> WebContext::create(const String& injectedBundlePath)
 {
     JSC::initializeThreading();

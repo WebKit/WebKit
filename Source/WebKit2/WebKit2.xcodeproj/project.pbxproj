@@ -834,9 +834,6 @@
 		BCEE966D112FAF57006BCC24 /* Attachment.h in Headers */ = {isa = PBXBuildFile; fileRef = BCEE966B112FAF57006BCC24 /* Attachment.h */; };
 		BCF049E611FE20F600F86A58 /* WKBundleFramePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = BCF049E411FE20F600F86A58 /* WKBundleFramePrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BCF049E711FE20F600F86A58 /* WKBundlePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = BCF049E511FE20F600F86A58 /* WKBundlePrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		BCF50121123ED3B3005955AE /* ThreadLauncher.h in Headers */ = {isa = PBXBuildFile; fileRef = BCF5011F123ED3B3005955AE /* ThreadLauncher.h */; };
-		BCF50122123ED3B3005955AE /* ThreadLauncher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCF50120123ED3B3005955AE /* ThreadLauncher.cpp */; };
-		BCF501B4123EF602005955AE /* ThreadLauncherMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = BCF501B3123EF602005955AE /* ThreadLauncherMac.mm */; };
 		BCF505E71243047B005955AE /* PlatformCertificateInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = BCF505E51243047B005955AE /* PlatformCertificateInfo.h */; };
 		BCF505E81243047B005955AE /* PlatformCertificateInfo.mm in Sources */ = {isa = PBXBuildFile; fileRef = BCF505E61243047B005955AE /* PlatformCertificateInfo.mm */; };
 		BCF50728124329AA005955AE /* WebCertificateInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = BCF50726124329AA005955AE /* WebCertificateInfo.h */; };
@@ -1908,9 +1905,6 @@
 		BCF049E511FE20F600F86A58 /* WKBundlePrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKBundlePrivate.h; sourceTree = "<group>"; };
 		BCF04C8C11FF9B7D00F86A58 /* APIObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIObject.h; sourceTree = "<group>"; };
 		BCF04C8E11FF9F6E00F86A58 /* WebString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebString.h; sourceTree = "<group>"; };
-		BCF5011F123ED3B3005955AE /* ThreadLauncher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ThreadLauncher.h; sourceTree = "<group>"; };
-		BCF50120123ED3B3005955AE /* ThreadLauncher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ThreadLauncher.cpp; sourceTree = "<group>"; };
-		BCF501B3123EF602005955AE /* ThreadLauncherMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ThreadLauncherMac.mm; sourceTree = "<group>"; };
 		BCF505E51243047B005955AE /* PlatformCertificateInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatformCertificateInfo.h; sourceTree = "<group>"; };
 		BCF505E61243047B005955AE /* PlatformCertificateInfo.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PlatformCertificateInfo.mm; sourceTree = "<group>"; };
 		BCF5068412431861005955AE /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = /System/Library/Frameworks/Security.framework; sourceTree = "<absolute>"; };
@@ -3161,8 +3155,6 @@
 				BC111B19112F5FC500337BAB /* mac */,
 				1AE117F511DBB30900981615 /* ProcessLauncher.cpp */,
 				BC1A7C571136E19C00FB7167 /* ProcessLauncher.h */,
-				BCF50120123ED3B3005955AE /* ThreadLauncher.cpp */,
-				BCF5011F123ED3B3005955AE /* ThreadLauncher.h */,
 			);
 			path = Launcher;
 			sourceTree = "<group>";
@@ -3175,7 +3167,6 @@
 				1A7C6CD81378950800B9C04D /* EnvironmentVariables.cpp */,
 				1A7C6CD91378950800B9C04D /* EnvironmentVariables.h */,
 				BC111B1B112F5FE600337BAB /* ProcessLauncherMac.mm */,
-				BCF501B3123EF602005955AE /* ThreadLauncherMac.mm */,
 			);
 			path = mac;
 			sourceTree = "<group>";
@@ -3972,7 +3963,6 @@
 				BCBD3C3B125BFA7A00D2C29F /* StringPairVector.h in Headers */,
 				1AA417CB12C00CCA002BE67B /* TextChecker.h in Headers */,
 				1A5E4DA412D3BD3D0099A2BB /* TextCheckerState.h in Headers */,
-				BCF50121123ED3B3005955AE /* ThreadLauncher.h in Headers */,
 				1AAF263914687C39004A1E8A /* TiledCoreAnimationDrawingArea.h in Headers */,
 				1AF05D8714688348008B1E81 /* TiledCoreAnimationDrawingAreaProxy.h in Headers */,
 				1A64245E12DE29A100CAAE2C /* UpdateInfo.h in Headers */,
@@ -4757,8 +4747,6 @@
 				1A24BF3A120896A600FBB059 /* SharedMemoryMac.cpp in Sources */,
 				5272B28A1406985D0096A5D0 /* StatisticsData.cpp in Sources */,
 				1AA417EF12C00D87002BE67B /* TextCheckerMac.mm in Sources */,
-				BCF50122123ED3B3005955AE /* ThreadLauncher.cpp in Sources */,
-				BCF501B4123EF602005955AE /* ThreadLauncherMac.mm in Sources */,
 				1AAF263814687C39004A1E8A /* TiledCoreAnimationDrawingArea.mm in Sources */,
 				1AF05D8614688348008B1E81 /* TiledCoreAnimationDrawingAreaProxy.mm in Sources */,
 				1A64245F12DE29A100CAAE2C /* UpdateInfo.cpp in Sources */,

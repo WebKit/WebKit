@@ -205,7 +205,6 @@ HEADERS += \
     UIProcess/GeolocationPermissionRequestManagerProxy.h \
     UIProcess/GeolocationPermissionRequestProxy.h \
     UIProcess/Launcher/ProcessLauncher.h \
-    UIProcess/Launcher/ThreadLauncher.h \
     UIProcess/Notifications/NotificationPermissionRequest.h \
     UIProcess/Notifications/NotificationPermissionRequestManagerProxy.h \
     UIProcess/Notifications/WebNotification.h \
@@ -542,9 +541,7 @@ SOURCES += \
     UIProcess/GeolocationPermissionRequestManagerProxy.cpp \
     UIProcess/GeolocationPermissionRequestProxy.cpp \
     UIProcess/Launcher/ProcessLauncher.cpp \
-    UIProcess/Launcher/ThreadLauncher.cpp \
     UIProcess/Launcher/qt/ProcessLauncherQt.cpp \
-    UIProcess/Launcher/qt/ThreadLauncherQt.cpp \
     UIProcess/Notifications/NotificationPermissionRequest.cpp \
     UIProcess/Notifications/NotificationPermissionRequestManagerProxy.cpp \
     UIProcess/Notifications/WebNotification.cpp \
