@@ -1,3 +1,27 @@
+2012-08-12  Takashi Sakamoto  <tasak@google.com>
+
+        webkit fails IETC namespaces/prefix-007.xml
+        https://bugs.webkit.org/show_bug.cgi?id=86137
+
+        Reviewed by Eric Seidel.
+
+        If a namespace prefix or default namespace is declared more than once
+        only the last declaration shall be used.
+
+        parseAddNamespace doesn't check return value of WTF::HashMap<>::add.
+        If the return value's isNewEntry is true, the new entry is added with
+        the specified value. However, if isNewEntry is false, it is required
+        to update the store value.
+
+        No new tests. ietestcenter/css3/namespaces/prefix-007.xml and
+        ietestcenter/css3/namespaces/prefix-010.xml covers this change.
+
+        * css/StyleSheetContents.cpp:
+        (WebCore::StyleSheetContents::parserAddNamespace):
+        Modified to check m_namespaces.add's return value.
+        If the result says not a new entry, updated the value stored in
+        m_namespaces by using iterator in the result.
+
 2012-08-12  Benjamin Poulain  <benjamin@webkit.org>
 
         Move CSS's propertyNameStrings[] to from the header to the cpp file

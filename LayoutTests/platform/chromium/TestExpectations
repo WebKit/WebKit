@@ -3129,8 +3129,6 @@ BUGWK85308 DEBUG : ietestcenter/css3/valuesandunits/units-000.htm = CRASH
 BUGWK85308 RELEASE : ietestcenter/css3/valuesandunits/units-000.htm = IMAGE
 BUGWK85310 : ietestcenter/css3/valuesandunits/units-010.htm = IMAGE
 // IETC namespace failures
-BUGWK86137 : ietestcenter/css3/namespaces/prefix-007.xml = IMAGE
-BUGWK86139 : ietestcenter/css3/namespaces/prefix-010.xml = IMAGE
 BUGWK86142 : ietestcenter/css3/namespaces/syntax-021.xml = IMAGE
 
 BUGWK84432 WIN : fast/filesystem/op-restricted-names.html = TEXT

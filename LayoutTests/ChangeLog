@@ -1,3 +1,17 @@
+2012-08-12  Takashi Sakamoto  <tasak@google.com>
+
+        webkit fails IETC namespaces/prefix-007.xml
+        https://bugs.webkit.org/show_bug.cgi?id=86137
+
+        Reviewed by Eric Seidel.
+
+        * platform/chromium/TestExpectations:
+        Enabled the layout tests, ietestcenter/css3/namespaces/prefix-007.xml
+        and ietestcenter/css3/namespaces/prefix-010.xml.
+        * platform/win/ietestcenter/css3/namespaces/prefix-007-expected.txt: Removed.
+        * platform/win/ietestcenter/css3/namespaces/prefix-010-expected.txt: Removed.
+        Removed old expectations.
+
 2012-08-11  Jon Lee  <jonlee@apple.com>
 
         webarchive/ignore-noscript-if-scripting.html expected results should use .webarchive extension
