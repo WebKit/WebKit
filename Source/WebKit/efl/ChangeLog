@@ -1,3 +1,16 @@
+2012-08-12  Krzysztof Czech  <k.czech@samsung.com>
+
+        [EFL][UT] Delete shutdown method.
+        https://bugs.webkit.org/show_bug.cgi?id=90785
+
+        Reviewed by Eric Seidel.
+
+        EWKTestBase class already has a shutdownAll method that can be used instead of shutdown.
+
+        * tests/UnitTestUtils/EWKTestBase.cpp:
+        * tests/UnitTestUtils/EWKTestBase.h:
+        (EWKTestBase):
+
 2012-08-09  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Handle SSL errors for SOUP

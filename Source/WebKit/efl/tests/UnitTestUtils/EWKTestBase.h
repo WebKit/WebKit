@@ -54,7 +54,6 @@ class EWKTestBase {
     static bool createTest(const char* url, void (*event_callback)(void*, Evas_Object*, void*), const char* event_name, void* event_data);
 public:
     static bool init();
-    static void shutdown();
     static void shutdownAll();
     static void startTest();
     static void endTest();

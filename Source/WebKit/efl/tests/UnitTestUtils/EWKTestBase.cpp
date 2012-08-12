@@ -49,13 +49,6 @@ bool EWKTestBase::init()
     return ret;
 }
 
-void EWKTestBase::shutdown()
-{
-    ecore_evas_shutdown();
-    edje_shutdown();
-    ewk_shutdown();
-}
-
 void EWKTestBase::shutdownAll()
 {
     int count = 0;
