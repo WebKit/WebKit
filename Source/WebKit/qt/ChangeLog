@@ -1,3 +1,15 @@
+2012-08-12  Loïc Yhuel  <loic.yhuel@softathome.com>
+
+        [Qt] Make it possible to build without QtTest/QtPrintSupport
+        https://bugs.webkit.org/show_bug.cgi?id=93492
+
+        Reviewed by Tor Arne Vestbø.
+
+        * Api/qwebframe.cpp:
+        (QWebFrame::print): Does nothing if no printsupport
+        * Api/qwebview.cpp:
+        (QWebView::print): Does nothing if no printsupport
+
 2012-08-11  Pierre Rossi  <pierre.rossi@gmail.com>
 
         [Qt] Add support for HTML5 state object history API in FrameLoaderClientQt

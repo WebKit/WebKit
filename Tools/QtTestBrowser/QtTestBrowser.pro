@@ -42,7 +42,8 @@ WEBKIT += wtf webcore
 
 DESTDIR = $$ROOT_BUILD_DIR/bin
 
-QT += network webkit printsupport widgets
+QT += network webkit widgets
+contains(DEFINES, HAVE_QTPRINTSUPPORT=1): QT += printsupport
 
 macx:QT += xml
 

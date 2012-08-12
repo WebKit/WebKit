@@ -39,8 +39,9 @@ contains(CONFIG, texmap): DEFINES += WTF_USE_TEXTURE_MAPPER=1
 
 plugin_backend_xlib: PKGCONFIG += x11
 
-QT += network widgets printsupport
+QT += network widgets
 contains(DEFINES, HAVE_QTQUICK=1): QT += quick
+contains(DEFINES, HAVE_QTPRINTSUPPORT=1): QT += printsupport
 
 contains(DEFINES, WTF_USE_TEXTURE_MAPPER_GL=1)|contains(DEFINES, ENABLE_WEBGL=1) {
     QT *= opengl

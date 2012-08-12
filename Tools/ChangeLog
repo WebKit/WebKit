@@ -1,3 +1,23 @@
+2012-08-12  Loïc Yhuel  <loic.yhuel@softathome.com>
+
+        [Qt] Make it possible to build without QtTest/QtPrintSupport
+        https://bugs.webkit.org/show_bug.cgi?id=93492
+
+        Reviewed by Tor Arne Vestbø.
+
+        * DumpRenderTree/qt/DumpRenderTree.pro: Optional printsupport
+        * DumpRenderTree/qt/DumpRenderTreeQt.cpp:
+        (WebCore):
+        (WebCore::DumpRenderTree::dryRunPrint): Does nothing if no printsupport
+        * QtTestBrowser/QtTestBrowser.pro: Optional printsupport
+        * QtTestBrowser/launcherwindow.cpp:
+        (LauncherWindow::createChrome): No print menu if no printsupport
+        (LauncherWindow::print): Does nothing if no printsupport
+        * QtTestBrowser/launcherwindow.h:
+        * Tools.pro: Disable DRT/WTR if QtTest not present
+        * qmake/mkspecs/features/default_pre.prf: printsupport no more mandatory
+        * qmake/mkspecs/features/features.prf: Qt module availability tests
+
 2012-08-12  Csaba Osztrogonác  <ossy@webkit.org>
 
         master.cfg unittest cleanup: Show DeprecationWarnings with python >= 2.7 too

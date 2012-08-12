@@ -57,7 +57,7 @@
 #include <QNetworkRequest>
 #include <QPaintDevice>
 #include <QPaintEngine>
-#ifndef QT_NO_PRINTER
+#if !defined(QT_NO_PRINTER) && HAVE(QTPRINTSUPPORT)
 #include <QPrinter>
 #endif
 #include <QProgressBar>
@@ -110,7 +110,7 @@ void NetworkAccessManager::sslErrorsEncountered(QNetworkReply* reply, const QLis
 #endif
 
 
-#ifndef QT_NO_PRINTER
+#if !defined(QT_NO_PRINTER) && HAVE(QTPRINTSUPPORT)
 class NullPrinter : public QPrinter {
 public:
     class NullPaintEngine : public QPaintEngine {
@@ -500,7 +500,7 @@ static void clearHistory(QWebPage* page)
 
 void DumpRenderTree::dryRunPrint(QWebFrame* frame)
 {
-#ifndef QT_NO_PRINTER
+#if !defined(QT_NO_PRINTER) && HAVE(QTPRINTSUPPORT)
     NullPrinter printer;
     frame->print(&printer);
 #endif

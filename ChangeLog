@@ -1,3 +1,12 @@
+2012-08-12  Loïc Yhuel  <loic.yhuel@softathome.com>
+
+        [Qt] Make it possible to build without QtTest/QtPrintSupport
+        https://bugs.webkit.org/show_bug.cgi?id=93492
+
+        Reviewed by Tor Arne Vestbø.
+
+        * Source/QtWebKit.pro: Disable tests if no testlib
+
 2012-08-10  Rob Buis  <rbuis@rim.com>
 
         [BlackBerry] Enable relro link option for JSC executable

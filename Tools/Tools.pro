@@ -9,13 +9,13 @@ CONFIG += ordered
 
 !no_webkit1 {
     SUBDIRS += QtTestBrowser/QtTestBrowser.pro
-    SUBDIRS += DumpRenderTree/qt/DumpRenderTree.pro
+    contains(DEFINES, HAVE_QTTESTLIB=1): SUBDIRS += DumpRenderTree/qt/DumpRenderTree.pro
     SUBDIRS += DumpRenderTree/qt/ImageDiff.pro
 }
 
 !no_webkit2 {
     # WTR's InjectedBundle depends currently on WK1's DumpRenderTreeSupport
-    !no_webkit1:contains(DEFINES, HAVE_QTQUICK=1): SUBDIRS += WebKitTestRunner/WebKitTestRunner.pro
+    !no_webkit1:contains(DEFINES, HAVE_QTQUICK=1):contains(DEFINES, HAVE_QTTESTLIB=1): SUBDIRS += WebKitTestRunner/WebKitTestRunner.pro
 
     contains(DEFINES, HAVE_QTQUICK=1): SUBDIRS += MiniBrowser/qt/MiniBrowser.pro
     SUBDIRS += MiniBrowser/qt/raw/MiniBrowserRaw.pro

@@ -48,6 +48,18 @@ config_fontconfig:!mac {
     haveQtModule(quick): DEFINES += HAVE_QTQUICK=1
 }
 
+!contains(DEFINES, HAVE_QTPRINTSUPPORT=.) {
+    haveQtModule(printsupport): DEFINES += HAVE_QTPRINTSUPPORT=1
+}
+
+!contains(DEFINES, HAVE_QTTESTLIB=.) {
+    haveQtModule(testlib) {
+        DEFINES += HAVE_QTTESTLIB=1
+    } else {
+        message("Missing QtTest module, disabling DumpRenderTree, WebKitTestRunner and tests")
+    }
+}
+
 # We need libxml2 config test to determine to use libxml2 or not
 !contains(DEFINES, WTF_USE_LIBXML2=.) {
     config_libxml2: DEFINES += WTF_USE_LIBXML2=1

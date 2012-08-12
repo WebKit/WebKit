@@ -39,10 +39,6 @@
 #include <QtOpenGL/QGLWidget>
 #endif
 
-#if !defined(QT_NO_PRINTER)
-#include <QPrintPreviewDialog>
-#endif
-
 #include <QDebug>
 
 #include <cstdio>

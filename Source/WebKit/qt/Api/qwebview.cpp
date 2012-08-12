@@ -30,7 +30,9 @@
 #include "qbitmap.h"
 #include "qevent.h"
 #include "qpainter.h"
+#if HAVE(QTPRINTSUPPORT)
 #include "qprinter.h"
+#endif
 #include "qdir.h"
 #include "qfile.h"
 #ifndef QT_NO_ACCESSIBILITY
@@ -746,7 +748,7 @@ bool QWebView::event(QEvent *e)
 */
 void QWebView::print(QPrinter *printer) const
 {
-#ifndef QT_NO_PRINTER
+#if !defined(QT_NO_PRINTER) && HAVE(QTPRINTSUPPORT)
     page()->mainFrame()->print(printer);
 #endif
 }

@@ -93,7 +93,9 @@
 #include <qevent.h>
 #include <qfileinfo.h>
 #include <qpainter.h>
+#if HAVE(QTPRINTSUPPORT)
 #include <qprinter.h>
+#endif
 #include <qregion.h>
 #include <qnetworkrequest.h>
 
@@ -1427,6 +1429,7 @@ bool QWebFrame::event(QEvent *e)
 */
 void QWebFrame::print(QPrinter *printer) const
 {
+#if HAVE(QTPRINTSUPPORT)
     QPainter painter;
     if (!painter.begin(printer))
         return;
@@ -1514,6 +1517,7 @@ void QWebFrame::print(QPrinter *printer) const
     }
 
     printContext.end();
+#endif // HAVE(PRINTSUPPORT)
 }
 #endif // QT_NO_PRINTER
 

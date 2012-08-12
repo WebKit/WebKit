@@ -51,6 +51,9 @@
 #ifndef QT_NO_SHORTCUT
 #include <QMenuBar>
 #endif
+#if !defined(QT_NO_PRINTER) && HAVE(QTPRINTSUPPORT)
+#include <QPrintPreviewDialog>
+#endif
 #include <QSlider>
 #include <QSplitter>
 #include <QStatusBar>
@@ -237,7 +240,7 @@ void LauncherWindow::createChrome()
     fileMenu->addAction("Close Window", this, SLOT(close()), QKeySequence::Close);
     fileMenu->addSeparator();
     fileMenu->addAction("Take Screen Shot...", this, SLOT(screenshot()));
-#ifndef QT_NO_PRINTER
+#if !defined(QT_NO_PRINTER) && HAVE(QTPRINTSUPPORT)
     fileMenu->addAction(tr("Print..."), this, SLOT(print()), QKeySequence::Print);
 #endif
     fileMenu->addSeparator();
@@ -724,7 +727,7 @@ void LauncherWindow::toggleZoomTextOnly(bool b)
 
 void LauncherWindow::print()
 {
-#if !defined(QT_NO_PRINTER)
+#if !defined(QT_NO_PRINTER) && HAVE(QTPRINTSUPPORT)
     QPrintPreviewDialog dlg(this);
     connect(&dlg, SIGNAL(paintRequested(QPrinter*)),
             page()->mainFrame(), SLOT(print(QPrinter*)));

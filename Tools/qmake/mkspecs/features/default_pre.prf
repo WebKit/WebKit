@@ -78,8 +78,8 @@ else: PYTHON = python
 
 !haveQt(5):!recursive_include: error("Building WebKit with Qt versions older than 5.0 is not supported.")
 
-!haveQtModule(widgets)|!haveQtModule(printsupport) {
-    root_project_file: message("WebKit1 requires the QtWidgets and QtPrintSupport modules. Disabling WebKit1.")
+!haveQtModule(widgets) {
+    root_project_file: message("WebKit1 requires the QtWidgets module. Disabling WebKit1.")
     CONFIG += no_webkit1
 }
 
