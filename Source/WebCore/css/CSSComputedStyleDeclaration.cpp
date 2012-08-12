@@ -57,6 +57,7 @@
 #include "StylePropertyShorthand.h"
 #include "WebKitCSSTransformValue.h"
 #include "WebKitFontFamilyNames.h"
+#include <wtf/text/StringBuilder.h>
 
 #if ENABLE(CSS_EXCLUSIONS)
 #include "CSSWrapShapes.h"
@@ -1061,18 +1062,18 @@ void CSSComputedStyleDeclaration::deref()
 
 String CSSComputedStyleDeclaration::cssText() const
 {
-    String result("");
+    StringBuilder result;
 
     for (unsigned i = 0; i < numComputedProperties; i++) {
         if (i)
-            result += " ";
-        result += getPropertyName(computedProperties[i]);
-        result += ": ";
-        result += getPropertyValue(computedProperties[i]);
-        result += ";";
+            result.append(' ');
+        result.append(getPropertyName(computedProperties[i]));
+        result.append(": ", 2);
+        result.append(getPropertyValue(computedProperties[i]));
+        result.append(';');
     }
 
-    return result;
+    return result.toString();
 }
 
 void CSSComputedStyleDeclaration::setCssText(const String&, ExceptionCode& ec)
