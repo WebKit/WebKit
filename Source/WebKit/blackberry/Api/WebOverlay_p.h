@@ -69,7 +69,7 @@ public:
 
     virtual void setClient(WebOverlayClient* c) { client = c; }
 
-    virtual WebOverlayOverride* override();
+    WebOverlayOverride* override();
 
     virtual WebCore::FloatPoint position() const = 0;
     virtual void setPosition(const WebCore::FloatPoint&) = 0;
@@ -127,8 +127,6 @@ protected:
 class WebOverlayPrivateWebKitThread : public WebOverlayPrivate, public WebCore::GraphicsLayerClient {
 public:
     WebOverlayPrivateWebKitThread(WebCore::GraphicsLayerClient* = 0);
-
-    virtual WebOverlayOverride* override();
 
     virtual WebCore::FloatPoint position() const;
     virtual void setPosition(const WebCore::FloatPoint&);
@@ -220,7 +218,6 @@ public:
     ~WebOverlayPrivateCompositingThread();
 
     virtual void setClient(WebOverlayClient*);
-    virtual WebOverlayOverride* override();
 
     virtual WebCore::FloatPoint position() const;
     virtual void setPosition(const WebCore::FloatPoint&);

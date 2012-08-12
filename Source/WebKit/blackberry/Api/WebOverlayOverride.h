@@ -39,7 +39,7 @@ class WebString;
 class BLACKBERRY_EXPORT WebOverlayOverride {
 public:
     // Don't use this, call WebOverlay::override() instead
-    WebOverlayOverride(WebOverlayPrivate*, bool owned);
+    WebOverlayOverride(WebOverlayPrivate*);
     ~WebOverlayOverride();
 
     void setPosition(const Platform::FloatPoint&);

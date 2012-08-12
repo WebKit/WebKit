@@ -1,3 +1,47 @@
+2012-08-12  Arvid Nilsson  <anilsson@rim.com>
+
+        [BlackBerry] Tap highlight sometimes doesn't disappear
+        https://bugs.webkit.org/show_bug.cgi?id=93711
+
+        Reviewed by Antonio Gomes.
+
+        The WebOverlayOverride implementation just changes properties of a
+        LayerCompositingThread directly, which means the changes will
+        immediately be overwritten on the next commit. Therefore, when the tap
+        highlight implementation adds a fade out animation, that animation will
+        instantly be removed again if a commit happens for any reason.
+
+        The reason is I totally botched the implementation of
+        WebOverlayOverride, it's not wrapping WebCore::LayerOverride at all,
+        instead for some reason it's manipulating the LayerCompositingThread
+        directly.
+
+        Fixed by actually mapping WebOverlayOverride calls to the corresponding
+        WebCore::LayerOverride method, and scheduling a compositing run to make
+        the change visible and kick off animations.
+
+        Reviewed internally by Sean Wang.
+
+        PR 188453
+
+        * Api/WebOverlay.cpp:
+        (BlackBerry::WebKit::WebOverlayPrivate::override):
+        * Api/WebOverlayOverride.cpp:
+        (BlackBerry::WebKit::WebOverlayOverride::WebOverlayOverride):
+        (BlackBerry::WebKit::WebOverlayOverride::~WebOverlayOverride):
+        (BlackBerry::WebKit::WebOverlayOverride::setPosition):
+        (BlackBerry::WebKit::WebOverlayOverride::setAnchorPoint):
+        (BlackBerry::WebKit::WebOverlayOverride::setSize):
+        (BlackBerry::WebKit::WebOverlayOverride::setTransform):
+        (BlackBerry::WebKit::WebOverlayOverride::setOpacity):
+        (BlackBerry::WebKit::WebOverlayOverride::addAnimation):
+        (BlackBerry::WebKit::WebOverlayOverride::removeAnimation):
+        * Api/WebOverlayOverride.h:
+        * Api/WebOverlay_p.h:
+        (WebOverlayPrivate):
+        (WebOverlayPrivateWebKitThread):
+        (WebOverlayPrivateCompositingThread):
+
 2012-08-10  Benjamin C Meyer  <bmeyer@rim.com>
 
         Introduce JavaScriptVariant object.

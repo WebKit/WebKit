@@ -27,57 +27,69 @@
 #include "WebString.h"
 
 #include <BlackBerryPlatformMessageClient.h>
+#include <wtf/CurrentTime.h>
 
 namespace BlackBerry {
 namespace WebKit {
 
 using namespace WebCore;
 
-WebOverlayOverride::WebOverlayOverride(WebOverlayPrivate* d, bool owned)
+WebOverlayOverride::WebOverlayOverride(WebOverlayPrivate* d)
     : d(d)
-    , m_owned(owned)
 {
 }
 
 WebOverlayOverride::~WebOverlayOverride()
 {
-    if (m_owned)
-        delete d;
 }
 
 void WebOverlayOverride::setPosition(const Platform::FloatPoint& position)
 {
-    d->setPosition(position);
+    d->layerCompositingThread()->override()->setPosition(position);
+    d->scheduleCompositingRun();
 }
 
 void WebOverlayOverride::setAnchorPoint(const Platform::FloatPoint& anchor)
 {
-    d->setAnchorPoint(anchor);
+    d->layerCompositingThread()->override()->setAnchorPoint(anchor);
+    d->scheduleCompositingRun();
 }
 
 void WebOverlayOverride::setSize(const Platform::FloatSize& size)
 {
-    d->setSize(size);
+    d->layerCompositingThread()->override()->setBounds(IntSize(size.width(), size.height()));
+    d->scheduleCompositingRun();
 }
 
 void WebOverlayOverride::setTransform(const Platform::TransformationMatrix& transform)
 {
-    d->setTransform(reinterpret_cast<const TransformationMatrix&>(transform));
+    d->layerCompositingThread()->override()->setTransform(reinterpret_cast<const TransformationMatrix&>(transform));
+    d->scheduleCompositingRun();
 }
 
 void WebOverlayOverride::setOpacity(float opacity)
 {
-    d->setOpacity(opacity);
+    d->layerCompositingThread()->override()->setOpacity(opacity);
+    d->scheduleCompositingRun();
 }
 
 void WebOverlayOverride::addAnimation(const WebAnimation& animation)
 {
-    d->addAnimation(animation.d->name, animation.d->animation.get(), animation.d->keyframes);
+    LayerCompositingThread* layerCompositingThread = d->layerCompositingThread();
+    LayerOverride* override = layerCompositingThread->override();
+
+    IntSize boxSize = override->isBoundsSet() ? override->bounds() : layerCompositingThread->bounds();
+    RefPtr<LayerAnimation> layerAnimation = LayerAnimation::create(animation.d->keyframes, boxSize, animation.d->animation.get(), animation.d->name, 0.0);
+    layerAnimation->setStartTime(currentTime());
+
+    override->addAnimation(layerAnimation);
+    d->scheduleCompositingRun();
 }
 
 void WebOverlayOverride::removeAnimation(const WebString& name)
 {
-    d->removeAnimation(String(PassRefPtr<StringImpl>(name.impl())));
+    d->layerCompositingThread()->override()->removeAnimation(String(PassRefPtr<StringImpl>(name.impl())));
+    d->scheduleCompositingRun();
 }
 
 }
