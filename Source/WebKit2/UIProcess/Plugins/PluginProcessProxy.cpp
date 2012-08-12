@@ -67,6 +67,9 @@ PluginProcessProxy::PluginProcessProxy(PluginProcessManager* PluginProcessManage
 #if PLATFORM(MAC)
     launchOptions.architecture = pluginInfo.pluginArchitecture;
     launchOptions.executableHeap = PluginProcessProxy::pluginNeedsExecutableHeap(pluginInfo);
+#if HAVE(XPC)
+    launchOptions.useXPC = false;
+#endif
 #endif
 
     m_processLauncher = ProcessLauncher::create(this, launchOptions);
@@ -190,7 +193,7 @@ void PluginProcessProxy::didFinishLaunching(ProcessLauncher*, CoreIPC::Connectio
 {
     ASSERT(!m_connection);
 
-    if (!connectionIdentifier) {
+    if (CoreIPC::Connection::identifierIsNull(connectionIdentifier)) {
         pluginProcessCrashedOrFailedToLaunch();
         return;
     }

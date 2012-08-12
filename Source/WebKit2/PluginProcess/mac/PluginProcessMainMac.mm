@@ -118,9 +118,9 @@ int PluginProcessMain(const CommandLine& commandLine)
 
     // Initialize the shim.
     PluginProcess::shared().initializeShim();
-    
+
     // Initialize the plug-in process connection.
-    PluginProcess::shared().initialize(serverPort, RunLoop::main());
+    PluginProcess::shared().initialize(CoreIPC::Connection::Identifier(serverPort), RunLoop::main());
 
     [NSApplication sharedApplication];
 

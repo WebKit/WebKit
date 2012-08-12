@@ -47,7 +47,7 @@ static void webThreadBody(void* context)
     JSC::initializeThreading();
     WTF::initializeMainThread();
 
-    WebProcess::shared().initialize(serverPort, RunLoop::current());
+    WebProcess::shared().initialize(CoreIPC::Connection::Identifier(serverPort), RunLoop::current());
 
     [pool drain];
 
@@ -65,10 +65,10 @@ CoreIPC::Connection::Identifier ThreadLauncher::createWebThread()
 
     if (!createThread(webThreadBody, reinterpret_cast<void*>(listeningPort), "WebKit2: WebThread")) {
         mach_port_destroy(mach_task_self(), listeningPort);
-        return MACH_PORT_NULL;
+        return CoreIPC::Connection::Identifier();
     }
 
-    return listeningPort;
+    return CoreIPC::Connection::Identifier(listeningPort);
 }
 
 } // namespace WebKit

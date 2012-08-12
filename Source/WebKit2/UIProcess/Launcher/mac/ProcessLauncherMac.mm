@@ -45,10 +45,19 @@
 #import <wtf/text/CString.h>
 #import <wtf/text/WTFString.h>
 
+#if HAVE(XPC)
+#import <xpc/xpc.h>
+#endif
+
 using namespace WebCore;
 
 // FIXME: We should be doing this another way.
 extern "C" kern_return_t bootstrap_register2(mach_port_t, name_t, mach_port_t, uint64_t);
+
+#if HAVE(XPC)
+extern "C" void xpc_connection_set_instance(xpc_connection_t, uuid_t);
+extern "C" void xpc_dictionary_set_mach_send(xpc_object_t, const char*, mach_port_t);
+#endif
 
 namespace WebKit {
 
@@ -68,8 +77,81 @@ static void setUpTerminationNotificationHandler(pid_t pid)
 #endif
 }
 
-void ProcessLauncher::launchProcess()
+typedef void (ProcessLauncher::*DidFinishLaunchingProcessFunction)(PlatformProcessIdentifier, CoreIPC::Connection::Identifier);
+
+#if HAVE(XPC)
+static void launchXPCService(const ProcessLauncher::LaunchOptions&, const EnvironmentVariables&, ProcessLauncher* that, DidFinishLaunchingProcessFunction didFinishLaunchingProcessFunction)
 {
+    // Create a connection to the WebKit2 XPC service.
+    xpc_connection_t connection = xpc_connection_create("com.apple.WebKit2Service", 0);
+
+    uuid_t uuid;
+    uuid_generate(uuid);
+    xpc_connection_set_instance(connection, uuid);
+
+    xpc_connection_set_event_handler(connection, ^(xpc_object_t event) {
+        xpc_type_t type = xpc_get_type(event);
+        if (type == XPC_TYPE_ERROR) {
+            if (event == XPC_ERROR_CONNECTION_INVALID || event == XPC_ERROR_CONNECTION_INTERRUPTED)
+                NSLog(@"WebKit2 Web Content service exited.");
+        }
+    });
+    xpc_connection_resume(connection);
+
+    // Create the listening port.
+    mach_port_t listeningPort;
+    mach_port_allocate(mach_task_self(), MACH_PORT_RIGHT_RECEIVE, &listeningPort);
+    
+    // Insert a send right so we can send to it.
+    mach_port_insert_right(mach_task_self(), listeningPort, listeningPort, MACH_MSG_TYPE_MAKE_SEND);
+
+    xpc_object_t bootStrapMessage = xpc_dictionary_create(0, 0, 0);
+    xpc_dictionary_set_string(bootStrapMessage, "message-name", "bootstrap");
+    xpc_dictionary_set_string(bootStrapMessage, "framework-executable-path", [[[NSBundle bundleWithIdentifier:@"com.apple.WebKit2"] executablePath] fileSystemRepresentation]);
+    xpc_dictionary_set_mach_send(bootStrapMessage, "server-port", listeningPort);
+
+    that->ref();
+
+    xpc_connection_send_message_with_reply(connection, bootStrapMessage, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^(xpc_object_t reply) {
+        xpc_type_t type = xpc_get_type(reply);
+        if (type == XPC_TYPE_ERROR) {
+            // We failed to launch. Release the send right.
+            mach_port_deallocate(mach_task_self(), listeningPort);
+
+            // And the receive right.
+            mach_port_mod_refs(mach_task_self(), listeningPort, MACH_PORT_RIGHT_RECEIVE, -1);
+            
+            RunLoop::main()->dispatch(bind(didFinishLaunchingProcessFunction, this, 0, CoreIPC::Connection::Identifier()));
+        } else {
+            ASSERT(type == XPC_TYPE_DICTIONARY);
+            ASSERT(!strcmp(xpc_dictionary_get_string(reply, "message-name"), "process-finished-launching"));
+    
+            // The process has finished launching, grab the pid from the connection.
+            pid_t processIdentifier = xpc_connection_get_pid(connection);
+
+            // We've finished launching the process, message back to the main run loop.
+            RunLoop::main()->dispatch(bind(didFinishLaunchingProcessFunction, that, processIdentifier, CoreIPC::Connection::Identifier(listeningPort, connection)));
+        }
+
+        that->deref();
+    });
+    xpc_release(bootStrapMessage);
+}
+#endif
+
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
+static bool tryPreexistingProcess(const ProcessLauncher::LaunchOptions& launchOptions, const EnvironmentVariables& environmentVariables, ProcessLauncher* that, DidFinishLaunchingProcessFunction didFinishLaunchingProcessFunction)
+{
+    static const char* preexistingProcessServiceName = environmentVariables.get(EnvironmentVariables::preexistingProcessServiceNameKey());
+
+    ProcessLauncher::ProcessType preexistingProcessType;
+    if (preexistingProcessServiceName)
+        ProcessLauncher::getProcessTypeFromString(environmentVariables.get(EnvironmentVariables::preexistingProcessTypeKey()), preexistingProcessType);
+
+    bool usePreexistingProcess = preexistingProcessServiceName && preexistingProcessType == launchOptions.processType;
+    if (!usePreexistingProcess)
+        return false;
+
     // Create the listening port.
     mach_port_t listeningPort;
     mach_port_allocate(mach_task_self(), MACH_PORT_RIGHT_RECEIVE, &listeningPort);
@@ -79,39 +161,53 @@ void ProcessLauncher::launchProcess()
 
     pid_t processIdentifier = 0;
 
+    mach_port_t lookupPort;
+    bootstrap_look_up(bootstrap_port, preexistingProcessServiceName, &lookupPort);
+
+    mach_msg_header_t header;
+    header.msgh_bits = MACH_MSGH_BITS(MACH_MSG_TYPE_COPY_SEND, MACH_MSG_TYPE_MAKE_SEND);
+    header.msgh_id = 0;
+    header.msgh_local_port = listeningPort;
+    header.msgh_remote_port = lookupPort;
+    header.msgh_size = sizeof(header);
+    kern_return_t kr = mach_msg(&header, MACH_SEND_MSG, sizeof(header), 0, MACH_PORT_NULL, MACH_MSG_TIMEOUT_NONE, MACH_PORT_NULL);
+
+    mach_port_deallocate(mach_task_self(), lookupPort);
+    preexistingProcessServiceName = 0;
+
+    if (kr) {
+        LOG_ERROR("Failed to pick up preexisting process at %s (%x). Launching a new process of type %s instead.", preexistingProcessServiceName, kr, ProcessLauncher::processTypeAsString(launchOptions.processType));
+        return false;
+    }
+    
+    // We've finished launching the process, message back to the main run loop.
+    RunLoop::main()->dispatch(bind(didFinishLaunchingProcessFunction, that, processIdentifier, CoreIPC::Connection::Identifier(listeningPort)));
+    return true;
+}
+#endif
+
+void ProcessLauncher::launchProcess()
+{
     EnvironmentVariables environmentVariables;
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
-    static const char* preexistingProcessServiceName = environmentVariables.get(EnvironmentVariables::preexistingProcessServiceNameKey());
-    ProcessType preexistingProcessType;
-    if (preexistingProcessServiceName)
-        getProcessTypeFromString(environmentVariables.get(EnvironmentVariables::preexistingProcessTypeKey()), preexistingProcessType);
-
-    bool usePreexistingProcess = preexistingProcessServiceName && preexistingProcessType == m_launchOptions.processType;
-
-    if (usePreexistingProcess) {
-        mach_port_t lookupPort;
-        bootstrap_look_up(bootstrap_port, preexistingProcessServiceName, &lookupPort);
-
-        mach_msg_header_t header;
-        header.msgh_bits = MACH_MSGH_BITS(MACH_MSG_TYPE_COPY_SEND, MACH_MSG_TYPE_MAKE_SEND);
-        header.msgh_id = 0;
-        header.msgh_local_port = listeningPort;
-        header.msgh_remote_port = lookupPort;
-        header.msgh_size = sizeof(header);
-        kern_return_t kr = mach_msg(&header, MACH_SEND_MSG, sizeof(header), 0, MACH_PORT_NULL, MACH_MSG_TIMEOUT_NONE, MACH_PORT_NULL);
-
-        if (kr) {
-            LOG_ERROR("Failed to pick up preexisting process at %s (%x). Launching a new process of type %s instead.", preexistingProcessServiceName, kr, processTypeAsString(m_launchOptions.processType));
-            usePreexistingProcess = false;
-        }
-
-        mach_port_deallocate(mach_task_self(), lookupPort);
-
-        preexistingProcessServiceName = 0;
-    }
-
-    if (!usePreexistingProcess) {
+    if (tryPreexistingProcess(m_launchOptions, environmentVariables, this, &ProcessLauncher::didFinishLaunchingProcess))
+        return;
 #endif
+
+#if HAVE(XPC)
+    if (m_launchOptions.useXPC) {
+        launchXPCService(m_launchOptions, environmentVariables, this, &ProcessLauncher::didFinishLaunchingProcess);
+        return;
+    }
+#endif
+
+        // Create the listening port.
+        mach_port_t listeningPort;
+        mach_port_allocate(mach_task_self(), MACH_PORT_RIGHT_RECEIVE, &listeningPort);
+    
+        // Insert a send right so we can send to it.
+        mach_port_insert_right(mach_task_self(), listeningPort, listeningPort, MACH_MSG_TYPE_MAKE_SEND);
+
         NSBundle *webKit2Bundle = [NSBundle bundleWithIdentifier:@"com.apple.WebKit2"];
         NSString *frameworksPath = [[webKit2Bundle bundlePath] stringByDeletingLastPathComponent];
         const char* frameworkExecutablePath = [[webKit2Bundle executablePath] fileSystemRepresentation];
@@ -192,7 +288,8 @@ void ProcessLauncher::launchProcess()
             if (stat(processShimPath, &statBuf) == 0 && (statBuf.st_mode & S_IFMT) == S_IFREG)
                 environmentVariables.appendValue("DYLD_INSERT_LIBRARIES", processShimPath, ':');
         }
-        
+
+        pid_t processIdentifier = 0;
         int result = posix_spawn(&processIdentifier, args[0], 0, &attr, const_cast<char**>(args), environmentVariables.environmentPointer());
 
         posix_spawnattr_destroy(&attr);
@@ -211,12 +308,9 @@ void ProcessLauncher::launchProcess()
             listeningPort = MACH_PORT_NULL;
             processIdentifier = 0;
         }
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
-    }
-#endif
 
     // We've finished launching the process, message back to the main run loop.
-    RunLoop::main()->dispatch(bind(&ProcessLauncher::didFinishLaunchingProcess, this, processIdentifier, listeningPort));
+    RunLoop::main()->dispatch(bind(&ProcessLauncher::didFinishLaunchingProcess, this, processIdentifier, CoreIPC::Connection::Identifier(listeningPort)));
 }
 
 void ProcessLauncher::terminateProcess()

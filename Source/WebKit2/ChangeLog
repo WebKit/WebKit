@@ -1,3 +1,124 @@
+2012-08-11  Sam Weinig  <sam@webkit.org>
+
+        Make it possible to run the WebProcess as an XPC service
+        https://bugs.webkit.org/show_bug.cgi?id=92814
+
+        Reviewed by Anders Carlsson.
+
+        In this initial implementation, we are only using the XPC service
+        to launch the WebProcess, and then using the xpc_connection to send
+        over a mach_port to the WebProcess which is then used for creating
+        the CoreIPC connection.  In the future, we will switch to using the
+        xpc_connection for all messaging.
+
+        When the XPC service is enabled (it is compiled out by default for now), both
+        the XPC service and the old spawned process are runtime choosable.  This allows
+        the connect to pre-existing process workflow to continue to work.
+
+        There are a few additional caveats of this initial implementation:
+            - It is only set up for the WebProcess (not for the PluginProcess)
+            - The WebProcess shim does not work.
+            - It requires a new environment variable to be set when launching
+              to find the right service to launch (__XPC_DYLD_FRAMEWORK_PATH).
+
+        * Configurations/WebKit2Service.xcconfig: Added.
+        Add new configuration file for the service.
+
+        * Platform/CoreIPC/Connection.h:
+        (CoreIPC::Connection::Identifier::Identifier):
+        (CoreIPC::Connection::identifierIsNull):
+        Added to encapsulate the concept of a null identifier, now that it
+        is not possible to just compare to null.
+
+        * Platform/CoreIPC/mac/ConnectionMac.cpp:
+        (CoreIPC::Connection::platformInvalidate):
+        (CoreIPC::Connection::platformInitialize):
+        Change Connection::Identifier on the Mac to be a struct instead of
+        a typedef to a mach_port. This allows for the Connection to get both
+        the listening port and a reference to the xpc_connection (if it
+        compiled in). For now, all we do is retain the xpc_connection when it
+        is given to us, and release on Connection invalidation.
+
+        * PluginProcess/PluginProcess.cpp:
+        (WebKit::PluginProcess::createWebProcessConnection):
+        * PluginProcess/mac/PluginProcessMainMac.mm:
+        (WebKit::PluginProcessMain):
+        * WebProcess/Plugins/PluginProcessConnectionManager.cpp:
+        (WebKit::PluginProcessConnectionManager::getPluginProcessConnection):
+        Use the Connection::Identifier constructor.
+
+        * UIProcess/Launcher/ProcessLauncher.h:
+        (LaunchOptions):
+        Add a UseXPC option to the LaunchOptions so we can dynamically choose whether to use it.
+
+        (ProcessLauncher):
+        Make processTypeAsString public to allow better factoring in the implementation file
+        using static functions.
+
+        * UIProcess/Launcher/mac/ProcessLauncherMac.mm:
+        Factor out the different launching options into helper functions. Always start by
+        trying to connect to a pre-existing process.
+
+        (WebKit::launchXPCService):
+        Create a new xpc_connection to our service, and give it a unique instance UUID.
+        Then, send a bootstrap message with a mach_port and wait for a reply to complete
+        the launch procedure.
+ 
+        (WebKit::tryPreexistingProcess):
+        Move the code to connect to a preexisting process to its own helper function.
+
+        (WebKit::ProcessLauncher::launchProcess):
+        Clean up a bit, calling the helper functions and adding call to launch the XPC service
+        if it is enabled.
+
+        * UIProcess/Launcher/mac/ThreadLauncherMac.mm:
+        (WebKit::webThreadBody):
+        (WebKit::ThreadLauncher::createWebThread):
+        Switch to using the constructor version of Identifier.
+
+        * UIProcess/Plugins/PluginProcessProxy.cpp:
+        (WebKit::PluginProcessProxy::PluginProcessProxy):
+        Don't try to use the XPC service for plugins yet.
+ 
+        (WebKit::PluginProcessProxy::didFinishLaunching):
+        Use Connection::identifierIsNull instead of explicit null check.
+
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::connect):
+        If XPC is compiled in (it currently is not) enable it by default.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        Add the new files and targets.
+
+        * WebKit2Service: Added.
+        * WebKit2Service/Info.plist: Added.
+        Add the paper work needed for an XPC service. Importantly, set up the XPC
+        service to be an Application service type, use NSApplicationMain as its run
+        loop, and allow for multiple instantiations. Also make sure the service acts
+        like the WebProcess binary by making it a LSUIElement, enabling LSFileQuarantine,
+        and setting the principle class to NSApplication.
+
+        * WebKit2Service/MainMacService.mm: Added.
+        (WebKit2ServiceEventHandler):
+        (main):
+        The initialization of the XPC service is quite a bit different than the
+        WebProcess version, since we don't get passed parameters in argv. Instead,
+        we initiate the XPC service via xpc_main, and wait for the bootstrap message
+        we sent in ProcessLauncherMac.mm. When we receive that message we can load 
+        WebKit2 framework and initialize the WebProcess normally (we also get the mach_port
+        for the CoreIPC connection in that bootstrap message).
+
+        * WebProcess/mac/WebProcessMainMac.mm:
+        (WebKit::WebProcessMainXPC):
+        Add a variant of WebProcessMain that is used for the XPC service case, where we don't
+        have command line arguments and don't need to talk to the mach bootstrap server.
+
+        (WebKit::WebProcessMain):
+        * mac/MainMac.cpp: Removed.
+        * mac/MainMacProcess.cpp: Copied from Source/WebKit2/mac/MainMac.cpp.
+        Rename MainMac to MainMacProcess to signify that it is different from the XPC
+        service main.
+
 2012-08-09  Jer Noble  <jer.noble@apple.com>
 
         Crash exiting from HTML5 FS mode to normal mode via ESC key

@@ -110,6 +110,9 @@ void WebProcessProxy::connect()
         // We want the web process to match the architecture of the UI process.
         launchOptions.architecture = ProcessLauncher::LaunchOptions::MatchCurrentArchitecture;
         launchOptions.executableHeap = false;
+#if HAVE(XPC)
+        launchOptions.useXPC = true; // FIXME: This needs to be configurable.
+#endif
 #endif
 #ifndef NDEBUG
         const char* webProcessCmdPrefix = getenv("WEB_PROCESS_CMD_PREFIX");

@@ -63,8 +63,8 @@ PluginProcessConnection* PluginProcessConnectionManager::getPluginProcessConnect
         return 0;
 
 #if PLATFORM(MAC)
-    CoreIPC::Connection::Identifier connectionIdentifier = encodedConnectionIdentifier.port();
-    if (!connectionIdentifier)
+    CoreIPC::Connection::Identifier connectionIdentifier(encodedConnectionIdentifier.port());
+    if (CoreIPC::Connection::identifierIsNull(connectionIdentifier))
         return 0;
 #elif USE(UNIX_DOMAIN_SOCKETS)
     CoreIPC::Connection::Identifier connectionIdentifier = encodedConnectionIdentifier.fileDescriptor();

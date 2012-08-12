@@ -33,6 +33,10 @@
 #include <mach/mach_error.h>
 #include <mach/vm_map.h>
 
+#if HAVE(XPC)
+#include <xpc/xpc.h>
+#endif
+
 using namespace std;
 using namespace WebCore;
 
@@ -65,6 +69,13 @@ void Connection::platformInvalidate()
         m_connectionQueue.unregisterMachPortEventHandler(m_exceptionPort);
         m_exceptionPort = MACH_PORT_NULL;
     }
+
+#if HAVE(XPC)
+    if (m_xpcConnection) {
+        xpc_release(m_xpcConnection);
+        m_xpcConnection = 0;
+    }
+#endif
 }
 
 void Connection::platformInitialize(Identifier identifier)
@@ -72,12 +83,16 @@ void Connection::platformInitialize(Identifier identifier)
     m_exceptionPort = MACH_PORT_NULL;
 
     if (m_isServer) {
-        m_receivePort = identifier;
+        m_receivePort = identifier.port;
         m_sendPort = MACH_PORT_NULL;
     } else {
         m_receivePort = MACH_PORT_NULL;
-        m_sendPort = identifier;
+        m_sendPort = identifier.port;
     }
+
+#if HAVE(XPC)
+    m_xpcConnection = identifier.xpcConnection;
+#endif
 }
 
 bool Connection::open()
