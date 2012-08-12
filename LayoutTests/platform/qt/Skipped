@@ -2300,6 +2300,9 @@ css2.1/20110323/inline-table-001.htm
 css2.1/20110323/inline-table-003.htm
 editing/inserting/multiple-lines-selected.html
 
+fast/table/table-row-outline-paint.html
+svg/as-image/animated-svg-repaints-completely-in-hidpi.html
+
 # ============================================================================= #
 # Regressions occured after Qt version update
 # ============================================================================= #

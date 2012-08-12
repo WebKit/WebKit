@@ -1,3 +1,9 @@
+2012-08-12  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed gardening, skip new tests without expected results.
+
+        * platform/qt/Skipped:
+
 2012-08-12  Pravin D  <pravind.2k4@gmail.com>
 
         table cell.cellIndex should return -1 if there is no parent table
