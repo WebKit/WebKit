@@ -1,5 +1,12 @@
 2012-08-11  Sam Weinig  <sam@webkit.org>
 
+        Fix the build.
+
+        * Platform/CoreIPC/Connection.h:
+        Add missing include.
+
+2012-08-11  Sam Weinig  <sam@webkit.org>
+
         [WK2] Get rid of ProcessModelSharedSecondaryThread
         https://bugs.webkit.org/show_bug.cgi?id=93652
 

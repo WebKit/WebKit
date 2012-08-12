@@ -40,6 +40,9 @@
 
 #if OS(DARWIN)
 #include <mach/mach_port.h>
+#if HAVE(XPC)
+#include <xpc/xpc.h>
+#endif
 #elif PLATFORM(WIN)
 #include <string>
 #elif PLATFORM(QT)
