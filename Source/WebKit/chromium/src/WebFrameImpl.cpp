@@ -89,6 +89,7 @@
 #include "EventHandler.h"
 #include "EventListenerWrapper.h"
 #include "FileSystemType.h"
+#include "FindInPageCoordinates.h"
 #include "FocusController.h"
 #include "FontCache.h"
 #include "FormState.h"
@@ -118,6 +119,7 @@
 #include "PlatformSupport.h"
 #include "PluginDocument.h"
 #include "PrintContext.h"
+#include "RenderBox.h"
 #include "RenderFrame.h"
 #include "RenderLayer.h"
 #include "RenderObject.h"
@@ -514,6 +516,12 @@ private:
 static WebDataSource* DataSourceForDocLoader(DocumentLoader* loader)
 {
     return loader ? WebDataSourceImpl::fromDocumentLoader(loader) : 0;
+}
+
+WebFrameImpl::FindMatch::FindMatch(PassRefPtr<Range> range, int ordinal)
+    : m_range(range)
+    , m_ordinal(ordinal)
+{
 }
 
 // WebFrame -------------------------------------------------------------------
@@ -1654,9 +1662,17 @@ bool WebFrameImpl::find(int identifier,
     m_activeMatch = frame()->editor()->findStringAndScrollToVisible(searchText, m_activeMatch.get(), findOptions);
 
     if (!m_activeMatch) {
+        // If we're finding next the next active match might not be in the current frame.
+        // In this case we don't want to clear the matches cache.
+        if (!options.findNext)
+            clearFindMatchesCache();
         invalidateArea(InvalidateAll);
         return false;
     }
+
+#if OS(ANDROID)
+    viewImpl()->zoomToFindInPageRect(frameView()->contentsToWindow(enclosingIntRect(m_activeMatch->transformFriendlyBoundingBox)));
+#endif
 
     setMarkerActive(m_activeMatch.get(), true);
     WebFrameImpl* oldActiveFrame = mainFrameImpl->m_currentActiveMatchFrame;
@@ -1705,6 +1721,7 @@ void WebFrameImpl::stopFinding(bool clearSelection)
     // Remove all markers for matches found and turn off the highlighting.
     frame()->document()->markers()->removeMarkers(DocumentMarker::TextMatch);
     frame()->editor()->setMarkedTextMatchesAreHighlighted(false);
+    clearFindMatchesCache();
 
     // Let the frame know that we don't want tickmarks or highlighting anymore.
     invalidateArea(InvalidateAll);
@@ -1727,6 +1744,10 @@ void WebFrameImpl::scopeStringMatches(int identifier,
         // Clear highlighting for this frame.
         if (frame()->editor()->markedTextMatchesAreHighlighted())
             frame()->page()->unmarkAllTextMatches();
+
+        // Clear the tickmarks and results cache.
+        clearFindMatchesCache();
+
         // Clear the counters from last operation.
         m_lastMatchCount = 0;
         m_nextInvalidateAfter = 0;
@@ -1825,6 +1846,8 @@ void WebFrameImpl::scopeStringMatches(int identifier,
 
         addMarker(resultRange.get(), foundActiveMatch);
 
+        m_findMatchesCache.append(FindMatch(resultRange.get(), m_lastMatchCount + matchCount));
+
         // Set the new start for the search range to be the end of the previous
         // result range. There is no need to use a VisiblePosition here,
         // since findPlainText will use a TextIterator to go over the visible
@@ -1895,6 +1918,9 @@ void WebFrameImpl::increaseMatchCount(int count, int identifier)
     // This function should only be called on the mainframe.
     ASSERT(!parent());
 
+    if (count)
+        ++m_findMatchMarkersVersion;
+
     m_totalMatchCount += count;
 
     // Update the UI with the latest findings.
@@ -1913,6 +1939,9 @@ void WebFrameImpl::reportFindInPageSelection(const WebRect& selectionRect,
 
 void WebFrameImpl::resetMatchCount()
 {
+    if (m_totalMatchCount > 0)
+        ++m_findMatchMarkersVersion;
+
     m_totalMatchCount = 0;
     m_framesScopingCount = 0;
 }
@@ -1959,25 +1988,188 @@ void WebFrameImpl::dispatchMessageEventWithOriginCheck(const WebSecurityOrigin& 
 
 int WebFrameImpl::findMatchMarkersVersion() const
 {
-    // FIXME: Implement this as part of https://bugs.webkit.org/show_bug.cgi?id=93111.
-    return 0;
+    ASSERT(!parent());
+    return m_findMatchMarkersVersion;
+}
+
+void WebFrameImpl::clearFindMatchesCache()
+{
+    if (!m_findMatchesCache.isEmpty())
+        viewImpl()->mainFrameImpl()->m_findMatchMarkersVersion++;
+
+    m_findMatchesCache.clear();
+    m_findMatchRectsAreValid = false;
+}
+
+bool WebFrameImpl::isActiveMatchFrameValid() const
+{
+    WebFrameImpl* mainFrameImpl = viewImpl()->mainFrameImpl();
+    WebFrameImpl* activeMatchFrame = mainFrameImpl->activeMatchFrame();
+    return activeMatchFrame && activeMatchFrame->m_activeMatch
+        && activeMatchFrame->frame()->tree()->isDescendantOf(mainFrameImpl->frame());
+}
+
+void WebFrameImpl::updateFindMatchRects()
+{
+    IntSize currentContentsSize = contentsSize();
+    if (m_contentsSizeForCurrentFindMatchRects != currentContentsSize) {
+        m_contentsSizeForCurrentFindMatchRects = currentContentsSize;
+        m_findMatchRectsAreValid = false;
+    }
+
+    size_t deadMatches = 0;
+    for (Vector<FindMatch>::iterator it = m_findMatchesCache.begin(); it != m_findMatchesCache.end(); ++it) {
+        if (!it->m_range->boundaryPointsValid() || !it->m_range->startContainer()->inDocument())
+            it->m_rect = FloatRect();
+        else if (!m_findMatchRectsAreValid)
+            it->m_rect = findInPageRectFromRange(it->m_range.get());
+
+        if (it->m_rect.isEmpty())
+            ++deadMatches;
+    }
+
+    // Remove any invalid matches from the cache.
+    if (deadMatches) {
+        Vector<FindMatch> filteredMatches;
+        filteredMatches.reserveCapacity(m_findMatchesCache.size() - deadMatches);
+
+        for (Vector<FindMatch>::const_iterator it = m_findMatchesCache.begin(); it != m_findMatchesCache.end(); ++it)
+            if (!it->m_rect.isEmpty())
+                filteredMatches.append(*it);
+
+        m_findMatchesCache.swap(filteredMatches);
+    }
+
+    // Invalidate the rects in child frames. Will be updated later during traversal.
+    if (!m_findMatchRectsAreValid)
+        for (WebFrame* child = firstChild(); child; child = child->nextSibling())
+            static_cast<WebFrameImpl*>(child)->m_findMatchRectsAreValid = false;
+
+    m_findMatchRectsAreValid = true;
 }
 
 WebFloatRect WebFrameImpl::activeFindMatchRect()
 {
-    // FIXME: Implement this as part of https://bugs.webkit.org/show_bug.cgi?id=93111.
-    return WebFloatRect();
+    ASSERT(!parent());
+
+    if (!isActiveMatchFrameValid())
+        return WebFloatRect();
+
+    return WebFloatRect(findInPageRectFromRange(m_currentActiveMatchFrame->m_activeMatch.get()));
 }
 
 void WebFrameImpl::findMatchRects(WebVector<WebFloatRect>& outputRects)
 {
-    // FIXME: Implement this as part of https://bugs.webkit.org/show_bug.cgi?id=93111.
+    ASSERT(!parent());
+
+    Vector<WebFloatRect> matchRects;
+    for (WebFrameImpl* frame = this; frame; frame = static_cast<WebFrameImpl*>(frame->traverseNext(false)))
+        frame->appendFindMatchRects(matchRects);
+
+    outputRects = matchRects;
+}
+
+void WebFrameImpl::appendFindMatchRects(Vector<WebFloatRect>& frameRects)
+{
+    updateFindMatchRects();
+    frameRects.reserveCapacity(frameRects.size() + m_findMatchesCache.size());
+    for (Vector<FindMatch>::const_iterator it = m_findMatchesCache.begin(); it != m_findMatchesCache.end(); ++it) {
+        ASSERT(!it->m_rect.isEmpty());
+        frameRects.append(it->m_rect);
+    }
 }
 
 int WebFrameImpl::selectNearestFindMatch(const WebFloatPoint& point, WebRect* selectionRect)
 {
-    // FIXME: Implement this as part of https://bugs.webkit.org/show_bug.cgi?id=93111.
-    return 0;
+    ASSERT(!parent());
+
+    WebFrameImpl* bestFrame = 0;
+    int indexInBestFrame = -1;
+    float distanceInBestFrame = FLT_MAX;
+
+    for (WebFrameImpl* frame = this; frame; frame = static_cast<WebFrameImpl*>(frame->traverseNext(false))) {
+        float distanceInFrame;
+        int indexInFrame = frame->nearestFindMatch(point, distanceInFrame);
+        if (distanceInFrame < distanceInBestFrame) {
+            bestFrame = frame;
+            indexInBestFrame = indexInFrame;
+            distanceInBestFrame = distanceInFrame;
+        }
+    }
+
+    if (indexInBestFrame != -1)
+        return bestFrame->selectFindMatch(static_cast<unsigned>(indexInBestFrame), selectionRect);
+
+    return -1;
+}
+
+int WebFrameImpl::nearestFindMatch(const FloatPoint& point, float& distanceSquared)
+{
+    updateFindMatchRects();
+
+    int nearest = -1;
+    distanceSquared = FLT_MAX;
+    for (size_t i = 0; i < m_findMatchesCache.size(); ++i) {
+        ASSERT(!m_findMatchesCache[i].m_rect.isEmpty());
+        FloatSize offset = point - m_findMatchesCache[i].m_rect.center();
+        float width = offset.width();
+        float height = offset.height();
+        float currentDistanceSquared = width * width + height * height;
+        if (currentDistanceSquared < distanceSquared) {
+            nearest = i;
+            distanceSquared = currentDistanceSquared;
+        }
+    }
+    return nearest;
+}
+
+int WebFrameImpl::selectFindMatch(unsigned index, WebRect* selectionRect)
+{
+    ASSERT(index < m_findMatchesCache.size());
+
+    RefPtr<Range> range = m_findMatchesCache[index].m_range;
+    if (!range->boundaryPointsValid() || !range->startContainer()->inDocument())
+        return -1;
+
+    // Check if the match is already selected.
+    WebFrameImpl* activeMatchFrame = viewImpl()->mainFrameImpl()->m_currentActiveMatchFrame;
+    if (this != activeMatchFrame || !m_activeMatch || !areRangesEqual(m_activeMatch.get(), range.get())) {
+        if (isActiveMatchFrameValid())
+            activeMatchFrame->setMarkerActive(activeMatchFrame->m_activeMatch.get(), false);
+
+        m_activeMatchIndexInCurrentFrame = m_findMatchesCache[index].m_ordinal - 1;
+
+        // Set this frame as the active frame (the one with the active highlight).
+        viewImpl()->mainFrameImpl()->m_currentActiveMatchFrame = this;
+        viewImpl()->setFocusedFrame(this);
+
+        m_activeMatch = range.release();
+        setMarkerActive(m_activeMatch.get(), true);
+
+        // Clear any user selection, to make sure Find Next continues on from the match we just activated.
+        frame()->selection()->clear();
+
+        // Make sure no node is focused. See http://crbug.com/38700.
+        frame()->document()->setFocusedNode(0);
+    }
+
+    IntRect activeMatchRect;
+    IntRect activeMatchBoundingBox = enclosingIntRect(m_activeMatch->transformFriendlyBoundingBox());
+
+    if (!activeMatchBoundingBox.isEmpty()) {
+        if (m_activeMatch->firstNode() && m_activeMatch->firstNode()->renderer())
+            m_activeMatch->firstNode()->renderer()->scrollRectToVisible(activeMatchBoundingBox,
+                    ScrollAlignment::alignCenterIfNeeded, ScrollAlignment::alignCenterIfNeeded);
+
+        // Zoom to the active match.
+        activeMatchRect = frameView()->contentsToWindow(activeMatchBoundingBox);
+        viewImpl()->zoomToFindInPageRect(activeMatchRect);
+    }
+
+    if (selectionRect)
+        *selectionRect = activeMatchRect;
+
+    return ordinalOfFirstMatchForFrame(this) + m_activeMatchIndexInCurrentFrame + 1;
 }
 
 void WebFrameImpl::deliverIntent(const WebIntent& intent, WebMessagePortChannelArray* ports, WebDeliveredIntentClient* intentClient)
@@ -2097,6 +2289,8 @@ WebFrameImpl::WebFrameImpl(WebFrameClient* client)
     , m_framesScopingCount(-1)
     , m_scopingComplete(false)
     , m_nextInvalidateAfter(0)
+    , m_findMatchMarkersVersion(0)
+    , m_findMatchRectsAreValid(false)
     , m_animationController(this)
     , m_identifier(generateFrameIdentifier())
     , m_inSameDocumentHistoryLoad(false)
@@ -2173,6 +2367,15 @@ PassRefPtr<Frame> WebFrameImpl::createChildFrame(
         m_client->didCreateFrame(this, webframe.get());
 
     return childFrame.release();
+}
+
+void WebFrameImpl::didChangeContentsSize(const IntSize& size)
+{
+    // This is only possible on the main frame.
+    if (m_totalMatchCount > 0) {
+        ASSERT(!parent());
+        ++m_findMatchMarkersVersion;
+    }
 }
 
 void WebFrameImpl::createFrameView()

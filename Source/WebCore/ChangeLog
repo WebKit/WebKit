@@ -1,3 +1,34 @@
+2012-08-12  Leandro Gracia Gil  <leandrogracia@chromium.org>
+
+        [Chromium] Implement the find-in-page match rects API
+        https://bugs.webkit.org/show_bug.cgi?id=93111
+
+        Reviewed by Adam Barth.
+
+        Introduce the find-in-page coordinate system. This system tries to solve
+        the unintuitive tickmark results presented in pages with multiple frames
+        and scrolled contents where the find results might not be in the visible
+        area of a frame, which might lead to tickmarks below the container frame.
+
+        To achieve this, this coordinate system goes up the render tree
+        normalizing the coordinates by the actual contents size of its container.
+        This leads to tickmarks scaled to the visible size of their frame
+        independently of its scroll. This coordinate system supports also CSS
+        scroll:overflow, transforms and the different positions.
+
+        Also add an auxiliary method to Range in order to provide a transform
+        friendly way to retrieve the absolute coordinates of the enclosing
+        bounding box without the adjustment operations that the existing
+        enclosingRect method does.
+
+        Tested by WebFrameTest WebKit unit test.
+
+        * dom/Range.cpp:
+        (WebCore::Range::transformFriendlyBoundingBox): add a transform-friendly equivalent of boundingBox.
+        (WebCore):
+        * dom/Range.h: move boundingBox to the group of non-transform-friendly methods.
+        (Range):
+
 2012-08-12  Ami Fischman  <fischman@chromium.org>
 
         Stop Y-flipping CROS/ARM video textures

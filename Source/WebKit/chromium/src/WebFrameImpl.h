@@ -45,6 +45,7 @@ namespace WebCore {
 class GraphicsContext;
 class HTMLInputElement;
 class HistoryItem;
+class IntSize;
 class KURL;
 class Node;
 class Range;
@@ -248,6 +249,8 @@ public:
     PassRefPtr<WebCore::Frame> createChildFrame(
         const WebCore::FrameLoadRequest&, WebCore::HTMLFrameOwnerElement*);
 
+    void didChangeContentsSize(const WebCore::IntSize&);
+
     void createFrameView();
 
     static WebFrameImpl* fromFrame(WebCore::Frame* frame);
@@ -270,7 +273,11 @@ public:
     // Returns which frame has an active match. This function should only be
     // called on the main frame, as it is the only frame keeping track. Returned
     // value can be 0 if no frame has an active match.
-    const WebFrameImpl* activeMatchFrame() const { return m_currentActiveMatchFrame; }
+    WebFrameImpl* activeMatchFrame() const { return m_currentActiveMatchFrame; }
+
+    // Returns the active match in the current frame. Could be a null range if
+    // the local frame has no active match.
+    WebCore::Range* activeMatch() const { return m_activeMatch.get(); }
 
     // When a Find operation ends, we want to set the selection to what was active
     // and set focus to the first focusable node we find (starting with the first
@@ -297,6 +304,19 @@ private:
     friend class DeferredScopeStringMatches;
     friend class FrameLoaderClientImpl;
 
+    struct FindMatch {
+        RefPtr<WebCore::Range> m_range;
+
+        // 1-based index within this frame.
+        int m_ordinal;
+
+        // In find-in-page coordinates.
+        // Lazily calculated by updateFindMatchRects.
+        WebCore::FloatRect m_rect;
+
+        FindMatch(PassRefPtr<WebCore::Range>, int ordinal);
+    };
+
     // A bit mask specifying area of the frame to invalidate.
     enum AreaToInvalidate {
       InvalidateNothing,
@@ -314,6 +334,32 @@ private:
     // Notifies the delegate about a new selection rect.
     void reportFindInPageSelection(
         const WebRect& selectionRect, int activeMatchOrdinal, int identifier);
+
+    // Clear the find-in-page matches cache forcing rects to be fully
+    // calculated again next time updateFindMatchRects is called.
+    void clearFindMatchesCache();
+
+    // Check if the activeMatchFrame still exists in the frame tree.
+    bool isActiveMatchFrameValid() const;
+
+    // Return the index in the find-in-page cache of the match closest to the
+    // provided point in find-in-page coordinates, or -1 in case of error.
+    // The squared distance to the closest match is returned in the distanceSquared parameter.
+    int nearestFindMatch(const WebCore::FloatPoint&, float& distanceSquared);
+
+    // Select a find-in-page match marker in the current frame using a cache
+    // match index returned by nearestFindMatch. Returns the ordinal of the new
+    // selected match or -1 in case of error. Also provides the bounding box of
+    // the marker in window coordinates if selectionRect is not null.
+    int selectFindMatch(unsigned index, WebRect* selectionRect);
+
+    // Compute and cache the rects for FindMatches if required.
+    // Rects are automatically invalidated in case of content size changes,
+    // propagating the invalidation to child frames.
+    void updateFindMatchRects();
+
+    // Append the find-in-page match rects of the current frame to the provided vector.
+    void appendFindMatchRects(Vector<WebFloatRect>& frameRects);
 
     // Invalidates a certain area within the frame.
     void invalidateArea(AreaToInvalidate);
@@ -413,6 +459,21 @@ private:
 
     // A list of all of the pending calls to scopeStringMatches.
     Vector<DeferredScopeStringMatches*> m_deferredScopingWork;
+
+    // Version number incremented on the main frame only whenever the document
+    // find-in-page match markers change. It should be 0 for all other frames.
+    int m_findMatchMarkersVersion;
+
+    // Local cache of the find match markers currently displayed for this frame.
+    Vector<FindMatch> m_findMatchesCache;
+
+    // Determines if the rects in the find-in-page matches cache of this frame
+    // are invalid and should be recomputed.
+    bool m_findMatchRectsAreValid;
+
+    // Contents size when find-in-page match rects were last computed for this
+    // frame's cache.
+    WebCore::IntSize m_contentsSizeForCurrentFindMatchRects;
 
     // Valid between calls to BeginPrint() and EndPrint(). Containts the print
     // information. Is used by PrintPage().

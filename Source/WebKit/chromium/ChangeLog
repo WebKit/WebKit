@@ -1,3 +1,57 @@
+2012-08-12  Leandro Gracia Gil  <leandrogracia@chromium.org>
+
+        [Chromium] Implement the find-in-page match rects API
+        https://bugs.webkit.org/show_bug.cgi?id=93111
+
+        Reviewed by Adam Barth.
+
+        Implement the funcionality of the find-in-page match rects API in WebFrame.
+        These methods keep a cache of the match rects in a special coordinate system
+        (find-in-page coordinates) and update them on size changes. They also allow
+        to recover the match closest to a given point, therefore enabling to move
+        to find matches when tapping on their corresponding tickmarks.
+
+        * WebKit.gyp: add FindInPageCoordinates.h / cpp.
+        * src/ChromeClientImpl.cpp:
+        (WebKit::ChromeClientImpl::contentsSizeChanged): propagate didChangeContentsSize to WebFrameImpl.
+        * src/FindInPageCoordinates.cpp: Added.
+        (WebKit):
+        (WebKit::toNormalizedRect): auxiliary internal function.
+        (WebKit::findInPageRectFromAbsoluteRect): main coordinate conversion function.
+        (WebKit::findInPageRectFromRange): convenience conversion function for Ranges.
+        * src/FindInPageCoordinates.h: Added.
+        (WebCore):
+        (WebKit):
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::FindMatch::FindMatch): find matches cache constructor.
+        (WebKit):
+        (WebKit::WebFrameImpl::find): clear match cache when appropriate and zoom into results on the Android port.
+        (WebKit::WebFrameImpl::stopFinding): clear matches cache.
+        (WebKit::WebFrameImpl::scopeStringMatches): add new results to the matches cache.
+        (WebKit::WebFrameImpl::increaseMatchCount): update the matches cache version.
+        (WebKit::WebFrameImpl::resetMatchCount): update the matches cache version.
+        (WebKit::WebFrameImpl::findMatchMarkersVersion): new API providing the matches cache version.
+        (WebKit::WebFrameImpl::clearFindMatchesCache): internal utility method to reset the matches cache.
+        (WebKit::WebFrameImpl::isActiveMatchFrameValid): internal utility method to check if the local frame is still in the frame tree.
+        (WebKit::WebFrameImpl::updateFindMatchRects): internal utility method to update the match result rects if required.
+        (WebKit::WebFrameImpl::activeFindMatchRect): new API providing the active find match rect in find-in-page coordinates.
+        (WebKit::WebFrameImpl::findMatchRects): new API returning the valid match rects in find-in-page coordinates.
+        (WebKit::WebFrameImpl::appendFindMatchRects): internal utility method to concatenate the match results of multiple frames.
+        (WebKit::WebFrameImpl::selectNearestFindMatch): new API selecting the find match closer to a point in find-in-page coordinates.
+        (WebKit::WebFrameImpl::nearestFindMatch): internal utility method to find the nearest find match to a point in a frame.
+        (WebKit::WebFrameImpl::selectFindMatch): internal utility method to select a match in the cache.
+        (WebKit::WebFrameImpl::WebFrameImpl): initialization of new variables.
+        (WebKit::WebFrameImpl::didChangeContentsSize): invalidate the cached match rect coordinates on frame content size changes.
+        * src/WebFrameImpl.h:
+        (WebCore):
+        (WebFrameImpl):
+        (WebKit::WebFrameImpl::activeMatchFrame): remove unrequired const.
+        (WebKit::WebFrameImpl::activeMatch): expose the range of the active match to allow testing.
+        (FindMatch): cache structure for find matches.
+        * tests/WebFrameTest.cpp: new test case for find-in-page match rects.
+        * tests/data/find_in_page.html: Added. Test case layout.
+        * tests/data/find_in_page_frame.html: Added. Test case layout.
+
 2012-08-09  James Robinson  <jamesr@chromium.org>
 
         [chromium] Remove forwarding headers for compositor-related WebKit API and update includes

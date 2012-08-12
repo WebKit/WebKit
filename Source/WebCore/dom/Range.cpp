@@ -1942,7 +1942,6 @@ void Range::getBorderAndTextQuads(Vector<FloatQuad>& quads) const
     }
 }
 
-    
 FloatRect Range::boundingRect() const
 {
     if (!m_start.container())
@@ -1957,6 +1956,19 @@ FloatRect Range::boundingRect() const
 
     FloatRect result;
     for (size_t i = 0; i < quads.size(); ++i)
+        result.unite(quads[i].boundingBox());
+
+    return result;
+}
+
+FloatRect Range::transformFriendlyBoundingBox() const
+{
+    FloatRect result;
+    Vector<FloatQuad> quads;
+    textQuads(quads);
+
+    const size_t n = quads.size();
+    for (size_t i = 0; i < n; ++i)
         result.unite(quads[i].boundingBox());
 
     return result;

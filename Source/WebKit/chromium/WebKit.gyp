@@ -386,6 +386,8 @@
                 'src/EventListenerWrapper.h',
                 'src/ExternalPopupMenu.cpp',
                 'src/ExternalPopupMenu.h',
+                'src/FindInPageCoordinates.cpp',
+                'src/FindInPageCoordinates.h',
                 'src/FrameLoaderClientImpl.cpp',
                 'src/FrameLoaderClientImpl.h',
                 'src/FrameNetworkingContextImpl.h',
