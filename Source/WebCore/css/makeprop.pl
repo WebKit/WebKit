@@ -73,6 +73,15 @@ print GPERF << "EOF";
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
+EOF
+
+print GPERF "const char* const propertyNameStrings[numCSSProperties] = {\n";
+foreach my $name (@names) {
+  print GPERF "    \"$name\",\n";
+}
+print GPERF "};\n\n";
+
+print GPERF << "EOF";
 %}
 %struct-type
 struct Property;
@@ -189,12 +198,6 @@ print HEADER "const int firstCSSProperty = $first;\n";
 print HEADER "const int numCSSProperties = $num;\n";
 print HEADER "const int lastCSSProperty = $last;\n";
 print HEADER "const size_t maxCSSPropertyNameLength = $maxLen;\n";
-
-print HEADER "const char* const propertyNameStrings[$num] = {\n";
-foreach my $name (@names) {
-  print HEADER "\"$name\",\n";
-}
-print HEADER "};\n";
 
 print HEADER << "EOF";
 

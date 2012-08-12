@@ -1,5 +1,19 @@
 2012-08-12  Benjamin Poulain  <benjamin@webkit.org>
 
+        Move CSS's propertyNameStrings[] to from the header to the cpp file
+        https://bugs.webkit.org/show_bug.cgi?id=93771
+
+        Reviewed by Eric Seidel.
+
+        The names of propertyNameStrings[] should never be accessed directly. The function getPropertyName()
+        return the correct string of propertyNameStrings.
+
+        To ensure the values are not accessed by mistake, move them from the header to the implementation.
+
+        * css/makeprop.pl:
+
+2012-08-12  Benjamin Poulain  <benjamin@webkit.org>
+
         CSSComputedStyleDeclaration::cssText() should use StringBuilder
         https://bugs.webkit.org/show_bug.cgi?id=93776
 
