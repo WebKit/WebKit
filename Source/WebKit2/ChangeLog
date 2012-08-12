@@ -1,5 +1,25 @@
 2012-08-11  Sam Weinig  <sam@webkit.org>
 
+        Enable XPC Service based WebProcess with runtime flag
+        https://bugs.webkit.org/show_bug.cgi?id=93773
+
+        Reviewed by Dan Bernstein.
+
+        Use the XPC Service for WebProcess code path if WEBKIT_USE_XPC_SERVICE_FOR_WEB_PROCESS
+        is set in the environment.
+
+        * UIProcess/Launcher/mac/ProcessLauncherMac.mm:
+        (WebKit::launchXPCService):
+        Fix issue that was causing this code not to compile. This was not caught before since
+        the code was not being built.
+        
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::connect):
+        Switch from hard coding always using the XPC Service code path if
+        HAVE(XPC) was true, to doing it conditionally on an environment variable.
+
+2012-08-11  Sam Weinig  <sam@webkit.org>
+
         Make it possible to run the WebProcess as an XPC service
         https://bugs.webkit.org/show_bug.cgi?id=92814
 

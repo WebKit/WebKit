@@ -1,3 +1,13 @@
+2012-08-11  Sam Weinig  <sam@webkit.org>
+
+        Enable XPC Service based WebProcess with runtime flag
+        https://bugs.webkit.org/show_bug.cgi?id=93773
+
+        Reviewed by Dan Bernstein.
+
+        * wtf/Platform.h:
+        Define HAVE_XPC on 10.7 and later.
+
 2012-08-11  Benjamin Poulain  <bpoulain@apple.com>
 
         Do the DecimalNumber to String conversion on 8 bits

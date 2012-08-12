@@ -120,12 +120,12 @@ static void launchXPCService(const ProcessLauncher::LaunchOptions&, const Enviro
 
             // And the receive right.
             mach_port_mod_refs(mach_task_self(), listeningPort, MACH_PORT_RIGHT_RECEIVE, -1);
-            
-            RunLoop::main()->dispatch(bind(didFinishLaunchingProcessFunction, this, 0, CoreIPC::Connection::Identifier()));
+
+            RunLoop::main()->dispatch(bind(didFinishLaunchingProcessFunction, that, 0, CoreIPC::Connection::Identifier()));
         } else {
             ASSERT(type == XPC_TYPE_DICTIONARY);
             ASSERT(!strcmp(xpc_dictionary_get_string(reply, "message-name"), "process-finished-launching"));
-    
+
             // The process has finished launching, grab the pid from the connection.
             pid_t processIdentifier = xpc_connection_get_pid(connection);
 

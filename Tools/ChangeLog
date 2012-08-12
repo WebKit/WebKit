@@ -1,3 +1,34 @@
+2012-08-11  Sam Weinig  <sam@webkit.org>
+
+        Enable XPC Service based WebProcess with runtime flag
+        https://bugs.webkit.org/show_bug.cgi?id=93773
+
+        Reviewed by Dan Bernstein.
+
+        Convert --use-web-process-xpc-service passed to run-safari (and similar scripts)
+        to setting WEBKIT_USE_XPC_SERVICE_FOR_WEB_PROCESS=YES in the environment and setting
+        up __XPC_DYLD_FRAMEWORK_PATH and __XPC_DYLD_INSERT_LIBRARIES variables. NOTE: using
+        the XPC service is not the default code path.
+
+        * Scripts/webkitdirs.pm:
+        (shouldUseXPCServiceForWebProcess):
+        (determineShouldUseXPCServiceForWebProcess):
+        Add functions to extract --use-web-process-xpc-service from ARGV and set a
+        global variable.
+
+        (printHelpAndExitForRunAndDebugWebKitAppIfNeeded):
+        Add help text for --use-web-process-xpc-service.
+
+        (runMacWebKitApp):
+        Set the WEBKIT_USE_XPC_SERVICE_FOR_WEB_PROCESS environment variable and DYLD
+        if --use-web-process-xpc-service was passed on the command line.
+
+        (execMacWebKitAppForDebugging):
+        Set the WEBKIT_USE_XPC_SERVICE_FOR_WEB_PROCESS environment variable and DYLD
+        if --use-web-process-xpc-service was passed on the command line. Also, bail
+        if both --use-web-process-xpc-service and --target-web-process are passed on
+        the command line, as we don't currently support using both.
+
 2012-08-11  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         [EFL] Bump harfbuzz dependency to v0.9.2

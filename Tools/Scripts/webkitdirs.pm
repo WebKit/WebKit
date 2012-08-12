@@ -105,6 +105,7 @@ my $forceChromiumUpdate;
 my $isInspectorFrontend;
 my $isWK2;
 my $shouldTargetWebProcess;
+my $shouldUseXPCServiceForWebProcess;
 my $shouldUseGuardMalloc;
 my $xcodeVersion;
 
@@ -1441,6 +1442,18 @@ sub determineShouldTargetWebProcess
     $shouldTargetWebProcess = checkForArgumentAndRemoveFromARGV("--target-web-process");
 }
 
+sub shouldUseXPCServiceForWebProcess
+{
+    determineShouldUseXPCServiceForWebProcess();
+    return $shouldUseXPCServiceForWebProcess;
+}
+
+sub determineShouldUseXPCServiceForWebProcess
+{
+    return if defined($shouldUseXPCServiceForWebProcess);
+    $shouldUseXPCServiceForWebProcess = checkForArgumentAndRemoveFromARGV("--use-web-process-xpc-service");
+}
+
 sub debugger
 {
     determineDebugger();
@@ -1480,6 +1493,9 @@ sub setUpGuardMallocIfNeeded
 
     if ($shouldUseGuardMalloc) {
         appendToEnvironmentVariableList("DYLD_INSERT_LIBRARIES", "/usr/lib/libgmalloc.dylib");
+        if (shouldUseXPCServiceForWebProcess()) {
+            appendToEnvironmentVariableList("__XPC_DYLD_INSERT_LIBRARIES", "/usr/lib/libgmalloc.dylib");
+        }
     }
 }
 
@@ -2678,15 +2694,16 @@ sub printHelpAndExitForRunAndDebugWebKitAppIfNeeded
 
     print STDERR <<EOF;
 Usage: @{[basename($0)]} [options] [args ...]
-  --help                Show this help message
-  --no-saved-state      Disable application resume for the session on Mac OS 10.7
-  --guard-malloc        Enable Guard Malloc (Mac OS X only)
+  --help                            Show this help message
+  --no-saved-state                  Disable application resume for the session on Mac OS 10.7
+  --guard-malloc                    Enable Guard Malloc (OS X only)
+  --use-web-process-xpc-service     Launch the Web Process as an XPC Service (OS X only)
 EOF
 
     if ($includeOptionsForDebugging) {
         print STDERR <<EOF;
-  --target-web-process  Debug the web process
-  --use-lldb            Use LLDB
+  --target-web-process              Debug the web process
+  --use-lldb                        Use LLDB
 EOF
     }
 
@@ -2709,6 +2726,12 @@ sub runMacWebKitApp($;$)
     $ENV{WEBKIT_UNSET_DYLD_FRAMEWORK_PATH} = "YES";
 
     setUpGuardMallocIfNeeded();
+
+    if (shouldUseXPCServiceForWebProcess()) {
+        $ENV{__XPC_DYLD_FRAMEWORK_PATH} = $productDir;
+        appendToEnvironmentVariableList("__XPC_DYLD_INSERT_LIBRARIES", File::Spec->catfile($productDir, "WebProcessShim.dylib"));
+        $ENV{WEBKIT_USE_XPC_SERVICE_FOR_WEB_PROCESS} = "YES";
+    }
 
     if (defined($useOpenCommand) && $useOpenCommand == USE_OPEN_COMMAND) {
         return system("open", "-W", "-a", $appPath, "--args", argumentsForRunAndDebugMacWebKitApp());
@@ -2747,9 +2770,18 @@ sub execMacWebKitAppForDebugging($)
 
     my @architectureFlags = ($architectureSwitch, architecture());
     if (!shouldTargetWebProcess()) {
+        if (shouldUseXPCServiceForWebProcess()) {
+            $ENV{__XPC_DYLD_FRAMEWORK_PATH} = $productDir;
+            appendToEnvironmentVariableList("__XPC_DYLD_INSERT_LIBRARIES", File::Spec->catfile($productDir, "WebProcessShim.dylib"));
+            $ENV{WEBKIT_USE_XPC_SERVICE_FOR_WEB_PROCESS} = "YES";
+        }
         print "Starting @{[basename($appPath)]} under $debugger with DYLD_FRAMEWORK_PATH set to point to built WebKit in $productDir.\n";
         exec { $debuggerPath } $debuggerPath, @architectureFlags, $argumentsSeparator, $appPath, argumentsForRunAndDebugMacWebKitApp() or die;
     } else {
+        if (shouldUseXPCServiceForWebProcess()) {
+            die "Targetting the Web Process is not compatible with using an XPC Service for the Web Process at this time.";
+        }
+        
         my $webProcessShimPath = File::Spec->catfile($productDir, "WebProcessShim.dylib");
         my $webProcessPath = File::Spec->catdir($productDir, "WebProcess.app");
         my $webKit2ExecutablePath = File::Spec->catfile($productDir, "WebKit2.framework", "WebKit2");

@@ -111,7 +111,7 @@ void WebProcessProxy::connect()
         launchOptions.architecture = ProcessLauncher::LaunchOptions::MatchCurrentArchitecture;
         launchOptions.executableHeap = false;
 #if HAVE(XPC)
-        launchOptions.useXPC = true; // FIXME: This needs to be configurable.
+        launchOptions.useXPC = getenv("WEBKIT_USE_XPC_SERVICE_FOR_WEB_PROCESS");
 #endif
 #endif
 #ifndef NDEBUG
