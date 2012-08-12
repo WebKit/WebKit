@@ -1,3 +1,12 @@
+2012-08-12  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Unreviewed trivial build fix: Newer Qt versions don't implicitly include qwindowsysteminterface.h
+        through the QTestLib headers anymore.
+
+        * DumpRenderTree/qt/EventSenderQt.cpp:
+        * WebKitTestRunner/Target.pri:
+        * WebKitTestRunner/qt/EventSenderProxyQt.cpp:
+
 2012-08-11  Sam Weinig  <sam@webkit.org>
 
         Remove ability to run MiniBrowser in threaded mode, it hasn't worked for a long time

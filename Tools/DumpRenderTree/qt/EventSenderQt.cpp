@@ -31,6 +31,7 @@
 
 #include <QGraphicsSceneMouseEvent>
 #include <QtTest/QtTest>
+#include <qpa/qwindowsysteminterface.h>
 
 #define KEYCODE_DEL         127
 #define KEYCODE_BACKSPACE   8

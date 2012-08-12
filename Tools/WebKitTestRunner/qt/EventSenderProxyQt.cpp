@@ -33,6 +33,7 @@
 #include <QtTest/QtTest>
 #include <WebKit2/WKPagePrivate.h>
 #include <WebKit2/WKStringQt.h>
+#include <qpa/qwindowsysteminterface.h>
 
 namespace WTR {
 
