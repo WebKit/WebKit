@@ -1,3 +1,41 @@
+2012-08-12  Huang Dongsung  <luxtella@company100.net>
+
+        Set the access qualifier of two methods to query frame specific info of BitmapImage to protected.
+        https://bugs.webkit.org/show_bug.cgi?id=90505
+
+        Reviewed by Eric Seidel.
+
+        Following 4 methods are protected.
+          size_t frameCount();
+          NativeImagePtr frameAtIndex(size_t);
+          bool frameIsCompleteAtIndex(size_t);
+          float frameDurationAtIndex(size_t);
+
+        So, 2 methds also should be protected because the frame info is only specific of
+        BitmapImage.
+          bool frameHasAlphaAtIndex(size_t);
+          ImageOrientation frameOrientationAtIndex(size_t);
+
+        On the other hand, this patch amended GraphicsContext3DCG.
+        - static_cast<BitmapImage*>(image)->frameHasAlphaAtIndex(0)
+        + image->currentFrameHasAlpha()
+
+        This patch does not affect PNG, JPEG, BMP, and WEBP because those images
+        have only 0 indexed frame.
+        Thus, GIF, and ICO are affected. However, an above query to get Alpha
+        is for the image that is created by image->nativeImageForCurrentFrame(), so it
+        is proper to use image->currentFrameHasAlpha() instead of
+        image->frameHasAlphaAtIndex(0).
+
+        No new tests, because it is hard to test. We need an animated GIF that
+        one frame has alpha and another frame does not have alpha. However, I
+        cannot find the animated GIF file that suffices the requirement.
+
+        * platform/graphics/BitmapImage.h:
+        (BitmapImage):
+        * platform/graphics/cg/GraphicsContext3DCG.cpp:
+        (WebCore::GraphicsContext3D::getImageData):
+
 2012-08-12  Takashi Sakamoto  <tasak@google.com>
 
         webkit fails IETC namespaces/prefix-007.xml

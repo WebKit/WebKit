@@ -170,11 +170,9 @@ public:
 #endif
 
     virtual NativeImagePtr nativeImageForCurrentFrame();
-    bool frameHasAlphaAtIndex(size_t);
     virtual bool currentFrameHasAlpha();
 
     ImageOrientation currentFrameOrientation();
-    ImageOrientation frameOrientationAtIndex(size_t);
 
 #if !ASSERT_DISABLED
     virtual bool notSolidColor();
@@ -214,6 +212,8 @@ protected:
     NativeImagePtr frameAtIndex(size_t);
     bool frameIsCompleteAtIndex(size_t);
     float frameDurationAtIndex(size_t);
+    bool frameHasAlphaAtIndex(size_t);
+    ImageOrientation frameOrientationAtIndex(size_t);
 
     // Decodes and caches a frame. Never accessed except internally.
     void cacheFrame(size_t index);

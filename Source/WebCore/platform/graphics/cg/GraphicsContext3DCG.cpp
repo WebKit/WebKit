@@ -100,7 +100,7 @@ bool GraphicsContext3D::getImageData(Image* image,
         return false;
     CGImageRef cgImage;
     RetainPtr<CGImageRef> decodedImage;
-    bool hasAlpha = image->isBitmapImage() ? static_cast<BitmapImage*>(image)->frameHasAlphaAtIndex(0) : true;
+    bool hasAlpha = image->isBitmapImage() ? image->currentFrameHasAlpha() : true;
     if ((ignoreGammaAndColorProfile || (hasAlpha && !premultiplyAlpha)) && image->data()) {
         ImageSource decoder(ImageSource::AlphaNotPremultiplied,
                             ignoreGammaAndColorProfile ? ImageSource::GammaAndColorProfileIgnored : ImageSource::GammaAndColorProfileApplied);
