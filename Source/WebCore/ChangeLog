@@ -1,3 +1,33 @@
+2012-08-13  Anna Cavender  <annacc@chromium.org>
+
+        Cap the number of SourceBuffers that may be added to a MediaSource.
+        https://bugs.webkit.org/show_bug.cgi?id=93406
+
+        Reviewed by Eric Carlson.
+
+        Make sure that no more SourceBuffer objects are added to a MediaSource
+        than can fit into the sourceBuffers SourceBufferList (internally stored
+        as a Vector). Also, make sure that new SourceBuffers are added with a
+        unique id even if the variable we are using to generate id wraps around.
+
+        No new tests.  It would not be realistic to add so many SourceBuffers to
+        test the id variable wrapping.  Existing tests should not be affected.
+
+        * Modules/mediasource/MediaSource.cpp:
+        (WebCore::MediaSource::MediaSource):
+        (WebCore::MediaSource::addSourceBuffer): Obtain a unique id before creating
+            a new SourceBuffer.
+        * Modules/mediasource/MediaSource.h:
+        * Modules/mediasource/SourceBufferList.cpp:
+        (WebCore::SourceBufferList::SourceBufferList):
+        (WebCore::SourceBufferList::generateUniqueId): Search for and generate a
+            unique id.
+        (WebCore):
+        (WebCore::SourceBufferList::contains): Check if a SourceBuffer with a
+            given id already exists in this SourceBufferList.
+        * Modules/mediasource/SourceBufferList.h:
+        (SourceBufferList):
+
 2012-08-13  Andrey Kosyakov  <caseq@chromium.org>
 
         Web Inspector: when status bar is too narrow, cut panel status bar, not main status bar items

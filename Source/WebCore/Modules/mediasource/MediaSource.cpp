@@ -49,7 +49,6 @@ MediaSource::MediaSource(ScriptExecutionContext* context)
     : ContextDestructionObserver(context)
     , m_readyState(closedKeyword())
     , m_player(0)
-    , m_nextSourceBufferId(0)
 {
     m_sourceBuffers = SourceBufferList::create(scriptExecutionContext());
     m_activeSourceBuffers = SourceBufferList::create(scriptExecutionContext());
@@ -94,7 +93,13 @@ SourceBuffer* MediaSource::addSourceBuffer(const String& type, ExceptionCode& ec
     }
 
     // 5. Create a new SourceBuffer object and associated resources.
-    RefPtr<SourceBuffer> buffer = SourceBuffer::create(String::number(++m_nextSourceBufferId), this);
+    String id = m_sourceBuffers->generateUniqueId();
+    if (id == emptyString()) {
+        ec = QUOTA_EXCEEDED_ERR;
+        return 0;
+    }
+
+    RefPtr<SourceBuffer> buffer = SourceBuffer::create(id, this);
 
     switch (m_player->sourceAddId(buffer->id(), contentType.type(), codecs)) {
     case MediaPlayer::Ok:

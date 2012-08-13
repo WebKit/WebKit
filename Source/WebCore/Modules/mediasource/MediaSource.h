@@ -104,7 +104,6 @@ private:
 
     RefPtr<SourceBufferList> m_sourceBuffers;
     RefPtr<SourceBufferList> m_activeSourceBuffers;
-    int m_nextSourceBufferId;
 };
 
 } // namespace WebCore
