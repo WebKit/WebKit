@@ -619,6 +619,7 @@ private:
     bool isDirtyStackingContext() const { return m_zOrderListsDirty && isStackingContext(); }
 
     void computeRepaintRects(LayoutPoint* offsetFromRoot = 0);
+    void computeRepaintRectsIncludingDescendants();
     void clearRepaintRects();
 
     void clipToRect(RenderLayer* rootLayer, GraphicsContext*, const LayoutRect& paintDirtyRect, const ClipRect&,
