@@ -44,6 +44,9 @@ private:
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
     virtual const AtomicString& formControlType() const;
     virtual bool recalcWillValidate() const { return false; }
+    virtual void childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta) OVERRIDE;
+
+    static void invalidateDisabledStateUnder(Element*);
 };
 
 } // namespace
