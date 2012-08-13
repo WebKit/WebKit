@@ -1,3 +1,9 @@
+2012-08-13  Peter Beverloo  <peter@chromium.org>
+
+        Unreviewed.  Rolled DEPS.
+
+        * DEPS:
+
 2012-08-10  Kinuko Yasuda  <kinuko@chromium.org>
 
         Support creating File object from FileSystem URL for files in FileSystem API
