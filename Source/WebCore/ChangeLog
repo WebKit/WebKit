@@ -1,3 +1,16 @@
+2012-08-13  Andrey Kosyakov  <caseq@chromium.org>
+
+        Web Inspector: when status bar is too narrow, cut panel status bar, not main status bar items
+        https://bugs.webkit.org/show_bug.cgi?id=93814
+
+        Reviewed by Pavel Feldman.
+
+        - set shrink factor of bottom-status-bar-container to 1;
+        - set bottom-status-bar-container's width to 0 to workaround for flex-basis being ignored;
+
+        * inspector/front-end/inspector.css:
+        (#bottom-status-bar-container):
+
 2012-08-13  Yury Semikhatsky  <yurys@chromium.org>
 
         Web Inspector: add memory instrumentation for Attribute

@@ -2573,7 +2573,9 @@ body.platform-mac .search-drawer-header input[type="checkbox"].search-config-che
 }
 
 #bottom-status-bar-container {
-    -webkit-flex: 1 0;
+    -webkit-flex: 1 1 0;
+    width: 0;
+    overflow: hidden;
 }
 
 .search-status-bar-item {
