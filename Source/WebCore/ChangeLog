@@ -1,3 +1,14 @@
+2012-08-13  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
+
+        [Qt] Assertion in RenderObject::offsetFromAncestorContainer
+        https://bugs.webkit.org/show_bug.cgi?id=93845
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Do not attempt to clip using layers that are not containers of the renderer.
+
+        * page/GestureTapHighlighter.cpp:
+
 2012-08-13  Dominik Röttsches  <dominik.rottsches@intel.com>
 
         [Cairo] canvas/philip/tests/2d.drawImage.self.2.html test failing on ports using Cairo

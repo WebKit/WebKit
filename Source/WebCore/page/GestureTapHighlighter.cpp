@@ -198,10 +198,15 @@ Path absolutePathForRenderer(RenderObject* const o)
         RenderObject* currentRenderer = o;
 
         // Check ancestor layers for overflow clip and intersect them.
-        while (layer) {
-            RenderObject* layerRenderer = layer->renderer();
+        for (; layer; layer = layer->parent()) {
+            RenderBoxModelObject* layerRenderer = layer->renderer();
 
             if (layerRenderer->hasOverflowClip() && layerRenderer != currentRenderer) {
+                bool containerSkipped = false;
+                // Skip ancestor layers that are not containers for the current renderer.
+                currentRenderer->container(layerRenderer, &containerSkipped);
+                if (containerSkipped)
+                    continue;
                 ringRect.move(currentRenderer->offsetFromAncestorContainer(layerRenderer));
                 currentRenderer = layerRenderer;
 
@@ -211,7 +216,6 @@ Path absolutePathForRenderer(RenderObject* const o)
                 if (ringRect.isEmpty())
                     break;
             }
-            layer = layer->parent();
         }
 
         if (ringRect.isEmpty()) {
