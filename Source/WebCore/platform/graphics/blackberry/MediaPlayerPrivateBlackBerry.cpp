@@ -160,9 +160,9 @@ void MediaPlayerPrivate::load(const String& url)
     if (!url.isEmpty())
         cookiePairs = cookieManager().getCookie(KURL(ParsedURLString, url.utf8().data()), WithHttpOnlyCookies);
     if (!cookiePairs.isEmpty() && cookiePairs.utf8().data())
-        m_platformPlayer->load(modifiedUrl.utf8().data(), userAgent(modifiedUrl).utf8().data(), cookiePairs.utf8().data());
+        m_platformPlayer->load(modifiedUrl.utf8().data(), m_webCorePlayer->userAgent().utf8().data(), cookiePairs.utf8().data());
     else
-        m_platformPlayer->load(modifiedUrl.utf8().data(), userAgent(modifiedUrl).utf8().data(), 0);
+        m_platformPlayer->load(modifiedUrl.utf8().data(), m_webCorePlayer->userAgent().utf8().data(), 0);
 }
 
 void MediaPlayerPrivate::cancelLoad()
@@ -346,20 +346,6 @@ bool MediaPlayerPrivate::hasSingleSecurityOrigin() const
 MediaPlayer::MovieLoadType MediaPlayerPrivate::movieLoadType() const
 {
     return static_cast<MediaPlayer::MovieLoadType>(m_platformPlayer->movieLoadType());
-}
-
-// This function returns the user agent string associated with the
-// frame loader client of our HTMLMediaElement. The call below will
-// end up in FrameLoaderClientBlackBerry::userAgent().
-String MediaPlayerPrivate::userAgent(const String& url) const
-{
-    HTMLMediaElement* element = static_cast<HTMLMediaElement*>(m_webCorePlayer->mediaPlayerClient());
-    Document* topdoc = element->document()->topDocument();
-    ASSERT(topdoc->frame());
-    ASSERT(topdoc->frame()->loader());
-    if (topdoc->frame())
-        return topdoc->frame()->loader()->userAgent(KURL(KURL(), url));
-    return String();
 }
 
 void MediaPlayerPrivate::resizeSourceDimensions()

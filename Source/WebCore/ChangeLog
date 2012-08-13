@@ -1,3 +1,19 @@
+2012-08-12  Jonathan Dong  <jonathan.dong@torchmobile.com.cn>
+
+        [BlackBerry] use MediaPlayer::userAgent() in MediaPlayerPrivateBlackBerry to avoid layering violation
+        https://bugs.webkit.org/show_bug.cgi?id=93588
+
+        Reviewed by Antonio Gomes.
+
+        Removed helper function MediaPlayerPrivate::userAgent() which has
+        introduced abstraction layering violation and replaced with
+        MediaPlayer::userAgent().
+
+        No new tests since there's no functional change.
+
+        * platform/graphics/blackberry/MediaPlayerPrivateBlackBerry.cpp:
+        (WebCore::MediaPlayerPrivate::load):
+
 2012-07-04  Kinuko Yasuda  <kinuko@chromium.org>
 
         Record metrics to measure the usage of WebKitBlobBuilder to eventually deprecate it
