@@ -1,3 +1,30 @@
+2012-08-13  Mike Fenton  <mifenton@rim.com>
+
+        [BlackBerry] Update API for spell checking suggestions again.
+        https://bugs.webkit.org/show_bug.cgi?id=93877
+
+        Reviewed by Antonio Gomes.
+
+        PR 163283.
+
+        Update the spell checking options request API
+        to include the caret positions.
+
+        Reviewed internally by Nima Ghanavatian.
+
+        * Api/WebPageClient.h:
+        * WebKitSupport/InputHandler.cpp:
+        (BlackBerry::WebKit::InputHandler::shouldRequestSpellCheckingOptionsForPoint):
+        (WebKit):
+        (BlackBerry::WebKit::InputHandler::requestSpellingCheckingOptions):
+        * WebKitSupport/InputHandler.h:
+        (Platform):
+        (InputHandler):
+        * WebKitSupport/TouchEventHandler.cpp:
+        (BlackBerry::WebKit::TouchEventHandler::handleTouchPoint):
+        * WebKitSupport/TouchEventHandler.h:
+        (TouchEventHandler):
+
 2012-08-13  Antonio Gomes  <agomes@rim.com>
 
         [BlackBerry] Rounding error somewhere when translating CompositingLayer 's for in-region scrolling

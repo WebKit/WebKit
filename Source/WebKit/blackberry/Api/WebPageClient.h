@@ -26,6 +26,7 @@
 #include <BlackBerryPlatformInputEvents.h>
 #include <BlackBerryPlatformNavigationType.h>
 #include <BlackBerryPlatformPrimitives.h>
+#include <imf/events.h>
 #include <interaction/ScrollViewBase.h>
 #include <vector>
 
@@ -144,7 +145,7 @@ public:
 
     virtual void showVirtualKeyboard(bool) = 0;
 
-    virtual void requestSpellingSuggestionsForString(unsigned start, unsigned end) = 0;
+    virtual void requestSpellingCheckingOptions(imf_sp_text_t&) = 0;
     virtual int32_t checkSpellingOfStringAsync(wchar_t* text, int length) = 0;
 
     virtual void notifySelectionDetailsChanged(const Platform::IntRect& start, const Platform::IntRect& end, const Platform::IntRectRegion&, bool overrideTouchHandling = false) = 0;
