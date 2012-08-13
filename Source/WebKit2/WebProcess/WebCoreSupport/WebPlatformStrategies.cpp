@@ -34,6 +34,7 @@
 #include "WebCookieManager.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebProcess.h"
+#include "WebProcessProxyMessages.h"
 #include <WebCore/Color.h>
 #include <WebCore/KURL.h>
 #include <WebCore/Page.h>
@@ -130,7 +131,7 @@ void WebPlatformStrategies::populatePluginCache()
     
     // FIXME: Should we do something in case of error here?
     uint64_t requestID = generateRequestID();
-    WebProcess::shared().connection()->send(Messages::WebContext::GetPlugins(requestID, m_shouldRefreshPlugins), 0);
+    WebProcess::shared().connection()->send(Messages::WebProcessProxy::GetPlugins(requestID, m_shouldRefreshPlugins), 0);
 
     m_cachedPlugins = *responseMap().waitForResponse(requestID);
     

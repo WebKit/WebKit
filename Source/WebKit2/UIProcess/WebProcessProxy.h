@@ -55,7 +55,7 @@ class WebContext;
 class WebPageGroup;
 struct WebNavigationDataStore;
 
-class WebProcessProxy : public RefCounted<WebProcessProxy>, CoreIPC::Connection::Client, ResponsivenessTimer::Client, ProcessLauncher::Client,  CoreIPC::Connection::QueueClient {
+class WebProcessProxy : public ThreadSafeRefCounted<WebProcessProxy>, CoreIPC::Connection::Client, ResponsivenessTimer::Client, ProcessLauncher::Client,  CoreIPC::Connection::QueueClient {
 public:
     typedef HashMap<uint64_t, RefPtr<WebFrameProxy> > WebFrameProxyMap;
     typedef HashMap<uint64_t, RefPtr<WebBackForwardListItem> > WebBackForwardListItemMap;
@@ -132,10 +132,20 @@ private:
     
     void shouldTerminate(bool& shouldTerminate);
 
+    // Plugins
+    void getPlugins(CoreIPC::Connection*, uint64_t requestID, bool refresh);
+    void getPluginPath(const String& mimeType, const String& urlString, String& pluginPath, bool& blocked);
 #if ENABLE(PLUGIN_PROCESS)
     void getPluginProcessConnection(const String& pluginPath, PassRefPtr<Messages::WebProcessProxy::GetPluginProcessConnection::DelayedReply>);
     void pluginSyncMessageSendTimedOut(const String& pluginPath);
+#else
+    void didGetSitesWithPluginData(const Vector<String>& sites, uint64_t callbackID);
+    void didClearPluginSiteData(uint64_t callbackID);
 #endif
+
+    void handleGetPlugins(uint64_t requestID, bool refresh);
+    void sendDidGetPlugins(uint64_t requestID, PassOwnPtr<Vector<WebCore::PluginInfo> >);
+
 #if USE(SECURITY_FRAMEWORK)
     void secItemRequest(CoreIPC::Connection*, uint64_t requestID, const SecItemRequestData&);
     void secKeychainItemRequest(CoreIPC::Connection*, uint64_t requestID, const SecKeychainItemRequestData&);

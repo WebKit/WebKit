@@ -33,9 +33,16 @@ messages -> WebProcessProxy {
 
     ShouldTerminate() -> (bool shouldTerminate)
 
+    # Plugin messages.
+    GetPlugins(uint64_t requestID, bool refresh) DispatchOnConnectionQueue
+    GetPluginPath(WTF::String mimeType, WTF::String urlString) -> (WTF::String pluginPath, bool blocked)
 #if ENABLE(PLUGIN_PROCESS)
     GetPluginProcessConnection(WTF::String pluginPath) -> (CoreIPC::Attachment connectionHandle, bool supportsAsynchronousInitialization) Delayed
     PluginSyncMessageSendTimedOut(WTF::String pluginPath)
+#endif
+#if !ENABLE(PLUGIN_PROCESS)
+    void DidGetSitesWithPluginData(Vector<WTF::String> sites, uint64_t callbackID)
+    void DidClearPluginSiteData(uint64_t callbackID)
 #endif
 
 #if USE(SECURITY_FRAMEWORK)

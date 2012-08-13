@@ -1,3 +1,47 @@
+2012-08-13  Alexey Proskuryakov  <ap@apple.com>
+
+        [WK2] Move a remaining per-process message from WebContext to WebProcessProxy
+        https://bugs.webkit.org/show_bug.cgi?id=93883
+
+        Reviewed by Sam Weinig.
+
+        There was one plug-in message renaming. Moving it, and also other plug-in messages
+        for consistency.
+
+        * UIProcess/WebContext.cpp:
+        (WebKit): Got rid of the last MESSAGE_CHECK in this file.
+        (WebKit::WebContext::WebContext): Moved m_pluginWorkQueue to a singleton.
+        We don't need more than one queue (all it does is read plug-in info), and if we
+        needed, it would have been per-process, not per-context.
+        (WebKit::WebContext::~WebContext): No more work queue.
+        (WebKit::WebContext::processDidFinishLaunching): Ditto.
+
+        * UIProcess/WebContext.h: No longer needs to be a QueueClient.
+
+        * UIProcess/WebContext.messages.in:
+        * UIProcess/WebProcessProxy.messages.in:
+        Moved plug-in related messages.
+
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::pluginWorkQueue): Moved from WebContext to a singleton.
+        (WebKit::WebProcessProxy::sendDidGetPlugins): Moved from WebContext.
+        (WebKit::WebProcessProxy::handleGetPlugins): Ditto.
+        (WebKit::WebProcessProxy::getPlugins): Ditto.
+        (WebKit::WebProcessProxy::getPluginPath): Ditto.
+        (WebKit::WebProcessProxy::getPluginProcessConnection): Ditto.
+        (WebKit::WebProcessProxy::didGetSitesWithPluginData): Ditto.
+        (WebKit::WebProcessProxy::didClearPluginSiteData): Ditto.
+
+        * UIProcess/WebProcessProxy.h: Process proxy needs to be thread safe ref counted
+        now, since it sends messages to itself on a work queue and back.
+
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.cpp:
+        (WebKit::WebPlatformStrategies::populatePluginCache): Updated for new receiver.
+
+        * WebProcess/WebPage/WebPage.cpp: (WebKit::WebPage::createPlugin): Ditto.
+
+        * WebProcess/WebProcess.cpp: (WebKit::canPluginHandleResponse): Ditto.
+
 2012-08-13  Raphael Kubo da Costa  <rakuco@webkit.org>
 
         [CMake] Remove glib-related Find modules and write single new one instead.

@@ -36,12 +36,18 @@
 #include "WebNavigationDataStore.h"
 #include "WebNotificationManagerProxy.h"
 #include "WebPageProxy.h"
+#include "WebPluginSiteDataManager.h"
 #include "WebProcessMessages.h"
 #include "WebProcessProxyMessages.h"
 #include <WebCore/KURL.h>
 #include <stdio.h>
+#include <wtf/MainThread.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
+
+#if PLATFORM(MAC)
+#include "BuiltInPDFView.h"
+#endif
 
 using namespace WebCore;
 using namespace std;
@@ -61,6 +67,12 @@ static uint64_t generatePageID()
 {
     static uint64_t uniquePageID = 1;
     return uniquePageID++;
+}
+
+static WorkQueue& pluginWorkQueue()
+{
+    DEFINE_STATIC_LOCAL(WorkQueue, queue, ("com.apple.CoreIPC.PluginQueue"));
+    return queue;
 }
 
 PassRefPtr<WebProcessProxy> WebProcessProxy::create(PassRefPtr<WebContext> context)
@@ -282,16 +294,86 @@ void WebProcessProxy::addBackForwardItem(uint64_t itemID, const String& original
     result.iterator->second->setBackForwardData(backForwardData.data(), backForwardData.size());
 }
 
+void WebProcessProxy::sendDidGetPlugins(uint64_t requestID, PassOwnPtr<Vector<PluginInfo> > pluginInfos)
+{
+    ASSERT(isMainThread());
+
+    OwnPtr<Vector<PluginInfo> > plugins(pluginInfos);
+
+#if PLATFORM(MAC)
+    // Add built-in PDF last, so that it's not used when a real plug-in is installed.
+    // NOTE: This has to be done on the main thread as it calls localizedString().
+    if (!m_context->omitPDFSupport())
+        plugins->append(BuiltInPDFView::pluginInfo());
+#endif
+
+    send(Messages::WebProcess::DidGetPlugins(requestID, *plugins), 0);
+}
+
+void WebProcessProxy::handleGetPlugins(uint64_t requestID, bool refresh)
+{
+    if (refresh)
+        m_context->pluginInfoStore().refresh();
+
+    OwnPtr<Vector<PluginInfo> > pluginInfos = adoptPtr(new Vector<PluginInfo>);
+
+    Vector<PluginModuleInfo> plugins = m_context->pluginInfoStore().plugins();
+    for (size_t i = 0; i < plugins.size(); ++i)
+        pluginInfos->append(plugins[i].info);
+
+    // NOTE: We have to pass the PluginInfo vector to the secondary thread via a pointer as otherwise
+    //       we'd end up with a deref() race on all the WTF::Strings it contains.
+    RunLoop::main()->dispatch(bind(&WebProcessProxy::sendDidGetPlugins, this, requestID, pluginInfos.release()));
+}
+
+void WebProcessProxy::getPlugins(CoreIPC::Connection*, uint64_t requestID, bool refresh)
+{
+    pluginWorkQueue().dispatch(bind(&WebProcessProxy::handleGetPlugins, this, requestID, refresh));
+}
+
+void WebProcessProxy::getPluginPath(const String& mimeType, const String& urlString, String& pluginPath, bool& blocked)
+{
+    MESSAGE_CHECK_URL(urlString);
+
+    String newMimeType = mimeType.lower();
+
+    blocked = false;
+    PluginModuleInfo plugin = m_context->pluginInfoStore().findPlugin(newMimeType, KURL(KURL(), urlString));
+    if (!plugin.path)
+        return;
+
+    if (m_context->pluginInfoStore().shouldBlockPlugin(plugin)) {
+        blocked = true;
+        return;
+    }
+
+    pluginPath = plugin.path;
+}
+
 #if ENABLE(PLUGIN_PROCESS)
+
 void WebProcessProxy::getPluginProcessConnection(const String& pluginPath, PassRefPtr<Messages::WebProcessProxy::GetPluginProcessConnection::DelayedReply> reply)
 {
-    PluginProcessManager::shared().getPluginProcessConnection(context()->pluginInfoStore(), pluginPath, reply);
+    PluginProcessManager::shared().getPluginProcessConnection(m_context->pluginInfoStore(), pluginPath, reply);
 }
 
 void WebProcessProxy::pluginSyncMessageSendTimedOut(const String& pluginPath)
 {
     PluginProcessManager::shared().pluginSyncMessageSendTimedOut(pluginPath);
 }
+
+#else
+
+void WebProcessProxy::didGetSitesWithPluginData(const Vector<String>& sites, uint64_t callbackID)
+{
+    m_context->pluginSiteDataManager()->didGetSitesWithData(sites, callbackID);
+}
+
+void WebProcessProxy::didClearPluginSiteData(uint64_t callbackID)
+{
+    m_context->pluginSiteDataManager()->didClearSiteData(callbackID);
+}
+
 #endif
 
 void WebProcessProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments)
