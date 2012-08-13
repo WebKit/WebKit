@@ -671,6 +671,11 @@ static int16_t handleEventX11(NPP instance, PluginObject* obj, XEvent* event)
         // FIXME: extract key code
         if (obj->eventLogging)
             pluginLog(instance, "keyUp '%c'", keyEventToChar(&event->xkey));
+        if (obj->testKeyboardFocusForPlugins) {
+            obj->eventLogging = false;
+            obj->testKeyboardFocusForPlugins = FALSE;
+            executeScript(obj, "testRunner.notifyDone();");
+        }
         break;
     case GraphicsExpose:
         if (obj->eventLogging)

@@ -1,3 +1,17 @@
+2012-08-13  KwangYong Choi  <ky0.choi@samsung.com>
+
+        [TestNetscapePlugin][X11] Additional key up event handler routine is required
+        https://bugs.webkit.org/show_bug.cgi?id=91357
+
+        Reviewed by Eric Seidel.
+
+        Fixed key up event handler routine to pass http/tests/plugins/plugin-document-
+        has-focus.html on X11 architecture. The test can not be done without this patch.
+        All other ports implemented it already.
+
+        * DumpRenderTree/TestNetscapePlugIn/main.cpp:
+        (handleEventX11): Modified key up event handler for X11
+
 2012-08-13  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL][WK2] Replace Skipped list by TestExpectations
