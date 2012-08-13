@@ -1,3 +1,48 @@
+2012-08-13  Florin Malita  <fmalita@chromium.org>
+
+        WebKit+SVG does not support color-interpolation-filters or draw filters in correct colorspace
+        https://bugs.webkit.org/show_bug.cgi?id=6033
+
+        Reviewed by Dirk Schulze.
+
+        * platform/chromium-linux/css3/filters/crash-hw-sw-switch-expected.png:
+        * platform/chromium-linux/css3/filters/custom/custom-filter-shader-cache-expected.png:
+        * platform/chromium-linux/css3/filters/custom/effect-custom-expected.png:
+        * platform/chromium-linux/css3/filters/custom/filter-repaint-custom-clipped-expected.png:
+        * platform/chromium-linux/css3/filters/custom/filter-repaint-custom-expected.png:
+        * platform/chromium-linux/css3/filters/custom/filter-repaint-custom-rotated-expected.png:
+        * platform/chromium-linux/css3/filters/effect-brightness-clamping-expected.png:
+        * platform/chromium-linux/css3/filters/effect-brightness-expected.png:
+        * platform/chromium-linux/svg/filters/color-interpolation-filters-expected.png: Added.
+        * platform/chromium-linux/svg/filters/color-interpolation-filters-expected.txt: Added.
+        * platform/chromium-win/css3/filters/add-filter-rendering-expected.png:
+        * platform/chromium-win/css3/filters/crash-filter-change-expected.png:
+        * platform/chromium-win/css3/filters/effect-blur-expected.png:
+        * platform/chromium-win/css3/filters/effect-combined-expected.png:
+        * platform/chromium-win/css3/filters/effect-contrast-expected.png:
+        * platform/chromium-win/css3/filters/effect-drop-shadow-expected.png:
+        * platform/chromium-win/css3/filters/effect-grayscale-expected.png:
+        * platform/chromium-win/css3/filters/effect-hue-rotate-expected.png:
+        * platform/chromium-win/css3/filters/effect-invert-expected.png:
+        * platform/chromium-win/css3/filters/effect-opacity-expected.png:
+        * platform/chromium-win/css3/filters/effect-reference-expected.png:
+        * platform/chromium-win/css3/filters/effect-reference-external-expected.png:
+        * platform/chromium-win/css3/filters/effect-reference-hw-expected.png:
+        * platform/chromium-win/css3/filters/effect-reference-ordering-expected.png:
+        * platform/chromium-win/css3/filters/effect-saturate-expected.png:
+        * platform/chromium-win/css3/filters/effect-sepia-expected.png:
+        * platform/chromium-win/css3/filters/filtered-inline-expected.png:
+        * platform/chromium-win/css3/filters/multiple-filters-invalidation-expected.png:
+        * platform/chromium-win/css3/filters/nested-filters-expected.png:
+        * platform/chromium-win/css3/filters/regions-expanding-expected.png:
+        * platform/chromium-win/css3/filters/simple-filter-rendering-expected.png:
+        * platform/chromium/TestExpectations:
+        * platform/chromium/css3/filters/blur-filter-page-scroll-expected.png:
+        * platform/chromium/css3/filters/blur-filter-page-scroll-parents-expected.png:
+        * platform/mac/TestExpectations:
+        * platform/qt/TestExpectations:
+        * svg/filters/color-interpolation-filters.svg: Added.
+
 2012-08-13  Raymond Toy  <rtoy@google.com>
 
         Oscillator node should throw exception if type is assigned an invalid value

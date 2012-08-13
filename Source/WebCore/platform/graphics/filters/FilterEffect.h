@@ -23,6 +23,7 @@
 #define FilterEffect_h
 
 #if ENABLE(FILTERS)
+#include "ColorSpace.h"
 #include "FloatRect.h"
 #include "IntRect.h"
 
@@ -129,6 +130,10 @@ public:
     bool clipsToBounds() const { return m_clipsToBounds; }
     void setClipsToBounds(bool value) { m_clipsToBounds = value; }
 
+    ColorSpace colorSpace() const { return m_colorSpace; }
+    void setColorSpace(ColorSpace colorSpace) { m_colorSpace = colorSpace; }
+    void transformResultColorSpace(ColorSpace);
+
 protected:
     FilterEffect(Filter*);
 
@@ -178,6 +183,9 @@ private:
 
     // Should the effect clip to its primitive region, or expand to use the combined region of its inputs.
     bool m_clipsToBounds;
+
+    ColorSpace m_colorSpace;
+    ColorSpace m_resultColorSpace;
 };
 
 } // namespace WebCore
