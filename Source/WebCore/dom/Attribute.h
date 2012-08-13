@@ -67,6 +67,13 @@ public:
     // elements may have placed the Attribute in a hash by name.
     void parserSetName(const QualifiedName& name) { m_name = name; }
 
+    void reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+    {
+        MemoryClassInfo info(memoryObjectInfo, this, MemoryInstrumentation::DOM);
+        info.addInstrumentedMember(m_name);
+        info.addMember(m_value);
+    }
+
 private:
     QualifiedName m_name;
     AtomicString m_value;
