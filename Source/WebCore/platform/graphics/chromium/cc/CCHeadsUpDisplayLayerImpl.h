@@ -68,6 +68,7 @@ private:
 
     OwnPtr<CCFontAtlas> m_fontAtlas;
     OwnPtr<CCScopedTexture> m_hudTexture;
+    OwnPtr<SkCanvas> m_hudCanvas;
 };
 
 }

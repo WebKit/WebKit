@@ -90,11 +90,19 @@ void CCHeadsUpDisplayLayerImpl::willDraw(CCResourceProvider* resourceProvider)
     if (!m_hudTexture->id() && !m_hudTexture->allocate(CCRenderer::ImplPool, bounds(), GraphicsContext3D::RGBA, CCResourceProvider::TextureUsageAny))
         return;
 
-    // Render pixels into the texture.
-    OwnPtr<SkCanvas> canvas = adoptPtr(skia::CreateBitmapCanvas(bounds().width(), bounds().height(), false /* opaque */));
-    drawHudContents(canvas.get());
+    SkISize canvasSize;
+    if (m_hudCanvas)
+        canvasSize = m_hudCanvas->getDeviceSize();
+    else
+        canvasSize.set(0, 0);
 
-    const SkBitmap* bitmap = &canvas->getDevice()->accessBitmap(false);
+    if (canvasSize.fWidth != bounds().width() || canvasSize.fHeight != bounds().height() || !m_hudCanvas)
+        m_hudCanvas = adoptPtr(skia::CreateBitmapCanvas(bounds().width(), bounds().height(), false /* opaque */));
+
+    m_hudCanvas->clear(SkColorSetARGB(0, 0, 0, 0));
+    drawHudContents(m_hudCanvas.get());
+
+    const SkBitmap* bitmap = &m_hudCanvas->getDevice()->accessBitmap(false);
     SkAutoLockPixels locker(*bitmap);
 
     IntRect layerRect(IntPoint(), bounds());

@@ -1,3 +1,18 @@
+2012-08-13  Vangelis Kokkevis  <vangelis@chromium.org>
+
+        [chromium] Clear HUD canvas contents before drawing into it.
+        https://bugs.webkit.org/show_bug.cgi?id=93759
+
+        Reviewed by Adrienne Walker.
+
+        Not clearing the bitmaps before drawing into it results into
+        random noise. This patch also caches the SkCanvas used by the HUD
+        to avoid reallocating it every frame.
+
+        * platform/graphics/chromium/cc/CCHeadsUpDisplayLayerImpl.cpp:
+        (WebCore::CCHeadsUpDisplayLayerImpl::willDraw):
+        * platform/graphics/chromium/cc/CCHeadsUpDisplayLayerImpl.h:
+
 2012-08-13  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] Replace use of internal Weak smart pointer with JSWeakObjectMap
