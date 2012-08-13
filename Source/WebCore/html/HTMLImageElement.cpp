@@ -202,6 +202,14 @@ RenderObject* HTMLImageElement::createRenderer(RenderArena* arena, RenderStyle* 
     return createRendererForImage(this, arena);
 }
 
+bool HTMLImageElement::canStartSelection() const
+{
+    if (shadow())
+        return HTMLElement::canStartSelection();
+
+    return false;
+}
+
 void HTMLImageElement::attach()
 {
     HTMLElement::attach();

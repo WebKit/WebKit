@@ -54,6 +54,8 @@ private:
     virtual void attach() OVERRIDE;
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*) OVERRIDE;
 
+    virtual bool canStartSelection() const { return false; }
+
     virtual const AtomicString& shadowPseudoId() const OVERRIDE;
 };
 

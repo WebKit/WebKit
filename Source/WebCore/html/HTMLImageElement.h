@@ -110,7 +110,7 @@ private:
     virtual void attach();
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
 
-    virtual bool canStartSelection() const { return false; }
+    virtual bool canStartSelection() const;
 
     virtual bool isURLAttribute(const Attribute&) const OVERRIDE;
 

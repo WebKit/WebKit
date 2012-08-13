@@ -1,3 +1,26 @@
+2012-08-13  Shinya Kawanaka  <shinyak@chromium.org>
+
+        Cannot select the AuthorShadowDOM inner element of an img element
+        https://bugs.webkit.org/show_bug.cgi?id=91591
+
+        Reviewed by Dimitri Glazkov.
+
+        Since HTMLImageElement::canStartSelection always returns false, we cannot start selection
+        from any children (including shadow dom) of an img element. When the img element has a shadow dom,
+        we should be able to start selection.
+
+        Test: fast/dom/shadow/select-image-with-shadow.html
+
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::canStartSelection):
+        (WebCore):
+        * html/HTMLImageElement.h:
+        (HTMLImageElement):
+        * html/shadow/ImageInnerElement.h:
+        (WebCore::ImageInnerElement::canStartSelection): Since ImageInnerElement is really an image,
+        this should return always false to obey the exising behavior.
+        (ImageInnerElement):
+
 2012-08-13  Peter Wang  <peter.wang@torchmobile.com.cn>
 
         REGRESSION (r124723-r124741): 5 inspector/debugger tests failing on Apple Lion Debug WK1 (Tests)

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="resources/polyfill.js"></script>
+<script src="../../js/resources/js-test-pre.js"></script>
+<img id="host" src="../resources/apple.gif">
+
+<script>
+var shadowRoot = new WebKitShadowRoot(host);
+shadowRoot.innerHTML = "<span id='span1'>Kotori</span><shadow></shadow><span id='span2'>Piyo</span>";
+
+var span1 = shadowRoot.getElementById('span1');
+var span2 = shadowRoot.getElementById('span2');
+if (window.eventSender) {
+    eventSender.mouseMoveTo(span1.offsetLeft + 1, span1.offsetTop + span1.offsetHeight / 2);
+    eventSender.mouseDown();
+    eventSender.mouseMoveTo(span2.offsetLeft + span2.offsetWidth - 1, span2.offsetTop + span2.offsetHeight / 2);
+    eventSender.mouseUp();
+
+    var selectedString = shadowRoot.getSelection().toString();
+    shouldBe('selectedString', '"KotoriPiyo"');
+}
+
+var successfullyParsed = true;
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>

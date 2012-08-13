@@ -1,3 +1,13 @@
+2012-08-13  Shinya Kawanaka  <shinyak@chromium.org>
+
+        Cannot select the AuthorShadowDOM inner element of an img element
+        https://bugs.webkit.org/show_bug.cgi?id=91591
+
+        Reviewed by Dimitri Glazkov.
+
+        * fast/dom/shadow/select-image-with-shadow-expected.txt: Added.
+        * fast/dom/shadow/select-image-with-shadow.html: Added.
+
 2012-08-13  Yuta Kitamura  <yutak@google.com>
 
         [Chromium] Unreviewed gardening. Add expectations for flaky tests.
