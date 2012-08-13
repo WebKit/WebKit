@@ -30,6 +30,7 @@
 
 #include "Connection.h"
 #include "Plugin.h"
+#include "WebProcessConnectionMessages.h"
 #include <wtf/HashSet.h>
 #include <wtf/RefCounted.h>
 
@@ -70,7 +71,7 @@ private:
     // Message handlers.
     void didReceiveWebProcessConnectionMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
     void didReceiveSyncWebProcessConnectionMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*, OwnPtr<CoreIPC::ArgumentEncoder>&);
-    void createPlugin(const PluginCreationParameters&, bool& result, bool& wantsWheelEvents, uint32_t& remoteLayerClientID);
+    void createPlugin(const PluginCreationParameters&, PassRefPtr<Messages::WebProcessConnection::CreatePlugin::DelayedReply>);
     void createPluginAsynchronously(const PluginCreationParameters&);
     void destroyPlugin(uint64_t pluginInstanceID, bool asynchronousCreationIncomplete);
     

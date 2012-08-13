@@ -1,3 +1,18 @@
+2012-08-13  Brady Eidson  <beidson@apple.com>
+
+        With asynchronous plug-in initialization, WebProcess and PluginProcess can deadlock
+        <rdar://problem/12062125> and https://bugs.webkit.org/show_bug.cgi?id=93894
+
+        Reviewed by Alexey Proskuryakov.
+
+        Add a test that calls out to NPP_Evaluate for some JS inside of NPP_New.
+
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
+        * DumpRenderTree/TestNetscapePlugIn/Tests/EvaluateJSWithinNPP_New.cpp: Added.
+        (EvaluteJSWithinNPP_New):
+        (EvaluteJSWithinNPP_New::EvaluteJSWithinNPP_New):
+        (EvaluteJSWithinNPP_New::NPP_New):
+
 2012-08-13  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r125422.

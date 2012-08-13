@@ -1,3 +1,37 @@
+2012-08-13  Brady Eidson  <beidson@apple.com>
+
+        With asynchronous plug-in initialization, WebProcess and PluginProcess can deadlock
+        <rdar://problem/12062125> and https://bugs.webkit.org/show_bug.cgi?id=93894
+
+        Reviewed by Alexey Proskuryakov.
+
+        A few things were in play here:
+        - The WebProcess thought the plug-in was done initializing but it wasn't.
+        - The sync message out from the PluginProcess was not being handled by the WebProcess.
+
+        Expose the ability for the PluginProcess to act as if it is handling a sync message and needs messages dispatched:
+        * Platform/CoreIPC/Connection.h:
+        (CoreIPC::Connection::incrementDispatchMessageMarkedDispatchWhenWaitingForSyncReplyCount):
+        (CoreIPC::Connection::decrementDispatchMessageMarkedDispatchWhenWaitingForSyncReplyCount):
+
+        * PluginProcess/PluginControllerProxy.cpp:
+        (WebKit::PluginControllerProxy::PluginControllerProxy):
+        (WebKit::PluginControllerProxy::setInitializationReply): Save the delayed reply for synchronous initialization.
+        (WebKit::PluginControllerProxy::takeInitializationReply): Give back the delayed reply for initialization completion.
+        (WebKit::PluginControllerProxy::initialize):
+        * PluginProcess/PluginControllerProxy.h:
+        (WebKit::PluginControllerProxy::isInitializing): Accessor so WebProcessConnection knows whether or not to store the
+          delayed reply for later.
+
+        * PluginProcess/WebProcessConnection.messages.in: Make the synchronous form of "CreatePlugin" have a delayed reply.
+        * PluginProcess/WebProcessConnection.cpp:
+        (WebKit::WebProcessConnection::createPlugin): Store away the delayed reply message so it can be responded to after
+          asynchronous initialization completes.
+        (WebKit::WebProcessConnection::createPluginAsynchronously): If there is a stored away delayed reply message, respond to
+          it instead of sending the asynchronously reply.
+        * PluginProcess/WebProcessConnection.h:
+        (WebProcessConnection):
+
 2012-08-13  Alexey Proskuryakov  <ap@apple.com>
 
         [WK2] Move a remaining per-process message from WebContext to WebProcessProxy

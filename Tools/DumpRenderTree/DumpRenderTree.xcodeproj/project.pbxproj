@@ -71,6 +71,7 @@
 		515F429C15C07872007C8F90 /* PluginScriptableObjectOverridesAllProperties.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 515F429B15C07872007C8F90 /* PluginScriptableObjectOverridesAllProperties.cpp */; };
 		5185F6B210714E07007AA393 /* HistoryDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5185F69F10714A57007AA393 /* HistoryDelegate.mm */; };
 		5185F6B310714E12007AA393 /* HistoryDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 5185F69E10714A57007AA393 /* HistoryDelegate.h */; };
+		51CACBD815D96FD000EB53A2 /* EvaluateJSWithinNPP_New.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51CACBD715D96FD000EB53A2 /* EvaluateJSWithinNPP_New.cpp */; };
 		53CBB832134E42F3001CE6A4 /* CyclicRedundancyCheck.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 53CBB830134E42F3001CE6A4 /* CyclicRedundancyCheck.cpp */; };
 		53CBB833134E42F3001CE6A4 /* CyclicRedundancyCheck.h in Headers */ = {isa = PBXBuildFile; fileRef = 53CBB831134E42F3001CE6A4 /* CyclicRedundancyCheck.h */; };
 		5DB9AC970F722C3600684641 /* AHEM____.TTF in Copy Font Files */ = {isa = PBXBuildFile; fileRef = AA7F10C20CB3C1030003BDC9 /* AHEM____.TTF */; };
@@ -283,6 +284,7 @@
 		515F429B15C07872007C8F90 /* PluginScriptableObjectOverridesAllProperties.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PluginScriptableObjectOverridesAllProperties.cpp; sourceTree = "<group>"; };
 		5185F69E10714A57007AA393 /* HistoryDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HistoryDelegate.h; path = mac/HistoryDelegate.h; sourceTree = "<group>"; };
 		5185F69F10714A57007AA393 /* HistoryDelegate.mm */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; name = HistoryDelegate.mm; path = mac/HistoryDelegate.mm; sourceTree = "<group>"; };
+		51CACBD715D96FD000EB53A2 /* EvaluateJSWithinNPP_New.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = EvaluateJSWithinNPP_New.cpp; path = TestNetscapePlugIn/Tests/EvaluateJSWithinNPP_New.cpp; sourceTree = SOURCE_ROOT; };
 		53CBB830134E42F3001CE6A4 /* CyclicRedundancyCheck.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CyclicRedundancyCheck.cpp; sourceTree = "<group>"; };
 		53CBB831134E42F3001CE6A4 /* CyclicRedundancyCheck.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CyclicRedundancyCheck.h; sourceTree = "<group>"; };
 		5DE8AE4313A2C15800D6A37D /* libWebCoreTestSupport.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = libWebCoreTestSupport.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -541,6 +543,7 @@
 				1A31EB3613466AC100017372 /* mac */,
 				1A215A7511F26072008AD0F5 /* DocumentOpenInDestroyStream.cpp */,
 				C0E720741281C828004EF533 /* EvaluateJSAfterRemovingPluginElement.cpp */,
+				51CACBD715D96FD000EB53A2 /* EvaluateJSWithinNPP_New.cpp */,
 				4AD6A11313C8124000EA9737 /* FormValue.cpp */,
 				1AFF66BB137DEA8300791696 /* GetURLNotifyWithURLThatFailsToLoad.cpp */,
 				1A5CC1F3137DD2EC00A5D7E7 /* GetURLWithJavaScriptURL.cpp */,
@@ -906,6 +909,7 @@
 				1A66C35114576A920099A115 /* ContentsScaleFactor.cpp in Sources */,
 				515F429C15C07872007C8F90 /* PluginScriptableObjectOverridesAllProperties.cpp in Sources */,
 				5106803E15CC7B10001A8A23 /* SlowNPPNew.cpp in Sources */,
+				51CACBD815D96FD000EB53A2 /* EvaluateJSWithinNPP_New.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
