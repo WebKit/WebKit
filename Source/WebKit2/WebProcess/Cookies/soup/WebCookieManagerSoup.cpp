@@ -27,6 +27,7 @@
 #include "WebCookieManager.h"
 
 #include "WebKitSoupCookieJarSqlite.h"
+#include "WebProcess.h"
 #include <WebCore/CookieJarSoup.h>
 #include <WebCore/ResourceHandle.h>
 #include <libsoup/soup.h>
@@ -83,6 +84,8 @@ HTTPCookieAcceptPolicy WebCookieManager::platformGetHTTPCookieAcceptPolicy()
 
 void WebCookieManager::setCookiePersistentStorage(const String& storagePath, uint32_t storageType)
 {
+    WebProcess::LocalTerminationDisabler terminationDisabler(WebProcess::shared());
+
     GRefPtr<SoupCookieJar> jar;
     switch (storageType) {
     case SoupCookiePersistentStorageText:

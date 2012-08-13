@@ -1,3 +1,17 @@
+2012-08-13  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [SOUP][WK2] Missing LocalTerminationDisabler in WebCookieManager::setCookiePersistentStorage()
+        https://bugs.webkit.org/show_bug.cgi?id=93837
+
+        Reviewed by Carlos Garcia Campos.
+
+        Add missing WebCore::LocalTerminationDisabler in
+        WebCookieManager::setCookiePersistentStorage() to
+        temporarily disable process termination.
+
+        * WebProcess/Cookies/soup/WebCookieManagerSoup.cpp:
+        (WebKit::WebCookieManager::setCookiePersistentStorage):
+
 2012-08-12  Nuno Lopes  <nlopes@apple.com>
 
         Fix build with recent clang.
