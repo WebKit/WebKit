@@ -1,3 +1,19 @@
+2012-08-13  Peter Wang  <peter.wang@torchmobile.com.cn>
+
+        REGRESSION (r124723-r124741): 5 inspector/debugger tests failing on Apple Lion Debug WK1 (Tests)
+        https://bugs.webkit.org/show_bug.cgi?id=93387
+
+        Reviewed by Pavel Feldman.
+
+        Now the front-end has problem when setting the positon of breakpoint, so remove the comparing
+        of "column" to make the behavior back to the time as JSC cannot provide "column" info.
+        Refer to https://bugs.webkit.org/show_bug.cgi?id=93473.  
+
+        No new test case for this bug.
+
+        * bindings/js/ScriptDebugServer.cpp:
+        (WebCore::ScriptDebugServer::hasBreakpoint):
+
 2012-08-10  Kinuko Yasuda  <kinuko@chromium.org>
 
         Support creating File object from FileSystem URL for files in FileSystem API

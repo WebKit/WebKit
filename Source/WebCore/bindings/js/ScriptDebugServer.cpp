@@ -187,9 +187,8 @@ bool ScriptDebugServer::hasBreakpoint(intptr_t sourceID, const TextPosition& pos
     unsigned breaksCount = breaksVector.size();
     unsigned i;
     for (i = 0; i < breaksCount; i++) {
-        int breakColumn = breaksVector.at(i).columnNumber;
         int breakLine = breaksVector.at(i).lineNumber;
-        if (lineNumber == breakLine && columnNumber == breakColumn) {
+        if (lineNumber == breakLine) {
             hit = true;
             break;
         }
