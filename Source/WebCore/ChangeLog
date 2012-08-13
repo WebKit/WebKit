@@ -1,3 +1,24 @@
+2012-08-13  Chris Rogers  <crogers@google.com>
+
+        AudioContext::createMediaStreamSource() must create a provider for local MediaStreams
+        https://bugs.webkit.org/show_bug.cgi?id=93756
+
+        Reviewed by Eric Carlson.
+
+        There are two main kinds of MediaStreams (local and from remote peers).
+        Internally we need to know the difference so a MediaStreamAudioSourceNode will "just work".
+
+        Tested by existing test: mediastreamaudiosourcenode.html
+        Full testing can only be verified by manual tests.
+
+        * Modules/mediastream/LocalMediaStream.h:
+        (LocalMediaStream):
+        * Modules/mediastream/MediaStream.h:
+        (WebCore::MediaStream::isLocal):
+        (MediaStream):
+        * Modules/webaudio/AudioContext.cpp:
+        (WebCore::AudioContext::createMediaStreamSource):
+
 2012-08-13  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Unreviewed, rolling out r125444.

@@ -40,6 +40,9 @@ public:
 
     void stop();
 
+    // MediaStream
+    virtual bool isLocal() const OVERRIDE { return true; }
+
     // EventTarget
     virtual const AtomicString& interfaceName() const OVERRIDE;
 

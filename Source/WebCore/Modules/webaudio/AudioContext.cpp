@@ -401,8 +401,19 @@ PassRefPtr<MediaStreamAudioSourceNode> AudioContext::createMediaStreamSource(Med
     ASSERT(isMainThread());
     lazyInitialize();
 
-    // FIXME: For now we don't give it an AudioSourceProvider, so it will output silence.
-    RefPtr<MediaStreamAudioSourceNode> node = MediaStreamAudioSourceNode::create(this, mediaStream, 0);
+    AudioSourceProvider* provider = 0;
+
+    if (mediaStream->isLocal() && mediaStream->audioTracks()->length())
+        provider = destination()->localAudioInputProvider();
+    else {
+        // FIXME: get a provider for non-local MediaStreams (like from a remote peer).
+        provider = 0;
+    }
+
+    RefPtr<MediaStreamAudioSourceNode> node = MediaStreamAudioSourceNode::create(this, mediaStream, provider);
+
+    // FIXME: Only stereo streams are supported right now. We should be able to accept multi-channel streams.
+    node->setFormat(2, sampleRate());
 
     refNode(node.get()); // context keeps reference until node is disconnected
     return node;

@@ -56,6 +56,8 @@ public:
     MediaStreamTrackList* audioTracks() { return m_audioTracks.get(); }
     MediaStreamTrackList* videoTracks() { return m_videoTracks.get(); }
 
+    virtual bool isLocal() const { return false; }
+
     // MediaStreamDescriptorOwner
     virtual void streamEnded() OVERRIDE;
 
