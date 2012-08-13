@@ -1,3 +1,17 @@
+2012-08-13  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] Default signal handler for WebKitWebView::should-show-delete-interface-for-element overrides default result
+        https://bugs.webkit.org/show_bug.cgi?id=93600
+
+        Reviewed by Xan Lopez.
+
+        Instead of using the default editing signal handler for ::should-show-delete-interface-for-element,
+        do not use a default signal handler. This means that the result of the signal defaults to FALSE,
+        which is the expected value to ensure that the delete interface is not shown.
+
+        * webkit/webkitwebview.cpp:
+        (webkit_web_view_class_init): Do not install a default signal handler.
+
 2012-08-13  Mario Sanchez Prada  <msanchez@igalia.com>
 
         [GTK] Implementation of atk_editable_text_insert_text ignores 'length' parameter
