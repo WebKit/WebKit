@@ -1,3 +1,10 @@
+2012-08-12  Yuta Kitamura  <yutak@google.com>
+
+        Unreviewed. Fix Chromium's Android build.
+
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::find): Needs parentheses for a function call.
+
 2012-08-12  Leandro Gracia Gil  <leandrogracia@chromium.org>
 
         [Chromium] Implement the find-in-page match rects API

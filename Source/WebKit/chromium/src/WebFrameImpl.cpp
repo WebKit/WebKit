@@ -1671,7 +1671,7 @@ bool WebFrameImpl::find(int identifier,
     }
 
 #if OS(ANDROID)
-    viewImpl()->zoomToFindInPageRect(frameView()->contentsToWindow(enclosingIntRect(m_activeMatch->transformFriendlyBoundingBox)));
+    viewImpl()->zoomToFindInPageRect(frameView()->contentsToWindow(enclosingIntRect(m_activeMatch->transformFriendlyBoundingBox())));
 #endif
 
     setMarkerActive(m_activeMatch.get(), true);
