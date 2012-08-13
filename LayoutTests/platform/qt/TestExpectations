@@ -142,3 +142,4 @@ BUGWK93247 DEBUG : fast/lists/list-marker-remove-crash.html = CRASH
 BUGWK93475 : fast/block/float/overhanging-tall-block.html = TEXT
 
 BUGWK93654 DEBUG : fast/events/keyevent-iframe-removed-crash.html = CRASH
+BUGWK93812 DEBUG : svg/custom/use-instanceRoot-as-event-target.xhtml = CRASH
