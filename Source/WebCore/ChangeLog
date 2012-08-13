@@ -1,3 +1,16 @@
+2012-08-13  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        [GTK] Implementation of atk_editable_text_insert_text ignores 'length' parameter
+        https://bugs.webkit.org/show_bug.cgi?id=93804
+
+        Reviewed by Carlos Garcia Campos.
+
+        Use the 'length' parameter to insert a substring of the full
+        string passed to this method from AtkEditableText interface.
+
+        * accessibility/gtk/WebKitAccessibleInterfaceEditableText.cpp:
+        (webkitAccessibleEditableTextInsertText): Don't ignore 'length'.
+
 2012-08-13  Sam D  <dsam2912@gmail.com>
 
         Web Inspector: Feature Request - Adding mouse gesture for editing attribute values in elements/css panel

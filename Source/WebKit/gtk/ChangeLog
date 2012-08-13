@@ -1,3 +1,15 @@
+2012-08-13  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        [GTK] Implementation of atk_editable_text_insert_text ignores 'length' parameter
+        https://bugs.webkit.org/show_bug.cgi?id=93804
+
+        Reviewed by Carlos Garcia Campos.
+
+        Update unit tests to also check inserting a partial string.
+
+        * tests/testatk.c:
+        (testWebkitAtkTextChangedNotifications): Update test.
+
 2012-08-10  Alice Cheng  <alice_cheng@apple.com>
 
         Part 1 of: Extend -webkit-user-select with a new value "all"

@@ -1761,7 +1761,7 @@ static void testWebkitAtkTextChangedNotifications()
     g_free(text);
 
     pos = 4;
-    atk_editable_text_insert_text(ATK_EDITABLE_TEXT(textEntry), "qux quux", 8, &pos);
+    atk_editable_text_insert_text(ATK_EDITABLE_TEXT(textEntry), "qux quux tobeignored", 8, &pos);
     text = atk_text_get_text(ATK_TEXT(textEntry), 0, -1);
     g_assert_cmpstr(text, ==, "foo qux quux baz");
     g_assert_cmpstr(textChangedResult, ==, "|1|4|8|'qux quux'|");
@@ -1794,7 +1794,7 @@ static void testWebkitAtkTextChangedNotifications()
     g_free(text);
 
     pos = 3;
-    atk_editable_text_insert_text(ATK_EDITABLE_TEXT(passwordEntry), "qux", 3, &pos);
+    atk_editable_text_insert_text(ATK_EDITABLE_TEXT(passwordEntry), "qux tobeignored", 3, &pos);
     g_assert_cmpstr(textChangedResult, ==, "|1|3|3|'\342\200\242\342\200\242\342\200\242'|");
 
     text = atk_text_get_text(ATK_TEXT(passwordEntry), 0, -1);

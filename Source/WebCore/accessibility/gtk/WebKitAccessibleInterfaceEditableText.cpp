@@ -61,7 +61,8 @@ static void webkitAccessibleEditableTextSetTextContents(AtkEditableText* text, c
 
 static void webkitAccessibleEditableTextInsertText(AtkEditableText* text, const gchar* string, gint length, gint* position)
 {
-    // FIXME: string nullcheck?
+    if (!string)
+        return;
 
     AccessibilityObject* coreObject = core(text);
     // FIXME: Not implemented in WebCore
@@ -75,7 +76,7 @@ static void webkitAccessibleEditableTextInsertText(AtkEditableText* text, const 
     coreObject->setSelectedVisiblePositionRange(coreObject->visiblePositionRangeForRange(PlainTextRange(*position, 0)));
     coreObject->setFocused(true);
     // FIXME: We should set position to the actual inserted text length, which may be less than that requested.
-    if (document->frame()->editor()->insertTextWithoutSendingTextEvent(String::fromUTF8(string), false, 0))
+    if (document->frame()->editor()->insertTextWithoutSendingTextEvent(String::fromUTF8(string).substring(0, length), false, 0))
         *position += length;
 }
 
