@@ -193,7 +193,6 @@ public:
         , m_isEmpty(true)
         , m_previousLineBrokeCleanly(true)
         , m_floatPaginationStrut(0)
-        , m_runsFromLeadingWhitespace(0)
     { }
 
     bool isFirstLine() const { return m_isFirstLine; }
@@ -201,9 +200,6 @@ public:
     bool isEmpty() const { return m_isEmpty; }
     bool previousLineBrokeCleanly() const { return m_previousLineBrokeCleanly; }
     LayoutUnit floatPaginationStrut() const { return m_floatPaginationStrut; }
-    unsigned runsFromLeadingWhitespace() const { return m_runsFromLeadingWhitespace; }
-    void resetRunsFromLeadingWhitespace() { m_runsFromLeadingWhitespace = 0; }
-    void incrementRunsFromLeadingWhitespace() { m_runsFromLeadingWhitespace++; }
 
     void setFirstLine(bool firstLine) { m_isFirstLine = firstLine; }
     void setLastLine(bool lastLine) { m_isLastLine = lastLine; }
@@ -228,7 +224,6 @@ private:
     bool m_isEmpty;
     bool m_previousLineBrokeCleanly;
     LayoutUnit m_floatPaginationStrut;
-    unsigned m_runsFromLeadingWhitespace;
 };
 
 static inline LayoutUnit borderPaddingMarginStart(RenderInline* child)
@@ -483,11 +478,10 @@ RootInlineBox* RenderBlock::constructLine(BidiRunList<BidiRun>& bidiRuns, const 
 
     bool rootHasSelectedChildren = false;
     InlineFlowBox* parentBox = 0;
-    int runCount = bidiRuns.runCount() - lineInfo.runsFromLeadingWhitespace();
     for (BidiRun* r = bidiRuns.firstRun(); r; r = r->next()) {
         // Create a box for our object.
-        bool isOnlyRun = (runCount == 1);
-        if (runCount == 2 && !r->m_object->isListMarker())
+        bool isOnlyRun = (bidiRuns.runCount() == 1);
+        if (bidiRuns.runCount() == 2 && !r->m_object->isListMarker())
             isOnlyRun = (!style()->isLeftToRightDirection() ? bidiRuns.lastRun() : bidiRuns.firstRun())->m_object->isListMarker();
 
         if (lineInfo.isEmpty())
@@ -703,57 +697,6 @@ static inline void computeExpansionForJustifiedText(BidiRun* firstRun, BidiRun* 
     }
 }
 
-void RenderBlock::updateLogicalWidthForAlignment(const ETextAlign& textAlign, BidiRun* trailingSpaceRun, float& logicalLeft, float& totalLogicalWidth, float& availableLogicalWidth, int expansionOpportunityCount)
-{
-    // Armed with the total width of the line (without justification),
-    // we now examine our text-align property in order to determine where to position the
-    // objects horizontally. The total width of the line can be increased if we end up
-    // justifying text.
-    switch (textAlign) {
-    case LEFT:
-    case WEBKIT_LEFT:
-        updateLogicalWidthForLeftAlignedBlock(style()->isLeftToRightDirection(), trailingSpaceRun, logicalLeft, totalLogicalWidth, availableLogicalWidth);
-        break;
-    case JUSTIFY:
-        adjustInlineDirectionLineBounds(expansionOpportunityCount, logicalLeft, availableLogicalWidth);
-        if (expansionOpportunityCount) {
-            if (trailingSpaceRun) {
-                totalLogicalWidth -= trailingSpaceRun->m_box->logicalWidth();
-                trailingSpaceRun->m_box->setLogicalWidth(0);
-            }
-            break;
-        }
-        // fall through
-    case TAAUTO:
-        // for right to left fall through to right aligned
-        if (style()->isLeftToRightDirection()) {
-            if (totalLogicalWidth > availableLogicalWidth && trailingSpaceRun)
-                trailingSpaceRun->m_box->setLogicalWidth(max<float>(0, trailingSpaceRun->m_box->logicalWidth() - totalLogicalWidth + availableLogicalWidth));
-            break;
-        }
-    case RIGHT:
-    case WEBKIT_RIGHT:
-        updateLogicalWidthForRightAlignedBlock(style()->isLeftToRightDirection(), trailingSpaceRun, logicalLeft, totalLogicalWidth, availableLogicalWidth);
-        break;
-    case CENTER:
-    case WEBKIT_CENTER:
-        updateLogicalWidthForCenterAlignedBlock(style()->isLeftToRightDirection(), trailingSpaceRun, logicalLeft, totalLogicalWidth, availableLogicalWidth);
-        break;
-    case TASTART:
-        if (style()->isLeftToRightDirection())
-            updateLogicalWidthForLeftAlignedBlock(style()->isLeftToRightDirection(), trailingSpaceRun, logicalLeft, totalLogicalWidth, availableLogicalWidth);
-        else
-            updateLogicalWidthForRightAlignedBlock(style()->isLeftToRightDirection(), trailingSpaceRun, logicalLeft, totalLogicalWidth, availableLogicalWidth);
-        break;
-    case TAEND:
-        if (style()->isLeftToRightDirection())
-            updateLogicalWidthForRightAlignedBlock(style()->isLeftToRightDirection(), trailingSpaceRun, logicalLeft, totalLogicalWidth, availableLogicalWidth);
-        else
-            updateLogicalWidthForLeftAlignedBlock(style()->isLeftToRightDirection(), trailingSpaceRun, logicalLeft, totalLogicalWidth, availableLogicalWidth);
-        break;
-    }
-}
-
 void RenderBlock::computeInlineDirectionPositionsForLine(RootInlineBox* lineBox, const LineInfo& lineInfo, BidiRun* firstRun, BidiRun* trailingSpaceRun, bool reachedEnd,
                                                          GlyphOverflowAndFallbackFontsMap& textBoxDataMap, VerticalPositionCache& verticalPositionCache)
 {
@@ -810,7 +753,53 @@ void RenderBlock::computeInlineDirectionPositionsForLine(RootInlineBox* lineBox,
         expansionOpportunityCount--;
     }
 
-    updateLogicalWidthForAlignment(textAlign, trailingSpaceRun, logicalLeft, totalLogicalWidth, availableLogicalWidth, expansionOpportunityCount);
+    // Armed with the total width of the line (without justification),
+    // we now examine our text-align property in order to determine where to position the
+    // objects horizontally.  The total width of the line can be increased if we end up
+    // justifying text.
+    switch (textAlign) {
+        case LEFT:
+        case WEBKIT_LEFT:
+            updateLogicalWidthForLeftAlignedBlock(style()->isLeftToRightDirection(), trailingSpaceRun, logicalLeft, totalLogicalWidth, availableLogicalWidth);
+            break;
+        case JUSTIFY:
+            adjustInlineDirectionLineBounds(expansionOpportunityCount, logicalLeft, availableLogicalWidth);
+            if (expansionOpportunityCount) {
+                if (trailingSpaceRun) {
+                    totalLogicalWidth -= trailingSpaceRun->m_box->logicalWidth();
+                    trailingSpaceRun->m_box->setLogicalWidth(0);
+                }
+                break;
+            }
+            // fall through
+        case TAAUTO:
+            // for right to left fall through to right aligned
+            if (style()->isLeftToRightDirection()) {
+                if (totalLogicalWidth > availableLogicalWidth && trailingSpaceRun)
+                    trailingSpaceRun->m_box->setLogicalWidth(max<float>(0, trailingSpaceRun->m_box->logicalWidth() - totalLogicalWidth + availableLogicalWidth));
+                break;
+            }
+        case RIGHT:
+        case WEBKIT_RIGHT:
+            updateLogicalWidthForRightAlignedBlock(style()->isLeftToRightDirection(), trailingSpaceRun, logicalLeft, totalLogicalWidth, availableLogicalWidth);
+            break;
+        case CENTER:
+        case WEBKIT_CENTER:
+            updateLogicalWidthForCenterAlignedBlock(style()->isLeftToRightDirection(), trailingSpaceRun, logicalLeft, totalLogicalWidth, availableLogicalWidth);
+            break;
+        case TASTART:
+            if (style()->isLeftToRightDirection())
+                updateLogicalWidthForLeftAlignedBlock(style()->isLeftToRightDirection(), trailingSpaceRun, logicalLeft, totalLogicalWidth, availableLogicalWidth);
+            else
+                updateLogicalWidthForRightAlignedBlock(style()->isLeftToRightDirection(), trailingSpaceRun, logicalLeft, totalLogicalWidth, availableLogicalWidth);
+            break;
+        case TAEND:
+            if (style()->isLeftToRightDirection())
+                updateLogicalWidthForRightAlignedBlock(style()->isLeftToRightDirection(), trailingSpaceRun, logicalLeft, totalLogicalWidth, availableLogicalWidth);
+            else
+                updateLogicalWidthForLeftAlignedBlock(style()->isLeftToRightDirection(), trailingSpaceRun, logicalLeft, totalLogicalWidth, availableLogicalWidth);
+            break;
+    }
 
     computeExpansionForJustifiedText(firstRun, trailingSpaceRun, expansionOpportunities, expansionOpportunityCount, totalLogicalWidth, availableLogicalWidth);
 
@@ -870,12 +859,12 @@ static void setStaticPositions(RenderBlock* block, RenderBox* child)
         // A relative positioned inline encloses us. In this case, we also have to determine our
         // position as though we were an inline. Set |staticInlinePosition| and |staticBlockPosition| on the relative positioned
         // inline so that we can obtain the value later.
-        toRenderInline(containerBlock)->layer()->setStaticInlinePosition(block->startAlignedOffsetForLine(child, blockHeight, false));
+        toRenderInline(containerBlock)->layer()->setStaticInlinePosition(block->startOffsetForLine(blockHeight, false));
         toRenderInline(containerBlock)->layer()->setStaticBlockPosition(blockHeight);
     }
 
     if (child->style()->isOriginalDisplayInlineType())
-        block->setStaticInlinePositionForChild(child, blockHeight, block->startAlignedOffsetForLine(child, blockHeight, false));
+        child->layer()->setStaticInlinePosition(block->startOffsetForLine(blockHeight, false));
     else
         block->setStaticInlinePositionForChild(child, blockHeight, block->startOffsetForContent(blockHeight));
     child->layer()->setStaticBlockPosition(blockHeight);
@@ -1243,7 +1232,6 @@ void RenderBlock::layoutRunsAndFloatsInRange(LineLayoutState& layoutState, Inlin
         lineMidpointState.reset();
 
         layoutState.lineInfo().setEmpty(true);
-        layoutState.lineInfo().resetRunsFromLeadingWhitespace();
 
         const InlineIterator oldEnd = end;
         bool isNewUBAParagraph = layoutState.lineInfo().previousLineBrokeCleanly();
@@ -1901,13 +1889,9 @@ void RenderBlock::LineBreaker::skipLeadingWhitespace(InlineBidiResolver& resolve
 {
     while (!resolver.position().atEnd() && !requiresLineBox(resolver.position(), lineInfo, LeadingWhitespace)) {
         RenderObject* object = resolver.position().m_obj;
-        if (object->isPositioned()) {
+        if (object->isPositioned())
             setStaticPositions(m_block, toRenderBox(object));
-            if (object->style()->isOriginalDisplayInlineType()) {
-                resolver.runs().addRun(createRun(0, 1, object, resolver));
-                lineInfo.incrementRunsFromLeadingWhitespace();
-            }
-        } else if (object->isFloating())
+        else if (object->isFloating())
             m_block->positionNewFloatOnLine(m_block->insertFloatingObject(toRenderBox(object)), lastFloatFromPreviousLine, lineInfo, width);
         else if (object->isText() && object->style()->hasTextCombine() && object->isCombineText() && !toRenderCombineText(object)->isCombined()) {
             toRenderCombineText(object)->combineText();
@@ -2765,27 +2749,6 @@ bool RenderBlock::positionNewFloatOnLine(FloatingObject* newFloat, FloatingObjec
     lineInfo.setFloatPaginationStrut(lineInfo.floatPaginationStrut() + paginationStrut);
     return true;
 }
-
-LayoutUnit RenderBlock::startAlignedOffsetForLine(RenderBox* child, LayoutUnit position, bool firstLine)
-{
-    ETextAlign textAlign = style()->textAlign();
-
-    if (textAlign == TAAUTO)
-        return startOffsetForLine(position, firstLine);
-
-    // updateLogicalWidthForAlignment() handles the direction of the block so no need to consider it here
-    float logicalLeft;
-    float availableLogicalWidth;
-    logicalLeft = logicalLeftOffsetForLine(logicalHeight(), false);
-    availableLogicalWidth = logicalRightOffsetForLine(logicalHeight(), false) - logicalLeft;
-    float totalLogicalWidth = logicalWidthForChild(child);
-    updateLogicalWidthForAlignment(textAlign, 0l, logicalLeft, totalLogicalWidth, availableLogicalWidth, 0);
-
-    if (!style()->isLeftToRightDirection())
-        return logicalWidth() - (logicalLeft + totalLogicalWidth);
-    return logicalLeft;
-}
-
 
 void RenderBlock::layoutLineGridBox()
 {

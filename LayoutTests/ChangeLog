@@ -1,3 +1,29 @@
+2012-08-13  Andy Estes  <aestes@apple.com>
+
+        <rdar://problem/12050793> Brahms: REGRESSION (r113584): Apple reseller website does not display correctly. (91452)
+
+        Roll out <http://trac.webkit.org/changeset/94492>,
+        <http://trac.webkit.org/changeset/103851>, and
+        <http://trac.webkit.org/changeset/113584> from safari-536.26-branch.
+
+        * fast/css/absolute-child-with-percent-height-inside-relative-parent-expected.txt:
+        * fast/css/absolute-inline-alignment-2-expected.html: Removed.
+        * fast/css/absolute-inline-alignment-2.html: Removed.
+        * fast/css/absolute-inline-alignment-expected.html: Removed.
+        * fast/css/absolute-inline-alignment.html: Removed.
+        * fast/css/align-positioned-object-on-resize-expected.txt: Removed.
+        * fast/css/align-positioned-object-on-resize.html: Removed.
+        * fast/css/bug4860-absolute-block-child-does-not-inherit-alignment-expected.png: Removed.
+        * fast/css/bug4860-absolute-block-child-does-not-inherit-alignment-expected.txt: Removed.
+        * fast/css/bug4860-absolute-block-child-does-not-inherit-alignment.html: Removed.
+        * fast/css/bug4860-absolute-inline-child-inherits-alignment-expected.png: Removed.
+        * fast/css/bug4860-absolute-inline-child-inherits-alignment-expected.txt: Removed.
+        * fast/css/bug4860-absolute-inline-child-inherits-alignment.html: Removed.
+        * fast/inline/absolute-positioned-block-in-centred-block-expected.txt: Removed.
+        * fast/inline/absolute-positioned-block-in-centred-block.html: Removed.
+        * fast/inline/absolute-positioned-inline-in-centred-block-expected.txt: Removed.
+        * fast/inline/absolute-positioned-inline-in-centred-block.html: Removed.
+
 2012-08-13  Lucas Forschler  <lforschler@apple.com>
 
     Merge r125086.
