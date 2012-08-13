@@ -3,6 +3,18 @@
         [WK2] Move a remaining per-process message from WebContext to WebProcessProxy
         https://bugs.webkit.org/show_bug.cgi?id=93883
 
+        Windows build fix.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::getSitesWithPluginData):
+        (WebKit::WebProcess::clearPluginSiteData):
+        Use WebProcessProxy for the message here, too.
+
+2012-08-13  Alexey Proskuryakov  <ap@apple.com>
+
+        [WK2] Move a remaining per-process message from WebContext to WebProcessProxy
+        https://bugs.webkit.org/show_bug.cgi?id=93883
+
         Reviewed by Sam Weinig.
 
         There was one plug-in message renaming. Moving it, and also other plug-in messages
