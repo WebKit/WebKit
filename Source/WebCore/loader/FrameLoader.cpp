@@ -334,9 +334,9 @@ void FrameLoader::submitForm(PassRefPtr<FormSubmission> submission)
     // needed any more now that we reset m_submittedFormURL on each mouse or key down event.
 
     if (m_frame->tree()->isDescendantOf(targetFrame)) {
-        if (m_submittedFormURL == submission->action())
+        if (m_submittedFormURL == submission->requestURL())
             return;
-        m_submittedFormURL = submission->action();
+        m_submittedFormURL = submission->requestURL();
     }
 
     submission->data()->generateFiles(m_frame->document());

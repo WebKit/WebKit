@@ -1,3 +1,27 @@
+2012-08-13  Mike West  <mkwst@chromium.org>
+
+        FrameLoader::receivedMainResourceError doesn't handle GET cancellations well.
+        https://bugs.webkit.org/show_bug.cgi?id=93850
+
+        Reviewed by Adam Barth.
+
+        'FrameLoader::cancel' should reset the loader's state, and it mostly
+        does. In the case of a GET form submission, however, the submitted form
+        URL that's stored doesn't match the URL that's requested (query string).
+        This leads to the loader getting a bit confused about what's going on,
+        and not clearing the stored form submission URL.
+
+        This patch moves to storing the form submission's actual request URL
+        as opposed to the form action URL.
+
+        None of the current tests should break, and when issue 93777 lands, it
+        won't be broken either.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::submitForm):
+            Switched to using 'FormSubmission::requestURL', as that matches the
+            URL that's actually requested during a form submission via GET.
+
 2012-08-13  Antonio Gomes  <agomes@rim.com>
 
         [BlackBerry] Hardware accelerated scrolling of <select> content
