@@ -1,3 +1,10 @@
+2012-08-12  Pavel Feldman  <pfeldman@chromium.org>
+
+        Not reviewed: rebaselined inspector/console/console-format-collections.html after r125284.
+        https://bugs.webkit.org/show_bug.cgi?id=93748
+
+        * inspector/console/console-format-collections-expected.txt:
+
 2012-08-12  Yuta Kitamura  <yutak@google.com>
 
         [Chromium] Unreviewed. Update TestExpectations so it matches the recent results.

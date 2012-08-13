@@ -36,5 +36,4 @@ Arguments[2] console-format-collections.html:51
 [1, Array[2]] console-format-collections.html:41
 NonArrayWithLength {keys: Array[0]} console-format-collections.html:44
 [1, "2"] console-format-collections.html:51
-Page reloaded.
 
