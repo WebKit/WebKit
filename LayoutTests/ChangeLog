@@ -1,3 +1,11 @@
+2012-08-13  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening, updating test expectation for
+        canvas/philip/tests/2d.drawImage.self.2.html to note that
+        bug #93244 tracks the regression.
+
+        * platform/gtk/TestExpectations:
+
 2012-08-13  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unreviewed gardening, skip a failing test.
