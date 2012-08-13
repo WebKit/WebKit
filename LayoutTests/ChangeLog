@@ -1,3 +1,10 @@
+2012-08-13  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed gardening, skip a failing test.
+
+        * platform/qt/Skipped:
+        * platform/qt/TestExpectations:
+
 2012-08-13  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] fast/box-sizing/box-sizing.html needs new baseline after r124347
