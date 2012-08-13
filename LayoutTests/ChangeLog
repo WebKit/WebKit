@@ -1,3 +1,17 @@
+2012-08-13  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL][WK2] Wrong TestExpectations for 2 webintents tests
+        https://bugs.webkit.org/show_bug.cgi?id=93811
+
+        Unreviewed EFL gardening.
+
+        Update expected state for the following webintents tests
+        to make the tree green:
+        webintents/web-intents-invoke-port.html
+        webintents/web-intents-obj-constructor.html
+
+        * platform/efl-wk2/TestExpectations:
+
 2012-08-13  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unreviewed gardening, skip new failing/crashing tests.
