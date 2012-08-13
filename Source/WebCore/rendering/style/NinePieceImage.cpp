@@ -26,10 +26,16 @@
 
 namespace WebCore {
 
-bool NinePieceImage::operator==(const NinePieceImage& o) const
+bool NinePieceImageData::operator==(const NinePieceImageData& o) const
 {
     return StyleImage::imagesEquivalent(m_image.get(), o.m_image.get()) && m_imageSlices == o.m_imageSlices && m_fill == o.m_fill
            && m_borderSlices == o.m_borderSlices && m_outset == o.m_outset && m_horizontalRule == o.m_horizontalRule && m_verticalRule == o.m_verticalRule;
+}
+
+const NinePieceImageData& NinePieceImage::defaultData()
+{
+    DEFINE_STATIC_LOCAL(NinePieceImageData, data, ());
+    return data;
 }
 
 }

@@ -1,3 +1,58 @@
+2012-08-13  Andreas Kling  <kling@webkit.org>
+
+        Reduce the size of empty NinePieceImage objects.
+        <http://webkit.org/b/93747>
+
+        Reviewed by Antti Koivisto.
+
+        Move the members of NinePieceImage into a NinePieceImageData class, leaving NinePieceImage
+        with a single OwnPtr<NinePieceImageData> member. The constant NinePieceImage::defaultData()
+        provides default values for objects with null m_data.
+
+        RenderStyle's "StyleSurroundData" member has a BorderData, which in turn holds a NinePieceImage.
+        This means that anything with left/right/top/bottom, margin, padding or border style but *no*
+        border-image will save 104 bytes (assuming their RenderStyle is unshared, which is fairly common.)
+
+        This reduces the size of StyleSurroundData by 104 bytes, effectively reducing memory consumption
+        by 1.72MB when viewing the full HTML5 spec at <http://whatwg.org/c>
+
+        * rendering/style/NinePieceImage.cpp:
+        (WebCore::NinePieceImageData::operator==):
+        (WebCore::NinePieceImage::defaultData):
+        (WebCore):
+        * rendering/style/NinePieceImage.h:
+        (WebCore::NinePieceImageData::NinePieceImageData):
+        (NinePieceImageData):
+        (WebCore::NinePieceImageData::operator!=):
+        (WebCore):
+        (NinePieceImage):
+        (WebCore::NinePieceImage::NinePieceImage):
+        (WebCore::NinePieceImage::operator=):
+        (WebCore::NinePieceImage::operator==):
+        (WebCore::NinePieceImage::operator!=):
+        (WebCore::NinePieceImage::hasImage):
+        (WebCore::NinePieceImage::image):
+        (WebCore::NinePieceImage::setImage):
+        (WebCore::NinePieceImage::imageSlices):
+        (WebCore::NinePieceImage::setImageSlices):
+        (WebCore::NinePieceImage::fill):
+        (WebCore::NinePieceImage::setFill):
+        (WebCore::NinePieceImage::borderSlices):
+        (WebCore::NinePieceImage::setBorderSlices):
+        (WebCore::NinePieceImage::outset):
+        (WebCore::NinePieceImage::setOutset):
+        (WebCore::NinePieceImage::horizontalRule):
+        (WebCore::NinePieceImage::setHorizontalRule):
+        (WebCore::NinePieceImage::verticalRule):
+        (WebCore::NinePieceImage::setVerticalRule):
+        (WebCore::NinePieceImage::copyImageSlicesFrom):
+        (WebCore::NinePieceImage::copyBorderSlicesFrom):
+        (WebCore::NinePieceImage::copyOutsetFrom):
+        (WebCore::NinePieceImage::copyRepeatFrom):
+        (WebCore::NinePieceImage::setMaskDefaults):
+        (WebCore::NinePieceImage::ensureData):
+        (WebCore::NinePieceImage::data):
+
 2012-08-13  Florin Malita  <fmalita@chromium.org>
 
         WebKit+SVG does not support color-interpolation-filters or draw filters in correct colorspace
