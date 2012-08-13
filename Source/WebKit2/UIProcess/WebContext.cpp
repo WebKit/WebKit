@@ -860,7 +860,7 @@ static PassRefPtr<MutableDictionary> createDictionaryFromHashMap(const HashMap<S
 }
 
 #if !PLATFORM(MAC)
-void WebPage::dummy(bool&)
+void WebContext::dummy(bool&)
 {
 }
 #endif
