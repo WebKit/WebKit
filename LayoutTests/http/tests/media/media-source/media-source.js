@@ -172,8 +172,8 @@ MediaSourceTest.SegmentHelper.prototype.getMediaSegmentIndexForTimestamp = funct
 
 MediaSourceTest.setSrcToMediaSourceTestURL = function(videoTag)
 {
-    if (!videoTag.webkitMediaSourceURL) {
-        failTest("webkitMediaSourceURL is not available");
+    if (!mediaSource) {
+        failTest("MediaSource is not available");
         return;
     }
 

@@ -174,7 +174,6 @@ public:
 
 #if ENABLE(MEDIA_SOURCE)
 //  Media Source.
-    const KURL& webkitMediaSourceURL() const { return m_mediaSourceURL; }
     void setSourceState(const String&);
 #endif 
 

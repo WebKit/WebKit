@@ -95,11 +95,6 @@ module html {
     readonly attribute [Conditional=MEDIA_STATISTICS] unsigned long webkitAudioDecodedByteCount;
     readonly attribute [Conditional=MEDIA_STATISTICS] unsigned long webkitVideoDecodedByteCount;
 
-#if defined(ENABLE_MEDIA_SOURCE) && ENABLE_MEDIA_SOURCE
-    // URL passed to src attribute to enable the media source logic.
-    readonly attribute [V8EnabledAtRuntime=mediaSource, URL] DOMString webkitMediaSourceURL;
-#endif
-
 #if defined(ENABLE_ENCRYPTED_MEDIA) && ENABLE_ENCRYPTED_MEDIA
     [V8EnabledAtRuntime=encryptedMedia] void webkitGenerateKeyRequest(in [TreatNullAs=NullString, TreatUndefinedAs=NullString] DOMString keySystem, in [Optional] Uint8Array initData)
         raises (DOMException);

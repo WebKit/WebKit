@@ -1,3 +1,16 @@
+2012-08-13  Anna Cavender  <annacc@chromium.org>
+
+        Remove webkitMediaSourceURL from HTMLMediaElement.idl
+        https://bugs.webkit.org/show_bug.cgi?id=93619
+
+        Reviewed by Adam Barth.
+
+        The webkitMediaSourceURL attribute is no longer needed now that we use
+        createObjectURL() to generate a media source URL.
+
+        * http/tests/media/media-source/media-source.js:
+        (MediaSourceTest.setSrcToMediaSourceTestURL):
+
 2012-08-13  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: get rid of beforeTextChanged

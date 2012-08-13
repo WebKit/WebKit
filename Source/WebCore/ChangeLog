@@ -1,3 +1,18 @@
+2012-08-13  Anna Cavender  <annacc@chromium.org>
+
+        Remove webkitMediaSourceURL from HTMLMediaElement.idl
+        https://bugs.webkit.org/show_bug.cgi?id=93619
+
+        Reviewed by Adam Barth.
+
+        The webkitMediaSourceURL attribute is no longer needed now that we use
+        createObjectURL() to generate a media source URL.
+
+        Test: update http/test/media/media-source/media-source.js
+
+        * html/HTMLMediaElement.h:
+        * html/HTMLMediaElement.idl:
+
 2012-08-13  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] Port meta method/signal/slot handling in run-time bridge to use JSC C API
