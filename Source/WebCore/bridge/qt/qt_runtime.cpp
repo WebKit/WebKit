@@ -38,7 +38,6 @@
 #include "JSObject.h"
 #include "JSRetainPtr.h"
 #include "JSUint8ClampedArray.h"
-#include "JSWeakObjectMapRefPrivate.h"
 #include "ObjectPrototype.h"
 #include "PropertyNameArray.h"
 #include "qdatetime.h"
@@ -1291,15 +1290,6 @@ static JSClassRef prototypeForSignalsAndSlots()
     return cls;
 }
 
-typedef HashMap<JSGlobalContextRef, JSWeakObjectMapRef> WeakRuntimeMethodMap;
-static WeakRuntimeMethodMap weakRuntimeMethodCache;
-
-static void methodMapCleaner(JSWeakObjectMapRef, void* data)
-{
-    JSGlobalContextRef ref = static_cast<JSGlobalContextRef>(data);
-    weakRuntimeMethodCache.remove(ref);
-}
-
 QtRuntimeMethod::QtRuntimeMethod(JSContextRef ctx, QObject* object, const QByteArray& identifier, int index, int flags, QtInstance* instance)
     : m_object(object)
     , m_identifier(identifier)
@@ -1311,13 +1301,8 @@ QtRuntimeMethod::QtRuntimeMethod(JSContextRef ctx, QObject* object, const QByteA
 
 QtRuntimeMethod::~QtRuntimeMethod()
 {
-    for (WeakRuntimeMethodMap::const_iterator it = weakRuntimeMethodCache.begin(), end = weakRuntimeMethodCache.end();
-         it != end; ++it) {
-        if (JSObjectRef obj = JSWeakObjectMapGet(it->first, it->second, this)) {
-            JSObjectSetPrivate(obj, 0);
-            JSWeakObjectMapRemove(it->first, it->second, this);
-        }
-    }
+    if (m_jsObject)
+        JSObjectSetPrivate(toRef(m_jsObject.get()), 0);
 }
 
 JSValueRef QtRuntimeMethod::call(JSContextRef context, JSObjectRef function, JSObjectRef /*thisObject*/, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
@@ -1365,12 +1350,8 @@ JSValueRef QtRuntimeMethod::disconnect(JSContextRef context, JSObjectRef functio
 
 JSObjectRef QtRuntimeMethod::jsObjectRef(JSContextRef context, JSValueRef* exception)
 {
-    JSGlobalContextRef globalContext = JSContextGetGlobalContext(context);
-    WeakRuntimeMethodMap::iterator cache = weakRuntimeMethodCache.find(globalContext);
-    if (cache != weakRuntimeMethodCache.end()) {
-        if (JSObjectRef cachedMethod = JSWeakObjectMapGet(cache->first, cache->second, this))
-            return cachedMethod;
-    }
+    if (m_jsObject)
+        return toRef(m_jsObject.get());
 
     static const JSClassDefinition classDefForConnect = {
         0, 0, "connect", 0, 0, 0,
@@ -1406,14 +1387,7 @@ JSObjectRef QtRuntimeMethod::jsObjectRef(JSContextRef context, JSValueRef* excep
     JSObjectSetProperty(context, object, lengthStr, JSValueMakeNumber(context, 0), attributes, exception);
     JSObjectSetProperty(context, object, nameStr, JSValueMakeString(context, actualNameStr.get()), attributes, exception);
 
-    JSWeakObjectMapRef map;
-    if (cache == weakRuntimeMethodCache.end()) {
-        map = JSWeakObjectMapCreate(globalContext, globalContext, methodMapCleaner);
-        weakRuntimeMethodCache.add(globalContext, map);
-    } else
-        map = cache->second;
-    JSWeakObjectMapSet(globalContext, map, this, object);
-
+    m_jsObject = PassWeak<JSObject>(toJS(object));
     return object;
 }
 

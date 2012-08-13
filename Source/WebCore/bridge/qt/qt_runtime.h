@@ -122,6 +122,7 @@ private:
     QByteArray m_identifier;
     int m_index;
     int m_flags;
+    Weak<JSObject> m_jsObject;
     QtInstance* m_instance;
 };
 
