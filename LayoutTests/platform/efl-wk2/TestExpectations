@@ -221,7 +221,6 @@ BUGWKEFL : editing/execCommand/format-block-multiple-paragraphs-in-pre.html = TE
 BUGWKEFL : editing/input/emacs-ctrl-o.html = TEXT
 BUGWKEFL : editing/input/page-up-down-scrolls.html = TEXT
 BUGWKEFL : fast/block/float/float-in-float-hit-testing.html = TEXT
-BUGWKEFL : fast/box-sizing/box-sizing.html = TEXT
 BUGWKEFL : fast/cookies/local-file-can-set-cookies.html = TEXT
 BUGWKEFL : fast/css/bidi-override-in-anonymous-block.html = TEXT
 BUGWKEFL : fast/css/media-rule-screenDepthPerComponent.html = TEXT

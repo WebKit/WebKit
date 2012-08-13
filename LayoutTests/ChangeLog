@@ -1,5 +1,20 @@
 2012-08-13  Christophe Dumez  <christophe.dumez@intel.com>
 
+        [EFL] fast/box-sizing/box-sizing.html needs new baseline after r124347
+        https://bugs.webkit.org/show_bug.cgi?id=93823
+
+        Unreviewed EFL gardening.
+
+        Provide new baseline for fast/box-sizing/box-sizing.html,
+        needed after r124347.
+
+        * platform/efl-wk2/TestExpectations:
+        * platform/efl/TestExpectations:
+        * platform/efl/fast/box-sizing/box-sizing-expected.png:
+        * platform/efl/fast/box-sizing/box-sizing-expected.txt: Added.
+
+2012-08-13  Christophe Dumez  <christophe.dumez@intel.com>
+
         [EFL][WK2] Skip inspector tests that hit assertion in WebCore::SuspendableTimer::resume()
         https://bugs.webkit.org/show_bug.cgi?id=93815
 
