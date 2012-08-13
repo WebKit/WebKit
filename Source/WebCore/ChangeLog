@@ -1,3 +1,20 @@
+2012-08-13  Dominik Röttsches  <dominik.rottsches@intel.com>
+
+        [Cairo] canvas/philip/tests/2d.drawImage.self.2.html test failing on ports using Cairo
+        https://bugs.webkit.org/show_bug.cgi?id=93244
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Similar to Skia's and Qt's ImageBuffer implementation we need to make sure that buffers
+        for images are copied when the destination canvas is identical to the
+        image buffer's context. This happens mostly in JS calls to canvas' drawImage method.
+        For now fixing the drawImage case, drawPattern case is handled in bug 93854.
+
+        No new tests, covered by canvas/philip/tests/2d.drawImage.self.2.html
+
+        * platform/graphics/cairo/ImageBufferCairo.cpp:
+        (WebCore::ImageBuffer::draw): Making sure buffer is copied when source and destination contexts are identical.
+
 2012-06-24  Robert Hogan  <robert@webkit.org>
 
         CSS 2.1 failure: Word-spacing affects each space and non-breaking space

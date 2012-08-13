@@ -96,11 +96,12 @@ void ImageBuffer::clip(GraphicsContext* context, const FloatRect& maskRect) cons
     context->platformContext()->pushImageMask(m_data.m_surface, maskRect);
 }
 
-void ImageBuffer::draw(GraphicsContext* context, ColorSpace styleColorSpace, const FloatRect& destRect, const FloatRect& srcRect,
+void ImageBuffer::draw(GraphicsContext* destinationContext, ColorSpace styleColorSpace, const FloatRect& destRect, const FloatRect& srcRect,
                        CompositeOperator op , bool useLowQualityScale)
 {
-    RefPtr<Image> image = copyImage(DontCopyBackingStore);
-    context->drawImage(image.get(), styleColorSpace, destRect, srcRect, op, DoNotRespectImageOrientation, useLowQualityScale);
+    BackingStoreCopy copyMode = destinationContext == context() ? CopyBackingStore : DontCopyBackingStore;
+    RefPtr<Image> image = copyImage(copyMode);
+    destinationContext->drawImage(image.get(), styleColorSpace, destRect, srcRect, op, DoNotRespectImageOrientation, useLowQualityScale);
 }
 
 void ImageBuffer::drawPattern(GraphicsContext* context, const FloatRect& srcRect, const AffineTransform& patternTransform,

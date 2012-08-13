@@ -354,11 +354,6 @@ canvas/philip/tests/2d.imageData.object.wrap.html
 # These tests are failing for us, but not for Mac. This likely
 # indicates platform specific problems (via GTK+).
 
-# When drawing canvas into itself, WebCore draws canvas's buffer into the same buffer. This
-# results in recursive drawing into cairo surface. We should either use groups when drawing
-# with cairo or copy the buffer every time the HTMLCanvasElement gets repainted.
-canvas/philip/tests/2d.drawImage.self.2.html
-
 # A testcase for this failure is already in cairo tree, but has not yet been fixed.
 # Cairo commit http://cgit.freedesktop.org/cairo/commit/?id=4d4056872db94573183473610ad1d81d5439fdc6
 # https://bugs.webkit.org/show_bug.cgi?id=54471
