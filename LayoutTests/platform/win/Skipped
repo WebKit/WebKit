@@ -1976,3 +1976,6 @@ fast/forms/select/menulist-popup-crash.html
 
 # This test causes any following plugins test to crash
 plugins/nested-plugin-objects.html
+
+#Require rebaselining after  https://bugs.webkit.org/show_bug.cgi?id=89826
+fast/css/word-space-extra.html

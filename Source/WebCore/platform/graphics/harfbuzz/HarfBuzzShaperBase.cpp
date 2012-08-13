@@ -121,7 +121,7 @@ void HarfBuzzShaperBase::setNormalizedBuffer(NormalizeMode normalizeMode)
 bool HarfBuzzShaperBase::isWordEnd(unsigned index)
 {
     // This could refer a high-surrogate, but should work.
-    return index && isCodepointSpace(m_normalizedBuffer[index]) && !isCodepointSpace(m_normalizedBuffer[index - 1]);
+    return index && isCodepointSpace(m_run[index]);
 }
 
 int HarfBuzzShaperBase::determineWordBreakSpacing()
