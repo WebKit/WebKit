@@ -192,10 +192,10 @@ template<> inline CSSPrimitiveValue::operator PrintColorAdjust() const
         return PrintColorAdjustEconomy;
     case CSSValueExact:
         return PrintColorAdjustExact;
-    default:
-        ASSERT_NOT_REACHED();
-        return PrintColorAdjustEconomy;
     }
+
+    ASSERT_NOT_REACHED();
+    return PrintColorAdjustEconomy;
 }
 
 
@@ -330,10 +330,10 @@ template<> inline CSSPrimitiveValue::operator CompositeOperator() const
             return CompositePlusDarker;
         case CSSValuePlusLighter:
             return CompositePlusLighter;
-        default:
-            ASSERT_NOT_REACHED();
-            return CompositeClear;
     }
+
+    ASSERT_NOT_REACHED();
+    return CompositeClear;
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(ControlPart e)
@@ -553,10 +553,10 @@ template<> inline CSSPrimitiveValue::operator EBackfaceVisibility() const
         return BackfaceVisibilityVisible;
     case CSSValueHidden:
         return BackfaceVisibilityHidden;
-    default:
-        ASSERT_NOT_REACHED();
-        return BackfaceVisibilityHidden;
     }
+
+    ASSERT_NOT_REACHED();
+    return BackfaceVisibilityHidden;
 }
 
 
@@ -586,10 +586,10 @@ template<> inline CSSPrimitiveValue::operator EFillAttachment() const
             return LocalBackgroundAttachment;
         case CSSValueFixed:
             return FixedBackgroundAttachment;
-        default:
-            ASSERT_NOT_REACHED();
-            return ScrollBackgroundAttachment;
     }
+
+    ASSERT_NOT_REACHED();
+    return ScrollBackgroundAttachment;
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EFillBox e)
@@ -627,10 +627,10 @@ template<> inline CSSPrimitiveValue::operator EFillBox() const
         case CSSValueText:
         case CSSValueWebkitText:
             return TextFillBox;
-        default:
-            ASSERT_NOT_REACHED();
-            return BorderFillBox;
     }
+
+    ASSERT_NOT_REACHED();
+    return BorderFillBox;
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EFillRepeat e)
@@ -664,10 +664,10 @@ template<> inline CSSPrimitiveValue::operator EFillRepeat() const
             return RoundFill;
         case CSSValueSpace:
             return SpaceFill;
-        default:
-            ASSERT_NOT_REACHED();
-            return RepeatFill;
     }
+
+    ASSERT_NOT_REACHED();
+    return RepeatFill;
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EBoxPack e)
@@ -701,10 +701,10 @@ template<> inline CSSPrimitiveValue::operator EBoxPack() const
         return Center;
     case CSSValueJustify:
         return Justify;
-    default:
-        ASSERT_NOT_REACHED();
-        return Justify;
     }
+
+    ASSERT_NOT_REACHED();
+    return Justify;
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EBoxAlignment e)
@@ -743,10 +743,10 @@ template<> inline CSSPrimitiveValue::operator EBoxAlignment() const
             return BCENTER;
         case CSSValueBaseline:
             return BBASELINE;
-        default:
-            ASSERT_NOT_REACHED();
-            return BSTRETCH;
     }
+
+    ASSERT_NOT_REACHED();
+    return BSTRETCH;
 }
 
 #if ENABLE(CSS_BOX_DECORATION_BREAK)
@@ -771,10 +771,10 @@ template<> inline CSSPrimitiveValue::operator EBoxDecorationBreak() const
         return DSLICE;
     case CSSValueClone:
         return DCLONE;
-    default:
-        ASSERT_NOT_REACHED();
-        return DSLICE;
     }
+
+    ASSERT_NOT_REACHED();
+    return DSLICE;
 }
 #endif
 
@@ -799,10 +799,10 @@ template<> inline CSSPrimitiveValue::operator EBoxSizing() const
         return BORDER_BOX;
     case CSSValueContentBox:
         return CONTENT_BOX;
-    default:
-        ASSERT_NOT_REACHED();
-        return BORDER_BOX;
     }
+
+    ASSERT_NOT_REACHED();
+    return BORDER_BOX;
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EBoxDirection e)
@@ -826,10 +826,10 @@ template<> inline CSSPrimitiveValue::operator EBoxDirection() const
             return BNORMAL;
         case CSSValueReverse:
             return BREVERSE;
-        default:
-            ASSERT_NOT_REACHED();
-            return BNORMAL;
     }
+
+    ASSERT_NOT_REACHED();
+    return BNORMAL;
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EBoxLines e)
@@ -853,10 +853,10 @@ template<> inline CSSPrimitiveValue::operator EBoxLines() const
             return SINGLE;
         case CSSValueMultiple:
             return MULTIPLE;
-        default:
-            ASSERT_NOT_REACHED();
-            return SINGLE;
     }
+
+    ASSERT_NOT_REACHED();
+    return SINGLE;
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EBoxOrient e)
@@ -882,10 +882,10 @@ template<> inline CSSPrimitiveValue::operator EBoxOrient() const
         case CSSValueVertical:
         case CSSValueBlockAxis:
             return VERTICAL;
-        default:
-            ASSERT_NOT_REACHED();
-            return HORIZONTAL;
     }
+
+    ASSERT_NOT_REACHED();
+    return HORIZONTAL;
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(ECaptionSide e)
@@ -919,10 +919,10 @@ template<> inline CSSPrimitiveValue::operator ECaptionSide() const
             return CAPTOP;
         case CSSValueBottom:
             return CAPBOTTOM;
-        default:
-            ASSERT_NOT_REACHED();
-            return CAPTOP;
     }
+
+    ASSERT_NOT_REACHED();
+    return CAPTOP;
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EClear e)
@@ -956,10 +956,10 @@ template<> inline CSSPrimitiveValue::operator EClear() const
             return CRIGHT;
         case CSSValueBoth:
             return CBOTH;
-        default:
-            ASSERT_NOT_REACHED();
-            return CNONE;
     }
+
+    ASSERT_NOT_REACHED();
+    return CNONE;
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(ECursor e)
@@ -1197,10 +1197,10 @@ template<> inline CSSPrimitiveValue::operator EEmptyCell() const
             return SHOW;
         case CSSValueHide:
             return HIDE;
-        default:
-            ASSERT_NOT_REACHED();
-            return SHOW;
     }
+
+    ASSERT_NOT_REACHED();
+    return SHOW;
 }
 
 #if ENABLE(CSS3_FLEXBOX)
@@ -1246,10 +1246,10 @@ template<> inline CSSPrimitiveValue::operator EAlignItems() const
         return AlignStretch;
     case CSSValueBaseline:
         return AlignBaseline;
-    default:
-        ASSERT_NOT_REACHED();
-        return AlignFlexStart;
     }
+
+    ASSERT_NOT_REACHED();
+    return AlignFlexStart;
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EJustifyContent e)
@@ -1288,10 +1288,10 @@ template<> inline CSSPrimitiveValue::operator EJustifyContent() const
         return JustifySpaceBetween;
     case CSSValueSpaceAround:
         return JustifySpaceAround;
-    default:
-        ASSERT_NOT_REACHED();
-        return JustifyFlexStart;
     }
+
+    ASSERT_NOT_REACHED();
+    return JustifyFlexStart;
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EFlexDirection e)
@@ -1325,10 +1325,10 @@ template<> inline CSSPrimitiveValue::operator EFlexDirection() const
         return FlowColumn;
     case CSSValueColumnReverse:
         return FlowColumnReverse;
-    default:
-        ASSERT_NOT_REACHED();
-        return FlowRow;
     }
+
+    ASSERT_NOT_REACHED();
+    return FlowRow;
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EAlignContent e)
@@ -1372,10 +1372,10 @@ template<> inline CSSPrimitiveValue::operator EAlignContent() const
         return AlignContentSpaceAround;
     case CSSValueStretch:
         return AlignContentStretch;
-    default:
-        ASSERT_NOT_REACHED();
-        return AlignContentStretch;
     }
+
+    ASSERT_NOT_REACHED();
+    return AlignContentStretch;
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EFlexWrap e)
@@ -1404,10 +1404,10 @@ template<> inline CSSPrimitiveValue::operator EFlexWrap() const
         return FlexWrap;
     case CSSValueWrapReverse:
         return FlexWrapReverse;
-    default:
-        ASSERT_NOT_REACHED();
-        return FlexWrapNone;
     }
+
+    ASSERT_NOT_REACHED();
+    return FlexWrapNone;
 }
 
 #endif
@@ -1439,10 +1439,10 @@ template<> inline CSSPrimitiveValue::operator EFloat() const
         case CSSValueNone:
         case CSSValueCenter:  // Non-standard CSS value
             return NoFloat;
-        default:
-            ASSERT_NOT_REACHED();
-            return NoFloat;
     }
+
+    ASSERT_NOT_REACHED();
+    return NoFloat;
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EKHTMLLineBreak e)
@@ -1466,10 +1466,10 @@ template<> inline CSSPrimitiveValue::operator EKHTMLLineBreak() const
             return AFTER_WHITE_SPACE;
         case CSSValueNormal:
             return LBNORMAL;
-        default:
-            ASSERT_NOT_REACHED();
-            return LBNORMAL;
     }
+
+    ASSERT_NOT_REACHED();
+    return LBNORMAL;
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EListStylePosition e)
@@ -1493,10 +1493,10 @@ template<> inline CSSPrimitiveValue::operator EListStylePosition() const
         return OUTSIDE;
     case CSSValueInside:
         return INSIDE;
-    default:
-        ASSERT_NOT_REACHED();
-        return OUTSIDE;
     }
+
+    ASSERT_NOT_REACHED();
+    return OUTSIDE;
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EListStyleType e)
@@ -1786,10 +1786,10 @@ template<> inline CSSPrimitiveValue::operator EMarginCollapse() const
             return MSEPARATE;
         case CSSValueDiscard:
             return MDISCARD;
-        default:
-            ASSERT_NOT_REACHED();
-            return MCOLLAPSE;
     }
+
+    ASSERT_NOT_REACHED();
+    return MCOLLAPSE;
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EMarqueeBehavior e)
@@ -1823,10 +1823,10 @@ template<> inline CSSPrimitiveValue::operator EMarqueeBehavior() const
             return MSLIDE;
         case CSSValueAlternate:
             return MALTERNATE;
-        default:
-            ASSERT_NOT_REACHED();
-            return MNONE;
     }
+
+    ASSERT_NOT_REACHED();
+    return MNONE;
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(RegionOverflow e)
@@ -1850,10 +1850,10 @@ template<> inline CSSPrimitiveValue::operator RegionOverflow() const
         return AutoRegionOverflow;
     case CSSValueBreak:
         return BreakRegionOverflow;
-    default:
-        ASSERT_NOT_REACHED();
-        return AutoRegionOverflow;
     }
+
+    ASSERT_NOT_REACHED();
+    return AutoRegionOverflow;
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EMarqueeDirection e)
@@ -1904,10 +1904,10 @@ template<> inline CSSPrimitiveValue::operator EMarqueeDirection() const
             return MLEFT;
         case CSSValueRight:
             return MRIGHT;
-        default:
-            ASSERT_NOT_REACHED();
-            return MAUTO;
     }
+
+    ASSERT_NOT_REACHED();
+    return MAUTO;
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(ENBSPMode e)
@@ -1931,10 +1931,10 @@ template<> inline CSSPrimitiveValue::operator ENBSPMode() const
             return SPACE;
         case CSSValueNormal:
             return NBNORMAL;
-        default:
-            ASSERT_NOT_REACHED();
-            return NBNORMAL;
     }
+
+    ASSERT_NOT_REACHED();
+    return NBNORMAL;
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EOverflow e)
@@ -1978,10 +1978,10 @@ template<> inline CSSPrimitiveValue::operator EOverflow() const
             return OMARQUEE;
         case CSSValueOverlay:
             return OOVERLAY;
-        default:
-            ASSERT_NOT_REACHED();
-            return OVISIBLE;
     }
+
+    ASSERT_NOT_REACHED();
+    return OVISIBLE;
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EPageBreak e)
@@ -2012,10 +2012,10 @@ template<> inline CSSPrimitiveValue::operator EPageBreak() const
             return PBALWAYS; // CSS2.1: "Conforming user agents may map left/right to always."
         case CSSValueAvoid:
             return PBAVOID;
-        default:
-            ASSERT_NOT_REACHED();
-            return PBAUTO;
     }
+
+    ASSERT_NOT_REACHED();
+    return PBAUTO;
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EPosition e)
@@ -2058,10 +2058,10 @@ template<> inline CSSPrimitiveValue::operator EPosition() const
         case CSSValueWebkitSticky:
             return StickyPosition;
 #endif
-        default:
-            ASSERT_NOT_REACHED();
-            return StaticPosition;
     }
+
+    ASSERT_NOT_REACHED();
+    return StaticPosition;
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EResize e)
@@ -2098,10 +2098,10 @@ template<> inline CSSPrimitiveValue::operator EResize() const
             return RESIZE_NONE;
         case CSSValueNone:
             return RESIZE_NONE;
-        default:
-            ASSERT_NOT_REACHED();
-            return RESIZE_NONE;
     }
+
+    ASSERT_NOT_REACHED();
+    return RESIZE_NONE;
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(ETableLayout e)
@@ -2125,10 +2125,10 @@ template<> inline CSSPrimitiveValue::operator ETableLayout() const
             return TFIXED;
         case CSSValueAuto:
             return TAUTO;
-        default:
-            ASSERT_NOT_REACHED();
-            return TAUTO;
     }
+
+    ASSERT_NOT_REACHED();
+    return TAUTO;
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(ETextAlign e)
@@ -2192,10 +2192,10 @@ template<> inline CSSPrimitiveValue::operator ETextDecoration() const
         return LINE_THROUGH;
     case CSSValueBlink:
         return BLINK;
-    default:
-        ASSERT_NOT_REACHED();
-        return TDNONE;
     }
+
+    ASSERT_NOT_REACHED();
+    return TDNONE;
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(ETextSecurity e)
@@ -2229,10 +2229,10 @@ template<> inline CSSPrimitiveValue::operator ETextSecurity() const
             return TSCIRCLE;
         case CSSValueSquare:
             return TSSQUARE;
-        default:
-            ASSERT_NOT_REACHED();
-            return TSNONE;
     }
+
+    ASSERT_NOT_REACHED();
+    return TSNONE;
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(ETextTransform e)
@@ -2266,10 +2266,10 @@ template<> inline CSSPrimitiveValue::operator ETextTransform() const
             return LOWERCASE;
         case CSSValueNone:
             return TTNONE;
-        default:
-            ASSERT_NOT_REACHED();
-            return TTNONE;
     }
+
+    ASSERT_NOT_REACHED();
+    return TTNONE;
 }
 
 template<> inline CSSPrimitiveValue::operator EUnicodeBidi() const
@@ -2285,10 +2285,10 @@ template<> inline CSSPrimitiveValue::operator EUnicodeBidi() const
         return Isolate;
     case CSSValueWebkitPlaintext:
         return Plaintext;
-    default:
-        ASSERT_NOT_REACHED();
-        return UBNormal;
     }
+
+    ASSERT_NOT_REACHED();
+    return UBNormal;
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EUserDrag e)
@@ -2317,10 +2317,10 @@ template<> inline CSSPrimitiveValue::operator EUserDrag() const
             return DRAG_NONE;
         case CSSValueElement:
             return DRAG_ELEMENT;
-        default:
-            ASSERT_NOT_REACHED();
-            return DRAG_AUTO;
     }
+
+    ASSERT_NOT_REACHED();
+    return DRAG_AUTO;
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EUserModify e)
@@ -2349,10 +2349,10 @@ template<> inline CSSPrimitiveValue::operator EUserModify() const
         return READ_WRITE;
     case CSSValueReadWritePlaintextOnly:
         return READ_WRITE_PLAINTEXT_ONLY;
-    default:
-        ASSERT_NOT_REACHED();
-        return READ_ONLY;
     }
+
+    ASSERT_NOT_REACHED();
+    return READ_ONLY;
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EUserSelect e)
@@ -2383,10 +2383,10 @@ template<> inline CSSPrimitiveValue::operator EUserSelect() const
             return SELECT_TEXT;
         case CSSValueAll:
             return SELECT_ALL;
-        default:
-            ASSERT_NOT_REACHED();
-            return SELECT_TEXT;
     }
+
+    ASSERT_NOT_REACHED();
+    return SELECT_TEXT;
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EVerticalAlign a)
@@ -2447,10 +2447,10 @@ template<> inline CSSPrimitiveValue::operator EVerticalAlign() const
         return SUPER;
     case CSSValueWebkitBaselineMiddle:
         return BASELINE_MIDDLE;
-    default:
-        ASSERT_NOT_REACHED();
-        return TOP;
     }
+
+    ASSERT_NOT_REACHED();
+    return TOP;
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EVisibility e)
@@ -2479,10 +2479,10 @@ template<> inline CSSPrimitiveValue::operator EVisibility() const
             return VISIBLE;
         case CSSValueCollapse:
             return COLLAPSE;
-        default:
-            ASSERT_NOT_REACHED();
-            return VISIBLE;
     }
+
+    ASSERT_NOT_REACHED();
+    return VISIBLE;
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EWhiteSpace e)
@@ -2526,10 +2526,10 @@ template<> inline CSSPrimitiveValue::operator EWhiteSpace() const
             return PRE_LINE;
         case CSSValueNormal:
             return NORMAL;
-        default:
-            ASSERT_NOT_REACHED();
-            return NORMAL;
     }
+
+    ASSERT_NOT_REACHED();
+    return NORMAL;
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EWordBreak e)
@@ -2558,10 +2558,10 @@ template<> inline CSSPrimitiveValue::operator EWordBreak() const
             return BreakWordBreak;
         case CSSValueNormal:
             return NormalWordBreak;
-        default:
-        ASSERT_NOT_REACHED();
-        return NormalWordBreak;
     }
+
+    ASSERT_NOT_REACHED();
+    return NormalWordBreak;
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EWordWrap e)
@@ -2585,10 +2585,10 @@ template<> inline CSSPrimitiveValue::operator EWordWrap() const
             return BreakWordWrap;
         case CSSValueNormal:
             return NormalWordWrap;
-        default:
-            ASSERT_NOT_REACHED();
-            return NormalWordWrap;
     }
+
+    ASSERT_NOT_REACHED();
+    return NormalWordWrap;
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(TextDirection e)
@@ -2612,10 +2612,10 @@ template<> inline CSSPrimitiveValue::operator TextDirection() const
             return LTR;
         case CSSValueRtl:
             return RTL;
-        default:
-            ASSERT_NOT_REACHED();
-            return LTR;
     }
+
+    ASSERT_NOT_REACHED();
+    return LTR;
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(WritingMode e)
@@ -2649,10 +2649,10 @@ template<> inline CSSPrimitiveValue::operator WritingMode() const
         return LeftToRightWritingMode;
     case CSSValueHorizontalBt:
         return BottomToTopWritingMode;
-    default:
-        ASSERT_NOT_REACHED();
-        return TopToBottomWritingMode;
     }
+
+    ASSERT_NOT_REACHED();
+    return TopToBottomWritingMode;
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(TextCombine e)
@@ -2676,10 +2676,10 @@ template<> inline CSSPrimitiveValue::operator TextCombine() const
         return TextCombineNone;
     case CSSValueHorizontal:
         return TextCombineHorizontal;
-    default:
-        ASSERT_NOT_REACHED();
-        return TextCombineNone;
     }
+
+    ASSERT_NOT_REACHED();
+    return TextCombineNone;
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(TextEmphasisPosition position)
@@ -2703,10 +2703,10 @@ template<> inline CSSPrimitiveValue::operator TextEmphasisPosition() const
         return TextEmphasisPositionOver;
     case CSSValueUnder:
         return TextEmphasisPositionUnder;
-    default:
-        ASSERT_NOT_REACHED();
-        return TextEmphasisPositionOver;
     }
+
+    ASSERT_NOT_REACHED();
+    return TextEmphasisPositionOver;
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(TextOverflow overflow)
@@ -2730,10 +2730,10 @@ template<> inline CSSPrimitiveValue::operator TextOverflow() const
         return TextOverflowClip;
     case CSSValueEllipsis:
         return TextOverflowEllipsis;
-    default:
-        ASSERT_NOT_REACHED();
-        return TextOverflowClip;
     }
+
+    ASSERT_NOT_REACHED();
+    return TextOverflowClip;
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(TextEmphasisFill fill)
@@ -2757,10 +2757,10 @@ template<> inline CSSPrimitiveValue::operator TextEmphasisFill() const
         return TextEmphasisFillFilled;
     case CSSValueOpen:
         return TextEmphasisFillOpen;
-    default:
-        ASSERT_NOT_REACHED();
-        return TextEmphasisFillFilled;
     }
+
+    ASSERT_NOT_REACHED();
+    return TextEmphasisFillFilled;
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(TextEmphasisMark mark)
@@ -2807,10 +2807,10 @@ template<> inline CSSPrimitiveValue::operator TextEmphasisMark() const
         return TextEmphasisMarkTriangle;
     case CSSValueSesame:
         return TextEmphasisMarkSesame;
-    default:
-        ASSERT_NOT_REACHED();
-        return TextEmphasisMarkNone;
     }
+
+    ASSERT_NOT_REACHED();
+    return TextEmphasisMarkNone;
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(TextOrientation e)
@@ -2834,10 +2834,10 @@ template<> inline CSSPrimitiveValue::operator TextOrientation() const
         return TextOrientationVerticalRight;
     case CSSValueUpright:
         return TextOrientationUpright;
-    default:
-        ASSERT_NOT_REACHED();
-        return TextOrientationVerticalRight;
     }
+
+    ASSERT_NOT_REACHED();
+    return TextOrientationVerticalRight;
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EPointerEvents e)
@@ -2901,10 +2901,10 @@ template<> inline CSSPrimitiveValue::operator EPointerEvents() const
             return PE_FILL;
         case CSSValueStroke:
             return PE_STROKE;
-        default:
-            ASSERT_NOT_REACHED();
-            return PE_ALL;
     }
+
+    ASSERT_NOT_REACHED();
+    return PE_ALL;
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(FontDescription::Kerning kerning)
@@ -3142,10 +3142,10 @@ template<> inline CSSPrimitiveValue::operator TextRenderingMode() const
             return OptimizeLegibility;
         case CSSValueGeometricprecision:
             return GeometricPrecision;
-        default:
-            ASSERT_NOT_REACHED();
-            return AutoTextRendering;
     }
+
+    ASSERT_NOT_REACHED();
+    return AutoTextRendering;
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(ColorSpace space)
@@ -3174,10 +3174,10 @@ template<> inline CSSPrimitiveValue::operator ColorSpace() const
         return ColorSpaceDeviceRGB;
     case CSSValueSrgb:
         return ColorSpaceSRGB;
-    default:
-        ASSERT_NOT_REACHED();
-        return ColorSpaceDeviceRGB;
     }
+
+    ASSERT_NOT_REACHED();
+    return ColorSpaceDeviceRGB;
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(Hyphens hyphens)
@@ -3206,10 +3206,10 @@ template<> inline CSSPrimitiveValue::operator Hyphens() const
         return HyphensManual;
     case CSSValueAuto:
         return HyphensAuto;
-    default:
-        ASSERT_NOT_REACHED();
-        return HyphensAuto;
     }
+
+    ASSERT_NOT_REACHED();
+    return HyphensAuto;
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(LineSnap gridSnap)
@@ -3238,10 +3238,10 @@ template<> inline CSSPrimitiveValue::operator LineSnap() const
         return LineSnapBaseline;
     case CSSValueContain:
         return LineSnapContain;
-    default:
-        ASSERT_NOT_REACHED();
-        return LineSnapNone;
     }
+
+    ASSERT_NOT_REACHED();
+    return LineSnapNone;
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(LineAlign lineAlign)
@@ -3265,10 +3265,10 @@ template<> inline CSSPrimitiveValue::operator LineAlign() const
         return LineAlignNone;
     case CSSValueEdges:
         return LineAlignEdges;
-    default:
-        ASSERT_NOT_REACHED();
-        return LineAlignNone;
     }
+
+    ASSERT_NOT_REACHED();
+    return LineAlignNone;
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(ESpeak e)
@@ -3304,10 +3304,10 @@ template<> inline CSSPrimitiveValue::operator Order() const
         return LogicalOrder;
     case CSSValueVisual:
         return VisualOrder;
-    default:
-        ASSERT_NOT_REACHED();
-        return LogicalOrder;
     }
+
+    ASSERT_NOT_REACHED();
+    return LogicalOrder;
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(Order e)
@@ -3339,10 +3339,10 @@ template<> inline CSSPrimitiveValue::operator ESpeak() const
         return SpeakLiteralPunctuation;
     case CSSValueNoPunctuation:
         return SpeakNoPunctuation;
-    default:
-        ASSERT_NOT_REACHED();
-        return SpeakNormal;
     }
+
+    ASSERT_NOT_REACHED();
+    return SpeakNormal;
 }
 
 #if ENABLE(CSS_SHADERS)
@@ -3377,10 +3377,10 @@ template<> inline CSSPrimitiveValue::operator CustomFilterOperation::MeshBoxType
         return CustomFilterOperation::PADDING_BOX;
     case CSSValueContentBox:
         return CustomFilterOperation::CONTENT_BOX;
-    default:
-        ASSERT_NOT_REACHED();
-        return CustomFilterOperation::FILTER_BOX;
     }
+
+    ASSERT_NOT_REACHED();
+    return CustomFilterOperation::FILTER_BOX;
 }
 #endif // ENABLE(CSS_SHADERS)
 
@@ -3475,10 +3475,10 @@ template<> inline CSSPrimitiveValue::operator BlendMode() const
         return BlendModeColor;
     case CSSValueLuminosity:
         return BlendModeLuminosity;
-    default:
-        ASSERT_NOT_REACHED();
-        return BlendModeNormal;
     }
+
+    ASSERT_NOT_REACHED();
+    return BlendModeNormal;
 }
 
 #if ENABLE(SVG)
@@ -3509,10 +3509,10 @@ template<> inline CSSPrimitiveValue::operator LineCap() const
             return RoundCap;
         case CSSValueSquare:
             return SquareCap;
-        default:
-            ASSERT_NOT_REACHED();
-            return ButtCap;
     }
+
+    ASSERT_NOT_REACHED();
+    return ButtCap;
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(LineJoin e)
@@ -3541,10 +3541,10 @@ template<> inline CSSPrimitiveValue::operator LineJoin() const
             return RoundJoin;
         case CSSValueBevel:
             return BevelJoin;
-        default:
-            ASSERT_NOT_REACHED();
-            return MiterJoin;
     }
+
+    ASSERT_NOT_REACHED();
+    return MiterJoin;
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(WindRule e)
@@ -3568,10 +3568,10 @@ template<> inline CSSPrimitiveValue::operator WindRule() const
             return RULE_NONZERO;
         case CSSValueEvenodd:
             return RULE_EVENODD;
-        default:
-            ASSERT_NOT_REACHED();
-            return RULE_NONZERO;
     }
+
+    ASSERT_NOT_REACHED();
+    return RULE_NONZERO;
 }
 
 
@@ -3646,10 +3646,10 @@ template<> inline CSSPrimitiveValue::operator EAlignmentBaseline() const
             return AB_HANGING;
         case CSSValueMathematical:
             return AB_MATHEMATICAL;
-        default:
-            ASSERT_NOT_REACHED();
-            return AB_AUTO;
     }
+
+    ASSERT_NOT_REACHED();
+    return AB_AUTO;
 }
 
 #endif
@@ -3675,10 +3675,10 @@ template<> inline CSSPrimitiveValue::operator EBorderCollapse() const
         return BSEPARATE;
     case CSSValueCollapse:
         return BCOLLAPSE;
-    default:
-        ASSERT_NOT_REACHED();
-        return BSEPARATE;
     }
+
+    ASSERT_NOT_REACHED();
+    return BSEPARATE;
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EBorderFit e)
@@ -3702,10 +3702,10 @@ template<> inline CSSPrimitiveValue::operator EBorderFit() const
         return BorderFitBorder;
     case CSSValueLines:
         return BorderFitLines;
-    default:
-        ASSERT_NOT_REACHED();
-        return BorderFitLines;
     }
+
+    ASSERT_NOT_REACHED();
+    return BorderFitLines;
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EImageRendering e)
@@ -3739,10 +3739,10 @@ template<> inline CSSPrimitiveValue::operator EImageRendering() const
         return ImageRenderingOptimizeQuality;
     case CSSValueWebkitOptimizeContrast:
         return ImageRenderingOptimizeContrast;
-    default:
-        ASSERT_NOT_REACHED();
-        return ImageRenderingAuto;
     }
+
+    ASSERT_NOT_REACHED();
+    return ImageRenderingAuto;
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(ETransformStyle3D e)
@@ -3766,10 +3766,10 @@ template<> inline CSSPrimitiveValue::operator ETransformStyle3D() const
         return TransformStyle3DFlat;
     case CSSValuePreserve3d:
         return TransformStyle3DPreserve3D;
-    default:
-        ASSERT_NOT_REACHED();
-        return TransformStyle3DFlat;
     }
+
+    ASSERT_NOT_REACHED();
+    return TransformStyle3DFlat;
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(ColumnAxis e)
@@ -3798,10 +3798,10 @@ template<> inline CSSPrimitiveValue::operator ColumnAxis() const
         return VerticalColumnAxis;
     case CSSValueAuto:
         return AutoColumnAxis;
-    default:
-        ASSERT_NOT_REACHED();
-        return AutoColumnAxis;
     }
+
+    ASSERT_NOT_REACHED();
+    return AutoColumnAxis;
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(ColumnProgression e)
@@ -3825,10 +3825,10 @@ template<> inline CSSPrimitiveValue::operator ColumnProgression() const
         return NormalColumnProgression;
     case CSSValueReverse:
         return ReverseColumnProgression;
-    default:
-        ASSERT_NOT_REACHED();
-        return NormalColumnProgression;
     }
+
+    ASSERT_NOT_REACHED();
+    return NormalColumnProgression;
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(WrapFlow wrapFlow)
@@ -3872,10 +3872,10 @@ template<> inline CSSPrimitiveValue::operator WrapFlow() const
         return WrapFlowMaximum;
     case CSSValueClear:
         return WrapFlowClear;
-    default:
-        ASSERT_NOT_REACHED();
-        return WrapFlowAuto;
     }
+
+    ASSERT_NOT_REACHED();
+    return WrapFlowAuto;
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(WrapThrough wrapThrough)
@@ -3899,10 +3899,10 @@ template<> inline CSSPrimitiveValue::operator WrapThrough() const
         return WrapThroughWrap;
     case CSSValueNone:
         return WrapThroughNone;
-    default:
-        ASSERT_NOT_REACHED();
-        return WrapThroughWrap;
     }
+
+    ASSERT_NOT_REACHED();
+    return WrapThroughWrap;
 }
 
 enum LengthConversion {
@@ -3965,10 +3965,10 @@ template<> inline CSSPrimitiveValue::operator EColorInterpolation() const
             return CI_LINEARRGB;
         case CSSValueAuto:
             return CI_AUTO;
-        default:
-            ASSERT_NOT_REACHED();
-            return CI_AUTO;
     }
+
+    ASSERT_NOT_REACHED();
+    return CI_AUTO;
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EColorRendering e)
@@ -3997,10 +3997,10 @@ template<> inline CSSPrimitiveValue::operator EColorRendering() const
             return CR_OPTIMIZEQUALITY;
         case CSSValueAuto:
             return CR_AUTO;
-        default:
-            ASSERT_NOT_REACHED();
-            return CR_AUTO;
     }
+
+    ASSERT_NOT_REACHED();
+    return CR_AUTO;
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EDominantBaseline e)
@@ -4074,10 +4074,10 @@ template<> inline CSSPrimitiveValue::operator EDominantBaseline() const
             return DB_TEXT_AFTER_EDGE;
         case CSSValueTextBeforeEdge:
             return DB_TEXT_BEFORE_EDGE;
-        default:
-            ASSERT_NOT_REACHED();
-            return DB_AUTO;
     }
+
+    ASSERT_NOT_REACHED();
+    return DB_AUTO;
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EShapeRendering e)
@@ -4111,10 +4111,10 @@ template<> inline CSSPrimitiveValue::operator EShapeRendering() const
         return SR_CRISPEDGES;
     case CSSValueGeometricprecision:
         return SR_GEOMETRICPRECISION;
-    default:
-        ASSERT_NOT_REACHED();
-        return SR_AUTO;
     }
+
+    ASSERT_NOT_REACHED();
+    return SR_AUTO;
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(ETextAnchor e)
@@ -4143,10 +4143,10 @@ template<> inline CSSPrimitiveValue::operator ETextAnchor() const
             return TA_MIDDLE;
         case CSSValueEnd:
             return TA_END;
-        default:
-            ASSERT_NOT_REACHED();
-            return TA_START;
     }
+
+    ASSERT_NOT_REACHED();
+    return TA_START;
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(SVGWritingMode e)
@@ -4190,10 +4190,10 @@ template<> inline CSSPrimitiveValue::operator SVGWritingMode() const
         return WM_TBRL;
     case CSSValueTb:
         return WM_TB;
-    default:
-        ASSERT_NOT_REACHED();
-        return WM_LRTB;
     }
+
+    ASSERT_NOT_REACHED();
+    return WM_LRTB;
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EVectorEffect e)
@@ -4217,10 +4217,10 @@ template<> inline CSSPrimitiveValue::operator EVectorEffect() const
         return VE_NONE;
     case CSSValueNonScalingStroke:
         return VE_NON_SCALING_STROKE;
-    default:
-        ASSERT_NOT_REACHED();
-        return VE_NONE;
     }
+
+    ASSERT_NOT_REACHED();
+    return VE_NONE;
 }
 
 #endif // ENABLE(SVG)
@@ -4266,10 +4266,10 @@ template<> inline CSSPrimitiveValue::operator ImageOrientationEnum() const
         return OriginBottomRight;
     case 3:
         return OriginLeftBottom;
-    default:
-        ASSERT_NOT_REACHED();
-        return OriginTopLeft;
     }
+
+    ASSERT_NOT_REACHED();
+    return OriginTopLeft;
 }
 
 #endif // ENABLE(CSS_IMAGE_ORIENTATION)

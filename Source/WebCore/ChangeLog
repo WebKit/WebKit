@@ -1,3 +1,15 @@
+2012-08-13  Bruno de Oliveira Abinader  <bruno.abinader@basyskom.com>
+
+        [css] Remove "default" switch case from CSS primitive value mappings
+        https://bugs.webkit.org/show_bug.cgi?id=93781
+
+        Reviewed by Alexey Proskuryakov.
+
+        Removing the "default" switch case allows compile-time early warning check,
+        specially useful for newly added or removed enumeration values.
+
+        * css/CSSPrimitiveValueMappings.h:
+
 2012-08-13  Anna Cavender  <annacc@chromium.org>
 
         Cap the number of SourceBuffers that may be added to a MediaSource.
