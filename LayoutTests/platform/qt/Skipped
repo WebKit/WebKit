@@ -2735,3 +2735,6 @@ fast/js/dfg-compare-final-object-to-final-object-or-other-when-both-proven-final
 # [Qt][GTK] REGRESSION(r125251): It made svg/custom/use-instanceRoot-as-event-target.xhtml assert and flakey
 # https://bugs.webkit.org/show_bug.cgi?id=93812
 svg/custom/use-instanceRoot-as-event-target.xhtml
+
+# https://bugs.webkit.org/show_bug.cgi?id=93897
+fast/profiler/nested-start-and-stop-profiler.html
