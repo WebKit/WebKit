@@ -17,7 +17,7 @@ InspectorTest.replaceInSource = function(sourceFrame, string, replacement, callb
         break;
     }
     sourceFrame.onTextChanged(oldRange, newRange);
-    sourceFrame._textEditor._commitEditing();
+    sourceFrame._commitEditing();
 }
 
 };

@@ -193,8 +193,6 @@ WebInspector.TextEditorDelegate.prototype = {
      */
     onTextChanged: function(oldRange, newRange) { },
 
-    commitEditing: function() { },
-
     /**
      * @param {WebInspector.TextRange} textRange
      */

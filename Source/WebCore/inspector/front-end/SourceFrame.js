@@ -56,6 +56,10 @@ WebInspector.SourceFrame = function(contentProvider)
     this._messageBubbles = {};
 
     this._textEditor.setReadOnly(!this.canEditSource());
+
+    this._shortcuts = {};
+    this._shortcuts[WebInspector.KeyboardShortcut.makeKey("s", WebInspector.KeyboardShortcut.Modifiers.CtrlOrMeta)] = this._commitEditing.bind(this);
+    this.element.addEventListener("keydown", this._handleKeyDown.bind(this), false);
 }
 
 /**
@@ -625,6 +629,26 @@ WebInspector.SourceFrame.prototype = {
     scrollChanged: function(lineNumber)
     {
         this.dispatchEventToListeners(WebInspector.SourceFrame.Events.ScrollChanged, lineNumber);
+    },
+
+    _handleKeyDown: function(e)
+    {
+        var shortcutKey = WebInspector.KeyboardShortcut.makeKeyFromEvent(e);
+        var handler = this._shortcuts[shortcutKey];
+        if (handler && handler())
+            e.consume(true);
+    },
+
+    _commitEditing: function()
+    {
+        if (this._textEditor.readOnly())
+            return false;
+
+        var content = this._textEditor.text();
+        this.commitEditing(content);
+        if (this._url && WebInspector.fileManager.isURLSaved(this._url))
+            WebInspector.fileManager.save(this._url, content, false);
+        return true;
     }
 }
 
@@ -644,11 +668,6 @@ WebInspector.TextEditorDelegateForSourceFrame.prototype = {
     onTextChanged: function(oldRange, newRange)
     {
         this._sourceFrame.onTextChanged(oldRange, newRange);
-    },
-
-    commitEditing: function()
-    {
-        this._sourceFrame.commitEditing(this._sourceFrame._textEditor.text());
     },
 
     /**

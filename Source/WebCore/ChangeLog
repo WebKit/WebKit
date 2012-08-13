@@ -1,3 +1,21 @@
+2012-08-13  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: remove commitEditing from the text editor delegate.
+        https://bugs.webkit.org/show_bug.cgi?id=93858
+
+        Reviewed by Vsevolod Vlasov.
+
+        This should be up to the source frame.
+
+        * inspector/front-end/DefaultTextEditor.js:
+        (WebInspector.DefaultTextEditor.prototype._registerShortcuts):
+        * inspector/front-end/SourceFrame.js:
+        (WebInspector.SourceFrame):
+        (WebInspector.SourceFrame.prototype.scrollChanged):
+        (WebInspector.SourceFrame.prototype._handleKeyDown):
+        (WebInspector.SourceFrame.prototype._commitEditing):
+        * inspector/front-end/TextEditor.js:
+
 2012-08-13  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r125430.

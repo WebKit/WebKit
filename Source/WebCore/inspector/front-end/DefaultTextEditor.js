@@ -324,8 +324,6 @@ WebInspector.DefaultTextEditor.prototype = {
         var modifiers = WebInspector.KeyboardShortcut.Modifiers;
 
         this._shortcuts = {};
-        var commitEditing = this._commitEditing.bind(this);
-        this._shortcuts[WebInspector.KeyboardShortcut.makeKey("s", modifiers.CtrlOrMeta)] = commitEditing;
 
         var handleEnterKey = this._mainPanel.handleEnterKey.bind(this._mainPanel);
         this._shortcuts[WebInspector.KeyboardShortcut.makeKey(keys.Enter.code, WebInspector.KeyboardShortcut.Modifiers.None)] = handleEnterKey;
@@ -363,17 +361,6 @@ WebInspector.DefaultTextEditor.prototype = {
             this._delegate.populateTextAreaContextMenu(contextMenu, target && target.lineNumber);
         }
         contextMenu.show(event);
-    },
-
-    _commitEditing: function()
-    {
-        if (this.readOnly())
-            return false;
-
-        this._delegate.commitEditing();
-        if (this._url && WebInspector.fileManager.isURLSaved(this._url))
-            WebInspector.fileManager.save(this._url, this._textModel.text(), false);
-        return true;
     },
 
     _handleScrollChanged: function(event)
