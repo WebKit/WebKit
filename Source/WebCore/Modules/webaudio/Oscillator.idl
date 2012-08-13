@@ -36,7 +36,8 @@ module audio {
         const unsigned short TRIANGLE = 3;
         const unsigned short CUSTOM = 4;
 
-        attribute unsigned short type;
+        attribute unsigned short type
+            setter raises(DOMException);        
 
         // Playback state constants.
         const unsigned short UNSCHEDULED_STATE = 0;

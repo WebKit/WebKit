@@ -54,9 +54,25 @@ function runTest()
     var wavetable = context.createWaveTable(coeffA, coeffB);
     osc.setWaveTable(wavetable);
     if (osc.type == osc.CUSTOM)
-        testPassed("Oscillator correctly set to CUSTOM type.");
+        testPassed("Oscillator correctly set to CUSTOM type using setWaveTable.");
     else
         testFailed("Oscillator set to CUSTOM type, but returns " + oscTypes[osc.type].name + " type.");
+
+    // Try setting some invalid types
+    try {
+        osc.type = osc.CUSTOM;
+        testFailed("Directly setting oscillator type to CUSTOM did not throw exception.");
+    } catch (e) {
+        testPassed("Directly setting oscillator type to CUSTOM correctly throws exception.");
+    }
+
+    var oscType = osc.CUSTOM + 1;
+    try {
+        osc.type = oscType;
+        testFailed("Setting oscillator to invalid type " + oscType + " did not throw exception.");
+    } catch (e) {
+        testPassed("Setting oscillator to invalid type " + oscType + " correctly throws exception.");
+    }
 
     finishJSTest();
 }

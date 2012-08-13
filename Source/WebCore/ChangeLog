@@ -1,3 +1,19 @@
+2012-08-13  Raymond Toy  <rtoy@google.com>
+
+        Oscillator node should throw exception if type is assigned an invalid value
+        https://bugs.webkit.org/show_bug.cgi?id=93490
+
+        Reviewed by Chris Rogers.
+
+        New tests added to oscillator-basic to catch exceptions.
+
+        * Modules/webaudio/Oscillator.cpp:
+        (WebCore::Oscillator::Oscillator):
+        (WebCore::Oscillator::setType): Return exception
+        * Modules/webaudio/Oscillator.h:
+        (Oscillator): Update setType declaration
+        * Modules/webaudio/Oscillator.idl: setType can raise exception.
+
 2012-08-13  Chris Rogers  <crogers@google.com>
 
         AudioContext::createMediaStreamSource() must create a provider for local MediaStreams

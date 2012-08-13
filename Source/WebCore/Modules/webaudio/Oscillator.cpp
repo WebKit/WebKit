@@ -31,6 +31,7 @@
 #include "AudioContext.h"
 #include "AudioNodeOutput.h"
 #include "AudioUtilities.h"
+#include "ExceptionCode.h"
 #include "VectorMath.h"
 #include "WaveTable.h"
 #include <algorithm>
@@ -68,7 +69,8 @@ Oscillator::Oscillator(AudioContext* context, float sampleRate)
     m_detune = AudioParam::create(context, "detune", 0, -4800, 4800);
 
     // Sets up default wavetable.
-    setType(m_type);
+    ExceptionCode ec;
+    setType(m_type, ec);
 
     // An oscillator is always mono.
     addOutput(adoptPtr(new AudioNodeOutput(this, 1)));
@@ -81,7 +83,7 @@ Oscillator::~Oscillator()
     uninitialize();
 }
 
-void Oscillator::setType(unsigned short type)
+void Oscillator::setType(unsigned short type, ExceptionCode& ec)
 {
     WaveTable* waveTable = 0;
     float sampleRate = this->sampleRate();
@@ -109,10 +111,10 @@ void Oscillator::setType(unsigned short type)
         break;
     case CUSTOM:
     default:
-        // FIXME: throw exception for invalid types or if the type is CUSTOM since setWaveTable()
-        // method must be called explicitly in that case.
+        // Throw exception for invalid types, including CUSTOM since setWaveTable() method must be
+        // called explicitly.
+        ec = NOT_SUPPORTED_ERR;
         return;
-        break;
     }
 
     setWaveTable(waveTable);
