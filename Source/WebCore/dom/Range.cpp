@@ -1963,12 +1963,16 @@ FloatRect Range::boundingRect() const
 
 FloatRect Range::transformFriendlyBoundingBox() const
 {
-    FloatRect result;
+    if (!m_start.container())
+        return FloatRect();
+
+    m_ownerDocument->updateLayoutIgnorePendingStylesheets();
+
     Vector<FloatQuad> quads;
     textQuads(quads);
 
-    const size_t n = quads.size();
-    for (size_t i = 0; i < n; ++i)
+    FloatRect result;
+    for (size_t i = 0; i < quads.size(); ++i)
         result.unite(quads[i].boundingBox());
 
     return result;

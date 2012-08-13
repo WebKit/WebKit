@@ -48,21 +48,19 @@ using namespace WebCore;
 
 namespace WebKit {
 
-static FloatRect toNormalizedRect(const FloatRect& absoluteRect, const RenderObject* renderer, FloatRect* containerBoundingBox = 0)
+static FloatRect toNormalizedRect(const FloatRect& absoluteRect, const RenderObject* renderer, FloatRect& containerBoundingBox)
 {
     ASSERT(renderer);
 
     const RenderObject* container = renderer->container();
     if (!container) {
-        if (containerBoundingBox)
-            *containerBoundingBox = FloatRect();
+        containerBoundingBox = FloatRect();
         return FloatRect();
     }
 
     FloatRect normalizedRect = absoluteRect;
     FloatRect containerRect = container->absoluteBoundingBoxRect();
-    if (containerBoundingBox)
-        *containerBoundingBox = containerRect;
+    containerBoundingBox = containerRect;
 
     // For RenderBoxes we want to normalize by the max layout overflow size instead of only the visible bounding box.
     // Quads and their enclosing bounding boxes need to be used in order to keep results transform-friendly.
@@ -102,7 +100,7 @@ FloatRect findInPageRectFromAbsoluteRect(const FloatRect& inputRect, const Rende
 
     // Normalize the input rect to its container, saving the container bounding box for the incoming loop.
     FloatRect rendererBoundingBox;
-    FloatRect normalizedRect = toNormalizedRect(inputRect, renderer, &rendererBoundingBox);
+    FloatRect normalizedRect = toNormalizedRect(inputRect, renderer, rendererBoundingBox);
     renderer = renderer->container();
 
     // Go up across frames.
@@ -113,7 +111,7 @@ FloatRect findInPageRectFromAbsoluteRect(const FloatRect& inputRect, const Rende
 
             // Compose the normalized rects. The absolute bounding box of the container is calculated in toNormalizedRect
             // and can be reused for the next iteration of the loop.
-            FloatRect normalizedBoxRect = toNormalizedRect(rendererBoundingBox, renderer, &rendererBoundingBox);
+            FloatRect normalizedBoxRect = toNormalizedRect(rendererBoundingBox, renderer, rendererBoundingBox);
             normalizedRect.scale(normalizedBoxRect.width(), normalizedBoxRect.height());
             normalizedRect.moveBy(normalizedBoxRect.location());
 

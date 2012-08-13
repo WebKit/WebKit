@@ -1,3 +1,17 @@
+2012-08-13  Leandro Gracia Gil  <leandrogracia@chromium.org>
+
+        [Chromium] Fix nits in the find-in-page match rects API
+        https://bugs.webkit.org/show_bug.cgi?id=93817
+
+        Reviewed by Adam Barth.
+
+        This patch fixes a few pending nits from 93111.
+
+        Tests: existing WebKit unit test WebFrameTest.FindInPageMatchRects
+
+        * dom/Range.cpp:
+        (WebCore::Range::transformFriendlyBoundingBox): add call to updateLayoutIgnorePendingStylesheets.
+
 2012-08-13  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: get rid of beforeTextChanged
