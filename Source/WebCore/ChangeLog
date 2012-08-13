@@ -1,5 +1,11 @@
 2012-08-13  Zan Dobersek  <zandobersek@gmail.com>
 
+        Unreviewed build fix after r125408, removing another usage of SVG_FEATURES.
+
+        * GNUmakefile.am:
+
+2012-08-13  Zan Dobersek  <zandobersek@gmail.com>
+
         [Gtk] Remove SVG_FEATURES and HTML_FEATURES from Source/WebCore/GNUmakefile.am
         https://bugs.webkit.org/show_bug.cgi?id=90693
 
