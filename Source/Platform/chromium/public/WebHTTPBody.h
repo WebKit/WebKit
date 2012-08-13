@@ -48,12 +48,15 @@ class WebHTTPBodyPrivate;
 class WebHTTPBody {
 public:
     struct Element {
-        enum Type { TypeData, TypeFile, TypeBlob } type;
+        enum Type { TypeData, TypeFile, TypeBlob, TypeURL } type;
         WebData data;
         WebString filePath;
         long long fileStart;
         long long fileLength; // -1 means to the end of the file.
         double modificationTime;
+        WebURL url; // For TypeBlob or TypeURL.
+
+        // FIXME: deprecate this.
         WebURL blobURL;
     };
 
@@ -86,6 +89,9 @@ public:
     // Passing -1 to fileLength means to the end of the file.
     WEBKIT_EXPORT void appendFileRange(const WebString&, long long fileStart, long long fileLength, double modificationTime);
     WEBKIT_EXPORT void appendBlob(const WebURL&);
+
+    // Append a resource which is identified by URL. Currently we only support FileSystem URL.
+    WEBKIT_EXPORT void appendURLRange(const WebURL&, long long start, long long length, double modificationTime);
 
     // Identifies a particular form submission instance. A value of 0 is
     // used to indicate an unspecified identifier.

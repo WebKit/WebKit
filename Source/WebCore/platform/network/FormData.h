@@ -39,25 +39,31 @@ public:
 
 #if ENABLE(BLOB)
     FormDataElement(const String& filename, long long fileStart, long long fileLength, double expectedFileModificationTime, bool shouldGenerateFile) : m_type(encodedFile), m_filename(filename), m_fileStart(fileStart), m_fileLength(fileLength), m_expectedFileModificationTime(expectedFileModificationTime), m_shouldGenerateFile(shouldGenerateFile) { }
-    explicit FormDataElement(const KURL& blobURL) : m_type(encodedBlob), m_blobURL(blobURL) { }
+    explicit FormDataElement(const KURL& blobURL) : m_type(encodedBlob), m_url(blobURL) { }
 #else
     FormDataElement(const String& filename, bool shouldGenerateFile) : m_type(encodedFile), m_filename(filename), m_shouldGenerateFile(shouldGenerateFile) { }
 #endif
+#if ENABLE(FILE_SYSTEM)
+    FormDataElement(const KURL& url, long long start, long long length, double expectedFileModificationTime) : m_type(encodedURL), m_url(url), m_fileStart(start), m_fileLength(length), m_expectedFileModificationTime(expectedFileModificationTime), m_shouldGenerateFile(false) { }
+#endif
 
-    enum {
+    enum Type {
         data,
         encodedFile
 #if ENABLE(BLOB)
         , encodedBlob
 #endif
+#if ENABLE(FILE_SYSTEM)
+        , encodedURL
+#endif
     } m_type;
     Vector<char> m_data;
     String m_filename;
 #if ENABLE(BLOB)
+    KURL m_url; // For Blob or URL.
     long long m_fileStart;
     long long m_fileLength;
     double m_expectedFileModificationTime;
-    KURL m_blobURL;
 #endif
     String m_generatedFilename;
     bool m_shouldGenerateFile;
@@ -76,9 +82,13 @@ inline bool operator==(const FormDataElement& a, const FormDataElement& b)
 #if ENABLE(BLOB)
         return a.m_filename == b.m_filename && a.m_fileStart == b.m_fileStart && a.m_fileLength == b.m_fileLength && a.m_expectedFileModificationTime == b.m_expectedFileModificationTime;
     if (a.m_type == FormDataElement::encodedBlob)
-        return a.m_blobURL == b.m_blobURL;
+        return a.m_url == b.m_url;
 #else
         return a.m_filename == b.m_filename;
+#endif
+#if ENABLE(FILE_SYSTEM)
+    if (a.m_type == FormDataElement::encodedURL)
+        return a.m_url == b.m_url;
 #endif
 
     return true;
@@ -115,6 +125,10 @@ public:
 #if ENABLE(BLOB)
     void appendFileRange(const String& filename, long long start, long long length, double expectedModificationTime, bool shouldGenerateFile = false);
     void appendBlob(const KURL& blobURL);
+#endif
+#if ENABLE(FILE_SYSTEM)
+    void appendURL(const KURL&);
+    void appendURLRange(const KURL&, long long start, long long length, double expectedModificationTime);
 #endif
 
     void flatten(Vector<char>&) const; // omits files

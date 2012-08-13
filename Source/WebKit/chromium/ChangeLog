@@ -1,3 +1,13 @@
+2012-08-10  Kinuko Yasuda  <kinuko@chromium.org>
+
+        Support creating File object from FileSystem URL for files in FileSystem API
+        https://bugs.webkit.org/show_bug.cgi?id=93706
+
+        Reviewed by Darin Fisher.
+
+        * src/WebBlobData.cpp:
+        (WebKit::WebBlobData::itemAt):
+
 2012-08-12  Yuta Kitamura  <yutak@google.com>
 
         Unreviewed. Fix Chromium's Android build.

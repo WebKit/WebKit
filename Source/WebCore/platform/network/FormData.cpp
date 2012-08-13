@@ -143,7 +143,12 @@ PassRefPtr<FormData> FormData::deepCopy() const
             break;
 #if ENABLE(BLOB)
         case FormDataElement::encodedBlob:
-            formData->m_elements.append(FormDataElement(e.m_blobURL));
+            formData->m_elements.append(FormDataElement(e.m_url));
+            break;
+#endif
+#if ENABLE(FILE_SYSTEM)
+        case FormDataElement::encodedURL:
+            formData->m_elements.append(FormDataElement(e.m_url, e.m_fileStart, e.m_fileLength, e.m_expectedFileModificationTime));
             break;
 #endif
         }
@@ -179,6 +184,17 @@ void FormData::appendFileRange(const String& filename, long long start, long lon
 void FormData::appendBlob(const KURL& blobURL)
 {
     m_elements.append(FormDataElement(blobURL));
+}
+#endif
+#if ENABLE(FILE_SYSTEM)
+void FormData::appendURL(const KURL& url)
+{
+    m_elements.append(FormDataElement(url, 0, BlobDataItem::toEndOfFile, invalidFileTime()));
+}
+
+void FormData::appendURLRange(const KURL& url, long long start, long long length, double expectedModificationTime)
+{
+    m_elements.append(FormDataElement(url, start, length, expectedModificationTime));
 }
 #endif
 
@@ -252,6 +268,10 @@ void FormData::appendKeyValuePairItems(const FormDataList& list, const TextEncod
                     // Do not add the file if the path is empty.
                     if (!file->path().isEmpty())
                         appendFile(file->path(), shouldGenerateFile);
+#if ENABLE(FILE_SYSTEM)
+                    if (!file->fileSystemURL().isEmpty())
+                        appendURL(file->fileSystemURL());
+#endif
                 }
 #if ENABLE(BLOB)
                 else
@@ -361,7 +381,16 @@ static void encode(Encoder& encoder, const FormDataElement& element)
 
 #if ENABLE(BLOB)
     case FormDataElement::encodedBlob:
-        encoder.encodeString(element.m_blobURL.string());
+        encoder.encodeString(element.m_url.string());
+        return;
+#endif
+
+#if ENABLE(FILE_SYSTEM)
+    case FormDataElement::encodedURL:
+        encoder.encodeString(element.m_url.string());
+        encoder.encodeInt64(element.m_fileStart);
+        encoder.encodeInt64(element.m_fileLength);
+        encoder.encodeDouble(element.m_expectedFileModificationTime);
         return;
 #endif
     }
@@ -387,11 +416,16 @@ static bool decode(Decoder& decoder, FormDataElement& element)
         return true;
     }
 
-    case FormDataElement::encodedFile: {
-        element.m_type = FormDataElement::encodedFile;
-        if (!decoder.decodeString(element.m_filename))
+    case FormDataElement::encodedFile:
+#if ENABLE(FILE_SYSTEM)
+    case FormDataElement::encodedURL:
+#endif
+    {
+        element.m_type = static_cast<FormDataElement::Type>(type);
+        String filenameOrURL;
+        if (!decoder.decodeString(filenameOrURL))
             return false;
-        if (!decoder.decodeBool(element.m_shouldGenerateFile))
+        if (type == FormDataElement::encodedFile && !decoder.decodeBool(element.m_shouldGenerateFile))
             return false;
         int64_t fileStart;
         if (!decoder.decodeInt64(fileStart))
@@ -406,6 +440,14 @@ static bool decode(Decoder& decoder, FormDataElement& element)
         double expectedFileModificationTime;
         if (!decoder.decodeDouble(expectedFileModificationTime))
             return false;
+
+#if ENABLE(FILE_SYSTEM)
+        if (type == FormDataElement::encodedURL)
+            element.m_url = KURL(KURL(), filenameOrURL);
+        else
+#endif
+        element.m_filename = filenameOrURL;
+
 #if ENABLE(BLOB)
         element.m_fileStart = fileStart;
         element.m_fileLength = fileLength;
@@ -420,9 +462,10 @@ static bool decode(Decoder& decoder, FormDataElement& element)
         String blobURLString;
         if (!decoder.decodeString(blobURLString))
             return false;
-        element.m_blobURL = KURL(KURL(), blobURLString);
+        element.m_url = KURL(KURL(), blobURLString);
         return true;
 #endif
+
     }
 
     return false;

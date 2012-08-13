@@ -1,3 +1,58 @@
+2012-08-10  Kinuko Yasuda  <kinuko@chromium.org>
+
+        Support creating File object from FileSystem URL for files in FileSystem API
+        https://bugs.webkit.org/show_bug.cgi?id=93706
+
+        Reviewed by Darin Fisher.
+
+        Current File code assumes the existence of local file (i.e. requires a platform local file path) but for FileSystem
+        files it may not be always the case. For example some implementation may want to use in-memory filesystem to realize
+        sandboxed filesystem, or others may have the filesystem in remote servers.
+
+        This patch adds basic support for making File object constructible not only from a file path but from a FileSystem URL.
+        Since File can be appended to FormData or included in another Blob this patch also extends BlobData and FormData to support URL.
+
+        FileChooser and Drag-and-drop changes are not included in this patch.
+
+        No new tests: will add tests when we implement the platform side changes to wire this change.
+
+        * Modules/filesystem/DOMFileSystem.cpp:
+        (WebCore::DOMFileSystem::createFile):
+        * Modules/filesystem/DOMFileSystemSync.cpp:
+        (WebCore::DOMFileSystemSync::createFile):
+        * fileapi/Blob.cpp:
+        (WebCore::Blob::sliceInternal):
+        * fileapi/File.cpp:
+        (WebCore::createBlobDataForFileSystemURL): Added.
+        (WebCore::File::File):
+        * fileapi/File.h:
+        (WebCore::File::createForFileSystemFile):
+        (WebCore::File::fileSystemURL): Added.
+        * fileapi/WebKitBlobBuilder.cpp:
+        (WebCore::WebKitBlobBuilder::append):
+        * platform/chromium/support/WebHTTPBody.cpp:
+        (WebKit::WebHTTPBody::elementAt):
+        (WebKit::WebHTTPBody::appendURL): Added.
+        (WebKit::WebHTTPBody::appendURLRange): Added.
+        (WebKit::WebHTTPBody::appendBlob):
+        * platform/network/BlobData.cpp:
+        (WebCore::BlobData::appendURL):
+        * platform/network/BlobData.h:
+        (BlobDataItem):
+        (WebCore::BlobDataItem::BlobDataItem):
+        * platform/network/BlobRegistryImpl.cpp:
+        (WebCore::BlobRegistryImpl::appendStorageItems):
+        (WebCore::BlobRegistryImpl::registerBlobURL):
+        * platform/network/FormData.cpp:
+        (WebCore::FormData::deepCopy):
+        (WebCore::FormData::appendURL): Added.
+        (WebCore::FormData::appendURLRange): Added.
+        (WebCore::FormData::appendKeyValuePairItems):
+        * platform/network/FormData.h:
+        (WebCore::FormDataElement::FormDataElement):
+        (FormDataElement):
+        (WebCore::operator==):
+
 2012-08-12  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/11442485> off-screen or inactive pages can change the mouse pointer

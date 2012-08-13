@@ -89,6 +89,13 @@ void BlobData::appendBlob(const KURL& url, long long offset, long long length)
     m_items.append(BlobDataItem(url, offset, length));
 }
 
+#if ENABLE(FILE_SYSTEM)
+void BlobData::appendURL(const KURL& url, long long offset, long long length, double expectedModificationTime)
+{
+    m_items.append(BlobDataItem(url, offset, length, expectedModificationTime));
+}
+#endif
+
 void BlobData::swapItems(BlobDataItemList& items)
 {
     m_items.swap(items);

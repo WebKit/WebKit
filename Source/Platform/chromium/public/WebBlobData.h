@@ -47,13 +47,16 @@ class WebBlobDataPrivate;
 class WebBlobData {
 public:
     struct Item {
-        enum { TypeData, TypeFile, TypeBlob } type;
+        enum { TypeData, TypeFile, TypeBlob, TypeURL } type;
         WebThreadSafeData data;
         WebString filePath;
-        WebURL blobURL;
+        WebURL url; // For TypeBlob or TypeURL.
         long long offset;
         long long length; // -1 means go to the end of the file/blob.
         double expectedModificationTime; // 0.0 means that the time is not set.
+
+        // FIXME: deprecate this.
+        WebURL blobURL;
     };
 
     ~WebBlobData() { reset(); }

@@ -98,9 +98,9 @@ public:
         friend class WTF::RefCounted<CreateFileResult>;
     };
 
-    static PassOwnPtr<CreateFileHelper> create(PassRefPtr<CreateFileResult> result, const String& name, FileSystemType type)
+    static PassOwnPtr<CreateFileHelper> create(PassRefPtr<CreateFileResult> result, const String& name, const KURL& url, FileSystemType type)
     {
-        return adoptPtr(new CreateFileHelper(result, name, type));
+        return adoptPtr(new CreateFileHelper(result, name, url, type));
     }
 
     virtual void didFail(int code)
@@ -117,21 +117,30 @@ public:
     {
         // For regular filesystem types (temporary or persistent), we should not cache file metadata as it could change File semantics.
         // For other filesystem types (which could be platform-specific ones), there's a chance that the files are on remote filesystem. If the port has returned metadata just pass it to File constructor (so we may cache the metadata).
-        if (m_type == FileSystemTypeTemporary || m_type == FileSystemTypePersistent)
+        // FIXME: We should use the snapshot metadata for all files.
+        // https://www.w3.org/Bugs/Public/show_bug.cgi?id=17746
+        if (m_type == FileSystemTypeTemporary || m_type == FileSystemTypePersistent) {
             m_result->m_file = File::createWithName(metadata.platformPath, m_name);
-        else
-            m_result->m_file = File::createForFileSystemFile(m_name, metadata);
+        } else if (!metadata.platformPath.isEmpty()) {
+            // If the platformPath in the returned metadata is given, we create a File object for the path.
+            m_result->m_file = File::createForFileSystemFile(m_name, metadata).get();
+        } else {
+            // Otherwise create a File from the FileSystem URL.
+            m_result->m_file = File::createForFileSystemFile(m_url, metadata).get();
+        }
     }
 private:
-    CreateFileHelper(PassRefPtr<CreateFileResult> result, const String& name, FileSystemType type)
+    CreateFileHelper(PassRefPtr<CreateFileResult> result, const String& name, const KURL& url, FileSystemType type)
         : m_result(result)
         , m_name(name)
+        , m_url(url)
         , m_type(type)
     {
     }
 
     RefPtr<CreateFileResult> m_result;
     String m_name;
+    KURL m_url;
     FileSystemType m_type;
 };
 
@@ -140,8 +149,9 @@ private:
 PassRefPtr<File> DOMFileSystemSync::createFile(const FileEntrySync* fileEntry, ExceptionCode& ec)
 {
     ec = 0;
+    KURL fileSystemURL = createFileSystemURL(fileEntry);
     RefPtr<CreateFileHelper::CreateFileResult> result(CreateFileHelper::CreateFileResult::create());
-    m_asyncFileSystem->createSnapshotFileAndReadMetadata(createFileSystemURL(fileEntry), CreateFileHelper::create(result, fileEntry->name(), type()));
+    m_asyncFileSystem->createSnapshotFileAndReadMetadata(fileSystemURL, CreateFileHelper::create(result, fileEntry->name(), fileSystemURL, type()));
     if (!m_asyncFileSystem->waitForOperationToComplete()) {
         ec = FileException::ABORT_ERR;
         return 0;

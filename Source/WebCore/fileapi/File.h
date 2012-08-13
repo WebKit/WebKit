@@ -68,6 +68,13 @@ public:
     {
         return adoptRef(new File(name, metadata));
     }
+
+    static PassRefPtr<File> createForFileSystemFile(const KURL& url, const FileMetadata& metadata)
+    {
+        return adoptRef(new File(url, metadata));
+    }
+
+    KURL fileSystemURL() const { return m_fileSystemURL; }
 #endif
 
     // Create a file with a name exposed to the author (via File.name and associated DOM properties) that differs from the one provided in the path.
@@ -104,6 +111,7 @@ private:
 
 # if ENABLE(FILE_SYSTEM)
     File(const String& name, const FileMetadata&);
+    File(const KURL& fileSystemURL, const FileMetadata&);
 
     // Returns true if this has a valid snapshot metadata (i.e. m_snapshotSize >= 0).
     bool hasValidSnapshotMetadata() const { return m_snapshotSize >= 0; }
@@ -113,6 +121,8 @@ private:
     String m_name;
 
 #if ENABLE(FILE_SYSTEM)
+    KURL m_fileSystemURL;
+
     // If m_snapshotSize is negative (initialized to -1 by default), the snapshot metadata is invalid and we retrieve the latest metadata synchronously in size(), lastModifiedTime() and webkitSlice().
     // Otherwise, the snapshot metadata are used directly in those methods.
     const long long m_snapshotSize;

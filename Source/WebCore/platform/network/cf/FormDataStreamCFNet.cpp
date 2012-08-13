@@ -418,7 +418,7 @@ void setHTTPBody(CFMutableURLRequestRef request, PassRefPtr<FormData> prpFormDat
                 newFormData->appendFile(element.m_filename, element.m_shouldGenerateFile);
             else {
                 ASSERT(element.m_type == FormDataElement::encodedBlob);
-                RefPtr<BlobStorageData> blobData = static_cast<BlobRegistryImpl&>(blobRegistry()).getBlobDataFromURL(KURL(ParsedURLString, element.m_blobURL));
+                RefPtr<BlobStorageData> blobData = static_cast<BlobRegistryImpl&>(blobRegistry()).getBlobDataFromURL(KURL(ParsedURLString, element.m_url));
                 if (blobData) {
                     for (size_t j = 0; j < blobData->items().size(); ++j) {
                         const BlobDataItem& blobItem = blobData->items()[j];

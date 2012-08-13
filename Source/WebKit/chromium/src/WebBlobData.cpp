@@ -83,7 +83,12 @@ bool WebBlobData::itemAt(size_t index, Item& result) const
         return true;
     case BlobDataItem::Blob:
         result.type = Item::TypeBlob;
-        result.blobURL = item.url;
+        result.blobURL = item.url; // FIXME: deprecate this.
+        result.url = item.url;
+        return true;
+    case BlobDataItem::URL:
+        result.type = Item::TypeURL;
+        result.url = item.url;
         return true;
     }
     ASSERT_NOT_REACHED();

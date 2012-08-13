@@ -171,7 +171,7 @@ void ResourceRequest::initializePlatformRequest(NetworkRequest& platformRequest,
                         platformRequest.addMultipartFilename(element.m_filename.characters(), element.m_filename.length());
 #if ENABLE(BLOB)
                     else if (element.m_type == FormDataElement::encodedBlob) {
-                        RefPtr<BlobStorageData> blobData = static_cast<BlobRegistryImpl&>(blobRegistry()).getBlobDataFromURL(KURL(ParsedURLString, element.m_blobURL));
+                        RefPtr<BlobStorageData> blobData = static_cast<BlobRegistryImpl&>(blobRegistry()).getBlobDataFromURL(KURL(ParsedURLString, element.m_url));
                         if (blobData) {
                             for (size_t j = 0; j < blobData->items().size(); ++j) {
                                 const BlobDataItem& blobItem = blobData->items()[j];

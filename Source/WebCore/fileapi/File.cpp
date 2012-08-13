@@ -75,6 +75,14 @@ static PassOwnPtr<BlobData> createBlobDataForFileWithMetadata(const String& file
     blobData->appendFile(metadata.platformPath, 0, metadata.length, metadata.modificationTime);
     return blobData.release();
 }
+
+static PassOwnPtr<BlobData> createBlobDataForFileSystemURL(const KURL& fileSystemURL, const FileMetadata& metadata)
+{
+    OwnPtr<BlobData> blobData = BlobData::create();
+    blobData->setContentType(getContentTypeFromFileName(fileSystemURL.path(), File::WellKnownContentTypes));
+    blobData->appendURL(fileSystemURL, 0, metadata.length, metadata.modificationTime);
+    return blobData.release();
+}
 #endif
 
 #if ENABLE(DIRECTORY_UPLOAD)
@@ -127,6 +135,14 @@ File::File(const String& name, const FileMetadata& metadata)
     : Blob(createBlobDataForFileWithMetadata(name, metadata), metadata.length)
     , m_path(metadata.platformPath)
     , m_name(name)
+    , m_snapshotSize(metadata.length)
+    , m_snapshotModificationTime(metadata.modificationTime)
+{
+}
+
+File::File(const KURL& fileSystemURL, const FileMetadata& metadata)
+    : Blob(createBlobDataForFileSystemURL(fileSystemURL, metadata), metadata.length)
+    , m_fileSystemURL(fileSystemURL)
     , m_snapshotSize(metadata.length)
     , m_snapshotModificationTime(metadata.modificationTime)
 {
