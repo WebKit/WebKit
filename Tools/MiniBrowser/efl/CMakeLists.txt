@@ -42,8 +42,8 @@ SET(MiniBrowser_LINK_FLAGS
 
 IF (ENABLE_GLIB_SUPPORT)
     LIST(APPEND MiniBrowser_LIBRARIES
-        ${Glib_LIBRARIES}
-        ${Gthread_LIBRARIES}
+        ${GLIB_LIBRARIES}
+        ${GLIB_GTHREAD_LIBRARIES}
     )
 ENDIF ()
 

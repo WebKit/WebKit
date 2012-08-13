@@ -1,3 +1,16 @@
+2012-08-13  Raphael Kubo da Costa  <rakuco@webkit.org>
+
+        [CMake] Remove glib-related Find modules and write single new one instead.
+        https://bugs.webkit.org/show_bug.cgi?id=93786
+
+        Reviewed by Rob Buis.
+
+        No new tests, build system plumbing.
+
+        * PlatformEfl.cmake: Use GLIB_* instead of Glib_*, and link
+        directly against GIO, as code in the soup network backend uses
+        that.
+
 2012-08-13  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] Simplify storage and reduce size of QtConnectionObject

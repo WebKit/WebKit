@@ -1,3 +1,27 @@
+2012-08-13  Raphael Kubo da Costa  <rakuco@webkit.org>
+
+        [CMake] Remove glib-related Find modules and write single new one instead.
+        https://bugs.webkit.org/show_bug.cgi?id=93786
+
+        Reviewed by Rob Buis.
+
+        As part of the ongoing effort to write proper Find modules that use
+        absolute include and library paths instead of the short ones from
+        pkg-config, replace Find{GIO,Glib,Gthread}.cmake with a single
+        FindGLIB.cmake that optionally detects components such as GIO and
+        GObject.
+
+        Library paths are now defined as "/full/path/to/libfoo.so" instead of
+        simply "foo", so that the linker receives a full path and we can then
+        avoid accidentally picking up a libfoo.so installed into /usr/lib
+        instead of a local one built with jhbuild.
+
+        * Source/cmake/FindGIO.cmake: Removed.
+        * Source/cmake/FindGLIB.cmake: Added.
+        * Source/cmake/FindGlib.cmake: Removed.
+        * Source/cmake/FindGthread.cmake: Removed.
+        * Source/cmake/OptionsEfl.cmake: Look for GLIB with the GIO component.
+
 2012-08-13  Zan Dobersek  <zandobersek@gmail.com>
 
         [Gtk] Remove SVG_FEATURES and HTML_FEATURES from Source/WebCore/GNUmakefile.am
