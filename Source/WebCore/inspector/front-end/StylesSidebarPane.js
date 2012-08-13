@@ -2537,6 +2537,15 @@ WebInspector.StylesSidebarPane.CSSPropertyPrompt.prototype = {
         WebInspector.TextPrompt.prototype.onKeyDown.call(this, event);
     },
 
+    onMouseWheel: function(event)
+    {
+        if (this._handleNameOrValueUpDown(event)) {
+            event.consume(true);
+            return;
+        }
+        WebInspector.TextPrompt.prototype.onMouseWheel.call(this, event);
+    },
+
     tabKeyPressed: function()
     {
         this.acceptAutoComplete();

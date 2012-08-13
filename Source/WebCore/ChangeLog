@@ -1,3 +1,30 @@
+2012-08-13  Sam D  <dsam2912@gmail.com>
+
+        Web Inspector: Feature Request - Adding mouse gesture for editing attribute values in elements/css panel
+        https://bugs.webkit.org/show_bug.cgi?id=93581
+
+        Reviewed by Alexander Pavlov.
+
+        Added functionality to modify valuesAdding support for updating number values in attributes in element
+        panel/ css panel using mouse gestures as well.
+
+        No new tests.
+
+        * inspector/front-end/StylesSidebarPane.js:
+        handling mousewheel event
+        * inspector/front-end/TextPrompt.js:
+        adding mouse event listener
+        (WebInspector.TextPrompt.prototype._attachInternal):
+        (WebInspector.TextPrompt.prototype.defaultKeyHandler):
+        (WebInspector.TextPrompt.prototype.onMouseWheel):
+        * inspector/front-end/UIUtils.js:
+        handling mouse event gesture and updating number based on mouse wheel
+        scroll direction as well.
+        (WebInspector._valueModificationDirection):
+        (WebInspector._modifiedHexValue):
+        (WebInspector._modifiedFloatNumber):
+        (WebInspector.handleElementValueModifications):
+
 2012-08-13  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix make distcheck.

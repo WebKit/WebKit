@@ -105,6 +105,7 @@ WebInspector.TextPrompt.prototype = {
         this._element = element;
 
         this._boundOnKeyDown = this.onKeyDown.bind(this);
+        this._boundOnMouseWheel = this.onMouseWheel.bind(this);
         this._boundSelectStart = this._selectStart.bind(this);
         this._proxyElement = element.ownerDocument.createElement("span");
         this._proxyElement.style.display = this._proxyElementDisplay;
@@ -112,6 +113,7 @@ WebInspector.TextPrompt.prototype = {
         this.proxyElement.appendChild(element);
         this._element.addStyleClass("text-prompt");
         this._element.addEventListener("keydown", this._boundOnKeyDown, false);
+        this._element.addEventListener("mousewheel", this._boundOnMouseWheel, false);
         this._element.addEventListener("selectstart", this._boundSelectStart, false);
 
         if (typeof this._suggestBoxClassName === "string")
@@ -127,6 +129,7 @@ WebInspector.TextPrompt.prototype = {
         this.proxyElement.parentElement.removeChild(this.proxyElement);
         this._element.removeStyleClass("text-prompt");
         this._element.removeEventListener("keydown", this._boundOnKeyDown, false);
+        this._element.removeEventListener("mousewheel", this._boundOnMouseWheel, false);
         this._element.removeEventListener("selectstart", this._boundSelectStart, false);
         delete this._proxyElement;
         WebInspector.restoreFocusFromElement(this._element);
@@ -218,6 +221,11 @@ WebInspector.TextPrompt.prototype = {
         this.clearAutoComplete();
         this.autoCompleteSoon(force);
         return false;
+    },
+
+    onMouseWheel: function(event)
+    {
+        // Subclasses can implement. 
     },
 
     onKeyDown: function(event)
