@@ -1,3 +1,21 @@
+2012-08-13  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Make WebAnimation a pure virtual interface to hide implementation and avoid unresolved symbols
+        https://bugs.webkit.org/show_bug.cgi?id=93907
+
+        Reviewed by Darin Fisher.
+
+        This makes WebAnimation a pure virtual interface with instances returned by a factory function. Currently the
+        factory is a static function on WebAnimation, but it will likely move to a platform support interface. This
+        provides better isolation of the implementation from the interface and in particular allows for implementing the
+        WebAnimation interface outside of WebKit.dll without having unresolved external symbols in WebKit.dll.
+
+        * chromium/public/WebAnimation.h:
+        (WebKit::WebAnimation::~WebAnimation):
+        (WebAnimation):
+        * chromium/public/WebLayer.h:
+        (WebLayer):
+
 2012-08-10  James Robinson  <jamesr@chromium.org>
 
         [chromium] Clean up dependencies for Canvas2DLayerBridgeTest and GraphicsLayerChromiumTest unit tests

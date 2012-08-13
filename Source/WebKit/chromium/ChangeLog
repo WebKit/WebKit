@@ -1,3 +1,37 @@
+2012-08-13  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Make WebAnimation a pure virtual interface to hide implementation and avoid unresolved symbols
+        https://bugs.webkit.org/show_bug.cgi?id=93907
+
+        Reviewed by Darin Fisher.
+
+        Adds a WebAnimationImpl implementation of the WebAnimation interface.
+
+        * WebKit.gyp:
+        * src/WebAnimationImpl.cpp: Renamed from Source/WebKit/chromium/src/WebAnimation.cpp.
+        (WebKit):
+        (WebKit::WebAnimation::create):
+        (WebKit::WebAnimationImpl::targetProperty):
+        (WebKit::WebAnimationImpl::iterations):
+        (WebKit::WebAnimationImpl::setIterations):
+        (WebKit::WebAnimationImpl::startTime):
+        (WebKit::WebAnimationImpl::setStartTime):
+        (WebKit::WebAnimationImpl::timeOffset):
+        (WebKit::WebAnimationImpl::setTimeOffset):
+        (WebKit::WebAnimationImpl::alternatesDirection):
+        (WebKit::WebAnimationImpl::setAlternatesDirection):
+        (WebKit::WebAnimationImpl::cloneToCCAnimation):
+        * src/WebAnimationImpl.h: Added.
+        (WebCore):
+        (WebKit):
+        (WebAnimationImpl):
+        (WebKit::WebAnimationImpl::WebAnimationImpl):
+        (WebKit::WebAnimationImpl::~WebAnimationImpl):
+        * src/WebLayer.cpp:
+        (WebKit::WebLayer::addAnimation):
+        * tests/WebAnimationTest.cpp:
+        (WebKit::TEST):
+
 2012-08-10  James Robinson  <jamesr@chromium.org>
 
         [chromium] Clean up dependencies for Canvas2DLayerBridgeTest and GraphicsLayerChromiumTest unit tests

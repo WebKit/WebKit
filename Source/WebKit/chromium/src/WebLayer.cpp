@@ -28,6 +28,7 @@
 
 #include "LayerChromium.h"
 #include "SkMatrix44.h"
+#include "WebAnimationImpl.h"
 #include "WebLayerImpl.h"
 #include <public/WebFilterOperations.h>
 #include <public/WebFloatPoint.h>
@@ -332,9 +333,9 @@ void WebLayer::setAnimationDelegate(WebAnimationDelegate* delegate)
     m_private->setLayerAnimationDelegate(delegate);
 }
 
-bool WebLayer::addAnimation(const WebAnimation& animation)
+bool WebLayer::addAnimation(WebAnimation* animation)
 {
-    return m_private->addAnimation(animation);
+    return m_private->addAnimation(static_cast<WebAnimationImpl*>(animation)->cloneToCCAnimation());
 }
 
 void WebLayer::removeAnimation(int animationId)

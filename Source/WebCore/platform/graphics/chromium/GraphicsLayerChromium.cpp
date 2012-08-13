@@ -527,10 +527,10 @@ bool GraphicsLayerChromium::addAnimation(const KeyframeValueList& values, const 
 
     OwnPtr<WebKit::WebAnimation> toAdd(createWebAnimation(values, animation, animationId, groupId, timeOffset, boxSize));
 
-    if (toAdd.get()) {
+    if (toAdd) {
         // Remove any existing animations with the same animation id and target property.
         primaryLayer().removeAnimation(animationId, toAdd->targetProperty());
-        return primaryLayer().addAnimation(*toAdd);
+        return primaryLayer().addAnimation(toAdd.get());
     }
 
     return false;

@@ -152,7 +152,7 @@ public:
     WEBKIT_EXPORT void setAnimationDelegate(WebAnimationDelegate*);
 
     // Returns false if the animation cannot be added.
-    WEBKIT_EXPORT bool addAnimation(const WebAnimation&);
+    WEBKIT_EXPORT bool addAnimation(WebAnimation*);
 
     // Removes all animations with the given id.
     WEBKIT_EXPORT void removeAnimation(int animationId);

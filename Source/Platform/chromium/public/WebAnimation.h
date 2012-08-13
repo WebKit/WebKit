@@ -42,60 +42,40 @@ namespace WebKit {
 class WebAnimationCurve;
 
 // A compositor driven animation.
-class WebAnimation : public WebNonCopyable {
+class WebAnimation {
 public:
     enum TargetProperty {
         TargetPropertyTransform = 0,
         TargetPropertyOpacity
     };
 
-    WebAnimation(const WebAnimationCurve& curve, TargetProperty targetProperty)
-    {
-        initialize(curve, targetProperty);
-    }
+    // The caller takes ownership of the returned valuev
+    WEBKIT_EXPORT static WebAnimation* create(const WebAnimationCurve&, TargetProperty);
 
     // An animationId is effectively the animation's name, and it is not unique.
     // Animations with the same groupId are run at the same time. An animation
     // may be uniquely identified by a combination of groupId and target property.
-    WebAnimation(const WebAnimationCurve& curve, int animationId, int groupId, TargetProperty targetProperty)
-    {
-        initialize(curve, animationId, groupId, targetProperty);
-    }
+    WEBKIT_EXPORT static WebAnimation* create(const WebAnimationCurve&, int animationId, int groupId, TargetProperty);
 
-    ~WebAnimation()
-    {
-        destroy();
-    }
+    virtual ~WebAnimation() { }
 
-    WEBKIT_EXPORT TargetProperty targetProperty() const;
+    virtual TargetProperty targetProperty() const = 0;
 
     // This is the number of times that the animation will play. If this
     // value is zero the animation will not play. If it is negative, then
     // the animation will loop indefinitely.
-    WEBKIT_EXPORT int iterations() const;
-    WEBKIT_EXPORT void setIterations(int);
+    virtual int iterations() const = 0;
+    virtual void setIterations(int) = 0;
 
-    WEBKIT_EXPORT double startTime() const;
-    WEBKIT_EXPORT void setStartTime(double monotonicTime);
-    WEBKIT_EXPORT bool hasSetStartTime() const;
+    virtual double startTime() const = 0;
+    virtual void setStartTime(double monotonicTime) = 0;
 
-    WEBKIT_EXPORT double timeOffset() const;
-    WEBKIT_EXPORT void setTimeOffset(double monotonicTime);
+    virtual double timeOffset() const = 0;
+    virtual void setTimeOffset(double monotonicTime) = 0;
 
     // If alternatesDirection is true, on odd numbered iterations we reverse the curve.
-    WEBKIT_EXPORT bool alternatesDirection() const;
-    WEBKIT_EXPORT void setAlternatesDirection(bool);
-
-#if WEBKIT_IMPLEMENTATION
-    operator PassOwnPtr<WebCore::CCActiveAnimation>() const;
-#endif
-
-private:
-    WEBKIT_EXPORT void initialize(const WebAnimationCurve&, TargetProperty);
-    WEBKIT_EXPORT void initialize(const WebAnimationCurve&, int animationId, int groupId, TargetProperty);
-    WEBKIT_EXPORT void destroy();
-
-    WebPrivateOwnPtr<WebCore::CCActiveAnimation> m_private;
+    virtual bool alternatesDirection() const = 0;
+    virtual void setAlternatesDirection(bool) = 0;
 };
 
 } // namespace WebKit

@@ -1,3 +1,17 @@
+2012-08-13  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Make WebAnimation a pure virtual interface to hide implementation and avoid unresolved symbols
+        https://bugs.webkit.org/show_bug.cgi?id=93907
+
+        Reviewed by Darin Fisher.
+
+        Updates WebAnimation users for interface changes.
+
+        * platform/graphics/chromium/AnimationTranslationUtil.cpp:
+        (WebCore::createWebAnimation):
+        * platform/graphics/chromium/GraphicsLayerChromium.cpp:
+        (WebCore::GraphicsLayerChromium::addAnimation):
+
 2012-08-11  Raphael Kubo da Costa  <rakuco@webkit.org>
 
         [CMake] Rewrite FindLibSoup2.cmake.

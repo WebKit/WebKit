@@ -272,7 +272,7 @@ PassOwnPtr<WebKit::WebAnimation> createWebAnimation(const KeyframeValueList& val
             return nullptr;
     }
 
-    OwnPtr<WebKit::WebAnimation> anim(adoptPtr(new WebKit::WebAnimation(curve, animationId, groupId, targetProperty)));
+    OwnPtr<WebKit::WebAnimation> anim(adoptPtr(WebKit::WebAnimation::create(curve, animationId, groupId, targetProperty)));
 
     int iterations = (animation && animation->isIterationCountSet()) ? animation->iterationCount() : 1;
     anim->setIterations(iterations);

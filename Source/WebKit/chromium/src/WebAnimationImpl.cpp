@@ -24,11 +24,12 @@
 
 #include "config.h"
 
-#include <public/WebAnimation.h>
+#include "WebAnimationImpl.h"
 
 #include "AnimationIdVendor.h"
 #include "cc/CCActiveAnimation.h"
 #include "cc/CCAnimationCurve.h"
+#include <public/WebAnimation.h>
 #include <public/WebAnimationCurve.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
@@ -38,71 +39,66 @@ using WebCore::CCActiveAnimation;
 
 namespace WebKit {
 
-WebAnimation::TargetProperty WebAnimation::targetProperty() const
+WebAnimation* WebAnimation::create(const WebAnimationCurve& curve, TargetProperty targetProperty)
 {
-    return static_cast<WebAnimation::TargetProperty>(m_private->targetProperty());
+    return WebAnimation::create(curve, AnimationIdVendor::getNextAnimationId(), AnimationIdVendor::getNextGroupId(), targetProperty);
 }
 
-int WebAnimation::iterations() const
+WebAnimation* WebAnimation::create(const WebAnimationCurve& curve, int animationId, int groupId, TargetProperty targetProperty)
 {
-    return m_private->iterations();
+    return new WebAnimationImpl(CCActiveAnimation::create(curve, animationId, groupId, static_cast<WebCore::CCActiveAnimation::TargetProperty>(targetProperty)));
 }
 
-void WebAnimation::setIterations(int n)
+WebAnimation::TargetProperty WebAnimationImpl::targetProperty() const
 {
-    m_private->setIterations(n);
+    return static_cast<WebAnimationImpl::TargetProperty>(m_animation->targetProperty());
 }
 
-double WebAnimation::startTime() const
+int WebAnimationImpl::iterations() const
 {
-    return m_private->startTime();
+    return m_animation->iterations();
 }
 
-void WebAnimation::setStartTime(double monotonicTime)
+void WebAnimationImpl::setIterations(int n)
 {
-    m_private->setStartTime(monotonicTime);
+    m_animation->setIterations(n);
 }
 
-double WebAnimation::timeOffset() const
+double WebAnimationImpl::startTime() const
 {
-    return m_private->timeOffset();
+    return m_animation->startTime();
 }
 
-void WebAnimation::setTimeOffset(double monotonicTime)
+void WebAnimationImpl::setStartTime(double monotonicTime)
 {
-    m_private->setTimeOffset(monotonicTime);
+    m_animation->setStartTime(monotonicTime);
 }
 
-bool WebAnimation::alternatesDirection() const
+double WebAnimationImpl::timeOffset() const
 {
-    return m_private->alternatesDirection();
+    return m_animation->timeOffset();
 }
 
-void WebAnimation::setAlternatesDirection(bool alternates)
+void WebAnimationImpl::setTimeOffset(double monotonicTime)
 {
-    m_private->setAlternatesDirection(alternates);
+    m_animation->setTimeOffset(monotonicTime);
 }
 
-WebAnimation::operator PassOwnPtr<WebCore::CCActiveAnimation>() const
+bool WebAnimationImpl::alternatesDirection() const
 {
-    OwnPtr<WebCore::CCActiveAnimation> toReturn(m_private->cloneForImplThread());
+    return m_animation->alternatesDirection();
+}
+
+void WebAnimationImpl::setAlternatesDirection(bool alternates)
+{
+    m_animation->setAlternatesDirection(alternates);
+}
+
+PassOwnPtr<WebCore::CCActiveAnimation> WebAnimationImpl::cloneToCCAnimation()
+{
+    OwnPtr<WebCore::CCActiveAnimation> toReturn(m_animation->cloneForImplThread());
     toReturn->setNeedsSynchronizedStartTime(true);
     return toReturn.release();
-}
-
-void WebAnimation::initialize(const WebAnimationCurve& curve, TargetProperty targetProperty)
-{
-    initialize(curve, AnimationIdVendor::getNextAnimationId(), AnimationIdVendor::getNextGroupId(), targetProperty);
-}
-
-void WebAnimation::initialize(const WebAnimationCurve& curve, int animationId, int groupId, TargetProperty targetProperty)
-{
-    m_private.reset(CCActiveAnimation::create(curve, animationId, groupId, static_cast<WebCore::CCActiveAnimation::TargetProperty>(targetProperty)).leakPtr());
-}
-
-void WebAnimation::destroy()
-{
-    m_private.reset(0);
 }
 
 } // namespace WebKit
