@@ -1,3 +1,13 @@
+2012-08-12  Dan Bernstein  <mitz@apple.com>
+
+        <rdar://problem/11442485> off-screen or inactive pages can change the mouse pointer
+
+        Reviewed by Adele Peterson.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::fakeMouseMoveEventTimerFired): Added a check that the page is
+        on-screen and active before dispatching the fake mouse event.
+
 2012-08-12  Jonathan Dong  <jonathan.dong@torchmobile.com.cn>
 
         [BlackBerry] use MediaPlayer::userAgent() in MediaPlayerPrivateBlackBerry to avoid layering violation
