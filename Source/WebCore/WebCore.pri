@@ -259,7 +259,11 @@ mac {
     LIBS_PRIVATE += -framework Carbon -framework AppKit
 }
 
-unix:!mac:*-g++*:QMAKE_CXXFLAGS += -ffunction-sections -fdata-sections
+# -ffunction-section conflicts with -pg option
+!contains(CONFIG, gprof) {
+    unix:!mac:*-g++*:QMAKE_CXXFLAGS += -ffunction-sections
+}
+unix:!mac:*-g++*:QMAKE_CXXFLAGS += -fdata-sections
 unix:!mac:*-g++*:QMAKE_LFLAGS += -Wl,--gc-sections
 linux*-g++*:QMAKE_LFLAGS += $$QMAKE_LFLAGS_NOUNDEF
 

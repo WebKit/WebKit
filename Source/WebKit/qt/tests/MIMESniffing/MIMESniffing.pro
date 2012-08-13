@@ -2,7 +2,10 @@ include(../tests.pri)
 TARGET = MIMESniffing
 CONFIG += console
 
-SOURCES += ../../../../WebCore/platform/network/MIMESniffing.cpp
+!contains(CONFIG, gprof) {
+    SOURCES += ../../../../WebCore/platform/network/MIMESniffing.cpp
+}
+
 HEADERS += \
     ../../../../WebCore/platform/network/MIMESniffing.h \
     TestData.h
