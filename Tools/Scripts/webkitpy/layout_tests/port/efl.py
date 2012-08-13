@@ -94,6 +94,16 @@ class EflPort(Port, PulseAudioSanitizer):
         dyn_path = self._build_path('lib', 'libwebcore_efl.so')
         return static_path if self._filesystem.exists(static_path) else dyn_path
 
+    def _search_paths(self):
+        search_paths = []
+        if self.get_option('webkit_test_runner'):
+            search_paths.append(self.port_name + '-wk2')
+        search_paths.append(self.port_name)
+        return search_paths
+
+    def expectations_files(self):
+        return list(reversed([self._filesystem.join(self._webkit_baseline_path(p), 'TestExpectations') for p in self._search_paths()]))
+
     def show_results_html_file(self, results_filename):
         # FIXME: We should find a way to share this implmentation with Gtk,
         # or teach run-launcher how to call run-safari and move this down to WebKitPort.

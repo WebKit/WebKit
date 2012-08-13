@@ -1,3 +1,18 @@
+2012-08-13  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL][WK2] Replace Skipped list by TestExpectations
+        https://bugs.webkit.org/show_bug.cgi?id=93796
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Enable cascaded TestExpectations for EFL port so
+        that we can use TestExpectations in WK2-EFL.
+
+        * Scripts/webkitpy/layout_tests/port/efl.py:
+        (EflPort._search_paths):
+        (EflPort):
+        (EflPort.expectations_files):
+
 2012-08-13  Peter Gal  <galpeter@inf.u-szeged.hu>
 
         REGRESSION(r125153): It broke the 'Unexpected no expected results' case

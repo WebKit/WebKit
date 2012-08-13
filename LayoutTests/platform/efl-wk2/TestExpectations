@@ -1,0 +1,276 @@
+// We divide the EFL WK2 test expectations into several categories:
+// 1. TESTS EXPECTED TO FAIL
+//    Test cases related to features that we don't expect to be activated for EFL WK2 since
+//    the feature implementation in WebKit2 is missing or not complete yet.
+//    If test cases related to a feature cannot be activated since e.g.
+//    * the feature implementation in WebCore is not complete yet
+//    * the feature is not relevant for the EFL port
+//    * the feature is meant to solve a backwards compatibility issue on other platforms
+//    please put them into EFL TestExpectations file.
+//    If in doubt, please discuss on webkit-efl mailing list whether a set of test cases
+//    should be moved here.
+
+// 2. CRASHES
+
+// 3. FLAKY TESTS
+
+// 4. FAILING TESTS
+//    * Interim failures that are moved here for further investigation as a result of daily
+//      gardening. They should be analysed quickly and either resolved or moved to 1).
+//    * Remaining failures that are moved here until further investigation after
+//      unskipping a directory or block of tests in the Skipped list.
+//    * Tests that we expect to pass once the respective fix for DRT is available or
+//      a relevant compile time feature can be enabled for EFL.
+
+//////////////////////////////////////////////////////////////////////////////////////////
+// TESTS EXPECTED TO FAIL
+//////////////////////////////////////////////////////////////////////////////////////////
+
+//////////////////////////////////////////////////////////////////////////////////////////
+// CRASHES
+//////////////////////////////////////////////////////////////////////////////////////////
+
+BUGWKEFL : inspector/elements/event-listeners-about-blank.html = CRASH
+BUGWKEFL : inspector/console/console-assert.html  = CRASH
+BUGWKEFL : inspector/debugger/debugger-step-out.html = CRASH
+BUGWKEFL : inspector/debugger/debugger-proto-property.html = CRASH
+BUGWKEFL : inspector/debugger/debugger-activation-crash2.html = CRASH
+BUGWKEFL : inspector/debugger/debugger-suspend-active-dom-objects.html = CRASH
+BUGWKEFL : inspector/debugger/debugger-pause-in-eval-script.html = CRASH
+BUGWKEFL : inspector/debugger/debugger-eval-on-call-frame.html = CRASH
+BUGWKEFL : fast/loader/document-with-fragment-url-1.html = CRASH
+BUGWKEFL : fast/forms/select/menulist-popup-crash.html = CRASH
+BUGWKEFL : fast/forms/fieldset/fieldset-crash.html = CRASH
+BUGWKEFL : fast/events/keyevent-iframe-removed-crash.html = CRASH
+BUGWKEFL : fast/overflow/lots-of-sibling-inline-boxes.html = CRASH
+BUGWKEFL : fast/dom/register-protocol-handler.html = CRASH
+BUGWKEFL : fast/dom/unregister-protocol-handler.html = CRASH
+BUGWKEFL : sputnik/Conformance/07_Lexical_Conventions/7.8_Literals/7.8.5_Regular_Expression_Literals/S7.8.5_A2.1_T2.html = CRASH
+BUGWKEFL : http/tests/loading/fire-error-event-script-no-content-type.html = CRASH
+
+//////////////////////////////////////////////////////////////////////////////////////////
+// FLAKY TESTS
+//////////////////////////////////////////////////////////////////////////////////////////
+
+BUGWKEFL : inspector/styles/styles-add-new-rule.html = TEXT PASS
+BUGWKEFL : inspector/styles/metrics-box-sizing.html = TEXT PASS
+BUGWKEFL : inspector/styles/inject-stylesheet.html = TEXT PASS
+BUGWKEFL : inspector/styles/css-live-edit.html = TEXT PASS
+BUGWKEFL : inspector/styles/styles-cancel-editing.html = TEXT PASS
+BUGWKEFL : inspector/styles/get-set-stylesheet-text.html = TEXT PASS
+BUGWKEFL : inspector/styles/media-queries.html = TEXT PASS
+BUGWKEFL : inspector/styles/lazy-computed-style.html = TEXT PASS
+BUGWKEFL : inspector/styles/add-new-rule-inline-style-csp.html = TEXT PASS
+BUGWKEFL : inspector/styles/styles-commit-editing.html = TEXT PASS
+BUGWKEFL : inspector/styles/edit-inspector-stylesheet.html = TEXT PASS
+BUGWKEFL : inspector/styles/commit-selector.html = TEXT PASS
+BUGWKEFL : inspector/styles/force-pseudo-state.html = TEXT PASS
+BUGWKEFL : inspector/styles/styles-add-invalid-property.html = TEXT PASS
+BUGWKEFL : inspector/styles/perform-undo-perform-of-mergable-action.html = TEXT PASS
+BUGWKEFL : inspector/elements/insert-node.html = TEXT PASS
+BUGWKEFL : inspector/elements/elements-inspect-iframe-from-different-domain.html = TEXT PASS
+BUGWKEFL : inspector/elements/elements-panel-styles.html = TEXT PASS
+BUGWKEFL : inspector/elements/elements-panel-selection-on-refresh.html = TEXT PASS
+BUGWKEFL : inspector/elements/elements-panel-limited-children.html = TEXT PASS
+BUGWKEFL : inspector/elements/elements-panel-reload-assert.html = TEXT PASS
+BUGWKEFL : inspector/elements/elements-panel-rewrite-href.html = TEXT PASS
+BUGWKEFL : inspector/elements/event-listener-sidebar.html = TEXT PASS
+BUGWKEFL : inspector/elements/elements-panel-structure.html = TEXT PASS
+BUGWKEFL : inspector/elements/highlight-node-scaled.html = TEXT PASS
+BUGWKEFL : inspector/console/console-format.html = TEXT PASS
+BUGWKEFL : inspector/console/command-line-api-inspect.html = TEXT PASS
+BUGWKEFL : inspector/console/console-api-on-call-frame.html = TEXT PASS
+BUGWKEFL : inspector/console/console-big-array.html = TEXT PASS
+BUGWKEFL : inspector/debugger/debugger-breakpoints-not-activated-on-reload.html = TEXT PASS
+BUGWKEFL : inspector/debugger/debugger-eval-while-paused.html = TEXT PASS
+BUGWKEFL : inspector/debugger/debugger-no-nested-pause.html = TEXT PASS
+BUGWKEFL : inspector/debugger/callstack-placards-discarded.html = TEXT PASS
+BUGWKEFL : inspector/debugger/debugger-expand-scope.html = TEXT PASS
+BUGWKEFL : inspector/debugger/debugger-step-in.html = TEXT PASS
+BUGWKEFL : inspector/debugger/debugger-reload-on-pause.html = TEXT PASS
+BUGWKEFL : inspector/debugger/debugger-autocontinue-on-syntax-error.html = TEXT PASS
+BUGWKEFL : inspector/debugger/debugger-activation-crash.html = TEXT PASS
+BUGWKEFL : inspector/debugger/debugger-pause-on-debugger-statement.html = TEXT PASS
+BUGWKEFL : inspector/debugger/debugger-pause-in-internal.html = TEXT PASS
+BUGWKEFL : inspector/debugger/pause-in-inline-script.html = TEXT PASS
+BUGWKEFL : inspector/debugger/debugger-step-over.html = TEXT PASS
+BUGWKEFL : inspector/debugger/breakpoint-manager.html = TEXT PASS
+BUGWKEFL : inspector/debugger/copy-stack-trace.html = TEXT PASS
+BUGWKEFL : inspector/debugger/debugger-pause-on-exception.html = TEXT PASS
+BUGWKEFL : inspector/timeline/timeline-animation-frame.html = TEXT PASS
+BUGWKEFL : inspector/cookie-parser.html = TEXT PASS
+BUGWKEFL : inspector/profiler/cpu-profiler-profiling.html = TEXT PASS
+BUGWKEFL : inspector/extensions/extensions-resources.html = TEXT PASS
+BUGWKEFL : inspector/extensions/extensions-audits-api.html = TEXT PASS
+BUGWKEFL : inspector/extensions/extensions-reload.html = TEXT PASS
+BUGWKEFL : inspector/editor/highlighter-basics.html = TEXT PASS
+BUGWKEFL : inspector/editor/highlighter-long-line.html = TEXT PASS
+BUGWKEFL : inspector/audits/audits-panel-functional.html = TEXT PASS
+BUGWKEFL : inspector/runtime/runtime-callFunctionOn.html = TEXT PASS
+BUGWKEFL : inspector/storage-panel-dom-storage-update.html = TEXT PASS
+BUGWKEFL : media/video-played-reset.html = TEXT PASS
+BUGWKEFL : fast/encoding/parser-tests-110.html = TEXT PASS
+BUGWKEFL : fast/loader/fragment-after-redirect-gets-back-entry.html = TEXT PASS
+BUGWKEFL : fast/loader/child-frame-add-after-back-forward.html = TEXT PASS
+BUGWKEFL : fast/forms/validation-message-user-modify.html = TEXT PASS
+BUGWKEFL : fast/events/onchange-click-hang.html = TEXT PASS
+BUGWKEFL : fast/events/dispatch-message-string-data.html = TEXT PASS
+BUGWKEFL : fast/events/domactivate-sets-underlying-click-event-as-handled.html = TEXT PASS
+BUGWKEFL : sputnik/Conformance/07_Lexical_Conventions/7.8_Literals/7.8.5_Regular_Expression_Literals/S7.8.5_A1.4_T2.html = TEXT PASS
+BUGWKEFL : sputnik/Conformance/07_Lexical_Conventions/7.8_Literals/7.8.5_Regular_Expression_Literals/S7.8.5_A1.1_T2.html = TEXT PASS
+BUGWKEFL : http/tests/inspector/change-iframe-src.html = TEXT PASS
+BUGWKEFL : jquery/offset.html = TEXT PASS
+BUGWKEFL : svg/dom/viewspec-parser-3.html = TEXT PASS
+BUGWKEFL : svg/dom/viewspec-parser-1.html = TEXT PASS
+BUGWKEFL : svg/dom/viewspec-parser-4.html = TEXT PASS
+BUGWKEFL : svg/dom/viewspec-parser-2.html = TEXT PASS
+BUGWKEFL : svg/dom/viewspec-parser-5.html = TEXT PASS
+
+//////////////////////////////////////////////////////////////////////////////////////////
+// FAILING TESTS
+//////////////////////////////////////////////////////////////////////////////////////////
+
+// WebKitTestRunner needs an implementation for testRunner.queueLoad
+BUGWKEFL : fast/dom/navigation-type-back-forward.html = TEXT
+BUGWKEFL : fast/dom/navigation-type-navigate.html = TEXT
+BUGWKEFL : fast/dom/navigation-type-reload.html = TEXT
+
+// WebKitTestRunner needs an implementation for testRunner.titleTextDirection
+BUGWK93470 : fast/dom/title-directionality-removeChild.html = TEXT
+BUGWK93470 : fast/dom/title-directionality.html = TEXT
+
+// WebKitTestRunner needs an implementation for eventSender.scheduleAsynchronousClick
+BUGWKEFL : fast/events/popup-blocking-click-in-iframe.html = TEXT
+
+// WebKitTestRunner eventSender needs touch events support
+BUGWKEFL : fast/events/touch/basic-multi-touch-events-limited.html = TEXT
+BUGWKEFL : fast/events/touch/basic-multi-touch-events.html = TEXT
+BUGWKEFL : fast/events/touch/basic-single-touch-events.html = TEXT
+BUGWKEFL : fast/events/touch/multi-touch-grouped-targets.html = TEXT
+BUGWKEFL : fast/events/touch/send-oncancel-event.html = TEXT
+BUGWKEFL : fast/events/touch/tap-highlight-color.html = TEXT
+BUGWKEFL : fast/events/touch/touch-active-state.html = TEXT
+BUGWKEFL : fast/events/touch/touch-before-pressing-spin-button.html = TEXT
+BUGWKEFL : fast/events/touch/touch-coords-in-zoom-and-scroll.html = TEXT
+BUGWKEFL : fast/events/touch/touch-inside-iframe.html = TEXT
+BUGWKEFL : fast/events/touch/touch-slider-no-js-touch-listener.html = TEXT
+BUGWKEFL : fast/events/touch/touch-slider.html = TEXT
+BUGWKEFL : fast/events/touch/touch-stale-node-crash.html = TEXT
+BUGWKEFL : fast/events/touch/touch-target-limited.html = TEXT
+BUGWKEFL : fast/events/touch/touch-target.html = TEXT
+
+// WebKitTestRunner needs an implementation for testRunner.setViewModeMediaFeature
+BUGWKEFL : fast/media/media-query-list-02.html = TEXT
+BUGWKEFL : fast/media/media-query-list-03.html = TEXT
+BUGWKEFL : fast/media/media-query-list-04.html = TEXT
+BUGWKEFL : fast/media/media-query-list-05.html = TEXT
+BUGWKEFL : fast/media/media-query-list-06.html = TEXT
+BUGWKEFL : fast/media/media-query-list-07.html = TEXT
+BUGWKEFL : fast/media/view-mode-media-feature.html = TEXT
+
+// WebKitTestRunner needs an implementation for eventSender.scheduleAsynchronousKeyDown
+BUGWKEFL : fast/mutation/end-of-task-delivery.html = TEXT
+
+// Failing Ruby tests
+BUGWKEFL : fast/ruby/nested-ruby.html = TEXT
+BUGWKEFL : fast/ruby/ruby-beforeafter.html = TEXT
+BUGWKEFL : fast/ruby/ruby-empty-rt.html = TEXT
+BUGWKEFL : fast/ruby/ruby-length.html = TEXT
+BUGWKEFL : fast/ruby/ruby-run-break.html = TEXT
+BUGWKEFL : fast/ruby/ruby-runs-spans.html = TEXT
+BUGWKEFL : fast/ruby/ruby-runs.html = TEXT
+BUGWKEFL : fast/ruby/ruby-simple-rp.html = TEXT
+BUGWKEFL : fast/ruby/ruby-simple.html = TEXT
+BUGWKEFL : fast/ruby/ruby-trailing.html = TEXT
+BUGWKEFL : fast/ruby/rubyDOM-insert-rt.html = TEXT
+BUGWKEFL : fast/ruby/rubyDOM-insert-text1.html = TEXT
+BUGWKEFL : fast/ruby/rubyDOM-insert-text2.html = TEXT
+BUGWKEFL : fast/ruby/rubyDOM-insert-text3.html = TEXT
+BUGWKEFL : fast/ruby/rubyDOM-remove-rt1.html = TEXT
+BUGWKEFL : fast/ruby/rubyDOM-remove-rt2.html = TEXT
+BUGWKEFL : fast/ruby/rubyDOM-remove-text1.html = TEXT
+BUGWKEFL : fast/ruby/rubyDOM-remove-text2.html = TEXT
+
+// Failing Security tests
+BUGWKEFL : http/tests/security/aboutBlank/security-context-grandchildren-lexical.html = TEXT
+BUGWKEFL : http/tests/security/aboutBlank/security-context-grandchildren-write-lexical.html = TEXT
+BUGWKEFL : http/tests/security/aboutBlank/security-context-grandchildren-writeln-lexical.html = TEXT
+BUGWKEFL : http/tests/security/aboutBlank/security-context-grandchildren.html = TEXT
+BUGWKEFL : http/tests/security/aboutBlank/security-context-window-open.html = TEXT
+BUGWKEFL : http/tests/security/aboutBlank/security-context-with-base-tag.html = TEXT
+BUGWKEFL : http/tests/security/aboutBlank/security-context-write.html = TEXT
+BUGWKEFL : http/tests/security/aboutBlank/security-context-writeln.html = TEXT
+BUGWKEFL : http/tests/security/aboutBlank/security-context.html = TEXT
+BUGWKEFL : http/tests/security/cookies/assign-document-url.html = TEXT
+BUGWKEFL : http/tests/security/cookies/base-about-blank.html = TEXT
+BUGWKEFL : http/tests/security/cookies/base-tag.html = TEXT
+BUGWKEFL : http/tests/security/cookies/basic.html = TEXT
+BUGWKEFL : http/tests/security/cookies/document-open.html = TEXT
+
+// WebKitTestRunner needs an implementation for testRunner.setStorageDatabaseIdleInterval
+BUGWKEFL : storage/domstorage/storage-close-database-on-idle.html = TEXT
+
+// Unclassified failures
+BUGWKEFL : editing/execCommand/format-block-multiple-paragraphs-in-pre.html = TEXT
+BUGWKEFL : editing/input/emacs-ctrl-o.html = TEXT
+BUGWKEFL : editing/input/page-up-down-scrolls.html = TEXT
+BUGWKEFL : fast/block/float/float-in-float-hit-testing.html = TEXT
+BUGWKEFL : fast/box-sizing/box-sizing.html = TEXT
+BUGWKEFL : fast/cookies/local-file-can-set-cookies.html = TEXT
+BUGWKEFL : fast/css/bidi-override-in-anonymous-block.html = TEXT
+BUGWKEFL : fast/css/media-rule-screenDepthPerComponent.html = TEXT
+BUGWKEFL : fast/css/relative-positioned-block-crash.html = TEXT
+BUGWKEFL : fast/dom/Window/mozilla-focus-blur.html = TEXT
+BUGWKEFL : fast/dom/Window/timer-resume-on-navigation-back.html = TEXT
+BUGWKEFL : fast/dom/frame-loading-via-document-write.html = TEXT
+BUGWKEFL : fast/events/node-event-anchor-lock.html = TEXT
+BUGWKEFL : fast/events/pagehide-timeout.html = TEXT
+BUGWKEFL : fast/events/pagehide-xhr-open.html = TEXT
+BUGWKEFL : fast/events/pageshow-pagehide-on-back-cached-with-frames.html = TEXT
+BUGWKEFL : fast/events/pageshow-pagehide-on-back-cached.html = TEXT
+BUGWKEFL : fast/events/scroll-after-click-on-tab-index.html = TEXT
+BUGWKEFL : fast/events/suspend-timers.html = TEXT
+BUGWKEFL : fast/forms/autocomplete-off-with-default-value-does-not-clear.html = TEXT
+BUGWKEFL : fast/forms/legend-access-key.html = TEXT
+BUGWKEFL : fast/forms/listbox-deselect-scroll.html = TEXT
+BUGWKEFL : fast/forms/listbox-selection.html = TEXT
+BUGWKEFL : fast/forms/plaintext-mode-1.html = TEXT
+BUGWKEFL : fast/forms/select-multiple-elements-with-mouse-drag-with-options-less-than-size.html = TEXT
+BUGWKEFL : fast/forms/select-writing-direction-natural.html = TEXT
+BUGWKEFL : fast/forms/validation-message-in-relative-body.html = TEXT
+BUGWKEFL : fast/frames/flattening/iframe-tiny.html = TEXT
+BUGWKEFL : fast/harness/use-page-cache.html = TEXT
+BUGWKEFL : fast/history/timed-refresh-in-cached-frame.html = TEXT
+BUGWKEFL : fast/media/color-does-not-include-alpha.html = TEXT
+BUGWKEFL : fast/media/implicit-media-all.html = TEXT
+BUGWKEFL : fast/media/mq-compound-query-01.html = TEXT
+BUGWKEFL : fast/media/mq-compound-query-02.html = TEXT
+BUGWKEFL : fast/media/mq-compound-query-03.html = TEXT
+BUGWKEFL : fast/media/mq-compound-query-04.html = TEXT
+BUGWKEFL : fast/media/mq-js-media-except-01.html = TEXT
+BUGWKEFL : fast/media/mq-js-stylesheet-media-01.html = TEXT
+BUGWKEFL : fast/media/mq-js-stylesheet-media-02.html = TEXT
+BUGWKEFL : fast/media/mq-js-stylesheet-media-03.html = TEXT
+BUGWKEFL : fast/media/mq-simple-query-05.html = TEXT
+BUGWKEFL : fast/media/mq-valueless.html = TEXT
+BUGWKEFL : fast/repaint/fixed-move-after-keyboard-scroll.html = TEXT
+BUGWKEFL : fast/replaced/no-focus-ring-embed.html = TEXT
+BUGWKEFL : fast/replaced/no-focus-ring-object.html = TEXT
+BUGWKEFL : fast/text/international/spaces-combined-in-vertical-text.html = TEXT
+BUGWKEFL : fast/viewport/viewport-128.html = TEXT
+BUGWKEFL : fast/workers/worker-cloneport.html = TEXT
+BUGWKEFL : http/tests/appcache/load-from-appcache-defer-resume-crash.html = TEXT
+BUGWKEFL : http/tests/inspector/network/network-sidebar-width.html = TEXT
+BUGWKEFL : http/tests/inspector/resource-main-cookies.php = TEXT
+BUGWKEFL : http/tests/misc/object-embedding-svg-delayed-size-negotiation-2.htm = TEXT
+BUGWKEFL : http/tests/navigation/https-in-page-cache.html = TEXT
+BUGWKEFL : http/tests/xmlhttprequest/workers/abort-exception-assert.html = TEXT
+BUGWKEFL : inspector/debugger/debugger-completions-on-call-frame.html = TEXT
+BUGWKEFL : inspector/extensions/extensions-panel.html = TEXT
+BUGWKEFL : inspector/extensions/extensions-sidebar.html = TEXT
+BUGWKEFL : jquery/attributes.html = TEXT
+
+// WTR does not print information about Web Intents MessagePorts
+BUGWK89072 : webintents/web-intents-invoke-port.html = FAIL
+BUGWK89072 : webintents/web-intents-obj-constructor.html = TEXT
+

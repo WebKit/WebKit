@@ -1,3 +1,17 @@
+2012-08-13  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL][WK2] Replace Skipped list by TestExpectations
+        https://bugs.webkit.org/show_bug.cgi?id=93796
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Replace efl-wk2 Skipped file by TestExpectations now
+        that we support cascaded TestExpectations in EFL
+        port.
+
+        * platform/efl-wk2/Skipped: Removed.
+        * platform/efl-wk2/TestExpectations: Added.
+
 2012-08-13  Shinya Kawanaka  <shinyak@chromium.org>
 
         Cannot select the AuthorShadowDOM inner element of an img element
