@@ -1,5 +1,12 @@
 2012-08-13  Raphael Kubo da Costa  <rakuco@webkit.org>
 
+        [EFL] Unreviewed bot fix after r125467.
+
+        * PlatformEfl.cmake: Make the WK2 tests link against glib, gobject
+        and gio as well.
+
+2012-08-13  Raphael Kubo da Costa  <rakuco@webkit.org>
+
         [EFL] Unreviewed attempt at fixing the bots after r125467.
 
         * PlatformEfl.cmake: Link against GIO and GObject due to the usage
