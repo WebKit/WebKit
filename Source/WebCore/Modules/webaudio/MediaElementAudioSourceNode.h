@@ -25,7 +25,7 @@
 #ifndef MediaElementAudioSourceNode_h
 #define MediaElementAudioSourceNode_h
 
-#if ENABLE(VIDEO)
+#if ENABLE(WEB_AUDIO) && ENABLE(VIDEO)
 
 #include "AudioSourceNode.h"
 #include "AudioSourceProviderClient.h"
@@ -74,6 +74,6 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(VIDEO)
+#endif // ENABLE(WEB_AUDIO) && ENABLE(VIDEO)
 
 #endif // MediaElementAudioSourceNode_h

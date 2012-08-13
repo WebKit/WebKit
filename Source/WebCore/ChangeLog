@@ -1,3 +1,20 @@
+2012-08-13  Zan Dobersek  <zandobersek@gmail.com>
+
+        Media(Stream|Element)AudioSourceNode should be guarded by the WEB_AUDIO condition as well
+        https://bugs.webkit.org/show_bug.cgi?id=93864
+
+        Reviewed by Eric Carlson.
+
+        Add the WEB_AUDIO to the Conditional attribute in MediaElementAudioSourceNode
+        IDL file and the ENABLE(WEB_AUDIO) compilation guard to the header files for both
+        MediaStreamAudioSourceNode and MediaElementAudioSourceNode.
+
+        No new tests - no new functionality.
+
+        * Modules/webaudio/MediaElementAudioSourceNode.h:
+        * Modules/webaudio/MediaStreamAudioSourceNode.h:
+        * Modules/webaudio/MediaStreamAudioSourceNode.idl:
+
 2012-08-13  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] Clean up exception handling

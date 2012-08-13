@@ -24,7 +24,7 @@
 
 module audio {
     interface [
-        Conditional=MEDIA_STREAM,
+        Conditional=WEB_AUDIO&MEDIA_STREAM,
         JSGenerateToJSObject
     ] MediaStreamAudioSourceNode : AudioSourceNode {
         readonly attribute MediaStream mediaStream;
