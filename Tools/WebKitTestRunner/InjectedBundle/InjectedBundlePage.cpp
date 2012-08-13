@@ -580,7 +580,7 @@ void InjectedBundlePage::didFinishLoadForResource(WKBundlePageRef page, WKBundle
 
 void InjectedBundlePage::didFailLoadForResource(WKBundlePageRef page, WKBundleFrameRef frame, uint64_t identifier, WKErrorRef error, const void* clientInfo)
 {
-    static_cast<InjectedBundlePage*>(const_cast<void*>(clientInfo))->didFinishLoadForResource(page, frame, identifier, error);
+    static_cast<InjectedBundlePage*>(const_cast<void*>(clientInfo))->didFailLoadForResource(page, frame, identifier, error);
 }
 
 void InjectedBundlePage::didStartProvisionalLoadForFrame(WKBundleFrameRef frame)

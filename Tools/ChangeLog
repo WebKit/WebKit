@@ -1,3 +1,15 @@
+2012-08-13  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [WK2] [WTR] InjectedBundlePage::didFailLoadForResource invokes wrong callback
+        https://bugs.webkit.org/show_bug.cgi?id=93825
+
+        Reviewed by Antonio Gomes.
+
+        Corrected from didFinishLoadForResource() invoke to didFailLoadForResource() invoke. 
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::InjectedBundlePage::didFailLoadForResource):
+
 2012-08-13  Kwang Yul Seo  <skyul@company100.net>
 
         [Qt] Add gprof.prf to build WebKit with gprof enabled
