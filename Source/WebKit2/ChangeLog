@@ -1,3 +1,10 @@
+2012-08-13  Raphael Kubo da Costa  <rakuco@webkit.org>
+
+        [EFL] Unreviewed attempt at fixing the bots after r125467.
+
+        * PlatformEfl.cmake: Link against GIO and GObject due to the usage
+        of libsoup.
+
 2012-08-11  Raphael Kubo da Costa  <rakuco@webkit.org>
 
         [CMake] Rewrite FindLibSoup2.cmake.
