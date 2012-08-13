@@ -1908,6 +1908,7 @@ void StyleResolver::keyframeStylesForAnimation(Element* e, const RenderStyle* el
 
 PassRefPtr<RenderStyle> StyleResolver::pseudoStyleForElement(PseudoId pseudo, Element* e, RenderStyle* parentStyle)
 {
+    ASSERT(m_parentStyle);
     if (!e)
         return 0;
 
@@ -1915,9 +1916,7 @@ PassRefPtr<RenderStyle> StyleResolver::pseudoStyleForElement(PseudoId pseudo, El
 
     initForStyleResolve(e, parentStyle, pseudo);
     m_style = RenderStyle::create();
-
-    if (m_parentStyle)
-        m_style->inheritFrom(m_parentStyle);
+    m_style->inheritFrom(m_parentStyle);
 
     // Since we don't use pseudo-elements in any of our quirk/print user agent rules, don't waste time walking
     // those rules.
@@ -2070,6 +2069,8 @@ static bool doesNotInheritTextDecoration(RenderStyle* style, Element* e)
 
 void StyleResolver::adjustRenderStyle(RenderStyle* style, RenderStyle* parentStyle, Element *e)
 {
+    ASSERT(parentStyle);
+
     // Cache our original display.
     style->setOriginalDisplay(style->display());
 
@@ -2129,7 +2130,7 @@ void StyleResolver::adjustRenderStyle(RenderStyle* style, RenderStyle* parentSty
 
         // FIXME: Don't support this mutation for pseudo styles like first-letter or first-line, since it's not completely
         // clear how that should work.
-        if (style->display() == INLINE && style->styleType() == NOPSEUDO && parentStyle && style->writingMode() != parentStyle->writingMode())
+        if (style->display() == INLINE && style->styleType() == NOPSEUDO && style->writingMode() != parentStyle->writingMode())
             style->setDisplay(INLINE_BLOCK);
 
         // After performing the display mutation, check table rows. We do not honor position:relative on

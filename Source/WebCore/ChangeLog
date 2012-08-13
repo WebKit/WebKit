@@ -1,3 +1,17 @@
+2012-08-12  Ojan Vafai  <ojan@chromium.org>
+
+        Remove unnecessary null checks from pseudoStyleForElement and adjustRenderStyle
+        https://bugs.webkit.org/show_bug.cgi?id=93730
+
+        Reviewed by Tony Chang.
+
+        All the callers of both methods make sure to pass in a non-null parentStyle.
+
+        No change in behavior.
+
+        * css/StyleResolver.cpp:
+        * css/StyleResolver.h:
+
 2012-08-12  Pravin D  <pravind.2k4@gmail.com>
 
         table cell.cellIndex should return -1 if there is no parent table
