@@ -32,6 +32,7 @@
 #include "JSNode.h"
 #include "Logging.h"
 #include "Page.h"
+#include "ScriptController.h"
 #include "SecurityOrigin.h"
 #include "Settings.h"
 #include "WebCoreJSClientData.h"
@@ -196,6 +197,7 @@ JSGlobalData* JSDOMWindowBase::commonJSGlobalData()
 
     static JSGlobalData* globalData = 0;
     if (!globalData) {
+        ScriptController::initializeThreading();
         globalData = JSGlobalData::createLeaked(ThreadStackTypeLarge, LargeHeap).leakRef();
         globalData->timeoutChecker.setTimeoutInterval(10000); // 10 seconds
 #ifndef NDEBUG
