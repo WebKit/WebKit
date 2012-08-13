@@ -33,7 +33,6 @@
 
 #include "TextRun.h"
 #include <wtf/OwnArrayPtr.h>
-#include <wtf/unicode/CharacterNames.h>
 
 namespace WebCore {
 
@@ -58,8 +57,8 @@ protected:
     // WebKit uses this to justify text.
     void setPadding(int);
 
-    // In complex text word-spacing affects each line-break, space (U+0020) and non-breaking space (U+00A0).
-    static bool isCodepointSpace(UChar c) { return c == ' ' || c == noBreakSpace || c == '\n'; }
+    // This matches the logic in RenderBlock::findNextLineBreak
+    static bool isCodepointSpace(UChar c) { return c == ' ' || c == '\t'; }
 
     const Font* m_font;
     OwnArrayPtr<UChar> m_normalizedBuffer;

@@ -1,3 +1,26 @@
+2012-08-13  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r125430.
+        http://trac.webkit.org/changeset/125430
+        https://bugs.webkit.org/show_bug.cgi?id=93881
+
+        Caused css2.1/t1604-c541-word-sp-00-b-a.html to regress on Mac
+        builds (Requested by mwenge on #webkit).
+
+        * platform/graphics/WidthIterator.cpp:
+        (WebCore::WidthIterator::advance):
+        * platform/graphics/harfbuzz/HarfBuzzShaperBase.cpp:
+        (WebCore::HarfBuzzShaperBase::isWordEnd):
+        * platform/graphics/harfbuzz/HarfBuzzShaperBase.h:
+        (HarfBuzzShaperBase):
+        (WebCore::HarfBuzzShaperBase::isCodepointSpace):
+        * platform/graphics/mac/ComplexTextController.cpp:
+        (WebCore::ComplexTextController::adjustGlyphsAndAdvances):
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::LineBreaker::nextLineBreak):
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::widthFromCache):
+
 2012-08-13  Mike West  <mkwst@chromium.org>
 
         FrameLoader::receivedMainResourceError doesn't handle GET cancellations well.

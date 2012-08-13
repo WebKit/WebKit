@@ -507,8 +507,8 @@ void ComplexTextController::adjustGlyphsAndAdvances()
                     } else
                         m_afterExpansion = false;
 
-                    // In complex text word-spacing affects each line-break, space (U+0020) and non-breaking space (U+00A0).
-                    if ((ch == noBreakSpace || ch == ' ' || ch == '\n') && characterIndex > 0 && m_font.wordSpacing())
+                    // Account for word-spacing.
+                    if (treatAsSpace && characterIndex > 0 && !Font::treatAsSpace(*m_run.data(characterIndex - 1)) && m_font.wordSpacing())
                         advance.width += m_font.wordSpacing();
                 } else
                     m_afterExpansion = false;

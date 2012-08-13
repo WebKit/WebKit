@@ -862,6 +862,3 @@ BUGWK93328 : inspector/debugger/pause-in-internal-script.html = TEXT
 BUGWK93328 : inspector/debugger/script-formatter-breakpoints.html = TEXT
 BUGWK93328 : inspector/debugger/set-breakpoint.html = TEXT
 BUGWK93328 : inspector/debugger/watch-expressions-panel-switch.html = TEXT
-
-// Require rebaselining after  https://bugs.webkit.org/show_bug.cgi?id=89826
-BUGWK89826 : fast/css/word-space-extra.html = TEXT

@@ -3479,6 +3479,3 @@ BUGWK93799 MAC : fast/dom/HTMLMeterElement/meter-optimums.html = PASS IMAGE
 BUGWK93799 MAC : fast/dom/HTMLMeterElement/meter-styles.html = PASS IMAGE
 
 BUGWK93801 LION : fast/speech/input-appearance-searchandspeech.html = PASS IMAGE
-
-// Require rebaselining after  https://bugs.webkit.org/show_bug.cgi?id=89826
-BUGWK89826 MAC WIN : fast/css/word-space-extra.html = IMAGE+TEXT

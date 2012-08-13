@@ -727,6 +727,7 @@ ALWAYS_INLINE float RenderText::widthFromCache(const Font& f, int start, int len
         float monospaceCharacterWidth = f.spaceWidth();
         float w = 0;
         bool isSpace;
+        bool previousCharWasSpace = true; // FIXME: Preserves historical behavior, but seems wrong for start > 0.
         ASSERT(m_text);
         StringImpl& text = *m_text.impl();
         for (int i = start; i < start + len; i++) {
@@ -737,15 +738,16 @@ ALWAYS_INLINE float RenderText::widthFromCache(const Font& f, int start, int len
                     isSpace = true;
                 } else if (c == '\t') {
                     w += style()->collapseWhiteSpace() ? monospaceCharacterWidth : f.tabWidth(style()->tabSize(), xPos + w);
-                    isSpace = false;
+                    isSpace = true;
                 } else
                     isSpace = false;
             } else {
                 w += monospaceCharacterWidth;
                 isSpace = false;
             }
-            if (isSpace)
+            if (isSpace && !previousCharWasSpace)
                 w += f.wordSpacing();
+            previousCharWasSpace = isSpace;
         }
         return w;
     }

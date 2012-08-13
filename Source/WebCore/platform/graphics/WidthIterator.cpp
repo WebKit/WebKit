@@ -185,8 +185,7 @@ unsigned WidthIterator::advance(int offset, GlyphBuffer* glyphBuffer)
 
                 // Account for word spacing.
                 // We apply additional space between "words" by adding width to the space character.
-                // Word-spacing affects each space (U+0020) and non-breaking space (U+00A0).
-                if ((character == noBreakSpace || character == ' ') && textIterator.currentCharacter() && m_font->wordSpacing())
+                if (treatAsSpace && textIterator.currentCharacter() && !Font::treatAsSpace(textIterator.characters()[-1]) && m_font->wordSpacing())
                     width += m_font->wordSpacing();
             } else
                 m_isAfterExpansion = false;
