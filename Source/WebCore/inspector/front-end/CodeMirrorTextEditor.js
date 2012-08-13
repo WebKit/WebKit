@@ -180,22 +180,17 @@ WebInspector.CodeMirrorTextEditor.prototype = {
      */
     editRange: function(range, text)
     {
-        this._delegate.beforeTextChanged();
-
         var pos = this._toPos(range);
         this._codeMirror.replaceRange(text, pos.start, pos.end);
         var newRange = this._toRange(pos.start, this._codeMirror.posFromIndex(this._codeMirror.indexFromPos(pos.start) + text.length));
-
-        this._delegate.afterTextChanged(range, newRange);
-
+        this._delegate.onTextChanged(range, newRange);
         return newRange;
     },
 
     _onChange: function()
     {
-        this._delegate.beforeTextChanged();
         var newRange = this.range();
-        this._delegate.afterTextChanged(this._lastRange, newRange);
+        this._delegate.onTextChanged(this._lastRange, newRange);
         this._lastRange = newRange;
     },
 

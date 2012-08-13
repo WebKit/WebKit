@@ -273,15 +273,11 @@ WebInspector.SourceFrame.prototype = {
         this._innerSetSelectionIfNeeded();
     },
 
-    beforeTextChanged: function()
+    onTextChanged: function(oldRange, newRange)
     {
         if (!this._isReplacing)
             WebInspector.searchController.cancelSearch();
         this.clearMessages();
-    },
-
-    afterTextChanged: function(oldRange, newRange)
-    {
     },
 
     /**
@@ -645,14 +641,9 @@ WebInspector.TextEditorDelegateForSourceFrame = function(sourceFrame)
 }
 
 WebInspector.TextEditorDelegateForSourceFrame.prototype = {
-    beforeTextChanged: function()
+    onTextChanged: function(oldRange, newRange)
     {
-        this._sourceFrame.beforeTextChanged();
-    },
-
-    afterTextChanged: function(oldRange, newRange)
-    {
-        this._sourceFrame.afterTextChanged(oldRange, newRange);
+        this._sourceFrame.onTextChanged(oldRange, newRange);
     },
 
     commitEditing: function()

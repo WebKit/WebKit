@@ -251,7 +251,6 @@ WebInspector.DefaultTextEditor.prototype = {
     _enterInternalTextChangeMode: function()
     {
         this._internalTextChangeMode = true;
-        this._delegate.beforeTextChanged();
     },
 
     /**
@@ -261,7 +260,7 @@ WebInspector.DefaultTextEditor.prototype = {
     _exitInternalTextChangeMode: function(oldRange, newRange)
     {
         this._internalTextChangeMode = false;
-        this._delegate.afterTextChanged(oldRange, newRange);
+        this._delegate.onTextChanged(oldRange, newRange);
     },
 
     _updatePanelOffsets: function()

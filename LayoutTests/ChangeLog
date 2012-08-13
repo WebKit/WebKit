@@ -1,3 +1,14 @@
+2012-08-13  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: get rid of beforeTextChanged
+        https://bugs.webkit.org/show_bug.cgi?id=93851
+
+        Reviewed by Vsevolod Vlasov.
+
+        * http/tests/inspector/live-edit-test.js:
+        (initialize_LiveEditTest.InspectorTest.replaceInSource):
+        (initialize_LiveEditTest):
+
 2012-08-13  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL][WK2] Update TestExpectations to make bot green

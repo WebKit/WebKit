@@ -187,13 +187,11 @@ WebInspector.TextEditorDelegate = function()
 }
 
 WebInspector.TextEditorDelegate.prototype = {
-    beforeTextChanged: function() { },
-
     /**
      * @param {WebInspector.TextRange} oldRange
      * @param {WebInspector.TextRange} newRange
      */
-    afterTextChanged: function(oldRange, newRange) { },
+    onTextChanged: function(oldRange, newRange) { },
 
     commitEditing: function() { },
 

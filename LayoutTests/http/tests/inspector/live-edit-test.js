@@ -3,7 +3,6 @@ var initialize_LiveEditTest = function() {
 InspectorTest.replaceInSource = function(sourceFrame, string, replacement, callback)
 {
     sourceFrame._textEditor._mainPanel.setReadOnly(false);
-    sourceFrame.beforeTextChanged();
     var oldRange, newRange;
     var lines = sourceFrame._textEditor._textModel._lines;
     for (var i = 0; i < lines.length; ++i) {
@@ -17,7 +16,7 @@ InspectorTest.replaceInSource = function(sourceFrame, string, replacement, callb
         newRange = new WebInspector.TextRange(i, column, i + lineEndings.length - 1, lastLineLength);
         break;
     }
-    sourceFrame.afterTextChanged(oldRange, newRange);
+    sourceFrame.onTextChanged(oldRange, newRange);
     sourceFrame._textEditor._commitEditing();
 }
 

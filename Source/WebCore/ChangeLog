@@ -1,3 +1,32 @@
+2012-08-13  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: get rid of beforeTextChanged
+        https://bugs.webkit.org/show_bug.cgi?id=93851
+
+        Reviewed by Vsevolod Vlasov.
+
+        Merged beforeTextChanged and afterTextChanged into a single
+        onTextChanged event.
+
+        * inspector/front-end/CodeMirrorTextEditor.js:
+        (WebInspector.CodeMirrorTextEditor.prototype.editRange):
+        (WebInspector.CodeMirrorTextEditor.prototype._onChange):
+        * inspector/front-end/DefaultTextEditor.js:
+        (WebInspector.DefaultTextEditor.prototype._enterInternalTextChangeMode):
+        (WebInspector.DefaultTextEditor.prototype._exitInternalTextChangeMode):
+        * inspector/front-end/JavaScriptSourceFrame.js:
+        (WebInspector.JavaScriptSourceFrame.prototype.onTextChanged):
+        (WebInspector.JavaScriptSourceFrame.prototype._removeBreakpointsBeforeEditing):
+        (WebInspector.JavaScriptSourceFrame.prototype._addBreakpointDecoration):
+        (WebInspector.JavaScriptSourceFrame.prototype._removeBreakpointDecoration):
+        * inspector/front-end/SourceFrame.js:
+        (WebInspector.SourceFrame.prototype.onTextChanged):
+        (WebInspector.TextEditorDelegateForSourceFrame.prototype.onTextChanged):
+        * inspector/front-end/TextEditor.js:
+        (WebInspector.TextEditorDelegate.prototype.onTextChanged):
+        * inspector/front-end/UISourceCodeFrame.js:
+        (WebInspector.UISourceCodeFrame.prototype.onTextChanged):
+
 2012-08-13  Bruno de Oliveira Abinader  <bruno.abinader@basyskom.com>
 
         [css] Remove "default" switch case from CSS primitive value mappings
