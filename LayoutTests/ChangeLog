@@ -1,3 +1,26 @@
+2012-08-13  Thiago Marcos P. Santos  <thiago.santos@intel.com>
+
+        CanvasRenderContext2D::font() does not re-serialize the font
+        https://bugs.webkit.org/show_bug.cgi?id=50859
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Unskip tests that will now pass and remove wrong/duplicated
+        expectations. canvas-font-ex-units-crash has now the wrong
+        expectations until we fix the issue on 93840.
+
+        * fast/canvas/canvas-font-ex-units-crash-expected.txt:
+        * fast/canvas/script-tests/canvas-font-ex-units-crash.js:
+        Even though we are setting a value on this test case (and verifying),
+        the font is not being effectiviely set as the serialization reveled. This
+        is going to be fixed in another bug.
+        * platform/chromium/TestExpectations:
+        * platform/chromium/canvas/philip/tests/2d.text.font.parse.system-expected.txt: Removed.
+        * platform/efl/Skipped:
+        * platform/gtk/TestExpectations:
+        * platform/mac/canvas/philip/tests/2d.text.font.parse.system-expected.txt: Removed.
+        * platform/qt/Skipped:
+
 2012-08-13  Elliott Sprehn  <esprehn@chromium.org>
 
         CSS quotes output quotes when depth is negative

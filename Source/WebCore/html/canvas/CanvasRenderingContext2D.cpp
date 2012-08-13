@@ -5,6 +5,7 @@
  * Copyright (C) 2008 Eric Seidel <eric@webkit.org>
  * Copyright (C) 2008 Dirk Schulze <krit@webkit.org>
  * Copyright (C) 2010 Torch Mobile (Beijing) Co. Ltd. All rights reserved.
+ * Copyright (C) 2012 Intel Corporation. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -1986,7 +1987,34 @@ void CanvasRenderingContext2D::putImageData(ImageData* data, ImageBuffer::Coordi
 
 String CanvasRenderingContext2D::font() const
 {
-    return state().m_unparsedFont;
+    if (!state().m_realizedFont)
+        return defaultFont;
+
+    String serializedFont;
+    const FontDescription& fontDescription = state().m_font.fontDescription();
+
+    if (fontDescription.italic())
+        serializedFont += "italic ";
+    if (fontDescription.smallCaps() == FontSmallCapsOn)
+        serializedFont += "small-caps ";
+
+    serializedFont += String::number(fontDescription.computedPixelSize()) + "px";
+
+    const FontFamily& firstFontFamily = fontDescription.family();
+    for (const FontFamily* fontFamily = &firstFontFamily; fontFamily; fontFamily = fontFamily->next()) {
+        if (fontFamily != &firstFontFamily)
+            serializedFont += ",";
+
+        String family = fontFamily->family();
+        if (family.startsWith("-webkit-"))
+            family = family.substring(8);
+        if (family.contains(' '))
+            family = makeString('"', family, '"');
+
+        serializedFont += " " + family;
+    }
+
+    return serializedFont;
 }
 
 void CanvasRenderingContext2D::setFont(const String& newFont)

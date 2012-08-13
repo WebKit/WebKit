@@ -325,11 +325,8 @@ canvas/philip/tests/2d.text.draw.space.collapse.nonspace.html
 canvas/philip/tests/2d.text.draw.space.collapse.other.html
 canvas/philip/tests/2d.text.draw.space.collapse.space.html
 canvas/philip/tests/2d.text.draw.space.collapse.start.html
-canvas/philip/tests/2d.text.font.parse.basic.html
-canvas/philip/tests/2d.text.font.parse.complex.html
 canvas/philip/tests/2d.text.font.parse.size.percentage.html
 canvas/philip/tests/2d.text.font.parse.size.percentage.default.html
-canvas/philip/tests/2d.text.font.parse.system.html
 canvas/philip/tests/2d.text.measure.width.space.html
 canvas/philip/tests/type.prototype.html
 

@@ -1896,16 +1896,10 @@ BUGWK45991 : platform/chromium/virtual/gpu/canvas/philip/tests/2d.text.draw.spac
 BUGWK45991 : platform/chromium/virtual/gpu/canvas/philip/tests/2d.text.draw.space.collapse.space.html = TEXT
 BUGWK45991 : platform/chromium/virtual/gpu/canvas/philip/tests/2d.text.draw.space.collapse.start.html = TEXT
 
-BUGWK50859 : canvas/philip/tests/2d.text.font.parse.basic.html = TEXT
-BUGWK50859 : canvas/philip/tests/2d.text.font.parse.complex.html = TEXT
 BUGWK50859 : canvas/philip/tests/2d.text.font.parse.size.percentage.default.html = TEXT
 BUGWK50859 : canvas/philip/tests/2d.text.font.parse.size.percentage.html = TEXT
-BUGWK50859 : canvas/philip/tests/2d.text.font.parse.system.html = TEXT
-BUGWK50859 : platform/chromium/virtual/gpu/canvas/philip/tests/2d.text.font.parse.basic.html = TEXT
-BUGWK50859 : platform/chromium/virtual/gpu/canvas/philip/tests/2d.text.font.parse.complex.html = TEXT
 BUGWK50859 : platform/chromium/virtual/gpu/canvas/philip/tests/2d.text.font.parse.size.percentage.default.html = TEXT
 BUGWK50859 : platform/chromium/virtual/gpu/canvas/philip/tests/2d.text.font.parse.size.percentage.html = TEXT
-BUGWK50859 : platform/chromium/virtual/gpu/canvas/philip/tests/2d.text.font.parse.system.html = TEXT
 
 BUGWK45991 : canvas/philip/tests/2d.text.measure.width.space.html = TEXT
 BUGWK45991 : platform/chromium/virtual/gpu/canvas/philip/tests/2d.text.measure.width.space.html = TEXT

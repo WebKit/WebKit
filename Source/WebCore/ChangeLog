@@ -1,3 +1,17 @@
+2012-08-13  Thiago Marcos P. Santos  <thiago.santos@intel.com>
+
+        CanvasRenderContext2D::font() does not re-serialize the font
+        https://bugs.webkit.org/show_bug.cgi?id=50859
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Added proper serialization for the font property.
+
+        No new tests, unskipped the existing ones.
+
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::font):
+
 2012-08-13  Elliott Sprehn  <esprehn@chromium.org>
 
         CSS quotes output quotes when depth is negative
