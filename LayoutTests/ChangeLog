@@ -1,5 +1,18 @@
 2012-08-13  Christophe Dumez  <christophe.dumez@intel.com>
 
+        [EFL][WK2] Skip inspector tests that hit assertion in WebCore::SuspendableTimer::resume()
+        https://bugs.webkit.org/show_bug.cgi?id=93815
+
+        Unreviewed EFL gardening.
+
+        Update TestExpectations for several flaky Web Inspector
+        test cases.
+
+        * platform/efl-wk2/TestExpectations:
+        * platform/efl/TestExpectations:
+
+2012-08-13  Christophe Dumez  <christophe.dumez@intel.com>
+
         [EFL][WK2] Wrong TestExpectations for 2 webintents tests
         https://bugs.webkit.org/show_bug.cgi?id=93811
 

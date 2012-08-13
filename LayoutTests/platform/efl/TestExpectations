@@ -172,6 +172,7 @@ BUGWK91366 : fast/forms/number/number-spinbutton-gets-disabled-or-readonly.html 
 BUGWK91958 : http/tests/inspector-enabled/injected-script-discard.html = TEXT PASS
 BUGWK92112 : fast/overflow/overflow-height-float-not-removed-crash2.html = CRASH PASS
 BUGWK85615 : http/tests/inspector/resource-har-pages.html = TEXT PASS
+BUGWK93820 : inspector/console/console-format-collections.html = TEXT PASS
 
 // Aborting application cache downloads is flaky.
 BUGWK87633 : http/tests/appcache/abort-cache-onchecking-manifest-404.html = TEXT PASS
