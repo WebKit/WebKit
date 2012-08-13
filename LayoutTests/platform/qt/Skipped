@@ -1536,10 +1536,6 @@ css3/filters/filtered-compositing-descendant.html
 css3/filters/effect-brightness-hw.html
 css3/filters/effect-contrast-hw.html
 
-# [Qt] new test css3/flexbox/line-wrapping.html failing
-# https://bugs.webkit.org/show_bug.cgi?id=72490
-css3/flexbox/line-wrapping.html
-
 # [Qt] New css3/flexbox/flexitem.html fails
 # https://bugs.webkit.org/show_bug.cgi?id=88963
 css3/flexbox/flexitem.html

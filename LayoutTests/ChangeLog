@@ -1,3 +1,14 @@
+2012-08-13  Lauro Neto  <lauro.neto@openbossa.org>
+
+        [Qt] new test css3/flexbox/line-wrapping.html failing
+        https://bugs.webkit.org/show_bug.cgi?id=72490
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Gardening. Unskip now passing test.
+
+        * platform/qt/Skipped:
+
 2012-06-24  Robert Hogan  <robert@webkit.org>
 
         CSS 2.1 failure: Word-spacing affects each space and non-breaking space
