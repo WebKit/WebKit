@@ -1,3 +1,13 @@
+2012-08-13  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL][WK2] Update TestExpectations to make bot green
+        https://bugs.webkit.org/show_bug.cgi?id=93852
+
+        Unreviewed EFL gardening. Update wk2-efl TestExpectations
+        to make the bot green.
+
+        * platform/efl-wk2/TestExpectations:
+
 2012-08-13  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed GTK gardening, updating test expectation for
