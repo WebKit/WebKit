@@ -1,3 +1,23 @@
+2012-08-13  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Simplify storage and reduce size of QtConnectionObject
+        https://bugs.webkit.org/show_bug.cgi?id=93868
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        The connection object is a child of the sender QObject, so we can use parent()
+        whenever we need the sender instead of keeping an extra QObject pointer. Also
+        QtConnectionObject kept a RefPtr to the Instance, but actually only needed the
+        root object, so we can store a pointer to that instead.
+
+        * bridge/qt/qt_runtime.cpp:
+        (JSC::Bindings::QtConnectionObject::QtConnectionObject):
+        (JSC::Bindings::QtConnectionObject::~QtConnectionObject):
+        (JSC::Bindings::QtConnectionObject::execute):
+        (JSC::Bindings::QtConnectionObject::match):
+        * bridge/qt/qt_runtime.h:
+        (QtConnectionObject):
+
 2012-08-13  Zan Dobersek  <zandobersek@gmail.com>
 
         Media(Stream|Element)AudioSourceNode should be guarded by the WEB_AUDIO condition as well

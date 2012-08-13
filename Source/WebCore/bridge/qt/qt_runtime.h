@@ -141,10 +141,7 @@ public:
 
 private:
     JSGlobalContextRef m_context;
-    RefPtr<QtInstance> m_senderInstance;
-
-    // We use this as key in active connections multimap.
-    QObject* m_originalSender;
+    RefPtr<RootObject> m_rootObject;
 
     int m_signalIndex;
     JSObjectRef m_receiver;

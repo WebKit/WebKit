@@ -1525,8 +1525,7 @@ QMultiMap<QObject*, QtConnectionObject*> QtConnectionObject::connections;
 QtConnectionObject::QtConnectionObject(JSContextRef context, PassRefPtr<QtInstance> senderInstance, int signalIndex, JSObjectRef receiver, JSObjectRef receiverFunction)
     : QObject(senderInstance->getObject())
     , m_context(JSContextGetGlobalContext(context))
-    , m_senderInstance(senderInstance)
-    , m_originalSender(m_senderInstance->getObject())
+    , m_rootObject(senderInstance->rootObject())
     , m_signalIndex(signalIndex)
     , m_receiver(receiver)
     , m_receiverFunction(receiverFunction)
@@ -1538,9 +1537,7 @@ QtConnectionObject::QtConnectionObject(JSContextRef context, PassRefPtr<QtInstan
 
 QtConnectionObject::~QtConnectionObject()
 {
-    // We can safely use m_originalSender because connection object will never outlive the sender,
-    // which is its QObject parent.
-    connections.remove(m_originalSender, this);
+    connections.remove(parent(), this);
 
     if (m_receiver)
         JSValueUnprotect(m_context, m_receiver);
@@ -1636,14 +1633,7 @@ int QtConnectionObject::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
 
 void QtConnectionObject::execute(void** argv)
 {
-    QObject* sender = m_senderInstance->getObject();
-    if (!sender) {
-        qWarning() << "sender deleted, cannot deliver signal";
-        return;
-    }
-
-    ASSERT(sender == m_originalSender);
-
+    QObject* sender = parent();
     const QMetaObject* meta = sender->metaObject();
     const QMetaMethod method = meta->method(m_signalIndex);
 
@@ -1655,11 +1645,10 @@ void QtConnectionObject::execute(void** argv)
 
     // TODO: remove once conversion functions use JSC API.
     ExecState* exec = ::toJS(m_context);
-    RefPtr<RootObject> rootObject = m_senderInstance->rootObject();
 
     for (int i = 0; i < argc; i++) {
         int argType = method.parameterType(i);
-        args[i] = ::toRef(exec, convertQVariantToValue(exec, rootObject, QVariant(argType, argv[i+1])));
+        args[i] = ::toRef(exec, convertQVariantToValue(exec, m_rootObject, QVariant(argType, argv[i+1])));
     }
 
     JSObjectCallAsFunction(m_context, m_receiverFunction, m_receiver, argc, args.data(), 0);
@@ -1667,7 +1656,7 @@ void QtConnectionObject::execute(void** argv)
 
 bool QtConnectionObject::match(JSContextRef context, QObject* sender, int signalIndex, JSObjectRef receiver, JSObjectRef receiverFunction)
 {
-    if (sender != m_originalSender || signalIndex != m_signalIndex)
+    if (sender != parent() || signalIndex != m_signalIndex)
         return false;
     JSValueRef* ignoredException = 0;
     const bool receiverMatch = (!receiver && !m_receiver) || (receiver && m_receiver && JSValueIsEqual(context, receiver, m_receiver, ignoredException));
