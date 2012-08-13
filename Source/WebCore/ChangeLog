@@ -1,3 +1,15 @@
+2012-08-13  Antonio Gomes  <agomes@rim.com>
+
+        [BlackBerry] Hardware accelerated scrolling of <select> content
+        https://bugs.webkit.org/show_bug.cgi?id=93856
+
+        Reviewed by Rob Buis.
+
+        Internally reviewed by Matthew Staikos.
+
+        * Resources/blackberry/selectControlBlackBerry.css: add -webkit-overflow-scrolling: touch (EOM).
+        (.select-area):
+
 2012-08-13  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
 
         [Qt] Assertion in RenderObject::offsetFromAncestorContainer
