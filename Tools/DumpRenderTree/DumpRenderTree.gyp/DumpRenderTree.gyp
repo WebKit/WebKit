@@ -500,6 +500,8 @@
                         '-DANDROID_TOOLCHAIN=<(android_toolchain)',
                         '--ant-args',
                         '-DPRODUCT_DIR=<(ant_build_out)',
+                        '--ant-args',
+                        '-DCHROMIUM_SRC=<(chromium_src_dir)',
                         '--sdk-build=<(sdk_build)',
                         '--app_abi',
                         '<(android_app_abi)',

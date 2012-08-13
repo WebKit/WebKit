@@ -1,5 +1,18 @@
 2012-08-13  Peter Beverloo  <peter@chromium.org>
 
+        [Chromium] Fix apk generation for the Android platform
+        https://bugs.webkit.org/show_bug.cgi?id=93841
+
+        Reviewed by Dimitri Glazkov.
+
+        APK generation was broken as the configuration file assumed compilation
+        would only occur in the Chromium tree. Pass the path to Chromium's source
+        base directory as a property to ant.
+
+        * WebKitUnitTests.gyp:
+
+2012-08-13  Peter Beverloo  <peter@chromium.org>
+
         Unreviewed.  Rolled DEPS.
 
         * DEPS:
