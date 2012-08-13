@@ -47,7 +47,7 @@ void QuotesData::addPair(std::pair<String, String> quotePair)
 const String QuotesData::getOpenQuote(int index) const
 {
     ASSERT(index >= 0);
-    if (!m_quotePairs.size())
+    if (!m_quotePairs.size() || index < 0)
         return emptyString();
     if ((size_t)index >= m_quotePairs.size())
         return m_quotePairs.last().first;
@@ -56,8 +56,8 @@ const String QuotesData::getOpenQuote(int index) const
 
 const String QuotesData::getCloseQuote(int index) const
 {
-    ASSERT(index >= 0);
-    if (!m_quotePairs.size())
+    ASSERT(index >= -1);
+    if (!m_quotePairs.size() || index < 0)
         return emptyString();
     if ((size_t)index >= m_quotePairs.size())
         return m_quotePairs.last().second;

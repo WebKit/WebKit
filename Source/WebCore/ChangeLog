@@ -1,3 +1,23 @@
+2012-08-13  Elliott Sprehn  <esprehn@chromium.org>
+
+        CSS quotes output quotes when depth is negative
+        https://bugs.webkit.org/show_bug.cgi?id=92690
+
+        Reviewed by Eric Seidel.
+
+        Previously if the quote depth would go negative we would output the close quote from the
+        first pair of quotes again instead of outputting no quotes as required by the spec.
+ 
+        See: http://www.w3.org/TR/CSS21/generate.html#quotes-insert
+
+        Test: fast/css-generated-content/nested-quote-more-than-pairs.html
+
+        * rendering/RenderQuote.cpp:
+        (WebCore::RenderQuote::originalText): Allow the value passed to getOpenQuote to go negative by removing std::max.
+        * rendering/style/QuotesData.cpp:
+        (WebCore::QuotesData::getOpenQuote): Bounds check for negative values for safety.
+        (WebCore::QuotesData::getCloseQuote): Allow index to be >= -1 and return an empty string for -1.
+
 2012-08-13  Vangelis Kokkevis  <vangelis@chromium.org>
 
         [chromium] Clear HUD canvas contents before drawing into it.

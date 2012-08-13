@@ -77,8 +77,7 @@ PassRefPtr<StringImpl> RenderQuote::originalText() const
     case NO_CLOSE_QUOTE:
         return StringImpl::empty();
     case CLOSE_QUOTE:
-        // FIXME: When m_depth is 0 we should return empty string.
-        return quotesData()->getCloseQuote(std::max(m_depth - 1, 0)).impl();
+        return quotesData()->getCloseQuote(m_depth - 1).impl();
     case OPEN_QUOTE:
         return quotesData()->getOpenQuote(m_depth).impl();
     }

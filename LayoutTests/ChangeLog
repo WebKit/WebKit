@@ -1,3 +1,19 @@
+2012-08-13  Elliott Sprehn  <esprehn@chromium.org>
+
+        CSS quotes output quotes when depth is negative
+        https://bugs.webkit.org/show_bug.cgi?id=92690
+
+        Reviewed by Eric Seidel.
+
+        Make the expected output of close-quote-negative-depth.html follow the spec and
+        add another test that ensures the last quote pair is repeated when the depth is
+        greater than the number of quote pairs.
+
+        * fast/css-generated-content/close-quote-negative-depth-expected.html:
+        * fast/css-generated-content/close-quote-negative-depth.html:
+        * fast/css-generated-content/nested-quote-more-than-pairs-expected.html: Added.
+        * fast/css-generated-content/nested-quote-more-than-pairs.html: Added.
+
 2012-08-13  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Unreviewed skip: Skip faling test after r125428.
