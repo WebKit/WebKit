@@ -94,7 +94,7 @@ QtInstance::~QtInstance()
 
     cachedInstances.remove(m_hashkey);
 
-    // clean up (unprotect from gc) the JSValues we've created
+    qDeleteAll(m_methods);
     m_methods.clear();
 
     qDeleteAll(m_fields);
@@ -147,16 +147,6 @@ void QtInstance::put(JSObject* object, ExecState* exec, PropertyName propertyNam
     JSObject::put(object, exec, propertyName, value, slot);
 }
 
-void QtInstance::removeUnusedMethods()
-{
-    for (QHash<QByteArray, QtWeakObjectReference>::Iterator it = m_methods.begin(), end = m_methods.end(); it != end; ) {
-        if (!it.value().get())
-            it = m_methods.erase(it);
-        else
-            ++it;
-    }
-}
-
 QtInstance* QtInstance::getInstance(JSObject* object)
 {
     if (!object)
@@ -179,6 +169,7 @@ Class* QtInstance::getClass() const
 RuntimeObject* QtInstance::newRuntimeObject(ExecState* exec)
 {
     JSLockHolder lock(exec);
+    qDeleteAll(m_methods);
     m_methods.clear();
     return QtRuntimeObject::create(exec, exec->lexicalGlobalObject(), this);
 }

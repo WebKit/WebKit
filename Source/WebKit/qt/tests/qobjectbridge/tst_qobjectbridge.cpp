@@ -1499,10 +1499,13 @@ void tst_QObjectBridge::connectAndDisconnect()
     QCOMPARE(evalJS("myObject.mySignal2.disconnect(myObject, myHandler)"), sUndefined);
 
     // connect(obj, string)
-    QCOMPARE(evalJS("myObject.mySignal.connect(yetAnotherObject, 'func')"), sUndefined);
-    QCOMPARE(evalJS("myObject.mySignal.connect(myObject, 'mySlot')"), sUndefined);
-    QCOMPARE(evalJS("myObject.mySignal.disconnect(yetAnotherObject, 'func')"), sUndefined);
-    QCOMPARE(evalJS("myObject.mySignal.disconnect(myObject, 'mySlot')"), sUndefined);
+    {
+        QString type;
+        QCOMPARE(evalJS("myObject.mySignal.connect(yetAnotherObject, 'func')", type), sUndefined);
+        QCOMPARE(evalJS("myObject.mySignal.connect(myObject, 'mySlot')", type), sUndefined);
+        QCOMPARE(evalJS("myObject.mySignal.disconnect(yetAnotherObject, 'func')", type), sUndefined);
+        QCOMPARE(evalJS("myObject.mySignal.disconnect(myObject, 'mySlot')", type), sUndefined);
+    }
 
     // check that emitting signals from script works
 
@@ -1555,6 +1558,14 @@ void tst_QObjectBridge::connectAndDisconnect()
     QCOMPARE(m_myObject->qtFunctionActuals().at(0).toInt(), 456);
     QCOMPARE(evalJS("myObject.mySignalWithIntArg.disconnect(myObject['myOverloadedSlot(int)'])"), sUndefined);
 
+    QCOMPARE(evalJS("myObject.mySignalWithIntArg.connect(myObject, 'myOverloadedSlot(int)')"), sUndefined);
+    m_myObject->resetQtFunctionInvoked();
+    QCOMPARE(evalJS("myObject.mySignalWithIntArg(456)"), sUndefined);
+    QCOMPARE(m_myObject->qtFunctionInvoked(), 28); // int overload
+    QCOMPARE(m_myObject->qtFunctionActuals().size(), 1);
+    QCOMPARE(m_myObject->qtFunctionActuals().at(0).toInt(), 456);
+    QCOMPARE(evalJS("myObject.mySignalWithIntArg.disconnect(myObject, 'myOverloadedSlot(int)')"), sUndefined);
+
     // erroneous input
     {
         // ### QtScript adds .connect to all functions, WebKit does only to signals/slots
@@ -1587,20 +1598,34 @@ void tst_QObjectBridge::connectAndDisconnect()
         QString type;
         QString ret = evalJS("myObject.myInvokable.connect(123)", type);
         QCOMPARE(type, sError);
-        QCOMPARE(ret, QLatin1String("TypeError: QtMetaMethod.connect: MyQObject::myInvokable() is not a signal"));
+        QCOMPARE(ret, QLatin1String("Error: QtMetaMethod.connect: MyQObject::myInvokable() is not a signal"));
     }
     {
         QString type;
         QString ret = evalJS("myObject.myInvokable.connect(function() { })", type);
         QCOMPARE(type, sError);
-        QCOMPARE(ret, QLatin1String("TypeError: QtMetaMethod.connect: MyQObject::myInvokable() is not a signal"));
+        QCOMPARE(ret, QLatin1String("Error: QtMetaMethod.connect: MyQObject::myInvokable() is not a signal"));
     }
 
     {
         QString type;
         QString ret = evalJS("myObject.mySignal.connect(123)", type);
         QCOMPARE(type, sError);
-        QCOMPARE(ret, QLatin1String("TypeError: QtMetaMethod.connect: target is not a function"));
+        QCOMPARE(ret, QLatin1String("Error: QtMetaMethod.connect: target is not a function"));
+    }
+
+    {
+        QString type;
+        QString ret = evalJS("var randomObject = new Object; myObject.mySignal.connect(myObject, randomObject)", type);
+        QCOMPARE(type, sError);
+        QCOMPARE(ret, QLatin1String("Error: QtMetaMethod.connect: target is not a function"));
+    }
+
+    {
+        QString type;
+        QString ret = evalJS("myObject.mySignal.connect(myObject, 'nonExistantSlot')", type);
+        QCOMPARE(type, sError);
+        QCOMPARE(ret, QLatin1String("Error: QtMetaMethod.connect: target is not a function"));
     }
 
     {
@@ -1616,6 +1641,13 @@ void tst_QObjectBridge::connectAndDisconnect()
         QCOMPARE(ret, QLatin1String("Error: QtMetaMethod.disconnect: no arguments given"));
     }
 
+    {
+        QString type;
+        QString ret = evalJS("myObject.mySignal.disconnect(myObject, 'nonExistantSlot')", type);
+        QCOMPARE(type, sError);
+        QCOMPARE(ret, QLatin1String("Error: QtMetaMethod.disconnect: target is not a function"));
+    }
+
     /* XFAIL - Function.prototype doesn't get connect/disconnect, just signals/slots
     {
         QString type;
@@ -1629,27 +1661,27 @@ void tst_QObjectBridge::connectAndDisconnect()
         QString type;
         QString ret = evalJS("var o = { }; o.disconnect = myObject.myInvokable.disconnect; o.disconnect(123)", type);
         QCOMPARE(type, sError);
-        QCOMPARE(ret, QLatin1String("TypeError: QtMetaMethod.disconnect: MyQObject::myInvokable() is not a signal"));
+        QCOMPARE(ret, QLatin1String("Error: QtMetaMethod.disconnect: MyQObject::myInvokable() is not a signal"));
     }
 
     {
         QString type;
         QString ret = evalJS("myObject.myInvokable.disconnect(123)", type);
         QCOMPARE(type, sError);
-        QCOMPARE(ret, QLatin1String("TypeError: QtMetaMethod.disconnect: MyQObject::myInvokable() is not a signal"));
+        QCOMPARE(ret, QLatin1String("Error: QtMetaMethod.disconnect: MyQObject::myInvokable() is not a signal"));
     }
     {
         QString type;
         QString ret = evalJS("myObject.myInvokable.disconnect(function() { })", type);
         QCOMPARE(type, sError);
-        QCOMPARE(ret, QLatin1String("TypeError: QtMetaMethod.disconnect: MyQObject::myInvokable() is not a signal"));
+        QCOMPARE(ret, QLatin1String("Error: QtMetaMethod.disconnect: MyQObject::myInvokable() is not a signal"));
     }
 
     {
         QString type;
         QString ret = evalJS("myObject.mySignal.disconnect(123)", type);
         QCOMPARE(type, sError);
-        QCOMPARE(ret, QLatin1String("TypeError: QtMetaMethod.disconnect: target is not a function"));
+        QCOMPARE(ret, QLatin1String("Error: QtMetaMethod.disconnect: target is not a function"));
     }
 
     {
@@ -1847,7 +1879,7 @@ void tst_QObjectBridge::objectDeleted()
     evalJS("bar.intProperty = 123;");
     QCOMPARE(qobj->intProperty(), 123);
     qobj->resetQtFunctionInvoked();
-    evalJS("bar.myInvokable.call(bar);");
+    evalJS("bar.myInvokable(bar);");
     QCOMPARE(qobj->qtFunctionInvoked(), 0);
 
     // do this, to ensure that we cache that it implements call
@@ -2145,7 +2177,7 @@ void tst_QObjectBridge::introspectQtMethods()
         QCOMPARE(evalJS("descriptor.set"), sUndefined);
         QCOMPARE(evalJS(QString::fromLatin1("descriptor.value === %0['%1']").arg(methodLookup).arg(name)), sTrue);
         QCOMPARE(evalJS(QString::fromLatin1("descriptor.enumerable")), sFalse);
-        QCOMPARE(evalJS(QString::fromLatin1("descriptor.configurable")), sFalse);
+        QCOMPARE(evalJS(QString::fromLatin1("descriptor.configurable")), sTrue);
     }
 
     QVERIFY(evalJSV("var props=[]; for (var p in myObject.deleteLater) {props.push(p);}; props.sort()").toStringList().isEmpty());

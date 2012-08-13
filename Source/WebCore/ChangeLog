@@ -1,3 +1,50 @@
+2012-08-13  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Port meta method/signal/slot handling in run-time bridge to use JSC C API
+        https://bugs.webkit.org/show_bug.cgi?id=93476
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Based on patch by No'am Rosenthal and lots of good suggestions by Caio Marcelo.
+
+        Ported the code that mapped invokable methods (and signals/slots) as
+        well as the code that provides the connect() and disconnect() functions
+        over to use the JSC C API. In the process one behavioural change was
+        implemented: Previously meta methods were actually function objects
+        that through Function.prototype allowed calling via
+        object.method.call(object). Through the use of plain JS objects that is
+        not possible anymore.
+
+        If we tried to continue to use function objects (JSObjectMakeFunction)
+        then we would loose the ability to store the private pointer. An
+        alternative approach would be to use a regular object and install the
+        Function prototype (Function.prototype), but unfortunately we cannot do
+        that without loosing the common prototype for signals and slots.
+
+        * bridge/qt/qt_class.cpp:
+        (JSC::Bindings::QtClass::fallbackObject):
+        * bridge/qt/qt_instance.cpp:
+        (JSC::Bindings::QtInstance::~QtInstance):
+        (JSC::Bindings::QtInstance::newRuntimeObject):
+        * bridge/qt/qt_instance.h:
+        (Bindings):
+        (QtInstance):
+        * bridge/qt/qt_runtime.cpp:
+        (JSC::Bindings::prototypeForSignalsAndSlots):
+        (JSC::Bindings::QtRuntimeMethod::QtRuntimeMethod):
+        (JSC::Bindings::QtRuntimeMethod::~QtRuntimeMethod):
+        (JSC::Bindings::QtRuntimeMethod::call):
+        (JSC::Bindings::QtRuntimeMethod::connect):
+        (JSC::Bindings::QtRuntimeMethod::disconnect):
+        (JSC::Bindings::QtRuntimeMethod::jsObjectRef):
+        (JSC::Bindings::QtRuntimeMethod::connectOrDisconnect):
+        (Bindings):
+        (JSC::Bindings::QtConnectionObject::~QtConnectionObject):
+        * bridge/qt/qt_runtime.h:
+        (JSC::Bindings::QtRuntimeMethod::name):
+        (QtRuntimeMethod):
+        (QtConnectionObject):
+
 2012-08-13  Leandro Gracia Gil  <leandrogracia@chromium.org>
 
         [Chromium] Fix nits in the find-in-page match rects API

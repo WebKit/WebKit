@@ -1,3 +1,21 @@
+2012-08-13  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Port meta method/signal/slot handling in run-time bridge to use JSC C API
+        https://bugs.webkit.org/show_bug.cgi?id=93476
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Changed semantics of some test expectations. Similarly to r125032 when generating
+        error exceptions for connect/disconnect, we cannot generate explicit type error
+        exceptions but only generic errors. Another change is that the meta-method wrapper
+        doesn't support the call() through Function.prototype anymore. See WebCore changelog
+        for details.
+
+        * tests/qobjectbridge/tst_qobjectbridge.cpp:
+        (tst_QObjectBridge::connectAndDisconnect):
+        (tst_QObjectBridge::objectDeleted):
+        (tst_QObjectBridge::introspectQtMethods):
+
 2012-08-13  Kwang Yul Seo  <skyul@company100.net>
 
         [Qt] Add gprof.prf to build WebKit with gprof enabled
