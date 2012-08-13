@@ -314,8 +314,8 @@ body.detached.platform-mac-snowleopard #toolbar-dropdown {
 
 .toolbar-search button {
     border: 1px solid rgb(163, 163, 163);
-    border-radius: 12px;
-    margin: 0 6px;
+    border-radius: 8px;
+    margin: 0 0px;
     font-size: 11px;
     background-image: -webkit-linear-gradient(rgb(241, 241, 241), rgb(220, 220, 220));
     width: 100%;

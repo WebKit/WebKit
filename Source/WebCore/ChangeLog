@@ -1,3 +1,13 @@
+2012-08-13  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Polish search/replace toolbar buttons style.
+        https://bugs.webkit.org/show_bug.cgi?id=93826
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/inspector.css:
+        (.toolbar-search button):
+
 2012-08-13  Kwang Yul Seo  <skyul@company100.net>
 
         [Qt] Add gprof.prf to build WebKit with gprof enabled
