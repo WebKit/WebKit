@@ -8,7 +8,7 @@ ADD_CUSTOM_TARGET(forwarding-headersSoupForTestWebKitAPI
 )
 SET(ForwardingNetworkHeadersForTestWebKitAPI_NAME forwarding-headersSoupForTestWebKitAPI)
 
-INCLUDE_DIRECTORIES(${LIBSOUP24_INCLUDE_DIRS}
+INCLUDE_DIRECTORIES(${LIBSOUP_INCLUDE_DIRS}
     ${WEBKIT2_DIR}/UIProcess/API/C/soup
     ${WEBKIT2_DIR}/UIProcess/API/C/efl
     ${ECORE_INCLUDE_DIRS}

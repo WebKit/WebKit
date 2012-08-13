@@ -3,7 +3,6 @@ LIST(APPEND WebKitTestRunner_LINK_FLAGS
     ${EDJE_LDFLAGS}
     ${EFLDEPS_LDFLAGS}
     ${EVAS_LDFLAGS}
-    ${LIBSOUP24_LDFLAGS}
 )
 
 ADD_CUSTOM_TARGET(forwarding-headersEflForWebKitTestRunner

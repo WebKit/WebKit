@@ -1,3 +1,12 @@
+2012-08-11  Raphael Kubo da Costa  <rakuco@webkit.org>
+
+        [CMake] Rewrite FindLibSoup2.cmake.
+        https://bugs.webkit.org/show_bug.cgi?id=93191
+
+        Reviewed by Rob Buis.
+
+        * PlatformEfl.cmake: Use LIBSOUP_FOO instead of LIBSOUP24_FOO.
+
 2012-08-13  Raphael Kubo da Costa  <rakuco@webkit.org>
 
         [CMake] Remove glib-related Find modules and write single new one instead.

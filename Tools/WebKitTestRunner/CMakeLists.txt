@@ -42,7 +42,7 @@ SET(WebKitTestRunner_INCLUDE_DIRECTORIES
     ${DERIVED_SOURCES_DIR}/InjectedBundle
     ${CMAKE_BINARY_DIR}
     ${CMAKE_SOURCE_DIR}/Source
-    ${LIBSOUP24_INCLUDE_DIRS}
+    ${LIBSOUP_INCLUDE_DIRS}
 )
 
 SET(WebKitTestRunnerInjectedBundle_SOURCES
