@@ -1,3 +1,15 @@
+2012-08-13  Peter Gal  <galpeter@inf.u-szeged.hu>
+
+        REGRESSION(r125153): It broke the 'Unexpected no expected results' case
+        https://bugs.webkit.org/show_bug.cgi?id=93789
+
+        Reviewed by Csaba Osztrogonác.
+
+        Fix the regex, so the text won't be a capturing group.
+
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+        (RunWebKitTests._parseNewRunWebKitTestsOutput):
+
 2012-08-12  MORITA Hajime  <morrita@google.com>
 
         Unreviewed, added a proxy address to contributors_who_are_not_committers.
