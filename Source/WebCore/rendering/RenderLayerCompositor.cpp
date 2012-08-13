@@ -487,6 +487,12 @@ bool RenderLayerCompositor::updateBacking(RenderLayer* layer, CompositingChangeR
                 repaintOnCompositingChange(layer);
 
             layer->ensureBacking();
+            
+            // This layer and all of its descendants have cached repaints rects that are relative to 
+            // the repaint container, so change when compositing changes; we need to update them here. 
+            if (layer->parent()) 
+                layer->computeRepaintRectsIncludingDescendants();
+
             layerChanged = true;
         }
     } else {
@@ -504,6 +510,10 @@ bool RenderLayerCompositor::updateBacking(RenderLayer* layer, CompositingChangeR
             
             layer->clearBacking();
             layerChanged = true;
+            
+            // This layer and all of its descendants have cached repaints rects that are relative to 
+             // the repaint container, so change when compositing changes; we need to update them here. 
+             layer->computeRepaintRectsIncludingDescendants();
 
             // If we need to repaint, do so now that we've removed the backing
             if (shouldRepaint == CompositingChangeRepaintNow)
@@ -525,13 +535,6 @@ bool RenderLayerCompositor::updateBacking(RenderLayer* layer, CompositingChangeR
             innerCompositor->updateRootLayerAttachment();
     }
     
-    if (layerChanged) {
-
-        // This layer and all of its descendants have cached repaints rects that are relative to
-        // the repaint container, so change when compositing changes; we need to update them here.
-        layer->computeRepaintRectsIncludingDescendants();
-    }
-
     return layerChanged;
 }
 
