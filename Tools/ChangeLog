@@ -1,3 +1,9 @@
+2012-08-12  MORITA Hajime  <morrita@google.com>
+
+        Unreviewed, added a proxy address to contributors_who_are_not_committers.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2012-08-12  Loïc Yhuel  <loic.yhuel@softathome.com>
 
         [Qt] Make it possible to build without QtTest/QtPrintSupport
