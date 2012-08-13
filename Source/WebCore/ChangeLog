@@ -1,3 +1,9 @@
+2012-08-13  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix make distcheck.
+
+        * GNUmakefile.list.am: Add missing header file.
+
 2012-08-10  Alexander Pavlov  <apavlov@chromium.org>
 
         Web Inspector: [Protocol] Force elements pseudo state via a separate InspectorCSSAgent method
