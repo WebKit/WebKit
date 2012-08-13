@@ -45,4 +45,10 @@ messages -> WebContext {
     SetPasteboardStringForType(WTF::String pasteboardName, WTF::String pasteboardType, WTF::String string)
     SetPasteboardBufferForType(WTF::String pasteboardName, WTF::String pasteboardType, WebKit::SharedMemory::Handle handle, uint64_t size)
 #endif
+
+#if !PLATFORM(MAC)
+    // FIXME: This a dummy message, to avoid breaking the build for platforms that don't require
+    // any synchronous messages, and should be removed when <rdar://problem/8775115> is fixed.
+    Dummy() -> (bool dummyReturn)
+#endif
 }

@@ -859,6 +859,12 @@ static PassRefPtr<MutableDictionary> createDictionaryFromHashMap(const HashMap<S
     return result;
 }
 
+#if !PLATFORM(MAC)
+void WebPage::dummy(bool&)
+{
+}
+#endif
+
 void WebContext::didGetWebCoreStatistics(const StatisticsData& statisticsData, uint64_t callbackID)
 {
     RefPtr<DictionaryCallback> callback = m_dictionaryCallbacks.take(callbackID);

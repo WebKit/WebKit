@@ -1,3 +1,16 @@
+2012-08-13  Alexey Proskuryakov  <ap@apple.com>
+
+        [WK2] Move a remaining per-process message from WebContext to WebProcessProxy
+        https://bugs.webkit.org/show_bug.cgi?id=93883
+
+        More Windows build fix
+
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebPage::dummy):
+        * UIProcess/WebContext.h: (WebContext):
+        * UIProcess/WebContext.messages.in:
+        Add a dummy sync message - the same workaround is already used in WebPage.
+
 2012-08-13  Brady Eidson  <beidson@apple.com>
 
         With asynchronous plug-in initialization, WebProcess and PluginProcess can deadlock
