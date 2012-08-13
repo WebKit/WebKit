@@ -1,3 +1,21 @@
+2012-07-04  Kinuko Yasuda  <kinuko@chromium.org>
+
+        Record metrics to measure the usage of WebKitBlobBuilder to eventually deprecate it
+        https://bugs.webkit.org/show_bug.cgi?id=90535
+
+        Reviewed by Eric Seidel.
+
+        No new tests as this has no functional changes.
+
+        * bindings/js/JSBlobCustom.cpp:
+        (WebCore::JSBlobConstructor::constructJSBlob):
+        * bindings/v8/custom/V8BlobCustom.cpp:
+        (WebCore::V8Blob::constructorCallback):
+        * fileapi/WebKitBlobBuilder.cpp:
+        (WebCore::WebKitBlobBuilder::getBlob):
+        * fileapi/WebKitBlobBuilder.h:
+        (WebKitBlobBuilder):
+
 2012-08-12  Ojan Vafai  <ojan@chromium.org>
 
         Remove unnecessary null checks from pseudoStyleForElement and adjustRenderStyle

@@ -149,7 +149,6 @@ void WebKitBlobBuilder::append(Blob* blob)
     }
 }
 
-
 void WebKitBlobBuilder::appendBytesData(const void* data, size_t length)
 {
     Vector<char>& buffer = getBuffer();
@@ -158,8 +157,10 @@ void WebKitBlobBuilder::appendBytesData(const void* data, size_t length)
     m_size += buffer.size() - oldSize;
 }
 
-PassRefPtr<Blob> WebKitBlobBuilder::getBlob(const String& contentType)
+PassRefPtr<Blob> WebKitBlobBuilder::getBlob(const String& contentType, BlobConstructionReason constructionReason)
 {
+    HistogramSupport::histogramEnumeration("WebCore.BlobBuilder.getBlob", constructionReason, BlobConstructionReasonMax);
+
     OwnPtr<BlobData> blobData = BlobData::create();
     blobData->setContentType(contentType);
     blobData->swapItems(m_items);

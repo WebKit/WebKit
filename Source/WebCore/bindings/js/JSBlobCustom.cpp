@@ -136,7 +136,7 @@ EncodedJSValue JSC_HOST_CALL JSBlobConstructor::constructJSBlob(ExecState* exec)
         }
     }
 
-    RefPtr<Blob> blob = blobBuilder->getBlob(type);
+    RefPtr<Blob> blob = blobBuilder->getBlob(type, BlobConstructedByConstructor);
     return JSValue::encode(CREATE_DOM_WRAPPER(exec, jsConstructor->globalObject(), Blob, blob.get()));
 }
 

@@ -138,7 +138,7 @@ v8::Handle<v8::Value> V8Blob::constructorCallback(const v8::Arguments& args)
         }
     }
 
-    RefPtr<Blob> blob = blobBuilder->getBlob(type);
+    RefPtr<Blob> blob = blobBuilder->getBlob(type, BlobConstructedByConstructor);
     return toV8(blob.get(), args.GetIsolate());
 }
 

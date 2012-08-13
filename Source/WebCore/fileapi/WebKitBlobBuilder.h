@@ -43,6 +43,12 @@ class TextEncoding;
 
 typedef int ExceptionCode;
 
+enum BlobConstructionReason {
+    BlobConstructedByBlobBuilder,
+    BlobConstructedByConstructor,
+    BlobConstructionReasonMax,
+};
+
 class WebKitBlobBuilder : public RefCounted<WebKitBlobBuilder> {
 public:
     // Called when BlobBuilder is instantiated in JS API. We show deprecate warning message.
@@ -59,7 +65,7 @@ public:
     void append(ArrayBufferView*);
 #endif
 
-    PassRefPtr<Blob> getBlob(const String& contentType = String());
+    PassRefPtr<Blob> getBlob(const String& contentType = String(), BlobConstructionReason = BlobConstructedByBlobBuilder);
 
 private:
     WebKitBlobBuilder();
