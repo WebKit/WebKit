@@ -133,6 +133,8 @@ public:
     Image* contents() const { return m_contents.get(); }
 
     void setOwner(GraphicsLayerBlackBerry* owner) { m_owner = owner; }
+    // NOTE: Can be 0.
+    GraphicsLayerBlackBerry* owner() const { return m_owner; }
 
     bool drawsContent() const { return m_owner && m_owner->drawsContent(); }
     void setDrawable(bool);

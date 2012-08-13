@@ -29,6 +29,7 @@ namespace WebCore {
 class Frame;
 class Node;
 class RenderObject;
+class RenderLayer;
 }
 
 namespace BlackBerry {
@@ -48,13 +49,18 @@ public:
     bool hasNode() const;
 
     bool scrollBy(const Platform::IntSize& delta);
-    bool compositedSetScrollPosition(unsigned camouflagedLayer, const WebCore::IntPoint& scrollPosition);
+
+    bool setScrollPositionCompositingThread(unsigned camouflagedLayer, const WebCore::IntPoint& scrollPosition);
+    bool setScrollPositionWebKitThread(unsigned camouflagedLayer, const WebCore::IntPoint& scrollPosition);
 
     std::vector<Platform::ScrollViewBase*> inRegionScrollableAreasForPoint(const WebCore::IntPoint&);
 
     WebPagePrivate* m_webPage;
 
 private:
+    bool setLayerScrollPosition(WebCore::RenderLayer*, const WebCore::IntPoint& scrollPosition);
+
+    // Obsolete codepath.
     bool scrollNodeRecursively(WebCore::Node*, const WebCore::IntSize& delta);
     bool scrollRenderer(WebCore::RenderObject*, const WebCore::IntSize& delta);
     void adjustScrollDelta(const WebCore::IntPoint& maxOffset, const WebCore::IntPoint& currentOffset, WebCore::IntSize& delta) const;

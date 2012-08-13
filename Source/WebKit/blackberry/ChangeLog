@@ -1,3 +1,41 @@
+2012-08-13  Antonio Gomes  <agomes@rim.com>
+
+        [BlackBerry] Rounding error somewhere when translating CompositingLayer 's for in-region scrolling
+        https://bugs.webkit.org/show_bug.cgi?id=93848
+        PR #190986
+
+        Reviewed by Yong Li.
+
+        Patch adds a WebKit thread setScrollPosition-like API to InRegionScroller.
+        It fixes a mismatch we had of setting a layer's scroll positing directly via
+        ::setScrollPosition on the UI thread, but dispatching a coalesceable
+        scrollBy(delta) message to WebKit thread.
+
+        * Api/InRegionScroller.cpp:
+        (BlackBerry::WebKit::InRegionScroller::setScrollPositionCompositingThread):
+        Changed the API name to match other thread specific methods naming.
+        (WebKit):
+        (BlackBerry::WebKit::InRegionScroller::setScrollPositionWebKitThread):
+        Added a setScrollPosition-like method to InRegionScroller public API. Used
+        together with its UI-thread counterpart, it can fix some rounding
+        errors we have due to mixing ::setScrollPosition and ::scrollBy methods.
+        (BlackBerry::WebKit::InRegionScrollerPrivate::setScrollPositionCompositingThread):
+        Method renamed. See reasons above.
+        (BlackBerry::WebKit::InRegionScrollerPrivate::setScrollPositionWebKitThread):
+        Calls fowards the call to ::setLayerScrollPosition (below).
+        (BlackBerry::WebKit::InRegionScrollerPrivate::setLayerScrollPosition):
+        Sets the scroll position of a given RenderLayer.
+        * Api/InRegionScroller.h:
+        (InRegionScroller):
+        * Api/InRegionScroller_p.h:
+        (WebCore):
+        (InRegionScrollerPrivate):
+        * WebKitSupport/InRegionScrollableArea.cpp:
+        (BlackBerry::WebKit::InRegionScrollableArea::InRegionScrollableArea):
+        Cache the RenderLayer object associated to a given scrollable area
+        instead of its LayerCompositingThread. This way we can use it for
+        scrolling from both Compositing/UI and WebKit threads.
+
 2012-08-12  Arvid Nilsson  <anilsson@rim.com>
 
         [BlackBerry] Tap highlight flashes checkerboard after pinch zoom
