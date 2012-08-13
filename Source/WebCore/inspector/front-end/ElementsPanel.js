@@ -177,22 +177,23 @@ WebInspector.ElementsPanel.prototype = {
         if (!node)
             return;
 
-        var pseudoClasses = node.getUserProperty("pseudoState");
+        var pseudoClasses = node.getUserProperty(WebInspector.ElementsTreeOutline.PseudoStateDecorator.PropertyName);
         if (enable) {
             pseudoClasses = pseudoClasses || [];
             if (pseudoClasses.indexOf(pseudoClass) >= 0)
                 return;
             pseudoClasses.push(pseudoClass);
-            node.setUserProperty("pseudoState", pseudoClasses);
+            node.setUserProperty(WebInspector.ElementsTreeOutline.PseudoStateDecorator.PropertyName, pseudoClasses);
         } else {
             if (!pseudoClasses || pseudoClasses.indexOf(pseudoClass) < 0)
                 return;
             pseudoClasses.remove(pseudoClass);
             if (!pseudoClasses.length)
-                node.removeUserProperty("pseudoState");
+                node.removeUserProperty(WebInspector.ElementsTreeOutline.PseudoStateDecorator.PropertyName);
         }
 
         this.treeOutline.updateOpenCloseTags(node);
+        WebInspector.cssModel.forcePseudoState(node.id, node.getUserProperty(WebInspector.ElementsTreeOutline.PseudoStateDecorator.PropertyName));
         this._metricsPaneEdited();
         this._stylesPaneEdited();
     },

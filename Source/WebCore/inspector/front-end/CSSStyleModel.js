@@ -64,12 +64,11 @@ WebInspector.CSSStyleModel.Events = {
 WebInspector.CSSStyleModel.prototype = {
     /**
      * @param {DOMAgent.NodeId} nodeId
-     * @param {?Array.<string>|undefined} forcedPseudoClasses
      * @param {boolean} needPseudo
      * @param {boolean} needInherited
      * @param {function(?*)} userCallback
      */
-    getMatchedStylesAsync: function(nodeId, forcedPseudoClasses, needPseudo, needInherited, userCallback)
+    getMatchedStylesAsync: function(nodeId, needPseudo, needInherited, userCallback)
     {
         /**
          * @param {function(?*)} userCallback
@@ -115,15 +114,14 @@ WebInspector.CSSStyleModel.prototype = {
                 userCallback(result);
         }
 
-        CSSAgent.getMatchedStylesForNode(nodeId, forcedPseudoClasses || [], needPseudo, needInherited, callback.bind(null, userCallback));
+        CSSAgent.getMatchedStylesForNode(nodeId, needPseudo, needInherited, callback.bind(null, userCallback));
     },
 
     /**
      * @param {DOMAgent.NodeId} nodeId
-     * @param {?Array.<string>|undefined} forcedPseudoClasses
      * @param {function(?WebInspector.CSSStyleDeclaration)} userCallback
      */
-    getComputedStyleAsync: function(nodeId, forcedPseudoClasses, userCallback)
+    getComputedStyleAsync: function(nodeId, userCallback)
     {
         /**
          * @param {function(?WebInspector.CSSStyleDeclaration)} userCallback
@@ -136,7 +134,7 @@ WebInspector.CSSStyleModel.prototype = {
                 userCallback(WebInspector.CSSStyleDeclaration.parseComputedStylePayload(computedPayload));
         }
 
-        CSSAgent.getComputedStyleForNode(nodeId, forcedPseudoClasses || [], callback.bind(null, userCallback));
+        CSSAgent.getComputedStyleForNode(nodeId, callback.bind(null, userCallback));
     },
 
     /**
@@ -160,6 +158,16 @@ WebInspector.CSSStyleModel.prototype = {
         }
 
         CSSAgent.getInlineStylesForNode(nodeId, callback.bind(null, userCallback));
+    },
+
+    /**
+     * @param {DOMAgent.NodeId} nodeId
+     * @param {?Array.<string>|undefined} forcedPseudoClasses
+     * @param {function()=} userCallback
+     */
+    forcePseudoState: function(nodeId, forcedPseudoClasses, userCallback)
+    {
+        CSSAgent.forcePseudoState(nodeId, forcedPseudoClasses || [], userCallback);
     },
 
     /**

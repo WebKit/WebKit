@@ -150,7 +150,7 @@ WebInspector.StylesSidebarPane.prototype = {
             contextMenu.show(event);
     },
 
-    get forcedPseudoClasses()
+    get _forcedPseudoClasses()
     {
         return this.node ? (this.node.getUserProperty("pseudoState") || undefined) : undefined;
     },
@@ -160,7 +160,7 @@ WebInspector.StylesSidebarPane.prototype = {
         if (!this.node)
             return;
 
-        var nodePseudoState = this.forcedPseudoClasses;
+        var nodePseudoState = this._forcedPseudoClasses;
         if (!nodePseudoState)
             nodePseudoState = [];
 
@@ -236,7 +236,7 @@ WebInspector.StylesSidebarPane.prototype = {
 
         if (this._computedStylePane.expanded || forceFetchComputedStyle) {
             this._refreshUpdateInProgress = true;
-            WebInspector.cssModel.getComputedStyleAsync(node.id, this.forcedPseudoClasses, computedStyleCallback.bind(this));
+            WebInspector.cssModel.getComputedStyleAsync(node.id, computedStyleCallback.bind(this));
         } else {
             this._innerRefreshUpdate(node, null, editedSection);
             if (userCallback)
@@ -294,9 +294,9 @@ WebInspector.StylesSidebarPane.prototype = {
         }
 
         if (this._computedStylePane.expanded)
-            WebInspector.cssModel.getComputedStyleAsync(node.id, this.forcedPseudoClasses, computedCallback.bind(this));
+            WebInspector.cssModel.getComputedStyleAsync(node.id, computedCallback.bind(this));
         WebInspector.cssModel.getInlineStylesAsync(node.id, inlineCallback.bind(this));
-        WebInspector.cssModel.getMatchedStylesAsync(node.id, this.forcedPseudoClasses, true, true, stylesCallback.bind(this));
+        WebInspector.cssModel.getMatchedStylesAsync(node.id, true, true, stylesCallback.bind(this));
     },
 
     /**

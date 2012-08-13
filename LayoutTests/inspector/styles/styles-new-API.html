@@ -45,7 +45,7 @@ function test()
             InspectorTest.addResult("");
             InspectorTest.addResult("=== Inline style for body ===");
             dumpStyle(styles.inlineStyle);
-            test_tableStyles();
+            test_forcedState();
         }
 
         var resultStyles = {};
@@ -87,11 +87,24 @@ function test()
         function nodeCallback(node)
         {
             bodyId = node.id;
-            CSSAgent.getComputedStyleForNode(node.id, [], computedCallback);
+            CSSAgent.getComputedStyleForNode(node.id, computedCallback);
             CSSAgent.getInlineStylesForNode(node.id, inlineCallback);
-            CSSAgent.getMatchedStylesForNode(node.id, [], true, true, matchedCallback);
+            CSSAgent.getMatchedStylesForNode(node.id, true, true, matchedCallback);
         }
         InspectorTest.selectNodeWithId("mainBody", nodeCallback);
+    }
+
+    function test_forcedState()
+    {
+        CSSAgent.forcePseudoState(bodyId, ["hover"]);
+        CSSAgent.getMatchedStylesForNode(bodyId, true, true, matchedCallback);
+
+        function matchedCallback(error, matchedRules)
+        {
+            InspectorTest.addResult("=== BODY with forced :hover ===");
+            dumpRulesArray(matchedRules);
+            CSSAgent.forcePseudoState(bodyId, ["hover"], test_tableStyles);
+        }
     }
 
     function test_tableStyles()
@@ -205,7 +218,7 @@ function test()
                 InspectorTest.addResult("error: " + error);
                 return;
             }
-            CSSAgent.getMatchedStylesForNode(bodyId, [], false, false, didGetStyles);
+            CSSAgent.getMatchedStylesForNode(bodyId, false, false, didGetStyles);
         }
 
         function ruleAdded(error, rule)
@@ -273,7 +286,7 @@ function test()
 
         function nodeCallback(node)
         {
-            CSSAgent.getMatchedStylesForNode(node.id, [], false, false, stylesCallback);
+            CSSAgent.getMatchedStylesForNode(node.id, false, false, stylesCallback);
         }
         InspectorTest.nodeWithId("toggle", nodeCallback);
     }
@@ -390,17 +403,6 @@ function test()
     }
 }
 
-/*
-Covered API methods:
- - getStylesForNode
- - getAllStyleSheets
- - getStyleSheet
- - setStyleSheetText
- - setStyleData
- - setRuleSelector
- - addRule
-*/
-
 </script>
 
 <style>
@@ -416,6 +418,9 @@ body.mainpage {
     prop2: val2;
 }
 
+body:hover {
+  color: #CDE;
+}
 </style>
 </head>
 

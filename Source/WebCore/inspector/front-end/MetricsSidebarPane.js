@@ -72,7 +72,7 @@ WebInspector.MetricsSidebarPane.prototype = {
                 return;
             this._updateMetrics(style);
         }
-        WebInspector.cssModel.getComputedStyleAsync(node.id, WebInspector.panels.elements.sidebarPanes.styles.forcedPseudoClasses, callback.bind(this));
+        WebInspector.cssModel.getComputedStyleAsync(node.id, callback.bind(this));
 
         function inlineStyleCallback(style)
         {

@@ -193,6 +193,7 @@ public:
     static bool isWhitespace(Node*);
 
     Node* assertNode(ErrorString*, int nodeId);
+    Element* assertElement(ErrorString*, int nodeId);
     Document* assertDocument(ErrorString*, int nodeId);
 
     // Methods called from other agents.
@@ -209,7 +210,6 @@ private:
     int bind(Node*, NodeToIdMap*);
     void unbind(Node*, NodeToIdMap*);
 
-    Element* assertElement(ErrorString*, int nodeId);
     Node* assertEditableNode(ErrorString*, int nodeId);
     Element* assertEditableElement(ErrorString*, int nodeId);
 

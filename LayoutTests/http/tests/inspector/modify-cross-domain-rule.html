@@ -34,7 +34,7 @@ function test()
                     return;
                 }
 
-                WebInspector.cssModel.getMatchedStylesAsync(nodeId, null, false, false, callback);
+                WebInspector.cssModel.getMatchedStylesAsync(nodeId, false, false, callback);
             }
 
             function callback(rules)

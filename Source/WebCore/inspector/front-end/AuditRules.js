@@ -786,9 +786,9 @@ WebInspector.AuditRules.ImageDimensionsRule.prototype = {
                 doneCallback();
 
             for (var i = 0; nodeIds && i < nodeIds.length; ++i) {
-                WebInspector.cssModel.getMatchedStylesAsync(nodeIds[i], undefined, false, false, matchedCallback);
+                WebInspector.cssModel.getMatchedStylesAsync(nodeIds[i], false, false, matchedCallback);
                 WebInspector.cssModel.getInlineStylesAsync(nodeIds[i], inlineCallback);
-                WebInspector.cssModel.getComputedStyleAsync(nodeIds[i], undefined, imageStylesReady.bind(null, nodeIds[i], targetResult, i === nodeIds.length - 1));
+                WebInspector.cssModel.getComputedStyleAsync(nodeIds[i], imageStylesReady.bind(null, nodeIds[i], targetResult, i === nodeIds.length - 1));
             }
         }
 

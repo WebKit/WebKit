@@ -26,7 +26,7 @@ function test()
 
             function nodeCallback(node)
             {
-                WebInspector.cssModel.getMatchedStylesAsync(node.id, undefined, false, false, callback);
+                WebInspector.cssModel.getMatchedStylesAsync(node.id, false, false, callback);
             }
             InspectorTest.selectNodeWithId("formatted", nodeCallback);
         },
@@ -121,7 +121,7 @@ function test()
 
             function nodeCallback(node)
             {
-                WebInspector.cssModel.getMatchedStylesAsync(node.id, undefined, false, false, callback);
+                WebInspector.cssModel.getMatchedStylesAsync(node.id, false, false, callback);
             }
             InspectorTest.selectNodeWithId("unformatted", nodeCallback);
         },

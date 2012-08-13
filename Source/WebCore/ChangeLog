@@ -1,3 +1,35 @@
+2012-08-10  Alexander Pavlov  <apavlov@chromium.org>
+
+        Web Inspector: [Protocol] Force elements pseudo state via a separate InspectorCSSAgent method
+        https://bugs.webkit.org/show_bug.cgi?id=93721
+
+        Reviewed by Pavel Feldman.
+
+        Introduce InspectorCSSAgent::forcePseudoState() to modify the element's forced pseudo state.
+
+        * inspector/Inspector.json:
+        * inspector/InspectorCSSAgent.cpp:
+        (WebCore::InspectorCSSAgent::getMatchedStylesForNode):
+        (WebCore::InspectorCSSAgent::getComputedStyleForNode):
+        (WebCore::InspectorCSSAgent::forcePseudoState):
+        (WebCore):
+        * inspector/InspectorCSSAgent.h:
+        (InspectorCSSAgent):
+        * inspector/InspectorDOMAgent.h:
+        (InspectorDOMAgent):
+        * inspector/front-end/AuditRules.js:
+        (WebInspector.AuditRules.ImageDimensionsRule.prototype.doRun.getStyles):
+        * inspector/front-end/CSSStyleModel.js:
+        (WebInspector.CSSStyleModel.prototype.getMatchedStylesAsync):
+        (WebInspector.CSSStyleModel.prototype.getComputedStyleAsync):
+        (WebInspector.CSSStyleModel.prototype.forcePseudoState):
+        * inspector/front-end/ElementsPanel.js:
+        (WebInspector.ElementsPanel.prototype._setPseudoClassForNodeId):
+        * inspector/front-end/MetricsSidebarPane.js:
+        * inspector/front-end/StylesSidebarPane.js:
+        (WebInspector.StylesSidebarPane.prototype._refreshUpdate):
+        (WebInspector.StylesSidebarPane.prototype._rebuildUpdate):
+
 2012-08-13  Shinya Kawanaka  <shinyak@chromium.org>
 
         Cannot select the AuthorShadowDOM inner element of an img element

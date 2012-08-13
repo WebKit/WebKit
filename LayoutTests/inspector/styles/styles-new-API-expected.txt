@@ -77,6 +77,59 @@ html: [regular] {
 ['font-weight':'normal'] @[0-20] active
 ['width':'85%'] @[21-32] active
 ['background-image':'url(bar.png)'] @[33-63] active
+=== BODY with forced :hover ===
+body: [user-agent] {
+    ['display':'block'] @[undefined-undefined] style
+    ['margin-top':'8px'] @[undefined-undefined] style
+    ['margin-right':'8px'] @[undefined-undefined] style
+    ['margin-bottom':'8px'] @[undefined-undefined] style
+    ['margin-left':'8px'] @[undefined-undefined] style
+}
+body: [regular] {
+    ['property':'imported-media-screen-stylesheet' non-parsed] @[5-48] active
+}
+body: [regular] {
+    ['property':'imported-media-screen-stylesheet' non-parsed] @[5-48] active
+}
+body: [regular] {
+    ['font-size':'12px'] @[5-21] active
+    ['foo':'bar !
+
+    important /* !important property not recognized by WebCore */' is-important non-parsed] @[26-104] active
+    ['height':'100% !important' is-important] @[109-133] active
+    ['colorz':'"!important"' non-parsed] @[138-159] active
+    ['important':'!important' non-parsed] @[164-185] active
+    ['color':'yellow'] @[190-204] active
+    ['color':'"badcolor" ! important /* good property with strange value */' is-important non-parsed] @[209-278] active
+}
+body.main1: [regular] {
+    ['color':'#F00BAA'] @[13-28] active
+    ['zoo':'moo /* not an !important unrecognized property */' non-parsed] @[28-81] active
+}
+body.main2: [regular] {
+    ['background':'green /* value !important comment */ !important /* no semicolon, very !important */' is-important] @[0-95] active
+    ['background-image':'initial' is-important] @[undefined-undefined] style
+    ['background-repeat-x':'initial' is-important] @[undefined-undefined] style
+    ['background-repeat-y':'initial' is-important] @[undefined-undefined] style
+    ['background-attachment':'initial' is-important] @[undefined-undefined] style
+    ['background-position-x':'initial' is-important] @[undefined-undefined] style
+    ['background-position-y':'initial' is-important] @[undefined-undefined] style
+    ['background-origin':'initial' is-important] @[undefined-undefined] style
+    ['background-clip':'initial' is-important] @[undefined-undefined] style
+    ['background-color':'green' is-important] @[undefined-undefined] style
+    ['background-size':'initial' is-important] @[undefined-undefined] style
+}
+body.mainpage: [regular] {
+    ['text-decoration':'none'] @[5-27] active
+    ['badproperty':'1badvalue1' non-parsed] @[108-132] active
+}
+body.mainpage: [regular] {
+    ['prop1':'val1' non-parsed] @[5-17] active
+    ['prop2':'val2' non-parsed] @[22-34] active
+}
+body:hover: [regular] {
+    ['color':'#CDE'] @[3-15] active
+}
 
 === Attributes style for table ===
 ['width':'50%'] @[undefined-undefined] style
@@ -252,6 +305,9 @@ body.mainpage {
     prop2: val2;
 }
 
+body:hover {
+  color: #CDE;
+}
 '
 body.mainpage: [regular] {
     ['text-decoration':'none'] @[5-27] active
@@ -260,6 +316,9 @@ body.mainpage: [regular] {
 body.mainpage: [regular] {
     ['prop1':'val1' non-parsed] @[5-17] active
     ['prop2':'val2' non-parsed] @[22-34] active
+}
+body:hover: [regular] {
+    ['color':'#CDE'] @[3-15] active
 }
 
 === Last stylesheet patched ===

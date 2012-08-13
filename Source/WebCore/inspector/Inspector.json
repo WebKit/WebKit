@@ -2242,7 +2242,6 @@
                 "name": "getMatchedStylesForNode",
                 "parameters": [
                     { "name": "nodeId", "$ref": "DOM.NodeId" },
-                    { "name": "forcedPseudoClasses", "type": "array", "items": { "type": "string", "enum": ["active", "focus", "hover", "visited"] }, "optional": true, "description": "Element pseudo classes to force when computing applicable style rules." },
                     { "name": "includePseudo", "type": "boolean", "optional": true, "description": "Whether to include pseudo styles (default: true)." },
                     { "name": "includeInherited", "type": "boolean", "optional": true, "description": "Whether to include inherited styles (default: true)." }
                 ],
@@ -2267,8 +2266,7 @@
             {
                 "name": "getComputedStyleForNode",
                 "parameters": [
-                    { "name": "nodeId", "$ref": "DOM.NodeId" },
-                    { "name": "forcedPseudoClasses", "type": "array", "items": { "type": "string", "enum": ["active", "focus", "hover", "visited"] }, "optional": true, "description": "Element pseudo classes to force when computing applicable style rules." }
+                    { "name": "nodeId", "$ref": "DOM.NodeId" }
                 ],
                 "returns": [
                     { "name": "computedStyle", "type": "array", "items": { "$ref": "CSSComputedStyleProperty" }, "description": "Computed style for the specified DOM node." }
@@ -2363,6 +2361,14 @@
                     { "name": "cssProperties", "type": "array", "items": { "$ref": "CSSPropertyInfo" }, "description": "Supported property metainfo." }
                 ],
                 "description": "Returns all supported CSS property names."
+            },
+            {
+                "name": "forcePseudoState",
+                "parameters": [
+                    { "name": "nodeId", "$ref": "DOM.NodeId", "description": "The element id for which to force the pseudo state." },
+                    { "name": "forcedPseudoClasses", "type": "array", "items": { "type": "string", "enum": ["active", "focus", "hover", "visited"] }, "description": "Element pseudo classes to force when computing the element's style." }
+                ],
+                "description": "Ensures that the given node will have specified pseudo-classes whenever its style is computed by the browser."
             },
             {
                 "name": "startSelectorProfiler"
