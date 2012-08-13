@@ -71,14 +71,18 @@ JSValue QtClass::fallbackObject(ExecState* exec, Instance* inst, PropertyName id
 {
     QtInstance* qtinst = static_cast<QtInstance*>(inst);
     JSContextRef context = toRef(exec);
-    JSValueRef* exception = 0;
+    JSValueRef exception = 0;
 
     UString ustring(identifier.publicName());
     const QByteArray name = QString(reinterpret_cast<const QChar*>(ustring.characters()), ustring.length()).toLatin1();
 
     // First see if we have a cache hit
-    if (QtRuntimeMethod* method = qtinst->m_methods.value(name))
-        return toJS(method->jsObjectRef(context, exception));
+    if (QtRuntimeMethod* method = qtinst->m_methods.value(name)) {
+        JSValue obj = toJS(method->jsObjectRef(context, &exception));
+        if (exception)
+            return throwError(exec, toJS(exec, exception));
+        return obj;
+    }
 
     // Nope, create an entry
     const QByteArray normal = QMetaObject::normalizedSignature(name.constData());
@@ -109,9 +113,12 @@ JSValue QtClass::fallbackObject(ExecState* exec, Instance* inst, PropertyName id
         return jsUndefined();
 
     int flags = metaMethod.methodType() == QMetaMethod::Signal ? QtRuntimeMethod::MethodIsSignal : 0;
-    QtRuntimeMethod* method = new QtRuntimeMethod(context, exception, static_cast<QtInstance*>(inst)->getObject(), normal, index, flags, qtinst);
+    QtRuntimeMethod* method = new QtRuntimeMethod(context, static_cast<QtInstance*>(inst)->getObject(), normal, index, flags, qtinst);
     qtinst->m_methods.insert(name, method);
-    return toJS(method->jsObjectRef(context, exception));
+    JSValue obj = toJS(method->jsObjectRef(context, &exception));
+    if (exception)
+        return throwError(exec, toJS(exec, exception));
+    return obj;
 }
 
 // This functionality is handled by the fallback case above...

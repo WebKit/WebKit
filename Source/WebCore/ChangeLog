@@ -1,3 +1,25 @@
+2012-08-13  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Clean up exception handling
+        https://bugs.webkit.org/show_bug.cgi?id=93880
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        The JSC C API uses a JSValueRef* exception parameter to indicate to the
+        caller that an exception was thrown. Naturally the caller must store
+        that ValueRef on the stack in order to get seen and marked by the
+        garbage collector, otherwise the callee would have to use
+        JSValueProtect on it.
+
+        This patch fixes one such case where in fact the exception pointer was passed as zero to the
+        callee and thus ignored. The patch also removes an unused exception parameter.
+
+        * bridge/qt/qt_class.cpp:
+        (JSC::Bindings::QtClass::fallbackObject):
+        * bridge/qt/qt_runtime.cpp:
+        (JSC::Bindings::QtRuntimeMethod::QtRuntimeMethod):
+        * bridge/qt/qt_runtime.h:
+
 2012-08-13  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: remove commitEditing from the text editor delegate.
