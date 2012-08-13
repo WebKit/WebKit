@@ -3290,7 +3290,7 @@ BUGWK87772 DEBUG : svg/dom/viewspec-parser-4.html = TIMEOUT
 BUGWK87772 SLOW RELEASE : svg/dom/viewspec-parser-5.html = PASS
 BUGWK87772 DEBUG : svg/dom/viewspec-parser-5.html = TIMEOUT
 
-BUGWK87880 LINUX ANDROID MAC : fast/layers/scroll-with-transform-composited-layer.html = PASS IMAGE
+BUGWK87880 RELEASE : fast/layers/scroll-with-transform-composited-layer.html = PASS IMAGE
 
 BUGWK87886 LINUX ANDROID : perf/mouse-event.html = PASS TEXT
 
@@ -3472,3 +3472,10 @@ BUGWK93558 : compositing/masks/layer-mask-placement.html = IMAGE
 // V8 does not support static attributes
 BUGWK93488 SKIP : fast/notifications/notifications-permission.html = TEXT
 
+// Flaky
+BUGWK93799 MAC : fast/dom/HTMLMeterElement/meter-element-repaint-on-update-value.html = PASS IMAGE
+BUGWK93799 MAC : fast/dom/HTMLMeterElement/meter-element.html = PASS IMAGE
+BUGWK93799 MAC : fast/dom/HTMLMeterElement/meter-optimums.html = PASS IMAGE
+BUGWK93799 MAC : fast/dom/HTMLMeterElement/meter-styles.html = PASS IMAGE
+
+BUGWK93801 LION : fast/speech/input-appearance-searchandspeech.html = PASS IMAGE
