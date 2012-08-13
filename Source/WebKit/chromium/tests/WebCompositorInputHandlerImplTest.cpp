@@ -117,12 +117,24 @@ TEST(WebCompositorInputHandlerImpl, fromIdentifier)
     WebCompositor::shutdown();
 }
 
+class WebCompositorInitializer {
+public:
+    WebCompositorInitializer()
+    {
+        WebCompositor::initialize(0);
+    }
+
+    ~WebCompositorInitializer()
+    {
+        WebCompositor::shutdown();
+    }
+};
+
 class WebCompositorInputHandlerImplTest : public testing::Test {
 public:
     WebCompositorInputHandlerImplTest()
         : m_expectedDisposition(DidHandle)
     {
-        WebCompositor::initialize(0);
         m_inputHandler = WebCompositorInputHandlerImpl::create(&m_mockCCInputHandlerClient);
         m_inputHandler->setClient(&m_mockClient);
     }
@@ -131,7 +143,6 @@ public:
     {
         m_inputHandler->setClient(0);
         m_inputHandler.clear();
-        WebCompositor::shutdown();
     }
 
     // This is defined as a macro because when an expectation is not satisfied the only output you get
@@ -166,12 +177,11 @@ protected:
     OwnPtr<WebCompositorInputHandlerImpl> m_inputHandler;
     MockWebCompositorInputHandlerClient m_mockClient;
     WebGestureEvent gesture;
+    WebCore::DebugScopedSetImplThread alwaysImplThread;
+    WebCompositorInitializer initializer;
 
     enum ExpectedDisposition { DidHandle, DidNotHandle, DropEvent };
     ExpectedDisposition m_expectedDisposition;
-
-private:
-    WebCore::DebugScopedSetImplThread m_alwaysImplThread;
 };
 
 

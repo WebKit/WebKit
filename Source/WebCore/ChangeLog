@@ -1,3 +1,15 @@
+2012-08-10  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Clean up dependencies for Canvas2DLayerBridgeTest and GraphicsLayerChromiumTest unit tests
+        https://bugs.webkit.org/show_bug.cgi?id=93757
+
+        Reviewed by Adrienne Walker.
+
+        Exposes the current contentsScale for tests.
+
+        * platform/graphics/chromium/GraphicsLayerChromium.h:
+        (GraphicsLayerChromium):
+
 2012-08-13  Andreas Kling  <kling@webkit.org>
 
         Reduce the size of empty NinePieceImage objects.

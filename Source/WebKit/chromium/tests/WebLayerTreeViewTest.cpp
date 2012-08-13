@@ -28,6 +28,7 @@
 
 #include "CompositorFakeWebGraphicsContext3D.h"
 #include "FakeWebCompositorOutputSurface.h"
+#include "WebLayerTreeViewTestCommon.h"
 #include <gmock/gmock.h>
 #include <public/Platform.h>
 #include <public/WebCompositor.h>
@@ -40,27 +41,6 @@ using testing::Mock;
 using testing::Test;
 
 namespace {
-
-class MockWebLayerTreeViewClient : public WebLayerTreeViewClient {
-public:
-    virtual void scheduleComposite() OVERRIDE { }
-    virtual void updateAnimations(double frameBeginTime) OVERRIDE { }
-    MOCK_METHOD0(willBeginFrame, void());
-    MOCK_METHOD0(didBeginFrame, void());
-    virtual void layout() OVERRIDE { }
-    virtual void applyScrollAndScale(const WebSize& scrollDelta, float scaleFactor) OVERRIDE { }
-
-    virtual WebCompositorOutputSurface* createOutputSurface() OVERRIDE
-    {
-        return FakeWebCompositorOutputSurface::create(CompositorFakeWebGraphicsContext3D::create(WebGraphicsContext3D::Attributes())).leakPtr();
-    }
-    virtual void didRecreateOutputSurface(bool) OVERRIDE { }
-
-    MOCK_METHOD0(willCommit, void());
-    MOCK_METHOD0(didCommit, void());
-    virtual void didCommitAndDrawFrame() OVERRIDE { }
-    virtual void didCompleteSwapBuffers() OVERRIDE { }
-};
 
 class MockWebLayerTreeViewClientForThreadedTests : public MockWebLayerTreeViewClient {
 public:

@@ -127,6 +127,7 @@ public:
 
     // Exposed for tests.
     WebKit::WebLayer contentsLayer() const { return m_contentsLayer; }
+    float contentsScale() const;
 
 private:
     virtual void willBeDestroyed();
@@ -151,7 +152,6 @@ private:
     void updateContentsScale();
 
     void setupContentsLayer(WebKit::WebLayer);
-    float contentsScale() const;
 
     int mapAnimationNameToId(const String& animationName);
 

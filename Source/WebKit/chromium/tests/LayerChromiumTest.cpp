@@ -79,13 +79,11 @@ protected:
     {
         // Initialize without threading support.
         WebKit::WebCompositor::initialize(0);
-        DebugScopedSetMainThread main;
         m_layerTreeHost = adoptPtr(new MockCCLayerTreeHost);
     }
 
     virtual void TearDown()
     {
-        DebugScopedSetMainThread main;
         Mock::VerifyAndClearExpectations(m_layerTreeHost.get());
         EXPECT_CALL(*m_layerTreeHost, setNeedsCommit()).Times(AnyNumber());
         m_parent.clear();
@@ -638,7 +636,6 @@ void assertLayerTreeHostMatchesForSubtree(LayerChromium* layer, CCLayerTreeHost*
 TEST(LayerChromiumLayerTreeHostTest, enteringTree)
 {
     WebKit::WebCompositor::initialize(0);
-    DebugScopedSetMainThread main;
     RefPtr<LayerChromium> parent = LayerChromium::create();
     RefPtr<LayerChromium> child = LayerChromium::create();
     RefPtr<LayerChromium> mask = LayerChromium::create();
@@ -671,7 +668,6 @@ TEST(LayerChromiumLayerTreeHostTest, enteringTree)
 TEST(LayerChromiumLayerTreeHostTest, addingLayerSubtree)
 {
     WebKit::WebCompositor::initialize(0);
-    DebugScopedSetMainThread main;
     RefPtr<LayerChromium> parent = LayerChromium::create();
     OwnPtr<FakeCCLayerTreeHost> layerTreeHost(FakeCCLayerTreeHost::create());
 
@@ -703,7 +699,6 @@ TEST(LayerChromiumLayerTreeHostTest, addingLayerSubtree)
 TEST(LayerChromiumLayerTreeHostTest, changeHost)
 {
     WebKit::WebCompositor::initialize(0);
-    DebugScopedSetMainThread main;
     RefPtr<LayerChromium> parent = LayerChromium::create();
     RefPtr<LayerChromium> child = LayerChromium::create();
     RefPtr<LayerChromium> mask = LayerChromium::create();
@@ -737,7 +732,6 @@ TEST(LayerChromiumLayerTreeHostTest, changeHost)
 TEST(LayerChromiumLayerTreeHostTest, changeHostInSubtree)
 {
     WebKit::WebCompositor::initialize(0);
-    DebugScopedSetMainThread main;
     RefPtr<LayerChromium> firstParent = LayerChromium::create();
     RefPtr<LayerChromium> firstChild = LayerChromium::create();
     RefPtr<LayerChromium> secondParent = LayerChromium::create();
@@ -775,7 +769,6 @@ TEST(LayerChromiumLayerTreeHostTest, changeHostInSubtree)
 TEST(LayerChromiumLayerTreeHostTest, replaceMaskAndReplicaLayer)
 {
     WebKit::WebCompositor::initialize(0);
-    DebugScopedSetMainThread main;
     RefPtr<LayerChromium> parent = LayerChromium::create();
     RefPtr<LayerChromium> mask = LayerChromium::create();
     RefPtr<LayerChromium> replica = LayerChromium::create();

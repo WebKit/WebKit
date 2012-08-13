@@ -26,28 +26,24 @@
 
 #include "GraphicsLayerChromium.h"
 
-#include "CCAnimationTestCommon.h"
 #include "CompositorFakeWebGraphicsContext3D.h"
-#include "FakeCCLayerTreeHostClient.h"
-#include "GraphicsContext3D.h"
-#include "GraphicsContext3DPrivate.h"
 #include "GraphicsLayer.h"
-#include "LayerChromium.h"
 #include "Matrix3DTransformOperation.h"
 #include "RotateTransformOperation.h"
 #include "TranslateTransformOperation.h"
+#include "WebLayerTreeViewTestCommon.h"
 #include "cc/CCLayerTreeHost.h"
 #include "cc/CCLayerTreeHostImpl.h"
 #include "cc/CCSingleThreadProxy.h"
-#include <public/WebCompositor.h>
-
 #include <gtest/gtest.h>
+#include <public/WebCompositor.h>
+#include <public/WebFloatAnimationCurve.h>
 #include <public/WebGraphicsContext3D.h>
+#include <public/WebLayerTreeView.h>
 #include <wtf/PassOwnPtr.h>
 
 using namespace WebCore;
 using namespace WebKit;
-using namespace WebKitTests;
 
 namespace {
 
@@ -61,31 +57,6 @@ class MockGraphicsLayerClient : public GraphicsLayerClient {
     virtual float deviceScaleFactor() const OVERRIDE { return 2; }
 };
 
-class MockLayerTreeHost : public CCLayerTreeHost {
-public:
-    static PassOwnPtr<MockLayerTreeHost> create()
-    {
-        CCLayerTreeSettings settings;
-        OwnPtr<MockLayerTreeHost> layerTreeHost(adoptPtr(new MockLayerTreeHost(new FakeCCLayerTreeHostClient(), settings)));
-        bool success = layerTreeHost->initialize();
-        EXPECT_TRUE(success);
-        layerTreeHost->setRootLayer(LayerChromium::create());
-        layerTreeHost->setViewportSize(IntSize(1, 1), IntSize(1, 1));
-        return layerTreeHost.release();
-    }
-
-    virtual PassOwnPtr<CCLayerTreeHostImpl> createLayerTreeHostImpl(CCLayerTreeHostImplClient* client)
-    {
-        return CCLayerTreeHostImpl::create(settings(), client);
-    }
-
-private:
-    MockLayerTreeHost(CCLayerTreeHostClient* client, const CCLayerTreeSettings& settings)
-        : CCLayerTreeHost(client, settings)
-    {
-    }
-};
-
 class GraphicsLayerChromiumTest : public testing::Test {
 public:
     GraphicsLayerChromiumTest()
@@ -94,15 +65,15 @@ public:
         WebCompositor::setAcceleratedAnimationEnabled(true);
         WebCompositor::initialize(0);
         m_graphicsLayer = static_pointer_cast<GraphicsLayerChromium>(GraphicsLayer::create(&m_client));
-        m_platformLayer = m_graphicsLayer->platformLayer()->unwrap<LayerChromium>();
-        m_layerTreeHost = MockLayerTreeHost::create();
-        m_platformLayer->setLayerTreeHost(m_layerTreeHost.get());
+        m_platformLayer = m_graphicsLayer->platformLayer();
+        m_layerTreeView.initialize(&m_layerTreeViewClient, *m_platformLayer, WebLayerTreeView::Settings());
+        m_layerTreeView.setViewportSize(WebSize(1, 1), WebSize(1, 1));
     }
 
     virtual ~GraphicsLayerChromiumTest()
     {
         m_graphicsLayer.clear();
-        m_layerTreeHost.clear();
+        m_layerTreeView.reset();
         WebCompositor::shutdown();
     }
 
@@ -112,318 +83,46 @@ protected:
         EXPECT_FLOAT_EQ(translateX, matrix.m41());
     }
 
-    LayerChromium* m_platformLayer;
+    WebLayer* m_platformLayer;
     OwnPtr<GraphicsLayerChromium> m_graphicsLayer;
-    OwnPtr<CCLayerTreeHost> m_layerTreeHost;
 
 private:
+    MockWebLayerTreeViewClient m_layerTreeViewClient;
+    WebLayerTreeView m_layerTreeView;
     MockGraphicsLayerClient m_client;
-    DebugScopedSetMainThread m_main;
 };
 
 TEST_F(GraphicsLayerChromiumTest, updateLayerPreserves3DWithAnimations)
 {
     ASSERT_FALSE(m_platformLayer->hasActiveAnimation());
 
-    OwnPtr<CCActiveAnimation> floatAnimation(CCActiveAnimation::create(adoptPtr(new FakeFloatAnimationCurve), 0, 1, CCActiveAnimation::Opacity));
-    m_platformLayer->layerAnimationController()->addAnimation(floatAnimation.release());
+    WebFloatAnimationCurve curve;
+    curve.add(WebFloatKeyframe(0.0, 0.0));
+    WebAnimation floatAnimation(curve, 1, 1, WebAnimation::TargetPropertyOpacity);
+    ASSERT_TRUE(m_platformLayer->addAnimation(floatAnimation));
 
     ASSERT_TRUE(m_platformLayer->hasActiveAnimation());
 
     m_graphicsLayer->setPreserves3D(true);
 
-    m_platformLayer = m_graphicsLayer->platformLayer()->unwrap<LayerChromium>();
+    m_platformLayer = m_graphicsLayer->platformLayer();
     ASSERT_TRUE(m_platformLayer);
 
     ASSERT_TRUE(m_platformLayer->hasActiveAnimation());
-    m_platformLayer->removeAnimation(0);
+    m_platformLayer->removeAnimation(1);
     ASSERT_FALSE(m_platformLayer->hasActiveAnimation());
 
     m_graphicsLayer->setPreserves3D(false);
 
-    m_platformLayer = m_graphicsLayer->platformLayer()->unwrap<LayerChromium>();
+    m_platformLayer = m_graphicsLayer->platformLayer();
     ASSERT_TRUE(m_platformLayer);
 
     ASSERT_FALSE(m_platformLayer->hasActiveAnimation());
 }
 
-TEST_F(GraphicsLayerChromiumTest, createOpacityAnimation)
-{
-    const double duration = 1;
-    WebCore::KeyframeValueList values(AnimatedPropertyOpacity);
-    values.insert(new FloatAnimationValue(0, 0));
-    values.insert(new FloatAnimationValue(duration, 1));
-
-    RefPtr<Animation> animation = Animation::create();
-    animation->setDuration(duration);
-
-    IntSize boxSize;
-    bool addedAnimation = m_graphicsLayer->addAnimation(values, boxSize, animation.get(), "", 0);
-
-    EXPECT_TRUE(addedAnimation);
-
-    EXPECT_TRUE(m_platformLayer->layerAnimationController()->hasActiveAnimation());
-
-    CCActiveAnimation* activeAnimation = m_platformLayer->layerAnimationController()->getActiveAnimation(CCActiveAnimation::Opacity);
-    EXPECT_TRUE(activeAnimation);
-
-    EXPECT_EQ(1, activeAnimation->iterations());
-    EXPECT_EQ(CCActiveAnimation::Opacity, activeAnimation->targetProperty());
-
-    EXPECT_EQ(CCAnimationCurve::Float, activeAnimation->curve()->type());
-
-    const CCFloatAnimationCurve* curve = activeAnimation->curve()->toFloatAnimationCurve();
-    EXPECT_TRUE(curve);
-
-    EXPECT_EQ(0, curve->getValue(0));
-    EXPECT_EQ(1, curve->getValue(duration));
-}
-
-TEST_F(GraphicsLayerChromiumTest, createTransformAnimation)
-{
-    const double duration = 1;
-    WebCore::KeyframeValueList values(AnimatedPropertyWebkitTransform);
-
-    TransformOperations operations1;
-    operations1.operations().append(TranslateTransformOperation::create(Length(2, WebCore::Fixed), Length(0, WebCore::Fixed), TransformOperation::TRANSLATE_X));
-    values.insert(new TransformAnimationValue(0, &operations1));
-
-    TransformOperations operations2;
-    operations2.operations().append(TranslateTransformOperation::create(Length(4, WebCore::Fixed), Length(0, WebCore::Fixed), TransformOperation::TRANSLATE_X));
-    values.insert(new TransformAnimationValue(duration, &operations2));
-
-    RefPtr<Animation> animation = Animation::create();
-    animation->setDuration(duration);
-
-    IntSize boxSize;
-    m_graphicsLayer->addAnimation(values, boxSize, animation.get(), "", 0);
-
-    EXPECT_TRUE(m_platformLayer->layerAnimationController()->hasActiveAnimation());
-
-    CCActiveAnimation* activeAnimation = m_platformLayer->layerAnimationController()->getActiveAnimation(CCActiveAnimation::Transform);
-    EXPECT_TRUE(activeAnimation);
-
-    EXPECT_EQ(1, activeAnimation->iterations());
-    EXPECT_EQ(CCActiveAnimation::Transform, activeAnimation->targetProperty());
-
-    EXPECT_EQ(CCAnimationCurve::Transform, activeAnimation->curve()->type());
-
-    const CCTransformAnimationCurve* curve = activeAnimation->curve()->toTransformAnimationCurve();
-    EXPECT_TRUE(curve);
-
-    expectTranslateX(2, curve->getValue(0));
-    expectTranslateX(4, curve->getValue(duration));
-}
-
-TEST_F(GraphicsLayerChromiumTest, createTransformAnimationWithBigRotation)
-{
-    const double duration = 1;
-    WebCore::KeyframeValueList values(AnimatedPropertyWebkitTransform);
-
-    TransformOperations operations1;
-    operations1.operations().append(RotateTransformOperation::create(0, TransformOperation::ROTATE));
-    values.insert(new TransformAnimationValue(0, &operations1));
-
-    TransformOperations operations2;
-    operations2.operations().append(RotateTransformOperation::create(270, TransformOperation::ROTATE));
-    values.insert(new TransformAnimationValue(duration, &operations2));
-
-    RefPtr<Animation> animation = Animation::create();
-    animation->setDuration(duration);
-
-    IntSize boxSize;
-    m_graphicsLayer->addAnimation(values, boxSize, animation.get(), "", 0);
-
-    EXPECT_FALSE(m_platformLayer->layerAnimationController()->hasActiveAnimation());
-}
-
-TEST_F(GraphicsLayerChromiumTest, createTransformAnimationWithRotationInvolvingNegativeAngles)
-{
-    const double duration = 1;
-    WebCore::KeyframeValueList values(AnimatedPropertyWebkitTransform);
-
-    TransformOperations operations1;
-    operations1.operations().append(RotateTransformOperation::create(-330, TransformOperation::ROTATE));
-    values.insert(new TransformAnimationValue(0, &operations1));
-
-    TransformOperations operations2;
-    operations2.operations().append(RotateTransformOperation::create(-320, TransformOperation::ROTATE));
-    values.insert(new TransformAnimationValue(duration, &operations2));
-
-    RefPtr<Animation> animation = Animation::create();
-    animation->setDuration(duration);
-
-    IntSize boxSize;
-    m_graphicsLayer->addAnimation(values, boxSize, animation.get(), "", 0);
-
-    EXPECT_TRUE(m_platformLayer->layerAnimationController()->hasActiveAnimation());
-}
-
-TEST_F(GraphicsLayerChromiumTest, createTransformAnimationWithSmallRotationInvolvingLargeAngles)
-{
-    const double duration = 1;
-    WebCore::KeyframeValueList values(AnimatedPropertyWebkitTransform);
-
-    TransformOperations operations1;
-    operations1.operations().append(RotateTransformOperation::create(270, TransformOperation::ROTATE));
-    values.insert(new TransformAnimationValue(0, &operations1));
-
-    TransformOperations operations2;
-    operations2.operations().append(RotateTransformOperation::create(360, TransformOperation::ROTATE));
-    values.insert(new TransformAnimationValue(duration, &operations2));
-
-    RefPtr<Animation> animation = Animation::create();
-    animation->setDuration(duration);
-
-    IntSize boxSize;
-    m_graphicsLayer->addAnimation(values, boxSize, animation.get(), "", 0);
-
-    EXPECT_TRUE(m_platformLayer->layerAnimationController()->hasActiveAnimation());
-}
-
-TEST_F(GraphicsLayerChromiumTest, createTransformAnimationWithSingularMatrix)
-{
-    const double duration = 1;
-    WebCore::KeyframeValueList values(AnimatedPropertyWebkitTransform);
-
-    TransformationMatrix matrix1;
-    TransformOperations operations1;
-    operations1.operations().append(Matrix3DTransformOperation::create(matrix1));
-    values.insert(new TransformAnimationValue(0, &operations1));
-
-    TransformationMatrix matrix2;
-    matrix2.setM11(0);
-    TransformOperations operations2;
-    operations2.operations().append(Matrix3DTransformOperation::create(matrix2));
-    values.insert(new TransformAnimationValue(duration, &operations2));
-
-    RefPtr<Animation> animation = Animation::create();
-    animation->setDuration(duration);
-
-    IntSize boxSize;
-    m_graphicsLayer->addAnimation(values, boxSize, animation.get(), "", 0);
-
-    EXPECT_FALSE(m_platformLayer->layerAnimationController()->hasActiveAnimation());
-}
-
-TEST_F(GraphicsLayerChromiumTest, createReversedAnimation)
-{
-    const double duration = 1;
-    WebCore::KeyframeValueList values(AnimatedPropertyWebkitTransform);
-
-    TransformOperations operations1;
-    operations1.operations().append(TranslateTransformOperation::create(Length(2, WebCore::Fixed), Length(0, WebCore::Fixed), TransformOperation::TRANSLATE_X));
-    values.insert(new TransformAnimationValue(0, &operations1));
-
-    TransformOperations operations2;
-    operations2.operations().append(TranslateTransformOperation::create(Length(4, WebCore::Fixed), Length(0, WebCore::Fixed), TransformOperation::TRANSLATE_X));
-    values.insert(new TransformAnimationValue(duration, &operations2));
-
-    RefPtr<Animation> animation = Animation::create();
-    animation->setDuration(duration);
-    animation->setDirection(Animation::AnimationDirectionReverse);
-
-    IntSize boxSize;
-    m_graphicsLayer->addAnimation(values, boxSize, animation.get(), "", 0);
-
-    EXPECT_TRUE(m_platformLayer->layerAnimationController()->hasActiveAnimation());
-
-    CCActiveAnimation* activeAnimation = m_platformLayer->layerAnimationController()->getActiveAnimation(CCActiveAnimation::Transform);
-    EXPECT_TRUE(activeAnimation);
-
-    EXPECT_EQ(1, activeAnimation->iterations());
-    EXPECT_EQ(CCActiveAnimation::Transform, activeAnimation->targetProperty());
-
-    EXPECT_EQ(CCAnimationCurve::Transform, activeAnimation->curve()->type());
-
-    const CCTransformAnimationCurve* curve = activeAnimation->curve()->toTransformAnimationCurve();
-    EXPECT_TRUE(curve);
-
-    expectTranslateX(4, curve->getValue(0));
-    expectTranslateX(2, curve->getValue(duration));
-}
-
-TEST_F(GraphicsLayerChromiumTest, createAlternatingAnimation)
-{
-    const double duration = 1;
-    WebCore::KeyframeValueList values(AnimatedPropertyWebkitTransform);
-
-    TransformOperations operations1;
-    operations1.operations().append(TranslateTransformOperation::create(Length(2, WebCore::Fixed), Length(0, WebCore::Fixed), TransformOperation::TRANSLATE_X));
-    values.insert(new TransformAnimationValue(0, &operations1));
-
-    TransformOperations operations2;
-    operations2.operations().append(TranslateTransformOperation::create(Length(4, WebCore::Fixed), Length(0, WebCore::Fixed), TransformOperation::TRANSLATE_X));
-    values.insert(new TransformAnimationValue(duration, &operations2));
-
-    RefPtr<Animation> animation = Animation::create();
-    animation->setDuration(duration);
-    animation->setDirection(Animation::AnimationDirectionAlternate);
-    animation->setIterationCount(2);
-
-    IntSize boxSize;
-    m_graphicsLayer->addAnimation(values, boxSize, animation.get(), "", 0);
-
-    EXPECT_TRUE(m_platformLayer->layerAnimationController()->hasActiveAnimation());
-
-    CCActiveAnimation* activeAnimation = m_platformLayer->layerAnimationController()->getActiveAnimation(CCActiveAnimation::Transform);
-    EXPECT_TRUE(activeAnimation);
-    EXPECT_TRUE(activeAnimation->alternatesDirection());
-
-    EXPECT_EQ(2, activeAnimation->iterations());
-    EXPECT_EQ(CCActiveAnimation::Transform, activeAnimation->targetProperty());
-
-    EXPECT_EQ(CCAnimationCurve::Transform, activeAnimation->curve()->type());
-
-    const CCTransformAnimationCurve* curve = activeAnimation->curve()->toTransformAnimationCurve();
-    EXPECT_TRUE(curve);
-
-    expectTranslateX(2, curve->getValue(0));
-    expectTranslateX(4, curve->getValue(duration));
-}
-
-TEST_F(GraphicsLayerChromiumTest, createReversedAlternatingAnimation)
-{
-    const double duration = 1;
-    WebCore::KeyframeValueList values(AnimatedPropertyWebkitTransform);
-
-    TransformOperations operations1;
-    operations1.operations().append(TranslateTransformOperation::create(Length(2, WebCore::Fixed), Length(0, WebCore::Fixed), TransformOperation::TRANSLATE_X));
-    values.insert(new TransformAnimationValue(0, &operations1));
-
-    TransformOperations operations2;
-    operations2.operations().append(TranslateTransformOperation::create(Length(4, WebCore::Fixed), Length(0, WebCore::Fixed), TransformOperation::TRANSLATE_X));
-    values.insert(new TransformAnimationValue(duration, &operations2));
-
-    RefPtr<Animation> animation = Animation::create();
-    animation->setDuration(duration);
-    animation->setDirection(Animation::AnimationDirectionAlternateReverse);
-    animation->setIterationCount(2);
-
-    IntSize boxSize;
-    m_graphicsLayer->addAnimation(values, boxSize, animation.get(), "", 0);
-
-    EXPECT_TRUE(m_platformLayer->layerAnimationController()->hasActiveAnimation());
-
-    CCActiveAnimation* activeAnimation = m_platformLayer->layerAnimationController()->getActiveAnimation(CCActiveAnimation::Transform);
-    EXPECT_TRUE(activeAnimation);
-    EXPECT_TRUE(activeAnimation->alternatesDirection());
-
-    EXPECT_EQ(2, activeAnimation->iterations());
-    EXPECT_EQ(CCActiveAnimation::Transform, activeAnimation->targetProperty());
-
-    EXPECT_EQ(CCAnimationCurve::Transform, activeAnimation->curve()->type());
-
-    const CCTransformAnimationCurve* curve = activeAnimation->curve()->toTransformAnimationCurve();
-    EXPECT_TRUE(curve);
-
-    expectTranslateX(4, curve->getValue(0));
-    expectTranslateX(2, curve->getValue(duration));
-}
-
 TEST_F(GraphicsLayerChromiumTest, shouldStartWithCorrectContentsScale)
 {
-    EXPECT_EQ(2, m_platformLayer->contentsScale());
+    EXPECT_EQ(2, m_graphicsLayer->contentsScale());
 }
 
 } // namespace

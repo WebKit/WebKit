@@ -362,6 +362,11 @@ void WebLayer::resumeAnimations(double monotonicTime)
     m_private->resumeAnimations(monotonicTime);
 }
 
+bool WebLayer::hasActiveAnimation()
+{
+    return m_private->hasActiveAnimation();
+}
+
 void WebLayer::transferAnimationsTo(WebLayer* other)
 {
     ASSERT(other);

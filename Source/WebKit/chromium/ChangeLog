@@ -1,3 +1,37 @@
+2012-08-10  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Clean up dependencies for Canvas2DLayerBridgeTest and GraphicsLayerChromiumTest unit tests
+        https://bugs.webkit.org/show_bug.cgi?id=93757
+
+        Reviewed by Adrienne Walker.
+
+        Breaks up some unit tests and removes unused code to avoid unit tests depending on both non-compositor WebCore
+        logic and compositor internals. Canvas2DLayerBridgeTest had some vestigal includes and local variables that
+        weren't being used, those are removed. GraphicsLayerChromiumTest was reaching into CC types, but could mostly
+        use Platform API types for testing.
+
+        GraphicsLayerChromiumTest had some tests that were verifying that we could correctly translate WebCore
+        animation lists into CCAnimation types - these have been moved into AnimationTranslationUtilTest.cpp, since the
+        logic under test is in AnimationTranslationUtil. Currently these only test that we accept / reject animations as
+        expected. They could be expanded to verify that the animation was translated faithfully, but that would require
+        expanding the information exposed on WebAnimation.
+
+        * WebKit.gypi:
+        * src/WebLayer.cpp:
+        (WebKit::WebLayer::hasActiveAnimation):
+        (WebKit):
+        * tests/Canvas2DLayerBridgeTest.cpp:
+        (Canvas2DLayerBridgeTest::fullLifecycleTest):
+        * tests/GraphicsLayerChromiumTest.cpp:
+        (WebKit::GraphicsLayerChromiumTest::GraphicsLayerChromiumTest):
+        (WebKit::GraphicsLayerChromiumTest::~GraphicsLayerChromiumTest):
+        (GraphicsLayerChromiumTest):
+        (WebKit::TEST_F):
+        * tests/WebLayerTreeViewTest.cpp:
+        * tests/WebLayerTreeViewTestCommon.h: Added.
+        (WebKit):
+        (MockWebLayerTreeViewClient):
+
 2012-08-13  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r125422.

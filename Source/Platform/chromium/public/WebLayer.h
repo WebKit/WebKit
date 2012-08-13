@@ -168,6 +168,9 @@ public:
     WEBKIT_EXPORT void suspendAnimations(double monotonicTime);
     WEBKIT_EXPORT void resumeAnimations(double monotonicTime);
 
+    // Returns true if this layer has any active animations - useful for tests.
+    WEBKIT_EXPORT bool hasActiveAnimation();
+
     // Transfers all animations running on the current layer.
     WEBKIT_EXPORT void transferAnimationsTo(WebLayer*);
 

@@ -30,10 +30,6 @@
 #include "FakeWebGraphicsContext3D.h"
 #include "GraphicsContext3DPrivate.h"
 #include "ImageBuffer.h"
-#include "LayerChromium.h"
-#include "cc/CCGraphicsContext.h"
-#include "cc/CCRenderingStats.h"
-#include "cc/CCTextureUpdateQueue.h"
 #include <public/Platform.h>
 #include <public/WebCompositor.h>
 #include <public/WebThread.h>
@@ -75,10 +71,8 @@ protected:
     void fullLifecycleTest(ThreadMode threadMode, DeferralMode deferralMode)
     {
         RefPtr<GraphicsContext3D> mainContext = GraphicsContext3DPrivate::createGraphicsContextFromWebContext(adoptPtr(new MockCanvasContext));
-        OwnPtr<CCGraphicsContext> ccImplContext = FakeWebCompositorOutputSurface::create(adoptPtr(new MockCanvasContext));
 
         MockCanvasContext& mainMock = *static_cast<MockCanvasContext*>(GraphicsContext3DPrivate::extractWebGraphicsContext3D(mainContext.get()));
-        MockCanvasContext& implMock = *static_cast<MockCanvasContext*>(ccImplContext->context3D());
 
         MockWebTextureUpdater updater;
 
@@ -115,7 +109,6 @@ protected:
             EXPECT_CALL(mainMock, flush());
         }
         bridge.clear();
-        ::testing::Mock::VerifyAndClearExpectations(&implMock);
 
         WebCompositor::shutdown();
     }

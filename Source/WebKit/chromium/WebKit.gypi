@@ -52,6 +52,7 @@
             'src/js/Images/segmentSelectedEndChromium.png',
         ],
         'webkit_unittest_files': [
+            'tests/AnimationTranslationUtilTest.cpp',
             'tests/ArenaTestHelpers.h',
             'tests/AssociatedURLLoaderTest.cpp',
             'tests/Canvas2DLayerBridgeTest.cpp',
@@ -160,6 +161,7 @@
             'tests/WebFrameTest.cpp',
             'tests/WebLayerTest.cpp',
             'tests/WebLayerTreeViewTest.cpp',
+            'tests/WebLayerTreeViewTestCommon.h',
             'tests/WebMediaPlayerClientImplTest.cpp',
             'tests/WebPageNewSerializerTest.cpp',
             'tests/WebPageSerializerTest.cpp',
