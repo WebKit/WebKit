@@ -1,3 +1,31 @@
+2012-08-13  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Replace use of internal Weak smart pointer with JSWeakObjectMap
+        https://bugs.webkit.org/show_bug.cgi?id=93872
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        The intention of this patch series is to replace use of internal JSC
+        API with use of the stable and public C API.
+
+        The JSC::Weak template is internal API and the only part of the C API
+        that exposes similar functionality is the JSWeakObjectMap. It is
+        special in the sense that its life-time is tied to the life-time of the
+        JS global object, which in turn is subject to garbage collection. In
+        order to maximize re-use of the same map across different JSContextRef
+        instances, we use the associated global context ref as owner of the
+        weak maps. The key in the weak map is the identity (pointer) of the
+        runtime method object itself.  The iteration through the maps is
+        tedious, but should usually not go beyond just a few.
+
+        * bridge/qt/qt_runtime.cpp:
+        (Bindings):
+        (JSC::Bindings::methodMapCleaner):
+        (JSC::Bindings::QtRuntimeMethod::~QtRuntimeMethod):
+        (JSC::Bindings::QtRuntimeMethod::jsObjectRef):
+        * bridge/qt/qt_runtime.h:
+        (QtRuntimeMethod):
+
 2012-08-13  Raphael Kubo da Costa  <rakuco@webkit.org>
 
         [CMake] Remove glib-related Find modules and write single new one instead.

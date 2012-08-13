@@ -40,6 +40,7 @@ SOURCES += \
     API/JSObjectRef.cpp \
     API/JSStringRef.cpp \
     API/JSValueRef.cpp \
+    API/JSWeakObjectMapRefPrivate.cpp \
     API/OpaqueJSString.cpp \
     assembler/ARMAssembler.cpp \
     assembler/ARMv7Assembler.cpp \
