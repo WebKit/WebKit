@@ -1,3 +1,13 @@
+2012-08-13  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening.
+
+        Adding an empty platform baseline for r125462 just to avoid exceptions
+        in the layout-test step on the buildbots. The baseline will be updated
+        accordingly later.
+
+        * platform/gtk/svg/filters/color-interpolation-filters-expected.txt: Added.
+
 2012-08-13  Joone Hur  <joone.hur@intel.com>
 
         [EFL] Unreviewed gardening, rebaselining after r125462.
