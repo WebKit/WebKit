@@ -1,3 +1,20 @@
+2012-08-14  Leo Yang  <leoyang@rim.com>
+
+        [BlackBerry] Checkerboard flashes on Go Back
+        https://bugs.webkit.org/show_bug.cgi?id=94018
+
+        Reviewed by Yong Li.
+        Reviewed internally by Yong Li.
+
+        The backing store need to be suspended before the
+        WebPagePrivate::restoreHistoryViewState() is called to avoid UI thread
+        drawing checkerboard.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::restoreHistoryViewState):
+        * WebCoreSupport/FrameLoaderClientBlackBerry.cpp:
+        (WebCore::FrameLoaderClientBlackBerry::restoreViewState):
+
 2012-08-14  Mike Fenton  <mifenton@rim.com>
 
         [BlackBerry] Remove unnecessary \n's from InputHandler log messages.

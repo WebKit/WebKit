@@ -1088,6 +1088,10 @@ void FrameLoaderClientBlackBerry::restoreViewState()
     if (orientationChanged && viewState.isZoomToFitScale)
         scale = BlackBerry::Platform::Graphics::Screen::primaryScreen()->width() * scale / static_cast<double>(BlackBerry::Platform::Graphics::Screen::primaryScreen()->height());
 
+    // Don't flash checkerboard before WebPagePrivate::restoreHistoryViewState() finished.
+    // This call will be balanced by BackingStorePrivate::resumeScreenAndBackingStoreUpdates() in WebPagePrivate::restoreHistoryViewState().
+    m_webPagePrivate->m_backingStore->d->suspendScreenAndBackingStoreUpdates();
+
     // It is not safe to render the page at this point. So we post a message instead. Messages have higher priority than timers.
     BlackBerry::Platform::webKitThreadMessageClient()->dispatchMessage(BlackBerry::Platform::createMethodCallMessage(
         &WebPagePrivate::restoreHistoryViewState, m_webPagePrivate, contentsSize, scrollPosition, scale, viewState.shouldReflowBlock));

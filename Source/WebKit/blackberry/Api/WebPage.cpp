@@ -6424,10 +6424,11 @@ void WebPagePrivate::setTextZoomFactor(float textZoomFactor)
 
 void WebPagePrivate::restoreHistoryViewState(Platform::IntSize contentsSize, Platform::IntPoint scrollPosition, double scale, bool shouldReflowBlock)
 {
-    if (!m_mainFrame)
+    if (!m_mainFrame) {
+        m_backingStore->d->resumeScreenAndBackingStoreUpdates(BackingStore::RenderAndBlit);
         return;
+    }
 
-    m_backingStore->d->suspendScreenAndBackingStoreUpdates(); // don't flash checkerboard for the setScrollPosition call
     m_mainFrame->view()->setContentsSizeFromHistory(contentsSize);
 
     // Here we need to set scroll position what we asked for.
