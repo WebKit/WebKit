@@ -56,7 +56,7 @@ v8::Handle<v8::Value> V8HTMLFormElement::namedPropertyGetter(v8::Local<v8::Strin
 {
     INC_STATS("DOM.HTMLFormElement.NamedPropertyGetter");
     HTMLFormElement* imp = V8HTMLFormElement::toNative(info.Holder());
-    AtomicString v = v8ValueToAtomicWebCoreString(name);
+    AtomicString v = toWebCoreAtomicString(name);
 
     // Call getNamedElements twice, first time check if it has a value
     // and let HTMLFormElement update its cache.

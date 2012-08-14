@@ -1,5 +1,50 @@
 2012-08-13  Kentaro Hara  <haraken@chromium.org>
 
+        [V8] Rename v8ValueToAtomicWebCoreString() to toWebCoreAtomicString()
+        https://bugs.webkit.org/show_bug.cgi?id=93824
+
+        Reviewed by Adam Barth.
+
+        For naming consistency with toWebCoreString(), we can rename
+        v8ValueToAtomicWebCoreString() to toWebCoreAtomicString().
+        Also we can rename v8ValueToAtomicWebCoreStringWithNullCheck()
+        to toWebCoreAtomicStringWithNullCheck().
+
+        No tests. No change in behavior.
+
+        * bindings/scripts/CodeGeneratorV8.pm:
+        (GenerateNormalAttrSetter):
+        (GenerateEventListenerCallback):
+        * bindings/scripts/test/V8/V8TestEventTarget.cpp:
+        (WebCore::TestEventTargetV8Internal::addEventListenerCallback):
+        (WebCore::TestEventTargetV8Internal::removeEventListenerCallback):
+        * bindings/scripts/test/V8/V8TestObj.cpp:
+        (WebCore::TestObjV8Internal::addEventListenerCallback):
+        (WebCore::TestObjV8Internal::removeEventListenerCallback):
+        * bindings/v8/V8Binding.cpp:
+        (WebCore::toWebCoreAtomicString):
+        * bindings/v8/V8Binding.h:
+        (WebCore::toWebCoreStringWithNullOrUndefinedCheck):
+        (WebCore::toWebCoreAtomicStringWithNullCheck):
+        * bindings/v8/V8Collection.h:
+        (WebCore::getNamedPropertyOfCollection):
+        * bindings/v8/V8DOMWindowShell.cpp:
+        (WebCore::getter):
+        * bindings/v8/custom/V8DOMWindowCustom.cpp:
+        (WebCore::V8DOMWindow::namedPropertyGetter):
+        * bindings/v8/custom/V8HTMLAllCollectionCustom.cpp:
+        (WebCore::V8HTMLAllCollection::namedPropertyGetter):
+        * bindings/v8/custom/V8HTMLCollectionCustom.cpp:
+        (WebCore::V8HTMLCollection::namedPropertyGetter):
+        * bindings/v8/custom/V8HTMLFormElementCustom.cpp:
+        (WebCore::V8HTMLFormElement::namedPropertyGetter):
+        * bindings/v8/custom/V8HTMLFrameSetElementCustom.cpp:
+        (WebCore::V8HTMLFrameSetElement::namedPropertyGetter):
+        * bindings/v8/custom/V8NodeListCustom.cpp:
+        (WebCore::V8NodeList::namedPropertyGetter):
+
+2012-08-13  Kentaro Hara  <haraken@chromium.org>
+
         [V8] Remove v8ValueToWebCoreString()
         https://bugs.webkit.org/show_bug.cgi?id=93822
 

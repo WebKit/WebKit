@@ -97,7 +97,7 @@ namespace WebCore {
     String toWebCoreString(v8::Handle<v8::Value>);
 
     // Convert a V8 value to a WTF::AtomicString.
-    AtomicString v8ValueToAtomicWebCoreString(v8::Handle<v8::Value>);
+    AtomicString toWebCoreAtomicString(v8::Handle<v8::Value>);
 
     // Return a V8 external string that shares the underlying buffer with the given
     // WebCore string. The reference counting mechanism is used to keep the
@@ -341,14 +341,14 @@ namespace WebCore {
         return value->IsNull() ? String() : toWebCoreString(value);
     }
 
-    inline AtomicString toAtomicWebCoreStringWithNullCheck(v8::Handle<v8::Value> value)
-    {
-        return value->IsNull() ? AtomicString() : v8ValueToAtomicWebCoreString(value);
-    }
-
     inline String toWebCoreStringWithNullOrUndefinedCheck(v8::Handle<v8::Value> value)
     {
         return (value->IsNull() || value->IsUndefined()) ? String() : toWebCoreString(value);
+    }
+
+    inline AtomicString toWebCoreAtomicStringWithNullCheck(v8::Handle<v8::Value> value)
+    {
+        return value->IsNull() ? AtomicString() : toWebCoreAtomicString(value);
     }
 
     inline v8::Handle<v8::String> v8UndetectableString(const String& str)

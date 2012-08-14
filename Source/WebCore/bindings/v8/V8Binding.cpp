@@ -88,7 +88,7 @@ String toWebCoreString(v8::Handle<v8::Value> value)
     return v8NonStringValueToWebCoreString(value);
 }
 
-AtomicString v8ValueToAtomicWebCoreString(v8::Handle<v8::Value> value)
+AtomicString toWebCoreAtomicString(v8::Handle<v8::Value> value)
 {
     if (value->IsString())
         return v8StringToWebCoreString<AtomicString>(v8::Handle<v8::String>::Cast(value), Externalize);

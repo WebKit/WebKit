@@ -70,7 +70,7 @@ v8::Handle<v8::Value> V8HTMLCollection::namedPropertyGetter(v8::Local<v8::String
         return v8Undefined();
 
     HTMLCollection* imp = V8HTMLCollection::toNative(info.Holder());
-    return getNamedItems(imp, v8ValueToAtomicWebCoreString(name), info.GetIsolate());
+    return getNamedItems(imp, toWebCoreAtomicString(name), info.GetIsolate());
 }
 
 v8::Handle<v8::Value> V8HTMLCollection::namedItemCallback(const v8::Arguments& args)

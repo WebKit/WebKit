@@ -556,7 +556,7 @@ void V8DOMWindowShell::updateDocument()
 v8::Handle<v8::Value> getter(v8::Local<v8::String> property, const v8::AccessorInfo& info)
 {
     // FIXME(antonm): consider passing AtomicStringImpl directly.
-    AtomicString name = v8ValueToAtomicWebCoreString(property);
+    AtomicString name = toWebCoreAtomicString(property);
     HTMLDocument* htmlDocument = V8HTMLDocument::toNative(info.Holder());
     ASSERT(htmlDocument);
     v8::Handle<v8::Value> result = V8HTMLDocument::GetNamedProperty(htmlDocument, name, info.GetIsolate());

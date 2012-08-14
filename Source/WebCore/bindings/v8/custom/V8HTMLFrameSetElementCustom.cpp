@@ -49,7 +49,7 @@ v8::Handle<v8::Value> V8HTMLFrameSetElement::namedPropertyGetter(v8::Local<v8::S
 {
     INC_STATS("DOM.HTMLFrameSetElement.NamedPropertyGetter");
     HTMLFrameSetElement* imp = V8HTMLFrameSetElement::toNative(info.Holder());
-    Node* frameNode = imp->children()->namedItem(v8ValueToAtomicWebCoreString(name));
+    Node* frameNode = imp->children()->namedItem(toWebCoreAtomicString(name));
     if (frameNode && frameNode->hasTagName(HTMLNames::frameTag)) {
         Document* doc = static_cast<HTMLFrameElement*>(frameNode)->contentDocument();
         if (!doc)

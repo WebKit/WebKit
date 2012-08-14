@@ -499,7 +499,7 @@ v8::Handle<v8::Value> V8DOMWindow::namedPropertyGetter(v8::Local<v8::String> nam
         return v8Undefined();
 
     // Search sub-frames.
-    AtomicString propName = v8ValueToAtomicWebCoreString(name);
+    AtomicString propName = toWebCoreAtomicString(name);
     Frame* child = frame->tree()->scopedChild(propName);
     if (child)
         return toV8(child->domWindow(), info.GetIsolate());

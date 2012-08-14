@@ -66,7 +66,7 @@ template<class Collection, class ItemType> static v8::Handle<v8::Value> getNamed
     ASSERT(V8DOMWrapper::maybeDOMWrapper(object));
     ASSERT(V8DOMWrapper::domWrapperType(object) != &V8Node::info);
     Collection* collection = toNativeCollection<Collection>(object);
-    AtomicString propertyName = toAtomicWebCoreStringWithNullCheck(name);
+    AtomicString propertyName = toWebCoreAtomicStringWithNullCheck(name);
     return getV8Object<ItemType>(collection->namedItem(propertyName), isolate);
 }
 

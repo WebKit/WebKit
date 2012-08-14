@@ -1183,7 +1183,7 @@ END
             my $namespace = $codeGenerator->NamespaceForAttributeName($interfaceName, $contentAttributeName);
             AddToImplIncludes("${namespace}.h");
             push(@implContentDecls, "    Element* imp = V8Element::toNative(info.Holder());\n");
-            push(@implContentDecls, "    AtomicString v = toAtomicWebCoreStringWithNullCheck(value);\n");
+            push(@implContentDecls, "    AtomicString v = toWebCoreAtomicStringWithNullCheck(value);\n");
             push(@implContentDecls, "    imp->setAttribute(${namespace}::${contentAttributeName}Attr, v);\n");
             push(@implContentDecls, "}\n\n");
             push(@implContentDecls, "#endif // ${conditionalString}\n\n") if $conditionalString;
@@ -1345,7 +1345,7 @@ static v8::Handle<v8::Value> ${functionName}EventListenerCallback(const v8::Argu
     INC_STATS("DOM.${implClassName}.${functionName}EventListener()");
     RefPtr<EventListener> listener = V8DOMWrapper::getEventListener(args[1], false, ListenerFind${lookupType});
     if (listener) {
-        V8${implClassName}::toNative(args.Holder())->${functionName}EventListener(v8ValueToAtomicWebCoreString(args[0]), listener${passRefPtrHandling}, args[2]->BooleanValue());
+        V8${implClassName}::toNative(args.Holder())->${functionName}EventListener(toWebCoreAtomicString(args[0]), listener${passRefPtrHandling}, args[2]->BooleanValue());
 END
     if ($requiresHiddenDependency) {
         push(@implContentDecls, <<END);
