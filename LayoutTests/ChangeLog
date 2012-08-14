@@ -1,3 +1,14 @@
+2012-08-14  Robert Hogan  <robert@webkit.org>
+
+        Update Test Expectations after r125578
+
+       Unreviewed gardening.
+
+       * platform/mac/TestExpectations:
+       * platform/qt/TestExpectations:
+       * platform/efl/TestExpectations:
+       * platform/gtk/TestExpectations:
+
 2012-08-14  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         WebKitTestRunner needs layoutTestController.dumpResourceLoadCallbacks

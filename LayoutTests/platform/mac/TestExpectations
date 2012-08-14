@@ -377,3 +377,6 @@ BUGWK93840 : canvas/philip/tests/2d.text.font.parse.size.percentage.default.html
 // Require rebaselining after  https://bugs.webkit.org/show_bug.cgi?id=89826
 BUGWK89826 : fast/css/word-space-extra.html = TEXT
 
+// Added by bug 89826 
+BUGWK94003 MAC : fast/css/word-spacing-characters.html = IMAGE 
+BUGWK94003 MAC : fast/css/word-spacing-characters-complex-text.html = IMAGE 
