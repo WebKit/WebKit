@@ -231,10 +231,7 @@ bool isTextBasedContentEditableElement(Element* element)
     if (!element)
         return false;
 
-    if (element->isTextFormControl() && static_cast<HTMLTextFormControlElement*>(element)->readOnly())
-        return false;
-
-    if (!element->isEnabledFormControl())
+    if (element->isReadOnlyFormControl() || !element->isEnabledFormControl())
         return false;
 
     if (isPopupInputField(element))

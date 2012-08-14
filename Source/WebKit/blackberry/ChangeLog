@@ -1,5 +1,18 @@
 2012-08-14  Mike Fenton  <mifenton@rim.com>
 
+        [BlackBerry] Use Form helper functions to determine state in DOMSupport::isTextBasedContentEditableElement
+        https://bugs.webkit.org/show_bug.cgi?id=93992
+
+        Reviewed by Antonio Gomes.
+
+        Use form control helper functions to determine the editable state
+        of the input field.
+
+        * WebKitSupport/DOMSupport.cpp:
+        (BlackBerry::WebKit::DOMSupport::isTextBasedContentEditableElement):
+
+2012-08-14  Mike Fenton  <mifenton@rim.com>
+
         [BlackBerry] Use constructor to initialize rect in TouchEventHandler::drawTapHighlight()
         https://bugs.webkit.org/show_bug.cgi?id=93988
 
