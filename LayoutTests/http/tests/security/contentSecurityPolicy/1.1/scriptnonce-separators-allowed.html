@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src='../resources/multiple-iframe-test.js'></script>
+<script>
+var tests = [
+    ['yes', 'script-src 127.0.0.1:8000; script-nonce 1/1;', 'resources/script.js', '1/1'],
+    ['yes', 'script-src 127.0.0.1:8000; script-nonce {};', 'resources/script.js', '{}'],
+    ['yes', 'script-src 127.0.0.1:8000; script-nonce /\\;', 'resources/script.js', '/\\'],
+];
+</script>
+</head>
+<body onload="test()">
+  <p>
+      All of these scripts should execute, as all the nonces are valid.
+  </p>

@@ -61,6 +61,11 @@ bool isDirectiveValueCharacter(UChar c)
     return isASCIISpace(c) || (c >= 0x21 && c <= 0x7e); // Whitespace + VCHAR
 }
 
+bool isNonceCharacter(UChar c)
+{
+    return (c >= 0x21 && c <= 0x7e) && c != ',' && c != ';'; // VCHAR - ',' - ';'
+}
+
 bool isSourceCharacter(UChar c)
 {
     return !isASCIISpace(c);
@@ -998,7 +1003,7 @@ void CSPDirectiveList::parseScriptNonce(const String& name, const String& value)
         m_scriptNonce = "";
         return;
     }
-    skipWhile<isNotASCIISpace>(position, end);
+    skipWhile<isNonceCharacter>(position, end);
     if (nonceBegin < position)
         nonce = String(nonceBegin, position - nonceBegin);
 

@@ -1,0 +1,18 @@
+All of these scripts should execute, as all the nonces are valid.
+
+
+
+--------
+Frame: '<!--framePath //<!--frame0-->-->'
+--------
+PASS
+
+--------
+Frame: '<!--framePath //<!--frame1-->-->'
+--------
+PASS
+
+--------
+Frame: '<!--framePath //<!--frame2-->-->'
+--------
+PASS

@@ -1,3 +1,19 @@
+2012-08-14  Mike West  <mkwst@chromium.org>
+
+        Tighten up parsing the 'script-nonce' CSP directive value.
+        https://bugs.webkit.org/show_bug.cgi?id=93783
+
+        Reviewed by Adam Barth.
+
+        Currently we're accepting any non-whitespace character. This patch
+        limits the valid characters to VCHAR minus ',' and ';', and pulls the
+        validity check out into a named function for clarity.
+
+        Test: http/tests/security/contentSecurityPolicy/1.1/scriptnonce-separators-allowed.html
+
+        * page/ContentSecurityPolicy.cpp:
+        (WebCore::CSPDirectiveList::parseScriptNonce):
+
 2012-08-14  Adam Barth  <abarth@webkit.org>
 
         Delete DOMWindow::m_url
