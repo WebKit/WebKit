@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2012 Samsung Electronics. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -59,5 +60,13 @@ PassRefPtr<ImmutableArray> WebOpenPanelParameters::acceptMIMETypes() const
         vector.uncheckedAppend(WebString::create(m_settings.acceptMIMETypes[i]));
     return ImmutableArray::adopt(vector);
 }
+
+#if ENABLE(MEDIA_CAPTURE)
+String WebOpenPanelParameters::capture() const
+{
+    return m_settings.capture;
+}
+#endif
+
 
 } // namespace WebCore

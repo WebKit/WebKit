@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2012 Samsung Electronics. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -45,6 +46,9 @@ public:
     bool allowMultipleFiles() const { return m_settings.allowsMultipleFiles; } 
     PassRefPtr<ImmutableArray> acceptMIMETypes() const;
     Vector<String> selectedFileNames() const { return m_settings.selectedFiles; }
+#if ENABLE(MEDIA_CAPTURE)
+    String capture() const;
+#endif
 
 private:
     explicit WebOpenPanelParameters(const WebCore::FileChooserSettings&);
