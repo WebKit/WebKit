@@ -2426,7 +2426,7 @@ InlineIterator RenderBlock::LineBreaker::nextLineBreak(InlineBidiResolver& resol
                         appliedStartWidth = true;
                     }
 
-                    applyWordSpacing =  wordSpacing && currentCharacterIsSpace && !previousCharacterIsSpace;
+                    applyWordSpacing =  wordSpacing && currentCharacterIsSpace;
 
                     if (!width.committedWidth() && autoWrap && !width.fitsOnLine())
                         width.fitBelowFloats();

@@ -173,3 +173,6 @@ BUGWK93148 : fast/css/nested-layers-with-hover.html = TEXT
 BUGWK93247 DEBUG : fast/lists/list-marker-remove-crash.html = CRASH
 
 BUGWK93654 DEBUG : fast/events/keyevent-iframe-removed-crash.html = CRASH
+
+// Require rebaselining after  https://bugs.webkit.org/show_bug.cgi?id=89826
+BUGWK89826 : fast/css/word-space-extra.html = TEXT

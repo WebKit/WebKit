@@ -1,3 +1,81 @@
+2012-06-24  Robert Hogan  <robert@webkit.org>
+
+        CSS 2.1 failure: Word-spacing affects each space and non-breaking space
+        https://bugs.webkit.org/show_bug.cgi?id=89826
+
+        Reviewed by Eric Seidel.
+
+        * css2.1/20110323/c541-word-sp-000-expected.html: Added.
+        * css2.1/20110323/c541-word-sp-000.htm: Renamed from LayoutTests/css2.1/t1604-c541-word-sp-00-b-a.html.
+        * css2.1/20110323/c541-word-sp-001-expected.html: Added.
+        * css2.1/20110323/c541-word-sp-001.htm: Added.
+          Replaces t1604-c541-word-sp-01-b-a.html below.
+        * css2.1/20110323/word-spacing-characters-002-expected.html: Added.
+        * css2.1/20110323/word-spacing-characters-002.htm: Added.
+        * css2.1/20110323/word-spacing-characters-003-expected.html: Added.
+        * css2.1/20110323/word-spacing-characters-003.htm: Added.
+          These passed already.
+        * css2.1/20110323/word-spacing-remove-space-001-expected.html: Added.
+        * css2.1/20110323/word-spacing-remove-space-001.htm: Added.
+        * css2.1/20110323/word-spacing-remove-space-002-expected.html: Added.
+        * css2.1/20110323/word-spacing-remove-space-002.htm: Added.
+        * css2.1/20110323/word-spacing-remove-space-003-expected.html: Added.
+        * css2.1/20110323/word-spacing-remove-space-003.htm: Added.
+        * css2.1/20110323/word-spacing-remove-space-004-expected.html: Added.
+        * css2.1/20110323/word-spacing-remove-space-004.htm: Added.
+        * css2.1/20110323/word-spacing-remove-space-005-expected.html: Added.
+        * css2.1/20110323/word-spacing-remove-space-005.htm: Added.
+        * css2.1/20110323/word-spacing-remove-space-006-expected.html: Added.
+        * css2.1/20110323/word-spacing-remove-space-006.htm: Added.
+          These 6 tests are fixed by this patch.
+        * css2.1/t1604-c541-word-sp-01-b-a.html: Removed.
+          Per http://lists.w3.org/Archives/Public/public-css-testsuite/2010Jan/0029.html t1604-c541-word-sp-01-b-a.htm is
+          now invalid and has been replaced by c541-word-sp-001.htm above.
+        * fast/css/word-spacing-characters-complex-text-expected.html: Added.
+        * fast/css/word-spacing-characters-complex-text.html: Added.
+          This is a complex text version of word-spacing-characters-001.htm
+        * fast/css/word-spacing-characters-expected.html: Added.
+        * fast/css/word-spacing-characters.html: Added.
+          The original test (word-spacing-characters-001.htm) has two spaces between the non-breaking spaces in the second last case. 
+          This causes WebKit to split the text into two-runs and drop the second of the two spaces. This entire test can be replaced 
+          with word-spacing-characters-001.htm from the css test suite when https://bugs.webkit.org/show_bug.cgi?id=89827 is fixed.
+        * fast/css/word-spacing-linebreak-expected.html: Added.
+        * fast/css/word-spacing-linebreak.html: Added.
+        * platform/chromium-linux/css2.1/t1604-c541-word-sp-00-b-a-expected.png: Removed.
+        * platform/chromium-linux/css2.1/t1604-c541-word-sp-00-b-a-expected.txt: Removed.
+        * platform/chromium-linux/css2.1/t1604-c541-word-sp-01-b-a-expected.png: Removed.
+        * platform/chromium-linux/fast/css/word-space-extra-expected.png:
+        * platform/chromium-mac-snowleopard/css2.1/t1604-c541-word-sp-00-b-a-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/css2.1/t1604-c541-word-sp-01-b-a-expected.png: Removed.
+        * platform/chromium-mac/css2.1/t1604-c541-word-sp-00-b-a-expected.png: Removed.
+        * platform/chromium-mac/css2.1/t1604-c541-word-sp-01-b-a-expected.png: Removed.
+        * platform/chromium-win/css2.1/t1604-c541-word-sp-00-b-a-expected.png: Removed.
+        * platform/chromium-win/css2.1/t1604-c541-word-sp-00-b-a-expected.txt: Removed.
+        * platform/chromium-win/css2.1/t1604-c541-word-sp-01-b-a-expected.png: Removed.
+        * platform/chromium-win/css2.1/t1604-c541-word-sp-01-b-a-expected.txt: Removed.
+        * platform/chromium-win/fast/css/word-space-extra-expected.txt:
+        * platform/chromium/TestExpectations:
+        * platform/efl/TestExpectations:
+        * platform/efl/css2.1/t1604-c541-word-sp-00-b-a-expected.png: Removed.
+        * platform/efl/css2.1/t1604-c541-word-sp-00-b-a-expected.txt: Removed.
+        * platform/efl/css2.1/t1604-c541-word-sp-01-b-a-expected.png: Removed.
+        * platform/efl/css2.1/t1604-c541-word-sp-01-b-a-expected.txt: Removed.
+        * platform/gtk/TestExpectations:
+        * platform/gtk/css2.1/t1604-c541-word-sp-00-b-a-expected.png: Removed.
+        * platform/gtk/css2.1/t1604-c541-word-sp-00-b-a-expected.txt: Removed.
+        * platform/gtk/css2.1/t1604-c541-word-sp-01-b-a-expected.png: Removed.
+        * platform/gtk/css2.1/t1604-c541-word-sp-01-b-a-expected.txt: Removed.
+        * platform/mac/TestExpectations:
+        * platform/mac/css2.1/t1604-c541-word-sp-00-b-a-expected.png: Removed.
+        * platform/mac/css2.1/t1604-c541-word-sp-00-b-a-expected.txt: Removed.
+        * platform/mac/css2.1/t1604-c541-word-sp-01-b-a-expected.png: Removed.
+        * platform/mac/css2.1/t1604-c541-word-sp-01-b-a-expected.txt: Removed.
+        * platform/qt/TestExpectations:
+        * platform/qt/css2.1/t1604-c541-word-sp-00-b-a-expected.txt: Removed.
+        * platform/qt/css2.1/t1604-c541-word-sp-01-b-a-expected.png: Removed.
+        * platform/qt/css2.1/t1604-c541-word-sp-01-b-a-expected.txt: Removed.
+        * platform/win/Skipped:
+
 2012-08-14  Christophe Dumez  <christophe.dumez@intel.com>
 
         Fix  LayoutTests/canvas/philip/tests/2d.text.draw.space.collapse.nonspace.html

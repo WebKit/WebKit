@@ -3480,3 +3480,7 @@ BUGWK93938 LION RELEASE : fast/forms/range/slider-delete-while-dragging-thumb.ht
 BUGWK93938 DEBUG : fast/forms/range/slider-mouse-events.html = PASS TEXT
 BUGWK93938 LION RELEASE : fast/forms/range/slider-mouse-events.html = PASS TEXT
 BUGWK93938 WIN LINUX DEBUG : fast/forms/range/slider-onchange-event.html = PASS TEXT
+
+// Require rebaselining after  https://bugs.webkit.org/show_bug.cgi?id=89826
+BUGWK89826 MAC WIN : fast/css/word-space-extra.html = IMAGE+TEXT
+

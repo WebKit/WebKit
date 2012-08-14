@@ -1,3 +1,39 @@
+2012-06-24  Robert Hogan  <robert@webkit.org>
+
+        CSS 2.1 failure: Word-spacing affects each space and non-breaking space
+        https://bugs.webkit.org/show_bug.cgi?id=89826
+
+        Reviewed by Eric Seidel.
+
+        Add word spacing to consecutive spaces in a run per http://www.w3.org/TR/CSS21/text.html#spacing-props.
+
+        Test: fast/css/word-spacing-characters.html
+              fast/css/word-spacing-characters-complex-text.html
+              fast/css/word-spacing-characters-linebreak.html
+              css2.1/20110323/word-spacing-characters-002.htm
+              css2.1/20110323/word-spacing-characters-003.htm
+              css2.1/20110323/word-spacing-remove-space-001.htm
+              css2.1/20110323/word-spacing-remove-space-002.htm
+              css2.1/20110323/word-spacing-remove-space-003.htm
+              css2.1/20110323/word-spacing-remove-space-004.htm
+              css2.1/20110323/word-spacing-remove-space-005.htm
+              css2.1/20110323/word-spacing-remove-space-006.htm
+              css2.1/20110323/c541-word-sp-001.htm
+              css2.1/20110323/c541-word-sp-000.htm
+
+        * platform/graphics/WidthIterator.cpp:
+        (WebCore::WidthIterator::advance): All spaces (ordinary space or &nbsp;) get word-spacing added, even
+          if they are consecutive.
+        * platform/graphics/harfbuzz/HarfBuzzShaperBase.cpp:
+        (WebCore::HarfBuzzShaperBase::isWordEnd): ditto, but for the complex text case on Chromium. Had to use
+          m_run rather than m_normalizedBuffer here as m_normalizedBuffer turns tabs into spaces! Unlike the simple
+          text path, '\n' gets word-spacing - I observed this from fast/text/atsui-spacing-features.html but can't
+          find it specified anywhere.
+        * platform/graphics/harfbuzz/HarfBuzzShaperBase.h:
+        (WebCore::HarfBuzzShaperBase::isCodepointSpace):
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::LineBreaker::nextLineBreak): Tested by word-spacing-linebreak.html
+
 2012-08-14  Antoine Labour  <piman@chromium.org>
 
         [chromium] race between CCLayerTreeHostImpl::releaseContentsTextures and CCThreadProxy::beginFrameCompleteOnImplThread

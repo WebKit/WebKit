@@ -853,3 +853,6 @@ BUGWK92956 : http/tests/security/contentSecurityPolicy/object-src-url-blocked.ht
 BUGWK93212 : http/tests/incremental/slow-utf8-text.pl = TIMEOUT
 
 BUGWK93247 DEBUG : fast/lists/list-marker-remove-crash.html = CRASH
+
+// Require rebaselining after  https://bugs.webkit.org/show_bug.cgi?id=89826
+BUGWK89826 : fast/css/word-space-extra.html = TEXT
