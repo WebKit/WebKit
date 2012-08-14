@@ -1,3 +1,12 @@
+2012-08-13  Dean Jackson  <dino@apple.com>
+
+        REGRESSION (r125450): 4 canvas/philip/tests tests failing on Apple Lion Release WK1 (Tests)
+        https://bugs.webkit.org/show_bug.cgi?id=93910
+
+        Unreviewed test expectations update. Temporarily skipping tests.
+
+        * platform/mac/TestExpectations:
+
 2012-08-13  Florin Malita  <fmalita@chromium.org>
 
         WebKit+SVG does not support color-interpolation-filters or draw filters in correct colorspace

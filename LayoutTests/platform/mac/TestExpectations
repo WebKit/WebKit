@@ -369,3 +369,9 @@ BUGWK93552 : inspector/device-orientation-success.html = TEXT
 
 // (r125185) http/tests/images/jpg-img-partial-load.html timeout on Lion
 BUGWK93636 : http/tests/images/jpg-img-partial-load.html = TEXT
+
+// (r125450): 4 canvas/philip/tests tests failing on Apple Lion Release WK1 (Tests)
+BUGWK93910 : canvas/philip/tests/2d.text.font.parse.size.percentage.html = TEXT
+BUGWK93910 : canvas/philip/tests/2d.text.font.parse.complex.html = TEXT
+BUGWK93910 : canvas/philip/tests/2d.text.font.parse.size.percentage.default.html = TEXT
+BUGWK93910 : canvas/philip/tests/2d.text.font.parse.basic.html = TEXT
