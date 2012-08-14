@@ -73,7 +73,7 @@ public:
 
     bool isBoundsSet() const { return m_boundsSet; }
     IntSize bounds() const { return m_bounds; }
-    void setBounds(const IntSize&) { m_bounds = bounds; m_boundsSet = true; }
+    void setBounds(const IntSize& bounds) { m_bounds = bounds; m_boundsSet = true; }
 
     bool isTransformSet() const { return m_transformSet; }
     const TransformationMatrix& transform() const { return m_transform; }
@@ -81,7 +81,7 @@ public:
 
     bool isOpacitySet() const { return m_opacitySet; }
     float opacity() const { return m_opacity; }
-    void setOpacity(float) { m_opacity = opacity; m_opacitySet = true; }
+    void setOpacity(float opacity) { m_opacity = opacity; m_opacitySet = true; }
 
     bool isBoundsOriginSet() const { return m_boundsOriginSet; }
     FloatPoint boundsOrigin() const { return m_boundsOrigin; }

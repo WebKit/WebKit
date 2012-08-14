@@ -1,3 +1,16 @@
+2012-08-14  Arvid Nilsson  <anilsson@rim.com>
+
+        [BlackBerry] LayerCompositingThread.h doesn't compile
+        https://bugs.webkit.org/show_bug.cgi?id=93956
+
+        Reviewed by Rob Buis.
+
+        I forgot to upstream this local change.
+
+        * platform/graphics/blackberry/LayerCompositingThread.h:
+        (WebCore::LayerOverride::setBounds):
+        (WebCore::LayerOverride::setOpacity):
+
 2012-08-14  Ed Baker  <edbaker@rim.com>
 
         [BlackBerry] LayerAnimation is not immutable, which makes dereferencing an expensive operation
