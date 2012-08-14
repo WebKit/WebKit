@@ -1,3 +1,15 @@
+2012-08-13  Alex Christensen  <alex.christensen@flexsim.com>
+
+        Windows 64 bit compliance
+        https://bugs.webkit.org/show_bug.cgi?id=93275
+
+        Reviewed by Brent Fulgham.
+
+        Fixed a few compile and link problems for Win64
+
+        * WinLauncher/WinLauncher.cpp:
+        * win/DLLLauncher/DLLLauncherMain.cpp:
+
 2012-08-13  MORITA Hajime  <morrita@google.com>
 
         Unreviewed update for webcomponents-bugzilla address.

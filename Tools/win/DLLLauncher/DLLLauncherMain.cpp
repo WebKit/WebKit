@@ -184,10 +184,18 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpstrCm
 
 #if USE_CONSOLE_ENTRY_POINT
     typedef int (WINAPI*EntryPoint)(int, const char*[]);
+#if defined _M_AMD64 || defined _WIN64
+    const char* entryPointName = "_dllLauncherEntryPoint";
+#else
     const char* entryPointName = "_dllLauncherEntryPoint@8";
+#endif
 #else
     typedef int (WINAPI*EntryPoint)(HINSTANCE, HINSTANCE, LPWSTR, int);
+#if defined _M_AMD64 || defined _WIN64
+    const char* entryPointName = "_dllLauncherEntryPoint";
+#else
     const char* entryPointName = "_dllLauncherEntryPoint@16";
+#endif
 #endif
 
     EntryPoint entryPoint = reinterpret_cast<EntryPoint>(::GetProcAddress(module, entryPointName));
