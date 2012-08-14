@@ -1,3 +1,57 @@
+2012-08-14  Lauro Neto  <lauro.neto@openbossa.org>
+
+        Convert signals/slots to Q_* macros.
+
+        [Qt] Use Q_SLOTS and Q_SIGNALS instead of slots and signals
+        https://bugs.webkit.org/show_bug.cgi?id=93996
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Change usage of keyword-conflicting 'signals' and 'slots' for
+        Q_SIGNALS and Q_SLOTS macro.
+
+        * DumpRenderTree/qt/DumpRenderTreeQt.h:
+        (NetworkAccessManager):
+        (WebPage):
+        * DumpRenderTree/qt/EventSenderQt.h:
+        (EventSender):
+        * DumpRenderTree/qt/GCControllerQt.h:
+        (GCController):
+        * DumpRenderTree/qt/TestRunnerQt.h:
+        (TestRunner):
+        * DumpRenderTree/qt/TextInputControllerQt.h:
+        (TextInputController):
+        * MiniBrowser/qt/BrowserWindow.h:
+        (BrowserWindow):
+        * MiniBrowser/qt/MiniBrowserApplication.h:
+        (WindowOptions):
+        * MiniBrowser/qt/UrlLoader.h:
+        (UrlLoader):
+        * QtTestBrowser/cookiejar.h:
+        (TestBrowserCookieJar):
+        * QtTestBrowser/fpstimer.h:
+        (FpsTimer):
+        * QtTestBrowser/launcherwindow.h:
+        (LauncherWindow):
+        * QtTestBrowser/locationedit.h:
+        (LocationEdit):
+        * QtTestBrowser/mainwindow.h:
+        (MainWindow):
+        * QtTestBrowser/urlloader.h:
+        (UrlLoader):
+        * QtTestBrowser/webinspector.h:
+        (WebInspector):
+        * QtTestBrowser/webpage.h:
+        (WebPage):
+        * QtTestBrowser/webview.h:
+        (WebViewGraphicsBased):
+        * WebKitTestRunner/InjectedBundle/qt/LayoutTestControllerQt.cpp:
+        (WatchdogTimerHelper):
+        * WebKitTestRunner/qt/PlatformWebViewQt.cpp:
+        (WrapperWindow):
+        * WebKitTestRunner/qt/main.cpp:
+        (Launcher):
+
 2012-08-14  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         WebKitTestRunner needs layoutTestController.dumpResourceLoadCallbacks

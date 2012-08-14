@@ -58,7 +58,7 @@ private:
     GamepadDeviceLinuxQt(const String&);
     QSocketNotifier* m_notifier;
 
-private slots:
+private Q_SLOTS:
     bool readCallback();
 };
 
@@ -97,7 +97,7 @@ public:
 
     void updateGamepadList(GamepadList*);
 
-private slots:
+private Q_SLOTS:
     void onGamePadChange();
 
 private:

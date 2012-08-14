@@ -36,7 +36,7 @@ class WebInspector : public QWebInspector {
 public:
     WebInspector(QWidget* parent = 0) : QWebInspector(parent) {}
 
-signals:
+Q_SIGNALS:
     void visibleChanged(bool nowVisible);
 
 protected:

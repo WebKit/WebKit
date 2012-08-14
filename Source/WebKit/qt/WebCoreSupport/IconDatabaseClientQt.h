@@ -45,7 +45,7 @@ public:
     virtual void didChangeIconForPageURL(const String&);
     virtual void didFinishURLImport();
 
-signals:
+Q_SIGNALS:
     void iconLoadedForPageURL(const QString&);
 
 private:

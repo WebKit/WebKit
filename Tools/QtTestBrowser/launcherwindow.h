@@ -121,7 +121,7 @@ public:
 
     bool eventFilter(QObject* obj, QEvent* event);
 
-protected slots:
+protected Q_SLOTS:
     void loadStarted();
     void loadFinished();
 
@@ -184,12 +184,12 @@ protected slots:
     void fileDownloadFinished();
 #endif
 
-public slots:
+public Q_SLOTS:
     LauncherWindow* newWindow();
     LauncherWindow* cloneWindow();
     void updateFPS(int fps);
 
-signals:
+Q_SIGNALS:
     void enteredFullScreenMode(bool on);
 
 private:

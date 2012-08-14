@@ -34,7 +34,7 @@ class tst_QGraphicsWebView : public QObject
 {
     Q_OBJECT
 
-private slots:
+private Q_SLOTS:
     void qgraphicswebview();
     void crashOnViewlessWebPages();
     void microFocusCoordinates();
@@ -92,7 +92,7 @@ public:
 
     QGraphicsWebView* webView;
 
-private slots:
+private Q_SLOTS:
     // Force a webview deletion during the load.
     // It should not cause WebPage to crash due to
     // it accessing invalid pageClient pointer.
@@ -636,7 +636,7 @@ void tst_QGraphicsWebView::compareCanvasToImage(const QUrl& url, const QImage& r
 
 class ResizeSpy : public QObject {
     Q_OBJECT
-public slots:
+public Q_SLOTS:
     void receiveResize(int width, int height)
     {
         m_size = QSize(width, height);
@@ -648,7 +648,7 @@ public slots:
         return m_size;
     }
 
-signals:
+Q_SIGNALS:
     void resized();
 
 private:

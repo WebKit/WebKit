@@ -44,12 +44,12 @@ public:
 
     void setDiskStorageEnabled(bool);
 
-public slots:
+public Q_SLOTS:
     void scheduleSaveToDisk();
     void loadFromDisk();
     void reset();
 
-private slots:
+private Q_SLOTS:
     void saveToDisk();
 
 private:

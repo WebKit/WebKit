@@ -65,7 +65,7 @@ public:
     QString string;
     int integer;
 
-public slots:
+public Q_SLOTS:
     void foo() { qDebug() << "foo invoked"; }
 };
 

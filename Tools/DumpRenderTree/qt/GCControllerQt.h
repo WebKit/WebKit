@@ -40,7 +40,7 @@ class GCController : public QObject
 public:
     GCController(QWebPage* parent);
 
-public slots:
+public Q_SLOTS:
     void collect() const;
     void collectOnAlternateThread(bool waitUntilDone) const;
     unsigned int getJSObjectCount() const;

@@ -168,7 +168,7 @@ class NetworkAccessManager : public QNetworkAccessManager {
 public:
     NetworkAccessManager(QObject* parent);
 
-private slots:
+private Q_SLOTS:
 #ifndef QT_NO_OPENSSL
     void sslErrorsEncountered(QNetworkReply*, const QList<QSslError>&);
 #endif
@@ -198,7 +198,7 @@ public:
 
     void permissionSet(QWebPage::Feature feature);
 
-public slots:
+public Q_SLOTS:
     bool shouldInterruptJavaScript() { return false; }
     void requestPermission(QWebFrame* frame, QWebPage::Feature feature);
     void cancelPermission(QWebFrame* frame, QWebPage::Feature feature);
@@ -207,7 +207,7 @@ protected:
     bool acceptNavigationRequest(QWebFrame* frame, const QNetworkRequest& request, NavigationType type);
     bool isTextOutputEnabled() { return m_drt->isTextOutputEnabled(); }
 
-private slots:
+private Q_SLOTS:
     void setViewGeometry(const QRect&);
 
 private:

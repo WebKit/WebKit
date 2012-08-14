@@ -1,3 +1,76 @@
+2012-08-14  Lauro Neto  <lauro.neto@openbossa.org>
+
+        Convert signals/slots to Q_* macros.
+
+        [Qt] Use Q_SLOTS and Q_SIGNALS instead of slots and signals
+        https://bugs.webkit.org/show_bug.cgi?id=93996
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Change usage of keyword-conflicting 'signals' and 'slots' for
+        Q_SIGNALS and Q_SLOTS macro.
+
+        * WebCoreSupport/FrameLoaderClientQt.h:
+        (FrameLoaderClientQt):
+        * WebCoreSupport/FullScreenVideoQt.h:
+        (FullScreenVideoQt):
+        * WebCoreSupport/FullScreenVideoWidget.h:
+        (FullScreenVideoWidget):
+        * WebCoreSupport/IconDatabaseClientQt.h:
+        (IconDatabaseClientQt):
+        * WebCoreSupport/InspectorClientQt.cpp:
+        (InspectorClientWebPage):
+        * WebCoreSupport/InspectorServerQt.h:
+        (InspectorServerQt):
+        (InspectorServerRequestHandlerQt):
+        * WebCoreSupport/PopupMenuQt.h:
+        (PopupMenuQt):
+        * WebCoreSupport/QtFallbackWebPopup.h:
+        (QtFallbackWebPopup):
+        * docs/webkitsnippets/qtwebkit_bridge_snippets.cpp:
+        (wrapInFunction):
+        * docs/webkitsnippets/webpage/main.cpp:
+        (Thumbnailer):
+        * examples/platformplugin/WebPlugin.h:
+        (Popup):
+        (WebPopup):
+        * tests/benchmarks/webgl/tst_webgl.cpp:
+        (tst_WebGlPerformance):
+        * tests/hybridPixmap/tst_hybridPixmap.cpp:
+        (tst_hybridPixmap):
+        * tests/hybridPixmap/widget.h:
+        (Widget):
+        * tests/qdeclarativewebview/tst_qdeclarativewebview.cpp:
+        (tst_QDeclarativeWebView):
+        * tests/qgraphicswebview/tst_qgraphicswebview.cpp:
+        (tst_QGraphicsWebView):
+        (WebPage):
+        (ResizeSpy):
+        * tests/qobjectbridge/tst_qobjectbridge.cpp:
+        (MyWebElementSlotOnlyObject):
+        (tst_QObjectBridge):
+        (TestPluginWidget):
+        * tests/qwebelement/tst_qwebelement.cpp:
+        (tst_QWebElement):
+        * tests/qwebframe/tst_qwebframe.cpp:
+        (tst_QWebFrame):
+        (FakeReply):
+        * tests/qwebhistory/tst_qwebhistory.cpp:
+        * tests/qwebhistoryinterface/tst_qwebhistoryinterface.cpp:
+        (tst_QWebHistoryInterface):
+        * tests/qwebinspector/tst_qwebinspector.cpp:
+        (tst_QWebInspector):
+        * tests/qwebpage/tst_qwebpage.cpp:
+        (tst_QWebPage):
+        (JSTestPage):
+        (RepaintRequestedRenderer):
+        (SpyForLoadSignalsOrder):
+        * tests/qwebplugindatabase/tst_qwebplugindatabase.cpp:
+        (tst_QWebPluginDatabase):
+        * tests/qwebview/tst_qwebview.cpp:
+        (tst_QWebView):
+        (WebViewCrashTest):
+
 2012-08-14  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] Fix failing tst_QWebPage::findText unit test

@@ -57,7 +57,7 @@ public:
     {
     }
 
-public slots:
+public Q_SLOTS:
     // Allows clients to call dismiss() directly, while also
     // being able to hook up signals to automatically also
     // dismiss the dialog since it's a slot.
@@ -68,7 +68,7 @@ public slots:
         emit dismissed();
     }
 
-signals:
+Q_SIGNALS:
     void dismissed();
 
 private:
@@ -95,11 +95,11 @@ public:
     QString message() const { return m_message; }
     QString defaultValue() const { return m_defaultValue; }
 
-public slots:
+public Q_SLOTS:
     void accept(const QString& result = QString()) { emit accepted(result); }
     void reject() { emit rejected(); }
 
-signals:
+Q_SIGNALS:
     void accepted(const QString& result);
     void rejected();
 
@@ -126,11 +126,11 @@ public:
     QString hostname() const { return m_hostname; }
     QString prefilledUsername() const { return m_prefilledUsername; }
 
-public slots:
+public Q_SLOTS:
     void accept(const QString& username, const QString& password) { emit accepted(username, password); }
     void reject() { emit rejected(); }
 
-signals:
+Q_SIGNALS:
     void accepted(const QString& username, const QString& password);
     void rejected();
 
@@ -188,11 +188,11 @@ public:
 
     QString hostname() const { return m_hostname; }
 
-public slots:
+public Q_SLOTS:
     void accept() { emit accepted(); }
     void reject() { emit rejected(); }
 
-signals:
+Q_SIGNALS:
     void accepted();
     void rejected();
 
@@ -218,7 +218,7 @@ public:
     QStringList fileList() const { return m_fileList; }
     bool allowMultipleFiles() const { return m_allowMultiple;}
 
-public slots:
+public Q_SLOTS:
     void reject() { emit rejected();}
     void accept(const QVariant& path)
     {
@@ -235,7 +235,7 @@ public slots:
         emit fileSelected(filesPath);
     }
 
-signals:
+Q_SIGNALS:
     void rejected();
     void fileSelected(const QStringList&);
 
@@ -283,11 +283,11 @@ public:
     quint64 expectedUsage() const { return m_expectedUsage; }
     QtWebSecurityOrigin* securityOrigin() { return &m_securityOrigin; }
 
-public slots:
+public Q_SLOTS:
     void accept(quint64 size) { emit accepted(size); }
     void reject() { emit rejected(); }
 
-signals:
+Q_SIGNALS:
     void accepted(quint64 size);
     void rejected();
 

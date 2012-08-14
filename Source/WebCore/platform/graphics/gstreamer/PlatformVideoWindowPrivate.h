@@ -34,16 +34,16 @@ Q_OBJECT
 public:
     FullScreenVideoWindow();
     void setVideoElement(HTMLVideoElement*);
-signals:
+Q_SIGNALS:
     void closed();
 protected:
     void keyPressEvent(QKeyEvent*);
     bool event(QEvent*);
 
-public slots:
+public Q_SLOTS:
     void showFullScreen();
 
-private slots:
+private Q_SLOTS:
     void hideCursor();
 
 private:

@@ -30,10 +30,10 @@ class Thumbnailer : public QObject
 public:
     Thumbnailer(const QUrl &url);
 
-signals:
+Q_SIGNALS:
     void finished();
 
-private slots:
+private Q_SLOTS:
     void render();
 
 private:

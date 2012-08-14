@@ -28,7 +28,7 @@ class tst_hybridPixmap : public QObject {
 public:
     tst_hybridPixmap(QObject* o = 0) : QObject(o) {}
 
-public slots:
+public Q_SLOTS:
     void init()
     {
     }
@@ -37,7 +37,7 @@ public slots:
     {
     }
 
-private slots:
+private Q_SLOTS:
     void hybridPixmap()
     {
         Widget widget;

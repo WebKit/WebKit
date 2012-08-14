@@ -40,7 +40,7 @@ class TextInputController : public QObject {
 public:
     TextInputController(QWebPage* parent);
 
-public slots:
+public Q_SLOTS:
     void doCommand(const QString& command);
     void setMarkedText(const QString& string, int start, int end);
 //     bool hasMarkedText();

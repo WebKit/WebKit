@@ -53,7 +53,7 @@ public:
     void setFont(const QFont& font) { m_font = font; }
     QFont font() const { return m_font; }
 
-private slots:
+private Q_SLOTS:
     void activeChanged(int);
     void deleteComboBox();
 

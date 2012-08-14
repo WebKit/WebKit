@@ -41,7 +41,7 @@ public:
     bool listen(const String& bindAddress, unsigned short port);
     void close();
 
-private slots:
+private Q_SLOTS:
     void handleNewConnection();
 
 private:

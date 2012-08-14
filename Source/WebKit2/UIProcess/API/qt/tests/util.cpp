@@ -65,10 +65,10 @@ public:
     {
         connect(webView, SIGNAL(loadingChanged(QWebLoadRequest*)), SLOT(onLoadingChanged(QWebLoadRequest*)));
     }
-signals:
+Q_SIGNALS:
     void loadSucceeded();
     void loadFailed();
-private slots:
+private Q_SLOTS:
     void onLoadingChanged(QWebLoadRequest* loadRequest)
     {
         if (loadRequest->status() == QQuickWebView::LoadSucceededStatus)

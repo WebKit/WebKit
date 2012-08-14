@@ -36,11 +36,11 @@ public:
     tst_QWebElement();
     virtual ~tst_QWebElement();
 
-public slots:
+public Q_SLOTS:
     void init();
     void cleanup();
 
-private slots:
+private Q_SLOTS:
     void textHtml();
     void simpleCollection();
     void attributes();

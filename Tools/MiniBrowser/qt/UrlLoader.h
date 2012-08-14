@@ -41,15 +41,15 @@ class UrlLoader : public QObject {
 public:
     UrlLoader(BrowserWindow*, const QString&, int, int);
 
-public slots:
+public Q_SLOTS:
     void loadNext();
 
-private slots:
+private Q_SLOTS:
     void checkIfFinished();
     void frameLoadStarted();
     void frameLoadFinished();
 
-signals:
+Q_SIGNALS:
     void pageLoadFinished();
 
 private:

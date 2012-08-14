@@ -45,7 +45,7 @@ public:
     virtual void updateFromElement();
     virtual void disconnectClient();
 
-private slots:
+private Q_SLOTS:
     void didHide();
     void selectItem(int index, bool ctrl, bool shift);
 

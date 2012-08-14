@@ -40,10 +40,10 @@ public:
     void setNetworkAccessAllowed(bool);
     bool effectivelyOnline() const { return m_online && m_networkAccessAllowed; }
 
-public slots:
+public Q_SLOTS:
     void setOnlineState(bool);
 
-private slots:
+private Q_SLOTS:
     void initialize();
 
 public:

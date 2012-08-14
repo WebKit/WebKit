@@ -35,11 +35,11 @@ public:
     tst_QWebHistoryInterface();
     virtual ~tst_QWebHistoryInterface();
 
-public slots:
+public Q_SLOTS:
     void init();
     void cleanup();
 
-private slots:
+private Q_SLOTS:
     void visitedLinks();
 
 private:

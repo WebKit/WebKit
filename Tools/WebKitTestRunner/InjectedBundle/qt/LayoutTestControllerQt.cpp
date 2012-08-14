@@ -47,7 +47,7 @@ public:
         return theInstance;
     }
 
-public slots:
+public Q_SLOTS:
     void timerFired()
     {
         InjectedBundle::shared().layoutTestController()->waitToDumpWatchdogTimerFired();

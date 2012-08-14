@@ -38,7 +38,7 @@ class tst_InspectorServer : public QObject {
 public:
     tst_InspectorServer();
 
-private slots:
+private Q_SLOTS:
     void init();
     void cleanup();
 

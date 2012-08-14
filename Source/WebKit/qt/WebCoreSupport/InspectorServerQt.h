@@ -55,7 +55,7 @@ protected:
     InspectorServerQt();
     virtual ~InspectorServerQt();
 
-private slots:
+private Q_SLOTS:
     void newConnection();
 
 private:
@@ -75,7 +75,7 @@ public:
     virtual int webSocketSend(QByteArray payload);
     virtual int webSocketSend(const char *payload, size_t length);
 
-private slots:
+private Q_SLOTS:
     void tcpReadyRead();
     void tcpConnectionDisconnected();
     void webSocketReadyRead();

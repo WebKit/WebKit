@@ -1,3 +1,36 @@
+2012-08-14  Lauro Neto  <lauro.neto@openbossa.org>
+
+        Convert signals/slots to Q_* macros.
+
+        [Qt] Use Q_SLOTS and Q_SIGNALS instead of slots and signals
+        https://bugs.webkit.org/show_bug.cgi?id=93996
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Change usage of keyword-conflicting 'signals' and 'slots' for
+        Q_SIGNALS and Q_SLOTS macro.
+
+        * bridge/testqtbindings.cpp:
+        (MyObject):
+        * platform/graphics/gstreamer/PlatformVideoWindowPrivate.h:
+        * platform/graphics/qt/MediaPlayerPrivateQt.h:
+        (MediaPlayerPrivateQt):
+        * platform/network/qt/DnsPrefetchHelper.h:
+        (DnsPrefetchHelper):
+        * platform/network/qt/NetworkStateNotifierPrivate.h:
+        (NetworkStateNotifierPrivate):
+        * platform/network/qt/QNetworkReplyHandler.h:
+        (QNetworkReplyHandler):
+        * platform/network/qt/QtMIMETypeSniffer.h:
+        (QtMIMETypeSniffer):
+        * platform/network/qt/SocketStreamHandlePrivate.h:
+        (SocketStreamHandlePrivate):
+        * platform/qt/GamepadsQt.cpp:
+        (GamepadDeviceLinuxQt):
+        (GamepadsQt):
+        * platform/qt/SharedTimerQt.cpp:
+        (SharedTimerQt):
+
 2012-08-14  Andrei Onea  <onea@adobe.com>
 
         [CSSRegions]regionOverset is computed as "overset" even though the region is not the last in the chain

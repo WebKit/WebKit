@@ -30,7 +30,7 @@ class tst_QWebPluginDatabase : public QObject
 {
     Q_OBJECT
 
-private slots:
+private Q_SLOTS:
     void installedPlugins();
     void searchPaths();
     void null_data();

@@ -48,7 +48,7 @@ public:
         connect(this, SIGNAL(statusChanged(QQuickView::Status)), SLOT(handleStatusChanged(QQuickView::Status)));
     }
 
-private slots:
+private Q_SLOTS:
     void handleStatusChanged(QQuickView::Status status)
     {
         if (status != QQuickView::Ready)

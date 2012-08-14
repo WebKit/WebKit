@@ -40,9 +40,9 @@ class LoadStartedCatcher : public QObject {
     Q_OBJECT
 public:
     LoadStartedCatcher(QQuickWebView* webView);
-public slots:
+public Q_SLOTS:
     void onLoadingChanged(QWebLoadRequest* loadRequest);
-signals:
+Q_SIGNALS:
     void finished();
 private:
     QQuickWebView* m_webView;

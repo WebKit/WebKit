@@ -46,10 +46,10 @@ public:
     void setImage(const QImage&);
     QImage image() const;
 
-private slots:
+private Q_SLOTS:
     void refreshJS();
 
-public slots:
+public Q_SLOTS:
     void completeTest();
     void start();
     void compare(const QVariant& a, const QVariant& b);
@@ -58,7 +58,7 @@ public slots:
     void randomSlot(const QPixmap&);
     QImage abcImage(int format);
 
-signals:
+Q_SIGNALS:
     void testComplete();
     void imageSignal(const QImage&);
     void pixmapSignal(const QPixmap&);

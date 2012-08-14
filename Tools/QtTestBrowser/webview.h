@@ -94,14 +94,14 @@ public:
 
     GraphicsWebView* graphicsWebView() const { return m_item; }
 
-public slots:
+public Q_SLOTS:
     void updateFrameRate();
     void animatedFlip();
     void animatedYFlip();
     void contentsSizeChanged(const QSize&);
     void scrollRequested(int, int);
 
-signals:
+Q_SIGNALS:
     void currentFPSUpdated(int fps);
 
 private:

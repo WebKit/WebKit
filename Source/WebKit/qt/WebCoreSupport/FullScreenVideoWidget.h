@@ -52,7 +52,7 @@ protected:
     virtual bool event(QEvent*);
     virtual void keyPressEvent(QKeyEvent*);
 
-private slots:
+private Q_SLOTS:
     void hideCursor();
 
 private:

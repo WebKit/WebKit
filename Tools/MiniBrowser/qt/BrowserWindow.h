@@ -50,13 +50,13 @@ public:
 
     void updateVisualMockTouchPoints(const QList<QTouchEvent::TouchPoint>& touchPoints);
 
-public slots:
+public Q_SLOTS:
     BrowserWindow* newWindow(const QString& url = "about:blank");
 
-protected slots:
+protected Q_SLOTS:
     void screenshot();
 
-private slots:
+private Q_SLOTS:
     void onTitleChanged(QString);
 
 private:

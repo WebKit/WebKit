@@ -69,7 +69,7 @@ class FrameLoaderClientQt : public QObject, public FrameLoaderClient {
     void callPolicyFunction(FramePolicyFunction function, PolicyAction action);
     bool callErrorPageExtension(const ResourceError&);
 
-signals:
+Q_SIGNALS:
     void loadProgress(int d);
     void titleChanged(const QString& title);
     void unsupportedContent(QNetworkReply*);
@@ -243,7 +243,7 @@ public:
     static bool dumpHistoryCallbacks;
     static QMap<QString, QString> URLsToRedirect;
 
-private slots:
+private Q_SLOTS:
     void onIconLoadedForPageURL(const QString&);
 
 private:

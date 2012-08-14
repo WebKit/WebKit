@@ -65,7 +65,7 @@ public:
 
     QStringList filePaths() const { return m_filepaths; }
 
-public slots:
+public Q_SLOTS:
     void onAccepted(const QString& result = QString());
     void onAuthenticationAccepted(const QString& username, const QString& password);
     void onFileSelected(const QStringList& filePaths);

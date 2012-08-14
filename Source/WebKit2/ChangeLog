@@ -1,3 +1,44 @@
+2012-08-14  Lauro Neto  <lauro.neto@openbossa.org>
+
+        Convert signals/slots to Q_* macros.
+
+        [Qt] Use Q_SLOTS and Q_SIGNALS instead of slots and signals
+        https://bugs.webkit.org/show_bug.cgi?id=93996
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Change usage of keyword-conflicting 'signals' and 'slots' for
+        Q_SIGNALS and Q_SLOTS macro.
+
+        * UIProcess/API/qt/qwebkittest_p.h:
+        * UIProcess/API/qt/tests/inspectorserver/tst_inspectorserver.cpp:
+        (tst_InspectorServer):
+        * UIProcess/API/qt/tests/publicapi/tst_publicapi.cpp:
+        (tst_publicapi):
+        * UIProcess/API/qt/tests/qquickwebview/tst_qquickwebview.cpp:
+        (tst_QQuickWebView):
+        * UIProcess/API/qt/tests/qrawwebview/tst_qrawwebview.cpp:
+        (WebView):
+        (tst_qrawwebview):
+        * UIProcess/API/qt/tests/util.cpp:
+        (LoadSpy):
+        * UIProcess/API/qt/tests/util.h:
+        (LoadStartedCatcher):
+        * UIProcess/InspectorServer/qt/WebSocketServerQt.h:
+        (QtTcpServerHandler):
+        * UIProcess/qt/QtDialogRunner.cpp:
+        (DialogContextBase):
+        (DialogContextObject):
+        (BaseAuthenticationContextObject):
+        (CertificateVerificationDialogContextObject):
+        (FilePickerContextObject):
+        (DatabaseQuotaDialogContextObject):
+        * UIProcess/qt/QtDialogRunner.h:
+        (QtDialogRunner):
+        * UIProcess/qt/QtWebPageEventHandler.h:
+        (QtWebPageEventHandler):
+        * WebProcess/Downloads/qt/QtFileDownloader.h:
+
 2012-08-14  Alexey Proskuryakov  <ap@apple.com>
 
         [WK2] Track multiple Web Processes per context

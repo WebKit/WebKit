@@ -75,7 +75,7 @@ public:
         return page;
     }
 
-public slots:
+public Q_SLOTS:
     void javaScriptWindowObjectCleared() 
     {
 #ifndef QT_NO_PROPERTIES

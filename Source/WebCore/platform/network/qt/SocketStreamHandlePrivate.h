@@ -50,7 +50,7 @@ public:
     SocketStreamHandlePrivate(SocketStreamHandle*, QTcpSocket*);
     ~SocketStreamHandlePrivate();
 
-public slots:
+public Q_SLOTS:
     void socketConnected();
     void socketReadyRead();
     int send(const char* data, int len);

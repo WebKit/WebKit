@@ -55,7 +55,7 @@ public:
         delete m_controller;
     }
 
-public slots:
+public Q_SLOTS:
     void launch()
     {
         m_controller = new WTR::TestController(m_argc, const_cast<const char**>(m_argv));

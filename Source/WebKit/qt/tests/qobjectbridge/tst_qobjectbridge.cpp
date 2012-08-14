@@ -589,7 +589,7 @@ private:
 class MyWebElementSlotOnlyObject : public QObject {
     Q_OBJECT
     Q_PROPERTY(QString tagName READ tagName)
-public slots:
+public Q_SLOTS:
     void doSomethingWithWebElement(const QWebElement& element)
     {
         m_tagName = element.tagName();
@@ -616,11 +616,11 @@ class tst_QObjectBridge : public QObject {
 public:
     tst_QObjectBridge();
 
-public slots:
+public Q_SLOTS:
     void init();
     void cleanup();
 
-private slots:
+private Q_SLOTS:
     void getSetStaticProperty();
     void getSetDynamicProperty();
     void getSetChildren();
@@ -2197,7 +2197,7 @@ class TestPluginWidget : public QWidget {
 public:
     TestPluginWidget() { }
 
-public slots:
+public Q_SLOTS:
     int slotWithReturnValue() { return 42; }
 };
 

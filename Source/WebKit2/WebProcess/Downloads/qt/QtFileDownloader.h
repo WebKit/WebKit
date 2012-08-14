@@ -58,7 +58,7 @@ public:
         DownloadErrorNetworkFailure
     };
 
-private slots:
+private Q_SLOTS:
     void onReadyRead();
     void onFinished();
     void onError(QNetworkReply::NetworkError);

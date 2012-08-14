@@ -55,7 +55,7 @@ public:
     WebPage* page() const;
     void setPage(WebPage*);
 
-protected slots:
+protected Q_SLOTS:
     void setAddressUrl(const QString& url);
     void setAddressUrl(const QUrl& url);
     void openFile();

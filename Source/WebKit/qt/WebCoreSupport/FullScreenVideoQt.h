@@ -100,7 +100,7 @@ private:
     MediaPlayerPrivateQt* mediaPlayer();
 #endif
 
-private slots:
+private Q_SLOTS:
     void aboutToClose();
 
 private:

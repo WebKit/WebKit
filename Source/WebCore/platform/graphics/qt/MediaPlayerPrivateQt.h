@@ -116,7 +116,7 @@ public:
     void removeVideoItem();
     void restoreVideoItem();
 
-private slots:
+private Q_SLOTS:
     void mediaStatusChanged(QMediaPlayer::MediaStatus);
     void handleError(QMediaPlayer::Error);
     void stateChanged(QMediaPlayer::State);

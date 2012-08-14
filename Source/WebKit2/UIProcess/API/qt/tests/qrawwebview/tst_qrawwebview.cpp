@@ -123,7 +123,7 @@ public:
         static_cast<WebView*>(const_cast<void*>(clientInfo))->frameLoaded();
     }
 
-signals:
+Q_SIGNALS:
     void loaded();
 
 private:
@@ -154,7 +154,7 @@ public:
         , m_baseUrl(QUrl::fromLocalFile(TESTS_SOURCE_DIR "/html").toString())
     { }
 
-private slots:
+private Q_SLOTS:
     void paint() { run(&tst_qrawwebview::doPaint, m_resourceDir + "/qwkview_paint.png"); }
     void noBackground1() { run(&tst_qrawwebview::doNoBackground1, m_resourceDir + "/qwkview_noBackground1.png"); }
     void noBackground2() { run(&tst_qrawwebview::doNoBackground2, m_resourceDir + "/qwkview_noBackground1.png"); }

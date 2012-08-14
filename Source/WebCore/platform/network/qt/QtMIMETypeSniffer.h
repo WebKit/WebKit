@@ -34,10 +34,10 @@ public:
     QString mimeType() const { return m_mimeType; }
     bool isFinished() const { return m_isFinished; }
 
-signals:
+Q_SIGNALS:
     void finished();
 
-private slots:
+private Q_SLOTS:
     void trySniffing();
 
 private:

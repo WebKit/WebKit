@@ -75,7 +75,7 @@ public:
         }
     }
 
-signals:
+Q_SIGNALS:
     void touchMockingEnabledChanged();
 
 private:

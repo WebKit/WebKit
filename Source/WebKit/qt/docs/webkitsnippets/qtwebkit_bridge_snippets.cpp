@@ -58,7 +58,7 @@ void wrapInFunction()
 class MyObject : QObject {
         Q_OBJECT
 
-    public slots:
+    public Q_SLOTS:
         void doSomethingWithWebElement(const QWebElement&);
     };
 

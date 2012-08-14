@@ -51,7 +51,7 @@ public:
 protected:
     void timerEvent(QTimerEvent* ev);
 
-private slots:
+private Q_SLOTS:
     void destroy();
 
 private:

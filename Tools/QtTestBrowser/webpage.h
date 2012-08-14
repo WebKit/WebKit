@@ -52,7 +52,7 @@ public:
     QString userAgentForUrl(const QUrl& url) const;
     void setInterruptingJavaScriptEnabled(bool enabled) { m_interruptingJavaScriptEnabled = enabled; }
 
-public slots:
+public Q_SLOTS:
     void openUrlInDefaultBrowser(const QUrl& url = QUrl());
     void setUserAgent(const QString& ua) { m_userAgent = ua; }
     bool shouldInterruptJavaScript();

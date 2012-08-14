@@ -31,7 +31,7 @@ class tst_QQuickWebView : public QObject {
 public:
     tst_QQuickWebView();
 
-private slots:
+private Q_SLOTS:
     void init();
     void cleanup();
 

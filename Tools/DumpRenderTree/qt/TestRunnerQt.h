@@ -87,14 +87,14 @@ public:
 protected:
     void timerEvent(QTimerEvent*);
 
-signals:
+Q_SIGNALS:
     void done();
 
     void showPage();
     void hidePage();
     void geolocationPermissionSet();
 
-public slots:
+public Q_SLOTS:
     void maybeDump(bool ok);
     void disallowIncreaseForApplicationCacheQuota() { m_disallowIncreaseForApplicationCacheQuota = true; }
     void dumpAsText() { m_textDump = true; }
@@ -278,7 +278,7 @@ public slots:
     void setAlwaysAcceptCookies(bool);
     void setAlwaysBlockCookies(bool);
 
-private slots:
+private Q_SLOTS:
     void processWork();
 
 private:

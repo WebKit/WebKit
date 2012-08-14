@@ -41,11 +41,11 @@ protected :
         waitForLoadFinished.exec();
     }
 
-public slots:
+public Q_SLOTS:
     void init();
     void cleanup();
 
-private slots:
+private Q_SLOTS:
     void title();
     void count();
     void back();

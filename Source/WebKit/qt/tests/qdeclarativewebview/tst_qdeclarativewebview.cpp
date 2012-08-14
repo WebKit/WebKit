@@ -20,7 +20,7 @@ class tst_QDeclarativeWebView : public QObject {
 public:
     tst_QDeclarativeWebView();
 
-private slots:
+private Q_SLOTS:
     void initTestCase();
     void cleanupTestCase();
 

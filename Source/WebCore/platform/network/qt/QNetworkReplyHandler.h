@@ -136,7 +136,7 @@ public:
 
     static ResourceError errorForReply(QNetworkReply*);
 
-private slots:
+private Q_SLOTS:
     void uploadProgress(qint64 bytesSent, qint64 bytesTotal);
 
 private:

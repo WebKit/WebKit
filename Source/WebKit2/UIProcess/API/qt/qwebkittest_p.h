@@ -47,13 +47,13 @@ class QWEBKIT_EXPORT QWebKitTest : public QObject {
     Q_PROPERTY(QVariant minimumScale READ minimumScale NOTIFY viewportChanged)
     Q_PROPERTY(QVariant layoutSize READ layoutSize NOTIFY viewportChanged)
 
-signals:
+Q_SIGNALS:
     void contentsSizeChanged();
     void contentsScaleChanged();
     void contentsScaleCommitted();
     void viewportChanged();
 
-public slots:
+public Q_SLOTS:
     bool touchTap(QObject* item, qreal x, qreal y, int delay = -1);
     bool touchDoubleTap(QObject* item, qreal x, qreal y, int delay = -1);
     bool wheelEvent(QObject* item, qreal x, qreal y, int delta, Qt::Orientation orient = Qt::Vertical);

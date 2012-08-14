@@ -44,10 +44,10 @@ public:
 
     void setPageIcon(const QIcon&);
 
-public slots:
+public Q_SLOTS:
     void setProgress(int progress);
 
-private slots:
+private Q_SLOTS:
     void reset();
 
 protected:

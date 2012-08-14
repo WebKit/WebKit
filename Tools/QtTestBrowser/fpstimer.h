@@ -43,7 +43,7 @@ public Q_SLOTS:
     void start();
     void stop();
 
-protected slots:
+protected Q_SLOTS:
     virtual void timerEvent(QTimerEvent*);
 
 private:

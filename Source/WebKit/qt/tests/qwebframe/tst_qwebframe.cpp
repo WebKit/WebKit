@@ -46,11 +46,11 @@ class tst_QWebFrame : public QObject
 public:
     bool eventFilter(QObject* watched, QEvent* event);
 
-public slots:
+public Q_SLOTS:
     void init();
     void cleanup();
 
-private slots:
+private Q_SLOTS:
     void horizontalScrollAfterBack();
     void symmetricUrl();
     void progressSignal();
@@ -244,7 +244,7 @@ protected:
         return 0;
     }
 
-private slots:
+private Q_SLOTS:
     void continueRedirect()
     {
         emit metaDataChanged();
@@ -1489,10 +1489,10 @@ public:
 
     URLSetter(QWebFrame*, Signal, Type, const QUrl&);
 
-public slots:
+public Q_SLOTS:
     void execute();
 
-signals:
+Q_SIGNALS:
     void finished();
 
 private:

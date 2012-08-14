@@ -33,7 +33,7 @@ namespace WebCore {
     public:
         DnsPrefetchHelper() : QObject(), currentLookups(0) { }
 
-    public slots:
+    public Q_SLOTS:
         void lookup(QString hostname)
         {
             if (hostname.isEmpty())

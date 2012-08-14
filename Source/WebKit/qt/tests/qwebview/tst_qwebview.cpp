@@ -38,13 +38,13 @@ class tst_QWebView : public QObject
 {
     Q_OBJECT
 
-public slots:
+public Q_SLOTS:
     void initTestCase();
     void cleanupTestCase();
     void init();
     void cleanup();
 
-private slots:
+private Q_SLOTS:
     void renderingAfterMaxAndBack();
     void renderHints();
     void getWebKitVersion();
@@ -180,7 +180,7 @@ public:
         view->connect(view, SIGNAL(loadProgress(int)), this, SLOT(loading(int)));
     }
 
-private slots:
+private Q_SLOTS:
     void loading(int progress)
     {
         if (progress >= 20 && progress < 90) {

@@ -104,7 +104,7 @@ protected:
     QQuickWebPage* m_webPage;
     QQuickWebView* m_webView;
 
-private slots:
+private Q_SLOTS:
     void inputPanelVisibleChanged();
 
 private:
