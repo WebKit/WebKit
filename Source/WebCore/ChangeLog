@@ -1,3 +1,20 @@
+2012-08-13  Elliott Sprehn  <esprehn@chromium.org>
+
+        Expand list of supported languages for RenderQuote to match WHATWG spec
+        https://bugs.webkit.org/show_bug.cgi?id=93424
+
+        Reviewed by Eric Seidel.
+
+        Expand the table of quotes to include the 148 lang values and associated quotes
+        from the WHATWG web-apps recommended styling spec.
+
+        Test: fast/css-generated-content/quotes-lang-case-insensitive.html
+
+        * rendering/RenderQuote.cpp: Added missing copyright.
+        (WebCore::quotesDataLanguageMap): Expanded the table of quotes.
+        (WebCore::basicQuotesData): Added a FIXME to switch to using stylized "en" quotes.
+        * rendering/RenderQuote.h: Added missing copyright.
+
 2012-08-09  Kentaro Hara  <haraken@chromium.org>
 
         [V8] Remove evaluateInIsolatedWorld() from V8Proxy

@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2011 Nokia Inc. All rights reserved.
+ * Copyright (C) 2012 Google Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
