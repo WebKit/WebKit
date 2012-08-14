@@ -1,3 +1,13 @@
+2012-08-14  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL][WK2] inspector/debugger/debugger-pause-on-exception.html is duplicated in TestExpectations
+        https://bugs.webkit.org/show_bug.cgi?id=93936
+
+        Unreviewed EFL gardening. Remove duplicated test
+        in WK2-EFL TestExpectations.
+
+        * platform/efl-wk2/TestExpectations:
+
 2012-08-14  Kristóf Kosztyó  <kkristof@inf.u-szeged.hu>
 
         [Qt] Unreviewed gardening. Unskip passing inspector tests after r125394.

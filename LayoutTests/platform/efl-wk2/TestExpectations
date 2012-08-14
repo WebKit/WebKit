@@ -91,7 +91,6 @@ BUGWKEFL : inspector/debugger/debugger-proto-property.html = TEXT PASS
 BUGWKEFL : inspector/debugger/pause-in-inline-script.html = TEXT PASS
 BUGWKEFL : inspector/debugger/breakpoint-manager.html = TEXT PASS
 BUGWKEFL : inspector/debugger/copy-stack-trace.html = TEXT PASS
-BUGWKEFL : inspector/debugger/debugger-pause-on-exception.html = TEXT PASS
 BUGWKEFL : inspector/timeline/timeline-animation-frame.html = TEXT PASS
 BUGWKEFL : inspector/timeline/timeline-timer.html = TEXT PASS
 BUGWKEFL : inspector/cookie-parser.html = TEXT PASS
