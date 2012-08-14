@@ -942,6 +942,23 @@ static float calcConstraintScaleFor(const IntRect& rect, const RoundedRect::Radi
     return factor;
 }
 
+StyleImage* RenderStyle::listStyleImage() const { return inherited->list_style_image.get(); }
+void RenderStyle::setListStyleImage(PassRefPtr<StyleImage> v)
+{
+    if (inherited->list_style_image != v)
+        inherited.access()->list_style_image = v;
+}
+
+Color RenderStyle::color() const { return inherited->color; }
+Color RenderStyle::visitedLinkColor() const { return inherited->visitedLinkColor; }
+void RenderStyle::setColor(const Color& v) { SET_VAR(inherited, color, v) };
+void RenderStyle::setVisitedLinkColor(const Color& v) { SET_VAR(inherited, visitedLinkColor, v) }
+
+short RenderStyle::horizontalBorderSpacing() const { return inherited->horizontal_border_spacing; }
+short RenderStyle::verticalBorderSpacing() const { return inherited->vertical_border_spacing; }
+void RenderStyle::setHorizontalBorderSpacing(short v) { SET_VAR(inherited, horizontal_border_spacing, v) }
+void RenderStyle::setVerticalBorderSpacing(short v) { SET_VAR(inherited, vertical_border_spacing, v) }
+
 RoundedRect RenderStyle::getRoundedBorderFor(const LayoutRect& borderRect, RenderView* renderView, bool includeLogicalLeftEdge, bool includeLogicalRightEdge) const
 {
     IntRect snappedBorderRect(pixelSnappedIntRect(borderRect));
@@ -1163,6 +1180,46 @@ const Animation* RenderStyle::transitionForProperty(CSSPropertyID property) cons
     }
     return 0;
 }
+
+const Font& RenderStyle::font() const { return inherited->font; }
+const FontMetrics& RenderStyle::fontMetrics() const { return inherited->font.fontMetrics(); }
+const FontDescription& RenderStyle::fontDescription() const { return inherited->font.fontDescription(); }
+int RenderStyle::fontSize() const { return inherited->font.pixelSize(); }
+
+int RenderStyle::wordSpacing() const { return inherited->font.wordSpacing(); }
+int RenderStyle::letterSpacing() const { return inherited->font.letterSpacing(); }
+
+bool RenderStyle::setFontDescription(const FontDescription& v)
+{
+    if (inherited->font.fontDescription() != v) {
+        inherited.access()->font = Font(v, inherited->font.letterSpacing(), inherited->font.wordSpacing());
+        return true;
+    }
+    return false;
+}
+
+Length RenderStyle::lineHeight() const { return inherited->line_height; }
+void RenderStyle::setLineHeight(Length v) { SET_VAR(inherited, line_height, v); }
+
+int RenderStyle::computedLineHeight(RenderView* renderView) const
+{
+    const Length& lh = inherited->line_height;
+
+    // Negative value means the line height is not set. Use the font's built-in spacing.
+    if (lh.isNegative())
+        return fontMetrics().lineSpacing();
+
+    if (lh.isPercent())
+        return minimumValueForLength(lh, fontSize());
+
+    if (lh.isViewportPercentage())
+        return valueForLength(lh, 0, renderView);
+
+    return lh.value();
+}
+
+void RenderStyle::setWordSpacing(int v) { inherited.access()->font.setWordSpacing(v); }
+void RenderStyle::setLetterSpacing(int v) { inherited.access()->font.setLetterSpacing(v); }
 
 void RenderStyle::setBlendedFontSize(int size)
 {

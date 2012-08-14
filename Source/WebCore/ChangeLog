@@ -1,3 +1,42 @@
+2012-08-14  Nikhil Bhargava  <nbhargava@google.com>
+
+        De-inline stuff from RenderStyle.h
+        https://bugs.webkit.org/show_bug.cgi?id=94019
+
+        Reviewed by Eric Seidel.
+
+        De-inline things from RenderStyle.h in preparation of fixing a series of
+        errant includes.
+
+        No new tests. Doesn't change functionality
+
+        * WebCore.exp.in:
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::listStyleImage):
+        (WebCore::RenderStyle::setListStyleImage):
+        (WebCore):
+        (WebCore::RenderStyle::color):
+        (WebCore::RenderStyle::visitedLinkColor):
+        (WebCore::RenderStyle::setColor):
+        (WebCore::RenderStyle::setVisitedLinkColor):
+        (WebCore::RenderStyle::horizontalBorderSpacing):
+        (WebCore::RenderStyle::verticalBorderSpacing):
+        (WebCore::RenderStyle::setHorizontalBorderSpacing):
+        (WebCore::RenderStyle::setVerticalBorderSpacing):
+        (WebCore::RenderStyle::font):
+        (WebCore::RenderStyle::fontMetrics):
+        (WebCore::RenderStyle::fontDescription):
+        (WebCore::RenderStyle::fontSize):
+        (WebCore::RenderStyle::wordSpacing):
+        (WebCore::RenderStyle::letterSpacing):
+        (WebCore::RenderStyle::setFontDescription):
+        (WebCore::RenderStyle::lineHeight):
+        (WebCore::RenderStyle::setLineHeight):
+        (WebCore::RenderStyle::computedLineHeight):
+        (WebCore::RenderStyle::setWordSpacing):
+        (WebCore::RenderStyle::setLetterSpacing):
+        * rendering/style/RenderStyle.h:
+
 2012-08-14  Andrei Onea  <onea@adobe.com>
 
         [CSSRegions]Region overset property is incorectly computed when content has negative letter spacing and is flowed near to the edge of a region
