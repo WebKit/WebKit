@@ -90,10 +90,12 @@ public:
     void initializeDownloadClient(const WKContextDownloadClient*);
 
     ProcessModel processModel() const { return m_processModel; }
-    WebProcessProxy* process() const { return m_process.get(); }
 
-    template<typename U> bool sendToAllProcesses(const U& message);
-    template<typename U> bool sendToAllProcessesRelaunchingThemIfNecessary(const U& message);
+    // FIXME (Multi-WebProcess): Remove. No code should assume that there is a shared process.
+    WebProcessProxy* deprecatedSharedProcess();
+
+    template<typename U> void sendToAllProcesses(const U& message);
+    template<typename U> void sendToAllProcessesRelaunchingThemIfNecessary(const U& message);
     
     void processDidFinishLaunching(WebProcessProxy*);
 
@@ -198,7 +200,8 @@ public:
     String iconDatabasePath() const;
     void setLocalStorageDirectory(const String& dir) { m_overrideLocalStorageDirectory = dir; }
 
-    void ensureWebProcess();
+    void ensureSharedWebProcess();
+    PassRefPtr<WebProcessProxy> createNewWebProcess();
     void warmInitialProcess();
 
     bool shouldTerminate(WebProcessProxy*);
@@ -219,6 +222,8 @@ public:
 #endif
 
     void fullKeyboardAccessModeChanged(bool fullKeyboardAccessEnabled);
+
+    void textCheckerStateChanged();
 
 private:
     WebContext(ProcessModel, const String& injectedBundlePath);
@@ -270,8 +275,7 @@ private:
 
     ProcessModel m_processModel;
     
-    // FIXME: In the future, this should be one or more WebProcessProxies.
-    RefPtr<WebProcessProxy> m_process;
+    Vector<RefPtr<WebProcessProxy> > m_processes;
 
     RefPtr<WebPageGroup> m_defaultPageGroup;
 
@@ -346,19 +350,20 @@ private:
     HashMap<uint64_t, RefPtr<DictionaryCallback> > m_dictionaryCallbacks;
 };
 
-template<typename U> inline bool WebContext::sendToAllProcesses(const U& message)
+template<typename U> inline void WebContext::sendToAllProcesses(const U& message)
 {
-    if (!m_process || !m_process->canSendMessage())
-        return false;
-
-    return m_process->send(message, 0);
+    size_t processCount = m_processes.size();
+    for (size_t i = 0; i < processCount; ++i) {
+        WebProcessProxy* process = m_processes[i].get();
+        if (process->canSendMessage())
+            process->send(message, 0);
+    }
 }
 
-template<typename U> bool WebContext::sendToAllProcessesRelaunchingThemIfNecessary(const U& message)
+template<typename U> void WebContext::sendToAllProcessesRelaunchingThemIfNecessary(const U& message)
 {
     relaunchProcessIfNecessary();
-
-    return m_process->send(message, 0);
+    sendToAllProcesses(message);
 }
 
 } // namespace WebKit

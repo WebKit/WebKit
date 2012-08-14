@@ -48,27 +48,23 @@ void WebTextChecker::setClient(const WKTextCheckerClient* client)
     m_client.initialize(client);
 }
 
-static void updateStateForAllWebProcesses()
+static void updateStateForAllContexts()
 {
     const Vector<WebContext*>& contexts = WebContext::allContexts();
-    for (size_t i = 0; i < contexts.size(); ++i) {
-        WebProcessProxy* webProcess = contexts[i]->process();
-        if (!webProcess)
-            continue;
-        webProcess->updateTextCheckerState();
-    }
+    for (size_t i = 0; i < contexts.size(); ++i)
+        contexts[i]->textCheckerStateChanged();
 }
 
 void WebTextChecker::continuousSpellCheckingEnabledStateChanged(bool enabled)
 {
     TextChecker::continuousSpellCheckingEnabledStateChanged(enabled);
-    updateStateForAllWebProcesses();
+    updateStateForAllContexts();
 }
 
 void WebTextChecker::grammarCheckingEnabledStateChanged(bool enabled)
 {
     TextChecker::grammarCheckingEnabledStateChanged(enabled);
-    updateStateForAllWebProcesses();
+    updateStateForAllContexts();
 }
 
 void WebTextChecker::checkSpelling(const WebPageProxy* page, bool startBeforeSelection)

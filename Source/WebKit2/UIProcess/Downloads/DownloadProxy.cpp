@@ -98,7 +98,8 @@ void DownloadProxy::didReceiveAuthenticationChallenge(const AuthenticationChalle
     if (!m_webContext)
         return;
 
-    RefPtr<AuthenticationChallengeProxy> authenticationChallengeProxy = AuthenticationChallengeProxy::create(authenticationChallenge, challengeID, m_webContext->process());
+    // FIXME (Multi-WebProcess): Get rid of deprecatedSharedProcess.
+    RefPtr<AuthenticationChallengeProxy> authenticationChallengeProxy = AuthenticationChallengeProxy::create(authenticationChallenge, challengeID, m_webContext->deprecatedSharedProcess());
     m_webContext->downloadClient().didReceiveAuthenticationChallenge(m_webContext, this, authenticationChallengeProxy.get());
 }
 
