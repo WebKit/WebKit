@@ -349,6 +349,9 @@ BUGWK91969 : fast/dom/HTMLProgressElement/progress-bar-value-pseudo-element.html
 BUGWK91969 : fast/dom/HTMLProgressElement/progress-writing-mode.html = TEXT
 BUGWK91969 : fast/dom/HTMLProgressElement/indeterminate-progress-001.html = TEXT
 
+// Needs new image to be checked in for all platforms.
+BUGWK93859 : compositing/video/video-controls-layer-creation.html = PASS FAIL
+
 // Require rebaseline after bug 93148
 BUGWK93148 : tables/mozilla_expected_failures/bugs/bug106966.html = TEXT
 BUGWK93148 : tables/mozilla_expected_failures/marvin/table_overflow_hidden_tbody.html = TEXT

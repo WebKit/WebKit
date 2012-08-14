@@ -1,3 +1,16 @@
+2012-08-13  Adrienne Walker  <enne@google.com>
+
+        REGRESSION (r109851): Video controls do not render
+        https://bugs.webkit.org/show_bug.cgi?id=93859
+
+        Reviewed by Simon Fraser.
+
+        Convert jernoble's test into a layout test.
+
+        * compositing/video/video-controls-layer-creation.html: Added.
+        * platform/chromium/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2012-08-14  Robert Hogan  <robert@webkit.org>
 
         Update Test Expectations to consolidate bug refs for new tests added

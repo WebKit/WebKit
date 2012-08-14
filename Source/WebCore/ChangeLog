@@ -1,3 +1,21 @@
+2012-08-13  Adrienne Walker  <enne@google.com>
+
+        REGRESSION (r109851): Video controls do not render
+        https://bugs.webkit.org/show_bug.cgi?id=93859
+
+        Reviewed by Simon Fraser.
+
+        Because video layers can't act as an ancestor composited layer whose
+        backing can be shared by child layers, any child layer of a video
+        layer needs to be put into its own composited layer. Because this is
+        technically overlap, the "overlap" indirect compositing reason is
+        reused for this case.
+
+        Test: compositing/video/video-controls-layer-creation.html
+
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::computeCompositingRequirements):
+
 2012-08-14  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         WebKitTestRunner needs layoutTestController.dumpResourceLoadCallbacks

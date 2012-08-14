@@ -3454,6 +3454,8 @@ BUGWK85856 : scrollbars/rtl/div-horizontal.html = TEXT
 // Bug 93148 changed this to a testRunner test and it started timing out on Mac.
 BUGWK93148 MAC : fast/css/nested-layers-with-hover.html = TIMEOUT
 
+// Needs new image to be checked in for all platforms.
+BUGWK93859 : compositing/video/video-controls-layer-creation.html = PASS FAIL
 
 BUGWK93247 DEBUG : fast/lists/list-marker-remove-crash.html = CRASH
 
