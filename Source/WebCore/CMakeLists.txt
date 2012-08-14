@@ -2544,9 +2544,22 @@ IF (WTF_USE_3D_GRAPHICS)
     LIST(APPEND WebCore_LIBRARIES
         ${OPENGL_gl_LIBRARY}
     )
+
+    IF (BISON_VERSION EQUAL "2.5")
+        # Bison 2.5 can not compile generated glslang.
+        # See https://bugs.webkit.org/show_bug.cgi?id=93487
+        LIST(APPEND WebCore_SOURCES
+            ${THIRDPARTY_DIR}/ANGLE/src/compiler/glslang_lex.cpp
+            ${THIRDPARTY_DIR}/ANGLE/src/compiler/glslang_tab.cpp
+        )
+    ELSE ()
+        LIST(APPEND WebCore_SOURCES
+            ${DERIVED_SOURCES_WEBCORE_DIR}/glslang.cpp
+            ${DERIVED_SOURCES_WEBCORE_DIR}/glslang_tab.cpp
+        )
+    ENDIF ()
+
     LIST(APPEND WebCore_SOURCES
-        ${DERIVED_SOURCES_WEBCORE_DIR}/glslang.cpp
-        ${DERIVED_SOURCES_WEBCORE_DIR}/glslang_tab.cpp
         ${THIRDPARTY_DIR}/ANGLE/src/compiler/BuiltInFunctionEmulator.cpp
         ${THIRDPARTY_DIR}/ANGLE/src/compiler/CodeGenGLSL.cpp
         ${THIRDPARTY_DIR}/ANGLE/src/compiler/Compiler.cpp
@@ -2566,8 +2579,6 @@ IF (WTF_USE_3D_GRAPHICS)
         ${THIRDPARTY_DIR}/ANGLE/src/compiler/DetectDiscontinuity.h
         ${THIRDPARTY_DIR}/ANGLE/src/compiler/DetectRecursion.cpp
         ${THIRDPARTY_DIR}/ANGLE/src/compiler/ForLoopUnroll.cpp
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/glslang_lex.cpp
-        ${THIRDPARTY_DIR}/ANGLE/src/compiler/glslang_tab.cpp
         ${THIRDPARTY_DIR}/ANGLE/src/compiler/InfoSink.cpp
         ${THIRDPARTY_DIR}/ANGLE/src/compiler/Initialize.cpp
         ${THIRDPARTY_DIR}/ANGLE/src/compiler/InitializeDll.cpp

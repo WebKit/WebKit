@@ -1,3 +1,13 @@
+2012-08-13  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [CMAKE][EFL] Fix build break with --tiled-backing-store
+        https://bugs.webkit.org/show_bug.cgi?id=93487
+
+        Unreviewed build fix for Efl with --tiled-backing-store.
+
+        * CMakeLists.txt:
+        Checked bison version and selected proper glslang files.
+
 2012-08-12  Kentaro Hara  <haraken@chromium.org>
 
         [V8] Factor out exception related methods of V8Proxy
