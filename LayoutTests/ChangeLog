@@ -1,3 +1,10 @@
+2012-08-14  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, GTK gardening.
+
+        * platform/gtk/TestExpectations: Skip media-source tests, the GTK
+        port doesn't support this feature yet and the tests time out.
+
 2012-08-14  Mike West  <mkwst@chromium.org>
 
         Implement the plugin-types Content Security Policy directive.

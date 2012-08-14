@@ -249,8 +249,7 @@ BUGWKGTK SKIP : fast/events/page-visibility-transition-test.html = TEXT
 BUGWK61661 : editing/pasteboard/drag-drop-list.html = TEXT
 
 // Tests for MediaSource API. Feature is not yet functional.
-BUGWK64731 : http/tests/media/media-source = TEXT
-BUGWK64731 SKIP : http/tests/media/media-source/video-media-source-event-attributes.html = TEXT
+BUGWK64731 SKIP : http/tests/media/media-source = TEXT
 
 // Encrypted Media Extensions are not enabled.
 BUGWKGTK SKIP : media/encrypted-media = TEXT
