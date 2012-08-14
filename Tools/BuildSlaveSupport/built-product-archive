@@ -145,7 +145,7 @@ def archiveBuiltProduct(configuration, platform, fullPlatform):
         if platform == 'qt' or platform == 'efl':
             neededDirectories = ["bin", "lib"]
         elif platform == 'gtk':
-            neededDirectories = ["Programs", ".libs", "Libraries"]
+            neededDirectories = ["Programs", ".libs", "Libraries", "TestNetscapePlugin"]
 
         for dirname in neededDirectories:
             fromDir = os.path.join(configurationBuildDirectory, dirname, ".")

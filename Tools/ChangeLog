@@ -1,3 +1,17 @@
+2012-08-14  Sergio Villar Senin  <svillar@igalia.com>
+
+        [WK2] [GTK] Plugin tests failing in WK2 bot
+        https://bugs.webkit.org/show_bug.cgi?id=93954
+
+        Reviewed by Carlos Garcia Campos.
+
+        Plugin tests are failing in the WK2 bot because we aren't exporting
+        the Netscape plugin when creating the product archive.
+
+        * BuildSlaveSupport/built-product-archive: added TestNetscapePlugin
+        to the list of directories to export.
+        (archiveBuiltProduct):
+
 2012-08-14  Peter Beverloo  <peter@chromium.org>
 
         [Chromium] Fix apk generation for the Android platform
