@@ -1,3 +1,36 @@
+2012-08-14  Arvid Nilsson  <anilsson@rim.com>
+
+        [BlackBerry] Get rid of glCopyTexImage2D in Canvas and WebGL code paths
+        https://bugs.webkit.org/show_bug.cgi?id=93614
+
+        Reviewed by Antonio Gomes.
+
+        We used to set up resource sharing between the compositing thread
+        context and the Canvas and WebGL contexts, and use glCopyTexImage2D to
+        get a copy of the framebuffer to use as front buffer for compositing
+        purposes.
+
+        Now we instead create an EGLImage and blit the Canvas/WebGL output to
+        it. The compositing thread creates a texture from the EGLImage in order
+        to composite the output.
+
+        This allows us to turn off resource sharing, so the WebPageCompositor
+        no longer needs to pass the compositing thread context to the webkit
+        thread.
+
+        Reviewed internally by Filip Spacek.
+
+        PR 188472
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::setCompositor):
+        (BlackBerry::WebKit::WebPagePrivate::setCompositorHelper):
+        * Api/WebPageCompositor.cpp:
+        (BlackBerry::WebKit::WebPageCompositor::WebPageCompositor):
+        (BlackBerry::WebKit::WebPageCompositor::~WebPageCompositor):
+        * Api/WebPage_p.h:
+        (WebPagePrivate):
+
 2012-08-14  Charles Wei  <charles.wei@torchmobile.com.cn>
 
         [BlackBerry] Enable DNS prefetch

@@ -155,6 +155,7 @@ PassRefPtr<ImageData> GraphicsContext3D::paintRenderingResultsToImageData(Drawin
     return imageData.release();
 }
 
+#if !PLATFORM(BLACKBERRY)
 void GraphicsContext3D::prepareTexture()
 {
     if (m_layerComposited)
@@ -166,22 +167,7 @@ void GraphicsContext3D::prepareTexture()
 
     ::glBindFramebufferEXT(GraphicsContext3D::FRAMEBUFFER, m_fbo);
     ::glActiveTexture(GL_TEXTURE0);
-#if PLATFORM(BLACKBERRY)
-    if (!platformTexture()) {
-        GLuint tex = 0;
-        ::glGenTextures(1, &tex);
-        ::glBindTexture(GL_TEXTURE_2D, tex);
-        ::glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        ::glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        ::glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        ::glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-        ::glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_currentWidth, m_currentHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
-        m_compositingLayer->setTextureID(tex);
-    }
-    ::glBindTexture(GL_TEXTURE_2D, platformTexture());
-#else
     ::glBindTexture(GL_TEXTURE_2D, m_compositorTexture);
-#endif
     ::glCopyTexImage2D(GL_TEXTURE_2D, 0, m_internalColorFormat, 0, 0, m_currentWidth, m_currentHeight, 0);
     ::glBindTexture(GL_TEXTURE_2D, m_boundTexture0);
     ::glActiveTexture(m_activeTexture);
@@ -190,6 +176,7 @@ void GraphicsContext3D::prepareTexture()
     ::glFinish();
     m_layerComposited = true;
 }
+#endif
 
 void GraphicsContext3D::readRenderingResults(unsigned char *pixels, int pixelsSize)
 {

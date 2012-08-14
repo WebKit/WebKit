@@ -5600,7 +5600,7 @@ GraphicsLayer* WebPagePrivate::overlayLayer()
     return m_overlayLayer.get();
 }
 
-void WebPagePrivate::setCompositor(PassRefPtr<WebPageCompositorPrivate> compositor, EGLContext compositingContext)
+void WebPagePrivate::setCompositor(PassRefPtr<WebPageCompositorPrivate> compositor)
 {
     using namespace BlackBerry::Platform;
 
@@ -5611,20 +5611,15 @@ void WebPagePrivate::setCompositor(PassRefPtr<WebPageCompositorPrivate> composit
     if (m_compositor || m_client->window())
         m_backingStore->d->suspendScreenAndBackingStoreUpdates();
 
-    // This method call always round-trips on the WebKit thread (see WebPageCompositor::WebPageCompositor() and ~WebPageCompositor()),
-    // and the compositing context must be set on the WebKit thread. How convenient!
-    if (compositingContext != EGL_NO_CONTEXT)
-        BlackBerry::Platform::Graphics::setCompositingContext(compositingContext);
-
     // The m_compositor member has to be modified during a sync call for thread
     // safe access to m_compositor and its refcount.
-    userInterfaceThreadMessageClient()->dispatchSyncMessage(createMethodCallMessage(&WebPagePrivate::setCompositorHelper, this, compositor, compositingContext));
+    userInterfaceThreadMessageClient()->dispatchSyncMessage(createMethodCallMessage(&WebPagePrivate::setCompositorHelper, this, compositor));
 
     if (m_compositor || m_client->window()) // the new compositor, if one was set
         m_backingStore->d->resumeScreenAndBackingStoreUpdates(BackingStore::RenderAndBlit);
 }
 
-void WebPagePrivate::setCompositorHelper(PassRefPtr<WebPageCompositorPrivate> compositor, EGLContext compositingContext)
+void WebPagePrivate::setCompositorHelper(PassRefPtr<WebPageCompositorPrivate> compositor)
 {
     using namespace BlackBerry::Platform;
 

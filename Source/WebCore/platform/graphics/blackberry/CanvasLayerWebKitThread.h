@@ -21,7 +21,7 @@
 
 #if USE(ACCELERATED_COMPOSITING) && ENABLE(ACCELERATED_2D_CANVAS)
 
-#include "LayerWebKitThread.h"
+#include "EGLImageLayerWebKitThread.h"
 
 class SkGpuDevice;
 
@@ -29,7 +29,7 @@ namespace WebCore {
 
 class HTMLCanvasElement;
 
-class CanvasLayerWebKitThread : public LayerWebKitThread {
+class CanvasLayerWebKitThread : public EGLImageLayerWebKitThread {
 public:
     static PassRefPtr<CanvasLayerWebKitThread> create(SkGpuDevice* device)
     {
@@ -40,18 +40,16 @@ public:
 
     void setDevice(SkGpuDevice*);
 
-    virtual void setNeedsDisplay();
-
 protected:
     virtual void updateTextureContentsIfNeeded();
 
 private:
     CanvasLayerWebKitThread(SkGpuDevice*);
-    bool m_needsDisplay;
+
     SkGpuDevice* m_device;
 };
 
-}
+} // namespace WebCore
 
 #endif // USE(ACCELERATED_COMPOSITING) && ENABLE(ACCELERATED_2D_CANVAS)
 

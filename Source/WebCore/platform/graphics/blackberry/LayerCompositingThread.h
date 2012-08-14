@@ -126,6 +126,8 @@ class LayerCompositingThread : public ThreadSafeRefCounted<LayerCompositingThrea
 public:
     static PassRefPtr<LayerCompositingThread> create(LayerType, LayerCompositingThreadClient*);
 
+    void setClient(LayerCompositingThreadClient* client) { m_client = client; }
+
     // Thread safe
     void setPluginView(PluginView*);
 #if ENABLE(VIDEO)

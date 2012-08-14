@@ -165,7 +165,6 @@ protected:
 
     void setNeedsTexture(bool needsTexture) { m_needsTexture = needsTexture; }
     void setLayerProgramShader(LayerData::LayerProgramShader shader) { m_layerProgramShader = shader; }
-    void createFrontBufferLock();
     bool isDrawable() const { return m_isDrawable; }
 
     void startAnimations(double time);
@@ -174,6 +173,7 @@ protected:
 
     virtual void boundsChanged() { }
     virtual void updateTextureContentsIfNeeded();
+    virtual void commitPendingTextureUploads();
 
 private:
     void updateLayerHierarchy();

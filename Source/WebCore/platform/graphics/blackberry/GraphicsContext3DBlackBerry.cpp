@@ -133,6 +133,18 @@ GraphicsContext3D::~GraphicsContext3D()
     BlackBerry::Platform::Graphics::destroyWebGLContext(m_context);
 }
 
+void GraphicsContext3D::prepareTexture()
+{
+    if (m_layerComposited)
+        return;
+
+    makeContextCurrent();
+    if (m_attrs.antialias)
+        resolveMultisamplingIfNecessary();
+
+    m_layerComposited = true;
+}
+
 bool GraphicsContext3D::reshapeFBOs(const IntSize& size)
 {
     // A BlackBerry-specific implementation of reshapeFBOs is necessary because it contains:
@@ -344,7 +356,7 @@ bool GraphicsContext3D::isErrorGeneratedOnOutOfBoundsAccesses() const
 
 Platform3DObject GraphicsContext3D::platformTexture() const
 {
-    return m_compositingLayer->getTextureID();
+    return m_texture;
 }
 
 PlatformGraphicsContext3D GraphicsContext3D::platformGraphicsContext3D() const

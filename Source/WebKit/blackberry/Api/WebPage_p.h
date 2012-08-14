@@ -413,8 +413,8 @@ public:
     void commitRootLayer(const WebCore::IntRect&, const WebCore::IntSize&, bool);
     bool isAcceleratedCompositingActive() const { return m_compositor; }
     WebPageCompositorPrivate* compositor() const { return m_compositor.get(); }
-    void setCompositor(PassRefPtr<WebPageCompositorPrivate>, EGLContext compositingContext);
-    void setCompositorHelper(PassRefPtr<WebPageCompositorPrivate>, EGLContext compositingContext);
+    void setCompositor(PassRefPtr<WebPageCompositorPrivate>);
+    void setCompositorHelper(PassRefPtr<WebPageCompositorPrivate>);
     void setCompositorBackgroundColor(const WebCore::Color&);
     bool createCompositor();
     void destroyCompositor();

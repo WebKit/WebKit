@@ -269,6 +269,8 @@ IF (WTF_USE_ACCELERATED_COMPOSITING)
     LIST(APPEND WebCore_SOURCES
         ${WEBCORE_DIR}/platform/graphics/GraphicsLayer.cpp
         ${WEBCORE_DIR}/platform/graphics/blackberry/CanvasLayerWebKitThread.cpp
+        ${WEBCORE_DIR}/platform/graphics/blackberry/EGLImageLayerWebKitThread.cpp
+        ${WEBCORE_DIR}/platform/graphics/blackberry/EGLImageLayerCompositingThreadClient.cpp
         ${WEBCORE_DIR}/platform/graphics/blackberry/GraphicsLayerBlackBerry.cpp
         ${WEBCORE_DIR}/platform/graphics/blackberry/LayerAnimation.cpp
         ${WEBCORE_DIR}/platform/graphics/blackberry/LayerCompositingThread.cpp

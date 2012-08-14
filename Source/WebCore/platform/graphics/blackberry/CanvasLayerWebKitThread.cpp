@@ -28,61 +28,40 @@
 namespace WebCore {
 
 CanvasLayerWebKitThread::CanvasLayerWebKitThread(SkGpuDevice* device)
-    : LayerWebKitThread(CanvasLayer, 0)
+    : EGLImageLayerWebKitThread(CanvasLayer)
 {
     setDevice(device);
 }
 
 CanvasLayerWebKitThread::~CanvasLayerWebKitThread()
 {
-    if (m_texID) {
-        SharedGraphicsContext3D::get()->makeContextCurrent();
-        glDeleteTextures(1, &m_texID);
-    }
+    if (SharedGraphicsContext3D::get()->makeContextCurrent())
+        deleteFrontBuffer();
 }
 
 void CanvasLayerWebKitThread::setDevice(SkGpuDevice* device)
 {
     m_device = device;
-    setLayerProgramShader(LayerProgramShaderRGBA);
     setNeedsDisplay();
-}
-
-void CanvasLayerWebKitThread::setNeedsDisplay()
-{
-    m_needsDisplay = true;
-    setNeedsCommit();
 }
 
 void CanvasLayerWebKitThread::updateTextureContentsIfNeeded()
 {
-    if (!m_needsDisplay || !m_device)
+    if (!m_device)
         return;
 
-    m_needsDisplay = false;
-    m_device->makeRenderTargetCurrent();
+    if (!SharedGraphicsContext3D::get()->makeContextCurrent())
+        return;
 
-    GLint previousTexture;
-    glGetIntegerv(GL_TEXTURE_BINDING_2D, &previousTexture);
+    GrRenderTarget* renderTarget = reinterpret_cast<GrRenderTarget*>(m_device->accessRenderTarget());
+    if (!renderTarget)
+        return;
 
-    if (!m_texID) {
-        glGenTextures(1, &m_texID);
-        glBindTexture(GL_TEXTURE_2D, m_texID);
-        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_device->width(), m_device->height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
+    GrTexture* texture = renderTarget->asTexture();
+    if (!texture)
+        return;
 
-        createFrontBufferLock();
-    }
-
-    pthread_mutex_lock(m_frontBufferLock);
-    glBindTexture(GL_TEXTURE_2D, m_texID);
-    glCopyTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 0, 0, m_device->width(), m_device->height(), 0);
-    glFinish(); // This might be implicit in the CopyTexImage2D, but explicit Finish is required on some architectures
-    glBindTexture(GL_TEXTURE_2D, previousTexture);
-    pthread_mutex_unlock(m_frontBufferLock);
+    updateFrontBuffer(IntSize(m_device->width(), m_device->height()), texture->getTextureHandle());
 }
 
 }

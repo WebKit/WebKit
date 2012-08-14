@@ -76,9 +76,6 @@ LayerWebKitThread::LayerWebKitThread(LayerType type, GraphicsLayerBlackBerry* ow
 
 LayerWebKitThread::~LayerWebKitThread()
 {
-    if (m_frontBufferLock)
-        pthread_mutex_destroy(m_frontBufferLock);
-
     if (m_tiler)
         m_tiler->layerWebKitThreadDestroyed();
 
@@ -162,18 +159,16 @@ bool LayerWebKitThread::contentsVisible(const IntRect& contentsRect) const
     return m_owner->contentsVisible(contentsRect);
 }
 
-void LayerWebKitThread::createFrontBufferLock()
-{
-    pthread_mutexattr_t mutexAttributes;
-    pthread_mutexattr_init(&mutexAttributes);
-    m_frontBufferLock = new pthread_mutex_t;
-    pthread_mutex_init(m_frontBufferLock, &mutexAttributes);
-}
-
 void LayerWebKitThread::updateTextureContentsIfNeeded()
 {
     if (m_tiler)
         m_tiler->updateTextureContentsIfNeeded(m_isMask ? 1.0 : contentsScale());
+}
+
+void LayerWebKitThread::commitPendingTextureUploads()
+{
+    if (m_tiler)
+        m_tiler->commitPendingTextureUploads();
 }
 
 void LayerWebKitThread::setContents(Image* contents)
@@ -197,7 +192,7 @@ void LayerWebKitThread::setDrawable(bool isDrawable)
 
     m_isDrawable = isDrawable;
 
-    setNeedsTexture(m_isDrawable && (drawsContent() || contents() || pluginView() || mediaPlayer() || m_texID));
+    setNeedsTexture(m_isDrawable && (drawsContent() || contents() || pluginView() || mediaPlayer()));
     setNeedsCommit();
 }
 
@@ -302,8 +297,7 @@ void LayerWebKitThread::commitOnCompositingThread()
     }
     m_position = oldPosition;
     updateLayerHierarchy();
-    if (m_tiler)
-        m_tiler->commitPendingTextureUploads();
+    commitPendingTextureUploads();
 
     size_t listSize = m_sublayers.size();
     for (size_t i = 0; i < listSize; i++)

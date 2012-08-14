@@ -32,7 +32,6 @@
 #include <BlackBerryPlatformExecutableMessage.h>
 #include <BlackBerryPlatformMessage.h>
 #include <BlackBerryPlatformMessageClient.h>
-#include <EGL/egl.h>
 #include <GenericTimerClient.h>
 #include <ThreadTimerClient.h>
 #include <wtf/CurrentTime.h>
@@ -282,7 +281,7 @@ WebPageCompositor::WebPageCompositor(WebPage* page, WebPageCompositorClient* cli
     // This ensures that the compositor will be around for as long as it's
     // needed. Unfortunately RefPtr<T> is not public, so we have declare to
     // resort to manual refcounting.
-    webKitThreadMessageClient()->dispatchMessage(createMethodCallMessage(&WebPagePrivate::setCompositor, d->page(), tmp, eglGetCurrentContext()));
+    webKitThreadMessageClient()->dispatchMessage(createMethodCallMessage(&WebPagePrivate::setCompositor, d->page(), tmp));
 }
 
 WebPageCompositor::~WebPageCompositor()
@@ -291,7 +290,7 @@ WebPageCompositor::~WebPageCompositor()
 
     // If we're being destroyed before the page, send a message to disconnect us
     if (d->page())
-        webKitThreadMessageClient()->dispatchMessage(createMethodCallMessage(&WebPagePrivate::setCompositor, d->page(), PassRefPtr<WebPageCompositorPrivate>(0), EGL_NO_CONTEXT));
+        webKitThreadMessageClient()->dispatchMessage(createMethodCallMessage(&WebPagePrivate::setCompositor, d->page(), PassRefPtr<WebPageCompositorPrivate>(0)));
     d->compositorDestroyed();
     d->deref();
 }

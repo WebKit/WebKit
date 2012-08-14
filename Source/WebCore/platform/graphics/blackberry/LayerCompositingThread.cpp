@@ -249,33 +249,6 @@ void LayerCompositingThread::drawTextures(double scale, int positionLocation, in
         return;
     }
 #endif
-#if ENABLE(WEBGL)
-    if (layerType() == LayerData::WebGLLayer) {
-        m_layerRenderer->addLayerToReleaseTextureResourcesList(this);
-        pthread_mutex_lock(m_frontBufferLock);
-        glVertexAttribPointer(positionLocation, 2, GL_FLOAT, GL_FALSE, 0, &m_transformedBounds);
-        float canvasWidthRatio = 1.0f;
-        float canvasHeightRatio = 1.0f;
-        float upsideDown[4 * 2] = { 0, 1,  0, 1 - canvasHeightRatio,  canvasWidthRatio, 1 - canvasHeightRatio,  canvasWidthRatio, 1 };
-        // Flip the texture Y axis because OpenGL and Skia have different origins
-        glVertexAttribPointer(texCoordLocation, 2, GL_FLOAT, GL_FALSE, 0, upsideDown);
-        glBindTexture(GL_TEXTURE_2D, m_texID);
-        glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
-        // FIXME: If the canvas/texture is larger than 2048x2048, then we'll die here
-        return;
-    }
-#endif
-    if (m_texID) {
-        m_layerRenderer->addLayerToReleaseTextureResourcesList(this);
-        pthread_mutex_lock(m_frontBufferLock);
-
-        glBindTexture(GL_TEXTURE_2D, m_texID);
-        glVertexAttribPointer(positionLocation, 2, GL_FLOAT, GL_FALSE, 0, &m_transformedBounds);
-        float upsideDown[4 * 2] = { 0, 1,  0, 0,  1, 0,  1, 1 };
-        glVertexAttribPointer(texCoordLocation, 2, GL_FLOAT, GL_FALSE, 0, upsideDown);
-        glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
-        return;
-    }
 
     if (m_client)
         m_client->drawTextures(this, scale, positionLocation, texCoordLocation);
@@ -325,8 +298,6 @@ void LayerCompositingThread::releaseTextureResources()
         m_pluginBuffer = 0;
         m_pluginView->unlockFrontBuffer();
     }
-    if (m_frontBufferLock && (m_texID || layerType() == LayerData::WebGLLayer))
-        pthread_mutex_unlock(m_frontBufferLock);
 }
 
 void LayerCompositingThread::setPluginView(PluginView* pluginView)
