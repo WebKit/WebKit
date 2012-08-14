@@ -1,3 +1,152 @@
+2012-08-14  Gabor Ballabas  <gaborb@inf.u-szeged.hu>
+
+        Rename functions in the ARM port of DFG-JIT for better code readability.
+        https://bugs.webkit.org/show_bug.cgi?id=93609
+
+        Reviewed by Zoltan Herczeg.
+
+        Rename functions in the ARM port of DFG-JIT for better code
+        readability, and for following the WebKit coding style
+        wherever it is possible.
+
+        * assembler/ARMAssembler.cpp:
+        (JSC::ARMAssembler::genInt):
+        (JSC::ARMAssembler::getImm):
+        (JSC::ARMAssembler::moveImm):
+        (JSC::ARMAssembler::encodeComplexImm):
+        (JSC::ARMAssembler::dataTransfer32):
+        (JSC::ARMAssembler::baseIndexTransfer32):
+        (JSC::ARMAssembler::dataTransfer16):
+        (JSC::ARMAssembler::baseIndexTransfer16):
+        (JSC::ARMAssembler::dataTransferFloat):
+        (JSC::ARMAssembler::baseIndexTransferFloat):
+        * assembler/ARMAssembler.h:
+        (JSC::ARMAssembler::bitAnd):
+        (JSC::ARMAssembler::bitAnds):
+        (JSC::ARMAssembler::eor):
+        (JSC::ARMAssembler::eors):
+        (JSC::ARMAssembler::sub):
+        (JSC::ARMAssembler::subs):
+        (JSC::ARMAssembler::rsb):
+        (JSC::ARMAssembler::rsbs):
+        (JSC::ARMAssembler::add):
+        (JSC::ARMAssembler::adds):
+        (JSC::ARMAssembler::adc):
+        (JSC::ARMAssembler::adcs):
+        (JSC::ARMAssembler::sbc):
+        (JSC::ARMAssembler::sbcs):
+        (JSC::ARMAssembler::rsc):
+        (JSC::ARMAssembler::rscs):
+        (JSC::ARMAssembler::tst):
+        (JSC::ARMAssembler::teq):
+        (JSC::ARMAssembler::cmp):
+        (JSC::ARMAssembler::cmn):
+        (JSC::ARMAssembler::orr):
+        (JSC::ARMAssembler::orrs):
+        (JSC::ARMAssembler::mov):
+        (JSC::ARMAssembler::movw):
+        (JSC::ARMAssembler::movt):
+        (JSC::ARMAssembler::movs):
+        (JSC::ARMAssembler::bic):
+        (JSC::ARMAssembler::bics):
+        (JSC::ARMAssembler::mvn):
+        (JSC::ARMAssembler::mvns):
+        (JSC::ARMAssembler::mul):
+        (JSC::ARMAssembler::muls):
+        (JSC::ARMAssembler::mull):
+        (JSC::ARMAssembler::vmov_f64):
+        (JSC::ARMAssembler::vadd_f64):
+        (JSC::ARMAssembler::vdiv_f64):
+        (JSC::ARMAssembler::vsub_f64):
+        (JSC::ARMAssembler::vmul_f64):
+        (JSC::ARMAssembler::vcmp_f64):
+        (JSC::ARMAssembler::vsqrt_f64):
+        (JSC::ARMAssembler::vabs_f64):
+        (JSC::ARMAssembler::vneg_f64):
+        (JSC::ARMAssembler::ldrImmediate):
+        (JSC::ARMAssembler::ldrUniqueImmediate):
+        (JSC::ARMAssembler::dtrUp):
+        (JSC::ARMAssembler::dtrUpRegister):
+        (JSC::ARMAssembler::dtrDown):
+        (JSC::ARMAssembler::dtrDownRegister):
+        (JSC::ARMAssembler::halfDtrUp):
+        (JSC::ARMAssembler::halfDtrUpRegister):
+        (JSC::ARMAssembler::halfDtrDown):
+        (JSC::ARMAssembler::halfDtrDownRegister):
+        (JSC::ARMAssembler::doubleDtrUp):
+        (JSC::ARMAssembler::doubleDtrDown):
+        (JSC::ARMAssembler::push):
+        (JSC::ARMAssembler::pop):
+        (JSC::ARMAssembler::poke):
+        (JSC::ARMAssembler::peek):
+        (JSC::ARMAssembler::vmov_vfp64):
+        (JSC::ARMAssembler::vmov_arm64):
+        (JSC::ARMAssembler::vmov_vfp32):
+        (JSC::ARMAssembler::vmov_arm32):
+        (JSC::ARMAssembler::vcvt_f64_s32):
+        (JSC::ARMAssembler::vcvt_s32_f64):
+        (JSC::ARMAssembler::vcvt_u32_f64):
+        (JSC::ARMAssembler::vcvt_f64_f32):
+        (JSC::ARMAssembler::vcvt_f32_f64):
+        (JSC::ARMAssembler::clz):
+        (JSC::ARMAssembler::lslRegister):
+        (JSC::ARMAssembler::lsrRegister):
+        (JSC::ARMAssembler::asrRegister):
+        (JSC::ARMAssembler::align):
+        (JSC::ARMAssembler::loadBranchTarget):
+        (JSC::ARMAssembler::vmov):
+        * assembler/MacroAssemblerARM.cpp:
+        (JSC::MacroAssemblerARM::load32WithUnalignedHalfWords):
+        * assembler/MacroAssemblerARM.h:
+        (JSC::MacroAssemblerARM::add32):
+        (JSC::MacroAssemblerARM::and32):
+        (JSC::MacroAssemblerARM::lshift32):
+        (JSC::MacroAssemblerARM::mul32):
+        (JSC::MacroAssemblerARM::or32):
+        (JSC::MacroAssemblerARM::rshift32):
+        (JSC::MacroAssemblerARM::urshift32):
+        (JSC::MacroAssemblerARM::sub32):
+        (JSC::MacroAssemblerARM::xor32):
+        (JSC::MacroAssemblerARM::countLeadingZeros32):
+        (JSC::MacroAssemblerARM::convertibleLoadPtr):
+        (JSC::MacroAssemblerARM::load32WithAddressOffsetPatch):
+        (JSC::MacroAssemblerARM::load32WithCompactAddressOffsetPatch):
+        (JSC::MacroAssemblerARM::store32WithAddressOffsetPatch):
+        (JSC::MacroAssemblerARM::store32):
+        (JSC::MacroAssemblerARM::pop):
+        (JSC::MacroAssemblerARM::push):
+        (JSC::MacroAssemblerARM::move):
+        (JSC::MacroAssemblerARM::swap):
+        (JSC::MacroAssemblerARM::branch32):
+        (JSC::MacroAssemblerARM::branchTest32):
+        (JSC::MacroAssemblerARM::mull32):
+        (JSC::MacroAssemblerARM::branchSub32):
+        (JSC::MacroAssemblerARM::compare32):
+        (JSC::MacroAssemblerARM::test32):
+        (JSC::MacroAssemblerARM::load32):
+        (JSC::MacroAssemblerARM::relativeTableJump):
+        (JSC::MacroAssemblerARM::moveWithPatch):
+        (JSC::MacroAssemblerARM::loadDouble):
+        (JSC::MacroAssemblerARM::moveDouble):
+        (JSC::MacroAssemblerARM::addDouble):
+        (JSC::MacroAssemblerARM::divDouble):
+        (JSC::MacroAssemblerARM::subDouble):
+        (JSC::MacroAssemblerARM::mulDouble):
+        (JSC::MacroAssemblerARM::sqrtDouble):
+        (JSC::MacroAssemblerARM::absDouble):
+        (JSC::MacroAssemblerARM::negateDouble):
+        (JSC::MacroAssemblerARM::convertInt32ToDouble):
+        (JSC::MacroAssemblerARM::convertFloatToDouble):
+        (JSC::MacroAssemblerARM::convertDoubleToFloat):
+        (JSC::MacroAssemblerARM::branchDouble):
+        (JSC::MacroAssemblerARM::branchTruncateDoubleToInt32):
+        (JSC::MacroAssemblerARM::branchTruncateDoubleToUint32):
+        (JSC::MacroAssemblerARM::truncateDoubleToInt32):
+        (JSC::MacroAssemblerARM::truncateDoubleToUint32):
+        (JSC::MacroAssemblerARM::branchConvertDoubleToInt32):
+        (JSC::MacroAssemblerARM::branchDoubleNonZero):
+        (JSC::MacroAssemblerARM::branchDoubleZeroOrNaN):
+
 2012-08-13  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Unreviewed, rolling out r125444.
