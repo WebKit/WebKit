@@ -152,7 +152,8 @@ public:
     int sourceFrameNumber() const { return m_sourceFrameNumber; }
     void setSourceFrameNumber(int frameNumber) { m_sourceFrameNumber = frameNumber; }
 
-    bool contentsTexturesWerePurgedSinceLastCommit() const { return m_contentsTexturesWerePurgedSinceLastCommit; }
+    bool contentsTexturesPurged() const { return m_contentsTexturesPurged; }
+    void resetContentsTexturesPurged() { m_contentsTexturesPurged = false; }
     size_t memoryAllocationLimitBytes() const { return m_memoryAllocationLimitBytes; }
 
     void setViewportSize(const IntSize& layoutViewportSize, const IntSize& deviceViewportSize);
@@ -272,7 +273,7 @@ private:
     IntSize m_deviceViewportSize;
     float m_deviceScaleFactor;
     bool m_visible;
-    bool m_contentsTexturesWerePurgedSinceLastCommit;
+    bool m_contentsTexturesPurged;
     size_t m_memoryAllocationLimitBytes;
 
     float m_pageScale;

@@ -2347,4 +2347,251 @@ private:
 
 SINGLE_AND_MULTI_THREAD_TEST_F(CCLayerTreeHostTestSurfaceNotAllocatedForLayersOutsideMemoryLimit)
 
+
+class EvictionTrackingTexture : public LayerTextureUpdater::Texture {
+public:
+    static PassOwnPtr<EvictionTrackingTexture> create(PassOwnPtr<CCPrioritizedTexture> texture) { return adoptPtr(new EvictionTrackingTexture(texture)); }
+    virtual ~EvictionTrackingTexture() { }
+
+    virtual void updateRect(CCResourceProvider* resourceProvider, const IntRect&, const IntRect&) OVERRIDE
+    {
+        ASSERT_TRUE(!texture()->haveBackingTexture() || resourceProvider->numResources() > 0);
+        texture()->acquireBackingTexture(resourceProvider);
+        m_updated = true;
+    }
+    void resetUpdated() { m_updated = false; }
+    bool updated() const { return m_updated; }
+
+private:
+    explicit EvictionTrackingTexture(PassOwnPtr<CCPrioritizedTexture> texture)
+        : LayerTextureUpdater::Texture(texture)
+        , m_updated(false)
+    { }
+    bool m_updated;
+};
+
+class EvictionTestLayer : public LayerChromium {
+public:
+    static PassRefPtr<EvictionTestLayer> create() { return adoptRef(new EvictionTestLayer()); }
+
+    virtual void update(CCTextureUpdateQueue&, const CCOcclusionTracker*, CCRenderingStats&) OVERRIDE;
+    virtual bool drawsContent() const OVERRIDE { return true; }
+
+    virtual PassOwnPtr<CCLayerImpl> createCCLayerImpl() OVERRIDE;
+    virtual void pushPropertiesTo(CCLayerImpl*) OVERRIDE;
+    virtual void setTexturePriorities(const CCPriorityCalculator&) OVERRIDE;
+
+    void resetUpdated()
+    {
+        if (m_texture.get())
+            m_texture->resetUpdated();
+    }
+    bool updated() const { return m_texture.get() ? m_texture->updated() : false; }
+
+private:
+    EvictionTestLayer() : LayerChromium() { }
+
+    void createTextureIfNeeded()
+    {
+        if (m_texture.get())
+            return;
+        m_texture = EvictionTrackingTexture::create(CCPrioritizedTexture::create(layerTreeHost()->contentsTextureManager()));
+        m_texture->texture()->setDimensions(WebCore::IntSize(10, 10), WebCore::GraphicsContext3D::RGBA);
+    }
+
+    OwnPtr<EvictionTrackingTexture> m_texture;
+};
+
+class EvictionTestLayerImpl : public CCLayerImpl {
+public:
+    static PassOwnPtr<EvictionTestLayerImpl> create(int id)
+    {
+        return adoptPtr(new EvictionTestLayerImpl(id));
+    }
+    virtual ~EvictionTestLayerImpl() { }
+    virtual void appendQuads(CCQuadSink&, const CCSharedQuadState*, bool& hadMissingTiles)
+    {
+        ASSERT_TRUE(m_hasTexture);
+        ASSERT_NE(0u, layerTreeHostImpl()->resourceProvider()->numResources());
+    }
+    void setHasTexture(bool hasTexture) { m_hasTexture = hasTexture; }
+
+private:
+    explicit EvictionTestLayerImpl(int id)
+        : CCLayerImpl(id)
+        , m_hasTexture(false) { }
+
+    bool m_hasTexture;
+};
+
+void EvictionTestLayer::setTexturePriorities(const CCPriorityCalculator&)
+{
+    createTextureIfNeeded();
+    if (!m_texture.get())
+        return;
+    m_texture->texture()->setRequestPriority(CCPriorityCalculator::uiPriority(true));
+}
+
+void EvictionTestLayer::update(CCTextureUpdateQueue& queue, const CCOcclusionTracker*, CCRenderingStats&)
+{
+    createTextureIfNeeded();
+    if (!m_texture.get())
+        return;
+    IntRect fullRect(0, 0, 10, 10);
+    TextureUploader::Parameters parameters = { m_texture.get(), fullRect, fullRect };
+    queue.appendFullUpload(parameters);
+}
+
+PassOwnPtr<CCLayerImpl> EvictionTestLayer::createCCLayerImpl()
+{
+    return EvictionTestLayerImpl::create(m_layerId);
+}
+
+void EvictionTestLayer::pushPropertiesTo(CCLayerImpl* layerImpl)
+{
+    LayerChromium::pushPropertiesTo(layerImpl);
+
+    EvictionTestLayerImpl* testLayerImpl = static_cast<EvictionTestLayerImpl*>(layerImpl);
+    testLayerImpl->setHasTexture(m_texture->texture()->haveBackingTexture());
+}
+
+class CCLayerTreeHostTestEvictTextures : public CCLayerTreeHostTest {
+public:
+    CCLayerTreeHostTestEvictTextures()
+        : m_layer(EvictionTestLayer::create())
+        , m_implForEvictTextures(0)
+        , m_numCommits(0)
+    {
+    }
+
+    virtual void beginTest()
+    {
+        m_layerTreeHost->setRootLayer(m_layer);
+        m_layerTreeHost->setViewportSize(IntSize(10, 20), IntSize(10, 20));
+
+        WebTransformationMatrix identityMatrix;
+        setLayerPropertiesForTesting(m_layer.get(), 0, identityMatrix, FloatPoint(0, 0), FloatPoint(0, 0), IntSize(10, 20), true);
+    }
+
+    class EvictTexturesTask : public WebKit::WebThread::Task {
+    public:
+        EvictTexturesTask(CCLayerTreeHostTestEvictTextures* test) : m_test(test) { }
+        virtual ~EvictTexturesTask() { }
+        virtual void run()
+        {
+            ASSERT(m_test->m_implForEvictTextures);
+            m_test->m_implForEvictTextures->releaseContentsTextures();
+        }
+
+    private:
+        CCLayerTreeHostTestEvictTextures* m_test;
+    };
+
+    void postEvictTextures()
+    {
+        ASSERT(webThread());
+        webThread()->postTask(new EvictTexturesTask(this));
+    }
+
+    // Commit 1: Just commit and draw normally, then post an eviction at the end
+    // that will trigger a commit.
+    // Commit 2: Triggered by the eviction, let it go through and then set
+    // needsCommit.
+    // Commit 3: Triggered by the setNeedsCommit. In layout(), post an eviction
+    // task, which will be handled before the commit. Don't set needsCommit, it
+    // should have been posted. A frame should not be drawn (note,
+    // didCommitAndDrawFrame may be called anyway).
+    // Commit 4: Triggered by the eviction, let it go through and then set
+    // needsCommit.
+    // Commit 5: Triggered by the setNeedsCommit, post an eviction task in
+    // layout(), a frame should not be drawn but a commit will be posted.
+    // Commit 6: Triggered by the eviction, post an eviction task in
+    // layout(), which will be a noop, letting the commit (which recreates the
+    // textures) go through and draw a frame, then end the test.
+    //
+    // Commits 1+2 test the eviction recovery path where eviction happens outside
+    // of the beginFrame/commit pair.
+    // Commits 3+4 test the eviction recovery path where eviction happens inside
+    // the beginFrame/commit pair.
+    // Commits 5+6 test the path where an eviction happens during the eviction
+    // recovery path.
+    virtual void didCommitAndDrawFrame()
+    {
+        switch (m_numCommits) {
+        case 1:
+            EXPECT_TRUE(m_layer->updated());
+            postEvictTextures();
+            break;
+        case 2:
+            EXPECT_TRUE(m_layer->updated());
+            m_layerTreeHost->setNeedsCommit();
+            break;
+        case 3:
+            break;
+        case 4:
+            EXPECT_TRUE(m_layer->updated());
+            m_layerTreeHost->setNeedsCommit();
+            break;
+        case 5:
+            break;
+        case 6:
+            EXPECT_TRUE(m_layer->updated());
+            endTest();
+            break;
+        default:
+            ASSERT_NOT_REACHED();
+            break;
+        }
+    }
+
+    virtual void commitCompleteOnCCThread(CCLayerTreeHostImpl* impl)
+    {
+        m_implForEvictTextures = impl;
+    }
+
+    virtual void layout()
+    {
+        ++m_numCommits;
+        switch (m_numCommits) {
+        case 1:
+        case 2:
+            break;
+        case 3:
+            postEvictTextures();
+            break;
+        case 4:
+            // We couldn't check in didCommitAndDrawFrame on commit 3, so check here.
+            EXPECT_FALSE(m_layer->updated());
+            break;
+        case 5:
+            postEvictTextures();
+            break;
+        case 6:
+            // We couldn't check in didCommitAndDrawFrame on commit 5, so check here.
+            EXPECT_FALSE(m_layer->updated());
+            postEvictTextures();
+            break;
+        default:
+            ASSERT_NOT_REACHED();
+            break;
+        }
+        m_layer->resetUpdated();
+    }
+
+    virtual void afterTest()
+    {
+    }
+
+private:
+    MockContentLayerDelegate m_delegate;
+    RefPtr<EvictionTestLayer> m_layer;
+    CCLayerTreeHostImpl* m_implForEvictTextures;
+    int m_numCommits;
+};
+
+TEST_F(CCLayerTreeHostTestEvictTextures, runMultiThread)
+{
+    runTest(true);
+}
+
 } // namespace

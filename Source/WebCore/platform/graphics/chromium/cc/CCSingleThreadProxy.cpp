@@ -260,7 +260,7 @@ void CCSingleThreadProxy::stop()
         DebugScopedSetMainThreadBlocked mainThreadBlocked;
         DebugScopedSetImplThread impl;
 
-        if (!m_layerTreeHostImpl->contentsTexturesWerePurgedSinceLastCommit())
+        if (!m_layerTreeHostImpl->contentsTexturesPurged())
             m_layerTreeHost->deleteContentsTexturesOnImplThread(m_layerTreeHostImpl->resourceProvider());
         m_layerTreeHostImpl.clear();
     }
@@ -300,11 +300,12 @@ bool CCSingleThreadProxy::commitAndComposite()
     if (!m_layerTreeHost->initializeLayerRendererIfNeeded())
         return false;
 
-    if (m_layerTreeHostImpl->contentsTexturesWerePurgedSinceLastCommit())
+    if (m_layerTreeHostImpl->contentsTexturesPurged())
         m_layerTreeHost->evictAllContentTextures();
 
     CCTextureUpdateQueue queue;
     m_layerTreeHost->updateLayers(queue, m_layerTreeHostImpl->memoryAllocationLimitBytes());
+    m_layerTreeHostImpl->resetContentsTexturesPurged();
 
     m_layerTreeHost->willCommit();
     doCommit(queue);

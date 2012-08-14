@@ -43,6 +43,8 @@ public:
     void appendPartialUpload(TextureUploader::Parameters);
     void appendCopy(TextureCopier::Parameters);
 
+    void clearUploads();
+
     TextureUploader::Parameters takeFirstFullUpload();
     TextureUploader::Parameters takeFirstPartialUpload();
     TextureCopier::Parameters takeFirstCopy();

@@ -57,6 +57,7 @@ protected:
     CCTextureUpdateController(PassOwnPtr<CCTextureUpdateQueue>, CCResourceProvider*, TextureCopier*, TextureUploader*);
 
     OwnPtr<CCTextureUpdateQueue> m_queue;
+    bool m_contentsTexturesPurged;
     CCResourceProvider* m_resourceProvider;
     TextureCopier* m_copier;
     TextureUploader* m_uploader;

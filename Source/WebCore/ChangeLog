@@ -1,3 +1,43 @@
+2012-08-14  Antoine Labour  <piman@chromium.org>
+
+        [chromium] race between CCLayerTreeHostImpl::releaseContentsTextures and CCThreadProxy::beginFrameCompleteOnImplThread
+        https://bugs.webkit.org/show_bug.cgi?id=93684
+
+        Reviewed by James Robinson.
+
+        This keeps track of whether we're between the beginFrame post and the
+        commit when releaseContentsTextures comes, and if that is the case, we
+        prune the texture uploads, keep the "textures purged" flag on and kick a
+        new commit.
+
+        Added CCLayerTreeHostTestEvictTextures test.
+
+        * platform/graphics/chromium/cc/CCLayerTreeHostImpl.cpp:
+        (WebCore::CCLayerTreeHostImpl::CCLayerTreeHostImpl):
+        (WebCore::CCLayerTreeHostImpl::beginFramePosted):
+        (WebCore):
+        (WebCore::CCLayerTreeHostImpl::commitComplete):
+        (WebCore::CCLayerTreeHostImpl::canDraw):
+        (WebCore::CCLayerTreeHostImpl::releaseContentsTextures):
+        * platform/graphics/chromium/cc/CCLayerTreeHostImpl.h:
+        (CCLayerTreeHostImpl):
+        (WebCore::CCLayerTreeHostImpl::contentsTexturesPurged):
+        (WebCore::CCLayerTreeHostImpl::contentsTexturesWerePurgedSinceLastBeginFrame):
+        * platform/graphics/chromium/cc/CCSingleThreadProxy.cpp:
+        (WebCore::CCSingleThreadProxy::stop):
+        (WebCore::CCSingleThreadProxy::commitAndComposite):
+        * platform/graphics/chromium/cc/CCTextureUpdateController.h:
+        (CCTextureUpdateController):
+        * platform/graphics/chromium/cc/CCTextureUpdateQueue.cpp:
+        (WebCore::CCTextureUpdateQueue::clearUploads):
+        (WebCore):
+        * platform/graphics/chromium/cc/CCTextureUpdateQueue.h:
+        (CCTextureUpdateQueue):
+        * platform/graphics/chromium/cc/CCThreadProxy.cpp:
+        (WebCore::CCThreadProxy::scheduledActionBeginFrame):
+        (WebCore::CCThreadProxy::beginFrameCompleteOnImplThread):
+        (WebCore::CCThreadProxy::layerTreeHostClosedOnImplThread):
+
 2012-08-14  Yong Li  <yoli@rim.com>
 
         [BlackBerry] Pass URL String's 8-bit buffer directly to platform layer when possible

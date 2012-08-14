@@ -54,6 +54,12 @@ void CCTextureUpdateQueue::appendCopy(TextureCopier::Parameters copy)
     m_copyEntries.append(copy);
 }
 
+void CCTextureUpdateQueue::clearUploads()
+{
+    m_fullEntries.clear();
+    m_partialEntries.clear();
+}
+
 TextureUploader::Parameters CCTextureUpdateQueue::takeFirstFullUpload()
 {
     return m_fullEntries.takeFirst();

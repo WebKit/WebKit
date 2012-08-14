@@ -134,6 +134,7 @@ protected:
     static void dispatchDidAddAnimation(void* self);
 
     virtual void runTest(bool threaded);
+    WebKit::WebThread* webThread() const { return m_webThread.get(); }
 
     WebCore::CCLayerTreeSettings m_settings;
     OwnPtr<MockCCLayerTreeHostClient> m_client;
