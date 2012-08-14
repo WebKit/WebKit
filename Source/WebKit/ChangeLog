@@ -1,3 +1,13 @@
+2012-08-14  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] undefined reference to 'g_type_init' with gold linker
+        https://bugs.webkit.org/show_bug.cgi?id=93935
+
+        Unreviewed build fix. Link against glib-gobject to
+        fix linking error with gold linker.
+
+        * PlatformEfl.cmake:
+
 2012-08-11  Raphael Kubo da Costa  <rakuco@webkit.org>
 
         [CMake] Rewrite FindLibSoup2.cmake.
