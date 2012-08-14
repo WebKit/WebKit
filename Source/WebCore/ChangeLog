@@ -1,3 +1,18 @@
+2012-08-14  Thiago Marcos P. Santos  <thiago.santos@intel.com>
+
+        [EFL] Do not warn when the default theme is not found
+        https://bugs.webkit.org/show_bug.cgi?id=93968
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Even if you are using a custom theme, we always try to load first the
+        theme at the default path (that may or may not exist). In the case it
+        doesn't exist and you have a custom theme, we were always getting a
+        misleading error message.
+
+        * platform/efl/RenderThemeEfl.cpp:
+        (WebCore::RenderThemeEfl::createEdje):
+
 2012-08-14  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: Pass cursor continue results back in callback
