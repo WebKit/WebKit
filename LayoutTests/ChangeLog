@@ -1,3 +1,122 @@
+2012-08-10 Thiago Marcos P. Santos <thiago.santos@intel.com>
+
+        [Qt] Remove duplicated platform test expectations
+        https://bugs.webkit.org/show_bug.cgi?id=93351
+
+        Reviewed by Csaba Osztrogonác.
+
+        Remove platform test expectations that are the same as the global
+        expectations.
+
+        * platform/qt-5.0-wk2/compositing/iframes/fixed-position-iframe-expected.txt: Removed.
+        * platform/qt-5.0-wk2/compositing/iframes/invisible-iframe-expected.txt: Removed.
+        * platform/qt-5.0-wk2/compositing/iframes/invisible-nested-iframe-expected.txt: Removed.
+        * platform/qt-5.0-wk2/compositing/iframes/invisible-nested-iframe-hide-expected.txt: Removed.
+        * platform/qt-5.0-wk2/compositing/iframes/layout-on-compositing-change-expected.txt: Removed.
+        * platform/qt-5.0-wk2/compositing/iframes/nested-composited-iframe-expected.txt: Removed.
+        * platform/qt-5.0-wk2/compositing/iframes/nested-iframe-scrolling-expected.txt: Removed.
+        * platform/qt-5.0-wk2/compositing/iframes/overlapped-iframe-iframe-expected.txt: Removed.
+        * platform/qt-5.0-wk2/compositing/iframes/remove-iframe-crash-expected.txt: Removed.
+        * platform/qt-5.0-wk2/compositing/iframes/repaint-after-losing-scrollbars-expected.txt: Removed.
+        * platform/qt-5.0-wk2/compositing/iframes/scroll-fixed-transformed-element-expected.txt: Removed.
+        * platform/qt-5.0-wk2/compositing/iframes/scroll-grandchild-iframe-expected.txt: Removed.
+        * platform/qt-5.0-wk2/compositing/overflow/overflow-scaled-descendant-overlapping-expected.txt: Removed.
+        * platform/qt-5.0-wk2/compositing/reflections/become-simple-composited-reflection-expected.txt: Removed.
+        * platform/qt-5.0-wk2/compositing/reflections/empty-reflection-with-mask-expected.txt: Removed.
+        * platform/qt-5.0-wk2/compositing/reflections/remove-add-reflection-expected.txt: Removed.
+        * platform/qt-5.0-wk2/compositing/reflections/remove-reflection-expected.txt: Removed.
+        * platform/qt-5.0-wk2/compositing/rtl/rtl-absolute-expected.txt: Removed.
+        * platform/qt-5.0-wk2/compositing/rtl/rtl-fixed-expected.txt: Removed.
+        * platform/qt-5.0-wk2/compositing/rtl/rtl-iframe-absolute-expected.txt: Removed.
+        * platform/qt-5.0-wk2/compositing/rtl/rtl-iframe-fixed-expected.txt: Removed.
+        * platform/qt-5.0-wk2/compositing/rtl/rtl-iframe-relative-expected.txt: Removed.
+        * platform/qt-5.0-wk2/compositing/rtl/rtl-relative-expected.txt: Removed.
+        * platform/qt-5.0-wk2/fast/events/overflow-viewport-renderer-deleted-expected.txt: Removed.
+        * platform/qt-5.0-wk2/plugins/document-open-expected.txt: Removed.
+        * platform/qt-5.0/fast/dom/DeviceMotion/no-page-cache-expected.txt: Removed.
+        * platform/qt-5.0/fast/dom/DeviceMotion/optional-event-properties-expected.txt: Removed.
+        * platform/qt-5.0/fast/dom/DeviceMotion/window-property-expected.txt: Removed.
+        * platform/qt-5.0/fast/dom/DeviceOrientation/no-page-cache-expected.txt: Removed.
+        * platform/qt-5.0/fast/dom/DeviceOrientation/optional-event-properties-expected.txt: Removed.
+        * platform/qt-5.0/fast/dom/DeviceOrientation/window-property-expected.txt: Removed.
+        * platform/qt-5.0/svg/W3C-SVG-1.1-SE/color-prop-05-t-expected.txt: Removed.
+        * platform/qt-5.0/svg/W3C-SVG-1.1-SE/filters-image-03-f-expected.txt: Removed.
+        * platform/qt-5.0/svg/W3C-SVG-1.1-SE/pservers-pattern-03-f-expected.txt: Removed.
+        * platform/qt-5.0/svg/W3C-SVG-1.1-SE/struct-use-14-f-expected.txt: Removed.
+        * platform/qt-5.0/svg/W3C-SVG-1.1-SE/svgdom-over-01-f-expected.txt: Removed.
+        * platform/qt-5.0/svg/W3C-SVG-1.1-SE/types-dom-05-b-expected.txt: Removed.
+        * platform/qt-5.0/svg/foreignObject/text-tref-02-b-expected.txt: Removed.
+        * platform/qt-mac/plugins/plugin-javascript-access-expected.txt: Removed.
+        * platform/qt/compositing/geometry/composited-in-columns-expected.txt: Removed.
+        * platform/qt/compositing/geometry/object-clip-rects-assertion-expected.txt: Removed.
+        * platform/qt/compositing/iframes/composited-iframe-scroll-expected.txt: Removed.
+        * platform/qt/compositing/iframes/iframe-content-flipping-expected.txt: Removed.
+        * platform/qt/editing/execCommand/format-block-with-trailing-br-expected.txt: Removed.
+        * platform/qt/editing/pasteboard/4242293-1-expected.txt: Removed.
+        * platform/qt/editing/pasteboard/block-wrappers-necessary-expected.txt: Removed.
+        * platform/qt/editing/selection/drag-start-event-client-x-y-expected.txt: Removed.
+        * platform/qt/editing/selection/hit-test-on-text-with-line-height-expected.txt: Removed.
+        * platform/qt/fast/backgrounds/svg-as-mask-expected.txt: Removed.
+        * platform/qt/fast/borders/border-image-outset-split-inline-vertical-lr-expected.txt: Removed.
+        * platform/qt/fast/borders/borderRadiusSolid01-expected.txt: Removed.
+        * platform/qt/fast/borders/borderRadiusSolid02-expected.txt: Removed.
+        * platform/qt/fast/borders/borderRadiusSolid03-expected.txt: Removed.
+        * platform/qt/fast/borders/borderRadiusSolid04-expected.txt: Removed.
+        * platform/qt/fast/box-shadow/box-shadow-radius-expected.txt: Removed.
+        * platform/qt/fast/box-shadow/scaled-box-shadow-expected.txt: Removed.
+        * platform/qt/fast/css/font-face-descending-unicode-range-expected.txt: Removed.
+        * platform/qt/fast/css/font-face-font-family-descriptor-expected.txt: Removed.
+        * platform/qt/fast/css/font-family-pictograph-expected.txt: Removed.
+        * platform/qt/fast/css/hsla-color-expected.txt: Removed.
+        * platform/qt/fast/css/rgba-custom-text-expected.txt: Removed.
+        * platform/qt/fast/dom/HTMLMeterElement/meter-element-repaint-on-update-value-expected.txt: Removed.
+        * platform/qt/fast/dom/icon-url-change-expected.txt: Removed.
+        * platform/qt/fast/dom/icon-url-list-expected.txt: Removed.
+        * platform/qt/fast/inline/inline-fixed-position-boundingbox-expected.txt: Removed.
+        * platform/qt/fast/inline/inline-relative-offset-boundingbox-expected.txt: Removed.
+        * platform/qt/fast/multicol/hit-test-gap-between-pages-expected.txt: Removed.
+        * platform/qt/fast/reflections/reflection-masks-expected.txt: Removed.
+        * platform/qt/fast/reflections/reflection-masks-opacity-expected.txt: Removed.
+        * platform/qt/fast/repaint/repaint-svg-after-style-change-expected.txt: Removed.
+        * platform/qt/fast/writing-mode/background-horizontal-bt-expected.txt: Removed.
+        * platform/qt/fast/writing-mode/background-vertical-lr-expected.txt: Removed.
+        * platform/qt/fast/writing-mode/background-vertical-rl-expected.txt: Removed.
+        * platform/qt/svg/W3C-SVG-1.1-SE/color-prop-05-t-expected.txt: Removed.
+        * platform/qt/svg/W3C-SVG-1.1-SE/filters-image-03-f-expected.txt: Removed.
+        * platform/qt/svg/W3C-SVG-1.1-SE/pservers-pattern-03-f-expected.txt: Removed.
+        * platform/qt/svg/W3C-SVG-1.1-SE/struct-use-14-f-expected.txt: Removed.
+        * platform/qt/svg/W3C-SVG-1.1-SE/svgdom-over-01-f-expected.txt: Removed.
+        * platform/qt/svg/W3C-SVG-1.1-SE/types-dom-05-b-expected.txt: Removed.
+        * platform/qt/svg/as-background-image/svg-as-background-1-expected.txt: Removed.
+        * platform/qt/svg/as-background-image/svg-as-background-2-expected.txt: Removed.
+        * platform/qt/svg/as-background-image/svg-as-background-3-expected.txt: Removed.
+        * platform/qt/svg/as-background-image/svg-as-background-4-expected.txt: Removed.
+        * platform/qt/svg/as-background-image/svg-as-background-5-expected.txt: Removed.
+        * platform/qt/svg/as-background-image/svg-as-background-6-expected.txt: Removed.
+        * platform/qt/svg/custom/bug86119-expected.txt: Removed.
+        * platform/qt/svg/custom/glyph-transformation-with-hkern-expected.txt: Removed.
+        * platform/qt/svg/custom/object-sizing-width-50p-height-50p-on-target-svg-absolute-expected.txt: Removed.
+        * platform/qt/svg/custom/object-sizing-width-50p-height-75p-on-target-svg-absolute-expected.txt: Removed.
+        * platform/qt/svg/custom/object-sizing-width-50p-height-75p-on-target-svg-expected.txt: Removed.
+        * platform/qt/svg/custom/object-sizing-width-50p-on-target-svg-absolute-expected.txt: Removed.
+        * platform/qt/svg/custom/object-sizing-width-75p-height-50p-on-target-svg-absolute-expected.txt: Removed.
+        * platform/qt/svg/custom/object-sizing-width-75p-height-50p-on-target-svg-expected.txt: Removed.
+        * platform/qt/svg/custom/svg-features-expected.txt: Removed.
+        * platform/qt/svg/custom/use-instanceRoot-event-listeners-expected.txt: Removed.
+        * platform/qt/svg/custom/use-setAttribute-crash-expected.txt: Removed.
+        * platform/qt/svg/foreignObject/text-tref-02-b-expected.txt: Removed.
+        * platform/qt/svg/hixie/viewbox/002-expected.txt: Removed.
+        * platform/qt/svg/hixie/viewbox/003-expected.txt: Removed.
+        * platform/qt/svg/repaint/inner-svg-change-viewBox-contract-expected.txt: Removed.
+        * platform/qt/svg/repaint/inner-svg-change-viewBox-expected.txt: Removed.
+        * platform/qt/svg/text/text-viewbox-rescale-expected.txt: Removed.
+        * platform/qt/svg/zoom/page/zoom-foreign-content-expected.txt: Removed.
+        * platform/qt/svg/zoom/page/zoom-svg-as-background-with-relative-size-expected.txt: Removed.
+        * platform/qt/svg/zoom/page/zoom-svg-through-object-with-auto-size-expected.txt: Removed.
+        * platform/qt/tables/mozilla/bugs/bug26553-expected.txt: Removed.
+        * platform/qt/tables/mozilla/bugs/bug83786-expected.txt: Removed.
+        * platform/qt/tables/mozilla_expected_failures/bugs/bug23847-expected.txt: Removed.
+
 2012-08-14  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r125525.
