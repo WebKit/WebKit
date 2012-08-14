@@ -1,3 +1,19 @@
+2012-08-13  John Bates  <jbates@google.com>
+
+        [Chromium] Patch CCThreadProxy to call setTimebaseAndInterval on CCScheduler
+        https://bugs.webkit.org/show_bug.cgi?id=93918
+
+        Reviewed by James Robinson.
+
+        Also, update some trace events.
+
+        * platform/graphics/chromium/cc/CCDelayBasedTimeSource.cpp:
+        (WebCore::CCDelayBasedTimeSource::setActive):
+        * platform/graphics/chromium/cc/CCFrameRateController.cpp:
+        (WebCore::CCFrameRateController::setActive):
+        * platform/graphics/chromium/cc/CCThreadProxy.cpp:
+        (WebCore::CCThreadProxy::onVSyncParametersChanged):
+
 2012-08-13  Douglas Stockwell  <dstockwell@chromium.org>
 
         Crash in WebCore::RenderBlock::LineBreaker::nextLineBreak

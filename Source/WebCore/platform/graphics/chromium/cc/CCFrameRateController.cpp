@@ -78,9 +78,9 @@ CCFrameRateController::~CCFrameRateController()
 
 void CCFrameRateController::setActive(bool active)
 {
+    TRACE_EVENT1("cc", "CCFrameRateController::setActive", "active", active);
     if (m_active == active)
         return;
-    TRACE_EVENT1("cc", "CCFrameRateController::setActive", "active", active);
     m_active = active;
 
     if (m_isTimeSourceThrottling)

@@ -26,6 +26,7 @@
 
 #include "cc/CCDelayBasedTimeSource.h"
 
+#include "TraceEvent.h"
 #include <algorithm>
 #include <wtf/CurrentTime.h>
 #include <wtf/MathExtras.h>
@@ -66,6 +67,7 @@ CCDelayBasedTimeSource::CCDelayBasedTimeSource(double intervalSeconds, CCThread*
 
 void CCDelayBasedTimeSource::setActive(bool active)
 {
+    TRACE_EVENT1("cc", "CCDelayBasedTimeSource::setActive", "active", active);
     if (!active) {
         m_state = STATE_INACTIVE;
         m_timer.stop();

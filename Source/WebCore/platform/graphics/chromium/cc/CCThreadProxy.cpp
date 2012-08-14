@@ -328,7 +328,7 @@ void CCThreadProxy::onVSyncParametersChanged(double monotonicTimebase, double in
 {
     ASSERT(isImplThread());
     TRACE_EVENT0("cc", "CCThreadProxy::onVSyncParametersChanged");
-    // FIXME: route this into the scheduler once the scheduler supports vsync.
+    m_schedulerOnImplThread->setTimebaseAndInterval(monotonicTimebase, intervalInSeconds);
 }
 
 void CCThreadProxy::setNeedsCommitOnImplThread()
