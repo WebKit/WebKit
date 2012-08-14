@@ -1,3 +1,24 @@
+2012-08-14  Jacky Jiang  <zhajiang@rim.com>
+
+        [BlackBerry] Double-tap zoom on blocks on cnn.com desktop page doesn't work
+        https://bugs.webkit.org/show_bug.cgi?id=93895
+
+        Reviewed by Antonio Gomes.
+        Patch by Jacky Jiang  <zhajiang@rim.com>
+
+        PR: 188232
+        When adjusting block zoom node, don't choose a node if the width of the
+        node size is very close to the width of the actual visible size as
+        block zoom can do nothing on such kind of node. This condition is more
+        restrictive than the one based on area and can bail out early.
+        In this way, we can get a better node for double-tap zoom.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::bestNodeForZoomUnderPoint):
+        (BlackBerry::WebKit::WebPagePrivate::adjustedBlockZoomNodeForZoomAndExpandingRatioLimits):
+        * Api/WebPage_p.h:
+        (WebPagePrivate):
+
 2012-08-14  Konrad Piascik  <kpiascik@rim.com>
 
         [BlackBerry] Change the call to setUserScalable to use the setting.

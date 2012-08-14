@@ -2809,7 +2809,7 @@ Node* WebPagePrivate::bestNodeForZoomUnderPoint(const IntPoint& point)
     if (!originalNode)
         return 0;
     Node* node = bestChildNodeForClickRect(originalNode, clickRect);
-    return node ? adjustedBlockZoomNodeForZoomLimits(node) : adjustedBlockZoomNodeForZoomLimits(originalNode);
+    return node ? adjustedBlockZoomNodeForZoomAndExpandingRatioLimits(node) : adjustedBlockZoomNodeForZoomAndExpandingRatioLimits(originalNode);
 }
 
 Node* WebPagePrivate::bestChildNodeForClickRect(Node* parentNode, const IntRect& clickRect)
@@ -2877,31 +2877,24 @@ Node* WebPagePrivate::nodeForZoomUnderPoint(const IntPoint& point)
     return node;
 }
 
-Node* WebPagePrivate::adjustedBlockZoomNodeForZoomLimits(Node* node)
+Node* WebPagePrivate::adjustedBlockZoomNodeForZoomAndExpandingRatioLimits(Node* node)
 {
     Node* initialNode = node;
     RenderObject* renderer = node->renderer();
     bool acceptableNodeSize = newScaleForBlockZoomRect(rectForNode(node), 1.0, 0) < maxBlockZoomScale();
+    IntSize actualVisibleSize = this->actualVisibleSize();
 
     while (!renderer || !acceptableNodeSize) {
         node = node->parentNode();
+        IntRect nodeRect = rectForNode(node);
 
-        if (!node)
+        // Don't choose a node if the width of the node size is very close to the width of the actual visible size,
+        // as block zoom can do nothing on such kind of node.
+        if (!node || static_cast<double>(actualVisibleSize.width() - nodeRect.width()) / actualVisibleSize.width() < minimumExpandingRatio)
             return initialNode;
 
         renderer = node->renderer();
         acceptableNodeSize = newScaleForBlockZoomRect(rectForNode(node), 1.0, 0) < maxBlockZoomScale();
-    }
-
-    // Don't use a node if it is too close to the size of the actual contents.
-    if (initialNode != node) {
-        IntRect nodeRect = rectForNode(node);
-        nodeRect = adjustRectOffsetForFrameOffset(nodeRect, node);
-        nodeRect.intersect(IntRect(IntPoint::zero(), contentsSize()));
-        int nodeArea = nodeRect.width() * nodeRect.height();
-        int pageArea = contentsSize().width() * contentsSize().height();
-        if (static_cast<double>(pageArea - nodeArea) / pageArea < minimumExpandingRatio)
-            return initialNode;
     }
 
     return node;

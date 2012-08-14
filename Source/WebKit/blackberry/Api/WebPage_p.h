@@ -291,7 +291,7 @@ public:
     WebCore::Node* bestNodeForZoomUnderPoint(const WebCore::IntPoint&);
     WebCore::Node* bestChildNodeForClickRect(WebCore::Node* parentNode, const WebCore::IntRect& clickRect);
     WebCore::Node* nodeForZoomUnderPoint(const WebCore::IntPoint&);
-    WebCore::Node* adjustedBlockZoomNodeForZoomLimits(WebCore::Node*);
+    WebCore::Node* adjustedBlockZoomNodeForZoomAndExpandingRatioLimits(WebCore::Node*);
     WebCore::IntRect rectForNode(WebCore::Node*);
     WebCore::IntRect blockZoomRectForNode(WebCore::Node*);
     WebCore::IntRect adjustRectOffsetForFrameOffset(const WebCore::IntRect&, const WebCore::Node*);
