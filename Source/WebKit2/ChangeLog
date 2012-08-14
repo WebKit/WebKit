@@ -1,3 +1,20 @@
+2012-08-14  Lucas Forschler  <lforschler@apple.com>
+
+    Merge r125319.
+
+    2012-08-09  Jer Noble  <jer.noble@apple.com>
+
+            Crash exiting from HTML5 FS mode to normal mode via ESC key
+            https://bugs.webkit.org/show_bug.cgi?id=93663
+
+            Reviewed by Eric Carlson.
+
+            Crash is due to a refcount underrun with _watchdogTimer due to adopting an autoreleased NSTimer.
+            Use the non-autoreleased NSTimer creation method and manually add to the main NSRunLoop.
+
+            * UIProcess/mac/WKFullScreenWindowController.mm:
+            (-[WKFullScreenWindowController cancelOperation:]):
+
 2012-08-10  Lucas Forschler  <lforschler@apple.com>
 
     Merge r124799.
@@ -47074,4 +47091,5 @@
         socketpair().
 
 == Rolled over to ChangeLog-2011-06-04 ==
+.
 .
