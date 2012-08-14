@@ -1,3 +1,17 @@
+2012-08-13  Kwang Yul Seo  <skyul@company100.net>
+
+        Remove unused method HTMLDocumentParser::script()
+        https://bugs.webkit.org/show_bug.cgi?id=93916
+
+        Reviewed by Eric Seidel.
+
+        The use of HTMLDocumentParser::script() was removed in r61640 and has never been used since then.
+
+        No behavior change, so no new tests.
+
+        * html/parser/HTMLDocumentParser.cpp:
+        * html/parser/HTMLDocumentParser.h:
+
 2012-08-13  Tom Sepez  <tsepez@chromium.org>
 
         [chromium] release FrameLoaderClientImpl::m_pluginWidget refptr upon Plugin Document detach.

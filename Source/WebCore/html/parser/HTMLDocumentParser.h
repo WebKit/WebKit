@@ -137,8 +137,6 @@ private:
     bool inPumpSession() const { return m_pumpSessionNestingLevel > 0; }
     bool shouldDelayEnd() const { return inPumpSession() || isWaitingForScripts() || isScheduledForResume() || isExecutingScript(); }
 
-    ScriptController* script() const;
-
     HTMLInputStream m_input;
 
     // We hold m_token here because it might be partially complete.
