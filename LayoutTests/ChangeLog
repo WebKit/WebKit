@@ -1,3 +1,16 @@
+2012-08-14  Adrienne Walker  <enne@google.com>
+
+        [chromium] Add baselines for video-controls-layer-creation layout test
+
+        Unreviewed expectation update.
+
+        * compositing/video/video-controls-layer-creation-expected.txt: Added.
+        * platform/chromium-linux/compositing/video/video-controls-layer-creation-expected.png: Added.
+        * platform/chromium-mac-snowleopard/compositing/video/video-controls-layer-creation-expected.png: Added.
+        * platform/chromium-mac/compositing/video/video-controls-layer-creation-expected.png: Added.
+        * platform/chromium-win/compositing/video/video-controls-layer-creation-expected.png: Added.
+        * platform/mac/TestExpectations:
+
 2012-08-14  Alexandru Chiculita  <achicu@adobe.com>
 
         Layout Test css3/filters/custom/custom-filter-animation.html is failing
