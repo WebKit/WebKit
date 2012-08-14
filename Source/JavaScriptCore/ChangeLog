@@ -1,5 +1,15 @@
 2012-08-14  Lucas Forschler  <lforschler@apple.com>
 
+    Merge r124272.
+
+    2012-07-31  Sam Weinig  <sam@webkit.org>
+
+            Fix the Windows build.
+
+            * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+
+2012-08-14  Lucas Forschler  <lforschler@apple.com>
+
     Merge r124268.
 
     2012-07-31  Sam Weinig  <sam@webkit.org>
@@ -69174,4 +69184,5 @@
         global object's register storage, and initializing new registers.
 
 == Rolled over to ChangeLog-2011-02-16 ==
+.
 .
