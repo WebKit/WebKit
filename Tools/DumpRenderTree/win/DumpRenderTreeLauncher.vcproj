@@ -50,6 +50,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalOptions="/SAFESEH"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -111,6 +112,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalOptions="/SAFESEH"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -172,6 +174,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalOptions="/SAFESEH"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -233,6 +236,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalOptions="/SAFESEH"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -295,6 +299,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalOptions="/SAFESEH"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -356,6 +361,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalOptions="/SAFESEH"
 			/>
 			<Tool
 				Name="VCALinkTool"

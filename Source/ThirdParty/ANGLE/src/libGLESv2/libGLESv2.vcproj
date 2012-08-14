@@ -67,6 +67,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalOptions="/SAFESEH"
 				AdditionalDependencies="d3d9.lib D3dx9.lib d3dcompiler.lib"
 				LinkIncremental="2"
 				ModuleDefinitionFile="libGLESv2.def"
@@ -147,6 +148,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalOptions="/SAFESEH"
 				AdditionalDependencies="d3d9.lib D3dx9.lib d3dcompiler.lib"
 				LinkIncremental="1"
 				IgnoreAllDefaultLibraries="false"
@@ -231,6 +233,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalOptions="/SAFESEH"
 				AdditionalDependencies="d3d9.lib D3dx9.lib d3dcompiler.lib"
 				LinkIncremental="2"
 				ModuleDefinitionFile="libGLESv2.def"
@@ -312,6 +315,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalOptions="/SAFESEH"
 				AdditionalDependencies="d3d9.lib D3dx9.lib d3dcompiler.lib"
 				LinkIncremental="1"
 				IgnoreAllDefaultLibraries="false"

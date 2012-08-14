@@ -25,7 +25,7 @@
 	<Tool
 		Name="VCLinkerTool"
 		LinkLibraryDependencies="false"
-		AdditionalOptions="/SAFESEH /FIXED:NO /dynamicbase /ignore:4221"
+		AdditionalOptions="/FIXED:NO /dynamicbase /ignore:4221"
 		OutputFile="$(OutDir)\$(ProjectName)$(WebKitConfigSuffix).exe"
 		AdditionalLibraryDirectories="&quot;$(ConfigurationBuildDir)\lib&quot;;&quot;$(WebKitLibrariesDir)\lib&quot;"
 		GenerateDebugInformation="true"

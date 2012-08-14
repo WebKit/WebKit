@@ -31,6 +31,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalOptions="/SAFESEH"
 				OutputFile="$(OutDir)/gtest_unittest.exe"
 				LinkIncremental="2"
 				GenerateDebugInformation="TRUE"
@@ -76,6 +77,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalOptions="/SAFESEH"
 				OutputFile="$(OutDir)/gtest_unittest.exe"
 				LinkIncremental="1"
 				GenerateDebugInformation="TRUE"

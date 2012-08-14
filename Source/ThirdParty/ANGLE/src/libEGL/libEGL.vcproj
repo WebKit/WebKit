@@ -67,6 +67,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalOptions="/SAFESEH"
 				AdditionalDependencies="d3d9.lib dxguid.lib dwmapi.lib"
 				LinkIncremental="2"
 				ModuleDefinitionFile="libEGL.def"
@@ -148,6 +149,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalOptions="/SAFESEH"
 				AdditionalDependencies="d3d9.lib dxguid.lib dwmapi.lib"
 				LinkIncremental="1"
 				ModuleDefinitionFile="libEGL.def"
@@ -232,6 +234,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalOptions="/SAFESEH"
 				AdditionalDependencies="d3d9.lib dxguid.lib dwmapi.lib"
 				LinkIncremental="2"
 				ModuleDefinitionFile="libEGL.def"
@@ -314,6 +317,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalOptions="/SAFESEH"
 				AdditionalDependencies="d3d9.lib dxguid.lib dwmapi.lib"
 				LinkIncremental="1"
 				ModuleDefinitionFile="libEGL.def"
