@@ -464,6 +464,13 @@
                         '<(PRODUCT_DIR)/lib.java/chromium_net.jar',
                         '<(PRODUCT_DIR)/lib.java/chromium_media.jar',
                     ],
+                    'conditions': [
+                        ['inside_chromium_build==1', {
+                            'ant_build_to_chromium_src': '<(ant_build_out)/../../',
+                        }, {
+                            'ant_build_to_chromium_src': '<(chromium_src_dir)',
+                        }],
+                    ],
                 },
                 # Part of the following was copied from <(chromium_src_dir)/build/apk_test.gpyi.
                 # Not including it because gyp include doesn't support variable in path or under
@@ -500,6 +507,8 @@
                         '-DANDROID_TOOLCHAIN=<(android_toolchain)',
                         '--ant-args',
                         '-DPRODUCT_DIR=<(ant_build_out)',
+                        '--ant-args',
+                        '-DCHROMIUM_SRC=<(ant_build_to_chromium_src)',
                         '--sdk-build=<(sdk_build)',
                         '--app_abi',
                         '<(android_app_abi)',
