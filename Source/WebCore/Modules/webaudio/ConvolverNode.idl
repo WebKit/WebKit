@@ -28,7 +28,7 @@ module audio {
         Conditional=WEB_AUDIO,
         JSGenerateToJSObject
     ] ConvolverNode : AudioNode {
-        attribute [JSCustomSetter] AudioBuffer buffer;
+        attribute AudioBuffer buffer;
         attribute boolean normalize;
     };
 }

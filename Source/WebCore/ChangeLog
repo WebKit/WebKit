@@ -1,3 +1,22 @@
+2012-08-14  Vineet Chaudhary  <rgf748@motorola.com>
+
+        Remove custom JSC bindings from ConvolverNode.idl
+        https://bugs.webkit.org/show_bug.cgi?id=93952
+
+        Reviewed by Kentaro Hara.
+
+        We should remove custom bindings as CodeGenerator uses UNUSED_PARAM macro.
+
+        No new tests. No behavioural changes.
+        All tests under webaudio/* should behave same.
+
+        * GNUmakefile.list.am: Removed JSConvolverNodeCustom.cpp from builds.
+        * Modules/webaudio/ConvolverNode.idl: Removed [JSCustomSetter].
+        * UseJSC.cmake: Removed JSConvolverNodeCustom.cpp from builds.
+        * WebCore.gypi: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Ditto
+        * bindings/js/JSConvolverNodeCustom.cpp: Removed.
+
 2012-08-14  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: add external test runner for running inspector front-end tests with no TestRunner infrastructure.

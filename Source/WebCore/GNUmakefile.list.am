@@ -5774,7 +5774,6 @@ webcore_sources += \
 	Source/WebCore/Modules/webaudio/WaveTable.h \
 	Source/WebCore/bindings/js/JSAudioBufferSourceNodeCustom.cpp \
 	Source/WebCore/bindings/js/JSAudioContextCustom.cpp \
-	Source/WebCore/bindings/js/JSConvolverNodeCustom.cpp \
 	Source/WebCore/bindings/js/JSJavaScriptAudioNodeCustom.cpp \
 	Source/WebCore/platform/audio/AudioArray.h \
 	Source/WebCore/platform/audio/AudioBus.cpp \

@@ -276,7 +276,6 @@ IF (ENABLE_WEB_AUDIO)
     LIST(APPEND WebCore_SOURCES
         bindings/js/JSAudioBufferSourceNodeCustom.cpp
         bindings/js/JSAudioContextCustom.cpp
-        bindings/js/JSConvolverNodeCustom.cpp
         bindings/js/JSJavaScriptAudioNodeCustom.cpp
     )
 ENDIF ()

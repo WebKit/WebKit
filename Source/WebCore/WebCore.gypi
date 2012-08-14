@@ -1960,7 +1960,6 @@
             'bindings/js/JSCanvasRenderingContextCustom.cpp',
             'bindings/js/JSClipboardCustom.cpp',
             'bindings/js/JSConsoleCustom.cpp',
-            'bindings/js/JSConvolverNodeCustom.cpp',
             'bindings/js/JSCoordinatesCustom.cpp',
             'bindings/js/JSCustomSQLStatementErrorCallback.cpp',
             'bindings/js/JSCustomVoidCallback.cpp',
