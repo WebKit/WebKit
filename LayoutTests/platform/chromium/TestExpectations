@@ -15,7 +15,7 @@ BUGWK82097 SLOW : editing/selection/move-by-word-visually-crash-test-5.html = PA
 BUGWK79679 SLOW DEBUG : platform/chromium/virtual/gpu/fast/canvas/getPutImageDataPairTest.html = PASS
 BUGCR92287 SLOW WIN MAC : fast/canvas/webgl/context-creation-and-destruction.html = PASS
 BUGCR92287 SLOW WIN MAC : platform/chromium/virtual/gpu/fast/canvas/webgl/context-creation-and-destruction.html = PASS
-BUGCR24182 SLOW MAC DEBUG : fast/css/large-list-of-rules-crash.html = PASS
+BUGCR24182 SLOW DEBUG : fast/css/large-list-of-rules-crash.html = PASS
 BUGCR24182 SLOW SNOWLEOPARD DEBUG : fast/dom/shadow/tree-scope-crash.html = PASS
 BUGCR24182 SLOW SNOWLEOPARD DEBUG : fast/dom/Window/window-postmessage-clone-deep-array.html = PASS
 BUGCR24182 SLOW LINUX ANDROID MAC DEBUG : fast/dom/Window/window-postmessage-clone-really-deep-array.html = PASS
@@ -3512,3 +3512,10 @@ BUGWK93801 LION : fast/speech/input-appearance-searchandspeech.html = PASS IMAGE
 
 // This was fixed in V8 3.13.0, but the V8 roll to 3.13.0 was reverted :(
 BUGWK75468 : fast/js/kde/GlobalObject.html = TEXT
+
+// Flaky
+BUGWK93938 DEBUG : fast/forms/range/slider-delete-while-dragging-thumb.html = PASS TEXT
+BUGWK93938 LION RELEASE : fast/forms/range/slider-delete-while-dragging-thumb.html = PASS TEXT
+BUGWK93938 DEBUG : fast/forms/range/slider-mouse-events.html = PASS TEXT
+BUGWK93938 LION RELEASE : fast/forms/range/slider-mouse-events.html = PASS TEXT
+BUGWK93938 WIN LINUX DEBUG : fast/forms/range/slider-onchange-event.html = PASS TEXT

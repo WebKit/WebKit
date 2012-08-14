@@ -1,3 +1,9 @@
+2012-08-14  Yuta Kitamura  <yutak@google.com>
+
+        [Chromium] Unreviewed gardening. Add expectations for recent flakiness.
+
+        * platform/chromium/TestExpectations:
+
 2012-08-14  Shinya Kawanaka  <shinyak@chromium.org>
 
         AuthorShadowDOM for meter element
