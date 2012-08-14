@@ -200,11 +200,6 @@ void NumberInputType::handleKeydownEvent(KeyboardEvent* event)
         TextFieldInputType::handleKeydownEvent(event);
 }
 
-void NumberInputType::handleWheelEvent(WheelEvent* event)
-{
-    handleWheelEventForSpinButton(event);
-}
-
 Decimal NumberInputType::parseToNumber(const String& src, const Decimal& defaultValue) const
 {
     return parseToDecimalForNumberType(src, defaultValue);

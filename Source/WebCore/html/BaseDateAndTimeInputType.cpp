@@ -103,12 +103,6 @@ void BaseDateAndTimeInputType::handleKeydownEvent(KeyboardEvent* event)
         TextFieldInputType::handleKeydownEvent(event);
 }
 
-void BaseDateAndTimeInputType::handleWheelEvent(WheelEvent* event)
-{
-    if (shouldHaveSpinButton())
-        handleWheelEventForSpinButton(event);
-}
-
 Decimal BaseDateAndTimeInputType::parseToNumber(const String& source, const Decimal& defaultValue) const
 {
     DateComponents date;

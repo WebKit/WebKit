@@ -1,3 +1,38 @@
+2012-08-14  Yoshifumi Inoue  <yosin@chromium.org>
+
+        [Forms] Move wheel event handler to spin button class
+        https://bugs.webkit.org/show_bug.cgi?id=93928
+
+        Reviewed by Kent Tamura.
+
+        This patch moves implmentation of wheel event handling from TextFieldInput
+        class to SpinButtonElement class to share implementation in TextFieldInput
+        class, and DateTimeEditElement.
+
+        No new tests. This patch doesn't change behavior. fast/orms/number/number-wheel.html
+        covers this change.
+
+        * html/BaseDateAndTimeInputType.cpp: Removed handleWheelEvent() implementation.
+        * html/BaseDateAndTimeInputType.h:
+        (BaseDateAndTimeInputType): Removed handleWheelEvent() declaration.
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::defaultEventHandler): Removed wheel event handling.
+        * html/InputType.cpp: Removed handleWheelEvent() implementation.
+        * html/InputType.h:
+        (InputType): Removed handleWheelEvent() declaration.
+        * html/NumberInputType.cpp: Removed handleWheelEvent() implementation.
+        * html/NumberInputType.h:
+        (NumberInputType): Removed handleWheelEvent() declaration.
+        * html/TextFieldInputType.cpp: Removed handleWheelEventForSpinButton() declaration.
+        (WebCore::TextFieldInputType::forwardEvent): Changed to call SpinButtonElement::forwardEvent().
+        * html/TextFieldInputType.h:
+        (TextFieldInputType): Removed handleWheelEventForSpinButton() declaration.
+        * html/shadow/TextControlInnerElements.cpp:
+        (WebCore::SpinButtonElement::forwardEvent): Moved implementation of wheel event handling code
+        from TextFieldInputType::handleWheelEventForSpinButton().
+        * html/shadow/TextControlInnerElements.h:
+        (SpinButtonElement): Added forwardEvent() declaration.
+
 2012-08-14  Shinya Kawanaka  <shinyak@chromium.org>
 
         AuthorShadowDOM for meter element

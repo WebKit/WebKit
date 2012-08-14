@@ -62,7 +62,6 @@ class RenderArena;
 class RenderObject;
 class RenderStyle;
 class TouchEvent;
-class WheelEvent;
 
 typedef int ExceptionCode;
 
@@ -194,7 +193,6 @@ public:
     virtual void handleKeypressEvent(KeyboardEvent*);
     virtual void handleKeyupEvent(KeyboardEvent*);
     virtual void handleBeforeTextInsertedEvent(BeforeTextInsertedEvent*);
-    virtual void handleWheelEvent(WheelEvent*);
 #if ENABLE(TOUCH_EVENTS)
     virtual void handleTouchEvent(TouchEvent*);
 #endif

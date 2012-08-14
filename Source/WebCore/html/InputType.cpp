@@ -423,10 +423,6 @@ void InputType::handleBeforeTextInsertedEvent(BeforeTextInsertedEvent*)
 {
 }
 
-void InputType::handleWheelEvent(WheelEvent*)
-{
-}
-
 #if ENABLE(TOUCH_EVENTS)
 void InputType::handleTouchEvent(TouchEvent*)
 {

@@ -118,6 +118,8 @@ public:
     virtual bool willRespondToMouseMoveEvents() OVERRIDE;
     virtual bool willRespondToMouseClickEvents() OVERRIDE;
 
+    void forwardEvent(Event*);
+
 private:
     SpinButtonElement(Document*, StepActionHandler&);
 

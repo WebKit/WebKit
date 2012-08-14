@@ -48,7 +48,6 @@ protected:
     virtual bool canSetSuggestedValue() OVERRIDE;
     virtual void handleKeydownEvent(KeyboardEvent*) OVERRIDE;
     void handleKeydownEventForSpinButton(KeyboardEvent*);
-    void handleWheelEventForSpinButton(WheelEvent*);
 
     virtual HTMLElement* containerElement() const OVERRIDE;
     virtual HTMLElement* innerBlockElement() const OVERRIDE;

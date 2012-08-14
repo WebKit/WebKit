@@ -58,7 +58,6 @@ private:
     virtual bool typeMismatch() const OVERRIDE;
     virtual Decimal defaultValueForStepUp() const OVERRIDE;
     virtual bool isSteppable() const OVERRIDE;
-    virtual void handleWheelEvent(WheelEvent*) OVERRIDE;
     virtual String serialize(const Decimal&) const OVERRIDE;
     virtual String serializeWithMilliseconds(double) const;
     virtual String localizeValue(const String&) const OVERRIDE;

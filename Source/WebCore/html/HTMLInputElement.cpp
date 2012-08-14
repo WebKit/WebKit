@@ -56,7 +56,6 @@
 #include "SearchInputType.h"
 #include "ShadowRoot.h"
 #include "ScriptEventListener.h"
-#include "WheelEvent.h"
 #include <wtf/MathExtras.h>
 #include <wtf/StdLibExtras.h>
 
@@ -1154,12 +1153,6 @@ void HTMLInputElement::defaultEventHandler(Event* evt)
 
     if (evt->isBeforeTextInsertedEvent())
         m_inputType->handleBeforeTextInsertedEvent(static_cast<BeforeTextInsertedEvent*>(evt));
-
-    if (evt->hasInterface(eventNames().interfaceForWheelEvent)) {
-        m_inputType->handleWheelEvent(static_cast<WheelEvent*>(evt));
-        if (evt->defaultHandled())
-            return;
-    }
 
     if (evt->isMouseEvent() && evt->type() == eventNames().mousedownEvent) {
         m_inputType->handleMouseDownEvent(static_cast<MouseEvent*>(evt));

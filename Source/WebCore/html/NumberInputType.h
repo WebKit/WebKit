@@ -51,7 +51,6 @@ private:
     virtual bool isSteppable() const OVERRIDE;
     virtual StepRange createStepRange(AnyStepHandling) const OVERRIDE;
     virtual void handleKeydownEvent(KeyboardEvent*) OVERRIDE;
-    virtual void handleWheelEvent(WheelEvent*) OVERRIDE;
     virtual Decimal parseToNumber(const String&, const Decimal&) const OVERRIDE;
     virtual String serialize(const Decimal&) const OVERRIDE;
     virtual void handleBlurEvent() OVERRIDE;

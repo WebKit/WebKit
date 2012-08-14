@@ -45,6 +45,7 @@
 #include "SpeechInputEvent.h"
 #include "TextEvent.h"
 #include "TextEventInputType.h"
+#include "WheelEvent.h"
 
 namespace WebCore {
 
@@ -340,6 +341,22 @@ void SpinButtonElement::defaultEventHandler(Event* event)
 
     if (!event->defaultHandled())
         HTMLDivElement::defaultEventHandler(event);
+}
+
+void SpinButtonElement::forwardEvent(Event* event)
+{
+    if (!renderBox())
+        return;
+
+    if (!event->hasInterface(eventNames().interfaceForWheelEvent))
+        return;
+
+    HTMLInputElement* input = static_cast<HTMLInputElement*>(shadowHost());
+    if (input->disabled() || input->readOnly() || !input->focused())
+        return;
+
+    doStepAction(static_cast<WheelEvent*>(event)->wheelDeltaY());
+    event->setDefaultHandled();
 }
 
 bool SpinButtonElement::willRespondToMouseMoveEvents()

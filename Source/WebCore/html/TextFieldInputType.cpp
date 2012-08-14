@@ -163,21 +163,14 @@ void TextFieldInputType::handleKeydownEventForSpinButton(KeyboardEvent* event)
     event->setDefaultHandled();
 }
 
-void TextFieldInputType::handleWheelEventForSpinButton(WheelEvent* event)
-{
-    if (element()->disabled() || element()->readOnly() || !element()->focused())
-        return;
-    if (event->wheelDeltaY() > 0)
-        spinButtonStepUp();
-    else if (event->wheelDeltaY() < 0)
-        spinButtonStepDown();
-    else
-        return;
-    event->setDefaultHandled();
-}
-
 void TextFieldInputType::forwardEvent(Event* event)
 {
+    if (m_innerSpinButton) {
+        m_innerSpinButton->forwardEvent(event);
+        if (event->defaultHandled())
+            return;
+    }
+
     if (element()->renderer() && (event->isMouseEvent() || event->isDragEvent() || event->hasInterface(eventNames().interfaceForWheelEvent) || event->type() == eventNames().blurEvent || event->type() == eventNames().focusEvent)) {
         RenderTextControlSingleLine* renderTextControl = toRenderTextControlSingleLine(element()->renderer());
         if (event->type() == eventNames().blurEvent) {
