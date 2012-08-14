@@ -1,9 +1,33 @@
+.CodeMirror {
+  line-height: 1.2em !important;
+}
 .CodeMirror-scroll {
   height: 100% !important;
 }
 
-.CodeMirror {
-  line-height: 1.2em !important;
+.cm-highlight {
+  -webkit-animation: "fadeout" 2s 0s;
+}
+@-webkit-keyframes fadeout {
+    from {background-color: rgb(255, 255, 120); }
+    to { background-color: white; }
+}
+.cm-breakpoint {
+  color: white !important;
+  margin-right: -8px !important;
+  margin-left: -6px !important;
+  border-width: 0 8px 0px 2px !important;
+  -webkit-border-image: url(Images/breakpointBorder.png) 1 14 1 2;
+}
+.cm-breakpoint-disabled {
+  opacity: 0.5;
+}
+.cm-breakpoint-conditional {
+  -webkit-border-image: url(Images/breakpointConditionalBorder.png) 1 14 1 2;
+}
+.cm-execution-line {
+    background-color: rgb(171, 191, 254) !important;
+    outline: 1px solid rgb(64, 115, 244);
 }
 
 .cm-s-web-inspector-js span.cm-keyword {color: rgb(170, 13, 145);}
@@ -26,3 +50,34 @@
 .cm-s-web-inspector-html span.cm-tag {color: rgb(136, 18, 128);}
 .cm-s-web-inspector-html span.cm-attribute {color: rgb(153, 69, 0);}
 .cm-s-web-inspector-html span.cm-link {color: #00e;}
+
+.webkit-html-message-bubble {
+    -webkit-box-shadow: black 0px 2px 5px;
+    -webkit-border-radius: 9px;
+    -webkit-border-fit: lines;
+    font-size: 10px;
+    font-family: Lucida Grande, sans-serif;
+    font-weight: bold;
+    margin: 0px 10px;
+    padding: 0 7px 1px;
+    z-index: 5;
+}
+.webkit-html-warning-message {
+    background-color: rgb(100%, 62%, 42%);
+    border: 2px solid rgb(100%, 52%, 21%);
+}
+.webkit-html-error-message {
+    background-color: rgb(100%, 42%, 42%);
+    border: 2px solid rgb(100%, 31%, 31%);
+}
+.webkit-html-message-line {
+    padding-left: 23px;
+    text-indent: -20px;
+}
+.webkit-html-message-line-hover {
+    padding-left: 23px;
+    text-indent: -20px;
+    white-space: auto;
+    text-overflow: auto;
+    overflow: auto;
+}

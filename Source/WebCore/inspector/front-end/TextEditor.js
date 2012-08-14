@@ -34,6 +34,10 @@
  */
 WebInspector.TextEditor = function() { };
 
+WebInspector.TextEditor.Events = {
+    GutterClick: "gutterClick"
+};
+
 WebInspector.TextEditor.prototype = {
 
     /**
@@ -63,15 +67,34 @@ WebInspector.TextEditor.prototype = {
 
     /**
      * @param {number} lineNumber
-     * @param {string|Element} decoration
+     * @param {boolean} disabled
+     * @param {boolean} conditional
      */
-    addDecoration: function(lineNumber, decoration) { },
+    addBreakpoint: function(lineNumber, disabled, conditional) { },
 
     /**
      * @param {number} lineNumber
-     * @param {string|Element} decoration
      */
-    removeDecoration: function(lineNumber, decoration) { },
+    removeBreakpoint: function(lineNumber) { },
+
+    /**
+     * @param {number} lineNumber
+     */
+    setExecutionLine: function(lineNumber) { },
+
+    clearExecutionLine: function() { },
+
+    /**
+     * @param {number} lineNumber
+     * @param {Element} element
+     */
+    addDecoration: function(lineNumber, element) { },
+
+    /**
+     * @param {number} lineNumber
+     * @param {Element} element
+     */
+    removeDecoration: function(lineNumber, element) { },
 
     /**
      * @param {WebInspector.TextRange} range

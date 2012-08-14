@@ -49,6 +49,7 @@ WebInspector.CodeMirrorTextEditor = function(url, delegate)
         lineNumbers: true,
         fixedGutter: true,
         onChange: this._onChange.bind(this),
+        onGutterClick: this._onGutterClick.bind(this)
     });
 
     this._lastRange = this.range();
@@ -114,20 +115,62 @@ WebInspector.CodeMirrorTextEditor.prototype = {
         this._codeMirror.scrollTo(coords.x, coords.y);
     },
 
-    /**
-     * @param {number} lineNumber
-     * @param {string|Element} decoration
-     */
-    addDecoration: function(lineNumber, decoration)
+    _onGutterClick: function(instance, lineNumber, event)
     {
+        this.dispatchEventToListeners(WebInspector.TextEditor.Events.GutterClick, { lineNumber: lineNumber, event: event });
     },
 
     /**
      * @param {number} lineNumber
-     * @param {string|Element} decoration
+     * @param {boolean} disabled
+     * @param {boolean} conditional
      */
-    removeDecoration: function(lineNumber, decoration)
+    addBreakpoint: function(lineNumber, disabled, conditional)
     {
+        var className = "cm-breakpoint" + (disabled ? " cm-breakpoint-disabled" : "") + (conditional ? " cm-breakpoint-conditional" : "");
+        this._codeMirror.setMarker(lineNumber, null, className);
+    },
+
+    /**
+     * @param {number} lineNumber
+     */
+    removeBreakpoint: function(lineNumber)
+    {
+        this._codeMirror.clearMarker(lineNumber);
+    },
+
+    /**
+     * @param {number} lineNumber
+     */
+    setExecutionLine: function(lineNumber)
+    {
+        this._executionLine = this._codeMirror.getLineHandle(lineNumber)
+        this._codeMirror.setLineClass(this._executionLine, null, "cm-execution-line");
+    },
+
+    clearExecutionLine: function()
+    {
+        if (typeof this._executionLine == "number")
+            this._codeMirror.setLineClass(this._executionLine, null, null);
+        delete this._executionLine;
+    },
+
+    /**
+     * @param {number} lineNumber
+     * @param {Element} element
+     */
+    addDecoration: function(lineNumber, element)
+    {
+        // TODO implement so that it doesn't hide context code
+    },
+
+    /**
+     * @param {number} lineNumber
+     * @param {Element} element
+     */
+    removeDecoration: function(lineNumber, element)
+    {
+        // TODO implement so that it doesn't hide context code
     },
 
     /**
@@ -144,13 +187,21 @@ WebInspector.CodeMirrorTextEditor.prototype = {
      */
     highlightLine: function(lineNumber)
     {
-        var line = this._codeMirror.getLine(lineNumber);
-        var mark = this._codeMirror.markText({ line: lineNumber, ch: 0 }, { line: lineNumber, ch: line.length }, "CodeMirror-searching");
-        setTimeout(mark.clear.bind(mark), 1000);
+        this.clearLineHighlight();
+        this._codeMirror.setLineClass(lineNumber, null, "cm-highlight");
+        this._highlightedLine = lineNumber;
+        this._clearHighlightTimeout = setTimeout(this.clearLineHighlight.bind(this), 2000);
     },
 
     clearLineHighlight: function()
     {
+        if (this._clearHighlightTimeout)
+            clearTimeout(this._clearHighlightTimeout);
+        delete this._clearHighlightTimeout;
+
+        if (typeof this._highlightedLine == "number")
+            this._codeMirror.setLineClass(this._highlightedLine, null, null);
+        delete this._highlightedLine;
     },
 
     /**
@@ -307,7 +358,7 @@ WebInspector.CodeMirrorTextEditor.prototype = {
     removeAttribute: function(line, name)
     {
         var handle = this._codeMirror.getLineHandle(line);
-        if (handle.attributes)
+        if (handle && handle.attributes)
             delete handle.attributes[name];
     },
 
@@ -334,7 +385,6 @@ WebInspector.CodeMirrorTextEditor.prototype = {
             var xhr = new XMLHttpRequest();
             xhr.open("GET", file, false);
             xhr.send(null);
-            console.log(xhr.responseText);
             window.eval(xhr.responseText);
         }
 

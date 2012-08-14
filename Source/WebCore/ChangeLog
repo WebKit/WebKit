@@ -1,3 +1,63 @@
+2012-08-14  Jan Keromnes  <janx@linux.com>
+
+        Web Inspector: Render breakpoint gutter markers and execution line in CodeMirrorTextEditor
+        https://bugs.webkit.org/show_bug.cgi?id=93686
+
+        Reviewed by Pavel Feldman.
+
+        Divided TextEditor.addDecoration into addBreakpoint, setExecutionLine
+        and addDecoration. Same for removeDecoration. Render breakpoint
+        markers and execution line in CodeMirrorTextEditor.
+
+        * inspector/front-end/CodeMirrorTextEditor.js:
+        (WebInspector.CodeMirrorTextEditor):
+        (WebInspector.CodeMirrorTextEditor.prototype._onGutterClick):
+        (WebInspector.CodeMirrorTextEditor.prototype.addBreakpoint):
+        (WebInspector.CodeMirrorTextEditor.prototype.removeBreakpoint):
+        (WebInspector.CodeMirrorTextEditor.prototype.setExecutionLine):
+        (WebInspector.CodeMirrorTextEditor.prototype.clearExecutionLine):
+        (WebInspector.CodeMirrorTextEditor.prototype.addDecoration):
+        (WebInspector.CodeMirrorTextEditor.prototype.removeDecoration):
+        (WebInspector.CodeMirrorTextEditor.prototype.highlightLine):
+        (WebInspector.CodeMirrorTextEditor.prototype.clearLineHighlight):
+        (WebInspector.CodeMirrorTextEditor.prototype.removeAttribute):
+        * inspector/front-end/DefaultTextEditor.js:
+        (WebInspector.DefaultTextEditor.prototype._onMouseDown):
+        (WebInspector.DefaultTextEditor.prototype.addBreakpoint):
+        (WebInspector.DefaultTextEditor.prototype.removeBreakpoint):
+        (WebInspector.DefaultTextEditor.prototype.setExecutionLine):
+        (WebInspector.DefaultTextEditor.prototype.clearExecutionLine):
+        (WebInspector.DefaultTextEditor.prototype.addDecoration):
+        (WebInspector.DefaultTextEditor.prototype.removeDecoration):
+        * inspector/front-end/JavaScriptSourceFrame.js:
+        (WebInspector.JavaScriptSourceFrame):
+        (WebInspector.JavaScriptSourceFrame.prototype._addBreakpointDecoration):
+        (WebInspector.JavaScriptSourceFrame.prototype._removeBreakpointDecoration):
+        (WebInspector.JavaScriptSourceFrame.prototype.setExecutionLine):
+        (WebInspector.JavaScriptSourceFrame.prototype.clearExecutionLine):
+        (WebInspector.JavaScriptSourceFrame.prototype._handleGutterClick):
+        * inspector/front-end/TextEditor.js:
+        (WebInspector.TextEditor.prototype.addBreakpoint):
+        (WebInspector.TextEditor.prototype.removeBreakpoint):
+        (WebInspector.TextEditor.prototype.setExecutionLine):
+        (WebInspector.TextEditor.prototype.clearExecutionLine):
+        (WebInspector.TextEditor.prototype.addDecoration):
+        (WebInspector.TextEditor.prototype.removeDecoration):
+        * inspector/front-end/cmdevtools.css:
+        (.CodeMirror):
+        (.cm-highlight):
+        (@-webkit-keyframes fadeout):
+        (to):
+        (.cm-breakpoint):
+        (.cm-breakpoint-disabled):
+        (.cm-breakpoint-conditional):
+        (.cm-execution-line):
+        (.webkit-html-message-bubble):
+        (.webkit-html-warning-message):
+        (.webkit-html-error-message):
+        (.webkit-html-message-line):
+        (.webkit-html-message-line-hover):
+
 2012-08-13  Adrienne Walker  <enne@google.com>
 
         REGRESSION (r109851): Video controls do not render
