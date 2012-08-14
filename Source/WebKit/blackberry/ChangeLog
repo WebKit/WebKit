@@ -1,3 +1,15 @@
+2012-08-14  Mike Fenton  <mifenton@rim.com>
+
+        [BlackBerry] Fix use of endsWith to use string instead of char.
+        https://bugs.webkit.org/show_bug.cgi?id=93994
+
+        Reviewed by Antonio Gomes.
+
+        Regex comparison should use string instead of char comparison.
+
+        * WebKitSupport/DOMSupport.cpp:
+        (BlackBerry::WebKit::DOMSupport::elementPatternMatches):
+
 2012-08-14  Jacky Jiang  <zhajiang@rim.com>
 
         [BlackBerry] Double-tap zoom on blocks on cnn.com desktop page doesn't work

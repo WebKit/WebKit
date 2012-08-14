@@ -427,7 +427,7 @@ bool elementPatternMatches(const char* pattern, const HTMLInputElement* inputEle
                 return true;
 
             // Is the regex specifying a character count?
-            if (patternAttribute[patternString.length()] != '{' || !patternAttribute.endsWith('}'))
+            if (patternAttribute[patternString.length()] != '{' || !patternAttribute.endsWith("}"))
                 return false;
 
             // Make sure the number in the regex is actually a number.
