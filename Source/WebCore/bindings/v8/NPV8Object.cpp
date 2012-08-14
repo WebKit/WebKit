@@ -60,6 +60,24 @@ WrapperTypeInfo* npObjectTypeInfo()
 typedef Vector<V8NPObject*> V8NPObjectVector;
 typedef HashMap<int, V8NPObjectVector> V8NPObjectMap;
 
+static v8::Local<v8::Context> toV8Context(NPP npp, NPObject* npObject)
+{
+    V8NPObject* object = reinterpret_cast<V8NPObject*>(npObject);
+    DOMWindow* domWindow = object->rootObject;
+    if (!domWindow || !domWindow->frame() || domWindow != domWindow->frame()->domWindow())
+        return v8::Local<v8::Context>();
+    return V8Proxy::mainWorldContext(object->rootObject->frame());
+}
+
+static V8Proxy* toV8Proxy(NPObject* npObject)
+{
+    V8NPObject* object = reinterpret_cast<V8NPObject*>(npObject);
+    Frame* frame = object->rootObject->frame();
+    if (!frame)
+        return 0;
+    return frame->script()->proxy();
+}
+
 static V8NPObjectMap* staticV8NPObjectMap()
 {
     DEFINE_STATIC_LOCAL(V8NPObjectMap, v8npObjectMap, ());

@@ -2239,8 +2239,6 @@
             'bindings/v8/V8AbstractEventListener.h',
             'bindings/v8/V8Binding.cpp',
             'bindings/v8/V8Binding.h',
-            'bindings/v8/V8BindingHelpers.cpp',
-            'bindings/v8/V8BindingHelpers.h',
             'bindings/v8/V8BindingMacros.h',
             'bindings/v8/V8Collection.cpp',
             'bindings/v8/V8Collection.h',

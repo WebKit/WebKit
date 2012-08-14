@@ -1,5 +1,30 @@
 2012-08-13  Kentaro Hara  <haraken@chromium.org>
 
+        [V8] Remove V8BindingHelpers
+        https://bugs.webkit.org/show_bug.cgi?id=93807
+
+        Reviewed by Adam Barth.
+
+        V8BindingHelpers contains toV8Context() and toV8Proxy(), which are used
+        by NPV8Object.cpp only.
+
+        (1) Move these methods to NPV8Object.cpp as static methods.
+        (2) Remove V8BindingHelpers.{h,cpp}.
+
+        No tests. No change in behavior.
+
+        * UseV8.cmake:
+        * WebCore.gypi:
+        * bindings/v8/NPV8Object.cpp:
+        (WebCore::toV8Context):
+        (WebCore):
+        (WebCore::toV8Proxy):
+        * bindings/v8/V8Binding.h:
+        * bindings/v8/V8BindingHelpers.cpp: Removed.
+        * bindings/v8/V8BindingHelpers.h: Removed.
+
+2012-08-13  Kentaro Hara  <haraken@chromium.org>
+
         [V8] Remove unused methods and headers from V8Utilities
         https://bugs.webkit.org/show_bug.cgi?id=93805
 
