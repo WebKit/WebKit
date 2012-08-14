@@ -1,3 +1,15 @@
+2012-08-13  Roger Fong  <roger_fong@apple.com>
+
+        Enable CSS Sticky Position on Windows.
+        https://bugs.webkit.org/show_bug.cgi?id=93905
+
+        Reviewed by Tim Horton.
+
+        As per https://bugs.webkit.org/show_bug.cgi?id=90046, the ENABLE_CSS_STICKY_POSITION needs to be turned on for Windows as well.
+
+        * win/tools/vsprops/FeatureDefines.vsprops:
+        Include ENABLE_CSS_STICKY_POSITION flag. 
+        
 2012-08-06  Anders Carlsson  <andersca@apple.com>
 
         If the Apple Java plug-in is blocked and no runtime is installed, don't load it
