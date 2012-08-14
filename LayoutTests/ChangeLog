@@ -1,3 +1,18 @@
+2012-08-13  Eric Seidel  <eric@webkit.org>
+
+        Add test to demonstrate overpainting seen in bug 92800
+        https://bugs.webkit.org/show_bug.cgi?id=93901
+
+        Reviewed by Levi Weintraub.
+
+        Bug 92800 is a rather complicated change to fix this overpainting bug.
+        Adding the test before the change so that it's easier for me to track as I change
+        this behavior and for reviewers to see that I'm fixing this overpainting.
+
+        * fast/repaint/add-table-overpaint-expected.png: Added.
+        * fast/repaint/add-table-overpaint-expected.txt: Added.
+        * fast/repaint/add-table-overpaint.html: Added.
+
 2012-08-13  Elliott Sprehn  <esprehn@chromium.org>
 
         Expand list of supported languages for RenderQuote to match WHATWG spec
