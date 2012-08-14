@@ -3,6 +3,19 @@
         [Chromium] Fix apk generation for the Android platform
         https://bugs.webkit.org/show_bug.cgi?id=93841
 
+        Unreviewed build fix (step 2).
+
+        The path from webkit_unit_tests isn't robust enough. Use the same
+        convention as the Chromium side, i.e. walk up from the ant_build_out path.
+        One-line Android-only gyp change.
+
+        * WebKitUnitTests.gyp:
+
+2012-08-14  Peter Beverloo  <peter@chromium.org>
+
+        [Chromium] Fix apk generation for the Android platform
+        https://bugs.webkit.org/show_bug.cgi?id=93841
+
         Unreviewed build fix.
 
         APK generation was broken as the configuration file assumed compilation

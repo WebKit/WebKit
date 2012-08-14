@@ -151,7 +151,7 @@
                         ['inside_chromium_build==1', {
                             'ant_build_to_chromium_src': '<(ant_build_out)/../../',
                         }, {
-                            'ant_build_to_chromium_src': '<(chromium_src_dir)',
+                            'ant_build_to_chromium_src': '<(ant_build_out)/../../Source/WebKit/chromium',
                         }],
                     ],
                 },
