@@ -1,3 +1,35 @@
+2012-08-14  Alexandru Chiculita  <achicu@adobe.com>
+
+        Layout Test css3/filters/custom/custom-filter-animation.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=91769
+
+        Reviewed by Dean Jackson.
+
+        Mountain Lion added support for accelerated filter animations, but CSS Shaders are still
+        rendered in software mode. The setFilters method is using PlatformCALayer::filtersCanBeComposited to check
+        if the filters can be handled in hardwawre, so I've reused that in the createFilterAnimationsFromKeyframes
+        to check if the animations can also run in hardware.
+
+        Also the GraphicsContext3D doesn't update its own internal m_boundFBO when a framebuffer is deleted,
+        so I've added that to the FECustomFilter. Otherwise, if the next framebuffer is created using the same
+        identifier, bindFramebuffer will just return without calling the glBindFramebuffer because of this optimization.
+
+        The documentation for glDeleteFramebuffer says that the bound framebuffer is unbound before deleting it.
+        This is not reproduceable from WebGL, because WebGLRenderingContext::deleteFramebuffer
+        already knows to unbind the framebuffer when needed. However, I'm also adding that in GraphicsContext3DOpenGLCommon.cpp
+        and efl/GraphicsContext3DPrivate.cpp, to make sure that m_boundFBO is not used for other purposes.
+
+        No new tests, this patch fixes a failing test.
+
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::createFilterAnimationsFromKeyframes):
+        * platform/graphics/efl/GraphicsContext3DPrivate.cpp:
+        (WebCore::GraphicsContext3DPrivate::deleteFramebuffer):
+        * platform/graphics/filters/FECustomFilter.cpp:
+        (WebCore::FECustomFilter::deleteRenderBuffers):
+        * platform/graphics/opengl/GraphicsContext3DOpenGLCommon.cpp:
+        (WebCore::GraphicsContext3D::deleteFramebuffer):
+
 2012-08-14  Adam Barth  <abarth@webkit.org>
 
         Delete Frame::domWindow() and Frame::existingDOMWindow()

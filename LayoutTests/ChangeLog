@@ -1,3 +1,14 @@
+2012-08-14  Alexandru Chiculita  <achicu@adobe.com>
+
+        Layout Test css3/filters/custom/custom-filter-animation.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=91769
+
+        Reviewed by Dean Jackson.
+
+        The test should be passing on Mountain Lion now, so I'm removing it from the list.
+
+        * platform/mac/TestExpectations:
+
 2012-08-14  Mike West  <mkwst@chromium.org>
 
         Tighten up parsing the 'script-nonce' CSP directive value.

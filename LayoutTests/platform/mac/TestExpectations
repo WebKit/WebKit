@@ -337,9 +337,6 @@ BUGWK91505 : platform/mac/plugins/root-object-premature-delete-crash.html = CRAS
 // [Mac] REGRESSION (r122651): fast/text/descent-clip-in-scaled-page.html fails
 BUGWK91552 : fast/text/descent-clip-in-scaled-page.html = IMAGE
 
-// Layout Test css3/filters/custom/custom-filter-animation.html is failing
-BUGWK84813 : css3/filters/custom/custom-filter-animation.html = TEXT
-
 // Needs rebaseline after https://bugs.webkit.org/show_bug.cig?id=91969
 BUGWK91969 : fast/dom/HTMLProgressElement/progress-bar-value-pseudo-element.html = TEXT
 BUGWK91969 : fast/dom/HTMLProgressElement/progress-writing-mode.html = TEXT

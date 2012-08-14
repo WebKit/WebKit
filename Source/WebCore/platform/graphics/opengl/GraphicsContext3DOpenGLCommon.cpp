@@ -1322,6 +1322,11 @@ void GraphicsContext3D::deleteBuffer(Platform3DObject buffer)
 void GraphicsContext3D::deleteFramebuffer(Platform3DObject framebuffer)
 {
     makeContextCurrent();
+    if (framebuffer == m_boundFBO) {
+        // Make sure the framebuffer is not going to be used for drawing
+        // operations after it gets deleted.
+        bindFramebuffer(FRAMEBUFFER, 0);
+    }
     glDeleteFramebuffersEXT(1, &framebuffer);
 }
 

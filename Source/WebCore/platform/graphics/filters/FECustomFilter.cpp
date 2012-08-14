@@ -108,6 +108,9 @@ void FECustomFilter::deleteRenderBuffers()
         return;
     m_context->makeContextCurrent();
     if (m_frameBuffer) {
+        // Make sure to unbind any framebuffer from the context first, otherwise
+        // some platforms might refuse to bind the same buffer id again.
+        m_context->bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, 0);
         m_context->deleteFramebuffer(m_frameBuffer);
         m_frameBuffer = 0;
     }
