@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="resources/polyfill.js"></script>
+
+<div id="container">
+    <meter id="host" min="0" max="100" value="50"></meter>
+</div>
+
+<script>
+var shadowRoot = new WebKitShadowRoot(host);
+shadowRoot.innerHTML = "<span>no progress</span>"
+</script>
+
+</body>
+</html>

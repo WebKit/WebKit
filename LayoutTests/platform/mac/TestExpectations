@@ -349,6 +349,19 @@ BUGWK91969 : fast/dom/HTMLProgressElement/progress-bar-value-pseudo-element.html
 BUGWK91969 : fast/dom/HTMLProgressElement/progress-writing-mode.html = TEXT
 BUGWK91969 : fast/dom/HTMLProgressElement/indeterminate-progress-001.html = TEXT
 
+// Needs rebaseline after https://bugs.webkit.org/show_bug.cgi?id=91970
+BUGWK91970 : fast/dom/HTMLMeterElement/meter-appearances-capacity.html
+BUGWK91970 : fast/dom/HTMLMeterElement/meter-appearances-rating-relevancy.html
+BUGWK91970 : fast/dom/HTMLMeterElement/meter-boundary-values.html
+BUGWK91970 : fast/dom/HTMLMeterElement/meter-clone.html
+BUGWK91970 : fast/dom/HTMLMeterElement/meter-element-markup.html
+BUGWK91970 : fast/dom/HTMLMeterElement/meter-element-repaint-on-update-value.html
+BUGWK91970 : fast/dom/HTMLMeterElement/meter-element.html
+BUGWK91970 : fast/dom/HTMLMeterElement/meter-optimums.html
+BUGWK91970 : fast/dom/HTMLMeterElement/meter-styles-changing-pseudo.html
+BUGWK91970 : fast/dom/HTMLMeterElement/meter-styles.html
+BUGWK91970 : fast/dom/HTMLMeterElement/meter-writing-mode.html
+
 // Require rebaseline after bug 93148
 BUGWK93148 : tables/mozilla_expected_failures/bugs/bug106966.html = TEXT
 BUGWK93148 : tables/mozilla_expected_failures/marvin/table_overflow_hidden_tbody.html = TEXT

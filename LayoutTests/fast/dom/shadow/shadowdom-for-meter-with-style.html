@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="resources/polyfill.js"></script>
+<style>
+meter {
+    display: block;
+    margin: 0;
+    padding: 0;
+    width: auto;
+    height: 3em;
+    vertical-align: 0;
+}
+
+meter::-webkit-meter-inner-element {
+    -webkit-appearance: meter; /* We have to have this for now. Please see Bug 92455. */
+    display: block;
+    width: 15em;
+    height: 3em;
+}
+</style>
+
+<div id="container">
+    <meter id="host" min="0" max="100" value="50"></meter>
+</div>
+
+<script>
+var shadowRoot = new WebKitShadowRoot(host);
+shadowRoot.innerHTML = "<div style='margin-left: 100px'><shadow></shadow><span>(after)</span></div>";
+</script>
+
+</body>
+</html>
