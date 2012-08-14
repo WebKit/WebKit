@@ -104,12 +104,6 @@ namespace WebCore {
 
         void finishedWithEvent(Event*) { }
 
-        // Evaluate JavaScript in a new isolated world. The script gets its own
-        // global scope, its own prototypes for intrinsic JavaScript objects (String,
-        // Array, and so-on), and its own wrappers for all DOM nodes and DOM
-        // constructors.
-        v8::Local<v8::Array> evaluateInIsolatedWorld(int worldID, const Vector<ScriptSourceCode>& sources, int extensionGroup);
-
         // Evaluate a script file in the current execution environment.
         // The caller must hold an execution context.
         // If cannot evalute the script, it returns an error.

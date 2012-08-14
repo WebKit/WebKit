@@ -1,3 +1,20 @@
+2012-08-09  Kentaro Hara  <haraken@chromium.org>
+
+        [V8] Remove evaluateInIsolatedWorld() from V8Proxy
+        https://bugs.webkit.org/show_bug.cgi?id=93679
+
+        Reviewed by Adam Barth.
+
+        To remove V8Proxy, this patch moves V8Proxy::evaluateInIsolatedWorld()
+        to ScriptController.
+
+        No tests. No change in behavior.
+
+        * bindings/v8/ScriptController.cpp:
+        (WebCore::ScriptController::evaluateInIsolatedWorld):
+        * bindings/v8/V8Proxy.cpp:
+        (WebCore::V8Proxy::precompileScript):
+
 2012-08-13  Bear Travis  <betravis@adobe.com>
 
         [CSS Exclusions] Remove unused CSSWrapShapes header includes

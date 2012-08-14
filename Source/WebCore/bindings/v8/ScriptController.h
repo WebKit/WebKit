@@ -82,6 +82,10 @@ public:
     // as a string.
     ScriptValue evaluate(const ScriptSourceCode&);
 
+    // Evaluate JavaScript in a new isolated world. The script gets its own
+    // global scope, its own prototypes for intrinsic JavaScript objects (String,
+    // Array, and so-on), and its own wrappers for all DOM nodes and DOM
+    // constructors.
     void evaluateInIsolatedWorld(unsigned worldID, const Vector<ScriptSourceCode>& sources, Vector<ScriptValue>* results);
 
     // Executes JavaScript in an isolated world. The script gets its own global scope,

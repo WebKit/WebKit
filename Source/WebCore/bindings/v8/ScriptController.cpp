@@ -172,7 +172,58 @@ void ScriptController::evaluateInIsolatedWorld(unsigned worldID, const Vector<Sc
 void ScriptController::evaluateInIsolatedWorld(unsigned worldID, const Vector<ScriptSourceCode>& sources, int extensionGroup, Vector<ScriptValue>* results)
 {
     v8::HandleScope handleScope;
-    v8::Local<v8::Array> v8Results = m_proxy->evaluateInIsolatedWorld(worldID, sources, extensionGroup);
+
+    // FIXME: This will need to get reorganized once we have a windowShell for the isolated world.
+    if (!windowShell()->initContextIfNeeded())
+        return;
+
+    v8::Local<v8::Array> v8Results;
+    {
+        v8::HandleScope evaluateHandleScope;
+        V8IsolatedContext* isolatedContext = 0;
+        if (worldID > 0) {
+            IsolatedWorldMap::iterator iter = m_proxy->isolatedWorlds().find(worldID);
+            if (iter != m_proxy->isolatedWorlds().end())
+                isolatedContext = iter->second;
+            else {
+                isolatedContext = new V8IsolatedContext(proxy(), extensionGroup, worldID);
+                if (isolatedContext->context().IsEmpty()) {
+                    delete isolatedContext;
+                    return;
+                }
+
+                // FIXME: We should change this to using window shells to match JSC.
+                m_proxy->isolatedWorlds().set(worldID, isolatedContext);
+            }
+
+            IsolatedWorldSecurityOriginMap::iterator securityOriginIter = m_proxy->isolatedWorldSecurityOrigins().find(worldID);
+            if (securityOriginIter != m_proxy->isolatedWorldSecurityOrigins().end())
+                isolatedContext->setSecurityOrigin(securityOriginIter->second);
+        } else {
+            isolatedContext = new V8IsolatedContext(proxy(), extensionGroup, worldID);
+            if (isolatedContext->context().IsEmpty()) {
+                delete isolatedContext;
+                return;
+            }
+        }
+
+        v8::Local<v8::Context> context = v8::Local<v8::Context>::New(isolatedContext->context());
+        v8::Context::Scope contextScope(context);
+        v8::Local<v8::Array> resultArray = v8::Array::New(sources.size());
+
+        for (size_t i = 0; i < sources.size(); ++i) {
+            v8::Local<v8::Value> evaluationResult = m_proxy->evaluate(sources[i], 0);
+            if (evaluationResult.IsEmpty())
+                evaluationResult = v8::Local<v8::Value>::New(v8::Undefined());
+            resultArray->Set(i, evaluationResult);
+        }
+
+        if (!worldID)
+            isolatedContext->destroy();
+
+        v8Results = evaluateHandleScope.Close(resultArray);
+    }
+
     if (results && !v8Results.IsEmpty()) {
         for (size_t i = 0; i < v8Results->Length(); ++i)
             results->append(ScriptValue(v8Results->Get(i)));
