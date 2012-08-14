@@ -1,3 +1,19 @@
+2012-08-14  Milian Wolff  <milian.wolff@kdab.com>
+
+        [Qt] QtWebKit linking fails for QNX cross build
+        https://bugs.webkit.org/show_bug.cgi?id=93460
+
+        Reviewed by Simon Hausmann.
+
+        The GCC 4.4.2 used by the QNX BBNDK 2.0.1 fails to link QtWebKit.
+        Apparently it does not properly support the linker invokation using
+        -Wl,-whole-archive -l... -Wl,-no-whole-archive
+        yielding a "cc: no files to process" error. This patch works around
+        this issue by adding an empty dummy file (and thus object file) to
+        the linking stage.
+
+        * Source/api.pri:
+
 2012-08-14  Keishi Hattori  <keishi@webkit.org>
 
         Move page popup resources to separate directory

@@ -84,3 +84,14 @@ WEBKIT += webcore
 }
 
 !no_webkit1: WEBKIT += webkit1
+
+qnx {
+    # see: https://bugs.webkit.org/show_bug.cgi?id=93460
+    # the gcc 4.4.2 used in the qnx bbndk cannot cope with
+    # the linkage step of libQtWebKit, adding a dummy .cpp
+    # file fixes this though - so do this here
+    dummyfile.target = dummy.cpp
+    dummyfile.commands = touch $$dummyfile.target
+    QMAKE_EXTRA_TARGETS += dummyfile
+    GENERATED_SOURCES += $$dummyfile.target
+}
