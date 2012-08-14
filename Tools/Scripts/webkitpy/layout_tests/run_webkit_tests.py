@@ -331,6 +331,8 @@ def parse_args(args=None):
         optparse.make_option("--additional-expectations", action="append", default=[],
             help="Path to a test_expectations file that will override previous expectations. "
                  "Specify multiple times for multiple sets of overrides."),
+        optparse.make_option("--compare-port", action="store", default=None,
+            help="Use the specified port's baselines first"),
         optparse.make_option("--no-show-results", action="store_false",
             default=True, dest="show_results",
             help="Don't launch a browser with results after the tests "

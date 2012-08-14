@@ -60,6 +60,7 @@ from webkitpy.layout_tests.port import driver
 from webkitpy.layout_tests.port import http_lock
 from webkitpy.layout_tests.port import image_diff
 from webkitpy.layout_tests.port import server_process
+from webkitpy.layout_tests.port.factory import PortFactory
 from webkitpy.layout_tests.servers import apache_http_server
 from webkitpy.layout_tests.servers import http_server
 from webkitpy.layout_tests.servers import websocket_server
@@ -198,7 +199,7 @@ class Port(object):
 
 
     def baseline_search_path(self):
-        return self.get_option('additional_platform_directory', []) + self.default_baseline_search_path()
+        return self.get_option('additional_platform_directory', []) + self._compare_baseline() + self.default_baseline_search_path()
 
     def default_baseline_search_path(self):
         """Return a list of absolute paths to directories to search under for
@@ -210,6 +211,14 @@ class Port(object):
         if self.name() != self.port_name:
             search_paths.append(self.port_name)
         return map(self._webkit_baseline_path, search_paths)
+
+    @memoized
+    def _compare_baseline(self):
+        factory = PortFactory(self.host)
+        target_port = self.get_option('compare_port')
+        if target_port:
+            return factory.get(target_port).default_baseline_search_path()
+        return []
 
     def check_build(self, needs_http):
         """This routine is used to ensure that the build is up to date
