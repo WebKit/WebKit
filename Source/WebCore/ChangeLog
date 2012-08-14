@@ -1,3 +1,17 @@
+2012-08-13  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r124970.
+        http://trac.webkit.org/changeset/124970
+        https://bugs.webkit.org/show_bug.cgi?id=93495
+
+        Postponing the merge in a clearer context (Requested by
+        Michelangelo on #webkit).
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue):
+        (WebCore::CSSParser::parseTransform):
+        * css/CSSParser.h:
+
 2012-08-12  Shawn Singh  <shawnsingh@chromium.org>
 
         [chromium] renderSurface in incorrect space if owning layer has empty but non-zero bounds

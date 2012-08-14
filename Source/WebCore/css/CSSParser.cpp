@@ -2320,9 +2320,9 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
         if (id == CSSValueNone)
             validPrimitive = true;
         else {
-            RefPtr<CSSValue> transformValue = parseTransform(m_valueList.get());
-            if (transformValue) {
-                addProperty(propId, transformValue.release(), important);
+            PassRefPtr<CSSValue> val = parseTransform();
+            if (val) {
+                addProperty(propId, val, important);
                 return true;
             }
             return false;
@@ -7266,15 +7266,15 @@ private:
     CSSParser::Units m_unit;
 };
 
-PassRefPtr<CSSValueList> CSSParser::parseTransform(CSSParserValueList* valueList)
+PassRefPtr<CSSValueList> CSSParser::parseTransform()
 {
-    if (!valueList)
+    if (!m_valueList)
         return 0;
 
     // The transform is a list of functional primitives that specify transform operations.
     // We collect a list of WebKitCSSTransformValues, where each value specifies a single operation.
     RefPtr<CSSValueList> list = CSSValueList::createSpaceSeparated();
-    for (CSSParserValue* value = valueList->current(); value; value = valueList->next()) {
+    for (CSSParserValue* value = m_valueList->current(); value; value = m_valueList->next()) {
         if (value->unit != CSSParserValue::Function || !value->function)
             return 0;
 
