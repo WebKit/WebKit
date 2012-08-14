@@ -1,3 +1,18 @@
+2012-08-14  Yoshifumi Inoue  <yosin@chromium.org>
+
+        [Forms] Copy Source/WebCore/html/shadow/TextControlInnerElements.{cpp,h} to SpinButtonElement.{cpp,h}
+        https://bugs.webkit.org/show_bug.cgi?id=93943
+
+        Reviewed by Kent Tamura.
+
+        This patch copys html/shadow/TextControlInnerElement.{cpp,h} to SpinButtonElement.{cpp,h} for
+        preparation of bug 93941, Set SpinButtonElement free from HTMLInputElement.
+
+        No new tests. This patch doesn't change behavior.
+
+        * html/shadow/SpinButtonElement.cpp: Copied from Source/WebCore/html/shadow/TextControlInnerElements.cpp.
+        * html/shadow/SpinButtonElement.h: Copied from Source/WebCore/html/shadow/TextControlInnerElements.h.
+
 2012-08-14  Mike West  <mkwst@chromium.org>
 
         Implement the plugin-types Content Security Policy directive.
