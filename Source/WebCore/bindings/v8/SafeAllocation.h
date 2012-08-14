@@ -69,6 +69,8 @@ public:
     static inline v8::Local<v8::Object> newInstance(v8::Handle<v8::Function>);
     static inline v8::Local<v8::Object> newInstance(v8::Handle<v8::ObjectTemplate>);
     static inline v8::Local<v8::Object> newInstance(v8::Handle<v8::Function>, int argc, v8::Handle<v8::Value> argv[]);
+
+    static v8::Handle<v8::Value> isValidConstructorMode(const v8::Arguments&);
 };
 
 v8::Local<v8::Object> SafeAllocation::newInstance(v8::Handle<v8::Function> function)

@@ -37,6 +37,7 @@
 #include "MemoryInstrumentation.h"
 #include "PlatformString.h"
 #include "QualifiedName.h"
+#include "SafeAllocation.h"
 #include "V8DOMStringList.h"
 #include "V8Element.h"
 #include "V8Proxy.h"
@@ -291,7 +292,7 @@ String int32ToWebCoreString(int value)
 v8::Persistent<v8::FunctionTemplate> createRawTemplate()
 {
     v8::HandleScope scope;
-    v8::Local<v8::FunctionTemplate> result = v8::FunctionTemplate::New(V8Proxy::checkNewLegal);
+    v8::Local<v8::FunctionTemplate> result = v8::FunctionTemplate::New(SafeAllocation::isValidConstructorMode);
     return v8::Persistent<v8::FunctionTemplate>::New(result);
 }        
 

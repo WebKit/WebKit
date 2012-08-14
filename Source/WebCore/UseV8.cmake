@@ -29,6 +29,7 @@ LIST(APPEND WebCore_SOURCES
     bindings/v8/Dictionary.cpp
     bindings/v8/PageScriptDebugServer.cpp
     bindings/v8/RetainedDOMInfo.cpp
+    bindings/v8/SafeAllocation.cpp
     bindings/v8/ScheduledAction.cpp
     bindings/v8/ScopedDOMDataStore.cpp
     bindings/v8/ScriptCachedFrameData.cpp

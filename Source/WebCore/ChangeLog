@@ -1,5 +1,30 @@
 2012-08-13  Kentaro Hara  <haraken@chromium.org>
 
+        [V8] Move checkNewLegal() from V8Proxy.h to SafeAllocation.h
+        https://bugs.webkit.org/show_bug.cgi?id=93830
+
+        Reviewed by Adam Barth.
+
+        This patch moves checkNewLegal() from V8Proxy.h to SafeAllocation.h.
+        In addition, this patch renames checkNewLegal() to isValidConstructorMode()
+        for clarification.
+
+        No tests. No change in behavior.
+
+        * UseV8.cmake:
+        * WebCore.gypi:
+        * bindings/v8/SafeAllocation.cpp: Added.
+        * bindings/v8/SafeAllocation.h:
+        (WebCore::SafeAllocation::newInstance):
+        (WebCore):
+        * bindings/v8/V8Binding.cpp:
+        (WebCore::createRawTemplate):
+        * bindings/v8/V8Proxy.cpp:
+        * bindings/v8/V8Proxy.h:
+        (V8Proxy):
+
+2012-08-13  Kentaro Hara  <haraken@chromium.org>
+
         [V8] Remove unused methods from V8Binding.h
         https://bugs.webkit.org/show_bug.cgi?id=93836
 

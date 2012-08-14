@@ -547,14 +547,6 @@ v8::Local<v8::Context> V8Proxy::mainWorldContext(Frame* frame)
     return frame->script()->proxy()->mainWorldContext();
 }
 
-v8::Handle<v8::Value> V8Proxy::checkNewLegal(const v8::Arguments& args)
-{
-    if (ConstructorMode::current() == ConstructorMode::CreateNewObject)
-        return throwError(TypeError, "Illegal constructor", args.GetIsolate());
-
-    return args.This();
-}
-
 V8Extensions& V8Proxy::extensions()
 {
     DEFINE_STATIC_LOCAL(V8Extensions, extensions, ());
