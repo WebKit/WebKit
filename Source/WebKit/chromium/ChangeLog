@@ -1,3 +1,41 @@
+2012-08-14  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: Pass cursor continue results back in callback
+        https://bugs.webkit.org/show_bug.cgi?id=92278
+
+        Reviewed by Tony Chang.
+
+        Supply the updated cursor key/primaryKey/value in the success callback,
+        rather than forcing the callee to make three calls into the back end to
+        fetch them. Callbacks onSuccess(cursor) and onSuccessWithContinuation()
+        are given the three new payload parameters (and the latter is renamed.)
+
+        * public/WebIDBCallbacks.h:
+        (WebIDBCallbacks):
+        (WebKit::WebIDBCallbacks::onSuccess): Replace with no-op stub.
+        (WebKit::WebIDBCallbacks::onSuccessWithContinuation): Ditto.
+        * public/WebIDBCursor.h:
+        (WebIDBCursor): Methods can be removed once Chromium is cleaned up.
+        * src/IDBCallbacksProxy.cpp: Updated callbacks.
+        (WebKit::IDBCallbacksProxy::onSuccess):
+        (WebKit):
+        * src/IDBCallbacksProxy.h: Updated callbacks.
+        (IDBCallbacksProxy):
+        * src/IDBCursorBackendProxy.cpp: Remove back end accessors.
+        * src/IDBCursorBackendProxy.h:
+        (IDBCursorBackendProxy):
+        * src/WebIDBCallbacksImpl.cpp: Updated callbacks.
+        (WebKit::WebIDBCallbacksImpl::onSuccess):
+        * src/WebIDBCallbacksImpl.h: Updated callbacks.
+        (WebIDBCallbacksImpl):
+        * src/WebIDBCursorImpl.cpp: Remove back end accessors.
+        * src/WebIDBCursorImpl.h: Remove back end accessors.
+        (WebIDBCursorImpl):
+        * tests/IDBAbortOnCorruptTest.cpp: Update test stubs.
+        (WebCore::MockIDBCallbacks::onSuccess):
+        * tests/IDBDatabaseBackendTest.cpp: Ditto.
+        * tests/IDBRequestTest.cpp: Ditto.
+
 2012-08-14  Peter Beverloo  <peter@chromium.org>
 
         [Chromium] Remove unneeded build logic for Android

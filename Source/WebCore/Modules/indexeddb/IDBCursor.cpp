@@ -265,12 +265,12 @@ void IDBCursor::close()
     m_request.clear();
 }
 
-void IDBCursor::setValueReady()
+void IDBCursor::setValueReady(PassRefPtr<IDBKey> key, PassRefPtr<IDBKey> primaryKey, PassRefPtr<SerializedScriptValue> prpValue)
 {
-    m_currentKey = m_backend->key();
-    m_currentPrimaryKey = m_backend->primaryKey();
+    m_currentKey = key;
+    m_currentPrimaryKey = primaryKey;
 
-    RefPtr<SerializedScriptValue> value = m_backend->value();
+    RefPtr<SerializedScriptValue> value = prpValue;
     if (!isKeyCursor()) {
         RefPtr<IDBObjectStore> objectStore = effectiveObjectStore();
         const IDBObjectStoreMetadata metadata = objectStore->metadata();

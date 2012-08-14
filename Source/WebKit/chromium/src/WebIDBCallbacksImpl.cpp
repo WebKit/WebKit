@@ -65,9 +65,9 @@ void WebIDBCallbacksImpl::onSuccess(const WebDOMStringList& domStringList)
     m_callbacks->onSuccess(domStringList);
 }
 
-void WebIDBCallbacksImpl::onSuccess(WebIDBCursor* cursor)
+void WebIDBCallbacksImpl::onSuccess(WebIDBCursor* cursor, const WebIDBKey& key, const WebIDBKey& primaryKey, const WebSerializedScriptValue& value)
 {
-    m_callbacks->onSuccess(IDBCursorBackendProxy::create(adoptPtr(cursor)));
+    m_callbacks->onSuccess(IDBCursorBackendProxy::create(adoptPtr(cursor)), key, primaryKey, value);
 }
 
 void WebIDBCallbacksImpl::onSuccess(WebIDBDatabase* webKitInstance)
@@ -95,9 +95,9 @@ void WebIDBCallbacksImpl::onSuccess(const WebSerializedScriptValue& serializedSc
     m_callbacks->onSuccess(serializedScriptValue, key, keyPath);
 }
 
-void WebIDBCallbacksImpl::onSuccessWithContinuation()
+void WebIDBCallbacksImpl::onSuccess(const WebIDBKey& key, const WebIDBKey& primaryKey, const WebSerializedScriptValue& value)
 {
-    m_callbacks->onSuccessWithContinuation();
+    m_callbacks->onSuccess(key, primaryKey, value);
 }
 
 void WebIDBCallbacksImpl::onBlocked()

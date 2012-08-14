@@ -44,9 +44,6 @@ public:
     WebIDBCursorImpl(WTF::PassRefPtr<WebCore::IDBCursorBackendInterface>);
     virtual ~WebIDBCursorImpl();
 
-    virtual WebIDBKey key() const;
-    virtual WebIDBKey primaryKey() const;
-    virtual WebSerializedScriptValue value() const;
     virtual void advance(unsigned long, WebIDBCallbacks*, WebExceptionCode&);
     virtual void continueFunction(const WebIDBKey&, WebIDBCallbacks*, WebExceptionCode&);
     virtual void deleteFunction(WebIDBCallbacks*, WebExceptionCode&);

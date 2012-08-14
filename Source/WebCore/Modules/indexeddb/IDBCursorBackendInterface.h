@@ -53,10 +53,6 @@ public:
         ObjectStoreCursor
     };
 
-    virtual PassRefPtr<IDBKey> key() const = 0;
-    virtual PassRefPtr<IDBKey> primaryKey() const = 0;
-    virtual PassRefPtr<SerializedScriptValue> value() const = 0;
-
     virtual void advance(unsigned long count, PassRefPtr<IDBCallbacks>, ExceptionCode&) = 0;
     virtual void continueFunction(PassRefPtr<IDBKey> key, PassRefPtr<IDBCallbacks>, ExceptionCode&) = 0;
     virtual void deleteFunction(PassRefPtr<IDBCallbacks>, ExceptionCode&) = 0;

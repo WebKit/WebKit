@@ -77,7 +77,7 @@ public:
     }
     virtual void onError(PassRefPtr<IDBDatabaseError>) OVERRIDE { }
     virtual void onSuccess(PassRefPtr<DOMStringList>) OVERRIDE { }
-    virtual void onSuccess(PassRefPtr<IDBCursorBackendInterface>) OVERRIDE { }
+    virtual void onSuccess(PassRefPtr<IDBCursorBackendInterface>, PassRefPtr<IDBKey>, PassRefPtr<IDBKey>, PassRefPtr<SerializedScriptValue>) OVERRIDE { }
     virtual void onSuccess(PassRefPtr<IDBDatabaseBackendInterface>) OVERRIDE
     {
         m_wasSuccessDBCalled = true;
@@ -86,7 +86,7 @@ public:
     virtual void onSuccess(PassRefPtr<IDBTransactionBackendInterface>) OVERRIDE { }
     virtual void onSuccess(PassRefPtr<SerializedScriptValue>) OVERRIDE { }
     virtual void onSuccess(PassRefPtr<SerializedScriptValue>, PassRefPtr<IDBKey>, const IDBKeyPath&) OVERRIDE { };
-    virtual void onSuccessWithContinuation() OVERRIDE { }
+    virtual void onSuccess(PassRefPtr<IDBKey>, PassRefPtr<IDBKey>, PassRefPtr<SerializedScriptValue>) OVERRIDE { };
     virtual void onSuccessWithPrefetch(const Vector<RefPtr<IDBKey> >&, const Vector<RefPtr<IDBKey> >&, const Vector<RefPtr<SerializedScriptValue> >&) OVERRIDE { }
     virtual void onBlocked() OVERRIDE { }
 private:

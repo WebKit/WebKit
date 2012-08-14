@@ -47,21 +47,6 @@ WebIDBCursorImpl::~WebIDBCursorImpl()
 {
 }
 
-WebIDBKey WebIDBCursorImpl::key() const
-{
-    return m_idbCursorBackend->key();
-}
-
-WebIDBKey WebIDBCursorImpl::primaryKey() const
-{
-    return m_idbCursorBackend->primaryKey();
-}
-
-WebSerializedScriptValue WebIDBCursorImpl::value() const
-{
-    return m_idbCursorBackend->value();
-}
-
 void WebIDBCursorImpl::advance(unsigned long count, WebIDBCallbacks* callbacks, WebExceptionCode& ec)
 {
     m_idbCursorBackend->advance(count, IDBCallbacksProxy::create(adoptPtr(callbacks)), ec);

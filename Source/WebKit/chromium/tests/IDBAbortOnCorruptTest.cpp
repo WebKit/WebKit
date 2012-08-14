@@ -51,7 +51,7 @@ public:
         m_wasErrorCalled = true;
     }
     virtual void onSuccess(PassRefPtr<DOMStringList>) { }
-    virtual void onSuccess(PassRefPtr<IDBCursorBackendInterface>) { }
+    virtual void onSuccess(PassRefPtr<IDBCursorBackendInterface>, PassRefPtr<IDBKey>, PassRefPtr<IDBKey>, PassRefPtr<SerializedScriptValue>) { }
     virtual void onSuccess(PassRefPtr<IDBDatabaseBackendInterface>)
     {
         EXPECT_TRUE(false);
@@ -60,7 +60,7 @@ public:
     virtual void onSuccess(PassRefPtr<IDBTransactionBackendInterface>) { }
     virtual void onSuccess(PassRefPtr<SerializedScriptValue>) { }
     virtual void onSuccess(PassRefPtr<SerializedScriptValue>, PassRefPtr<IDBKey>, const IDBKeyPath&) { }
-    virtual void onSuccessWithContinuation() { }
+    virtual void onSuccess(PassRefPtr<IDBKey>, PassRefPtr<IDBKey>, PassRefPtr<SerializedScriptValue>) { };
     virtual void onSuccessWithPrefetch(const Vector<RefPtr<IDBKey> >&, const Vector<RefPtr<IDBKey> >&, const Vector<RefPtr<SerializedScriptValue> >&) { }
     virtual void onBlocked() { }
 private:

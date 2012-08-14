@@ -108,13 +108,13 @@ public:
 
     virtual void onError(PassRefPtr<IDBDatabaseError>) OVERRIDE { }
     virtual void onSuccess(PassRefPtr<DOMStringList>) OVERRIDE { }
-    virtual void onSuccess(PassRefPtr<IDBCursorBackendInterface>) OVERRIDE { }
+    virtual void onSuccess(PassRefPtr<IDBCursorBackendInterface>, PassRefPtr<IDBKey>, PassRefPtr<IDBKey>, PassRefPtr<SerializedScriptValue>) OVERRIDE { }
     virtual void onSuccess(PassRefPtr<IDBDatabaseBackendInterface>) OVERRIDE { }
     virtual void onSuccess(PassRefPtr<IDBKey>) OVERRIDE { }
     virtual void onSuccess(PassRefPtr<IDBTransactionBackendInterface>) OVERRIDE { }
     virtual void onSuccess(PassRefPtr<SerializedScriptValue>) OVERRIDE { }
     virtual void onSuccess(PassRefPtr<SerializedScriptValue>, PassRefPtr<IDBKey>, const IDBKeyPath&) OVERRIDE { }
-    virtual void onSuccessWithContinuation() OVERRIDE { }
+    virtual void onSuccess(PassRefPtr<IDBKey>, PassRefPtr<IDBKey>, PassRefPtr<SerializedScriptValue>) OVERRIDE { }
     virtual void onSuccessWithPrefetch(const Vector<RefPtr<IDBKey> >&, const Vector<RefPtr<IDBKey> >&, const Vector<RefPtr<SerializedScriptValue> >&) OVERRIDE { }
     virtual void onBlocked() OVERRIDE { }
 };
@@ -490,13 +490,13 @@ public:
         end(false);
     }
 
-    virtual void onSuccess(PassRefPtr<IDBCursorBackendInterface> idbCursor)
+    virtual void onSuccess(PassRefPtr<IDBCursorBackendInterface> idbCursor, PassRefPtr<IDBKey> key, PassRefPtr<IDBKey> primaryKey, PassRefPtr<SerializedScriptValue> value)
     {
         m_idbCursor = idbCursor;
-        onSuccessWithContinuation();
+        onSuccess(key, primaryKey, value);
     }
 
-    virtual void onSuccessWithContinuation()
+    virtual void onSuccess(PassRefPtr<IDBKey> key, PassRefPtr<IDBKey> primaryKey, PassRefPtr<SerializedScriptValue> value)
     {
         if (m_skipCount) {
             --m_skipCount;
@@ -509,9 +509,6 @@ public:
             return;
         }
 
-        RefPtr<IDBKey> key = m_idbCursor->key();
-        RefPtr<IDBKey> primaryKey = m_idbCursor->primaryKey();
-        RefPtr<SerializedScriptValue> value = m_idbCursor->value();
         RefPtr<TypeBuilder::Runtime::RemoteObject> wrappedValue = m_injectedScript.wrapSerializedObject(value.get(), String());
         RefPtr<DataEntry> dataEntry = DataEntry::create()
             .setKey(keyFromIDBKey(key.get()))

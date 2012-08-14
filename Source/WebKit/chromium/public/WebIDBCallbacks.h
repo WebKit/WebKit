@@ -50,17 +50,17 @@ public:
     // For the rest, pass ownership to the callee via a pointer.
     virtual void onError(const WebIDBDatabaseError&) { WEBKIT_ASSERT_NOT_REACHED(); }
     virtual void onSuccess(const WebDOMStringList&) { WEBKIT_ASSERT_NOT_REACHED(); }
-    virtual void onSuccess(WebIDBCursor*) { WEBKIT_ASSERT_NOT_REACHED(); }
-    // FIXME: Temporary no-op method to allow callers to update before WK92278 lands.
-    virtual void onSuccess(WebIDBCursor*, const WebIDBKey& key, const WebIDBKey& primaryKey, const WebSerializedScriptValue&) { }
+    // FIXME: Remove this no-op method when callers are updated.
+    virtual void onSuccess(WebIDBCursor*) { }
+    virtual void onSuccess(WebIDBCursor*, const WebIDBKey& key, const WebIDBKey& primaryKey, const WebSerializedScriptValue&) { WEBKIT_ASSERT_NOT_REACHED(); }
     virtual void onSuccess(WebIDBDatabase*) { WEBKIT_ASSERT_NOT_REACHED(); }
     virtual void onSuccess(const WebIDBKey&) { WEBKIT_ASSERT_NOT_REACHED(); }
     virtual void onSuccess(WebIDBTransaction*) { WEBKIT_ASSERT_NOT_REACHED(); }
     virtual void onSuccess(const WebSerializedScriptValue&) { WEBKIT_ASSERT_NOT_REACHED(); }
     virtual void onSuccess(const WebSerializedScriptValue&, const WebIDBKey&, const WebIDBKeyPath&) { WEBKIT_ASSERT_NOT_REACHED(); }
-    virtual void onSuccessWithContinuation() { WEBKIT_ASSERT_NOT_REACHED(); }
-    // FIXME: Temporary no-op method to allow callers to update before WK92278 lands.
-    virtual void onSuccess(const WebIDBKey& key, const WebIDBKey& primaryKey, const WebSerializedScriptValue&) { }
+    // FIXME: Remove this no-op method when callers are updated.
+    virtual void onSuccessWithContinuation() { }
+    virtual void onSuccess(const WebIDBKey& key, const WebIDBKey& primaryKey, const WebSerializedScriptValue&) { WEBKIT_ASSERT_NOT_REACHED(); }
     virtual void onBlocked() { WEBKIT_ASSERT_NOT_REACHED(); }
     virtual void onBlocked(long long oldVersion) { WEBKIT_ASSERT_NOT_REACHED(); }
     virtual void onSuccessWithPrefetch(const WebVector<WebIDBKey>& keys, const WebVector<WebIDBKey>& primaryKeys, const WebVector<WebSerializedScriptValue>& values) { WEBKIT_ASSERT_NOT_REACHED(); }

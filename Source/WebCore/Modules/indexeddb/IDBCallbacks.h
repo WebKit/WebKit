@@ -50,14 +50,23 @@ public:
     virtual ~IDBCallbacks() { }
 
     virtual void onError(PassRefPtr<IDBDatabaseError>) = 0;
+    // From IDBFactory.webkitGetDatabaseNames()
     virtual void onSuccess(PassRefPtr<DOMStringList>) = 0;
-    virtual void onSuccess(PassRefPtr<IDBCursorBackendInterface>) = 0;
+    // From IDBObjectStore/IDBIndex.openCursor(), IDBIndex.openKeyCursor()
+    virtual void onSuccess(PassRefPtr<IDBCursorBackendInterface>, PassRefPtr<IDBKey>, PassRefPtr<IDBKey> primaryKey, PassRefPtr<SerializedScriptValue>) = 0;
+    // From IDBFactory.open()
     virtual void onSuccess(PassRefPtr<IDBDatabaseBackendInterface>) = 0;
+    // From IDBObjectStore.add()/put(), IDBIndex.getKey()
     virtual void onSuccess(PassRefPtr<IDBKey>) = 0;
+    // From IDBDatabase.setVersion()
     virtual void onSuccess(PassRefPtr<IDBTransactionBackendInterface>) = 0;
+    // From IDBObjectStore/IDBIndex.get()/count(), and various methods that yield null/undefined.
     virtual void onSuccess(PassRefPtr<SerializedScriptValue>) = 0;
+    // From IDBObjectStore/IDBIndex.get() (with key injection)
     virtual void onSuccess(PassRefPtr<SerializedScriptValue>, PassRefPtr<IDBKey>, const IDBKeyPath&) = 0;
-    virtual void onSuccessWithContinuation() = 0;
+    // From IDBCursor.advance()/continue()
+    virtual void onSuccess(PassRefPtr<IDBKey>, PassRefPtr<IDBKey> primaryKey, PassRefPtr<SerializedScriptValue>) = 0;
+    // From IDBCursor.advance()/continue()
     virtual void onSuccessWithPrefetch(const Vector<RefPtr<IDBKey> >& keys, const Vector<RefPtr<IDBKey> >& primaryKeys, const Vector<RefPtr<SerializedScriptValue> >& values) = 0;
     virtual void onBlocked() { ASSERT_NOT_REACHED(); }
     virtual void onBlocked(int64_t existingVersion) { ASSERT_NOT_REACHED(); }

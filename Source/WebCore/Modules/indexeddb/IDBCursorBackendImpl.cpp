@@ -62,26 +62,6 @@ IDBCursorBackendImpl::~IDBCursorBackendImpl()
     m_objectStore.clear();
 }
 
-PassRefPtr<IDBKey> IDBCursorBackendImpl::key() const
-{
-    IDB_TRACE("IDBCursorBackendImpl::key");
-    return m_cursor->key();
-}
-
-PassRefPtr<IDBKey> IDBCursorBackendImpl::primaryKey() const
-{
-    IDB_TRACE("IDBCursorBackendImpl::primaryKey");
-    return m_cursor->primaryKey();
-}
-
-PassRefPtr<SerializedScriptValue> IDBCursorBackendImpl::value() const
-{
-    IDB_TRACE("IDBCursorBackendImpl::value");
-    if (m_cursorType == IndexKeyCursor)
-      return SerializedScriptValue::nullValue();
-    return SerializedScriptValue::createFromWire(m_cursor->value());
-}
-
 void IDBCursorBackendImpl::continueFunction(PassRefPtr<IDBKey> prpKey, PassRefPtr<IDBCallbacks> prpCallbacks, ExceptionCode& ec)
 {
     IDB_TRACE("IDBCursorBackendImpl::continue");
@@ -109,7 +89,7 @@ void IDBCursorBackendImpl::advanceInternal(ScriptExecutionContext*, PassRefPtr<I
         return;
     }
 
-    callbacks->onSuccessWithContinuation();
+    callbacks->onSuccess(cursor->key(), cursor->primaryKey(), cursor->value());
 }
 
 void IDBCursorBackendImpl::continueFunctionInternal(ScriptExecutionContext*, PassRefPtr<IDBCursorBackendImpl> prpCursor, PassRefPtr<IDBKey> prpKey, PassRefPtr<IDBCallbacks> callbacks)
@@ -124,7 +104,7 @@ void IDBCursorBackendImpl::continueFunctionInternal(ScriptExecutionContext*, Pas
         return;
     }
 
-    callbacks->onSuccessWithContinuation();
+    callbacks->onSuccess(cursor->key(), cursor->primaryKey(), cursor->value());
 }
 
 void IDBCursorBackendImpl::deleteFunction(PassRefPtr<IDBCallbacks> prpCallbacks, ExceptionCode& ec)

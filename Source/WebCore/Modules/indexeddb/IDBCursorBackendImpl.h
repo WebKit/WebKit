@@ -54,9 +54,6 @@ public:
     virtual ~IDBCursorBackendImpl();
 
     // IDBCursorBackendInterface
-    virtual PassRefPtr<IDBKey> key() const;
-    virtual PassRefPtr<IDBKey> primaryKey() const;
-    virtual PassRefPtr<SerializedScriptValue> value() const;
     virtual void advance(unsigned long, PassRefPtr<IDBCallbacks>, ExceptionCode&);
     virtual void continueFunction(PassRefPtr<IDBKey>, PassRefPtr<IDBCallbacks>, ExceptionCode&);
     virtual void deleteFunction(PassRefPtr<IDBCallbacks>, ExceptionCode&);
@@ -64,6 +61,9 @@ public:
     virtual void prefetchReset(int usedPrefetches, int unusedPrefetches);
     virtual void postSuccessHandlerCallback() { ASSERT_NOT_REACHED(); }
 
+    PassRefPtr<IDBKey> key() const { return m_cursor->key(); }
+    PassRefPtr<IDBKey> primaryKey() const { return m_cursor->primaryKey(); }
+    PassRefPtr<SerializedScriptValue> value() const { return (m_cursorType == IndexKeyCursor) ? SerializedScriptValue::nullValue() : SerializedScriptValue::createFromWire(m_cursor->value()); }
     void close();
 
 private:

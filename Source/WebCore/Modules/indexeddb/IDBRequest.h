@@ -82,12 +82,12 @@ public:
     virtual void onError(PassRefPtr<IDBDatabaseError>);
     virtual void onSuccess(PassRefPtr<DOMStringList>);
     virtual void onSuccess(PassRefPtr<IDBDatabaseBackendInterface>);
-    virtual void onSuccess(PassRefPtr<IDBCursorBackendInterface>);
+    virtual void onSuccess(PassRefPtr<IDBCursorBackendInterface>, PassRefPtr<IDBKey>, PassRefPtr<IDBKey> primaryKey, PassRefPtr<SerializedScriptValue>);
     virtual void onSuccess(PassRefPtr<IDBKey>);
     virtual void onSuccess(PassRefPtr<IDBTransactionBackendInterface>);
     virtual void onSuccess(PassRefPtr<SerializedScriptValue>);
     virtual void onSuccess(PassRefPtr<SerializedScriptValue>, PassRefPtr<IDBKey>, const IDBKeyPath&);
-    virtual void onSuccessWithContinuation();
+    virtual void onSuccess(PassRefPtr<IDBKey>, PassRefPtr<IDBKey> primaryKey, PassRefPtr<SerializedScriptValue>);
     virtual void onSuccessWithPrefetch(const Vector<RefPtr<IDBKey> >&, const Vector<RefPtr<IDBKey> >&, const Vector<RefPtr<SerializedScriptValue> >&) { ASSERT_NOT_REACHED(); } // Not implemented. Callback should not reach the renderer side.
     virtual void onBlocked();
 
@@ -123,7 +123,7 @@ private:
     virtual EventTargetData* ensureEventTargetData();
 
     PassRefPtr<IDBCursor> getResultCursor();
-    void setResultCursor(PassRefPtr<IDBCursor>);
+    void setResultCursor(PassRefPtr<IDBCursor>, PassRefPtr<IDBKey>, PassRefPtr<IDBKey> primaryKey, PassRefPtr<SerializedScriptValue>);
 
     RefPtr<IDBAny> m_source;
     RefPtr<IDBTransaction> m_transaction;
@@ -137,6 +137,9 @@ private:
     IDBCursorBackendInterface::CursorType m_cursorType;
     IDBCursor::Direction m_cursorDirection;
     RefPtr<IDBCursor> m_pendingCursor;
+    RefPtr<IDBKey> m_cursorKey;
+    RefPtr<IDBKey> m_cursorPrimaryKey;
+    RefPtr<SerializedScriptValue> m_cursorValue;
 
     EventTargetData m_eventTargetData;
 };

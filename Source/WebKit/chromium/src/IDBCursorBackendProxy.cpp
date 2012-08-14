@@ -54,21 +54,6 @@ IDBCursorBackendProxy::~IDBCursorBackendProxy()
 {
 }
 
-PassRefPtr<IDBKey> IDBCursorBackendProxy::key() const
-{
-    return m_idbCursor->key();
-}
-
-PassRefPtr<IDBKey> IDBCursorBackendProxy::primaryKey() const
-{
-    return m_idbCursor->primaryKey();
-}
-
-PassRefPtr<SerializedScriptValue> IDBCursorBackendProxy::value() const
-{
-    return m_idbCursor->value();
-}
-
 void IDBCursorBackendProxy::advance(unsigned long count, PassRefPtr<IDBCallbacks> callbacks, ExceptionCode& ec)
 {
     m_idbCursor->advance(count, new WebIDBCallbacksImpl(callbacks), ec);

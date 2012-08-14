@@ -51,12 +51,12 @@ TEST(IDBRequestTest, EventsAfterStopping)
     request->onError(IDBDatabaseError::create(IDBDatabaseException::IDB_ABORT_ERR, "Description goes here."));
     request->onSuccess(DOMStringList::create());
     request->onSuccess(PassRefPtr<IDBDatabaseBackendInterface>());
-    request->onSuccess(PassRefPtr<IDBCursorBackendInterface>());
+    request->onSuccess(PassRefPtr<IDBCursorBackendInterface>(), IDBKey::createInvalid(), IDBKey::createInvalid(), SerializedScriptValue::nullValue());
     request->onSuccess(IDBKey::createInvalid());
     request->onSuccess(PassRefPtr<IDBTransactionBackendInterface>());
     request->onSuccess(SerializedScriptValue::nullValue());
     request->onSuccess(SerializedScriptValue::nullValue(), IDBKey::createInvalid(), IDBKeyPath());
-    request->onSuccessWithContinuation();
+    request->onSuccess(IDBKey::createInvalid(), IDBKey::createInvalid(), SerializedScriptValue::nullValue());
 }
 
 } // namespace

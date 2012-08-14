@@ -199,15 +199,19 @@ PassRefPtr<IDBCursor> IDBRequest::getResultCursor()
     return 0;
 }
 
-void IDBRequest::setResultCursor(PassRefPtr<IDBCursor> prpCursor)
+void IDBRequest::setResultCursor(PassRefPtr<IDBCursor> cursor, PassRefPtr<IDBKey> key, PassRefPtr<IDBKey> primaryKey, PassRefPtr<SerializedScriptValue> value)
 {
     ASSERT(m_readyState == PENDING);
+    m_cursorKey = key;
+    m_cursorPrimaryKey = primaryKey;
+    m_cursorValue = value;
+
     if (m_cursorType == IDBCursorBackendInterface::IndexKeyCursor) {
-        m_result = IDBAny::create(prpCursor);
+        m_result = IDBAny::create(cursor);
         return;
     }
 
-    m_result = IDBAny::create(IDBCursorWithValue::fromCursor(prpCursor));
+    m_result = IDBAny::create(IDBCursorWithValue::fromCursor(cursor));
 }
 
 bool IDBRequest::shouldEnqueueEvent() const
@@ -250,7 +254,7 @@ void IDBRequest::onSuccess(PassRefPtr<DOMStringList> domStringList)
     enqueueEvent(createSuccessEvent());
 }
 
-void IDBRequest::onSuccess(PassRefPtr<IDBCursorBackendInterface> backend)
+void IDBRequest::onSuccess(PassRefPtr<IDBCursorBackendInterface> backend, PassRefPtr<IDBKey> key, PassRefPtr<IDBKey> primaryKey, PassRefPtr<SerializedScriptValue> value)
 {
     IDB_TRACE("IDBRequest::onSuccess(IDBCursor)");
     if (!shouldEnqueueEvent())
@@ -262,7 +266,7 @@ void IDBRequest::onSuccess(PassRefPtr<IDBCursorBackendInterface> backend)
         cursor = IDBCursor::create(backend, m_cursorDirection, this, m_source.get(), m_transaction.get());
     else
         cursor = IDBCursorWithValue::create(backend, m_cursorDirection, this, m_source.get(), m_transaction.get());
-    setResultCursor(cursor);
+    setResultCursor(cursor, key, primaryKey, value);
 
     enqueueEvent(createSuccessEvent());
 }
@@ -369,14 +373,14 @@ void IDBRequest::onSuccess(PassRefPtr<SerializedScriptValue> prpSerializedScript
     onSuccess(value.release());
 }
 
-void IDBRequest::onSuccessWithContinuation()
+void IDBRequest::onSuccess(PassRefPtr<IDBKey> key, PassRefPtr<IDBKey> primaryKey, PassRefPtr<SerializedScriptValue> value)
 {
-    IDB_TRACE("IDBRequest::onSuccessWithContinuation");
+    IDB_TRACE("IDBRequest::onSuccess(key, primaryKey, value)");
     if (!shouldEnqueueEvent())
         return;
 
     ASSERT(m_pendingCursor);
-    setResultCursor(m_pendingCursor.release());
+    setResultCursor(m_pendingCursor.release(), key, primaryKey, value);
     enqueueEvent(createSuccessEvent());
 }
 
@@ -448,7 +452,7 @@ bool IDBRequest::dispatchEvent(PassRefPtr<Event> event)
     if (event->type() == eventNames().successEvent) {
         cursorToNotify = getResultCursor();
         if (cursorToNotify)
-            cursorToNotify->setValueReady();
+            cursorToNotify->setValueReady(m_cursorKey.release(), m_cursorPrimaryKey.release(), m_cursorValue.release());
     }
 
     // FIXME: When we allow custom event dispatching, this will probably need to change.

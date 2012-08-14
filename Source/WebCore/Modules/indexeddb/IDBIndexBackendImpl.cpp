@@ -99,8 +99,8 @@ void IDBIndexBackendImpl::openCursorInternal(ScriptExecutionContext*, PassRefPtr
         return;
     }
 
-    RefPtr<IDBCursorBackendInterface> cursor = IDBCursorBackendImpl::create(backingStoreCursor.get(), cursorType, transaction.get(), index->m_objectStoreBackend);
-    callbacks->onSuccess(cursor.release());
+    RefPtr<IDBCursorBackendImpl> cursor = IDBCursorBackendImpl::create(backingStoreCursor.get(), cursorType, transaction.get(), index->m_objectStoreBackend);
+    callbacks->onSuccess(cursor, cursor->key(), cursor->primaryKey(), cursor->value());
 }
 
 void IDBIndexBackendImpl::openCursor(PassRefPtr<IDBKeyRange> prpKeyRange, unsigned short direction, PassRefPtr<IDBCallbacks> prpCallbacks, IDBTransactionBackendInterface* transactionPtr, ExceptionCode& ec)

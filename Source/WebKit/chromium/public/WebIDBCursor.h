@@ -47,6 +47,7 @@ public:
         PrevNoDuplicate = 3,
     };
 
+    // FIXME: Remove these methods when callers are updated.
     virtual WebIDBKey key() const
     {
         WEBKIT_ASSERT_NOT_REACHED();

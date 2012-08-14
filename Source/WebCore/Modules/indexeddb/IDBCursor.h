@@ -82,7 +82,7 @@ public:
 
     void postSuccessHandlerCallback();
     void close();
-    void setValueReady();
+    void setValueReady(PassRefPtr<IDBKey>, PassRefPtr<IDBKey> primaryKey, PassRefPtr<SerializedScriptValue>);
 
     // The spec requires that the script object that wraps the value
     // be unchanged until the value changes as a result of the cursor

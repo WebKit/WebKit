@@ -1,3 +1,45 @@
+2012-08-14  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: Pass cursor continue results back in callback
+        https://bugs.webkit.org/show_bug.cgi?id=92278
+
+        Reviewed by Tony Chang.
+
+        Supply the updated cursor key/primaryKey/value in the success callback,
+        rather than forcing the callee to make three calls into the back end to
+        fetch them. Callbacks onSuccess(cursor) and onSuccessWithContinuation()
+        are given the three new payload parameters (and the latter is renamed.)
+
+        No new tests - no behavioral changes.
+
+        * Modules/indexeddb/IDBCallbacks.h: Updated callbacks.
+        (IDBCallbacks):
+        * Modules/indexeddb/IDBCursor.cpp:
+        (WebCore::IDBCursor::setValueReady): Takes values rather than fetching them.
+        * Modules/indexeddb/IDBCursor.h:
+        (IDBCursor):
+        * Modules/indexeddb/IDBCursorBackendImpl.cpp: Delete accessors.
+        (WebCore::IDBCursorBackendImpl::advanceInternal): Pass along updated cursor state.
+        (WebCore::IDBCursorBackendImpl::continueFunctionInternal): Ditto.
+        * Modules/indexeddb/IDBCursorBackendImpl.h:
+        (IDBCursorBackendImpl): Delete accessors from interface...
+        (WebCore::IDBCursorBackendImpl::key): ...but keep them for use within back-end.
+        (WebCore::IDBCursorBackendImpl::primaryKey):
+        (WebCore::IDBCursorBackendImpl::value):
+        * Modules/indexeddb/IDBCursorBackendInterface.h: Delete accessors.
+        * Modules/indexeddb/IDBIndexBackendImpl.cpp:
+        (WebCore::IDBIndexBackendImpl::openCursorInternal): Pass along new cursor state.
+        * Modules/indexeddb/IDBObjectStoreBackendImpl.cpp:
+        (WebCore::IDBObjectStoreBackendImpl::openCursorInternal): Ditto.
+        * Modules/indexeddb/IDBRequest.cpp:
+        (WebCore::IDBRequest::setResultCursor): Stash updated cursor state until dispatch.
+        (WebCore::IDBRequest::onSuccess):
+        (WebCore::IDBRequest::dispatchEvent): Update cursor with new state.
+        * Modules/indexeddb/IDBRequest.h:
+        (IDBRequest):
+        * inspector/InspectorIndexedDBAgent.cpp: Update iteration code to use new callbacks.
+        (WebCore):
+
 2012-08-14  Arvid Nilsson  <anilsson@rim.com>
 
         [BlackBerry] Get rid of glCopyTexImage2D in Canvas and WebGL code paths

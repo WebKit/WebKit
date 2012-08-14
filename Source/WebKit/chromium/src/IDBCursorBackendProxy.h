@@ -42,9 +42,6 @@ public:
     static PassRefPtr<WebCore::IDBCursorBackendInterface> create(PassOwnPtr<WebIDBCursor>);
     virtual ~IDBCursorBackendProxy();
 
-    virtual PassRefPtr<WebCore::IDBKey> key() const;
-    virtual PassRefPtr<WebCore::IDBKey> primaryKey() const;
-    virtual PassRefPtr<WebCore::SerializedScriptValue> value() const;
     virtual void advance(unsigned long, PassRefPtr<WebCore::IDBCallbacks>, WebCore::ExceptionCode&);
     virtual void continueFunction(PassRefPtr<WebCore::IDBKey>, PassRefPtr<WebCore::IDBCallbacks>, WebCore::ExceptionCode&);
     virtual void deleteFunction(PassRefPtr<WebCore::IDBCallbacks>, WebCore::ExceptionCode&);
