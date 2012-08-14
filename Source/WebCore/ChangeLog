@@ -1,3 +1,17 @@
+2012-08-14  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
+
+        [Qt] Incomplete repaint of link underline
+        https://bugs.webkit.org/show_bug.cgi?id=66034
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        When trying to point a line of width 30, we end up painting on of width 31, because Qt 
+        interprets the line as end-inclusive. So adjust for end-include/exclusive difference 
+        before requesting the draw from Qt.
+
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        (WebCore::GraphicsContext::drawLine):
+
 2012-08-14  Mike West  <mkwst@chromium.org>
 
         Fix crash in http/tests/plugins/plugin-document-has-focus
