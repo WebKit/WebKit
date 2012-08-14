@@ -1,5 +1,36 @@
 2012-08-13  Kentaro Hara  <haraken@chromium.org>
 
+        [V8] Move GCEventData class from V8Binding.h to ScriptGCEvent.h
+        https://bugs.webkit.org/show_bug.cgi?id=93818
+
+        Reviewed by Adam Barth.
+
+        (1) This patch moves GCEventData class from V8Binding.h to ScriptGCEvent.h.
+        (2) This patch makes GCEventData::startTime and GCEventData::usedHeapSize
+        private members.
+        (3) This patch removes unused forward declarations from V8Binding.h.
+
+        No tests. No change in behavior.
+
+        * bindings/v8/ScriptGCEvent.cpp:
+        (WebCore::ScriptGCEvent::gcPrologueCallback):
+        (WebCore::ScriptGCEvent::gcEpilogueCallback):
+        * bindings/v8/ScriptGCEvent.h:
+        (GCEventData):
+        (WebCore::GCEventData::GCEventData):
+        (WebCore::GCEventData::clear):
+        (WebCore::GCEventData::listeners):
+        (WebCore::GCEventData::startTime):
+        (WebCore::GCEventData::setStartTime):
+        (WebCore::GCEventData::usedHeapSize):
+        (WebCore::GCEventData::setUsedHeapSize):
+        (WebCore):
+        * bindings/v8/V8Binding.h:
+        (WebCore):
+        * bindings/v8/V8PerIsolateData.cpp:
+
+2012-08-13  Kentaro Hara  <haraken@chromium.org>
+
         [V8] Move checkNewLegal() from V8Proxy.h to SafeAllocation.h
         https://bugs.webkit.org/show_bug.cgi?id=93830
 

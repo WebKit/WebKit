@@ -26,6 +26,7 @@
 #include "config.h"
 #include "V8PerIsolateData.h"
 
+#include "ScriptGCEvent.h"
 #include "V8Binding.h"
 
 namespace WebCore {

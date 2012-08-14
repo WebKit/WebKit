@@ -48,31 +48,6 @@
 namespace WebCore {
 
     class DOMStringList;
-    class EventListener;
-    class EventTarget;
-    class ExternalStringVisitor;
-    class MemoryObjectInfo;
-    class ScriptGCEventListener;
-
-    class GCEventData {
-    public:
-        typedef Vector<ScriptGCEventListener*> GCEventListeners;
-
-        GCEventData() : startTime(0.0), usedHeapSize(0) { }
-        void clear()
-        {
-            startTime = 0.0;
-            usedHeapSize = 0;
-        }
-        GCEventListeners& listeners() { return m_listeners; }
-
-        // FIXME: Make these members private.
-        double startTime;
-        size_t usedHeapSize;
-
-    private:
-        GCEventListeners m_listeners;
-    };
 
     // Since v8::Null(isolate) crashes if we pass a null isolate,
     // we need to use v8NullWithCheck(isolate) if an isolate can be null.

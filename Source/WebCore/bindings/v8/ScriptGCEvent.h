@@ -49,9 +49,37 @@ struct HeapInfo {
     size_t jsHeapSizeLimit;
 };
 
-#if ENABLE(INSPECTOR)
-
 class ScriptGCEventListener;
+
+class GCEventData {
+public:
+    typedef Vector<ScriptGCEventListener*> GCEventListeners;
+
+    GCEventData()
+        : m_startTime(0.0)
+        , m_usedHeapSize(0)
+    { }
+
+    void clear()
+    {
+        m_startTime = 0.0;
+        m_usedHeapSize = 0;
+    }
+
+    GCEventListeners& listeners() { return m_listeners; }
+
+    double startTime() { return m_startTime; }
+    void setStartTime(double startTime) { m_startTime = startTime; }
+    size_t usedHeapSize() { return m_usedHeapSize; }
+    void setUsedHeapSize(size_t usedHeapSize) { m_usedHeapSize = usedHeapSize; }
+
+private:
+    double m_startTime;
+    size_t m_usedHeapSize;
+    GCEventListeners m_listeners;
+};
+
+#if ENABLE(INSPECTOR)
 
 class ScriptGCEvent
 {

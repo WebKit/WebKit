@@ -90,21 +90,21 @@ size_t ScriptGCEvent::getUsedHeapSize()
 void ScriptGCEvent::gcPrologueCallback(v8::GCType type, v8::GCCallbackFlags flags)
 {
     GCEventData* gcEventData = isolateGCEventData();
-    gcEventData->startTime = WTF::monotonicallyIncreasingTime();
-    gcEventData->usedHeapSize = getUsedHeapSize();
+    gcEventData->setStartTime(WTF::monotonicallyIncreasingTime());
+    gcEventData->setUsedHeapSize(getUsedHeapSize());
 }
 
 void ScriptGCEvent::gcEpilogueCallback(v8::GCType type, v8::GCCallbackFlags flags)
 {
     GCEventData* gcEventData = isolateGCEventData();
-    if (!gcEventData->usedHeapSize)
+    if (!gcEventData->usedHeapSize())
         return;
     double endTime = WTF::monotonicallyIncreasingTime();
     size_t usedHeapSize = getUsedHeapSize();
-    size_t collectedBytes = usedHeapSize > gcEventData->usedHeapSize ? 0 : gcEventData->usedHeapSize - usedHeapSize;
+    size_t collectedBytes = usedHeapSize > gcEventData->usedHeapSize() ? 0 : gcEventData->usedHeapSize() - usedHeapSize;
     GCEventData::GCEventListeners& listeners = gcEventData->listeners();
     for (GCEventData::GCEventListeners::iterator i = listeners.begin(); i != listeners.end(); ++i)
-        (*i)->didGC(gcEventData->startTime, endTime, collectedBytes);
+        (*i)->didGC(gcEventData->startTime(), endTime, collectedBytes);
     gcEventData->clear();
 }
     
