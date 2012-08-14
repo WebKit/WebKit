@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Google Inc. All rights reserved.
+ * Copyright (C) 2009 Google Inc. All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -22,18 +22,33 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "SafeAllocation.h"
+#ifndef V8ThrowException_h
+#define V8ThrowException_h
 
-#include "V8Binding.h"
+#include <v8.h>
 
 namespace WebCore {
 
-v8::Handle<v8::Value> SafeAllocation::isValidConstructorMode(const v8::Arguments& args)
-{
-    if (ConstructorMode::current() == ConstructorMode::CreateNewObject)
-        return throwTypeError("Illegal constructor", args.GetIsolate());
-    return args.This();
-}
+// The types of javascript errors that can be thrown.
+enum ErrorType {
+    RangeError,
+    ReferenceError,
+    SyntaxError,
+    TypeError,
+    GeneralError
+};
+
+class V8ThrowException {
+public:
+    static v8::Handle<v8::Value> setDOMException(int, v8::Isolate*);
+
+    static v8::Handle<v8::Value> throwError(ErrorType, const char*, v8::Isolate* = 0);
+    static v8::Handle<v8::Value> throwError(v8::Local<v8::Value>, v8::Isolate* = 0);
+
+    static v8::Handle<v8::Value> throwTypeError(const char* = 0, v8::Isolate* = 0);
+    static v8::Handle<v8::Value> throwNotEnoughArgumentsError(v8::Isolate*);
+};
 
 } // namespace WebCore
+
+#endif // V8ThrowException_h

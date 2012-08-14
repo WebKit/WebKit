@@ -98,10 +98,10 @@ v8::Handle<v8::Value> V8DirectoryEntrySync::getDirectoryCallback(const v8::Argum
     STRING_TO_V8PARAMETER_EXCEPTION_BLOCK(V8Parameter<>, path, args[0]);
     RefPtr<WebKitFlags> flags = getFlags(args[1], ec);
     if (UNLIKELY(ec))
-        return V8Proxy::setDOMException(ec, args.GetIsolate());
+        return setDOMException(ec, args.GetIsolate());
     RefPtr<DirectoryEntrySync> result = imp->getDirectory(path, flags, ec);
     if (UNLIKELY(ec))
-        return V8Proxy::setDOMException(ec, args.GetIsolate());
+        return setDOMException(ec, args.GetIsolate());
     return toV8(result.release(), args.GetIsolate());
 }
 
@@ -113,10 +113,10 @@ v8::Handle<v8::Value> V8DirectoryEntrySync::getFileCallback(const v8::Arguments&
     STRING_TO_V8PARAMETER_EXCEPTION_BLOCK(V8Parameter<>, path, args[0]);
     RefPtr<WebKitFlags> flags = getFlags(args[1], ec);
     if (UNLIKELY(ec))
-        return V8Proxy::setDOMException(ec, args.GetIsolate());
+        return setDOMException(ec, args.GetIsolate());
     RefPtr<FileEntrySync> result = imp->getFile(path, flags, ec);
     if (UNLIKELY(ec))
-        return V8Proxy::setDOMException(ec, args.GetIsolate());
+        return setDOMException(ec, args.GetIsolate());
     return toV8(result.release(), args.GetIsolate());
 }
 

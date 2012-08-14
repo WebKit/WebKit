@@ -62,7 +62,7 @@ static v8::Handle<v8::Value> handlePostMessageCallback(const v8::Arguments& args
         return v8::Undefined();
     ExceptionCode ec = 0;
     messagePort->postMessage(message.release(), &portArray, ec);
-    return V8Proxy::setDOMException(ec, args.GetIsolate());
+    return setDOMException(ec, args.GetIsolate());
 }
 
 v8::Handle<v8::Value> V8MessagePort::postMessageCallback(const v8::Arguments& args)

@@ -53,6 +53,31 @@
 
 namespace WebCore {
 
+v8::Handle<v8::Value> setDOMException(int exceptionCode, v8::Isolate* isolate)
+{
+    return V8ThrowException::setDOMException(exceptionCode, isolate);
+}
+
+v8::Handle<v8::Value> throwError(ErrorType errorType, const char* message, v8::Isolate* isolate)
+{
+    return V8ThrowException::throwError(errorType, message, isolate);
+}
+
+v8::Handle<v8::Value> throwError(v8::Local<v8::Value> exception, v8::Isolate* isolate)
+{
+    return V8ThrowException::throwError(exception, isolate);
+}
+
+v8::Handle<v8::Value> throwTypeError(const char* message, v8::Isolate* isolate)
+{
+    return V8ThrowException::throwTypeError(message, isolate);
+}
+
+v8::Handle<v8::Value> throwNotEnoughArgumentsError(v8::Isolate* isolate)
+{
+    return V8ThrowException::throwNotEnoughArgumentsError(isolate);
+}
+
 static String v8NonStringValueToWebCoreString(v8::Handle<v8::Value> object)
 {
     ASSERT(!object->IsString());

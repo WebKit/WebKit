@@ -45,7 +45,7 @@ v8::Handle<v8::Value> V8HTMLInputElement::selectionStartAccessorGetter(v8::Local
     HTMLInputElement* imp = V8HTMLInputElement::toNative(holder);
 
     if (!imp->canHaveSelection())
-        return V8Proxy::throwTypeError("Accessing selectionStart on an input element that cannot have a selection.", info.GetIsolate());
+        return throwTypeError("Accessing selectionStart on an input element that cannot have a selection.", info.GetIsolate());
 
     int v = imp->selectionStart();
     return v8Integer(v, info.GetIsolate());
@@ -58,7 +58,7 @@ void V8HTMLInputElement::selectionStartAccessorSetter(v8::Local<v8::String> name
     HTMLInputElement* imp = V8HTMLInputElement::toNative(holder);
 
     if (!imp->canHaveSelection()) {
-        V8Proxy::throwTypeError("Accessing selectionStart on an input element that cannot have a selection.", info.GetIsolate());
+        throwTypeError("Accessing selectionStart on an input element that cannot have a selection.", info.GetIsolate());
         return;
     }
     imp->setSelectionStart(value->Int32Value());
@@ -71,7 +71,7 @@ v8::Handle<v8::Value> V8HTMLInputElement::selectionEndAccessorGetter(v8::Local<v
     HTMLInputElement* imp = V8HTMLInputElement::toNative(holder);
 
     if (!imp->canHaveSelection())
-        return V8Proxy::throwTypeError("Accessing selectionEnd on an input element that cannot have a selection.", info.GetIsolate());
+        return throwTypeError("Accessing selectionEnd on an input element that cannot have a selection.", info.GetIsolate());
 
     int v = imp->selectionEnd();
     return v8Integer(v, info.GetIsolate());
@@ -84,7 +84,7 @@ void V8HTMLInputElement::selectionEndAccessorSetter(v8::Local<v8::String> name, 
     HTMLInputElement* imp = V8HTMLInputElement::toNative(holder);
 
     if (!imp->canHaveSelection()) {
-        V8Proxy::throwTypeError("Accessing selectionEnd on an input element that cannot have a selection.", info.GetIsolate());
+        throwTypeError("Accessing selectionEnd on an input element that cannot have a selection.", info.GetIsolate());
         return;
     }
 
@@ -98,7 +98,7 @@ v8::Handle<v8::Value> V8HTMLInputElement::selectionDirectionAccessorGetter(v8::L
     HTMLInputElement* imp = V8HTMLInputElement::toNative(holder);
 
     if (!imp->canHaveSelection())
-        return V8Proxy::throwTypeError("Accessing selectionDirection on an input element that cannot have a selection.", info.GetIsolate());
+        return throwTypeError("Accessing selectionDirection on an input element that cannot have a selection.", info.GetIsolate());
 
     return v8String(imp->selectionDirection(), info.GetIsolate());
 }
@@ -110,7 +110,7 @@ void V8HTMLInputElement::selectionDirectionAccessorSetter(v8::Local<v8::String> 
     HTMLInputElement* imp = V8HTMLInputElement::toNative(holder);
 
     if (!imp->canHaveSelection()) {
-        V8Proxy::throwTypeError("Accessing selectionDirection on an input element that cannot have a selection.", info.GetIsolate());
+        throwTypeError("Accessing selectionDirection on an input element that cannot have a selection.", info.GetIsolate());
         return;
     }
 
@@ -124,7 +124,7 @@ v8::Handle<v8::Value> V8HTMLInputElement::setSelectionRangeCallback(const v8::Ar
     HTMLInputElement* imp = V8HTMLInputElement::toNative(holder);
 
     if (!imp->canHaveSelection())
-        return V8Proxy::throwTypeError("Calling setSelectionRange on an input element that cannot have a selection.", args.GetIsolate());
+        return throwTypeError("Calling setSelectionRange on an input element that cannot have a selection.", args.GetIsolate());
 
     int start = args[0]->Int32Value();
     int end = args[1]->Int32Value();

@@ -114,7 +114,7 @@ static void handleFatalErrorInV8()
 
 static v8::Local<v8::Value> handleMaxRecursionDepthExceeded()
 {
-    V8Proxy::throwError(V8Proxy::RangeError, "Maximum call stack size exceeded.");
+    throwError(RangeError, "Maximum call stack size exceeded.");
     return v8::Local<v8::Value>();
 }
 
@@ -406,83 +406,6 @@ void V8Proxy::clearForNavigation()
     resetIsolatedWorlds();
     V8GCController::collectGarbageIfNecessary();
     windowShell()->clearForNavigation();
-}
-
-static v8::Handle<v8::Value> DOMExceptionStackGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
-{
-    ASSERT(info.Data()->IsObject());
-    return info.Data()->ToObject()->Get(v8String("stack", info.GetIsolate()));
-}
-
-static void DOMExceptionStackSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
-{
-    ASSERT(info.Data()->IsObject());
-    info.Data()->ToObject()->Set(v8String("stack", info.GetIsolate()), value);
-}
-
-#define TRY_TO_CREATE_EXCEPTION(interfaceName) \
-    case interfaceName##Type: \
-        exception = toV8(interfaceName::create(description), isolate); \
-        break;
-
-v8::Handle<v8::Value> V8Proxy::setDOMException(int ec, v8::Isolate* isolate)
-{
-    if (ec <= 0 || v8::V8::IsExecutionTerminating())
-        return v8Undefined();
-
-    if (ec == NATIVE_TYPE_ERR) {
-        const char* message = 0;
-        return throwTypeError(message, isolate);
-    }
-
-    ExceptionCodeDescription description(ec);
-
-    v8::Handle<v8::Value> exception;
-    switch (description.type) {
-        DOM_EXCEPTION_INTERFACES_FOR_EACH(TRY_TO_CREATE_EXCEPTION)
-    }
-
-    if (exception.IsEmpty())
-        return v8Undefined();
-
-    // Attach an Error object to the DOMException. This is then lazily used to get the stack value.
-    v8::Handle<v8::Value> error = v8::Exception::Error(v8String(description.description, isolate));
-    ASSERT(!error.IsEmpty());
-    ASSERT(exception->IsObject());
-    exception->ToObject()->SetAccessor(v8String("stack", isolate), DOMExceptionStackGetter, DOMExceptionStackSetter, error);
-
-    return v8::ThrowException(exception);
-}
-
-#undef TRY_TO_CREATE_EXCEPTION
-
-v8::Handle<v8::Value> V8Proxy::throwError(ErrorType type, const char* message, v8::Isolate* isolate)
-{
-    switch (type) {
-    case RangeError:
-        return v8::ThrowException(v8::Exception::RangeError(v8String(message, isolate)));
-    case ReferenceError:
-        return v8::ThrowException(v8::Exception::ReferenceError(v8String(message, isolate)));
-    case SyntaxError:
-        return v8::ThrowException(v8::Exception::SyntaxError(v8String(message, isolate)));
-    case TypeError:
-        return v8::ThrowException(v8::Exception::TypeError(v8String(message, isolate)));
-    case GeneralError:
-        return v8::ThrowException(v8::Exception::Error(v8String(message, isolate)));
-    default:
-        ASSERT_NOT_REACHED();
-        return v8Undefined();
-    }
-}
-
-v8::Handle<v8::Value> V8Proxy::throwTypeError(const char* message, v8::Isolate* isolate)
-{
-    return throwError(TypeError, (message ? message : "Type error"), isolate);
-}
-
-v8::Handle<v8::Value> V8Proxy::throwNotEnoughArgumentsError(v8::Isolate* isolate)
-{
-    return throwError(TypeError, "Not enough arguments", isolate);
 }
 
 v8::Local<v8::Context> V8Proxy::context(Frame* frame)

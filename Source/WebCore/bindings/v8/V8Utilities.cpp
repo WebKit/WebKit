@@ -104,7 +104,7 @@ bool extractTransferables(v8::Local<v8::Value> value, MessagePortArray& ports, A
         v8::Local<v8::Value> transferrable = transferrables->Get(i);
         // Validation of non-null objects, per HTML5 spec 10.3.3.
         if (isUndefinedOrNull(transferrable)) {
-            V8Proxy::setDOMException(DATA_CLONE_ERR, isolate);
+            setDOMException(DATA_CLONE_ERR, isolate);
             return false;
         }
         // Validation of Objects implementing an interface, per WebIDL spec 4.1.15.
@@ -113,7 +113,7 @@ bool extractTransferables(v8::Local<v8::Value> value, MessagePortArray& ports, A
         else if (V8ArrayBuffer::HasInstance(transferrable))
             arrayBuffers.append(V8ArrayBuffer::toNative(v8::Handle<v8::Object>::Cast(transferrable)));
         else {
-            V8Proxy::throwTypeError();
+            throwTypeError();
             return false;
         }
     }
@@ -127,7 +127,7 @@ bool getMessagePortArray(v8::Local<v8::Value> value, MessagePortArray& ports, v8
     if (!result)
         return false;
     if (arrayBuffers.size() > 0) {
-        V8Proxy::throwTypeError("MessagePortArray argument must contain only MessagePorts");
+        throwTypeError("MessagePortArray argument must contain only MessagePorts");
         return false;
     }
     return true;
@@ -180,7 +180,7 @@ ScriptExecutionContext* getScriptExecutionContext()
 
 void setTypeMismatchException(v8::Isolate* isolate)
 {
-    V8Proxy::setDOMException(TYPE_MISMATCH_ERR, isolate);
+    setDOMException(TYPE_MISMATCH_ERR, isolate);
 }
 
 } // namespace WebCore

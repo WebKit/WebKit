@@ -1,3 +1,296 @@
+2012-08-12  Kentaro Hara  <haraken@chromium.org>
+
+        [V8] Factor out exception related methods of V8Proxy
+        https://bugs.webkit.org/show_bug.cgi?id=93792
+
+        Reviewed by Adam Barth.
+
+        To remove V8Proxy, this patch factors out exception related methods of V8Proxy
+        to a separate file.
+
+        (1) Move exception related methods from V8Proxy.{h,cpp} to V8ThrowException.{h,cpp}.
+        (2) To avoid writing V8ThrowException::throwError() here and there in V8 binding,
+        implement WebCore::throwError() in V8Binding.{h,cpp}. Ideally, we want to list up
+        all V8 binding APIs in V8Binding.h.
+        (3) Replace all V8Proxy::throwError() with throwError().
+
+        Nit: I couldn't write the definition of WebCore::throwError() in V8BInding.h
+        due to circular dependency issues. Either way, these methods wouldn't be
+        performance-critical.
+
+        No tests. No change in behavior.
+
+        * UseV8.cmake:
+        * WebCore.gypi:
+        * bindings/scripts/CodeGeneratorV8.pm:
+        (GenerateNormalAttrGetter):
+        (GenerateNormalAttrSetter):
+        (GenerateOverloadedFunctionCallback):
+        (GenerateFunctionCallback):
+        (GenerateArgumentsCountCheck):
+        (GenerateParametersCheck):
+        (GenerateConstructorCallback):
+        (GenerateEventConstructorCallback):
+        (GenerateNamedConstructorCallback):
+        (GenerateFunctionCallString):
+        * bindings/scripts/test/V8/V8Float64Array.cpp:
+        (WebCore::Float64ArrayV8Internal::fooCallback):
+        * bindings/scripts/test/V8/V8TestActiveDOMObject.cpp:
+        (WebCore::TestActiveDOMObjectV8Internal::excitingFunctionCallback):
+        (WebCore::TestActiveDOMObjectV8Internal::postMessageCallback):
+        * bindings/scripts/test/V8/V8TestCustomNamedGetter.cpp:
+        (WebCore::TestCustomNamedGetterV8Internal::anotherFunctionCallback):
+        * bindings/scripts/test/V8/V8TestEventConstructor.cpp:
+        (WebCore::V8TestEventConstructor::constructorCallback):
+        * bindings/scripts/test/V8/V8TestEventTarget.cpp:
+        (WebCore::TestEventTargetV8Internal::itemCallback):
+        (WebCore::TestEventTargetV8Internal::dispatchEventCallback):
+        * bindings/scripts/test/V8/V8TestInterface.cpp:
+        (WebCore::TestInterfaceV8Internal::supplementalMethod2Callback):
+        (WebCore::V8TestInterface::constructorCallback):
+        * bindings/scripts/test/V8/V8TestMediaQueryListListener.cpp:
+        (WebCore::TestMediaQueryListListenerV8Internal::methodCallback):
+        * bindings/scripts/test/V8/V8TestNamedConstructor.cpp:
+        (WebCore::V8TestNamedConstructorConstructorCallback):
+        * bindings/scripts/test/V8/V8TestNode.cpp:
+        (WebCore::V8TestNode::constructorCallback):
+        * bindings/scripts/test/V8/V8TestObj.cpp:
+        (WebCore::TestObjV8Internal::attrWithGetterExceptionAttrGetter):
+        (WebCore::TestObjV8Internal::attrWithGetterExceptionAttrSetter):
+        (WebCore::TestObjV8Internal::attrWithSetterExceptionAttrSetter):
+        (WebCore::TestObjV8Internal::stringAttrWithGetterExceptionAttrGetter):
+        (WebCore::TestObjV8Internal::stringAttrWithGetterExceptionAttrSetter):
+        (WebCore::TestObjV8Internal::stringAttrWithSetterExceptionAttrSetter):
+        (WebCore::TestObjV8Internal::withScriptStateAttributeRaisesAttrGetter):
+        (WebCore::TestObjV8Internal::withScriptStateAttributeRaisesAttrSetter):
+        (WebCore::TestObjV8Internal::withScriptExecutionContextAttributeRaisesAttrGetter):
+        (WebCore::TestObjV8Internal::withScriptExecutionContextAttributeRaisesAttrSetter):
+        (WebCore::TestObjV8Internal::withScriptExecutionContextAndScriptStateAttributeRaisesAttrGetter):
+        (WebCore::TestObjV8Internal::withScriptExecutionContextAndScriptStateAttributeRaisesAttrSetter):
+        (WebCore::TestObjV8Internal::voidMethodWithArgsCallback):
+        (WebCore::TestObjV8Internal::MethodWithArgsCallback):
+        (WebCore::TestObjV8Internal::objMethodWithArgsCallback):
+        (WebCore::TestObjV8Internal::methodWithSequenceArgCallback):
+        (WebCore::TestObjV8Internal::methodReturningSequenceCallback):
+        (WebCore::TestObjV8Internal::methodThatRequiresAllArgsAndThrowsCallback):
+        (WebCore::TestObjV8Internal::serializedValueCallback):
+        (WebCore::TestObjV8Internal::idbKeyCallback):
+        (WebCore::TestObjV8Internal::optionsObjectCallback):
+        (WebCore::TestObjV8Internal::methodWithExceptionCallback):
+        (WebCore::TestObjV8Internal::withScriptStateVoidExceptionCallback):
+        (WebCore::TestObjV8Internal::withScriptStateObjExceptionCallback):
+        (WebCore::TestObjV8Internal::withScriptExecutionContextAndScriptStateObjExceptionCallback):
+        (WebCore::TestObjV8Internal::methodWithNonOptionalArgAndOptionalArgCallback):
+        (WebCore::TestObjV8Internal::methodWithNonOptionalArgAndTwoOptionalArgsCallback):
+        (WebCore::TestObjV8Internal::methodWithCallbackArgCallback):
+        (WebCore::TestObjV8Internal::methodWithNonCallbackArgAndCallbackArgCallback):
+        (WebCore::TestObjV8Internal::methodWithCallbackAndOptionalArgCallback):
+        (WebCore::TestObjV8Internal::overloadedMethod1Callback):
+        (WebCore::TestObjV8Internal::overloadedMethod2Callback):
+        (WebCore::TestObjV8Internal::overloadedMethod3Callback):
+        (WebCore::TestObjV8Internal::overloadedMethod4Callback):
+        (WebCore::TestObjV8Internal::overloadedMethod5Callback):
+        (WebCore::TestObjV8Internal::overloadedMethod6Callback):
+        (WebCore::TestObjV8Internal::overloadedMethod7Callback):
+        (WebCore::TestObjV8Internal::overloadedMethod8Callback):
+        (WebCore::TestObjV8Internal::overloadedMethod9Callback):
+        (WebCore::TestObjV8Internal::overloadedMethod10Callback):
+        (WebCore::TestObjV8Internal::overloadedMethodCallback):
+        (WebCore::TestObjV8Internal::overloadedMethod11Callback):
+        (WebCore::TestObjV8Internal::overloadedMethod12Callback):
+        (WebCore::TestObjV8Internal::classMethodWithClampCallback):
+        (WebCore::TestObjV8Internal::enabledAtRuntimeMethod1Callback):
+        (WebCore::TestObjV8Internal::enabledAtRuntimeMethod2Callback):
+        (WebCore::TestObjV8Internal::enabledPerContextMethod1Callback):
+        (WebCore::TestObjV8Internal::enabledPerContextMethod2Callback):
+        (WebCore::TestObjV8Internal::stringArrayFunctionCallback):
+        (WebCore::TestObjV8Internal::getSVGDocumentCallback):
+        (WebCore::TestObjV8Internal::convert1Callback):
+        (WebCore::TestObjV8Internal::convert2Callback):
+        (WebCore::TestObjV8Internal::convert3Callback):
+        (WebCore::TestObjV8Internal::convert4Callback):
+        (WebCore::TestObjV8Internal::convert5Callback):
+        (WebCore::TestObjV8Internal::strictFunctionCallback):
+        (WebCore::V8TestObj::constructorCallback):
+        * bindings/scripts/test/V8/V8TestSerializedScriptValueInterface.cpp:
+        (WebCore::TestSerializedScriptValueInterfaceV8Internal::acceptTransferListCallback):
+        (WebCore::TestSerializedScriptValueInterfaceV8Internal::multiTransferListCallback):
+        (WebCore::V8TestSerializedScriptValueInterface::constructorCallback):
+        * bindings/v8/DateExtension.cpp:
+        (WebCore::DateExtension::OnSleepDetected):
+        * bindings/v8/NPV8Object.cpp:
+        (_NPN_SetException):
+        * bindings/v8/SerializedScriptValue.cpp:
+        (WebCore::SerializedScriptValue::transferArrayBuffers):
+        (WebCore::SerializedScriptValue::SerializedScriptValue):
+        * bindings/v8/V8Binding.cpp:
+        (WebCore::setDOMException):
+        (WebCore):
+        (WebCore::throwError):
+        (WebCore::throwTypeError):
+        (WebCore::throwNotEnoughArgumentsError):
+        * bindings/v8/V8Binding.h:
+        (WebCore):
+        (WebCore::toV8Sequence):
+        * bindings/v8/V8Collection.cpp:
+        (WebCore::toOptionsCollectionSetter):
+        * bindings/v8/V8NPObject.cpp:
+        (WebCore::npObjectInvokeImpl):
+        (WebCore::npObjectGetProperty):
+        (WebCore::npObjectSetProperty):
+        (WebCore::npObjectPropertyEnumerator):
+        * bindings/v8/V8NodeFilterCondition.cpp:
+        (WebCore::V8NodeFilterCondition::acceptNode):
+        * bindings/v8/V8Proxy.cpp:
+        (WebCore::handleMaxRecursionDepthExceeded):
+        (WebCore::V8Proxy::checkNewLegal):
+        * bindings/v8/V8Proxy.h:
+        (V8Proxy):
+        (WebCore):
+        * bindings/v8/V8ThrowException.cpp: Added.
+        (WebCore):
+        (WebCore::DOMExceptionStackGetter):
+        (WebCore::DOMExceptionStackSetter):
+        (WebCore::V8ThrowException::setDOMException):
+        (WebCore::V8ThrowException::throwError):
+        (WebCore::V8ThrowException::throwTypeError):
+        (WebCore::V8ThrowException::throwNotEnoughArgumentsError):
+        * bindings/v8/V8ThrowException.h: Added.
+        (WebCore):
+        (V8ThrowException):
+        * bindings/v8/V8Utilities.cpp:
+        (WebCore::extractTransferables):
+        (WebCore::getMessagePortArray):
+        (WebCore::setTypeMismatchException):
+        * bindings/v8/WorkerContextExecutionProxy.cpp:
+        (WebCore::WorkerContextExecutionProxy::evaluate):
+        * bindings/v8/custom/V8ArrayBufferCustom.cpp:
+        (WebCore::V8ArrayBuffer::constructorCallback):
+        * bindings/v8/custom/V8ArrayBufferViewCustom.h:
+        (WebCore::constructWebGLArrayWithArrayBufferArgument):
+        (WebCore::constructWebGLArray):
+        (WebCore::setWebGLArrayHelper):
+        * bindings/v8/custom/V8AudioBufferSourceNodeCustom.cpp:
+        (WebCore::V8AudioBufferSourceNode::bufferAccessorSetter):
+        * bindings/v8/custom/V8AudioContextCustom.cpp:
+        (WebCore::V8AudioContext::constructorCallback):
+        * bindings/v8/custom/V8BlobCustom.cpp:
+        (WebCore::V8Blob::constructorCallback):
+        * bindings/v8/custom/V8CSSStyleDeclarationCustom.cpp:
+        (WebCore::V8CSSStyleDeclaration::namedPropertySetter):
+        * bindings/v8/custom/V8ClipboardCustom.cpp:
+        (WebCore::V8Clipboard::clearDataCallback):
+        (WebCore::V8Clipboard::setDragImageCallback):
+        * bindings/v8/custom/V8DOMFormDataCustom.cpp:
+        (WebCore::V8DOMFormData::constructorCallback):
+        (WebCore::V8DOMFormData::appendCallback):
+        * bindings/v8/custom/V8DOMStringMapCustom.cpp:
+        (WebCore::V8DOMStringMap::namedPropertySetter):
+        * bindings/v8/custom/V8DOMWindowCustom.cpp:
+        (WebCore::WindowSetTimeoutImpl):
+        (WebCore::handlePostMessageCallback):
+        * bindings/v8/custom/V8DataViewCustom.cpp:
+        (WebCore::V8DataView::constructorCallback):
+        (WebCore::V8DataView::getInt8Callback):
+        (WebCore::V8DataView::getUint8Callback):
+        (WebCore::V8DataView::setInt8Callback):
+        (WebCore::V8DataView::setUint8Callback):
+        * bindings/v8/custom/V8DedicatedWorkerContextCustom.cpp:
+        (WebCore::handlePostMessageCallback):
+        * bindings/v8/custom/V8DirectoryEntryCustom.cpp:
+        (WebCore::V8DirectoryEntry::getDirectoryCallback):
+        (WebCore::V8DirectoryEntry::getFileCallback):
+        * bindings/v8/custom/V8DirectoryEntrySyncCustom.cpp:
+        (WebCore::V8DirectoryEntrySync::getDirectoryCallback):
+        (WebCore::V8DirectoryEntrySync::getFileCallback):
+        * bindings/v8/custom/V8DocumentCustom.cpp:
+        (WebCore::V8Document::evaluateCallback):
+        * bindings/v8/custom/V8HTMLCanvasElementCustom.cpp:
+        (WebCore::V8HTMLCanvasElement::toDataURLCallback):
+        * bindings/v8/custom/V8HTMLDocumentCustom.cpp:
+        (WebCore::V8HTMLDocument::openCallback):
+        * bindings/v8/custom/V8HTMLElementCustom.cpp:
+        (WebCore::V8HTMLElement::itemValueAccessorSetter):
+        * bindings/v8/custom/V8HTMLImageElementConstructor.cpp:
+        (WebCore::v8HTMLImageElementConstructorCallback):
+        * bindings/v8/custom/V8HTMLInputElementCustom.cpp:
+        (WebCore::V8HTMLInputElement::selectionStartAccessorGetter):
+        (WebCore::V8HTMLInputElement::selectionStartAccessorSetter):
+        (WebCore::V8HTMLInputElement::selectionEndAccessorGetter):
+        (WebCore::V8HTMLInputElement::selectionEndAccessorSetter):
+        (WebCore::V8HTMLInputElement::selectionDirectionAccessorGetter):
+        (WebCore::V8HTMLInputElement::selectionDirectionAccessorSetter):
+        (WebCore::V8HTMLInputElement::setSelectionRangeCallback):
+        * bindings/v8/custom/V8HTMLMediaElementCustom.cpp:
+        (WebCore::V8HTMLMediaElement::controllerAccessorSetter):
+        * bindings/v8/custom/V8HTMLOptionsCollectionCustom.cpp:
+        (WebCore::V8HTMLOptionsCollection::addCallback):
+        (WebCore::V8HTMLOptionsCollection::lengthAccessorSetter):
+        * bindings/v8/custom/V8HistoryCustom.cpp:
+        (WebCore::V8History::pushStateCallback):
+        (WebCore::V8History::replaceStateCallback):
+        * bindings/v8/custom/V8InjectedScriptHostCustom.cpp:
+        (WebCore::V8InjectedScriptHost::inspectedObjectCallback):
+        * bindings/v8/custom/V8IntentConstructor.cpp:
+        (WebCore::V8Intent::constructorCallback):
+        * bindings/v8/custom/V8LocationCustom.cpp:
+        (WebCore::V8Location::protocolAccessorSetter):
+        * bindings/v8/custom/V8MessageChannelConstructor.cpp:
+        (WebCore::V8MessageChannel::constructorCallback):
+        * bindings/v8/custom/V8MessagePortCustom.cpp:
+        (WebCore::handlePostMessageCallback):
+        * bindings/v8/custom/V8MutationObserverCustom.cpp:
+        (WebCore::V8MutationObserver::constructorCallback):
+        * bindings/v8/custom/V8NodeCustom.cpp:
+        (WebCore::V8Node::insertBeforeCallback):
+        (WebCore::V8Node::replaceChildCallback):
+        (WebCore::V8Node::removeChildCallback):
+        (WebCore::V8Node::appendChildCallback):
+        * bindings/v8/custom/V8NotificationCenterCustom.cpp:
+        (WebCore::V8NotificationCenter::createHTMLNotificationCallback):
+        (WebCore::V8NotificationCenter::createNotificationCallback):
+        (WebCore::V8NotificationCenter::requestPermissionCallback):
+        * bindings/v8/custom/V8SQLResultSetRowListCustom.cpp:
+        (WebCore::V8SQLResultSetRowList::itemCallback):
+        * bindings/v8/custom/V8SQLTransactionCustom.cpp:
+        (WebCore::V8SQLTransaction::executeSqlCallback):
+        * bindings/v8/custom/V8SQLTransactionSyncCustom.cpp:
+        (WebCore::V8SQLTransactionSync::executeSqlCallback):
+        * bindings/v8/custom/V8SVGLengthCustom.cpp:
+        (WebCore::V8SVGLength::valueAccessorGetter):
+        (WebCore::V8SVGLength::valueAccessorSetter):
+        (WebCore::V8SVGLength::convertToSpecifiedUnitsCallback):
+        * bindings/v8/custom/V8StorageCustom.cpp:
+        (WebCore::storageSetter):
+        * bindings/v8/custom/V8WebGLRenderingContextCustom.cpp:
+        (WebCore::getObjectParameter):
+        (WebCore::V8WebGLRenderingContext::getAttachedShadersCallback):
+        (WebCore::V8WebGLRenderingContext::getExtensionCallback):
+        (WebCore::V8WebGLRenderingContext::getFramebufferAttachmentParameterCallback):
+        (WebCore::V8WebGLRenderingContext::getParameterCallback):
+        (WebCore::V8WebGLRenderingContext::getProgramParameterCallback):
+        (WebCore::V8WebGLRenderingContext::getShaderParameterCallback):
+        (WebCore::V8WebGLRenderingContext::getUniformCallback):
+        (WebCore::vertexAttribAndUniformHelperf):
+        (WebCore::uniformHelperi):
+        (WebCore::uniformMatrixHelper):
+        * bindings/v8/custom/V8WebKitPointConstructor.cpp:
+        (WebCore::V8WebKitPoint::constructorCallback):
+        * bindings/v8/custom/V8WebSocketCustom.cpp:
+        (WebCore::V8WebSocket::constructorCallback):
+        (WebCore::V8WebSocket::sendCallback):
+        * bindings/v8/custom/V8WorkerContextCustom.cpp:
+        (WebCore::V8WorkerContext::importScriptsCallback):
+        * bindings/v8/custom/V8WorkerCustom.cpp:
+        (WebCore::handlePostMessageCallback):
+        * bindings/v8/custom/V8XMLHttpRequestConstructor.cpp:
+        (WebCore::V8XMLHttpRequest::constructorCallback):
+        * bindings/v8/custom/V8XMLHttpRequestCustom.cpp:
+        (WebCore::V8XMLHttpRequest::responseTextAccessorGetter):
+        (WebCore::V8XMLHttpRequest::responseAccessorGetter):
+        (WebCore::V8XMLHttpRequest::openCallback):
+        (WebCore::V8XMLHttpRequest::sendCallback):
+
 2012-08-13  Kentaro Hara  <haraken@chromium.org>
 
         [V8] Move GCEventData class from V8Binding.h to ScriptGCEvent.h

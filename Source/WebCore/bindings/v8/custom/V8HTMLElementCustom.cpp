@@ -60,7 +60,7 @@ void V8HTMLElement::itemValueAccessorSetter(v8::Local<v8::String> name, v8::Loca
     ExceptionCode ec = 0;
     impl->setItemValue(toWebCoreString(value), ec);
     if (ec)
-        V8Proxy::setDOMException(ec, info.GetIsolate());
+        setDOMException(ec, info.GetIsolate());
 }
 #endif
 

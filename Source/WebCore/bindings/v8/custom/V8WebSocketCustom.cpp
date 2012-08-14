@@ -57,25 +57,25 @@ v8::Handle<v8::Value> V8WebSocket::constructorCallback(const v8::Arguments& args
     INC_STATS("DOM.WebSocket.Constructor");
 
     if (!args.IsConstructCall())
-        return V8Proxy::throwTypeError("DOM object constructor cannot be called as a function.", args.GetIsolate());
+        return throwTypeError("DOM object constructor cannot be called as a function.", args.GetIsolate());
 
     if (ConstructorMode::current() == ConstructorMode::WrapExistingObject)
         return args.Holder();
 
     if (args.Length() == 0)
-        return V8Proxy::throwNotEnoughArgumentsError(args.GetIsolate());
+        return throwNotEnoughArgumentsError(args.GetIsolate());
 
     v8::TryCatch tryCatch;
     v8::Handle<v8::String> urlstring = args[0]->ToString();
     if (tryCatch.HasCaught())
         return throwError(tryCatch.Exception(), args.GetIsolate());
     if (urlstring.IsEmpty())
-        return V8Proxy::throwError(V8Proxy::SyntaxError, "Empty URL", args.GetIsolate());
+        return throwError(SyntaxError, "Empty URL", args.GetIsolate());
 
     // Get the script execution context.
     ScriptExecutionContext* context = getScriptExecutionContext();
     if (!context)
-        return V8Proxy::throwError(V8Proxy::ReferenceError, "WebSocket constructor's associated frame is not available", args.GetIsolate());
+        return throwError(ReferenceError, "WebSocket constructor's associated frame is not available", args.GetIsolate());
 
     const KURL& url = context->completeURL(toWebCoreString(urlstring));
 
@@ -106,7 +106,7 @@ v8::Handle<v8::Value> V8WebSocket::constructorCallback(const v8::Arguments& args
         }
     }
     if (ec)
-        return V8Proxy::setDOMException(ec, args.GetIsolate());
+        return setDOMException(ec, args.GetIsolate());
 
     v8::Handle<v8::Object> wrapper = args.Holder();
     V8DOMWrapper::setDOMWrapper(wrapper, &info, webSocket.get());
@@ -119,7 +119,7 @@ v8::Handle<v8::Value> V8WebSocket::sendCallback(const v8::Arguments& args)
     INC_STATS("DOM.WebSocket.send()");
 
     if (!args.Length())
-        return V8Proxy::throwNotEnoughArgumentsError(args.GetIsolate());
+        return throwNotEnoughArgumentsError(args.GetIsolate());
 
     WebSocket* webSocket = V8WebSocket::toNative(args.Holder());
     v8::Handle<v8::Value> message = args[0];
@@ -145,7 +145,7 @@ v8::Handle<v8::Value> V8WebSocket::sendCallback(const v8::Arguments& args)
         result = webSocket->send(toWebCoreString(stringMessage), ec);
     }
     if (ec)
-        return V8Proxy::setDOMException(ec, args.GetIsolate());
+        return setDOMException(ec, args.GetIsolate());
 
     return v8Boolean(result, args.GetIsolate());
 }

@@ -47,12 +47,12 @@ v8::Handle<v8::Value> V8Intent::constructorCallback(const v8::Arguments& args)
     INC_STATS("DOM.Intent.Constructor");
 
     if (!args.IsConstructCall())
-        return V8Proxy::throwTypeError("DOM object constructor cannot be called as a function.", args.GetIsolate());
+        return throwTypeError("DOM object constructor cannot be called as a function.", args.GetIsolate());
 
     if (ConstructorMode::current() == ConstructorMode::WrapExistingObject)
         return args.Holder();
     if (args.Length() < 1)
-        return V8Proxy::throwNotEnoughArgumentsError(args.GetIsolate());
+        return throwNotEnoughArgumentsError(args.GetIsolate());
     if (args.Length() == 1) {
         // Use the dictionary constructor. This block will return if the
         // argument isn't a valid Dictionary.
@@ -60,7 +60,7 @@ v8::Handle<v8::Value> V8Intent::constructorCallback(const v8::Arguments& args)
         ExceptionCode ec = 0;
         RefPtr<Intent> impl = Intent::create(ScriptState::current(), options, ec);
         if (ec)
-            return V8Proxy::setDOMException(ec, args.GetIsolate());
+            return setDOMException(ec, args.GetIsolate());
 
         v8::Handle<v8::Object> wrapper = args.Holder();
         V8DOMWrapper::setDOMWrapper(wrapper, &info, impl.get());
@@ -75,16 +75,16 @@ v8::Handle<v8::Value> V8Intent::constructorCallback(const v8::Arguments& args)
     ArrayBufferArray arrayBufferArrayTransferList;
     if (args.Length() > 3) {
         if (!extractTransferables(args[3], messagePortArrayTransferList, arrayBufferArrayTransferList, args.GetIsolate()))
-            return V8Proxy::throwTypeError("Could not extract transferables", args.GetIsolate());
+            return throwTypeError("Could not extract transferables", args.GetIsolate());
     }
     bool dataDidThrow = false;
     RefPtr<SerializedScriptValue> data = SerializedScriptValue::create(args[2], &messagePortArrayTransferList, &arrayBufferArrayTransferList, dataDidThrow);
     if (dataDidThrow)
-        return V8Proxy::setDOMException(DATA_CLONE_ERR, args.GetIsolate());
+        return setDOMException(DATA_CLONE_ERR, args.GetIsolate());
 
     RefPtr<Intent> impl = Intent::create(action, type, data, messagePortArrayTransferList, ec);
     if (ec)
-        return V8Proxy::setDOMException(ec, args.GetIsolate());
+        return setDOMException(ec, args.GetIsolate());
 
     v8::Handle<v8::Object> wrapper = args.Holder();
     V8DOMWrapper::setDOMWrapper(wrapper, &info, impl.get());

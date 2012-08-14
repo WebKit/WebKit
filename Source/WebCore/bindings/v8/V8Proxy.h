@@ -84,15 +84,6 @@ namespace WebCore {
 
     class V8Proxy {
     public:
-        // The types of javascript errors that can be thrown.
-        enum ErrorType {
-            RangeError,
-            ReferenceError,
-            SyntaxError,
-            TypeError,
-            GeneralError
-        };
-
         explicit V8Proxy(Frame*);
 
         ~V8Proxy();
@@ -141,17 +132,6 @@ namespace WebCore {
 
         static v8::Handle<v8::Script> compileScript(v8::Handle<v8::String> code, const String& fileName, const TextPosition& scriptStartPosition, v8::ScriptData* = 0);
 
-        // If the exception code is different from zero, a DOM exception is
-        // schedule to be thrown.
-        static v8::Handle<v8::Value> setDOMException(int exceptionCode, v8::Isolate*);
-
-        // Schedule an error object to be thrown.
-        static v8::Handle<v8::Value> throwError(ErrorType, const char* message, v8::Isolate* = 0);
-
-        // Helpers for throwing syntax and type errors with predefined messages.
-        static v8::Handle<v8::Value> throwTypeError(const char* = 0, v8::Isolate* = 0);
-        static v8::Handle<v8::Value> throwNotEnoughArgumentsError(v8::Isolate*);
-
         v8::Local<v8::Context> context();
         v8::Local<v8::Context> mainWorldContext();
         v8::Local<v8::Context> isolatedWorldContext(int worldId);
@@ -199,13 +179,6 @@ namespace WebCore {
     };
 
     v8::Local<v8::Context> toV8Context(ScriptExecutionContext*, const WorldContextHandle& worldContext);
-
-    inline v8::Handle<v8::Primitive> throwError(v8::Local<v8::Value> exception, v8::Isolate* isolate = 0)
-    {
-        if (!v8::V8::IsExecutionTerminating())
-            v8::ThrowException(exception);
-        return v8::Undefined();
-    }
 }
 
 #endif // V8Proxy_h

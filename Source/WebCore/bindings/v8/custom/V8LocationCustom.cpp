@@ -130,7 +130,7 @@ void V8Location::protocolAccessorSetter(v8::Local<v8::String> name, v8::Local<v8
     ExceptionCode ec = 0;
     impl->setProtocol(protocol, activeDOMWindow(state), firstDOMWindow(state), ec);
     if (UNLIKELY(ec))
-        V8Proxy::setDOMException(ec, info.GetIsolate());
+        setDOMException(ec, info.GetIsolate());
 }
 
 void V8Location::searchAccessorSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)

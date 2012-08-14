@@ -965,7 +965,7 @@ END
             push(@implContentDecls, "    $nativeType v = $getterString;\n");
         }
         push(@implContentDecls, "    if (UNLIKELY(ec))\n");
-        push(@implContentDecls, "        return V8Proxy::setDOMException(ec, info.GetIsolate());\n");
+        push(@implContentDecls, "        return setDOMException(ec, info.GetIsolate());\n");
 
         if ($codeGenerator->ExtendedAttributeContains($attribute->signature->extendedAttributes->{"CallWith"}, "ScriptState")) {
             push(@implContentDecls, "    if (state.hadException())\n");
@@ -1147,7 +1147,7 @@ sub GenerateNormalAttrSetter
         my $argType = GetTypeFromSignature($attribute->signature);
         if (IsWrapperType($argType)) {
             push(@implContentDecls, "    if (!isUndefinedOrNull(value) && !V8${argType}::HasInstance(value)) {\n");
-            push(@implContentDecls, "        V8Proxy::throwTypeError(0, info.GetIsolate());\n");
+            push(@implContentDecls, "        throwTypeError(0, info.GetIsolate());\n");
             push(@implContentDecls, "        return;\n");
             push(@implContentDecls, "    }\n");
         }
@@ -1164,7 +1164,7 @@ END
             AddToImplIncludes("ExceptionCode.h");
             push(@implContentDecls, "    $svgNativeType* wrapper = V8${implClassName}::toNative(info.Holder());\n");
             push(@implContentDecls, "    if (wrapper->isReadOnly()) {\n");
-            push(@implContentDecls, "        V8Proxy::setDOMException(NO_MODIFICATION_ALLOWED_ERR, info.GetIsolate());\n");
+            push(@implContentDecls, "        setDOMException(NO_MODIFICATION_ALLOWED_ERR, info.GetIsolate());\n");
             push(@implContentDecls, "        return;\n");
             push(@implContentDecls, "    }\n");
             push(@implContentDecls, "    $svgWrappedNativeType& impInstance = wrapper->propertyReference();\n");
@@ -1273,7 +1273,7 @@ END
 
     if ($useExceptions) {
         push(@implContentDecls, "    if (UNLIKELY(ec))\n");
-        push(@implContentDecls, "        V8Proxy::setDOMException(ec, info.GetIsolate());\n");
+        push(@implContentDecls, "        setDOMException(ec, info.GetIsolate());\n");
     }
 
     if ($codeGenerator->ExtendedAttributeContains($attribute->signature->extendedAttributes->{"CallWith"}, "ScriptState")) {
@@ -1447,7 +1447,7 @@ END
         push(@implContentDecls, "        return ${name}$overload->{overloadIndex}Callback(args);\n");
     }
     push(@implContentDecls, <<END);
-    return V8Proxy::throwTypeError(0, args.GetIsolate());
+    return throwTypeError(0, args.GetIsolate());
 END
     push(@implContentDecls, "}\n\n");
     push(@implContentDecls, "#endif // ${conditionalString}\n\n") if $conditionalString;
@@ -1508,7 +1508,7 @@ END
             AddToImplIncludes("ExceptionCode.h");
             push(@implContentDecls, "    $nativeClassName wrapper = V8${implClassName}::toNative(args.Holder());\n");
             push(@implContentDecls, "    if (wrapper->isReadOnly())\n");
-            push(@implContentDecls, "        return V8Proxy::setDOMException(NO_MODIFICATION_ALLOWED_ERR, args.GetIsolate());\n");
+            push(@implContentDecls, "        return setDOMException(NO_MODIFICATION_ALLOWED_ERR, args.GetIsolate());\n");
             my $svgWrappedNativeType = $codeGenerator->GetSVGWrappedTypeNeedingTearOff($implClassName);
             push(@implContentDecls, "    $svgWrappedNativeType& impInstance = wrapper->propertyReference();\n");
             push(@implContentDecls, "    $svgWrappedNativeType* imp = &impInstance;\n");
@@ -1564,7 +1564,7 @@ END
     if ($raisesExceptions) {
         push(@implContentDecls, "    }\n");
         push(@implContentDecls, "    fail:\n");
-        push(@implContentDecls, "    return V8Proxy::setDOMException(ec, args.GetIsolate());\n");
+        push(@implContentDecls, "    return setDOMException(ec, args.GetIsolate());\n");
     }
 
     push(@implContentDecls, "}\n\n");
@@ -1634,7 +1634,7 @@ sub GenerateArgumentsCountCheck
     my $argumentsCountCheckString = "";
     if ($numMandatoryParams >= 1) {
         $argumentsCountCheckString .= "    if (args.Length() < $numMandatoryParams)\n";
-        $argumentsCountCheckString .= "        return V8Proxy::throwNotEnoughArgumentsError(args.GetIsolate());\n";
+        $argumentsCountCheckString .= "        return throwNotEnoughArgumentsError(args.GetIsolate());\n";
     }
     return $argumentsCountCheckString;
 }
@@ -1698,12 +1698,12 @@ sub GenerateParametersCheck
                 $parameterCheckString .= "    RefPtr<" . $parameter->type . "> $parameterName;\n";
                 $parameterCheckString .= "    if (args.Length() > $paramIndex && !args[$paramIndex]->IsNull() && !args[$paramIndex]->IsUndefined()) {\n";
                 $parameterCheckString .= "        if (!args[$paramIndex]->IsFunction())\n";
-                $parameterCheckString .= "            return V8Proxy::setDOMException(TYPE_MISMATCH_ERR, args.GetIsolate());\n";
+                $parameterCheckString .= "            return setDOMException(TYPE_MISMATCH_ERR, args.GetIsolate());\n";
                 $parameterCheckString .= "        $parameterName = ${className}::create(args[$paramIndex], getScriptExecutionContext());\n";
                 $parameterCheckString .= "    }\n";
             } else {
                 $parameterCheckString .= "    if (args.Length() <= $paramIndex || !args[$paramIndex]->IsFunction())\n";
-                $parameterCheckString .= "        return V8Proxy::setDOMException(TYPE_MISMATCH_ERR, args.GetIsolate());\n";
+                $parameterCheckString .= "        return setDOMException(TYPE_MISMATCH_ERR, args.GetIsolate());\n";
                 $parameterCheckString .= "    RefPtr<" . $parameter->type . "> $parameterName = ${className}::create(args[$paramIndex], getScriptExecutionContext());\n";
             }
         } elsif ($parameter->extendedAttributes->{"Clamp"}) {
@@ -1738,7 +1738,7 @@ sub GenerateParametersCheck
                 $parameterCheckString .= "    ArrayBufferArray arrayBufferArray$TransferListName;\n";
                 $parameterCheckString .= "    if (args.Length() > $transferListIndex) {\n";
                 $parameterCheckString .= "        if (!extractTransferables(args[$transferListIndex], messagePortArray$TransferListName, arrayBufferArray$TransferListName, args.GetIsolate()))\n";
-                $parameterCheckString .= "            return V8Proxy::throwTypeError(\"Could not extract transferables\");\n";
+                $parameterCheckString .= "            return throwTypeError(\"Could not extract transferables\");\n";
                 $parameterCheckString .= "    }\n";
                 $useTransferList = 1;
             }
@@ -1772,14 +1772,14 @@ sub GenerateParametersCheck
                 my $argType = GetTypeFromSignature($parameter);
                 if (IsWrapperType($argType)) {
                     $parameterCheckString .= "    if (args.Length() > $paramIndex && !isUndefinedOrNull($argValue) && !V8${argType}::HasInstance($argValue))\n";
-                    $parameterCheckString .= "        return V8Proxy::throwTypeError(0, args.GetIsolate());\n";
+                    $parameterCheckString .= "        return throwTypeError(0, args.GetIsolate());\n";
                 }
             }
             $parameterCheckString .= "    EXCEPTION_BLOCK($nativeType, $parameterName, " .
                  JSValueToNative($parameter, "MAYBE_MISSING_PARAMETER(args, $paramIndex, $parameterDefaultPolicy)", "args.GetIsolate()") . ");\n";
             if ($nativeType eq 'Dictionary') {
                $parameterCheckString .= "    if (!$parameterName.isUndefinedOrNull() && !$parameterName.isObject())\n";
-               $parameterCheckString .= "        return V8Proxy::throwTypeError(\"Not an object.\", args.GetIsolate());\n";
+               $parameterCheckString .= "        return throwTypeError(\"Not an object.\", args.GetIsolate());\n";
             }
         }
 
@@ -1821,7 +1821,7 @@ v8::Handle<v8::Value> V8${implClassName}::constructorCallback(const v8::Argument
     INC_STATS("DOM.${implClassName}.Constructor");
 
     if (!args.IsConstructCall())
-        return V8Proxy::throwTypeError("DOM object constructor cannot be called as a function.");
+        return throwTypeError("DOM object constructor cannot be called as a function.");
 
     if (ConstructorMode::current() == ConstructorMode::WrapExistingObject)
         return args.Holder();
@@ -1846,7 +1846,7 @@ END
 
     ScriptExecutionContext* context = getScriptExecutionContext();
     if (!context)
-        return V8Proxy::throwError(V8Proxy::ReferenceError, "${implClassName} constructor's associated context is not available", args.GetIsolate());
+        return throwError(ReferenceError, "${implClassName} constructor's associated context is not available", args.GetIsolate());
 END
     }
 
@@ -1886,7 +1886,7 @@ END
 
     if ($raisesExceptions) {
         push(@implContent, "  fail:\n");
-        push(@implContent, "    return V8Proxy::setDOMException(ec, args.GetIsolate());\n");
+        push(@implContent, "    return setDOMException(ec, args.GetIsolate());\n");
     }
 
     push(@implContent, "}\n");
@@ -1905,13 +1905,13 @@ v8::Handle<v8::Value> V8${implClassName}::constructorCallback(const v8::Argument
     INC_STATS("DOM.${implClassName}.Constructor");
 
     if (!args.IsConstructCall())
-        return V8Proxy::throwTypeError("DOM object constructor cannot be called as a function.");
+        return throwTypeError("DOM object constructor cannot be called as a function.");
 
     if (ConstructorMode::current() == ConstructorMode::WrapExistingObject)
         return args.Holder();
 
     if (args.Length() < 1)
-        return V8Proxy::throwNotEnoughArgumentsError(args.GetIsolate());
+        return throwNotEnoughArgumentsError(args.GetIsolate());
 
     STRING_TO_V8PARAMETER_EXCEPTION_BLOCK(V8Parameter<>, type, args[0]);
     ${implClassName}Init eventInit;
@@ -2014,14 +2014,14 @@ static v8::Handle<v8::Value> V8${implClassName}ConstructorCallback(const v8::Arg
     INC_STATS("DOM.${implClassName}.Constructor");
 
     if (!args.IsConstructCall())
-        return V8Proxy::throwTypeError("DOM object constructor cannot be called as a function.");
+        return throwTypeError("DOM object constructor cannot be called as a function.");
 
     if (ConstructorMode::current() == ConstructorMode::WrapExistingObject)
         return args.Holder();
 
     Frame* frame = currentFrame(BindingState::instance());
     if (!frame)
-        return V8Proxy::throwError(V8Proxy::ReferenceError, "${implClassName} constructor associated frame is unavailable", args.GetIsolate());
+        return throwError(ReferenceError, "${implClassName} constructor associated frame is unavailable", args.GetIsolate());
 
     Document* document = frame->document();
 
@@ -2080,7 +2080,7 @@ END
 
     if ($raisesExceptions) {
         push(@implContent, "  fail:\n");
-        push(@implContent, "    return V8Proxy::setDOMException(ec, args.GetIsolate());\n");
+        push(@implContent, "    return setDOMException(ec, args.GetIsolate());\n");
     }
 
     push(@implContent, "}\n");
@@ -3535,7 +3535,7 @@ sub GenerateFunctionCallString()
         } elsif ($codeGenerator->IsSVGTypeNeedingTearOff($parameter->type) and not $implClassName =~ /List$/) {
             push @arguments, "$paramName->propertyReference()";
             $result .= $indent . "if (!$paramName)\n";
-            $result .= $indent . "    return V8Proxy::setDOMException(WebCore::TYPE_MISMATCH_ERR, args.GetIsolate());\n";
+            $result .= $indent . "    return setDOMException(WebCore::TYPE_MISMATCH_ERR, args.GetIsolate());\n";
         } elsif ($parameter->type eq "SVGMatrix" and $implClassName eq "SVGTransformList") {
             push @arguments, "$paramName.get()";
         } else {

@@ -32,7 +32,7 @@
 #include "DateExtension.h"
 
 #include "V8HiddenPropertyName.h"
-#include "V8Proxy.h"
+#include "V8Binding.h"
 #include "V8RecursionScope.h"
 
 namespace WebCore {
@@ -118,7 +118,7 @@ v8::Handle<v8::Value> DateExtension::Setup(const v8::Arguments& args)
 
 v8::Handle<v8::Value> DateExtension::OnSleepDetected(const v8::Arguments& args)
 {
-    return V8Proxy::throwError(V8Proxy::GeneralError, "Too much time spent in unload handler.", args.GetIsolate());
+    return throwError(GeneralError, "Too much time spent in unload handler.", args.GetIsolate());
 }
 
 }  // namespace WebCore

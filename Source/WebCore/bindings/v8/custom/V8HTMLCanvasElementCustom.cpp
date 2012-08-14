@@ -127,7 +127,7 @@ v8::Handle<v8::Value> V8HTMLCanvasElement::toDataURLCallback(const v8::Arguments
     }
 
     String result = canvas->toDataURL(type, qualityPtr, ec);
-    V8Proxy::setDOMException(ec, args.GetIsolate());
+    setDOMException(ec, args.GetIsolate());
     return v8StringOrUndefined(result, args.GetIsolate());
 }
 

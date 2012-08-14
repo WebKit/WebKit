@@ -60,7 +60,7 @@ v8::Handle<v8::Value> V8Blob::constructorCallback(const v8::Arguments& args)
     INC_STATS("DOM.Blob.Constructor");
 
     if (!args.IsConstructCall())
-        return V8Proxy::throwTypeError("DOM object constructor cannot be called as a function.", args.GetIsolate());
+        return throwTypeError("DOM object constructor cannot be called as a function.", args.GetIsolate());
 
     if (ConstructorMode::current() == ConstructorMode::WrapExistingObject)
         return args.Holder();
@@ -68,7 +68,7 @@ v8::Handle<v8::Value> V8Blob::constructorCallback(const v8::Arguments& args)
     // Get the script execution context.
     ScriptExecutionContext* context = getScriptExecutionContext();
     if (!context)
-        return V8Proxy::throwError(V8Proxy::ReferenceError, "Blob constructor associated document is unavailable", args.GetIsolate());
+        return throwError(ReferenceError, "Blob constructor associated document is unavailable", args.GetIsolate());
 
     if (!args.Length()) {
         RefPtr<Blob> blob = Blob::create();
@@ -77,14 +77,14 @@ v8::Handle<v8::Value> V8Blob::constructorCallback(const v8::Arguments& args)
 
     v8::Local<v8::Value> firstArg = args[0];
     if (!firstArg->IsArray())
-        return V8Proxy::throwTypeError("First argument of the constructor is not of type Array", args.GetIsolate());
+        return throwTypeError("First argument of the constructor is not of type Array", args.GetIsolate());
 
     String type;
     String endings = "transparent";
 
     if (args.Length() > 1) {
         if (!args[1]->IsObject())
-            return V8Proxy::throwTypeError("Second argument of the constructor is not of type Object", args.GetIsolate());
+            return throwTypeError("Second argument of the constructor is not of type Object", args.GetIsolate());
 
         EXCEPTION_BLOCK(Dictionary, dictionary, Dictionary(args[1], args.GetIsolate()));
 
@@ -95,7 +95,7 @@ v8::Handle<v8::Value> V8Blob::constructorCallback(const v8::Arguments& args)
 
         if (containsEndings) {
             if (endings != "transparent" && endings != "native")
-                return V8Proxy::throwTypeError("The endings property must be either \"transparent\" or \"native\"", args.GetIsolate());
+                return throwTypeError("The endings property must be either \"transparent\" or \"native\"", args.GetIsolate());
         }
 
         v8::TryCatch tryCatchType;
@@ -103,7 +103,7 @@ v8::Handle<v8::Value> V8Blob::constructorCallback(const v8::Arguments& args)
         if (tryCatchType.HasCaught())
             return throwError(tryCatchType.Exception(), args.GetIsolate());
         if (!type.containsOnlyASCII())
-            return V8Proxy::throwError(V8Proxy::SyntaxError, "type must consist of ASCII characters", args.GetIsolate());
+            return throwError(SyntaxError, "type must consist of ASCII characters", args.GetIsolate());
         type.makeLower();
     }
 

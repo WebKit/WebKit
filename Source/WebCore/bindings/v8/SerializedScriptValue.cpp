@@ -2221,7 +2221,7 @@ PassOwnPtr<SerializedScriptValue::ArrayBufferContentsArray> SerializedScriptValu
 {
     for (size_t i = 0; i < arrayBuffers.size(); i++) {
         if (arrayBuffers[i]->isNeutered()) {
-            V8Proxy::setDOMException(INVALID_STATE_ERR, isolate);
+            setDOMException(INVALID_STATE_ERR, isolate);
             didThrow = true;
             return nullptr;
         }
@@ -2239,7 +2239,7 @@ PassOwnPtr<SerializedScriptValue::ArrayBufferContentsArray> SerializedScriptValu
 
         bool result = arrayBuffers[i]->transfer(contents->at(i), neuteredViews);
         if (!result) {
-            V8Proxy::setDOMException(INVALID_STATE_ERR, isolate);
+            setDOMException(INVALID_STATE_ERR, isolate);
             didThrow = true;
             return nullptr;
         }
@@ -2277,11 +2277,11 @@ SerializedScriptValue::SerializedScriptValue(v8::Handle<v8::Value> value,
         // If there was an input error, throw a new exception outside
         // of the TryCatch scope.
         didThrow = true;
-        V8Proxy::setDOMException(DATA_CLONE_ERR, isolate);
+        setDOMException(DATA_CLONE_ERR, isolate);
         return;
     case Serializer::InvalidStateError:
         didThrow = true;
-        V8Proxy::setDOMException(INVALID_STATE_ERR, isolate);
+        setDOMException(INVALID_STATE_ERR, isolate);
         return;
     case Serializer::JSFailure:
         // If there was a JS failure (but no exception), there's not

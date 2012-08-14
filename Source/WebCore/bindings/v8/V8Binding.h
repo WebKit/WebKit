@@ -40,6 +40,7 @@
 #include "V8HiddenPropertyName.h"
 #include "V8PerIsolateData.h"
 #include "V8Proxy.h"
+#include "V8ThrowException.h"
 #include "V8ValueCache.h"
 #include <wtf/Noncopyable.h>
 #include <wtf/text/AtomicString.h>
@@ -48,6 +49,22 @@
 namespace WebCore {
 
     class DOMStringList;
+
+    // Schedule a DOM exception to be thrown, if the exception code is different
+    // from zero.
+    v8::Handle<v8::Value> setDOMException(int, v8::Isolate*);
+
+    // Schedule a JavaScript error to be thrown.
+    v8::Handle<v8::Value> throwError(ErrorType, const char*, v8::Isolate* = 0);
+
+    // Schedule a JavaScript error to be thrown.
+    v8::Handle<v8::Value> throwError(v8::Local<v8::Value>, v8::Isolate* = 0);
+
+    // A helper for throwing JavaScript TypeError.
+    v8::Handle<v8::Value> throwTypeError(const char* = 0, v8::Isolate* = 0);
+
+    // A helper for throwing JavaScript TypeError for not enough arguments.
+    v8::Handle<v8::Value> throwNotEnoughArgumentsError(v8::Isolate*);
 
     // Since v8::Null(isolate) crashes if we pass a null isolate,
     // we need to use v8NullWithCheck(isolate) if an isolate can be null.
@@ -212,7 +229,7 @@ namespace WebCore {
     inline v8::Handle<v8::Value> toV8Sequence(v8::Handle<v8::Value> value, uint32_t& length)
     {
         if (!value->IsObject()) {
-            V8Proxy::throwTypeError();
+            throwTypeError();
             return v8Undefined();
         }
 
@@ -222,7 +239,7 @@ namespace WebCore {
         EXCEPTION_BLOCK(v8::Local<v8::Value>, lengthValue, object->Get(v8::String::New("length")));
 
         if (lengthValue->IsUndefined() || lengthValue->IsNull()) {
-            V8Proxy::throwTypeError();
+            throwTypeError();
             return v8Undefined();
         }
 

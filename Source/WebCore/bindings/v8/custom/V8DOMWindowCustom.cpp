@@ -79,7 +79,7 @@ v8::Handle<v8::Value> WindowSetTimeoutImpl(const v8::Arguments& args, bool singl
     ScriptExecutionContext* scriptContext = static_cast<ScriptExecutionContext*>(imp->document());
 
     if (!scriptContext)
-        return V8Proxy::setDOMException(INVALID_ACCESS_ERR, args.GetIsolate());
+        return setDOMException(INVALID_ACCESS_ERR, args.GetIsolate());
 
     v8::Handle<v8::Value> function = args[0];
     WTF::String functionString;
@@ -303,7 +303,7 @@ static v8::Handle<v8::Value> handlePostMessageCallback(const v8::Arguments& args
 
     // If called directly by WebCore we don't have a calling context.
     if (!source)
-        return V8Proxy::throwTypeError(0, args.GetIsolate());
+        return throwTypeError(0, args.GetIsolate());
 
     // This function has variable arguments and can be:
     // Per current spec:
@@ -345,7 +345,7 @@ static v8::Handle<v8::Value> handlePostMessageCallback(const v8::Arguments& args
 
     ExceptionCode ec = 0;
     window->postMessage(message.release(), &portArray, targetOrigin, source, ec);
-    return V8Proxy::setDOMException(ec, args.GetIsolate());
+    return setDOMException(ec, args.GetIsolate());
 }
 
 v8::Handle<v8::Value> V8DOMWindow::postMessageCallback(const v8::Arguments& args)

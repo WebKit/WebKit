@@ -63,7 +63,7 @@ static v8::Handle<v8::Value> handlePostMessageCallback(const v8::Arguments& args
         return v8::Undefined();
     ExceptionCode ec = 0;
     workerContext->postMessage(message.release(), &ports, ec);
-    return V8Proxy::setDOMException(ec, args.GetIsolate());
+    return setDOMException(ec, args.GetIsolate());
 }
 
 v8::Handle<v8::Value> V8DedicatedWorkerContext::postMessageCallback(const v8::Arguments& args)
