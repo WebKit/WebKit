@@ -902,7 +902,6 @@ BUGWKGTK : canvas/philip/tests/2d.text.draw.baseline.ideographic.html = TEXT
 BUGWKGTK : canvas/philip/tests/2d.text.draw.baseline.middle.html = TEXT
 BUGWKGTK : canvas/philip/tests/2d.text.draw.baseline.top.html = TEXT
 BUGWKGTK : canvas/philip/tests/2d.text.draw.space.collapse.end.html = TEXT
-BUGWKGTK : canvas/philip/tests/2d.text.draw.space.collapse.nonspace.html = TEXT
 BUGWKGTK : canvas/philip/tests/2d.text.draw.space.collapse.other.html = TEXT
 BUGWKGTK : canvas/philip/tests/2d.text.draw.space.collapse.space.html = TEXT
 BUGWKGTK : canvas/philip/tests/2d.text.draw.space.collapse.start.html = TEXT

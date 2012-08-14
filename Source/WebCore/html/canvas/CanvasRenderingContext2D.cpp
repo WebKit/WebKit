@@ -2132,6 +2132,16 @@ PassRefPtr<TextMetrics> CanvasRenderingContext2D::measureText(const String& text
     return metrics.release();
 }
 
+static void replaceCharacterInString(String& text, WTF::CharacterMatchFunctionPtr matchFunction, const String& replacement)
+{
+    const size_t replacementLength = replacement.length();
+    size_t index = 0;
+    while ((index = text.find(matchFunction, index)) != notFound) {
+        text.replace(index, 1, replacement);
+        index += replacementLength;
+    }
+}
+
 void CanvasRenderingContext2D::drawTextInternal(const String& text, float x, float y, bool fill, float maxWidth, bool useMaxWidth)
 {
     GraphicsContext* c = drawingContext();
@@ -2148,6 +2158,9 @@ void CanvasRenderingContext2D::drawTextInternal(const String& text, float x, flo
 
     const Font& font = accessFont();
     const FontMetrics& fontMetrics = font.fontMetrics();
+    // According to spec, all the space characters must be replaced with U+0020 SPACE characters.
+    String normalizedText = text;
+    replaceCharacterInString(normalizedText, isSpaceOrNewline, " ");
 
     // FIXME: Need to turn off font smoothing.
 
@@ -2156,7 +2169,7 @@ void CanvasRenderingContext2D::drawTextInternal(const String& text, float x, flo
     bool isRTL = direction == RTL;
     bool override = computedStyle ? isOverride(computedStyle->unicodeBidi()) : false;
 
-    TextRun textRun(text, 0, 0, TextRun::AllowTrailingExpansion, direction, override, true, TextRun::NoRounding);
+    TextRun textRun(normalizedText, 0, 0, TextRun::AllowTrailingExpansion, direction, override, true, TextRun::NoRounding);
     // Draw the item text at the correct point.
     FloatPoint location(x, y);
     switch (state().m_textBaseline) {
@@ -2177,7 +2190,7 @@ void CanvasRenderingContext2D::drawTextInternal(const String& text, float x, flo
         break;
     }
 
-    float fontWidth = font.width(TextRun(text, 0, 0, TextRun::AllowTrailingExpansion, direction, override));
+    float fontWidth = font.width(TextRun(normalizedText, 0, 0, TextRun::AllowTrailingExpansion, direction, override));
 
     useMaxWidth = (useMaxWidth && maxWidth < fontWidth);
     float width = useMaxWidth ? maxWidth : fontWidth;

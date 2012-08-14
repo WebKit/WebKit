@@ -1888,12 +1888,10 @@ BUGWK38463 : canvas/philip/tests/2d.text.draw.baseline.top.html = TEXT
 BUGWK38463 : platform/chromium/virtual/gpu/canvas/philip/tests/2d.text.draw.baseline.top.html = TEXT
 
 BUGWK45991 : canvas/philip/tests/2d.text.draw.space.collapse.end.html = TEXT
-BUGWK45991 : canvas/philip/tests/2d.text.draw.space.collapse.nonspace.html = TEXT
 BUGWK45991 : canvas/philip/tests/2d.text.draw.space.collapse.other.html = TEXT
 BUGWK45991 : canvas/philip/tests/2d.text.draw.space.collapse.space.html = TEXT
 BUGWK45991 : canvas/philip/tests/2d.text.draw.space.collapse.start.html = TEXT
 BUGWK45991 : platform/chromium/virtual/gpu/canvas/philip/tests/2d.text.draw.space.collapse.end.html = TEXT
-BUGWK45991 : platform/chromium/virtual/gpu/canvas/philip/tests/2d.text.draw.space.collapse.nonspace.html = TEXT
 BUGWK45991 : platform/chromium/virtual/gpu/canvas/philip/tests/2d.text.draw.space.collapse.other.html = TEXT
 BUGWK45991 : platform/chromium/virtual/gpu/canvas/philip/tests/2d.text.draw.space.collapse.space.html = TEXT
 BUGWK45991 : platform/chromium/virtual/gpu/canvas/philip/tests/2d.text.draw.space.collapse.start.html = TEXT

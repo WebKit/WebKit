@@ -1,3 +1,20 @@
+2012-08-14  Christophe Dumez  <christophe.dumez@intel.com>
+
+        Fix  LayoutTests/canvas/philip/tests/2d.text.draw.space.collapse.nonspace.html
+        https://bugs.webkit.org/show_bug.cgi?id=92974
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Unskip canvas/philip/tests/2d.text.draw.space.collapse.nonspace.html for
+        all the ports now that space characters are correctly replaced in
+        the text passed to fillText() and strokeText().
+
+        * platform/chromium/TestExpectations:
+        * platform/efl/Skipped:
+        * platform/gtk/TestExpectations:
+        * platform/mac/canvas/philip/tests/2d.text.draw.space.collapse.nonspace-expected.txt: Removed.
+        * platform/qt/Skipped:
+
 2012-08-14  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed GTK gardening.
