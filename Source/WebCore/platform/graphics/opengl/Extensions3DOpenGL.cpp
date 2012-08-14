@@ -114,6 +114,24 @@ void Extensions3DOpenGL::copyTextureCHROMIUM(GC3Denum, Platform3DObject, Platfor
     return;
 }
 
+void Extensions3DOpenGL::insertEventMarkerEXT(const String&)
+{
+    // FIXME: implement this function and add GL_EXT_debug_marker in supports().
+    return;
+}
+
+void Extensions3DOpenGL::pushGroupMarkerEXT(const String&)
+{
+    // FIXME: implement this function and add GL_EXT_debug_marker in supports().
+    return;
+}
+
+void Extensions3DOpenGL::popGroupMarkerEXT(void)
+{
+    // FIXME: implement this function and add GL_EXT_debug_marker in supports().
+    return;
+}
+
 bool Extensions3DOpenGL::supportsExtension(const String& name)
 {
     // GL_ANGLE_framebuffer_blit and GL_ANGLE_framebuffer_multisample are "fake". They are implemented using other

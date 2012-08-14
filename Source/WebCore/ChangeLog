@@ -1,3 +1,43 @@
+2012-08-14  Gregg Tavares  <gman@google.com>
+
+        Plumb through EXT_debug_marker entry points
+        https://bugs.webkit.org/show_bug.cgi?id=93860
+
+        Reviewed by Kenneth Russell.
+
+        insertEventMarkerEXT, pushGroupMarkerEXT, popGroupMarkerEXT,
+        are all entry points exposed by the OpenGL ES
+        EXT_debug_marker extension
+
+        No new tests as no new functionality exposed to web.
+
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore):
+        (WebCore::WebGLRenderingContext::create):
+        * platform/chromium/support/Extensions3DChromium.cpp:
+        (WebCore::Extensions3DChromium::insertEventMarkerEXT):
+        (WebCore):
+        (WebCore::Extensions3DChromium::pushGroupMarkerEXT):
+        (WebCore::Extensions3DChromium::popGroupMarkerEXT):
+        * platform/graphics/Extensions3D.h:
+        (Extensions3D):
+        * platform/graphics/chromium/Extensions3DChromium.h:
+        (Extensions3DChromium):
+        * platform/graphics/opengl/Extensions3DOpenGL.cpp:
+        (WebCore::Extensions3DOpenGL::insertEventMarkerEXT):
+        (WebCore):
+        (WebCore::Extensions3DOpenGL::pushGroupMarkerEXT):
+        (WebCore::Extensions3DOpenGL::popGroupMarkerEXT):
+        * platform/graphics/opengl/Extensions3DOpenGL.h:
+        (Extensions3DOpenGL):
+        * platform/graphics/opengl/Extensions3DOpenGLES.cpp:
+        (WebCore::Extensions3DOpenGLES::insertEventMarkerEXT):
+        (WebCore):
+        (WebCore::Extensions3DOpenGLES::pushGroupMarkerEXT):
+        (WebCore::Extensions3DOpenGLES::popGroupMarkerEXT):
+        * platform/graphics/opengl/Extensions3DOpenGLES.h:
+        (Extensions3DOpenGLES):
+
 2012-06-24  Robert Hogan  <robert@webkit.org>
 
         CSS 2.1 failure: Word-spacing affects each space and non-breaking space

@@ -419,6 +419,10 @@ PassOwnPtr<WebGLRenderingContext> WebGLRenderingContext::create(HTMLCanvasElemen
         return nullptr;
     }
 
+    Extensions3D* extensions = context->getExtensions();
+    if (extensions->supports("GL_EXT_debug_marker"))
+        extensions->pushGroupMarkerEXT("WebGLRenderingContext");
+
     return adoptPtr(new WebGLRenderingContext(canvas, context, attributes));
 }
 

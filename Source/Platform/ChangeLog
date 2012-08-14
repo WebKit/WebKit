@@ -1,3 +1,20 @@
+2012-08-14  Gregg Tavares  <gman@google.com>
+
+        Plumb through EXT_debug_marker entry points
+        https://bugs.webkit.org/show_bug.cgi?id=93860
+
+        Reviewed by Kenneth Russell.
+
+        insertEventMarkerEXT, pushGroupMarkerEXT, popGroupMarkerEXT are
+        all entry points exposed by the OpenGL ES EXT_debug_marker
+        extension.
+
+        * chromium/public/WebGraphicsContext3D.h:
+        (WebGraphicsContext3D):
+        (WebKit::WebGraphicsContext3D::insertEventMarkerEXT):
+        (WebKit::WebGraphicsContext3D::pushGroupMarkerEXT):
+        (WebKit::WebGraphicsContext3D::popGroupMarkerEXT):
+
 2012-08-13  James Robinson  <jamesr@chromium.org>
 
         [chromium] Make WebAnimation a pure virtual interface to hide implementation and avoid unresolved symbols

@@ -95,6 +95,21 @@ void Extensions3DOpenGLES::copyTextureCHROMIUM(GC3Denum, Platform3DObject, Platf
     notImplemented();
 }
 
+void Extensions3DOpenGLES::insertEventMarkerEXT(const String&)
+{
+    notImplemented();
+}
+
+void Extensions3DOpenGLES::pushGroupMarkerEXT(const String&)
+{
+    notImplemented();
+}
+
+void Extensions3DOpenGLES::popGroupMarkerEXT(void)
+{
+    notImplemented();
+}
+
 Platform3DObject Extensions3DOpenGLES::createVertexArrayOES()
 {
     m_context->makeContextCurrent();

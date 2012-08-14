@@ -438,6 +438,11 @@ public:
     virtual void produceTextureCHROMIUM(WGC3Denum target, const WGC3Dbyte* mailbox) { }
     virtual void consumeTextureCHROMIUM(WGC3Denum target, const WGC3Dbyte* mailbox) { }
 
+    // GL_EXT_debug_marker
+    virtual void insertEventMarkerEXT(const WGC3Dchar* marker) { }
+    virtual void pushGroupMarkerEXT(const WGC3Dchar* marker) { }
+    virtual void popGroupMarkerEXT(void) { }
+
     GrGLInterface* createGrGLInterface();
 
 protected:

@@ -49,6 +49,7 @@ public:
     //   GL_CHROMIUM_iosurface (Mac OS X specific)
     //   GL_CHROMIUM_command_buffer_query
     //   GL_ANGLE_texture_usage
+    //   GL_EXT_debug_marker
     //   GL_EXT_texture_storage
     //   GL_EXT_occlusion_query_boolean
 
@@ -130,6 +131,11 @@ public:
     virtual void readnPixelsEXT(int x, int y, GC3Dsizei width, GC3Dsizei height, GC3Denum format, GC3Denum type, GC3Dsizei bufSize, void *data);
     virtual void getnUniformfvEXT(GC3Duint program, int location, GC3Dsizei bufSize, float *params);
     virtual void getnUniformivEXT(GC3Duint program, int location, GC3Dsizei bufSize, int *params);
+
+    // GL_EXT_debug_marker
+    virtual void insertEventMarkerEXT(const String&);
+    virtual void pushGroupMarkerEXT(const String&);
+    virtual void popGroupMarkerEXT(void);
 
 private:
     // Instances of this class are strictly owned by the GraphicsContext3D implementation and do not

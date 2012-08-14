@@ -31,6 +31,7 @@
 #include "GraphicsContext3DPrivate.h"
 #include "NotImplemented.h"
 #include <public/WebGraphicsContext3D.h>
+#include <wtf/text/CString.h>
 
 namespace WebCore {
 
@@ -197,5 +198,19 @@ void Extensions3DChromium::getnUniformivEXT(GC3Duint program, int location, GC3D
     notImplemented();
 }
 
+void Extensions3DChromium::insertEventMarkerEXT(const String& marker)
+{
+    m_private->webContext()->insertEventMarkerEXT(marker.utf8().data());
+}
+
+void Extensions3DChromium::pushGroupMarkerEXT(const String& marker)
+{
+    m_private->webContext()->pushGroupMarkerEXT(marker.utf8().data());
+}
+
+void Extensions3DChromium::popGroupMarkerEXT(void)
+{
+    m_private->webContext()->popGroupMarkerEXT();
+}
 
 } // namespace WebCore
