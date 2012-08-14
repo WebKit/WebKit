@@ -1,3 +1,13 @@
+2012-08-14  Szilard Ledan  <szledan@inf.u-szeged.hu>
+
+        [Qt] Gardening after r125516.
+
+        Reviewed by Csaba Osztrogonác.
+
+        Added baseline to fast/text/zero-font-size.html.
+
+        * platform/qt/fast/text/zero-font-size-expected.txt:
+
 2012-08-14  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, GTK gardening.
