@@ -394,28 +394,17 @@ void V8Proxy::resetIsolatedWorlds()
     m_isolatedWorldSecurityOrigins.clear();
 }
 
-void V8Proxy::hintForGCIfNecessary()
-{
-    V8PerIsolateData* data = V8PerIsolateData::current();
-    if (data->shouldCollectGarbageSoon()) {
-        const int longIdlePauseInMs = 1000;
-        data->clearShouldCollectGarbageSoon();
-        v8::V8::ContextDisposedNotification();
-        v8::V8::IdleNotification(longIdlePauseInMs);
-    }
-}
-
 void V8Proxy::clearForClose()
 {
     resetIsolatedWorlds();
-    hintForGCIfNecessary();
+    V8GCController::collectGarbageIfNecessary();
     windowShell()->clearForClose();
 }
 
 void V8Proxy::clearForNavigation()
 {
     resetIsolatedWorlds();
-    hintForGCIfNecessary();
+    V8GCController::collectGarbageIfNecessary();
     windowShell()->clearForNavigation();
 }
 

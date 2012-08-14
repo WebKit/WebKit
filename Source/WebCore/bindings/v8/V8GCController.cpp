@@ -519,5 +519,15 @@ void V8GCController::checkMemoryUsage()
 #endif
 }
 
+void V8GCController::collectGarbageIfNecessary()
+{
+    V8PerIsolateData* data = V8PerIsolateData::current();
+    if (!data->shouldCollectGarbageSoon())
+        return;
+    const int longIdlePauseInMS = 1000;
+    data->clearShouldCollectGarbageSoon();
+    v8::V8::ContextDisposedNotification();
+    v8::V8::IdleNotification(longIdlePauseInMS);
+}
 
 }  // namespace WebCore

@@ -1,3 +1,24 @@
+2012-08-13  Kentaro Hara  <haraken@chromium.org>
+
+        [V8] Move hintForGCIfNecessary() from V8Proxy.h to V8GCController.h
+        https://bugs.webkit.org/show_bug.cgi?id=93834
+
+        Reviewed by Adam Barth.
+
+        This patch moves hintForGCIfNecessary() from V8Proxy.h to V8GCController.h.
+
+        No tests. No change in behavior.
+
+        * bindings/v8/V8GCController.cpp:
+        (WebCore::V8GCController::hintForGCIfNecessary):
+        * bindings/v8/V8GCController.h:
+        (V8GCController):
+        * bindings/v8/V8Proxy.cpp:
+        (WebCore::V8Proxy::clearForClose):
+        (WebCore::V8Proxy::clearForNavigation):
+        * bindings/v8/V8Proxy.h:
+        (V8Proxy):
+
 2012-08-13  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r124970.
