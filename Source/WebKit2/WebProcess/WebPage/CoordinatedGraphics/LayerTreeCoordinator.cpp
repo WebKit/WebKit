@@ -601,7 +601,7 @@ void LayerTreeCoordinator::renderNextFrame()
     m_waitingForUIProcess = false;
     scheduleLayerFlush();
     for (int i = 0; i < m_updateAtlases.size(); ++i)
-        m_updateAtlases[i].didSwapBuffers();
+        m_updateAtlases[i]->didSwapBuffers();
 }
 
 bool LayerTreeCoordinator::layerTreeTileUpdatesAllowed() const
@@ -623,18 +623,18 @@ PassOwnPtr<WebCore::GraphicsContext> LayerTreeCoordinator::beginContentUpdate(co
 {
     OwnPtr<WebCore::GraphicsContext> graphicsContext;
     for (int i = 0; i < m_updateAtlases.size(); ++i) {
-        UpdateAtlas& atlas = m_updateAtlases[i];
-        if (atlas.flags() == flags) {
+        UpdateAtlas* atlas = m_updateAtlases[i].get();
+        if (atlas->flags() == flags) {
             // This will return null if there is no available buffer space.
-            graphicsContext = atlas.beginPaintingOnAvailableBuffer(handle, size, offset);
+            graphicsContext = atlas->beginPaintingOnAvailableBuffer(handle, size, offset);
             if (graphicsContext)
                 return graphicsContext.release();
         }
     }
 
-    static const int ScratchBufferDimension = 2000;
-    m_updateAtlases.append(UpdateAtlas(ScratchBufferDimension, flags));
-    return m_updateAtlases.last().beginPaintingOnAvailableBuffer(handle, size, offset);
+    static const int ScratchBufferDimension = 1024; // Should be a power of two.
+    m_updateAtlases.append(adoptPtr(new UpdateAtlas(ScratchBufferDimension, flags)));
+    return m_updateAtlases.last()->beginPaintingOnAvailableBuffer(handle, size, offset);
 }
 
 } // namespace WebKit

@@ -20,17 +20,20 @@
 #ifndef UpdateAtlas_h
 #define UpdateAtlas_h
 
+#include "AreaAllocator.h"
+#include "IntSize.h"
 #include "ShareableSurface.h"
 
 #if USE(COORDINATED_GRAPHICS)
 namespace WebCore {
 class GraphicsContext;
-class IntRect;
+class IntPoint;
 }
 
 namespace WebKit {
 
 class UpdateAtlas {
+    WTF_MAKE_NONCOPYABLE(UpdateAtlas);
 public:
     UpdateAtlas(int dimension, ShareableBitmap::Flags);
 
@@ -43,17 +46,9 @@ public:
 
 private:
     void buildLayoutIfNeeded();
-    WebCore::IntPoint offsetForIndex(int) const;
-    int findAvailableIndex(const WebCore::IntSize&);
 
 private:
-    enum State {
-        Available,
-        Taken
-    };
-
-    Vector<State> m_bufferStates;
-    Vector<int> m_layout;
+    OwnPtr<GeneralAreaAllocator> m_areaAllocator;
     ShareableBitmap::Flags m_flags;
     RefPtr<ShareableSurface> m_surface;
 };

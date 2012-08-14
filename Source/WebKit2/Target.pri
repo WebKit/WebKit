@@ -341,6 +341,7 @@ HEADERS += \
     WebProcess/WebCoreSupport/WebSearchPopupMenu.h \
     WebProcess/WebCoreSupport/WebVibrationClient.h \
     WebProcess/WebCoreSupport/qt/WebFrameNetworkingContext.h \
+    WebProcess/WebPage/AreaAllocator.h \
     WebProcess/WebPage/DrawingArea.h \
     WebProcess/WebPage/DrawingAreaImpl.h \
     WebProcess/WebPage/EventDispatcher.h \
@@ -702,6 +703,7 @@ SOURCES += \
     WebProcess/WebCoreSupport/qt/WebDragClientQt.cpp \
     WebProcess/WebCoreSupport/qt/WebFrameNetworkingContext.cpp \
     WebProcess/WebCoreSupport/qt/WebPopupMenuQt.cpp \
+    WebProcess/WebPage/AreaAllocator.cpp \
     WebProcess/WebPage/DecoderAdapter.cpp \
     WebProcess/WebPage/DrawingArea.cpp \
     WebProcess/WebPage/DrawingAreaImpl.cpp \

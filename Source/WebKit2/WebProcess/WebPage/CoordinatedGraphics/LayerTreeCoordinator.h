@@ -123,7 +123,7 @@ private:
 
     HashSet<WebCore::CoordinatedGraphicsLayer*> m_registeredLayers;
     HashMap<int64_t, int> m_directlyCompositedImageRefCounts;
-    Vector<UpdateAtlas> m_updateAtlases;
+    Vector<OwnPtr<UpdateAtlas> > m_updateAtlases;
 
     bool m_notifyAfterScheduledLayerFlush;
     bool m_isValid;

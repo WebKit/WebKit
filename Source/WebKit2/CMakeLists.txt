@@ -464,6 +464,7 @@ SET(WebKit2_SOURCES
     WebProcess/WebPage/EventDispatcher.cpp
     WebProcess/WebPage/FindController.cpp
 
+    WebProcess/WebPage/AreaAllocator.cpp
     WebProcess/WebPage/LayerTreeHost.cpp
     WebProcess/WebPage/PageOverlay.cpp
     WebProcess/WebPage/TapHighlightController.cpp

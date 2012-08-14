@@ -1,3 +1,57 @@
+2012-08-14  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
+
+        [Qt] UpdateAtlas is wasting memory
+        https://bugs.webkit.org/show_bug.cgi?id=93606
+
+        Reviewed by Jocelyn Turcotte.
+
+        Imported and QAreaAllocator from Qt3D and ported it to WebCore style,
+        and use this new area allocator to replace old one from UpdateAtlas.
+
+        * CMakeLists.txt:
+        * Target.pri:
+        * WebProcess/WebPage/AreaAllocator.cpp: Added.
+        (WebKit::AreaAllocator::AreaAllocator):
+        (WebKit::AreaAllocator::~AreaAllocator):
+        (WebKit::AreaAllocator::expand):
+        (WebKit::AreaAllocator::expandBy):
+        (WebKit::AreaAllocator::release):
+        (WebKit::AreaAllocator::overhead):
+        (WebKit::AreaAllocator::roundAllocation):
+        (WebKit::GeneralAreaAllocator::GeneralAreaAllocator):
+        (WebKit::GeneralAreaAllocator::~GeneralAreaAllocator):
+        (WebKit::GeneralAreaAllocator::freeNode):
+        (WebKit::GeneralAreaAllocator::expand):
+        (WebKit::fitsWithin):
+        (WebKit::GeneralAreaAllocator::allocate):
+        (WebKit::GeneralAreaAllocator::allocateFromNode):
+        (WebKit::GeneralAreaAllocator::splitNode):
+        (WebKit::GeneralAreaAllocator::updateLargestFree):
+        (WebKit::GeneralAreaAllocator::release):
+        (WebKit::GeneralAreaAllocator::overhead):
+        * WebProcess/WebPage/AreaAllocator.h: Added.
+        (WebCore::nextPowerOfTwo):
+        (AreaAllocator):
+        (WebKit::AreaAllocator::size):
+        (WebKit::AreaAllocator::minimumAllocation):
+        (WebKit::AreaAllocator::setMinimumAllocation):
+        (WebKit::AreaAllocator::margin):
+        (WebKit::AreaAllocator::setMargin):
+        (GeneralAreaAllocator):
+        (Node):
+        * WebProcess/WebPage/CoordinatedGraphics/LayerTreeCoordinator.cpp:
+        (WebKit::LayerTreeCoordinator::renderNextFrame):
+        (WebKit::LayerTreeCoordinator::beginContentUpdate):
+        * WebProcess/WebPage/CoordinatedGraphics/LayerTreeCoordinator.h:
+        (LayerTreeCoordinator):
+        * WebProcess/WebPage/UpdateAtlas.cpp:
+        (WebKit::UpdateAtlas::UpdateAtlas):
+        (WebKit::UpdateAtlas::buildLayoutIfNeeded):
+        (WebKit::UpdateAtlas::didSwapBuffers):
+        (WebKit::UpdateAtlas::beginPaintingOnAvailableBuffer):
+        * WebProcess/WebPage/UpdateAtlas.h:
+        (UpdateAtlas):
+
 2012-08-14  Sergio Villar Senin  <svillar@igalia.com>
 
         [GTK] REGRESSION (r122428) WebKit2APITests/TestWebKitFindController fails "next" test
