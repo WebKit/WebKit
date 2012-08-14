@@ -1,3 +1,31 @@
+2012-08-14  Charles Wei  <charles.wei@torchmobile.com.cn>
+
+        [BlackBerry] Some callback of Select onchange doesn't work
+        https://bugs.webkit.org/show_bug.cgi?id=93944
+
+        Reviewed by George Staikos.
+
+        The Selection element is implemented with PagePopup, an HTML-based WebView with
+        some Javascripts to make the UI of the select and option lists; The selection
+        change is initiated from the javascript code in the Select Webview, and back to
+        the native code of SelectPopupClient, which now in turn dispatches
+        FormControlChangeEvent to the select element directly, and that causes the
+        javascript callback been invoked in the same cycle as the javascript in the
+        Popup View, and causes some Javascript Context problem.
+
+        The solution is to send the FormControlChangeEvent asynchronously by a timer, 
+        when the JavaScript in the Popup view finishes execution, we then send the
+        FormControlChangeEvent to the select element in the content page, that avoids
+        the concurrent Javascript context issue.
+
+        * WebCoreSupport/SelectPopupClient.cpp:
+        (WebCore::SelectPopupClient::SelectPopupClient):
+        (WebCore::SelectPopupClient::setValueAndClosePopup):
+        (WebCore):
+        (WebCore::SelectPopupClient::notifySelectionChange):
+        * WebCoreSupport/SelectPopupClient.h:
+        (SelectPopupClient):
+
 2012-08-14  Arvid Nilsson  <anilsson@rim.com>
 
         [BlackBerry] Get rid of glCopyTexImage2D in Canvas and WebGL code paths
