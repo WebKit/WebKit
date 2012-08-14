@@ -1,3 +1,17 @@
+2012-08-14  Sergio Villar Senin  <svillar@igalia.com>
+
+        [GTK] REGRESSION (r122428) WebKit2APITests/TestWebKitFindController fails "next" test
+        https://bugs.webkit.org/show_bug.cgi?id=91083
+
+        Reviewed by Carlos Garcia Campos.
+
+        After r122428 search_next()/search_prev() should return just 1 match
+        if the text is found.
+
+        * UIProcess/API/gtk/tests/TestWebKitFindController.cpp:
+        (testFindControllerNext):
+        (testFindControllerPrevious):
+
 2012-08-13  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Implement smart separators for context menu in WebKit2 GTK+
