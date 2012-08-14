@@ -1,3 +1,15 @@
+2012-08-14  Levi Weintraub  <leviw@chromium.org>
+
+        Accumulating LayoutUnits with floats for determining block preferred width can lead to wrapping
+        https://bugs.webkit.org/show_bug.cgi?id=93513
+
+        Reviewed by Eric Seidel.
+
+        Ensuring floats with sub-pixel values don't unnecessarily wrap.
+
+        * fast/sub-pixel/block-preferred-widths-with-sub-pixel-floats-expected.txt: Added.
+        * fast/sub-pixel/block-preferred-widths-with-sub-pixel-floats.html: Added.
+
 2012-08-14  Jer Noble  <jer.noble@apple.com>
 
         Fullscreen/normal volume sliders don't stay in sync

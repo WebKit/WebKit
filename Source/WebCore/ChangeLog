@@ -1,3 +1,29 @@
+2012-08-14  Levi Weintraub  <leviw@chromium.org>
+
+        Accumulating LayoutUnits with floats for determining block preferred width can lead to wrapping
+        https://bugs.webkit.org/show_bug.cgi?id=93513
+
+        Reviewed by Eric Seidel.
+
+        Sub-pixel values from floats are subject to small losses in precision when accumulated with
+        floating point values, as we do in RenderBlock. This patch adds a new method to FractionalLayoutUnit --
+        ceilToFloat -- which guarantees us a floating point value at least as big as our original LayoutUnit
+        value, and uses it along with ceiledLayoutUnit to avoid underprovisioning RenderBlock's preferred
+        widths due to lost precision.
+
+        Test: fast/sub-pixel/block-preferred-widths-with-sub-pixel-floats.html
+
+        * platform/FractionalLayoutUnit.h:
+        (WebCore::FractionalLayoutUnit::ceilToFloat): Returns a float value the same or larger than the
+        FractionalLayoutUnit value.
+        (FractionalLayoutUnit):
+        (WebCore::FractionalLayoutUnit::epsilon): Now returns 0 when sub-pixel is disabled.
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::computeLogicalLocationForFloat): Adding a LayoutUnit::epsilon fudge factor
+        for fitting floats. This is probably necessary due to precision being lost elsewhere.
+        (WebCore::RenderBlock::computeInlinePreferredLogicalWidths): Ensure no precision is lost due to conversion
+        when accumulating our min/max width with floats.
+
 2012-08-14  Jer Noble  <jer.noble@apple.com>
 
         Fullscreen/normal volume sliders don't stay in sync

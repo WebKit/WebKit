@@ -114,10 +114,20 @@ public:
     int toInt() const { return m_value / kFixedPointDenominator; }
     float toFloat() const { return static_cast<float>(m_value) / kFixedPointDenominator; }
     double toDouble() const { return static_cast<double>(m_value) / kFixedPointDenominator; }
+    float ceilToFloat() const
+    {
+        float floatValue = toFloat();
+        if (static_cast<int>(floatValue * kFixedPointDenominator) == m_value)
+            return floatValue;
+        if (floatValue > 0)
+            return nextafterf(floatValue, std::numeric_limits<float>::max());
+        return nextafterf(floatValue, std::numeric_limits<float>::min());
+    }
 #else
     int toInt() const { return m_value; }
     float toFloat() const { return static_cast<float>(m_value); }
     double toDouble() const { return static_cast<double>(m_value); }
+    float ceilToFloat() const { return toFloat(); }
 #endif
     unsigned toUnsigned() const { REPORT_OVERFLOW(m_value >= 0); return toInt(); }
 
@@ -183,7 +193,11 @@ public:
 #endif
     }
 
+#if ENABLE(SUBPIXEL_LAYOUT)
     static float epsilon() { return 1.0f / kFixedPointDenominator; }
+#else
+    static int epsilon() { return 0; }
+#endif
     static const FractionalLayoutUnit max()
     {
         FractionalLayoutUnit m;

@@ -3826,7 +3826,8 @@ LayoutPoint RenderBlock::computeLogicalLocationForFloat(const FloatingObject* fl
         LayoutUnit heightRemainingLeft = 1;
         LayoutUnit heightRemainingRight = 1;
         floatLogicalLeft = logicalLeftOffsetForLine(logicalTopOffset, logicalLeftOffset, false, &heightRemainingLeft);
-        while (logicalRightOffsetForLine(logicalTopOffset, logicalRightOffset, false, &heightRemainingRight) - floatLogicalLeft < floatLogicalWidth) {
+        // FIXME: LayoutUnit::epsilon is probably only necessary here due to lost precision elsewhere https://bugs.webkit.org/show_bug.cgi?id=94000
+        while (logicalRightOffsetForLine(logicalTopOffset, logicalRightOffset, false, &heightRemainingRight) - floatLogicalLeft + LayoutUnit::epsilon() < floatLogicalWidth) {
             logicalTopOffset += min(heightRemainingLeft, heightRemainingRight);
             floatLogicalLeft = logicalLeftOffsetForLine(logicalTopOffset, logicalLeftOffset, false, &heightRemainingLeft);
             if (inRenderFlowThread()) {
@@ -3841,7 +3842,8 @@ LayoutPoint RenderBlock::computeLogicalLocationForFloat(const FloatingObject* fl
         LayoutUnit heightRemainingLeft = 1;
         LayoutUnit heightRemainingRight = 1;
         floatLogicalLeft = logicalRightOffsetForLine(logicalTopOffset, logicalRightOffset, false, &heightRemainingRight);
-        while (floatLogicalLeft - logicalLeftOffsetForLine(logicalTopOffset, logicalLeftOffset, false, &heightRemainingLeft) < floatLogicalWidth) {
+        // FIXME: LayoutUnit::epsilon is probably only necessary here due to lost precision elsewhere https://bugs.webkit.org/show_bug.cgi?id=94000
+        while (floatLogicalLeft - logicalLeftOffsetForLine(logicalTopOffset, logicalLeftOffset, false, &heightRemainingLeft) + LayoutUnit::epsilon() < floatLogicalWidth) {
             logicalTopOffset += min(heightRemainingLeft, heightRemainingRight);
             floatLogicalLeft = logicalRightOffsetForLine(logicalTopOffset, logicalRightOffset, false, &heightRemainingRight);
             if (inRenderFlowThread()) {
@@ -5751,11 +5753,11 @@ void RenderBlock::computeInlinePreferredLogicalWidths()
                     Length startMargin = childStyle->marginStart();
                     Length endMargin = childStyle->marginEnd();
                     if (startMargin.isFixed())
-                        margins += startMargin.value();
+                        margins += ceiledLayoutUnit(startMargin.value());
                     if (endMargin.isFixed())
-                        margins += endMargin.value();
-                    childMin += margins;
-                    childMax += margins;
+                        margins += ceiledLayoutUnit(endMargin.value());
+                    childMin += margins.ceilToFloat();
+                    childMax += margins.ceilToFloat();
                 }
             }
 
@@ -5763,8 +5765,8 @@ void RenderBlock::computeInlinePreferredLogicalWidths()
                 // Case (2). Inline replaced elements and floats.
                 // Go ahead and terminate the current line as far as
                 // minwidth is concerned.
-                childMin += child->minPreferredLogicalWidth();
-                childMax += child->maxPreferredLogicalWidth();
+                childMin += child->minPreferredLogicalWidth().ceilToFloat();
+                childMax += child->maxPreferredLogicalWidth().ceilToFloat();
 
                 bool clearPreviousFloat;
                 if (child->isFloating()) {
@@ -5791,11 +5793,11 @@ void RenderBlock::computeInlinePreferredLogicalWidths()
                 LayoutUnit ti = 0;
                 if (!addedTextIndent) {
                     ti = textIndent;
-                    childMin += ti;
-                    childMax += ti;
+                    childMin += ti.ceilToFloat();
+                    childMax += ti.ceilToFloat();
 
                     if (childMin < 0)
-                        textIndent = childMin;
+                        textIndent = ceiledLayoutUnit(childMin);
                     else
                         addedTextIndent = true;
                 }
@@ -5863,11 +5865,14 @@ void RenderBlock::computeInlinePreferredLogicalWidths()
                     trailingSpaceChild = 0;
 
                 // Add in text-indent.  This is added in only once.
-                LayoutUnit ti = 0;
+                float ti = 0;
                 if (!addedTextIndent) {
-                    ti = textIndent;
-                    childMin+=ti; beginMin += ti;
-                    childMax+=ti; beginMax += ti;
+                    ti = textIndent.ceilToFloat();
+                    
+                    childMin += ti;
+                    childMax += ti;
+                    beginMin += ti;
+                    beginMax += ti;
                     
                     if (childMin < 0)
                         textIndent = childMin;
