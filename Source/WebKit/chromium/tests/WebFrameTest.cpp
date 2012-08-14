@@ -958,4 +958,94 @@ TEST_F(WebFrameTest, FindInPageMatchRects)
     webView->close();
 }
 
+static WebView* selectRangeTestCreateWebView(const std::string& url)
+{
+    WebView* webView = FrameTestHelpers::createWebViewAndLoad(url, true);
+    webView->settings()->setDefaultFontSize(12);
+    webView->resize(WebSize(640, 480));
+    return webView;
+}
+
+static WebPoint topLeft(const WebRect& rect)
+{
+    return WebPoint(rect.x, rect.y);
+}
+
+static WebPoint bottomRightMinusOne(const WebRect& rect)
+{
+    // FIXME: If we don't subtract 1 from the x- and y-coordinates of the
+    // selection bounds, selectRange() will select the *next* element. That's
+    // strictly correct, as hit-testing checks the pixel to the lower-right of
+    // the input coordinate, but it's a wart on the API.
+    return WebPoint(rect.x + rect.width - 1, rect.y + rect.height - 1);
+}
+
+static std::string selectionAsString(WebFrame* frame)
+{
+    return std::string(frame->selectionAsText().utf8().data());
+}
+
+TEST_F(WebFrameTest, SelectRange)
+{
+    WebView* webView;
+    WebFrame* frame;
+    WebRect startWebRect;
+    WebRect endWebRect;
+
+    registerMockedHttpURLLoad("select_range_basic.html");
+    registerMockedHttpURLLoad("select_range_scroll.html");
+    registerMockedHttpURLLoad("select_range_iframe.html");
+    registerMockedHttpURLLoad("select_range_editable.html");
+
+    webView = selectRangeTestCreateWebView(m_baseURL + "select_range_basic.html");
+    frame = webView->mainFrame();
+    EXPECT_EQ("Some test text for testing.", selectionAsString(frame));
+    webView->selectionBounds(startWebRect, endWebRect);
+    frame->executeCommand(WebString::fromUTF8("Unselect"));
+    EXPECT_EQ("", selectionAsString(frame));
+    frame->selectRange(topLeft(startWebRect), bottomRightMinusOne(endWebRect));
+    EXPECT_EQ("Some test text for testing.", selectionAsString(frame));
+    webView->close();
+
+    webView = selectRangeTestCreateWebView(m_baseURL + "select_range_scroll.html");
+    frame = webView->mainFrame();
+    EXPECT_EQ("Some offscreen test text for testing.", selectionAsString(frame));
+    webView->selectionBounds(startWebRect, endWebRect);
+    frame->executeCommand(WebString::fromUTF8("Unselect"));
+    EXPECT_EQ("", selectionAsString(frame));
+    frame->selectRange(topLeft(startWebRect), bottomRightMinusOne(endWebRect));
+    EXPECT_EQ("Some offscreen test text for testing.", selectionAsString(frame));
+    webView->close();
+
+    webView = selectRangeTestCreateWebView(m_baseURL + "select_range_iframe.html");
+    frame = webView->mainFrame();
+    WebFrame* subframe = frame->findChildByExpression(WebString::fromUTF8("/html/body/iframe"));
+    EXPECT_EQ("Some test text for testing.", selectionAsString(subframe));
+    webView->selectionBounds(startWebRect, endWebRect);
+    subframe->executeCommand(WebString::fromUTF8("Unselect"));
+    EXPECT_EQ("", selectionAsString(subframe));
+    subframe->selectRange(topLeft(startWebRect), bottomRightMinusOne(endWebRect));
+    EXPECT_EQ("Some test text for testing.", selectionAsString(subframe));
+    webView->close();
+
+    // Select the middle of an editable element, then try to extend the selection to the top of the document.
+    // The selection range should be clipped to the bounds of the editable element.
+    webView = selectRangeTestCreateWebView(m_baseURL + "select_range_editable.html");
+    frame = webView->mainFrame();
+    EXPECT_EQ("This text is initially selected.", selectionAsString(frame));
+    webView->selectionBounds(startWebRect, endWebRect);
+    frame->selectRange(WebPoint(0, 0), bottomRightMinusOne(endWebRect));
+    EXPECT_EQ("16-char header. This text is initially selected.", selectionAsString(frame));
+    webView->close();
+
+    // As above, but extending the selection to the bottom of the document.
+    webView = selectRangeTestCreateWebView(m_baseURL + "select_range_editable.html");
+    frame = webView->mainFrame();
+    EXPECT_EQ("This text is initially selected.", selectionAsString(frame));
+    webView->selectionBounds(startWebRect, endWebRect);
+    frame->selectRange(topLeft(startWebRect), WebPoint(640, 480));
+    EXPECT_EQ("This text is initially selected. 16-char footer.", selectionAsString(frame));
+    webView->close();
+}
+
 } // namespace

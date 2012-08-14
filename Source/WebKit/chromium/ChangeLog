@@ -1,3 +1,30 @@
+2012-08-14  Iain Merrick  <husky@chromium.org>
+
+        [chromium] Add a test to WebFrameTest for selectRange and visiblePositionForWindowPoint.
+        https://bugs.webkit.org/show_bug.cgi?id=93108
+
+        Reviewed by Adam Barth.
+
+        Adds a new test WebFrameTest.SelectRange. This tests WebFrameImpl::selectRange,
+        and also serves to test WebFrameImpl::visiblePositionForWindowPoint as it is
+        used by selectRange.
+
+        The test uses sample files that contain selected text on load. The test uses
+        WebViewImpl::selectionBounds to get the coordinates, deselects all, then
+        calls WebFrameImpl::selectRange to attempt to reselect the same text.
+
+        Four cases are tested:
+        - the basic case
+        - the case where the selected text is offscreen due to a scroll
+        - the case where the selected text is in an iframe
+        - the case where the selected text is in an editable element
+
+        * tests/WebFrameTest.cpp:
+        * tests/data/select_range_basic.html: Added.
+        * tests/data/select_range_editable.html: Added.
+        * tests/data/select_range_iframe.html: Added.
+        * tests/data/select_range_scroll.html: Added.
+
 2012-08-14  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: Pass cursor continue results back in callback
