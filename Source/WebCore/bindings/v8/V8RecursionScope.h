@@ -32,7 +32,7 @@
 #define V8RecursionScope_h
 
 #include "ScriptExecutionContext.h"
-#include "V8Binding.h"
+#include "V8PerIsolateData.h"
 #include <wtf/Noncopyable.h>
 
 namespace WebCore {

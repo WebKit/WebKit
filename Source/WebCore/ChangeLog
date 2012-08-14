@@ -1,5 +1,25 @@
 2012-08-13  Kentaro Hara  <haraken@chromium.org>
 
+        [V8] Move the ConstructorMode class from V8Binding.h to SafeAllocation.h
+        https://bugs.webkit.org/show_bug.cgi?id=93821
+
+        Reviewed by Adam Barth.
+
+        This patch factors out the ConstructorMode class from V8Binding.h to SafeAllocation.h.
+
+        No tests. No change in behavior.
+
+        * bindings/v8/SafeAllocation.h:
+        (ConstructorMode):
+        (WebCore::ConstructorMode::ConstructorMode):
+        (WebCore::ConstructorMode::~ConstructorMode):
+        (WebCore::ConstructorMode::current):
+        (WebCore):
+        * bindings/v8/V8Binding.h:
+        * bindings/v8/V8RecursionScope.h:
+
+2012-08-13  Kentaro Hara  <haraken@chromium.org>
+
         [V8] Remove V8BindingHelpers
         https://bugs.webkit.org/show_bug.cgi?id=93807
 

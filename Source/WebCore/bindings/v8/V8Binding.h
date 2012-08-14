@@ -32,18 +32,15 @@
 #define V8Binding_h
 
 #include "BindingSecurity.h"
-#include "DOMDataStore.h"
 #include "Document.h"
-#include "PlatformString.h"
+#include "SafeAllocation.h"
 #include "V8BindingMacros.h"
 #include "V8DOMConfiguration.h"
 #include "V8DOMWrapper.h"
-#include "V8GCController.h"
 #include "V8HiddenPropertyName.h"
 #include "V8PerIsolateData.h"
 #include "V8Proxy.h"
 #include "V8ValueCache.h"
-#include <wtf/MathExtras.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/text/AtomicString.h>
 #include <v8.h>
@@ -75,32 +72,6 @@ namespace WebCore {
 
     private:
         GCEventListeners m_listeners;
-    };
-
-    class ConstructorMode {
-    public:
-        enum Mode {
-            WrapExistingObject,
-            CreateNewObject
-        };
-
-        ConstructorMode()
-        {
-            V8PerIsolateData* data = V8PerIsolateData::current();
-            m_previous = data->m_constructorMode;
-            data->m_constructorMode = WrapExistingObject;
-        }
-
-        ~ConstructorMode()
-        {
-            V8PerIsolateData* data = V8PerIsolateData::current();
-            data->m_constructorMode = m_previous;
-        }
-
-        static bool current() { return V8PerIsolateData::current()->m_constructorMode; }
-
-    private:
-        bool m_previous;
     };
 
     // Since v8::Null(isolate) crashes if we pass a null isolate,

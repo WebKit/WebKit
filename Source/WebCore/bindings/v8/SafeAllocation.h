@@ -31,12 +31,38 @@
 #ifndef SafeAllocation_h
 #define SafeAllocation_h
 
-#include "V8Binding.h"
+#include "V8PerIsolateData.h"
 #include "V8RecursionScope.h"
 
 #include <v8.h>
 
 namespace WebCore {
+
+class ConstructorMode {
+public:
+    enum Mode {
+        WrapExistingObject,
+        CreateNewObject
+    };
+
+    ConstructorMode()
+    {
+        V8PerIsolateData* data = V8PerIsolateData::current();
+        m_previous = data->m_constructorMode;
+        data->m_constructorMode = WrapExistingObject;
+    }
+
+    ~ConstructorMode()
+    {
+        V8PerIsolateData* data = V8PerIsolateData::current();
+        data->m_constructorMode = m_previous;
+    }
+
+    static bool current() { return V8PerIsolateData::current()->m_constructorMode; }
+
+private:
+    bool m_previous;
+};
 
 class SafeAllocation {
 public:
