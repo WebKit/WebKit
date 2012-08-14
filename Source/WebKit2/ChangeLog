@@ -1,3 +1,25 @@
+2012-08-13  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Implement smart separators for context menu in WebKit2 GTK+
+        https://bugs.webkit.org/show_bug.cgi?id=90449
+
+        Reviewed by Martin Robinson.
+
+        Don't add to the context menu separators that are at the very
+        beginning or end of the menu. Once the context menu is shown,
+        monitor menu items visibility to hide or show separators to make
+        sure they never appear in the context menu unless they are between
+        two visible items.
+
+        * UIProcess/API/gtk/tests/TestContextMenu.cpp:
+        (testContextMenuSmartSeparators):
+        (beforeAll):
+        * UIProcess/gtk/WebContextMenuProxyGtk.cpp:
+        (WebKit::contextMenuItemVisibilityChanged):
+        (WebKit):
+        (WebKit::WebContextMenuProxyGtk::append):
+        (WebKit::WebContextMenuProxyGtk::populate):
+
 2012-08-14  Kihong Kwon  <kihong.kwon@samsung.com>
 
         [WK2] Add getter for capture attribute of input element

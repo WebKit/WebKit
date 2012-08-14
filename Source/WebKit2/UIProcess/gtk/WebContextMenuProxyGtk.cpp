@@ -53,22 +53,78 @@ static void contextMenuItemActivatedCallback(GtkAction* action, WebPageProxy* pa
     page->contextMenuItemSelected(item);
 }
 
+static void contextMenuItemVisibilityChanged(GtkAction* action, GParamSpec*, WebContextMenuProxyGtk* contextMenuProxy)
+{
+    GtkMenu* menu = contextMenuProxy->gtkMenu();
+    if (!menu)
+        return;
+
+    GOwnPtr<GList> items(gtk_container_get_children(GTK_CONTAINER(menu)));
+    bool previousVisibleItemIsNotASeparator = false;
+    GtkWidget* lastItemVisibleSeparator = 0;
+    for (GList* iter = items.get(); iter; iter = g_list_next(iter)) {
+        GtkWidget* widget = GTK_WIDGET(iter->data);
+
+        if (GTK_IS_SEPARATOR_MENU_ITEM(widget)) {
+            if (previousVisibleItemIsNotASeparator) {
+                gtk_widget_show(widget);
+                lastItemVisibleSeparator = widget;
+                previousVisibleItemIsNotASeparator = false;
+            } else
+                gtk_widget_hide(widget);
+        } else if (gtk_widget_get_visible(widget)) {
+            lastItemVisibleSeparator = 0;
+            previousVisibleItemIsNotASeparator = true;
+        }
+    }
+
+    if (lastItemVisibleSeparator)
+        gtk_widget_hide(lastItemVisibleSeparator);
+}
+
 void WebContextMenuProxyGtk::append(ContextMenuItem& menuItem)
 {
     GtkAction* action = menuItem.gtkAction();
-
-    if (action && (menuItem.type() == ActionType || menuItem.type() == CheckableActionType)) {
-        g_object_set_data(G_OBJECT(action), gContextMenuActionId, GINT_TO_POINTER(menuItem.action()));
-        g_signal_connect(action, "activate", G_CALLBACK(contextMenuItemActivatedCallback), m_page);
+    if (action) {
+        switch (menuItem.type()) {
+        case ActionType:
+        case CheckableActionType:
+            g_object_set_data(G_OBJECT(action), gContextMenuActionId, GINT_TO_POINTER(menuItem.action()));
+            g_signal_connect(action, "activate", G_CALLBACK(contextMenuItemActivatedCallback), m_page);
+            // Fall through.
+        case SubmenuType:
+            g_signal_connect(action, "notify::visible", G_CALLBACK(contextMenuItemVisibilityChanged), this);
+            break;
+        case SeparatorType:
+            break;
+        }
     }
 
     m_menu.appendItem(menuItem);
 }
 
+// Populate the context menu ensuring that:
+//  - There aren't separators next to each other.
+//  - There aren't separators at the beginning of the menu.
+//  - There aren't separators at the end of the menu.
 void WebContextMenuProxyGtk::populate(Vector<ContextMenuItem>& items)
 {
-    for (size_t i = 0; i < items.size(); i++)
-        append(items.at(i));
+    bool previousIsSeparator = false;
+    bool isEmpty = true;
+    for (size_t i = 0; i < items.size(); i++) {
+        ContextMenuItem& menuItem = items.at(i);
+        if (menuItem.type() == SeparatorType) {
+            previousIsSeparator = true;
+            continue;
+        }
+
+        if (previousIsSeparator && !isEmpty)
+            append(items.at(i - 1));
+        previousIsSeparator = false;
+
+        append(menuItem);
+        isEmpty = false;
+    }
 }
 
 void WebContextMenuProxyGtk::populate(const Vector<WebContextMenuItemData>& items)

@@ -74,6 +74,24 @@ public:
         quitMainLoop();
     }
 
+    GtkMenu* getPopupMenu()
+    {
+        GOwnPtr<GList> toplevels(gtk_window_list_toplevels());
+        for (GList* iter = toplevels.get(); iter; iter = g_list_next(iter)) {
+            if (!GTK_IS_WINDOW(iter->data))
+                continue;
+
+            GtkWidget* child = gtk_bin_get_child(GTK_BIN(iter->data));
+            if (!GTK_IS_MENU(child))
+                continue;
+
+            if (gtk_menu_get_attach_widget(GTK_MENU(child)) == GTK_WIDGET(m_webView))
+                return GTK_MENU(child);
+        }
+        g_assert_not_reached();
+        return 0;
+    }
+
     bool shouldShowInputMethodsMenu()
     {
         GtkSettings* settings = gtk_widget_get_settings(GTK_WIDGET(m_webView));
@@ -391,24 +409,6 @@ public:
         return false;
     }
 
-    GtkMenu* getPopupMenu()
-    {
-        GOwnPtr<GList> toplevels(gtk_window_list_toplevels());
-        for (GList* iter = toplevels.get(); iter; iter = g_list_next(iter)) {
-            if (!GTK_IS_WINDOW(iter->data))
-                continue;
-
-            GtkWidget* child = gtk_bin_get_child(GTK_BIN(iter->data));
-            if (!GTK_IS_MENU(child))
-                continue;
-
-            if (gtk_menu_get_attach_widget(GTK_MENU(child)) == GTK_WIDGET(m_webView))
-                return GTK_MENU(child);
-        }
-        g_assert_not_reached();
-        return 0;
-    }
-
     GtkMenuItem* getMenuItem(GtkMenu* menu, const gchar* itemLabel)
     {
         GOwnPtr<GList> items(gtk_container_get_children(GTK_CONTAINER(menu)));
@@ -721,6 +721,115 @@ static void testContextMenuDismissed(ContextMenuDismissedTest* test, gconstpoint
     g_assert(test->m_dismissed);
 }
 
+class ContextMenuSmartSeparatorsTest: public ContextMenuTest {
+public:
+    MAKE_GLIB_TEST_FIXTURE(ContextMenuSmartSeparatorsTest);
+
+    bool contextMenu(WebKitContextMenu* contextMenu, GdkEvent*, WebKitHitTestResult*)
+    {
+        webkit_context_menu_remove_all(contextMenu);
+
+        webkit_context_menu_append(contextMenu, webkit_context_menu_item_new_separator());
+        webkit_context_menu_append(contextMenu, webkit_context_menu_item_new_separator());
+        webkit_context_menu_append(contextMenu, webkit_context_menu_item_new_from_stock_action(WEBKIT_CONTEXT_MENU_ACTION_GO_BACK));
+        webkit_context_menu_append(contextMenu, webkit_context_menu_item_new_from_stock_action(WEBKIT_CONTEXT_MENU_ACTION_GO_FORWARD));
+        webkit_context_menu_append(contextMenu, webkit_context_menu_item_new_separator());
+        webkit_context_menu_append(contextMenu, webkit_context_menu_item_new_separator());
+        webkit_context_menu_append(contextMenu, webkit_context_menu_item_new_from_stock_action(WEBKIT_CONTEXT_MENU_ACTION_COPY));
+        webkit_context_menu_append(contextMenu, webkit_context_menu_item_new_separator());
+        webkit_context_menu_append(contextMenu, webkit_context_menu_item_new_from_stock_action(WEBKIT_CONTEXT_MENU_ACTION_INSPECT_ELEMENT));
+        webkit_context_menu_append(contextMenu, webkit_context_menu_item_new_separator());
+        webkit_context_menu_append(contextMenu, webkit_context_menu_item_new_separator());
+
+        quitMainLoop();
+
+        return false;
+    }
+
+    GtkMenu* showContextMenuAndGetGtkMenu()
+    {
+        showContextMenuAndWaitUntilFinished();
+        return getPopupMenu();
+    }
+};
+
+static void testContextMenuSmartSeparators(ContextMenuSmartSeparatorsTest* test, gconstpointer)
+{
+    test->showInWindowAndWaitUntilMapped();
+
+    test->loadHtml("<html><body>WebKitGTK+ Context menu tests</body></html>", "file:///");
+    test->waitUntilLoadFinished();
+
+    GtkMenu* menu = test->showContextMenuAndGetGtkMenu();
+    g_assert(menu);
+
+    // Leading and trailing separators are not added to the context menu.
+    GOwnPtr<GList> menuItems(gtk_container_get_children(GTK_CONTAINER(menu)));
+    g_assert_cmpuint(g_list_length(menuItems.get()), ==, 6);
+    GtkWidget* item = GTK_WIDGET(g_list_nth_data(menuItems.get(), 0));
+    g_assert(!GTK_IS_SEPARATOR_MENU_ITEM(item) && gtk_widget_get_visible(item));
+    item = GTK_WIDGET(g_list_nth_data(menuItems.get(), 1));
+    g_assert(!GTK_IS_SEPARATOR_MENU_ITEM(item) && gtk_widget_get_visible(item));
+    item = GTK_WIDGET(g_list_nth_data(menuItems.get(), 2));
+    g_assert(GTK_IS_SEPARATOR_MENU_ITEM(item) && gtk_widget_get_visible(item));
+    item = GTK_WIDGET(g_list_nth_data(menuItems.get(), 3));
+    g_assert(!GTK_IS_SEPARATOR_MENU_ITEM(item) && gtk_widget_get_visible(item));
+    item = GTK_WIDGET(g_list_nth_data(menuItems.get(), 4));
+    g_assert(GTK_IS_SEPARATOR_MENU_ITEM(item) && gtk_widget_get_visible(item));
+    item = GTK_WIDGET(g_list_nth_data(menuItems.get(), 5));
+    g_assert(!GTK_IS_SEPARATOR_MENU_ITEM(item) && gtk_widget_get_visible(item));
+
+    // Hiding a menu item between two separators hides the following separator.
+    GtkAction* action = gtk_activatable_get_related_action(GTK_ACTIVATABLE(g_list_nth_data(menuItems.get(), 3)));
+    gtk_action_set_visible(action, FALSE);
+    menuItems.set(gtk_container_get_children(GTK_CONTAINER(menu)));
+    g_assert_cmpuint(g_list_length(menuItems.get()), ==, 6);
+    item = GTK_WIDGET(g_list_nth_data(menuItems.get(), 0));
+    g_assert(!GTK_IS_SEPARATOR_MENU_ITEM(item) && gtk_widget_get_visible(item));
+    item = GTK_WIDGET(g_list_nth_data(menuItems.get(), 1));
+    g_assert(!GTK_IS_SEPARATOR_MENU_ITEM(item) && gtk_widget_get_visible(item));
+    item = GTK_WIDGET(g_list_nth_data(menuItems.get(), 2));
+    g_assert(GTK_IS_SEPARATOR_MENU_ITEM(item) && gtk_widget_get_visible(item));
+    item = GTK_WIDGET(g_list_nth_data(menuItems.get(), 3));
+    g_assert(!GTK_IS_SEPARATOR_MENU_ITEM(item) && !gtk_widget_get_visible(item));
+    item = GTK_WIDGET(g_list_nth_data(menuItems.get(), 4));
+    g_assert(GTK_IS_SEPARATOR_MENU_ITEM(item) && !gtk_widget_get_visible(item));
+    item = GTK_WIDGET(g_list_nth_data(menuItems.get(), 5));
+    g_assert(!GTK_IS_SEPARATOR_MENU_ITEM(item) && gtk_widget_get_visible(item));
+    gtk_action_set_visible(action, TRUE);
+
+    // Showing an action between two separators shows the hidden separator.
+    item = GTK_WIDGET(g_list_nth_data(menuItems.get(), 0));
+    g_assert(!GTK_IS_SEPARATOR_MENU_ITEM(item) && gtk_widget_get_visible(item));
+    item = GTK_WIDGET(g_list_nth_data(menuItems.get(), 1));
+    g_assert(!GTK_IS_SEPARATOR_MENU_ITEM(item) && gtk_widget_get_visible(item));
+    item = GTK_WIDGET(g_list_nth_data(menuItems.get(), 2));
+    g_assert(GTK_IS_SEPARATOR_MENU_ITEM(item) && gtk_widget_get_visible(item));
+    item = GTK_WIDGET(g_list_nth_data(menuItems.get(), 3));
+    g_assert(!GTK_IS_SEPARATOR_MENU_ITEM(item) && gtk_widget_get_visible(item));
+    item = GTK_WIDGET(g_list_nth_data(menuItems.get(), 4));
+    g_assert(GTK_IS_SEPARATOR_MENU_ITEM(item) && gtk_widget_get_visible(item));
+    item = GTK_WIDGET(g_list_nth_data(menuItems.get(), 5));
+    g_assert(!GTK_IS_SEPARATOR_MENU_ITEM(item) && gtk_widget_get_visible(item));
+
+    // Trailing separators are hidden too.
+    action = gtk_activatable_get_related_action(GTK_ACTIVATABLE(g_list_nth_data(menuItems.get(), 5)));
+    gtk_action_set_visible(action, FALSE);
+    menuItems.set(gtk_container_get_children(GTK_CONTAINER(menu)));
+    item = GTK_WIDGET(g_list_nth_data(menuItems.get(), 0));
+    g_assert(!GTK_IS_SEPARATOR_MENU_ITEM(item) && gtk_widget_get_visible(item));
+    item = GTK_WIDGET(g_list_nth_data(menuItems.get(), 1));
+    g_assert(!GTK_IS_SEPARATOR_MENU_ITEM(item) && gtk_widget_get_visible(item));
+    item = GTK_WIDGET(g_list_nth_data(menuItems.get(), 2));
+    g_assert(GTK_IS_SEPARATOR_MENU_ITEM(item) && gtk_widget_get_visible(item));
+    item = GTK_WIDGET(g_list_nth_data(menuItems.get(), 3));
+    g_assert(!GTK_IS_SEPARATOR_MENU_ITEM(item) && gtk_widget_get_visible(item));
+    item = GTK_WIDGET(g_list_nth_data(menuItems.get(), 4));
+    g_assert(GTK_IS_SEPARATOR_MENU_ITEM(item) && !gtk_widget_get_visible(item));
+    item = GTK_WIDGET(g_list_nth_data(menuItems.get(), 5));
+    g_assert(!GTK_IS_SEPARATOR_MENU_ITEM(item) && !gtk_widget_get_visible(item));
+}
+
 void beforeAll()
 {
     ContextMenuDefaultTest::add("WebKitWebView", "default-menu", testContextMenuDefaultMenu);
@@ -729,6 +838,7 @@ void beforeAll()
     ContextMenuDisabledTest::add("WebKitWebView", "disable-menu", testContextMenuDisableMenu);
     ContextMenuSubmenuTest::add("WebKitWebView", "submenu", testContextMenuSubMenu);
     ContextMenuDismissedTest::add("WebKitWebView", "menu-dismissed", testContextMenuDismissed);
+    ContextMenuSmartSeparatorsTest::add("WebKitWebView", "smart-separators", testContextMenuSmartSeparators);
 }
 
 void afterAll()
