@@ -257,11 +257,6 @@ namespace WebCore {
         return v8Value;
     }
 
-    // Enables caching v8 wrappers created for WTF::StringImpl.  Currently this cache requires
-    // all the calls (both to convert WTF::String to v8::String and to GC the handle)
-    // to be performed on the main thread.
-    void enableStringImplCache();
-
     // Convert a value to a 32-bit integer.  The conversion fails if the
     // value cannot be converted to an integer or converts to nan or to an infinity.
     int toInt32(v8::Handle<v8::Value> value, bool& ok);
@@ -349,11 +344,6 @@ namespace WebCore {
     inline AtomicString toWebCoreAtomicStringWithNullCheck(v8::Handle<v8::Value> value)
     {
         return value->IsNull() ? AtomicString() : toWebCoreAtomicString(value);
-    }
-
-    inline v8::Handle<v8::String> v8UndetectableString(const String& str)
-    {
-        return v8::String::NewUndetectable(fromWebCoreString(str), str.length());
     }
 
     inline v8::Handle<v8::Value> v8StringOrNull(const String& str, v8::Isolate* isolate = 0)
