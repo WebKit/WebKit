@@ -1209,7 +1209,6 @@ BUGWK81217 : svg/hixie/perf/003.xml = PASS IMAGE
 // Rebaseline needed (https://bugs.webkit.org/show_bug.cgi?id=6033)
 BUGWK6033 : css3/filters/add-filter-rendering.html = PASS IMAGE
 BUGWK6033 : css3/filters/blur-filter-page-scroll-parents.html = PASS IMAGE
-BUGWK6033 : css3/filters/blur-filter-page-scroll.html = PASS IMAGE
 BUGWK6033 : css3/filters/crash-filter-change.html = PASS IMAGE
 BUGWK6033 : css3/filters/crash-hw-sw-switch.html = PASS IMAGE
 BUGWK6033 : css3/filters/custom/custom-filter-shader-cache.html = PASS IMAGE
@@ -1241,6 +1240,8 @@ BUGWK6033 : css3/filters/nested-filters.html = PASS IMAGE
 BUGWK6033 : css3/filters/regions-expanding.html = PASS IMAGE
 BUGWK6033 : css3/filters/simple-filter-rendering.html = PASS IMAGE
 BUGWK6033 : svg/filters/color-interpolation-filters.svg = PASS MISSING
+// Uncomment when BUGWK82783 is fixed.
+// BUGWK6033 : css3/filters/blur-filter-page-scroll.html = PASS IMAGE
 
 BUGWK92758 : css3/filters/custom/effect-custom-parameters.html = PASS IMAGE CRASH
 
@@ -2551,8 +2552,8 @@ BUGWK82783 : css3/filters/filter-repaint.html = PASS IMAGE IMAGE+TEXT TEXT MISSI
 BUGWK82783 : css3/filters/filter-with-transform.html = PASS IMAGE IMAGE+TEXT TEXT MISSING
 BUGWK82783 : css3/filters/filter-repaint-sepia.html = PASS IMAGE IMAGE+TEXT TEXT MISSING
 BUGWK82783 : css3/filters/nested-filter.html = PASS IMAGE IMAGE+TEXT TEXT MISSING
-BUGWK82783 WIN : css3/filters/blur-filter-page-scroll.html = PASS IMAGE IMAGE+TEXT TEXT MISSING
-
+// Please fix a line with BUGWK6033 above when BUGWK82783 is fixed.
+BUGWK82783 BUGWK6033 : css3/filters/blur-filter-page-scroll.html = PASS IMAGE IMAGE+TEXT TEXT MISSING
 
 // CSS Regions tests for region styling and scoped styles
 BUGWK49142 : fast/regions/style-scoped-in-flow-override-container-style.html = PASS IMAGE IMAGE+TEXT TEXT MISSING
@@ -3508,3 +3509,6 @@ BUGWK93799 MAC : fast/dom/HTMLMeterElement/meter-optimums.html = PASS IMAGE
 BUGWK93799 MAC : fast/dom/HTMLMeterElement/meter-styles.html = PASS IMAGE
 
 BUGWK93801 LION : fast/speech/input-appearance-searchandspeech.html = PASS IMAGE
+
+// This was fixed in V8 3.13.0, but the V8 roll to 3.13.0 was reverted :(
+BUGWK75468 : fast/js/kde/GlobalObject.html = TEXT
