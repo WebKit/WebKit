@@ -1,3 +1,66 @@
+2012-08-14  Florin Malita  <fmalita@chromium.org>
+
+        [Chromium] Rebaseline filter results after 125462
+        https://bugs.webkit.org/show_bug.cgi?id=93969
+
+        Unreviewed gardening.
+
+        * platform/chromium-linux-x86/css3/filters/custom/filter-repaint-custom-clipped-expected.png: Removed.
+        * platform/chromium-linux-x86/css3/filters/custom/filter-repaint-custom-expected.png: Removed.
+        * platform/chromium-linux-x86/css3/filters/custom/filter-repaint-custom-rotated-expected.png: Removed.
+        * platform/chromium-linux/css3/filters/custom/effect-custom-combined-missing-expected.png:
+        * platform/chromium-mac-snowleopard/css3/filters/crash-hw-sw-switch-expected.png:
+        * platform/chromium-mac/css3/filters/add-filter-rendering-expected.png:
+        * platform/chromium-mac/css3/filters/crash-filter-change-expected.png:
+        * platform/chromium-mac/css3/filters/crash-hw-sw-switch-expected.png:
+        * platform/chromium-mac/css3/filters/custom/custom-filter-shader-cache-expected.png:
+        * platform/chromium-mac/css3/filters/custom/effect-color-check-expected.png:
+        * platform/chromium-mac/css3/filters/custom/effect-custom-combined-missing-expected.png:
+        * platform/chromium-mac/css3/filters/custom/effect-custom-expected.png:
+        * platform/chromium-mac/css3/filters/custom/filter-repaint-custom-clipped-expected.png:
+        * platform/chromium-mac/css3/filters/custom/filter-repaint-custom-expected.png:
+        * platform/chromium-mac/css3/filters/custom/filter-repaint-custom-rotated-expected.png:
+        * platform/chromium-mac/css3/filters/effect-blur-expected.png:
+        * platform/chromium-mac/css3/filters/effect-brightness-clamping-expected.png:
+        * platform/chromium-mac/css3/filters/effect-brightness-expected.png:
+        * platform/chromium-mac/css3/filters/effect-combined-expected.png:
+        * platform/chromium-mac/css3/filters/effect-contrast-expected.png:
+        * platform/chromium-mac/css3/filters/effect-drop-shadow-expected.png:
+        * platform/chromium-mac/css3/filters/effect-grayscale-expected.png:
+        * platform/chromium-mac/css3/filters/effect-hue-rotate-expected.png:
+        * platform/chromium-mac/css3/filters/effect-invert-expected.png:
+        * platform/chromium-mac/css3/filters/effect-opacity-expected.png:
+        * platform/chromium-mac/css3/filters/effect-reference-expected.png:
+        * platform/chromium-mac/css3/filters/effect-reference-external-expected.png:
+        * platform/chromium-mac/css3/filters/effect-reference-hw-expected.png:
+        * platform/chromium-mac/css3/filters/effect-reference-ordering-expected.png:
+        * platform/chromium-mac/css3/filters/effect-saturate-expected.png:
+        * platform/chromium-mac/css3/filters/effect-sepia-expected.png:
+        * platform/chromium-mac/css3/filters/filtered-inline-expected.png:
+        * platform/chromium-mac/css3/filters/multiple-filters-invalidation-expected.png:
+        * platform/chromium-mac/css3/filters/nested-filters-expected.png:
+        * platform/chromium-mac/css3/filters/regions-expanding-expected.png:
+        * platform/chromium-mac/css3/filters/simple-filter-rendering-expected.png:
+        * platform/chromium-mac/svg/filters/color-interpolation-filters-expected.png: Copied from LayoutTests/platform/chromium-mac/css3/filters/simple-filter-rendering-expected.png.
+        * platform/chromium-win-xp/css3/filters/custom/filter-repaint-custom-clipped-expected.png: Removed.
+        * platform/chromium-win-xp/css3/filters/custom/filter-repaint-custom-expected.png: Removed.
+        * platform/chromium-win-xp/css3/filters/custom/filter-repaint-custom-rotated-expected.png: Removed.
+        * platform/chromium-win/css3/filters/crash-hw-sw-switch-expected.png:
+        * platform/chromium-win/css3/filters/custom/custom-filter-shader-cache-expected.png:
+        * platform/chromium-win/css3/filters/custom/effect-color-check-expected.png:
+        * platform/chromium-win/css3/filters/custom/effect-custom-combined-missing-expected.png:
+        * platform/chromium-win/css3/filters/custom/effect-custom-expected.png:
+        * platform/chromium-win/css3/filters/custom/filter-repaint-custom-clipped-expected.png:
+        * platform/chromium-win/css3/filters/custom/filter-repaint-custom-expected.png:
+        * platform/chromium-win/css3/filters/custom/filter-repaint-custom-rotated-expected.png:
+        * platform/chromium-win/css3/filters/effect-brightness-clamping-expected.png:
+        * platform/chromium-win/css3/filters/effect-brightness-expected.png:
+        * platform/chromium-win/svg/filters/color-interpolation-filters-expected.png: Added.
+        * platform/chromium/TestExpectations:
+        * platform/efl/svg/filters/color-interpolation-filters-expected.txt: Removed.
+        * platform/gtk/svg/filters/color-interpolation-filters-expected.txt: Removed.
+        * svg/filters/color-interpolation-filters-expected.txt: Renamed from LayoutTests/platform/chromium-linux/svg/filters/color-interpolation-filters-expected.txt.
+
 2012-08-14  Kent Tamura  <tkent@chromium.org>
 
         [Chromium] Update expectation files for fast/forms/date/calendar-picker-appearance.html
