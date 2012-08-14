@@ -1,3 +1,26 @@
+2012-08-13  Douglas Stockwell  <dstockwell@chromium.org>
+
+        Crash in WebCore::RenderBlock::LineBreaker::nextLineBreak
+        https://bugs.webkit.org/show_bug.cgi?id=93806
+
+        Reviewed by Abhishek Arya.
+
+        When looking for line breaks on the first line, existing code was
+        checking for text-combine only in the first-line style. Since
+        text-combine isn't inherited this resulted in a line break being
+        chosen before combineText was called. When this happened and then
+        combineText was called subsequently, the position of the line break
+        iterator would be invalid.
+
+        This patch changes the check to use the regular style as in
+        skipLeadingWhitespace and textWidth.
+
+        Test: fast/text/text-combine-first-line-crash.html
+
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::LineBreaker::nextLineBreak): Don't use the
+        first-line style when checking text-combine.
+
 2012-08-13  Kwang Yul Seo  <skyul@company100.net>
 
         Remove unused method HTMLDocumentParser::script()
