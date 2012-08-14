@@ -1240,7 +1240,7 @@ bool RenderThemeEfl::paintMediaSliderTrack(RenderObject* object, const PaintInfo
         IntPoint sliderTopRight = sliderTopLeft;
         sliderTopRight.move(0, rangeRect.height());
 
-        context->fillRect(FloatRect(rect), m_mediaPanelColor, ColorSpaceDeviceRGB);
+        context->fillRect(FloatRect(rangeRect), m_mediaPanelColor, ColorSpaceDeviceRGB);
     }
     context->restore();
     return true;

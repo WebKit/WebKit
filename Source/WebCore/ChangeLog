@@ -1,3 +1,16 @@
+2012-08-14  KwangYong Choi  <ky0.choi@samsung.com>
+
+        [EFL] Fixed displaying buffering progress in the media control.
+        https://bugs.webkit.org/show_bug.cgi?id=75681
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        It is required "rangeRect" instead of "rect" to display buffering
+        progress properly.
+
+        * platform/efl/RenderThemeEfl.cpp:
+        (WebCore::RenderThemeEfl::paintMediaSliderTrack):
+
 2012-08-14  Yoshifumi Inoue  <yosin@chromium.org>
 
         [Forms] Copy Source/WebCore/html/shadow/TextControlInnerElements.{cpp,h} to SpinButtonElement.{cpp,h}
