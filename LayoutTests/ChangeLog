@@ -1,3 +1,11 @@
+2012-08-13  Shawn Singh  <shawnsingh@chromium.org>
+
+        Unreviewed rebaseline after r125193.
+
+        * platform/chromium-mac/compositing/masks/layer-mask-placement-expected.png:
+        * platform/chromium-win/compositing/masks/layer-mask-placement-expected.png:
+        * platform/chromium/TestExpectations:
+
 2012-08-13  Eric Seidel  <eric@webkit.org>
 
         Add test to demonstrate overpainting seen in bug 92800
