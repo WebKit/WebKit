@@ -237,12 +237,6 @@ function resizeWindow(width, height) {
     }
 }
 
-function showMain() {
-    var main = $("main");
-    main.style.webkitTransition = "opacity 0.1s ease";
-    main.style.opacity = "1";
-}
-
 // ----------------------------------------------------------------
 // Initialization
 
@@ -308,7 +302,6 @@ function initialize(args) {
     if (errorString) {
         main.textContent = "Internal error: " + errorString;
         resizeWindow(main.offsetWidth, main.offsetHeight);
-        showMain();
     } else {
         global.params = args;
         checkLimits();
@@ -359,7 +352,6 @@ function fixWindowSize() {
     document.getElementsByClassName(ClassNames.YearMonthUpper)[0].style.display = "-webkit-box";
     document.getElementsByClassName(ClassNames.MonthSelectorBox)[0].style.display = "block";
     resizeWindow(desiredBodyWidth, mainHeight);
-    showMain();
 }
 
 function checkLimits() {

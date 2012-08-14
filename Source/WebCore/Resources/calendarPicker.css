@@ -47,9 +47,8 @@ body {
         inset -2px -2px 1px rgba(0,0,0,0.1);
     padding: 6px;
     whitespace: nowrap;
-    /* width and opacity are reset in the JS code. */
+    /* width is reset in the JS code. */
     width: 500px;
-    opacity: 0;
 }
 
 .year-month-area {

@@ -1,3 +1,21 @@
+2012-08-13  Keishi Hattori  <keishi@webkit.org>
+
+        Remove fade in transition from calendar picker
+        https://bugs.webkit.org/show_bug.cgi?id=93816
+
+        Reviewed by Kent Tamura.
+
+        The fade in transition was incomplete because it was only fading in the
+        popup content and not the popup itself. Removing the effect for now.
+
+        No new tests. Can't test animation.
+
+        * Resources/calendarPicker.css:
+        (#main):
+        * Resources/calendarPicker.js:
+        (initialize):
+        (fixWindowSize):
+
 2012-08-13  Alex Christensen  <alex.christensen@flexsim.com>
 
         WPARAM and LPARAM are incorrectly defined for x64
