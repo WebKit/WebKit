@@ -1,5 +1,19 @@
 2012-08-14  Arvid Nilsson  <anilsson@rim.com>
 
+        [BlackBerry] Texture cache must adapt to HashMap changes
+        https://bugs.webkit.org/show_bug.cgi?id=93955
+
+        Reviewed by Rob Buis.
+
+        This was fixed locally, but not upstreamed yet.
+
+        Based on an original patch by Konrad Piascik.
+
+        * platform/graphics/blackberry/TextureCacheCompositingThread.cpp:
+        (WebCore::TextureCacheCompositingThread::textureForTiledContents):
+
+2012-08-14  Arvid Nilsson  <anilsson@rim.com>
+
         [BlackBerry] LayerCompositingThread.h doesn't compile
         https://bugs.webkit.org/show_bug.cgi?id=93956
 

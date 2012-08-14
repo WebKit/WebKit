@@ -201,10 +201,10 @@ void TextureCacheCompositingThread::setMemoryUsage(size_t memoryUsage)
 
 PassRefPtr<Texture> TextureCacheCompositingThread::textureForTiledContents(const SkBitmap& contents, const IntRect& tileRect, const TileIndex& index, bool isOpaque)
 {
-    HashMap<ContentsKey, TextureMap>::iterator it = m_cache.add(key(contents), TextureMap()).first;
+    HashMap<ContentsKey, TextureMap>::iterator it = m_cache.add(key(contents), TextureMap()).iterator;
     TextureMap& map = (*it).second;
 
-    TextureMap::iterator jt = map.add(index, RefPtr<Texture>()).first;
+    TextureMap::iterator jt = map.add(index, RefPtr<Texture>()).iterator;
     RefPtr<Texture> texture = (*jt).second;
     if (!texture) {
         texture = createTexture();
