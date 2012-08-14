@@ -1,3 +1,15 @@
+2012-08-14  Robert Hogan  <robert@webkit.org>
+
+        Update Test Expectations after r125578
+
+        Unreviewed gardening.
+
+        * platform/chromium/TestExpectations:
+        * platform/efl/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/qt/Skipped:
+        * platform/qt/TestExpectations:
+
 2012-08-14  Adrienne Walker  <enne@google.com>
 
         [chromium] Mark inspector/debugger tests as flaky timeout on Win7
