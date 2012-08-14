@@ -4055,7 +4055,6 @@ sub NativeToJSValue
         if (defined $conv) {
             return "v8StringOrNull($value$getIsolateArg)" if $conv eq "Null";
             return "v8StringOrUndefined($value$getIsolateArg)" if $conv eq "Undefined";
-            return "v8StringOrFalse($value$getIsolateArg)" if $conv eq "False";
 
             die "Unknown value for TreatReturnedNullStringAs extended attribute";
         }

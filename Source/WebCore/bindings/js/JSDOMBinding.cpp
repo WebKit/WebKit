@@ -76,13 +76,6 @@ JSValue jsStringOrUndefined(ExecState* exec, const String& s)
     return jsString(exec, s);
 }
 
-JSValue jsStringOrFalse(ExecState* exec, const String& s)
-{
-    if (s.isNull())
-        return jsBoolean(false);
-    return jsString(exec, s);
-}
-
 JSValue jsString(ExecState* exec, const KURL& url)
 {
     return jsString(exec, url.string());
@@ -99,13 +92,6 @@ JSValue jsStringOrUndefined(ExecState* exec, const KURL& url)
 {
     if (url.isNull())
         return jsUndefined();
-    return jsString(exec, url.string());
-}
-
-JSValue jsStringOrFalse(ExecState* exec, const KURL& url)
-{
-    if (url.isNull())
-        return jsBoolean(false);
     return jsString(exec, url.string());
 }
 

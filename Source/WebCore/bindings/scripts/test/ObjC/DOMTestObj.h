@@ -40,7 +40,6 @@
 @class DOMa;
 @class DOMb;
 @class DOMbool;
-@class DOMc;
 @class DOMd;
 @class DOMe;
 @class NSString;
@@ -220,7 +219,6 @@ enum {
 - (DOMSVGDocument *)getSVGDocument;
 - (void)convert1:(DOMa *);
 - (void)convert2:(DOMb *);
-- (void)convert3:(DOMc *);
 - (void)convert4:(DOMd *);
 - (void)convert5:(DOMe *);
 - (DOMSVGPoint *)mutablePointFunction;

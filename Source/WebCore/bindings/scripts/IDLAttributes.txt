@@ -104,7 +104,7 @@ Supplemental=*
 SuppressToJSObject
 TransferList=*
 TreatNullAs=NullString
-TreatReturnedNullStringAs=False|Null|Undefined
+TreatReturnedNullStringAs=Null|Undefined
 TreatUndefinedAs=NullString
 TypedArray=*
 URL

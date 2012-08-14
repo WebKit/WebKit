@@ -420,17 +420,6 @@ WEBKIT_API void
 webkit_dom_test_obj_convert2(WebKitDOMTestObj* self, WebKitDOMb* );
 
 /**
- * webkit_dom_test_obj_convert3:
- * @self: A #WebKitDOMTestObj
- * @: A #WebKitDOMc
- *
- * Returns:
- *
-**/
-WEBKIT_API void
-webkit_dom_test_obj_convert3(WebKitDOMTestObj* self, WebKitDOMc* );
-
-/**
  * webkit_dom_test_obj_convert4:
  * @self: A #WebKitDOMTestObj
  * @: A #WebKitDOMd

@@ -40,7 +40,6 @@ class WebDOMTestObj;
 class WebDOMa;
 class WebDOMb;
 class WebDOMbool;
-class WebDOMc;
 class WebDOMd;
 class WebDOMe;
 
@@ -182,7 +181,6 @@ public:
 #endif
     void convert1(const WebDOMa& );
     void convert2(const WebDOMb& );
-    void convert3(const WebDOMc& );
     void convert4(const WebDOMd& );
     void convert5(const WebDOMe& );
     WebDOMSVGPoint mutablePointFunction();

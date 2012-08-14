@@ -3118,7 +3118,6 @@ sub NativeToJSValue
         if (defined $conv) {
             return "jsStringOrNull(exec, $value)" if $conv eq "Null";
             return "jsStringOrUndefined(exec, $value)" if $conv eq "Undefined";
-            return "jsStringOrFalse(exec, $value)" if $conv eq "False";
 
             die "Unknown value for TreatReturnedNullStringAs extended attribute";
         }

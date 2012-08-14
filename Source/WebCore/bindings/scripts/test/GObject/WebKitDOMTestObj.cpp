@@ -48,8 +48,6 @@
 #include "webkit/WebKitDOMbPrivate.h"
 #include "webkit/WebKitDOMbool.h"
 #include "webkit/WebKitDOMboolPrivate.h"
-#include "webkit/WebKitDOMc.h"
-#include "webkit/WebKitDOMcPrivate.h"
 #include "webkit/WebKitDOMd.h"
 #include "webkit/WebKitDOMdPrivate.h"
 #include "webkit/WebKitDOMe.h"
@@ -1357,21 +1355,6 @@ webkit_dom_test_obj_convert2(WebKitDOMTestObj* self, WebKitDOMb* )
         g_return_if_fail(converted);
     }
     item->convert2(converted);
-}
-
-void
-webkit_dom_test_obj_convert3(WebKitDOMTestObj* self, WebKitDOMc* )
-{
-    g_return_if_fail(self);
-    WebCore::JSMainThreadNullState state;
-    WebCore::TestObj* item = WebKit::core(self);
-    g_return_if_fail();
-    WebCore::c* converted = 0;
-    if () {
-        converted = WebKit::core();
-        g_return_if_fail(converted);
-    }
-    item->convert3(converted);
 }
 
 void

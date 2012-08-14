@@ -366,11 +366,6 @@ namespace WebCore {
         return str.isNull() ? v8::Handle<v8::Value>(v8::Undefined()) : v8::Handle<v8::Value>(v8String(str, isolate));
     }
 
-    inline v8::Handle<v8::Value> v8StringOrFalse(const String& str, v8::Isolate* isolate = 0)
-    {
-        return str.isNull() ? v8::Handle<v8::Value>(v8Boolean(false)) : v8::Handle<v8::Value>(v8String(str, isolate));
-    }
-
     inline double toWebCoreDate(v8::Handle<v8::Value> object)
     {
         return (object->IsDate() || object->IsNumber()) ? object->NumberValue() : std::numeric_limits<double>::quiet_NaN();

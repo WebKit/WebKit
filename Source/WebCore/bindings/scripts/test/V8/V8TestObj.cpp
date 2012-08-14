@@ -53,7 +53,6 @@
 #include "V8any.h"
 #include "V8b.h"
 #include "V8bool.h"
-#include "V8c.h"
 #include "V8d.h"
 #include "V8e.h"
 #include <wtf/Float32Array.h>
@@ -1858,17 +1857,6 @@ static v8::Handle<v8::Value> convert2Callback(const v8::Arguments& args)
     return v8Undefined();
 }
 
-static v8::Handle<v8::Value> convert3Callback(const v8::Arguments& args)
-{
-    INC_STATS("DOM.TestObj.convert3");
-    if (args.Length() < 1)
-        return V8Proxy::throwNotEnoughArgumentsError(args.GetIsolate());
-    TestObj* imp = V8TestObj::toNative(args.Holder());
-    EXCEPTION_BLOCK(c*, , V8c::HasInstance(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined)) ? V8c::toNative(v8::Handle<v8::Object>::Cast(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined))) : 0);
-    imp->convert3();
-    return v8Undefined();
-}
-
 static v8::Handle<v8::Value> convert4Callback(const v8::Arguments& args)
 {
     INC_STATS("DOM.TestObj.convert4");
@@ -2251,12 +2239,6 @@ static v8::Persistent<v8::FunctionTemplate> ConfigureV8TestObjTemplate(v8::Persi
     v8::Handle<v8::FunctionTemplate> convert2Argv[convert2Argc] = { V8b::GetRawTemplate() };
     v8::Handle<v8::Signature> convert2Signature = v8::Signature::New(desc, convert2Argc, convert2Argv);
     proto->Set(v8::String::New("convert2"), v8::FunctionTemplate::New(TestObjV8Internal::convert2Callback, v8Undefined(), convert2Signature));
-
-    // Custom Signature 'convert3'
-    const int convert3Argc = 1;
-    v8::Handle<v8::FunctionTemplate> convert3Argv[convert3Argc] = { V8c::GetRawTemplate() };
-    v8::Handle<v8::Signature> convert3Signature = v8::Signature::New(desc, convert3Argc, convert3Argv);
-    proto->Set(v8::String::New("convert3"), v8::FunctionTemplate::New(TestObjV8Internal::convert3Callback, v8Undefined(), convert3Signature));
 
     // Custom Signature 'convert4'
     const int convert4Argc = 1;

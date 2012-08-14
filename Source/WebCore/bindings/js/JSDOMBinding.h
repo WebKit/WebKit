@@ -247,9 +247,6 @@ enum ParameterDefaultPolicy {
     JSC::JSValue jsStringOrUndefined(JSC::ExecState*, const String&); // undefined if the string is null
     JSC::JSValue jsStringOrUndefined(JSC::ExecState*, const KURL&); // undefined if the URL is null
 
-    JSC::JSValue jsStringOrFalse(JSC::ExecState*, const String&); // boolean false if the string is null
-    JSC::JSValue jsStringOrFalse(JSC::ExecState*, const KURL&); // boolean false if the URL is null
-
     // See JavaScriptCore for explanation: Should be used for any string that is already owned by another
     // object, to let the engine know that collecting the JSString wrapper is unlikely to save memory.
     JSC::JSValue jsOwnedStringOrNull(JSC::ExecState*, const String&); 

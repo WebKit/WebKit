@@ -47,7 +47,6 @@
 #import "DOMaInternal.h"
 #import "DOMbInternal.h"
 #import "DOMboolInternal.h"
-#import "DOMcInternal.h"
 #import "DOMdInternal.h"
 #import "DOMeInternal.h"
 #import "Dictionary.h"
@@ -72,7 +71,6 @@
 #import "a.h"
 #import "b.h"
 #import "bool.h"
-#import "c.h"
 #import "d.h"
 #import "e.h"
 #import <wtf/GetPtr.h>
@@ -1001,12 +999,6 @@
 {
     WebCore::JSMainThreadNullState state;
     IMPL->convert2(core());
-}
-
-- (void)convert3:(DOMc *)
-{
-    WebCore::JSMainThreadNullState state;
-    IMPL->convert3(core());
 }
 
 - (void)convert4:(DOMd *)

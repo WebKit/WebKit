@@ -226,7 +226,6 @@ module test {
 
         void convert1(in [TreatReturnedNullStringAs=Null] a);
         void convert2(in [TreatReturnedNullStringAs=Undefined] b);
-        void convert3(in [TreatReturnedNullStringAs=False] c);
         void convert4(in [TreatNullAs=NullString] d);
         void convert5(in [TreatNullAs=NullString, TreatUndefinedAs=NullString] e);
 
