@@ -1,5 +1,13 @@
 2012-08-14  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
 
+        Unreviewed, Qt gardening
+
+        Unmark tests that has been passing since they were fixed generally in r125371.
+
+        * platform/qt/TestExpectations:
+
+2012-08-14  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
+
         Unreviewed gardening for Qt, rebaselining marked test from r125167.
 
         Changelog and commit mixed with entry below.
