@@ -410,6 +410,9 @@ bool SVGSMILElement::isSupportedAttribute(const QualifiedName& attrName)
         supportedAttributes.add(SVGNames::minAttr);
         supportedAttributes.add(SVGNames::maxAttr);
         supportedAttributes.add(SVGNames::attributeNameAttr);
+        supportedAttributes.add(SVGNames::fromAttr);
+        supportedAttributes.add(SVGNames::toAttr);
+        supportedAttributes.add(SVGNames::byAttr);
         supportedAttributes.add(XLinkNames::hrefAttr);
     }
     return supportedAttributes.contains<QualifiedName, SVGAttributeHashTranslator>(attrName);

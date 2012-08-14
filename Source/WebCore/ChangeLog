@@ -1,3 +1,24 @@
+2012-08-14  Florin Malita  <fmalita@chromium.org>
+
+        beginElement() does not observe updated animation attributes
+        https://bugs.webkit.org/show_bug.cgi?id=93972
+
+        Reviewed by Dirk Schulze.
+
+        The SVG animation attributes 'from', 'to' and 'by' should be registered as supported
+        SVGSMILElement attributes in order to trigger animationAttributeChanged() on dynamic
+        updates.
+
+        Test: svg/animations/updated-attributes.html
+
+        * svg/SVGAnimationElement.cpp:
+        (WebCore::SVGAnimationElement::updateAnimation):
+        Minor optimization - avoid recalculating animationMode().
+
+        * svg/animation/SVGSMILElement.cpp:
+        (WebCore::SVGSMILElement::isSupportedAttribute):
+        Register 'from', 'to' and 'by' as supported SVGSMILElement attributes.
+
 2012-08-14  Filip Spacek  <fspacek@rim.com>
 
         [BlackBerry] Don't crash on OOM in AC

@@ -574,8 +574,9 @@ void SVGAnimationElement::updateAnimation(float percent, unsigned repeatCount, S
         return;
 
     float effectivePercent;
-    CalcMode mode = calcMode();
-    if (animationMode() == ValuesAnimation) {
+    CalcMode calcMode = this->calcMode();
+    AnimationMode animationMode = this->animationMode();
+    if (animationMode == ValuesAnimation) {
         String from;
         String to;
         currentValuesForValuesAnimation(percent, effectivePercent, from, to);
@@ -586,11 +587,11 @@ void SVGAnimationElement::updateAnimation(float percent, unsigned repeatCount, S
             m_lastValuesAnimationFrom = from;
             m_lastValuesAnimationTo = to;
         }
-    } else if (!m_keyPoints.isEmpty() && mode != CalcModePaced)
+    } else if (!m_keyPoints.isEmpty() && calcMode != CalcModePaced)
         effectivePercent = calculatePercentFromKeyPoints(percent);
-    else if (m_keyPoints.isEmpty() && mode == CalcModeSpline && m_keyTimes.size() > 1)
+    else if (m_keyPoints.isEmpty() && calcMode == CalcModeSpline && m_keyTimes.size() > 1)
         effectivePercent = calculatePercentForSpline(percent, calculateKeyTimesIndex(percent));
-    else if (animationMode() == FromToAnimation || animationMode() == ToAnimation)
+    else if (animationMode == FromToAnimation || animationMode == ToAnimation)
         effectivePercent = calculatePercentForFromTo(percent);
     else
         effectivePercent = percent;
