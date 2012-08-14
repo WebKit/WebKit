@@ -1,3 +1,16 @@
+2012-08-14  Olivier Blin  <olivier.blin@softathome.com>
+
+        Remove unused yyparse method in CSSParser
+        https://bugs.webkit.org/show_bug.cgi?id=93986
+
+        Reviewed by Darin Adler.
+
+        This method is unused and not even declared.
+
+        No new tests, it just removes unused code.
+
+        * css/CSSParser.h:
+
 2012-08-14  Zan Dobersek  <zandobersek@gmail.com>
 
         [Gtk] Include all files guarded by ENABLE_* guards in Source/WebCore/GNUmakefile.list.am into the build

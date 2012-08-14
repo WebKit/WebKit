@@ -247,8 +247,6 @@ public:
 
     bool parseFontVariantLigatures(bool important);
 
-    int yyparse();
-
     CSSParserSelector* createFloatingSelector();
     PassOwnPtr<CSSParserSelector> sinkFloatingSelector(CSSParserSelector*);
 
