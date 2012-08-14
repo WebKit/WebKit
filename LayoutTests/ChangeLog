@@ -1,3 +1,10 @@
+2012-08-14  Kristóf Kosztyó  <kkristof@inf.u-szeged.hu>
+
+        [Qt] Unreviewed gardening. Unskip passing inspector tests after r125394.
+        https://bugs.webkit.org/show_bug.cgi?id=93228
+
+        * platform/qt/Skipped:
+
 2012-08-14  Christophe Dumez  <christophe.dumez@intel.com>
 
         regression(r124510) webintents/web-intents-obj-constructor.html is crashing
