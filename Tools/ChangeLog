@@ -1,3 +1,15 @@
+2012-08-14  Alexis Menard  <alexis.menard@openbossa.org>
+
+        Update INdT build bot to Mountain Lion.
+        https://bugs.webkit.org/show_bug.cgi?id=93963
+
+        Reviewed by Csaba Osztrogonác.
+
+        We updated the machine as well as the OS as the Qt port is now running
+        on top of Qt5.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json:
+
 2012-08-14  Peter Beverloo  <peter@chromium.org>
 
         [Chromium] Remove unneeded build logic for Android

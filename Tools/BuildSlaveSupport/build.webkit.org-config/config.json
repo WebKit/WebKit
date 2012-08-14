@@ -51,7 +51,7 @@
                     { "name": "szeged-windows-1", "platform": "qt-win"},
                     { "name": "szeged-windows-2", "platform": "qt-win"},
 
-                    { "name": "indt-snowleopard", "platform": "qt-mac"},
+                    { "name": "indt-mountainlion", "platform": "qt-mac"},
 
                     { "name": "google-windows-1", "platform": "chromium-win" },
                     { "name": "google-windows-2", "platform": "chromium-win" },
@@ -233,9 +233,9 @@
                       "slavenames": ["szeged-windows-2"]
                     },
                     {
-                      "name": "Qt SnowLeopard Release", "type": "Build", "builddir": "qt-snowleopard-release",
+                      "name": "Qt Mountain Lion Release", "type": "Build", "builddir": "qt-mountainlion-release",
                       "platform": "qt-mac", "configuration": "release", "architectures": ["x86_64"],
-                      "slavenames": ["indt-snowleopard"]
+                      "slavenames": ["indt-mountainlion"]
                     },
                     {
                       "name": "Chromium Win Release", "type": "Build", "builddir": "chromium-win-release",
@@ -326,7 +326,7 @@
                       "builderNames": ["GTK Linux 32-bit Release", "GTK Linux 64-bit Release", "GTK Linux 64-bit Debug",
                                        "Qt Linux Release", "Qt Linux Release minimal", "Qt Linux 64-bit Release (Perf)",
                                        "Qt Linux 64-bit Release (WebKit2 Perf)", "Qt Linux ARMv7 Release",
-                                       "Qt Windows 32-bit Release", "Qt Windows 32-bit Debug", "Qt SnowLeopard Release",
+                                       "Qt Windows 32-bit Release", "Qt Windows 32-bit Debug", "Qt Mountain Lion Release",
                                        "Chromium Win Release", "Chromium Mac Release", "Chromium Linux Release",
                                        "Chromium Android Release",
                                        "EFL Linux 64-bit Release", "EFL Linux 64-bit Debug", "EFL Linux 32-bit Release (Build)", "EFL Linux 64-bit Debug WK2",
