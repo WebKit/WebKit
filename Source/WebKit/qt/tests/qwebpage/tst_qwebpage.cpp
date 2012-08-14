@@ -2946,7 +2946,7 @@ void tst_QWebPage::findText()
     foreach (QString subString, words) {
         m_page->findText(subString, QWebPage::FindWrapsAroundDocument);
         QCOMPARE(m_page->selectedText(), subString);
-        QCOMPARE(m_page->selectedHtml().trimmed().replace(regExp, ""), QString("<span>%1</span>").arg(subString));
+        QCOMPARE(m_page->selectedHtml().trimmed().replace(regExp, ""), subString);
         m_page->findText("");
         QVERIFY(m_page->selectedText().isEmpty());
         QVERIFY(m_page->selectedHtml().isEmpty());

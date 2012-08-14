@@ -1,3 +1,15 @@
+2012-08-14  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        [Qt] Fix failing tst_QWebPage::findText unit test
+        https://bugs.webkit.org/show_bug.cgi?id=93951
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Adjust the expected text, as the HTML editing code improved to avoid unnecessary tags.
+
+        * tests/qwebpage/tst_qwebpage.cpp:
+        (tst_QWebPage::findText):
+
 2012-08-13  Tom Sepez  <tsepez@chromium.org>
 
         [chromium] release FrameLoaderClientImpl::m_pluginWidget refptr upon Plugin Document detach.
