@@ -84,4 +84,25 @@ void V8PerIsolateData::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) con
         info.addInstrumentedMember(m_domDataList[i]);
 }
 
+#if ENABLE(INSPECTOR)
+void V8PerIsolateData::visitExternalStrings(ExternalStringVisitor* visitor)
+{
+    v8::HandleScope handleScope;
+    class VisitorImpl : public v8::ExternalResourceVisitor {
+    public:
+        VisitorImpl(ExternalStringVisitor* visitor) : m_visitor(visitor) { }
+        virtual ~VisitorImpl() { }
+        virtual void VisitExternalString(v8::Handle<v8::String> string)
+        {
+            WebCoreStringResource* resource = static_cast<WebCoreStringResource*>(string->GetExternalStringResource());
+            if (resource)
+                resource->visitStrings(m_visitor);
+        }
+    private:
+        ExternalStringVisitor* m_visitor;
+    } v8Visitor(visitor);
+    v8::V8::VisitExternalResources(&v8Visitor);
+}
+#endif
+
 } // namespace WebCore

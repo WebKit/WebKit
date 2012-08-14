@@ -1,3 +1,20 @@
+2012-08-13  Kentaro Hara  <haraken@chromium.org>
+
+        [V8] Move V8PerIsolateData::visitExternalStrings() to V8PerIsolateData.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=93803
+
+        Reviewed by Adam Barth.
+
+        In r125015, I forgot to move V8PerIsolateData::visitExternalStrings()
+        to V8PerIsolateData.cpp. This patch moves it.
+
+        No tests. No change in behavior.
+
+        * bindings/v8/V8Binding.cpp:
+        * bindings/v8/V8PerIsolateData.cpp:
+        (WebCore):
+        (WebCore::V8PerIsolateData::visitExternalStrings):
+
 2012-08-13  Elliott Sprehn  <esprehn@chromium.org>
 
         Expand list of supported languages for RenderQuote to match WHATWG spec
