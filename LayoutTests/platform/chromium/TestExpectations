@@ -3492,5 +3492,5 @@ BUGWK94002 WIN7 : inspector/debugger = PASS TIMEOUT
 // Added by bug 89826
 BUGWK94003 MAC : fast/css/word-spacing-characters.html = IMAGE
 BUGWK94003 MAC : fast/css/word-spacing-characters-complex-text.html = IMAGE
-
 BUGWK94010 DEBUG : fast/regex/unicodeCaseInsensitive.html = PASS CRASH
+BUGWK94017 WIN : css2.1/20110323/c541-word-sp-000.htm = IMAGE
