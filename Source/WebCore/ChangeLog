@@ -1,3 +1,21 @@
+2012-08-14  Keishi Hattori  <keishi@webkit.org>
+
+        Move page popup resources to separate directory
+        https://bugs.webkit.org/show_bug.cgi?id=93932
+
+        Reviewed by Kent Tamura.
+
+        Keeping the resources organized.
+
+        No new tests.
+
+        * Resources/pagepopups/calendarPicker.css: Renamed from Source/WebCore/Resources/calendarPicker.css.
+        * Resources/pagepopups/calendarPicker.js: Renamed from Source/WebCore/Resources/calendarPicker.js.
+        * Resources/pagepopups/calendarPickerMac.css: Renamed from Source/WebCore/Resources/calendarPickerMac.css.
+        * Resources/pagepopups/colorSuggestionPicker.css: Renamed from Source/WebCore/Resources/colorSuggestionPicker.css.
+        * Resources/pagepopups/colorSuggestionPicker.js: Renamed from Source/WebCore/Resources/colorSuggestionPicker.js.
+        * WebCore.gyp/WebCore.gyp:
+
 2012-08-14  Yoshifumi Inoue  <yosin@chromium.org>
 
         [Forms] Move wheel event handler to spin button class

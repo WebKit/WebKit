@@ -75,10 +75,10 @@ function openCalendar(args) {
     doc.documentElement.innerHTML = '<head></head><body><div id=main>Loading...</div></body>';
     var link = doc.createElement('link');
     link.rel = 'stylesheet';
-    link.href = '../../Source/WebCore/Resources/calendarPicker.css?' + (new Date()).getTime();
+    link.href = '../../Source/WebCore/Resources/pagepopups/calendarPicker.css?' + (new Date()).getTime();
     doc.head.appendChild(link);
     var script = doc.createElement('script');
-    script.src = '../../Source/WebCore/Resources/calendarPicker.js?' + (new Date()).getTime();
+    script.src = '../../Source/WebCore/Resources/pagepopups/calendarPicker.js?' + (new Date()).getTime();
     doc.body.appendChild(script);
 
     var pagePopupController = {

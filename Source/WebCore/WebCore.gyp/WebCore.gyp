@@ -905,8 +905,8 @@
         {
           'action_name': 'CalendarPicker',
           'inputs': [
-            '../Resources/calendarPicker.css',
-            '../Resources/calendarPicker.js',
+            '../Resources/pagepopups/calendarPicker.css',
+            '../Resources/pagepopups/calendarPicker.js',
           ],
           'outputs': [
             '<(SHARED_INTERMEDIATE_DIR)/webkit/CalendarPicker.h',
@@ -924,7 +924,7 @@
         {
           'action_name': 'CalendarPickerMac',
           'inputs': [
-            '../Resources/calendarPickerMac.css',
+            '../Resources/pagepopups/calendarPickerMac.css',
           ],
           'outputs': [
             '<(SHARED_INTERMEDIATE_DIR)/webkit/CalendarPickerMac.h',
@@ -942,8 +942,8 @@
         {
           'action_name': 'ColorSuggestionPicker',
           'inputs': [
-            '../Resources/colorSuggestionPicker.css',
-            '../Resources/colorSuggestionPicker.js',
+            '../Resources/pagepopups/colorSuggestionPicker.css',
+            '../Resources/pagepopups/colorSuggestionPicker.js',
           ],
           'outputs': [
             '<(SHARED_INTERMEDIATE_DIR)/webkit/ColorSuggestionPicker.h',

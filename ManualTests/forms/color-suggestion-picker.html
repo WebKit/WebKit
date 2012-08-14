@@ -38,10 +38,10 @@ function openColorPicker(args) {
     doc.documentElement.innerHTML = '<head></head><body><div id=main>Loading...</div></body>';
     var link = doc.createElement('link');
     link.rel = 'stylesheet';
-    link.href = '../../Source/WebCore/Resources/colorSuggestionPicker.css?' + (new Date()).getTime();
+    link.href = '../../Source/WebCore/Resources/pagepopups/colorSuggestionPicker.css?' + (new Date()).getTime();
     doc.head.appendChild(link);
     var script = doc.createElement('script');
-    script.src = '../../Source/WebCore/Resources/colorSuggestionPicker.js?' + (new Date()).getTime();
+    script.src = '../../Source/WebCore/Resources/pagepopups/colorSuggestionPicker.js?' + (new Date()).getTime();
     doc.body.appendChild(script);
 
     var pagePopupController = {
