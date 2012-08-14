@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src='../resources/multiple-iframe-plugin-test.js'></script>
+<script>
+var tests = [
+    [true, 'plugin-types application/x-webkit-test-netscape'],
+    [true, 'plugin-types text/plain application/x-webkit-test-netscape'],
+    [true, 'plugin-types application/x-webkit-test-netscape text/plain'],
+    [true, 'plugin-types application/x-webkit-test-netscape', '/plugins/resources/mock-plugin.pl', 'application/x-webkit-test-netscape'],
+];
+</script>
+</head>
+<body onload="test()">
+    <p>
+        This tests our handling of `data:` URLs, given a `plugin-types` CSP
+        directive. Consider this test passing if each of the following frames
+        contains "PASS" or no text at all, and no console warnings appear above.
+    </p>

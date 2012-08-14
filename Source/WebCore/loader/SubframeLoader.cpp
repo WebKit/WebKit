@@ -126,7 +126,11 @@ bool SubframeLoader::pluginIsLoadable(HTMLPlugInImageElement* pluginElement, con
             return false;
         }
 
-        if (!document()->contentSecurityPolicy()->allowObjectFromSource(url)) {
+        String declaredMimeType = document()->isPluginDocument() ?
+            document()->ownerElement()->fastGetAttribute(HTMLNames::typeAttr) :
+            pluginElement->fastGetAttribute(HTMLNames::typeAttr);
+        if (!document()->contentSecurityPolicy()->allowObjectFromSource(url)
+            || !document()->contentSecurityPolicy()->allowPluginType(mimeType, declaredMimeType, url)) {
             RenderEmbeddedObject* renderer = pluginElement->renderEmbeddedObject();
             renderer->setPluginUnavailabilityReason(RenderEmbeddedObject::PluginBlockedByContentSecurityPolicy);
             return false;
@@ -293,7 +297,9 @@ PassRefPtr<Widget> SubframeLoader::createJavaAppletWidget(const IntSize& size, H
             return 0;
         }
 
-        if (!element->document()->contentSecurityPolicy()->allowObjectFromSource(codeBaseURL))
+        const char javaAppletMimeType[] = "application/x-java-applet";
+        if (!element->document()->contentSecurityPolicy()->allowObjectFromSource(codeBaseURL)
+            || !element->document()->contentSecurityPolicy()->allowPluginType(javaAppletMimeType, javaAppletMimeType, codeBaseURL))
             return 0;
     }
 

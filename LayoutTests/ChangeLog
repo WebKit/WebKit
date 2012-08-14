@@ -1,3 +1,45 @@
+2012-08-14  Mike West  <mkwst@chromium.org>
+
+        Implement the plugin-types Content Security Policy directive.
+        https://bugs.webkit.org/show_bug.cgi?id=91919
+
+        Reviewed by Adam Barth.
+
+        * http/tests/plugins/resources/mock-plugin-unknown-type.pl:
+            Adding a mock plugin resource that is served with a type that WebKit
+            doesn't understand. Using it to test a confusion attack in
+            plugintypes-url-02.
+        * http/tests/security/contentSecurityPolicy/1.1/plugintypes-invalid-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/plugintypes-invalid.html: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/plugintypes-mismatched-data-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/plugintypes-mismatched-data.html: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/plugintypes-mismatched-url-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/plugintypes-mismatched-url.html: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/plugintypes-notype-data-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/plugintypes-notype-data.html: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/plugintypes-notype-url-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/plugintypes-notype-url.html: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/plugintypes-nourl-allowed-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/plugintypes-nourl-allowed.html: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/plugintypes-nourl-blocked-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/plugintypes-nourl-blocked.html: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/plugintypes-url-01-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/plugintypes-url-01.html: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/plugintypes-url-02-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/plugintypes-url-02.html: Added.
+        * http/tests/security/contentSecurityPolicy/object-src-none-allowed.html:
+        * http/tests/security/contentSecurityPolicy/object-src-none-blocked.html:
+            Renaming the `q` parameter to `plugin` in these two tests.
+        * http/tests/security/contentSecurityPolicy/resources/echo-object-data.pl:
+            Add output of explicit MIME types to the object data renderer, and
+            changed the `q` parameter to be slightly less confusingly named.
+            It's now `plugin`.
+        * http/tests/security/contentSecurityPolicy/resources/multiple-iframe-plugin-test.js: Added.
+            Copy `multiple-iframe-test.js`, and add in plugin-specific details,
+            like `plugin`, `log`, and `type`.
+        (test):
+        (finishTesting):
+
 2012-08-14  Hans Wennborg  <hans@chromium.org>
 
         Speech Input: wrong position was reported for scolled-down elements

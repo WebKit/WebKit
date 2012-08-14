@@ -1,0 +1,20 @@
+<!DOCTYPE html>                                                                                                                                                                                
+<html>
+<head>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.dumpChildFramesAsText();
+}
+</script>
+<meta http-equiv="X-WebKit-CSP" content="plugin-types application/x-invalid-type">
+</head>
+<body>
+    Given a `plugin-types` directive, plugins have to declare a type explicitly.
+    No declared type, no load. This test passes if there's a console message
+    above.
+    <object data="/plugins/resources/mock-plugin.pl"
+            log="FAIL!"></object>
+</body>
+</html>
+

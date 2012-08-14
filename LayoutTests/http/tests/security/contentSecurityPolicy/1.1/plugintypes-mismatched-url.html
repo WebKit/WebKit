@@ -1,0 +1,21 @@
+<!DOCTYPE html>                                                                                                                                                                                
+<html>
+<head>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.dumpChildFramesAsText();
+}
+</script>
+<script src="/plugins/resources/mock-plugin-logger.js"></script>
+<meta http-equiv="X-WebKit-CSP" content="plugin-types application/x-invalid-type">
+</head>
+<body>
+    This tests that plugin content that doesn't match the declared type doesn't
+    load, even if the document's CSP would allow it. This test passes if no
+    iframe is dumped (meaning that no PluginDocument was created).
+    <object type="application/x-invalid-type"
+            data="/plugins/resources/mock-plugin.pl"
+            log="FAIL!"></object>
+</body>
+</html>

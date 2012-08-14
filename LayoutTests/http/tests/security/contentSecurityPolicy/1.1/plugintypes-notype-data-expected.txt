@@ -1,0 +1,3 @@
+CONSOLE MESSAGE: Refused to load 'data:application/x-webkit-test-netscape,logifloaded' (MIME type '') because it violates the following Content Security Policy Directive: 'plugin-types application/x-invalid-type'.
+
+Given a `plugin-types` directive, plugins have to declare a type explicitly. No declared type, no load. This test passes if there's a console message above and "FAIL!" isn't logged.  

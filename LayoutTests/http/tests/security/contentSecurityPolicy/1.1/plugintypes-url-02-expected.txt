@@ -1,0 +1,24 @@
+CONSOLE MESSAGE: Refused to load 'data:application/x-webkit-test-netscape,logifloaded' (MIME type 'application/x-webkit-test-netscape') because it violates the following Content Security Policy Directive: 'plugin-types text/plain'.
+
+CONSOLE MESSAGE: Refused to load 'http://127.0.0.1:8000/plugins/resources/mock-plugin.pl?url-doesnt-match-csp' (MIME type 'application/x-webkit-test-netscape') because it violates the following Content Security Policy Directive: 'plugin-types application/x-shockwave-flash'.
+
+CONSOLE MESSAGE: Refused to load 'http://127.0.0.1:8000/plugins/resources/mock-plugin-unknown-type.pl?type-attribute-doesnt-match-csp' (MIME type 'application/x-webkit-test-netscape') because it violates the following Content Security Policy Directive: 'plugin-types application/x-unknown-type'.
+
+This tests our handling of non-`data:` URLs, given a `plugin-types` CSP directive. Consider this test passing if none of the following frames contains "FAIL" and four sets of console logs appear above.
+
+
+
+--------
+Frame: '<!--framePath //<!--frame0-->-->'
+--------
+
+
+--------
+Frame: '<!--framePath //<!--frame1-->-->'
+--------
+
+
+--------
+Frame: '<!--framePath //<!--frame2-->-->'
+--------
+

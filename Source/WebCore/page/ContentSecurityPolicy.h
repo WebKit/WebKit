@@ -81,6 +81,7 @@ public:
     bool allowInlineStyle(const String& contextURL, const WTF::OrdinalNumber& contextLine, ReportingStatus = SendReport) const;
     bool allowEval(PassRefPtr<ScriptCallStack>, ReportingStatus = SendReport) const;
     bool allowScriptNonce(const String& nonce, const String& contextURL, const WTF::OrdinalNumber& contextLine, const KURL& = KURL()) const;
+    bool allowPluginType(const String& type, const String& typeAttribute, const KURL&, ReportingStatus = SendReport) const;
 
     bool allowScriptFromSource(const KURL&, ReportingStatus = SendReport) const;
     bool allowObjectFromSource(const KURL&, ReportingStatus = SendReport) const;
@@ -99,6 +100,7 @@ public:
     void reportDuplicateDirective(const String&) const;
     void reportIgnoredPathComponent(const String& directiveName, const String& completeSource, const String& path) const;
     void reportInvalidNonce(const String&) const;
+    void reportInvalidPluginTypes(const String&) const;
     void reportInvalidSourceExpression(const String& directiveName, const String& source) const;
     void reportUnrecognizedDirective(const String&) const;
     void reportViolation(const String& directiveText, const String& consoleMessage, const KURL& blockedURL, const Vector<KURL>& reportURIs, const String& header, const String& contextURL = String(), const WTF::OrdinalNumber& contextLine = WTF::OrdinalNumber::beforeFirst(), PassRefPtr<ScriptCallStack> = 0) const;

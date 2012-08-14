@@ -1,3 +1,70 @@
+2012-08-14  Mike West  <mkwst@chromium.org>
+
+        Implement the plugin-types Content Security Policy directive.
+        https://bugs.webkit.org/show_bug.cgi?id=91919
+
+        Reviewed by Adam Barth.
+
+        The CSP 1.1 editor's draft defines the 'plugin-types' directive as a
+        mechanism for whitelisting only specific types of plugin content on a
+        page. A protected resource might trust only Flash content, for instance,
+        and could enforce that preference via a Content Security Policy of
+        'plugin-types application/x-shockwave-flash'. Flash would load, no other
+        plugin type would.
+
+        Specification details available at: https://dvcs.w3.org/hg/content-security-policy/raw-file/tip/csp-specification.dev.html#plugin-types--experimental
+
+        This experimental directive is gated on the ENABLE_CSP_NEXT flag, which
+        is currently only enabled in Chromium.
+
+        Tests: http/tests/security/contentSecurityPolicy/1.1/plugintypes-invalid.html
+               http/tests/security/contentSecurityPolicy/1.1/plugintypes-mismatched-data.html
+               http/tests/security/contentSecurityPolicy/1.1/plugintypes-mismatched-url.html
+               http/tests/security/contentSecurityPolicy/1.1/plugintypes-notype-data.html
+               http/tests/security/contentSecurityPolicy/1.1/plugintypes-notype-url.html
+               http/tests/security/contentSecurityPolicy/1.1/plugintypes-nourl-allowed.html
+               http/tests/security/contentSecurityPolicy/1.1/plugintypes-nourl-blocked.html
+               http/tests/security/contentSecurityPolicy/1.1/plugintypes-url-01.html
+               http/tests/security/contentSecurityPolicy/1.1/plugintypes-url-02.html
+
+        * loader/SubframeLoader.cpp:
+        (WebCore::SubframeLoader::pluginIsLoadable):
+            Adding a check against 'allowPluginType', and passing in both the
+            MIME type of the plugin, as well as the declared MIME type from the
+            object/embed element (ensuring that we do this correctly, even if
+            we're inside a PluginDocument).
+        (WebCore::SubframeLoader::createJavaAppletWidget):
+            Same as 'pluginIsLoadable', but hard-coded to
+            'application/x-java-applet'.
+        * page/ContentSecurityPolicy.cpp:
+        (CSPDirectiveList):
+        (WebCore::CSPDirectiveList::logInvalidPluginTypes):
+            Plugin types that don't match the grammar ('not/a/mime/type') are
+            logged to the console, and ignored for purposes of matching.
+        (WebCore):
+        (WebCore::CSPDirectiveList::checkPluginType):
+            Given both the plugin type and the declared type attribute, returns
+            true if both types match, and are contained in the list of accepted
+            plugin types.
+        (WebCore::CSPDirectiveList::checkPluginTypeAndReportViolation):
+            Calls out to checkPluginType, and reports a violation if that check
+            fails.
+        (WebCore::CSPDirectiveList::allowPluginType):
+            Analog to the other 'CSPDirectiveList::allowXXX' methods, this
+            branches between simply checking the type against the policy, and
+            checking against the policy and then reporting violations.
+        (WebCore::CSPDirectiveList::parsePluginTypes):
+            Given a directive value, parse out the media types contained within
+            by splitting on spaces, and validating each token. Valid tokens are
+            added to 'm_pluginTypes' for use in 'checkPluginType'.
+        (WebCore::CSPDirectiveList::addDirective):
+            Wire up 'plugin-types' as a valid directive (if the ENABLE_CSP_NEXT
+            flag is set). This has been combined with the other implemented 1.1
+            header, 'script-nonce'.
+        (WebCore::ContentSecurityPolicy::allowPluginType):
+            The public interface to this set of functionality.
+        * page/ContentSecurityPolicy.h:
+
 2012-08-14  Charles Wei  <charles.wei@torchmobile.com.cn>
 
         [BlackBerry] Enable DNS prefetch
