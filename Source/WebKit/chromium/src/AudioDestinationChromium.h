@@ -40,6 +40,7 @@ namespace WebKit { class WebAudioDevice; }
 
 namespace WebCore { 
 
+class AudioFIFO;
 class AudioPullFIFO;
 
 // An AudioDestination using Chromium's audio system
@@ -56,6 +57,7 @@ public:
     float sampleRate() const { return m_sampleRate; }
 
     // WebKit::WebAudioDevice::RenderCallback
+    virtual void render(const WebKit::WebVector<float*>& sourceData, const WebKit::WebVector<float*>& audioData, size_t numberOfFrames);
     virtual void render(const WebKit::WebVector<float*>& audioData, size_t numberOfFrames);
 
     // WebCore::AudioSourceProvider
@@ -63,11 +65,14 @@ public:
 
 private:
     AudioIOCallback& m_callback;
+    AudioBus m_inputBus;
     AudioBus m_renderBus;
     float m_sampleRate;
     bool m_isPlaying;
     OwnPtr<WebKit::WebAudioDevice> m_audioDevice;
     size_t m_callbackBufferSize;
+
+    OwnPtr<AudioFIFO> m_inputFifo;
     OwnPtr<AudioPullFIFO> m_fifo;
 };
 

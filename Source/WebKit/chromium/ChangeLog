@@ -1,3 +1,23 @@
+2012-08-14  Chris Rogers  <crogers@google.com>
+
+        Implement new synchronized audio I/O render method in chromium
+        https://bugs.webkit.org/show_bug.cgi?id=93510
+
+        Reviewed by Kenneth Russell.
+
+        The chromium implementation of AudioDestination is being upgraded to
+        support synchronized audio I/O.  Other changes on the chromium-side
+        can then be tested against something that works in WebKit.
+
+        * src/AudioDestinationChromium.cpp:
+        (WebCore::AudioDestinationChromium::AudioDestinationChromium):
+        (WebCore::AudioDestinationChromium::render):
+        (WebCore):
+        (WebCore::AudioDestinationChromium::provideInput):
+        * src/AudioDestinationChromium.h:
+        (WebCore):
+        (AudioDestinationChromium):
+
 2012-08-14  Adam Barth  <abarth@webkit.org>
 
         Delete Frame::domWindow() and Frame::existingDOMWindow()

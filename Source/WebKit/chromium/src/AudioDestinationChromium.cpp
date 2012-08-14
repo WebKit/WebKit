@@ -32,6 +32,7 @@
 
 #include "AudioDestinationChromium.h"
 
+#include "AudioFIFO.h"
 #include "AudioPullFIFO.h"
 #include "WebKit.h"
 #include "platform/WebKitPlatformSupport.h"
@@ -59,6 +60,7 @@ PassOwnPtr<AudioDestination> AudioDestination::create(AudioIOCallback& callback,
 
 AudioDestinationChromium::AudioDestinationChromium(AudioIOCallback& callback, float sampleRate)
     : m_callback(callback)
+    , m_inputBus(numberOfChannels, renderBufferSize)
     , m_renderBus(numberOfChannels, renderBufferSize, false)
     , m_sampleRate(sampleRate)
     , m_isPlaying(false)
@@ -70,7 +72,7 @@ AudioDestinationChromium::AudioDestinationChromium(AudioIOCallback& callback, fl
     ASSERT(m_callbackBufferSize + renderBufferSize <= fifoSize);
     if (m_callbackBufferSize + renderBufferSize > fifoSize)
         return;
-    
+
     m_audioDevice = adoptPtr(WebKit::Platform::current()->createAudioDevice(m_callbackBufferSize, numberOfChannels, sampleRate, this));
     ASSERT(m_audioDevice);
 
@@ -80,6 +82,17 @@ AudioDestinationChromium::AudioDestinationChromium(AudioIOCallback& callback, fl
     // Otherwise, the FIFO will call the provider enough times to
     // satisfy the request for data.
     m_fifo = adoptPtr(new AudioPullFIFO(*this, numberOfChannels, fifoSize, renderBufferSize));
+
+    // Input buffering.
+    m_inputFifo = adoptPtr(new AudioFIFO(numberOfChannels, fifoSize));
+
+    // If the callback size does not match the render size, then we need to buffer some
+    // extra silence for the input. Otherwise, we can over-consume the input FIFO.
+    if (m_callbackBufferSize != renderBufferSize) {
+        // FIXME: handle multi-channel input and don't hard-code to stereo.
+        AudioBus silence(2, renderBufferSize);
+        m_inputFifo->push(&silence);
+    }
 }
 
 AudioDestinationChromium::~AudioDestinationChromium()
@@ -108,7 +121,37 @@ float AudioDestination::hardwareSampleRate()
     return static_cast<float>(WebKit::Platform::current()->audioHardwareSampleRate());
 }
 
+void AudioDestinationChromium::render(const WebVector<float*>& sourceData, const WebVector<float*>& audioData, size_t numberOfFrames)
+{
+    bool isNumberOfChannelsGood = audioData.size() == numberOfChannels;
+    if (!isNumberOfChannelsGood) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    bool isBufferSizeGood = numberOfFrames == m_callbackBufferSize;
+    if (!isBufferSizeGood) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    // Buffer optional live input.
+    if (sourceData.size() >= 2) {
+        // FIXME: handle multi-channel input and don't hard-code to stereo.
+        AudioBus wrapperBus(2, numberOfFrames, false);
+        wrapperBus.setChannelMemory(0, sourceData[0], numberOfFrames);
+        wrapperBus.setChannelMemory(1, sourceData[1], numberOfFrames);
+        m_inputFifo->push(&wrapperBus);
+    }
+
+    m_renderBus.setChannelMemory(0, audioData[0], numberOfFrames);
+    m_renderBus.setChannelMemory(1, audioData[1], numberOfFrames);
+
+    m_fifo->consume(&m_renderBus, numberOfFrames);
+}
+
 // Pulls on our provider to get the rendered audio stream.
+// FIXME: remove this method when the chromium-side switches over to the synchronized I/O render() method (above).
 void AudioDestinationChromium::render(const WebVector<float*>& audioData, size_t numberOfFrames)
 {
     bool isNumberOfChannelsGood = audioData.size() == numberOfChannels;
@@ -116,7 +159,7 @@ void AudioDestinationChromium::render(const WebVector<float*>& audioData, size_t
         ASSERT_NOT_REACHED();
         return;
     }
-        
+
     bool isBufferSizeGood = numberOfFrames == m_callbackBufferSize;
     if (!isBufferSizeGood) {
         ASSERT_NOT_REACHED();
@@ -130,8 +173,13 @@ void AudioDestinationChromium::render(const WebVector<float*>& audioData, size_t
 
 void AudioDestinationChromium::provideInput(AudioBus* bus, size_t framesToProcess)
 {
-    // FIXME: Add support for local/live audio input.
-    m_callback.render(0, bus, framesToProcess);
+    AudioBus* sourceBus = 0;
+    if (m_inputFifo->framesInFifo() >= framesToProcess) {
+        m_inputFifo->consume(&m_inputBus, framesToProcess);
+        sourceBus = &m_inputBus;
+    }
+
+    m_callback.render(sourceBus, bus, framesToProcess);
 }
 
 } // namespace WebCore
