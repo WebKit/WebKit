@@ -1,3 +1,17 @@
+2012-08-13  Alex Christensen  <alex.christensen@flexsim.com>
+
+        WPARAM and LPARAM are incorrectly defined for x64
+        https://bugs.webkit.org/show_bug.cgi?id=89902
+
+        Reviewed by Brent Fulgham.
+
+        Include WindowsExtras.h for PLATFORM(WIN) to define WPARAM and LPARAM correctly
+        * platform/PlatformKeyboardEvent.h:
+        * platform/PlatformMouseEvent.h:
+        * platform/PlatformWheelEvent.h:
+        * platform/graphics/win/MediaPlayerPrivateFullscreenWindow.h:
+        * platform/win/WindowMessageListener.h:
+
 2012-08-13  John Bates  <jbates@google.com>
 
         [Chromium] Patch CCThreadProxy to call setTimebaseAndInterval on CCScheduler

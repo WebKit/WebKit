@@ -29,10 +29,9 @@
 #ifndef WindowMessageListener_h
 #define WindowMessageListener_h
 
-typedef struct HWND__* HWND;
-typedef long LPARAM;
-typedef unsigned UINT;
-typedef unsigned WPARAM;
+#if OS(WINDOWS)
+#include "WindowsExtras.h"
+#endif
 
 namespace WebCore {
 

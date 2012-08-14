@@ -28,6 +28,9 @@
 
 #include "IntPoint.h"
 #include "PlatformEvent.h"
+#if OS(WINDOWS)
+#include "WindowsExtras.h"
+#endif
 
 #if PLATFORM(GTK)
 typedef struct _GdkEventScroll GdkEventScroll;
@@ -35,12 +38,6 @@ typedef struct _GdkEventScroll GdkEventScroll;
 
 #if PLATFORM(EFL)
 typedef struct _Evas_Event_Mouse_Wheel Evas_Event_Mouse_Wheel;
-#endif
-
-#if PLATFORM(WIN)
-typedef struct HWND__* HWND;
-typedef unsigned WPARAM;
-typedef long LPARAM;
 #endif
 
 #if PLATFORM(WX)

@@ -26,18 +26,14 @@
 #ifndef MediaPlayerPrivateFullscreenWindow_h
 #define MediaPlayerPrivateFullscreenWindow_h
 
+#if OS(WINDOWS)
+#include "WindowsExtras.h"
+#endif
 #include <wtf/RefPtr.h>
 
 #if USE(ACCELERATED_COMPOSITING)
 #include "CACFLayerTreeHostClient.h"
 #endif
-
-typedef unsigned WPARAM;
-typedef long LPARAM;
-typedef struct HWND__* HWND;
-typedef _W64 long LONG_PTR;
-typedef LONG_PTR LRESULT;
-typedef unsigned int UINT;
 
 namespace WebCore {
 

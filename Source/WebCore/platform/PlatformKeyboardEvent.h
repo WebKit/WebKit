@@ -28,17 +28,14 @@
 #define PlatformKeyboardEvent_h
 
 #include "PlatformEvent.h"
+#if OS(WINDOWS)
+#include "WindowsExtras.h"
+#endif
 #include <wtf/text/WTFString.h>
 
 #if PLATFORM(MAC)
 #include <wtf/RetainPtr.h>
 OBJC_CLASS NSEvent;
-#endif
-
-#if PLATFORM(WIN)
-typedef struct HWND__ *HWND;
-typedef unsigned WPARAM;
-typedef long LPARAM;
 #endif
 
 #if PLATFORM(GTK)
