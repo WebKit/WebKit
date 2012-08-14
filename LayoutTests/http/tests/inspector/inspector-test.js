@@ -515,3 +515,6 @@ function clearOutput()
         outputElement = null;
     }
 }
+
+if (!window.testRunner && window.opener)
+    window.testRunner = window.opener.testRunner;

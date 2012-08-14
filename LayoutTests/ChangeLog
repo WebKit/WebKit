@@ -1,3 +1,13 @@
+2012-08-14  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: add external test runner for running inspector front-end tests with no TestRunner infrastructure.
+        https://bugs.webkit.org/show_bug.cgi?id=93833
+
+        Reviewed by Yury Semikhatsky.
+
+        * http/tests/inspector/inspector-test.js:
+        * http/tests/inspector/resources/test-runner.html: Added.
+
 2012-08-14  Keishi Hattori  <keishi@webkit.org>
 
         [Chromium] Fix test calendar-picker-appearance.html after r125507

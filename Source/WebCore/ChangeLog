@@ -1,3 +1,19 @@
+2012-08-14  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: add external test runner for running inspector front-end tests with no TestRunner infrastructure.
+        https://bugs.webkit.org/show_bug.cgi?id=93833
+
+        Reviewed by Yury Semikhatsky.
+
+        Added mock test runner that allows running front-end layout tests.
+        InspectorFrontendAPI can now dispatch whatever it receives from its embedder (opener).
+
+        * inspector/front-end/InspectorFrontendAPI.js:
+        (InspectorFrontendAPI.evaluateForTest):
+        (InspectorFrontendAPI.dispatch):
+        (InspectorFrontendAPI.loadCompleted):
+        (.onMessageFromOpener):
+
 2012-08-14  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
 
         [Qt] Incomplete repaint of link underline

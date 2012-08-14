@@ -120,9 +120,14 @@ InspectorFrontendAPI = {
         WebInspector.setToolbarColors(backgroundColor, color);
     },
 
+    evaluateForTest: function(callId, script)
+    {
+        WebInspector.evaluateForTestInFrontend(callId, script);
+    },
+
     dispatch: function(signature)
     {
-        if (WebInspector.panels) {
+        if (InspectorFrontendAPI._isLoaded) {
             var methodName = signature.shift();
             return InspectorFrontendAPI[methodName].apply(InspectorFrontendAPI, signature);
         }
@@ -131,8 +136,18 @@ InspectorFrontendAPI = {
 
     loadCompleted: function()
     {
+        InspectorFrontendAPI._isLoaded = true;
         for (var i = 0; i < InspectorFrontendAPI._pendingCommands.length; ++i)
             InspectorFrontendAPI.dispatch(InspectorFrontendAPI._pendingCommands[i]);
         InspectorFrontendAPI._pendingCommands = [];
     }
+}
+
+if (window.opener) {
+    function onMessageFromOpener(event)
+    {
+        if (event.source === window.opener)
+            InspectorFrontendAPI.dispatch(event.data);
+    }
+    window.addEventListener("message", onMessageFromOpener, true);
 }
