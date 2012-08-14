@@ -31,13 +31,13 @@
 
 namespace WebCore {
 
-static v8::Handle<v8::Value> DOMExceptionStackGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
+static v8::Handle<v8::Value> domExceptionStackGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
     ASSERT(info.Data()->IsObject());
     return info.Data()->ToObject()->Get(v8String("stack", info.GetIsolate()));
 }
 
-static void DOMExceptionStackSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
+static void domExceptionStackSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
     ASSERT(info.Data()->IsObject());
     info.Data()->ToObject()->Set(v8String("stack", info.GetIsolate()), value);
@@ -53,10 +53,8 @@ v8::Handle<v8::Value> V8ThrowException::setDOMException(int ec, v8::Isolate* iso
     if (ec <= 0 || v8::V8::IsExecutionTerminating())
         return v8Undefined();
 
-    if (ec == NATIVE_TYPE_ERR) {
-        const char* message = 0;
-        return V8ThrowException::throwTypeError(message, isolate);
-    }
+    if (ec == NATIVE_TYPE_ERR)
+        return V8ThrowException::throwTypeError(0, isolate);
 
     ExceptionCodeDescription description(ec);
 
@@ -72,7 +70,7 @@ v8::Handle<v8::Value> V8ThrowException::setDOMException(int ec, v8::Isolate* iso
     v8::Handle<v8::Value> error = v8::Exception::Error(v8String(description.description, isolate));
     ASSERT(!error.IsEmpty());
     ASSERT(exception->IsObject());
-    exception->ToObject()->SetAccessor(v8String("stack", isolate), DOMExceptionStackGetter, DOMExceptionStackSetter, error);
+    exception->ToObject()->SetAccessor(v8String("stack", isolate), domExceptionStackGetter, domExceptionStackSetter, error);
 
     return v8::ThrowException(exception);
 }

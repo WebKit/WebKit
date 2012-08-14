@@ -29,7 +29,6 @@
 
 namespace WebCore {
 
-// The types of javascript errors that can be thrown.
 enum ErrorType {
     RangeError,
     ReferenceError,

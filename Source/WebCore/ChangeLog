@@ -1,3 +1,13 @@
+2012-08-13  Kentaro Hara  <haraken@chromium.org>
+
+        Unreviewed. Simple refactoring that I forgot to apply in r125495.
+
+        * bindings/v8/V8ThrowException.cpp:
+        (WebCore::domExceptionStackGetter):
+        (WebCore::domExceptionStackSetter):
+        (WebCore::V8ThrowException::setDOMException):
+        * bindings/v8/V8ThrowException.h:
+
 2012-08-13  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [CMAKE][EFL] Fix build break with --tiled-backing-store
