@@ -1,3 +1,14 @@
+2012-08-14  Kent Tamura  <tkent@chromium.org>
+
+        [Chromium] Update expectation files for fast/forms/date/calendar-picker-appearance.html
+
+        * platform/chromium-linux-x86/fast/forms/date/calendar-picker-appearance-expected.png: Added.
+        * platform/chromium-linux/fast/forms/date/calendar-picker-appearance-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/date/calendar-picker-appearance-expected.png:
+        * platform/chromium-mac/fast/forms/date/calendar-picker-appearance-expected.png:
+        * platform/chromium-win-xp/fast/forms/date/calendar-picker-appearance-expected.png:
+        * platform/chromium-win/fast/forms/date/calendar-picker-appearance-expected.png:
+
 2012-08-14  Thiago Marcos P. Santos  <thiago.santos@intel.com>
 
         REGRESSION (r125450): 4 canvas/philip/tests tests failing on Apple Lion Release WK1 (Tests)
