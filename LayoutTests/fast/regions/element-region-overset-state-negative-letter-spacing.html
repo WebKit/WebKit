@@ -1,0 +1,45 @@
+<html>
+<head>
+<script src="../../fast/js/resources/js-test-pre.js"></script>
+<style>
+#content {
+    -webkit-flow-into: article;
+    letter-spacing: -1px;
+    direction: rtl;
+}
+#region_1, #region_2{
+    -webkit-flow-from: article;
+    overset:visible;
+    display:inline-block;
+    vertical-align:top;
+    margin:10px;
+}
+
+#region_1 { height:110px; width:200px; }
+#region_2 { height:110px; width:200px; }
+
+</style>
+</head>
+<body>
+<h1 id="content">Lorem ipsum</h1>
+<div id="region_1"></div>
+<div id="region_2"></div>
+
+<script>
+    description("Tests Element.webkitRegionOverset attribute")
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+    }
+    var region_1 = document.getElementById("region_1");
+    var region_2 = document.getElementById("region_2");
+    var content =  document.getElementById("content");
+    shouldBeEqualToString("region_1.webkitRegionOverset", "fit");
+    shouldBeEqualToString("region_2.webkitRegionOverset", "empty");
+    document.body.removeChild(region_1);
+    document.body.removeChild(region_2);
+    document.body.removeChild(content);
+
+</script>
+<script src="../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

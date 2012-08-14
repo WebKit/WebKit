@@ -678,7 +678,8 @@ void RenderFlowThread::computeOverflowStateForRegions(LayoutUnit oldClientAfterE
     // might not be taken into account because the render flow thread height is greater that that regions height + its visual overflow
     // because of how computeLogicalHeight is implemented for RenderFlowThread (as a sum of all regions height).
     // This means that the middle region will be marked as fit (even if it has visual overflow flowing into the next region)
-    if (hasRenderOverflow())
+    if (hasRenderOverflow() && ( (isHorizontalWritingMode() && visualOverflowRect().maxY() > clientBoxRect().maxY()) 
+                                || (!isHorizontalWritingMode() && visualOverflowRect().maxX() > clientBoxRect().maxX())))
         height = isHorizontalWritingMode() ? visualOverflowRect().maxY() : visualOverflowRect().maxX();
 
     RenderRegion* lastReg = lastRegion();

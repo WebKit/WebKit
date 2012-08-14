@@ -1,3 +1,18 @@
+2012-08-14  Andrei Onea  <onea@adobe.com>
+
+        [CSSRegions]Region overset property is incorectly computed when content has negative letter spacing and is flowed near to the edge of a region
+        https://bugs.webkit.org/show_bug.cgi?id=92506
+
+        Reviewed by Eric Seidel.
+
+        Added tests for incorrect regionOverset computation when visual overflow in the writing direction creates
+        overset for all regions.
+
+        * fast/regions/element-region-overset-state-negative-letter-spacing-expected.txt: Added.
+        * fast/regions/element-region-overset-state-negative-letter-spacing.html: Added.
+        * fast/regions/element-region-overset-state-vertical-rl-negative-letter-spacing-expected.txt: Added.
+        * fast/regions/element-region-overset-state-vertical-rl-negative-letter-spacing.html: Added.
+
 2012-08-14  Florin Malita  <fmalita@chromium.org>
 
         beginElement() does not observe updated animation attributes
