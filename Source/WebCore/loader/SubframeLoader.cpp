@@ -126,7 +126,7 @@ bool SubframeLoader::pluginIsLoadable(HTMLPlugInImageElement* pluginElement, con
             return false;
         }
 
-        String declaredMimeType = document()->isPluginDocument() ?
+        String declaredMimeType = document()->isPluginDocument() && document()->ownerElement() ?
             document()->ownerElement()->fastGetAttribute(HTMLNames::typeAttr) :
             pluginElement->fastGetAttribute(HTMLNames::typeAttr);
         if (!document()->contentSecurityPolicy()->allowObjectFromSource(url)

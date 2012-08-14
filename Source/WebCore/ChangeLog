@@ -1,3 +1,17 @@
+2012-08-14  Mike West  <mkwst@chromium.org>
+
+        Fix crash in http/tests/plugins/plugin-document-has-focus
+        https://bugs.webkit.org/show_bug.cgi?id=93949
+
+        Reviewed by Jochen Eisinger.
+
+        Covered by http/tests/plugins/plugin-document-has-focus.html. If that
+        doesn't crash, we're good!
+
+        * loader/SubframeLoader.cpp:
+        (WebCore::SubframeLoader::pluginIsLoadable):
+            Check the PluginDocument's ownerElement before derefing.
+
 2012-08-14  KwangYong Choi  <ky0.choi@samsung.com>
 
         [EFL] Fixed displaying buffering progress in the media control.
