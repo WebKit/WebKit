@@ -502,10 +502,10 @@ static void calculateDrawTransformsInternal(LayerType* layer, LayerType* rootLay
     // The drawTransform that gets computed below is effectively the layer's drawTransform, unless
     // the layer itself creates a renderSurface. In that case, the renderSurface re-parents the transforms.
     WebTransformationMatrix drawTransform = combinedTransform;
+    // M[draw] = M[parent] * LT * Tr[anchor2center] * Tr[center2origin]
+    drawTransform.translate(-layer->bounds().width() / 2.0, -layer->bounds().height() / 2.0);
     if (!layer->contentBounds().isEmpty() && !layer->bounds().isEmpty()) {
-        // M[draw] = M[parent] * LT * Tr[anchor2center] * Tr[center2anchor]
-        drawTransform.translate(-layer->bounds().width() / 2.0, -layer->bounds().height() / 2.0);
-        // M[draw] = M[parent] * LT * Tr[anchor2origin] * S[content2layer]
+        // M[draw] = M[parent] * LT * Tr[anchor2origin] * S[layer2content]
         drawTransform.scaleNonUniform(layer->bounds().width() / static_cast<double>(layer->contentBounds().width()),
                                       layer->bounds().height() / static_cast<double>(layer->contentBounds().height()));
     }
