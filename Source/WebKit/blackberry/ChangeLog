@@ -1,3 +1,21 @@
+2012-08-14  Mike Fenton  <mifenton@rim.com>
+
+        [BlackBerry] Remove unnecessary \n's from InputHandler log messages.
+        https://bugs.webkit.org/show_bug.cgi?id=94015
+
+        Reviewed by Rob Buis.
+
+        Remove many unnecessary \n's from the end of log messages.
+
+        Reviewed Internally by Nima Ghanavatian.
+
+        * WebKitSupport/InputHandler.cpp:
+        (BlackBerry::WebKit::convertStringToWcharVector):
+        (BlackBerry::WebKit::convertSpannableStringToString):
+        (BlackBerry::WebKit::InputHandler::spannableTextInRange):
+        (BlackBerry::WebKit::InputHandler::setText):
+        (BlackBerry::WebKit::InputHandler::setSpannableTextAndRelativeCursor):
+
 2012-08-14  Nima Ghanavatian  <nghanavatian@rim.com>
 
         [BlackBerry] Queue spellcheck requests with char-count limitations

@@ -460,7 +460,7 @@ static bool convertStringToWcharVector(const String& string, WTF::Vector<wchar_t
         return true;
 
     if (!wcharString.tryReserveCapacity(length + 1)) {
-        logAlways(LogLevelCritical, "InputHandler::convertStringToWcharVector Cannot allocate memory for string.\n");
+        logAlways(LogLevelCritical, "InputHandler::convertStringToWcharVector Cannot allocate memory for string.");
         return false;
     }
 
@@ -480,7 +480,7 @@ static String convertSpannableStringToString(spannable_string_t* src)
     WTF::Vector<UChar> dest;
     int destCapacity = (src->length * 2) + 1;
     if (!dest.tryReserveCapacity(destCapacity)) {
-        logAlways(LogLevelCritical, "InputHandler::convertSpannableStringToString Cannot allocate memory for string.\n");
+        logAlways(LogLevelCritical, "InputHandler::convertSpannableStringToString Cannot allocate memory for string.");
         return String();
     }
 
@@ -1783,14 +1783,14 @@ spannable_string_t* InputHandler::spannableTextInRange(int start, int end, int32
     // crash immediately on failure.
     pst->str = (wchar_t*)malloc(sizeof(wchar_t) * (length + 1));
     if (!pst->str) {
-        logAlways(LogLevelCritical, "InputHandler::spannableTextInRange Cannot allocate memory for string.\n");
+        logAlways(LogLevelCritical, "InputHandler::spannableTextInRange Cannot allocate memory for string.");
         free(pst);
         return 0;
     }
 
     int stringLength = 0;
     if (!convertStringToWchar(textString, pst->str, length + 1, &stringLength)) {
-        logAlways(LogLevelCritical, "InputHandler::spannableTextInRange failed to convert string.\n");
+        logAlways(LogLevelCritical, "InputHandler::spannableTextInRange failed to convert string.");
         free(pst->str);
         free(pst);
         return 0;
@@ -1999,7 +1999,7 @@ bool InputHandler::setText(spannable_string_t* spannableString)
     String textToInsert = convertSpannableStringToString(spannableString);
     int textLength = textToInsert.length();
 
-    InputLog(LogLevelInfo, "InputHandler::setText spannableString is '%s', of length %d \n", textToInsert.latin1().data(), textLength);
+    InputLog(LogLevelInfo, "InputHandler::setText spannableString is '%s', of length %d", textToInsert.latin1().data(), textLength);
 
     span_t* changedSpan = firstSpanInString(spannableString, CHANGED_ATTRIB);
     int composingTextStart = m_composingTextStart;
@@ -2010,10 +2010,10 @@ bool InputHandler::setText(spannable_string_t* spannableString)
     if (isTrailingSingleCharacter(changedSpan, textLength, composingTextLength)) {
         // Handle the case where text is being composed.
         if (firstSpanInString(spannableString, COMPOSED_TEXT_ATTRIB)) {
-            InputLog(LogLevelInfo, "InputHandler::setText Single trailing character detected.  Text is being composed. \n");
+            InputLog(LogLevelInfo, "InputHandler::setText Single trailing character detected.  Text is being composed.");
             return editor->command("InsertText").execute(textToInsert.right(1));
         }
-        InputLog(LogLevelInfo, "InputHandler::setText Single trailing character detected. Text is not being composed. \n");
+        InputLog(LogLevelInfo, "InputHandler::setText Single trailing character detected. Text is not being composed.");
         return handleKeyboardInput(Platform::KeyboardEvent(textToInsert[textLength - 1], Platform::KeyboardEvent::KeyChar, 0), false /* changeIsPartOfComposition */);
     }
 
@@ -2021,12 +2021,12 @@ bool InputHandler::setText(spannable_string_t* spannableString)
     if (!changedSpan) {
         // If the composition length is the same as our string length, then we don't need to do anything.
         if (composingTextLength == textLength) {
-            InputLog(LogLevelInfo, "InputHandler::setText No spans have changed. New text is the same length as the old. Nothing to do. \n");
+            InputLog(LogLevelInfo, "InputHandler::setText No spans have changed. New text is the same length as the old. Nothing to do.");
             return true;
         }
 
         if (composingTextLength - textLength == 1) {
-            InputLog(LogLevelInfo, "InputHandler::setText No spans have changed. New text is one character shorter than the old. Treating as 'delete'. \n");
+            InputLog(LogLevelInfo, "InputHandler::setText No spans have changed. New text is one character shorter than the old. Treating as 'delete'.");
             return editor->command("DeleteBackward").execute();
         }
     }
@@ -2059,7 +2059,7 @@ bool InputHandler::setText(spannable_string_t* spannableString)
     if (textLength == 1 && !spannableString->spans_count) {
         // Handle single key non-attributed entry as key press rather than insert to allow
         // triggering of javascript events.
-        InputLog(LogLevelInfo, "InputHandler::setText Single character entry treated as key-press in the absense of spans. \n");
+        InputLog(LogLevelInfo, "InputHandler::setText Single character entry treated as key-press in the absense of spans.");
         return handleKeyboardInput(Platform::KeyboardEvent(textToInsert[0], Platform::KeyboardEvent::KeyChar, 0), true /* changeIsPartOfComposition */);
     }
 
@@ -2141,7 +2141,7 @@ bool InputHandler::setRelativeCursorPosition(int insertionPoint, int relativeCur
 
 bool InputHandler::setSpannableTextAndRelativeCursor(spannable_string_t* spannableString, int relativeCursorPosition, bool markTextAsComposing)
 {
-    InputLog(LogLevelInfo, "InputHandler::setSpannableTextAndRelativeCursor(%d, %d, %d)\n", spannableString->length, relativeCursorPosition, markTextAsComposing);
+    InputLog(LogLevelInfo, "InputHandler::setSpannableTextAndRelativeCursor(%d, %d, %d)", spannableString->length, relativeCursorPosition, markTextAsComposing);
     int insertionPoint = compositionActive() ? m_composingTextStart : selectionStart();
 
     ProcessingChangeGuard guard(this);
