@@ -1,3 +1,16 @@
+2012-08-14  Roger Fong  <roger_fong@apple.com>
+
+        old-run-webkit-tests should skip all file extensions for ref tests, not just .html.
+        https://bugs.webkit.org/show_bug.cgi?id=93904
+
+        Reviewed by Tim Horton.
+
+        old-run-webkit-tests ref test only skipped .html test.
+        They need to skip .html, .shtml, .xml, .xhtml, .pl, .htm, .php, .svg, .mht.
+        
+        * Scripts/old-run-webkit-tests:
+        (isUsedInReftest): Skip all extensions for ref tests.
+
 2012-08-14  Lauro Neto  <lauro.neto@openbossa.org>
 
         Convert signals/slots to Q_* macros.

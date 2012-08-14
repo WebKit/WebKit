@@ -2560,11 +2560,21 @@ my @testsFound;
 sub isUsedInReftest($)
 {
     my $filename = $_[0];
-    if ($filename =~ /-$expectedTag(-$mismatchTag)?\.html$/) {
+    my @extensions = ('html','shtml','xml','xhtml','htm','php','svg','mht','pl');
+    my $extensionsJoined = join("|", @extensions);
+    my $extensionExpression = "-$expectedTag(-$mismatchTag)?\\.(".$extensionsJoined.")\$";
+    
+    if ($filename =~ /$extensionExpression/) {
         return 1;
     }
     my $base = stripExtension($filename);
-    return (-f "$base-$expectedTag.html" || -f "$base-$expectedTag-$mismatchTag.html");
+    
+    foreach my $extension (@extensions) {
+        if (-f "$base-$expectedTag.$extension" || -f "$base-$expectedTag-$mismatchTag.$extensionsJoined") {
+            return 1;
+        }
+    }
+    return 0;
 }
 
 sub directoryFilter
