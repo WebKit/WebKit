@@ -904,9 +904,9 @@ PassRefPtr<Widget> FrameLoaderClientWx::createPlugin(const IntSize& size, HTMLPl
 
 void FrameLoaderClientWx::redirectDataToPlugin(Widget* pluginWidget)
 {
-    ASSERT(!m_pluginView);
     m_pluginView = static_cast<PluginView*>(pluginWidget);
-    m_hasSentResponseToPlugin = false;
+    if (pluginWidget)
+        m_hasSentResponseToPlugin = false;
 }
 
 ResourceError FrameLoaderClientWx::pluginWillHandleLoadError(const ResourceResponse& response)

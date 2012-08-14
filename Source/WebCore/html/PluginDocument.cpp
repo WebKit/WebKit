@@ -168,6 +168,8 @@ void PluginDocument::detach()
 {
     // Release the plugin node so that we don't have a circular reference.
     m_pluginNode = 0;
+    if (FrameLoader* loader = frame()->loader())
+        loader->client()->redirectDataToPlugin(0);
     HTMLDocument::detach();
 }
 

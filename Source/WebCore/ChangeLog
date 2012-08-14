@@ -1,3 +1,22 @@
+2012-08-13  Tom Sepez  <tsepez@chromium.org>
+
+        [chromium] release FrameLoaderClientImpl::m_pluginWidget refptr upon Plugin Document detach.
+        https://bugs.webkit.org/show_bug.cgi?id=93283
+
+        Reviewed by Eric Seidel.
+
+        Chromium has a refptr that needs to be NULLed at this point.
+        
+        The approach is to change the client redirectDataToPlugin method(s) to expect
+        the possibility of a NULL argument, and the use this to clear the refptr on
+        the chromium platform.  Other platforms can merely ignore the NULL case, thereby
+        maintaining the existing behaviour.
+
+        Formal testing is nearly impossible without some chrome-specific plugins.
+
+        * html/PluginDocument.cpp:
+        (WebCore::PluginDocument::detach):
+
 2012-08-13  Eric Penner  <epenner@google.com>
 
         [chromium] Paint animated layers immediately to avoid animation hiccups.

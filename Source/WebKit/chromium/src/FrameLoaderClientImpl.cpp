@@ -1490,9 +1490,8 @@ PassRefPtr<Widget> FrameLoaderClientImpl::createPlugin(
 // (e.g., acrobat reader).
 void FrameLoaderClientImpl::redirectDataToPlugin(Widget* pluginWidget)
 {
-    if (pluginWidget->isPluginContainer())
-        m_pluginWidget = static_cast<WebPluginContainerImpl*>(pluginWidget);
-    ASSERT(m_pluginWidget);
+    ASSERT(!pluginWidget || pluginWidget->isPluginContainer());
+    m_pluginWidget = static_cast<WebPluginContainerImpl*>(pluginWidget);
 }
 
 PassRefPtr<Widget> FrameLoaderClientImpl::createJavaAppletWidget(

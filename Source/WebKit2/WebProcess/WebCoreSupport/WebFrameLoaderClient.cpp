@@ -1356,9 +1356,6 @@ PassRefPtr<Widget> WebFrameLoaderClient::createPlugin(const IntSize&, HTMLPlugIn
 
 void WebFrameLoaderClient::redirectDataToPlugin(Widget* pluginWidget)
 {
-    ASSERT(!m_pluginView);
-    ASSERT(pluginWidget);
-    
     m_pluginView = static_cast<PluginView*>(pluginWidget);
 }
 

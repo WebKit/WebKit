@@ -885,8 +885,7 @@ PassRefPtr<Widget> WebFrameLoaderClient::createPlugin(const IntSize& pluginSize,
 void WebFrameLoaderClient::redirectDataToPlugin(Widget* pluginWidget)
 {
     // Ideally, this function shouldn't be necessary, see <rdar://problem/4852889>
-
-    if (pluginWidget->isPluginView())
+    if (!pluginWidget || pluginWidget->isPluginView())
         m_manualLoader = static_cast<PluginView*>(pluginWidget);
     else 
         m_manualLoader = static_cast<EmbeddedWidget*>(pluginWidget);

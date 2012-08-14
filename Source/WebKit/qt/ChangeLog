@@ -1,3 +1,16 @@
+2012-08-13  Tom Sepez  <tsepez@chromium.org>
+
+        [chromium] release FrameLoaderClientImpl::m_pluginWidget refptr upon Plugin Document detach.
+        https://bugs.webkit.org/show_bug.cgi?id=93283
+
+        Reviewed by Eric Seidel.
+
+        Change the client redirectDataToPlugin method(s) to expect the possibility of
+        a NULL argument, keeping existing behaviour otherwise.
+
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::redirectDataToPlugin):
+
 2012-08-13  Simon Hausmann  <simon.hausmann@nokia.com>
 
         [Qt] Port meta method/signal/slot handling in run-time bridge to use JSC C API

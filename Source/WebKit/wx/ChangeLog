@@ -1,3 +1,18 @@
+2012-08-13  Tom Sepez  <tsepez@chromium.org>
+
+        [chromium] release FrameLoaderClientImpl::m_pluginWidget refptr upon Plugin Document detach.
+        https://bugs.webkit.org/show_bug.cgi?id=93283
+
+        Reviewed by Eric Seidel.
+
+        Chromium has a refptr that needs to be NULLed at this point.
+        
+        Change the client redirectDataToPlugin method(s) to expect the possibility of
+        a NULL argument, keeping existing behaviour otherwise.
+
+        * WebKitSupport/FrameLoaderClientWx.cpp:
+        (WebCore::FrameLoaderClientWx::redirectDataToPlugin):
+
 2012-07-23  Pierre Rossi  <pierre.rossi@gmail.com>
 
         Unify numTouchEventHandlersChanged and needTouchEvents in the chrome client
