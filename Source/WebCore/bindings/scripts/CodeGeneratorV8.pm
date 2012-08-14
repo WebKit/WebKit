@@ -3767,9 +3767,9 @@ sub JSValueToNative
     return "toInt64($value)" if $type eq "unsigned long long" or $type eq "long long";
     return "static_cast<Range::CompareHow>($value->Int32Value())" if $type eq "CompareHow";
     return "toWebCoreDate($value)" if $type eq "Date";
-    return "v8ValueToWebCoreDOMStringList($value)" if $type eq "DOMStringList";
+    return "toDOMStringList($value)" if $type eq "DOMStringList";
     # FIXME: Add proper support for T[], T[]? and sequence<T>.
-    return "v8ValueToWebCoreDOMStringList($value)" if $type eq "DOMString[]";
+    return "toDOMStringList($value)" if $type eq "DOMString[]";
 
     if ($type eq "DOMString" or $type eq "DOMUserData") {
         return $value;

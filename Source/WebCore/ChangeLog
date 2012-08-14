@@ -1,5 +1,30 @@
 2012-08-13  Kentaro Hara  <haraken@chromium.org>
 
+        [V8] Rename v8ValueToWebCoreDOMStringList() to toDOMStringList()
+        https://bugs.webkit.org/show_bug.cgi?id=93839
+
+        Reviewed by Adam Barth.
+
+        For naming consistency with toWebCoreString() and toWebCoreAtomicString(),
+        this patch renames v8ValueToWebCoreDOMStringList() to toDOMStringList().
+        ("WebCore" wouldn't be needed because it's clear from "DOMStringList".)
+
+        No tests. No change in behavior.
+
+        * bindings/scripts/CodeGeneratorV8.pm:
+        (JSValueToNative):
+        * bindings/scripts/test/V8/V8TestObj.cpp:
+        (WebCore::TestObjV8Internal::overloadedMethod6Callback):
+        (WebCore::TestObjV8Internal::overloadedMethod7Callback):
+        (WebCore::TestObjV8Internal::overloadedMethod9Callback):
+        (WebCore::TestObjV8Internal::stringArrayFunctionCallback):
+        * bindings/v8/V8Binding.cpp:
+        (WebCore::toDOMStringList):
+        * bindings/v8/V8Binding.h:
+        (WebCore):
+
+2012-08-13  Kentaro Hara  <haraken@chromium.org>
+
         [V8] Rename v8ValueToAtomicWebCoreString() to toWebCoreAtomicString()
         https://bugs.webkit.org/show_bug.cgi?id=93824
 

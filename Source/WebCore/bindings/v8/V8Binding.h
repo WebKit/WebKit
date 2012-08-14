@@ -388,7 +388,7 @@ namespace WebCore {
 
     String int32ToWebCoreString(int value);
 
-    PassRefPtr<DOMStringList> v8ValueToWebCoreDOMStringList(v8::Handle<v8::Value>);
+    PassRefPtr<DOMStringList> toDOMStringList(v8::Handle<v8::Value>);
 
     class V8ParameterBase {
     public:

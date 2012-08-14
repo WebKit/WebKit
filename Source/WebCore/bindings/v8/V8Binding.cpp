@@ -334,7 +334,7 @@ void StringCache::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     info.addHashMap(m_stringCache);
 }
     
-PassRefPtr<DOMStringList> v8ValueToWebCoreDOMStringList(v8::Handle<v8::Value> value)
+PassRefPtr<DOMStringList> toDOMStringList(v8::Handle<v8::Value> value)
 {
     v8::Local<v8::Value> v8Value(v8::Local<v8::Value>::New(value));
 
