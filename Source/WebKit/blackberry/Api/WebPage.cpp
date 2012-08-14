@@ -597,6 +597,7 @@ void WebPagePrivate::init(const WebString& pageGroupName)
     Platform::userInterfaceThreadMessageClient()->dispatchSyncMessage(
             createMethodCallMessage(&WebPagePrivate::createCompositor, this));
 #endif
+    m_page->settings()->setDNSPrefetchingEnabled(true);
 }
 
 class DeferredTaskLoadManualScript: public DeferredTask<&WebPagePrivate::m_wouldLoadManualScript> {

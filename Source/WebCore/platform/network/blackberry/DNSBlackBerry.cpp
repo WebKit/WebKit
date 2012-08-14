@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Research In Motion Limited. All rights reserved.
+ * Copyright (C) 2012 Research In Motion Limited. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -16,17 +16,23 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
+#ifndef DNSPrefetchBlackBerry_H
+#define DNSPrefetchBlackBerry_H
+
 #include "config.h"
-
-#include "NotImplemented.h"
-
 #include "PlatformString.h"
+
+#include <BlackBerryPlatformCommonFunctions.h>
+#include <wtf/text/CString.h>
 
 namespace WebCore {
 
-void setCookieStoragePrivateBrowsingEnabled(bool)
+void prefetchDNS(const String& host)
 {
-    notImplemented();
+    if (host.isEmpty())
+        return;
+    BlackBerry::Platform::prefetchDNS(host.latin1().data());
 }
 
-} // namespace WebCore
+}
+#endif
