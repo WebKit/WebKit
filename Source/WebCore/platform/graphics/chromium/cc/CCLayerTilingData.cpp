@@ -101,6 +101,11 @@ void CCLayerTilingData::reset()
 
 void CCLayerTilingData::contentRectToTileIndices(const IntRect& contentRect, int& left, int& top, int& right, int& bottom) const
 {
+    // An empty rect doesn't result in an empty set of tiles, so don't pass an empty rect.
+    // FIXME: Possibly we should fill a vector of tiles instead,
+    //        since the normal use of this function is to enumerate some tiles.
+    ASSERT(!contentRect.isEmpty());
+
     left = m_tilingData.tileXIndexFromSrcCoord(contentRect.x());
     top = m_tilingData.tileYIndexFromSrcCoord(contentRect.y());
     right = m_tilingData.tileXIndexFromSrcCoord(contentRect.maxX() - 1);
@@ -138,6 +143,10 @@ Region CCLayerTilingData::opaqueRegionInContentRect(const IntRect& contentRect) 
 void CCLayerTilingData::setBounds(const IntSize& size)
 {
     m_tilingData.setTotalSize(size);
+    if (size.isEmpty()) {
+        m_tiles.clear();
+        return;
+    }
 
     // Any tiles completely outside our new bounds are invalid and should be dropped.
     int left, top, right, bottom;

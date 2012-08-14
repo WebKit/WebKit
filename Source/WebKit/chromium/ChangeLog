@@ -1,3 +1,14 @@
+2012-08-13  Eric Penner  <epenner@google.com>
+
+        [chromium] Paint animated layers immediately to avoid animation hiccups.
+        https://bugs.webkit.org/show_bug.cgi?id=93028
+
+        Reviewed by Adrienne Walker.
+
+        Replaced one test. Test painting full animated layer.
+
+        * tests/TiledLayerChromiumTest.cpp:
+
 2012-08-12  Shawn Singh  <shawnsingh@chromium.org>
 
         [chromium] renderSurface in incorrect space if owning layer has empty but non-zero bounds
