@@ -1,3 +1,9 @@
+2012-08-14  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, GTK baseline for test introduced in r125462.
+
+        * platform/gtk/svg/filters/color-interpolation-filters-expected.txt:
+
 2012-08-14  Yuta Kitamura  <yutak@google.com>
 
         [Chromium] Unreviewed gardening. Add expectations for recent flakiness.
