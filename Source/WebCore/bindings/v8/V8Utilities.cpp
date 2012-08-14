@@ -35,7 +35,6 @@
 #include "Document.h"
 #include "ExceptionCode.h"
 #include "Frame.h"
-#include "GenericBinding.h"
 #include "MessagePort.h"
 #include "ScriptExecutionContext.h"
 #include "ScriptState.h"
@@ -44,10 +43,8 @@
 #include "V8MessagePort.h"
 #include "V8Proxy.h"
 #include "WorkerContext.h"
-#include "WorkerContextExecutionProxy.h"
 #include <v8.h>
 #include <wtf/ArrayBuffer.h>
-#include <wtf/Assertions.h>
 
 namespace WebCore {
 
@@ -166,16 +163,6 @@ void transferHiddenDependency(v8::Handle<v8::Object> object,
     }
     if (!newValue->IsNull() && !newValue->IsUndefined())
         createHiddenDependency(object, newValue, cacheIndex);
-}
-
-Frame* callingOrEnteredFrame()
-{
-    return activeFrame(BindingState::instance());
-}
-
-KURL completeURL(const String& relativeURL)
-{
-    return completeURL(BindingState::instance(), relativeURL);
 }
 
 ScriptExecutionContext* getScriptExecutionContext()

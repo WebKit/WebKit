@@ -34,8 +34,6 @@
 #include <wtf/Forward.h>
 #include <v8.h>
 
-#include "OwnHandle.h"
-
 namespace WTF {
 class ArrayBuffer;
 }
@@ -43,11 +41,8 @@ class ArrayBuffer;
 namespace WebCore {
 
     class EventListener;
-    class Frame;
-    class KURL;
     class MessagePort;
     class ScriptExecutionContext;
-    class ScriptState;
 
     // Use an array to hold dependents. It works like a ref-counted scheme. A value can be added more than once to the DOM object.
     void createHiddenDependency(v8::Handle<v8::Object>, v8::Local<v8::Value>, int cacheIndex);
@@ -55,8 +50,6 @@ namespace WebCore {
 
     // Combo create/remove, for generated event-handler-setter bindings:
     void transferHiddenDependency(v8::Handle<v8::Object>, EventListener* oldValue, v8::Local<v8::Value> newValue, int cacheIndex);
-
-    KURL completeURL(const String& relativeURL);
 
     ScriptExecutionContext* getScriptExecutionContext();
 

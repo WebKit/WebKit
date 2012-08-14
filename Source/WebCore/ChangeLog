@@ -1,5 +1,21 @@
 2012-08-13  Kentaro Hara  <haraken@chromium.org>
 
+        [V8] Remove unused methods and headers from V8Utilities
+        https://bugs.webkit.org/show_bug.cgi?id=93805
+
+        Reviewed by Adam Barth.
+
+        This patch removes unused methods, forward declarations and
+        headers from V8Utilities.{h,cpp}.
+
+        No tests. No change in behavior.
+
+        * bindings/v8/V8Utilities.cpp:
+        * bindings/v8/V8Utilities.h:
+        (WebCore):
+
+2012-08-13  Kentaro Hara  <haraken@chromium.org>
+
         [V8] Move V8PerIsolateData::visitExternalStrings() to V8PerIsolateData.cpp
         https://bugs.webkit.org/show_bug.cgi?id=93803
 
