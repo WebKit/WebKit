@@ -47,7 +47,7 @@
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
-class LayoutTestController;
+class DRTTestRunner;
 class MockWebSpeechInputController;
 class MockWebSpeechRecognizer;
 class SkCanvas;
@@ -277,7 +277,7 @@ class WebViewHost : public WebKit::WebViewClient, public WebKit::WebFrameClient,
     void finishLastTextCheck();
     virtual void fillSpellingSuggestionList(const WebKit::WebString& word, Vector<WebKit::WebString>* suggestions) OVERRIDE;
 
-    // Geolocation client mocks for LayoutTestController
+    // Geolocation client mocks for DRTTestRunner
     WebKit::WebGeolocationClientMock* geolocationClientMock();
 
     // Pending task list, Note taht the method is referred from MethodTask class.
@@ -302,7 +302,7 @@ private:
         CallbackMethodType m_callback;
     };
 
-    LayoutTestController* layoutTestController() const;
+    DRTTestRunner* testRunner() const;
 
     // Called the title of the page changes.
     // Can be used to update the title of the window.

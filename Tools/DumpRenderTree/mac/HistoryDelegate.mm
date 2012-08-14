@@ -74,7 +74,7 @@
 
 - (void)populateVisitedLinksForWebView:(WebView *)webView
 {
-    if (gLayoutTestController->dumpVisitedLinksCallback())
+    if (gTestRunner->dumpVisitedLinksCallback())
         printf("Asked to populate visited links for WebView \"%s\"\n", [[[NSURL URLWithString:[webView mainFrameURL]] _drt_descriptionSuitableForTestResult] UTF8String]);
 }
 

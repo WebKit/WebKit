@@ -30,8 +30,8 @@
  */
 
 /*
-  LayoutTestController class:
-  Bound to a JavaScript window.layoutTestController object using the
+  DRTTestRunner class:
+  Bound to a JavaScript window.testRunner object using the
   CppBoundClass::bindToJavascript(), this allows layout tests that are run in
   the test_shell (or, in principle, any web page loaded into a client app built
   with this class) to control various aspects of how the tests are run and what
@@ -45,13 +45,13 @@
 
 class TestShell;
 
-class LayoutTestController : public TestRunner {
+class DRTTestRunner : public TestRunner {
 public:
     // Builds the property and method lists needed to bind this class to a JS
     // object.
-    LayoutTestController(TestShell*);
+    DRTTestRunner(TestShell*);
 
-    ~LayoutTestController();
+    ~DRTTestRunner();
 
     // This function sets a flag that tells the test_shell to dump pages as
     // plain text, rather than as a text representation of the renderer's state.
@@ -345,7 +345,7 @@ public:
     void setMockGeolocationPosition(const CppArgumentList&, CppVariant*);
     void setMockGeolocationError(const CppArgumentList&, CppVariant*);
 
-    // Empty stub method to keep parity with object model exposed by global LayoutTestController.
+    // Empty stub method to keep parity with object model exposed by global DRTTestRunner.
     void abortModal(const CppArgumentList&, CppVariant*);
 
     // Speech input related functions.
@@ -528,7 +528,7 @@ private:
     // queueScript.
     class WorkQueue {
     public:
-        WorkQueue(LayoutTestController* controller) : m_frozen(false), m_controller(controller) { }
+        WorkQueue(DRTTestRunner* controller) : m_frozen(false), m_controller(controller) { }
         virtual ~WorkQueue();
         void processWorkSoon();
 
@@ -552,7 +552,7 @@ private:
         TaskList m_taskList;
         Deque<WorkItem*> m_queue;
         bool m_frozen;
-        LayoutTestController* m_controller;
+        DRTTestRunner* m_controller;
     };
 
     // Support for overridePreference.
@@ -563,9 +563,9 @@ private:
 
     void logErrorToConsole(const std::string&);
     void completeNotifyDone(bool isTimeout);
-    class NotifyDoneTimedOutTask: public MethodTask<LayoutTestController> {
+    class NotifyDoneTimedOutTask: public MethodTask<DRTTestRunner> {
     public:
-        NotifyDoneTimedOutTask(LayoutTestController* object): MethodTask<LayoutTestController>(object) { }
+        NotifyDoneTimedOutTask(DRTTestRunner* object): MethodTask<DRTTestRunner>(object) { }
         virtual void runIfValid() { m_object->completeNotifyDone(true); }
     };
 
@@ -578,7 +578,7 @@ private:
     // Used for test timeouts.
     TaskList m_taskList;
 
-    // Non-owning pointer. The LayoutTestController is owned by the host.
+    // Non-owning pointer. The DRTTestRunner is owned by the host.
     TestShell* m_shell;
 
     // If true, the test_shell will produce a plain text dump rather than a
@@ -717,4 +717,4 @@ private:
     bool m_hasCustomFullScreenBehavior;
 };
 
-#endif // LayoutTestController_h
+#endif // DRTTestRunner_h

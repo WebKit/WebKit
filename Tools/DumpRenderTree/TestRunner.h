@@ -38,10 +38,10 @@
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 
-class LayoutTestController : public RefCounted<LayoutTestController> {
+class TestRunner : public RefCounted<TestRunner> {
 public:
-    static PassRefPtr<LayoutTestController> create(const std::string& testPathOrURL, const std::string& expectedPixelHash);
-    ~LayoutTestController();
+    static PassRefPtr<TestRunner> create(const std::string& testPathOrURL, const std::string& expectedPixelHash);
+    ~TestRunner();
 
     void makeWindowObject(JSContextRef, JSObjectRef windowObject, JSValueRef* exception);
 
@@ -366,7 +366,7 @@ public:
     void setStorageDatabaseIdleInterval(double);
 
 private:
-    LayoutTestController(const std::string& testPathOrURL, const std::string& expectedPixelHash);
+    TestRunner(const std::string& testPathOrURL, const std::string& expectedPixelHash);
 
     void setGeolocationPermissionCommon(bool allow);
 
@@ -441,4 +441,4 @@ private:
     static JSStaticFunction* staticFunctions();
 };
 
-#endif // LayoutTestController_h
+#endif // TestRunner_h

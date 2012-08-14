@@ -49,7 +49,7 @@ WebPermissions::~WebPermissions()
 bool WebPermissions::allowImage(WebKit::WebFrame*, bool enabledPerSettings, const WebKit::WebURL& imageURL)
 {
     bool allowed = enabledPerSettings && m_imagesAllowed;
-    if (layoutTestController()->shouldDumpPermissionClientCallbacks())
+    if (testRunner()->shouldDumpPermissionClientCallbacks())
         fprintf(stdout, "PERMISSION CLIENT: allowImage(%s): %s\n", m_shell->normalizeLayoutTestURL(imageURL.spec()).c_str(), allowed ? "true" : "false");
     return allowed;
 }
@@ -57,7 +57,7 @@ bool WebPermissions::allowImage(WebKit::WebFrame*, bool enabledPerSettings, cons
 bool WebPermissions::allowScriptFromSource(WebKit::WebFrame*, bool enabledPerSettings, const WebKit::WebURL& scriptURL)
 {
     bool allowed = enabledPerSettings && m_scriptsAllowed;
-    if (layoutTestController()->shouldDumpPermissionClientCallbacks())
+    if (testRunner()->shouldDumpPermissionClientCallbacks())
         fprintf(stdout, "PERMISSION CLIENT: allowScriptFromSource(%s): %s\n", m_shell->normalizeLayoutTestURL(scriptURL.spec()).c_str(), allowed ? "true" : "false");
     return allowed;
 }
@@ -126,7 +126,7 @@ void WebPermissions::reset()
 
 // Private functions ----------------------------------------------------------
 
-LayoutTestController* WebPermissions::layoutTestController() const
+DRTTestRunner* WebPermissions::testRunner() const
 {
-    return m_shell->layoutTestController();
+    return m_shell->testRunner();
 }

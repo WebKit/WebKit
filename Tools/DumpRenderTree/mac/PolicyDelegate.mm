@@ -133,7 +133,7 @@ static NSString *dispositionTypeFromContentDispositionHeader(NSString *header)
     permissiveDelegate = permissive;
 }
 
-- (void)setControllerToNotifyDone:(LayoutTestController*)controller
+- (void)setControllerToNotifyDone:(TestRunner*)controller
 {
     controllerToNotifyDone = controller;
 }

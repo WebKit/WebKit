@@ -80,7 +80,7 @@ ULONG HistoryDelegate::Release(void)
 // IWebHistoryDelegate
 HRESULT HistoryDelegate::didNavigateWithNavigationData(IWebView* webView, IWebNavigationData* navigationData, IWebFrame* webFrame)
 {
-    if (!gLayoutTestController->dumpHistoryDelegateCallbacks())
+    if (!gTestRunner->dumpHistoryDelegateCallbacks())
         return S_OK;
 
     BSTR urlBSTR;
@@ -151,7 +151,7 @@ HRESULT HistoryDelegate::didNavigateWithNavigationData(IWebView* webView, IWebNa
 
 HRESULT HistoryDelegate::didPerformClientRedirectFromURL(IWebView*, BSTR sourceURL, BSTR destinationURL, IWebFrame*)
 {
-    if (!gLayoutTestController->dumpHistoryDelegateCallbacks())
+    if (!gTestRunner->dumpHistoryDelegateCallbacks())
         return S_OK;
 
     wstring source;
@@ -168,7 +168,7 @@ HRESULT HistoryDelegate::didPerformClientRedirectFromURL(IWebView*, BSTR sourceU
     
 HRESULT HistoryDelegate::didPerformServerRedirectFromURL(IWebView* webView, BSTR sourceURL, BSTR destinationURL, IWebFrame* webFrame)
 {
-    if (!gLayoutTestController->dumpHistoryDelegateCallbacks())
+    if (!gTestRunner->dumpHistoryDelegateCallbacks())
         return S_OK;
 
     wstring source;
@@ -185,7 +185,7 @@ HRESULT HistoryDelegate::didPerformServerRedirectFromURL(IWebView* webView, BSTR
 
 HRESULT HistoryDelegate::updateHistoryTitle(IWebView* webView, BSTR titleBSTR, BSTR urlBSTR)
 {
-    if (!gLayoutTestController->dumpHistoryDelegateCallbacks())
+    if (!gTestRunner->dumpHistoryDelegateCallbacks())
         return S_OK;
     
     wstring url;
@@ -202,7 +202,7 @@ HRESULT HistoryDelegate::updateHistoryTitle(IWebView* webView, BSTR titleBSTR, B
     
 HRESULT HistoryDelegate::populateVisitedLinksForWebView(IWebView* webView)
 {
-    if (!gLayoutTestController->dumpHistoryDelegateCallbacks())
+    if (!gTestRunner->dumpHistoryDelegateCallbacks())
         return S_OK;
 
     BSTR urlBSTR;
@@ -214,7 +214,7 @@ HRESULT HistoryDelegate::populateVisitedLinksForWebView(IWebView* webView)
         url = urlSuitableForTestResult(wstringFromBSTR(urlBSTR));
     SysFreeString(urlBSTR);
 
-    if (gLayoutTestController->dumpVisitedLinksCallback())
+    if (gTestRunner->dumpVisitedLinksCallback())
         printf("Asked to populate visited links for WebView \"%S\"\n", url.c_str());
 
     return S_OK;

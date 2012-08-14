@@ -55,53 +55,53 @@
 using WebCore::toElement;
 using WebCore::toJS;
 
-LayoutTestController::~LayoutTestController()
+TestRunner::~TestRunner()
 {
 }
 
-void LayoutTestController::addDisallowedURL(JSStringRef url)
+void TestRunner::addDisallowedURL(JSStringRef url)
 {
     UNUSED_PARAM(url);
     notImplemented();
 }
 
-void LayoutTestController::clearAllDatabases()
+void TestRunner::clearAllDatabases()
 {
 #if ENABLE(DATABASE)
     WebCore::DatabaseTracker::tracker().deleteAllDatabases();
 #endif
 }
 
-void LayoutTestController::clearBackForwardList()
+void TestRunner::clearBackForwardList()
 {
     BlackBerry::WebKit::DumpRenderTree::currentInstance()->page()->clearBackForwardList(true);
 }
 
-void LayoutTestController::clearPersistentUserStyleSheet()
+void TestRunner::clearPersistentUserStyleSheet()
 {
     notImplemented();
 }
 
-JSStringRef LayoutTestController::copyDecodedHostName(JSStringRef name)
-{
-    UNUSED_PARAM(name);
-    notImplemented();
-    return 0;
-}
-
-JSStringRef LayoutTestController::copyEncodedHostName(JSStringRef name)
+JSStringRef TestRunner::copyDecodedHostName(JSStringRef name)
 {
     UNUSED_PARAM(name);
     notImplemented();
     return 0;
 }
 
-void LayoutTestController::dispatchPendingLoadRequests()
+JSStringRef TestRunner::copyEncodedHostName(JSStringRef name)
+{
+    UNUSED_PARAM(name);
+    notImplemented();
+    return 0;
+}
+
+void TestRunner::dispatchPendingLoadRequests()
 {
     notImplemented();
 }
 
-void LayoutTestController::display()
+void TestRunner::display()
 {
     notImplemented();
 }
@@ -114,7 +114,7 @@ static String jsStringRefToWebCoreString(JSStringRef str)
     return String::fromUTF8(strArr.get());
 }
 
-void LayoutTestController::execCommand(JSStringRef name, JSStringRef value)
+void TestRunner::execCommand(JSStringRef name, JSStringRef value)
 {
     if (!mainFrame)
         return;
@@ -125,7 +125,7 @@ void LayoutTestController::execCommand(JSStringRef name, JSStringRef value)
     mainFrame->editor()->command(nameStr).execute(valueStr);
 }
 
-bool LayoutTestController::isCommandEnabled(JSStringRef name)
+bool TestRunner::isCommandEnabled(JSStringRef name)
 {
     if (!mainFrame)
         return false;
@@ -135,12 +135,12 @@ bool LayoutTestController::isCommandEnabled(JSStringRef name)
     return mainFrame->editor()->command(nameStr).isEnabled();
 }
 
-void LayoutTestController::keepWebHistory()
+void TestRunner::keepWebHistory()
 {
     notImplemented();
 }
 
-void LayoutTestController::notifyDone()
+void TestRunner::notifyDone()
 {
     if (m_waitToDump && (!topLoadingFrame || BlackBerry::WebKit::DumpRenderTree::currentInstance()->loadFinished()) && !WorkQueue::shared()->count())
         dump();
@@ -149,12 +149,12 @@ void LayoutTestController::notifyDone()
     waitForPolicy = false;
 }
 
-JSStringRef LayoutTestController::pathToLocalResource(JSContextRef, JSStringRef url)
+JSStringRef TestRunner::pathToLocalResource(JSContextRef, JSStringRef url)
 {
     return JSStringRetain(url);
 }
 
-void LayoutTestController::queueLoad(JSStringRef url, JSStringRef target)
+void TestRunner::queueLoad(JSStringRef url, JSStringRef target)
 {
     size_t urlArrSize = JSStringGetMaximumUTF8CStringSize(url);
     OwnArrayPtr<char> urlArr = adoptArrayPtr(new char[urlArrSize]);
@@ -167,55 +167,55 @@ void LayoutTestController::queueLoad(JSStringRef url, JSStringRef target)
     WorkQueue::shared()->queue(new LoadItem(absoluteURL.get(), target));
 }
 
-void LayoutTestController::setAcceptsEditing(bool acceptsEditing)
+void TestRunner::setAcceptsEditing(bool acceptsEditing)
 {
     BlackBerry::WebKit::DumpRenderTree::currentInstance()->setAcceptsEditing(acceptsEditing);
 }
 
-void LayoutTestController::setAppCacheMaximumSize(unsigned long long quota)
+void TestRunner::setAppCacheMaximumSize(unsigned long long quota)
 {
     UNUSED_PARAM(quota);
     notImplemented();
 }
 
-void LayoutTestController::setAuthorAndUserStylesEnabled(bool enable)
+void TestRunner::setAuthorAndUserStylesEnabled(bool enable)
 {
     mainFrame->page()->settings()->setAuthorAndUserStylesEnabled(enable);
 }
 
-void LayoutTestController::setCacheModel(int)
+void TestRunner::setCacheModel(int)
 {
     notImplemented();
 }
 
-void LayoutTestController::setCustomPolicyDelegate(bool setDelegate, bool permissive)
+void TestRunner::setCustomPolicyDelegate(bool setDelegate, bool permissive)
 {
     UNUSED_PARAM(setDelegate);
     UNUSED_PARAM(permissive);
     notImplemented();
 }
 
-void LayoutTestController::clearApplicationCacheForOrigin(OpaqueJSString*)
+void TestRunner::clearApplicationCacheForOrigin(OpaqueJSString*)
 {
     // FIXME: Implement to support deleting all application caches for an origin.
     notImplemented();
 }
 
-long long LayoutTestController::localStorageDiskUsageForOrigin(JSStringRef)
+long long TestRunner::localStorageDiskUsageForOrigin(JSStringRef)
 {
     // FIXME: Implement to support getting disk usage in bytes for an origin.
     notImplemented();
     return 0;
 }
 
-JSValueRef LayoutTestController::originsWithApplicationCache(JSContextRef context)
+JSValueRef TestRunner::originsWithApplicationCache(JSContextRef context)
 {
     // FIXME: Implement to get origins that contain application caches.
     notImplemented();
     return JSValueMakeUndefined(context);
 }
 
-void LayoutTestController::setDatabaseQuota(unsigned long long quota)
+void TestRunner::setDatabaseQuota(unsigned long long quota)
 {
     if (!mainFrame)
         return;
@@ -223,57 +223,57 @@ void LayoutTestController::setDatabaseQuota(unsigned long long quota)
     WebCore::DatabaseTracker::tracker().setQuota(mainFrame->document()->securityOrigin(), quota);
 }
 
-void LayoutTestController::setDomainRelaxationForbiddenForURLScheme(bool forbidden, JSStringRef scheme)
+void TestRunner::setDomainRelaxationForbiddenForURLScheme(bool forbidden, JSStringRef scheme)
 {
     WebCore::SchemeRegistry::setDomainRelaxationForbiddenForURLScheme(forbidden, jsStringRefToWebCoreString(scheme));
 }
 
-void LayoutTestController::setIconDatabaseEnabled(bool iconDatabaseEnabled)
+void TestRunner::setIconDatabaseEnabled(bool iconDatabaseEnabled)
 {
     UNUSED_PARAM(iconDatabaseEnabled);
     notImplemented();
 }
 
-void LayoutTestController::setMainFrameIsFirstResponder(bool flag)
+void TestRunner::setMainFrameIsFirstResponder(bool flag)
 {
     UNUSED_PARAM(flag);
     notImplemented();
 }
 
-void LayoutTestController::setPersistentUserStyleSheetLocation(JSStringRef path)
+void TestRunner::setPersistentUserStyleSheetLocation(JSStringRef path)
 {
     UNUSED_PARAM(path);
     notImplemented();
 }
 
-void LayoutTestController::setPopupBlockingEnabled(bool flag)
+void TestRunner::setPopupBlockingEnabled(bool flag)
 {
     BlackBerry::WebKit::DumpRenderTree::currentInstance()->page()->settings()->setJavaScriptOpenWindowsAutomatically(!flag);
 }
 
-void LayoutTestController::setPrivateBrowsingEnabled(bool flag)
+void TestRunner::setPrivateBrowsingEnabled(bool flag)
 {
     UNUSED_PARAM(flag);
     notImplemented();
 }
 
-void LayoutTestController::setXSSAuditorEnabled(bool flag)
+void TestRunner::setXSSAuditorEnabled(bool flag)
 {
     BlackBerry::WebKit::DumpRenderTree::currentInstance()->page()->settings()->setXSSAuditorEnabled(flag);
 }
 
-void LayoutTestController::setSelectTrailingWhitespaceEnabled(bool flag)
+void TestRunner::setSelectTrailingWhitespaceEnabled(bool flag)
 {
     BlackBerry::WebKit::DumpRenderTree::currentInstance()->setSelectTrailingWhitespaceEnabled(flag);
 }
 
-void LayoutTestController::setSmartInsertDeleteEnabled(bool flag)
+void TestRunner::setSmartInsertDeleteEnabled(bool flag)
 {
     UNUSED_PARAM(flag);
     notImplemented();
 }
 
-void LayoutTestController::setTabKeyCyclesThroughElements(bool cycles)
+void TestRunner::setTabKeyCyclesThroughElements(bool cycles)
 {
     if (!mainFrame)
         return;
@@ -281,51 +281,51 @@ void LayoutTestController::setTabKeyCyclesThroughElements(bool cycles)
     mainFrame->page()->setTabKeyCyclesThroughElements(cycles);
 }
 
-void LayoutTestController::setUseDashboardCompatibilityMode(bool flag)
+void TestRunner::setUseDashboardCompatibilityMode(bool flag)
 {
     UNUSED_PARAM(flag);
     notImplemented();
 }
 
-void LayoutTestController::setUserStyleSheetEnabled(bool flag)
+void TestRunner::setUserStyleSheetEnabled(bool flag)
 {
     UNUSED_PARAM(flag);
     notImplemented();
 }
 
-void LayoutTestController::setUserStyleSheetLocation(JSStringRef path)
+void TestRunner::setUserStyleSheetLocation(JSStringRef path)
 {
     String pathStr = jsStringRefToWebCoreString(path);
     BlackBerry::WebKit::DumpRenderTree::currentInstance()->page()->settings()->setUserStyleSheetLocation(pathStr.utf8().data());
 }
 
-void LayoutTestController::waitForPolicyDelegate()
+void TestRunner::waitForPolicyDelegate()
 {
     setWaitToDump(true);
     waitForPolicy = true;
 }
 
-size_t LayoutTestController::webHistoryItemCount()
+size_t TestRunner::webHistoryItemCount()
 {
     SharedArray<BlackBerry::WebKit::WebPage::BackForwardEntry> backForwardList;
     BlackBerry::WebKit::DumpRenderTree::currentInstance()->page()->getBackForwardList(backForwardList);
     return backForwardList.length();
 }
 
-int LayoutTestController::windowCount()
+int TestRunner::windowCount()
 {
     notImplemented();
     return 0;
 }
 
-bool LayoutTestController::elementDoesAutoCompleteForElementWithId(JSStringRef id)
+bool TestRunner::elementDoesAutoCompleteForElementWithId(JSStringRef id)
 {
     UNUSED_PARAM(id);
     notImplemented();
     return false;
 }
 
-JSRetainPtr<JSStringRef> LayoutTestController::pageProperty(const char* propertyName, int pageNumber) const
+JSRetainPtr<JSStringRef> TestRunner::pageProperty(const char* propertyName, int pageNumber) const
 {
     UNUSED_PARAM(propertyName);
     UNUSED_PARAM(pageNumber);
@@ -333,7 +333,7 @@ JSRetainPtr<JSStringRef> LayoutTestController::pageProperty(const char* property
     return 0;
 }
 
-void LayoutTestController::setWaitToDump(bool waitToDump)
+void TestRunner::setWaitToDump(bool waitToDump)
 {
     // Change from 30s to 35s because some test cases in multipart need 30 seconds,
     // refer to http/tests/multipart/resources/multipart-wait-before-boundary.php please.
@@ -343,13 +343,13 @@ void LayoutTestController::setWaitToDump(bool waitToDump)
         BlackBerry::WebKit::DumpRenderTree::currentInstance()->setWaitToDumpWatchdog(kWaitToDumpWatchdogInterval);
 }
 
-void LayoutTestController::setWindowIsKey(bool windowIsKey)
+void TestRunner::setWindowIsKey(bool windowIsKey)
 {
     m_windowIsKey = windowIsKey;
     notImplemented();
 }
 
-bool LayoutTestController::pauseAnimationAtTimeOnElementWithId(JSStringRef animationName, double time, JSStringRef elementId)
+bool TestRunner::pauseAnimationAtTimeOnElementWithId(JSStringRef animationName, double time, JSStringRef elementId)
 {
     if (!mainFrame)
         return false;
@@ -373,7 +373,7 @@ bool LayoutTestController::pauseAnimationAtTimeOnElementWithId(JSStringRef anima
     return animationController->pauseAnimationAtTime(node->renderer(), name.get(), time);
 }
 
-bool LayoutTestController::pauseTransitionAtTimeOnElementWithId(JSStringRef propertyName, double time, JSStringRef elementId)
+bool TestRunner::pauseTransitionAtTimeOnElementWithId(JSStringRef propertyName, double time, JSStringRef elementId)
 {
     if (!mainFrame)
         return false;
@@ -397,7 +397,7 @@ bool LayoutTestController::pauseTransitionAtTimeOnElementWithId(JSStringRef prop
     return animationController->pauseTransitionAtTime(node->renderer(), name.get(), time);
 }
 
-unsigned LayoutTestController::numberOfActiveAnimations() const
+unsigned TestRunner::numberOfActiveAnimations() const
 {
     if (!mainFrame)
         return false;
@@ -409,7 +409,7 @@ unsigned LayoutTestController::numberOfActiveAnimations() const
     return animationController->numberOfActiveAnimations(mainFrame->document());
 }
 
-unsigned int LayoutTestController::workerThreadCount() const
+unsigned int TestRunner::workerThreadCount() const
 {
 #if ENABLE_WORKERS
     return WebCore::WorkerThread::workerThreadCount();
@@ -418,17 +418,17 @@ unsigned int LayoutTestController::workerThreadCount() const
 #endif
 }
 
-void LayoutTestController::removeAllVisitedLinks()
+void TestRunner::removeAllVisitedLinks()
 {
     notImplemented();
 }
 
-void LayoutTestController::disableImageLoading()
+void TestRunner::disableImageLoading()
 {
     BlackBerry::WebKit::DumpRenderTree::currentInstance()->page()->settings()->setLoadsImagesAutomatically(false);
 }
 
-void LayoutTestController::overridePreference(JSStringRef key, JSStringRef value)
+void TestRunner::overridePreference(JSStringRef key, JSStringRef value)
 {
     if (!mainFrame)
         return;
@@ -446,41 +446,41 @@ void LayoutTestController::overridePreference(JSStringRef key, JSStringRef value
         mainFrame->page()->settings()->setHyperlinkAuditingEnabled(valueStr == "true" || valueStr == "1");
 }
 
-void LayoutTestController::setAlwaysAcceptCookies(bool alwaysAcceptCookies)
+void TestRunner::setAlwaysAcceptCookies(bool alwaysAcceptCookies)
 {
     UNUSED_PARAM(alwaysAcceptCookies);
     notImplemented();
 }
 
-void LayoutTestController::setMockGeolocationPosition(double latitude, double longitude, double accuracy)
+void TestRunner::setMockGeolocationPosition(double latitude, double longitude, double accuracy)
 {
     DumpRenderTreeSupport::setMockGeolocationPosition(BlackBerry::WebKit::DumpRenderTree::currentInstance()->page(), latitude, longitude, accuracy);
 }
 
-void LayoutTestController::setMockGeolocationError(int code, JSStringRef message)
+void TestRunner::setMockGeolocationError(int code, JSStringRef message)
 {
     String messageStr = jsStringRefToWebCoreString(message);
     DumpRenderTreeSupport::setMockGeolocationError(BlackBerry::WebKit::DumpRenderTree::currentInstance()->page(), code, messageStr);
 }
 
-void LayoutTestController::showWebInspector()
+void TestRunner::showWebInspector()
 {
     notImplemented();
 }
 
-void LayoutTestController::closeWebInspector()
+void TestRunner::closeWebInspector()
 {
     notImplemented();
 }
 
-void LayoutTestController::evaluateInWebInspector(long callId, JSStringRef script)
+void TestRunner::evaluateInWebInspector(long callId, JSStringRef script)
 {
     UNUSED_PARAM(callId);
     UNUSED_PARAM(script);
     notImplemented();
 }
 
-void LayoutTestController::evaluateScriptInIsolatedWorldAndReturnValue(unsigned worldID, JSObjectRef globalObject, JSStringRef script)
+void TestRunner::evaluateScriptInIsolatedWorldAndReturnValue(unsigned worldID, JSObjectRef globalObject, JSStringRef script)
 {
     UNUSED_PARAM(worldID);
     UNUSED_PARAM(globalObject);
@@ -488,7 +488,7 @@ void LayoutTestController::evaluateScriptInIsolatedWorldAndReturnValue(unsigned 
     notImplemented();
 }
 
-void LayoutTestController::evaluateScriptInIsolatedWorld(unsigned worldID, JSObjectRef globalObject, JSStringRef script)
+void TestRunner::evaluateScriptInIsolatedWorld(unsigned worldID, JSObjectRef globalObject, JSStringRef script)
 {
     UNUSED_PARAM(worldID);
     UNUSED_PARAM(globalObject);
@@ -496,7 +496,7 @@ void LayoutTestController::evaluateScriptInIsolatedWorld(unsigned worldID, JSObj
     notImplemented();
 }
 
-void LayoutTestController::addUserScript(JSStringRef source, bool runAtStart, bool allFrames)
+void TestRunner::addUserScript(JSStringRef source, bool runAtStart, bool allFrames)
 {
     UNUSED_PARAM(source);
     UNUSED_PARAM(runAtStart);
@@ -504,55 +504,55 @@ void LayoutTestController::addUserScript(JSStringRef source, bool runAtStart, bo
     notImplemented();
 }
 
-void LayoutTestController::addUserStyleSheet(JSStringRef, bool)
+void TestRunner::addUserStyleSheet(JSStringRef, bool)
 {
     notImplemented();
 }
 
-JSRetainPtr<JSStringRef> LayoutTestController::pageSizeAndMarginsInPixels(int, int, int, int, int, int, int) const
+JSRetainPtr<JSStringRef> TestRunner::pageSizeAndMarginsInPixels(int, int, int, int, int, int, int) const
 {
     notImplemented();
     return 0;
 }
 
-int LayoutTestController::numberOfPages(float, float)
+int TestRunner::numberOfPages(float, float)
 {
     notImplemented();
     return -1;
 }
 
-void LayoutTestController::setScrollbarPolicy(JSStringRef, JSStringRef)
+void TestRunner::setScrollbarPolicy(JSStringRef, JSStringRef)
 {
     notImplemented();
 }
 
-void LayoutTestController::setWebViewEditable(bool)
+void TestRunner::setWebViewEditable(bool)
 {
     notImplemented();
 }
 
-void LayoutTestController::authenticateSession(JSStringRef url, JSStringRef username, JSStringRef password)
+void TestRunner::authenticateSession(JSStringRef url, JSStringRef username, JSStringRef password)
 {
     notImplemented();
 }
 
-bool LayoutTestController::callShouldCloseOnWebView()
+bool TestRunner::callShouldCloseOnWebView()
 {
     notImplemented();
     return false;
 }
 
-void LayoutTestController::setFrameFlatteningEnabled(bool enable)
+void TestRunner::setFrameFlatteningEnabled(bool enable)
 {
     BlackBerry::WebKit::DumpRenderTree::currentInstance()->page()->settings()->setFrameFlatteningEnabled(enable);
 }
 
-void LayoutTestController::setSpatialNavigationEnabled(bool enable)
+void TestRunner::setSpatialNavigationEnabled(bool enable)
 {
     notImplemented();
 }
 
-void LayoutTestController::addOriginAccessWhitelistEntry(JSStringRef sourceOrigin, JSStringRef destinationProtocol, JSStringRef destinationHost, bool allowDestinationSubdomains)
+void TestRunner::addOriginAccessWhitelistEntry(JSStringRef sourceOrigin, JSStringRef destinationProtocol, JSStringRef destinationHost, bool allowDestinationSubdomains)
 {
     WebCore::SecurityPolicy::addOriginAccessWhitelistEntry(*WebCore::SecurityOrigin::createFromString(jsStringRefToWebCoreString(sourceOrigin)),
                                                   jsStringRefToWebCoreString(destinationProtocol),
@@ -560,7 +560,7 @@ void LayoutTestController::addOriginAccessWhitelistEntry(JSStringRef sourceOrigi
                                                   allowDestinationSubdomains);
 }
 
-void LayoutTestController::removeOriginAccessWhitelistEntry(JSStringRef sourceOrigin, JSStringRef destinationProtocol, JSStringRef destinationHost, bool allowDestinationSubdomains)
+void TestRunner::removeOriginAccessWhitelistEntry(JSStringRef sourceOrigin, JSStringRef destinationProtocol, JSStringRef destinationHost, bool allowDestinationSubdomains)
 {
     WebCore::SecurityPolicy::removeOriginAccessWhitelistEntry(*WebCore::SecurityOrigin::createFromString(jsStringRefToWebCoreString(sourceOrigin)),
                                                      jsStringRefToWebCoreString(destinationProtocol),
@@ -568,7 +568,7 @@ void LayoutTestController::removeOriginAccessWhitelistEntry(JSStringRef sourceOr
                                                      allowDestinationSubdomains);
 }
 
-void LayoutTestController::setAllowFileAccessFromFileURLs(bool enabled)
+void TestRunner::setAllowFileAccessFromFileURLs(bool enabled)
 {
     if (!mainFrame)
         return;
@@ -576,7 +576,7 @@ void LayoutTestController::setAllowFileAccessFromFileURLs(bool enabled)
     mainFrame->page()->settings()->setAllowFileAccessFromFileURLs(enabled);
 }
 
-void LayoutTestController::setAllowUniversalAccessFromFileURLs(bool enabled)
+void TestRunner::setAllowUniversalAccessFromFileURLs(bool enabled)
 {
     if (!mainFrame)
         return;
@@ -584,33 +584,33 @@ void LayoutTestController::setAllowUniversalAccessFromFileURLs(bool enabled)
     mainFrame->page()->settings()->setAllowUniversalAccessFromFileURLs(enabled);
 }
 
-void LayoutTestController::apiTestNewWindowDataLoadBaseURL(JSStringRef utf8Data, JSStringRef baseURL)
+void TestRunner::apiTestNewWindowDataLoadBaseURL(JSStringRef utf8Data, JSStringRef baseURL)
 {
     notImplemented();
 }
 
-void LayoutTestController::apiTestGoToCurrentBackForwardItem()
+void TestRunner::apiTestGoToCurrentBackForwardItem()
 {
     notImplemented();
 }
 
-void LayoutTestController::setJavaScriptCanAccessClipboard(bool flag)
+void TestRunner::setJavaScriptCanAccessClipboard(bool flag)
 {
     BlackBerry::WebKit::DumpRenderTree::currentInstance()->page()->setJavaScriptCanAccessClipboard(flag);
 }
 
-JSValueRef LayoutTestController::computedStyleIncludingVisitedInfo(JSContextRef context, JSValueRef value)
+JSValueRef TestRunner::computedStyleIncludingVisitedInfo(JSContextRef context, JSValueRef value)
 {
     return DumpRenderTreeSupport::computedStyleIncludingVisitedInfo(context, value);
 }
 
-JSRetainPtr<JSStringRef> LayoutTestController::layerTreeAsText() const
+JSRetainPtr<JSStringRef> TestRunner::layerTreeAsText() const
 {
     notImplemented();
     return 0;
 }
 
-JSRetainPtr<JSStringRef> LayoutTestController::markerTextForListItem(JSContextRef context, JSValueRef nodeObject) const
+JSRetainPtr<JSStringRef> TestRunner::markerTextForListItem(JSContextRef context, JSValueRef nodeObject) const
 {
     WebCore::Element* element = toElement(toJS(toJS(context), nodeObject));
     if (!element)
@@ -620,102 +620,102 @@ JSRetainPtr<JSStringRef> LayoutTestController::markerTextForListItem(JSContextRe
     return markerText;
 }
 
-void LayoutTestController::setPluginsEnabled(bool flag)
+void TestRunner::setPluginsEnabled(bool flag)
 {
     notImplemented();
 }
 
-void LayoutTestController::abortModal()
+void TestRunner::abortModal()
 {
     notImplemented();
 }
 
-void LayoutTestController::clearAllApplicationCaches()
+void TestRunner::clearAllApplicationCaches()
 {
     notImplemented();
 }
 
-void LayoutTestController::setApplicationCacheOriginQuota(unsigned long long quota)
+void TestRunner::setApplicationCacheOriginQuota(unsigned long long quota)
 {
     notImplemented();
 }
 
-void LayoutTestController::setMockDeviceOrientation(bool canProvideAlpha, double alpha, bool canProvideBeta, double beta, bool canProvideGamma, double gamma)
+void TestRunner::setMockDeviceOrientation(bool canProvideAlpha, double alpha, bool canProvideBeta, double beta, bool canProvideGamma, double gamma)
 {
     notImplemented();
 }
 
-void LayoutTestController::addMockSpeechInputResult(JSStringRef result, double confidence, JSStringRef language)
+void TestRunner::addMockSpeechInputResult(JSStringRef result, double confidence, JSStringRef language)
 {
     notImplemented();
 }
 
-void LayoutTestController::setGeolocationPermission(bool allow)
+void TestRunner::setGeolocationPermission(bool allow)
 {
     setGeolocationPermissionCommon(allow);
     DumpRenderTreeSupport::setMockGeolocationPermission(BlackBerry::WebKit::DumpRenderTree::currentInstance()->page(), allow);
 }
 
-void LayoutTestController::setViewModeMediaFeature(const JSStringRef mode)
+void TestRunner::setViewModeMediaFeature(const JSStringRef mode)
 {
     notImplemented();
 }
 
-void LayoutTestController::setSerializeHTTPLoads(bool)
+void TestRunner::setSerializeHTTPLoads(bool)
 {
     // FIXME: Implement if needed for https://bugs.webkit.org/show_bug.cgi?id=50758.
     notImplemented();
 }
 
-void LayoutTestController::setMinimumTimerInterval(double)
+void TestRunner::setMinimumTimerInterval(double)
 {
     notImplemented();
 }
 
-void LayoutTestController::setTextDirection(JSStringRef)
+void TestRunner::setTextDirection(JSStringRef)
 {
     notImplemented();
 }
 
-void LayoutTestController::goBack()
-{
-    // FIXME: implement to enable loader/navigation-while-deferring-loads.html
-    notImplemented();
-}
-
-void LayoutTestController::setDefersLoading(bool)
+void TestRunner::goBack()
 {
     // FIXME: implement to enable loader/navigation-while-deferring-loads.html
     notImplemented();
 }
 
-JSValueRef LayoutTestController::originsWithLocalStorage(JSContextRef context)
+void TestRunner::setDefersLoading(bool)
+{
+    // FIXME: implement to enable loader/navigation-while-deferring-loads.html
+    notImplemented();
+}
+
+JSValueRef TestRunner::originsWithLocalStorage(JSContextRef context)
 {
     notImplemented();
     return JSValueMakeUndefined(context);
 }
 
-void LayoutTestController::observeStorageTrackerNotifications(unsigned)
+void TestRunner::observeStorageTrackerNotifications(unsigned)
 {
     notImplemented();
 }
 
-void LayoutTestController::syncLocalStorage()
+void TestRunner::syncLocalStorage()
 {
     notImplemented();
 }
 
-void LayoutTestController::deleteAllLocalStorage()
+void TestRunner::deleteAllLocalStorage()
 {
     notImplemented();
 }
 
-void LayoutTestController::setAsynchronousSpellCheckingEnabled(bool)
+void TestRunner::setAsynchronousSpellCheckingEnabled(bool)
 {
     notImplemented();
 }
 
-void LayoutTestController::setAutofilled(JSContextRef context, JSValueRef nodeObject, bool autofilled)
+void TestRunner::setAutofilled(JSContextRef context, JSValueRef nodeObject, bool autofilled)
 {
     JSC::ExecState* exec = toJS(context);
     WebCore::Element* element = toElement(toJS(exec, nodeObject));
@@ -728,12 +728,12 @@ void LayoutTestController::setAutofilled(JSContextRef context, JSValueRef nodeOb
     inputElement->setAutofilled(autofilled);
 }
 
-int LayoutTestController::numberOfPendingGeolocationPermissionRequests()
+int TestRunner::numberOfPendingGeolocationPermissionRequests()
 {
     return DumpRenderTreeSupport::numberOfPendingGeolocationPermissionRequests(BlackBerry::WebKit::DumpRenderTree::currentInstance()->page());
 }
 
-bool LayoutTestController::findString(JSContextRef context, JSStringRef target, JSObjectRef optionsArray)
+bool TestRunner::findString(JSContextRef context, JSStringRef target, JSObjectRef optionsArray)
 {
     WebCore::FindOptions options = 0;
 
@@ -774,12 +774,12 @@ bool LayoutTestController::findString(JSContextRef context, JSStringRef target, 
         !(options & WebCore::Backwards), !(options & WebCore::CaseInsensitive), true /* wrap */, true /* highlightAllMatches */);
 }
 
-void LayoutTestController::deleteLocalStorageForOrigin(JSStringRef URL)
+void TestRunner::deleteLocalStorageForOrigin(JSStringRef URL)
 {
     // FIXME: Implement.
 }
 
-void LayoutTestController::setValueForUser(JSContextRef context, JSValueRef nodeObject, JSStringRef value)
+void TestRunner::setValueForUser(JSContextRef context, JSValueRef nodeObject, JSStringRef value)
 {
     JSC::ExecState* exec = toJS(context);
     WebCore::Element* element = toElement(toJS(exec, nodeObject));
@@ -792,57 +792,57 @@ void LayoutTestController::setValueForUser(JSContextRef context, JSValueRef node
     inputElement->setValueForUser(jsStringRefToWebCoreString(value));
 }
 
-long long LayoutTestController::applicationCacheDiskUsageForOrigin(JSStringRef origin)
+long long TestRunner::applicationCacheDiskUsageForOrigin(JSStringRef origin)
 {
     // FIXME: Implement to support getting disk usage by all application caches for an origin.
     return 0;
 }
 
-void LayoutTestController::addChromeInputField()
+void TestRunner::addChromeInputField()
 {
 }
 
-void LayoutTestController::removeChromeInputField()
+void TestRunner::removeChromeInputField()
 {
 }
 
-void LayoutTestController::focusWebView()
+void TestRunner::focusWebView()
 {
 }
 
-void LayoutTestController::setBackingScaleFactor(double)
+void TestRunner::setBackingScaleFactor(double)
 {
 }
 
-void LayoutTestController::setMockSpeechInputDumpRect(bool)
+void TestRunner::setMockSpeechInputDumpRect(bool)
 {
 }
 
-void LayoutTestController::simulateDesktopNotificationClick(JSStringRef title)
+void TestRunner::simulateDesktopNotificationClick(JSStringRef title)
 {
 }
 
-void LayoutTestController::resetPageVisibility()
-{
-    notImplemented();
-}
-
-void LayoutTestController::setPageVisibility(const char*)
+void TestRunner::resetPageVisibility()
 {
     notImplemented();
 }
 
-void LayoutTestController::setAutomaticLinkDetectionEnabled(bool)
+void TestRunner::setPageVisibility(const char*)
 {
     notImplemented();
 }
 
-void LayoutTestController::sendWebIntentResponse(JSStringRef)
+void TestRunner::setAutomaticLinkDetectionEnabled(bool)
 {
     notImplemented();
 }
 
-void LayoutTestController::deliverWebIntent(JSStringRef, JSStringRef, JSStringRef)
+void TestRunner::sendWebIntentResponse(JSStringRef)
+{
+    notImplemented();
+}
+
+void TestRunner::deliverWebIntent(JSStringRef, JSStringRef, JSStringRef)
 {
     notImplemented();
 }

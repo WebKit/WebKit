@@ -471,7 +471,7 @@ HRESULT STDMETHODCALLTYPE UIDelegate::runBeforeUnloadConfirmPanelWithMessage(
     if (!result)
         return E_POINTER;
     printf("CONFIRM NAVIGATION: %S\n", message ? message : L"");
-    *result = !gLayoutTestController->shouldStayOnPageAfterHandlingBeforeUnload();
+    *result = !gTestRunner->shouldStayOnPageAfterHandlingBeforeUnload();
     return S_OK;
 }
 
@@ -536,7 +536,7 @@ HRESULT STDMETHODCALLTYPE UIDelegate::createWebViewWithRequest(
         /* [in] */ IWebURLRequest *request,
         /* [retval][out] */ IWebView **newWebView)
 {
-    if (!::gLayoutTestController->canOpenWindows())
+    if (!::gTestRunner->canOpenWindows())
         return E_FAIL;
     *newWebView = createWebViewAndOffscreenWindow();
     return S_OK;
@@ -587,7 +587,7 @@ HRESULT STDMETHODCALLTYPE UIDelegate::exceededDatabaseQuota(
     origin->host(&host);
     origin->port(&port);
 
-    if (!done && gLayoutTestController->dumpDatabaseCallbacks())
+    if (!done && gTestRunner->dumpDatabaseCallbacks())
         printf("UI DELEGATE DATABASE CALLBACK: exceededDatabaseQuotaForSecurityOrigin:{%S, %S, %i} database:%S\n", protocol, host, port, databaseIdentifier);
 
     SysFreeString(protocol);
@@ -632,7 +632,7 @@ HRESULT STDMETHODCALLTYPE UIDelegate::webViewDidInvalidate(
 
 HRESULT STDMETHODCALLTYPE UIDelegate::setStatusText(IWebView*, BSTR text)
 { 
-    if (gLayoutTestController->dumpStatusCallbacks())
+    if (gTestRunner->dumpStatusCallbacks())
         printf("UI DELEGATE STATUS CALLBACK: setStatusText:%s\n", text ? toUTF8(text).c_str() : "");
     return S_OK;
 }

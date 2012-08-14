@@ -33,7 +33,7 @@
 
 #include "WebPermissionClient.h"
 
-class LayoutTestController;
+class DRTTestRunner;
 class TestShell;
 
 class WebPermissions : public WebKit::WebPermissionClient {
@@ -63,7 +63,7 @@ public:
     void reset();
 
 private:
-    LayoutTestController* layoutTestController() const;
+    DRTTestRunner* testRunner() const;
 
     // Non-owning pointer. The WebPermissions instance is owned by this TestShell instance.
     TestShell* m_shell;

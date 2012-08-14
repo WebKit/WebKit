@@ -107,11 +107,11 @@
 
 @end
 
-LayoutTestController::~LayoutTestController()
+TestRunner::~TestRunner()
 {
 }
 
-void LayoutTestController::addDisallowedURL(JSStringRef url)
+void TestRunner::addDisallowedURL(JSStringRef url)
 {
     RetainPtr<CFStringRef> urlCF(AdoptCF, JSStringCopyCFString(kCFAllocatorDefault, url));
 
@@ -125,17 +125,17 @@ void LayoutTestController::addDisallowedURL(JSStringRef url)
     CFSetAddValue(disallowedURLs, [request URL]);
 }
 
-bool LayoutTestController::callShouldCloseOnWebView()
+bool TestRunner::callShouldCloseOnWebView()
 {
     return [[mainFrame webView] shouldClose];
 }
 
-void LayoutTestController::clearAllApplicationCaches()
+void TestRunner::clearAllApplicationCaches()
 {
     [WebApplicationCache deleteAllApplicationCaches];
 }
 
-long long LayoutTestController::applicationCacheDiskUsageForOrigin(JSStringRef url)
+long long TestRunner::applicationCacheDiskUsageForOrigin(JSStringRef url)
 {
     RetainPtr<CFStringRef> urlCF(AdoptCF, JSStringCopyCFString(kCFAllocatorDefault, url));
     WebSecurityOrigin *origin = [[WebSecurityOrigin alloc] initWithURL:[NSURL URLWithString:(NSString *)urlCF.get()]];
@@ -144,12 +144,12 @@ long long LayoutTestController::applicationCacheDiskUsageForOrigin(JSStringRef u
     return usage;
 }
 
-void LayoutTestController::syncLocalStorage()
+void TestRunner::syncLocalStorage()
 {
     [[WebStorageManager sharedWebStorageManager] syncLocalStorage];
 }
 
-long long LayoutTestController::localStorageDiskUsageForOrigin(JSStringRef url)
+long long TestRunner::localStorageDiskUsageForOrigin(JSStringRef url)
 {
     RetainPtr<CFStringRef> urlCF(AdoptCF, JSStringCopyCFString(kCFAllocatorDefault, url));
     WebSecurityOrigin *origin = [[WebSecurityOrigin alloc] initWithURL:[NSURL URLWithString:(NSString *)urlCF.get()]];
@@ -158,12 +158,12 @@ long long LayoutTestController::localStorageDiskUsageForOrigin(JSStringRef url)
     return usage;
 }
 
-void LayoutTestController::observeStorageTrackerNotifications(unsigned number)
+void TestRunner::observeStorageTrackerNotifications(unsigned number)
 {
     [storageDelegate logNotifications:number controller:this];
 }
 
-void LayoutTestController::clearApplicationCacheForOrigin(JSStringRef url)
+void TestRunner::clearApplicationCacheForOrigin(JSStringRef url)
 {
     RetainPtr<CFStringRef> urlCF(AdoptCF, JSStringCopyCFString(kCFAllocatorDefault, url));
 
@@ -186,32 +186,32 @@ JSValueRef originsArrayToJS(JSContextRef context, NSArray *origins)
     return JSObjectMakeArray(context, count, jsOriginsArray, NULL);
 }
 
-JSValueRef LayoutTestController::originsWithApplicationCache(JSContextRef context)
+JSValueRef TestRunner::originsWithApplicationCache(JSContextRef context)
 {
     return originsArrayToJS(context, [WebApplicationCache originsWithCache]);
 }
 
-void LayoutTestController::clearAllDatabases()
+void TestRunner::clearAllDatabases()
 {
     [[WebDatabaseManager sharedWebDatabaseManager] deleteAllDatabases];
 }
 
-void LayoutTestController::deleteAllLocalStorage()
+void TestRunner::deleteAllLocalStorage()
 {
     [[WebStorageManager sharedWebStorageManager] deleteAllOrigins];
 }
 
-void LayoutTestController::setStorageDatabaseIdleInterval(double interval)
+void TestRunner::setStorageDatabaseIdleInterval(double interval)
 {
     [WebStorageManager setStorageDatabaseIdleInterval:interval];
 }
 
-JSValueRef LayoutTestController::originsWithLocalStorage(JSContextRef context)
+JSValueRef TestRunner::originsWithLocalStorage(JSContextRef context)
 {
     return originsArrayToJS(context, [[WebStorageManager sharedWebStorageManager] origins]);
 }
 
-void LayoutTestController::deleteLocalStorageForOrigin(JSStringRef URL)
+void TestRunner::deleteLocalStorageForOrigin(JSStringRef URL)
 {
     RetainPtr<CFStringRef> urlCF(AdoptCF, JSStringCopyCFString(kCFAllocatorDefault, URL));
     
@@ -220,7 +220,7 @@ void LayoutTestController::deleteLocalStorageForOrigin(JSStringRef URL)
     [origin release];
 }
 
-void LayoutTestController::clearBackForwardList()
+void TestRunner::clearBackForwardList()
 {
     WebBackForwardList *backForwardList = [[mainFrame webView] backForwardList];
     WebHistoryItem *item = [[backForwardList currentItem] retain];
@@ -235,26 +235,26 @@ void LayoutTestController::clearBackForwardList()
     [item release];
 }
 
-JSStringRef LayoutTestController::copyDecodedHostName(JSStringRef name)
+JSStringRef TestRunner::copyDecodedHostName(JSStringRef name)
 {
     RetainPtr<CFStringRef> nameCF(AdoptCF, JSStringCopyCFString(kCFAllocatorDefault, name));
     NSString *nameNS = (NSString *)nameCF.get();
     return JSStringCreateWithCFString((CFStringRef)[nameNS _web_decodeHostName]);
 }
 
-JSStringRef LayoutTestController::copyEncodedHostName(JSStringRef name)
+JSStringRef TestRunner::copyEncodedHostName(JSStringRef name)
 {
     RetainPtr<CFStringRef> nameCF(AdoptCF, JSStringCopyCFString(kCFAllocatorDefault, name));
     NSString *nameNS = (NSString *)nameCF.get();
     return JSStringCreateWithCFString((CFStringRef)[nameNS _web_encodeHostName]);
 }
 
-void LayoutTestController::display()
+void TestRunner::display()
 {
     displayWebView();
 }
 
-void LayoutTestController::keepWebHistory()
+void TestRunner::keepWebHistory()
 {
     if (![WebHistory optionalSharedHistory]) {
         WebHistory *history = [[WebHistory alloc] init];
@@ -263,18 +263,18 @@ void LayoutTestController::keepWebHistory()
     }
 }
 
-JSValueRef LayoutTestController::computedStyleIncludingVisitedInfo(JSContextRef context, JSValueRef value)
+JSValueRef TestRunner::computedStyleIncludingVisitedInfo(JSContextRef context, JSValueRef value)
 {   
     return [[mainFrame webView] _computedStyleIncludingVisitedInfo:context forElement:value];
 }
 
-JSRetainPtr<JSStringRef> LayoutTestController::layerTreeAsText() const
+JSRetainPtr<JSStringRef> TestRunner::layerTreeAsText() const
 {
     JSRetainPtr<JSStringRef> string(Adopt, JSStringCreateWithCFString((CFStringRef)[mainFrame _layerTreeAsText]));
     return string;
 }
 
-JSRetainPtr<JSStringRef> LayoutTestController::markerTextForListItem(JSContextRef context, JSValueRef nodeObject) const
+JSRetainPtr<JSStringRef> TestRunner::markerTextForListItem(JSContextRef context, JSValueRef nodeObject) const
 {
     DOMElement *element = [DOMElement _DOMElementFromJSContext:context value:nodeObject];
     if (!element)
@@ -284,45 +284,45 @@ JSRetainPtr<JSStringRef> LayoutTestController::markerTextForListItem(JSContextRe
     return markerText;
 }
 
-JSRetainPtr<JSStringRef> LayoutTestController::pageProperty(const char* propertyName, int pageNumber) const
+JSRetainPtr<JSStringRef> TestRunner::pageProperty(const char* propertyName, int pageNumber) const
 {
     JSRetainPtr<JSStringRef> propertyValue(Adopt, JSStringCreateWithCFString((CFStringRef)[mainFrame pageProperty:propertyName:pageNumber]));
     return propertyValue;
 }
 
-JSRetainPtr<JSStringRef> LayoutTestController::pageSizeAndMarginsInPixels(int pageNumber, int width, int height, int marginTop, int marginRight, int marginBottom, int marginLeft) const
+JSRetainPtr<JSStringRef> TestRunner::pageSizeAndMarginsInPixels(int pageNumber, int width, int height, int marginTop, int marginRight, int marginBottom, int marginLeft) const
 {
     JSRetainPtr<JSStringRef> propertyValue(Adopt, JSStringCreateWithCFString((CFStringRef)[mainFrame pageSizeAndMarginsInPixels:pageNumber:width:height:marginTop:marginRight:marginBottom:marginLeft]));
     return propertyValue;
 }
 
-int LayoutTestController::numberOfPages(float pageWidthInPixels, float pageHeightInPixels)
+int TestRunner::numberOfPages(float pageWidthInPixels, float pageHeightInPixels)
 {
     return [mainFrame numberOfPages:pageWidthInPixels:pageHeightInPixels];
 }
 
-int LayoutTestController::numberOfPendingGeolocationPermissionRequests()
+int TestRunner::numberOfPendingGeolocationPermissionRequests()
 {
     return [[[mainFrame webView] UIDelegate] numberOfPendingGeolocationPermissionRequests];
 }
 
-size_t LayoutTestController::webHistoryItemCount()
+size_t TestRunner::webHistoryItemCount()
 {
     return [[[WebHistory optionalSharedHistory] allItems] count];
 }
 
-unsigned LayoutTestController::workerThreadCount() const
+unsigned TestRunner::workerThreadCount() const
 {
     return [WebWorkersPrivate workerThreadCount];
 }
 
-JSRetainPtr<JSStringRef> LayoutTestController::platformName() const
+JSRetainPtr<JSStringRef> TestRunner::platformName() const
 {
     JSRetainPtr<JSStringRef> platformName(Adopt, JSStringCreateWithUTF8CString("mac"));
     return platformName;
 }
 
-void LayoutTestController::notifyDone()
+void TestRunner::notifyDone()
 {
     if (m_waitToDump && !topLoadingFrame && !WorkQueue::shared()->count())
         dump();
@@ -362,12 +362,12 @@ static inline std::string resourceRootAbsolutePath(const std::string& testPathOr
     return testPathOrURL.substr(0, indexOfSeparatorAfterDirectoryName(expectedRootName, testPathOrURL));
 }
 
-JSStringRef LayoutTestController::pathToLocalResource(JSContextRef context, JSStringRef localResourceJSString)
+JSStringRef TestRunner::pathToLocalResource(JSContextRef context, JSStringRef localResourceJSString)
 {
     // The passed in path will be an absolute path to the resource starting
     // with "/tmp" or "/tmp/LayoutTests", optionally starting with the explicit file:// protocol.
     // /tmp maps to DUMPRENDERTREE_TEMP, and /tmp/LayoutTests maps to LOCAL_RESOURCE_ROOT.
-    // FIXME: This code should work on all *nix platforms and can be moved into LayoutTestController.cpp.
+    // FIXME: This code should work on all *nix platforms and can be moved into TestRunner.cpp.
     std::string expectedRootName;
     std::string absolutePathToResourceRoot;
     std::string localResourceString = stringFromJSString(localResourceJSString);
@@ -393,7 +393,7 @@ JSStringRef LayoutTestController::pathToLocalResource(JSContextRef context, JSSt
     return JSStringCreateWithUTF8CString(absolutePathToLocalResource.c_str());
 }
 
-void LayoutTestController::queueLoad(JSStringRef url, JSStringRef target)
+void TestRunner::queueLoad(JSStringRef url, JSStringRef target)
 {
     RetainPtr<CFStringRef> urlCF(AdoptCF, JSStringCopyCFString(kCFAllocatorDefault, url));
     NSString *urlNS = (NSString *)urlCF.get();
@@ -405,12 +405,12 @@ void LayoutTestController::queueLoad(JSStringRef url, JSStringRef target)
     WorkQueue::shared()->queue(new LoadItem(absoluteURL.get(), target));
 }
 
-void LayoutTestController::setAcceptsEditing(bool newAcceptsEditing)
+void TestRunner::setAcceptsEditing(bool newAcceptsEditing)
 {
     [(EditingDelegate *)[[mainFrame webView] editingDelegate] setAcceptsEditing:newAcceptsEditing];
 }
 
-void LayoutTestController::setAlwaysAcceptCookies(bool alwaysAcceptCookies)
+void TestRunner::setAlwaysAcceptCookies(bool alwaysAcceptCookies)
 {
     if (alwaysAcceptCookies == m_alwaysAcceptCookies)
         return;
@@ -420,24 +420,24 @@ void LayoutTestController::setAlwaysAcceptCookies(bool alwaysAcceptCookies)
     [WebPreferences _setCurrentNetworkLoaderSessionCookieAcceptPolicy:cookieAcceptPolicy];
 }
 
-void LayoutTestController::setAppCacheMaximumSize(unsigned long long size)
+void TestRunner::setAppCacheMaximumSize(unsigned long long size)
 {
     [WebApplicationCache setMaximumSize:size];
 }
 
-void LayoutTestController::setApplicationCacheOriginQuota(unsigned long long quota)
+void TestRunner::setApplicationCacheOriginQuota(unsigned long long quota)
 {
     WebSecurityOrigin *origin = [[WebSecurityOrigin alloc] initWithURL:[NSURL URLWithString:@"http://127.0.0.1:8000"]];
     [[origin applicationCacheQuotaManager] setQuota:quota];
     [origin release];
 }
 
-void LayoutTestController::setAuthorAndUserStylesEnabled(bool flag)
+void TestRunner::setAuthorAndUserStylesEnabled(bool flag)
 {
     [[[mainFrame webView] preferences] setAuthorAndUserStylesEnabled:flag];
 }
 
-void LayoutTestController::setAutofilled(JSContextRef context, JSValueRef nodeObject, bool autofilled)
+void TestRunner::setAutofilled(JSContextRef context, JSValueRef nodeObject, bool autofilled)
 {
     DOMElement *element = [DOMElement _DOMElementFromJSContext:context value:nodeObject];
     if (!element || ![element isKindOfClass:[DOMHTMLInputElement class]])
@@ -446,7 +446,7 @@ void LayoutTestController::setAutofilled(JSContextRef context, JSValueRef nodeOb
     [(DOMHTMLInputElement *)element _setAutofilled:autofilled];
 }
 
-void LayoutTestController::setCustomPolicyDelegate(bool setDelegate, bool permissive)
+void TestRunner::setCustomPolicyDelegate(bool setDelegate, bool permissive)
 {
     if (setDelegate) {
         [policyDelegate setPermissive:permissive];
@@ -455,30 +455,30 @@ void LayoutTestController::setCustomPolicyDelegate(bool setDelegate, bool permis
         [[mainFrame webView] setPolicyDelegate:nil];
 }
 
-void LayoutTestController::setDatabaseQuota(unsigned long long quota)
+void TestRunner::setDatabaseQuota(unsigned long long quota)
 {    
     WebSecurityOrigin *origin = [[WebSecurityOrigin alloc] initWithURL:[NSURL URLWithString:@"file:///"]];
     [[origin databaseQuotaManager] setQuota:quota];
     [origin release];
 }
 
-void LayoutTestController::goBack()
+void TestRunner::goBack()
 {
     [[mainFrame webView] goBack];
 }
 
-void LayoutTestController::setDefersLoading(bool defers)
+void TestRunner::setDefersLoading(bool defers)
 {
     [[mainFrame webView] setDefersCallbacks:defers];
 }
 
-void LayoutTestController::setDomainRelaxationForbiddenForURLScheme(bool forbidden, JSStringRef scheme)
+void TestRunner::setDomainRelaxationForbiddenForURLScheme(bool forbidden, JSStringRef scheme)
 {
     RetainPtr<CFStringRef> schemeCFString(AdoptCF, JSStringCopyCFString(kCFAllocatorDefault, scheme));
     [WebView _setDomainRelaxationForbidden:forbidden forURLScheme:(NSString *)schemeCFString.get()];
 }
 
-void LayoutTestController::setMockDeviceOrientation(bool canProvideAlpha, double alpha, bool canProvideBeta, double beta, bool canProvideGamma, double gamma)
+void TestRunner::setMockDeviceOrientation(bool canProvideAlpha, double alpha, bool canProvideBeta, double beta, bool canProvideGamma, double gamma)
 {
     // DumpRenderTree configured the WebView to use WebDeviceOrientationProviderMock.
     id<WebDeviceOrientationProvider> provider = [[mainFrame webView] _deviceOrientationProvider];
@@ -488,14 +488,14 @@ void LayoutTestController::setMockDeviceOrientation(bool canProvideAlpha, double
     [orientation release];
 }
 
-void LayoutTestController::setMockGeolocationPosition(double latitude, double longitude, double accuracy)
+void TestRunner::setMockGeolocationPosition(double latitude, double longitude, double accuracy)
 {
     WebGeolocationPosition *position = [[WebGeolocationPosition alloc] initWithTimestamp:currentTime() latitude:latitude longitude:longitude accuracy:accuracy];
     [[MockGeolocationProvider shared] setPosition:position];
     [position release];
 }
 
-void LayoutTestController::setMockGeolocationError(int code, JSStringRef message)
+void TestRunner::setMockGeolocationError(int code, JSStringRef message)
 {
     RetainPtr<CFStringRef> messageCF(AdoptCF, JSStringCopyCFString(kCFAllocatorDefault, message));
     NSString *messageNS = (NSString *)messageCF.get();
@@ -503,31 +503,31 @@ void LayoutTestController::setMockGeolocationError(int code, JSStringRef message
     [[MockGeolocationProvider shared] setError:error];
 }
 
-void LayoutTestController::setGeolocationPermission(bool allow)
+void TestRunner::setGeolocationPermission(bool allow)
 {
     setGeolocationPermissionCommon(allow);
     [[[mainFrame webView] UIDelegate] didSetMockGeolocationPermission];
 }
 
-void LayoutTestController::addMockSpeechInputResult(JSStringRef result, double confidence, JSStringRef language)
+void TestRunner::addMockSpeechInputResult(JSStringRef result, double confidence, JSStringRef language)
 {
     // FIXME: Implement for speech input layout tests.
     // See https://bugs.webkit.org/show_bug.cgi?id=39485.
 }
 
-void LayoutTestController::setMockSpeechInputDumpRect(bool flag)
+void TestRunner::setMockSpeechInputDumpRect(bool flag)
 {
     // FIXME: Implement for speech input layout tests.
     // See https://bugs.webkit.org/show_bug.cgi?id=39485.
 }
 
-void LayoutTestController::startSpeechInput(JSContextRef inputElement)
+void TestRunner::startSpeechInput(JSContextRef inputElement)
 {
     // FIXME: Implement for speech input layout tests.
     // See https://bugs.webkit.org/show_bug.cgi?id=39485.
 }
 
-void LayoutTestController::setIconDatabaseEnabled(bool iconDatabaseEnabled)
+void TestRunner::setIconDatabaseEnabled(bool iconDatabaseEnabled)
 {
     // FIXME: Workaround <rdar://problem/6480108>
     static WebIconDatabase *sharedWebIconDatabase = NULL;
@@ -541,7 +541,7 @@ void LayoutTestController::setIconDatabaseEnabled(bool iconDatabaseEnabled)
     [sharedWebIconDatabase setEnabled:iconDatabaseEnabled];
 }
 
-void LayoutTestController::setMainFrameIsFirstResponder(bool flag)
+void TestRunner::setMainFrameIsFirstResponder(bool flag)
 {
     NSView *documentView = [[mainFrame frameView] documentView];
     
@@ -549,79 +549,79 @@ void LayoutTestController::setMainFrameIsFirstResponder(bool flag)
     [[[mainFrame webView] window] makeFirstResponder:firstResponder];
 }
 
-void LayoutTestController::setPrivateBrowsingEnabled(bool privateBrowsingEnabled)
+void TestRunner::setPrivateBrowsingEnabled(bool privateBrowsingEnabled)
 {
     [[[mainFrame webView] preferences] setPrivateBrowsingEnabled:privateBrowsingEnabled];
 }
 
-void LayoutTestController::setXSSAuditorEnabled(bool enabled)
+void TestRunner::setXSSAuditorEnabled(bool enabled)
 {
     [[[mainFrame webView] preferences] setXSSAuditorEnabled:enabled];
 }
 
-void LayoutTestController::setFrameFlatteningEnabled(bool enabled)
+void TestRunner::setFrameFlatteningEnabled(bool enabled)
 {
     [[[mainFrame webView] preferences] setFrameFlatteningEnabled:enabled];
 }
 
-void LayoutTestController::setSpatialNavigationEnabled(bool enabled)
+void TestRunner::setSpatialNavigationEnabled(bool enabled)
 {
     [[[mainFrame webView] preferences] setSpatialNavigationEnabled:enabled];
 }
 
-void LayoutTestController::setAllowUniversalAccessFromFileURLs(bool enabled)
+void TestRunner::setAllowUniversalAccessFromFileURLs(bool enabled)
 {
     [[[mainFrame webView] preferences] setAllowUniversalAccessFromFileURLs:enabled];
 }
 
-void LayoutTestController::setAllowFileAccessFromFileURLs(bool enabled)
+void TestRunner::setAllowFileAccessFromFileURLs(bool enabled)
 {
     [[[mainFrame webView] preferences] setAllowFileAccessFromFileURLs:enabled];
 }
 
-void LayoutTestController::setPopupBlockingEnabled(bool popupBlockingEnabled)
+void TestRunner::setPopupBlockingEnabled(bool popupBlockingEnabled)
 {
     [[[mainFrame webView] preferences] setJavaScriptCanOpenWindowsAutomatically:!popupBlockingEnabled];
 }
 
-void LayoutTestController::setPluginsEnabled(bool pluginsEnabled)
+void TestRunner::setPluginsEnabled(bool pluginsEnabled)
 {
     [[[mainFrame webView] preferences] setPlugInsEnabled:pluginsEnabled];
 }
 
-void LayoutTestController::setJavaScriptCanAccessClipboard(bool enabled)
+void TestRunner::setJavaScriptCanAccessClipboard(bool enabled)
 {
     [[[mainFrame webView] preferences] setJavaScriptCanAccessClipboard:enabled];
 }
 
-void LayoutTestController::setAutomaticLinkDetectionEnabled(bool enabled)
+void TestRunner::setAutomaticLinkDetectionEnabled(bool enabled)
 {
     [[mainFrame webView] setAutomaticLinkDetectionEnabled:enabled];
 }
 
-void LayoutTestController::setTabKeyCyclesThroughElements(bool cycles)
+void TestRunner::setTabKeyCyclesThroughElements(bool cycles)
 {
     [[mainFrame webView] setTabKeyCyclesThroughElements:cycles];
 }
 
-void LayoutTestController::setUseDashboardCompatibilityMode(bool flag)
+void TestRunner::setUseDashboardCompatibilityMode(bool flag)
 {
     [[mainFrame webView] _setDashboardBehavior:WebDashboardBehaviorUseBackwardCompatibilityMode to:flag];
 }
 
-void LayoutTestController::setUserStyleSheetEnabled(bool flag)
+void TestRunner::setUserStyleSheetEnabled(bool flag)
 {
     [[WebPreferences standardPreferences] setUserStyleSheetEnabled:flag];
 }
 
-void LayoutTestController::setUserStyleSheetLocation(JSStringRef path)
+void TestRunner::setUserStyleSheetLocation(JSStringRef path)
 {
     RetainPtr<CFStringRef> pathCF(AdoptCF, JSStringCopyCFString(kCFAllocatorDefault, path));
     NSURL *url = [NSURL URLWithString:(NSString *)pathCF.get()];
     [[WebPreferences standardPreferences] setUserStyleSheetLocation:url];
 }
 
-void LayoutTestController::setValueForUser(JSContextRef context, JSValueRef nodeObject, JSStringRef value)
+void TestRunner::setValueForUser(JSContextRef context, JSValueRef nodeObject, JSStringRef value)
 {
     DOMElement *element = [DOMElement _DOMElementFromJSContext:context value:nodeObject];
     if (!element || ![element isKindOfClass:[DOMHTMLInputElement class]])
@@ -631,22 +631,22 @@ void LayoutTestController::setValueForUser(JSContextRef context, JSValueRef node
     [(DOMHTMLInputElement *)element _setValueForUser:(NSString *)valueCF.get()];
 }
 
-void LayoutTestController::setViewModeMediaFeature(JSStringRef mode)
+void TestRunner::setViewModeMediaFeature(JSStringRef mode)
 {
     // FIXME: implement
 }
 
-void LayoutTestController::disableImageLoading()
+void TestRunner::disableImageLoading()
 {
     [[WebPreferences standardPreferences] setLoadsImagesAutomatically:NO];
 }
 
-void LayoutTestController::dispatchPendingLoadRequests()
+void TestRunner::dispatchPendingLoadRequests()
 {
     [[mainFrame webView] _dispatchPendingLoadRequests];
 }
 
-void LayoutTestController::overridePreference(JSStringRef key, JSStringRef value)
+void TestRunner::overridePreference(JSStringRef key, JSStringRef value)
 {
     RetainPtr<CFStringRef> keyCF(AdoptCF, JSStringCopyCFString(kCFAllocatorDefault, key));
     NSString *keyNS = (NSString *)keyCF.get();
@@ -657,34 +657,34 @@ void LayoutTestController::overridePreference(JSStringRef key, JSStringRef value
     [[WebPreferences standardPreferences] _setPreferenceForTestWithValue:valueNS forKey:keyNS];
 }
 
-void LayoutTestController::removeAllVisitedLinks()
+void TestRunner::removeAllVisitedLinks()
 {
     [WebHistory _removeAllVisitedLinks];
 }
 
-void LayoutTestController::setPersistentUserStyleSheetLocation(JSStringRef jsURL)
+void TestRunner::setPersistentUserStyleSheetLocation(JSStringRef jsURL)
 {
     RetainPtr<CFStringRef> urlString(AdoptCF, JSStringCopyCFString(0, jsURL));
     ::setPersistentUserStyleSheetLocation(urlString.get());
 }
 
-void LayoutTestController::clearPersistentUserStyleSheet()
+void TestRunner::clearPersistentUserStyleSheet()
 {
     ::setPersistentUserStyleSheetLocation(0);
 }
 
-void LayoutTestController::setWindowIsKey(bool windowIsKey)
+void TestRunner::setWindowIsKey(bool windowIsKey)
 {
     m_windowIsKey = windowIsKey;
     [[mainFrame webView] _updateActiveState];
 }
 
-void LayoutTestController::setSmartInsertDeleteEnabled(bool flag)
+void TestRunner::setSmartInsertDeleteEnabled(bool flag)
 {
     [[mainFrame webView] setSmartInsertDeleteEnabled:flag];
 }
 
-void LayoutTestController::setSelectTrailingWhitespaceEnabled(bool flag)
+void TestRunner::setSelectTrailingWhitespaceEnabled(bool flag)
 {
     [[mainFrame webView] setSelectTrailingWhitespaceEnabled:flag];
 }
@@ -693,22 +693,22 @@ static const CFTimeInterval waitToDumpWatchdogInterval = 30.0;
 
 static void waitUntilDoneWatchdogFired(CFRunLoopTimerRef timer, void* info)
 {
-    gLayoutTestController->waitToDumpWatchdogTimerFired();
+    gTestRunner->waitToDumpWatchdogTimerFired();
 }
 
-void LayoutTestController::setWaitToDump(bool waitUntilDone)
+void TestRunner::setWaitToDump(bool waitUntilDone)
 {
     m_waitToDump = waitUntilDone;
     if (m_waitToDump && shouldSetWaitToDumpWatchdog())
         setWaitToDumpWatchdog(CFRunLoopTimerCreate(kCFAllocatorDefault, CFAbsoluteTimeGetCurrent() + waitToDumpWatchdogInterval, 0, 0, 0, waitUntilDoneWatchdogFired, NULL));
 }
 
-int LayoutTestController::windowCount()
+int TestRunner::windowCount()
 {
     return CFArrayGetCount(openWindowsRef);
 }
 
-bool LayoutTestController::elementDoesAutoCompleteForElementWithId(JSStringRef jsString)
+bool TestRunner::elementDoesAutoCompleteForElementWithId(JSStringRef jsString)
 {
     RetainPtr<CFStringRef> idCF(AdoptCF, JSStringCopyCFString(kCFAllocatorDefault, jsString));
     NSString *idNS = (NSString *)idCF.get();
@@ -722,7 +722,7 @@ bool LayoutTestController::elementDoesAutoCompleteForElementWithId(JSStringRef j
     return false;
 }
 
-void LayoutTestController::execCommand(JSStringRef name, JSStringRef value)
+void TestRunner::execCommand(JSStringRef name, JSStringRef value)
 {
     RetainPtr<CFStringRef> nameCF(AdoptCF, JSStringCopyCFString(kCFAllocatorDefault, name));
     NSString *nameNS = (NSString *)nameCF.get();
@@ -733,7 +733,7 @@ void LayoutTestController::execCommand(JSStringRef name, JSStringRef value)
     [[mainFrame webView] _executeCoreCommandByName:nameNS value:valueNS];
 }
 
-bool LayoutTestController::findString(JSContextRef context, JSStringRef target, JSObjectRef optionsArray)
+bool TestRunner::findString(JSContextRef context, JSStringRef target, JSObjectRef optionsArray)
 {
     WebFindOptions options = 0;
 
@@ -769,12 +769,12 @@ bool LayoutTestController::findString(JSContextRef context, JSStringRef target, 
     return [[mainFrame webView] findString:(NSString *)targetCFString.get() options:options];
 }
 
-void LayoutTestController::setCacheModel(int cacheModel)
+void TestRunner::setCacheModel(int cacheModel)
 {
     [[WebPreferences standardPreferences] setCacheModel:cacheModel];
 }
 
-bool LayoutTestController::isCommandEnabled(JSStringRef name)
+bool TestRunner::isCommandEnabled(JSStringRef name)
 {
     RetainPtr<CFStringRef> nameCF(AdoptCF, JSStringCopyCFString(kCFAllocatorDefault, name));
     NSString *nameNS = (NSString *)nameCF.get();
@@ -798,7 +798,7 @@ bool LayoutTestController::isCommandEnabled(JSStringRef name)
     return [validator validateUserInterfaceItem:target.get()];
 }
 
-bool LayoutTestController::pauseAnimationAtTimeOnElementWithId(JSStringRef animationName, double time, JSStringRef elementId)
+bool TestRunner::pauseAnimationAtTimeOnElementWithId(JSStringRef animationName, double time, JSStringRef elementId)
 {
     RetainPtr<CFStringRef> idCF(AdoptCF, JSStringCopyCFString(kCFAllocatorDefault, elementId));
     NSString *idNS = (NSString *)idCF.get();
@@ -808,7 +808,7 @@ bool LayoutTestController::pauseAnimationAtTimeOnElementWithId(JSStringRef anima
     return [mainFrame _pauseAnimation:nameNS onNode:[[mainFrame DOMDocument] getElementById:idNS] atTime:time];
 }
 
-bool LayoutTestController::pauseTransitionAtTimeOnElementWithId(JSStringRef propertyName, double time, JSStringRef elementId)
+bool TestRunner::pauseTransitionAtTimeOnElementWithId(JSStringRef propertyName, double time, JSStringRef elementId)
 {
     RetainPtr<CFStringRef> idCF(AdoptCF, JSStringCopyCFString(kCFAllocatorDefault, elementId));
     NSString *idNS = (NSString *)idCF.get();
@@ -818,19 +818,19 @@ bool LayoutTestController::pauseTransitionAtTimeOnElementWithId(JSStringRef prop
     return [mainFrame _pauseTransitionOfProperty:nameNS onNode:[[mainFrame DOMDocument] getElementById:idNS] atTime:time];
 }
 
-unsigned LayoutTestController::numberOfActiveAnimations() const
+unsigned TestRunner::numberOfActiveAnimations() const
 {
     return [mainFrame _numberOfActiveAnimations];
 }
 
-void LayoutTestController::waitForPolicyDelegate()
+void TestRunner::waitForPolicyDelegate()
 {
     setWaitToDump(true);
     [policyDelegate setControllerToNotifyDone:this];
     [[mainFrame webView] setPolicyDelegate:policyDelegate];
 }
 
-void LayoutTestController::addOriginAccessWhitelistEntry(JSStringRef sourceOrigin, JSStringRef destinationProtocol, JSStringRef destinationHost, bool allowDestinationSubdomains)
+void TestRunner::addOriginAccessWhitelistEntry(JSStringRef sourceOrigin, JSStringRef destinationProtocol, JSStringRef destinationHost, bool allowDestinationSubdomains)
 {
     RetainPtr<CFStringRef> sourceOriginCF(AdoptCF, JSStringCopyCFString(kCFAllocatorDefault, sourceOrigin));
     NSString *sourceOriginNS = (NSString *)sourceOriginCF.get();
@@ -841,7 +841,7 @@ void LayoutTestController::addOriginAccessWhitelistEntry(JSStringRef sourceOrigi
     [WebView _addOriginAccessWhitelistEntryWithSourceOrigin:sourceOriginNS destinationProtocol:destinationProtocolNS destinationHost:destinationHostNS allowDestinationSubdomains:allowDestinationSubdomains];
 }
 
-void LayoutTestController::removeOriginAccessWhitelistEntry(JSStringRef sourceOrigin, JSStringRef destinationProtocol, JSStringRef destinationHost, bool allowDestinationSubdomains)
+void TestRunner::removeOriginAccessWhitelistEntry(JSStringRef sourceOrigin, JSStringRef destinationProtocol, JSStringRef destinationHost, bool allowDestinationSubdomains)
 {
     RetainPtr<CFStringRef> sourceOriginCF(AdoptCF, JSStringCopyCFString(kCFAllocatorDefault, sourceOrigin));
     NSString *sourceOriginNS = (NSString *)sourceOriginCF.get();
@@ -852,46 +852,46 @@ void LayoutTestController::removeOriginAccessWhitelistEntry(JSStringRef sourceOr
     [WebView _removeOriginAccessWhitelistEntryWithSourceOrigin:sourceOriginNS destinationProtocol:destinationProtocolNS destinationHost:destinationHostNS allowDestinationSubdomains:allowDestinationSubdomains];
 }
 
-void LayoutTestController::setScrollbarPolicy(JSStringRef orientation, JSStringRef policy)
+void TestRunner::setScrollbarPolicy(JSStringRef orientation, JSStringRef policy)
 {
     // FIXME: implement
 }
 
-void LayoutTestController::addUserScript(JSStringRef source, bool runAtStart, bool allFrames)
+void TestRunner::addUserScript(JSStringRef source, bool runAtStart, bool allFrames)
 {
     RetainPtr<CFStringRef> sourceCF(AdoptCF, JSStringCopyCFString(kCFAllocatorDefault, source));
     NSString *sourceNS = (NSString *)sourceCF.get();
     [WebView _addUserScriptToGroup:@"org.webkit.DumpRenderTree" world:[WebScriptWorld world] source:sourceNS url:nil whitelist:nil blacklist:nil injectionTime:(runAtStart ? WebInjectAtDocumentStart : WebInjectAtDocumentEnd) injectedFrames:(allFrames ? WebInjectInAllFrames : WebInjectInTopFrameOnly)];
 }
 
-void LayoutTestController::addUserStyleSheet(JSStringRef source, bool allFrames)
+void TestRunner::addUserStyleSheet(JSStringRef source, bool allFrames)
 {
     RetainPtr<CFStringRef> sourceCF(AdoptCF, JSStringCopyCFString(kCFAllocatorDefault, source));
     NSString *sourceNS = (NSString *)sourceCF.get();
     [WebView _addUserStyleSheetToGroup:@"org.webkit.DumpRenderTree" world:[WebScriptWorld world] source:sourceNS url:nil whitelist:nil blacklist:nil injectedFrames:(allFrames ? WebInjectInAllFrames : WebInjectInTopFrameOnly)];
 }
 
-void LayoutTestController::setDeveloperExtrasEnabled(bool enabled)
+void TestRunner::setDeveloperExtrasEnabled(bool enabled)
 {
     [[[mainFrame webView] preferences] setDeveloperExtrasEnabled:enabled];
 }
 
-void LayoutTestController::setAsynchronousSpellCheckingEnabled(bool enabled)
+void TestRunner::setAsynchronousSpellCheckingEnabled(bool enabled)
 {
     [[[mainFrame webView] preferences] setAsynchronousSpellCheckingEnabled:enabled];
 }
 
-void LayoutTestController::showWebInspector()
+void TestRunner::showWebInspector()
 {
     [[[mainFrame webView] inspector] show:nil];
 }
 
-void LayoutTestController::closeWebInspector()
+void TestRunner::closeWebInspector()
 {
     [[[mainFrame webView] inspector] close:nil];
 }
 
-void LayoutTestController::evaluateInWebInspector(long callId, JSStringRef script)
+void TestRunner::evaluateInWebInspector(long callId, JSStringRef script)
 {
     RetainPtr<CFStringRef> scriptCF(AdoptCF, JSStringCopyCFString(kCFAllocatorDefault, script));
     NSString *scriptNS = (NSString *)scriptCF.get();
@@ -916,12 +916,12 @@ unsigned worldIDForWorld(WebScriptWorld *world)
     return 0;
 }
 
-void LayoutTestController::evaluateScriptInIsolatedWorldAndReturnValue(unsigned worldID, JSObjectRef globalObject, JSStringRef script)
+void TestRunner::evaluateScriptInIsolatedWorldAndReturnValue(unsigned worldID, JSObjectRef globalObject, JSStringRef script)
 {
     // FIXME: Implement this.
 }
 
-void LayoutTestController::evaluateScriptInIsolatedWorld(unsigned worldID, JSObjectRef globalObject, JSStringRef script)
+void TestRunner::evaluateScriptInIsolatedWorld(unsigned worldID, JSObjectRef globalObject, JSStringRef script)
 {
     RetainPtr<CFStringRef> scriptCF(AdoptCF, JSStringCopyCFString(kCFAllocatorDefault, script));
     NSString *scriptNS = (NSString *)scriptCF.get();
@@ -978,7 +978,7 @@ void LayoutTestController::evaluateScriptInIsolatedWorld(unsigned worldID, JSObj
 
 @end
 
-void LayoutTestController::apiTestNewWindowDataLoadBaseURL(JSStringRef utf8Data, JSStringRef baseURL)
+void TestRunner::apiTestNewWindowDataLoadBaseURL(JSStringRef utf8Data, JSStringRef baseURL)
 {
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 
@@ -1005,13 +1005,13 @@ void LayoutTestController::apiTestNewWindowDataLoadBaseURL(JSStringRef utf8Data,
     [pool release];
 }
 
-void LayoutTestController::apiTestGoToCurrentBackForwardItem()
+void TestRunner::apiTestGoToCurrentBackForwardItem()
 {
     WebView *view = [mainFrame webView];
     [view goToBackForwardItem:[[view backForwardList] currentItem]];
 }
 
-void LayoutTestController::setWebViewEditable(bool editable)
+void TestRunner::setWebViewEditable(bool editable)
 {
     WebView *view = [mainFrame webView];
     [view setEditable:editable];
@@ -1092,7 +1092,7 @@ static NSString *SynchronousLoaderRunLoopMode = @"DumpRenderTreeSynchronousLoade
 
 @end
 
-void LayoutTestController::authenticateSession(JSStringRef url, JSStringRef username, JSStringRef password)
+void TestRunner::authenticateSession(JSStringRef url, JSStringRef username, JSStringRef password)
 {
     // See <rdar://problem/7880699>.
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1060
@@ -1106,22 +1106,22 @@ void LayoutTestController::authenticateSession(JSStringRef url, JSStringRef user
 #endif
 }
 
-void LayoutTestController::abortModal()
+void TestRunner::abortModal()
 {
     [NSApp abortModal];
 }
 
-void LayoutTestController::setSerializeHTTPLoads(bool serialize)
+void TestRunner::setSerializeHTTPLoads(bool serialize)
 {
     [WebView _setLoadResourcesSerially:serialize];
 }
 
-void LayoutTestController::setMinimumTimerInterval(double minimumTimerInterval)
+void TestRunner::setMinimumTimerInterval(double minimumTimerInterval)
 {
     [[mainFrame webView] _setMinimumTimerInterval:minimumTimerInterval];
 }
 
-void LayoutTestController::setTextDirection(JSStringRef directionName)
+void TestRunner::setTextDirection(JSStringRef directionName)
 {
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1060
     if (JSStringIsEqualToUTF8CString(directionName, "ltr"))
@@ -1133,7 +1133,7 @@ void LayoutTestController::setTextDirection(JSStringRef directionName)
 #endif
 }
 
-void LayoutTestController::addChromeInputField()
+void TestRunner::addChromeInputField()
 {
     NSTextField *textField = [[NSTextField alloc] initWithFrame:NSMakeRect(0, 0, 100, 20)];
     textField.tag = 1;
@@ -1144,7 +1144,7 @@ void LayoutTestController::addChromeInputField()
     [[mainFrame webView] setNextKeyView:textField];
 }
 
-void LayoutTestController::removeChromeInputField()
+void TestRunner::removeChromeInputField()
 {
     NSView* textField = [[[[mainFrame webView] window] contentView] viewWithTag:1];
     if (textField) {
@@ -1153,37 +1153,37 @@ void LayoutTestController::removeChromeInputField()
     }
 }
 
-void LayoutTestController::focusWebView()
+void TestRunner::focusWebView()
 {
     [[[mainFrame webView] window] makeFirstResponder:[mainFrame webView]];
 }
 
-void LayoutTestController::setBackingScaleFactor(double backingScaleFactor)
+void TestRunner::setBackingScaleFactor(double backingScaleFactor)
 {
     [[mainFrame webView] _setCustomBackingScaleFactor:backingScaleFactor];
 }
 
-void LayoutTestController::simulateDesktopNotificationClick(JSStringRef title)
+void TestRunner::simulateDesktopNotificationClick(JSStringRef title)
 {
     // FIXME: Implement.
 }
 
-void LayoutTestController::resetPageVisibility()
+void TestRunner::resetPageVisibility()
 {
     // FIXME: Implement.
 }
 
-void LayoutTestController::setPageVisibility(const char*)
+void TestRunner::setPageVisibility(const char*)
 {
     // FIXME: Implement.
 }
 
-void LayoutTestController::sendWebIntentResponse(JSStringRef)
+void TestRunner::sendWebIntentResponse(JSStringRef)
 {
     // FIXME: Implement.
 }
 
-void LayoutTestController::deliverWebIntent(JSStringRef, JSStringRef, JSStringRef)
+void TestRunner::deliverWebIntent(JSStringRef, JSStringRef, JSStringRef)
 {
     // FIXME: Implement.
 }

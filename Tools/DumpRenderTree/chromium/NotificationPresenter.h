@@ -46,10 +46,10 @@ public:
     explicit NotificationPresenter(TestShell*) { }
     virtual ~NotificationPresenter();
 
-    // Called by the LayoutTestController to simulate a user granting permission.
+    // Called by the DRTTestRunner to simulate a user granting permission.
     void grantPermission(const WebKit::WebString& origin);
 
-    // Called by the LayoutTestController to simulate a user clicking on a notification.
+    // Called by the DRTTestRunner to simulate a user clicking on a notification.
     bool simulateClick(const WebKit::WebString& notificationIdentifier);
 
     // WebKit::WebNotificationPresenter interface

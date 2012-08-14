@@ -95,7 +95,7 @@ static Eina_Bool onJavaScriptPrompt(Ewk_View_Smart_Data*, Evas_Object*, const ch
 
 static Evas_Object* onWindowCreate(Ewk_View_Smart_Data*, Eina_Bool, const Ewk_Window_Features*)
 {
-    return gLayoutTestController->canOpenWindows() ? browser->createNewWindow() : 0;
+    return gTestRunner->canOpenWindows() ? browser->createNewWindow() : 0;
 }
 
 static Eina_Bool onWindowCloseDelayed(void* data)
@@ -113,7 +113,7 @@ static void onWindowClose(Ewk_View_Smart_Data* smartData)
 
 static uint64_t onExceededDatabaseQuota(Ewk_View_Smart_Data* smartData, Evas_Object* frame, const char* databaseName, uint64_t currentSize, uint64_t expectedSize)
 {
-    if (!gLayoutTestController->dumpDatabaseCallbacks())
+    if (!gTestRunner->dumpDatabaseCallbacks())
         return 0;
 
     Ewk_Security_Origin* origin = ewk_frame_security_origin_get(frame);
@@ -129,7 +129,7 @@ static uint64_t onExceededDatabaseQuota(Ewk_View_Smart_Data* smartData, Evas_Obj
 
 static int64_t onExceededApplicationCacheQuota(Ewk_View_Smart_Data*, Ewk_Security_Origin *origin, int64_t defaultOriginQuota, int64_t totalSpaceNeeded)
 {
-    if (gLayoutTestController->dumpApplicationCacheDelegateCallbacks()) {
+    if (gTestRunner->dumpApplicationCacheDelegateCallbacks()) {
         // For example, numbers from 30000 - 39999 will output as 30000.
         // Rounding up or down does not really matter for these tests. It's
         // sufficient to just get a range of 10000 to determine if we were
@@ -142,7 +142,7 @@ static int64_t onExceededApplicationCacheQuota(Ewk_View_Smart_Data*, Ewk_Securit
                truncatedSpaceNeeded);
     }
 
-    if (gLayoutTestController->disallowIncreaseForApplicationCacheQuota())
+    if (gTestRunner->disallowIncreaseForApplicationCacheQuota())
         return 0;
 
     return defaultOriginQuota;
@@ -187,8 +187,8 @@ static Eina_Bool onNavigationPolicyDecision(Ewk_View_Smart_Data*, Ewk_Frame_Reso
     printf("Policy delegate: attempt to load %s with navigation type '%s'\n", urlSuitableForTestResult(request->url).utf8().data(),
            navigationTypeToString(navigationType));
 
-    if (gLayoutTestController)
-        gLayoutTestController->notifyDone();
+    if (gTestRunner)
+        gTestRunner->notifyDone();
 
     return policyDelegatePermissive;
 }

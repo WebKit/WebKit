@@ -62,7 +62,7 @@ Ecore_Timer* waitToDumpWatchdog = 0;
 extern Ewk_History_Item* prevTestBFItem;
 
 // From the top-level DumpRenderTree.h
-RefPtr<LayoutTestController> gLayoutTestController;
+RefPtr<TestRunner> gTestRunner;
 volatile bool done = false;
 
 static bool dumpPixelsForCurrentTest;
@@ -85,7 +85,7 @@ static String dumpFramesAsText(Evas_Object* frame)
     result.append("\n");
     eina_stringshare_del(frameContents);
 
-    if (gLayoutTestController->dumpChildFramesAsText()) {
+    if (gTestRunner->dumpChildFramesAsText()) {
         Eina_List* children = DumpRenderTreeSupportEfl::frameChildren(frame);
         void* iterator;
 
@@ -128,7 +128,7 @@ static void dumpFrameScrollPosition(Evas_Object* frame)
         printf("%s", result.toString().utf8().data());
     }
 
-    if (gLayoutTestController->dumpChildFrameScrollPositions()) {
+    if (gTestRunner->dumpChildFrameScrollPositions()) {
         Eina_List* children = DumpRenderTreeSupportEfl::frameChildren(frame);
         void* iterator;
 
@@ -215,29 +215,29 @@ static inline bool isGlobalHistoryTest(const String& cTestPathOrURL)
     return cTestPathOrURL.contains("/globalhistory/");
 }
 
-static void createLayoutTestController(const String& testURL, const String& expectedPixelHash)
+static void createTestRunner(const String& testURL, const String& expectedPixelHash)
 {
-    gLayoutTestController =
-        LayoutTestController::create(std::string(testURL.utf8().data()),
+    gTestRunner =
+        TestRunner::create(std::string(testURL.utf8().data()),
                                      std::string(expectedPixelHash.utf8().data()));
 
     topLoadingFrame = 0;
     done = false;
 
-    gLayoutTestController->setIconDatabaseEnabled(false);
+    gTestRunner->setIconDatabaseEnabled(false);
 
     if (shouldLogFrameLoadDelegates(testURL))
-        gLayoutTestController->setDumpFrameLoadCallbacks(true);
+        gTestRunner->setDumpFrameLoadCallbacks(true);
 
-    gLayoutTestController->setDeveloperExtrasEnabled(true);
+    gTestRunner->setDeveloperExtrasEnabled(true);
     if (shouldOpenWebInspector(testURL))
-        gLayoutTestController->showWebInspector();
+        gTestRunner->showWebInspector();
 
-    gLayoutTestController->setDumpHistoryDelegateCallbacks(isGlobalHistoryTest(testURL));
+    gTestRunner->setDumpHistoryDelegateCallbacks(isGlobalHistoryTest(testURL));
 
     if (shouldDumpAsText(testURL)) {
-        gLayoutTestController->setDumpAsText(true);
-        gLayoutTestController->setGeneratePixelResults(false);
+        gTestRunner->setDumpAsText(true);
+        gTestRunner->setGeneratePixelResults(false);
     }
 }
 
@@ -268,14 +268,14 @@ static void runTest(const char* inputLine)
     const String testURL = getFinalTestURL(testPathOrURL);
 
     browser->resetDefaultsToConsistentValues();
-    createLayoutTestController(testURL, expectedPixelHash);
+    createTestRunner(testURL, expectedPixelHash);
 
     WorkQueue::shared()->clear();
     WorkQueue::shared()->setFrozen(false);
 
     const bool isSVGW3CTest = testURL.contains("svg/W3C-SVG-1.1");
-    const int width = isSVGW3CTest ? 480 : LayoutTestController::maxViewWidth;
-    const int height = isSVGW3CTest ? 360 : LayoutTestController::maxViewHeight;
+    const int width = isSVGW3CTest ? 480 : TestRunner::maxViewWidth;
+    const int height = isSVGW3CTest ? 360 : TestRunner::maxViewHeight;
     evas_object_resize(browser->mainView(), width, height);
 
     if (prevTestBFItem)
@@ -288,8 +288,8 @@ static void runTest(const char* inputLine)
 
     ecore_main_loop_begin();
 
-    gLayoutTestController->closeWebInspector();
-    gLayoutTestController->setDeveloperExtrasEnabled(false);
+    gTestRunner->closeWebInspector();
+    gTestRunner->setDeveloperExtrasEnabled(false);
 
     browser->clearExtraViews();
 
@@ -298,7 +298,7 @@ static void runTest(const char* inputLine)
 
     ewk_view_uri_set(browser->mainView(), "about:blank");
 
-    gLayoutTestController.clear();
+    gTestRunner.clear();
     sendPixelResultsEOF();
 }
 
@@ -320,15 +320,15 @@ static void adjustOutputTypeByMimeType(const Evas_Object* frame)
 {
     const String responseMimeType(DumpRenderTreeSupportEfl::responseMimeType(frame));
     if (responseMimeType == "text/plain") {
-        gLayoutTestController->setDumpAsText(true);
-        gLayoutTestController->setGeneratePixelResults(false);
+        gTestRunner->setDumpAsText(true);
+        gTestRunner->setGeneratePixelResults(false);
     }
 }
 
 static void dumpFrameContentsAsText(Evas_Object* frame)
 {
     String result;
-    if (gLayoutTestController->dumpAsText())
+    if (gTestRunner->dumpAsText())
         result = dumpFramesAsText(frame);
     else
         result = DumpRenderTreeSupportEfl::renderTreeDump(frame);
@@ -338,17 +338,17 @@ static void dumpFrameContentsAsText(Evas_Object* frame)
 
 static bool shouldDumpFrameScrollPosition()
 {
-    return !gLayoutTestController->dumpAsText() && !gLayoutTestController->dumpDOMAsWebArchive() && !gLayoutTestController->dumpSourceAsWebArchive();
+    return !gTestRunner->dumpAsText() && !gTestRunner->dumpDOMAsWebArchive() && !gTestRunner->dumpSourceAsWebArchive();
 }
 
 static bool shouldDumpPixelsAndCompareWithExpected()
 {
-    return dumpPixelsForCurrentTest && gLayoutTestController->generatePixelResults() && !gLayoutTestController->dumpDOMAsWebArchive() && !gLayoutTestController->dumpSourceAsWebArchive();
+    return dumpPixelsForCurrentTest && gTestRunner->generatePixelResults() && !gTestRunner->dumpDOMAsWebArchive() && !gTestRunner->dumpSourceAsWebArchive();
 }
 
 static bool shouldDumpBackForwardList()
 {
-    return gLayoutTestController->dumpBackForwardList();
+    return gTestRunner->dumpBackForwardList();
 }
 
 static bool initEfl()
@@ -412,7 +412,7 @@ void dump()
     }
 
     if (shouldDumpPixelsAndCompareWithExpected())
-        dumpWebViewAsPixelsAndCompareWithExpected(gLayoutTestController->expectedPixelHash());
+        dumpWebViewAsPixelsAndCompareWithExpected(gTestRunner->expectedPixelHash());
 
     done = true;
     ecore_main_loop_quit();

@@ -209,7 +209,7 @@ HRESULT STDMETHODCALLTYPE ResourceLoadDelegate::identifierForInitialRequest(
     /* [in] */ IWebDataSource* dataSource,
     /* [in] */ unsigned long identifier)
 { 
-    if (!done && gLayoutTestController->dumpResourceLoadCallbacks()) {
+    if (!done && gTestRunner->dumpResourceLoadCallbacks()) {
         BSTR urlStr;
         if (FAILED(request->URL(&urlStr)))
             return E_FAIL;
@@ -238,26 +238,26 @@ HRESULT STDMETHODCALLTYPE ResourceLoadDelegate::willSendRequest(
     /* [in] */ IWebDataSource* dataSource,
     /* [retval][out] */ IWebURLRequest **newRequest)
 {
-    if (!done && gLayoutTestController->dumpResourceLoadCallbacks()) {
+    if (!done && gTestRunner->dumpResourceLoadCallbacks()) {
         printf("%S - willSendRequest %S redirectResponse %S\n", 
             descriptionSuitableForTestResult(identifier).c_str(),
             descriptionSuitableForTestResult(request).c_str(),
             descriptionSuitableForTestResult(redirectResponse).c_str());
     }
 
-    if (!done && !gLayoutTestController->deferMainResourceDataLoad()) {
+    if (!done && !gTestRunner->deferMainResourceDataLoad()) {
         COMPtr<IWebDataSourcePrivate> dataSourcePrivate(Query, dataSource);
         if (!dataSourcePrivate)
             return E_FAIL;
         dataSourcePrivate->setDeferMainResourceDataLoad(FALSE);
     }
 
-    if (!done && gLayoutTestController->willSendRequestReturnsNull()) {
+    if (!done && gTestRunner->willSendRequestReturnsNull()) {
         *newRequest = 0;
         return S_OK;
     }
 
-    if (!done && gLayoutTestController->willSendRequestReturnsNullOnRedirect() && redirectResponse) {
+    if (!done && gTestRunner->willSendRequestReturnsNullOnRedirect() && redirectResponse) {
         printf("Returning null for this redirect\n");
         *newRequest = 0;
         return S_OK;
@@ -265,7 +265,7 @@ HRESULT STDMETHODCALLTYPE ResourceLoadDelegate::willSendRequest(
 
     IWebMutableURLRequest* requestCopy = 0;
     request->mutableCopy(&requestCopy);
-    const set<string>& clearHeaders = gLayoutTestController->willSendRequestClearHeaders();
+    const set<string>& clearHeaders = gTestRunner->willSendRequestClearHeaders();
     for (set<string>::const_iterator header = clearHeaders.begin(); header != clearHeaders.end(); ++header) {
       BSTR bstrHeader = BSTRFromString(*header);
       requestCopy->setValue(0, bstrHeader);
@@ -286,14 +286,14 @@ HRESULT STDMETHODCALLTYPE ResourceLoadDelegate::didReceiveAuthenticationChalleng
     if (!challenge || FAILED(challenge->sender(&sender)))
         return E_FAIL;
 
-    if (!gLayoutTestController->handlesAuthenticationChallenges()) {
+    if (!gTestRunner->handlesAuthenticationChallenges()) {
         printf("%S - didReceiveAuthenticationChallenge - Simulating cancelled authentication sheet\n", descriptionSuitableForTestResult(identifier).c_str());
         sender->continueWithoutCredentialForAuthenticationChallenge(challenge);
         return S_OK;
     }
     
-    const char* user = gLayoutTestController->authenticationUsername().c_str();
-    const char* password = gLayoutTestController->authenticationPassword().c_str();
+    const char* user = gTestRunner->authenticationUsername().c_str();
+    const char* password = gTestRunner->authenticationPassword().c_str();
 
     printf("%S - didReceiveAuthenticationChallenge - Responding with %s:%s\n", descriptionSuitableForTestResult(identifier).c_str(), user, password);
 
@@ -312,12 +312,12 @@ HRESULT STDMETHODCALLTYPE ResourceLoadDelegate::didReceiveResponse(
     /* [in] */ IWebURLResponse* response, 
     /* [in] */ IWebDataSource* dataSource)
 {
-    if (!done && gLayoutTestController->dumpResourceLoadCallbacks()) {
+    if (!done && gTestRunner->dumpResourceLoadCallbacks()) {
         printf("%S - didReceiveResponse %S\n",
             descriptionSuitableForTestResult(identifier).c_str(),
             descriptionSuitableForTestResult(response).c_str());
     }
-    if (!done && gLayoutTestController->dumpResourceResponseMIMETypes()) {
+    if (!done && gTestRunner->dumpResourceResponseMIMETypes()) {
         BSTR mimeTypeBSTR;
         if (FAILED(response->MIMEType(&mimeTypeBSTR)))
             E_FAIL;
@@ -344,7 +344,7 @@ HRESULT STDMETHODCALLTYPE ResourceLoadDelegate::didFinishLoadingFromDataSource(
     /* [in] */ unsigned long identifier,
     /* [in] */ IWebDataSource* dataSource)
 {
-    if (!done && gLayoutTestController->dumpResourceLoadCallbacks()) {
+    if (!done && gTestRunner->dumpResourceLoadCallbacks()) {
         printf("%S - didFinishLoading\n",
             descriptionSuitableForTestResult(identifier).c_str());
     }
@@ -360,7 +360,7 @@ HRESULT STDMETHODCALLTYPE ResourceLoadDelegate::didFailLoadingWithError(
     /* [in] */ IWebError* error,
     /* [in] */ IWebDataSource* dataSource)
 {
-    if (!done && gLayoutTestController->dumpResourceLoadCallbacks()) {
+    if (!done && gTestRunner->dumpResourceLoadCallbacks()) {
         printf("%S - didFailLoadingWithError: %S\n", 
             descriptionSuitableForTestResult(identifier).c_str(),
             descriptionSuitableForTestResult(error, identifier).c_str());

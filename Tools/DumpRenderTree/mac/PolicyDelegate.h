@@ -28,14 +28,14 @@
 
 #import <Cocoa/Cocoa.h>
 
-class LayoutTestController;
+class TestRunner;
 
 @interface PolicyDelegate : NSObject {
     BOOL permissiveDelegate;
-    LayoutTestController* controllerToNotifyDone;
+    TestRunner* controllerToNotifyDone;
 }
 
 - (void)setPermissive:(BOOL)permissive;
-- (void)setControllerToNotifyDone:(LayoutTestController*)controller;
+- (void)setControllerToNotifyDone:(TestRunner*)controller;
 
 @end

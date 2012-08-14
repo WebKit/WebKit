@@ -38,7 +38,7 @@
 #include <QLocale>
 #include <qwebsettings.h>
 
-LayoutTestController::LayoutTestController(WebCore::DumpRenderTree* drt)
+TestRunner::TestRunner(WebCore::DumpRenderTree* drt)
     : QObject()
     , m_drt(drt)
     , m_shouldTimeout(true)
@@ -48,7 +48,7 @@ LayoutTestController::LayoutTestController(WebCore::DumpRenderTree* drt)
     DumpRenderTreeSupportQt::dumpNotification(true);
 }
 
-void LayoutTestController::reset()
+void TestRunner::reset()
 {
     m_hasDumped = false;
     m_loadFinished = false;
@@ -99,7 +99,7 @@ void LayoutTestController::reset()
     emit hidePage();
 }
 
-void LayoutTestController::processWork()
+void TestRunner::processWork()
 {
     // qDebug() << ">>>processWork";
 
@@ -111,7 +111,7 @@ void LayoutTestController::processWork()
 }
 
 // Called on loadFinished on WebPage
-void LayoutTestController::maybeDump(bool /*success*/)
+void TestRunner::maybeDump(bool /*success*/)
 {
 
     // This can happen on any of the http/tests/security/window-events-*.html tests, where the test opens
@@ -142,7 +142,7 @@ void LayoutTestController::maybeDump(bool /*success*/)
     }
 }
 
-void LayoutTestController::waitUntilDone()
+void TestRunner::waitUntilDone()
 {
     //qDebug() << ">>>>waitForDone";
     m_waitForDone = true;
@@ -153,12 +153,12 @@ void LayoutTestController::waitUntilDone()
     m_timeoutTimer.start(m_timeout, this);
 }
 
-void LayoutTestController::setViewModeMediaFeature(const QString& mode)
+void TestRunner::setViewModeMediaFeature(const QString& mode)
 {
     m_drt->webPage()->setProperty("_q_viewMode", mode);
 }
 
-int LayoutTestController::webHistoryItemCount()
+int TestRunner::webHistoryItemCount()
 {
     if (!m_webHistory)
         return -1;
@@ -168,12 +168,12 @@ int LayoutTestController::webHistoryItemCount()
     return m_webHistory->count() - 1;
 }
 
-void LayoutTestController::keepWebHistory()
+void TestRunner::keepWebHistory()
 {
     m_webHistory = m_drt->webPage()->history();
 }
 
-void LayoutTestController::notifyDone()
+void TestRunner::notifyDone()
 {
     qDebug() << ">>>>notifyDone";
 
@@ -197,49 +197,49 @@ void LayoutTestController::notifyDone()
     m_waitForPolicy = false;
 }
 
-int LayoutTestController::windowCount()
+int TestRunner::windowCount()
 {
     return m_drt->windowCount();
 }
 
-void LayoutTestController::grantDesktopNotificationPermission(const QString& origin)
+void TestRunner::grantDesktopNotificationPermission(const QString& origin)
 {
     QWebFrame* frame = m_drt->webPage()->mainFrame();
     m_drt->webPage()->setFeaturePermission(frame, QWebPage::Notifications, QWebPage::PermissionGrantedByUser);
     m_desktopNotificationAllowedOrigins.append(origin);
 }
 
-void LayoutTestController::ignoreDesktopNotificationPermissionRequests()
+void TestRunner::ignoreDesktopNotificationPermissionRequests()
 {
     m_ignoreDesktopNotification = true;
 }
 
-bool LayoutTestController::checkDesktopNotificationPermission(const QString& origin)
+bool TestRunner::checkDesktopNotificationPermission(const QString& origin)
 {
     return !m_ignoreDesktopNotification && m_desktopNotificationAllowedOrigins.contains(origin);
 }
 
-void LayoutTestController::simulateDesktopNotificationClick(const QString& title)
+void TestRunner::simulateDesktopNotificationClick(const QString& title)
 {
     DumpRenderTreeSupportQt::simulateDesktopNotificationClick(title);
 }
 
-void LayoutTestController::display()
+void TestRunner::display()
 {
     emit showPage();
 }
 
-void LayoutTestController::displayInvalidatedRegion()
+void TestRunner::displayInvalidatedRegion()
 {
     display();
 }
 
-void LayoutTestController::clearBackForwardList()
+void TestRunner::clearBackForwardList()
 {
     m_drt->webPage()->history()->clear();
 }
 
-QString LayoutTestController::pathToLocalResource(const QString& url)
+QString TestRunner::pathToLocalResource(const QString& url)
 {
     QString localTmpUrl(QLatin1String("file:///tmp/LayoutTests"));
 
@@ -256,82 +256,82 @@ QString LayoutTestController::pathToLocalResource(const QString& url)
     return url;
 }
 
-void LayoutTestController::dumpEditingCallbacks()
+void TestRunner::dumpEditingCallbacks()
 {
     qDebug() << ">>>dumpEditingCallbacks";
     DumpRenderTreeSupportQt::dumpEditingCallbacks(true);
 }
 
-void LayoutTestController::dumpFrameLoadCallbacks()
+void TestRunner::dumpFrameLoadCallbacks()
 {
     DumpRenderTreeSupportQt::dumpFrameLoader(true);
 }
 
-void LayoutTestController::dumpProgressFinishedCallback()
+void TestRunner::dumpProgressFinishedCallback()
 {
     DumpRenderTreeSupportQt::dumpProgressFinishedCallback(true);
 }
 
-void LayoutTestController::dumpUserGestureInFrameLoadCallbacks()
+void TestRunner::dumpUserGestureInFrameLoadCallbacks()
 {
     DumpRenderTreeSupportQt::dumpUserGestureInFrameLoader(true);
 }
 
-void LayoutTestController::dumpResourceLoadCallbacks()
+void TestRunner::dumpResourceLoadCallbacks()
 {
     DumpRenderTreeSupportQt::dumpResourceLoadCallbacks(true);
 }
 
-void LayoutTestController::dumpResourceResponseMIMETypes()
+void TestRunner::dumpResourceResponseMIMETypes()
 {
     DumpRenderTreeSupportQt::dumpResourceResponseMIMETypes(true);
 }
 
-void LayoutTestController::dumpWillCacheResponse()
+void TestRunner::dumpWillCacheResponse()
 {
     DumpRenderTreeSupportQt::dumpWillCacheResponseCallbacks(true);
 }
 
-void LayoutTestController::dumpHistoryCallbacks()
+void TestRunner::dumpHistoryCallbacks()
 {
     DumpRenderTreeSupportQt::dumpHistoryCallbacks(true);
 }
 
-void LayoutTestController::setWillSendRequestReturnsNullOnRedirect(bool enabled)
+void TestRunner::setWillSendRequestReturnsNullOnRedirect(bool enabled)
 {
     DumpRenderTreeSupportQt::setWillSendRequestReturnsNullOnRedirect(enabled);
 }
 
-void LayoutTestController::setWillSendRequestReturnsNull(bool enabled)
+void TestRunner::setWillSendRequestReturnsNull(bool enabled)
 {
     DumpRenderTreeSupportQt::setWillSendRequestReturnsNull(enabled);
 }
 
-void LayoutTestController::setWillSendRequestClearHeader(const QStringList& headers)
+void TestRunner::setWillSendRequestClearHeader(const QStringList& headers)
 {
     DumpRenderTreeSupportQt::setWillSendRequestClearHeaders(headers);
 }
 
-void LayoutTestController::setDeferMainResourceDataLoad(bool defer)
+void TestRunner::setDeferMainResourceDataLoad(bool defer)
 {
     DumpRenderTreeSupportQt::setDeferMainResourceDataLoad(defer);
 }
 
-void LayoutTestController::queueBackNavigation(int howFarBackward)
+void TestRunner::queueBackNavigation(int howFarBackward)
 {
     //qDebug() << ">>>queueBackNavigation" << howFarBackward;
     for (int i = 0; i != howFarBackward; ++i)
         WorkQueue::shared()->queue(new BackItem(1, m_drt->webPage()));
 }
 
-void LayoutTestController::queueForwardNavigation(int howFarForward)
+void TestRunner::queueForwardNavigation(int howFarForward)
 {
     //qDebug() << ">>>queueForwardNavigation" << howFarForward;
     for (int i = 0; i != howFarForward; ++i)
         WorkQueue::shared()->queue(new ForwardItem(1, m_drt->webPage()));
 }
 
-void LayoutTestController::queueLoad(const QString& url, const QString& target)
+void TestRunner::queueLoad(const QString& url, const QString& target)
 {
     //qDebug() << ">>>queueLoad" << url << target;
     QUrl mainResourceUrl = m_drt->webPage()->mainFrame()->url();
@@ -339,7 +339,7 @@ void LayoutTestController::queueLoad(const QString& url, const QString& target)
     WorkQueue::shared()->queue(new LoadItem(absoluteUrl, target, m_drt->webPage()));
 }
 
-void LayoutTestController::queueLoadHTMLString(const QString& content, const QString& baseURL, const QString& failingURL)
+void TestRunner::queueLoadHTMLString(const QString& content, const QString& baseURL, const QString& failingURL)
 {
     if (failingURL.isEmpty())
         WorkQueue::shared()->queue(new LoadHTMLStringItem(content, baseURL, m_drt->webPage()));
@@ -347,32 +347,32 @@ void LayoutTestController::queueLoadHTMLString(const QString& content, const QSt
         WorkQueue::shared()->queue(new LoadAlternateHTMLStringItem(content, baseURL, failingURL, m_drt->webPage()));
 }
 
-void LayoutTestController::queueReload()
+void TestRunner::queueReload()
 {
     //qDebug() << ">>>queueReload";
     WorkQueue::shared()->queue(new ReloadItem(m_drt->webPage()));
 }
 
-void LayoutTestController::queueLoadingScript(const QString& script)
+void TestRunner::queueLoadingScript(const QString& script)
 {
     //qDebug() << ">>>queueLoadingScript" << script;
     WorkQueue::shared()->queue(new LoadingScriptItem(script, m_drt->webPage()));
 }
 
-void LayoutTestController::queueNonLoadingScript(const QString& script)
+void TestRunner::queueNonLoadingScript(const QString& script)
 {
     //qDebug() << ">>>queueNonLoadingScript" << script;
     WorkQueue::shared()->queue(new NonLoadingScriptItem(script, m_drt->webPage()));
 }
 
-void LayoutTestController::provisionalLoad()
+void TestRunner::provisionalLoad()
 {
     QWebFrame* frame = qobject_cast<QWebFrame*>(sender());
     if (!m_topLoadingFrame && !m_hasDumped)
         m_topLoadingFrame = frame;
 }
 
-void LayoutTestController::timerEvent(QTimerEvent *ev)
+void TestRunner::timerEvent(QTimerEvent *ev)
 {
     if (ev->timerId() == m_timeoutTimer.timerId()) {
         const char* message = "FAIL: Timed out waiting for notifyDone to be called\n";
@@ -383,144 +383,144 @@ void LayoutTestController::timerEvent(QTimerEvent *ev)
         QObject::timerEvent(ev);
 }
 
-QString LayoutTestController::encodeHostName(const QString& host)
+QString TestRunner::encodeHostName(const QString& host)
 {
     QString encoded = QString::fromLatin1(QUrl::toAce(host + QLatin1String(".no")));
     encoded.truncate(encoded.length() - 3); // strip .no
     return encoded;
 }
 
-QString LayoutTestController::decodeHostName(const QString& host)
+QString TestRunner::decodeHostName(const QString& host)
 {
     QString decoded = QUrl::fromAce(host.toLatin1() + QByteArray(".no"));
     decoded.truncate(decoded.length() - 3);
     return decoded;
 }
 
-void LayoutTestController::setMediaType(const QString& type)
+void TestRunner::setMediaType(const QString& type)
 {
     DumpRenderTreeSupportQt::setMediaType(m_drt->webPage()->mainFrame(), type);
 }
 
-void LayoutTestController::closeWebInspector()
+void TestRunner::closeWebInspector()
 {
     DumpRenderTreeSupportQt::webInspectorClose(m_drt->webPage());
     m_drt->webPage()->settings()->setAttribute(QWebSettings::DeveloperExtrasEnabled, false);
 }
 
-void LayoutTestController::setDeveloperExtrasEnabled(bool enabled)
+void TestRunner::setDeveloperExtrasEnabled(bool enabled)
 {
     m_drt->webPage()->settings()->setAttribute(QWebSettings::DeveloperExtrasEnabled, enabled);
 }
 
-void LayoutTestController::setAsynchronousSpellCheckingEnabled(bool)
+void TestRunner::setAsynchronousSpellCheckingEnabled(bool)
 {
     // FIXME: Implement this.
 }
 
-void LayoutTestController::showWebInspector()
+void TestRunner::showWebInspector()
 {
     m_drt->webPage()->settings()->setAttribute(QWebSettings::DeveloperExtrasEnabled, true);
     DumpRenderTreeSupportQt::webInspectorShow(m_drt->webPage());
 }
 
-void LayoutTestController::evaluateInWebInspector(long callId, const QString& script)
+void TestRunner::evaluateInWebInspector(long callId, const QString& script)
 {
     DumpRenderTreeSupportQt::webInspectorExecuteScript(m_drt->webPage(), callId, script);
 }
 
-void LayoutTestController::setFrameFlatteningEnabled(bool enabled)
+void TestRunner::setFrameFlatteningEnabled(bool enabled)
 {
     DumpRenderTreeSupportQt::setFrameFlatteningEnabled(m_drt->webPage(), enabled);
 }
 
-void LayoutTestController::setMockScrollbarsEnabled(bool enabled)
+void TestRunner::setMockScrollbarsEnabled(bool enabled)
 {
     DumpRenderTreeSupportQt::setMockScrollbarsEnabled(m_drt->webPage(), enabled);
 }
 
-void LayoutTestController::goBack()
+void TestRunner::goBack()
 {
     DumpRenderTreeSupportQt::goBack(m_drt->webPage());
 }
 
-void LayoutTestController::setDefersLoading(bool flag)
+void TestRunner::setDefersLoading(bool flag)
 {
     DumpRenderTreeSupportQt::setDefersLoading(m_drt->webPage(), flag);
 }
 
-void LayoutTestController::setAllowUniversalAccessFromFileURLs(bool enabled)
+void TestRunner::setAllowUniversalAccessFromFileURLs(bool enabled)
 {
     m_drt->webPage()->settings()->setAttribute(QWebSettings::LocalContentCanAccessRemoteUrls, enabled);
 }
 
-void LayoutTestController::setAllowFileAccessFromFileURLs(bool enabled)
+void TestRunner::setAllowFileAccessFromFileURLs(bool enabled)
 {
     m_drt->webPage()->settings()->setAttribute(QWebSettings::LocalContentCanAccessFileUrls, enabled);
 }
 
-void LayoutTestController::setAppCacheMaximumSize(unsigned long long quota)
+void TestRunner::setAppCacheMaximumSize(unsigned long long quota)
 {
     m_drt->webPage()->settings()->setOfflineWebApplicationCacheQuota(quota);
 }
 
-void LayoutTestController::setAutofilled(const QWebElement& element, bool isAutofilled)
+void TestRunner::setAutofilled(const QWebElement& element, bool isAutofilled)
 {
     return DumpRenderTreeSupportQt::setAutofilled(element, isAutofilled);
 }
 
-void LayoutTestController::setValueForUser(const QWebElement& element, const QString& value)
+void TestRunner::setValueForUser(const QWebElement& element, const QString& value)
 {
     DumpRenderTreeSupportQt::setValueForUser(element, value);
 }
 
-void LayoutTestController::setFixedContentsSize(int width, int height)
+void TestRunner::setFixedContentsSize(int width, int height)
 {
     m_topLoadingFrame->page()->setPreferredContentsSize(QSize(width, height));
 }
 
-void LayoutTestController::setPrivateBrowsingEnabled(bool enable)
+void TestRunner::setPrivateBrowsingEnabled(bool enable)
 {
     m_drt->webPage()->settings()->setAttribute(QWebSettings::PrivateBrowsingEnabled, enable);
 }
 
-void LayoutTestController::setSpatialNavigationEnabled(bool enable)
+void TestRunner::setSpatialNavigationEnabled(bool enable)
 {
     m_drt->webPage()->settings()->setAttribute(QWebSettings::SpatialNavigationEnabled, enable);
 }
 
-void LayoutTestController::setPopupBlockingEnabled(bool enable)
+void TestRunner::setPopupBlockingEnabled(bool enable)
 {
     m_drt->webPage()->settings()->setAttribute(QWebSettings::JavascriptCanOpenWindows, !enable);
 }
 
-void LayoutTestController::setPluginsEnabled(bool flag)
+void TestRunner::setPluginsEnabled(bool flag)
 {
     // FIXME: Implement
 }
 
-void LayoutTestController::setPOSIXLocale(const QString& locale)
+void TestRunner::setPOSIXLocale(const QString& locale)
 {
     QLocale qlocale(locale);
     QLocale::setDefault(qlocale);
 } 
 
-void LayoutTestController::setWindowIsKey(bool isKey)
+void TestRunner::setWindowIsKey(bool isKey)
 {
     m_drt->switchFocus(isKey);
 }
 
-void LayoutTestController::setMainFrameIsFirstResponder(bool isFirst)
+void TestRunner::setMainFrameIsFirstResponder(bool isFirst)
 {
     //FIXME: only need this for the moment: https://bugs.webkit.org/show_bug.cgi?id=32990
 }
 
-void LayoutTestController::setJavaScriptCanAccessClipboard(bool enable)
+void TestRunner::setJavaScriptCanAccessClipboard(bool enable)
 {
     m_drt->webPage()->settings()->setAttribute(QWebSettings::JavascriptCanAccessClipboard, enable);
 }
 
-void LayoutTestController::setXSSAuditorEnabled(bool enable)
+void TestRunner::setXSSAuditorEnabled(bool enable)
 {
     // Set XSSAuditingEnabled globally so that windows created by the test inherit it too.
     // resetSettings() will call this to reset the page and global setting to false again.
@@ -530,7 +530,7 @@ void LayoutTestController::setXSSAuditorEnabled(bool enable)
     m_drt->webPage()->settings()->setAttribute(QWebSettings::XSSAuditingEnabled, enable);
 }
 
-bool LayoutTestController::pauseAnimationAtTimeOnElementWithId(const QString& animationName,
+bool TestRunner::pauseAnimationAtTimeOnElementWithId(const QString& animationName,
                                                                double time,
                                                                const QString& elementId)
 {
@@ -539,7 +539,7 @@ bool LayoutTestController::pauseAnimationAtTimeOnElementWithId(const QString& an
     return DumpRenderTreeSupportQt::pauseAnimation(frame, animationName, time, elementId);
 }
 
-bool LayoutTestController::pauseTransitionAtTimeOnElementWithId(const QString& propertyName,
+bool TestRunner::pauseTransitionAtTimeOnElementWithId(const QString& propertyName,
                                                                 double time,
                                                                 const QString& elementId)
 {
@@ -548,59 +548,59 @@ bool LayoutTestController::pauseTransitionAtTimeOnElementWithId(const QString& p
     return DumpRenderTreeSupportQt::pauseTransitionOfProperty(frame, propertyName, time, elementId);
 }
 
-unsigned LayoutTestController::numberOfActiveAnimations() const
+unsigned TestRunner::numberOfActiveAnimations() const
 {
     QWebFrame* frame = m_drt->webPage()->mainFrame();
     Q_ASSERT(frame);
     return DumpRenderTreeSupportQt::numberOfActiveAnimations(frame);
 }
 
-void LayoutTestController::disableImageLoading()
+void TestRunner::disableImageLoading()
 {
     m_drt->webPage()->settings()->setAttribute(QWebSettings::AutoLoadImages, false);
 }
 
-void LayoutTestController::dispatchPendingLoadRequests()
+void TestRunner::dispatchPendingLoadRequests()
 {
     // FIXME: Implement for testing fix for 6727495
 }
 
-void LayoutTestController::clearAllApplicationCaches()
+void TestRunner::clearAllApplicationCaches()
 {
     DumpRenderTreeSupportQt::clearAllApplicationCaches();
 }
 
-void LayoutTestController::clearApplicationCacheForOrigin(const QString& url)
+void TestRunner::clearApplicationCacheForOrigin(const QString& url)
 {
     // FIXME: Implement to support deleting all application caches for an origin.
 }
 
-long long LayoutTestController::localStorageDiskUsageForOrigin(const QString& originIdentifier)
+long long TestRunner::localStorageDiskUsageForOrigin(const QString& originIdentifier)
 {
     // FIXME: Implement to support getting disk usage in bytes for an origin.
     return 0;
 }
 
-void LayoutTestController::setApplicationCacheOriginQuota(unsigned long long quota)
+void TestRunner::setApplicationCacheOriginQuota(unsigned long long quota)
 {
     if (!m_topLoadingFrame)
         return;
     m_topLoadingFrame->securityOrigin().setApplicationCacheQuota(quota);
 }
 
-long long LayoutTestController::applicationCacheDiskUsageForOrigin(const QString& origin)
+long long TestRunner::applicationCacheDiskUsageForOrigin(const QString& origin)
 {
     // FIXME: Implement to support getting disk usage by all application caches for an origin.
     return 0;
 }
 
-QStringList LayoutTestController::originsWithApplicationCache()
+QStringList TestRunner::originsWithApplicationCache()
 {
     // FIXME: Implement to get origins that have application caches.
     return QStringList();
 }
 
-void LayoutTestController::setCacheModel(int model)
+void TestRunner::setCacheModel(int model)
 {
     // qwebsetting doesn't have matched setting yet :
     // WEBKIT_CACHE_MODEL_DOCUMENT_VIEWER
@@ -610,41 +610,41 @@ void LayoutTestController::setCacheModel(int model)
     // FIXME: Implement.
 }
 
-void LayoutTestController::setDatabaseQuota(int size)
+void TestRunner::setDatabaseQuota(int size)
 {
     if (!m_topLoadingFrame)
         return;
     m_topLoadingFrame->securityOrigin().setDatabaseQuota(size);
 }
 
-void LayoutTestController::clearAllDatabases()
+void TestRunner::clearAllDatabases()
 {
     QWebDatabase::removeAllDatabases();
 }
 
-void LayoutTestController::addOriginAccessWhitelistEntry(const QString& sourceOrigin, const QString& destinationProtocol, const QString& destinationHost, bool allowDestinationSubdomains)
+void TestRunner::addOriginAccessWhitelistEntry(const QString& sourceOrigin, const QString& destinationProtocol, const QString& destinationHost, bool allowDestinationSubdomains)
 {
     DumpRenderTreeSupportQt::whiteListAccessFromOrigin(sourceOrigin, destinationProtocol, destinationHost, allowDestinationSubdomains);
 }
 
-void LayoutTestController::removeOriginAccessWhitelistEntry(const QString& sourceOrigin, const QString& destinationProtocol, const QString& destinationHost, bool allowDestinationSubdomains)
+void TestRunner::removeOriginAccessWhitelistEntry(const QString& sourceOrigin, const QString& destinationProtocol, const QString& destinationHost, bool allowDestinationSubdomains)
 {
     DumpRenderTreeSupportQt::removeWhiteListAccessFromOrigin(sourceOrigin, destinationProtocol, destinationHost, allowDestinationSubdomains);
 }
 
-void LayoutTestController::setCustomPolicyDelegate(bool enabled, bool permissive)
+void TestRunner::setCustomPolicyDelegate(bool enabled, bool permissive)
 {
     DumpRenderTreeSupportQt::setCustomPolicyDelegate(enabled, permissive);
 }
 
-void LayoutTestController::waitForPolicyDelegate()
+void TestRunner::waitForPolicyDelegate()
 {
     setCustomPolicyDelegate(true);
     m_waitForPolicy = true;
     waitUntilDone();
 }
 
-void LayoutTestController::overridePreference(const QString& name, const QVariant& value)
+void TestRunner::overridePreference(const QString& name, const QVariant& value)
 {
     QWebSettings* settings = m_topLoadingFrame->page()->settings();
 
@@ -673,11 +673,11 @@ void LayoutTestController::overridePreference(const QString& name, const QVarian
     else if (name == "WebKitAcceleratedCompositingEnabled")
         settings->setAttribute(QWebSettings::AcceleratedCompositingEnabled, value.toBool());
     else
-        printf("ERROR: LayoutTestController::overridePreference() does not support the '%s' preference\n",
+        printf("ERROR: TestRunner::overridePreference() does not support the '%s' preference\n",
             name.toLatin1().data());
 }
 
-void LayoutTestController::setUserStyleSheetLocation(const QString& url)
+void TestRunner::setUserStyleSheetLocation(const QString& url)
 {
     QByteArray urlData = pathToLocalResource(url).toLatin1();
     m_userStyleSheetLocation = QUrl::fromEncoded(urlData, QUrl::StrictMode);
@@ -686,17 +686,17 @@ void LayoutTestController::setUserStyleSheetLocation(const QString& url)
         setUserStyleSheetEnabled(true);
 }
 
-void LayoutTestController::setCaretBrowsingEnabled(bool value)
+void TestRunner::setCaretBrowsingEnabled(bool value)
 {
     DumpRenderTreeSupportQt::setCaretBrowsingEnabled(m_drt->webPage(), value);
 }
 
-void LayoutTestController::setAuthorAndUserStylesEnabled(bool value)
+void TestRunner::setAuthorAndUserStylesEnabled(bool value)
 {
     DumpRenderTreeSupportQt::setAuthorAndUserStylesEnabled(m_drt->webPage(), value);
 }
 
-void LayoutTestController::setUserStyleSheetEnabled(bool enabled)
+void TestRunner::setUserStyleSheetEnabled(bool enabled)
 {
     m_userStyleSheetEnabled = enabled;
 
@@ -706,27 +706,27 @@ void LayoutTestController::setUserStyleSheetEnabled(bool enabled)
         m_drt->webPage()->settings()->setUserStyleSheetUrl(QUrl());
 }
 
-void LayoutTestController::setDomainRelaxationForbiddenForURLScheme(bool forbidden, const QString& scheme)
+void TestRunner::setDomainRelaxationForbiddenForURLScheme(bool forbidden, const QString& scheme)
 {
     DumpRenderTreeSupportQt::setDomainRelaxationForbiddenForURLScheme(forbidden, scheme);
 }
 
-int LayoutTestController::workerThreadCount()
+int TestRunner::workerThreadCount()
 {
     return DumpRenderTreeSupportQt::workerThreadCount();
 }
 
-int LayoutTestController::numberOfPages(float width, float height)
+int TestRunner::numberOfPages(float width, float height)
 {
     return DumpRenderTreeSupportQt::numberOfPages(m_drt->webPage()->mainFrame(), width, height);
 }
 
-bool LayoutTestController::callShouldCloseOnWebView()
+bool TestRunner::callShouldCloseOnWebView()
 {
     return DumpRenderTreeSupportQt::shouldClose(m_drt->webPage()->mainFrame());
 }
 
-void LayoutTestController::setScrollbarPolicy(const QString& orientation, const QString& policy)
+void TestRunner::setScrollbarPolicy(const QString& orientation, const QString& policy)
 {
     Qt::Orientation o;
     Qt::ScrollBarPolicy p;
@@ -750,52 +750,52 @@ void LayoutTestController::setScrollbarPolicy(const QString& orientation, const 
     m_drt->webPage()->mainFrame()->setScrollBarPolicy(o, p);
 }
 
-void LayoutTestController::setSmartInsertDeleteEnabled(bool enable)
+void TestRunner::setSmartInsertDeleteEnabled(bool enable)
 {
     DumpRenderTreeSupportQt::setSmartInsertDeleteEnabled(m_drt->webPage(), enable);
 }
 
-void LayoutTestController::setSelectTrailingWhitespaceEnabled(bool enable)
+void TestRunner::setSelectTrailingWhitespaceEnabled(bool enable)
 {
     DumpRenderTreeSupportQt::setSelectTrailingWhitespaceEnabled(m_drt->webPage(), enable);
 }
 
-void LayoutTestController::execCommand(const QString& name, const QString& value)
+void TestRunner::execCommand(const QString& name, const QString& value)
 {
     DumpRenderTreeSupportQt::executeCoreCommandByName(m_drt->webPage(), name, value);
 }
 
-bool LayoutTestController::isCommandEnabled(const QString& name) const
+bool TestRunner::isCommandEnabled(const QString& name) const
 {
     return DumpRenderTreeSupportQt::isCommandEnabled(m_drt->webPage(), name);
 }
 
-bool LayoutTestController::findString(const QString& string, const QStringList& optionArray)
+bool TestRunner::findString(const QString& string, const QStringList& optionArray)
 {
     return DumpRenderTreeSupportQt::findString(m_drt->webPage(), string, optionArray);
 }
 
-QString LayoutTestController::markerTextForListItem(const QWebElement& listItem)
+QString TestRunner::markerTextForListItem(const QWebElement& listItem)
 {
     return DumpRenderTreeSupportQt::markerTextForListItem(listItem);
 }
 
-QVariantMap LayoutTestController::computedStyleIncludingVisitedInfo(const QWebElement& element) const
+QVariantMap TestRunner::computedStyleIncludingVisitedInfo(const QWebElement& element) const
 {
     return DumpRenderTreeSupportQt::computedStyleIncludingVisitedInfo(element);
 }
 
-bool LayoutTestController::elementDoesAutoCompleteForElementWithId(const QString& elementId)
+bool TestRunner::elementDoesAutoCompleteForElementWithId(const QString& elementId)
 {
     return DumpRenderTreeSupportQt::elementDoesAutoCompleteForElementWithId(m_drt->webPage()->mainFrame(), elementId);
 }
 
-void LayoutTestController::authenticateSession(const QString&, const QString&, const QString&)
+void TestRunner::authenticateSession(const QString&, const QString&, const QString&)
 {
     // FIXME: If there is a concept per-session (per-process) credential storage, the credentials should be added to it for later use.
 }
 
-void LayoutTestController::setIconDatabaseEnabled(bool enable)
+void TestRunner::setIconDatabaseEnabled(bool enable)
 {
     if (enable && !m_drt->persistentStoragePath().isEmpty())
         QWebSettings::setIconDatabasePath(m_drt->persistentStoragePath());
@@ -803,14 +803,14 @@ void LayoutTestController::setIconDatabaseEnabled(bool enable)
         QWebSettings::setIconDatabasePath(QString());
 }
 
-void LayoutTestController::setMockDeviceOrientation(bool canProvideAlpha, double alpha, bool canProvideBeta, double beta, bool canProvideGamma, double gamma)
+void TestRunner::setMockDeviceOrientation(bool canProvideAlpha, double alpha, bool canProvideBeta, double beta, bool canProvideGamma, double gamma)
 {
     QList<WebCore::WebPage*> pages = m_drt->getAllPages();
     foreach (WebCore::WebPage* page, pages)
         DumpRenderTreeSupportQt::setMockDeviceOrientation(page, canProvideAlpha, alpha, canProvideBeta, beta, canProvideGamma, gamma);
 }
 
-void LayoutTestController::setGeolocationPermission(bool allow)
+void TestRunner::setGeolocationPermission(bool allow)
 {
     setGeolocationPermissionCommon(allow);
     QList<WebCore::WebPage*> pages = m_drt->getAllPages();
@@ -818,7 +818,7 @@ void LayoutTestController::setGeolocationPermission(bool allow)
         DumpRenderTreeSupportQt::setMockGeolocationPermission(page, allow);
 }
 
-int LayoutTestController::numberOfPendingGeolocationPermissionRequests()
+int TestRunner::numberOfPendingGeolocationPermissionRequests()
 {
     int pendingPermissionCount = 0;
     QList<WebCore::WebPage*> pages = m_drt->getAllPages();
@@ -828,133 +828,133 @@ int LayoutTestController::numberOfPendingGeolocationPermissionRequests()
     return pendingPermissionCount;
 }
 
-void LayoutTestController::setGeolocationPermissionCommon(bool allow)
+void TestRunner::setGeolocationPermissionCommon(bool allow)
 {
      m_isGeolocationPermissionSet = true;
      m_geolocationPermission = allow;
 }
 
-void LayoutTestController::setMockGeolocationError(int code, const QString& message)
+void TestRunner::setMockGeolocationError(int code, const QString& message)
 {
     QList<WebCore::WebPage*> pages = m_drt->getAllPages();
     foreach (WebCore::WebPage* page, pages)
         DumpRenderTreeSupportQt::setMockGeolocationError(page, code, message);
 }
 
-void LayoutTestController::setMockGeolocationPosition(double latitude, double longitude, double accuracy)
+void TestRunner::setMockGeolocationPosition(double latitude, double longitude, double accuracy)
 {
     QList<WebCore::WebPage*> pages = m_drt->getAllPages();
     foreach (WebCore::WebPage* page, pages)
         DumpRenderTreeSupportQt::setMockGeolocationPosition(page, latitude, longitude, accuracy);
 }
 
-void LayoutTestController::addMockSpeechInputResult(const QString& result, double confidence, const QString& language)
+void TestRunner::addMockSpeechInputResult(const QString& result, double confidence, const QString& language)
 {
     // FIXME: Implement for speech input layout tests.
     // See https://bugs.webkit.org/show_bug.cgi?id=39485.
 }
 
-void LayoutTestController::setMockSpeechInputDumpRect(bool flag)
+void TestRunner::setMockSpeechInputDumpRect(bool flag)
 {
     // FIXME: Implement for speech input layout tests.
     // See https://bugs.webkit.org/show_bug.cgi?id=39485.
 }
 
-void LayoutTestController::startSpeechInput(const QString& inputElement)
+void TestRunner::startSpeechInput(const QString& inputElement)
 {
     // FIXME: Implement for speech input layout tests.
     // See https://bugs.webkit.org/show_bug.cgi?id=39485.
 }
 
-void LayoutTestController::evaluateScriptInIsolatedWorldAndReturnValue(int worldID, const QString& script)
+void TestRunner::evaluateScriptInIsolatedWorldAndReturnValue(int worldID, const QString& script)
 {
     // FIXME: Implement.
 }
 
-void LayoutTestController::evaluateScriptInIsolatedWorld(int worldID, const QString& script)
+void TestRunner::evaluateScriptInIsolatedWorld(int worldID, const QString& script)
 {
     DumpRenderTreeSupportQt::evaluateScriptInIsolatedWorld(m_drt->webPage()->mainFrame(), worldID, script);
 }
 
-QString LayoutTestController::pageSizeAndMarginsInPixels(int pageIndex, int width, int height, int marginTop, int marginRight, int marginBottom, int marginLeft)
+QString TestRunner::pageSizeAndMarginsInPixels(int pageIndex, int width, int height, int marginTop, int marginRight, int marginBottom, int marginLeft)
 {
     return DumpRenderTreeSupportQt::pageSizeAndMarginsInPixels(m_drt->webPage()->mainFrame(), pageIndex,
                                                                width, height, marginTop, marginRight, marginBottom, marginLeft);
 }
 
-QString LayoutTestController::pageProperty(const QString& propertyName, int pageNumber)
+QString TestRunner::pageProperty(const QString& propertyName, int pageNumber)
 {
     return DumpRenderTreeSupportQt::pageProperty(m_drt->webPage()->mainFrame(), propertyName, pageNumber);
 }
 
-void LayoutTestController::addUserStyleSheet(const QString& sourceCode)
+void TestRunner::addUserStyleSheet(const QString& sourceCode)
 {
     DumpRenderTreeSupportQt::addUserStyleSheet(m_drt->webPage(), sourceCode);
 }
 
-void LayoutTestController::removeAllVisitedLinks()
+void TestRunner::removeAllVisitedLinks()
 {
     QWebHistory* history = m_drt->webPage()->history();
     history->clear();
     DumpRenderTreeSupportQt::dumpVisitedLinksCallbacks(true);
 }
 
-void LayoutTestController::addURLToRedirect(const QString& origin, const QString& destination)
+void TestRunner::addURLToRedirect(const QString& origin, const QString& destination)
 {
     DumpRenderTreeSupportQt::addURLToRedirect(origin, destination);
 }
 
-void LayoutTestController::setMinimumTimerInterval(double minimumTimerInterval)
+void TestRunner::setMinimumTimerInterval(double minimumTimerInterval)
 {
     DumpRenderTreeSupportQt::setMinimumTimerInterval(m_drt->webPage(), minimumTimerInterval);
 }
 
-void LayoutTestController::originsWithLocalStorage()
+void TestRunner::originsWithLocalStorage()
 {
     // FIXME: Implement.
 }
 
-void LayoutTestController::deleteAllLocalStorage()
+void TestRunner::deleteAllLocalStorage()
 {
     // FIXME: Implement.
 }
 
-void LayoutTestController::deleteLocalStorageForOrigin(const QString& originIdentifier)
+void TestRunner::deleteLocalStorageForOrigin(const QString& originIdentifier)
 {
     // FIXME: Implement.
 }
 
-void LayoutTestController::observeStorageTrackerNotifications(unsigned number)
+void TestRunner::observeStorageTrackerNotifications(unsigned number)
 {
     // FIXME: Implement.
 }
 
-void LayoutTestController::syncLocalStorage()
+void TestRunner::syncLocalStorage()
 {
     // FIXME: Implement.
 }
 
-void LayoutTestController::resetPageVisibility()
+void TestRunner::resetPageVisibility()
 {
     // FIXME: Implement this.
 }
 
-void LayoutTestController::setPageVisibility(const char*)
+void TestRunner::setPageVisibility(const char*)
 {
     // FIXME: Implement this.
 }
 
-void LayoutTestController::setAutomaticLinkDetectionEnabled(bool)
+void TestRunner::setAutomaticLinkDetectionEnabled(bool)
 {
     // FIXME: Implement this.
 }
 
-QString LayoutTestController::layerTreeAsText()
+QString TestRunner::layerTreeAsText()
 {
     return DumpRenderTreeSupportQt::layerTreeAsText(m_drt->webPage()->mainFrame());
 }
 
-void LayoutTestController::setTextDirection(const QString& directionName)
+void TestRunner::setTextDirection(const QString& directionName)
 {
     if (directionName == "auto")
         m_drt->webPage()->triggerAction(QWebPage::SetTextDirectionDefault);
@@ -964,7 +964,7 @@ void LayoutTestController::setTextDirection(const QString& directionName)
         m_drt->webPage()->triggerAction(QWebPage::SetTextDirectionLeftToRight);
 }
 
-void LayoutTestController::setAlwaysAcceptCookies(bool accept)
+void TestRunner::setAlwaysAcceptCookies(bool accept)
 {
     QWebSettings* globalSettings = QWebSettings::globalSettings();
     if (accept)
@@ -975,7 +975,7 @@ void LayoutTestController::setAlwaysAcceptCookies(bool accept)
     }
 }
 
-void LayoutTestController::setAlwaysBlockCookies(bool block)
+void TestRunner::setAlwaysBlockCookies(bool block)
 {
     QWebSettings* globalSettings = QWebSettings::globalSettings();
     if (block)
@@ -984,5 +984,5 @@ void LayoutTestController::setAlwaysBlockCookies(bool block)
         globalSettings->setThirdPartyCookiePolicy(QWebSettings::AlwaysAllowThirdPartyCookies);
 }
 
-const unsigned LayoutTestController::maxViewWidth = 800;
-const unsigned LayoutTestController::maxViewHeight = 600;
+const unsigned TestRunner::maxViewWidth = 800;
+const unsigned TestRunner::maxViewHeight = 600;

@@ -31,7 +31,7 @@
 
 #include <WebKit/WebKit.h>
 
-class LayoutTestController;
+class TestRunner;
 
 class PolicyDelegate : public IWebPolicyDelegate {
 public:
@@ -71,12 +71,12 @@ public:
 
     // PolicyDelegate
     void setPermissive(bool permissive) { m_permissiveDelegate = permissive; }
-    void setControllerToNotifyDone(LayoutTestController* controller) { m_controllerToNotifyDone = controller; }
+    void setControllerToNotifyDone(TestRunner* controller) { m_controllerToNotifyDone = controller; }
 
 private:
     ULONG m_refCount;
     bool m_permissiveDelegate;
-    LayoutTestController* m_controllerToNotifyDone;
+    TestRunner* m_controllerToNotifyDone;
 };
 
 #endif // PolicyDelegate_h

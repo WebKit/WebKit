@@ -74,14 +74,14 @@
 
 - (BOOL)webView:(WebView *)webView shouldBeginEditingInDOMRange:(DOMRange *)range
 {
-    if (!done && gLayoutTestController->dumpEditingCallbacks())
+    if (!done && gTestRunner->dumpEditingCallbacks())
         printf("EDITING DELEGATE: shouldBeginEditingInDOMRange:%s\n", [[range dump] UTF8String]);
     return acceptsEditing;
 }
 
 - (BOOL)webView:(WebView *)webView shouldEndEditingInDOMRange:(DOMRange *)range
 {
-    if (!done && gLayoutTestController->dumpEditingCallbacks())
+    if (!done && gTestRunner->dumpEditingCallbacks())
         printf("EDITING DELEGATE: shouldEndEditingInDOMRange:%s\n", [[range dump] UTF8String]);
     return acceptsEditing;
 }
@@ -94,7 +94,7 @@
         "WebViewInsertActionDropped",
     };
 
-    if (!done && gLayoutTestController->dumpEditingCallbacks())
+    if (!done && gTestRunner->dumpEditingCallbacks())
         printf("EDITING DELEGATE: shouldInsertNode:%s replacingDOMRange:%s givenAction:%s\n", [[node dumpPath] UTF8String], [[range dump] UTF8String], insertactionstring[action]);
     return acceptsEditing;
 }
@@ -107,14 +107,14 @@
         "WebViewInsertActionDropped",
     };
 
-    if (!done && gLayoutTestController->dumpEditingCallbacks())
+    if (!done && gTestRunner->dumpEditingCallbacks())
         printf("EDITING DELEGATE: shouldInsertText:%s replacingDOMRange:%s givenAction:%s\n", [[text description] UTF8String], [[range dump] UTF8String], insertactionstring[action]);
     return acceptsEditing;
 }
 
 - (BOOL)webView:(WebView *)webView shouldDeleteDOMRange:(DOMRange *)range
 {
-    if (!done && gLayoutTestController->dumpEditingCallbacks())
+    if (!done && gTestRunner->dumpEditingCallbacks())
         printf("EDITING DELEGATE: shouldDeleteDOMRange:%s\n", [[range dump] UTF8String]);
     return acceptsEditing;
 }
@@ -135,52 +135,52 @@
         "TRUE"
     };
 
-    if (!done && gLayoutTestController->dumpEditingCallbacks())
+    if (!done && gTestRunner->dumpEditingCallbacks())
         printf("EDITING DELEGATE: shouldChangeSelectedDOMRange:%s toDOMRange:%s affinity:%s stillSelecting:%s\n", [[currentRange dump] UTF8String], [[proposedRange dump] UTF8String], affinitystring[selectionAffinity], boolstring[flag]);
     return acceptsEditing;
 }
 
 - (BOOL)webView:(WebView *)webView shouldApplyStyle:(DOMCSSStyleDeclaration *)style toElementsInDOMRange:(DOMRange *)range
 {
-    if (!done && gLayoutTestController->dumpEditingCallbacks())
+    if (!done && gTestRunner->dumpEditingCallbacks())
         printf("EDITING DELEGATE: shouldApplyStyle:%s toElementsInDOMRange:%s\n", [[style description] UTF8String], [[range dump] UTF8String]);
     return acceptsEditing;
 }
 
 - (BOOL)webView:(WebView *)webView shouldChangeTypingStyle:(DOMCSSStyleDeclaration *)currentStyle toStyle:(DOMCSSStyleDeclaration *)proposedStyle
 {
-    if (!done && gLayoutTestController->dumpEditingCallbacks())
+    if (!done && gTestRunner->dumpEditingCallbacks())
         printf("EDITING DELEGATE: shouldChangeTypingStyle:%s toStyle:%s\n", [[currentStyle description] UTF8String], [[proposedStyle description] UTF8String]);
     return acceptsEditing;
 }
 
 - (void)webViewDidBeginEditing:(NSNotification *)notification
 {
-    if (!done && gLayoutTestController->dumpEditingCallbacks())
+    if (!done && gTestRunner->dumpEditingCallbacks())
         printf("EDITING DELEGATE: webViewDidBeginEditing:%s\n", [[notification name] UTF8String]);
 }
 
 - (void)webViewDidChange:(NSNotification *)notification
 {
-    if (!done && gLayoutTestController->dumpEditingCallbacks())
+    if (!done && gTestRunner->dumpEditingCallbacks())
         printf("EDITING DELEGATE: webViewDidChange:%s\n", [[notification name] UTF8String]);
 }
 
 - (void)webViewDidEndEditing:(NSNotification *)notification
 {
-    if (!done && gLayoutTestController->dumpEditingCallbacks())
+    if (!done && gTestRunner->dumpEditingCallbacks())
         printf("EDITING DELEGATE: webViewDidEndEditing:%s\n", [[notification name] UTF8String]);
 }
 
 - (void)webViewDidChangeTypingStyle:(NSNotification *)notification
 {
-    if (!done && gLayoutTestController->dumpEditingCallbacks())
+    if (!done && gTestRunner->dumpEditingCallbacks())
         printf("EDITING DELEGATE: webViewDidChangeTypingStyle:%s\n", [[notification name] UTF8String]);
 }
 
 - (void)webViewDidChangeSelection:(NSNotification *)notification
 {
-    if (!done && gLayoutTestController->dumpEditingCallbacks())
+    if (!done && gTestRunner->dumpEditingCallbacks())
         printf("EDITING DELEGATE: webViewDidChangeSelection:%s\n", [[notification name] UTF8String]);
 }
 

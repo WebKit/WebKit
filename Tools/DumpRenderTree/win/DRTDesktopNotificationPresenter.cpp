@@ -125,7 +125,7 @@ HRESULT STDMETHODCALLTYPE DRTDesktopNotificationPresenter::checkNotificationPerm
 {
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
     JSStringRef jsOrigin = JSStringCreateWithBSTR(origin);
-    bool allowed = ::gLayoutTestController->checkDesktopNotificationPermission(jsOrigin);
+    bool allowed = ::gTestRunner->checkDesktopNotificationPermission(jsOrigin);
 
     if (allowed)
         *result = WebCore::NotificationClient::PermissionAllowed;

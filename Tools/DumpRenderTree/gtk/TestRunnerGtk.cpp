@@ -53,17 +53,17 @@ extern "C" {
 void webkit_web_inspector_execute_script(WebKitWebInspector* inspector, long callId, const gchar* script);
 }
 
-LayoutTestController::~LayoutTestController()
+TestRunner::~TestRunner()
 {
     // FIXME: implement
 }
 
-void LayoutTestController::addDisallowedURL(JSStringRef url)
+void TestRunner::addDisallowedURL(JSStringRef url)
 {
     // FIXME: implement
 }
 
-void LayoutTestController::clearBackForwardList()
+void TestRunner::clearBackForwardList()
 {
     WebKitWebView* webView = webkit_web_frame_get_web_view(mainFrame);
     WebKitWebBackForwardList* list = webkit_web_view_get_back_forward_list(webView);
@@ -80,63 +80,63 @@ void LayoutTestController::clearBackForwardList()
     g_object_unref(item);
 }
 
-JSStringRef LayoutTestController::copyDecodedHostName(JSStringRef name)
+JSStringRef TestRunner::copyDecodedHostName(JSStringRef name)
 {
     // FIXME: implement
     return 0;
 }
 
-JSStringRef LayoutTestController::copyEncodedHostName(JSStringRef name)
+JSStringRef TestRunner::copyEncodedHostName(JSStringRef name)
 {
     // FIXME: implement
     return 0;
 }
 
-void LayoutTestController::dispatchPendingLoadRequests()
+void TestRunner::dispatchPendingLoadRequests()
 {
     // FIXME: Implement for testing fix for 6727495
 }
 
-void LayoutTestController::display()
+void TestRunner::display()
 {
     displayWebView();
 }
 
-void LayoutTestController::keepWebHistory()
+void TestRunner::keepWebHistory()
 {
     // FIXME: implement
 }
 
-JSValueRef LayoutTestController::computedStyleIncludingVisitedInfo(JSContextRef context, JSValueRef value)
+JSValueRef TestRunner::computedStyleIncludingVisitedInfo(JSContextRef context, JSValueRef value)
 {
     return DumpRenderTreeSupportGtk::computedStyleIncludingVisitedInfo(context, value);
 }
 
-JSRetainPtr<JSStringRef> LayoutTestController::layerTreeAsText() const
+JSRetainPtr<JSStringRef> TestRunner::layerTreeAsText() const
 {
     // FIXME: implement
     JSRetainPtr<JSStringRef> string(Adopt, JSStringCreateWithUTF8CString(""));
     return string;
 }
 
-int LayoutTestController::numberOfPages(float pageWidth, float pageHeight)
+int TestRunner::numberOfPages(float pageWidth, float pageHeight)
 {
     return DumpRenderTreeSupportGtk::numberOfPagesForFrame(mainFrame, pageWidth, pageHeight);
 }
 
-JSRetainPtr<JSStringRef> LayoutTestController::pageProperty(const char* propertyName, int pageNumber) const
+JSRetainPtr<JSStringRef> TestRunner::pageProperty(const char* propertyName, int pageNumber) const
 {
     JSRetainPtr<JSStringRef> propertyValue(Adopt, JSStringCreateWithUTF8CString(DumpRenderTreeSupportGtk::pageProperty(mainFrame, propertyName, pageNumber).data()));
     return propertyValue;
 }
 
-JSRetainPtr<JSStringRef> LayoutTestController::pageSizeAndMarginsInPixels(int pageNumber, int width, int height, int marginTop, int marginRight, int marginBottom, int marginLeft) const
+JSRetainPtr<JSStringRef> TestRunner::pageSizeAndMarginsInPixels(int pageNumber, int width, int height, int marginTop, int marginRight, int marginBottom, int marginLeft) const
 {
     JSRetainPtr<JSStringRef> propertyValue(Adopt, JSStringCreateWithUTF8CString(DumpRenderTreeSupportGtk::pageSizeAndMarginsInPixels(mainFrame, pageNumber, width, height, marginTop, marginRight, marginBottom, marginLeft).data()));
     return propertyValue;
 }
 
-size_t LayoutTestController::webHistoryItemCount()
+size_t TestRunner::webHistoryItemCount()
 {
     WebKitWebView* webView = webkit_web_frame_get_web_view(mainFrame);
     WebKitWebBackForwardList* list = webkit_web_view_get_back_forward_list(webView);
@@ -150,18 +150,18 @@ size_t LayoutTestController::webHistoryItemCount()
             webkit_web_back_forward_list_get_forward_length(list);
 }
 
-unsigned LayoutTestController::workerThreadCount() const
+unsigned TestRunner::workerThreadCount() const
 {
     return DumpRenderTreeSupportGtk::workerThreadCount();
 }
 
-JSRetainPtr<JSStringRef> LayoutTestController::platformName() const
+JSRetainPtr<JSStringRef> TestRunner::platformName() const
 {
     JSRetainPtr<JSStringRef> platformName(Adopt, JSStringCreateWithUTF8CString("gtk"));
     return platformName;
 }
 
-void LayoutTestController::notifyDone()
+void TestRunner::notifyDone()
 {
     if (m_waitToDump && !topLoadingFrame && !WorkQueue::shared()->count())
         dump();
@@ -169,7 +169,7 @@ void LayoutTestController::notifyDone()
     waitForPolicy = false;
 }
 
-JSStringRef LayoutTestController::pathToLocalResource(JSContextRef context, JSStringRef url)
+JSStringRef TestRunner::pathToLocalResource(JSContextRef context, JSStringRef url)
 {
     GOwnPtr<char> urlCString(JSStringCopyUTF8CString(url));
     if (!g_str_has_prefix(urlCString.get(), "file:///tmp/LayoutTests/"))
@@ -181,7 +181,7 @@ JSStringRef LayoutTestController::pathToLocalResource(JSContextRef context, JSSt
     return JSStringCreateWithUTF8CString(testURI.get());
 }
 
-void LayoutTestController::queueLoad(JSStringRef url, JSStringRef target)
+void TestRunner::queueLoad(JSStringRef url, JSStringRef target)
 {
     gchar* relativeURL = JSStringCopyUTF8CString(url);
     SoupURI* baseURI = soup_uri_new(webkit_web_frame_get_uri(mainFrame));
@@ -203,13 +203,13 @@ void LayoutTestController::queueLoad(JSStringRef url, JSStringRef target)
     WorkQueue::shared()->queue(new LoadItem(absoluteURL.get(), target));
 }
 
-void LayoutTestController::setAcceptsEditing(bool acceptsEditing)
+void TestRunner::setAcceptsEditing(bool acceptsEditing)
 {
     WebKitWebView* webView = webkit_web_frame_get_web_view(mainFrame);
     webkit_web_view_set_editable(webView, acceptsEditing);
 }
 
-void LayoutTestController::setAlwaysAcceptCookies(bool alwaysAcceptCookies)
+void TestRunner::setAlwaysAcceptCookies(bool alwaysAcceptCookies)
 {
     SoupSession* session = webkit_get_default_session();
     SoupCookieJar* jar = reinterpret_cast<SoupCookieJar*>(soup_session_get_feature(session, SOUP_TYPE_COOKIE_JAR));
@@ -233,23 +233,23 @@ void LayoutTestController::setAlwaysAcceptCookies(bool alwaysAcceptCookies)
     g_object_set(G_OBJECT(jar), SOUP_COOKIE_JAR_ACCEPT_POLICY, policy, NULL);
 }
 
-void LayoutTestController::setCustomPolicyDelegate(bool setDelegate, bool permissive)
+void TestRunner::setCustomPolicyDelegate(bool setDelegate, bool permissive)
 {
     // FIXME: implement
 }
 
-void LayoutTestController::waitForPolicyDelegate()
+void TestRunner::waitForPolicyDelegate()
 {
     waitForPolicy = true;
     setWaitToDump(true);
 }
 
-void LayoutTestController::setScrollbarPolicy(JSStringRef orientation, JSStringRef policy)
+void TestRunner::setScrollbarPolicy(JSStringRef orientation, JSStringRef policy)
 {
     // FIXME: implement
 }
 
-void LayoutTestController::addOriginAccessWhitelistEntry(JSStringRef sourceOrigin, JSStringRef protocol, JSStringRef host, bool includeSubdomains)
+void TestRunner::addOriginAccessWhitelistEntry(JSStringRef sourceOrigin, JSStringRef protocol, JSStringRef host, bool includeSubdomains)
 {
     gchar* sourceOriginGChar = JSStringCopyUTF8CString(sourceOrigin);
     gchar* protocolGChar = JSStringCopyUTF8CString(protocol);
@@ -260,7 +260,7 @@ void LayoutTestController::addOriginAccessWhitelistEntry(JSStringRef sourceOrigi
     g_free(hostGChar);
 }
 
-void LayoutTestController::removeOriginAccessWhitelistEntry(JSStringRef sourceOrigin, JSStringRef protocol, JSStringRef host, bool includeSubdomains)
+void TestRunner::removeOriginAccessWhitelistEntry(JSStringRef sourceOrigin, JSStringRef protocol, JSStringRef host, bool includeSubdomains)
 {
     GOwnPtr<gchar> sourceOriginGChar(JSStringCopyUTF8CString(sourceOrigin));
     GOwnPtr<gchar> protocolGChar(JSStringCopyUTF8CString(protocol));
@@ -268,19 +268,19 @@ void LayoutTestController::removeOriginAccessWhitelistEntry(JSStringRef sourceOr
     DumpRenderTreeSupportGtk::removeWhiteListAccessFromOrigin(sourceOriginGChar.get(), protocolGChar.get(), hostGChar.get(), includeSubdomains);
 }
 
-void LayoutTestController::setMainFrameIsFirstResponder(bool flag)
+void TestRunner::setMainFrameIsFirstResponder(bool flag)
 {
     // FIXME: implement
 }
 
-void LayoutTestController::setTabKeyCyclesThroughElements(bool cycles)
+void TestRunner::setTabKeyCyclesThroughElements(bool cycles)
 {
     WebKitWebView* webView = webkit_web_frame_get_web_view(mainFrame);
     WebKitWebSettings* settings = webkit_web_view_get_settings(webView);
     g_object_set(G_OBJECT(settings), "tab-key-cycles-through-elements", cycles, NULL);
 }
 
-void LayoutTestController::setUseDashboardCompatibilityMode(bool flag)
+void TestRunner::setUseDashboardCompatibilityMode(bool flag)
 {
     // FIXME: implement
 }
@@ -288,7 +288,7 @@ void LayoutTestController::setUseDashboardCompatibilityMode(bool flag)
 static gchar* userStyleSheet = NULL;
 static gboolean userStyleSheetEnabled = TRUE;
 
-void LayoutTestController::setUserStyleSheetEnabled(bool flag)
+void TestRunner::setUserStyleSheetEnabled(bool flag)
 {
     userStyleSheetEnabled = flag;
 
@@ -300,7 +300,7 @@ void LayoutTestController::setUserStyleSheetEnabled(bool flag)
         g_object_set(G_OBJECT(settings), "user-stylesheet-uri", "", NULL);
 }
 
-void LayoutTestController::setUserStyleSheetLocation(JSStringRef path)
+void TestRunner::setUserStyleSheetLocation(JSStringRef path)
 {
     g_free(userStyleSheet);
     userStyleSheet = JSStringCopyUTF8CString(path);
@@ -308,12 +308,12 @@ void LayoutTestController::setUserStyleSheetLocation(JSStringRef path)
         setUserStyleSheetEnabled(true);
 }
 
-void LayoutTestController::setValueForUser(JSContextRef context, JSValueRef nodeObject, JSStringRef value)
+void TestRunner::setValueForUser(JSContextRef context, JSValueRef nodeObject, JSStringRef value)
 {
     DumpRenderTreeSupportGtk::setValueForUser(context, nodeObject, value);
 }
 
-void LayoutTestController::setViewModeMediaFeature(JSStringRef mode)
+void TestRunner::setViewModeMediaFeature(JSStringRef mode)
 {
     WebKitWebView* view = webkit_web_frame_get_web_view(mainFrame);
     ASSERT(view);
@@ -334,12 +334,12 @@ void LayoutTestController::setViewModeMediaFeature(JSStringRef mode)
     g_free(viewMode);
 }
 
-void LayoutTestController::setWindowIsKey(bool windowIsKey)
+void TestRunner::setWindowIsKey(bool windowIsKey)
 {
     // FIXME: implement
 }
 
-void LayoutTestController::setSmartInsertDeleteEnabled(bool flag)
+void TestRunner::setSmartInsertDeleteEnabled(bool flag)
 {
     DumpRenderTreeSupportGtk::setSmartInsertDeleteEnabled(webkit_web_frame_get_web_view(mainFrame), flag);
 }
@@ -347,11 +347,11 @@ void LayoutTestController::setSmartInsertDeleteEnabled(bool flag)
 static gboolean waitToDumpWatchdogFired(void*)
 {
     setWaitToDumpWatchdog(0);
-    gLayoutTestController->waitToDumpWatchdogTimerFired();
+    gTestRunner->waitToDumpWatchdogTimerFired();
     return FALSE;
 }
 
-void LayoutTestController::setWaitToDump(bool waitUntilDone)
+void TestRunner::setWaitToDump(bool waitUntilDone)
 {
     static const int timeoutSeconds = 30;
 
@@ -360,13 +360,13 @@ void LayoutTestController::setWaitToDump(bool waitUntilDone)
         setWaitToDumpWatchdog(g_timeout_add_seconds(timeoutSeconds, waitToDumpWatchdogFired, 0));
 }
 
-int LayoutTestController::windowCount()
+int TestRunner::windowCount()
 {
     // +1 -> including the main view
     return g_slist_length(webViewList) + 1;
 }
 
-void LayoutTestController::setPrivateBrowsingEnabled(bool flag)
+void TestRunner::setPrivateBrowsingEnabled(bool flag)
 {
     WebKitWebView* view = webkit_web_frame_get_web_view(mainFrame);
     ASSERT(view);
@@ -375,7 +375,7 @@ void LayoutTestController::setPrivateBrowsingEnabled(bool flag)
     g_object_set(G_OBJECT(settings), "enable-private-browsing", flag, NULL);
 }
 
-void LayoutTestController::setJavaScriptCanAccessClipboard(bool flag)
+void TestRunner::setJavaScriptCanAccessClipboard(bool flag)
 {
     WebKitWebView* view = webkit_web_frame_get_web_view(mainFrame);
     ASSERT(view);
@@ -384,7 +384,7 @@ void LayoutTestController::setJavaScriptCanAccessClipboard(bool flag)
     g_object_set(G_OBJECT(settings), "javascript-can-access-clipboard", flag, NULL);
 }
 
-void LayoutTestController::setXSSAuditorEnabled(bool flag)
+void TestRunner::setXSSAuditorEnabled(bool flag)
 {
     WebKitWebView* view = webkit_web_frame_get_web_view(mainFrame);
     ASSERT(view);
@@ -393,7 +393,7 @@ void LayoutTestController::setXSSAuditorEnabled(bool flag)
     g_object_set(G_OBJECT(settings), "enable-xss-auditor", flag, NULL);
 }
 
-void LayoutTestController::setFrameFlatteningEnabled(bool flag)
+void TestRunner::setFrameFlatteningEnabled(bool flag)
 {
     WebKitWebView* view = webkit_web_frame_get_web_view(mainFrame);
     ASSERT(view);
@@ -402,7 +402,7 @@ void LayoutTestController::setFrameFlatteningEnabled(bool flag)
     g_object_set(G_OBJECT(settings), "enable-frame-flattening", flag, NULL);
 }
 
-void LayoutTestController::setSpatialNavigationEnabled(bool flag)
+void TestRunner::setSpatialNavigationEnabled(bool flag)
 {
     WebKitWebView* view = webkit_web_frame_get_web_view(mainFrame);
     ASSERT(view);
@@ -411,7 +411,7 @@ void LayoutTestController::setSpatialNavigationEnabled(bool flag)
     g_object_set(G_OBJECT(settings), "enable-spatial-navigation", flag, NULL);
 }
 
-void LayoutTestController::setAllowUniversalAccessFromFileURLs(bool flag)
+void TestRunner::setAllowUniversalAccessFromFileURLs(bool flag)
 {
     WebKitWebView* view = webkit_web_frame_get_web_view(mainFrame);
     ASSERT(view);
@@ -420,7 +420,7 @@ void LayoutTestController::setAllowUniversalAccessFromFileURLs(bool flag)
     g_object_set(G_OBJECT(settings), "enable-universal-access-from-file-uris", flag, NULL);
 }
 
-void LayoutTestController::setAllowFileAccessFromFileURLs(bool flag)
+void TestRunner::setAllowFileAccessFromFileURLs(bool flag)
 {
     WebKitWebView* view = webkit_web_frame_get_web_view(mainFrame);
     ASSERT(view);
@@ -429,17 +429,17 @@ void LayoutTestController::setAllowFileAccessFromFileURLs(bool flag)
     g_object_set(G_OBJECT(settings), "enable-file-access-from-file-uris", flag, NULL);
 }
 
-void LayoutTestController::setAuthorAndUserStylesEnabled(bool flag)
+void TestRunner::setAuthorAndUserStylesEnabled(bool flag)
 {
     // FIXME: implement
 }
 
-void LayoutTestController::setAutofilled(JSContextRef context, JSValueRef nodeObject, bool isAutofilled)
+void TestRunner::setAutofilled(JSContextRef context, JSValueRef nodeObject, bool isAutofilled)
 {
     DumpRenderTreeSupportGtk::setAutofilled(context, nodeObject, isAutofilled);
 }
 
-void LayoutTestController::disableImageLoading()
+void TestRunner::disableImageLoading()
 {
     WebKitWebView* view = webkit_web_frame_get_web_view(mainFrame);
     ASSERT(view);
@@ -448,13 +448,13 @@ void LayoutTestController::disableImageLoading()
     g_object_set(G_OBJECT(settings), "auto-load-images", FALSE, NULL);
 }
 
-void LayoutTestController::setMockDeviceOrientation(bool canProvideAlpha, double alpha, bool canProvideBeta, double beta, bool canProvideGamma, double gamma)
+void TestRunner::setMockDeviceOrientation(bool canProvideAlpha, double alpha, bool canProvideBeta, double beta, bool canProvideGamma, double gamma)
 {
     // FIXME: Implement for DeviceOrientation layout tests.
     // See https://bugs.webkit.org/show_bug.cgi?id=30335.
 }
 
-void LayoutTestController::setMockGeolocationPosition(double latitude, double longitude, double accuracy)
+void TestRunner::setMockGeolocationPosition(double latitude, double longitude, double accuracy)
 {
     WebKitWebView* view = WEBKIT_WEB_VIEW(g_slist_nth_data(webViewList, 0));
     if (!view)
@@ -464,7 +464,7 @@ void LayoutTestController::setMockGeolocationPosition(double latitude, double lo
     DumpRenderTreeSupportGtk::setMockGeolocationPosition(view, latitude, longitude, accuracy);
 }
 
-void LayoutTestController::setMockGeolocationError(int code, JSStringRef message)
+void TestRunner::setMockGeolocationError(int code, JSStringRef message)
 {
     WebKitWebView* view = WEBKIT_WEB_VIEW(g_slist_nth_data(webViewList, 0));
     if (!view)
@@ -475,7 +475,7 @@ void LayoutTestController::setMockGeolocationError(int code, JSStringRef message
     DumpRenderTreeSupportGtk::setMockGeolocationError(view, code, cMessage.get());
 }
 
-void LayoutTestController::setGeolocationPermission(bool allow)
+void TestRunner::setGeolocationPermission(bool allow)
 {
     setGeolocationPermissionCommon(allow);
     WebKitWebView* view = WEBKIT_WEB_VIEW(g_slist_nth_data(webViewList, 0));
@@ -486,7 +486,7 @@ void LayoutTestController::setGeolocationPermission(bool allow)
     DumpRenderTreeSupportGtk::setMockGeolocationPermission(view, allow);
 }
 
-int LayoutTestController::numberOfPendingGeolocationPermissionRequests()
+int TestRunner::numberOfPendingGeolocationPermissionRequests()
 {
     WebKitWebView* view = webkit_web_frame_get_web_view(mainFrame);
     if (!view)
@@ -496,25 +496,25 @@ int LayoutTestController::numberOfPendingGeolocationPermissionRequests()
     return DumpRenderTreeSupportGtk::numberOfPendingGeolocationPermissionRequests(view);
 }
 
-void LayoutTestController::addMockSpeechInputResult(JSStringRef result, double confidence, JSStringRef language)
+void TestRunner::addMockSpeechInputResult(JSStringRef result, double confidence, JSStringRef language)
 {
     // FIXME: Implement for speech input layout tests.
     // See https://bugs.webkit.org/show_bug.cgi?id=39485.
 }
 
-void LayoutTestController::setMockSpeechInputDumpRect(bool flag)
+void TestRunner::setMockSpeechInputDumpRect(bool flag)
 {
     // FIXME: Implement for speech input layout tests.
     // See https://bugs.webkit.org/show_bug.cgi?id=39485.
 }
 
-void LayoutTestController::startSpeechInput(JSContextRef inputElement)
+void TestRunner::startSpeechInput(JSContextRef inputElement)
 {
     // FIXME: Implement for speech input layout tests.
     // See https://bugs.webkit.org/show_bug.cgi?id=39485.
 }
 
-void LayoutTestController::setIconDatabaseEnabled(bool enabled)
+void TestRunner::setIconDatabaseEnabled(bool enabled)
 {
     WebKitIconDatabase* database = webkit_get_icon_database();
     if (enabled) {
@@ -524,12 +524,12 @@ void LayoutTestController::setIconDatabaseEnabled(bool enabled)
         webkit_icon_database_set_path(database, 0);
 }
 
-void LayoutTestController::setSelectTrailingWhitespaceEnabled(bool flag)
+void TestRunner::setSelectTrailingWhitespaceEnabled(bool flag)
 {
     DumpRenderTreeSupportGtk::setSelectTrailingWhitespaceEnabled(flag);
 }
 
-void LayoutTestController::setPopupBlockingEnabled(bool flag)
+void TestRunner::setPopupBlockingEnabled(bool flag)
 {
     WebKitWebView* view = webkit_web_frame_get_web_view(mainFrame);
     ASSERT(view);
@@ -539,7 +539,7 @@ void LayoutTestController::setPopupBlockingEnabled(bool flag)
 
 }
 
-void LayoutTestController::setPluginsEnabled(bool flag)
+void TestRunner::setPluginsEnabled(bool flag)
 {
     WebKitWebView* view = webkit_web_frame_get_web_view(mainFrame);
     ASSERT(view);
@@ -548,12 +548,12 @@ void LayoutTestController::setPluginsEnabled(bool flag)
     g_object_set(G_OBJECT(settings), "enable-plugins", flag, NULL);
 }
 
-bool LayoutTestController::elementDoesAutoCompleteForElementWithId(JSStringRef id) 
+bool TestRunner::elementDoesAutoCompleteForElementWithId(JSStringRef id) 
 {
     return DumpRenderTreeSupportGtk::elementDoesAutoCompleteForElementWithId(mainFrame, id);
 }
 
-void LayoutTestController::execCommand(JSStringRef name, JSStringRef value)
+void TestRunner::execCommand(JSStringRef name, JSStringRef value)
 {
     WebKitWebView* view = webkit_web_frame_get_web_view(mainFrame);
     ASSERT(view);
@@ -565,7 +565,7 @@ void LayoutTestController::execCommand(JSStringRef name, JSStringRef value)
     g_free(cValue);
 }
 
-bool LayoutTestController::findString(JSContextRef context, JSStringRef target, JSObjectRef optionsArray)
+bool TestRunner::findString(JSContextRef context, JSStringRef target, JSObjectRef optionsArray)
 {
     WebKitFindOptions findOptions = 0;
     WebKitWebView* webView = webkit_web_frame_get_web_view(mainFrame);
@@ -603,7 +603,7 @@ bool LayoutTestController::findString(JSContextRef context, JSStringRef target, 
     return DumpRenderTreeSupportGtk::findString(webView, targetString.get(), findOptions); 
 }
 
-bool LayoutTestController::isCommandEnabled(JSStringRef name)
+bool TestRunner::isCommandEnabled(JSStringRef name)
 {
     WebKitWebView* view = webkit_web_frame_get_web_view(mainFrame);
     ASSERT(view);
@@ -614,7 +614,7 @@ bool LayoutTestController::isCommandEnabled(JSStringRef name)
     return result;
 }
 
-void LayoutTestController::setCacheModel(int cacheModel)
+void TestRunner::setCacheModel(int cacheModel)
 {
     // These constants are derived from the Mac cache model enum in Source/WebKit/mac/WebView/WebPreferences.h.
     switch (cacheModel) {
@@ -632,110 +632,110 @@ void LayoutTestController::setCacheModel(int cacheModel)
     }
 }
 
-void LayoutTestController::setPersistentUserStyleSheetLocation(JSStringRef jsURL)
+void TestRunner::setPersistentUserStyleSheetLocation(JSStringRef jsURL)
 {
     // FIXME: implement
 }
 
-void LayoutTestController::clearPersistentUserStyleSheet()
+void TestRunner::clearPersistentUserStyleSheet()
 {
     // FIXME: implement
 }
 
-void LayoutTestController::clearAllApplicationCaches()
+void TestRunner::clearAllApplicationCaches()
 {
     // FIXME: Implement to support application cache quotas.
 }
 
-void LayoutTestController::setApplicationCacheOriginQuota(unsigned long long quota)
+void TestRunner::setApplicationCacheOriginQuota(unsigned long long quota)
 {
     // FIXME: Implement to support application cache quotas.
 }
 
-void LayoutTestController::clearApplicationCacheForOrigin(OpaqueJSString*)
+void TestRunner::clearApplicationCacheForOrigin(OpaqueJSString*)
 {
     // FIXME: Implement to support deleting all application caches for an origin.
 }
 
-long long LayoutTestController::localStorageDiskUsageForOrigin(JSStringRef originIdentifier)
+long long TestRunner::localStorageDiskUsageForOrigin(JSStringRef originIdentifier)
 {
     // FIXME: Implement to support getting disk usage in bytes for an origin.
     return 0;
 }
 
-JSValueRef LayoutTestController::originsWithApplicationCache(JSContextRef context)
+JSValueRef TestRunner::originsWithApplicationCache(JSContextRef context)
 {
     // FIXME: Implement to get origins that contain application caches.
     return JSValueMakeUndefined(context);
 }
 
-long long LayoutTestController::applicationCacheDiskUsageForOrigin(JSStringRef name)
+long long TestRunner::applicationCacheDiskUsageForOrigin(JSStringRef name)
 {
     // FIXME: implement
     return 0;
 }
 
-void LayoutTestController::clearAllDatabases()
+void TestRunner::clearAllDatabases()
 {
     webkit_remove_all_web_databases();
 }
  
-void LayoutTestController::setDatabaseQuota(unsigned long long quota)
+void TestRunner::setDatabaseQuota(unsigned long long quota)
 {
     WebKitSecurityOrigin* origin = webkit_web_frame_get_security_origin(mainFrame);
     webkit_security_origin_set_web_database_quota(origin, quota);
 }
 
-JSValueRef LayoutTestController::originsWithLocalStorage(JSContextRef context)
+JSValueRef TestRunner::originsWithLocalStorage(JSContextRef context)
 {
     // FIXME: implement
     return JSValueMakeUndefined(context);
 }
 
-void LayoutTestController::deleteAllLocalStorage()
+void TestRunner::deleteAllLocalStorage()
 {
         // FIXME: implement
 }
 
-void LayoutTestController::deleteLocalStorageForOrigin(JSStringRef originIdentifier)
+void TestRunner::deleteLocalStorageForOrigin(JSStringRef originIdentifier)
 {
         // FIXME: implement
 }
 
-void LayoutTestController::observeStorageTrackerNotifications(unsigned number)
+void TestRunner::observeStorageTrackerNotifications(unsigned number)
 {
         // FIXME: implement
 }
 
-void LayoutTestController::syncLocalStorage()
+void TestRunner::syncLocalStorage()
 {
     // FIXME: implement
 }
 
-void LayoutTestController::setDomainRelaxationForbiddenForURLScheme(bool forbidden, JSStringRef scheme)
+void TestRunner::setDomainRelaxationForbiddenForURLScheme(bool forbidden, JSStringRef scheme)
 {
     GOwnPtr<gchar> urlScheme(JSStringCopyUTF8CString(scheme));
     DumpRenderTreeSupportGtk::setDomainRelaxationForbiddenForURLScheme(forbidden, urlScheme.get());
 }
 
-void LayoutTestController::goBack()
+void TestRunner::goBack()
 {
     WebKitWebView* webView = webkit_web_frame_get_web_view(mainFrame);
     webkit_web_view_go_back(webView);
 }
 
-void LayoutTestController::setDefersLoading(bool defers)
+void TestRunner::setDefersLoading(bool defers)
 {
     WebKitWebView* webView = webkit_web_frame_get_web_view(mainFrame);
     DumpRenderTreeSupportGtk::setDefersLoading(webView, defers);
 }
 
-void LayoutTestController::setAppCacheMaximumSize(unsigned long long size)
+void TestRunner::setAppCacheMaximumSize(unsigned long long size)
 {
     webkit_application_cache_set_maximum_size(size);
 }
 
-bool LayoutTestController::pauseAnimationAtTimeOnElementWithId(JSStringRef animationName, double time, JSStringRef elementId)
+bool TestRunner::pauseAnimationAtTimeOnElementWithId(JSStringRef animationName, double time, JSStringRef elementId)
 {    
     gchar* name = JSStringCopyUTF8CString(animationName);
     gchar* element = JSStringCopyUTF8CString(elementId);
@@ -745,7 +745,7 @@ bool LayoutTestController::pauseAnimationAtTimeOnElementWithId(JSStringRef anima
     return returnValue;
 }
 
-bool LayoutTestController::pauseTransitionAtTimeOnElementWithId(JSStringRef propertyName, double time, JSStringRef elementId)
+bool TestRunner::pauseTransitionAtTimeOnElementWithId(JSStringRef propertyName, double time, JSStringRef elementId)
 {    
     gchar* name = JSStringCopyUTF8CString(propertyName);
     gchar* element = JSStringCopyUTF8CString(elementId);
@@ -755,7 +755,7 @@ bool LayoutTestController::pauseTransitionAtTimeOnElementWithId(JSStringRef prop
     return returnValue;
 }
 
-unsigned LayoutTestController::numberOfActiveAnimations() const
+unsigned TestRunner::numberOfActiveAnimations() const
 {
     return DumpRenderTreeSupportGtk::numberOfActiveAnimations(mainFrame);
 }
@@ -765,7 +765,7 @@ static gboolean booleanFromValue(gchar* value)
     return !g_ascii_strcasecmp(value, "true") || !g_ascii_strcasecmp(value, "1");
 }
 
-void LayoutTestController::overridePreference(JSStringRef key, JSStringRef value)
+void TestRunner::overridePreference(JSStringRef key, JSStringRef value)
 {
     GOwnPtr<gchar> originalName(JSStringCopyUTF8CString(key));
     GOwnPtr<gchar> valueAsString(JSStringCopyUTF8CString(value));
@@ -806,7 +806,7 @@ void LayoutTestController::overridePreference(JSStringRef key, JSStringRef value
         DumpRenderTreeSupportGtk::setCSSRegionsEnabled(webkit_web_frame_get_web_view(mainFrame), booleanFromValue(valueAsString.get()));
         return;
     } else {
-        fprintf(stderr, "LayoutTestController::overridePreference tried to override "
+        fprintf(stderr, "TestRunner::overridePreference tried to override "
                 "unknown preference '%s'.\n", originalName.get());
         return;
     }
@@ -827,16 +827,16 @@ void LayoutTestController::overridePreference(JSStringRef key, JSStringRef value
         gfloat newValue = g_ascii_strtod(valueAsString.get(), 0);
         g_object_set(G_OBJECT(settings), propertyName, newValue, NULL);
     } else
-        fprintf(stderr, "LayoutTestController::overridePreference failed to override "
+        fprintf(stderr, "TestRunner::overridePreference failed to override "
                 "preference '%s'.\n", originalName.get());
 }
 
-void LayoutTestController::addUserScript(JSStringRef source, bool runAtStart, bool allFrames)
+void TestRunner::addUserScript(JSStringRef source, bool runAtStart, bool allFrames)
 {
-    printf("LayoutTestController::addUserScript not implemented.\n");
+    printf("TestRunner::addUserScript not implemented.\n");
 }
 
-void LayoutTestController::addUserStyleSheet(JSStringRef source, bool allFrames)
+void TestRunner::addUserStyleSheet(JSStringRef source, bool allFrames)
 {
     GOwnPtr<gchar> sourceCode(JSStringCopyUTF8CString(source));
     DumpRenderTreeSupportGtk::addUserStyleSheet(mainFrame, sourceCode.get(), allFrames);
@@ -844,7 +844,7 @@ void LayoutTestController::addUserStyleSheet(JSStringRef source, bool allFrames)
 
 }
 
-void LayoutTestController::setDeveloperExtrasEnabled(bool enabled)
+void TestRunner::setDeveloperExtrasEnabled(bool enabled)
 {
     WebKitWebView* webView = webkit_web_frame_get_web_view(mainFrame);
     WebKitWebSettings* webSettings = webkit_web_view_get_settings(webView);
@@ -852,12 +852,12 @@ void LayoutTestController::setDeveloperExtrasEnabled(bool enabled)
     g_object_set(webSettings, "enable-developer-extras", enabled, NULL);
 }
 
-void LayoutTestController::setAsynchronousSpellCheckingEnabled(bool)
+void TestRunner::setAsynchronousSpellCheckingEnabled(bool)
 {
     // FIXME: Implement this.
 }
 
-void LayoutTestController::showWebInspector()
+void TestRunner::showWebInspector()
 {
     WebKitWebView* webView = webkit_web_frame_get_web_view(mainFrame);
     WebKitWebInspector* inspector = webkit_web_view_get_inspector(webView);
@@ -865,7 +865,7 @@ void LayoutTestController::showWebInspector()
     webkit_web_inspector_show(inspector);
 }
 
-void LayoutTestController::closeWebInspector()
+void TestRunner::closeWebInspector()
 {
     WebKitWebView* webView = webkit_web_frame_get_web_view(mainFrame);
     WebKitWebInspector* inspector = webkit_web_view_get_inspector(webView);
@@ -873,7 +873,7 @@ void LayoutTestController::closeWebInspector()
     webkit_web_inspector_close(inspector);
 }
 
-void LayoutTestController::evaluateInWebInspector(long callId, JSStringRef script)
+void TestRunner::evaluateInWebInspector(long callId, JSStringRef script)
 {
     WebKitWebView* webView = webkit_web_frame_get_web_view(mainFrame);
     WebKitWebInspector* inspector = webkit_web_view_get_inspector(webView);
@@ -883,41 +883,41 @@ void LayoutTestController::evaluateInWebInspector(long callId, JSStringRef scrip
     g_free(scriptString);
 }
 
-void LayoutTestController::evaluateScriptInIsolatedWorldAndReturnValue(unsigned worldID, JSObjectRef globalObject, JSStringRef script)
+void TestRunner::evaluateScriptInIsolatedWorldAndReturnValue(unsigned worldID, JSObjectRef globalObject, JSStringRef script)
 {
     // FIXME: Implement this.
 }
 
-void LayoutTestController::evaluateScriptInIsolatedWorld(unsigned worldID, JSObjectRef globalObject, JSStringRef script)
+void TestRunner::evaluateScriptInIsolatedWorld(unsigned worldID, JSObjectRef globalObject, JSStringRef script)
 {
     // FIXME: Implement this.
 }
 
-void LayoutTestController::removeAllVisitedLinks()
+void TestRunner::removeAllVisitedLinks()
 {
     // FIXME: Implement this.
 }
 
-bool LayoutTestController::callShouldCloseOnWebView()
+bool TestRunner::callShouldCloseOnWebView()
 {
     return DumpRenderTreeSupportGtk::shouldClose(mainFrame);
 }
 
-void LayoutTestController::apiTestNewWindowDataLoadBaseURL(JSStringRef utf8Data, JSStringRef baseURL)
+void TestRunner::apiTestNewWindowDataLoadBaseURL(JSStringRef utf8Data, JSStringRef baseURL)
 {
 
 }
 
-void LayoutTestController::apiTestGoToCurrentBackForwardItem()
+void TestRunner::apiTestGoToCurrentBackForwardItem()
 {
 
 }
 
-void LayoutTestController::setWebViewEditable(bool)
+void TestRunner::setWebViewEditable(bool)
 {
 }
 
-JSRetainPtr<JSStringRef> LayoutTestController::markerTextForListItem(JSContextRef context, JSValueRef nodeObject) const
+JSRetainPtr<JSStringRef> TestRunner::markerTextForListItem(JSContextRef context, JSValueRef nodeObject) const
 {
     CString markerTextGChar = DumpRenderTreeSupportGtk::markerTextForListItem(mainFrame, context, nodeObject);
     if (markerTextGChar.isNull())
@@ -927,76 +927,76 @@ JSRetainPtr<JSStringRef> LayoutTestController::markerTextForListItem(JSContextRe
     return markerText;
 }
 
-void LayoutTestController::authenticateSession(JSStringRef, JSStringRef, JSStringRef)
+void TestRunner::authenticateSession(JSStringRef, JSStringRef, JSStringRef)
 {
 }
 
-void LayoutTestController::abortModal()
+void TestRunner::abortModal()
 {
 }
 
-void LayoutTestController::setSerializeHTTPLoads(bool serialize)
+void TestRunner::setSerializeHTTPLoads(bool serialize)
 {
     DumpRenderTreeSupportGtk::setSerializeHTTPLoads(serialize);
 }
 
-void LayoutTestController::setMinimumTimerInterval(double minimumTimerInterval)
+void TestRunner::setMinimumTimerInterval(double minimumTimerInterval)
 {
     WebKitWebView* webView = webkit_web_frame_get_web_view(mainFrame);
     DumpRenderTreeSupportGtk::setMinimumTimerInterval(webView, minimumTimerInterval);
 }
 
-void LayoutTestController::setTextDirection(JSStringRef direction)
+void TestRunner::setTextDirection(JSStringRef direction)
 {
     // FIXME: Implement.
 }
 
-void LayoutTestController::addChromeInputField()
+void TestRunner::addChromeInputField()
 {
 }
 
-void LayoutTestController::removeChromeInputField()
+void TestRunner::removeChromeInputField()
 {
 }
 
-void LayoutTestController::focusWebView()
+void TestRunner::focusWebView()
 {
 }
 
-void LayoutTestController::setBackingScaleFactor(double)
+void TestRunner::setBackingScaleFactor(double)
 {
 }
 
-void LayoutTestController::simulateDesktopNotificationClick(JSStringRef title)
+void TestRunner::simulateDesktopNotificationClick(JSStringRef title)
 {
 }
 
-void LayoutTestController::resetPageVisibility()
-{
-    // FIXME: Implement this.
-}
-
-void LayoutTestController::setPageVisibility(const char*)
+void TestRunner::resetPageVisibility()
 {
     // FIXME: Implement this.
 }
 
-void LayoutTestController::setAutomaticLinkDetectionEnabled(bool)
+void TestRunner::setPageVisibility(const char*)
 {
     // FIXME: Implement this.
 }
 
-void LayoutTestController::sendWebIntentResponse(JSStringRef)
+void TestRunner::setAutomaticLinkDetectionEnabled(bool)
 {
     // FIXME: Implement this.
 }
 
-void LayoutTestController::deliverWebIntent(JSStringRef, JSStringRef, JSStringRef)
+void TestRunner::sendWebIntentResponse(JSStringRef)
 {
     // FIXME: Implement this.
 }
 
-void LayoutTestController::setStorageDatabaseIdleInterval(double)
+void TestRunner::deliverWebIntent(JSStringRef, JSStringRef, JSStringRef)
+{
+    // FIXME: Implement this.
+}
+
+void TestRunner::setStorageDatabaseIdleInterval(double)
 {
     // FIXME: Implement this.
 }

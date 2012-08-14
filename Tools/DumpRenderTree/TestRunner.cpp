@@ -44,7 +44,7 @@
 #include <wtf/OwnArrayPtr.h>
 #include <wtf/RefPtr.h>
 
-LayoutTestController::LayoutTestController(const std::string& testPathOrURL, const std::string& expectedPixelHash)
+TestRunner::TestRunner(const std::string& testPathOrURL, const std::string& expectedPixelHash)
     : m_disallowIncreaseForApplicationCacheQuota(false)
     , m_dumpApplicationCacheDelegateCallbacks(false)
     , m_dumpAsAudio(false)
@@ -100,37 +100,37 @@ LayoutTestController::LayoutTestController(const std::string& testPathOrURL, con
 {
 }
 
-PassRefPtr<LayoutTestController> LayoutTestController::create(const std::string& testPathOrURL, const std::string& expectedPixelHash)
+PassRefPtr<TestRunner> TestRunner::create(const std::string& testPathOrURL, const std::string& expectedPixelHash)
 {
-    return adoptRef(new LayoutTestController(testPathOrURL, expectedPixelHash));
+    return adoptRef(new TestRunner(testPathOrURL, expectedPixelHash));
 }
 
 // Static Functions
 
 static JSValueRef disallowIncreaseForApplicationCacheQuotaCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     controller->setDisallowIncreaseForApplicationCacheQuota(true);
     return JSValueMakeUndefined(context);
 }
 
 static JSValueRef dumpApplicationCacheDelegateCallbacksCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     controller->setDumpApplicationCacheDelegateCallbacks(true);
     return JSValueMakeUndefined(context);
 }
 
 static JSValueRef dumpAsPDFCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     controller->setDumpAsPDF(true);
     return JSValueMakeUndefined(context);
 }
 
 static JSValueRef dumpAsTextCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     controller->setDumpAsText(true);
 
     // Optional paramater, describing whether it's allowed to dump pixel results in dumpAsText mode.
@@ -141,119 +141,119 @@ static JSValueRef dumpAsTextCallback(JSContextRef context, JSObjectRef function,
 
 static JSValueRef dumpBackForwardListCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     controller->setDumpBackForwardList(true);
     return JSValueMakeUndefined(context);
 }
 
 static JSValueRef dumpChildFramesAsTextCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     controller->setDumpChildFramesAsText(true);
     return JSValueMakeUndefined(context);
 }
 
 static JSValueRef dumpChildFrameScrollPositionsCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     controller->setDumpChildFrameScrollPositions(true);
     return JSValueMakeUndefined(context);
 }
 
 static JSValueRef dumpDatabaseCallbacksCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     controller->setDumpDatabaseCallbacks(true);
     return JSValueMakeUndefined(context);
 }
 
 static JSValueRef dumpDOMAsWebArchiveCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     controller->setDumpDOMAsWebArchive(true);
     return JSValueMakeUndefined(context);
 }
 
 static JSValueRef dumpEditingCallbacksCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     controller->setDumpEditingCallbacks(true);
     return JSValueMakeUndefined(context);
 }
 
 static JSValueRef dumpFrameLoadCallbacksCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     controller->setDumpFrameLoadCallbacks(true);
     return JSValueMakeUndefined(context);
 }
 
 static JSValueRef dumpProgressFinishedCallbackCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     controller->setDumpProgressFinishedCallback(true);
     return JSValueMakeUndefined(context);
 }
 
 static JSValueRef dumpUserGestureInFrameLoadCallbacksCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     controller->setDumpUserGestureInFrameLoadCallbacks(true);
     return JSValueMakeUndefined(context);
 }
 
 static JSValueRef dumpResourceLoadCallbacksCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     controller->setDumpResourceLoadCallbacks(true);
     return JSValueMakeUndefined(context);
 }
 
 static JSValueRef dumpResourceResponseMIMETypesCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     controller->setDumpResourceResponseMIMETypes(true);
     return JSValueMakeUndefined(context);
 }
 
 static JSValueRef dumpSelectionRectCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     controller->setDumpSelectionRect(true);
     return JSValueMakeUndefined(context);
 }
 
 static JSValueRef dumpSourceAsWebArchiveCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     controller->setDumpSourceAsWebArchive(true);
     return JSValueMakeUndefined(context);
 }
 
 static JSValueRef dumpStatusCallbacksCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     controller->setDumpStatusCallbacks(true);
     return JSValueMakeUndefined(context);
 }
 
 static JSValueRef dumpTitleChangesCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     controller->setDumpTitleChanges(true);
     return JSValueMakeUndefined(context);
 }
 
 static JSValueRef dumpIconChangesCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     controller->setDumpIconChanges(true);
     return JSValueMakeUndefined(context);
 }
 
 static JSValueRef dumpWillCacheResponseCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     controller->setDumpWillCacheResponse(true);
     return JSValueMakeUndefined(context);
 }
@@ -263,7 +263,7 @@ static JSValueRef pathToLocalResourceCallback(JSContextRef context, JSObjectRef 
     if (argumentCount < 1)
         return JSValueMakeUndefined(context);
 
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     JSRetainPtr<JSStringRef> localPath(Adopt, JSValueToStringCopy(context, arguments[0], exception));
     ASSERT(!*exception);
 
@@ -276,7 +276,7 @@ static JSValueRef pathToLocalResourceCallback(JSContextRef context, JSObjectRef 
 
 static JSValueRef removeAllVisitedLinksCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     controller->setDumpVisitedLinksCallback(true);
     controller->removeAllVisitedLinks();
     return JSValueMakeUndefined(context);
@@ -284,7 +284,7 @@ static JSValueRef removeAllVisitedLinksCallback(JSContextRef context, JSObjectRe
 
 static JSValueRef repaintSweepHorizontallyCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     controller->setTestRepaintSweepHorizontally(true);
     return JSValueMakeUndefined(context);
 }
@@ -294,14 +294,14 @@ static JSValueRef setCallCloseOnWebViewsCallback(JSContextRef context, JSObjectR
     if (argumentCount < 1)
         return JSValueMakeUndefined(context);
 
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     controller->setCallCloseOnWebViews(JSValueToBoolean(context, arguments[0]));
     return JSValueMakeUndefined(context);
 }
 
 static JSValueRef setCanOpenWindowsCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     controller->setCanOpenWindows(true);
     return JSValueMakeUndefined(context);
 }
@@ -311,7 +311,7 @@ static JSValueRef setCloseRemainingWindowsWhenCompleteCallback(JSContextRef cont
     if (argumentCount < 1)
         return JSValueMakeUndefined(context);
 
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     controller->setCloseRemainingWindowsWhenComplete(JSValueToBoolean(context, arguments[0]));
     return JSValueMakeUndefined(context);
 }
@@ -328,7 +328,7 @@ static JSValueRef setEncodedAudioDataCallback(JSContextRef context, JSObjectRef 
     OwnArrayPtr<char> encodedAudioDataBuffer = adoptArrayPtr(new char[maxLength + 1]);
     JSStringGetUTF8CString(encodedAudioData.get(), encodedAudioDataBuffer.get(), maxLength + 1);
 
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     controller->setEncodedAudioData(encodedAudioDataBuffer.get());
     controller->setDumpAsAudio(true);
     
@@ -337,14 +337,14 @@ static JSValueRef setEncodedAudioDataCallback(JSContextRef context, JSObjectRef 
 
 static JSValueRef testOnscreenCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     controller->setTestOnscreen(true);
     return JSValueMakeUndefined(context);
 }
 
 static JSValueRef testRepaintCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     controller->setTestRepaint(true);
     return JSValueMakeUndefined(context);
 }
@@ -358,7 +358,7 @@ static JSValueRef addDisallowedURLCallback(JSContextRef context, JSObjectRef fun
     JSRetainPtr<JSStringRef> url(Adopt, JSValueToStringCopy(context, arguments[0], exception));
     ASSERT(!*exception);
 
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     controller->addDisallowedURL(url.get());
 
     return JSValueMakeUndefined(context);
@@ -383,7 +383,7 @@ static JSValueRef addURLToRedirectCallback(JSContextRef context, JSObjectRef fun
     OwnArrayPtr<char> destinationBuffer = adoptArrayPtr(new char[maxLength + 1]);
     JSStringGetUTF8CString(destination.get(), destinationBuffer.get(), maxLength + 1);
 
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     controller->addURLToRedirect(originBuffer.get(), destinationBuffer.get());
 
     return JSValueMakeUndefined(context);
@@ -392,7 +392,7 @@ static JSValueRef addURLToRedirectCallback(JSContextRef context, JSObjectRef fun
 static JSValueRef callShouldCloseOnWebViewCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
     // Has mac & windows implementation
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
 
     return JSValueMakeBoolean(context, controller->callShouldCloseOnWebView());
 }
@@ -400,7 +400,7 @@ static JSValueRef callShouldCloseOnWebViewCallback(JSContextRef context, JSObjec
 static JSValueRef clearAllApplicationCachesCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
     // Has mac implementation
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     controller->clearAllApplicationCaches();
 
     return JSValueMakeUndefined(context);
@@ -414,7 +414,7 @@ static JSValueRef clearApplicationCacheForOriginCallback(JSContextRef context, J
     JSRetainPtr<JSStringRef> originURL(Adopt, JSValueToStringCopy(context, arguments[0], exception));
     ASSERT(!*exception);
 
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     controller->clearApplicationCacheForOrigin(originURL.get());
     
     return JSValueMakeUndefined(context);
@@ -428,21 +428,21 @@ static JSValueRef applicationCacheDiskUsageForOriginCallback(JSContextRef contex
     JSRetainPtr<JSStringRef> originURL(Adopt, JSValueToStringCopy(context, arguments[0], exception));
     ASSERT(!*exception);
     
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
 
     return JSValueMakeNumber(context, controller->applicationCacheDiskUsageForOrigin(originURL.get()));
 }
 
 static JSValueRef originsWithApplicationCacheCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     return controller->originsWithApplicationCache(context);
 }
 
 static JSValueRef clearAllDatabasesCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
     // Has mac & windows implementation
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     controller->clearAllDatabases();
 
     return JSValueMakeUndefined(context);
@@ -450,7 +450,7 @@ static JSValueRef clearAllDatabasesCallback(JSContextRef context, JSObjectRef fu
 
 static JSValueRef syncLocalStorageCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
 
     controller->syncLocalStorage();
 
@@ -459,7 +459,7 @@ static JSValueRef syncLocalStorageCallback(JSContextRef context, JSObjectRef fun
 
 static JSValueRef observeStorageTrackerNotificationsCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
 
     if (argumentCount < 1)
         return JSValueMakeUndefined(context);
@@ -475,7 +475,7 @@ static JSValueRef observeStorageTrackerNotificationsCallback(JSContextRef contex
 
 static JSValueRef deleteAllLocalStorageCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     controller->deleteAllLocalStorage();
 
     return JSValueMakeUndefined(context);
@@ -483,7 +483,7 @@ static JSValueRef deleteAllLocalStorageCallback(JSContextRef context, JSObjectRe
 
 static JSValueRef deleteLocalStorageForOriginCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
 
     if (argumentCount < 1)
         return JSValueMakeUndefined(context);
@@ -498,7 +498,7 @@ static JSValueRef deleteLocalStorageForOriginCallback(JSContextRef context, JSOb
 
 static JSValueRef localStorageDiskUsageForOriginCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
 
     if (argumentCount < 1)
         return JSValueMakeUndefined(context);
@@ -511,14 +511,14 @@ static JSValueRef localStorageDiskUsageForOriginCallback(JSContextRef context, J
 
 static JSValueRef originsWithLocalStorageCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     return controller->originsWithLocalStorage(context);
 }
 
 static JSValueRef clearBackForwardListCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
     // Has mac & windows implementation
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     controller->clearBackForwardList();
 
     return JSValueMakeUndefined(context);
@@ -527,7 +527,7 @@ static JSValueRef clearBackForwardListCallback(JSContextRef context, JSObjectRef
 static JSValueRef clearPersistentUserStyleSheetCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
     // Has mac & windows implementation
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     controller->clearPersistentUserStyleSheet();
 
     return JSValueMakeUndefined(context);
@@ -542,7 +542,7 @@ static JSValueRef decodeHostNameCallback(JSContextRef context, JSObjectRef funct
     JSRetainPtr<JSStringRef> name(Adopt, JSValueToStringCopy(context, arguments[0], exception));
     ASSERT(!*exception);
 
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     JSRetainPtr<JSStringRef> decodedHostName(Adopt, controller->copyDecodedHostName(name.get()));
     return JSValueMakeString(context, decodedHostName.get());
 }
@@ -550,7 +550,7 @@ static JSValueRef decodeHostNameCallback(JSContextRef context, JSObjectRef funct
 static JSValueRef disableImageLoadingCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
     // Has mac implementation, needs windows implementation
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     controller->disableImageLoading();
     
     return JSValueMakeUndefined(context);
@@ -559,7 +559,7 @@ static JSValueRef disableImageLoadingCallback(JSContextRef context, JSObjectRef 
 static JSValueRef dispatchPendingLoadRequestsCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
     // Has mac implementation, needs windows implementation
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     controller->dispatchPendingLoadRequests();
     
     return JSValueMakeUndefined(context);
@@ -568,7 +568,7 @@ static JSValueRef dispatchPendingLoadRequestsCallback(JSContextRef context, JSOb
 static JSValueRef displayCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
     // Has mac & windows implementation
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     controller->display();
 
     return JSValueMakeUndefined(context);
@@ -577,8 +577,8 @@ static JSValueRef displayCallback(JSContextRef context, JSObjectRef function, JS
 static JSValueRef displayInvalidatedRegionCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
     // Has mac & windows implementation
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
-    // LayoutTestController::display() only renders the invalidated region so
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
+    // TestRunner::display() only renders the invalidated region so
     // we can just use that.
     controller->display();
 
@@ -594,7 +594,7 @@ static JSValueRef encodeHostNameCallback(JSContextRef context, JSObjectRef funct
     JSRetainPtr<JSStringRef> name(Adopt, JSValueToStringCopy(context, arguments[0], exception));
     ASSERT(!*exception);
 
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     JSRetainPtr<JSStringRef> encodedHostName(Adopt, controller->copyEncodedHostName(name.get()));
     return JSValueMakeString(context, encodedHostName.get());
 }
@@ -618,7 +618,7 @@ static JSValueRef execCommandCallback(JSContextRef context, JSObjectRef function
         value.adopt(JSStringCreateWithUTF8CString(""));
 
 
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     controller->execCommand(name.get(), value.get());
 
     return JSValueMakeUndefined(context);
@@ -636,13 +636,13 @@ static JSValueRef findStringCallback(JSContextRef context, JSObjectRef function,
     JSObjectRef options = JSValueToObject(context, arguments[1], exception);
     ASSERT(!*exception);
 
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     return JSValueMakeBoolean(context, controller->findString(context, target.get(), options));
 }
 
 static JSValueRef goBackCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     controller->goBack();
     
     return JSValueMakeUndefined(context);
@@ -654,7 +654,7 @@ static JSValueRef grantDesktopNotificationPermissionCallback(JSContextRef contex
     if (argumentCount < 1)
         return JSValueMakeUndefined(context);
 
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
 
     controller->grantDesktopNotificationPermission(JSValueToStringCopy(context, arguments[0], NULL));
         
@@ -671,7 +671,7 @@ static JSValueRef isCommandEnabledCallback(JSContextRef context, JSObjectRef fun
     JSRetainPtr<JSStringRef> name(Adopt, JSValueToStringCopy(context, arguments[0], exception));
     ASSERT(!*exception);
 
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
 
     return JSValueMakeBoolean(context, controller->isCommandEnabled(name.get()));
 }
@@ -686,7 +686,7 @@ static JSValueRef overridePreferenceCallback(JSContextRef context, JSObjectRef f
     JSRetainPtr<JSStringRef> value(Adopt, JSValueToStringCopy(context, arguments[1], exception));
     ASSERT(!*exception);
 
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     controller->overridePreference(key.get(), value.get());
 
     return JSValueMakeUndefined(context);
@@ -695,7 +695,7 @@ static JSValueRef overridePreferenceCallback(JSContextRef context, JSObjectRef f
 static JSValueRef keepWebHistoryCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
     // Has mac implementation
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     controller->keepWebHistory();
 
     return JSValueMakeUndefined(context);
@@ -707,14 +707,14 @@ static JSValueRef computedStyleIncludingVisitedInfoCallback(JSContextRef context
         return JSValueMakeUndefined(context);
     
     // Has mac implementation
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     return controller->computedStyleIncludingVisitedInfo(context, arguments[0]);
 }
 
 static JSValueRef layerTreeAsTextCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
     // Has mac & windows implementation
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     return JSValueMakeString(context, controller->layerTreeAsText().get());
 }
 
@@ -722,15 +722,15 @@ static JSValueRef notifyDoneCallback(JSContextRef context, JSObjectRef function,
 {
     // Has mac & windows implementation
     // May be able to be made platform independant by using shared WorkQueue
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     controller->notifyDone();
     return JSValueMakeUndefined(context);
 }
 
 static bool parsePageParameters(JSContextRef context, int argumentCount, const JSValueRef* arguments, JSValueRef* exception, float& pageWidthInPixels, float& pageHeightInPixels)
 {
-    pageWidthInPixels = LayoutTestController::maxViewWidth;
-    pageHeightInPixels = LayoutTestController::maxViewHeight;
+    pageWidthInPixels = TestRunner::maxViewWidth;
+    pageHeightInPixels = TestRunner::maxViewHeight;
     switch (argumentCount) {
     case 2:
         pageWidthInPixels = static_cast<float>(JSValueToNumber(context, arguments[0], exception));
@@ -828,13 +828,13 @@ static JSValueRef numberOfPagesCallback(JSContextRef context, JSObjectRef functi
     if (!parsePageParameters(context, argumentCount, arguments, exception, pageWidthInPixels, pageHeightInPixels))
         return JSValueMakeUndefined(context);
 
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     return JSValueMakeNumber(context, controller->numberOfPages(pageWidthInPixels, pageHeightInPixels));
 }
 
 static JSValueRef numberOfPendingGeolocationPermissionRequestsCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     return JSValueMakeNumber(context, controller->numberOfPendingGeolocationPermissionRequests());
 }
 
@@ -845,7 +845,7 @@ static JSValueRef pagePropertyCallback(JSContextRef context, JSObjectRef functio
     if (!parsePagePropertyParameters(context, argumentCount, arguments, exception, propertyName, pageNumber))
         return JSValueMakeUndefined(context);
 
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     JSValueRef value = JSValueMakeString(context, controller->pageProperty(propertyName, pageNumber).get());
 
     delete[] propertyName;
@@ -860,7 +860,7 @@ static JSValueRef pageSizeAndMarginsInPixelsCallback(JSContextRef context, JSObj
     if (!parsePageNumberSizeMarings(context, argumentCount, arguments, exception, pageNumber, width, height, marginTop, marginRight, marginBottom, marginLeft))
         return JSValueMakeUndefined(context);
 
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     return JSValueMakeString(context, controller->pageSizeAndMarginsInPixels(pageNumber, width, height, marginTop, marginRight, marginBottom, marginLeft).get());
 }
 
@@ -874,7 +874,7 @@ static JSValueRef queueBackNavigationCallback(JSContextRef context, JSObjectRef 
     double howFarBackDouble = JSValueToNumber(context, arguments[0], exception);
     ASSERT(!*exception);
 
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     controller->queueBackNavigation(static_cast<int>(howFarBackDouble));
 
     return JSValueMakeUndefined(context);
@@ -890,7 +890,7 @@ static JSValueRef queueForwardNavigationCallback(JSContextRef context, JSObjectR
     double howFarForwardDouble = JSValueToNumber(context, arguments[0], exception);
     ASSERT(!*exception);
 
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     controller->queueForwardNavigation(static_cast<int>(howFarForwardDouble));
 
     return JSValueMakeUndefined(context);
@@ -913,7 +913,7 @@ static JSValueRef queueLoadCallback(JSContextRef context, JSObjectRef function, 
     } else
         target.adopt(JSStringCreateWithUTF8CString(""));
 
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     controller->queueLoad(url.get(), target.get());
 
     return JSValueMakeUndefined(context);
@@ -935,7 +935,7 @@ static JSValueRef queueLoadHTMLStringCallback(JSContextRef context, JSObjectRef 
     } else
         baseURL.adopt(JSStringCreateWithUTF8CString(""));
 
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
 
     if (argumentCount >= 3) {
         JSRetainPtr<JSStringRef> unreachableURL;
@@ -954,7 +954,7 @@ static JSValueRef queueReloadCallback(JSContextRef context, JSObjectRef function
     // Has mac & windows implementation
     // May be able to be made platform independant by using shared WorkQueue
 
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     controller->queueReload();
 
     return JSValueMakeUndefined(context);
@@ -970,7 +970,7 @@ static JSValueRef queueLoadingScriptCallback(JSContextRef context, JSObjectRef f
     JSRetainPtr<JSStringRef> script(Adopt, JSValueToStringCopy(context, arguments[0], exception));
     ASSERT(!*exception);
 
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     controller->queueLoadingScript(script.get());
 
     return JSValueMakeUndefined(context);
@@ -986,7 +986,7 @@ static JSValueRef queueNonLoadingScriptCallback(JSContextRef context, JSObjectRe
     JSRetainPtr<JSStringRef> script(Adopt, JSValueToStringCopy(context, arguments[0], exception));
     ASSERT(!*exception);
 
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     controller->queueNonLoadingScript(script.get());
 
     return JSValueMakeUndefined(context);
@@ -998,7 +998,7 @@ static JSValueRef setAcceptsEditingCallback(JSContextRef context, JSObjectRef fu
     if (argumentCount < 1)
         return JSValueMakeUndefined(context);
 
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     controller->setAcceptsEditing(JSValueToBoolean(context, arguments[0]));
 
     return JSValueMakeUndefined(context);
@@ -1010,7 +1010,7 @@ static JSValueRef setAlwaysAcceptCookiesCallback(JSContextRef context, JSObjectR
     if (argumentCount < 1)
         return JSValueMakeUndefined(context);
 
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     controller->setAlwaysAcceptCookies(JSValueToBoolean(context, arguments[0]));
 
     return JSValueMakeUndefined(context);
@@ -1022,7 +1022,7 @@ static JSValueRef setAppCacheMaximumSizeCallback(JSContextRef context, JSObjectR
     if (argumentCount < 1)
         return JSValueMakeUndefined(context);
 
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
 
     double size = JSValueToNumber(context, arguments[0], NULL);
     if (!isnan(size))
@@ -1037,7 +1037,7 @@ static JSValueRef setApplicationCacheOriginQuotaCallback(JSContextRef context, J
     if (argumentCount < 1)
         return JSValueMakeUndefined(context);
 
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
 
     double size = JSValueToNumber(context, arguments[0], NULL);
     if (!isnan(size))
@@ -1059,7 +1059,7 @@ static JSValueRef setAuthenticationPasswordCallback(JSContextRef context, JSObje
     char* passwordBuffer = new char[maxLength + 1];
     JSStringGetUTF8CString(password.get(), passwordBuffer, maxLength + 1);
     
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     controller->setAuthenticationPassword(passwordBuffer);
     delete[] passwordBuffer;
 
@@ -1079,7 +1079,7 @@ static JSValueRef setAuthenticationUsernameCallback(JSContextRef context, JSObje
     char* usernameBuffer = new char[maxLength + 1];
     JSStringGetUTF8CString(username.get(), usernameBuffer, maxLength + 1);
     
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     controller->setAuthenticationUsername(usernameBuffer);
     delete[] usernameBuffer;
 
@@ -1092,7 +1092,7 @@ static JSValueRef setAuthorAndUserStylesEnabledCallback(JSContextRef context, JS
     if (argumentCount < 1)
         return JSValueMakeUndefined(context);
 
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     controller->setAuthorAndUserStylesEnabled(JSValueToBoolean(context, arguments[0]));
 
     return JSValueMakeUndefined(context);
@@ -1103,7 +1103,7 @@ static JSValueRef setAutofilledCallback(JSContextRef context, JSObjectRef functi
     if (argumentCount != 2 || !arguments[0])
         return JSValueMakeUndefined(context);
 
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     controller->setAutofilled(context, arguments[0], JSValueToBoolean(context, arguments[1]));
 
     return JSValueMakeUndefined(context);
@@ -1118,7 +1118,7 @@ static JSValueRef setCacheModelCallback(JSContextRef context, JSObjectRef functi
     int cacheModel = JSValueToNumber(context, arguments[0], exception);
     ASSERT(!*exception);
 
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     controller->setCacheModel(cacheModel);
 
     return JSValueMakeUndefined(context);
@@ -1134,7 +1134,7 @@ static JSValueRef setCustomPolicyDelegateCallback(JSContextRef context, JSObject
     if (argumentCount >= 2)
         permissive = JSValueToBoolean(context, arguments[1]);
 
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     controller->setCustomPolicyDelegate(JSValueToBoolean(context, arguments[0]), permissive);
 
     return JSValueMakeUndefined(context);
@@ -1146,7 +1146,7 @@ static JSValueRef setDatabaseQuotaCallback(JSContextRef context, JSObjectRef fun
     if (argumentCount < 1)
         return JSValueMakeUndefined(context);
 
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
 
     double quota = JSValueToNumber(context, arguments[0], NULL);
     if (!isnan(quota))
@@ -1161,7 +1161,7 @@ static JSValueRef setDeferMainResourceDataLoadCallback(JSContextRef context, JSO
     if (argumentCount < 1)
         return JSValueMakeUndefined(context);
 
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     controller->setDeferMainResourceDataLoad(JSValueToBoolean(context, arguments[0]));
 
     return JSValueMakeUndefined(context);
@@ -1172,7 +1172,7 @@ static JSValueRef setDefersLoadingCallback(JSContextRef context, JSObjectRef fun
     if (argumentCount < 1)
         return JSValueMakeUndefined(context);
 
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     controller->setDefersLoading(JSValueToBoolean(context, arguments[0]));
 
     return JSValueMakeUndefined(context);
@@ -1183,7 +1183,7 @@ static JSValueRef setUseDeferredFrameLoadingCallback(JSContextRef context, JSObj
     if (argumentCount < 1)
         return JSValueMakeUndefined(context);
 
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     controller->setUseDeferredFrameLoading(JSValueToBoolean(context, arguments[0]));
 
     return JSValueMakeUndefined(context);
@@ -1195,7 +1195,7 @@ static JSValueRef setDomainRelaxationForbiddenForURLSchemeCallback(JSContextRef 
     if (argumentCount < 2)
         return JSValueMakeUndefined(context);
 
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
 
     bool forbidden = JSValueToBoolean(context, arguments[0]);
     JSRetainPtr<JSStringRef> scheme(Adopt, JSValueToStringCopy(context, arguments[1], 0));
@@ -1219,7 +1219,7 @@ static JSValueRef setMockDeviceOrientationCallback(JSContextRef context, JSObjec
     double gamma = JSValueToNumber(context, arguments[5], exception);
     ASSERT(!*exception);
 
-    LayoutTestController* controller = reinterpret_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = reinterpret_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     controller->setMockDeviceOrientation(canProvideAlpha, alpha, canProvideBeta, beta, canProvideGamma, gamma);
 
     return JSValueMakeUndefined(context);
@@ -1230,7 +1230,7 @@ static JSValueRef setMockGeolocationPositionCallback(JSContextRef context, JSObj
     if (argumentCount < 3)
         return JSValueMakeUndefined(context);
 
-    LayoutTestController* controller = reinterpret_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = reinterpret_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     controller->setMockGeolocationPosition(JSValueToNumber(context, arguments[0], NULL),  // latitude
                                            JSValueToNumber(context, arguments[1], NULL),  // longitude
                                            JSValueToNumber(context, arguments[2], NULL));  // accuracy
@@ -1247,7 +1247,7 @@ static JSValueRef setMockGeolocationErrorCallback(JSContextRef context, JSObject
     JSRetainPtr<JSStringRef> message(Adopt, JSValueToStringCopy(context, arguments[1], exception));
     ASSERT(!*exception);
 
-    LayoutTestController* controller = reinterpret_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = reinterpret_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     controller->setMockGeolocationError(code, message.get());
 
     return JSValueMakeUndefined(context);
@@ -1266,7 +1266,7 @@ static JSValueRef addMockSpeechInputResultCallback(JSContextRef context, JSObjec
     JSRetainPtr<JSStringRef> language(Adopt, JSValueToStringCopy(context, arguments[2], exception));
     ASSERT(!*exception);
 
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     controller->addMockSpeechInputResult(result.get(), confidence, language.get());
 
     return JSValueMakeUndefined(context);
@@ -1279,7 +1279,7 @@ static JSValueRef setMockSpeechInputDumpRectCallback(JSContextRef context, JSObj
 
     bool dumpRect = JSValueToBoolean(context, arguments[0]);
 
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     controller->setMockSpeechInputDumpRect(dumpRect);
 
     return JSValueMakeUndefined(context);
@@ -1291,7 +1291,7 @@ static JSValueRef setNewWindowsCopyBackForwardListCallback(JSContextRef context,
     if (argumentCount < 1)
         return JSValueMakeUndefined(context);
     
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     controller->setNewWindowsCopyBackForwardList(JSValueToBoolean(context, arguments[0]));
 
     return JSValueMakeUndefined(context);
@@ -1303,7 +1303,7 @@ static JSValueRef setGeolocationPermissionCallback(JSContextRef context, JSObjec
     if (argumentCount < 1)
         return JSValueMakeUndefined(context);
 
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     controller->setGeolocationPermission(JSValueToBoolean(context, arguments[0]));
 
     return JSValueMakeUndefined(context);
@@ -1315,7 +1315,7 @@ static JSValueRef setHandlesAuthenticationChallengesCallback(JSContextRef contex
     if (argumentCount < 1)
         return JSValueMakeUndefined(context);
 
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     controller->setHandlesAuthenticationChallenges(JSValueToBoolean(context, arguments[0]));
 
     return JSValueMakeUndefined(context);
@@ -1326,7 +1326,7 @@ static JSValueRef setPOSIXLocaleCallback(JSContextRef context, JSObjectRef funct
     if (argumentCount < 1)
         return JSValueMakeUndefined(context);
 
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     JSRetainPtr<JSStringRef> locale(Adopt, JSValueToStringCopy(context, arguments[0], exception));
     ASSERT(!*exception);
     controller->setPOSIXLocale(locale.get());
@@ -1340,7 +1340,7 @@ static JSValueRef setIconDatabaseEnabledCallback(JSContextRef context, JSObjectR
     if (argumentCount < 1)
         return JSValueMakeUndefined(context);
 
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     controller->setIconDatabaseEnabled(JSValueToBoolean(context, arguments[0]));
 
     return JSValueMakeUndefined(context);
@@ -1352,7 +1352,7 @@ static JSValueRef setMainFrameIsFirstResponderCallback(JSContextRef context, JSO
     if (argumentCount < 1)
         return JSValueMakeUndefined(context);
 
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     controller->setMainFrameIsFirstResponder(JSValueToBoolean(context, arguments[0]));
 
     return JSValueMakeUndefined(context);
@@ -1367,7 +1367,7 @@ static JSValueRef setPersistentUserStyleSheetLocationCallback(JSContextRef conte
     JSRetainPtr<JSStringRef> path(Adopt, JSValueToStringCopy(context, arguments[0], exception));
     ASSERT(!*exception);
 
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     controller->setPersistentUserStyleSheetLocation(path.get());
 
     return JSValueMakeUndefined(context);
@@ -1379,7 +1379,7 @@ static JSValueRef setPrivateBrowsingEnabledCallback(JSContextRef context, JSObje
     if (argumentCount < 1)
         return JSValueMakeUndefined(context);
 
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     controller->setPrivateBrowsingEnabled(JSValueToBoolean(context, arguments[0]));
 
     return JSValueMakeUndefined(context);
@@ -1391,7 +1391,7 @@ static JSValueRef setJavaScriptCanAccessClipboardCallback(JSContextRef context, 
     if (argumentCount < 1)
         return JSValueMakeUndefined(context);
 
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     controller->setJavaScriptCanAccessClipboard(JSValueToBoolean(context, arguments[0]));
 
     return JSValueMakeUndefined(context);
@@ -1403,7 +1403,7 @@ static JSValueRef setXSSAuditorEnabledCallback(JSContextRef context, JSObjectRef
     if (argumentCount < 1)
         return JSValueMakeUndefined(context);
 
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     controller->setXSSAuditorEnabled(JSValueToBoolean(context, arguments[0]));
 
     return JSValueMakeUndefined(context);
@@ -1415,7 +1415,7 @@ static JSValueRef setSpatialNavigationEnabledCallback(JSContextRef context, JSOb
     if (argumentCount < 1)
         return JSValueMakeUndefined(context);
 
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     controller->setSpatialNavigationEnabled(JSValueToBoolean(context, arguments[0]));
 
     return JSValueMakeUndefined(context);
@@ -1423,7 +1423,7 @@ static JSValueRef setSpatialNavigationEnabledCallback(JSContextRef context, JSOb
 
 static JSValueRef setPrintingCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     controller->setIsPrinting(true);
     return JSValueMakeUndefined(context);
 }
@@ -1435,7 +1435,7 @@ static JSValueRef setFrameFlatteningEnabledCallback(JSContextRef context, JSObje
     if (argumentCount < 1)
         return JSValueMakeUndefined(context);
 
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     controller->setFrameFlatteningEnabled(JSValueToBoolean(context, arguments[0]));
 
     return JSValueMakeUndefined(context);
@@ -1447,7 +1447,7 @@ static JSValueRef setAllowUniversalAccessFromFileURLsCallback(JSContextRef conte
     if (argumentCount < 1)
         return JSValueMakeUndefined(context);
 
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     controller->setAllowUniversalAccessFromFileURLs(JSValueToBoolean(context, arguments[0]));
 
     return JSValueMakeUndefined(context);
@@ -1459,7 +1459,7 @@ static JSValueRef setAllowFileAccessFromFileURLsCallback(JSContextRef context, J
     if (argumentCount < 1)
         return JSValueMakeUndefined(context);
 
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     controller->setAllowFileAccessFromFileURLs(JSValueToBoolean(context, arguments[0]));
 
     return JSValueMakeUndefined(context);
@@ -1471,7 +1471,7 @@ static JSValueRef setTabKeyCyclesThroughElementsCallback(JSContextRef context, J
     if (argumentCount < 1)
         return JSValueMakeUndefined(context);
 
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     controller->setTabKeyCyclesThroughElements(JSValueToBoolean(context, arguments[0]));
 
     return JSValueMakeUndefined(context);
@@ -1483,7 +1483,7 @@ static JSValueRef setUseDashboardCompatibilityModeCallback(JSContextRef context,
     if (argumentCount < 1)
         return JSValueMakeUndefined(context);
 
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     controller->setUseDashboardCompatibilityMode(JSValueToBoolean(context, arguments[0]));
 
     return JSValueMakeUndefined(context);
@@ -1495,7 +1495,7 @@ static JSValueRef setUserStyleSheetEnabledCallback(JSContextRef context, JSObjec
     if (argumentCount < 1)
         return JSValueMakeUndefined(context);
 
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     controller->setUserStyleSheetEnabled(JSValueToBoolean(context, arguments[0]));
 
     return JSValueMakeUndefined(context);
@@ -1510,7 +1510,7 @@ static JSValueRef setUserStyleSheetLocationCallback(JSContextRef context, JSObje
     JSRetainPtr<JSStringRef> path(Adopt, JSValueToStringCopy(context, arguments[0], exception));
     ASSERT(!*exception);
 
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     controller->setUserStyleSheetLocation(path.get());
 
     return JSValueMakeUndefined(context);
@@ -1525,7 +1525,7 @@ static JSValueRef setValueForUserCallback(JSContextRef context, JSObjectRef func
     JSRetainPtr<JSStringRef> value(Adopt, JSValueToStringCopy(context, arguments[1], exception));
     ASSERT(!*exception);
 
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     controller->setValueForUser(context, arguments[0], value.get());
 
     return JSValueMakeUndefined(context);
@@ -1540,7 +1540,7 @@ static JSValueRef setViewModeMediaFeatureCallback(JSContextRef context, JSObject
     JSRetainPtr<JSStringRef> mode(Adopt, JSValueToStringCopy(context, arguments[0], exception));
     ASSERT(!*exception);
 
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     controller->setViewModeMediaFeature(mode.get());
 
     return JSValueMakeUndefined(context);
@@ -1559,7 +1559,7 @@ static JSValueRef setWillSendRequestClearHeaderCallback(JSContextRef context, JS
     OwnArrayPtr<char> headerBuffer = adoptArrayPtr(new char[maxLength + 1]);
     JSStringGetUTF8CString(header.get(), headerBuffer.get(), maxLength + 1);
 
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     controller->setWillSendRequestClearHeader(headerBuffer.get());
 
     return JSValueMakeUndefined(context);
@@ -1571,7 +1571,7 @@ static JSValueRef setWillSendRequestReturnsNullCallback(JSContextRef context, JS
     if (argumentCount < 1)
         return JSValueMakeUndefined(context);
 
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     controller->setWillSendRequestReturnsNull(JSValueToBoolean(context, arguments[0]));
 
     return JSValueMakeUndefined(context);
@@ -1583,7 +1583,7 @@ static JSValueRef setWillSendRequestReturnsNullOnRedirectCallback(JSContextRef c
     if (argumentCount < 1)
         return JSValueMakeUndefined(context);
 
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     controller->setWillSendRequestReturnsNullOnRedirect(JSValueToBoolean(context, arguments[0]));
 
     return JSValueMakeUndefined(context);
@@ -1595,7 +1595,7 @@ static JSValueRef setWindowIsKeyCallback(JSContextRef context, JSObjectRef funct
     if (argumentCount < 1)
         return JSValueMakeUndefined(context);
 
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     controller->setWindowIsKey(JSValueToBoolean(context, arguments[0]));
 
     return JSValueMakeUndefined(context);
@@ -1604,7 +1604,7 @@ static JSValueRef setWindowIsKeyCallback(JSContextRef context, JSObjectRef funct
 static JSValueRef waitUntilDoneCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
     // Has mac & windows implementation
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     controller->setWaitToDump(true);
 
     return JSValueMakeUndefined(context);
@@ -1613,7 +1613,7 @@ static JSValueRef waitUntilDoneCallback(JSContextRef context, JSObjectRef functi
 static JSValueRef windowCountCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
     // Has mac implementation
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     int windows = controller->windowCount();
     return JSValueMakeNumber(context, windows);
 }
@@ -1624,7 +1624,7 @@ static JSValueRef setPopupBlockingEnabledCallback(JSContextRef context, JSObject
     if (argumentCount < 1)
         return JSValueMakeUndefined(context);
 
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     controller->setPopupBlockingEnabled(JSValueToBoolean(context, arguments[0]));
 
     return JSValueMakeUndefined(context);
@@ -1636,7 +1636,7 @@ static JSValueRef setPluginsEnabledCallback(JSContextRef context, JSObjectRef fu
     if (argumentCount < 1)
         return JSValueMakeUndefined(context);
     
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     controller->setPluginsEnabled(JSValueToBoolean(context, arguments[0]));
     
     return JSValueMakeUndefined(context);
@@ -1655,7 +1655,7 @@ static JSValueRef setPageVisibilityCallback(JSContextRef context, JSObjectRef fu
     char* visibilityBuffer = new char[maxLength + 1];
     JSStringGetUTF8CString(visibility.get(), visibilityBuffer, maxLength + 1);
     
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     controller->setPageVisibility(visibilityBuffer);
     delete[] visibilityBuffer;
     
@@ -1664,7 +1664,7 @@ static JSValueRef setPageVisibilityCallback(JSContextRef context, JSObjectRef fu
 
 static JSValueRef resetPageVisibilityCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     controller->resetPageVisibility();
     return JSValueMakeUndefined(context);
 }    
@@ -1674,7 +1674,7 @@ static JSValueRef setSmartInsertDeleteEnabledCallback(JSContextRef context, JSOb
     if (argumentCount < 1)
         return JSValueMakeUndefined(context);
 
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     controller->setSmartInsertDeleteEnabled(JSValueToBoolean(context, arguments[0]));
     return JSValueMakeUndefined(context);
 }
@@ -1684,7 +1684,7 @@ static JSValueRef setAutomaticLinkDetectionEnabledCallback(JSContextRef context,
     if (argumentCount < 1)
         return JSValueMakeUndefined(context);
 
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     controller->setAutomaticLinkDetectionEnabled(JSValueToBoolean(context, arguments[0]));
     return JSValueMakeUndefined(context);
 }
@@ -1694,14 +1694,14 @@ static JSValueRef setSelectTrailingWhitespaceEnabledCallback(JSContextRef contex
     if (argumentCount < 1)
         return JSValueMakeUndefined(context);
 
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     controller->setSelectTrailingWhitespaceEnabled(JSValueToBoolean(context, arguments[0]));
     return JSValueMakeUndefined(context);
 }
 
 static JSValueRef setStopProvisionalFrameLoadsCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     controller->setStopProvisionalFrameLoads(true);
     return JSValueMakeUndefined(context);
 }
@@ -1711,28 +1711,28 @@ static JSValueRef setAsynchronousSpellCheckingEnabledCallback(JSContextRef conte
     if (argumentCount < 1)
         return JSValueMakeUndefined(context);
 
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     controller->setAsynchronousSpellCheckingEnabled(JSValueToBoolean(context, arguments[0]));
     return JSValueMakeUndefined(context);
 }
 
 static JSValueRef showWebInspectorCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     controller->showWebInspector();
     return JSValueMakeUndefined(context);
 }
 
 static JSValueRef closeWebInspectorCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     controller->closeWebInspector();
     return JSValueMakeUndefined(context);
 }
 
 static JSValueRef evaluateInWebInspectorCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     double callId = JSValueToNumber(context, arguments[0], exception);
     ASSERT(!*exception);
     JSRetainPtr<JSStringRef> script(Adopt, JSValueToStringCopy(context, arguments[1], exception));
@@ -1744,7 +1744,7 @@ static JSValueRef evaluateInWebInspectorCallback(JSContextRef context, JSObjectR
 
 static JSValueRef evaluateScriptInIsolatedWorldCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     double worldID = JSValueToNumber(context, arguments[0], exception);
     ASSERT(!*exception);
     JSRetainPtr<JSStringRef> script(Adopt, JSValueToStringCopy(context, arguments[1], exception));
@@ -1756,7 +1756,7 @@ static JSValueRef evaluateScriptInIsolatedWorldCallback(JSContextRef context, JS
 
 static JSValueRef evaluateScriptInIsolatedWorldAndReturnValueCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     double worldID = JSValueToNumber(context, arguments[0], exception);
     ASSERT(!*exception);
     JSRetainPtr<JSStringRef> script(Adopt, JSValueToStringCopy(context, arguments[1], exception));
@@ -1768,7 +1768,7 @@ static JSValueRef evaluateScriptInIsolatedWorldAndReturnValueCallback(JSContextR
 
 static JSValueRef elementDoesAutoCompleteForElementWithIdCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     JSRetainPtr<JSStringRef> elementId(Adopt, JSValueToStringCopy(context, arguments[0], exception));
     ASSERT(!*exception);
 
@@ -1789,7 +1789,7 @@ static JSValueRef pauseAnimationAtTimeOnElementWithIdCallback(JSContextRef conte
     JSRetainPtr<JSStringRef> elementId(Adopt, JSValueToStringCopy(context, arguments[2], exception));
     ASSERT(!*exception);
 
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     return JSValueMakeBoolean(context, controller->pauseAnimationAtTimeOnElementWithId(animationName.get(), time, elementId.get()));
 }
 
@@ -1805,7 +1805,7 @@ static JSValueRef pauseTransitionAtTimeOnElementWithIdCallback(JSContextRef cont
     JSRetainPtr<JSStringRef> elementId(Adopt, JSValueToStringCopy(context, arguments[2], exception));
     ASSERT(!*exception);
 
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     return JSValueMakeBoolean(context, controller->pauseTransitionAtTimeOnElementWithId(propertyName.get(), time, elementId.get()));
 }
 
@@ -1814,13 +1814,13 @@ static JSValueRef numberOfActiveAnimationsCallback(JSContextRef context, JSObjec
     if (argumentCount != 0)
         return JSValueMakeUndefined(context);
 
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     return JSValueMakeNumber(context, controller->numberOfActiveAnimations());
 }
 
 static JSValueRef waitForPolicyDelegateCallback(JSContextRef context, JSObjectRef, JSObjectRef thisObject, size_t, const JSValueRef[], JSValueRef*)
 {
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     controller->waitForPolicyDelegate();
     return JSValueMakeUndefined(context);
 }
@@ -1838,7 +1838,7 @@ static JSValueRef addOriginAccessWhitelistEntryCallback(JSContextRef context, JS
     ASSERT(!*exception);
     bool allowDestinationSubdomains = JSValueToBoolean(context, arguments[3]);
 
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     controller->addOriginAccessWhitelistEntry(sourceOrigin.get(), destinationProtocol.get(), destinationHost.get(), allowDestinationSubdomains);
     return JSValueMakeUndefined(context);
 }
@@ -1856,7 +1856,7 @@ static JSValueRef removeOriginAccessWhitelistEntryCallback(JSContextRef context,
     ASSERT(!*exception);
     bool allowDestinationSubdomains = JSValueToBoolean(context, arguments[3]);
 
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     controller->removeOriginAccessWhitelistEntry(sourceOrigin.get(), destinationProtocol.get(), destinationHost.get(), allowDestinationSubdomains);
     return JSValueMakeUndefined(context);
 }
@@ -1871,7 +1871,7 @@ static JSValueRef setScrollbarPolicyCallback(JSContextRef context, JSObjectRef, 
     JSRetainPtr<JSStringRef> policy(Adopt, JSValueToStringCopy(context, arguments[1], exception));
     ASSERT(!*exception);
 
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     controller->setScrollbarPolicy(orientation.get(), policy.get());
     return JSValueMakeUndefined(context);
 }
@@ -1886,7 +1886,7 @@ static JSValueRef addUserScriptCallback(JSContextRef context, JSObjectRef, JSObj
     bool runAtStart = JSValueToBoolean(context, arguments[1]);
     bool allFrames = JSValueToBoolean(context, arguments[2]);
     
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     controller->addUserScript(source.get(), runAtStart, allFrames);
     return JSValueMakeUndefined(context);
 }
@@ -1900,7 +1900,7 @@ static JSValueRef addUserStyleSheetCallback(JSContextRef context, JSObjectRef, J
     ASSERT(!*exception);
     bool allFrames = JSValueToBoolean(context, arguments[1]);
    
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     controller->addUserStyleSheet(source.get(), allFrames);
     return JSValueMakeUndefined(context);
 }
@@ -1911,7 +1911,7 @@ static JSValueRef setShouldPaintBrokenImageCallback(JSContextRef context, JSObje
     if (argumentCount < 1)
         return JSValueMakeUndefined(context);
 
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     controller->setShouldPaintBrokenImage(JSValueToBoolean(context, arguments[0]));
 
     return JSValueMakeUndefined(context);
@@ -1928,14 +1928,14 @@ static JSValueRef apiTestNewWindowDataLoadBaseURLCallback(JSContextRef context, 
     JSRetainPtr<JSStringRef> baseURL(Adopt, JSValueToStringCopy(context, arguments[1], exception));
     ASSERT(!*exception);
         
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     controller->apiTestNewWindowDataLoadBaseURL(utf8Data.get(), baseURL.get());
     return JSValueMakeUndefined(context);
 }
 
 static JSValueRef apiTestGoToCurrentBackForwardItemCallback(JSContextRef context, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     controller->apiTestGoToCurrentBackForwardItem();
     return JSValueMakeUndefined(context);
 }
@@ -1946,7 +1946,7 @@ static JSValueRef setWebViewEditableCallback(JSContextRef context, JSObjectRef f
     if (argumentCount < 1)
         return JSValueMakeUndefined(context);
 
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     controller->setWebViewEditable(JSValueToBoolean(context, arguments[0]));
 
     return JSValueMakeUndefined(context);
@@ -1961,7 +1961,7 @@ static JSValueRef sendWebIntentResponseCallback(JSContextRef context, JSObjectRe
     } else
         response.adopt(JSStringCreateWithUTF8CString(0));
 
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     controller->sendWebIntentResponse(response.get());
 
     return JSValueMakeUndefined(context);
@@ -1979,7 +1979,7 @@ static JSValueRef deliverWebIntentCallback(JSContextRef context, JSObjectRef fun
     JSRetainPtr<JSStringRef> data(Adopt, JSValueToStringCopy(context, arguments[2], exception));
     ASSERT(!*exception);
 
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     controller->deliverWebIntent(action.get(), type.get(), data.get());
 
     return JSValueMakeUndefined(context);
@@ -1987,14 +1987,14 @@ static JSValueRef deliverWebIntentCallback(JSContextRef context, JSObjectRef fun
 
 static JSValueRef abortModalCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     controller->abortModal();
     return JSValueMakeUndefined(context);
 }
 
 static JSValueRef markerTextForListItemCallback(JSContextRef context, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     if (argumentCount < 1)
         return JSValueMakeUndefined(context);
     return JSValueMakeString(context, controller->markerTextForListItem(context, arguments[0]).get());
@@ -2013,7 +2013,7 @@ static JSValueRef authenticateSessionCallback(JSContextRef context, JSObjectRef,
     JSRetainPtr<JSStringRef> password(Adopt, JSValueToStringCopy(context, arguments[2], exception));
     ASSERT(!*exception);
 
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     controller->authenticateSession(url.get(), username.get(), password.get());
     return JSValueMakeUndefined(context);
 }
@@ -2024,13 +2024,13 @@ static JSValueRef setSerializeHTTPLoadsCallback(JSContextRef context, JSObjectRe
     if (argumentCount == 1)
         serialize = JSValueToBoolean(context, arguments[0]);
 
-    LayoutTestController::setSerializeHTTPLoads(serialize);
+    TestRunner::setSerializeHTTPLoads(serialize);
     return JSValueMakeUndefined(context);
 }
 
 static JSValueRef setShouldStayOnPageAfterHandlingBeforeUnloadCallback(JSContextRef context, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     
     if (argumentCount == 1)
         controller->setShouldStayOnPageAfterHandlingBeforeUnload(JSValueToBoolean(context, arguments[0]));
@@ -2040,7 +2040,7 @@ static JSValueRef setShouldStayOnPageAfterHandlingBeforeUnloadCallback(JSContext
 
 static JSValueRef addChromeInputFieldCallback(JSContextRef context, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     controller->addChromeInputField();
     // the first argument is a callback that is called once the input field has been added
     if (argumentCount == 1)
@@ -2050,7 +2050,7 @@ static JSValueRef addChromeInputFieldCallback(JSContextRef context, JSObjectRef,
 
 static JSValueRef removeChromeInputFieldCallback(JSContextRef context, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     controller->removeChromeInputField();
     // the first argument is a callback that is called once the input field has been added
     if (argumentCount == 1)
@@ -2060,7 +2060,7 @@ static JSValueRef removeChromeInputFieldCallback(JSContextRef context, JSObjectR
 
 static JSValueRef focusWebViewCallback(JSContextRef context, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     controller->focusWebView();
     // the first argument is a callback that is called once the input field has been added
     if (argumentCount == 1)
@@ -2076,7 +2076,7 @@ static JSValueRef setBackingScaleFactorCallback(JSContextRef context, JSObjectRe
     double backingScaleFactor = JSValueToNumber(context, arguments[0], exception);
     ASSERT(!*exception);
 
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     controller->setBackingScaleFactor(backingScaleFactor);
 
     // The second argument is a callback that is called once the backing scale factor has been set.
@@ -2093,26 +2093,26 @@ static JSValueRef preciseTimeCallback(JSContextRef context, JSObjectRef, JSObjec
 
 static JSValueRef getGlobalFlagCallback(JSContextRef context, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef* exception)
 {
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     return JSValueMakeBoolean(context, controller->globalFlag());
 }
 
 static JSValueRef getWebHistoryItemCountCallback(JSContextRef context, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef* exception)
 {
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     return JSValueMakeNumber(context, controller->webHistoryItemCount());
 }
 
 static JSValueRef getWorkerThreadCountCallback(JSContextRef context, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef* exception)
 {
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     return JSValueMakeNumber(context, controller->workerThreadCount());
 }
 
 #if PLATFORM(MAC) || PLATFORM(GTK) || PLATFORM(WIN)
 static JSValueRef getPlatformNameCallback(JSContextRef context, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef* exception)
 {
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     JSRetainPtr<JSStringRef> platformName(controller->platformName());
     if (!platformName.get())
         return JSValueMakeUndefined(context);
@@ -2122,28 +2122,28 @@ static JSValueRef getPlatformNameCallback(JSContextRef context, JSObjectRef this
 
 static JSValueRef getTitleTextDirectionCallback(JSContextRef context, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef* exception)
 {
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     JSRetainPtr<JSStringRef> titleDirection(Adopt, JSStringCreateWithUTF8CString(controller->titleTextDirection().c_str()));
     return JSValueMakeString(context, titleDirection.get());
 }
 
 static bool setGlobalFlagCallback(JSContextRef context, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef value, JSValueRef* exception)
 {
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     controller->setGlobalFlag(JSValueToBoolean(context, value));
     return true;
 }
 
 static JSValueRef ignoreDesktopNotificationPermissionRequestsCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     controller->ignoreDesktopNotificationPermissionRequests();
     return JSValueMakeUndefined(context);
 }
 
 static JSValueRef simulateDesktopNotificationClickCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject)); 
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject)); 
     JSRetainPtr<JSStringRef> title(Adopt, JSValueToStringCopy(context, arguments[0], exception));
     controller->simulateDesktopNotificationClick(title.get());
     return JSValueMakeUndefined(context);
@@ -2157,7 +2157,7 @@ static JSValueRef setMinimumTimerIntervalCallback(JSContextRef context, JSObject
     double minimum = JSValueToNumber(context, arguments[0], exception);
     ASSERT(!*exception);
 
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     controller->setMinimumTimerInterval(minimum);
 
     return JSValueMakeUndefined(context);
@@ -2167,7 +2167,7 @@ static JSValueRef setTextDirectionCallback(JSContextRef context, JSObjectRef fun
 {
     if (argumentCount == 1) {
         JSRetainPtr<JSStringRef> direction(Adopt, JSValueToStringCopy(context, arguments[0], exception));
-        LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+        TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
         controller->setTextDirection(direction.get());
     }
 
@@ -2179,7 +2179,7 @@ static JSValueRef setHasCustomFullScreenBehaviorCallback(JSContextRef context, J
 {
     if (argumentCount == 1) {
         bool hasCustomBehavior = JSValueToBoolean(context, arguments[0]);
-        LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+        TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
         controller->setHasCustomFullScreenBehavior(hasCustomBehavior);
     }
 
@@ -2194,21 +2194,21 @@ static JSValueRef setStorageDatabaseIdleIntervalCallback(JSContextRef context, J
     double interval = JSValueToNumber(context, arguments[0], exception);
     ASSERT(!*exception);
 
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     controller->setStorageDatabaseIdleInterval(interval);
 
     return JSValueMakeUndefined(context);
 }
 
-static void layoutTestControllerObjectFinalize(JSObjectRef object)
+static void testRunnerObjectFinalize(JSObjectRef object)
 {
-    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(object));
+    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(object));
     controller->deref();
 }
 
 // Object Creation
 
-void LayoutTestController::makeWindowObject(JSContextRef context, JSObjectRef windowObject, JSValueRef* exception)
+void TestRunner::makeWindowObject(JSContextRef context, JSObjectRef windowObject, JSValueRef* exception)
 {
     JSRetainPtr<JSStringRef> testRunnerStr(Adopt, JSStringCreateWithUTF8CString("testRunner"));
     ref();
@@ -2221,19 +2221,19 @@ void LayoutTestController::makeWindowObject(JSContextRef context, JSObjectRef wi
     JSObjectSetProperty(context, windowObject, testRunnerStr.get(), layoutTestContollerObject, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete, exception);
 }
 
-JSClassRef LayoutTestController::getJSClass()
+JSClassRef TestRunner::getJSClass()
 {
-    static JSStaticValue* staticValues = LayoutTestController::staticValues();
-    static JSStaticFunction* staticFunctions = LayoutTestController::staticFunctions();
+    static JSStaticValue* staticValues = TestRunner::staticValues();
+    static JSStaticFunction* staticFunctions = TestRunner::staticFunctions();
     static JSClassDefinition classDefinition = {
-        0, kJSClassAttributeNone, "LayoutTestController", 0, staticValues, staticFunctions,
-        0, layoutTestControllerObjectFinalize, 0, 0, 0, 0, 0, 0, 0, 0, 0
+        0, kJSClassAttributeNone, "TestRunner", 0, staticValues, staticFunctions,
+        0, testRunnerObjectFinalize, 0, 0, 0, 0, 0, 0, 0, 0, 0
     };
 
     return JSClassCreate(&classDefinition);
 }
 
-JSStaticValue* LayoutTestController::staticValues()
+JSStaticValue* TestRunner::staticValues()
 {
     static JSStaticValue staticValues[] = {
         { "globalFlag", getGlobalFlagCallback, setGlobalFlagCallback, kJSPropertyAttributeNone },
@@ -2248,7 +2248,7 @@ JSStaticValue* LayoutTestController::staticValues()
     return staticValues;
 }
 
-JSStaticFunction* LayoutTestController::staticFunctions()
+JSStaticFunction* TestRunner::staticFunctions()
 {
     static JSStaticFunction staticFunctions[] = {
         { "abortModal", abortModalCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
@@ -2423,47 +2423,47 @@ JSStaticFunction* LayoutTestController::staticFunctions()
     return staticFunctions;
 }
 
-void LayoutTestController::queueLoadHTMLString(JSStringRef content, JSStringRef baseURL)
+void TestRunner::queueLoadHTMLString(JSStringRef content, JSStringRef baseURL)
 {
     WorkQueue::shared()->queue(new LoadHTMLStringItem(content, baseURL));
 }
 
-void LayoutTestController::queueLoadAlternateHTMLString(JSStringRef content, JSStringRef baseURL, JSStringRef unreachableURL)
+void TestRunner::queueLoadAlternateHTMLString(JSStringRef content, JSStringRef baseURL, JSStringRef unreachableURL)
 {
     WorkQueue::shared()->queue(new LoadHTMLStringItem(content, baseURL, unreachableURL));
 }
 
-void LayoutTestController::queueBackNavigation(int howFarBack)
+void TestRunner::queueBackNavigation(int howFarBack)
 {
     WorkQueue::shared()->queue(new BackItem(howFarBack));
 }
 
-void LayoutTestController::queueForwardNavigation(int howFarForward)
+void TestRunner::queueForwardNavigation(int howFarForward)
 {
     WorkQueue::shared()->queue(new ForwardItem(howFarForward));
 }
 
-void LayoutTestController::queueLoadingScript(JSStringRef script)
+void TestRunner::queueLoadingScript(JSStringRef script)
 {
     WorkQueue::shared()->queue(new LoadingScriptItem(script));
 }
 
-void LayoutTestController::queueNonLoadingScript(JSStringRef script)
+void TestRunner::queueNonLoadingScript(JSStringRef script)
 {
     WorkQueue::shared()->queue(new NonLoadingScriptItem(script));
 }
 
-void LayoutTestController::queueReload()
+void TestRunner::queueReload()
 {
     WorkQueue::shared()->queue(new ReloadItem);
 }
 
-void LayoutTestController::grantDesktopNotificationPermission(JSStringRef origin)
+void TestRunner::grantDesktopNotificationPermission(JSStringRef origin)
 {
     m_desktopNotificationAllowedOrigins.push_back(JSStringRetain(origin));
 }
 
-bool LayoutTestController::checkDesktopNotificationPermission(JSStringRef origin)
+bool TestRunner::checkDesktopNotificationPermission(JSStringRef origin)
 {
     std::vector<JSStringRef>::iterator i;
     for (i = m_desktopNotificationAllowedOrigins.begin();
@@ -2475,12 +2475,12 @@ bool LayoutTestController::checkDesktopNotificationPermission(JSStringRef origin
     return false;
 }
 
-void LayoutTestController::ignoreDesktopNotificationPermissionRequests()
+void TestRunner::ignoreDesktopNotificationPermissionRequests()
 {
     m_areDesktopNotificationPermissionRequestsIgnored = false;
 }
 
-void LayoutTestController::waitToDumpWatchdogTimerFired()
+void TestRunner::waitToDumpWatchdogTimerFired()
 {
     const char* message = "FAIL: Timed out waiting for notifyDone to be called\n";
     fprintf(stderr, "%s", message);
@@ -2488,33 +2488,33 @@ void LayoutTestController::waitToDumpWatchdogTimerFired()
     notifyDone();
 }
 
-void LayoutTestController::setGeolocationPermissionCommon(bool allow)
+void TestRunner::setGeolocationPermissionCommon(bool allow)
 {
     m_isGeolocationPermissionSet = true;
     m_geolocationPermission = allow;
 }
 
-void LayoutTestController::setPOSIXLocale(JSStringRef locale)
+void TestRunner::setPOSIXLocale(JSStringRef locale)
 {
     char localeBuf[32];
     JSStringGetUTF8CString(locale, localeBuf, sizeof(localeBuf));
     setlocale(LC_ALL, localeBuf);
 }
 
-void LayoutTestController::addURLToRedirect(std::string origin, std::string destination)
+void TestRunner::addURLToRedirect(std::string origin, std::string destination)
 {
     m_URLsToRedirect[origin] = destination;
 }
 
-const std::string& LayoutTestController::redirectionDestinationForURL(std::string origin)
+const std::string& TestRunner::redirectionDestinationForURL(std::string origin)
 {
     return m_URLsToRedirect[origin];
 }
 
-void LayoutTestController::setShouldPaintBrokenImage(bool shouldPaintBrokenImage)
+void TestRunner::setShouldPaintBrokenImage(bool shouldPaintBrokenImage)
 {
     m_shouldPaintBrokenImage = shouldPaintBrokenImage;
 }
 
-const unsigned LayoutTestController::maxViewWidth = 800;
-const unsigned LayoutTestController::maxViewHeight = 600;
+const unsigned TestRunner::maxViewWidth = 800;
+const unsigned TestRunner::maxViewHeight = 600;

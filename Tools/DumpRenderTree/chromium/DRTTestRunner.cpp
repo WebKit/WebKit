@@ -94,7 +94,7 @@ public:
     virtual void destroy() { }
 };
 
-LayoutTestController::LayoutTestController(TestShell* shell)
+DRTTestRunner::DRTTestRunner(TestShell* shell)
     : m_shell(shell)
     , m_closeRemainingWindows(false)
     , m_deferMainResourceDataLoad(false)
@@ -107,178 +107,178 @@ LayoutTestController::LayoutTestController(TestShell* shell)
     // Initialize the map that associates methods of this class with the names
     // they will use when called by JavaScript. The actual binding of those
     // names to their methods will be done by calling bindToJavaScript() (defined
-    // by CppBoundClass, the parent to LayoutTestController).
-    bindMethod("addFileToPasteboardOnDrag", &LayoutTestController::addFileToPasteboardOnDrag);
+    // by CppBoundClass, the parent to DRTTestRunner).
+    bindMethod("addFileToPasteboardOnDrag", &DRTTestRunner::addFileToPasteboardOnDrag);
 #if ENABLE(INPUT_SPEECH)
-    bindMethod("addMockSpeechInputResult", &LayoutTestController::addMockSpeechInputResult);
-    bindMethod("setMockSpeechInputDumpRect", &LayoutTestController::setMockSpeechInputDumpRect);
+    bindMethod("addMockSpeechInputResult", &DRTTestRunner::addMockSpeechInputResult);
+    bindMethod("setMockSpeechInputDumpRect", &DRTTestRunner::setMockSpeechInputDumpRect);
 #endif
 #if ENABLE(SCRIPTED_SPEECH)
-    bindMethod("addMockSpeechRecognitionResult", &LayoutTestController::addMockSpeechRecognitionResult);
-    bindMethod("setMockSpeechRecognitionError", &LayoutTestController::setMockSpeechRecognitionError);
-    bindMethod("wasMockSpeechRecognitionAborted", &LayoutTestController::wasMockSpeechRecognitionAborted);
+    bindMethod("addMockSpeechRecognitionResult", &DRTTestRunner::addMockSpeechRecognitionResult);
+    bindMethod("setMockSpeechRecognitionError", &DRTTestRunner::setMockSpeechRecognitionError);
+    bindMethod("wasMockSpeechRecognitionAborted", &DRTTestRunner::wasMockSpeechRecognitionAborted);
 #endif
-    bindMethod("addOriginAccessWhitelistEntry", &LayoutTestController::addOriginAccessWhitelistEntry);
-    bindMethod("addUserScript", &LayoutTestController::addUserScript);
-    bindMethod("addUserStyleSheet", &LayoutTestController::addUserStyleSheet);
-    bindMethod("clearAllDatabases", &LayoutTestController::clearAllDatabases);
-    bindMethod("closeWebInspector", &LayoutTestController::closeWebInspector);
+    bindMethod("addOriginAccessWhitelistEntry", &DRTTestRunner::addOriginAccessWhitelistEntry);
+    bindMethod("addUserScript", &DRTTestRunner::addUserScript);
+    bindMethod("addUserStyleSheet", &DRTTestRunner::addUserStyleSheet);
+    bindMethod("clearAllDatabases", &DRTTestRunner::clearAllDatabases);
+    bindMethod("closeWebInspector", &DRTTestRunner::closeWebInspector);
 #if ENABLE(POINTER_LOCK)
-    bindMethod("didLosePointerLock", &LayoutTestController::didLosePointerLock);
+    bindMethod("didLosePointerLock", &DRTTestRunner::didLosePointerLock);
 #endif
-    bindMethod("disableAutoResizeMode", &LayoutTestController::disableAutoResizeMode);
-    bindMethod("disableImageLoading", &LayoutTestController::disableImageLoading);
-    bindMethod("display", &LayoutTestController::display);
-    bindMethod("displayInvalidatedRegion", &LayoutTestController::displayInvalidatedRegion);
-    bindMethod("dumpAsText", &LayoutTestController::dumpAsText);
-    bindMethod("dumpBackForwardList", &LayoutTestController::dumpBackForwardList);
-    bindMethod("dumpChildFramesAsText", &LayoutTestController::dumpChildFramesAsText);
-    bindMethod("dumpChildFrameScrollPositions", &LayoutTestController::dumpChildFrameScrollPositions);
-    bindMethod("dumpDatabaseCallbacks", &LayoutTestController::dumpDatabaseCallbacks);
-    bindMethod("dumpEditingCallbacks", &LayoutTestController::dumpEditingCallbacks);
-    bindMethod("dumpFrameLoadCallbacks", &LayoutTestController::dumpFrameLoadCallbacks);
-    bindMethod("dumpProgressFinishedCallback", &LayoutTestController::dumpProgressFinishedCallback);
-    bindMethod("dumpUserGestureInFrameLoadCallbacks", &LayoutTestController::dumpUserGestureInFrameLoadCallbacks);
-    bindMethod("dumpResourceLoadCallbacks", &LayoutTestController::dumpResourceLoadCallbacks);
-    bindMethod("dumpResourceResponseMIMETypes", &LayoutTestController::dumpResourceResponseMIMETypes);
-    bindMethod("dumpSelectionRect", &LayoutTestController::dumpSelectionRect);
-    bindMethod("dumpStatusCallbacks", &LayoutTestController::dumpWindowStatusChanges);
-    bindMethod("dumpTitleChanges", &LayoutTestController::dumpTitleChanges);
-    bindMethod("dumpPermissionClientCallbacks", &LayoutTestController::dumpPermissionClientCallbacks);
-    bindMethod("dumpCreateView", &LayoutTestController::dumpCreateView);
-    bindMethod("elementDoesAutoCompleteForElementWithId", &LayoutTestController::elementDoesAutoCompleteForElementWithId);
-    bindMethod("enableAutoResizeMode", &LayoutTestController::enableAutoResizeMode);
-    bindMethod("evaluateInWebInspector", &LayoutTestController::evaluateInWebInspector);
-    bindMethod("evaluateScriptInIsolatedWorld", &LayoutTestController::evaluateScriptInIsolatedWorld);
-    bindMethod("evaluateScriptInIsolatedWorldAndReturnValue", &LayoutTestController::evaluateScriptInIsolatedWorldAndReturnValue);
-    bindMethod("setIsolatedWorldSecurityOrigin", &LayoutTestController::setIsolatedWorldSecurityOrigin);
-    bindMethod("execCommand", &LayoutTestController::execCommand);
-    bindMethod("forceRedSelectionColors", &LayoutTestController::forceRedSelectionColors);
+    bindMethod("disableAutoResizeMode", &DRTTestRunner::disableAutoResizeMode);
+    bindMethod("disableImageLoading", &DRTTestRunner::disableImageLoading);
+    bindMethod("display", &DRTTestRunner::display);
+    bindMethod("displayInvalidatedRegion", &DRTTestRunner::displayInvalidatedRegion);
+    bindMethod("dumpAsText", &DRTTestRunner::dumpAsText);
+    bindMethod("dumpBackForwardList", &DRTTestRunner::dumpBackForwardList);
+    bindMethod("dumpChildFramesAsText", &DRTTestRunner::dumpChildFramesAsText);
+    bindMethod("dumpChildFrameScrollPositions", &DRTTestRunner::dumpChildFrameScrollPositions);
+    bindMethod("dumpDatabaseCallbacks", &DRTTestRunner::dumpDatabaseCallbacks);
+    bindMethod("dumpEditingCallbacks", &DRTTestRunner::dumpEditingCallbacks);
+    bindMethod("dumpFrameLoadCallbacks", &DRTTestRunner::dumpFrameLoadCallbacks);
+    bindMethod("dumpProgressFinishedCallback", &DRTTestRunner::dumpProgressFinishedCallback);
+    bindMethod("dumpUserGestureInFrameLoadCallbacks", &DRTTestRunner::dumpUserGestureInFrameLoadCallbacks);
+    bindMethod("dumpResourceLoadCallbacks", &DRTTestRunner::dumpResourceLoadCallbacks);
+    bindMethod("dumpResourceResponseMIMETypes", &DRTTestRunner::dumpResourceResponseMIMETypes);
+    bindMethod("dumpSelectionRect", &DRTTestRunner::dumpSelectionRect);
+    bindMethod("dumpStatusCallbacks", &DRTTestRunner::dumpWindowStatusChanges);
+    bindMethod("dumpTitleChanges", &DRTTestRunner::dumpTitleChanges);
+    bindMethod("dumpPermissionClientCallbacks", &DRTTestRunner::dumpPermissionClientCallbacks);
+    bindMethod("dumpCreateView", &DRTTestRunner::dumpCreateView);
+    bindMethod("elementDoesAutoCompleteForElementWithId", &DRTTestRunner::elementDoesAutoCompleteForElementWithId);
+    bindMethod("enableAutoResizeMode", &DRTTestRunner::enableAutoResizeMode);
+    bindMethod("evaluateInWebInspector", &DRTTestRunner::evaluateInWebInspector);
+    bindMethod("evaluateScriptInIsolatedWorld", &DRTTestRunner::evaluateScriptInIsolatedWorld);
+    bindMethod("evaluateScriptInIsolatedWorldAndReturnValue", &DRTTestRunner::evaluateScriptInIsolatedWorldAndReturnValue);
+    bindMethod("setIsolatedWorldSecurityOrigin", &DRTTestRunner::setIsolatedWorldSecurityOrigin);
+    bindMethod("execCommand", &DRTTestRunner::execCommand);
+    bindMethod("forceRedSelectionColors", &DRTTestRunner::forceRedSelectionColors);
 #if ENABLE(NOTIFICATIONS)
-    bindMethod("grantDesktopNotificationPermission", &LayoutTestController::grantDesktopNotificationPermission);
+    bindMethod("grantDesktopNotificationPermission", &DRTTestRunner::grantDesktopNotificationPermission);
 #endif
-    bindMethod("findString", &LayoutTestController::findString);
-    bindMethod("isCommandEnabled", &LayoutTestController::isCommandEnabled);
-    bindMethod("hasCustomPageSizeStyle", &LayoutTestController::hasCustomPageSizeStyle);
-    bindMethod("layerTreeAsText", &LayoutTestController::layerTreeAsText);
-    bindMethod("loseCompositorContext", &LayoutTestController::loseCompositorContext);
-    bindMethod("markerTextForListItem", &LayoutTestController::markerTextForListItem);
-    bindMethod("notifyDone", &LayoutTestController::notifyDone);
-    bindMethod("numberOfActiveAnimations", &LayoutTestController::numberOfActiveAnimations);
-    bindMethod("numberOfPages", &LayoutTestController::numberOfPages);
-    bindMethod("numberOfPendingGeolocationPermissionRequests", &LayoutTestController:: numberOfPendingGeolocationPermissionRequests);
-    bindMethod("objCIdentityIsEqual", &LayoutTestController::objCIdentityIsEqual);
-    bindMethod("overridePreference", &LayoutTestController::overridePreference);
-    bindMethod("pageProperty", &LayoutTestController::pageProperty);
-    bindMethod("pageSizeAndMarginsInPixels", &LayoutTestController::pageSizeAndMarginsInPixels);
-    bindMethod("pathToLocalResource", &LayoutTestController::pathToLocalResource);
-    bindMethod("pauseAnimationAtTimeOnElementWithId", &LayoutTestController::pauseAnimationAtTimeOnElementWithId);
-    bindMethod("pauseTransitionAtTimeOnElementWithId", &LayoutTestController::pauseTransitionAtTimeOnElementWithId);
-    bindMethod("queueBackNavigation", &LayoutTestController::queueBackNavigation);
-    bindMethod("queueForwardNavigation", &LayoutTestController::queueForwardNavigation);
-    bindMethod("queueLoadingScript", &LayoutTestController::queueLoadingScript);
-    bindMethod("queueLoad", &LayoutTestController::queueLoad);
-    bindMethod("queueLoadHTMLString", &LayoutTestController::queueLoadHTMLString);
-    bindMethod("queueNonLoadingScript", &LayoutTestController::queueNonLoadingScript);
-    bindMethod("queueReload", &LayoutTestController::queueReload);
-    bindMethod("removeOriginAccessWhitelistEntry", &LayoutTestController::removeOriginAccessWhitelistEntry);
-    bindMethod("repaintSweepHorizontally", &LayoutTestController::repaintSweepHorizontally);
-    bindMethod("resetPageVisibility", &LayoutTestController::resetPageVisibility);
-    bindMethod("setAcceptsEditing", &LayoutTestController::setAcceptsEditing);
-    bindMethod("setAllowDisplayOfInsecureContent", &LayoutTestController::setAllowDisplayOfInsecureContent);
-    bindMethod("setAllowFileAccessFromFileURLs", &LayoutTestController::setAllowFileAccessFromFileURLs);
-    bindMethod("setAllowRunningOfInsecureContent", &LayoutTestController::setAllowRunningOfInsecureContent);
-    bindMethod("setAllowUniversalAccessFromFileURLs", &LayoutTestController::setAllowUniversalAccessFromFileURLs);
-    bindMethod("setAlwaysAcceptCookies", &LayoutTestController::setAlwaysAcceptCookies);
-    bindMethod("setAuthorAndUserStylesEnabled", &LayoutTestController::setAuthorAndUserStylesEnabled);
-    bindMethod("setAutofilled", &LayoutTestController::setAutofilled);
-    bindMethod("setCanOpenWindows", &LayoutTestController::setCanOpenWindows);
-    bindMethod("setCloseRemainingWindowsWhenComplete", &LayoutTestController::setCloseRemainingWindowsWhenComplete);
-    bindMethod("setCustomPolicyDelegate", &LayoutTestController::setCustomPolicyDelegate);
-    bindMethod("setDatabaseQuota", &LayoutTestController::setDatabaseQuota);
-    bindMethod("setDeferMainResourceDataLoad", &LayoutTestController::setDeferMainResourceDataLoad);
-    bindMethod("setDomainRelaxationForbiddenForURLScheme", &LayoutTestController::setDomainRelaxationForbiddenForURLScheme);
-    bindMethod("setAudioData", &LayoutTestController::setAudioData);
-    bindMethod("setGeolocationPermission", &LayoutTestController::setGeolocationPermission);
-    bindMethod("setIconDatabaseEnabled", &LayoutTestController::setIconDatabaseEnabled);
-    bindMethod("setJavaScriptCanAccessClipboard", &LayoutTestController::setJavaScriptCanAccessClipboard);
-    bindMethod("setMinimumTimerInterval", &LayoutTestController::setMinimumTimerInterval);
-    bindMethod("setMockDeviceOrientation", &LayoutTestController::setMockDeviceOrientation);
-    bindMethod("setMockGeolocationError", &LayoutTestController::setMockGeolocationError);
-    bindMethod("setMockGeolocationPosition", &LayoutTestController::setMockGeolocationPosition);
-    bindMethod("setPageVisibility", &LayoutTestController::setPageVisibility);
-    bindMethod("setPluginsEnabled", &LayoutTestController::setPluginsEnabled);
+    bindMethod("findString", &DRTTestRunner::findString);
+    bindMethod("isCommandEnabled", &DRTTestRunner::isCommandEnabled);
+    bindMethod("hasCustomPageSizeStyle", &DRTTestRunner::hasCustomPageSizeStyle);
+    bindMethod("layerTreeAsText", &DRTTestRunner::layerTreeAsText);
+    bindMethod("loseCompositorContext", &DRTTestRunner::loseCompositorContext);
+    bindMethod("markerTextForListItem", &DRTTestRunner::markerTextForListItem);
+    bindMethod("notifyDone", &DRTTestRunner::notifyDone);
+    bindMethod("numberOfActiveAnimations", &DRTTestRunner::numberOfActiveAnimations);
+    bindMethod("numberOfPages", &DRTTestRunner::numberOfPages);
+    bindMethod("numberOfPendingGeolocationPermissionRequests", &DRTTestRunner:: numberOfPendingGeolocationPermissionRequests);
+    bindMethod("objCIdentityIsEqual", &DRTTestRunner::objCIdentityIsEqual);
+    bindMethod("overridePreference", &DRTTestRunner::overridePreference);
+    bindMethod("pageProperty", &DRTTestRunner::pageProperty);
+    bindMethod("pageSizeAndMarginsInPixels", &DRTTestRunner::pageSizeAndMarginsInPixels);
+    bindMethod("pathToLocalResource", &DRTTestRunner::pathToLocalResource);
+    bindMethod("pauseAnimationAtTimeOnElementWithId", &DRTTestRunner::pauseAnimationAtTimeOnElementWithId);
+    bindMethod("pauseTransitionAtTimeOnElementWithId", &DRTTestRunner::pauseTransitionAtTimeOnElementWithId);
+    bindMethod("queueBackNavigation", &DRTTestRunner::queueBackNavigation);
+    bindMethod("queueForwardNavigation", &DRTTestRunner::queueForwardNavigation);
+    bindMethod("queueLoadingScript", &DRTTestRunner::queueLoadingScript);
+    bindMethod("queueLoad", &DRTTestRunner::queueLoad);
+    bindMethod("queueLoadHTMLString", &DRTTestRunner::queueLoadHTMLString);
+    bindMethod("queueNonLoadingScript", &DRTTestRunner::queueNonLoadingScript);
+    bindMethod("queueReload", &DRTTestRunner::queueReload);
+    bindMethod("removeOriginAccessWhitelistEntry", &DRTTestRunner::removeOriginAccessWhitelistEntry);
+    bindMethod("repaintSweepHorizontally", &DRTTestRunner::repaintSweepHorizontally);
+    bindMethod("resetPageVisibility", &DRTTestRunner::resetPageVisibility);
+    bindMethod("setAcceptsEditing", &DRTTestRunner::setAcceptsEditing);
+    bindMethod("setAllowDisplayOfInsecureContent", &DRTTestRunner::setAllowDisplayOfInsecureContent);
+    bindMethod("setAllowFileAccessFromFileURLs", &DRTTestRunner::setAllowFileAccessFromFileURLs);
+    bindMethod("setAllowRunningOfInsecureContent", &DRTTestRunner::setAllowRunningOfInsecureContent);
+    bindMethod("setAllowUniversalAccessFromFileURLs", &DRTTestRunner::setAllowUniversalAccessFromFileURLs);
+    bindMethod("setAlwaysAcceptCookies", &DRTTestRunner::setAlwaysAcceptCookies);
+    bindMethod("setAuthorAndUserStylesEnabled", &DRTTestRunner::setAuthorAndUserStylesEnabled);
+    bindMethod("setAutofilled", &DRTTestRunner::setAutofilled);
+    bindMethod("setCanOpenWindows", &DRTTestRunner::setCanOpenWindows);
+    bindMethod("setCloseRemainingWindowsWhenComplete", &DRTTestRunner::setCloseRemainingWindowsWhenComplete);
+    bindMethod("setCustomPolicyDelegate", &DRTTestRunner::setCustomPolicyDelegate);
+    bindMethod("setDatabaseQuota", &DRTTestRunner::setDatabaseQuota);
+    bindMethod("setDeferMainResourceDataLoad", &DRTTestRunner::setDeferMainResourceDataLoad);
+    bindMethod("setDomainRelaxationForbiddenForURLScheme", &DRTTestRunner::setDomainRelaxationForbiddenForURLScheme);
+    bindMethod("setAudioData", &DRTTestRunner::setAudioData);
+    bindMethod("setGeolocationPermission", &DRTTestRunner::setGeolocationPermission);
+    bindMethod("setIconDatabaseEnabled", &DRTTestRunner::setIconDatabaseEnabled);
+    bindMethod("setJavaScriptCanAccessClipboard", &DRTTestRunner::setJavaScriptCanAccessClipboard);
+    bindMethod("setMinimumTimerInterval", &DRTTestRunner::setMinimumTimerInterval);
+    bindMethod("setMockDeviceOrientation", &DRTTestRunner::setMockDeviceOrientation);
+    bindMethod("setMockGeolocationError", &DRTTestRunner::setMockGeolocationError);
+    bindMethod("setMockGeolocationPosition", &DRTTestRunner::setMockGeolocationPosition);
+    bindMethod("setPageVisibility", &DRTTestRunner::setPageVisibility);
+    bindMethod("setPluginsEnabled", &DRTTestRunner::setPluginsEnabled);
 #if ENABLE(POINTER_LOCK)
-    bindMethod("setPointerLockWillFailAsynchronously", &LayoutTestController::setPointerLockWillFailAsynchronously);
-    bindMethod("setPointerLockWillFailSynchronously", &LayoutTestController::setPointerLockWillFailSynchronously);
+    bindMethod("setPointerLockWillFailAsynchronously", &DRTTestRunner::setPointerLockWillFailAsynchronously);
+    bindMethod("setPointerLockWillFailSynchronously", &DRTTestRunner::setPointerLockWillFailSynchronously);
 #endif
-    bindMethod("setPopupBlockingEnabled", &LayoutTestController::setPopupBlockingEnabled);
-    bindMethod("setPOSIXLocale", &LayoutTestController::setPOSIXLocale);
-    bindMethod("setPrinting", &LayoutTestController::setPrinting);
-    bindMethod("setScrollbarPolicy", &LayoutTestController::setScrollbarPolicy);
-    bindMethod("setSelectTrailingWhitespaceEnabled", &LayoutTestController::setSelectTrailingWhitespaceEnabled);
-    bindMethod("setTextSubpixelPositioning", &LayoutTestController::setTextSubpixelPositioning);
-    bindMethod("setBackingScaleFactor", &LayoutTestController::setBackingScaleFactor);
-    bindMethod("setSmartInsertDeleteEnabled", &LayoutTestController::setSmartInsertDeleteEnabled);
-    bindMethod("setStopProvisionalFrameLoads", &LayoutTestController::setStopProvisionalFrameLoads);
-    bindMethod("setTabKeyCyclesThroughElements", &LayoutTestController::setTabKeyCyclesThroughElements);
-    bindMethod("setUserStyleSheetEnabled", &LayoutTestController::setUserStyleSheetEnabled);
-    bindMethod("setUserStyleSheetLocation", &LayoutTestController::setUserStyleSheetLocation);
-    bindMethod("setValueForUser", &LayoutTestController::setValueForUser);
-    bindMethod("setWillSendRequestClearHeader", &LayoutTestController::setWillSendRequestClearHeader);
-    bindMethod("setWillSendRequestReturnsNull", &LayoutTestController::setWillSendRequestReturnsNull);
-    bindMethod("setWillSendRequestReturnsNullOnRedirect", &LayoutTestController::setWillSendRequestReturnsNullOnRedirect);
-    bindMethod("setWindowIsKey", &LayoutTestController::setWindowIsKey);
-    bindMethod("setXSSAuditorEnabled", &LayoutTestController::setXSSAuditorEnabled);
-    bindMethod("setAsynchronousSpellCheckingEnabled", &LayoutTestController::setAsynchronousSpellCheckingEnabled);
-    bindMethod("showWebInspector", &LayoutTestController::showWebInspector);
+    bindMethod("setPopupBlockingEnabled", &DRTTestRunner::setPopupBlockingEnabled);
+    bindMethod("setPOSIXLocale", &DRTTestRunner::setPOSIXLocale);
+    bindMethod("setPrinting", &DRTTestRunner::setPrinting);
+    bindMethod("setScrollbarPolicy", &DRTTestRunner::setScrollbarPolicy);
+    bindMethod("setSelectTrailingWhitespaceEnabled", &DRTTestRunner::setSelectTrailingWhitespaceEnabled);
+    bindMethod("setTextSubpixelPositioning", &DRTTestRunner::setTextSubpixelPositioning);
+    bindMethod("setBackingScaleFactor", &DRTTestRunner::setBackingScaleFactor);
+    bindMethod("setSmartInsertDeleteEnabled", &DRTTestRunner::setSmartInsertDeleteEnabled);
+    bindMethod("setStopProvisionalFrameLoads", &DRTTestRunner::setStopProvisionalFrameLoads);
+    bindMethod("setTabKeyCyclesThroughElements", &DRTTestRunner::setTabKeyCyclesThroughElements);
+    bindMethod("setUserStyleSheetEnabled", &DRTTestRunner::setUserStyleSheetEnabled);
+    bindMethod("setUserStyleSheetLocation", &DRTTestRunner::setUserStyleSheetLocation);
+    bindMethod("setValueForUser", &DRTTestRunner::setValueForUser);
+    bindMethod("setWillSendRequestClearHeader", &DRTTestRunner::setWillSendRequestClearHeader);
+    bindMethod("setWillSendRequestReturnsNull", &DRTTestRunner::setWillSendRequestReturnsNull);
+    bindMethod("setWillSendRequestReturnsNullOnRedirect", &DRTTestRunner::setWillSendRequestReturnsNullOnRedirect);
+    bindMethod("setWindowIsKey", &DRTTestRunner::setWindowIsKey);
+    bindMethod("setXSSAuditorEnabled", &DRTTestRunner::setXSSAuditorEnabled);
+    bindMethod("setAsynchronousSpellCheckingEnabled", &DRTTestRunner::setAsynchronousSpellCheckingEnabled);
+    bindMethod("showWebInspector", &DRTTestRunner::showWebInspector);
 #if ENABLE(NOTIFICATIONS)
-    bindMethod("simulateDesktopNotificationClick", &LayoutTestController::simulateDesktopNotificationClick);
+    bindMethod("simulateDesktopNotificationClick", &DRTTestRunner::simulateDesktopNotificationClick);
 #endif
-    bindMethod("startSpeechInput", &LayoutTestController::startSpeechInput);
-    bindMethod("testRepaint", &LayoutTestController::testRepaint);
-    bindMethod("waitForPolicyDelegate", &LayoutTestController::waitForPolicyDelegate);
-    bindMethod("waitUntilDone", &LayoutTestController::waitUntilDone);
-    bindMethod("windowCount", &LayoutTestController::windowCount);
-    bindMethod("setTextDirection", &LayoutTestController::setTextDirection);
-    bindMethod("setImagesAllowed", &LayoutTestController::setImagesAllowed);
-    bindMethod("setScriptsAllowed", &LayoutTestController::setScriptsAllowed);
-    bindMethod("setStorageAllowed", &LayoutTestController::setStorageAllowed);
-    bindMethod("setPluginsAllowed", &LayoutTestController::setPluginsAllowed);
+    bindMethod("startSpeechInput", &DRTTestRunner::startSpeechInput);
+    bindMethod("testRepaint", &DRTTestRunner::testRepaint);
+    bindMethod("waitForPolicyDelegate", &DRTTestRunner::waitForPolicyDelegate);
+    bindMethod("waitUntilDone", &DRTTestRunner::waitUntilDone);
+    bindMethod("windowCount", &DRTTestRunner::windowCount);
+    bindMethod("setTextDirection", &DRTTestRunner::setTextDirection);
+    bindMethod("setImagesAllowed", &DRTTestRunner::setImagesAllowed);
+    bindMethod("setScriptsAllowed", &DRTTestRunner::setScriptsAllowed);
+    bindMethod("setStorageAllowed", &DRTTestRunner::setStorageAllowed);
+    bindMethod("setPluginsAllowed", &DRTTestRunner::setPluginsAllowed);
 
     // The following are stubs.
-    bindMethod("abortModal", &LayoutTestController::abortModal);
-    bindMethod("accessStoredWebScriptObject", &LayoutTestController::accessStoredWebScriptObject);
-    bindMethod("addDisallowedURL", &LayoutTestController::addDisallowedURL);
-    bindMethod("applicationCacheDiskUsageForOrigin", &LayoutTestController::applicationCacheDiskUsageForOrigin);
-    bindMethod("callShouldCloseOnWebView", &LayoutTestController::callShouldCloseOnWebView);
-    bindMethod("clearAllApplicationCaches", &LayoutTestController::clearAllApplicationCaches);
-    bindMethod("clearApplicationCacheForOrigin", &LayoutTestController::clearApplicationCacheForOrigin);
-    bindMethod("clearBackForwardList", &LayoutTestController::clearBackForwardList);
-    bindMethod("dumpAsWebArchive", &LayoutTestController::dumpAsWebArchive);
-    bindMethod("keepWebHistory", &LayoutTestController::keepWebHistory);
-    bindMethod("objCClassNameOf", &LayoutTestController::objCClassNameOf);
-    bindMethod("setApplicationCacheOriginQuota", &LayoutTestController::setApplicationCacheOriginQuota);
-    bindMethod("setCallCloseOnWebViews", &LayoutTestController::setCallCloseOnWebViews);
-    bindMethod("setMainFrameIsFirstResponder", &LayoutTestController::setMainFrameIsFirstResponder);
-    bindMethod("setPrivateBrowsingEnabled", &LayoutTestController::setPrivateBrowsingEnabled);
-    bindMethod("setUseDashboardCompatibilityMode", &LayoutTestController::setUseDashboardCompatibilityMode);
-    bindMethod("storeWebScriptObject", &LayoutTestController::storeWebScriptObject);
-    bindMethod("deleteAllLocalStorage", &LayoutTestController::deleteAllLocalStorage);
-    bindMethod("localStorageDiskUsageForOrigin", &LayoutTestController::localStorageDiskUsageForOrigin);
-    bindMethod("originsWithLocalStorage", &LayoutTestController::originsWithLocalStorage);
-    bindMethod("deleteLocalStorageForOrigin", &LayoutTestController::deleteLocalStorageForOrigin);
-    bindMethod("observeStorageTrackerNotifications", &LayoutTestController::observeStorageTrackerNotifications);
-    bindMethod("syncLocalStorage", &LayoutTestController::syncLocalStorage);
-    bindMethod("setShouldStayOnPageAfterHandlingBeforeUnload", &LayoutTestController::setShouldStayOnPageAfterHandlingBeforeUnload);
-    bindMethod("enableFixedLayoutMode", &LayoutTestController::enableFixedLayoutMode);
-    bindMethod("setFixedLayoutSize", &LayoutTestController::setFixedLayoutSize);
-    bindMethod("selectionAsMarkup", &LayoutTestController::selectionAsMarkup);
-    bindMethod("setHasCustomFullScreenBehavior", &LayoutTestController::setHasCustomFullScreenBehavior);
-    bindMethod("textSurroundingNode", &LayoutTestController::textSurroundingNode);
+    bindMethod("abortModal", &DRTTestRunner::abortModal);
+    bindMethod("accessStoredWebScriptObject", &DRTTestRunner::accessStoredWebScriptObject);
+    bindMethod("addDisallowedURL", &DRTTestRunner::addDisallowedURL);
+    bindMethod("applicationCacheDiskUsageForOrigin", &DRTTestRunner::applicationCacheDiskUsageForOrigin);
+    bindMethod("callShouldCloseOnWebView", &DRTTestRunner::callShouldCloseOnWebView);
+    bindMethod("clearAllApplicationCaches", &DRTTestRunner::clearAllApplicationCaches);
+    bindMethod("clearApplicationCacheForOrigin", &DRTTestRunner::clearApplicationCacheForOrigin);
+    bindMethod("clearBackForwardList", &DRTTestRunner::clearBackForwardList);
+    bindMethod("dumpAsWebArchive", &DRTTestRunner::dumpAsWebArchive);
+    bindMethod("keepWebHistory", &DRTTestRunner::keepWebHistory);
+    bindMethod("objCClassNameOf", &DRTTestRunner::objCClassNameOf);
+    bindMethod("setApplicationCacheOriginQuota", &DRTTestRunner::setApplicationCacheOriginQuota);
+    bindMethod("setCallCloseOnWebViews", &DRTTestRunner::setCallCloseOnWebViews);
+    bindMethod("setMainFrameIsFirstResponder", &DRTTestRunner::setMainFrameIsFirstResponder);
+    bindMethod("setPrivateBrowsingEnabled", &DRTTestRunner::setPrivateBrowsingEnabled);
+    bindMethod("setUseDashboardCompatibilityMode", &DRTTestRunner::setUseDashboardCompatibilityMode);
+    bindMethod("storeWebScriptObject", &DRTTestRunner::storeWebScriptObject);
+    bindMethod("deleteAllLocalStorage", &DRTTestRunner::deleteAllLocalStorage);
+    bindMethod("localStorageDiskUsageForOrigin", &DRTTestRunner::localStorageDiskUsageForOrigin);
+    bindMethod("originsWithLocalStorage", &DRTTestRunner::originsWithLocalStorage);
+    bindMethod("deleteLocalStorageForOrigin", &DRTTestRunner::deleteLocalStorageForOrigin);
+    bindMethod("observeStorageTrackerNotifications", &DRTTestRunner::observeStorageTrackerNotifications);
+    bindMethod("syncLocalStorage", &DRTTestRunner::syncLocalStorage);
+    bindMethod("setShouldStayOnPageAfterHandlingBeforeUnload", &DRTTestRunner::setShouldStayOnPageAfterHandlingBeforeUnload);
+    bindMethod("enableFixedLayoutMode", &DRTTestRunner::enableFixedLayoutMode);
+    bindMethod("setFixedLayoutSize", &DRTTestRunner::setFixedLayoutSize);
+    bindMethod("selectionAsMarkup", &DRTTestRunner::selectionAsMarkup);
+    bindMethod("setHasCustomFullScreenBehavior", &DRTTestRunner::setHasCustomFullScreenBehavior);
+    bindMethod("textSurroundingNode", &DRTTestRunner::textSurroundingNode);
 
     // The fallback method is called when an unknown method is invoked.
-    bindFallbackMethod(&LayoutTestController::fallbackMethod);
+    bindFallbackMethod(&DRTTestRunner::fallbackMethod);
 
     // Shared properties.
     // globalFlag is used by a number of layout tests in
@@ -289,21 +289,21 @@ LayoutTestController::LayoutTestController(TestShell* shell)
     bindProperty("titleTextDirection", &m_titleTextDirection);
     bindProperty("platformName", &m_platformName);
     bindProperty("interceptPostMessage", &m_interceptPostMessage);
-    bindProperty("workerThreadCount", &LayoutTestController::workerThreadCount);
-    bindMethod("sendWebIntentResponse", &LayoutTestController::sendWebIntentResponse);
-    bindMethod("deliverWebIntent", &LayoutTestController::deliverWebIntent);
+    bindProperty("workerThreadCount", &DRTTestRunner::workerThreadCount);
+    bindMethod("sendWebIntentResponse", &DRTTestRunner::sendWebIntentResponse);
+    bindMethod("deliverWebIntent", &DRTTestRunner::deliverWebIntent);
 }
 
-LayoutTestController::~LayoutTestController()
+DRTTestRunner::~DRTTestRunner()
 {
 }
 
-LayoutTestController::WorkQueue::~WorkQueue()
+DRTTestRunner::WorkQueue::~WorkQueue()
 {
     reset();
 }
 
-void LayoutTestController::WorkQueue::processWorkSoon()
+void DRTTestRunner::WorkQueue::processWorkSoon()
 {
     if (m_controller->m_shell->webViewHost()->topLoadingFrame())
         return;
@@ -315,7 +315,7 @@ void LayoutTestController::WorkQueue::processWorkSoon()
         m_controller->m_shell->testFinished();
 }
 
-void LayoutTestController::WorkQueue::processWork()
+void DRTTestRunner::WorkQueue::processWork()
 {
     TestShell* shell = m_controller->m_shell;
     // Quit doing work once a load is in progress.
@@ -330,14 +330,14 @@ void LayoutTestController::WorkQueue::processWork()
         shell->testFinished();
 }
 
-void LayoutTestController::WorkQueue::reset()
+void DRTTestRunner::WorkQueue::reset()
 {
     m_frozen = false;
     while (!m_queue.isEmpty())
         delete m_queue.takeFirst();
 }
 
-void LayoutTestController::WorkQueue::addWork(WorkItem* work)
+void DRTTestRunner::WorkQueue::addWork(WorkItem* work)
 {
     if (m_frozen) {
         delete work;
@@ -346,7 +346,7 @@ void LayoutTestController::WorkQueue::addWork(WorkItem* work)
     m_queue.append(work);
 }
 
-void LayoutTestController::dumpAsText(const CppArgumentList& arguments, CppVariant* result)
+void DRTTestRunner::dumpAsText(const CppArgumentList& arguments, CppVariant* result)
 {
     m_dumpAsText = true;
     m_generatePixelResults = false;
@@ -358,98 +358,98 @@ void LayoutTestController::dumpAsText(const CppArgumentList& arguments, CppVaria
     result->setNull();
 }
 
-void LayoutTestController::dumpDatabaseCallbacks(const CppArgumentList&, CppVariant* result)
+void DRTTestRunner::dumpDatabaseCallbacks(const CppArgumentList&, CppVariant* result)
 {
     // Do nothing; we don't use this flag anywhere for now
     result->setNull();
 }
 
-void LayoutTestController::dumpEditingCallbacks(const CppArgumentList&, CppVariant* result)
+void DRTTestRunner::dumpEditingCallbacks(const CppArgumentList&, CppVariant* result)
 {
     m_dumpEditingCallbacks = true;
     result->setNull();
 }
 
-void LayoutTestController::dumpBackForwardList(const CppArgumentList&, CppVariant* result)
+void DRTTestRunner::dumpBackForwardList(const CppArgumentList&, CppVariant* result)
 {
     m_dumpBackForwardList = true;
     result->setNull();
 }
 
-void LayoutTestController::dumpFrameLoadCallbacks(const CppArgumentList&, CppVariant* result)
+void DRTTestRunner::dumpFrameLoadCallbacks(const CppArgumentList&, CppVariant* result)
 {
     m_dumpFrameLoadCallbacks = true;
     result->setNull();
 }
 
-void LayoutTestController::dumpProgressFinishedCallback(const CppArgumentList&, CppVariant* result)
+void DRTTestRunner::dumpProgressFinishedCallback(const CppArgumentList&, CppVariant* result)
 {
     m_dumpProgressFinishedCallback = true;
     result->setNull();
 }
 
-void LayoutTestController::dumpUserGestureInFrameLoadCallbacks(const CppArgumentList&, CppVariant* result)
+void DRTTestRunner::dumpUserGestureInFrameLoadCallbacks(const CppArgumentList&, CppVariant* result)
 {
     m_dumpUserGestureInFrameLoadCallbacks = true;
     result->setNull();
 }
 
-void LayoutTestController::dumpResourceLoadCallbacks(const CppArgumentList&, CppVariant* result)
+void DRTTestRunner::dumpResourceLoadCallbacks(const CppArgumentList&, CppVariant* result)
 {
     m_dumpResourceLoadCallbacks = true;
     result->setNull();
 }
 
-void LayoutTestController::dumpResourceResponseMIMETypes(const CppArgumentList&, CppVariant* result)
+void DRTTestRunner::dumpResourceResponseMIMETypes(const CppArgumentList&, CppVariant* result)
 {
     m_dumpResourceResponseMIMETypes = true;
     result->setNull();
 }
 
-void LayoutTestController::dumpChildFrameScrollPositions(const CppArgumentList&, CppVariant* result)
+void DRTTestRunner::dumpChildFrameScrollPositions(const CppArgumentList&, CppVariant* result)
 {
     m_dumpChildFrameScrollPositions = true;
     result->setNull();
 }
 
-void LayoutTestController::dumpChildFramesAsText(const CppArgumentList&, CppVariant* result)
+void DRTTestRunner::dumpChildFramesAsText(const CppArgumentList&, CppVariant* result)
 {
     m_dumpChildFramesAsText = true;
     result->setNull();
 }
 
-void LayoutTestController::dumpWindowStatusChanges(const CppArgumentList&, CppVariant* result)
+void DRTTestRunner::dumpWindowStatusChanges(const CppArgumentList&, CppVariant* result)
 {
     m_dumpWindowStatusChanges = true;
     result->setNull();
 }
 
-void LayoutTestController::dumpTitleChanges(const CppArgumentList&, CppVariant* result)
+void DRTTestRunner::dumpTitleChanges(const CppArgumentList&, CppVariant* result)
 {
     m_dumpTitleChanges = true;
     result->setNull();
 }
 
-void LayoutTestController::dumpPermissionClientCallbacks(const CppArgumentList&, CppVariant* result)
+void DRTTestRunner::dumpPermissionClientCallbacks(const CppArgumentList&, CppVariant* result)
 {
     m_dumpPermissionClientCallbacks = true;
     result->setNull();
 }
 
-void LayoutTestController::dumpCreateView(const CppArgumentList&, CppVariant* result)
+void DRTTestRunner::dumpCreateView(const CppArgumentList&, CppVariant* result)
 {
     m_dumpCreateView = true;
     result->setNull();
 }
 
-void LayoutTestController::setAcceptsEditing(const CppArgumentList& arguments, CppVariant* result)
+void DRTTestRunner::setAcceptsEditing(const CppArgumentList& arguments, CppVariant* result)
 {
     if (arguments.size() > 0 && arguments[0].isBool())
         m_acceptsEditing = arguments[0].value.boolValue;
     result->setNull();
 }
 
-void LayoutTestController::waitUntilDone(const CppArgumentList&, CppVariant* result)
+void DRTTestRunner::waitUntilDone(const CppArgumentList&, CppVariant* result)
 {
     if (!webkit_support::BeingDebugged())
         postDelayedTask(new NotifyDoneTimedOutTask(this), m_shell->layoutTestTimeout());
@@ -457,7 +457,7 @@ void LayoutTestController::waitUntilDone(const CppArgumentList&, CppVariant* res
     result->setNull();
 }
 
-void LayoutTestController::notifyDone(const CppArgumentList&, CppVariant* result)
+void DRTTestRunner::notifyDone(const CppArgumentList&, CppVariant* result)
 {
     // Test didn't timeout. Kill the timeout timer.
     m_taskList.revokeAll();
@@ -466,7 +466,7 @@ void LayoutTestController::notifyDone(const CppArgumentList&, CppVariant* result
     result->setNull();
 }
 
-void LayoutTestController::completeNotifyDone(bool isTimeout)
+void DRTTestRunner::completeNotifyDone(bool isTimeout)
 {
     if (m_waitUntilDone && !m_shell->webViewHost()->topLoadingFrame() && m_workQueue.isEmpty()) {
         if (isTimeout)
@@ -477,7 +477,7 @@ void LayoutTestController::completeNotifyDone(bool isTimeout)
     m_waitUntilDone = false;
 }
 
-class WorkItemBackForward : public LayoutTestController::WorkItem {
+class WorkItemBackForward : public DRTTestRunner::WorkItem {
 public:
     WorkItemBackForward(int distance) : m_distance(distance) { }
     bool run(TestShell* shell)
@@ -490,21 +490,21 @@ private:
     int m_distance;
 };
 
-void LayoutTestController::queueBackNavigation(const CppArgumentList& arguments, CppVariant* result)
+void DRTTestRunner::queueBackNavigation(const CppArgumentList& arguments, CppVariant* result)
 {
     if (arguments.size() > 0 && arguments[0].isNumber())
         m_workQueue.addWork(new WorkItemBackForward(-arguments[0].toInt32()));
     result->setNull();
 }
 
-void LayoutTestController::queueForwardNavigation(const CppArgumentList& arguments, CppVariant* result)
+void DRTTestRunner::queueForwardNavigation(const CppArgumentList& arguments, CppVariant* result)
 {
     if (arguments.size() > 0 && arguments[0].isNumber())
         m_workQueue.addWork(new WorkItemBackForward(arguments[0].toInt32()));
     result->setNull();
 }
 
-class WorkItemReload : public LayoutTestController::WorkItem {
+class WorkItemReload : public DRTTestRunner::WorkItem {
 public:
     bool run(TestShell* shell)
     {
@@ -513,13 +513,13 @@ public:
     }
 };
 
-void LayoutTestController::queueReload(const CppArgumentList&, CppVariant* result)
+void DRTTestRunner::queueReload(const CppArgumentList&, CppVariant* result)
 {
     m_workQueue.addWork(new WorkItemReload);
     result->setNull();
 }
 
-class WorkItemLoadingScript : public LayoutTestController::WorkItem {
+class WorkItemLoadingScript : public DRTTestRunner::WorkItem {
 public:
     WorkItemLoadingScript(const string& script) : m_script(script) { }
     bool run(TestShell* shell)
@@ -532,7 +532,7 @@ private:
     string m_script;
 };
 
-class WorkItemNonLoadingScript : public LayoutTestController::WorkItem {
+class WorkItemNonLoadingScript : public DRTTestRunner::WorkItem {
 public:
     WorkItemNonLoadingScript(const string& script) : m_script(script) { }
     bool run(TestShell* shell)
@@ -545,21 +545,21 @@ private:
     string m_script;
 };
 
-void LayoutTestController::queueLoadingScript(const CppArgumentList& arguments, CppVariant* result)
+void DRTTestRunner::queueLoadingScript(const CppArgumentList& arguments, CppVariant* result)
 {
     if (arguments.size() > 0 && arguments[0].isString())
         m_workQueue.addWork(new WorkItemLoadingScript(arguments[0].toString()));
     result->setNull();
 }
 
-void LayoutTestController::queueNonLoadingScript(const CppArgumentList& arguments, CppVariant* result)
+void DRTTestRunner::queueNonLoadingScript(const CppArgumentList& arguments, CppVariant* result)
 {
     if (arguments.size() > 0 && arguments[0].isString())
         m_workQueue.addWork(new WorkItemNonLoadingScript(arguments[0].toString()));
     result->setNull();
 }
 
-class WorkItemLoad : public LayoutTestController::WorkItem {
+class WorkItemLoad : public DRTTestRunner::WorkItem {
 public:
     WorkItemLoad(const WebURL& url, const WebString& target)
         : m_url(url)
@@ -575,7 +575,7 @@ private:
     WebString m_target;
 };
 
-void LayoutTestController::queueLoad(const CppArgumentList& arguments, CppVariant* result)
+void DRTTestRunner::queueLoad(const CppArgumentList& arguments, CppVariant* result)
 {
     if (arguments.size() > 0 && arguments[0].isString()) {
         // FIXME: Implement WebURL::resolve() and avoid GURL.
@@ -591,7 +591,7 @@ void LayoutTestController::queueLoad(const CppArgumentList& arguments, CppVarian
     result->setNull();
 }
 
-class WorkItemLoadHTMLString : public LayoutTestController::WorkItem  {
+class WorkItemLoadHTMLString : public DRTTestRunner::WorkItem  {
 public:
     WorkItemLoadHTMLString(const std::string& html, const WebURL& baseURL)
         : m_html(html)
@@ -613,7 +613,7 @@ private:
     WebURL m_unreachableURL;
 };
 
-void LayoutTestController::queueLoadHTMLString(const CppArgumentList& arguments, CppVariant* result)
+void DRTTestRunner::queueLoadHTMLString(const CppArgumentList& arguments, CppVariant* result)
 {
     if (arguments.size() > 0 && arguments[0].isString()) {
         string html = arguments[0].toString();
@@ -628,7 +628,7 @@ void LayoutTestController::queueLoadHTMLString(const CppArgumentList& arguments,
     result->setNull();
 }
 
-void LayoutTestController::objCIdentityIsEqual(const CppArgumentList& arguments, CppVariant* result)
+void DRTTestRunner::objCIdentityIsEqual(const CppArgumentList& arguments, CppVariant* result)
 {
     if (arguments.size() < 2) {
         // This is the best we can do to return an error.
@@ -638,7 +638,7 @@ void LayoutTestController::objCIdentityIsEqual(const CppArgumentList& arguments,
     result->set(arguments[0].isEqual(arguments[1]));
 }
 
-void LayoutTestController::reset()
+void DRTTestRunner::reset()
 {
     if (m_shell) {
         m_shell->webView()->setZoomLevel(false, 0);
@@ -707,7 +707,7 @@ void LayoutTestController::reset()
 #endif
 }
 
-void LayoutTestController::locationChangeDone()
+void DRTTestRunner::locationChangeDone()
 {
     m_webHistoryItemCount.set(m_shell->navigationEntryCount());
 
@@ -718,72 +718,72 @@ void LayoutTestController::locationChangeDone()
         m_workQueue.processWorkSoon();
 }
 
-void LayoutTestController::policyDelegateDone()
+void DRTTestRunner::policyDelegateDone()
 {
     ASSERT(m_waitUntilDone);
     m_shell->testFinished();
     m_waitUntilDone = false;
 }
 
-void LayoutTestController::setCanOpenWindows(const CppArgumentList&, CppVariant* result)
+void DRTTestRunner::setCanOpenWindows(const CppArgumentList&, CppVariant* result)
 {
     m_canOpenWindows = true;
     result->setNull();
 }
 
-void LayoutTestController::setTabKeyCyclesThroughElements(const CppArgumentList& arguments, CppVariant* result)
+void DRTTestRunner::setTabKeyCyclesThroughElements(const CppArgumentList& arguments, CppVariant* result)
 {
     if (arguments.size() > 0 && arguments[0].isBool())
         m_shell->webView()->setTabKeyCyclesThroughElements(arguments[0].toBoolean());
     result->setNull();
 }
 
-void LayoutTestController::windowCount(const CppArgumentList&, CppVariant* result)
+void DRTTestRunner::windowCount(const CppArgumentList&, CppVariant* result)
 {
     result->set(static_cast<int>(m_shell->windowCount()));
 }
 
-void LayoutTestController::setCloseRemainingWindowsWhenComplete(const CppArgumentList& arguments, CppVariant* result)
+void DRTTestRunner::setCloseRemainingWindowsWhenComplete(const CppArgumentList& arguments, CppVariant* result)
 {
     if (arguments.size() > 0 && arguments[0].isBool())
         m_closeRemainingWindows = arguments[0].value.boolValue;
     result->setNull();
 }
 
-void LayoutTestController::setAlwaysAcceptCookies(const CppArgumentList& arguments, CppVariant* result)
+void DRTTestRunner::setAlwaysAcceptCookies(const CppArgumentList& arguments, CppVariant* result)
 {
     if (arguments.size() > 0)
         webkit_support::SetAcceptAllCookies(cppVariantToBool(arguments[0]));
     result->setNull();
 }
 
-void LayoutTestController::setAsynchronousSpellCheckingEnabled(const CppArgumentList& arguments, CppVariant* result)
+void DRTTestRunner::setAsynchronousSpellCheckingEnabled(const CppArgumentList& arguments, CppVariant* result)
 {
     if (arguments.size() > 0 && arguments[0].isBool())
         m_shell->webView()->settings()->setAsynchronousSpellCheckingEnabled(cppVariantToBool(arguments[0]));
     result->setNull();
 }
 
-void LayoutTestController::showWebInspector(const CppArgumentList&, CppVariant* result)
+void DRTTestRunner::showWebInspector(const CppArgumentList&, CppVariant* result)
 {
     m_shell->showDevTools();
     result->setNull();
 }
 
-void LayoutTestController::closeWebInspector(const CppArgumentList& args, CppVariant* result)
+void DRTTestRunner::closeWebInspector(const CppArgumentList& args, CppVariant* result)
 {
     m_shell->closeDevTools();
     result->setNull();
 }
 
-void LayoutTestController::setWindowIsKey(const CppArgumentList& arguments, CppVariant* result)
+void DRTTestRunner::setWindowIsKey(const CppArgumentList& arguments, CppVariant* result)
 {
     if (arguments.size() > 0 && arguments[0].isBool())
         m_shell->setFocus(m_shell->webView(), arguments[0].value.boolValue);
     result->setNull();
 }
 
-void LayoutTestController::setUserStyleSheetEnabled(const CppArgumentList& arguments, CppVariant* result)
+void DRTTestRunner::setUserStyleSheetEnabled(const CppArgumentList& arguments, CppVariant* result)
 {
     if (arguments.size() > 0 && arguments[0].isBool()) {
         m_shell->preferences()->userStyleSheetLocation = arguments[0].value.boolValue ? m_userStyleSheetLocation : WebURL();
@@ -792,7 +792,7 @@ void LayoutTestController::setUserStyleSheetEnabled(const CppArgumentList& argum
     result->setNull();
 }
 
-void LayoutTestController::setUserStyleSheetLocation(const CppArgumentList& arguments, CppVariant* result)
+void DRTTestRunner::setUserStyleSheetLocation(const CppArgumentList& arguments, CppVariant* result)
 {
     if (arguments.size() > 0 && arguments[0].isString()) {
         m_userStyleSheetLocation = webkit_support::LocalFileToDataURL(
@@ -803,7 +803,7 @@ void LayoutTestController::setUserStyleSheetLocation(const CppArgumentList& argu
     result->setNull();
 }
 
-void LayoutTestController::setAuthorAndUserStylesEnabled(const CppArgumentList& arguments, CppVariant* result)
+void DRTTestRunner::setAuthorAndUserStylesEnabled(const CppArgumentList& arguments, CppVariant* result)
 {
     if (arguments.size() > 0 && arguments[0].isBool()) {
         m_shell->preferences()->authorAndUserStylesEnabled = arguments[0].value.boolValue;
@@ -812,7 +812,7 @@ void LayoutTestController::setAuthorAndUserStylesEnabled(const CppArgumentList& 
     result->setNull();
 }
 
-void LayoutTestController::execCommand(const CppArgumentList& arguments, CppVariant* result)
+void DRTTestRunner::execCommand(const CppArgumentList& arguments, CppVariant* result)
 {
     result->setNull();
     if (arguments.size() <= 0 || !arguments[0].isString())
@@ -829,7 +829,7 @@ void LayoutTestController::execCommand(const CppArgumentList& arguments, CppVari
     m_shell->webView()->focusedFrame()->executeCommand(WebString::fromUTF8(command), WebString::fromUTF8(value));
 }
 
-void LayoutTestController::isCommandEnabled(const CppArgumentList& arguments, CppVariant* result)
+void DRTTestRunner::isCommandEnabled(const CppArgumentList& arguments, CppVariant* result)
 {
     if (arguments.size() <= 0 || !arguments[0].isString()) {
         result->setNull();
@@ -841,7 +841,7 @@ void LayoutTestController::isCommandEnabled(const CppArgumentList& arguments, Cp
     result->set(rv);
 }
 
-void LayoutTestController::setPopupBlockingEnabled(const CppArgumentList& arguments, CppVariant* result)
+void DRTTestRunner::setPopupBlockingEnabled(const CppArgumentList& arguments, CppVariant* result)
 {
     if (arguments.size() > 0 && arguments[0].isBool()) {
         bool blockPopups = arguments[0].toBoolean();
@@ -851,78 +851,78 @@ void LayoutTestController::setPopupBlockingEnabled(const CppArgumentList& argume
     result->setNull();
 }
 
-void LayoutTestController::setImagesAllowed(const CppArgumentList& arguments, CppVariant* result)
+void DRTTestRunner::setImagesAllowed(const CppArgumentList& arguments, CppVariant* result)
 {
     if (arguments.size() > 0 && arguments[0].isBool())
         m_shell->webPermissions()->setImagesAllowed(arguments[0].toBoolean());
     result->setNull();
 }
 
-void LayoutTestController::setScriptsAllowed(const CppArgumentList& arguments, CppVariant* result)
+void DRTTestRunner::setScriptsAllowed(const CppArgumentList& arguments, CppVariant* result)
 {
     if (arguments.size() > 0 && arguments[0].isBool())
         m_shell->webPermissions()->setScriptsAllowed(arguments[0].toBoolean());
     result->setNull();
 }
 
-void LayoutTestController::setStorageAllowed(const CppArgumentList& arguments, CppVariant* result)
+void DRTTestRunner::setStorageAllowed(const CppArgumentList& arguments, CppVariant* result)
 {
     if (arguments.size() > 0 && arguments[0].isBool())
         m_shell->webPermissions()->setStorageAllowed(arguments[0].toBoolean());
     result->setNull();
 }
 
-void LayoutTestController::setPluginsAllowed(const CppArgumentList& arguments, CppVariant* result)
+void DRTTestRunner::setPluginsAllowed(const CppArgumentList& arguments, CppVariant* result)
 {
     if (arguments.size() > 0 && arguments[0].isBool())
         m_shell->webPermissions()->setPluginsAllowed(arguments[0].toBoolean());
     result->setNull();
 }
 
-void LayoutTestController::setUseDashboardCompatibilityMode(const CppArgumentList&, CppVariant* result)
+void DRTTestRunner::setUseDashboardCompatibilityMode(const CppArgumentList&, CppVariant* result)
 {
     // We have no need to support Dashboard Compatibility Mode (mac-only)
     result->setNull();
 }
 
-void LayoutTestController::clearAllApplicationCaches(const CppArgumentList&, CppVariant* result)
+void DRTTestRunner::clearAllApplicationCaches(const CppArgumentList&, CppVariant* result)
 {
     // FIXME: Implement to support application cache quotas.
     result->setNull();
 }
 
-void LayoutTestController::clearApplicationCacheForOrigin(const CppArgumentList&, CppVariant* result)
+void DRTTestRunner::clearApplicationCacheForOrigin(const CppArgumentList&, CppVariant* result)
 {
     // FIXME: Implement to support deleting all application cache for an origin.
     result->setNull();
 }
 
-void LayoutTestController::setApplicationCacheOriginQuota(const CppArgumentList&, CppVariant* result)
+void DRTTestRunner::setApplicationCacheOriginQuota(const CppArgumentList&, CppVariant* result)
 {
     // FIXME: Implement to support application cache quotas.
     result->setNull();
 }
 
-void LayoutTestController::originsWithApplicationCache(const CppArgumentList&, CppVariant* result)
+void DRTTestRunner::originsWithApplicationCache(const CppArgumentList&, CppVariant* result)
 {
     // FIXME: Implement to support getting origins that have application caches.
     result->setNull();
 }
 
-void LayoutTestController::applicationCacheDiskUsageForOrigin(const CppArgumentList&, CppVariant* result)
+void DRTTestRunner::applicationCacheDiskUsageForOrigin(const CppArgumentList&, CppVariant* result)
 {
     // FIXME: Implement to support getting disk usage by all application cache for an origin.
     result->setNull();
 }
 
-void LayoutTestController::setScrollbarPolicy(const CppArgumentList&, CppVariant* result)
+void DRTTestRunner::setScrollbarPolicy(const CppArgumentList&, CppVariant* result)
 {
     // FIXME: implement.
     // Currently only has a non-null implementation on QT.
     result->setNull();
 }
 
-void LayoutTestController::setCustomPolicyDelegate(const CppArgumentList& arguments, CppVariant* result)
+void DRTTestRunner::setCustomPolicyDelegate(const CppArgumentList& arguments, CppVariant* result)
 {
     if (arguments.size() > 0 && arguments[0].isBool()) {
         bool enable = arguments[0].value.boolValue;
@@ -934,14 +934,14 @@ void LayoutTestController::setCustomPolicyDelegate(const CppArgumentList& argume
     result->setNull();
 }
 
-void LayoutTestController::waitForPolicyDelegate(const CppArgumentList&, CppVariant* result)
+void DRTTestRunner::waitForPolicyDelegate(const CppArgumentList&, CppVariant* result)
 {
     m_shell->webViewHost()->waitForPolicyDelegate();
     m_waitUntilDone = true;
     result->setNull();
 }
 
-void LayoutTestController::setWillSendRequestClearHeader(const CppArgumentList& arguments, CppVariant* result)
+void DRTTestRunner::setWillSendRequestClearHeader(const CppArgumentList& arguments, CppVariant* result)
 {
     if (arguments.size() > 0 && arguments[0].isString()) {
         string header = arguments[0].toString();
@@ -951,21 +951,21 @@ void LayoutTestController::setWillSendRequestClearHeader(const CppArgumentList& 
     result->setNull();
 }
 
-void LayoutTestController::setWillSendRequestReturnsNullOnRedirect(const CppArgumentList& arguments, CppVariant* result)
+void DRTTestRunner::setWillSendRequestReturnsNullOnRedirect(const CppArgumentList& arguments, CppVariant* result)
 {
     if (arguments.size() > 0 && arguments[0].isBool())
         m_shell->webViewHost()->setBlockRedirects(arguments[0].value.boolValue);
     result->setNull();
 }
 
-void LayoutTestController::setWillSendRequestReturnsNull(const CppArgumentList& arguments, CppVariant* result)
+void DRTTestRunner::setWillSendRequestReturnsNull(const CppArgumentList& arguments, CppVariant* result)
 {
     if (arguments.size() > 0 && arguments[0].isBool())
         m_shell->webViewHost()->setRequestReturnNull(arguments[0].value.boolValue);
     result->setNull();
 }
 
-void LayoutTestController::pathToLocalResource(const CppArgumentList& arguments, CppVariant* result)
+void DRTTestRunner::pathToLocalResource(const CppArgumentList& arguments, CppVariant* result)
 {
     result->setNull();
     if (arguments.size() <= 0 || !arguments[0].isString())
@@ -1003,33 +1003,33 @@ void LayoutTestController::pathToLocalResource(const CppArgumentList& arguments,
     result->set(webkit_support::RewriteLayoutTestsURL(url).spec());
 }
 
-void LayoutTestController::addFileToPasteboardOnDrag(const CppArgumentList&, CppVariant* result)
+void DRTTestRunner::addFileToPasteboardOnDrag(const CppArgumentList&, CppVariant* result)
 {
     result->setNull();
     m_shouldAddFileToPasteboard = true;
 }
 
-void LayoutTestController::setStopProvisionalFrameLoads(const CppArgumentList&, CppVariant* result)
+void DRTTestRunner::setStopProvisionalFrameLoads(const CppArgumentList&, CppVariant* result)
 {
     result->setNull();
     m_stopProvisionalFrameLoads = true;
 }
 
-void LayoutTestController::setSmartInsertDeleteEnabled(const CppArgumentList& arguments, CppVariant* result)
+void DRTTestRunner::setSmartInsertDeleteEnabled(const CppArgumentList& arguments, CppVariant* result)
 {
     if (arguments.size() > 0 && arguments[0].isBool())
         m_shell->webViewHost()->setSmartInsertDeleteEnabled(arguments[0].value.boolValue);
     result->setNull();
 }
 
-void LayoutTestController::setSelectTrailingWhitespaceEnabled(const CppArgumentList& arguments, CppVariant* result)
+void DRTTestRunner::setSelectTrailingWhitespaceEnabled(const CppArgumentList& arguments, CppVariant* result)
 {
     if (arguments.size() > 0 && arguments[0].isBool())
         m_shell->webViewHost()->setSelectTrailingWhitespaceEnabled(arguments[0].value.boolValue);
     result->setNull();
 }
 
-bool LayoutTestController::pauseAnimationAtTimeOnElementWithId(const WebString& animationName, double time, const WebString& elementId)
+bool DRTTestRunner::pauseAnimationAtTimeOnElementWithId(const WebString& animationName, double time, const WebString& elementId)
 {
     WebFrame* webFrame = m_shell->webView()->mainFrame();
     if (!webFrame)
@@ -1045,7 +1045,7 @@ bool LayoutTestController::pauseAnimationAtTimeOnElementWithId(const WebString& 
     return controller->pauseAnimationAtTime(element, animationName, time);
 }
 
-bool LayoutTestController::pauseTransitionAtTimeOnElementWithId(const WebString& propertyName, double time, const WebString& elementId)
+bool DRTTestRunner::pauseTransitionAtTimeOnElementWithId(const WebString& propertyName, double time, const WebString& elementId)
 {
     WebFrame* webFrame = m_shell->webView()->mainFrame();
     if (!webFrame)
@@ -1061,7 +1061,7 @@ bool LayoutTestController::pauseTransitionAtTimeOnElementWithId(const WebString&
     return controller->pauseTransitionAtTime(element, propertyName, time);
 }
 
-bool LayoutTestController::elementDoesAutoCompleteForElementWithId(const WebString& elementId)
+bool DRTTestRunner::elementDoesAutoCompleteForElementWithId(const WebString& elementId)
 {
     WebFrame* webFrame = m_shell->webView()->mainFrame();
     if (!webFrame)
@@ -1075,7 +1075,7 @@ bool LayoutTestController::elementDoesAutoCompleteForElementWithId(const WebStri
     return inputElement.autoComplete();
 }
 
-int LayoutTestController::numberOfActiveAnimations()
+int DRTTestRunner::numberOfActiveAnimations()
 {
     WebFrame* webFrame = m_shell->webView()->mainFrame();
     if (!webFrame)
@@ -1088,7 +1088,7 @@ int LayoutTestController::numberOfActiveAnimations()
     return controller->numberOfActiveAnimations();
 }
 
-void LayoutTestController::pauseAnimationAtTimeOnElementWithId(const CppArgumentList& arguments, CppVariant* result)
+void DRTTestRunner::pauseAnimationAtTimeOnElementWithId(const CppArgumentList& arguments, CppVariant* result)
 {
     result->set(false);
     if (arguments.size() > 2 && arguments[0].isString() && arguments[1].isNumber() && arguments[2].isString()) {
@@ -1099,7 +1099,7 @@ void LayoutTestController::pauseAnimationAtTimeOnElementWithId(const CppArgument
     }
 }
 
-void LayoutTestController::pauseTransitionAtTimeOnElementWithId(const CppArgumentList& arguments, CppVariant* result)
+void DRTTestRunner::pauseTransitionAtTimeOnElementWithId(const CppArgumentList& arguments, CppVariant* result)
 {
     result->set(false);
     if (arguments.size() > 2 && arguments[0].isString() && arguments[1].isNumber() && arguments[2].isString()) {
@@ -1110,7 +1110,7 @@ void LayoutTestController::pauseTransitionAtTimeOnElementWithId(const CppArgumen
     }
 }
 
-void LayoutTestController::elementDoesAutoCompleteForElementWithId(const CppArgumentList& arguments, CppVariant* result)
+void DRTTestRunner::elementDoesAutoCompleteForElementWithId(const CppArgumentList& arguments, CppVariant* result)
 {
     if (arguments.size() != 1 || !arguments[0].isString()) {
         result->set(false);
@@ -1120,7 +1120,7 @@ void LayoutTestController::elementDoesAutoCompleteForElementWithId(const CppArgu
     result->set(elementDoesAutoCompleteForElementWithId(elementId));
 }
 
-void LayoutTestController::enableAutoResizeMode(const CppArgumentList& arguments, CppVariant* result)
+void DRTTestRunner::enableAutoResizeMode(const CppArgumentList& arguments, CppVariant* result)
 {
     if (arguments.size() != 4) {
         result->set(false);
@@ -1138,7 +1138,7 @@ void LayoutTestController::enableAutoResizeMode(const CppArgumentList& arguments
     result->set(true);
 }
 
-void LayoutTestController::disableAutoResizeMode(const CppArgumentList& arguments, CppVariant* result)
+void DRTTestRunner::disableAutoResizeMode(const CppArgumentList& arguments, CppVariant* result)
 {
     if (arguments.size() !=2) {
         result->set(false);
@@ -1154,31 +1154,31 @@ void LayoutTestController::disableAutoResizeMode(const CppArgumentList& argument
     result->set(true);
 }
 
-void LayoutTestController::numberOfActiveAnimations(const CppArgumentList&, CppVariant* result)
+void DRTTestRunner::numberOfActiveAnimations(const CppArgumentList&, CppVariant* result)
 {
     result->set(numberOfActiveAnimations());
 }
 
-void LayoutTestController::disableImageLoading(const CppArgumentList&, CppVariant* result)
+void DRTTestRunner::disableImageLoading(const CppArgumentList&, CppVariant* result)
 {
     m_shell->preferences()->loadsImagesAutomatically = false;
     m_shell->applyPreferences();
     result->setNull();
 }
 
-void LayoutTestController::setIconDatabaseEnabled(const CppArgumentList&, CppVariant* result)
+void DRTTestRunner::setIconDatabaseEnabled(const CppArgumentList&, CppVariant* result)
 {
     // We don't use the WebKit icon database.
     result->setNull();
 }
 
-void LayoutTestController::callShouldCloseOnWebView(const CppArgumentList&, CppVariant* result)
+void DRTTestRunner::callShouldCloseOnWebView(const CppArgumentList&, CppVariant* result)
 {
     result->set(m_shell->webView()->dispatchBeforeUnloadEvent());
 }
 
 #if ENABLE(NOTIFICATIONS)
-void LayoutTestController::grantDesktopNotificationPermission(const CppArgumentList& arguments, CppVariant* result)
+void DRTTestRunner::grantDesktopNotificationPermission(const CppArgumentList& arguments, CppVariant* result)
 {
     if (arguments.size() != 1 || !arguments[0].isString()) {
         result->set(false);
@@ -1190,7 +1190,7 @@ void LayoutTestController::grantDesktopNotificationPermission(const CppArgumentL
     result->set(true);
 }
 
-void LayoutTestController::simulateDesktopNotificationClick(const CppArgumentList& arguments, CppVariant* result)
+void DRTTestRunner::simulateDesktopNotificationClick(const CppArgumentList& arguments, CppVariant* result)
 {
     if (arguments.size() != 1 || !arguments[0].isString()) {
         result->set(false);
@@ -1205,14 +1205,14 @@ void LayoutTestController::simulateDesktopNotificationClick(const CppArgumentLis
 }
 #endif
 
-void LayoutTestController::setDomainRelaxationForbiddenForURLScheme(const CppArgumentList& arguments, CppVariant* result)
+void DRTTestRunner::setDomainRelaxationForbiddenForURLScheme(const CppArgumentList& arguments, CppVariant* result)
 {
     if (arguments.size() != 2 || !arguments[0].isBool() || !arguments[1].isString())
         return;
     m_shell->webView()->setDomainRelaxationForbidden(cppVariantToBool(arguments[0]), cppVariantToWebString(arguments[1]));
 }
 
-void LayoutTestController::setDeferMainResourceDataLoad(const CppArgumentList& arguments, CppVariant* result)
+void DRTTestRunner::setDeferMainResourceDataLoad(const CppArgumentList& arguments, CppVariant* result)
 {
     if (arguments.size() == 1)
         m_deferMainResourceDataLoad = cppVariantToBool(arguments[0]);
@@ -1222,23 +1222,23 @@ void LayoutTestController::setDeferMainResourceDataLoad(const CppArgumentList& a
 // Unimplemented stubs
 //
 
-void LayoutTestController::dumpAsWebArchive(const CppArgumentList& arguments, CppVariant* result)
+void DRTTestRunner::dumpAsWebArchive(const CppArgumentList& arguments, CppVariant* result)
 {
     result->setNull();
 }
 
-void LayoutTestController::setMainFrameIsFirstResponder(const CppArgumentList& arguments, CppVariant* result)
+void DRTTestRunner::setMainFrameIsFirstResponder(const CppArgumentList& arguments, CppVariant* result)
 {
     result->setNull();
 }
 
-void LayoutTestController::dumpSelectionRect(const CppArgumentList& arguments, CppVariant* result)
+void DRTTestRunner::dumpSelectionRect(const CppArgumentList& arguments, CppVariant* result)
 {
     m_dumpSelectionRect = true;
     result->setNull();
 }
 
-void LayoutTestController::display(const CppArgumentList& arguments, CppVariant* result)
+void DRTTestRunner::display(const CppArgumentList& arguments, CppVariant* result)
 {
     WebViewHost* host = m_shell->webViewHost();
     const WebKit::WebSize& size = m_shell->webView()->size();
@@ -1249,7 +1249,7 @@ void LayoutTestController::display(const CppArgumentList& arguments, CppVariant*
     result->setNull();
 }
 
-void LayoutTestController::displayInvalidatedRegion(const CppArgumentList& arguments, CppVariant* result)
+void DRTTestRunner::displayInvalidatedRegion(const CppArgumentList& arguments, CppVariant* result)
 {
     WebViewHost* host = m_shell->webViewHost();
     host->paintInvalidatedRegion();
@@ -1257,59 +1257,59 @@ void LayoutTestController::displayInvalidatedRegion(const CppArgumentList& argum
     result->setNull();
 }
 
-void LayoutTestController::testRepaint(const CppArgumentList&, CppVariant* result)
+void DRTTestRunner::testRepaint(const CppArgumentList&, CppVariant* result)
 {
     m_testRepaint = true;
     result->setNull();
 }
 
-void LayoutTestController::repaintSweepHorizontally(const CppArgumentList&, CppVariant* result)
+void DRTTestRunner::repaintSweepHorizontally(const CppArgumentList&, CppVariant* result)
 {
     m_sweepHorizontally = true;
     result->setNull();
 }
 
-void LayoutTestController::clearBackForwardList(const CppArgumentList& arguments, CppVariant* result)
+void DRTTestRunner::clearBackForwardList(const CppArgumentList& arguments, CppVariant* result)
 {
     result->setNull();
 }
 
-void LayoutTestController::keepWebHistory(const CppArgumentList& arguments,  CppVariant* result)
+void DRTTestRunner::keepWebHistory(const CppArgumentList& arguments,  CppVariant* result)
 {
     result->setNull();
 }
 
-void LayoutTestController::storeWebScriptObject(const CppArgumentList& arguments, CppVariant* result)
+void DRTTestRunner::storeWebScriptObject(const CppArgumentList& arguments, CppVariant* result)
 {
     result->setNull();
 }
 
-void LayoutTestController::accessStoredWebScriptObject(const CppArgumentList& arguments, CppVariant* result)
+void DRTTestRunner::accessStoredWebScriptObject(const CppArgumentList& arguments, CppVariant* result)
 {
     result->setNull();
 }
 
-void LayoutTestController::objCClassNameOf(const CppArgumentList& arguments, CppVariant* result)
+void DRTTestRunner::objCClassNameOf(const CppArgumentList& arguments, CppVariant* result)
 {
     result->setNull();
 }
 
-void LayoutTestController::addDisallowedURL(const CppArgumentList& arguments, CppVariant* result)
+void DRTTestRunner::addDisallowedURL(const CppArgumentList& arguments, CppVariant* result)
 {
     result->setNull();
 }
 
-void LayoutTestController::setCallCloseOnWebViews(const CppArgumentList& arguments, CppVariant* result)
+void DRTTestRunner::setCallCloseOnWebViews(const CppArgumentList& arguments, CppVariant* result)
 {
     result->setNull();
 }
 
-void LayoutTestController::setPrivateBrowsingEnabled(const CppArgumentList& arguments, CppVariant* result)
+void DRTTestRunner::setPrivateBrowsingEnabled(const CppArgumentList& arguments, CppVariant* result)
 {
     result->setNull();
 }
 
-void LayoutTestController::setJavaScriptCanAccessClipboard(const CppArgumentList& arguments, CppVariant* result)
+void DRTTestRunner::setJavaScriptCanAccessClipboard(const CppArgumentList& arguments, CppVariant* result)
 {
     if (arguments.size() > 0 && arguments[0].isBool()) {
         m_shell->preferences()->javaScriptCanAccessClipboard = arguments[0].value.boolValue;
@@ -1318,7 +1318,7 @@ void LayoutTestController::setJavaScriptCanAccessClipboard(const CppArgumentList
     result->setNull();
 }
 
-void LayoutTestController::setXSSAuditorEnabled(const CppArgumentList& arguments, CppVariant* result)
+void DRTTestRunner::setXSSAuditorEnabled(const CppArgumentList& arguments, CppVariant* result)
 {
     if (arguments.size() > 0 && arguments[0].isBool()) {
         m_shell->preferences()->XSSAuditorEnabled = arguments[0].value.boolValue;
@@ -1327,7 +1327,7 @@ void LayoutTestController::setXSSAuditorEnabled(const CppArgumentList& arguments
     result->setNull();
 }
 
-void LayoutTestController::evaluateScriptInIsolatedWorldAndReturnValue(const CppArgumentList& arguments, CppVariant* result)
+void DRTTestRunner::evaluateScriptInIsolatedWorldAndReturnValue(const CppArgumentList& arguments, CppVariant* result)
 {
     v8::HandleScope scope;
     WebVector<v8::Local<v8::Value> > values;
@@ -1357,7 +1357,7 @@ void LayoutTestController::evaluateScriptInIsolatedWorldAndReturnValue(const Cpp
     }
 }
 
-void LayoutTestController::evaluateScriptInIsolatedWorld(const CppArgumentList& arguments, CppVariant* result)
+void DRTTestRunner::evaluateScriptInIsolatedWorld(const CppArgumentList& arguments, CppVariant* result)
 {
     if (arguments.size() >= 2 && arguments[0].isNumber() && arguments[1].isString()) {
         WebScriptSource source(cppVariantToWebString(arguments[1]));
@@ -1368,7 +1368,7 @@ void LayoutTestController::evaluateScriptInIsolatedWorld(const CppArgumentList& 
     result->setNull();
 }
 
-void LayoutTestController::setIsolatedWorldSecurityOrigin(const CppArgumentList& arguments, CppVariant* result)
+void DRTTestRunner::setIsolatedWorldSecurityOrigin(const CppArgumentList& arguments, CppVariant* result)
 {
     result->setNull();
 
@@ -1380,7 +1380,7 @@ void LayoutTestController::setIsolatedWorldSecurityOrigin(const CppArgumentList&
         WebSecurityOrigin::createFromString(cppVariantToWebString(arguments[1])));
 }
 
-void LayoutTestController::setAllowUniversalAccessFromFileURLs(const CppArgumentList& arguments, CppVariant* result)
+void DRTTestRunner::setAllowUniversalAccessFromFileURLs(const CppArgumentList& arguments, CppVariant* result)
 {
     if (arguments.size() > 0 && arguments[0].isBool()) {
         m_shell->preferences()->allowUniversalAccessFromFileURLs = arguments[0].value.boolValue;
@@ -1389,7 +1389,7 @@ void LayoutTestController::setAllowUniversalAccessFromFileURLs(const CppArgument
     result->setNull();
 }
 
-void LayoutTestController::setAllowDisplayOfInsecureContent(const CppArgumentList& arguments, CppVariant* result)
+void DRTTestRunner::setAllowDisplayOfInsecureContent(const CppArgumentList& arguments, CppVariant* result)
 {
     if (arguments.size() > 0 && arguments[0].isBool())
         m_shell->webPermissions()->setDisplayingInsecureContentAllowed(arguments[0].toBoolean());
@@ -1397,7 +1397,7 @@ void LayoutTestController::setAllowDisplayOfInsecureContent(const CppArgumentLis
     result->setNull();
 }
 
-void LayoutTestController::setAllowFileAccessFromFileURLs(const CppArgumentList& arguments, CppVariant* result)
+void DRTTestRunner::setAllowFileAccessFromFileURLs(const CppArgumentList& arguments, CppVariant* result)
 {
     if (arguments.size() > 0 && arguments[0].isBool()) {
         m_shell->preferences()->allowFileAccessFromFileURLs = arguments[0].value.boolValue;
@@ -1406,7 +1406,7 @@ void LayoutTestController::setAllowFileAccessFromFileURLs(const CppArgumentList&
     result->setNull();
 }
 
-void LayoutTestController::setAllowRunningOfInsecureContent(const CppArgumentList& arguments, CppVariant* result)
+void DRTTestRunner::setAllowRunningOfInsecureContent(const CppArgumentList& arguments, CppVariant* result)
 {
     if (arguments.size() > 0 && arguments[0].isBool())
         m_shell->webPermissions()->setRunningInsecureContentAllowed(arguments[0].value.boolValue);
@@ -1416,7 +1416,7 @@ void LayoutTestController::setAllowRunningOfInsecureContent(const CppArgumentLis
 
 // Need these conversions because the format of the value for booleans
 // may vary - for example, on mac "1" and "0" are used for boolean.
-bool LayoutTestController::cppVariantToBool(const CppVariant& value)
+bool DRTTestRunner::cppVariantToBool(const CppVariant& value)
 {
     if (value.isBool())
         return value.toBoolean();
@@ -1433,7 +1433,7 @@ bool LayoutTestController::cppVariantToBool(const CppVariant& value)
     return false;
 }
 
-int32_t LayoutTestController::cppVariantToInt32(const CppVariant& value)
+int32_t DRTTestRunner::cppVariantToInt32(const CppVariant& value)
 {
     if (value.isNumber())
         return value.toInt32();
@@ -1449,7 +1449,7 @@ int32_t LayoutTestController::cppVariantToInt32(const CppVariant& value)
     return 0;
 }
 
-WebString LayoutTestController::cppVariantToWebString(const CppVariant& value)
+WebString DRTTestRunner::cppVariantToWebString(const CppVariant& value)
 {
     if (!value.isString()) {
         logErrorToConsole("Invalid value for preference. Expected string value.");
@@ -1458,7 +1458,7 @@ WebString LayoutTestController::cppVariantToWebString(const CppVariant& value)
     return WebString::fromUTF8(value.toString());
 }
 
-Vector<WebString> LayoutTestController::cppVariantToWebStringArray(const CppVariant& value)
+Vector<WebString> DRTTestRunner::cppVariantToWebStringArray(const CppVariant& value)
 {
     if (!value.isObject()) {
         logErrorToConsole("Invalid value for preference. Expected object value.");
@@ -1488,7 +1488,7 @@ static void setFontMap(WebPreferences::ScriptFontFamilyMap& map, const Vector<We
     }
 }
 
-void LayoutTestController::overridePreference(const CppArgumentList& arguments, CppVariant* result)
+void DRTTestRunner::overridePreference(const CppArgumentList& arguments, CppVariant* result)
 {
     result->setNull();
     if (arguments.size() != 2 || !arguments[0].isString())
@@ -1591,13 +1591,13 @@ void LayoutTestController::overridePreference(const CppArgumentList& arguments, 
     m_shell->applyPreferences();
 }
 
-void LayoutTestController::fallbackMethod(const CppArgumentList&, CppVariant* result)
+void DRTTestRunner::fallbackMethod(const CppArgumentList&, CppVariant* result)
 {
-    printf("CONSOLE MESSAGE: JavaScript ERROR: unknown method called on LayoutTestController\n");
+    printf("CONSOLE MESSAGE: JavaScript ERROR: unknown method called on DRTTestRunner\n");
     result->setNull();
 }
 
-void LayoutTestController::addOriginAccessWhitelistEntry(const CppArgumentList& arguments, CppVariant* result)
+void DRTTestRunner::addOriginAccessWhitelistEntry(const CppArgumentList& arguments, CppVariant* result)
 {
     result->setNull();
 
@@ -1616,7 +1616,7 @@ void LayoutTestController::addOriginAccessWhitelistEntry(const CppArgumentList& 
         arguments[3].toBoolean());
 }
 
-void LayoutTestController::removeOriginAccessWhitelistEntry(const CppArgumentList& arguments, CppVariant* result)
+void DRTTestRunner::removeOriginAccessWhitelistEntry(const CppArgumentList& arguments, CppVariant* result)
 {
     result->setNull();
 
@@ -1635,20 +1635,20 @@ void LayoutTestController::removeOriginAccessWhitelistEntry(const CppArgumentLis
         arguments[3].toBoolean());
 }
 
-void LayoutTestController::clearAllDatabases(const CppArgumentList& arguments, CppVariant* result)
+void DRTTestRunner::clearAllDatabases(const CppArgumentList& arguments, CppVariant* result)
 {
     result->setNull();
     webkit_support::ClearAllDatabases();
 }
 
-void LayoutTestController::setDatabaseQuota(const CppArgumentList& arguments, CppVariant* result)
+void DRTTestRunner::setDatabaseQuota(const CppArgumentList& arguments, CppVariant* result)
 {
     result->setNull();
     if ((arguments.size() >= 1) && arguments[0].isNumber())
         webkit_support::SetDatabaseQuota(arguments[0].toInt32());
 }
 
-void LayoutTestController::setPOSIXLocale(const CppArgumentList& arguments, CppVariant* result)
+void DRTTestRunner::setPOSIXLocale(const CppArgumentList& arguments, CppVariant* result)
 {
     result->setNull();
     if (arguments.size() == 1 && arguments[0].isString())
@@ -1715,13 +1715,13 @@ static bool parsePageNumberSizeMargins(const CppArgumentList& arguments, int arg
     return true;
 }
 
-void LayoutTestController::setPrinting(const CppArgumentList& arguments, CppVariant* result)
+void DRTTestRunner::setPrinting(const CppArgumentList& arguments, CppVariant* result)
 {
     setIsPrinting(true);
     result->setNull();
 }
 
-void LayoutTestController::pageSizeAndMarginsInPixels(const CppArgumentList& arguments, CppVariant* result)
+void DRTTestRunner::pageSizeAndMarginsInPixels(const CppArgumentList& arguments, CppVariant* result)
 {
     result->set("");
     int pageNumber = 0;
@@ -1746,7 +1746,7 @@ void LayoutTestController::pageSizeAndMarginsInPixels(const CppArgumentList& arg
     result->set(resultString.str());
 }
 
-void LayoutTestController::hasCustomPageSizeStyle(const CppArgumentList& arguments, CppVariant* result)
+void DRTTestRunner::hasCustomPageSizeStyle(const CppArgumentList& arguments, CppVariant* result)
 {
     result->set(false);
     int pageIndex = 0;
@@ -1758,7 +1758,7 @@ void LayoutTestController::hasCustomPageSizeStyle(const CppArgumentList& argumen
     result->set(frame->hasCustomPageSizeStyle(pageIndex));
 }
 
-void LayoutTestController::pageProperty(const CppArgumentList& arguments, CppVariant* result)
+void DRTTestRunner::pageProperty(const CppArgumentList& arguments, CppVariant* result)
 {
     result->set("");
     int pageNumber = 0;
@@ -1775,7 +1775,7 @@ void LayoutTestController::pageProperty(const CppArgumentList& arguments, CppVar
     frame->printEnd();
 }
 
-void LayoutTestController::numberOfPages(const CppArgumentList& arguments, CppVariant* result)
+void DRTTestRunner::numberOfPages(const CppArgumentList& arguments, CppVariant* result)
 {
     result->setNull();
     int pageWidthInPixels = 0;
@@ -1792,7 +1792,7 @@ void LayoutTestController::numberOfPages(const CppArgumentList& arguments, CppVa
     result->set(numberOfPages);
 }
 
-void LayoutTestController::numberOfPendingGeolocationPermissionRequests(const CppArgumentList& arguments, CppVariant* result)
+void DRTTestRunner::numberOfPendingGeolocationPermissionRequests(const CppArgumentList& arguments, CppVariant* result)
 {
     result->setNull();
     Vector<WebViewHost*> windowList = m_shell->windowList();
@@ -1802,14 +1802,14 @@ void LayoutTestController::numberOfPendingGeolocationPermissionRequests(const Cp
     result->set(numberOfRequests);
 }
 
-void LayoutTestController::logErrorToConsole(const std::string& text)
+void DRTTestRunner::logErrorToConsole(const std::string& text)
 {
     m_shell->webViewHost()->didAddMessageToConsole(
         WebConsoleMessage(WebConsoleMessage::LevelError, WebString::fromUTF8(text)),
         WebString(), 0);
 }
 
-void LayoutTestController::evaluateInWebInspector(const CppArgumentList& arguments, CppVariant* result)
+void DRTTestRunner::evaluateInWebInspector(const CppArgumentList& arguments, CppVariant* result)
 {
     result->setNull();
     if (arguments.size() < 2 || !arguments[0].isNumber() || !arguments[1].isString())
@@ -1817,13 +1817,13 @@ void LayoutTestController::evaluateInWebInspector(const CppArgumentList& argumen
     m_shell->drtDevToolsAgent()->evaluateInWebInspector(arguments[0].toInt32(), arguments[1].toString());
 }
 
-void LayoutTestController::forceRedSelectionColors(const CppArgumentList& arguments, CppVariant* result)
+void DRTTestRunner::forceRedSelectionColors(const CppArgumentList& arguments, CppVariant* result)
 {
     result->setNull();
     m_shell->webView()->setSelectionColors(0xffee0000, 0xff00ee00, 0xff000000, 0xffc0c0c0);
 }
 
-void LayoutTestController::addUserScript(const CppArgumentList& arguments, CppVariant* result)
+void DRTTestRunner::addUserScript(const CppArgumentList& arguments, CppVariant* result)
 {
     result->setNull();
     if (arguments.size() < 3 || !arguments[0].isString() || !arguments[1].isBool() || !arguments[2].isBool())
@@ -1834,7 +1834,7 @@ void LayoutTestController::addUserScript(const CppArgumentList& arguments, CppVa
         arguments[2].toBoolean() ? WebView::UserContentInjectInAllFrames : WebView::UserContentInjectInTopFrameOnly);
 }
 
-void LayoutTestController::addUserStyleSheet(const CppArgumentList& arguments, CppVariant* result)
+void DRTTestRunner::addUserStyleSheet(const CppArgumentList& arguments, CppVariant* result)
 {
     result->setNull();
     if (arguments.size() < 2 || !arguments[0].isString() || !arguments[1].isBool())
@@ -1847,7 +1847,7 @@ void LayoutTestController::addUserStyleSheet(const CppArgumentList& arguments, C
         WebView::UserStyleInjectInExistingDocuments);
 }
 
-void LayoutTestController::setMockDeviceOrientation(const CppArgumentList& arguments, CppVariant* result)
+void DRTTestRunner::setMockDeviceOrientation(const CppArgumentList& arguments, CppVariant* result)
 {
     result->setNull();
     if (arguments.size() < 6 || !arguments[0].isBool() || !arguments[1].isNumber() || !arguments[2].isBool() || !arguments[3].isNumber() || !arguments[4].isBool() || !arguments[5].isNumber())
@@ -1870,7 +1870,7 @@ void LayoutTestController::setMockDeviceOrientation(const CppArgumentList& argum
 
 // FIXME: For greater test flexibility, we should be able to set each page's geolocation mock individually.
 // https://bugs.webkit.org/show_bug.cgi?id=52368
-void LayoutTestController::setGeolocationPermission(const CppArgumentList& arguments, CppVariant* result)
+void DRTTestRunner::setGeolocationPermission(const CppArgumentList& arguments, CppVariant* result)
 {
     result->setNull();
     if (arguments.size() < 1 || !arguments[0].isBool())
@@ -1880,7 +1880,7 @@ void LayoutTestController::setGeolocationPermission(const CppArgumentList& argum
         windowList[i]->geolocationClientMock()->setPermission(arguments[0].toBoolean());
 }
 
-void LayoutTestController::setMockGeolocationPosition(const CppArgumentList& arguments, CppVariant* result)
+void DRTTestRunner::setMockGeolocationPosition(const CppArgumentList& arguments, CppVariant* result)
 {
     result->setNull();
     if (arguments.size() < 3 || !arguments[0].isNumber() || !arguments[1].isNumber() || !arguments[2].isNumber())
@@ -1890,7 +1890,7 @@ void LayoutTestController::setMockGeolocationPosition(const CppArgumentList& arg
         windowList[i]->geolocationClientMock()->setPosition(arguments[0].toDouble(), arguments[1].toDouble(), arguments[2].toDouble());
 }
 
-void LayoutTestController::setMockGeolocationError(const CppArgumentList& arguments, CppVariant* result)
+void DRTTestRunner::setMockGeolocationError(const CppArgumentList& arguments, CppVariant* result)
 {
     result->setNull();
     if (arguments.size() < 2 || !arguments[0].isNumber() || !arguments[1].isString())
@@ -1900,13 +1900,13 @@ void LayoutTestController::setMockGeolocationError(const CppArgumentList& argume
         windowList[i]->geolocationClientMock()->setError(arguments[0].toInt32(), cppVariantToWebString(arguments[1]));
 }
 
-void LayoutTestController::abortModal(const CppArgumentList& arguments, CppVariant* result)
+void DRTTestRunner::abortModal(const CppArgumentList& arguments, CppVariant* result)
 {
     result->setNull();
 }
 
 #if ENABLE(INPUT_SPEECH)
-void LayoutTestController::addMockSpeechInputResult(const CppArgumentList& arguments, CppVariant* result)
+void DRTTestRunner::addMockSpeechInputResult(const CppArgumentList& arguments, CppVariant* result)
 {
     result->setNull();
     if (arguments.size() < 3 || !arguments[0].isString() || !arguments[1].isNumber() || !arguments[2].isString())
@@ -1916,7 +1916,7 @@ void LayoutTestController::addMockSpeechInputResult(const CppArgumentList& argum
         controller->addMockRecognitionResult(cppVariantToWebString(arguments[0]), arguments[1].toDouble(), cppVariantToWebString(arguments[2]));
 }
 
-void LayoutTestController::setMockSpeechInputDumpRect(const CppArgumentList& arguments, CppVariant* result)
+void DRTTestRunner::setMockSpeechInputDumpRect(const CppArgumentList& arguments, CppVariant* result)
 {
     result->setNull();
     if (arguments.size() < 1 || !arguments[0].isBool())
@@ -1928,7 +1928,7 @@ void LayoutTestController::setMockSpeechInputDumpRect(const CppArgumentList& arg
 #endif
 
 #if ENABLE(SCRIPTED_SPEECH)
-void LayoutTestController::addMockSpeechRecognitionResult(const CppArgumentList& arguments, CppVariant* result)
+void DRTTestRunner::addMockSpeechRecognitionResult(const CppArgumentList& arguments, CppVariant* result)
 {
     result->setNull();
     if (arguments.size() < 2 || !arguments[0].isString() || !arguments[1].isNumber())
@@ -1938,7 +1938,7 @@ void LayoutTestController::addMockSpeechRecognitionResult(const CppArgumentList&
         recognizer->addMockResult(cppVariantToWebString(arguments[0]), arguments[1].toDouble());
 }
 
-void LayoutTestController::setMockSpeechRecognitionError(const CppArgumentList& arguments, CppVariant* result)
+void DRTTestRunner::setMockSpeechRecognitionError(const CppArgumentList& arguments, CppVariant* result)
 {
     result->setNull();
     if (arguments.size() < 2 || !arguments[0].isNumber() || !arguments[1].isString())
@@ -1948,7 +1948,7 @@ void LayoutTestController::setMockSpeechRecognitionError(const CppArgumentList& 
         recognizer->setError(arguments[0].toInt32(), cppVariantToWebString(arguments[1]));
 }
 
-void LayoutTestController::wasMockSpeechRecognitionAborted(const CppArgumentList&, CppVariant* result)
+void DRTTestRunner::wasMockSpeechRecognitionAborted(const CppArgumentList&, CppVariant* result)
 {
     result->set(false);
     if (MockWebSpeechRecognizer* recognizer = m_shell->webViewHost()->mockSpeechRecognizer())
@@ -1956,7 +1956,7 @@ void LayoutTestController::wasMockSpeechRecognitionAborted(const CppArgumentList
 }
 #endif
 
-void LayoutTestController::startSpeechInput(const CppArgumentList& arguments, CppVariant* result)
+void DRTTestRunner::startSpeechInput(const CppArgumentList& arguments, CppVariant* result)
 {
     result->setNull();
     if (arguments.size() != 1)
@@ -1976,12 +1976,12 @@ void LayoutTestController::startSpeechInput(const CppArgumentList& arguments, Cp
     input->startSpeechInput();
 }
 
-void LayoutTestController::layerTreeAsText(const CppArgumentList& args, CppVariant* result)
+void DRTTestRunner::layerTreeAsText(const CppArgumentList& args, CppVariant* result)
 {
     result->set(m_shell->webView()->mainFrame()->layerTreeAsText(m_showDebugLayerTree).utf8());
 }
 
-void LayoutTestController::loseCompositorContext(const CppArgumentList& args, CppVariant*)
+void DRTTestRunner::loseCompositorContext(const CppArgumentList& args, CppVariant*)
 {
     int numTimes;
     if (args.size() == 1 || !args[0].isNumber())
@@ -1991,7 +1991,7 @@ void LayoutTestController::loseCompositorContext(const CppArgumentList& args, Cp
     m_shell->webView()->loseCompositorContext(numTimes);
 }
 
-void LayoutTestController::markerTextForListItem(const CppArgumentList& args, CppVariant* result)
+void DRTTestRunner::markerTextForListItem(const CppArgumentList& args, CppVariant* result)
 {
     WebElement element;
     if (!WebBindings::getElement(args[0].value.objectValue, &element))
@@ -2000,7 +2000,7 @@ void LayoutTestController::markerTextForListItem(const CppArgumentList& args, Cp
         result->set(element.document().frame()->markerTextForListItem(element).utf8());
 }
 
-void LayoutTestController::findString(const CppArgumentList& arguments, CppVariant* result)
+void DRTTestRunner::findString(const CppArgumentList& arguments, CppVariant* result)
 {
     if (arguments.size() < 1 || !arguments[0].isString())
         return;
@@ -2028,7 +2028,7 @@ void LayoutTestController::findString(const CppArgumentList& arguments, CppVaria
     result->set(findResult);
 }
 
-void LayoutTestController::setMinimumTimerInterval(const CppArgumentList& arguments, CppVariant* result)
+void DRTTestRunner::setMinimumTimerInterval(const CppArgumentList& arguments, CppVariant* result)
 {
     result->setNull();
     if (arguments.size() < 1 || !arguments[0].isNumber())
@@ -2036,7 +2036,7 @@ void LayoutTestController::setMinimumTimerInterval(const CppArgumentList& argume
     m_shell->webView()->settings()->setMinimumTimerInterval(arguments[0].toDouble());
 }
 
-void LayoutTestController::setAutofilled(const CppArgumentList& arguments, CppVariant* result)
+void DRTTestRunner::setAutofilled(const CppArgumentList& arguments, CppVariant* result)
 {
     result->setNull();
     if (arguments.size() != 2 || !arguments[1].isBool())
@@ -2053,7 +2053,7 @@ void LayoutTestController::setAutofilled(const CppArgumentList& arguments, CppVa
     input->setAutofilled(arguments[1].value.boolValue);
 }
 
-void LayoutTestController::setValueForUser(const CppArgumentList& arguments, CppVariant* result)
+void DRTTestRunner::setValueForUser(const CppArgumentList& arguments, CppVariant* result)
 {
     result->setNull();
     if (arguments.size() != 2)
@@ -2070,37 +2070,37 @@ void LayoutTestController::setValueForUser(const CppArgumentList& arguments, Cpp
     input->setValue(cppVariantToWebString(arguments[1]), true);
 }
 
-void LayoutTestController::deleteAllLocalStorage(const CppArgumentList& arguments, CppVariant*)
+void DRTTestRunner::deleteAllLocalStorage(const CppArgumentList& arguments, CppVariant*)
 {
     // Not Implemented
 }
 
-void LayoutTestController::localStorageDiskUsageForOrigin(const CppArgumentList& arguments, CppVariant*)
+void DRTTestRunner::localStorageDiskUsageForOrigin(const CppArgumentList& arguments, CppVariant*)
 {
     // Not Implemented
 }
 
-void LayoutTestController::originsWithLocalStorage(const CppArgumentList& arguments, CppVariant*)
+void DRTTestRunner::originsWithLocalStorage(const CppArgumentList& arguments, CppVariant*)
 {
     // Not Implemented
 }
 
-void LayoutTestController::deleteLocalStorageForOrigin(const CppArgumentList& arguments, CppVariant*)
+void DRTTestRunner::deleteLocalStorageForOrigin(const CppArgumentList& arguments, CppVariant*)
 {
     // Not Implemented
 }
 
-void LayoutTestController::observeStorageTrackerNotifications(const CppArgumentList&, CppVariant*)
+void DRTTestRunner::observeStorageTrackerNotifications(const CppArgumentList&, CppVariant*)
 {
     // Not Implemented
 }
 
-void LayoutTestController::syncLocalStorage(const CppArgumentList&, CppVariant*)
+void DRTTestRunner::syncLocalStorage(const CppArgumentList&, CppVariant*)
 {
     // Not Implemented
 }
 
-void LayoutTestController::setShouldStayOnPageAfterHandlingBeforeUnload(const CppArgumentList& arguments, CppVariant* result)
+void DRTTestRunner::setShouldStayOnPageAfterHandlingBeforeUnload(const CppArgumentList& arguments, CppVariant* result)
 {
     if (arguments.size() == 1 && arguments[0].isBool())
         m_shouldStayOnPageAfterHandlingBeforeUnload = arguments[0].toBoolean();
@@ -2108,7 +2108,7 @@ void LayoutTestController::setShouldStayOnPageAfterHandlingBeforeUnload(const Cp
     result->setNull();
 }
 
-void LayoutTestController::enableFixedLayoutMode(const CppArgumentList& arguments, CppVariant* result)
+void DRTTestRunner::enableFixedLayoutMode(const CppArgumentList& arguments, CppVariant* result)
 {
     result->setNull();
     if (arguments.size() <  1 || !arguments[0].isBool())
@@ -2117,7 +2117,7 @@ void LayoutTestController::enableFixedLayoutMode(const CppArgumentList& argument
     m_shell->webView()->enableFixedLayoutMode(enableFixedLayout);
 }
 
-void LayoutTestController::setFixedLayoutSize(const CppArgumentList& arguments, CppVariant* result)
+void DRTTestRunner::setFixedLayoutSize(const CppArgumentList& arguments, CppVariant* result)
 {
     result->setNull();
     if (arguments.size() <  2 || !arguments[0].isNumber() || !arguments[1].isNumber())
@@ -2127,17 +2127,17 @@ void LayoutTestController::setFixedLayoutSize(const CppArgumentList& arguments, 
     m_shell->webView()->setFixedLayoutSize(WebSize(width, height));
 }
 
-void LayoutTestController::selectionAsMarkup(const CppArgumentList& arguments, CppVariant* result)
+void DRTTestRunner::selectionAsMarkup(const CppArgumentList& arguments, CppVariant* result)
 {
     result->set(m_shell->webView()->mainFrame()->selectionAsMarkup().utf8());
 }
 
-void LayoutTestController::workerThreadCount(CppVariant* result)
+void DRTTestRunner::workerThreadCount(CppVariant* result)
 {
     result->set(static_cast<int>(WebWorkerInfo::dedicatedWorkerCount()));
 }
 
-void LayoutTestController::sendWebIntentResponse(const CppArgumentList& arguments, CppVariant* result)
+void DRTTestRunner::sendWebIntentResponse(const CppArgumentList& arguments, CppVariant* result)
 {
     v8::HandleScope scope;
     v8::Local<v8::Context> ctx = m_shell->webView()->mainFrame()->mainWorldScriptContext();
@@ -2159,7 +2159,7 @@ void LayoutTestController::sendWebIntentResponse(const CppArgumentList& argument
     result->setNull();
 }
 
-void LayoutTestController::deliverWebIntent(const CppArgumentList& arguments, CppVariant* result)
+void DRTTestRunner::deliverWebIntent(const CppArgumentList& arguments, CppVariant* result)
 {
     if (arguments.size() <  3)
         return;
@@ -2180,7 +2180,7 @@ void LayoutTestController::deliverWebIntent(const CppArgumentList& arguments, Cp
     m_shell->webView()->mainFrame()->deliverIntent(intent, 0, m_intentClient.get());
 }
 
-void LayoutTestController::setTextSubpixelPositioning(const CppArgumentList& arguments, CppVariant* result)
+void DRTTestRunner::setTextSubpixelPositioning(const CppArgumentList& arguments, CppVariant* result)
 {
 #if OS(LINUX) || OS(ANDROID)
     // Since FontConfig doesn't provide a variable to control subpixel positioning, we'll fall back
@@ -2191,10 +2191,10 @@ void LayoutTestController::setTextSubpixelPositioning(const CppArgumentList& arg
     result->setNull();
 }
 
-class InvokeCallbackTask : public MethodTask<LayoutTestController> {
+class InvokeCallbackTask : public MethodTask<DRTTestRunner> {
 public:
-    InvokeCallbackTask(LayoutTestController* object, PassOwnArrayPtr<CppVariant> callbackArguments, uint32_t numberOfArguments)
-        : MethodTask<LayoutTestController>(object)
+    InvokeCallbackTask(DRTTestRunner* object, PassOwnArrayPtr<CppVariant> callbackArguments, uint32_t numberOfArguments)
+        : MethodTask<DRTTestRunner>(object)
         , m_callbackArguments(callbackArguments)
         , m_numberOfArguments(numberOfArguments)
     {
@@ -2211,7 +2211,7 @@ private:
     uint32_t m_numberOfArguments;
 };
 
-void LayoutTestController::setBackingScaleFactor(const CppArgumentList& arguments, CppVariant* result)
+void DRTTestRunner::setBackingScaleFactor(const CppArgumentList& arguments, CppVariant* result)
 {
     if (arguments.size() < 2 || !arguments[0].isNumber() || !arguments[1].isObject())
         return;
@@ -2225,7 +2225,7 @@ void LayoutTestController::setBackingScaleFactor(const CppArgumentList& argument
     postTask(new InvokeCallbackTask(this, callbackArguments.release(), 1));
 }
 
-void LayoutTestController::setPluginsEnabled(const CppArgumentList& arguments, CppVariant* result)
+void DRTTestRunner::setPluginsEnabled(const CppArgumentList& arguments, CppVariant* result)
 {
     if (arguments.size() > 0 && arguments[0].isBool()) {
         m_shell->preferences()->pluginsEnabled = arguments[0].toBoolean();
@@ -2234,12 +2234,12 @@ void LayoutTestController::setPluginsEnabled(const CppArgumentList& arguments, C
     result->setNull();
 }
 
-void LayoutTestController::resetPageVisibility(const CppArgumentList& arguments, CppVariant* result)
+void DRTTestRunner::resetPageVisibility(const CppArgumentList& arguments, CppVariant* result)
 {
     m_shell->webView()->setVisibilityState(WebPageVisibilityStateVisible, true);
 }
 
-void LayoutTestController::setPageVisibility(const CppArgumentList& arguments, CppVariant* result)
+void DRTTestRunner::setPageVisibility(const CppArgumentList& arguments, CppVariant* result)
 {
     if (arguments.size() > 0 && arguments[0].isString()) {
         string newVisibility = arguments[0].toString();
@@ -2254,12 +2254,12 @@ void LayoutTestController::setPageVisibility(const CppArgumentList& arguments, C
     }
 }
 
-void LayoutTestController::setAutomaticLinkDetectionEnabled(bool)
+void DRTTestRunner::setAutomaticLinkDetectionEnabled(bool)
 {
     // Not Implemented
 }
 
-void LayoutTestController::setTextDirection(const CppArgumentList& arguments, CppVariant* result)
+void DRTTestRunner::setTextDirection(const CppArgumentList& arguments, CppVariant* result)
 {
     result->setNull();
     if (arguments.size() != 1 || !arguments[0].isString())
@@ -2280,7 +2280,7 @@ void LayoutTestController::setTextDirection(const CppArgumentList& arguments, Cp
     m_shell->webView()->setTextDirection(direction);
 }
 
-void LayoutTestController::setAudioData(const CppArgumentList& arguments, CppVariant* result)
+void DRTTestRunner::setAudioData(const CppArgumentList& arguments, CppVariant* result)
 {
     result->setNull();
 
@@ -2297,7 +2297,7 @@ void LayoutTestController::setAudioData(const CppArgumentList& arguments, CppVar
     setShouldDumpAsAudio(true);
 }
 
-void LayoutTestController::setHasCustomFullScreenBehavior(const CppArgumentList& arguments, CppVariant* result)
+void DRTTestRunner::setHasCustomFullScreenBehavior(const CppArgumentList& arguments, CppVariant* result)
 {
     result->setNull();
     if (arguments.size() <  1 || !arguments[0].isBool())
@@ -2306,26 +2306,26 @@ void LayoutTestController::setHasCustomFullScreenBehavior(const CppArgumentList&
 }
 
 #if ENABLE(POINTER_LOCK)
-void LayoutTestController::didLosePointerLock(const CppArgumentList&, CppVariant* result)
+void DRTTestRunner::didLosePointerLock(const CppArgumentList&, CppVariant* result)
 {
     m_shell->webViewHost()->didLosePointerLock();
     result->setNull();
 }
 
-void LayoutTestController::setPointerLockWillFailAsynchronously(const CppArgumentList&, CppVariant* result)
+void DRTTestRunner::setPointerLockWillFailAsynchronously(const CppArgumentList&, CppVariant* result)
 {
     m_shell->webViewHost()->setPointerLockWillFailAsynchronously();
     result->setNull();
 }
 
-void LayoutTestController::setPointerLockWillFailSynchronously(const CppArgumentList&, CppVariant* result)
+void DRTTestRunner::setPointerLockWillFailSynchronously(const CppArgumentList&, CppVariant* result)
 {
     m_shell->webViewHost()->setPointerLockWillFailSynchronously();
     result->setNull();
 }
 #endif
 
-void LayoutTestController::textSurroundingNode(const CppArgumentList& arguments, CppVariant* result)
+void DRTTestRunner::textSurroundingNode(const CppArgumentList& arguments, CppVariant* result)
 {
     result->setNull();
     if (arguments.size() < 4 || !arguments[0].isObject() || !arguments[1].isNumber() || !arguments[2].isNumber() || !arguments[3].isNumber())

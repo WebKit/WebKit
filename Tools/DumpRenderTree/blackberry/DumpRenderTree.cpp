@@ -72,7 +72,7 @@
 
 volatile bool testDone;
 
-RefPtr<LayoutTestController> gLayoutTestController;
+RefPtr<TestRunner> gTestRunner;
 
 WebCore::Frame* mainFrame = 0;
 WebCore::Frame* topLoadingFrame = 0;
@@ -181,7 +181,7 @@ void DumpRenderTree::runTest(const String& url)
     mainFrame->loader()->stopForUserCancel();
     resetToConsistentStateBeforeTesting();
     if (shouldLogFrameLoadDelegates(url))
-        gLayoutTestController->setDumpFrameLoadCallbacks(true);
+        gTestRunner->setDumpFrameLoadCallbacks(true);
     String stdoutFile = m_resultsDir + *m_currentTest + ".dump";
     String stderrFile = m_resultsDir + *m_currentTest + ".stderr";
 
@@ -241,11 +241,11 @@ void DumpRenderTree::runRemainingTests()
 void DumpRenderTree::resetToConsistentStateBeforeTesting()
 {
     if (isHTTPTest(m_currentTest->utf8().data()))
-        gLayoutTestController = LayoutTestController::create(String(httpPrefixURL + *m_currentTest).utf8().data(), "");
+        gTestRunner = TestRunner::create(String(httpPrefixURL + *m_currentTest).utf8().data(), "");
     else
-        gLayoutTestController = LayoutTestController::create(String(kSDCLayoutTestsURI + *m_currentTest).utf8().data(), "");
+        gTestRunner = TestRunner::create(String(kSDCLayoutTestsURI + *m_currentTest).utf8().data(), "");
 
-    gLayoutTestController->setIconDatabaseEnabled(false);
+    gTestRunner->setIconDatabaseEnabled(false);
 
     DumpRenderTreeSupport::resetGeolocationMock(m_page);
 
@@ -361,7 +361,7 @@ String DumpRenderTree::dumpFramesAsText(WebCore::Frame* frame)
 
     s += documentElement->innerText() + "\n";
 
-    if (gLayoutTestController->dumpChildFramesAsText()) {
+    if (gTestRunner->dumpChildFramesAsText()) {
         WebCore::FrameTree* tree = frame->tree();
         for (WebCore::Frame* child = tree->firstChild(); child; child = child->tree()->nextSibling())
             s += dumpFramesAsText(child);
@@ -488,17 +488,17 @@ void DumpRenderTree::dump()
     String resultMimeType = "text/plain";
     String responseMimeType = mainFrame->loader()->documentLoader()->responseMIMEType();
 
-    bool dumpAsText = gLayoutTestController->dumpAsText() || responseMimeType == "text/plain";
+    bool dumpAsText = gTestRunner->dumpAsText() || responseMimeType == "text/plain";
     String data = dumpAsText ? dumpFramesAsText(mainFrame) : renderTreeDump();
 
-    if (gLayoutTestController->dumpBackForwardList())
+    if (gTestRunner->dumpBackForwardList())
         data += dumpBackForwardListForWebView();
 
     String result = "Content-Type: " + resultMimeType + "\n" + data;
 
     dumpToFile(result);
-    if (m_dumpPixels && !dumpAsText && gLayoutTestController->generatePixelResults())
-        dumpWebViewAsPixelsAndCompareWithExpected(gLayoutTestController->expectedPixelHash());
+    if (m_dumpPixels && !dumpAsText && gTestRunner->generatePixelResults())
+        dumpWebViewAsPixelsAndCompareWithExpected(gTestRunner->expectedPixelHash());
 
     String crashFile = dumpFile + ".crash";
     unlink(crashFile.utf8().data());
@@ -518,7 +518,7 @@ void DumpRenderTree::setWaitToDumpWatchdog(double interval)
 
 void DumpRenderTree::waitToDumpWatchdogTimerFired(WebCore::Timer<DumpRenderTree>*)
 {
-    gLayoutTestController->waitToDumpWatchdogTimerFired();
+    gTestRunner->waitToDumpWatchdogTimerFired();
 }
 
 void DumpRenderTree::processWork(WebCore::Timer<DumpRenderTree>*)
@@ -526,7 +526,7 @@ void DumpRenderTree::processWork(WebCore::Timer<DumpRenderTree>*)
     if (topLoadingFrame)
         return;
 
-    if (WorkQueue::shared()->processWork() && !gLayoutTestController->waitToDump())
+    if (WorkQueue::shared()->processWork() && !gTestRunner->waitToDump())
         dump();
 }
 
@@ -537,7 +537,7 @@ void DumpRenderTree::locationChangeForFrame(WebCore::Frame* frame)
 
     topLoadingFrame = 0;
     WorkQueue::shared()->setFrozen(true); // first complete load freezes the queue
-    if (gLayoutTestController->waitToDump())
+    if (gTestRunner->waitToDump())
         return;
 
     if (WorkQueue::shared()->count())
@@ -549,16 +549,16 @@ void DumpRenderTree::locationChangeForFrame(WebCore::Frame* frame)
 // FrameLoadClient delegates.
 void DumpRenderTree::didStartProvisionalLoadForFrame(WebCore::Frame* frame)
 {
-    if (!testDone && gLayoutTestController->dumpFrameLoadCallbacks())
+    if (!testDone && gTestRunner->dumpFrameLoadCallbacks())
         printf("%s - didStartProvisionalLoadForFrame\n", drtFrameDescription(frame).utf8().data());
 
-    if (!testDone && gLayoutTestController->dumpUserGestureInFrameLoadCallbacks())
+    if (!testDone && gTestRunner->dumpUserGestureInFrameLoadCallbacks())
         printf("Frame with user gesture \"%s\" - in didStartProvisionalLoadForFrame\n", WebCore::ScriptController::processingUserGesture() ? "true" : "false");
 
     if (!topLoadingFrame && !testDone)
         topLoadingFrame = frame;
 
-    if (!testDone && gLayoutTestController->stopProvisionalFrameLoads()) {
+    if (!testDone && gTestRunner->stopProvisionalFrameLoads()) {
         printf("%s - stopping load in didStartProvisionalLoadForFrame callback\n", drtFrameDescription(frame).utf8().data());
         frame->loader()->stopForUserCancel();
     }
@@ -566,15 +566,15 @@ void DumpRenderTree::didStartProvisionalLoadForFrame(WebCore::Frame* frame)
 
 void DumpRenderTree::didCommitLoadForFrame(WebCore::Frame* frame)
 {
-    if (!testDone && gLayoutTestController->dumpFrameLoadCallbacks())
+    if (!testDone && gTestRunner->dumpFrameLoadCallbacks())
         printf("%s - didCommitLoadForFrame\n", drtFrameDescription(frame).utf8().data());
 
-    gLayoutTestController->setWindowIsKey(true);
+    gTestRunner->setWindowIsKey(true);
 }
 
 void DumpRenderTree::didFailProvisionalLoadForFrame(WebCore::Frame* frame)
 {
-    if (!testDone && gLayoutTestController->dumpFrameLoadCallbacks())
+    if (!testDone && gTestRunner->dumpFrameLoadCallbacks())
         printf("%s - didFailProvisionalLoadWithError\n", drtFrameDescription(frame).utf8().data());
 
     locationChangeForFrame(frame);
@@ -582,7 +582,7 @@ void DumpRenderTree::didFailProvisionalLoadForFrame(WebCore::Frame* frame)
 
 void DumpRenderTree::didFailLoadForFrame(WebCore::Frame* frame)
 {
-    if (!testDone && gLayoutTestController->dumpFrameLoadCallbacks())
+    if (!testDone && gTestRunner->dumpFrameLoadCallbacks())
         printf("%s - didFailLoadWithError\n", drtFrameDescription(frame).utf8().data());
 
     locationChangeForFrame(frame);
@@ -590,7 +590,7 @@ void DumpRenderTree::didFailLoadForFrame(WebCore::Frame* frame)
 
 void DumpRenderTree::didFinishLoadForFrame(WebCore::Frame* frame)
 {
-    if (!testDone && gLayoutTestController->dumpFrameLoadCallbacks())
+    if (!testDone && gTestRunner->dumpFrameLoadCallbacks())
         printf("%s - didFinishLoadForFrame\n", drtFrameDescription(frame).utf8().data());
 
     if (frame == topLoadingFrame)
@@ -601,7 +601,7 @@ void DumpRenderTree::didFinishLoadForFrame(WebCore::Frame* frame)
 void DumpRenderTree::didFinishDocumentLoadForFrame(WebCore::Frame* frame)
 {
     if (!testDone) {
-        if (gLayoutTestController->dumpFrameLoadCallbacks())
+        if (gTestRunner->dumpFrameLoadCallbacks())
             printf("%s - didFinishDocumentLoadForFrame\n", drtFrameDescription(frame).utf8().data());
         else {
             unsigned pendingFrameUnloadEvents = frame->domWindow()->pendingUnloadEventListeners();
@@ -615,7 +615,7 @@ void DumpRenderTree::didClearWindowObjectInWorld(WebCore::DOMWrapperWorld*, JSGl
 {
     JSValueRef exception = 0;
 
-    gLayoutTestController->makeWindowObject(context, windowObject, &exception);
+    gTestRunner->makeWindowObject(context, windowObject, &exception);
     ASSERT(!exception);
 
     m_gcController->makeWindowObject(context, windowObject, &exception);
@@ -633,10 +633,10 @@ void DumpRenderTree::didClearWindowObjectInWorld(WebCore::DOMWrapperWorld*, JSGl
 
 void DumpRenderTree::didReceiveTitleForFrame(const String& title, WebCore::Frame* frame)
 {
-    if (!testDone && gLayoutTestController->dumpFrameLoadCallbacks())
+    if (!testDone && gTestRunner->dumpFrameLoadCallbacks())
         printf("%s - didReceiveTitle: %s\n", drtFrameDescription(frame).utf8().data(), title.utf8().data());
 
-    if (gLayoutTestController->dumpTitleChanges())
+    if (gTestRunner->dumpTitleChanges())
         printf("TITLE CHANGED: %s\n", title.utf8().data());
 }
 
@@ -675,13 +675,13 @@ bool DumpRenderTree::runBeforeUnloadConfirmPanel(const String& message)
 
 void DumpRenderTree::setStatusText(const String& status)
 {
-    if (gLayoutTestController->dumpStatusCallbacks())
+    if (gTestRunner->dumpStatusCallbacks())
         printf("UI DELEGATE STATUS CALLBACK: setStatusText:%s\n", status.utf8().data());
 }
 
 void DumpRenderTree::exceededDatabaseQuota(WebCore::SecurityOrigin* origin, const String& name)
 {
-    if (!testDone && gLayoutTestController->dumpDatabaseCallbacks())
+    if (!testDone && gTestRunner->dumpDatabaseCallbacks())
         printf("UI DELEGATE DATABASE CALLBACK: exceededDatabaseQuotaForSecurityOrigin:{%s, %s, %i} database:%s\n", origin->protocol().utf8().data(), origin->host().utf8().data(), origin->port(), name.utf8().data());
 
     WebCore::DatabaseTracker::tracker().setQuota(mainFrame->document()->securityOrigin(), 5 * 1024 * 1024);
@@ -689,7 +689,7 @@ void DumpRenderTree::exceededDatabaseQuota(WebCore::SecurityOrigin* origin, cons
 
 bool DumpRenderTree::allowsOpeningWindow()
 {
-    return gLayoutTestController->canOpenWindows();
+    return gTestRunner->canOpenWindows();
 }
 
 void DumpRenderTree::windowCreated(BlackBerry::WebKit::WebPage* page)
@@ -700,25 +700,25 @@ void DumpRenderTree::windowCreated(BlackBerry::WebKit::WebPage* page)
 // EditorClient delegates.
 void DumpRenderTree::didBeginEditing()
 {
-    if (!testDone && gLayoutTestController->dumpEditingCallbacks())
+    if (!testDone && gTestRunner->dumpEditingCallbacks())
         printf("EDITING DELEGATE: webViewDidBeginEditing:%s\n", "WebViewDidBeginEditingNotification");
 }
 
 void DumpRenderTree::didEndEditing()
 {
-    if (!testDone && gLayoutTestController->dumpEditingCallbacks())
+    if (!testDone && gTestRunner->dumpEditingCallbacks())
         printf("EDITING DELEGATE: webViewDidEndEditing:%s\n", "WebViewDidEndEditingNotification");
 }
 
 void DumpRenderTree::didChange()
 {
-    if (!testDone && gLayoutTestController->dumpEditingCallbacks())
+    if (!testDone && gTestRunner->dumpEditingCallbacks())
         printf("EDITING DELEGATE: webViewDidChange:%s\n", "WebViewDidChangeNotification");
 }
 
 void DumpRenderTree::didChangeSelection()
 {
-    if (!testDone && gLayoutTestController->dumpEditingCallbacks())
+    if (!testDone && gTestRunner->dumpEditingCallbacks())
         printf("EDITING DELEGATE: webViewDidChangeSelection:%s\n", "WebViewDidChangeSelectionNotification");
 }
 
@@ -730,28 +730,28 @@ bool DumpRenderTree::findString(const String& string, WebCore::FindOptions optio
 
 bool DumpRenderTree::shouldBeginEditingInDOMRange(WebCore::Range* range)
 {
-    if (!testDone && gLayoutTestController->dumpEditingCallbacks())
+    if (!testDone && gTestRunner->dumpEditingCallbacks())
         printf("EDITING DELEGATE: shouldBeginEditingInDOMRange:%s\n", drtRangeDescription(range).utf8().data());
     return m_acceptsEditing;
 }
 
 bool DumpRenderTree::shouldEndEditingInDOMRange(WebCore::Range* range)
 {
-    if (!testDone && gLayoutTestController->dumpEditingCallbacks())
+    if (!testDone && gTestRunner->dumpEditingCallbacks())
         printf("EDITING DELEGATE: shouldEndEditingInDOMRange:%s\n", drtRangeDescription(range).utf8().data());
     return m_acceptsEditing;
 }
 
 bool DumpRenderTree::shouldDeleteDOMRange(WebCore::Range* range)
 {
-    if (!testDone && gLayoutTestController->dumpEditingCallbacks())
+    if (!testDone && gTestRunner->dumpEditingCallbacks())
         printf("EDITING DELEGATE: shouldDeleteDOMRange:%s\n", drtRangeDescription(range).utf8().data());
     return m_acceptsEditing;
 }
 
 bool DumpRenderTree::shouldChangeSelectedDOMRangeToDOMRangeAffinityStillSelecting(WebCore::Range* fromRange, WebCore::Range* toRange, int affinity, bool stillSelecting)
 {
-    if (!testDone && gLayoutTestController->dumpEditingCallbacks())
+    if (!testDone && gTestRunner->dumpEditingCallbacks())
         printf("EDITING DELEGATE: shouldChangeSelectedDOMRange:%s toDOMRange:%s affinity:%s stillSelecting:%s\n", drtRangeDescription(fromRange).utf8().data(), drtRangeDescription(toRange).utf8().data(), drtAffinityDescription(static_cast<WebCore::EAffinity>(affinity)).utf8().data(), stillSelecting ? "TRUE" : "FALSE");
     return m_acceptsEditing;
 }
@@ -772,14 +772,14 @@ static const char* insertActionString(WebCore::EditorInsertAction action)
 
 bool DumpRenderTree::shouldInsertNode(WebCore::Node* node, WebCore::Range* range, int action)
 {
-    if (!testDone && gLayoutTestController->dumpEditingCallbacks())
+    if (!testDone && gTestRunner->dumpEditingCallbacks())
         printf("EDITING DELEGATE: shouldInsertNode:%s replacingDOMRange:%s givenAction:%s\n", drtDumpPath(node).utf8().data(), drtRangeDescription(range).utf8().data(), insertActionString((WebCore::EditorInsertAction)action));
     return m_acceptsEditing;
 }
 
 bool DumpRenderTree::shouldInsertText(const String& text, WebCore::Range* range, int action)
 {
-    if (!testDone && gLayoutTestController->dumpEditingCallbacks())
+    if (!testDone && gTestRunner->dumpEditingCallbacks())
         printf("EDITING DELEGATE: shouldInsertText:%s replacingDOMRange:%s givenAction:%s\n", text.utf8().data(), drtRangeDescription(range).utf8().data(), insertActionString((WebCore::EditorInsertAction)action));
     return m_acceptsEditing;
 }
@@ -816,36 +816,36 @@ void DumpRenderTree::didDecidePolicyForNavigationAction(const WebCore::Navigatio
     printf("Policy delegate: attempt to load %s with navigation type '%s'\n", request.url().string().utf8().data(), typeDescription);
     // FIXME: do originating part.
 
-    gLayoutTestController->notifyDone();
+    gTestRunner->notifyDone();
 }
 
 void DumpRenderTree::didDispatchWillPerformClientRedirect()
 {
-    if (!testDone && gLayoutTestController->dumpUserGestureInFrameLoadCallbacks())
+    if (!testDone && gTestRunner->dumpUserGestureInFrameLoadCallbacks())
         printf("Frame with user gesture \"%s\" - in willPerformClientRedirect\n", WebCore::ScriptController::processingUserGesture() ? "true" : "false");
 }
 
 void DumpRenderTree::didHandleOnloadEventsForFrame(WebCore::Frame* frame)
 {
-    if (!testDone && gLayoutTestController->dumpFrameLoadCallbacks())
+    if (!testDone && gTestRunner->dumpFrameLoadCallbacks())
         printf("%s - didHandleOnloadEventsForFrame\n", drtFrameDescription(frame).utf8().data());
 }
 
 void DumpRenderTree::didReceiveResponseForFrame(WebCore::Frame* frame, const WebCore::ResourceResponse& response)
 {
-    if (!testDone && gLayoutTestController->dumpResourceResponseMIMETypes())
+    if (!testDone && gTestRunner->dumpResourceResponseMIMETypes())
         printf("%s has MIME type %s\n", response.url().lastPathComponent().utf8().data(), response.mimeType().utf8().data());
 }
 
 bool DumpRenderTree::didReceiveAuthenticationChallenge(WebCore::Credential& credential)
 {
-    if (!gLayoutTestController->handlesAuthenticationChallenges()) {
+    if (!gTestRunner->handlesAuthenticationChallenges()) {
         credential = WebCore::Credential();
         printf("%s - didReceiveAuthenticationChallenge - Simulating cancelled authentication\n", drtCredentialDescription(credential).utf8().data());
         return false;
     }
-    const char* user = gLayoutTestController->authenticationUsername().c_str();
-    const char* password = gLayoutTestController->authenticationPassword().c_str();
+    const char* user = gTestRunner->authenticationUsername().c_str();
+    const char* password = gTestRunner->authenticationPassword().c_str();
     credential = WebCore::Credential(user, password, WebCore::CredentialPersistenceForSession);
     printf("%s - didReceiveAuthenticationChallenge - Responding with %s:%s\n", drtCredentialDescription(credential).utf8().data(), user, password);
     return true;

@@ -1,3 +1,66 @@
+2012-08-13  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Rename LayoutTestController to TestRunner in DumpRenderTree
+        https://bugs.webkit.org/show_bug.cgi?id=93758
+
+        Reviewed by Tony Chang.
+
+        Renamed LayoutTestController to TestRunner. For Chromium port, it's renamed to DRTTestRunner
+        since it already has TestRunner class shared between DumpRenderTree and content_shell.
+
+        * DumpRenderTree/DumpRenderTree.h:
+        * DumpRenderTree/PixelDumpSupport.cpp:
+        * DumpRenderTree/StorageTrackerDelegate.h:
+        * DumpRenderTree/StorageTrackerDelegate.mm:
+        * DumpRenderTree/TestRunner.cpp:
+        * DumpRenderTree/TestRunner.h:
+        * DumpRenderTree/blackberry/DumpRenderTree.cpp:
+        * DumpRenderTree/blackberry/TestRunnerBlackBerry.cpp:
+        * DumpRenderTree/chromium/DRTTestRunner.cpp:
+        * DumpRenderTree/chromium/DRTTestRunner.h:
+        * DumpRenderTree/chromium/DumpRenderTree.cpp:
+        * DumpRenderTree/chromium/NotificationPresenter.h:
+        * DumpRenderTree/chromium/TestShell.cpp:
+        * DumpRenderTree/chromium/TestShell.h:
+        * DumpRenderTree/chromium/WebPermissions.cpp:
+        * DumpRenderTree/chromium/WebPermissions.h:
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        * DumpRenderTree/chromium/WebViewHost.h:
+        * DumpRenderTree/efl/DumpRenderTree.cpp:
+        * DumpRenderTree/efl/DumpRenderTreeChrome.cpp:
+        * DumpRenderTree/efl/DumpRenderTreeView.cpp:
+        * DumpRenderTree/efl/EditingCallbacks.cpp:
+        * DumpRenderTree/efl/TestRunnerEfl.cpp:
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        * DumpRenderTree/gtk/EditingCallbacks.cpp:
+        * DumpRenderTree/gtk/TestRunnerGtk.cpp:
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        * DumpRenderTree/mac/DumpRenderTreeWindow.mm:
+        * DumpRenderTree/mac/EditingDelegate.mm:
+        * DumpRenderTree/mac/FrameLoadDelegate.mm:
+        * DumpRenderTree/mac/HistoryDelegate.mm:
+        * DumpRenderTree/mac/PixelDumpSupportMac.mm:
+        * DumpRenderTree/mac/PolicyDelegate.h:
+        * DumpRenderTree/mac/PolicyDelegate.mm:
+        * DumpRenderTree/mac/ResourceLoadDelegate.mm:
+        * DumpRenderTree/mac/TestRunnerMac.mm:
+        * DumpRenderTree/mac/UIDelegate.mm:
+        * DumpRenderTree/qt/DumpRenderTreeQt.cpp:
+        * DumpRenderTree/qt/DumpRenderTreeQt.h:
+        * DumpRenderTree/qt/TestRunnerQt.cpp:
+        * DumpRenderTree/qt/TestRunnerQt.h:
+        * DumpRenderTree/win/DRTDesktopNotificationPresenter.cpp:
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        * DumpRenderTree/win/EditingDelegate.cpp:
+        * DumpRenderTree/win/FrameLoadDelegate.cpp:
+        * DumpRenderTree/win/HistoryDelegate.cpp:
+        * DumpRenderTree/win/PolicyDelegate.h:
+        * DumpRenderTree/win/ResourceLoadDelegate.cpp:
+        * DumpRenderTree/win/TestRunnerWin.cpp:
+        * DumpRenderTree/win/UIDelegate.cpp:
+        * DumpRenderTree/wx/DumpRenderTreeWx.cpp:
+        * DumpRenderTree/wx/TestRunnerWx.cpp:
+
 2012-08-14  Sudarsana Nagineni  <sudarsana.nagineni@linux.intel.com>
 
         [GTK] String returned by g_path_get_dirname() must be freed

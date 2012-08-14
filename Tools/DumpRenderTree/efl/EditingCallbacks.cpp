@@ -87,7 +87,7 @@ static const char* selectionAffinityString(WebCore::EAffinity affinity)
 
 void shouldBeginEditing(void*, Evas_Object*, void* eventInfo)
 {
-    if (!done && gLayoutTestController->dumpEditingCallbacks()) {
+    if (!done && gTestRunner->dumpEditingCallbacks()) {
         WebCore::Range* range = static_cast<WebCore::Range*>(eventInfo);
         printf("EDITING DELEGATE: shouldBeginEditingInDOMRange:%s\n", dumpRange(range).utf8().data());
     }
@@ -95,7 +95,7 @@ void shouldBeginEditing(void*, Evas_Object*, void* eventInfo)
 
 void shouldEndEditing(void*, Evas_Object*, void* eventInfo)
 {
-    if (!done && gLayoutTestController->dumpEditingCallbacks()) {
+    if (!done && gTestRunner->dumpEditingCallbacks()) {
         WebCore::Range* range = static_cast<WebCore::Range*>(eventInfo);
         printf("EDITING DELEGATE: shouldEndEditingInDOMRange:%s\n", dumpRange(range).utf8().data());
     }
@@ -103,7 +103,7 @@ void shouldEndEditing(void*, Evas_Object*, void* eventInfo)
 
 void shouldInsertNode(void*, Evas_Object*, void* eventInfo)
 {
-    if (!done && gLayoutTestController->dumpEditingCallbacks()) {
+    if (!done && gTestRunner->dumpEditingCallbacks()) {
         Ewk_Should_Insert_Node_Event* shouldInsertNodeEvent = static_cast<Ewk_Should_Insert_Node_Event*>(eventInfo);
         printf("EDITING DELEGATE: shouldInsertNode:%s replacingDOMRange:%s givenAction:%s\n",
                dumpPath(shouldInsertNodeEvent->node).utf8().data(), dumpRange(shouldInsertNodeEvent->range).utf8().data(),
@@ -113,7 +113,7 @@ void shouldInsertNode(void*, Evas_Object*, void* eventInfo)
 
 void shouldInsertText(void*, Evas_Object*, void* eventInfo)
 {
-    if (!done && gLayoutTestController->dumpEditingCallbacks()) {
+    if (!done && gTestRunner->dumpEditingCallbacks()) {
         Ewk_Should_Insert_Text_Event* shouldInsertTextEvent = static_cast<Ewk_Should_Insert_Text_Event*>(eventInfo);
         printf("EDITING DELEGATE: shouldInsertText:%s replacingDOMRange:%s givenAction:%s\n",
                 shouldInsertTextEvent->text, dumpRange(shouldInsertTextEvent->range).utf8().data(), insertActionString(shouldInsertTextEvent->action));
@@ -122,7 +122,7 @@ void shouldInsertText(void*, Evas_Object*, void* eventInfo)
 
 void shouldDeleteRange(void*, Evas_Object*, void* eventInfo)
 {
-    if (!done && gLayoutTestController->dumpEditingCallbacks()) {
+    if (!done && gTestRunner->dumpEditingCallbacks()) {
         WebCore::Range* range = static_cast<WebCore::Range*>(eventInfo);
         printf("EDITING DELEGATE: shouldDeleteDOMRange:%s\n", dumpRange(range).utf8().data());
     }
@@ -130,7 +130,7 @@ void shouldDeleteRange(void*, Evas_Object*, void* eventInfo)
 
 void shouldChangeSelectedRange(void*, Evas_Object*, void* eventInfo)
 {
-    if (!done && gLayoutTestController->dumpEditingCallbacks()) {
+    if (!done && gTestRunner->dumpEditingCallbacks()) {
         Ewk_Should_Change_Selected_Range_Event* shouldChangeSelectedRangeEvent = static_cast<Ewk_Should_Change_Selected_Range_Event*>(eventInfo);
         printf("EDITING DELEGATE: shouldChangeSelectedDOMRange:%s toDOMRange:%s affinity:%s stillSelecting:%s\n",
                dumpRange(shouldChangeSelectedRangeEvent->fromRange).utf8().data(), dumpRange(shouldChangeSelectedRangeEvent->toRange).utf8().data(),
@@ -140,7 +140,7 @@ void shouldChangeSelectedRange(void*, Evas_Object*, void* eventInfo)
 
 void shouldApplyStyle(void*, Evas_Object*, void* eventInfo)
 {
-    if (!done && gLayoutTestController->dumpEditingCallbacks()) {
+    if (!done && gTestRunner->dumpEditingCallbacks()) {
         Ewk_Should_Apply_Style_Event* shouldApplyStyleEvent = static_cast<Ewk_Should_Apply_Style_Event*>(eventInfo);
         printf("EDITING DELEGATE: shouldApplyStyle:%s toElementsInDOMRange:%s\n",
                 shouldApplyStyleEvent->style->asText().utf8().data(), dumpRange(shouldApplyStyleEvent->range).utf8().data());
@@ -149,25 +149,25 @@ void shouldApplyStyle(void*, Evas_Object*, void* eventInfo)
 
 void editingBegan(void*, Evas_Object*, void*)
 {
-    if (!done && gLayoutTestController->dumpEditingCallbacks())
+    if (!done && gTestRunner->dumpEditingCallbacks())
         printf("EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification\n");
 }
 
 void userChangedContents(void*, Evas_Object*, void*)
 {
-    if (!done && gLayoutTestController->dumpEditingCallbacks())
+    if (!done && gTestRunner->dumpEditingCallbacks())
         printf("EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification\n");
 }
 
 void editingEnded(void*, Evas_Object*, void*)
 {
-    if (!done && gLayoutTestController->dumpEditingCallbacks())
+    if (!done && gTestRunner->dumpEditingCallbacks())
         printf("EDITING DELEGATE: webViewDidEndEditing:WebViewDidEndEditingNotification\n");
 }
 
 void selectionChanged(void*, Evas_Object*, void*)
 {
-    if (!done && gLayoutTestController->dumpEditingCallbacks())
+    if (!done && gTestRunner->dumpEditingCallbacks())
         printf("EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification\n");
 }
 

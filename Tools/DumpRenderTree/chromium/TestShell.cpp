@@ -151,7 +151,7 @@ void TestShell::initialize()
 {
     m_webPermissions = adoptPtr(new WebPermissions(this));
     m_testInterfaces = adoptPtr(new TestInterfaces());
-    m_layoutTestController = adoptPtr(new LayoutTestController(this));
+    m_testRunner = adoptPtr(new DRTTestRunner(this));
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
     m_notificationPresenter = adoptPtr(new NotificationPresenter(this));
 #endif
@@ -240,11 +240,11 @@ void TestShell::runFileTest(const TestParams& params, bool shouldDumpPixels)
     m_params = params;
     string testUrl = m_params.testUrl.spec();
 
-    m_layoutTestController->setShouldGeneratePixelResults(shouldDumpPixels);
+    m_testRunner->setShouldGeneratePixelResults(shouldDumpPixels);
 
     if (testUrl.find("loading/") != string::npos
         || testUrl.find("loading\\") != string::npos)
-        m_layoutTestController->setShouldDumpFrameLoadCallbacks(true);
+        m_testRunner->setShouldDumpFrameLoadCallbacks(true);
 
     if (testUrl.find("compositing/") != string::npos || testUrl.find("compositing\\") != string::npos) {
         m_prefs.acceleratedCompositingForVideoEnabled = true;
@@ -256,8 +256,8 @@ void TestShell::runFileTest(const TestParams& params, bool shouldDumpPixels)
 
     if (testUrl.find("/dumpAsText/") != string::npos
         || testUrl.find("\\dumpAsText\\") != string::npos) {
-        m_layoutTestController->setShouldDumpAsText(true);
-        m_layoutTestController->setShouldGeneratePixelResults(false);
+        m_testRunner->setShouldDumpAsText(true);
+        m_testRunner->setShouldGeneratePixelResults(false);
     }
 
     if (testUrl.find("/inspector/") != string::npos
@@ -265,7 +265,7 @@ void TestShell::runFileTest(const TestParams& params, bool shouldDumpPixels)
         showDevTools();
 
     if (m_params.debugLayerTree)
-        m_layoutTestController->setShowDebugLayerTree(true);
+        m_testRunner->setShowDebugLayerTree(true);
 
     if (m_dumpWhenFinished)
         m_printer.handleTestHeader(testUrl.c_str());
@@ -298,7 +298,7 @@ void TestShell::resetTestController()
     resetWebSettings(*webView());
     m_webPermissions->reset();
     m_testInterfaces->resetAll();
-    m_layoutTestController->reset();
+    m_testRunner->reset();
     m_webViewHost->reset();
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
     m_notificationPresenter->reset();
@@ -555,14 +555,14 @@ void TestShell::dump()
     WebFrame* frame = m_webView->mainFrame();
     if (!frame)
         return;
-    bool shouldDumpAsText = m_layoutTestController->shouldDumpAsText();
-    bool shouldDumpAsAudio = m_layoutTestController->shouldDumpAsAudio();
-    bool shouldGeneratePixelResults = m_layoutTestController->shouldGeneratePixelResults();
-    bool shouldDumpAsPrinted = m_layoutTestController->isPrinting();
+    bool shouldDumpAsText = m_testRunner->shouldDumpAsText();
+    bool shouldDumpAsAudio = m_testRunner->shouldDumpAsAudio();
+    bool shouldGeneratePixelResults = m_testRunner->shouldGeneratePixelResults();
+    bool shouldDumpAsPrinted = m_testRunner->isPrinting();
     bool dumpedAnything = false;
 
     if (shouldDumpAsAudio) {
-        const WebKit::WebArrayBufferView& webArrayBufferView = m_layoutTestController->audioData();
+        const WebKit::WebArrayBufferView& webArrayBufferView = m_testRunner->audioData();
         m_printer.handleAudio(webArrayBufferView.baseAddress(), webArrayBufferView.byteLength());
         m_printer.handleAudioFooter();
         m_printer.handleTestFooter(true);
@@ -586,7 +586,7 @@ void TestShell::dump()
             }
         }
         if (shouldDumpAsText) {
-            bool recursive = m_layoutTestController->shouldDumpChildFramesAsText();
+            bool recursive = m_testRunner->shouldDumpChildFramesAsText();
             string dataUtf8 = shouldDumpAsPrinted ? dumpFramesAsPrintedText(frame, recursive) : dumpFramesAsText(frame, recursive);
             if (fwrite(dataUtf8.c_str(), 1, dataUtf8.size(), stdout) != dataUtf8.size())
                 FATAL("Short write to stdout, disk full?\n");
@@ -597,10 +597,10 @@ void TestShell::dump()
             if (m_params.debugRenderTree)
                 renderTextBehavior |= WebFrame::RenderAsTextDebug;
             printf("%s", frame->renderTreeAsText(renderTextBehavior).utf8().data());
-            bool recursive = m_layoutTestController->shouldDumpChildFrameScrollPositions();
+            bool recursive = m_testRunner->shouldDumpChildFrameScrollPositions();
             dumpFrameScrollPosition(frame, recursive);
         }
-        if (m_layoutTestController->shouldDumpBackForwardList())
+        if (m_testRunner->shouldDumpBackForwardList())
             printf("%s", dumpAllBackForwardLists().c_str());
     }
     if (dumpedAnything && m_params.printSeparators)
@@ -612,18 +612,18 @@ void TestShell::dump()
         // stdout.
         dumpedAnything = true;
         m_webView->layout();
-        if (m_layoutTestController->testRepaint()) {
+        if (m_testRunner->testRepaint()) {
             WebSize viewSize = m_webView->size();
             int width = viewSize.width;
             int height = viewSize.height;
-            if (m_layoutTestController->sweepHorizontally()) {
+            if (m_testRunner->sweepHorizontally()) {
                 for (WebRect column(0, 0, 1, height); column.x < width; column.x++)
                     m_webViewHost->paintRect(column);
             } else {
                 for (WebRect line(0, 0, width, 1); line.y < height; line.y++)
                     m_webViewHost->paintRect(line);
             }
-        } else if (m_layoutTestController->isPrinting())
+        } else if (m_testRunner->isPrinting())
             m_webViewHost->paintPagesWithBoundaries();
         else
             m_webViewHost->paintInvalidatedRegion();
@@ -631,7 +631,7 @@ void TestShell::dump()
         // See if we need to draw the selection bounds rect. Selection bounds
         // rect is the rect enclosing the (possibly transformed) selection.
         // The rect should be drawn after everything is laid out and painted.
-        if (m_layoutTestController->shouldDumpSelectionRect()) {
+        if (m_testRunner->shouldDumpSelectionRect()) {
             // If there is a selection rect - draw a red 1px border enclosing rect
             WebRect wr = frame->selectionBoundsRect();
             if (!wr.isEmpty()) {
@@ -725,8 +725,8 @@ void TestShell::bindJSObjectsToWindow(WebFrame* frame)
 {
     WebTestingSupport::injectInternalsObject(frame);
     m_testInterfaces->bindTo(frame);
-    m_layoutTestController->bindToJavascript(frame, WebString::fromUTF8("layoutTestController"));
-    m_layoutTestController->bindToJavascript(frame, WebString::fromUTF8("testRunner"));
+    m_testRunner->bindToJavascript(frame, WebString::fromUTF8("testRunner"));
+    m_testRunner->bindToJavascript(frame, WebString::fromUTF8("testRunner"));
 }
 
 WebViewHost* TestShell::createNewWindow(const WebKit::WebURL& url)

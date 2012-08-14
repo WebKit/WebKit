@@ -121,7 +121,7 @@ using namespace std;
 {
     ASSERT([[dataSource webFrame] dataSource] || [[dataSource webFrame] provisionalDataSource]);
 
-    if (!done && gLayoutTestController->dumpResourceLoadCallbacks())
+    if (!done && gTestRunner->dumpResourceLoadCallbacks())
         return [[request URL] _drt_descriptionSuitableForTestResult];
 
     return @"<unknown>";
@@ -140,20 +140,20 @@ BOOL hostIsUsedBySomeTestsToGenerateError(NSString *host)
 
 -(NSURLRequest *)webView: (WebView *)wv resource:identifier willSendRequest: (NSURLRequest *)request redirectResponse:(NSURLResponse *)redirectResponse fromDataSource:(WebDataSource *)dataSource
 {
-    if (!done && gLayoutTestController->dumpResourceLoadCallbacks()) {
+    if (!done && gTestRunner->dumpResourceLoadCallbacks()) {
         NSString *string = [NSString stringWithFormat:@"%@ - willSendRequest %@ redirectResponse %@", identifier, [request _drt_descriptionSuitableForTestResult],
             [redirectResponse _drt_descriptionSuitableForTestResult]];
         printf("%s\n", [string UTF8String]);
     }
 
-    if (!done && !gLayoutTestController->deferMainResourceDataLoad()) {
+    if (!done && !gTestRunner->deferMainResourceDataLoad()) {
         [dataSource _setDeferMainResourceDataLoad:false];
     }
 
-    if (!done && gLayoutTestController->willSendRequestReturnsNull())
+    if (!done && gTestRunner->willSendRequestReturnsNull())
         return nil;
 
-    if (!done && gLayoutTestController->willSendRequestReturnsNullOnRedirect() && redirectResponse) {
+    if (!done && gTestRunner->willSendRequestReturnsNullOnRedirect() && redirectResponse) {
         printf("Returning null for this redirect\n");
         return nil;
     }
@@ -161,7 +161,7 @@ BOOL hostIsUsedBySomeTestsToGenerateError(NSString *host)
     NSURL *url = [request URL];
     NSString *host = [url host];
     if (host && (NSOrderedSame == [[url scheme] caseInsensitiveCompare:@"http"] || NSOrderedSame == [[url scheme] caseInsensitiveCompare:@"https"])) {
-        NSString *testPathOrURL = [NSString stringWithUTF8String:gLayoutTestController->testPathOrURL().c_str()];
+        NSString *testPathOrURL = [NSString stringWithUTF8String:gTestRunner->testPathOrURL().c_str()];
         NSString *lowercaseTestPathOrURL = [testPathOrURL lowercaseString];
         NSString *testHost = 0;
         if ([lowercaseTestPathOrURL hasPrefix:@"http:"] || [lowercaseTestPathOrURL hasPrefix:@"https:"])
@@ -176,13 +176,13 @@ BOOL hostIsUsedBySomeTestsToGenerateError(NSString *host)
         return nil;
 
     NSMutableURLRequest *newRequest = [request mutableCopy];
-    const set<string>& clearHeaders = gLayoutTestController->willSendRequestClearHeaders();
+    const set<string>& clearHeaders = gTestRunner->willSendRequestClearHeaders();
     for (set<string>::const_iterator header = clearHeaders.begin(); header != clearHeaders.end(); ++header) {
         NSString *nsHeader = [[NSString alloc] initWithUTF8String:header->c_str()];
         [newRequest setValue:nil forHTTPHeaderField:nsHeader];
         [nsHeader release];
     }
-    const std::string& destination = gLayoutTestController->redirectionDestinationForURL([[url absoluteString] UTF8String]);
+    const std::string& destination = gTestRunner->redirectionDestinationForURL([[url absoluteString] UTF8String]);
     if (destination.length())
         [newRequest setURL:[NSURL URLWithString:[NSString stringWithUTF8String:destination.data()]]];
 
@@ -191,7 +191,7 @@ BOOL hostIsUsedBySomeTestsToGenerateError(NSString *host)
 
 - (void)webView:(WebView *)wv resource:(id)identifier didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge fromDataSource:(WebDataSource *)dataSource
 {
-    if (!gLayoutTestController->handlesAuthenticationChallenges()) {
+    if (!gTestRunner->handlesAuthenticationChallenges()) {
         NSString *string = [NSString stringWithFormat:@"%@ - didReceiveAuthenticationChallenge - Simulating cancelled authentication sheet", identifier];
         printf("%s\n", [string UTF8String]);
 
@@ -199,10 +199,10 @@ BOOL hostIsUsedBySomeTestsToGenerateError(NSString *host)
         return;
     }
     
-    const char* user = gLayoutTestController->authenticationUsername().c_str();
+    const char* user = gTestRunner->authenticationUsername().c_str();
     NSString *nsUser = [NSString stringWithFormat:@"%s", user ? user : ""];
 
-    const char* password = gLayoutTestController->authenticationPassword().c_str();
+    const char* password = gTestRunner->authenticationPassword().c_str();
     NSString *nsPassword = [NSString stringWithFormat:@"%s", password ? password : ""];
 
     NSString *string = [NSString stringWithFormat:@"%@ - didReceiveAuthenticationChallenge - Responding with %@:%@", identifier, nsUser, nsPassword];
@@ -218,11 +218,11 @@ BOOL hostIsUsedBySomeTestsToGenerateError(NSString *host)
 
 -(void)webView: (WebView *)wv resource:identifier didReceiveResponse: (NSURLResponse *)response fromDataSource:(WebDataSource *)dataSource
 {
-    if (!done && gLayoutTestController->dumpResourceLoadCallbacks()) {
+    if (!done && gTestRunner->dumpResourceLoadCallbacks()) {
         NSString *string = [NSString stringWithFormat:@"%@ - didReceiveResponse %@", identifier, [response _drt_descriptionSuitableForTestResult]];
         printf("%s\n", [string UTF8String]);
     }
-    if (!done && gLayoutTestController->dumpResourceResponseMIMETypes())
+    if (!done && gTestRunner->dumpResourceResponseMIMETypes())
         printf("%s has MIME type %s\n", [[[[response URL] relativePath] lastPathComponent] UTF8String], [[response MIMEType] UTF8String]);
 }
 
@@ -232,7 +232,7 @@ BOOL hostIsUsedBySomeTestsToGenerateError(NSString *host)
 
 -(void)webView: (WebView *)wv resource:identifier didFinishLoadingFromDataSource:(WebDataSource *)dataSource
 {
-    if (!done && gLayoutTestController->dumpResourceLoadCallbacks()) {
+    if (!done && gTestRunner->dumpResourceLoadCallbacks()) {
         NSString *string = [NSString stringWithFormat:@"%@ - didFinishLoading", identifier];
         printf("%s\n", [string UTF8String]);
     }
@@ -240,7 +240,7 @@ BOOL hostIsUsedBySomeTestsToGenerateError(NSString *host)
 
 -(void)webView: (WebView *)wv resource:identifier didFailLoadingWithError:(NSError *)error fromDataSource:(WebDataSource *)dataSource
 {
-    if (!done && gLayoutTestController->dumpResourceLoadCallbacks()) {
+    if (!done && gTestRunner->dumpResourceLoadCallbacks()) {
         NSString *string = [NSString stringWithFormat:@"%@ - didFailLoadingWithError: %@", identifier, [error _drt_descriptionSuitableForTestResult]];
         printf("%s\n", [string UTF8String]);
     }
@@ -255,7 +255,7 @@ BOOL hostIsUsedBySomeTestsToGenerateError(NSString *host)
 
 -(NSCachedURLResponse *) webView: (WebView *)wv resource:(id)identifier willCacheResponse:(NSCachedURLResponse *)response fromDataSource:(WebDataSource *)dataSource
 {
-    if (!done && gLayoutTestController->dumpWillCacheResponse()) {
+    if (!done && gTestRunner->dumpWillCacheResponse()) {
         NSString *string = [NSString stringWithFormat:@"%@ - willCacheResponse: called", identifier];
         printf("%s\n", [string UTF8String]);
     }
@@ -266,11 +266,11 @@ BOOL hostIsUsedBySomeTestsToGenerateError(NSString *host)
 {
     // Only log the message when shouldPaintBrokenImage() returns NO; this avoids changing results of layout tests with failed
     // images, e.g., security/block-test-no-port.html.
-    if (!done && gLayoutTestController->dumpResourceLoadCallbacks() && !gLayoutTestController->shouldPaintBrokenImage()) {
+    if (!done && gTestRunner->dumpResourceLoadCallbacks() && !gTestRunner->shouldPaintBrokenImage()) {
         NSString *string = [NSString stringWithFormat:@"%@ - shouldPaintBrokenImage: NO", [imageURL _drt_descriptionSuitableForTestResult]];
         printf("%s\n", [string UTF8String]);
     }
 
-    return gLayoutTestController->shouldPaintBrokenImage();
+    return gTestRunner->shouldPaintBrokenImage();
 }
 @end

@@ -39,602 +39,603 @@
 
 
 
-LayoutTestController::~LayoutTestController()
+TestRunner::~TestRunner()
 {
     // FIXME: implement
 }
 
-void LayoutTestController::addDisallowedURL(JSStringRef url)
+void TestRunner::addDisallowedURL(JSStringRef url)
 {
     // FIXME: implement
 }
 
-void LayoutTestController::clearBackForwardList()
+void TestRunner::clearBackForwardList()
 {
 }
 
-JSStringRef LayoutTestController::copyDecodedHostName(JSStringRef name)
-{
-    // FIXME: implement
-    return 0;
-}
-
-JSStringRef LayoutTestController::copyEncodedHostName(JSStringRef name)
+JSStringRef TestRunner::copyDecodedHostName(JSStringRef name)
 {
     // FIXME: implement
     return 0;
 }
 
-void LayoutTestController::dispatchPendingLoadRequests()
+JSStringRef TestRunner::copyEncodedHostName(JSStringRef name)
+{
+    // FIXME: implement
+    return 0;
+}
+
+void TestRunner::dispatchPendingLoadRequests()
 {
     // FIXME: Implement for testing fix for 6727495
 }
 
-void LayoutTestController::display()
+void TestRunner::display()
 {
 }
 
-void LayoutTestController::keepWebHistory()
+void TestRunner::keepWebHistory()
 {
     // FIXME: implement
 }
 
-void LayoutTestController::notifyDone()
+void TestRunner::notifyDone()
 {
     if (m_waitToDump && !WorkQueue::shared()->count())
         notifyDoneFired();
     m_waitToDump = false;
 }
 
-JSStringRef LayoutTestController::pathToLocalResource(JSContextRef context, JSStringRef url)
+JSStringRef TestRunner::pathToLocalResource(JSContextRef context, JSStringRef url)
 {
     // Function introduced in r28690. This may need special-casing on Windows.
     return JSStringRetain(url); // Do nothing on Unix.
 }
 
-void LayoutTestController::queueLoad(JSStringRef url, JSStringRef target)
+void TestRunner::queueLoad(JSStringRef url, JSStringRef target)
 {
     // FIXME: We need to resolve relative URLs here
     WorkQueue::shared()->queue(new LoadItem(url, target));
 }
 
-void LayoutTestController::setAcceptsEditing(bool acceptsEditing)
+void TestRunner::setAcceptsEditing(bool acceptsEditing)
 {
 }
 
-void LayoutTestController::setAlwaysAcceptCookies(bool alwaysAcceptCookies)
+void TestRunner::setAlwaysAcceptCookies(bool alwaysAcceptCookies)
 {
     // FIXME: Implement this (and restore the default value before running each test in DumpRenderTree.cpp).
 }
 
-void LayoutTestController::setCustomPolicyDelegate(bool, bool)
+void TestRunner::setCustomPolicyDelegate(bool, bool)
 {
     // FIXME: implement
 }
 
-void LayoutTestController::setMainFrameIsFirstResponder(bool flag)
+void TestRunner::setMainFrameIsFirstResponder(bool flag)
 {
     // FIXME: implement
 }
 
-void LayoutTestController::setTabKeyCyclesThroughElements(bool cycles)
+void TestRunner::setTabKeyCyclesThroughElements(bool cycles)
 {
     // FIXME: implement
 }
 
-void LayoutTestController::setUseDashboardCompatibilityMode(bool flag)
+void TestRunner::setUseDashboardCompatibilityMode(bool flag)
 {
     // FIXME: implement
 }
 
-void LayoutTestController::setUserStyleSheetEnabled(bool flag)
+void TestRunner::setUserStyleSheetEnabled(bool flag)
 {
 }
 
-void LayoutTestController::setUserStyleSheetLocation(JSStringRef path)
+void TestRunner::setUserStyleSheetLocation(JSStringRef path)
 {
 }
 
-void LayoutTestController::setValueForUser(JSContextRef context, JSValueRef element, JSStringRef value)
-{
-    // FIXME: implement
-}
-
-void LayoutTestController::setViewModeMediaFeature(JSStringRef mode)
+void TestRunner::setValueForUser(JSContextRef context, JSValueRef element, JSStringRef value)
 {
     // FIXME: implement
 }
 
-void LayoutTestController::setWindowIsKey(bool windowIsKey)
+void TestRunner::setViewModeMediaFeature(JSStringRef mode)
 {
     // FIXME: implement
 }
 
-void LayoutTestController::setSmartInsertDeleteEnabled(bool flag)
+void TestRunner::setWindowIsKey(bool windowIsKey)
 {
     // FIXME: implement
 }
 
-void LayoutTestController::setWaitToDump(bool waitUntilDone)
+void TestRunner::setSmartInsertDeleteEnabled(bool flag)
+{
+    // FIXME: implement
+}
+
+void TestRunner::setWaitToDump(bool waitUntilDone)
 {
     static const int timeoutSeconds = 10;
 
     m_waitToDump = waitUntilDone;
 }
 
-int LayoutTestController::windowCount()
+int TestRunner::windowCount()
 {
     // FIXME: implement
     return 1;
 }
 
-void LayoutTestController::setPrivateBrowsingEnabled(bool privateBrowsingEnabled)
+void TestRunner::setPrivateBrowsingEnabled(bool privateBrowsingEnabled)
 {
     // FIXME: implement
 }
 
-void LayoutTestController::setJavaScriptCanAccessClipboard(bool enabled)
+void TestRunner::setJavaScriptCanAccessClipboard(bool enabled)
 {
     // FIXME: implement
 }
 
-void LayoutTestController::setXSSAuditorEnabled(bool enabled)
+void TestRunner::setXSSAuditorEnabled(bool enabled)
 {
     // FIXME: implement
 }
 
-void LayoutTestController::setFrameFlatteningEnabled(bool enabled)
+void TestRunner::setFrameFlatteningEnabled(bool enabled)
 {
     // FIXME: implement
 }
 
-void LayoutTestController::setAllowUniversalAccessFromFileURLs(bool enabled)
+void TestRunner::setAllowUniversalAccessFromFileURLs(bool enabled)
 {
     // FIXME: implement
 }
 
-void LayoutTestController::setAllowFileAccessFromFileURLs(bool enabled)
+void TestRunner::setAllowFileAccessFromFileURLs(bool enabled)
 {
     // FIXME: implement
 }
 
-void LayoutTestController::setAuthorAndUserStylesEnabled(bool flag)
+void TestRunner::setAuthorAndUserStylesEnabled(bool flag)
 {
     // FIXME: implement
 }
 
-void LayoutTestController::setAutofilled(JSContextRef, JSValueRef element, bool isAutofilled)
+void TestRunner::setAutofilled(JSContextRef, JSValueRef element, bool isAutofilled)
 {
     // FIXME: implement
 }
 
-void LayoutTestController::setPopupBlockingEnabled(bool popupBlockingEnabled)
+void TestRunner::setPopupBlockingEnabled(bool popupBlockingEnabled)
 {
     // FIXME: implement
 }
 
-void LayoutTestController::setPluginsEnabled(bool flag)
+void TestRunner::setPluginsEnabled(bool flag)
 {
     // FIXME: Implement
 }
 
-bool LayoutTestController::elementDoesAutoCompleteForElementWithId(JSStringRef id) 
+bool TestRunner::elementDoesAutoCompleteForElementWithId(JSStringRef id) 
 {
     // FIXME: implement
     return false;
 }
 
-void LayoutTestController::execCommand(JSStringRef name, JSStringRef value)
+void TestRunner::execCommand(JSStringRef name, JSStringRef value)
 {
     // FIXME: implement
 }
 
-void LayoutTestController::setPersistentUserStyleSheetLocation(JSStringRef jsURL)
+void TestRunner::setPersistentUserStyleSheetLocation(JSStringRef jsURL)
 {
     // FIXME: implement
 }
 
-void LayoutTestController::clearPersistentUserStyleSheet()
+void TestRunner::clearPersistentUserStyleSheet()
 {
     // FIXME: implement
 }
 
-void LayoutTestController::clearAllApplicationCaches()
+void TestRunner::clearAllApplicationCaches()
 {
     // FIXME: Implement to support application cache quotas.
 }
 
-void LayoutTestController::clearApplicationCacheForOrigin(JSStringRef url)
+void TestRunner::clearApplicationCacheForOrigin(JSStringRef url)
 {
     // FIXME: Implement to support deleting all application cache for an origin.
 }
 
-long long LayoutTestController::localStorageDiskUsageForOrigin(JSStringRef originIdentifier)
+long long TestRunner::localStorageDiskUsageForOrigin(JSStringRef originIdentifier)
 {
     // FIXME: Implement to support getting disk usage in bytes for an origin.
     return 0;
 }
 
-void LayoutTestController::setApplicationCacheOriginQuota(unsigned long long quota)
+void TestRunner::setApplicationCacheOriginQuota(unsigned long long quota)
 {
     // FIXME: Implement to support application cache quotas.
 }
 
-long long LayoutTestController::applicationCacheDiskUsageForOrigin(JSStringRef origin)
+long long TestRunner::applicationCacheDiskUsageForOrigin(JSStringRef origin)
 {
     // FIXME: Implement to support getting disk usage by all application caches for an origin.
     return 0;
 }
 
 
-JSValueRef LayoutTestController::originsWithApplicationCache(JSContextRef context)
+JSValueRef TestRunner::originsWithApplicationCache(JSContextRef context)
 {
     // FIXME: Implement to get origins that have application caches.
     return 0;
 }
 
-void LayoutTestController::clearAllDatabases()
+void TestRunner::clearAllDatabases()
 {
     // FIXME: implement
 }
  
-void LayoutTestController::setDatabaseQuota(unsigned long long quota)
+void TestRunner::setDatabaseQuota(unsigned long long quota)
 {    
     // FIXME: implement
 }
 
-void LayoutTestController::goBack()
+void TestRunner::goBack()
 {
     // FIXME: implement to enable loader/navigation-while-deferring-loads.html
 }
 
-void LayoutTestController::setDefersLoading(bool)
+void TestRunner::setDefersLoading(bool)
 {
     // FIXME: implement to enable loader/navigation-while-deferring-loads.html
 }
 
-void LayoutTestController::setDomainRelaxationForbiddenForURLScheme(bool, JSStringRef)
+void TestRunner::setDomainRelaxationForbiddenForURLScheme(bool, JSStringRef)
 {
     // FIXME: implement
 }
 
-void LayoutTestController::setAppCacheMaximumSize(unsigned long long size)
+void TestRunner::setAppCacheMaximumSize(unsigned long long size)
 {
     // FIXME: implement
 }
 
-unsigned LayoutTestController::numberOfActiveAnimations() const
+unsigned TestRunner::numberOfActiveAnimations() const
 {
     // FIXME: implement
     return 0;
 }
 
-unsigned LayoutTestController::workerThreadCount() const
+unsigned TestRunner::workerThreadCount() const
 {
     // FIXME: implement
     return 0;
 }
 
-void LayoutTestController::setSelectTrailingWhitespaceEnabled(bool flag)
+void TestRunner::setSelectTrailingWhitespaceEnabled(bool flag)
 {
     // FIXME: implement
 }
 
-bool LayoutTestController::pauseTransitionAtTimeOnElementWithId(JSStringRef propertyName, double time, JSStringRef elementId)
+bool TestRunner::pauseTransitionAtTimeOnElementWithId(JSStringRef propertyName, double time, JSStringRef elementId)
 {
     // FIXME: implement
     return false;
 }
 
-void LayoutTestController::setMockDeviceOrientation(bool canProvideAlpha, double alpha, bool canProvideBeta, double beta, bool canProvideGamma, double gamma)
+void TestRunner::setMockDeviceOrientation(bool canProvideAlpha, double alpha, bool canProvideBeta, double beta, bool canProvideGamma, double gamma)
 {
     // FIXME: Implement for DeviceOrientation layout tests.
     // See https://bugs.webkit.org/show_bug.cgi?id=30335.
 }
 
-void LayoutTestController::setMockGeolocationPosition(double latitude, double longitude, double accuracy)
+void TestRunner::setMockGeolocationPosition(double latitude, double longitude, double accuracy)
 {
     // FIXME: Implement for Geolocation layout tests.
     // See https://bugs.webkit.org/show_bug.cgi?id=28264.
 }
 
-void LayoutTestController::setMockGeolocationError(int code, JSStringRef message)
+void TestRunner::setMockGeolocationError(int code, JSStringRef message)
 {
     // FIXME: Implement for Geolocation layout tests.
     // See https://bugs.webkit.org/show_bug.cgi?id=28264.
 }
 
-void LayoutTestController::setGeolocationPermission(bool allow)
+void TestRunner::setGeolocationPermission(bool allow)
 {
     // FIXME: Implement for Geolocation layout tests.
     setGeolocationPermissionCommon(allow);
 }
 
-int LayoutTestController::numberOfPendingGeolocationPermissionRequests()
+int TestRunner::numberOfPendingGeolocationPermissionRequests()
 {
     // FIXME: Implement for Geolocation layout tests.
     return -1;
 }
 
-void LayoutTestController::addMockSpeechInputResult(JSStringRef result, double confidence, JSStringRef language)
+void TestRunner::addMockSpeechInputResult(JSStringRef result, double confidence, JSStringRef language)
 {
     // FIXME: Implement for speech input layout tests.
     // See https://bugs.webkit.org/show_bug.cgi?id=39485.
 }
 
-void LayoutTestController::setMockSpeechInputDumpRect(bool flag)
+void TestRunner::setMockSpeechInputDumpRect(bool flag)
 {
     // FIXME: Implement for speech input layout tests.
     // See https://bugs.webkit.org/show_bug.cgi?id=39485.
 }
 
-void LayoutTestController::startSpeechInput(JSContextRef inputElement)
+void TestRunner::startSpeechInput(JSContextRef inputElement)
 {
     // FIXME: Implement for speech input layout tests.
     // See https://bugs.webkit.org/show_bug.cgi?id=39485.
 }
 
-void LayoutTestController::setIconDatabaseEnabled(bool iconDatabaseEnabled)
+void TestRunner::setIconDatabaseEnabled(bool iconDatabaseEnabled)
 {
     // FIXME: implement
 }
 
-bool LayoutTestController::pauseAnimationAtTimeOnElementWithId(JSStringRef animationName, double time, JSStringRef elementId)
+bool TestRunner::pauseAnimationAtTimeOnElementWithId(JSStringRef animationName, double time, JSStringRef elementId)
 {
     // FIXME: implement
     return false;
 }
 
-void LayoutTestController::setCacheModel(int)
+void TestRunner::setCacheModel(int)
 {
     // FIXME: implement
 }
 
-bool LayoutTestController::isCommandEnabled(JSStringRef /*name*/)
+bool TestRunner::isCommandEnabled(JSStringRef /*name*/)
 {
     // FIXME: implement
     return false;
 }
 
-size_t LayoutTestController::webHistoryItemCount()
+size_t TestRunner::webHistoryItemCount()
 {
     // FIXME: implement
     return 0;
 }
 
-void LayoutTestController::waitForPolicyDelegate()
+void TestRunner::waitForPolicyDelegate()
 {
     // FIXME: Implement this.
 }
 
-void LayoutTestController::overridePreference(JSStringRef /* key */, JSStringRef /* value */)
+void TestRunner::overridePreference(JSStringRef /* key */, JSStringRef /* value */)
 {
     // FIXME: implement
 }
 
-void LayoutTestController::addUserScript(JSStringRef source, bool runAtStart, bool allFrames)
+void TestRunner::addUserScript(JSStringRef source, bool runAtStart, bool allFrames)
 {
-    printf("LayoutTestController::addUserScript not implemented.\n");
+    printf("TestRunner::addUserScript not implemented.\n");
 }
 
-void LayoutTestController::addUserStyleSheet(JSStringRef source, bool allFrames)
+void TestRunner::addUserStyleSheet(JSStringRef source, bool allFrames)
 {
-    printf("LayoutTestController::addUserStyleSheet not implemented.\n");
+    printf("TestRunner::addUserStyleSheet not implemented.\n");
 }
 
-void LayoutTestController::showWebInspector()
-{
-    // FIXME: Implement this.
-}
-
-void LayoutTestController::closeWebInspector()
+void TestRunner::showWebInspector()
 {
     // FIXME: Implement this.
 }
 
-void LayoutTestController::evaluateInWebInspector(long callId, JSStringRef script)
+void TestRunner::closeWebInspector()
 {
     // FIXME: Implement this.
 }
 
-void LayoutTestController::removeAllVisitedLinks()
+void TestRunner::evaluateInWebInspector(long callId, JSStringRef script)
 {
     // FIXME: Implement this.
 }
 
-void LayoutTestController::evaluateScriptInIsolatedWorldAndReturnValue(unsigned worldID, JSObjectRef globalObject, JSStringRef script)
+void TestRunner::removeAllVisitedLinks()
+{
+    // FIXME: Implement this.
+}
+
+void TestRunner::evaluateScriptInIsolatedWorldAndReturnValue(unsigned worldID, JSObjectRef globalObject, JSStringRef script)
 {
 
 }
 
-void LayoutTestController::evaluateScriptInIsolatedWorld(unsigned worldID, JSObjectRef globalObject, JSStringRef script)
+void TestRunner::evaluateScriptInIsolatedWorld(unsigned worldID, JSObjectRef globalObject, JSStringRef script)
 {
 
 }
 
-void LayoutTestController::disableImageLoading()
+void TestRunner::disableImageLoading()
 {
 
 }
 
-void LayoutTestController::addOriginAccessWhitelistEntry(JSStringRef sourceOrigin, JSStringRef destinationProtocol, JSStringRef destinationHost, bool allowDestinationSubdomains)
+void TestRunner::addOriginAccessWhitelistEntry(JSStringRef sourceOrigin, JSStringRef destinationProtocol, JSStringRef destinationHost, bool allowDestinationSubdomains)
 {
     // FIXME: implement
 }
 
-void LayoutTestController::removeOriginAccessWhitelistEntry(JSStringRef sourceOrigin, JSStringRef destinationProtocol, JSStringRef destinationHost, bool allowDestinationSubdomains)
+void TestRunner::removeOriginAccessWhitelistEntry(JSStringRef sourceOrigin, JSStringRef destinationProtocol, JSStringRef destinationHost, bool allowDestinationSubdomains)
 {
     // FIXME: implement
 }
 
-void LayoutTestController::setScrollbarPolicy(JSStringRef orientation, JSStringRef policy)
+void TestRunner::setScrollbarPolicy(JSStringRef orientation, JSStringRef policy)
 {
     // FIXME: implement
 }
 
-int LayoutTestController::numberOfPages(float, float)
+int TestRunner::numberOfPages(float, float)
 {
     // FIXME: implement
     return -1;
 }
 
-void LayoutTestController::apiTestNewWindowDataLoadBaseURL(JSStringRef utf8Data, JSStringRef baseURL)
+void TestRunner::apiTestNewWindowDataLoadBaseURL(JSStringRef utf8Data, JSStringRef baseURL)
 {
 
 }
 
-void LayoutTestController::apiTestGoToCurrentBackForwardItem()
+void TestRunner::apiTestGoToCurrentBackForwardItem()
 {
 
 }
 
-void LayoutTestController::setSpatialNavigationEnabled(bool)
+void TestRunner::setSpatialNavigationEnabled(bool)
 {
 
 }
 
-void LayoutTestController::setWebViewEditable(bool)
+void TestRunner::setWebViewEditable(bool)
 {
 }
 
-bool LayoutTestController::callShouldCloseOnWebView()
+bool TestRunner::callShouldCloseOnWebView()
 {
     return false;
 }
 
-JSRetainPtr<JSStringRef> LayoutTestController::layerTreeAsText() const
+JSRetainPtr<JSStringRef> TestRunner::layerTreeAsText() const
 {
     return 0;
 }
 
-JSRetainPtr<JSStringRef> LayoutTestController::markerTextForListItem(JSContextRef context, JSValueRef nodeObject) const
+JSRetainPtr<JSStringRef> TestRunner::markerTextForListItem(JSContextRef context, JSValueRef nodeObject) const
 {
     return 0;
 }
 
-JSValueRef LayoutTestController::computedStyleIncludingVisitedInfo(JSContextRef, JSValueRef)
+JSValueRef TestRunner::computedStyleIncludingVisitedInfo(JSContextRef, JSValueRef)
 {
     return 0;
 }
 
-void LayoutTestController::authenticateSession(JSStringRef, JSStringRef, JSStringRef)
+void TestRunner::authenticateSession(JSStringRef, JSStringRef, JSStringRef)
 {
 }
 
-void LayoutTestController::abortModal()
+void TestRunner::abortModal()
 {
 }
 
-JSRetainPtr<JSStringRef> LayoutTestController::pageProperty(const char* propertyName, int pageNumber) const
+JSRetainPtr<JSStringRef> TestRunner::pageProperty(const char* propertyName, int pageNumber) const
 {
     // FIXME: Implement
     return 0;
 }
 
-JSRetainPtr<JSStringRef> LayoutTestController::pageSizeAndMarginsInPixels(int pageNumber, int width, int height, int marginTop, int marginRight, int marginBottom, int marginLeft) const
+JSRetainPtr<JSStringRef> TestRunner::pageSizeAndMarginsInPixels(int pageNumber, int width, int height, int marginTop, int marginRight, int marginBottom, int marginLeft) const
 {
     // FIXME: Implement
     return 0;
 }
 
-void LayoutTestController::setAsynchronousSpellCheckingEnabled(bool)
+void TestRunner::setAsynchronousSpellCheckingEnabled(bool)
 {
     // FIXME: Implement this.
 }
 
-bool LayoutTestController::findString(JSContextRef context, JSStringRef target, JSObjectRef optionsArray)
+bool TestRunner::findString(JSContextRef context, JSStringRef target, JSObjectRef optionsArray)
 {
     // FIXME: Implement
     return false;
 }
 
-void LayoutTestController::setSerializeHTTPLoads(bool)
+void TestRunner::setSerializeHTTPLoads(bool)
 {
     // FIXME: Implement.
 }
 
-void LayoutTestController::setMinimumTimerInterval(double interval) {
+void TestRunner::setMinimumTimerInterval(double interval)
+{
 
 }
 
-void LayoutTestController::syncLocalStorage()
+void TestRunner::syncLocalStorage()
 {
     // FIXME: Implement.
 }
 
-void LayoutTestController::observeStorageTrackerNotifications(unsigned number)
+void TestRunner::observeStorageTrackerNotifications(unsigned number)
 {
     // FIXME: Implement.
 }
 
-void LayoutTestController::deleteAllLocalStorage()
+void TestRunner::deleteAllLocalStorage()
 {
     // FIXME: Implement.
 }
 
-JSValueRef LayoutTestController::originsWithLocalStorage(JSContextRef context)
+JSValueRef TestRunner::originsWithLocalStorage(JSContextRef context)
 {
     // FIXME: Implement.
     return 0;
 }
 
-void LayoutTestController::deleteLocalStorageForOrigin(JSStringRef URL)
+void TestRunner::deleteLocalStorageForOrigin(JSStringRef URL)
 {
     // FIXME: Implement.
 }
 
-void LayoutTestController::setTextDirection(JSStringRef direction)
+void TestRunner::setTextDirection(JSStringRef direction)
 {
     // FIXME: Implement.
 }
 
-void LayoutTestController::addChromeInputField()
+void TestRunner::addChromeInputField()
 {
 }
 
-void LayoutTestController::removeChromeInputField()
+void TestRunner::removeChromeInputField()
 {
 }
 
-void LayoutTestController::focusWebView()
+void TestRunner::focusWebView()
 {
 }
 
-void LayoutTestController::setBackingScaleFactor(double)
+void TestRunner::setBackingScaleFactor(double)
 {
 }
 
-void LayoutTestController::simulateDesktopNotificationClick(JSStringRef title)
+void TestRunner::simulateDesktopNotificationClick(JSStringRef title)
 {
     // FIXME: Implement.
 }
 
-void LayoutTestController::resetPageVisibility()
+void TestRunner::resetPageVisibility()
 {
     // FIXME: Implement this.
 }
 
-void LayoutTestController::setPageVisibility(const char*)
+void TestRunner::setPageVisibility(const char*)
 {
     // FIXME: Implement this.
 }
 
-void LayoutTestController::setAutomaticLinkDetectionEnabled(bool)
+void TestRunner::setAutomaticLinkDetectionEnabled(bool)
 {
     // FIXME: Implement this.
 }
 
-void LayoutTestController::sendWebIntentResponse(JSStringRef)
+void TestRunner::sendWebIntentResponse(JSStringRef)
 {
     // FIXME: Implement this.
 }
 
-void LayoutTestController::deliverWebIntent(JSStringRef, JSStringRef, JSStringRef)
+void TestRunner::deliverWebIntent(JSStringRef, JSStringRef, JSStringRef)
 {
     // FIXME: Implement this.
 }
 
-void LayoutTestController::setStorageDatabaseIdleInterval(double)
+void TestRunner::setStorageDatabaseIdleInterval(double)
 {
     // FIXME: Implement this.
 }

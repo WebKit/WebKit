@@ -52,13 +52,13 @@ namespace WebCore {
 class DumpRenderTree;
 }
 
-class LayoutTestController : public QObject {
+class TestRunner : public QObject {
     Q_OBJECT
     Q_PROPERTY(int webHistoryItemCount READ webHistoryItemCount)
     Q_PROPERTY(int workerThreadCount READ workerThreadCount)
     Q_PROPERTY(bool globalFlag READ globalFlag WRITE setGlobalFlag)
 public:
-    LayoutTestController(WebCore::DumpRenderTree*);
+    TestRunner(WebCore::DumpRenderTree*);
 
     bool shouldDisallowIncreaseForApplicationCacheQuota() const { return m_disallowIncreaseForApplicationCacheQuota; }
     bool shouldDumpAsText() const { return m_textDump; }
@@ -240,7 +240,7 @@ public slots:
 
     void setAutomaticLinkDetectionEnabled(bool);
 
-    // Empty stub method to keep parity with object model exposed by global LayoutTestController.
+    // Empty stub method to keep parity with object model exposed by global TestRunner.
     void abortModal() { }
 
     void addURLToRedirect(const QString& origin, const QString& destination);
@@ -318,4 +318,4 @@ private:
     int m_timeout;
 };
 
-#endif // LayoutTestControllerQt_h
+#endif // TestRunnerQt_h

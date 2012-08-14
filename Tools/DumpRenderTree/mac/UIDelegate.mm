@@ -80,10 +80,10 @@ DumpRenderTreeDraggingInfo *draggingInfo = nil;
 
 - (void)webViewRunModal:(WebView *)sender
 {
-    gLayoutTestController->setWindowIsKey(false);
+    gTestRunner->setWindowIsKey(false);
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(modalWindowWillClose:) name:NSWindowWillCloseNotification object:nil];
     [NSApp runModalForWindow:[sender window]];
-    gLayoutTestController->setWindowIsKey(true);
+    gTestRunner->setWindowIsKey(true);
 }
 
 - (void)webView:(WebView *)sender runJavaScriptAlertPanelWithMessage:(NSString *)message initiatedByFrame:(WebFrame *)frame
@@ -111,7 +111,7 @@ DumpRenderTreeDraggingInfo *draggingInfo = nil;
     if (!done)
         printf("CONFIRM NAVIGATION: %s\n", [message UTF8String]);
     
-    return !gLayoutTestController->shouldStayOnPageAfterHandlingBeforeUnload();
+    return !gTestRunner->shouldStayOnPageAfterHandlingBeforeUnload();
 }
 
 
@@ -125,25 +125,25 @@ DumpRenderTreeDraggingInfo *draggingInfo = nil;
 
 - (void)webViewFocus:(WebView *)webView
 {
-    gLayoutTestController->setWindowIsKey(true);
+    gTestRunner->setWindowIsKey(true);
 }
 
 - (void)webViewUnfocus:(WebView *)webView
 {
-    gLayoutTestController->setWindowIsKey(false);
+    gTestRunner->setWindowIsKey(false);
 }
 
 - (WebView *)webView:(WebView *)sender createWebViewWithRequest:(NSURLRequest *)request
 {
-    if (!gLayoutTestController->canOpenWindows())
+    if (!gTestRunner->canOpenWindows())
         return nil;
     
     // Make sure that waitUntilDone has been called.
-    ASSERT(gLayoutTestController->waitToDump());
+    ASSERT(gTestRunner->waitToDump());
 
     WebView *webView = createWebViewAndOffscreenWindow();
     
-    if (gLayoutTestController->newWindowsCopyBackForwardList())
+    if (gTestRunner->newWindowsCopyBackForwardList())
         [webView _loadBackForwardListFromOtherView:sender];
     
     return [webView autorelease];
@@ -153,7 +153,7 @@ DumpRenderTreeDraggingInfo *draggingInfo = nil;
 {
     NSWindow* window = [sender window];
  
-    if (gLayoutTestController->callCloseOnWebViews())
+    if (gTestRunner->callCloseOnWebViews())
         [sender close];
     
     [window close];
@@ -161,7 +161,7 @@ DumpRenderTreeDraggingInfo *draggingInfo = nil;
 
 - (void)webView:(WebView *)sender frame:(WebFrame *)frame exceededDatabaseQuotaForSecurityOrigin:(WebSecurityOrigin *)origin database:(NSString *)databaseIdentifier
 {
-    if (!done && gLayoutTestController->dumpDatabaseCallbacks()) {
+    if (!done && gTestRunner->dumpDatabaseCallbacks()) {
         printf("UI DELEGATE DATABASE CALLBACK: exceededDatabaseQuotaForSecurityOrigin:{%s, %s, %i} database:%s\n", [[origin protocol] UTF8String], [[origin host] UTF8String], 
             [origin port], [databaseIdentifier UTF8String]);
     }
@@ -172,7 +172,7 @@ DumpRenderTreeDraggingInfo *draggingInfo = nil;
 
 - (void)webView:(WebView *)sender exceededApplicationCacheOriginQuotaForSecurityOrigin:(WebSecurityOrigin *)origin totalSpaceNeeded:(NSUInteger)totalSpaceNeeded
 {
-    if (!done && gLayoutTestController->dumpApplicationCacheDelegateCallbacks()) {
+    if (!done && gTestRunner->dumpApplicationCacheDelegateCallbacks()) {
         // For example, numbers from 30000 - 39999 will output as 30000.
         // Rounding up or down not really matter for these tests. It's
         // sufficient to just get a range of 10000 to determine if we were
@@ -182,7 +182,7 @@ DumpRenderTreeDraggingInfo *draggingInfo = nil;
             [[origin protocol] UTF8String], [[origin host] UTF8String], [origin port], truncatedSpaceNeeded);
     }
 
-    if (gLayoutTestController->disallowIncreaseForApplicationCacheQuota())
+    if (gTestRunner->disallowIncreaseForApplicationCacheQuota())
         return;
 
     static const unsigned long long defaultOriginQuota = [WebApplicationCache defaultOriginQuota];
@@ -191,20 +191,20 @@ DumpRenderTreeDraggingInfo *draggingInfo = nil;
 
 - (void)webView:(WebView *)sender setStatusText:(NSString *)text
 {
-    if (gLayoutTestController->dumpStatusCallbacks())
+    if (gTestRunner->dumpStatusCallbacks())
         printf("UI DELEGATE STATUS CALLBACK: setStatusText:%s\n", [text UTF8String]);
 }
 
 - (void)webView:(WebView *)webView decidePolicyForGeolocationRequestFromOrigin:(WebSecurityOrigin *)origin frame:(WebFrame *)frame listener:(id<WebAllowDenyPolicyListener>)listener
 {
-    if (!gLayoutTestController->isGeolocationPermissionSet()) {
+    if (!gTestRunner->isGeolocationPermissionSet()) {
         if (!m_pendingGeolocationPermissionListeners)
             m_pendingGeolocationPermissionListeners = [[NSMutableSet set] retain];
         [m_pendingGeolocationPermissionListeners addObject:listener];
         return;
     }
 
-    if (gLayoutTestController->geolocationPermission())
+    if (gTestRunner->geolocationPermission())
         [listener allow];
     else
         [listener deny];
@@ -212,7 +212,7 @@ DumpRenderTreeDraggingInfo *draggingInfo = nil;
 
 - (void)didSetMockGeolocationPermission
 {
-    ASSERT(gLayoutTestController->isGeolocationPermissionSet());
+    ASSERT(gTestRunner->isGeolocationPermissionSet());
     if (m_pendingGeolocationPermissionListeners && !m_timer)
         m_timer = [NSTimer scheduledTimerWithTimeInterval:0 target:self selector:@selector(timerFired) userInfo:0 repeats:NO];
 }
@@ -227,12 +227,12 @@ DumpRenderTreeDraggingInfo *draggingInfo = nil;
 
 - (void)timerFired
 {
-    ASSERT(gLayoutTestController->isGeolocationPermissionSet());
+    ASSERT(gTestRunner->isGeolocationPermissionSet());
     m_timer = 0;
     NSEnumerator* enumerator = [m_pendingGeolocationPermissionListeners objectEnumerator];
     id<WebAllowDenyPolicyListener> listener;
     while ((listener = [enumerator nextObject])) {
-        if (gLayoutTestController->geolocationPermission())
+        if (gTestRunner->geolocationPermission())
             [listener allow];
         else
             [listener deny];
@@ -260,7 +260,7 @@ DumpRenderTreeDraggingInfo *draggingInfo = nil;
 
 - (void)webView:(WebView *)webView enterFullScreenForElement:(DOMElement*)element listener:(NSObject<WebKitFullScreenListener>*)listener
 {
-    if (!gLayoutTestController->hasCustomFullScreenBehavior())
+    if (!gTestRunner->hasCustomFullScreenBehavior())
         [self performSelector:@selector(enterFullScreenWithListener:) withObject:listener afterDelay:0];
 }
 
@@ -272,7 +272,7 @@ DumpRenderTreeDraggingInfo *draggingInfo = nil;
 
 - (void)webView:(WebView *)webView exitFullScreenForElement:(DOMElement*)element listener:(NSObject<WebKitFullScreenListener>*)listener
 {
-    if (!gLayoutTestController->hasCustomFullScreenBehavior())
+    if (!gTestRunner->hasCustomFullScreenBehavior())
         [self performSelector:@selector(exitFullScreenWithListener:) withObject:listener afterDelay:0];
 }
 

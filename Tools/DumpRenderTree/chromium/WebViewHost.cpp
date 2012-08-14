@@ -251,9 +251,9 @@ static string textAffinityDescription(WebTextAffinity affinity)
 
 WebView* WebViewHost::createView(WebFrame*, const WebURLRequest& request, const WebWindowFeatures&, const WebString&, WebNavigationPolicy)
 {
-    if (!layoutTestController()->canOpenWindows())
+    if (!testRunner()->canOpenWindows())
         return 0;
-    if (layoutTestController()->shouldDumpCreateView())
+    if (testRunner()->shouldDumpCreateView())
         fprintf(stdout, "createView(%s)\n", URLDescription(request.url()).c_str());
     return m_shell->createNewWindow(WebURL())->webView();
 }
@@ -319,7 +319,7 @@ void WebViewHost::didStartLoading()
 
 void WebViewHost::didStopLoading()
 {
-    if (layoutTestController()->shouldDumpProgressFinishedCallback())
+    if (testRunner()->shouldDumpProgressFinishedCallback())
         fputs("postProgressFinishedNotification\n", stdout);
     m_shell->setIsLoading(false);
 }
@@ -329,50 +329,50 @@ void WebViewHost::didStopLoading()
 
 bool WebViewHost::shouldBeginEditing(const WebRange& range)
 {
-    if (layoutTestController()->shouldDumpEditingCallbacks()) {
+    if (testRunner()->shouldDumpEditingCallbacks()) {
         fputs("EDITING DELEGATE: shouldBeginEditingInDOMRange:", stdout);
         printRangeDescription(range);
         fputs("\n", stdout);
     }
-    return layoutTestController()->acceptsEditing();
+    return testRunner()->acceptsEditing();
 }
 
 bool WebViewHost::shouldEndEditing(const WebRange& range)
 {
-    if (layoutTestController()->shouldDumpEditingCallbacks()) {
+    if (testRunner()->shouldDumpEditingCallbacks()) {
         fputs("EDITING DELEGATE: shouldEndEditingInDOMRange:", stdout);
         printRangeDescription(range);
         fputs("\n", stdout);
     }
-    return layoutTestController()->acceptsEditing();
+    return testRunner()->acceptsEditing();
 }
 
 bool WebViewHost::shouldInsertNode(const WebNode& node, const WebRange& range, WebEditingAction action)
 {
-    if (layoutTestController()->shouldDumpEditingCallbacks()) {
+    if (testRunner()->shouldDumpEditingCallbacks()) {
         fputs("EDITING DELEGATE: shouldInsertNode:", stdout);
         printNodeDescription(node, 0);
         fputs(" replacingDOMRange:", stdout);
         printRangeDescription(range);
         printf(" givenAction:%s\n", editingActionDescription(action).c_str());
     }
-    return layoutTestController()->acceptsEditing();
+    return testRunner()->acceptsEditing();
 }
 
 bool WebViewHost::shouldInsertText(const WebString& text, const WebRange& range, WebEditingAction action)
 {
-    if (layoutTestController()->shouldDumpEditingCallbacks()) {
+    if (testRunner()->shouldDumpEditingCallbacks()) {
         printf("EDITING DELEGATE: shouldInsertText:%s replacingDOMRange:", text.utf8().data());
         printRangeDescription(range);
         printf(" givenAction:%s\n", editingActionDescription(action).c_str());
     }
-    return layoutTestController()->acceptsEditing();
+    return testRunner()->acceptsEditing();
 }
 
 bool WebViewHost::shouldChangeSelectedRange(
     const WebRange& fromRange, const WebRange& toRange, WebTextAffinity affinity, bool stillSelecting)
 {
-    if (layoutTestController()->shouldDumpEditingCallbacks()) {
+    if (testRunner()->shouldDumpEditingCallbacks()) {
         fputs("EDITING DELEGATE: shouldChangeSelectedDOMRange:", stdout);
         printRangeDescription(fromRange);
         fputs(" toDOMRange:", stdout);
@@ -381,27 +381,27 @@ bool WebViewHost::shouldChangeSelectedRange(
                textAffinityDescription(affinity).c_str(),
                (stillSelecting ? "TRUE" : "FALSE"));
     }
-    return layoutTestController()->acceptsEditing();
+    return testRunner()->acceptsEditing();
 }
 
 bool WebViewHost::shouldDeleteRange(const WebRange& range)
 {
-    if (layoutTestController()->shouldDumpEditingCallbacks()) {
+    if (testRunner()->shouldDumpEditingCallbacks()) {
         fputs("EDITING DELEGATE: shouldDeleteDOMRange:", stdout);
         printRangeDescription(range);
         fputs("\n", stdout);
     }
-    return layoutTestController()->acceptsEditing();
+    return testRunner()->acceptsEditing();
 }
 
 bool WebViewHost::shouldApplyStyle(const WebString& style, const WebRange& range)
 {
-    if (layoutTestController()->shouldDumpEditingCallbacks()) {
+    if (testRunner()->shouldDumpEditingCallbacks()) {
         printf("EDITING DELEGATE: shouldApplyStyle:%s toElementsInDOMRange:", style.utf8().data());
         printRangeDescription(range);
         fputs("\n", stdout);
     }
-    return layoutTestController()->acceptsEditing();
+    return testRunner()->acceptsEditing();
 }
 
 bool WebViewHost::isSmartInsertDeleteEnabled()
@@ -416,28 +416,28 @@ bool WebViewHost::isSelectTrailingWhitespaceEnabled()
 
 void WebViewHost::didBeginEditing()
 {
-    if (!layoutTestController()->shouldDumpEditingCallbacks())
+    if (!testRunner()->shouldDumpEditingCallbacks())
         return;
     fputs("EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification\n", stdout);
 }
 
 void WebViewHost::didChangeSelection(bool isEmptySelection)
 {
-    if (layoutTestController()->shouldDumpEditingCallbacks())
+    if (testRunner()->shouldDumpEditingCallbacks())
         fputs("EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification\n", stdout);
     // No need to update clipboard with the selected text in DRT.
 }
 
 void WebViewHost::didChangeContents()
 {
-    if (!layoutTestController()->shouldDumpEditingCallbacks())
+    if (!testRunner()->shouldDumpEditingCallbacks())
         return;
     fputs("EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification\n", stdout);
 }
 
 void WebViewHost::didEndEditing()
 {
-    if (!layoutTestController()->shouldDumpEditingCallbacks())
+    if (!testRunner()->shouldDumpEditingCallbacks())
         return;
     fputs("EDITING DELEGATE: webViewDidEndEditing:WebViewDidEndEditingNotification\n", stdout);
 }
@@ -561,7 +561,7 @@ bool WebViewHost::runModalPromptDialog(WebFrame* frame, const WebString& message
 bool WebViewHost::runModalBeforeUnloadDialog(WebFrame*, const WebString& message)
 {
     printf("CONFIRM NAVIGATION: %s\n", message.utf8().data());
-    return !layoutTestController()->shouldStayOnPageAfterHandlingBeforeUnload();
+    return !testRunner()->shouldStayOnPageAfterHandlingBeforeUnload();
 }
 
 void WebViewHost::showContextMenu(WebFrame*, const WebContextMenuData& contextMenuData)
@@ -581,7 +581,7 @@ WebContextMenuData* WebViewHost::lastContextMenuData() const
 
 void WebViewHost::setStatusText(const WebString& text)
 {
-    if (!layoutTestController()->shouldDumpStatusCallbacks())
+    if (!testRunner()->shouldDumpStatusCallbacks())
         return;
     // When running tests, write to stdout.
     printf("UI DELEGATE STATUS CALLBACK: setStatusText:%s\n", text.utf8().data());
@@ -590,7 +590,7 @@ void WebViewHost::setStatusText(const WebString& text)
 void WebViewHost::startDragging(WebFrame*, const WebDragData& data, WebDragOperationsMask mask, const WebImage&, const WebPoint&)
 {
     WebDragData mutableDragData = data;
-    if (layoutTestController()->shouldAddFileToPasteboard()) {
+    if (testRunner()->shouldAddFileToPasteboard()) {
         // Add a file called DRTFakeFile to the drag&drop clipboard.
         addDRTFakeFileToDataObject(&mutableDragData);
     }
@@ -1055,7 +1055,7 @@ WebNavigationPolicy WebViewHost::decidePolicyForNavigation(
         result = WebKit::WebNavigationPolicyIgnore;
 
     if (m_policyDelegateShouldNotifyDone)
-        layoutTestController()->policyDelegateDone();
+        testRunner()->policyDelegateDone();
     return result;
 }
 
@@ -1113,7 +1113,7 @@ void WebViewHost::didCancelClientRedirect(WebFrame* frame)
 void WebViewHost::didCreateDataSource(WebFrame*, WebDataSource* ds)
 {
     ds->setExtraData(m_pendingExtraData.leakPtr());
-    if (!layoutTestController()->deferMainResourceDataLoad())
+    if (!testRunner()->deferMainResourceDataLoad())
         ds->setDeferMainResourceDataLoad(false);
 }
 
@@ -1130,7 +1130,7 @@ void WebViewHost::didStartProvisionalLoad(WebFrame* frame)
     if (!m_topLoadingFrame)
         m_topLoadingFrame = frame;
 
-    if (layoutTestController()->stopProvisionalFrameLoads()) {
+    if (testRunner()->stopProvisionalFrameLoads()) {
         printFrameDescription(frame);
         fputs(" - stopping load in didStartProvisionalLoadForFrame callback\n", stdout);
         frame->stopLoading();
@@ -1183,11 +1183,11 @@ void WebViewHost::didReceiveTitle(WebFrame* frame, const WebString& title, WebTe
         printf(" - didReceiveTitle: %s\n", title8.data());
     }
 
-    if (layoutTestController()->shouldDumpTitleChanges())
+    if (testRunner()->shouldDumpTitleChanges())
         printf("TITLE CHANGED: %s\n", title8.data());
 
     setPageTitle(title);
-    layoutTestController()->setTitleTextDirection(direction);
+    testRunner()->setTitleTextDirection(direction);
 }
 
 void WebViewHost::didFinishDocumentLoad(WebFrame* frame)
@@ -1281,7 +1281,7 @@ void WebViewHost::willSendRequest(WebFrame* frame, unsigned identifier, WebURLRe
     string requestURL = url.possibly_invalid_spec();
 
     GURL mainDocumentURL = request.firstPartyForCookies();
-    if (layoutTestController()->shouldDumpResourceLoadCallbacks()) {
+    if (testRunner()->shouldDumpResourceLoadCallbacks()) {
         printResourceDescription(identifier);
         printf(" - willSendRequest <NSURLRequest URL %s, main document URL %s,"
                " http method %s> redirectResponse ",
@@ -1387,7 +1387,7 @@ void WebViewHost::openFileSystem(WebFrame* frame, WebFileSystem::Type type, long
 
 bool WebViewHost::willCheckAndDispatchMessageEvent(WebFrame* source, WebSecurityOrigin target, WebDOMMessageEvent event)
 {
-    if (m_shell->layoutTestController()->shouldInterceptPostMessage()) {
+    if (m_shell->testRunner()->shouldInterceptPostMessage()) {
         fputs("intercepted postMessage\n", stdout);
         return true;
     }
@@ -1638,9 +1638,9 @@ bool WebViewHost::navigate(const TestNavigationEntry& entry, bool reload)
 
 // Private functions ----------------------------------------------------------
 
-LayoutTestController* WebViewHost::layoutTestController() const
+DRTTestRunner* WebViewHost::testRunner() const
 {
-    return m_shell->layoutTestController();
+    return m_shell->testRunner();
 }
 
 void WebViewHost::updateAddressBar(WebView* webView)
@@ -1660,7 +1660,7 @@ void WebViewHost::locationChangeDone(WebFrame* frame)
     if (frame != m_topLoadingFrame)
         return;
     m_topLoadingFrame = 0;
-    layoutTestController()->locationChangeDone();
+    testRunner()->locationChangeDone();
 }
 
 void WebViewHost::updateForCommittedLoad(WebFrame* frame, bool isNewNavigation)
@@ -1780,7 +1780,7 @@ void WebViewHost::setAddressBarURL(const WebURL&)
 
 void WebViewHost::enterFullScreenNow()
 {
-    if (layoutTestController()->hasCustomFullScreenBehavior())
+    if (testRunner()->hasCustomFullScreenBehavior())
         return;
 
     webView()->willEnterFullScreen();
@@ -1789,7 +1789,7 @@ void WebViewHost::enterFullScreenNow()
 
 void WebViewHost::exitFullScreenNow()
 {
-    if (layoutTestController()->hasCustomFullScreenBehavior())
+    if (testRunner()->hasCustomFullScreenBehavior())
         return;
 
     webView()->willExitFullScreen();

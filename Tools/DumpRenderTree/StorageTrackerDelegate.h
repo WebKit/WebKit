@@ -23,15 +23,15 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-class LayoutTestController;
+class TestRunner;
 
 @interface StorageTrackerDelegate : NSObject {
     unsigned numberOfNotificationsToLog;
-    LayoutTestController* controllerToNotifyDone;
+    TestRunner* controllerToNotifyDone;
 }
 
-- (void)logNotifications:(unsigned)number controller:(LayoutTestController*)controller;
+- (void)logNotifications:(unsigned)number controller:(TestRunner*)controller;
 - (void)originModified:(NSNotification *)notification;
-- (void)setControllerToNotifyDone:(LayoutTestController*)controller;
+- (void)setControllerToNotifyDone:(TestRunner*)controller;
 
 @end

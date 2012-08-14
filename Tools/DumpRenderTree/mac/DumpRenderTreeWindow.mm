@@ -79,7 +79,7 @@ static CFArrayCallBacks NonRetainingArrayCallbacks = {
 
 - (BOOL)isKeyWindow
 {
-    return gLayoutTestController ? gLayoutTestController->windowIsKey() : YES;
+    return gTestRunner ? gTestRunner->windowIsKey() : YES;
 }
 
 - (void)keyDown:(NSEvent *)event
