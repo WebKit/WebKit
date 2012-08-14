@@ -1,3 +1,18 @@
+2012-08-14  Andrei Onea  <onea@adobe.com>
+
+        [CSSRegions]regionOverset is computed as "overset" even though the region is not the last in the chain
+        https://bugs.webkit.org/show_bug.cgi?id=93102
+
+        Reviewed by Eric Seidel.
+
+        Modified existing tests to reflect spec, where Element.webkitRegionOverset can be
+        "overset" only for the last region in a region chain, if the content cannot fit inside it.
+
+        * fast/regions/element-region-overset-state-expected.txt:
+        * fast/regions/element-region-overset-state-vertical-rl-expected.txt:
+        * fast/regions/element-region-overset-state-vertical-rl.html:
+        * fast/regions/element-region-overset-state.html:
+
 2012-08-13  Adrienne Walker  <enne@google.com>
 
         REGRESSION (r109851): Video controls do not render

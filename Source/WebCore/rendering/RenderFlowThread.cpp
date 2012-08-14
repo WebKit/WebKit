@@ -681,6 +681,7 @@ void RenderFlowThread::computeOverflowStateForRegions(LayoutUnit oldClientAfterE
     if (hasRenderOverflow())
         height = isHorizontalWritingMode() ? visualOverflowRect().maxY() : visualOverflowRect().maxX();
 
+    RenderRegion* lastReg = lastRegion();
     for (RenderRegionList::iterator iter = m_regionList.begin(); iter != m_regionList.end(); ++iter) {
         RenderRegion* region = *iter;
         if (!region->isValid()) {
@@ -693,7 +694,7 @@ void RenderFlowThread::computeOverflowStateForRegions(LayoutUnit oldClientAfterE
         RenderRegion::RegionState state = RenderRegion::RegionFit;
         if (flowMin <= 0)
             state = RenderRegion::RegionEmpty;
-        if (flowMax > 0)
+        if (flowMax > 0 && region == lastReg)
             state = RenderRegion::RegionOverset;
         region->setRegionState(state);
         // determine whether the NamedFlow object should dispatch a regionLayoutUpdate event
@@ -707,7 +708,6 @@ void RenderFlowThread::computeOverflowStateForRegions(LayoutUnit oldClientAfterE
 
     // With the regions overflow state computed we can also set the overset flag for the named flow.
     // If there are no valid regions in the chain, overset is true
-    RenderRegion* lastReg = lastRegion();
     m_overset = lastReg ? lastReg->regionState() == RenderRegion::RegionOverset : true;
 }
 

@@ -1,3 +1,16 @@
+2012-08-14  Andrei Onea  <onea@adobe.com>
+
+        [CSSRegions]regionOverset is computed as "overset" even though the region is not the last in the chain
+        https://bugs.webkit.org/show_bug.cgi?id=93102
+
+        Reviewed by Eric Seidel.
+
+        Making Element.webkitRegionOverset return "overset" only for the last region in a region chain, 
+        if the content cannot fit inside it, to reflect current spec. http://www.w3.org/TR/css3-regions/#dom-region-regionoverset
+
+        * rendering/RenderFlowThread.cpp:
+        (WebCore::RenderFlowThread::computeOverflowStateForRegions):
+
 2012-08-14  Jan Keromnes  <janx@linux.com>
 
         Web Inspector: Render breakpoint gutter markers and execution line in CodeMirrorTextEditor

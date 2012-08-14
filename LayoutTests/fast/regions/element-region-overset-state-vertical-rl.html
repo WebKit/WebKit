@@ -76,22 +76,22 @@ body { font-family: monospace; }
         debug("Flow content");
         flowContent("article");
 
-        shouldBeEqualToString("regionOverset('region_1')", "overset");
+        shouldBeEqualToString("regionOverset('region_1')", "fit");
         shouldBeEqualToString("regionOverset('region_2')", "fit");
         shouldBeEqualToString("regionOverset('region_3')", "empty");
 
         debug("Add more content");
         addMoreContent();
 
-        shouldBeEqualToString("regionOverset('region_1')", "overset");
-        shouldBeEqualToString("regionOverset('region_2')", "overset");
+        shouldBeEqualToString("regionOverset('region_1')", "fit");
+        shouldBeEqualToString("regionOverset('region_2')", "fit");
         shouldBeEqualToString("regionOverset('region_3')", "fit");
 
         debug("Add visual overflow");
         addVisualOverflow();
 
-        shouldBeEqualToString("regionOverset('region_1')", "overset");
-        shouldBeEqualToString("regionOverset('region_2')", "overset");
+        shouldBeEqualToString("regionOverset('region_1')", "fit");
+        shouldBeEqualToString("regionOverset('region_2')", "fit");
         shouldBeEqualToString("regionOverset('region_3')", "overset");
 
         debug("Empty content");

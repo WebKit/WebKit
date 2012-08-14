@@ -7,16 +7,16 @@ PASS regionOverset('region_1') is "empty"
 PASS regionOverset('region_2') is "empty"
 PASS regionOverset('region_3') is "empty"
 Flow content
-PASS regionOverset('region_1') is "overset"
+PASS regionOverset('region_1') is "fit"
 PASS regionOverset('region_2') is "fit"
 PASS regionOverset('region_3') is "empty"
 Add more content
-PASS regionOverset('region_1') is "overset"
-PASS regionOverset('region_2') is "overset"
+PASS regionOverset('region_1') is "fit"
+PASS regionOverset('region_2') is "fit"
 PASS regionOverset('region_3') is "fit"
 Add visual overflow
-PASS regionOverset('region_1') is "overset"
-PASS regionOverset('region_2') is "overset"
+PASS regionOverset('region_1') is "fit"
+PASS regionOverset('region_2') is "fit"
 PASS regionOverset('region_3') is "overset"
 Empty content
 PASS regionOverset('region_1') is "empty"
