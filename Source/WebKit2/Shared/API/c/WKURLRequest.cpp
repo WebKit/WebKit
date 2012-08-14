@@ -48,6 +48,16 @@ WKURLRef WKURLRequestCopyURL(WKURLRequestRef requestRef)
     return toCopiedURLAPI(toImpl(requestRef)->url());
 }
 
+WKURLRef WKURLRequestCopyFirstPartyForCookies(WKURLRequestRef requestRef)
+{
+    return toCopiedURLAPI(toImpl(requestRef)->resourceRequest().firstPartyForCookies());
+}
+
+WKStringRef WKURLRequestCopyHTTPMethod(WKURLRequestRef requestRef)
+{
+    return toCopiedAPI(toImpl(requestRef)->resourceRequest().httpMethod());
+}
+
 void WKURLRequestSetDefaultTimeoutInterval(double timeoutInterval)
 {
     WebURLRequest::setDefaultTimeoutInterval(timeoutInterval);

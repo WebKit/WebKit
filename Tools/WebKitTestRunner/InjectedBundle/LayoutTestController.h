@@ -79,6 +79,7 @@ public:
     void dumpFullScreenCallbacks() { m_dumpFullScreenCallbacks = true; }
     void dumpFrameLoadCallbacks() { setShouldDumpFrameLoadCallbacks(true); }
     void dumpProgressFinishedCallback() { setShouldDumpProgressFinishedCallback(true); }
+    void dumpResourceLoadCallbacks() { m_dumpResourceLoadCallbacks = true; }
     void dumpResourceResponseMIMETypes() { m_dumpResourceResponseMIMETypes = true; }
 
     void setShouldDumpFrameLoadCallbacks(bool value) { m_dumpFrameLoadCallbacks = value; }
@@ -163,6 +164,7 @@ public:
     bool shouldDumpFullScreenCallbacks() const { return m_dumpFullScreenCallbacks; }
     bool shouldDumpFrameLoadCallbacks() const { return m_dumpFrameLoadCallbacks; }
     bool shouldDumpProgressFinishedCallback() const { return m_dumpProgressFinishedCallback; }
+    bool shouldDumpResourceLoadCallbacks() const { return m_dumpResourceLoadCallbacks; }
     bool shouldDumpResourceResponseMIMETypes() const { return m_dumpResourceResponseMIMETypes; }
 
     bool isPolicyDelegateEnabled() const { return m_policyDelegateEnabled; }
@@ -249,6 +251,7 @@ private:
     bool m_dumpFullScreenCallbacks;
     bool m_dumpFrameLoadCallbacks;
     bool m_dumpProgressFinishedCallback;
+    bool m_dumpResourceLoadCallbacks;
     bool m_dumpResourceResponseMIMETypes;
     bool m_waitToDump; // True if waitUntilDone() has been called, but notifyDone() has not yet been called.
     bool m_testRepaint;

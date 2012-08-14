@@ -38,6 +38,8 @@ WK_EXPORT WKURLRef WKURLResponseCopyURL(WKURLResponseRef);
 
 WK_EXPORT WKStringRef WKURLResponseCopyMIMEType(WKURLResponseRef);
 
+WK_EXPORT int32_t WKURLResponseHTTPStatusCode(WKURLResponseRef);
+
 #ifdef __cplusplus
 }
 #endif

@@ -1,3 +1,34 @@
+2012-08-14  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        WebKitTestRunner needs layoutTestController.dumpResourceLoadCallbacks
+        https://bugs.webkit.org/show_bug.cgi?id=42332
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Added Resource Callbacks logging. Several aux dumping functions are added.
+
+        * WebKitTestRunner/InjectedBundle/Bindings/LayoutTestController.idl:
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::isFileScheme):
+        (WTR):
+        (WTR::pathSuitableForTestResult):
+        (WTR::urlSuitableForTestResult):
+        (WTR::InjectedBundlePage::resetAfterTest):
+        (WTR::dumpRequestDescriptionSuitableForTestResult):
+        (WTR::dumpResponseDescriptionSuitableForTestResult):
+        (WTR::dumpErrorDescriptionSuitableForTestResult):
+        (WTR::InjectedBundlePage::didInitiateLoadForResource):
+        (WTR::InjectedBundlePage::willSendRequestForFrame):
+        (WTR::InjectedBundlePage::didReceiveResponseForResource):
+        (WTR::InjectedBundlePage::didFinishLoadForResource):
+        (WTR::InjectedBundlePage::didFailLoadForResource):
+        * WebKitTestRunner/InjectedBundle/LayoutTestController.cpp:
+        (WTR::LayoutTestController::LayoutTestController):
+        * WebKitTestRunner/InjectedBundle/LayoutTestController.h:
+        (WTR::LayoutTestController::dumpResourceLoadCallbacks):
+        (WTR::LayoutTestController::shouldDumpResourceLoadCallbacks):
+        (LayoutTestController):
+
 2012-08-14  Alexis Menard  <alexis.menard@openbossa.org>
 
         Update INdT build bot to Mountain Lion.

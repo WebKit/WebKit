@@ -42,6 +42,7 @@
 #include <WebKit2/WKBundleNodeHandlePrivate.h>
 #include <WebKit2/WKBundlePagePrivate.h>
 #include <WebKit2/WKURLRequest.h>
+#include <wtf/HashMap.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
 
@@ -215,6 +216,58 @@ static WTF::String frameToStr(WKBundleFrameRef frame)
     return stringBuilder.toString();
 }
 
+static inline bool isLocalFileScheme(WKStringRef scheme)
+{
+    return WKStringIsEqualToUTF8CStringIgnoringCase(scheme, "file");
+}
+
+static const char divider = '/';
+
+static inline WTF::String pathSuitableForTestResult(WKURLRef fileUrl)
+{
+    if (!fileUrl)
+        return String();
+
+    WKRetainPtr<WKStringRef> schemeString = adoptWK(WKURLCopyScheme(fileUrl));
+    if (!isLocalFileScheme(schemeString.get()))
+        return toWTFString(adoptWK(WKURLCopyString(fileUrl)));
+
+    String pathString = toWTFString(adoptWK(WKURLCopyPath(fileUrl)));
+    WTF::StringBuilder stringBuilder;
+
+    // Remove the leading path from file urls.
+    const size_t indexBaseName = pathString.reverseFind(divider);
+    if (indexBaseName != notFound) {
+        const size_t indexDirName = pathString.reverseFind(divider, indexBaseName - 1);
+        if (indexDirName != notFound)
+            stringBuilder.append(pathString.substring(indexDirName + 1, indexBaseName - indexDirName - 1));
+        stringBuilder.append(divider);
+        stringBuilder.append(pathString.substring(indexBaseName + 1)); // Filename.
+    } else {
+        stringBuilder.append(divider);
+        stringBuilder.append(pathString); // Return "/pathString".
+    }
+
+    return stringBuilder.toString();
+}
+
+static inline WTF::String urlSuitableForTestResult(WKURLRef fileUrl)
+{
+    if (!fileUrl)
+        return String();
+
+    WKRetainPtr<WKStringRef> schemeString = adoptWK(WKURLCopyScheme(fileUrl));
+    if (!isLocalFileScheme(schemeString.get()))
+        return toWTFString(adoptWK(WKURLCopyString(fileUrl)));
+
+    WTF::String urlString = toWTFString(adoptWK(WKURLCopyString(fileUrl)));
+    const size_t indexBaseName = urlString.reverseFind(divider);
+
+    return (indexBaseName == notFound) ? urlString : urlString.substring(indexBaseName + 1);
+}
+
+static HashMap<uint64_t, String> assignedUrlsCache;
+
 InjectedBundlePage::InjectedBundlePage(WKBundlePageRef page)
     : m_page(page)
     , m_world(AdoptWK, WKBundleScriptWorldCreateWorld())
@@ -366,6 +419,7 @@ void InjectedBundlePage::resetAfterTest()
 #else
     WebCoreTestSupport::resetInternalsObject(context);
 #endif
+    assignedUrlsCache.clear();
 }
 
 // Loader Client Callbacks
@@ -394,6 +448,70 @@ static void dumpFrameDescriptionSuitableForTestResult(WKBundleFrameRef frame)
     InjectedBundle::shared().stringBuilder()->append("frame \"");
     InjectedBundle::shared().stringBuilder()->append(toWTFString(name));
     InjectedBundle::shared().stringBuilder()->append("\"");
+}
+
+static inline void dumpRequestDescriptionSuitableForTestResult(WKURLRequestRef request)
+{
+    WKRetainPtr<WKURLRef> url = adoptWK(WKURLRequestCopyURL(request));
+    WKRetainPtr<WKURLRef> firstParty = adoptWK(WKURLRequestCopyFirstPartyForCookies(request));
+    WKRetainPtr<WKStringRef> httpMethod = adoptWK(WKURLRequestCopyHTTPMethod(request));
+
+    InjectedBundle::shared().stringBuilder()->append("<NSURLRequest URL ");
+    InjectedBundle::shared().stringBuilder()->append(pathSuitableForTestResult(url.get()));
+    InjectedBundle::shared().stringBuilder()->append(", main document URL ");
+    InjectedBundle::shared().stringBuilder()->append(urlSuitableForTestResult(firstParty.get()));
+    InjectedBundle::shared().stringBuilder()->append(", http method ");
+
+    if (WKStringIsEmpty(httpMethod.get()))
+        InjectedBundle::shared().stringBuilder()->append("(none)");
+    else
+        InjectedBundle::shared().stringBuilder()->append(toWTFString(httpMethod));
+
+    InjectedBundle::shared().stringBuilder()->append(">");
+}
+
+static inline void dumpResponseDescriptionSuitableForTestResult(WKURLResponseRef response)
+{
+    WKRetainPtr<WKURLRef> url = adoptWK(WKURLResponseCopyURL(response));
+    if (!url) {
+        InjectedBundle::shared().stringBuilder()->append("(null)");
+        return;
+    }
+    InjectedBundle::shared().stringBuilder()->append("<NSURLResponse ");
+    InjectedBundle::shared().stringBuilder()->append(pathSuitableForTestResult(url.get()));
+    InjectedBundle::shared().stringBuilder()->append(", http status code ");
+    InjectedBundle::shared().stringBuilder()->append(WTF::String::number(WKURLResponseHTTPStatusCode(response)));
+    InjectedBundle::shared().stringBuilder()->append(">");
+}
+
+static inline void dumpErrorDescriptionSuitableForTestResult(WKErrorRef error)
+{
+    WKRetainPtr<WKStringRef> errorDomain = adoptWK(WKErrorCopyDomain(error));
+    int errorCode = WKErrorGetErrorCode(error);
+
+    // We need to do some error mapping here to match the test expectations (Mac error names are expected).
+    if (WKStringIsEqualToUTF8CString(errorDomain.get(), "WebKitNetworkError")) {
+        errorDomain = adoptWK(WKStringCreateWithUTF8CString("NSURLErrorDomain"));
+        errorCode = -999;
+    }
+
+    if (WKStringIsEqualToUTF8CString(errorDomain.get(), "WebKitPolicyError"))
+        errorDomain = adoptWK(WKStringCreateWithUTF8CString("WebKitErrorDomain"));
+
+    InjectedBundle::shared().stringBuilder()->append("<NSError domain ");
+    InjectedBundle::shared().stringBuilder()->append(toWTFString(errorDomain));
+    InjectedBundle::shared().stringBuilder()->append(", code ");
+    InjectedBundle::shared().stringBuilder()->append(String::number(errorCode));
+
+    WKRetainPtr<WKURLRef> url = adoptWK(WKErrorCopyFailingURL(error));
+    if (url.get()) {
+        WKRetainPtr<WKStringRef> urlString = adoptWK(WKURLCopyString(url.get()));
+        InjectedBundle::shared().stringBuilder()->append(", failing URL \"");
+        InjectedBundle::shared().stringBuilder()->append(toWTFString(urlString));
+        InjectedBundle::shared().stringBuilder()->append("\"");
+    }
+
+    InjectedBundle::shared().stringBuilder()->append(">");
 }
 
 void InjectedBundlePage::didStartProvisionalLoadForFrame(WKBundlePageRef page, WKBundleFrameRef frame, WKTypeRef*, const void *clientInfo)
@@ -938,8 +1056,16 @@ void InjectedBundlePage::didDetectXSSForFrame(WKBundleFrameRef frame)
 {
 }
 
-void InjectedBundlePage::didInitiateLoadForResource(WKBundlePageRef, WKBundleFrameRef, uint64_t identifier, WKURLRequestRef, bool)
+void InjectedBundlePage::didInitiateLoadForResource(WKBundlePageRef, WKBundleFrameRef, uint64_t identifier, WKURLRequestRef request, bool)
 {
+    if (!InjectedBundle::shared().isTestRunning())
+        return;
+
+    if (!InjectedBundle::shared().layoutTestController()->shouldDumpResourceLoadCallbacks())
+        return;
+
+    WKRetainPtr<WKURLRef> url = adoptWK(WKURLRequestCopyURL(request));
+    assignedUrlsCache.add(identifier, pathSuitableForTestResult(url.get()));
 }
 
 // Resource Load Client Callbacks
@@ -954,10 +1080,22 @@ static inline bool isHTTPOrHTTPSScheme(WKStringRef scheme)
     return WKStringIsEqualToUTF8CStringIgnoringCase(scheme, "http") || WKStringIsEqualToUTF8CStringIgnoringCase(scheme, "https");
 }
 
-WKURLRequestRef InjectedBundlePage::willSendRequestForFrame(WKBundlePageRef, WKBundleFrameRef frame, uint64_t, WKURLRequestRef request, WKURLResponseRef)
+WKURLRequestRef InjectedBundlePage::willSendRequestForFrame(WKBundlePageRef, WKBundleFrameRef frame, uint64_t identifier, WKURLRequestRef request, WKURLResponseRef response)
 {
     if (InjectedBundle::shared().isTestRunning() && InjectedBundle::shared().layoutTestController()->willSendRequestReturnsNull())
         return 0;
+
+    if (InjectedBundle::shared().isTestRunning()
+        && InjectedBundle::shared().layoutTestController()->shouldDumpResourceLoadCallbacks()) {
+        InjectedBundle::shared().stringBuilder()->append(assignedUrlsCache.contains(identifier)
+                                                         ? assignedUrlsCache.get(identifier)
+                                                         : "<unknown>");
+        InjectedBundle::shared().stringBuilder()->append(" - willSendRequest ");
+        dumpRequestDescriptionSuitableForTestResult(request);
+        InjectedBundle::shared().stringBuilder()->append(" redirectResponse ");
+        dumpResponseDescriptionSuitableForTestResult(response);
+        InjectedBundle::shared().stringBuilder()->append("\n");
+    }
 
     WKRetainPtr<WKURLRef> url = adoptWK(WKURLRequestCopyURL(request));
     WKRetainPtr<WKStringRef> host = adoptWK(WKURLCopyHostName(url.get()));
@@ -990,10 +1128,20 @@ WKURLRequestRef InjectedBundlePage::willSendRequestForFrame(WKBundlePageRef, WKB
     return request;
 }
 
-void InjectedBundlePage::didReceiveResponseForResource(WKBundlePageRef, WKBundleFrameRef, uint64_t, WKURLResponseRef response)
+void InjectedBundlePage::didReceiveResponseForResource(WKBundlePageRef, WKBundleFrameRef, uint64_t identifier, WKURLResponseRef response)
 {
     if (!InjectedBundle::shared().isTestRunning())
         return;
+
+    if (InjectedBundle::shared().layoutTestController()->shouldDumpResourceLoadCallbacks()) {
+        InjectedBundle::shared().stringBuilder()->append(assignedUrlsCache.contains(identifier)
+                                                         ? assignedUrlsCache.get(identifier)
+                                                         : "<unknown>");
+        InjectedBundle::shared().stringBuilder()->append(" - didReceiveResponse ");
+        dumpResponseDescriptionSuitableForTestResult(response);
+        InjectedBundle::shared().stringBuilder()->append("\n");
+    }
+
 
     if (!InjectedBundle::shared().layoutTestController()->shouldDumpResourceResponseMIMETypes())
         return;
@@ -1012,12 +1160,35 @@ void InjectedBundlePage::didReceiveContentLengthForResource(WKBundlePageRef, WKB
 {
 }
 
-void InjectedBundlePage::didFinishLoadForResource(WKBundlePageRef, WKBundleFrameRef, uint64_t)
+void InjectedBundlePage::didFinishLoadForResource(WKBundlePageRef, WKBundleFrameRef, uint64_t identifier)
 {
+    if (!InjectedBundle::shared().isTestRunning())
+        return;
+
+    if (!InjectedBundle::shared().layoutTestController()->shouldDumpResourceLoadCallbacks())
+        return;
+
+    InjectedBundle::shared().stringBuilder()->append(assignedUrlsCache.contains(identifier)
+                                                     ? assignedUrlsCache.get(identifier)
+                                                     : "<unknown>");
+    InjectedBundle::shared().stringBuilder()->append(" - didFinishLoading\n");
 }
 
-void InjectedBundlePage::didFailLoadForResource(WKBundlePageRef, WKBundleFrameRef, uint64_t, WKErrorRef)
+void InjectedBundlePage::didFailLoadForResource(WKBundlePageRef, WKBundleFrameRef, uint64_t identifier, WKErrorRef error)
 {
+    if (!InjectedBundle::shared().isTestRunning())
+        return;
+
+    if (!InjectedBundle::shared().layoutTestController()->shouldDumpResourceLoadCallbacks())
+        return;
+
+    InjectedBundle::shared().stringBuilder()->append(assignedUrlsCache.contains(identifier)
+                                                     ? assignedUrlsCache.get(identifier)
+                                                     : "<unknown>");
+    InjectedBundle::shared().stringBuilder()->append(" - didFailLoadingWithError: ");
+
+    dumpErrorDescriptionSuitableForTestResult(error);
+    InjectedBundle::shared().stringBuilder()->append("\n");
 }
 
 

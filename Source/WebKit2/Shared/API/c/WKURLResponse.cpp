@@ -46,3 +46,8 @@ WKStringRef WKURLResponseCopyMIMEType(WKURLResponseRef responseRef)
 {
     return toCopiedAPI(toImpl(responseRef)->resourceResponse().mimeType());
 }
+
+int32_t WKURLResponseHTTPStatusCode(WKURLResponseRef responseRef)
+{
+    return toImpl(responseRef)->resourceResponse().httpStatusCode();
+}

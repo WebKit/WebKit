@@ -386,35 +386,6 @@ webarchive/loading/mainresource-null-mimetype-crash.html
 webarchive/loading/missing-data.html
 http/tests/security/xssAuditor/script-tag-with-callbacks.html
 
-# WebKitTestRunner needs layoutTestController.dumpResourceLoadCallbacks
-# <https://bugs.webkit.org/show_bug.cgi?id=42332>
-fast/images/support-broken-image-delegate.html
-fast/loader/file-protocol-fragment.html
-fast/loader/main-document-url-for-non-http-loads.html
-fast/loader/user-style-sheet-resource-load-callbacks.html
-http/tests/loading/307-after-303-after-post.html
-http/tests/loading/pdf-commit-load-callbacks.html
-http/tests/loading/redirect-methods.html
-http/tests/misc/favicon-loads-with-images-disabled.html
-http/tests/misc/favicon-loads-with-icon-loading-override.html
-http/tests/misc/link-rel-icon-beforeload.html
-http/tests/misc/will-send-request-returns-null-on-redirect.html
-http/tests/misc/willCacheResponse-delegate-callback.html
-http/tests/misc/window-dot-stop.html
-http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-in-body.html
-http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-parent-same-origin-allow.html
-http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-parent-same-origin-deny.html
-http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag.html
-http/tests/security/XFrameOptions/x-frame-options-deny.html
-http/tests/security/XFrameOptions/x-frame-options-parent-same-origin-allow.html
-http/tests/security/XFrameOptions/x-frame-options-parent-same-origin-deny.html
-http/tests/xmlhttprequest/abort-should-cancel-load.html
-security/block-test-no-port.html
-security/block-test.html
-webarchive/loading/cache-expired-subresource.html
-webarchive/loading/test-loading-archive.html
-webarchive/loading/test-loading-archive-subresource-null-mimetype.html
-
 # WebKitTestRunner needs textInputController
 # <https://bugs.webkit.org/show_bug.cgi?id=42337>
 editing/input/setting-input-value-cancel-ime-composition.html
@@ -798,12 +769,25 @@ fast/text-autosizing
 ########################################
 ### START OF (2) Classified failures without bug reports (yet)
 
+# WebKitTestRunner needs layoutTestController.shouldPaintBrockenImage
+fast/images/support-broken-image-delegate.html
+
+# WebKitTestRunner needs layoutTestController.setWillSendRequestReturnNullOnRedirect
+http/tests/misc/will-send-request-returns-null-on-redirect.html
+
+# WebKitTestRunner needs ReceiveServerRedirectForProvisionalLoadForFrame logging
+http/tests/loading/307-after-303-after-post.html
+http/tests/loading/redirect-methods.html
+
 # WebKitTestrunner needs layoutTestController.dumpSourceAsWebArchive
 webarchive/doctype.html
 webarchive/archive-empty-frame-source.html
 
 # WebKitTestRunner needs layoutTestController.setIconDatabaseEnabled
 webarchive/test-link-rel-icon.html
+http/tests/misc/favicon-loads-with-images-disabled.html
+http/tests/misc/favicon-loads-with-icon-loading-override.html
+http/tests/misc/link-rel-icon-beforeload.html
 
 # WebKitTestRunner should dump text/plain content as text
 http/tests/incremental/slow-utf8-text.pl
@@ -1044,6 +1028,9 @@ http/tests/security/contentSecurityPolicy/1.1
 platform/mac/fast/loader/file-url-mimetypes-2.html
 platform/mac/fast/loader/file-url-mimetypes-3.html
 platform/mac/fast/loader/file-url-mimetypes.html
+webarchive/loading/cache-expired-subresource.html
+webarchive/loading/test-loading-archive.html
+webarchive/loading/test-loading-archive-subresource-null-mimetype.html
 
 ### END OF (2) Classified failures without bug reports (yet)
 ########################################
@@ -1302,6 +1289,10 @@ fast/loader/window-properties-restored-from-page-cache.html
 # Flakey on Lion WK2 debug.
 # https://bugs.webkit.org/show_bug.cgi?id=81616
 fast/harness/page-cache-crash-on-data-urls.html
+
+# Wrong logging order
+fast/loader/file-protocol-fragment.html
+http/tests/loading/pdf-commit-load-callbacks.html
 
 ### END OF (3) Unclassified failures
 ########################################
