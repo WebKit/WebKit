@@ -1,3 +1,11 @@
+2012-08-14  Keishi Hattori  <keishi@webkit.org>
+
+        [Chromium] Fix test calendar-picker-appearance.html after r125507
+
+        Unreviewed.
+
+        * fast/forms/date/calendar-picker-appearance.html: Use resize event instead of transitionEnd.
+
 2012-08-10 Thiago Marcos P. Santos <thiago.santos@intel.com>
 
         [Qt] Remove duplicated platform test expectations
