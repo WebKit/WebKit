@@ -345,7 +345,7 @@ void TouchEventHandler::drawTapHighlight()
     IntPoint framePos(m_webPage->frameOffset(elementFrame));
 
     // FIXME: We can get more precise on the <map> case by calculating the rect with HTMLAreaElement::computeRect().
-    IntRect absoluteRect = renderer->absoluteClippedOverflowRect();
+    IntRect absoluteRect(renderer->absoluteClippedOverflowRect());
     absoluteRect.move(framePos.x(), framePos.y());
 
     IntRect clippingRect;
