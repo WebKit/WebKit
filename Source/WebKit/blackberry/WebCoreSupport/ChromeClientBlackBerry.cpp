@@ -78,12 +78,9 @@ using BlackBerry::Platform::Graphics::Window;
 
 namespace WebCore {
 
-static CString frameOrigin(Frame* frame)
+static CString toOriginString(Frame* frame)
 {
-    DOMWindow* window = frame->domWindow();
-    SecurityOrigin* origin = window->securityOrigin();
-    CString latinOrigin = origin->toString().latin1();
-    return latinOrigin;
+    return frame->document()->securityOrigin()->toString().latin1();
 }
 
 ChromeClientBlackBerry::ChromeClientBlackBerry(WebPagePrivate* pagePrivate)
@@ -111,7 +108,7 @@ void ChromeClientBlackBerry::runJavaScriptAlert(Frame* frame, const String& mess
 #endif
 
     TimerBase::fireTimersInNestedEventLoop();
-    CString latinOrigin = frameOrigin(frame);
+    CString latinOrigin = toOriginString(frame);
     m_webPagePrivate->m_client->runJavaScriptAlert(message.characters(), message.length(), latinOrigin.data(), latinOrigin.length());
 }
 
@@ -123,7 +120,7 @@ bool ChromeClientBlackBerry::runJavaScriptConfirm(Frame* frame, const String& me
 #endif
 
     TimerBase::fireTimersInNestedEventLoop();
-    CString latinOrigin = frameOrigin(frame);
+    CString latinOrigin = toOriginString(frame);
     return m_webPagePrivate->m_client->runJavaScriptConfirm(message.characters(), message.length(), latinOrigin.data(), latinOrigin.length());
 }
 
@@ -137,7 +134,7 @@ bool ChromeClientBlackBerry::runJavaScriptPrompt(Frame* frame, const String& mes
 #endif
 
     TimerBase::fireTimersInNestedEventLoop();
-    CString latinOrigin = frameOrigin(frame);
+    CString latinOrigin = toOriginString(frame);
     WebString clientResult;
     if (m_webPagePrivate->m_client->runJavaScriptPrompt(message.characters(), message.length(), defaultValue.characters(), defaultValue.length(), latinOrigin.data(), latinOrigin.length(), clientResult)) {
         result = clientResult;
@@ -386,7 +383,7 @@ bool ChromeClientBlackBerry::runBeforeUnloadConfirmPanel(const String& message, 
 #endif
 
     TimerBase::fireTimersInNestedEventLoop();
-    CString latinOrigin = frameOrigin(frame);
+    CString latinOrigin = toOriginString(frame);
     return m_webPagePrivate->m_client->runBeforeUnloadConfirmPanel(message.characters(), message.length(), latinOrigin.data(), latinOrigin.length());
 }
 
@@ -768,7 +765,7 @@ void ChromeClientBlackBerry::fullScreenRendererChanged(RenderBox* fullScreenRend
 void ChromeClientBlackBerry::requestWebGLPermission(Frame* frame)
 {
     if (frame) {
-        CString latinOrigin = frameOrigin(frame);
+        CString latinOrigin = toOriginString(frame);
         m_webPagePrivate->m_client->requestWebGLPermission(latinOrigin.data());
     }
 }

@@ -385,7 +385,7 @@ static void printNavigationErrorMessage(Frame* frame, const KURL& activeURL)
                      frame->document()->url().string() + " from frame with URL " + activeURL.string() + ".\n";
 
     // FIXME: should we print to the console of the document performing the navigation instead?
-    frame->domWindow()->printErrorMessage(message);
+    frame->document()->domWindow()->printErrorMessage(message);
 }
 
 static HashSet<Document*>* documentsThatNeedStyleRecalc = 0;

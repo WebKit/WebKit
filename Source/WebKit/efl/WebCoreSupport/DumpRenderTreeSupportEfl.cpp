@@ -225,7 +225,7 @@ bool DumpRenderTreeSupportEfl::pauseTransition(Evas_Object* ewkFrame, const char
 unsigned DumpRenderTreeSupportEfl::pendingUnloadEventCount(const Evas_Object* ewkFrame)
 {
     if (WebCore::Frame* frame = EWKPrivate::coreFrame(ewkFrame))
-        return frame->domWindow()->pendingUnloadEventListeners();
+        return frame->document()->domWindow()->pendingUnloadEventListeners();
 
     return 0;
 }

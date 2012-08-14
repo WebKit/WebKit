@@ -94,7 +94,7 @@ v8::Handle<v8::Value> V8HTMLDocument::GetNamedProperty(HTMLDocument* htmlDocumen
         Node* node = items->item(0);
         Frame* frame = 0;
         if (node->hasTagName(HTMLNames::iframeTag) && (frame = static_cast<HTMLIFrameElement*>(node)->contentFrame()))
-            return toV8(frame->domWindow(), isolate);
+            return toV8(frame->document()->domWindow(), isolate);
 
         return toV8(node, isolate);
     }

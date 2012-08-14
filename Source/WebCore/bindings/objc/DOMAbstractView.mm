@@ -50,7 +50,7 @@
 {
     if (!_internal)
         return nil;
-    return kit(IMPL->domWindow()->document());
+    return kit(IMPL->document());
 }
 
 @end
@@ -72,7 +72,7 @@ WebCore::DOMWindow* core(DOMAbstractView *wrapper)
         return 0;
     if (!wrapper->_internal)
         return 0;
-    return reinterpret_cast<WebCore::Frame*>(wrapper->_internal)->domWindow();
+    return reinterpret_cast<WebCore::Frame*>(wrapper->_internal)->document()->domWindow();
 }
 
 DOMAbstractView *kit(WebCore::DOMWindow* value)

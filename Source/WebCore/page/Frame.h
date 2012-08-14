@@ -128,10 +128,6 @@ namespace WebCore {
         
         String layerTreeAsText(bool showDebugInfo = false) const;
 
-        // FIXME: Callers should use document()->domWindow() directly.
-        DOMWindow* domWindow() const;
-        DOMWindow* existingDOMWindow() { return domWindow(); }
-
         static Frame* frameForWidget(const Widget*);
 
         Settings* settings() const; // can be NULL

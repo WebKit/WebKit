@@ -704,7 +704,7 @@ bool AlternativeTextController::insertDictatedText(const String& text, const Vec
     if (FrameView* view = m_frame->view())
         view->resetDeferredRepaintDelay();
 
-    RefPtr<TextEvent> event = TextEvent::createForDictation(m_frame->domWindow(), text, dictationAlternatives);
+    RefPtr<TextEvent> event = TextEvent::createForDictation(m_frame->document()->domWindow(), text, dictationAlternatives);
     event->setUnderlyingEvent(triggeringEvent);
 
     ExceptionCode ec;

@@ -196,8 +196,8 @@ static int parserLineNumber(Document* document)
 
 static void reportMessage(Document* document, MessageLevel level, const String& message)
 {
-    if (Frame* frame = document->frame())
-        frame->domWindow()->console()->addMessage(JSMessageSource, LogMessageType, level, message, document->documentURI(), parserLineNumber(document));
+    if (document->frame())
+        document->domWindow()->console()->addMessage(JSMessageSource, LogMessageType, level, message, document->documentURI(), parserLineNumber(document));
 }
 
 void SVGDocumentExtensions::reportWarning(const String& message)

@@ -1,3 +1,14 @@
+2012-08-14  Adam Barth  <abarth@webkit.org>
+
+        Delete Frame::domWindow() and Frame::existingDOMWindow()
+        https://bugs.webkit.org/show_bug.cgi?id=93990
+
+        Reviewed by Eric Seidel.
+
+        * WebView/WebFrame.mm:
+        (-[WebFrame _pendingFrameUnloadEventCount]):
+        (-[WebFrame _cacheabilityDictionary]):
+
 2012-08-14  Tom Sepez  <tsepez@chromium.org>
 
         REGRESSION r125500: 7 tests crashing on Mac bots

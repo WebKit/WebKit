@@ -479,7 +479,7 @@ v8::Handle<v8::Value> V8DOMWindow::indexedPropertyGetter(uint32_t index, const v
 
     Frame* child = frame->tree()->scopedChild(index);
     if (child)
-        return toV8(child->domWindow(), info.GetIsolate());
+        return toV8(child->document()->domWindow(), info.GetIsolate());
 
     return v8Undefined();
 }
@@ -502,7 +502,7 @@ v8::Handle<v8::Value> V8DOMWindow::namedPropertyGetter(v8::Local<v8::String> nam
     AtomicString propName = toWebCoreAtomicString(name);
     Frame* child = frame->tree()->scopedChild(propName);
     if (child)
-        return toV8(child->domWindow(), info.GetIsolate());
+        return toV8(child->document()->domWindow(), info.GetIsolate());
 
     // Search IDL functions defined in the prototype
     if (!info.Holder()->GetRealNamedProperty(name).IsEmpty())

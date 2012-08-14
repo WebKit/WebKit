@@ -357,10 +357,10 @@ void FrameLoader::stopLoading(UnloadEventPolicy unloadEventPolicy)
                 Node* currentFocusedNode = m_frame->document()->focusedNode();
                 if (currentFocusedNode)
                     currentFocusedNode->aboutToUnload();
-                if (m_frame->domWindow() && m_pageDismissalEventBeingDispatched == NoDismissal) {
+                if (m_frame->document()->domWindow() && m_pageDismissalEventBeingDispatched == NoDismissal) {
                     if (unloadEventPolicy == UnloadEventPolicyUnloadAndPageHide) {
                         m_pageDismissalEventBeingDispatched = PageHideDismissal;
-                        m_frame->domWindow()->dispatchEvent(PageTransitionEvent::create(eventNames().pagehideEvent, m_frame->document()->inPageCache()), m_frame->document());
+                        m_frame->document()->domWindow()->dispatchEvent(PageTransitionEvent::create(eventNames().pagehideEvent, m_frame->document()->inPageCache()), m_frame->document());
                     }
                     if (!m_frame->document()->inPageCache()) {
                         RefPtr<Event> unloadEvent(Event::create(eventNames().unloadEvent, false, false));
@@ -373,10 +373,10 @@ void FrameLoader::stopLoading(UnloadEventPolicy unloadEventPolicy)
                             DocumentLoadTiming* timing = documentLoader->timing();
                             ASSERT(timing->navigationStart());
                             timing->markUnloadEventStart();
-                            m_frame->domWindow()->dispatchEvent(unloadEvent, m_frame->domWindow()->document());
+                            m_frame->document()->domWindow()->dispatchEvent(unloadEvent, m_frame->document());
                             timing->markUnloadEventEnd();
                         } else
-                            m_frame->domWindow()->dispatchEvent(unloadEvent, m_frame->domWindow()->document());
+                            m_frame->document()->domWindow()->dispatchEvent(unloadEvent, m_frame->document());
                     }
                 }
                 m_pageDismissalEventBeingDispatched = NoDismissal;
@@ -464,7 +464,7 @@ bool FrameLoader::didOpenURL()
     // its frame is not in a consistent state for rendering, so avoid setJSStatusBarText
     // since it may cause clients to attempt to render the frame.
     if (!m_stateMachine.creatingInitialEmptyDocument()) {
-        if (DOMWindow* window = m_frame->existingDOMWindow()) {
+        if (DOMWindow* window = m_frame->document()->domWindow()) {
             window->setStatus(String());
             window->setDefaultStatus(String());
         }
@@ -886,7 +886,7 @@ bool FrameLoader::checkIfDisplayInsecureContent(SecurityOrigin* context, const K
     String message = (allowed ? emptyString() : "[blocked] ") + "The page at " +
         m_frame->document()->url().string() + " displayed insecure content from " + url.string() + ".\n";
         
-    m_frame->domWindow()->console()->addMessage(HTMLMessageSource, LogMessageType, WarningMessageLevel, message);
+    m_frame->document()->domWindow()->console()->addMessage(HTMLMessageSource, LogMessageType, WarningMessageLevel, message);
 
     if (allowed)
         m_client->didDisplayInsecureContent();
@@ -904,7 +904,7 @@ bool FrameLoader::checkIfRunInsecureContent(SecurityOrigin* context, const KURL&
     String message = (allowed ? emptyString() : "[blocked] ") + "The page at " +
         m_frame->document()->url().string() + " ran insecure content from " + url.string() + ".\n";
        
-    m_frame->domWindow()->console()->addMessage(HTMLMessageSource, LogMessageType, WarningMessageLevel, message);
+    m_frame->document()->domWindow()->console()->addMessage(HTMLMessageSource, LogMessageType, WarningMessageLevel, message);
 
     if (allowed)
         m_client->didRunInsecureContent(context, url);
@@ -1371,7 +1371,7 @@ void FrameLoader::reportLocalLoadFailed(Frame* frame, const String& url)
     if (!frame)
         return;
 
-    frame->domWindow()->console()->addMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, "Not allowed to load local resource: " + url);
+    frame->document()->domWindow()->console()->addMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, "Not allowed to load local resource: " + url);
 }
 
 const ResourceRequest& FrameLoader::initialRequest() const
@@ -1902,7 +1902,7 @@ void FrameLoader::prepareForCachedPageRestore()
     
     // Delete old status bar messages (if it _was_ activated on last URL).
     if (m_frame->script()->canExecuteScripts(NotAboutToExecuteScript)) {
-        if (DOMWindow* window = m_frame->existingDOMWindow()) {
+        if (DOMWindow* window = m_frame->document()->domWindow()) {
             window->setStatus(String());
             window->setDefaultStatus(String());
         }
@@ -2692,7 +2692,7 @@ bool FrameLoader::shouldClose()
 
 bool FrameLoader::fireBeforeUnloadEvent(Chrome* chrome)
 {
-    DOMWindow* domWindow = m_frame->existingDOMWindow();
+    DOMWindow* domWindow = m_frame->document()->domWindow();
     if (!domWindow)
         return true;
 

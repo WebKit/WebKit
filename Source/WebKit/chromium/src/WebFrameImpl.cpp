@@ -809,10 +809,10 @@ WebAnimationController* WebFrameImpl::animationController()
 
 WebPerformance WebFrameImpl::performance() const
 {
-    if (!m_frame || !m_frame->domWindow())
+    if (!m_frame)
         return WebPerformance();
 
-    return WebPerformance(m_frame->domWindow()->performance());
+    return WebPerformance(m_frame->document()->domWindow()->performance());
 }
 
 NPObject* WebFrameImpl::windowObject() const
@@ -887,7 +887,7 @@ void WebFrameImpl::addMessageToConsole(const WebConsoleMessage& message)
         return;
     }
 
-    frame()->domWindow()->console()->addMessage(OtherMessageSource, LogMessageType, webCoreMessageLevel, message.text);
+    frame()->document()->domWindow()->console()->addMessage(OtherMessageSource, LogMessageType, webCoreMessageLevel, message.text);
 }
 
 void WebFrameImpl::collectGarbage()
@@ -1180,7 +1180,7 @@ void WebFrameImpl::commitDocumentData(const char* data, size_t length)
 
 unsigned WebFrameImpl::unloadListenerCount() const
 {
-    return frame()->domWindow()->pendingUnloadEventListeners();
+    return frame()->document()->domWindow()->pendingUnloadEventListeners();
 }
 
 bool WebFrameImpl::isProcessingUserGesture() const
@@ -1956,34 +1956,29 @@ void WebFrameImpl::sendOrientationChangeEvent(int orientation)
 
 void WebFrameImpl::addEventListener(const WebString& eventType, WebDOMEventListener* listener, bool useCapture)
 {
-    DOMWindow* window = m_frame->domWindow();
-
-    EventListenerWrapper* listenerWrapper =
-        listener->createEventListenerWrapper(eventType, useCapture, window);
-
-    m_frame->domWindow()->addEventListener(eventType, adoptRef(listenerWrapper), useCapture);
+    DOMWindow* window = m_frame->document()->domWindow();
+    EventListenerWrapper* listenerWrapper = listener->createEventListenerWrapper(eventType, useCapture, window);
+    window->addEventListener(eventType, adoptRef(listenerWrapper), useCapture);
 }
 
 void WebFrameImpl::removeEventListener(const WebString& eventType, WebDOMEventListener* listener, bool useCapture)
 {
-    DOMWindow* window = m_frame->domWindow();
-
-    EventListenerWrapper* listenerWrapper =
-        listener->getEventListenerWrapper(eventType, useCapture, window);
+    DOMWindow* window = m_frame->document()->domWindow();
+    EventListenerWrapper* listenerWrapper = listener->getEventListenerWrapper(eventType, useCapture, window);
     window->removeEventListener(eventType, listenerWrapper, useCapture);
 }
 
 bool WebFrameImpl::dispatchEvent(const WebDOMEvent& event)
 {
     ASSERT(!event.isNull());
-    return m_frame->domWindow()->dispatchEvent(event);
+    return m_frame->document()->domWindow()->dispatchEvent(event);
 }
 
 void WebFrameImpl::dispatchMessageEventWithOriginCheck(const WebSecurityOrigin& intendedTargetOrigin, const WebDOMEvent& event)
 {
     ASSERT(!event.isNull());
     // Pass an empty call stack, since we don't have the one from the other process.
-    m_frame->domWindow()->dispatchMessageEventWithOriginCheck(intendedTargetOrigin.get(), event, 0);
+    m_frame->document()->domWindow()->dispatchMessageEventWithOriginCheck(intendedTargetOrigin.get(), event, 0);
 }
 
 int WebFrameImpl::findMatchMarkersVersion() const
@@ -2190,11 +2185,11 @@ void WebFrameImpl::deliverIntent(const WebIntent& intent, WebMessagePortChannelA
             (*channels)[i] = MessagePortChannel::create(platformChannel);
         }
     }
-    OwnPtr<MessagePortArray> portArray = WebCore::MessagePort::entanglePorts(*(m_frame->domWindow()->scriptExecutionContext()), channels.release());
+    OwnPtr<MessagePortArray> portArray = WebCore::MessagePort::entanglePorts(*(m_frame->document()), channels.release());
 
     RefPtr<DeliveredIntent> deliveredIntent = DeliveredIntent::create(m_frame, client.release(), intent.action(), intent.type(), intentData, portArray.release(), webcoreIntent->extras());
 
-    DOMWindowIntents::from(m_frame->domWindow())->deliver(deliveredIntent.release());
+    DOMWindowIntents::from(m_frame->document()->domWindow())->deliver(deliveredIntent.release());
 #endif
 }
 

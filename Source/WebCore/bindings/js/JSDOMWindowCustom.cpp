@@ -99,12 +99,12 @@ JSValue nonCachingStaticFunctionGetter(ExecState* exec, JSValue, PropertyName pr
 
 static JSValue childFrameGetter(ExecState* exec, JSValue slotBase, PropertyName propertyName)
 {
-    return toJS(exec, jsCast<JSDOMWindow*>(asObject(slotBase))->impl()->frame()->tree()->scopedChild(propertyNameToAtomicString(propertyName))->domWindow());
+    return toJS(exec, jsCast<JSDOMWindow*>(asObject(slotBase))->impl()->frame()->tree()->scopedChild(propertyNameToAtomicString(propertyName))->document()->domWindow());
 }
 
 static JSValue indexGetter(ExecState* exec, JSValue slotBase, unsigned index)
 {
-    return toJS(exec, jsCast<JSDOMWindow*>(asObject(slotBase))->impl()->frame()->tree()->scopedChild(index)->domWindow());
+    return toJS(exec, jsCast<JSDOMWindow*>(asObject(slotBase))->impl()->frame()->tree()->scopedChild(index)->document()->domWindow());
 }
 
 static JSValue namedItemGetter(ExecState* exec, JSValue slotBase, PropertyName propertyName)

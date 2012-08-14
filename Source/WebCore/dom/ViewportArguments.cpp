@@ -363,7 +363,7 @@ void reportViewportWarning(Document* document, ViewportErrorCode errorCode, cons
     if (!replacement2.isNull())
         message.replace("%replacement2", replacement2);
 
-    frame->domWindow()->console()->addMessage(HTMLMessageSource, LogMessageType, viewportErrorMessageLevel(errorCode), message, document->url().string(), parserLineNumber(document));
+    document->domWindow()->console()->addMessage(HTMLMessageSource, LogMessageType, viewportErrorMessageLevel(errorCode), message, document->url().string(), parserLineNumber(document));
 }
 
 } // namespace WebCore

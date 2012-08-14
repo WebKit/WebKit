@@ -1,3 +1,128 @@
+2012-08-14  Adam Barth  <abarth@webkit.org>
+
+        Delete Frame::domWindow() and Frame::existingDOMWindow()
+        https://bugs.webkit.org/show_bug.cgi?id=93990
+
+        Reviewed by Eric Seidel.
+
+        These functions just call through to document()->domWindow(). This
+        patch updates the callers so it's clearer what's going on.
+
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::shouldAllowAccessToFrame):
+        (WebCore::printErrorMessageForFrame):
+        * bindings/js/JSDocumentCustom.cpp:
+        (WebCore::JSDocument::location):
+        (WebCore::JSDocument::setLocation):
+        * bindings/js/JSEventListener.cpp:
+        (WebCore::JSEventListener::handleEvent):
+        * bindings/js/ScriptCachedFrameData.cpp:
+        (WebCore::ScriptCachedFrameData::restore):
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::createWindowShell):
+        * bindings/objc/DOMAbstractView.mm:
+        (core):
+        * bindings/v8/NPV8Object.cpp:
+        (WebCore::toV8Context):
+        * bindings/v8/ScriptController.cpp:
+        (WebCore::createScriptObject):
+        (WebCore::ScriptController::createScriptObjectForPluginElement):
+        * bindings/v8/V8DOMWindowShell.cpp:
+        (WebCore::V8DOMWindowShell::initContextIfNeeded):
+        * bindings/v8/V8IsolatedContext.cpp:
+        (WebCore::V8IsolatedContext::V8IsolatedContext):
+        * bindings/v8/V8Proxy.cpp:
+        (WebCore::V8Proxy::retrieveFrame):
+        * bindings/v8/custom/V8DOMWindowCustom.cpp:
+        (WebCore::V8DOMWindow::indexedPropertyGetter):
+        (WebCore::V8DOMWindow::namedPropertyGetter):
+        * bindings/v8/custom/V8DocumentLocationCustom.cpp:
+        (WebCore::V8Document::locationAccessorGetter):
+        (WebCore::V8Document::locationAccessorSetter):
+        * bindings/v8/custom/V8HTMLDocumentCustom.cpp:
+        (WebCore::V8HTMLDocument::GetNamedProperty):
+        * bindings/v8/custom/V8HTMLFrameSetElementCustom.cpp:
+        (WebCore::V8HTMLFrameSetElement::namedPropertyGetter):
+        * dom/Document.cpp:
+        (WebCore::printNavigationErrorMessage):
+        * dom/ViewportArguments.cpp:
+        (WebCore::reportViewportWarning):
+        * editing/AlternativeTextController.cpp:
+        (WebCore::AlternativeTextController::insertDictatedText):
+        * editing/Editor.cpp:
+        (WebCore::Editor::pasteAsPlainText):
+        (WebCore::Editor::pasteAsFragment):
+        (WebCore::Editor::setComposition):
+        * history/PageCache.cpp:
+        (WebCore::logCanCacheFrameDecision):
+        (WebCore::PageCache::canCachePageContainingThisFrame):
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::validateInteractively):
+        * html/HTMLFrameOwnerElement.cpp:
+        (WebCore::HTMLFrameOwnerElement::contentWindow):
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore):
+        (WebCore::WebGLRenderingContext::printWarningToConsole):
+        * inspector/InspectorDOMStorageAgent.cpp:
+        (WebCore::InspectorDOMStorageAgent::storageId):
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::checkLoadComplete):
+        * loader/DocumentWriter.cpp:
+        (WebCore::DocumentWriter::begin):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::stopLoading):
+        (WebCore::FrameLoader::didOpenURL):
+        (WebCore::FrameLoader::checkIfDisplayInsecureContent):
+        (WebCore::FrameLoader::checkIfRunInsecureContent):
+        (WebCore::FrameLoader::reportLocalLoadFailed):
+        (WebCore::FrameLoader::prepareForCachedPageRestore):
+        (WebCore::FrameLoader::open):
+        (WebCore::FrameLoader::fireBeforeUnloadEvent):
+        * loader/MainResourceLoader.cpp:
+        (WebCore::MainResourceLoader::didReceiveResponse):
+        * loader/appcache/ApplicationCacheGroup.cpp:
+        (WebCore::ApplicationCacheGroup::abort):
+        (WebCore::ApplicationCacheGroup::didReceiveResponse):
+        (WebCore::ApplicationCacheGroup::didFinishLoading):
+        (WebCore::ApplicationCacheGroup::didFail):
+        (WebCore::ApplicationCacheGroup::didReceiveManifestResponse):
+        (WebCore::ApplicationCacheGroup::didFinishLoadingManifest):
+        (WebCore::ApplicationCacheGroup::checkIfLoadIsComplete):
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::printAccessDeniedMessage):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::isCurrentlyDisplayedInFrame):
+        (WebCore::DOMWindow::self):
+        (WebCore::DOMWindow::opener):
+        (WebCore::DOMWindow::parent):
+        (WebCore::DOMWindow::top):
+        (WebCore::DOMWindow::createWindow):
+        (WebCore::DOMWindow::open):
+        * page/DOMWindowProperty.cpp:
+        (WebCore::DOMWindowProperty::DOMWindowProperty):
+        (WebCore::DOMWindowProperty::reconnectFrameFromPageCache):
+        * page/DragController.cpp:
+        (WebCore::DragController::dispatchTextInputEventFor):
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleTextInputEvent):
+        * page/Frame.cpp:
+        * page/Frame.h:
+        (Frame):
+        * page/Location.cpp:
+        (WebCore::Location::replace):
+        (WebCore::Location::reload):
+        (WebCore::Location::setLocation):
+        * storage/StorageEventDispatcher.cpp:
+        (WebCore::StorageEventDispatcher::dispatch):
+        * svg/SVGDocumentExtensions.cpp:
+        (WebCore::reportMessage):
+        * xml/XSLStyleSheetLibxslt.cpp:
+        (WebCore::XSLStyleSheet::parseString):
+        * xml/XSLTProcessorLibxslt.cpp:
+        (WebCore::docLoaderFunc):
+        * xml/XSLTProcessorQt.cpp:
+        (WebCore::XSLTMessageHandler::handleMessage):
+
 2012-08-14  Mike West  <mkwst@chromium.org>
 
         Tighten up parsing the 'script-nonce' CSP directive value.

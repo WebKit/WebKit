@@ -251,7 +251,7 @@ void WebFrame::deliverIntent(const IntentData& intentData)
     RefPtr<DeliveredIntent> deliveredIntent = DeliveredIntent::create(m_coreFrame, dummyClient.release(), intentData.action, intentData.type,
                                                                       SerializedScriptValue::adopt(dataCopy), dummyPorts.release(),
                                                                       intentData.extras);
-    WebCore::DOMWindowIntents::from(m_coreFrame->domWindow())->deliver(deliveredIntent.release());
+    WebCore::DOMWindowIntents::from(m_coreFrame->document()->domWindow())->deliver(deliveredIntent.release());
 }
 #endif
 
@@ -493,7 +493,7 @@ unsigned WebFrame::pendingUnloadCount() const
     if (!m_coreFrame)
         return 0;
 
-    return m_coreFrame->domWindow()->pendingUnloadEventListeners();
+    return m_coreFrame->document()->domWindow()->pendingUnloadEventListeners();
 }
 
 bool WebFrame::allowsFollowingLink(const WebCore::KURL& url) const

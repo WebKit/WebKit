@@ -423,7 +423,7 @@ bool DragController::dispatchTextInputEventFor(Frame* innerFrame, DragData* drag
     String text = m_page->dragCaretController()->isContentRichlyEditable() ? "" : dragData->asPlainText(innerFrame);
     Node* target = innerFrame->editor()->findEventTargetFrom(m_page->dragCaretController()->caretPosition());
     ExceptionCode ec = 0;
-    return target->dispatchEvent(TextEvent::createForDrop(innerFrame->domWindow(), text), ec);
+    return target->dispatchEvent(TextEvent::createForDrop(innerFrame->document()->domWindow(), text), ec);
 }
 
 bool DragController::concludeEditDrag(DragData* dragData)

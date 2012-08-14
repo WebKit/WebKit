@@ -91,7 +91,7 @@ V8IsolatedContext::V8IsolatedContext(V8Proxy* proxy, int extensionGroup, int wor
     m_perContextData->init();
 
     // FIXME: This will go away once we have a windowShell for the isolated world.
-    proxy->windowShell()->installDOMWindow(m_context->get(), m_frame->domWindow());
+    proxy->windowShell()->installDOMWindow(m_context->get(), m_frame->document()->domWindow());
 
     // Using the default security token means that the canAccess is always
     // called, which is slow.

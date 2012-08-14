@@ -224,7 +224,7 @@ bool shouldAllowAccessToFrame(ExecState* exec, Frame* frame, String& message)
         return false;
     bool result = BindingSecurity::shouldAllowAccessToFrame(exec, frame, DoNotReportSecurityError);
     // FIXME: The following line of code should move somewhere that it can be shared with immediatelyReportUnsafeAccessTo.
-    message = frame->domWindow()->crossDomainAccessErrorMessage(activeDOMWindow(exec));
+    message = frame->document()->domWindow()->crossDomainAccessErrorMessage(activeDOMWindow(exec));
     return result;
 }
 
@@ -232,7 +232,7 @@ void printErrorMessageForFrame(Frame* frame, const String& message)
 {
     if (!frame)
         return;
-    frame->domWindow()->printErrorMessage(message);
+    frame->document()->domWindow()->printErrorMessage(message);
 }
 
 JSValue objectToStringFunctionGetter(ExecState* exec, JSValue, PropertyName propertyName)

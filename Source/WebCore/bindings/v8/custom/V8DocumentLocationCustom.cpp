@@ -40,7 +40,7 @@ v8::Handle<v8::Value> V8Document::locationAccessorGetter(v8::Local<v8::String> n
     if (!document->frame())
         return v8::Null(info.GetIsolate());
 
-    DOMWindow* window = document->frame()->domWindow();
+    DOMWindow* window = document->domWindow();
     return toV8(window->location(), info.GetIsolate());
 }
 
@@ -60,7 +60,7 @@ void V8Document::locationAccessorSetter(v8::Local<v8::String> name, v8::Local<v8
     if (!first)
         return;
 
-    DOMWindow* window = document->frame()->domWindow();
+    DOMWindow* window = document->domWindow();
     if (Location* location = window->location())
         location->setHref(toWebCoreString(value), active, first);
 }

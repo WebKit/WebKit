@@ -766,12 +766,12 @@ void ewk_frame_intent_deliver(const Evas_Object* ewkFrame, Ewk_Intent* ewk_inten
         for (size_t i = 0; i < origChannels->size(); ++i)
             (*channels)[i] = origChannels->at(i).release();
     }
-    OwnPtr<WebCore::MessagePortArray> ports = WebCore::MessagePort::entanglePorts(*(smartData->frame->domWindow()->scriptExecutionContext()), channels.release());
+    OwnPtr<WebCore::MessagePortArray> ports = WebCore::MessagePort::entanglePorts(*(smartData->frame->document()), channels.release());
 
     OwnPtr<WebCore::DeliveredIntentClient> dummyClient;
     RefPtr<WebCore::DeliveredIntent> deliveredIntent = WebCore::DeliveredIntent::create(smartData->frame, dummyClient.release(), intent->action(), intent->type(), intent->data(), ports.release(), intent->extras());
 
-    WebCore::DOMWindowIntents::from(smartData->frame->domWindow())->deliver(deliveredIntent.release());
+    WebCore::DOMWindowIntents::from(smartData->frame->document()->domWindow())->deliver(deliveredIntent.release());
 #endif
 }
 

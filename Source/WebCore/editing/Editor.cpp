@@ -346,7 +346,7 @@ void Editor::pasteAsPlainText(const String& pastingText, bool smartReplace)
     if (!target)
         return;
     ExceptionCode ec = 0;
-    target->dispatchEvent(TextEvent::createForPlainTextPaste(m_frame->domWindow(), pastingText, smartReplace), ec);
+    target->dispatchEvent(TextEvent::createForPlainTextPaste(m_frame->document()->domWindow(), pastingText, smartReplace), ec);
 }
 
 void Editor::pasteAsFragment(PassRefPtr<DocumentFragment> pastingFragment, bool smartReplace, bool matchStyle)
@@ -355,7 +355,7 @@ void Editor::pasteAsFragment(PassRefPtr<DocumentFragment> pastingFragment, bool 
     if (!target)
         return;
     ExceptionCode ec = 0;
-    target->dispatchEvent(TextEvent::createForFragmentPaste(m_frame->domWindow(), pastingFragment, smartReplace, matchStyle), ec);
+    target->dispatchEvent(TextEvent::createForFragmentPaste(m_frame->document()->domWindow(), pastingFragment, smartReplace, matchStyle), ec);
 }
 
 void Editor::pasteAsPlainTextBypassingDHTML()
@@ -1363,7 +1363,7 @@ void Editor::setComposition(const String& text, SetCompositionMode mode)
     // the DOM Event specification.
     Node* target = m_frame->document()->focusedNode();
     if (target) {
-        RefPtr<CompositionEvent> event = CompositionEvent::create(eventNames().compositionendEvent, m_frame->domWindow(), text);
+        RefPtr<CompositionEvent> event = CompositionEvent::create(eventNames().compositionendEvent, m_frame->document()->domWindow(), text);
         ExceptionCode ec = 0;
         target->dispatchEvent(event, ec);
     }
@@ -1426,14 +1426,14 @@ void Editor::setComposition(const String& text, const Vector<CompositionUnderlin
             // We should send a compositionstart event only when the given text is not empty because this
             // function doesn't create a composition node when the text is empty.
             if (!text.isEmpty()) {
-                target->dispatchEvent(CompositionEvent::create(eventNames().compositionstartEvent, m_frame->domWindow(), text));
-                event = CompositionEvent::create(eventNames().compositionupdateEvent, m_frame->domWindow(), text);
+                target->dispatchEvent(CompositionEvent::create(eventNames().compositionstartEvent, m_frame->document()->domWindow(), text));
+                event = CompositionEvent::create(eventNames().compositionupdateEvent, m_frame->document()->domWindow(), text);
             }
         } else {
             if (!text.isEmpty())
-                event = CompositionEvent::create(eventNames().compositionupdateEvent, m_frame->domWindow(), text);
+                event = CompositionEvent::create(eventNames().compositionupdateEvent, m_frame->document()->domWindow(), text);
             else
-              event = CompositionEvent::create(eventNames().compositionendEvent, m_frame->domWindow(), text);
+              event = CompositionEvent::create(eventNames().compositionendEvent, m_frame->document()->domWindow(), text);
         }
         ExceptionCode ec = 0;
         if (event.get())

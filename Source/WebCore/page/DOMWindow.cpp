@@ -594,7 +594,7 @@ void DOMWindow::clearDOMWindowProperties()
 
 bool DOMWindow::isCurrentlyDisplayedInFrame() const
 {
-    return m_frame && m_frame->domWindow() == this;
+    return m_frame && m_frame->document()->domWindow() == this;
 }
 
 #if ENABLE(ORIENTATION_EVENTS)
@@ -1260,7 +1260,7 @@ DOMWindow* DOMWindow::self() const
     if (!m_frame)
         return 0;
 
-    return m_frame->domWindow();
+    return m_frame->document()->domWindow();
 }
 
 DOMWindow* DOMWindow::opener() const
@@ -1272,7 +1272,7 @@ DOMWindow* DOMWindow::opener() const
     if (!opener)
         return 0;
 
-    return opener->domWindow();
+    return opener->document()->domWindow();
 }
 
 DOMWindow* DOMWindow::parent() const
@@ -1282,9 +1282,9 @@ DOMWindow* DOMWindow::parent() const
 
     Frame* parent = m_frame->tree()->parent();
     if (parent)
-        return parent->domWindow();
+        return parent->document()->domWindow();
 
-    return m_frame->domWindow();
+    return m_frame->document()->domWindow();
 }
 
 DOMWindow* DOMWindow::top() const
@@ -1296,7 +1296,7 @@ DOMWindow* DOMWindow::top() const
     if (!page)
         return 0;
 
-    return m_frame->tree()->top()->domWindow();
+    return m_frame->tree()->top()->document()->domWindow();
 }
 
 Document* DOMWindow::document() const
@@ -1823,11 +1823,11 @@ Frame* DOMWindow::createWindow(const String& urlString, const AtomicString& fram
     newFrame->loader()->setOpener(openerFrame);
     newFrame->page()->setOpenedByDOM();
 
-    if (newFrame->domWindow()->isInsecureScriptAccess(activeWindow, completedURL))
+    if (newFrame->document()->domWindow()->isInsecureScriptAccess(activeWindow, completedURL))
         return newFrame;
 
     if (function)
-        function(newFrame->domWindow(), functionContext);
+        function(newFrame->document()->domWindow(), functionContext);
 
     if (created)
         newFrame->loader()->changeLocation(activeWindow->securityOrigin(), completedURL, referrer, false, false);
@@ -1875,11 +1875,11 @@ PassRefPtr<DOMWindow> DOMWindow::open(const String& urlString, const AtomicStrin
 
         KURL completedURL = firstFrame->document()->completeURL(urlString);
 
-        if (targetFrame->domWindow()->isInsecureScriptAccess(activeWindow, completedURL))
-            return targetFrame->domWindow();
+        if (targetFrame->document()->domWindow()->isInsecureScriptAccess(activeWindow, completedURL))
+            return targetFrame->document()->domWindow();
 
         if (urlString.isEmpty())
-            return targetFrame->domWindow();
+            return targetFrame->document()->domWindow();
 
         // For whatever reason, Firefox uses the first window rather than the active window to
         // determine the outgoing referrer. We replicate that behavior here.
@@ -1890,7 +1890,7 @@ PassRefPtr<DOMWindow> DOMWindow::open(const String& urlString, const AtomicStrin
             firstFrame->loader()->outgoingReferrer(),
             lockHistory,
             false);
-        return targetFrame->domWindow();
+        return targetFrame->document()->domWindow();
     }
 
     WindowFeatures windowFeatures(windowFeaturesString);
@@ -1904,7 +1904,7 @@ PassRefPtr<DOMWindow> DOMWindow::open(const String& urlString, const AtomicStrin
     windowFeatures.width = windowRect.width();
 
     Frame* result = createWindow(urlString, frameName, windowFeatures, activeWindow, firstFrame, m_frame);
-    return result ? result->domWindow() : 0;
+    return result ? result->document()->domWindow() : 0;
 }
 
 void DOMWindow::showModalDialog(const String& urlString, const String& dialogFeaturesString,

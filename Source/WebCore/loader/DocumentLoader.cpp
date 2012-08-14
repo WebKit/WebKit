@@ -422,7 +422,7 @@ void DocumentLoader::checkLoadComplete()
         return;
     ASSERT(this == frameLoader()->activeDocumentLoader());
 
-    if (DOMWindow* window = m_frame->existingDOMWindow())
+    if (DOMWindow* window = m_frame->document()->domWindow())
         window->finishedLoading();
 }
 

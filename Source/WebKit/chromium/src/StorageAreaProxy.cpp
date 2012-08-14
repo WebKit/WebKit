@@ -131,7 +131,7 @@ void StorageAreaProxy::dispatchLocalStorageEvent(PageGroup* pageGroup, const Str
     const HashSet<Page*>& pages = pageGroup->pages();
     for (HashSet<Page*>::const_iterator it = pages.begin(); it != pages.end(); ++it) {
         for (Frame* frame = (*it)->mainFrame(); frame; frame = frame->tree()->traverseNext()) {
-            Storage* storage = frame->domWindow()->optionalLocalStorage();
+            Storage* storage = frame->document()->domWindow()->optionalLocalStorage();
             if (storage && frame->document()->securityOrigin()->equal(securityOrigin) && !isEventSource(storage, sourceAreaInstance))
                 frame->document()->enqueueWindowEvent(StorageEvent::create(eventNames().storageEvent, key, oldValue, newValue, pageURL, storage));
         }
@@ -160,7 +160,7 @@ void StorageAreaProxy::dispatchSessionStorageEvent(PageGroup* pageGroup, const S
         return;
 
     for (Frame* frame = page->mainFrame(); frame; frame = frame->tree()->traverseNext()) {
-        Storage* storage = frame->domWindow()->optionalSessionStorage();
+        Storage* storage = frame->document()->domWindow()->optionalSessionStorage();
         if (storage && frame->document()->securityOrigin()->equal(securityOrigin) && !isEventSource(storage, sourceAreaInstance))
             frame->document()->enqueueWindowEvent(StorageEvent::create(eventNames().storageEvent, key, oldValue, newValue, pageURL, storage));
     }

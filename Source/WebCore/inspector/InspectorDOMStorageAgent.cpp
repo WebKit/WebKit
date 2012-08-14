@@ -156,7 +156,7 @@ String InspectorDOMStorageAgent::storageId(Storage* storage)
     ASSERT(storage);
     Frame* frame = storage->frame();
     ExceptionCode ec = 0;
-    bool isLocalStorage = (frame->domWindow()->localStorage(ec) == storage && !ec);
+    bool isLocalStorage = (frame->document()->domWindow()->localStorage(ec) == storage && !ec);
     return storageId(frame->document()->securityOrigin(), isLocalStorage);
 }
 

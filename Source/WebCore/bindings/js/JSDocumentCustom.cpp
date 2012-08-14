@@ -54,7 +54,7 @@ JSValue JSDocument::location(ExecState* exec) const
     if (!frame)
         return jsNull();
 
-    Location* location = frame->domWindow()->location();
+    Location* location = frame->document()->domWindow()->location();
     if (JSDOMWrapper* wrapper = getCachedWrapper(currentWorld(exec), location))
         return wrapper;
 
@@ -73,7 +73,7 @@ void JSDocument::setLocation(ExecState* exec, JSValue value)
     if (exec->hadException())
         return;
 
-    if (Location* location = frame->domWindow()->location())
+    if (Location* location = frame->document()->domWindow()->location())
         location->setHref(ustringToString(locationString), activeDOMWindow(exec), firstDOMWindow(exec));
 }
 

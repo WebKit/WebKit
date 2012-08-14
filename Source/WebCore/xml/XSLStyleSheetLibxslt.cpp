@@ -145,8 +145,8 @@ bool XSLStyleSheet::parseString(const String& string)
     m_stylesheetDocTaken = false;
 
     Console* console = 0;
-    if (Frame* frame = ownerDocument()->frame())
-        console = frame->domWindow()->console();
+    if (ownerDocument()->frame())
+        console = ownerDocument()->domWindow()->console();
 
     XMLDocumentParserScope scope(cachedResourceLoader(), XSLTProcessor::genericErrorFunc, XSLTProcessor::parseErrorFunc, console);
 

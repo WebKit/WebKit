@@ -32,6 +32,7 @@
 #include "WebDOMMessageEvent.h"
 
 #include "DOMWindow.h"
+#include "Document.h"
 #include "MessageEvent.h"
 #include "MessagePort.h"
 #include "PlatformMessagePortChannel.h"
@@ -55,7 +56,7 @@ void WebDOMMessageEvent::initMessageEvent(const WebString& type, bool canBubble,
     ASSERT(isMessageEvent());
     DOMWindow* window = 0;
     if (sourceFrame)
-        window = static_cast<const WebFrameImpl*>(sourceFrame)->frame()->domWindow();
+        window = static_cast<const WebFrameImpl*>(sourceFrame)->frame()->document()->domWindow();
     OwnPtr<MessagePortArray> ports;
     unwrap<MessageEvent>()->initMessageEvent(type, canBubble, cancelable, messageData, origin, lastEventId, window, ports.release());
 }

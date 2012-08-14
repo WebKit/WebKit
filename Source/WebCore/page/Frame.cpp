@@ -680,12 +680,6 @@ void Frame::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     info.addInstrumentedMember(m_loader);
 }
 
-DOMWindow* Frame::domWindow() const
-{
-    ASSERT(m_doc->domWindow());
-    return m_doc->domWindow();
-}
-
 void Frame::willDetachPage()
 {
     if (Frame* parent = tree()->parent())

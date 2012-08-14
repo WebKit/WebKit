@@ -279,7 +279,7 @@ guint DumpRenderTreeSupportGtk::getPendingUnloadEventCount(WebKitWebFrame* frame
 {
     g_return_val_if_fail(WEBKIT_IS_WEB_FRAME(frame), 0);
 
-    return core(frame)->domWindow()->pendingUnloadEventListeners();
+    return core(frame)->document()->domWindow()->pendingUnloadEventListeners();
 }
 
 bool DumpRenderTreeSupportGtk::pauseAnimation(WebKitWebFrame* frame, const char* name, double time, const char* element)

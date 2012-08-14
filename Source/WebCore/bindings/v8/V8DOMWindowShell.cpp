@@ -334,7 +334,7 @@ bool V8DOMWindowShell::initContextIfNeeded()
         return false;
     }
 
-    if (!installDOMWindow(v8Context, m_frame->domWindow())) {
+    if (!installDOMWindow(v8Context, m_frame->document()->domWindow())) {
         disposeContextHandles();
         return false;
     }

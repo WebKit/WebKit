@@ -63,8 +63,8 @@ typedef HashMap<int, V8NPObjectVector> V8NPObjectMap;
 static v8::Local<v8::Context> toV8Context(NPP npp, NPObject* npObject)
 {
     V8NPObject* object = reinterpret_cast<V8NPObject*>(npObject);
-    DOMWindow* domWindow = object->rootObject;
-    if (!domWindow || !domWindow->frame() || domWindow != domWindow->frame()->domWindow())
+    DOMWindow* window = object->rootObject;
+    if (!window || !window->isCurrentlyDisplayedInFrame())
         return v8::Local<v8::Context>();
     return V8Proxy::mainWorldContext(object->rootObject->frame());
 }

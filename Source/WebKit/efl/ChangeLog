@@ -1,3 +1,15 @@
+2012-08-14  Adam Barth  <abarth@webkit.org>
+
+        Delete Frame::domWindow() and Frame::existingDOMWindow()
+        https://bugs.webkit.org/show_bug.cgi?id=93990
+
+        Reviewed by Eric Seidel.
+
+        * WebCoreSupport/DumpRenderTreeSupportEfl.cpp:
+        (DumpRenderTreeSupportEfl::pendingUnloadEventCount):
+        * ewk/ewk_frame.cpp:
+        (ewk_frame_intent_deliver):
+
 2012-08-13  Tom Sepez  <tsepez@chromium.org>
 
         [chromium] release FrameLoaderClientImpl::m_pluginWidget refptr upon Plugin Document detach.

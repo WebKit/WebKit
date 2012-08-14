@@ -85,18 +85,12 @@ void JSEventListener::handleEvent(ScriptExecutionContext* scriptExecutionContext
     if (!globalObject)
         return;
 
-    Frame* frame = 0;
     if (scriptExecutionContext->isDocument()) {
         JSDOMWindow* window = jsCast<JSDOMWindow*>(globalObject);
-        frame = window->impl()->frame();
-        if (!frame)
-            return;
-        // The window must still be active in its frame. See <https://bugs.webkit.org/show_bug.cgi?id=21921>.
-        // FIXME: A better fix for this may be to change DOMWindow::frame() to not return a frame the detached window used to be in.
-        if (frame->domWindow() != window->impl())
+        if (!window->impl()->isCurrentlyDisplayedInFrame())
             return;
         // FIXME: Is this check needed for other contexts?
-        ScriptController* script = frame->script();
+        ScriptController* script = window->impl()->frame()->script();
         if (!script->canExecuteScripts(AboutToExecuteScript) || script->isPaused())
             return;
     }

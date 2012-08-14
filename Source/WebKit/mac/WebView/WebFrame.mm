@@ -906,7 +906,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
 
 - (unsigned)_pendingFrameUnloadEventCount
 {
-    return _private->coreFrame->domWindow()->pendingUnloadEventListeners();
+    return _private->coreFrame->document()->domWindow()->pendingUnloadEventListeners();
 }
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
@@ -1067,7 +1067,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     if (frameLoader->subframeLoader()->containsPlugins())
         [result setObject:[NSNumber numberWithBool:YES] forKey:WebFrameHasPlugins];
     
-    if (DOMWindow* domWindow = _private->coreFrame->domWindow()) {
+    if (DOMWindow* domWindow = _private->coreFrame->document()->domWindow()) {
         if (domWindow->hasEventListeners(eventNames().unloadEvent))
             [result setObject:[NSNumber numberWithBool:YES] forKey:WebFrameHasUnloadListener];
         if (domWindow->optionalApplicationCache())

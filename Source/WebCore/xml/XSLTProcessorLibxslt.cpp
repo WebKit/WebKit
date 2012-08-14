@@ -138,8 +138,8 @@ static xmlDocPtr docLoaderFunc(const xmlChar* uri,
         }
 
         Console* console = 0;
-        if (Frame* frame = globalProcessor->xslStylesheet()->ownerDocument()->frame())
-            console = frame->domWindow()->console();
+        if (globalProcessor->xslStylesheet()->ownerDocument()->frame())
+            console = globalProcessor->xslStylesheet()->ownerDocument()->domWindow()->console();
         xmlSetStructuredErrorFunc(console, XSLTProcessor::parseErrorFunc);
         xmlSetGenericErrorFunc(console, XSLTProcessor::genericErrorFunc);
 

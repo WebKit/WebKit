@@ -83,9 +83,8 @@ void XSLTMessageHandler::handleMessage(QtMsgType type, const QString& descriptio
         break;
     }
 
-    Console* console = m_document->frame()->domWindow()->console();
-    console->addMessage(XMLMessageSource, LogMessageType, level, description,
-                        sourceLocation.uri().toString(), sourceLocation.line());
+    Console* console = m_document->domWindow()->console();
+    console->addMessage(XMLMessageSource, LogMessageType, level, description, sourceLocation.uri().toString(), sourceLocation.line());
 }
 
 class XSLTUriResolver : public QAbstractUriResolver {

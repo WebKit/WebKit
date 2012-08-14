@@ -478,7 +478,7 @@ HRESULT WebFrame::DOMWindow(/* [retval][out] */ IDOMWindow** window)
     *window = 0;
 
     if (Frame* coreFrame = core(this)) {
-        if (WebCore::DOMWindow* coreWindow = coreFrame->domWindow())
+        if (WebCore::DOMWindow* coreWindow = coreFrame->document()->domWindow())
             *window = ::DOMWindow::createInstance(coreWindow);
     }
 
@@ -989,7 +989,7 @@ HRESULT STDMETHODCALLTYPE WebFrame::pendingFrameUnloadEventCount(
     if (!coreFrame)
         return E_FAIL;
 
-    *result = coreFrame->domWindow()->pendingUnloadEventListeners();
+    *result = coreFrame->document()->domWindow()->pendingUnloadEventListeners();
     return S_OK;
 }
 

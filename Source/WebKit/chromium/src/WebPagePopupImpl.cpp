@@ -198,8 +198,7 @@ bool WebPagePopupImpl::initPage()
     m_popupClient->writeDocument(*writer);
     writer->end();
 
-    ASSERT(frame->existingDOMWindow());
-    DOMWindowPagePopup::install(frame->existingDOMWindow(), m_popupClient);
+    DOMWindowPagePopup::install(frame->document()->domWindow(), m_popupClient);
     return true;
 }
 
