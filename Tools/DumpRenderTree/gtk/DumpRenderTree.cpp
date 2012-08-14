@@ -1126,7 +1126,8 @@ static CString pathFromSoupURI(SoupURI* uri)
         return CString(uriString.get());
     }
 
-    GOwnPtr<gchar> pathDirname(g_path_get_basename(g_path_get_dirname(uri->path)));
+    GOwnPtr<gchar> parentPath(g_path_get_dirname(uri->path));
+    GOwnPtr<gchar> pathDirname(g_path_get_basename(parentPath.get()));
     GOwnPtr<gchar> pathBasename(g_path_get_basename(uri->path));
     GOwnPtr<gchar> urlPath(g_strdup_printf("%s/%s", pathDirname.get(), pathBasename.get()));
     return CString(urlPath.get());
