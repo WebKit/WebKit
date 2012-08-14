@@ -1,5 +1,19 @@
 2012-08-14  Philippe Normand  <pnormand@igalia.com>
 
+        Unreviewed, GTK rebaseline after r125519.
+
+        * platform/gtk/fast/dom/HTMLMeterElement/meter-appearances-capacity-expected.txt:
+        * platform/gtk/fast/dom/HTMLMeterElement/meter-appearances-rating-relevancy-expected.txt:
+        * platform/gtk/fast/dom/HTMLMeterElement/meter-boundary-values-expected.txt:
+        * platform/gtk/fast/dom/HTMLMeterElement/meter-element-expected.txt: Added.
+        * platform/gtk/fast/dom/HTMLMeterElement/meter-element-repaint-on-update-value-expected.txt: Added.
+        * platform/gtk/fast/dom/HTMLMeterElement/meter-optimums-expected.txt: Added.
+        * platform/gtk/fast/dom/HTMLMeterElement/meter-styles-changing-pseudo-expected.txt: Added.
+        * platform/gtk/fast/dom/HTMLMeterElement/meter-styles-expected.txt: Added.
+        * platform/gtk/fast/dom/HTMLMeterElement/meter-writing-mode-expected.txt:
+
+2012-08-14  Philippe Normand  <pnormand@igalia.com>
+
         Unreviewed, GTK baseline for test introduced in r125462.
 
         * platform/gtk/svg/filters/color-interpolation-filters-expected.txt:
