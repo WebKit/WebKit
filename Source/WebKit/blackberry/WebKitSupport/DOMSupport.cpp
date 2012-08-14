@@ -198,6 +198,11 @@ AttributeState elementSupportsAutocomplete(const Element* element)
     return elementAttributeState(element, HTMLNames::autocompleteAttr);
 }
 
+AttributeState elementSupportsSpellCheck(const Element* element)
+{
+    return elementAttributeState(element, HTMLNames::spellcheckAttr);
+}
+
 AttributeState elementAttributeState(const Element* element, const QualifiedName& attributeName)
 {
     // First we check the input item itself. If the attribute is not defined,

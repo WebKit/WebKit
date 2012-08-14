@@ -19,6 +19,8 @@
 #ifndef InputHandler_h
 #define InputHandler_h
 
+#include "TextChecking.h"
+
 #include <BlackBerryPlatformInputEvents.h>
 
 #include <imf/events.h>
@@ -38,8 +40,11 @@ class HTMLInputElement;
 class HTMLSelectElement;
 class IntRect;
 class Node;
+class Range;
 class SpellChecker;
 class TextCheckingRequest;
+class VisiblePosition;
+class VisibleSelection;
 }
 
 namespace BlackBerry {
@@ -189,6 +194,9 @@ private:
     void learnText();
     void sendLearnTextDetails(const WTF::String&);
     int32_t convertTransactionIdToSequenceId(int32_t transactionId);
+    void spellCheckBlock(WebCore::VisibleSelection&, WebCore::TextCheckingProcessType);
+    PassRefPtr<WebCore::Range> getRangeForSpellCheckWithFineGranularity(WebCore::VisiblePosition startPosition, WebCore::VisiblePosition endPosition);
+    void cancelAllSpellCheckingRequests();
     WebCore::SpellChecker* getSpellChecker();
 
     WebPagePrivate* m_webPage;

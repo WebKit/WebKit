@@ -1,3 +1,22 @@
+2012-08-14  Nima Ghanavatian  <nghanavatian@rim.com>
+
+        [BlackBerry] Queue spellcheck requests with char-count limitations
+        https://bugs.webkit.org/show_bug.cgi?id=93866
+
+        Reviewed by Rob Buis.
+
+        PR184196
+        Making spellcheck a little more granular so as to work around
+        the limitations of the inputservice.
+        Also, spellcheck the entire field on focus only if
+        spellcheck="on" is explicitly set.
+
+        Internally reviewed by Mike Fenton.
+
+        * WebKitSupport/InputHandler.cpp:
+        (BlackBerry::WebKit::InputHandler::requestCheckingOfString):
+        (BlackBerry::WebKit::InputHandler::spellCheckingRequestProcessed):
+
 2012-08-14  Mike Fenton  <mifenton@rim.com>
 
         [BlackBerry] Use Form helper functions to determine state in DOMSupport::isTextBasedContentEditableElement
