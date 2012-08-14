@@ -1,3 +1,10 @@
+2012-08-14  Sergio Villar Senin  <svillar@igalia.com>
+
+        Unreviewed, updated the GTK WK2 Skipped file with well-known
+        failures in the WK2 bot.
+
+        * platform/gtk-wk2/Skipped:
+
 2012-08-14  Thiago Marcos P. Santos  <thiago.santos@intel.com>
 
         [EFL] Gardening of failing tests and new passes

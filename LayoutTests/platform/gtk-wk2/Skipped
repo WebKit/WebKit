@@ -39,6 +39,14 @@
 # TESTS TIMING OUT
 ###############################################################################
 
+# Fullscreen tests timing out
+# http://webkit.org/b/93973
+fullscreen/anonymous-block-merge-crash.html
+fullscreen/full-screen-crash-offsetLeft.html
+fullscreen/full-screen-iframe-without-allow-attribute-allowed-from-parent.html
+fullscreen/full-screen-line-boxes-crash.html
+fullscreen/full-screen-render-inline.html
+fullscreen/parent-flow-inline-with-block-child.html
 fullscreen/full-screen-keyboard-disabled.html
 fullscreen/full-screen-request.html
 fullscreen/full-screen-cancel.html
@@ -54,12 +62,17 @@ fullscreen/full-screen-css.html
 fullscreen/full-screen-zIndex.html
 fullscreen/full-screen-remove-ancestor.html
 fullscreen/video-controls-override.html
+fullscreen/video-controls-timeline.html
 fullscreen/full-screen-iframe-allowed.html
 fullscreen/full-screen-twice.html
 fullscreen/full-screen-remove.html
 fullscreen/full-screen-zIndex-after.html
-plugins/fullscreen-plugins-dont-reload.html
-plugins/keyboard-events.html
+
+animations/fill-mode-forwards.html
+editing/deleting/delete-by-word-001.html
+editing/undo/undo-deleteWord.html
+editing/pasteboard/emacs-ctrl-a-k-y.html
+editing/input/emacs-ctrl-o.html
 fast/dom/access-key-iframe.html
 fast/events/access-key-self-destruct.html
 fast/events/keydown-numpad-keys.html
@@ -69,11 +82,11 @@ fast/forms/listbox-typeahead-cyrillic.html
 fast/forms/listbox-selection.html
 fast/forms/listbox-typeahead-greek.html
 fast/forms/legend-access-key.html
+http/tests/xmlhttprequest/workers/abort-exception-assert.html
 platform/gtk/fast/forms/menulist-typeahead-find.html
-editing/deleting/delete-by-word-001.html
-editing/undo/undo-deleteWord.html
-editing/pasteboard/emacs-ctrl-a-k-y.html
-editing/input/emacs-ctrl-o.html
+plugins/document-open.html
+plugins/fullscreen-plugins-dont-reload.html
+plugins/keyboard-events.html
 
 ###############################################################################
 # TESTS CRASHING
@@ -132,6 +145,12 @@ svg/text/select-text-svgfont.html
 accessibility/editable-webarea-context-menu-point.html
 plugins/mouse-events-fixedpos.html
 plugins/mouse-events.html
+fast/events/content-changed-during-drop.html
+fast/events/drag-and-drop-subframe-dataTransfer.html
+fast/events/drag-link.html
+fast/events/dropzone-002.html
+fast/events/selectstart-by-drag.html
+fast/forms/file/input-file-write-files.html
 fast/text/reset-drag-on-mouse-down.html
 fast/text/atsui-rtl-override-selection.html
 fast/writing-mode/japanese-rl-selection.html
@@ -183,12 +202,16 @@ editing/pasteboard/drop-text-without-selection.html
 editing/pasteboard/drag-drop-url-text.html
 editing/pasteboard/drag-drop-input-textarea.html
 editing/pasteboard/drag-and-drop-objectimage-contenteditable.html
+editing/pasteboard/drop-file-svg.html
+editing/pasteboard/drop-link.html
+editing/pasteboard/smart-drag-drop.html
 editing/pasteboard/4947130.html
 editing/selection/drag-text-delay.html
 editing/selection/4895428-4.html
 editing/selection/4895428-1.html
 editing/selection/contains-boundaries.html
 editing/pasteboard/drop-text-events.html
+http/tests/local/blob/send-hybrid-blob.html
 svg/custom/mouse-move-on-svg-container-standalone.svg
 svg/custom/mouse-move-on-svg-container.xhtml
 svg/custom/mouse-move-on-svg-root-standalone.svg
@@ -256,6 +279,7 @@ fast/events/context-onmousedown-event.html
 editing/pasteboard/copy-standalone-image-crash.html
 editing/selection/empty-cell-right-click.html
 editing/selection/button-right-click.html
+editing/selection/context-menu-on-text.html
 editing/selection/empty-cell-right-click.html
 editing/selection/select-across-readonly-input-1.html
 editing/selection/select-across-readonly-input-2.html
@@ -265,6 +289,7 @@ editing/selection/select-across-readonly-input-5.html
 editing/selection/select-out-of-floated-contenteditable.html
 editing/selection/select-out-of-floated-input.html
 editing/selection/select-out-of-floated-textarea.html
+media/controls-right-click-on-timebar.html
 platform/gtk/editing/pasteboard/middle-click-onpaste.html
 
 # Implement PageClientImpl::registerEditCommand and handling commands functions
@@ -330,6 +355,55 @@ http/tests/navigation/ping-cookie.html
 
 # WebKitTestRunner needs to allow self-signed certificates for localhost.
 http/tests/ssl
+
+# Implement testRunner.setAsynchronousSpellCheckingEnabled
+# http://webkit.org/b/81042
+editing/spelling/spellcheck-paste.html
+editing/spelling/spellcheck-paste-disabled.html
+
+# Implement testRunner.numberOfPendingGeolocationPermissionRequests()
+# http://webkit.org/b/93977
+fast/dom/Geolocation/page-reload-cancel-permission-requests.html
+
+# HiDPI - 1 pixel diffs
+# http://webkit.org/b/93978
+fast/hidpi/clip-text-in-hidpi.html
+fast/hidpi/image-set-background-dynamic.html
+fast/hidpi/image-set-border-image-dynamic.html
+fast/hidpi/image-set-in-content-dynamic.html
+
+# Implement eventSender.scheduleAsynchronousKeyDown
+# http://webkit.org/b/93979
+fast/mutation/end-of-task-delivery.html
+
+# Implement testRunner.setUseDeferredFrameLoading
+# http://webkit.org/b/93980
+http/tests/appcache/load-from-appcache-defer-resume-crash.html
+
+# RenderDeprecatedFlexibleBox showing 20-pixel diffs in WK2 bot
+# http://webkit.org/b/93981
+media/controls-strict.html
+media/controls-styling-strict.html
+media/controls-without-preload.html
+media/media-document-audio-repaint.html
+media/video-controls-rendering.html
+media/video-display-toggle.html
+media/video-no-audio.html
+media/video-volume-slider.html
+
+# Implement testRunner.setStorageDatabaseIdleInterval
+# http://webkit.org/b/93982
+storage/domstorage/storage-close-database-on-idle.html
+
+# Tests showing weird float values instead of integer results
+# http://webkit.org/b/93984
+animations/combo-transform-translate+scale.html
+animations/fill-mode-forwards.html
+animations/play-state-paused.html
+animations/play-state-suspend.html
+transitions/change-values-during-transition.html
+transitions/extra-transition.html
+transitions/interrupted-accelerated-transition.html
 
 ###############################################################################
 # TESTS FAILING
