@@ -110,7 +110,14 @@ SkBitmap LayerWebKitThread::paintContents(const IntRect& contentsRect, double sc
     if (drawsContent()) { // Layer contents must be drawn into a canvas.
         IntRect untransformedContentsRect = contentsRect;
 
-        canvas = adoptPtr(new InstrumentedPlatformCanvas(contentsRect.width(), contentsRect.height()));
+        SkBitmap canvasBitmap;
+        canvasBitmap.setConfig(SkBitmap::kARGB_8888_Config, contentsRect.width(), contentsRect.height());
+        if (!canvasBitmap.allocPixels())
+            return SkBitmap();
+        canvasBitmap.setIsOpaque(false);
+        canvasBitmap.eraseColor(0);
+
+        canvas = adoptPtr(new InstrumentedPlatformCanvas(canvasBitmap));
         PlatformContextSkia skiaContext(canvas.get());
 
         GraphicsContext graphicsContext(&skiaContext);

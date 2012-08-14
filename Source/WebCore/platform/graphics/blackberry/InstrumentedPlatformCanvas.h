@@ -36,12 +36,12 @@ namespace WebCore {
 
 class InstrumentedPlatformCanvas : public SkCanvas {
 public:
-    InstrumentedPlatformCanvas(int width, int height)
-        : m_size(width, height)
+    InstrumentedPlatformCanvas(const SkBitmap& bitmap)
+        : m_size(bitmap.width(), bitmap.height())
         , m_isSolidColor(true)
         , m_solidColor(0, 0, 0, 0)
     {
-        setDevice(new SkDevice(SkBitmap::kARGB_8888_Config, width, height))->unref();
+        setDevice(new SkDevice(bitmap))->unref();
     }
 
     virtual ~InstrumentedPlatformCanvas() { }

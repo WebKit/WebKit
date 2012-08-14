@@ -1,3 +1,20 @@
+2012-08-14  Filip Spacek  <fspacek@rim.com>
+
+        [BlackBerry] Don't crash on OOM in AC
+        https://bugs.webkit.org/show_bug.cgi?id=93999
+
+        Reviewed by George Staikos.
+
+        Internally reviewed by George Staikos.
+
+        Fail gracefully in case we fail to allocate the bitmap
+        for the AC layer contents.
+
+        * platform/graphics/blackberry/InstrumentedPlatformCanvas.h:
+        (WebCore::InstrumentedPlatformCanvas::InstrumentedPlatformCanvas):
+        * platform/graphics/blackberry/LayerWebKitThread.cpp:
+        (WebCore::LayerWebKitThread::paintContents):
+
 2012-08-14  Lauro Neto  <lauro.neto@openbossa.org>
 
         Convert signals/slots to Q_* macros.
