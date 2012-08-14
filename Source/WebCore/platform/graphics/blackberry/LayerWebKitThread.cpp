@@ -76,8 +76,6 @@ LayerWebKitThread::LayerWebKitThread(LayerType type, GraphicsLayerBlackBerry* ow
 
 LayerWebKitThread::~LayerWebKitThread()
 {
-    m_layerCompositingThread->clearAnimations();
-
     if (m_frontBufferLock)
         pthread_mutex_destroy(m_frontBufferLock);
 

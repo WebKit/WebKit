@@ -131,7 +131,6 @@ public:
 #if ENABLE(VIDEO)
     void setMediaPlayer(MediaPlayer*);
 #endif
-    void clearAnimations();
 
     // Not thread safe
 

@@ -357,21 +357,6 @@ void LayerCompositingThread::setMediaPlayer(MediaPlayer* mediaPlayer)
 }
 #endif
 
-void LayerCompositingThread::clearAnimations()
-{
-    // Animations don't use thread safe refcounting, and must only be
-    // touched when the two threads are in sync.
-    if (!isCompositingThread()) {
-        dispatchSyncCompositingMessage(BlackBerry::Platform::createMethodCallMessage(
-            &LayerCompositingThread::clearAnimations,
-            this));
-        return;
-    }
-
-    m_runningAnimations.clear();
-    m_suspendedAnimations.clear();
-}
-
 void LayerCompositingThread::removeSublayer(LayerCompositingThread* sublayer)
 {
     ASSERT(isCompositingThread());

@@ -34,17 +34,8 @@ class Animation;
 class LayerCompositingThread;
 class TransformationMatrix;
 
-// This class uses non-threadsafe refcounting in the WebCore::Animation and
-// WebCore::String members, so using threadsafe refcounting here would be a big
-// cover-up. Instead, you must be careful to use ref/deref this class only on
-// the WebKit thread, or when the WebKit and compositing threads are in sync.
-class LayerAnimation : public RefCounted<LayerAnimation> {
+class LayerAnimation : public ThreadSafeRefCounted<LayerAnimation> {
 public:
-    // WebKit thread only
-    // Because the refcounting done in constructor and destructor is not thread safe,
-    // the LayerAnimation must be created or destroyed on the WebKit thread, or when
-    // the WebKit and compositing threads are in sync.
-    // Also, the name property is using a String which has non-threadsafe refcounting.
     // The setStartTime method is not threadsafe and must only be called on a newly
     // created LayerAnimation before sending it off to the compositing thread.
     static PassRefPtr<LayerAnimation> create(const KeyframeValueList& values, const IntSize& boxSize, const Animation* animation, const String& name, double timeOffset)
@@ -65,7 +56,13 @@ public:
     {
     }
 
-    const String& name() const { return m_name; }
+    String name() const
+    {
+        if (m_name.isEmpty())
+            return String("");
+        return String(m_name);
+    }
+
     void setStartTime(double time) { m_startTime = time; }
 
     // These functions are thread safe (immutable state).
@@ -77,14 +74,10 @@ public:
     double timeOffset() const { return m_timeOffset; }
     double startTime() const { return m_startTime; }
     size_t valueCount() const { return m_values.size(); }
-
-    // NOTE: Don't try to ref a TimingFunction, that's not a threadsafe operation.
     const TimingFunction* timingFunction() const { return m_timingFunction.get(); }
     double duration() const { return m_duration; }
     int iterationCount() const { return m_iterationCount; }
     Animation::AnimationDirection direction() const { return m_direction; }
-
-    // NOTE: Don't try to clone() an AnimationValue, that's not a threadsafe operation since it mutates refcounts.
     const AnimationValue* valueAt(size_t i) const { return m_values.at(i); }
     bool finished() const { return m_finished; }
 
@@ -97,7 +90,6 @@ private:
         : m_id(reinterpret_cast<int>(animation))
         , m_values(values)
         , m_boxSize(boxSize)
-        , m_name(name)
         , m_timeOffset(timeOffset)
         , m_startTime(0)
         , m_timingFunction(0)
@@ -110,14 +102,14 @@ private:
             m_timingFunction = animation->timingFunction();
 
         validateTransformLists();
+        setName(name);
     }
 
     LayerAnimation(const LayerAnimation& other)
-        :  RefCounted<LayerAnimation>()
+        :  ThreadSafeRefCounted<LayerAnimation>()
         , m_id(other.m_id)
         , m_values(other.m_values)
         , m_boxSize(other.m_boxSize)
-        , m_name(other.m_name)
         , m_timeOffset(other.m_timeOffset)
         , m_startTime(other.m_startTime)
         , m_transformFunctionListValid(other.m_transformFunctionListValid)
@@ -127,9 +119,18 @@ private:
         , m_direction(other.m_direction)
         , m_finished(false)
     {
+        setName(other.name());
     }
 
     void validateTransformLists();
+
+    void setName(const String& name)
+    {
+        unsigned length = name.length();
+        m_name.resize(length);
+        if (length)
+            memcpy(m_name.data(), name.characters(), sizeof(UChar) * length);
+    }
 
     int m_id;
 
@@ -137,7 +138,7 @@ private:
     // constructor mutates refcounts and thus is not thread safe.
     KeyframeValueList m_values;
     IntSize m_boxSize;
-    String m_name;
+    Vector<UChar> m_name; // Must not use String member when deriving from ThreadSafeRefCounted
     double m_timeOffset;
     double m_startTime;
     bool m_transformFunctionListValid;
