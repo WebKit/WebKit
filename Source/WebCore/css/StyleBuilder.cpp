@@ -45,7 +45,6 @@
 #include <wtf/UnusedParam.h>
 
 #if ENABLE(CSS_EXCLUSIONS)
-#include "CSSWrapShapes.h"
 #include "WrapShapeFunctions.h"
 #include "WrapShapes.h"
 #endif

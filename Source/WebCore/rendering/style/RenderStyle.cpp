@@ -26,7 +26,6 @@
 #include "ContentData.h"
 #include "CursorList.h"
 #include "CSSPropertyNames.h"
-#include "CSSWrapShapes.h"
 #include "FontSelector.h"
 #include "MemoryInstrumentation.h"
 #include "QuotesData.h"

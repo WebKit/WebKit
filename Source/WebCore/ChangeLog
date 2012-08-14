@@ -1,3 +1,16 @@
+2012-08-13  Bear Travis  <betravis@adobe.com>
+
+        [CSS Exclusions] Remove unused CSSWrapShapes header includes
+        https://bugs.webkit.org/show_bug.cgi?id=93395
+
+        Reviewed by Kentaro Hara.
+
+        Removing the #include "CSSWrapShapes.h" lines from StyleBuilder.cpp and
+        RenderStyle.cpp. Both files now use the length-based WrapShapes.h classes.
+
+        * css/StyleBuilder.cpp:
+        * rendering/style/RenderStyle.cpp:
+
 2012-08-13  Pravin D  <pravind.2k4@gmail.com>
 
         Bad cast in RenderBox::computeReplacedLogicalHeightUsing
