@@ -1,3 +1,25 @@
+2012-08-14  Zan Dobersek  <zandobersek@gmail.com>
+
+        [Gtk] Include all files guarded by ENABLE_* guards in Source/WebCore/GNUmakefile.list.am into the build
+        https://bugs.webkit.org/show_bug.cgi?id=90696
+
+        Reviewed by Philippe Normand.
+
+        Include all files in the Autotools build that are currently guarded by ENABLE_* guards in
+        the WebCore GNUmakefile.list.am, regardless of the feature being enabled. Compilation should
+        rely on proper use of guards inside source files and preprocessor work to keep the disabled
+        features out.
+
+        The only exception left is the ENABLE_WEBGL guard that includes the ANGLE into compilation
+        only if WebGL feature is enabled.
+
+        No new tests - no new functionality.
+
+        * GNUmakefile.am:
+        * GNUmakefile.list.am:
+        * bindings/gobject/GNUmakefile.am: Add StorageInfo to the DOM bindings, despite
+        the feature being currently disabled.
+
 2012-08-14  Gregg Tavares  <gman@google.com>
 
         Plumb through EXT_debug_marker entry points

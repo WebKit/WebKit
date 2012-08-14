@@ -231,6 +231,8 @@ webkitgtk_gdom_built_sources += \
 	DerivedSources/webkit/WebKitDOMScreen.cpp \
 	DerivedSources/webkit/WebKitDOMScreenPrivate.h \
 	DerivedSources/webkit/WebKitDOMStorage.cpp \
+	DerivedSources/webkit/WebKitDOMStorageInfo.cpp \
+	DerivedSources/webkit/WebKitDOMStorageInfoPrivate.h \
 	DerivedSources/webkit/WebKitDOMStoragePrivate.h \
 	DerivedSources/webkit/WebKitDOMStyleMedia.cpp \
 	DerivedSources/webkit/WebKitDOMStyleMediaPrivate.h \
@@ -392,6 +394,7 @@ webkitgtk_built_h_api += \
 	DerivedSources/webkit/WebKitDOMDOMPluginArray.h \
 	DerivedSources/webkit/WebKitDOMDatabase.h \
 	DerivedSources/webkit/WebKitDOMStorage.h \
+	DerivedSources/webkit/WebKitDOMStorageInfo.h \
 	DerivedSources/webkit/WebKitDOMXPathExpression.h \
 	DerivedSources/webkit/WebKitDOMXPathNSResolver.h \
 	DerivedSources/webkit/WebKitDOMXPathResult.h \

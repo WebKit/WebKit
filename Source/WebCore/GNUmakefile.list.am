@@ -36,14 +36,42 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSArrayBufferView.h \
 	DerivedSources/WebCore/JSAttr.cpp \
 	DerivedSources/WebCore/JSAttr.h \
+	DerivedSources/WebCore/JSAudioBuffer.cpp \
+	DerivedSources/WebCore/JSAudioBuffer.h \
+	DerivedSources/WebCore/JSAudioBufferCallback.cpp \
+	DerivedSources/WebCore/JSAudioBufferCallback.h \
+	DerivedSources/WebCore/JSAudioBufferSourceNode.cpp \
+	DerivedSources/WebCore/JSAudioBufferSourceNode.h \
+	DerivedSources/WebCore/JSAudioChannelMerger.cpp \
+	DerivedSources/WebCore/JSAudioChannelMerger.h \
+	DerivedSources/WebCore/JSAudioChannelSplitter.cpp \
+	DerivedSources/WebCore/JSAudioChannelSplitter.h \
 	DerivedSources/WebCore/JSAudioContext.cpp \
 	DerivedSources/WebCore/JSAudioContext.h \
+	DerivedSources/WebCore/JSAudioDestinationNode.cpp \
+	DerivedSources/WebCore/JSAudioDestinationNode.h \
+	DerivedSources/WebCore/JSAudioGain.cpp \
+	DerivedSources/WebCore/JSAudioGain.h \
+	DerivedSources/WebCore/JSAudioGainNode.cpp \
+	DerivedSources/WebCore/JSAudioGainNode.h \
+	DerivedSources/WebCore/JSAudioListener.cpp \
+	DerivedSources/WebCore/JSAudioListener.h \
+	DerivedSources/WebCore/JSAudioNode.cpp \
+	DerivedSources/WebCore/JSAudioNode.h \
 	DerivedSources/WebCore/JSAudioPannerNode.cpp \
 	DerivedSources/WebCore/JSAudioPannerNode.h \
+	DerivedSources/WebCore/JSAudioParam.cpp \
+	DerivedSources/WebCore/JSAudioParam.h \
+	DerivedSources/WebCore/JSAudioProcessingEvent.cpp \
+	DerivedSources/WebCore/JSAudioProcessingEvent.h \
+	DerivedSources/WebCore/JSAudioSourceNode.cpp \
+	DerivedSources/WebCore/JSAudioSourceNode.h \
 	DerivedSources/WebCore/JSBarInfo.cpp \
 	DerivedSources/WebCore/JSBarInfo.h \
 	DerivedSources/WebCore/JSBeforeLoadEvent.cpp \
 	DerivedSources/WebCore/JSBeforeLoadEvent.h \
+	DerivedSources/WebCore/JSBiquadFilterNode.cpp \
+	DerivedSources/WebCore/JSBiquadFilterNode.h \
 	DerivedSources/WebCore/JSBlob.cpp \
 	DerivedSources/WebCore/JSBlob.h \
 	DerivedSources/WebCore/JSCanvasGradient.cpp \
@@ -64,12 +92,16 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSClientRectList.h \
 	DerivedSources/WebCore/JSClipboard.cpp \
 	DerivedSources/WebCore/JSClipboard.h \
+	DerivedSources/WebCore/JSCloseEvent.cpp \
+	DerivedSources/WebCore/JSCloseEvent.h \
 	DerivedSources/WebCore/JSComment.cpp \
 	DerivedSources/WebCore/JSComment.h \
 	DerivedSources/WebCore/JSCompositionEvent.cpp \
 	DerivedSources/WebCore/JSCompositionEvent.h \
 	DerivedSources/WebCore/JSConsole.cpp \
 	DerivedSources/WebCore/JSConsole.h \
+	DerivedSources/WebCore/JSConvolverNode.cpp \
+	DerivedSources/WebCore/JSConvolverNode.h \
 	DerivedSources/WebCore/JSCoordinates.cpp \
 	DerivedSources/WebCore/JSCoordinates.h \
 	DerivedSources/WebCore/JSCounter.cpp \
@@ -104,16 +136,34 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSCSSValueList.h \
 	DerivedSources/WebCore/JSCustomEvent.cpp \
 	DerivedSources/WebCore/JSCustomEvent.h \
-	DerivedSources/WebCore/JSDataTransferItemList.h \
+	DerivedSources/WebCore/JSDatabase.cpp \
+	DerivedSources/WebCore/JSDatabase.h \
+	DerivedSources/WebCore/JSDatabaseCallback.cpp \
+	DerivedSources/WebCore/JSDatabaseCallback.h \
+	DerivedSources/WebCore/JSDatabaseSync.cpp \
+	DerivedSources/WebCore/JSDatabaseSync.h \
+	DerivedSources/WebCore/JSDataTransferItem.cpp \
+	DerivedSources/WebCore/JSDataTransferItem.h \
 	DerivedSources/WebCore/JSDataTransferItemList.cpp \
+	DerivedSources/WebCore/JSDataTransferItemList.h \
 	DerivedSources/WebCore/JSDataView.cpp \
 	DerivedSources/WebCore/JSDataView.h \
 	DerivedSources/WebCore/JSDedicatedWorkerContext.cpp \
 	DerivedSources/WebCore/JSDedicatedWorkerContext.h \
+	DerivedSources/WebCore/JSDelayNode.cpp \
+	DerivedSources/WebCore/JSDelayNode.h \
 	DerivedSources/WebCore/JSDeviceMotionEvent.cpp \
 	DerivedSources/WebCore/JSDeviceMotionEvent.h \
 	DerivedSources/WebCore/JSDeviceOrientationEvent.cpp \
 	DerivedSources/WebCore/JSDeviceOrientationEvent.h \
+	DerivedSources/WebCore/JSDirectoryEntry.cpp \
+	DerivedSources/WebCore/JSDirectoryEntry.h \
+	DerivedSources/WebCore/JSDirectoryEntrySync.cpp \
+	DerivedSources/WebCore/JSDirectoryEntrySync.h \
+	DerivedSources/WebCore/JSDirectoryReader.cpp \
+	DerivedSources/WebCore/JSDirectoryReader.h \
+	DerivedSources/WebCore/JSDirectoryReaderSync.cpp \
+	DerivedSources/WebCore/JSDirectoryReaderSync.h \
 	DerivedSources/WebCore/JSDocument.cpp \
 	DerivedSources/WebCore/JSDocumentFragment.cpp \
 	DerivedSources/WebCore/JSDocumentFragment.h \
@@ -126,6 +176,10 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSDOMCoreException.h \
 	DerivedSources/WebCore/JSDOMError.cpp \
 	DerivedSources/WebCore/JSDOMError.h \
+	DerivedSources/WebCore/JSDOMFileSystem.cpp \
+	DerivedSources/WebCore/JSDOMFileSystem.h \
+	DerivedSources/WebCore/JSDOMFileSystemSync.cpp \
+	DerivedSources/WebCore/JSDOMFileSystemSync.h \
 	DerivedSources/WebCore/JSDOMFormData.cpp \
 	DerivedSources/WebCore/JSDOMFormData.h \
 	DerivedSources/WebCore/JSDOMImplementation.cpp \
@@ -160,10 +214,25 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSDynamicsCompressorNode.cpp \
 	DerivedSources/WebCore/JSElement.cpp \
 	DerivedSources/WebCore/JSElement.h \
+	DerivedSources/WebCore/JSElementTimeControl.h \
 	DerivedSources/WebCore/JSEntity.cpp \
 	DerivedSources/WebCore/JSEntity.h \
 	DerivedSources/WebCore/JSEntityReference.cpp \
 	DerivedSources/WebCore/JSEntityReference.h \
+	DerivedSources/WebCore/JSEntriesCallback.cpp \
+	DerivedSources/WebCore/JSEntriesCallback.h \
+	DerivedSources/WebCore/JSEntry.cpp \
+	DerivedSources/WebCore/JSEntry.h \
+	DerivedSources/WebCore/JSEntryArray.cpp \
+	DerivedSources/WebCore/JSEntryArray.h \
+	DerivedSources/WebCore/JSEntryArraySync.cpp \
+	DerivedSources/WebCore/JSEntryArraySync.h \
+	DerivedSources/WebCore/JSEntryCallback.cpp \
+	DerivedSources/WebCore/JSEntryCallback.h \
+	DerivedSources/WebCore/JSEntrySync.cpp \
+	DerivedSources/WebCore/JSEntrySync.h \
+	DerivedSources/WebCore/JSErrorCallback.cpp \
+	DerivedSources/WebCore/JSErrorCallback.h \
 	DerivedSources/WebCore/JSErrorEvent.cpp \
 	DerivedSources/WebCore/JSErrorEvent.h \
 	DerivedSources/WebCore/JSEXTTextureFilterAnisotropic.cpp \
@@ -177,6 +246,12 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSEventTarget.cpp \
 	DerivedSources/WebCore/JSEventTarget.h \
 	DerivedSources/WebCore/JSFile.cpp \
+	DerivedSources/WebCore/JSFileCallback.cpp \
+	DerivedSources/WebCore/JSFileCallback.h \
+	DerivedSources/WebCore/JSFileEntry.cpp \
+	DerivedSources/WebCore/JSFileEntry.h \
+	DerivedSources/WebCore/JSFileEntrySync.cpp \
+	DerivedSources/WebCore/JSFileEntrySync.h \
 	DerivedSources/WebCore/JSFileError.cpp \
 	DerivedSources/WebCore/JSFileError.h \
 	DerivedSources/WebCore/JSFile.h \
@@ -188,6 +263,14 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSFileReader.h \
 	DerivedSources/WebCore/JSFileReaderSync.cpp \
 	DerivedSources/WebCore/JSFileReaderSync.h \
+	DerivedSources/WebCore/JSFileSystemCallback.cpp \
+	DerivedSources/WebCore/JSFileSystemCallback.h \
+	DerivedSources/WebCore/JSFileWriter.cpp \
+	DerivedSources/WebCore/JSFileWriter.h \
+	DerivedSources/WebCore/JSFileWriterCallback.cpp \
+	DerivedSources/WebCore/JSFileWriterCallback.h \
+	DerivedSources/WebCore/JSFileWriterSync.cpp \
+	DerivedSources/WebCore/JSFileWriterSync.h \
 	DerivedSources/WebCore/JSFloat32Array.cpp \
 	DerivedSources/WebCore/JSFloat32Array.h \
 	DerivedSources/WebCore/JSFloat64Array.cpp \
@@ -323,6 +406,8 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSHTMLScriptElement.h \
 	DerivedSources/WebCore/JSHTMLSelectElement.cpp \
 	DerivedSources/WebCore/JSHTMLSelectElement.h \
+	DerivedSources/WebCore/JSHTMLShadowElement.cpp \
+	DerivedSources/WebCore/JSHTMLShadowElement.h \
 	DerivedSources/WebCore/JSHTMLSourceElement.cpp \
 	DerivedSources/WebCore/JSHTMLSourceElement.h \
 	DerivedSources/WebCore/JSHTMLSpanElement.cpp \
@@ -357,6 +442,34 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSIceCallback.h \
 	DerivedSources/WebCore/JSIceCandidate.cpp \
 	DerivedSources/WebCore/JSIceCandidate.h \
+	DerivedSources/WebCore/JSIDBAny.cpp \
+	DerivedSources/WebCore/JSIDBAny.h \
+	DerivedSources/WebCore/JSIDBCursor.cpp \
+	DerivedSources/WebCore/JSIDBCursor.h \
+	DerivedSources/WebCore/JSIDBCursorWithValue.cpp \
+	DerivedSources/WebCore/JSIDBCursorWithValue.h \
+	DerivedSources/WebCore/JSIDBDatabaseException.cpp \
+	DerivedSources/WebCore/JSIDBDatabaseException.h \
+	DerivedSources/WebCore/JSIDBDatabase.cpp \
+	DerivedSources/WebCore/JSIDBDatabase.h \
+	DerivedSources/WebCore/JSIDBFactory.cpp \
+	DerivedSources/WebCore/JSIDBFactory.h \
+	DerivedSources/WebCore/JSIDBIndex.cpp \
+	DerivedSources/WebCore/JSIDBIndex.h \
+	DerivedSources/WebCore/JSIDBKey.cpp \
+	DerivedSources/WebCore/JSIDBKey.h \
+	DerivedSources/WebCore/JSIDBKeyRange.cpp \
+	DerivedSources/WebCore/JSIDBKeyRange.h \
+	DerivedSources/WebCore/JSIDBObjectStore.cpp \
+	DerivedSources/WebCore/JSIDBObjectStore.h \
+	DerivedSources/WebCore/JSIDBRequest.cpp \
+	DerivedSources/WebCore/JSIDBRequest.h \
+	DerivedSources/WebCore/JSIDBTransaction.cpp \
+	DerivedSources/WebCore/JSIDBTransaction.h \
+	DerivedSources/WebCore/JSIDBVersionChangeEvent.cpp \
+	DerivedSources/WebCore/JSIDBVersionChangeEvent.h \
+	DerivedSources/WebCore/JSIDBVersionChangeRequest.cpp \
+	DerivedSources/WebCore/JSIDBVersionChangeRequest.h \
 	DerivedSources/WebCore/JSImageData.cpp \
 	DerivedSources/WebCore/JSImageData.h \
 	DerivedSources/WebCore/JSInjectedScriptHost.cpp \
@@ -369,6 +482,8 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSInt32Array.h \
 	DerivedSources/WebCore/JSInt8Array.cpp \
 	DerivedSources/WebCore/JSInt8Array.h \
+	DerivedSources/WebCore/JSJavaScriptAudioNode.cpp \
+	DerivedSources/WebCore/JSJavaScriptAudioNode.h \
 	DerivedSources/WebCore/JSJavaScriptCallFrame.cpp \
 	DerivedSources/WebCore/JSJavaScriptCallFrame.h \
 	DerivedSources/WebCore/JSKeyboardEvent.cpp \
@@ -379,6 +494,8 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSLocation.h \
 	DerivedSources/WebCore/JSMediaController.cpp \
 	DerivedSources/WebCore/JSMediaController.h \
+	DerivedSources/WebCore/JSMediaElementAudioSourceNode.cpp \
+	DerivedSources/WebCore/JSMediaElementAudioSourceNode.h \
 	DerivedSources/WebCore/JSMediaError.cpp \
 	DerivedSources/WebCore/JSMediaError.h \
 	DerivedSources/WebCore/JSMediaList.cpp \
@@ -387,6 +504,8 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSMediaSource.h \
 	DerivedSources/WebCore/JSMediaStream.cpp \
 	DerivedSources/WebCore/JSMediaStream.h \
+	DerivedSources/WebCore/JSMediaStreamAudioSourceNode.cpp \
+	DerivedSources/WebCore/JSMediaStreamAudioSourceNode.h \
 	DerivedSources/WebCore/JSMediaStreamEvent.cpp \
 	DerivedSources/WebCore/JSMediaStreamEvent.h \
 	DerivedSources/WebCore/JSMediaStreamList.cpp \
@@ -407,6 +526,10 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSMessageEvent.h \
 	DerivedSources/WebCore/JSMessagePort.cpp \
 	DerivedSources/WebCore/JSMessagePort.h \
+	DerivedSources/WebCore/JSMetadata.cpp \
+	DerivedSources/WebCore/JSMetadata.h \
+	DerivedSources/WebCore/JSMetadataCallback.cpp \
+	DerivedSources/WebCore/JSMetadataCallback.h \
 	DerivedSources/WebCore/JSMicroDataItemValue.cpp \
 	DerivedSources/WebCore/JSMicroDataItemValue.h \
 	DerivedSources/WebCore/JSMouseEvent.cpp \
@@ -451,6 +574,8 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSOESTextureFloat.h \
 	DerivedSources/WebCore/JSOESVertexArrayObject.cpp \
 	DerivedSources/WebCore/JSOESVertexArrayObject.h \
+	DerivedSources/WebCore/JSOfflineAudioCompletionEvent.cpp \
+	DerivedSources/WebCore/JSOfflineAudioCompletionEvent.h \
 	DerivedSources/WebCore/JSOscillator.cpp \
 	DerivedSources/WebCore/JSOscillator.h \
 	DerivedSources/WebCore/JSOverflowEvent.cpp \
@@ -489,8 +614,12 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSRangeException.cpp \
 	DerivedSources/WebCore/JSRangeException.h \
 	DerivedSources/WebCore/JSRange.h \
+	DerivedSources/WebCore/JSRealtimeAnalyserNode.cpp \
+	DerivedSources/WebCore/JSRealtimeAnalyserNode.h \
 	DerivedSources/WebCore/JSRect.cpp \
 	DerivedSources/WebCore/JSRect.h \
+	DerivedSources/WebCore/JSRequestAnimationFrameCallback.cpp \
+	DerivedSources/WebCore/JSRequestAnimationFrameCallback.h \
 	DerivedSources/WebCore/JSRGBColor.cpp \
 	DerivedSources/WebCore/JSRGBColor.h \
 	DerivedSources/WebCore/JSRTCPeerConnection.cpp \
@@ -519,23 +648,344 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSSpeechInputResult.h \
 	DerivedSources/WebCore/JSSpeechInputResultList.cpp \
 	DerivedSources/WebCore/JSSpeechInputResultList.h \
+	DerivedSources/WebCore/JSSQLError.cpp \
+	DerivedSources/WebCore/JSSQLError.h \
+	DerivedSources/WebCore/JSSQLException.cpp \
 	DerivedSources/WebCore/JSSQLException.h \
+	DerivedSources/WebCore/JSSQLResultSet.cpp \
+	DerivedSources/WebCore/JSSQLResultSet.h \
+	DerivedSources/WebCore/JSSQLResultSetRowList.cpp \
 	DerivedSources/WebCore/JSSQLResultSetRowList.h \
+	DerivedSources/WebCore/JSSQLStatementCallback.cpp \
+	DerivedSources/WebCore/JSSQLStatementCallback.h \
+	DerivedSources/WebCore/JSSQLStatementErrorCallback.h \
 	DerivedSources/WebCore/JSSQLStatementErrorCallback.cpp \
+	DerivedSources/WebCore/JSSQLTransaction.cpp \
 	DerivedSources/WebCore/JSSQLTransaction.h \
+	DerivedSources/WebCore/JSSQLTransactionCallback.cpp \
+	DerivedSources/WebCore/JSSQLTransactionCallback.h \
+	DerivedSources/WebCore/JSSQLTransactionErrorCallback.cpp \
+	DerivedSources/WebCore/JSSQLTransactionErrorCallback.h \
+	DerivedSources/WebCore/JSSQLTransactionSync.cpp \
 	DerivedSources/WebCore/JSSQLTransactionSync.h \
+	DerivedSources/WebCore/JSSQLTransactionSyncCallback.cpp \
+	DerivedSources/WebCore/JSSQLTransactionSyncCallback.h \
 	DerivedSources/WebCore/JSStorage.cpp \
 	DerivedSources/WebCore/JSStorage.h \
 	DerivedSources/WebCore/JSStorageEvent.cpp \
 	DerivedSources/WebCore/JSStorageEvent.h \
+	DerivedSources/WebCore/JSStorageInfo.cpp \
+	DerivedSources/WebCore/JSStorageInfo.h \
+	DerivedSources/WebCore/JSStorageInfoErrorCallback.cpp \
+	DerivedSources/WebCore/JSStorageInfoErrorCallback.h \
+	DerivedSources/WebCore/JSStorageInfoQuotaCallback.cpp \
+	DerivedSources/WebCore/JSStorageInfoQuotaCallback.h \
+	DerivedSources/WebCore/JSStorageInfoUsageCallback.cpp \
+	DerivedSources/WebCore/JSStorageInfoUsageCallback.h \
+	DerivedSources/WebCore/JSStringCallback.cpp \
+	DerivedSources/WebCore/JSStringCallback.h \
 	DerivedSources/WebCore/JSStyleMedia.cpp \
 	DerivedSources/WebCore/JSStyleMedia.h \
 	DerivedSources/WebCore/JSStyleSheet.cpp \
 	DerivedSources/WebCore/JSStyleSheet.h \
 	DerivedSources/WebCore/JSStyleSheetList.cpp \
 	DerivedSources/WebCore/JSStyleSheetList.h \
+	DerivedSources/WebCore/JSSVGAElement.cpp \
+	DerivedSources/WebCore/JSSVGAElement.h \
+	DerivedSources/WebCore/JSSVGAltGlyphDefElement.cpp \
+	DerivedSources/WebCore/JSSVGAltGlyphDefElement.h \
+	DerivedSources/WebCore/JSSVGAltGlyphElement.cpp \
+	DerivedSources/WebCore/JSSVGAltGlyphElement.h \
+	DerivedSources/WebCore/JSSVGAltGlyphItemElement.cpp \
+	DerivedSources/WebCore/JSSVGAltGlyphItemElement.h \
+	DerivedSources/WebCore/JSSVGAngle.cpp \
+	DerivedSources/WebCore/JSSVGAngle.h \
+	DerivedSources/WebCore/JSSVGAnimateColorElement.cpp \
+	DerivedSources/WebCore/JSSVGAnimateColorElement.h \
+	DerivedSources/WebCore/JSSVGAnimatedAngle.cpp \
+	DerivedSources/WebCore/JSSVGAnimatedAngle.h \
+	DerivedSources/WebCore/JSSVGAnimatedBoolean.cpp \
+	DerivedSources/WebCore/JSSVGAnimatedBoolean.h \
+	DerivedSources/WebCore/JSSVGAnimatedEnumeration.cpp \
+	DerivedSources/WebCore/JSSVGAnimatedEnumeration.h \
+	DerivedSources/WebCore/JSSVGAnimatedInteger.cpp \
+	DerivedSources/WebCore/JSSVGAnimatedInteger.h \
+	DerivedSources/WebCore/JSSVGAnimatedLength.cpp \
+	DerivedSources/WebCore/JSSVGAnimatedLength.h \
+	DerivedSources/WebCore/JSSVGAnimatedLengthList.cpp \
+	DerivedSources/WebCore/JSSVGAnimatedLengthList.h \
+	DerivedSources/WebCore/JSSVGAnimatedNumber.cpp \
+	DerivedSources/WebCore/JSSVGAnimatedNumber.h \
+	DerivedSources/WebCore/JSSVGAnimatedNumberList.cpp \
+	DerivedSources/WebCore/JSSVGAnimatedNumberList.h \
+	DerivedSources/WebCore/JSSVGAnimatedPreserveAspectRatio.cpp \
+	DerivedSources/WebCore/JSSVGAnimatedPreserveAspectRatio.h \
+	DerivedSources/WebCore/JSSVGAnimatedRect.cpp \
+	DerivedSources/WebCore/JSSVGAnimatedRect.h \
+	DerivedSources/WebCore/JSSVGAnimatedString.cpp \
+	DerivedSources/WebCore/JSSVGAnimatedString.h \
+	DerivedSources/WebCore/JSSVGAnimatedTransformList.cpp \
+	DerivedSources/WebCore/JSSVGAnimatedTransformList.h \
+	DerivedSources/WebCore/JSSVGAnimateElement.cpp \
+	DerivedSources/WebCore/JSSVGAnimateElement.h \
+	DerivedSources/WebCore/JSSVGAnimateMotionElement.cpp \
+	DerivedSources/WebCore/JSSVGAnimateMotionElement.h \
+	DerivedSources/WebCore/JSSVGAnimateTransformElement.cpp \
+	DerivedSources/WebCore/JSSVGAnimateTransformElement.h \
+	DerivedSources/WebCore/JSSVGAnimationElement.cpp \
+	DerivedSources/WebCore/JSSVGAnimationElement.h \
+	DerivedSources/WebCore/JSSVGCircleElement.cpp \
+	DerivedSources/WebCore/JSSVGCircleElement.h \
+	DerivedSources/WebCore/JSSVGClipPathElement.cpp \
+	DerivedSources/WebCore/JSSVGClipPathElement.h \
+	DerivedSources/WebCore/JSSVGColor.cpp \
+	DerivedSources/WebCore/JSSVGColor.h \
+	DerivedSources/WebCore/JSSVGComponentTransferFunctionElement.cpp \
+	DerivedSources/WebCore/JSSVGComponentTransferFunctionElement.h \
+	DerivedSources/WebCore/JSSVGCursorElement.cpp \
+	DerivedSources/WebCore/JSSVGCursorElement.h \
+	DerivedSources/WebCore/JSSVGDefsElement.cpp \
+	DerivedSources/WebCore/JSSVGDefsElement.h \
+	DerivedSources/WebCore/JSSVGDescElement.cpp \
+	DerivedSources/WebCore/JSSVGDescElement.h \
+	DerivedSources/WebCore/JSSVGDocument.cpp \
+	DerivedSources/WebCore/JSSVGDocument.h \
+	DerivedSources/WebCore/JSSVGElement.cpp \
+	DerivedSources/WebCore/JSSVGElement.h \
+	DerivedSources/WebCore/JSSVGElementInstance.cpp \
 	DerivedSources/WebCore/JSSVGElementInstance.h \
+	DerivedSources/WebCore/JSSVGElementInstanceList.cpp \
+	DerivedSources/WebCore/JSSVGElementInstanceList.h \
 	DerivedSources/WebCore/JSSVGElementWrapperFactory.cpp \
+	DerivedSources/WebCore/JSSVGEllipseElement.cpp \
+	DerivedSources/WebCore/JSSVGEllipseElement.h \
+	DerivedSources/WebCore/JSSVGException.cpp \
+	DerivedSources/WebCore/JSSVGException.h \
+	DerivedSources/WebCore/JSSVGExternalResourcesRequired.h \
+	DerivedSources/WebCore/JSSVGFEBlendElement.cpp \
+	DerivedSources/WebCore/JSSVGFEBlendElement.h \
+	DerivedSources/WebCore/JSSVGFEColorMatrixElement.cpp \
+	DerivedSources/WebCore/JSSVGFEColorMatrixElement.h \
+	DerivedSources/WebCore/JSSVGFEComponentTransferElement.cpp \
+	DerivedSources/WebCore/JSSVGFEComponentTransferElement.h \
+	DerivedSources/WebCore/JSSVGFECompositeElement.cpp \
+	DerivedSources/WebCore/JSSVGFECompositeElement.h \
+	DerivedSources/WebCore/JSSVGFEConvolveMatrixElement.cpp \
+	DerivedSources/WebCore/JSSVGFEConvolveMatrixElement.h \
+	DerivedSources/WebCore/JSSVGFEDiffuseLightingElement.cpp \
+	DerivedSources/WebCore/JSSVGFEDiffuseLightingElement.h \
+	DerivedSources/WebCore/JSSVGFEDisplacementMapElement.cpp \
+	DerivedSources/WebCore/JSSVGFEDisplacementMapElement.h \
+	DerivedSources/WebCore/JSSVGFEDistantLightElement.cpp \
+	DerivedSources/WebCore/JSSVGFEDistantLightElement.h \
+	DerivedSources/WebCore/JSSVGFEDropShadowElement.cpp \
+	DerivedSources/WebCore/JSSVGFEDropShadowElement.h \
+	DerivedSources/WebCore/JSSVGFEFloodElement.cpp \
+	DerivedSources/WebCore/JSSVGFEFloodElement.h \
+	DerivedSources/WebCore/JSSVGFEFuncAElement.cpp \
+	DerivedSources/WebCore/JSSVGFEFuncAElement.h \
+	DerivedSources/WebCore/JSSVGFEFuncBElement.cpp \
+	DerivedSources/WebCore/JSSVGFEFuncBElement.h \
+	DerivedSources/WebCore/JSSVGFEFuncGElement.cpp \
+	DerivedSources/WebCore/JSSVGFEFuncGElement.h \
+	DerivedSources/WebCore/JSSVGFEFuncRElement.cpp \
+	DerivedSources/WebCore/JSSVGFEFuncRElement.h \
+	DerivedSources/WebCore/JSSVGFEGaussianBlurElement.cpp \
+	DerivedSources/WebCore/JSSVGFEGaussianBlurElement.h \
+	DerivedSources/WebCore/JSSVGFEImageElement.cpp \
+	DerivedSources/WebCore/JSSVGFEImageElement.h \
+	DerivedSources/WebCore/JSSVGFEMergeElement.cpp \
+	DerivedSources/WebCore/JSSVGFEMergeElement.h \
+	DerivedSources/WebCore/JSSVGFEMergeNodeElement.cpp \
+	DerivedSources/WebCore/JSSVGFEMergeNodeElement.h \
+	DerivedSources/WebCore/JSSVGFEMorphologyElement.cpp \
+	DerivedSources/WebCore/JSSVGFEMorphologyElement.h \
+	DerivedSources/WebCore/JSSVGFEOffsetElement.cpp \
+	DerivedSources/WebCore/JSSVGFEOffsetElement.h \
+	DerivedSources/WebCore/JSSVGFEPointLightElement.cpp \
+	DerivedSources/WebCore/JSSVGFEPointLightElement.h \
+	DerivedSources/WebCore/JSSVGFESpecularLightingElement.cpp \
+	DerivedSources/WebCore/JSSVGFESpecularLightingElement.h \
+	DerivedSources/WebCore/JSSVGFESpotLightElement.cpp \
+	DerivedSources/WebCore/JSSVGFESpotLightElement.h \
+	DerivedSources/WebCore/JSSVGFETileElement.cpp \
+	DerivedSources/WebCore/JSSVGFETileElement.h \
+	DerivedSources/WebCore/JSSVGFETurbulenceElement.cpp \
+	DerivedSources/WebCore/JSSVGFETurbulenceElement.h \
+	DerivedSources/WebCore/JSSVGFilterElement.cpp \
+	DerivedSources/WebCore/JSSVGFilterElement.h \
+	DerivedSources/WebCore/JSSVGFilterPrimitiveStandardAttributes.h \
+	DerivedSources/WebCore/JSSVGFitToViewBox.h \
+	DerivedSources/WebCore/JSSVGFontElement.cpp \
+	DerivedSources/WebCore/JSSVGFontElement.h \
+	DerivedSources/WebCore/JSSVGFontFaceElement.cpp \
+	DerivedSources/WebCore/JSSVGFontFaceElement.h \
+	DerivedSources/WebCore/JSSVGFontFaceFormatElement.cpp \
+	DerivedSources/WebCore/JSSVGFontFaceFormatElement.h \
+	DerivedSources/WebCore/JSSVGFontFaceNameElement.cpp \
+	DerivedSources/WebCore/JSSVGFontFaceNameElement.h \
+	DerivedSources/WebCore/JSSVGFontFaceSrcElement.cpp \
+	DerivedSources/WebCore/JSSVGFontFaceSrcElement.h \
+	DerivedSources/WebCore/JSSVGFontFaceUriElement.cpp \
+	DerivedSources/WebCore/JSSVGFontFaceUriElement.h \
+	DerivedSources/WebCore/JSSVGForeignObjectElement.cpp \
+	DerivedSources/WebCore/JSSVGForeignObjectElement.h \
+	DerivedSources/WebCore/JSSVGGElement.cpp \
+	DerivedSources/WebCore/JSSVGGElement.h \
+	DerivedSources/WebCore/JSSVGGlyphElement.cpp \
+	DerivedSources/WebCore/JSSVGGlyphElement.h \
+	DerivedSources/WebCore/JSSVGGlyphRefElement.cpp \
+	DerivedSources/WebCore/JSSVGGlyphRefElement.h \
+	DerivedSources/WebCore/JSSVGGradientElement.cpp \
+	DerivedSources/WebCore/JSSVGGradientElement.h \
+	DerivedSources/WebCore/JSSVGHKernElement.cpp \
+	DerivedSources/WebCore/JSSVGHKernElement.h \
+	DerivedSources/WebCore/JSSVGImageElement.cpp \
+	DerivedSources/WebCore/JSSVGImageElement.h \
+	DerivedSources/WebCore/JSSVGLangSpace.h \
+	DerivedSources/WebCore/JSSVGLength.cpp \
+	DerivedSources/WebCore/JSSVGLength.h \
+	DerivedSources/WebCore/JSSVGLengthList.cpp \
+	DerivedSources/WebCore/JSSVGLengthList.h \
+	DerivedSources/WebCore/JSSVGLinearGradientElement.cpp \
+	DerivedSources/WebCore/JSSVGLinearGradientElement.h \
+	DerivedSources/WebCore/JSSVGLineElement.cpp \
+	DerivedSources/WebCore/JSSVGLineElement.h \
+	DerivedSources/WebCore/JSSVGLocatable.h \
+	DerivedSources/WebCore/JSSVGMPathElement.cpp \
+	DerivedSources/WebCore/JSSVGMPathElement.h \
+	DerivedSources/WebCore/JSSVGMarkerElement.cpp \
+	DerivedSources/WebCore/JSSVGMarkerElement.h \
+	DerivedSources/WebCore/JSSVGMaskElement.cpp \
+	DerivedSources/WebCore/JSSVGMaskElement.h \
+	DerivedSources/WebCore/JSSVGMatrix.cpp \
+	DerivedSources/WebCore/JSSVGMatrix.h \
+	DerivedSources/WebCore/JSSVGMetadataElement.cpp \
+	DerivedSources/WebCore/JSSVGMetadataElement.h \
+	DerivedSources/WebCore/JSSVGMissingGlyphElement.cpp \
+	DerivedSources/WebCore/JSSVGMissingGlyphElement.h \
+	DerivedSources/WebCore/JSSVGNumber.cpp \
+	DerivedSources/WebCore/JSSVGNumber.h \
+	DerivedSources/WebCore/JSSVGNumberList.cpp \
+	DerivedSources/WebCore/JSSVGNumberList.h \
+	DerivedSources/WebCore/JSSVGPaint.cpp \
+	DerivedSources/WebCore/JSSVGPaint.h \
+	DerivedSources/WebCore/JSSVGPathElement.cpp \
+	DerivedSources/WebCore/JSSVGPathElement.h \
+	DerivedSources/WebCore/JSSVGPathSegArcAbs.cpp \
+	DerivedSources/WebCore/JSSVGPathSegArcAbs.h \
+	DerivedSources/WebCore/JSSVGPathSegArcRel.cpp \
+	DerivedSources/WebCore/JSSVGPathSegArcRel.h \
+	DerivedSources/WebCore/JSSVGPathSegClosePath.cpp \
+	DerivedSources/WebCore/JSSVGPathSegClosePath.h \
+	DerivedSources/WebCore/JSSVGPathSeg.cpp \
+	DerivedSources/WebCore/JSSVGPathSegCurvetoCubicAbs.cpp \
+	DerivedSources/WebCore/JSSVGPathSegCurvetoCubicAbs.h \
+	DerivedSources/WebCore/JSSVGPathSegCurvetoCubicRel.cpp \
+	DerivedSources/WebCore/JSSVGPathSegCurvetoCubicRel.h \
+	DerivedSources/WebCore/JSSVGPathSegCurvetoCubicSmoothAbs.cpp \
+	DerivedSources/WebCore/JSSVGPathSegCurvetoCubicSmoothAbs.h \
+	DerivedSources/WebCore/JSSVGPathSegCurvetoCubicSmoothRel.cpp \
+	DerivedSources/WebCore/JSSVGPathSegCurvetoCubicSmoothRel.h \
+	DerivedSources/WebCore/JSSVGPathSegCurvetoQuadraticAbs.cpp \
+	DerivedSources/WebCore/JSSVGPathSegCurvetoQuadraticAbs.h \
+	DerivedSources/WebCore/JSSVGPathSegCurvetoQuadraticRel.cpp \
+	DerivedSources/WebCore/JSSVGPathSegCurvetoQuadraticRel.h \
+	DerivedSources/WebCore/JSSVGPathSegCurvetoQuadraticSmoothAbs.cpp \
+	DerivedSources/WebCore/JSSVGPathSegCurvetoQuadraticSmoothAbs.h \
+	DerivedSources/WebCore/JSSVGPathSegCurvetoQuadraticSmoothRel.cpp \
+	DerivedSources/WebCore/JSSVGPathSegCurvetoQuadraticSmoothRel.h \
+	DerivedSources/WebCore/JSSVGPathSeg.h \
+	DerivedSources/WebCore/JSSVGPathSegLinetoAbs.cpp \
+	DerivedSources/WebCore/JSSVGPathSegLinetoAbs.h \
+	DerivedSources/WebCore/JSSVGPathSegLinetoHorizontalAbs.cpp \
+	DerivedSources/WebCore/JSSVGPathSegLinetoHorizontalAbs.h \
+	DerivedSources/WebCore/JSSVGPathSegLinetoHorizontalRel.cpp \
+	DerivedSources/WebCore/JSSVGPathSegLinetoHorizontalRel.h \
+	DerivedSources/WebCore/JSSVGPathSegLinetoRel.cpp \
+	DerivedSources/WebCore/JSSVGPathSegLinetoRel.h \
+	DerivedSources/WebCore/JSSVGPathSegLinetoVerticalAbs.cpp \
+	DerivedSources/WebCore/JSSVGPathSegLinetoVerticalAbs.h \
+	DerivedSources/WebCore/JSSVGPathSegLinetoVerticalRel.cpp \
+	DerivedSources/WebCore/JSSVGPathSegLinetoVerticalRel.h \
+	DerivedSources/WebCore/JSSVGPathSegList.cpp \
+	DerivedSources/WebCore/JSSVGPathSegList.h \
+	DerivedSources/WebCore/JSSVGPathSegMovetoAbs.cpp \
+	DerivedSources/WebCore/JSSVGPathSegMovetoAbs.h \
+	DerivedSources/WebCore/JSSVGPathSegMovetoRel.cpp \
+	DerivedSources/WebCore/JSSVGPathSegMovetoRel.h \
+	DerivedSources/WebCore/JSSVGPatternElement.cpp \
+	DerivedSources/WebCore/JSSVGPatternElement.h \
+	DerivedSources/WebCore/JSSVGPoint.cpp \
+	DerivedSources/WebCore/JSSVGPoint.h \
+	DerivedSources/WebCore/JSSVGPointList.cpp \
+	DerivedSources/WebCore/JSSVGPointList.h \
+	DerivedSources/WebCore/JSSVGPolygonElement.cpp \
+	DerivedSources/WebCore/JSSVGPolygonElement.h \
+	DerivedSources/WebCore/JSSVGPolylineElement.cpp \
+	DerivedSources/WebCore/JSSVGPolylineElement.h \
+	DerivedSources/WebCore/JSSVGPreserveAspectRatio.cpp \
+	DerivedSources/WebCore/JSSVGPreserveAspectRatio.h \
+	DerivedSources/WebCore/JSSVGRadialGradientElement.cpp \
+	DerivedSources/WebCore/JSSVGRadialGradientElement.h \
+	DerivedSources/WebCore/JSSVGRect.cpp \
+	DerivedSources/WebCore/JSSVGRectElement.cpp \
+	DerivedSources/WebCore/JSSVGRectElement.h \
+	DerivedSources/WebCore/JSSVGRect.h \
+	DerivedSources/WebCore/JSSVGRenderingIntent.cpp \
+	DerivedSources/WebCore/JSSVGRenderingIntent.h \
+	DerivedSources/WebCore/JSSVGScriptElement.cpp \
+	DerivedSources/WebCore/JSSVGScriptElement.h \
+	DerivedSources/WebCore/JSSVGSetElement.cpp \
+	DerivedSources/WebCore/JSSVGSetElement.h \
+	DerivedSources/WebCore/JSSVGStopElement.cpp \
+	DerivedSources/WebCore/JSSVGStopElement.h \
+	DerivedSources/WebCore/JSSVGStringList.cpp \
+	DerivedSources/WebCore/JSSVGStringList.h \
+	DerivedSources/WebCore/JSSVGStylable.h \
+	DerivedSources/WebCore/JSSVGStyleElement.cpp \
+	DerivedSources/WebCore/JSSVGStyleElement.h \
+	DerivedSources/WebCore/JSSVGSVGElement.cpp \
+	DerivedSources/WebCore/JSSVGSVGElement.h \
+	DerivedSources/WebCore/JSSVGSwitchElement.cpp \
+	DerivedSources/WebCore/JSSVGSwitchElement.h \
+	DerivedSources/WebCore/JSSVGSymbolElement.cpp \
+	DerivedSources/WebCore/JSSVGSymbolElement.h \
+	DerivedSources/WebCore/JSSVGTests.h \
+	DerivedSources/WebCore/JSSVGTextContentElement.cpp \
+	DerivedSources/WebCore/JSSVGTextContentElement.h \
+	DerivedSources/WebCore/JSSVGTextElement.cpp \
+	DerivedSources/WebCore/JSSVGTextElement.h \
+	DerivedSources/WebCore/JSSVGTextPathElement.cpp \
+	DerivedSources/WebCore/JSSVGTextPathElement.h \
+	DerivedSources/WebCore/JSSVGTextPositioningElement.cpp \
+	DerivedSources/WebCore/JSSVGTextPositioningElement.h \
+	DerivedSources/WebCore/JSSVGTitleElement.cpp \
+	DerivedSources/WebCore/JSSVGTitleElement.h \
+	DerivedSources/WebCore/JSSVGTransformable.h \
+	DerivedSources/WebCore/JSSVGTransform.cpp \
+	DerivedSources/WebCore/JSSVGTransform.h \
+	DerivedSources/WebCore/JSSVGTransformList.cpp \
+	DerivedSources/WebCore/JSSVGTransformList.h \
+	DerivedSources/WebCore/JSSVGTRefElement.cpp \
+	DerivedSources/WebCore/JSSVGTRefElement.h \
+	DerivedSources/WebCore/JSSVGTSpanElement.cpp \
+	DerivedSources/WebCore/JSSVGTSpanElement.h \
+	DerivedSources/WebCore/JSSVGUnitTypes.cpp \
+	DerivedSources/WebCore/JSSVGUnitTypes.h \
+	DerivedSources/WebCore/JSSVGURIReference.h \
+	DerivedSources/WebCore/JSSVGUseElement.cpp \
+	DerivedSources/WebCore/JSSVGUseElement.h \
+	DerivedSources/WebCore/JSSVGViewElement.cpp \
+	DerivedSources/WebCore/JSSVGViewElement.h \
+	DerivedSources/WebCore/JSSVGViewSpec.cpp \
+	DerivedSources/WebCore/JSSVGViewSpec.h \
+	DerivedSources/WebCore/JSSVGVKernElement.cpp \
+	DerivedSources/WebCore/JSSVGVKernElement.h \
+	DerivedSources/WebCore/JSSVGZoomAndPan.cpp \
+	DerivedSources/WebCore/JSSVGZoomAndPan.h \
+	DerivedSources/WebCore/JSSVGZoomEvent.cpp \
+	DerivedSources/WebCore/JSSVGZoomEvent.h \
 	DerivedSources/WebCore/JSText.cpp \
 	DerivedSources/WebCore/JSTextEvent.cpp \
 	DerivedSources/WebCore/JSTextEvent.h \
@@ -640,6 +1090,8 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSWebKitPoint.h \
 	DerivedSources/WebCore/JSWebKitTransitionEvent.cpp \
 	DerivedSources/WebCore/JSWebKitTransitionEvent.h \
+	DerivedSources/WebCore/JSWebSocket.cpp \
+	DerivedSources/WebCore/JSWebSocket.h \
 	DerivedSources/WebCore/JSWheelEvent.cpp \
 	DerivedSources/WebCore/JSWheelEvent.h \
 	DerivedSources/WebCore/JSWorkerContext.cpp \
@@ -693,6 +1145,30 @@ webcore_built_sources += \
 	DerivedSources/WebCore/XPathGrammar.h
 
 dom_binding_idls += \
+	$(WebCore)/Modules/filesystem/DOMFileSystem.idl \
+	$(WebCore)/Modules/filesystem/DOMFileSystemSync.idl \
+	$(WebCore)/Modules/filesystem/DOMWindowFileSystem.idl \
+	$(WebCore)/Modules/filesystem/DirectoryEntry.idl \
+	$(WebCore)/Modules/filesystem/DirectoryEntrySync.idl \
+	$(WebCore)/Modules/filesystem/DirectoryReader.idl \
+	$(WebCore)/Modules/filesystem/DirectoryReaderSync.idl \
+	$(WebCore)/Modules/filesystem/EntriesCallback.idl \
+	$(WebCore)/Modules/filesystem/Entry.idl \
+	$(WebCore)/Modules/filesystem/EntryArray.idl \
+	$(WebCore)/Modules/filesystem/EntryArraySync.idl \
+	$(WebCore)/Modules/filesystem/EntryCallback.idl \
+	$(WebCore)/Modules/filesystem/EntrySync.idl \
+	$(WebCore)/Modules/filesystem/ErrorCallback.idl \
+	$(WebCore)/Modules/filesystem/FileCallback.idl \
+	$(WebCore)/Modules/filesystem/FileEntry.idl \
+	$(WebCore)/Modules/filesystem/FileEntrySync.idl \
+	$(WebCore)/Modules/filesystem/FileSystemCallback.idl \
+	$(WebCore)/Modules/filesystem/FileWriter.idl \
+	$(WebCore)/Modules/filesystem/FileWriterCallback.idl \
+	$(WebCore)/Modules/filesystem/FileWriterSync.idl \
+	$(WebCore)/Modules/filesystem/Metadata.idl \
+	$(WebCore)/Modules/filesystem/MetadataCallback.idl \
+	$(WebCore)/Modules/filesystem/WorkerContextFileSystem.idl \
 	$(WebCore)/Modules/gamepad/Gamepad.idl \
 	$(WebCore)/Modules/gamepad/GamepadList.idl \
 	$(WebCore)/Modules/gamepad/NavigatorGamepad.idl \
@@ -702,6 +1178,22 @@ dom_binding_idls += \
 	$(WebCore)/Modules/geolocation/PositionCallback.idl \
 	$(WebCore)/Modules/geolocation/PositionError.idl \
 	$(WebCore)/Modules/geolocation/PositionErrorCallback.idl \
+	$(WebCore)/Modules/indexeddb/DOMWindowIndexedDatabase.idl \
+	$(WebCore)/Modules/indexeddb/IDBAny.idl \
+	$(WebCore)/Modules/indexeddb/IDBCursor.idl \
+	$(WebCore)/Modules/indexeddb/IDBCursorWithValue.idl \
+	$(WebCore)/Modules/indexeddb/IDBDatabaseException.idl \
+	$(WebCore)/Modules/indexeddb/IDBDatabase.idl \
+	$(WebCore)/Modules/indexeddb/IDBFactory.idl \
+	$(WebCore)/Modules/indexeddb/IDBIndex.idl \
+	$(WebCore)/Modules/indexeddb/IDBKey.idl \
+	$(WebCore)/Modules/indexeddb/IDBKeyRange.idl \
+	$(WebCore)/Modules/indexeddb/IDBObjectStore.idl \
+	$(WebCore)/Modules/indexeddb/IDBRequest.idl \
+	$(WebCore)/Modules/indexeddb/IDBTransaction.idl \
+	$(WebCore)/Modules/indexeddb/IDBVersionChangeEvent.idl \
+	$(WebCore)/Modules/indexeddb/IDBVersionChangeRequest.idl \
+	$(WebCore)/Modules/indexeddb/WorkerContextIndexedDatabase.idl \
 	$(WebCore)/Modules/mediasource/MediaSource.idl \
 	$(WebCore)/Modules/mediasource/SourceBuffer.idl \
 	$(WebCore)/Modules/mediasource/SourceBufferList.idl \
@@ -726,11 +1218,59 @@ dom_binding_idls += \
 	$(WebCore)/Modules/notifications/NotificationCenter.idl \
 	$(WebCore)/Modules/notifications/NotificationPermissionCallback.idl \
 	$(WebCore)/Modules/protocolhandler/NavigatorRegisterProtocolHandler.idl \
+	$(WebCore)/Modules/quota/DOMWindowQuota.idl \
+	$(WebCore)/Modules/quota/StorageInfo.idl \
+	$(WebCore)/Modules/quota/StorageInfoErrorCallback.idl \
+	$(WebCore)/Modules/quota/StorageInfoQuotaCallback.idl \
+	$(WebCore)/Modules/quota/StorageInfoUsageCallback.idl \
+	$(WebCore)/Modules/webaudio/AudioBuffer.idl \
+	$(WebCore)/Modules/webaudio/AudioBufferCallback.idl \
+	$(WebCore)/Modules/webaudio/AudioBufferSourceNode.idl \
+	$(WebCore)/Modules/webaudio/AudioChannelMerger.idl \
+	$(WebCore)/Modules/webaudio/AudioChannelSplitter.idl \
 	$(WebCore)/Modules/webaudio/AudioContext.idl \
+	$(WebCore)/Modules/webaudio/AudioDestinationNode.idl \
+	$(WebCore)/Modules/webaudio/AudioGain.idl \
+	$(WebCore)/Modules/webaudio/AudioGainNode.idl \
+	$(WebCore)/Modules/webaudio/AudioListener.idl \
+	$(WebCore)/Modules/webaudio/AudioNode.idl \
 	$(WebCore)/Modules/webaudio/AudioPannerNode.idl \
-	$(WebCore)/Modules/webaudio/DynamicsCompressorNode.idl \
+	$(WebCore)/Modules/webaudio/AudioParam.idl \
+	$(WebCore)/Modules/webaudio/AudioProcessingEvent.idl \
+	$(WebCore)/Modules/webaudio/AudioSourceNode.idl \
+	$(WebCore)/Modules/webaudio/BiquadFilterNode.idl \
+	$(WebCore)/Modules/webaudio/ConvolverNode.idl \
+	$(WebCore)/Modules/webaudio/DelayNode.idl \
 	$(WebCore)/Modules/webaudio/DOMWindowWebAudio.idl \
+	$(WebCore)/Modules/webaudio/DynamicsCompressorNode.idl \
+	$(WebCore)/Modules/webaudio/JavaScriptAudioNode.idl \
+	$(WebCore)/Modules/webaudio/MediaElementAudioSourceNode.idl \
+	$(WebCore)/Modules/webaudio/MediaStreamAudioSourceNode.idl \
+	$(WebCore)/Modules/webaudio/OfflineAudioCompletionEvent.idl \
+    $(WebCore)/Modules/webaudio/Oscillator.idl \
+	$(WebCore)/Modules/webaudio/RealtimeAnalyserNode.idl \
 	$(WebCore)/Modules/webaudio/WaveShaperNode.idl \
+    $(WebCore)/Modules/webaudio/WaveTable.idl \
+	$(WebCore)/Modules/webdatabase/DOMWindowWebDatabase.idl \
+	$(WebCore)/Modules/webdatabase/Database.idl \
+	$(WebCore)/Modules/webdatabase/DatabaseCallback.idl \
+	$(WebCore)/Modules/webdatabase/DatabaseSync.idl \
+	$(WebCore)/Modules/webdatabase/SQLError.idl \
+	$(WebCore)/Modules/webdatabase/SQLException.idl \
+	$(WebCore)/Modules/webdatabase/SQLResultSet.idl \
+	$(WebCore)/Modules/webdatabase/SQLResultSetRowList.idl \
+	$(WebCore)/Modules/webdatabase/SQLStatementCallback.idl \
+	$(WebCore)/Modules/webdatabase/SQLStatementErrorCallback.idl \
+	$(WebCore)/Modules/webdatabase/SQLTransaction.idl \
+	$(WebCore)/Modules/webdatabase/SQLTransactionCallback.idl \
+	$(WebCore)/Modules/webdatabase/SQLTransactionErrorCallback.idl \
+	$(WebCore)/Modules/webdatabase/SQLTransactionSync.idl \
+	$(WebCore)/Modules/webdatabase/SQLTransactionSyncCallback.idl \
+	$(WebCore)/Modules/webdatabase/WorkerContextWebDatabase.idl \
+	$(WebCore)/Modules/websockets/CloseEvent.idl \
+	$(WebCore)/Modules/websockets/DOMWindowWebSocket.idl \
+	$(WebCore)/Modules/websockets/WebSocket.idl \
+	$(WebCore)/Modules/websockets/WorkerContextWebSocket.idl \
 	$(WebCore)/css/CSSCharsetRule.idl \
 	$(WebCore)/css/CSSFontFaceRule.idl \
 	$(WebCore)/css/CSSImportRule.idl \
@@ -773,6 +1313,7 @@ dom_binding_idls += \
 	$(WebCore)/dom/DOMImplementation.idl \
 	$(WebCore)/dom/DOMStringList.idl \
 	$(WebCore)/dom/DOMStringMap.idl \
+	$(WebCore)/dom/DataTransferItem.idl \
 	$(WebCore)/dom/DataTransferItemList.idl \
 	$(WebCore)/dom/DeviceMotionEvent.idl \
 	$(WebCore)/dom/DeviceOrientationEvent.idl \
@@ -810,7 +1351,9 @@ dom_binding_idls += \
 	$(WebCore)/dom/PropertyNodeList.idl \
 	$(WebCore)/dom/Range.idl \
 	$(WebCore)/dom/RangeException.idl \
+	$(WebCore)/dom/RequestAnimationFrameCallback.idl \
 	$(WebCore)/dom/ShadowRoot.idl \
+	$(WebCore)/dom/StringCallback.idl \
 	$(WebCore)/dom/Text.idl \
 	$(WebCore)/dom/TextEvent.idl \
 	$(WebCore)/dom/Touch.idl \
@@ -956,6 +1499,7 @@ dom_binding_idls += \
 	$(WebCore)/html/canvas/WebGLUniformLocation.idl \
 	$(WebCore)/html/canvas/WebGLVertexArrayObjectOES.idl \
 	$(WebCore)/html/shadow/HTMLContentElement.idl \
+	$(WebCore)/html/shadow/HTMLShadowElement.idl \
 	$(WebCore)/html/track/TextTrack.idl \
 	$(WebCore)/html/track/TextTrackCue.idl \
 	$(WebCore)/html/track/TextTrackCueList.idl \
@@ -999,6 +1543,149 @@ dom_binding_idls += \
 	$(WebCore)/plugins/DOMPluginArray.idl \
 	$(WebCore)/storage/Storage.idl \
 	$(WebCore)/storage/StorageEvent.idl \
+	$(WebCore)/svg/SVGAElement.idl \
+	$(WebCore)/svg/SVGAltGlyphDefElement.idl \
+	$(WebCore)/svg/SVGAltGlyphElement.idl \
+	$(WebCore)/svg/SVGAltGlyphItemElement.idl \
+	$(WebCore)/svg/SVGAngle.idl \
+	$(WebCore)/svg/SVGAnimateColorElement.idl \
+	$(WebCore)/svg/SVGAnimateElement.idl \
+	$(WebCore)/svg/SVGAnimateMotionElement.idl \
+	$(WebCore)/svg/SVGAnimateTransformElement.idl \
+	$(WebCore)/svg/SVGAnimatedAngle.idl \
+	$(WebCore)/svg/SVGAnimatedBoolean.idl \
+	$(WebCore)/svg/SVGAnimatedEnumeration.idl \
+	$(WebCore)/svg/SVGAnimatedInteger.idl \
+	$(WebCore)/svg/SVGAnimatedLength.idl \
+	$(WebCore)/svg/SVGAnimatedLengthList.idl \
+	$(WebCore)/svg/SVGAnimatedNumber.idl \
+	$(WebCore)/svg/SVGAnimatedNumberList.idl \
+	$(WebCore)/svg/SVGAnimatedPreserveAspectRatio.idl \
+	$(WebCore)/svg/SVGAnimatedRect.idl \
+	$(WebCore)/svg/SVGAnimatedString.idl \
+	$(WebCore)/svg/SVGAnimatedTransformList.idl \
+	$(WebCore)/svg/SVGAnimationElement.idl \
+	$(WebCore)/svg/SVGCircleElement.idl \
+	$(WebCore)/svg/SVGClipPathElement.idl \
+	$(WebCore)/svg/SVGColor.idl \
+	$(WebCore)/svg/SVGComponentTransferFunctionElement.idl \
+	$(WebCore)/svg/SVGCursorElement.idl \
+	$(WebCore)/svg/SVGDefsElement.idl \
+	$(WebCore)/svg/SVGDescElement.idl \
+	$(WebCore)/svg/SVGDocument.idl \
+	$(WebCore)/svg/SVGElement.idl \
+	$(WebCore)/svg/SVGElementInstance.idl \
+	$(WebCore)/svg/SVGElementInstanceList.idl \
+	$(WebCore)/svg/SVGEllipseElement.idl \
+	$(WebCore)/svg/SVGException.idl \
+	$(WebCore)/svg/SVGFEBlendElement.idl \
+	$(WebCore)/svg/SVGFEColorMatrixElement.idl \
+	$(WebCore)/svg/SVGFEComponentTransferElement.idl \
+	$(WebCore)/svg/SVGFECompositeElement.idl \
+	$(WebCore)/svg/SVGFEConvolveMatrixElement.idl \
+	$(WebCore)/svg/SVGFEDiffuseLightingElement.idl \
+	$(WebCore)/svg/SVGFEDisplacementMapElement.idl \
+	$(WebCore)/svg/SVGFEDistantLightElement.idl \
+	$(WebCore)/svg/SVGFEDropShadowElement.idl \
+	$(WebCore)/svg/SVGFEFloodElement.idl \
+	$(WebCore)/svg/SVGFEFuncAElement.idl \
+	$(WebCore)/svg/SVGFEFuncBElement.idl \
+	$(WebCore)/svg/SVGFEFuncGElement.idl \
+	$(WebCore)/svg/SVGFEFuncRElement.idl \
+	$(WebCore)/svg/SVGFEGaussianBlurElement.idl \
+	$(WebCore)/svg/SVGFEImageElement.idl \
+	$(WebCore)/svg/SVGFEMergeElement.idl \
+	$(WebCore)/svg/SVGFEMergeNodeElement.idl \
+	$(WebCore)/svg/SVGFEMorphologyElement.idl \
+	$(WebCore)/svg/SVGFEOffsetElement.idl \
+	$(WebCore)/svg/SVGFEPointLightElement.idl \
+	$(WebCore)/svg/SVGFESpecularLightingElement.idl \
+	$(WebCore)/svg/SVGFESpotLightElement.idl \
+	$(WebCore)/svg/SVGFETileElement.idl \
+	$(WebCore)/svg/SVGFETurbulenceElement.idl \
+	$(WebCore)/svg/SVGFilterElement.idl \
+	$(WebCore)/svg/SVGFontElement.idl \
+	$(WebCore)/svg/SVGFontFaceElement.idl \
+	$(WebCore)/svg/SVGFontFaceFormatElement.idl \
+	$(WebCore)/svg/SVGFontFaceNameElement.idl \
+	$(WebCore)/svg/SVGFontFaceSrcElement.idl \
+	$(WebCore)/svg/SVGFontFaceUriElement.idl \
+	$(WebCore)/svg/SVGForeignObjectElement.idl \
+	$(WebCore)/svg/SVGGElement.idl \
+	$(WebCore)/svg/SVGGlyphElement.idl \
+	$(WebCore)/svg/SVGGlyphRefElement.idl \
+	$(WebCore)/svg/SVGGradientElement.idl \
+	$(WebCore)/svg/SVGHKernElement.idl \
+	$(WebCore)/svg/SVGImageElement.idl \
+	$(WebCore)/svg/SVGLength.idl \
+	$(WebCore)/svg/SVGLengthList.idl \
+	$(WebCore)/svg/SVGLineElement.idl \
+	$(WebCore)/svg/SVGLinearGradientElement.idl \
+	$(WebCore)/svg/SVGMPathElement.idl \
+	$(WebCore)/svg/SVGMarkerElement.idl \
+	$(WebCore)/svg/SVGMaskElement.idl \
+	$(WebCore)/svg/SVGMatrix.idl \
+	$(WebCore)/svg/SVGMetadataElement.idl \
+	$(WebCore)/svg/SVGMissingGlyphElement.idl \
+	$(WebCore)/svg/SVGNumber.idl \
+	$(WebCore)/svg/SVGNumberList.idl \
+	$(WebCore)/svg/SVGPaint.idl \
+	$(WebCore)/svg/SVGPathElement.idl \
+	$(WebCore)/svg/SVGPathSeg.idl \
+	$(WebCore)/svg/SVGPathSegArcAbs.idl \
+	$(WebCore)/svg/SVGPathSegArcRel.idl \
+	$(WebCore)/svg/SVGPathSegClosePath.idl \
+	$(WebCore)/svg/SVGPathSegCurvetoCubicAbs.idl \
+	$(WebCore)/svg/SVGPathSegCurvetoCubicRel.idl \
+	$(WebCore)/svg/SVGPathSegCurvetoCubicSmoothAbs.idl \
+	$(WebCore)/svg/SVGPathSegCurvetoCubicSmoothRel.idl \
+	$(WebCore)/svg/SVGPathSegCurvetoQuadraticAbs.idl \
+	$(WebCore)/svg/SVGPathSegCurvetoQuadraticRel.idl \
+	$(WebCore)/svg/SVGPathSegCurvetoQuadraticSmoothAbs.idl \
+	$(WebCore)/svg/SVGPathSegCurvetoQuadraticSmoothRel.idl \
+	$(WebCore)/svg/SVGPathSegLinetoAbs.idl \
+	$(WebCore)/svg/SVGPathSegLinetoHorizontalAbs.idl \
+	$(WebCore)/svg/SVGPathSegLinetoHorizontalRel.idl \
+	$(WebCore)/svg/SVGPathSegLinetoRel.idl \
+	$(WebCore)/svg/SVGPathSegLinetoVerticalAbs.idl \
+	$(WebCore)/svg/SVGPathSegLinetoVerticalRel.idl \
+	$(WebCore)/svg/SVGPathSegList.idl \
+	$(WebCore)/svg/SVGPathSegMovetoAbs.idl \
+	$(WebCore)/svg/SVGPathSegMovetoRel.idl \
+	$(WebCore)/svg/SVGPatternElement.idl \
+	$(WebCore)/svg/SVGPoint.idl \
+	$(WebCore)/svg/SVGPointList.idl \
+	$(WebCore)/svg/SVGPolygonElement.idl \
+	$(WebCore)/svg/SVGPolylineElement.idl \
+	$(WebCore)/svg/SVGPreserveAspectRatio.idl \
+	$(WebCore)/svg/SVGRadialGradientElement.idl \
+	$(WebCore)/svg/SVGRect.idl \
+	$(WebCore)/svg/SVGRectElement.idl \
+	$(WebCore)/svg/SVGRenderingIntent.idl \
+	$(WebCore)/svg/SVGSVGElement.idl \
+	$(WebCore)/svg/SVGScriptElement.idl \
+	$(WebCore)/svg/SVGSetElement.idl \
+	$(WebCore)/svg/SVGStopElement.idl \
+	$(WebCore)/svg/SVGStringList.idl \
+	$(WebCore)/svg/SVGStyleElement.idl \
+	$(WebCore)/svg/SVGSwitchElement.idl \
+	$(WebCore)/svg/SVGSymbolElement.idl \
+	$(WebCore)/svg/SVGTRefElement.idl \
+	$(WebCore)/svg/SVGTSpanElement.idl \
+	$(WebCore)/svg/SVGTextContentElement.idl \
+	$(WebCore)/svg/SVGTextElement.idl \
+	$(WebCore)/svg/SVGTextPathElement.idl \
+	$(WebCore)/svg/SVGTextPositioningElement.idl \
+	$(WebCore)/svg/SVGTitleElement.idl \
+	$(WebCore)/svg/SVGTransform.idl \
+	$(WebCore)/svg/SVGTransformList.idl \
+	$(WebCore)/svg/SVGUnitTypes.idl \
+	$(WebCore)/svg/SVGUseElement.idl \
+	$(WebCore)/svg/SVGVKernElement.idl \
+	$(WebCore)/svg/SVGViewElement.idl \
+	$(WebCore)/svg/SVGViewSpec.idl \
+	$(WebCore)/svg/SVGZoomAndPan.idl \
+	$(WebCore)/svg/SVGZoomEvent.idl \
 	$(WebCore)/testing/FastMallocStatistics.idl \
 	$(WebCore)/testing/Internals.idl \
 	$(WebCore)/testing/InternalSettings.idl \
@@ -1233,6 +1920,98 @@ webcore_modules_sources += \
 	Source/WebCore/Modules/protocolhandler/NavigatorRegisterProtocolHandler.cpp \
 	Source/WebCore/Modules/protocolhandler/NavigatorRegisterProtocolHandler.h \
 	Source/WebCore/Modules/protocolhandler/RegisterProtocolHandlerClient.h \
+	Source/WebCore/Modules/quota/DOMWindowQuota.cpp \
+	Source/WebCore/Modules/quota/DOMWindowQuota.h \
+	Source/WebCore/Modules/quota/StorageInfo.cpp \
+	Source/WebCore/Modules/quota/StorageInfo.h \
+	Source/WebCore/Modules/quota/StorageInfoErrorCallback.h \
+	Source/WebCore/Modules/quota/StorageInfoQuotaCallback.h \
+	Source/WebCore/Modules/quota/StorageInfoUsageCallback.h \
+	Source/WebCore/Modules/webaudio/AsyncAudioDecoder.cpp \
+	Source/WebCore/Modules/webaudio/AsyncAudioDecoder.h \
+	Source/WebCore/Modules/webaudio/AudioBasicInspectorNode.cpp \
+	Source/WebCore/Modules/webaudio/AudioBasicInspectorNode.h \
+	Source/WebCore/Modules/webaudio/AudioBasicProcessorNode.cpp \
+	Source/WebCore/Modules/webaudio/AudioBasicProcessorNode.h \
+	Source/WebCore/Modules/webaudio/AudioBuffer.cpp \
+	Source/WebCore/Modules/webaudio/AudioBuffer.h \
+	Source/WebCore/Modules/webaudio/AudioBufferCallback.h \
+	Source/WebCore/Modules/webaudio/AudioBufferSourceNode.cpp \
+	Source/WebCore/Modules/webaudio/AudioBufferSourceNode.h \
+	Source/WebCore/Modules/webaudio/AudioChannelMerger.cpp \
+	Source/WebCore/Modules/webaudio/AudioChannelMerger.h \
+	Source/WebCore/Modules/webaudio/AudioChannelSplitter.cpp \
+	Source/WebCore/Modules/webaudio/AudioChannelSplitter.h \
+	Source/WebCore/Modules/webaudio/AudioContext.cpp \
+	Source/WebCore/Modules/webaudio/AudioContext.h \
+	Source/WebCore/Modules/webaudio/AudioDestinationNode.cpp \
+	Source/WebCore/Modules/webaudio/AudioDestinationNode.h \
+	Source/WebCore/Modules/webaudio/AudioGain.h \
+	Source/WebCore/Modules/webaudio/AudioGainNode.cpp \
+	Source/WebCore/Modules/webaudio/AudioGainNode.h \
+	Source/WebCore/Modules/webaudio/AudioListener.cpp \
+	Source/WebCore/Modules/webaudio/AudioListener.h \
+	Source/WebCore/Modules/webaudio/AudioNode.cpp \
+	Source/WebCore/Modules/webaudio/AudioNode.h \
+	Source/WebCore/Modules/webaudio/AudioNodeInput.cpp \
+	Source/WebCore/Modules/webaudio/AudioNodeInput.h \
+	Source/WebCore/Modules/webaudio/AudioNodeOutput.cpp \
+	Source/WebCore/Modules/webaudio/AudioNodeOutput.h \
+	Source/WebCore/Modules/webaudio/AudioPannerNode.cpp \
+	Source/WebCore/Modules/webaudio/AudioPannerNode.h \
+	Source/WebCore/Modules/webaudio/AudioParam.cpp \
+	Source/WebCore/Modules/webaudio/AudioParam.h \
+	Source/WebCore/Modules/webaudio/AudioParamTimeline.cpp \
+	Source/WebCore/Modules/webaudio/AudioParamTimeline.h \
+	Source/WebCore/Modules/webaudio/AudioProcessingEvent.cpp \
+	Source/WebCore/Modules/webaudio/AudioProcessingEvent.h \
+	Source/WebCore/Modules/webaudio/AudioScheduledSourceNode.cpp \
+	Source/WebCore/Modules/webaudio/AudioScheduledSourceNode.h \
+	Source/WebCore/Modules/webaudio/AudioSummingJunction.cpp \
+	Source/WebCore/Modules/webaudio/AudioSummingJunction.h \
+	Source/WebCore/Modules/webaudio/AudioSourceNode.h \
+	Source/WebCore/Modules/webaudio/BiquadDSPKernel.cpp \
+	Source/WebCore/Modules/webaudio/BiquadDSPKernel.h \
+	Source/WebCore/Modules/webaudio/BiquadFilterNode.cpp \
+	Source/WebCore/Modules/webaudio/BiquadFilterNode.h \
+	Source/WebCore/Modules/webaudio/BiquadProcessor.cpp \
+	Source/WebCore/Modules/webaudio/BiquadProcessor.h \
+	Source/WebCore/Modules/webaudio/ConvolverNode.cpp \
+	Source/WebCore/Modules/webaudio/ConvolverNode.h \
+	Source/WebCore/Modules/webaudio/DefaultAudioDestinationNode.h \
+	Source/WebCore/Modules/webaudio/DefaultAudioDestinationNode.cpp \
+	Source/WebCore/Modules/webaudio/DelayDSPKernel.cpp \
+	Source/WebCore/Modules/webaudio/DelayDSPKernel.h \
+	Source/WebCore/Modules/webaudio/DelayNode.cpp \
+	Source/WebCore/Modules/webaudio/DelayNode.h \
+	Source/WebCore/Modules/webaudio/DelayProcessor.cpp \
+	Source/WebCore/Modules/webaudio/DelayProcessor.h \
+	Source/WebCore/Modules/webaudio/DynamicsCompressorNode.cpp \
+	Source/WebCore/Modules/webaudio/DynamicsCompressorNode.h \
+	Source/WebCore/Modules/webaudio/JavaScriptAudioNode.cpp \
+	Source/WebCore/Modules/webaudio/JavaScriptAudioNode.h \
+	Source/WebCore/Modules/webaudio/MediaElementAudioSourceNode.cpp \
+	Source/WebCore/Modules/webaudio/MediaElementAudioSourceNode.h \
+	Source/WebCore/Modules/webaudio/MediaStreamAudioSourceNode.cpp \
+	Source/WebCore/Modules/webaudio/MediaStreamAudioSourceNode.h \
+	Source/WebCore/Modules/webaudio/OfflineAudioDestinationNode.h \
+	Source/WebCore/Modules/webaudio/OfflineAudioDestinationNode.cpp \
+	Source/WebCore/Modules/webaudio/OfflineAudioCompletionEvent.h \
+	Source/WebCore/Modules/webaudio/OfflineAudioCompletionEvent.cpp \
+	Source/WebCore/Modules/webaudio/Oscillator.h \
+	Source/WebCore/Modules/webaudio/Oscillator.cpp \
+	Source/WebCore/Modules/webaudio/RealtimeAnalyser.cpp \
+	Source/WebCore/Modules/webaudio/RealtimeAnalyser.h \
+	Source/WebCore/Modules/webaudio/RealtimeAnalyserNode.cpp \
+	Source/WebCore/Modules/webaudio/RealtimeAnalyserNode.h \
+	Source/WebCore/Modules/webaudio/WaveShaperNode.cpp \
+	Source/WebCore/Modules/webaudio/WaveShaperProcessor.h \
+	Source/WebCore/Modules/webaudio/WaveShaperDSPKernel.cpp \
+	Source/WebCore/Modules/webaudio/WaveShaperDSPKernel.h \
+	Source/WebCore/Modules/webaudio/WaveShaperProcessor.cpp \
+	Source/WebCore/Modules/webaudio/WaveShaperNode.h \
+	Source/WebCore/Modules/webaudio/WaveTable.cpp \
+	Source/WebCore/Modules/webaudio/WaveTable.h \
 	Source/WebCore/Modules/webdatabase/AbstractDatabase.cpp \
 	Source/WebCore/Modules/webdatabase/AbstractDatabase.h \
 	Source/WebCore/Modules/webdatabase/ChangeVersionWrapper.cpp \
@@ -1392,6 +2171,8 @@ webcore_sources += \
 	Source/WebCore/bindings/js/JSArrayBufferCustom.cpp \
 	Source/WebCore/bindings/js/JSArrayBufferViewHelper.h \
 	Source/WebCore/bindings/js/JSAttrCustom.cpp \
+	Source/WebCore/bindings/js/JSAudioBufferSourceNodeCustom.cpp \
+	Source/WebCore/bindings/js/JSAudioContextCustom.cpp \
 	Source/WebCore/bindings/js/JSBlobCustom.cpp \
 	Source/WebCore/bindings/js/JSCDATASectionCustom.cpp \
 	Source/WebCore/bindings/js/JSCSSFontFaceRuleCustom.cpp \
@@ -1486,12 +2267,16 @@ webcore_sources += \
 	Source/WebCore/bindings/js/JSHTMLStyleElementCustom.cpp \
 	Source/WebCore/bindings/js/JSHistoryCustom.cpp \
 	Source/WebCore/bindings/js/JSHistoryCustom.h \
+	Source/WebCore/bindings/js/JSIDBAnyCustom.cpp \
+	Source/WebCore/bindings/js/JSIDBKeyCustom.cpp \
+	Source/WebCore/bindings/js/JSIDBVersionChangeRequestCustom.cpp \
 	Source/WebCore/bindings/js/JSImageConstructor.cpp \
 	Source/WebCore/bindings/js/JSImageConstructor.h \
 	Source/WebCore/bindings/js/JSImageDataCustom.cpp \
 	Source/WebCore/bindings/js/JSInjectedScriptHostCustom.cpp \
 	Source/WebCore/bindings/js/JSInjectedScriptManager.cpp \
 	Source/WebCore/bindings/js/JSInspectorFrontendHostCustom.cpp \
+	Source/WebCore/bindings/js/JSJavaScriptAudioNodeCustom.cpp \
 	Source/WebCore/bindings/js/JSJavaScriptCallFrameCustom.cpp \
 	Source/WebCore/bindings/js/JSLazyEventListener.cpp \
 	Source/WebCore/bindings/js/JSLazyEventListener.h \
@@ -1520,6 +2305,7 @@ webcore_sources += \
 	Source/WebCore/bindings/js/JSPluginElementFunctions.h \
 	Source/WebCore/bindings/js/JSPopStateEventCustom.cpp \
 	Source/WebCore/bindings/js/JSProcessingInstructionCustom.cpp \
+	Source/WebCore/bindings/js/JSRequestAnimationFrameCallbackCustom.cpp \
 	Source/WebCore/bindings/js/JSSQLResultSetRowListCustom.cpp \
 	Source/WebCore/bindings/js/JSSQLTransactionCustom.cpp \
 	Source/WebCore/bindings/js/JSSQLTransactionSyncCustom.cpp \
@@ -1872,6 +2658,9 @@ webcore_sources += \
 	Source/WebCore/dom/CustomEvent.h \
 	Source/WebCore/dom/DatasetDOMStringMap.cpp \
 	Source/WebCore/dom/DatasetDOMStringMap.h \
+	Source/WebCore/dom/DataTransferItem.cpp \
+	Source/WebCore/dom/DataTransferItem.h \
+	Source/WebCore/dom/DataTransferItemList.h \
 	Source/WebCore/dom/DecodedDataDocumentParser.cpp \
 	Source/WebCore/dom/DecodedDataDocumentParser.h \
 	Source/WebCore/dom/default/PlatformMessagePortChannel.cpp \
@@ -2051,10 +2840,13 @@ webcore_sources += \
 	Source/WebCore/dom/RegisteredEventListener.cpp \
 	Source/WebCore/dom/RegisteredEventListener.h \
 	Source/WebCore/dom/RenderedDocumentMarker.h \
+	Source/WebCore/dom/RequestAnimationFrameCallback.h \
 	Source/WebCore/dom/ScopedEventQueue.cpp \
 	Source/WebCore/dom/ScopedEventQueue.h \
 	Source/WebCore/dom/ScriptableDocumentParser.cpp \
 	Source/WebCore/dom/ScriptableDocumentParser.h \
+	Source/WebCore/dom/ScriptedAnimationController.cpp \
+	Source/WebCore/dom/ScriptedAnimationController.h \
 	Source/WebCore/dom/ScriptElement.cpp \
 	Source/WebCore/dom/ScriptElement.h \
 	Source/WebCore/dom/ScriptExecutionContext.cpp \
@@ -2316,6 +3108,63 @@ webcore_sources += \
 	Source/WebCore/html/canvas/CheckedInt.h \
 	Source/WebCore/html/canvas/DataView.cpp \
 	Source/WebCore/html/canvas/DataView.h \
+	Source/WebCore/html/canvas/EXTTextureFilterAnisotropic.cpp \
+	Source/WebCore/html/canvas/EXTTextureFilterAnisotropic.h \
+	Source/WebCore/html/canvas/OESStandardDerivatives.cpp \
+	Source/WebCore/html/canvas/OESStandardDerivatives.h \
+	Source/WebCore/html/canvas/OESTextureFloat.cpp \
+	Source/WebCore/html/canvas/OESTextureFloat.h \
+	Source/WebCore/html/canvas/OESVertexArrayObject.cpp \
+	Source/WebCore/html/canvas/OESVertexArrayObject.h \
+	Source/WebCore/html/canvas/WebGLActiveInfo.h \
+	Source/WebCore/html/canvas/WebGLBuffer.cpp \
+	Source/WebCore/html/canvas/WebGLBuffer.h \
+	Source/WebCore/html/canvas/WebGLCompressedTextureS3TC.cpp \
+	Source/WebCore/html/canvas/WebGLCompressedTextureS3TC.h \
+	Source/WebCore/html/canvas/WebGLContextAttributes.cpp \
+	Source/WebCore/html/canvas/WebGLContextAttributes.h \
+	Source/WebCore/html/canvas/WebGLContextEvent.cpp \
+	Source/WebCore/html/canvas/WebGLContextEvent.h \
+	Source/WebCore/html/canvas/WebGLContextGroup.cpp \
+	Source/WebCore/html/canvas/WebGLContextGroup.h \
+	Source/WebCore/html/canvas/WebGLContextObject.cpp \
+	Source/WebCore/html/canvas/WebGLContextObject.h \
+	Source/WebCore/html/canvas/WebGLDebugRendererInfo.cpp \
+	Source/WebCore/html/canvas/WebGLDebugRendererInfo.h \
+	Source/WebCore/html/canvas/WebGLDebugShaders.cpp \
+	Source/WebCore/html/canvas/WebGLDebugShaders.h \
+	Source/WebCore/html/canvas/WebGLDepthTexture.cpp \
+	Source/WebCore/html/canvas/WebGLDepthTexture.h \
+	Source/WebCore/html/canvas/WebGLFramebuffer.cpp \
+	Source/WebCore/html/canvas/WebGLFramebuffer.h \
+	Source/WebCore/html/canvas/WebGLGetInfo.cpp \
+	Source/WebCore/html/canvas/WebGLGetInfo.h \
+	Source/WebCore/html/canvas/WebGLLoseContext.cpp \
+	Source/WebCore/html/canvas/WebGLLoseContext.h \
+	Source/WebCore/html/canvas/WebGLObject.cpp \
+	Source/WebCore/html/canvas/WebGLObject.h \
+	Source/WebCore/html/canvas/WebGLProgram.cpp \
+	Source/WebCore/html/canvas/WebGLProgram.h \
+	Source/WebCore/html/canvas/WebGLRenderbuffer.cpp \
+	Source/WebCore/html/canvas/WebGLRenderbuffer.h \
+	Source/WebCore/html/canvas/WebGLRenderingContext.cpp \
+	Source/WebCore/html/canvas/WebGLRenderingContext.h \
+	Source/WebCore/html/canvas/WebGLShader.cpp \
+	Source/WebCore/html/canvas/WebGLShader.h \
+	Source/WebCore/html/canvas/WebGLShaderPrecisionFormat.cpp \
+	Source/WebCore/html/canvas/WebGLShaderPrecisionFormat.h \
+	Source/WebCore/html/canvas/WebGLSharedObject.cpp \
+	Source/WebCore/html/canvas/WebGLSharedObject.h \
+	Source/WebCore/html/canvas/WebGLTexture.cpp \
+	Source/WebCore/html/canvas/WebGLTexture.h \
+	Source/WebCore/html/canvas/WebGLUniformLocation.cpp \
+	Source/WebCore/html/canvas/WebGLUniformLocation.h \
+	Source/WebCore/html/canvas/WebGLVertexArrayObjectOES.cpp \
+	Source/WebCore/html/canvas/WebGLVertexArrayObjectOES.h \
+	Source/WebCore/html/canvas/WebGLExtension.cpp \
+	Source/WebCore/html/canvas/WebGLExtension.h \
+	Source/WebCore/html/shadow/HTMLShadowElement.cpp \
+	Source/WebCore/html/shadow/HTMLShadowElement.h \
 	Source/WebCore/html/DOMSettableTokenList.cpp \
 	Source/WebCore/html/DOMSettableTokenList.h \
 	Source/WebCore/html/DOMTokenList.cpp \
@@ -2861,6 +3710,10 @@ webcore_sources += \
 	Source/WebCore/loader/appcache/DOMApplicationCache.h \
 	Source/WebCore/loader/appcache/ManifestParser.cpp \
 	Source/WebCore/loader/appcache/ManifestParser.h \
+	Source/WebCore/loader/archive/mhtml/MHTMLArchive.cpp \
+	Source/WebCore/loader/archive/mhtml/MHTMLArchive.h \
+	Source/WebCore/loader/archive/mhtml/MHTMLParser.cpp \
+	Source/WebCore/loader/archive/mhtml/MHTMLParser.h \
 	Source/WebCore/loader/archive/ArchiveFactory.cpp \
 	Source/WebCore/loader/archive/ArchiveFactory.h \
 	Source/WebCore/loader/archive/Archive.cpp \
@@ -3179,6 +4032,76 @@ webcore_sources += \
 	Source/WebCore/platform/animation/AnimationList.h \
 	Source/WebCore/platform/animation/AnimationUtilities.h \
 	Source/WebCore/platform/animation/TimingFunction.h \
+	Source/WebCore/platform/audio/AudioArray.h \
+	Source/WebCore/platform/audio/AudioBus.cpp \
+	Source/WebCore/platform/audio/AudioBus.h \
+	Source/WebCore/platform/audio/AudioChannel.cpp \
+	Source/WebCore/platform/audio/AudioChannel.h \
+	Source/WebCore/platform/audio/AudioDestination.h \
+	Source/WebCore/platform/audio/AudioDSPKernel.h \
+	Source/WebCore/platform/audio/AudioDSPKernelProcessor.cpp \
+	Source/WebCore/platform/audio/AudioDSPKernelProcessor.h \
+	Source/WebCore/platform/audio/AudioFileReader.h \
+	Source/WebCore/platform/audio/AudioIOCallback.h \
+	Source/WebCore/platform/audio/AudioProcessor.h \
+	Source/WebCore/platform/audio/AudioResampler.cpp \
+	Source/WebCore/platform/audio/AudioResampler.h \
+	Source/WebCore/platform/audio/AudioResamplerKernel.cpp \
+	Source/WebCore/platform/audio/AudioResamplerKernel.h \
+	Source/WebCore/platform/audio/AudioSourceProvider.h \
+	Source/WebCore/platform/audio/AudioSourceProviderClient.h \
+	Source/WebCore/platform/audio/AudioUtilities.cpp \
+	Source/WebCore/platform/audio/AudioUtilities.h \
+	Source/WebCore/platform/audio/Biquad.cpp \
+	Source/WebCore/platform/audio/Biquad.h \
+	Source/WebCore/platform/audio/Cone.cpp \
+	Source/WebCore/platform/audio/Cone.h \
+	Source/WebCore/platform/audio/DenormalDisabler.h \
+	Source/WebCore/platform/audio/DirectConvolver.cpp \
+	Source/WebCore/platform/audio/DirectConvolver.h \
+	Source/WebCore/platform/audio/Distance.cpp \
+	Source/WebCore/platform/audio/Distance.h \
+	Source/WebCore/platform/audio/DynamicsCompressor.h \
+	Source/WebCore/platform/audio/DynamicsCompressorKernel.cpp \
+	Source/WebCore/platform/audio/DynamicsCompressorKernel.h \
+	Source/WebCore/platform/audio/DynamicsCompressor.cpp \
+	Source/WebCore/platform/audio/EqualPowerPanner.cpp \
+	Source/WebCore/platform/audio/EqualPowerPanner.h \
+	Source/WebCore/platform/audio/FFTConvolver.cpp \
+	Source/WebCore/platform/audio/FFTConvolver.h \
+	Source/WebCore/platform/audio/FFTFrame.cpp \
+	Source/WebCore/platform/audio/FFTFrame.h \
+	Source/WebCore/platform/audio/FFTFrameStub.cpp \
+	Source/WebCore/platform/audio/HRTFDatabase.cpp \
+	Source/WebCore/platform/audio/HRTFDatabase.h \
+	Source/WebCore/platform/audio/HRTFDatabaseLoader.cpp \
+	Source/WebCore/platform/audio/HRTFDatabaseLoader.h \
+	Source/WebCore/platform/audio/HRTFElevation.cpp \
+	Source/WebCore/platform/audio/HRTFElevation.h \
+	Source/WebCore/platform/audio/HRTFKernel.cpp \
+	Source/WebCore/platform/audio/HRTFKernel.h \
+	Source/WebCore/platform/audio/HRTFPanner.cpp \
+	Source/WebCore/platform/audio/HRTFPanner.h \
+	Source/WebCore/platform/audio/MultiChannelResampler.cpp \
+	Source/WebCore/platform/audio/MultiChannelResampler.h \
+	Source/WebCore/platform/audio/Panner.cpp \
+	Source/WebCore/platform/audio/Panner.h \
+	Source/WebCore/platform/audio/ReverbAccumulationBuffer.cpp \
+	Source/WebCore/platform/audio/ReverbAccumulationBuffer.h \
+	Source/WebCore/platform/audio/ReverbConvolver.cpp \
+	Source/WebCore/platform/audio/ReverbConvolver.h \
+	Source/WebCore/platform/audio/ReverbConvolverStage.cpp \
+	Source/WebCore/platform/audio/ReverbConvolverStage.h \
+	Source/WebCore/platform/audio/Reverb.cpp \
+	Source/WebCore/platform/audio/Reverb.h \
+	Source/WebCore/platform/audio/ReverbInputBuffer.cpp \
+	Source/WebCore/platform/audio/ReverbInputBuffer.h \
+	Source/WebCore/platform/audio/SincResampler.cpp \
+	Source/WebCore/platform/audio/SincResampler.h \
+	Source/WebCore/platform/audio/VectorMath.cpp \
+	Source/WebCore/platform/audio/VectorMath.h \
+	Source/WebCore/platform/audio/ZeroPole.cpp \
+	Source/WebCore/platform/audio/ZeroPole.h \
 	Source/WebCore/platform/ActivePlatformGestureAnimation.cpp \
 	Source/WebCore/platform/ActivePlatformGestureAnimation.h \
 	Source/WebCore/platform/PlatformGestureCurve.h \
@@ -3234,6 +4157,8 @@ webcore_sources += \
 	Source/WebCore/platform/HashTools.h \
 	Source/WebCore/platform/HistogramSupport.cpp \
 	Source/WebCore/platform/HistogramSupport.h \
+	Source/WebCore/platform/graphics/ANGLEWebKitBridge.cpp \
+	Source/WebCore/platform/graphics/ANGLEWebKitBridge.h \
 	Source/WebCore/platform/graphics/BitmapImage.cpp \
 	Source/WebCore/platform/graphics/BitmapImage.h \
 	Source/WebCore/platform/graphics/Color.cpp \
@@ -3393,10 +4318,14 @@ webcore_sources += \
 	Source/WebCore/platform/graphics/GlyphPage.h \
 	Source/WebCore/platform/graphics/GlyphPageTreeNode.cpp \
 	Source/WebCore/platform/graphics/GlyphPageTreeNode.h \
+	Source/WebCore/platform/graphics/gpu/DrawingBuffer.cpp \
+	Source/WebCore/platform/graphics/gpu/DrawingBuffer.h \
 	Source/WebCore/platform/graphics/Gradient.cpp \
 	Source/WebCore/platform/graphics/Gradient.h \
 	Source/WebCore/platform/graphics/GraphicsContext.cpp \
 	Source/WebCore/platform/graphics/GraphicsContext.h \
+	Source/WebCore/platform/graphics/GraphicsContext3D.cpp \
+	Source/WebCore/platform/graphics/GraphicsContext3D.h \
 	Source/WebCore/platform/graphics/GraphicsLayer.h \
 	Source/WebCore/platform/graphics/GraphicsLayer.cpp \
 	Source/WebCore/platform/graphics/GraphicsLayerClient.h \
@@ -3423,6 +4352,14 @@ webcore_sources += \
 	Source/WebCore/platform/graphics/MediaPlayer.cpp \
 	Source/WebCore/platform/graphics/MediaPlayer.h \
 	Source/WebCore/platform/graphics/MediaPlayerPrivate.h \
+	Source/WebCore/platform/graphics/opengl/Extensions3DOpenGL.cpp \
+	Source/WebCore/platform/graphics/opengl/Extensions3DOpenGL.h \
+	Source/WebCore/platform/graphics/opengl/Extensions3DOpenGLCommon.cpp \
+	Source/WebCore/platform/graphics/opengl/Extensions3DOpenGLCommon.h \
+	Source/WebCore/platform/graphics/opengl/GraphicsContext3DOpenGL.cpp \
+	Source/WebCore/platform/graphics/opengl/GraphicsContext3DOpenGLCommon.cpp \
+	Source/WebCore/platform/graphics/OpenGLShims.cpp \
+	Source/WebCore/platform/graphics/OpenGLShims.h \
 	Source/WebCore/platform/graphics/opentype/OpenTypeVerticalData.h \
 	Source/WebCore/platform/graphics/Path.cpp \
 	Source/WebCore/platform/graphics/Path.h \
@@ -3739,6 +4676,8 @@ webcore_sources += \
 	Source/WebCore/platform/SuddenTermination.h \
 	Source/WebCore/platform/Supplementable.h \
 	Source/WebCore/platform/SystemTime.h \
+	Source/WebCore/platform/text/gtk/TextCheckerEnchant.h \
+	Source/WebCore/platform/text/gtk/TextCheckerEnchant.cpp \
 	Source/WebCore/platform/text/BidiContext.cpp \
 	Source/WebCore/platform/text/BidiContext.h \
 	Source/WebCore/platform/text/BidiResolver.h \
@@ -3971,13 +4910,13 @@ webcore_sources += \
 	Source/WebCore/rendering/RenderMenuList.h \
 	Source/WebCore/rendering/RenderMeter.cpp \
 	Source/WebCore/rendering/RenderMeter.h \
-    Source/WebCore/rendering/RenderMultiColumnBlock.cpp \
-    Source/WebCore/rendering/RenderMultiColumnBlock.h \
-    Source/WebCore/rendering/RenderMultiColumnFlowThread.cpp \
-    Source/WebCore/rendering/RenderMultiColumnFlowThread.h \
-    Source/WebCore/rendering/RenderMultiColumnSet.cpp \
-    Source/WebCore/rendering/RenderMultiColumnSet.h \
-    Source/WebCore/rendering/RenderNamedFlowThread.cpp \
+	Source/WebCore/rendering/RenderMultiColumnBlock.cpp \
+	Source/WebCore/rendering/RenderMultiColumnBlock.h \
+	Source/WebCore/rendering/RenderMultiColumnFlowThread.cpp \
+	Source/WebCore/rendering/RenderMultiColumnFlowThread.h \
+	Source/WebCore/rendering/RenderMultiColumnSet.cpp \
+	Source/WebCore/rendering/RenderMultiColumnSet.h \
+	Source/WebCore/rendering/RenderNamedFlowThread.cpp \
 	Source/WebCore/rendering/RenderNamedFlowThread.h \
 	Source/WebCore/rendering/RenderObjectChildList.cpp \
 	Source/WebCore/rendering/RenderObjectChildList.h \
@@ -3992,7 +4931,7 @@ webcore_sources += \
 	Source/WebCore/rendering/RenderQuote.h \
 	Source/WebCore/rendering/RenderRegion.cpp \
 	Source/WebCore/rendering/RenderRegion.h \
-    Source/WebCore/rendering/RenderRegionSet.cpp \
+	Source/WebCore/rendering/RenderRegionSet.cpp \
 	Source/WebCore/rendering/RenderRegionSet.h \
 	Source/WebCore/rendering/RenderReplaced.cpp \
 	Source/WebCore/rendering/RenderReplaced.h \
@@ -4819,6 +5758,13 @@ webcoregtk_sources += \
 	Source/WebCore/editing/gtk/FrameSelectionGtk.cpp \
 	Source/WebCore/page/gtk/DragControllerGtk.cpp \
 	Source/WebCore/page/gtk/EventHandlerGtk.cpp \
+	Source/WebCore/platform/audio/gstreamer/AudioDestinationGStreamer.cpp \
+	Source/WebCore/platform/audio/gstreamer/AudioDestinationGStreamer.h \
+	Source/WebCore/platform/audio/gstreamer/AudioFileReaderGStreamer.cpp \
+	Source/WebCore/platform/audio/gstreamer/FFTFrameGStreamer.cpp \
+	Source/WebCore/platform/audio/gstreamer/WebKitWebAudioSourceGStreamer.cpp \
+	Source/WebCore/platform/audio/gstreamer/WebKitWebAudioSourceGStreamer.h \
+	Source/WebCore/platform/audio/gtk/AudioBusGtk.cpp \
 	Source/WebCore/platform/cairo/WidgetBackingStore.h \
 	Source/WebCore/platform/geoclue/GeolocationProviderGeoclue.h \
 	Source/WebCore/platform/geoclue/GeolocationProviderGeoclue.cpp \
@@ -4845,6 +5791,8 @@ webcoregtk_sources += \
 	Source/WebCore/platform/graphics/gtk/ImageGtk.cpp \
 	Source/WebCore/platform/graphics/gtk/IntPointGtk.cpp \
 	Source/WebCore/platform/graphics/gtk/IntRectGtk.cpp \
+	Source/WebCore/platform/gtk/AsyncFileSystemGtk.cpp \
+	Source/WebCore/platform/gtk/AsyncFileSystemGtk.h \
 	Source/WebCore/platform/gtk/ClipboardGtk.cpp \
 	Source/WebCore/platform/gtk/ClipboardGtk.h \
 	Source/WebCore/platform/gtk/ClipboardUtilitiesGtk.cpp \
@@ -5006,923 +5954,6 @@ webcoregtk_sources += \
 	Source/WebCore/platform/graphics/pango/FontPango.cpp
 endif # END USE_PANGO
 
-# ----
-# Database Support
-# ----
-if ENABLE_SQL_DATABASE
-webcore_built_sources += \
-	DerivedSources/WebCore/JSDatabase.cpp \
-	DerivedSources/WebCore/JSDatabase.h \
-	DerivedSources/WebCore/JSDatabaseCallback.cpp \
-	DerivedSources/WebCore/JSDatabaseCallback.h \
-	DerivedSources/WebCore/JSDatabaseSync.cpp \
-	DerivedSources/WebCore/JSDatabaseSync.h \
-	DerivedSources/WebCore/JSSQLError.cpp \
-	DerivedSources/WebCore/JSSQLError.h \
-	DerivedSources/WebCore/JSSQLException.cpp \
-	DerivedSources/WebCore/JSSQLResultSet.cpp \
-	DerivedSources/WebCore/JSSQLResultSet.h \
-	DerivedSources/WebCore/JSSQLResultSetRowList.cpp \
-	DerivedSources/WebCore/JSSQLStatementCallback.cpp \
-	DerivedSources/WebCore/JSSQLStatementCallback.h \
-	DerivedSources/WebCore/JSSQLStatementErrorCallback.h \
-	DerivedSources/WebCore/JSSQLTransaction.cpp \
-	DerivedSources/WebCore/JSSQLTransactionCallback.cpp \
-	DerivedSources/WebCore/JSSQLTransactionCallback.h \
-	DerivedSources/WebCore/JSSQLTransactionErrorCallback.cpp \
-	DerivedSources/WebCore/JSSQLTransactionErrorCallback.h \
-	DerivedSources/WebCore/JSSQLTransactionSync.cpp \
-	DerivedSources/WebCore/JSSQLTransactionSyncCallback.cpp \
-	DerivedSources/WebCore/JSSQLTransactionSyncCallback.h
-
-dom_binding_idls += \
-	$(WebCore)/Modules/webdatabase/DOMWindowWebDatabase.idl \
-	$(WebCore)/Modules/webdatabase/Database.idl \
-	$(WebCore)/Modules/webdatabase/DatabaseCallback.idl \
-	$(WebCore)/Modules/webdatabase/DatabaseSync.idl \
-	$(WebCore)/Modules/webdatabase/SQLError.idl \
-	$(WebCore)/Modules/webdatabase/SQLException.idl \
-	$(WebCore)/Modules/webdatabase/SQLResultSet.idl \
-	$(WebCore)/Modules/webdatabase/SQLResultSetRowList.idl \
-	$(WebCore)/Modules/webdatabase/SQLStatementCallback.idl \
-	$(WebCore)/Modules/webdatabase/SQLStatementErrorCallback.idl \
-	$(WebCore)/Modules/webdatabase/SQLTransaction.idl \
-	$(WebCore)/Modules/webdatabase/SQLTransactionCallback.idl \
-	$(WebCore)/Modules/webdatabase/SQLTransactionErrorCallback.idl \
-	$(WebCore)/Modules/webdatabase/SQLTransactionSync.idl \
-	$(WebCore)/Modules/webdatabase/SQLTransactionSyncCallback.idl \
-	$(WebCore)/Modules/webdatabase/WorkerContextWebDatabase.idl
-endif # END ENABLE_SQL_DATABASE
-
-# ----
-# HTML5 data transfer items support
-# ----
-if ENABLE_DATA_TRANSFER_ITEMS
-webcore_built_sources += \
-	DerivedSources/WebCore/JSDataTransferItem.cpp \
-	DerivedSources/WebCore/JSDataTransferItem.h \
-	DerivedSources/WebCore/JSDataTransferItemList.cpp \
-	DerivedSources/WebCore/JSDataTransferItemList.h \
-	DerivedSources/WebCore/JSStringCallback.cpp \
-	DerivedSources/WebCore/JSStringCallback.h
-
-dom_binding_idls += \
-	$(WebCore)/dom/DataTransferItem.idl \
-	$(WebCore)/dom/StringCallback.idl
-
-webcore_sources += \
-	Source/WebCore/dom/DataTransferItem.cpp \
-	Source/WebCore/dom/DataTransferItem.h \
-	Source/WebCore/dom/DataTransferItemList.h \
-	Source/WebCore/dom/StringCallback.cpp \
-	Source/WebCore/dom/StringCallback.h
-endif # END ENABLE_DATA_TRANSFER_ITEMS
-
-# ----
-# Indexed Database API support
-# ----
-if ENABLE_INDEXED_DATABASE
-webcore_built_sources += \
-	DerivedSources/WebCore/JSIDBAny.cpp \
-	DerivedSources/WebCore/JSIDBAny.h \
-	DerivedSources/WebCore/JSIDBCursor.cpp \
-	DerivedSources/WebCore/JSIDBCursor.h \
-	DerivedSources/WebCore/JSIDBCursorWithValue.cpp \
-	DerivedSources/WebCore/JSIDBCursorWithValue.h \
-	DerivedSources/WebCore/JSIDBDatabaseException.cpp \
-	DerivedSources/WebCore/JSIDBDatabaseException.h \
-	DerivedSources/WebCore/JSIDBDatabase.cpp \
-	DerivedSources/WebCore/JSIDBDatabase.h \
-	DerivedSources/WebCore/JSIDBFactory.cpp \
-	DerivedSources/WebCore/JSIDBFactory.h \
-	DerivedSources/WebCore/JSIDBIndex.cpp \
-	DerivedSources/WebCore/JSIDBIndex.h \
-	DerivedSources/WebCore/JSIDBKey.cpp \
-	DerivedSources/WebCore/JSIDBKey.h \
-	DerivedSources/WebCore/JSIDBKeyRange.cpp \
-	DerivedSources/WebCore/JSIDBKeyRange.h \
-	DerivedSources/WebCore/JSIDBObjectStore.cpp \
-	DerivedSources/WebCore/JSIDBObjectStore.h \
-	DerivedSources/WebCore/JSIDBRequest.cpp \
-	DerivedSources/WebCore/JSIDBRequest.h \
-	DerivedSources/WebCore/JSIDBTransaction.cpp \
-	DerivedSources/WebCore/JSIDBTransaction.h \
-	DerivedSources/WebCore/JSIDBVersionChangeEvent.cpp \
-	DerivedSources/WebCore/JSIDBVersionChangeEvent.h \
-	DerivedSources/WebCore/JSIDBVersionChangeRequest.cpp \
-	DerivedSources/WebCore/JSIDBVersionChangeRequest.h
-
-dom_binding_idls += \
-	$(WebCore)/Modules/indexeddb/DOMWindowIndexedDatabase.idl \
-	$(WebCore)/Modules/indexeddb/IDBAny.idl \
-	$(WebCore)/Modules/indexeddb/IDBCursor.idl \
-	$(WebCore)/Modules/indexeddb/IDBCursorWithValue.idl \
-	$(WebCore)/Modules/indexeddb/IDBDatabaseException.idl \
-	$(WebCore)/Modules/indexeddb/IDBDatabase.idl \
-	$(WebCore)/Modules/indexeddb/IDBFactory.idl \
-	$(WebCore)/Modules/indexeddb/IDBIndex.idl \
-	$(WebCore)/Modules/indexeddb/IDBKey.idl \
-	$(WebCore)/Modules/indexeddb/IDBKeyRange.idl \
-	$(WebCore)/Modules/indexeddb/IDBObjectStore.idl \
-	$(WebCore)/Modules/indexeddb/IDBRequest.idl \
-	$(WebCore)/Modules/indexeddb/IDBTransaction.idl \
-	$(WebCore)/Modules/indexeddb/IDBVersionChangeEvent.idl \
-	$(WebCore)/Modules/indexeddb/IDBVersionChangeRequest.idl \
-	$(WebCore)/Modules/indexeddb/WorkerContextIndexedDatabase.idl
-webcore_sources += \
-	Source/WebCore/bindings/js/JSIDBAnyCustom.cpp \
-	Source/WebCore/bindings/js/JSIDBKeyCustom.cpp \
-	Source/WebCore/bindings/js/JSIDBVersionChangeRequestCustom.cpp
-endif # END ENABLE_INDEXED_DATABASE
-
-# ----
-# LevelDB
-# ----
-if USE_LEVELDB
-webcore_sources += \
-	Source/WebCore/platform/leveldb/LevelDBComparator.h \
-	Source/WebCore/platform/leveldb/LevelDBDatabase.cpp \
-	Source/WebCore/platform/leveldb/LevelDBDatabase.h \
-	Source/WebCore/platform/leveldb/LevelDBIterator.h \
-	Source/WebCore/platform/leveldb/LevelDBSlice.h \
-	Source/WebCore/platform/leveldb/LevelDBTransaction.cpp \
-	Source/WebCore/platform/leveldb/LevelDBTransaction.h \
-	Source/WebCore/platform/leveldb/LevelDBWriteBatch.cpp \
-	Source/WebCore/platform/leveldb/LevelDBWriteBatch.h
-endif # end USE_LEVELDB
-
-# ----
-# FileSystem API support
-# ----
-if ENABLE_FILE_SYSTEM
-webcore_built_sources += \
-	DerivedSources/WebCore/JSDirectoryEntry.cpp \
-	DerivedSources/WebCore/JSDirectoryEntry.h \
-	DerivedSources/WebCore/JSDirectoryEntrySync.cpp \
-	DerivedSources/WebCore/JSDirectoryEntrySync.h \
-	DerivedSources/WebCore/JSDirectoryReader.cpp \
-	DerivedSources/WebCore/JSDirectoryReader.h \
-	DerivedSources/WebCore/JSDirectoryReaderSync.cpp \
-	DerivedSources/WebCore/JSDirectoryReaderSync.h \
-	DerivedSources/WebCore/JSDOMFileSystem.cpp \
-	DerivedSources/WebCore/JSDOMFileSystem.h \
-	DerivedSources/WebCore/JSDOMFileSystemSync.cpp \
-	DerivedSources/WebCore/JSDOMFileSystemSync.h \
-	DerivedSources/WebCore/JSEntriesCallback.cpp \
-	DerivedSources/WebCore/JSEntriesCallback.h \
-	DerivedSources/WebCore/JSEntry.cpp \
-	DerivedSources/WebCore/JSEntry.h \
-	DerivedSources/WebCore/JSEntryArray.cpp \
-	DerivedSources/WebCore/JSEntryArray.h \
-	DerivedSources/WebCore/JSEntryArraySync.cpp \
-	DerivedSources/WebCore/JSEntryArraySync.h \
-	DerivedSources/WebCore/JSEntryCallback.cpp \
-	DerivedSources/WebCore/JSEntryCallback.h \
-	DerivedSources/WebCore/JSEntrySync.cpp \
-	DerivedSources/WebCore/JSEntrySync.h \
-	DerivedSources/WebCore/JSErrorCallback.cpp \
-	DerivedSources/WebCore/JSErrorCallback.h \
-	DerivedSources/WebCore/JSFileCallback.cpp \
-	DerivedSources/WebCore/JSFileCallback.h \
-	DerivedSources/WebCore/JSFileEntry.cpp \
-	DerivedSources/WebCore/JSFileEntry.h \
-	DerivedSources/WebCore/JSFileEntrySync.cpp \
-	DerivedSources/WebCore/JSFileEntrySync.h \
-	DerivedSources/WebCore/JSFileSystemCallback.cpp \
-	DerivedSources/WebCore/JSFileSystemCallback.h \
-	DerivedSources/WebCore/JSFileWriter.cpp \
-	DerivedSources/WebCore/JSFileWriter.h \
-	DerivedSources/WebCore/JSFileWriterCallback.cpp \
-	DerivedSources/WebCore/JSFileWriterCallback.h \
-	DerivedSources/WebCore/JSFileWriterSync.cpp \
-	DerivedSources/WebCore/JSFileWriterSync.h \
-	DerivedSources/WebCore/JSMetadata.cpp \
-	DerivedSources/WebCore/JSMetadata.h \
-	DerivedSources/WebCore/JSMetadataCallback.cpp \
-	DerivedSources/WebCore/JSMetadataCallback.h
-
-dom_binding_idls += \
-	$(WebCore)/Modules/filesystem/DOMFileSystem.idl \
-	$(WebCore)/Modules/filesystem/DOMFileSystemSync.idl \
-	$(WebCore)/Modules/filesystem/DOMWindowFileSystem.idl \
-	$(WebCore)/Modules/filesystem/DirectoryEntry.idl \
-	$(WebCore)/Modules/filesystem/DirectoryEntrySync.idl \
-	$(WebCore)/Modules/filesystem/DirectoryReader.idl \
-	$(WebCore)/Modules/filesystem/DirectoryReaderSync.idl \
-	$(WebCore)/Modules/filesystem/EntriesCallback.idl \
-	$(WebCore)/Modules/filesystem/Entry.idl \
-	$(WebCore)/Modules/filesystem/EntryArray.idl \
-	$(WebCore)/Modules/filesystem/EntryArraySync.idl \
-	$(WebCore)/Modules/filesystem/EntryCallback.idl \
-	$(WebCore)/Modules/filesystem/EntrySync.idl \
-	$(WebCore)/Modules/filesystem/ErrorCallback.idl \
-	$(WebCore)/Modules/filesystem/FileCallback.idl \
-	$(WebCore)/Modules/filesystem/FileEntry.idl \
-	$(WebCore)/Modules/filesystem/FileEntrySync.idl \
-	$(WebCore)/Modules/filesystem/FileSystemCallback.idl \
-	$(WebCore)/Modules/filesystem/FileWriter.idl \
-	$(WebCore)/Modules/filesystem/FileWriterCallback.idl \
-	$(WebCore)/Modules/filesystem/FileWriterSync.idl \
-	$(WebCore)/Modules/filesystem/Metadata.idl \
-	$(WebCore)/Modules/filesystem/MetadataCallback.idl \
-	$(WebCore)/Modules/filesystem/WorkerContextFileSystem.idl
-
-webcoregtk_sources += \
-	Source/WebCore/platform/gtk/AsyncFileSystemGtk.cpp \
-	Source/WebCore/platform/gtk/AsyncFileSystemGtk.h
-endif # END ENABLE_FILE_SYSTEM
-
-# ----
-# SVG Support
-#
-# FIXME: allow a more fine-grained inclusion/generation of sources per SVG feature
-# ----
-if ENABLE_SVG
-webcore_built_sources += \
-	DerivedSources/WebCore/JSElementTimeControl.h \
-	DerivedSources/WebCore/JSSVGAElement.cpp \
-	DerivedSources/WebCore/JSSVGAElement.h \
-	DerivedSources/WebCore/JSSVGAltGlyphDefElement.cpp \
-	DerivedSources/WebCore/JSSVGAltGlyphDefElement.h \
-	DerivedSources/WebCore/JSSVGAltGlyphElement.cpp \
-	DerivedSources/WebCore/JSSVGAltGlyphElement.h \
-	DerivedSources/WebCore/JSSVGAltGlyphItemElement.cpp \
-	DerivedSources/WebCore/JSSVGAltGlyphItemElement.h \
-	DerivedSources/WebCore/JSSVGAngle.cpp \
-	DerivedSources/WebCore/JSSVGAngle.h \
-	DerivedSources/WebCore/JSSVGAnimateColorElement.cpp \
-	DerivedSources/WebCore/JSSVGAnimateColorElement.h \
-	DerivedSources/WebCore/JSSVGAnimatedAngle.cpp \
-	DerivedSources/WebCore/JSSVGAnimatedAngle.h \
-	DerivedSources/WebCore/JSSVGAnimatedBoolean.cpp \
-	DerivedSources/WebCore/JSSVGAnimatedBoolean.h \
-	DerivedSources/WebCore/JSSVGAnimatedEnumeration.cpp \
-	DerivedSources/WebCore/JSSVGAnimatedEnumeration.h \
-	DerivedSources/WebCore/JSSVGAnimatedInteger.cpp \
-	DerivedSources/WebCore/JSSVGAnimatedInteger.h \
-	DerivedSources/WebCore/JSSVGAnimatedLength.cpp \
-	DerivedSources/WebCore/JSSVGAnimatedLength.h \
-	DerivedSources/WebCore/JSSVGAnimatedLengthList.cpp \
-	DerivedSources/WebCore/JSSVGAnimatedLengthList.h \
-	DerivedSources/WebCore/JSSVGAnimatedNumber.cpp \
-	DerivedSources/WebCore/JSSVGAnimatedNumber.h \
-	DerivedSources/WebCore/JSSVGAnimatedNumberList.cpp \
-	DerivedSources/WebCore/JSSVGAnimatedNumberList.h \
-	DerivedSources/WebCore/JSSVGAnimatedPreserveAspectRatio.cpp \
-	DerivedSources/WebCore/JSSVGAnimatedPreserveAspectRatio.h \
-	DerivedSources/WebCore/JSSVGAnimatedRect.cpp \
-	DerivedSources/WebCore/JSSVGAnimatedRect.h \
-	DerivedSources/WebCore/JSSVGAnimatedString.cpp \
-	DerivedSources/WebCore/JSSVGAnimatedString.h \
-	DerivedSources/WebCore/JSSVGAnimatedTransformList.cpp \
-	DerivedSources/WebCore/JSSVGAnimatedTransformList.h \
-	DerivedSources/WebCore/JSSVGAnimateElement.cpp \
-	DerivedSources/WebCore/JSSVGAnimateElement.h \
-	DerivedSources/WebCore/JSSVGAnimateMotionElement.cpp \
-	DerivedSources/WebCore/JSSVGAnimateMotionElement.h \
-	DerivedSources/WebCore/JSSVGAnimateTransformElement.cpp \
-	DerivedSources/WebCore/JSSVGAnimateTransformElement.h \
-	DerivedSources/WebCore/JSSVGAnimationElement.cpp \
-	DerivedSources/WebCore/JSSVGAnimationElement.h \
-	DerivedSources/WebCore/JSSVGCircleElement.cpp \
-	DerivedSources/WebCore/JSSVGCircleElement.h \
-	DerivedSources/WebCore/JSSVGClipPathElement.cpp \
-	DerivedSources/WebCore/JSSVGClipPathElement.h \
-	DerivedSources/WebCore/JSSVGColor.cpp \
-	DerivedSources/WebCore/JSSVGColor.h \
-	DerivedSources/WebCore/JSSVGComponentTransferFunctionElement.cpp \
-	DerivedSources/WebCore/JSSVGComponentTransferFunctionElement.h \
-	DerivedSources/WebCore/JSSVGCursorElement.cpp \
-	DerivedSources/WebCore/JSSVGCursorElement.h \
-	DerivedSources/WebCore/JSSVGDefsElement.cpp \
-	DerivedSources/WebCore/JSSVGDefsElement.h \
-	DerivedSources/WebCore/JSSVGDescElement.cpp \
-	DerivedSources/WebCore/JSSVGDescElement.h \
-	DerivedSources/WebCore/JSSVGDocument.cpp \
-	DerivedSources/WebCore/JSSVGDocument.h \
-	DerivedSources/WebCore/JSSVGElement.cpp \
-	DerivedSources/WebCore/JSSVGElement.h \
-	DerivedSources/WebCore/JSSVGElementInstance.cpp \
-	DerivedSources/WebCore/JSSVGElementInstanceList.cpp \
-	DerivedSources/WebCore/JSSVGElementInstanceList.h \
-	DerivedSources/WebCore/JSSVGEllipseElement.cpp \
-	DerivedSources/WebCore/JSSVGEllipseElement.h \
-	DerivedSources/WebCore/JSSVGException.cpp \
-	DerivedSources/WebCore/JSSVGException.h \
-	DerivedSources/WebCore/JSSVGExternalResourcesRequired.h \
-	DerivedSources/WebCore/JSSVGFEBlendElement.cpp \
-	DerivedSources/WebCore/JSSVGFEBlendElement.h \
-	DerivedSources/WebCore/JSSVGFEColorMatrixElement.cpp \
-	DerivedSources/WebCore/JSSVGFEColorMatrixElement.h \
-	DerivedSources/WebCore/JSSVGFEComponentTransferElement.cpp \
-	DerivedSources/WebCore/JSSVGFEComponentTransferElement.h \
-	DerivedSources/WebCore/JSSVGFECompositeElement.cpp \
-	DerivedSources/WebCore/JSSVGFECompositeElement.h \
-	DerivedSources/WebCore/JSSVGFEConvolveMatrixElement.cpp \
-	DerivedSources/WebCore/JSSVGFEConvolveMatrixElement.h \
-	DerivedSources/WebCore/JSSVGFEDiffuseLightingElement.cpp \
-	DerivedSources/WebCore/JSSVGFEDiffuseLightingElement.h \
-	DerivedSources/WebCore/JSSVGFEDisplacementMapElement.cpp \
-	DerivedSources/WebCore/JSSVGFEDisplacementMapElement.h \
-	DerivedSources/WebCore/JSSVGFEDistantLightElement.cpp \
-	DerivedSources/WebCore/JSSVGFEDistantLightElement.h \
-	DerivedSources/WebCore/JSSVGFEDropShadowElement.cpp \
-	DerivedSources/WebCore/JSSVGFEDropShadowElement.h \
-	DerivedSources/WebCore/JSSVGFEFloodElement.cpp \
-	DerivedSources/WebCore/JSSVGFEFloodElement.h \
-	DerivedSources/WebCore/JSSVGFEFuncAElement.cpp \
-	DerivedSources/WebCore/JSSVGFEFuncAElement.h \
-	DerivedSources/WebCore/JSSVGFEFuncBElement.cpp \
-	DerivedSources/WebCore/JSSVGFEFuncBElement.h \
-	DerivedSources/WebCore/JSSVGFEFuncGElement.cpp \
-	DerivedSources/WebCore/JSSVGFEFuncGElement.h \
-	DerivedSources/WebCore/JSSVGFEFuncRElement.cpp \
-	DerivedSources/WebCore/JSSVGFEFuncRElement.h \
-	DerivedSources/WebCore/JSSVGFEGaussianBlurElement.cpp \
-	DerivedSources/WebCore/JSSVGFEGaussianBlurElement.h \
-	DerivedSources/WebCore/JSSVGFEImageElement.cpp \
-	DerivedSources/WebCore/JSSVGFEImageElement.h \
-	DerivedSources/WebCore/JSSVGFEMergeElement.cpp \
-	DerivedSources/WebCore/JSSVGFEMergeElement.h \
-	DerivedSources/WebCore/JSSVGFEMergeNodeElement.cpp \
-	DerivedSources/WebCore/JSSVGFEMergeNodeElement.h \
-	DerivedSources/WebCore/JSSVGFEMorphologyElement.cpp \
-	DerivedSources/WebCore/JSSVGFEMorphologyElement.h \
-	DerivedSources/WebCore/JSSVGFEOffsetElement.cpp \
-	DerivedSources/WebCore/JSSVGFEOffsetElement.h \
-	DerivedSources/WebCore/JSSVGFEPointLightElement.cpp \
-	DerivedSources/WebCore/JSSVGFEPointLightElement.h \
-	DerivedSources/WebCore/JSSVGFESpecularLightingElement.cpp \
-	DerivedSources/WebCore/JSSVGFESpecularLightingElement.h \
-	DerivedSources/WebCore/JSSVGFESpotLightElement.cpp \
-	DerivedSources/WebCore/JSSVGFESpotLightElement.h \
-	DerivedSources/WebCore/JSSVGFETileElement.cpp \
-	DerivedSources/WebCore/JSSVGFETileElement.h \
-	DerivedSources/WebCore/JSSVGFETurbulenceElement.cpp \
-	DerivedSources/WebCore/JSSVGFETurbulenceElement.h \
-	DerivedSources/WebCore/JSSVGFilterElement.cpp \
-	DerivedSources/WebCore/JSSVGFilterElement.h \
-	DerivedSources/WebCore/JSSVGFilterPrimitiveStandardAttributes.h \
-	DerivedSources/WebCore/JSSVGFitToViewBox.h \
-	DerivedSources/WebCore/JSSVGFontElement.cpp \
-	DerivedSources/WebCore/JSSVGFontElement.h \
-	DerivedSources/WebCore/JSSVGFontFaceElement.cpp \
-	DerivedSources/WebCore/JSSVGFontFaceElement.h \
-	DerivedSources/WebCore/JSSVGFontFaceFormatElement.cpp \
-	DerivedSources/WebCore/JSSVGFontFaceFormatElement.h \
-	DerivedSources/WebCore/JSSVGFontFaceNameElement.cpp \
-	DerivedSources/WebCore/JSSVGFontFaceNameElement.h \
-	DerivedSources/WebCore/JSSVGFontFaceSrcElement.cpp \
-	DerivedSources/WebCore/JSSVGFontFaceSrcElement.h \
-	DerivedSources/WebCore/JSSVGFontFaceUriElement.cpp \
-	DerivedSources/WebCore/JSSVGFontFaceUriElement.h \
-	DerivedSources/WebCore/JSSVGForeignObjectElement.cpp \
-	DerivedSources/WebCore/JSSVGForeignObjectElement.h \
-	DerivedSources/WebCore/JSSVGGElement.cpp \
-	DerivedSources/WebCore/JSSVGGElement.h \
-	DerivedSources/WebCore/JSSVGGlyphElement.cpp \
-	DerivedSources/WebCore/JSSVGGlyphElement.h \
-	DerivedSources/WebCore/JSSVGGlyphRefElement.cpp \
-	DerivedSources/WebCore/JSSVGGlyphRefElement.h \
-	DerivedSources/WebCore/JSSVGGradientElement.cpp \
-	DerivedSources/WebCore/JSSVGGradientElement.h \
-	DerivedSources/WebCore/JSSVGHKernElement.cpp \
-	DerivedSources/WebCore/JSSVGHKernElement.h \
-	DerivedSources/WebCore/JSSVGImageElement.cpp \
-	DerivedSources/WebCore/JSSVGImageElement.h \
-	DerivedSources/WebCore/JSSVGLangSpace.h \
-	DerivedSources/WebCore/JSSVGLength.cpp \
-	DerivedSources/WebCore/JSSVGLength.h \
-	DerivedSources/WebCore/JSSVGLengthList.cpp \
-	DerivedSources/WebCore/JSSVGLengthList.h \
-	DerivedSources/WebCore/JSSVGLinearGradientElement.cpp \
-	DerivedSources/WebCore/JSSVGLinearGradientElement.h \
-	DerivedSources/WebCore/JSSVGLineElement.cpp \
-	DerivedSources/WebCore/JSSVGLineElement.h \
-	DerivedSources/WebCore/JSSVGLocatable.h \
-	DerivedSources/WebCore/JSSVGMPathElement.cpp \
-	DerivedSources/WebCore/JSSVGMPathElement.h \
-	DerivedSources/WebCore/JSSVGMarkerElement.cpp \
-	DerivedSources/WebCore/JSSVGMarkerElement.h \
-	DerivedSources/WebCore/JSSVGMaskElement.cpp \
-	DerivedSources/WebCore/JSSVGMaskElement.h \
-	DerivedSources/WebCore/JSSVGMatrix.cpp \
-	DerivedSources/WebCore/JSSVGMatrix.h \
-	DerivedSources/WebCore/JSSVGMetadataElement.cpp \
-	DerivedSources/WebCore/JSSVGMetadataElement.h \
-	DerivedSources/WebCore/JSSVGMissingGlyphElement.cpp \
-	DerivedSources/WebCore/JSSVGMissingGlyphElement.h \
-	DerivedSources/WebCore/JSSVGNumber.cpp \
-	DerivedSources/WebCore/JSSVGNumber.h \
-	DerivedSources/WebCore/JSSVGNumberList.cpp \
-	DerivedSources/WebCore/JSSVGNumberList.h \
-	DerivedSources/WebCore/JSSVGPaint.cpp \
-	DerivedSources/WebCore/JSSVGPaint.h \
-	DerivedSources/WebCore/JSSVGPathElement.cpp \
-	DerivedSources/WebCore/JSSVGPathElement.h \
-	DerivedSources/WebCore/JSSVGPathSegArcAbs.cpp \
-	DerivedSources/WebCore/JSSVGPathSegArcAbs.h \
-	DerivedSources/WebCore/JSSVGPathSegArcRel.cpp \
-	DerivedSources/WebCore/JSSVGPathSegArcRel.h \
-	DerivedSources/WebCore/JSSVGPathSegClosePath.cpp \
-	DerivedSources/WebCore/JSSVGPathSegClosePath.h \
-	DerivedSources/WebCore/JSSVGPathSeg.cpp \
-	DerivedSources/WebCore/JSSVGPathSegCurvetoCubicAbs.cpp \
-	DerivedSources/WebCore/JSSVGPathSegCurvetoCubicAbs.h \
-	DerivedSources/WebCore/JSSVGPathSegCurvetoCubicRel.cpp \
-	DerivedSources/WebCore/JSSVGPathSegCurvetoCubicRel.h \
-	DerivedSources/WebCore/JSSVGPathSegCurvetoCubicSmoothAbs.cpp \
-	DerivedSources/WebCore/JSSVGPathSegCurvetoCubicSmoothAbs.h \
-	DerivedSources/WebCore/JSSVGPathSegCurvetoCubicSmoothRel.cpp \
-	DerivedSources/WebCore/JSSVGPathSegCurvetoCubicSmoothRel.h \
-	DerivedSources/WebCore/JSSVGPathSegCurvetoQuadraticAbs.cpp \
-	DerivedSources/WebCore/JSSVGPathSegCurvetoQuadraticAbs.h \
-	DerivedSources/WebCore/JSSVGPathSegCurvetoQuadraticRel.cpp \
-	DerivedSources/WebCore/JSSVGPathSegCurvetoQuadraticRel.h \
-	DerivedSources/WebCore/JSSVGPathSegCurvetoQuadraticSmoothAbs.cpp \
-	DerivedSources/WebCore/JSSVGPathSegCurvetoQuadraticSmoothAbs.h \
-	DerivedSources/WebCore/JSSVGPathSegCurvetoQuadraticSmoothRel.cpp \
-	DerivedSources/WebCore/JSSVGPathSegCurvetoQuadraticSmoothRel.h \
-	DerivedSources/WebCore/JSSVGPathSeg.h \
-	DerivedSources/WebCore/JSSVGPathSegLinetoAbs.cpp \
-	DerivedSources/WebCore/JSSVGPathSegLinetoAbs.h \
-	DerivedSources/WebCore/JSSVGPathSegLinetoHorizontalAbs.cpp \
-	DerivedSources/WebCore/JSSVGPathSegLinetoHorizontalAbs.h \
-	DerivedSources/WebCore/JSSVGPathSegLinetoHorizontalRel.cpp \
-	DerivedSources/WebCore/JSSVGPathSegLinetoHorizontalRel.h \
-	DerivedSources/WebCore/JSSVGPathSegLinetoRel.cpp \
-	DerivedSources/WebCore/JSSVGPathSegLinetoRel.h \
-	DerivedSources/WebCore/JSSVGPathSegLinetoVerticalAbs.cpp \
-	DerivedSources/WebCore/JSSVGPathSegLinetoVerticalAbs.h \
-	DerivedSources/WebCore/JSSVGPathSegLinetoVerticalRel.cpp \
-	DerivedSources/WebCore/JSSVGPathSegLinetoVerticalRel.h \
-	DerivedSources/WebCore/JSSVGPathSegList.cpp \
-	DerivedSources/WebCore/JSSVGPathSegList.h \
-	DerivedSources/WebCore/JSSVGPathSegMovetoAbs.cpp \
-	DerivedSources/WebCore/JSSVGPathSegMovetoAbs.h \
-	DerivedSources/WebCore/JSSVGPathSegMovetoRel.cpp \
-	DerivedSources/WebCore/JSSVGPathSegMovetoRel.h \
-	DerivedSources/WebCore/JSSVGPatternElement.cpp \
-	DerivedSources/WebCore/JSSVGPatternElement.h \
-	DerivedSources/WebCore/JSSVGPoint.cpp \
-	DerivedSources/WebCore/JSSVGPoint.h \
-	DerivedSources/WebCore/JSSVGPointList.cpp \
-	DerivedSources/WebCore/JSSVGPointList.h \
-	DerivedSources/WebCore/JSSVGPolygonElement.cpp \
-	DerivedSources/WebCore/JSSVGPolygonElement.h \
-	DerivedSources/WebCore/JSSVGPolylineElement.cpp \
-	DerivedSources/WebCore/JSSVGPolylineElement.h \
-	DerivedSources/WebCore/JSSVGPreserveAspectRatio.cpp \
-	DerivedSources/WebCore/JSSVGPreserveAspectRatio.h \
-	DerivedSources/WebCore/JSSVGRadialGradientElement.cpp \
-	DerivedSources/WebCore/JSSVGRadialGradientElement.h \
-	DerivedSources/WebCore/JSSVGRect.cpp \
-	DerivedSources/WebCore/JSSVGRectElement.cpp \
-	DerivedSources/WebCore/JSSVGRectElement.h \
-	DerivedSources/WebCore/JSSVGRect.h \
-	DerivedSources/WebCore/JSSVGRenderingIntent.cpp \
-	DerivedSources/WebCore/JSSVGRenderingIntent.h \
-	DerivedSources/WebCore/JSSVGScriptElement.cpp \
-	DerivedSources/WebCore/JSSVGScriptElement.h \
-	DerivedSources/WebCore/JSSVGSetElement.cpp \
-	DerivedSources/WebCore/JSSVGSetElement.h \
-	DerivedSources/WebCore/JSSVGStopElement.cpp \
-	DerivedSources/WebCore/JSSVGStopElement.h \
-	DerivedSources/WebCore/JSSVGStringList.cpp \
-	DerivedSources/WebCore/JSSVGStringList.h \
-	DerivedSources/WebCore/JSSVGStylable.h \
-	DerivedSources/WebCore/JSSVGStyleElement.cpp \
-	DerivedSources/WebCore/JSSVGStyleElement.h \
-	DerivedSources/WebCore/JSSVGSVGElement.cpp \
-	DerivedSources/WebCore/JSSVGSVGElement.h \
-	DerivedSources/WebCore/JSSVGSwitchElement.cpp \
-	DerivedSources/WebCore/JSSVGSwitchElement.h \
-	DerivedSources/WebCore/JSSVGSymbolElement.cpp \
-	DerivedSources/WebCore/JSSVGSymbolElement.h \
-	DerivedSources/WebCore/JSSVGTests.h \
-	DerivedSources/WebCore/JSSVGTextContentElement.cpp \
-	DerivedSources/WebCore/JSSVGTextContentElement.h \
-	DerivedSources/WebCore/JSSVGTextElement.cpp \
-	DerivedSources/WebCore/JSSVGTextElement.h \
-	DerivedSources/WebCore/JSSVGTextPathElement.cpp \
-	DerivedSources/WebCore/JSSVGTextPathElement.h \
-	DerivedSources/WebCore/JSSVGTextPositioningElement.cpp \
-	DerivedSources/WebCore/JSSVGTextPositioningElement.h \
-	DerivedSources/WebCore/JSSVGTitleElement.cpp \
-	DerivedSources/WebCore/JSSVGTitleElement.h \
-	DerivedSources/WebCore/JSSVGTransformable.h \
-	DerivedSources/WebCore/JSSVGTransform.cpp \
-	DerivedSources/WebCore/JSSVGTransform.h \
-	DerivedSources/WebCore/JSSVGTransformList.cpp \
-	DerivedSources/WebCore/JSSVGTransformList.h \
-	DerivedSources/WebCore/JSSVGTRefElement.cpp \
-	DerivedSources/WebCore/JSSVGTRefElement.h \
-	DerivedSources/WebCore/JSSVGTSpanElement.cpp \
-	DerivedSources/WebCore/JSSVGTSpanElement.h \
-	DerivedSources/WebCore/JSSVGUnitTypes.cpp \
-	DerivedSources/WebCore/JSSVGUnitTypes.h \
-	DerivedSources/WebCore/JSSVGURIReference.h \
-	DerivedSources/WebCore/JSSVGUseElement.cpp \
-	DerivedSources/WebCore/JSSVGUseElement.h \
-	DerivedSources/WebCore/JSSVGViewElement.cpp \
-	DerivedSources/WebCore/JSSVGViewElement.h \
-	DerivedSources/WebCore/JSSVGViewSpec.cpp \
-	DerivedSources/WebCore/JSSVGViewSpec.h \
-	DerivedSources/WebCore/JSSVGVKernElement.cpp \
-	DerivedSources/WebCore/JSSVGVKernElement.h \
-	DerivedSources/WebCore/JSSVGZoomAndPan.cpp \
-	DerivedSources/WebCore/JSSVGZoomAndPan.h \
-	DerivedSources/WebCore/JSSVGZoomEvent.cpp \
-	DerivedSources/WebCore/JSSVGZoomEvent.h
-
-dom_binding_idls += \
-	$(WebCore)/svg/SVGAElement.idl \
-	$(WebCore)/svg/SVGAltGlyphDefElement.idl \
-	$(WebCore)/svg/SVGAltGlyphElement.idl \
-	$(WebCore)/svg/SVGAltGlyphItemElement.idl \
-	$(WebCore)/svg/SVGAngle.idl \
-	$(WebCore)/svg/SVGAnimateColorElement.idl \
-	$(WebCore)/svg/SVGAnimateElement.idl \
-	$(WebCore)/svg/SVGAnimateMotionElement.idl \
-	$(WebCore)/svg/SVGAnimateTransformElement.idl \
-	$(WebCore)/svg/SVGAnimatedAngle.idl \
-	$(WebCore)/svg/SVGAnimatedBoolean.idl \
-	$(WebCore)/svg/SVGAnimatedEnumeration.idl \
-	$(WebCore)/svg/SVGAnimatedInteger.idl \
-	$(WebCore)/svg/SVGAnimatedLength.idl \
-	$(WebCore)/svg/SVGAnimatedLengthList.idl \
-	$(WebCore)/svg/SVGAnimatedNumber.idl \
-	$(WebCore)/svg/SVGAnimatedNumberList.idl \
-	$(WebCore)/svg/SVGAnimatedPreserveAspectRatio.idl \
-	$(WebCore)/svg/SVGAnimatedRect.idl \
-	$(WebCore)/svg/SVGAnimatedString.idl \
-	$(WebCore)/svg/SVGAnimatedTransformList.idl \
-	$(WebCore)/svg/SVGAnimationElement.idl \
-	$(WebCore)/svg/SVGCircleElement.idl \
-	$(WebCore)/svg/SVGClipPathElement.idl \
-	$(WebCore)/svg/SVGColor.idl \
-	$(WebCore)/svg/SVGComponentTransferFunctionElement.idl \
-	$(WebCore)/svg/SVGCursorElement.idl \
-	$(WebCore)/svg/SVGDefsElement.idl \
-	$(WebCore)/svg/SVGDescElement.idl \
-	$(WebCore)/svg/SVGDocument.idl \
-	$(WebCore)/svg/SVGElement.idl \
-	$(WebCore)/svg/SVGElementInstance.idl \
-	$(WebCore)/svg/SVGElementInstanceList.idl \
-	$(WebCore)/svg/SVGEllipseElement.idl \
-	$(WebCore)/svg/SVGException.idl \
-	$(WebCore)/svg/SVGFEBlendElement.idl \
-	$(WebCore)/svg/SVGFEColorMatrixElement.idl \
-	$(WebCore)/svg/SVGFEComponentTransferElement.idl \
-	$(WebCore)/svg/SVGFECompositeElement.idl \
-	$(WebCore)/svg/SVGFEConvolveMatrixElement.idl \
-	$(WebCore)/svg/SVGFEDiffuseLightingElement.idl \
-	$(WebCore)/svg/SVGFEDisplacementMapElement.idl \
-	$(WebCore)/svg/SVGFEDistantLightElement.idl \
-	$(WebCore)/svg/SVGFEDropShadowElement.idl \
-	$(WebCore)/svg/SVGFEFloodElement.idl \
-	$(WebCore)/svg/SVGFEFuncAElement.idl \
-	$(WebCore)/svg/SVGFEFuncBElement.idl \
-	$(WebCore)/svg/SVGFEFuncGElement.idl \
-	$(WebCore)/svg/SVGFEFuncRElement.idl \
-	$(WebCore)/svg/SVGFEGaussianBlurElement.idl \
-	$(WebCore)/svg/SVGFEImageElement.idl \
-	$(WebCore)/svg/SVGFEMergeElement.idl \
-	$(WebCore)/svg/SVGFEMergeNodeElement.idl \
-	$(WebCore)/svg/SVGFEMorphologyElement.idl \
-	$(WebCore)/svg/SVGFEOffsetElement.idl \
-	$(WebCore)/svg/SVGFEPointLightElement.idl \
-	$(WebCore)/svg/SVGFESpecularLightingElement.idl \
-	$(WebCore)/svg/SVGFESpotLightElement.idl \
-	$(WebCore)/svg/SVGFETileElement.idl \
-	$(WebCore)/svg/SVGFETurbulenceElement.idl \
-	$(WebCore)/svg/SVGFilterElement.idl \
-	$(WebCore)/svg/SVGFontElement.idl \
-	$(WebCore)/svg/SVGFontFaceElement.idl \
-	$(WebCore)/svg/SVGFontFaceFormatElement.idl \
-	$(WebCore)/svg/SVGFontFaceNameElement.idl \
-	$(WebCore)/svg/SVGFontFaceSrcElement.idl \
-	$(WebCore)/svg/SVGFontFaceUriElement.idl \
-	$(WebCore)/svg/SVGForeignObjectElement.idl \
-	$(WebCore)/svg/SVGGElement.idl \
-	$(WebCore)/svg/SVGGlyphElement.idl \
-	$(WebCore)/svg/SVGGlyphRefElement.idl \
-	$(WebCore)/svg/SVGGradientElement.idl \
-	$(WebCore)/svg/SVGHKernElement.idl \
-	$(WebCore)/svg/SVGImageElement.idl \
-	$(WebCore)/svg/SVGLength.idl \
-	$(WebCore)/svg/SVGLengthList.idl \
-	$(WebCore)/svg/SVGLineElement.idl \
-	$(WebCore)/svg/SVGLinearGradientElement.idl \
-	$(WebCore)/svg/SVGMPathElement.idl \
-	$(WebCore)/svg/SVGMarkerElement.idl \
-	$(WebCore)/svg/SVGMaskElement.idl \
-	$(WebCore)/svg/SVGMatrix.idl \
-	$(WebCore)/svg/SVGMetadataElement.idl \
-	$(WebCore)/svg/SVGMissingGlyphElement.idl \
-	$(WebCore)/svg/SVGNumber.idl \
-	$(WebCore)/svg/SVGNumberList.idl \
-	$(WebCore)/svg/SVGPaint.idl \
-	$(WebCore)/svg/SVGPathElement.idl \
-	$(WebCore)/svg/SVGPathSeg.idl \
-	$(WebCore)/svg/SVGPathSegArcAbs.idl \
-	$(WebCore)/svg/SVGPathSegArcRel.idl \
-	$(WebCore)/svg/SVGPathSegClosePath.idl \
-	$(WebCore)/svg/SVGPathSegCurvetoCubicAbs.idl \
-	$(WebCore)/svg/SVGPathSegCurvetoCubicRel.idl \
-	$(WebCore)/svg/SVGPathSegCurvetoCubicSmoothAbs.idl \
-	$(WebCore)/svg/SVGPathSegCurvetoCubicSmoothRel.idl \
-	$(WebCore)/svg/SVGPathSegCurvetoQuadraticAbs.idl \
-	$(WebCore)/svg/SVGPathSegCurvetoQuadraticRel.idl \
-	$(WebCore)/svg/SVGPathSegCurvetoQuadraticSmoothAbs.idl \
-	$(WebCore)/svg/SVGPathSegCurvetoQuadraticSmoothRel.idl \
-	$(WebCore)/svg/SVGPathSegLinetoAbs.idl \
-	$(WebCore)/svg/SVGPathSegLinetoHorizontalAbs.idl \
-	$(WebCore)/svg/SVGPathSegLinetoHorizontalRel.idl \
-	$(WebCore)/svg/SVGPathSegLinetoRel.idl \
-	$(WebCore)/svg/SVGPathSegLinetoVerticalAbs.idl \
-	$(WebCore)/svg/SVGPathSegLinetoVerticalRel.idl \
-	$(WebCore)/svg/SVGPathSegList.idl \
-	$(WebCore)/svg/SVGPathSegMovetoAbs.idl \
-	$(WebCore)/svg/SVGPathSegMovetoRel.idl \
-	$(WebCore)/svg/SVGPatternElement.idl \
-	$(WebCore)/svg/SVGPoint.idl \
-	$(WebCore)/svg/SVGPointList.idl \
-	$(WebCore)/svg/SVGPolygonElement.idl \
-	$(WebCore)/svg/SVGPolylineElement.idl \
-	$(WebCore)/svg/SVGPreserveAspectRatio.idl \
-	$(WebCore)/svg/SVGRadialGradientElement.idl \
-	$(WebCore)/svg/SVGRect.idl \
-	$(WebCore)/svg/SVGRectElement.idl \
-	$(WebCore)/svg/SVGRenderingIntent.idl \
-	$(WebCore)/svg/SVGSVGElement.idl \
-	$(WebCore)/svg/SVGScriptElement.idl \
-	$(WebCore)/svg/SVGSetElement.idl \
-	$(WebCore)/svg/SVGStopElement.idl \
-	$(WebCore)/svg/SVGStringList.idl \
-	$(WebCore)/svg/SVGStyleElement.idl \
-	$(WebCore)/svg/SVGSwitchElement.idl \
-	$(WebCore)/svg/SVGSymbolElement.idl \
-	$(WebCore)/svg/SVGTRefElement.idl \
-	$(WebCore)/svg/SVGTSpanElement.idl \
-	$(WebCore)/svg/SVGTextContentElement.idl \
-	$(WebCore)/svg/SVGTextElement.idl \
-	$(WebCore)/svg/SVGTextPathElement.idl \
-	$(WebCore)/svg/SVGTextPositioningElement.idl \
-	$(WebCore)/svg/SVGTitleElement.idl \
-	$(WebCore)/svg/SVGTransform.idl \
-	$(WebCore)/svg/SVGTransformList.idl \
-	$(WebCore)/svg/SVGUnitTypes.idl \
-	$(WebCore)/svg/SVGUseElement.idl \
-	$(WebCore)/svg/SVGVKernElement.idl \
-	$(WebCore)/svg/SVGViewElement.idl \
-	$(WebCore)/svg/SVGViewSpec.idl \
-	$(WebCore)/svg/SVGZoomAndPan.idl \
-	$(WebCore)/svg/SVGZoomEvent.idl
-endif # END ENABLE_SVG
-
-# ----
-# Web Audio Support
-# ----
-
-if ENABLE_WEB_AUDIO
-webcore_sources += \
-	Source/WebCore/Modules/webaudio/AsyncAudioDecoder.cpp \
-	Source/WebCore/Modules/webaudio/AsyncAudioDecoder.h \
-	Source/WebCore/Modules/webaudio/AudioBasicInspectorNode.cpp \
-	Source/WebCore/Modules/webaudio/AudioBasicInspectorNode.h \
-	Source/WebCore/Modules/webaudio/AudioBasicProcessorNode.cpp \
-	Source/WebCore/Modules/webaudio/AudioBasicProcessorNode.h \
-	Source/WebCore/Modules/webaudio/AudioBuffer.cpp \
-	Source/WebCore/Modules/webaudio/AudioBuffer.h \
-	Source/WebCore/Modules/webaudio/AudioBufferCallback.h \
-	Source/WebCore/Modules/webaudio/AudioBufferSourceNode.cpp \
-	Source/WebCore/Modules/webaudio/AudioBufferSourceNode.h \
-	Source/WebCore/Modules/webaudio/AudioChannelMerger.cpp \
-	Source/WebCore/Modules/webaudio/AudioChannelMerger.h \
-	Source/WebCore/Modules/webaudio/AudioChannelSplitter.cpp \
-	Source/WebCore/Modules/webaudio/AudioChannelSplitter.h \
-	Source/WebCore/Modules/webaudio/AudioContext.cpp \
-	Source/WebCore/Modules/webaudio/AudioContext.h \
-	Source/WebCore/Modules/webaudio/AudioDestinationNode.cpp \
-	Source/WebCore/Modules/webaudio/AudioDestinationNode.h \
-	Source/WebCore/Modules/webaudio/AudioGain.h \
-	Source/WebCore/Modules/webaudio/AudioGainNode.cpp \
-	Source/WebCore/Modules/webaudio/AudioGainNode.h \
-	Source/WebCore/Modules/webaudio/AudioListener.cpp \
-	Source/WebCore/Modules/webaudio/AudioListener.h \
-	Source/WebCore/Modules/webaudio/AudioNode.cpp \
-	Source/WebCore/Modules/webaudio/AudioNode.h \
-	Source/WebCore/Modules/webaudio/AudioNodeInput.cpp \
-	Source/WebCore/Modules/webaudio/AudioNodeInput.h \
-	Source/WebCore/Modules/webaudio/AudioNodeOutput.cpp \
-	Source/WebCore/Modules/webaudio/AudioNodeOutput.h \
-	Source/WebCore/Modules/webaudio/AudioPannerNode.cpp \
-	Source/WebCore/Modules/webaudio/AudioPannerNode.h \
-	Source/WebCore/Modules/webaudio/AudioParam.cpp \
-	Source/WebCore/Modules/webaudio/AudioParam.h \
-	Source/WebCore/Modules/webaudio/AudioParamTimeline.cpp \
-	Source/WebCore/Modules/webaudio/AudioParamTimeline.h \
-	Source/WebCore/Modules/webaudio/AudioProcessingEvent.cpp \
-	Source/WebCore/Modules/webaudio/AudioProcessingEvent.h \
-	Source/WebCore/Modules/webaudio/AudioScheduledSourceNode.cpp \
-	Source/WebCore/Modules/webaudio/AudioScheduledSourceNode.h \
-	Source/WebCore/Modules/webaudio/AudioSummingJunction.cpp \
-	Source/WebCore/Modules/webaudio/AudioSummingJunction.h \
-	Source/WebCore/Modules/webaudio/AudioSourceNode.h \
-	Source/WebCore/Modules/webaudio/BiquadDSPKernel.cpp \
-	Source/WebCore/Modules/webaudio/BiquadDSPKernel.h \
-	Source/WebCore/Modules/webaudio/BiquadFilterNode.cpp \
-	Source/WebCore/Modules/webaudio/BiquadFilterNode.h \
-	Source/WebCore/Modules/webaudio/BiquadProcessor.cpp \
-	Source/WebCore/Modules/webaudio/BiquadProcessor.h \
-	Source/WebCore/Modules/webaudio/ConvolverNode.cpp \
-	Source/WebCore/Modules/webaudio/ConvolverNode.h \
-	Source/WebCore/Modules/webaudio/DefaultAudioDestinationNode.h \
-	Source/WebCore/Modules/webaudio/DefaultAudioDestinationNode.cpp \
-	Source/WebCore/Modules/webaudio/DelayDSPKernel.cpp \
-	Source/WebCore/Modules/webaudio/DelayDSPKernel.h \
-	Source/WebCore/Modules/webaudio/DelayNode.cpp \
-	Source/WebCore/Modules/webaudio/DelayNode.h \
-	Source/WebCore/Modules/webaudio/DelayProcessor.cpp \
-	Source/WebCore/Modules/webaudio/DelayProcessor.h \
-	Source/WebCore/Modules/webaudio/DynamicsCompressorNode.cpp \
-	Source/WebCore/Modules/webaudio/DynamicsCompressorNode.h \
-	Source/WebCore/Modules/webaudio/JavaScriptAudioNode.cpp \
-	Source/WebCore/Modules/webaudio/JavaScriptAudioNode.h \
-	Source/WebCore/Modules/webaudio/MediaElementAudioSourceNode.cpp \
-	Source/WebCore/Modules/webaudio/MediaElementAudioSourceNode.h \
-	Source/WebCore/Modules/webaudio/MediaStreamAudioSourceNode.cpp \
-	Source/WebCore/Modules/webaudio/MediaStreamAudioSourceNode.h \
-	Source/WebCore/Modules/webaudio/OfflineAudioDestinationNode.h \
-	Source/WebCore/Modules/webaudio/OfflineAudioDestinationNode.cpp \
-	Source/WebCore/Modules/webaudio/OfflineAudioCompletionEvent.h \
-	Source/WebCore/Modules/webaudio/OfflineAudioCompletionEvent.cpp \
-	Source/WebCore/Modules/webaudio/Oscillator.h \
-	Source/WebCore/Modules/webaudio/Oscillator.cpp \
-	Source/WebCore/Modules/webaudio/RealtimeAnalyser.cpp \
-	Source/WebCore/Modules/webaudio/RealtimeAnalyser.h \
-	Source/WebCore/Modules/webaudio/RealtimeAnalyserNode.cpp \
-	Source/WebCore/Modules/webaudio/RealtimeAnalyserNode.h \
-	Source/WebCore/Modules/webaudio/WaveShaperNode.cpp \
-	Source/WebCore/Modules/webaudio/WaveShaperProcessor.h \
-	Source/WebCore/Modules/webaudio/WaveShaperDSPKernel.cpp \
-	Source/WebCore/Modules/webaudio/WaveShaperDSPKernel.h \
-	Source/WebCore/Modules/webaudio/WaveShaperProcessor.cpp \
-	Source/WebCore/Modules/webaudio/WaveShaperNode.h \
-	Source/WebCore/Modules/webaudio/WaveTable.cpp \
-	Source/WebCore/Modules/webaudio/WaveTable.h \
-	Source/WebCore/bindings/js/JSAudioBufferSourceNodeCustom.cpp \
-	Source/WebCore/bindings/js/JSAudioContextCustom.cpp \
-	Source/WebCore/bindings/js/JSJavaScriptAudioNodeCustom.cpp \
-	Source/WebCore/platform/audio/AudioArray.h \
-	Source/WebCore/platform/audio/AudioBus.cpp \
-	Source/WebCore/platform/audio/AudioBus.h \
-	Source/WebCore/platform/audio/AudioChannel.cpp \
-	Source/WebCore/platform/audio/AudioChannel.h \
-	Source/WebCore/platform/audio/AudioDestination.h \
-	Source/WebCore/platform/audio/AudioDSPKernel.h \
-	Source/WebCore/platform/audio/AudioDSPKernelProcessor.cpp \
-	Source/WebCore/platform/audio/AudioDSPKernelProcessor.h \
-	Source/WebCore/platform/audio/AudioFileReader.h \
-	Source/WebCore/platform/audio/AudioIOCallback.h \
-	Source/WebCore/platform/audio/AudioProcessor.h \
-	Source/WebCore/platform/audio/AudioResampler.cpp \
-	Source/WebCore/platform/audio/AudioResampler.h \
-	Source/WebCore/platform/audio/AudioResamplerKernel.cpp \
-	Source/WebCore/platform/audio/AudioResamplerKernel.h \
-	Source/WebCore/platform/audio/AudioSourceProvider.h \
-	Source/WebCore/platform/audio/AudioSourceProviderClient.h \
-	Source/WebCore/platform/audio/AudioUtilities.cpp \
-	Source/WebCore/platform/audio/AudioUtilities.h \
-	Source/WebCore/platform/audio/Biquad.cpp \
-	Source/WebCore/platform/audio/Biquad.h \
-	Source/WebCore/platform/audio/Cone.cpp \
-	Source/WebCore/platform/audio/Cone.h \
-	Source/WebCore/platform/audio/DenormalDisabler.h \
-	Source/WebCore/platform/audio/DirectConvolver.cpp \
-	Source/WebCore/platform/audio/DirectConvolver.h \
-	Source/WebCore/platform/audio/Distance.cpp \
-	Source/WebCore/platform/audio/Distance.h \
-	Source/WebCore/platform/audio/DynamicsCompressor.h \
-	Source/WebCore/platform/audio/DynamicsCompressorKernel.cpp \
-	Source/WebCore/platform/audio/DynamicsCompressorKernel.h \
-	Source/WebCore/platform/audio/DynamicsCompressor.cpp \
-	Source/WebCore/platform/audio/EqualPowerPanner.cpp \
-	Source/WebCore/platform/audio/EqualPowerPanner.h \
-	Source/WebCore/platform/audio/FFTConvolver.cpp \
-	Source/WebCore/platform/audio/FFTConvolver.h \
-	Source/WebCore/platform/audio/FFTFrame.cpp \
-	Source/WebCore/platform/audio/FFTFrame.h \
-	Source/WebCore/platform/audio/FFTFrameStub.cpp \
-	Source/WebCore/platform/audio/HRTFDatabase.cpp \
-	Source/WebCore/platform/audio/HRTFDatabase.h \
-	Source/WebCore/platform/audio/HRTFDatabaseLoader.cpp \
-	Source/WebCore/platform/audio/HRTFDatabaseLoader.h \
-	Source/WebCore/platform/audio/HRTFElevation.cpp \
-	Source/WebCore/platform/audio/HRTFElevation.h \
-	Source/WebCore/platform/audio/HRTFKernel.cpp \
-	Source/WebCore/platform/audio/HRTFKernel.h \
-	Source/WebCore/platform/audio/HRTFPanner.cpp \
-	Source/WebCore/platform/audio/HRTFPanner.h \
-	Source/WebCore/platform/audio/MultiChannelResampler.cpp \
-	Source/WebCore/platform/audio/MultiChannelResampler.h \
-	Source/WebCore/platform/audio/Panner.cpp \
-	Source/WebCore/platform/audio/Panner.h \
-	Source/WebCore/platform/audio/ReverbAccumulationBuffer.cpp \
-	Source/WebCore/platform/audio/ReverbAccumulationBuffer.h \
-	Source/WebCore/platform/audio/ReverbConvolver.cpp \
-	Source/WebCore/platform/audio/ReverbConvolver.h \
-	Source/WebCore/platform/audio/ReverbConvolverStage.cpp \
-	Source/WebCore/platform/audio/ReverbConvolverStage.h \
-	Source/WebCore/platform/audio/Reverb.cpp \
-	Source/WebCore/platform/audio/Reverb.h \
-	Source/WebCore/platform/audio/ReverbInputBuffer.cpp \
-	Source/WebCore/platform/audio/ReverbInputBuffer.h \
-	Source/WebCore/platform/audio/SincResampler.cpp \
-	Source/WebCore/platform/audio/SincResampler.h \
-	Source/WebCore/platform/audio/VectorMath.cpp \
-	Source/WebCore/platform/audio/VectorMath.h \
-	Source/WebCore/platform/audio/ZeroPole.cpp \
-	Source/WebCore/platform/audio/ZeroPole.h \
-	Source/WebCore/platform/audio/gstreamer/AudioDestinationGStreamer.cpp \
-	Source/WebCore/platform/audio/gstreamer/AudioDestinationGStreamer.h \
-	Source/WebCore/platform/audio/gstreamer/AudioFileReaderGStreamer.cpp \
-	Source/WebCore/platform/audio/gstreamer/FFTFrameGStreamer.cpp \
-	Source/WebCore/platform/audio/gstreamer/WebKitWebAudioSourceGStreamer.cpp \
-	Source/WebCore/platform/audio/gstreamer/WebKitWebAudioSourceGStreamer.h \
-	Source/WebCore/platform/audio/gtk/AudioBusGtk.cpp
-
-webcore_built_sources += \
-	DerivedSources/WebCore/JSAudioBuffer.cpp \
-	DerivedSources/WebCore/JSAudioBuffer.h \
-	DerivedSources/WebCore/JSAudioBufferCallback.cpp \
-	DerivedSources/WebCore/JSAudioBufferCallback.h \
-	DerivedSources/WebCore/JSAudioBufferSourceNode.cpp \
-	DerivedSources/WebCore/JSAudioBufferSourceNode.h \
-	DerivedSources/WebCore/JSAudioChannelMerger.cpp \
-	DerivedSources/WebCore/JSAudioChannelMerger.h \
-	DerivedSources/WebCore/JSAudioChannelSplitter.cpp \
-	DerivedSources/WebCore/JSAudioChannelSplitter.h \
-	DerivedSources/WebCore/JSAudioDestinationNode.cpp \
-	DerivedSources/WebCore/JSAudioDestinationNode.h \
-	DerivedSources/WebCore/JSAudioGain.cpp \
-	DerivedSources/WebCore/JSAudioGain.h \
-	DerivedSources/WebCore/JSAudioGainNode.cpp \
-	DerivedSources/WebCore/JSAudioGainNode.h \
-	DerivedSources/WebCore/JSAudioListener.cpp \
-	DerivedSources/WebCore/JSAudioListener.h \
-	DerivedSources/WebCore/JSAudioNode.cpp \
-	DerivedSources/WebCore/JSAudioNode.h \
-	DerivedSources/WebCore/JSAudioParam.cpp \
-	DerivedSources/WebCore/JSAudioParam.h \
-	DerivedSources/WebCore/JSAudioProcessingEvent.cpp \
-	DerivedSources/WebCore/JSAudioProcessingEvent.h \
-	DerivedSources/WebCore/JSAudioSourceNode.cpp \
-	DerivedSources/WebCore/JSAudioSourceNode.h \
-	DerivedSources/WebCore/JSBiquadFilterNode.cpp \
-	DerivedSources/WebCore/JSBiquadFilterNode.h \
-	DerivedSources/WebCore/JSConvolverNode.cpp \
-	DerivedSources/WebCore/JSConvolverNode.h \
-	DerivedSources/WebCore/JSDelayNode.cpp \
-	DerivedSources/WebCore/JSDelayNode.h \
-	DerivedSources/WebCore/JSJavaScriptAudioNode.cpp \
-	DerivedSources/WebCore/JSJavaScriptAudioNode.h \
-	DerivedSources/WebCore/JSOfflineAudioCompletionEvent.cpp \
-	DerivedSources/WebCore/JSOfflineAudioCompletionEvent.h \
-	DerivedSources/WebCore/JSMediaElementAudioSourceNode.cpp \
-	DerivedSources/WebCore/JSMediaElementAudioSourceNode.h \
-	DerivedSources/WebCore/JSMediaStreamAudioSourceNode.cpp \
-	DerivedSources/WebCore/JSMediaStreamAudioSourceNode.h \
-	DerivedSources/WebCore/JSRealtimeAnalyserNode.cpp \
-	DerivedSources/WebCore/JSRealtimeAnalyserNode.h
-
-dom_binding_idls += \
-	$(WebCore)/Modules/webaudio/AudioBuffer.idl \
-	$(WebCore)/Modules/webaudio/AudioBufferCallback.idl \
-	$(WebCore)/Modules/webaudio/AudioBufferSourceNode.idl \
-	$(WebCore)/Modules/webaudio/AudioChannelMerger.idl \
-	$(WebCore)/Modules/webaudio/AudioChannelSplitter.idl \
-	$(WebCore)/Modules/webaudio/AudioDestinationNode.idl \
-	$(WebCore)/Modules/webaudio/AudioGain.idl \
-	$(WebCore)/Modules/webaudio/AudioGainNode.idl \
-	$(WebCore)/Modules/webaudio/AudioListener.idl \
-	$(WebCore)/Modules/webaudio/AudioNode.idl \
-	$(WebCore)/Modules/webaudio/AudioParam.idl \
-	$(WebCore)/Modules/webaudio/AudioProcessingEvent.idl \
-	$(WebCore)/Modules/webaudio/AudioSourceNode.idl \
-	$(WebCore)/Modules/webaudio/BiquadFilterNode.idl \
-	$(WebCore)/Modules/webaudio/ConvolverNode.idl \
-	$(WebCore)/Modules/webaudio/DelayNode.idl \
-	$(WebCore)/Modules/webaudio/JavaScriptAudioNode.idl \
-	$(WebCore)/Modules/webaudio/MediaElementAudioSourceNode.idl \
-	$(WebCore)/Modules/webaudio/MediaStreamAudioSourceNode.idl \
-	$(WebCore)/Modules/webaudio/OfflineAudioCompletionEvent.idl \
-    $(WebCore)/Modules/webaudio/Oscillator.idl \
-	$(WebCore)/Modules/webaudio/RealtimeAnalyserNode.idl \
-    $(WebCore)/Modules/webaudio/WaveTable.idl
-endif
-
 if USE_GSTREAMER
 webcoregtk_sources += \
 	Source/WebCore/platform/graphics/gstreamer/GRefPtrGStreamer.cpp \
@@ -5932,23 +5963,6 @@ webcoregtk_sources += \
 	Source/WebCore/platform/graphics/gstreamer/GStreamerVersioning.cpp \
 	Source/WebCore/platform/graphics/gstreamer/GStreamerVersioning.h
 endif
-
-# ----
-# Web Sockets Support
-# ----
-if ENABLE_WEB_SOCKETS
-webcore_built_sources += \
-	DerivedSources/WebCore/JSCloseEvent.cpp \
-	DerivedSources/WebCore/JSCloseEvent.h \
-	DerivedSources/WebCore/JSWebSocket.cpp \
-	DerivedSources/WebCore/JSWebSocket.h
-
-dom_binding_idls += \
-	$(WebCore)/Modules/websockets/CloseEvent.idl \
-	$(WebCore)/Modules/websockets/DOMWindowWebSocket.idl \
-	$(WebCore)/Modules/websockets/WebSocket.idl \
-	$(WebCore)/Modules/websockets/WorkerContextWebSocket.idl
-endif  # END ENABLE_WEB_SOCKETS
 
 # ---
 # 3D canvas (WebGL) support
@@ -6096,76 +6110,8 @@ webcore_sources += \
 	Source/ThirdParty/ANGLE/src/compiler/ValidateLimitations.cpp \
 	Source/ThirdParty/ANGLE/src/compiler/ValidateLimitations.h \
 	Source/ThirdParty/ANGLE/src/compiler/VariableInfo.cpp \
-	Source/ThirdParty/ANGLE/src/compiler/VariableInfo.h \
-	Source/WebCore/html/canvas/WebGLActiveInfo.h \
-	Source/WebCore/html/canvas/WebGLBuffer.cpp \
-	Source/WebCore/html/canvas/WebGLBuffer.h \
-	Source/WebCore/html/canvas/WebGLCompressedTextureS3TC.cpp \
-	Source/WebCore/html/canvas/WebGLCompressedTextureS3TC.h \
-	Source/WebCore/html/canvas/WebGLContextAttributes.cpp \
-	Source/WebCore/html/canvas/WebGLContextAttributes.h \
-	Source/WebCore/html/canvas/WebGLContextEvent.cpp \
-	Source/WebCore/html/canvas/WebGLContextEvent.h \
-	Source/WebCore/html/canvas/WebGLContextGroup.cpp \
-	Source/WebCore/html/canvas/WebGLContextGroup.h \
-	Source/WebCore/html/canvas/WebGLContextObject.cpp \
-	Source/WebCore/html/canvas/WebGLContextObject.h \
-	Source/WebCore/html/canvas/WebGLDebugRendererInfo.cpp \
-	Source/WebCore/html/canvas/WebGLDebugRendererInfo.h \
-	Source/WebCore/html/canvas/WebGLDebugShaders.cpp \
-	Source/WebCore/html/canvas/WebGLDebugShaders.h \
-	Source/WebCore/html/canvas/WebGLDepthTexture.cpp \
-	Source/WebCore/html/canvas/WebGLDepthTexture.h \
-	Source/WebCore/html/canvas/WebGLFramebuffer.cpp \
-	Source/WebCore/html/canvas/WebGLFramebuffer.h \
-	Source/WebCore/html/canvas/WebGLGetInfo.cpp \
-	Source/WebCore/html/canvas/WebGLGetInfo.h \
-	Source/WebCore/html/canvas/WebGLLoseContext.cpp \
-	Source/WebCore/html/canvas/WebGLLoseContext.h \
-	Source/WebCore/html/canvas/WebGLObject.cpp \
-	Source/WebCore/html/canvas/WebGLObject.h \
-	Source/WebCore/html/canvas/WebGLProgram.cpp \
-	Source/WebCore/html/canvas/WebGLProgram.h \
-	Source/WebCore/html/canvas/WebGLRenderbuffer.cpp \
-	Source/WebCore/html/canvas/WebGLRenderbuffer.h \
-	Source/WebCore/html/canvas/WebGLRenderingContext.cpp \
-	Source/WebCore/html/canvas/WebGLRenderingContext.h \
-	Source/WebCore/html/canvas/WebGLShader.cpp \
-	Source/WebCore/html/canvas/WebGLShader.h \
-	Source/WebCore/html/canvas/WebGLShaderPrecisionFormat.cpp \
-	Source/WebCore/html/canvas/WebGLShaderPrecisionFormat.h \
-	Source/WebCore/html/canvas/WebGLSharedObject.cpp \
-	Source/WebCore/html/canvas/WebGLSharedObject.h \
-	Source/WebCore/html/canvas/WebGLTexture.cpp \
-	Source/WebCore/html/canvas/WebGLTexture.h \
-	Source/WebCore/html/canvas/WebGLUniformLocation.cpp \
-	Source/WebCore/html/canvas/WebGLUniformLocation.h \
-	Source/WebCore/html/canvas/WebGLVertexArrayObjectOES.cpp \
-	Source/WebCore/html/canvas/WebGLVertexArrayObjectOES.h \
-	Source/WebCore/html/canvas/WebGLExtension.cpp \
-	Source/WebCore/html/canvas/WebGLExtension.h \
-	Source/WebCore/html/canvas/EXTTextureFilterAnisotropic.cpp \
-	Source/WebCore/html/canvas/EXTTextureFilterAnisotropic.h \
-	Source/WebCore/html/canvas/OESStandardDerivatives.cpp \
-	Source/WebCore/html/canvas/OESStandardDerivatives.h \
-	Source/WebCore/html/canvas/OESTextureFloat.cpp \
-	Source/WebCore/html/canvas/OESTextureFloat.h \
-	Source/WebCore/html/canvas/OESVertexArrayObject.cpp \
-	Source/WebCore/html/canvas/OESVertexArrayObject.h \
-	Source/WebCore/platform/graphics/ANGLEWebKitBridge.cpp \
-	Source/WebCore/platform/graphics/ANGLEWebKitBridge.h \
-	Source/WebCore/platform/graphics/gpu/DrawingBuffer.cpp \
-	Source/WebCore/platform/graphics/gpu/DrawingBuffer.h \
-	Source/WebCore/platform/graphics/GraphicsContext3D.cpp \
-	Source/WebCore/platform/graphics/GraphicsContext3D.h \
-	Source/WebCore/platform/graphics/OpenGLShims.cpp \
-	Source/WebCore/platform/graphics/OpenGLShims.h \
-	Source/WebCore/platform/graphics/opengl/Extensions3DOpenGL.cpp \
-	Source/WebCore/platform/graphics/opengl/Extensions3DOpenGL.h \
-	Source/WebCore/platform/graphics/opengl/Extensions3DOpenGLCommon.cpp \
-	Source/WebCore/platform/graphics/opengl/Extensions3DOpenGLCommon.h \
-	Source/WebCore/platform/graphics/opengl/GraphicsContext3DOpenGL.cpp \
-	Source/WebCore/platform/graphics/opengl/GraphicsContext3DOpenGLCommon.cpp
+	Source/ThirdParty/ANGLE/src/compiler/VariableInfo.h
+
 if USE_CLUTTER
 webcore_sources += \
 	Source/WebCore/platform/graphics/clutter/DrawingBufferClutter.cpp \
@@ -6181,35 +6127,6 @@ webcore_sources += \
 endif  # END USE_CLUTTER
 
 endif  # END ENABLE_WEBGL
-
-# ---
-# MHTML support
-# ---
-if ENABLE_MHTML
-webcore_sources += \
-	Source/WebCore/loader/archive/mhtml/MHTMLArchive.cpp \
-	Source/WebCore/loader/archive/mhtml/MHTMLArchive.h \
-	Source/WebCore/loader/archive/mhtml/MHTMLParser.cpp \
-	Source/WebCore/loader/archive/mhtml/MHTMLParser.h
-endif  # END ENABLE_MHTML
-
-# ---
-# RequestAnimationFrame support
-# ---
-if ENABLE_REQUEST_ANIMATION_FRAME
-webcore_built_sources += \
-    DerivedSources/WebCore/JSRequestAnimationFrameCallback.cpp \
-    DerivedSources/WebCore/JSRequestAnimationFrameCallback.h
-
-dom_binding_idls += \
-	$(WebCore)/dom/RequestAnimationFrameCallback.idl
-
-webcore_sources += \
-    Source/WebCore/bindings/js/JSRequestAnimationFrameCallbackCustom.cpp \
-    Source/WebCore/dom/RequestAnimationFrameCallback.h \
-    Source/WebCore/dom/ScriptedAnimationController.cpp \
-    Source/WebCore/dom/ScriptedAnimationController.h
-endif  # END ENABLE_REQUEST_ANIMATION_FRAME
 
 # ---
 # Accelerated compositing support
@@ -6267,60 +6184,3 @@ webcore_sources += \
 	Source/WebCore/platform/graphics/texmap/TextureMapperPlatformLayer.h
 endif  # END USE_TEXTURE_MAPPER_GL
 endif  # USE_ACCELERATED_COMPOSITING
-
-# ---
-# Shadow DOM support
-# ---
-if ENABLE_SHADOW_DOM
-webcore_sources += \
-	Source/WebCore/html/shadow/HTMLShadowElement.cpp \
-	Source/WebCore/html/shadow/HTMLShadowElement.h
-webcore_built_sources += \
-	DerivedSources/WebCore/JSHTMLShadowElement.cpp \
-	DerivedSources/WebCore/JSHTMLShadowElement.h
-dom_binding_idls += \
-	$(WebCore)/html/shadow/HTMLShadowElement.idl
-
-endif  # END ENABLE_SHADOW_DOM
-
-# ----
-# Quota support
-# ----
-if ENABLE_QUOTA
-webcore_sources += \
-	Source/WebCore/Modules/quota/DOMWindowQuota.cpp \
-	Source/WebCore/Modules/quota/DOMWindowQuota.h \
-	Source/WebCore/Modules/quota/StorageInfo.cpp \
-	Source/WebCore/Modules/quota/StorageInfo.h \
-	Source/WebCore/Modules/quota/StorageInfoErrorCallback.h \
-	Source/WebCore/Modules/quota/StorageInfoQuotaCallback.h \
-	Source/WebCore/Modules/quota/StorageInfoUsageCallback.h
-
-webcore_built_sources += \
-	DerivedSources/WebCore/JSStorageInfo.cpp \
-	DerivedSources/WebCore/JSStorageInfo.h \
-	DerivedSources/WebCore/JSStorageInfoErrorCallback.cpp \
-	DerivedSources/WebCore/JSStorageInfoErrorCallback.h \
-	DerivedSources/WebCore/JSStorageInfoQuotaCallback.cpp \
-	DerivedSources/WebCore/JSStorageInfoQuotaCallback.h \
-	DerivedSources/WebCore/JSStorageInfoUsageCallback.cpp \
-	DerivedSources/WebCore/JSStorageInfoUsageCallback.h
-
-dom_binding_idls += \
-	$(WebCore)/Modules/quota/DOMWindowQuota.idl \
-	$(WebCore)/Modules/quota/StorageInfo.idl \
-	$(WebCore)/Modules/quota/StorageInfoErrorCallback.idl \
-	$(WebCore)/Modules/quota/StorageInfoQuotaCallback.idl \
-	$(WebCore)/Modules/quota/StorageInfoUsageCallback.idl
-
-endif  # END ENABLE_QUOTA
-
-# ----
-# Spell check support
-# ----
-if ENABLE_SPELLCHECK
-webcore_sources += \
-	Source/WebCore/platform/text/gtk/TextCheckerEnchant.h \
-	Source/WebCore/platform/text/gtk/TextCheckerEnchant.cpp
-endif # END ENABLE_SPELLCHECK
-
