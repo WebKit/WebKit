@@ -30,7 +30,7 @@
 #include "EditingCallbacks.h"
 
 #include "DumpRenderTree.h"
-#include "LayoutTestController.h"
+#include "TestRunner.h"
 #include <gtk/gtk.h>
 #include <webkit/webkit.h>
 #include <wtf/gobject/GOwnPtr.h>

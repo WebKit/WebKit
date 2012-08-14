@@ -28,7 +28,7 @@
 
 #import "config.h"
 #import "DumpRenderTree.h"
-#import "LayoutTestController.h"
+#import "TestRunner.h"
 
 #import "EditingDelegate.h"
 #import "MockGeolocationProvider.h"

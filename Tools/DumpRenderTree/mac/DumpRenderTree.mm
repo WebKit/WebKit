@@ -40,7 +40,7 @@
 #import "FrameLoadDelegate.h"
 #import "HistoryDelegate.h"
 #import "JavaScriptThreading.h"
-#import "LayoutTestController.h"
+#import "TestRunner.h"
 #import "MockGeolocationProvider.h"
 #import "NavigationController.h"
 #import "ObjCPlugin.h"

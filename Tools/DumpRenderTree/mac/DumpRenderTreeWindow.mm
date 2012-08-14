@@ -34,7 +34,7 @@
 #import "DumpRenderTree.h"
 
 // FIXME: This file is ObjC++ only because of this include. :(
-#import "LayoutTestController.h"
+#import "TestRunner.h"
 #import <WebKit/WebViewPrivate.h>
 #import <WebKit/WebTypesInternal.h>
 

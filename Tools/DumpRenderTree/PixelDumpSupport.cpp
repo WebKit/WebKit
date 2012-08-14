@@ -31,7 +31,7 @@
 
 #include "CyclicRedundancyCheck.h"
 #include "DumpRenderTree.h"
-#include "LayoutTestController.h"
+#include "TestRunner.h"
 #include <cstdio>
 #include <wtf/Assertions.h>
 #include <wtf/RefPtr.h>

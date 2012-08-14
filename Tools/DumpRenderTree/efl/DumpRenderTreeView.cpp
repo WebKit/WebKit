@@ -30,7 +30,7 @@
 #include "DumpRenderTree.h"
 #include "DumpRenderTreeChrome.h"
 #include "DumpRenderTreeEfl.h"
-#include "LayoutTestController.h"
+#include "TestRunner.h"
 #include <EWebKit.h>
 #include <Ecore.h>
 #include <Eina.h>

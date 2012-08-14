@@ -30,7 +30,7 @@
 #import "PolicyDelegate.h"
 
 #import "DumpRenderTree.h"
-#import "LayoutTestController.h"
+#import "TestRunner.h"
 #import <WebKit/DOMElement.h>
 #import <WebKit/WebFrame.h>
 #import <WebKit/WebPolicyDelegate.h>

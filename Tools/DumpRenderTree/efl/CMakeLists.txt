@@ -2,7 +2,7 @@ SET(DumpRenderTree_SOURCES
     ${TOOLS_DIR}/DumpRenderTree/DumpRenderTreeCommon.cpp
     ${TOOLS_DIR}/DumpRenderTree/CyclicRedundancyCheck.cpp
     ${TOOLS_DIR}/DumpRenderTree/GCController.cpp
-    ${TOOLS_DIR}/DumpRenderTree/LayoutTestController.cpp
+    ${TOOLS_DIR}/DumpRenderTree/TestRunner.cpp
     ${TOOLS_DIR}/DumpRenderTree/PixelDumpSupport.cpp
     ${TOOLS_DIR}/DumpRenderTree/WorkQueue.cpp
     ${TOOLS_DIR}/DumpRenderTree/cairo/PixelDumpSupportCairo.cpp
@@ -15,7 +15,7 @@ SET(DumpRenderTree_SOURCES
     ${TOOLS_DIR}/DumpRenderTree/efl/FontManagement.cpp
     ${TOOLS_DIR}/DumpRenderTree/efl/GCControllerEfl.cpp
     ${TOOLS_DIR}/DumpRenderTree/efl/JSStringUtils.cpp
-    ${TOOLS_DIR}/DumpRenderTree/efl/LayoutTestControllerEfl.cpp
+    ${TOOLS_DIR}/DumpRenderTree/efl/TestRunnerEfl.cpp
     ${TOOLS_DIR}/DumpRenderTree/efl/PixelDumpSupportEfl.cpp
     ${TOOLS_DIR}/DumpRenderTree/efl/TextInputController.cpp
     ${TOOLS_DIR}/DumpRenderTree/efl/WorkQueueItemEfl.cpp

@@ -26,7 +26,7 @@
 #import "config.h"
 #import "StorageTrackerDelegate.h"
 
-#import "LayoutTestController.h"
+#import "TestRunner.h"
 #import <WebKit/WebSecurityOriginPrivate.h>
 #import <WebKit/WebStorageManagerPrivate.h>
 

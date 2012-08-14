@@ -28,7 +28,7 @@
 
 #include "DumpRenderTree.h"
 #include "DumpRenderTreeWin.h"
-#include "LayoutTestController.h"
+#include "TestRunner.h"
 #include <string>
 #include <WebKit/WebKit.h>
 

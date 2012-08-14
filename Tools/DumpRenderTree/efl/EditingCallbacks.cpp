@@ -33,10 +33,10 @@
 #include "DumpRenderTree.h"
 #include "EditorClientEfl.h"
 #include "EditorInsertAction.h"
-#include "LayoutTestController.h"
 #include "Node.h"
 #include "Range.h"
 #include "StylePropertySet.h"
+#include "TestRunner.h"
 #include "TextAffinity.h"
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>

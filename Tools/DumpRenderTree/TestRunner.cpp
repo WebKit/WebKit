@@ -28,7 +28,7 @@
  */
 
 #include "config.h"
-#include "LayoutTestController.h"
+#include "TestRunner.h"
 
 #include "WorkQueue.h"
 #include "WorkQueueItem.h"

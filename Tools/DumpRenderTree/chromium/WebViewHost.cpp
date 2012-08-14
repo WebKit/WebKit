@@ -31,8 +31,8 @@
 #include "config.h"
 #include "WebViewHost.h"
 
+#include "DRTTestRunner.h"
 #include "EventSender.h"
-#include "LayoutTestController.h"
 #include "MockGrammarCheck.h"
 #include "MockWebSpeechInputController.h"
 #include "MockWebSpeechRecognizer.h"

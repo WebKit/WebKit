@@ -32,7 +32,7 @@
 #import "DumpRenderTree.h"
 #import "DumpRenderTreeDraggingInfo.h"
 #import "EventSendingController.h"
-#import "LayoutTestController.h"
+#import "TestRunner.h"
 #import <WebKit/WebApplicationCache.h>
 #import <WebKit/WebFramePrivate.h>
 #import <WebKit/WebHTMLViewPrivate.h>

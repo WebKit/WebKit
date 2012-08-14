@@ -32,7 +32,7 @@
 #include "DRTDesktopNotificationPresenter.h"
 
 #include "DumpRenderTree.h"
-#include "LayoutTestController.h"
+#include "TestRunner.h"
 #include <JavaScriptCore/JSStringRef.h>
 #include <JavaScriptCore/JSStringRefBSTR.h>
 #include <WebCore/NotificationClient.h>

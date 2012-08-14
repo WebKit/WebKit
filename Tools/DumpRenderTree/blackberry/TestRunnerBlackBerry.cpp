@@ -17,7 +17,7 @@
  */
 
 #include "config.h"
-#include "LayoutTestController.h"
+#include "TestRunner.h"
 
 #include "CString.h"
 #include "DatabaseTracker.h"

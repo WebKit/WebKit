@@ -26,8 +26,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
  
-#ifndef LayoutTestController_h
-#define LayoutTestController_h
+#ifndef TestRunner_h
+#define TestRunner_h
 
 #include <JavaScriptCore/JSObjectRef.h>
 #include <JavaScriptCore/JSRetainPtr.h>
@@ -43,7 +43,7 @@ public:
     static PassRefPtr<LayoutTestController> create(const std::string& testPathOrURL, const std::string& expectedPixelHash);
     ~LayoutTestController();
 
-    void makeWindowObject(JSContextRef context, JSObjectRef windowObject, JSValueRef* exception);
+    void makeWindowObject(JSContextRef, JSObjectRef windowObject, JSValueRef* exception);
 
     void addDisallowedURL(JSStringRef url);
     void addURLToRedirect(std::string origin, std::string destination);
@@ -86,11 +86,11 @@ public:
     void queueReload();
     void removeAllVisitedLinks();
     void sendWebIntentResponse(JSStringRef response);
-    void setAcceptsEditing(bool acceptsEditing);
+    void setAcceptsEditing(bool);
     void setAllowUniversalAccessFromFileURLs(bool);
     void setAllowFileAccessFromFileURLs(bool);
     void setAppCacheMaximumSize(unsigned long long quota);
-    void setApplicationCacheOriginQuota(unsigned long long quota);
+    void setApplicationCacheOriginQuota(unsigned long long);
     void setAuthorAndUserStylesEnabled(bool);
     void setAutofilled(JSContextRef, JSValueRef nodeObject, bool autofilled);
     void setCacheModel(int);
@@ -98,7 +98,7 @@ public:
     void setDatabaseQuota(unsigned long long quota);
     void setDomainRelaxationForbiddenForURLScheme(bool forbidden, JSStringRef scheme);
     void setDefersLoading(bool);
-    void setIconDatabaseEnabled(bool iconDatabaseEnabled);
+    void setIconDatabaseEnabled(bool);
     void setJavaScriptCanAccessClipboard(bool flag);
     void setAutomaticLinkDetectionEnabled(bool flag);
     void setMainFrameIsFirstResponder(bool flag);
@@ -108,20 +108,20 @@ public:
     void addMockSpeechInputResult(JSStringRef result, double confidence, JSStringRef language);
     void setMockSpeechInputDumpRect(bool flag);
     void setPersistentUserStyleSheetLocation(JSStringRef path);
-    void setPluginsEnabled(bool flag);
-    void setPopupBlockingEnabled(bool flag);
-    void setPrivateBrowsingEnabled(bool flag);
-    void setSelectTrailingWhitespaceEnabled(bool flag);
-    void setSmartInsertDeleteEnabled(bool flag);
-    void setTabKeyCyclesThroughElements(bool cycles);
+    void setPluginsEnabled(bool);
+    void setPopupBlockingEnabled(bool);
+    void setPrivateBrowsingEnabled(bool);
+    void setSelectTrailingWhitespaceEnabled(bool);
+    void setSmartInsertDeleteEnabled(bool);
+    void setTabKeyCyclesThroughElements(bool);
     void setUseDashboardCompatibilityMode(bool flag);
     void setUserStyleSheetEnabled(bool flag);
     void setUserStyleSheetLocation(JSStringRef path);
     void setValueForUser(JSContextRef, JSValueRef nodeObject, JSStringRef value);
-    void setViewModeMediaFeature(JSStringRef mode);
+    void setViewModeMediaFeature(JSStringRef);
     void setXSSAuditorEnabled(bool flag);
-    void setFrameFlatteningEnabled(bool enable);
-    void setSpatialNavigationEnabled(bool enable);
+    void setFrameFlatteningEnabled(bool);
+    void setSpatialNavigationEnabled(bool);
     void setScrollbarPolicy(JSStringRef orientation, JSStringRef policy);
     void startSpeechInput(JSContextRef inputElement);
     void setPageVisibility(const char*);
@@ -244,7 +244,7 @@ public:
     void setTestRepaintSweepHorizontally(bool testRepaintSweepHorizontally) { m_testRepaintSweepHorizontally = testRepaintSweepHorizontally; }
 
     bool waitToDump() const { return m_waitToDump; }
-    void setWaitToDump(bool waitToDump);
+    void setWaitToDump(bool);
     void waitToDumpWatchdogTimerFired();
 
     const std::set<std::string>& willSendRequestClearHeaders() const { return m_willSendRequestClearHeaders; }
@@ -257,10 +257,10 @@ public:
     void setWillSendRequestReturnsNullOnRedirect(bool returnsNull) { m_willSendRequestReturnsNullOnRedirect = returnsNull; }
 
     bool windowIsKey() const { return m_windowIsKey; }
-    void setWindowIsKey(bool windowIsKey);
+    void setWindowIsKey(bool);
 
     bool alwaysAcceptCookies() const { return m_alwaysAcceptCookies; }
-    void setAlwaysAcceptCookies(bool alwaysAcceptCookies);
+    void setAlwaysAcceptCookies(bool);
     
     bool handlesAuthenticationChallenges() const { return m_handlesAuthenticationChallenges; }
     void setHandlesAuthenticationChallenges(bool handlesAuthenticationChallenges) { m_handlesAuthenticationChallenges = handlesAuthenticationChallenges; }
@@ -320,13 +320,13 @@ public:
 
     void setBackingScaleFactor(double);
 
-    void setPOSIXLocale(JSStringRef locale);
+    void setPOSIXLocale(JSStringRef);
 
     void setWebViewEditable(bool);
 
     void abortModal();
 
-    static void setSerializeHTTPLoads(bool serialize);
+    static void setSerializeHTTPLoads(bool);
 
     // The following API test functions should probably be moved to platform-specific 
     // unit tests outside of DRT once they exist.
@@ -338,7 +338,7 @@ public:
 
     JSRetainPtr<JSStringRef> layerTreeAsText() const;
 
-    JSRetainPtr<JSStringRef> markerTextForListItem(JSContextRef context, JSValueRef nodeObject) const;
+    JSRetainPtr<JSStringRef> markerTextForListItem(JSContextRef, JSValueRef nodeObject) const;
 
     JSValueRef originsWithLocalStorage(JSContextRef);
     void deleteAllLocalStorage();
@@ -423,7 +423,7 @@ private:
     std::string m_authenticationUsername;
     std::string m_authenticationPassword; 
     std::string m_testPathOrURL;
-    std::string m_expectedPixelHash;    // empty string if no hash
+    std::string m_expectedPixelHash; // empty string if no hash
     std::string m_titleTextDirection;
 
     std::set<std::string> m_willSendRequestClearHeaders;

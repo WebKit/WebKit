@@ -27,17 +27,17 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef LayoutTestControllerQt_h
-#define LayoutTestControllerQt_h
+#ifndef TestRunnerQt_h
+#define TestRunnerQt_h
 
 #include <QBasicTimer>
 #include <QObject>
 #include <QSize>
 #include <QString>
-#include <QtDebug>
 #include <QTimer>
 #include <QTimerEvent>
 #include <QVariant>
+#include <QtDebug>
 
 #include <qwebdatabase.h>
 #include <qwebelement.h>
@@ -49,15 +49,16 @@
 class QWebFrame;
 class DumpRenderTreeSupportQt;
 namespace WebCore {
-    class DumpRenderTree;
+class DumpRenderTree;
 }
+
 class LayoutTestController : public QObject {
     Q_OBJECT
     Q_PROPERTY(int webHistoryItemCount READ webHistoryItemCount)
     Q_PROPERTY(int workerThreadCount READ workerThreadCount)
     Q_PROPERTY(bool globalFlag READ globalFlag WRITE setGlobalFlag)
 public:
-    LayoutTestController(WebCore::DumpRenderTree* drt);
+    LayoutTestController(WebCore::DumpRenderTree*);
 
     bool shouldDisallowIncreaseForApplicationCacheQuota() const { return m_disallowIncreaseForApplicationCacheQuota; }
     bool shouldDumpAsText() const { return m_textDump; }
@@ -131,7 +132,7 @@ public slots:
     void queueLoadingScript(const QString& script);
     void queueNonLoadingScript(const QString& script);
     void provisionalLoad();
-    void setCloseRemainingWindowsWhenComplete(bool = false) {}
+    void setCloseRemainingWindowsWhenComplete(bool = false) { }
     int windowCount();
     void grantDesktopNotificationPermission(const QString& origin);
     void ignoreDesktopNotificationPermissionRequests();
@@ -144,41 +145,41 @@ public slots:
     void dumpTitleChanges() { m_dumpTitleChanges = true; }
     QString encodeHostName(const QString& host);
     QString decodeHostName(const QString& host);
-    void dumpSelectionRect() const {}
+    void dumpSelectionRect() const { }
     void setDeveloperExtrasEnabled(bool);
     void setAsynchronousSpellCheckingEnabled(bool);
     void showWebInspector();
     void closeWebInspector();
     void evaluateInWebInspector(long callId, const QString& script);
     void removeAllVisitedLinks();
-    void setMediaType(const QString& type);
-    void setFrameFlatteningEnabled(bool enable);
-    void setMockScrollbarsEnabled(bool enable);
+    void setMediaType(const QString&);
+    void setFrameFlatteningEnabled(bool);
+    void setMockScrollbarsEnabled(bool);
     void setAllowUniversalAccessFromFileURLs(bool enable);
     void setAllowFileAccessFromFileURLs(bool enable);
     void setAppCacheMaximumSize(unsigned long long quota);
     void setAutofilled(const QWebElement&, bool enable);
     void setValueForUser(const QWebElement&, const QString& value);
     void setFixedContentsSize(int width, int height);
-    void setPrivateBrowsingEnabled(bool enable);
-    void setSpatialNavigationEnabled(bool enabled);
+    void setPrivateBrowsingEnabled(bool);
+    void setSpatialNavigationEnabled(bool);
     void setPluginsEnabled(bool flag);
-    void setPopupBlockingEnabled(bool enable);
+    void setPopupBlockingEnabled(bool);
     void setPOSIXLocale(const QString& locale);
     void resetLoadFinished() { m_loadFinished = false; }
-    void setWindowIsKey(bool isKey);
-    void setMainFrameIsFirstResponder(bool isFirst);
+    void setWindowIsKey(bool);
+    void setMainFrameIsFirstResponder(bool);
     void setDeferMainResourceDataLoad(bool);
     void setJavaScriptCanAccessClipboard(bool enable);
-    void setXSSAuditorEnabled(bool enable);
-    void setCaretBrowsingEnabled(bool enable);
+    void setXSSAuditorEnabled(bool);
+    void setCaretBrowsingEnabled(bool);
     void setAuthorAndUserStylesEnabled(bool);
     void setViewModeMediaFeature(const QString& mode);
-    void setSmartInsertDeleteEnabled(bool enable);
-    void setSelectTrailingWhitespaceEnabled(bool enable);
+    void setSmartInsertDeleteEnabled(bool);
+    void setSelectTrailingWhitespaceEnabled(bool);
     void execCommand(const QString& name, const QString& value = QString());
     bool isCommandEnabled(const QString& name) const;
-    bool findString(const QString& string, const QStringList& optionArray);
+    bool findString(const QString&, const QStringList& optionArray);
 
     bool pauseAnimationAtTimeOnElementWithId(const QString& animationName, double time, const QString& elementId);
     bool pauseTransitionAtTimeOnElementWithId(const QString& propertyName, double time, const QString& elementId);
@@ -194,32 +195,32 @@ public slots:
 
     void clearAllApplicationCaches();
     void clearApplicationCacheForOrigin(const QString& url);
-    void setApplicationCacheOriginQuota(unsigned long long quota);
+    void setApplicationCacheOriginQuota(unsigned long long);
     QStringList originsWithApplicationCache();
     long long applicationCacheDiskUsageForOrigin(const QString&); 
     void setCacheModel(int);
 
     void setDatabaseQuota(int size);
     void clearAllDatabases();
-    void setIconDatabaseEnabled(bool enable);
+    void setIconDatabaseEnabled(bool);
 
     void setCustomPolicyDelegate(bool enabled, bool permissive = false);
     void waitForPolicyDelegate();
 
     void overridePreference(const QString& name, const QVariant& value);
     void setUserStyleSheetLocation(const QString& url);
-    void setUserStyleSheetEnabled(bool enabled);
+    void setUserStyleSheetEnabled(bool);
     void setDomainRelaxationForbiddenForURLScheme(bool forbidden, const QString& scheme);
     int workerThreadCount();
     int numberOfPages(float width = maxViewWidth, float height = maxViewHeight);
     bool callShouldCloseOnWebView();
     // For now, this is a no-op. This may change depending on outcome of
     // https://bugs.webkit.org/show_bug.cgi?id=33333
-    void setCallCloseOnWebViews() {}
+    void setCallCloseOnWebViews() { }
     // This is a no-op - it allows us to pass
     // plugins/get-url-that-the-resource-load-delegate-will-disallow.html
     // which is a Mac-specific test.
-    void addDisallowedURL(const QString&) {}
+    void addDisallowedURL(const QString&) { }
 
     void setMockDeviceOrientation(bool canProvideAlpha, double alpha, bool canProvideBeta, double beta, bool canProvideGamma, double gamma);
 
@@ -240,7 +241,7 @@ public slots:
     void setAutomaticLinkDetectionEnabled(bool);
 
     // Empty stub method to keep parity with object model exposed by global LayoutTestController.
-    void abortModal() {}
+    void abortModal() { }
 
     void addURLToRedirect(const QString& origin, const QString& destination);
 
@@ -251,7 +252,7 @@ public slots:
     void setScrollbarPolicy(const QString& orientation, const QString& policy);
 
     QString markerTextForListItem(const QWebElement& listItem);
-    QVariantMap computedStyleIncludingVisitedInfo(const QWebElement& element) const;
+    QVariantMap computedStyleIncludingVisitedInfo(const QWebElement&) const;
 
     // Simulate a request an embedding application could make, populating per-session credential storage.
     void authenticateSession(const QString& url, const QString& username, const QString& password);

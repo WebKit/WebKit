@@ -30,7 +30,7 @@
 #import "ResourceLoadDelegate.h"
 
 #import "DumpRenderTree.h"
-#import "LayoutTestController.h"
+#import "TestRunner.h"
 #import <WebKit/WebKit.h>
 #import <WebKit/WebTypesInternal.h>
 #import <WebKit/WebDataSourcePrivate.h>

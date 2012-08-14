@@ -30,7 +30,7 @@
 #include "EditingDelegate.h"
 
 #include "DumpRenderTree.h"
-#include "LayoutTestController.h"
+#include "TestRunner.h"
 #include <WebCore/COMPtr.h>
 #include <wtf/Assertions.h>
 #include <wtf/Platform.h>

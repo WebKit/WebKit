@@ -29,7 +29,7 @@
 #include "config.h"
 #include "DumpRenderTree.h"
 
-#include "LayoutTestController.h"
+#include "TestRunner.h"
 #include "WorkQueue.h"
 #include "WorkQueueItem.h"
 

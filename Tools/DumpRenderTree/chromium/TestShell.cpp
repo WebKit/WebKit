@@ -33,9 +33,8 @@
 
 #include "DRTDevToolsAgent.h"
 #include "DRTDevToolsClient.h"
-#include "LayoutTestController.h"
+#include "DRTTestRunner.h"
 #include "MockWebPrerenderingSupport.h"
-#include "platform/WebArrayBufferView.h"
 #include "WebDataSource.h"
 #include "WebDocument.h"
 #include "WebElement.h"
@@ -49,6 +48,7 @@
 #include "WebSettings.h"
 #include "WebView.h"
 #include "WebViewHost.h"
+#include "platform/WebArrayBufferView.h"
 #include "skia/ext/platform_canvas.h"
 #include "webkit/support/webkit_support.h"
 #include "webkit/support/webkit_support_gfx.h"

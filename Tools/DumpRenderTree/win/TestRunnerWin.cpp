@@ -27,7 +27,7 @@
  */
 
 #include "config.h"
-#include "LayoutTestController.h"
+#include "TestRunner.h"
 
 #include "DumpRenderTree.h"
 #include "EditingDelegate.h"
@@ -42,8 +42,8 @@
 #include <WebKit/WebKit.h>
 #include <WebKit/WebKitCOMAPI.h>
 #include <comutil.h>
-#include <shlwapi.h>
 #include <shlguid.h>
+#include <shlwapi.h>
 #include <shobjidl.h>
 #include <string>
 #include <wtf/Assertions.h>
@@ -623,7 +623,7 @@ void LayoutTestController::setUserStyleSheetEnabled(bool flag)
     if (FAILED(webView->preferences(&preferences)))
         return;
 
-   preferences->setUserStyleSheetEnabled(flag);
+    preferences->setUserStyleSheetEnabled(flag);
 }
 
 bool appendComponentToPath(wstring& path, const wstring& component)
@@ -681,7 +681,7 @@ static bool resolveCygwinPath(const wstring& cygwinPath, wstring& windowsPath)
 {
     wstring fileProtocol = L"file://";
     bool isFileProtocol = cygwinPath.find(fileProtocol) != string::npos;
-    if (cygwinPath[isFileProtocol ? 7 : 0] != '/')  // ensure path is absolute
+    if (cygwinPath[isFileProtocol ? 7 : 0] != '/') // ensure path is absolute
         return false;
 
     // Get the Root path.

@@ -30,7 +30,7 @@
 #include "ResourceLoadDelegate.h"
 
 #include "DumpRenderTree.h"
-#include "LayoutTestController.h"
+#include "TestRunner.h"
 #include <WebKit/WebKitCOMAPI.h>
 #include <comutil.h>
 #include <sstream>

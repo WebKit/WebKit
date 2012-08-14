@@ -1,3 +1,85 @@
+2012-08-13  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Rename files that declare and define LayoutTestController in DumpRenderTree
+        https://bugs.webkit.org/show_bug.cgi?id=93899
+
+        Reviewed by Tony Chang.
+
+        Renamed files and fixed style errors.
+
+        * DumpRenderTree/DumpRenderTree.gypi:
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
+        * DumpRenderTree/LayoutTestController.cpp: Removed.
+        * DumpRenderTree/LayoutTestController.h: Removed.
+        * DumpRenderTree/PixelDumpSupport.cpp:
+        * DumpRenderTree/StorageTrackerDelegate.mm:
+        * DumpRenderTree/TestRunner.cpp: Copied from Tools/DumpRenderTree/LayoutTestController.cpp.
+        * DumpRenderTree/TestRunner.h: Copied from Tools/DumpRenderTree/LayoutTestController.h.
+        (LayoutTestController):
+        * DumpRenderTree/blackberry/DumpRenderTree.cpp:
+        * DumpRenderTree/blackberry/LayoutTestControllerBlackBerry.cpp: Removed.
+        * DumpRenderTree/blackberry/TestRunnerBlackBerry.cpp: Copied from Tools/DumpRenderTree/blackberry/LayoutTestControllerBlackBerry.cpp.
+        * DumpRenderTree/chromium/DRTTestRunner.cpp: Copied from Tools/DumpRenderTree/chromium/LayoutTestController.cpp.
+        * DumpRenderTree/chromium/DRTTestRunner.h: Copied from Tools/DumpRenderTree/chromium/LayoutTestController.h.
+        * DumpRenderTree/chromium/LayoutTestController.cpp: Removed.
+        * DumpRenderTree/chromium/LayoutTestController.h: Removed.
+        * DumpRenderTree/chromium/TestShell.cpp:
+        * DumpRenderTree/chromium/TestShell.h:
+        * DumpRenderTree/chromium/WebPermissions.cpp:
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        * DumpRenderTree/efl/CMakeLists.txt:
+        * DumpRenderTree/efl/DumpRenderTree.cpp:
+        * DumpRenderTree/efl/DumpRenderTreeChrome.cpp:
+        * DumpRenderTree/efl/DumpRenderTreeView.cpp:
+        * DumpRenderTree/efl/EditingCallbacks.cpp:
+        * DumpRenderTree/efl/LayoutTestControllerEfl.cpp: Removed.
+        * DumpRenderTree/efl/TestRunnerEfl.cpp: Copied from Tools/DumpRenderTree/efl/LayoutTestControllerEfl.cpp.
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        * DumpRenderTree/gtk/EditingCallbacks.cpp:
+        * DumpRenderTree/gtk/LayoutTestControllerGtk.cpp: Removed.
+        * DumpRenderTree/gtk/TestRunnerGtk.cpp: Copied from Tools/DumpRenderTree/gtk/LayoutTestControllerGtk.cpp.
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        * DumpRenderTree/mac/DumpRenderTreeWindow.mm:
+        * DumpRenderTree/mac/EditingDelegate.mm:
+        * DumpRenderTree/mac/FrameLoadDelegate.mm:
+        * DumpRenderTree/mac/HistoryDelegate.mm:
+        * DumpRenderTree/mac/LayoutTestControllerMac.mm: Removed.
+        * DumpRenderTree/mac/PixelDumpSupportMac.mm:
+        * DumpRenderTree/mac/PolicyDelegate.mm:
+        * DumpRenderTree/mac/ResourceLoadDelegate.mm:
+        * DumpRenderTree/mac/TestRunnerMac.mm: Copied from Tools/DumpRenderTree/mac/LayoutTestControllerMac.mm.
+        * DumpRenderTree/mac/UIDelegate.mm:
+        * DumpRenderTree/qt/DumpRenderTree.pro:
+        * DumpRenderTree/qt/DumpRenderTreeQt.cpp:
+        * DumpRenderTree/qt/LayoutTestControllerQt.cpp: Removed.
+        * DumpRenderTree/qt/LayoutTestControllerQt.h: Removed.
+        * DumpRenderTree/qt/TestRunnerQt.cpp: Copied from Tools/DumpRenderTree/qt/LayoutTestControllerQt.cpp.
+        * DumpRenderTree/qt/TestRunnerQt.h: Copied from Tools/DumpRenderTree/qt/LayoutTestControllerQt.h.
+        (WebCore):
+        (LayoutTestController):
+        (LayoutTestController::setCloseRemainingWindowsWhenComplete):
+        (LayoutTestController::dumpSelectionRect):
+        (LayoutTestController::setCallCloseOnWebViews):
+        (LayoutTestController::addDisallowedURL):
+        (LayoutTestController::abortModal):
+        * DumpRenderTree/win/DRTDesktopNotificationPresenter.cpp:
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        * DumpRenderTree/win/DumpRenderTree.vcproj:
+        * DumpRenderTree/win/EditingDelegate.cpp:
+        * DumpRenderTree/win/FrameLoadDelegate.cpp:
+        * DumpRenderTree/win/HistoryDelegate.cpp:
+        * DumpRenderTree/win/LayoutTestControllerWin.cpp: Removed.
+        * DumpRenderTree/win/PolicyDelegate.cpp:
+        * DumpRenderTree/win/ResourceLoadDelegate.cpp:
+        * DumpRenderTree/win/TestRunnerWin.cpp: Copied from Tools/DumpRenderTree/win/LayoutTestControllerWin.cpp.
+        (LayoutTestController::setUserStyleSheetEnabled):
+        (resolveCygwinPath):
+        * DumpRenderTree/win/UIDelegate.cpp:
+        * DumpRenderTree/wscript:
+        * DumpRenderTree/wx/DumpRenderTreeWx.cpp:
+        * DumpRenderTree/wx/LayoutTestControllerWx.cpp: Removed.
+        * DumpRenderTree/wx/TestRunnerWx.cpp: Copied from Tools/DumpRenderTree/wx/LayoutTestControllerWx.cpp.
+
 2012-08-13  Alex Christensen  <alex.christensen@flexsim.com>
 
         Windows 64 bit compliance

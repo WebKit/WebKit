@@ -32,8 +32,8 @@
 #define TestShell_h
 
 #include "AccessibilityControllerChromium.h"
+#include "DRTTestRunner.h"
 #include "GamepadController.h"
-#include "LayoutTestController.h"
 #include "NotificationPresenter.h"
 #include "TestEventPrinter.h"
 #include "TestInterfaces.h"

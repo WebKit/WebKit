@@ -31,7 +31,7 @@ HEADERS += \
     EventSenderQt.h \
     TextInputControllerQt.h \
     WorkQueueItemQt.h \
-    LayoutTestControllerQt.h \
+    TestRunnerQt.h \
     GCControllerQt.h \
     QtInitializeTestFonts.h \
     testplugin.h
@@ -43,7 +43,7 @@ SOURCES += \
     EventSenderQt.cpp \
     TextInputControllerQt.cpp \
     WorkQueueItemQt.cpp \
-    LayoutTestControllerQt.cpp \
+    TestRunnerQt.cpp \
     GCControllerQt.cpp \
     QtInitializeTestFonts.cpp \
     testplugin.cpp \

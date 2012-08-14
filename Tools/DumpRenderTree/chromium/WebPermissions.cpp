@@ -31,7 +31,7 @@
 #include "config.h"
 #include "WebPermissions.h"
 
-#include "LayoutTestController.h"
+#include "DRTTestRunner.h"
 #include "TestShell.h"
 #include "platform/WebCString.h"
 #include "platform/WebURL.h"

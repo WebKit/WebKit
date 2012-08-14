@@ -27,10 +27,10 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 #include "config.h"
-#include "LayoutTestControllerQt.h"
-#include "DumpRenderTreeSupportQt.h"
+#include "TestRunnerQt.h"
 
 #include "DumpRenderTreeQt.h"
+#include "DumpRenderTreeSupportQt.h"
 #include "WorkQueue.h"
 #include "WorkQueueItemQt.h"
 #include <QCoreApplication>

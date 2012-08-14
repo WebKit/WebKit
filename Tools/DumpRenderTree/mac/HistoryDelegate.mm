@@ -26,7 +26,7 @@
 #import "HistoryDelegate.h"
 
 #import "DumpRenderTree.h"
-#import "LayoutTestController.h"
+#import "TestRunner.h"
 
 #import <WebKit/WebNavigationData.h>
 #import <WebKit/WebView.h>

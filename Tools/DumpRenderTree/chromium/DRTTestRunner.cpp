@@ -30,7 +30,7 @@
  */
 
 #include "config.h"
-#include "LayoutTestController.h"
+#include "DRTTestRunner.h"
 
 #include "DRTDevToolsAgent.h"
 #include "MockWebSpeechInputController.h"

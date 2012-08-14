@@ -34,7 +34,7 @@
 #include "DumpRenderTree.h"
 #include "EventSender.h"
 #include "GCController.h"
-#include "LayoutTestController.h"
+#include "TestRunner.h"
 #include "TextInputController.h"
 #include "WebCoreTestSupport.h"
 #include "WorkQueueItem.h"

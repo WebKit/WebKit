@@ -38,10 +38,10 @@
   sort of output they produce.
 */
 
-#ifndef LayoutTestController_h
-#define LayoutTestController_h
+#ifndef DRTTestRunner_h
+#define DRTTestRunner_h
 
-#include "TestRunner.h"
+#include "TestRunner/TestRunner.h"
 
 class TestShell;
 

@@ -32,9 +32,8 @@
 #include "DumpRenderTree.h"
 #include "DraggingInfo.h"
 #include "EventSender.h"
-#include "LayoutTestController.h"
 #include "DRTDesktopNotificationPresenter.h"
-
+#include "TestRunner.h"
 #include <WebCore/COMPtr.h>
 #include <wtf/Assertions.h>
 #include <wtf/PassOwnPtr.h>

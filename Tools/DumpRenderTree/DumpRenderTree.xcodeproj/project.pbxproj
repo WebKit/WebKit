@@ -106,8 +106,8 @@
 		AE8259F308D22463000507AB /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AE8257EF08D22389000507AB /* Carbon.framework */; };
 		AE8259F408D22463000507AB /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AE8257EF08D22389000507AB /* Carbon.framework */; };
 		B5A752A208AF5D1F00138E45 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B5A752A108AF5D1F00138E45 /* QuartzCore.framework */; };
-		BC0131DA0C9772010087317D /* LayoutTestController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC0131D80C9772010087317D /* LayoutTestController.cpp */; };
-		BC0131DB0C9772010087317D /* LayoutTestController.h in Headers */ = {isa = PBXBuildFile; fileRef = BC0131D90C9772010087317D /* LayoutTestController.h */; };
+		BC0131DA0C9772010087317D /* TestRunner.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC0131D80C9772010087317D /* TestRunner.cpp */; };
+		BC0131DB0C9772010087317D /* TestRunner.h in Headers */ = {isa = PBXBuildFile; fileRef = BC0131D90C9772010087317D /* TestRunner.h */; };
 		BC0E24E00E2D9451001B6BC2 /* AccessibilityUIElement.h in Headers */ = {isa = PBXBuildFile; fileRef = BC0E24DE0E2D9451001B6BC2 /* AccessibilityUIElement.h */; };
 		BC0E24E10E2D9451001B6BC2 /* AccessibilityUIElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC0E24DF0E2D9451001B6BC2 /* AccessibilityUIElement.cpp */; };
 		BC0E26150E2DA4C6001B6BC2 /* AccessibilityUIElementMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC0E26140E2DA4C6001B6BC2 /* AccessibilityUIElementMac.mm */; };
@@ -117,7 +117,7 @@
 		BC9D90250C97472E0099A4A3 /* WorkQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = BC9D90220C97472E0099A4A3 /* WorkQueue.h */; };
 		BC9D90260C97472E0099A4A3 /* WorkQueueItem.h in Headers */ = {isa = PBXBuildFile; fileRef = BC9D90230C97472E0099A4A3 /* WorkQueueItem.h */; };
 		BCA18B230C9B014B00114369 /* GCControllerMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = BCA18B210C9B014B00114369 /* GCControllerMac.mm */; };
-		BCA18B240C9B014B00114369 /* LayoutTestControllerMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = BCA18B220C9B014B00114369 /* LayoutTestControllerMac.mm */; };
+		BCA18B240C9B014B00114369 /* TestRunnerMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = BCA18B220C9B014B00114369 /* TestRunnerMac.mm */; };
 		BCA18B260C9B015C00114369 /* WorkQueueItemMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = BCA18B250C9B015C00114369 /* WorkQueueItemMac.mm */; };
 		BCA18B310C9B01B400114369 /* ObjCController.h in Headers */ = {isa = PBXBuildFile; fileRef = BCA18B2F0C9B01B400114369 /* ObjCController.h */; };
 		BCA18B320C9B01B400114369 /* ObjCController.m in Sources */ = {isa = PBXBuildFile; fileRef = BCA18B300C9B01B400114369 /* ObjCController.m */; };
@@ -310,8 +310,8 @@
 		AE8257EF08D22389000507AB /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = /System/Library/Frameworks/Carbon.framework; sourceTree = "<absolute>"; };
 		B5A7526708AF4A4A00138E45 /* ImageDiff */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ImageDiff; sourceTree = BUILT_PRODUCTS_DIR; };
 		B5A752A108AF5D1F00138E45 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = /System/Library/Frameworks/QuartzCore.framework; sourceTree = "<absolute>"; };
-		BC0131D80C9772010087317D /* LayoutTestController.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = LayoutTestController.cpp; sourceTree = "<group>"; };
-		BC0131D90C9772010087317D /* LayoutTestController.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = LayoutTestController.h; sourceTree = "<group>"; };
+		BC0131D80C9772010087317D /* TestRunner.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = TestRunner.cpp; sourceTree = "<group>"; };
+		BC0131D90C9772010087317D /* TestRunner.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = TestRunner.h; sourceTree = "<group>"; };
 		BC0E24DE0E2D9451001B6BC2 /* AccessibilityUIElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessibilityUIElement.h; sourceTree = "<group>"; };
 		BC0E24DF0E2D9451001B6BC2 /* AccessibilityUIElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AccessibilityUIElement.cpp; sourceTree = "<group>"; };
 		BC0E26140E2DA4C6001B6BC2 /* AccessibilityUIElementMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AccessibilityUIElementMac.mm; path = mac/AccessibilityUIElementMac.mm; sourceTree = "<group>"; };
@@ -322,7 +322,7 @@
 		BC9D90220C97472E0099A4A3 /* WorkQueue.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WorkQueue.h; sourceTree = "<group>"; };
 		BC9D90230C97472E0099A4A3 /* WorkQueueItem.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WorkQueueItem.h; sourceTree = "<group>"; };
 		BCA18B210C9B014B00114369 /* GCControllerMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; name = GCControllerMac.mm; path = mac/GCControllerMac.mm; sourceTree = "<group>"; };
-		BCA18B220C9B014B00114369 /* LayoutTestControllerMac.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = LayoutTestControllerMac.mm; path = mac/LayoutTestControllerMac.mm; sourceTree = "<group>"; };
+		BCA18B220C9B014B00114369 /* TestRunnerMac.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = TestRunnerMac.mm; path = mac/TestRunnerMac.mm; sourceTree = "<group>"; };
 		BCA18B250C9B015C00114369 /* WorkQueueItemMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; name = WorkQueueItemMac.mm; path = mac/WorkQueueItemMac.mm; sourceTree = "<group>"; };
 		BCA18B2F0C9B01B400114369 /* ObjCController.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = ObjCController.h; path = mac/ObjCController.h; sourceTree = "<group>"; };
 		BCA18B300C9B01B400114369 /* ObjCController.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; name = ObjCController.m; path = mac/ObjCController.m; sourceTree = "<group>"; };
@@ -500,9 +500,9 @@
 				BCF6C64F0C98E9C000AC063E /* GCController.cpp */,
 				14770FE00A22ADF7009342EE /* GCController.h */,
 				BCA18B210C9B014B00114369 /* GCControllerMac.mm */,
-				BC0131D80C9772010087317D /* LayoutTestController.cpp */,
-				BC0131D90C9772010087317D /* LayoutTestController.h */,
-				BCA18B220C9B014B00114369 /* LayoutTestControllerMac.mm */,
+				BC0131D80C9772010087317D /* TestRunner.cpp */,
+				BC0131D90C9772010087317D /* TestRunner.h */,
+				BCA18B220C9B014B00114369 /* TestRunnerMac.mm */,
 				E1B7808511AF1643007E1BC2 /* MockGeolocationProvider.h */,
 				E1B7808711AF1669007E1BC2 /* MockGeolocationProvider.mm */,
 				BCA18B6D0C9B08DB00114369 /* NavigationController.h */,
@@ -716,7 +716,7 @@
 				BCA18B630C9B08C200114369 /* FrameLoadDelegate.h in Headers */,
 				14770FE20A22ADF7009342EE /* GCController.h in Headers */,
 				BC47412A0D038A4C0072B006 /* JavaScriptThreading.h in Headers */,
-				BC0131DB0C9772010087317D /* LayoutTestController.h in Headers */,
+				BC0131DB0C9772010087317D /* TestRunner.h in Headers */,
 				BCA18B710C9B08DB00114369 /* NavigationController.h in Headers */,
 				BCA18B310C9B01B400114369 /* ObjCController.h in Headers */,
 				BCA18B7D0C9B08F100114369 /* ObjCPlugin.h in Headers */,
@@ -943,8 +943,8 @@
 				BCF6C6500C98E9C000AC063E /* GCController.cpp in Sources */,
 				BCA18B230C9B014B00114369 /* GCControllerMac.mm in Sources */,
 				BC4741410D038A570072B006 /* JavaScriptThreadingPthreads.cpp in Sources */,
-				BC0131DA0C9772010087317D /* LayoutTestController.cpp in Sources */,
-				BCA18B240C9B014B00114369 /* LayoutTestControllerMac.mm in Sources */,
+				BC0131DA0C9772010087317D /* TestRunner.cpp in Sources */,
+				BCA18B240C9B014B00114369 /* TestRunnerMac.mm in Sources */,
 				BCA18B720C9B08DB00114369 /* NavigationController.m in Sources */,
 				BCA18B320C9B01B400114369 /* ObjCController.m in Sources */,
 				BCA18B7E0C9B08F100114369 /* ObjCPlugin.m in Sources */,

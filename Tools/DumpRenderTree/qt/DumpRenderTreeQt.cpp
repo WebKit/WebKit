@@ -36,7 +36,7 @@
 #include "DumpRenderTreeSupportQt.h"
 #include "EventSenderQt.h"
 #include "GCControllerQt.h"
-#include "LayoutTestControllerQt.h"
+#include "TestRunnerQt.h"
 #include "TextInputControllerQt.h"
 #include "QtInitializeTestFonts.h"
 #include "testplugin.h"

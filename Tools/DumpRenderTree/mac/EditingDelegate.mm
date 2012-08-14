@@ -30,7 +30,7 @@
 #import "EditingDelegate.h"
 
 #import "DumpRenderTree.h"
-#import "LayoutTestController.h"
+#import "TestRunner.h"
 #import <WebKit/WebKit.h>
 
 @interface DOMNode (dumpPath)

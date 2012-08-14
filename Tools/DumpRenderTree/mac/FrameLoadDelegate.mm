@@ -35,7 +35,7 @@
 #import "EventSendingController.h"
 #import "Foundation/NSNotification.h"
 #import "GCController.h"
-#import "LayoutTestController.h"
+#import "TestRunner.h"
 #import "NavigationController.h"
 #import "ObjCController.h"
 #import "ObjCPlugin.h"

@@ -32,7 +32,7 @@
  */
 
 #include "config.h"
-#include "LayoutTestController.h"
+#include "TestRunner.h"
 
 #include "DumpRenderTree.h"
 #include "WebCoreSupport/DumpRenderTreeSupportGtk.h"

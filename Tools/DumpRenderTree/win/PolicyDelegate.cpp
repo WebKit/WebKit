@@ -30,7 +30,7 @@
 #include "PolicyDelegate.h"
 
 #include "DumpRenderTree.h"
-#include "LayoutTestController.h"
+#include "TestRunner.h"
 #include <string>
 
 using std::wstring;
