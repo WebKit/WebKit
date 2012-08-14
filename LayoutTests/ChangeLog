@@ -1,3 +1,10 @@
+2012-08-14  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
+
+        Unreviewed gardening for Qt, rebaselining marked test from r125167.
+
+        * platform/qt/TestExpectations:
+        * platform/qt/tables/mozilla_expected_failures/bugs/bug106966-expected.txt:
+
 2012-08-14  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: add external test runner for running inspector front-end tests with no TestRunner infrastructure.
