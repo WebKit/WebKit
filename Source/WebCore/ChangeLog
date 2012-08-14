@@ -1,3 +1,25 @@
+2012-08-14  Yong Li  <yoli@rim.com>
+
+        [BlackBerry] Pass URL String's 8-bit buffer directly to platform layer when possible
+        https://bugs.webkit.org/show_bug.cgi?id=93861
+
+        Reviewed by Rob Buis.
+
+        PR# 187605.
+        URL strings and HTTP header strings usually use 8-bit buffers internally. We can
+        just pass the buffers to platform calls when only Latin1 strings are needed.
+
+        * platform/blackberry/ReadOnlyLatin1String.h: Added.
+        (WebCore):
+        (ReadOnlyLatin1String): A utility class that uses either WTF::CString or WTF::String's 8-bit buffer.
+        (WebCore::ReadOnlyLatin1String::ReadOnlyLatin1String): Can only be constructed with WTF::String for now.
+        (WebCore::ReadOnlyLatin1String::data):
+        (WebCore::ReadOnlyLatin1String::length):
+        * platform/network/blackberry/ResourceRequestBlackBerry.cpp:
+        (WebCore::ResourceRequest::initializePlatformRequest):
+        * platform/network/blackberry/SocketStreamHandleBlackBerry.cpp:
+        (WebCore::SocketStreamHandle::SocketStreamHandle):
+
 2012-08-14  Christophe Dumez  <christophe.dumez@intel.com>
 
         Fix  LayoutTests/canvas/philip/tests/2d.text.draw.space.collapse.nonspace.html
