@@ -51,7 +51,8 @@ public:
     // The client does not take ownership of the pointer.
     virtual void setListener(SpeechInputListener*) = 0;
 
-    // Starts speech recognition and audio recording.
+    // Starts speech recognition and audio recording. elementRect is the position
+    // of the element where the user clicked in the RootView coordinate system.
     virtual bool startRecognition(int requestId, const IntRect& elementRect, const AtomicString& language, const String& grammar, SecurityOrigin*) = 0;
 
     // Stops audio recording and performs recognition with the audio recorded until now

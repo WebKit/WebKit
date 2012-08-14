@@ -44,7 +44,8 @@ class WebSpeechInputController {
 public:
     // Starts speech recognition. Speech will get recorded until the endpointer detects silence,
     // runs to the limit or stopRecording is called. Progress indications and the recognized
-    // text are returned via the listener interface.
+    // text are returned via the listener interface. elementRect is the position
+    // of the element where the user clicked in the RootView coordinate system.
     virtual bool startRecognition(int requestId, const WebRect& elementRect, const WebString& language, const WebString& grammar, const WebSecurityOrigin& origin)
     {
         WEBKIT_ASSERT_NOT_REACHED();

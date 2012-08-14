@@ -1,3 +1,16 @@
+2012-08-14  Hans Wennborg  <hans@chromium.org>
+
+        Speech Input: wrong position was reported for scolled-down elements
+        https://bugs.webkit.org/show_bug.cgi?id=93634
+
+        Reviewed by Kent Tamura.
+
+        Test that the position of the speech element is passed to the embedder
+        corectly, i.e. where the user clicked, when the page is scrolled down.
+
+        * fast/speech/bubble-position-scrolled-expected.txt: Added.
+        * fast/speech/bubble-position-scrolled.html: Added.
+
 2012-08-14  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r125519.

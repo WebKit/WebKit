@@ -1,3 +1,25 @@
+2012-08-14  Hans Wennborg  <hans@chromium.org>
+
+        Speech Input: wrong position was reported for scolled-down elements
+        https://bugs.webkit.org/show_bug.cgi?id=93634
+
+        Reviewed by Kent Tamura.
+
+        When clicking on a speech-enabled input element, WebKit reports
+        the position of the element to the embedder, so that it can show
+        a bubble indicating that speech recognition is in progress for
+        the element that the user clicked on.
+
+        On a page that was scrolled, this position was being reported
+        erroneously: it was given relative to the frame content as opposed to
+        the root view, and the in-progress bubble would be shown in the wrong
+        place.
+
+        Test: fast/speech/bubble-position-scrolled.html
+
+        * html/shadow/TextControlInnerElements.cpp:
+        (WebCore::InputFieldSpeechButtonElement::startSpeechInput):
+
 2012-08-14  Taiju Tsuiki  <tzik@chromium.org>
 
         Web Inspector: Drop "Loading..." message from FileContentView

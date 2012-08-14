@@ -1,0 +1,63 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<script type="text/javascript">
+description('Tests for speech button click with &lt;input type="text" speech>.');
+
+function onSpeechChange() {
+    debug('onSpeechChange');
+    var rect = input.value.split(',');
+    var x = parseInt(rect[0]);
+    var y = parseInt(rect[1]);
+
+    if (Math.abs(x - clickTargetX) > 20) {
+        testFailed('x too far away from clickTargetX');
+        debug('x: ' + x + ' clickTargetX: ' + clickTargetX);
+    } else {
+        debug('x OK');
+    }
+
+    if (Math.abs(y - clickTargetY) > 20) {
+        testFailed('y too far away from clickTargetY');
+        debug('y: ' + y + ' clickTargetY: ' + clickTargetY);
+    } else {
+        debug('y OK');
+    }
+
+    finishJSTest();
+}
+
+function run() {
+    window.input = document.getElementsByTagName('input')[0];
+    input.onwebkitspeechchange = onSpeechChange;
+
+    var scrollAmount = 100;
+    window.scrollTo(0, scrollAmount);
+
+    if (window.testRunner && window.eventSender) {
+        testRunner.setMockSpeechInputDumpRect(true);
+        debug('Clicking the speech button.');
+
+        window.clickTargetX = input.offsetLeft + input.offsetWidth - 4;
+        window.clickTargetY = input.offsetTop + input.offsetHeight / 2;
+
+        clickTargetY -= scrollAmount;
+
+        eventSender.mouseMoveTo(clickTargetX, clickTargetY);
+        eventSender.mouseDown();
+        eventSender.mouseUp();
+    }
+}
+
+window.onload = run;
+window.jsTestIsAsync = true;
+</script>
+<script src="../js/resources/js-test-post.js"></script>
+<div style="height: 200px"></div>
+<input x-webkit-speech>
+<div style="height: 1000px"></div>
+</body>
+</html>
