@@ -1,3 +1,11 @@
+2012-08-13  Joone Hur  <joone.hur@intel.com>
+
+        [EFL] Unreviewed gardening, rebaselining after r125462.
+
+        Add a new test result to avoid layout-test exception
+
+        * platform/efl/svg/filters/color-interpolation-filters-expected.txt: Added.
+
 2012-08-13  Douglas Stockwell  <dstockwell@chromium.org>
 
         Crash in WebCore::RenderBlock::LineBreaker::nextLineBreak
