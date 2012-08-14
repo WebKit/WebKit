@@ -2270,7 +2270,7 @@ LayoutUnit RenderBox::computeReplacedLogicalHeightUsing(SizeType sizeType, Lengt
                 }
             }
             availableHeight = computeContentBoxLogicalHeight(valueForLength(logicalHeight, availableHeight));
-            if (cb->style()->logicalHeight().isFixed())
+            if (cb->isBox() && cb->style()->logicalHeight().isFixed())
                 availableHeight = max<LayoutUnit>(0, availableHeight - toRenderBox(cb)->scrollbarLogicalHeight());
             return availableHeight;
         }

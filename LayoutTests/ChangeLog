@@ -1,3 +1,13 @@
+2012-08-13  Pravin D  <pravind.2k4@gmail.com>
+
+        Bad cast in RenderBox::computeReplacedLogicalHeightUsing
+        https://bugs.webkit.org/show_bug.cgi?id=93875
+
+        Reviewed by Abhishek Arya.
+
+        * fast/replaced/render-inline-cast-to-render-box-crash-expected.txt: Added.
+        * fast/replaced/render-inline-cast-to-render-box-crash.html: Added.
+
 2012-08-13  Dean Jackson  <dino@apple.com>
 
         REGRESSION (r125450): 4 canvas/philip/tests tests failing on Apple Lion Release WK1 (Tests)

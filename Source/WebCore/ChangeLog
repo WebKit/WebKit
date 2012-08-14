@@ -1,3 +1,19 @@
+2012-08-13  Pravin D  <pravind.2k4@gmail.com>
+
+        Bad cast in RenderBox::computeReplacedLogicalHeightUsing
+        https://bugs.webkit.org/show_bug.cgi?id=93875
+
+        Reviewed by Abhishek Arya.
+
+        Pointer to the container of a replaced element was being type casted to renderbox
+        without checking if the container is a renderbox or not.
+
+        Test: fast/replaced/render-inline-cast-to-render-box-crash.html
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::computeReplacedLogicalHeightUsing):
+         Scrollbar height is retrieved only if the container is a renderBox. Otherwise scrollbar is taken as zero.
+
 2012-08-13  James Robinson  <jamesr@chromium.org>
 
         [chromium] Make WebAnimation a pure virtual interface to hide implementation and avoid unresolved symbols
