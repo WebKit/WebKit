@@ -47,7 +47,7 @@ WebInspector.FileContentView.prototype = {
     {
         if (!this._innerView) {
             if (this._file.isTextFile)
-                this._innerView = new WebInspector.EmptyView(WebInspector.UIString("Loading..."));
+                this._innerView = new WebInspector.EmptyView("");
             else
                 this._innerView = new WebInspector.EmptyView(WebInspector.UIString("Binary File"));
             this.refresh();
