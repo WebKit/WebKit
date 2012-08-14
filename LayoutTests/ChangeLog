@@ -1,3 +1,15 @@
+2012-08-14  Robert Hogan  <robert@webkit.org>
+
+        Update Test Expectations to consolidate bug refs for new tests added
+        with r125578.
+
+        Unreviewed gardening.
+
+        * platform/chromium/TestExpectations:
+        * platform/efl/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2012-08-14  Adrienne Walker  <enne@google.com>
 
         [chromium] Mark css2.1/20110323/c541-word-sp-000.htm as failing on Windows Chromium
