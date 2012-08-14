@@ -1724,6 +1724,9 @@ PassRefPtr<Widget> WebFrameLoaderClient::createPlugin(const IntSize& size, HTMLP
 
 void WebFrameLoaderClient::redirectDataToPlugin(Widget* pluginWidget)
 {
+    if (!pluginWidget)
+        return;
+
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
     WebHTMLRepresentation *representation = (WebHTMLRepresentation *)[[m_webFrame.get() _dataSource] representation];

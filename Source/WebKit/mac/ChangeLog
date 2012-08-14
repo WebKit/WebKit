@@ -1,3 +1,16 @@
+2012-08-14  Tom Sepez  <tsepez@chromium.org>
+
+        REGRESSION r125500: 7 tests crashing on Mac bots
+        https://bugs.webkit.org/show_bug.cgi?id=93970
+
+        Reviewed by Eric Seidel.
+
+        Make WebFrameLoaderClient::redirectDataToPlugin expect the now real possibility
+        of a NULL pluginWidget argument.
+
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::redirectDataToPlugin)
+        
 2012-08-09  Kinuko Yasuda  <kinuko@chromium.org>
 
         http/tests/security/mixedContent/blob-url-in-iframe.html fails on Mac
