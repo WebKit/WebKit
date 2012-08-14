@@ -1,3 +1,40 @@
+2012-08-14  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r125519.
+        http://trac.webkit.org/changeset/125519
+        https://bugs.webkit.org/show_bug.cgi?id=93945
+
+        New ref-tests caused image failures on chromium-mac bots.
+        (Requested by yutak on #webkit).
+
+        * fast/dom/HTMLMeterElement/meter-clone-expected.txt:
+        * fast/dom/HTMLMeterElement/meter-clone.html:
+        * fast/dom/HTMLMeterElement/meter-element-markup-expected.txt:
+        * fast/dom/shadow/resources/replaced-element-styles.css:
+        (.progress-inner-element-like):
+        * fast/dom/shadow/shadowdom-for-meter-dynamic-expected.html: Removed.
+        * fast/dom/shadow/shadowdom-for-meter-dynamic.html: Removed.
+        * fast/dom/shadow/shadowdom-for-meter-expected.html: Removed.
+        * fast/dom/shadow/shadowdom-for-meter-multiple-expected.html: Removed.
+        * fast/dom/shadow/shadowdom-for-meter-multiple.html: Removed.
+        * fast/dom/shadow/shadowdom-for-meter-with-style-expected.html: Removed.
+        * fast/dom/shadow/shadowdom-for-meter-with-style.html: Removed.
+        * fast/dom/shadow/shadowdom-for-meter-without-appearance-expected.html: Removed.
+        * fast/dom/shadow/shadowdom-for-meter-without-appearance.html: Removed.
+        * fast/dom/shadow/shadowdom-for-meter-without-shadow-element-expected.html: Removed.
+        * fast/dom/shadow/shadowdom-for-meter-without-shadow-element.html: Removed.
+        * fast/dom/shadow/shadowdom-for-meter.html: Removed.
+        * platform/chromium-win/fast/dom/HTMLMeterElement/meter-appearances-capacity-expected.txt:
+        * platform/chromium-win/fast/dom/HTMLMeterElement/meter-appearances-rating-relevancy-expected.txt:
+        * platform/chromium-win/fast/dom/HTMLMeterElement/meter-boundary-values-expected.txt:
+        * platform/chromium-win/fast/dom/HTMLMeterElement/meter-element-expected.txt:
+        * platform/chromium-win/fast/dom/HTMLMeterElement/meter-element-repaint-on-update-value-expected.txt:
+        * platform/chromium-win/fast/dom/HTMLMeterElement/meter-optimums-expected.txt:
+        * platform/chromium-win/fast/dom/HTMLMeterElement/meter-styles-changing-pseudo-expected.txt:
+        * platform/chromium-win/fast/dom/HTMLMeterElement/meter-styles-expected.txt:
+        * platform/chromium-win/fast/dom/HTMLMeterElement/meter-writing-mode-expected.txt:
+        * platform/mac/TestExpectations:
+
 2012-08-14  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, GTK rebaseline after r125519.

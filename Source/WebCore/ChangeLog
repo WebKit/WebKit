@@ -1,3 +1,34 @@
+2012-08-14  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r125519.
+        http://trac.webkit.org/changeset/125519
+        https://bugs.webkit.org/show_bug.cgi?id=93945
+
+        New ref-tests caused image failures on chromium-mac bots.
+        (Requested by yutak on #webkit).
+
+        * css/html.css:
+        (meter):
+        * html/HTMLMeterElement.cpp:
+        (WebCore::HTMLMeterElement::HTMLMeterElement):
+        (WebCore::HTMLMeterElement::createRenderer):
+        (WebCore::HTMLMeterElement::didElementStateChange):
+        (WebCore::HTMLMeterElement::createShadowSubtree):
+        * html/HTMLMeterElement.h:
+        (WebCore):
+        (HTMLMeterElement):
+        * html/shadow/MeterShadowElement.cpp:
+        (WebCore::MeterShadowElement::meterElement):
+        (WebCore::MeterShadowElement::rendererIsNeeded):
+        (WebCore):
+        * html/shadow/MeterShadowElement.h:
+        (WebCore):
+        * rendering/RenderMeter.cpp:
+        (WebCore::RenderMeter::RenderMeter):
+        (WebCore::RenderMeter::valueRatio):
+        * rendering/RenderMeter.h:
+        (RenderMeter):
+
 2012-08-14  Keishi Hattori  <keishi@webkit.org>
 
         Move page popup resources to separate directory

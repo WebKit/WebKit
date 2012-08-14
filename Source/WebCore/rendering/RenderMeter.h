@@ -32,19 +32,17 @@ class HTMLMeterElement;
 
 class RenderMeter : public RenderBlock {
 public:
-    RenderMeter(HTMLElement*);
+    RenderMeter(HTMLMeterElement*);
     virtual ~RenderMeter();
 
-    virtual void updateFromElement();
 private:
-    HTMLMeterElement* meterElement() const;
-    
     virtual void computeLogicalWidth();
     virtual void computeLogicalHeight();
 
     virtual const char* renderName() const { return "RenderMeter"; }
     virtual bool isMeter() const { return true; }
     virtual bool requiresForcedStyleRecalcPropagation() const { return true; }
+    virtual void updateFromElement();
 
     double valueRatio() const;
 };
