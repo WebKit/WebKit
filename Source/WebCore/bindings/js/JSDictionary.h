@@ -48,8 +48,9 @@ class JSDictionary {
 public:
     JSDictionary(JSC::ExecState* exec, JSC::JSObject* initializerObject)
         : m_exec(exec)
-        , m_initializerObject(exec->globalData(), initializerObject)
     {
+        if (exec && initializerObject)
+            m_initializerObject = JSC::Strong<JSC::JSObject>(exec->globalData(), initializerObject);
     }
 
     // Returns false if any exceptions were thrown, regardless of whether the property was found.

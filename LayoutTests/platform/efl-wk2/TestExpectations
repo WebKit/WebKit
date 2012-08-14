@@ -281,5 +281,5 @@ BUGWKEFL : jquery/attributes.html = TEXT
 
 // WTR does not print information about Web Intents MessagePorts
 BUGWK89072 : webintents/web-intents-invoke-port.html = TEXT
-BUGWK89072 : webintents/web-intents-obj-constructor.html = CRASH
+BUGWK89072 : webintents/web-intents-obj-constructor.html = TEXT
 

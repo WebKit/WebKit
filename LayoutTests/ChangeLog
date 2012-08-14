@@ -1,3 +1,16 @@
+2012-08-14  Christophe Dumez  <christophe.dumez@intel.com>
+
+        regression(r124510) webintents/web-intents-obj-constructor.html is crashing
+        https://bugs.webkit.org/show_bug.cgi?id=93096
+
+        Reviewed by Kentaro Hara.
+
+        Unskip webintents/web-intents-obj-constructor.html now that the
+        crash is fixed in WebCore.
+
+        * platform/efl-wk2/TestExpectations:
+        * platform/efl/TestExpectations:
+
 2012-08-13  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed GTK gardening.

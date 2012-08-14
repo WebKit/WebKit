@@ -1,3 +1,21 @@
+2012-08-14  Christophe Dumez  <christophe.dumez@intel.com>
+
+        regression(r124510) webintents/web-intents-obj-constructor.html is crashing
+        https://bugs.webkit.org/show_bug.cgi?id=93096
+
+        Reviewed by Kentaro Hara.
+
+        Add null-check for JSC::ExecState pointer in JSDictionary constructor
+        before using it. The exec may indeed be null, thus causing crashes.
+
+        No new test, already tested by webintents/web-intents-obj-constructor.html
+
+        * bindings/js/JSDictionary.cpp:
+        (WebCore::JSDictionary::tryGetProperty):
+        (WebCore::JSDictionary::getWithUndefinedOrNullCheck):
+        * bindings/js/JSDictionary.h:
+        (WebCore::JSDictionary::JSDictionary):
+
 2012-08-13  Keishi Hattori  <keishi@webkit.org>
 
         Remove fade in transition from calendar picker

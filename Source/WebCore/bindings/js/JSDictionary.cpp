@@ -46,6 +46,7 @@ namespace WebCore {
 
 JSDictionary::GetPropertyResult JSDictionary::tryGetProperty(const char* propertyName, JSValue& finalResult) const
 {
+    ASSERT(isValid());
     Identifier identifier(m_exec, propertyName);
     PropertySlot slot(m_initializerObject.get());
 
@@ -196,6 +197,7 @@ void JSDictionary::convertValue(ExecState* exec, JSValue value, ArrayValue& resu
 
 bool JSDictionary::getWithUndefinedOrNullCheck(const String& propertyName, String& result) const
 {
+    ASSERT(isValid());
     JSValue value;
     if (tryGetProperty(propertyName.utf8().data(), value) != PropertyFound || value.isUndefinedOrNull())
         return false;
