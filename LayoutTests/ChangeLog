@@ -1,3 +1,11 @@
+2012-08-14  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening.
+
+        Adding image failure expectation for fast/css-generated-content/quotes-lang.html.
+
+        * platform/gtk/TestExpectations:
+
 2012-08-14  Sergio Villar Senin  <svillar@igalia.com>
 
         Unreviewed, updated the GTK WK2 Skipped file with well-known
