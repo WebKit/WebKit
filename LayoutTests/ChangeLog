@@ -1,3 +1,16 @@
+2012-08-14  Roger Fong  <roger_fong@apple.com>
+
+        Rebaseline fast/box-sizing/box-sizing.html and compositing/overflow/clip-descendents.html.
+        https://bugs.webkit.org/show_bug.cgi?id=93909
+
+        Reviewed by Tim Horton.
+
+        As per https://bugs.webkit.org/show_bug.cgi?id=92904 rebaselining those tests.
+
+        * compositing/overflow/clip-descendents-expected.txt: Rebaselined.
+        * platform/mac/TestExpectations: Removed tests from expectations list.
+        * platform/mac/fast/box-sizing/box-sizing-expected.txt: Rebaselined.
+
 2012-08-14  Andrei Onea  <onea@adobe.com>
 
         [CSSRegions]regionOverset is computed as "overset" even though the region is not the last in the chain
