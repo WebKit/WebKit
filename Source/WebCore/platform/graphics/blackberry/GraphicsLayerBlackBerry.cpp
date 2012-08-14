@@ -105,6 +105,8 @@ void GraphicsLayerBlackBerry::willBeDestroyed()
         m_contentsLayer->setOwner(0);
     if (m_transformLayer)
         m_transformLayer->setOwner(0);
+
+    GraphicsLayer::willBeDestroyed();
 }
 
 void GraphicsLayerBlackBerry::setName(const String& inName)
