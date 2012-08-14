@@ -31,6 +31,7 @@
 #include "config.h"
 #include "BindingState.h"
 
+#include "DOMWindow.h"
 #include "Frame.h"
 #include "ScriptController.h"
 #include "V8Proxy.h"
@@ -87,6 +88,14 @@ Frame* currentFrame(BindingState*)
     if (context.IsEmpty())
         return 0;
     return V8Proxy::retrieveFrame(context);
+}
+
+Document* currentDocument(BindingState*)
+{
+    DOMWindow* current = V8Proxy::retrieveWindow(v8::Context::GetCurrent());
+    if (!current)
+        return 0;
+    return current->document();
 }
 
 void immediatelyReportUnsafeAccessTo(BindingState*, Document* targetDocument)

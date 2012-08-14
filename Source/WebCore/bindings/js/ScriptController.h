@@ -121,7 +121,7 @@ public:
 
     const String* sourceURL() const { return m_sourceURL; } // 0 if we are not evaluating any script
 
-    void clearWindowShell(bool goingIntoPageCache = false);
+    void clearWindowShell(DOMWindow* newDOMWindow, bool goingIntoPageCache);
     void updateDocument();
 
     void namedItemAdded(HTMLDocument*, const AtomicString&) { }

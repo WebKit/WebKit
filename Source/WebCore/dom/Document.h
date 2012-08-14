@@ -766,8 +766,12 @@ public:
     void textNodesMerged(Text* oldNode, unsigned offset);
     void textNodeSplit(Text* oldNode);
 
+    void createDOMWindow();
+    void takeDOMWindowFrom(Document*);
+
+    DOMWindow* domWindow() const { return m_domWindow.get(); }
+    // In DOM Level 2, the Document's DOMWindow is called the defaultView.
     DOMWindow* defaultView() const { return domWindow(); } 
-    DOMWindow* domWindow() const;
 
     // Helper functions for forwarding DOMWindow event related tasks to the DOMWindow if it exists.
     void setWindowAttributeEventListener(const AtomicString& eventType, PassRefPtr<EventListener>);
@@ -1265,6 +1269,8 @@ private:
     Vector<OwnPtr<FontData> > m_customFonts;
 
     Frame* m_frame;
+    RefPtr<DOMWindow> m_domWindow;
+
     OwnPtr<CachedResourceLoader> m_cachedResourceLoader;
     RefPtr<DocumentParser> m_parser;
     RefPtr<ContextFeatures> m_contextFeatures;

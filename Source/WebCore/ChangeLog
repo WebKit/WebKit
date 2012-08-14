@@ -1,3 +1,174 @@
+2012-08-14  Adam Barth  <abarth@webkit.org>
+
+        DOMWindow::document() should not reach through Frame
+        https://bugs.webkit.org/show_bug.cgi?id=27640
+
+        Reviewed by Eric Seidel.
+
+        Originally, the lifetime of DOMWindow was similar to that of Frame in
+        that it was reused for each document that was displayed in the Frame.
+        To fix some tricky security issues, all modern browsers use a "split
+        window" architecture whereby the DOMWindow is not reused by each
+        Document in a Frame. Instead a JavaScript "window shell" object
+        redirects JavaScript references to the active Document's DOMWindow.
+
+        When we implemented split windows, we left DOMWindow attached to the
+        Frame and attempted to keep it in sync with the Document via a lot of
+        delicate code. One of the main problems with this approach is that
+        finding the DOMWindow associated with a Document or the Document
+        associated with a DOMWindow required traversing through the Frame.
+        Because there is a many-to-one relationship between both Documents and
+        Frames (as well as DOMWindows and Frames), this traversal is error
+        prone and not always available (e.g., for inactive documents).
+
+        This patch moves the "owning" reference for DOMWindow to Document so
+        that we can directly traverse from Document to DOMWindow. For
+        traversing from DOMWindow to Document, each DOMWindow keeps a Document
+        pointer via a ContextDestructionObserver base class.
+
+        The main sublties in this patch are related to situations in which
+        there isn't precisely a one-to-one relationship between Documents and
+        DOMWindows. Previously, these situations were handled implicitly by the
+        "flex and slop" of having separate Document and DOMWindow pointers in
+        Frame. In this patch, these sublties are made explicit via
+        Document::takeDOMWindowFrom, which explicitly transfers the DOMWindow
+        (as well as ASSERTs that all the relevant objects exist in a sensible
+        constellation).
+
+        * WebCore.exp.in:
+            - These functions are no longer exported because they're inline.
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::clearWindowShell):
+        * bindings/js/ScriptController.h:
+        (ScriptController):
+            - clearWindowShell now explicitly takes the new DOMWindow that will
+              be pointed to by the WindowShell. Previously, clearWindowShell
+              would implicitly create the new DOMWindow by accessing
+              Frame::domWindow (which used to lazily create the DOMWindow).
+        * bindings/v8/BindingState.cpp:
+        (WebCore::currentDocument):
+        * bindings/v8/BindingState.h:
+        (WebCore):
+            - currentDocument provides a directly path from the current
+              v8::Context to the Document (by way of DOMWindow). Previously,
+              code transited via the Frame using currentFrame.
+        * bindings/v8/ScriptController.cpp:
+        (WebCore::ScriptController::clearWindowShell):
+        * bindings/v8/ScriptController.h:
+        (ScriptController):
+            - Mirror JSC changes to clearWindowShell.
+        * bindings/v8/V8Utilities.cpp:
+        (WebCore::getScriptExecutionContext):
+            - Update getScriptExecutionContext to transit directly from the
+              DOMWindow to the Document rather than detouring via the Frame.
+        * dom/ContextDestructionObserver.cpp:
+        (WebCore::ContextDestructionObserver::ContextDestructionObserver):
+        (WebCore::ContextDestructionObserver::~ContextDestructionObserver):
+        (WebCore):
+        (WebCore::ContextDestructionObserver::observeContext):
+        * dom/ContextDestructionObserver.h:
+        (ContextDestructionObserver):
+            - When we transfer a DOMWindow from one Document to another, we
+              need to update the Document pointer in the DOMWindow to point to
+              the new Document. The DOMWindow holds the Document pointer via
+              ContextDestructionObserver, so this patch teaches
+              ContextDestructionObserver how to change which
+              ScriptExecutionContext it is observing. This code mirrors similar
+              code in FrameDestructionObserver.
+        * dom/Document.cpp:
+        (WebCore::Document::~Document):
+        (WebCore::Document::detach):
+        (WebCore::Document::createDOMWindow):
+            - createDOMWindow now explicitly creates the DOMWindow. Previously,
+              we created the DOMWindow implicitly in Frame::domWindow when it
+              was first accessed.
+        (WebCore::Document::takeDOMWindowFrom):
+            - takeDOMWindowFrom explicitly transfers the DOMWindow from one
+              Document to another. The main benefit of this function is the
+              ASSERTs that ensure that the Document, DOMWindow, and Frame all
+              point to each other the correct configuration.
+        (WebCore::Document::didUpdateSecurityOrigin):
+            - We no longer need to keep the SecurityOrigin pointer in DOMWindow
+              in sync with the Document because DOMWindow no longer has a
+              SecurityOrigin object.
+        * dom/Document.h:
+        (Document):
+        (WebCore::Document::domWindow):
+        * history/CachedFrame.cpp:
+        (WebCore::CachedFrame::CachedFrame):
+        (WebCore::CachedFrame::destroy):
+        * history/CachedFrame.h:
+        (CachedFrameBase):
+            - Previously, CachedFrame held the Document and the DOMWindow with
+              separate pointers. Now, the CachedFrame holds the DOMWnidow via
+              the Document, which makes adding and removing Documents from the
+              PageCache simpler because we don't need to keep the Frame's
+              DOMWindow pointer synchronized.
+        * loader/DocumentWriter.cpp:
+        (WebCore::DocumentWriter::begin):
+            - begin now explicitly creates the DOMWindow and transfers
+              DOMWindow when performing a "secure transition." Previously, both
+              of these processes were handled implicitly: the DOMWindow was
+              created implicitly by Frame::domWindow, and the DOMWindow was
+              reused during navigation by not clearing Frame::m_domWindow.
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::cancelAndClear):
+        (WebCore::FrameLoader::clear):
+            - These functions now pass the new Document so that we have access
+              to the new DOMWindow in clearDOMWindowShell.
+        (WebCore::FrameLoader::setOpener):
+            - We no longer need to keep the DOMWindow's SecurityOrigin in sync
+              with the Document's SecurityOrigin because DOMWindow no longer
+              has a duplicate SecurityOrigin pointer.
+        (WebCore::FrameLoader::open):
+            - We no longer need to keep the Frame::m_domWindow in sync with the
+              Document because the Document carries its own DOMWindow.
+        * loader/FrameLoader.h:
+        (FrameLoader):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::DOMWindow):
+            - DOMWindow now uses Document as its primary context object. In a
+              future patch, we should remove the FrameDestructionObserver base
+              class and instead access the frame via DOMWindow::document().
+        (WebCore::DOMWindow::didSecureTransitionTo):
+            - Notify the DOMWindow that it is now associated with a new
+              Document.
+        (WebCore::DOMWindow::scriptExecutionContext):
+        (WebCore::DOMWindow::document):
+        (WebCore::DOMWindow::securityOrigin):
+            - These functions now retrieve the Document directly rather than
+              transiting via the Frame.
+        * page/DOMWindow.h:
+        (WebCore::DOMWindow::create):
+        (DOMWindow):
+        * page/Frame.cpp:
+        (WebCore::Frame::setDocument):
+            - Add more ASSERTs that the Document and its DOMWindow are properly
+              wired up to this Frame.
+        (WebCore::Frame::domWindow):
+            - Rather than lazily creating the DOMWindow, this function now just
+              accesses the already-created DOMWindow on Document. Eventually,
+              all callers should retreive the DOMWindow from the Document
+              directly.
+        * page/Frame.h:
+        (WebCore::Frame::existingDOMWindow):
+            - The DOMWindow always exists, so there is no distinction between
+              domWindow() and existingDOMWindow().
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::open):
+            - Previously, open would exit early if it was unable to find its
+              ScriptExecutionContext (e.g., if the ScriptExecutionContext was
+              inactive). Now we can always locate the ScriptExecutionContext
+              and so we need to test whether the ScriptExecutionContext is
+              still attached to the Page before accessing Settings. Tests
+              verify that the platform-visible behaviors of XMLHttpRequest are
+              unchanged, even for XMLHttpRequest constructors associated with
+              inactive Documents.
+        * xml/XSLTProcessor.cpp:
+        (WebCore::XSLTProcessor::createDocumentFromSource):
+            - Make it explicit that XSLT re-uses the DOMWindow from the source
+              Document in the transformed Document.
+
 2012-08-14  Levi Weintraub  <leviw@chromium.org>
 
         Accumulating LayoutUnits with floats for determining block preferred width can lead to wrapping

@@ -391,11 +391,19 @@ bool DOMWindow::canShowModalDialogNow(const Frame* frame)
     return page->chrome()->canRunModalNow();
 }
 
-DOMWindow::DOMWindow(Frame* frame)
-    : FrameDestructionObserver(frame)
+DOMWindow::DOMWindow(Document* document)
+    : ContextDestructionObserver(document)
+    , FrameDestructionObserver(document->frame())
     , m_shouldPrintWhenFinishedLoading(false)
     , m_suspendedForPageCache(false)
 {
+    ASSERT(frame());
+    ASSERT(DOMWindow::document());
+}
+
+void DOMWindow::didSecureTransitionTo(Document* document)
+{
+    observeContext(document);
 }
 
 DOMWindow::~DOMWindow()
@@ -444,7 +452,7 @@ const AtomicString& DOMWindow::interfaceName() const
 
 ScriptExecutionContext* DOMWindow::scriptExecutionContext() const
 {
-    return document();
+    return ContextDestructionObserver::scriptExecutionContext();
 }
 
 DOMWindow* DOMWindow::toDOMWindow()
@@ -455,11 +463,6 @@ DOMWindow* DOMWindow::toDOMWindow()
 PassRefPtr<MediaQueryList> DOMWindow::matchMedia(const String& media)
 {
     return document() ? document()->mediaQueryMatcher()->matchMedia(media) : 0;
-}
-
-void DOMWindow::setSecurityOrigin(SecurityOrigin* securityOrigin)
-{
-    m_securityOrigin = securityOrigin;
 }
 
 Page* DOMWindow::page()
@@ -1298,12 +1301,14 @@ DOMWindow* DOMWindow::top() const
 
 Document* DOMWindow::document() const
 {
-    if (!isCurrentlyDisplayedInFrame())
-        return 0;
+    ScriptExecutionContext* context = ContextDestructionObserver::scriptExecutionContext();
+    ASSERT(!context || context->isDocument());
+    return static_cast<Document*>(context);
+}
 
-    // FIXME: This function shouldn't need a frame to work.
-    ASSERT(m_frame->document());
-    return m_frame->document();
+SecurityOrigin* DOMWindow::securityOrigin() const
+{
+    return document() ? document()->securityOrigin() : 0;
 }
 
 PassRefPtr<StyleMedia> DOMWindow::styleMedia() const

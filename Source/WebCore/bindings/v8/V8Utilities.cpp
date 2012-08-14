@@ -172,10 +172,7 @@ ScriptExecutionContext* getScriptExecutionContext()
         return controller->workerContext();
 #endif
 
-    if (Frame* frame = currentFrame(BindingState::instance()))
-        return frame->document()->scriptExecutionContext();
-
-    return 0;
+    return currentDocument(BindingState::instance());
 }
 
 void setTypeMismatchException(v8::Isolate* isolate)

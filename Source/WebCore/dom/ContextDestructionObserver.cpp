@@ -32,22 +32,29 @@
 namespace WebCore {
 
 ContextDestructionObserver::ContextDestructionObserver(ScriptExecutionContext* scriptExecutionContext)
-    : m_scriptExecutionContext(scriptExecutionContext)
+    : m_scriptExecutionContext(0)
 {
-    if (!m_scriptExecutionContext)
-        return;
-
-    ASSERT(m_scriptExecutionContext->isContextThread());
-    m_scriptExecutionContext->didCreateDestructionObserver(this);
+    observeContext(scriptExecutionContext);
 }
 
 ContextDestructionObserver::~ContextDestructionObserver()
 {
-    if (!m_scriptExecutionContext)
-        return;
+    observeContext(0);
+}
 
-    ASSERT(m_scriptExecutionContext->isContextThread());
-    m_scriptExecutionContext->willDestroyDestructionObserver(this);
+void ContextDestructionObserver::observeContext(ScriptExecutionContext* scriptExecutionContext)
+{
+    if (m_scriptExecutionContext) {
+        ASSERT(m_scriptExecutionContext->isContextThread());
+        m_scriptExecutionContext->willDestroyDestructionObserver(this);
+    }
+
+    m_scriptExecutionContext = scriptExecutionContext;
+
+    if (m_scriptExecutionContext) {
+        ASSERT(m_scriptExecutionContext->isContextThread());
+        m_scriptExecutionContext->didCreateDestructionObserver(this);
+    }
 }
 
 void ContextDestructionObserver::contextDestroyed()

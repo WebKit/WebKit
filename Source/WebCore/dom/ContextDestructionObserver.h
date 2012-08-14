@@ -40,6 +40,7 @@ public:
 
 protected:
     virtual ~ContextDestructionObserver();
+    void observeContext(ScriptExecutionContext*);
 
     ScriptExecutionContext* m_scriptExecutionContext;
 };

@@ -51,7 +51,6 @@ public:
     Document* document() const { return m_document.get(); }
     FrameView* view() const { return m_view.get(); }
     const KURL& url() const { return m_url; }
-    DOMWindow* domWindow() const { return m_domWindow.get(); }
     bool isMainFrame() { return m_isMainFrame; }
 
 protected:
@@ -60,7 +59,6 @@ protected:
     
     RefPtr<Document> m_document;
     RefPtr<DocumentLoader> m_documentLoader;
-    RefPtr<DOMWindow> m_domWindow;
     RefPtr<FrameView> m_view;
     RefPtr<Node> m_mousePressNode;
     KURL m_url;

@@ -288,13 +288,16 @@ void Frame::setView(PassRefPtr<FrameView> view)
 
 void Frame::setDocument(PassRefPtr<Document> newDoc)
 {
-    ASSERT(!newDoc || newDoc->frame());
+    ASSERT(!newDoc || newDoc->frame() == this);
     if (m_doc && m_doc->attached() && !m_doc->inPageCache()) {
         // FIXME: We don't call willRemove here. Why is that OK?
         m_doc->detach();
     }
 
     m_doc = newDoc;
+    ASSERT(!m_doc || m_doc->domWindow());
+    ASSERT(!m_doc || m_doc->domWindow()->frame() == this);
+
     selection()->updateSecureKeyboardEntryIfActive();
 
     if (m_doc && !m_doc->attached())
@@ -601,15 +604,6 @@ void Frame::injectUserScriptsForWorld(DOMWrapperWorld* world, const UserScriptVe
     }
 }
 
-void Frame::clearDOMWindow()
-{
-    if (m_domWindow) {
-        InspectorInstrumentation::frameWindowDiscarded(this, m_domWindow.get());
-        m_domWindow->clear();
-    }
-    m_domWindow = 0;
-}
-
 RenderView* Frame::contentRenderer() const
 {
     Document* doc = document();
@@ -669,15 +663,6 @@ void Frame::clearTimers()
     clearTimers(m_view.get(), document());
 }
 
-void Frame::setDOMWindow(DOMWindow* domWindow)
-{
-    if (m_domWindow) {
-        InspectorInstrumentation::frameWindowDiscarded(this, m_domWindow.get());
-        m_domWindow->clear();
-    }
-    m_domWindow = domWindow;
-}
-
 #if ENABLE(PAGE_VISIBILITY_API)
 void Frame::dispatchVisibilityStateChangeEvent()
 {
@@ -697,10 +682,8 @@ void Frame::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 
 DOMWindow* Frame::domWindow() const
 {
-    if (!m_domWindow)
-        m_domWindow = DOMWindow::create(const_cast<Frame*>(this));
-
-    return m_domWindow.get();
+    ASSERT(m_doc->domWindow());
+    return m_doc->domWindow();
 }
 
 void Frame::willDetachPage()

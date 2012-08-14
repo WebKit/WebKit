@@ -499,11 +499,11 @@ void FrameLoader::cancelAndClear()
     if (!m_isComplete)
         closeURL();
 
-    clear(false);
+    clear(m_frame->document(), false);
     m_frame->script()->updatePlatformScriptObjects();
 }
 
-void FrameLoader::clear(bool clearWindowProperties, bool clearScriptObjects, bool clearFrameView)
+void FrameLoader::clear(Document* newDocument, bool clearWindowProperties, bool clearScriptObjects, bool clearFrameView)
 {
     m_frame->editor()->clear();
 
@@ -522,8 +522,9 @@ void FrameLoader::clear(bool clearWindowProperties, bool clearScriptObjects, boo
 
     // Do this after detaching the document so that the unload event works.
     if (clearWindowProperties) {
-        m_frame->clearDOMWindow();
-        m_frame->script()->clearWindowShell(m_frame->document()->inPageCache());
+        InspectorInstrumentation::frameWindowDiscarded(m_frame, m_frame->document()->domWindow());
+        m_frame->document()->domWindow()->clear();
+        m_frame->script()->clearWindowShell(newDocument->domWindow(), m_frame->document()->inPageCache());
     }
 
     m_frame->selection()->clear();
@@ -924,10 +925,8 @@ void FrameLoader::setOpener(Frame* opener)
         opener->loader()->m_openedFrames.add(m_frame);
     m_opener = opener;
 
-    if (m_frame->document()) {
+    if (m_frame->document())
         m_frame->document()->initSecurityContext();
-        m_frame->domWindow()->setSecurityOrigin(m_frame->document()->securityOrigin());
-    }
 }
 
 // FIXME: This does not belong in FrameLoader!
@@ -1924,10 +1923,12 @@ void FrameLoader::open(CachedFrameBase& cachedFrame)
         url.setPath("/");
 
     started();
-    clear(true, true, cachedFrame.isMainFrame());
-
     Document* document = cachedFrame.document();
     ASSERT(document);
+    ASSERT(document->domWindow());
+
+    clear(document, true, true, cachedFrame.isMainFrame());
+
     document->setInPageCache(false);
 
     m_needsClear = true;
@@ -1947,10 +1948,9 @@ void FrameLoader::open(CachedFrameBase& cachedFrame)
     m_frame->setView(view);
     
     m_frame->setDocument(document);
-    m_frame->setDOMWindow(cachedFrame.domWindow());
-    m_frame->domWindow()->resumeFromPageCache();
+    document->domWindow()->resumeFromPageCache();
+    // FIXME: This shouldn't be necessary now that Document owns the DOMWindow.
     m_frame->domWindow()->setURL(document->url());
-    m_frame->domWindow()->setSecurityOrigin(document->securityOrigin());
 
     updateFirstPartyForCookies();
 

@@ -174,7 +174,7 @@ void ScriptController::getAllWorlds(Vector<RefPtr<DOMWrapperWorld> >& worlds)
     static_cast<WebCoreJSClientData*>(JSDOMWindow::commonJSGlobalData()->clientData)->getAllWorlds(worlds);
 }
 
-void ScriptController::clearWindowShell(bool goingIntoPageCache)
+void ScriptController::clearWindowShell(DOMWindow* newDOMWindow, bool goingIntoPageCache)
 {
     if (m_windowShells.isEmpty())
         return;
@@ -184,11 +184,14 @@ void ScriptController::clearWindowShell(bool goingIntoPageCache)
     for (ShellMap::iterator iter = m_windowShells.begin(); iter != m_windowShells.end(); ++iter) {
         JSDOMWindowShell* windowShell = iter->second.get();
 
+        if (windowShell->window()->impl() == newDOMWindow)
+            continue;
+
         // Clear the debugger from the current window before setting the new window.
         attachDebugger(windowShell, 0);
 
         windowShell->window()->willRemoveFromWindowShell();
-        windowShell->setWindow(m_frame->domWindow());
+        windowShell->setWindow(newDOMWindow);
 
         // An m_cacheableBindingRootObject persists between page navigations
         // so needs to know about the new JSDOMWindow.

@@ -1,3 +1,34 @@
+2012-08-14  Adam Barth  <abarth@webkit.org>
+
+        DOMWindow::document() should not reach through Frame
+        https://bugs.webkit.org/show_bug.cgi?id=27640
+
+        Reviewed by Eric Seidel.
+
+        * fast/dom/Window/timer-null-script-execution-context.html:
+            - This test was assuming that we'd throw an exception when we
+              failed to find the script execution context. Now that we are
+              always able to find the script execution context, we never throw
+              that exception, even after GC. As far as I can tell, the original
+              intent of the test was to make sure we don't crash in that case,
+              which of course we don't.
+        * fast/dom/xmlhttprequest-constructor-in-detached-document-expected.txt:
+            - Remove warning message about not being able to find the script
+              execution context. We can now always find the script execution
+              context.
+        * http/tests/security/MessagePort/event-listener-context-expected.txt:
+        * http/tests/security/MessagePort/event-listener-context.html:
+            - This test is attempting to check that MessagePorts behave in a
+              reasonable way when created in inactive documents. The test
+              relies on us throwing an exception in the inactive case because
+              we're unable to find the script execution context. We are now
+              able to find the script execution context (as above), so we no
+              longer throw the exception. It's not clear whether this test is
+              valuable any more, but I've converted it to be a test that we
+              don't crash in this situation.
+        * platform/chromium/fast/dom/xmlhttprequest-constructor-in-detached-document-expected.txt: Removed.
+            - Remove platform-specific result as it now matches the cross-platform result.
+
 2012-08-14  Levi Weintraub  <leviw@chromium.org>
 
         Accumulating LayoutUnits with floats for determining block preferred width can lead to wrapping

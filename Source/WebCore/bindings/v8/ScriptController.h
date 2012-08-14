@@ -164,7 +164,7 @@ public:
 
     const String* sourceURL() const { return m_sourceURL; } // 0 if we are not evaluating any script.
 
-    void clearWindowShell(bool = false);
+    void clearWindowShell(DOMWindow*, bool);
     void updateDocument();
 
     void namedItemAdded(HTMLDocument*, const AtomicString&);

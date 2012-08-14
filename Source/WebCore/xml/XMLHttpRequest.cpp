@@ -481,7 +481,7 @@ void XMLHttpRequest::open(const String& method, const KURL& url, bool async, Exc
     }
 
     if (!async && scriptExecutionContext()->isDocument()) {
-        if (!document()->settings()->syncXHRInDocumentsEnabled()) {
+        if (document()->settings() && !document()->settings()->syncXHRInDocumentsEnabled()) {
             logConsoleError(scriptExecutionContext(), "Synchronous XMLHttpRequests are disabled for this page.");
             ec = INVALID_ACCESS_ERR;
             return;

@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: line 12: ReferenceError: XMLHttpRequest constructor associated document is unavailable
 Text for bug 25290: Crash when constructing XMLHttpRequest in a detached document.
 
 PASS

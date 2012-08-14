@@ -1,5 +1,5 @@
-Test that JS code cannot be planted into an unsuspecting subframe via MessagePort and navigation.
+Test that we don't crash when creating a message port for an inactive document.
 
-PASS: got exception while creating port from closed frame's constructor: ReferenceError: MessageChannel constructor associated document is unavailable
+PASS: Creating MessageChannel from closed frame does not crash
 DONE
 

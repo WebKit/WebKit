@@ -30,9 +30,9 @@ function test()
     document.body.removeChild(document.getElementsByTagName("iframe")[0]);
     setTimeout(function() {
         gc();
-        try { w_setTimeout.call(w, "", 0); alert("FAIL: no exception") } catch (ex) { }
+        try { w_setTimeout.call(w, "alert('FAIL: timeout ran');", 0); } catch (ex) { }
         try { w_clearTimeout.call(w, 0) } catch (ex) { }
-        try { w_setInterval.call(w, "", 0); alert("FAIL: no exception") } catch (ex) { }
+        try { w_setInterval.call(w, "alert('FAIL: interval ran');", 0); } catch (ex) { }
         try { w_clearInterval.call(w, 0) } catch (ex) { }
 
         if (window.testRunner)

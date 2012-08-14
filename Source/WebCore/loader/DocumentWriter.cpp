@@ -125,10 +125,16 @@ void DocumentWriter::begin(const KURL& urlReference, bool dispatch, Document* ow
 
     // FIXME: Do we need to consult the content security policy here about blocked plug-ins?
 
-    bool resetScripting = !(m_frame->loader()->stateMachine()->isDisplayingInitialEmptyDocument() && m_frame->document()->isSecureTransitionTo(url));
-    m_frame->loader()->clear(resetScripting, resetScripting);
+    bool shouldReuseDefaultView = m_frame->loader()->stateMachine()->isDisplayingInitialEmptyDocument() && m_frame->document()->isSecureTransitionTo(url);
+    if (shouldReuseDefaultView)
+        document->takeDOMWindowFrom(m_frame->document());
+    else
+        document->createDOMWindow();
+
+    m_frame->loader()->clear(document.get(), !shouldReuseDefaultView, !shouldReuseDefaultView);
     clear();
-    if (resetScripting)
+
+    if (!shouldReuseDefaultView)
         m_frame->script()->updatePlatformScriptObjects();
 
     m_frame->loader()->setOutgoingReferrer(url);
@@ -141,8 +147,8 @@ void DocumentWriter::begin(const KURL& urlReference, bool dispatch, Document* ow
         document->setSecurityOrigin(ownerDocument->securityOrigin());
     }
 
+    // FIXME: DOMWindow should get the URL from the document itself.
     m_frame->domWindow()->setURL(document->url());
-    m_frame->domWindow()->setSecurityOrigin(document->securityOrigin());
 
     m_frame->loader()->didBeginDocument(dispatch);
 
