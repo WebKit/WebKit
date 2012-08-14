@@ -94,7 +94,7 @@ namespace WebCore {
     // Convert v8 types to a WTF::String. If the V8 string is not already
     // an external string then it is transformed into an external string at this
     // point to avoid repeated conversions.
-    String v8ValueToWebCoreString(v8::Handle<v8::Value>);
+    String toWebCoreString(v8::Handle<v8::Value>);
 
     // Convert a V8 value to a WTF::AtomicString.
     AtomicString v8ValueToAtomicWebCoreString(v8::Handle<v8::Value>);
@@ -195,7 +195,7 @@ namespace WebCore {
     struct NativeValueTraits<String> {
         static inline String arrayNativeValue(const v8::Local<v8::Array>& array, size_t i)
         {
-            return v8ValueToWebCoreString(array->Get(i));
+            return toWebCoreString(array->Get(i));
         }
     };
 
@@ -294,17 +294,6 @@ namespace WebCore {
         return static_cast<long long>(value->IntegerValue());
     }
 
-    // FIXME: Drop this in favor of the type specific v8ValueToWebCoreString when we rework the code generation.
-    inline String toWebCoreString(v8::Handle<v8::Value> object)
-    {
-        return v8ValueToWebCoreString(object);
-    }
-
-    inline String toWebCoreString(const v8::Arguments& args, int index)
-    {
-        return v8ValueToWebCoreString(args[index]);
-    }
-
     // The string returned by this function is still owned by the argument
     // and will be deallocated when the argument is deallocated.
     inline const uint16_t* fromWebCoreString(const String& str)
@@ -349,7 +338,7 @@ namespace WebCore {
 
     inline String toWebCoreStringWithNullCheck(v8::Handle<v8::Value> value)
     {
-        return value->IsNull() ? String() : v8ValueToWebCoreString(value);
+        return value->IsNull() ? String() : toWebCoreString(value);
     }
 
     inline AtomicString toAtomicWebCoreStringWithNullCheck(v8::Handle<v8::Value> value)

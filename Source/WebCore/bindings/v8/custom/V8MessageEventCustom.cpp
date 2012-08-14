@@ -110,12 +110,12 @@ v8::Handle<v8::Value> V8MessageEvent::initMessageEventCallback(const v8::Argumen
 {
     INC_STATS("DOM.MessageEvent.initMessageEvent");
     MessageEvent* event = V8MessageEvent::toNative(args.Holder());
-    String typeArg = v8ValueToWebCoreString(args[0]);
+    String typeArg = toWebCoreString(args[0]);
     bool canBubbleArg = args[1]->BooleanValue();
     bool cancelableArg = args[2]->BooleanValue();
     ScriptValue dataArg = ScriptValue(args[3]);
-    String originArg = v8ValueToWebCoreString(args[4]);
-    String lastEventIdArg = v8ValueToWebCoreString(args[5]);
+    String originArg = toWebCoreString(args[4]);
+    String lastEventIdArg = toWebCoreString(args[5]);
 
     DOMWindow* sourceArg = 0;
     if (args[6]->IsObject()) {

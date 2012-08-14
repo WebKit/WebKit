@@ -47,7 +47,7 @@ static PassRefPtr<IDBKey> createIDBKeyFromValue(v8::Handle<v8::Value> value, Vec
     if (value->IsNumber() && !isnan(value->NumberValue()))
         return IDBKey::createNumber(value->NumberValue());
     if (value->IsString())
-        return IDBKey::createString(v8ValueToWebCoreString(value));
+        return IDBKey::createString(toWebCoreString(value));
     if (value->IsDate() && !isnan(value->NumberValue()))
         return IDBKey::createDate(value->NumberValue());
     if (value->IsArray()) {

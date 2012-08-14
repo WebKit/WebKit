@@ -81,7 +81,7 @@ static AtomicString v8NonStringValueToAtomicWebCoreString(v8::Handle<v8::Value> 
     return AtomicString(v8NonStringValueToWebCoreString(object));
 }
 
-String v8ValueToWebCoreString(v8::Handle<v8::Value> value)
+String toWebCoreString(v8::Handle<v8::Value> value)
 {
     if (value->IsString())
         return v8StringToWebCoreString<String>(v8::Handle<v8::String>::Cast(value), Externalize);
@@ -350,7 +350,7 @@ PassRefPtr<DOMStringList> v8ValueToWebCoreDOMStringList(v8::Handle<v8::Value> va
     v8::Local<v8::Array> v8Array = v8::Local<v8::Array>::Cast(v8Value);
     for (size_t i = 0; i < v8Array->Length(); ++i) {
         v8::Local<v8::Value> indexedValue = v8Array->Get(v8Integer(i));
-        ret->append(v8ValueToWebCoreString(indexedValue));
+        ret->append(toWebCoreString(indexedValue));
     }
     return ret.release();
 }

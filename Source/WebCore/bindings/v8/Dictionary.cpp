@@ -160,7 +160,7 @@ bool Dictionary::get(const String& key, String& value) const
     //        an empty string and returning true when we should be returning false.
     //        See fast/dom/Geolocation/script-tests/argument-types.js for a similar
     //        example.
-    value = v8ValueToWebCoreString(v8Value);
+    value = toWebCoreString(v8Value);
     return true;
 }
 
@@ -285,7 +285,7 @@ bool Dictionary::get(const String& key, HashSet<AtomicString>& value) const
     v8::Local<v8::Array> v8Array = v8::Local<v8::Array>::Cast(v8Value);
     for (size_t i = 0; i < v8Array->Length(); ++i) {
         v8::Local<v8::Value> indexedValue = v8Array->Get(v8Integer(i));
-        value.add(v8ValueToWebCoreString(indexedValue));
+        value.add(toWebCoreString(indexedValue));
     }
 
     return true;
@@ -301,7 +301,7 @@ bool Dictionary::getWithUndefinedOrNullCheck(const String& key, String& value) c
     //        an empty string and returning true when we should be returning false.
     //        See fast/dom/Geolocation/script-tests/argument-types.js for a similar
     //        example.
-    value = WebCore::isUndefinedOrNull(v8Value) ? String() : v8ValueToWebCoreString(v8Value);
+    value = WebCore::isUndefinedOrNull(v8Value) ? String() : toWebCoreString(v8Value);
     return true;
 }
 
@@ -446,7 +446,7 @@ bool Dictionary::get(const String& key, Vector<String>& value) const
     v8::Local<v8::Array> v8Array = v8::Local<v8::Array>::Cast(v8Value);
     for (size_t i = 0; i < v8Array->Length(); ++i) {
         v8::Local<v8::Value> indexedValue = v8Array->Get(v8::Uint32::New(i));
-        value.append(v8ValueToWebCoreString(indexedValue));
+        value.append(toWebCoreString(indexedValue));
     }
 
     return true;
@@ -485,8 +485,8 @@ bool Dictionary::getOwnPropertiesAsStringHashMap(WTF::HashMap<String, String>& h
             continue;
 
         v8::Local<v8::Value> value = options->Get(key);
-        String stringKey = v8ValueToWebCoreString(key);
-        String stringValue = v8ValueToWebCoreString(value);
+        String stringKey = toWebCoreString(key);
+        String stringValue = toWebCoreString(value);
         if (!stringKey.isEmpty())
             hashMap.set(stringKey, stringValue);
     }

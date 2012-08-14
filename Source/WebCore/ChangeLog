@@ -1,5 +1,36 @@
 2012-08-13  Kentaro Hara  <haraken@chromium.org>
 
+        [V8] Remove v8ValueToWebCoreString()
+        https://bugs.webkit.org/show_bug.cgi?id=93822
+
+        Reviewed by Adam Barth.
+
+        There are two equivalent ways to convert a V8 value to a WebCore String;
+        i.e. v8ValueToWebCoreString() and toWebCoreString(). We can remove the former.
+
+        In a follow-up patch, I will replace v8ValueToAtomicWebCoreString()
+        with toWebCoreAtomicString(), for consistency with toWebCoreString().
+
+        No tests. No change in behavior.
+
+        * bindings/v8/Dictionary.cpp:
+        (WebCore::Dictionary::get):
+        (WebCore::Dictionary::getWithUndefinedOrNullCheck):
+        (WebCore::Dictionary::getOwnPropertiesAsStringHashMap):
+        * bindings/v8/IDBBindingUtilities.cpp:
+        (WebCore::createIDBKeyFromValue):
+        * bindings/v8/ScriptDebugServer.cpp:
+        (WebCore::ScriptDebugServer::setBreakpoint):
+        * bindings/v8/V8Binding.cpp:
+        (WebCore::toWebCoreString):
+        (WebCore::v8ValueToWebCoreDOMStringList):
+        * bindings/v8/V8Binding.h:
+        (WebCore::toWebCoreStringWithNullCheck):
+        * bindings/v8/custom/V8MessageEventCustom.cpp:
+        (WebCore::V8MessageEvent::initMessageEventCallback):
+
+2012-08-13  Kentaro Hara  <haraken@chromium.org>
+
         [V8] Move the ConstructorMode class from V8Binding.h to SafeAllocation.h
         https://bugs.webkit.org/show_bug.cgi?id=93821
 
