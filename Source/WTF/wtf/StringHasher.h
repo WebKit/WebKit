@@ -63,23 +63,9 @@ public:
         m_hasPendingCharacter = true;
     }
 
-    inline unsigned hash() const
+    inline unsigned hashWithTop8BitsMasked() const
     {
-        unsigned result = m_hash;
-
-        // Handle end case.
-        if (m_hasPendingCharacter) {
-            result += m_pendingCharacter;
-            result ^= result << 11;
-            result += result >> 17;
-        }
-
-        // Force "avalanching" of final 31 bits.
-        result ^= result << 3;
-        result += result >> 5;
-        result ^= result << 2;
-        result += result >> 15;
-        result ^= result << 10;
+        unsigned result = avalancheBits();
 
         // Reserving space from the high bits for flags preserves most of the hash's
         // value, since hash lookup typically masks out the high bits anyway.
@@ -93,6 +79,67 @@ public:
             result = 0x80000000 >> flagCount;
 
         return result;
+    }
+
+    inline unsigned hash() const
+    {
+        unsigned result = avalancheBits();
+
+        // This avoids ever returning a hash code of 0, since that is used to
+        // signal "hash not computed yet". Setting the high bit maintains
+        // reasonable fidelity to a hash code of 0 because it is likely to yield
+        // exactly 0 when hash lookup masks out the high bits.
+        if (!result)
+            result = 0x80000000;
+
+        return result;
+    }
+
+    template<typename T, UChar Converter(T)> static inline unsigned computeHashAndMaskTop8Bits(const T* data, unsigned length)
+    {
+        StringHasher hasher;
+        bool rem = length & 1;
+        length >>= 1;
+
+        while (length--) {
+            hasher.addCharacters(Converter(data[0]), Converter(data[1]));
+            data += 2;
+        }
+
+        if (rem)
+            hasher.addCharacter(Converter(*data));
+
+        return hasher.hashWithTop8BitsMasked();
+    }
+
+    template<typename T, UChar Converter(T)> static inline unsigned computeHashAndMaskTop8Bits(const T* data)
+    {
+        StringHasher hasher;
+
+        while (true) {
+            UChar b0 = Converter(*data++);
+            if (!b0)
+                break;
+            UChar b1 = Converter(*data++);
+            if (!b1) {
+                hasher.addCharacter(b0);
+                break;
+            }
+
+            hasher.addCharacters(b0, b1);
+        }
+
+        return hasher.hashWithTop8BitsMasked();
+    }
+
+    template<typename T> static inline unsigned computeHashAndMaskTop8Bits(const T* data, unsigned length)
+    {
+        return computeHashAndMaskTop8Bits<T, defaultConverter>(data, length);
+    }
+
+    template<typename T> static inline unsigned computeHashAndMaskTop8Bits(const T* data)
+    {
+        return computeHashAndMaskTop8Bits<T, defaultConverter>(data);
     }
 
     template<typename T, UChar Converter(T)> static inline unsigned computeHash(const T* data, unsigned length)
@@ -145,13 +192,13 @@ public:
     template<size_t length> static inline unsigned hashMemory(const void* data)
     {
         COMPILE_ASSERT(!(length % 4), length_must_be_a_multible_of_four);
-        return computeHash<UChar>(static_cast<const UChar*>(data), length / sizeof(UChar));
+        return computeHashAndMaskTop8Bits<UChar>(static_cast<const UChar*>(data), length / sizeof(UChar));
     }
 
     static inline unsigned hashMemory(const void* data, unsigned size)
     {
         ASSERT(!(size % 2));
-        return computeHash<UChar>(static_cast<const UChar*>(data), size / sizeof(UChar));
+        return computeHashAndMaskTop8Bits<UChar>(static_cast<const UChar*>(data), size / sizeof(UChar));
     }
 
 private:
@@ -171,6 +218,27 @@ private:
         unsigned tmp = (b << 11) ^ m_hash;
         m_hash = (m_hash << 16) ^ tmp;
         m_hash += m_hash >> 11;
+    }
+
+    inline unsigned avalancheBits() const
+    {
+        unsigned result = m_hash;
+
+        // Handle end case.
+        if (m_hasPendingCharacter) {
+            result += m_pendingCharacter;
+            result ^= result << 11;
+            result += result >> 17;
+        }
+
+        // Force "avalanching" of final 31 bits.
+        result ^= result << 3;
+        result += result >> 5;
+        result ^= result << 2;
+        result += result >> 15;
+        result ^= result << 10;
+
+        return result;
     }
 
     unsigned m_hash;

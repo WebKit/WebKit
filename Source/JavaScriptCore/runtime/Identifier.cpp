@@ -49,7 +49,7 @@ void deleteIdentifierTable(IdentifierTable* table)
 struct IdentifierCStringTranslator {
     static unsigned hash(const LChar* c)
     {
-        return StringHasher::computeHash<LChar>(c);
+        return StringHasher::computeHashAndMaskTop8Bits<LChar>(c);
     }
 
     static bool equal(StringImpl* r, const LChar* s)
@@ -72,7 +72,7 @@ struct IdentifierCStringTranslator {
 struct IdentifierLCharFromUCharTranslator {
     static unsigned hash(const CharBuffer<UChar>& buf)
     {
-        return StringHasher::computeHash<UChar>(buf.s, buf.length);
+        return StringHasher::computeHashAndMaskTop8Bits<UChar>(buf.s, buf.length);
     }
     
     static bool equal(StringImpl* str, const CharBuffer<UChar>& buf)

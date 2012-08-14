@@ -147,7 +147,7 @@ namespace JSC {
     struct IdentifierCharBufferTranslator {
         static unsigned hash(const CharBuffer<T>& buf)
         {
-            return StringHasher::computeHash<T>(buf.s, buf.length);
+            return StringHasher::computeHashAndMaskTop8Bits<T>(buf.s, buf.length);
         }
         
         static bool equal(StringImpl* str, const CharBuffer<T>& buf)

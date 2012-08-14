@@ -88,7 +88,7 @@ static inline PassRefPtr<StringImpl> addToStringTable(const T& value)
 struct CStringTranslator {
     static unsigned hash(const LChar* c)
     {
-        return StringHasher::computeHash(c);
+        return StringHasher::computeHashAndMaskTop8Bits(c);
     }
 
     static inline bool equal(StringImpl* r, const LChar* s)
@@ -122,7 +122,7 @@ struct UCharBuffer {
 struct UCharBufferTranslator {
     static unsigned hash(const UCharBuffer& buf)
     {
-        return StringHasher::computeHash(buf.s, buf.length);
+        return StringHasher::computeHashAndMaskTop8Bits(buf.s, buf.length);
     }
 
     static bool equal(StringImpl* const& str, const UCharBuffer& buf)
@@ -147,7 +147,7 @@ struct HashAndCharacters {
 struct HashAndCharactersTranslator {
     static unsigned hash(const HashAndCharacters& buffer)
     {
-        ASSERT(buffer.hash == StringHasher::computeHash(buffer.characters, buffer.length));
+        ASSERT(buffer.hash == StringHasher::computeHashAndMaskTop8Bits(buffer.characters, buffer.length));
         return buffer.hash;
     }
 
@@ -260,7 +260,7 @@ struct SubstringLocation {
 struct SubstringTranslator {
     static unsigned hash(const SubstringLocation& buffer)
     {
-        return StringHasher::computeHash(buffer.baseString->characters() + buffer.start, buffer.length);
+        return StringHasher::computeHashAndMaskTop8Bits(buffer.baseString->characters() + buffer.start, buffer.length);
     }
 
     static bool equal(StringImpl* const& string, const SubstringLocation& buffer)
@@ -342,7 +342,7 @@ AtomicString AtomicString::fromUTF8Internal(const char* charactersStart, const c
 {
     HashAndUTF8Characters buffer;
     buffer.characters = charactersStart;
-    buffer.hash = calculateStringHashAndLengthFromUTF8(charactersStart, charactersEnd, buffer.length, buffer.utf16Length);
+    buffer.hash = calculateStringHashAndLengthFromUTF8MaskingTop8Bits(charactersStart, charactersEnd, buffer.length, buffer.utf16Length);
 
     if (!buffer.hash)
         return nullAtom;
