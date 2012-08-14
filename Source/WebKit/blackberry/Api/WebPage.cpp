@@ -3541,7 +3541,7 @@ IntSize WebPagePrivate::recomputeVirtualViewportFromViewportArguments()
     int deviceHeight = Platform::Graphics::Screen::primaryScreen()->height();
     ViewportAttributes result = computeViewportAttributes(m_viewportArguments, desktopWidth, deviceWidth, deviceHeight, m_webSettings->devicePixelRatio(), m_defaultLayoutSize);
 
-    setUserScalable(m_userScalable && result.userScalable);
+    setUserScalable(m_webSettings->isUserScalable() && result.userScalable);
     if (result.initialScale > 0)
         setInitialScale(result.initialScale * result.devicePixelRatio);
     if (result.minimumScale > 0)

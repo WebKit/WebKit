@@ -1,3 +1,15 @@
+2012-08-14  Konrad Piascik  <kpiascik@rim.com>
+
+        [BlackBerry] Change the call to setUserScalable to use the setting.
+        https://bugs.webkit.org/show_bug.cgi?id=93974
+
+        Reviewed by Rob Buis.
+
+        We should be using the WebSetting and not the current value of m_userScalable.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::recomputeVirtualViewportFromViewportArguments):
+
 2012-08-14  Charles Wei  <charles.wei@torchmobile.com.cn>
 
         [BlackBerry] Some callback of Select onchange doesn't work
