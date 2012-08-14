@@ -1,5 +1,12 @@
 2012-08-13  Yuta Kitamura  <yutak@google.com>
 
+        [Chromium] Unreviewed. Rebaseline test results for add-table-overpaint.html.
+
+        * platform/chromium-mac/fast/repaint/add-table-overpaint-expected.png: Added.
+        * platform/chromium-win/fast/repaint/add-table-overpaint-expected.png: Renamed from LayoutTests/platform/chromium/fast/repaint/add-table-overpaint-expected.png.
+
+2012-08-13  Yuta Kitamura  <yutak@google.com>
+
         [Chromium] Unreviewed, update test expectations to reflect the recent results and
         remove lint errors.
 
