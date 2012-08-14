@@ -161,7 +161,7 @@ contributors_who_are_not_committers = [
     Contributor("Terry Anderson", "tdanderson@chromium.org", "tdanderson"),
     Contributor("Tien-Ren Chen", "trchen@chromium.org", "trchen"),
     Contributor("WebKit Review Bot", "webkit.review.bot@gmail.com", "sheriff-bot"),
-    Contributor("Web Components Team", "webcomponents-bugzilla@google.com"),
+    Contributor("Web Components Team", "webcomponents-bugzilla@chromium.org"),
     Contributor("Wyatt Carss", ["wcarss@chromium.org", "wcarss@google.com"], "wcarss"),
     Contributor("Zeev Lieber", "zlieber@chromium.org"),
     Contributor("Zoltan Arvai", "zarvai@inf.u-szeged.hu", "azbest_hu"),

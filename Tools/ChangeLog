@@ -1,3 +1,9 @@
+2012-08-13  MORITA Hajime  <morrita@google.com>
+
+        Unreviewed update for webcomponents-bugzilla address.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2012-08-11  Raphael Kubo da Costa  <rakuco@webkit.org>
 
         [CMake] Rewrite FindLibSoup2.cmake.
