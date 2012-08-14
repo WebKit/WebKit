@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Video Element - Full Screen Volume Test</title>
+    <script src=video-test.js></script>
+    <script src=media-file.js></script>
+    <script src=media-controls.js></script>
+    <script src=../fullscreen/full-screen-test.js></script>
+    <script>
+        var volumeSlider;
+
+        var startTest = function() {
+            findMediaElement();
+            waitForEvent(video, 'canplay', oncanplay);
+            video.src = findMediaFile('video', 'content/test');
+        };
+
+        var oncanplay = function() {
+            waitForEvent(video, 'webkitfullscreenchange', onfullscreenchange);
+            runWithKeyDown(function(){ video.webkitRequestFullscreen(); })
+        };
+
+        var onfullscreenchange = function() {
+            volumeSlider = mediaControlsElement(internals.shadowRoot(video).firstChild, "-webkit-media-controls-fullscreen-volume-slider");
+            run('video.volume = 1');
+            testExpected('volumeSlider.value', 1);
+            run('video.volume = 0.5');
+            testExpected('volumeSlider.value', 0.5);
+            endTest();
+        };
+    </script>
+</head>
+<body onload="startTest()">
+    
+    <video controls></video>    
+    
+</body>
+</html>

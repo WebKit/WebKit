@@ -480,6 +480,9 @@ void MediaControlRootElement::changedVolume()
 {
     if (m_volumeSlider)
         m_volumeSlider->setVolume(m_mediaController->volume());
+
+    if (m_fullScreenVolumeSlider)
+        m_fullScreenVolumeSlider->setVolume(m_mediaController->volume());
 }
 
 void MediaControlRootElement::enteredFullscreen()

@@ -1,3 +1,17 @@
+2012-08-14  Jer Noble  <jer.noble@apple.com>
+
+        Fullscreen/normal volume sliders don't stay in sync
+        https://bugs.webkit.org/show_bug.cgi?id=93867
+
+        Reviewed by Eric Carlson.
+
+        New test checking that volume changes in the media element are reflected in the full
+        screen volume slider.
+
+        * media/video-controls-fullscreen-volume-expected.txt: Added.
+        * media/video-controls-fullscreen-volume.html: Added.
+        * platform/chromium/TestExpectations: Skip this test on chromium.
+
 2012-08-14  Adrienne Walker  <enne@google.com>
 
         [chromium] Mark fast/regex/unicodeCaseInsensitive.html expectation as crashing

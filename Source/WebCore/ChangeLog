@@ -1,3 +1,18 @@
+2012-08-14  Jer Noble  <jer.noble@apple.com>
+
+        Fullscreen/normal volume sliders don't stay in sync
+        https://bugs.webkit.org/show_bug.cgi?id=93867
+
+        Reviewed by Eric Carlson.
+
+        Change the full screen volume slider, if present, when the media element's volume
+        changes.
+
+        Test: media/video-controls-fullscreen-volume.html
+
+        * html/shadow/MediaControlRootElement.cpp:
+        (WebCore::MediaControlRootElement::changedVolume):
+
 2012-08-14  Olivier Blin  <olivier.blin@softathome.com>
 
         Remove unused yyparse method in CSSParser

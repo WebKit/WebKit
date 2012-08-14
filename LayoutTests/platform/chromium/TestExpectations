@@ -846,6 +846,9 @@ WONTFIX SKIP : platform/blackberry = PASS
 // JavaScriptCore bindings willfully have different behavior than V8 bindings
 WONTFIX SKIP : plugins/npruntime/overrides-all-properties.html = TEXT
 
+// Chromium doesn't use fullscreen-specific media controls
+WONTFIX SKIP : media/video-controls-fullscreen-volume.html = TEXT
+
 // -----------------------------------------------------------------
 // TESTS TO FIX
 // -----------------------------------------------------------------

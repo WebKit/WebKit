@@ -1,0 +1,8 @@
+EVENT(canplay)
+EVENT(webkitfullscreenchange)
+RUN(video.volume = 1)
+EXPECTED (volumeSlider.value == '1') OK
+RUN(video.volume = 0.5)
+EXPECTED (volumeSlider.value == '0.5') OK
+END OF TEST
+
