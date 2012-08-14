@@ -480,8 +480,11 @@
 #endif
 #endif
 
-#if PLATFORM(BLACKBERRY)
+#if OS(QNX)
 #define USE_SYSTEM_MALLOC 1
+#endif
+
+#if PLATFORM(BLACKBERRY)
 #define WTF_USE_MERSENNE_TWISTER_19937 1
 #define WTF_USE_SKIA 1
 #endif
