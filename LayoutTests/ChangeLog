@@ -2,6 +2,15 @@
 
         Unreviewed gardening for Qt, rebaselining marked test from r125167.
 
+        Changelog and commit mixed with entry below.
+
+        * platform/qt/TestExpectations:
+        * platform/qt/fast/block/float/overhanging-tall-block-expected.txt:
+
+2012-08-14  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
+
+        Unreviewed gardening for Qt, rebaselining marked test from bug 93148.
+
         * platform/qt/TestExpectations:
         * platform/qt/tables/mozilla_expected_failures/bugs/bug106966-expected.txt:
 
