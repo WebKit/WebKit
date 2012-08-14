@@ -1,3 +1,13 @@
+2012-08-14  Thiago Marcos P. Santos  <thiago.santos@intel.com>
+
+        [EFL] Gardening of failing tests and new passes
+        https://bugs.webkit.org/show_bug.cgi?id=93967
+
+        Unreviewed gardening.
+
+        * platform/efl/TestExpectations:
+        * platform/efl/fast/css-generated-content/quotes-lang-expected.png: Added.
+
 2012-08-14  Florin Malita  <fmalita@chromium.org>
 
         [Chromium] Rebaseline filter results after 125462
