@@ -119,8 +119,8 @@ Programs_DumpRenderTree_SOURCES = \
 	Tools/DumpRenderTree/GCController.cpp \
 	Tools/DumpRenderTree/GCController.h \
 	Tools/DumpRenderTree/JavaScriptThreading.h \
-	Tools/DumpRenderTree/LayoutTestController.cpp \
-	Tools/DumpRenderTree/LayoutTestController.h \
+	Tools/DumpRenderTree/TestRunner.cpp \
+	Tools/DumpRenderTree/TestRunner.h \
 	Tools/DumpRenderTree/PixelDumpSupport.cpp \
 	Tools/DumpRenderTree/PixelDumpSupport.h \
 	Tools/DumpRenderTree/WorkQueue.cpp \
@@ -140,7 +140,7 @@ Programs_DumpRenderTree_SOURCES = \
 	Tools/DumpRenderTree/gtk/EventSender.h \
 	Tools/DumpRenderTree/gtk/EventSender.cpp \
 	Tools/DumpRenderTree/gtk/GCControllerGtk.cpp \
-	Tools/DumpRenderTree/gtk/LayoutTestControllerGtk.cpp \
+	Tools/DumpRenderTree/gtk/TestRunnerGtk.cpp \
 	Tools/DumpRenderTree/gtk/PixelDumpSupportGtk.cpp \
 	Tools/DumpRenderTree/gtk/SelfScrollingWebKitWebView.cpp \
 	Tools/DumpRenderTree/gtk/SelfScrollingWebKitWebView.h \
