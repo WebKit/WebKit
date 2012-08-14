@@ -498,7 +498,9 @@ PassRefPtr<ResourceHandle> ApplicationCacheGroup::createResourceHandle(const KUR
             target = ResourceRequest::targetTypeFromMimeType(mimeType);
     }
     if (target == ResourceRequest::TargetIsUnspecified) {
-        String mimeType = mimeTypeFromDataURL(url);
+        String mimeType;
+        if (url.protocolIsData())
+            mimeType = mimeTypeFromDataURL(url);
         if (!mimeType.isEmpty())
             target = ResourceRequest::targetTypeFromMimeType(mimeType);
     }
