@@ -147,9 +147,6 @@ void DocumentWriter::begin(const KURL& urlReference, bool dispatch, Document* ow
         document->setSecurityOrigin(ownerDocument->securityOrigin());
     }
 
-    // FIXME: DOMWindow should get the URL from the document itself.
-    m_frame->domWindow()->setURL(document->url());
-
     m_frame->loader()->didBeginDocument(dispatch);
 
     document->implicitOpen();

@@ -1,3 +1,23 @@
+2012-08-14  Adam Barth  <abarth@webkit.org>
+
+        Delete DOMWindow::m_url
+        https://bugs.webkit.org/show_bug.cgi?id=93989
+
+        Reviewed by Eric Seidel.
+
+        There's no reason for DOMWindow to keep a separate copy of the
+        Document's URL now that there is a predictable way to get a Document
+        from a DOMWindow.
+
+        * loader/DocumentWriter.cpp:
+        (WebCore::DocumentWriter::begin):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::open):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::crossDomainAccessErrorMessage):
+        * page/DOMWindow.h:
+        (DOMWindow):
+
 2012-08-14  Nikhil Bhargava  <nbhargava@google.com>
 
         De-inline stuff from RenderStyle.h

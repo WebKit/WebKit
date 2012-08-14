@@ -1,3 +1,18 @@
+2012-08-14  Adam Barth  <abarth@webkit.org>
+
+        Delete DOMWindow::m_url
+        https://bugs.webkit.org/show_bug.cgi?id=93989
+
+        Reviewed by Eric Seidel.
+
+        The error messages for these tests now relect the document's updated
+        URL after document.write has changed the URL. Previously, we failed to
+        sync these changes to DOMWindow::m_url, which is why the error messages
+        showed the wrong URL.
+
+        * http/tests/security/aboutBlank/xss-DENIED-navigate-opener-document-write-expected.txt:
+        * http/tests/security/aboutBlank/xss-DENIED-set-opener-expected.txt:
+
 2012-08-14  Andrei Onea  <onea@adobe.com>
 
         [CSSRegions]Region overset property is incorectly computed when content has negative letter spacing and is flowed near to the edge of a region

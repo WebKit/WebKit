@@ -1949,8 +1949,6 @@ void FrameLoader::open(CachedFrameBase& cachedFrame)
     
     m_frame->setDocument(document);
     document->domWindow()->resumeFromPageCache();
-    // FIXME: This shouldn't be necessary now that Document owns the DOMWindow.
-    m_frame->domWindow()->setURL(document->url());
 
     updateFirstPartyForCookies();
 

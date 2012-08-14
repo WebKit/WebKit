@@ -118,10 +118,6 @@ namespace WebCore {
         // FIXME: Callers should use document()->securityOrigin() directly.
         SecurityOrigin* securityOrigin() const;
 
-        // FIXME: We should get the URL from document()->url() directly.
-        void setURL(const KURL& url) { m_url = url; }
-        KURL url() const { return m_url; }
-
         unsigned pendingUnloadEventListeners() const;
 
         static bool dispatchAllPendingBeforeUnloadEvents();
@@ -433,8 +429,6 @@ namespace WebCore {
         void disconnectDOMWindowProperties();
         void reconnectDOMWindowProperties();
         void willDestroyDocumentInFrame();
-
-        KURL m_url;
 
         bool m_shouldPrintWhenFinishedLoading;
         bool m_suspendedForPageCache;

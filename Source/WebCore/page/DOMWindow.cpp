@@ -1760,14 +1760,14 @@ void DOMWindow::printErrorMessage(const String& message)
 
 String DOMWindow::crossDomainAccessErrorMessage(DOMWindow* activeWindow)
 {
-    const KURL& activeWindowURL = activeWindow->url();
+    const KURL& activeWindowURL = activeWindow->document()->url();
     if (activeWindowURL.isNull())
         return String();
 
     // FIXME: This error message should contain more specifics of why the same origin check has failed.
     // Perhaps we should involve the security origin object in composing it.
     // FIXME: This message, and other console messages, have extra newlines. Should remove them.
-    return "Unsafe JavaScript attempt to access frame with URL " + m_url.string() + " from frame with URL " + activeWindowURL.string() + ". Domains, protocols and ports must match.\n";
+    return "Unsafe JavaScript attempt to access frame with URL " + document()->url().string() + " from frame with URL " + activeWindowURL.string() + ". Domains, protocols and ports must match.\n";
 }
 
 bool DOMWindow::isInsecureScriptAccess(DOMWindow* activeWindow, const String& urlString)
