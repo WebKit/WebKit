@@ -181,8 +181,6 @@ deps_os = {
   'android': {
     'third_party/android_tools':
       From('chromium_deps', 'src/third_party/android_tools'),
-    'third_party/aosp':
-      From('chromium_deps', 'src/third_party/aosp'),
     'third_party/freetype':
       From('chromium_deps', 'src/third_party/freetype'),
     'tools/android':

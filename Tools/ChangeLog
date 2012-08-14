@@ -1,3 +1,18 @@
+2012-08-14  Peter Beverloo  <peter@chromium.org>
+
+        [Chromium] Remove unneeded build logic for Android
+        https://bugs.webkit.org/show_bug.cgi?id=93962
+
+        Reviewed by Dimitri Glazkov.
+
+        The Android SDK and NDK have been checked in to the Chromium tree, which
+        allows WebKit to leverage those as well. They will already be pulled in
+        through a DEPS change made last week, and by not setting the ANDROID_NDK_ROOT
+        environment variable, the envsetup.sh will set the project files up
+        appropriately for us.
+
+        * Scripts/webkitdirs.pm:
+
 2012-08-14  Sergio Villar Senin  <svillar@igalia.com>
 
         [WK2] [GTK] Plugin tests failing in WK2 bot

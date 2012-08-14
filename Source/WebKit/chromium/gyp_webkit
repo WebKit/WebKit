@@ -87,9 +87,6 @@ if __name__ == '__main__':
       envsetup_location = os.path.join(chrome_src, 'build', 'android', 'envsetup.sh')
       exit(subprocess.call(['bash', '-c', 'source %s && python gyp_webkit --no-envsetup-recursion %s' % (envsetup_location, ' '.join(args))]))
     else:
-      # FIXME: v8 requires the CXX_target variable to determine whether -m32 should be
-      # set. The current Android build set-up is not sustainable and breaks too often.
-      os.environ['CXX_target'] = glob.glob('%s/*-g++' % os.environ.get('ANDROID_TOOLCHAIN'))[0]
       args.remove('--no-envsetup-recursion')
 
   # Add includes.

@@ -2618,49 +2618,6 @@ sub buildChromium($@)
     return $result;
 }
 
-sub chromiumInstall64BitAndroidLinkerIfNeeded
-{
-    my ($androidNdkRoot) = @_;
-
-    # Resolve the toolchain version through glob().
-    my $linkerDirPrefix = glob("$androidNdkRoot/toolchains/arm-linux-androideabi-*/prebuilt/linux-x86");
-
-    my $linkerDirname1 = "$linkerDirPrefix/bin";
-    my $linkerBasename1 = "arm-linux-androideabi-ld";
-    my $linkerDirname2 = "$linkerDirPrefix/arm-linux-androideabi/bin";
-    my $linkerBasename2 = "ld";
-    my $newLinker = "arm-linux-androideabi-ld.e4df3e0a5bb640ccfa2f30ee67fe9b3146b152d6";
-
-    # Do not continue if the new linker is not (yet) available.
-    if (! -e "third_party/aosp/$newLinker") {
-        return;
-    }
-
-    chromiumReplaceAndroidLinkerIfNeeded($linkerDirname1, $linkerBasename1, $newLinker);
-    chromiumReplaceAndroidLinkerIfNeeded($linkerDirname2, $linkerBasename2, $newLinker);
-}
-
-sub chromiumReplaceAndroidLinkerIfNeeded
-{
-    my ($linkerDirname, $linkerBasename, $newLinker) = @_;
-
-    # If the destination directory does not exist, or the linker has already
-    # been installed, replacing it will not be necessary.
-    if (! -d "$linkerDirname" || -e "$linkerDirname/$newLinker") {
-        return;
-    }
-
-    print "Installing 64-bit Android linker in $linkerDirname..\n";
-    system("cp", "third_party/aosp/$newLinker", "$linkerDirname/$newLinker");
-    system("mv", "$linkerDirname/$linkerBasename", "$linkerDirname/$linkerBasename.orig");
-    system("ln", "-s", "$newLinker", "$linkerDirname/$linkerBasename");
-
-    if (! -e "$linkerDirname/$newLinker") {
-        print "Unable to copy the linker.\n";
-        exit 1;
-    }
-}
-
 sub appleApplicationSupportPath
 {
     open INSTALL_DIR, "</proc/registry/HKEY_LOCAL_MACHINE/SOFTWARE/Apple\ Inc./Apple\ Application\ Support/InstallDir";
