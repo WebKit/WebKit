@@ -1,5 +1,24 @@
 2012-08-15  Yong Li  <yoli@rim.com>
 
+        [BlackBerry] Upstream FrameLoaderClientBlackBerry::securityOriginForNewDocument()
+        https://bugs.webkit.org/show_bug.cgi?id=94139
+
+        Reviewed by Antonio Gomes.
+
+        Keep same security origin when a file URL automatically redirects to its child folder.
+        This patch will be reverted when we finish the better solution.
+        PR# 172333 and PR# 180590.
+
+        * WebCoreSupport/FrameLoaderClientBlackBerry.cpp:
+        (WebCore::FrameLoaderClientBlackBerry::FrameLoaderClientBlackBerry):
+        (WebCore::FrameLoaderClientBlackBerry::dispatchDidStartProvisionalLoad):
+        (WebCore::FrameLoaderClientBlackBerry::securityOriginForNewDocument):
+        (WebCore):
+        * WebCoreSupport/FrameLoaderClientBlackBerry.h:
+        (FrameLoaderClientBlackBerry):
+
+2012-08-15  Yong Li  <yoli@rim.com>
+
         [BlackBerry] Should not keep recreating GeoTracker in setEnableHighAccuracy()
         https://bugs.webkit.org/show_bug.cgi?id=94136
 

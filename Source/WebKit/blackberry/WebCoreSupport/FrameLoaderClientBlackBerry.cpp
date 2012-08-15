@@ -108,6 +108,7 @@ FrameLoaderClientBlackBerry::FrameLoaderClientBlackBerry()
     , m_pluginView(0)
     , m_hasSentResponseToPlugin(false)
     , m_cancelLoadOnNextData(false)
+    , m_wasProvisionalLoadTriggeredByUserGesture(true) // To avoid affecting the first load.
 {
 }
 
@@ -504,6 +505,8 @@ void FrameLoaderClientBlackBerry::dispatchDidStartProvisionalLoad()
 
     if (m_webPagePrivate->m_dumpRenderTree)
         m_webPagePrivate->m_dumpRenderTree->didStartProvisionalLoadForFrame(m_frame);
+
+    m_wasProvisionalLoadTriggeredByUserGesture = ScriptController::processingUserGesture();
 }
 
 void FrameLoaderClientBlackBerry::dispatchDidReceiveResponse(DocumentLoader*, unsigned long identifier, const ResourceResponse& response)
@@ -1250,6 +1253,24 @@ void FrameLoaderClientBlackBerry::dispatchDidLoadFromApplicationCache(const Reso
         return;
 
     m_webPagePrivate->m_client->notifyDidLoadFromApplicationCache();
+}
+
+PassRefPtr<SecurityOrigin> FrameLoaderClientBlackBerry::securityOriginForNewDocument(const KURL& url)
+{
+    // What we are trying to do here is to keep using the old path as origin when a file-based html page
+    // changes its location to some html in a subfolder. This will allow some file-based html packages
+    // to work smoothly even with security checks enabled.
+
+    RefPtr<SecurityOrigin> newSecurityOrigin = SecurityOrigin::create(url);
+
+    if (m_wasProvisionalLoadTriggeredByUserGesture || !url.isLocalFile())
+        return newSecurityOrigin;
+
+    RefPtr<SecurityOrigin> currentSecurityOrigin = m_frame->document()->securityOrigin();
+    if (currentSecurityOrigin && currentSecurityOrigin->containsInFolder(newSecurityOrigin.get()))
+        return currentSecurityOrigin;
+
+    return newSecurityOrigin;
 }
 
 } // WebCore

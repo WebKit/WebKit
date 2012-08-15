@@ -170,6 +170,8 @@ public:
 
     virtual PassRefPtr<FrameNetworkingContext> createNetworkingContext();
 
+    virtual PassRefPtr<SecurityOrigin> securityOriginForNewDocument(const KURL&);
+
     void readyToRender(bool pageIsVisuallyNonEmpty);
 
     void doPendingFragmentScroll();
@@ -215,6 +217,8 @@ private:
 
     // Used to stop media files from loading because we don't need to have the entire file loaded by WebKit.
     bool m_cancelLoadOnNextData;
+
+    bool m_wasProvisionalLoadTriggeredByUserGesture;
 };
 
 } // WebCore
