@@ -105,12 +105,17 @@ RenderListBox::~RenderListBox()
         frameView->removeScrollableArea(this);
 }
 
+inline HTMLSelectElement* RenderListBox::selectElement() const
+{
+    return toHTMLSelectElement(node());
+}
+
 void RenderListBox::updateFromElement()
 {
     FontCachePurgePreventer fontCachePurgePreventer;
 
     if (m_optionsChanged) {
-        const Vector<HTMLElement*>& listItems = toHTMLSelectElement(node())->listItems();
+        const Vector<HTMLElement*>& listItems = selectElement()->listItems();
         int size = numItems();
         
         float width = 0;
@@ -176,7 +181,7 @@ void RenderListBox::layout()
 
 void RenderListBox::scrollToRevealSelection()
 {    
-    HTMLSelectElement* select = toHTMLSelectElement(node());
+    HTMLSelectElement* select = selectElement();
 
     m_scrollToRevealSelectionAfterLayout = false;
 
@@ -222,7 +227,7 @@ void RenderListBox::computePreferredLogicalWidths()
 
 int RenderListBox::size() const
 {
-    int specifiedSize = toHTMLSelectElement(node())->size();
+    int specifiedSize = selectElement()->size();
     if (specifiedSize > 1)
         return max(minSize, specifiedSize);
 
@@ -237,7 +242,7 @@ int RenderListBox::numVisibleItems() const
 
 int RenderListBox::numItems() const
 {
-    return toHTMLSelectElement(node())->listItems().size();
+    return selectElement()->listItems().size();
 }
 
 LayoutUnit RenderListBox::listHeight() const
@@ -326,7 +331,7 @@ void RenderListBox::addFocusRingRects(Vector<IntRect>& rects, const LayoutPoint&
     if (!isSpatialNavigationEnabled(frame()))
         return RenderBlock::addFocusRingRects(rects, additionalOffset);
 
-    HTMLSelectElement* select = toHTMLSelectElement(node());
+    HTMLSelectElement* select = selectElement();
 
     // Focus the last selected item.
     int selectedItem = select->activeSelectionEndListIndex();
@@ -383,9 +388,9 @@ void RenderListBox::paintItemForeground(PaintInfo& paintInfo, const LayoutPoint&
 {
     FontCachePurgePreventer fontCachePurgePreventer;
 
-    HTMLSelectElement* selectElement = toHTMLSelectElement(node());
+    HTMLSelectElement* select = selectElement();
 
-    const Vector<HTMLElement*>& listItems = selectElement->listItems();
+    const Vector<HTMLElement*>& listItems = select->listItems();
     HTMLElement* element = listItems[listIndex];
 
     RenderStyle* itemStyle = element->renderStyle();
@@ -408,7 +413,7 @@ void RenderListBox::paintItemForeground(PaintInfo& paintInfo, const LayoutPoint&
         if (frame()->selection()->isFocusedAndActive() && document()->focusedNode() == node())
             textColor = theme()->activeListBoxSelectionForegroundColor();
         // Honor the foreground color for disabled items
-        else if (!element->disabled() && !selectElement->disabled())
+        else if (!element->disabled() && !select->disabled())
             textColor = theme()->inactiveListBoxSelectionForegroundColor();
     }
 
@@ -433,7 +438,7 @@ void RenderListBox::paintItemForeground(PaintInfo& paintInfo, const LayoutPoint&
 
 void RenderListBox::paintItemBackground(PaintInfo& paintInfo, const LayoutPoint& paintOffset, int listIndex)
 {
-    const Vector<HTMLElement*>& listItems = toHTMLSelectElement(node())->listItems();
+    const Vector<HTMLElement*>& listItems = selectElement()->listItems();
     HTMLElement* element = listItems[listIndex];
 
     Color backColor;
@@ -528,7 +533,7 @@ void RenderListBox::panScroll(const IntPoint& panStartMousePosition)
         return;
 
     m_inAutoscroll = true;
-    HTMLSelectElement* select = toHTMLSelectElement(node());
+    HTMLSelectElement* select = selectElement();
     select->updateListBoxSelection(!select->multiple());
     m_inAutoscroll = false;
 }
@@ -557,7 +562,7 @@ void RenderListBox::autoscroll()
 
     int endIndex = scrollToward(pos);
     if (endIndex >= 0) {
-        HTMLSelectElement* select = toHTMLSelectElement(node());
+        HTMLSelectElement* select = selectElement();
         m_inAutoscroll = true;
 
         if (!select->multiple())
@@ -571,7 +576,7 @@ void RenderListBox::autoscroll()
 
 void RenderListBox::stopAutoscroll()
 {
-    toHTMLSelectElement(node())->listBoxOnChange();
+    selectElement()->listBoxOnChange();
 }
 
 bool RenderListBox::scrollToRevealElementAtListIndex(int index)
@@ -607,7 +612,7 @@ bool RenderListBox::logicalScroll(ScrollLogicalDirection direction, ScrollGranul
 
 void RenderListBox::valueChanged(unsigned listIndex)
 {
-    HTMLSelectElement* element = toHTMLSelectElement(node());
+    HTMLSelectElement* element = selectElement();
     element->setSelectedIndex(element->listToOptionIndex(listIndex));
     element->dispatchFormControlChangeEvent();
 }
@@ -693,7 +698,7 @@ bool RenderListBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& re
 {
     if (!RenderBlock::nodeAtPoint(request, result, pointInContainer, accumulatedOffset, hitTestAction))
         return false;
-    const Vector<HTMLElement*>& listItems = toHTMLSelectElement(node())->listItems();
+    const Vector<HTMLElement*>& listItems = selectElement()->listItems();
     int size = numItems();
     LayoutPoint adjustedLocation = accumulatedOffset + location();
 

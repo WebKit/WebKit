@@ -36,6 +36,8 @@
 
 namespace WebCore {
 
+class HTMLSelectElement;
+
 class RenderListBox : public RenderBlock, private ScrollableArea {
 public:
     RenderListBox(Element*);
@@ -56,6 +58,8 @@ public:
     int size() const;
 
 private:
+    HTMLSelectElement* selectElement() const;
+
     virtual const char* renderName() const { return "RenderListBox"; }
 
     virtual bool isListBox() const { return true; }
