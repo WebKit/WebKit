@@ -1,3 +1,13 @@
+2012-08-14  Ojan Vafai  <ojan@chromium.org>
+
+        Fix access to m_markupBox in WebCore::EllipsisBox::paint
+        https://bugs.webkit.org/show_bug.cgi?id=91138
+
+        Reviewed by Abhishek Arya.
+
+        * fast/overflow/line-clamp-and-columns-expected.html: Added.
+        * fast/overflow/line-clamp-and-columns.html: Added.
+
 2012-08-14  Yoshifumi Inoue  <yosin@chromium.org>
 
         [Forms] Make input type "time" to use multiple field time input UI

@@ -65,13 +65,29 @@ void EllipsisBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, La
     if (setShadow)
         context->clearShadow();
 
-    if (m_markupBox) {
-        // Paint the markup box
-        LayoutPoint adjustedPaintOffset = paintOffset;
-        adjustedPaintOffset.move(x() + m_logicalWidth - m_markupBox->x(),
-            y() + style->fontMetrics().ascent() - (m_markupBox->y() + m_markupBox->renderer()->style(isFirstLineStyle())->fontMetrics().ascent()));
-        m_markupBox->paint(paintInfo, adjustedPaintOffset, lineTop, lineBottom);
-    }
+    paintMarkupBox(paintInfo, paintOffset, lineTop, lineBottom, style);
+}
+
+void EllipsisBox::paintMarkupBox(PaintInfo& paintInfo, const LayoutPoint& paintOffset, LayoutUnit lineTop, LayoutUnit lineBottom, RenderStyle* style)
+{
+    if (!m_shouldPaintMarkupBox || !m_renderer->isRenderBlock())
+        return;
+
+    RenderBlock* block = toRenderBlock(m_renderer);
+    RootInlineBox* lastLine = block->lineAtIndex(block->lineCount() - 1);
+    if (!lastLine)
+        return;
+
+    // If the last line-box on the last line of a block is a link, -webkit-line-clamp paints that box after the ellipsis.
+    // It does not actually move the link.
+    InlineBox* anchorBox = lastLine->lastChild();
+    if (!anchorBox || !anchorBox->renderer()->style()->isLink())
+        return;
+
+    LayoutPoint adjustedPaintOffset = paintOffset;
+    adjustedPaintOffset.move(x() + m_logicalWidth - anchorBox->x(),
+        y() + style->fontMetrics().ascent() - (anchorBox->y() + anchorBox->renderer()->style(isFirstLineStyle())->fontMetrics().ascent()));
+    anchorBox->paint(paintInfo, adjustedPaintOffset, lineTop, lineBottom);
 }
 
 IntRect EllipsisBox::selectionRect()

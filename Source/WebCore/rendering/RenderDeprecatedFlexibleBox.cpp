@@ -883,6 +883,7 @@ void RenderDeprecatedFlexibleBox::applyLineClamp(FlexBoxIterator& iterator, bool
         if (childDoesNotAffectWidthOrFlexing(child))
             continue;
 
+        child->clearOverrideSize();
         if (relayoutChildren || (child->isReplaced() && (child->style()->width().isPercent() || child->style()->height().isPercent()))
             || (child->style()->height().isAuto() && child->isBlockFlow())) {
             child->setChildNeedsLayout(true, MarkOnlyThis);
@@ -921,7 +922,6 @@ void RenderDeprecatedFlexibleBox::applyLineClamp(FlexBoxIterator& iterator, bool
         child->setChildNeedsLayout(true, MarkOnlyThis);
         child->setOverrideLogicalContentHeight(newHeight - child->borderAndPaddingHeight());
         child->layoutIfNeeded();
-        child->clearOverrideSize();
 
         // FIXME: For now don't support RTL.
         if (style()->direction() != LTR)
@@ -984,6 +984,7 @@ void RenderDeprecatedFlexibleBox::clearLineClamp()
         if (childDoesNotAffectWidthOrFlexing(child))
             continue;
 
+        child->clearOverrideSize();
         if ((child->isReplaced() && (child->style()->width().isPercent() || child->style()->height().isPercent()))
             || (child->style()->height().isAuto() && child->isBlockFlow())) {
             child->setChildNeedsLayout(true);
