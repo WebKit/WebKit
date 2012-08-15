@@ -35,17 +35,17 @@ static NSString *defaultURL = @"http://www.webkit.org/";
 
 @implementation BrowserAppDelegate
 
-void didRecieveMessageFromInjectedBundle(WKContextRef context, WKStringRef messageName, WKTypeRef messageBody, const void *clientInfo)
+void didReceiveMessageFromInjectedBundle(WKContextRef context, WKStringRef messageName, WKTypeRef messageBody, const void *clientInfo)
 {
     CFStringRef cfMessageName = WKStringCopyCFString(0, messageName);
 
     WKTypeID typeID = WKGetTypeID(messageBody);
     if (typeID == WKStringGetTypeID()) {
         CFStringRef cfMessageBody = WKStringCopyCFString(0, (WKStringRef)messageBody);
-        LOG(@"ContextInjectedBundleClient - didRecieveMessage - MessageName: %@ MessageBody %@", cfMessageName, cfMessageBody);
+        LOG(@"ContextInjectedBundleClient - didReceiveMessage - MessageName: %@ MessageBody %@", cfMessageName, cfMessageBody);
         CFRelease(cfMessageBody);
     } else {
-        LOG(@"ContextInjectedBundleClient - didRecieveMessage - MessageName: %@ (MessageBody Unhandeled)\n", cfMessageName);
+        LOG(@"ContextInjectedBundleClient - didReceiveMessage - MessageName: %@ (MessageBody Unhandled)\n", cfMessageName);
     }
     
     CFRelease(cfMessageName);
@@ -130,7 +130,7 @@ static void populateVisitedLinks(WKContextRef context, const void *clientInfo)
         WKContextInjectedBundleClient bundleClient = {
             kWKContextInjectedBundleClientCurrentVersion,
             0,      /* clientInfo */
-            didRecieveMessageFromInjectedBundle,
+            didReceiveMessageFromInjectedBundle,
             0,      /* didReceiveSynchronousMessageFromInjectedBundle */
             0       /* getInjectedBundleInitializationUserData */
         };

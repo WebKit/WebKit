@@ -1,3 +1,16 @@
+2012-08-14  Alexey Proskuryakov  <ap@apple.com>
+
+        [WK2] Fix some typos in MiniBrowser
+        https://bugs.webkit.org/show_bug.cgi?id=94047
+
+        Reviewed by Jon Honeycutt.
+
+        * MiniBrowser/mac/AppDelegate.m:
+        (didReceiveMessageFromInjectedBundle): (-[BrowserAppDelegate init]):
+        * MiniBrowser/mac/WebBundle/WebBundleMain.m:
+        (didReceiveMessage):
+        (WKBundleInitialize):
+
 2012-08-14  Roger Fong  <roger_fong@apple.com>
 
         old-run-webkit-tests should skip all file extensions for ref tests, not just .html.
