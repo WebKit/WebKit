@@ -278,9 +278,7 @@ WebInspector.TabbedEditorContainer.prototype = {
 
         this._tabbedPane.appendTab(tabId, title, view, tooltip, userGesture);
 
-        uiSourceCode.addEventListener(WebInspector.UISourceCode.Events.TitleChanged, this._uiSourceCodeTitleChanged, this);
-        uiSourceCode.addEventListener(WebInspector.UISourceCode.Events.WorkingCopyChanged, this._uiSourceCodeWorkingCopyChanged, this);
-        uiSourceCode.addEventListener(WebInspector.UISourceCode.Events.ContentChanged, this._uiSourceCodeContentChanged, this);
+        this._addUISourceCodeListeners(uiSourceCode);
         return tabId;
     },
 
@@ -300,9 +298,7 @@ WebInspector.TabbedEditorContainer.prototype = {
         this._tabIds.remove(uiSourceCode);
         delete this._files[tabId];
 
-        uiSourceCode.removeEventListener(WebInspector.UISourceCode.Events.TitleChanged, this._uiSourceCodeTitleChanged, this);
-        uiSourceCode.removeEventListener(WebInspector.UISourceCode.Events.WorkingCopyChanged, this._uiSourceCodeWorkingCopyChanged, this);
-        uiSourceCode.removeEventListener(WebInspector.UISourceCode.Events.ContentChanged, this._uiSourceCodeContentChanged, this);
+        this._removeUISourceCodeListeners(uiSourceCode);
 
         this.dispatchEventToListeners(WebInspector.TabbedEditorContainer.Events.EditorClosed, uiSourceCode);
 
@@ -341,6 +337,29 @@ WebInspector.TabbedEditorContainer.prototype = {
         this._tabbedPane.changeTabTitle(tabId, this._titleForFile(uiSourceCode));
         this._tabbedPane.changeTabView(tabId, this._delegate.viewForFile(uiSourceCode));
         this._tabbedPane.changeTabTooltip(tabId, this._tooltipForFile(uiSourceCode));
+
+        this._removeUISourceCodeListeners(oldUISourceCode);
+        this._addUISourceCodeListeners(uiSourceCode);
+    },
+
+    /**
+     * @param {WebInspector.UISourceCode} uiSourceCode
+     */
+    _addUISourceCodeListeners: function(uiSourceCode)
+    {
+        uiSourceCode.addEventListener(WebInspector.UISourceCode.Events.TitleChanged, this._uiSourceCodeTitleChanged, this);
+        uiSourceCode.addEventListener(WebInspector.UISourceCode.Events.WorkingCopyChanged, this._uiSourceCodeWorkingCopyChanged, this);
+        uiSourceCode.addEventListener(WebInspector.UISourceCode.Events.ContentChanged, this._uiSourceCodeContentChanged, this);
+    },
+
+    /**
+     * @param {WebInspector.UISourceCode} uiSourceCode
+     */
+    _removeUISourceCodeListeners: function(uiSourceCode)
+    {
+        uiSourceCode.removeEventListener(WebInspector.UISourceCode.Events.TitleChanged, this._uiSourceCodeTitleChanged, this);
+        uiSourceCode.removeEventListener(WebInspector.UISourceCode.Events.WorkingCopyChanged, this._uiSourceCodeWorkingCopyChanged, this);
+        uiSourceCode.removeEventListener(WebInspector.UISourceCode.Events.ContentChanged, this._uiSourceCodeContentChanged, this);
     },
 
     /**

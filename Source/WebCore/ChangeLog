@@ -1,5 +1,20 @@
 2012-08-15  Vsevolod Vlasov  <vsevik@chromium.org>
 
+        Web Inspector: TabbedEditorContainer Doens't show '*' near modified file name sometimes.
+        https://bugs.webkit.org/show_bug.cgi?id=94095
+
+        Reviewed by Pavel Feldman.
+
+        TabbedEditorContainer now correctly updates event listeners on UISourceCodeReplaced event.
+
+        * inspector/front-end/TabbedEditorContainer.js:
+        (WebInspector.TabbedEditorContainer.prototype._appendFileTab):
+        (WebInspector.TabbedEditorContainer.prototype._tabClosed):
+        (WebInspector.TabbedEditorContainer.prototype._addUISourceCodeListeners):
+        (WebInspector.TabbedEditorContainer.prototype._removeUISourceCodeListeners):
+
+2012-08-15  Vsevolod Vlasov  <vsevik@chromium.org>
+
         Web Inspector: Scroll/selection are not saved in sources panel editors sometimes.
         https://bugs.webkit.org/show_bug.cgi?id=94098
 
