@@ -278,7 +278,7 @@ void TimeInputType::updateInnerTextValue()
     }
 }
 #else
-TimeInputType(HTMLInputElement* element)
+TimeInputType::TimeInputType(HTMLInputElement* element)
     : BaseDateAndTimeInputType(element)
 {
 }

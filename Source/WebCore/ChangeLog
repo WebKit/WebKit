@@ -1,3 +1,11 @@
+2012-08-14  Yuta Kitamura  <yutak@google.com>
+
+        Unreviewed. Fix Chromium-Android builds.
+
+        * html/TimeInputType.cpp:
+        (WebCore::TimeInputType::TimeInputType):
+        Declare the function as a constructor.
+
 2012-08-14  Sukolsak Sakshuwong  <sukolsak@google.com>
 
         Text selection in text area in auto scroll mode goes wrong.
