@@ -1,3 +1,18 @@
+2012-08-15  Benjamin Poulain  <bpoulain@apple.com>
+
+        Use literal initialization for CSS's pseudo types
+        https://bugs.webkit.org/show_bug.cgi?id=94066
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Initialize CSS pseudo type strings with the new initialization from literal.
+
+        The first invocation of nameToPseudoTypeMap() becomes 20% faster and we use
+        less memory to store the strings.
+
+        * css/CSSSelector.cpp:
+        (WebCore::nameToPseudoTypeMap):
+
 2012-08-15  Brady Eidson  <beidson@apple.com>
 
         Removing a plug-in element from a page opened in a background tab in Safari crashes
