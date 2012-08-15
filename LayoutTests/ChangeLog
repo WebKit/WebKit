@@ -1,3 +1,17 @@
+2012-08-15  Matt Falkenhagen  <falken@chromium.org>
+
+        Add a layout test for :lang() selector observing dynamic changes to lang
+        https://bugs.webkit.org/show_bug.cgi?id=94092
+
+        Reviewed by Alexey Proskuryakov.
+
+        This patch adds a test that dynamic changes to the lang attribute are seen by the :lang selector.
+        This behavior was first added in an earlier patch (probably http://trac.webkit.org/changeset/103608)
+        but there was no layout test for it yet.
+
+        * fast/selectors/lang-dynamic-expected.html: Added.
+        * fast/selectors/lang-dynamic.html: Added.
+
 2012-08-15  Brady Eidson  <beidson@apple.com>
 
         REGRESSION (125659): 4 HTMLMeterElement tests fail on Mac
