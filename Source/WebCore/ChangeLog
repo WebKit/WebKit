@@ -1,3 +1,24 @@
+2012-08-15  Thiago Marcos P. Santos  <thiago.santos@intel.com>
+
+        Relative units are not set when the canvas has not parent
+        https://bugs.webkit.org/show_bug.cgi?id=93840
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Set the default font when no parent style is set. It will make
+        possible to apply relative units when a parent is not set.
+
+        No new tests, unskipped the existing ones.
+
+        * css/StyleBuilder.cpp:
+        (WebCore::ApplyPropertyFontSize::applyValue):
+        Make it possible to apply relative units if a parent style exist but
+        not a parent node. It works like this for em and ex, but not for
+        percent units.
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore):
+        (WebCore::CanvasRenderingContext2D::setFont):
+
 2012-08-14  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: split standalone test runner, test scanner and test stub.

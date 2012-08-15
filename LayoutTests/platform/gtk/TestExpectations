@@ -910,8 +910,6 @@ BUGWKGTK : canvas/philip/tests/2d.text.draw.space.collapse.end.html = TEXT
 BUGWKGTK : canvas/philip/tests/2d.text.draw.space.collapse.other.html = TEXT
 BUGWKGTK : canvas/philip/tests/2d.text.draw.space.collapse.space.html = TEXT
 BUGWKGTK : canvas/philip/tests/2d.text.draw.space.collapse.start.html = TEXT
-BUGWKGTK : canvas/philip/tests/2d.text.font.parse.size.percentage.html = TEXT
-BUGWKGTK : canvas/philip/tests/2d.text.font.parse.size.percentage.default.html = TEXT
 BUGWKGTK : canvas/philip/tests/2d.text.measure.width.space.html = TEXT
 BUGWKGTK : canvas/philip/tests/type.prototype.html = TEXT
 

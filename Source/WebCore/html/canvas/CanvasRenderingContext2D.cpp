@@ -83,6 +83,8 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
+static const int defaultFontSize = 10;
+static const char* const defaultFontFamily = "sans-serif";
 static const char* const defaultFont = "10px sans-serif";
 
 static bool isOriginClean(CachedImage* cachedImage, SecurityOrigin* securityOrigin)
@@ -2037,6 +2039,18 @@ void CanvasRenderingContext2D::setFont(const String& newFont)
     RefPtr<RenderStyle> newStyle = RenderStyle::create();
     if (RenderStyle* computedStyle = canvas()->computedStyle())
         newStyle->setFontDescription(computedStyle->fontDescription());
+    else {
+        FontFamily fontFamily;
+        fontFamily.setFamily(defaultFontFamily);
+
+        FontDescription defaultFontDescription;
+        defaultFontDescription.setFamily(fontFamily);
+        defaultFontDescription.setSpecifiedSize(defaultFontSize);
+        defaultFontDescription.setComputedSize(defaultFontSize);
+
+        newStyle->setFontDescription(defaultFontDescription);
+    }
+
     newStyle->font().update(newStyle->font().fontSelector());
 
     // Now map the font property longhands into the style.

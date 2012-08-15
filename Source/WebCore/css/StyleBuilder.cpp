@@ -719,7 +719,7 @@ public:
         bool parentIsAbsoluteSize = false;
         float size = 0;
 
-        if (styleResolver->hasParentNode()) {
+        if (styleResolver->parentStyle()) {
             parentSize = styleResolver->parentStyle()->fontDescription().specifiedSize();
             parentIsAbsoluteSize = styleResolver->parentStyle()->fontDescription().isAbsoluteSize();
         }
