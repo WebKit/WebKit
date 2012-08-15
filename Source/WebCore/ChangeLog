@@ -1,3 +1,30 @@
+2012-08-15  Beth Dakin  <bdakin@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=93693
+        [WK2] REGRESSION(125091): pixel results don't sow scrollbars 
+        anymore
+
+        Reviewed by Sam Weinig.
+
+        This is a regression from http://trac.webkit.org/changeset/125091 
+        in which I failed to noticed that 
+        WKBundlePageCreateSnapshotInViewCoordinates() did actually do 
+        something different than 
+        WKBundlePageCreateSnapshotInDocumentCoordinates(). Specifically, 
+        it used ScrollView::paint() to paint instead of 
+        FrameView::paintContents(). So this patch restores that 
+        functionality by adding a value to SnapshotOptions indicating 
+        whether the snapshot should be taken in ViewCoordinates 
+        (otherwise it defaults to DocumentCoordinates).
+
+        FrameView:: paintContentsForSnapshot() now takes a new parameter 
+        that indicates whether to take the snapshot in document 
+        coordinates or view coordinates.
+        * WebCore.exp.in:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::paintContentsForSnapshot):
+        * page/FrameView.h:
+
 2012-08-15  Benjamin Poulain  <bpoulain@apple.com>
 
         Use literal initialization for CSS's pseudo types

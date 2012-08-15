@@ -899,7 +899,7 @@ void InjectedBundlePage::dump()
         InjectedBundle::shared().dumpBackForwardListsForAllPages();
 
     if (InjectedBundle::shared().shouldDumpPixels() && InjectedBundle::shared().layoutTestController()->shouldDumpPixels()) {
-        InjectedBundle::shared().setPixelResult(adoptWK(WKBundlePageCreateSnapshotInViewCoordinates(m_page, WKBundleFrameGetVisibleContentBounds(WKBundlePageGetMainFrame(m_page)), kWKImageOptionsShareable)).get());
+        InjectedBundle::shared().setPixelResult(adoptWK(WKBundlePageCreateSnapshotWithOptions(m_page, WKBundleFrameGetVisibleContentBounds(WKBundlePageGetMainFrame(m_page)), kWKSnapshotOptionsShareable | kWKSnapshotOptionsInViewCoordinates)).get());
         if (WKBundlePageIsTrackingRepaints(m_page))
             InjectedBundle::shared().setRepaintRects(adoptWK(WKBundlePageCopyTrackedRepaintRects(m_page)).get());
     }

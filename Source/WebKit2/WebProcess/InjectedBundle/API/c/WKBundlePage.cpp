@@ -295,7 +295,9 @@ WKImageRef WKBundlePageCreateSnapshotWithOptions(WKBundlePageRef pageRef, WKRect
 
 WKImageRef WKBundlePageCreateSnapshotInViewCoordinates(WKBundlePageRef pageRef, WKRect rect, WKImageOptions options)
 {
-    RefPtr<WebImage> webImage = toImpl(pageRef)->scaledSnapshotWithOptions(toIntRect(rect), 1, snapshotOptionsFromImageOptions(options));
+    SnapshotOptions snapshotOptions = snapshotOptionsFromImageOptions(options);
+    snapshotOptions |= SnapshotOptionsInViewCoordinates;
+    RefPtr<WebImage> webImage = toImpl(pageRef)->scaledSnapshotWithOptions(toIntRect(rect), 1, snapshotOptions);
     return toAPI(webImage.release().leakRef());
 }
 

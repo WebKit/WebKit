@@ -776,6 +776,8 @@ inline SnapshotOptions toSnapshotOptions(WKSnapshotOptions wkSnapshotOptions)
         snapshotOptions |= SnapshotOptionsShareable;
     if (wkSnapshotOptions & kWKSnapshotOptionsExcludeSelectionHighlighting)
         snapshotOptions |= SnapshotOptionsExcludeSelectionHighlighting;
+    if (wkSnapshotOptions & kWKSnapshotOptionsInViewCoordinates)
+        snapshotOptions |= SnapshotOptionsInViewCoordinates;
 
     return snapshotOptions;
 }

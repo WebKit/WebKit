@@ -3146,7 +3146,7 @@ void FrameView::setNodeToDraw(Node* node)
     m_nodeToDraw = node;
 }
 
-void FrameView::paintContentsForSnapshot(GraphicsContext* context, const IntRect& imageRect, SelectionInSnaphot shouldPaintSelection)
+void FrameView::paintContentsForSnapshot(GraphicsContext* context, const IntRect& imageRect, SelectionInSnaphot shouldPaintSelection, CoordinateSpaceForSnapshot coordinateSpace)
 {
     updateLayoutAndStyleIfNeededRecursive();
 
@@ -3164,7 +3164,13 @@ void FrameView::paintContentsForSnapshot(GraphicsContext* context, const IntRect
         }
     }
 
-    paintContents(context, imageRect);
+    if (coordinateSpace == DocumentCoordinates)
+        paintContents(context, imageRect);
+    else {
+        // A snapshot in ViewCoordinates will include a scrollbar, and the snapshot will contain
+        // whatever content the document is currently scrolled to.
+        paint(context, imageRect);
+    }
 
     // Restore selection.
     if (shouldPaintSelection == ExcludeSelection) {

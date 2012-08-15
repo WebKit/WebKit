@@ -40,7 +40,8 @@ typedef uint32_t WKImageOptions;
 
 enum {
     kWKSnapshotOptionsShareable = 1 << 0,
-    kWKSnapshotOptionsExcludeSelectionHighlighting = 1 << 1
+    kWKSnapshotOptionsExcludeSelectionHighlighting = 1 << 1,
+    kWKSnapshotOptionsInViewCoordinates = 1 << 2
 };
 typedef uint32_t WKSnapshotOptions;
 

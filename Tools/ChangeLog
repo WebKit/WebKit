@@ -1,3 +1,15 @@
+2012-08-15  Beth Dakin  <bdakin@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=93693
+        [WK2] REGRESSION(125091): pixel results don't sow scrollbars 
+        anymore
+
+        Reviewed by Sam Weinig.
+
+        Use new API WKBundlePageCreateSnapshotWithOptions().
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::InjectedBundlePage::dump):
+
 2012-08-15  Alexey Proskuryakov  <ap@apple.com>
 
         Add rfong to Bugzilla CC "contributor" list.

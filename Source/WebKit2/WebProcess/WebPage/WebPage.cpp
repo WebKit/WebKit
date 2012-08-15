@@ -1225,7 +1225,11 @@ PassRefPtr<WebImage> WebPage::scaledSnapshotWithOptions(const IntRect& rect, dou
     if (options & SnapshotOptionsExcludeSelectionHighlighting)
         shouldPaintSelection = FrameView::ExcludeSelection;
 
-    frameView->paintContentsForSnapshot(graphicsContext.get(), rect, shouldPaintSelection);
+    FrameView::CoordinateSpaceForSnapshot coordinateSpace = FrameView::DocumentCoordinates;
+    if (options & SnapshotOptionsInViewCoordinates)
+        coordinateSpace = FrameView::ViewCoordinates;
+
+    frameView->paintContentsForSnapshot(graphicsContext.get(), rect, shouldPaintSelection, coordinateSpace);
 
     return snapshot.release();
 }

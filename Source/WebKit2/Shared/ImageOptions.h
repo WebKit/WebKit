@@ -34,7 +34,8 @@ enum ImageOptions {
 
 enum {
     SnapshotOptionsShareable = 1 << 0,
-    SnapshotOptionsExcludeSelectionHighlighting = 1 << 1
+    SnapshotOptionsExcludeSelectionHighlighting = 1 << 1,
+    SnapshotOptionsInViewCoordinates = 1 << 2
 };
 typedef uint32_t SnapshotOptions;
 
