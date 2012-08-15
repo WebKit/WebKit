@@ -533,6 +533,16 @@ BUGWK91314 : http/tests/misc/webtiming-origins.html = PASS TEXT
 
 BUGWK70485 : fast/events/drag-selects-image.html = PASS TEXT
 
+BUGWK94119 : storage/websql/database-lock-after-reload.html = TEXT PASS
+
+BUGWK93727 RELEASE : fast/events/keyevent-iframe-removed-crash.html = TEXT PASS
+BUGWK93727 RELEASE : fullscreen/full-screen-iframe-allowed.html = TEXT PASS
+BUGWK93727 RELEASE : fullscreen/full-screen-iframe-legacy.html = TEXT PASS
+BUGWK93727 RELEASE : fullscreen/full-screen-iframe-not-allowed.html = TEXT PASS
+BUGWK93727 RELEASE : fullscreen/exit-full-screen-iframe.html = TEXT PASS
+BUGWK93727 RELEASE : fullscreen/full-screen-iframe-zIndex.html = TEXT PASS
+BUGWK93727 RELEASE : svg/custom/use-instanceRoot-as-event-target.xhtml = TEXT PASS
+
 //////////////////////////////////////////////////////////////////////////////////////////
 // End of Flaky tests
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -1290,13 +1300,6 @@ BUGWK93073 : mathml/presentation/tables.xhtml = TEXT
 BUGWK93073 : mathml/presentation/tokenElements.xhtml = TEXT
 BUGWK93073 : mathml/presentation/under.xhtml = TEXT
 BUGWK93073 : mathml/presentation/underover.xhtml = TEXT
-
-BUGWK93727 RELEASE : fast/events/keyevent-iframe-removed-crash.html = TEXT PASS
-BUGWK93727 RELEASE : fullscreen/full-screen-iframe-zIndex.html = TEXT PASS
-BUGWK93727 RELEASE : fullscreen/full-screen-iframe-allowed.html = TEXT PASS
-BUGWK93727 RELEASE : fullscreen/full-screen-iframe-not-allowed.html = TEXT PASS
-BUGWK93727 RELEASE : fullscreen/exit-full-screen-iframe.html = TEXT PASS
-BUGWK93727 RELEASE : svg/custom/use-instanceRoot-as-event-target.xhtml = TEXT PASS
 
 BUGWK93976 : fast/css-generated-content/quotes-lang.html = IMAGE
 

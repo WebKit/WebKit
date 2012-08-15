@@ -1,3 +1,23 @@
+2012-08-15  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening.
+
+        Updating baselines for <meter> tests after r125659.
+
+        Marking fullscreen/full-screen-iframe-legacy.html and
+        storage/websql/database-lock-after-reload.html as flaky.
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/fast/dom/HTMLMeterElement/meter-appearances-capacity-expected.txt:
+        * platform/gtk/fast/dom/HTMLMeterElement/meter-appearances-rating-relevancy-expected.txt:
+        * platform/gtk/fast/dom/HTMLMeterElement/meter-boundary-values-expected.txt:
+        * platform/gtk/fast/dom/HTMLMeterElement/meter-element-expected.txt: Added.
+        * platform/gtk/fast/dom/HTMLMeterElement/meter-element-repaint-on-update-value-expected.txt: Added.
+        * platform/gtk/fast/dom/HTMLMeterElement/meter-optimums-expected.txt: Added.
+        * platform/gtk/fast/dom/HTMLMeterElement/meter-styles-changing-pseudo-expected.txt: Added.
+        * platform/gtk/fast/dom/HTMLMeterElement/meter-styles-expected.txt: Added.
+        * platform/gtk/fast/dom/HTMLMeterElement/meter-writing-mode-expected.txt: Added.
+
 2012-08-15  Lauro Neto  <lauro.neto@openbossa.org>
 
         [Qt] unskip passing fast/text tests.
