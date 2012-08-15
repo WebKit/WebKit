@@ -47,23 +47,6 @@ public:
         PrevNoDuplicate = 3,
     };
 
-    // FIXME: Remove these methods when callers are updated.
-    virtual WebIDBKey key() const
-    {
-        WEBKIT_ASSERT_NOT_REACHED();
-        return WebIDBKey::createInvalid();
-    }
-    virtual WebIDBKey primaryKey() const
-    {
-        WEBKIT_ASSERT_NOT_REACHED();
-        return WebIDBKey::createInvalid();
-    }
-    virtual WebSerializedScriptValue value() const
-    {
-        WEBKIT_ASSERT_NOT_REACHED();
-        return WebSerializedScriptValue();
-    }
-
     virtual void advance(unsigned long, WebIDBCallbacks*, WebExceptionCode&) { WEBKIT_ASSERT_NOT_REACHED(); }
     virtual void continueFunction(const WebIDBKey&, WebIDBCallbacks*, WebExceptionCode&) { WEBKIT_ASSERT_NOT_REACHED(); }
     virtual void deleteFunction(WebIDBCallbacks*, WebExceptionCode&) { WEBKIT_ASSERT_NOT_REACHED(); }

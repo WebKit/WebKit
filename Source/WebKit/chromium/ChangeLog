@@ -1,3 +1,17 @@
+2012-08-15  Joshua Bell  <jsbell@chromium.org>
+
+        [chromium] IndexedDB: Delete unused WebKit API cursor accessors
+        https://bugs.webkit.org/show_bug.cgi?id=94134
+
+        Reviewed by Adam Barth.
+
+        Last bit of refactor work from http://webkit.org/b/92278 that ships the
+        cursor key/primaryKey/value to the front end via success messages, eliminating
+        the need for these accessors and the old success messages.
+
+        * public/WebIDBCallbacks.h:
+        * public/WebIDBCursor.h:
+
 2012-08-15  Anna Cavender  <annacc@chromium.org>
 
         Add the timestampOffset attribute to SourceBuffer.
