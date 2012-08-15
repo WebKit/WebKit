@@ -1,3 +1,10 @@
+2012-08-14  Yuta Kitamura  <yutak@google.com>
+
+        [Chromium] Unreviewed test expectation update. Address new flakiness
+        and slow tests.
+
+        * platform/chromium/TestExpectations:
+
 2012-08-14  Ojan Vafai  <ojan@chromium.org>
 
         Fix access to m_markupBox in WebCore::EllipsisBox::paint

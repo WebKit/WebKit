@@ -64,6 +64,7 @@ BUGCR24182 : jquery/manipulation.html = PASS TIMEOUT
 BUGCR24182 SLOW DEBUG : jquery/offset.html = PASS
 BUGCR24182 LINUX ANDROID WIN DEBUG : jquery/traversing.html = PASS TIMEOUT
 BUGCR24182 SLOW SNOWLEOPARD DEBUG : svg/dom/baseVal-animVal-crash.html = PASS
+BUGCR24182 SLOW MAC : storage/indexeddb/factory-basics.html = PASS
 
 // These tests started being slow when we switched to DRT.
 BUGWK90488 SLOW LINUX WIN DEBUG : inspector = PASS
@@ -1583,10 +1584,6 @@ BUGCR27486 LINUX ANDROID WIN : fast/forms/range/slider-zoomed.html = TEXT
 
 // This test isn't just slow -- sometimes it times out indefinitely.
 BUGCR27569 : http/tests/xmlhttprequest/redirect-cross-origin-tripmine.html = PASS TIMEOUT
-
-// Merge WebKit 42200:42244 regressions
-BUGCR9786 : fast/dom/Window/dom-access-from-closure-iframe.html = TEXT
-BUGCR9786 : fast/dom/Window/dom-access-from-closure-window.html = TEXT
 
 BUGCR9798 SLOW WIN DEBUG : fast/dom/Window/slow-unload-handler.html = PASS
 
@@ -3352,6 +3349,7 @@ BUGWK90003 WIN DEBUG : fast/js/repeat-cached-vm-reentry.html = TIMEOUT PASS
 // Flaky. It also times out very frequently on Windows and Linux debug build.
 BUGWK90207 SLOW WIN DEBUG : fast/forms/select/select-state-restore.html = PASS TEXT
 BUGWK90207 SLOW LINUX ANDROID DEBUG : fast/forms/select/select-state-restore.html = PASS TEXT
+BUGWK90207 WIN RELEASE : fast/forms/select/select-state-restore.html = PASS TIMEOUT
 
 // Flaky
 BUGWK90430 : inspector/timeline/timeline-receive-response-event.html = PASS TEXT TIMEOUT
@@ -3494,3 +3492,8 @@ BUGWK94003 MAC WIN : fast/css/word-spacing-characters-complex-text.html = IMAGE
 
 BUGWK94010 DEBUG : fast/regex/unicodeCaseInsensitive.html = PASS CRASH
 BUGWK94017 WIN : css2.1/20110323/c541-word-sp-000.htm = IMAGE
+
+BUGWK94059 DEBUG : editing/selection/move-by-line-001.html = PASS TEXT
+BUGWK94059 LION RELEASE : editing/selection/move-by-line-001.html = PASS TEXT
+
+BUGWK94060 LINUX : fast/dom/Window/dom-access-from-closure-window.html = PASS TEXT
