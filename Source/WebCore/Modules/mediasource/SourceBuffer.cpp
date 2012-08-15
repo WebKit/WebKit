@@ -41,6 +41,7 @@ namespace WebCore {
 SourceBuffer::SourceBuffer(const String& id, PassRefPtr<MediaSource> source)
     : m_id(id)
     , m_source(source)
+    , m_timestampOffset(0)
 {
 }
 
@@ -56,6 +57,22 @@ PassRefPtr<TimeRanges> SourceBuffer::buffered(ExceptionCode& ec) const
     }
 
     return m_source->buffered(id(), ec);
+}
+
+double SourceBuffer::timestampOffset() const
+{
+    return m_timestampOffset;
+}
+
+void SourceBuffer::setTimestampOffset(double offset, ExceptionCode& ec)
+{
+    if (!m_source) {
+        ec = INVALID_STATE_ERR;
+        return;
+    }
+
+    if (m_source->setTimestampOffset(id(), offset, ec))
+        m_timestampOffset = offset;
 }
 
 void SourceBuffer::append(PassRefPtr<Uint8Array> data, ExceptionCode& ec)

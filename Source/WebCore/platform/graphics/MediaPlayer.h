@@ -256,6 +256,7 @@ public:
     bool sourceAbort(const String& id);
     enum EndOfStreamStatus { EosNoError, EosNetworkError, EosDecodeError };
     void sourceEndOfStream(EndOfStreamStatus);
+    bool sourceSetTimestampOffset(const String& id, double offset);
 #endif
 
 #if ENABLE(ENCRYPTED_MEDIA)

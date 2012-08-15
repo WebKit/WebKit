@@ -435,6 +435,13 @@ void WebMediaPlayerClientImpl::sourceEndOfStream(WebCore::MediaPlayer::EndOfStre
     if (m_webMediaPlayer)
         m_webMediaPlayer->sourceEndOfStream(static_cast<WebMediaPlayer::EndOfStreamStatus>(status));
 }
+
+bool WebMediaPlayerClientImpl::sourceSetTimestampOffset(const String& id, double offset)
+{
+    if (!m_webMediaPlayer)
+        return false;
+    return m_webMediaPlayer->sourceSetTimestampOffset(id, offset);
+}
 #endif
 
 #if ENABLE(ENCRYPTED_MEDIA)

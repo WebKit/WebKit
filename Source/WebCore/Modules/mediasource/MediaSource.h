@@ -80,6 +80,7 @@ public:
     PassRefPtr<TimeRanges> buffered(const String& id, ExceptionCode&) const;
     void append(const String& id, PassRefPtr<Uint8Array> data, ExceptionCode&);
     void abort(const String& id, ExceptionCode&);
+    bool setTimestampOffset(const String& id, double, ExceptionCode&);
 
     // EventTarget interface
     virtual const AtomicString& interfaceName() const OVERRIDE;

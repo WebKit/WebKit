@@ -54,6 +54,9 @@ public:
 
     PassRefPtr<TimeRanges> buffered(ExceptionCode&) const;
 
+    double timestampOffset() const;
+    void setTimestampOffset(double, ExceptionCode&);
+
     void append(PassRefPtr<Uint8Array> data, ExceptionCode&);
 
     void abort(ExceptionCode&);
@@ -67,6 +70,8 @@ private:
 
     String m_id;
     RefPtr<MediaSource> m_source;
+    
+    double m_timestampOffset;
 };
 
 } // namespace WebCore

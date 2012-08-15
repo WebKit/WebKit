@@ -187,6 +187,7 @@ public:
     virtual bool sourceAppend(const WebString& id, const unsigned char* data, unsigned length) { return false; }
     virtual bool sourceAbort(const WebString& id) { return false; }
     virtual void sourceEndOfStream(EndOfStreamStatus)  { }
+    virtual bool sourceSetTimestampOffset(const WebString& id, double offset) { return false; }
 
     // Returns whether keySystem is supported. If true, the result will be
     // reported by an event.

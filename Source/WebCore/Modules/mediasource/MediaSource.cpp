@@ -267,6 +267,20 @@ void MediaSource::abort(const String& id, ExceptionCode& ec)
         ASSERT_NOT_REACHED();
 }
 
+bool MediaSource::setTimestampOffset(const String& id, double offset, ExceptionCode& ec)
+{
+    if (!m_player || m_readyState != openKeyword()) {
+        ec = INVALID_STATE_ERR;
+        return false;
+    }
+
+    if (!m_player->sourceSetTimestampOffset(id, offset)) {
+        ec = INVALID_STATE_ERR;
+        return false;
+    }
+    return true;
+}
+
 const AtomicString& MediaSource::interfaceName() const
 {
     return eventNames().interfaceForMediaSource;

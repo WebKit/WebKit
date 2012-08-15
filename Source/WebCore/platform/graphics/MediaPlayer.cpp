@@ -155,6 +155,7 @@ public:
     virtual bool sourceAppend(const String&, const unsigned char*, unsigned) { return false; }
     virtual bool sourceAbort(const String&) { return false; }
     virtual void sourceEndOfStream(MediaPlayer::EndOfStreamStatus) { }
+    virtual bool sourceSetTimestampOffset(const String&, double) { return false; }
 #endif
 
 #if ENABLE(ENCRYPTED_MEDIA)
@@ -491,6 +492,11 @@ bool MediaPlayer::sourceAbort(const String& id)
 void MediaPlayer::sourceEndOfStream(MediaPlayer::EndOfStreamStatus status)
 {
     return m_private->sourceEndOfStream(status);
+}
+
+bool MediaPlayer::sourceSetTimestampOffset(const String& id, double offset)
+{
+    return m_private->sourceSetTimestampOffset(id, offset);
 }
 #endif
 

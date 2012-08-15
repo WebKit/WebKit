@@ -43,6 +43,22 @@
                 testExpected("mediaSource.sourceBuffers[0].buffered.end(0)", 1, '>');
 
                 consoleWrite("");
+                consoleWrite("Set timestampOffset.");
+                testExpected("segmentHelper.sourceBuffer.timestampOffset", 0);
+                run("segmentHelper.sourceBuffer.timestampOffset = 5");
+                testExpected("segmentHelper.sourceBuffer.timestampOffset", 5);
+
+                // Append another 1 second of media data.
+                consoleWrite("");
+                consoleWrite("Append 1 second of data.");
+                var endIndex = segmentHelper.getMediaSegmentIndexForTimestamp(1);
+                for (var i = 0; i <= endIndex; i++)
+                    segmentHelper.appendMediaSegment(i);
+                testExpected("mediaSource.sourceBuffers[0].buffered.length", 2);
+                testExpected("mediaSource.sourceBuffers[0].buffered.start(1)", 5);
+                testExpected("mediaSource.sourceBuffers[0].buffered.end(1)", 1, '>');
+
+                consoleWrite("");
                 consoleWrite("Remove SourceBuffer");
 
                 mediaSource.sourceBuffers.addEventListener('webkitremovesourcebuffer', onSourceBufferRemoved);
@@ -54,6 +70,13 @@
                 video.src = webkitURL.createObjectURL(mediaSource2);
                 try {
                     mediaSource.addSourceBuffer('video/webm; codecs="vorbis,vp8"');
+                } catch (e) {
+                    consoleWrite("Got expected exception " + e);
+                }
+
+                consoleWrite("Test that setting timestampOffset throws an error when the MediaSource is not associated with a media element.");
+                try {
+                    segmentHelper.sourceBuffer.timestampOffset = 10;
                 } catch (e) {
                     consoleWrite("Got expected exception " + e);
                 }

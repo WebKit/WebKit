@@ -1,3 +1,38 @@
+2012-08-15  Anna Cavender  <annacc@chromium.org>
+
+        Add the timestampOffset attribute to SourceBuffer.
+        https://bugs.webkit.org/show_bug.cgi?id=93303
+
+        Reviewed by Dimitri Glazkov.
+
+        On the 30 July 2012 version of the Media Source Extensions spec, a timestampOffset 
+        attribute was added to the SourceBuffer object:
+        http://dvcs.w3.org/hg/html-media/raw-file/tip/media-source/media-source.html#dom-timestampoffset
+
+        Tests: additions to http/tests/media/media-source/video-media-source-objects.html
+
+        * Modules/mediasource/MediaSource.cpp:
+        (WebCore::MediaSource::setTimestampOffset): Set the timestampOffset on MediaPlayer.
+        (WebCore):
+        * Modules/mediasource/MediaSource.h:
+        (MediaSource):
+        * Modules/mediasource/SourceBuffer.cpp:
+        (WebCore::SourceBuffer::SourceBuffer): Let the timestampOffset be 0 initially
+        (WebCore::SourceBuffer::timestampOffset): Return the last value set.
+        (WebCore):
+        (WebCore::SourceBuffer::setTimestampOffset): Forward the call onto MediaSouce.
+        * Modules/mediasource/SourceBuffer.h:
+        (SourceBuffer):
+        * Modules/mediasource/SourceBuffer.idl: Create the new timestampOffset attr.
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::NullMediaPlayerPrivate::sourceSetTimestampOffset): A null media player
+            should just return false (nothing to set).
+        (WebCore):
+        (WebCore::MediaPlayer::sourceSetTimestampOffset):  Forward the call.
+        * platform/graphics/MediaPlayer.h:
+        * platform/graphics/MediaPlayerPrivate.h:
+        (WebCore::MediaPlayerPrivateInterface::sourceSetTimestampOffset):
+
 2012-08-15  Pavel Chadnov  <chadnov@google.com>
 
         Web Inspector: Incorrect XHR responses when two async xhrs are sent synchronously

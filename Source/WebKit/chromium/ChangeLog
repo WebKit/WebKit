@@ -1,3 +1,22 @@
+2012-08-15  Anna Cavender  <annacc@chromium.org>
+
+        Add the timestampOffset attribute to SourceBuffer.
+        https://bugs.webkit.org/show_bug.cgi?id=93303
+
+        Reviewed by Dimitri Glazkov.
+
+        On the 30 July 2012 version of the Media Source Extensions spec, a timestampOffset 
+        attribute was added to the SourceBuffer object:
+        http://dvcs.w3.org/hg/html-media/raw-file/tip/media-source/media-source.html#dom-timestampoffset
+
+        * public/WebMediaPlayer.h:
+        (WebKit::WebMediaPlayer::sourceSetTimestampOffset): Add the new method.
+        * src/WebMediaPlayerClientImpl.cpp:
+        (WebKit):
+        (WebKit::WebMediaPlayerClientImpl::sourceSetTimestampOffset): Forward the call.
+        * src/WebMediaPlayerClientImpl.h:
+        (WebMediaPlayerClientImpl):
+
 2012-08-15  Peter Beverloo  <peter@chromium.org>
 
         [Chromium] Roll WebKit Chromium DEPS to r151672

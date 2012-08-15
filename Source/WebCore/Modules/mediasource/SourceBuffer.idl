@@ -39,6 +39,10 @@ module html {
         readonly attribute TimeRanges buffered
             getter raises(DOMException);
 
+        // Applies an offset to media segment timestamps.
+        attribute double timestampOffset
+            setter raises(DOMException);
+
         // Append segment data.
         void append(in Uint8Array data) raises (DOMException);
 

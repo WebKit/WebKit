@@ -26,6 +26,16 @@ EXPECTED (mediaSource.sourceBuffers[0].buffered.length == '1') OK
 EXPECTED (mediaSource.sourceBuffers[0].buffered.start(0) == '0') OK
 EXPECTED (mediaSource.sourceBuffers[0].buffered.end(0) > '1') OK
 
+Set timestampOffset.
+EXPECTED (segmentHelper.sourceBuffer.timestampOffset == '0') OK
+RUN(segmentHelper.sourceBuffer.timestampOffset = 5)
+EXPECTED (segmentHelper.sourceBuffer.timestampOffset == '5') OK
+
+Append 1 second of data.
+EXPECTED (mediaSource.sourceBuffers[0].buffered.length == '2') OK
+EXPECTED (mediaSource.sourceBuffers[0].buffered.start(1) == '5') OK
+EXPECTED (mediaSource.sourceBuffers[0].buffered.end(1) > '1') OK
+
 Remove SourceBuffer
 RUN(mediaSource.removeSourceBuffer(segmentHelper.sourceBuffer))
 EXPECTED (mediaSource.sourceBuffers.length == '0') OK
@@ -37,6 +47,8 @@ Test that buffered throws an error after SourceBuffer has been removed.
 Got expected exception Error: INVALID_STATE_ERR: DOM Exception 11
 EXPECTED (mediaSource.sourceBuffers.length == '0') OK
 Test that addSourceBuffer() throws and error when the MediaSource is not associated with a media element.
+Got expected exception Error: INVALID_STATE_ERR: DOM Exception 11
+Test that setting timestampOffset throws an error when the MediaSource is not associated with a media element.
 Got expected exception Error: INVALID_STATE_ERR: DOM Exception 11
 END OF TEST
 

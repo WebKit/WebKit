@@ -164,6 +164,7 @@ public:
     virtual bool sourceAppend(const String&, const unsigned char* data, unsigned length);
     virtual bool sourceAbort(const String&);
     virtual void sourceEndOfStream(WebCore::MediaPlayer::EndOfStreamStatus);
+    virtual bool sourceSetTimestampOffset(const String&, double offset);
 #endif
 
 #if ENABLE(ENCRYPTED_MEDIA)
