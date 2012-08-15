@@ -1591,20 +1591,4 @@ unsigned HTMLSelectElement::length() const
     return options;
 }
 
-#ifndef NDEBUG
-
-HTMLSelectElement* toHTMLSelectElement(Node* node)
-{
-    ASSERT(!node || node->hasTagName(selectTag));
-    return static_cast<HTMLSelectElement*>(node);
-}
-
-const HTMLSelectElement* toHTMLSelectElement(const Node* node)
-{
-    ASSERT(!node || node->hasTagName(selectTag));
-    return static_cast<const HTMLSelectElement*>(node);
-}
-
-#endif
-
 } // namespace

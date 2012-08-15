@@ -1,5 +1,23 @@
 2012-08-15  Shinya Kawanaka  <shinyak@chromium.org>
 
+        [Refactoring] The debug version and release version of toHTMLSelectElement can be merged without any penalty
+        https://bugs.webkit.org/show_bug.cgi?id=94084
+
+        Reviewed by Kent Tamura.
+
+        We have two versions of toHTMLSelectElement. One has ASSERT() and the other one does not have ASSERT().
+        We can merge them without any penalty.
+
+        No new tests, no change in behavior.
+
+        * html/HTMLSelectElement.cpp:
+        * html/HTMLSelectElement.h:
+        (WebCore::isHTMLSelectElement):
+        (WebCore::toHTMLSelectElement):
+        (WebCore):
+
+2012-08-15  Shinya Kawanaka  <shinyak@chromium.org>
+
         AuthorShadowDOM for meter element
         https://bugs.webkit.org/show_bug.cgi?id=91970
 
