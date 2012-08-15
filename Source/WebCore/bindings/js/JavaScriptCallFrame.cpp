@@ -100,14 +100,6 @@ JSObject* JavaScriptCallFrame::thisObject() const
     return m_debuggerCallFrame.thisObject();
 }
 
-ExecState* JavaScriptCallFrame::exec() const
-{
-    ASSERT(m_isValid);
-    if (!m_isValid)
-        return 0;
-    return m_debuggerCallFrame.callFrame();
-}
-
 // Evaluate some JavaScript code in the scope of this frame.
 JSValue JavaScriptCallFrame::evaluate(const UString& script, JSValue& exception) const
 {

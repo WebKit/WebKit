@@ -78,7 +78,7 @@ public:
     
     bool* addressOfIsWatched() { return &m_isWatched; }
     
-    JS_EXPORT_PRIVATE void notifyWriteSlow(); // Call only if you've checked isWatched.
+    void notifyWriteSlow(); // Call only if you've checked isWatched.
     
 private:
     void fireAllWatchpoints();

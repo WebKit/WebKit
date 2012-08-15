@@ -1,3 +1,66 @@
+2012-08-15  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r125687.
+        http://trac.webkit.org/changeset/125687
+        https://bugs.webkit.org/show_bug.cgi?id=94147
+
+        It broke the whole world (Requested by Ossy_night on #webkit).
+
+        * bindings/js/JSCustomSQLStatementErrorCallback.cpp:
+        (WebCore::JSSQLStatementErrorCallback::handleEvent):
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::addEventListener):
+        (WebCore::JSDOMWindow::removeEventListener):
+        * bindings/js/JSDataViewCustom.cpp:
+        (WebCore::getDataViewMember):
+        * bindings/js/JSDeviceMotionEventCustom.cpp:
+        (WebCore::JSDeviceMotionEvent::initDeviceMotionEvent):
+        * bindings/js/JSDeviceOrientationEventCustom.cpp:
+        (WebCore::JSDeviceOrientationEvent::initDeviceOrientationEvent):
+        * bindings/js/JSDictionary.cpp:
+        (WebCore::JSDictionary::convertValue):
+        * bindings/js/JSDirectoryEntryCustom.cpp:
+        (WebCore::JSDirectoryEntry::getFile):
+        (WebCore::JSDirectoryEntry::getDirectory):
+        * bindings/js/JSDirectoryEntrySyncCustom.cpp:
+        (WebCore::getFlags):
+        * bindings/js/JSHTMLCanvasElementCustom.cpp:
+        (WebCore::JSHTMLCanvasElement::getContext):
+        * bindings/js/JSInspectorFrontendHostCustom.cpp:
+        (WebCore::populateContextMenuItems):
+        * bindings/js/JSMessageEventCustom.cpp:
+        (WebCore::handleInitMessageEvent):
+        * bindings/js/JSWebGLRenderingContextCustom.cpp:
+        (WebCore::dataFunctionMatrix):
+        * bindings/js/JSXMLHttpRequestCustom.cpp:
+        (WebCore::JSXMLHttpRequest::open):
+        * bindings/js/JavaScriptCallFrame.cpp:
+        * bindings/js/JavaScriptCallFrame.h:
+        (JavaScriptCallFrame):
+        * bindings/js/ScriptDebugServer.cpp:
+        (WebCore::ScriptDebugServer::hasBreakpoint):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateEventListenerCall):
+        (GenerateHeader):
+        (JSValueToNative):
+        * bindings/scripts/test/JS/JSTestEventTarget.cpp:
+        (WebCore::jsTestEventTargetPrototypeFunctionAddEventListener):
+        (WebCore::jsTestEventTargetPrototypeFunctionRemoveEventListener):
+        * bindings/scripts/test/JS/JSTestEventTarget.h:
+        (WebCore::JSTestEventTarget::create):
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::setJSTestObjCreate):
+        (WebCore::setJSTestObjReflectedBooleanAttr):
+        (WebCore::setJSTestObjReflectedCustomBooleanAttr):
+        (WebCore::jsTestObjPrototypeFunctionAddEventListener):
+        (WebCore::jsTestObjPrototypeFunctionRemoveEventListener):
+        * bridge/c/c_utility.cpp:
+        (JSC::Bindings::convertValueToNPVariant):
+        * bridge/jni/jni_jsobject.mm:
+        (JavaJSObject::convertValueToJObject):
+        * bridge/qt/qt_runtime.cpp:
+        (JSC::Bindings::convertValueToQVariant):
+
 2012-08-15  Dominic Mazzoni  <dmazzoni@google.com>
 
         AX: Calls to AXObjectCache should prefer Node over Renderer

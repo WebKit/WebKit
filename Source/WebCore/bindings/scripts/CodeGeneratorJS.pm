@@ -165,7 +165,7 @@ END
     JSValue listener = exec->argument(1);
     if (!listener.isObject())
         return JSValue::encode(jsUndefined());
-    impl->${functionName}EventListener(ustringToAtomicString(exec->argument(0).toString(exec)->value(exec)), JSEventListener::create(asObject(listener), $wrapperObject, false, currentWorld(exec))$passRefPtrHandling, exec->argument(2).toBoolean(exec));
+    impl->${functionName}EventListener(ustringToAtomicString(exec->argument(0).toString(exec)->value(exec)), JSEventListener::create(asObject(listener), $wrapperObject, false, currentWorld(exec))$passRefPtrHandling, exec->argument(2).toBoolean());
     return JSValue::encode(jsUndefined());
 END
     return @GenerateEventListenerImpl;
@@ -749,15 +749,6 @@ sub GenerateHeader
         push(@headerContent, "    {\n");
         push(@headerContent, "        $className* ptr = new (NotNull, JSC::allocateCell<$className>(globalData.heap)) ${className}(globalData, structure, impl);\n");
         push(@headerContent, "        ptr->finishCreation(globalData);\n");
-        push(@headerContent, "        return ptr;\n");
-        push(@headerContent, "    }\n\n");
-    } elsif ($dataNode->extendedAttributes->{"MasqueradesAsUndefined"}) {
-        AddIncludesForTypeInHeader($implType) unless $svgPropertyOrListPropertyType;
-        push(@headerContent, "    static $className* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, PassRefPtr<$implType> impl)\n");
-        push(@headerContent, "    {\n");
-        push(@headerContent, "        globalObject->masqueradesAsUndefinedWatchpoint()->notifyWrite();\n");
-        push(@headerContent, "        $className* ptr = new (NotNull, JSC::allocateCell<$className>(globalObject->globalData().heap)) $className(structure, globalObject, impl);\n");
-        push(@headerContent, "        ptr->finishCreation(globalObject->globalData());\n");
         push(@headerContent, "        return ptr;\n");
         push(@headerContent, "    }\n\n");
     } else {
@@ -3017,7 +3008,7 @@ sub JSValueToNative
     my $conditional = $signature->extendedAttributes->{"Conditional"};
     my $type = $codeGenerator->StripModule($signature->type);
 
-    return "$value.toBoolean(exec)" if $type eq "boolean";
+    return "$value.toBoolean()" if $type eq "boolean";
     return "$value.toNumber(exec)" if $type eq "double";
     return "$value.toFloat(exec)" if $type eq "float";
     return "$value.toInt32(exec)" if $type eq "long" or $type eq "short";

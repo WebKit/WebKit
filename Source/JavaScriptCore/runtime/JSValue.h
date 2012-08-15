@@ -209,7 +209,7 @@ namespace JSC {
         JSValue toPrimitive(ExecState*, PreferredPrimitiveType = NoPreference) const;
         bool getPrimitiveNumber(ExecState*, double& number, JSValue&);
 
-        bool toBoolean(ExecState*) const;
+        bool toBoolean() const;
 
         // toNumber conversion is expected to be side effect free if an exception has
         // been set in the ExecState already.

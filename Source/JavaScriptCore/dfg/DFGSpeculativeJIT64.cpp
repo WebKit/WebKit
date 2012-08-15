@@ -588,29 +588,10 @@ void SpeculativeJIT::nonSpeculativeNonPeepholeCompareNull(Edge operand, bool inv
     
     if (!isKnownCell(operand.index()))
         notCell = m_jit.branchTestPtr(MacroAssembler::NonZero, argGPR, GPRInfo::tagMaskRegister);
-   
-    JITCompiler::Jump notMasqueradesAsUndefined;
-    if (m_jit.graph().globalObjectFor(m_jit.graph()[operand].codeOrigin)->masqueradesAsUndefinedWatchpoint()->isStillValid()) {
-        m_jit.graph().globalObjectFor(m_jit.graph()[operand].codeOrigin)->masqueradesAsUndefinedWatchpoint()->add(speculationWatchpoint());
-        m_jit.move(invert ? TrustedImm32(0) : TrustedImm32(1), resultGPR);
-        notMasqueradesAsUndefined = m_jit.jump();
-    } else {
-        m_jit.loadPtr(JITCompiler::Address(argGPR, JSCell::structureOffset()), resultGPR);
-        JITCompiler::Jump isMasqueradesAsUndefined = m_jit.branchTest8(JITCompiler::NonZero, JITCompiler::Address(resultGPR, Structure::typeInfoFlagsOffset()), JITCompiler::TrustedImm32(MasqueradesAsUndefined));
-
-        m_jit.move(invert ? TrustedImm32(0) : TrustedImm32(1), resultGPR);
-        notMasqueradesAsUndefined = m_jit.jump();
-
-        isMasqueradesAsUndefined.link(&m_jit);
-        GPRTemporary localGlobalObject(this);
-        GPRTemporary remoteGlobalObject(this);
-        GPRReg localGlobalObjectGPR = localGlobalObject.gpr();
-        GPRReg remoteGlobalObjectGPR = remoteGlobalObject.gpr();
-        m_jit.move(JITCompiler::TrustedImmPtr(m_jit.graph().globalObjectFor(m_jit.graph()[operand].codeOrigin)), localGlobalObjectGPR);
-        m_jit.loadPtr(JITCompiler::Address(resultGPR, Structure::globalObjectOffset()), remoteGlobalObjectGPR);
-        m_jit.comparePtr(invert ? JITCompiler::NotEqual : JITCompiler::Equal, localGlobalObjectGPR, remoteGlobalObjectGPR, resultGPR);
-    }
- 
+    
+    m_jit.loadPtr(JITCompiler::Address(argGPR, JSCell::structureOffset()), resultGPR);
+    m_jit.test8(invert ? JITCompiler::Zero : JITCompiler::NonZero, JITCompiler::Address(resultGPR, Structure::typeInfoFlagsOffset()), JITCompiler::TrustedImm32(MasqueradesAsUndefined), resultGPR);
+    
     if (!isKnownCell(operand.index())) {
         JITCompiler::Jump done = m_jit.jump();
         
@@ -622,9 +603,7 @@ void SpeculativeJIT::nonSpeculativeNonPeepholeCompareNull(Edge operand, bool inv
         
         done.link(&m_jit);
     }
-   
-    notMasqueradesAsUndefined.link(&m_jit);
- 
+    
     m_jit.or32(TrustedImm32(ValueFalse), resultGPR);
     jsValueResult(resultGPR, m_compileIndex, DataFormatJSBoolean);
 }
@@ -653,22 +632,9 @@ void SpeculativeJIT::nonSpeculativePeepholeBranchNull(Edge operand, NodeIndex br
     if (!isKnownCell(operand.index()))
         notCell = m_jit.branchTestPtr(MacroAssembler::NonZero, argGPR, GPRInfo::tagMaskRegister);
     
-    if (m_jit.graph().globalObjectFor(m_jit.graph()[operand].codeOrigin)->masqueradesAsUndefinedWatchpoint()->isStillValid()) {
-        m_jit.graph().globalObjectFor(m_jit.graph()[operand].codeOrigin)->masqueradesAsUndefinedWatchpoint()->add(speculationWatchpoint());
-        jump(invert ? taken : notTaken, ForceJump);
-    } else {
-        m_jit.loadPtr(JITCompiler::Address(argGPR, JSCell::structureOffset()), resultGPR);
-        branchTest8(JITCompiler::Zero, JITCompiler::Address(resultGPR, Structure::typeInfoFlagsOffset()), JITCompiler::TrustedImm32(MasqueradesAsUndefined), invert ? taken : notTaken);
-   
-        GPRTemporary localGlobalObject(this);
-        GPRTemporary remoteGlobalObject(this);
-        GPRReg localGlobalObjectGPR = localGlobalObject.gpr();
-        GPRReg remoteGlobalObjectGPR = remoteGlobalObject.gpr();
-        m_jit.move(TrustedImmPtr(m_jit.graph().globalObjectFor(m_jit.graph()[operand].codeOrigin)), localGlobalObjectGPR);
-        m_jit.loadPtr(JITCompiler::Address(resultGPR, Structure::globalObjectOffset()), remoteGlobalObjectGPR);
-        branchPtr(invert ? JITCompiler::NotEqual : JITCompiler::Equal, localGlobalObjectGPR, remoteGlobalObjectGPR, taken);
-    }
- 
+    m_jit.loadPtr(JITCompiler::Address(argGPR, JSCell::structureOffset()), resultGPR);
+    branchTest8(invert ? JITCompiler::Zero : JITCompiler::NonZero, JITCompiler::Address(resultGPR, Structure::typeInfoFlagsOffset()), JITCompiler::TrustedImm32(MasqueradesAsUndefined), taken);
+    
     if (!isKnownCell(operand.index())) {
         jump(notTaken, ForceJump);
         
@@ -3789,28 +3755,9 @@ void SpeculativeJIT::compile(Node& node)
         JITCompiler::Jump done = m_jit.jump();
         
         isCell.link(&m_jit);
-        JITCompiler::Jump notMasqueradesAsUndefined;
-        if (m_jit.graph().globalObjectFor(node.codeOrigin)->masqueradesAsUndefinedWatchpoint()->isStillValid()) {
-            m_jit.graph().globalObjectFor(node.codeOrigin)->masqueradesAsUndefinedWatchpoint()->add(speculationWatchpoint());
-            m_jit.move(TrustedImm32(ValueFalse), result.gpr());
-            notMasqueradesAsUndefined = m_jit.jump();
-        } else {
-            m_jit.loadPtr(JITCompiler::Address(value.gpr(), JSCell::structureOffset()), result.gpr());
-            JITCompiler::Jump isMasqueradesAsUndefined = m_jit.branchTest8(JITCompiler::NonZero, JITCompiler::Address(result.gpr(), Structure::typeInfoFlagsOffset()), TrustedImm32(MasqueradesAsUndefined));
-            m_jit.move(TrustedImm32(ValueFalse), result.gpr());
-            notMasqueradesAsUndefined = m_jit.jump();
-
-            isMasqueradesAsUndefined.link(&m_jit);
-            GPRTemporary localGlobalObject(this);
-            GPRTemporary remoteGlobalObject(this);
-            GPRReg localGlobalObjectGPR = localGlobalObject.gpr();
-            GPRReg remoteGlobalObjectGPR = remoteGlobalObject.gpr();
-            m_jit.move(TrustedImmPtr(m_jit.globalObjectFor(node.codeOrigin)), localGlobalObjectGPR);
-            m_jit.loadPtr(JITCompiler::Address(result.gpr(), Structure::globalObjectOffset()), remoteGlobalObjectGPR); 
-            m_jit.comparePtr(JITCompiler::Equal, localGlobalObjectGPR, remoteGlobalObjectGPR, result.gpr());
-        }
-
-        notMasqueradesAsUndefined.link(&m_jit);
+        m_jit.loadPtr(JITCompiler::Address(value.gpr(), JSCell::structureOffset()), result.gpr());
+        m_jit.test8(JITCompiler::NonZero, JITCompiler::Address(result.gpr(), Structure::typeInfoFlagsOffset()), TrustedImm32(MasqueradesAsUndefined), result.gpr());
+        
         done.link(&m_jit);
         m_jit.or32(TrustedImm32(ValueFalse), result.gpr());
         jsValueResult(result.gpr(), m_compileIndex, DataFormatJSBoolean);

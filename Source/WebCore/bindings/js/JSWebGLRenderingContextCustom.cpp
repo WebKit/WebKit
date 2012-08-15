@@ -613,7 +613,7 @@ static JSC::JSValue dataFunctionMatrix(DataFunctionMatrixToCall f, JSC::ExecStat
     if (exec->hadException())    
         return jsUndefined();
         
-    bool transpose = exec->argument(1).toBoolean(exec);
+    bool transpose = exec->argument(1).toBoolean();
     if (exec->hadException())    
         return jsUndefined();
         

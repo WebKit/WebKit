@@ -1,3 +1,82 @@
+2012-08-15  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r125687.
+        http://trac.webkit.org/changeset/125687
+        https://bugs.webkit.org/show_bug.cgi?id=94147
+
+        It broke the whole world (Requested by Ossy_night on #webkit).
+
+        * API/JSValueRef.cpp:
+        (JSValueToBoolean):
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * bytecode/Watchpoint.h:
+        (WatchpointSet):
+        * debugger/DebuggerCallFrame.h:
+        * dfg/DFGAbstractState.cpp:
+        (JSC::DFG::AbstractState::execute):
+        * dfg/DFGCFGSimplificationPhase.cpp:
+        (JSC::DFG::CFGSimplificationPhase::run):
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::nonSpeculativeNonPeepholeCompareNull):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativePeepholeBranchNull):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::nonSpeculativeNonPeepholeCompareNull):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativePeepholeBranchNull):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::privateExecute):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_is_undefined):
+        (JSC::JIT::emit_op_jeq_null):
+        (JSC::JIT::emit_op_jneq_null):
+        (JSC::JIT::emit_op_eq_null):
+        (JSC::JIT::emit_op_neq_null):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_is_undefined):
+        (JSC::JIT::emit_op_jeq_null):
+        (JSC::JIT::emit_op_jneq_null):
+        (JSC::JIT::emit_op_eq_null):
+        (JSC::JIT::emit_op_neq_null):
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * runtime/ArrayPrototype.cpp:
+        (JSC::arrayProtoFuncFilter):
+        (JSC::arrayProtoFuncEvery):
+        (JSC::arrayProtoFuncSome):
+        * runtime/BooleanConstructor.cpp:
+        (JSC::constructBoolean):
+        (JSC::callBooleanConstructor):
+        * runtime/JSCell.h:
+        (JSCell):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::JSGlobalObject):
+        * runtime/JSGlobalObject.h:
+        (JSGlobalObject):
+        * runtime/JSString.h:
+        (JSC::JSCell::toBoolean):
+        (JSC::JSValue::toBoolean):
+        * runtime/JSValue.h:
+        * runtime/ObjectConstructor.cpp:
+        (JSC::toPropertyDescriptor):
+        * runtime/Operations.cpp:
+        (JSC::jsTypeStringForValue):
+        (JSC::jsIsObjectType):
+        * runtime/Operations.h:
+        (JSC):
+        (JSC::JSValue::equalSlowCaseInline):
+        * runtime/RegExpConstructor.cpp:
+        (JSC::setRegExpConstructorMultiline):
+        * runtime/RegExpPrototype.cpp:
+        (JSC::regExpProtoFuncToString):
+        * runtime/Structure.h:
+
 2012-08-15  Gabor Ballabas  <gaborb@inf.u-szeged.hu>
 
         Buildfix after r125541

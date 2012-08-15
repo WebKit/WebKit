@@ -797,7 +797,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncFilter(ExecState* exec)
             cachedCall.setArgument(2, thisObj);
             
             JSValue result = cachedCall.call();
-            if (result.toBoolean(exec))
+            if (result.toBoolean())
                 resultArray->putDirectIndex(exec, filterIndex++, v);
         }
         if (k == length)
@@ -818,7 +818,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncFilter(ExecState* exec)
         eachArguments.append(thisObj);
 
         JSValue result = call(exec, function, callType, callData, applyThis, eachArguments);
-        if (result.toBoolean(exec))
+        if (result.toBoolean())
             resultArray->putDirectIndex(exec, filterIndex++, v);
     }
     return JSValue::encode(resultArray);
@@ -917,7 +917,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncEvery(ExecState* exec)
             cachedCall.setArgument(1, jsNumber(k));
             cachedCall.setArgument(2, thisObj);
             JSValue result = cachedCall.call();
-            if (!result.toBoolean(exec))
+            if (!result.toBoolean())
                 return JSValue::encode(jsBoolean(false));
         }
     }
@@ -934,7 +934,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncEvery(ExecState* exec)
         if (exec->hadException())
             return JSValue::encode(jsUndefined());
 
-        bool predicateResult = call(exec, function, callType, callData, applyThis, eachArguments).toBoolean(exec);
+        bool predicateResult = call(exec, function, callType, callData, applyThis, eachArguments).toBoolean();
         if (!predicateResult) {
             result = jsBoolean(false);
             break;
@@ -1025,7 +1025,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncSome(ExecState* exec)
             cachedCall.setArgument(1, jsNumber(k));
             cachedCall.setArgument(2, thisObj);
             JSValue result = cachedCall.call();
-            if (result.toBoolean(exec))
+            if (result.toBoolean())
                 return JSValue::encode(jsBoolean(true));
         }
     }
@@ -1042,7 +1042,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncSome(ExecState* exec)
         if (exec->hadException())
             return JSValue::encode(jsUndefined());
 
-        bool predicateResult = call(exec, function, callType, callData, applyThis, eachArguments).toBoolean(exec);
+        bool predicateResult = call(exec, function, callType, callData, applyThis, eachArguments).toBoolean();
         if (predicateResult) {
             result = jsBoolean(true);
             break;

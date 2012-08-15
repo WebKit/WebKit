@@ -31,7 +31,7 @@ namespace JSC {
 
     NEVER_INLINE JSValue jsAddSlowCase(CallFrame*, JSValue, JSValue);
     JSValue jsTypeStringForValue(CallFrame*, JSValue);
-    bool jsIsObjectType(CallFrame*, JSValue);
+    bool jsIsObjectType(JSValue);
     bool jsIsFunctionType(JSValue);
 
     ALWAYS_INLINE JSValue jsString(ExecState* exec, JSString* s1, JSString* s2)
@@ -134,13 +134,13 @@ namespace JSC {
                     return true;
                 if (!v2.isCell())
                     return false;
-                return v2.asCell()->structure()->masqueradesAsUndefined(exec->lexicalGlobalObject());
+                return v2.asCell()->structure()->typeInfo().masqueradesAsUndefined();
             }
 
             if (v2.isUndefinedOrNull()) {
                 if (!v1.isCell())
                     return false;
-                return v1.asCell()->structure()->masqueradesAsUndefined(exec->lexicalGlobalObject());
+                return v1.asCell()->structure()->typeInfo().masqueradesAsUndefined();
             }
 
             if (v1.isObject()) {

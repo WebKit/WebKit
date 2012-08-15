@@ -180,7 +180,7 @@ EncodedJSValue DFG_OPERATION operationGetArgumentByVal(ExecState*, int32_t, int3
 JSCell* DFG_OPERATION operationNewFunction(ExecState*, JSCell*) WTF_INTERNAL;
 JSCell* DFG_OPERATION operationNewFunctionExpression(ExecState*, JSCell*) WTF_INTERNAL;
 double DFG_OPERATION operationFModOnInts(int32_t, int32_t) WTF_INTERNAL;
-size_t DFG_OPERATION operationIsObject(ExecState*, EncodedJSValue) WTF_INTERNAL;
+size_t DFG_OPERATION operationIsObject(EncodedJSValue) WTF_INTERNAL;
 size_t DFG_OPERATION operationIsFunction(EncodedJSValue) WTF_INTERNAL;
 void DFG_OPERATION operationReallocateStorageAndFinishPut(ExecState*, JSObject*, Structure*, PropertyOffset, EncodedJSValue) WTF_INTERNAL;
 char* DFG_OPERATION operationAllocatePropertyStorageWithInitialCapacity(ExecState*) WTF_INTERNAL;

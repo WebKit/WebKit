@@ -1271,7 +1271,7 @@ void NetscapePluginInstanceProxy::addValueToArray(NSMutableArray *array, ExecSta
         [array addObject:[NSNumber numberWithDouble:value.toNumber(exec)]];
     } else if (value.isBoolean()) {
         [array addObject:[NSNumber numberWithInt:BoolValueType]];
-        [array addObject:[NSNumber numberWithBool:value.toBoolean(exec)]];
+        [array addObject:[NSNumber numberWithBool:value.toBoolean()]];
     } else if (value.isNull())
         [array addObject:[NSNumber numberWithInt:NullValueType]];
     else if (value.isObject()) {

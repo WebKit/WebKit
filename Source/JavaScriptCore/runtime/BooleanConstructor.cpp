@@ -49,7 +49,7 @@ void BooleanConstructor::finishCreation(ExecState* exec, BooleanPrototype* boole
 JSObject* constructBoolean(ExecState* exec, const ArgList& args)
 {
     BooleanObject* obj = BooleanObject::create(exec->globalData(), asInternalFunction(exec->callee())->globalObject()->booleanObjectStructure());
-    obj->setInternalValue(exec->globalData(), jsBoolean(args.at(0).toBoolean(exec)));
+    obj->setInternalValue(exec->globalData(), jsBoolean(args.at(0).toBoolean()));
     return obj;
 }
 
@@ -68,7 +68,7 @@ ConstructType BooleanConstructor::getConstructData(JSCell*, ConstructData& const
 // ECMA 15.6.1
 static EncodedJSValue JSC_HOST_CALL callBooleanConstructor(ExecState* exec)
 {
-    return JSValue::encode(jsBoolean(exec->argument(0).toBoolean(exec)));
+    return JSValue::encode(jsBoolean(exec->argument(0).toBoolean()));
 }
 
 CallType BooleanConstructor::getCallData(JSCell*, CallData& callData)

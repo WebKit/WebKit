@@ -1273,9 +1273,9 @@ JSCell* DFG_OPERATION operationNewFunctionExpression(ExecState* exec, JSCell* fu
     return function;
 }
 
-size_t DFG_OPERATION operationIsObject(ExecState* exec, EncodedJSValue value)
+size_t DFG_OPERATION operationIsObject(EncodedJSValue value)
 {
-    return jsIsObjectType(exec, JSValue::decode(value));
+    return jsIsObjectType(JSValue::decode(value));
 }
 
 size_t DFG_OPERATION operationIsFunction(EncodedJSValue value)
@@ -1368,7 +1368,7 @@ size_t DFG_OPERATION dfgConvertJSValueToBoolean(ExecState* exec, EncodedJSValue 
     JSGlobalData* globalData = &exec->globalData();
     NativeCallFrameTracer tracer(globalData, exec);
     
-    return JSValue::decode(encodedOp).toBoolean(exec);
+    return JSValue::decode(encodedOp).toBoolean();
 }
 
 #if DFG_ENABLE(VERBOSE_SPECULATION_FAILURE)

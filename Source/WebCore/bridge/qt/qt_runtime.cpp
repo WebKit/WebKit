@@ -291,9 +291,9 @@ QVariant convertValueToQVariant(ExecState* exec, JSValue value, QMetaType::Type 
     switch (hint) {
         case QMetaType::Bool:
             if (type == Object && object->inherits(&BooleanObject::s_info))
-                ret = QVariant(asBooleanObject(value)->internalValue().toBoolean(exec));
+                ret = QVariant(asBooleanObject(value)->internalValue().toBoolean());
             else
-                ret = QVariant(value.toBoolean(exec));
+                ret = QVariant(value.toBoolean());
             if (type == Boolean)
                 dist = 0;
             else

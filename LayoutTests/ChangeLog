@@ -1,3 +1,16 @@
+2012-08-15  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r125687.
+        http://trac.webkit.org/changeset/125687
+        https://bugs.webkit.org/show_bug.cgi?id=94147
+
+        It broke the whole world (Requested by Ossy_night on #webkit).
+
+        * fast/js/document-all-between-frames-expected.txt: Removed.
+        * fast/js/document-all-between-frames.html: Removed.
+        * fast/js/resources/document-all-between-frames-subframe.html: Removed.
+        * platform/chromium/TestExpectations:
+
 2012-08-15  Dominic Mazzoni  <dmazzoni@google.com>
 
         AX: Calls to AXObjectCache should prefer Node over Renderer

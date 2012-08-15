@@ -70,7 +70,7 @@ JSValue jsTypeStringForValue(CallFrame* callFrame, JSValue v)
     if (v.isObject()) {
         // Return "undefined" for objects that should be treated
         // as null when doing comparisons.
-        if (asObject(v)->structure()->masqueradesAsUndefined(callFrame->lexicalGlobalObject()))
+        if (asObject(v)->structure()->typeInfo().masqueradesAsUndefined())
             return globalData.smallStrings.undefinedString(&globalData);
         CallData callData;
         JSObject* object = asObject(v);
@@ -80,7 +80,7 @@ JSValue jsTypeStringForValue(CallFrame* callFrame, JSValue v)
     return globalData.smallStrings.objectString(&globalData);
 }
 
-bool jsIsObjectType(CallFrame* callFrame, JSValue v)
+bool jsIsObjectType(JSValue v)
 {
     if (!v.isCell())
         return v.isNull();
@@ -89,7 +89,7 @@ bool jsIsObjectType(CallFrame* callFrame, JSValue v)
     if (type == NumberType || type == StringType)
         return false;
     if (type >= ObjectType) {
-        if (asObject(v)->structure()->masqueradesAsUndefined(callFrame->lexicalGlobalObject()))
+        if (asObject(v)->structure()->typeInfo().masqueradesAsUndefined())
             return false;
         CallData callData;
         JSObject* object = asObject(v);

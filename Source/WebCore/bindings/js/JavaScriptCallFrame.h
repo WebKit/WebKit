@@ -71,7 +71,6 @@ public:
     JSC::DebuggerCallFrame::Type type() const;
     JSC::ScopeChainNode* scopeChain() const;
     JSC::JSGlobalObject* dynamicGlobalObject() const;
-    JSC::ExecState* exec() const;
 
     JSC::JSObject* thisObject() const;
     JSC::JSValue evaluate(const JSC::UString& script, JSC::JSValue& exception) const;

@@ -1,3 +1,14 @@
+2012-08-15  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r125687.
+        http://trac.webkit.org/changeset/125687
+        https://bugs.webkit.org/show_bug.cgi?id=94147
+
+        It broke the whole world (Requested by Ossy_night on #webkit).
+
+        * Plugins/Hosted/NetscapePluginInstanceProxy.mm:
+        (WebKit::NetscapePluginInstanceProxy::addValueToArray):
+
 2012-08-14  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Change behavior of MasqueradesAsUndefined to better accommodate DFG changes

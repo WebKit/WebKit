@@ -66,9 +66,9 @@ JSValue JSDirectoryEntry::getFile(ExecState* exec)
         JSObject* object = exec->argument(1).getObject();
         flags = WebKitFlags::create();
         JSValue jsCreate = object->get(exec, Identifier(exec, "create"));
-        flags->setCreate(jsCreate.toBoolean(exec));
+        flags->setCreate(jsCreate.toBoolean());
         JSValue jsExclusive = object->get(exec, Identifier(exec, "exclusive"));
-        flags->setExclusive(jsExclusive.toBoolean(exec));
+        flags->setExclusive(jsExclusive.toBoolean());
     }
     if (exec->hadException())
         return jsUndefined();
@@ -114,9 +114,9 @@ JSValue JSDirectoryEntry::getDirectory(ExecState* exec)
         JSObject* object = exec->argument(1).getObject();
         flags = WebKitFlags::create();
         JSValue jsCreate = object->get(exec, Identifier(exec, "create"));
-        flags->setCreate(jsCreate.toBoolean(exec));
+        flags->setCreate(jsCreate.toBoolean());
         JSValue jsExclusive = object->get(exec, Identifier(exec, "exclusive"));
-        flags->setExclusive(jsExclusive.toBoolean(exec));
+        flags->setExclusive(jsExclusive.toBoolean());
     }
     if (exec->hadException())
         return jsUndefined();

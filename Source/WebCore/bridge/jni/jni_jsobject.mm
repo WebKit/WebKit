@@ -495,7 +495,7 @@ jobject JavaJSObject::convertValueToJObject(JSValue value) const
         jclass JSObjectClass = env->FindClass ("java/lang/Boolean");
         jmethodID constructorID = env->GetMethodID (JSObjectClass, "<init>", "(Z)V");
         if (constructorID != NULL) {
-            result = env->NewObject (JSObjectClass, constructorID, (jboolean)value.toBoolean(exec));
+            result = env->NewObject (JSObjectClass, constructorID, (jboolean)value.toBoolean());
         }
     }
     else {

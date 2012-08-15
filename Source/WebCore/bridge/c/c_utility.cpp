@@ -80,7 +80,7 @@ void convertValueToNPVariant(ExecState* exec, JSValue value, NPVariant* result)
     } else if (value.isNumber()) {
         DOUBLE_TO_NPVARIANT(value.toNumber(exec), *result);
     } else if (value.isBoolean()) {
-        BOOLEAN_TO_NPVARIANT(value.toBoolean(exec), *result);
+        BOOLEAN_TO_NPVARIANT(value.toBoolean(), *result);
     } else if (value.isNull()) {
         NULL_TO_NPVARIANT(*result);
     } else if (value.isObject()) {

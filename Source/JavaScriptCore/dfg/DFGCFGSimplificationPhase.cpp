@@ -101,7 +101,7 @@ public:
                     // Branch on constant -> jettison the not-taken block and merge.
                     if (m_graph[m_graph[block->last()].child1()].hasConstant()) {
                         bool condition =
-                            m_graph.valueOfJSConstant(m_graph[block->last()].child1().index()).toBoolean(m_graph.globalObjectFor(m_graph[block->last()].codeOrigin)->globalExec());
+                            m_graph.valueOfJSConstant(m_graph[block->last()].child1().index()).toBoolean();
                         BasicBlock* targetBlock = m_graph.m_blocks[
                             m_graph.successorForCondition(block, condition)].get();
                         if (targetBlock->m_predecessors.size() == 1) {
