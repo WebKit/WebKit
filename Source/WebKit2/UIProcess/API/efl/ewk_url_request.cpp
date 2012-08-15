@@ -27,7 +27,7 @@
 #include "ewk_url_request.h"
 
 #include "WKAPICast.h"
-#include "WKRetainPtr.h"
+#include "WKEinaSharedString.h"
 #include "WKURL.h"
 #include "WKURLRequest.h"
 #include "WebURLRequest.h"
@@ -42,39 +42,23 @@ using namespace WebKit;
  */
 struct _Ewk_Url_Request {
     unsigned int __ref; /**< the reference count of the object */
-    WKRetainPtr<WKURLRequestRef> wkRequest;
 
-    const char* url;
-    const char* first_party;
-    const char* http_method;
+    WKEinaSharedString url;
+    WKEinaSharedString first_party;
+    WKEinaSharedString http_method;
 
     _Ewk_Url_Request(WKURLRequestRef requestRef)
         : __ref(1)
-        , wkRequest(requestRef)
-        , url(0)
-        , first_party(0)
-        , http_method(0)
+        , url(AdoptWK, WKURLRequestCopyURL(requestRef))
+        , first_party(AdoptWK, WKURLRequestCopyFirstPartyForCookies(requestRef))
+        , http_method(AdoptWK, WKURLRequestCopyHTTPMethod(requestRef))
     { }
 
     ~_Ewk_Url_Request()
     {
         ASSERT(!__ref);
-        eina_stringshare_del(url);
-        eina_stringshare_del(first_party);
-        eina_stringshare_del(http_method);
     }
 };
-
-#define EWK_URL_REQUEST_WK_GET_OR_RETURN(request, wkRequest_, ...)    \
-    if (!(request)) {                                                 \
-        EINA_LOG_CRIT("request is NULL.");                            \
-        return __VA_ARGS__;                                           \
-    }                                                                 \
-    if (!(request)->wkRequest) {                                      \
-        EINA_LOG_CRIT("request->wkRequest is NULL.");                 \
-        return __VA_ARGS__;                                           \
-    }                                                                 \
-    WKURLRequestRef wkRequest_ = (request)->wkRequest.get()
 
 void ewk_url_request_ref(Ewk_Url_Request* request)
 {
@@ -94,31 +78,21 @@ void ewk_url_request_unref(Ewk_Url_Request* request)
 
 const char* ewk_url_request_url_get(const Ewk_Url_Request* request)
 {
-    EWK_URL_REQUEST_WK_GET_OR_RETURN(request, wkRequest, 0);
-
-    WKRetainPtr<WKURLRef> wkUrl(AdoptWK, WKURLRequestCopyURL(wkRequest));
-    Ewk_Url_Request* ewkRequest = const_cast<Ewk_Url_Request*>(request);
-    eina_stringshare_replace(&ewkRequest->url, toImpl(wkUrl.get())->string().utf8().data());
+    EINA_SAFETY_ON_NULL_RETURN_VAL(request, 0);
 
     return request->url;
 }
 
 const char* ewk_request_cookies_first_party_get(const Ewk_Url_Request* request)
 {
-    EWK_URL_REQUEST_WK_GET_OR_RETURN(request, wkRequest, 0);
-
-    Ewk_Url_Request* ewkRequest = const_cast<Ewk_Url_Request*>(request);
-    eina_stringshare_replace(&ewkRequest->first_party, toImpl(wkRequest)->resourceRequest().firstPartyForCookies().string().utf8().data());
+    EINA_SAFETY_ON_NULL_RETURN_VAL(request, 0);
 
     return request->first_party;
 }
 
 const char* ewk_url_request_http_method_get(const Ewk_Url_Request* request)
 {
-    EWK_URL_REQUEST_WK_GET_OR_RETURN(request, wkRequest, 0);
-
-    Ewk_Url_Request* ewkRequest = const_cast<Ewk_Url_Request*>(request);
-    eina_stringshare_replace(&ewkRequest->http_method, toImpl(wkRequest)->resourceRequest().httpMethod().utf8().data());
+    EINA_SAFETY_ON_NULL_RETURN_VAL(request, 0);
 
     return request->http_method;
 }

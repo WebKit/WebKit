@@ -100,3 +100,8 @@ WKEinaSharedString& WKEinaSharedString::operator=(const char* str)
     eina_stringshare_replace(&m_string, str);
     return *this;
 }
+
+bool WKEinaSharedString::operator==(const char* str) const
+{
+    return (!str || !m_string) ? (str == m_string) : !strcmp(m_string, str);
+}

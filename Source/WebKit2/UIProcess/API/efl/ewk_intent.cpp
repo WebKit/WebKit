@@ -29,6 +29,7 @@
 #include "WKAPICast.h"
 #include "WKArray.h"
 #include "WKDictionary.h"
+#include "WKEinaSharedString.h"
 #include "WKIntentData.h"
 #include "WKRetainPtr.h"
 #include "WKString.h"
@@ -47,26 +48,23 @@ struct _Ewk_Intent {
 #if ENABLE(WEB_INTENTS)
     WKRetainPtr<WKIntentDataRef> wkIntent;
 #endif
-    const char* action;
-    const char* type;
-    const char* service;
+    WKEinaSharedString action;
+    WKEinaSharedString type;
+    WKEinaSharedString service;
 
     _Ewk_Intent(WKIntentDataRef intentRef)
         : __ref(1)
 #if ENABLE(WEB_INTENTS)
         , wkIntent(intentRef)
+        , action(AdoptWK, WKIntentDataCopyAction(intentRef))
+        , type(AdoptWK, WKIntentDataCopyType(intentRef))
+        , service(AdoptWK, WKIntentDataCopyService(intentRef))
 #endif
-        , action(0)
-        , type(0)
-        , service(0)
     { }
 
     ~_Ewk_Intent()
     {
         ASSERT(!__ref);
-        eina_stringshare_del(action);
-        eina_stringshare_del(type);
-        eina_stringshare_del(service);
     }
 };
 
@@ -103,47 +101,23 @@ void ewk_intent_unref(Ewk_Intent* intent)
 
 const char* ewk_intent_action_get(const Ewk_Intent* intent)
 {
-#if ENABLE(WEB_INTENTS)
-    EWK_INTENT_WK_GET_OR_RETURN(intent, wkIntent, 0);
-
-    WKRetainPtr<WKStringRef> wkAction(AdoptWK, WKIntentDataCopyAction(wkIntent));
-    Ewk_Intent* ewkIntent = const_cast<Ewk_Intent*>(intent);
-    eina_stringshare_replace(&ewkIntent->action, toImpl(wkAction.get())->string().utf8().data());
+    EINA_SAFETY_ON_NULL_RETURN_VAL(intent, 0);
 
     return intent->action;
-#else
-    return 0;
-#endif
 }
 
 const char* ewk_intent_type_get(const Ewk_Intent* intent)
 {
-#if ENABLE(WEB_INTENTS)
-    EWK_INTENT_WK_GET_OR_RETURN(intent, wkIntent, 0);
-
-    WKRetainPtr<WKStringRef> wkType(AdoptWK, WKIntentDataCopyType(wkIntent));
-    Ewk_Intent* ewkIntent = const_cast<Ewk_Intent*>(intent);
-    eina_stringshare_replace(&ewkIntent->type, toImpl(wkType.get())->string().utf8().data());
+    EINA_SAFETY_ON_NULL_RETURN_VAL(intent, 0);
 
     return intent->type;
-#else
-    return 0;
-#endif
 }
 
 const char* ewk_intent_service_get(const Ewk_Intent* intent)
 {
-#if ENABLE(WEB_INTENTS)
-    EWK_INTENT_WK_GET_OR_RETURN(intent, wkIntent, 0);
-
-    WKRetainPtr<WKURLRef> wkService(AdoptWK, WKIntentDataCopyService(wkIntent));
-    Ewk_Intent* ewkIntent = const_cast<Ewk_Intent*>(intent);
-    eina_stringshare_replace(&ewkIntent->service, toImpl(wkService.get())->string().utf8().data());
+    EINA_SAFETY_ON_NULL_RETURN_VAL(intent, 0);
 
     return intent->service;
-#else
-    return 0;
-#endif
 }
 
 Eina_List* ewk_intent_suggestions_get(const Ewk_Intent* intent)

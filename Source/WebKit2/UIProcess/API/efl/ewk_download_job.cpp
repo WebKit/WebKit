@@ -28,6 +28,7 @@
 
 #include "DownloadProxy.h"
 #include "WKAPICast.h"
+#include "WKEinaSharedString.h"
 #include "WKRetainPtr.h"
 #include "WebURLRequest.h"
 #include "ewk_download_job_private.h"
@@ -50,8 +51,8 @@ struct _Ewk_Download_Job {
     double startTime;
     double endTime;
     uint64_t downloaded; /**< length already downloaded */
-    const char* destination;
-    const char* suggestedFilename;
+    WKEinaSharedString destination;
+    WKEinaSharedString suggestedFilename;
 
     _Ewk_Download_Job(DownloadProxy* download, Evas_Object* ewkView)
         : __ref(1)
@@ -63,8 +64,6 @@ struct _Ewk_Download_Job {
         , startTime(-1)
         , endTime(-1)
         , downloaded(0)
-        , destination(0)
-        , suggestedFilename(0)
     { }
 
     ~_Ewk_Download_Job()
@@ -74,8 +73,6 @@ struct _Ewk_Download_Job {
             ewk_url_request_unref(request);
         if (response)
             ewk_url_response_unref(response);
-        eina_stringshare_del(destination);
-        eina_stringshare_del(suggestedFilename);
     }
 };
 
@@ -159,7 +156,7 @@ Eina_Bool ewk_download_job_destination_set(Ewk_Download_Job* download, const cha
     EINA_SAFETY_ON_NULL_RETURN_VAL(download, false);
     EINA_SAFETY_ON_NULL_RETURN_VAL(destination, false);
 
-    eina_stringshare_replace(&download->destination, destination);
+    download->destination = destination;
 
     return true;
 }
@@ -236,7 +233,7 @@ void ewk_download_job_suggested_filename_set(Ewk_Download_Job* download, const c
 {
     EINA_SAFETY_ON_NULL_RETURN(download);
 
-    eina_stringshare_replace(&download->suggestedFilename, suggestedFilename);
+    download->suggestedFilename = suggestedFilename;
 }
 
 /**

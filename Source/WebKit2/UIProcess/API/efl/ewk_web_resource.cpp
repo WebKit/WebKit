@@ -26,24 +26,24 @@
 #include "config.h"
 #include "ewk_web_resource.h"
 
+#include "WKEinaSharedString.h"
 #include "ewk_web_resource_private.h"
 #include <wtf/text/CString.h>
 
 struct _Ewk_Web_Resource {
     unsigned int __ref; /**< the reference count of the object */
-    const char* url;
+    WKEinaSharedString url;
     bool isMainResource;
 
-    _Ewk_Web_Resource(const char* _url, bool _isMainResource)
+    _Ewk_Web_Resource(const char* url, bool isMainResource)
         : __ref(1)
-         , url(eina_stringshare_add(_url))
-        , isMainResource(_isMainResource)
+        , url(url)
+        , isMainResource(isMainResource)
     { }
 
     ~_Ewk_Web_Resource()
     {
         ASSERT(!__ref);
-        eina_stringshare_del(url);
     }
 };
 

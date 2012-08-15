@@ -27,6 +27,7 @@
 #include "ewk_navigation_policy_decision.h"
 
 #include "WKAPICast.h"
+#include "WKEinaSharedString.h"
 #include "WKFramePolicyListener.h"
 #include "WKRetainPtr.h"
 #include "ewk_navigation_policy_decision_private.h"
@@ -47,7 +48,7 @@ struct _Ewk_Navigation_Policy_Decision {
     Event_Mouse_Button mouseButton;
     Event_Modifier_Keys modifiers;
     Ewk_Url_Request* request;
-    const char* frameName;
+    WKEinaSharedString frameName;
 
     _Ewk_Navigation_Policy_Decision(WKFramePolicyListenerRef _listener, Ewk_Navigation_Type _navigationType, Event_Mouse_Button _mouseButton, Event_Modifier_Keys _modifiers, Ewk_Url_Request* _request, const char* _frameName)
         : __ref(1)
@@ -57,7 +58,7 @@ struct _Ewk_Navigation_Policy_Decision {
         , mouseButton(_mouseButton)
         , modifiers(_modifiers)
         , request(_request)
-        , frameName(eina_stringshare_add(_frameName))
+        , frameName(_frameName)
     { }
 
     ~_Ewk_Navigation_Policy_Decision()
@@ -69,7 +70,6 @@ struct _Ewk_Navigation_Policy_Decision {
             WKFramePolicyListenerUse(listener.get());
 
         ewk_url_request_unref(request);
-        eina_stringshare_del(frameName);
     }
 };
 

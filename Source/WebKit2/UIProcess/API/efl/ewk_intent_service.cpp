@@ -28,6 +28,7 @@
 
 #include "IntentServiceInfo.h"
 #include "WKAPICast.h"
+#include "WKEinaSharedString.h"
 #include "WKIntentServiceInfo.h"
 #include "WKRetainPtr.h"
 #include "WKURL.h"
@@ -42,48 +43,29 @@ using namespace WebKit;
  */
 struct _Ewk_Intent_Service {
     unsigned int __ref; /**< the reference count of the object */
-#if ENABLE(WEB_INTENTS_TAG)
-    WKRetainPtr<WKIntentServiceInfoRef> wkService;
-#endif
-    const char* action;
-    const char* type;
-    const char* href;
-    const char* title;
-    const char* disposition;
+
+    WKEinaSharedString action;
+    WKEinaSharedString type;
+    WKEinaSharedString href;
+    WKEinaSharedString title;
+    WKEinaSharedString disposition;
 
     _Ewk_Intent_Service(WKIntentServiceInfoRef serviceRef)
         : __ref(1)
 #if ENABLE(WEB_INTENTS_TAG)
-        , wkService(serviceRef)
+        , action(AdoptWK, WKIntentServiceInfoCopyAction(serviceRef))
+        , type(AdoptWK, WKIntentServiceInfoCopyType(serviceRef))
+        , href(AdoptWK, WKIntentServiceInfoCopyHref(serviceRef))
+        , title(AdoptWK, WKIntentServiceInfoCopyTitle(serviceRef))
+        , disposition(AdoptWK, WKIntentServiceInfoCopyDisposition(serviceRef))
 #endif
-        , action(0)
-        , type(0)
-        , href(0)
-        , title(0)
-        , disposition(0)
     { }
 
     ~_Ewk_Intent_Service()
     {
         ASSERT(!__ref);
-        eina_stringshare_del(action);
-        eina_stringshare_del(type);
-        eina_stringshare_del(href);
-        eina_stringshare_del(title);
-        eina_stringshare_del(disposition);
     }
 };
-
-#define EWK_INTENT_SERVICE_WK_GET_OR_RETURN(service, wkService_, ...) \
-    if (!(service)) { \
-        EINA_LOG_CRIT("service is NULL."); \
-        return __VA_ARGS__; \
-    } \
-    if (!(service)->wkService) { \
-        EINA_LOG_CRIT("service->wkService is NULL."); \
-        return __VA_ARGS__; \
-    } \
-    WKIntentServiceInfoRef wkService_ = (service)->wkService.get()
 
 void ewk_intent_service_ref(Ewk_Intent_Service* service)
 {
@@ -107,77 +89,37 @@ void ewk_intent_service_unref(Ewk_Intent_Service* service)
 
 const char* ewk_intent_service_action_get(const Ewk_Intent_Service* service)
 {
-#if ENABLE(WEB_INTENTS_TAG)
-    EWK_INTENT_SERVICE_WK_GET_OR_RETURN(service, wkService, 0);
-
-    WKRetainPtr<WKStringRef> wkAction(AdoptWK, WKIntentServiceInfoCopyAction(wkService));
-    Ewk_Intent_Service* ewkIntentService = const_cast<Ewk_Intent_Service*>(service);
-    eina_stringshare_replace(&ewkIntentService->action, toImpl(wkAction.get())->string().utf8().data());
+    EINA_SAFETY_ON_NULL_RETURN_VAL(service, 0);
 
     return service->action;
-#else
-    return 0;
-#endif
 }
 
 const char* ewk_intent_service_type_get(const Ewk_Intent_Service* service)
 {
-#if ENABLE(WEB_INTENTS_TAG)
-    EWK_INTENT_SERVICE_WK_GET_OR_RETURN(service, wkService, 0);
-
-    WKRetainPtr<WKStringRef> wkType(AdoptWK, WKIntentServiceInfoCopyType(wkService));
-    Ewk_Intent_Service* ewkIntentService = const_cast<Ewk_Intent_Service*>(service);
-    eina_stringshare_replace(&ewkIntentService->type, toImpl(wkType.get())->string().utf8().data());
+    EINA_SAFETY_ON_NULL_RETURN_VAL(service, 0);
 
     return service->type;
-#else
-    return 0;
-#endif
 }
 
 const char* ewk_intent_service_href_get(const Ewk_Intent_Service* service)
 {
-#if ENABLE(WEB_INTENTS_TAG)
-    EWK_INTENT_SERVICE_WK_GET_OR_RETURN(service, wkService, 0);
-
-    WKRetainPtr<WKURLRef> wkHref(AdoptWK, WKIntentServiceInfoCopyHref(wkService));
-    Ewk_Intent_Service* ewkIntentService = const_cast<Ewk_Intent_Service*>(service);
-    eina_stringshare_replace(&ewkIntentService->href, toImpl(wkHref.get())->string().utf8().data());
+    EINA_SAFETY_ON_NULL_RETURN_VAL(service, 0);
 
     return service->href;
-#else
-    return 0;
-#endif
 }
 
 const char* ewk_intent_service_title_get(const Ewk_Intent_Service* service)
 {
-#if ENABLE(WEB_INTENTS_TAG)
-    EWK_INTENT_SERVICE_WK_GET_OR_RETURN(service, wkService, 0);
-
-    WKRetainPtr<WKStringRef> wkTitle(AdoptWK, WKIntentServiceInfoCopyTitle(wkService));
-    Ewk_Intent_Service* ewkIntentService = const_cast<Ewk_Intent_Service*>(service);
-    eina_stringshare_replace(&ewkIntentService->title, toImpl(wkTitle.get())->string().utf8().data());
+    EINA_SAFETY_ON_NULL_RETURN_VAL(service, 0);
 
     return service->title;
-#else
-    return 0;
-#endif
 }
 
 const char* ewk_intent_service_disposition_get(const Ewk_Intent_Service* service)
 {
-#if ENABLE(WEB_INTENTS_TAG)
-    EWK_INTENT_SERVICE_WK_GET_OR_RETURN(service, wkService, 0);
-
-    WKRetainPtr<WKStringRef> wkDisposition(AdoptWK, WKIntentServiceInfoCopyDisposition(wkService));
-    Ewk_Intent_Service* ewkIntentService = const_cast<Ewk_Intent_Service*>(service);
-    eina_stringshare_replace(&ewkIntentService->disposition, toImpl(wkDisposition.get())->string().utf8().data());
+    EINA_SAFETY_ON_NULL_RETURN_VAL(service, 0);
 
     return service->disposition;
-#else
-    return 0;
-#endif
 }
 
 #if ENABLE(WEB_INTENTS_TAG)

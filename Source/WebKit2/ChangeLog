@@ -1,3 +1,74 @@
+2012-08-15  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [EFL][WK2] Refactoring: start using WKEinaSharedString in ewk_ classes
+        https://bugs.webkit.org/show_bug.cgi?id=93964
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Started using WKEinaSharedString where it is advisable.
+
+        * UIProcess/API/cpp/efl/WKEinaSharedString.cpp:
+        (WKEinaSharedString::operator==):
+        * UIProcess/API/cpp/efl/WKEinaSharedString.h:
+        * UIProcess/API/efl/ewk_download_job.cpp:
+        (_Ewk_Download_Job):
+        (_Ewk_Download_Job::_Ewk_Download_Job):
+        (_Ewk_Download_Job::~_Ewk_Download_Job):
+        (ewk_download_job_destination_set):
+        (ewk_download_job_suggested_filename_set):
+        * UIProcess/API/efl/ewk_intent.cpp:
+        (_Ewk_Intent):
+        (_Ewk_Intent::_Ewk_Intent):
+        (_Ewk_Intent::~_Ewk_Intent):
+        (ewk_intent_action_get):
+        (ewk_intent_type_get):
+        (ewk_intent_service_get):
+        * UIProcess/API/efl/ewk_intent_service.cpp:
+        (_Ewk_Intent_Service):
+        (_Ewk_Intent_Service::_Ewk_Intent_Service):
+        (_Ewk_Intent_Service::~_Ewk_Intent_Service):
+        (ewk_intent_service_action_get):
+        (ewk_intent_service_type_get):
+        (ewk_intent_service_href_get):
+        (ewk_intent_service_title_get):
+        (ewk_intent_service_disposition_get):
+        * UIProcess/API/efl/ewk_navigation_policy_decision.cpp:
+        (_Ewk_Navigation_Policy_Decision):
+        (_Ewk_Navigation_Policy_Decision::_Ewk_Navigation_Policy_Decision):
+        (_Ewk_Navigation_Policy_Decision::~_Ewk_Navigation_Policy_Decision):
+        * UIProcess/API/efl/ewk_url_request.cpp:
+        (_Ewk_Url_Request):
+        (_Ewk_Url_Request::_Ewk_Url_Request):
+        (_Ewk_Url_Request::~_Ewk_Url_Request):
+        (ewk_url_request_url_get):
+        (ewk_request_cookies_first_party_get):
+        (ewk_url_request_http_method_get):
+        * UIProcess/API/efl/ewk_url_response.cpp:
+        (_Ewk_Url_Response):
+        (_Ewk_Url_Response::_Ewk_Url_Response):
+        (_Ewk_Url_Response::~_Ewk_Url_Response):
+        (ewk_url_response_url_get):
+        (ewk_url_response_mime_type_get):
+        * UIProcess/API/efl/ewk_view.cpp:
+        (_Ewk_View_Private_Data):
+        (_Ewk_View_Private_Data::_Ewk_View_Private_Data):
+        (_Ewk_View_Private_Data::~_Ewk_View_Private_Data):
+        (ewk_view_uri_update):
+        (ewk_view_title_get):
+        (ewk_view_theme_set):
+        (ewk_view_setting_encoding_custom_get):
+        (ewk_view_setting_encoding_custom_set):
+        * UIProcess/API/efl/ewk_web_error.cpp:
+        (_Ewk_Web_Error):
+        (_Ewk_Web_Error::_Ewk_Web_Error):
+        (_Ewk_Web_Error::~_Ewk_Web_Error):
+        (ewk_web_error_url_get):
+        (ewk_web_error_description_get):
+        * UIProcess/API/efl/ewk_web_resource.cpp:
+        (_Ewk_Web_Resource):
+        (_Ewk_Web_Resource::_Ewk_Web_Resource):
+        (_Ewk_Web_Resource::~_Ewk_Web_Resource):
+
 2012-08-15  Christophe Dumez  <christophe.dumez@intel.com>
 
         [WK2] Add support for Web Intents MessagePorts

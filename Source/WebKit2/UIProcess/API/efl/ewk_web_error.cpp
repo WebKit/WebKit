@@ -27,6 +27,7 @@
 #include "ewk_web_error.h"
 
 #include "ErrorsEfl.h"
+#include "WKEinaSharedString.h"
 #include "WKString.h"
 #include "WKURL.h"
 #include "ewk_web_error_private.h"
@@ -41,19 +42,17 @@ using namespace WebKit;
 struct _Ewk_Web_Error {
     WKRetainPtr<WKErrorRef> wkError;
 
-    const char* url;
-    const char* description;
+    WKEinaSharedString url;
+    WKEinaSharedString description;
 
     _Ewk_Web_Error(WKErrorRef errorRef)
         : wkError(errorRef)
-        , url(0)
-        , description(0)
+        , url(AdoptWK, WKErrorCopyFailingURL(errorRef))
+        , description(AdoptWK, WKErrorCopyLocalizedDescription(errorRef))
     { }
 
     ~_Ewk_Web_Error()
     {
-        eina_stringshare_del(url);
-        eina_stringshare_del(description);
     }
 };
 
@@ -97,11 +96,7 @@ Ewk_Web_Error_Type ewk_web_error_type_get(const Ewk_Web_Error* error)
 
 const char* ewk_web_error_url_get(const Ewk_Web_Error* error)
 {
-    EWK_WEB_ERROR_WK_GET_OR_RETURN(error, wkError, 0);
-
-    WKRetainPtr<WKURLRef> wkUrl(AdoptWK, WKErrorCopyFailingURL(wkError));
-    Ewk_Web_Error* ewkError = const_cast<Ewk_Web_Error*>(error);
-    eina_stringshare_replace(&ewkError->url, toImpl(wkUrl.get())->string().utf8().data());
+    EINA_SAFETY_ON_NULL_RETURN_VAL(error, 0);
 
     return error->url;
 }
@@ -115,11 +110,7 @@ int ewk_web_error_code_get(const Ewk_Web_Error* error)
 
 const char* ewk_web_error_description_get(const Ewk_Web_Error* error)
 {
-    EWK_WEB_ERROR_WK_GET_OR_RETURN(error, wkError, 0);
-
-    WKRetainPtr<WKStringRef> wkDescription(AdoptWK, WKErrorCopyLocalizedDescription(wkError));
-    Ewk_Web_Error* ewkError = const_cast<Ewk_Web_Error*>(error);
-    eina_stringshare_replace(&ewkError->description, toImpl(wkDescription.get())->string().utf8().data());
+    EINA_SAFETY_ON_NULL_RETURN_VAL(error, 0);
 
     return error->description;
 }

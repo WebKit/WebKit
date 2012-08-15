@@ -26,6 +26,7 @@
 #include "NativeWebWheelEvent.h"
 #include "PageClientImpl.h"
 #include "WKAPICast.h"
+#include "WKEinaSharedString.h"
 #include "WKFindOptions.h"
 #include "WKRetainPtr.h"
 #include "WKString.h"
@@ -73,11 +74,11 @@ struct _Ewk_View_Private_Data {
     OwnPtr<EflViewportHandler> viewportHandler;
 #endif
 
-    const char* uri;
-    const char* title;
-    const char* theme;
-    const char* customEncoding;
-    const char* cursorGroup;
+    WKEinaSharedString uri;
+    WKEinaSharedString title;
+    WKEinaSharedString theme;
+    WKEinaSharedString customEncoding;
+    WKEinaSharedString cursorGroup;
     Evas_Object* cursorObject;
     LoadingResourcesMap loadingResourcesMap;
     Ewk_Back_Forward_List* backForwardList;
@@ -93,12 +94,7 @@ struct _Ewk_View_Private_Data {
 #endif
 
     _Ewk_View_Private_Data()
-        : uri(0)
-        , title(0)
-        , theme(0)
-        , customEncoding(0)
-        , cursorGroup(0)
-        , cursorObject(0)
+        : cursorObject(0)
         , backForwardList(0)
 #ifdef HAVE_ECORE_X
         , isUsingEcoreX(false)
@@ -112,10 +108,6 @@ struct _Ewk_View_Private_Data {
 
     ~_Ewk_View_Private_Data()
     {
-        eina_stringshare_del(uri);
-        eina_stringshare_del(title);
-        eina_stringshare_del(theme);
-        eina_stringshare_del(customEncoding);
         _ewk_view_priv_loading_resources_clear(loadingResourcesMap);
 
         if (cursorObject)
@@ -771,10 +763,12 @@ void ewk_view_uri_update(Evas_Object* ewkView)
     if (activeURL.isEmpty())
         return;
 
-    if (!eina_stringshare_replace(&priv->uri, activeURL.utf8().data()))
+    if (priv->uri == activeURL.utf8().data())
         return;
 
-    evas_object_smart_callback_call(ewkView, "uri,changed", static_cast<void*>(const_cast<char*>(priv->uri)));
+    priv->uri = activeURL.utf8().data();
+    const char* callbackArgument = static_cast<const char*>(priv->uri);
+    evas_object_smart_callback_call(ewkView, "uri,changed", const_cast<char*>(callbackArgument));
 }
 
 Eina_Bool ewk_view_uri_set(Evas_Object* ewkView, const char* uri)
@@ -933,7 +927,7 @@ const char* ewk_view_title_get(const Evas_Object* ewkView)
     EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, 0);
 
     CString title = priv->pageClient->page()->pageTitle().utf8();
-    eina_stringshare_replace(&priv->title, title.data());
+    priv->title = title.data();
 
     return priv->title;
 }
@@ -1032,10 +1026,10 @@ void ewk_view_theme_set(Evas_Object* ewkView, const char* path)
     EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData);
     EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv);
 
-    if (!eina_stringshare_replace(&priv->theme, path))
-        return;
-
-    priv->pageClient->page()->setThemePath(path);
+    if (priv->theme != path) {
+        priv->theme = path;
+        priv->pageClient->page()->setThemePath(path);
+    }
 }
 
 const char* ewk_view_theme_get(const Evas_Object* ewkView)
@@ -1381,7 +1375,7 @@ const char* ewk_view_setting_encoding_custom_get(const Evas_Object* ewkView)
     if (customEncoding.isEmpty())
         return 0;
 
-    eina_stringshare_replace(&priv->customEncoding, customEncoding.utf8().data());
+    priv->customEncoding = customEncoding.utf8().data();
 
     return priv->customEncoding;
 }
@@ -1391,8 +1385,8 @@ Eina_Bool ewk_view_setting_encoding_custom_set(Evas_Object* ewkView, const char*
     EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, false);
     EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, false);
 
-    if (eina_stringshare_replace(&priv->customEncoding, encoding))
-        priv->pageClient->page()->setCustomTextEncodingName(encoding ? encoding : String());
+    priv->customEncoding = encoding;
+    priv->pageClient->page()->setCustomTextEncodingName(encoding ? encoding : String());
 
     return true;
 }

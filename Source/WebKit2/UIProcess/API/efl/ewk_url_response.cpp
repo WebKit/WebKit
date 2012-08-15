@@ -26,8 +26,13 @@
 #include "config.h"
 #include "ewk_url_response.h"
 
+#include "WKAPICast.h"
+#include "WKEinaSharedString.h"
+#include "WKURLResponse.h"
 #include "ewk_url_response_private.h"
 #include <wtf/text/CString.h>
+
+using namespace WebKit;
 
 /**
  * \struct  _Ewk_Url_Response
@@ -37,21 +42,19 @@ struct _Ewk_Url_Response {
     unsigned int __ref; /**< the reference count of the object */
     WebCore::ResourceResponse coreResponse;
 
-    const char* url;
-    const char* mimeType;
+    WKEinaSharedString url;
+    WKEinaSharedString mimeType;
 
     _Ewk_Url_Response(const WebCore::ResourceResponse& _coreResponse)
         : __ref(1)
         , coreResponse(_coreResponse)
-        , url(0)
-        , mimeType(0)
+        , url(AdoptWK, WKURLResponseCopyURL(toAPI(coreResponse)))
+        , mimeType(AdoptWK, WKURLResponseCopyMIMEType(toAPI(coreResponse)))
     { }
 
     ~_Ewk_Url_Response()
     {
         ASSERT(!__ref);
-        eina_stringshare_del(url);
-        eina_stringshare_del(mimeType);
     }
 };
 
@@ -75,9 +78,6 @@ const char* ewk_url_response_url_get(const Ewk_Url_Response* response)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(response, 0);
 
-    Ewk_Url_Response* ewkResponse = const_cast<Ewk_Url_Response*>(response);
-    eina_stringshare_replace(&ewkResponse->url, response->coreResponse.url().string().utf8().data());
-
     return response->url;
 }
 
@@ -91,9 +91,6 @@ int ewk_url_response_status_code_get(const Ewk_Url_Response* response)
 const char* ewk_url_response_mime_type_get(const Ewk_Url_Response* response)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(response, 0);
-
-    Ewk_Url_Response* ewkResponse = const_cast<Ewk_Url_Response*>(response);
-    eina_stringshare_replace(&ewkResponse->mimeType, response->coreResponse.mimeType().utf8().data());
 
     return response->mimeType;
 }
