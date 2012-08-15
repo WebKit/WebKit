@@ -1,3 +1,16 @@
+2012-08-14  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: split standalone test runner, test scanner and test stub.
+        https://bugs.webkit.org/show_bug.cgi?id=94001
+
+        Reviewed by Vsevolod Vlasov.
+
+        This change starts sending loacCompleted message to the embedder.
+
+        * inspector/front-end/InspectorFrontendAPI.js:
+        (InspectorFrontendAPI.loadCompleted):
+        * inspector/front-end/test-runner.html: Added.
+
 2012-08-15  Shinya Kawanaka  <shinyak@chromium.org>
 
         [Refactoring] The debug version and release version of toHTMLSelectElement can be merged without any penalty

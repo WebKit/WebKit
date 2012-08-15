@@ -1,3 +1,17 @@
+2012-08-14  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: split standalone test runner, test scanner and test stub.
+        https://bugs.webkit.org/show_bug.cgi?id=94001
+
+        Reviewed by Vsevolod Vlasov.
+
+        This change allows opening a) test runner, b) layout tests and c) inspector front-end off different
+        hosts. It is one more step towards extension-driven runner.
+
+        * http/tests/inspector/inspector-test.js:
+        * http/tests/inspector/resources/test-runner.html: Removed.
+        * http/tests/inspector/resources/test-scanner.html: Added.
+
 2012-08-15  Shinya Kawanaka  <shinyak@chromium.org>
 
         AuthorShadowDOM for meter element

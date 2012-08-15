@@ -1,0 +1,68 @@
+<html>
+<script>
+var tests = [];
+
+scanFolder("inspector/console");
+// scanFolder("inspector/debugger");
+scanFolder("inspector/editor");
+scanFolder("inspector/elements");
+scanFolder("inspector/profiler");
+scanFolder("inspector/styles");
+scanFolder("inspector/timeline");
+scanFolder("inspector");
+
+function scanFolder(folder)
+{
+    var xhr = new XMLHttpRequest();
+    xhr.open("GET", "/LayoutTests/" + folder + "/", false);
+    xhr.send(null);
+    var text = xhr.responseText;
+    var element = document.createElement("div");
+    element.innerHTML = text;
+    var links = element.querySelectorAll("a");
+    for (var i = 0; i < links.length; ++i) {
+        var link = links[i].href;
+        var match = link.match(/[^\/]*\/([^\/]+\.html)$/);
+        if (!match)
+            continue;
+        var path = "/LayoutTests/" + folder + "/" + match[1];
+        var expected = fetchExpectations(path);
+        tests.push([path, expected]);
+    }
+}
+
+function fetchExpectations(path)
+{
+    var ext = path.lastIndexOf(".");
+    path = path.substring(0, ext) + "-expected.txt";
+    var chromiumPath = path.replace("/LayoutTests/", "/LayoutTests/platform/chromium/");
+
+    var expectations = fetch(chromiumPath) || fetch(path) || "";
+
+    var expectationLines = expectations.split("\n");
+    var filtered = [];
+    for (var i = 0; i < expectationLines.length; ++i) {
+        if (!expectationLines[i].indexOf("ALERT: ") ||
+            !expectationLines[i].indexOf("CONSOLE MESSAGE: ")) {
+            filtered = [];
+            continue;
+        }
+        filtered.push(expectationLines[i]);
+    }
+    return filtered.join("\n");
+}
+
+function fetch(path)
+{
+    var xhr = new XMLHttpRequest();
+    xhr.open("GET", path, false);
+    xhr.send(null);
+    return xhr.status !== 404 ? xhr.responseText : "";
+}
+
+window.parent.postMessage(["tests", tests], "*");
+
+</script>
+<body>
+</body>
+</html>

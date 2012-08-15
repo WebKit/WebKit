@@ -140,6 +140,8 @@ InspectorFrontendAPI = {
         for (var i = 0; i < InspectorFrontendAPI._pendingCommands.length; ++i)
             InspectorFrontendAPI.dispatch(InspectorFrontendAPI._pendingCommands[i]);
         InspectorFrontendAPI._pendingCommands = [];
+        if (window.opener)
+            window.opener.postMessage(["loadCompleted"], "*");
     }
 }
 
