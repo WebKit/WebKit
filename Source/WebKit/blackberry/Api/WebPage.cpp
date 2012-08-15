@@ -2521,6 +2521,8 @@ IntSize WebPagePrivate::fixedLayoutSize(bool snapToIncrement) const
         // If we detect an overflow larger than the contents size then use that instead since
         // it'll still be clamped by the maxWidth below...
         int width = std::max(absoluteVisibleOverflowSize().width(), contentsSize().width());
+        if (m_pendingOrientation != -1 && !m_nestedLayoutFinishedCount)
+            width = 0;
 
         if (snapToIncrement) {
             // Snap to increments of defaultLayoutWidth / 2.0.
@@ -3851,16 +3853,25 @@ void WebPagePrivate::setViewportSize(const IntSize& transformedActualVisibleSize
         }
     }
 
-    if (needsLayout)
-        setNeedsLayout();
-
     // Need to resume so that the backingstore will start recording the invalidated
     // rects from below.
     m_backingStore->d->resumeScreenAndBackingStoreUpdates(BackingStore::None);
 
     // We might need to layout here to get a correct contentsSize so that zoomToFit
     // is calculated correctly.
-    requestLayoutIfNeeded();
+    while (needsLayout) {
+        setNeedsLayout();
+        requestLayoutIfNeeded();
+        needsLayout = false;
+
+        // Emulate the zoomToFitWidthOnLoad algorithm if we're rotating.
+        ++m_nestedLayoutFinishedCount;
+        if (needsLayoutToFindContentSize) {
+            if (setViewMode(viewMode()))
+                needsLayout = true;
+        }
+    }
+    m_nestedLayoutFinishedCount = 0;
 
     // As a special case if we were zoomed to the initial scale at the beginning
     // of the rotation then preserve that zoom level even when it is zoomToFit.

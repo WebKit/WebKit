@@ -1,3 +1,23 @@
+2012-08-15  Leo Yang  <leoyang@rim.com>
+
+        [BlackBerry] Use nested layout when rotating
+        https://bugs.webkit.org/show_bug.cgi?id=94117
+
+        Partially patched by Arvid Nilsson.
+
+        Reviewed by George Staikos.
+        Reviewed internally by Arvid Nilsson.
+
+        When rotating the content width used for fixedLayoutSize is not
+        correct because we are changing the rotation and the content with
+        should be determined after layout. So we set the with to 0 if we
+        are rotating and beginning the nested layout. And in setViewportSize
+        we need a nested layout loop to trigger zoom-to-fit.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::fixedLayoutSize):
+        (BlackBerry::WebKit::WebPagePrivate::setViewportSize):
+
 2012-08-14  Antonio Gomes  <agomes@rim.com>
 
         [BlackBerry] Stop copying ScrollViewBase vector all over
