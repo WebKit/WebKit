@@ -1,3 +1,12 @@
+2012-08-15  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
+
+        [Qt] Unreviwed gardening. Skip failing tests and remove obsolete test expectations.
+        https://bugs.webkit.org/show_bug.cgi?id=94076
+
+        * platform/qt/Skipped: skip fast/events/autoscroll-in-textarea.html.
+        * platform/qt/http/tests/security/aboutBlank/xss-DENIED-navigate-opener-document-write-expected.txt: Removed after r125615.
+        * platform/qt/http/tests/security/aboutBlank/xss-DENIED-set-opener-expected.txt: Removed after r125615.
+
 2012-08-15  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed GTK gardening.

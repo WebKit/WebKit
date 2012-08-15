@@ -2573,6 +2573,7 @@ fast/css/empty-cell-baseline.html
 fast/forms/datalist/update-range-with-datalist.html
 fast/multicol/cell-shrinkback.html
 fast/multicol/overflow-into-columngap.html
+fast/overflow/line-clamp-and-columns.html
 fast/table/td-width-fifty-percent-regression.html
 fast/text/descent-clip-in-scaled-page.html
 fast/sub-pixel/block-with-margin-overflow.html
@@ -2728,3 +2729,7 @@ svg/custom/use-instanceRoot-as-event-target.xhtml
 
 # https://bugs.webkit.org/show_bug.cgi?id=93897
 fast/profiler/nested-start-and-stop-profiler.html
+
+# New test introduced in r125648 fast/events/autoscroll-in-textarea.html fails
+# https://bugs.webkit.org/show_bug.cgi?id=94076
+fast/events/autoscroll-in-textarea.html
