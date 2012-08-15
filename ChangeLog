@@ -1,3 +1,13 @@
+2012-08-14  Keishi Hattori  <keishi@webkit.org>
+
+        Share common code between calendar picker and color suggestion picker
+        https://bugs.webkit.org/show_bug.cgi?id=93802
+
+        Reviewed by Kent Tamura.
+
+        * ManualTests/forms/calendar-picker.html:
+        * ManualTests/forms/color-suggestion-picker.html:
+
 2012-08-14  Milian Wolff  <milian.wolff@kdab.com>
 
         [Qt] QtWebKit linking fails for QNX cross build

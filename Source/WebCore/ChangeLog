@@ -1,3 +1,30 @@
+2012-08-14  Keishi Hattori  <keishi@webkit.org>
+
+        Share common code between calendar picker and color suggestion picker
+        https://bugs.webkit.org/show_bug.cgi?id=93802
+
+        Reviewed by Kent Tamura.
+
+        We want to share common code like utility functions between picker page popups.
+
+        No new tests because no behavior change. Covered by existing tests, color-suggestion-picker-appearance.html and calendar-picker-apeparance.html.
+
+        * Resources/pagepopups/calendarPicker.js:
+        (YearMonthController.prototype.attachTo):
+        (YearMonthController.prototype._showPopup):
+        * Resources/pagepopups/colorSuggestionPicker.js:
+        (handleMessage):
+        (handleArgumentsTimeout):
+        * Resources/pagepopups/pickerCommon.css: Added.
+        (body):
+        * Resources/pagepopups/pickerCommon.js: Added.
+        (createElement):
+        (resizeWindow):
+        (getScrollbarWidth):
+        * WebCore.gyp/WebCore.gyp: Add actions for pickerCommon.{css,js}
+        * html/shadow/CalendarPickerElement.cpp:
+        (WebCore::CalendarPickerElement::writeDocument):
+
 2012-08-14  Ojan Vafai  <ojan@chromium.org>
 
         Fix access to m_markupBox in WebCore::EllipsisBox::paint

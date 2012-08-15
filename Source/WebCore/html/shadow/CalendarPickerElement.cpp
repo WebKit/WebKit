@@ -45,6 +45,7 @@
 #include "LocalizedDate.h"
 #include "LocalizedStrings.h"
 #include "Page.h"
+#include "PickerCommon.h"
 #include "RenderDetailsMarker.h"
 #include "RenderTheme.h"
 #include <wtf/text/StringBuilder.h>
@@ -165,6 +166,7 @@ void CalendarPickerElement::writeDocument(DocumentWriter& writer)
         stepString = "1";
 
     addString("<!DOCTYPE html><head><meta charset='UTF-8'><style>\n", writer);
+    writer.addData(pickerCommonCss, sizeof(pickerCommonCss));
     writer.addData(calendarPickerCss, sizeof(calendarPickerCss));
     if (document()->page()) {
         CString extraStyle = document()->page()->theme()->extraCalendarPickerStyleSheet();
@@ -188,6 +190,7 @@ void CalendarPickerElement::writeDocument(DocumentWriter& writer)
     addProperty("isRTL", dir == RightToLeft || dir == RightToLeftArabic, writer);
     addString("}\n", writer);
 
+    writer.addData(pickerCommonJs, sizeof(pickerCommonJs));
     writer.addData(calendarPickerJs, sizeof(calendarPickerJs));
     addString("</script></body>\n", writer);
 }

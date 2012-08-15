@@ -903,6 +903,25 @@
           ],
         },
         {
+          'action_name': 'PickerCommon',
+          'inputs': [
+            '../Resources/pagepopups/pickerCommon.css',
+            '../Resources/pagepopups/pickerCommon.js',
+          ],
+          'outputs': [
+            '<(SHARED_INTERMEDIATE_DIR)/webkit/PickerCommon.h',
+            '<(SHARED_INTERMEDIATE_DIR)/webkit/PickerCommon.cpp',
+          ],
+          'action': [
+            'python',
+            '../make-file-arrays.py',
+            '--condition=ENABLE(CALENDAR_PICKER)',
+            '--out-h=<(SHARED_INTERMEDIATE_DIR)/webkit/PickerCommon.h',
+            '--out-cpp=<(SHARED_INTERMEDIATE_DIR)/webkit/PickerCommon.cpp',
+            '<@(_inputs)',
+          ],
+        },
+        {
           'action_name': 'CalendarPicker',
           'inputs': [
             '../Resources/pagepopups/calendarPicker.css',
@@ -1213,6 +1232,7 @@
         '<(SHARED_INTERMEDIATE_DIR)/webkit/EventTargetHeaders.h',
         '<(SHARED_INTERMEDIATE_DIR)/webkit/EventTargetInterfaces.h',
         '<(SHARED_INTERMEDIATE_DIR)/webkit/ExceptionCodeDescription.cpp',
+        '<(SHARED_INTERMEDIATE_DIR)/webkit/PickerCommon.cpp',
         '<(SHARED_INTERMEDIATE_DIR)/webkit/UserAgentStyleSheetsData.cpp',
         '<(SHARED_INTERMEDIATE_DIR)/webkit/V8HTMLElementWrapperFactory.cpp',
         '<(SHARED_INTERMEDIATE_DIR)/webkit/XLinkNames.cpp',

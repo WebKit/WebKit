@@ -23,72 +23,14 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-var global = {
-    argumentsReceived: false,
-    scrollbarWidth: null
-};
-
-/**
- * @param {!string} id
- */
-function $(id) {
-    return document.getElementById(id);
-}
-
-function bind(func, context) {
-    return function() {
-        return func.apply(context, arguments);
-    };
-}
-
-function getScrollbarWidth() {
-    if (global.scrollbarWidth === null) {
-        var scrollDiv = document.createElement("div");
-        scrollDiv.style.opacity = "0";
-        scrollDiv.style.overflow = "scroll";
-        scrollDiv.style.width = "50px";
-        scrollDiv.style.height = "50px";
-        document.body.appendChild(scrollDiv);
-        global.scrollbarWidth = scrollDiv.offsetWidth - scrollDiv.clientWidth;
-        scrollDiv.parentNode.removeChild(scrollDiv);
-    }
-    return global.scrollbarWidth;
-}
-
-/**
- * @param {!string} tagName
- * @param {string=} opt_class
- * @param {string=} opt_text
- * @return {!Element}
- */
-function createElement(tagName, opt_class, opt_text) {
-    var element = document.createElement(tagName);
-    if (opt_class)
-        element.setAttribute("class", opt_class);
-    if (opt_text)
-        element.appendChild(document.createTextNode(opt_text));
-    return element;
-}
-
-/**
- * @param {!number} width
- * @param {!number} height
- */
-function resizeWindow(width, height) {
-    if (window.frameElement) {
-        window.frameElement.style.width = width + "px";
-        window.frameElement.style.height = height + "px";
-    } else {
-        window.resizeTo(width, height);
-    }
-}
+window.argumentsReceived = false;
 
 /**
  * @param {Event} event
  */
 function handleMessage(event) {
     initialize(JSON.parse(event.data));
-    global.argumentsReceived = true;
+    window.argumentsReceived = true;
 }
 
 /**
@@ -111,7 +53,7 @@ var DefaultColorPalette = ["#000000", "#404040", "#808080", "#c0c0c0",
     "#4a86e8", "#0000ff", "#9900ff", "#ff00ff"];
 
 function handleArgumentsTimeout() {
-    if (global.argumentsReceived)
+    if (window.argumentsReceived)
         return;
     var args = {
         values : DefaultColorPalette,

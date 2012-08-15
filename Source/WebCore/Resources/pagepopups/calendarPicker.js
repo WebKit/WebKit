@@ -51,7 +51,6 @@ var ClassNames = {
     MonthSelectorPopup: "month-selector-popup",
     MonthSelectorPopupContents: "month-selector-popup-contents",
     MonthSelectorPopupEntry: "month-selector-popup-entry",
-    MonthSelectorPopupSizer: "month-selector-popup-sizer",
     MonthSelectorWall: "month-selector-wall",
     NoFocusRing: "no-focus-ring",
     NotThisMonth: "not-this-month",
@@ -79,34 +78,6 @@ var global = {
 
 // ----------------------------------------------------------------
 // Utility functions
-
-/**
- * @param {!string} id
- */
-function $(id) {
-    return document.getElementById(id);
-}
-
-function bind(func, context) {
-    return function() {
-        return func.apply(context, arguments);
-    };
-}
-
-/**
- * @param {!string} tagName
- * @param {string=} opt_class
- * @param {string=} opt_text
- * @return {!Element}
- */
-function createElement(tagName, opt_class, opt_text) {
-    var element = document.createElement(tagName);
-    if (opt_class)
-        element.setAttribute("class", opt_class);
-    if (opt_text)
-        element.appendChild(document.createTextNode(opt_text));
-    return element;
-}
 
 /**
  * @return {!string} lowercase locale name. e.g. "en-us"
@@ -222,19 +193,6 @@ function serializeDate(year, month, day) {
     if (yearString.length < 4)
         yearString = ("000" + yearString).substr(-4, 4);
     return yearString + "-" + ("0" + (month + 1)).substr(-2, 2) + "-" + ("0" + day).substr(-2, 2);
-}
-
-/**
- * @param {!number} width
- * @param {!number} height
- */
-function resizeWindow(width, height) {
-    if (window.frameElement) {
-        window.frameElement.style.width = width + "px";
-        window.frameElement.style.height = height + "px";
-    } else {
-        window.resizeTo(width, height);
-    }
 }
 
 // ----------------------------------------------------------------
@@ -451,9 +409,6 @@ YearMonthController.prototype.attachTo = function(main) {
     this._monthPopup.tabIndex = 0;
     this._monthPopupContents = createElement("div", ClassNames.MonthSelectorPopupContents);
     this._monthPopup.appendChild(this._monthPopupContents);
-    // Sizer used to determine the width of the viewport in the popup menu.
-    var sizer = createElement("div", ClassNames.MonthSelectorPopupSizer);
-    this._monthPopup.appendChild(sizer);
     box.appendChild(this._monthPopup);
     this._month = createElement("div", ClassNames.MonthSelector);
     this._month.addEventListener("click", bind(this._showPopup, this), false);
@@ -609,10 +564,7 @@ YearMonthController.prototype._showPopup = function() {
            if (bottom > popupHeight)
                this._monthPopup.scrollTop = bottom - popupHeight;
         }
-        var sizer = document.querySelector("." + ClassNames.MonthSelectorPopupSizer);
-        var scrollWidth = this._monthPopupContents.clientWidth - sizer.clientWidth;
-        if (scrollWidth > 0)
-            this._monthPopup.style.webkitPaddingEnd = scrollWidth + 'px';
+        this._monthPopup.style.webkitPaddingEnd = getScrollbarWidth() + 'px';
     }
     this._monthPopup.focus();
 };

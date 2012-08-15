@@ -34,6 +34,7 @@
 #include "ColorSuggestionPicker.h"
 #include "IntRect.h"
 #include "LocalizedStrings.h"
+#include "PickerCommon.h"
 #include "WebColorChooser.h"
 #include "platform/WebColor.h"
 #include "platform/WebKitPlatformSupport.h"
@@ -103,12 +104,14 @@ void ColorChooserUIController::writeDocument(WebCore::DocumentWriter& writer)
         suggestionValues.append(suggestions[i].serialized());
     
     WebCore::PagePopupClient::addString("<!DOCTYPE html><head><meta charset='UTF-8'><style>\n", writer);
+    writer.addData(WebCore::pickerCommonCss, sizeof(WebCore::pickerCommonCss));
     writer.addData(WebCore::colorSuggestionPickerCss, sizeof(WebCore::colorSuggestionPickerCss));
     WebCore::PagePopupClient::addString("</style></head><body><div id=main>Loading...</div><script>\n"
                                       "window.dialogArguments = {\n", writer);
     WebCore::PagePopupClient::addProperty("values", suggestionValues, writer);       
     WebCore::PagePopupClient::addProperty("otherColorLabel", Platform::current()->queryLocalizedString(WebLocalizedString::OtherColorLabel), writer);
     WebCore::PagePopupClient::addString("};\n", writer);
+    writer.addData(WebCore::pickerCommonJs, sizeof(WebCore::pickerCommonJs));
     writer.addData(WebCore::colorSuggestionPickerJs, sizeof(WebCore::colorSuggestionPickerJs));
     WebCore::PagePopupClient::addString("</script></body>\n", writer);
 }

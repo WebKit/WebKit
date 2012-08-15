@@ -1,3 +1,13 @@
+2012-08-14  Keishi Hattori  <keishi@webkit.org>
+
+        Share common code between calendar picker and color suggestion picker
+        https://bugs.webkit.org/show_bug.cgi?id=93802
+
+        Reviewed by Kent Tamura.
+
+        * src/ColorChooserUIController.cpp:
+        (WebKit::ColorChooserUIController::writeDocument):
+
 2012-08-14  Scott Graham  <scottmg@chromium.org>
 
         [Chromium] Fix warnings on Windows build

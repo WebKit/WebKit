@@ -36,10 +36,17 @@ function openColorPicker(args) {
     var frame = document.getElementsByTagName('iframe')[0];
     var doc = frame.contentDocument;
     doc.documentElement.innerHTML = '<head></head><body><div id=main>Loading...</div></body>';
+    var commonCssLink = doc.createElement('link');
+    commonCssLink.rel = 'stylesheet';
+    commonCssLink.href = '../../Source/WebCore/Resources/pagepopups/pickerCommon.css?' + (new Date()).getTime();
+    doc.head.appendChild(commonCssLink);
     var link = doc.createElement('link');
     link.rel = 'stylesheet';
     link.href = '../../Source/WebCore/Resources/pagepopups/colorSuggestionPicker.css?' + (new Date()).getTime();
     doc.head.appendChild(link);
+    var commonJsScript = doc.createElement('script');
+    commonJsScript.src = '../../Source/WebCore/Resources/pagepopups/pickerCommon.js?' + (new Date()).getTime();
+    doc.body.appendChild(commonJsScript);
     var script = doc.createElement('script');
     script.src = '../../Source/WebCore/Resources/pagepopups/colorSuggestionPicker.js?' + (new Date()).getTime();
     doc.body.appendChild(script);
