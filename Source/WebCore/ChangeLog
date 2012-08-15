@@ -1,3 +1,17 @@
+2012-08-14  Hayato Ito  <hayato@chromium.org>
+
+        Refactor EventDispatcher, moving code to make actual changes easier to review later.
+        https://bugs.webkit.org/show_bug.cgi?id=93959
+
+        Reviewed by Dimitri Glazkov.
+
+        No new tests - no new functionality.
+
+        * dom/EventDispatcher.cpp:
+        (WebCore::EventDispatcher::dispatchScopedEvent):
+        (WebCore):
+        (WebCore::EventDispatcher::dispatchSimulatedClick):
+
 2012-08-14  Kihong Kwon  <kihong.kwon@samsung.com>
 
         Clear pattern to prevent timing problem between cancelVibration and vibrate

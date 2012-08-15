@@ -151,39 +151,6 @@ inline static EventTarget* eventTargetRespectingSVGTargetRules(Node* referenceNo
     return referenceNode;
 }
 
-void EventDispatcher::dispatchScopedEvent(Node* node, PassRefPtr<EventDispatchMediator> mediator)
-{
-    // We need to set the target here because it can go away by the time we actually fire the event.
-    mediator->event()->setTarget(eventTargetRespectingSVGTargetRules(node));
-    ScopedEventQueue::instance()->enqueueEventDispatchMediator(mediator);
-}
-
-void EventDispatcher::dispatchSimulatedClick(Node* node, PassRefPtr<Event> underlyingEvent, bool sendMouseEvents, bool showPressedLook)
-{
-    if (node->disabled())
-        return;
-
-    if (!gNodesDispatchingSimulatedClicks)
-        gNodesDispatchingSimulatedClicks = new HashSet<Node*>;
-    else if (gNodesDispatchingSimulatedClicks->contains(node))
-        return;
-
-    gNodesDispatchingSimulatedClicks->add(node);
-
-    // send mousedown and mouseup before the click, if requested
-    if (sendMouseEvents)
-        EventDispatcher(node).dispatchEvent(SimulatedMouseEvent::create(eventNames().mousedownEvent, node->document()->defaultView(), underlyingEvent));
-    node->setActive(true, showPressedLook);
-    if (sendMouseEvents)
-        EventDispatcher(node).dispatchEvent(SimulatedMouseEvent::create(eventNames().mouseupEvent, node->document()->defaultView(), underlyingEvent));
-    node->setActive(false);
-
-    // always send click
-    EventDispatcher(node).dispatchEvent(SimulatedMouseEvent::create(eventNames().clickEvent, node->document()->defaultView(), underlyingEvent));
-
-    gNodesDispatchingSimulatedClicks->remove(node);
-}
-
 void EventDispatcher::adjustRelatedTarget(Event* event, PassRefPtr<EventTarget> prpRelatedTarget)
 {
     if (!prpRelatedTarget)
@@ -236,6 +203,39 @@ void EventDispatcher::ensureEventAncestors(Event* event)
             targetStack.removeLast();
         }
     }
+}
+
+void EventDispatcher::dispatchScopedEvent(Node* node, PassRefPtr<EventDispatchMediator> mediator)
+{
+    // We need to set the target here because it can go away by the time we actually fire the event.
+    mediator->event()->setTarget(eventTargetRespectingSVGTargetRules(node));
+    ScopedEventQueue::instance()->enqueueEventDispatchMediator(mediator);
+}
+
+void EventDispatcher::dispatchSimulatedClick(Node* node, PassRefPtr<Event> underlyingEvent, bool sendMouseEvents, bool showPressedLook)
+{
+    if (node->disabled())
+        return;
+
+    if (!gNodesDispatchingSimulatedClicks)
+        gNodesDispatchingSimulatedClicks = new HashSet<Node*>;
+    else if (gNodesDispatchingSimulatedClicks->contains(node))
+        return;
+
+    gNodesDispatchingSimulatedClicks->add(node);
+
+    // send mousedown and mouseup before the click, if requested
+    if (sendMouseEvents)
+        EventDispatcher(node).dispatchEvent(SimulatedMouseEvent::create(eventNames().mousedownEvent, node->document()->defaultView(), underlyingEvent));
+    node->setActive(true, showPressedLook);
+    if (sendMouseEvents)
+        EventDispatcher(node).dispatchEvent(SimulatedMouseEvent::create(eventNames().mouseupEvent, node->document()->defaultView(), underlyingEvent));
+    node->setActive(false);
+
+    // always send click
+    EventDispatcher(node).dispatchEvent(SimulatedMouseEvent::create(eventNames().clickEvent, node->document()->defaultView(), underlyingEvent));
+
+    gNodesDispatchingSimulatedClicks->remove(node);
 }
 
 bool EventDispatcher::dispatchEvent(PassRefPtr<Event> prpEvent)
