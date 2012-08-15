@@ -110,13 +110,10 @@ void toRenderTextControlSingleLine(const RenderTextControlSingleLine*);
 
 class RenderTextControlInnerBlock : public RenderBlock {
 public:
-    RenderTextControlInnerBlock(Node* node, bool isMultiLine) : RenderBlock(node), m_multiLine(isMultiLine) { }
+    RenderTextControlInnerBlock(Node* node) : RenderBlock(node) { }
 
 private:
     virtual bool hasLineIfEmpty() const { return true; }
-    virtual VisiblePosition positionForPoint(const LayoutPoint&);
-
-    bool m_multiLine;
 };
 
 }

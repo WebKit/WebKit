@@ -102,13 +102,7 @@ void TextControlInnerTextElement::defaultEventHandler(Event* event)
 
 RenderObject* TextControlInnerTextElement::createRenderer(RenderArena* arena, RenderStyle*)
 {
-    bool multiLine = false;
-    Element* shadowAncestor = shadowHost();
-    if (shadowAncestor && shadowAncestor->renderer()) {
-        ASSERT(shadowAncestor->renderer()->isTextField() || shadowAncestor->renderer()->isTextArea());
-        multiLine = shadowAncestor->renderer()->isTextArea();
-    }
-    return new (arena) RenderTextControlInnerBlock(this, multiLine);
+    return new (arena) RenderTextControlInnerBlock(this);
 }
 
 PassRefPtr<RenderStyle> TextControlInnerTextElement::customStyleForRenderer()

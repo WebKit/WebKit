@@ -155,11 +155,14 @@ void RenderTextControl::computeLogicalHeight()
 
 void RenderTextControl::hitInnerTextElement(HitTestResult& result, const LayoutPoint& pointInContainer, const LayoutPoint& accumulatedOffset)
 {
-    LayoutPoint adjustedLocation = accumulatedOffset + location();
     HTMLElement* innerText = innerTextElement();
+    LayoutPoint adjustedLocation = accumulatedOffset + location();
+    LayoutPoint localPoint = pointInContainer - toLayoutSize(adjustedLocation + innerText->renderBox()->location());
+    if (hasOverflowClip())
+        localPoint += scrolledContentOffset();
     result.setInnerNode(innerText);
     result.setInnerNonSharedNode(innerText);
-    result.setLocalPoint(pointInContainer - toLayoutSize(adjustedLocation + innerText->renderBox()->location()));
+    result.setLocalPoint(localPoint);
 }
 
 static const char* fontFamiliesWithInvalidCharWidth[] = {

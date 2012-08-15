@@ -49,23 +49,6 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-VisiblePosition RenderTextControlInnerBlock::positionForPoint(const LayoutPoint& point)
-{
-    LayoutPoint contentsPoint(point);
-
-    // Multiline text controls have the scroll on shadowHost, so we need to take
-    // that into account here.
-    if (m_multiLine) {
-        RenderTextControl* renderer = toRenderTextControl(node()->shadowHost()->renderer());
-        if (renderer->hasOverflowClip())
-            contentsPoint += renderer->scrolledContentOffset();
-    }
-
-    return RenderBlock::positionForPoint(contentsPoint);
-}
-
-// ----------------------------
-
 RenderTextControlSingleLine::RenderTextControlSingleLine(Node* node)
     : RenderTextControl(node)
     , m_shouldDrawCapsLockIndicator(false)

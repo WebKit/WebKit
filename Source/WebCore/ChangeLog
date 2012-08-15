@@ -1,3 +1,30 @@
+2012-08-14  Sukolsak Sakshuwong  <sukolsak@google.com>
+
+        Text selection in text area in auto scroll mode goes wrong.
+        https://bugs.webkit.org/show_bug.cgi?id=74346
+
+        Reviewed by Ojan Vafai.
+
+        WebKit triggers autoscroll in text area when the user drags the cursor from inside
+        the text area to the outside. When that happens, it gets the local cursor position
+        relative to the node under the cursor from hit-testing, converts it to
+        the absolute position, and then converts it to the local position relative to the
+        text area. However, the hit-testing method of text area did not take scrolling
+        offset into account. This caused it to give an incorrect value of the local cursor
+        position. Make the hit-testing take scrolling offset into account.
+
+        Test: fast/events/autoscroll-in-textarea.html
+
+        * html/shadow/TextControlInnerElements.cpp:
+        (WebCore::TextControlInnerTextElement::createRenderer):
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::hitInnerTextElement):
+        * rendering/RenderTextControlSingleLine.cpp:
+        (WebCore):
+        * rendering/RenderTextControlSingleLine.h:
+        (WebCore::RenderTextControlInnerBlock::RenderTextControlInnerBlock):
+        (WebCore::RenderTextControlInnerBlock::hasLineIfEmpty):
+
 2012-08-14  Shinya Kawanaka  <shinyak@chromium.org>
 
         [Refactoring] RenderMenuList and RenderListBox should have a method to return HTMLSelectElement.
