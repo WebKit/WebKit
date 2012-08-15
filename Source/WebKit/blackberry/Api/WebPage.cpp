@@ -885,8 +885,7 @@ void WebPage::executeJavaScriptFunction(const std::vector<std::string> &function
     if (functionObject && thisObject)
         result = JSObjectCallAsFunction(ctx, functionObject, thisObject, args.size(), argListRef.data(), 0);
 
-    JSC::JSValue value = toJS(exec, result);
-    if (!value) {
+    if (!result) {
         returnValue.setType(JavaScriptVariant::Exception);
         return;
     }

@@ -1,3 +1,14 @@
+2012-08-15  Benjamin C Meyer  <bmeyer@rim.com>
+
+        [BlackBerry] When there is an exception we want to check if the ref is 0, not the
+        value as JSObjectCallAsFunction returns 0 in that case.
+        https://bugs.webkit.org/show_bug.cgi?id=94153
+
+        Reviewed by Yong Li.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPage::executeJavaScriptFunction):
+
 2012-08-15  Yong Li  <yoli@rim.com>
 
         [BlackBerry] Upstream FrameLoaderClientBlackBerry::securityOriginForNewDocument()
