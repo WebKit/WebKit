@@ -52,27 +52,30 @@ TEST(CCRenderSurfaceFiltersTest, testColorMatrixFiltersCombined)
     // Several filters should always combine for any amount between 0 and 1:
     // grayscale, saturate, invert, contrast, opacity.
     EXPECT_TRUE(isCombined(WebFilterOperation::createGrayscaleFilter(0)));
-    EXPECT_TRUE(isCombined(WebFilterOperation::createGrayscaleFilter(0.3)));
+    // Note that we use 0.3f to avoid "argument is truncated from 'double' to
+    // 'float'" warnings on Windows. 0.5 is exactly representable as a float, so
+    // there is no warning.
+    EXPECT_TRUE(isCombined(WebFilterOperation::createGrayscaleFilter(0.3f)));
     EXPECT_TRUE(isCombined(WebFilterOperation::createGrayscaleFilter(0.5)));
     EXPECT_TRUE(isCombined(WebFilterOperation::createGrayscaleFilter(1)));
 
     EXPECT_TRUE(isCombined(WebFilterOperation::createSaturateFilter(0)));
-    EXPECT_TRUE(isCombined(WebFilterOperation::createSaturateFilter(0.3)));
+    EXPECT_TRUE(isCombined(WebFilterOperation::createSaturateFilter(0.3f)));
     EXPECT_TRUE(isCombined(WebFilterOperation::createSaturateFilter(0.5)));
     EXPECT_TRUE(isCombined(WebFilterOperation::createSaturateFilter(1)));
 
     EXPECT_TRUE(isCombined(WebFilterOperation::createInvertFilter(0)));
-    EXPECT_TRUE(isCombined(WebFilterOperation::createInvertFilter(0.3)));
+    EXPECT_TRUE(isCombined(WebFilterOperation::createInvertFilter(0.3f)));
     EXPECT_TRUE(isCombined(WebFilterOperation::createInvertFilter(0.5)));
     EXPECT_TRUE(isCombined(WebFilterOperation::createInvertFilter(1)));
 
     EXPECT_TRUE(isCombined(WebFilterOperation::createContrastFilter(0)));
-    EXPECT_TRUE(isCombined(WebFilterOperation::createContrastFilter(0.3)));
+    EXPECT_TRUE(isCombined(WebFilterOperation::createContrastFilter(0.3f)));
     EXPECT_TRUE(isCombined(WebFilterOperation::createContrastFilter(0.5)));
     EXPECT_TRUE(isCombined(WebFilterOperation::createContrastFilter(1)));
 
     EXPECT_TRUE(isCombined(WebFilterOperation::createOpacityFilter(0)));
-    EXPECT_TRUE(isCombined(WebFilterOperation::createOpacityFilter(0.3)));
+    EXPECT_TRUE(isCombined(WebFilterOperation::createOpacityFilter(0.3f)));
     EXPECT_TRUE(isCombined(WebFilterOperation::createOpacityFilter(0.5)));
     EXPECT_TRUE(isCombined(WebFilterOperation::createOpacityFilter(1)));
 

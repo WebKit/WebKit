@@ -84,9 +84,11 @@ TEST_F(CCScrollbarAnimationControllerLinearFadeTest, verifyAwakenByScroll)
     m_scrollbarController->animate(3);
     EXPECT_FLOAT_EQ(1, m_scrollbarLayer->opacity());
     m_scrollbarController->animate(4);
-    EXPECT_FLOAT_EQ(2 / 3.0, m_scrollbarLayer->opacity());
+    // Note that we use 3.0f to avoid "argument is truncated from 'double' to
+    // 'float'" warnings on Windows.
+    EXPECT_FLOAT_EQ(2 / 3.0f, m_scrollbarLayer->opacity());
     m_scrollbarController->animate(5);
-    EXPECT_FLOAT_EQ(1 / 3.0, m_scrollbarLayer->opacity());
+    EXPECT_FLOAT_EQ(1 / 3.0f, m_scrollbarLayer->opacity());
     m_scrollLayer->setScrollDelta(IntSize(3, 3));
     m_scrollbarController->updateScrollOffsetAtTime(m_scrollLayer.get(), 5);
     m_scrollbarController->animate(6);
@@ -94,9 +96,9 @@ TEST_F(CCScrollbarAnimationControllerLinearFadeTest, verifyAwakenByScroll)
     m_scrollbarController->animate(7);
     EXPECT_FLOAT_EQ(1, m_scrollbarLayer->opacity());
     m_scrollbarController->animate(8);
-    EXPECT_FLOAT_EQ(2 / 3.0, m_scrollbarLayer->opacity());
+    EXPECT_FLOAT_EQ(2 / 3.0f, m_scrollbarLayer->opacity());
     m_scrollbarController->animate(9);
-    EXPECT_FLOAT_EQ(1 / 3.0, m_scrollbarLayer->opacity());
+    EXPECT_FLOAT_EQ(1 / 3.0f, m_scrollbarLayer->opacity());
     m_scrollbarController->animate(10);
     EXPECT_FLOAT_EQ(0, m_scrollbarLayer->opacity());
 }
@@ -127,9 +129,9 @@ TEST_F(CCScrollbarAnimationControllerLinearFadeTest, verifyForceAwakenByPinch)
     m_scrollbarController->animate(8);
     EXPECT_FLOAT_EQ(1, m_scrollbarLayer->opacity());
     m_scrollbarController->animate(9);
-    EXPECT_FLOAT_EQ(2 / 3.0, m_scrollbarLayer->opacity());
+    EXPECT_FLOAT_EQ(2 / 3.0f, m_scrollbarLayer->opacity());
     m_scrollbarController->animate(10);
-    EXPECT_FLOAT_EQ(1 / 3.0, m_scrollbarLayer->opacity());
+    EXPECT_FLOAT_EQ(1 / 3.0f, m_scrollbarLayer->opacity());
     m_scrollbarController->animate(11);
     EXPECT_FLOAT_EQ(0, m_scrollbarLayer->opacity());
 
