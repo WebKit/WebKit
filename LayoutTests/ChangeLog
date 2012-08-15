@@ -1,3 +1,59 @@
+2012-08-15  Levi Weintraub  <leviw@chromium.org>
+
+        Unreviewed gardening. Updating test expectations after r125694.
+
+        * fast/table/rowindex-expected.txt: Added.
+        * fast/text/international/bidi-layout-across-linebreak-expected.txt: Added.
+        * fast/text/international/bidi-override-expected.txt: Added.
+        * fast/transforms/bounding-rect-zoom-expected.txt: Replaced.
+        * platform/chromium-linux-x86/svg/zoom/page/zoom-img-preserveAspectRatio-support-1-expected.txt: Removed.
+        * platform/chromium-linux/fast/text/international/bidi-layout-across-linebreak-expected.png:
+        * platform/chromium-linux/fast/text/international/bidi-layout-across-linebreak-expected.txt: Added.
+        * platform/chromium-linux/fast/transforms/bounding-rect-zoom-expected.txt: Added.
+        * platform/chromium-linux/svg/zoom/page/zoom-img-preserveAspectRatio-support-1-expected.png:
+        * platform/chromium-linux/svg/zoom/page/zoom-img-preserveAspectRatio-support-1-expected.txt:
+        * platform/chromium-linux/svg/zoom/page/zoom-replaced-intrinsic-ratio-001-expected.txt: Added.
+        * platform/chromium-linux/svg/zoom/page/zoom-svg-through-object-with-percentage-size-expected.txt: Added.
+        * platform/chromium-linux/tables/mozilla_expected_failures/bugs/bug89315-expected.png:
+        * platform/chromium-linux/tables/mozilla_expected_failures/bugs/bug89315-expected.txt: Added.
+        * platform/chromium-mac-snowleopard/fast/forms/001-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/form-element-geometry-expected.png:
+        * platform/chromium-mac-snowleopard/fast/replaced/width100percent-button-expected.png:
+        * platform/chromium-mac-snowleopard/fast/replaced/width100percent-checkbox-expected.png:
+        * platform/chromium-mac-snowleopard/fast/replaced/width100percent-radio-expected.png:
+        * platform/chromium-mac-snowleopard/fast/table/rowindex-expected.png:
+        * platform/chromium-mac-snowleopard/fast/table/rowindex-expected.txt: Removed.
+        * platform/chromium-mac-snowleopard/fast/text/international/bidi-LDB-2-CSS-expected.png:
+        * platform/chromium-mac-snowleopard/fast/text/international/bidi-LDB-2-HTML-expected.png:
+        * platform/chromium-mac-snowleopard/fast/text/international/bidi-LDB-2-formatting-characters-expected.png:
+        * platform/chromium-mac-snowleopard/fast/text/international/bidi-layout-across-linebreak-expected.png:
+        * platform/chromium-mac-snowleopard/fast/text/international/bidi-layout-across-linebreak-expected.txt: Removed.
+        * platform/chromium-mac-snowleopard/fast/text/international/bidi-override-expected.png:
+        * platform/chromium-mac-snowleopard/fast/text/international/bidi-override-expected.txt: Removed.
+        * platform/chromium-mac-snowleopard/fast/text/textIteratorNilRenderer-expected.png:
+        * platform/chromium-mac-snowleopard/svg/zoom/page/zoom-img-preserveAspectRatio-support-1-expected.png:
+        * platform/chromium-mac-snowleopard/svg/zoom/page/zoom-svg-through-object-with-percentage-size-expected.png:
+        * platform/chromium-mac-snowleopard/tables/mozilla/bugs/bug1318-expected.png:
+        * platform/chromium-mac-snowleopard/tables/mozilla/bugs/bug33855-expected.png:
+        * platform/chromium-mac-snowleopard/tables/mozilla/bugs/bug39209-expected.png:
+        * platform/chromium-mac-snowleopard/tables/mozilla/bugs/bug4527-expected.png:
+        * platform/chromium-mac-snowleopard/tables/mozilla/bugs/bug55527-expected.png:
+        * platform/chromium-mac-snowleopard/tables/mozilla_expected_failures/bugs/bug89315-expected.png:
+        * platform/chromium-mac/fast/table/rowindex-expected.txt: Removed.
+        * platform/chromium-mac/fast/text/international/bidi-override-expected.txt: Removed.
+        * platform/chromium-win-xp/svg/zoom/page/zoom-img-preserveAspectRatio-support-1-expected.png: Removed.
+        * platform/chromium-win-xp/svg/zoom/page/zoom-img-preserveAspectRatio-support-1-expected.txt: Removed.
+        * platform/chromium-win/fast/text/international/bidi-layout-across-linebreak-expected.txt:
+        * platform/chromium/TestExpectations:
+        * platform/efl/fast/table/rowindex-expected.txt: Removed.
+        * platform/efl/fast/text/international/bidi-layout-across-linebreak-expected.txt: Removed.
+        * platform/efl/fast/text/international/bidi-override-expected.txt: Removed.
+        * platform/efl/fast/transforms/bounding-rect-zoom-expected.txt: Removed.
+        * platform/gtk/fast/table/rowindex-expected.txt: Removed.
+        * platform/gtk/fast/text/international/bidi-layout-across-linebreak-expected.txt: Removed.
+        * platform/gtk/fast/text/international/bidi-override-expected.txt: Removed.
+        * platform/gtk/fast/transforms/bounding-rect-zoom-expected.txt: Removed.
+
 2012-08-15  Brady Eidson  <beidson@apple.com>
 
         Removing a plug-in element from a page opened in a background tab in Safari crashes

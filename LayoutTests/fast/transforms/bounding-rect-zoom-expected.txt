@@ -9,18 +9,18 @@ layer at (0,0) size 800x600
         RenderBR {BR} at (303,13) size 0x0
         RenderText {#text} at (0,16) size 176x17
           text run at (0,16) width 176: "There should be no red visible."
-      RenderTable {TABLE} at (0,46) size 786x20
-        RenderTableSection {TBODY} at (0,0) size 786x20
-          RenderTableRow {TR} at (0,1) size 786x18
-            RenderTableCell {TD} at (1,1) size 182x18 [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 145x17
-                text run at (1,1) width 145: "getClientBoundingRect():"
+      RenderTable {TABLE} at (0,46) size 786x18
+        RenderTableSection {TBODY} at (0,0) size 786x18
+          RenderTableRow {TR} at (0,1) size 786x16
+            RenderTableCell {TD} at (1,1) size 180x16 [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (0,0) size 145x17
+                text run at (0,0) width 145: "getClientBoundingRect():"
               RenderText {#text} at (0,0) size 0x0
               RenderText {#text} at (0,0) size 0x0
               RenderText {#text} at (0,0) size 0x0
-            RenderTableCell {TD} at (184,1) size 601x18 [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 95x17
-                text run at (1,1) width 95: "getClientRects():"
+            RenderTableCell {TD} at (182,1) size 603x16 [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (0,0) size 95x17
+                text run at (0,0) width 95: "getClientRects():"
               RenderText {#text} at (0,0) size 0x0
               RenderText {#text} at (0,0) size 0x0
               RenderText {#text} at (0,0) size 0x0

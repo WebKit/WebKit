@@ -1753,7 +1753,7 @@ BUGCR30826 WIN : platform/win/fast/events/panScroll-imageMap-noHref-scroll.html 
 BUGCR30826 WIN DEBUG : platform/win/fast/events/panScroll-event-fired.html = PASS TIMEOUT TEXT
 
 // WebKit roll 52468->52535
-BUGCR31991 LINUX ANDROID WIN : fast/text/international/bidi-layout-across-linebreak.html = TEXT
+BUGCR31991 ANDROID WIN7 : fast/text/international/bidi-layout-across-linebreak.html = TEXT
 
 BUGCR31623 WIN SNOWLEOPARD : http/tests/appcache/remove-cache.html = PASS TIMEOUT TEXT
 
@@ -3387,42 +3387,6 @@ BUGWK92776 SKIP : storage/indexeddb/intversion-delete-in-upgradeneeded.html = PA
 
 // Started failing around r122770
 BUGWK91445 LINUX : plugins/embed-attributes-style.html = PASS IMAGE
-
-// Need updated baselines once the bots cycle
-BUGLEVIW WIN LINUX : tables/mozilla/bugs = PASS FAIL
-BUGLEVIW WIN LINUX SNOWLEOPARD LEOPARD : editing/deleting/5144139-2.html = PASS FAIL
-BUGLEVIW WIN LINUX SNOWLEOPARD LEOPARD : fast/replaced/width100percent-checkbox.html = PASS FAIL
-BUGLEVIW WIN LINUX SNOWLEOPARD LEOPARD : fast/replaced/width100percent-radio.html = PASS FAIL
-BUGLEVIW WIN LINUX SNOWLEOPARD LEOPARD : fast/replaced/width100percent-button.html = PASS FAIL
-BUGLEVIW WIN LINUX SNOWLEOPARD LEOPARD : fast/text/international/bidi-layout-across-linebreak.html = PASS FAIL
-BUGLEVIW WIN LINUX SNOWLEOPARD LEOPARD : fast/text/international/bidi-LDB-2-HTML.html= PASS FAIL
-BUGLEVIW WIN LINUX SNOWLEOPARD LEOPARD : fast/text/international/bidi-LDB-2-formatting-characters.html = PASS FAIL
-BUGLEVIW WIN LINUX SNOWLEOPARD LEOPARD : fast/text/international/bidi-LDB-2-CSS.html = PASS FAIL
-BUGLEVIW WIN LINUX SNOWLEOPARD LEOPARD : fast/text/international/bidi-override = PASS FAIL
-BUGLEVIW WIN LINUX SNOWLEOPARD LEOPARD : fast/text/textIteratorNilRenderer.html = PASS FAIL
-BUGLEVIW WIN LINUX SNOWLEOPARD LEOPARD : fast/transforms/bounding-rect-zoom.html = PASS FAIL
-BUGLEVIW WIN LINUX SNOWLEOPARD LEOPARD : fast/forms/001.html = PASS FAIL
-BUGLEVIW WIN LINUX SNOWLEOPARD LEOPARD : fast/forms/form-element-geometry.html = PASS FAIL
-BUGLEVIW WIN LINUX SNOWLEOPARD LEOPARD : fast/forms/button-white-space.html = PASS FAIL
-BUGLEVIW WIN LINUX SNOWLEOPARD LEOPARD : fast/forms/formmove3.html = PASS FAIL
-BUGLEVIW WIN LINUX SNOWLEOPARD LEOPARD : fast/table/rowindex.html = PASS FAIL
-BUGLEVIW WIN LINUX SNOWLEOPARD LEOPARD : svg/zoom/page/zoom-svg-through-object-with-percentage-size.xhtml = PASS FAIL
-BUGLEVIW WIN LINUX SNOWLEOPARD LEOPARD : svg/zoom/page/zoom-img-preserveAspectRatio-support-1.xhtml = PASS FAIL
-BUGLEVIW WIN LINUX SNOWLEOPARD LEOPARD : svg/zoom/page/zoom-replaced-intrinsic-ratio-001.xhtml = PASS FAIL
-BUGLEVIW WIN LINUX SNOWLEOPARD LEOPARD : svg/zoom/page/zoom-img-preserveAspectRatio-support-1.html = PASS FAIL
-BUGLEVIW WIN LINUX SNOWLEOPARD LEOPARD : tables/mozilla_expected_failures/bugs/bug89315.html = PASS FAIL
-BUGLEVIW WIN LINUX SNOWLEOPARD LEOPARD : tables/mozilla_expected_failures/bugs/bug89315.html = PASS FAIL
-BUGLEVIW WIN LINUX SNOWLEOPARD LEOPARD : tables/mozilla/bugs/bug39209.html = PASS FAIL
-BUGLEVIW WIN LINUX SNOWLEOPARD LEOPARD : tables/mozilla/bugs/bug18359.html = PASS FAIL
-BUGLEVIW WIN LINUX SNOWLEOPARD LEOPARD : tables/mozilla/bugs/bug138725.html = PASS FAIL
-BUGLEVIW WIN LINUX SNOWLEOPARD LEOPARD : tables/mozilla/bugs/bug33855.html = PASS FAIL
-BUGLEVIW WIN LINUX SNOWLEOPARD LEOPARD : tables/mozilla/bugs/bug4527.html = PASS FAIL
-BUGLEVIW WIN LINUX SNOWLEOPARD LEOPARD : tables/mozilla/bugs/bug1318.html = PASS FAIL
-BUGLEVIW WIN LINUX SNOWLEOPARD LEOPARD : tables/mozilla/bugs/bug33855.html = PASS FAIL
-BUGLEVIW WIN LINUX SNOWLEOPARD LEOPARD : tables/mozilla/bugs/bug4527.html = PASS FAIL
-BUGLEVIW WIN LINUX SNOWLEOPARD LEOPARD : tables/mozilla/bugs/bug39209.html = PASS FAIL
-BUGLEVIW WIN LINUX SNOWLEOPARD LEOPARD : tables/mozilla/bugs/bug1318.html = PASS FAIL
-BUGLEVIW WIN LINUX SNOWLEOPARD LEOPARD : tables/mozilla/bugs/bug55527.html = PASS FAIL
 
 // Fails since creation in r122130
 BUGWK91620 : css3/filters/blur-filter-page-scroll-self.html = PASS IMAGE
