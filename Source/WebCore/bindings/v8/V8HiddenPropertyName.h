@@ -36,17 +36,18 @@
 namespace WebCore {
 
 #define V8_HIDDEN_PROPERTIES(V) \
-    V(listener) \
     V(attributeListener) \
-    V(scriptState) \
-    V(sleepFunction) \
-    V(toStringString) \
-    V(event) \
-    V(state) \
+    V(document) \
     V(domStringMap) \
     V(domTokenList) \
+    V(event) \
+    V(listener) \
     V(ownerNode) \
-    V(textTracks)
+    V(scriptState) \
+    V(sleepFunction) \
+    V(state) \
+    V(textTracks) \
+    V(toStringString)
 
     class V8HiddenPropertyName {
     public:

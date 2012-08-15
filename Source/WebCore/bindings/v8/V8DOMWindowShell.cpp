@@ -488,6 +488,12 @@ void V8DOMWindowShell::updateDocumentWrapperCache()
     }
     ASSERT(documentWrapper->IsObject());
     m_context->Global()->ForceSet(v8::String::New("document"), documentWrapper, static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete));
+
+    // We also stash a reference to the document on the real global object so that
+    // DOMWindow objects we obtain from JavaScript references are guaranteed to have
+    // live Document objects.
+    v8::Handle<v8::Object> v8RealGlobal = v8::Handle<v8::Object>::Cast(m_context->Global()->GetPrototype());
+    v8RealGlobal->SetHiddenValue(V8HiddenPropertyName::document(), documentWrapper);
 }
 
 void V8DOMWindowShell::clearDocumentWrapperCache()

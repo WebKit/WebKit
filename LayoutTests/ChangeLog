@@ -1,3 +1,16 @@
+2012-08-15  Adam Barth  <abarth@webkit.org>
+
+        [Chromium] fast/dom/Window/dom-access-from-closure-window.html is flaky on Linux
+        https://bugs.webkit.org/show_bug.cgi?id=94060
+
+        Reviewed by Kentaro Hara.
+
+        Ensure that collecting garbage doesn't change the behavior of this test
+        (compared with dom-access-from-closure-window.html).
+
+        * fast/dom/Window/dom-access-from-closure-window-with-gc-expected.txt: Added.
+        * fast/dom/Window/dom-access-from-closure-window-with-gc.html: Added.
+
 2012-08-15  Yuta Kitamura  <yutak@google.com>
 
         [Chromium] Unreviewed. Add one more flaky test to test expectations.
