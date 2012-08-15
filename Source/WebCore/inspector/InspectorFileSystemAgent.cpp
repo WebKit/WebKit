@@ -155,7 +155,7 @@ private:
     bool didHitError(FileError*);
     bool didGetEntry(Entry*);
 
-    void reportResult(FileError::ErrorCode errorCode, PassRefPtr<TypeBuilder::FileSystem::Entry> entry)
+    void reportResult(FileError::ErrorCode errorCode, PassRefPtr<TypeBuilder::FileSystem::Entry> entry = 0)
     {
         if (!m_frontendProvider || !m_frontendProvider->frontend())
             return;
@@ -175,7 +175,7 @@ private:
 
 bool FileSystemRootRequest::didHitError(FileError* error)
 {
-    reportResult(error->code(), 0);
+    reportResult(error->code());
     return true;
 }
 
@@ -208,7 +208,7 @@ public:
 
     virtual ~DirectoryContentRequest()
     {
-        reportResult(FileError::ABORT_ERR, 0);
+        reportResult(FileError::ABORT_ERR);
     }
 
     void start(ScriptExecutionContext*);
@@ -216,14 +216,14 @@ public:
 private:
     bool didHitError(FileError* error)
     {
-        reportResult(error->code(), 0);
+        reportResult(error->code());
         return true;
     }
 
     bool didGetEntry(Entry*);
     bool didReadDirectoryEntries(EntryArray*);
 
-    void reportResult(FileError::ErrorCode errorCode, PassRefPtr<Array<TypeBuilder::FileSystem::Entry> > entries)
+    void reportResult(FileError::ErrorCode errorCode, PassRefPtr<Array<TypeBuilder::FileSystem::Entry> > entries = 0)
     {
         if (!m_frontendProvider || !m_frontendProvider->frontend())
             return;
@@ -252,7 +252,7 @@ void DirectoryContentRequest::start(ScriptExecutionContext* scriptExecutionConte
     FileSystemType type;
     String path;
     if (!DOMFileSystemBase::crackFileSystemURL(m_url, type, path)) {
-        reportResult(FileError::SYNTAX_ERR, 0);
+        reportResult(FileError::SYNTAX_ERR);
         return;
     }
 
@@ -266,7 +266,7 @@ void DirectoryContentRequest::start(ScriptExecutionContext* scriptExecutionConte
 bool DirectoryContentRequest::didGetEntry(Entry* entry)
 {
     if (!entry->isDirectory()) {
-        reportResult(FileError::TYPE_MISMATCH_ERR, 0);
+        reportResult(FileError::TYPE_MISMATCH_ERR);
         return true;
     }
 
@@ -279,7 +279,7 @@ bool DirectoryContentRequest::didGetEntry(Entry* entry)
 void DirectoryContentRequest::readDirectoryEntries()
 {
     if (!m_directoryReader->filesystem()->scriptExecutionContext()) {
-        reportResult(FileError::ABORT_ERR, 0);
+        reportResult(FileError::ABORT_ERR);
         return;
     }
 
@@ -340,20 +340,22 @@ public:
 
     virtual ~MetadataRequest()
     {
-        reportResult(FileError::ABORT_ERR, 0);
-    }
-
-    bool didHitError(FileError* error)
-    {
-        reportResult(error->code(), 0);
-        return true;
+        reportResult(FileError::ABORT_ERR);
     }
 
     void start(ScriptExecutionContext*);
+
+private:
+    bool didHitError(FileError* error)
+    {
+        reportResult(error->code());
+        return true;
+    }
+
     bool didGetEntry(Entry*);
     bool didGetMetadata(Metadata*);
 
-    void reportResult(FileError::ErrorCode errorCode, PassRefPtr<TypeBuilder::FileSystem::Metadata> metadata)
+    void reportResult(FileError::ErrorCode errorCode, PassRefPtr<TypeBuilder::FileSystem::Metadata> metadata = 0)
     {
         if (!m_frontendProvider || !m_frontendProvider->frontend())
             return;
@@ -361,7 +363,6 @@ public:
         m_frontendProvider = 0;
     }
 
-private:
     MetadataRequest(PassRefPtr<FrontendProvider> frontendProvider, int requestId, const String& url)
         : m_frontendProvider(frontendProvider)
         , m_requestId(requestId)
@@ -389,7 +390,7 @@ void MetadataRequest::start(ScriptExecutionContext* scriptExecutionContext)
 bool MetadataRequest::didGetEntry(Entry* entry)
 {
     if (!entry->filesystem()->scriptExecutionContext()) {
-        reportResult(FileError::ABORT_ERR, 0);
+        reportResult(FileError::ABORT_ERR);
         return true;
     }
 
@@ -420,11 +421,10 @@ public:
 
     virtual ~FileContentRequest()
     {
-        reportResult(FileError::ABORT_ERR, 0, 0);
+        reportResult(FileError::ABORT_ERR);
     }
 
     void start(ScriptExecutionContext*);
-
 
     virtual bool operator==(const EventListener& other) OVERRIDE
     {
@@ -442,7 +442,7 @@ public:
 private:
     bool didHitError(FileError* error)
     {
-        reportResult(error->code(), 0, 0);
+        reportResult(error->code());
         return true;
     }
 
@@ -450,7 +450,7 @@ private:
     bool didGetFile(File*);
     void didRead();
 
-    void reportResult(FileError::ErrorCode errorCode, const String* result, const String* charset)
+    void reportResult(FileError::ErrorCode errorCode, const String* result = 0, const String* charset = 0)
     {
         if (!m_frontendProvider || !m_frontendProvider->frontend())
             return;
@@ -487,7 +487,7 @@ void FileContentRequest::start(ScriptExecutionContext* scriptExecutionContext)
     FileSystemType type;
     String path;
     if (!DOMFileSystemBase::crackFileSystemURL(m_url, type, path)) {
-        reportResult(FileError::SYNTAX_ERR, 0, 0);
+        reportResult(FileError::SYNTAX_ERR);
         return;
     }
 
@@ -501,12 +501,12 @@ void FileContentRequest::start(ScriptExecutionContext* scriptExecutionContext)
 bool FileContentRequest::didGetEntry(Entry* entry)
 {
     if (entry->isDirectory()) {
-        reportResult(FileError::TYPE_MISMATCH_ERR, 0, 0);
+        reportResult(FileError::TYPE_MISMATCH_ERR);
         return true;
     }
 
     if (!entry->filesystem()->scriptExecutionContext()) {
-        reportResult(FileError::ABORT_ERR, 0, 0);
+        reportResult(FileError::ABORT_ERR);
         return true;
     }
 
@@ -548,7 +548,7 @@ void FileContentRequest::didRead()
     reportResult(static_cast<FileError::ErrorCode>(0), &result, &m_charset);
 }
 
-}
+} // anonymous namespace
 
 // static
 PassOwnPtr<InspectorFileSystemAgent> InspectorFileSystemAgent::create(InstrumentingAgents* instrumentingAgents, InspectorPageAgent* pageAgent, InspectorState* state)

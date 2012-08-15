@@ -1,3 +1,15 @@
+2012-08-15  Taiju Tsuiki  <tzik@chromium.org>
+
+        Web Inspector: Use default parameter on reportResult in InspectorFileSystemAgent
+        https://bugs.webkit.org/show_bug.cgi?id=93930
+
+        Reviewed by Vsevolod Vlasov.
+
+        No functional change.
+
+        * inspector/InspectorFileSystemAgent.cpp:
+        (WebCore):
+
 2012-08-15  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: TabbedEditorContainer Doens't show '*' near modified file name sometimes.
