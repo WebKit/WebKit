@@ -1,3 +1,14 @@
+2012-08-10  Ojan Vafai  <ojan@chromium.org>
+
+        z-index should work without position on flexitems
+        https://bugs.webkit.org/show_bug.cgi?id=91405
+
+        Reviewed by Tony Chang.
+
+        * css3/flexbox/z-index-expected.html: Added.
+        * css3/flexbox/z-index.html: Added.
+        Use a ref-test since we want to be sure that the elements get painted in the right order.
+
 2012-08-15  Scott Graham  <scottmg@chromium.org>
 
         Rename window.internals.fastMallocStatistics to mallocStatistics

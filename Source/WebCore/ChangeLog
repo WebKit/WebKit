@@ -1,3 +1,24 @@
+2012-08-10  Ojan Vafai  <ojan@chromium.org>
+
+        z-index should work without position on flexitems
+        https://bugs.webkit.org/show_bug.cgi?id=91405
+
+        Reviewed by Tony Chang.
+
+        Require a layer on any RenderBox that has a non-auto z-index.
+        Statically positioned, non-flex-item's have their z-index coerced to auto,
+        so it's safe to check z-index unconditionally.
+
+        Test: css3/flexbox/z-index.html
+
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::adjustRenderStyle):
+        -Don't coerce z-index to auto on statically positioned flex-items.
+        -Use the parentStyle to determine if the parent is a flexbox instead of
+        looking at the element's parentNode's renderer.
+        * rendering/RenderBox.h:
+        -Add having a non-auto z-index to the list of things that require a layer.
+
 2012-08-15  Joanmarie Diggs  <jdiggs@igalia.com>
 
         [Gtk] atk_text_set_caret_offset() fails for table cells

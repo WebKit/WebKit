@@ -2067,6 +2067,15 @@ static bool doesNotInheritTextDecoration(RenderStyle* style, Element* e)
         || style->isFloating() || style->isOutOfFlowPositioned();
 }
 
+static bool isDisplayFlexibleBox(EDisplay display)
+{
+#if ENABLE(CSS3_FLEXBOX)
+    return display == FLEX || display == INLINE_FLEX;
+#else
+    return false;
+#endif
+}
+
 void StyleResolver::adjustRenderStyle(RenderStyle* style, RenderStyle* parentStyle, Element *e)
 {
     ASSERT(parentStyle);
@@ -2154,14 +2163,14 @@ void StyleResolver::adjustRenderStyle(RenderStyle* style, RenderStyle* parentSty
         if (style->writingMode() != TopToBottomWritingMode && (style->display() == BOX || style->display() == INLINE_BOX))
             style->setWritingMode(TopToBottomWritingMode);
 
-        if (e && e->parentNode() && e->parentNode()->renderer() && e->parentNode()->renderer()->isFlexibleBox()) {
+        if (isDisplayFlexibleBox(parentStyle->display())) {
             style->setFloating(NoFloat);
             style->setDisplay(equivalentBlockDisplay(style->display(), style->isFloating(), m_checker.strictParsing()));
         }
     }
 
     // Make sure our z-index value is only applied if the object is positioned.
-    if (style->position() == StaticPosition)
+    if (style->position() == StaticPosition && !isDisplayFlexibleBox(parentStyle->display()))
         style->setHasAutoZIndex();
 
     // Auto z-index becomes 0 for the root element and transparent objects. This prevents
