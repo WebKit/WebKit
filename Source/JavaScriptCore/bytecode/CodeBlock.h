@@ -30,6 +30,7 @@
 #ifndef CodeBlock_h
 #define CodeBlock_h
 
+#include "ArrayProfile.h"
 #include "BytecodeConventions.h"
 #include "CallLinkInfo.h"
 #include "CallReturnOffsetToBytecodeOffset.h"
@@ -751,8 +752,18 @@ namespace JSC {
         }
         
         unsigned executionEntryCount() const { return m_executionEntryCount; }
-#endif
 
+        unsigned numberOfArrayProfiles() const { return m_arrayProfiles.size(); }
+        const ArrayProfileVector& arrayProfiles() { return m_arrayProfiles; }
+        ArrayProfile* addArrayProfile(unsigned bytecodeOffset)
+        {
+            m_arrayProfiles.append(ArrayProfile(bytecodeOffset));
+            return &m_arrayProfiles.last();
+        }
+        ArrayProfile* getArrayProfile(unsigned bytecodeOffset);
+        ArrayProfile* getOrAddArrayProfile(unsigned bytecodeOffset);
+#endif
+        
         unsigned globalResolveInfoCount() const
         {
 #if ENABLE(JIT)    
@@ -1333,6 +1344,7 @@ namespace JSC {
         SegmentedVector<ValueProfile, 8> m_valueProfiles;
         SegmentedVector<RareCaseProfile, 8> m_rareCaseProfiles;
         SegmentedVector<RareCaseProfile, 8> m_specialFastCaseProfiles;
+        ArrayProfileVector m_arrayProfiles;
         unsigned m_executionEntryCount;
 #endif
 

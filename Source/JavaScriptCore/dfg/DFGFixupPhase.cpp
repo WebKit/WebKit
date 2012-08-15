@@ -96,9 +96,29 @@ private:
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
             dataLog("  @%u -> %s", m_compileIndex, isArray ? "GetArrayLength" : "GetStringLength");
 #endif
-            if (isArray)
+            if (isArray) {
                 node.setOp(GetArrayLength);
-            else if (isArguments)
+                ASSERT(node.flags() & NodeMustGenerate);
+                node.clearFlags(NodeMustGenerate);
+                m_graph.deref(m_compileIndex);
+                
+                ArrayProfile* arrayProfile = 
+                    m_graph.baselineCodeBlockFor(node.codeOrigin)->getArrayProfile(
+                        node.codeOrigin.bytecodeIndex);
+                if (!arrayProfile)
+                    break;
+                arrayProfile->computeUpdatedPrediction();
+                if (!arrayProfile->hasDefiniteStructure())
+                    break;
+                m_graph.ref(node.child1());
+                Node checkStructure(CheckStructure, node.codeOrigin, OpInfo(m_graph.addStructureSet(arrayProfile->expectedStructure())), node.child1().index());
+                checkStructure.ref();
+                NodeIndex checkStructureIndex = m_graph.size();
+                m_graph.append(checkStructure);
+                m_insertionSet.append(m_indexInBlock, checkStructureIndex);
+                break;
+            }
+            if (isArguments)
                 node.setOp(GetArgumentsLength);
             else if (isString)
                 node.setOp(GetStringLength);
@@ -129,10 +149,9 @@ private:
             break;
         }
         case GetIndexedPropertyStorage: {
-            SpeculatedType basePrediction = m_graph[node.child2()].prediction();
-            if ((!(basePrediction & SpecInt32) && basePrediction)
-                || m_graph[node.child1()].shouldSpeculateArguments()
-                || !isActionableArraySpeculation(m_graph[node.child1()].prediction())) {
+            if (!m_graph[node.child1()].prediction()
+                || !m_graph[node.child2()].shouldSpeculateInteger()
+                || m_graph[node.child1()].shouldSpeculateArguments()) {
                 node.setOpAndDefaultFlags(Nop);
                 m_graph.clearAndDerefChild1(node);
                 m_graph.clearAndDerefChild2(node);

@@ -2191,6 +2191,8 @@ public:
     void terminateSpeculativeExecution(ExitKind, JSValueRegs, Edge);
     void terminateSpeculativeExecutionWithConditionalDirection(ExitKind, JSValueRegs, NodeIndex, bool isForward);
     
+    void speculateArray(Edge baseEdge, GPRReg baseReg);
+    
     template<bool strict>
     GPRReg fillSpeculateIntInternal(NodeIndex, DataFormat& returnFormat);
     

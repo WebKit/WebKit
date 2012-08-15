@@ -94,6 +94,11 @@ public:
                 case AllocatePropertyStorage:
                 case ReallocatePropertyStorage:
                 case GetPropertyStorage:
+                case GetByVal:
+                case PutByVal:
+                case PutByValAlias:
+                case GetArrayLength:
+                case Phantom:
                     // Don't count these uses.
                     break;
                     

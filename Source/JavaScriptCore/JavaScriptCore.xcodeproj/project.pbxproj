@@ -140,6 +140,8 @@
 		0F620179143FCD480068B77C /* DFGAbstractState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F62016D143FCD2F0068B77C /* DFGAbstractState.cpp */; };
 		0F63943F15C75F19006A597C /* DFGStructureCheckHoistingPhase.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F63943D15C75F14006A597C /* DFGStructureCheckHoistingPhase.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F63944015C75F1D006A597C /* DFGStructureCheckHoistingPhase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F63943C15C75F14006A597C /* DFGStructureCheckHoistingPhase.cpp */; };
+		0F63945415D07055006A597C /* ArrayProfile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F63945115D07051006A597C /* ArrayProfile.cpp */; };
+		0F63945515D07057006A597C /* ArrayProfile.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F63945215D07051006A597C /* ArrayProfile.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F66E16B14DF3F1600B7B2E4 /* DFGAdjacencyList.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F66E16814DF3F1300B7B2E4 /* DFGAdjacencyList.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F66E16C14DF3F1600B7B2E4 /* DFGEdge.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F66E16914DF3F1300B7B2E4 /* DFGEdge.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F766D2815A8CC1E008F363E /* JITStubRoutine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F766D2615A8CC1B008F363E /* JITStubRoutine.cpp */; };
@@ -889,6 +891,8 @@
 		0F620172143FCD2F0068B77C /* DFGVariableAccessData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGVariableAccessData.h; path = dfg/DFGVariableAccessData.h; sourceTree = "<group>"; };
 		0F63943C15C75F14006A597C /* DFGStructureCheckHoistingPhase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGStructureCheckHoistingPhase.cpp; path = dfg/DFGStructureCheckHoistingPhase.cpp; sourceTree = "<group>"; };
 		0F63943D15C75F14006A597C /* DFGStructureCheckHoistingPhase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGStructureCheckHoistingPhase.h; path = dfg/DFGStructureCheckHoistingPhase.h; sourceTree = "<group>"; };
+		0F63945115D07051006A597C /* ArrayProfile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ArrayProfile.cpp; sourceTree = "<group>"; };
+		0F63945215D07051006A597C /* ArrayProfile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArrayProfile.h; sourceTree = "<group>"; };
 		0F66E16814DF3F1300B7B2E4 /* DFGAdjacencyList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGAdjacencyList.h; path = dfg/DFGAdjacencyList.h; sourceTree = "<group>"; };
 		0F66E16914DF3F1300B7B2E4 /* DFGEdge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGEdge.h; path = dfg/DFGEdge.h; sourceTree = "<group>"; };
 		0F766D1C15A5028D008F363E /* JITStubRoutine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JITStubRoutine.h; sourceTree = "<group>"; };
@@ -2407,6 +2411,8 @@
 		969A078F0ED1D3AE00F1F681 /* bytecode */ = {
 			isa = PBXGroup;
 			children = (
+				0F63945115D07051006A597C /* ArrayProfile.cpp */,
+				0F63945215D07051006A597C /* ArrayProfile.h */,
 				0F56A1D415001CF2002992B1 /* ExecutionCounter.cpp */,
 				0F56A1D115000F31002992B1 /* ExecutionCounter.h */,
 				0FB5467C14F5CFD3002C2989 /* MethodOfGettingAValueProfile.cpp */,
@@ -2867,6 +2873,7 @@
 				0F766D4415B2A3C0008F363E /* DFGRegisterSet.h in Headers */,
 				0F766D4615B3701F008F363E /* DFGScratchRegisterAllocator.h in Headers */,
 				0F63943F15C75F19006A597C /* DFGStructureCheckHoistingPhase.h in Headers */,
+				0F63945515D07057006A597C /* ArrayProfile.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3465,6 +3472,7 @@
 				0F766D3415AE2538008F363E /* JumpReplacementWatchpoint.cpp in Sources */,
 				0F766D3815AE4A1C008F363E /* StructureStubClearingWatchpoint.cpp in Sources */,
 				0F63944015C75F1D006A597C /* DFGStructureCheckHoistingPhase.cpp in Sources */,
+				0F63945415D07055006A597C /* ArrayProfile.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

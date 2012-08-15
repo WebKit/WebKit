@@ -1099,31 +1099,36 @@ _llint_op_put_by_id_transition_normal_out_of_line:
 
 _llint_op_get_by_val:
     traceExecution()
-    loadp CodeBlock[cfr], t1
     loadis 16[PB, PC, 8], t2
     loadis 24[PB, PC, 8], t3
-    loadp CodeBlock::m_globalData[t1], t1
     loadConstantOrVariableCell(t2, t0, .opGetByValSlow)
-    loadp JSGlobalData::jsArrayClassInfo[t1], t2
     loadConstantOrVariableInt32(t3, t1, .opGetByValSlow)
     sxi2p t1, t1
-    bpneq [t0], t2, .opGetByValSlow
+    loadp JSCell::m_structure[t0], t3
+    loadp 32[PB, PC, 8], t2
+    storep t3, ArrayProfile::m_lastSeenStructure[t2]
+    loadp CodeBlock[cfr], t2
+    loadp CodeBlock::m_globalData[t2], t2
+    loadp JSGlobalData::jsArrayClassInfo[t2], t2
+    bpneq Structure::m_classInfo[t3], t2, .opGetByValSlow
     loadp JSArray::m_storage[t0], t3
     biaeq t1, JSArray::m_vectorLength[t0], .opGetByValSlow
     loadis 8[PB, PC, 8], t0
     loadp ArrayStorage::m_vector[t3, t1, 8], t2
     btpz t2, .opGetByValSlow
     storep t2, [cfr, t0, 8]
-    loadp 32[PB, PC, 8], t0
+    loadp 40[PB, PC, 8], t0
     valueProfile(t2, t0)
-    dispatch(5)
+    dispatch(6)
 
 .opGetByValSlow:
     callSlowPath(_llint_slow_path_get_by_val)
-    dispatch(5)
+    dispatch(6)
 
 
 _llint_op_get_argument_by_val:
+    # FIXME: At some point we should array profile this. Right now it isn't necessary
+    # since the DFG will never turn a get_argument_by_val into a GetByVal.
     traceExecution()
     loadis 16[PB, PC, 8], t0
     loadis 24[PB, PC, 8], t1
@@ -1139,11 +1144,11 @@ _llint_op_get_argument_by_val:
     loadp ThisArgumentOffset[cfr, t2, 8], t0
     storep t0, [cfr, t3, 8]
     valueProfile(t0, t1)
-    dispatch(5)
+    dispatch(6)
 
 .opGetArgumentByValSlow:
     callSlowPath(_llint_slow_path_get_argument_by_val)
-    dispatch(5)
+    dispatch(6)
 
 
 _llint_op_get_by_pname:
@@ -1182,10 +1187,13 @@ _llint_op_put_by_val:
     loadis 16[PB, PC, 8], t0
     loadConstantOrVariableInt32(t0, t2, .opPutByValSlow)
     sxi2p t2, t2
+    loadp JSCell::m_structure[t1], t3
+    loadp 32[PB, PC, 8], t0
+    storep t3, ArrayProfile::m_lastSeenStructure[t0]
     loadp CodeBlock[cfr], t0
     loadp CodeBlock::m_globalData[t0], t0
     loadp JSGlobalData::jsArrayClassInfo[t0], t0
-    bpneq [t1], t0, .opPutByValSlow
+    bpneq Structure::m_classInfo[t3], t0, .opPutByValSlow
     biaeq t2, JSArray::m_vectorLength[t1], .opPutByValSlow
     loadp JSArray::m_storage[t1], t0
     btpz ArrayStorage::m_vector[t0, t2, 8], .opPutByValEmpty
@@ -1194,7 +1202,7 @@ _llint_op_put_by_val:
     loadConstantOrVariable(t3, t1)
     writeBarrier(t1)
     storep t1, ArrayStorage::m_vector[t0, t2, 8]
-    dispatch(4)
+    dispatch(5)
 
 .opPutByValEmpty:
     addi 1, ArrayStorage::m_numValuesInVector[t0]
@@ -1205,7 +1213,7 @@ _llint_op_put_by_val:
 
 .opPutByValSlow:
     callSlowPath(_llint_slow_path_put_by_val)
-    dispatch(4)
+    dispatch(5)
 
 
 _llint_op_loop:

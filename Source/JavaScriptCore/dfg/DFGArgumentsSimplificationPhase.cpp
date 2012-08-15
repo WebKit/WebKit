@@ -317,6 +317,15 @@ public:
                     // PhantomArguments and OSR exit will still do the right things.
                     break;
                     
+                case CheckStructure:
+                case StructureTransitionWatchpoint:
+                    // We don't care about these because if we get uses of the relevant
+                    // variable then we can safely get rid of these, too. This of course
+                    // relies on there not being any information transferred by the CFA
+                    // from a CheckStructure on one variable to the information about the
+                    // structures of another variable.
+                    break;
+                    
                 default:
                     observeBadArgumentsUses(node);
                     break;
@@ -468,6 +477,17 @@ public:
                     //    precisely what we don't want.
                     for (unsigned i = 0; i < AdjacencyList::Size; ++i)
                         removeArgumentsReferencingPhantomChild(node, i);
+                    break;
+                }
+                    
+                case CheckStructure:
+                case StructureTransitionWatchpoint: {
+                    // We can just get rid of this node, if it references a phantom argument.
+                    if (!isOKToOptimize(m_graph[node.child1()]))
+                        break;
+                    m_graph.deref(node.child1());
+                    node.setOpAndDefaultFlags(Phantom);
+                    node.children.setChild1(Edge());
                     break;
                 }
                     

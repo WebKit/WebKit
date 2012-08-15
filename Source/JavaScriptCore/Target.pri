@@ -46,6 +46,7 @@ SOURCES += \
     assembler/LinkBuffer.cpp \
     assembler/MacroAssemblerARM.cpp \
     assembler/MacroAssemblerSH4.cpp \
+    bytecode/ArrayProfile.cpp \
     bytecode/CallLinkInfo.cpp \
     bytecode/CallLinkStatus.cpp \
     bytecode/CodeBlock.cpp \

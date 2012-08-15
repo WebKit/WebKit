@@ -322,6 +322,11 @@ namespace JSC {
         {
             return OBJECT_OFFSETOF(Structure, m_typeInfo) + TypeInfo::typeOffset();
         }
+        
+        static ptrdiff_t classInfoOffset()
+        {
+            return OBJECT_OFFSETOF(Structure, m_classInfo);
+        }
 
         static Structure* createStructure(JSGlobalData&);
         

@@ -110,7 +110,9 @@ void JIT::emit_op_get_by_val(Instruction* currentInstruction)
     zeroExtend32ToPtr(regT1, regT1);
 
     emitJumpSlowCaseIfNotJSCell(regT0, base);
-    addSlowCase(branchPtr(NotEqual, Address(regT0, JSCell::classInfoOffset()), TrustedImmPtr(&JSArray::s_info)));
+    loadPtr(Address(regT0, JSCell::structureOffset()), regT2);
+    storePtr(regT2, currentInstruction[4].u.arrayProfile->addressOfLastSeenStructure());
+    addSlowCase(branchPtr(NotEqual, Address(regT2, Structure::classInfoOffset()), TrustedImmPtr(&JSArray::s_info)));
 
     loadPtr(Address(regT0, JSArray::storageOffset()), regT2);
     addSlowCase(branch32(AboveOrEqual, regT1, Address(regT0, JSArray::vectorLengthOffset())));
@@ -231,7 +233,9 @@ void JIT::emit_op_put_by_val(Instruction* currentInstruction)
     // See comment in op_get_by_val.
     zeroExtend32ToPtr(regT1, regT1);
     emitJumpSlowCaseIfNotJSCell(regT0, base);
-    addSlowCase(branchPtr(NotEqual, Address(regT0, JSCell::classInfoOffset()), TrustedImmPtr(&JSArray::s_info)));
+    loadPtr(Address(regT0, JSCell::structureOffset()), regT2);
+    storePtr(regT2, currentInstruction[4].u.arrayProfile->addressOfLastSeenStructure());
+    addSlowCase(branchPtr(NotEqual, Address(regT2, Structure::classInfoOffset()), TrustedImmPtr(&JSArray::s_info)));
     addSlowCase(branch32(AboveOrEqual, regT1, Address(regT0, JSArray::vectorLengthOffset())));
 
     loadPtr(Address(regT0, JSArray::storageOffset()), regT2);
@@ -645,7 +649,9 @@ void JIT::privateCompilePatchGetArrayLength(ReturnAddressPtr returnAddress)
     StructureStubInfo* stubInfo = &m_codeBlock->getStubInfo(returnAddress);
 
     // Check eax is an array
-    Jump failureCases1 = branchPtr(NotEqual, Address(regT0, JSCell::classInfoOffset()), TrustedImmPtr(&JSArray::s_info));
+    loadPtr(Address(regT0, JSCell::structureOffset()), regT3);
+    storePtr(regT3, m_codeBlock->getOrAddArrayProfile(stubInfo->bytecodeIndex)->addressOfLastSeenStructure());
+    Jump failureCases1 = branchPtr(NotEqual, Address(regT3, Structure::classInfoOffset()), TrustedImmPtr(&JSArray::s_info));
 
     // Checks out okay! - get the length from the storage
     loadPtr(Address(regT0, JSArray::storageOffset()), regT3);

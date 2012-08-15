@@ -2149,6 +2149,10 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             
             NodeIndex base = get(currentInstruction[2].u.operand);
             NodeIndex property = get(currentInstruction[3].u.operand);
+            ArrayProfile* profile = currentInstruction[4].u.arrayProfile;
+            profile->computeUpdatedPrediction();
+            if (profile->hasDefiniteStructure())
+                addToGraph(CheckStructure, OpInfo(m_graph.addStructureSet(profile->expectedStructure())), base);
             NodeIndex propertyStorage = addToGraph(GetIndexedPropertyStorage, base, property);
             NodeIndex getByVal = addToGraph(GetByVal, OpInfo(0), OpInfo(prediction), base, property, propertyStorage);
             set(currentInstruction[1].u.operand, getByVal);
@@ -2160,6 +2164,15 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             NodeIndex base = get(currentInstruction[1].u.operand);
             NodeIndex property = get(currentInstruction[2].u.operand);
             NodeIndex value = get(currentInstruction[3].u.operand);
+            
+            ArrayProfile* profile = currentInstruction[4].u.arrayProfile;
+            profile->computeUpdatedPrediction();
+            if (profile->hasDefiniteStructure())
+                addToGraph(CheckStructure, OpInfo(m_graph.addStructureSet(profile->expectedStructure())), base);
+
+#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
+            dataLog("Slow case profile for bc#%u: %u\n", m_currentIndex, m_inlineStackTop->m_profiledBlock->rareCaseProfileForBytecodeOffset(m_currentIndex)->m_counter);
+#endif
 
             bool makeSafe =
                 m_inlineStackTop->m_profiledBlock->couldTakeSlowCase(m_currentIndex)

@@ -1155,6 +1155,7 @@ void CodeBlock::dump(ExecState* exec, const Vector<Instruction>::const_iterator&
             dataLog("[%4d] get_by_val\t %s, %s, %s", location, registerName(exec, r0).data(), registerName(exec, r1).data(), registerName(exec, r2).data());
             dumpBytecodeCommentAndNewLine(location);
             it++;
+            it++;
             break;
         }
         case op_get_argument_by_val: {
@@ -1163,6 +1164,7 @@ void CodeBlock::dump(ExecState* exec, const Vector<Instruction>::const_iterator&
             int r2 = (++it)->u.operand;
             dataLog("[%4d] get_argument_by_val\t %s, %s, %s", location, registerName(exec, r0).data(), registerName(exec, r1).data(), registerName(exec, r2).data());
             dumpBytecodeCommentAndNewLine(location);
+            ++it;
             ++it;
             break;
         }
@@ -1183,6 +1185,7 @@ void CodeBlock::dump(ExecState* exec, const Vector<Instruction>::const_iterator&
             int r2 = (++it)->u.operand;
             dataLog("[%4d] put_by_val\t %s, %s, %s", location, registerName(exec, r0).data(), registerName(exec, r1).data(), registerName(exec, r2).data());
             dumpBytecodeCommentAndNewLine(location);
+            ++it;
             break;
         }
         case op_del_by_val: {
@@ -2769,6 +2772,23 @@ bool FunctionCodeBlock::jitCompileImpl(ExecState* exec)
 #endif
 
 #if ENABLE(VALUE_PROFILER)
+ArrayProfile* CodeBlock::getArrayProfile(unsigned bytecodeOffset)
+{
+    for (unsigned i = 0; i < m_arrayProfiles.size(); ++i) {
+        if (m_arrayProfiles[i].bytecodeOffset() == bytecodeOffset)
+            return &m_arrayProfiles[i];
+    }
+    return 0;
+}
+
+ArrayProfile* CodeBlock::getOrAddArrayProfile(unsigned bytecodeOffset)
+{
+    ArrayProfile* result = getArrayProfile(bytecodeOffset);
+    if (result)
+        return result;
+    return addArrayProfile(bytecodeOffset);
+}
+
 void CodeBlock::updateAllPredictionsAndCountLiveness(
     OperationInProgress operation, unsigned& numberOfLiveNonArgumentValueProfiles, unsigned& numberOfSamplesInProfiles)
 {
@@ -2792,6 +2812,12 @@ void CodeBlock::updateAllPredictionsAndCountLiveness(
 #if ENABLE(DFG_JIT)
     m_lazyOperandValueProfiles.computeUpdatedPredictions(operation);
 #endif
+    
+    // Don't count the array profiles towards statistics, since each array profile
+    // site also has a value profile site - so we already know whether or not it's
+    // live.
+    for (unsigned i = m_arrayProfiles.size(); i--;)
+        m_arrayProfiles[i].computeUpdatedPrediction(operation);
 }
 
 void CodeBlock::updateAllPredictions(OperationInProgress operation)

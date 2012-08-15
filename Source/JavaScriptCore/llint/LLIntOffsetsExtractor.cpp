@@ -25,6 +25,7 @@
 
 #include "config.h"
 
+#include "ArrayProfile.h"
 #include "CodeBlock.h"
 #include "Executable.h"
 #include "Heap.h"

@@ -1918,7 +1918,7 @@ void SpeculativeJIT::compile(Node& node)
                 break;
             }
 
-            if (isArraySpeculation(value.m_type) || isCellSpeculation(value.m_type)) {
+            if (isCellSpeculation(value.m_type)) {
                 GPRTemporary result(this);
                 m_jit.load32(JITCompiler::payloadFor(node.local()), result.gpr());
 
@@ -2034,16 +2034,6 @@ void SpeculativeJIT::compile(Node& node)
                 m_jit.store32(value.gpr(), JITCompiler::payloadFor(node.local()));
                 noResult(m_compileIndex);
                 recordSetLocal(node.local(), ValueSource(Int32InRegisterFile));
-                break;
-            }
-            if (isArraySpeculation(predictedType)) {
-                SpeculateCellOperand cell(this, node.child1());
-                GPRReg cellGPR = cell.gpr();
-                if (!isArraySpeculation(m_state.forNode(node.child1()).m_type))
-                    speculationCheck(BadType, JSValueSource::unboxedCell(cellGPR), node.child1(), m_jit.branchPtr(MacroAssembler::NotEqual, MacroAssembler::Address(cellGPR, JSCell::classInfoOffset()), MacroAssembler::TrustedImmPtr(&JSArray::s_info)));
-                m_jit.storePtr(cellGPR, JITCompiler::payloadFor(node.local()));
-                noResult(m_compileIndex);
-                recordSetLocal(node.local(), ValueSource(CellInRegisterFile));
                 break;
             }
             if (isCellSpeculation(predictedType)) {
@@ -2356,7 +2346,7 @@ void SpeculativeJIT::compile(Node& node)
             break;
         }
         
-        if (!at(node.child2()).shouldSpeculateInteger() || !isActionableArraySpeculation(at(node.child1()).prediction())) {
+        if (!at(node.child2()).shouldSpeculateInteger() || (!node.child3() && !at(node.child1()).shouldSpeculateArguments())) {
             SpeculateCellOperand base(this, node.child1()); // Save a register, speculate cell. We'll probably be right.
             JSValueOperand property(this, node.child2());
             GPRReg baseGPR = base.gpr();
@@ -2449,8 +2439,6 @@ void SpeculativeJIT::compile(Node& node)
             break;            
         }
         
-        ASSERT(at(node.child1()).shouldSpeculateArray());
-
         SpeculateStrictInt32Operand property(this, node.child2());
         StorageOperand storage(this, node.child3());
         GPRReg propertyReg = property.gpr();
@@ -2464,17 +2452,13 @@ void SpeculativeJIT::compile(Node& node)
         {
             SpeculateCellOperand base(this, node.child1());
             GPRReg baseReg = base.gpr();
-            if (!isArraySpeculation(m_state.forNode(node.child1()).m_type))
-                speculationCheck(BadType, JSValueSource::unboxedCell(baseReg), node.child1(), m_jit.branchPtr(MacroAssembler::NotEqual, MacroAssembler::Address(baseReg, JSCell::classInfoOffset()), MacroAssembler::TrustedImmPtr(&JSArray::s_info)));
+            // We've already speculated that it's some kind of array, at this point.
             speculationCheck(Uncountable, JSValueRegs(), NoNode, m_jit.branch32(MacroAssembler::AboveOrEqual, propertyReg, MacroAssembler::Address(baseReg, JSArray::vectorLengthOffset())));
         }
 
         GPRTemporary resultTag(this);
         GPRTemporary resultPayload(this);
 
-        // FIXME: In cases where there are subsequent by_val accesses to the same base it might help to cache
-        // the storage pointer - especially if there happens to be another register free right now. If we do so,
-        // then we'll need to allocate a new temporary for result.
         m_jit.load32(MacroAssembler::BaseIndex(storageReg, propertyReg, MacroAssembler::TimesEight, OBJECT_OFFSETOF(ArrayStorage, m_vector[0]) + OBJECT_OFFSETOF(JSValue, u.asBits.tag)), resultTag.gpr());
         speculationCheck(Uncountable, JSValueRegs(), NoNode, m_jit.branch32(MacroAssembler::Equal, resultTag.gpr(), TrustedImm32(JSValue::EmptyValueTag)));
         m_jit.load32(MacroAssembler::BaseIndex(storageReg, propertyReg, MacroAssembler::TimesEight, OBJECT_OFFSETOF(ArrayStorage, m_vector[0]) + OBJECT_OFFSETOF(JSValue, u.asBits.payload)), resultPayload.gpr());
@@ -2495,7 +2479,6 @@ void SpeculativeJIT::compile(Node& node)
         }
         
         if (!at(child2).shouldSpeculateInteger()
-            || !isActionableMutableArraySpeculation(at(child1).prediction())
             || at(child1).shouldSpeculateArguments()) {
             SpeculateCellOperand base(this, child1); // Save a register, speculate cell. We'll probably be right.
             JSValueOperand property(this, child2);
@@ -2578,27 +2561,23 @@ void SpeculativeJIT::compile(Node& node)
             break;            
         }
         
-        ASSERT(at(child1).shouldSpeculateArray());
-
         JSValueOperand value(this, child3);
-        GPRTemporary scratch(this);
-
         // Map base, property & value into registers, allocate a scratch register.
         GPRReg baseReg = base.gpr();
         GPRReg propertyReg = property.gpr();
         GPRReg valueTagReg = value.tagGPR();
         GPRReg valuePayloadReg = value.payloadGPR();
-        GPRReg scratchReg = scratch.gpr();
         
         if (!m_compileOkay)
             return;
-        
-        writeBarrier(baseReg, valueTagReg, child3, WriteBarrierForPropertyAccess, scratchReg);
 
-        // Check that base is an array, and that property is contained within m_vector (< m_vectorLength).
-        // If we have predicted the base to be type array, we can skip the check.
-        if (!isArraySpeculation(m_state.forNode(child1).m_type))
-            speculationCheck(BadType, JSValueSource::unboxedCell(baseReg), child1, m_jit.branchPtr(MacroAssembler::NotEqual, MacroAssembler::Address(baseReg, JSCell::classInfoOffset()), MacroAssembler::TrustedImmPtr(&JSArray::s_info)));
+        {
+            GPRTemporary scratch(this);
+            GPRReg scratchReg = scratch.gpr();
+            writeBarrier(baseReg, valueTagReg, child3, WriteBarrierForPropertyAccess, scratchReg);
+        }
+
+        speculateArray(child1, baseReg);
 
         MacroAssembler::Jump beyondArrayBounds = m_jit.branch32(MacroAssembler::AboveOrEqual, propertyReg, MacroAssembler::Address(baseReg, JSArray::vectorLengthOffset()));
         if (node.op() == PutByVal)
@@ -2609,7 +2588,8 @@ void SpeculativeJIT::compile(Node& node)
         value.use();
         
         // Get the array storage.
-        GPRReg storageReg = scratchReg;
+        GPRTemporary storage(this);
+        GPRReg storageReg = storage.gpr();
         m_jit.loadPtr(MacroAssembler::Address(baseReg, JSArray::storageOffset()), storageReg);
 
         // Check if we're writing to a hole; if so increment m_numValuesInVector.
@@ -2795,20 +2775,23 @@ void SpeculativeJIT::compile(Node& node)
     case ArrayPush: {
         SpeculateCellOperand base(this, node.child1());
         JSValueOperand value(this, node.child2());
-        GPRTemporary storage(this);
         GPRTemporary storageLength(this);
         
         GPRReg baseGPR = base.gpr();
         GPRReg valueTagGPR = value.tagGPR();
         GPRReg valuePayloadGPR = value.payloadGPR();
-        GPRReg storageGPR = storage.gpr();
         GPRReg storageLengthGPR = storageLength.gpr();
         
-        writeBarrier(baseGPR, valueTagGPR, node.child2(), WriteBarrierForPropertyAccess, storageGPR, storageLengthGPR);
+        {
+            GPRTemporary scratch(this);
+            writeBarrier(baseGPR, valueTagGPR, node.child2(), WriteBarrierForPropertyAccess, scratch.gpr(), storageLengthGPR);
+        }
 
-        if (!isArraySpeculation(m_state.forNode(node.child1()).m_type))
-            speculationCheck(BadType, JSValueSource::unboxedCell(baseGPR), node.child1(), m_jit.branchPtr(MacroAssembler::NotEqual, MacroAssembler::Address(baseGPR, JSCell::classInfoOffset()), MacroAssembler::TrustedImmPtr(&JSArray::s_info)));
+        speculateArray(node.child1(), baseGPR);
         
+        GPRTemporary storage(this);
+        GPRReg storageGPR = storage.gpr();
+
         m_jit.loadPtr(MacroAssembler::Address(baseGPR, JSArray::storageOffset()), storageGPR);
         m_jit.load32(MacroAssembler::Address(storageGPR, OBJECT_OFFSETOF(ArrayStorage, m_length)), storageLengthGPR);
         
@@ -2844,8 +2827,7 @@ void SpeculativeJIT::compile(Node& node)
         GPRReg storageGPR = storage.gpr();
         GPRReg storageLengthGPR = storageLength.gpr();
         
-        if (!isArraySpeculation(m_state.forNode(node.child1()).m_type))
-            speculationCheck(BadType, JSValueSource::unboxedCell(baseGPR), node.child1(), m_jit.branchPtr(MacroAssembler::NotEqual, MacroAssembler::Address(baseGPR, JSCell::classInfoOffset()), MacroAssembler::TrustedImmPtr(&JSArray::s_info)));
+        speculateArray(node.child1(), baseGPR);
         
         m_jit.loadPtr(MacroAssembler::Address(baseGPR, JSArray::storageOffset()), storageGPR);
         m_jit.load32(MacroAssembler::Address(storageGPR, OBJECT_OFFSETOF(ArrayStorage, m_length)), storageLengthGPR);
@@ -3395,8 +3377,7 @@ void SpeculativeJIT::compile(Node& node)
         SpeculateCellOperand base(this, node.child1());
         GPRReg baseGPR = base.gpr();
         
-        if (!isArraySpeculation(m_state.forNode(node.child1()).m_type))
-            speculationCheck(BadType, JSValueSource::unboxedCell(baseGPR), node.child1(), m_jit.branchPtr(MacroAssembler::NotEqual, MacroAssembler::Address(baseGPR, JSCell::classInfoOffset()), MacroAssembler::TrustedImmPtr(&JSArray::s_info)));
+        speculateArray(node.child1(), baseGPR);
         
         GPRTemporary result(this);
         GPRReg resultGPR = result.gpr();

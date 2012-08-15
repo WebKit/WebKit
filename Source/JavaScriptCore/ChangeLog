@@ -1,3 +1,99 @@
+2012-08-13  Filip Pizlo  <fpizlo@apple.com>
+
+        Array checks should use the structure, not the class info
+        https://bugs.webkit.org/show_bug.cgi?id=93150
+
+        Reviewed by Mark Hahnenberg.
+
+        This changes all array checks used in array accesses (get, put, get length,
+        push, pop) to use the structure, not the class info. Additionally, these
+        checks in the LLInt and baseline JIT record the structure in an ArrayProfile,
+        so that the DFG can know exactly what structure to check for.
+        
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Target.pri:
+        * bytecode/ArrayProfile.cpp: Added.
+        (JSC):
+        (JSC::ArrayProfile::computeUpdatedPrediction):
+        * bytecode/ArrayProfile.h: Added.
+        (JSC):
+        (JSC::arrayModeFromStructure):
+        (ArrayProfile):
+        (JSC::ArrayProfile::ArrayProfile):
+        (JSC::ArrayProfile::bytecodeOffset):
+        (JSC::ArrayProfile::addressOfLastSeenStructure):
+        (JSC::ArrayProfile::observeStructure):
+        (JSC::ArrayProfile::expectedStructure):
+        (JSC::ArrayProfile::structureIsPolymorphic):
+        (JSC::ArrayProfile::hasDefiniteStructure):
+        (JSC::ArrayProfile::observedArrayModes):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dump):
+        (JSC::CodeBlock::getArrayProfile):
+        (JSC):
+        (JSC::CodeBlock::getOrAddArrayProfile):
+        (JSC::CodeBlock::updateAllPredictionsAndCountLiveness):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::executionEntryCount):
+        (JSC::CodeBlock::numberOfArrayProfiles):
+        (JSC::CodeBlock::arrayProfiles):
+        (JSC::CodeBlock::addArrayProfile):
+        (CodeBlock):
+        * bytecode/Instruction.h:
+        (JSC):
+        (JSC::Instruction::Instruction):
+        * bytecode/Opcode.h:
+        (JSC):
+        (JSC::padOpcodeName):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitGetArgumentByVal):
+        (JSC::BytecodeGenerator::emitGetByVal):
+        (JSC::BytecodeGenerator::emitPutByVal):
+        * dfg/DFGAbstractState.cpp:
+        (JSC::DFG::AbstractState::initialize):
+        (JSC::DFG::AbstractState::execute):
+        * dfg/DFGAbstractValue.h:
+        (JSC::DFG::StructureAbstractValue::hasSingleton):
+        (StructureAbstractValue):
+        (JSC::DFG::StructureAbstractValue::singleton):
+        * dfg/DFGArgumentsSimplificationPhase.cpp:
+        (JSC::DFG::ArgumentsSimplificationPhase::run):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::speculateArray):
+        (DFG):
+        (JSC::DFG::SpeculativeJIT::compile):
+        (JSC::DFG::SpeculativeJIT::checkArgumentTypes):
+        (JSC::DFG::SpeculativeJIT::compileGetIndexedPropertyStorage):
+        * dfg/DFGSpeculativeJIT.h:
+        (SpeculativeJIT):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGStructureCheckHoistingPhase.cpp:
+        (JSC::DFG::StructureCheckHoistingPhase::run):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emit_op_get_by_val):
+        (JSC::JIT::emit_op_put_by_val):
+        (JSC::JIT::privateCompilePatchGetArrayLength):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::emit_op_get_by_val):
+        (JSC::JIT::emit_op_put_by_val):
+        (JSC::JIT::privateCompilePatchGetArrayLength):
+        * llint/LLIntOffsetsExtractor.cpp:
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * runtime/Structure.h:
+        (Structure):
+        (JSC::Structure::classInfoOffset):
+
 2012-08-14  Gabor Ballabas  <gaborb@inf.u-szeged.hu>
 
         Rename functions in the ARM port of DFG-JIT for better code readability.

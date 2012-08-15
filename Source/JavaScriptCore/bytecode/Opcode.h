@@ -132,10 +132,10 @@ namespace JSC {
         macro(op_put_by_id_replace, 9) \
         macro(op_put_by_id_generic, 9) \
         macro(op_del_by_id, 4) \
-        macro(op_get_by_val, 5) /* has value profiling */ \
-        macro(op_get_argument_by_val, 5) /* must be the same size as op_get_by_val */ \
+        macro(op_get_by_val, 6) /* has value profiling */ \
+        macro(op_get_argument_by_val, 6) /* must be the same size as op_get_by_val */ \
         macro(op_get_by_pname, 7) \
-        macro(op_put_by_val, 4) \
+        macro(op_put_by_val, 5) \
         macro(op_del_by_val, 4) \
         macro(op_put_by_index, 4) \
         macro(op_put_getter_setter, 5) \

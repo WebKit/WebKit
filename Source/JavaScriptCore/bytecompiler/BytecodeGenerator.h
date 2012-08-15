@@ -555,6 +555,7 @@ namespace JSC {
 #endif
 
         void emitOpcode(OpcodeID);
+        ArrayProfile* newArrayProfile();
         ValueProfile* emitProfiledOpcode(OpcodeID);
         void retrieveLastBinaryOp(int& dstIndex, int& src1Index, int& src2Index);
         void retrieveLastUnaryOp(int& dstIndex, int& srcIndex);

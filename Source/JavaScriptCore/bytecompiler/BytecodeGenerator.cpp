@@ -708,6 +708,15 @@ void BytecodeGenerator::prependComment(const char* string)
 }
 #endif
 
+ArrayProfile* BytecodeGenerator::newArrayProfile()
+{
+#if ENABLE(VALUE_PROFILER)
+    return m_codeBlock->addArrayProfile(instructions().size());
+#else
+    return 0;
+#endif
+}
+
 ValueProfile* BytecodeGenerator::emitProfiledOpcode(OpcodeID opcodeID)
 {
 #if ENABLE(VALUE_PROFILER)
@@ -1669,11 +1678,13 @@ RegisterID* BytecodeGenerator::emitDeleteById(RegisterID* dst, RegisterID* base,
 
 RegisterID* BytecodeGenerator::emitGetArgumentByVal(RegisterID* dst, RegisterID* base, RegisterID* property)
 {
+    ArrayProfile* arrayProfile = newArrayProfile();
     ValueProfile* profile = emitProfiledOpcode(op_get_argument_by_val);
     instructions().append(dst->index());
     ASSERT(base->index() == m_codeBlock->argumentsRegister());
     instructions().append(base->index());
     instructions().append(property->index());
+    instructions().append(arrayProfile);
     instructions().append(profile);
     return dst;
 }
@@ -1693,20 +1704,24 @@ RegisterID* BytecodeGenerator::emitGetByVal(RegisterID* dst, RegisterID* base, R
             return dst;
         }
     }
+    ArrayProfile* arrayProfile = newArrayProfile();
     ValueProfile* profile = emitProfiledOpcode(op_get_by_val);
     instructions().append(dst->index());
     instructions().append(base->index());
     instructions().append(property->index());
+    instructions().append(arrayProfile);
     instructions().append(profile);
     return dst;
 }
 
 RegisterID* BytecodeGenerator::emitPutByVal(RegisterID* base, RegisterID* property, RegisterID* value)
 {
+    ArrayProfile* arrayProfile = newArrayProfile();
     emitOpcode(op_put_by_val);
     instructions().append(base->index());
     instructions().append(property->index());
     instructions().append(value->index());
+    instructions().append(arrayProfile);
     return value;
 }
 

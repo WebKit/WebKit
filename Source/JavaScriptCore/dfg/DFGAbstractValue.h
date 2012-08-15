@@ -282,6 +282,17 @@ public:
         return speculationFromStructure(m_structure);
     }
     
+    bool hasSingleton() const
+    {
+        return isNeitherClearNorTop();
+    }
+    
+    Structure* singleton() const
+    {
+        ASSERT(isNeitherClearNorTop());
+        return m_structure;
+    }
+    
     bool operator==(const StructureAbstractValue& other) const
     {
         return m_structure == other.m_structure;

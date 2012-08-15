@@ -1530,6 +1530,14 @@
 			Name="bytecode"
 			>
 			<File
+				RelativePath="..\..\bytecode\ArrayProfile.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\bytecode\ArrayProfile.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\bytecode\CallLinkInfo.cpp"
 				>
 			</File>

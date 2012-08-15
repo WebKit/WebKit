@@ -106,8 +106,6 @@ void AbstractState::initialize(Graph& graph)
         SpeculatedType prediction = node.variableAccessData()->prediction();
         if (isInt32Speculation(prediction))
             root->valuesAtHead.argument(i).set(SpecInt32);
-        else if (isArraySpeculation(prediction))
-            root->valuesAtHead.argument(i).set(SpecArray);
         else if (isBooleanSpeculation(prediction))
             root->valuesAtHead.argument(i).set(SpecBoolean);
         else if (isInt8ArraySpeculation(prediction))
@@ -290,10 +288,7 @@ bool AbstractState::execute(unsigned indexInBlock)
         SpeculatedType predictedType = node.variableAccessData()->argumentAwarePrediction();
         if (isInt32Speculation(predictedType))
             speculateInt32Unary(node);
-        else if (isArraySpeculation(predictedType)) {
-            node.setCanExit(!isArraySpeculation(forNode(node.child1()).m_type));
-            forNode(node.child1()).filter(SpecArray);
-        } else if (isCellSpeculation(predictedType)) {
+        else if (isCellSpeculation(predictedType)) {
             node.setCanExit(!isCellSpeculation(forNode(node.child1()).m_type));
             forNode(node.child1()).filter(SpecCell);
         } else if (isBooleanSpeculation(predictedType))
@@ -867,7 +862,7 @@ bool AbstractState::execute(unsigned indexInBlock)
             m_isValid = false;
             break;
         }
-        if (!isActionableArraySpeculation(m_graph[node.child1()].prediction()) || !m_graph[node.child2()].shouldSpeculateInteger()) {
+        if (!m_graph[node.child2()].shouldSpeculateInteger() || (!node.child3() && !m_graph[node.child1()].shouldSpeculateArguments())) {
             clobberWorld(node.codeOrigin, indexInBlock);
             forNode(nodeIndex).makeTop();
             break;
@@ -942,8 +937,7 @@ bool AbstractState::execute(unsigned indexInBlock)
             forNode(nodeIndex).set(SpecDouble);
             break;
         }
-        ASSERT(m_graph[node.child1()].shouldSpeculateArray());
-        forNode(node.child1()).filter(SpecArray);
+        forNode(node.child1()).filter(SpecCell);
         forNode(node.child2()).filter(SpecInt32);
         forNode(nodeIndex).makeTop();
         break;
@@ -1053,8 +1047,7 @@ bool AbstractState::execute(unsigned indexInBlock)
             forNode(child3).filter(SpecNumber);
             break;
         }
-        ASSERT(m_graph[child1].shouldSpeculateArray());
-        forNode(child1).filter(SpecArray);
+        forNode(child1).filter(SpecCell);
         forNode(child2).filter(SpecInt32);
         if (node.op() == PutByValSafe)
             clobberWorld(node.codeOrigin, indexInBlock);
@@ -1063,13 +1056,13 @@ bool AbstractState::execute(unsigned indexInBlock)
             
     case ArrayPush:
         node.setCanExit(true);
-        forNode(node.child1()).filter(SpecArray);
+        forNode(node.child1()).filter(SpecCell);
         forNode(nodeIndex).set(SpecNumber);
         break;
             
     case ArrayPop:
         node.setCanExit(true);
-        forNode(node.child1()).filter(SpecArray);
+        forNode(node.child1()).filter(SpecCell);
         forNode(nodeIndex).makeTop();
         break;
             
@@ -1354,7 +1347,7 @@ bool AbstractState::execute(unsigned indexInBlock)
             
     case GetArrayLength:
         node.setCanExit(true);
-        forNode(node.child1()).filter(SpecArray);
+        forNode(node.child1()).filter(SpecCell);
         forNode(nodeIndex).set(SpecInt32);
         break;
 
@@ -1453,12 +1446,9 @@ bool AbstractState::execute(unsigned indexInBlock)
         forNode(nodeIndex).clear(); // The result is not a JS value.
         break;
     case GetIndexedPropertyStorage: {
+        ASSERT(m_graph[node.child1()].prediction());
+        ASSERT(m_graph[node.child2()].shouldSpeculateInteger());
         node.setCanExit(true); // Lies, but this is (almost) always followed by GetByVal, which does exit. So no point in trying to be more precise.
-        SpeculatedType basePrediction = m_graph[node.child2()].prediction();
-        if (!(basePrediction & SpecInt32) && basePrediction) {
-            forNode(nodeIndex).clear();
-            break;
-        }
         if (m_graph[node.child1()].shouldSpeculateArguments()) {
             ASSERT_NOT_REACHED();
             break;
@@ -1514,7 +1504,7 @@ bool AbstractState::execute(unsigned indexInBlock)
             forNode(nodeIndex).clear();
             break;
         }
-        forNode(node.child1()).filter(SpecArray);
+        forNode(node.child1()).filter(SpecCell);
         forNode(nodeIndex).clear();
         break; 
     }

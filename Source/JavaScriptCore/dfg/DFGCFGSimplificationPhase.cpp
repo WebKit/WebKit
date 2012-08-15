@@ -613,7 +613,9 @@ private:
                 
                 ASSERT(node.shouldGenerate());
                 Node& possibleLocalOp = m_graph[node.child1()];
-                if (possibleLocalOp.hasLocal() && !possibleLocalOp.variableAccessData()->isCaptured()) {
+                if (possibleLocalOp.op() != GetLocal
+                    && possibleLocalOp.hasLocal()
+                    && !possibleLocalOp.variableAccessData()->isCaptured()) {
                     NodeIndex setLocalIndex =
                         firstBlock->variablesAtTail.operand(possibleLocalOp.local());
                     Node& setLocal = m_graph[setLocalIndex];

@@ -46,6 +46,7 @@ namespace JSC {
     // curently actually use PolymorphicAccessStructureLists, which we should).  Anyway, this seems like the best
     // solution for now - will need to something smarter if/when we actually want mixed-mode operation.
 
+    class ArrayProfile;
     class JSCell;
     class Structure;
     class StructureChain;
@@ -190,6 +191,7 @@ namespace JSC {
         Instruction(LLIntCallLinkInfo* callLinkInfo) { u.callLinkInfo = callLinkInfo; }
         
         Instruction(ValueProfile* profile) { u.profile = profile; }
+        Instruction(ArrayProfile* profile) { u.arrayProfile = profile; }
         
         Instruction(WriteBarrier<Unknown>* registerPointer) { u.registerPointer = registerPointer; }
         
@@ -205,6 +207,7 @@ namespace JSC {
             PropertySlot::GetValueFunc getterFunc;
             LLIntCallLinkInfo* callLinkInfo;
             ValueProfile* profile;
+            ArrayProfile* arrayProfile;
             void* pointer;
             bool* predicatePointer;
         } u;

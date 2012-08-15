@@ -82,6 +82,8 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/assembler/RepatchBuffer.h \
 	Source/JavaScriptCore/assembler/SH4Assembler.h \
 	Source/JavaScriptCore/assembler/X86Assembler.h \
+	Source/JavaScriptCore/bytecode/ArrayProfile.cpp \
+	Source/JavaScriptCore/bytecode/ArrayProfile.h \
 	Source/JavaScriptCore/bytecode/BytecodeConventions.h \
 	Source/JavaScriptCore/bytecode/CallLinkInfo.cpp \
 	Source/JavaScriptCore/bytecode/CallLinkInfo.h \

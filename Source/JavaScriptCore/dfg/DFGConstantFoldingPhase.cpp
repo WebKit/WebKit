@@ -103,9 +103,7 @@ private:
             }
                 
             m_state.execute(indexInBlock);
-            if (!node.shouldGenerate()
-                || m_state.didClobber()
-                || node.hasConstant())
+            if (!node.shouldGenerate() || m_state.didClobber() || node.hasConstant())
                 continue;
             JSValue value = m_state.forNode(nodeIndex).value();
             if (!value)
