@@ -320,13 +320,8 @@ canvas/philip/tests/2d.text.draw.baseline.hanging.html
 canvas/philip/tests/2d.text.draw.baseline.ideographic.html
 canvas/philip/tests/2d.text.draw.baseline.middle.html
 canvas/philip/tests/2d.text.draw.baseline.top.html
-canvas/philip/tests/2d.text.draw.space.collapse.end.html
-canvas/philip/tests/2d.text.draw.space.collapse.other.html
-canvas/philip/tests/2d.text.draw.space.collapse.space.html
-canvas/philip/tests/2d.text.draw.space.collapse.start.html
 canvas/philip/tests/2d.text.font.parse.size.percentage.html
 canvas/philip/tests/2d.text.font.parse.size.percentage.default.html
-canvas/philip/tests/2d.text.measure.width.space.html
 canvas/philip/tests/type.prototype.html
 
 # Test takes too long in a debug build

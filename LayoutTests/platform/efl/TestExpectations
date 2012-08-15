@@ -831,6 +831,14 @@ BUGWK93073 : mathml/presentation/tokenElements.xhtml = TEXT
 BUGWK93073 : mathml/presentation/under.xhtml = TEXT
 BUGWK93073 : mathml/presentation/underover.xhtml = TEXT
 
+// Tests are outdated: spaces are not supposed to be collapsed anymore
+// according to spec: http://www.w3.org/TR/2dcontext/#drawing-text-to-the-canvas
+BUGWK61799 : canvas/philip/tests/2d.text.draw.space.collapse.end.html = TEXT
+BUGWK61799 : canvas/philip/tests/2d.text.draw.space.collapse.other.html = TEXT
+BUGWK61799 : canvas/philip/tests/2d.text.draw.space.collapse.space.html = TEXT
+BUGWK61799 : canvas/philip/tests/2d.text.draw.space.collapse.start.html = TEXT
+BUGWK61799 : canvas/philip/tests/2d.text.measure.width.space.html = TEXT
+
 // JSC doesn't support heap profiling
 BUGWK50485 SKIP : inspector/profiler/heap-snapshot-inspect-dom-wrapper.html = TEXT
 BUGWK50485 SKIP : inspector/profiler/heap-snapshot-comparison-dom-groups-change.html = TEXT

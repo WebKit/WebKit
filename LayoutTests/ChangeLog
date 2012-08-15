@@ -1,3 +1,18 @@
+2012-08-15  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] Update expectations for canvas/philip tests that require space collapsing
+        https://bugs.webkit.org/show_bug.cgi?id=94072
+
+        Unreviewed EFL gardening.
+
+        Move canvas/philip tests that require space collapsing
+        from Skipped file to TestExpectations and indicate
+        that the tests are outdated with corresponding bug
+        number.
+
+        * platform/efl/Skipped:
+        * platform/efl/TestExpectations:
+
 2012-08-15  Yuta Kitamura  <yutak@google.com>
 
         [Chromium] Unreviewed test expectations update. Tests named dfg-*array.html are
