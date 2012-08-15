@@ -1,5 +1,11 @@
 2012-08-14  Yuta Kitamura  <yutak@google.com>
 
+        [Chromium] Unreviewed, another gardening. Add one slow test.
+
+        * platform/chromium/TestExpectations:
+
+2012-08-14  Yuta Kitamura  <yutak@google.com>
+
         [Chromium] Unreviewed. Add new test expectation for nested-rounded-corners.html.
 
         * platform/chromium/TestExpectations:

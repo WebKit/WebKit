@@ -65,6 +65,7 @@ BUGCR24182 SLOW DEBUG : jquery/offset.html = PASS
 BUGCR24182 LINUX ANDROID WIN DEBUG : jquery/traversing.html = PASS TIMEOUT
 BUGCR24182 SLOW SNOWLEOPARD DEBUG : svg/dom/baseVal-animVal-crash.html = PASS
 BUGCR24182 SLOW MAC : storage/indexeddb/factory-basics.html = PASS
+BUGCR24182 SLOW DEBUG : css3/flexbox/position-absolute-child.html = PASS
 
 // These tests started being slow when we switched to DRT.
 BUGWK90488 SLOW LINUX WIN DEBUG : inspector = PASS
