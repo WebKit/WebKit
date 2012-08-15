@@ -724,26 +724,26 @@ void Element::attributeChanged(const Attribute& attribute)
     const QualifiedName& attrName = attribute.name();
     if (attrName == aria_activedescendantAttr) {
         // any change to aria-activedescendant attribute triggers accessibility focus change, but document focus remains intact
-        document()->axObjectCache()->handleActiveDescendantChanged(renderer());
+        document()->axObjectCache()->handleActiveDescendantChanged(this);
     } else if (attrName == roleAttr) {
         // the role attribute can change at any time, and the AccessibilityObject must pick up these changes
-        document()->axObjectCache()->handleAriaRoleChanged(renderer());
+        document()->axObjectCache()->handleAriaRoleChanged(this);
     } else if (attrName == aria_valuenowAttr) {
         // If the valuenow attribute changes, AX clients need to be notified.
-        document()->axObjectCache()->postNotification(renderer(), AXObjectCache::AXValueChanged, true);
+        document()->axObjectCache()->postNotification(this, AXObjectCache::AXValueChanged, true);
     } else if (attrName == aria_labelAttr || attrName == aria_labeledbyAttr || attrName == altAttr || attrName == titleAttr) {
         // If the content of an element changes due to an attribute change, notify accessibility.
-        document()->axObjectCache()->contentChanged(renderer());
+        document()->axObjectCache()->contentChanged(this);
     } else if (attrName == aria_checkedAttr)
-        document()->axObjectCache()->checkedStateChanged(renderer());
+        document()->axObjectCache()->checkedStateChanged(this);
     else if (attrName == aria_selectedAttr)
-        document()->axObjectCache()->selectedChildrenChanged(renderer());
+        document()->axObjectCache()->selectedChildrenChanged(this);
     else if (attrName == aria_expandedAttr)
-        document()->axObjectCache()->handleAriaExpandedChange(renderer());
+        document()->axObjectCache()->handleAriaExpandedChange(this);
     else if (attrName == aria_hiddenAttr)
-        document()->axObjectCache()->childrenChanged(renderer());
+        document()->axObjectCache()->childrenChanged(this);
     else if (attrName == aria_invalidAttr)
-        document()->axObjectCache()->postNotification(renderer(), AXObjectCache::AXInvalidStatusChanged, true);
+        document()->axObjectCache()->postNotification(this, AXObjectCache::AXInvalidStatusChanged, true);
 }
 
 // Returns true is the given attribute is an event handler.

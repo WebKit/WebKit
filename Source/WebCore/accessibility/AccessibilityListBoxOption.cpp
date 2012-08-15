@@ -172,7 +172,7 @@ AccessibilityObject* AccessibilityListBoxOption::parentObject() const
     if (!parentNode)
         return 0;
     
-    return m_optionElement->document()->axObjectCache()->getOrCreate(parentNode->renderer());
+    return m_optionElement->document()->axObjectCache()->getOrCreate(parentNode);
 }
 
 void AccessibilityListBoxOption::setSelected(bool selected)

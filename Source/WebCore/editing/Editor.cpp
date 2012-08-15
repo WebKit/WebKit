@@ -494,7 +494,7 @@ void Editor::respondToChangedContents(const VisibleSelection& endingSelection)
     if (AXObjectCache::accessibilityEnabled()) {
         Node* node = endingSelection.start().deprecatedNode();
         if (node)
-            m_frame->document()->axObjectCache()->postNotification(node->renderer(), AXObjectCache::AXValueChanged, false);
+            m_frame->document()->axObjectCache()->postNotification(node, AXObjectCache::AXValueChanged, false);
     }
 
     updateMarkersForWordsAffectedByEditing(true);
@@ -2130,7 +2130,7 @@ void Editor::markAndReplaceFor(PassRefPtr<SpellCheckRequest> request, const Vect
                 
                 if (AXObjectCache::accessibilityEnabled()) {
                     if (Element* root = m_frame->selection()->selection().rootEditableElement())
-                        m_frame->document()->axObjectCache()->postNotification(root->renderer(), AXObjectCache::AXAutocorrectionOccured, true);
+                        m_frame->document()->axObjectCache()->postNotification(root, AXObjectCache::AXAutocorrectionOccured, true);
                 }
 
                 selectionChanged = true;

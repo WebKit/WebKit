@@ -238,14 +238,14 @@ void AXObjectCache::frameLoadingEventPlatformNotification(AccessibilityObject* o
     }
 }
 
-void AXObjectCache::handleFocusedUIElementChanged(RenderObject* oldFocusedRender, RenderObject* newFocusedRender)
+void AXObjectCache::handleFocusedUIElementChanged(Node* oldFocusedNode, Node* newFocusedNode)
 {
-    RefPtr<AccessibilityObject> oldObject = getOrCreate(oldFocusedRender);
+    RefPtr<AccessibilityObject> oldObject = getOrCreate(oldFocusedNode);
     if (oldObject) {
         g_signal_emit_by_name(oldObject->wrapper(), "focus-event", false);
         g_signal_emit_by_name(oldObject->wrapper(), "state-change", "focused", false);
     }
-    RefPtr<AccessibilityObject> newObject = getOrCreate(newFocusedRender);
+    RefPtr<AccessibilityObject> newObject = getOrCreate(newFocusedNode);
     if (newObject) {
         g_signal_emit_by_name(newObject->wrapper(), "focus-event", true);
         g_signal_emit_by_name(newObject->wrapper(), "state-change", "focused", true);

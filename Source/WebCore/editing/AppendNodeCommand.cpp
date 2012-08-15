@@ -51,7 +51,7 @@ static void sendAXTextChangedIgnoringLineBreaks(Node* node, AXObjectCache::AXTex
     if (nodeValue == "\n")
       return;
 
-    node->document()->axObjectCache()->nodeTextChangeNotification(node->renderer(), textChange, 0, nodeValue);
+    node->document()->axObjectCache()->nodeTextChangeNotification(node, textChange, 0, nodeValue);
 }
 
 void AppendNodeCommand::doApply()

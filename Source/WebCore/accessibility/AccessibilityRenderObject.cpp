@@ -998,7 +998,7 @@ AccessibilityObject* AccessibilityRenderObject::menuForMenuButton() const
 {
     Element* menu = menuElementForMenuButton();
     if (menu && menu->renderer())
-        return axObjectCache()->getOrCreate(menu->renderer());
+        return axObjectCache()->getOrCreate(menu);
     return 0;
 }
 
@@ -1016,7 +1016,7 @@ AccessibilityObject* AccessibilityRenderObject::menuButtonForMenu() const
 
     if (menuItem && menuItem->renderer()) {
         // ARIA just has generic menu items.  AppKit needs to know if this is a top level items like MenuBarButton or MenuBarItem
-        AccessibilityObject* menuItemAX = axObjectCache()->getOrCreate(menuItem->renderer());
+        AccessibilityObject* menuItemAX = axObjectCache()->getOrCreate(menuItem);
         if (menuItemAX->isMenuButton())
             return menuItemAX;
     }
@@ -1552,7 +1552,7 @@ LayoutRect AccessibilityRenderObject::checkboxOrRadioRect() const
     if (!label || !label->renderer())
         return boundingBoxRect();
     
-    LayoutRect labelRect = axObjectCache()->getOrCreate(label->renderer())->elementRect();
+    LayoutRect labelRect = axObjectCache()->getOrCreate(label)->elementRect();
     labelRect.unite(boundingBoxRect());
     return labelRect;
 }
@@ -1640,7 +1640,7 @@ void AccessibilityRenderObject::addRadioButtonGroupMembers(AccessibilityChildren
         unsigned len = formElements.size();
         for (unsigned i = 0; i < len; ++i) {
             Node* associateElement = formElements[i].get();
-            if (AccessibilityObject* object = axObjectCache()->getOrCreate(associateElement->renderer()))
+            if (AccessibilityObject* object = axObjectCache()->getOrCreate(associateElement))
                 linkedUIElements.append(object);        
         } 
     } else {
@@ -1650,7 +1650,7 @@ void AccessibilityRenderObject::addRadioButtonGroupMembers(AccessibilityChildren
             if (list->item(i)->hasTagName(inputTag)) {
                 HTMLInputElement* associateElement = static_cast<HTMLInputElement*>(list->item(i));
                 if (associateElement->isRadioButton() && associateElement->name() == input->name()) {
-                    if (AccessibilityObject* object = axObjectCache()->getOrCreate(associateElement->renderer()))
+                    if (AccessibilityObject* object = axObjectCache()->getOrCreate(associateElement))
                         linkedUIElements.append(object);
                 }
             }
@@ -1703,7 +1703,7 @@ void AccessibilityRenderObject::ariaFlowToElements(AccessibilityChildrenVector& 
     unsigned count = elements.size();
     for (unsigned k = 0; k < count; ++k) {
         Element* element = elements[k];
-        AccessibilityObject* flowToElement = cache->getOrCreate(element->renderer());
+        AccessibilityObject* flowToElement = cache->getOrCreate(element);
         if (flowToElement)
             flowTo.append(flowToElement);
     }
@@ -1777,7 +1777,7 @@ AccessibilityObject* AccessibilityRenderObject::titleUIElement() const
         return 0;
     HTMLLabelElement* label = labelForElement(static_cast<Element*>(element));
     if (label && label->renderer())
-        return axObjectCache()->getOrCreate(label->renderer());
+        return axObjectCache()->getOrCreate(label);
 
     return 0;   
 }
@@ -2271,7 +2271,7 @@ bool AccessibilityRenderObject::isTabItemSelected() const
     unsigned count = elements.size();
     for (unsigned k = 0; k < count; ++k) {
         Element* element = elements[k];
-        AccessibilityObject* tabPanel = axObjectCache()->getOrCreate(element->renderer());
+        AccessibilityObject* tabPanel = axObjectCache()->getOrCreate(element);
 
         // A tab item should only control tab panels.
         if (!tabPanel || tabPanel->roleValue() != TabPanelRole)
@@ -2470,7 +2470,7 @@ AccessibilityObject* AccessibilityRenderObject::accessibilityParentForImageMap(H
     if (!imageElement)
         return 0;
     
-    return axObjectCache()->getOrCreate(imageElement->renderer());
+    return axObjectCache()->getOrCreate(imageElement);
 }
     
 void AccessibilityRenderObject::getDocumentLinks(AccessibilityChildrenVector& result)
@@ -2661,7 +2661,7 @@ bool AccessibilityRenderObject::nodeIsTextControl(const Node* node) const
     if (!node)
         return false;
 
-    const AccessibilityObject* axObjectForNode = axObjectCache()->getOrCreate(node->renderer());
+    const AccessibilityObject* axObjectForNode = axObjectCache()->getOrCreate(const_cast<Node*>(node));
     if (!axObjectForNode)
         return false;
 
@@ -2998,7 +2998,7 @@ AccessibilityObject* AccessibilityRenderObject::activeDescendant() const
     if (!target)
         return 0;
     
-    AccessibilityObject* obj = axObjectCache()->getOrCreate(target->renderer());
+    AccessibilityObject* obj = axObjectCache()->getOrCreate(target);
     if (obj && obj->isAccessibilityRenderObject())
     // an activedescendant is only useful if it has a renderer, because that's what's needed to post the notification
         return obj;
@@ -3063,7 +3063,7 @@ AccessibilityObject* AccessibilityRenderObject::correspondingControlForLabelElem
     if (!correspondingControl)
         return 0;
     
-    return axObjectCache()->getOrCreate(correspondingControl->renderer());     
+    return axObjectCache()->getOrCreate(correspondingControl);     
 }
 
 AccessibilityObject* AccessibilityRenderObject::correspondingLabelForControlElement() const
@@ -3075,7 +3075,7 @@ AccessibilityObject* AccessibilityRenderObject::correspondingLabelForControlElem
     if (node && node->isHTMLElement()) {
         HTMLLabelElement* label = labelForElement(static_cast<Element*>(node));
         if (label)
-            return axObjectCache()->getOrCreate(label->renderer());
+            return axObjectCache()->getOrCreate(label);
     }
 
     return 0;

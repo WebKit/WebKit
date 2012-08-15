@@ -239,7 +239,7 @@ void RangeInputType::handleKeydownEvent(KeyboardEvent* event)
         setValueAsDecimal(newValue, eventBehavior, ec);
 
         if (AXObjectCache::accessibilityEnabled())
-            element()->document()->axObjectCache()->postNotification(element()->renderer(), AXObjectCache::AXValueChanged, true);
+            element()->document()->axObjectCache()->postNotification(element(), AXObjectCache::AXValueChanged, true);
         element()->dispatchFormControlChangeEvent();
     }
 

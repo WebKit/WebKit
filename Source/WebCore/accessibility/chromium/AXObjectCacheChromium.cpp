@@ -80,7 +80,7 @@ void AXObjectCache::postPlatformNotification(AccessibilityObject* obj, AXNotific
 
         // Calling handleFocusedUIElementChanged will focus the new active
         // descendant and send the AXFocusedUIElementChanged notification.
-        handleFocusedUIElementChanged(0, obj->document()->focusedNode()->renderer());
+        handleFocusedUIElementChanged(0, obj->document()->focusedNode());
         break;
     case AXAutocorrectionOccured:
     case AXCheckedStateChanged:
@@ -113,12 +113,12 @@ void AXObjectCache::frameLoadingEventPlatformNotification(AccessibilityObject*, 
 {
 }
 
-void AXObjectCache::handleFocusedUIElementChanged(RenderObject*, RenderObject* newFocusedRenderer)
+void AXObjectCache::handleFocusedUIElementChanged(Node*, Node* newFocusedNode)
 {
-    if (!newFocusedRenderer)
+    if (!newFocusedNode)
         return;
 
-    Page* page = newFocusedRenderer->document()->page();
+    Page* page = newFocusedNode->document()->page();
     if (!page)
         return;
 

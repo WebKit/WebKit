@@ -134,12 +134,12 @@ AXID AXObjectCache::platformGenerateAXID() const
     return objID;
 }
 
-void AXObjectCache::handleFocusedUIElementChanged(RenderObject*, RenderObject* newFocusedRenderer)
+void AXObjectCache::handleFocusedUIElementChanged(Node*, Node* newFocusedNode)
 {
-    if (!newFocusedRenderer)
+    if (!newFocusedNode)
         return;
 
-    Page* page = newFocusedRenderer->document()->page();
+    Page* page = newFocusedNode->document()->page();
     if (!page || !page->chrome()->platformPageClient())
         return;
 

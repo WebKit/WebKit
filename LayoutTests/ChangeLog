@@ -1,3 +1,28 @@
+2012-08-15  Dominic Mazzoni  <dmazzoni@google.com>
+
+        AX: Calls to AXObjectCache should prefer Node over Renderer
+        https://bugs.webkit.org/show_bug.cgi?id=91794
+
+        Reviewed by Chris Fleizach.
+
+        New tests:
+        - canvas-fallback-content tests that objects in a canvas subtree can be
+          focused and then you can retrieve the role of the accessible object.
+        - accessibility-node-memory-management ensures that an AccessibilityNodeObject
+          is detached when its node is destroyed.
+        - accessibility-node-reparent ensures that if an AccessibilityNodeObject is
+          created for a node without a renderer, but the node later gets a renderer,
+          the AccessibilityNodeObject is detached and an AccessibilityRenderObject is
+          created instead.
+
+        * accessibility/accessibility-node-memory-management-expected.txt: Added.
+        * accessibility/accessibility-node-memory-management.html: Added.
+        * accessibility/accessibility-node-reparent-expected.txt: Added.
+        * accessibility/accessibility-node-reparent.html: Added.
+        * accessibility/canvas-fallback-content-expected.txt: Added.
+        * accessibility/canvas-fallback-content.html: Added.
+        * platform/gtk/TestExpectations:
+
 2012-08-15  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed GTK gardening.

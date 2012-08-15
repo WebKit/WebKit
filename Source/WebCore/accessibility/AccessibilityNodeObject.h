@@ -81,7 +81,7 @@ public:
 
     virtual void detach();
     virtual void childrenChanged();
-    void updateAccessibilityRole();
+    virtual void updateAccessibilityRole();
 
     virtual LayoutRect elementRect() const;
 

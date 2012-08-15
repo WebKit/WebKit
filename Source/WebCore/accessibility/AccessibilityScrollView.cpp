@@ -160,7 +160,7 @@ AccessibilityObject* AccessibilityScrollView::webAreaObject() const
     if (!doc || !doc->renderer())
         return 0;
 
-    return axObjectCache()->getOrCreate(doc->renderer());
+    return axObjectCache()->getOrCreate(doc);
 }
 
 AccessibilityObject* AccessibilityScrollView::accessibilityHitTest(const IntPoint& point) const
@@ -197,7 +197,7 @@ AccessibilityObject* AccessibilityScrollView::parentObject() const
     
     HTMLFrameOwnerElement* owner = static_cast<FrameView*>(m_scrollView.get())->frame()->ownerElement();
     if (owner && owner->renderer())
-        return axObjectCache()->getOrCreate(owner->renderer());
+        return axObjectCache()->getOrCreate(owner);
 
     return 0;
 }
@@ -209,7 +209,7 @@ AccessibilityObject* AccessibilityScrollView::parentObjectIfExists() const
     
     HTMLFrameOwnerElement* owner = static_cast<FrameView*>(m_scrollView.get())->frame()->ownerElement();
     if (owner && owner->renderer())
-        return axObjectCache()->get(owner->renderer());
+        return axObjectCache()->get(owner);
     
     return 0;
 }

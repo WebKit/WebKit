@@ -557,6 +557,7 @@ public:
 
     virtual void childrenChanged() { }
     virtual void contentChanged() { }
+    virtual void updateAccessibilityRole() { }
     const AccessibilityChildrenVector& children();
     virtual void addChildren() { }
     virtual bool canHaveChildren() const { return true; }

@@ -42,7 +42,7 @@ void FrameSelection::notifyAccessibilityForSelectionChange()
     // FIXME: Support editable text in chromium.
     if (AXObjectCache::accessibilityEnabled() && m_selection.start().isNotNull() && m_selection.end().isNotNull()) {
         Document* document = m_frame->document();
-        document->axObjectCache()->postNotification(m_selection.start().deprecatedNode()->renderer(), AXObjectCache::AXSelectedTextChanged, false);
+        document->axObjectCache()->postNotification(m_selection.start().deprecatedNode(), AXObjectCache::AXSelectedTextChanged, false);
     }
 }
 

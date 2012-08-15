@@ -484,7 +484,7 @@ void HTMLTextFormControlElement::setInnerTextValue(const String& value)
     bool textIsChanged = value != innerTextValue();
     if (textIsChanged || !innerTextElement()->hasChildNodes()) {
         if (textIsChanged && document() && renderer() && AXObjectCache::accessibilityEnabled())
-            document()->axObjectCache()->postNotification(renderer(), AXObjectCache::AXValueChanged, false);
+            document()->axObjectCache()->postNotification(this, AXObjectCache::AXValueChanged, false);
 
         ExceptionCode ec = 0;
         innerTextElement()->setInnerText(value, ec);

@@ -1,3 +1,127 @@
+2012-08-15  Dominic Mazzoni  <dmazzoni@google.com>
+
+        AX: Calls to AXObjectCache should prefer Node over Renderer
+        https://bugs.webkit.org/show_bug.cgi?id=91794
+
+        Reviewed by Chris Fleizach.
+
+        Now that it's possible for nodes inside a canvas subtree to be focused and
+        represent accessible content, accessibility notifications should be triggered
+        with a Node* rather than with a RenderObject* whenever possible.
+
+        Every public API in AXObjectCache that took a RenderObject* before now either
+        takes a Node* instead, or has a parallel method that takes a Node*.
+
+        Tests: accessibility/accessibility-node-memory-management.html
+               accessibility/accessibility-node-reparent.html
+               accessibility/canvas-fallback-content.html
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::focusedImageMapUIElement):
+        (WebCore::AXObjectCache::focusedUIElementForPage):
+        (WebCore::AXObjectCache::get):
+        (WebCore::AXObjectCache::getOrCreate):
+        (WebCore::AXObjectCache::contentChanged):
+        (WebCore):
+        (WebCore::AXObjectCache::updateCacheAfterNodeIsAttached):
+        (WebCore::AXObjectCache::childrenChanged):
+        (WebCore::AXObjectCache::postNotification):
+        (WebCore::AXObjectCache::checkedStateChanged):
+        (WebCore::AXObjectCache::selectedChildrenChanged):
+        (WebCore::AXObjectCache::nodeTextChangeNotification):
+        (WebCore::AXObjectCache::handleAriaExpandedChange):
+        (WebCore::AXObjectCache::handleActiveDescendantChanged):
+        (WebCore::AXObjectCache::handleAriaRoleChanged):
+        (WebCore::AXObjectCache::textMarkerDataForVisiblePosition):
+        (WebCore::AXObjectCache::rootAXEditableElement):
+        (WebCore::AXObjectCache::nodeIsTextControl):
+        * accessibility/AXObjectCache.h:
+        (AXObjectCache):
+        (WebCore::AXObjectCache::setNodeInUse):
+        (WebCore::AXObjectCache::removeNodeForUse):
+        (WebCore::AXObjectCache::isNodeInUse):
+        (WebCore::AXObjectCache::checkedStateChanged):
+        (WebCore::AXObjectCache::childrenChanged):
+        (WebCore::AXObjectCache::contentChanged):
+        (WebCore::AXObjectCache::updateCacheAfterNodeIsAttached):
+        (WebCore::AXObjectCache::handleActiveDescendantChanged):
+        (WebCore::AXObjectCache::handleAriaExpandedChange):
+        (WebCore::AXObjectCache::handleAriaRoleChanged):
+        (WebCore::AXObjectCache::handleFocusedUIElementChanged):
+        (WebCore::AXObjectCache::nodeTextChangeNotification):
+        (WebCore::AXObjectCache::postNotification):
+        (WebCore::AXObjectCache::selectedChildrenChanged):
+        * accessibility/AccessibilityListBoxOption.cpp:
+        (WebCore::AccessibilityListBoxOption::parentObject):
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::appendAccessibilityObject):
+        (WebCore::replacedNodeNeedsCharacter):
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::menuForMenuButton):
+        (WebCore::AccessibilityRenderObject::menuButtonForMenu):
+        (WebCore::AccessibilityRenderObject::checkboxOrRadioRect):
+        (WebCore::AccessibilityRenderObject::addRadioButtonGroupMembers):
+        (WebCore::AccessibilityRenderObject::titleUIElement):
+        (WebCore::AccessibilityRenderObject::isTabItemSelected):
+        (WebCore::AccessibilityRenderObject::accessibilityParentForImageMap):
+        (WebCore::AccessibilityRenderObject::nodeIsTextControl):
+        (WebCore::AccessibilityRenderObject::activeDescendant):
+        (WebCore::AccessibilityRenderObject::correspondingControlForLabelElement):
+        (WebCore::AccessibilityRenderObject::correspondingLabelForControlElement):
+        * accessibility/AccessibilityRenderObject.h:
+        (AccessibilityRenderObject):
+        * accessibility/AccessibilityScrollView.cpp:
+        (WebCore::AccessibilityScrollView::webAreaObject):
+        (WebCore::AccessibilityScrollView::parentObject):
+        (WebCore::AccessibilityScrollView::parentObjectIfExists):
+        * accessibility/chromium/AXObjectCacheChromium.cpp:
+        (WebCore::AXObjectCache::postPlatformNotification):
+        (WebCore::AXObjectCache::handleFocusedUIElementChanged):
+        * accessibility/gtk/AXObjectCacheAtk.cpp:
+        (WebCore::AXObjectCache::handleFocusedUIElementChanged):
+        * accessibility/mac/AXObjectCacheMac.mm:
+        (WebCore::AXObjectCache::handleFocusedUIElementChanged):
+        * accessibility/win/AXObjectCacheWin.cpp:
+        (WebCore::AXObjectCache::handleFocusedUIElementChanged):
+        * bindings/cpp/WebDOMCustomVoidCallback.cpp:
+        (toWebCore):
+        * dom/Document.cpp:
+        (WebCore::Document::setFocusedNode):
+        * dom/Element.cpp:
+        (WebCore::Element::attributeChanged):
+        * dom/Node.cpp:
+        (WebCore::Node::~Node):
+        (WebCore::Node::attach):
+        * editing/AppendNodeCommand.cpp:
+        (WebCore::sendAXTextChangedIgnoringLineBreaks):
+        * editing/DeleteFromTextNodeCommand.cpp:
+        (WebCore::DeleteFromTextNodeCommand::doApply):
+        (WebCore::DeleteFromTextNodeCommand::doUnapply):
+        * editing/Editor.cpp:
+        (WebCore::Editor::respondToChangedContents):
+        (WebCore::Editor::markAndReplaceFor):
+        * editing/InsertIntoTextNodeCommand.cpp:
+        (WebCore::InsertIntoTextNodeCommand::doApply):
+        (WebCore::InsertIntoTextNodeCommand::doUnapply):
+        * editing/InsertNodeBeforeCommand.cpp:
+        (WebCore::InsertNodeBeforeCommand::doApply):
+        (WebCore::InsertNodeBeforeCommand::doUnapply):
+        * editing/chromium/FrameSelectionChromium.cpp:
+        (WebCore::FrameSelection::notifyAccessibilityForSelectionChange):
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::setChecked):
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::childrenChanged):
+        (WebCore::HTMLSelectElement::optionElementChildrenChanged):
+        * html/HTMLTextFormControlElement.cpp:
+        (WebCore::HTMLTextFormControlElement::setInnerTextValue):
+        * html/InputType.cpp:
+        (WebCore::InputType::applyStep):
+        * html/RangeInputType.cpp:
+        (WebCore::RangeInputType::handleKeydownEvent):
+        * page/FocusController.cpp:
+        (WebCore::FocusController::setInitialFocus):
+
 2012-08-15  Andreas Kling  <kling@webkit.org>
 
         NinePieceImage: Avoid unnecessary duplication of default data in assignment operator.

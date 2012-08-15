@@ -378,7 +378,7 @@ void HTMLSelectElement::childrenChanged(bool changedByParser, Node* beforeChange
     HTMLFormControlElementWithState::childrenChanged(changedByParser, beforeChange, afterChange, childCountDelta);
     
     if (AXObjectCache::accessibilityEnabled() && renderer())
-        renderer()->document()->axObjectCache()->childrenChanged(renderer());
+        renderer()->document()->axObjectCache()->childrenChanged(this);
 }
 
 void HTMLSelectElement::optionElementChildrenChanged()
@@ -387,7 +387,7 @@ void HTMLSelectElement::optionElementChildrenChanged()
     setNeedsValidityCheck();
 
     if (AXObjectCache::accessibilityEnabled() && renderer())
-        renderer()->document()->axObjectCache()->childrenChanged(renderer());
+        renderer()->document()->axObjectCache()->childrenChanged(this);
 }
 
 void HTMLSelectElement::accessKeyAction(bool sendMouseEvents)

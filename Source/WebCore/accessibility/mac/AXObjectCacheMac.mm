@@ -139,7 +139,7 @@ void AXObjectCache::frameLoadingEventPlatformNotification(AccessibilityObject*, 
 {
 }
 
-void AXObjectCache::handleFocusedUIElementChanged(RenderObject*, RenderObject*)
+void AXObjectCache::handleFocusedUIElementChanged(Node*, Node*)
 {
     wkAccessibilityHandleFocusChanged();
 }

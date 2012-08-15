@@ -3858,17 +3858,8 @@ bool Document::setFocusedNode(PassRefPtr<Node> prpNewFocusedNode)
     }
 
 #if PLATFORM(MAC) || PLATFORM(WIN) || PLATFORM(GTK) || PLATFORM(CHROMIUM)
-    if (!focusChangeBlocked && m_focusedNode && AXObjectCache::accessibilityEnabled()) {
-        RenderObject* oldFocusedRenderer = 0;
-        RenderObject* newFocusedRenderer = 0;
-
-        if (oldFocusedNode)
-            oldFocusedRenderer = oldFocusedNode->renderer();
-        if (newFocusedNode)
-            newFocusedRenderer = newFocusedNode->renderer();
-
-        axObjectCache()->handleFocusedUIElementChanged(oldFocusedRenderer, newFocusedRenderer);
-    }
+    if (!focusChangeBlocked && m_focusedNode && AXObjectCache::accessibilityEnabled())
+        axObjectCache()->handleFocusedUIElementChanged(oldFocusedNode.get(), newFocusedNode.get());
 #endif
     if (!focusChangeBlocked)
         page()->chrome()->focusedNodeChanged(m_focusedNode.get());

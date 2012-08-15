@@ -384,7 +384,7 @@ static void appendAccessibilityObject(AccessibilityObject* object, Accessibility
         if (!doc || !doc->renderer())
             return;
         
-        object = object->axObjectCache()->getOrCreate(doc->renderer());
+        object = object->axObjectCache()->getOrCreate(doc);
     }
 
     if (object)
@@ -779,7 +779,7 @@ static bool replacedNodeNeedsCharacter(Node* replacedNode)
         return false;
 
     // create an AX object, but skip it if it is not supposed to be seen
-    AccessibilityObject* object = replacedNode->renderer()->document()->axObjectCache()->getOrCreate(replacedNode->renderer());
+    AccessibilityObject* object = replacedNode->renderer()->document()->axObjectCache()->getOrCreate(replacedNode);
     if (object->accessibilityIsIgnored())
         return false;
 

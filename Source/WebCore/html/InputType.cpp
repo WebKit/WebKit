@@ -968,7 +968,7 @@ void InputType::applyStep(int count, AnyStepHandling anyStepHandling, TextFieldE
     setValueAsDecimal(newValue, eventBehavior, ec);
 
     if (AXObjectCache::accessibilityEnabled())
-         element()->document()->axObjectCache()->postNotification(element()->renderer(), AXObjectCache::AXValueChanged, true);
+         element()->document()->axObjectCache()->postNotification(element(), AXObjectCache::AXValueChanged, true);
 }
 
 bool InputType::getAllowedValueStep(Decimal* step) const

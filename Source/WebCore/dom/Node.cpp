@@ -414,7 +414,7 @@ Node::~Node()
 
     Document* doc = m_document;
     if (AXObjectCache::accessibilityEnabled() && doc && doc->axObjectCacheExists())
-        doc->axObjectCache()->removeNodeForUse(this);
+        doc->axObjectCache()->remove(this);
     
     if (m_previous)
         m_previous->setNextSibling(0);
@@ -1283,6 +1283,10 @@ void Node::attach()
 
     setAttached();
     clearNeedsStyleRecalc();
+
+    Document* doc = m_document;
+    if (AXObjectCache::accessibilityEnabled() && doc && doc->axObjectCacheExists())
+        doc->axObjectCache()->updateCacheAfterNodeIsAttached(this);
 }
 
 #ifndef NDEBUG
