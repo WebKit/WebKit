@@ -1106,7 +1106,9 @@ _llint_op_get_by_val:
     sxi2p t1, t1
     loadp JSCell::m_structure[t0], t3
     loadp 32[PB, PC, 8], t2
-    storep t3, ArrayProfile::m_lastSeenStructure[t2]
+    if VALUE_PROFILER
+        storep t3, ArrayProfile::m_lastSeenStructure[t2]
+    end
     loadp CodeBlock[cfr], t2
     loadp CodeBlock::m_globalData[t2], t2
     loadp JSGlobalData::jsArrayClassInfo[t2], t2
@@ -1189,7 +1191,9 @@ _llint_op_put_by_val:
     sxi2p t2, t2
     loadp JSCell::m_structure[t1], t3
     loadp 32[PB, PC, 8], t0
-    storep t3, ArrayProfile::m_lastSeenStructure[t0]
+    if VALUE_PROFILER
+        storep t3, ArrayProfile::m_lastSeenStructure[t0]
+    end
     loadp CodeBlock[cfr], t0
     loadp CodeBlock::m_globalData[t0], t0
     loadp JSGlobalData::jsArrayClassInfo[t0], t0

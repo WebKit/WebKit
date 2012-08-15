@@ -1,3 +1,18 @@
+2012-08-14  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, build fix for !ENABLE(DFG_JIT)
+
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emit_op_get_by_val):
+        (JSC::JIT::emit_op_put_by_val):
+        (JSC::JIT::privateCompilePatchGetArrayLength):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::emit_op_get_by_val):
+        (JSC::JIT::emit_op_put_by_val):
+        (JSC::JIT::privateCompilePatchGetArrayLength):
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+
 2012-08-13  Filip Pizlo  <fpizlo@apple.com>
 
         Array checks should use the structure, not the class info

@@ -111,7 +111,9 @@ void JIT::emit_op_get_by_val(Instruction* currentInstruction)
 
     emitJumpSlowCaseIfNotJSCell(regT0, base);
     loadPtr(Address(regT0, JSCell::structureOffset()), regT2);
+#if ENABLE(VALUE_PROFILER)
     storePtr(regT2, currentInstruction[4].u.arrayProfile->addressOfLastSeenStructure());
+#endif
     addSlowCase(branchPtr(NotEqual, Address(regT2, Structure::classInfoOffset()), TrustedImmPtr(&JSArray::s_info)));
 
     loadPtr(Address(regT0, JSArray::storageOffset()), regT2);
@@ -234,7 +236,9 @@ void JIT::emit_op_put_by_val(Instruction* currentInstruction)
     zeroExtend32ToPtr(regT1, regT1);
     emitJumpSlowCaseIfNotJSCell(regT0, base);
     loadPtr(Address(regT0, JSCell::structureOffset()), regT2);
+#if ENABLE(VALUE_PROFILER)
     storePtr(regT2, currentInstruction[4].u.arrayProfile->addressOfLastSeenStructure());
+#endif
     addSlowCase(branchPtr(NotEqual, Address(regT2, Structure::classInfoOffset()), TrustedImmPtr(&JSArray::s_info)));
     addSlowCase(branch32(AboveOrEqual, regT1, Address(regT0, JSArray::vectorLengthOffset())));
 
@@ -650,7 +654,9 @@ void JIT::privateCompilePatchGetArrayLength(ReturnAddressPtr returnAddress)
 
     // Check eax is an array
     loadPtr(Address(regT0, JSCell::structureOffset()), regT3);
+#if ENABLE(VALUE_PROFILER)
     storePtr(regT3, m_codeBlock->getOrAddArrayProfile(stubInfo->bytecodeIndex)->addressOfLastSeenStructure());
+#endif
     Jump failureCases1 = branchPtr(NotEqual, Address(regT3, Structure::classInfoOffset()), TrustedImmPtr(&JSArray::s_info));
 
     // Checks out okay! - get the length from the storage
