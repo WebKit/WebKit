@@ -2686,9 +2686,9 @@ SET(WebCoreTestSupport_IDL_INCLUDES
 )
 
 SET(WebCoreTestSupport_IDL_FILES
-    testing/FastMallocStatistics.idl
     testing/Internals.idl
     testing/InternalSettings.idl
+    testing/MallocStatistics.idl
 )
 
 SET(WebCoreTestSupport_SOURCES

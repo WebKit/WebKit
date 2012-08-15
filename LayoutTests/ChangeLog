@@ -1,3 +1,12 @@
+2012-08-15  Scott Graham  <scottmg@chromium.org>
+
+        Rename window.internals.fastMallocStatistics to mallocStatistics
+        https://bugs.webkit.org/show_bug.cgi?id=94033
+
+        Reviewed by Adam Barth.
+
+        * fast/harness/fastmallocstatistics-object.html:
+
 2012-08-15  Ojan Vafai  <ojan@chromium.org>
 
         Update expectations to match the bots. This test hasn't timed out in over 500 runs.

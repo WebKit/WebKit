@@ -123,7 +123,7 @@ stdev 15000 bytes
 min 811000 bytes
 max 848000 bytes
 
-FastMalloc:
+Malloc:
 avg 532000 bytes
 median 529000 bytes
 stdev 13000 bytes
@@ -274,13 +274,13 @@ max 548000 bytes
             'median= 1101.0 ms, stdev= 11.0 ms, min= 1080.0 ms, max= 1120.0 ms',
             'RESULT Parser: memory-test: JSHeap= 832000.0 bytes',
             'median= 829000.0 bytes, stdev= 15000.0 bytes, min= 811000.0 bytes, max= 848000.0 bytes',
-            'RESULT Parser: memory-test: FastMalloc= 532000.0 bytes',
+            'RESULT Parser: memory-test: Malloc= 532000.0 bytes',
             'median= 529000.0 bytes, stdev= 13000.0 bytes, min= 511000.0 bytes, max= 548000.0 bytes',
             '', '']))
         results = runner.load_output_json()[0]['results']
         self.assertEqual(results['Parser/memory-test'], {'min': 1080.0, 'max': 1120.0, 'median': 1101.0, 'stdev': 11.0, 'avg': 1100.0, 'unit': 'ms'})
         self.assertEqual(results['Parser/memory-test:JSHeap'], {'min': 811000.0, 'max': 848000.0, 'median': 829000.0, 'stdev': 15000.0, 'avg': 832000.0, 'unit': 'bytes'})
-        self.assertEqual(results['Parser/memory-test:FastMalloc'], {'min': 511000.0, 'max': 548000.0, 'median': 529000.0, 'stdev': 13000.0, 'avg': 532000.0, 'unit': 'bytes'})
+        self.assertEqual(results['Parser/memory-test:Malloc'], {'min': 511000.0, 'max': 548000.0, 'median': 529000.0, 'stdev': 13000.0, 'avg': 532000.0, 'unit': 'bytes'})
 
     def _test_run_with_json_output(self, runner, filesystem, upload_suceeds=True, expected_exit_code=0):
         filesystem.write_text_file(runner._base_path + '/inspector/pass.html', 'some content')

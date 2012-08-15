@@ -185,7 +185,7 @@ module window {
         void registerURLSchemeAsBypassingContentSecurityPolicy(in DOMString scheme);
         void removeURLSchemeRegisteredAsBypassingContentSecurityPolicy(in DOMString scheme);
 
-        FastMallocStatistics fastMallocStatistics();
+        MallocStatistics mallocStatistics();
     };
 }
 

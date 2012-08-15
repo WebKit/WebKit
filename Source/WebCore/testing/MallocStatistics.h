@@ -23,8 +23,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef FastMallocStatistics_h
-#define FastMallocStatistics_h
+#ifndef MallocStatistics_h
+#define MallocStatistics_h
 
 #include <wtf/FastMalloc.h>
 #include <wtf/PassRefPtr.h>
@@ -32,16 +32,16 @@
 
 namespace WebCore {
 
-class FastMallocStatistics : public RefCounted<FastMallocStatistics> {
+class MallocStatistics : public RefCounted<MallocStatistics> {
 public:
-    static PassRefPtr<FastMallocStatistics> create() { return adoptRef(new FastMallocStatistics()); }
+    static PassRefPtr<MallocStatistics> create() { return adoptRef(new MallocStatistics()); }
 
     size_t reservedVMBytes() const { return m_stats.reservedVMBytes; }
     size_t committedVMBytes() const { return m_stats.committedVMBytes; }
     size_t freeListBytes() const { return m_stats.freeListBytes; }
 
 private:
-    FastMallocStatistics()
+    MallocStatistics()
     {
         m_stats = WTF::fastMallocStatistics();
     }

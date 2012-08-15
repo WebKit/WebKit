@@ -130,7 +130,7 @@ PerfTestRunner._runLoop = function () {
         this.logStatistics(this._results, this.unit, "Time:");
         if (this._jsHeapResults.length) {
             this.logStatistics(this._jsHeapResults, "bytes", "JS Heap:");
-            this.logStatistics(this._fastMallocHeapResults, "bytes", "FastMalloc:");
+            this.logStatistics(this._mallocHeapResults, "bytes", "Malloc:");
         }
         if (this._logLines) {
             var logLines = this._logLines;
@@ -168,11 +168,11 @@ PerfTestRunner.storeHeapResults = function() {
     if (!window.internals)
         return;
     this._jsHeapResults.push(this.getUsedJSHeap());
-    this._fastMallocHeapResults.push(this.getUsedFastMallocHeap());
+    this._mallocHeapResults.push(this.getUsedMallocHeap());
 }
 
-PerfTestRunner.getUsedFastMallocHeap = function() {
-    var stats = window.internals.fastMallocStatistics();
+PerfTestRunner.getUsedMallocHeap = function() {
+    var stats = window.internals.mallocStatistics();
     return stats.committedVMBytes - stats.freeListBytes;
 }
 
@@ -186,8 +186,8 @@ PerfTestRunner.getAndPrintMemoryStatistics = function() {
     var jsMemoryStats = PerfTestRunner.computeStatistics([PerfTestRunner.getUsedJSHeap()], "bytes");
     PerfTestRunner.printStatistics(jsMemoryStats, "JS Heap:");
 
-    var fastMallocMemoryStats = PerfTestRunner.computeStatistics([PerfTestRunner.getUsedFastMallocHeap()], "bytes");
-    PerfTestRunner.printStatistics(fastMallocMemoryStats, "FastMalloc:");
+    var mallocMemoryStats = PerfTestRunner.computeStatistics([PerfTestRunner.getUsedMallocHeap()], "bytes");
+    PerfTestRunner.printStatistics(mallocMemoryStats, "Malloc:");
 }
 
 PerfTestRunner.ignoreWarmUpAndLog = function (result) {
@@ -208,7 +208,7 @@ PerfTestRunner.initAndStartLoop = function() {
     this.customRunFunction = null;
     this._results = [];
     this._jsHeapResults = [];
-    this._fastMallocHeapResults = [];
+    this._mallocHeapResults = [];
     this._logLines = window.testRunner ? [] : null;
     this.log("Running " + this._runCount + " times");
     this._runLoop();

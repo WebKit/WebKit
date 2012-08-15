@@ -1,3 +1,37 @@
+2012-08-15  Scott Graham  <scottmg@chromium.org>
+
+        Rename window.internals.fastMallocStatistics to mallocStatistics
+        https://bugs.webkit.org/show_bug.cgi?id=94033
+
+        Reviewed by Adam Barth.
+
+        Mechanical rename. In preparation for plumbing allocation information
+        from allocators that aren't "fastMalloc".
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * DerivedSources.pri:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gyp/WebCore.gyp:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCoreTestSupport.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * loader/DocumentLoader.h:
+        (WebCore::DocumentLoader::didTellClientAboutLoad):
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::loadResource):
+        * testing/FastMallocStatistics.h: Removed.
+        * testing/FastMallocStatistics.idl: Removed.
+        * testing/Internals.cpp:
+        (WebCore::Internals::mallocStatistics):
+        * testing/Internals.h:
+        (WebCore):
+        (Internals):
+        * testing/Internals.idl:
+        * testing/MallocStatistics.h: Added.
+        * testing/MallocStatistics.idl: Added.
+
 2012-08-15  Joshua Netterfield  <jnetterfield@rim.com>
 
         [BlackBerry] Upstream BlackBerry build fixes

@@ -26,7 +26,7 @@
 module window {
     interface [
         OmitConstructor
-    ] FastMallocStatistics {
+    ] MallocStatistics {
         readonly attribute unsigned long reservedVMBytes;
         readonly attribute unsigned long committedVMBytes;
         readonly attribute unsigned long freeListBytes;

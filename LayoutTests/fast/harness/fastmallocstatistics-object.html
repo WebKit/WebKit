@@ -5,7 +5,7 @@
 <script type="text/javascript">
 shouldBeDefined(window.internals);
 
-var stats = window.internals.fastMallocStatistics();
+var stats = window.internals.mallocStatistics();
 shouldBeDefined(stats);
 shouldBeGreaterThanOrEqual("stats.reservedVMBytes", "0");
 shouldBeGreaterThanOrEqual("stats.committedVMBytes", "0");

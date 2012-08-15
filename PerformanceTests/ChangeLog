@@ -1,3 +1,16 @@
+2012-08-15  Scott Graham  <scottmg@chromium.org>
+
+        Rename window.internals.fastMallocStatistics to mallocStatistics
+        https://bugs.webkit.org/show_bug.cgi?id=94033
+
+        Reviewed by Adam Barth.
+
+        * resources/runner.js:
+        (PerfTestRunner.storeHeapResults):
+        (PerfTestRunner.getUsedMallocHeap):
+        (PerfTestRunner.getAndPrintMemoryStatistics):
+        (PerfTestRunner.initAndStartLoop):
+
 2012-08-10  Ryosuke Niwa  <rniwa@webkit.org>
 
         Unreviewed; fix an insanely silly typo.

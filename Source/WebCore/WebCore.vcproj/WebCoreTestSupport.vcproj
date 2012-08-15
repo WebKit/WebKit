@@ -348,7 +348,7 @@
 			Name="DerivedSources"
 			>
 			<File
-				RelativePath="$(ConfigurationBuildDir)\obj\WebCore\DerivedSources\JSFastMallocStatistics.cpp"
+				RelativePath="$(ConfigurationBuildDir)\obj\WebCore\DerivedSources\JSMallocStatistics.cpp"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
@@ -412,7 +412,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="$(ConfigurationBuildDir)\obj\WebCore\DerivedSources\JSFastMallocStatistics.h"
+				RelativePath="$(ConfigurationBuildDir)\obj\WebCore\DerivedSources\JSMallocStatistics.h"
 				>
 			</File>
 			<File
@@ -556,7 +556,7 @@
 			Name="testing"
 			>
 			<File
-				RelativePath="..\testing\FastMallocStatistics.h"
+				RelativePath="..\testing\MallocStatistics.h"
 				>
 			</File>
 			<File

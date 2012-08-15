@@ -1,5 +1,5 @@
 PASS [object Internals] is defined.
-PASS [object FastMallocStatistics] is defined.
+PASS [object MallocStatistics] is defined.
 PASS stats.reservedVMBytes is >= 0
 PASS stats.committedVMBytes is >= 0
 PASS stats.freeListBytes is >= 0
