@@ -1,3 +1,20 @@
+2012-08-15  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed gardening after r125659.
+
+        * platform/qt/Skipped: Skip new tests because of disabled SHADOW_DOM
+        * platform/qt/fast/dom/HTMLMeterElement/meter-boundary-values-expected.png:
+        * platform/qt/fast/dom/HTMLMeterElement/meter-boundary-values-expected.txt:
+        * platform/qt/fast/dom/HTMLMeterElement/meter-element-expected.txt: Added.
+        * platform/qt/fast/dom/HTMLMeterElement/meter-element-repaint-on-update-value-expected.txt: Added.
+        * platform/qt/fast/dom/HTMLMeterElement/meter-optimums-expected.png:
+        * platform/qt/fast/dom/HTMLMeterElement/meter-optimums-expected.txt:
+        * platform/qt/fast/dom/HTMLMeterElement/meter-styles-changing-pseudo-expected.png:
+        * platform/qt/fast/dom/HTMLMeterElement/meter-styles-changing-pseudo-expected.txt:
+        * platform/qt/fast/dom/HTMLMeterElement/meter-styles-expected.png:
+        * platform/qt/fast/dom/HTMLMeterElement/meter-styles-expected.txt:
+        * platform/qt/fast/dom/HTMLMeterElement/meter-writing-mode-expected.txt:
+
 2012-08-15  Thiago Marcos P. Santos  <thiago.santos@intel.com>
 
         Relative units are not set when the canvas has not parent

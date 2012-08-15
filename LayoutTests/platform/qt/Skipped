@@ -272,6 +272,12 @@ fast/dom/shadow/input-with-validation-without-shadow.html
 fast/dom/shadow/shadowdom-for-form-associated-element-useragent.html
 fast/dom/shadow/suppress-mutation-events-in-shadow-characterdata.html
 fast/dom/shadow/select-image-with-shadow.html
+fast/dom/shadow/shadowdom-for-meter-dynamic.html
+fast/dom/shadow/shadowdom-for-meter-multiple.html
+fast/dom/shadow/shadowdom-for-meter-with-style.html
+fast/dom/shadow/shadowdom-for-meter-without-appearance.html
+fast/dom/shadow/shadowdom-for-meter-without-shadow-element.html
+fast/dom/shadow/shadowdom-for-meter.html
 
 # Fail until SUBPIXEL_LAYOUT is enabled
 # https://bugs.webkit.org/show_bug.cgi?id=85532
