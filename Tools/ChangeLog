@@ -1,3 +1,32 @@
+2012-08-14  Gustavo Noronha Silva  <gns@gnome.org>
+
+        [jhbuild] move md5sum checking to update-webkit-libs-jhbuild
+        https://bugs.webkit.org/show_bug.cgi?id=93208
+
+        Reviewed by Martin Robinson.
+
+        This change makes the md5sum check and saving be done by the script
+        that performs the dependencies update. build-webkit no longer prefixes
+        calls to commands with jhbuild-wrapper if jhbuild has not been
+        bootstrapped by the developer and --update-gtk is not given.
+
+        * Scripts/update-webkit-libs-jhbuild:
+        (getMD5HashForFile): moved from webkitdirs.
+        (jhbuildConfigurationChanged): ditto.
+        (saveJhbuildMd5): ditto.
+        (cleanJhbuild): ditto, and changed to run jhbuild clean before removing
+        jhbuild.
+        * Scripts/webkitdirs.pm:
+        (runAutogenForAutotoolsProjectIfNecessary): use jhbuildWrapperPrefixIfNeeded.
+        (buildAutotoolsProject): ditto.
+        (jhbuildWrapperPrefixIfNeeded): add a code branch for GTK+.
+        (generateBuildSystemFromCMakeProject): call update-webkitefl-libs
+        unconditionally for EFL.
+        * jhbuild/jhbuild-wrapper:
+        (update_webkit_libs_jhbuild): removed, jhbuild-wrapper no longer runs the
+        update script itself
+        (ensure_jhbuild): remove update call.
+
 2012-08-15  Christophe Dumez  <christophe.dumez@intel.com>
 
         [WK2] Add support for Web Intents MessagePorts

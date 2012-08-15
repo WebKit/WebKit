@@ -90,13 +90,6 @@ def install_jhbuild():
         raise Exception('jhbuild configure failed with return code: %i' % process.returncode)
 
 
-def update_webkit_libs_jhbuild(platform):
-    process = subprocess.Popen([jhbuildutils.top_level_path('Tools', 'Scripts', 'update-webkit-libs-jhbuild'), '--' + platform])
-    process.wait()
-    if process.returncode != 0:
-        raise Exception('jhbuild configure failed with return code: %i' % process.returncode)
-
-
 def determine_platform():
     if '--efl' in sys.argv:
         return "efl";
@@ -110,7 +103,6 @@ def ensure_jhbuild(platform):
         clone_jhbuild()
         update_jhbuild()
         install_jhbuild()
-        update_webkit_libs_jhbuild(platform)
     elif not jhbuild_installed() \
             or not jhbuild_at_expected_revision():
         update_jhbuild()

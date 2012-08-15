@@ -41,6 +41,56 @@ if (!$getOptionsResult) {
     }
 }
 
+sub getMD5HashForFile($)
+{
+    my $file = shift;
+
+    open(FILE_CONTENTS, $file);
+
+    my $contents = "";
+    while (<FILE_CONTENTS>) {
+        $contents .= $_;
+    }
+
+    close(FILE_CONTENTS);
+
+    return md5_hex($contents);
+}
+
+sub jhbuildConfigurationChanged()
+{
+    foreach my $file (qw(jhbuildrc jhbuild.modules)) {
+        my $path = join('/', getJhbuildPath(), $file . '.md5sum');
+        if (! -e $path) {
+            return 1;
+        }
+
+        # Get the md5 sum of the file we're testing, look in the right platform directory.
+        my $actualFile = join('/', sourceDir(), 'Tools', $platform, $file);
+        my $currentSum = getMD5HashForFile($actualFile);
+
+        # Get our previous record.
+        open(PREVIOUS_MD5, $path);
+        chomp(my $previousSum = <PREVIOUS_MD5>);
+        close(PREVIOUS_MD5);
+
+        if ($previousSum ne $currentSum) {
+            return 1;
+        }
+    }
+}
+
+sub saveJhbuildMd5() {
+    # Save md5sum for jhbuild-related files.saveJhbuildMd5();
+    foreach my $file (qw(jhbuildrc jhbuild.modules)) {
+        my $source = join('/', sourceDir(), "Tools", $platform, $file);
+        my $destination = join('/', getJhbuildPath(), $file);
+        open(SUM, ">$destination" . ".md5sum");
+        print SUM getMD5HashForFile($source);
+        close(SUM);
+    }
+}
+
 sub runJhbuild
 {
     my $command = shift;
@@ -49,10 +99,30 @@ sub runJhbuild
     system(@jhbuildArgs) == 0 or die "Running jhbuild-wrapper " . $command . " failed.\n";
 }
 
+sub cleanJhbuild()
+{
+    runJhbuild("clean");
+
+    # If the configuration changed, dependencies may have been removed.
+    # Since we lack a granular way of uninstalling those we wipe out the
+    # jhbuild root and start from scratch.
+    my $jhbuildPath = getJhbuildPath();
+    if (system("rm -rf $jhbuildPath/Root") ne 0) {
+        die "Cleaning jhbuild root failed!";
+    }
+}
+
 delete $ENV{AR_FLAGS} if exists $ENV{AR_FLAGS};
 
 chdir(relativeScriptsDir() . "/../jhbuild") or die $!;
 
 my %prettyPlatform = ( "efl" => "EFL", "gtk" => "GTK+" );
+
+if (-e getJhbuildPath() && jhbuildConfigurationChanged()) {
+    cleanJhbuild();
+}
+
 print "Updating " . $prettyPlatform{$platform} . " port dependencies using jhbuild...\n";
 runJhbuild("build");
+
+saveJhbuildMd5();
