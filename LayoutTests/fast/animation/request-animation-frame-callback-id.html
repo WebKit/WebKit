@@ -1,0 +1,22 @@
+<script>
+if (window.testRunner) {
+    window.testRunner.dumpAsText();
+    window.testRunner.waitUntilDone();
+}
+
+function runTest() {
+    var id = window.webkitRequestAnimationFrame(function () {});
+    var results = document.getElementById("results");
+
+    if (id > 0)
+        results.innerText = "PASSED: Callback id was > 0";
+    else
+        results.innerText = "FAILED: Callback id was <= 0";
+
+    if (window.testRunner)
+        window.testRunner.notifyDone();
+}
+
+window.addEventListener("load", runTest, false);
+</script>
+<div id="results"></div>

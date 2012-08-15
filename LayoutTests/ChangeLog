@@ -1,3 +1,13 @@
+2012-08-14  Dean Jackson  <dino@apple.com>
+
+        Initial call to webkitRequestAnimationFrame returns 0, Spec indicates the handle should always be > 0
+        https://bugs.webkit.org/show_bug.cgi?id=85819
+
+        Reviewed by James Robinson.
+
+        * fast/animation/request-animation-frame-callback-id-expected.txt: Added.
+        * fast/animation/request-animation-frame-callback-id.html: Added.
+
 2012-08-14  Chris Evans  <cevans@google.com>
 
         Handle the XPath / (root) operator correctly for nodes that aren't attached to the document.

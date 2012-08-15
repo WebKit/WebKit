@@ -83,7 +83,7 @@ void ScriptedAnimationController::resume()
 
 ScriptedAnimationController::CallbackId ScriptedAnimationController::registerCallback(PassRefPtr<RequestAnimationFrameCallback> callback)
 {
-    ScriptedAnimationController::CallbackId id = m_nextCallbackId++;
+    ScriptedAnimationController::CallbackId id = ++m_nextCallbackId;
     callback->m_firedOrCancelled = false;
     callback->m_id = id;
     m_callbacks.append(callback);

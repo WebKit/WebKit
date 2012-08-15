@@ -1,3 +1,18 @@
+2012-08-14  Dean Jackson  <dino@apple.com>
+
+        Initial call to webkitRequestAnimationFrame returns 0, Spec indicates the handle should always be > 0
+        https://bugs.webkit.org/show_bug.cgi?id=85819
+
+        Reviewed by James Robinson.
+
+        The callback id returned by requestAnimationFrame was beginning at zero, when the spec
+        says it should be above one. Use a pre-increment rather than a post-increment.
+
+        Test: fast/animation/request-animation-frame-callback-id.html
+
+        * dom/ScriptedAnimationController.cpp:
+        (WebCore::ScriptedAnimationController::registerCallback): Pre-increment rather than post-increment.
+
 2012-08-14  Levi Weintraub  <leviw@chromium.org>
 
         r125591 broke tests with SUBPIXEL_LAYOUT disabled
