@@ -2806,7 +2806,7 @@ BUGWK76727 : fast/multicol/span/span-as-immediate-columns-child-removal.html = I
 // Need to implement file name logging.
 BUGWK76572 : http/tests/download = TEXT
 
-BUGABARTH : fast/html/marquee-alternate.html = PASS TEXT
+BUGWK94130 : fast/html/marquee-alternate.html = PASS TEXT
 
 BUGWK77314 WIN MAC : fast/events/touch/send-oncancel-event.html = PASS TEXT
 

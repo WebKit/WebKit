@@ -1,3 +1,9 @@
+2012-08-15  Adam Barth  <abarth@webkit.org>
+
+        Update TestExpectations entry to refer to an actual bug.
+
+        * platform/chromium/TestExpectations:
+
 2012-08-15  Arpita Bahuguna  <arpitabahuguna@gmail.com>
 
         There is additional space not belonged to a table between the table cells
