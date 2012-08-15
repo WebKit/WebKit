@@ -103,7 +103,7 @@ void AccessibilityObject::setWrapper(AccessibilityObjectWrapper* wrapper)
 bool AccessibilityObject::allowsTextRanges() const
 {
     // Check type for the AccessibilityObject.
-    if (isTextControl() || isWebArea() || isGroup() || isLink() || isHeading() || isListItem())
+    if (isTextControl() || isWebArea() || isGroup() || isLink() || isHeading() || isListItem() || isTableCell())
         return true;
 
     // Check roles as the last fallback mechanism.

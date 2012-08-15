@@ -1,5 +1,17 @@
 2012-08-15  Joanmarie Diggs  <jdiggs@igalia.com>
 
+        [Gtk] atk_text_set_caret_offset() fails for table cells
+        https://bugs.webkit.org/show_bug.cgi?id=83501
+
+        Reviewed by Chris Fleizach.
+
+        Update unit test to include setting the caret in a table cell via the AtkText interface.
+
+        * tests/testatk.c:
+        (testWebkitAtkCaretOffsets): Add setting the caret inside the text of a table cell.
+
+2012-08-15  Joanmarie Diggs  <jdiggs@igalia.com>
+
         [Gtk] atk_text_get_text_at_offset() fails to provide the correct line for paragraphs in list items whose text wraps
         https://bugs.webkit.org/show_bug.cgi?id=83435
 

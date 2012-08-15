@@ -65,7 +65,7 @@ static const char* linksWithInlineImages = "<html><head><style>a.http:before {co
 
 static const char* listsOfItems = "<html><body><ul><li>text only</li><li><a href='foo'>link only</a></li><li>text and a <a href='bar'>link</a></li></ul><ol><li>text only</li><li><a href='foo'>link only</a></li><li>text and a <a href='bar'>link</a></li></ol></body></html>";
 
-static const char* textForCaretBrowsing = "<html><body><h1>A text header</h1><p>A paragraph <a href='http://foo.bar.baz/'>with a link</a> in the middle</p><ol><li>A list item</li></ol><select><option selected value='foo'>An option in a combo box</option></select><input type='text'' name='foo'' value='foo bar baz' /></body></html>";
+static const char* textForCaretBrowsing = "<html><body><h1>A text header</h1><p>A paragraph <a href='http://foo.bar.baz/'>with a link</a> in the middle</p><ol><li>A list item</li></ol><select><option selected value='foo'>An option in a combo box</option></select><input type='text'' name='foo'' value='foo bar baz' /><table><tr><td>a table cell</td></tr></table></body></html>";
 
 static const char* textForSelections = "<html><body><p>A paragraph with plain text</p><p>A paragraph with <a href='http://webkit.org'>a link</a> in the middle</p><ol><li>A list item</li></ol><select></body></html>";
 
@@ -389,6 +389,23 @@ static void testWebkitAtkCaretOffsets()
     offset = atk_text_get_caret_offset(ATK_TEXT(textEntry));
     g_assert_cmpint(offset, ==, 5);
 
+    AtkObject* table = atk_object_ref_accessible_child(object, 4);
+    g_assert(ATK_IS_OBJECT(table));
+    g_assert(atk_object_get_role(table) == ATK_ROLE_TABLE);
+    g_assert_cmpint(atk_object_get_n_accessible_children(table), ==, 1);
+
+    AtkObject* tableCell = atk_object_ref_accessible_child(table, 0);
+    g_assert(ATK_IS_TEXT(tableCell));
+    g_assert(atk_object_get_role(tableCell) == ATK_ROLE_TABLE_CELL);
+    text = atk_text_get_text(ATK_TEXT(tableCell), 0, -1);
+    g_assert_cmpstr(text, ==, "a table cell");
+    g_free(text);
+
+    result = atk_text_set_caret_offset(ATK_TEXT(tableCell), 2);
+    g_assert_cmpint(result, ==, TRUE);
+    offset = atk_text_get_caret_offset(ATK_TEXT(tableCell));
+    g_assert_cmpint(offset, ==, 2);
+
     g_free(textCaretMovedResult);
 
     g_object_unref(header);
@@ -401,6 +418,8 @@ static void testWebkitAtkCaretOffsets()
     g_object_unref(menuPopup);
     g_object_unref(comboBoxOption);
     g_object_unref(textEntry);
+    g_object_unref(table);
+    g_object_unref(tableCell);
     g_object_unref(webView);
 }
 

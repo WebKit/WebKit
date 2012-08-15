@@ -1,3 +1,16 @@
+2012-08-15  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        [Gtk] atk_text_set_caret_offset() fails for table cells
+        https://bugs.webkit.org/show_bug.cgi?id=83501
+
+        Reviewed by Chris Fleizach.
+
+        Allow using text ranges in accessible table cells.
+
+        * accessibility/gtk/AccessibilityObjectAtk.cpp:
+        (WebCore::AccessibilityObject::allowsTextRanges):
+        Add table cells to the list of accessibility objects supporting text ranges.
+
 2012-08-15  Scott Graham  <scottmg@chromium.org>
 
         Rename window.internals.fastMallocStatistics to mallocStatistics
