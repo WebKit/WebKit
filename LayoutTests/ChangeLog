@@ -1,3 +1,9 @@
+2012-08-15  Yuta Kitamura  <yutak@google.com>
+
+        [Chromium] Unreviewed. Add one more flaky test to test expectations.
+
+        * platform/chromium/TestExpectations:
+
 2012-08-14  Andrey Kosyakov  <caseq@chromium.org>
 
         Web Inspector: Calling getEventListeners() on element with malformed javascript event listeners crashes
