@@ -46,6 +46,8 @@ public:
     static PassRefPtr<SubresourceLoader> create(Frame*, CachedResource*, const ResourceRequest&, const ResourceLoaderOptions&);
 
     void cancelIfNotFinishing();
+    virtual bool isSubresourceLoader();
+    CachedResource* cachedResource();
 
     virtual void reportMemoryUsage(MemoryObjectInfo*) const OVERRIDE;
 

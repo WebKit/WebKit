@@ -214,6 +214,11 @@ void ResourceLoader::clearResourceData()
         m_resourceData->clear();
 }
 
+bool ResourceLoader::isSubresourceLoader()
+{
+    return false;
+}
+
 void ResourceLoader::willSendRequest(ResourceRequest& request, const ResourceResponse& redirectResponse)
 {
     // Protect this in this delegate method since the additional processing can do

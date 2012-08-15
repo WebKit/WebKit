@@ -249,7 +249,7 @@ void DocumentThreadableLoader::didReceiveResponse(unsigned long identifier, cons
     if (m_preflightRequestIdentifier) {
         DocumentLoader* loader = m_document->frame()->loader()->documentLoader();
         InspectorInstrumentationCookie cookie = InspectorInstrumentation::willReceiveResourceResponse(m_document->frame(), m_preflightRequestIdentifier, response);
-        InspectorInstrumentation::didReceiveResourceResponse(cookie, m_preflightRequestIdentifier, loader, response);
+        InspectorInstrumentation::didReceiveResourceResponse(cookie, m_preflightRequestIdentifier, loader, response, 0);
     }
 #endif
 

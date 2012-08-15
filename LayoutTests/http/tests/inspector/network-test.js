@@ -27,6 +27,11 @@ InspectorTest.resetInspectorResourcesData = function(callback)
 
 function doXHR(method, url, async, callback)
 {
+    doXHRWithPayload(method, url, async, null, callback);
+}
+
+function doXHRWithPayload(method, url, async, payload, callback)
+{
     var xhr = new XMLHttpRequest();
     xhr.onreadystatechange = function()
     {
@@ -34,9 +39,9 @@ function doXHR(method, url, async, callback)
             if (typeof(callback) === "function")
                 callback();
         }
-    };
+    }
     xhr.open(method, url, async);
-    xhr.send(null);
+    xhr.send(payload);
 }
 
 function resetInspectorResourcesData()

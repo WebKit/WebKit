@@ -1,0 +1,72 @@
+<html>
+<head>
+<script src="../inspector-test.js"></script>
+<script src="../network-test.js"></script>
+<script>
+var firstXHRLoaded = false;
+var secondXHRLoaded = false;
+
+function loadData()
+{
+    doXHRWithPayload("POST", "resources/echo-payload.php", true, 'request1', firstResourceLoaded);
+    doXHRWithPayload("POST", "resources/echo-payload.php", true, 'request2', secondResourceLoaded);
+}
+
+function resourcesLoaded()
+{
+    if (firstXHRLoaded && secondXHRLoaded)
+        console.log('Done.');
+}
+
+function firstResourceLoaded()
+{
+    firstXHRLoaded = true;
+    resourcesLoaded();
+}
+
+function secondResourceLoaded()
+{
+    secondXHRLoaded = true;
+    resourcesLoaded();
+}
+
+function test()
+{
+    // Since this test could be run together with other inspector backend cache
+    // tests, we need to reset size limits to default ones.
+    InspectorTest.resetInspectorResourcesData(step1);
+
+    function step1()
+    {
+        InspectorTest.addConsoleSniffer(step2);
+        InspectorTest.evaluateInPage("loadData()");
+    }
+
+    function step2()
+    {
+        var request1 = WebInspector.panels.network.requests[WebInspector.panels.network.requests.length - 2];
+        var request2 = WebInspector.panels.network.requests[WebInspector.panels.network.requests.length - 1];
+        request1.requestContent(step3);
+        request2.requestContent(step3);
+    }
+
+    var toLoad = 2;
+    function step3()
+    {
+        if (--toLoad) 
+            return;
+        var request1 = WebInspector.panels.network.requests[WebInspector.panels.network.requests.length - 2];
+        var request2 = WebInspector.panels.network.requests[WebInspector.panels.network.requests.length - 1];
+        InspectorTest.addResult("resource1.content: " + request1.content);
+        InspectorTest.addResult("resource2.content: " + request2.content);
+        InspectorTest.assertTrue(request1.content === 'request1' && request2.content === 'request2');
+        InspectorTest.completeTest();      
+    }
+}
+</script>
+</head>
+<body onload="runTest()">
+Tests responses in network tab for two XHRs sent without any delay between them.
+<a href="https://bugs.webkit.org/show_bug.cgi?id=91630">Bug 91630</a>
+</body>
+</html>

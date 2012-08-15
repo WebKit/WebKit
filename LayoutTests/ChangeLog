@@ -1,3 +1,22 @@
+2012-08-15  Pavel Chadnov  <chadnov@google.com>
+
+        Web Inspector: Incorrect XHR responses when two async xhrs are sent synchronously
+        https://bugs.webkit.org/show_bug.cgi?id=91630
+
+        Reviewed by Vsevolod Vlasov.
+
+        New test for two async XHRs sent synchronously.
+
+        * http/tests/inspector/network-test.js:
+        (doXHR):
+        (doXHRWithPayload.xhr.onreadystatechange):
+        (doXHRWithPayload):
+        * http/tests/inspector/network/network-xhr-async-double-expected.txt: Added.
+        * http/tests/inspector/network/network-xhr-async-double.html: Added.
+        * http/tests/inspector/network/resources/echo-payload.php: Added.
+        * platform/chromium/http/tests/inspector/console-xhr-logging-async-expected.txt:
+        * platform/chromium/http/tests/inspector/console-xhr-logging-expected.txt:
+
 2012-08-15  Christophe Dumez  <christophe.dumez@intel.com>
 
         [WK2] Add support for Web Intents MessagePorts

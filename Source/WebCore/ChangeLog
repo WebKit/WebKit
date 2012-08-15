@@ -1,3 +1,48 @@
+2012-08-15  Pavel Chadnov  <chadnov@google.com>
+
+        Web Inspector: Incorrect XHR responses when two async xhrs are sent synchronously
+        https://bugs.webkit.org/show_bug.cgi?id=91630
+        
+        Reviewed by Vsevolod Vlasov.
+
+        CachedResource object for XHR response is now taken from ResourceLoader (if it's possible).
+
+        Test: http/tests/inspector/network/network-xhr-async-double.html
+
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore):
+        (WebCore::InspectorInstrumentation::didReceiveResourceResponseImpl):
+        (WebCore::InspectorInstrumentation::didReceiveResourceResponseButCanceledImpl):
+        * inspector/InspectorInstrumentation.h:
+        (InspectorInstrumentation):
+        (WebCore::InspectorInstrumentation::didReceiveResourceResponse):
+        * inspector/InspectorResourceAgent.cpp:
+        (WebCore::InspectorResourceAgent::willSendRequest):
+        (WebCore::InspectorResourceAgent::didReceiveResponse):
+        * inspector/InspectorResourceAgent.h:
+        (WebCore):
+        (InspectorResourceAgent):
+        * loader/DocumentThreadableLoader.cpp:
+        (WebCore::DocumentThreadableLoader::didReceiveResponse):
+        * loader/ResourceLoadNotifier.cpp:
+        (WebCore::ResourceLoadNotifier::didReceiveResponse):
+        (WebCore::ResourceLoadNotifier::dispatchDidReceiveResponse):
+        * loader/ResourceLoadNotifier.h:
+        (ResourceLoadNotifier):
+        * loader/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::isSubresourceLoader):
+        (WebCore):
+        * loader/ResourceLoader.h:
+        (ResourceLoader):
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::cachedResource):
+        (WebCore):
+        (WebCore::SubresourceLoader::isSubresourceLoader):
+        * loader/SubresourceLoader.h:
+        (SubresourceLoader):
+        * loader/appcache/ApplicationCacheGroup.cpp:
+        (WebCore::ApplicationCacheGroup::didReceiveResponse):
+
 2012-08-15  Taiju Tsuiki  <tzik@chromium.org>
 
         Web Inspector: Use default parameter on reportResult in InspectorFileSystemAgent

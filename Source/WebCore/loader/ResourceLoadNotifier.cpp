@@ -71,7 +71,7 @@ void ResourceLoadNotifier::didReceiveResponse(ResourceLoader* loader, const Reso
     if (Page* page = m_frame->page())
         page->progress()->incrementProgress(loader->identifier(), r);
 
-    dispatchDidReceiveResponse(loader->documentLoader(), loader->identifier(), r);
+    dispatchDidReceiveResponse(loader->documentLoader(), loader->identifier(), r, loader);
 }
 
 void ResourceLoadNotifier::didReceiveData(ResourceLoader* loader, const char* data, int dataLength, int encodedDataLength)
@@ -123,11 +123,11 @@ void ResourceLoadNotifier::dispatchWillSendRequest(DocumentLoader* loader, unsig
         request.setReportLoadTiming(true);
 }
 
-void ResourceLoadNotifier::dispatchDidReceiveResponse(DocumentLoader* loader, unsigned long identifier, const ResourceResponse& r)
+void ResourceLoadNotifier::dispatchDidReceiveResponse(DocumentLoader* loader, unsigned long identifier, const ResourceResponse& r, ResourceLoader* resourceLoader)
 {
     InspectorInstrumentationCookie cookie = InspectorInstrumentation::willReceiveResourceResponse(m_frame, identifier, r);
     m_frame->loader()->client()->dispatchDidReceiveResponse(loader, identifier, r);
-    InspectorInstrumentation::didReceiveResourceResponse(cookie, identifier, loader, r);
+    InspectorInstrumentation::didReceiveResourceResponse(cookie, identifier, loader, r, resourceLoader);
 }
 
 void ResourceLoadNotifier::dispatchDidReceiveData(DocumentLoader* loader, unsigned long identifier, const char* data, int dataLength, int encodedDataLength)
