@@ -875,3 +875,5 @@ BUGWK94008 : fast/css/word-spacing-characters.html = IMAGE
 BUGWK94003 : fast/css/word-spacing-characters-complex-text.html = IMAGE
 // This has always failed on Gtk/Efl - exposed by bug 89826
 BUGWK94009 : css2.1/20110323/c541-word-sp-000.htm = IMAGE
+
+BUGWK94150 : fast/events/autoscroll-in-textarea.html = TEXT

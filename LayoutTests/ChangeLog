@@ -1,3 +1,30 @@
+2012-08-15  Dominik Röttsches  <d-r@roettsches.de>
+
+        [EFL] Some late night gardening
+        https://bugs.webkit.org/show_bug.cgi?id=94151
+
+        Unreviewed, EFL gardening.
+
+        Moving the autoscroll test out, adding platform specific baselines for the HTMLMeterElement tests.
+
+        * platform/efl/TestExpectations:
+        * platform/efl/fast/dom/HTMLMeterElement/meter-appearances-capacity-expected.txt:
+        * platform/efl/fast/dom/HTMLMeterElement/meter-appearances-rating-relevancy-expected.txt:
+        * platform/efl/fast/dom/HTMLMeterElement/meter-boundary-values-expected.txt:
+        * platform/efl/fast/dom/HTMLMeterElement/meter-clone-expected.txt: Added.
+        * platform/efl/fast/dom/HTMLMeterElement/meter-element-crash-expected.txt: Added.
+        * platform/efl/fast/dom/HTMLMeterElement/meter-element-expected.txt: Added.
+        * platform/efl/fast/dom/HTMLMeterElement/meter-element-form-expected.txt: Added.
+        * platform/efl/fast/dom/HTMLMeterElement/meter-element-markup-expected.txt: Added.
+        * platform/efl/fast/dom/HTMLMeterElement/meter-element-repaint-on-update-value-expected.txt: Added.
+        * platform/efl/fast/dom/HTMLMeterElement/meter-element-with-child-crash-expected.txt: Added.
+        * platform/efl/fast/dom/HTMLMeterElement/meter-optimums-expected.txt: Added.
+        * platform/efl/fast/dom/HTMLMeterElement/meter-percent-size-expected.txt: Added.
+        * platform/efl/fast/dom/HTMLMeterElement/meter-styles-changing-pseudo-expected.txt: Added.
+        * platform/efl/fast/dom/HTMLMeterElement/meter-styles-expected.txt: Added.
+        * platform/efl/fast/dom/HTMLMeterElement/meter-writing-mode-expected.txt: Added.
+        * platform/efl/fast/dom/HTMLMeterElement/set-meter-properties-expected.txt: Added.
+
 2012-08-15  Adrienne Walker  <enne@google.com>
 
         [chromium] Mark canvas-fallback-content tests as asserting in debug builds
