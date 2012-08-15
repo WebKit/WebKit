@@ -1,3 +1,18 @@
+2012-08-15  Ian Vollick  <vollick@chromium.org>
+
+        [chromium] Must account for empty transformation lists when checking for big rotations.
+        https://bugs.webkit.org/show_bug.cgi?id=93975
+
+        Reviewed by James Robinson.
+
+        Adds a test to check that creating an animation with a big (> 180
+        degree) rotation, where the transform operations list in the 1st
+        keyframe is empty fails as expected.
+
+        * tests/AnimationTranslationUtilTest.cpp:
+        (WebKit::TEST):
+        (WebKit):
+
 2012-08-15  Joshua Bell  <jsbell@chromium.org>
 
         [chromium] IndexedDB: Delete unused WebKit API cursor accessors

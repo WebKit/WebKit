@@ -1,3 +1,27 @@
+2012-08-15  Ian Vollick  <vollick@chromium.org>
+
+        [chromium] Must account for empty transformation lists when checking for big rotations.
+        https://bugs.webkit.org/show_bug.cgi?id=93975
+
+        Reviewed by James Robinson.
+
+        AnimationTranslationUtil.cpp is supposed to reject large rotations 
+        (>= 180 degrees between keyframes). The current code assumes that if 
+        the lists of transforms at two consecutive keyframes do not match 
+        (i.e., are different types), then do not need to reject. The rationale
+        is that we will revert to matrix blending -- we will collapse the lists
+        of transform operations to matrices at each keyframe and blend those. 
+        Unfortunately, this is not true if a list is empty. It can be the case 
+        that we transition from no transform to a rotation about the z axis of 
+        360 degrees. In this case, the first list of transform operations will 
+        be empty and the second will have a single rotation of 360 degrees. An 
+        empty list should be treated as a rotation of zero degrees.
+
+        Unit tested in: GraphicsLayerChromiumTest.createTransformAnimationWithBigRotationAndEmptyTransformOperationList
+
+        * platform/graphics/chromium/AnimationTranslationUtil.cpp:
+        (WebCore::causesRotationOfAtLeast180Degrees):
+
 2012-08-15  Beth Dakin  <bdakin@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=93693

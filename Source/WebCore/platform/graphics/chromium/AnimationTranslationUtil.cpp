@@ -153,19 +153,31 @@ bool causesRotationOfAtLeast180Degrees(const TransformAnimationValue* value, con
     const TransformOperations& operations = *value->value();
     const TransformOperations& lastOperations = *lastValue->value();
 
-    // We'll be doing matrix interpolation in this case. No risk of incorrect
-    // rotations here.
-    if (!operations.operationsMatch(lastOperations))
+    // We'll be doing matrix interpolation in this case. No risk of incorrect rotations here.
+    if (operations.size() && lastOperations.size() && !operations.operationsMatch(lastOperations))
         return false;
 
-    for (size_t i = 0; i < operations.size(); ++i) {
-        if (!isRotationType(operations.operations()[i]->getOperationType()))
-            continue;
+    size_t numOperations = max(operations.size(), lastOperations.size());
+    for (size_t i = 0; i < numOperations; ++i) {
+        float angle = 0;
+        if (i < operations.size()) {
+            if (!isRotationType(operations.operations()[i]->getOperationType()))
+                continue;
 
-        RotateTransformOperation* rotation = static_cast<RotateTransformOperation*>(operations.operations()[i].get());
-        RotateTransformOperation* lastRotation = static_cast<RotateTransformOperation*>(lastOperations.operations()[i].get());
+            RotateTransformOperation* rotation = static_cast<RotateTransformOperation*>(operations.operations()[i].get());
+            angle = rotation->angle();
+        }
 
-        if (fabs(rotation->angle() - lastRotation->angle()) >= 180)
+        float lastAngle = 0;
+        if (i < lastOperations.size()) {
+            if (!isRotationType(lastOperations.operations()[i]->getOperationType()))
+                continue;
+
+            RotateTransformOperation* lastRotation = static_cast<RotateTransformOperation*>(lastOperations.operations()[i].get());
+            lastAngle = lastRotation->angle();
+        }
+
+        if (fabs(angle - lastAngle) >= 180)
             return true;
     }
 

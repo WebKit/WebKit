@@ -99,6 +99,24 @@ TEST(AnimationTranslationUtilTest, createTransformAnimationWithBigRotation)
     EXPECT_FALSE(animationCanBeTranslated(values, animation.get()));
 }
 
+TEST(AnimationTranslationUtilTest, createTransformAnimationWithBigRotationAndEmptyTransformOperationList)
+{
+    const double duration = 1;
+    WebCore::KeyframeValueList values(AnimatedPropertyWebkitTransform);
+
+    TransformOperations operations1;
+    values.insert(new TransformAnimationValue(0, &operations1));
+
+    TransformOperations operations2;
+    operations2.operations().append(RotateTransformOperation::create(270, TransformOperation::ROTATE));
+    values.insert(new TransformAnimationValue(duration, &operations2));
+
+    RefPtr<Animation> animation = Animation::create();
+    animation->setDuration(duration);
+
+    EXPECT_FALSE(animationCanBeTranslated(values, animation.get()));
+}
+
 TEST(AnimationTranslationUtilTest, createTransformAnimationWithRotationInvolvingNegativeAngles)
 {
     const double duration = 1;
