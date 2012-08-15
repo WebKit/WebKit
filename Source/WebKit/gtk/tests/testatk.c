@@ -35,7 +35,7 @@ static const char* contentsWithNewlines = "<html><body><p>This is a test. \n\nTh
 
 static const char* contentsWithPreformattedText = "<html><body><pre>\n\t\n\tfirst line\n\tsecond line\n</pre></body></html>";
 
-static const char* contentsWithSpecialChars = "<html><body><p>&laquo;&nbsp;This is a paragraph with &ldquo;special&rdquo; characters inside.&nbsp;&raquo;</p><ul><li style='max-width:100px;'>List item with some text that wraps across different lines.</li></ul></body></html>";
+static const char* contentsWithSpecialChars = "<html><body><p>&laquo;&nbsp;This is a paragraph with &ldquo;special&rdquo; characters inside.&nbsp;&raquo;</p><ul><li style='max-width:100px;'>List item with some text that wraps across different lines.</li><li style='max-width:100px;'><p>List item with some text that wraps across different lines.</p></li></ul></body></html>";
 
 static const char* contentsInTextarea = "<html><body><textarea cols='80'>This is a test. This is the second sentence. And this the third.</textarea></body></html>";
 
@@ -840,6 +840,21 @@ static void testWebkitAtkGetTextAtOffsetWithSpecialCharacters()
        and ATK_TEXT_BOUNDARY_LINE_END for line items with bullets
        (special character) and wrapped text always return the right
        piece of text for each line. */
+    testGetTextFunction(ATK_TEXT(listItem), atk_text_get_text_at_offset, ATK_TEXT_BOUNDARY_LINE_START, 3, "\342\200\242 List item ", 0, 12);
+    testGetTextFunction(ATK_TEXT(listItem), atk_text_get_text_at_offset, ATK_TEXT_BOUNDARY_LINE_START, 13, "with some ", 12, 22);
+    testGetTextFunction(ATK_TEXT(listItem), atk_text_get_text_at_offset, ATK_TEXT_BOUNDARY_LINE_END, 0, "\342\200\242 List item", 0, 11);
+    testGetTextFunction(ATK_TEXT(listItem), atk_text_get_text_at_offset, ATK_TEXT_BOUNDARY_LINE_END, 12, " with some", 11, 21);
+
+    g_object_unref(listItem);
+
+    listItem = ATK_TEXT(atk_object_ref_accessible_child(list, 1));
+    g_assert(ATK_IS_TEXT(listItem));
+
+    /* Check that placing the same text in a paragraph doesn't break things. */
+    text = atk_text_get_text(ATK_TEXT(listItem), 0, -1);
+    g_assert_cmpstr(text, ==, "\342\200\242 List item with some text that wraps across different lines.");
+    g_free(text);
+
     testGetTextFunction(ATK_TEXT(listItem), atk_text_get_text_at_offset, ATK_TEXT_BOUNDARY_LINE_START, 3, "\342\200\242 List item ", 0, 12);
     testGetTextFunction(ATK_TEXT(listItem), atk_text_get_text_at_offset, ATK_TEXT_BOUNDARY_LINE_START, 13, "with some ", 12, 22);
     testGetTextFunction(ATK_TEXT(listItem), atk_text_get_text_at_offset, ATK_TEXT_BOUNDARY_LINE_END, 0, "\342\200\242 List item", 0, 11);
