@@ -1,0 +1,9 @@
+The user-visible values of week input fields should be localized if the platform has a LocalizedDate implementation. Otherwise, they should be in the HTML5 formats.
+
+time: value='01:56:20.391' visible='The user-visible values of week input fields should be localized if the platform has a LocalizedDate implementation. Otherwise, they should be in the HTML5 formats.
+
+'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

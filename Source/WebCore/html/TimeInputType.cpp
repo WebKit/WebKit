@@ -40,6 +40,11 @@
 #include <wtf/PassOwnPtr.h>
 
 #if ENABLE(INPUT_TYPE_TIME)
+#if ENABLE(INPUT_TYPE_TIME_MULTIPLE_FIELDS)
+#include "ElementShadow.h"
+#include "KeyboardEvent.h"
+#include "ShadowRoot.h"
+#endif
 
 namespace WebCore {
 
@@ -107,6 +112,177 @@ bool TimeInputType::isTimeField() const
 {
     return true;
 }
+
+#if ENABLE(INPUT_TYPE_TIME_MULTIPLE_FIELDS)
+
+TimeInputType::DateTimeEditControlOwnerImpl::DateTimeEditControlOwnerImpl(TimeInputType& timeInputType)
+    : m_timeInputType(timeInputType)
+{
+}
+
+TimeInputType::DateTimeEditControlOwnerImpl::~DateTimeEditControlOwnerImpl()
+{
+}
+
+void TimeInputType::DateTimeEditControlOwnerImpl::editControlMouseFocus()
+{
+    m_timeInputType.element()->focus();
+}
+
+void TimeInputType::DateTimeEditControlOwnerImpl::editControlValueChanged()
+{
+    RefPtr<HTMLInputElement> input(m_timeInputType.element());
+    input->setValueInternal(m_timeInputType.serialize(Decimal::fromDouble(m_timeInputType.m_dateTimeEditElement->valueAsDouble())), DispatchNoEvent);
+    input->setNeedsStyleRecalc();
+    input->dispatchFormControlInputEvent();
+    input->dispatchFormControlChangeEvent();
+}
+
+bool TimeInputType::DateTimeEditControlOwnerImpl::isEditControlOwnerDisabled() const
+{
+    return m_timeInputType.element()->readOnly();
+}
+
+bool TimeInputType::DateTimeEditControlOwnerImpl::isEditControlOwnerReadOnly() const
+{
+    return m_timeInputType.element()->disabled();
+}
+
+TimeInputType::TimeInputType(HTMLInputElement* element)
+    : BaseDateAndTimeInputType(element)
+    , m_dateTimeEditElement(0)
+    , m_dateTimeEditControlOwnerImpl(*this)
+{
+}
+
+TimeInputType::~TimeInputType()
+{
+    if (m_dateTimeEditElement)
+        m_dateTimeEditElement->removeEditControlOwner();
+}
+
+RenderObject* TimeInputType::createRenderer(RenderArena* arena, RenderStyle* style) const
+{
+    return InputType::createRenderer(arena, style);
+}
+
+void TimeInputType::createShadowSubtree()
+{
+    ASSERT(element()->shadow());
+
+    const StepRange stepRange(createStepRange(AnyIsDefaultStep));
+    RefPtr<DateTimeEditElement> dateTimeEditElement(DateTimeEditElement::create(element()->document(), m_dateTimeEditControlOwnerImpl, stepRange));
+    m_dateTimeEditElement = dateTimeEditElement.get();
+    element()->userAgentShadowRoot()->appendChild(m_dateTimeEditElement);
+    updateInnerTextValue();
+}
+
+void TimeInputType::destroyShadowSubtree()
+{
+    if (m_dateTimeEditElement) {
+        m_dateTimeEditElement->removeEditControlOwner();
+        m_dateTimeEditElement = 0;
+    }
+    BaseDateAndTimeInputType::destroyShadowSubtree();
+}
+
+void TimeInputType::forwardEvent(Event* event)
+{
+    if (m_dateTimeEditElement)
+        m_dateTimeEditElement->defaultEventHandler(event);
+}
+
+void TimeInputType::disabledAttributeChanged()
+{
+    if (m_dateTimeEditElement)
+        m_dateTimeEditElement->disabledStateChanged();
+}
+
+void TimeInputType::handleKeydownEvent(KeyboardEvent* event)
+{
+    forwardEvent(event);
+}
+
+void TimeInputType::handleDOMActivateEvent(Event* event)
+{
+    if (element()->disabled() || element()->readOnly() || !element()->renderer())
+        return;
+
+    if (m_dateTimeEditElement)
+        m_dateTimeEditElement->focus();
+
+    event->setDefaultHandled();
+}
+
+bool TimeInputType::isKeyboardFocusable(KeyboardEvent*) const
+{
+    return element()->isTextFormControlFocusable();
+}
+
+bool TimeInputType::isMouseFocusable() const
+{
+    return element()->isTextFormControlFocusable();
+}
+
+void TimeInputType::minOrMaxAttributeChanged()
+{
+    updateEditElementLayout();
+}
+
+void TimeInputType::readonlyAttributeChanged()
+{
+    if (m_dateTimeEditElement)
+        m_dateTimeEditElement->readOnlyStateChanged();
+}
+
+bool TimeInputType::isTextField() const
+{
+    return false;
+}
+
+void TimeInputType::setValue(const String& sanitizedValue, bool valueChanged, TextFieldEventBehavior eventBehavior)
+{
+    InputType::setValue(sanitizedValue, valueChanged, eventBehavior);
+    if (valueChanged)
+        updateInnerTextValue();
+}
+
+bool TimeInputType::shouldUseInputMethod() const
+{
+    return false;
+}
+
+void TimeInputType::stepAttributeChanged()
+{
+    updateEditElementLayout();
+}
+
+void TimeInputType::updateEditElementLayout()
+{
+    if (m_dateTimeEditElement)
+        m_dateTimeEditElement->layout(createStepRange(AnyIsDefaultStep));
+}
+
+void TimeInputType::updateInnerTextValue()
+{
+    if (!m_dateTimeEditElement)
+        return;
+
+    DateComponents date;
+    if (parseToDateComponents(element()->value(), &date))
+        m_dateTimeEditElement->setValueAsDate(date);
+    else {
+        const StepRange stepRange(createStepRange(AnyIsDefaultStep));
+        setMillisecondToDateComponents(stepRange.minimum().toDouble(), &date);
+        m_dateTimeEditElement->setEmptyValue(date);
+    }
+}
+#else
+TimeInputType(HTMLInputElement* element)
+    : BaseDateAndTimeInputType(element)
+{
+}
+#endif
 
 } // namespace WebCore
 

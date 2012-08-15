@@ -35,14 +35,22 @@
 
 #if ENABLE(INPUT_TYPE_TIME)
 
+#if ENABLE(INPUT_TYPE_TIME_MULTIPLE_FIELDS)
+#include "DateTimeEditElement.h"
+#endif
+
 namespace WebCore {
 
 class TimeInputType : public BaseDateAndTimeInputType {
 public:
     static PassOwnPtr<InputType> create(HTMLInputElement*);
 
+#if ENABLE(INPUT_TYPE_TIME_MULTIPLE_FIELDS)
+    virtual ~TimeInputType();
+#endif
+
 private:
-    TimeInputType(HTMLInputElement* element) : BaseDateAndTimeInputType(element) { }
+    TimeInputType(HTMLInputElement*);
     virtual const AtomicString& formControlType() const OVERRIDE;
     virtual DateComponents::Type dateType() const OVERRIDE;
     virtual Decimal defaultValueForStepUp() const OVERRIDE;
@@ -50,6 +58,49 @@ private:
     virtual bool parseToDateComponentsInternal(const UChar*, unsigned length, DateComponents*) const OVERRIDE;
     virtual bool setMillisecondToDateComponents(double, DateComponents*) const OVERRIDE;
     virtual bool isTimeField() const OVERRIDE;
+
+#if ENABLE(INPUT_TYPE_TIME_MULTIPLE_FIELDS)
+    class DateTimeEditControlOwnerImpl : public DateTimeEditElement::EditControlOwner {
+        WTF_MAKE_NONCOPYABLE(DateTimeEditControlOwnerImpl);
+
+    public:
+        DateTimeEditControlOwnerImpl(TimeInputType&);
+        virtual ~DateTimeEditControlOwnerImpl();
+
+    private:
+        virtual void editControlMouseFocus() OVERRIDE FINAL;
+        virtual void editControlValueChanged() OVERRIDE FINAL;
+        virtual bool isEditControlOwnerDisabled() const OVERRIDE FINAL;
+        virtual bool isEditControlOwnerReadOnly() const OVERRIDE FINAL;
+
+        TimeInputType& m_timeInputType;
+    };
+
+    friend class DateTimeEditControlOwnerImpl;
+
+    void updateEditElementLayout();
+
+    // InputType functions
+    virtual RenderObject* createRenderer(RenderArena*, RenderStyle*) const OVERRIDE FINAL;
+    virtual void createShadowSubtree() OVERRIDE FINAL;
+    virtual void destroyShadowSubtree() OVERRIDE FINAL;
+    virtual void disabledAttributeChanged() OVERRIDE FINAL;
+    virtual void forwardEvent(Event*) OVERRIDE FINAL;
+    virtual void handleDOMActivateEvent(Event*) OVERRIDE FINAL;
+    virtual void handleKeydownEvent(KeyboardEvent*) OVERRIDE FINAL;
+    virtual bool isKeyboardFocusable(KeyboardEvent*) const OVERRIDE FINAL;
+    virtual bool isMouseFocusable() const OVERRIDE FINAL;
+    virtual bool isTextField() const OVERRIDE FINAL;
+    virtual void minOrMaxAttributeChanged() OVERRIDE FINAL;
+    virtual void readonlyAttributeChanged() OVERRIDE FINAL;
+    virtual void setValue(const String&, bool valueChanged, TextFieldEventBehavior) OVERRIDE FINAL;
+    virtual bool shouldUseInputMethod() const OVERRIDE FINAL;
+    virtual void stepAttributeChanged() OVERRIDE FINAL;
+    virtual void updateInnerTextValue() OVERRIDE FINAL;
+
+    DateTimeEditElement* m_dateTimeEditElement;
+    DateTimeEditControlOwnerImpl m_dateTimeEditControlOwnerImpl;
+#endif
 };
 
 } // namespace WebCore

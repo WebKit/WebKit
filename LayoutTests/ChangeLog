@@ -1,3 +1,17 @@
+2012-08-14  Yoshifumi Inoue  <yosin@chromium.org>
+
+        [Forms] Make input type "time" to use multiple field time input UI
+        https://bugs.webkit.org/show_bug.cgi?id=93929
+
+        Reviewed by Kent Tamura.
+
+        This patch added test expectations for multiple fields time input UI
+        testing which are different behavior from single field time input UI
+        for Chromium which enables multiple fields time input UI.
+
+        * platform/chromium/fast/forms/time/time-input-visible-string-expected.txt: Select all in a field doesn't select text.
+        * platform/chromium/fast/forms/time/time-stepup-stepdown-from-renderer-expected.txt: Fields don't change value on Up/Down keyboard events when they don't have focus and Up/Down keyboard increment/decrement value on hour field rather than minute field.
+
 2012-08-14  Dean Jackson  <dino@apple.com>
 
         Initial call to webkitRequestAnimationFrame returns 0, Spec indicates the handle should always be > 0

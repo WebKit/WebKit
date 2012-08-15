@@ -1,3 +1,55 @@
+2012-08-14  Yoshifumi Inoue  <yosin@chromium.org>
+
+        [Forms] Make input type "time" to use multiple field time input UI
+        https://bugs.webkit.org/show_bug.cgi?id=93929
+
+        Reviewed by Kent Tamura.
+
+        This patch changes input type "time" UI to use multiple field time
+        input UI when build flag ENABLE_INPUT_TYPE_TIME_MULTIPLE_FIELDS
+        enabled.
+
+        No new tests. This patch doesn't change behavior for users, however,
+        this patch changes behavior on layout tests. Tests will be added
+        in another patch with runtime enabled feature flag is enabled.
+
+        Test expectations for following tests are updated:
+         - fast/forms/time/time-input-visible-string.html
+         - fast/forms/time/time-stepup-stepdown-from-renderer.html
+
+        * html/BaseDateAndTimeInputType.h:
+        (BaseDateAndTimeInputType): Exposed serialize() to derived classes.
+        * html/TimeInputType.cpp:
+        (WebCore::TimeInputType::DateTimeEditControlOwnerImpl::DateTimeEditControlOwnerImpl):
+        (WebCore::TimeInputType::DateTimeEditControlOwnerImpl::~DateTimeEditControlOwnerImpl):
+        (WebCore::TimeInputType::DateTimeEditControlOwnerImpl::editControlMouseFocus):
+        (WebCore::TimeInputType::DateTimeEditControlOwnerImpl::editControlValueChanged):
+        (WebCore::TimeInputType::DateTimeEditControlOwnerImpl::isEditControlOwnerDisabled):
+        (WebCore::TimeInputType::DateTimeEditControlOwnerImpl::isEditControlOwnerReadOnly):
+        (WebCore::TimeInputType::TimeInputType):
+        (WebCore::TimeInputType::~TimeInputType):
+        (WebCore::TimeInputType::createRenderer):
+        (WebCore::TimeInputType::createShadowSubtree):
+        (WebCore::TimeInputType::destroyShadowSubtree):
+        (WebCore::TimeInputType::forwardEvent):
+        (WebCore::TimeInputType::disabledAttributeChanged):
+        (WebCore::TimeInputType::handleKeydownEvent):
+        (WebCore::TimeInputType::handleDOMActivateEvent):
+        (WebCore::TimeInputType::isKeyboardFocusable):
+        (WebCore::TimeInputType::isMouseFocusable):
+        (WebCore::TimeInputType::minOrMaxAttributeChanged):
+        (WebCore::TimeInputType::readonlyAttributeChanged):
+        (WebCore::TimeInputType::isTextField):
+        (WebCore::TimeInputType::setValue):
+        (WebCore::TimeInputType::shouldUseInputMethod):
+        (WebCore::TimeInputType::stepAttributeChanged):
+        (WebCore::TimeInputType::updateEditElementLayout):
+        (WebCore::TimeInputType::updateInnerTextValue):
+        (WebCore::TimeInputType):
+        * html/TimeInputType.h:
+        (TimeInputType):
+        (DateTimeEditControlOwnerImpl):
+
 2012-08-14  Dean Jackson  <dino@apple.com>
 
         Initial call to webkitRequestAnimationFrame returns 0, Spec indicates the handle should always be > 0

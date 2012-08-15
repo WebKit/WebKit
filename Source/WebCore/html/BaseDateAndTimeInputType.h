@@ -44,6 +44,7 @@ protected:
     virtual void handleKeydownEvent(KeyboardEvent*) OVERRIDE;
     virtual Decimal parseToNumber(const String&, const Decimal&) const OVERRIDE;
     virtual bool parseToDateComponents(const String&, DateComponents*) const OVERRIDE;
+    virtual String serialize(const Decimal&) const OVERRIDE;
     String serializeWithComponents(const DateComponents&) const;
 
 private:
@@ -58,7 +59,6 @@ private:
     virtual bool typeMismatch() const OVERRIDE;
     virtual Decimal defaultValueForStepUp() const OVERRIDE;
     virtual bool isSteppable() const OVERRIDE;
-    virtual String serialize(const Decimal&) const OVERRIDE;
     virtual String serializeWithMilliseconds(double) const;
     virtual String localizeValue(const String&) const OVERRIDE;
     virtual String visibleValue() const OVERRIDE;
