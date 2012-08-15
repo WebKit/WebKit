@@ -1,3 +1,25 @@
+2012-08-15  Joshua Netterfield  <jnetterfield@rim.com>
+
+        [BlackBerry] Upstream BlackBerry build fixes
+        https://bugs.webkit.org/show_bug.cgi?id=94121
+
+        Reviewed by Rob Buis.
+
+        This includes several build fixes due to incorrect upstream patches.
+        These mistakes were never present downstream.
+
+        No new tests, because no new functionality is added.
+
+        * platform/graphics/GraphicsContext3D.cpp:
+        (WebCore::GraphicsContext3D::computeFormatAndTypeParameters):
+        * platform/graphics/GraphicsContext3D.h:
+        (GraphicsContext3D):
+        (WebCore::GraphicsContext3D::ShaderSourceEntry::ShaderSourceEntry):
+        * platform/graphics/blackberry/LayerFilterRenderer.cpp:
+        (WebCore::LayerFilterRendererAction::LayerFilterRendererAction):
+        * platform/graphics/blackberry/LayerFilterRenderer.h:
+        (LayerFilterRendererAction):
+
 2012-08-15  Adam Barth  <abarth@webkit.org>
 
         JSDOMWrapper should ASSERT that it has an associated ScriptExecutionContext

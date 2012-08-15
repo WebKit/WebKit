@@ -95,7 +95,6 @@ public:
     static PassRefPtr<LayerFilterRendererAction> create(int programId);
         // A vector of actions must have an even count, so if you have an odd count, add a passthrough event at the end.
         // See the ping-pong note in LayerFilterRenderer::applyActions.
-    ~LayerFilterRendererAction();
 
     bool shouldPushSnapshot() const { return m_pushSnapshot; }
     void setPushSnapshot() { m_pushSnapshot = true; }

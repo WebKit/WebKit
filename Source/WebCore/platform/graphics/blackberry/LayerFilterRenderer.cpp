@@ -133,7 +133,7 @@ PassRefPtr<LayerFilterRendererAction> LayerFilterRendererAction::create(int prog
 }
 
 LayerFilterRendererAction::LayerFilterRendererAction(int c_programId)
-    , m_programId(c_programId)
+    : m_programId(c_programId)
     , m_pushSnapshot(false)
     , m_popSnapshot(false)
 {

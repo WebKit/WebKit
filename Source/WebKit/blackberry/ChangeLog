@@ -1,3 +1,19 @@
+2012-08-15  Joshua Netterfield  <jnetterfield@rim.com>
+
+        [BlackBerry] Upstream BlackBerry build fixes
+        https://bugs.webkit.org/show_bug.cgi?id=94121
+
+        Reviewed by Rob Buis.
+
+        This includes several build fixes due to incorrect upstream patches.
+        These mistakes were never present downstream.
+
+        No new tests, because no new functionality is added.
+
+        * WebCoreSupport/AboutDataEnableFeatures.in:
+        * WebCoreSupport/AboutTemplate.html.cpp:
+        (writeHeader):
+
 2012-08-15  Leo Yang  <leoyang@rim.com>
 
         [BlackBerry] Use nested layout when rotating

@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-static String writeHeader(const String& header)
+static String writeHeader(const String& title)
 {
     return "<!DOCTYPE html><html>"
         "<head>"

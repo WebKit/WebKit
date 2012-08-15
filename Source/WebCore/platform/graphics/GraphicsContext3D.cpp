@@ -116,7 +116,9 @@ bool GraphicsContext3D::computeFormatAndTypeParameters(GC3Denum format,
         *componentsPerPixel = 1;
         *bytesPerComponent = sizeof(GC3Dushort);
         break;
+#if !PLATFORM(BLACKBERRY)
     case GraphicsContext3D::UNSIGNED_INT_24_8:
+#endif
     case GraphicsContext3D::UNSIGNED_INT:
         *bytesPerComponent = sizeof(GC3Duint);
         break;
