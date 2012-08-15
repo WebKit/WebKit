@@ -1,0 +1,16 @@
+http://127.0.0.1:8000/security/XFrameOptions/resources/x-frame-options-deny-meta-tag-subframe-in-body.html - willSendRequest <NSURLRequest URL http://127.0.0.1:8000/security/XFrameOptions/resources/x-frame-options-deny-meta-tag-subframe-in-body.html, main document URL http://127.0.0.1:8000/security/XFrameOptions/x-frame-options-deny-meta-tag-in-body.html, http method GET> redirectResponse (null)
+<unknown> - didFinishLoading
+http://127.0.0.1:8000/security/XFrameOptions/resources/x-frame-options-deny-meta-tag-subframe-in-body.html - didReceiveResponse <NSURLResponse http://127.0.0.1:8000/security/XFrameOptions/resources/x-frame-options-deny-meta-tag-subframe-in-body.html, http status code 200>
+http://127.0.0.1:8000/security/XFrameOptions/resources/x-frame-options-deny-meta-tag-subframe-in-body.html - didFailLoadingWithError: <NSError domain QtNetwork, code 5, failing URL "http://127.0.0.1:8000/security/XFrameOptions/resources/x-frame-options-deny-meta-tag-subframe-in-body.html">
+CONSOLE MESSAGE: Refused to display document because display forbidden by X-Frame-Options.
+
+about:blank - willSendRequest <NSURLRequest URL about:blank, main document URL http://127.0.0.1:8000/security/XFrameOptions/x-frame-options-deny-meta-tag-in-body.html, http method GET> redirectResponse (null)
+about:blank - didReceiveResponse <NSURLResponse about:blank, http status code 0>
+There should be no content in the iframe below
+
+
+
+--------
+Frame: '<!--framePath //<!--frame0-->-->'
+--------
+

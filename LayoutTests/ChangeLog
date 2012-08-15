@@ -1,3 +1,13 @@
+2012-08-15  Ádám Kallai  <kadam@inf.u-szeged.hu>
+
+        [Qt] Unreviewed gardening. Add platfrom specific expected results after r125593.
+
+        * platform/qt-5.0-wk2/http/tests/misc/window-dot-stop-expected.txt: Added.
+        * platform/qt-5.0-wk2/http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-expected.txt: Added.
+        * platform/qt-5.0-wk2/http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-in-body-expected.txt: Added.
+        * platform/qt-5.0-wk2/http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-parent-same-origin-deny-expected.txt: Added.
+        * platform/qt-5.0-wk2/http/tests/xmlhttprequest/abort-should-cancel-load-expected.txt: Added.
+
 2012-08-15  Shinya Kawanaka  <shinyak@chromium.org>
 
         [Chromium Mac] Unreviewed, rebaseline after r125659.

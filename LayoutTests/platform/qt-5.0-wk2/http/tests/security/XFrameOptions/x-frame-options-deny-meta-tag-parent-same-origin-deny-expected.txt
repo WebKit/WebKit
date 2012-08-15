@@ -1,0 +1,16 @@
+http://localhost:8000/security/XFrameOptions/resources/x-frame-options-deny-meta-tag-subframe-parent-same-origin-deny.html - willSendRequest <NSURLRequest URL http://localhost:8000/security/XFrameOptions/resources/x-frame-options-deny-meta-tag-subframe-parent-same-origin-deny.html, main document URL http://127.0.0.1:8000/security/XFrameOptions/x-frame-options-deny-meta-tag-parent-same-origin-deny.html, http method GET> redirectResponse (null)
+<unknown> - didFinishLoading
+http://localhost:8000/security/XFrameOptions/resources/x-frame-options-deny-meta-tag-subframe-parent-same-origin-deny.html - didReceiveResponse <NSURLResponse http://localhost:8000/security/XFrameOptions/resources/x-frame-options-deny-meta-tag-subframe-parent-same-origin-deny.html, http status code 200>
+http://localhost:8000/security/XFrameOptions/resources/x-frame-options-deny-meta-tag-subframe-parent-same-origin-deny.html - didFailLoadingWithError: <NSError domain QtNetwork, code 5, failing URL "http://localhost:8000/security/XFrameOptions/resources/x-frame-options-deny-meta-tag-subframe-parent-same-origin-deny.html">
+CONSOLE MESSAGE: Refused to display document because display forbidden by X-Frame-Options.
+
+about:blank - willSendRequest <NSURLRequest URL about:blank, main document URL http://127.0.0.1:8000/security/XFrameOptions/x-frame-options-deny-meta-tag-parent-same-origin-deny.html, http method GET> redirectResponse (null)
+about:blank - didReceiveResponse <NSURLResponse about:blank, http status code 0>
+There should be no content in the iframe below
+
+
+
+--------
+Frame: '<!--framePath //<!--frame0-->-->'
+--------
+

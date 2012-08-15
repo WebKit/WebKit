@@ -1,0 +1,4 @@
+http://127.0.0.1:8000/xmlhttprequest/resources/endlessxml.php - willSendRequest <NSURLRequest URL http://127.0.0.1:8000/xmlhttprequest/resources/endlessxml.php, main document URL http://127.0.0.1:8000/xmlhttprequest/abort-should-cancel-load.html, http method GET> redirectResponse (null)
+http://127.0.0.1:8000/xmlhttprequest/resources/endlessxml.php - didFailLoadingWithError: <NSError domain QtNetwork, code 5, failing URL "http://127.0.0.1:8000/xmlhttprequest/resources/endlessxml.php">
+This tests that calling abort() on an XHR object stops the load, causing the relevant resource load delegates to be sent.
+
