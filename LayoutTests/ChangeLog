@@ -1,3 +1,13 @@
+2012-08-15  Thiago Marcos P. Santos  <thiago.santos@intel.com>
+
+        [EFL] Remove image expectation added for a ref test
+        https://bugs.webkit.org/show_bug.cgi?id=94090
+
+        Unreviewed gardening.
+
+        * platform/efl/TestExpectations:
+        * platform/efl/fast/css-generated-content/quotes-lang-expected.png: Removed.
+
 2012-08-15  Ádám Kallai  <kadam@inf.u-szeged.hu>
 
         [Qt] Unreviewed gardening. Add platfrom specific expected results after r125593.

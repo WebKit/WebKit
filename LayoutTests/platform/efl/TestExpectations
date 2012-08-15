@@ -860,6 +860,8 @@ BUGWK93148 : fast/css/nested-layers-with-hover.html = TEXT
 BUGWK92956 : http/tests/security/contentSecurityPolicy/object-src-url-blocked.html = TEXT
 BUGWK93212 : http/tests/incremental/slow-utf8-text.pl = TIMEOUT
 
+BUGWK93976 : fast/css-generated-content/quotes-lang.html = IMAGE
+
 BUGWK93247 DEBUG : fast/lists/list-marker-remove-crash.html = CRASH
 
 // Require rebaselining after  https://bugs.webkit.org/show_bug.cgi?id=89826
