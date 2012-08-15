@@ -1,3 +1,16 @@
+2012-08-14  Alexandru Chiculita  <achicu@adobe.com>
+
+        [CSS Shaders][Chromium] Filters area applied twice when CustomFilterOperation is in the list
+        https://bugs.webkit.org/show_bug.cgi?id=93900
+
+        Reviewed by James Robinson.
+
+        Added a test that first applies a blur and then switches to a CSS Shader plus a blur.
+        The test was failing on Chromium by not removing the old blur filter from the platform layer.
+
+        * css3/filters/custom/filter-fallback-to-software-expected.html: Added.
+        * css3/filters/custom/filter-fallback-to-software.html: Added.
+
 2012-08-14  Adrienne Walker  <enne@google.com>
 
         [chromium] Add baselines for video-controls-layer-creation layout test

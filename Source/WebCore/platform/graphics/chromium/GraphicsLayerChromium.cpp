@@ -388,8 +388,13 @@ static bool copyWebCoreFilterOperationsToWebFilterOperations(const FilterOperati
 bool GraphicsLayerChromium::setFilters(const FilterOperations& filters)
 {
     WebFilterOperations webFilters;
-    if (!copyWebCoreFilterOperationsToWebFilterOperations(filters, webFilters))
+    if (!copyWebCoreFilterOperationsToWebFilterOperations(filters, webFilters)) {
+        // Make sure the filters are removed from the platform layer, as they are
+        // going to fallback to software mode.
+        m_layer.setFilters(WebFilterOperations());
+        GraphicsLayer::setFilters(FilterOperations());
         return false;
+    }
     m_layer.setFilters(webFilters);
     return GraphicsLayer::setFilters(filters);
 }
