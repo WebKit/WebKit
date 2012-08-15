@@ -1,3 +1,41 @@
+2012-08-15  Otto Derek Cheung  <otcheung@rim.com>
+
+        [BlackBerry] Show custom error page when 407 is received
+        https://bugs.webkit.org/show_bug.cgi?id=94138
+
+         Reviewed by George Staikos.
+         Internally reviewed by Lianghui Chen
+
+         Adding a new custom error page when the browser receieves
+         a Wifi proxy authentication error. The previous behaviour
+         is to ask for user credentials everytime, and silently fails
+         when the username and password fields in the Wifi settings
+         are not empty. UX suggests modifying the behaviour to simply
+         asks the user to change their credentials in the Wifi settings
+         when we receive such an error.
+
+         The fix is to prevent notifyAuthReceived from sending another
+         networkjob when authCallbacks are called, and to listen to any 407
+         calls in notifyStatusReceived. Once we hit a 407, tell the frame we
+         failed and should load the custom error page.
+
+         Also removed checking functions in sendRequestWithCredentials because
+         proxy auth requests won't get into that function anymore.
+
+         #PR163400
+
+         Tested by loading on device and loading/reloading pages under
+         these scenarios:
+         - Connected to wifi (no proxy)
+         - Connected to wifi (proxy with no credentials)
+         - Connected to wifi (proxy with invalid credentials)
+         - Connected to wifi (proxy with valid credentials)
+
+         * platform/network/blackberry/NetworkJob.cpp:
+         (WebCore::NetworkJob::handleNotifyStatusReceived):
+         (WebCore::NetworkJob::notifyAuthReceived):
+         (WebCore::NetworkJob::sendRequestWithCredentials):
+
 2012-08-15  Dan Carney  <dcarney@google.com>
 
         Refactor away IsolatedWorld
