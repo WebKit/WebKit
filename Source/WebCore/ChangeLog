@@ -1,3 +1,16 @@
+2012-08-15  Andreas Kling  <kling@webkit.org>
+
+        NinePieceImage: Avoid unnecessary duplication of default data in assignment operator.
+        <http://webkit.org/b/94046>
+
+        Reviewed by Geoffrey Garen.
+
+        If copying a NinePieceImage with a null m_data, don't create a copy of it's data()
+        as that will point to the default NinePieceImageData. ~200kB progression on Membuster.
+
+        * rendering/style/NinePieceImage.h:
+        (WebCore::NinePieceImage::operator=):
+
 2012-08-15  Gregg Tavares  <gman@google.com>
 
         Mark Skia and Compositor Contexts

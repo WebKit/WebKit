@@ -85,6 +85,10 @@ public:
 
     void operator=(const NinePieceImage& other)
     {
+        if (!other.m_data) {
+            m_data.clear();
+            return;
+        }
         const NinePieceImageData& otherData = other.data();
         m_data = adoptPtr(new NinePieceImageData(otherData.m_image, otherData.m_imageSlices, otherData.m_fill, otherData.m_borderSlices, otherData.m_outset, static_cast<ENinePieceImageRule>(otherData.m_horizontalRule), static_cast<ENinePieceImageRule>(otherData.m_verticalRule)));
     }
