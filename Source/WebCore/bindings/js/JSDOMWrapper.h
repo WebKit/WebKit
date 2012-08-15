@@ -31,25 +31,14 @@ class ScriptExecutionContext;
 
 class JSDOMWrapper : public JSC::JSNonFinalObject {
 public:
-    JSDOMGlobalObject* globalObject() const
-    {
-        return JSC::jsCast<JSDOMGlobalObject*>(JSC::JSNonFinalObject::globalObject());
-    }
-
-    ScriptExecutionContext* scriptExecutionContext() const
-    {
-        // FIXME: Should never be 0, but can be due to bug 27640.
-        return globalObject()->scriptExecutionContext();
-    }
+    JSDOMGlobalObject* globalObject() const { return JSC::jsCast<JSDOMGlobalObject*>(JSC::JSNonFinalObject::globalObject()); }
+    ScriptExecutionContext* scriptExecutionContext() const { return globalObject()->scriptExecutionContext(); }
 
 protected:
-    explicit JSDOMWrapper(JSC::Structure* structure, JSC::JSGlobalObject* globalObject) 
+    JSDOMWrapper(JSC::Structure* structure, JSC::JSGlobalObject* globalObject) 
         : JSNonFinalObject(globalObject->globalData(), structure)
     {
-        // FIXME: This ASSERT is valid, but fires in fast/dom/gc-6.html when trying to create
-        // new JavaScript objects on detached windows due to DOMWindow::document()
-        // needing to reach through the frame to get to the Document*.  See bug 27640.
-        // ASSERT(globalObject->scriptExecutionContext());
+        ASSERT(scriptExecutionContext());
     }
 };
 

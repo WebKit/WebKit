@@ -1,3 +1,19 @@
+2012-08-15  Adam Barth  <abarth@webkit.org>
+
+        JSDOMWrapper should ASSERT that it has an associated ScriptExecutionContext
+        https://bugs.webkit.org/show_bug.cgi?id=94053
+
+        Reviewed by Sam Weinig.
+
+        Previously we were unable have this ASSERT because DOMWindow needed a
+        Frame to find Document. Now that we can find the Document without a
+        Frame, we can include the ASSERT and sanity will rein across the land.
+
+        * bindings/js/JSDOMWrapper.h:
+        (WebCore::JSDOMWrapper::globalObject):
+        (WebCore::JSDOMWrapper::scriptExecutionContext):
+        (WebCore::JSDOMWrapper::JSDOMWrapper):
+
 2012-08-14  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Change behavior of MasqueradesAsUndefined to better accommodate DFG changes
