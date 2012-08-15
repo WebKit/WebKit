@@ -2641,8 +2641,6 @@ BUGWK68437 BUGWK54322 SNOWLEOPARD : platform/chromium/virtual/gpu/fast/canvas/se
 // Failures introduced by USE_NEW_BUILDER in Skia.
 BUGCR33287 : fast/canvas/set-colors.html = TEXT
 
-BUG_EPOGER SNOWLEOPARD DEBUG : fast/js/try-catch-crash.html = PASS TIMEOUT
-
 // Alpha channel differences
 BUGWK68736 MAC : fast/table/border-collapsing/cached-cell-append.html = IMAGE
 BUGWK68736 MAC : fast/table/border-collapsing/cached-cell-remove.html = IMAGE

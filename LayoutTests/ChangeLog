@@ -1,3 +1,8 @@
+2012-08-15  Ojan Vafai  <ojan@chromium.org>
+
+        Update expectations to match the bots. This test hasn't timed out in over 500 runs.
+        * platform/chromium/TestExpectations:
+
 2012-08-14  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Change behavior of MasqueradesAsUndefined to better accommodate DFG changes
