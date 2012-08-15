@@ -1,3 +1,19 @@
+2012-08-15  Nima Ghanavatian  <nghanavatian@rim.com>
+
+        [BlackBerry] Check for valid field focus before processing a spellcheck request
+        https://bugs.webkit.org/show_bug.cgi?id=94115
+
+        Reviewed by Rob Buis.
+
+        PR192891
+        Checking for valid field focus before processing the spellcheck
+        request.
+
+        Internally reviewed by Mike Fenton.
+
+        * WebKitSupport/InputHandler.cpp:
+        (BlackBerry::WebKit::InputHandler::requestCheckingOfString):
+
 2012-08-14  Adam Barth  <abarth@webkit.org>
 
         Delete Frame::domWindow() and Frame::existingDOMWindow()

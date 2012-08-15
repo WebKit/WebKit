@@ -535,6 +535,11 @@ void InputHandler::requestCheckingOfString(PassRefPtr<WebCore::TextCheckingReque
 
     int32_t sequenceId = request->sequence();
 
+    if (!isActiveTextEdit()) {
+        spellCheckingRequestCancelled(sequenceId, true /* isSequenceId */);
+        return;
+    }
+
     // Check if field explicitly asked for spellchecking.
     if (DOMSupport::elementSupportsSpellCheck(m_currentFocusElement.get()) != DOMSupport::On) {
         spellCheckingRequestCancelled(sequenceId, true /* isSequenceId */);
