@@ -1,3 +1,21 @@
+2012-08-15  Iain Merrick  <husky@chromium.org>
+
+        Refactoring: move EventHandler::targetNode into HitTestResult
+        https://bugs.webkit.org/show_bug.cgi?id=94107
+
+        Reviewed by Dimitri Glazkov.
+
+        This static helper method in EventHandler was made public so that
+        WebFrameImpl can call it. That's untidy because EventHandler isn't
+        really involved. This patch turns it into an instance method of
+        HitTestResult (with a wrapper in MouseEventWithHitTestResult for
+        convenience).
+
+        Pure refactoring, no behavior change, no new test needed.
+
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::visiblePositionForWindowPoint):
+
 2012-08-15  David Grogan  <dgrogan@chromium.org>
 
         IndexedDB: Add some ASSERTs

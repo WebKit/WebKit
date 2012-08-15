@@ -177,6 +177,8 @@ public:
 
     Vector<String> dictationAlternatives() const;
 
+    Node* targetNode() const;
+
 private:
     NodeSet& mutableRectBasedTestResult(); // See above.
 

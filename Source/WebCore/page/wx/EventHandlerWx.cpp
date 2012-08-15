@@ -63,10 +63,10 @@ bool EventHandler::passMouseReleaseEventToSubframe(MouseEventWithHitTestResults&
 bool EventHandler::passWidgetMouseDownEventToWidget(const MouseEventWithHitTestResults& event)
 {
     // Figure out which view to send the event to.
-    if (!targetNode(event) || !targetNode(event)->renderer() || !targetNode(event)->renderer()->isWidget())
+    if (!event.targetNode() || !event.targetNode()->renderer() || !event.targetNode()->renderer()->isWidget())
         return false;
     
-    return passMouseDownEventToWidget(toRenderWidget(targetNode(event)->renderer())->widget());
+    return passMouseDownEventToWidget(toRenderWidget(event.targetNode()->renderer())->widget());
 }
 
 bool EventHandler::passWidgetMouseDownEventToWidget(RenderWidget* renderWidget)

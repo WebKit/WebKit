@@ -1503,7 +1503,7 @@ VisiblePosition WebFrameImpl::visiblePositionForWindowPoint(const WebPoint& poin
 
     frame()->document()->renderView()->layer()->hitTest(request, result);
 
-    Node* node = EventHandler::targetNode(result);
+    Node* node = result.targetNode();
     if (!node)
         return VisiblePosition();
 

@@ -795,4 +795,19 @@ Vector<String> HitTestResult::dictationAlternatives() const
     return frame->editor()->dictationAlternativesForMarker(marker);
 }
 
+Node* HitTestResult::targetNode() const
+{
+    Node* node = innerNode();
+    if (!node)
+        return 0;
+    if (node->inDocument())
+        return node;
+
+    Element* element = node->parentElement();
+    if (element && element->inDocument())
+        return element;
+
+    return node;
+}
+
 } // namespace WebCore

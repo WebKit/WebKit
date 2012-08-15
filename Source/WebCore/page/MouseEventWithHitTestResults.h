@@ -38,6 +38,7 @@ public:
     Scrollbar* scrollbar() const { return m_hitTestResult.scrollbar(); }
     bool isOverLink() const;
     bool isOverWidget() const { return m_hitTestResult.isOverWidget(); }
+    Node* targetNode() const { return m_hitTestResult.targetNode(); }
 
 private:
     PlatformMouseEvent m_event;

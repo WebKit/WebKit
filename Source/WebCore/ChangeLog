@@ -1,3 +1,56 @@
+2012-08-15  Iain Merrick  <husky@chromium.org>
+
+        Refactoring: move EventHandler::targetNode into HitTestResult
+        https://bugs.webkit.org/show_bug.cgi?id=94107
+
+        Reviewed by Dimitri Glazkov.
+
+        This static helper method in EventHandler was made public so that
+        WebFrameImpl can call it. That's untidy because EventHandler isn't
+        really involved. This patch turns it into an instance method of
+        HitTestResult (with a wrapper in MouseEventWithHitTestResult for
+        convenience).
+    
+        Pure refactoring, no behavior change, no new test needed.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::selectClosestWordFromMouseEvent):
+        (WebCore::EventHandler::selectClosestWordOrLinkFromMouseEvent):
+        (WebCore::EventHandler::handleMousePressEventTripleClick):
+        (WebCore::EventHandler::handleMousePressEventSingleClick):
+        (WebCore::EventHandler::handleMousePressEvent):
+        (WebCore::EventHandler::handleMouseDraggedEvent):
+        (WebCore::EventHandler::updateSelectionForMouseDrag):
+        (WebCore::EventHandler::handleMouseReleaseEvent):
+        (WebCore::EventHandler::subframeForHitTestResult):
+        (WebCore::EventHandler::selectCursor):
+        (WebCore::EventHandler::handleMouseDoubleClickEvent):
+        (WebCore::EventHandler::handleMouseMoveEvent):
+        (WebCore::EventHandler::updateDragAndDrop):
+        (WebCore::EventHandler::handleGestureEvent):
+        (WebCore::EventHandler::sendContextMenuEvent):
+        * page/EventHandler.h:
+        (EventHandler):
+        * page/MouseEventWithHitTestResults.h:
+        (WebCore::MouseEventWithHitTestResults::targetNode):
+        * page/chromium/EventHandlerChromium.cpp:
+        (WebCore::EventHandler::passMousePressEventToSubframe):
+        (WebCore::EventHandler::passWidgetMouseDownEventToWidget):
+        * page/efl/EventHandlerEfl.cpp:
+        (WebCore::EventHandler::passWidgetMouseDownEventToWidget):
+        * page/gtk/EventHandlerGtk.cpp:
+        (WebCore::EventHandler::passWidgetMouseDownEventToWidget):
+        * page/mac/EventHandlerMac.mm:
+        (WebCore::EventHandler::passWidgetMouseDownEventToWidget):
+        (WebCore::EventHandler::passSubframeEventToSubframe):
+        * page/wx/EventHandlerWx.cpp:
+        (WebCore::EventHandler::passWidgetMouseDownEventToWidget):
+        * rendering/HitTestResult.cpp:
+        (WebCore::HitTestResult::targetNode):
+        (WebCore):
+        * rendering/HitTestResult.h:
+        (HitTestResult):
+
 2012-08-15  David Grogan  <dgrogan@chromium.org>
 
         IndexedDB: Add some ASSERTs

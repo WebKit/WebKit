@@ -230,8 +230,6 @@ public:
     bool handleTouchEvent(const PlatformTouchEvent&);
 #endif
 
-    static Node* targetNode(const HitTestResult&);
-
 private:
 #if ENABLE(DRAG_SUPPORT)
     static DragState& dragState();
@@ -246,8 +244,6 @@ private:
     void selectClosestWordOrLinkFromMouseEvent(const MouseEventWithHitTestResults&);
 
     bool handleMouseDoubleClickEvent(const PlatformMouseEvent&);
-
-    static Node* targetNode(const MouseEventWithHitTestResults&);
 
     bool handleMousePressEvent(const MouseEventWithHitTestResults&);
     bool handleMousePressEventSingleClick(const MouseEventWithHitTestResults&);
