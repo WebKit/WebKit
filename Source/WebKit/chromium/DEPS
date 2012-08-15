@@ -32,7 +32,7 @@
 
 vars = {
   'chromium_svn': 'http://src.chromium.org/svn/trunk/src',
-  'chromium_rev': '151462'
+  'chromium_rev': '151672'
 }
 
 deps = {
@@ -58,6 +58,8 @@ deps = {
     From('chromium_deps', 'src/third_party/skia/src'),
   'third_party/skia/include':
     From('chromium_deps', 'src/third_party/skia/include'),
+  'third_party/skia/gyp':
+    From('chromium_deps', 'src/third_party/skia/gyp'),
 
   # testing
   'testing':

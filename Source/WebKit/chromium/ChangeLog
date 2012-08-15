@@ -1,3 +1,15 @@
+2012-08-15  Peter Beverloo  <peter@chromium.org>
+
+        [Chromium] Roll WebKit Chromium DEPS to r151672
+        https://bugs.webkit.org/show_bug.cgi?id=94091
+
+        Unreviewed DEPS roll.
+
+        This also adds the new dependency on third_party/skia/gyp/, as was
+        introduced in Chromium's revision 151463.
+
+        * DEPS:
+
 2012-08-14  Keishi Hattori  <keishi@webkit.org>
 
         Share common code between calendar picker and color suggestion picker
