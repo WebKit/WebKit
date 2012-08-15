@@ -96,6 +96,7 @@ InternalSettings::Backup::Backup(Page* page, Settings* settings)
 #if ENABLE(DIALOG_ELEMENT)
     , m_originalDialogElementEnabled(RuntimeEnabledFeatures::dialogElementEnabled())
 #endif
+    , m_canStartMedia(page->canStartMedia())
 {
 }
 
@@ -127,6 +128,7 @@ void InternalSettings::Backup::restoreTo(Page* page, Settings* settings)
 #if ENABLE(DIALOG_ELEMENT)
     RuntimeEnabledFeatures::setDialogElementEnabled(m_originalDialogElementEnabled);
 #endif
+    page->setCanStartMedia(m_canStartMedia);
 }
 
 InternalSettings* InternalSettings::from(Page* page)
@@ -431,6 +433,12 @@ bool InternalSettings::cssVariablesEnabled(ExceptionCode& ec)
 {
     InternalSettingsGuardForSettingsReturn(false);
     return settings()->cssVariablesEnabled();
+}
+
+void InternalSettings::setCanStartMedia(bool enabled, ExceptionCode& ec)
+{
+    InternalSettingsGuardForSettings();
+    m_page->setCanStartMedia(enabled);
 }
 
 void InternalSettings::setMediaPlaybackRequiresUserGesture(bool enabled, ExceptionCode& ec)

@@ -1,3 +1,16 @@
+2012-08-15  Brady Eidson  <beidson@apple.com>
+
+        Removing a plug-in element from a page opened in a background tab in Safari crashes
+        <rdar://problem/12057991> and https://bugs.webkit.org/show_bug.cgi?id=93913
+
+        Reviewed by Beth Dakin.
+
+        Using internal setting setCanStartMedia, pretend the page is in an unwindowed WebView then remove
+        the plug-in element.
+
+        * platform/mac-wk2/plugins/asynchronous-destroy-before-initialization-expected.txt: Added.
+        * platform/mac-wk2/plugins/asynchronous-destroy-before-initialization.html: Added.
+
 2012-08-15  Levi Weintraub  <leviw@chromium.org>
 
         AutoTableLayout truncates preferred widths for cells when it needs to ceil them to contain the contents

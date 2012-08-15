@@ -210,6 +210,7 @@ EXPORTS
         ?scriptExecutionContext@JSDOMGlobalObject@WebCore@@QBEPAVScriptExecutionContext@2@XZ
         ?scriptNameToCode@WebCore@@YA?AW4UScriptCode@@ABVString@WTF@@@Z
         ?scrollElementToRect@FrameView@WebCore@@QAEXPAVElement@2@ABVIntRect@2@@Z
+        ?setCanStartMedia@Page@WebCore@@QAEX_N@Z
         ?setCursiveFontFamily@Settings@WebCore@@QAEXABVAtomicString@WTF@@W4UScriptCode@@@Z
         ?setDeviceScaleFactor@Page@WebCore@@QAEXM@Z
         ?setDocumentState@HistoryItem@WebCore@@QAEXABV?$Vector@VString@WTF@@$0A@@WTF@@@Z

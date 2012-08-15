@@ -1,3 +1,17 @@
+2012-08-15  Brady Eidson  <beidson@apple.com>
+
+        Removing a plug-in element from a page opened in a background tab in Safari crashes
+        <rdar://problem/12057991> and https://bugs.webkit.org/show_bug.cgi?id=93913
+
+        Reviewed by Beth Dakin.
+
+        This only happens in WebKit2 with asynchronous plug-in initialization enabled.
+
+        * WebProcess/Plugins/PluginProxy.cpp:
+        (WebKit::PluginProxy::destroy): Null-check m_connection, as it might not have been created yet.
+
+        * win/WebKit2.def: Export Page::setCanStartMedia for InternalSettings/DRT use.
+
 2012-08-14  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Change behavior of MasqueradesAsUndefined to better accommodate DFG changes
